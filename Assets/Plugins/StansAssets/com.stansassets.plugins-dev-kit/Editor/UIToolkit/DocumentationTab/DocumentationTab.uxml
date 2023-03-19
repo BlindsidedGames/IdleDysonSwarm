@@ -1,0 +1,14 @@
+<ui:UXML xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements"
+         xmlns:sa="StansAssets.Foundation.UIElements">
+
+    <sa:SettingsBlock label="Documentation" name="DocBlock">
+        <ui:VisualElement name="DocTopPanel" class="top-panel" />
+        <ui:VisualElement name="DocItemsPanel" class="doc-panel" />
+    </sa:SettingsBlock>
+
+    <sa:SettingsBlock label="Samples" name="SampleBlock">
+        <ui:VisualElement name="SampleTopPanel" class="top-panel" />
+        <ui:VisualElement name="SampleItemsPanel" class="doc-panel" />
+    </sa:SettingsBlock>
+    
+</ui:UXML>

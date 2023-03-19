@@ -1,0 +1,7 @@
+{"m_error":{"m_message":"","m_code":0},
+"m_contacts":[
+    {"m_familyName":"","m_departmentName":"","m_nickname":"","m_phones":[],"m_jobTitle":"","m_givenName":"lacost","m_organizationName":"","m_emails":[]},
+    {"m_familyName":"","m_departmentName":"","m_nickname":"","m_phones":[],"m_jobTitle":"","m_givenName":"Admin","m_organizationName":"","m_emails":[]},
+    {"m_familyName":"Osipov","m_departmentName":"","m_nickname":"","m_phones":[],"m_jobTitle":"","m_givenName":"Stanislav","m_organizationName":"","m_emails":[]},
+    {"m_familyName":"","m_departmentName":"","m_nickname":"","m_phones":[{"m_countryCode":"ua","m_digits":"1800MYAPPLE"}],"m_jobTitle":"","m_givenName":"","m_organizationName":"Apple Inc.","m_emails":[]}
+]}

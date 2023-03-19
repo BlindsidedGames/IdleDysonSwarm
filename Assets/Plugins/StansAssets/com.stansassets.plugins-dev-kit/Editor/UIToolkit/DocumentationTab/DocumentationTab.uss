@@ -1,0 +1,55 @@
+SettingsBlock {
+    flex-shrink: 0;
+}
+
+.doc-item {
+    margin: 5px 5px 0 0;
+    flex-grow: 1;
+}
+
+.sample-btn {
+    margin: 5px 5px 0 0;
+    background-color: initial;
+    border-width: 0;
+    width: auto;
+    flex-shrink: 0;
+    flex-direction: row;
+    flex-grow: 1;
+}
+
+.sample-btn:hover Label,
+.sample-btn:hover VisualElement {
+    -unity-background-image-tint-color: cornflowerblue;
+    color: cornflowerblue;
+    cursor: link;
+}
+
+.top-panel {
+    padding-right: 1px;
+    flex-grow: 1;
+}
+
+.doc-panel {
+    flex-wrap: wrap;
+    flex-direction: row;
+}
+
+.id-sample-panel {
+    margin-bottom: 5px;
+    flex-direction: row;
+    flex-wrap: wrap;
+}
+
+.id-sample {
+    margin-left: 5px;
+}
+
+.id-sample-text {
+   margin-left: 0;
+}
+
+.sample-icon {
+    height: 13px;
+    width: 17px;
+    background-image: url('../../Art/Icons/Generic/sample_dark.png');
+}
