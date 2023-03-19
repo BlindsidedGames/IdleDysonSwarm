@@ -1,0 +1,20 @@
+{
+    "name": "StansAssets.IOS.XCode",
+    "references": [
+        "StansAssets.Plugins",
+        "StansAssets.Plugins.Editor",
+        "StansAssets.Foundation",
+        "StansAssets.Foundation.Editor"
+    ],
+    "includePlatforms": [
+        "Editor"
+    ],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}

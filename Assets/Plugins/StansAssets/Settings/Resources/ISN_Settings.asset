@@ -1,0 +1,50 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 08d5455d6d21d4ea98ea2c10c4aab299, type: 3}
+  m_Name: ISN_Settings
+  m_EditorClassIdentifier: 
+  LastVersionCode: 
+  Contacts: 0
+  CloudKit: 0
+  Photos: 0
+  ReplayKit: 0
+  Social: 0
+  AdSupport: 0
+  AppTrackingTransparency: 0
+  AVKit: 0
+  CoreLocation: 0
+  AssetsLibrary: 0
+  AppDelegate: 0
+  UserNotifications: 0
+  MediaPlayer: 0
+  EventKit: 0
+  InAppProducts: []
+  Achievements: []
+  SavingAGame: 0
+  ShortcutItems: []
+  UrlTypes: []
+  ApplicationQueriesSchemes: []
+  CameraUsageDescriptionEnabled: 1
+  MediaLibraryUsageDescriptionEnabled: 0
+  PhotoLibraryUsageDescriptionEnabled: 1
+  PhotoLibraryAddUsageDescriptionEnabled: 1
+  MicrophoneUsageDescriptionEnabled: 1
+  ContactsUsageDescription: Please change 'Contacts Usage Description' with IOS Native
+    Contacts Editor Settings
+  LocationAlwaysAndWhenInUseUsageDescription: Please change 'Location Always And
+    When In Use Usage Description' with IOS Native Core Location Editor Settings
+  LocationWhenInUseUsageDescription: Please change 'Location When In Use Usage Description'
+    with IOS Native Core Location Editor Settings
+  NsCalendarsUsageDescription: This app is require access your Calendar
+  NsRemindersUsageDescription: This app is require access to your Reminder
+  UserTrackingUsageDescription: Please change 'UserTrackingUsageDescription' with
+    IOS Native App Tracking Transparency Editor Settings

@@ -1,0 +1,9 @@
+This asset is governed by the Asset Store EULA; however, the following components are governed by the licenses indicated below:
+
+A. Rotorz. Reorderable List Field
+MIT
+Copyright (c) 2013-2015 Rotorz Limited
+
+A. Rotorz. ClassTypeReference
+MIT
+Copyright (c) 2013-2015 Rotorz Limited

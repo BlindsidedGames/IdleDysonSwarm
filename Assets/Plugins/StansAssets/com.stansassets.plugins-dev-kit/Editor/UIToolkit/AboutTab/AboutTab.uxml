@@ -1,0 +1,138 @@
+<ui:UXML xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements"
+         xmlns:sa="StansAssets.Foundation.UIElements">>
+
+    <!--Who we are-->
+    <sa:SettingsBlock label="Who we are">
+        <ui:Label
+                text="Stan’s Assets is a team of Unity developers  with more than 6 years of experience that are committed to develop high quality and  engaging entertainment software."
+                name="descriptionWhoWeAre" class="description"/>
+    </sa:SettingsBlock>
+
+    <!--What we do-->
+    <sa:SettingsBlock label="What we do">
+        <ui:Label
+                text="Game development our main direction. But we do everything that is connected to Unity. Games, Plugins, VR, AR and even enterprise applications with 3D elemnets. And of course we are always looking forward to a new challenging projects."
+                name="descriptionWhatWeDo" class="description"/>
+
+        <!--1st Line-->
+        <ui:VisualElement class="contact-container" name="contactContainer">
+
+            <!--Our Games-->
+            <ui:VisualElement class="contact-element">
+                <sa:Hyperlink name="GamesElement"
+                              link="https://stansassets.com/#portfolio">
+                    <ui:Label text="" name="GamesIcon" class="icon icon-game"/>
+                    <ui:Label text="Our Games" name="GamesText" class="contact-text"/>
+                </sa:Hyperlink>
+            </ui:VisualElement>
+
+            <!--Our Plugins-->
+            <ui:VisualElement class="contact-element">
+                <sa:Hyperlink name="PluginsElement"
+                              link="https://assetstore.unity.com/publishers/2256">
+                    <ui:Label text="" name="PluginsIcon" class="icon icon-plugin"/>
+                    <ui:Label text="Our Plugins" name="PluginsText" class="contact-text"/>
+                </sa:Hyperlink>
+            </ui:VisualElement>
+
+            <!--Our Team-->
+            <ui:VisualElement class="contact-element">
+                <sa:Hyperlink name="TeamElement"
+                              link="https://stansassets.com/#our-team">
+                    <ui:Label text="" name="TeamIcon" class="icon icon-team"/>
+                    <ui:Label text="Our Team" name="TeamText" class="contact-text"/>
+                </sa:Hyperlink>
+            </ui:VisualElement>
+        </ui:VisualElement>
+
+    </sa:SettingsBlock>
+
+    <!--What we do-->
+    <sa:SettingsBlock label="How to get in touch">
+        <ui:Label
+                text="If you have any technical issues or questions, do not hesitate to drop us a message at:"
+                name="descriptionWhatWeDo" class="description"/>
+        <ui:VisualElement class="mail">
+            <sa:Hyperlink link="mailto:support@stansassets.com" name="supportEmail">
+                <ui:Label text="support@stansassets.com" name="supportEmailText"/>
+            </sa:Hyperlink>
+        </ui:VisualElement>
+        <ui:Label
+                text="For a non technical and business related questions, use:"
+                name="descriptionWhatWeDo" class="description"/>
+        <ui:VisualElement class="mail">
+            <sa:Hyperlink link="mailto:ceo@stansassets.com" name="ceoEmail">
+                <ui:Label text="ceo@stansassets.com" name="ceoEmailText"/>
+            </sa:Hyperlink>
+        </ui:VisualElement>
+
+        <!--1st Line-->
+        <ui:VisualElement class="contact-container" name="contactContainer">
+
+            <!--Linkedin-->
+            <ui:VisualElement class="contact-element">
+                <sa:Hyperlink name="LinkedinElement"
+                              link="https://www.linkedin.com/in/lacost">
+                    <ui:Label text="" name="LinkedinIcon" class="icon icon-linkedin"/>
+                    <ui:Label text="Linkedin" name="LinkedinText" class="contact-text"/>
+                </sa:Hyperlink>
+            </ui:VisualElement>
+            <!--Twitter-->
+            <ui:VisualElement class="contact-element">
+                <sa:Hyperlink name="TwitterElement"
+                              link="https://twitter.com/stansassets">
+                    <ui:Label text="" name="TwitterIcon" class="icon icon-twitter"/>
+                    <ui:Label text="Twitter" name="TwitterText" class="contact-text"/>
+                </sa:Hyperlink>
+            </ui:VisualElement>
+
+            <!--Facebook-->
+            <ui:VisualElement class="contact-element">
+                <sa:Hyperlink name="FacebookElement"
+                              link="https://www.facebook.com/stansassets/">
+                    <ui:Label text="" name="FacebookIcon" class="icon icon-facebook"/>
+                    <ui:Label text="Facebook" name="FacebookText" class="contact-text"/>
+                </sa:Hyperlink>
+            </ui:VisualElement>
+        </ui:VisualElement>
+        <!--2st Line-->
+        <ui:VisualElement class="contact-container" name="contactContainer">
+
+            <!--Youtube-->
+            <ui:VisualElement class="contact-element">
+                <sa:Hyperlink name="YoutubeElement"
+                              link="https://www.youtube.com/user/stansassets/videos">
+                    <ui:Label text="" name="YoutubeIcon" class="icon icon-youtube"/>
+                    <ui:Label text="Youtube" name="YoutubeText" class="contact-text"/>
+                </sa:Hyperlink>
+            </ui:VisualElement>
+
+            <!--Google+-->
+            <ui:VisualElement class="contact-element">
+                <sa:Hyperlink name="GooglePlusElement"
+                              link="https://plus.google.com/+StansassetsOfficia">
+                    <ui:Label text="" name="GooglePlusIcon" class="icon icon-google-plus"/>
+                    <ui:Label text="Google+" name="GooglePlusText" class="contact-text"/>
+                </sa:Hyperlink>
+            </ui:VisualElement>
+
+            <!--Twitch-->
+            <ui:VisualElement class="contact-element">
+                <sa:Hyperlink name="TwitchElement"
+                              link="https://www.twitch.tv/stans_assets">
+                    <ui:Label text="" name="TwitchIcon" class="icon icon-twitch"/>
+                    <ui:Label text="Twitch" name="TwitchText" class="contact-text"/>
+                </sa:Hyperlink>
+            </ui:VisualElement>
+        </ui:VisualElement>
+
+        <!--Logo-->
+        <ui:VisualElement class="logo-container">
+            <sa:Hyperlink name="LogoElement" link="https://stansassets.com/">
+                <ui:Label text="" name="Logo" class="icon-logo"/>
+            </sa:Hyperlink>
+        </ui:VisualElement>
+
+    </sa:SettingsBlock>
+    
+</ui:UXML>

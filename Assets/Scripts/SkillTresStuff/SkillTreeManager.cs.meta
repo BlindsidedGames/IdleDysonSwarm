@@ -1,0 +1,13 @@
+fileFormatVersion: 2
+guid: 5f75ec2b96e0a984ba73ea2349cc147e
+MonoImporter:
+  externalObjects: {}
+  serializedVersion: 2
+  defaultReferences:
+  - skillButton: {instanceID: 0}
+  - purchasedImage: {fileID: 6890171417896752708, guid: 86ae7de409eb54f619fb1328e4d42480, type: 3}
+  executionOrder: 0
+  icon: {instanceID: 0}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

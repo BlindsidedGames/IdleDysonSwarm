@@ -1,0 +1,30 @@
+{
+  "name": "com.stansassets.plugins-dev-kit",
+  "displayName": "Stans Assets - Plugin Dev Kit",
+  "version": "1.0.2",
+  "unity": "2018.4",
+  "description": "Package Sample.",
+  "dependencies": {
+    "com.stansassets.foundation": "1.0.16"
+  },
+  "keywords": [
+    "plugins",
+    "packages",
+    "sdk"
+  ],
+  "license": "MIT",
+  "author": {
+    "name": "Stan's Assets",
+    "email": "stan@stansassets.com",
+    "url": "https://stansassets.com/"
+  },
+  "homepage": "https://api.stansassets.com/",
+  "bugs": {
+    "url": "https://github.com/StansAssets/com.stansassets.plugins-dev-kit/issues",
+    "email": "support@stansassets.com"
+  },
+  "repository": {
+    "type": "git",
+    "url": "ssh://git@github.com:StansAssets/com.stansassets.plugins-dev-kit.git"
+  }
+}
