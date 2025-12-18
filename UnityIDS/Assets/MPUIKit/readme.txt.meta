@@ -1,0 +1,14 @@
+fileFormatVersion: 2
+guid: f5c469485ab6745caa15ede5fe6d4659
+TextScriptImporter:
+  externalObjects: {}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 163041
+  packageName: Modern Procedural UI Kit
+  packageVersion: 1.2.1
+  assetPath: Assets/MPUIKit/readme.txt
+  uploadId: 668392

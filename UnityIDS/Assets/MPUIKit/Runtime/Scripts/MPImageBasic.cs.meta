@@ -1,0 +1,18 @@
+fileFormatVersion: 2
+guid: fceb93b9d8bf04943b1dd4939eaf6284
+MonoImporter:
+  externalObjects: {}
+  serializedVersion: 2
+  defaultReferences: []
+  executionOrder: 0
+  icon: {instanceID: 0}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 163041
+  packageName: Modern Procedural UI Kit
+  packageVersion: 1.2.1
+  assetPath: Assets/MPUIKit/Runtime/Scripts/MPImageBasic.cs
+  uploadId: 668392

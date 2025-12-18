@@ -1,0 +1,10 @@
+﻿fileFormatVersion: 2
+guid: 9ce9faf1c41643d88c5ca734c7187921
+timeCreated: 1587197968
+AssetOrigin:
+  serializedVersion: 1
+  productId: 163041
+  packageName: Modern Procedural UI Kit
+  packageVersion: 1.2.1
+  assetPath: Assets/MPUIKit/Runtime/Scripts/Utility/MPImageHelper.cs
+  uploadId: 668392

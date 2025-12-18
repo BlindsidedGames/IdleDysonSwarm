@@ -1,0 +1,14 @@
+fileFormatVersion: 2
+guid: 0eb232f11bcdcfe4babcf96125bd9f6a
+DefaultImporter:
+  externalObjects: {}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 163041
+  packageName: Modern Procedural UI Kit
+  packageVersion: 1.2.1
+  assetPath: Assets/MPUIKit/Demos/MPUIKit_Shape_Demo.unity
+  uploadId: 668392

@@ -1,0 +1,104 @@
+-   1 `startHereTree`: 20% Cash & Science (cost 1) | lock:59
+-   2 `assemblyLineTree`: Double Assembly Line Speed (cost 1) | req:1 lock:59
+-   3 `aiManagerTree`: Double AI Manager Speed (cost 1) | req:1 lock:59
+-   4 `serverTree`: Double Server Capacity (cost 1) | req:1 lock:59
+-   5 `planetsTree`: Double Planet Effect (cost 1) | req:1 lock:59
+-   6 `scientificPlanets`: Automatic Planet Discovery (cost 1) | req:5,30 lock:59
+-   7 `workerEfficiencyTree`: Worker Efficiency Increase (cost 1) | req:1
+-   8 `panelLifetime20Tree`: Panel Lifetime +20s (cost 1) | req:1
+-   9 `doubleScienceTree`: Double <sprite=0> (cost 1) | req:1
+-  10 `producedAsScienceTree`: Power in Numbers (cost 1) | req:9
+-  11 `banking`: Banking (cost 1) [unrefundable]
+-  12 `investmentPortfolio`: Investment Portfolio (cost 1) [unrefundable] | req:11
+-  13 `scientificRevolution`: Scientific Revolution (cost 1) | req:9
+-  14 `economicRevolution`: Economic Revolution (cost 1) | req:7
+-  15 `renewableEnergy`: Renewable Energy (cost 1) | req:17
+-  16 `burnOut`: Burnout (cost 1) | req:56
+-  17 `artificiallyEnhancedPanels`: Artificially Enhanced Panels (cost 1) | req:8
+-  18 `stayingPower`: 'Staying Power ' (cost 2) | req:17
+-  19 `higgsBoson`: Higgs Boson (cost 2) | req:1
+-  20 `androids`: Androids (cost 2) | req:7,8
+-  21 `superchargedPower`: Supercharged Power (cost 1) [power] | req:7
+-  22 `dataCenterTree`: Data Centers (cost 1) | req:1 lock:59
+-  23 `workerBoost`: Worker Boost (cost 1) | req:7
+-  24 `stellarSacrifices`: Stellar Sacrifices (cost 2) [stellar]
+-  25 `stellarObliteration`: Stellar Obliteration (cost 2) [stellar] | req:24
+-  26 `supernova`: Supernova (cost 4) [stellar] | req:25
+-  27 `stellarImprovements`: Stellar Improvements (cost 3) [stellar] | req:24
+-  28 `powerUnderwhelming`: Power Underwhelming (cost 1) | req:67
+-  29 `powerOverwhelming`: Power Overwhelming (cost 1) | req:28
+-  30 `pocketDimensions`: Pocket DImensions (cost 1) | req:70,22 lock:59
+-  31 `tasteOfPower`: Taste of Power (cost 1) [power] | req:21
+-  32 `indulgingInPower`: Indulging in Power (cost 1) [power] | req:31
+-  33 `addictionToPower`: Addiction to Power (cost 1) [power] | req:32
+-  34 `rule34`: Avocados (cost 2)
+-  35 `progressiveAssembly`: Progressive Assembly (Fragment) (cost 1) [fragment] | req:2
+-  36 `regulatedAcademia`: Regulated Academia (Fragment) (cost 1) [fragment] | req:67
+-  37 `panelWarranty`: Panel Warranty (Fragment) (cost 1) [fragment] | req:8
+-  38 `monetaryPolicy`: Monetary Policy (Fragment) (cost 1) [fragment] | req:7
+-  39 `terraformingProtocols`: Terraforming Protocols (Fragment) (cost 1) [fragment] | req:6
+-  40 `productionScaling`: Production Scaling (Fragment) (cost 1) [fragment] | req:44
+-  41 `fragmentAssembly`: Fragment Assembly (Fragment) (cost 1) [fragment]
+-  42 `assemblyMegaLines`: Assembly Megalines (cost 1) | req:2
+-  43 `idleElectricSheep`: Idle Electric Sheep (cost 2) [unrefundable]
+-  44 `superSwarm`: Super Swarm (cost 2) | req:56
+-  45 `megaSwarm`: Mega Swarm (cost 2) | req:44
+-  46 `ultimateSwarm`: Ultimate Swarm (cost 3) | req:45
+-  47 `purityOfMind`: Purity of Mind (cost 2) [purity] | req:56
+-  48 `purityOfBody`: Purity of Body (cost 2) [purity] | req:47
+-  49 `purityOfSEssence`: Purity of Essence (cost 3) [purity] | req:48
+-  50 `dysonSubsidies`: Dyson Subsidies (cost 1) | req:56
+-  51 `oneMinutePlan`: One Minute Plan (cost 1) | req:54,50
+-  52 `galacticPradigmShift`: Galactic Paradigm Shift (cost 1) | req:50
+-  53 `panelMaintenance`: Panel Maintenance (cost 3) [paragade] | req:56
+-  54 `worthySacrifice`: Worthy Sacrifice (cost 1) | req:16
+-  55 `endOfTheLine`: End of the Line (cost 1) | req:54
+-  56 `manualLabour`: Manual Labour (cost 1)
+-  57 `superRadiantScattering`: Super-Radiant Scattering (cost 3) [firstRunBlocked] | req:6
+-  58 `repeatableResearch`: Repeatable Research (cost 1) | req:9
+-  59 `shouldersOfGiants`: Shoulders of Giants (cost 1) [firstRunBlocked, unrefundable] | req:6
+-  60 `shouldersOfPrecursors`: Shoulders of Precursors (cost 1) [firstRunBlocked, unrefundable] | req:59 exclusive:62
+-  61 `shouldersOfTheFallen`: Shoulders of the Fallen (cost 1) [firstRunBlocked, unrefundable] | req:60 exclusive:62
+-  62 `shouldersOfTheEnlightened`: Shoulders of the Enlightened (cost 1) [firstRunBlocked, unrefundable] | req:59 exclusive:60
+-  63 `shouldersOfTheRevolution`: 'Shoulders of the Revolution ' (cost 1) [firstRunBlocked, unrefundable] | req:62 exclusive:60
+-  64 `rocketMania`: Rocket Mania (cost 3) | req:55
+-  65 `idleSpaceFlight`: Idle Spaceflight (cost 3) | req:10
+-  66 `fusionReactors`: Fusion Reactors (cost 1) | req:16
+-  67 `coldFusion`: Cold Fusion (cost 1) | req:66
+-  68 `scientificDominance`: Scientific Dominance (cost 1) | req:13 exclusive:69
+-  69 `economicDominance`: Economic Dominance (cost 1) | req:14 exclusive:68
+-  70 `parallelProcessing`: Parallel Processing (cost 1) | req:4,3,2 lock:59
+-  71 `rudimentarySingularity`: Rudimentary Singularity (cost 1) [firstRunBlocked] | req:70
+-  72 `hubbleTelescope`: Hubble Telescope (cost 1) | req:6
+-  73 `jamesWebbTelescope`: James Webb Telescope (cost 1) | req:72
+-  74 `dimensionalCatCables`: Dimensional CAT cables (cost 1) [firstRunBlocked] | req:30
+-  75 `pocketProtectors`: 'Pocket Protectors ' (cost 1) [firstRunBlocked] | req:74
+-  76 `pocketMultiverse`: Pocket Multiverse (cost 2) [firstRunBlocked] | req:75
+-  77 `whatCouldHaveBeen`: "What could\u2019ve been" (cost 1) [firstRunBlocked] | req:74,59 exclusive:95
+-  78 `shoulderSurgery`: Shoulder Surgery (cost 1) [firstRunBlocked] | req:77 exclusive:95
+-  79 `terraFirma`: Terra Firma (cost 1) [terra] | req:52
+-  80 `terraEculeo`: Terra Eculeo (cost 1) [terra] | req:79
+-  81 `terraInfirma`: Terra Infirma (cost 1) [terra] | req:80
+-  82 `terraNullius`: Terra Nullius (cost 1) [terra] | req:81
+-  83 `terraNova`: Terra Nova (cost 1) [terra] | req:79
+-  84 `terraGloriae`: Terra Gloriae (cost 1) [terra] | req:83
+-  85 `terraIrradiant`: Terra Irradient (cost 1) [terra] | req:82,84
+-  86 `paragon`: Paragon (cost 1) [paragade] | req:53 exclusive:89
+-  87 `shepherd`: Shepherd (cost 1) [paragade] | req:86 exclusive:89
+-  88 `citadelCouncil`: 'Citadel Council ' (cost 1) [paragade] | req:87 exclusive:89
+-  89 `renegade`: Renegade (cost 1) [paragade] | req:53 exclusive:86
+-  90 `saren`: Saren (cost 1) [paragade] | req:89 exclusive:86
+-  91 `reapers`: Reapers (cost 1) [paragade] | req:90 exclusive:86
+-  92 `planetAssembly`: Planet Assembly (cost 1) | req:52,94
+-  93 `shellWorlds`: Shell Worlds (cost 1) | req:92
+-  94 `versatileProductionTactics`: Versatile Production Tactics (cost 1) | req:51
+-  95 `whatWillComeToPass`: What Will Come to Pass (cost 1) [firstRunBlocked] | req:74 exclusive:77
+-  96 `solarBubbles`: Solar Bubbles (cost 1) [firstRunBlocked] | req:95 exclusive:77
+-  97 `pocketAndroids`: Pocket Androids (cost 1) [firstRunBlocked] | req:96 exclusive:77
+-  98 `hypercubeNetworks`: Hypercube Networks (cost 1) [firstRunBlocked] | req:95 exclusive:77
+-  99 `parallelComputation`: Parallel Computation (cost 1) [firstRunBlocked] | req:98,103 exclusive:77
+- 100 `quantumComputing`: 'Quantum Computing ' (cost 1) [firstRunBlocked] | req:99 exclusive:77
+- 101 `unsuspiciousAlgorithms`: Unsuspicious Algorithms (cost 1) [firstRunBlocked] | req:71
+- 102 `agressiveAlgorithms`: Aggressive Algorithms (cost 1) [firstRunBlocked] | req:101
+- 103 `clusterNetworking`: Cluster Networking (cost 1) [firstRunBlocked] | req:71
+- 104 `stellarDominance`: Stellar Dominance (cost 3) [stellar] | req:24

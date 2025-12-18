@@ -1,0 +1,18 @@
+fileFormatVersion: 2
+guid: 16763ff62e066b44a98d652e9e43db81
+MonoImporter:
+  externalObjects: {}
+  serializedVersion: 2
+  defaultReferences: []
+  executionOrder: 0
+  icon: {instanceID: 0}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 768
+  packageName: Easy Save - The Complete Save Game & Data Serializer System
+  packageVersion: 3.5.20
+  assetPath: Assets/Plugins/Easy Save 3/Scripts/Types/NET Types/ES3Type_Nullable.cs
+  uploadId: 712434

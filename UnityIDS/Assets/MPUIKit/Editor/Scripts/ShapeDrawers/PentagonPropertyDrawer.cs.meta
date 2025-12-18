@@ -1,0 +1,10 @@
+﻿fileFormatVersion: 2
+guid: b3117b92bdcb4b69a32f19a16ef9e482
+timeCreated: 1586501835
+AssetOrigin:
+  serializedVersion: 1
+  productId: 163041
+  packageName: Modern Procedural UI Kit
+  packageVersion: 1.2.1
+  assetPath: Assets/MPUIKit/Editor/Scripts/ShapeDrawers/PentagonPropertyDrawer.cs
+  uploadId: 668392
