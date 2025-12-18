@@ -1,0 +1,18 @@
+fileFormatVersion: 2
+guid: 8a6f9388f4adce440beef499dd64fba1
+MonoImporter:
+  externalObjects: {}
+  serializedVersion: 2
+  defaultReferences: []
+  executionOrder: 0
+  icon: {instanceID: 0}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 163041
+  packageName: Modern Procedural UI Kit
+  packageVersion: 1.2.1
+  assetPath: Assets/MPUIKit/Editor/Scripts/MPEditorContents.cs
+  uploadId: 668392

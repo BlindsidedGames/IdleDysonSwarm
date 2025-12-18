@@ -1,0 +1,15 @@
+fileFormatVersion: 2
+guid: 2786a7fd364f443298001578367a4c54
+NativeFormatImporter:
+  externalObjects: {}
+  mainObjectFileID: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 163041
+  packageName: Modern Procedural UI Kit
+  packageVersion: 1.2.1
+  assetPath: Assets/MPUIKit/Editor/MPUIKitSettings.asset
+  uploadId: 668392

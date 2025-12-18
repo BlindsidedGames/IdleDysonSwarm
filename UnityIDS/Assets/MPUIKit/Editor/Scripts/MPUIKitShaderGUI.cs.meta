@@ -1,0 +1,10 @@
+﻿fileFormatVersion: 2
+guid: 3baee42b106f43cd8eb1edfa21a94ae5
+timeCreated: 1590741710
+AssetOrigin:
+  serializedVersion: 1
+  productId: 163041
+  packageName: Modern Procedural UI Kit
+  packageVersion: 1.2.1
+  assetPath: Assets/MPUIKit/Editor/Scripts/MPUIKitShaderGUI.cs
+  uploadId: 668392

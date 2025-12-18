@@ -1,0 +1,10 @@
+﻿fileFormatVersion: 2
+guid: 5309a3f903204db8982ae4b1954c6db2
+timeCreated: 1606546667
+AssetOrigin:
+  serializedVersion: 1
+  productId: 163041
+  packageName: Modern Procedural UI Kit
+  packageVersion: 1.2.1
+  assetPath: Assets/MPUIKit/Runtime/Resources/Shaders/MPImageBasic.shader
+  uploadId: 668392

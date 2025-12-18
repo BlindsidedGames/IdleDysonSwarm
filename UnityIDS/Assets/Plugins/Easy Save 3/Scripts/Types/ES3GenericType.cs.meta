@@ -1,0 +1,18 @@
+fileFormatVersion: 2
+guid: e9b5a36560db414458d423f1d7c1a36c
+MonoImporter:
+  externalObjects: {}
+  serializedVersion: 2
+  defaultReferences: []
+  executionOrder: 0
+  icon: {instanceID: 0}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 768
+  packageName: Easy Save - The Complete Save Game & Data Serializer System
+  packageVersion: 3.5.20
+  assetPath: Assets/Plugins/Easy Save 3/Scripts/Types/ES3GenericType.cs
+  uploadId: 712434

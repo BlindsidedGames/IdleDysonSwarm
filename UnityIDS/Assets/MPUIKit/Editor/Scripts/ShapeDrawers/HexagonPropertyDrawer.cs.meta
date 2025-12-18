@@ -1,0 +1,10 @@
+﻿fileFormatVersion: 2
+guid: e3e33a21b8af4566a49e820424dc26e2
+timeCreated: 1586503332
+AssetOrigin:
+  serializedVersion: 1
+  productId: 163041
+  packageName: Modern Procedural UI Kit
+  packageVersion: 1.2.1
+  assetPath: Assets/MPUIKit/Editor/Scripts/ShapeDrawers/HexagonPropertyDrawer.cs
+  uploadId: 668392
