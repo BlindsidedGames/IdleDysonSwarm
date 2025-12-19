@@ -1,0 +1,9 @@
+{
+  "infinityExponent": 3.92,
+  "maxInfinityBuff": 1e+308,
+  "source": {
+    "oracleScript": "UnityIDS/Assets/Scripts/Expansion/Oracle.cs",
+    "gameManagerScript": "UnityIDS/Assets/Scripts/Systems/GameManager.cs",
+    "scene": "UnityIDS/Assets/Scenes/Game.unity"
+  }
+}

@@ -58,3 +58,18 @@ sysinfo.txt
 # Crashlytics generated file
 crashlytics-build.properties
 
+# Node / web
+node_modules/
+dist/
+coverage/
+.turbo/
+.vite/
+
+# Tauri
+apps/**/src-tauri/target/
+apps/**/src-tauri/gen/
+
+# OS/editor
+.DS_Store
+Thumbs.db
+

@@ -1,0 +1,633 @@
+{
+  "icons": [
+    {
+      "id": 1,
+      "fileName": "icons_Cash & Science.png",
+      "spriteGuid": "2b8866f94d73e440ba801a334858e1a2",
+      "sourcePng": "UnityIDS/Assets/Sprites/SkillIcons/icons_Cash & Science.png"
+    },
+    {
+      "id": 2,
+      "fileName": "icons_Assembly Lines.png",
+      "spriteGuid": "25060be4c29124769af2dc04de31bcdb",
+      "sourcePng": "UnityIDS/Assets/Sprites/SkillIcons/icons_Assembly Lines.png"
+    },
+    {
+      "id": 3,
+      "fileName": "icons_AI Managers.png",
+      "spriteGuid": "4fcc50f98fd7744aba30e5233bb52654",
+      "sourcePng": "UnityIDS/Assets/Sprites/SkillIcons/icons_AI Managers.png"
+    },
+    {
+      "id": 4,
+      "fileName": "icons_Servers.png",
+      "spriteGuid": "367555f1bb82e49ae80d450e5a153510",
+      "sourcePng": "UnityIDS/Assets/Sprites/SkillIcons/icons_Servers.png"
+    },
+    {
+      "id": 5,
+      "fileName": "icons_Planets.png",
+      "spriteGuid": "06830f15e73d34846bb0b4f10351b433",
+      "sourcePng": "UnityIDS/Assets/Sprites/SkillIcons/icons_Planets.png"
+    },
+    {
+      "id": 6,
+      "fileName": "icons_Automatic Planet Discovery.png",
+      "spriteGuid": "55e9c989dadf74414a7fbc3f667c9ae0",
+      "sourcePng": "UnityIDS/Assets/Sprites/SkillIcons/icons_Automatic Planet Discovery.png"
+    },
+    {
+      "id": 7,
+      "fileName": "icons_Worker Efficiency.png",
+      "spriteGuid": "a0c6bf1c6b4064cee9c7a7d47d40a909",
+      "sourcePng": "UnityIDS/Assets/Sprites/SkillIcons/icons_Worker Efficiency.png"
+    },
+    {
+      "id": 8,
+      "fileName": "icons_20s Panel Lifetime.png",
+      "spriteGuid": "c16bff96990ad45f0af61abcc540720e",
+      "sourcePng": "UnityIDS/Assets/Sprites/SkillIcons/icons_20s Panel Lifetime.png"
+    },
+    {
+      "id": 9,
+      "fileName": "icons_Double Science.png",
+      "spriteGuid": "a3e3b741e70344ddf924eece3adc2b27",
+      "sourcePng": "UnityIDS/Assets/Sprites/SkillIcons/icons_Double Science.png"
+    },
+    {
+      "id": 10,
+      "fileName": "icons_Science Boost.png",
+      "spriteGuid": "031165676b81d4c54a4cc1e1538fabe5",
+      "sourcePng": "UnityIDS/Assets/Sprites/SkillIcons/icons_Science Boost.png"
+    },
+    {
+      "id": 11,
+      "fileName": "icons_Banking.png",
+      "spriteGuid": "bfe64bca14fc14670b143050ba35f1f0",
+      "sourcePng": "UnityIDS/Assets/Sprites/SkillIcons/icons_Banking.png"
+    },
+    {
+      "id": 12,
+      "fileName": "icons_Investment.png",
+      "spriteGuid": "fad12964a0d1e4d35b81a9b429032409",
+      "sourcePng": "UnityIDS/Assets/Sprites/SkillIcons/icons_Investment.png"
+    },
+    {
+      "id": 13,
+      "fileName": "icons_Scientific Revolution.png",
+      "spriteGuid": "8d22ceaadbf38490aacbb1b6bf7a009a",
+      "sourcePng": "UnityIDS/Assets/Sprites/SkillIcons/icons_Scientific Revolution.png"
+    },
+    {
+      "id": 14,
+      "fileName": "icons_Economic Revolution.png",
+      "spriteGuid": "d9bd3fdec8a5141d0b441827f98fc61e",
+      "sourcePng": "UnityIDS/Assets/Sprites/SkillIcons/icons_Economic Revolution.png"
+    },
+    {
+      "id": 15,
+      "fileName": "icons_Renewable Energy.png",
+      "spriteGuid": "08905642f712c4d508962e805550181b",
+      "sourcePng": "UnityIDS/Assets/Sprites/SkillIcons/icons_Renewable Energy.png"
+    },
+    {
+      "id": 16,
+      "fileName": "icons_Burnout.png",
+      "spriteGuid": "bc6241dbdf29b45bb886dae4fd7c3d90",
+      "sourcePng": "UnityIDS/Assets/Sprites/SkillIcons/icons_Burnout.png"
+    },
+    {
+      "id": 17,
+      "fileName": "icons_Artificially Enhanced Panels.png",
+      "spriteGuid": "6ce5f1220ae0a437d841b5a48db39175",
+      "sourcePng": "UnityIDS/Assets/Sprites/SkillIcons/icons_Artificially Enhanced Panels.png"
+    },
+    {
+      "id": 18,
+      "fileName": "icons_Staying Power.png",
+      "spriteGuid": "f3182bcef7ac441e28f79625b1dca3b3",
+      "sourcePng": "UnityIDS/Assets/Sprites/SkillIcons/icons_Staying Power.png"
+    },
+    {
+      "id": 19,
+      "fileName": "icons_Higgs Boson.png",
+      "spriteGuid": "246dae6d038cc48aa847dcfdcb03f3da",
+      "sourcePng": "UnityIDS/Assets/Sprites/SkillIcons/icons_Higgs Boson.png"
+    },
+    {
+      "id": 20,
+      "fileName": "icons_Androids.png",
+      "spriteGuid": "d15d5366436154a33a0f8b5c28981749",
+      "sourcePng": "UnityIDS/Assets/Sprites/SkillIcons/icons_Androids.png"
+    },
+    {
+      "id": 21,
+      "fileName": "icons_Supercharged Power.png",
+      "spriteGuid": "c81fcdf3adcb54cb5ad0478bb703b91b",
+      "sourcePng": "UnityIDS/Assets/Sprites/SkillIcons/icons_Supercharged Power.png"
+    },
+    {
+      "id": 22,
+      "fileName": "icons_Data Centers.png",
+      "spriteGuid": "56781f60867bb4a7f8135c0eb38d1885",
+      "sourcePng": "UnityIDS/Assets/Sprites/SkillIcons/icons_Data Centers.png"
+    },
+    {
+      "id": 23,
+      "fileName": "icons_Workers Boost.png",
+      "spriteGuid": "9444f197e1dc74ff8b1e564914ca3c4c",
+      "sourcePng": "UnityIDS/Assets/Sprites/SkillIcons/icons_Workers Boost.png"
+    },
+    {
+      "id": 24,
+      "fileName": "icons_Stellar Sacrifices.png",
+      "spriteGuid": "b131aa2a7cf154582a3402ae05189458",
+      "sourcePng": "UnityIDS/Assets/Sprites/SkillIcons/icons_Stellar Sacrifices.png"
+    },
+    {
+      "id": 25,
+      "fileName": "icons_Stellar Obliteration.png",
+      "spriteGuid": "64842518360054d11a9fbca1255ac463",
+      "sourcePng": "UnityIDS/Assets/Sprites/SkillIcons/icons_Stellar Obliteration.png"
+    },
+    {
+      "id": 26,
+      "fileName": "icons_Supernova.png",
+      "spriteGuid": "bb1de96fafb2849519230ef499dd4d01",
+      "sourcePng": "UnityIDS/Assets/Sprites/SkillIcons/icons_Supernova.png"
+    },
+    {
+      "id": 27,
+      "fileName": "icons_Stellar Improvements.png",
+      "spriteGuid": "585236a24a902407481ca7ada6abd72f",
+      "sourcePng": "UnityIDS/Assets/Sprites/SkillIcons/icons_Stellar Improvements.png"
+    },
+    {
+      "id": 28,
+      "fileName": "icons_Power Underwhelming.png",
+      "spriteGuid": "b3006fc6789d546f0a1f7ecd4cabee63",
+      "sourcePng": "UnityIDS/Assets/Sprites/SkillIcons/icons_Power Underwhelming.png"
+    },
+    {
+      "id": 29,
+      "fileName": "icons_Power Overwhelming.png",
+      "spriteGuid": "ff715c3f618ba4329af25b6022531d00",
+      "sourcePng": "UnityIDS/Assets/Sprites/SkillIcons/icons_Power Overwhelming.png"
+    },
+    {
+      "id": 30,
+      "fileName": "icons_Pocket Dimensions.png",
+      "spriteGuid": "1f4a955b79a754e469371a32ad973cc1",
+      "sourcePng": "UnityIDS/Assets/Sprites/SkillIcons/icons_Pocket Dimensions.png"
+    },
+    {
+      "id": 31,
+      "fileName": "icons_Taste of Power.png",
+      "spriteGuid": "7f8a75691ba214fa5a01739b3dfa3927",
+      "sourcePng": "UnityIDS/Assets/Sprites/SkillIcons/icons_Taste of Power.png"
+    },
+    {
+      "id": 32,
+      "fileName": "icons_Indulging in Power.png",
+      "spriteGuid": "90c48bdd712a043498daf517d03123a7",
+      "sourcePng": "UnityIDS/Assets/Sprites/SkillIcons/icons_Indulging in Power.png"
+    },
+    {
+      "id": 33,
+      "fileName": "icons_Addiction to Power.png",
+      "spriteGuid": "c9de6009384494dedb26357e71bfc3c5",
+      "sourcePng": "UnityIDS/Assets/Sprites/SkillIcons/icons_Addiction to Power.png"
+    },
+    {
+      "id": 34,
+      "fileName": "icons_Avocados.png",
+      "spriteGuid": "d0ad3bcf08bf448a59c4b317918d27b1",
+      "sourcePng": "UnityIDS/Assets/Sprites/SkillIcons/icons_Avocados.png"
+    },
+    {
+      "id": 35,
+      "fileName": "icons_Progressive Assembly.png",
+      "spriteGuid": "40a7919e963a742d5b4d4ed09ef30708",
+      "sourcePng": "UnityIDS/Assets/Sprites/SkillIcons/icons_Progressive Assembly.png"
+    },
+    {
+      "id": 36,
+      "fileName": "icons_Regulated Academia.png",
+      "spriteGuid": "785b8b23a6dd646a7a04be802d6c5cdc",
+      "sourcePng": "UnityIDS/Assets/Sprites/SkillIcons/icons_Regulated Academia.png"
+    },
+    {
+      "id": 37,
+      "fileName": "icons_Panel Warranty.png",
+      "spriteGuid": "e1a1ce3a717f54496b8144deb8a7410c",
+      "sourcePng": "UnityIDS/Assets/Sprites/SkillIcons/icons_Panel Warranty.png"
+    },
+    {
+      "id": 38,
+      "fileName": "icons_Monetary Policy.png",
+      "spriteGuid": "182f1f59f8c234020aeb1a1485a70d57",
+      "sourcePng": "UnityIDS/Assets/Sprites/SkillIcons/icons_Monetary Policy.png"
+    },
+    {
+      "id": 39,
+      "fileName": "icons_Terraforming Protocols.png",
+      "spriteGuid": "7f11383cc79d249548544209c46f0a40",
+      "sourcePng": "UnityIDS/Assets/Sprites/SkillIcons/icons_Terraforming Protocols.png"
+    },
+    {
+      "id": 40,
+      "fileName": "icons_Production Scaling.png",
+      "spriteGuid": "667e287419510429995bfc63dca9730b",
+      "sourcePng": "UnityIDS/Assets/Sprites/SkillIcons/icons_Production Scaling.png"
+    },
+    {
+      "id": 41,
+      "fileName": "icons_Fragment Assembly.png",
+      "spriteGuid": "3ee197daaac214261897bae3fe9dc2c8",
+      "sourcePng": "UnityIDS/Assets/Sprites/SkillIcons/icons_Fragment Assembly.png"
+    },
+    {
+      "id": 42,
+      "fileName": "icons_Assembly Megalines.png",
+      "spriteGuid": "0b43db52c6c2648ce80a76656ee27ddd",
+      "sourcePng": "UnityIDS/Assets/Sprites/SkillIcons/icons_Assembly Megalines.png"
+    },
+    {
+      "id": 43,
+      "fileName": "icons_Idle Electric Sheep.png",
+      "spriteGuid": "0a8c597c496874c63ac8764246addabd",
+      "sourcePng": "UnityIDS/Assets/Sprites/SkillIcons/icons_Idle Electric Sheep.png"
+    },
+    {
+      "id": 44,
+      "fileName": "icons_Super Swarm.png",
+      "spriteGuid": "ad65bf2ef7e65443bbfb210de61e0eec",
+      "sourcePng": "UnityIDS/Assets/Sprites/SkillIcons/icons_Super Swarm.png"
+    },
+    {
+      "id": 45,
+      "fileName": "icons_Mega Swarm.png",
+      "spriteGuid": "7f584815c121d4a55a9cc9576d041dfd",
+      "sourcePng": "UnityIDS/Assets/Sprites/SkillIcons/icons_Mega Swarm.png"
+    },
+    {
+      "id": 46,
+      "fileName": "icons_Ultimate Swarm.png",
+      "spriteGuid": "08f6c050081764cceb1f2c440649e579",
+      "sourcePng": "UnityIDS/Assets/Sprites/SkillIcons/icons_Ultimate Swarm.png"
+    },
+    {
+      "id": 47,
+      "fileName": "icons_Purity of Mind.png",
+      "spriteGuid": "9923c2eb456a34592b3f38245cabab7e",
+      "sourcePng": "UnityIDS/Assets/Sprites/SkillIcons/icons_Purity of Mind.png"
+    },
+    {
+      "id": 48,
+      "fileName": "icons_Purity of Body.png",
+      "spriteGuid": "3c5fa78210fee4b9badd1d591661dbf8",
+      "sourcePng": "UnityIDS/Assets/Sprites/SkillIcons/icons_Purity of Body.png"
+    },
+    {
+      "id": 49,
+      "fileName": "icons_Purity of Essence.png",
+      "spriteGuid": "f0ab110b5e93c40b1af2d61a3a026b0c",
+      "sourcePng": "UnityIDS/Assets/Sprites/SkillIcons/icons_Purity of Essence.png"
+    },
+    {
+      "id": 50,
+      "fileName": "icons_Dyson Subsidies.png",
+      "spriteGuid": "bcb05961f99624077b0b85d0c09cc374",
+      "sourcePng": "UnityIDS/Assets/Sprites/SkillIcons/icons_Dyson Subsidies.png"
+    },
+    {
+      "id": 51,
+      "fileName": "icons_One Minute Plan.png",
+      "spriteGuid": "4fe1eb720f46542639ecbc6067c021e8",
+      "sourcePng": "UnityIDS/Assets/Sprites/SkillIcons/icons_One Minute Plan.png"
+    },
+    {
+      "id": 52,
+      "fileName": "icons_Galactic Paradigm Shift.png",
+      "spriteGuid": "1dc5e6729f5bc4cee840f27cf20fcd3d",
+      "sourcePng": "UnityIDS/Assets/Sprites/SkillIcons/icons_Galactic Paradigm Shift.png"
+    },
+    {
+      "id": 53,
+      "fileName": "icons_Panel Maintenance.png",
+      "spriteGuid": "0880d97929a8140f181b72e1eae48a87",
+      "sourcePng": "UnityIDS/Assets/Sprites/SkillIcons/icons_Panel Maintenance.png"
+    },
+    {
+      "id": 54,
+      "fileName": "icons_Worthy Sacrifice.png",
+      "spriteGuid": "da584849591df4c8194eab3ea09bcae4",
+      "sourcePng": "UnityIDS/Assets/Sprites/SkillIcons/icons_Worthy Sacrifice.png"
+    },
+    {
+      "id": 55,
+      "fileName": "icons_End of the Line.png",
+      "spriteGuid": "68448cf0cafad48ccae1f0832579ae5f",
+      "sourcePng": "UnityIDS/Assets/Sprites/SkillIcons/icons_End of the Line.png"
+    },
+    {
+      "id": 56,
+      "fileName": "icons_Manual Labour.png",
+      "spriteGuid": "d8af9dd3762814ccebba8a2c7dfe219a",
+      "sourcePng": "UnityIDS/Assets/Sprites/SkillIcons/icons_Manual Labour.png"
+    },
+    {
+      "id": 57,
+      "fileName": "icons_Super Radiant Scattering.png",
+      "spriteGuid": "2ba931f8de5d244e6af33cb38923ff36",
+      "sourcePng": "UnityIDS/Assets/Sprites/SkillIcons/icons_Super Radiant Scattering.png"
+    },
+    {
+      "id": 58,
+      "fileName": "icons_Repeatable Research.png",
+      "spriteGuid": "9cd74c0bdcbf04cad987acb3887aa398",
+      "sourcePng": "UnityIDS/Assets/Sprites/SkillIcons/icons_Repeatable Research.png"
+    },
+    {
+      "id": 59,
+      "fileName": "icons_Shoulders of Giants.png",
+      "spriteGuid": "eb87d6cfc072b42ff9b8afd44cc0e616",
+      "sourcePng": "UnityIDS/Assets/Sprites/SkillIcons/icons_Shoulders of Giants.png"
+    },
+    {
+      "id": 60,
+      "fileName": "icons_Shoulders of Precursors.png",
+      "spriteGuid": "9fdbbfe1e633e4cf3b5805e5783be760",
+      "sourcePng": "UnityIDS/Assets/Sprites/SkillIcons/icons_Shoulders of Precursors.png"
+    },
+    {
+      "id": 61,
+      "fileName": "icons_Shoulders of the Fallen.png",
+      "spriteGuid": "4ec044480052840da9e522bb26beafca",
+      "sourcePng": "UnityIDS/Assets/Sprites/SkillIcons/icons_Shoulders of the Fallen.png"
+    },
+    {
+      "id": 62,
+      "fileName": "icons_Shoulders of the Enlightened.png",
+      "spriteGuid": "aa3ee1d06f1e141a893e3edad59b3ee9",
+      "sourcePng": "UnityIDS/Assets/Sprites/SkillIcons/icons_Shoulders of the Enlightened.png"
+    },
+    {
+      "id": 63,
+      "fileName": "icons_Shoulders of the Revolution.png",
+      "spriteGuid": "42cefde34c2a44f3fa9e0f26f857672b",
+      "sourcePng": "UnityIDS/Assets/Sprites/SkillIcons/icons_Shoulders of the Revolution.png"
+    },
+    {
+      "id": 64,
+      "fileName": "icons_Rocket Mania.png",
+      "spriteGuid": "2f4672738207942638384fba8da6715b",
+      "sourcePng": "UnityIDS/Assets/Sprites/SkillIcons/icons_Rocket Mania.png"
+    },
+    {
+      "id": 65,
+      "fileName": "icons_Idle Spaceflight.png",
+      "spriteGuid": "abc74073233654be5961e40136e7035a",
+      "sourcePng": "UnityIDS/Assets/Sprites/SkillIcons/icons_Idle Spaceflight.png"
+    },
+    {
+      "id": 66,
+      "fileName": "icons_Fusion Reactors.png",
+      "spriteGuid": "54e0263c17b14402db61fa7c3901b46a",
+      "sourcePng": "UnityIDS/Assets/Sprites/SkillIcons/icons_Fusion Reactors.png"
+    },
+    {
+      "id": 67,
+      "fileName": "icons_Cold Fusion.png",
+      "spriteGuid": "e5014995c9e514a538ceec1b3a6a7bb7",
+      "sourcePng": "UnityIDS/Assets/Sprites/SkillIcons/icons_Cold Fusion.png"
+    },
+    {
+      "id": 68,
+      "fileName": "icons_Scientific Dominance.png",
+      "spriteGuid": "720d16a7006254a3791ec7e6220bce3a",
+      "sourcePng": "UnityIDS/Assets/Sprites/SkillIcons/icons_Scientific Dominance.png"
+    },
+    {
+      "id": 69,
+      "fileName": "icons_Economic Dominance.png",
+      "spriteGuid": "2053f0f995547406085a7fdbabd08e3b",
+      "sourcePng": "UnityIDS/Assets/Sprites/SkillIcons/icons_Economic Dominance.png"
+    },
+    {
+      "id": 70,
+      "fileName": "icons_Parallel Processing.png",
+      "spriteGuid": "839faecd936874f0ca3e7cbcf62686a6",
+      "sourcePng": "UnityIDS/Assets/Sprites/SkillIcons/icons_Parallel Processing.png"
+    },
+    {
+      "id": 71,
+      "fileName": "icons_Rudimentary Singularity.png",
+      "spriteGuid": "63211096da11a40f5876ad03f8a46068",
+      "sourcePng": "UnityIDS/Assets/Sprites/SkillIcons/icons_Rudimentary Singularity.png"
+    },
+    {
+      "id": 72,
+      "fileName": "icons_Hubble Telescope.png",
+      "spriteGuid": "aecc890a486a64c93b23acc49f2b12fb",
+      "sourcePng": "UnityIDS/Assets/Sprites/SkillIcons/icons_Hubble Telescope.png"
+    },
+    {
+      "id": 73,
+      "fileName": "icons_James Webb Telescope.png",
+      "spriteGuid": "af19b8413c11149698a69c2f8659d4db",
+      "sourcePng": "UnityIDS/Assets/Sprites/SkillIcons/icons_James Webb Telescope.png"
+    },
+    {
+      "id": 74,
+      "fileName": "icons_Dimensional CAT Cables.png",
+      "spriteGuid": "32102846e7fcd410da9d5389e45f1ac7",
+      "sourcePng": "UnityIDS/Assets/Sprites/SkillIcons/icons_Dimensional CAT Cables.png"
+    },
+    {
+      "id": 75,
+      "fileName": "icons_Pocket Protectors.png",
+      "spriteGuid": "836c55cabb6f040b9954ff66fb15748d",
+      "sourcePng": "UnityIDS/Assets/Sprites/SkillIcons/icons_Pocket Protectors.png"
+    },
+    {
+      "id": 76,
+      "fileName": "icons_Pocket Multiverse.png",
+      "spriteGuid": "75da9643b88ed4c50ba78d3464f71789",
+      "sourcePng": "UnityIDS/Assets/Sprites/SkillIcons/icons_Pocket Multiverse.png"
+    },
+    {
+      "id": 77,
+      "fileName": "icons_What Could've Been.png",
+      "spriteGuid": "450187a73b62544da98bee2dd7c4a9a7",
+      "sourcePng": "UnityIDS/Assets/Sprites/SkillIcons/icons_What Could've Been.png"
+    },
+    {
+      "id": 78,
+      "fileName": "icons_Shoulder Surgery.png",
+      "spriteGuid": "92b3c086fc2534f288f961df1c747aba",
+      "sourcePng": "UnityIDS/Assets/Sprites/SkillIcons/icons_Shoulder Surgery.png"
+    },
+    {
+      "id": 79,
+      "fileName": "icons_Terra Firma.png",
+      "spriteGuid": "389d45a2270684f0a9370b30821ed403",
+      "sourcePng": "UnityIDS/Assets/Sprites/SkillIcons/icons_Terra Firma.png"
+    },
+    {
+      "id": 80,
+      "fileName": "icons_Terra Eculeo.png",
+      "spriteGuid": "5fdd3d88928854a4aa8b1318bff7179f",
+      "sourcePng": "UnityIDS/Assets/Sprites/SkillIcons/icons_Terra Eculeo.png"
+    },
+    {
+      "id": 81,
+      "fileName": "icons_Terra Infirma.png",
+      "spriteGuid": "b12323c35e92e4ee78ac80f1e7dc0379",
+      "sourcePng": "UnityIDS/Assets/Sprites/SkillIcons/icons_Terra Infirma.png"
+    },
+    {
+      "id": 82,
+      "fileName": "icons_Terra Nullius.png",
+      "spriteGuid": "73c42c066f24343ff8a47e97284f8877",
+      "sourcePng": "UnityIDS/Assets/Sprites/SkillIcons/icons_Terra Nullius.png"
+    },
+    {
+      "id": 83,
+      "fileName": "icons_Terra Nove.png",
+      "spriteGuid": "0dd8d936ee468444689923a5a6e3beff",
+      "sourcePng": "UnityIDS/Assets/Sprites/SkillIcons/icons_Terra Nove.png"
+    },
+    {
+      "id": 84,
+      "fileName": "icons_Terra Gloriae.png",
+      "spriteGuid": "0226a6ae849da4c10bba0ac81d648178",
+      "sourcePng": "UnityIDS/Assets/Sprites/SkillIcons/icons_Terra Gloriae.png"
+    },
+    {
+      "id": 85,
+      "fileName": "icons_Terra Irradiant.png",
+      "spriteGuid": "4c5c0fda0f7294b218c5a9f7391d2690",
+      "sourcePng": "UnityIDS/Assets/Sprites/SkillIcons/icons_Terra Irradiant.png"
+    },
+    {
+      "id": 86,
+      "fileName": "icons_Paragon.png",
+      "spriteGuid": "2f8d8d473699e40c49c750942753d908",
+      "sourcePng": "UnityIDS/Assets/Sprites/SkillIcons/icons_Paragon.png"
+    },
+    {
+      "id": 87,
+      "fileName": "icons_Sheperds.png",
+      "spriteGuid": "ce2600f00bc2b43e789546b6b4e72a50",
+      "sourcePng": "UnityIDS/Assets/Sprites/SkillIcons/icons_Sheperds.png"
+    },
+    {
+      "id": 88,
+      "fileName": "icons_Citadel Council.png",
+      "spriteGuid": "adbdbe983a3d349b68b04c433edacd0b",
+      "sourcePng": "UnityIDS/Assets/Sprites/SkillIcons/icons_Citadel Council.png"
+    },
+    {
+      "id": 89,
+      "fileName": "icons_Renegade.png",
+      "spriteGuid": "36fd82f9265ac408c81724a15f7e1d66",
+      "sourcePng": "UnityIDS/Assets/Sprites/SkillIcons/icons_Renegade.png"
+    },
+    {
+      "id": 90,
+      "fileName": "icons_Saren.png",
+      "spriteGuid": "92d1e726a2d0d4de9bf652f1eca06637",
+      "sourcePng": "UnityIDS/Assets/Sprites/SkillIcons/icons_Saren.png"
+    },
+    {
+      "id": 91,
+      "fileName": "icons_Reapers.png",
+      "spriteGuid": "16c9b039f7f4c438189f9bb18cbf4de5",
+      "sourcePng": "UnityIDS/Assets/Sprites/SkillIcons/icons_Reapers.png"
+    },
+    {
+      "id": 92,
+      "fileName": "icons_Planet Assembly.png",
+      "spriteGuid": "cf81ec9aa8ce645bba4e307362b9b52c",
+      "sourcePng": "UnityIDS/Assets/Sprites/SkillIcons/icons_Planet Assembly.png"
+    },
+    {
+      "id": 93,
+      "fileName": "icons_Shell Worlds.png",
+      "spriteGuid": "613762fd31c3f48618da662aca200d4f",
+      "sourcePng": "UnityIDS/Assets/Sprites/SkillIcons/icons_Shell Worlds.png"
+    },
+    {
+      "id": 94,
+      "fileName": "icons_Versatile Production Tactics.png",
+      "spriteGuid": "660c79124ddc2454e981a288e37e7b05",
+      "sourcePng": "UnityIDS/Assets/Sprites/SkillIcons/icons_Versatile Production Tactics.png"
+    },
+    {
+      "id": 95,
+      "fileName": "icons_What Will Come to Pass.png",
+      "spriteGuid": "92c94e82f4dca465c9bf6ff9d11872c6",
+      "sourcePng": "UnityIDS/Assets/Sprites/SkillIcons/icons_What Will Come to Pass.png"
+    },
+    {
+      "id": 96,
+      "fileName": "icons_Solar Bubbles.png",
+      "spriteGuid": "6eed61837b9f542cc91df844bf867698",
+      "sourcePng": "UnityIDS/Assets/Sprites/SkillIcons/icons_Solar Bubbles.png"
+    },
+    {
+      "id": 97,
+      "fileName": "icons_Pocket Androids.png",
+      "spriteGuid": "7e722c1e4245948be84a2ffbf6552114",
+      "sourcePng": "UnityIDS/Assets/Sprites/SkillIcons/icons_Pocket Androids.png"
+    },
+    {
+      "id": 98,
+      "fileName": "icons_Hypercube Networks.png",
+      "spriteGuid": "66549a18149194521901c6b49ccba0bb",
+      "sourcePng": "UnityIDS/Assets/Sprites/SkillIcons/icons_Hypercube Networks.png"
+    },
+    {
+      "id": 99,
+      "fileName": "icons_Parallel Computation.png",
+      "spriteGuid": "defdae9113f4e4384ba31227363c153c",
+      "sourcePng": "UnityIDS/Assets/Sprites/SkillIcons/icons_Parallel Computation.png"
+    },
+    {
+      "id": 100,
+      "fileName": "icons_Quantum Computing.png",
+      "spriteGuid": "c442d2c607cde442fbe8ada8251fb834",
+      "sourcePng": "UnityIDS/Assets/Sprites/SkillIcons/icons_Quantum Computing.png"
+    },
+    {
+      "id": 101,
+      "fileName": "icons_Unsuspicious Algorithms.png",
+      "spriteGuid": "7cd922a601f8d423f938c029b1aba6b9",
+      "sourcePng": "UnityIDS/Assets/Sprites/SkillIcons/icons_Unsuspicious Algorithms.png"
+    },
+    {
+      "id": 102,
+      "fileName": "icons_Aggressive Algorithms.png",
+      "spriteGuid": "19259291a4f574f21be5eb2ba9ff9720",
+      "sourcePng": "UnityIDS/Assets/Sprites/SkillIcons/icons_Aggressive Algorithms.png"
+    },
+    {
+      "id": 103,
+      "fileName": "icons_Cluster Networking.png",
+      "spriteGuid": "c555bf87f9ff746799f04b111dac60dd",
+      "sourcePng": "UnityIDS/Assets/Sprites/SkillIcons/icons_Cluster Networking.png"
+    },
+    {
+      "id": 104,
+      "fileName": "icons_Scientific Dominance.png",
+      "spriteGuid": "720d16a7006254a3791ec7e6220bce3a",
+      "sourcePng": "UnityIDS/Assets/Sprites/SkillIcons/icons_Scientific Dominance.png"
+    }
+  ],
+  "source": {
+    "prefab": "UnityIDS/Assets/Prefabs/Panel.prefab",
+    "nestedPrefab": "UnityIDS/Assets/Prefabs/SkillButtonPrefab.prefab",
+    "iconsDir": "UnityIDS/Assets/Sprites/SkillIcons"
+  }
+}

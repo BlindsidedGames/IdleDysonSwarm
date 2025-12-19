@@ -1,0 +1,9 @@
+{
+  "doNotAutoBuy": [
+    12,
+    59
+  ],
+  "source": {
+    "scene": "UnityIDS/Assets/Scenes/Game.unity"
+  }
+}
