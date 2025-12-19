@@ -1,0 +1,82 @@
+[
+  {
+    "id": "science",
+    "name": "Science",
+    "baseCost": 10000,
+    "exponent": 1.55,
+    "notes": ["Disabled by skill `shouldersOfGiants`."],
+    "source": {
+      "script": "UnityIDS/Assets/Scripts/Research/ScienceBoostUpgrade.cs",
+      "scene": "UnityIDS/Assets/Scenes/Game.unity"
+    }
+  },
+  {
+    "id": "cash",
+    "name": "Cash",
+    "baseCost": 5000,
+    "exponent": 1.77,
+    "notes": [
+      "Disabled by skills `shouldersOfTheEnlightened` / `shouldersOfPrecursors`."
+    ],
+    "source": {
+      "script": "UnityIDS/Assets/Scripts/Research/MoneyMultiUpgrade.cs",
+      "scene": "UnityIDS/Assets/Scenes/Game.unity"
+    }
+  },
+  {
+    "id": "assemblyLine",
+    "name": "Assembly Line",
+    "baseCost": 50000,
+    "exponent": 1.4,
+    "notes": [],
+    "source": {
+      "script": "UnityIDS/Assets/Scripts/Research/AssemblyLineUpgrade.cs",
+      "scene": "UnityIDS/Assets/Scenes/Game.unity"
+    }
+  },
+  {
+    "id": "aiManager",
+    "name": "AI Manager",
+    "baseCost": 1000000,
+    "exponent": 1.5,
+    "notes": [],
+    "source": {
+      "script": "UnityIDS/Assets/Scripts/Research/AiManagerUpgrade.cs",
+      "scene": "UnityIDS/Assets/Scenes/Game.unity"
+    }
+  },
+  {
+    "id": "server",
+    "name": "Server",
+    "baseCost": 100000000,
+    "exponent": 1.6,
+    "notes": [],
+    "source": {
+      "script": "UnityIDS/Assets/Scripts/Research/ServerManagerUpgrade.cs",
+      "scene": "UnityIDS/Assets/Scenes/Game.unity"
+    }
+  },
+  {
+    "id": "dataCenter",
+    "name": "Data Center",
+    "baseCost": 1000000000,
+    "exponent": 1.7,
+    "notes": [],
+    "source": {
+      "script": "UnityIDS/Assets/Scripts/Research/DataCenterManagerUpgrade.cs",
+      "scene": "UnityIDS/Assets/Scenes/Game.unity"
+    }
+  },
+  {
+    "id": "planet",
+    "name": "Planet",
+    "baseCost": 2000000000,
+    "exponent": 1.8,
+    "notes": [],
+    "source": {
+      "script": "UnityIDS/Assets/Scripts/Research/PlanetManagerUpgrade.cs",
+      "scene": "UnityIDS/Assets/Scenes/Game.unity"
+    }
+  }
+]
+

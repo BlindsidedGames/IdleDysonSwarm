@@ -1,18 +1,23 @@
-# IDS Unity -> Web/Tauri Rewrite Plan (1:1 Gameplay + Balance)
+# IDS UnityIDS -> Windows/Tauri Rewrite Plan (1:1 Gameplay + Balance)
 
-This document is a migration plan to rebuild this Unity project as a standalone web app + desktop app without Unity, while preserving gameplay and balance 1:1.
+This document is a migration plan to rebuild the game from the ground up (no Unity runtime) as a Windows desktop app, while preserving gameplay and balance 1:1.
+
+Repo layout note:
+- `UnityIDS/` is the Unity reference implementation (kept for verification).
+- New rewrite code lives at repo root (`apps/`, `packages/`, `tools/`).
 
 ## Goal and constraints
 
 - Goal: feature-for-feature rebuild using:
   - pnpm workspace monorepo
-  - Desktop shell: Tauri (Rust)
-  - Frontend: Vite + React 18 + TypeScript
+  - Desktop shell: Tauri (Rust, Windows only)
+  - Frontend: Vite + React 18 + TypeScript (runs inside Tauri)
   - Engine: UI-agnostic TypeScript core running in a Web Worker
   - Balance/tuning: TypeScript + Zod schemas
   - Tooling: Vitest, ESLint, Prettier, react-window
 - Hard constraint: no rebalancing. Every number/formula/threshold matches Unity.
 - Source of truth: Unity scripts + serialized scene values (not only code defaults).
+- Out of scope: mobile frameworks and store/IAP integration.
 
 ## What we are rebuilding (current gameplay map)
 
@@ -22,38 +27,38 @@ This game is effectively 3 intertwined systems:
 2. Reality layer: "workers ready to go" accumulate up to 128 then convert into Influence; translation/speed upgrades; double-time boost; automation.
 3. Simulation (Dream1): a nested incremental simulation (hunters/gatherers -> community -> housing/villages/cities -> factories/bots/rockets -> space factories -> dyson panels -> railguns -> swarm panels), disasters, and Strange Matter prestige currency used to buy upgrades.
 
-All three share and/or feed each other via the shared save model in `Assets/Scripts/Expansion/Oracle.cs`.
+All three share and/or feed each other via the shared save model in `UnityIDS/Assets/Scripts/Expansion/Oracle.cs`.
 
 ## Source-of-truth files (read during planning)
 
 ### Core gameplay and save model
-- `Assets/Scripts/Systems/GameManager.cs` (main tick loop, production, modifiers, prestige trigger)
-- `Assets/Scripts/Expansion/Oracle.cs` (save/load, Infinity/PrestigePlus resets, clipboard export/import, global settings)
-- `Assets/Scripts/Systems/StaticMethods.cs`, `Assets/Scripts/Incremental/BuyMultiple.cs`
-- `Assets/Scripts/Blindsided/Utilities/CalcUtils.cs`, `Assets/Scripts/Systems/CalcUtils.cs`
+- `UnityIDS/Assets/Scripts/Systems/GameManager.cs` (main tick loop, production, modifiers, prestige trigger)
+- `UnityIDS/Assets/Scripts/Expansion/Oracle.cs` (save/load, Infinity/PrestigePlus resets, clipboard export/import, global settings)
+- `UnityIDS/Assets/Scripts/Systems/StaticMethods.cs`, `UnityIDS/Assets/Scripts/Incremental/BuyMultiple.cs`
+- `UnityIDS/Assets/Scripts/Blindsided/Utilities/CalcUtils.cs`, `UnityIDS/Assets/Scripts/Systems/CalcUtils.cs`
 
 ### DysonVerse systems
-- Buildings: `Assets/Scripts/Buildings/*`
-- Research upgrades: `Assets/Scripts/Research/*`
-- Infinity shop: `Assets/Scripts/InfinityManager.cs`
-- PrestigePlus ("Quantum") shop: `Assets/Scripts/PrestigePlusUpdater.cs`
-- Skill tree UI + mapping: `Assets/Scripts/SkillTresStuff/*`
-- Story unlocks: `Assets/Scripts/StoryManager.cs`
+- Buildings: `UnityIDS/Assets/Scripts/Buildings/*`
+- Research upgrades: `UnityIDS/Assets/Scripts/Research/*`
+- Infinity shop: `UnityIDS/Assets/Scripts/InfinityManager.cs`
+- PrestigePlus ("Quantum") shop: `UnityIDS/Assets/Scripts/PrestigePlusUpdater.cs`
+- Skill tree UI + mapping: `UnityIDS/Assets/Scripts/SkillTresStuff/*`
+- Story unlocks: `UnityIDS/Assets/Scripts/StoryManager.cs`
 
 ### Reality + Simulation systems
-- Reality (Influence): `Assets/Scripts/Expansion/InceptionController.cs`
-- Reality upgrades + Simulation upgrades: `Assets/Scripts/Expansion/ResearchManager.cs`
-- Artifact (translation/speed effects): `Assets/Scripts/Expansion/ArtifactController.cs`
-- DoubleTime boost: `Assets/Scripts/Expansion/DoubleTimeManager.cs`
-- Simulation loop: `Assets/Scripts/Expansion/Dream1/*`
-- Simulation prestige/disasters: `Assets/Scripts/Expansion/SimulationPrestigeManager.cs`
+- Reality (Influence): `UnityIDS/Assets/Scripts/Expansion/InceptionController.cs`
+- Reality upgrades + Simulation upgrades: `UnityIDS/Assets/Scripts/Expansion/ResearchManager.cs`
+- Artifact (translation/speed effects): `UnityIDS/Assets/Scripts/Expansion/ArtifactController.cs`
+- DoubleTime boost: `UnityIDS/Assets/Scripts/Expansion/DoubleTimeManager.cs`
+- Simulation loop: `UnityIDS/Assets/Scripts/Expansion/Dream1/*`
+- Simulation prestige/disasters: `UnityIDS/Assets/Scripts/Expansion/SimulationPrestigeManager.cs`
 
-### Purchases / entitlements
-- Unity IAP catalog: `Assets/Resources/IAPProductCatalog.json`
-- Purchase handling: `Assets/Scripts/DebugPurchaseHandler.cs`
+### Purchases / entitlements (reference only; no store integration in rewrite)
+- Unity IAP catalog: `UnityIDS/Assets/Resources/IAPProductCatalog.json`
+- Purchase handling: `UnityIDS/Assets/Scripts/DebugPurchaseHandler.cs`
 
 ### Serialized tuning values (balance-critical)
-- `Assets/Scenes/Game.unity` contains the authoritative serialized values for:
+- `UnityIDS/Assets/Scenes/Game.unity` contains the authoritative serialized values for:
   - Skill tree item definitions (names/costs/requirements/line membership)
   - Building + research base costs and exponents
   - Panel lifetime upgrade costs
@@ -61,38 +66,38 @@ All three share and/or feed each other via the shared save model in `Assets/Scri
   - `GameManager.maxInfinityBuff`
   - `ResearchManager` translation/speed costs
 
-## Balance-critical extracted values (from `Assets/Scenes/Game.unity`)
+## Balance-critical extracted values (from `UnityIDS/Assets/Scenes/Game.unity`)
 
 These values must be replicated exactly in the new TS balance layer.
 
 ### DysonVerse building costs (Money)
-Cost formula is implemented in `Assets/Scripts/Blindsided/Utilities/CalcUtils.cs` (`BuyXCost`, `MaxAffordable`) and `Assets/Scripts/Buildings/Building.cs`.
+Cost formula is implemented in `UnityIDS/Assets/Scripts/Blindsided/Utilities/CalcUtils.cs` (`BuyXCost`, `MaxAffordable`) and `UnityIDS/Assets/Scripts/Buildings/Building.cs`.
 
 | Building | Script | baseCost | exponent | wordUsed | productionWordUsed |
 |---|---|---:|---:|---|---|
-| Assembly Lines | `Assets/Scripts/Buildings/AssemblyLineManager.cs` | 100 | 1.22 | Producing | Bot |
-| AI Managers | `Assets/Scripts/Buildings/ManagerManager.cs` | 5,000 | 1.23 | Generating | Assembly Line |
-| Servers | `Assets/Scripts/Buildings/ServerManager.cs` | 5,000,000 | 1.24 | Training | AI Manager |
-| Data Centers | `Assets/Scripts/Buildings/DataCenterManager.cs` | 300,000,000 | 1.23 | Deploying | Server |
-| Planets | `Assets/Scripts/Buildings/PlanetManager.cs` | 1,000,000,000 | 1.25 | Creating | Data Center |
+| Assembly Lines | `UnityIDS/Assets/Scripts/Buildings/AssemblyLineManager.cs` | 100 | 1.22 | Producing | Bot |
+| AI Managers | `UnityIDS/Assets/Scripts/Buildings/ManagerManager.cs` | 5,000 | 1.23 | Generating | Assembly Line |
+| Servers | `UnityIDS/Assets/Scripts/Buildings/ServerManager.cs` | 5,000,000 | 1.24 | Training | AI Manager |
+| Data Centers | `UnityIDS/Assets/Scripts/Buildings/DataCenterManager.cs` | 300,000,000 | 1.23 | Deploying | Server |
+| Planets | `UnityIDS/Assets/Scripts/Buildings/PlanetManager.cs` | 1,000,000,000 | 1.25 | Creating | Data Center |
 
 ### DysonVerse research upgrade costs (Science)
-These are `Assets/Scripts/Research/*.cs` components and use the same buy-multiple math as buildings, but spend Science.
+These are `UnityIDS/Assets/Scripts/Research/*.cs` components and use the same buy-multiple math as buildings, but spend Science.
 
 | Upgrade | Script | baseCost | exponent | Notes |
 |---|---|---:|---:|---|
-| Science | `Assets/Scripts/Research/ScienceBoostUpgrade.cs` | 10,000 | 1.55 | Disabled by skill `shouldersOfGiants` |
-| Cash | `Assets/Scripts/Research/MoneyMultiUpgrade.cs` | 5,000 | 1.77 | Disabled by skills `shouldersOfTheEnlightened`/`shouldersOfPrecursors` |
-| Assembly Line | `Assets/Scripts/Research/AssemblyLineUpgrade.cs` | 50,000 | 1.40 |  |
-| AI Manager | `Assets/Scripts/Research/AiManagerUpgrade.cs` | 1,000,000 | 1.50 |  |
-| Server | `Assets/Scripts/Research/ServerManagerUpgrade.cs` | 100,000,000 | 1.60 |  |
-| Data Center | `Assets/Scripts/Research/DataCenterManagerUpgrade.cs` | 1,000,000,000 | 1.70 |  |
-| Planet | `Assets/Scripts/Research/PlanetManagerUpgrade.cs` | 2,000,000,000 | 1.80 |  |
+| Science | `UnityIDS/Assets/Scripts/Research/ScienceBoostUpgrade.cs` | 10,000 | 1.55 | Disabled by skill `shouldersOfGiants` |
+| Cash | `UnityIDS/Assets/Scripts/Research/MoneyMultiUpgrade.cs` | 5,000 | 1.77 | Disabled by skills `shouldersOfTheEnlightened`/`shouldersOfPrecursors` |
+| Assembly Line | `UnityIDS/Assets/Scripts/Research/AssemblyLineUpgrade.cs` | 50,000 | 1.40 |  |
+| AI Manager | `UnityIDS/Assets/Scripts/Research/AiManagerUpgrade.cs` | 1,000,000 | 1.50 |  |
+| Server | `UnityIDS/Assets/Scripts/Research/ServerManagerUpgrade.cs` | 100,000,000 | 1.60 |  |
+| Data Center | `UnityIDS/Assets/Scripts/Research/DataCenterManagerUpgrade.cs` | 1,000,000,000 | 1.70 |  |
+| Planet | `UnityIDS/Assets/Scripts/Research/PlanetManagerUpgrade.cs` | 2,000,000,000 | 1.80 |  |
 
-Percent-per-level defaults live in `Assets/Scripts/Expansion/Oracle.cs` (`DysonVerseInfinityData.*Percent`) and are modified by `GameManager.SecretBuffs()` depending on secrets owned.
+Percent-per-level defaults live in `UnityIDS/Assets/Scripts/Expansion/Oracle.cs` (`DysonVerseInfinityData.*Percent`) and are modified by `GameManager.SecretBuffs()` depending on secrets owned.
 
 ### Panel lifetime upgrades (Science, one-time)
-Source: `Assets/Scripts/PanelLifetime1.cs` + scene overrides.
+Source: `UnityIDS/Assets/Scripts/PanelLifetime1.cs` + scene overrides.
 
 | Upgrade id | Cost (_cost) | Save flag | Effect in `GameManager.UpdatePanelLifetime()` |
 |---:|---:|---|---|
@@ -115,7 +120,7 @@ Value in scene: `infinityExponent = 3.92`
 Value in scene: `maxInfinityBuff = 1e+308`
 
 ### Reality upgrade costs (Strange Matter): Translation + Speed
-These are scene-overridden costs on `Assets/Scripts/Expansion/ResearchManager.cs` and must not use code defaults.
+These are scene-overridden costs on `UnityIDS/Assets/Scripts/Expansion/ResearchManager.cs` and must not use code defaults.
 
 Translation costs (each purchase also grants +1 DysonVerse skill point via `dvst.skillPointsTree++`):
 - 1: 8
@@ -139,8 +144,8 @@ Speed costs (each purchase also grants +1 DysonVerse skill point via `dvst.skill
 
 ## Purchases / upgrades inventory (must be 1:1)
 
-### IAP products (Unity IAP catalog)
-Source: `Assets/Resources/IAPProductCatalog.json`
+### IAP products (Unity IAP catalog) (reference only; no store integration)
+Source: `UnityIDS/Assets/Resources/IAPProductCatalog.json`
 
 - Consumables (tips): `ids.tiptier1`, `ids.tiptier2`, `ids.tiptier3`
 - Non-consumables:
@@ -148,12 +153,12 @@ Source: `Assets/Resources/IAPProductCatalog.json`
   - `ids.doubleip` ("Double Infinity Points")
 
 Implementation details:
-- `Assets/Scripts/DebugPurchaseHandler.cs` also allows buying dev options with in-game currency:
+- `UnityIDS/Assets/Scripts/DebugPurchaseHandler.cs` also allows buying dev options with in-game currency:
   - Cost: 100,000 `prestigePlus.points` and 500,000 `sdPrestige.strangeMatter`
   - Persists via `PlayerPrefs` keys `debug` and `doubleip`
 
 ### DysonVerse Infinity shop
-Source: `Assets/Scripts/InfinityManager.cs`
+Source: `UnityIDS/Assets/Scripts/InfinityManager.cs`
 
 - Secrets of the Universe:
   - Max: 27
@@ -172,7 +177,7 @@ Source: `Assets/Scripts/InfinityManager.cs`
   - Auto Bots: cost 3 IP (`dvpd.infinityAutoBots = true`)
 
 ### PrestigePlus ("Quantum") shop
-Source: `Assets/Scripts/PrestigePlusUpdater.cs` and resets in `Assets/Scripts/Expansion/Oracle.cs` (`EnactPrestigePlus`, `PrestigeDoubleWiper`).
+Source: `UnityIDS/Assets/Scripts/PrestigePlusUpdater.cs` and resets in `UnityIDS/Assets/Scripts/Expansion/Oracle.cs` (`EnactPrestigePlus`, `PrestigeDoubleWiper`).
 
 Purchases (costs in `pp.points - pp.spentPoints`):
 - 1 point each:
@@ -196,13 +201,13 @@ Purchases (costs in `pp.points - pp.spentPoints`):
 
 ### Avocato systems
 Sources:
-- Purchase: `Assets/Scripts/PrestigePlusUpdater.cs` (sets `pp.avocatoPurchased`)
-- Feeding: `Assets/Scripts/AvocadoFeeder.cs`
-- Meditation unlock: `Assets/Scripts/AvocadoMeditation.cs` (sets `saveSettings.avotation` and grants +4 skill points once)
-- Overflow behavior: `Assets/Scripts/Expansion/Oracle.cs` (overflow detection increments `pp.avocatoOverflow`)
+- Purchase: `UnityIDS/Assets/Scripts/PrestigePlusUpdater.cs` (sets `pp.avocatoPurchased`)
+- Feeding: `UnityIDS/Assets/Scripts/AvocadoFeeder.cs`
+- Meditation unlock: `UnityIDS/Assets/Scripts/AvocadoMeditation.cs` (sets `saveSettings.avotation` and grants +4 skill points once)
+- Overflow behavior: `UnityIDS/Assets/Scripts/Expansion/Oracle.cs` (overflow detection increments `pp.avocatoOverflow`)
 
 ### Simulation (Dream1) prestige currency: Strange Matter
-Source: `Assets/Scripts/Expansion/SimulationPrestigeManager.cs` + `Assets/Scripts/Expansion/ResearchManager.cs`
+Source: `UnityIDS/Assets/Scripts/Expansion/SimulationPrestigeManager.cs` + `UnityIDS/Assets/Scripts/Expansion/ResearchManager.cs`
 
 - Simulation prestige triggers depend on `sp.disasterStage` and simulation progress:
   - Stage 0/1: if `sd1.cities >= 1`, prestige for +1 Strange Matter
@@ -212,7 +217,7 @@ Source: `Assets/Scripts/Expansion/SimulationPrestigeManager.cs` + `Assets/Script
 - Prestige wipes Dream1 save twice (`oracle.WipeDream1Save()`), then applies research via `ResearchManager.ApplyResearch()`
 
 ### Strange Matter upgrade shop (Simulation upgrades)
-Source: `Assets/Scripts/Expansion/ResearchManager.cs`
+Source: `UnityIDS/Assets/Scripts/Expansion/ResearchManager.cs`
 
 All costs are in Strange Matter (`sp.strangeMatter`). Effects are applied immediately on purchase and re-applied after prestige via `ApplyResearch()`.
 
@@ -268,11 +273,11 @@ Reality QoL:
 ### Dream1 purchases (Influence) and key constants
 
 Primary Dream1 purchases spend Influence (`saveData.influence`) and are implemented in:
-- `Assets/Scripts/Expansion/Dream1/FoundationalEraManager.cs`
-- `Assets/Scripts/Expansion/Dream1/InformationEraManager.cs`
-- `Assets/Scripts/Expansion/Dream1/SpaceAgeManager.cs`
+- `UnityIDS/Assets/Scripts/Expansion/Dream1/FoundationalEraManager.cs`
+- `UnityIDS/Assets/Scripts/Expansion/Dream1/InformationEraManager.cs`
+- `UnityIDS/Assets/Scripts/Expansion/Dream1/SpaceAgeManager.cs`
 
-Defaults live in `Assets/Scripts/Expansion/Oracle.cs` (`SaveDataDream1` and `SaveData`):
+Defaults live in `UnityIDS/Assets/Scripts/Expansion/Oracle.cs` (`SaveDataDream1` and `SaveData`):
 - Hunters purchase:
   - Cost: `sd1.hunterCost` (default 100)
   - Amount gained: `saveData.huntersPerPurchase` (default 1, upgraded by Strange Matter shop)
@@ -303,44 +308,44 @@ These are not "balance numbers" but must behave the same as Unity:
 - Buy modes and rounding: `SaveDataSettings.buyMode`, `researchBuyMode`, `roundedBulkBuy`, `researchRoundedBulkBuy`
 - Number formatting: `SaveDataSettings.numberFormatting` (Standard/Scientific/Engineering) and matching `CalcUtils.FormatNumber` output
 - Hide purchased: `SaveDataSettings.hidePurchased` and its UI behavior
-- Offline time: `SaveDataSettings.offlineTime` / `maxOfflineTime`, spend-time UI, and the "double max" button logic (`Assets/Scripts/OfflineTimeManager.cs`)
-- Audio: `PlayerPrefs` keys `musicVolume` and `buttonVolume`, plus `SaveDataSettings.globalMute` (`Assets/Scripts/SoundController.cs`)
+- Offline time: `SaveDataSettings.offlineTime` / `maxOfflineTime`, spend-time UI, and the "double max" button logic (`UnityIDS/Assets/Scripts/OfflineTimeManager.cs`)
+- Audio: `PlayerPrefs` keys `musicVolume` and `buttonVolume`, plus `SaveDataSettings.globalMute` (`UnityIDS/Assets/Scripts/SoundController.cs`)
 - UI state persistence:
   - category open/closed state via `PlayerPrefs` (CategoryStateSaver scripts)
   - default/initial screen via `PlayerPrefs` key `initialScreen`
   - disclaimer dismissal via `PlayerPrefs` key `disclaimer`
-- News ticker: fetch from `https://blindsidedgames.github.io/BlindsidedGames/newsTicker` (`Assets/Scripts/Expansion/Oracle.cs`)
-- External links: Discord, App Store link, Wiki link (various `Assets/Scripts/User Interface/*` scripts)
-- Achievements: `CloudOnce` achievements calls in `Assets/Scripts/Systems/GameManager.cs` (decide replacement: local-only, Steam, etc.)
-- Visual-only parity: Rotator/panels effect (`Assets/Rotator.cs`) and other UI/FX scripts (recreate similarly or accept visual drift while keeping numbers exact)
+- News ticker: fetch from `https://blindsidedgames.github.io/BlindsidedGames/newsTicker` (`UnityIDS/Assets/Scripts/Expansion/Oracle.cs`)
+- External links: Discord, Wiki link (various `UnityIDS/Assets/Scripts/User Interface/*` scripts)
+- Achievements: Unity uses `CloudOnce` calls in `UnityIDS/Assets/Scripts/Systems/GameManager.cs` (out of scope for Windows-only unless requested)
+- Visual-only parity: Rotator/panels effect (`UnityIDS/Assets/Rotator.cs`) and other UI/FX scripts (recreate similarly or accept visual drift while keeping numbers exact)
 
 ## DysonVerse skill tree inventory (IDs 1-104)
 
-Skill definitions (names, costs, requirements, exclusive locks, line membership) are serialized in `Assets/Scenes/Game.unity`.
+Skill definitions (names, costs, requirements, exclusive locks, line membership) are serialized in `UnityIDS/Assets/Scenes/Game.unity`.
 
 Skill effects are applied by mapping ownership -> `DysonVerseSkillTreeData` flags in:
-- `Assets/Scripts/SkillTresStuff/SetSkillsOnOracle.cs`
+- `UnityIDS/Assets/Scripts/SkillTresStuff/SetSkillsOnOracle.cs`
 
 The full extracted inventory (id, flag, popup, cost, requirements, exclusives, tags) is in:
 - `skill_tree_inventory.md`
 
-If `Assets/Scenes/Game.unity` or `Assets/Scripts/SkillTresStuff/SetSkillsOnOracle.cs` changes, regenerate the inventory and re-export balance JSON during migration.
+If `UnityIDS/Assets/Scenes/Game.unity` or `UnityIDS/Assets/Scripts/SkillTresStuff/SetSkillsOnOracle.cs` changes, regenerate the inventory and re-export balance JSON during migration.
 
 ## Target architecture (monorepo)
 
 Recommended workspace layout:
 
 ```
+UnityIDS/           # Unity reference project (read-only)
 apps/
-  web/              # Vite + React (deployable as web)
-  desktop/          # Tauri wrapper (reuses the web UI)
+  desktop/          # Tauri app (Vite + React UI)
 packages/
   core/             # UI-agnostic simulation engine (runs in worker)
   balance/          # Zod schemas + tuned JSON data
   ui/               # Shared UI components/hooks (optional)
   testkit/          # Golden master + scenario runner (optional)
 tools/
-  unity-export/     # Parsers/exporters reading Unity YAML to JSON (Node scripts)
+  unity-extract/    # Offline parsers: Unity YAML/JSON -> typed balance JSON
 ```
 
 Key principles:
@@ -354,12 +359,13 @@ Optional improvements if the project grows:
 
 ## Porting strategy (keep parity, avoid drift)
 
-### 1) Freeze and export balance data from Unity
+### 1) Capture and externalize balance data
 
-Build a repeatable export pipeline that reads:
-- `Assets/Scenes/Game.unity`
-- `Assets/Resources/IAPProductCatalog.json`
+Capture balance/tuning values from Unity files (prefer no Unity-side scripts):
+- `UnityIDS/Assets/Scenes/Game.unity`
 - any other serialized gameplay parameters discovered later
+
+Do this either manually (with source notes) or via offline parsing scripts in `tools/unity-extract/`.
 
 Output JSON assets in the new monorepo:
 - `packages/balance/src/dysonverse/buildings.json` (baseCost/exponent/strings)
@@ -368,7 +374,7 @@ Output JSON assets in the new monorepo:
 - `packages/balance/src/dysonverse/skillTree.json` (104 skills incl. requirements/exclusives/line tags)
 - `packages/balance/src/reality/costs.json` (translation/speed costs)
 
-Validate with Zod and commit the exported JSON so it becomes stable, reviewable source of truth.
+Validate with Zod and commit the JSON so it becomes stable, reviewable source of truth.
 
 ### 2) Implement the core simulation engine (TypeScript)
 
@@ -406,14 +412,11 @@ Use `react-window` for long lists (research lists, history/log panels, etc.). Th
 ### 4) Persistence and offline time
 
 Implement save backends:
-- Web: IndexedDB (or localStorage for small saves) + periodic autosave
-- Desktop (Tauri): filesystem save in app data dir
+- Desktop (Tauri, Windows): filesystem save in app data dir
 
-Unity save/import details to preserve (optional but strongly recommended):
-- Unity currently saves `SaveDataSettings` via Easy Save 3 (`ES3.Save("saveSettings", saveSettings)`) in `Oracle.SaveState()`.
-- Fallback load exists for an Odin-serialized file: `<persistentDataPath>/betaTestTwo.idsOdin` (`Oracle.LoadState()`).
-- Clipboard export/import uses Odin Serializer JSON (`SerializationUtility.SerializeValue(..., DataFormat.JSON)`) and Base64 in `Oracle.SaveToClipboard()` / `Oracle.LoadFromClipboard()`.
-- Some entitlements/preferences are stored in `PlayerPrefs` (e.g., `debug`, `doubleip`, volume, category states). Decide whether to migrate these into the main save or keep them separate.
+Save format notes:
+- Keep the current JSON save + base64 import/export approach; no Odin serializer parity is required.
+- Persist gameplay-affecting entitlements/preferences locally (e.g., `debug`, `doubleip`, volume, category states).
 
 Port offline systems:
 - Oracle's "AwayForSeconds" mechanism
@@ -424,23 +427,21 @@ Port offline systems:
 
 Add a parity harness early, before UI polish:
 - Golden scenarios: a suite of state snapshots + dt sequences + expected outputs.
-- Generate expected outputs from Unity by adding a scenario runner that logs state after N seconds.
+- Generate expected outputs from Unity via existing save/export flows (avoid Unity-side tooling unless we get blocked).
 - In TS, run the same scenarios under Vitest and compare:
   - resources, building counts, modifiers, timers, prestige triggers, upgrade flags
   - tolerate only minimal floating error where Unity/JS differ (ideally none; both are double)
 
 ### 6) Purchases / entitlements replacement
 
-Apple/Google IAP won't exist in a pure web/Tauri build, so decide on replacements:
-- Tips: external links (Ko-fi/Patreon) or Stripe checkout
-- Dev options + Double IP: license key / "supporter unlock" flag stored in save
+No store/IAP integration in the Windows build.
 
-Keep gameplay effects identical to Unity even if the purchase plumbing changes.
+For parity (and to support old saves), keep the gameplay effects behind entitlement flags as local settings/save toggles (default: off).
 
 ## Implementation milestones (suggested)
 
 1. Create pnpm workspace + tooling (ESLint/Prettier/Vitest) and empty apps/packages.
-2. Implement `packages/balance` Zod schemas + Unity exporter scripts.
+2. Implement `packages/balance` Zod schemas + (optional) offline extraction tools (Node).
 3. Implement `packages/core` state model + math helpers + deterministic tick loop.
 4. Port DysonVerse base loop: production, buildings, research, panel lifetime.
 5. Port Infinity + secrets + prestige reset logic.
@@ -450,4 +451,4 @@ Keep gameplay effects identical to Unity even if the purchase plumbing changes.
 9. Port Dream1 simulation loop + disasters + Strange Matter shop.
 10. Build React UI parity screens and hook into worker.
 11. Add golden master tests and lock parity.
-12. Package web + desktop (Tauri), add save migrations/import if needed.
+12. Package Windows desktop (Tauri), add save migrations/import if needed.

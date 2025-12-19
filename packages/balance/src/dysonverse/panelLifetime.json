@@ -1,0 +1,43 @@
+[
+  {
+    "id": 1,
+    "cost": 1000000000,
+    "saveFlag": "panelLifetime1",
+    "baseLifetimeSecondsDelta": 1,
+    "source": {
+      "script": "UnityIDS/Assets/Scripts/PanelLifetime1.cs",
+      "scene": "UnityIDS/Assets/Scenes/Game.unity"
+    }
+  },
+  {
+    "id": 2,
+    "cost": 1000000000000,
+    "saveFlag": "panelLifetime2",
+    "baseLifetimeSecondsDelta": 2,
+    "source": {
+      "script": "UnityIDS/Assets/Scripts/PanelLifetime1.cs",
+      "scene": "UnityIDS/Assets/Scenes/Game.unity"
+    }
+  },
+  {
+    "id": 3,
+    "cost": 1000000000000000,
+    "saveFlag": "panelLifetime3",
+    "baseLifetimeSecondsDelta": 3,
+    "source": {
+      "script": "UnityIDS/Assets/Scripts/PanelLifetime1.cs",
+      "scene": "UnityIDS/Assets/Scenes/Game.unity"
+    }
+  },
+  {
+    "id": 4,
+    "cost": 1000000000000000000,
+    "saveFlag": "panelLifetime4",
+    "baseLifetimeSecondsDelta": 4,
+    "source": {
+      "script": "UnityIDS/Assets/Scripts/PanelLifetime1.cs",
+      "scene": "UnityIDS/Assets/Scenes/Game.unity"
+    }
+  }
+]
+

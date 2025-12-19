@@ -1,0 +1,13 @@
+{
+  "name": "@ids/unity-extract",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "scripts": {
+    "generate:skill-tree": "node ./scripts/generate-skill-tree.mjs",
+    "extract:skill-tree": "node ./scripts/extract-skill-tree-from-scene.mjs",
+    "extract:skill-tree-layout": "node ./scripts/extract-skill-tree-layout-from-panel.mjs",
+    "extract:skill-tree-icons": "node ./scripts/extract-skill-tree-icons-from-panel.mjs",
+    "extract:progression": "node ./scripts/extract-progression-and-reality-costs.mjs"
+  }
+}

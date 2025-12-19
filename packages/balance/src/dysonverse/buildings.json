@@ -1,0 +1,62 @@
+[
+  {
+    "id": "assemblyLines",
+    "name": "Assembly Lines",
+    "baseCost": 100,
+    "exponent": 1.22,
+    "wordUsed": "Producing",
+    "productionWordUsed": "Bot",
+    "source": {
+      "script": "UnityIDS/Assets/Scripts/Buildings/AssemblyLineManager.cs",
+      "scene": "UnityIDS/Assets/Scenes/Game.unity"
+    }
+  },
+  {
+    "id": "managers",
+    "name": "AI Managers",
+    "baseCost": 5000,
+    "exponent": 1.23,
+    "wordUsed": "Generating",
+    "productionWordUsed": "Assembly Line",
+    "source": {
+      "script": "UnityIDS/Assets/Scripts/Buildings/ManagerManager.cs",
+      "scene": "UnityIDS/Assets/Scenes/Game.unity"
+    }
+  },
+  {
+    "id": "servers",
+    "name": "Servers",
+    "baseCost": 5000000,
+    "exponent": 1.24,
+    "wordUsed": "Training",
+    "productionWordUsed": "AI Manager",
+    "source": {
+      "script": "UnityIDS/Assets/Scripts/Buildings/ServerManager.cs",
+      "scene": "UnityIDS/Assets/Scenes/Game.unity"
+    }
+  },
+  {
+    "id": "dataCenters",
+    "name": "Data Centers",
+    "baseCost": 300000000,
+    "exponent": 1.23,
+    "wordUsed": "Deploying",
+    "productionWordUsed": "Server",
+    "source": {
+      "script": "UnityIDS/Assets/Scripts/Buildings/DataCenterManager.cs",
+      "scene": "UnityIDS/Assets/Scenes/Game.unity"
+    }
+  },
+  {
+    "id": "planets",
+    "name": "Planets",
+    "baseCost": 1000000000,
+    "exponent": 1.25,
+    "wordUsed": "Creating",
+    "productionWordUsed": "Data Center",
+    "source": {
+      "script": "UnityIDS/Assets/Scripts/Buildings/PlanetManager.cs",
+      "scene": "UnityIDS/Assets/Scenes/Game.unity"
+    }
+  }
+]
