@@ -1,0 +1,10 @@
+fileFormatVersion: 2
+guid: 4fede2e5e26d44a7892fc4aef50d8ea7
+timeCreated: 1749667341
+AssetOrigin:
+  serializedVersion: 1
+  productId: 163041
+  packageName: Modern Procedural UI Kit
+  packageVersion: 1.2.3
+  assetPath: Assets/MPUIKit/Editor/Scripts/ShapeDrawers/ChamferBoxPropertyDrawer.cs
+  uploadId: 764221

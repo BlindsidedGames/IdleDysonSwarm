@@ -1,0 +1,14 @@
+fileFormatVersion: 2
+guid: 5b891e253fd1a40e999dd9064b8a0d6f
+DefaultImporter:
+  externalObjects: {}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 768
+  packageName: Easy Save - The Complete Save Game & Data Serializer System
+  packageVersion: 3.5.25
+  assetPath: Assets/Plugins/Easy Save 3/Web/ES3Cloud.php
+  uploadId: 816548

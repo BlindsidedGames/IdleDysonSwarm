@@ -1,0 +1,19 @@
+fileFormatVersion: 2
+guid: 9f97d288c55524622a117171a19d3225
+timeCreated: 1518175265
+licenseType: Store
+MonoImporter:
+  serializedVersion: 2
+  defaultReferences: []
+  executionOrder: 0
+  icon: {instanceID: 0}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 768
+  packageName: Easy Save - The Complete Save Game & Data Serializer System
+  packageVersion: 3.5.25
+  assetPath: Assets/Plugins/Easy Save 3/Scripts/Debugging/ES3Debug.cs
+  uploadId: 816548

@@ -1,0 +1,15 @@
+fileFormatVersion: 2
+guid: cc3cada215f0d417a8fa879651f22f84
+timeCreated: 1483698819
+licenseType: Store
+TextScriptImporter:
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 768
+  packageName: Easy Save - The Complete Save Game & Data Serializer System
+  packageVersion: 3.5.25
+  assetPath: Assets/Plugins/Easy Save 3/Editor/ES3ClassTypeTemplate.txt
+  uploadId: 816548
