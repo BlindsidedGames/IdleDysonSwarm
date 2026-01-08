@@ -24,6 +24,11 @@ MonoBehaviour:
     bufferSize: 2048
     saveChildren: 1
     postprocessRawCachedData: 0
+    storeCacheAtEndOfEveryFrame: 1
+    storeCacheOnApplicationQuit: 1
+    storeCacheOnApplicationPause: 1
+    autoCacheDefaultFile: 1
+    autoCacheFileOnLoad: 1
     typeChecking: 1
     safeReflection: 1
     memberReferenceMode: 0
@@ -34,10 +39,6 @@ MonoBehaviour:
     - Assembly-CSharp-firstpass
     - MPUIKit
     - Purchasing.Common
-    - SA.Foundation
-    - SA.iOS
-    - StansAssets.Foundation
-    - StansAssets.Plugins
     showAdvancedSettings: 0
   addMgrToSceneAutomatically: 0
   autoUpdateReferences: 1
