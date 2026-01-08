@@ -1,0 +1,19 @@
+fileFormatVersion: 2
+guid: e2fe9704b49ad41cbb997e2b68befc6e
+timeCreated: 1519132298
+licenseType: Store
+MonoImporter:
+  serializedVersion: 2
+  defaultReferences: []
+  executionOrder: 0
+  icon: {instanceID: 0}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 768
+  packageName: Easy Save - The Complete Save Game & Data Serializer System
+  packageVersion: 3.5.25
+  assetPath: Assets/Plugins/Easy Save 3/Scripts/Types/Unity Types/ES3Type_Material.cs
+  uploadId: 816548

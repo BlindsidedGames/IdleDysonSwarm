@@ -1,0 +1,14 @@
+fileFormatVersion: 2
+guid: c7b06d0054ae75b41bc4f2b9d5528b04
+PrefabImporter:
+  externalObjects: {}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 768
+  packageName: Easy Save - The Complete Save Game & Data Serializer System
+  packageVersion: 3.5.25
+  assetPath: Assets/Plugins/Easy Save 3/Scripts/Save Slots/Easy Save Slots Canvas.prefab
+  uploadId: 816548

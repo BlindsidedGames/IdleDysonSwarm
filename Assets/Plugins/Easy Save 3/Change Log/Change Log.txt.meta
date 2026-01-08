@@ -1,0 +1,14 @@
+fileFormatVersion: 2
+guid: 48fdb523e0bb47f479a18f9b236df644
+TextScriptImporter:
+  externalObjects: {}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 768
+  packageName: Easy Save - The Complete Save Game & Data Serializer System
+  packageVersion: 3.5.25
+  assetPath: Assets/Plugins/Easy Save 3/Change Log/Change Log.txt
+  uploadId: 816548

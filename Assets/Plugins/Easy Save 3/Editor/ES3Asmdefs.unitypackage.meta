@@ -1,0 +1,14 @@
+fileFormatVersion: 2
+guid: de41a70ead12af544a4e99a925b269d2
+DefaultImporter:
+  externalObjects: {}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 768
+  packageName: Easy Save - The Complete Save Game & Data Serializer System
+  packageVersion: 3.5.25
+  assetPath: Assets/Plugins/Easy Save 3/Editor/ES3Asmdefs.unitypackage
+  uploadId: 816548

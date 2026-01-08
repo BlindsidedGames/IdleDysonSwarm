@@ -1,0 +1,4 @@
+repository "Idle Dyson Swarm@BlindsidedGames@cloud"
+  path "/"
+    br "/main"
+    co "/main"

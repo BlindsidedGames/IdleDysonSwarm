@@ -1,0 +1,10 @@
+fileFormatVersion: 2
+guid: 0d7a6ae0a6a540e7bbb54f6c0fc9dfaf
+timeCreated: 1749671806
+AssetOrigin:
+  serializedVersion: 1
+  productId: 163041
+  packageName: Modern Procedural UI Kit
+  packageVersion: 1.2.3
+  assetPath: Assets/MPUIKit/Runtime/Scripts/Shapes/Parallelogram.cs
+  uploadId: 764221

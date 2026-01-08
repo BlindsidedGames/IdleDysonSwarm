@@ -1,0 +1,14 @@
+fileFormatVersion: 2
+guid: 5c64090e866862f449075dc1f3e5ab06
+DefaultImporter:
+  externalObjects: {}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 768
+  packageName: Easy Save - The Complete Save Game & Data Serializer System
+  packageVersion: 3.5.25
+  assetPath: Assets/Plugins/Easy Save 3/Editor/EasySave3Editor.asmdef.disabled
+  uploadId: 816548
