@@ -1,8 +1,0 @@
-.window-root {
-    background-color: rgb(160, 160, 160);
-}
-
-SettingsBlock,
-.tabs-bar {
-    background-color: rgb(190, 190, 190);
-}
