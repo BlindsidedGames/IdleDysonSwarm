@@ -1,7 +1,6 @@
 using System;
 using System.Collections;
 using System.Globalization;
-using CloudOnce;
 using TMPro;
 using Unity.Mathematics;
 using UnityEngine;
@@ -115,7 +114,7 @@ public class GameManager : MonoBehaviour
         CalculateProduction();
         InvokeRepeating(nameof(UpdateTextFields), 0, 0.1f);
         InvokeRepeating(nameof(CalculateModifiers), 0, 1f);
-        InvokeRepeating(nameof(SubmitHighScores), 10, 10f);
+        // InvokeRepeating(nameof(SubmitHighScores), 10, 10f);
         InvokeRepeating(nameof(CheckIfValuesNegative), 0, 10);
         if (Application.platform == RuntimePlatform.WindowsPlayer)
         {
@@ -226,23 +225,23 @@ public class GameManager : MonoBehaviour
         AwayFor -= ApplyReturnValues;
     }
 
-    private void SubmitHighScores()
-    {
-        if (dvid.goalSetter < 1) return;
-        Achievements.tenbots.Unlock();
-        if (dvid.goalSetter < 2) return;
-        Achievements.fiveassemblylines.Unlock();
-        if (dvid.goalSetter < 3) return;
-        Achievements.twentykactivective.Unlock();
-        if (dvid.goalSetter < 4) return;
-        Achievements.twentyplanets.Unlock();
-        if (dvid.goalSetter < 7) return;
-        Achievements.surroundstarstenb.Unlock();
-        if (dvid.goalSetter < 8) return;
-        Achievements.engulfgalaxy.Unlock();
-        if (dvid.goalSetter < 10) return;
-        Achievements.galaxyonehundred.Unlock();
-    }
+    // private void SubmitHighScores()
+    // {
+    //     if (dvid.goalSetter < 1) return;
+    //     Achievements.tenbots.Unlock();
+    //     if (dvid.goalSetter < 2) return;
+    //     Achievements.fiveassemblylines.Unlock();
+    //     if (dvid.goalSetter < 3) return;
+    //     Achievements.twentykactivective.Unlock();
+    //     if (dvid.goalSetter < 4) return;
+    //     Achievements.twentyplanets.Unlock();
+    //     if (dvid.goalSetter < 7) return;
+    //     Achievements.surroundstarstenb.Unlock();
+    //     if (dvid.goalSetter < 8) return;
+    //     Achievements.engulfgalaxy.Unlock();
+    //     if (dvid.goalSetter < 10) return;
+    //     Achievements.galaxyonehundred.Unlock();
+    // }
 
     #endregion
 

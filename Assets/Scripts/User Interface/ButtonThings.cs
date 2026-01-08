@@ -1,4 +1,3 @@
-using SA.iOS.GameKit;
 using TMPro;
 using UnityEngine;
 using UnityEngine.SceneManagement;
@@ -97,12 +96,12 @@ public class ButtonThings : MonoBehaviour
         PlayerPrefs.SetInt("initialScreen", defaultScreen);
     }
 
-    public void ShowGameCenter()
-    {
-        ISN_GKGameCenterViewController viewController = new ISN_GKGameCenterViewController();
-        viewController.ViewState = ISN_GKGameCenterViewControllerState.Default;
-        viewController.Show();
-    }
+    // public void ShowGameCenter()
+    // {
+    //     ISN_GKGameCenterViewController viewController = new ISN_GKGameCenterViewController();
+    //     viewController.ViewState = ISN_GKGameCenterViewControllerState.Default;
+    //     viewController.Show();
+    // }
 
     public void SetWithSLider(float amount)
     {

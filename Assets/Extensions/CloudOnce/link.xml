@@ -1,5 +1,0 @@
-<linker>
-    <assembly fullname="Assembly-CSharp">
-        <namespace fullname="CloudOnce.Internal" preserve="all" />
-    </assembly>
-</linker>

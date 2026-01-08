@@ -1,18 +1,8 @@
 ﻿<Solution>
   <Project Path="Assembly-CSharp-firstpass.csproj" />
   <Project Path="Assembly-CSharp.csproj" />
-  <Project Path="SA.iOS.csproj" />
-  <Project Path="SA.Foundation.csproj" />
-  <Project Path="SA.Foundation.Editor.csproj" />
-  <Project Path="Assembly-CSharp-Editor-firstpass.csproj" />
-  <Project Path="StansAssets.Plugins.Editor.csproj" />
-  <Project Path="Assembly-CSharp-Editor.csproj" />
-  <Project Path="StansAssets.Foundation.Editor.csproj" />
-  <Project Path="SA.iOS.Editor.csproj" />
-  <Project Path="StansAssets.Foundation.csproj" />
-  <Project Path="StansAssets.IOS.XCode.csproj" />
   <Project Path="MPUIKit.Editor.csproj" />
+  <Project Path="Assembly-CSharp-Editor-firstpass.csproj" />
   <Project Path="MPUIKit.csproj" />
   <Project Path="Sirenix.OdinInspector.Modules.UnityMathematics.csproj" />
-  <Project Path="StansAssets.Plugins.csproj" />
 </Solution>
