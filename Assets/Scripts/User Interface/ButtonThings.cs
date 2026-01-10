@@ -41,7 +41,7 @@ public class ButtonThings : MonoBehaviour
 
     public void SetMaxFPS()
     {
-        int rate = Screen.currentResolution.refreshRate;
+        int rate = Mathf.RoundToInt((float)Screen.currentResolution.refreshRateRatio.value);
         Application.targetFrameRate = rate;
         oracle.saveSettings.frameRate = rate;
     }

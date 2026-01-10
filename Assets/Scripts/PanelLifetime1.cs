@@ -113,7 +113,7 @@ public class PanelLifetime1 : MonoBehaviour
                 }
             }
 
-            FindObjectOfType<GameManager>().UpdatePanelLifetime();
+            Object.FindFirstObjectByType<GameManager>().UpdatePanelLifetime();
             dvid.science -= _cost;
             UpdateText();
         }

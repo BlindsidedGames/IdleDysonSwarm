@@ -50,7 +50,6 @@ public class OfflineTimeManager : MonoBehaviour
 
     public void SetTimeDisplay()
     {
-        string color = "<color=#91DD8F>";
         string colorS = "<color=#00E1FF>";
         timeDisplay.text =
             $"You have {colorS}{CalcUtils.FormatTimeLarge(ss.offlineTime)}</color> stored";

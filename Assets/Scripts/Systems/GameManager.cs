@@ -2,10 +2,10 @@ using System;
 using System.Collections;
 using System.Globalization;
 using TMPro;
-using Unity.Mathematics;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
+using Systems;
 using static Expansion.Oracle;
 
 
@@ -87,6 +87,7 @@ public class GameManager : MonoBehaviour
     [SerializeField] private double maxInfinityBuff = 1e44;
 
     [SerializeField] private SkillTreeConfirmationManager _skillTreeConfirmationManager;
+    private readonly SecretBuffState _secretBuffState = new SecretBuffState();
 
     #endregion
 
@@ -153,19 +154,7 @@ public class GameManager : MonoBehaviour
 
     public void CalculateProduction()
     {
-        CalculateMoney();
-        CalculateScience();
-        CalculatePanelsPerSec();
-        CalculateAssemblyLineProduction();
-        CalculateManagerProduction();
-        CalculateServerProduction();
-        CalculateDataCenterProduction();
-        CalculatePlanetProduction();
-        CalculatePlanetsPerSecond();
-        CalculateShouldersSkills(Time.deltaTime);
-        if (dvst.androids) dvpd.androidsSkillTimer += Time.deltaTime;
-        if (dvst.pocketAndroids) dvpd.pocketAndroidsTimer += Time.deltaTime;
-        if (dvst.superRadiantScattering) dvst.superRadiantScatteringTimer += Time.deltaTime;
+        ProductionSystem.CalculateProduction(dvid, dvst, dvpd, Time.deltaTime);
     }
 
     private double CurrentRunTime()
@@ -247,43 +236,40 @@ public class GameManager : MonoBehaviour
 
     #region AwayTime
 
+    private OfflineProgressContext CreateOfflineProgressContext()
+    {
+        return new OfflineProgressContext
+        {
+            dvid = dvid,
+            dvpd = dvpd,
+            dvst = dvst,
+            saveSettings = oracle.saveSettings,
+            SetBotDistribution = SetBotDistribution,
+            CalculateShouldersSkills = CalculateShouldersSkills,
+            CalculateProduction = CalculateProduction,
+            MoneyToAdd = MoneyToAdd,
+            ScienceToAdd = ScienceToAdd
+        };
+    }
+
+    private OfflineProgressUI CreateOfflineProgressUi()
+    {
+        return new OfflineProgressUI
+        {
+            AwayForHeader = awayForHeader,
+            AwayFor = awayFor,
+            OfflineTimeInstructions = offlineTimeInstructions,
+            OfflineProgressLayoutElement = offlineProgressLayoutElement,
+            ReturnScreen = returnScreen,
+            ReturnScreenSlider = returnScreenSlider,
+            ReturnScreenSliderParentGameObject = returnScreenSliderParentGameObject,
+            Amounts = amounts
+        };
+    }
+
     public void ApplyReturnValues(double awayTime)
     {
-        string color = "<color=#91DD8F>";
-        string colorS = "<color=#00E1FF>";
-        awayForHeader.gameObject.SetActive(true);
-        awayForHeader.text = "Welcome Back!";
-        returnScreen.SetActive(awayTime >= 60 || awayTime < 0);
-        offlineTimeInstructions.SetActive(true);
-        if (awayTime < 0)
-        {
-            oracle.saveSettings.cheater = true;
-            oracle.saveSettings.offlineTime = 0;
-            oracle.saveSettings.maxOfflineTime = 0;
-            string text = $"You were away for {color}{CalcUtils.FormatTimeLarge(awayTime)}</color>";
-            text +=
-                "<br>You're probably cheating: Offline time disabled. <br>Please wipe your save to continue using offline time.";
-            awayFor.text = text;
-            return;
-        }
-
-        double calculatedAwayTime = 0f;
-        switch (awayTime >= oracle.saveSettings.maxOfflineTime - oracle.saveSettings.offlineTime)
-        {
-            case true:
-                calculatedAwayTime = oracle.saveSettings.maxOfflineTime - oracle.saveSettings.offlineTime;
-                oracle.saveSettings.offlineTime = oracle.saveSettings.maxOfflineTime;
-                break;
-            case false:
-                oracle.saveSettings.offlineTime += awayTime;
-                calculatedAwayTime = awayTime;
-                break;
-        }
-
-        string text1 = $"You gained {color}{CalcUtils.FormatTimeLarge(calculatedAwayTime)}</color> offline time ";
-        text1 += $"<br>You have {colorS}{CalcUtils.FormatTimeLarge(oracle.saveSettings.offlineTime)}</color> stored";
-        awayFor.text = text1;
-        amounts.text = "";
+        OfflineProgressSystem.ApplyReturnValues(awayTime, CreateOfflineProgressContext(), CreateOfflineProgressUi());
     }
 
     public void RunAwayTime(double awayTime)
@@ -294,196 +280,7 @@ public class GameManager : MonoBehaviour
 
     private IEnumerator CalculateAwavValues(double awayTime)
     {
-        string color = "<color=#91DD8F>";
-        string colorS = "<color=#00E1FF>";
-        awayForHeader.gameObject.SetActive(false);
-        awayFor.text = $"Advanced {color}{CalcUtils.FormatTimeLarge(awayTime)}";
-
-        long startingIP = dvpd.infinityPoints;
-        dvpd.infinityPoints += oracle.saveSettings.lastInfinityPointsGained >= 1 ? (long)Math.Floor(awayTime * oracle.saveSettings.lastInfinityPointsGained /
-                                                                                                    oracle.saveSettings.timeLastInfinity / 10) : 0;
-
-        if (dvst.idleElectricSheep) awayTime *= 2;
-        double remainder = awayTime % 60;
-        double minutes = (awayTime - remainder) / 60;
-
-        double planets = 0;
-        double dataCenters = 0;
-        double servers = 0;
-        double managers = 0;
-        double lines = 0;
-        double bots = 0;
-
-        double money = 0;
-        double science = 0;
-        double decayed = 0;
-
-        if (minutes >= 1)
-        {
-            int sliderFill = 0;
-            offlineProgressLayoutElement.minHeight = 7;
-            returnScreenSliderParentGameObject.SetActive(true);
-            for (int i = 0; i < minutes; i++)
-            {
-                if (dvst.androids) dvpd.androidsSkillTimer += 60;
-                if (dvst.pocketAndroids) dvpd.pocketAndroidsTimer += 60;
-
-
-                double p = dvid.totalPlanetProduction * 60;
-                planets += p;
-
-                dvid.planets[0] += p;
-                CalculateShouldersSkills(60);
-                CalculateProduction();
-
-                double da = dvid.dataCenterProduction * 60;
-                dataCenters += da;
-                dvid.dataCenters[0] += da;
-                CalculateProduction();
-
-                double s = dvid.serverProduction * 60;
-                servers += s;
-                dvid.servers[0] += s;
-                CalculateProduction();
-
-                double m = dvid.managerProduction * 60;
-                managers += m;
-                dvid.managers[0] += m;
-                CalculateProduction();
-
-                double l = dvid.assemblyLineProduction * 60;
-                lines += l;
-                dvid.assemblyLines[0] += l;
-                CalculateProduction();
-
-                double b = dvid.botProduction * 60;
-                bots += b;
-
-                dvid.bots += b;
-                CalculateProduction();
-
-                SetBotDistribution();
-
-                double mo = MoneyToAdd() * 60;
-                money += mo;
-                dvid.money += mo;
-
-                double sc = ScienceToAdd() * 60;
-                science += sc;
-                dvid.science += sc;
-
-                double d = dvid.panelsPerSec * 60;
-                decayed += d;
-                dvid.totalPanelsDecayed += d;
-                CalculateProduction();
-
-
-                sliderFill++;
-                returnScreenSlider.fillAmount = (float)(sliderFill / minutes);
-
-                yield return 0;
-            }
-        }
-
-        if (dvst.androids) dvpd.androidsSkillTimer += remainder;
-        if (dvst.pocketAndroids) dvpd.pocketAndroidsTimer += remainder;
-
-
-        double p1 = dvid.totalPlanetProduction * remainder;
-        planets += p1;
-        dvid.planets[0] += p1;
-        CalculateShouldersSkills(remainder);
-        CalculateProduction();
-
-        double da1 = dvid.dataCenterProduction * remainder;
-        dataCenters += da1;
-        dvid.dataCenters[0] += da1;
-        CalculateProduction();
-
-        double s1 = dvid.serverProduction * remainder;
-        servers += s1;
-        dvid.servers[0] += s1;
-        CalculateProduction();
-
-        double m1 = dvid.managerProduction * remainder;
-        managers += m1;
-        dvid.managers[0] += m1;
-        CalculateProduction();
-
-        double l1 = dvid.assemblyLineProduction * remainder;
-        lines += l1;
-        dvid.assemblyLines[0] += l1;
-        CalculateProduction();
-
-        double b1 = dvid.botProduction * remainder;
-        bots += b1;
-        dvid.bots += b1;
-        CalculateProduction();
-
-        SetBotDistribution();
-
-        double mo1 = MoneyToAdd() * remainder;
-        money += mo1;
-        dvid.money += mo1;
-
-        double sc1 = ScienceToAdd() * remainder;
-        science += sc1;
-        dvid.science += sc1;
-
-        double d1 = dvid.panelsPerSec * remainder;
-        decayed += d1;
-        dvid.totalPanelsDecayed += d1;
-
-        yield return 0;
-
-        string textBuilder = "";
-
-        if (dvid.planets[0] + dvid.planets[1] > 0)
-            textBuilder +=
-                $"\nYou gained {color}{CalcUtils.FormatNumber(planets)}</color> Planets ";
-
-        if (dvid.planets[0] + dvid.planets[1] > 0)
-            textBuilder +=
-                $"\nYou gained {color}{CalcUtils.FormatNumber(dataCenters)}</color> Data Centers";
-
-        if (dvid.dataCenters[0] + dvid.dataCenters[1] > 0)
-            textBuilder +=
-                $"\nYou gained {color}{CalcUtils.FormatNumber(servers)}</color> Servers";
-
-        if (dvid.servers[0] + dvid.servers[1] > 0)
-            textBuilder +=
-                $"\nYou gained {color}{CalcUtils.FormatNumber(managers)}</color> Managers";
-
-        if (dvid.managers[0] + dvid.managers[1] > 0)
-            textBuilder +=
-                $"\nYou gained {color}{CalcUtils.FormatNumber(lines)}</color> Assembly Lines";
-
-        if (dvid.assemblyLines[0] + dvid.assemblyLines[1] > 0)
-            textBuilder +=
-                $"\nYour assembly lines produced {color}{CalcUtils.FormatNumber(bots)}</color> Bots";
-
-        textBuilder +=
-            $"\n\nYou earned {color}{CalcUtils.FormatNumber(money)}</color> Cash";
-
-        textBuilder +=
-            $"\nYou earned {colorS}{CalcUtils.FormatNumber(science)}</color> Research Points";
-
-        textBuilder +=
-            $"\n{colorS}{CalcUtils.FormatNumber(decayed)}</color> Panels Decayed";
-
-        if (dvpd.infinityPoints > startingIP)
-            textBuilder +=
-                $"<br>You gained: {colorS}{CalcUtils.FormatNumber(dvpd.infinityPoints - startingIP)}</color> Infinity Points";
-
-        textBuilder +=
-            $"<br><br>{colorS}{CalcUtils.FormatTimeLarge(oracle.saveSettings.offlineTime)}</color> remaining";
-
-        amounts.text = textBuilder;
-
-        offlineProgressLayoutElement.minHeight = 3;
-        returnScreenSliderParentGameObject.SetActive(false);
-        offlineTimeInstructions.SetActive(false);
-        returnScreen.SetActive(true);
+        return OfflineProgressSystem.CalculateAwayValues(awayTime, CreateOfflineProgressContext(), CreateOfflineProgressUi());
     }
 
     #endregion
@@ -491,18 +288,7 @@ public class GameManager : MonoBehaviour
 
     private void SetBotDistribution()
     {
-        if (!oracle.saveSettings.prestigePlus.botMultitasking)
-        {
-            dvid.workers =
-                Math.Ceiling(Math.Floor(dvid.bots) / 100f * ((1f - dvpd.botDistribution) * 100f));
-            dvid.researchers =
-                Math.Floor(Math.Floor(dvid.bots) / 100f * dvpd.botDistribution * 100f);
-        }
-        else
-        {
-            dvid.workers = dvid.bots;
-            dvid.researchers = dvid.bots;
-        }
+        ProductionSystem.SetBotDistribution(dvid, dvpd, pp);
     }
 
     #region GoalManagment
@@ -708,242 +494,59 @@ public class GameManager : MonoBehaviour
 
     private void CalculatePlanetsPerSecond()
     {
-        dvid.totalPlanetProduction = 0;
-        dvid.scientificPlanetsProduction = dvid.researchers > 1 && dvst.scientificPlanets
-            ? Math.Log10(dvid.researchers)
-            : 0;
-        if (dvst.hubbleTelescope)
-            dvid.scientificPlanetsProduction *= 2f;
-        if (dvst.jamesWebbTelescope)
-            dvid.scientificPlanetsProduction *= 4f;
-        dvid.scientificPlanetsProduction += dvst.terraformingProtocols ? dvst.fragments : 0;
-
-        if (dvst.scientificPlanets) dvid.totalPlanetProduction += dvid.scientificPlanetsProduction;
-
-        //Planet Assembly
-        dvid.planetAssemblyProduction = dvst.planetAssembly && dvid.assemblyLines[0] + dvid.assemblyLines[1] >= 10
-            ? Math.Log10(dvid.assemblyLines[0] + dvid.assemblyLines[1])
-            : 0;
-        if (dvst.planetAssembly)
-            dvid.totalPlanetProduction += dvid.planetAssemblyProduction;
-        //Shell Worlds
-        dvid.shellWorldsProduction = dvst.planetAssembly && dvid.planets[0] + dvid.planets[1] >= 2
-            ? Math.Log(dvid.planets[0] + dvid.planets[1], 2)
-            : 0;
-        if (dvst.shellWorlds)
-            dvid.totalPlanetProduction += dvid.shellWorldsProduction;
-
-        //StellarSacrifices
-
-
-        dvid.stellarSacrificesProduction = dvst.stellarSacrifices && dvid.bots >= StellarSacrificesRequiredBots() &&
-                                           StellarGalaxies() > 0
-            ? StellarGalaxies()
-            : 0;
-        if (dvst.stellarSacrifices)
-            dvid.totalPlanetProduction += dvid.stellarSacrificesProduction;
-
-
-        //ApplyPlanetProduction
-        dvid.planets[0] += dvid.totalPlanetProduction * Time.deltaTime;
-
-
-        //Shoulders
-        if (dvst.shouldersOfTheFallen && dvid.scienceBoostOwned > 0)
-        {
-            dvid.scientificPlanetsProduction += math.log2(dvid.scienceBoostOwned);
-            if (dvst.shoulderSurgery) dvid.pocketDimensionsProduction += Math.Log(dvid.scienceBoostOwned, 2);
-        }
+        ProductionSystem.CalculatePlanetsPerSecond(dvid, dvst, Time.deltaTime);
     }
 
     private void CalculateShouldersSkills(double time)
     {
-        if (dvst.shouldersOfGiants && dvst.scientificPlanets)
-        {
-            dvid.scienceBoostOwned += dvid.scientificPlanetsProduction * time;
-            if (dvst.whatCouldHaveBeen) dvid.scienceBoostOwned += dvid.pocketDimensionsProduction * time;
-        }
-
-        if (dvst.shouldersOfTheEnlightened && dvst.scientificPlanets)
-            dvid.moneyMultiUpgradeOwned += dvid.scientificPlanetsProduction * time;
+        ProductionSystem.CalculateShouldersSkills(dvid, dvst, time);
     }
 
     private void CalculatePlanetProduction()
     {
-        dvid.dataCenterProduction =
-            (dvid.planets[0] + dvid.planets[1]) * .0002777777777777778f * dvid.planetModifier;
-        if (dvst.rule34 && dvid.planets[1] >= 69) dvid.dataCenterProduction *= 2;
-        if (dvst.superchargedPower) dvid.dataCenterProduction *= 1.5f;
-
-        dvid.planetsDataCenterProduction = dvid.dataCenterProduction;
-
-        //pocketDimensions
-        double dataCenterProductionTemp = dvst.pocketDimensions && dvid.workers > 1
-            ? Math.Log10(dvid.workers)
-            : 0;
-        dvid.pocketDimensionsWithoutAnythingElseProduction = dataCenterProductionTemp;
-
-        if (dvst.pocketMultiverse)
-        {
-            double multiplyBy = 1;
-            multiplyBy *= dvst.pocketDimensions && dvid.researchers > 1f
-                ? Math.Log10(dvid.researchers)
-                : 0;
-            dvid.pocketMultiverseProduction = dvid.researchers > 0
-                ? dataCenterProductionTemp * multiplyBy - dvid.pocketDimensionsWithoutAnythingElseProduction
-                : 0;
-            if (multiplyBy > 0) dataCenterProductionTemp *= multiplyBy;
-        }
-        else
-        {
-            double add = 0;
-            if (dvst.pocketProtectors)
-                add += dvst.pocketDimensions && dvid.researchers > 1f
-                    ? Math.Log10(dvid.researchers)
-                    : 0;
-            dvid.pocketProtectorsProduction =
-                dataCenterProductionTemp + add - dvid.pocketDimensionsWithoutAnythingElseProduction;
-
-            dataCenterProductionTemp += add;
-        }
-
-        if (dvst.dimensionalCatCables) dataCenterProductionTemp *= 5;
-
-        if (dvst.solarBubbles) dataCenterProductionTemp *= 1 + 0.01 * dvid.panelLifetime;
-
-        if (dvst.pocketAndroids)
-            dataCenterProductionTemp *=
-                dvpd.pocketAndroidsTimer > 3564 ? 100 : 1 + dvpd.pocketAndroidsTimer / 36;
-
-        if (dvst.quantumComputing)
-        {
-            double quantumMulti = 1 + (dvid.rudimentrySingularityProduction >= 1
-                ? Math.Log(dvid.rudimentrySingularityProduction, 2)
-                : 0);
-            dvid.quantumComputingProduction = quantumMulti;
-            dataCenterProductionTemp *= quantumMulti;
-        }
-
-        dvid.pocketDimensionsProduction = dataCenterProductionTemp;
-        if (dvst.pocketDimensions) dvid.dataCenterProduction += dvid.pocketDimensionsProduction;
-
-        dvid.dataCenters[0] += dvid.dataCenterProduction * Time.deltaTime;
+        ProductionSystem.CalculatePlanetProduction(dvid, dvst, dvpd, Time.deltaTime);
     }
 
     private void CalculateDataCenterProduction()
     {
-        dvid.serverProduction =
-            (dvid.dataCenters[0] + dvid.dataCenters[1]) * 0.0011111111f * dvid.dataCenterModifier;
-        if (dvst.rule34 && dvid.dataCenters[1] >= 69) dvid.serverProduction *= 2;
-        if (dvst.superchargedPower) dvid.serverProduction *= 1.5f;
-        dvid.dataCenterServerProduction = dvid.serverProduction;
-
-        dvid.serverProduction += dvid.rudimentrySingularityProduction;
-        dvid.servers[0] += dvst.parallelComputation && dvid.servers[0] + dvid.servers[1] > 1
-            ? dvid.serverProduction * Time.deltaTime * 1 +
-              0.1f * Math.Log(dvid.servers[0] + dvid.servers[1], 2)
-            : dvid.serverProduction * Time.deltaTime;
+        ProductionSystem.CalculateDataCenterProduction(dvid, dvst, Time.deltaTime);
     }
 
     private void CalculateServerProduction()
     {
-        dvid.managerProduction =
-            (dvid.servers[0] + dvid.servers[1]) * 0.0016666666666667f * dvid.serverModifier;
-        if (dvst.rule34 && dvid.servers[1] >= 69) dvid.managerProduction *= 2;
-
-        if (dvst.superchargedPower) dvid.managerProduction *= 1.5f;
-        dvid.serverManagerProduction = dvid.managerProduction;
-
-        dvid.managers[0] += dvid.managerProduction * Time.deltaTime;
+        ProductionSystem.CalculateServerProduction(dvid, dvst, Time.deltaTime);
     }
 
     private void CalculateManagerProduction()
     {
-        dvid.assemblyLineProduction =
-            (dvid.managers[0] + dvid.managers[1]) * 0.0166666666666667f * dvid.managerModifier;
-        if (dvst.rule34 && dvid.managers[1] >= 69) dvid.assemblyLineProduction *= 2;
-
-        if (dvst.superchargedPower) dvid.assemblyLineProduction *= 1.5f;
-
-        double rudimentaryProduction = 0;
-        if (dvst.rudimentarySingularity && dvid.assemblyLineProduction > 1)
-            rudimentaryProduction = dvst.unsuspiciousAlgorithms
-                ? 10 * Math.Pow(Math.Log(dvid.assemblyLineProduction, 2),
-                    1 + Math.Log10(dvid.assemblyLineProduction) / 10)
-                : Math.Pow(Math.Log(dvid.assemblyLineProduction, 2),
-                    1 + Math.Log10(dvid.assemblyLineProduction) / 10);
-        if (dvst.clusterNetworking)
-            rudimentaryProduction *= 1 + (dvid.servers[0] + dvid.servers[1] > 1
-                ? 0.05f * Math.Log10(dvid.servers[0] + dvid.servers[1])
-                : 0);
-
-        dvid.rudimentrySingularityProduction = rudimentaryProduction;
-        dvid.managerAssemblyLineProduction = dvid.assemblyLineProduction;
-        dvid.assemblyLines[0] += dvid.assemblyLineProduction * Time.deltaTime;
+        ProductionSystem.CalculateManagerProduction(dvid, dvst, Time.deltaTime);
     }
 
     private void CalculateAssemblyLineProduction()
     {
-        dvid.botProduction =
-            (dvid.assemblyLines[0] + dvid.assemblyLines[1]) * 0.1f * dvid.assemblyLineModifier;
-        if (dvst.stayingPower)
-            dvid.botProduction *= 1 + 0.01f * dvid.panelLifetime;
-        if (dvst.rule34 && dvid.assemblyLines[1] >= 69) dvid.botProduction *= 2;
-        if (dvst.superchargedPower) dvid.botProduction *= 1.5f;
-        dvid.assemblyLineBotProduction = dvid.botProduction;
-
-        dvid.bots += dvid.botProduction * Time.deltaTime;
-
-        //StellarSacrifices
-
-
-        if (dvst.stellarSacrifices && dvid.bots >= StellarSacrificesRequiredBots() && StellarGalaxies() > 0)
-            dvid.bots -= StellarSacrificesRequiredBots() * Time.deltaTime;
+        ProductionSystem.CalculateAssemblyLineProduction(dvid, dvst, Time.deltaTime);
     }
 
     private void CalculatePanelsPerSec()
     {
-        double panels = 1;
-        double mult = dvid.panelsPerSecMulti;
-        if (dvst.burnOut)
-            mult *= 3;
-        if (dvst.workerEfficiencyTree)
-            panels = dvid.workers / 50 * mult;
-        else
-            panels = dvid.workers / 100 * mult;
-
-        if (dvst.reapers && dvid.totalPanelsDecayed > 2)
-            panels *= 1 + math.log2(dvid.totalPanelsDecayed) / 10;
-        if (dvst.rocketMania && dvid.panelsPerSec > 20)
-            panels *= Math.Log(dvid.panelsPerSec, 20);
-        if (dvst.saren) panels *= 40;
-
-        if (dvst.fusionReactors)
-            panels *= 5f;
-        dvid.panelsPerSec = panels;
-
-        dvid.totalPanelsDecayed += dvid.panelsPerSec * Time.deltaTime;
+        ProductionSystem.CalculatePanelsPerSec(dvid, dvst, Time.deltaTime);
     }
 
     private void CalculateScience()
     {
-        dvid.science += ScienceToAdd() * Time.deltaTime;
+        ProductionSystem.CalculateScience(dvid, dvst, Time.deltaTime);
     }
 
     public double ScienceToAdd() =>
-        dvst.powerUnderwhelming
-            ? Math.Pow(dvid.researchers * dvid.scienceMulti, 1.05)
-            : dvid.researchers * dvid.scienceMulti;
+        ProductionSystem.ScienceToAdd(dvid, dvst);
 
     private void CalculateMoney()
     {
-        dvid.money += MoneyToAdd() * Time.deltaTime;
+        ProductionSystem.CalculateMoney(dvid, dvst, Time.deltaTime);
     }
 
     public double MoneyToAdd() =>
-        dvst.powerOverwhelming
-            ? Math.Pow(dvid.panelsPerSec * dvid.panelLifetime * dvid.moneyMulti, 1.03)
-            : dvid.panelsPerSec * dvid.panelLifetime * dvid.moneyMulti;
+        ProductionSystem.MoneyToAdd(dvid, dvst);
 
     #endregion
 
@@ -1210,324 +813,50 @@ public class GameManager : MonoBehaviour
         UpdatePanelLifetime();
     }
 
-    private double _secretPlanetMulti = 1;
-    private double _secretServerMulti = 1;
-    private double _secretAIMulti = 1;
-    private double _secretAssemblyMulti = 1;
-    private double _secretCashMulti = 1;
-    private double _secretScienceMulti = 1;
-
     private void SecretBuffs()
     {
-        switch (dvpd.secretsOfTheUniverse)
-        {
-            case 27:
-                _secretAIMulti = 42;
-                goto case 26;
-            case 26:
-                _secretAIMulti = 3;
-                goto case 25;
-            case 25:
-                _secretCashMulti = 8;
-                goto case 24;
-            case 24:
-                _secretAIMulti = 2.5f;
-                goto case 23;
-            case 23:
-                _secretAssemblyMulti = 7;
-                goto case 22;
-            case 22:
-                _secretScienceMulti = 10;
-                goto case 21;
-            case 21:
-                _secretServerMulti = 3;
-                goto case 20;
-            case 20:
-                _secretServerMulti = 2;
-                goto case 19;
-            case 19:
-                _secretCashMulti = 6;
-                goto case 18;
-            case 18:
-                _secretPlanetMulti = 5;
-                goto case 17;
-            case 17:
-                _secretPlanetMulti = 2;
-                goto case 16;
-            case 16:
-                _secretAssemblyMulti = 2;
-                goto case 15;
-            case 15:
-                _secretScienceMulti = 8;
-                goto case 14;
-            case 14:
-                dvid.planetUpgradePercent = 0.09f;
-                goto case 13;
-            case 13:
-                dvid.aiManagerUpgradePercent = 0.09f;
-                goto case 12;
-            case 12:
-                dvid.assemblyLineUpgradePercent = 0.12f;
-                goto case 11;
-            case 11:
-                _secretScienceMulti = 6;
-                goto case 10;
-            case 10:
-                _secretScienceMulti = 4;
-                goto case 9;
-            case 9:
-                dvid.serverUpgradePercent = 0.09f;
-                goto case 8;
-            case 8:
-                _secretCashMulti = 4;
-                goto case 7;
-            case 7:
-                dvid.planetUpgradePercent = 0.06f;
-                goto case 6;
-            case 6:
-                _secretScienceMulti = 2;
-                goto case 5;
-            case 5:
-                dvid.aiManagerUpgradePercent = 0.06f;
-                goto case 4;
-            case 4:
-                dvid.assemblyLineUpgradePercent = 0.09f;
-                goto case 3;
-            case 3:
-                dvid.serverUpgradePercent = 0.06f;
-                goto case 2;
-            case 2:
-                _secretCashMulti = 2;
-                goto case 1;
-            case 1:
-                dvid.assemblyLineUpgradePercent = 0.06f;
-                break;
-        }
+        ModifierSystem.SecretBuffs(dvid, dvpd, _secretBuffState);
     }
 
 
     public void UpdatePanelLifetime()
     {
-        double lifetime = 10;
-        if (dvid.panelLifetime1) lifetime += 1;
-        if (dvid.panelLifetime2) lifetime += 2;
-        if (dvid.panelLifetime3) lifetime += 3;
-        if (dvid.panelLifetime4) lifetime += 4;
-        if (dvst.panelMaintenance)
-            lifetime += oracle.saveSettings.prestigePlus.botMultitasking ? 100 : (1 - dvpd.botDistribution) * 100;
-
-        if (dvst.shepherd) lifetime += 600;
-
-        if (dvst.citadelCouncil && dvid.totalPanelsDecayed > 1) lifetime += Math.Log(dvid.totalPanelsDecayed, 1.2);
-
-        if (dvst.panelWarranty) lifetime += 5 * dvst.fragments > 1 ? Math.Pow(2, dvst.fragments - 1) : 1;
-
-        if (dvst.panelLifetime20Tree) lifetime += 20;
-        if (dvst.burnOut) lifetime -= 5;
-        if (dvst.artificiallyEnhancedPanels && dvid.managers[0] + dvid.managers[1] >= 1)
-            lifetime += 5 * Math.Log10(dvid.managers[0] + dvid.managers[1]);
-        if (dvst.androids) lifetime += Math.Floor(dvpd.androidsSkillTimer > 600 ? 200 : dvpd.androidsSkillTimer / 3);
-        //multipliers
-        if (dvst.renewableEnergy && dvid.workers >= 1e7f) lifetime *= 1 + 0.1 * Math.Log10(dvid.workers / 1e6f);
-        if (dvst.stellarDominance && dvid.bots > StellarSacrificesRequiredBots()) lifetime *= 10;
-        //dividers
-        if (dvst.worthySacrifice) lifetime /= 2;
-        dvid.panelLifetime = lifetime;
+        ModifierSystem.UpdatePanelLifetime(dvid, dvst, dvpd, pp);
     }
 
     private void UpdatePlanetMulti()
     {
-        double boost1 = dvid.planetUpgradeOwned * dvid.planetUpgradePercent;
-        double totalBoost = 1 + boost1;
-        totalBoost *= GlobalBuff();
-        if (dvst.planetsTree) totalBoost *= 2;
-        if ((dvst.terraIrradiant ? dvid.planets[1] * 12 : dvid.planets[1]) >= 50 && !dvst.supernova) totalBoost *= 2;
-        if ((dvst.terraIrradiant ? dvid.planets[1] * 12 : dvid.planets[1]) >= 100 && !dvst.supernova) totalBoost *= 2;
-        if (dvst.fragmentAssembly && dvst.fragments > 4) totalBoost *= 3;
-
-        if ((dvst.terraIrradiant ? dvid.planets[1] * 12 : dvid.planets[1]) > AmountForBuildingBoostAfterX() &&
-            !dvst.supernova)
-        {
-            double perExtraBoost =
-                ((dvst.terraIrradiant ? dvid.planets[1] * 12 : dvid.planets[1]) - AmountForBuildingBoostAfterX()) /
-                DivisionForBoostAfterX();
-            perExtraBoost += 1;
-            totalBoost *= perExtraBoost;
-        }
-
-        if (dvst.galacticPradigmShift) totalBoost *= GalaxiesEngulfed() > 1 ? 3 : 1.5f;
-
-        if (dvst.tasteOfPower) totalBoost *= 1.5f;
-        if (dvst.indulgingInPower) totalBoost *= 2;
-        if (dvst.addictionToPower) totalBoost *= 3f;
-
-        if (dvst.dimensionalCatCables) totalBoost *= 0.75f;
-
-        if (dvpd.infinityPoints >= 5) totalBoost *= 1 + Math.Clamp(dvpd.infinityPoints, 0f, maxInfinityBuff);
-        totalBoost *= _secretPlanetMulti;
-
-        //dividers
-        if (dvst.endOfTheLine) totalBoost /= 2;
-        if (dvst.agressiveAlgorithms) totalBoost /= 3;
-
-        dvid.planetModifier = totalBoost;
+        ModifierSystem.UpdatePlanetMulti(dvid, dvst, dvpd, pp, _secretBuffState, maxInfinityBuff);
     }
 
     private void UpdateDataCenterMulti()
     {
-        double terraAmount = dvst.terraFirma
-            ? dvid.dataCenters[1] + (dvst.terraIrradiant ? dvid.planets[1] * 12 : dvid.planets[1])
-            : dvid.dataCenters[1];
-        double boost1 = dvid.dataCenterUpgradeOwned * dvid.dataCenterUpgradePercent;
-        double totalBoost = 1 + boost1;
-        totalBoost *= GlobalBuff();
-        if (dvst.dataCenterTree) totalBoost *= 2;
-        if (terraAmount >= 50 && !dvst.supernova) totalBoost *= 2;
-        if (terraAmount >= 100 && !dvst.supernova) totalBoost *= 2;
-        if (dvst.fragmentAssembly && dvst.fragments > 4) totalBoost *= 3;
-
-        if (terraAmount > AmountForBuildingBoostAfterX() && !dvst.supernova)
-        {
-            double perExtraBoost = (terraAmount - AmountForBuildingBoostAfterX()) / DivisionForBoostAfterX();
-            perExtraBoost += 1;
-            totalBoost *= perExtraBoost;
-        }
-
-        if (dvst.tasteOfPower) totalBoost *= 1.5f;
-        if (dvst.indulgingInPower) totalBoost *= 2f;
-        if (dvst.addictionToPower) totalBoost *= 3f;
-        if (dvst.whatWillComeToPass) totalBoost *= 1 + 0.01 * dvid.dataCenters[1];
-        if (dvst.hypercubeNetworks && dvid.servers[0] + dvid.servers[1] > 1)
-            totalBoost *= 1 + 0.1f * Math.Log10(dvid.servers[0] + dvid.servers[1]);
-
-
-        if (dvpd.infinityPoints >= 4) totalBoost *= 1 + Math.Clamp(dvpd.infinityPoints, 0f, maxInfinityBuff);
-
-        if (dvst.agressiveAlgorithms) totalBoost /= 3;
-
-        dvid.dataCenterModifier = totalBoost;
+        ModifierSystem.UpdateDataCenterMulti(dvid, dvst, dvpd, pp, maxInfinityBuff);
     }
 
     private void UpdateServerMulti()
     {
-        double terraAmount = dvst.terraEculeo
-            ? dvid.servers[1] + (dvst.terraIrradiant ? dvid.planets[1] * 12 : dvid.planets[1])
-            : dvid.servers[1];
-        double boost1 = dvid.serverUpgradeOwned * dvid.serverUpgradePercent;
-        double totalBoost = 1 + boost1;
-        totalBoost *= GlobalBuff();
-        if (dvst.serverTree) totalBoost *= 2;
-        if (terraAmount >= 50 && !dvst.supernova) totalBoost *= 2;
-        if (terraAmount >= 100 && !dvst.supernova) totalBoost *= 2;
-        if (dvst.fragmentAssembly && dvst.fragments > 4) totalBoost *= 3;
-
-        if (terraAmount > AmountForBuildingBoostAfterX() && !dvst.supernova)
-        {
-            double perExtraBoost = (terraAmount - AmountForBuildingBoostAfterX()) / DivisionForBoostAfterX();
-            perExtraBoost += 1;
-            totalBoost *= perExtraBoost;
-        }
-
-        if (dvst.tasteOfPower) totalBoost *= 1.5f;
-        if (dvst.indulgingInPower) totalBoost *= 2f;
-        if (dvst.addictionToPower) totalBoost *= 3f;
-        if (dvst.agressiveAlgorithms) totalBoost *= 3;
-
-        if (dvst.clusterNetworking)
-            totalBoost *= 1 + (dvid.servers[0] + dvid.servers[1] > 1
-                ? 0.05f * Math.Log10(dvid.servers[0] + dvid.servers[1])
-                : 0);
-
-        if (dvpd.infinityPoints >= 3) totalBoost *= 1 + Math.Clamp(dvpd.infinityPoints, 0f, maxInfinityBuff);
-        totalBoost *= _secretServerMulti;
-        if (dvst.parallelProcessing && dvid.servers[0] + dvid.servers[1] > 1)
-            totalBoost *= 1f + 0.05f * Math.Log(dvid.servers[0] + dvid.servers[1], 2);
-        dvid.serverModifier = totalBoost;
+        ModifierSystem.UpdateServerMulti(dvid, dvst, dvpd, pp, _secretBuffState, maxInfinityBuff);
     }
 
     private void UpdateManagerMulti()
     {
-        double terraAmount = dvst.terraInfirma
-            ? dvid.managers[1] + (dvst.terraIrradiant ? dvid.planets[1] * 12 : dvid.planets[1])
-            : dvid.managers[1];
-        double boost1 = dvid.aiManagerUpgradeOwned * dvid.aiManagerUpgradePercent;
-        double totalBoost = 1 + boost1;
-        totalBoost *= GlobalBuff();
-        if (dvst.aiManagerTree) totalBoost *= 2;
-        if (terraAmount >= 50 && !dvst.supernova) totalBoost *= 2;
-        if (terraAmount >= 100 && !dvst.supernova) totalBoost *= 2;
-        if (dvst.fragmentAssembly && dvst.fragments > 4) totalBoost *= 3;
-
-        if (terraAmount > AmountForBuildingBoostAfterX() && !dvst.supernova)
-        {
-            double perExtraBoost = (terraAmount - AmountForBuildingBoostAfterX()) / DivisionForBoostAfterX();
-            perExtraBoost += 1;
-            totalBoost *= perExtraBoost;
-        }
-
-        if (dvst.tasteOfPower) totalBoost *= 1.5f;
-        if (dvst.indulgingInPower) totalBoost *= 2f;
-        if (dvst.addictionToPower) totalBoost *= 3f;
-        if (dvst.agressiveAlgorithms) totalBoost *= 3;
-
-        if (dvpd.infinityPoints >= 2) totalBoost *= 1 + Math.Clamp(dvpd.infinityPoints, 0f, maxInfinityBuff);
-        totalBoost *= _secretAIMulti;
-
-        dvid.managerModifier = totalBoost;
+        ModifierSystem.UpdateManagerMulti(dvid, dvst, dvpd, pp, _secretBuffState, maxInfinityBuff);
     }
 
     private void UpdateAssemblyLineMulti()
     {
-        double terraAmount = dvst.terraNullius
-            ? dvid.assemblyLines[1] + (dvst.terraIrradiant ? dvid.planets[1] * 12 : dvid.planets[1])
-            : dvid.assemblyLines[1];
-
-        double boost1 = dvid.assemblyLineUpgradeOwned * dvid.assemblyLineUpgradePercent;
-        double totalBoost = 1 + boost1;
-        totalBoost *= GlobalBuff();
-        if (dvst.assemblyLineTree) totalBoost *= 2;
-        if (terraAmount >= 50 && !dvst.supernova) totalBoost *= 2;
-        if (terraAmount >= 100 && !dvst.supernova) totalBoost *= 2;
-        if (dvst.fragmentAssembly && dvst.fragments > 4) totalBoost *= 3;
-        if (dvst.worthySacrifice) totalBoost *= 2.5f;
-        if (dvst.endOfTheLine) totalBoost *= 5;
-
-        if (dvst.versatileProductionTactics)
-            totalBoost *= dvid.planets[0] + (dvst.terraIrradiant ? dvid.planets[1] * 12 : dvid.planets[1]) >= 100
-                ? 2
-                : 1.5f;
-        if (terraAmount > AmountForBuildingBoostAfterX() && !dvst.supernova)
-        {
-            double perExtraBoost = (terraAmount - AmountForBuildingBoostAfterX()) / DivisionForBoostAfterX();
-            perExtraBoost += 1;
-            totalBoost *= perExtraBoost;
-        }
-
-        if (dvst.oneMinutePlan) totalBoost *= dvid.panelLifetime > 60 ? 5 : 1.5f;
-        if (dvst.progressiveAssembly) totalBoost *= 1 + 0.5f * dvst.fragments;
-
-        if (dvst.tasteOfPower) totalBoost *= 1.5f;
-        if (dvst.indulgingInPower) totalBoost *= 2f;
-        if (dvst.addictionToPower) totalBoost *= 3f;
-        if (dvst.agressiveAlgorithms) totalBoost *= 3;
-        if (dvst.dysonSubsidies && StarsSurrounded() > 1) totalBoost *= 2;
-
-        if (dvst.purityOfBody && dvst.skillPointsTree > 0) totalBoost *= 1.25f * dvst.skillPointsTree;
-
-        totalBoost *= 1 + Math.Clamp(dvpd.infinityPoints, 0f, maxInfinityBuff);
-        totalBoost *= _secretAssemblyMulti;
-
-        dvid.assemblyLineModifier = totalBoost;
+        ModifierSystem.UpdateAssemblyLineMulti(dvid, dvst, dvpd, pp, _secretBuffState, maxInfinityBuff);
     }
 
     private void UpdateSciencePerSec()
     {
-        dvid.scienceMulti = ScienceMultipliers();
+        ModifierSystem.UpdateSciencePerSec(dvid, dvst, dvpd, pp, _secretBuffState);
     }
 
     private void UpdateMoneyPerSecMulti()
     {
-        dvid.moneyMulti = dvst.shouldersOfPrecursors ? ScienceMultipliers() : MoneyMultipliers();
+        ModifierSystem.UpdateMoneyPerSecMulti(dvid, dvst, dvpd, pp, _secretBuffState);
     }
 
     #endregion
@@ -1536,170 +865,49 @@ public class GameManager : MonoBehaviour
 
     private double StellarGalaxies()
     {
-        double stellarSacrificesGalaxies = GalaxiesEngulfed(false, false);
-        if (dvst.stellarObliteration) stellarSacrificesGalaxies *= 1000;
-        if (dvst.supernova) stellarSacrificesGalaxies *= 1000;
-
-        double stellarSacAmount = stellarSacrificesGalaxies > 10
-            ? Math.Pow(Math.Log10(stellarSacrificesGalaxies), 2)
-            : stellarSacrificesGalaxies > 1
-                ? Math.Log10(stellarSacrificesGalaxies)
-                : 0;
-        return stellarSacAmount;
+        double galaxiesEngulfed = ProductionMath.GalaxiesEngulfed(dvid, false, false, Time.deltaTime);
+        return ProductionMath.StellarGalaxies(dvst, galaxiesEngulfed);
     }
 
     private double StellarSacrificesRequiredBots()
     {
-        double botsNeeded = dvst.supernova
-            ? StarsSurrounded(false, false) * 1000000
-            : dvst.stellarObliteration
-                ? StarsSurrounded(false, false) * 1000
-                : StarsSurrounded(false, false);
-
-        if (botsNeeded < 1) botsNeeded = 1;
-        if (dvst.stellarDominance) botsNeeded *= 100;
-        if (dvst.stellarImprovements) botsNeeded /= 1000;
-        return botsNeeded;
+        double starsSurrounded = ProductionMath.StarsSurrounded(dvid, false, false, Time.deltaTime);
+        return ProductionMath.StellarSacrificesRequiredBots(dvst, starsSurrounded);
     }
 
     public double GalaxiesEngulfed(bool multipliedByDeltaTime = false, bool floored = true)
     {
-        double engulfed;
-        if (floored)
-            engulfed = math.floor(dvid.panelsPerSec * dvid.panelLifetime / 20000 / 100000000000);
-        else
-            engulfed = dvid.panelsPerSec * dvid.panelLifetime / 20000 / 100000000000;
-        if (multipliedByDeltaTime) return engulfed * Time.deltaTime;
-        return engulfed;
+        return ProductionMath.GalaxiesEngulfed(dvid, multipliedByDeltaTime, floored, Time.deltaTime);
     }
 
     public double StarsSurrounded(bool multipliedByDeltaTime = false, bool floored = true)
     {
-        double surrounded;
-        if (floored)
-            surrounded = math.floor(dvid.panelsPerSec * dvid.panelLifetime / 20000);
-        else
-            surrounded = dvid.panelsPerSec * dvid.panelLifetime / 20000;
-        if (multipliedByDeltaTime) return surrounded * Time.deltaTime;
-        return surrounded;
+        return ProductionMath.StarsSurrounded(dvid, multipliedByDeltaTime, floored, Time.deltaTime);
     }
 
     private double GlobalBuff()
     {
-        double multi = 1f;
-        if (dvst.purityOfSEssence && dvst.skillPointsTree > 0) multi *= 1.42f * dvst.skillPointsTree;
-        if (dvst.superRadiantScattering) multi *= 1 + 0.01f * dvst.superRadiantScatteringTimer;
-        if (pp.avocatoPurchased)
-        {
-            if (pp.avocatoIP >= 10)
-                multi *= Math.Log10(pp.avocatoIP);
-            if (pp.avocatoInfluence >= 10)
-                multi *= Math.Log10(pp.avocatoInfluence);
-            if (pp.avocatoStrangeMatter >= 10)
-                multi *= Math.Log10(pp.avocatoStrangeMatter);
-            if (pp.avocatoOverflow >= 1)
-                multi *= 1 + pp.avocatoOverflow;
-        }
-
-        return multi;
+        return ModifierSystem.GlobalBuff(dvst, pp);
     }
 
     private double AmountForBuildingBoostAfterX()
     {
-        int amountForBoost = dvst.productionScaling ? 90 : 100;
-
-        return amountForBoost;
+        return ProductionMath.AmountForBuildingBoostAfterX(dvst);
     }
 
     private double DivisionForBoostAfterX()
     {
-        int value = dvst.superSwarm ? dvst.megaSwarm ? dvst.ultimateSwarm ? 20 : 100 / 3 : 50 : 100;
-
-
-        return value;
+        return ProductionMath.DivisionForBoostAfterX(dvst);
     }
 
     private double MoneyMultipliers()
     {
-        double moneyBoost = dvid.moneyMultiUpgradeOwned * dvid.moneyMultiUpgradePercent;
-        if (dvst.regulatedAcademia) moneyBoost *= 1.02f + 1.01f * (dvst.fragments - 1);
-        double totalBoost = 1 + moneyBoost;
-        totalBoost *= GlobalBuff();
-        if (dvst.startHereTree) totalBoost *= 1.2f;
-        totalBoost *= 1 + oracle.saveSettings.prestigePlus.cash * 5 / 100;
-        totalBoost *= _secretCashMulti;
-        if (dvst.economicRevolution && dvpd.botDistribution <= .5f ||
-            dvst.economicRevolution && oracle.saveSettings.prestigePlus.botMultitasking) totalBoost *= 5;
-        if (dvst.superchargedPower) totalBoost *= 1.5f;
-        if (dvst.higgsBoson && GalaxiesEngulfed() >= 1) totalBoost *= 1 + 0.1f * GalaxiesEngulfed();
-        if (dvst.workerBoost)
-        {
-            if (!oracle.saveSettings.prestigePlus.botMultitasking)
-                totalBoost *= (1f - dvpd.botDistribution) * 100f;
-            else
-                totalBoost *= 100;
-        }
-
-        if (dvst.economicDominance)
-            totalBoost *= 20f;
-
-        if (dvst.renegade) totalBoost *= 50f;
-
-        if (dvst.shouldersOfTheRevolution) totalBoost *= 1 + 0.01f * dvid.scienceBoostOwned;
-        if (dvst.dysonSubsidies && StarsSurrounded() < 1) totalBoost *= 3;
-
-        if (dvst.purityOfMind && dvst.skillPointsTree > 0) totalBoost *= 1.5f * dvst.skillPointsTree;
-        if (dvst.monetaryPolicy) totalBoost *= 1f + 0.75f * dvst.fragments;
-        totalBoost *= dvst.tasteOfPower ? dvst.indulgingInPower ? dvst.addictionToPower ? 0.5f : 0.6f : 0.75f : 1;
-
-        //Dividers
-        if (dvst.stellarObliteration && GalaxiesEngulfed() >= 1) totalBoost /= GalaxiesEngulfed(false, false);
-        if (dvst.fusionReactors)
-            totalBoost *= 0.75f;
-        if (dvst.coldFusion)
-            totalBoost *= 0.5f;
-        if (dvst.scientificDominance) totalBoost /= 4f;
-        if (dvst.stellarDominance && dvid.bots > StellarSacrificesRequiredBots()) totalBoost /= 100;
-        return totalBoost;
+        return ModifierSystem.MoneyMultipliers(dvid, dvst, dvpd, pp, _secretBuffState);
     }
 
     private double ScienceMultipliers()
     {
-        double scienceBoost = dvid.scienceBoostOwned * dvid.scienceBoostPercent;
-        if (dvst.regulatedAcademia) scienceBoost *= 1.02f + 1.01f * (dvst.fragments - 1);
-        double totalBoost = 1 + scienceBoost;
-        totalBoost *= GlobalBuff();
-        if (dvst.doubleScienceTree) totalBoost *= 2;
-        if (dvst.startHereTree) totalBoost *= 1.2f;
-        if (dvst.producedAsScienceTree)
-        {
-            if (!oracle.saveSettings.prestigePlus.botMultitasking)
-                totalBoost *= dvpd.botDistribution * 100;
-            else
-                totalBoost *= 100;
-        }
-
-        if (dvst.idleSpaceFlight)
-            totalBoost += 0.01 * (dvid.panelsPerSec * dvid.panelLifetime) / 100000000;
-
-        if (dvst.scientificRevolution && dvpd.botDistribution >= .5f ||
-            dvst.scientificRevolution && oracle.saveSettings.prestigePlus.botMultitasking) totalBoost *= 5;
-        if (dvst.superchargedPower) totalBoost *= 1.5;
-        if (dvst.purityOfMind && dvst.skillPointsTree > 0) totalBoost *= 1.5 * dvst.skillPointsTree;
-        totalBoost *= 1 + oracle.saveSettings.prestigePlus.science * 5 / 100;
-        totalBoost *= _secretScienceMulti;
-        if (dvst.coldFusion)
-            totalBoost *= 10f;
-        if (dvst.scientificDominance)
-            totalBoost *= 20f;
-        if (dvst.paragon) totalBoost *= 50f;
-        totalBoost *= dvst.tasteOfPower ? dvst.indulgingInPower ? dvst.addictionToPower ? 0.5f : 0.6f : 0.75f : 1;
-
-        //Dividers
-        if (dvst.stellarObliteration && GalaxiesEngulfed() >= 1) totalBoost /= GalaxiesEngulfed(false, false);
-        if (dvst.economicDominance) totalBoost /= 4f;
-
-        return totalBoost;
+        return ModifierSystem.ScienceMultipliers(dvid, dvst, dvpd, pp, _secretBuffState);
     }
 
     #endregion

@@ -37,6 +37,7 @@ MonoBehaviour:
     assemblyNames:
     - Assembly-CSharp
     - Assembly-CSharp-firstpass
+    - MCPForUnity.Runtime
     - MPUIKit
     - Purchasing.Common
     showAdvancedSettings: 0
