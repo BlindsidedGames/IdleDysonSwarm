@@ -124,7 +124,9 @@ namespace Expansion
             Load();
             Loaded = true;
             Application.targetFrameRate =
-                saveSettings.frameRate != 0 ? saveSettings.frameRate : Screen.currentResolution.refreshRate;
+                saveSettings.frameRate != 0
+                    ? saveSettings.frameRate
+                    : Mathf.RoundToInt((float)Screen.currentResolution.refreshRateRatio.value);
             bool doubleIpUnlocked = saveSettings.doubleIp || PlayerPrefs.GetInt("doubleip", 0) == 1;
             saveSettings.doubleIp = doubleIpUnlocked;
             InvokeRepeating(nameof(Save), 60, 60);

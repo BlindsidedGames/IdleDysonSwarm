@@ -36920,7 +36920,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: -1103.8252, y: 31}
+  m_AnchoredPosition: {x: -1124.1929, y: 31}
   m_SizeDelta: {x: 0, y: 55}
   m_Pivot: {x: 0, y: 1}
 --- !u!114 &223457327
@@ -200595,7 +200595,6 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1205226094}
-  - component: {fileID: 1205226095}
   - component: {fileID: 1205226096}
   - component: {fileID: 1205226097}
   - component: {fileID: 1205226098}
@@ -200630,21 +200629,6 @@ Transform:
   - {fileID: 2047032765}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &1205226095
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1205226093}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 8f9cbee2052be1944a62dbcb0ced7aa0, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  cloudSaveEnabled: 0
-  autoSignIn: 1
-  autoCloudLoad: 1
 --- !u!114 &1205226096
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -311302,7 +311286,7 @@ MonoBehaviour:
   m_HandleRect: {fileID: 321736273}
   m_Direction: 0
   m_Value: 0
-  m_Size: 0.5
+  m_Size: 1
   m_NumberOfSteps: 0
   m_OnValueChanged:
     m_PersistentCalls:

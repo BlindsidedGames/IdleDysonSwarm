@@ -1,18 +1,20 @@
 {
   "dependencies": {
+    "com.coplaydev.unity-mcp": {
+      "version": "https://github.com/CoplayDev/unity-mcp.git?path=/MCPForUnity",
+      "depth": 0,
+      "source": "git",
+      "dependencies": {
+        "com.unity.nuget.newtonsoft-json": "3.0.2"
+      },
+      "hash": "4c9beaffdefadee03c07f00eb3e3b6c5294fc99d"
+    },
     "com.febucci.custom-hierarchy": {
       "version": "https://github.com/febucci/unitypackage-custom-hierarchy.git",
       "depth": 0,
       "source": "git",
       "dependencies": {},
       "hash": "845f7521c4695bc30d9efe0c3168b616cc51454a"
-    },
-    "com.marijnzwemmer.unity-toolbar-extender": {
-      "version": "https://github.com/marijnz/unity-toolbar-extender.git",
-      "depth": 0,
-      "source": "git",
-      "dependencies": {},
-      "hash": "dbd76ed996483d219c39d240f785b1790aa039ed"
     },
     "com.unity.2d.animation": {
       "version": "13.0.2",
@@ -242,7 +244,7 @@
     },
     "com.unity.nuget.newtonsoft-json": {
       "version": "3.2.2",
-      "depth": 2,
+      "depth": 1,
       "source": "registry",
       "dependencies": {},
       "url": "https://packages.unity.com"
