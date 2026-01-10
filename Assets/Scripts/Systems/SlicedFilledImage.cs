@@ -7,6 +7,8 @@ using UnityEngine.UI;
 using UnityEngine.U2D;
 #endif
 
+namespace Blindsided.Utilities
+{
 #if UNITY_EDITOR
 using UnityEditor;
 
@@ -661,4 +663,5 @@ public class SlicedFilledImage : MaskableGraphic, ISerializationCallbackReceiver
     private static readonly List<SlicedFilledImage> m_TrackedTexturelessImages = new();
     private static bool s_Initialized;
 #endif
+}
 }

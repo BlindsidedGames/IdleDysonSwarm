@@ -3,6 +3,7 @@ using TMPro;
 using Unity.Mathematics;
 using UnityEngine;
 using UnityEngine.UI;
+using Blindsided.Utilities;
 using static Expansion.Oracle;
 
 public class ManualBotCreation : MonoBehaviour

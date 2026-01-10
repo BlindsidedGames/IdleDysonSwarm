@@ -287,6 +287,32 @@ namespace Blindsided.Utilities
             return outputTime;
         }
 
+        public static string FormatTimeLarge(double time)
+        {
+            time = Math.Floor(time);
+
+            double days = Math.Floor(time / 86400);
+            double hours = Math.Floor(time / 3600);
+            double minutes = Math.Floor(time / 60);
+
+            int secondsC = (int)time % 60;
+            int minutesC = (int)minutes % 60;
+            int hoursC = (int)hours % 24;
+
+            string secondsS = "Second".Plural(secondsC);
+            string minutesS = "Minute".Plural(minutes);
+            string minutesCS = "Minute".Plural(minutesC);
+            string hoursS = "Hour".Plural(hours);
+            string hoursCS = "Hour".Plural(hoursC);
+            string daysS = "Day".Plural(days);
+
+            if (time > 86400)
+                return $"{days:F0} {daysS} {hoursC:F0} {hoursCS} {minutesC:F0} {minutesS} {secondsC:F0} {secondsS}";
+            if (time > 3600) return $"{hours:F0} {hoursS} {minutesC:F0} {minutesCS} {secondsC:F0} {secondsS}";
+            if (time > 60) return $"{minutes:F0} {minutesS} {secondsC:F0} {secondsS}";
+            return time + " Second".Plural(time);
+        }
+
         public static string Plural(this string str, double num) => str + (num == 1 ? "" : "s");
 
 

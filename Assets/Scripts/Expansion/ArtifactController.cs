@@ -1,5 +1,6 @@
 using TMPro;
 using UnityEngine;
+using Blindsided.Utilities;
 using static Expansion.Oracle;
 
 public class ArtifactController : MonoBehaviour

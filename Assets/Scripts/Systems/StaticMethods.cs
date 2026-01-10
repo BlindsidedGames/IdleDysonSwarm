@@ -1,5 +1,7 @@
 ﻿using static Expansion.Oracle;
 
+using Blindsided.Utilities;
+
 namespace Systems
 {
     public static class StaticMethods

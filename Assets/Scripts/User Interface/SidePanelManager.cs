@@ -5,6 +5,7 @@ using Unity.Mathematics;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
+using Blindsided.Utilities;
 using static Expansion.Oracle;
 
 public class SidePanelManager : MonoBehaviour
