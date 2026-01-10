@@ -1,4 +1,5 @@
 using UnityEngine;
+using Blindsided.Utilities;
 
 public class LoadingBarScript : MonoBehaviour
 {
