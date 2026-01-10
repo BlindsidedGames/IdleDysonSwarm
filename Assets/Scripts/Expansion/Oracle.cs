@@ -50,6 +50,9 @@ namespace Expansion
 
         //public List<int> skillAutoAssignmentList = new();
         public bool Loaded;
+        private bool _isSaveReady;
+        private bool _autoSaveScheduled;
+        private const int CurrentSaveVersion = 1;
 
         #region SaveAndLoadFromClipboard
 
@@ -70,7 +73,8 @@ namespace Expansion
             saveSettings.debugOptions = devOptions;
             saveSettings.doubleIp = doubleIpUnlocked;
             FixSkillpoints();
-            Save();
+            ApplyMigrations();
+            SaveInternal(true);
             SceneManager.LoadScene(0);
         }
 
@@ -112,6 +116,42 @@ namespace Expansion
 
         #endregion
 
+        private void SetSaveReady(bool ready)
+        {
+            _isSaveReady = ready;
+            if (_isSaveReady) ScheduleAutoSave();
+        }
+
+        private void ScheduleAutoSave()
+        {
+            if (_autoSaveScheduled) return;
+            InvokeRepeating(nameof(Save), 60, 60);
+            _autoSaveScheduled = true;
+        }
+
+        private void ApplyMigrations()
+        {
+            if (saveSettings == null) return;
+
+            if (saveSettings.saveVersion < 0) saveSettings.saveVersion = 0;
+
+            if (saveSettings.saveVersion < CurrentSaveVersion)
+            {
+                saveSettings.lastMigratedFromVersion = saveSettings.saveVersion;
+                // TODO: add migration steps here.
+                saveSettings.saveVersion = CurrentSaveVersion;
+            }
+
+            saveSettings.lastSuccessfulLoadUtc = DateTime.UtcNow.ToString(CultureInfo.InvariantCulture);
+        }
+
+        private void SaveInternal(bool force)
+        {
+            if (!_isSaveReady && !force) return;
+            saveSettings.dateQuitString = DateTime.UtcNow.ToString(CultureInfo.InvariantCulture);
+            SaveState();
+        }
+
 
         private void Start()
         {
@@ -121,6 +161,7 @@ namespace Expansion
             foreach (SkillTreeManager skill in allSkillTreeManagers) skill.MakeLines();
             BsNewsGet();
             Loaded = false;
+            SetSaveReady(false);
             Load();
             Loaded = true;
             Application.targetFrameRate =
@@ -129,7 +170,6 @@ namespace Expansion
                     : Mathf.RoundToInt((float)Screen.currentResolution.refreshRateRatio.value);
             bool doubleIpUnlocked = saveSettings.doubleIp || PlayerPrefs.GetInt("doubleip", 0) == 1;
             saveSettings.doubleIp = doubleIpUnlocked;
-            InvokeRepeating(nameof(Save), 60, 60);
             if (lsm != null) lsm.CloseLoadScreen();
 
             bool fileExists = File.Exists(Application.persistentDataPath + "/" + fileName + ".idsOdin");
@@ -272,6 +312,7 @@ namespace Expansion
         public void WipeAllData()
         {
             saveSettings = new SaveDataSettings();
+            saveSettings.saveVersion = CurrentSaveVersion;
             ES3.Save("saveSettings", saveSettings);
             SceneManager.LoadScene(0);
         }
@@ -297,6 +338,7 @@ namespace Expansion
             if (Loaded)
                 saveSettings.firstReality = true;
             saveSettings.doubleIp = doubleIpUnlocked;
+            saveSettings.saveVersion = CurrentSaveVersion;
         }
 
         [ContextMenu("WipeDream1Save")]
@@ -309,8 +351,7 @@ namespace Expansion
         [ContextMenu("Save")]
         public void Save()
         {
-            saveSettings.dateQuitString = DateTime.UtcNow.ToString(CultureInfo.InvariantCulture);
-            SaveState();
+            SaveInternal(false);
         }
 
         public void AttemptSaveRecovery()
@@ -334,6 +375,7 @@ namespace Expansion
         public void Load()
         {
             Loaded = false;
+            SetSaveReady(false);
             WipeSaveData();
 
             if (ES3.KeyExists("saveSettings"))
@@ -359,8 +401,10 @@ namespace Expansion
                 Debug.Log("Made new save");
             }
 
+            ApplyMigrations();
             UpdateSkills?.Invoke();
             StartCoroutine(AwayForCoroutine());
+            SetSaveReady(true);
         }
 
         public void LoadState(string filePath)
@@ -581,6 +625,9 @@ namespace Expansion
         [Serializable]
         public class SaveDataSettings
         {
+            public int saveVersion;
+            public int lastMigratedFromVersion;
+            public string lastSuccessfulLoadUtc;
             public bool hasFixedIP;
             public BuyMode buyMode = BuyMode.Buy1;
             public BuyMode researchBuyMode = BuyMode.Buy1;
