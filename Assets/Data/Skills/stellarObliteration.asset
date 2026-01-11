@@ -1,0 +1,38 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a7893ea89ef8ebd41958ad2a303d4fc9, type: 3}
+  m_Name: stellarObliteration
+  m_EditorClassIdentifier: Assembly-CSharp::GameData.SkillDefinition
+  id: stellarObliteration
+  displayName: Stellar Obliteration
+  description: Obliterating even more Bots greatly improve the rate at which you
+    generate artificial Planets, however this is costly.
+  technicalDescription: <color=#A3FFFE>Stellar Sacrifices Galaxies</color> are <color=#A3FFFE>1000x</color>
+    better, however you <color=#A3FFFE>divide</color> your <color=#A3FFFE>Cash</color>,
+    and <color=#A3FFFE>Science</color> by <color=#A3FFFE>Stellar Galaxies</color>.
+  cost: 2
+  refundable: 1
+  isFragment: 0
+  purityLine: 0
+  terraLine: 0
+  powerLine: 0
+  paragadeLine: 0
+  stellarLine: 1
+  firstRunBlocked: 0
+  requiredSkillIds:
+  - stellarSacrifices
+  shadowRequirementIds: []
+  exclusiveWithIds: []
+  unrefundableWithIds: []
+  effects:
+  - {fileID: 11400000, guid: befe1f8ee5ad20f4288b666e9cd5e4a6, type: 2}
+  - {fileID: 11400000, guid: d823fa96bc6a2064d913e5591333cdd8, type: 2}

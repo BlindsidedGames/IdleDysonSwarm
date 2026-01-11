@@ -1,0 +1,38 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a7893ea89ef8ebd41958ad2a303d4fc9, type: 3}
+  m_Name: panelWarranty
+  m_EditorClassIdentifier: Assembly-CSharp::GameData.SkillDefinition
+  id: panelWarranty
+  displayName: Panel Warranty
+  description: You find a fragment of another universe. You use this knowledge to
+    improve your Solar Panels, I wonder what other parts of this universe you can
+    find?
+  technicalDescription: <color=#A3FFFE>+5s</color> of Panel Lifetime. Double this
+    bonus for every other purchased <color=#A3FFFE>Fragment Skill</color>. (<color=#A3FFFE>10s</color>
+    for <color=#A3FFFE>1</color>, <color=#91DD8F>40s</color> for <color=#91DD8F>3</color>)
+  cost: 1
+  refundable: 1
+  isFragment: 1
+  purityLine: 0
+  terraLine: 0
+  powerLine: 0
+  paragadeLine: 0
+  stellarLine: 0
+  firstRunBlocked: 0
+  requiredSkillIds:
+  - panelLifetime20Tree
+  shadowRequirementIds: []
+  exclusiveWithIds: []
+  unrefundableWithIds: []
+  effects:
+  - {fileID: 11400000, guid: 0b0ea3ad2e173d44da410bd0f688d62b, type: 2}

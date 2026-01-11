@@ -1,0 +1,38 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a7893ea89ef8ebd41958ad2a303d4fc9, type: 3}
+  m_Name: shouldersOfTheEnlightened
+  m_EditorClassIdentifier: Assembly-CSharp::GameData.SkillDefinition
+  id: shouldersOfTheEnlightened
+  displayName: Shoulders of the Enlightened
+  description: The "Shoulders of the Enlightened" are a pair of mysterious and powerful
+    artifacts that grant immense knowledge and understanding to their bearer, along
+    with the ability to generate great wealth.
+  technicalDescription: <color=#A3FFFE>Scientific Planets</color> also produces <color=#A3FFFE>Cash
+    Boosts</color>. Mutually Exclusive with <color=#A3FFFE>Shoulders of the Precursors</color>.
+  cost: 1
+  refundable: 0
+  isFragment: 0
+  purityLine: 0
+  terraLine: 0
+  powerLine: 0
+  paragadeLine: 0
+  stellarLine: 0
+  firstRunBlocked: 1
+  requiredSkillIds:
+  - shouldersOfGiants
+  shadowRequirementIds: []
+  exclusiveWithIds:
+  - shouldersOfPrecursors
+  unrefundableWithIds: []
+  effects:
+  - {fileID: 11400000, guid: a4c1df6e106aff741a4e7b0080af346e, type: 2}

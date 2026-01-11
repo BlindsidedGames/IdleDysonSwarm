@@ -1,0 +1,42 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a7893ea89ef8ebd41958ad2a303d4fc9, type: 3}
+  m_Name: purityOfSEssence
+  m_EditorClassIdentifier: Assembly-CSharp::GameData.SkillDefinition
+  id: purityOfSEssence
+  displayName: Purity of Essence
+  description: You transcend beyond reality, consuming everything in your path you
+    become one with the Universe.
+  technicalDescription: Gain a <color=#A3FFFE>42%</color> bonus to <color=#A3FFFE>Everything</color>
+    for each unspent <color=#A3FFFE>Skill Point</color>.
+  cost: 3
+  refundable: 1
+  isFragment: 0
+  purityLine: 1
+  terraLine: 0
+  powerLine: 0
+  paragadeLine: 0
+  stellarLine: 0
+  firstRunBlocked: 0
+  requiredSkillIds:
+  - purityOfBody
+  shadowRequirementIds: []
+  exclusiveWithIds: []
+  unrefundableWithIds: []
+  effects:
+  - {fileID: 11400000, guid: 383cdc0d4554f304c8cf6a977a328d89, type: 2}
+  - {fileID: 11400000, guid: b0dc4b79b0a9d3a42a17d5cf86d79ea7, type: 2}
+  - {fileID: 11400000, guid: 8a96e929541ef404e91acbcd1f1f87ef, type: 2}
+  - {fileID: 11400000, guid: 246280edd2e8dc445a0dbc9570042cbf, type: 2}
+  - {fileID: 11400000, guid: ffb45376168c68743b6d16afe1d9d8bd, type: 2}
+  - {fileID: 11400000, guid: 1dcda61ffac0e074a8d23e7423708322, type: 2}
+  - {fileID: 11400000, guid: fc55944bd270385428a099d37f2caf16, type: 2}

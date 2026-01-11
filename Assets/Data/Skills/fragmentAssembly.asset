@@ -1,0 +1,40 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a7893ea89ef8ebd41958ad2a303d4fc9, type: 3}
+  m_Name: fragmentAssembly
+  m_EditorClassIdentifier: Assembly-CSharp::GameData.SkillDefinition
+  id: fragmentAssembly
+  displayName: Fragment Assembly
+  description: As you begin to piece the fragments together, you manage to decipher
+    ways to improve all of your buildings.
+  technicalDescription: 'If you have at least <color=#A3FFFE>4</color> other <color=#A3FFFE>Fragment
+    Skills</color> purchased, <color=#A3FFFE>Triple</color> the production of all
+    <color=#A3FFFE>Buildings</color>. '
+  cost: 1
+  refundable: 1
+  isFragment: 1
+  purityLine: 0
+  terraLine: 0
+  powerLine: 0
+  paragadeLine: 0
+  stellarLine: 0
+  firstRunBlocked: 0
+  requiredSkillIds: []
+  shadowRequirementIds: []
+  exclusiveWithIds: []
+  unrefundableWithIds: []
+  effects:
+  - {fileID: 11400000, guid: d402e61ab41a01d4092131a495035aaa, type: 2}
+  - {fileID: 11400000, guid: 3b7637e0dbe123145a63956c4c0efc31, type: 2}
+  - {fileID: 11400000, guid: 84ef93104dfacc8478f275d71d6134ab, type: 2}
+  - {fileID: 11400000, guid: 874ec36e29e63f446abbbf2f2d18f430, type: 2}
+  - {fileID: 11400000, guid: bda138beff74abe469f76ad0ff2ddd6e, type: 2}

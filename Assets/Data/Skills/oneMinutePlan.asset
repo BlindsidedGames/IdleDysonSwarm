@@ -1,0 +1,39 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a7893ea89ef8ebd41958ad2a303d4fc9, type: 3}
+  m_Name: oneMinutePlan
+  m_EditorClassIdentifier: Assembly-CSharp::GameData.SkillDefinition
+  id: oneMinutePlan
+  displayName: One Minute Plan
+  description: Harness the ancient power of the One Minute Plan for boosted production.
+    This timeless strategy offers increased efficiency and solidifies your place
+    as a master of the universe.
+  technicalDescription: If <color=#A3FFFE>Panel Lifetime</color> is below a minute,
+    <color=#A3FFFE>1.5x</color> Assembly Line production. Otherwise, <color=#A3FFFE>5x</color>
+    Assembly Line Production
+  cost: 1
+  refundable: 1
+  isFragment: 0
+  purityLine: 0
+  terraLine: 0
+  powerLine: 0
+  paragadeLine: 0
+  stellarLine: 0
+  firstRunBlocked: 0
+  requiredSkillIds:
+  - worthySacrifice
+  - dysonSubsidies
+  shadowRequirementIds: []
+  exclusiveWithIds: []
+  unrefundableWithIds: []
+  effects:
+  - {fileID: 11400000, guid: 3985eb583eb34db43963f9bb92ea22de, type: 2}

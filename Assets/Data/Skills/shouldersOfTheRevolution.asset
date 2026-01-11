@@ -1,0 +1,40 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a7893ea89ef8ebd41958ad2a303d4fc9, type: 3}
+  m_Name: shouldersOfTheRevolution
+  m_EditorClassIdentifier: Assembly-CSharp::GameData.SkillDefinition
+  id: shouldersOfTheRevolution
+  displayName: 'Shoulders of the Revolution '
+  description: The "Shoulders of the Revolution" is a phrase that refers to a powerful
+    financial system that harnesses the latest advancements in science to dramatically
+    increase wealth. It is said to be built upon the innovations and insights of
+    previous generations of thinkers, and it represents a new era of prosperity and
+    progress for those who use it.
+  technicalDescription: Gain <color=#A3FFFE>1%</color> additional <color=#A3FFFE>Cash</color>
+    per <color=#A3FFFE>Science Boost</color>.
+  cost: 1
+  refundable: 0
+  isFragment: 0
+  purityLine: 0
+  terraLine: 0
+  powerLine: 0
+  paragadeLine: 0
+  stellarLine: 0
+  firstRunBlocked: 1
+  requiredSkillIds:
+  - shouldersOfTheEnlightened
+  shadowRequirementIds: []
+  exclusiveWithIds:
+  - shouldersOfPrecursors
+  unrefundableWithIds: []
+  effects:
+  - {fileID: 11400000, guid: d9ff5af0155b92b4e90fd687c29e7e51, type: 2}

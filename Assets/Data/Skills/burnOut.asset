@@ -1,0 +1,37 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a7893ea89ef8ebd41958ad2a303d4fc9, type: 3}
+  m_Name: burnOut
+  m_EditorClassIdentifier: Assembly-CSharp::GameData.SkillDefinition
+  id: burnOut
+  displayName: Burnout
+  description: You experiment with lower orbits. The heat of the sun degrades your
+    panels faster but the energy output is greatly improved!
+  technicalDescription: Shorten <color=#A3FFFE>Panel Lifetime</color> by <color=#A3FFFE>5s</color>,
+    and <color=#A3FFFE>triple</color> panel production.
+  cost: 1
+  refundable: 1
+  isFragment: 0
+  purityLine: 0
+  terraLine: 0
+  powerLine: 0
+  paragadeLine: 0
+  stellarLine: 0
+  firstRunBlocked: 0
+  requiredSkillIds:
+  - manualLabour
+  shadowRequirementIds: []
+  exclusiveWithIds: []
+  unrefundableWithIds: []
+  effects:
+  - {fileID: 11400000, guid: 0c6d04360d6c58b409d410377d56b9c8, type: 2}
+  - {fileID: 11400000, guid: a154ca4f91037474d9a6345ebc6ce4c3, type: 2}

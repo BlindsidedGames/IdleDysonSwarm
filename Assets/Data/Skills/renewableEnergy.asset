@@ -1,0 +1,40 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a7893ea89ef8ebd41958ad2a303d4fc9, type: 3}
+  m_Name: renewableEnergy
+  m_EditorClassIdentifier: Assembly-CSharp::GameData.SkillDefinition
+  id: renewableEnergy
+  displayName: Renewable Energy
+  description: 'Renewables surge in popularity leading you to focus on panel lifetime
+    improvements. '
+  technicalDescription: Starting at <color=#A3FFFE>10 million</color> worker bots,
+    <color=#A3FFFE>panel lifetime</color> increases by <color=#A3FFFE>10%</color>.
+    This increases by <color=#A3FFFE>10%</color> each time you multiply your workers
+    by <color=#A3FFFE>10</color>. <br><br> <color=#A3FFFE>lifetime</color> *= <color=#A3FFFE>1</color>
+    + <color=#A3FFFE>0.1</color> * <color=#A3FFFE>log10(<color=#91DD8F>Workers /
+    1e6</color>)
+  cost: 1
+  refundable: 1
+  isFragment: 0
+  purityLine: 0
+  terraLine: 0
+  powerLine: 0
+  paragadeLine: 0
+  stellarLine: 0
+  firstRunBlocked: 0
+  requiredSkillIds:
+  - artificiallyEnhancedPanels
+  shadowRequirementIds: []
+  exclusiveWithIds: []
+  unrefundableWithIds: []
+  effects:
+  - {fileID: 11400000, guid: b97584851de773745899256202cff806, type: 2}

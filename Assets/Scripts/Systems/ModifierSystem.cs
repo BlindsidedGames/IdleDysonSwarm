@@ -1,4 +1,5 @@
 using System;
+using Systems.Stats;
 using static Expansion.Oracle;
 
 namespace Systems
@@ -118,7 +119,102 @@ namespace Systems
             }
         }
 
+        public static SecretBuffState BuildSecretBuffState(DysonVersePrestigeData dvpd)
+        {
+            var secrets = new SecretBuffState();
+            if (dvpd == null) return secrets;
+
+            switch (dvpd.secretsOfTheUniverse)
+            {
+                case 27:
+                    secrets.AiMulti = 42;
+                    goto case 26;
+                case 26:
+                    secrets.AiMulti = 3;
+                    goto case 25;
+                case 25:
+                    secrets.CashMulti = 8;
+                    goto case 24;
+                case 24:
+                    secrets.AiMulti = 2.5;
+                    goto case 23;
+                case 23:
+                    secrets.AssemblyMulti = 7;
+                    goto case 22;
+                case 22:
+                    secrets.ScienceMulti = 10;
+                    goto case 21;
+                case 21:
+                    secrets.ServerMulti = 3;
+                    goto case 20;
+                case 20:
+                    secrets.ServerMulti = 2;
+                    goto case 19;
+                case 19:
+                    secrets.CashMulti = 6;
+                    goto case 18;
+                case 18:
+                    secrets.PlanetMulti = 5;
+                    goto case 17;
+                case 17:
+                    secrets.PlanetMulti = 2;
+                    goto case 16;
+                case 16:
+                    secrets.AssemblyMulti = 2;
+                    goto case 15;
+                case 15:
+                    secrets.ScienceMulti = 8;
+                    goto case 14;
+                case 14:
+                    goto case 13;
+                case 13:
+                    goto case 12;
+                case 12:
+                    goto case 11;
+                case 11:
+                    secrets.ScienceMulti = 6;
+                    goto case 10;
+                case 10:
+                    secrets.ScienceMulti = 4;
+                    goto case 9;
+                case 9:
+                    goto case 8;
+                case 8:
+                    secrets.CashMulti = 4;
+                    goto case 7;
+                case 7:
+                    goto case 6;
+                case 6:
+                    secrets.ScienceMulti = 2;
+                    goto case 5;
+                case 5:
+                    goto case 4;
+                case 4:
+                    goto case 3;
+                case 3:
+                    goto case 2;
+                case 2:
+                    secrets.CashMulti = 2;
+                    goto case 1;
+                case 1:
+                    break;
+            }
+
+            return secrets;
+        }
+
         public static void UpdatePanelLifetime(DysonVerseInfinityData dvid, DysonVerseSkillTreeData dvst,
+            DysonVersePrestigeData dvpd, PrestigePlus pp)
+        {
+            if (GlobalStatPipeline.TryCalculatePanelLifetime(dvid, dvst, dvpd, pp, out StatResult result))
+            {
+                dvid.panelLifetime = result.Value;
+                return;
+            }
+            dvid.panelLifetime = CalculatePanelLifetimeLegacy(dvid, dvst, dvpd, pp);
+        }
+
+        internal static double CalculatePanelLifetimeLegacy(DysonVerseInfinityData dvid, DysonVerseSkillTreeData dvst,
             DysonVersePrestigeData dvpd, PrestigePlus pp)
         {
             double lifetime = 10;
@@ -149,18 +245,33 @@ namespace Systems
                     lifetime *= 10;
             }
             if (dvst.worthySacrifice) lifetime /= 2;
-            dvid.panelLifetime = lifetime;
+            return lifetime;
         }
 
         public static void UpdatePlanetMulti(DysonVerseInfinityData dvid, DysonVerseSkillTreeData dvst,
+            DysonVersePrestigeData dvpd, PrestigePlus pp, SecretBuffState secrets, double maxInfinityBuff)
+        {
+            if (FacilityModifierPipeline.TryCalculatePlanetModifier(dvid, dvst, dvpd, pp, secrets, maxInfinityBuff,
+                    out StatResult result))
+            {
+                dvid.planetModifier = result.Value;
+                return;
+            }
+
+            dvid.planetModifier = CalculatePlanetModifierLegacy(dvid, dvst, dvpd, pp, secrets, maxInfinityBuff);
+        }
+
+        internal static double CalculatePlanetModifierLegacy(DysonVerseInfinityData dvid, DysonVerseSkillTreeData dvst,
             DysonVersePrestigeData dvpd, PrestigePlus pp, SecretBuffState secrets, double maxInfinityBuff)
         {
             double boost1 = dvid.planetUpgradeOwned * dvid.planetUpgradePercent;
             double totalBoost = 1 + boost1;
             totalBoost *= GlobalBuff(dvst, pp);
             if (dvst.planetsTree) totalBoost *= 2;
-            if ((dvst.terraIrradiant ? dvid.planets[1] * 12 : dvid.planets[1]) >= 50 && !dvst.supernova) totalBoost *= 2;
-            if ((dvst.terraIrradiant ? dvid.planets[1] * 12 : dvid.planets[1]) >= 100 && !dvst.supernova) totalBoost *= 2;
+            if ((dvst.terraIrradiant ? dvid.planets[1] * 12 : dvid.planets[1]) >= 50 && !dvst.supernova)
+                totalBoost *= 2;
+            if ((dvst.terraIrradiant ? dvid.planets[1] * 12 : dvid.planets[1]) >= 100 && !dvst.supernova)
+                totalBoost *= 2;
             if (dvst.fragmentAssembly && dvst.fragments > 4) totalBoost *= 3;
 
             if ((dvst.terraIrradiant ? dvid.planets[1] * 12 : dvid.planets[1]) >
@@ -187,16 +298,29 @@ namespace Systems
             if (dvst.dimensionalCatCables) totalBoost *= 0.75f;
 
             if (dvpd.infinityPoints >= 5) totalBoost *= 1 + Math.Clamp(dvpd.infinityPoints, 0f, maxInfinityBuff);
-            totalBoost *= secrets.PlanetMulti;
+            totalBoost *= secrets != null ? secrets.PlanetMulti : 1;
 
             if (dvst.endOfTheLine) totalBoost /= 2;
             if (dvst.agressiveAlgorithms) totalBoost /= 3;
 
-            dvid.planetModifier = totalBoost;
+            return totalBoost;
         }
 
         public static void UpdateDataCenterMulti(DysonVerseInfinityData dvid, DysonVerseSkillTreeData dvst,
             DysonVersePrestigeData dvpd, PrestigePlus pp, double maxInfinityBuff)
+        {
+            if (FacilityModifierPipeline.TryCalculateDataCenterModifier(dvid, dvst, dvpd, pp, maxInfinityBuff,
+                    out StatResult result))
+            {
+                dvid.dataCenterModifier = result.Value;
+                return;
+            }
+
+            dvid.dataCenterModifier = CalculateDataCenterModifierLegacy(dvid, dvst, dvpd, pp, maxInfinityBuff);
+        }
+
+        internal static double CalculateDataCenterModifierLegacy(DysonVerseInfinityData dvid,
+            DysonVerseSkillTreeData dvst, DysonVersePrestigeData dvpd, PrestigePlus pp, double maxInfinityBuff)
         {
             double terraAmount = dvst.terraFirma
                 ? dvid.dataCenters[1] + (dvst.terraIrradiant ? dvid.planets[1] * 12 : dvid.planets[1])
@@ -224,15 +348,27 @@ namespace Systems
             if (dvst.hypercubeNetworks && dvid.servers[0] + dvid.servers[1] > 1)
                 totalBoost *= 1 + 0.1f * Math.Log10(dvid.servers[0] + dvid.servers[1]);
 
-
             if (dvpd.infinityPoints >= 4) totalBoost *= 1 + Math.Clamp(dvpd.infinityPoints, 0f, maxInfinityBuff);
 
             if (dvst.agressiveAlgorithms) totalBoost /= 3;
 
-            dvid.dataCenterModifier = totalBoost;
+            return totalBoost;
         }
 
         public static void UpdateServerMulti(DysonVerseInfinityData dvid, DysonVerseSkillTreeData dvst,
+            DysonVersePrestigeData dvpd, PrestigePlus pp, SecretBuffState secrets, double maxInfinityBuff)
+        {
+            if (FacilityModifierPipeline.TryCalculateServerModifier(dvid, dvst, dvpd, pp, secrets, maxInfinityBuff,
+                    out StatResult result))
+            {
+                dvid.serverModifier = result.Value;
+                return;
+            }
+
+            dvid.serverModifier = CalculateServerModifierLegacy(dvid, dvst, dvpd, pp, secrets, maxInfinityBuff);
+        }
+
+        internal static double CalculateServerModifierLegacy(DysonVerseInfinityData dvid, DysonVerseSkillTreeData dvst,
             DysonVersePrestigeData dvpd, PrestigePlus pp, SecretBuffState secrets, double maxInfinityBuff)
         {
             double terraAmount = dvst.terraEculeo
@@ -265,13 +401,26 @@ namespace Systems
                     : 0);
 
             if (dvpd.infinityPoints >= 3) totalBoost *= 1 + Math.Clamp(dvpd.infinityPoints, 0f, maxInfinityBuff);
-            totalBoost *= secrets.ServerMulti;
+            totalBoost *= secrets != null ? secrets.ServerMulti : 1;
             if (dvst.parallelProcessing && dvid.servers[0] + dvid.servers[1] > 1)
                 totalBoost *= 1f + 0.05f * Math.Log(dvid.servers[0] + dvid.servers[1], 2);
-            dvid.serverModifier = totalBoost;
+            return totalBoost;
         }
 
         public static void UpdateManagerMulti(DysonVerseInfinityData dvid, DysonVerseSkillTreeData dvst,
+            DysonVersePrestigeData dvpd, PrestigePlus pp, SecretBuffState secrets, double maxInfinityBuff)
+        {
+            if (FacilityModifierPipeline.TryCalculateManagerModifier(dvid, dvst, dvpd, pp, secrets, maxInfinityBuff,
+                    out StatResult result))
+            {
+                dvid.managerModifier = result.Value;
+                return;
+            }
+
+            dvid.managerModifier = CalculateManagerModifierLegacy(dvid, dvst, dvpd, pp, secrets, maxInfinityBuff);
+        }
+
+        internal static double CalculateManagerModifierLegacy(DysonVerseInfinityData dvid, DysonVerseSkillTreeData dvst,
             DysonVersePrestigeData dvpd, PrestigePlus pp, SecretBuffState secrets, double maxInfinityBuff)
         {
             double terraAmount = dvst.terraInfirma
@@ -299,13 +448,28 @@ namespace Systems
             if (dvst.agressiveAlgorithms) totalBoost *= 3;
 
             if (dvpd.infinityPoints >= 2) totalBoost *= 1 + Math.Clamp(dvpd.infinityPoints, 0f, maxInfinityBuff);
-            totalBoost *= secrets.AiMulti;
+            totalBoost *= secrets != null ? secrets.AiMulti : 1;
 
-            dvid.managerModifier = totalBoost;
+            return totalBoost;
         }
 
         public static void UpdateAssemblyLineMulti(DysonVerseInfinityData dvid, DysonVerseSkillTreeData dvst,
             DysonVersePrestigeData dvpd, PrestigePlus pp, SecretBuffState secrets, double maxInfinityBuff)
+        {
+            if (FacilityModifierPipeline.TryCalculateAssemblyLineModifier(dvid, dvst, dvpd, pp, secrets,
+                    maxInfinityBuff, out StatResult result))
+            {
+                dvid.assemblyLineModifier = result.Value;
+                return;
+            }
+
+            dvid.assemblyLineModifier =
+                CalculateAssemblyLineModifierLegacy(dvid, dvst, dvpd, pp, secrets, maxInfinityBuff);
+        }
+
+        internal static double CalculateAssemblyLineModifierLegacy(DysonVerseInfinityData dvid,
+            DysonVerseSkillTreeData dvst, DysonVersePrestigeData dvpd, PrestigePlus pp, SecretBuffState secrets,
+            double maxInfinityBuff)
         {
             double terraAmount = dvst.terraNullius
                 ? dvid.assemblyLines[1] + (dvst.terraIrradiant ? dvid.planets[1] * 12 : dvid.planets[1])
@@ -349,20 +513,34 @@ namespace Systems
             if (dvst.purityOfBody && dvst.skillPointsTree > 0) totalBoost *= 1.25f * dvst.skillPointsTree;
 
             totalBoost *= 1 + Math.Clamp(dvpd.infinityPoints, 0f, maxInfinityBuff);
-            totalBoost *= secrets.AssemblyMulti;
+            totalBoost *= secrets != null ? secrets.AssemblyMulti : 1;
 
-            dvid.assemblyLineModifier = totalBoost;
+            return totalBoost;
         }
 
         public static void UpdateSciencePerSec(DysonVerseInfinityData dvid, DysonVerseSkillTreeData dvst,
             DysonVersePrestigeData dvpd, PrestigePlus pp, SecretBuffState secrets)
         {
+            if (GlobalStatPipeline.TryCalculateScienceMultiplier(dvid, dvst, dvpd, pp, secrets,
+                    out StatResult result))
+            {
+                dvid.scienceMulti = result.Value;
+                return;
+            }
+
             dvid.scienceMulti = ScienceMultipliers(dvid, dvst, dvpd, pp, secrets);
         }
 
         public static void UpdateMoneyPerSecMulti(DysonVerseInfinityData dvid, DysonVerseSkillTreeData dvst,
             DysonVersePrestigeData dvpd, PrestigePlus pp, SecretBuffState secrets)
         {
+            if (GlobalStatPipeline.TryCalculateMoneyMultiplier(dvid, dvst, dvpd, pp, secrets,
+                    out StatResult result))
+            {
+                dvid.moneyMulti = result.Value;
+                return;
+            }
+
             dvid.moneyMulti = dvst.shouldersOfPrecursors
                 ? ScienceMultipliers(dvid, dvst, dvpd, pp, secrets)
                 : MoneyMultipliers(dvid, dvst, dvpd, pp, secrets);

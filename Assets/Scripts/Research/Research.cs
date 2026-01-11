@@ -1,6 +1,7 @@
 ﻿using System;
 using Buildings;
 using UnityEngine;
+using GameData;
 using static Blindsided.Utilities.CalcUtils;
 using static Expansion.Oracle;
 
@@ -13,11 +14,16 @@ namespace Research
         public double exponent;
         public string nameText;
         public BuildingReferences buildingReferences;
+        private ResearchDefinition _definition;
+
+        public string ResearchIdValue => ResearchId;
 
         public virtual double Percent => throw new NotImplementedException();
         public double BoostPercent => CurrentLevel * Percent * 100;
         public virtual bool AutoBuy => throw new NotImplementedException();
         public bool DoAutoBuy => AutoBuy && Affordable() > 0;
+
+        protected virtual string ResearchId => string.Empty;
 
         public virtual double CurrentLevel {
             get => throw new NotImplementedException();
@@ -37,6 +43,7 @@ namespace Research
 
         public void Start()
         {
+            ApplyDefinitionDefaults();
             buildingReferences.purchaseButton.onClick.AddListener(PurchaseBuilding);
         }
         public virtual void Update()
@@ -108,6 +115,36 @@ namespace Research
             buildingReferences.amountToBuy.text = $"{(AutoBuy ? "Auto" : $"+{NumberToBuy()}")}";
             buildingReferences.buttonCost.text = $"<sprite=1>{FormatNumber(Cost())}";
             buildingReferences.building.text = OwnedText;
+        }
+
+        private void ApplyDefinitionDefaults()
+        {
+            if (!string.IsNullOrEmpty(ResearchId))
+            {
+                GameDataRegistry registry = GameDataRegistry.Instance;
+                if (registry != null && registry.researchDatabase != null &&
+                    registry.researchDatabase.TryGet(ResearchId, out ResearchDefinition definition))
+                {
+                    _definition = definition;
+                }
+            }
+
+            if (_definition == null) return;
+
+            if (_definition.baseCost > 0)
+            {
+                baseCost = _definition.baseCost;
+            }
+
+            if (_definition.exponent > 0)
+            {
+                exponent = _definition.exponent;
+            }
+
+            if (!string.IsNullOrEmpty(_definition.displayName))
+            {
+                nameText = _definition.displayName;
+            }
         }
     }
 }

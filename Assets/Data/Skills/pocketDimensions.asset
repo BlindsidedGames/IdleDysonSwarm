@@ -1,0 +1,40 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a7893ea89ef8ebd41958ad2a303d4fc9, type: 3}
+  m_Name: pocketDimensions
+  m_EditorClassIdentifier: Assembly-CSharp::GameData.SkillDefinition
+  id: pocketDimensions
+  displayName: Pocket Dimensions
+  description: Discovery of pocket dimensions allow multiple Data Centers to be placed
+    in layers. Ya know, like Onions. Or is it more like a TARDIS?
+  technicalDescription: Produces <color=#91DD8F>Data Centers</color> based on <color=#91DD8F>Log10(<color=#A3FFFE>Worker
+    Bots)</color></color>  <br><br>Starting at <color=#A3FFFE>10</color> Worker Bots,
+    you gain <color=#A3FFFE>1 Data Center</color> per second, this increases by <color=#A3FFFE>1</color>
+    each time you multiply your <color=#A3FFFE>Workers</color> by <color=#A3FFFE>10</color>.
+  cost: 1
+  refundable: 1
+  isFragment: 0
+  purityLine: 0
+  terraLine: 0
+  powerLine: 0
+  paragadeLine: 0
+  stellarLine: 0
+  firstRunBlocked: 0
+  requiredSkillIds:
+  - parallelProcessing
+  - dataCenterTree
+  shadowRequirementIds: []
+  exclusiveWithIds: []
+  unrefundableWithIds:
+  - shouldersOfGiants
+  effects:
+  - {fileID: 11400000, guid: 4e5ac607a955f584f9c616e0399d990a, type: 2}

@@ -4,6 +4,7 @@ using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 using Blindsided.Utilities;
+using GameData;
 using static Expansion.Oracle;
 
 
@@ -94,22 +95,22 @@ public class PanelLifetime1 : MonoBehaviour
                 }
                 case 1:
                 {
-                    dvid.panelLifetime1 = true;
+                    SetResearchLevel(ResearchIdMap.PanelLifetime1, 1);
                     break;
                 }
                 case 2:
                 {
-                    dvid.panelLifetime2 = true;
+                    SetResearchLevel(ResearchIdMap.PanelLifetime2, 1);
                     break;
                 }
                 case 3:
                 {
-                    dvid.panelLifetime3 = true;
+                    SetResearchLevel(ResearchIdMap.PanelLifetime3, 1);
                     break;
                 }
                 case 4:
                 {
-                    dvid.panelLifetime4 = true;
+                    SetResearchLevel(ResearchIdMap.PanelLifetime4, 1);
                     break;
                 }
             }

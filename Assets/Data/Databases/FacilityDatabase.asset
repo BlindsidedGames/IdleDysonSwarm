@@ -1,0 +1,20 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f6f0c67f0d0a18f48a95fc573a0f467a, type: 3}
+  m_Name: FacilityDatabase
+  m_EditorClassIdentifier: Assembly-CSharp::GameData.FacilityDatabase
+  facilities:
+  - {fileID: 11400000, guid: e33bf44da19bf22449dbdf3c94f15e6b, type: 2}
+  - {fileID: 11400000, guid: 7602f0b091148304d9802121f8a4a0bb, type: 2}
+  - {fileID: 11400000, guid: 0d42beb46519a2f48814df8498e0ebf9, type: 2}
+  - {fileID: 11400000, guid: e3d821dc202306147ad5afb2da037fbb, type: 2}
+  - {fileID: 11400000, guid: b832bf3217d7be347867ebdb99d047aa, type: 2}

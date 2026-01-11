@@ -1,0 +1,37 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a7893ea89ef8ebd41958ad2a303d4fc9, type: 3}
+  m_Name: clusterNetworking
+  m_EditorClassIdentifier: Assembly-CSharp::GameData.SkillDefinition
+  id: clusterNetworking
+  displayName: Cluster Networking
+  description: Create dedicated server 'clusters' for your own benefit.
+  technicalDescription: For every <color=#91DD8F>log10(<color=#A3FFFE>Servers</color>)</color>,
+    <color=#A3FFFE>Servers</color> are <color=#A3FFFE>5%</color> better, and <color=#A3FFFE>Server</color>
+    Production from <color=#A3FFFE>Rudimentary Singularity</color> is <color=#A3FFFE>5%</color>
+    stronger.
+  cost: 1
+  refundable: 1
+  isFragment: 0
+  purityLine: 0
+  terraLine: 0
+  powerLine: 0
+  paragadeLine: 0
+  stellarLine: 0
+  firstRunBlocked: 1
+  requiredSkillIds:
+  - rudimentarySingularity
+  shadowRequirementIds: []
+  exclusiveWithIds: []
+  unrefundableWithIds: []
+  effects:
+  - {fileID: 11400000, guid: 66a296c393978a94bad84543cc8b0d86, type: 2}

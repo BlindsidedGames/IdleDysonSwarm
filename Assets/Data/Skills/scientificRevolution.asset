@@ -1,0 +1,35 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a7893ea89ef8ebd41958ad2a303d4fc9, type: 3}
+  m_Name: scientificRevolution
+  m_EditorClassIdentifier: Assembly-CSharp::GameData.SkillDefinition
+  id: scientificRevolution
+  displayName: Scientific Revolution
+  description: Self improving bots create a surge in scientific progress.
+  technicalDescription: Multiplies <color=#A3FFFE>Science</color> by <color=#A3FFFE>5</color>
+    while you have at least <color=#A3FFFE>50%</color> of bots assigned to Science.
+  cost: 1
+  refundable: 1
+  isFragment: 0
+  purityLine: 0
+  terraLine: 0
+  powerLine: 0
+  paragadeLine: 0
+  stellarLine: 0
+  firstRunBlocked: 0
+  requiredSkillIds:
+  - doubleScienceTree
+  shadowRequirementIds: []
+  exclusiveWithIds: []
+  unrefundableWithIds: []
+  effects:
+  - {fileID: 11400000, guid: 039eac2dfae869b418b0afafc5a2a730, type: 2}

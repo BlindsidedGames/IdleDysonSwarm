@@ -1,0 +1,39 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a7893ea89ef8ebd41958ad2a303d4fc9, type: 3}
+  m_Name: panelMaintenance
+  m_EditorClassIdentifier: Assembly-CSharp::GameData.SkillDefinition
+  id: panelMaintenance
+  displayName: Panel Maintenance
+  description: Panel Maintenance increases the lifespan of panels by dedicating robotic
+    resources to its upkeep. The more maintenance efforts, the longer the panels
+    will last and function effectively. This process extends the life of panels and
+    ensures optimal performance, reducing the risk of failures and improving system
+    reliability.
+  technicalDescription: Add <color=#A3FFFE>1</color> second of <color=#A3FFFE>Panel
+    Lifetime</color> for every <color=#A3FFFE>%</color> of <color=#A3FFFE>Workers</color>.
+  cost: 3
+  refundable: 1
+  isFragment: 0
+  purityLine: 0
+  terraLine: 0
+  powerLine: 0
+  paragadeLine: 1
+  stellarLine: 0
+  firstRunBlocked: 0
+  requiredSkillIds:
+  - manualLabour
+  shadowRequirementIds: []
+  exclusiveWithIds: []
+  unrefundableWithIds: []
+  effects:
+  - {fileID: 11400000, guid: 2863bb1a2051127498582ed2d9ee6a0e, type: 2}

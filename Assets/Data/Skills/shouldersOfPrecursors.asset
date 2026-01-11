@@ -1,0 +1,40 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a7893ea89ef8ebd41958ad2a303d4fc9, type: 3}
+  m_Name: shouldersOfPrecursors
+  m_EditorClassIdentifier: Assembly-CSharp::GameData.SkillDefinition
+  id: shouldersOfPrecursors
+  displayName: Shoulders of Precursors
+  description: The Shoulders of Precursors is a powerful artifact with the ability
+    to multiply wealth and knowledge. It negates the effects of other wealth multipliers
+    and also affects cash. This mysterious relic from a lost civilization is highly
+    valuable and sought after. Its true potential remains unknown.
+  technicalDescription: Disable <color=#A3FFFE>Cash Multipliers</color>, <color=#A3FFFE>Science
+    Multipliers</color> additionally affect <color=#A3FFFE>Cash</color>. <br><br>Mutually
+    exclusive with <color=#A3FFFE>Shoulders of the Enlightened</color>.
+  cost: 1
+  refundable: 0
+  isFragment: 0
+  purityLine: 0
+  terraLine: 0
+  powerLine: 0
+  paragadeLine: 0
+  stellarLine: 0
+  firstRunBlocked: 1
+  requiredSkillIds:
+  - shouldersOfGiants
+  shadowRequirementIds: []
+  exclusiveWithIds:
+  - shouldersOfTheEnlightened
+  unrefundableWithIds: []
+  effects:
+  - {fileID: 11400000, guid: b909166452197f4458de80122bc862c7, type: 2}
