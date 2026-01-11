@@ -1,0 +1,41 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a7893ea89ef8ebd41958ad2a303d4fc9, type: 3}
+  m_Name: agressiveAlgorithms
+  m_EditorClassIdentifier: Assembly-CSharp::GameData.SkillDefinition
+  id: agressiveAlgorithms
+  displayName: Aggressive Algorithms
+  description: Go faster, innovate harder, and take some prisoners.
+  technicalDescription: <color=#A3FFFE>Servers</color>, <color=#A3FFFE>AI Managers</color>,
+    and <color=#A3FFFE>Assembly Lines</color> are <color=#A3FFFE>3x</color> stronger.
+    <color=#A3FFFE>Planets</color> and <color=#A3FFFE>Data Centers</color> are <color=#A3FFFE>3x</color>
+    weaker.
+  cost: 1
+  refundable: 1
+  isFragment: 0
+  purityLine: 0
+  terraLine: 0
+  powerLine: 0
+  paragadeLine: 0
+  stellarLine: 0
+  firstRunBlocked: 1
+  requiredSkillIds:
+  - unsuspiciousAlgorithms
+  shadowRequirementIds: []
+  exclusiveWithIds: []
+  unrefundableWithIds: []
+  effects:
+  - {fileID: 11400000, guid: 85a69f994e133f24a985b7da7e2a7821, type: 2}
+  - {fileID: 11400000, guid: 4baadfee657b3a6438156688a14c5a73, type: 2}
+  - {fileID: 11400000, guid: c9228b385c14a8641874e348917731d9, type: 2}
+  - {fileID: 11400000, guid: e56f1d94a4b392d43bdfe0a344410d5b, type: 2}
+  - {fileID: 11400000, guid: 67a5aa531270cf040ac7cfaa1e03283f, type: 2}

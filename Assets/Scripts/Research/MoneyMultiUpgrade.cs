@@ -1,3 +1,4 @@
+using GameData;
 using static Expansion.Oracle;
 using static Blindsided.Utilities.CalcUtils;
 
@@ -5,10 +6,11 @@ namespace Research
 {
     public class MoneyMultiUpgrade : Research
     {
+        protected override string ResearchId => ResearchIdMap.MoneyMultiplier;
         public override double Percent => StaticInfinityData.moneyMultiUpgradePercent;
         public override double CurrentLevel {
-            get => StaticInfinityData.moneyMultiUpgradeOwned;
-            set => StaticInfinityData.moneyMultiUpgradeOwned = value;
+            get => GetResearchLevel(ResearchIdMap.MoneyMultiplier);
+            set => SetResearchLevel(ResearchIdMap.MoneyMultiplier, value);
         }
         public override bool AutoBuy => StaticSaveSettings.infinityAutoResearchToggleMoney && StaticPrestigeData.infinityAutoResearch;
 

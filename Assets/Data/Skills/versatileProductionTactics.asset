@@ -1,0 +1,38 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a7893ea89ef8ebd41958ad2a303d4fc9, type: 3}
+  m_Name: versatileProductionTactics
+  m_EditorClassIdentifier: Assembly-CSharp::GameData.SkillDefinition
+  id: versatileProductionTactics
+  displayName: Versatile Production Tactics
+  description: Stuff happens, and your production layout is prepared for everything
+    and anything. This allows for a flexible production boost, boosting the highest
+    and the lowest layer of the dyson swarm.
+  technicalDescription: You now produce <color=#A3FFFE>50%</color> more <color=#A3FFFE>Assembly
+    Lines</color>. Additionally, after <color=#A3FFFE>100 Planets</color>, <color=#A3FFFE>Planets</color>
+    production boosted by <color=#A3FFFE>50%</color>
+  cost: 1
+  refundable: 1
+  isFragment: 0
+  purityLine: 0
+  terraLine: 0
+  powerLine: 0
+  paragadeLine: 0
+  stellarLine: 0
+  firstRunBlocked: 0
+  requiredSkillIds:
+  - oneMinutePlan
+  shadowRequirementIds: []
+  exclusiveWithIds: []
+  unrefundableWithIds: []
+  effects:
+  - {fileID: 11400000, guid: a6b82eec160715a4fb1611bd18289bfc, type: 2}

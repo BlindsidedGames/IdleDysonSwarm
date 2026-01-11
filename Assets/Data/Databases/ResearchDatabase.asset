@@ -1,0 +1,27 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ab2eaf9d3272fbc4da3e9979d0166114, type: 3}
+  m_Name: ResearchDatabase
+  m_EditorClassIdentifier: Assembly-CSharp::GameData.ResearchDatabase
+  research:
+  - {fileID: 11400000, guid: bf87dfd08b49a2d489cacec66ecbffbf, type: 2}
+  - {fileID: 11400000, guid: c996623d52bcd6d48a7dedd3ddb16a02, type: 2}
+  - {fileID: 11400000, guid: d3a4834829daeec4e84eba697dc5e0a3, type: 2}
+  - {fileID: 11400000, guid: 66e4e1d2c860d8b49844e84038daa297, type: 2}
+  - {fileID: 11400000, guid: 66b9ae4fe93023a40b5f3a69c3d7404a, type: 2}
+  - {fileID: 11400000, guid: 917a49e53789c3b409c84cb25f315454, type: 2}
+  - {fileID: 11400000, guid: e0991e328a4adc146b0130627eb1108f, type: 2}
+  - {fileID: 11400000, guid: 9f31b508f4b46c040ad15c9199ad9fed, type: 2}
+  - {fileID: 11400000, guid: 87edd692713b7a245aabbbba07949afb, type: 2}
+  - {fileID: 0}
+  - {fileID: 11400000, guid: f8d6bdbd98e42c74fb8bbfc05ccff865, type: 2}
+  - {fileID: 11400000, guid: 1698aca169fc0b74d9bd2918edb8620f, type: 2}

@@ -1,0 +1,40 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a7893ea89ef8ebd41958ad2a303d4fc9, type: 3}
+  m_Name: parallelProcessing
+  m_EditorClassIdentifier: Assembly-CSharp::GameData.SkillDefinition
+  id: parallelProcessing
+  displayName: Parallel Processing
+  description: One fine day in the middle of the night, 2 dead men got up to fight,
+    back to back they faced each other, drew their swords and shot each other. Oh
+    wait this is about processing.
+  technicalDescription: Increase <color=#A3FFFE>Server</color> effectiveness by <color=#A3FFFE>5%</color>
+    for every <color=#91DD8F>log2(<color=#A3FFFE>Servers</color>)</color>.
+  cost: 1
+  refundable: 1
+  isFragment: 0
+  purityLine: 0
+  terraLine: 0
+  powerLine: 0
+  paragadeLine: 0
+  stellarLine: 0
+  firstRunBlocked: 0
+  requiredSkillIds:
+  - serverTree
+  - aiManagerTree
+  - assemblyLineTree
+  shadowRequirementIds: []
+  exclusiveWithIds: []
+  unrefundableWithIds:
+  - shouldersOfGiants
+  effects:
+  - {fileID: 11400000, guid: d3ebe5a884a64fc458c952ebd03fd109, type: 2}

@@ -35,6 +35,7 @@
 
 ## Requirements for the New System
 - Use ScriptableObjects for facility definitions, skill definitions, and effect definitions.
+- Make research upgrades data-driven (definitions, cost curves, effects) and integrate them into the stat pipeline.
 - Use stable string IDs for skills/facilities/effects to avoid save breakage.
 - Preserve all current skill effects, including:
   - Threshold, log-based, and conditional multipliers.
@@ -69,6 +70,10 @@
   - prerequisites (ids), exclusives (ids), non-refundable flag
   - skill point cost, fragment flags, line flags (purity/power/etc)
   - `effects[]`
+- `ResearchDefinition` (ScriptableObject)
+  - `id`, `displayName`, `description`
+  - `baseCost`, `exponent`, `maxLevel`, prerequisites (ids)
+  - `effects[]`
 - `EffectDefinition` (ScriptableObject or serialized struct)
   - `id`, `targetStat`, `operation` (Add, Mult, Power, Override, Clamp)
   - `value`, `perLevel`, `stackOrder`
@@ -81,12 +86,16 @@
   - Derived stats: `Derived.StarsSurrounded`, `Derived.GalaxiesEngulfed`.
 - `FacilityDatabase` / `SkillDatabase` (ScriptableObject)
   - Central lists for lookups and editor tooling.
+- `ResearchDatabase` (ScriptableObject)
+  - Central list for research definitions.
 
 ### Runtime State
 - `FacilityState` (runtime)
   - `ownedAuto`, `ownedManual`, `currentLevel`, `effectiveCount`, `productionRate`.
 - `SkillState` (runtime)
   - `owned`, `level` (if applicable), `timers`.
+- `ResearchState` (runtime)
+  - `level`, `unlocked`, `autoBuyEnabled`.
 - `GameStateSnapshot`
   - A read-only view of save data needed for calculations.
 
@@ -121,7 +130,7 @@ Keep these as code-backed effects but still return breakdown entries:
   - Skill provider (from skill definitions + owned states).
   - Secret provider (from `dvpd.secretsOfTheUniverse`).
   - Prestige provider (from `PrestigePlus`).
-  - Research provider (from research levels).
+  - Research provider (from research levels, implemented during Phase 4).
 
 ### Phase 2: Facility Production Migration
 - Replace `ProductionSystem` computations with data-driven formulas:
@@ -141,7 +150,14 @@ Keep these as code-backed effects but still return breakdown entries:
   - Migrate auto-assignment lists to `skillId` string list.
 - Update prerequisites/exclusive/line logic to use IDs.
 
-### Phase 4: Save Data + Migration
+### Phase 4: Research Data Migration
+- Create `ResearchDefinition` assets for existing research upgrades (science, money, assembly, AI, servers, data centers, planets).
+- Add `ResearchDatabase` and a `ResearchEffectProvider` that feeds the stat pipeline based on research levels.
+- Move research UI to reference `ResearchDefinition` instead of hard-coded subclasses where feasible.
+- Preserve special research logic (`repeatableResearch`, auto-buy toggles, disabling science boost when shoulders-of-giants).
+- Add parity checks for research cost/level math and output effects.
+
+### Phase 5: Save Data + Migration
 - Add new fields to `SaveDataSettings`:
   - `Dictionary<string, bool> skillOwnedById`
   - `Dictionary<string, int> upgradeLevelsById`
@@ -175,14 +191,14 @@ Keep these as code-backed effects but still return breakdown entries:
 - Avoid auto-saves during load by pausing `InvokeRepeating(nameof(Save), ...)` until load completes.
 - Record a `lastSuccessfulLoadUtc` to help diagnose any unexpected save timing.
 
-### Phase 5: UI Breakdown Popups
+### Phase 6: UI Breakdown Popups
 - Add a `FacilityBreakdownPopup` UI prefab.
 - Add a `FacilityPresenter` on each facility card:
   - Clicking opens popup, pulls breakdown data.
   - Show: base, additive, multipliers, conditionals, final.
 - Keep existing card UI and wire new breakdown button/tooltip.
 
-### Phase 6: Remove Legacy Paths
+### Phase 7: Remove Legacy Paths
 - Remove old `SetSkillsOnOracle` and `DysonVerseSkillTreeData` bool usage from runtime.
 - Replace `ModifierSystem`/`ProductionSystem` calls with new pipeline.
 - Remove `SkillTreeItem` dependencies if fully migrated.
@@ -192,7 +208,9 @@ Keep these as code-backed effects but still return breakdown entries:
   - `Assets/Data/Facilities/*.asset` for each facility.
   - `Assets/Data/Skills/*.asset` for each skill.
   - `Assets/Data/Effects/*.asset` for shared effects.
+  - `Assets/Data/Research/*.asset` for each research item.
   - `Assets/Data/Databases/FacilityDatabase.asset` and `SkillDatabase.asset`.
+  - `Assets/Data/Databases/ResearchDatabase.asset`.
 - Update scene references:
   - Replace or extend facility UI components to reference `FacilityDefinition`.
   - Add `FacilityPresenter` to each facility card prefab/GO.
@@ -200,6 +218,7 @@ Keep these as code-backed effects but still return breakdown entries:
   - Update `SkillTreeManager` nodes to reference `SkillDefinition` assets.
 - Assign database references:
   - Add database references to `Oracle` or a new `GameDataRegistry` component.
+  - Ensure `ResearchDatabase` is assigned alongside facility/skill/effect databases.
 - Verify prefab variants for facility cards after adding new fields.
 
 ## Skill Coverage Checklist (Must Map to Effects or Formulas)
@@ -228,6 +247,8 @@ Keep these as code-backed effects but still return breakdown entries:
   `manualLabour`, `versatileProductionTactics`.
 - Research gating/costs: `repeatableResearch`, `assemblyMegaLines`, `shouldersOfGiants`,
   `shouldersOfTheEnlightened`, `shouldersOfPrecursors`.
+- Research upgrades: science boost, money multi, assembly line, AI manager, server, data center, planet,
+  panel lifetime tiers, auto-buy toggles.
 - Currently unused in runtime: `banking`, `investmentPortfolio`, `terraNova`, `terraGloriae`.
   - Decide if these are intended or dead; keep in data for now.
 
@@ -237,6 +258,7 @@ Keep these as code-backed effects but still return breakdown entries:
 - Multiple timers (androids, pocket androids, superRadiantScattering) must persist in save data.
 - Secrets of the universe modify upgrade percents and should be represented as effects.
 - Auto-buy and research gating uses skill flags; must be preserved.
+- Research auto-buy toggles and repeatable research cost formulas must remain compatible with current UI/flow.
 - `skillAutoAssignmentList` and preset lists use int keys; requires migration to string IDs.
 - `Oracle.WipeSaveData()` must set defaults for new dictionaries and timers.
 - `ResearchManager` and Dream1 systems are separate; do not break while refactoring core facilities.
@@ -248,15 +270,19 @@ Keep these as code-backed effects but still return breakdown entries:
   - Panel lifetime and panel per sec.
 - Validate parity for a save with a broad skill set.
 - Validate offline progress accumulation matches existing behavior.
+- Validate research costs/levels and auto-buy toggles match existing behavior.
 - Validate UI breakdown entries line up with totals.
 
 ## Suggested File/Folder Layout
 - `Assets/Scripts/Systems/Stats/`
   - `StatId.cs`, `StatCalculator.cs`, `Contribution.cs`
+  - `ResearchEffectProvider.cs`
 - `Assets/Scripts/Data/`
   - `FacilityDefinition.cs`, `SkillDefinition.cs`, `EffectDefinition.cs`
-  - `FacilityDatabase.cs`, `SkillDatabase.cs`
+  - `ResearchDefinition.cs`
+  - `FacilityDatabase.cs`, `SkillDatabase.cs`, `ResearchDatabase.cs`
 - `Assets/Scripts/Systems/Facilities/`
   - `FacilityRuntime.cs`, `FacilityPresenter.cs`, `FacilityBreakdownPopup.cs`
-- `Assets/Data/Facilities/`, `Assets/Data/Skills/`, `Assets/Data/Effects/`, `Assets/Data/Databases/`
+- `Assets/Data/Facilities/`, `Assets/Data/Skills/`, `Assets/Data/Effects/`, `Assets/Data/Research/`,
+  `Assets/Data/Databases/`
 

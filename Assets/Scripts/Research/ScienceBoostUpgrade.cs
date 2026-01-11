@@ -1,3 +1,4 @@
+using GameData;
 using static Expansion.Oracle;
 using static Blindsided.Utilities.CalcUtils;
 
@@ -5,10 +6,11 @@ namespace Research
 {
     public class ScienceBoostUpgrade : Research
     {
+        protected override string ResearchId => ResearchIdMap.ScienceBoost;
         public override double Percent => StaticInfinityData.scienceBoostPercent;
         public override double CurrentLevel {
-            get => StaticInfinityData.scienceBoostOwned;
-            set => StaticInfinityData.scienceBoostOwned = value;
+            get => GetResearchLevel(ResearchIdMap.ScienceBoost);
+            set => SetResearchLevel(ResearchIdMap.ScienceBoost, value);
         }
         public override bool AutoBuy => StaticSaveSettings.infinityAutoResearchToggleScience && StaticPrestigeData.infinityAutoResearch;
 

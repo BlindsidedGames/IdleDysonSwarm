@@ -1,0 +1,36 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a7893ea89ef8ebd41958ad2a303d4fc9, type: 3}
+  m_Name: economicDominance
+  m_EditorClassIdentifier: Assembly-CSharp::GameData.SkillDefinition
+  id: economicDominance
+  displayName: Economic Dominance
+  description: Shift your goals to economic growth with singular focus.
+  technicalDescription: <color=#A3FFFE>20x Cash</color>, <color=#A3FFFE>0.25x Science</color>
+  cost: 1
+  refundable: 1
+  isFragment: 0
+  purityLine: 0
+  terraLine: 0
+  powerLine: 0
+  paragadeLine: 0
+  stellarLine: 0
+  firstRunBlocked: 0
+  requiredSkillIds:
+  - economicRevolution
+  shadowRequirementIds: []
+  exclusiveWithIds:
+  - scientificDominance
+  unrefundableWithIds: []
+  effects:
+  - {fileID: 11400000, guid: c78b67ba4cb869947b70f19177243bf2, type: 2}
+  - {fileID: 11400000, guid: 841c490ad1974c544872542049f2d823, type: 2}

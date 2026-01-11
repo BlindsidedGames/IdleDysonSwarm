@@ -1,0 +1,43 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a7893ea89ef8ebd41958ad2a303d4fc9, type: 3}
+  m_Name: shouldersOfTheFallen
+  m_EditorClassIdentifier: Assembly-CSharp::GameData.SkillDefinition
+  id: shouldersOfTheFallen
+  displayName: Shoulders of the Fallen
+  description: The Shoulders of the Fallen are a revered artifact said to have belonged
+    to great leaders of a lost civilization. They possess the power to enhance Planet
+    production, the extent of which is determined by the number of science boosts
+    acquired. This makes the Shoulders a valuable addition to any empire seeking
+    to increase its production and growth. The true nature and history of this powerful
+    relic remains a mystery, but those who possess it are rumored to have an edge
+    in their quest for expansion and prosperity.
+  technicalDescription: <color=#A3FFFE>Scientific Planets</color> create additional
+    <color=#A3FFFE>Planets</color> based on <color=#A3FFFE>Log2(<color=#91DD8F>Science
+    Boosts</color>)</color>
+  cost: 1
+  refundable: 0
+  isFragment: 0
+  purityLine: 0
+  terraLine: 0
+  powerLine: 0
+  paragadeLine: 0
+  stellarLine: 0
+  firstRunBlocked: 1
+  requiredSkillIds:
+  - shouldersOfPrecursors
+  shadowRequirementIds: []
+  exclusiveWithIds:
+  - shouldersOfTheEnlightened
+  unrefundableWithIds: []
+  effects:
+  - {fileID: 11400000, guid: 255a23652da7a2a4f97487baeb4c51cf, type: 2}

@@ -1,0 +1,37 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a7893ea89ef8ebd41958ad2a303d4fc9, type: 3}
+  m_Name: stellarDominance
+  m_EditorClassIdentifier: Assembly-CSharp::GameData.SkillDefinition
+  id: stellarDominance
+  displayName: Stellar Dominance
+  description: A price must be paid for greater profits.
+  technicalDescription: All <color=#A3FFFE>Panel Lifetime x10</color>. <color=#A3FFFE>Cash</color>
+    / <color=#A3FFFE>100</color>. <color=#A3FFFE>Bots Sacrificed x100</color>. May
+    the stars have mercy.
+  cost: 3
+  refundable: 1
+  isFragment: 0
+  purityLine: 0
+  terraLine: 0
+  powerLine: 0
+  paragadeLine: 0
+  stellarLine: 1
+  firstRunBlocked: 0
+  requiredSkillIds:
+  - stellarSacrifices
+  shadowRequirementIds: []
+  exclusiveWithIds: []
+  unrefundableWithIds: []
+  effects:
+  - {fileID: 11400000, guid: f65acdbd544ae944f8f54443f2614bd0, type: 2}
+  - {fileID: 11400000, guid: 079b557225efc8443af869d0d5eb958a, type: 2}

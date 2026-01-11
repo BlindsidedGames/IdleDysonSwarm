@@ -1,6 +1,6 @@
-using System;
 using System.Collections.Generic;
-using System.Reflection;
+using Classes;
+using GameData;
 using Sirenix.OdinInspector;
 using UnityEngine;
 using UnityEngine.UI;
@@ -22,8 +22,11 @@ public class LineManager : MonoBehaviour
     private UILineRenderer lr;
     public int startSkillKey;
     public int endSkillKey;
+    public string startSkillId;
+    public string endSkillId;
+    public SkillTreeManager startSkillManager;
+    public SkillTreeManager endSkillManager;
 
-    private DysonVerseSkillTreeData dvst => oracle.saveSettings.dysonVerseSaveData.dysonVerseSkillTreeData;
     private PrestigePlus pp => oracle.saveSettings.prestigePlus;
 
     private void OnEnable()
@@ -53,30 +56,60 @@ public class LineManager : MonoBehaviour
     private void SetColor()
     {
         if (lr == null) return;
-        bool startOwned = oracle.SkillTree[startSkillKey].Owned;
-        bool endOwned = oracle.SkillTree[endSkillKey].Owned;
+        SkillDefinition endDefinition = ResolveEndDefinition();
+        SkillTreeItem endLegacy = ResolveEndLegacyItem();
+        bool startOwned = ResolveOwned(startSkillManager, startSkillId, startSkillKey);
+        bool endOwned = ResolveOwned(endSkillManager, endSkillId, endSkillKey);
         bool missingRequirement = false;
-        if (oracle.SkillTree[endSkillKey].RequiredSkill.Length >= 1)
-            foreach (int skill in oracle.SkillTree[endSkillKey].RequiredSkill)
-                if (oracle.SkillTree[skill].Owned)
+        if (endDefinition != null && endDefinition.requiredSkillIds != null &&
+            endDefinition.requiredSkillIds.Length >= 1)
+            foreach (string requiredId in endDefinition.requiredSkillIds)
+                if (oracle.IsSkillOwned(requiredId))
+                    missingRequirement = true;
+        else if (endLegacy != null && endLegacy.RequiredSkill is { Length: >= 1 })
+            foreach (int requiredKey in endLegacy.RequiredSkill)
+                if (oracle.SkillTree[requiredKey].Owned)
                     missingRequirement = true;
 
-        if (oracle.SkillTree[endSkillKey].ExclusvieWith is { Length: >= 1 })
-            foreach (int skill in oracle.SkillTree[endSkillKey].ExclusvieWith)
-                if (oracle.SkillTree[skill].Owned)
+        if (endDefinition != null && endDefinition.exclusiveWithIds is { Length: >= 1 })
+        {
+            if (HasExclusiveOwned(endDefinition.exclusiveWithIds))
+            {
+                lr.color = colorExclusive;
+                return;
+            }
+        }
+        else if (endLegacy != null && endLegacy.ExclusvieWith is { Length: >= 1 })
+        {
+            foreach (int exclusiveKey in endLegacy.ExclusvieWith)
+                if (oracle.SkillTree[exclusiveKey].Owned)
                 {
                     lr.color = colorExclusive;
                     return;
                 }
+        }
 
         bool enabled = true;
-        if (oracle.SkillTree[endSkillKey].purityLine && !pp.purity) enabled = false;
-        if (oracle.SkillTree[endSkillKey].isFragment && !pp.fragments) enabled = false;
-        if (oracle.SkillTree[endSkillKey].terraLine && !pp.terra) enabled = false;
-        if (oracle.SkillTree[endSkillKey].powerLine && !pp.power) enabled = false;
-        if (oracle.SkillTree[endSkillKey].paragadeLine && !pp.paragade) enabled = false;
-        if (oracle.SkillTree[endSkillKey].stellarLine && !pp.stellar) enabled = false;
-        if (oracle.SkillTree[endSkillKey].firstRunBlocked && !oracle.saveSettings.firstInfinityDone) enabled = false;
+        if (endDefinition != null)
+        {
+            if (endDefinition.purityLine && !pp.purity) enabled = false;
+            if (endDefinition.isFragment && !pp.fragments) enabled = false;
+            if (endDefinition.terraLine && !pp.terra) enabled = false;
+            if (endDefinition.powerLine && !pp.power) enabled = false;
+            if (endDefinition.paragadeLine && !pp.paragade) enabled = false;
+            if (endDefinition.stellarLine && !pp.stellar) enabled = false;
+            if (endDefinition.firstRunBlocked && !oracle.saveSettings.firstInfinityDone) enabled = false;
+        }
+        else if (endLegacy != null)
+        {
+            if (endLegacy.purityLine && !pp.purity) enabled = false;
+            if (endLegacy.isFragment && !pp.fragments) enabled = false;
+            if (endLegacy.terraLine && !pp.terra) enabled = false;
+            if (endLegacy.powerLine && !pp.power) enabled = false;
+            if (endLegacy.paragadeLine && !pp.paragade) enabled = false;
+            if (endLegacy.stellarLine && !pp.stellar) enabled = false;
+            if (endLegacy.firstRunBlocked && !oracle.saveSettings.firstInfinityDone) enabled = false;
+        }
 
         if (!enabled)
         {
@@ -84,9 +117,16 @@ public class LineManager : MonoBehaviour
             return;
         }
 
+        bool queued = false;
+        List<string> autoIds = oracle.GetAutoAssignmentSkillIds();
+        string resolvedEndId = ResolveEndSkillId();
+        if (!string.IsNullOrEmpty(resolvedEndId) && autoIds.Contains(resolvedEndId)) queued = true;
+        if (!queued && oracle.saveSettings.dysonVerseSaveData.skillAutoAssignmentList.Contains(endSkillKey))
+            queued = true;
+
         if (startOwned && endOwned)
             lr.color = colorOwned;
-        else if (oracle.saveSettings.dysonVerseSaveData.skillAutoAssignmentList.Contains(endSkillKey))
+        else if (queued)
             lr.color = colorQueued;
         else if (startOwned)
             lr.color = colorAvailable;
@@ -94,6 +134,51 @@ public class LineManager : MonoBehaviour
             lr.color = colorMissing;
         else
             lr.color = colorDefault;
+    }
+
+    private bool ResolveOwned(SkillTreeManager manager, string id, int key)
+    {
+        if (manager != null) return manager.IsOwned;
+        if (!string.IsNullOrEmpty(id)) return oracle.IsSkillOwned(id);
+        if (oracle.SkillTree != null && oracle.SkillTree.TryGetValue(key, out SkillTreeItem item)) return item.Owned;
+        return false;
+    }
+
+    private SkillDefinition ResolveEndDefinition()
+    {
+        if (endSkillManager != null && endSkillManager.Definition != null) return endSkillManager.Definition;
+        string id = ResolveEndSkillId();
+        if (string.IsNullOrEmpty(id)) return null;
+        GameDataRegistry registry = GameDataRegistry.Instance;
+        if (registry == null || registry.skillDatabase == null) return null;
+        registry.skillDatabase.TryGet(id, out SkillDefinition definition);
+        return definition;
+    }
+
+    private SkillTreeItem ResolveEndLegacyItem()
+    {
+        if (endSkillKey <= 0 || oracle.SkillTree == null) return null;
+        oracle.SkillTree.TryGetValue(endSkillKey, out SkillTreeItem item);
+        return item;
+    }
+
+    private string ResolveEndSkillId()
+    {
+        if (!string.IsNullOrEmpty(endSkillId)) return endSkillId;
+        if (endSkillManager != null && !string.IsNullOrEmpty(endSkillManager.SkillId)) return endSkillManager.SkillId;
+        if (SkillIdMap.TryGetId(endSkillKey, out string mappedId)) return mappedId;
+        return null;
+    }
+
+    private bool HasExclusiveOwned(string[] exclusiveIds)
+    {
+        if (exclusiveIds == null || exclusiveIds.Length == 0) return false;
+        for (int i = 0; i < exclusiveIds.Length; i++)
+        {
+            if (oracle.IsSkillOwned(exclusiveIds[i])) return true;
+        }
+
+        return false;
     }
 
     private void SetLine()

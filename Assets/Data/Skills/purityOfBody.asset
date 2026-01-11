@@ -1,0 +1,36 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a7893ea89ef8ebd41958ad2a303d4fc9, type: 3}
+  m_Name: purityOfBody
+  m_EditorClassIdentifier: Assembly-CSharp::GameData.SkillDefinition
+  id: purityOfBody
+  displayName: Purity of Body
+  description: You become one with your Bots, perfection on this scale never before
+    seen.
+  technicalDescription: Gain <color=#A3FFFE>25%</color> more <color=#A3FFFE>Bots</color>
+    for each unspent <color=#A3FFFE>Skill Point</color>.
+  cost: 2
+  refundable: 1
+  isFragment: 0
+  purityLine: 1
+  terraLine: 0
+  powerLine: 0
+  paragadeLine: 0
+  stellarLine: 0
+  firstRunBlocked: 0
+  requiredSkillIds:
+  - purityOfMind
+  shadowRequirementIds: []
+  exclusiveWithIds: []
+  unrefundableWithIds: []
+  effects:
+  - {fileID: 11400000, guid: bc5d273c091e81f43adba3322ccee5ec, type: 2}

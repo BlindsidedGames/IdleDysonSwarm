@@ -1,5 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
+using Classes;
+using GameData;
 using MPUIKIT;
 using TMPro;
 using UnityEngine;
@@ -45,8 +47,12 @@ public class SkillTreeConfirmationManager : MonoBehaviour
 
     private void RemoveSkillFromAutoAssign()
     {
-        if (!oracle.saveSettings.dysonVerseSaveData.skillAutoAssignmentList.Contains(skillTreeManager.skillKey)) return;
-        oracle.saveSettings.dysonVerseSaveData.skillAutoAssignmentList.Remove(skillTreeManager.skillKey);
+        string skillId = skillTreeManager.SkillId;
+        if (string.IsNullOrEmpty(skillId) && !SkillIdMap.TryGetId(skillTreeManager.skillKey, out skillId)) return;
+        List<string> autoIds = oracle.GetAutoAssignmentSkillIds();
+        if (!autoIds.Contains(skillId)) return;
+        autoIds.Remove(skillId);
+        oracle.saveSettings.dysonVerseSaveData.skillAutoAssignmentList = SkillIdMap.ConvertIdsToKeys(autoIds);
         _gameManager.UpdateSkillsInvoke();
         autoAssignRemovalButton.gameObject.SetActive(false);
         autoAssignAddButton.gameObject.SetActive(true);
@@ -54,8 +60,12 @@ public class SkillTreeConfirmationManager : MonoBehaviour
 
     private void AddSkillToAutoAssign()
     {
-        if (oracle.saveSettings.dysonVerseSaveData.skillAutoAssignmentList.Contains(skillTreeManager.skillKey)) return;
-        oracle.saveSettings.dysonVerseSaveData.skillAutoAssignmentList.Add(skillTreeManager.skillKey);
+        string skillId = skillTreeManager.SkillId;
+        if (string.IsNullOrEmpty(skillId) && !SkillIdMap.TryGetId(skillTreeManager.skillKey, out skillId)) return;
+        List<string> autoIds = oracle.GetAutoAssignmentSkillIds();
+        if (autoIds.Contains(skillId)) return;
+        autoIds.Add(skillId);
+        oracle.saveSettings.dysonVerseSaveData.skillAutoAssignmentList = SkillIdMap.ConvertIdsToKeys(autoIds);
         _gameManager.UpdateSkillsInvoke();
         autoAssignAddButton.gameObject.SetActive(false);
         autoAssignRemovalButton.gameObject.SetActive(true);
@@ -76,53 +86,86 @@ public class SkillTreeConfirmationManager : MonoBehaviour
 
     public void SetTexts(string name, string description, string technicalDescription, string cost)
     {
-        notRefundableMessage.SetActive(!oracle.SkillTree[skillTreeManager.skillKey].Refundable);
-        autoAssignRemovalButton.gameObject.SetActive(
-            oracle.saveSettings.dysonVerseSaveData.skillAutoAssignmentList.Contains(skillTreeManager.skillKey));
-        autoAssignAddButton.gameObject.SetActive(
-            !oracle.saveSettings.dysonVerseSaveData.skillAutoAssignmentList.Contains(skillTreeManager.skillKey));
+        SkillDefinition definition = skillTreeManager.Definition;
+        SkillTreeItem legacy = null;
+        if (definition == null)
+        {
+            oracle.SkillTree.TryGetValue(skillTreeManager.skillKey, out legacy);
+        }
+
+        bool refundable = definition != null ? definition.refundable : legacy == null || legacy.Refundable;
+        bool isFragment = definition != null ? definition.isFragment : legacy != null && legacy.isFragment;
+        bool owned = skillTreeManager.IsOwned;
+
+        notRefundableMessage.SetActive(!refundable);
+        string skillId = skillTreeManager.SkillId;
+        if (string.IsNullOrEmpty(skillId)) SkillIdMap.TryGetId(skillTreeManager.skillKey, out skillId);
+        List<string> autoAssignIds = oracle.GetAutoAssignmentSkillIds();
+        bool queued = !string.IsNullOrEmpty(skillId) && autoAssignIds.Contains(skillId);
+        autoAssignRemovalButton.gameObject.SetActive(queued);
+        autoAssignAddButton.gameObject.SetActive(!queued);
         nameText.text = name;
         descText.text = description;
         technicalDescText.text = technicalDescription;
-        if (oracle.SkillTree[skillTreeManager.skillKey].isFragment &&
-            oracle.SkillTree[skillTreeManager.skillKey].Refundable)
+        if (isFragment && refundable)
         {
-            string fragmentPlusOrMinus = oracle.SkillTree[skillTreeManager.skillKey].Owned ? "-1" : "+1";
+            string fragmentPlusOrMinus = owned ? "-1" : "+1";
             cost +=
                 $"<br>Fragments owned: {oracle.saveSettings.dysonVerseSaveData.dysonVerseSkillTreeData.fragments}<color=#91DD8F><size=70%>{fragmentPlusOrMinus}";
             foreach (Image image in highlights) image.color = fragmentColours[0];
             background.color = fragmentColours[1];
         }
 
-        if (oracle.SkillTree[skillTreeManager.skillKey].ExclusvieWith != null)
-            if (oracle.SkillTree[skillTreeManager.skillKey].ExclusvieWith.Length >= 1 &&
-                !oracle.SkillTree[skillTreeManager.skillKey].Refundable)
+        if (definition != null && definition.exclusiveWithIds != null)
+        {
+            if (definition.exclusiveWithIds.Length >= 1 && !refundable)
             {
                 bool makeComma = true;
 
-                for (int i = 0; i < oracle.SkillTree[skillTreeManager.skillKey].ExclusvieWith.Length; i++)
+                for (int i = 0; i < definition.exclusiveWithIds.Length; i++)
                 {
+                    string exclusiveName = ResolveSkillName(definition.exclusiveWithIds[i]);
                     if (makeComma)
                     {
-                        cost +=
-                            $"<br>Exclusive With: {oracle.SkillTree[oracle.SkillTree[skillTreeManager.skillKey].ExclusvieWith[i]].SkillName}";
+                        cost += $"<br>Exclusive With: {exclusiveName}";
                         makeComma = false;
                     }
                     else
                     {
-                        cost +=
-                            $", {oracle.SkillTree[oracle.SkillTree[skillTreeManager.skillKey].ExclusvieWith[i]].SkillName}";
+                        cost += $", {exclusiveName}";
                     }
                 }
             }
+        }
+        else if (legacy != null && legacy.ExclusvieWith != null)
+        {
+            if (legacy.ExclusvieWith.Length >= 1 && !refundable)
+            {
+                bool makeComma = true;
 
-        if (oracle.SkillTree[skillTreeManager.skillKey].isFragment)
+                for (int i = 0; i < legacy.ExclusvieWith.Length; i++)
+                {
+                    string exclusiveName = oracle.SkillTree[legacy.ExclusvieWith[i]].SkillName;
+                    if (makeComma)
+                    {
+                        cost += $"<br>Exclusive With: {exclusiveName}";
+                        makeComma = false;
+                    }
+                    else
+                    {
+                        cost += $", {exclusiveName}";
+                    }
+                }
+            }
+        }
+
+        if (isFragment)
         {
             foreach (Image image in highlights) image.color = fragmentColours[0];
             background.color = fragmentColours[1];
             background.OutlineColor = fragmentColours[0];
         }
-        else if (!oracle.SkillTree[skillTreeManager.skillKey].Refundable)
+        else if (!refundable)
         {
             foreach (Image image in highlights) image.color = nonRefundableColours[0];
             background.color = nonRefundableColours[1];
@@ -136,5 +179,19 @@ public class SkillTreeConfirmationManager : MonoBehaviour
         }
 
         costText.text = cost;
+    }
+
+    private string ResolveSkillName(string id)
+    {
+        if (string.IsNullOrEmpty(id)) return string.Empty;
+        GameDataRegistry registry = GameDataRegistry.Instance;
+        if (registry != null && registry.skillDatabase != null &&
+            registry.skillDatabase.TryGet(id, out SkillDefinition definition) &&
+            !string.IsNullOrEmpty(definition.displayName))
+        {
+            return definition.displayName;
+        }
+
+        return id;
     }
 }

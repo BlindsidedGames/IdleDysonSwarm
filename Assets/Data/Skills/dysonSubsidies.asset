@@ -1,0 +1,39 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a7893ea89ef8ebd41958ad2a303d4fc9, type: 3}
+  m_Name: dysonSubsidies
+  m_EditorClassIdentifier: Assembly-CSharp::GameData.SkillDefinition
+  id: dysonSubsidies
+  displayName: Dyson Subsidies
+  description: Unlock the full potential of your space empire with Dyson Subsidies.
+    Get a big boost in Cash flow before you surround a star and enjoy increased Bot
+    production after. Take your game to the next level and conquer the galaxy with
+    Dyson Subsidies.
+  technicalDescription: Before you surround a star you gain <color=#A3FFFE>3x Cash</color>,
+    after a star is surrounded this becomes <color=#A3FFFE>2x Bot</color> production.
+  cost: 1
+  refundable: 1
+  isFragment: 0
+  purityLine: 0
+  terraLine: 0
+  powerLine: 0
+  paragadeLine: 0
+  stellarLine: 0
+  firstRunBlocked: 0
+  requiredSkillIds:
+  - manualLabour
+  shadowRequirementIds: []
+  exclusiveWithIds: []
+  unrefundableWithIds: []
+  effects:
+  - {fileID: 11400000, guid: 58bd74f4d974eef44a01577932526f65, type: 2}
+  - {fileID: 11400000, guid: 5b460ae0b6297ee45a95073ed40ed489, type: 2}

@@ -1,0 +1,44 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a7893ea89ef8ebd41958ad2a303d4fc9, type: 3}
+  m_Name: superRadiantScattering
+  m_EditorClassIdentifier: Assembly-CSharp::GameData.SkillDefinition
+  id: superRadiantScattering
+  displayName: Super-Radiant Scattering
+  description: Scattering... Something... Causes a perpetually increasing value to
+    affect everything you touch.
+  technicalDescription: For each <color=#A3FFFE>second</color> this skill is assigned
+    and the app is running, <color=#A3FFFE>all</color> production increases by <color=#A3FFFE>1%</color>
+    this scales additively, and resets on <color=#A3FFFE>Infinity</color>/<color=#A3FFFE>Quantum
+    Leap</color>.
+  cost: 3
+  refundable: 1
+  isFragment: 0
+  purityLine: 0
+  terraLine: 0
+  powerLine: 0
+  paragadeLine: 0
+  stellarLine: 0
+  firstRunBlocked: 1
+  requiredSkillIds:
+  - scientificPlanets
+  shadowRequirementIds: []
+  exclusiveWithIds: []
+  unrefundableWithIds: []
+  effects:
+  - {fileID: 11400000, guid: 73156d46524e14f43b7372f3994fa1ee, type: 2}
+  - {fileID: 11400000, guid: 15d221a9c62ecdf4795c22d3b030f3d4, type: 2}
+  - {fileID: 11400000, guid: d6cb726c1b4670146a7a910316b65f0b, type: 2}
+  - {fileID: 11400000, guid: a058d6b9ce0a3e941a6f35dee1db0e0e, type: 2}
+  - {fileID: 11400000, guid: f92ac89e900e1904dbc19294c15bd21d, type: 2}
+  - {fileID: 11400000, guid: b01f3799ace0e224c9bd808e1a27d6ff, type: 2}
+  - {fileID: 11400000, guid: 0766df3379eda304a83a10dfb6bf0652, type: 2}

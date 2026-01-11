@@ -1,0 +1,42 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a7893ea89ef8ebd41958ad2a303d4fc9, type: 3}
+  m_Name: addictionToPower
+  m_EditorClassIdentifier: Assembly-CSharp::GameData.SkillDefinition
+  id: addictionToPower
+  displayName: Addiction to Power
+  description: Unable to help yourself you claim all of the unknown power.
+  technicalDescription: <color=#A3FFFE>200%</color> stronger Assembly Lines, AI Managers,
+    Servers, Data Centers, and Planets. <color=#A3FFFE>10%</color> less Cash and
+    Science. <br><br>Buff stacks <color=#A3FFFE>Multiplicatively</color>. Debuff
+    stacks <color=#A3FFFE>Additively</color> for a total of <color=#A3FFFE>50%</color>
+    less.
+  cost: 1
+  refundable: 1
+  isFragment: 0
+  purityLine: 0
+  terraLine: 0
+  powerLine: 1
+  paragadeLine: 0
+  stellarLine: 0
+  firstRunBlocked: 0
+  requiredSkillIds:
+  - indulgingInPower
+  shadowRequirementIds: []
+  exclusiveWithIds: []
+  unrefundableWithIds: []
+  effects:
+  - {fileID: 11400000, guid: e42a026ec86b528439619dd5b90d5e36, type: 2}
+  - {fileID: 11400000, guid: 0ba2ffb25db92a346a00edca7c8958c2, type: 2}
+  - {fileID: 11400000, guid: a0d7a53cfe909174ab8eb118408c4ac5, type: 2}
+  - {fileID: 11400000, guid: bc449df0b6c3f994da49f9da39be14d2, type: 2}
+  - {fileID: 11400000, guid: 9726d46298a07254186f5a381146f39e, type: 2}

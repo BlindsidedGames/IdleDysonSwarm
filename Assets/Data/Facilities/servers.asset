@@ -1,0 +1,25 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 115bda21744dd8648b5c65fcc91c666b, type: 3}
+  m_Name: servers
+  m_EditorClassIdentifier: Assembly-CSharp::GameData.FacilityDefinition
+  id: servers
+  displayName: Servers
+  description: Servers that produce AI managers.
+  icon: {fileID: 0}
+  tags:
+  - facility
+  - server
+  baseCost: 1
+  costExponent: 1.15
+  baseProduction: 0.0016666666666666668
+  productionStatId: Facility.Server.Production

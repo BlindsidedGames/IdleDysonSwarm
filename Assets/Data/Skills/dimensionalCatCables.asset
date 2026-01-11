@@ -1,0 +1,38 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a7893ea89ef8ebd41958ad2a303d4fc9, type: 3}
+  m_Name: dimensionalCatCables
+  m_EditorClassIdentifier: Assembly-CSharp::GameData.SkillDefinition
+  id: dimensionalCatCables
+  displayName: Dimensional CAT cables
+  description: Meow. Linking up your fancy dimensional Data Centers with your regular
+    old boring Data Centers makes them far more capable. The resources needed do
+    make your Planets slightly worse, however.
+  technicalDescription: <color=#A3FFFE>5x</color> as many <color=#A3FFFE>Data Centers</color>
+    from <color=#A3FFFE>Pocket Dimensions</color>.  <color=#A3FFFE>25%</color> less
+    <color=#A3FFFE>Data Center</color> production from <color=#A3FFFE>Planets</color>.
+  cost: 1
+  refundable: 1
+  isFragment: 0
+  purityLine: 0
+  terraLine: 0
+  powerLine: 0
+  paragadeLine: 0
+  stellarLine: 0
+  firstRunBlocked: 1
+  requiredSkillIds:
+  - pocketDimensions
+  shadowRequirementIds: []
+  exclusiveWithIds: []
+  unrefundableWithIds: []
+  effects:
+  - {fileID: 11400000, guid: 4e598a2023f2b664ab287f114449115e, type: 2}

@@ -9,11 +9,14 @@ using Classes;
 using Sirenix.OdinInspector;
 using Sirenix.Serialization;
 using Systems;
+using Systems.Facilities;
+using Systems.Stats;
 using TMPro;
 using UnityEngine;
 using UnityEngine.Networking;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
+using GameData;
 using static LoadScreenMethods;
 
 
@@ -52,7 +55,7 @@ namespace Expansion
         public bool Loaded;
         private bool _isSaveReady;
         private bool _autoSaveScheduled;
-        private const int CurrentSaveVersion = 1;
+        private const int CurrentSaveVersion = 3;
 
         #region SaveAndLoadFromClipboard
 
@@ -106,6 +109,19 @@ namespace Expansion
         private void SaveDictionaries()
         {
             dvid.SkillTreeSaveData = new Dictionary<int, bool>();
+            if (dvid.skillOwnedById != null && dvid.skillOwnedById.Count > 0)
+            {
+                foreach (KeyValuePair<string, bool> entry in dvid.skillOwnedById)
+                {
+                    if (SkillIdMap.TryGetLegacyKey(entry.Key, out int key))
+                    {
+                        dvid.SkillTreeSaveData[key] = entry.Value;
+                    }
+                }
+
+                return;
+            }
+
             foreach (KeyValuePair<int, SkillTreeItem> value in SkillTree)
             {
                 if (!dvid.SkillTreeSaveData.ContainsKey(value.Key))
@@ -135,14 +151,194 @@ namespace Expansion
 
             if (saveSettings.saveVersion < 0) saveSettings.saveVersion = 0;
 
-            if (saveSettings.saveVersion < CurrentSaveVersion)
+            if (saveSettings.saveVersion < 2)
             {
                 saveSettings.lastMigratedFromVersion = saveSettings.saveVersion;
-                // TODO: add migration steps here.
-                saveSettings.saveVersion = CurrentSaveVersion;
+                MigrateSkillOwnershipToIds();
+                MigrateSkillAutoAssignmentIds();
+                saveSettings.saveVersion = 2;
             }
 
+            if (saveSettings.saveVersion < 3)
+            {
+                saveSettings.lastMigratedFromVersion = saveSettings.saveVersion;
+                MigrateResearchLevelsToIds();
+                saveSettings.saveVersion = 3;
+            }
+
+            EnsureSkillOwnershipData();
+            EnsureSkillAutoAssignmentIds();
+            EnsureResearchLevelData();
             saveSettings.lastSuccessfulLoadUtc = DateTime.UtcNow.ToString(CultureInfo.InvariantCulture);
+        }
+
+        private void EnsureSkillOwnershipData()
+        {
+            if (dvid == null) return;
+            dvid.skillOwnedById ??= new Dictionary<string, bool>();
+            if (dvid.skillOwnedById.Count > 0) return;
+
+            if (dvid.SkillTreeSaveData != null && dvid.SkillTreeSaveData.Count > 0)
+            {
+                foreach (KeyValuePair<int, bool> entry in dvid.SkillTreeSaveData)
+                {
+                    if (SkillIdMap.TryGetId(entry.Key, out string id))
+                    {
+                        dvid.skillOwnedById[id] = entry.Value;
+                    }
+                }
+
+                return;
+            }
+
+            if (SkillTree == null || SkillTree.Count == 0) return;
+            foreach (KeyValuePair<int, SkillTreeItem> entry in SkillTree)
+            {
+                if (entry.Value == null) continue;
+                if (SkillIdMap.TryGetId(entry.Key, out string id))
+                {
+                    dvid.skillOwnedById[id] = entry.Value.Owned;
+                }
+            }
+        }
+
+        private void EnsureSkillAutoAssignmentIds()
+        {
+            DysonVerseSaveData data = saveSettings?.dysonVerseSaveData;
+            if (data == null) return;
+
+            data.skillAutoAssignmentIds ??= new List<string>();
+            if (data.skillAutoAssignmentIds.Count == 0 && data.skillAutoAssignmentList.Count > 0)
+            {
+                data.skillAutoAssignmentIds = SkillIdMap.ConvertKeysToIds(data.skillAutoAssignmentList);
+            }
+
+            data.skillAutoAssignmentIds1 ??= new List<string>();
+            if (data.skillAutoAssignmentIds1.Count == 0 && data.skillAutoAssignmentList1.Count > 0)
+            {
+                data.skillAutoAssignmentIds1 = SkillIdMap.ConvertKeysToIds(data.skillAutoAssignmentList1);
+            }
+
+            data.skillAutoAssignmentIds2 ??= new List<string>();
+            if (data.skillAutoAssignmentIds2.Count == 0 && data.skillAutoAssignmentList2.Count > 0)
+            {
+                data.skillAutoAssignmentIds2 = SkillIdMap.ConvertKeysToIds(data.skillAutoAssignmentList2);
+            }
+
+            data.skillAutoAssignmentIds3 ??= new List<string>();
+            if (data.skillAutoAssignmentIds3.Count == 0 && data.skillAutoAssignmentList3.Count > 0)
+            {
+                data.skillAutoAssignmentIds3 = SkillIdMap.ConvertKeysToIds(data.skillAutoAssignmentList3);
+            }
+
+            data.skillAutoAssignmentIds4 ??= new List<string>();
+            if (data.skillAutoAssignmentIds4.Count == 0 && data.skillAutoAssignmentList4.Count > 0)
+            {
+                data.skillAutoAssignmentIds4 = SkillIdMap.ConvertKeysToIds(data.skillAutoAssignmentList4);
+            }
+
+            data.skillAutoAssignmentIds5 ??= new List<string>();
+            if (data.skillAutoAssignmentIds5.Count == 0 && data.skillAutoAssignmentList5.Count > 0)
+            {
+                data.skillAutoAssignmentIds5 = SkillIdMap.ConvertKeysToIds(data.skillAutoAssignmentList5);
+            }
+        }
+
+        private void EnsureResearchLevelData()
+        {
+            if (dvid == null) return;
+            dvid.researchLevelsById ??= new Dictionary<string, double>();
+
+            if (dvid.researchLevelsById.Count == 0)
+            {
+                ResearchIdMap.PopulateLevelsFromLegacy(dvid, dvid.researchLevelsById);
+                return;
+            }
+
+            ResearchIdMap.ApplyLevelsToLegacy(dvid, dvid.researchLevelsById);
+            ResearchIdMap.PopulateLevelsFromLegacy(dvid, dvid.researchLevelsById);
+        }
+
+        private void MigrateResearchLevelsToIds()
+        {
+            if (dvid == null) return;
+            dvid.researchLevelsById ??= new Dictionary<string, double>();
+            if (dvid.researchLevelsById.Count > 0) return;
+
+            ResearchIdMap.PopulateLevelsFromLegacy(dvid, dvid.researchLevelsById);
+        }
+
+        private void SyncResearchLevelsFromLegacy()
+        {
+            if (dvid == null) return;
+            dvid.researchLevelsById ??= new Dictionary<string, double>();
+            ResearchIdMap.PopulateLevelsFromLegacy(dvid, dvid.researchLevelsById);
+        }
+
+        private void MigrateSkillOwnershipToIds()
+        {
+            if (dvid == null) return;
+            dvid.skillOwnedById ??= new Dictionary<string, bool>();
+            if (dvid.skillOwnedById.Count > 0) return;
+
+            if (dvid.SkillTreeSaveData != null && dvid.SkillTreeSaveData.Count > 0)
+            {
+                foreach (KeyValuePair<int, bool> entry in dvid.SkillTreeSaveData)
+                {
+                    if (SkillIdMap.TryGetId(entry.Key, out string id))
+                    {
+                        dvid.skillOwnedById[id] = entry.Value;
+                    }
+                }
+
+                return;
+            }
+
+            if (SkillTree == null || SkillTree.Count == 0) return;
+            foreach (KeyValuePair<int, SkillTreeItem> entry in SkillTree)
+            {
+                if (entry.Value == null) continue;
+                if (SkillIdMap.TryGetId(entry.Key, out string id))
+                {
+                    dvid.skillOwnedById[id] = entry.Value.Owned;
+                }
+            }
+        }
+
+        private void MigrateSkillAutoAssignmentIds()
+        {
+            DysonVerseSaveData data = saveSettings?.dysonVerseSaveData;
+            if (data == null) return;
+
+            if (data.skillAutoAssignmentIds == null || data.skillAutoAssignmentIds.Count == 0)
+            {
+                data.skillAutoAssignmentIds = SkillIdMap.ConvertKeysToIds(data.skillAutoAssignmentList);
+            }
+
+            if (data.skillAutoAssignmentIds1 == null || data.skillAutoAssignmentIds1.Count == 0)
+            {
+                data.skillAutoAssignmentIds1 = SkillIdMap.ConvertKeysToIds(data.skillAutoAssignmentList1);
+            }
+
+            if (data.skillAutoAssignmentIds2 == null || data.skillAutoAssignmentIds2.Count == 0)
+            {
+                data.skillAutoAssignmentIds2 = SkillIdMap.ConvertKeysToIds(data.skillAutoAssignmentList2);
+            }
+
+            if (data.skillAutoAssignmentIds3 == null || data.skillAutoAssignmentIds3.Count == 0)
+            {
+                data.skillAutoAssignmentIds3 = SkillIdMap.ConvertKeysToIds(data.skillAutoAssignmentList3);
+            }
+
+            if (data.skillAutoAssignmentIds4 == null || data.skillAutoAssignmentIds4.Count == 0)
+            {
+                data.skillAutoAssignmentIds4 = SkillIdMap.ConvertKeysToIds(data.skillAutoAssignmentList4);
+            }
+
+            if (data.skillAutoAssignmentIds5 == null || data.skillAutoAssignmentIds5.Count == 0)
+            {
+                data.skillAutoAssignmentIds5 = SkillIdMap.ConvertKeysToIds(data.skillAutoAssignmentList5);
+            }
         }
 
         private void SaveInternal(bool force)
@@ -347,6 +543,1484 @@ namespace Expansion
             saveSettings.sdSimulation = new SaveDataDream1();
         }
 
+        private void DebugCompareAssemblyLineProduction()
+        {
+            DebugCompareAssemblyLineProduction(null);
+        }
+
+        private void DebugCompareAssemblyLineProduction(List<ParityResult> results)
+        {
+            if (GameDataRegistry.Instance == null)
+            {
+                Debug.LogWarning("GameDataRegistry not found in scene.");
+                return;
+            }
+
+            if (!GameDataRegistry.Instance.TryGetFacility("assembly_lines", out FacilityDefinition definition))
+            {
+                Debug.LogWarning("Assembly Line FacilityDefinition not found.");
+                return;
+            }
+
+            FacilityRuntime runtime = FacilityLegacyBridge.BuildAssemblyLineRuntime(definition, dvid, dvst);
+            if (runtime == null)
+            {
+                Debug.LogWarning("Assembly Line runtime could not be built.");
+                return;
+            }
+
+            double legacyCached = dvid.botProduction;
+            double legacyComputed = (dvid.assemblyLines[0] + dvid.assemblyLines[1]) * 0.1f * dvid.assemblyLineModifier;
+            if (dvst.stayingPower)
+                legacyComputed *= 1 + 0.01f * dvid.panelLifetime;
+            if (dvst.rule34 && dvid.assemblyLines[1] >= 69)
+                legacyComputed *= 2;
+            if (dvst.superchargedPower)
+                legacyComputed *= 1.5f;
+            double updated = runtime.State.ProductionRate;
+            double delta = updated - legacyComputed;
+            results?.Add(new ParityResult("Assembly Lines (pipeline)", delta));
+            var builder = new StringBuilder();
+            builder.AppendLine($"Assembly Lines (legacy cached): {legacyCached}");
+            builder.AppendLine($"Assembly Lines (legacy formula): {legacyComputed}");
+            builder.AppendLine($"Assembly Lines (pipeline): {updated}");
+            builder.AppendLine($"Delta: {delta}");
+            builder.AppendLine($"Inputs: count={dvid.assemblyLines[0] + dvid.assemblyLines[1]}, " +
+                               $"modifier={dvid.assemblyLineModifier}, lifetime={dvid.panelLifetime}");
+            builder.AppendLine("Breakdown:");
+            foreach (Contribution contribution in runtime.Breakdown.Contributions)
+            {
+                builder.AppendLine(
+                    $"{contribution.SourceName} [{contribution.Operation}] {contribution.Value} (delta {contribution.Delta})");
+            }
+
+            double dataDrivenExpected = legacyComputed;
+            if (TryGetDataDrivenModifier("assembly_lines", out double dataDrivenModifier))
+            {
+                dataDrivenExpected = (dvid.assemblyLines[0] + dvid.assemblyLines[1]) * 0.1f * dataDrivenModifier;
+                if (dvst.stayingPower)
+                    dataDrivenExpected *= 1 + 0.01f * dvid.panelLifetime;
+                if (dvst.rule34 && dvid.assemblyLines[1] >= 69)
+                    dataDrivenExpected *= 2;
+                if (dvst.superchargedPower)
+                    dataDrivenExpected *= 1.5f;
+            }
+
+            AppendDataDrivenComparison(builder, "Assembly Lines", definition, dataDrivenExpected, results);
+            Debug.Log(builder.ToString());
+        }
+
+        private void DebugCompareAiManagerProduction()
+        {
+            DebugCompareAiManagerProduction(null);
+        }
+
+        private void DebugCompareAiManagerProduction(List<ParityResult> results)
+        {
+            if (GameDataRegistry.Instance == null)
+            {
+                Debug.LogWarning("GameDataRegistry not found in scene.");
+                return;
+            }
+
+            if (!GameDataRegistry.Instance.TryGetFacility("ai_managers", out FacilityDefinition definition))
+            {
+                Debug.LogWarning("AI Manager FacilityDefinition not found.");
+                return;
+            }
+
+            FacilityRuntime runtime = FacilityLegacyBridge.BuildAiManagerRuntime(definition, dvid, dvst);
+            if (runtime == null)
+            {
+                Debug.LogWarning("AI Manager runtime could not be built.");
+                return;
+            }
+
+            double legacyCached = dvid.assemblyLineProduction;
+            double legacyComputed = (dvid.managers[0] + dvid.managers[1]) * 0.0166666666666667f * dvid.managerModifier;
+            if (dvst.rule34 && dvid.managers[1] >= 69)
+                legacyComputed *= 2;
+            if (dvst.superchargedPower)
+                legacyComputed *= 1.5f;
+
+            double updated = runtime.State.ProductionRate;
+            double delta = updated - legacyComputed;
+            results?.Add(new ParityResult("AI Managers (pipeline)", delta));
+            var builder = new StringBuilder();
+            builder.AppendLine($"AI Managers (legacy cached): {legacyCached}");
+            builder.AppendLine($"AI Managers (legacy formula): {legacyComputed}");
+            builder.AppendLine($"AI Managers (pipeline): {updated}");
+            builder.AppendLine($"Delta: {delta}");
+            builder.AppendLine($"Inputs: count={dvid.managers[0] + dvid.managers[1]}, modifier={dvid.managerModifier}");
+            builder.AppendLine("Breakdown:");
+            foreach (Contribution contribution in runtime.Breakdown.Contributions)
+            {
+                builder.AppendLine(
+                    $"{contribution.SourceName} [{contribution.Operation}] {contribution.Value} (delta {contribution.Delta})");
+            }
+
+            double dataDrivenExpected = legacyComputed;
+            if (TryGetDataDrivenModifier("ai_managers", out double dataDrivenModifier))
+            {
+                dataDrivenExpected = (dvid.managers[0] + dvid.managers[1]) * 0.0166666666666667f *
+                                     dataDrivenModifier;
+                if (dvst.rule34 && dvid.managers[1] >= 69)
+                    dataDrivenExpected *= 2;
+                if (dvst.superchargedPower)
+                    dataDrivenExpected *= 1.5f;
+            }
+
+            AppendDataDrivenComparison(builder, "AI Managers", definition, dataDrivenExpected, results);
+            Debug.Log(builder.ToString());
+        }
+
+        private void DebugCompareServerProduction()
+        {
+            DebugCompareServerProduction(null);
+        }
+
+        private void DebugCompareServerProduction(List<ParityResult> results)
+        {
+            if (GameDataRegistry.Instance == null)
+            {
+                Debug.LogWarning("GameDataRegistry not found in scene.");
+                return;
+            }
+
+            if (!GameDataRegistry.Instance.TryGetFacility("servers", out FacilityDefinition definition))
+            {
+                Debug.LogWarning("Server FacilityDefinition not found.");
+                return;
+            }
+
+            FacilityRuntime runtime = FacilityLegacyBridge.BuildServerRuntime(definition, dvid, dvst);
+            if (runtime == null)
+            {
+                Debug.LogWarning("Server runtime could not be built.");
+                return;
+            }
+
+            double legacyCached = dvid.managerProduction;
+            double legacyComputed = (dvid.servers[0] + dvid.servers[1]) * 0.0016666666666667f * dvid.serverModifier;
+            if (dvst.rule34 && dvid.servers[1] >= 69)
+                legacyComputed *= 2;
+            if (dvst.superchargedPower)
+                legacyComputed *= 1.5f;
+
+            double updated = runtime.State.ProductionRate;
+            double delta = updated - legacyComputed;
+            results?.Add(new ParityResult("Servers (pipeline)", delta));
+            var builder = new StringBuilder();
+            builder.AppendLine($"Servers (legacy cached): {legacyCached}");
+            builder.AppendLine($"Servers (legacy formula): {legacyComputed}");
+            builder.AppendLine($"Servers (pipeline): {updated}");
+            builder.AppendLine($"Delta: {delta}");
+            builder.AppendLine($"Inputs: count={dvid.servers[0] + dvid.servers[1]}, modifier={dvid.serverModifier}");
+            builder.AppendLine("Breakdown:");
+            foreach (Contribution contribution in runtime.Breakdown.Contributions)
+            {
+                builder.AppendLine(
+                    $"{contribution.SourceName} [{contribution.Operation}] {contribution.Value} (delta {contribution.Delta})");
+            }
+
+            double dataDrivenExpected = legacyComputed;
+            if (TryGetDataDrivenModifier("servers", out double dataDrivenModifier))
+            {
+                dataDrivenExpected = (dvid.servers[0] + dvid.servers[1]) * 0.0016666666666667f * dataDrivenModifier;
+                if (dvst.rule34 && dvid.servers[1] >= 69)
+                    dataDrivenExpected *= 2;
+                if (dvst.superchargedPower)
+                    dataDrivenExpected *= 1.5f;
+            }
+
+            AppendDataDrivenComparison(builder, "Servers", definition, dataDrivenExpected, results);
+            Debug.Log(builder.ToString());
+        }
+
+        private void DebugCompareDataCenterProduction()
+        {
+            DebugCompareDataCenterProduction(null);
+        }
+
+        private void DebugCompareDataCenterProduction(List<ParityResult> results)
+        {
+            if (GameDataRegistry.Instance == null)
+            {
+                Debug.LogWarning("GameDataRegistry not found in scene.");
+                return;
+            }
+
+            if (!GameDataRegistry.Instance.TryGetFacility("data_centers", out FacilityDefinition definition))
+            {
+                Debug.LogWarning("Data Center FacilityDefinition not found.");
+                return;
+            }
+
+            FacilityRuntime runtime = FacilityLegacyBridge.BuildDataCenterRuntime(definition, dvid, dvst);
+            if (runtime == null)
+            {
+                Debug.LogWarning("Data Center runtime could not be built.");
+                return;
+            }
+
+            double legacyCached = dvid.serverProduction;
+            double legacyComputed = (dvid.dataCenters[0] + dvid.dataCenters[1]) * 0.0011111111f * dvid.dataCenterModifier;
+            if (dvst.rule34 && dvid.dataCenters[1] >= 69)
+                legacyComputed *= 2;
+            if (dvst.superchargedPower)
+                legacyComputed *= 1.5f;
+            legacyComputed += dvid.rudimentrySingularityProduction;
+            double serversTotal = dvid.servers[0] + dvid.servers[1];
+            if (dvst.parallelComputation && serversTotal > 1)
+                legacyComputed += 0.1f * Math.Log(serversTotal, 2);
+
+            double updated = runtime.State.ProductionRate;
+            double delta = updated - legacyComputed;
+            results?.Add(new ParityResult("Data Centers (pipeline)", delta));
+            var builder = new StringBuilder();
+            builder.AppendLine($"Data Centers (legacy cached): {legacyCached}");
+            builder.AppendLine($"Data Centers (legacy formula): {legacyComputed}");
+            builder.AppendLine($"Data Centers (pipeline): {updated}");
+            builder.AppendLine($"Delta: {delta}");
+            builder.AppendLine(
+                $"Inputs: count={dvid.dataCenters[0] + dvid.dataCenters[1]}, modifier={dvid.dataCenterModifier}, " +
+                $"serversTotal={serversTotal}, rudimentary={dvid.rudimentrySingularityProduction}");
+            builder.AppendLine("Breakdown:");
+            foreach (Contribution contribution in runtime.Breakdown.Contributions)
+            {
+                builder.AppendLine(
+                    $"{contribution.SourceName} [{contribution.Operation}] {contribution.Value} (delta {contribution.Delta})");
+            }
+
+            double dataDrivenExpected = legacyComputed;
+            if (TryGetDataDrivenModifier("data_centers", out double dataDrivenModifier))
+            {
+                dataDrivenExpected =
+                    (dvid.dataCenters[0] + dvid.dataCenters[1]) * 0.0011111111f * dataDrivenModifier;
+                if (dvst.rule34 && dvid.dataCenters[1] >= 69)
+                    dataDrivenExpected *= 2;
+                if (dvst.superchargedPower)
+                    dataDrivenExpected *= 1.5f;
+                dataDrivenExpected += dvid.rudimentrySingularityProduction;
+                if (dvst.parallelComputation && serversTotal > 1)
+                    dataDrivenExpected += 0.1f * Math.Log(serversTotal, 2);
+            }
+
+            AppendDataDrivenComparison(builder, "Data Centers", definition, dataDrivenExpected, results);
+            Debug.Log(builder.ToString());
+        }
+
+        [ContextMenu("Debug/Log Data-Driven Breakdowns")]
+        public void DebugLogDataDrivenBreakdowns()
+        {
+            if (GameDataRegistry.Instance == null)
+            {
+                Debug.LogWarning("GameDataRegistry not found in scene.");
+                return;
+            }
+
+            var builder = new StringBuilder();
+            builder.AppendLine("Data-driven breakdowns:");
+
+            AppendFacilityBreakdown(builder, "Assembly Lines", "assembly_lines");
+            AppendFacilityBreakdown(builder, "AI Managers", "ai_managers");
+            AppendFacilityBreakdown(builder, "Servers", "servers");
+            AppendFacilityBreakdown(builder, "Data Centers", "data_centers");
+            AppendFacilityBreakdown(builder, "Planets", "planets");
+
+            var secrets = new SecretBuffState();
+            ModifierSystem.SecretBuffs(dvid, dvpd, secrets);
+
+            if (GlobalStatPipeline.TryCalculateMoneyMultiplier(dvid, dvst, dvpd, pp, secrets,
+                    out StatResult moneyResult))
+            {
+                AppendStatBreakdown(builder, "Money Multiplier", moneyResult);
+            }
+            else
+            {
+                builder.AppendLine("Money Multiplier: data-driven not ready.");
+            }
+
+            if (GlobalStatPipeline.TryCalculateScienceMultiplier(dvid, dvst, dvpd, pp, secrets,
+                    out StatResult scienceResult))
+            {
+                AppendStatBreakdown(builder, "Science Multiplier", scienceResult);
+            }
+            else
+            {
+                builder.AppendLine("Science Multiplier: data-driven not ready.");
+            }
+
+            if (GlobalStatPipeline.TryCalculatePanelsPerSecond(dvid, dvst, dvpd, pp, out StatResult panelsResult))
+            {
+                AppendStatBreakdown(builder, "Panels Per Second", panelsResult);
+            }
+            else
+            {
+                builder.AppendLine("Panels Per Second: data-driven not ready.");
+            }
+
+            if (GlobalStatPipeline.TryCalculatePanelLifetime(dvid, dvst, dvpd, pp, out StatResult panelLifetimeResult))
+            {
+                AppendStatBreakdown(builder, "Panel Lifetime", panelLifetimeResult);
+            }
+            else
+            {
+                builder.AppendLine("Panel Lifetime: data-driven not ready.");
+            }
+
+            if (GlobalStatPipeline.TryCalculatePlanetGeneration(dvid, dvst, dvpd, pp,
+                    out GlobalStatPipeline.PlanetGenerationResult planetResult))
+            {
+                builder.AppendLine($"Planet Generation Total: {planetResult.TotalResult.Value}");
+                builder.AppendLine($"Scientific Planets: {planetResult.ScientificPlanets}");
+                builder.AppendLine($"Planet Assembly: {planetResult.PlanetAssembly}");
+                builder.AppendLine($"Shell Worlds: {planetResult.ShellWorlds}");
+                builder.AppendLine($"Stellar Sacrifices: {planetResult.StellarSacrifices}");
+                builder.AppendLine("Planet Generation Breakdown:");
+                AppendContributions(builder, planetResult.TotalResult.Contributions);
+            }
+            else
+            {
+                builder.AppendLine("Planet Generation: data-driven not ready.");
+            }
+
+            if (GlobalStatPipeline.TryCalculateShouldersAccruals(dvid, dvst, dvpd, pp,
+                    out StatResult scienceBoostResult, out StatResult moneyUpgradeResult))
+            {
+                AppendStatBreakdown(builder, "Science Boost Per Second", scienceBoostResult);
+                AppendStatBreakdown(builder, "Money Upgrade Per Second", moneyUpgradeResult);
+            }
+            else
+            {
+                builder.AppendLine("Shoulders Accruals: data-driven not ready.");
+            }
+
+            Debug.Log(builder.ToString());
+        }
+
+        [ContextMenu("Debug/Run Facility Parity Suite")]
+        public void DebugRunFacilityParityTests()
+        {
+            if (GameDataRegistry.Instance == null)
+            {
+                Debug.LogWarning("GameDataRegistry not found in scene.");
+                return;
+            }
+
+            double[] dataCenters = (double[])dvid.dataCenters.Clone();
+            double dataCenterModifier = dvid.dataCenterModifier;
+            double[] servers = (double[])dvid.servers.Clone();
+            double serverModifier = dvid.serverModifier;
+            double rudimentarySingularity = dvid.rudimentrySingularityProduction;
+            double scienceBoostOwned = GetResearchLevelInternal(ResearchIdMap.ScienceBoost);
+
+            double[] assemblyLines = (double[])dvid.assemblyLines.Clone();
+            double assemblyLineModifier = dvid.assemblyLineModifier;
+            double[] managers = (double[])dvid.managers.Clone();
+            double managerModifier = dvid.managerModifier;
+
+            double[] planets = (double[])dvid.planets.Clone();
+            double planetModifier = dvid.planetModifier;
+            double workers = dvid.workers;
+            double researchers = dvid.researchers;
+            double panelLifetime = dvid.panelLifetime;
+            double panelsPerSec = dvid.panelsPerSec;
+            double pocketAndroidsTimer = dvpd.pocketAndroidsTimer;
+            double bots = dvid.bots;
+
+            bool rule34 = dvst.rule34;
+            bool stayingPower = dvst.stayingPower;
+            bool superchargedPower = dvst.superchargedPower;
+            bool parallelComputation = dvst.parallelComputation;
+            bool pocketDimensions = dvst.pocketDimensions;
+            bool pocketMultiverse = dvst.pocketMultiverse;
+            bool pocketProtectors = dvst.pocketProtectors;
+            bool dimensionalCatCables = dvst.dimensionalCatCables;
+            bool solarBubbles = dvst.solarBubbles;
+            bool pocketAndroids = dvst.pocketAndroids;
+            bool quantumComputing = dvst.quantumComputing;
+            bool rudimentarySingularitySkill = dvst.rudimentarySingularity;
+            bool unsuspiciousAlgorithms = dvst.unsuspiciousAlgorithms;
+            bool clusterNetworking = dvst.clusterNetworking;
+            bool scientificPlanets = dvst.scientificPlanets;
+            bool hubbleTelescope = dvst.hubbleTelescope;
+            bool jamesWebbTelescope = dvst.jamesWebbTelescope;
+            bool terraformingProtocols = dvst.terraformingProtocols;
+            bool planetAssembly = dvst.planetAssembly;
+            bool shellWorlds = dvst.shellWorlds;
+            bool stellarSacrifices = dvst.stellarSacrifices;
+            bool stellarObliteration = dvst.stellarObliteration;
+            bool supernova = dvst.supernova;
+            bool stellarImprovements = dvst.stellarImprovements;
+            bool stellarDominance = dvst.stellarDominance;
+            bool shouldersOfTheFallen = dvst.shouldersOfTheFallen;
+            bool shoulderSurgery = dvst.shoulderSurgery;
+            bool shouldersOfGiants = dvst.shouldersOfGiants;
+            bool shouldersOfTheEnlightened = dvst.shouldersOfTheEnlightened;
+            bool whatCouldHaveBeen = dvst.whatCouldHaveBeen;
+            long fragments = dvst.fragments;
+            Dictionary<string, bool> skillOwnedByIdSnapshot =
+                dvid.skillOwnedById != null ? new Dictionary<string, bool>(dvid.skillOwnedById) : null;
+
+            var results = new List<ParityResult>();
+
+            try
+            {
+                dvid.assemblyLines[0] = 1000;
+                dvid.assemblyLines[1] = 70;
+                dvid.assemblyLineModifier = 25;
+                dvid.panelLifetime = 20;
+                dvst.stayingPower = true;
+                dvst.rule34 = true;
+                dvst.superchargedPower = true;
+
+                SyncSkillOwnershipFromSkillTreeData();
+                DebugCompareAssemblyLineProduction(results);
+
+                dvid.managers[0] = 500;
+                dvid.managers[1] = 70;
+                dvid.managerModifier = 131;
+                dvst.stayingPower = false;
+                dvst.rule34 = true;
+                dvst.superchargedPower = true;
+
+                SyncSkillOwnershipFromSkillTreeData();
+                DebugCompareAiManagerProduction(results);
+
+                dvid.servers[0] = 1000;
+                dvid.servers[1] = 70;
+                dvid.serverModifier = 114.231998421252;
+                dvst.rule34 = true;
+                dvst.superchargedPower = true;
+
+                SyncSkillOwnershipFromSkillTreeData();
+                DebugCompareServerProduction(results);
+
+                dvid.dataCenters[0] = 1000;
+                dvid.dataCenters[1] = 250;
+                dvid.dataCenterModifier = 33.8;
+                dvid.servers[0] = 200;
+                dvid.servers[1] = 50;
+                dvid.rudimentrySingularityProduction = 42.5;
+                dvst.rule34 = true;
+                dvst.superchargedPower = true;
+                dvst.rudimentarySingularity = true;
+                dvst.parallelComputation = true;
+
+                SyncSkillOwnershipFromSkillTreeData();
+                DebugCompareDataCenterProduction(results);
+
+                dvid.planets[0] = 75;
+                dvid.planets[1] = 5;
+                dvid.planetModifier = 32.6;
+                dvid.workers = 1_000_000;
+                dvid.researchers = 250_000;
+                dvid.panelLifetime = 15;
+                dvpd.pocketAndroidsTimer = 1800;
+
+                dvst.pocketDimensions = true;
+                dvst.pocketMultiverse = true;
+                dvst.pocketProtectors = false;
+                dvst.dimensionalCatCables = true;
+                dvst.solarBubbles = true;
+                dvst.pocketAndroids = true;
+                dvst.quantumComputing = true;
+
+                SyncSkillOwnershipFromSkillTreeData();
+                DebugComparePlanetProduction(results);
+
+                dvst.pocketMultiverse = false;
+                dvst.pocketProtectors = true;
+
+                SyncSkillOwnershipFromSkillTreeData();
+                DebugComparePlanetProduction(results);
+
+                dvid.managers[0] = 100;
+                dvid.managers[1] = 25;
+                dvid.managerModifier = 50;
+                dvst.rudimentarySingularity = true;
+                dvst.unsuspiciousAlgorithms = true;
+                dvst.clusterNetworking = true;
+
+                SyncSkillOwnershipFromSkillTreeData();
+                DebugCompareRudimentarySingularityProduction(results);
+
+                dvid.assemblyLines[0] = 80;
+                dvid.assemblyLines[1] = 20;
+                dvid.planets[0] = 8;
+                dvid.planets[1] = 2;
+                dvid.researchers = 1_000_000;
+                dvid.panelsPerSec = 2e15;
+                dvid.panelLifetime = 100;
+                dvid.bots = 1e16;
+                SetResearchLevelInternal(ResearchIdMap.ScienceBoost, 1e6);
+                dvst.fragments = 5;
+
+                dvst.scientificPlanets = true;
+                dvst.hubbleTelescope = true;
+                dvst.jamesWebbTelescope = true;
+                dvst.terraformingProtocols = true;
+                dvst.planetAssembly = true;
+                dvst.shellWorlds = true;
+                dvst.stellarSacrifices = true;
+                dvst.stellarObliteration = false;
+                dvst.supernova = false;
+                dvst.stellarImprovements = false;
+                dvst.stellarDominance = false;
+                dvst.shouldersOfTheFallen = true;
+                dvst.shoulderSurgery = true;
+                dvst.shouldersOfGiants = true;
+                dvst.shouldersOfTheEnlightened = true;
+                dvst.whatCouldHaveBeen = true;
+
+                SyncSkillOwnershipFromSkillTreeData();
+                DebugComparePlanetGeneration(results);
+                DebugCompareStellarSacrificeBotDrain(results);
+                DebugCompareShouldersOfTheFallenBonuses(results);
+                DebugCompareShouldersAccruals(results);
+                DebugCompareMoneyMultiplier(results);
+                DebugCompareScienceMultiplier(results);
+                DebugComparePanelLifetime(results);
+                DebugCompareFacilityModifiers(results);
+
+                dvst.stellarObliteration = true;
+                dvst.stellarImprovements = true;
+                dvst.stellarDominance = true;
+
+                SyncSkillOwnershipFromSkillTreeData();
+                DebugComparePlanetGeneration(results);
+                DebugCompareStellarSacrificeBotDrain(results);
+
+                dvst.supernova = true;
+                dvst.stellarObliteration = false;
+                dvst.stellarImprovements = false;
+                dvst.stellarDominance = false;
+
+                SyncSkillOwnershipFromSkillTreeData();
+                DebugComparePlanetGeneration(results);
+                DebugCompareStellarSacrificeBotDrain(results);
+            }
+            finally
+            {
+                dvid.dataCenters[0] = dataCenters[0];
+                dvid.dataCenters[1] = dataCenters[1];
+                dvid.dataCenterModifier = dataCenterModifier;
+                dvid.servers[0] = servers[0];
+                dvid.servers[1] = servers[1];
+                dvid.serverModifier = serverModifier;
+                dvid.rudimentrySingularityProduction = rudimentarySingularity;
+                SetResearchLevelInternal(ResearchIdMap.ScienceBoost, scienceBoostOwned);
+
+                dvid.assemblyLines[0] = assemblyLines[0];
+                dvid.assemblyLines[1] = assemblyLines[1];
+                dvid.assemblyLineModifier = assemblyLineModifier;
+                dvid.managers[0] = managers[0];
+                dvid.managers[1] = managers[1];
+                dvid.managerModifier = managerModifier;
+
+                dvid.planets[0] = planets[0];
+                dvid.planets[1] = planets[1];
+                dvid.planetModifier = planetModifier;
+                dvid.workers = workers;
+                dvid.researchers = researchers;
+                dvid.panelLifetime = panelLifetime;
+                dvid.panelsPerSec = panelsPerSec;
+                dvpd.pocketAndroidsTimer = pocketAndroidsTimer;
+                dvid.bots = bots;
+
+                dvst.rule34 = rule34;
+                dvst.stayingPower = stayingPower;
+                dvst.superchargedPower = superchargedPower;
+                dvst.parallelComputation = parallelComputation;
+                dvst.pocketDimensions = pocketDimensions;
+                dvst.pocketMultiverse = pocketMultiverse;
+                dvst.pocketProtectors = pocketProtectors;
+                dvst.dimensionalCatCables = dimensionalCatCables;
+                dvst.solarBubbles = solarBubbles;
+                dvst.pocketAndroids = pocketAndroids;
+                dvst.quantumComputing = quantumComputing;
+                dvst.rudimentarySingularity = rudimentarySingularitySkill;
+                dvst.unsuspiciousAlgorithms = unsuspiciousAlgorithms;
+                dvst.clusterNetworking = clusterNetworking;
+                dvst.scientificPlanets = scientificPlanets;
+                dvst.hubbleTelescope = hubbleTelescope;
+                dvst.jamesWebbTelescope = jamesWebbTelescope;
+                dvst.terraformingProtocols = terraformingProtocols;
+                dvst.planetAssembly = planetAssembly;
+                dvst.shellWorlds = shellWorlds;
+                dvst.stellarSacrifices = stellarSacrifices;
+                dvst.stellarObliteration = stellarObliteration;
+                dvst.supernova = supernova;
+                dvst.stellarImprovements = stellarImprovements;
+                dvst.stellarDominance = stellarDominance;
+                dvst.shouldersOfTheFallen = shouldersOfTheFallen;
+                dvst.shoulderSurgery = shoulderSurgery;
+                dvst.shouldersOfGiants = shouldersOfGiants;
+                dvst.shouldersOfTheEnlightened = shouldersOfTheEnlightened;
+                dvst.whatCouldHaveBeen = whatCouldHaveBeen;
+                dvst.fragments = fragments;
+                if (dvid != null)
+                {
+                    dvid.skillOwnedById ??= new Dictionary<string, bool>();
+                    dvid.skillOwnedById.Clear();
+                    if (skillOwnedByIdSnapshot != null)
+                    {
+                        foreach (KeyValuePair<string, bool> entry in skillOwnedByIdSnapshot)
+                        {
+                            dvid.skillOwnedById[entry.Key] = entry.Value;
+                        }
+                    }
+                }
+
+                LogParitySummary(results);
+            }
+        }
+
+        private void SyncSkillOwnershipFromSkillTreeData()
+        {
+            if (dvid == null || dvst == null) return;
+            dvid.skillOwnedById ??= new Dictionary<string, bool>();
+            dvid.skillOwnedById.Clear();
+
+            GameDataRegistry registry = GameDataRegistry.Instance;
+            if (registry != null && registry.skillDatabase != null && registry.skillDatabase.skills.Count > 0)
+            {
+                foreach (SkillDefinition skill in registry.skillDatabase.skills)
+                {
+                    if (skill == null || string.IsNullOrEmpty(skill.id)) continue;
+                    bool owned = SkillFlagAccessor.TryGetFlag(dvst, skill.id, out bool flag) && flag;
+                    dvid.skillOwnedById[skill.id] = owned;
+                }
+
+                return;
+            }
+
+            if (SkillTree == null) return;
+            foreach (KeyValuePair<int, SkillTreeItem> entry in SkillTree)
+            {
+                if (!SkillIdMap.TryGetId(entry.Key, out string id)) continue;
+                bool owned = SkillFlagAccessor.TryGetFlag(dvst, id, out bool flag) && flag;
+                dvid.skillOwnedById[id] = owned;
+            }
+        }
+
+        private void AppendFacilityBreakdown(StringBuilder builder, string label, string facilityId)
+        {
+            if (builder == null || string.IsNullOrEmpty(facilityId)) return;
+
+            if (!GameDataRegistry.Instance.TryGetFacility(facilityId, out FacilityDefinition definition))
+            {
+                builder.AppendLine($"{label}: FacilityDefinition not found.");
+                return;
+            }
+
+            FacilityRuntime runtime = TryBuildDataDrivenRuntime(definition);
+            if (runtime == null)
+            {
+                builder.AppendLine($"{label}: data-driven runtime not ready.");
+                return;
+            }
+
+            builder.AppendLine($"{label}: {runtime.State.ProductionRate}");
+            builder.AppendLine($"{label} Breakdown:");
+            AppendContributions(builder, runtime.Breakdown.Contributions);
+        }
+
+        private void AppendStatBreakdown(StringBuilder builder, string label, StatResult result)
+        {
+            if (builder == null || result == null) return;
+
+            builder.AppendLine($"{label}: {result.Value}");
+            builder.AppendLine($"{label} Breakdown:");
+            AppendContributions(builder, result.Contributions);
+        }
+
+        private void AppendContributions(StringBuilder builder, List<Contribution> contributions)
+        {
+            if (builder == null || contributions == null) return;
+
+            foreach (Contribution contribution in contributions)
+            {
+                builder.AppendLine(
+                    $"{contribution.SourceName} [{contribution.Operation}] {contribution.Value} (delta {contribution.Delta})");
+            }
+        }
+
+        private void DebugCompareRudimentarySingularityProduction()
+        {
+            DebugCompareRudimentarySingularityProduction(null);
+        }
+
+        private void DebugCompareRudimentarySingularityProduction(List<ParityResult> results)
+        {
+            if (GameDataRegistry.Instance == null)
+            {
+                Debug.LogWarning("GameDataRegistry not found in scene.");
+                return;
+            }
+
+            if (!GameDataRegistry.Instance.TryGetFacility("ai_managers", out FacilityDefinition definition))
+            {
+                Debug.LogWarning("AI Manager FacilityDefinition not found.");
+                return;
+            }
+
+            FacilityRuntime runtime = FacilityLegacyBridge.BuildAiManagerRuntime(definition, dvid, dvst);
+            if (runtime == null)
+            {
+                Debug.LogWarning("AI Manager runtime could not be built.");
+                return;
+            }
+
+            double legacyCached = dvid.rudimentrySingularityProduction;
+            double assemblyLineProduction = runtime.State.ProductionRate;
+            double baseValue = 0;
+            if (dvst.rudimentarySingularity && assemblyLineProduction > 1)
+            {
+                baseValue = Math.Pow(Math.Log(assemblyLineProduction, 2),
+                    1 + Math.Log10(assemblyLineProduction) / 10);
+            }
+
+            double serversTotal = dvid.servers[0] + dvid.servers[1];
+            var effects = new List<StatEffect>();
+            if (dvst.unsuspiciousAlgorithms && baseValue > 0)
+            {
+                effects.Add(new StatEffect
+                {
+                    Id = "skill.unsuspicious_algorithms",
+                    SourceName = "Unsuspicious Algorithms",
+                    TargetStatId = "Global.RudimentarySingularity",
+                    Operation = StatOperation.Multiply,
+                    Value = 10,
+                    Order = 10
+                });
+            }
+
+            if (dvst.clusterNetworking && serversTotal > 1)
+            {
+                effects.Add(new StatEffect
+                {
+                    Id = "skill.cluster_networking",
+                    SourceName = "Cluster Networking",
+                    TargetStatId = "Global.RudimentarySingularity",
+                    Operation = StatOperation.Multiply,
+                    Value = 1 + 0.05f * Math.Log10(serversTotal),
+                    Order = 20,
+                    ConditionId = "servers_total_gt_1"
+                });
+            }
+
+            double legacyComputed = baseValue;
+            if (dvst.unsuspiciousAlgorithms && legacyComputed > 0)
+                legacyComputed *= 10;
+            if (dvst.clusterNetworking && serversTotal > 1)
+                legacyComputed *= 1 + 0.05f * Math.Log10(serversTotal);
+
+            StatResult pipelineResult = StatCalculator.Calculate(baseValue, effects);
+            double updated = pipelineResult.Value;
+            double delta = updated - legacyComputed;
+            results?.Add(new ParityResult("Rudimentary Singularity", delta));
+            var builder = new StringBuilder();
+            builder.AppendLine($"Rudimentary Singularity (legacy cached): {legacyCached}");
+            builder.AppendLine($"Rudimentary Singularity (legacy formula): {legacyComputed}");
+            builder.AppendLine($"Rudimentary Singularity (pipeline): {updated}");
+            builder.AppendLine($"Delta: {delta}");
+            builder.AppendLine(
+                $"Inputs: assemblyLineProduction={assemblyLineProduction}, serversTotal={serversTotal}");
+            builder.AppendLine("Breakdown:");
+            foreach (Contribution contribution in pipelineResult.Contributions)
+            {
+                builder.AppendLine(
+                    $"{contribution.SourceName} [{contribution.Operation}] {contribution.Value} (delta {contribution.Delta})");
+            }
+
+            Debug.Log(builder.ToString());
+        }
+
+        private void DebugCompareStellarSacrificeBotDrain()
+        {
+            DebugCompareStellarSacrificeBotDrain(null);
+        }
+
+        private void DebugCompareStellarSacrificeBotDrain(List<ParityResult> results)
+        {
+            double starsSurrounded = ProductionMath.StarsSurrounded(dvid, false, false, 0);
+            double galaxiesEngulfed = ProductionMath.GalaxiesEngulfed(dvid, false, false, 0);
+            double stellarGalaxies = ProductionMath.StellarGalaxies(dvst, galaxiesEngulfed);
+            double botsRequired = ProductionMath.StellarSacrificesRequiredBots(dvst, starsSurrounded);
+
+            double legacyComputed = dvst.stellarSacrifices && dvid.bots >= botsRequired && stellarGalaxies > 0
+                ? botsRequired
+                : 0;
+
+            var effects = new List<StatEffect>();
+            if (dvst.stellarSacrifices && dvid.bots >= botsRequired && stellarGalaxies > 0)
+            {
+                effects.Add(new StatEffect
+                {
+                    Id = "skill.stellar_sacrifices_drain",
+                    SourceName = "Stellar Sacrifices Drain",
+                    TargetStatId = "Global.BotsDrainPerSecond",
+                    Operation = StatOperation.Add,
+                    Value = botsRequired,
+                    Order = 0,
+                    ConditionId = "bots_required_met"
+                });
+            }
+
+            StatResult pipelineResult = StatCalculator.Calculate(0, effects);
+            double updated = pipelineResult.Value;
+            double delta = updated - legacyComputed;
+            results?.Add(new ParityResult("Stellar Sacrifice Bot Drain", delta));
+            var builder = new StringBuilder();
+            builder.AppendLine($"Stellar Sacrifice Bot Drain (legacy formula): {legacyComputed}");
+            builder.AppendLine($"Stellar Sacrifice Bot Drain (pipeline): {updated}");
+            builder.AppendLine($"Delta: {delta}");
+            builder.AppendLine(
+                $"Inputs: bots={dvid.bots}, starsSurrounded={starsSurrounded}, galaxiesEngulfed={galaxiesEngulfed}, " +
+                $"stellarGalaxies={stellarGalaxies}, botsRequired={botsRequired}");
+            builder.AppendLine("Breakdown:");
+            foreach (Contribution contribution in pipelineResult.Contributions)
+            {
+                builder.AppendLine(
+                    $"{contribution.SourceName} [{contribution.Operation}] {contribution.Value} (delta {contribution.Delta})");
+            }
+
+            Debug.Log(builder.ToString());
+        }
+
+        private void DebugCompareShouldersOfTheFallenBonuses()
+        {
+            DebugCompareShouldersOfTheFallenBonuses(null);
+        }
+
+        private void DebugCompareShouldersOfTheFallenBonuses(List<ParityResult> results)
+        {
+            double scientificBase = FacilityLegacyBridge.ComputeScientificPlanetsProduction(dvid, dvst);
+            double shouldersBonus = dvst.shouldersOfTheFallen && dvid.scienceBoostOwned > 0
+                ? Math.Log(dvid.scienceBoostOwned, 2)
+                : 0;
+            double legacyScientific = scientificBase + shouldersBonus;
+
+            var scientificEffects = new List<StatEffect>();
+            if (shouldersBonus > 0)
+            {
+                scientificEffects.Add(new StatEffect
+                {
+                    Id = "skill.shoulders_of_the_fallen",
+                    SourceName = "Shoulders Of The Fallen",
+                    TargetStatId = "Global.ScientificPlanetsPerSecond",
+                    Operation = StatOperation.Add,
+                    Value = shouldersBonus,
+                    Order = 0
+                });
+            }
+
+            StatResult scientificResult = StatCalculator.Calculate(scientificBase, scientificEffects);
+            double scientificDelta = scientificResult.Value - legacyScientific;
+            results?.Add(new ParityResult("Shoulders Of The Fallen (Scientific)", scientificDelta));
+
+            double pocketBase = FacilityLegacyBridge.ComputePocketDimensionsProduction(dvid, dvpd, dvst);
+            double shoulderSurgeryBonus = dvst.shouldersOfTheFallen && dvst.shoulderSurgery && dvid.scienceBoostOwned > 0
+                ? Math.Log(dvid.scienceBoostOwned, 2)
+                : 0;
+            double legacyPocket = pocketBase + shoulderSurgeryBonus;
+
+            var pocketEffects = new List<StatEffect>();
+            if (shoulderSurgeryBonus > 0)
+            {
+                pocketEffects.Add(new StatEffect
+                {
+                    Id = "skill.shoulder_surgery",
+                    SourceName = "Shoulder Surgery",
+                    TargetStatId = "Global.PocketDimensionsPerSecond",
+                    Operation = StatOperation.Add,
+                    Value = shoulderSurgeryBonus,
+                    Order = 0
+                });
+            }
+
+            StatResult pocketResult = StatCalculator.Calculate(pocketBase, pocketEffects);
+            double pocketDelta = pocketResult.Value - legacyPocket;
+            results?.Add(new ParityResult("Shoulder Surgery (Pocket Dimensions)", pocketDelta));
+
+            var builder = new StringBuilder();
+            builder.AppendLine($"Shoulders Of The Fallen (Scientific Planets) legacy: {legacyScientific}");
+            builder.AppendLine($"Shoulders Of The Fallen (Scientific Planets) pipeline: {scientificResult.Value}");
+            builder.AppendLine($"Delta: {scientificDelta}");
+            builder.AppendLine($"Inputs: researchers={dvid.researchers}, scienceBoostOwned={dvid.scienceBoostOwned}");
+            builder.AppendLine("Breakdown:");
+            foreach (Contribution contribution in scientificResult.Contributions)
+            {
+                builder.AppendLine(
+                    $"{contribution.SourceName} [{contribution.Operation}] {contribution.Value} (delta {contribution.Delta})");
+            }
+
+            builder.AppendLine($"Shoulder Surgery (Pocket Dimensions) legacy: {legacyPocket}");
+            builder.AppendLine($"Shoulder Surgery (Pocket Dimensions) pipeline: {pocketResult.Value}");
+            builder.AppendLine($"Delta: {pocketDelta}");
+            builder.AppendLine(
+                $"Inputs: workers={dvid.workers}, researchers={dvid.researchers}, panelLifetime={dvid.panelLifetime}, " +
+                $"pocketAndroidsTimer={dvpd.pocketAndroidsTimer}, scienceBoostOwned={dvid.scienceBoostOwned}");
+            builder.AppendLine("Breakdown:");
+            foreach (Contribution contribution in pocketResult.Contributions)
+            {
+                builder.AppendLine(
+                    $"{contribution.SourceName} [{contribution.Operation}] {contribution.Value} (delta {contribution.Delta})");
+            }
+
+            Debug.Log(builder.ToString());
+        }
+
+        private void DebugCompareShouldersAccruals()
+        {
+            DebugCompareShouldersAccruals(null);
+        }
+
+        private void DebugCompareShouldersAccruals(List<ParityResult> results)
+        {
+            double scientificPlanetsProduction = FacilityLegacyBridge.ComputeScientificPlanetsProduction(dvid, dvst);
+            if (dvst.shouldersOfTheFallen && dvid.scienceBoostOwned > 0)
+                scientificPlanetsProduction += Math.Log(dvid.scienceBoostOwned, 2);
+
+            double pocketDimensionsProduction = FacilityLegacyBridge.ComputePocketDimensionsProduction(dvid, dvpd, dvst);
+            if (dvst.shouldersOfTheFallen && dvst.shoulderSurgery && dvid.scienceBoostOwned > 0)
+                pocketDimensionsProduction += Math.Log(dvid.scienceBoostOwned, 2);
+
+            double legacyScienceBoostRate = dvst.shouldersOfGiants && dvst.scientificPlanets
+                ? scientificPlanetsProduction + (dvst.whatCouldHaveBeen ? pocketDimensionsProduction : 0)
+                : 0;
+            double legacyMoneyUpgradeRate = dvst.shouldersOfTheEnlightened && dvst.scientificPlanets
+                ? scientificPlanetsProduction
+                : 0;
+
+            var scienceBoostEffects = new List<StatEffect>();
+            if (dvst.shouldersOfGiants && dvst.scientificPlanets)
+            {
+                scienceBoostEffects.Add(new StatEffect
+                {
+                    Id = "skill.shoulders_of_giants",
+                    SourceName = "Shoulders Of Giants",
+                    TargetStatId = "Global.ScienceBoostPerSecond",
+                    Operation = StatOperation.Add,
+                    Value = scientificPlanetsProduction,
+                    Order = 0
+                });
+                if (dvst.whatCouldHaveBeen)
+                {
+                    scienceBoostEffects.Add(new StatEffect
+                    {
+                        Id = "skill.what_could_have_been",
+                        SourceName = "What Could Have Been",
+                        TargetStatId = "Global.ScienceBoostPerSecond",
+                        Operation = StatOperation.Add,
+                        Value = pocketDimensionsProduction,
+                        Order = 10
+                    });
+                }
+            }
+
+            var moneyUpgradeEffects = new List<StatEffect>();
+            if (dvst.shouldersOfTheEnlightened && dvst.scientificPlanets)
+            {
+                moneyUpgradeEffects.Add(new StatEffect
+                {
+                    Id = "skill.shoulders_of_the_enlightened",
+                    SourceName = "Shoulders Of The Enlightened",
+                    TargetStatId = "Global.MoneyMultiUpgradePerSecond",
+                    Operation = StatOperation.Add,
+                    Value = scientificPlanetsProduction,
+                    Order = 0
+                });
+            }
+
+            StatResult scienceResult = StatCalculator.Calculate(0, scienceBoostEffects);
+            StatResult moneyResult = StatCalculator.Calculate(0, moneyUpgradeEffects);
+            double scienceDelta = scienceResult.Value - legacyScienceBoostRate;
+            double moneyDelta = moneyResult.Value - legacyMoneyUpgradeRate;
+            results?.Add(new ParityResult("Shoulders Accruals (Science Boost)", scienceDelta));
+            results?.Add(new ParityResult("Shoulders Accruals (Money Upgrade)", moneyDelta));
+
+            var builder = new StringBuilder();
+            builder.AppendLine($"Shoulders Accruals (Science Boost) legacy: {legacyScienceBoostRate}");
+            builder.AppendLine($"Shoulders Accruals (Science Boost) pipeline: {scienceResult.Value}");
+            builder.AppendLine($"Delta: {scienceDelta}");
+            builder.AppendLine(
+                $"Inputs: scientificPlanets={scientificPlanetsProduction}, pocketDimensions={pocketDimensionsProduction}, " +
+                $"scienceBoostOwned={dvid.scienceBoostOwned}");
+            builder.AppendLine("Breakdown:");
+            foreach (Contribution contribution in scienceResult.Contributions)
+            {
+                builder.AppendLine(
+                    $"{contribution.SourceName} [{contribution.Operation}] {contribution.Value} (delta {contribution.Delta})");
+            }
+
+            builder.AppendLine($"Shoulders Accruals (Money Upgrade) legacy: {legacyMoneyUpgradeRate}");
+            builder.AppendLine($"Shoulders Accruals (Money Upgrade) pipeline: {moneyResult.Value}");
+            builder.AppendLine($"Delta: {moneyDelta}");
+            builder.AppendLine($"Inputs: scientificPlanets={scientificPlanetsProduction}");
+            builder.AppendLine("Breakdown:");
+            foreach (Contribution contribution in moneyResult.Contributions)
+            {
+                builder.AppendLine(
+                    $"{contribution.SourceName} [{contribution.Operation}] {contribution.Value} (delta {contribution.Delta})");
+            }
+
+            Debug.Log(builder.ToString());
+        }
+
+        private void DebugCompareMoneyMultiplier(List<ParityResult> results)
+        {
+            var secrets = ModifierSystem.BuildSecretBuffState(dvpd);
+            double legacy = dvst.shouldersOfPrecursors
+                ? ModifierSystem.ScienceMultipliers(dvid, dvst, dvpd, pp, secrets)
+                : ModifierSystem.MoneyMultipliers(dvid, dvst, dvpd, pp, secrets);
+
+            if (GlobalStatPipeline.TryCalculateMoneyMultiplier(dvid, dvst, dvpd, pp, secrets,
+                    out StatResult result))
+            {
+                results?.Add(new ParityResult("Money Multiplier", result.Value - legacy));
+            }
+            else
+            {
+                results?.Add(new ParityResult("Money Multiplier", double.NaN));
+            }
+        }
+
+        private void DebugCompareScienceMultiplier(List<ParityResult> results)
+        {
+            var secrets = ModifierSystem.BuildSecretBuffState(dvpd);
+            double legacy = ModifierSystem.ScienceMultipliers(dvid, dvst, dvpd, pp, secrets);
+
+            if (GlobalStatPipeline.TryCalculateScienceMultiplier(dvid, dvst, dvpd, pp, secrets,
+                    out StatResult result))
+            {
+                results?.Add(new ParityResult("Science Multiplier", result.Value - legacy));
+            }
+            else
+            {
+                results?.Add(new ParityResult("Science Multiplier", double.NaN));
+            }
+        }
+
+        private void DebugComparePanelLifetime(List<ParityResult> results)
+        {
+            double legacyLifetime = ModifierSystem.CalculatePanelLifetimeLegacy(dvid, dvst, dvpd, pp);
+            if (GlobalStatPipeline.TryCalculatePanelLifetime(dvid, dvst, dvpd, pp, out StatResult result))
+            {
+                results?.Add(new ParityResult("Panel Lifetime", result.Value - legacyLifetime));
+            }
+            else
+            {
+                results?.Add(new ParityResult("Panel Lifetime", double.NaN));
+            }
+        }
+
+        private void DebugComparePlanetGeneration()
+        {
+            DebugComparePlanetGeneration(null);
+        }
+
+        private void DebugComparePlanetGeneration(List<ParityResult> results)
+        {
+            double legacyCached = dvid.totalPlanetProduction;
+            double scientificPlanetsProduction = FacilityLegacyBridge.ComputeScientificPlanetsProduction(dvid, dvst);
+            double planetAssemblyProduction = FacilityLegacyBridge.ComputePlanetAssemblyProduction(dvid, dvst);
+            double shellWorldsProduction = FacilityLegacyBridge.ComputeShellWorldsProduction(dvid, dvst);
+            double stellarSacrificesProduction = FacilityLegacyBridge.ComputeStellarSacrificesProduction(dvid, dvst);
+
+            double legacyComputed = 0;
+            if (dvst.scientificPlanets) legacyComputed += scientificPlanetsProduction;
+            if (dvst.planetAssembly) legacyComputed += planetAssemblyProduction;
+            if (dvst.shellWorlds) legacyComputed += shellWorldsProduction;
+            if (dvst.stellarSacrifices) legacyComputed += stellarSacrificesProduction;
+
+            StatResult pipelineResult = FacilityLegacyBridge.CalculatePlanetGeneration(dvid, dvst);
+            double updated = pipelineResult.Value;
+            double delta = updated - legacyComputed;
+            results?.Add(new ParityResult("Planet Generation", delta));
+
+            double starsSurrounded = ProductionMath.StarsSurrounded(dvid, false, false, 0);
+            double galaxiesEngulfed = ProductionMath.GalaxiesEngulfed(dvid, false, false, 0);
+            double stellarGalaxies = ProductionMath.StellarGalaxies(dvst, galaxiesEngulfed);
+            double botsRequired = ProductionMath.StellarSacrificesRequiredBots(dvst, starsSurrounded);
+
+            var builder = new StringBuilder();
+            builder.AppendLine($"Planet Generation (legacy cached): {legacyCached}");
+            builder.AppendLine($"Planet Generation (legacy formula): {legacyComputed}");
+            builder.AppendLine($"Planet Generation (pipeline): {updated}");
+            builder.AppendLine($"Delta: {delta}");
+            builder.AppendLine(
+                $"Inputs: researchers={dvid.researchers}, assemblyLines={dvid.assemblyLines[0] + dvid.assemblyLines[1]}, " +
+                $"planets={dvid.planets[0] + dvid.planets[1]}, bots={dvid.bots}, " +
+                $"starsSurrounded={starsSurrounded}, galaxiesEngulfed={galaxiesEngulfed}, stellarGalaxies={stellarGalaxies}, " +
+                $"botsRequired={botsRequired}");
+            builder.AppendLine($"Scientific Planets: {scientificPlanetsProduction}");
+            builder.AppendLine($"Planet Assembly: {planetAssemblyProduction}");
+            builder.AppendLine($"Shell Worlds: {shellWorldsProduction}");
+            builder.AppendLine($"Stellar Sacrifices: {stellarSacrificesProduction}");
+            builder.AppendLine("Breakdown:");
+            foreach (Contribution contribution in pipelineResult.Contributions)
+            {
+                builder.AppendLine(
+                    $"{contribution.SourceName} [{contribution.Operation}] {contribution.Value} (delta {contribution.Delta})");
+            }
+
+            Debug.Log(builder.ToString());
+        }
+
+        private void DebugComparePlanetProduction()
+        {
+            DebugComparePlanetProduction(null);
+        }
+
+        private void DebugComparePlanetProduction(List<ParityResult> results)
+        {
+            if (GameDataRegistry.Instance == null)
+            {
+                Debug.LogWarning("GameDataRegistry not found in scene.");
+                return;
+            }
+
+            if (!GameDataRegistry.Instance.TryGetFacility("planets", out FacilityDefinition definition))
+            {
+                Debug.LogWarning("Planet FacilityDefinition not found.");
+                return;
+            }
+
+            FacilityRuntime runtime = FacilityLegacyBridge.BuildPlanetRuntime(definition, dvid, dvpd, dvst);
+            if (runtime == null)
+            {
+                Debug.LogWarning("Planet runtime could not be built.");
+                return;
+            }
+
+            double legacyCached = dvid.dataCenterProduction;
+            double legacyComputed = (dvid.planets[0] + dvid.planets[1]) * 0.0002777777777777778f * dvid.planetModifier;
+            if (dvst.rule34 && dvid.planets[1] >= 69)
+                legacyComputed *= 2;
+            if (dvst.superchargedPower)
+                legacyComputed *= 1.5f;
+            if (dvst.pocketDimensions)
+            {
+                double pocketDimensionsProduction = FacilityLegacyBridge.ComputePocketDimensionsProduction(dvid, dvpd, dvst);
+                if (pocketDimensionsProduction > 0)
+                    legacyComputed += pocketDimensionsProduction;
+            }
+
+            double updated = runtime.State.ProductionRate;
+            double delta = updated - legacyComputed;
+            results?.Add(new ParityResult("Planets (pipeline)", delta));
+            var builder = new StringBuilder();
+            builder.AppendLine($"Planets (legacy cached): {legacyCached}");
+            builder.AppendLine($"Planets (legacy formula): {legacyComputed}");
+            builder.AppendLine($"Planets (pipeline): {updated}");
+            builder.AppendLine($"Delta: {delta}");
+            builder.AppendLine(
+                $"Inputs: count={dvid.planets[0] + dvid.planets[1]}, modifier={dvid.planetModifier}, " +
+                $"workers={dvid.workers}, researchers={dvid.researchers}, pocketAndroidsTimer={dvpd.pocketAndroidsTimer}");
+            builder.AppendLine("Breakdown:");
+            foreach (Contribution contribution in runtime.Breakdown.Contributions)
+            {
+                builder.AppendLine(
+                    $"{contribution.SourceName} [{contribution.Operation}] {contribution.Value} (delta {contribution.Delta})");
+            }
+
+            double dataDrivenExpected = legacyComputed;
+            if (TryGetDataDrivenModifier("planets", out double dataDrivenModifier))
+            {
+                dataDrivenExpected =
+                    (dvid.planets[0] + dvid.planets[1]) * 0.0002777777777777778f * dataDrivenModifier;
+                if (dvst.rule34 && dvid.planets[1] >= 69)
+                    dataDrivenExpected *= 2;
+                if (dvst.superchargedPower)
+                    dataDrivenExpected *= 1.5f;
+                if (dvst.pocketDimensions)
+                {
+                    double pocketDimensionsProduction =
+                        FacilityLegacyBridge.ComputePocketDimensionsProduction(dvid, dvpd, dvst);
+                    if (pocketDimensionsProduction > 0)
+                        dataDrivenExpected += pocketDimensionsProduction;
+                }
+            }
+
+            AppendDataDrivenComparison(builder, "Planets", definition, dataDrivenExpected, results);
+            Debug.Log(builder.ToString());
+        }
+
+        private bool TryGetDataDrivenModifier(string facilityId, out double modifier)
+        {
+            modifier = 1;
+            if (string.IsNullOrEmpty(facilityId)) return false;
+
+            var secrets = ModifierSystem.BuildSecretBuffState(dvpd);
+            const double parityMaxInfinityBuff = 1e44;
+
+            StatResult result;
+            switch (facilityId)
+            {
+                case "assembly_lines":
+                    if (!FacilityModifierPipeline.TryCalculateAssemblyLineModifier(dvid, dvst, dvpd, pp, secrets,
+                            parityMaxInfinityBuff, out result))
+                        return false;
+                    break;
+                case "ai_managers":
+                    if (!FacilityModifierPipeline.TryCalculateManagerModifier(dvid, dvst, dvpd, pp, secrets,
+                            parityMaxInfinityBuff, out result))
+                        return false;
+                    break;
+                case "servers":
+                    if (!FacilityModifierPipeline.TryCalculateServerModifier(dvid, dvst, dvpd, pp, secrets,
+                            parityMaxInfinityBuff, out result))
+                        return false;
+                    break;
+                case "data_centers":
+                    if (!FacilityModifierPipeline.TryCalculateDataCenterModifier(dvid, dvst, dvpd, pp,
+                            parityMaxInfinityBuff, out result))
+                        return false;
+                    break;
+                case "planets":
+                    if (!FacilityModifierPipeline.TryCalculatePlanetModifier(dvid, dvst, dvpd, pp, secrets,
+                            parityMaxInfinityBuff, out result))
+                        return false;
+                    break;
+                default:
+                    return false;
+            }
+
+            modifier = result.Value;
+            return true;
+        }
+
+        private void DebugCompareFacilityModifiers(List<ParityResult> results)
+        {
+            if (results == null) return;
+
+            var secrets = new SecretBuffState();
+            double assemblyLineUpgradePercent = dvid.assemblyLineUpgradePercent;
+            double aiManagerUpgradePercent = dvid.aiManagerUpgradePercent;
+            double serverUpgradePercent = dvid.serverUpgradePercent;
+            double dataCenterUpgradePercent = dvid.dataCenterUpgradePercent;
+            double planetUpgradePercent = dvid.planetUpgradePercent;
+
+            try
+            {
+                ModifierSystem.SecretBuffs(dvid, dvpd, secrets);
+
+                const double parityMaxInfinityBuff = 1e44;
+
+                if (FacilityModifierPipeline.TryCalculateAssemblyLineModifier(dvid, dvst, dvpd, pp, secrets,
+                        parityMaxInfinityBuff, out StatResult assemblyResult))
+                {
+                    double legacy = ModifierSystem.CalculateAssemblyLineModifierLegacy(dvid, dvst, dvpd, pp, secrets,
+                        parityMaxInfinityBuff);
+                    results.Add(new ParityResult("Assembly Lines Modifier", assemblyResult.Value - legacy));
+                }
+                else
+                {
+                    results.Add(new ParityResult("Assembly Lines Modifier", double.NaN));
+                }
+
+                if (FacilityModifierPipeline.TryCalculateManagerModifier(dvid, dvst, dvpd, pp, secrets,
+                        parityMaxInfinityBuff, out StatResult managerResult))
+                {
+                    double legacy = ModifierSystem.CalculateManagerModifierLegacy(dvid, dvst, dvpd, pp, secrets,
+                        parityMaxInfinityBuff);
+                    results.Add(new ParityResult("AI Managers Modifier", managerResult.Value - legacy));
+                }
+                else
+                {
+                    results.Add(new ParityResult("AI Managers Modifier", double.NaN));
+                }
+
+                if (FacilityModifierPipeline.TryCalculateServerModifier(dvid, dvst, dvpd, pp, secrets,
+                        parityMaxInfinityBuff, out StatResult serverResult))
+                {
+                    double legacy = ModifierSystem.CalculateServerModifierLegacy(dvid, dvst, dvpd, pp, secrets,
+                        parityMaxInfinityBuff);
+                    results.Add(new ParityResult("Servers Modifier", serverResult.Value - legacy));
+                }
+                else
+                {
+                    results.Add(new ParityResult("Servers Modifier", double.NaN));
+                }
+
+                if (FacilityModifierPipeline.TryCalculateDataCenterModifier(dvid, dvst, dvpd, pp,
+                        parityMaxInfinityBuff, out StatResult dataCenterResult))
+                {
+                    double legacy = ModifierSystem.CalculateDataCenterModifierLegacy(dvid, dvst, dvpd, pp,
+                        parityMaxInfinityBuff);
+                    results.Add(new ParityResult("Data Centers Modifier", dataCenterResult.Value - legacy));
+                }
+                else
+                {
+                    results.Add(new ParityResult("Data Centers Modifier", double.NaN));
+                }
+
+                if (FacilityModifierPipeline.TryCalculatePlanetModifier(dvid, dvst, dvpd, pp, secrets,
+                        parityMaxInfinityBuff, out StatResult planetResult))
+                {
+                    double legacy = ModifierSystem.CalculatePlanetModifierLegacy(dvid, dvst, dvpd, pp, secrets,
+                        parityMaxInfinityBuff);
+                    results.Add(new ParityResult("Planets Modifier", planetResult.Value - legacy));
+                }
+                else
+                {
+                    results.Add(new ParityResult("Planets Modifier", double.NaN));
+                }
+            }
+            finally
+            {
+                dvid.assemblyLineUpgradePercent = assemblyLineUpgradePercent;
+                dvid.aiManagerUpgradePercent = aiManagerUpgradePercent;
+                dvid.serverUpgradePercent = serverUpgradePercent;
+                dvid.dataCenterUpgradePercent = dataCenterUpgradePercent;
+                dvid.planetUpgradePercent = planetUpgradePercent;
+            }
+        }
+
+        private void AppendDataDrivenComparison(StringBuilder builder, string label, FacilityDefinition definition,
+            double legacyComputed, List<ParityResult> results)
+        {
+            if (builder == null || definition == null) return;
+
+            FacilityRuntime runtime = TryBuildDataDrivenRuntime(definition);
+            if (runtime == null) return;
+
+            double dataDriven = runtime.State.ProductionRate;
+            double delta = dataDriven - legacyComputed;
+            results?.Add(new ParityResult($"{label} (data-driven)", delta));
+            builder.AppendLine($"{label} (data-driven expected): {legacyComputed}");
+            builder.AppendLine($"{label} (data-driven): {dataDriven}");
+            builder.AppendLine($"Delta (data-driven): {delta}");
+            builder.AppendLine("Data-driven Breakdown:");
+            foreach (Contribution contribution in runtime.Breakdown.Contributions)
+            {
+                builder.AppendLine(
+                    $"{contribution.SourceName} [{contribution.Operation}] {contribution.Value} (delta {contribution.Delta})");
+            }
+        }
+
+        private const double ParityEpsilon = 1e-09;
+
+        private void LogParitySummary(List<ParityResult> results)
+        {
+            if (results == null || results.Count == 0)
+            {
+                Debug.Log("Parity suite: no results collected.");
+                return;
+            }
+
+            int failed = 0;
+            int skipped = 0;
+            var builder = new StringBuilder();
+
+            foreach (ParityResult result in results)
+            {
+                if (double.IsNaN(result.Delta))
+                {
+                    skipped++;
+                    continue;
+                }
+
+                if (Math.Abs(result.Delta) > ParityEpsilon)
+                {
+                    failed++;
+                    builder.AppendLine($"{result.Label}: {result.Delta}");
+                }
+            }
+
+            if (failed == 0)
+            {
+                Debug.Log($"Parity suite: all deltas within {ParityEpsilon}. Results={results.Count}, Skipped={skipped}");
+            }
+            else
+            {
+                Debug.Log($"Parity suite: {failed} mismatches (epsilon {ParityEpsilon}). Results={results.Count}, Skipped={skipped}\n{builder}");
+            }
+        }
+
+        private readonly struct ParityResult
+        {
+            public ParityResult(string label, double delta)
+            {
+                Label = label;
+                Delta = delta;
+            }
+
+            public string Label { get; }
+            public double Delta { get; }
+        }
+
+        private FacilityRuntime TryBuildDataDrivenRuntime(FacilityDefinition definition)
+        {
+            if (definition == null) return null;
+            GameDataRegistry registry = GameDataRegistry.Instance;
+            if (registry == null || registry.skillDatabase == null || registry.skillDatabase.skills == null ||
+                registry.skillDatabase.skills.Count == 0)
+            {
+                return null;
+            }
+
+            FacilityState state = BuildFacilityState(definition.id);
+            if (state == null) return null;
+
+            var context = new EffectContext(dvid, dvpd, dvst, pp);
+            return FacilityEffectPipeline.BuildRuntimeFromDefinitions(definition, state, context);
+        }
+
+        private FacilityState BuildFacilityState(string facilityId)
+        {
+            if (string.IsNullOrEmpty(facilityId)) return null;
+
+            switch (facilityId)
+            {
+                case "assembly_lines":
+                    return new FacilityState
+                    {
+                        FacilityId = facilityId,
+                        ManualOwned = dvid.assemblyLines[1],
+                        AutoOwned = dvid.assemblyLines[0],
+                        EffectiveCount = dvid.assemblyLines[0] + dvid.assemblyLines[1]
+                    };
+                case "ai_managers":
+                    return new FacilityState
+                    {
+                        FacilityId = facilityId,
+                        ManualOwned = dvid.managers[1],
+                        AutoOwned = dvid.managers[0],
+                        EffectiveCount = dvid.managers[0] + dvid.managers[1]
+                    };
+                case "servers":
+                    return new FacilityState
+                    {
+                        FacilityId = facilityId,
+                        ManualOwned = dvid.servers[1],
+                        AutoOwned = dvid.servers[0],
+                        EffectiveCount = dvid.servers[0] + dvid.servers[1]
+                    };
+                case "data_centers":
+                    return new FacilityState
+                    {
+                        FacilityId = facilityId,
+                        ManualOwned = dvid.dataCenters[1],
+                        AutoOwned = dvid.dataCenters[0],
+                        EffectiveCount = dvid.dataCenters[0] + dvid.dataCenters[1]
+                    };
+                case "planets":
+                    return new FacilityState
+                    {
+                        FacilityId = facilityId,
+                        ManualOwned = dvid.planets[1],
+                        AutoOwned = dvid.planets[0],
+                        EffectiveCount = dvid.planets[0] + dvid.planets[1]
+                    };
+                default:
+                    return null;
+            }
+        }
+
 
         [ContextMenu("Save")]
         public void Save()
@@ -447,6 +2121,148 @@ namespace Expansion
             UpdateSkills?.Invoke();
         }
 
+        public bool IsSkillOwned(string skillId)
+        {
+            if (string.IsNullOrEmpty(skillId)) return false;
+            if (dvid != null && dvid.skillOwnedById != null &&
+                dvid.skillOwnedById.TryGetValue(skillId, out bool owned))
+            {
+                return owned;
+            }
+
+            return SkillFlagAccessor.TryGetFlag(dvst, skillId, out bool legacyOwned) && legacyOwned;
+        }
+
+        public void SetSkillOwned(string skillId, bool owned)
+        {
+            if (string.IsNullOrEmpty(skillId)) return;
+            if (dvid == null) return;
+
+            dvid.skillOwnedById ??= new Dictionary<string, bool>();
+            dvid.skillOwnedById[skillId] = owned;
+
+            if (SkillIdMap.TryGetLegacyKey(skillId, out int key))
+            {
+                dvid.SkillTreeSaveData ??= new Dictionary<int, bool>();
+                dvid.SkillTreeSaveData[key] = owned;
+                if (SkillTree != null && SkillTree.TryGetValue(key, out SkillTreeItem item))
+                {
+                    item.Owned = owned;
+                }
+            }
+
+            SkillFlagAccessor.TrySetFlag(dvst, skillId, owned);
+        }
+
+        public static double GetResearchLevel(string researchId)
+        {
+            return oracle != null ? oracle.GetResearchLevelInternal(researchId) : 0;
+        }
+
+        public static void SetResearchLevel(string researchId, double level)
+        {
+            if (oracle == null) return;
+            oracle.SetResearchLevelInternal(researchId, level);
+        }
+
+        public static void AddResearchLevel(string researchId, double delta)
+        {
+            if (oracle == null || string.IsNullOrEmpty(researchId)) return;
+            double level = oracle.GetResearchLevelInternal(researchId);
+            oracle.SetResearchLevelInternal(researchId, level + delta);
+        }
+
+        private double GetResearchLevelInternal(string researchId)
+        {
+            if (dvid == null || string.IsNullOrEmpty(researchId)) return 0;
+
+            dvid.researchLevelsById ??= new Dictionary<string, double>();
+            if (dvid.researchLevelsById.TryGetValue(researchId, out double level))
+            {
+                return level;
+            }
+
+            if (ResearchIdMap.TryGetLegacyLevel(dvid, researchId, out double legacyLevel))
+            {
+                dvid.researchLevelsById[researchId] = legacyLevel;
+                return legacyLevel;
+            }
+
+            return 0;
+        }
+
+        private void SetResearchLevelInternal(string researchId, double level)
+        {
+            if (dvid == null || string.IsNullOrEmpty(researchId)) return;
+
+            dvid.researchLevelsById ??= new Dictionary<string, double>();
+            if (ResearchIdMap.TrySetLegacyLevel(dvid, researchId, level) &&
+                ResearchIdMap.TryGetLegacyLevel(dvid, researchId, out double normalized))
+            {
+                dvid.researchLevelsById[researchId] = normalized;
+                return;
+            }
+
+            dvid.researchLevelsById[researchId] = level;
+        }
+
+        public List<string> GetAutoAssignmentSkillIds()
+        {
+            DysonVerseSaveData data = saveSettings?.dysonVerseSaveData;
+            if (data == null) return new List<string>();
+            data.skillAutoAssignmentIds ??= new List<string>();
+            if (data.skillAutoAssignmentIds.Count == 0 && data.skillAutoAssignmentList.Count > 0)
+            {
+                data.skillAutoAssignmentIds = SkillIdMap.ConvertKeysToIds(data.skillAutoAssignmentList);
+            }
+
+            return data.skillAutoAssignmentIds;
+        }
+
+        public void SetAutoAssignmentSkillIds(List<string> ids)
+        {
+            DysonVerseSaveData data = saveSettings?.dysonVerseSaveData;
+            if (data == null) return;
+            data.skillAutoAssignmentIds = ids ?? new List<string>();
+            data.skillAutoAssignmentList = SkillIdMap.ConvertIdsToKeys(data.skillAutoAssignmentIds);
+        }
+
+        private void ResetSkillOwnership()
+        {
+            if (dvid != null)
+            {
+                dvid.skillOwnedById?.Clear();
+                dvid.SkillTreeSaveData?.Clear();
+            }
+
+            if (SkillTree != null)
+            {
+                foreach (KeyValuePair<int, SkillTreeItem> entry in SkillTree)
+                {
+                    if (entry.Value != null) entry.Value.Owned = false;
+                }
+            }
+
+            GameDataRegistry registry = GameDataRegistry.Instance;
+            if (registry != null && registry.skillDatabase != null && registry.skillDatabase.skills.Count > 0)
+            {
+                foreach (SkillDefinition skill in registry.skillDatabase.skills)
+                {
+                    if (skill == null || string.IsNullOrEmpty(skill.id)) continue;
+                    SkillFlagAccessor.TrySetFlag(dvst, skill.id, false);
+                }
+
+                return;
+            }
+
+            if (SkillTree == null) return;
+            foreach (KeyValuePair<int, SkillTreeItem> entry in SkillTree)
+            {
+                if (!SkillIdMap.TryGetId(entry.Key, out string id)) continue;
+                SkillFlagAccessor.TrySetFlag(dvst, id, false);
+            }
+        }
+
         #region DysonVerseInfinity
 
         [ContextMenu("DysonInfinity")]
@@ -456,9 +2272,9 @@ namespace Expansion
             dvpd.androidsSkillTimer = 0;
             dvpd.pocketAndroidsTimer = 0;
             int bankedSkills = 0;
-            if (SkillTree[11].Owned) bankedSkills++;
-            if (SkillTree[12].Owned) bankedSkills++;
-            foreach (KeyValuePair<int, SkillTreeItem> var in SkillTree) var.Value.Owned = false;
+            if (IsSkillOwned("banking")) bankedSkills++;
+            if (IsSkillOwned("investmentPortfolio")) bankedSkills++;
+            ResetSkillOwnership();
 
             saveSettings.dysonVerseSaveData.dysonVerseInfinityData = new DysonVerseInfinityData();
 
@@ -497,9 +2313,9 @@ namespace Expansion
             dvpd.androidsSkillTimer = 0;
             dvpd.pocketAndroidsTimer = 0;
             int bankedSkills = 0;
-            if (SkillTree[11].Owned) bankedSkills++;
-            if (SkillTree[12].Owned) bankedSkills++;
-            foreach (KeyValuePair<int, SkillTreeItem> var in SkillTree) var.Value.Owned = false;
+            if (IsSkillOwned("banking")) bankedSkills++;
+            if (IsSkillOwned("investmentPortfolio")) bankedSkills++;
+            ResetSkillOwnership();
 
             double amount = pp.divisionsPurchased > 0 ? 4.2e19 / Math.Pow(10, pp.divisionsPurchased) : 4.2e19;
             int ipToGain = StaticMethods.InfinityPointsToGain(amount, dvid.bots);
@@ -539,7 +2355,7 @@ namespace Expansion
                     break;
                 case false:
                 {
-                    foreach (KeyValuePair<int, SkillTreeItem> var in SkillTree) var.Value.Owned = false;
+                    ResetSkillOwnership();
                     StartCoroutine(PrestigeDoubleWiper());
                     dvst.superRadiantScatteringTimer = 0;
                 }
@@ -718,32 +2534,45 @@ namespace Expansion
             public List<int> skillAutoAssignmentList5 = new List<int>();
             public double botDistPreset5;
             public string preset5Name = "Preset 5";
+            public List<string> skillAutoAssignmentIds = new List<string>();
+            public List<string> skillAutoAssignmentIds1 = new List<string>();
+            public List<string> skillAutoAssignmentIds2 = new List<string>();
+            public List<string> skillAutoAssignmentIds3 = new List<string>();
+            public List<string> skillAutoAssignmentIds4 = new List<string>();
+            public List<string> skillAutoAssignmentIds5 = new List<string>();
         }
 
         public void SaveList(int listNum)
         {
-            List<int> list = new List<int>(saveSettings.dysonVerseSaveData.skillAutoAssignmentList);
+            DysonVerseSaveData data = saveSettings.dysonVerseSaveData;
+            List<string> ids = new List<string>(GetAutoAssignmentSkillIds());
+            List<int> legacyList = SkillIdMap.ConvertIdsToKeys(ids);
             switch (listNum)
             {
                 case 1:
-                    saveSettings.dysonVerseSaveData.skillAutoAssignmentList1 = list;
-                    saveSettings.dysonVerseSaveData.botDistPreset1 = dvpd.botDistribution;
+                    data.skillAutoAssignmentIds1 = ids;
+                    data.skillAutoAssignmentList1 = legacyList;
+                    data.botDistPreset1 = dvpd.botDistribution;
                     break;
                 case 2:
-                    saveSettings.dysonVerseSaveData.skillAutoAssignmentList2 = list;
-                    saveSettings.dysonVerseSaveData.botDistPreset2 = dvpd.botDistribution;
+                    data.skillAutoAssignmentIds2 = ids;
+                    data.skillAutoAssignmentList2 = legacyList;
+                    data.botDistPreset2 = dvpd.botDistribution;
                     break;
                 case 3:
-                    saveSettings.dysonVerseSaveData.skillAutoAssignmentList3 = list;
-                    saveSettings.dysonVerseSaveData.botDistPreset3 = dvpd.botDistribution;
+                    data.skillAutoAssignmentIds3 = ids;
+                    data.skillAutoAssignmentList3 = legacyList;
+                    data.botDistPreset3 = dvpd.botDistribution;
                     break;
                 case 4:
-                    saveSettings.dysonVerseSaveData.skillAutoAssignmentList4 = list;
-                    saveSettings.dysonVerseSaveData.botDistPreset4 = dvpd.botDistribution;
+                    data.skillAutoAssignmentIds4 = ids;
+                    data.skillAutoAssignmentList4 = legacyList;
+                    data.botDistPreset4 = dvpd.botDistribution;
                     break;
                 case 5:
-                    saveSettings.dysonVerseSaveData.skillAutoAssignmentList5 = list;
-                    saveSettings.dysonVerseSaveData.botDistPreset5 = dvpd.botDistribution;
+                    data.skillAutoAssignmentIds5 = ids;
+                    data.skillAutoAssignmentList5 = legacyList;
+                    data.botDistPreset5 = dvpd.botDistribution;
                     break;
             }
         }
@@ -752,37 +2581,54 @@ namespace Expansion
 
         public void LoadList(int listNum)
         {
-            List<int> list = new List<int>();
+            DysonVerseSaveData data = saveSettings.dysonVerseSaveData;
+            List<string> ids = new List<string>();
             switch (listNum)
             {
                 case 1:
-                    foreach (int skill in saveSettings.dysonVerseSaveData.skillAutoAssignmentList1) list.Add(skill);
-                    dvpd.botDistribution = saveSettings.dysonVerseSaveData.botDistPreset1;
+                    if (data.skillAutoAssignmentIds1.Count > 0)
+                        ids.AddRange(data.skillAutoAssignmentIds1);
+                    else
+                        ids.AddRange(SkillIdMap.ConvertKeysToIds(data.skillAutoAssignmentList1));
+                    dvpd.botDistribution = data.botDistPreset1;
                     slider.SetSlider();
                     break;
                 case 2:
-                    foreach (int skill in saveSettings.dysonVerseSaveData.skillAutoAssignmentList2) list.Add(skill);
-                    dvpd.botDistribution = saveSettings.dysonVerseSaveData.botDistPreset2;
+                    if (data.skillAutoAssignmentIds2.Count > 0)
+                        ids.AddRange(data.skillAutoAssignmentIds2);
+                    else
+                        ids.AddRange(SkillIdMap.ConvertKeysToIds(data.skillAutoAssignmentList2));
+                    dvpd.botDistribution = data.botDistPreset2;
                     slider.SetSlider();
                     break;
                 case 3:
-                    foreach (int skill in saveSettings.dysonVerseSaveData.skillAutoAssignmentList3) list.Add(skill);
-                    dvpd.botDistribution = saveSettings.dysonVerseSaveData.botDistPreset3;
+                    if (data.skillAutoAssignmentIds3.Count > 0)
+                        ids.AddRange(data.skillAutoAssignmentIds3);
+                    else
+                        ids.AddRange(SkillIdMap.ConvertKeysToIds(data.skillAutoAssignmentList3));
+                    dvpd.botDistribution = data.botDistPreset3;
                     slider.SetSlider();
                     break;
                 case 4:
-                    foreach (int skill in saveSettings.dysonVerseSaveData.skillAutoAssignmentList4) list.Add(skill);
-                    dvpd.botDistribution = saveSettings.dysonVerseSaveData.botDistPreset4;
+                    if (data.skillAutoAssignmentIds4.Count > 0)
+                        ids.AddRange(data.skillAutoAssignmentIds4);
+                    else
+                        ids.AddRange(SkillIdMap.ConvertKeysToIds(data.skillAutoAssignmentList4));
+                    dvpd.botDistribution = data.botDistPreset4;
                     slider.SetSlider();
                     break;
                 case 5:
-                    foreach (int skill in saveSettings.dysonVerseSaveData.skillAutoAssignmentList5) list.Add(skill);
-                    dvpd.botDistribution = saveSettings.dysonVerseSaveData.botDistPreset5;
+                    if (data.skillAutoAssignmentIds5.Count > 0)
+                        ids.AddRange(data.skillAutoAssignmentIds5);
+                    else
+                        ids.AddRange(SkillIdMap.ConvertKeysToIds(data.skillAutoAssignmentList5));
+                    dvpd.botDistribution = data.botDistPreset5;
                     slider.SetSlider();
                     break;
             }
 
-            saveSettings.dysonVerseSaveData.skillAutoAssignmentList = list;
+            data.skillAutoAssignmentIds = ids;
+            data.skillAutoAssignmentList = SkillIdMap.ConvertIdsToKeys(ids);
         }
 
         [Serializable]
@@ -814,6 +2660,8 @@ namespace Expansion
         public class DysonVerseInfinityData
         {
             public Dictionary<int, bool> SkillTreeSaveData;
+            public Dictionary<string, bool> skillOwnedById = new Dictionary<string, bool>();
+            public Dictionary<string, double> researchLevelsById = new Dictionary<string, double>();
             [Header("Money")] public double money;
 
             public double moneyMulti = 1f;

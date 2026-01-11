@@ -1,0 +1,37 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a7893ea89ef8ebd41958ad2a303d4fc9, type: 3}
+  m_Name: productionScaling
+  m_EditorClassIdentifier: Assembly-CSharp::GameData.SkillDefinition
+  id: productionScaling
+  displayName: Production Scaling
+  description: You find a fragment of another universe. You use this knowledge to
+    improve your entire production line, I wonder what other parts of this universe
+    you can find?
+  technicalDescription: Reduce the starting point of the <color=#A3FFFE>1%</color>
+    bonus per bought building to <color=#A3FFFE>90</color>. Reduce it by another
+    <color=#A3FFFE>5</color> for every other purchased <color=#A3FFFE>Fragment Skill</color>.
+  cost: 1
+  refundable: 1
+  isFragment: 1
+  purityLine: 0
+  terraLine: 0
+  powerLine: 0
+  paragadeLine: 0
+  stellarLine: 0
+  firstRunBlocked: 0
+  requiredSkillIds:
+  - superSwarm
+  shadowRequirementIds: []
+  exclusiveWithIds: []
+  unrefundableWithIds: []
+  effects: []

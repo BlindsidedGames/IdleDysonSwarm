@@ -6,6 +6,7 @@ using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 using Systems;
+using Systems.Stats;
 using Blindsided.Utilities;
 using static Expansion.Oracle;
 
@@ -500,7 +501,7 @@ public class GameManager : MonoBehaviour
 
     private void CalculateShouldersSkills(double time)
     {
-        ProductionSystem.CalculateShouldersSkills(dvid, dvst, time);
+        ProductionSystem.CalculateShouldersSkills(dvid, dvst, dvpd, time);
     }
 
     private void CalculatePlanetProduction()
@@ -903,11 +904,23 @@ public class GameManager : MonoBehaviour
 
     private double MoneyMultipliers()
     {
+        if (GlobalStatPipeline.TryCalculateMoneyMultiplier(dvid, dvst, dvpd, pp, _secretBuffState,
+                out StatResult result))
+        {
+            return result.Value;
+        }
+
         return ModifierSystem.MoneyMultipliers(dvid, dvst, dvpd, pp, _secretBuffState);
     }
 
     private double ScienceMultipliers()
     {
+        if (GlobalStatPipeline.TryCalculateScienceMultiplier(dvid, dvst, dvpd, pp, _secretBuffState,
+                out StatResult result))
+        {
+            return result.Value;
+        }
+
         return ModifierSystem.ScienceMultipliers(dvid, dvst, dvpd, pp, _secretBuffState);
     }
 

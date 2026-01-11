@@ -5,4 +5,5 @@
   <Project Path="Assembly-CSharp-Editor-firstpass.csproj" />
   <Project Path="MPUIKit.csproj" />
   <Project Path="Sirenix.OdinInspector.Modules.UnityMathematics.csproj" />
+  <Project Path="Assembly-CSharp-Editor.csproj" />
 </Solution>
