@@ -49,6 +49,9 @@ namespace Systems.Stats
         private const string SciencePerSecondSuffix = ".science_per_second";
         private const string ScienceBoostPerSecondSuffix = ".science_boost_per_second";
         private const string MoneyMultiUpgradePerSecondSuffix = ".money_multi_upgrade_per_second";
+        private const string TinkerBotYieldSuffix = ".tinker_bot_yield";
+        private const string TinkerAssemblyYieldSuffix = ".tinker_assembly_yield";
+        private const string TinkerCooldownSuffix = ".tinker_cooldown";
 
         private static readonly FacilityModifierSpec[] FacilityModifierSpecs =
         {
@@ -75,34 +78,34 @@ namespace Systems.Stats
                 return false;
             }
 
-            DysonVerseInfinityData dvid = context.InfinityData;
-            DysonVersePrestigeData dvpd = context.PrestigeData;
-            DysonVerseSkillTreeData dvst = context.SkillTreeData;
+            DysonVerseInfinityData infinityData = context.InfinityData;
+            DysonVersePrestigeData prestigeData = context.PrestigeData;
+            DysonVerseSkillTreeData skillTreeData = context.SkillTreeData;
             switch (effectId)
             {
                 case "effect.staying_power.assembly_lines":
-                    value = dvid != null ? 1 + 0.01f * dvid.panelLifetime : 1;
+                    value = infinityData != null ? 1 + 0.01f * infinityData.panelLifetime : 1;
                     return true;
                 case "effect.rudimentary_singularity.data_centers":
-                    value = dvst != null && dvst.rudimentarySingularity && dvid != null
-                        ? dvid.rudimentrySingularityProduction
+                    value = skillTreeData != null && skillTreeData.rudimentarySingularity && infinityData != null
+                        ? infinityData.rudimentrySingularityProduction
                         : 0;
                     return true;
                 case "effect.parallel_computation.data_centers":
                 {
-                    if (dvst == null || dvid == null || !dvst.parallelComputation)
+                    if (skillTreeData == null || infinityData == null || !skillTreeData.parallelComputation)
                     {
                         value = 0;
                         return true;
                     }
 
-                    double serversTotal = dvid.servers[0] + dvid.servers[1];
+                    double serversTotal = infinityData.servers[0] + infinityData.servers[1];
                     value = serversTotal > 1 ? 0.1f * Math.Log(serversTotal, 2) : 0;
                     return true;
                 }
                 case "effect.pocket_dimensions.planets":
-                    value = dvid != null && dvpd != null && dvst != null
-                        ? FacilityLegacyBridge.ComputePocketDimensionsProduction(dvid, dvpd, dvst)
+                    value = infinityData != null && prestigeData != null && skillTreeData != null
+                        ? FacilityLegacyBridge.ComputePocketDimensionsProduction(infinityData, prestigeData, skillTreeData)
                         : 0;
                     return true;
             }
@@ -111,135 +114,135 @@ namespace Systems.Stats
             {
                 if (IsModifierSkill(effectId, "fragmentAssembly"))
                 {
-                    value = dvst != null && dvst.fragmentAssembly && dvst.fragments > 4 ? 3 : 1;
+                    value = skillTreeData != null && skillTreeData.fragmentAssembly && skillTreeData.fragments > 4 ? 3 : 1;
                     return true;
                 }
 
                 if (IsModifierSkill(effectId, "progressiveAssembly"))
                 {
-                    value = dvst != null && dvst.progressiveAssembly ? 1 + 0.5 * dvst.fragments : 1;
+                    value = skillTreeData != null && skillTreeData.progressiveAssembly ? 1 + 0.5 * skillTreeData.fragments : 1;
                     return true;
                 }
 
                 if (IsModifierSkill(effectId, "versatileProductionTactics"))
                 {
-                    if (dvst == null || dvid == null || !dvst.versatileProductionTactics)
+                    if (skillTreeData == null || infinityData == null || !skillTreeData.versatileProductionTactics)
                     {
                         value = 1;
                         return true;
                     }
 
-                    double planetsTotal = dvid.planets[0] +
-                                          (dvst.terraIrradiant ? dvid.planets[1] * 12 : dvid.planets[1]);
+                    double planetsTotal = infinityData.planets[0] +
+                                          (skillTreeData.terraIrradiant ? infinityData.planets[1] * 12 : infinityData.planets[1]);
                     value = planetsTotal >= 100 ? 2 : 1.5;
                     return true;
                 }
 
                 if (IsModifierSkill(effectId, "oneMinutePlan"))
                 {
-                    if (dvst == null || dvid == null || !dvst.oneMinutePlan)
+                    if (skillTreeData == null || infinityData == null || !skillTreeData.oneMinutePlan)
                     {
                         value = 1;
                         return true;
                     }
 
-                    value = dvid.panelLifetime > 60 ? 5 : 1.5;
+                    value = infinityData.panelLifetime > 60 ? 5 : 1.5;
                     return true;
                 }
 
                 if (IsModifierSkill(effectId, "dysonSubsidies"))
                 {
-                    if (dvst == null || dvid == null || !dvst.dysonSubsidies)
+                    if (skillTreeData == null || infinityData == null || !skillTreeData.dysonSubsidies)
                     {
                         value = 1;
                         return true;
                     }
 
-                    double starsSurrounded = ProductionMath.StarsSurrounded(dvid, false, true, 0);
+                    double starsSurrounded = ProductionMath.StarsSurrounded(infinityData, false, true, 0);
                     value = starsSurrounded > 1 ? 2 : 1;
                     return true;
                 }
 
                 if (IsModifierSkill(effectId, "purityOfBody"))
                 {
-                    value = dvst != null && dvst.purityOfBody && dvst.skillPointsTree > 0
-                        ? 1.25 * dvst.skillPointsTree
+                    value = skillTreeData != null && skillTreeData.purityOfBody && skillTreeData.skillPointsTree > 0
+                        ? 1.25 * skillTreeData.skillPointsTree
                         : 1;
                     return true;
                 }
 
                 if (IsModifierSkill(effectId, "clusterNetworking"))
                 {
-                    if (dvst == null || dvid == null || !dvst.clusterNetworking)
+                    if (skillTreeData == null || infinityData == null || !skillTreeData.clusterNetworking)
                     {
                         value = 1;
                         return true;
                     }
 
-                    double serversTotal = dvid.servers[0] + dvid.servers[1];
+                    double serversTotal = infinityData.servers[0] + infinityData.servers[1];
                     value = serversTotal > 1 ? 1 + 0.05f * Math.Log10(serversTotal) : 1;
                     return true;
                 }
 
                 if (IsModifierSkill(effectId, "parallelProcessing"))
                 {
-                    if (dvst == null || dvid == null || !dvst.parallelProcessing)
+                    if (skillTreeData == null || infinityData == null || !skillTreeData.parallelProcessing)
                     {
                         value = 1;
                         return true;
                     }
 
-                    double serversTotal = dvid.servers[0] + dvid.servers[1];
+                    double serversTotal = infinityData.servers[0] + infinityData.servers[1];
                     value = serversTotal > 1 ? 1 + 0.05f * Math.Log(serversTotal, 2) : 1;
                     return true;
                 }
 
                 if (IsModifierSkill(effectId, "whatWillComeToPass"))
                 {
-                    value = dvst != null && dvid != null && dvst.whatWillComeToPass
-                        ? 1 + 0.01 * dvid.dataCenters[1]
+                    value = skillTreeData != null && infinityData != null && skillTreeData.whatWillComeToPass
+                        ? 1 + 0.01 * infinityData.dataCenters[1]
                         : 1;
                     return true;
                 }
 
                 if (IsModifierSkill(effectId, "hypercubeNetworks"))
                 {
-                    if (dvst == null || dvid == null || !dvst.hypercubeNetworks)
+                    if (skillTreeData == null || infinityData == null || !skillTreeData.hypercubeNetworks)
                     {
                         value = 1;
                         return true;
                     }
 
-                    double serversTotal = dvid.servers[0] + dvid.servers[1];
+                    double serversTotal = infinityData.servers[0] + infinityData.servers[1];
                     value = serversTotal > 1 ? 1 + 0.1 * Math.Log10(serversTotal) : 1;
                     return true;
                 }
 
                 if (IsModifierSkill(effectId, "galacticPradigmShift"))
                 {
-                    if (dvst == null || dvid == null || !dvst.galacticPradigmShift)
+                    if (skillTreeData == null || infinityData == null || !skillTreeData.galacticPradigmShift)
                     {
                         value = 1;
                         return true;
                     }
 
-                    double galaxiesEngulfed = ProductionMath.GalaxiesEngulfed(dvid, false, true, 0);
+                    double galaxiesEngulfed = ProductionMath.GalaxiesEngulfed(infinityData, false, true, 0);
                     value = galaxiesEngulfed > 1 ? 3 : 1.5;
                     return true;
                 }
 
                 if (IsModifierSkill(effectId, "purityOfSEssence"))
                 {
-                    value = dvst != null && dvst.purityOfSEssence && dvst.skillPointsTree > 0
-                        ? 1.42 * dvst.skillPointsTree
+                    value = skillTreeData != null && skillTreeData.purityOfSEssence && skillTreeData.skillPointsTree > 0
+                        ? 1.42 * skillTreeData.skillPointsTree
                         : 1;
                     return true;
                 }
 
                 if (IsModifierSkill(effectId, "superRadiantScattering"))
                 {
-                    value = dvst != null && dvst.superRadiantScattering
-                        ? 1 + 0.01 * dvst.superRadiantScatteringTimer
+                    value = skillTreeData != null && skillTreeData.superRadiantScattering
+                        ? 1 + 0.01 * skillTreeData.superRadiantScatteringTimer
                         : 1;
                     return true;
                 }
@@ -270,6 +273,11 @@ namespace Systems.Stats
                 return true;
             }
 
+            if (TryResolveTinkerEffects(effectId, context, out value))
+            {
+                return true;
+            }
+
             return false;
         }
 
@@ -283,6 +291,7 @@ namespace Systems.Stats
             AddPanelsPerSecondEffects(specs);
             AddPlanetGenerationEffects(specs);
             AddShouldersAccrualEffects(specs);
+            AddTinkerEffects(specs);
             AddMoneySciencePerSecondEffects(specs);
             return specs;
         }
@@ -586,6 +595,15 @@ namespace Systems.Stats
                 null, null));
         }
 
+        private static void AddTinkerEffects(List<SkillEffectSpec> specs)
+        {
+            specs.Add(new SkillEffectSpec("manualLabour", EffectId("manualLabour", TinkerAssemblyYieldSuffix),
+                "Manual Labour", StatId.TinkerAssemblyYield, StatOperation.Add, 0, 10, null, null, null));
+            specs.Add(new SkillEffectSpec("versatileProductionTactics",
+                EffectId("versatileProductionTactics", TinkerAssemblyYieldSuffix), "Versatile Production Tactics",
+                StatId.TinkerAssemblyYield, StatOperation.Multiply, 1, 20, null, null, null));
+        }
+
         private static void AddMoneySciencePerSecondEffects(List<SkillEffectSpec> specs)
         {
             specs.Add(new SkillEffectSpec("powerOverwhelming", EffectId("powerOverwhelming", MoneyPerSecondSuffix),
@@ -597,10 +615,10 @@ namespace Systems.Stats
         private static bool TryResolveMoneyScienceEffects(string effectId, EffectContext context, out double value)
         {
             value = 0;
-            DysonVerseInfinityData dvid = context.InfinityData;
-            DysonVersePrestigeData dvpd = context.PrestigeData;
-            DysonVerseSkillTreeData dvst = context.SkillTreeData;
-            PrestigePlus pp = context.PrestigePlus;
+            DysonVerseInfinityData infinityData = context.InfinityData;
+            DysonVersePrestigeData prestigeData = context.PrestigeData;
+            DysonVerseSkillTreeData skillTreeData = context.SkillTreeData;
+            PrestigePlus prestigePlus = context.PrestigePlus;
 
             if (effectId.EndsWith(MoneySuffix, StringComparison.Ordinal))
             {
@@ -613,127 +631,127 @@ namespace Systems.Stats
                 switch (skillId)
                 {
                     case "regulatedAcademia":
-                        if (dvst == null || dvid == null || !dvst.regulatedAcademia)
+                        if (skillTreeData == null || infinityData == null || !skillTreeData.regulatedAcademia)
                         {
                             value = 0;
                             return true;
                         }
 
-                        double moneyBoost = dvid.moneyMultiUpgradeOwned * dvid.moneyMultiUpgradePercent;
-                        double factor = 1.02 + 1.01 * (dvst.fragments - 1);
+                        double moneyBoost = infinityData.moneyMultiUpgradeOwned * infinityData.moneyMultiUpgradePercent;
+                        double factor = 1.02 + 1.01 * (skillTreeData.fragments - 1);
                         value = moneyBoost * (factor - 1);
                         return true;
                     case "economicRevolution":
-                        if (dvst == null || dvpd == null || pp == null || !dvst.economicRevolution)
+                        if (skillTreeData == null || prestigeData == null || prestigePlus == null || !skillTreeData.economicRevolution)
                         {
                             value = 1;
                             return true;
                         }
 
-                        value = dvpd.botDistribution <= 0.5f || pp.botMultitasking ? 5 : 1;
+                        value = prestigeData.botDistribution <= 0.5f || prestigePlus.botMultitasking ? 5 : 1;
                         return true;
                     case "higgsBoson":
-                        if (dvst == null || dvid == null || !dvst.higgsBoson)
+                        if (skillTreeData == null || infinityData == null || !skillTreeData.higgsBoson)
                         {
                             value = 1;
                             return true;
                         }
 
-                        double galaxiesEngulfed = ProductionMath.GalaxiesEngulfed(dvid, false, true, 0);
+                        double galaxiesEngulfed = ProductionMath.GalaxiesEngulfed(infinityData, false, true, 0);
                         value = galaxiesEngulfed >= 1 ? 1 + 0.1 * galaxiesEngulfed : 1;
                         return true;
                     case "workerBoost":
-                        if (dvst == null || dvpd == null || pp == null || !dvst.workerBoost)
+                        if (skillTreeData == null || prestigeData == null || prestigePlus == null || !skillTreeData.workerBoost)
                         {
                             value = 1;
                             return true;
                         }
 
-                        value = pp.botMultitasking ? 100 : (1 - dvpd.botDistribution) * 100;
+                        value = prestigePlus.botMultitasking ? 100 : (1 - prestigeData.botDistribution) * 100;
                         return true;
                     case "shouldersOfTheRevolution":
-                        if (dvst == null || dvid == null || !dvst.shouldersOfTheRevolution)
+                        if (skillTreeData == null || infinityData == null || !skillTreeData.shouldersOfTheRevolution)
                         {
                             value = 1;
                             return true;
                         }
 
-                        value = 1 + 0.01 * dvid.scienceBoostOwned;
+                        value = 1 + 0.01 * infinityData.scienceBoostOwned;
                         return true;
                     case "shouldersOfPrecursors":
-                        if (dvst == null || dvid == null || !dvst.shouldersOfPrecursors)
+                        if (skillTreeData == null || infinityData == null || !skillTreeData.shouldersOfPrecursors)
                         {
                             value = 1;
                             return true;
                         }
 
-                        value = dvid.scienceMulti;
+                        value = infinityData.scienceMulti;
                         return true;
                     case "dysonSubsidies":
-                        if (dvst == null || dvid == null || !dvst.dysonSubsidies)
+                        if (skillTreeData == null || infinityData == null || !skillTreeData.dysonSubsidies)
                         {
                             value = 1;
                             return true;
                         }
 
-                        double starsSurrounded = ProductionMath.StarsSurrounded(dvid, false, true, 0);
+                        double starsSurrounded = ProductionMath.StarsSurrounded(infinityData, false, true, 0);
                         value = starsSurrounded < 1 ? 3 : 1;
                         return true;
                     case "purityOfMind":
-                        value = dvst != null && dvst.purityOfMind && dvst.skillPointsTree > 0
-                            ? 1.5 * dvst.skillPointsTree
+                        value = skillTreeData != null && skillTreeData.purityOfMind && skillTreeData.skillPointsTree > 0
+                            ? 1.5 * skillTreeData.skillPointsTree
                             : 1;
                         return true;
                     case "monetaryPolicy":
-                        value = dvst != null && dvst.monetaryPolicy
-                            ? 1 + 0.75 * dvst.fragments
+                        value = skillTreeData != null && skillTreeData.monetaryPolicy
+                            ? 1 + 0.75 * skillTreeData.fragments
                             : 1;
                         return true;
                     case "tasteOfPower":
-                        if (dvst == null || !dvst.tasteOfPower)
+                        if (skillTreeData == null || !skillTreeData.tasteOfPower)
                         {
                             value = 1;
                             return true;
                         }
 
-                        value = dvst.indulgingInPower ? dvst.addictionToPower ? 0.5 : 0.6 : 0.75;
+                        value = skillTreeData.indulgingInPower ? skillTreeData.addictionToPower ? 0.5 : 0.6 : 0.75;
                         return true;
                     case "stellarObliteration":
-                        if (dvst == null || dvid == null || !dvst.stellarObliteration)
+                        if (skillTreeData == null || infinityData == null || !skillTreeData.stellarObliteration)
                         {
                             value = 1;
                             return true;
                         }
 
-                        double galaxiesEngulfedFloor = ProductionMath.GalaxiesEngulfed(dvid, false, true, 0);
+                        double galaxiesEngulfedFloor = ProductionMath.GalaxiesEngulfed(infinityData, false, true, 0);
                         if (galaxiesEngulfedFloor < 1)
                         {
                             value = 1;
                             return true;
                         }
 
-                        double galaxiesEngulfedRaw = ProductionMath.GalaxiesEngulfed(dvid, false, false, 0);
+                        double galaxiesEngulfedRaw = ProductionMath.GalaxiesEngulfed(infinityData, false, false, 0);
                         value = galaxiesEngulfedRaw > 0 ? 1 / galaxiesEngulfedRaw : 1;
                         return true;
                     case "stellarDominance":
-                        if (dvst == null || dvid == null || !dvst.stellarDominance)
+                        if (skillTreeData == null || infinityData == null || !skillTreeData.stellarDominance)
                         {
                             value = 1;
                             return true;
                         }
 
-                        double stars = ProductionMath.StarsSurrounded(dvid, false, false, 0);
-                        double botsRequired = ProductionMath.StellarSacrificesRequiredBots(dvst, stars);
-                        value = dvid.bots > botsRequired ? 0.01 : 1;
+                        double stars = ProductionMath.StarsSurrounded(infinityData, false, false, 0);
+                        double botsRequired = ProductionMath.StellarSacrificesRequiredBots(skillTreeData, stars);
+                        value = infinityData.bots > botsRequired ? 0.01 : 1;
                         return true;
                     case "purityOfSEssence":
-                        value = dvst != null && dvst.purityOfSEssence && dvst.skillPointsTree > 0
-                            ? 1.42 * dvst.skillPointsTree
+                        value = skillTreeData != null && skillTreeData.purityOfSEssence && skillTreeData.skillPointsTree > 0
+                            ? 1.42 * skillTreeData.skillPointsTree
                             : 1;
                         return true;
                     case "superRadiantScattering":
-                        value = dvst != null && dvst.superRadiantScattering
-                            ? 1 + 0.01 * dvst.superRadiantScatteringTimer
+                        value = skillTreeData != null && skillTreeData.superRadiantScattering
+                            ? 1 + 0.01 * skillTreeData.superRadiantScatteringTimer
                             : 1;
                         return true;
                     default:
@@ -752,82 +770,82 @@ namespace Systems.Stats
                 switch (skillId)
                 {
                     case "regulatedAcademia":
-                        if (dvst == null || dvid == null || !dvst.regulatedAcademia)
+                        if (skillTreeData == null || infinityData == null || !skillTreeData.regulatedAcademia)
                         {
                             value = 0;
                             return true;
                         }
 
-                        double scienceBoost = dvid.scienceBoostOwned * dvid.scienceBoostPercent;
-                        double factor = 1.02 + 1.01 * (dvst.fragments - 1);
+                        double scienceBoost = infinityData.scienceBoostOwned * infinityData.scienceBoostPercent;
+                        double factor = 1.02 + 1.01 * (skillTreeData.fragments - 1);
                         value = scienceBoost * (factor - 1);
                         return true;
                     case "producedAsScienceTree":
-                        if (dvst == null || dvpd == null || pp == null || !dvst.producedAsScienceTree)
+                        if (skillTreeData == null || prestigeData == null || prestigePlus == null || !skillTreeData.producedAsScienceTree)
                         {
                             value = 1;
                             return true;
                         }
 
-                        value = pp.botMultitasking ? 100 : dvpd.botDistribution * 100;
+                        value = prestigePlus.botMultitasking ? 100 : prestigeData.botDistribution * 100;
                         return true;
                     case "idleSpaceFlight":
-                        if (dvst == null || dvid == null || !dvst.idleSpaceFlight)
+                        if (skillTreeData == null || infinityData == null || !skillTreeData.idleSpaceFlight)
                         {
                             value = 0;
                             return true;
                         }
 
-                        value = 0.01 * (dvid.panelsPerSec * dvid.panelLifetime) / 100000000;
+                        value = 0.01 * (infinityData.panelsPerSec * infinityData.panelLifetime) / 100000000;
                         return true;
                     case "scientificRevolution":
-                        if (dvst == null || dvpd == null || pp == null || !dvst.scientificRevolution)
+                        if (skillTreeData == null || prestigeData == null || prestigePlus == null || !skillTreeData.scientificRevolution)
                         {
                             value = 1;
                             return true;
                         }
 
-                        value = dvpd.botDistribution >= 0.5f || pp.botMultitasking ? 5 : 1;
+                        value = prestigeData.botDistribution >= 0.5f || prestigePlus.botMultitasking ? 5 : 1;
                         return true;
                     case "purityOfMind":
-                        value = dvst != null && dvst.purityOfMind && dvst.skillPointsTree > 0
-                            ? 1.5 * dvst.skillPointsTree
+                        value = skillTreeData != null && skillTreeData.purityOfMind && skillTreeData.skillPointsTree > 0
+                            ? 1.5 * skillTreeData.skillPointsTree
                             : 1;
                         return true;
                     case "tasteOfPower":
-                        if (dvst == null || !dvst.tasteOfPower)
+                        if (skillTreeData == null || !skillTreeData.tasteOfPower)
                         {
                             value = 1;
                             return true;
                         }
 
-                        value = dvst.indulgingInPower ? dvst.addictionToPower ? 0.5 : 0.6 : 0.75;
+                        value = skillTreeData.indulgingInPower ? skillTreeData.addictionToPower ? 0.5 : 0.6 : 0.75;
                         return true;
                     case "stellarObliteration":
-                        if (dvst == null || dvid == null || !dvst.stellarObliteration)
+                        if (skillTreeData == null || infinityData == null || !skillTreeData.stellarObliteration)
                         {
                             value = 1;
                             return true;
                         }
 
-                        double galaxiesEngulfedFloor = ProductionMath.GalaxiesEngulfed(dvid, false, true, 0);
+                        double galaxiesEngulfedFloor = ProductionMath.GalaxiesEngulfed(infinityData, false, true, 0);
                         if (galaxiesEngulfedFloor < 1)
                         {
                             value = 1;
                             return true;
                         }
 
-                        double galaxiesEngulfedRaw = ProductionMath.GalaxiesEngulfed(dvid, false, false, 0);
+                        double galaxiesEngulfedRaw = ProductionMath.GalaxiesEngulfed(infinityData, false, false, 0);
                         value = galaxiesEngulfedRaw > 0 ? 1 / galaxiesEngulfedRaw : 1;
                         return true;
                     case "purityOfSEssence":
-                        value = dvst != null && dvst.purityOfSEssence && dvst.skillPointsTree > 0
-                            ? 1.42 * dvst.skillPointsTree
+                        value = skillTreeData != null && skillTreeData.purityOfSEssence && skillTreeData.skillPointsTree > 0
+                            ? 1.42 * skillTreeData.skillPointsTree
                             : 1;
                         return true;
                     case "superRadiantScattering":
-                        value = dvst != null && dvst.superRadiantScattering
-                            ? 1 + 0.01 * dvst.superRadiantScatteringTimer
+                        value = skillTreeData != null && skillTreeData.superRadiantScattering
+                            ? 1 + 0.01 * skillTreeData.superRadiantScatteringTimer
                             : 1;
                         return true;
                     default:
@@ -841,10 +859,10 @@ namespace Systems.Stats
         private static bool TryResolvePanelLifetimeEffects(string effectId, EffectContext context, out double value)
         {
             value = 0;
-            DysonVerseInfinityData dvid = context.InfinityData;
-            DysonVersePrestigeData dvpd = context.PrestigeData;
-            DysonVerseSkillTreeData dvst = context.SkillTreeData;
-            PrestigePlus pp = context.PrestigePlus;
+            DysonVerseInfinityData infinityData = context.InfinityData;
+            DysonVersePrestigeData prestigeData = context.PrestigeData;
+            DysonVerseSkillTreeData skillTreeData = context.SkillTreeData;
+            PrestigePlus prestigePlus = context.PrestigePlus;
 
             if (!effectId.EndsWith(PanelLifetimeSuffix, StringComparison.Ordinal))
             {
@@ -860,71 +878,71 @@ namespace Systems.Stats
             switch (skillId)
             {
                 case "panelMaintenance":
-                    if (dvst == null || dvpd == null || pp == null || !dvst.panelMaintenance)
+                    if (skillTreeData == null || prestigeData == null || prestigePlus == null || !skillTreeData.panelMaintenance)
                     {
                         value = 0;
                         return true;
                     }
 
-                    value = pp.botMultitasking ? 100 : (1 - dvpd.botDistribution) * 100;
+                    value = prestigePlus.botMultitasking ? 100 : (1 - prestigeData.botDistribution) * 100;
                     return true;
                 case "panelWarranty":
-                    if (dvst == null || !dvst.panelWarranty)
+                    if (skillTreeData == null || !skillTreeData.panelWarranty)
                     {
                         value = 0;
                         return true;
                     }
 
-                    bool warranty = 5 * dvst.fragments > 1;
-                    value = warranty ? Math.Pow(2, dvst.fragments - 1) : 1;
+                    bool warranty = 5 * skillTreeData.fragments > 1;
+                    value = warranty ? Math.Pow(2, skillTreeData.fragments - 1) : 1;
                     return true;
                 case "artificiallyEnhancedPanels":
-                    if (dvst == null || dvid == null || !dvst.artificiallyEnhancedPanels)
+                    if (skillTreeData == null || infinityData == null || !skillTreeData.artificiallyEnhancedPanels)
                     {
                         value = 0;
                         return true;
                     }
 
-                    double managersTotal = dvid.managers[0] + dvid.managers[1];
+                    double managersTotal = infinityData.managers[0] + infinityData.managers[1];
                     value = managersTotal >= 1 ? 5 * Math.Log10(managersTotal) : 0;
                     return true;
                 case "androids":
-                    if (dvst == null || dvpd == null || !dvst.androids)
+                    if (skillTreeData == null || prestigeData == null || !skillTreeData.androids)
                     {
                         value = 0;
                         return true;
                     }
 
-                    value = Math.Floor(dvpd.androidsSkillTimer > 600 ? 200 : dvpd.androidsSkillTimer / 3);
+                    value = Math.Floor(prestigeData.androidsSkillTimer > 600 ? 200 : prestigeData.androidsSkillTimer / 3);
                     return true;
                 case "renewableEnergy":
-                    if (dvst == null || dvid == null || !dvst.renewableEnergy)
+                    if (skillTreeData == null || infinityData == null || !skillTreeData.renewableEnergy)
                     {
                         value = 1;
                         return true;
                     }
 
-                    value = dvid.workers >= 1e7f ? 1 + 0.1 * Math.Log10(dvid.workers / 1e6f) : 1;
+                    value = infinityData.workers >= 1e7f ? 1 + 0.1 * Math.Log10(infinityData.workers / 1e6f) : 1;
                     return true;
                 case "citadelCouncil":
-                    if (dvst == null || dvid == null || !dvst.citadelCouncil)
+                    if (skillTreeData == null || infinityData == null || !skillTreeData.citadelCouncil)
                     {
                         value = 0;
                         return true;
                     }
 
-                    value = dvid.totalPanelsDecayed > 1 ? Math.Log(dvid.totalPanelsDecayed, 1.2) : 0;
+                    value = infinityData.totalPanelsDecayed > 1 ? Math.Log(infinityData.totalPanelsDecayed, 1.2) : 0;
                     return true;
                 case "stellarDominance":
-                    if (dvst == null || dvid == null || !dvst.stellarDominance)
+                    if (skillTreeData == null || infinityData == null || !skillTreeData.stellarDominance)
                     {
                         value = 1;
                         return true;
                     }
 
-                    double stars = ProductionMath.StarsSurrounded(dvid, false, false, 0);
-                    double botsRequired = ProductionMath.StellarSacrificesRequiredBots(dvst, stars);
-                    value = dvid.bots > botsRequired ? 10 : 1;
+                    double stars = ProductionMath.StarsSurrounded(infinityData, false, false, 0);
+                    double botsRequired = ProductionMath.StellarSacrificesRequiredBots(skillTreeData, stars);
+                    value = infinityData.bots > botsRequired ? 10 : 1;
                     return true;
                 default:
                     return false;
@@ -934,8 +952,8 @@ namespace Systems.Stats
         private static bool TryResolvePanelsPerSecondEffects(string effectId, EffectContext context, out double value)
         {
             value = 0;
-            DysonVerseInfinityData dvid = context.InfinityData;
-            DysonVerseSkillTreeData dvst = context.SkillTreeData;
+            DysonVerseInfinityData infinityData = context.InfinityData;
+            DysonVerseSkillTreeData skillTreeData = context.SkillTreeData;
 
             if (!effectId.EndsWith(PanelsPerSecondSuffix, StringComparison.Ordinal))
             {
@@ -951,24 +969,24 @@ namespace Systems.Stats
             switch (skillId)
             {
                 case "reapers":
-                    if (dvst == null || dvid == null || !dvst.reapers)
+                    if (skillTreeData == null || infinityData == null || !skillTreeData.reapers)
                     {
                         value = 1;
                         return true;
                     }
 
-                    value = dvid.totalPanelsDecayed > 2
-                        ? 1 + Math.Log(dvid.totalPanelsDecayed, 2) / 10
+                    value = infinityData.totalPanelsDecayed > 2
+                        ? 1 + Math.Log(infinityData.totalPanelsDecayed, 2) / 10
                         : 1;
                     return true;
                 case "rocketMania":
-                    if (dvst == null || dvid == null || !dvst.rocketMania)
+                    if (skillTreeData == null || infinityData == null || !skillTreeData.rocketMania)
                     {
                         value = 1;
                         return true;
                     }
 
-                    value = dvid.panelsPerSec > 20 ? Math.Log(dvid.panelsPerSec, 20) : 1;
+                    value = infinityData.panelsPerSec > 20 ? Math.Log(infinityData.panelsPerSec, 20) : 1;
                     return true;
                 default:
                     return false;
@@ -978,8 +996,8 @@ namespace Systems.Stats
         private static bool TryResolvePlanetGenerationEffects(string effectId, EffectContext context, out double value)
         {
             value = 0;
-            DysonVerseInfinityData dvid = context.InfinityData;
-            DysonVerseSkillTreeData dvst = context.SkillTreeData;
+            DysonVerseInfinityData infinityData = context.InfinityData;
+            DysonVerseSkillTreeData skillTreeData = context.SkillTreeData;
 
             if (!effectId.EndsWith(PlanetsPerSecondSuffix, StringComparison.Ordinal))
             {
@@ -995,34 +1013,34 @@ namespace Systems.Stats
             switch (skillId)
             {
                 case "scientificPlanets":
-                    value = dvid != null && dvst != null
-                        ? FacilityLegacyBridge.ComputeScientificPlanetsProduction(dvid, dvst)
+                    value = infinityData != null && skillTreeData != null
+                        ? FacilityLegacyBridge.ComputeScientificPlanetsProduction(infinityData, skillTreeData)
                         : 0;
                     return true;
                 case "planetAssembly":
-                    value = dvid != null && dvst != null
-                        ? FacilityLegacyBridge.ComputePlanetAssemblyProduction(dvid, dvst)
+                    value = infinityData != null && skillTreeData != null
+                        ? FacilityLegacyBridge.ComputePlanetAssemblyProduction(infinityData, skillTreeData)
                         : 0;
                     return true;
                 case "shellWorlds":
-                    value = dvid != null && dvst != null
-                        ? FacilityLegacyBridge.ComputeShellWorldsProduction(dvid, dvst)
+                    value = infinityData != null && skillTreeData != null
+                        ? FacilityLegacyBridge.ComputeShellWorldsProduction(infinityData, skillTreeData)
                         : 0;
                     return true;
                 case "stellarSacrifices":
-                    value = dvid != null && dvst != null
-                        ? FacilityLegacyBridge.ComputeStellarSacrificesProduction(dvid, dvst)
+                    value = infinityData != null && skillTreeData != null
+                        ? FacilityLegacyBridge.ComputeStellarSacrificesProduction(infinityData, skillTreeData)
                         : 0;
                     return true;
                 case "shouldersOfTheFallen":
-                    if (dvst == null || dvid == null || !dvst.shouldersOfTheFallen || dvid.scienceBoostOwned <= 0 ||
-                        !dvst.scientificPlanets)
+                    if (skillTreeData == null || infinityData == null || !skillTreeData.shouldersOfTheFallen || infinityData.scienceBoostOwned <= 0 ||
+                        !skillTreeData.scientificPlanets)
                     {
                         value = 0;
                         return true;
                     }
 
-                    value = Math.Log(dvid.scienceBoostOwned, 2);
+                    value = Math.Log(infinityData.scienceBoostOwned, 2);
                     return true;
                 default:
                     return false;
@@ -1032,9 +1050,9 @@ namespace Systems.Stats
         private static bool TryResolveShouldersAccrualEffects(string effectId, EffectContext context, out double value)
         {
             value = 0;
-            DysonVerseInfinityData dvid = context.InfinityData;
-            DysonVersePrestigeData dvpd = context.PrestigeData;
-            DysonVerseSkillTreeData dvst = context.SkillTreeData;
+            DysonVerseInfinityData infinityData = context.InfinityData;
+            DysonVersePrestigeData prestigeData = context.PrestigeData;
+            DysonVerseSkillTreeData skillTreeData = context.SkillTreeData;
 
             if (effectId.EndsWith(ScienceBoostPerSecondSuffix, StringComparison.Ordinal))
             {
@@ -1047,23 +1065,23 @@ namespace Systems.Stats
                 switch (skillId)
                 {
                     case "shouldersOfGiants":
-                        if (dvst == null || dvid == null || !dvst.shouldersOfGiants || !dvst.scientificPlanets)
+                        if (skillTreeData == null || infinityData == null || !skillTreeData.shouldersOfGiants || !skillTreeData.scientificPlanets)
                         {
                             value = 0;
                             return true;
                         }
 
-                        value = ComputeScientificPlanetsWithShouldersBonus(dvid, dvst);
+                        value = ComputeScientificPlanetsWithShouldersBonus(infinityData, skillTreeData);
                         return true;
                     case "whatCouldHaveBeen":
-                        if (dvst == null || dvid == null || dvpd == null || !dvst.whatCouldHaveBeen ||
-                            !dvst.shouldersOfGiants || !dvst.scientificPlanets)
+                        if (skillTreeData == null || infinityData == null || prestigeData == null || !skillTreeData.whatCouldHaveBeen ||
+                            !skillTreeData.shouldersOfGiants || !skillTreeData.scientificPlanets)
                         {
                             value = 0;
                             return true;
                         }
 
-                        value = ComputePocketDimensionsWithShoulderSurgery(dvid, dvpd, dvst);
+                        value = ComputePocketDimensionsWithShoulderSurgery(infinityData, prestigeData, skillTreeData);
                         return true;
                     default:
                         return false;
@@ -1081,13 +1099,13 @@ namespace Systems.Stats
                 switch (skillId)
                 {
                     case "shouldersOfTheEnlightened":
-                        if (dvst == null || dvid == null || !dvst.shouldersOfTheEnlightened || !dvst.scientificPlanets)
+                        if (skillTreeData == null || infinityData == null || !skillTreeData.shouldersOfTheEnlightened || !skillTreeData.scientificPlanets)
                         {
                             value = 0;
                             return true;
                         }
 
-                        value = ComputeScientificPlanetsWithShouldersBonus(dvid, dvst);
+                        value = ComputeScientificPlanetsWithShouldersBonus(infinityData, skillTreeData);
                         return true;
                     default:
                         return false;
@@ -1097,25 +1115,79 @@ namespace Systems.Stats
             return false;
         }
 
-        private static double ComputeScientificPlanetsWithShouldersBonus(DysonVerseInfinityData dvid,
-            DysonVerseSkillTreeData dvst)
+        private static bool TryResolveTinkerEffects(string effectId, EffectContext context, out double value)
         {
-            double production = FacilityLegacyBridge.ComputeScientificPlanetsProduction(dvid, dvst);
-            if (dvst.shouldersOfTheFallen && dvid.scienceBoostOwned > 0)
+            value = 0;
+            DysonVerseInfinityData infinityData = context.InfinityData;
+            DysonVerseSkillTreeData skillTreeData = context.SkillTreeData;
+
+            if (effectId.EndsWith(TinkerAssemblyYieldSuffix, StringComparison.Ordinal))
             {
-                production += Math.Log(dvid.scienceBoostOwned, 2);
+                string skillId = ExtractSkillId(effectId, TinkerAssemblyYieldSuffix);
+                if (string.IsNullOrEmpty(skillId))
+                {
+                    return false;
+                }
+
+                switch (skillId)
+                {
+                    case "manualLabour":
+                        if (skillTreeData == null || infinityData == null || !skillTreeData.manualLabour)
+                        {
+                            value = 0;
+                            return true;
+                        }
+
+                        double manualLabourAmount = (infinityData.assemblyLines[0] + infinityData.assemblyLines[1]) / 50;
+                        double managerProduction = infinityData.managerAssemblyLineProduction * 20;
+                        value = Math.Min(manualLabourAmount, managerProduction);
+                        return true;
+                    case "versatileProductionTactics":
+                        if (skillTreeData == null || !skillTreeData.versatileProductionTactics)
+                        {
+                            value = 1;
+                            return true;
+                        }
+
+                        value = 1.5;
+                        return true;
+                    default:
+                        return false;
+                }
+            }
+
+            if (effectId.EndsWith(TinkerBotYieldSuffix, StringComparison.Ordinal))
+            {
+                return false;
+            }
+
+            if (effectId.EndsWith(TinkerCooldownSuffix, StringComparison.Ordinal))
+            {
+                return false;
+            }
+
+            return false;
+        }
+
+        private static double ComputeScientificPlanetsWithShouldersBonus(DysonVerseInfinityData infinityData,
+            DysonVerseSkillTreeData skillTreeData)
+        {
+            double production = FacilityLegacyBridge.ComputeScientificPlanetsProduction(infinityData, skillTreeData);
+            if (skillTreeData.shouldersOfTheFallen && infinityData.scienceBoostOwned > 0)
+            {
+                production += Math.Log(infinityData.scienceBoostOwned, 2);
             }
 
             return production;
         }
 
-        private static double ComputePocketDimensionsWithShoulderSurgery(DysonVerseInfinityData dvid,
-            DysonVersePrestigeData dvpd, DysonVerseSkillTreeData dvst)
+        private static double ComputePocketDimensionsWithShoulderSurgery(DysonVerseInfinityData infinityData,
+            DysonVersePrestigeData prestigeData, DysonVerseSkillTreeData skillTreeData)
         {
-            double production = FacilityLegacyBridge.ComputePocketDimensionsProduction(dvid, dvpd, dvst);
-            if (dvst.shouldersOfTheFallen && dvst.shoulderSurgery && dvid.scienceBoostOwned > 0)
+            double production = FacilityLegacyBridge.ComputePocketDimensionsProduction(infinityData, prestigeData, skillTreeData);
+            if (skillTreeData.shouldersOfTheFallen && skillTreeData.shoulderSurgery && infinityData.scienceBoostOwned > 0)
             {
-                production += Math.Log(dvid.scienceBoostOwned, 2);
+                production += Math.Log(infinityData.scienceBoostOwned, 2);
             }
 
             return production;
@@ -1177,3 +1249,4 @@ namespace Systems.Stats
         }
     }
 }
+

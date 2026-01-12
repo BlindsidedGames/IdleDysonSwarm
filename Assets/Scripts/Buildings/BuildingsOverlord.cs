@@ -1,9 +1,9 @@
-﻿using UnityEngine;
+using UnityEngine;
 using static Expansion.Oracle;
 
 public class BuildingsOverlord : MonoBehaviour
 {
-    private DysonVerseInfinityData dvid => oracle.saveSettings.dysonVerseSaveData.dysonVerseInfinityData;
+    private DysonVerseInfinityData infinityData => oracle.saveSettings.dysonVerseSaveData.dysonVerseInfinityData;
 
     public double CalculateCosts(long owned, int minusX, double baseCost, double costMulti)
     {
@@ -41,7 +41,7 @@ public class BuildingsOverlord : MonoBehaviour
 
     public int MaxAffordable(double baseCost, double costMulti, long ownedMinusX)
     {
-        int maxAffordable = BuyMultiple.MaxAffordable((float)dvid.money, baseCost, costMulti,
+        int maxAffordable = BuyMultiple.MaxAffordable((float)infinityData.money, baseCost, costMulti,
             ownedMinusX);
         if (maxAffordable < 1) maxAffordable = 1;
         return maxAffordable;

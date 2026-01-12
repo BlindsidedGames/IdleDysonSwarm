@@ -16,24 +16,24 @@ namespace Systems
 
     public static class ModifierSystem
     {
-        public static void CalculateModifiers(DysonVerseInfinityData dvid, DysonVerseSkillTreeData dvst,
-            DysonVersePrestigeData dvpd, PrestigePlus pp, SecretBuffState secrets, double maxInfinityBuff)
+        public static void CalculateModifiers(DysonVerseInfinityData infinityData, DysonVerseSkillTreeData skillTreeData,
+            DysonVersePrestigeData prestigeData, PrestigePlus prestigePlus, SecretBuffState secrets, double maxInfinityBuff)
         {
-            UpdateSciencePerSec(dvid, dvst, dvpd, pp, secrets);
-            UpdateMoneyPerSecMulti(dvid, dvst, dvpd, pp, secrets);
-            UpdateAssemblyLineMulti(dvid, dvst, dvpd, pp, secrets, maxInfinityBuff);
-            UpdateManagerMulti(dvid, dvst, dvpd, pp, secrets, maxInfinityBuff);
-            UpdateServerMulti(dvid, dvst, dvpd, pp, secrets, maxInfinityBuff);
-            UpdateDataCenterMulti(dvid, dvst, dvpd, pp, maxInfinityBuff);
-            UpdatePlanetMulti(dvid, dvst, dvpd, pp, secrets, maxInfinityBuff);
-            SecretBuffs(dvid, dvpd, secrets);
-            UpdatePanelLifetime(dvid, dvst, dvpd, pp);
+            UpdateSciencePerSec(infinityData, skillTreeData, prestigeData, prestigePlus, secrets);
+            UpdateMoneyPerSecMulti(infinityData, skillTreeData, prestigeData, prestigePlus, secrets);
+            UpdateAssemblyLineMulti(infinityData, skillTreeData, prestigeData, prestigePlus, secrets, maxInfinityBuff);
+            UpdateManagerMulti(infinityData, skillTreeData, prestigeData, prestigePlus, secrets, maxInfinityBuff);
+            UpdateServerMulti(infinityData, skillTreeData, prestigeData, prestigePlus, secrets, maxInfinityBuff);
+            UpdateDataCenterMulti(infinityData, skillTreeData, prestigeData, prestigePlus, maxInfinityBuff);
+            UpdatePlanetMulti(infinityData, skillTreeData, prestigeData, prestigePlus, secrets, maxInfinityBuff);
+            SecretBuffs(infinityData, prestigeData, secrets);
+            UpdatePanelLifetime(infinityData, skillTreeData, prestigeData, prestigePlus);
         }
 
-        public static void SecretBuffs(DysonVerseInfinityData dvid, DysonVersePrestigeData dvpd,
+        public static void SecretBuffs(DysonVerseInfinityData infinityData, DysonVersePrestigeData prestigeData,
             SecretBuffState secrets)
         {
-            switch (dvpd.secretsOfTheUniverse)
+            switch (prestigeData.secretsOfTheUniverse)
             {
                 case 27:
                     secrets.AiMulti = 42;
@@ -75,13 +75,13 @@ namespace Systems
                     secrets.ScienceMulti = 8;
                     goto case 14;
                 case 14:
-                    dvid.planetUpgradePercent = 0.09f;
+                    infinityData.planetUpgradePercent = 0.09f;
                     goto case 13;
                 case 13:
-                    dvid.aiManagerUpgradePercent = 0.09f;
+                    infinityData.aiManagerUpgradePercent = 0.09f;
                     goto case 12;
                 case 12:
-                    dvid.assemblyLineUpgradePercent = 0.12f;
+                    infinityData.assemblyLineUpgradePercent = 0.12f;
                     goto case 11;
                 case 11:
                     secrets.ScienceMulti = 6;
@@ -90,41 +90,41 @@ namespace Systems
                     secrets.ScienceMulti = 4;
                     goto case 9;
                 case 9:
-                    dvid.serverUpgradePercent = 0.09f;
+                    infinityData.serverUpgradePercent = 0.09f;
                     goto case 8;
                 case 8:
                     secrets.CashMulti = 4;
                     goto case 7;
                 case 7:
-                    dvid.planetUpgradePercent = 0.06f;
+                    infinityData.planetUpgradePercent = 0.06f;
                     goto case 6;
                 case 6:
                     secrets.ScienceMulti = 2;
                     goto case 5;
                 case 5:
-                    dvid.aiManagerUpgradePercent = 0.06f;
+                    infinityData.aiManagerUpgradePercent = 0.06f;
                     goto case 4;
                 case 4:
-                    dvid.assemblyLineUpgradePercent = 0.09f;
+                    infinityData.assemblyLineUpgradePercent = 0.09f;
                     goto case 3;
                 case 3:
-                    dvid.serverUpgradePercent = 0.06f;
+                    infinityData.serverUpgradePercent = 0.06f;
                     goto case 2;
                 case 2:
                     secrets.CashMulti = 2;
                     goto case 1;
                 case 1:
-                    dvid.assemblyLineUpgradePercent = 0.06f;
+                    infinityData.assemblyLineUpgradePercent = 0.06f;
                     break;
             }
         }
 
-        public static SecretBuffState BuildSecretBuffState(DysonVersePrestigeData dvpd)
+        public static SecretBuffState BuildSecretBuffState(DysonVersePrestigeData prestigeData)
         {
             var secrets = new SecretBuffState();
-            if (dvpd == null) return secrets;
+            if (prestigeData == null) return secrets;
 
-            switch (dvpd.secretsOfTheUniverse)
+            switch (prestigeData.secretsOfTheUniverse)
             {
                 case 27:
                     secrets.AiMulti = 42;
@@ -203,479 +203,486 @@ namespace Systems
             return secrets;
         }
 
-        public static void UpdatePanelLifetime(DysonVerseInfinityData dvid, DysonVerseSkillTreeData dvst,
-            DysonVersePrestigeData dvpd, PrestigePlus pp)
+        public static void UpdatePanelLifetime(DysonVerseInfinityData infinityData, DysonVerseSkillTreeData skillTreeData,
+            DysonVersePrestigeData prestigeData, PrestigePlus prestigePlus)
         {
-            if (GlobalStatPipeline.TryCalculatePanelLifetime(dvid, dvst, dvpd, pp, out StatResult result))
+            if (GlobalStatPipeline.TryCalculatePanelLifetime(infinityData, skillTreeData, prestigeData, prestigePlus, out StatResult result))
             {
-                dvid.panelLifetime = result.Value;
-                return;
+                infinityData.panelLifetime = result.Value;
             }
-            dvid.panelLifetime = CalculatePanelLifetimeLegacy(dvid, dvst, dvpd, pp);
+            else
+            {
+                infinityData.panelLifetime = 10;
+            }
         }
 
-        internal static double CalculatePanelLifetimeLegacy(DysonVerseInfinityData dvid, DysonVerseSkillTreeData dvst,
-            DysonVersePrestigeData dvpd, PrestigePlus pp)
+        internal static double CalculatePanelLifetimeLegacy(DysonVerseInfinityData infinityData, DysonVerseSkillTreeData skillTreeData,
+            DysonVersePrestigeData prestigeData, PrestigePlus prestigePlus)
         {
             double lifetime = 10;
-            if (dvid.panelLifetime1) lifetime += 1;
-            if (dvid.panelLifetime2) lifetime += 2;
-            if (dvid.panelLifetime3) lifetime += 3;
-            if (dvid.panelLifetime4) lifetime += 4;
-            if (dvst.panelMaintenance)
-                lifetime += pp.botMultitasking ? 100 : (1 - dvpd.botDistribution) * 100;
+            if (infinityData.panelLifetime1) lifetime += 1;
+            if (infinityData.panelLifetime2) lifetime += 2;
+            if (infinityData.panelLifetime3) lifetime += 3;
+            if (infinityData.panelLifetime4) lifetime += 4;
+            if (skillTreeData.panelMaintenance)
+                lifetime += prestigePlus.botMultitasking ? 100 : (1 - prestigeData.botDistribution) * 100;
 
-            if (dvst.shepherd) lifetime += 600;
+            if (skillTreeData.shepherd) lifetime += 600;
 
-            if (dvst.citadelCouncil && dvid.totalPanelsDecayed > 1) lifetime += Math.Log(dvid.totalPanelsDecayed, 1.2);
+            if (skillTreeData.citadelCouncil && infinityData.totalPanelsDecayed > 1) lifetime += Math.Log(infinityData.totalPanelsDecayed, 1.2);
 
-            if (dvst.panelWarranty) lifetime += 5 * dvst.fragments > 1 ? Math.Pow(2, dvst.fragments - 1) : 1;
+            if (skillTreeData.panelWarranty) lifetime += 5 * skillTreeData.fragments > 1 ? Math.Pow(2, skillTreeData.fragments - 1) : 1;
 
-            if (dvst.panelLifetime20Tree) lifetime += 20;
-            if (dvst.burnOut) lifetime -= 5;
-            if (dvst.artificiallyEnhancedPanels && dvid.managers[0] + dvid.managers[1] >= 1)
-                lifetime += 5 * Math.Log10(dvid.managers[0] + dvid.managers[1]);
-            if (dvst.androids) lifetime += Math.Floor(dvpd.androidsSkillTimer > 600 ? 200 : dvpd.androidsSkillTimer / 3);
-            if (dvst.renewableEnergy && dvid.workers >= 1e7f)
-                lifetime *= 1 + 0.1 * Math.Log10(dvid.workers / 1e6f);
-            if (dvst.stellarDominance)
+            if (skillTreeData.panelLifetime20Tree) lifetime += 20;
+            if (skillTreeData.burnOut) lifetime -= 5;
+            if (skillTreeData.artificiallyEnhancedPanels && infinityData.managers[0] + infinityData.managers[1] >= 1)
+                lifetime += 5 * Math.Log10(infinityData.managers[0] + infinityData.managers[1]);
+            if (skillTreeData.androids) lifetime += Math.Floor(prestigeData.androidsSkillTimer > 600 ? 200 : prestigeData.androidsSkillTimer / 3);
+            if (skillTreeData.renewableEnergy && infinityData.workers >= 1e7f)
+                lifetime *= 1 + 0.1 * Math.Log10(infinityData.workers / 1e6f);
+            if (skillTreeData.stellarDominance)
             {
-                double starsSurrounded = ProductionMath.StarsSurrounded(dvid, false, false, 0);
-                if (dvid.bots > ProductionMath.StellarSacrificesRequiredBots(dvst, starsSurrounded))
+                double starsSurrounded = ProductionMath.StarsSurrounded(infinityData, false, false, 0);
+                if (infinityData.bots > ProductionMath.StellarSacrificesRequiredBots(skillTreeData, starsSurrounded))
                     lifetime *= 10;
             }
-            if (dvst.worthySacrifice) lifetime /= 2;
+            if (skillTreeData.worthySacrifice) lifetime /= 2;
             return lifetime;
         }
 
-        public static void UpdatePlanetMulti(DysonVerseInfinityData dvid, DysonVerseSkillTreeData dvst,
-            DysonVersePrestigeData dvpd, PrestigePlus pp, SecretBuffState secrets, double maxInfinityBuff)
+        public static void UpdatePlanetMulti(DysonVerseInfinityData infinityData, DysonVerseSkillTreeData skillTreeData,
+            DysonVersePrestigeData prestigeData, PrestigePlus prestigePlus, SecretBuffState secrets, double maxInfinityBuff)
         {
-            if (FacilityModifierPipeline.TryCalculatePlanetModifier(dvid, dvst, dvpd, pp, secrets, maxInfinityBuff,
+            if (FacilityModifierPipeline.TryCalculatePlanetModifier(infinityData, skillTreeData, prestigeData, prestigePlus, secrets, maxInfinityBuff,
                     out StatResult result))
             {
-                dvid.planetModifier = result.Value;
-                return;
+                infinityData.planetModifier = result.Value;
             }
-
-            dvid.planetModifier = CalculatePlanetModifierLegacy(dvid, dvst, dvpd, pp, secrets, maxInfinityBuff);
+            else
+            {
+                infinityData.planetModifier = 1;
+            }
         }
 
-        internal static double CalculatePlanetModifierLegacy(DysonVerseInfinityData dvid, DysonVerseSkillTreeData dvst,
-            DysonVersePrestigeData dvpd, PrestigePlus pp, SecretBuffState secrets, double maxInfinityBuff)
+        internal static double CalculatePlanetModifierLegacy(DysonVerseInfinityData infinityData, DysonVerseSkillTreeData skillTreeData,
+            DysonVersePrestigeData prestigeData, PrestigePlus prestigePlus, SecretBuffState secrets, double maxInfinityBuff)
         {
-            double boost1 = dvid.planetUpgradeOwned * dvid.planetUpgradePercent;
+            double boost1 = infinityData.planetUpgradeOwned * infinityData.planetUpgradePercent;
             double totalBoost = 1 + boost1;
-            totalBoost *= GlobalBuff(dvst, pp);
-            if (dvst.planetsTree) totalBoost *= 2;
-            if ((dvst.terraIrradiant ? dvid.planets[1] * 12 : dvid.planets[1]) >= 50 && !dvst.supernova)
+            totalBoost *= GlobalBuff(skillTreeData, prestigePlus);
+            if (skillTreeData.planetsTree) totalBoost *= 2;
+            if ((skillTreeData.terraIrradiant ? infinityData.planets[1] * 12 : infinityData.planets[1]) >= 50 && !skillTreeData.supernova)
                 totalBoost *= 2;
-            if ((dvst.terraIrradiant ? dvid.planets[1] * 12 : dvid.planets[1]) >= 100 && !dvst.supernova)
+            if ((skillTreeData.terraIrradiant ? infinityData.planets[1] * 12 : infinityData.planets[1]) >= 100 && !skillTreeData.supernova)
                 totalBoost *= 2;
-            if (dvst.fragmentAssembly && dvst.fragments > 4) totalBoost *= 3;
+            if (skillTreeData.fragmentAssembly && skillTreeData.fragments > 4) totalBoost *= 3;
 
-            if ((dvst.terraIrradiant ? dvid.planets[1] * 12 : dvid.planets[1]) >
-                ProductionMath.AmountForBuildingBoostAfterX(dvst) && !dvst.supernova)
+            if ((skillTreeData.terraIrradiant ? infinityData.planets[1] * 12 : infinityData.planets[1]) >
+                ProductionMath.AmountForBuildingBoostAfterX(skillTreeData) && !skillTreeData.supernova)
             {
                 double perExtraBoost =
-                    ((dvst.terraIrradiant ? dvid.planets[1] * 12 : dvid.planets[1]) -
-                     ProductionMath.AmountForBuildingBoostAfterX(dvst)) /
-                    ProductionMath.DivisionForBoostAfterX(dvst);
+                    ((skillTreeData.terraIrradiant ? infinityData.planets[1] * 12 : infinityData.planets[1]) -
+                     ProductionMath.AmountForBuildingBoostAfterX(skillTreeData)) /
+                    ProductionMath.DivisionForBoostAfterX(skillTreeData);
                 perExtraBoost += 1;
                 totalBoost *= perExtraBoost;
             }
 
-            if (dvst.galacticPradigmShift)
+            if (skillTreeData.galacticPradigmShift)
             {
-                double galaxiesEngulfed = ProductionMath.GalaxiesEngulfed(dvid, false, true, 0);
+                double galaxiesEngulfed = ProductionMath.GalaxiesEngulfed(infinityData, false, true, 0);
                 totalBoost *= galaxiesEngulfed > 1 ? 3 : 1.5f;
             }
 
-            if (dvst.tasteOfPower) totalBoost *= 1.5f;
-            if (dvst.indulgingInPower) totalBoost *= 2;
-            if (dvst.addictionToPower) totalBoost *= 3f;
+            if (skillTreeData.tasteOfPower) totalBoost *= 1.5f;
+            if (skillTreeData.indulgingInPower) totalBoost *= 2;
+            if (skillTreeData.addictionToPower) totalBoost *= 3f;
 
-            if (dvst.dimensionalCatCables) totalBoost *= 0.75f;
+            if (skillTreeData.dimensionalCatCables) totalBoost *= 0.75f;
 
-            if (dvpd.infinityPoints >= 5) totalBoost *= 1 + Math.Clamp(dvpd.infinityPoints, 0f, maxInfinityBuff);
+            if (prestigeData.infinityPoints >= 5) totalBoost *= 1 + Math.Clamp(prestigeData.infinityPoints, 0f, maxInfinityBuff);
             totalBoost *= secrets != null ? secrets.PlanetMulti : 1;
 
-            if (dvst.endOfTheLine) totalBoost /= 2;
-            if (dvst.agressiveAlgorithms) totalBoost /= 3;
+            if (skillTreeData.endOfTheLine) totalBoost /= 2;
+            if (skillTreeData.agressiveAlgorithms) totalBoost /= 3;
 
             return totalBoost;
         }
 
-        public static void UpdateDataCenterMulti(DysonVerseInfinityData dvid, DysonVerseSkillTreeData dvst,
-            DysonVersePrestigeData dvpd, PrestigePlus pp, double maxInfinityBuff)
+        public static void UpdateDataCenterMulti(DysonVerseInfinityData infinityData, DysonVerseSkillTreeData skillTreeData,
+            DysonVersePrestigeData prestigeData, PrestigePlus prestigePlus, double maxInfinityBuff)
         {
-            if (FacilityModifierPipeline.TryCalculateDataCenterModifier(dvid, dvst, dvpd, pp, maxInfinityBuff,
+            if (FacilityModifierPipeline.TryCalculateDataCenterModifier(infinityData, skillTreeData, prestigeData, prestigePlus, maxInfinityBuff,
                     out StatResult result))
             {
-                dvid.dataCenterModifier = result.Value;
-                return;
+                infinityData.dataCenterModifier = result.Value;
             }
-
-            dvid.dataCenterModifier = CalculateDataCenterModifierLegacy(dvid, dvst, dvpd, pp, maxInfinityBuff);
+            else
+            {
+                infinityData.dataCenterModifier = 1;
+            }
         }
 
-        internal static double CalculateDataCenterModifierLegacy(DysonVerseInfinityData dvid,
-            DysonVerseSkillTreeData dvst, DysonVersePrestigeData dvpd, PrestigePlus pp, double maxInfinityBuff)
+        internal static double CalculateDataCenterModifierLegacy(DysonVerseInfinityData infinityData,
+            DysonVerseSkillTreeData skillTreeData, DysonVersePrestigeData prestigeData, PrestigePlus prestigePlus, double maxInfinityBuff)
         {
-            double terraAmount = dvst.terraFirma
-                ? dvid.dataCenters[1] + (dvst.terraIrradiant ? dvid.planets[1] * 12 : dvid.planets[1])
-                : dvid.dataCenters[1];
-            double boost1 = dvid.dataCenterUpgradeOwned * dvid.dataCenterUpgradePercent;
+            double terraAmount = skillTreeData.terraFirma
+                ? infinityData.dataCenters[1] + (skillTreeData.terraIrradiant ? infinityData.planets[1] * 12 : infinityData.planets[1])
+                : infinityData.dataCenters[1];
+            double boost1 = infinityData.dataCenterUpgradeOwned * infinityData.dataCenterUpgradePercent;
             double totalBoost = 1 + boost1;
-            totalBoost *= GlobalBuff(dvst, pp);
-            if (dvst.dataCenterTree) totalBoost *= 2;
-            if (terraAmount >= 50 && !dvst.supernova) totalBoost *= 2;
-            if (terraAmount >= 100 && !dvst.supernova) totalBoost *= 2;
-            if (dvst.fragmentAssembly && dvst.fragments > 4) totalBoost *= 3;
+            totalBoost *= GlobalBuff(skillTreeData, prestigePlus);
+            if (skillTreeData.dataCenterTree) totalBoost *= 2;
+            if (terraAmount >= 50 && !skillTreeData.supernova) totalBoost *= 2;
+            if (terraAmount >= 100 && !skillTreeData.supernova) totalBoost *= 2;
+            if (skillTreeData.fragmentAssembly && skillTreeData.fragments > 4) totalBoost *= 3;
 
-            if (terraAmount > ProductionMath.AmountForBuildingBoostAfterX(dvst) && !dvst.supernova)
+            if (terraAmount > ProductionMath.AmountForBuildingBoostAfterX(skillTreeData) && !skillTreeData.supernova)
             {
-                double perExtraBoost = (terraAmount - ProductionMath.AmountForBuildingBoostAfterX(dvst)) /
-                                       ProductionMath.DivisionForBoostAfterX(dvst);
+                double perExtraBoost = (terraAmount - ProductionMath.AmountForBuildingBoostAfterX(skillTreeData)) /
+                                       ProductionMath.DivisionForBoostAfterX(skillTreeData);
                 perExtraBoost += 1;
                 totalBoost *= perExtraBoost;
             }
 
-            if (dvst.tasteOfPower) totalBoost *= 1.5f;
-            if (dvst.indulgingInPower) totalBoost *= 2f;
-            if (dvst.addictionToPower) totalBoost *= 3f;
-            if (dvst.whatWillComeToPass) totalBoost *= 1 + 0.01 * dvid.dataCenters[1];
-            if (dvst.hypercubeNetworks && dvid.servers[0] + dvid.servers[1] > 1)
-                totalBoost *= 1 + 0.1f * Math.Log10(dvid.servers[0] + dvid.servers[1]);
+            if (skillTreeData.tasteOfPower) totalBoost *= 1.5f;
+            if (skillTreeData.indulgingInPower) totalBoost *= 2f;
+            if (skillTreeData.addictionToPower) totalBoost *= 3f;
+            if (skillTreeData.whatWillComeToPass) totalBoost *= 1 + 0.01 * infinityData.dataCenters[1];
+            if (skillTreeData.hypercubeNetworks && infinityData.servers[0] + infinityData.servers[1] > 1)
+                totalBoost *= 1 + 0.1f * Math.Log10(infinityData.servers[0] + infinityData.servers[1]);
 
-            if (dvpd.infinityPoints >= 4) totalBoost *= 1 + Math.Clamp(dvpd.infinityPoints, 0f, maxInfinityBuff);
+            if (prestigeData.infinityPoints >= 4) totalBoost *= 1 + Math.Clamp(prestigeData.infinityPoints, 0f, maxInfinityBuff);
 
-            if (dvst.agressiveAlgorithms) totalBoost /= 3;
+            if (skillTreeData.agressiveAlgorithms) totalBoost /= 3;
 
             return totalBoost;
         }
 
-        public static void UpdateServerMulti(DysonVerseInfinityData dvid, DysonVerseSkillTreeData dvst,
-            DysonVersePrestigeData dvpd, PrestigePlus pp, SecretBuffState secrets, double maxInfinityBuff)
+        public static void UpdateServerMulti(DysonVerseInfinityData infinityData, DysonVerseSkillTreeData skillTreeData,
+            DysonVersePrestigeData prestigeData, PrestigePlus prestigePlus, SecretBuffState secrets, double maxInfinityBuff)
         {
-            if (FacilityModifierPipeline.TryCalculateServerModifier(dvid, dvst, dvpd, pp, secrets, maxInfinityBuff,
+            if (FacilityModifierPipeline.TryCalculateServerModifier(infinityData, skillTreeData, prestigeData, prestigePlus, secrets, maxInfinityBuff,
                     out StatResult result))
             {
-                dvid.serverModifier = result.Value;
-                return;
+                infinityData.serverModifier = result.Value;
             }
-
-            dvid.serverModifier = CalculateServerModifierLegacy(dvid, dvst, dvpd, pp, secrets, maxInfinityBuff);
+            else
+            {
+                infinityData.serverModifier = 1;
+            }
         }
 
-        internal static double CalculateServerModifierLegacy(DysonVerseInfinityData dvid, DysonVerseSkillTreeData dvst,
-            DysonVersePrestigeData dvpd, PrestigePlus pp, SecretBuffState secrets, double maxInfinityBuff)
+        internal static double CalculateServerModifierLegacy(DysonVerseInfinityData infinityData, DysonVerseSkillTreeData skillTreeData,
+            DysonVersePrestigeData prestigeData, PrestigePlus prestigePlus, SecretBuffState secrets, double maxInfinityBuff)
         {
-            double terraAmount = dvst.terraEculeo
-                ? dvid.servers[1] + (dvst.terraIrradiant ? dvid.planets[1] * 12 : dvid.planets[1])
-                : dvid.servers[1];
-            double boost1 = dvid.serverUpgradeOwned * dvid.serverUpgradePercent;
+            double terraAmount = skillTreeData.terraEculeo
+                ? infinityData.servers[1] + (skillTreeData.terraIrradiant ? infinityData.planets[1] * 12 : infinityData.planets[1])
+                : infinityData.servers[1];
+            double boost1 = infinityData.serverUpgradeOwned * infinityData.serverUpgradePercent;
             double totalBoost = 1 + boost1;
-            totalBoost *= GlobalBuff(dvst, pp);
-            if (dvst.serverTree) totalBoost *= 2;
-            if (terraAmount >= 50 && !dvst.supernova) totalBoost *= 2;
-            if (terraAmount >= 100 && !dvst.supernova) totalBoost *= 2;
-            if (dvst.fragmentAssembly && dvst.fragments > 4) totalBoost *= 3;
+            totalBoost *= GlobalBuff(skillTreeData, prestigePlus);
+            if (skillTreeData.serverTree) totalBoost *= 2;
+            if (terraAmount >= 50 && !skillTreeData.supernova) totalBoost *= 2;
+            if (terraAmount >= 100 && !skillTreeData.supernova) totalBoost *= 2;
+            if (skillTreeData.fragmentAssembly && skillTreeData.fragments > 4) totalBoost *= 3;
 
-            if (terraAmount > ProductionMath.AmountForBuildingBoostAfterX(dvst) && !dvst.supernova)
+            if (terraAmount > ProductionMath.AmountForBuildingBoostAfterX(skillTreeData) && !skillTreeData.supernova)
             {
-                double perExtraBoost = (terraAmount - ProductionMath.AmountForBuildingBoostAfterX(dvst)) /
-                                       ProductionMath.DivisionForBoostAfterX(dvst);
+                double perExtraBoost = (terraAmount - ProductionMath.AmountForBuildingBoostAfterX(skillTreeData)) /
+                                       ProductionMath.DivisionForBoostAfterX(skillTreeData);
                 perExtraBoost += 1;
                 totalBoost *= perExtraBoost;
             }
 
-            if (dvst.tasteOfPower) totalBoost *= 1.5f;
-            if (dvst.indulgingInPower) totalBoost *= 2f;
-            if (dvst.addictionToPower) totalBoost *= 3f;
-            if (dvst.agressiveAlgorithms) totalBoost *= 3;
+            if (skillTreeData.tasteOfPower) totalBoost *= 1.5f;
+            if (skillTreeData.indulgingInPower) totalBoost *= 2f;
+            if (skillTreeData.addictionToPower) totalBoost *= 3f;
+            if (skillTreeData.agressiveAlgorithms) totalBoost *= 3;
 
-            if (dvst.clusterNetworking)
-                totalBoost *= 1 + (dvid.servers[0] + dvid.servers[1] > 1
-                    ? 0.05f * Math.Log10(dvid.servers[0] + dvid.servers[1])
+            if (skillTreeData.clusterNetworking)
+                totalBoost *= 1 + (infinityData.servers[0] + infinityData.servers[1] > 1
+                    ? 0.05f * Math.Log10(infinityData.servers[0] + infinityData.servers[1])
                     : 0);
 
-            if (dvpd.infinityPoints >= 3) totalBoost *= 1 + Math.Clamp(dvpd.infinityPoints, 0f, maxInfinityBuff);
+            if (prestigeData.infinityPoints >= 3) totalBoost *= 1 + Math.Clamp(prestigeData.infinityPoints, 0f, maxInfinityBuff);
             totalBoost *= secrets != null ? secrets.ServerMulti : 1;
-            if (dvst.parallelProcessing && dvid.servers[0] + dvid.servers[1] > 1)
-                totalBoost *= 1f + 0.05f * Math.Log(dvid.servers[0] + dvid.servers[1], 2);
+            if (skillTreeData.parallelProcessing && infinityData.servers[0] + infinityData.servers[1] > 1)
+                totalBoost *= 1f + 0.05f * Math.Log(infinityData.servers[0] + infinityData.servers[1], 2);
             return totalBoost;
         }
 
-        public static void UpdateManagerMulti(DysonVerseInfinityData dvid, DysonVerseSkillTreeData dvst,
-            DysonVersePrestigeData dvpd, PrestigePlus pp, SecretBuffState secrets, double maxInfinityBuff)
+        public static void UpdateManagerMulti(DysonVerseInfinityData infinityData, DysonVerseSkillTreeData skillTreeData,
+            DysonVersePrestigeData prestigeData, PrestigePlus prestigePlus, SecretBuffState secrets, double maxInfinityBuff)
         {
-            if (FacilityModifierPipeline.TryCalculateManagerModifier(dvid, dvst, dvpd, pp, secrets, maxInfinityBuff,
+            if (FacilityModifierPipeline.TryCalculateManagerModifier(infinityData, skillTreeData, prestigeData, prestigePlus, secrets, maxInfinityBuff,
                     out StatResult result))
             {
-                dvid.managerModifier = result.Value;
-                return;
+                infinityData.managerModifier = result.Value;
             }
-
-            dvid.managerModifier = CalculateManagerModifierLegacy(dvid, dvst, dvpd, pp, secrets, maxInfinityBuff);
+            else
+            {
+                infinityData.managerModifier = 1;
+            }
         }
 
-        internal static double CalculateManagerModifierLegacy(DysonVerseInfinityData dvid, DysonVerseSkillTreeData dvst,
-            DysonVersePrestigeData dvpd, PrestigePlus pp, SecretBuffState secrets, double maxInfinityBuff)
+        internal static double CalculateManagerModifierLegacy(DysonVerseInfinityData infinityData, DysonVerseSkillTreeData skillTreeData,
+            DysonVersePrestigeData prestigeData, PrestigePlus prestigePlus, SecretBuffState secrets, double maxInfinityBuff)
         {
-            double terraAmount = dvst.terraInfirma
-                ? dvid.managers[1] + (dvst.terraIrradiant ? dvid.planets[1] * 12 : dvid.planets[1])
-                : dvid.managers[1];
-            double boost1 = dvid.aiManagerUpgradeOwned * dvid.aiManagerUpgradePercent;
+            double terraAmount = skillTreeData.terraInfirma
+                ? infinityData.managers[1] + (skillTreeData.terraIrradiant ? infinityData.planets[1] * 12 : infinityData.planets[1])
+                : infinityData.managers[1];
+            double boost1 = infinityData.aiManagerUpgradeOwned * infinityData.aiManagerUpgradePercent;
             double totalBoost = 1 + boost1;
-            totalBoost *= GlobalBuff(dvst, pp);
-            if (dvst.aiManagerTree) totalBoost *= 2;
-            if (terraAmount >= 50 && !dvst.supernova) totalBoost *= 2;
-            if (terraAmount >= 100 && !dvst.supernova) totalBoost *= 2;
-            if (dvst.fragmentAssembly && dvst.fragments > 4) totalBoost *= 3;
+            totalBoost *= GlobalBuff(skillTreeData, prestigePlus);
+            if (skillTreeData.aiManagerTree) totalBoost *= 2;
+            if (terraAmount >= 50 && !skillTreeData.supernova) totalBoost *= 2;
+            if (terraAmount >= 100 && !skillTreeData.supernova) totalBoost *= 2;
+            if (skillTreeData.fragmentAssembly && skillTreeData.fragments > 4) totalBoost *= 3;
 
-            if (terraAmount > ProductionMath.AmountForBuildingBoostAfterX(dvst) && !dvst.supernova)
+            if (terraAmount > ProductionMath.AmountForBuildingBoostAfterX(skillTreeData) && !skillTreeData.supernova)
             {
-                double perExtraBoost = (terraAmount - ProductionMath.AmountForBuildingBoostAfterX(dvst)) /
-                                       ProductionMath.DivisionForBoostAfterX(dvst);
+                double perExtraBoost = (terraAmount - ProductionMath.AmountForBuildingBoostAfterX(skillTreeData)) /
+                                       ProductionMath.DivisionForBoostAfterX(skillTreeData);
                 perExtraBoost += 1;
                 totalBoost *= perExtraBoost;
             }
 
-            if (dvst.tasteOfPower) totalBoost *= 1.5f;
-            if (dvst.indulgingInPower) totalBoost *= 2f;
-            if (dvst.addictionToPower) totalBoost *= 3f;
-            if (dvst.agressiveAlgorithms) totalBoost *= 3;
+            if (skillTreeData.tasteOfPower) totalBoost *= 1.5f;
+            if (skillTreeData.indulgingInPower) totalBoost *= 2f;
+            if (skillTreeData.addictionToPower) totalBoost *= 3f;
+            if (skillTreeData.agressiveAlgorithms) totalBoost *= 3;
 
-            if (dvpd.infinityPoints >= 2) totalBoost *= 1 + Math.Clamp(dvpd.infinityPoints, 0f, maxInfinityBuff);
+            if (prestigeData.infinityPoints >= 2) totalBoost *= 1 + Math.Clamp(prestigeData.infinityPoints, 0f, maxInfinityBuff);
             totalBoost *= secrets != null ? secrets.AiMulti : 1;
 
             return totalBoost;
         }
 
-        public static void UpdateAssemblyLineMulti(DysonVerseInfinityData dvid, DysonVerseSkillTreeData dvst,
-            DysonVersePrestigeData dvpd, PrestigePlus pp, SecretBuffState secrets, double maxInfinityBuff)
+        public static void UpdateAssemblyLineMulti(DysonVerseInfinityData infinityData, DysonVerseSkillTreeData skillTreeData,
+            DysonVersePrestigeData prestigeData, PrestigePlus prestigePlus, SecretBuffState secrets, double maxInfinityBuff)
         {
-            if (FacilityModifierPipeline.TryCalculateAssemblyLineModifier(dvid, dvst, dvpd, pp, secrets,
+            if (FacilityModifierPipeline.TryCalculateAssemblyLineModifier(infinityData, skillTreeData, prestigeData, prestigePlus, secrets,
                     maxInfinityBuff, out StatResult result))
             {
-                dvid.assemblyLineModifier = result.Value;
-                return;
+                infinityData.assemblyLineModifier = result.Value;
             }
-
-            dvid.assemblyLineModifier =
-                CalculateAssemblyLineModifierLegacy(dvid, dvst, dvpd, pp, secrets, maxInfinityBuff);
+            else
+            {
+                infinityData.assemblyLineModifier = 1;
+            }
         }
 
-        internal static double CalculateAssemblyLineModifierLegacy(DysonVerseInfinityData dvid,
-            DysonVerseSkillTreeData dvst, DysonVersePrestigeData dvpd, PrestigePlus pp, SecretBuffState secrets,
+        internal static double CalculateAssemblyLineModifierLegacy(DysonVerseInfinityData infinityData,
+            DysonVerseSkillTreeData skillTreeData, DysonVersePrestigeData prestigeData, PrestigePlus prestigePlus, SecretBuffState secrets,
             double maxInfinityBuff)
         {
-            double terraAmount = dvst.terraNullius
-                ? dvid.assemblyLines[1] + (dvst.terraIrradiant ? dvid.planets[1] * 12 : dvid.planets[1])
-                : dvid.assemblyLines[1];
+            double terraAmount = skillTreeData.terraNullius
+                ? infinityData.assemblyLines[1] + (skillTreeData.terraIrradiant ? infinityData.planets[1] * 12 : infinityData.planets[1])
+                : infinityData.assemblyLines[1];
 
-            double boost1 = dvid.assemblyLineUpgradeOwned * dvid.assemblyLineUpgradePercent;
+            double boost1 = infinityData.assemblyLineUpgradeOwned * infinityData.assemblyLineUpgradePercent;
             double totalBoost = 1 + boost1;
-            totalBoost *= GlobalBuff(dvst, pp);
-            if (dvst.assemblyLineTree) totalBoost *= 2;
-            if (terraAmount >= 50 && !dvst.supernova) totalBoost *= 2;
-            if (terraAmount >= 100 && !dvst.supernova) totalBoost *= 2;
-            if (dvst.fragmentAssembly && dvst.fragments > 4) totalBoost *= 3;
-            if (dvst.worthySacrifice) totalBoost *= 2.5f;
-            if (dvst.endOfTheLine) totalBoost *= 5;
+            totalBoost *= GlobalBuff(skillTreeData, prestigePlus);
+            if (skillTreeData.assemblyLineTree) totalBoost *= 2;
+            if (terraAmount >= 50 && !skillTreeData.supernova) totalBoost *= 2;
+            if (terraAmount >= 100 && !skillTreeData.supernova) totalBoost *= 2;
+            if (skillTreeData.fragmentAssembly && skillTreeData.fragments > 4) totalBoost *= 3;
+            if (skillTreeData.worthySacrifice) totalBoost *= 2.5f;
+            if (skillTreeData.endOfTheLine) totalBoost *= 5;
 
-            if (dvst.versatileProductionTactics)
-                totalBoost *= dvid.planets[0] + (dvst.terraIrradiant ? dvid.planets[1] * 12 : dvid.planets[1]) >= 100
+            if (skillTreeData.versatileProductionTactics)
+                totalBoost *= infinityData.planets[0] + (skillTreeData.terraIrradiant ? infinityData.planets[1] * 12 : infinityData.planets[1]) >= 100
                     ? 2
                     : 1.5f;
-            if (terraAmount > ProductionMath.AmountForBuildingBoostAfterX(dvst) && !dvst.supernova)
+            if (terraAmount > ProductionMath.AmountForBuildingBoostAfterX(skillTreeData) && !skillTreeData.supernova)
             {
-                double perExtraBoost = (terraAmount - ProductionMath.AmountForBuildingBoostAfterX(dvst)) /
-                                       ProductionMath.DivisionForBoostAfterX(dvst);
+                double perExtraBoost = (terraAmount - ProductionMath.AmountForBuildingBoostAfterX(skillTreeData)) /
+                                       ProductionMath.DivisionForBoostAfterX(skillTreeData);
                 perExtraBoost += 1;
                 totalBoost *= perExtraBoost;
             }
 
-            if (dvst.oneMinutePlan) totalBoost *= dvid.panelLifetime > 60 ? 5 : 1.5f;
-            if (dvst.progressiveAssembly) totalBoost *= 1 + 0.5f * dvst.fragments;
+            if (skillTreeData.oneMinutePlan) totalBoost *= infinityData.panelLifetime > 60 ? 5 : 1.5f;
+            if (skillTreeData.progressiveAssembly) totalBoost *= 1 + 0.5f * skillTreeData.fragments;
 
-            if (dvst.tasteOfPower) totalBoost *= 1.5f;
-            if (dvst.indulgingInPower) totalBoost *= 2f;
-            if (dvst.addictionToPower) totalBoost *= 3f;
-            if (dvst.agressiveAlgorithms) totalBoost *= 3;
-            if (dvst.dysonSubsidies)
+            if (skillTreeData.tasteOfPower) totalBoost *= 1.5f;
+            if (skillTreeData.indulgingInPower) totalBoost *= 2f;
+            if (skillTreeData.addictionToPower) totalBoost *= 3f;
+            if (skillTreeData.agressiveAlgorithms) totalBoost *= 3;
+            if (skillTreeData.dysonSubsidies)
             {
-                double starsSurrounded = ProductionMath.StarsSurrounded(dvid, false, true, 0);
+                double starsSurrounded = ProductionMath.StarsSurrounded(infinityData, false, true, 0);
                 if (starsSurrounded > 1) totalBoost *= 2;
             }
 
-            if (dvst.purityOfBody && dvst.skillPointsTree > 0) totalBoost *= 1.25f * dvst.skillPointsTree;
+            if (skillTreeData.purityOfBody && skillTreeData.skillPointsTree > 0) totalBoost *= 1.25f * skillTreeData.skillPointsTree;
 
-            totalBoost *= 1 + Math.Clamp(dvpd.infinityPoints, 0f, maxInfinityBuff);
+            totalBoost *= 1 + Math.Clamp(prestigeData.infinityPoints, 0f, maxInfinityBuff);
             totalBoost *= secrets != null ? secrets.AssemblyMulti : 1;
 
             return totalBoost;
         }
 
-        public static void UpdateSciencePerSec(DysonVerseInfinityData dvid, DysonVerseSkillTreeData dvst,
-            DysonVersePrestigeData dvpd, PrestigePlus pp, SecretBuffState secrets)
+        public static void UpdateSciencePerSec(DysonVerseInfinityData infinityData, DysonVerseSkillTreeData skillTreeData,
+            DysonVersePrestigeData prestigeData, PrestigePlus prestigePlus, SecretBuffState secrets)
         {
-            if (GlobalStatPipeline.TryCalculateScienceMultiplier(dvid, dvst, dvpd, pp, secrets,
+            if (GlobalStatPipeline.TryCalculateScienceMultiplier(infinityData, skillTreeData, prestigeData, prestigePlus, secrets,
                     out StatResult result))
             {
-                dvid.scienceMulti = result.Value;
-                return;
+                infinityData.scienceMulti = result.Value;
             }
-
-            dvid.scienceMulti = ScienceMultipliers(dvid, dvst, dvpd, pp, secrets);
+            else
+            {
+                infinityData.scienceMulti = 1;
+            }
         }
 
-        public static void UpdateMoneyPerSecMulti(DysonVerseInfinityData dvid, DysonVerseSkillTreeData dvst,
-            DysonVersePrestigeData dvpd, PrestigePlus pp, SecretBuffState secrets)
+        public static void UpdateMoneyPerSecMulti(DysonVerseInfinityData infinityData, DysonVerseSkillTreeData skillTreeData,
+            DysonVersePrestigeData prestigeData, PrestigePlus prestigePlus, SecretBuffState secrets)
         {
-            if (GlobalStatPipeline.TryCalculateMoneyMultiplier(dvid, dvst, dvpd, pp, secrets,
+            if (GlobalStatPipeline.TryCalculateMoneyMultiplier(infinityData, skillTreeData, prestigeData, prestigePlus, secrets,
                     out StatResult result))
             {
-                dvid.moneyMulti = result.Value;
-                return;
+                infinityData.moneyMulti = result.Value;
             }
-
-            dvid.moneyMulti = dvst.shouldersOfPrecursors
-                ? ScienceMultipliers(dvid, dvst, dvpd, pp, secrets)
-                : MoneyMultipliers(dvid, dvst, dvpd, pp, secrets);
+            else
+            {
+                infinityData.moneyMulti = 1;
+            }
         }
 
-        public static double GlobalBuff(DysonVerseSkillTreeData dvst, PrestigePlus pp)
+        public static double GlobalBuff(DysonVerseSkillTreeData skillTreeData, PrestigePlus prestigePlus)
         {
             double multi = 1f;
-            if (dvst.purityOfSEssence && dvst.skillPointsTree > 0) multi *= 1.42f * dvst.skillPointsTree;
-            if (dvst.superRadiantScattering) multi *= 1 + 0.01f * dvst.superRadiantScatteringTimer;
-            if (pp.avocatoPurchased)
+            if (skillTreeData.purityOfSEssence && skillTreeData.skillPointsTree > 0) multi *= 1.42f * skillTreeData.skillPointsTree;
+            if (skillTreeData.superRadiantScattering) multi *= 1 + 0.01f * skillTreeData.superRadiantScatteringTimer;
+            if (prestigePlus.avocatoPurchased)
             {
-                if (pp.avocatoIP >= 10)
-                    multi *= Math.Log10(pp.avocatoIP);
-                if (pp.avocatoInfluence >= 10)
-                    multi *= Math.Log10(pp.avocatoInfluence);
-                if (pp.avocatoStrangeMatter >= 10)
-                    multi *= Math.Log10(pp.avocatoStrangeMatter);
-                if (pp.avocatoOverflow >= 1)
-                    multi *= 1 + pp.avocatoOverflow;
+                if (prestigePlus.avocatoIP >= 10)
+                    multi *= Math.Log10(prestigePlus.avocatoIP);
+                if (prestigePlus.avocatoInfluence >= 10)
+                    multi *= Math.Log10(prestigePlus.avocatoInfluence);
+                if (prestigePlus.avocatoStrangeMatter >= 10)
+                    multi *= Math.Log10(prestigePlus.avocatoStrangeMatter);
+                if (prestigePlus.avocatoOverflow >= 1)
+                    multi *= 1 + prestigePlus.avocatoOverflow;
             }
 
             return multi;
         }
 
-        public static double MoneyMultipliers(DysonVerseInfinityData dvid, DysonVerseSkillTreeData dvst,
-            DysonVersePrestigeData dvpd, PrestigePlus pp, SecretBuffState secrets)
+        public static double MoneyMultipliers(DysonVerseInfinityData infinityData, DysonVerseSkillTreeData skillTreeData,
+            DysonVersePrestigeData prestigeData, PrestigePlus prestigePlus, SecretBuffState secrets)
         {
-            double moneyBoost = dvid.moneyMultiUpgradeOwned * dvid.moneyMultiUpgradePercent;
-            if (dvst.regulatedAcademia) moneyBoost *= 1.02f + 1.01f * (dvst.fragments - 1);
+            double moneyBoost = infinityData.moneyMultiUpgradeOwned * infinityData.moneyMultiUpgradePercent;
+            if (skillTreeData.regulatedAcademia) moneyBoost *= 1.02f + 1.01f * (skillTreeData.fragments - 1);
             double totalBoost = 1 + moneyBoost;
-            totalBoost *= GlobalBuff(dvst, pp);
-            if (dvst.startHereTree) totalBoost *= 1.2f;
-            totalBoost *= 1 + pp.cash * 5 / 100;
+            totalBoost *= GlobalBuff(skillTreeData, prestigePlus);
+            if (skillTreeData.startHereTree) totalBoost *= 1.2f;
+            totalBoost *= 1 + prestigePlus.cash * 5 / 100;
             totalBoost *= secrets.CashMulti;
-            if (dvst.economicRevolution && dvpd.botDistribution <= .5f ||
-                dvst.economicRevolution && pp.botMultitasking) totalBoost *= 5;
-            if (dvst.superchargedPower) totalBoost *= 1.5f;
-            if (dvst.higgsBoson)
+            if (skillTreeData.economicRevolution && prestigeData.botDistribution <= .5f ||
+                skillTreeData.economicRevolution && prestigePlus.botMultitasking) totalBoost *= 5;
+            if (skillTreeData.superchargedPower) totalBoost *= 1.5f;
+            if (skillTreeData.higgsBoson)
             {
-                double galaxiesEngulfed = ProductionMath.GalaxiesEngulfed(dvid, false, true, 0);
+                double galaxiesEngulfed = ProductionMath.GalaxiesEngulfed(infinityData, false, true, 0);
                 if (galaxiesEngulfed >= 1) totalBoost *= 1 + 0.1f * galaxiesEngulfed;
             }
-            if (dvst.workerBoost)
+            if (skillTreeData.workerBoost)
             {
-                if (!pp.botMultitasking)
-                    totalBoost *= (1f - dvpd.botDistribution) * 100f;
+                if (!prestigePlus.botMultitasking)
+                    totalBoost *= (1f - prestigeData.botDistribution) * 100f;
                 else
                     totalBoost *= 100;
             }
 
-            if (dvst.economicDominance)
+            if (skillTreeData.economicDominance)
                 totalBoost *= 20f;
 
-            if (dvst.renegade) totalBoost *= 50f;
+            if (skillTreeData.renegade) totalBoost *= 50f;
 
-            if (dvst.shouldersOfTheRevolution) totalBoost *= 1 + 0.01f * dvid.scienceBoostOwned;
-            if (dvst.dysonSubsidies)
+            if (skillTreeData.shouldersOfTheRevolution) totalBoost *= 1 + 0.01f * infinityData.scienceBoostOwned;
+            if (skillTreeData.dysonSubsidies)
             {
-                double starsSurrounded = ProductionMath.StarsSurrounded(dvid, false, true, 0);
+                double starsSurrounded = ProductionMath.StarsSurrounded(infinityData, false, true, 0);
                 if (starsSurrounded < 1) totalBoost *= 3;
             }
 
-            if (dvst.purityOfMind && dvst.skillPointsTree > 0) totalBoost *= 1.5f * dvst.skillPointsTree;
-            if (dvst.monetaryPolicy) totalBoost *= 1f + 0.75f * dvst.fragments;
-            totalBoost *= dvst.tasteOfPower ? dvst.indulgingInPower ? dvst.addictionToPower ? 0.5f : 0.6f : 0.75f : 1;
+            if (skillTreeData.purityOfMind && skillTreeData.skillPointsTree > 0) totalBoost *= 1.5f * skillTreeData.skillPointsTree;
+            if (skillTreeData.monetaryPolicy) totalBoost *= 1f + 0.75f * skillTreeData.fragments;
+            totalBoost *= skillTreeData.tasteOfPower ? skillTreeData.indulgingInPower ? skillTreeData.addictionToPower ? 0.5f : 0.6f : 0.75f : 1;
 
-            if (dvst.stellarObliteration)
+            if (skillTreeData.stellarObliteration)
             {
-                double galaxiesEngulfed = ProductionMath.GalaxiesEngulfed(dvid, false, true, 0);
+                double galaxiesEngulfed = ProductionMath.GalaxiesEngulfed(infinityData, false, true, 0);
                 if (galaxiesEngulfed >= 1)
                 {
-                    double galaxiesEngulfedRaw = ProductionMath.GalaxiesEngulfed(dvid, false, false, 0);
+                    double galaxiesEngulfedRaw = ProductionMath.GalaxiesEngulfed(infinityData, false, false, 0);
                     totalBoost /= galaxiesEngulfedRaw;
                 }
             }
-            if (dvst.fusionReactors)
+            if (skillTreeData.fusionReactors)
                 totalBoost *= 0.75f;
-            if (dvst.coldFusion)
+            if (skillTreeData.coldFusion)
                 totalBoost *= 0.5f;
-            if (dvst.scientificDominance) totalBoost /= 4f;
-            if (dvst.stellarDominance)
+            if (skillTreeData.scientificDominance) totalBoost /= 4f;
+            if (skillTreeData.stellarDominance)
             {
-                double starsSurrounded = ProductionMath.StarsSurrounded(dvid, false, false, 0);
-                if (dvid.bots > ProductionMath.StellarSacrificesRequiredBots(dvst, starsSurrounded))
+                double starsSurrounded = ProductionMath.StarsSurrounded(infinityData, false, false, 0);
+                if (infinityData.bots > ProductionMath.StellarSacrificesRequiredBots(skillTreeData, starsSurrounded))
                     totalBoost /= 100;
             }
             return totalBoost;
         }
 
-        public static double ScienceMultipliers(DysonVerseInfinityData dvid, DysonVerseSkillTreeData dvst,
-            DysonVersePrestigeData dvpd, PrestigePlus pp, SecretBuffState secrets)
+        public static double ScienceMultipliers(DysonVerseInfinityData infinityData, DysonVerseSkillTreeData skillTreeData,
+            DysonVersePrestigeData prestigeData, PrestigePlus prestigePlus, SecretBuffState secrets)
         {
-            double scienceBoost = dvid.scienceBoostOwned * dvid.scienceBoostPercent;
-            if (dvst.regulatedAcademia) scienceBoost *= 1.02f + 1.01f * (dvst.fragments - 1);
+            double scienceBoost = infinityData.scienceBoostOwned * infinityData.scienceBoostPercent;
+            if (skillTreeData.regulatedAcademia) scienceBoost *= 1.02f + 1.01f * (skillTreeData.fragments - 1);
             double totalBoost = 1 + scienceBoost;
-            totalBoost *= GlobalBuff(dvst, pp);
-            if (dvst.doubleScienceTree) totalBoost *= 2;
-            if (dvst.startHereTree) totalBoost *= 1.2f;
-            if (dvst.producedAsScienceTree)
+            totalBoost *= GlobalBuff(skillTreeData, prestigePlus);
+            if (skillTreeData.doubleScienceTree) totalBoost *= 2;
+            if (skillTreeData.startHereTree) totalBoost *= 1.2f;
+            if (skillTreeData.producedAsScienceTree)
             {
-                if (!pp.botMultitasking)
-                    totalBoost *= dvpd.botDistribution * 100;
+                if (!prestigePlus.botMultitasking)
+                    totalBoost *= prestigeData.botDistribution * 100;
                 else
                     totalBoost *= 100;
             }
 
-            if (dvst.idleSpaceFlight)
-                totalBoost += 0.01 * (dvid.panelsPerSec * dvid.panelLifetime) / 100000000;
+            if (skillTreeData.idleSpaceFlight)
+                totalBoost += 0.01 * (infinityData.panelsPerSec * infinityData.panelLifetime) / 100000000;
 
-            if (dvst.scientificRevolution && dvpd.botDistribution >= .5f ||
-                dvst.scientificRevolution && pp.botMultitasking) totalBoost *= 5;
-            if (dvst.superchargedPower) totalBoost *= 1.5;
-            if (dvst.purityOfMind && dvst.skillPointsTree > 0) totalBoost *= 1.5 * dvst.skillPointsTree;
-            totalBoost *= 1 + pp.science * 5 / 100;
+            if (skillTreeData.scientificRevolution && prestigeData.botDistribution >= .5f ||
+                skillTreeData.scientificRevolution && prestigePlus.botMultitasking) totalBoost *= 5;
+            if (skillTreeData.superchargedPower) totalBoost *= 1.5;
+            if (skillTreeData.purityOfMind && skillTreeData.skillPointsTree > 0) totalBoost *= 1.5 * skillTreeData.skillPointsTree;
+            totalBoost *= 1 + prestigePlus.science * 5 / 100;
             totalBoost *= secrets.ScienceMulti;
-            if (dvst.coldFusion)
+            if (skillTreeData.coldFusion)
                 totalBoost *= 10f;
-            if (dvst.scientificDominance)
+            if (skillTreeData.scientificDominance)
                 totalBoost *= 20f;
-            if (dvst.paragon) totalBoost *= 50f;
-            totalBoost *= dvst.tasteOfPower ? dvst.indulgingInPower ? dvst.addictionToPower ? 0.5f : 0.6f : 0.75f : 1;
+            if (skillTreeData.paragon) totalBoost *= 50f;
+            totalBoost *= skillTreeData.tasteOfPower ? skillTreeData.indulgingInPower ? skillTreeData.addictionToPower ? 0.5f : 0.6f : 0.75f : 1;
 
-            if (dvst.stellarObliteration)
+            if (skillTreeData.stellarObliteration)
             {
-                double galaxiesEngulfed = ProductionMath.GalaxiesEngulfed(dvid, false, true, 0);
+                double galaxiesEngulfed = ProductionMath.GalaxiesEngulfed(infinityData, false, true, 0);
                 if (galaxiesEngulfed >= 1)
                 {
-                    double galaxiesEngulfedRaw = ProductionMath.GalaxiesEngulfed(dvid, false, false, 0);
+                    double galaxiesEngulfedRaw = ProductionMath.GalaxiesEngulfed(infinityData, false, false, 0);
                     totalBoost /= galaxiesEngulfedRaw;
                 }
             }
-            if (dvst.economicDominance) totalBoost /= 4f;
+            if (skillTreeData.economicDominance) totalBoost /= 4f;
 
             return totalBoost;
         }
     }
 }
+

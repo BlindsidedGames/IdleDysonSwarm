@@ -27,7 +27,7 @@ public class LineManager : MonoBehaviour
     public SkillTreeManager startSkillManager;
     public SkillTreeManager endSkillManager;
 
-    private PrestigePlus pp => oracle.saveSettings.prestigePlus;
+    private PrestigePlus prestigePlus => oracle.saveSettings.prestigePlus;
 
     private void OnEnable()
     {
@@ -92,22 +92,22 @@ public class LineManager : MonoBehaviour
         bool enabled = true;
         if (endDefinition != null)
         {
-            if (endDefinition.purityLine && !pp.purity) enabled = false;
-            if (endDefinition.isFragment && !pp.fragments) enabled = false;
-            if (endDefinition.terraLine && !pp.terra) enabled = false;
-            if (endDefinition.powerLine && !pp.power) enabled = false;
-            if (endDefinition.paragadeLine && !pp.paragade) enabled = false;
-            if (endDefinition.stellarLine && !pp.stellar) enabled = false;
+            if (endDefinition.purityLine && !prestigePlus.purity) enabled = false;
+            if (endDefinition.isFragment && !prestigePlus.fragments) enabled = false;
+            if (endDefinition.terraLine && !prestigePlus.terra) enabled = false;
+            if (endDefinition.powerLine && !prestigePlus.power) enabled = false;
+            if (endDefinition.paragadeLine && !prestigePlus.paragade) enabled = false;
+            if (endDefinition.stellarLine && !prestigePlus.stellar) enabled = false;
             if (endDefinition.firstRunBlocked && !oracle.saveSettings.firstInfinityDone) enabled = false;
         }
         else if (endLegacy != null)
         {
-            if (endLegacy.purityLine && !pp.purity) enabled = false;
-            if (endLegacy.isFragment && !pp.fragments) enabled = false;
-            if (endLegacy.terraLine && !pp.terra) enabled = false;
-            if (endLegacy.powerLine && !pp.power) enabled = false;
-            if (endLegacy.paragadeLine && !pp.paragade) enabled = false;
-            if (endLegacy.stellarLine && !pp.stellar) enabled = false;
+            if (endLegacy.purityLine && !prestigePlus.purity) enabled = false;
+            if (endLegacy.isFragment && !prestigePlus.fragments) enabled = false;
+            if (endLegacy.terraLine && !prestigePlus.terra) enabled = false;
+            if (endLegacy.powerLine && !prestigePlus.power) enabled = false;
+            if (endLegacy.paragadeLine && !prestigePlus.paragade) enabled = false;
+            if (endLegacy.stellarLine && !prestigePlus.stellar) enabled = false;
             if (endLegacy.firstRunBlocked && !oracle.saveSettings.firstInfinityDone) enabled = false;
         }
 
@@ -194,3 +194,4 @@ public class LineManager : MonoBehaviour
         lr.Points = pointlist.ToArray();
     }
 }
+

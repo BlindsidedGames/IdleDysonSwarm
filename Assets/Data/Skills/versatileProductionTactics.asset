@@ -36,3 +36,4 @@ MonoBehaviour:
   unrefundableWithIds: []
   effects:
   - {fileID: 11400000, guid: a6b82eec160715a4fb1611bd18289bfc, type: 2}
+  - {fileID: 11400000, guid: e4e96832a2f46d14bbc0cfd705837d6b, type: 2}

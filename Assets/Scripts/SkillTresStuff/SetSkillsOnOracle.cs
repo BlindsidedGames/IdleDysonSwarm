@@ -7,7 +7,7 @@ using static Expansion.Oracle;
 
 public class SetSkillsOnOracle : MonoBehaviour
 {
-    private DysonVerseSkillTreeData dvst => oracle.saveSettings.dysonVerseSaveData.dysonVerseSkillTreeData;
+    private DysonVerseSkillTreeData skillTreeData => oracle.saveSettings.dysonVerseSaveData.dysonVerseSkillTreeData;
 
     private void OnEnable()
     {
@@ -32,7 +32,7 @@ public class SetSkillsOnOracle : MonoBehaviour
             {
                 if (skill == null || string.IsNullOrEmpty(skill.id)) continue;
                 bool owned = oracle.IsSkillOwned(skill.id);
-                SkillFlagAccessor.TrySetFlag(dvst, skill.id, owned);
+                SkillFlagAccessor.TrySetFlag(skillTreeData, skill.id, owned);
 
                 if (SkillIdMap.TryGetLegacyKey(skill.id, out int key) &&
                     oracle.SkillTree.TryGetValue(key, out SkillTreeItem item))
@@ -47,7 +47,8 @@ public class SetSkillsOnOracle : MonoBehaviour
         foreach (KeyValuePair<int, SkillTreeItem> variable in oracle.SkillTree)
         {
             if (!SkillIdMap.TryGetId(variable.Key, out string id)) continue;
-            SkillFlagAccessor.TrySetFlag(dvst, id, variable.Value.Owned);
+            SkillFlagAccessor.TrySetFlag(skillTreeData, id, variable.Value.Owned);
         }
     }
 }
+

@@ -19,7 +19,10 @@ MonoBehaviour:
   tags:
   - facility
   - data_center
-  baseCost: 1
-  costExponent: 1.15
+  baseCost: 300000000
+  costExponent: 1.23
   baseProduction: 0.0011111111111111111
   productionStatId: Facility.DataCenter.Production
+  wordUsed: Deploying
+  productionWordUsed: Server
+  purchasePrompt: Purchase a Data Center

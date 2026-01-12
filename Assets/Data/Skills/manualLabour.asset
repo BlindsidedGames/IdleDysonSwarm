@@ -33,4 +33,5 @@ MonoBehaviour:
   shadowRequirementIds: []
   exclusiveWithIds: []
   unrefundableWithIds: []
-  effects: []
+  effects:
+  - {fileID: 11400000, guid: ed630795e78389e48b19a11478ce4f2a, type: 2}

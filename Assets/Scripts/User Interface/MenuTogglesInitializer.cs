@@ -5,7 +5,7 @@ using static Expansion.Oracle;
 
 public class MenuTogglesInitializer : MonoBehaviour
 {
-    private DysonVersePrestigeData dvpd => oracle.saveSettings.dysonVerseSaveData.dysonVersePrestigeData;
+    private DysonVersePrestigeData prestigeData => oracle.saveSettings.dysonVerseSaveData.dysonVersePrestigeData;
     [SerializeField] private Toggle _botsToggle;
     [SerializeField] private Toggle _researchToggle;
     [SerializeField] private Toggle _SkillsToggle;
@@ -31,7 +31,7 @@ public class MenuTogglesInitializer : MonoBehaviour
         _SkillsToggle.isOn = oracle.saveSettings.skillsButtonToggle;
         _infinityToggle.isOn = oracle.saveSettings.infinityFirstRunDone
             ? oracle.saveSettings.infinityButtonToggle
-            : !(dvpd.infinityPoints >= 1 || oracle.saveSettings.prestigePlus.points >= 1);
+            : !(prestigeData.infinityPoints >= 1 || oracle.saveSettings.prestigePlus.points >= 1);
         _realityToggle.isOn = oracle.saveSettings.realityButtonToggle;
         _simulationsToggle.isOn = oracle.saveSettings.simulationsButtonToggle;
         _prestigeToggle.isOn = oracle.saveSettings.prestigeButtonToggle;

@@ -14,5 +14,8 @@ namespace GameData
         public double costExponent = 1.15;
         public double baseProduction;
         public string productionStatId;
+        public string wordUsed;
+        public string productionWordUsed;
+        public string purchasePrompt;
     }
 }

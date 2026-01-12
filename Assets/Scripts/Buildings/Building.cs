@@ -1,6 +1,8 @@
 ﻿using System;
 using UnityEngine;
 using Blindsided.Utilities;
+using TMPro;
+using UnityEngine.UI;
 using static Blindsided.Utilities.CalcUtils;
 using static Expansion.Oracle;
 
@@ -8,12 +10,24 @@ namespace Buildings
 {
     public class Building : MonoBehaviour
     {
-        public double baseCost;
-        public virtual double ModifiedBaseCost => baseCost;
-        public double exponent;
-        public string wordUsed;
-        public string productionWordUsed;
-        public BuildingReferences buildingReferences;
+        [SerializeField, HideInInspector] protected double baseCost;
+        [SerializeField, HideInInspector] protected double exponent = 1;
+        [SerializeField, HideInInspector] protected string wordUsed;
+        [SerializeField, HideInInspector] protected string productionWordUsed;
+        [SerializeField] private BuildingReferences buildingReferences;
+        [SerializeField, HideInInspector] private TMP_Text buildingText;
+        [SerializeField, HideInInspector] private TMP_Text productionText;
+        [SerializeField, HideInInspector] private TMP_Text buttonCostText;
+        [SerializeField, HideInInspector] private TMP_Text amountToBuyText;
+        [SerializeField, HideInInspector] private Button purchaseButton;
+        public BuildingReferences UiReferences
+        {
+            get => buildingReferences;
+            set => ApplyBuildingReferences(value);
+        }
+        protected virtual double BaseCost => baseCost;
+        protected virtual double CostExponent => exponent;
+        public virtual double ModifiedBaseCost => BaseCost;
         public virtual double
             ManuallyPurchasedBuildings { get => throw new NotImplementedException(); set => throw new NotImplementedException(); } //{ get => StaticInfinityData.managers[1]; set => StaticInfinityData.managers[1] = value; }
         public virtual double
@@ -28,20 +42,31 @@ namespace Buildings
         public virtual bool AutoBuy => throw new NotImplementedException();
         public bool DoAutoBuy => AutoBuy && Affordable() > 0;
 
-        public long Affordable() => MaxAffordable(Money, ModifiedBaseCost, exponent, CurrentLevel);
+        public long Affordable() => MaxAffordable(Money, ModifiedBaseCost, CostExponent, CurrentLevel);
 
-        public double Cost() => BuyXCost(NumberToBuy(), ModifiedBaseCost, exponent, CurrentLevel);
-        public double BuyMaxCost() => BuyXCost(Affordable(), ModifiedBaseCost, exponent, CurrentLevel);
+        public double Cost() => BuyXCost(NumberToBuy(), ModifiedBaseCost, CostExponent, CurrentLevel);
+        public double BuyMaxCost() => BuyXCost(Affordable(), ModifiedBaseCost, CostExponent, CurrentLevel);
 
 
-        public void Start()
+        protected virtual void Awake()
         {
-            buildingReferences.purchaseButton.onClick.AddListener(PurchaseBuilding);
+            ApplySerializedReferences();
+        }
+
+        private void Start()
+        {
+            if (purchaseButton != null)
+            {
+                purchaseButton.onClick.AddListener(PurchaseBuilding);
+            }
         }
         public void Update()
         {
             UpdateCostText();
-            buildingReferences.purchaseButton.interactable = Cost() <= Money && NumberToBuy() > 0 && !AutoBuy;
+            if (purchaseButton != null)
+            {
+                purchaseButton.interactable = Cost() <= Money && NumberToBuy() > 0 && !AutoBuy;
+            }
             SetProductionSec();
         }
 
@@ -68,7 +93,10 @@ namespace Buildings
 
         private void SetProductionSec()
         {
-            buildingReferences.production.text = ProductioinText;
+            if (productionText != null)
+            {
+                productionText.text = ProductioinText;
+            }
         }
 
 
@@ -104,9 +132,64 @@ namespace Buildings
 
         public void UpdateCostText()
         {
-            buildingReferences.amountToBuy.text = $"{(AutoBuy ? "Auto" : $"+{NumberToBuy()}")}";
-            buildingReferences.buttonCost.text = $"${FormatNumber(Cost())}";
-            buildingReferences.building.text = OwnedText;
+            if (amountToBuyText != null)
+            {
+                amountToBuyText.text = $"{(AutoBuy ? "Auto" : $"+{NumberToBuy()}")}";
+            }
+
+            if (buttonCostText != null)
+            {
+                buttonCostText.text = $"${FormatNumber(Cost())}";
+            }
+
+            if (buildingText != null)
+            {
+                buildingText.text = OwnedText;
+            }
+        }
+
+        public void ApplyBuildingReferences(BuildingReferences references)
+        {
+            if (references == null) return;
+            buildingReferences = references;
+            buildingText = references.building;
+            productionText = references.production;
+            buttonCostText = references.buttonCost;
+            amountToBuyText = references.amountToBuy;
+            purchaseButton = references.purchaseButton;
+        }
+
+        private void ApplySerializedReferences()
+        {
+            if (buildingReferences != null)
+            {
+                ApplyBuildingReferences(buildingReferences);
+                return;
+            }
+
+            TryApplyBuildingReferences();
+        }
+
+        private void TryApplyBuildingReferences()
+        {
+            if (HasUiReferences())
+            {
+                return;
+            }
+
+            BuildingReferences references = GetComponent<BuildingReferences>();
+            if (references == null)
+            {
+                return;
+            }
+
+            ApplyBuildingReferences(references);
+        }
+
+        private bool HasUiReferences()
+        {
+            return buildingText != null && productionText != null && buttonCostText != null &&
+                   amountToBuyText != null && purchaseButton != null;
         }
     }
 }

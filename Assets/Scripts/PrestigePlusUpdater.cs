@@ -35,12 +35,11 @@ public class PrestigePlusUpdater : MonoBehaviour
     [SerializeField] private Button cashButton;
     [SerializeField] private Button scienceButton;
 
-    private int divisionCost => pp.divisionsPurchased >= 1 ? (int)Math.Pow(2, pp.divisionsPurchased) * 2 : 2;
-    private PrestigePlus pp => oracle.saveSettings.prestigePlus;
-    private DysonVerseInfinityData dvid => oracle.saveSettings.dysonVerseSaveData.dysonVerseInfinityData;
-    private DysonVersePrestigeData dvpd => oracle.saveSettings.dysonVerseSaveData.dysonVersePrestigeData;
-    private DysonVerseSaveData dvsd => oracle.saveSettings.dysonVerseSaveData;
-    private SaveDataPrestige sp => oracle.saveSettings.sdPrestige;
+    private int divisionCost => prestigePlus.divisionsPurchased >= 1 ? (int)Math.Pow(2, prestigePlus.divisionsPurchased) * 2 : 2;
+    private PrestigePlus prestigePlus => oracle.saveSettings.prestigePlus;
+    private DysonVerseInfinityData infinityData => oracle.saveSettings.dysonVerseSaveData.dysonVerseInfinityData;
+    private DysonVersePrestigeData prestigeData => oracle.saveSettings.dysonVerseSaveData.dysonVersePrestigeData;
+    private DysonVerseSaveData dysonVerseSaveData => oracle.saveSettings.dysonVerseSaveData;
 
     private const int BreakTheLoopCost = 6;
     private const int QuantumEntanglementCost = 12;
@@ -52,47 +51,47 @@ public class PrestigePlusUpdater : MonoBehaviour
     private const int PowerCost = 2;
     private const int ParagadeCost = 1;
     private const int StellarCost = 4;
-    private long pointsRemaining => pp.points - pp.spentPoints;
+    private long pointsRemaining => prestigePlus.points - prestigePlus.spentPoints;
 
 
     private void Start()
     {
         multiTaskingButton.onClick.AddListener(PurchaseMultiTasking);
-        if (pp.botMultitasking) multiTaskingButton.transform.GetComponentInChildren<TMP_Text>().text = "Purchased";
+        if (prestigePlus.botMultitasking) multiTaskingButton.transform.GetComponentInChildren<TMP_Text>().text = "Purchased";
         doubleIpButton.onClick.AddListener(PurchaseDoubleIP);
-        if (pp.doubleIP) doubleIpButton.transform.GetComponentInChildren<TMP_Text>().text = "Purchased";
+        if (prestigePlus.doubleIP) doubleIpButton.transform.GetComponentInChildren<TMP_Text>().text = "Purchased";
         automationButton.onClick.AddListener(PurchaseAutomation);
-        if (pp.automation) automationButton.transform.GetComponentInChildren<TMP_Text>().text = "Purchased";
+        if (prestigePlus.automation) automationButton.transform.GetComponentInChildren<TMP_Text>().text = "Purchased";
 
 
         secretsButton.onClick.AddListener(PurchaseSecrets);
         secretsButton.transform.GetComponentInChildren<TMP_Text>().text =
-            pp.secrets >= 27 ? "Purchased" : "1<sprite=5, color=#000000>";
+            prestigePlus.secrets >= 27 ? "Purchased" : "1<sprite=5, color=#000000>";
         divisionButton.onClick.AddListener(PurchaseDivision);
         divisionButton.transform.GetComponentInChildren<TMP_Text>().text =
-            pp.divisionsPurchased >= 19 ? "Purchased" : $"{CalcUtils.FormatNumber(divisionCost)}<sprite=5, color=#000000>";
+            prestigePlus.divisionsPurchased >= 19 ? "Purchased" : $"{CalcUtils.FormatNumber(divisionCost)}<sprite=5, color=#000000>";
 
         avocatoButton.onClick.AddListener(PurchaseAvocato);
-        if (pp.avocatoPurchased) avocatoButton.transform.GetComponentInChildren<TMP_Text>().text = "Purchased";
+        if (prestigePlus.avocatoPurchased) avocatoButton.transform.GetComponentInChildren<TMP_Text>().text = "Purchased";
 
         breakTheLoopButton.onClick.AddListener(PurchaseBreakTheLoop);
-        if (pp.breakTheLoop) breakTheLoopButton.transform.GetComponentInChildren<TMP_Text>().text = "Purchased";
+        if (prestigePlus.breakTheLoop) breakTheLoopButton.transform.GetComponentInChildren<TMP_Text>().text = "Purchased";
         quantumEntanglementButton.onClick.AddListener(PurchaseQuantumEntanglement);
-        if (pp.quantumEntanglement)
+        if (prestigePlus.quantumEntanglement)
             quantumEntanglementButton.transform.GetComponentInChildren<TMP_Text>().text = "Purchased";
 
         fragmentsButton.onClick.AddListener(PurchaseFragments);
-        if (pp.fragments) fragmentsButton.transform.GetComponentInChildren<TMP_Text>().text = "Purchased";
+        if (prestigePlus.fragments) fragmentsButton.transform.GetComponentInChildren<TMP_Text>().text = "Purchased";
         purityButton.onClick.AddListener(PurchasePurity);
-        if (pp.purity) purityButton.transform.GetComponentInChildren<TMP_Text>().text = "Purchased";
+        if (prestigePlus.purity) purityButton.transform.GetComponentInChildren<TMP_Text>().text = "Purchased";
         terraButton.onClick.AddListener(PurchaseTerra);
-        if (pp.terra) terraButton.transform.GetComponentInChildren<TMP_Text>().text = "Purchased";
+        if (prestigePlus.terra) terraButton.transform.GetComponentInChildren<TMP_Text>().text = "Purchased";
         powerButton.onClick.AddListener(PurchasePower);
-        if (pp.power) powerButton.transform.GetComponentInChildren<TMP_Text>().text = "Purchased";
+        if (prestigePlus.power) powerButton.transform.GetComponentInChildren<TMP_Text>().text = "Purchased";
         paragadeButton.onClick.AddListener(PurchaseParagade);
-        if (pp.paragade) paragadeButton.transform.GetComponentInChildren<TMP_Text>().text = "Purchased";
+        if (prestigePlus.paragade) paragadeButton.transform.GetComponentInChildren<TMP_Text>().text = "Purchased";
         stellarButton.onClick.AddListener(PurchaseStellar);
-        if (pp.stellar) stellarButton.transform.GetComponentInChildren<TMP_Text>().text = "Purchased";
+        if (prestigePlus.stellar) stellarButton.transform.GetComponentInChildren<TMP_Text>().text = "Purchased";
 
         influenceButton.onClick.AddListener(PurchaseInfluence);
         cashButton.onClick.AddListener(PurchaseCashPercent);
@@ -101,185 +100,186 @@ public class PrestigePlusUpdater : MonoBehaviour
 
     private void Update()
     {
-        prestigeButtonText.text = pp.quantumEntanglement
-            ? $"Leap for {(long)Math.Floor((dvpd.infinityPoints - dvpd.spentInfinityPoints) / 42f):N0}<sprite=5, color=#000000>"
+        prestigeButtonText.text = prestigePlus.quantumEntanglement
+            ? $"Leap for {(long)Math.Floor((prestigeData.infinityPoints - prestigeData.spentInfinityPoints) / 42f):N0}<sprite=5, color=#000000>"
             : "Engage Quantum Leap (<color=#FFA45E>42 IP</color>)";
         pointsText.text =
-            $"You have: <color=#FFA45E>{CalcUtils.FormatNumber(pp.points - pp.spentPoints)}<size=70%><color=#91DD8F>({CalcUtils.FormatNumber(pp.spentPoints)})</size></color> {"<sprite=5>"}";
-        cashText.text = $"5% Cash - <color=#91DD8F>{pp.cash * 5}%";
-        scienceText.text = $"5% Science - <color=#91DD8F>{pp.science * 5}%";
-        influenceText.text = $"4 Influence /sec <color=#91DD8F>+{pp.influence}";
+            $"You have: <color=#FFA45E>{CalcUtils.FormatNumber(prestigePlus.points - prestigePlus.spentPoints)}<size=70%><color=#91DD8F>({CalcUtils.FormatNumber(prestigePlus.spentPoints)})</size></color> {"<sprite=5>"}";
+        cashText.text = $"5% Cash - <color=#91DD8F>{prestigePlus.cash * 5}%";
+        scienceText.text = $"5% Science - <color=#91DD8F>{prestigePlus.science * 5}%";
+        influenceText.text = $"4 Influence /sec <color=#91DD8F>+{prestigePlus.influence}";
 
-        secretsTitleText.text = pp.secrets > 0
-            ? $"Secrets of the Universe - <color=#91DD8F>{pp.secrets}"
+        secretsTitleText.text = prestigePlus.secrets > 0
+            ? $"Secrets of the Universe - <color=#91DD8F>{prestigePlus.secrets}"
             : "Secrets of the Universe";
-        divisionTitleText.text = pp.divisionsPurchased >= 1
-            ? $"Division - <color=#91DD8F>{CalcUtils.FormatNumber(Math.Pow(10, pp.divisionsPurchased))}"
+        divisionTitleText.text = prestigePlus.divisionsPurchased >= 1
+            ? $"Division - <color=#91DD8F>{CalcUtils.FormatNumber(Math.Pow(10, prestigePlus.divisionsPurchased))}"
             : "Division";
 
-        bool activate = pp.points - pp.spentPoints >= 1;
+        bool activate = prestigePlus.points - prestigePlus.spentPoints >= 1;
 
 
         influenceButton.interactable = activate;
         cashButton.interactable = activate;
         scienceButton.interactable = activate;
 
-        multiTaskingButton.interactable = !pp.botMultitasking && activate;
-        doubleIpButton.interactable = !pp.doubleIP && activate;
-        automationButton.interactable = !pp.automation && activate;
-        secretsButton.interactable = pp.secrets < 27 && activate &&
-                                     (pp.botMultitasking || pp.doubleIP);
-        divisionButton.interactable = !(pp.divisionsPurchased >= 19) && pp.points - pp.spentPoints >= divisionCost &&
-                                      pp.botMultitasking && pp.doubleIP;
+        multiTaskingButton.interactable = !prestigePlus.botMultitasking && activate;
+        doubleIpButton.interactable = !prestigePlus.doubleIP && activate;
+        automationButton.interactable = !prestigePlus.automation && activate;
+        secretsButton.interactable = prestigePlus.secrets < 27 && activate &&
+                                     (prestigePlus.botMultitasking || prestigePlus.doubleIP);
+        divisionButton.interactable = !(prestigePlus.divisionsPurchased >= 19) && prestigePlus.points - prestigePlus.spentPoints >= divisionCost &&
+                                      prestigePlus.botMultitasking && prestigePlus.doubleIP;
 
-        avocatoButton.interactable = !pp.avocatoPurchased && pointsRemaining >= avocatoCost;
+        avocatoButton.interactable = !prestigePlus.avocatoPurchased && pointsRemaining >= avocatoCost;
 
-        breakTheLoopButton.interactable = !pp.breakTheLoop && pointsRemaining >= BreakTheLoopCost;
-        quantumEntanglementButton.interactable = !pp.quantumEntanglement && pointsRemaining >= QuantumEntanglementCost;
+        breakTheLoopButton.interactable = !prestigePlus.breakTheLoop && pointsRemaining >= BreakTheLoopCost;
+        quantumEntanglementButton.interactable = !prestigePlus.quantumEntanglement && pointsRemaining >= QuantumEntanglementCost;
 
-        fragmentsButton.interactable = !pp.fragments && pointsRemaining >= FragmentCost;
-        purityButton.interactable = !pp.purity && pointsRemaining >= PurityCost;
-        terraButton.interactable = !pp.terra && pointsRemaining >= TerraCost;
-        powerButton.interactable = !pp.power && pointsRemaining >= PowerCost;
-        paragadeButton.interactable = !pp.paragade && pointsRemaining >= ParagadeCost;
-        stellarButton.interactable = !pp.stellar && pointsRemaining >= StellarCost;
+        fragmentsButton.interactable = !prestigePlus.fragments && pointsRemaining >= FragmentCost;
+        purityButton.interactable = !prestigePlus.purity && pointsRemaining >= PurityCost;
+        terraButton.interactable = !prestigePlus.terra && pointsRemaining >= TerraCost;
+        powerButton.interactable = !prestigePlus.power && pointsRemaining >= PowerCost;
+        paragadeButton.interactable = !prestigePlus.paragade && pointsRemaining >= ParagadeCost;
+        stellarButton.interactable = !prestigePlus.stellar && pointsRemaining >= StellarCost;
     }
 
     private void PurchaseAvocato()
     {
         if (pointsRemaining < avocatoCost) return;
         avocatoButton.transform.GetComponentInChildren<TMP_Text>().text = "Purchased";
-        pp.avocatoPurchased = true;
-        pp.spentPoints += avocatoCost;
+        prestigePlus.avocatoPurchased = true;
+        prestigePlus.spentPoints += avocatoCost;
     }
 
     private void PurchaseDivision()
     {
         if (pointsRemaining < divisionCost) return;
-        pp.spentPoints += divisionCost;
-        pp.divisionsPurchased++;
+        prestigePlus.spentPoints += divisionCost;
+        prestigePlus.divisionsPurchased++;
         divisionButton.transform.GetComponentInChildren<TMP_Text>().text =
-            pp.divisionsPurchased >= 19 ? "Purchased" : $"{CalcUtils.FormatNumber(divisionCost)}<sprite=5, color=#000000>";
+            prestigePlus.divisionsPurchased >= 19 ? "Purchased" : $"{CalcUtils.FormatNumber(divisionCost)}<sprite=5, color=#000000>";
     }
 
     private void PurchaseSecrets()
     {
         if (pointsRemaining < 1) return;
-        pp.secrets += pp.secrets >= 27 ? 0 : 3;
-        dvpd.secretsOfTheUniverse += dvpd.secretsOfTheUniverse >= 27 ? 0 : 3;
-        pp.spentPoints++;
+        prestigePlus.secrets += prestigePlus.secrets >= 27 ? 0 : 3;
+        prestigeData.secretsOfTheUniverse += prestigeData.secretsOfTheUniverse >= 27 ? 0 : 3;
+        prestigePlus.spentPoints++;
         secretsButton.transform.GetComponentInChildren<TMP_Text>().text =
-            pp.secrets >= 27 ? "Purchased" : "1<sprite=5, color=#000000>";
+            prestigePlus.secrets >= 27 ? "Purchased" : "1<sprite=5, color=#000000>";
     }
 
     private void PurchaseMultiTasking()
     {
         if (pointsRemaining < 1) return;
         multiTaskingButton.transform.GetComponentInChildren<TMP_Text>().text = "Purchased";
-        pp.botMultitasking = true;
-        pp.spentPoints++;
+        prestigePlus.botMultitasking = true;
+        prestigePlus.spentPoints++;
     }
 
     private void PurchaseDoubleIP()
     {
         if (pointsRemaining < 1) return;
         doubleIpButton.transform.GetComponentInChildren<TMP_Text>().text = "Purchased";
-        pp.doubleIP = true;
-        pp.spentPoints++;
+        prestigePlus.doubleIP = true;
+        prestigePlus.spentPoints++;
     }
 
     private void PurchaseBreakTheLoop()
     {
         if (pointsRemaining < BreakTheLoopCost) return;
         breakTheLoopButton.transform.GetComponentInChildren<TMP_Text>().text = "Purchased";
-        pp.breakTheLoop = true;
-        pp.spentPoints += BreakTheLoopCost;
+        prestigePlus.breakTheLoop = true;
+        prestigePlus.spentPoints += BreakTheLoopCost;
     }
 
     private void PurchaseQuantumEntanglement()
     {
         if (pointsRemaining < QuantumEntanglementCost) return;
         quantumEntanglementButton.transform.GetComponentInChildren<TMP_Text>().text = "Purchased";
-        pp.quantumEntanglement = true;
-        pp.spentPoints += QuantumEntanglementCost;
+        prestigePlus.quantumEntanglement = true;
+        prestigePlus.spentPoints += QuantumEntanglementCost;
     }
 
     private void PurchaseAutomation()
     {
         if (pointsRemaining < 1) return;
         automationButton.transform.GetComponentInChildren<TMP_Text>().text = "Purchased";
-        pp.automation = true;
-        dvpd.infinityAutoBots = true;
-        dvpd.infinityAutoResearch = true;
-        pp.spentPoints++;
+        prestigePlus.automation = true;
+        prestigeData.infinityAutoBots = true;
+        prestigeData.infinityAutoResearch = true;
+        prestigePlus.spentPoints++;
     }
 
     private void PurchaseFragments()
     {
         if (pointsRemaining < FragmentCost) return;
         fragmentsButton.transform.GetComponentInChildren<TMP_Text>().text = "Purchased";
-        pp.fragments = true;
-        pp.spentPoints += FragmentCost;
+        prestigePlus.fragments = true;
+        prestigePlus.spentPoints += FragmentCost;
     }
 
     private void PurchasePurity()
     {
         if (pointsRemaining < PurityCost) return;
         purityButton.transform.GetComponentInChildren<TMP_Text>().text = "Purchased";
-        pp.purity = true;
-        pp.spentPoints += PurityCost;
+        prestigePlus.purity = true;
+        prestigePlus.spentPoints += PurityCost;
     }
 
     private void PurchaseTerra()
     {
         if (pointsRemaining < TerraCost) return;
         terraButton.transform.GetComponentInChildren<TMP_Text>().text = "Purchased";
-        pp.terra = true;
-        pp.spentPoints += TerraCost;
+        prestigePlus.terra = true;
+        prestigePlus.spentPoints += TerraCost;
     }
 
     private void PurchasePower()
     {
         if (pointsRemaining < PowerCost) return;
         powerButton.transform.GetComponentInChildren<TMP_Text>().text = "Purchased";
-        pp.power = true;
-        pp.spentPoints += PowerCost;
+        prestigePlus.power = true;
+        prestigePlus.spentPoints += PowerCost;
     }
 
     private void PurchaseParagade()
     {
         if (pointsRemaining < ParagadeCost) return;
         paragadeButton.transform.GetComponentInChildren<TMP_Text>().text = "Purchased";
-        pp.paragade = true;
-        pp.spentPoints += ParagadeCost;
+        prestigePlus.paragade = true;
+        prestigePlus.spentPoints += ParagadeCost;
     }
 
     private void PurchaseStellar()
     {
         if (pointsRemaining < StellarCost) return;
         stellarButton.transform.GetComponentInChildren<TMP_Text>().text = "Purchased";
-        pp.stellar = true;
-        pp.spentPoints += StellarCost;
+        prestigePlus.stellar = true;
+        prestigePlus.spentPoints += StellarCost;
     }
 
     private void PurchaseInfluence()
     {
         if (pointsRemaining < 1) return;
-        pp.influence += 4;
-        pp.spentPoints++;
+        prestigePlus.influence += 4;
+        prestigePlus.spentPoints++;
     }
 
     private void PurchaseCashPercent()
     {
         if (pointsRemaining < 1) return;
-        pp.cash++;
-        pp.spentPoints++;
+        prestigePlus.cash++;
+        prestigePlus.spentPoints++;
     }
 
     private void PurchaseSciencePercent()
     {
         if (pointsRemaining < 1) return;
-        pp.science++;
-        pp.spentPoints++;
+        prestigePlus.science++;
+        prestigePlus.spentPoints++;
     }
 }
+

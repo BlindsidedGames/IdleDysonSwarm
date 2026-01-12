@@ -104,6 +104,7 @@ MonoBehaviour:
   m_VerticalAlignment: 512
   m_textAlignment: 65535
   m_characterSpacing: 0
+  m_characterHorizontalScale: 1
   m_wordSpacing: 0
   m_lineSpacing: 0
   m_lineSpacingMax: 0
@@ -296,6 +297,7 @@ MonoBehaviour:
   m_VerticalAlignment: 256
   m_textAlignment: 65535
   m_characterSpacing: 0
+  m_characterHorizontalScale: 1
   m_wordSpacing: 0
   m_lineSpacing: 0
   m_lineSpacingMax: 0
@@ -432,6 +434,7 @@ MonoBehaviour:
   m_VerticalAlignment: 512
   m_textAlignment: 65535
   m_characterSpacing: 0
+  m_characterHorizontalScale: 1
   m_wordSpacing: 0
   m_lineSpacing: 0
   m_lineSpacingMax: 0
@@ -568,6 +571,7 @@ MonoBehaviour:
   m_VerticalAlignment: 512
   m_textAlignment: 65535
   m_characterSpacing: 0
+  m_characterHorizontalScale: 1
   m_wordSpacing: 0
   m_lineSpacing: 0
   m_lineSpacingMax: 0
@@ -704,6 +708,7 @@ MonoBehaviour:
   m_VerticalAlignment: 512
   m_textAlignment: 65535
   m_characterSpacing: 0
+  m_characterHorizontalScale: 1
   m_wordSpacing: 0
   m_lineSpacing: 0
   m_lineSpacingMax: 0
@@ -850,6 +855,11 @@ MonoBehaviour:
   m_Rectangle:
     m_CornerRadius: {x: 8, y: 8, z: 8, w: 8}
     m_UniformCornerRadius: 1
+  m_ChamferBox:
+    m_ChamferSize: 0
+  m_Parallelogram:
+    m_Skew: 0
+    m_CornerRadius: 0
   m_Circle:
     m_Radius: 0
     m_FitRadius: 0
@@ -1012,6 +1022,7 @@ MonoBehaviour:
   m_VerticalAlignment: 512
   m_textAlignment: 65535
   m_characterSpacing: 0
+  m_characterHorizontalScale: 1
   m_wordSpacing: 0
   m_lineSpacing: 0
   m_lineSpacingMax: 0
@@ -1141,6 +1152,11 @@ MonoBehaviour:
   m_Rectangle:
     m_CornerRadius: {x: 8, y: 8, z: 8, w: 8}
     m_UniformCornerRadius: 1
+  m_ChamferBox:
+    m_ChamferSize: 0
+  m_Parallelogram:
+    m_Skew: 0
+    m_CornerRadius: 0
   m_Circle:
     m_Radius: 0
     m_FitRadius: 0
@@ -1247,18 +1263,6 @@ MonoBehaviour:
       - m_Target: {fileID: 0}
         m_TargetAssemblyTypeName: UnityEngine.AudioSource, UnityEngine
         m_MethodName: Play
-        m_Mode: 1
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
-      - m_Target: {fileID: 0}
-        m_TargetAssemblyTypeName: DataCenterManager, Assembly-CSharp
-        m_MethodName: PurchaseDataCenter
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -1388,6 +1392,7 @@ GameObject:
   - component: {fileID: 2197149241486112251}
   - component: {fileID: 4954428224332451645}
   - component: {fileID: 1743056480953293298}
+  - component: {fileID: 375496910266824280}
   m_Layer: 5
   m_Name: Building
   m_TagString: Untagged
@@ -1488,6 +1493,11 @@ MonoBehaviour:
   m_Rectangle:
     m_CornerRadius: {x: 8, y: 8, z: 8, w: 8}
     m_UniformCornerRadius: 1
+  m_ChamferBox:
+    m_ChamferSize: 0
+  m_Parallelogram:
+    m_Skew: 0
+    m_CornerRadius: 0
   m_Circle:
     m_Radius: 0
     m_FitRadius: 0
@@ -1593,6 +1603,21 @@ MonoBehaviour:
   m_ChildScaleWidth: 0
   m_ChildScaleHeight: 0
   m_ReverseArrangement: 0
+--- !u!114 &375496910266824280
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4972459859932635571}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: eaa466bbc8c298843b426cdf76067b20, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Systems.Facilities.FacilityPresenter
+  facilityId: assembly_lines
+  breakdownButton: {fileID: 0}
+  breakdownPopup: {fileID: 0}
 --- !u!1 &5784462771954546110
 GameObject:
   m_ObjectHideFlags: 0

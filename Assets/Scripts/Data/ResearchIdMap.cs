@@ -34,123 +34,124 @@ namespace GameData
 
         public static IReadOnlyList<string> Ids => AllIds;
 
-        public static bool TryGetLegacyLevel(Oracle.DysonVerseInfinityData dvid, string id, out double level)
+        public static bool TryGetLegacyLevel(Oracle.DysonVerseInfinityData infinityData, string id, out double level)
         {
             level = 0;
-            if (dvid == null || string.IsNullOrEmpty(id)) return false;
+            if (infinityData == null || string.IsNullOrEmpty(id)) return false;
 
             switch (id)
             {
                 case MoneyMultiplier:
-                    level = dvid.moneyMultiUpgradeOwned;
+                    level = infinityData.moneyMultiUpgradeOwned;
                     return true;
                 case ScienceBoost:
-                    level = dvid.scienceBoostOwned;
+                    level = infinityData.scienceBoostOwned;
                     return true;
                 case AssemblyLineUpgrade:
-                    level = dvid.assemblyLineUpgradeOwned;
+                    level = infinityData.assemblyLineUpgradeOwned;
                     return true;
                 case AiManagerUpgrade:
-                    level = dvid.aiManagerUpgradeOwned;
+                    level = infinityData.aiManagerUpgradeOwned;
                     return true;
                 case ServerUpgrade:
-                    level = dvid.serverUpgradeOwned;
+                    level = infinityData.serverUpgradeOwned;
                     return true;
                 case DataCenterUpgrade:
-                    level = dvid.dataCenterUpgradeOwned;
+                    level = infinityData.dataCenterUpgradeOwned;
                     return true;
                 case PlanetUpgrade:
-                    level = dvid.planetUpgradeOwned;
+                    level = infinityData.planetUpgradeOwned;
                     return true;
                 case PanelLifetime1:
-                    level = dvid.panelLifetime1 ? 1 : 0;
+                    level = infinityData.panelLifetime1 ? 1 : 0;
                     return true;
                 case PanelLifetime2:
-                    level = dvid.panelLifetime2 ? 1 : 0;
+                    level = infinityData.panelLifetime2 ? 1 : 0;
                     return true;
                 case PanelLifetime3:
-                    level = dvid.panelLifetime3 ? 1 : 0;
+                    level = infinityData.panelLifetime3 ? 1 : 0;
                     return true;
                 case PanelLifetime4:
-                    level = dvid.panelLifetime4 ? 1 : 0;
+                    level = infinityData.panelLifetime4 ? 1 : 0;
                     return true;
                 default:
                     return false;
             }
         }
 
-        public static bool TrySetLegacyLevel(Oracle.DysonVerseInfinityData dvid, string id, double level)
+        public static bool TrySetLegacyLevel(Oracle.DysonVerseInfinityData infinityData, string id, double level)
         {
-            if (dvid == null || string.IsNullOrEmpty(id)) return false;
+            if (infinityData == null || string.IsNullOrEmpty(id)) return false;
 
             switch (id)
             {
                 case MoneyMultiplier:
-                    dvid.moneyMultiUpgradeOwned = level;
+                    infinityData.moneyMultiUpgradeOwned = level;
                     return true;
                 case ScienceBoost:
-                    dvid.scienceBoostOwned = level;
+                    infinityData.scienceBoostOwned = level;
                     return true;
                 case AssemblyLineUpgrade:
-                    dvid.assemblyLineUpgradeOwned = (long)level;
+                    infinityData.assemblyLineUpgradeOwned = (long)level;
                     return true;
                 case AiManagerUpgrade:
-                    dvid.aiManagerUpgradeOwned = (long)level;
+                    infinityData.aiManagerUpgradeOwned = (long)level;
                     return true;
                 case ServerUpgrade:
-                    dvid.serverUpgradeOwned = (long)level;
+                    infinityData.serverUpgradeOwned = (long)level;
                     return true;
                 case DataCenterUpgrade:
-                    dvid.dataCenterUpgradeOwned = (long)level;
+                    infinityData.dataCenterUpgradeOwned = (long)level;
                     return true;
                 case PlanetUpgrade:
-                    dvid.planetUpgradeOwned = (long)level;
+                    infinityData.planetUpgradeOwned = (long)level;
                     return true;
                 case PanelLifetime1:
-                    dvid.panelLifetime1 = level >= 1;
+                    infinityData.panelLifetime1 = level >= 1;
                     return true;
                 case PanelLifetime2:
-                    dvid.panelLifetime2 = level >= 1;
+                    infinityData.panelLifetime2 = level >= 1;
                     return true;
                 case PanelLifetime3:
-                    dvid.panelLifetime3 = level >= 1;
+                    infinityData.panelLifetime3 = level >= 1;
                     return true;
                 case PanelLifetime4:
-                    dvid.panelLifetime4 = level >= 1;
+                    infinityData.panelLifetime4 = level >= 1;
                     return true;
                 default:
                     return false;
             }
         }
 
-        public static void PopulateLevelsFromLegacy(Oracle.DysonVerseInfinityData dvid,
+        public static void PopulateLevelsFromLegacy(Oracle.DysonVerseInfinityData infinityData,
             IDictionary<string, double> target)
         {
-            if (dvid == null || target == null) return;
+            if (infinityData == null || target == null) return;
 
             for (int i = 0; i < AllIds.Length; i++)
             {
                 string id = AllIds[i];
-                if (TryGetLegacyLevel(dvid, id, out double level))
+                if (TryGetLegacyLevel(infinityData, id, out double level))
                 {
                     target[id] = level;
                 }
             }
         }
 
-        public static void ApplyLevelsToLegacy(Oracle.DysonVerseInfinityData dvid,
+        public static void ApplyLevelsToLegacy(Oracle.DysonVerseInfinityData infinityData,
             IReadOnlyDictionary<string, double> source)
         {
-            if (dvid == null || source == null) return;
+            if (infinityData == null || source == null) return;
 
             for (int i = 0; i < AllIds.Length; i++)
             {
                 string id = AllIds[i];
                 if (source.TryGetValue(id, out double level))
                 {
-                    TrySetLegacyLevel(dvid, id, level);
+                    TrySetLegacyLevel(infinityData, id, level);
                 }
             }
         }
     }
 }
+

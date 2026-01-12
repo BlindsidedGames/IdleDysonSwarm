@@ -1,71 +1,70 @@
-using System;
-using System.Collections;
 using UnityEngine;
-using static Expansion.Oracle;
 
 namespace Buildings
 {
     public class BotsAutoBuy : MonoBehaviour
     {
-        [SerializeField] private AssemblyLineManager imu;
-        [SerializeField] private ManagerManager mmu;
-        [SerializeField] private ServerManager smu;
-        [SerializeField] private DataCenterManager dcmu;
-        [SerializeField] private PlanetManager pmu;
+        [SerializeField] private FacilityBuildingPresenter assemblyLineManager;
+        [SerializeField] private FacilityBuildingPresenter aiManager;
+        [SerializeField] private FacilityBuildingPresenter serverManager;
+        [SerializeField] private FacilityBuildingPresenter dataCenterManager;
+        [SerializeField] private FacilityBuildingPresenter planetManager;
 
-        private bool im => imu.DoAutoBuy;
-        private bool mm => mmu.DoAutoBuy;
-        private bool sm => smu.DoAutoBuy;
-        private bool dc => dcmu.DoAutoBuy;
-        private bool pm => pmu.DoAutoBuy;
-        private bool any => im || mm || sm || dc || pm;
-        private int priority;
+        private bool assemblyLineAutoBuy => assemblyLineManager.DoAutoBuy;
+        private bool aiManagerAutoBuy => aiManager.DoAutoBuy;
+        private bool serverAutoBuy => serverManager.DoAutoBuy;
+        private bool dataCenterAutoBuy => dataCenterManager.DoAutoBuy;
+        private bool planetAutoBuy => planetManager.DoAutoBuy;
+        private bool anyAutoBuy => assemblyLineAutoBuy || aiManagerAutoBuy || serverAutoBuy || dataCenterAutoBuy ||
+                                   planetAutoBuy;
+        // Rotate purchase order so no facility always buys first.
+        private int autoBuyOrderIndex;
 
         private void Update()
         {
-            while (any)
+            while (anyAutoBuy)
             {
-                switch (priority)
+                switch (autoBuyOrderIndex)
                 {
                     case 0:
-                        if (pm) pmu.AutoPurchase();
-                        if (sm) smu.AutoPurchase();
-                        if (mm) mmu.AutoPurchase();
-                        if (dc) dcmu.AutoPurchase();
-                        if (im) imu.AutoPurchase();
-                        priority = 1;
+                        if (planetAutoBuy) planetManager.AutoPurchase();
+                        if (serverAutoBuy) serverManager.AutoPurchase();
+                        if (aiManagerAutoBuy) aiManager.AutoPurchase();
+                        if (dataCenterAutoBuy) dataCenterManager.AutoPurchase();
+                        if (assemblyLineAutoBuy) assemblyLineManager.AutoPurchase();
+                        autoBuyOrderIndex = 1;
                         break;
                     case 1:
-                        if (sm) smu.AutoPurchase();
-                        if (mm) mmu.AutoPurchase();
-                        if (dc) dcmu.AutoPurchase();
-                        if (im) imu.AutoPurchase();
-                        if (pm) pmu.AutoPurchase();
-                        priority = 2;
+                        if (serverAutoBuy) serverManager.AutoPurchase();
+                        if (aiManagerAutoBuy) aiManager.AutoPurchase();
+                        if (dataCenterAutoBuy) dataCenterManager.AutoPurchase();
+                        if (assemblyLineAutoBuy) assemblyLineManager.AutoPurchase();
+                        if (planetAutoBuy) planetManager.AutoPurchase();
+                        autoBuyOrderIndex = 2;
                         break;
                     case 2:
-                        if (mm) mmu.AutoPurchase();
-                        if (dc) dcmu.AutoPurchase();
-                        if (im) imu.AutoPurchase();
-                        if (pm) pmu.AutoPurchase();
-                        if (sm) smu.AutoPurchase();
-                        priority = 3;
+                        if (aiManagerAutoBuy) aiManager.AutoPurchase();
+                        if (dataCenterAutoBuy) dataCenterManager.AutoPurchase();
+                        if (assemblyLineAutoBuy) assemblyLineManager.AutoPurchase();
+                        if (planetAutoBuy) planetManager.AutoPurchase();
+                        if (serverAutoBuy) serverManager.AutoPurchase();
+                        autoBuyOrderIndex = 3;
                         break;
                     case 3:
-                        if (dc) dcmu.AutoPurchase();
-                        if (im) imu.AutoPurchase();
-                        if (pm) pmu.AutoPurchase();
-                        if (sm) smu.AutoPurchase();
-                        if (mm) mmu.AutoPurchase();
-                        priority = 4;
+                        if (dataCenterAutoBuy) dataCenterManager.AutoPurchase();
+                        if (assemblyLineAutoBuy) assemblyLineManager.AutoPurchase();
+                        if (planetAutoBuy) planetManager.AutoPurchase();
+                        if (serverAutoBuy) serverManager.AutoPurchase();
+                        if (aiManagerAutoBuy) aiManager.AutoPurchase();
+                        autoBuyOrderIndex = 4;
                         break;
                     case 4:
-                        if (im) imu.AutoPurchase();
-                        if (pm) pmu.AutoPurchase();
-                        if (sm) smu.AutoPurchase();
-                        if (mm) mmu.AutoPurchase();
-                        if (dc) dcmu.AutoPurchase();
-                        priority = 0;
+                        if (assemblyLineAutoBuy) assemblyLineManager.AutoPurchase();
+                        if (planetAutoBuy) planetManager.AutoPurchase();
+                        if (serverAutoBuy) serverManager.AutoPurchase();
+                        if (aiManagerAutoBuy) aiManager.AutoPurchase();
+                        if (dataCenterAutoBuy) dataCenterManager.AutoPurchase();
+                        autoBuyOrderIndex = 0;
                         break;
                 }
             }

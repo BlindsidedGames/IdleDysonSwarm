@@ -33,14 +33,28 @@ namespace Systems.Stats
             public double StellarSacrifices { get; }
         }
 
-        public static bool TryCalculateMoneyMultiplier(DysonVerseInfinityData dvid, DysonVerseSkillTreeData dvst,
-            DysonVersePrestigeData dvpd, PrestigePlus pp, SecretBuffState secrets, out StatResult result)
+        public readonly struct TinkerResult
+        {
+            public TinkerResult(StatResult botYield, StatResult assemblyYield, StatResult cooldown)
+            {
+                BotYield = botYield;
+                AssemblyYield = assemblyYield;
+                Cooldown = cooldown;
+            }
+
+            public StatResult BotYield { get; }
+            public StatResult AssemblyYield { get; }
+            public StatResult Cooldown { get; }
+        }
+
+        public static bool TryCalculateMoneyMultiplier(DysonVerseInfinityData infinityData, DysonVerseSkillTreeData skillTreeData,
+            DysonVersePrestigeData prestigeData, PrestigePlus prestigePlus, SecretBuffState secrets, out StatResult result)
         {
             result = null;
-            if (!IsReady() || dvid == null) return false;
+            if (!IsReady() || infinityData == null) return false;
 
-            double moneyBoost = dvid.moneyMultiUpgradeOwned * dvid.moneyMultiUpgradePercent;
-            var context = new EffectContext(dvid, dvpd, dvst, pp);
+            double moneyBoost = infinityData.moneyMultiUpgradeOwned * infinityData.moneyMultiUpgradePercent;
+            var context = new EffectContext(infinityData, prestigeData, skillTreeData, prestigePlus);
             bool hasResearch = ResearchEffectProvider.TryBuildGlobalEffects(StatId.MoneyMultiplier, context,
                 out List<StatEffect> researchEffects);
             double baseValue = hasResearch ? 1 : 1 + moneyBoost;
@@ -48,23 +62,23 @@ namespace Systems.Stats
             var effects = new List<StatEffect>();
             if (hasResearch) effects.AddRange(researchEffects);
             effects.AddRange(SkillEffectProvider.BuildGlobalEffects(StatId.MoneyMultiplier, context));
-            AddPrestigeMultipliers(effects, StatId.MoneyMultiplier, pp, true);
+            AddPrestigeMultipliers(effects, StatId.MoneyMultiplier, prestigePlus, true);
             AddSecretMultiplier(effects, StatId.MoneyMultiplier, secrets != null ? secrets.CashMulti : 1,
                 "secrets.cash_multiplier", "Secrets Cash Multiplier", 90);
-            AddAvocatoMultiplier(effects, StatId.MoneyMultiplier, pp, 95);
+            AddAvocatoMultiplier(effects, StatId.MoneyMultiplier, prestigePlus, 95);
 
             result = StatCalculator.Calculate(baseValue, effects);
             return true;
         }
 
-        public static bool TryCalculateScienceMultiplier(DysonVerseInfinityData dvid, DysonVerseSkillTreeData dvst,
-            DysonVersePrestigeData dvpd, PrestigePlus pp, SecretBuffState secrets, out StatResult result)
+        public static bool TryCalculateScienceMultiplier(DysonVerseInfinityData infinityData, DysonVerseSkillTreeData skillTreeData,
+            DysonVersePrestigeData prestigeData, PrestigePlus prestigePlus, SecretBuffState secrets, out StatResult result)
         {
             result = null;
-            if (!IsReady() || dvid == null) return false;
+            if (!IsReady() || infinityData == null) return false;
 
-            double scienceBoost = dvid.scienceBoostOwned * dvid.scienceBoostPercent;
-            var context = new EffectContext(dvid, dvpd, dvst, pp);
+            double scienceBoost = infinityData.scienceBoostOwned * infinityData.scienceBoostPercent;
+            var context = new EffectContext(infinityData, prestigeData, skillTreeData, prestigePlus);
             bool hasResearch = ResearchEffectProvider.TryBuildGlobalEffects(StatId.ScienceMultiplier, context,
                 out List<StatEffect> researchEffects);
             double baseValue = hasResearch ? 1 : 1 + scienceBoost;
@@ -72,35 +86,35 @@ namespace Systems.Stats
             var effects = new List<StatEffect>();
             if (hasResearch) effects.AddRange(researchEffects);
             effects.AddRange(SkillEffectProvider.BuildGlobalEffects(StatId.ScienceMultiplier, context));
-            AddPrestigeMultipliers(effects, StatId.ScienceMultiplier, pp, false);
+            AddPrestigeMultipliers(effects, StatId.ScienceMultiplier, prestigePlus, false);
             AddSecretMultiplier(effects, StatId.ScienceMultiplier, secrets != null ? secrets.ScienceMulti : 1,
                 "secrets.science_multiplier", "Secrets Science Multiplier", 90);
-            AddAvocatoMultiplier(effects, StatId.ScienceMultiplier, pp, 95);
+            AddAvocatoMultiplier(effects, StatId.ScienceMultiplier, prestigePlus, 95);
 
             result = StatCalculator.Calculate(baseValue, effects);
             return true;
         }
 
-        public static bool TryCalculatePanelsPerSecond(DysonVerseInfinityData dvid, DysonVerseSkillTreeData dvst,
-            DysonVersePrestigeData dvpd, PrestigePlus pp, out StatResult result)
+        public static bool TryCalculatePanelsPerSecond(DysonVerseInfinityData infinityData, DysonVerseSkillTreeData skillTreeData,
+            DysonVersePrestigeData prestigeData, PrestigePlus prestigePlus, out StatResult result)
         {
             result = null;
-            if (!IsReady() || dvid == null) return false;
+            if (!IsReady() || infinityData == null) return false;
 
-            double baseValue = dvid.workers / 100 * dvid.panelsPerSecMulti;
-            var context = new EffectContext(dvid, dvpd, dvst, pp);
+            double baseValue = infinityData.workers / 100 * infinityData.panelsPerSecMulti;
+            var context = new EffectContext(infinityData, prestigeData, skillTreeData, prestigePlus);
             List<StatEffect> effects = SkillEffectProvider.BuildGlobalEffects(StatId.PanelsPerSecond, context);
             result = StatCalculator.Calculate(baseValue, effects);
             return true;
         }
 
-        public static bool TryCalculatePanelLifetime(DysonVerseInfinityData dvid, DysonVerseSkillTreeData dvst,
-            DysonVersePrestigeData dvpd, PrestigePlus pp, out StatResult result)
+        public static bool TryCalculatePanelLifetime(DysonVerseInfinityData infinityData, DysonVerseSkillTreeData skillTreeData,
+            DysonVersePrestigeData prestigeData, PrestigePlus prestigePlus, out StatResult result)
         {
             result = null;
-            if (!IsReady() || dvid == null) return false;
+            if (!IsReady() || infinityData == null) return false;
 
-            var context = new EffectContext(dvid, dvpd, dvst, pp);
+            var context = new EffectContext(infinityData, prestigeData, skillTreeData, prestigePlus);
             bool hasResearch = ResearchEffectProvider.TryBuildGlobalEffects(StatId.PanelLifetime, context,
                 out List<StatEffect> researchEffects);
 
@@ -112,13 +126,13 @@ namespace Systems.Stats
             return true;
         }
 
-        public static bool TryCalculatePlanetGeneration(DysonVerseInfinityData dvid, DysonVerseSkillTreeData dvst,
-            DysonVersePrestigeData dvpd, PrestigePlus pp, out PlanetGenerationResult result)
+        public static bool TryCalculatePlanetGeneration(DysonVerseInfinityData infinityData, DysonVerseSkillTreeData skillTreeData,
+            DysonVersePrestigeData prestigeData, PrestigePlus prestigePlus, out PlanetGenerationResult result)
         {
             result = default;
-            if (!IsReady()) return false;
+            if (!IsReady() || infinityData == null || skillTreeData == null) return false;
 
-            var context = new EffectContext(dvid, dvpd, dvst, pp);
+            var context = new EffectContext(infinityData, prestigeData, skillTreeData, prestigePlus);
             List<StatEffect> effects = SkillEffectProvider.BuildGlobalEffects(StatId.PlanetsPerSecond, context);
             double scientificPlanets = GetEffectValue(effects, ScientificPlanetsEffectId);
             double planetAssembly = GetEffectValue(effects, PlanetAssemblyEffectId);
@@ -132,15 +146,15 @@ namespace Systems.Stats
             return true;
         }
 
-        public static bool TryCalculateShouldersAccruals(DysonVerseInfinityData dvid, DysonVerseSkillTreeData dvst,
-            DysonVersePrestigeData dvpd, PrestigePlus pp, out StatResult scienceBoostResult,
+        public static bool TryCalculateShouldersAccruals(DysonVerseInfinityData infinityData, DysonVerseSkillTreeData skillTreeData,
+            DysonVersePrestigeData prestigeData, PrestigePlus prestigePlus, out StatResult scienceBoostResult,
             out StatResult moneyUpgradeResult)
         {
             scienceBoostResult = null;
             moneyUpgradeResult = null;
-            if (!IsReady()) return false;
+            if (!IsReady() || infinityData == null || skillTreeData == null) return false;
 
-            var context = new EffectContext(dvid, dvpd, dvst, pp);
+            var context = new EffectContext(infinityData, prestigeData, skillTreeData, prestigePlus);
             List<StatEffect> scienceEffects =
                 SkillEffectProvider.BuildGlobalEffects(StatId.ScienceBoostPerSecond, context);
             List<StatEffect> moneyEffects =
@@ -151,19 +165,38 @@ namespace Systems.Stats
             return true;
         }
 
-        private static bool IsReady()
+        public static bool TryCalculateTinkerStats(DysonVerseInfinityData infinityData, DysonVerseSkillTreeData skillTreeData,
+            DysonVersePrestigeData prestigeData, PrestigePlus prestigePlus, double manualCreationTime, out TinkerResult result)
         {
-            GameDataRegistry registry = GameDataRegistry.Instance;
-            return registry != null && registry.skillDatabase != null && registry.skillDatabase.skills != null &&
-                   registry.skillDatabase.skills.Count > 0;
+            result = default;
+            if (infinityData == null) return false;
+
+            var context = new EffectContext(infinityData, prestigeData, skillTreeData, prestigePlus);
+            List<StatEffect> botEffects = SkillEffectProvider.BuildGlobalEffects(StatId.TinkerBotYield, context);
+            List<StatEffect> assemblyEffects =
+                SkillEffectProvider.BuildGlobalEffects(StatId.TinkerAssemblyYield, context);
+            List<StatEffect> cooldownEffects =
+                SkillEffectProvider.BuildGlobalEffects(StatId.TinkerCooldownSeconds, context);
+
+            StatResult botResult = StatCalculator.Calculate(1, botEffects);
+            StatResult assemblyResult = StatCalculator.Calculate(0, assemblyEffects);
+            StatResult cooldownResult = StatCalculator.Calculate(manualCreationTime, cooldownEffects);
+
+            result = new TinkerResult(botResult, assemblyResult, cooldownResult);
+            return true;
         }
 
-        private static void AddPrestigeMultipliers(List<StatEffect> effects, string targetStatId, PrestigePlus pp,
+        private static bool IsReady()
+        {
+            return true;
+        }
+
+        private static void AddPrestigeMultipliers(List<StatEffect> effects, string targetStatId, PrestigePlus prestigePlus,
             bool isMoney)
         {
-            if (pp == null) return;
+            if (prestigePlus == null) return;
 
-            double prestigeMulti = isMoney ? 1 + pp.cash * 5 / 100.0 : 1 + pp.science * 5 / 100.0;
+            double prestigeMulti = isMoney ? 1 + prestigePlus.cash * 5 / 100.0 : 1 + prestigePlus.science * 5 / 100.0;
             string id = isMoney ? "prestige.cash_multiplier" : "prestige.science_multiplier";
             string name = isMoney ? "Prestige Cash Multiplier" : "Prestige Science Multiplier";
             AddMultiplierEffect(effects, id, name, targetStatId, prestigeMulti, 85);
@@ -175,20 +208,20 @@ namespace Systems.Stats
             AddMultiplierEffect(effects, id, name, targetStatId, value, order);
         }
 
-        private static void AddAvocatoMultiplier(List<StatEffect> effects, string targetStatId, PrestigePlus pp,
+        private static void AddAvocatoMultiplier(List<StatEffect> effects, string targetStatId, PrestigePlus prestigePlus,
             int order)
         {
-            if (pp == null || !pp.avocatoPurchased) return;
+            if (prestigePlus == null || !prestigePlus.avocatoPurchased) return;
 
             double multi = 1;
-            if (pp.avocatoIP >= 10)
-                multi *= Math.Log10(pp.avocatoIP);
-            if (pp.avocatoInfluence >= 10)
-                multi *= Math.Log10(pp.avocatoInfluence);
-            if (pp.avocatoStrangeMatter >= 10)
-                multi *= Math.Log10(pp.avocatoStrangeMatter);
-            if (pp.avocatoOverflow >= 1)
-                multi *= 1 + pp.avocatoOverflow;
+            if (prestigePlus.avocatoIP >= 10)
+                multi *= Math.Log10(prestigePlus.avocatoIP);
+            if (prestigePlus.avocatoInfluence >= 10)
+                multi *= Math.Log10(prestigePlus.avocatoInfluence);
+            if (prestigePlus.avocatoStrangeMatter >= 10)
+                multi *= Math.Log10(prestigePlus.avocatoStrangeMatter);
+            if (prestigePlus.avocatoOverflow >= 1)
+                multi *= 1 + prestigePlus.avocatoOverflow;
 
             AddMultiplierEffect(effects, "prestige.avocato_multiplier", "Avocato Multiplier", targetStatId, multi,
                 order);
@@ -245,3 +278,4 @@ namespace Systems.Stats
         }
     }
 }
+

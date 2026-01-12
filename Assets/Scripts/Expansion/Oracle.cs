@@ -36,12 +36,21 @@ namespace Expansion
         [SerializeField] private GameManager _gameManager;
         public float infinityExponent = 3.9f;
 
+        [Header("Offline Progress Debug")]
+        [SerializeField] private double offlineParityAwaySeconds = 3600;
+        [SerializeField] private double offlineParityOfflineStepSeconds = 1;
+        [SerializeField] private double offlineParityOnlineStepSeconds = 1;
+        [SerializeField] private double offlineParityRecalcDeltaSeconds = 0;
+        [SerializeField] private double offlineParityAbsoluteTolerance = 0.01;
+        [SerializeField] private double offlineParityRelativeTolerance = 0.001;
+        [SerializeField] private bool offlineParityApplyInfinityPointsBonus = true;
+
         public static event Action UpdateSkills;
 
-        private DysonVerseInfinityData dvid => saveSettings.dysonVerseSaveData.dysonVerseInfinityData;
-        private DysonVersePrestigeData dvpd => saveSettings.dysonVerseSaveData.dysonVersePrestigeData;
-        private DysonVerseSkillTreeData dvst => saveSettings.dysonVerseSaveData.dysonVerseSkillTreeData;
-        private PrestigePlus pp => oracle.saveSettings.prestigePlus;
+        private DysonVerseInfinityData infinityData => saveSettings.dysonVerseSaveData.dysonVerseInfinityData;
+        private DysonVersePrestigeData prestigeData => saveSettings.dysonVerseSaveData.dysonVersePrestigeData;
+        private DysonVerseSkillTreeData skillTreeData => saveSettings.dysonVerseSaveData.dysonVerseSkillTreeData;
+        private PrestigePlus prestigePlus => oracle.saveSettings.prestigePlus;
         private SaveDataPrestige sp => oracle.saveSettings.sdPrestige;
 
         private readonly string fileName = "betaTestTwo";
@@ -84,7 +93,7 @@ namespace Expansion
         private void FixSkillpoints()
         {
             if (saveSettings.hasFixedIP) return;
-            dvst.skillPointsTree = dvpd.permanentSkillPoint + ArtifactSkillPoints() + dvid.goalSetter > 0 ? dvid.goalSetter : 0;
+            skillTreeData.skillPointsTree = prestigeData.permanentSkillPoint + ArtifactSkillPoints() + infinityData.goalSetter > 0 ? infinityData.goalSetter : 0;
             saveSettings.hasFixedIP = true;
         }
 
@@ -92,9 +101,9 @@ namespace Expansion
         {
             foreach (KeyValuePair<int, SkillTreeItem> variable in SkillTree)
             {
-                dvid.SkillTreeSaveData ??= new Dictionary<int, bool>();
-                dvid.SkillTreeSaveData.TryAdd(variable.Key, variable.Value.Owned);
-                variable.Value.Owned = dvid.SkillTreeSaveData[variable.Key];
+                infinityData.SkillTreeSaveData ??= new Dictionary<int, bool>();
+                infinityData.SkillTreeSaveData.TryAdd(variable.Key, variable.Value.Owned);
+                variable.Value.Owned = infinityData.SkillTreeSaveData[variable.Key];
             }
         }
 
@@ -108,14 +117,14 @@ namespace Expansion
 
         private void SaveDictionaries()
         {
-            dvid.SkillTreeSaveData = new Dictionary<int, bool>();
-            if (dvid.skillOwnedById != null && dvid.skillOwnedById.Count > 0)
+            infinityData.SkillTreeSaveData = new Dictionary<int, bool>();
+            if (infinityData.skillOwnedById != null && infinityData.skillOwnedById.Count > 0)
             {
-                foreach (KeyValuePair<string, bool> entry in dvid.skillOwnedById)
+                foreach (KeyValuePair<string, bool> entry in infinityData.skillOwnedById)
                 {
                     if (SkillIdMap.TryGetLegacyKey(entry.Key, out int key))
                     {
-                        dvid.SkillTreeSaveData[key] = entry.Value;
+                        infinityData.SkillTreeSaveData[key] = entry.Value;
                     }
                 }
 
@@ -124,9 +133,9 @@ namespace Expansion
 
             foreach (KeyValuePair<int, SkillTreeItem> value in SkillTree)
             {
-                if (!dvid.SkillTreeSaveData.ContainsKey(value.Key))
-                    dvid.SkillTreeSaveData.Add(value.Key, value.Value.Owned);
-                dvid.SkillTreeSaveData[value.Key] = value.Value.Owned;
+                if (!infinityData.SkillTreeSaveData.ContainsKey(value.Key))
+                    infinityData.SkillTreeSaveData.Add(value.Key, value.Value.Owned);
+                infinityData.SkillTreeSaveData[value.Key] = value.Value.Owned;
             }
         }
 
@@ -174,17 +183,17 @@ namespace Expansion
 
         private void EnsureSkillOwnershipData()
         {
-            if (dvid == null) return;
-            dvid.skillOwnedById ??= new Dictionary<string, bool>();
-            if (dvid.skillOwnedById.Count > 0) return;
+            if (infinityData == null) return;
+            infinityData.skillOwnedById ??= new Dictionary<string, bool>();
+            if (infinityData.skillOwnedById.Count > 0) return;
 
-            if (dvid.SkillTreeSaveData != null && dvid.SkillTreeSaveData.Count > 0)
+            if (infinityData.SkillTreeSaveData != null && infinityData.SkillTreeSaveData.Count > 0)
             {
-                foreach (KeyValuePair<int, bool> entry in dvid.SkillTreeSaveData)
+                foreach (KeyValuePair<int, bool> entry in infinityData.SkillTreeSaveData)
                 {
                     if (SkillIdMap.TryGetId(entry.Key, out string id))
                     {
-                        dvid.skillOwnedById[id] = entry.Value;
+                        infinityData.skillOwnedById[id] = entry.Value;
                     }
                 }
 
@@ -197,7 +206,7 @@ namespace Expansion
                 if (entry.Value == null) continue;
                 if (SkillIdMap.TryGetId(entry.Key, out string id))
                 {
-                    dvid.skillOwnedById[id] = entry.Value.Owned;
+                    infinityData.skillOwnedById[id] = entry.Value.Owned;
                 }
             }
         }
@@ -246,48 +255,48 @@ namespace Expansion
 
         private void EnsureResearchLevelData()
         {
-            if (dvid == null) return;
-            dvid.researchLevelsById ??= new Dictionary<string, double>();
+            if (infinityData == null) return;
+            infinityData.researchLevelsById ??= new Dictionary<string, double>();
 
-            if (dvid.researchLevelsById.Count == 0)
+            if (infinityData.researchLevelsById.Count == 0)
             {
-                ResearchIdMap.PopulateLevelsFromLegacy(dvid, dvid.researchLevelsById);
+                ResearchIdMap.PopulateLevelsFromLegacy(infinityData, infinityData.researchLevelsById);
                 return;
             }
 
-            ResearchIdMap.ApplyLevelsToLegacy(dvid, dvid.researchLevelsById);
-            ResearchIdMap.PopulateLevelsFromLegacy(dvid, dvid.researchLevelsById);
+            ResearchIdMap.ApplyLevelsToLegacy(infinityData, infinityData.researchLevelsById);
+            ResearchIdMap.PopulateLevelsFromLegacy(infinityData, infinityData.researchLevelsById);
         }
 
         private void MigrateResearchLevelsToIds()
         {
-            if (dvid == null) return;
-            dvid.researchLevelsById ??= new Dictionary<string, double>();
-            if (dvid.researchLevelsById.Count > 0) return;
+            if (infinityData == null) return;
+            infinityData.researchLevelsById ??= new Dictionary<string, double>();
+            if (infinityData.researchLevelsById.Count > 0) return;
 
-            ResearchIdMap.PopulateLevelsFromLegacy(dvid, dvid.researchLevelsById);
+            ResearchIdMap.PopulateLevelsFromLegacy(infinityData, infinityData.researchLevelsById);
         }
 
         private void SyncResearchLevelsFromLegacy()
         {
-            if (dvid == null) return;
-            dvid.researchLevelsById ??= new Dictionary<string, double>();
-            ResearchIdMap.PopulateLevelsFromLegacy(dvid, dvid.researchLevelsById);
+            if (infinityData == null) return;
+            infinityData.researchLevelsById ??= new Dictionary<string, double>();
+            ResearchIdMap.PopulateLevelsFromLegacy(infinityData, infinityData.researchLevelsById);
         }
 
         private void MigrateSkillOwnershipToIds()
         {
-            if (dvid == null) return;
-            dvid.skillOwnedById ??= new Dictionary<string, bool>();
-            if (dvid.skillOwnedById.Count > 0) return;
+            if (infinityData == null) return;
+            infinityData.skillOwnedById ??= new Dictionary<string, bool>();
+            if (infinityData.skillOwnedById.Count > 0) return;
 
-            if (dvid.SkillTreeSaveData != null && dvid.SkillTreeSaveData.Count > 0)
+            if (infinityData.SkillTreeSaveData != null && infinityData.SkillTreeSaveData.Count > 0)
             {
-                foreach (KeyValuePair<int, bool> entry in dvid.SkillTreeSaveData)
+                foreach (KeyValuePair<int, bool> entry in infinityData.SkillTreeSaveData)
                 {
                     if (SkillIdMap.TryGetId(entry.Key, out string id))
                     {
-                        dvid.skillOwnedById[id] = entry.Value;
+                        infinityData.skillOwnedById[id] = entry.Value;
                     }
                 }
 
@@ -300,7 +309,7 @@ namespace Expansion
                 if (entry.Value == null) continue;
                 if (SkillIdMap.TryGetId(entry.Key, out string id))
                 {
-                    dvid.skillOwnedById[id] = entry.Value.Owned;
+                    infinityData.skillOwnedById[id] = entry.Value.Owned;
                 }
             }
         }
@@ -378,23 +387,23 @@ namespace Expansion
 
         private void Update()
         {
-            prestigeButton.interactable = dvpd.infinityPoints >= 42;
-            if (double.IsInfinity(dvid.bots) || double.IsNaN(dvid.bots))
+            prestigeButton.interactable = prestigeData.infinityPoints >= 42;
+            if (double.IsInfinity(infinityData.bots) || double.IsNaN(infinityData.bots))
                 if (!oracle.saveSettings.infinityInProgress)
                 {
                     oracle.saveSettings.infinityInProgress = true;
-                    pp.avocatoOverflow++;
-                    dvpd.infinityPoints += 1000;
+                    prestigePlus.avocatoOverflow++;
+                    prestigeData.infinityPoints += 1000;
                     _gameManager.Prestige();
                 }
 
-            double amount = pp.divisionsPurchased > 0 ? 4.2e19 / Math.Pow(10, pp.divisionsPurchased) : 4.2e19;
-            int ipToGain = StaticMethods.InfinityPointsToGain(amount, dvid.bots);
+            double amount = prestigePlus.divisionsPurchased > 0 ? 4.2e19 / Math.Pow(10, prestigePlus.divisionsPurchased) : 4.2e19;
+            int ipToGain = StaticMethods.InfinityPointsToGain(amount, infinityData.bots);
             ipToGain = saveSettings.doubleIp ? ipToGain * 2 : ipToGain;
 
 
-            if (pp.breakTheLoop && !saveSettings.infinityInProgress)
-                if ((pp.doubleIP ? ipToGain * 2 : ipToGain) >= (saveSettings.infinityPointsToBreakFor >= 1
+            if (prestigePlus.breakTheLoop && !saveSettings.infinityInProgress)
+                if ((prestigePlus.doubleIP ? ipToGain * 2 : ipToGain) >= (saveSettings.infinityPointsToBreakFor >= 1
                         ? saveSettings.infinityPointsToBreakFor
                         : 1))
                 {
@@ -562,20 +571,20 @@ namespace Expansion
                 return;
             }
 
-            FacilityRuntime runtime = FacilityLegacyBridge.BuildAssemblyLineRuntime(definition, dvid, dvst);
+            FacilityRuntime runtime = FacilityLegacyBridge.BuildAssemblyLineRuntime(definition, infinityData, skillTreeData);
             if (runtime == null)
             {
                 Debug.LogWarning("Assembly Line runtime could not be built.");
                 return;
             }
 
-            double legacyCached = dvid.botProduction;
-            double legacyComputed = (dvid.assemblyLines[0] + dvid.assemblyLines[1]) * 0.1f * dvid.assemblyLineModifier;
-            if (dvst.stayingPower)
-                legacyComputed *= 1 + 0.01f * dvid.panelLifetime;
-            if (dvst.rule34 && dvid.assemblyLines[1] >= 69)
+            double legacyCached = infinityData.botProduction;
+            double legacyComputed = (infinityData.assemblyLines[0] + infinityData.assemblyLines[1]) * 0.1f * infinityData.assemblyLineModifier;
+            if (skillTreeData.stayingPower)
+                legacyComputed *= 1 + 0.01f * infinityData.panelLifetime;
+            if (skillTreeData.rule34 && infinityData.assemblyLines[1] >= 69)
                 legacyComputed *= 2;
-            if (dvst.superchargedPower)
+            if (skillTreeData.superchargedPower)
                 legacyComputed *= 1.5f;
             double updated = runtime.State.ProductionRate;
             double delta = updated - legacyComputed;
@@ -585,8 +594,8 @@ namespace Expansion
             builder.AppendLine($"Assembly Lines (legacy formula): {legacyComputed}");
             builder.AppendLine($"Assembly Lines (pipeline): {updated}");
             builder.AppendLine($"Delta: {delta}");
-            builder.AppendLine($"Inputs: count={dvid.assemblyLines[0] + dvid.assemblyLines[1]}, " +
-                               $"modifier={dvid.assemblyLineModifier}, lifetime={dvid.panelLifetime}");
+            builder.AppendLine($"Inputs: count={infinityData.assemblyLines[0] + infinityData.assemblyLines[1]}, " +
+                               $"modifier={infinityData.assemblyLineModifier}, lifetime={infinityData.panelLifetime}");
             builder.AppendLine("Breakdown:");
             foreach (Contribution contribution in runtime.Breakdown.Contributions)
             {
@@ -597,12 +606,12 @@ namespace Expansion
             double dataDrivenExpected = legacyComputed;
             if (TryGetDataDrivenModifier("assembly_lines", out double dataDrivenModifier))
             {
-                dataDrivenExpected = (dvid.assemblyLines[0] + dvid.assemblyLines[1]) * 0.1f * dataDrivenModifier;
-                if (dvst.stayingPower)
-                    dataDrivenExpected *= 1 + 0.01f * dvid.panelLifetime;
-                if (dvst.rule34 && dvid.assemblyLines[1] >= 69)
+                dataDrivenExpected = (infinityData.assemblyLines[0] + infinityData.assemblyLines[1]) * 0.1f * dataDrivenModifier;
+                if (skillTreeData.stayingPower)
+                    dataDrivenExpected *= 1 + 0.01f * infinityData.panelLifetime;
+                if (skillTreeData.rule34 && infinityData.assemblyLines[1] >= 69)
                     dataDrivenExpected *= 2;
-                if (dvst.superchargedPower)
+                if (skillTreeData.superchargedPower)
                     dataDrivenExpected *= 1.5f;
             }
 
@@ -629,18 +638,18 @@ namespace Expansion
                 return;
             }
 
-            FacilityRuntime runtime = FacilityLegacyBridge.BuildAiManagerRuntime(definition, dvid, dvst);
+            FacilityRuntime runtime = FacilityLegacyBridge.BuildAiManagerRuntime(definition, infinityData, skillTreeData);
             if (runtime == null)
             {
                 Debug.LogWarning("AI Manager runtime could not be built.");
                 return;
             }
 
-            double legacyCached = dvid.assemblyLineProduction;
-            double legacyComputed = (dvid.managers[0] + dvid.managers[1]) * 0.0166666666666667f * dvid.managerModifier;
-            if (dvst.rule34 && dvid.managers[1] >= 69)
+            double legacyCached = infinityData.assemblyLineProduction;
+            double legacyComputed = (infinityData.managers[0] + infinityData.managers[1]) * 0.0166666666666667f * infinityData.managerModifier;
+            if (skillTreeData.rule34 && infinityData.managers[1] >= 69)
                 legacyComputed *= 2;
-            if (dvst.superchargedPower)
+            if (skillTreeData.superchargedPower)
                 legacyComputed *= 1.5f;
 
             double updated = runtime.State.ProductionRate;
@@ -651,7 +660,7 @@ namespace Expansion
             builder.AppendLine($"AI Managers (legacy formula): {legacyComputed}");
             builder.AppendLine($"AI Managers (pipeline): {updated}");
             builder.AppendLine($"Delta: {delta}");
-            builder.AppendLine($"Inputs: count={dvid.managers[0] + dvid.managers[1]}, modifier={dvid.managerModifier}");
+            builder.AppendLine($"Inputs: count={infinityData.managers[0] + infinityData.managers[1]}, modifier={infinityData.managerModifier}");
             builder.AppendLine("Breakdown:");
             foreach (Contribution contribution in runtime.Breakdown.Contributions)
             {
@@ -662,11 +671,11 @@ namespace Expansion
             double dataDrivenExpected = legacyComputed;
             if (TryGetDataDrivenModifier("ai_managers", out double dataDrivenModifier))
             {
-                dataDrivenExpected = (dvid.managers[0] + dvid.managers[1]) * 0.0166666666666667f *
+                dataDrivenExpected = (infinityData.managers[0] + infinityData.managers[1]) * 0.0166666666666667f *
                                      dataDrivenModifier;
-                if (dvst.rule34 && dvid.managers[1] >= 69)
+                if (skillTreeData.rule34 && infinityData.managers[1] >= 69)
                     dataDrivenExpected *= 2;
-                if (dvst.superchargedPower)
+                if (skillTreeData.superchargedPower)
                     dataDrivenExpected *= 1.5f;
             }
 
@@ -693,18 +702,18 @@ namespace Expansion
                 return;
             }
 
-            FacilityRuntime runtime = FacilityLegacyBridge.BuildServerRuntime(definition, dvid, dvst);
+            FacilityRuntime runtime = FacilityLegacyBridge.BuildServerRuntime(definition, infinityData, skillTreeData);
             if (runtime == null)
             {
                 Debug.LogWarning("Server runtime could not be built.");
                 return;
             }
 
-            double legacyCached = dvid.managerProduction;
-            double legacyComputed = (dvid.servers[0] + dvid.servers[1]) * 0.0016666666666667f * dvid.serverModifier;
-            if (dvst.rule34 && dvid.servers[1] >= 69)
+            double legacyCached = infinityData.managerProduction;
+            double legacyComputed = (infinityData.servers[0] + infinityData.servers[1]) * 0.0016666666666667f * infinityData.serverModifier;
+            if (skillTreeData.rule34 && infinityData.servers[1] >= 69)
                 legacyComputed *= 2;
-            if (dvst.superchargedPower)
+            if (skillTreeData.superchargedPower)
                 legacyComputed *= 1.5f;
 
             double updated = runtime.State.ProductionRate;
@@ -715,7 +724,7 @@ namespace Expansion
             builder.AppendLine($"Servers (legacy formula): {legacyComputed}");
             builder.AppendLine($"Servers (pipeline): {updated}");
             builder.AppendLine($"Delta: {delta}");
-            builder.AppendLine($"Inputs: count={dvid.servers[0] + dvid.servers[1]}, modifier={dvid.serverModifier}");
+            builder.AppendLine($"Inputs: count={infinityData.servers[0] + infinityData.servers[1]}, modifier={infinityData.serverModifier}");
             builder.AppendLine("Breakdown:");
             foreach (Contribution contribution in runtime.Breakdown.Contributions)
             {
@@ -726,10 +735,10 @@ namespace Expansion
             double dataDrivenExpected = legacyComputed;
             if (TryGetDataDrivenModifier("servers", out double dataDrivenModifier))
             {
-                dataDrivenExpected = (dvid.servers[0] + dvid.servers[1]) * 0.0016666666666667f * dataDrivenModifier;
-                if (dvst.rule34 && dvid.servers[1] >= 69)
+                dataDrivenExpected = (infinityData.servers[0] + infinityData.servers[1]) * 0.0016666666666667f * dataDrivenModifier;
+                if (skillTreeData.rule34 && infinityData.servers[1] >= 69)
                     dataDrivenExpected *= 2;
-                if (dvst.superchargedPower)
+                if (skillTreeData.superchargedPower)
                     dataDrivenExpected *= 1.5f;
             }
 
@@ -756,22 +765,22 @@ namespace Expansion
                 return;
             }
 
-            FacilityRuntime runtime = FacilityLegacyBridge.BuildDataCenterRuntime(definition, dvid, dvst);
+            FacilityRuntime runtime = FacilityLegacyBridge.BuildDataCenterRuntime(definition, infinityData, skillTreeData);
             if (runtime == null)
             {
                 Debug.LogWarning("Data Center runtime could not be built.");
                 return;
             }
 
-            double legacyCached = dvid.serverProduction;
-            double legacyComputed = (dvid.dataCenters[0] + dvid.dataCenters[1]) * 0.0011111111f * dvid.dataCenterModifier;
-            if (dvst.rule34 && dvid.dataCenters[1] >= 69)
+            double legacyCached = infinityData.serverProduction;
+            double legacyComputed = (infinityData.dataCenters[0] + infinityData.dataCenters[1]) * 0.0011111111f * infinityData.dataCenterModifier;
+            if (skillTreeData.rule34 && infinityData.dataCenters[1] >= 69)
                 legacyComputed *= 2;
-            if (dvst.superchargedPower)
+            if (skillTreeData.superchargedPower)
                 legacyComputed *= 1.5f;
-            legacyComputed += dvid.rudimentrySingularityProduction;
-            double serversTotal = dvid.servers[0] + dvid.servers[1];
-            if (dvst.parallelComputation && serversTotal > 1)
+            legacyComputed += infinityData.rudimentrySingularityProduction;
+            double serversTotal = infinityData.servers[0] + infinityData.servers[1];
+            if (skillTreeData.parallelComputation && serversTotal > 1)
                 legacyComputed += 0.1f * Math.Log(serversTotal, 2);
 
             double updated = runtime.State.ProductionRate;
@@ -783,8 +792,8 @@ namespace Expansion
             builder.AppendLine($"Data Centers (pipeline): {updated}");
             builder.AppendLine($"Delta: {delta}");
             builder.AppendLine(
-                $"Inputs: count={dvid.dataCenters[0] + dvid.dataCenters[1]}, modifier={dvid.dataCenterModifier}, " +
-                $"serversTotal={serversTotal}, rudimentary={dvid.rudimentrySingularityProduction}");
+                $"Inputs: count={infinityData.dataCenters[0] + infinityData.dataCenters[1]}, modifier={infinityData.dataCenterModifier}, " +
+                $"serversTotal={serversTotal}, rudimentary={infinityData.rudimentrySingularityProduction}");
             builder.AppendLine("Breakdown:");
             foreach (Contribution contribution in runtime.Breakdown.Contributions)
             {
@@ -796,13 +805,13 @@ namespace Expansion
             if (TryGetDataDrivenModifier("data_centers", out double dataDrivenModifier))
             {
                 dataDrivenExpected =
-                    (dvid.dataCenters[0] + dvid.dataCenters[1]) * 0.0011111111f * dataDrivenModifier;
-                if (dvst.rule34 && dvid.dataCenters[1] >= 69)
+                    (infinityData.dataCenters[0] + infinityData.dataCenters[1]) * 0.0011111111f * dataDrivenModifier;
+                if (skillTreeData.rule34 && infinityData.dataCenters[1] >= 69)
                     dataDrivenExpected *= 2;
-                if (dvst.superchargedPower)
+                if (skillTreeData.superchargedPower)
                     dataDrivenExpected *= 1.5f;
-                dataDrivenExpected += dvid.rudimentrySingularityProduction;
-                if (dvst.parallelComputation && serversTotal > 1)
+                dataDrivenExpected += infinityData.rudimentrySingularityProduction;
+                if (skillTreeData.parallelComputation && serversTotal > 1)
                     dataDrivenExpected += 0.1f * Math.Log(serversTotal, 2);
             }
 
@@ -829,9 +838,9 @@ namespace Expansion
             AppendFacilityBreakdown(builder, "Planets", "planets");
 
             var secrets = new SecretBuffState();
-            ModifierSystem.SecretBuffs(dvid, dvpd, secrets);
+            ModifierSystem.SecretBuffs(infinityData, prestigeData, secrets);
 
-            if (GlobalStatPipeline.TryCalculateMoneyMultiplier(dvid, dvst, dvpd, pp, secrets,
+            if (GlobalStatPipeline.TryCalculateMoneyMultiplier(infinityData, skillTreeData, prestigeData, prestigePlus, secrets,
                     out StatResult moneyResult))
             {
                 AppendStatBreakdown(builder, "Money Multiplier", moneyResult);
@@ -841,7 +850,7 @@ namespace Expansion
                 builder.AppendLine("Money Multiplier: data-driven not ready.");
             }
 
-            if (GlobalStatPipeline.TryCalculateScienceMultiplier(dvid, dvst, dvpd, pp, secrets,
+            if (GlobalStatPipeline.TryCalculateScienceMultiplier(infinityData, skillTreeData, prestigeData, prestigePlus, secrets,
                     out StatResult scienceResult))
             {
                 AppendStatBreakdown(builder, "Science Multiplier", scienceResult);
@@ -851,7 +860,7 @@ namespace Expansion
                 builder.AppendLine("Science Multiplier: data-driven not ready.");
             }
 
-            if (GlobalStatPipeline.TryCalculatePanelsPerSecond(dvid, dvst, dvpd, pp, out StatResult panelsResult))
+            if (GlobalStatPipeline.TryCalculatePanelsPerSecond(infinityData, skillTreeData, prestigeData, prestigePlus, out StatResult panelsResult))
             {
                 AppendStatBreakdown(builder, "Panels Per Second", panelsResult);
             }
@@ -860,7 +869,7 @@ namespace Expansion
                 builder.AppendLine("Panels Per Second: data-driven not ready.");
             }
 
-            if (GlobalStatPipeline.TryCalculatePanelLifetime(dvid, dvst, dvpd, pp, out StatResult panelLifetimeResult))
+            if (GlobalStatPipeline.TryCalculatePanelLifetime(infinityData, skillTreeData, prestigeData, prestigePlus, out StatResult panelLifetimeResult))
             {
                 AppendStatBreakdown(builder, "Panel Lifetime", panelLifetimeResult);
             }
@@ -869,7 +878,19 @@ namespace Expansion
                 builder.AppendLine("Panel Lifetime: data-driven not ready.");
             }
 
-            if (GlobalStatPipeline.TryCalculatePlanetGeneration(dvid, dvst, dvpd, pp,
+            if (GlobalStatPipeline.TryCalculateTinkerStats(infinityData, skillTreeData, prestigeData, prestigePlus,
+                    saveSettings.dysonVerseSaveData.manualCreationTime, out GlobalStatPipeline.TinkerResult tinker))
+            {
+                AppendStatBreakdown(builder, "Tinker Bot Yield", tinker.BotYield);
+                AppendStatBreakdown(builder, "Tinker Assembly Yield", tinker.AssemblyYield);
+                AppendStatBreakdown(builder, "Tinker Cooldown", tinker.Cooldown);
+            }
+            else
+            {
+                builder.AppendLine("Tinker: data-driven not ready.");
+            }
+
+            if (GlobalStatPipeline.TryCalculatePlanetGeneration(infinityData, skillTreeData, prestigeData, prestigePlus,
                     out GlobalStatPipeline.PlanetGenerationResult planetResult))
             {
                 builder.AppendLine($"Planet Generation Total: {planetResult.TotalResult.Value}");
@@ -885,7 +906,7 @@ namespace Expansion
                 builder.AppendLine("Planet Generation: data-driven not ready.");
             }
 
-            if (GlobalStatPipeline.TryCalculateShouldersAccruals(dvid, dvst, dvpd, pp,
+            if (GlobalStatPipeline.TryCalculateShouldersAccruals(infinityData, skillTreeData, prestigeData, prestigePlus,
                     out StatResult scienceBoostResult, out StatResult moneyUpgradeResult))
             {
                 AppendStatBreakdown(builder, "Science Boost Per Second", scienceBoostResult);
@@ -908,171 +929,171 @@ namespace Expansion
                 return;
             }
 
-            double[] dataCenters = (double[])dvid.dataCenters.Clone();
-            double dataCenterModifier = dvid.dataCenterModifier;
-            double[] servers = (double[])dvid.servers.Clone();
-            double serverModifier = dvid.serverModifier;
-            double rudimentarySingularity = dvid.rudimentrySingularityProduction;
+            double[] dataCenters = (double[])infinityData.dataCenters.Clone();
+            double dataCenterModifier = infinityData.dataCenterModifier;
+            double[] servers = (double[])infinityData.servers.Clone();
+            double serverModifier = infinityData.serverModifier;
+            double rudimentarySingularity = infinityData.rudimentrySingularityProduction;
             double scienceBoostOwned = GetResearchLevelInternal(ResearchIdMap.ScienceBoost);
 
-            double[] assemblyLines = (double[])dvid.assemblyLines.Clone();
-            double assemblyLineModifier = dvid.assemblyLineModifier;
-            double[] managers = (double[])dvid.managers.Clone();
-            double managerModifier = dvid.managerModifier;
+            double[] assemblyLines = (double[])infinityData.assemblyLines.Clone();
+            double assemblyLineModifier = infinityData.assemblyLineModifier;
+            double[] managers = (double[])infinityData.managers.Clone();
+            double managerModifier = infinityData.managerModifier;
 
-            double[] planets = (double[])dvid.planets.Clone();
-            double planetModifier = dvid.planetModifier;
-            double workers = dvid.workers;
-            double researchers = dvid.researchers;
-            double panelLifetime = dvid.panelLifetime;
-            double panelsPerSec = dvid.panelsPerSec;
-            double pocketAndroidsTimer = dvpd.pocketAndroidsTimer;
-            double bots = dvid.bots;
+            double[] planets = (double[])infinityData.planets.Clone();
+            double planetModifier = infinityData.planetModifier;
+            double workers = infinityData.workers;
+            double researchers = infinityData.researchers;
+            double panelLifetime = infinityData.panelLifetime;
+            double panelsPerSec = infinityData.panelsPerSec;
+            double pocketAndroidsTimer = prestigeData.pocketAndroidsTimer;
+            double bots = infinityData.bots;
 
-            bool rule34 = dvst.rule34;
-            bool stayingPower = dvst.stayingPower;
-            bool superchargedPower = dvst.superchargedPower;
-            bool parallelComputation = dvst.parallelComputation;
-            bool pocketDimensions = dvst.pocketDimensions;
-            bool pocketMultiverse = dvst.pocketMultiverse;
-            bool pocketProtectors = dvst.pocketProtectors;
-            bool dimensionalCatCables = dvst.dimensionalCatCables;
-            bool solarBubbles = dvst.solarBubbles;
-            bool pocketAndroids = dvst.pocketAndroids;
-            bool quantumComputing = dvst.quantumComputing;
-            bool rudimentarySingularitySkill = dvst.rudimentarySingularity;
-            bool unsuspiciousAlgorithms = dvst.unsuspiciousAlgorithms;
-            bool clusterNetworking = dvst.clusterNetworking;
-            bool scientificPlanets = dvst.scientificPlanets;
-            bool hubbleTelescope = dvst.hubbleTelescope;
-            bool jamesWebbTelescope = dvst.jamesWebbTelescope;
-            bool terraformingProtocols = dvst.terraformingProtocols;
-            bool planetAssembly = dvst.planetAssembly;
-            bool shellWorlds = dvst.shellWorlds;
-            bool stellarSacrifices = dvst.stellarSacrifices;
-            bool stellarObliteration = dvst.stellarObliteration;
-            bool supernova = dvst.supernova;
-            bool stellarImprovements = dvst.stellarImprovements;
-            bool stellarDominance = dvst.stellarDominance;
-            bool shouldersOfTheFallen = dvst.shouldersOfTheFallen;
-            bool shoulderSurgery = dvst.shoulderSurgery;
-            bool shouldersOfGiants = dvst.shouldersOfGiants;
-            bool shouldersOfTheEnlightened = dvst.shouldersOfTheEnlightened;
-            bool whatCouldHaveBeen = dvst.whatCouldHaveBeen;
-            long fragments = dvst.fragments;
+            bool rule34 = skillTreeData.rule34;
+            bool stayingPower = skillTreeData.stayingPower;
+            bool superchargedPower = skillTreeData.superchargedPower;
+            bool parallelComputation = skillTreeData.parallelComputation;
+            bool pocketDimensions = skillTreeData.pocketDimensions;
+            bool pocketMultiverse = skillTreeData.pocketMultiverse;
+            bool pocketProtectors = skillTreeData.pocketProtectors;
+            bool dimensionalCatCables = skillTreeData.dimensionalCatCables;
+            bool solarBubbles = skillTreeData.solarBubbles;
+            bool pocketAndroids = skillTreeData.pocketAndroids;
+            bool quantumComputing = skillTreeData.quantumComputing;
+            bool rudimentarySingularitySkill = skillTreeData.rudimentarySingularity;
+            bool unsuspiciousAlgorithms = skillTreeData.unsuspiciousAlgorithms;
+            bool clusterNetworking = skillTreeData.clusterNetworking;
+            bool scientificPlanets = skillTreeData.scientificPlanets;
+            bool hubbleTelescope = skillTreeData.hubbleTelescope;
+            bool jamesWebbTelescope = skillTreeData.jamesWebbTelescope;
+            bool terraformingProtocols = skillTreeData.terraformingProtocols;
+            bool planetAssembly = skillTreeData.planetAssembly;
+            bool shellWorlds = skillTreeData.shellWorlds;
+            bool stellarSacrifices = skillTreeData.stellarSacrifices;
+            bool stellarObliteration = skillTreeData.stellarObliteration;
+            bool supernova = skillTreeData.supernova;
+            bool stellarImprovements = skillTreeData.stellarImprovements;
+            bool stellarDominance = skillTreeData.stellarDominance;
+            bool shouldersOfTheFallen = skillTreeData.shouldersOfTheFallen;
+            bool shoulderSurgery = skillTreeData.shoulderSurgery;
+            bool shouldersOfGiants = skillTreeData.shouldersOfGiants;
+            bool shouldersOfTheEnlightened = skillTreeData.shouldersOfTheEnlightened;
+            bool whatCouldHaveBeen = skillTreeData.whatCouldHaveBeen;
+            long fragments = skillTreeData.fragments;
             Dictionary<string, bool> skillOwnedByIdSnapshot =
-                dvid.skillOwnedById != null ? new Dictionary<string, bool>(dvid.skillOwnedById) : null;
+                infinityData.skillOwnedById != null ? new Dictionary<string, bool>(infinityData.skillOwnedById) : null;
 
             var results = new List<ParityResult>();
 
             try
             {
-                dvid.assemblyLines[0] = 1000;
-                dvid.assemblyLines[1] = 70;
-                dvid.assemblyLineModifier = 25;
-                dvid.panelLifetime = 20;
-                dvst.stayingPower = true;
-                dvst.rule34 = true;
-                dvst.superchargedPower = true;
+                infinityData.assemblyLines[0] = 1000;
+                infinityData.assemblyLines[1] = 70;
+                infinityData.assemblyLineModifier = 25;
+                infinityData.panelLifetime = 20;
+                skillTreeData.stayingPower = true;
+                skillTreeData.rule34 = true;
+                skillTreeData.superchargedPower = true;
 
                 SyncSkillOwnershipFromSkillTreeData();
                 DebugCompareAssemblyLineProduction(results);
 
-                dvid.managers[0] = 500;
-                dvid.managers[1] = 70;
-                dvid.managerModifier = 131;
-                dvst.stayingPower = false;
-                dvst.rule34 = true;
-                dvst.superchargedPower = true;
+                infinityData.managers[0] = 500;
+                infinityData.managers[1] = 70;
+                infinityData.managerModifier = 131;
+                skillTreeData.stayingPower = false;
+                skillTreeData.rule34 = true;
+                skillTreeData.superchargedPower = true;
 
                 SyncSkillOwnershipFromSkillTreeData();
                 DebugCompareAiManagerProduction(results);
 
-                dvid.servers[0] = 1000;
-                dvid.servers[1] = 70;
-                dvid.serverModifier = 114.231998421252;
-                dvst.rule34 = true;
-                dvst.superchargedPower = true;
+                infinityData.servers[0] = 1000;
+                infinityData.servers[1] = 70;
+                infinityData.serverModifier = 114.231998421252;
+                skillTreeData.rule34 = true;
+                skillTreeData.superchargedPower = true;
 
                 SyncSkillOwnershipFromSkillTreeData();
                 DebugCompareServerProduction(results);
 
-                dvid.dataCenters[0] = 1000;
-                dvid.dataCenters[1] = 250;
-                dvid.dataCenterModifier = 33.8;
-                dvid.servers[0] = 200;
-                dvid.servers[1] = 50;
-                dvid.rudimentrySingularityProduction = 42.5;
-                dvst.rule34 = true;
-                dvst.superchargedPower = true;
-                dvst.rudimentarySingularity = true;
-                dvst.parallelComputation = true;
+                infinityData.dataCenters[0] = 1000;
+                infinityData.dataCenters[1] = 250;
+                infinityData.dataCenterModifier = 33.8;
+                infinityData.servers[0] = 200;
+                infinityData.servers[1] = 50;
+                infinityData.rudimentrySingularityProduction = 42.5;
+                skillTreeData.rule34 = true;
+                skillTreeData.superchargedPower = true;
+                skillTreeData.rudimentarySingularity = true;
+                skillTreeData.parallelComputation = true;
 
                 SyncSkillOwnershipFromSkillTreeData();
                 DebugCompareDataCenterProduction(results);
 
-                dvid.planets[0] = 75;
-                dvid.planets[1] = 5;
-                dvid.planetModifier = 32.6;
-                dvid.workers = 1_000_000;
-                dvid.researchers = 250_000;
-                dvid.panelLifetime = 15;
-                dvpd.pocketAndroidsTimer = 1800;
+                infinityData.planets[0] = 75;
+                infinityData.planets[1] = 5;
+                infinityData.planetModifier = 32.6;
+                infinityData.workers = 1_000_000;
+                infinityData.researchers = 250_000;
+                infinityData.panelLifetime = 15;
+                prestigeData.pocketAndroidsTimer = 1800;
 
-                dvst.pocketDimensions = true;
-                dvst.pocketMultiverse = true;
-                dvst.pocketProtectors = false;
-                dvst.dimensionalCatCables = true;
-                dvst.solarBubbles = true;
-                dvst.pocketAndroids = true;
-                dvst.quantumComputing = true;
-
-                SyncSkillOwnershipFromSkillTreeData();
-                DebugComparePlanetProduction(results);
-
-                dvst.pocketMultiverse = false;
-                dvst.pocketProtectors = true;
+                skillTreeData.pocketDimensions = true;
+                skillTreeData.pocketMultiverse = true;
+                skillTreeData.pocketProtectors = false;
+                skillTreeData.dimensionalCatCables = true;
+                skillTreeData.solarBubbles = true;
+                skillTreeData.pocketAndroids = true;
+                skillTreeData.quantumComputing = true;
 
                 SyncSkillOwnershipFromSkillTreeData();
                 DebugComparePlanetProduction(results);
 
-                dvid.managers[0] = 100;
-                dvid.managers[1] = 25;
-                dvid.managerModifier = 50;
-                dvst.rudimentarySingularity = true;
-                dvst.unsuspiciousAlgorithms = true;
-                dvst.clusterNetworking = true;
+                skillTreeData.pocketMultiverse = false;
+                skillTreeData.pocketProtectors = true;
+
+                SyncSkillOwnershipFromSkillTreeData();
+                DebugComparePlanetProduction(results);
+
+                infinityData.managers[0] = 100;
+                infinityData.managers[1] = 25;
+                infinityData.managerModifier = 50;
+                skillTreeData.rudimentarySingularity = true;
+                skillTreeData.unsuspiciousAlgorithms = true;
+                skillTreeData.clusterNetworking = true;
 
                 SyncSkillOwnershipFromSkillTreeData();
                 DebugCompareRudimentarySingularityProduction(results);
 
-                dvid.assemblyLines[0] = 80;
-                dvid.assemblyLines[1] = 20;
-                dvid.planets[0] = 8;
-                dvid.planets[1] = 2;
-                dvid.researchers = 1_000_000;
-                dvid.panelsPerSec = 2e15;
-                dvid.panelLifetime = 100;
-                dvid.bots = 1e16;
+                infinityData.assemblyLines[0] = 80;
+                infinityData.assemblyLines[1] = 20;
+                infinityData.planets[0] = 8;
+                infinityData.planets[1] = 2;
+                infinityData.researchers = 1_000_000;
+                infinityData.panelsPerSec = 2e15;
+                infinityData.panelLifetime = 100;
+                infinityData.bots = 1e16;
                 SetResearchLevelInternal(ResearchIdMap.ScienceBoost, 1e6);
-                dvst.fragments = 5;
+                skillTreeData.fragments = 5;
 
-                dvst.scientificPlanets = true;
-                dvst.hubbleTelescope = true;
-                dvst.jamesWebbTelescope = true;
-                dvst.terraformingProtocols = true;
-                dvst.planetAssembly = true;
-                dvst.shellWorlds = true;
-                dvst.stellarSacrifices = true;
-                dvst.stellarObliteration = false;
-                dvst.supernova = false;
-                dvst.stellarImprovements = false;
-                dvst.stellarDominance = false;
-                dvst.shouldersOfTheFallen = true;
-                dvst.shoulderSurgery = true;
-                dvst.shouldersOfGiants = true;
-                dvst.shouldersOfTheEnlightened = true;
-                dvst.whatCouldHaveBeen = true;
+                skillTreeData.scientificPlanets = true;
+                skillTreeData.hubbleTelescope = true;
+                skillTreeData.jamesWebbTelescope = true;
+                skillTreeData.terraformingProtocols = true;
+                skillTreeData.planetAssembly = true;
+                skillTreeData.shellWorlds = true;
+                skillTreeData.stellarSacrifices = true;
+                skillTreeData.stellarObliteration = false;
+                skillTreeData.supernova = false;
+                skillTreeData.stellarImprovements = false;
+                skillTreeData.stellarDominance = false;
+                skillTreeData.shouldersOfTheFallen = true;
+                skillTreeData.shoulderSurgery = true;
+                skillTreeData.shouldersOfGiants = true;
+                skillTreeData.shouldersOfTheEnlightened = true;
+                skillTreeData.whatCouldHaveBeen = true;
 
                 SyncSkillOwnershipFromSkillTreeData();
                 DebugComparePlanetGeneration(results);
@@ -1084,18 +1105,18 @@ namespace Expansion
                 DebugComparePanelLifetime(results);
                 DebugCompareFacilityModifiers(results);
 
-                dvst.stellarObliteration = true;
-                dvst.stellarImprovements = true;
-                dvst.stellarDominance = true;
+                skillTreeData.stellarObliteration = true;
+                skillTreeData.stellarImprovements = true;
+                skillTreeData.stellarDominance = true;
 
                 SyncSkillOwnershipFromSkillTreeData();
                 DebugComparePlanetGeneration(results);
                 DebugCompareStellarSacrificeBotDrain(results);
 
-                dvst.supernova = true;
-                dvst.stellarObliteration = false;
-                dvst.stellarImprovements = false;
-                dvst.stellarDominance = false;
+                skillTreeData.supernova = true;
+                skillTreeData.stellarObliteration = false;
+                skillTreeData.stellarImprovements = false;
+                skillTreeData.stellarDominance = false;
 
                 SyncSkillOwnershipFromSkillTreeData();
                 DebugComparePlanetGeneration(results);
@@ -1103,72 +1124,72 @@ namespace Expansion
             }
             finally
             {
-                dvid.dataCenters[0] = dataCenters[0];
-                dvid.dataCenters[1] = dataCenters[1];
-                dvid.dataCenterModifier = dataCenterModifier;
-                dvid.servers[0] = servers[0];
-                dvid.servers[1] = servers[1];
-                dvid.serverModifier = serverModifier;
-                dvid.rudimentrySingularityProduction = rudimentarySingularity;
+                infinityData.dataCenters[0] = dataCenters[0];
+                infinityData.dataCenters[1] = dataCenters[1];
+                infinityData.dataCenterModifier = dataCenterModifier;
+                infinityData.servers[0] = servers[0];
+                infinityData.servers[1] = servers[1];
+                infinityData.serverModifier = serverModifier;
+                infinityData.rudimentrySingularityProduction = rudimentarySingularity;
                 SetResearchLevelInternal(ResearchIdMap.ScienceBoost, scienceBoostOwned);
 
-                dvid.assemblyLines[0] = assemblyLines[0];
-                dvid.assemblyLines[1] = assemblyLines[1];
-                dvid.assemblyLineModifier = assemblyLineModifier;
-                dvid.managers[0] = managers[0];
-                dvid.managers[1] = managers[1];
-                dvid.managerModifier = managerModifier;
+                infinityData.assemblyLines[0] = assemblyLines[0];
+                infinityData.assemblyLines[1] = assemblyLines[1];
+                infinityData.assemblyLineModifier = assemblyLineModifier;
+                infinityData.managers[0] = managers[0];
+                infinityData.managers[1] = managers[1];
+                infinityData.managerModifier = managerModifier;
 
-                dvid.planets[0] = planets[0];
-                dvid.planets[1] = planets[1];
-                dvid.planetModifier = planetModifier;
-                dvid.workers = workers;
-                dvid.researchers = researchers;
-                dvid.panelLifetime = panelLifetime;
-                dvid.panelsPerSec = panelsPerSec;
-                dvpd.pocketAndroidsTimer = pocketAndroidsTimer;
-                dvid.bots = bots;
+                infinityData.planets[0] = planets[0];
+                infinityData.planets[1] = planets[1];
+                infinityData.planetModifier = planetModifier;
+                infinityData.workers = workers;
+                infinityData.researchers = researchers;
+                infinityData.panelLifetime = panelLifetime;
+                infinityData.panelsPerSec = panelsPerSec;
+                prestigeData.pocketAndroidsTimer = pocketAndroidsTimer;
+                infinityData.bots = bots;
 
-                dvst.rule34 = rule34;
-                dvst.stayingPower = stayingPower;
-                dvst.superchargedPower = superchargedPower;
-                dvst.parallelComputation = parallelComputation;
-                dvst.pocketDimensions = pocketDimensions;
-                dvst.pocketMultiverse = pocketMultiverse;
-                dvst.pocketProtectors = pocketProtectors;
-                dvst.dimensionalCatCables = dimensionalCatCables;
-                dvst.solarBubbles = solarBubbles;
-                dvst.pocketAndroids = pocketAndroids;
-                dvst.quantumComputing = quantumComputing;
-                dvst.rudimentarySingularity = rudimentarySingularitySkill;
-                dvst.unsuspiciousAlgorithms = unsuspiciousAlgorithms;
-                dvst.clusterNetworking = clusterNetworking;
-                dvst.scientificPlanets = scientificPlanets;
-                dvst.hubbleTelescope = hubbleTelescope;
-                dvst.jamesWebbTelescope = jamesWebbTelescope;
-                dvst.terraformingProtocols = terraformingProtocols;
-                dvst.planetAssembly = planetAssembly;
-                dvst.shellWorlds = shellWorlds;
-                dvst.stellarSacrifices = stellarSacrifices;
-                dvst.stellarObliteration = stellarObliteration;
-                dvst.supernova = supernova;
-                dvst.stellarImprovements = stellarImprovements;
-                dvst.stellarDominance = stellarDominance;
-                dvst.shouldersOfTheFallen = shouldersOfTheFallen;
-                dvst.shoulderSurgery = shoulderSurgery;
-                dvst.shouldersOfGiants = shouldersOfGiants;
-                dvst.shouldersOfTheEnlightened = shouldersOfTheEnlightened;
-                dvst.whatCouldHaveBeen = whatCouldHaveBeen;
-                dvst.fragments = fragments;
-                if (dvid != null)
+                skillTreeData.rule34 = rule34;
+                skillTreeData.stayingPower = stayingPower;
+                skillTreeData.superchargedPower = superchargedPower;
+                skillTreeData.parallelComputation = parallelComputation;
+                skillTreeData.pocketDimensions = pocketDimensions;
+                skillTreeData.pocketMultiverse = pocketMultiverse;
+                skillTreeData.pocketProtectors = pocketProtectors;
+                skillTreeData.dimensionalCatCables = dimensionalCatCables;
+                skillTreeData.solarBubbles = solarBubbles;
+                skillTreeData.pocketAndroids = pocketAndroids;
+                skillTreeData.quantumComputing = quantumComputing;
+                skillTreeData.rudimentarySingularity = rudimentarySingularitySkill;
+                skillTreeData.unsuspiciousAlgorithms = unsuspiciousAlgorithms;
+                skillTreeData.clusterNetworking = clusterNetworking;
+                skillTreeData.scientificPlanets = scientificPlanets;
+                skillTreeData.hubbleTelescope = hubbleTelescope;
+                skillTreeData.jamesWebbTelescope = jamesWebbTelescope;
+                skillTreeData.terraformingProtocols = terraformingProtocols;
+                skillTreeData.planetAssembly = planetAssembly;
+                skillTreeData.shellWorlds = shellWorlds;
+                skillTreeData.stellarSacrifices = stellarSacrifices;
+                skillTreeData.stellarObliteration = stellarObliteration;
+                skillTreeData.supernova = supernova;
+                skillTreeData.stellarImprovements = stellarImprovements;
+                skillTreeData.stellarDominance = stellarDominance;
+                skillTreeData.shouldersOfTheFallen = shouldersOfTheFallen;
+                skillTreeData.shoulderSurgery = shoulderSurgery;
+                skillTreeData.shouldersOfGiants = shouldersOfGiants;
+                skillTreeData.shouldersOfTheEnlightened = shouldersOfTheEnlightened;
+                skillTreeData.whatCouldHaveBeen = whatCouldHaveBeen;
+                skillTreeData.fragments = fragments;
+                if (infinityData != null)
                 {
-                    dvid.skillOwnedById ??= new Dictionary<string, bool>();
-                    dvid.skillOwnedById.Clear();
+                    infinityData.skillOwnedById ??= new Dictionary<string, bool>();
+                    infinityData.skillOwnedById.Clear();
                     if (skillOwnedByIdSnapshot != null)
                     {
                         foreach (KeyValuePair<string, bool> entry in skillOwnedByIdSnapshot)
                         {
-                            dvid.skillOwnedById[entry.Key] = entry.Value;
+                            infinityData.skillOwnedById[entry.Key] = entry.Value;
                         }
                     }
                 }
@@ -1177,11 +1198,328 @@ namespace Expansion
             }
         }
 
+        [ContextMenu("Debug/Run Offline Progress Parity")]
+        public void DebugRunOfflineProgressParity()
+        {
+            if (saveSettings == null || saveSettings.dysonVerseSaveData == null)
+            {
+                Debug.LogWarning("Save settings not ready.");
+                return;
+            }
+
+            double awaySeconds = offlineParityAwaySeconds;
+            if (awaySeconds <= 0)
+            {
+                Debug.LogWarning("Offline parity away seconds must be greater than 0.");
+                return;
+            }
+
+            double offlineStepSeconds = Math.Max(0.1, offlineParityOfflineStepSeconds);
+            double onlineStepSeconds = Math.Max(0.1, offlineParityOnlineStepSeconds);
+            double recalcDeltaSeconds = Math.Max(0, offlineParityRecalcDeltaSeconds);
+            double absTolerance = Math.Max(0, offlineParityAbsoluteTolerance);
+            double relTolerance = Math.Max(0, offlineParityRelativeTolerance);
+
+            double effectiveAwaySeconds = awaySeconds;
+            DysonVerseSkillTreeData baseSkillTree = saveSettings.dysonVerseSaveData.dysonVerseSkillTreeData;
+            if (baseSkillTree != null && baseSkillTree.idleElectricSheep)
+            {
+                effectiveAwaySeconds *= 2;
+            }
+
+            SaveDataSettings originalSettings = saveSettings;
+            SaveDataSettings offlineSettings = (SaveDataSettings)SerializationUtility.CreateCopy(saveSettings);
+            SaveDataSettings onlineSettings = (SaveDataSettings)SerializationUtility.CreateCopy(saveSettings);
+
+            OfflineParitySnapshot offlineSnapshot;
+            OfflineParitySnapshot onlineSnapshot;
+
+            try
+            {
+                saveSettings = offlineSettings;
+                ApplyOfflineInfinityPointsBonus(offlineSettings, awaySeconds);
+                offlineSnapshot = SimulateOfflineProgress(offlineSettings, effectiveAwaySeconds, offlineStepSeconds,
+                    recalcDeltaSeconds);
+
+                saveSettings = onlineSettings;
+                if (offlineParityApplyInfinityPointsBonus)
+                {
+                    ApplyOfflineInfinityPointsBonus(onlineSettings, awaySeconds);
+                }
+
+                onlineSnapshot = SimulateOnlineProgress(onlineSettings, effectiveAwaySeconds, onlineStepSeconds);
+            }
+            finally
+            {
+                saveSettings = originalSettings;
+            }
+
+            LogOfflineParityResults(offlineSnapshot, onlineSnapshot, awaySeconds, effectiveAwaySeconds,
+                offlineStepSeconds, onlineStepSeconds, absTolerance, relTolerance);
+        }
+
+        private static OfflineParitySnapshot SimulateOfflineProgress(SaveDataSettings settings,
+            double awaySeconds, double stepSeconds, double recalcDeltaSeconds)
+        {
+            DysonVerseInfinityData infinityData = settings.dysonVerseSaveData.dysonVerseInfinityData;
+            DysonVersePrestigeData prestigeData = settings.dysonVerseSaveData.dysonVersePrestigeData;
+            DysonVerseSkillTreeData skillTreeData = settings.dysonVerseSaveData.dysonVerseSkillTreeData;
+            PrestigePlus prestigePlus = settings.prestigePlus;
+
+            if (infinityData == null || prestigeData == null || skillTreeData == null)
+            {
+                return default;
+            }
+
+            ProductionSystem.SetBotDistribution(infinityData, prestigeData, prestigePlus);
+            ProductionSystem.CalculateProduction(infinityData, skillTreeData, prestigeData, prestigePlus, recalcDeltaSeconds);
+
+            if (awaySeconds <= 0 || stepSeconds <= 0)
+            {
+                return CaptureOfflineParitySnapshot(infinityData, prestigeData);
+            }
+
+            double remainder = awaySeconds % stepSeconds;
+            long steps = (long)((awaySeconds - remainder) / stepSeconds);
+            for (long i = 0; i < steps; i++)
+            {
+                ApplyOfflineStep(infinityData, prestigeData, skillTreeData, prestigePlus, stepSeconds, recalcDeltaSeconds);
+            }
+
+            if (remainder > 0)
+            {
+                ApplyOfflineStep(infinityData, prestigeData, skillTreeData, prestigePlus, remainder, recalcDeltaSeconds);
+            }
+
+            return CaptureOfflineParitySnapshot(infinityData, prestigeData);
+        }
+
+        private static OfflineParitySnapshot SimulateOnlineProgress(SaveDataSettings settings,
+            double awaySeconds, double stepSeconds)
+        {
+            DysonVerseInfinityData infinityData = settings.dysonVerseSaveData.dysonVerseInfinityData;
+            DysonVersePrestigeData prestigeData = settings.dysonVerseSaveData.dysonVersePrestigeData;
+            DysonVerseSkillTreeData skillTreeData = settings.dysonVerseSaveData.dysonVerseSkillTreeData;
+            PrestigePlus prestigePlus = settings.prestigePlus;
+
+            if (infinityData == null || prestigeData == null || skillTreeData == null)
+            {
+                return default;
+            }
+
+            var secrets = new SecretBuffState();
+            const double maxInfinityBuff = 1e44;
+            ModifierSystem.CalculateModifiers(infinityData, skillTreeData, prestigeData, prestigePlus, secrets, maxInfinityBuff);
+
+            if (awaySeconds <= 0 || stepSeconds <= 0)
+            {
+                return CaptureOfflineParitySnapshot(infinityData, prestigeData);
+            }
+
+            double remaining = awaySeconds;
+            double modifierTimer = 0;
+            while (remaining > 0)
+            {
+                double delta = Math.Min(stepSeconds, remaining);
+                ProductionSystem.SetBotDistribution(infinityData, prestigeData, prestigePlus);
+                ProductionSystem.CalculateProduction(infinityData, skillTreeData, prestigeData, prestigePlus, delta);
+
+                modifierTimer += delta;
+                while (modifierTimer >= 1)
+                {
+                    ModifierSystem.CalculateModifiers(infinityData, skillTreeData, prestigeData, prestigePlus, secrets, maxInfinityBuff);
+                    modifierTimer -= 1;
+                }
+
+                remaining -= delta;
+            }
+
+            return CaptureOfflineParitySnapshot(infinityData, prestigeData);
+        }
+
+        private static void ApplyOfflineStep(DysonVerseInfinityData infinityData, DysonVersePrestigeData prestigeData,
+            DysonVerseSkillTreeData skillTreeData, PrestigePlus prestigePlus, double stepSeconds, double recalcDeltaSeconds)
+        {
+            if (skillTreeData.androids) prestigeData.androidsSkillTimer += stepSeconds;
+            if (skillTreeData.pocketAndroids) prestigeData.pocketAndroidsTimer += stepSeconds;
+
+            double planets = infinityData.totalPlanetProduction * stepSeconds;
+            infinityData.planets[0] += planets;
+            ProductionSystem.CalculateShouldersSkills(infinityData, skillTreeData, prestigeData, stepSeconds);
+            ProductionSystem.CalculateProduction(infinityData, skillTreeData, prestigeData, prestigePlus, recalcDeltaSeconds);
+
+            double dataCenters = infinityData.dataCenterProduction * stepSeconds;
+            infinityData.dataCenters[0] += dataCenters;
+            ProductionSystem.CalculateProduction(infinityData, skillTreeData, prestigeData, prestigePlus, recalcDeltaSeconds);
+
+            double servers = infinityData.serverProduction * stepSeconds;
+            infinityData.servers[0] += servers;
+            ProductionSystem.CalculateProduction(infinityData, skillTreeData, prestigeData, prestigePlus, recalcDeltaSeconds);
+
+            double managers = infinityData.managerProduction * stepSeconds;
+            infinityData.managers[0] += managers;
+            ProductionSystem.CalculateProduction(infinityData, skillTreeData, prestigeData, prestigePlus, recalcDeltaSeconds);
+
+            double lines = infinityData.assemblyLineProduction * stepSeconds;
+            infinityData.assemblyLines[0] += lines;
+            ProductionSystem.CalculateProduction(infinityData, skillTreeData, prestigeData, prestigePlus, recalcDeltaSeconds);
+
+            double bots = infinityData.botProduction * stepSeconds;
+            infinityData.bots += bots;
+            ProductionSystem.CalculateProduction(infinityData, skillTreeData, prestigeData, prestigePlus, recalcDeltaSeconds);
+
+            ProductionSystem.SetBotDistribution(infinityData, prestigeData, prestigePlus);
+
+            double money = ProductionSystem.MoneyToAdd(infinityData, skillTreeData) * stepSeconds;
+            infinityData.money += money;
+
+            double science = ProductionSystem.ScienceToAdd(infinityData, skillTreeData) * stepSeconds;
+            infinityData.science += science;
+
+            double decayed = infinityData.panelsPerSec * stepSeconds;
+            infinityData.totalPanelsDecayed += decayed;
+            ProductionSystem.CalculateProduction(infinityData, skillTreeData, prestigeData, prestigePlus, recalcDeltaSeconds);
+        }
+
+        private static void ApplyOfflineInfinityPointsBonus(SaveDataSettings settings, double awaySeconds)
+        {
+            if (settings == null) return;
+
+            DysonVersePrestigeData prestigeData = settings.dysonVerseSaveData?.dysonVersePrestigeData;
+            if (prestigeData == null) return;
+
+            if (settings.lastInfinityPointsGained < 1) return;
+            if (settings.timeLastInfinity <= 0) return;
+
+            prestigeData.infinityPoints += (long)Math.Floor(awaySeconds * settings.lastInfinityPointsGained /
+                                                    settings.timeLastInfinity / 10);
+        }
+
+        private static OfflineParitySnapshot CaptureOfflineParitySnapshot(DysonVerseInfinityData infinityData,
+            DysonVersePrestigeData prestigeData)
+        {
+            return new OfflineParitySnapshot
+            {
+                Money = infinityData.money,
+                Science = infinityData.science,
+                Bots = infinityData.bots,
+                TotalPanelsDecayed = infinityData.totalPanelsDecayed,
+                PlanetsAuto = infinityData.planets[0],
+                PlanetsManual = infinityData.planets[1],
+                DataCentersAuto = infinityData.dataCenters[0],
+                DataCentersManual = infinityData.dataCenters[1],
+                ServersAuto = infinityData.servers[0],
+                ServersManual = infinityData.servers[1],
+                ManagersAuto = infinityData.managers[0],
+                ManagersManual = infinityData.managers[1],
+                AssemblyLinesAuto = infinityData.assemblyLines[0],
+                AssemblyLinesManual = infinityData.assemblyLines[1],
+                AndroidsSkillTimer = prestigeData.androidsSkillTimer,
+                PocketAndroidsTimer = prestigeData.pocketAndroidsTimer,
+                ScienceBoostOwned = infinityData.scienceBoostOwned,
+                MoneyMultiUpgradeOwned = infinityData.moneyMultiUpgradeOwned
+            };
+        }
+
+        private void LogOfflineParityResults(OfflineParitySnapshot offlineSnapshot, OfflineParitySnapshot onlineSnapshot,
+            double awaySeconds, double effectiveAwaySeconds, double offlineStepSeconds, double onlineStepSeconds,
+            double absTolerance, double relTolerance)
+        {
+            var builder = new StringBuilder();
+            builder.AppendLine("Offline progress parity");
+            builder.AppendLine(
+                $"Away: {awaySeconds.ToString(CultureInfo.InvariantCulture)}s (effective {effectiveAwaySeconds.ToString(CultureInfo.InvariantCulture)}s)");
+            builder.AppendLine(
+                $"Steps: offline {offlineStepSeconds.ToString(CultureInfo.InvariantCulture)}s, online {onlineStepSeconds.ToString(CultureInfo.InvariantCulture)}s");
+            builder.AppendLine(
+                $"Tolerance: abs {absTolerance.ToString(CultureInfo.InvariantCulture)}, rel {relTolerance.ToString(CultureInfo.InvariantCulture)}");
+            builder.AppendLine($"Online applies IP bonus: {offlineParityApplyInfinityPointsBonus}");
+
+            AppendOfflineParityLine(builder, "Bots", offlineSnapshot.Bots, onlineSnapshot.Bots, absTolerance,
+                relTolerance);
+            AppendOfflineParityLine(builder, "Money", offlineSnapshot.Money, onlineSnapshot.Money, absTolerance,
+                relTolerance);
+            AppendOfflineParityLine(builder, "Science", offlineSnapshot.Science, onlineSnapshot.Science, absTolerance,
+                relTolerance);
+            AppendOfflineParityLine(builder, "Panels Decayed", offlineSnapshot.TotalPanelsDecayed,
+                onlineSnapshot.TotalPanelsDecayed, absTolerance, relTolerance);
+            AppendOfflineParityLine(builder, "Planets Auto", offlineSnapshot.PlanetsAuto, onlineSnapshot.PlanetsAuto,
+                absTolerance, relTolerance);
+            AppendOfflineParityLine(builder, "Planets Manual", offlineSnapshot.PlanetsManual,
+                onlineSnapshot.PlanetsManual, absTolerance, relTolerance);
+            AppendOfflineParityLine(builder, "Data Centers Auto", offlineSnapshot.DataCentersAuto,
+                onlineSnapshot.DataCentersAuto, absTolerance, relTolerance);
+            AppendOfflineParityLine(builder, "Data Centers Manual", offlineSnapshot.DataCentersManual,
+                onlineSnapshot.DataCentersManual, absTolerance, relTolerance);
+            AppendOfflineParityLine(builder, "Servers Auto", offlineSnapshot.ServersAuto, onlineSnapshot.ServersAuto,
+                absTolerance, relTolerance);
+            AppendOfflineParityLine(builder, "Servers Manual", offlineSnapshot.ServersManual,
+                onlineSnapshot.ServersManual, absTolerance, relTolerance);
+            AppendOfflineParityLine(builder, "Managers Auto", offlineSnapshot.ManagersAuto, onlineSnapshot.ManagersAuto,
+                absTolerance, relTolerance);
+            AppendOfflineParityLine(builder, "Managers Manual", offlineSnapshot.ManagersManual,
+                onlineSnapshot.ManagersManual, absTolerance, relTolerance);
+            AppendOfflineParityLine(builder, "Assembly Lines Auto", offlineSnapshot.AssemblyLinesAuto,
+                onlineSnapshot.AssemblyLinesAuto, absTolerance, relTolerance);
+            AppendOfflineParityLine(builder, "Assembly Lines Manual", offlineSnapshot.AssemblyLinesManual,
+                onlineSnapshot.AssemblyLinesManual, absTolerance, relTolerance);
+            AppendOfflineParityLine(builder, "Androids Timer", offlineSnapshot.AndroidsSkillTimer,
+                onlineSnapshot.AndroidsSkillTimer, absTolerance, relTolerance);
+            AppendOfflineParityLine(builder, "Pocket Androids Timer", offlineSnapshot.PocketAndroidsTimer,
+                onlineSnapshot.PocketAndroidsTimer, absTolerance, relTolerance);
+            AppendOfflineParityLine(builder, "Science Boost", offlineSnapshot.ScienceBoostOwned,
+                onlineSnapshot.ScienceBoostOwned, absTolerance, relTolerance);
+            AppendOfflineParityLine(builder, "Money Upgrade", offlineSnapshot.MoneyMultiUpgradeOwned,
+                onlineSnapshot.MoneyMultiUpgradeOwned, absTolerance, relTolerance);
+
+            Debug.Log(builder.ToString());
+        }
+
+        private static void AppendOfflineParityLine(StringBuilder builder, string label, double offlineValue,
+            double onlineValue, double absTolerance, double relTolerance)
+        {
+            double delta = offlineValue - onlineValue;
+            double absDelta = Math.Abs(delta);
+            double relDelta = absDelta / Math.Max(1, Math.Abs(onlineValue));
+            bool withinTolerance = absDelta <= absTolerance || relDelta <= relTolerance;
+            string status = withinTolerance ? "OK" : "WARN";
+
+            builder.AppendLine(
+                $"{label}: offline={FormatOfflineParityValue(offlineValue)} online={FormatOfflineParityValue(onlineValue)} delta={FormatOfflineParityValue(delta)} rel={relDelta.ToString("P4", CultureInfo.InvariantCulture)} {status}");
+        }
+
+        private static string FormatOfflineParityValue(double value)
+        {
+            return value.ToString("G6", CultureInfo.InvariantCulture);
+        }
+
+        private struct OfflineParitySnapshot
+        {
+            public double Money;
+            public double Science;
+            public double Bots;
+            public double TotalPanelsDecayed;
+            public double PlanetsAuto;
+            public double PlanetsManual;
+            public double DataCentersAuto;
+            public double DataCentersManual;
+            public double ServersAuto;
+            public double ServersManual;
+            public double ManagersAuto;
+            public double ManagersManual;
+            public double AssemblyLinesAuto;
+            public double AssemblyLinesManual;
+            public double AndroidsSkillTimer;
+            public double PocketAndroidsTimer;
+            public double ScienceBoostOwned;
+            public double MoneyMultiUpgradeOwned;
+        }
+
         private void SyncSkillOwnershipFromSkillTreeData()
         {
-            if (dvid == null || dvst == null) return;
-            dvid.skillOwnedById ??= new Dictionary<string, bool>();
-            dvid.skillOwnedById.Clear();
+            if (infinityData == null || skillTreeData == null) return;
+            infinityData.skillOwnedById ??= new Dictionary<string, bool>();
+            infinityData.skillOwnedById.Clear();
 
             GameDataRegistry registry = GameDataRegistry.Instance;
             if (registry != null && registry.skillDatabase != null && registry.skillDatabase.skills.Count > 0)
@@ -1189,8 +1527,8 @@ namespace Expansion
                 foreach (SkillDefinition skill in registry.skillDatabase.skills)
                 {
                     if (skill == null || string.IsNullOrEmpty(skill.id)) continue;
-                    bool owned = SkillFlagAccessor.TryGetFlag(dvst, skill.id, out bool flag) && flag;
-                    dvid.skillOwnedById[skill.id] = owned;
+                    bool owned = SkillFlagAccessor.TryGetFlag(skillTreeData, skill.id, out bool flag) && flag;
+                    infinityData.skillOwnedById[skill.id] = owned;
                 }
 
                 return;
@@ -1200,8 +1538,8 @@ namespace Expansion
             foreach (KeyValuePair<int, SkillTreeItem> entry in SkillTree)
             {
                 if (!SkillIdMap.TryGetId(entry.Key, out string id)) continue;
-                bool owned = SkillFlagAccessor.TryGetFlag(dvst, id, out bool flag) && flag;
-                dvid.skillOwnedById[id] = owned;
+                bool owned = SkillFlagAccessor.TryGetFlag(skillTreeData, id, out bool flag) && flag;
+                infinityData.skillOwnedById[id] = owned;
             }
         }
 
@@ -1266,25 +1604,25 @@ namespace Expansion
                 return;
             }
 
-            FacilityRuntime runtime = FacilityLegacyBridge.BuildAiManagerRuntime(definition, dvid, dvst);
+            FacilityRuntime runtime = FacilityLegacyBridge.BuildAiManagerRuntime(definition, infinityData, skillTreeData);
             if (runtime == null)
             {
                 Debug.LogWarning("AI Manager runtime could not be built.");
                 return;
             }
 
-            double legacyCached = dvid.rudimentrySingularityProduction;
+            double legacyCached = infinityData.rudimentrySingularityProduction;
             double assemblyLineProduction = runtime.State.ProductionRate;
             double baseValue = 0;
-            if (dvst.rudimentarySingularity && assemblyLineProduction > 1)
+            if (skillTreeData.rudimentarySingularity && assemblyLineProduction > 1)
             {
                 baseValue = Math.Pow(Math.Log(assemblyLineProduction, 2),
                     1 + Math.Log10(assemblyLineProduction) / 10);
             }
 
-            double serversTotal = dvid.servers[0] + dvid.servers[1];
+            double serversTotal = infinityData.servers[0] + infinityData.servers[1];
             var effects = new List<StatEffect>();
-            if (dvst.unsuspiciousAlgorithms && baseValue > 0)
+            if (skillTreeData.unsuspiciousAlgorithms && baseValue > 0)
             {
                 effects.Add(new StatEffect
                 {
@@ -1297,7 +1635,7 @@ namespace Expansion
                 });
             }
 
-            if (dvst.clusterNetworking && serversTotal > 1)
+            if (skillTreeData.clusterNetworking && serversTotal > 1)
             {
                 effects.Add(new StatEffect
                 {
@@ -1312,9 +1650,9 @@ namespace Expansion
             }
 
             double legacyComputed = baseValue;
-            if (dvst.unsuspiciousAlgorithms && legacyComputed > 0)
+            if (skillTreeData.unsuspiciousAlgorithms && legacyComputed > 0)
                 legacyComputed *= 10;
-            if (dvst.clusterNetworking && serversTotal > 1)
+            if (skillTreeData.clusterNetworking && serversTotal > 1)
                 legacyComputed *= 1 + 0.05f * Math.Log10(serversTotal);
 
             StatResult pipelineResult = StatCalculator.Calculate(baseValue, effects);
@@ -1345,17 +1683,17 @@ namespace Expansion
 
         private void DebugCompareStellarSacrificeBotDrain(List<ParityResult> results)
         {
-            double starsSurrounded = ProductionMath.StarsSurrounded(dvid, false, false, 0);
-            double galaxiesEngulfed = ProductionMath.GalaxiesEngulfed(dvid, false, false, 0);
-            double stellarGalaxies = ProductionMath.StellarGalaxies(dvst, galaxiesEngulfed);
-            double botsRequired = ProductionMath.StellarSacrificesRequiredBots(dvst, starsSurrounded);
+            double starsSurrounded = ProductionMath.StarsSurrounded(infinityData, false, false, 0);
+            double galaxiesEngulfed = ProductionMath.GalaxiesEngulfed(infinityData, false, false, 0);
+            double stellarGalaxies = ProductionMath.StellarGalaxies(skillTreeData, galaxiesEngulfed);
+            double botsRequired = ProductionMath.StellarSacrificesRequiredBots(skillTreeData, starsSurrounded);
 
-            double legacyComputed = dvst.stellarSacrifices && dvid.bots >= botsRequired && stellarGalaxies > 0
+            double legacyComputed = skillTreeData.stellarSacrifices && infinityData.bots >= botsRequired && stellarGalaxies > 0
                 ? botsRequired
                 : 0;
 
             var effects = new List<StatEffect>();
-            if (dvst.stellarSacrifices && dvid.bots >= botsRequired && stellarGalaxies > 0)
+            if (skillTreeData.stellarSacrifices && infinityData.bots >= botsRequired && stellarGalaxies > 0)
             {
                 effects.Add(new StatEffect
                 {
@@ -1378,7 +1716,7 @@ namespace Expansion
             builder.AppendLine($"Stellar Sacrifice Bot Drain (pipeline): {updated}");
             builder.AppendLine($"Delta: {delta}");
             builder.AppendLine(
-                $"Inputs: bots={dvid.bots}, starsSurrounded={starsSurrounded}, galaxiesEngulfed={galaxiesEngulfed}, " +
+                $"Inputs: bots={infinityData.bots}, starsSurrounded={starsSurrounded}, galaxiesEngulfed={galaxiesEngulfed}, " +
                 $"stellarGalaxies={stellarGalaxies}, botsRequired={botsRequired}");
             builder.AppendLine("Breakdown:");
             foreach (Contribution contribution in pipelineResult.Contributions)
@@ -1397,9 +1735,9 @@ namespace Expansion
 
         private void DebugCompareShouldersOfTheFallenBonuses(List<ParityResult> results)
         {
-            double scientificBase = FacilityLegacyBridge.ComputeScientificPlanetsProduction(dvid, dvst);
-            double shouldersBonus = dvst.shouldersOfTheFallen && dvid.scienceBoostOwned > 0
-                ? Math.Log(dvid.scienceBoostOwned, 2)
+            double scientificBase = FacilityLegacyBridge.ComputeScientificPlanetsProduction(infinityData, skillTreeData);
+            double shouldersBonus = skillTreeData.shouldersOfTheFallen && infinityData.scienceBoostOwned > 0
+                ? Math.Log(infinityData.scienceBoostOwned, 2)
                 : 0;
             double legacyScientific = scientificBase + shouldersBonus;
 
@@ -1421,9 +1759,9 @@ namespace Expansion
             double scientificDelta = scientificResult.Value - legacyScientific;
             results?.Add(new ParityResult("Shoulders Of The Fallen (Scientific)", scientificDelta));
 
-            double pocketBase = FacilityLegacyBridge.ComputePocketDimensionsProduction(dvid, dvpd, dvst);
-            double shoulderSurgeryBonus = dvst.shouldersOfTheFallen && dvst.shoulderSurgery && dvid.scienceBoostOwned > 0
-                ? Math.Log(dvid.scienceBoostOwned, 2)
+            double pocketBase = FacilityLegacyBridge.ComputePocketDimensionsProduction(infinityData, prestigeData, skillTreeData);
+            double shoulderSurgeryBonus = skillTreeData.shouldersOfTheFallen && skillTreeData.shoulderSurgery && infinityData.scienceBoostOwned > 0
+                ? Math.Log(infinityData.scienceBoostOwned, 2)
                 : 0;
             double legacyPocket = pocketBase + shoulderSurgeryBonus;
 
@@ -1449,7 +1787,7 @@ namespace Expansion
             builder.AppendLine($"Shoulders Of The Fallen (Scientific Planets) legacy: {legacyScientific}");
             builder.AppendLine($"Shoulders Of The Fallen (Scientific Planets) pipeline: {scientificResult.Value}");
             builder.AppendLine($"Delta: {scientificDelta}");
-            builder.AppendLine($"Inputs: researchers={dvid.researchers}, scienceBoostOwned={dvid.scienceBoostOwned}");
+            builder.AppendLine($"Inputs: researchers={infinityData.researchers}, scienceBoostOwned={infinityData.scienceBoostOwned}");
             builder.AppendLine("Breakdown:");
             foreach (Contribution contribution in scientificResult.Contributions)
             {
@@ -1461,8 +1799,8 @@ namespace Expansion
             builder.AppendLine($"Shoulder Surgery (Pocket Dimensions) pipeline: {pocketResult.Value}");
             builder.AppendLine($"Delta: {pocketDelta}");
             builder.AppendLine(
-                $"Inputs: workers={dvid.workers}, researchers={dvid.researchers}, panelLifetime={dvid.panelLifetime}, " +
-                $"pocketAndroidsTimer={dvpd.pocketAndroidsTimer}, scienceBoostOwned={dvid.scienceBoostOwned}");
+                $"Inputs: workers={infinityData.workers}, researchers={infinityData.researchers}, panelLifetime={infinityData.panelLifetime}, " +
+                $"pocketAndroidsTimer={prestigeData.pocketAndroidsTimer}, scienceBoostOwned={infinityData.scienceBoostOwned}");
             builder.AppendLine("Breakdown:");
             foreach (Contribution contribution in pocketResult.Contributions)
             {
@@ -1480,23 +1818,23 @@ namespace Expansion
 
         private void DebugCompareShouldersAccruals(List<ParityResult> results)
         {
-            double scientificPlanetsProduction = FacilityLegacyBridge.ComputeScientificPlanetsProduction(dvid, dvst);
-            if (dvst.shouldersOfTheFallen && dvid.scienceBoostOwned > 0)
-                scientificPlanetsProduction += Math.Log(dvid.scienceBoostOwned, 2);
+            double scientificPlanetsProduction = FacilityLegacyBridge.ComputeScientificPlanetsProduction(infinityData, skillTreeData);
+            if (skillTreeData.shouldersOfTheFallen && infinityData.scienceBoostOwned > 0)
+                scientificPlanetsProduction += Math.Log(infinityData.scienceBoostOwned, 2);
 
-            double pocketDimensionsProduction = FacilityLegacyBridge.ComputePocketDimensionsProduction(dvid, dvpd, dvst);
-            if (dvst.shouldersOfTheFallen && dvst.shoulderSurgery && dvid.scienceBoostOwned > 0)
-                pocketDimensionsProduction += Math.Log(dvid.scienceBoostOwned, 2);
+            double pocketDimensionsProduction = FacilityLegacyBridge.ComputePocketDimensionsProduction(infinityData, prestigeData, skillTreeData);
+            if (skillTreeData.shouldersOfTheFallen && skillTreeData.shoulderSurgery && infinityData.scienceBoostOwned > 0)
+                pocketDimensionsProduction += Math.Log(infinityData.scienceBoostOwned, 2);
 
-            double legacyScienceBoostRate = dvst.shouldersOfGiants && dvst.scientificPlanets
-                ? scientificPlanetsProduction + (dvst.whatCouldHaveBeen ? pocketDimensionsProduction : 0)
+            double legacyScienceBoostRate = skillTreeData.shouldersOfGiants && skillTreeData.scientificPlanets
+                ? scientificPlanetsProduction + (skillTreeData.whatCouldHaveBeen ? pocketDimensionsProduction : 0)
                 : 0;
-            double legacyMoneyUpgradeRate = dvst.shouldersOfTheEnlightened && dvst.scientificPlanets
+            double legacyMoneyUpgradeRate = skillTreeData.shouldersOfTheEnlightened && skillTreeData.scientificPlanets
                 ? scientificPlanetsProduction
                 : 0;
 
             var scienceBoostEffects = new List<StatEffect>();
-            if (dvst.shouldersOfGiants && dvst.scientificPlanets)
+            if (skillTreeData.shouldersOfGiants && skillTreeData.scientificPlanets)
             {
                 scienceBoostEffects.Add(new StatEffect
                 {
@@ -1507,7 +1845,7 @@ namespace Expansion
                     Value = scientificPlanetsProduction,
                     Order = 0
                 });
-                if (dvst.whatCouldHaveBeen)
+                if (skillTreeData.whatCouldHaveBeen)
                 {
                     scienceBoostEffects.Add(new StatEffect
                     {
@@ -1522,7 +1860,7 @@ namespace Expansion
             }
 
             var moneyUpgradeEffects = new List<StatEffect>();
-            if (dvst.shouldersOfTheEnlightened && dvst.scientificPlanets)
+            if (skillTreeData.shouldersOfTheEnlightened && skillTreeData.scientificPlanets)
             {
                 moneyUpgradeEffects.Add(new StatEffect
                 {
@@ -1548,7 +1886,7 @@ namespace Expansion
             builder.AppendLine($"Delta: {scienceDelta}");
             builder.AppendLine(
                 $"Inputs: scientificPlanets={scientificPlanetsProduction}, pocketDimensions={pocketDimensionsProduction}, " +
-                $"scienceBoostOwned={dvid.scienceBoostOwned}");
+                $"scienceBoostOwned={infinityData.scienceBoostOwned}");
             builder.AppendLine("Breakdown:");
             foreach (Contribution contribution in scienceResult.Contributions)
             {
@@ -1572,12 +1910,12 @@ namespace Expansion
 
         private void DebugCompareMoneyMultiplier(List<ParityResult> results)
         {
-            var secrets = ModifierSystem.BuildSecretBuffState(dvpd);
-            double legacy = dvst.shouldersOfPrecursors
-                ? ModifierSystem.ScienceMultipliers(dvid, dvst, dvpd, pp, secrets)
-                : ModifierSystem.MoneyMultipliers(dvid, dvst, dvpd, pp, secrets);
+            var secrets = ModifierSystem.BuildSecretBuffState(prestigeData);
+            double legacy = skillTreeData.shouldersOfPrecursors
+                ? ModifierSystem.ScienceMultipliers(infinityData, skillTreeData, prestigeData, prestigePlus, secrets)
+                : ModifierSystem.MoneyMultipliers(infinityData, skillTreeData, prestigeData, prestigePlus, secrets);
 
-            if (GlobalStatPipeline.TryCalculateMoneyMultiplier(dvid, dvst, dvpd, pp, secrets,
+            if (GlobalStatPipeline.TryCalculateMoneyMultiplier(infinityData, skillTreeData, prestigeData, prestigePlus, secrets,
                     out StatResult result))
             {
                 results?.Add(new ParityResult("Money Multiplier", result.Value - legacy));
@@ -1590,10 +1928,10 @@ namespace Expansion
 
         private void DebugCompareScienceMultiplier(List<ParityResult> results)
         {
-            var secrets = ModifierSystem.BuildSecretBuffState(dvpd);
-            double legacy = ModifierSystem.ScienceMultipliers(dvid, dvst, dvpd, pp, secrets);
+            var secrets = ModifierSystem.BuildSecretBuffState(prestigeData);
+            double legacy = ModifierSystem.ScienceMultipliers(infinityData, skillTreeData, prestigeData, prestigePlus, secrets);
 
-            if (GlobalStatPipeline.TryCalculateScienceMultiplier(dvid, dvst, dvpd, pp, secrets,
+            if (GlobalStatPipeline.TryCalculateScienceMultiplier(infinityData, skillTreeData, prestigeData, prestigePlus, secrets,
                     out StatResult result))
             {
                 results?.Add(new ParityResult("Science Multiplier", result.Value - legacy));
@@ -1606,8 +1944,8 @@ namespace Expansion
 
         private void DebugComparePanelLifetime(List<ParityResult> results)
         {
-            double legacyLifetime = ModifierSystem.CalculatePanelLifetimeLegacy(dvid, dvst, dvpd, pp);
-            if (GlobalStatPipeline.TryCalculatePanelLifetime(dvid, dvst, dvpd, pp, out StatResult result))
+            double legacyLifetime = ModifierSystem.CalculatePanelLifetimeLegacy(infinityData, skillTreeData, prestigeData, prestigePlus);
+            if (GlobalStatPipeline.TryCalculatePanelLifetime(infinityData, skillTreeData, prestigeData, prestigePlus, out StatResult result))
             {
                 results?.Add(new ParityResult("Panel Lifetime", result.Value - legacyLifetime));
             }
@@ -1624,27 +1962,27 @@ namespace Expansion
 
         private void DebugComparePlanetGeneration(List<ParityResult> results)
         {
-            double legacyCached = dvid.totalPlanetProduction;
-            double scientificPlanetsProduction = FacilityLegacyBridge.ComputeScientificPlanetsProduction(dvid, dvst);
-            double planetAssemblyProduction = FacilityLegacyBridge.ComputePlanetAssemblyProduction(dvid, dvst);
-            double shellWorldsProduction = FacilityLegacyBridge.ComputeShellWorldsProduction(dvid, dvst);
-            double stellarSacrificesProduction = FacilityLegacyBridge.ComputeStellarSacrificesProduction(dvid, dvst);
+            double legacyCached = infinityData.totalPlanetProduction;
+            double scientificPlanetsProduction = FacilityLegacyBridge.ComputeScientificPlanetsProduction(infinityData, skillTreeData);
+            double planetAssemblyProduction = FacilityLegacyBridge.ComputePlanetAssemblyProduction(infinityData, skillTreeData);
+            double shellWorldsProduction = FacilityLegacyBridge.ComputeShellWorldsProduction(infinityData, skillTreeData);
+            double stellarSacrificesProduction = FacilityLegacyBridge.ComputeStellarSacrificesProduction(infinityData, skillTreeData);
 
             double legacyComputed = 0;
-            if (dvst.scientificPlanets) legacyComputed += scientificPlanetsProduction;
-            if (dvst.planetAssembly) legacyComputed += planetAssemblyProduction;
-            if (dvst.shellWorlds) legacyComputed += shellWorldsProduction;
-            if (dvst.stellarSacrifices) legacyComputed += stellarSacrificesProduction;
+            if (skillTreeData.scientificPlanets) legacyComputed += scientificPlanetsProduction;
+            if (skillTreeData.planetAssembly) legacyComputed += planetAssemblyProduction;
+            if (skillTreeData.shellWorlds) legacyComputed += shellWorldsProduction;
+            if (skillTreeData.stellarSacrifices) legacyComputed += stellarSacrificesProduction;
 
-            StatResult pipelineResult = FacilityLegacyBridge.CalculatePlanetGeneration(dvid, dvst);
+            StatResult pipelineResult = FacilityLegacyBridge.CalculatePlanetGeneration(infinityData, skillTreeData);
             double updated = pipelineResult.Value;
             double delta = updated - legacyComputed;
             results?.Add(new ParityResult("Planet Generation", delta));
 
-            double starsSurrounded = ProductionMath.StarsSurrounded(dvid, false, false, 0);
-            double galaxiesEngulfed = ProductionMath.GalaxiesEngulfed(dvid, false, false, 0);
-            double stellarGalaxies = ProductionMath.StellarGalaxies(dvst, galaxiesEngulfed);
-            double botsRequired = ProductionMath.StellarSacrificesRequiredBots(dvst, starsSurrounded);
+            double starsSurrounded = ProductionMath.StarsSurrounded(infinityData, false, false, 0);
+            double galaxiesEngulfed = ProductionMath.GalaxiesEngulfed(infinityData, false, false, 0);
+            double stellarGalaxies = ProductionMath.StellarGalaxies(skillTreeData, galaxiesEngulfed);
+            double botsRequired = ProductionMath.StellarSacrificesRequiredBots(skillTreeData, starsSurrounded);
 
             var builder = new StringBuilder();
             builder.AppendLine($"Planet Generation (legacy cached): {legacyCached}");
@@ -1652,8 +1990,8 @@ namespace Expansion
             builder.AppendLine($"Planet Generation (pipeline): {updated}");
             builder.AppendLine($"Delta: {delta}");
             builder.AppendLine(
-                $"Inputs: researchers={dvid.researchers}, assemblyLines={dvid.assemblyLines[0] + dvid.assemblyLines[1]}, " +
-                $"planets={dvid.planets[0] + dvid.planets[1]}, bots={dvid.bots}, " +
+                $"Inputs: researchers={infinityData.researchers}, assemblyLines={infinityData.assemblyLines[0] + infinityData.assemblyLines[1]}, " +
+                $"planets={infinityData.planets[0] + infinityData.planets[1]}, bots={infinityData.bots}, " +
                 $"starsSurrounded={starsSurrounded}, galaxiesEngulfed={galaxiesEngulfed}, stellarGalaxies={stellarGalaxies}, " +
                 $"botsRequired={botsRequired}");
             builder.AppendLine($"Scientific Planets: {scientificPlanetsProduction}");
@@ -1689,22 +2027,22 @@ namespace Expansion
                 return;
             }
 
-            FacilityRuntime runtime = FacilityLegacyBridge.BuildPlanetRuntime(definition, dvid, dvpd, dvst);
+            FacilityRuntime runtime = FacilityLegacyBridge.BuildPlanetRuntime(definition, infinityData, prestigeData, skillTreeData);
             if (runtime == null)
             {
                 Debug.LogWarning("Planet runtime could not be built.");
                 return;
             }
 
-            double legacyCached = dvid.dataCenterProduction;
-            double legacyComputed = (dvid.planets[0] + dvid.planets[1]) * 0.0002777777777777778f * dvid.planetModifier;
-            if (dvst.rule34 && dvid.planets[1] >= 69)
+            double legacyCached = infinityData.dataCenterProduction;
+            double legacyComputed = (infinityData.planets[0] + infinityData.planets[1]) * 0.0002777777777777778f * infinityData.planetModifier;
+            if (skillTreeData.rule34 && infinityData.planets[1] >= 69)
                 legacyComputed *= 2;
-            if (dvst.superchargedPower)
+            if (skillTreeData.superchargedPower)
                 legacyComputed *= 1.5f;
-            if (dvst.pocketDimensions)
+            if (skillTreeData.pocketDimensions)
             {
-                double pocketDimensionsProduction = FacilityLegacyBridge.ComputePocketDimensionsProduction(dvid, dvpd, dvst);
+                double pocketDimensionsProduction = FacilityLegacyBridge.ComputePocketDimensionsProduction(infinityData, prestigeData, skillTreeData);
                 if (pocketDimensionsProduction > 0)
                     legacyComputed += pocketDimensionsProduction;
             }
@@ -1718,8 +2056,8 @@ namespace Expansion
             builder.AppendLine($"Planets (pipeline): {updated}");
             builder.AppendLine($"Delta: {delta}");
             builder.AppendLine(
-                $"Inputs: count={dvid.planets[0] + dvid.planets[1]}, modifier={dvid.planetModifier}, " +
-                $"workers={dvid.workers}, researchers={dvid.researchers}, pocketAndroidsTimer={dvpd.pocketAndroidsTimer}");
+                $"Inputs: count={infinityData.planets[0] + infinityData.planets[1]}, modifier={infinityData.planetModifier}, " +
+                $"workers={infinityData.workers}, researchers={infinityData.researchers}, pocketAndroidsTimer={prestigeData.pocketAndroidsTimer}");
             builder.AppendLine("Breakdown:");
             foreach (Contribution contribution in runtime.Breakdown.Contributions)
             {
@@ -1731,15 +2069,15 @@ namespace Expansion
             if (TryGetDataDrivenModifier("planets", out double dataDrivenModifier))
             {
                 dataDrivenExpected =
-                    (dvid.planets[0] + dvid.planets[1]) * 0.0002777777777777778f * dataDrivenModifier;
-                if (dvst.rule34 && dvid.planets[1] >= 69)
+                    (infinityData.planets[0] + infinityData.planets[1]) * 0.0002777777777777778f * dataDrivenModifier;
+                if (skillTreeData.rule34 && infinityData.planets[1] >= 69)
                     dataDrivenExpected *= 2;
-                if (dvst.superchargedPower)
+                if (skillTreeData.superchargedPower)
                     dataDrivenExpected *= 1.5f;
-                if (dvst.pocketDimensions)
+                if (skillTreeData.pocketDimensions)
                 {
                     double pocketDimensionsProduction =
-                        FacilityLegacyBridge.ComputePocketDimensionsProduction(dvid, dvpd, dvst);
+                        FacilityLegacyBridge.ComputePocketDimensionsProduction(infinityData, prestigeData, skillTreeData);
                     if (pocketDimensionsProduction > 0)
                         dataDrivenExpected += pocketDimensionsProduction;
                 }
@@ -1754,34 +2092,34 @@ namespace Expansion
             modifier = 1;
             if (string.IsNullOrEmpty(facilityId)) return false;
 
-            var secrets = ModifierSystem.BuildSecretBuffState(dvpd);
+            var secrets = ModifierSystem.BuildSecretBuffState(prestigeData);
             const double parityMaxInfinityBuff = 1e44;
 
             StatResult result;
             switch (facilityId)
             {
                 case "assembly_lines":
-                    if (!FacilityModifierPipeline.TryCalculateAssemblyLineModifier(dvid, dvst, dvpd, pp, secrets,
+                    if (!FacilityModifierPipeline.TryCalculateAssemblyLineModifier(infinityData, skillTreeData, prestigeData, prestigePlus, secrets,
                             parityMaxInfinityBuff, out result))
                         return false;
                     break;
                 case "ai_managers":
-                    if (!FacilityModifierPipeline.TryCalculateManagerModifier(dvid, dvst, dvpd, pp, secrets,
+                    if (!FacilityModifierPipeline.TryCalculateManagerModifier(infinityData, skillTreeData, prestigeData, prestigePlus, secrets,
                             parityMaxInfinityBuff, out result))
                         return false;
                     break;
                 case "servers":
-                    if (!FacilityModifierPipeline.TryCalculateServerModifier(dvid, dvst, dvpd, pp, secrets,
+                    if (!FacilityModifierPipeline.TryCalculateServerModifier(infinityData, skillTreeData, prestigeData, prestigePlus, secrets,
                             parityMaxInfinityBuff, out result))
                         return false;
                     break;
                 case "data_centers":
-                    if (!FacilityModifierPipeline.TryCalculateDataCenterModifier(dvid, dvst, dvpd, pp,
+                    if (!FacilityModifierPipeline.TryCalculateDataCenterModifier(infinityData, skillTreeData, prestigeData, prestigePlus,
                             parityMaxInfinityBuff, out result))
                         return false;
                     break;
                 case "planets":
-                    if (!FacilityModifierPipeline.TryCalculatePlanetModifier(dvid, dvst, dvpd, pp, secrets,
+                    if (!FacilityModifierPipeline.TryCalculatePlanetModifier(infinityData, skillTreeData, prestigeData, prestigePlus, secrets,
                             parityMaxInfinityBuff, out result))
                         return false;
                     break;
@@ -1798,22 +2136,22 @@ namespace Expansion
             if (results == null) return;
 
             var secrets = new SecretBuffState();
-            double assemblyLineUpgradePercent = dvid.assemblyLineUpgradePercent;
-            double aiManagerUpgradePercent = dvid.aiManagerUpgradePercent;
-            double serverUpgradePercent = dvid.serverUpgradePercent;
-            double dataCenterUpgradePercent = dvid.dataCenterUpgradePercent;
-            double planetUpgradePercent = dvid.planetUpgradePercent;
+            double assemblyLineUpgradePercent = infinityData.assemblyLineUpgradePercent;
+            double aiManagerUpgradePercent = infinityData.aiManagerUpgradePercent;
+            double serverUpgradePercent = infinityData.serverUpgradePercent;
+            double dataCenterUpgradePercent = infinityData.dataCenterUpgradePercent;
+            double planetUpgradePercent = infinityData.planetUpgradePercent;
 
             try
             {
-                ModifierSystem.SecretBuffs(dvid, dvpd, secrets);
+                ModifierSystem.SecretBuffs(infinityData, prestigeData, secrets);
 
                 const double parityMaxInfinityBuff = 1e44;
 
-                if (FacilityModifierPipeline.TryCalculateAssemblyLineModifier(dvid, dvst, dvpd, pp, secrets,
+                if (FacilityModifierPipeline.TryCalculateAssemblyLineModifier(infinityData, skillTreeData, prestigeData, prestigePlus, secrets,
                         parityMaxInfinityBuff, out StatResult assemblyResult))
                 {
-                    double legacy = ModifierSystem.CalculateAssemblyLineModifierLegacy(dvid, dvst, dvpd, pp, secrets,
+                    double legacy = ModifierSystem.CalculateAssemblyLineModifierLegacy(infinityData, skillTreeData, prestigeData, prestigePlus, secrets,
                         parityMaxInfinityBuff);
                     results.Add(new ParityResult("Assembly Lines Modifier", assemblyResult.Value - legacy));
                 }
@@ -1822,10 +2160,10 @@ namespace Expansion
                     results.Add(new ParityResult("Assembly Lines Modifier", double.NaN));
                 }
 
-                if (FacilityModifierPipeline.TryCalculateManagerModifier(dvid, dvst, dvpd, pp, secrets,
+                if (FacilityModifierPipeline.TryCalculateManagerModifier(infinityData, skillTreeData, prestigeData, prestigePlus, secrets,
                         parityMaxInfinityBuff, out StatResult managerResult))
                 {
-                    double legacy = ModifierSystem.CalculateManagerModifierLegacy(dvid, dvst, dvpd, pp, secrets,
+                    double legacy = ModifierSystem.CalculateManagerModifierLegacy(infinityData, skillTreeData, prestigeData, prestigePlus, secrets,
                         parityMaxInfinityBuff);
                     results.Add(new ParityResult("AI Managers Modifier", managerResult.Value - legacy));
                 }
@@ -1834,10 +2172,10 @@ namespace Expansion
                     results.Add(new ParityResult("AI Managers Modifier", double.NaN));
                 }
 
-                if (FacilityModifierPipeline.TryCalculateServerModifier(dvid, dvst, dvpd, pp, secrets,
+                if (FacilityModifierPipeline.TryCalculateServerModifier(infinityData, skillTreeData, prestigeData, prestigePlus, secrets,
                         parityMaxInfinityBuff, out StatResult serverResult))
                 {
-                    double legacy = ModifierSystem.CalculateServerModifierLegacy(dvid, dvst, dvpd, pp, secrets,
+                    double legacy = ModifierSystem.CalculateServerModifierLegacy(infinityData, skillTreeData, prestigeData, prestigePlus, secrets,
                         parityMaxInfinityBuff);
                     results.Add(new ParityResult("Servers Modifier", serverResult.Value - legacy));
                 }
@@ -1846,10 +2184,10 @@ namespace Expansion
                     results.Add(new ParityResult("Servers Modifier", double.NaN));
                 }
 
-                if (FacilityModifierPipeline.TryCalculateDataCenterModifier(dvid, dvst, dvpd, pp,
+                if (FacilityModifierPipeline.TryCalculateDataCenterModifier(infinityData, skillTreeData, prestigeData, prestigePlus,
                         parityMaxInfinityBuff, out StatResult dataCenterResult))
                 {
-                    double legacy = ModifierSystem.CalculateDataCenterModifierLegacy(dvid, dvst, dvpd, pp,
+                    double legacy = ModifierSystem.CalculateDataCenterModifierLegacy(infinityData, skillTreeData, prestigeData, prestigePlus,
                         parityMaxInfinityBuff);
                     results.Add(new ParityResult("Data Centers Modifier", dataCenterResult.Value - legacy));
                 }
@@ -1858,10 +2196,10 @@ namespace Expansion
                     results.Add(new ParityResult("Data Centers Modifier", double.NaN));
                 }
 
-                if (FacilityModifierPipeline.TryCalculatePlanetModifier(dvid, dvst, dvpd, pp, secrets,
+                if (FacilityModifierPipeline.TryCalculatePlanetModifier(infinityData, skillTreeData, prestigeData, prestigePlus, secrets,
                         parityMaxInfinityBuff, out StatResult planetResult))
                 {
-                    double legacy = ModifierSystem.CalculatePlanetModifierLegacy(dvid, dvst, dvpd, pp, secrets,
+                    double legacy = ModifierSystem.CalculatePlanetModifierLegacy(infinityData, skillTreeData, prestigeData, prestigePlus, secrets,
                         parityMaxInfinityBuff);
                     results.Add(new ParityResult("Planets Modifier", planetResult.Value - legacy));
                 }
@@ -1872,11 +2210,11 @@ namespace Expansion
             }
             finally
             {
-                dvid.assemblyLineUpgradePercent = assemblyLineUpgradePercent;
-                dvid.aiManagerUpgradePercent = aiManagerUpgradePercent;
-                dvid.serverUpgradePercent = serverUpgradePercent;
-                dvid.dataCenterUpgradePercent = dataCenterUpgradePercent;
-                dvid.planetUpgradePercent = planetUpgradePercent;
+                infinityData.assemblyLineUpgradePercent = assemblyLineUpgradePercent;
+                infinityData.aiManagerUpgradePercent = aiManagerUpgradePercent;
+                infinityData.serverUpgradePercent = serverUpgradePercent;
+                infinityData.dataCenterUpgradePercent = dataCenterUpgradePercent;
+                infinityData.planetUpgradePercent = planetUpgradePercent;
             }
         }
 
@@ -1956,69 +2294,10 @@ namespace Expansion
         private FacilityRuntime TryBuildDataDrivenRuntime(FacilityDefinition definition)
         {
             if (definition == null) return null;
-            GameDataRegistry registry = GameDataRegistry.Instance;
-            if (registry == null || registry.skillDatabase == null || registry.skillDatabase.skills == null ||
-                registry.skillDatabase.skills.Count == 0)
-            {
-                return null;
-            }
-
-            FacilityState state = BuildFacilityState(definition.id);
-            if (state == null) return null;
-
-            var context = new EffectContext(dvid, dvpd, dvst, pp);
-            return FacilityEffectPipeline.BuildRuntimeFromDefinitions(definition, state, context);
-        }
-
-        private FacilityState BuildFacilityState(string facilityId)
-        {
-            if (string.IsNullOrEmpty(facilityId)) return null;
-
-            switch (facilityId)
-            {
-                case "assembly_lines":
-                    return new FacilityState
-                    {
-                        FacilityId = facilityId,
-                        ManualOwned = dvid.assemblyLines[1],
-                        AutoOwned = dvid.assemblyLines[0],
-                        EffectiveCount = dvid.assemblyLines[0] + dvid.assemblyLines[1]
-                    };
-                case "ai_managers":
-                    return new FacilityState
-                    {
-                        FacilityId = facilityId,
-                        ManualOwned = dvid.managers[1],
-                        AutoOwned = dvid.managers[0],
-                        EffectiveCount = dvid.managers[0] + dvid.managers[1]
-                    };
-                case "servers":
-                    return new FacilityState
-                    {
-                        FacilityId = facilityId,
-                        ManualOwned = dvid.servers[1],
-                        AutoOwned = dvid.servers[0],
-                        EffectiveCount = dvid.servers[0] + dvid.servers[1]
-                    };
-                case "data_centers":
-                    return new FacilityState
-                    {
-                        FacilityId = facilityId,
-                        ManualOwned = dvid.dataCenters[1],
-                        AutoOwned = dvid.dataCenters[0],
-                        EffectiveCount = dvid.dataCenters[0] + dvid.dataCenters[1]
-                    };
-                case "planets":
-                    return new FacilityState
-                    {
-                        FacilityId = facilityId,
-                        ManualOwned = dvid.planets[1],
-                        AutoOwned = dvid.planets[0],
-                        EffectiveCount = dvid.planets[0] + dvid.planets[1]
-                    };
-                default:
-                    return null;
-            }
+            return FacilityRuntimeBuilder.TryBuildRuntime(definition.id, infinityData, prestigeData, skillTreeData, prestigePlus,
+                out FacilityRuntime runtime)
+                ? runtime
+                : null;
         }
 
 
@@ -2124,34 +2403,34 @@ namespace Expansion
         public bool IsSkillOwned(string skillId)
         {
             if (string.IsNullOrEmpty(skillId)) return false;
-            if (dvid != null && dvid.skillOwnedById != null &&
-                dvid.skillOwnedById.TryGetValue(skillId, out bool owned))
+            if (infinityData != null && infinityData.skillOwnedById != null &&
+                infinityData.skillOwnedById.TryGetValue(skillId, out bool owned))
             {
                 return owned;
             }
 
-            return SkillFlagAccessor.TryGetFlag(dvst, skillId, out bool legacyOwned) && legacyOwned;
+            return SkillFlagAccessor.TryGetFlag(skillTreeData, skillId, out bool legacyOwned) && legacyOwned;
         }
 
         public void SetSkillOwned(string skillId, bool owned)
         {
             if (string.IsNullOrEmpty(skillId)) return;
-            if (dvid == null) return;
+            if (infinityData == null) return;
 
-            dvid.skillOwnedById ??= new Dictionary<string, bool>();
-            dvid.skillOwnedById[skillId] = owned;
+            infinityData.skillOwnedById ??= new Dictionary<string, bool>();
+            infinityData.skillOwnedById[skillId] = owned;
 
             if (SkillIdMap.TryGetLegacyKey(skillId, out int key))
             {
-                dvid.SkillTreeSaveData ??= new Dictionary<int, bool>();
-                dvid.SkillTreeSaveData[key] = owned;
+                infinityData.SkillTreeSaveData ??= new Dictionary<int, bool>();
+                infinityData.SkillTreeSaveData[key] = owned;
                 if (SkillTree != null && SkillTree.TryGetValue(key, out SkillTreeItem item))
                 {
                     item.Owned = owned;
                 }
             }
 
-            SkillFlagAccessor.TrySetFlag(dvst, skillId, owned);
+            SkillFlagAccessor.TrySetFlag(skillTreeData, skillId, owned);
         }
 
         public static double GetResearchLevel(string researchId)
@@ -2174,17 +2453,17 @@ namespace Expansion
 
         private double GetResearchLevelInternal(string researchId)
         {
-            if (dvid == null || string.IsNullOrEmpty(researchId)) return 0;
+            if (infinityData == null || string.IsNullOrEmpty(researchId)) return 0;
 
-            dvid.researchLevelsById ??= new Dictionary<string, double>();
-            if (dvid.researchLevelsById.TryGetValue(researchId, out double level))
+            infinityData.researchLevelsById ??= new Dictionary<string, double>();
+            if (infinityData.researchLevelsById.TryGetValue(researchId, out double level))
             {
                 return level;
             }
 
-            if (ResearchIdMap.TryGetLegacyLevel(dvid, researchId, out double legacyLevel))
+            if (ResearchIdMap.TryGetLegacyLevel(infinityData, researchId, out double legacyLevel))
             {
-                dvid.researchLevelsById[researchId] = legacyLevel;
+                infinityData.researchLevelsById[researchId] = legacyLevel;
                 return legacyLevel;
             }
 
@@ -2193,17 +2472,17 @@ namespace Expansion
 
         private void SetResearchLevelInternal(string researchId, double level)
         {
-            if (dvid == null || string.IsNullOrEmpty(researchId)) return;
+            if (infinityData == null || string.IsNullOrEmpty(researchId)) return;
 
-            dvid.researchLevelsById ??= new Dictionary<string, double>();
-            if (ResearchIdMap.TrySetLegacyLevel(dvid, researchId, level) &&
-                ResearchIdMap.TryGetLegacyLevel(dvid, researchId, out double normalized))
+            infinityData.researchLevelsById ??= new Dictionary<string, double>();
+            if (ResearchIdMap.TrySetLegacyLevel(infinityData, researchId, level) &&
+                ResearchIdMap.TryGetLegacyLevel(infinityData, researchId, out double normalized))
             {
-                dvid.researchLevelsById[researchId] = normalized;
+                infinityData.researchLevelsById[researchId] = normalized;
                 return;
             }
 
-            dvid.researchLevelsById[researchId] = level;
+            infinityData.researchLevelsById[researchId] = level;
         }
 
         public List<string> GetAutoAssignmentSkillIds()
@@ -2229,10 +2508,10 @@ namespace Expansion
 
         private void ResetSkillOwnership()
         {
-            if (dvid != null)
+            if (infinityData != null)
             {
-                dvid.skillOwnedById?.Clear();
-                dvid.SkillTreeSaveData?.Clear();
+                infinityData.skillOwnedById?.Clear();
+                infinityData.SkillTreeSaveData?.Clear();
             }
 
             if (SkillTree != null)
@@ -2249,7 +2528,7 @@ namespace Expansion
                 foreach (SkillDefinition skill in registry.skillDatabase.skills)
                 {
                     if (skill == null || string.IsNullOrEmpty(skill.id)) continue;
-                    SkillFlagAccessor.TrySetFlag(dvst, skill.id, false);
+                    SkillFlagAccessor.TrySetFlag(skillTreeData, skill.id, false);
                 }
 
                 return;
@@ -2259,7 +2538,7 @@ namespace Expansion
             foreach (KeyValuePair<int, SkillTreeItem> entry in SkillTree)
             {
                 if (!SkillIdMap.TryGetId(entry.Key, out string id)) continue;
-                SkillFlagAccessor.TrySetFlag(dvst, id, false);
+                SkillFlagAccessor.TrySetFlag(skillTreeData, id, false);
             }
         }
 
@@ -2269,8 +2548,8 @@ namespace Expansion
         public void DysonInfinity()
         {
             saveSettings.firstInfinityDone = true;
-            dvpd.androidsSkillTimer = 0;
-            dvpd.pocketAndroidsTimer = 0;
+            prestigeData.androidsSkillTimer = 0;
+            prestigeData.pocketAndroidsTimer = 0;
             int bankedSkills = 0;
             if (IsSkillOwned("banking")) bankedSkills++;
             if (IsSkillOwned("investmentPortfolio")) bankedSkills++;
@@ -2282,15 +2561,15 @@ namespace Expansion
             ipToGain *= saveSettings.doubleIp ? 2 : 1;
 
             oracle.saveSettings.lastInfinityPointsGained = ipToGain;
-            dvpd.infinityPoints += ipToGain;
-            dvid.bots = dvpd.infinityAssemblyLines ? 10 : 1;
-            dvid.assemblyLines[1] = dvpd.infinityAssemblyLines ? 10 : 0;
-            dvid.managers[1] = dvpd.infinityAiManagers ? 10 : 0;
-            dvid.servers[1] = dvpd.infinityServers ? 10 : 0;
-            dvid.dataCenters[1] = dvpd.infinityDataCenter ? 10 : 0;
-            dvid.planets[1] = dvpd.infinityPlanets ? 10 : 0;
+            prestigeData.infinityPoints += ipToGain;
+            infinityData.bots = prestigeData.infinityAssemblyLines ? 10 : 1;
+            infinityData.assemblyLines[1] = prestigeData.infinityAssemblyLines ? 10 : 0;
+            infinityData.managers[1] = prestigeData.infinityAiManagers ? 10 : 0;
+            infinityData.servers[1] = prestigeData.infinityServers ? 10 : 0;
+            infinityData.dataCenters[1] = prestigeData.infinityDataCenter ? 10 : 0;
+            infinityData.planets[1] = prestigeData.infinityPlanets ? 10 : 0;
 
-            dvst.skillPointsTree = dvpd.permanentSkillPoint + bankedSkills + ArtifactSkillPoints();
+            skillTreeData.skillPointsTree = prestigeData.permanentSkillPoint + bankedSkills + ArtifactSkillPoints();
 
             if (saveSettings.firstReality)
             {
@@ -2298,45 +2577,45 @@ namespace Expansion
                 saveSettings.firstReality = false;
             }
 
-            if (dvpd.infinityPoints == 42)
+            if (prestigeData.infinityPoints == 42)
                 SidePanelManager.PrestigeToggle.GetComponentInChildren<MenuToggleController>().Toggle(false);
-            dvst.fragments = 0;
+            skillTreeData.fragments = 0;
             _gameManager.AutoAssignSkillsInvoke();
             WipeSaveButtonUpdate();
-            dvst.superRadiantScatteringTimer = 0;
+            skillTreeData.superRadiantScatteringTimer = 0;
             Rotator.ResetPanelsStatic();
         }
 
         public void ManualDysonInfinity()
         {
             saveSettings.firstInfinityDone = true;
-            dvpd.androidsSkillTimer = 0;
-            dvpd.pocketAndroidsTimer = 0;
+            prestigeData.androidsSkillTimer = 0;
+            prestigeData.pocketAndroidsTimer = 0;
             int bankedSkills = 0;
             if (IsSkillOwned("banking")) bankedSkills++;
             if (IsSkillOwned("investmentPortfolio")) bankedSkills++;
             ResetSkillOwnership();
 
-            double amount = pp.divisionsPurchased > 0 ? 4.2e19 / Math.Pow(10, pp.divisionsPurchased) : 4.2e19;
-            int ipToGain = StaticMethods.InfinityPointsToGain(amount, dvid.bots);
+            double amount = prestigePlus.divisionsPurchased > 0 ? 4.2e19 / Math.Pow(10, prestigePlus.divisionsPurchased) : 4.2e19;
+            int ipToGain = StaticMethods.InfinityPointsToGain(amount, infinityData.bots);
             ipToGain *= saveSettings.doubleIp ? 2 : 1;
             oracle.saveSettings.lastInfinityPointsGained = saveSettings.prestigePlus.doubleIP ? ipToGain * 2 : ipToGain;
-            dvpd.infinityPoints += saveSettings.prestigePlus.doubleIP ? ipToGain * 2 : ipToGain;
+            prestigeData.infinityPoints += saveSettings.prestigePlus.doubleIP ? ipToGain * 2 : ipToGain;
 
             saveSettings.dysonVerseSaveData.dysonVerseInfinityData = new DysonVerseInfinityData();
-            dvid.bots = dvpd.infinityAssemblyLines ? 10 : 1;
-            dvid.assemblyLines[1] = dvpd.infinityAssemblyLines ? 10 : 0;
-            dvid.managers[1] = dvpd.infinityAiManagers ? 10 : 0;
-            dvid.servers[1] = dvpd.infinityServers ? 10 : 0;
-            dvid.dataCenters[1] = dvpd.infinityDataCenter ? 10 : 0;
-            dvid.planets[1] = dvpd.infinityPlanets ? 10 : 0;
+            infinityData.bots = prestigeData.infinityAssemblyLines ? 10 : 1;
+            infinityData.assemblyLines[1] = prestigeData.infinityAssemblyLines ? 10 : 0;
+            infinityData.managers[1] = prestigeData.infinityAiManagers ? 10 : 0;
+            infinityData.servers[1] = prestigeData.infinityServers ? 10 : 0;
+            infinityData.dataCenters[1] = prestigeData.infinityDataCenter ? 10 : 0;
+            infinityData.planets[1] = prestigeData.infinityPlanets ? 10 : 0;
 
-            dvst.skillPointsTree = dvpd.permanentSkillPoint + bankedSkills + ArtifactSkillPoints();
+            skillTreeData.skillPointsTree = prestigeData.permanentSkillPoint + bankedSkills + ArtifactSkillPoints();
 
-            dvst.fragments = 0;
+            skillTreeData.fragments = 0;
             _gameManager.AutoAssignSkillsInvoke();
             WipeSaveButtonUpdate();
-            dvst.superRadiantScatteringTimer = 0;
+            skillTreeData.superRadiantScatteringTimer = 0;
             saveSettings.infinityInProgress = false;
             Rotator.ResetPanelsStatic();
         }
@@ -2344,20 +2623,20 @@ namespace Expansion
         public void EnactPrestigePlus()
         {
             saveSettings.firstInfinityDone = true;
-            switch (pp.quantumEntanglement)
+            switch (prestigePlus.quantumEntanglement)
             {
                 case true:
                 {
                     saveSettings.prestigePlus.points +=
-                        (long)Math.Floor((dvpd.infinityPoints - dvpd.spentInfinityPoints) / 42f);
-                    dvpd.infinityPoints -= (long)Math.Floor((dvpd.infinityPoints - dvpd.spentInfinityPoints) / 42f) * 42;
+                        (long)Math.Floor((prestigeData.infinityPoints - prestigeData.spentInfinityPoints) / 42f);
+                    prestigeData.infinityPoints -= (long)Math.Floor((prestigeData.infinityPoints - prestigeData.spentInfinityPoints) / 42f) * 42;
                 }
                     break;
                 case false:
                 {
                     ResetSkillOwnership();
                     StartCoroutine(PrestigeDoubleWiper());
-                    dvst.superRadiantScatteringTimer = 0;
+                    skillTreeData.superRadiantScatteringTimer = 0;
                 }
                     break;
             }
@@ -2373,16 +2652,16 @@ namespace Expansion
             saveSettings.dysonVerseSaveData.dysonVersePrestigeData = new DysonVersePrestigeData();
             saveSettings.dysonVerseSaveData.dysonVerseInfinityData = new DysonVerseInfinityData();
             saveSettings.prestigePlus.points++;
-            dvpd.secretsOfTheUniverse =
+            prestigeData.secretsOfTheUniverse =
                 saveSettings.prestigePlus.secrets > 1 ? saveSettings.prestigePlus.secrets : 0;
-            dvpd.infinityAutoBots = saveSettings.prestigePlus.automation;
-            dvpd.infinityAutoResearch = saveSettings.prestigePlus.automation;
+            prestigeData.infinityAutoBots = saveSettings.prestigePlus.automation;
+            prestigeData.infinityAutoResearch = saveSettings.prestigePlus.automation;
             saveSettings.lastInfinityPointsGained = 0;
             saveSettings.timeLastInfinity = 0;
-            dvpd.androidsSkillTimer = 0;
-            dvpd.pocketAndroidsTimer = 0;
-            dvst.fragments = 0;
-            dvst.skillPointsTree = 0 + ArtifactSkillPoints();
+            prestigeData.androidsSkillTimer = 0;
+            prestigeData.pocketAndroidsTimer = 0;
+            skillTreeData.fragments = 0;
+            skillTreeData.skillPointsTree = 0 + ArtifactSkillPoints();
             _skillTreeConfirmationManager.CloseConfirm();
             _gameManager.AutoAssignSkillsInvoke();
             Rotator.ResetPanelsStatic();
@@ -2552,27 +2831,27 @@ namespace Expansion
                 case 1:
                     data.skillAutoAssignmentIds1 = ids;
                     data.skillAutoAssignmentList1 = legacyList;
-                    data.botDistPreset1 = dvpd.botDistribution;
+                    data.botDistPreset1 = prestigeData.botDistribution;
                     break;
                 case 2:
                     data.skillAutoAssignmentIds2 = ids;
                     data.skillAutoAssignmentList2 = legacyList;
-                    data.botDistPreset2 = dvpd.botDistribution;
+                    data.botDistPreset2 = prestigeData.botDistribution;
                     break;
                 case 3:
                     data.skillAutoAssignmentIds3 = ids;
                     data.skillAutoAssignmentList3 = legacyList;
-                    data.botDistPreset3 = dvpd.botDistribution;
+                    data.botDistPreset3 = prestigeData.botDistribution;
                     break;
                 case 4:
                     data.skillAutoAssignmentIds4 = ids;
                     data.skillAutoAssignmentList4 = legacyList;
-                    data.botDistPreset4 = dvpd.botDistribution;
+                    data.botDistPreset4 = prestigeData.botDistribution;
                     break;
                 case 5:
                     data.skillAutoAssignmentIds5 = ids;
                     data.skillAutoAssignmentList5 = legacyList;
-                    data.botDistPreset5 = dvpd.botDistribution;
+                    data.botDistPreset5 = prestigeData.botDistribution;
                     break;
             }
         }
@@ -2590,7 +2869,7 @@ namespace Expansion
                         ids.AddRange(data.skillAutoAssignmentIds1);
                     else
                         ids.AddRange(SkillIdMap.ConvertKeysToIds(data.skillAutoAssignmentList1));
-                    dvpd.botDistribution = data.botDistPreset1;
+                    prestigeData.botDistribution = data.botDistPreset1;
                     slider.SetSlider();
                     break;
                 case 2:
@@ -2598,7 +2877,7 @@ namespace Expansion
                         ids.AddRange(data.skillAutoAssignmentIds2);
                     else
                         ids.AddRange(SkillIdMap.ConvertKeysToIds(data.skillAutoAssignmentList2));
-                    dvpd.botDistribution = data.botDistPreset2;
+                    prestigeData.botDistribution = data.botDistPreset2;
                     slider.SetSlider();
                     break;
                 case 3:
@@ -2606,7 +2885,7 @@ namespace Expansion
                         ids.AddRange(data.skillAutoAssignmentIds3);
                     else
                         ids.AddRange(SkillIdMap.ConvertKeysToIds(data.skillAutoAssignmentList3));
-                    dvpd.botDistribution = data.botDistPreset3;
+                    prestigeData.botDistribution = data.botDistPreset3;
                     slider.SetSlider();
                     break;
                 case 4:
@@ -2614,7 +2893,7 @@ namespace Expansion
                         ids.AddRange(data.skillAutoAssignmentIds4);
                     else
                         ids.AddRange(SkillIdMap.ConvertKeysToIds(data.skillAutoAssignmentList4));
-                    dvpd.botDistribution = data.botDistPreset4;
+                    prestigeData.botDistribution = data.botDistPreset4;
                     slider.SetSlider();
                     break;
                 case 5:
@@ -2622,7 +2901,7 @@ namespace Expansion
                         ids.AddRange(data.skillAutoAssignmentIds5);
                     else
                         ids.AddRange(SkillIdMap.ConvertKeysToIds(data.skillAutoAssignmentList5));
-                    dvpd.botDistribution = data.botDistPreset5;
+                    prestigeData.botDistribution = data.botDistPreset5;
                     slider.SetSlider();
                     break;
             }
@@ -3167,3 +3446,4 @@ namespace Expansion
 
     }
 }
+

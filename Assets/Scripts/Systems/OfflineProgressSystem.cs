@@ -10,9 +10,9 @@ namespace Systems
 {
     public sealed class OfflineProgressContext
     {
-        public DysonVerseInfinityData dvid;
-        public DysonVersePrestigeData dvpd;
-        public DysonVerseSkillTreeData dvst;
+        public DysonVerseInfinityData infinityData;
+        public DysonVersePrestigeData prestigeData;
+        public DysonVerseSkillTreeData skillTreeData;
         public SaveDataSettings saveSettings;
         public Action SetBotDistribution;
         public Action<double> CalculateShouldersSkills;
@@ -81,13 +81,13 @@ namespace Systems
             ui.AwayForHeader.gameObject.SetActive(false);
             ui.AwayFor.text = $"Advanced {color}{CalcUtils.FormatTimeLarge(awayTime)}";
 
-            long startingIP = context.dvpd.infinityPoints;
-            context.dvpd.infinityPoints += context.saveSettings.lastInfinityPointsGained >= 1
+            long startingIP = context.prestigeData.infinityPoints;
+            context.prestigeData.infinityPoints += context.saveSettings.lastInfinityPointsGained >= 1
                 ? (long)Math.Floor(awayTime * context.saveSettings.lastInfinityPointsGained /
                                    context.saveSettings.timeLastInfinity / 10)
                 : 0;
 
-            if (context.dvst.idleElectricSheep) awayTime *= 2;
+            if (context.skillTreeData.idleElectricSheep) awayTime *= 2;
             double remainder = awayTime % 60;
             double minutes = (awayTime - remainder) / 60;
 
@@ -109,56 +109,56 @@ namespace Systems
                 ui.ReturnScreenSliderParentGameObject.SetActive(true);
                 for (int i = 0; i < minutes; i++)
                 {
-                    if (context.dvst.androids) context.dvpd.androidsSkillTimer += 60;
-                    if (context.dvst.pocketAndroids) context.dvpd.pocketAndroidsTimer += 60;
+                    if (context.skillTreeData.androids) context.prestigeData.androidsSkillTimer += 60;
+                    if (context.skillTreeData.pocketAndroids) context.prestigeData.pocketAndroidsTimer += 60;
 
 
-                    double p = context.dvid.totalPlanetProduction * 60;
+                    double p = context.infinityData.totalPlanetProduction * 60;
                     planets += p;
 
-                    context.dvid.planets[0] += p;
+                    context.infinityData.planets[0] += p;
                     context.CalculateShouldersSkills(60);
                     context.CalculateProduction();
 
-                    double da = context.dvid.dataCenterProduction * 60;
+                    double da = context.infinityData.dataCenterProduction * 60;
                     dataCenters += da;
-                    context.dvid.dataCenters[0] += da;
+                    context.infinityData.dataCenters[0] += da;
                     context.CalculateProduction();
 
-                    double s = context.dvid.serverProduction * 60;
+                    double s = context.infinityData.serverProduction * 60;
                     servers += s;
-                    context.dvid.servers[0] += s;
+                    context.infinityData.servers[0] += s;
                     context.CalculateProduction();
 
-                    double m = context.dvid.managerProduction * 60;
+                    double m = context.infinityData.managerProduction * 60;
                     managers += m;
-                    context.dvid.managers[0] += m;
+                    context.infinityData.managers[0] += m;
                     context.CalculateProduction();
 
-                    double l = context.dvid.assemblyLineProduction * 60;
+                    double l = context.infinityData.assemblyLineProduction * 60;
                     lines += l;
-                    context.dvid.assemblyLines[0] += l;
+                    context.infinityData.assemblyLines[0] += l;
                     context.CalculateProduction();
 
-                    double b = context.dvid.botProduction * 60;
+                    double b = context.infinityData.botProduction * 60;
                     bots += b;
 
-                    context.dvid.bots += b;
+                    context.infinityData.bots += b;
                     context.CalculateProduction();
 
                     context.SetBotDistribution();
 
                     double mo = context.MoneyToAdd() * 60;
                     money += mo;
-                    context.dvid.money += mo;
+                    context.infinityData.money += mo;
 
                     double sc = context.ScienceToAdd() * 60;
                     science += sc;
-                    context.dvid.science += sc;
+                    context.infinityData.science += sc;
 
-                    double d = context.dvid.panelsPerSec * 60;
+                    double d = context.infinityData.panelsPerSec * 60;
                     decayed += d;
-                    context.dvid.totalPanelsDecayed += d;
+                    context.infinityData.totalPanelsDecayed += d;
                     context.CalculateProduction();
 
 
@@ -169,79 +169,79 @@ namespace Systems
                 }
             }
 
-            if (context.dvst.androids) context.dvpd.androidsSkillTimer += remainder;
-            if (context.dvst.pocketAndroids) context.dvpd.pocketAndroidsTimer += remainder;
+            if (context.skillTreeData.androids) context.prestigeData.androidsSkillTimer += remainder;
+            if (context.skillTreeData.pocketAndroids) context.prestigeData.pocketAndroidsTimer += remainder;
 
 
-            double p1 = context.dvid.totalPlanetProduction * remainder;
+            double p1 = context.infinityData.totalPlanetProduction * remainder;
             planets += p1;
-            context.dvid.planets[0] += p1;
+            context.infinityData.planets[0] += p1;
             context.CalculateShouldersSkills(remainder);
             context.CalculateProduction();
 
-            double da1 = context.dvid.dataCenterProduction * remainder;
+            double da1 = context.infinityData.dataCenterProduction * remainder;
             dataCenters += da1;
-            context.dvid.dataCenters[0] += da1;
+            context.infinityData.dataCenters[0] += da1;
             context.CalculateProduction();
 
-            double s1 = context.dvid.serverProduction * remainder;
+            double s1 = context.infinityData.serverProduction * remainder;
             servers += s1;
-            context.dvid.servers[0] += s1;
+            context.infinityData.servers[0] += s1;
             context.CalculateProduction();
 
-            double m1 = context.dvid.managerProduction * remainder;
+            double m1 = context.infinityData.managerProduction * remainder;
             managers += m1;
-            context.dvid.managers[0] += m1;
+            context.infinityData.managers[0] += m1;
             context.CalculateProduction();
 
-            double l1 = context.dvid.assemblyLineProduction * remainder;
+            double l1 = context.infinityData.assemblyLineProduction * remainder;
             lines += l1;
-            context.dvid.assemblyLines[0] += l1;
+            context.infinityData.assemblyLines[0] += l1;
             context.CalculateProduction();
 
-            double b1 = context.dvid.botProduction * remainder;
+            double b1 = context.infinityData.botProduction * remainder;
             bots += b1;
-            context.dvid.bots += b1;
+            context.infinityData.bots += b1;
             context.CalculateProduction();
 
             context.SetBotDistribution();
 
             double mo1 = context.MoneyToAdd() * remainder;
             money += mo1;
-            context.dvid.money += mo1;
+            context.infinityData.money += mo1;
 
             double sc1 = context.ScienceToAdd() * remainder;
             science += sc1;
-            context.dvid.science += sc1;
+            context.infinityData.science += sc1;
 
-            double d1 = context.dvid.panelsPerSec * remainder;
+            double d1 = context.infinityData.panelsPerSec * remainder;
             decayed += d1;
-            context.dvid.totalPanelsDecayed += d1;
+            context.infinityData.totalPanelsDecayed += d1;
             yield return 0;
 
             string textBuilder = "";
 
-            if (context.dvid.planets[0] + context.dvid.planets[1] > 0)
+            if (context.infinityData.planets[0] + context.infinityData.planets[1] > 0)
                 textBuilder +=
                     $"\nYou gained {color}{CalcUtils.FormatNumber(planets)}</color> Planets ";
 
-            if (context.dvid.planets[0] + context.dvid.planets[1] > 0)
+            if (context.infinityData.planets[0] + context.infinityData.planets[1] > 0)
                 textBuilder +=
                     $"\nYou gained {color}{CalcUtils.FormatNumber(dataCenters)}</color> Data Centers";
 
-            if (context.dvid.dataCenters[0] + context.dvid.dataCenters[1] > 0)
+            if (context.infinityData.dataCenters[0] + context.infinityData.dataCenters[1] > 0)
                 textBuilder +=
                     $"\nYou gained {color}{CalcUtils.FormatNumber(servers)}</color> Servers";
 
-            if (context.dvid.servers[0] + context.dvid.servers[1] > 0)
+            if (context.infinityData.servers[0] + context.infinityData.servers[1] > 0)
                 textBuilder +=
                     $"\nYou gained {color}{CalcUtils.FormatNumber(managers)}</color> Managers";
 
-            if (context.dvid.managers[0] + context.dvid.managers[1] > 0)
+            if (context.infinityData.managers[0] + context.infinityData.managers[1] > 0)
                 textBuilder +=
                     $"\nYou gained {color}{CalcUtils.FormatNumber(lines)}</color> Assembly Lines";
 
-            if (context.dvid.assemblyLines[0] + context.dvid.assemblyLines[1] > 0)
+            if (context.infinityData.assemblyLines[0] + context.infinityData.assemblyLines[1] > 0)
                 textBuilder +=
                     $"\nYour assembly lines produced {color}{CalcUtils.FormatNumber(bots)}</color> Bots";
 
@@ -254,9 +254,9 @@ namespace Systems
             textBuilder +=
                 $"\n{colorS}{CalcUtils.FormatNumber(decayed)}</color> Panels Decayed";
 
-            if (context.dvpd.infinityPoints > startingIP)
+            if (context.prestigeData.infinityPoints > startingIP)
                 textBuilder +=
-                    $"<br>You gained: {colorS}{CalcUtils.FormatNumber(context.dvpd.infinityPoints - startingIP)}</color> Infinity Points";
+                    $"<br>You gained: {colorS}{CalcUtils.FormatNumber(context.prestigeData.infinityPoints - startingIP)}</color> Infinity Points";
 
             textBuilder +=
                 $"<br><br>{colorS}{CalcUtils.FormatTimeLarge(context.saveSettings.offlineTime)}</color> remaining";
@@ -270,3 +270,4 @@ namespace Systems
         }
     }
 }
+

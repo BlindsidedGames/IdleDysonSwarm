@@ -20,32 +20,32 @@ public class BotPanelManager : MonoBehaviour
     [SerializeField] private MPImage dataCenters;
     [SerializeField] private MPImage planets;
 
-    private DysonVerseInfinityData dvid => oracle.saveSettings.dysonVerseSaveData.dysonVerseInfinityData;
+    private DysonVerseInfinityData infinityData => oracle.saveSettings.dysonVerseSaveData.dysonVerseInfinityData;
+    private DysonVerseSkillTreeData skillTreeData => oracle.saveSettings.dysonVerseSaveData.dysonVerseSkillTreeData;
 
     private void Update()
     {
-        internPanel.SetActive(dvid.bots >= 10 || dvid.assemblyLines[0] + dvid.assemblyLines[1] > 0);
-        bool clickPanelActivator = !(dvid.assemblyLines[0] + dvid.assemblyLines[1] >= 10) || !(dvid.managers[1] >= 1);
-        managerPanel.SetActive(dvid.assemblyLines[1] >= 5 || dvid.managers[0] + dvid.managers[1] > 0);
-        serverPanel.SetActive(dvid.managers[1] >= 1 || dvid.servers[0] + dvid.servers[1] > 0);
-        bool serversGreaterThanOne = dvid.servers[0] + dvid.servers[1] >= 1;
-        dataCenterPanel.SetActive(serversGreaterThanOne || dvid.dataCenters[0] + dvid.dataCenters[1] > 0);
-        bool dataCentersGreaterThanOne = dvid.dataCenters[0] + dvid.dataCenters[1] >= 1;
-        planetPanel.SetActive(dataCentersGreaterThanOne || dvid.planets[0] + dvid.planets[1] > 0);
-        questionmarkPanel.SetActive(!dataCentersGreaterThanOne && dvid.planets[0] + dvid.planets[1] == 0);
-        clickPanel.SetActive(clickPanelActivator && !dataCentersGreaterThanOne ||
-                             oracle.saveSettings.dysonVerseSaveData.dysonVerseSkillTreeData.manualLabour);
+        internPanel.SetActive(infinityData.bots >= 10 || infinityData.assemblyLines[0] + infinityData.assemblyLines[1] > 0);
+        bool isClickPanelActive = !(infinityData.assemblyLines[0] + infinityData.assemblyLines[1] >= 10) || !(infinityData.managers[1] >= 1);
+        managerPanel.SetActive(infinityData.assemblyLines[1] >= 5 || infinityData.managers[0] + infinityData.managers[1] > 0);
+        serverPanel.SetActive(infinityData.managers[1] >= 1 || infinityData.servers[0] + infinityData.servers[1] > 0);
+        bool hasServers = infinityData.servers[0] + infinityData.servers[1] >= 1;
+        dataCenterPanel.SetActive(hasServers || infinityData.dataCenters[0] + infinityData.dataCenters[1] > 0);
+        bool hasDataCenters = infinityData.dataCenters[0] + infinityData.dataCenters[1] >= 1;
+        planetPanel.SetActive(hasDataCenters || infinityData.planets[0] + infinityData.planets[1] > 0);
+        questionmarkPanel.SetActive(!hasDataCenters && infinityData.planets[0] + infinityData.planets[1] == 0);
+        clickPanel.SetActive(isClickPanelActive && !hasDataCenters || skillTreeData.manualLabour);
 
-        assemblyLines.fillAmount = dvid.assemblyLineProduction >= 5 ? 1 : (float)(dvid.assemblyLines[0] % 1);
-        managers.fillAmount = dvid.managerProduction >= 5 ? 1 : (float)(dvid.managers[0] % 1);
+        assemblyLines.fillAmount = infinityData.assemblyLineProduction >= 5 ? 1 : (float)(infinityData.assemblyLines[0] % 1);
+        managers.fillAmount = infinityData.managerProduction >= 5 ? 1 : (float)(infinityData.managers[0] % 1);
         servers.fillAmount =
-            dvid.serverProduction + dvid.rudimentrySingularityProduction >= 5 ? 1 : (float)(dvid.servers[0] % 1);
-        dataCenters.fillAmount = dvid.dataCenterProduction + dvid.pocketDimensionsProduction >= 5
+            infinityData.serverProduction + infinityData.rudimentrySingularityProduction >= 5 ? 1 : (float)(infinityData.servers[0] % 1);
+        dataCenters.fillAmount = infinityData.dataCenterProduction + infinityData.pocketDimensionsProduction >= 5
             ? 1
-            : (float)(dvid.dataCenters[0] % 1);
-        planets.fillAmount = dvid.scientificPlanetsProduction + dvid.stellarSacrificesProduction +
-            dvid.planetAssemblyProduction + dvid.shellWorldsProduction >= 5
+            : (float)(infinityData.dataCenters[0] % 1);
+        planets.fillAmount = infinityData.scientificPlanetsProduction + infinityData.stellarSacrificesProduction +
+            infinityData.planetAssemblyProduction + infinityData.shellWorldsProduction >= 5
                 ? 1
-                : (float)(dvid.planets[0] % 1);
+                : (float)(infinityData.planets[0] % 1);
     }
 }

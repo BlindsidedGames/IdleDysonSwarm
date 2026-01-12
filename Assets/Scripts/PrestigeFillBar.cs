@@ -27,10 +27,9 @@ public class PrestigeFillBar : MonoBehaviour
 
     private double percent;
 
-    private DysonVerseInfinityData dvid => oracle.saveSettings.dysonVerseSaveData.dysonVerseInfinityData;
-    private DysonVersePrestigeData dvpd => oracle.saveSettings.dysonVerseSaveData.dysonVersePrestigeData;
-    private SaveDataPrestige sdp => oracle.saveSettings.sdPrestige;
-    private PrestigePlus pp => oracle.saveSettings.prestigePlus;
+    private DysonVerseInfinityData infinityData => oracle.saveSettings.dysonVerseSaveData.dysonVerseInfinityData;
+    private DysonVersePrestigeData prestigeData => oracle.saveSettings.dysonVerseSaveData.dysonVersePrestigeData;
+    private PrestigePlus prestigePlus => oracle.saveSettings.prestigePlus;
 
 
     private void Start()
@@ -53,9 +52,9 @@ public class PrestigeFillBar : MonoBehaviour
 
     private void Update()
     {
-        bool autoPrestige = !pp.breakTheLoop;
-        double amount = pp.divisionsPurchased > 0 ? 4.2e19 / Math.Pow(10, pp.divisionsPurchased) : 4.2e19;
-        int ipToGain = StaticMethods.InfinityPointsToGain(amount, dvid.bots);
+        bool autoPrestige = !prestigePlus.breakTheLoop;
+        double amount = prestigePlus.divisionsPurchased > 0 ? 4.2e19 / Math.Pow(10, prestigePlus.divisionsPurchased) : 4.2e19;
+        int ipToGain = StaticMethods.InfinityPointsToGain(amount, infinityData.bots);
 
         manualInfinityButtonHolder.SetActive(!autoPrestige);
 
@@ -63,28 +62,29 @@ public class PrestigeFillBar : MonoBehaviour
 
         if (autoPrestige)
         {
-            percent = math.log10(dvid.bots) / math.log10(amount);
-            if (dvid.bots < 1) percent = 0;
+            percent = math.log10(infinityData.bots) / math.log10(amount);
+            if (infinityData.bots < 1) percent = 0;
             fill.fillAmount = (float)percent;
             fillText.text = $" {percent * 100:N2}%";
             progressToInfinityText.text = "Progress to Infinity";
-            realityBreak.SetActive(percent > 0.95f && dvpd.infinityPoints < 42);
+            realityBreak.SetActive(percent > 0.95f && prestigeData.infinityPoints < 42);
         }
         else
         {
             double amountForNextPoint =
                 BuyMultiple.BuyX(ipToGain + 1, amount, oracle.infinityExponent, 0);
 
-            fill.fillAmount = (pp.doubleIP ? ipToGain * 2 : ipToGain) /
+            fill.fillAmount = (prestigePlus.doubleIP ? ipToGain * 2 : ipToGain) /
                               (float)oracle.saveSettings.infinityPointsToBreakFor;
 
             ipToGain *= oracle.saveSettings.doubleIp ? 2 : 1;
-            ipToGain *= pp.doubleIP ? 2 : 1;
+            ipToGain *= prestigePlus.doubleIP ? 2 : 1;
             fillText.text =
                 $" {ipToGain}/{oracle.saveSettings.infinityPointsToBreakFor}";
             progressToInfinityText.text =
-                $"{CalcUtils.FormatNumber(amountForNextPoint - dvid.bots)} Bots till next Infinity Point";
+                $"{CalcUtils.FormatNumber(amountForNextPoint - infinityData.bots)} Bots till next Infinity Point";
             realityBreak.SetActive(false);
         }
     }
 }
+
