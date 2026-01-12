@@ -101,17 +101,19 @@
 - Renamed `dvid`/`dvpd`/`dvst`/`pp` identifiers to descriptive names across the project; fixed `AvocadoFeeder` infinity point feed type.
 - Reviewed secrets-of-the-universe integration: `SecretBuffState` feeds data-driven facility/global multipliers with breakdown entries (no data center secret multiplier, matching legacy).
 - Added explicit secrets-of-the-universe upgrade-percent contributions in facility modifier breakdowns (assembly/manager/server/planet upgrades).
+- Added cross-facility breakdown section with upstream sources (summary-only) and bonus summaries.
+- Added planet generation breakdown section to surface scientific planets/shell worlds/etc.
+- Moved Pocket Dimensions out of the Planets breakdown and into upstream bonus summaries for Data Centers.
 
 ## In Progress
 - None
 
 ## Next Steps
 - Load an existing save to confirm skill ownership + auto-assign lists migrate correctly.
-- Verify breakdown UI in play mode (open/close + totals match cards).
+- Verify breakdown UI in play mode (totals, upstream summary, pocket dimensions placement).
 
 ## Known Issues / Problems
-- Breakdown shows Pocket Dimensions under Planets even though it produces Data Centers; need an upstream-source section on the Data Centers breakdown with line breaks (include planet production + pocket dimensions amounts).
-- Planet breakdown misses scientific planets production lines, so some planet production is never shown in details.
+- None currently noted.
 
 ## Files Touched
 - `Documentation/FacilityAndSkillRefactor.md`
@@ -236,6 +238,7 @@
 - Offline simulation: parity harness added; 1s step run shows sub-1% drift.
 - Secrets-of-the-universe multipliers are included in facility/global pipelines and appear in breakdown entries when active.
 - Breakdown UI: not verified
+- Breakdown UI: upstream sources summary + planet generation section implemented (needs play-mode confirmation).
 - Skill tree migration: code updated, needs play-mode validation + migration spot check
 - Skill tree migration: play-mode sanity check reported OK, still need migration spot check on older save
 
