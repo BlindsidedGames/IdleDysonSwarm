@@ -5,6 +5,7 @@ using TMPro;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
+using UnityEngine.Serialization;
 using Systems;
 using Systems.Stats;
 using Blindsided.Utilities;
@@ -15,23 +16,22 @@ public class GameManager : MonoBehaviour
 {
     #region SerializedFields
 
-    private DysonVerseInfinityData dvid => oracle.saveSettings.dysonVerseSaveData.dysonVerseInfinityData;
-    private DysonVersePrestigeData dvpd => oracle.saveSettings.dysonVerseSaveData.dysonVersePrestigeData;
-    private DysonVerseSkillTreeData dvst => oracle.saveSettings.dysonVerseSaveData.dysonVerseSkillTreeData;
-    private DysonVerseSaveData dvsd => oracle.saveSettings.dysonVerseSaveData;
-    private SaveDataPrestige sdp => oracle.saveSettings.sdPrestige;
-    private PrestigePlus pp => oracle.saveSettings.prestigePlus;
+    private DysonVerseInfinityData infinityData => oracle.saveSettings.dysonVerseSaveData.dysonVerseInfinityData;
+    private DysonVersePrestigeData prestigeData => oracle.saveSettings.dysonVerseSaveData.dysonVersePrestigeData;
+    private DysonVerseSkillTreeData skillTreeData => oracle.saveSettings.dysonVerseSaveData.dysonVerseSkillTreeData;
+    private DysonVerseSaveData dysonVerseSaveData => oracle.saveSettings.dysonVerseSaveData;
+    private PrestigePlus prestigePlus => oracle.saveSettings.prestigePlus;
 
     [SerializeField] private GameObject store;
 
-    [SerializeField] private SkillTreeManager skb;
+    [SerializeField, FormerlySerializedAs("skb")] private SkillTreeManager skillTreeManager;
     [SerializeField] private TMP_Text saveAge;
 
-    [SerializeField] private TMP_Text skillTimers;
+    [SerializeField, FormerlySerializedAs("skillTimers")] private TMP_Text skillTimersText;
 
     [SerializeField] private TMP_Text runAge;
     [SerializeField] private TMP_Text runAgePrestigeScreen;
-    private string sciencePerSec = "";
+    private string sciencePerSecondText = "";
     [SerializeField] private TMP_Text skillTreePoints;
     [SerializeField] private GameObject prestigeScreen;
 
@@ -77,18 +77,19 @@ public class GameManager : MonoBehaviour
     [SerializeField] private TMP_Text panelLifetime;
     [SerializeField] private TMP_Text goal;
 
-    [Header("SkillsMenuItems"), SerializeField]
-    private SlicedFilledImage SkillsFill;
+    [Header("SkillsMenuItems"), SerializeField, FormerlySerializedAs("SkillsFill")]
+    private SlicedFilledImage skillsFill;
 
     [SerializeField] private GameObject skillsIcon;
     [SerializeField] private GameObject skillsToggle;
     [SerializeField] private GameObject[] skillsButton;
-    [SerializeField] private GameObject skillsfillbar;
+    [SerializeField, FormerlySerializedAs("skillsfillbar")] private GameObject skillsFillBar;
     [SerializeField] private TMP_Text skillsText;
-    [SerializeField] private Button skillsMenubutton;
+    [SerializeField, FormerlySerializedAs("skillsMenubutton")] private Button skillsMenuButton;
     [SerializeField] private double maxInfinityBuff = 1e44;
 
-    [SerializeField] private SkillTreeConfirmationManager _skillTreeConfirmationManager;
+    [SerializeField, FormerlySerializedAs("_skillTreeConfirmationManager")]
+    private SkillTreeConfirmationManager skillTreeConfirmationManager;
     private readonly SecretBuffState _secretBuffState = new SecretBuffState();
 
     #endregion
@@ -127,20 +128,20 @@ public class GameManager : MonoBehaviour
 
     private void CheckIfValuesNegative()
     {
-        if (dvid.bots < 0 || dvid.money < 0)
+        if (infinityData.bots < 0 || infinityData.money < 0)
         {
-            dvid.bots = 10;
-            dvid.assemblyLines[0] = 0;
-            dvid.assemblyLines[1] = 0;
-            dvid.managers[0] = 0;
-            dvid.managers[1] = 0;
-            dvid.servers[0] = 0;
-            dvid.servers[1] = 0;
-            dvid.planets[0] = 0;
-            dvid.planets[1] = 0;
-            dvid.science = 10;
-            dvid.money = 10;
-            dvid.totalPanelsDecayed = 0;
+            infinityData.bots = 10;
+            infinityData.assemblyLines[0] = 0;
+            infinityData.assemblyLines[1] = 0;
+            infinityData.managers[0] = 0;
+            infinityData.managers[1] = 0;
+            infinityData.servers[0] = 0;
+            infinityData.servers[1] = 0;
+            infinityData.planets[0] = 0;
+            infinityData.planets[1] = 0;
+            infinityData.science = 10;
+            infinityData.money = 10;
+            infinityData.totalPanelsDecayed = 0;
         }
     }
 
@@ -149,21 +150,21 @@ public class GameManager : MonoBehaviour
         SetBotDistribution();
         CalculateProduction();
         ManageGoal();
-        bool trigger = !pp.breakTheLoop && dvid.bots >=
-            (pp.divisionsPurchased > 0 ? 4.2e19 / Math.Pow(10, pp.divisionsPurchased) : 4.2e19);
+        bool trigger = !prestigePlus.breakTheLoop && infinityData.bots >=
+            (prestigePlus.divisionsPurchased > 0 ? 4.2e19 / Math.Pow(10, prestigePlus.divisionsPurchased) : 4.2e19);
         if (trigger) Prestige();
     }
 
     public void CalculateProduction()
     {
-        ProductionSystem.CalculateProduction(dvid, dvst, dvpd, Time.deltaTime);
+        ProductionSystem.CalculateProduction(infinityData, skillTreeData, prestigeData, prestigePlus, Time.deltaTime);
     }
 
     private double CurrentRunTime()
     {
-        DateTime dateStarted = string.IsNullOrEmpty(dvsd.lastCollapseDate)
+        DateTime dateStarted = string.IsNullOrEmpty(dysonVerseSaveData.lastCollapseDate)
             ? DateTime.Parse(oracle.saveSettings.dateStarted, CultureInfo.InvariantCulture)
-            : DateTime.Parse(dvsd.lastCollapseDate, CultureInfo.InvariantCulture);
+            : DateTime.Parse(dysonVerseSaveData.lastCollapseDate, CultureInfo.InvariantCulture);
         DateTime dateNow = DateTime.UtcNow;
         TimeSpan timespan = dateNow - dateStarted;
         return timespan.TotalSeconds;
@@ -171,7 +172,7 @@ public class GameManager : MonoBehaviour
 
     public void Prestige()
     {
-        _skillTreeConfirmationManager.CloseConfirm();
+        skillTreeConfirmationManager.CloseConfirm();
         double seconds = CurrentRunTime();
         if (seconds <= 0) seconds = 10000;
         string lastCollapseInfo = "";
@@ -179,19 +180,19 @@ public class GameManager : MonoBehaviour
         lastCollapseInfo = seconds > 10
             ? $"You broke reality in: {CalcUtils.FormatTimeLarge(seconds)}"
             : $"You broke reality in: {seconds:F2} Seconds";
-        lastCollapseInfo += $"\nYou have broken reality {dvpd.infinityPoints + 1} ";
-        lastCollapseInfo += dvpd.infinityPoints > 1 ? "times" : "time";
+        lastCollapseInfo += $"\nYou have broken reality {prestigeData.infinityPoints + 1} ";
+        lastCollapseInfo += prestigeData.infinityPoints > 1 ? "times" : "time";
 
         runAgePrestigeScreen.text = lastCollapseInfo;
 
         oracle.saveSettings.timeLastInfinity = seconds;
 
-        dvsd.lastCollapseDate = DateTime.UtcNow.ToString(CultureInfo.InvariantCulture);
+        dysonVerseSaveData.lastCollapseDate = DateTime.UtcNow.ToString(CultureInfo.InvariantCulture);
         if (!oracle.saveSettings.infinityFirstRunDone)
             foreach (GameObject VARIABLE in infinityButton)
                 VARIABLE.SetActive(true);
 
-        switch (pp.breakTheLoop)
+        switch (prestigePlus.breakTheLoop)
         {
             case true:
                 oracle.ManualDysonInfinity();
@@ -203,7 +204,7 @@ public class GameManager : MonoBehaviour
 
         UpdateSkillsInvoke();
 
-        if (dvpd.infinityPoints <= 42 && oracle.saveSettings.prestigePlus.points == 0) prestigeScreen.SetActive(true);
+        if (prestigeData.infinityPoints <= 42 && oracle.saveSettings.prestigePlus.points == 0) prestigeScreen.SetActive(true);
     }
 
     private void OnEnable()
@@ -218,19 +219,19 @@ public class GameManager : MonoBehaviour
 
     // private void SubmitHighScores()
     // {
-    //     if (dvid.goalSetter < 1) return;
+    //     if (infinityData.goalSetter < 1) return;
     //     Achievements.tenbots.Unlock();
-    //     if (dvid.goalSetter < 2) return;
+    //     if (infinityData.goalSetter < 2) return;
     //     Achievements.fiveassemblylines.Unlock();
-    //     if (dvid.goalSetter < 3) return;
+    //     if (infinityData.goalSetter < 3) return;
     //     Achievements.twentykactivective.Unlock();
-    //     if (dvid.goalSetter < 4) return;
+    //     if (infinityData.goalSetter < 4) return;
     //     Achievements.twentyplanets.Unlock();
-    //     if (dvid.goalSetter < 7) return;
+    //     if (infinityData.goalSetter < 7) return;
     //     Achievements.surroundstarstenb.Unlock();
-    //     if (dvid.goalSetter < 8) return;
+    //     if (infinityData.goalSetter < 8) return;
     //     Achievements.engulfgalaxy.Unlock();
-    //     if (dvid.goalSetter < 10) return;
+    //     if (infinityData.goalSetter < 10) return;
     //     Achievements.galaxyonehundred.Unlock();
     // }
 
@@ -242,9 +243,9 @@ public class GameManager : MonoBehaviour
     {
         return new OfflineProgressContext
         {
-            dvid = dvid,
-            dvpd = dvpd,
-            dvst = dvst,
+            infinityData = infinityData,
+            prestigeData = prestigeData,
+            skillTreeData = skillTreeData,
             saveSettings = oracle.saveSettings,
             SetBotDistribution = SetBotDistribution,
             CalculateShouldersSkills = CalculateShouldersSkills,
@@ -277,10 +278,10 @@ public class GameManager : MonoBehaviour
     public void RunAwayTime(double awayTime)
     {
         if (oracle.saveSettings.cheater) return;
-        StartCoroutine(CalculateAwavValues(awayTime));
+        StartCoroutine(CalculateAwayValues(awayTime));
     }
 
-    private IEnumerator CalculateAwavValues(double awayTime)
+    private IEnumerator CalculateAwayValues(double awayTime)
     {
         return OfflineProgressSystem.CalculateAwayValues(awayTime, CreateOfflineProgressContext(), CreateOfflineProgressUi());
     }
@@ -290,7 +291,7 @@ public class GameManager : MonoBehaviour
 
     private void SetBotDistribution()
     {
-        ProductionSystem.SetBotDistribution(dvid, dvpd, pp);
+        ProductionSystem.SetBotDistribution(infinityData, prestigeData, prestigePlus);
     }
 
     #region GoalManagment
@@ -298,45 +299,45 @@ public class GameManager : MonoBehaviour
     private void ManageGoal()
     {
         //var colorSkillTree = "<color=#FFA45E>";
-        string colorSkillTree2 = "<color=#91DD8F>";
+        string skillPointColor = "<color=#91DD8F>";
         skillTreePoints.text =
-            $"Skill points: {colorSkillTree2}{dvst.skillPointsTree}</color>";
+            $"Skill points: {skillPointColor}{skillTreeData.skillPointsTree}</color>";
         string color = "<color=#91DD8F>";
         skillsText.text = oracle.saveSettings.skillsFirstRunDone
             ? "Skills"
             : "<align=\"center\"><sprite=4 color=#C8B3FF>";
-        if (dvst.skillPointsTree > 0 || dvpd.permanentSkillPoint > 0 || dvpd.infinityPoints > 0 ||
-            dvpd.spentInfinityPoints > 0)
+        if (skillTreeData.skillPointsTree > 0 || prestigeData.permanentSkillPoint > 0 || prestigeData.infinityPoints > 0 ||
+            prestigeData.spentInfinityPoints > 0)
         {
             skillsIcon.SetActive(true);
             if (SceneManager.GetActiveScene().buildIndex == 1) skillsToggle.SetActive(true);
             skillsButton[0].SetActive(!oracle.saveSettings.skillsButtonToggle);
             if (!oracle.saveSettings.skillsFirstRunDone) skillsButton[1].SetActive(true);
             oracle.saveSettings.skillsFirstRunDone = true;
-            skillsMenubutton.interactable = true;
+            skillsMenuButton.interactable = true;
         }
-        else if (dvst.skillPointsTree == 0 && dvpd.permanentSkillPoint == 0 && dvpd.infinityPoints == 0 &&
-                 dvpd.spentInfinityPoints == 0 && !oracle.saveSettings.skillsFirstRunDone)
+        else if (skillTreeData.skillPointsTree == 0 && prestigeData.permanentSkillPoint == 0 && prestigeData.infinityPoints == 0 &&
+                 prestigeData.spentInfinityPoints == 0 && !oracle.saveSettings.skillsFirstRunDone)
         {
             skillsIcon.SetActive(oracle.saveSettings.skillsFirstRunDone);
             skillsToggle.SetActive(false);
             skillsButton[0].SetActive(false);
-            skillsMenubutton.interactable = false;
+            skillsMenuButton.interactable = false;
         }
 
-        switch (dvid.goalSetter)
+        switch (infinityData.goalSetter)
         {
             case 0:
             {
                 goal.text = $"{color}Goal: Create {CalcUtils.FormatNumber(10)} Bots";
-                SkillsFill.fillAmount = (float)dvid.bots / 10;
-                if (dvid.bots >= 10)
+                skillsFill.fillAmount = (float)infinityData.bots / 10;
+                if (infinityData.bots >= 10)
                 {
-                    skillsfillbar.SetActive(true);
-                    dvid.goalSetter = 1;
-                    dvst.skillPointsTree += 1;
+                    skillsFillBar.SetActive(true);
+                    infinityData.goalSetter = 1;
+                    skillTreeData.skillPointsTree += 1;
                     AssignSkills?.Invoke();
-                    if (skillsMenubutton.interactable == false)
+                    if (skillsMenuButton.interactable == false)
                     {
                         oracle.saveSettings.skillsButtonToggle = false;
                         skillsButton[0].SetActive(true);
@@ -350,14 +351,14 @@ public class GameManager : MonoBehaviour
             case 1:
             {
                 goal.text = $"{color}Goal: Build {CalcUtils.FormatNumber(5)} Assembly Lines";
-                SkillsFill.fillAmount = (float)(dvid.assemblyLines[1] / 5);
-                if (dvid.assemblyLines[1] >= 5)
+                skillsFill.fillAmount = (float)(infinityData.assemblyLines[1] / 5);
+                if (infinityData.assemblyLines[1] >= 5)
                 {
-                    dvid.goalSetter = 2;
-                    dvst.skillPointsTree += 1;
+                    infinityData.goalSetter = 2;
+                    skillTreeData.skillPointsTree += 1;
                     AssignSkills?.Invoke();
                     UpdateSkills?.Invoke();
-                    skillsfillbar.SetActive(true);
+                    skillsFillBar.SetActive(true);
                 }
 
                 break;
@@ -365,14 +366,14 @@ public class GameManager : MonoBehaviour
             case 2:
             {
                 goal.text = $"{color}Goal: Have {CalcUtils.FormatNumber(20000)} active Panels";
-                SkillsFill.fillAmount = (float)(dvid.panelsPerSec * dvid.panelLifetime / 20000);
-                if (dvid.panelsPerSec * dvid.panelLifetime >= 20000)
+                skillsFill.fillAmount = (float)(infinityData.panelsPerSec * infinityData.panelLifetime / 20000);
+                if (infinityData.panelsPerSec * infinityData.panelLifetime >= 20000)
                 {
-                    dvid.goalSetter = 3;
-                    dvst.skillPointsTree += 1;
+                    infinityData.goalSetter = 3;
+                    skillTreeData.skillPointsTree += 1;
                     AssignSkills?.Invoke();
                     UpdateSkills?.Invoke();
-                    skillsfillbar.SetActive(true);
+                    skillsFillBar.SetActive(true);
                 }
 
                 break;
@@ -380,15 +381,15 @@ public class GameManager : MonoBehaviour
             case 3:
             {
                 goal.text = $"{color}Goal: Own {CalcUtils.FormatNumber(20)} Planets";
-                SkillsFill.fillAmount =
-                    (float)(dvid.planets[0] + (dvst.terraIrradiant ? dvid.planets[1] * 12 : dvid.planets[1]) / 20);
-                if (dvid.planets[0] + (dvst.terraIrradiant ? dvid.planets[1] * 12 : dvid.planets[1]) >= 20)
+                skillsFill.fillAmount =
+                    (float)(infinityData.planets[0] + (skillTreeData.terraIrradiant ? infinityData.planets[1] * 12 : infinityData.planets[1]) / 20);
+                if (infinityData.planets[0] + (skillTreeData.terraIrradiant ? infinityData.planets[1] * 12 : infinityData.planets[1]) >= 20)
                 {
-                    dvid.goalSetter = 4;
-                    dvst.skillPointsTree += 1;
+                    infinityData.goalSetter = 4;
+                    skillTreeData.skillPointsTree += 1;
                     AssignSkills?.Invoke();
                     UpdateSkills?.Invoke();
-                    skillsfillbar.SetActive(true);
+                    skillsFillBar.SetActive(true);
                 }
 
                 break;
@@ -397,14 +398,14 @@ public class GameManager : MonoBehaviour
             {
                 goal.text = $"{color}Goal: {CalcUtils.FormatNumber(1000000000000)} total panels decayed";
 
-                SkillsFill.fillAmount = (float)dvid.totalPanelsDecayed / 1000000000000;
-                if (dvid.totalPanelsDecayed >= 1000000000000)
+                skillsFill.fillAmount = (float)infinityData.totalPanelsDecayed / 1000000000000;
+                if (infinityData.totalPanelsDecayed >= 1000000000000)
                 {
-                    dvid.goalSetter = 5;
-                    dvst.skillPointsTree += 1;
+                    infinityData.goalSetter = 5;
+                    skillTreeData.skillPointsTree += 1;
                     AssignSkills?.Invoke();
                     UpdateSkills?.Invoke();
-                    skillsfillbar.SetActive(true);
+                    skillsFillBar.SetActive(true);
                 }
 
                 break;
@@ -412,14 +413,14 @@ public class GameManager : MonoBehaviour
             case 5:
             {
                 goal.text = $"{color}Goal: Surround {CalcUtils.FormatNumber(1000000000)} Stars";
-                SkillsFill.fillAmount = (float)(dvid.panelsPerSec * dvid.panelLifetime / 20000 / 1000000000);
-                if (dvid.panelsPerSec * dvid.panelLifetime / 20000 >= 1000000000)
+                skillsFill.fillAmount = (float)(infinityData.panelsPerSec * infinityData.panelLifetime / 20000 / 1000000000);
+                if (infinityData.panelsPerSec * infinityData.panelLifetime / 20000 >= 1000000000)
                 {
-                    dvid.goalSetter = 6;
-                    dvst.skillPointsTree += 1;
+                    infinityData.goalSetter = 6;
+                    skillTreeData.skillPointsTree += 1;
                     AssignSkills?.Invoke();
                     UpdateSkills?.Invoke();
-                    skillsfillbar.SetActive(true);
+                    skillsFillBar.SetActive(true);
                 }
 
                 break;
@@ -427,14 +428,14 @@ public class GameManager : MonoBehaviour
             case 6:
             {
                 goal.text = $"{color}Goal: Surround {CalcUtils.FormatNumber(10000000000)} Stars";
-                SkillsFill.fillAmount = (float)(dvid.panelsPerSec * dvid.panelLifetime / 20000 / 10000000000);
-                if (dvid.panelsPerSec * dvid.panelLifetime / 20000 >= 10000000000)
+                skillsFill.fillAmount = (float)(infinityData.panelsPerSec * infinityData.panelLifetime / 20000 / 10000000000);
+                if (infinityData.panelsPerSec * infinityData.panelLifetime / 20000 >= 10000000000)
                 {
-                    dvid.goalSetter = 7;
-                    dvst.skillPointsTree += 1;
+                    infinityData.goalSetter = 7;
+                    skillTreeData.skillPointsTree += 1;
                     AssignSkills?.Invoke();
                     UpdateSkills?.Invoke();
-                    skillsfillbar.SetActive(true);
+                    skillsFillBar.SetActive(true);
                 }
 
                 break;
@@ -442,14 +443,14 @@ public class GameManager : MonoBehaviour
             case 7:
             {
                 goal.text = $"{color}Goal: Engulf a Galaxy";
-                SkillsFill.fillAmount = (float)(dvid.panelsPerSec * dvid.panelLifetime / 20000 / 100000000000 / 1);
-                if (dvid.panelsPerSec * dvid.panelLifetime / 20000 / 100000000000 > 1)
+                skillsFill.fillAmount = (float)(infinityData.panelsPerSec * infinityData.panelLifetime / 20000 / 100000000000 / 1);
+                if (infinityData.panelsPerSec * infinityData.panelLifetime / 20000 / 100000000000 > 1)
                 {
-                    dvid.goalSetter = 8;
-                    dvst.skillPointsTree += 1;
+                    infinityData.goalSetter = 8;
+                    skillTreeData.skillPointsTree += 1;
                     AssignSkills?.Invoke();
                     UpdateSkills?.Invoke();
-                    skillsfillbar.SetActive(true);
+                    skillsFillBar.SetActive(true);
                 }
 
                 break;
@@ -457,14 +458,14 @@ public class GameManager : MonoBehaviour
             case 8:
             {
                 goal.text = $"{color}Goal: Engulf {CalcUtils.FormatNumber(10)} Galaxies";
-                SkillsFill.fillAmount = (float)(dvid.panelsPerSec * dvid.panelLifetime / 20000 / 100000000000 / 10);
-                if (dvid.panelsPerSec * dvid.panelLifetime / 20000 / 100000000000 > 10)
+                skillsFill.fillAmount = (float)(infinityData.panelsPerSec * infinityData.panelLifetime / 20000 / 100000000000 / 10);
+                if (infinityData.panelsPerSec * infinityData.panelLifetime / 20000 / 100000000000 > 10)
                 {
-                    dvid.goalSetter = 9;
-                    dvst.skillPointsTree += 1;
+                    infinityData.goalSetter = 9;
+                    skillTreeData.skillPointsTree += 1;
                     AssignSkills?.Invoke();
                     UpdateSkills?.Invoke();
-                    skillsfillbar.SetActive(true);
+                    skillsFillBar.SetActive(true);
                 }
 
                 break;
@@ -472,14 +473,14 @@ public class GameManager : MonoBehaviour
             case 9:
             {
                 goal.text = $"{color}Goal: Engulf {CalcUtils.FormatNumber(100)} Galaxies";
-                SkillsFill.fillAmount = (float)(dvid.panelsPerSec * dvid.panelLifetime / 20000 / 100000000000 / 100);
-                if (dvid.panelsPerSec * dvid.panelLifetime / 20000 / 100000000000 > 100)
+                skillsFill.fillAmount = (float)(infinityData.panelsPerSec * infinityData.panelLifetime / 20000 / 100000000000 / 100);
+                if (infinityData.panelsPerSec * infinityData.panelLifetime / 20000 / 100000000000 > 100)
                 {
-                    dvid.goalSetter = 10;
-                    dvst.skillPointsTree += 1;
+                    infinityData.goalSetter = 10;
+                    skillTreeData.skillPointsTree += 1;
                     AssignSkills?.Invoke();
                     UpdateSkills?.Invoke();
-                    skillsfillbar.SetActive(false);
+                    skillsFillBar.SetActive(false);
                 }
 
                 break;
@@ -496,59 +497,59 @@ public class GameManager : MonoBehaviour
 
     private void CalculatePlanetsPerSecond()
     {
-        ProductionSystem.CalculatePlanetsPerSecond(dvid, dvst, Time.deltaTime);
+        ProductionSystem.CalculatePlanetsPerSecond(infinityData, skillTreeData, Time.deltaTime);
     }
 
     private void CalculateShouldersSkills(double time)
     {
-        ProductionSystem.CalculateShouldersSkills(dvid, dvst, dvpd, time);
+        ProductionSystem.CalculateShouldersSkills(infinityData, skillTreeData, prestigeData, time);
     }
 
     private void CalculatePlanetProduction()
     {
-        ProductionSystem.CalculatePlanetProduction(dvid, dvst, dvpd, Time.deltaTime);
+        ProductionSystem.CalculatePlanetProduction(infinityData, skillTreeData, prestigeData, Time.deltaTime);
     }
 
     private void CalculateDataCenterProduction()
     {
-        ProductionSystem.CalculateDataCenterProduction(dvid, dvst, Time.deltaTime);
+        ProductionSystem.CalculateDataCenterProduction(infinityData, skillTreeData, prestigeData, prestigePlus, Time.deltaTime);
     }
 
     private void CalculateServerProduction()
     {
-        ProductionSystem.CalculateServerProduction(dvid, dvst, Time.deltaTime);
+        ProductionSystem.CalculateServerProduction(infinityData, skillTreeData, prestigeData, prestigePlus, Time.deltaTime);
     }
 
     private void CalculateManagerProduction()
     {
-        ProductionSystem.CalculateManagerProduction(dvid, dvst, Time.deltaTime);
+        ProductionSystem.CalculateManagerProduction(infinityData, skillTreeData, prestigeData, prestigePlus, Time.deltaTime);
     }
 
     private void CalculateAssemblyLineProduction()
     {
-        ProductionSystem.CalculateAssemblyLineProduction(dvid, dvst, Time.deltaTime);
+        ProductionSystem.CalculateAssemblyLineProduction(infinityData, skillTreeData, prestigeData, prestigePlus, Time.deltaTime);
     }
 
     private void CalculatePanelsPerSec()
     {
-        ProductionSystem.CalculatePanelsPerSec(dvid, dvst, Time.deltaTime);
+        ProductionSystem.CalculatePanelsPerSec(infinityData, skillTreeData, Time.deltaTime);
     }
 
     private void CalculateScience()
     {
-        ProductionSystem.CalculateScience(dvid, dvst, Time.deltaTime);
+        ProductionSystem.CalculateScience(infinityData, skillTreeData, Time.deltaTime);
     }
 
     public double ScienceToAdd() =>
-        ProductionSystem.ScienceToAdd(dvid, dvst);
+        ProductionSystem.ScienceToAdd(infinityData, skillTreeData);
 
     private void CalculateMoney()
     {
-        ProductionSystem.CalculateMoney(dvid, dvst, Time.deltaTime);
+        ProductionSystem.CalculateMoney(infinityData, skillTreeData, Time.deltaTime);
     }
 
     public double MoneyToAdd() =>
-        ProductionSystem.MoneyToAdd(dvid, dvst);
+        ProductionSystem.MoneyToAdd(infinityData, skillTreeData);
 
     #endregion
 
@@ -557,43 +558,43 @@ public class GameManager : MonoBehaviour
     private void UpdateTextFields()
     {
         string color = "<color=#FFA45E>";
-        string Scolor = "<color=#00E1FF>";
+        string scienceColor = "<color=#00E1FF>";
 
-        totalBots.text = $"Total Bots: {CalcUtils.FormatNumber(dvid.bots)}";
+        totalBots.text = $"Total Bots: {CalcUtils.FormatNumber(infinityData.bots)}";
 
         //research FF5A6E
-        researchPoints.text = $"<sprite=0>{CalcUtils.FormatNumber(dvid.science)}";
-        sciencePerSec = CalcUtils.FormatNumber(ScienceToAdd());
+        researchPoints.text = $"<sprite=0>{CalcUtils.FormatNumber(infinityData.science)}";
+        sciencePerSecondText = CalcUtils.FormatNumber(ScienceToAdd());
 
-        researchPerSec.text = $"<sprite=0>{sciencePerSec} /s";
+        researchPerSec.text = $"<sprite=0>{sciencePerSecondText} /s";
         //cash
-        cash.text = $"${CalcUtils.FormatNumber(dvid.money)}";
+        cash.text = $"${CalcUtils.FormatNumber(infinityData.money)}";
         cashPerSec.text =
             $"${CalcUtils.FormatNumber(MoneyToAdd())} /s";
         //workerPanels
         //solarStats
-        if (dvid.panelsPerSec * dvid.panelLifetime < 20000)
+        if (infinityData.panelsPerSec * infinityData.panelLifetime < 20000)
             activePanels.text =
-                $"Active panels: {color}{CalcUtils.FormatNumber(dvid.panelsPerSec * dvid.panelLifetime)}";
-        else if (dvid.panelsPerSec * dvid.panelLifetime / 20000 < 100000000000)
+                $"Active panels: {color}{CalcUtils.FormatNumber(infinityData.panelsPerSec * infinityData.panelLifetime)}";
+        else if (infinityData.panelsPerSec * infinityData.panelLifetime / 20000 < 100000000000)
             activePanels.text =
-                $"Stars Surrounded: {color}{CalcUtils.FormatNumber(dvid.panelsPerSec * dvid.panelLifetime / 20000)}";
+                $"Stars Surrounded: {color}{CalcUtils.FormatNumber(infinityData.panelsPerSec * infinityData.panelLifetime / 20000)}";
         else
             activePanels.text =
-                $"Galaxies Engulfed: {color}{CalcUtils.FormatNumber(dvid.panelsPerSec * dvid.panelLifetime / 20000 / 100000000000)}";
-        panelLifetime.text = $"Panel lifetime: {color}{CalcUtils.FormatNumber(dvid.panelLifetime)}</color> seconds";
+                $"Galaxies Engulfed: {color}{CalcUtils.FormatNumber(infinityData.panelsPerSec * infinityData.panelLifetime / 20000 / 100000000000)}";
+        panelLifetime.text = $"Panel lifetime: {color}{CalcUtils.FormatNumber(infinityData.panelLifetime)}</color> seconds";
         lifetimePanels.text =
-            $"Total panels decayed: {color}{CalcUtils.FormatNumber(dvid.totalPanelsDecayed)}";
+            $"Total panels decayed: {color}{CalcUtils.FormatNumber(infinityData.totalPanelsDecayed)}";
         //Lower panel
-        string workers = CalcUtils.FormatNumber(dvid.workers);
+        string workers = CalcUtils.FormatNumber(infinityData.workers);
 
-        string bots = CalcUtils.FormatNumber(Math.Floor(dvid.bots));
+        string bots = CalcUtils.FormatNumber(Math.Floor(infinityData.bots));
         workerStats.text =
-            $"{color}{workers}</color> Worker Bots producing {color}{CalcUtils.FormatNumber(dvid.panelsPerSec)}</color> Panels /s ";
+            $"{color}{workers}</color> Worker Bots producing {color}{CalcUtils.FormatNumber(infinityData.panelsPerSec)}</color> Panels /s ";
         //researcherPanels
-        string scientists = CalcUtils.FormatNumber(dvid.researchers);
+        string scientists = CalcUtils.FormatNumber(infinityData.researchers);
         scienceStats.text =
-            $"{Scolor}{scientists}</color> Science Bots producing {Scolor}{sciencePerSec}</color><sprite=0>/s ";
+            $"{scienceColor}{scientists}</color> Science Bots producing {scienceColor}{sciencePerSecondText}</color><sprite=0>/s ";
         if (string.IsNullOrEmpty(oracle.saveSettings.dateStarted))
             oracle.saveSettings.dateStarted = DateTime.UtcNow.ToString(CultureInfo.InvariantCulture);
         if (!string.IsNullOrEmpty(oracle.saveSettings.dateStarted))
@@ -607,10 +608,10 @@ public class GameManager : MonoBehaviour
         }
 
         runAge.text = "";
-        if (dvpd.infinityPoints >= 1)
-            if (!string.IsNullOrEmpty(dvsd.lastCollapseDate))
+        if (prestigeData.infinityPoints >= 1)
+            if (!string.IsNullOrEmpty(dysonVerseSaveData.lastCollapseDate))
             {
-                DateTime dateStarted = DateTime.Parse(dvsd.lastCollapseDate, CultureInfo.InvariantCulture);
+                DateTime dateStarted = DateTime.Parse(dysonVerseSaveData.lastCollapseDate, CultureInfo.InvariantCulture);
                 DateTime dateNow = DateTime.UtcNow;
                 TimeSpan timespan = dateNow - dateStarted;
                 double seconds = timespan.TotalSeconds;
@@ -619,181 +620,181 @@ public class GameManager : MonoBehaviour
             }
 
 //serverProduction
-        bool coldFusion = dvst.rudimentarySingularity && dvid.managers[0] + dvid.managers[1] > 0;
+        bool coldFusion = skillTreeData.rudimentarySingularity && infinityData.managers[0] + infinityData.managers[1] > 0;
         serverProductionDisplay.SetActive(coldFusion);
 
         /*coldFusionText.gameObject.SetActive(coldFusion);
-        if (dvst.rudimentarySingularity)
+        if (skillTreeData.rudimentarySingularity)
             coldFusionText.text =
-                $"Rudimentary Singularity <color=#FFA45E>+{CalcUtils.FormatNumber(dvid.rudimentrySingularityProduction)} </color>";*/
+                $"Rudimentary Singularity <color=#FFA45E>+{CalcUtils.FormatNumber(infinityData.rudimentrySingularityProduction)} </color>";*/
 
         totalServerProduction.text =
-            $"Server Production <color=#FFA45E>+{CalcUtils.FormatNumber(dvid.rudimentrySingularityProduction)}";
+            $"Server Production <color=#FFA45E>+{CalcUtils.FormatNumber(infinityData.rudimentrySingularityProduction)}";
 //planetsProduction
-        bool sciproduction = dvid.researchers > 1 && dvst.scientificPlanets;
+        bool scientificPlanetsActive = infinityData.researchers > 1 && skillTreeData.scientificPlanets;
         bool displayPlanetProduction =
-            sciproduction || dvst.stellarSacrifices || dvst.planetAssembly || dvst.shellWorlds;
+            scientificPlanetsActive || skillTreeData.stellarSacrifices || skillTreeData.planetAssembly || skillTreeData.shellWorlds;
         planetProductionDisplay.SetActive(displayPlanetProduction);
 
-        string tempText = "";
-        bool makeLineBreak = false;
-        if (dvst.scientificPlanets)
+        string planetProductionDetailText = "";
+        bool addPlanetLineBreak = false;
+        if (skillTreeData.scientificPlanets)
         {
-            tempText +=
-                dvid.researchers > 1
-                    ? $"Scientific Planets <color=#FFA45E>+{CalcUtils.FormatNumber(dvid.scientificPlanetsProduction)} </color>"
+            planetProductionDetailText +=
+                infinityData.researchers > 1
+                    ? $"Scientific Planets <color=#FFA45E>+{CalcUtils.FormatNumber(infinityData.scientificPlanetsProduction)} </color>"
                     : "Scientific Planets <color=#FFA45E>+0 </color>";
-            makeLineBreak = true;
+            addPlanetLineBreak = true;
         }
 
-        if (dvst.stellarSacrifices)
+        if (skillTreeData.stellarSacrifices)
         {
-            if (makeLineBreak) tempText += "<br>";
-            makeLineBreak = true;
+            if (addPlanetLineBreak) planetProductionDetailText += "<br>";
+            addPlanetLineBreak = true;
 
-            string tempTextCost = dvid.bots > StellarSacrificesRequiredBots() && StellarGalaxies() > 0
+            string stellarSacrificeText = infinityData.bots > StellarSacrificesRequiredBots() && StellarGalaxies() > 0
                 ? $"<color=#FFA45E>{CalcUtils.FormatNumber(StellarGalaxies())}</color> Stellar Galaxies sacrificing <color=#FFA45E>{CalcUtils.FormatNumber(StellarSacrificesRequiredBots())}</color> Bots/s</color>"
-                : dvid.bots < StellarSacrificesRequiredBots()
+                : infinityData.bots < StellarSacrificesRequiredBots()
                     ? $"You need <color=#FFA45E>{CalcUtils.FormatNumber(StellarSacrificesRequiredBots())}</color> Bots"
                     : "You have <color=#FFA45E>0</color> Stellar Galaxies.";
-            tempText +=
-                $"Stellar Sacrifices: {tempTextCost}";
+            planetProductionDetailText +=
+                $"Stellar Sacrifices: {stellarSacrificeText}";
         }
 
-        if (dvst.planetAssembly)
+        if (skillTreeData.planetAssembly)
         {
-            if (makeLineBreak) tempText += "<br>";
-            makeLineBreak = true;
-            tempText +=
-                $"Planet Assembly <color=#FFA45E>+{CalcUtils.FormatNumber(dvid.planetAssemblyProduction)} </color>";
+            if (addPlanetLineBreak) planetProductionDetailText += "<br>";
+            addPlanetLineBreak = true;
+            planetProductionDetailText +=
+                $"Planet Assembly <color=#FFA45E>+{CalcUtils.FormatNumber(infinityData.planetAssemblyProduction)} </color>";
         }
 
-        if (dvst.shellWorlds)
+        if (skillTreeData.shellWorlds)
         {
-            if (makeLineBreak) tempText += "<br>";
-            makeLineBreak = true;
-            tempText +=
-                $"Shell Worlds <color=#FFA45E>+{CalcUtils.FormatNumber(dvid.shellWorldsProduction)} </color>";
+            if (addPlanetLineBreak) planetProductionDetailText += "<br>";
+            addPlanetLineBreak = true;
+            planetProductionDetailText +=
+                $"Shell Worlds <color=#FFA45E>+{CalcUtils.FormatNumber(infinityData.shellWorldsProduction)} </color>";
         }
 
-        /*planetProductionText.text = tempText;*/
+        /*planetProductionText.text = planetProductionDetailText;*/
         totalPlanetsProduction.text =
-            $"Planet Production <color=#FFA45E>+{CalcUtils.FormatNumber(dvid.totalPlanetProduction)}";
+            $"Planet Production <color=#FFA45E>+{CalcUtils.FormatNumber(infinityData.totalPlanetProduction)}";
 //DataCenterProduction
-        bool dcproduction = dvid.workers > 1 && dvst.pocketDimensions || dvst.pocketProtectors;
+        bool dataCenterProductionActive = infinityData.workers > 1 && skillTreeData.pocketDimensions || skillTreeData.pocketProtectors;
 
-        dataCenterProductionDisplay.SetActive(dcproduction);
+        dataCenterProductionDisplay.SetActive(dataCenterProductionActive);
 
 
-        string tempTextDataCenters = "";
-        bool makeLineBreakDataCenters = false;
-        if (dvst.pocketDimensions)
+        string dataCenterProductionDetailText = "";
+        bool addDataCenterLineBreak = false;
+        if (skillTreeData.pocketDimensions)
         {
-            tempTextDataCenters +=
-                dvid.workers > 1
-                    ? $"Pocket Dimensions <color=#FFA45E>+{CalcUtils.FormatNumber(dvid.pocketDimensionsWithoutAnythingElseProduction)} </color>"
+            dataCenterProductionDetailText +=
+                infinityData.workers > 1
+                    ? $"Pocket Dimensions <color=#FFA45E>+{CalcUtils.FormatNumber(infinityData.pocketDimensionsWithoutAnythingElseProduction)} </color>"
                     : "Pocket Dimensions <color=#FFA45E>+0 </color>";
-            makeLineBreakDataCenters = true;
+            addDataCenterLineBreak = true;
         }
 
-        if (dvst.pocketProtectors)
+        if (skillTreeData.pocketProtectors)
         {
-            if (makeLineBreakDataCenters) tempTextDataCenters += "<br>";
-            makeLineBreakDataCenters = true;
-            tempTextDataCenters += dvst.pocketMultiverse
-                ? $"Pocket Multiverse <color=#FFA45E>+{CalcUtils.FormatNumber(dvid.pocketMultiverseProduction)} </color>"
-                : $"Pocket Protectors <color=#FFA45E>+{CalcUtils.FormatNumber(dvid.pocketProtectorsProduction)} </color>";
+            if (addDataCenterLineBreak) dataCenterProductionDetailText += "<br>";
+            addDataCenterLineBreak = true;
+            dataCenterProductionDetailText += skillTreeData.pocketMultiverse
+                ? $"Pocket Multiverse <color=#FFA45E>+{CalcUtils.FormatNumber(infinityData.pocketMultiverseProduction)} </color>"
+                : $"Pocket Protectors <color=#FFA45E>+{CalcUtils.FormatNumber(infinityData.pocketProtectorsProduction)} </color>";
         }
 
-        double multiplier = dvid.pocketDimensionsWithoutAnythingElseProduction + (dvst.pocketMultiverse
-            ? dvid.pocketMultiverseProduction
-            : dvid.pocketProtectorsProduction);
-        if (dvst.dimensionalCatCables)
+        double multiplier = infinityData.pocketDimensionsWithoutAnythingElseProduction + (skillTreeData.pocketMultiverse
+            ? infinityData.pocketMultiverseProduction
+            : infinityData.pocketProtectorsProduction);
+        if (skillTreeData.dimensionalCatCables)
         {
             multiplier *= 5;
-            if (makeLineBreakDataCenters) tempTextDataCenters += "<br>";
-            makeLineBreakDataCenters = true;
-            tempTextDataCenters +=
+            if (addDataCenterLineBreak) dataCenterProductionDetailText += "<br>";
+            addDataCenterLineBreak = true;
+            dataCenterProductionDetailText +=
                 $"Dimensional CAT Cables <color=#FFA45E>* 5 <color=#91DD8F>= {CalcUtils.FormatNumber(multiplier)}</color></color>";
         }
 
-        if (dvst.solarBubbles)
+        if (skillTreeData.solarBubbles)
         {
-            double math = 1 + 0.01 * dvid.panelLifetime;
-            multiplier *= math;
-            if (makeLineBreakDataCenters) tempTextDataCenters += "<br>";
-            makeLineBreakDataCenters = true;
-            tempTextDataCenters +=
-                $"Solar Bubbles <color=#FFA45E>* {CalcUtils.FormatNumber(math)} <color=#91DD8F>= {CalcUtils.FormatNumber(multiplier)} </color></color>";
+            double solarBubblesMultiplier = 1 + 0.01 * infinityData.panelLifetime;
+            multiplier *= solarBubblesMultiplier;
+            if (addDataCenterLineBreak) dataCenterProductionDetailText += "<br>";
+            addDataCenterLineBreak = true;
+            dataCenterProductionDetailText +=
+                $"Solar Bubbles <color=#FFA45E>* {CalcUtils.FormatNumber(solarBubblesMultiplier)} <color=#91DD8F>= {CalcUtils.FormatNumber(multiplier)} </color></color>";
         }
 
-        if (dvst.pocketAndroids)
+        if (skillTreeData.pocketAndroids)
         {
-            double math = dvpd.pocketAndroidsTimer > 3564 ? 100 : 1 + dvpd.pocketAndroidsTimer / 36;
-            multiplier *= math;
-            if (makeLineBreakDataCenters) tempTextDataCenters += "<br>";
-            makeLineBreakDataCenters = true;
-            tempTextDataCenters +=
-                $"Pocket Androids <color=#FFA45E>* {CalcUtils.FormatNumber(math)} <color=#91DD8F>= {CalcUtils.FormatNumber(multiplier)} </color></color>";
+            double pocketAndroidsMultiplier = prestigeData.pocketAndroidsTimer > 3564 ? 100 : 1 + prestigeData.pocketAndroidsTimer / 36;
+            multiplier *= pocketAndroidsMultiplier;
+            if (addDataCenterLineBreak) dataCenterProductionDetailText += "<br>";
+            addDataCenterLineBreak = true;
+            dataCenterProductionDetailText +=
+                $"Pocket Androids <color=#FFA45E>* {CalcUtils.FormatNumber(pocketAndroidsMultiplier)} <color=#91DD8F>= {CalcUtils.FormatNumber(multiplier)} </color></color>";
         }
 
-        if (dvst.quantumComputing)
+        if (skillTreeData.quantumComputing)
         {
-            double math = dvid.quantumComputingProduction;
-            multiplier *= math;
-            if (makeLineBreakDataCenters) tempTextDataCenters += "<br>";
-            makeLineBreakDataCenters = true;
-            tempTextDataCenters +=
-                $"Quantum Computing <color=#FFA45E>* {CalcUtils.FormatNumber(math)} <color=#91DD8F>= {CalcUtils.FormatNumber(multiplier)} </color></color>";
+            double quantumComputingMultiplier = infinityData.quantumComputingProduction;
+            multiplier *= quantumComputingMultiplier;
+            if (addDataCenterLineBreak) dataCenterProductionDetailText += "<br>";
+            addDataCenterLineBreak = true;
+            dataCenterProductionDetailText +=
+                $"Quantum Computing <color=#FFA45E>* {CalcUtils.FormatNumber(quantumComputingMultiplier)} <color=#91DD8F>= {CalcUtils.FormatNumber(multiplier)} </color></color>";
         }
 
 
-        /*pocketDimensionsText.text = tempTextDataCenters;*/
+        /*pocketDimensionsText.text = dataCenterProductionDetailText;*/
         totalDataCenterText.text =
-            $"Data Center Production <color=#FFA45E>+{CalcUtils.FormatNumber(dvid.pocketDimensionsProduction)}";
+            $"Data Center Production <color=#FFA45E>+{CalcUtils.FormatNumber(infinityData.pocketDimensionsProduction)}";
 
-        string skilltimersText = "";
+        string skillTimersDisplayText = "";
 
-        skilltimersText += $"Cash Multiplier: {Scolor}{CalcUtils.FormatNumber(MoneyMultipliers())}</color>";
-        skilltimersText +=
-            $"<br>Research Multiplier: {Scolor}{CalcUtils.FormatNumber(ScienceMultipliers())}</color>";
-        skilltimersText +=
-            $"<br>Panel Lifetime: {Scolor}{CalcUtils.FormatNumber(dvid.panelLifetime)} s</color><br>";
+        skillTimersDisplayText += $"Cash Multiplier: {scienceColor}{CalcUtils.FormatNumber(MoneyMultipliers())}</color>";
+        skillTimersDisplayText +=
+            $"<br>Research Multiplier: {scienceColor}{CalcUtils.FormatNumber(ScienceMultipliers())}</color>";
+        skillTimersDisplayText +=
+            $"<br>Panel Lifetime: {scienceColor}{CalcUtils.FormatNumber(infinityData.panelLifetime)} s</color><br>";
 
-        skilltimersText +=
-            $"<br>Current Infinity Time: {Scolor}{CalcUtils.FormatTimeLarge(CurrentRunTime())}</color><br>";
+        skillTimersDisplayText +=
+            $"<br>Current Infinity Time: {scienceColor}{CalcUtils.FormatTimeLarge(CurrentRunTime())}</color><br>";
         if (oracle.saveSettings.timeLastInfinity > 0)
-            skilltimersText +=
-                $"Last Infinity Time: {Scolor}{CalcUtils.FormatTimeLarge(oracle.saveSettings.timeLastInfinity)}</color><br>";
+            skillTimersDisplayText +=
+                $"Last Infinity Time: {scienceColor}{CalcUtils.FormatTimeLarge(oracle.saveSettings.timeLastInfinity)}</color><br>";
         if (oracle.saveSettings.lastInfinityPointsGained > 0)
         {
             double ipPerSec = oracle.saveSettings.lastInfinityPointsGained / oracle.saveSettings.timeLastInfinity;
-            skilltimersText += ipPerSec >= 1
-                ? $"IP/s: {Scolor}{CalcUtils.FormatNumber(ipPerSec)}</color><br>"
-                : $"s/IP: {Scolor}{CalcUtils.FormatNumber(1 / ipPerSec)}</color><br>";
+            skillTimersDisplayText += ipPerSec >= 1
+                ? $"IP/s: {scienceColor}{CalcUtils.FormatNumber(ipPerSec)}</color><br>"
+                : $"s/IP: {scienceColor}{CalcUtils.FormatNumber(1 / ipPerSec)}</color><br>";
         }
 
-        skilltimersText +=
-            $"<br>Active Panels: {Scolor}{CalcUtils.FormatNumber(dvid.panelsPerSec * dvid.panelLifetime)}</color>";
-        skilltimersText +=
-            $"<br>Stars Surrounded: {Scolor}{CalcUtils.FormatNumber(StarsSurrounded(false, false))}</color>";
-        skilltimersText +=
-            $"<br>Galaxies Engulfed: {Scolor}{CalcUtils.FormatNumber(GalaxiesEngulfed(false, false))}</color><br>";
+        skillTimersDisplayText +=
+            $"<br>Active Panels: {scienceColor}{CalcUtils.FormatNumber(infinityData.panelsPerSec * infinityData.panelLifetime)}</color>";
+        skillTimersDisplayText +=
+            $"<br>Stars Surrounded: {scienceColor}{CalcUtils.FormatNumber(StarsSurrounded(false, false))}</color>";
+        skillTimersDisplayText +=
+            $"<br>Galaxies Engulfed: {scienceColor}{CalcUtils.FormatNumber(GalaxiesEngulfed(false, false))}</color><br>";
 
-        if (dvst.androids)
-            skilltimersText +=
-                $"<br>Androids: {Scolor}{CalcUtils.FormatTimeLarge(dvpd.androidsSkillTimer >= 600 ? 600 : dvpd.androidsSkillTimer)}</color><br><size=80%>Granting: {Scolor}{CalcUtils.FormatNumber(Math.Floor(dvpd.androidsSkillTimer > 600 ? 200 : dvpd.androidsSkillTimer / 3))}s Lifetime</color>.<br></size>";
+        if (skillTreeData.androids)
+            skillTimersDisplayText +=
+                $"<br>Androids: {scienceColor}{CalcUtils.FormatTimeLarge(prestigeData.androidsSkillTimer >= 600 ? 600 : prestigeData.androidsSkillTimer)}</color><br><size=80%>Granting: {scienceColor}{CalcUtils.FormatNumber(Math.Floor(prestigeData.androidsSkillTimer > 600 ? 200 : prestigeData.androidsSkillTimer / 3))}s Lifetime</color>.<br></size>";
 
-        if (dvst.pocketAndroids)
-            skilltimersText +=
-                $"<br>Pocket Androids: {Scolor}{CalcUtils.FormatTimeLarge(dvpd.pocketAndroidsTimer >= 3600 ? 3600 : dvpd.pocketAndroidsTimer)}</color><br><size=80%>Multiplying Data Center Production by: {Scolor}{CalcUtils.FormatNumber(dvpd.pocketAndroidsTimer > 3564 ? 100 : 1 + dvpd.pocketAndroidsTimer / 36)}</color>.<br></size>";
+        if (skillTreeData.pocketAndroids)
+            skillTimersDisplayText +=
+                $"<br>Pocket Androids: {scienceColor}{CalcUtils.FormatTimeLarge(prestigeData.pocketAndroidsTimer >= 3600 ? 3600 : prestigeData.pocketAndroidsTimer)}</color><br><size=80%>Multiplying Data Center Production by: {scienceColor}{CalcUtils.FormatNumber(prestigeData.pocketAndroidsTimer > 3564 ? 100 : 1 + prestigeData.pocketAndroidsTimer / 36)}</color>.<br></size>";
 
-        if (dvst.superRadiantScattering)
-            skilltimersText +=
-                $"<br>Scattering: {Scolor}{CalcUtils.FormatTimeLarge(dvst.superRadiantScatteringTimer)}</color><br><size=80%>Multiplying All Production by: {Scolor}{CalcUtils.FormatNumber(1 + 0.01f * dvst.superRadiantScatteringTimer)}</color>.<br></size>";
+        if (skillTreeData.superRadiantScattering)
+            skillTimersDisplayText +=
+                $"<br>Scattering: {scienceColor}{CalcUtils.FormatTimeLarge(skillTreeData.superRadiantScatteringTimer)}</color><br><size=80%>Multiplying All Production by: {scienceColor}{CalcUtils.FormatNumber(1 + 0.01f * skillTreeData.superRadiantScatteringTimer)}</color>.<br></size>";
 
 
-        skillTimers.text = skilltimersText;
+        skillTimersText.text = skillTimersDisplayText;
     }
 
     #endregion
@@ -817,48 +818,48 @@ public class GameManager : MonoBehaviour
 
     private void SecretBuffs()
     {
-        ModifierSystem.SecretBuffs(dvid, dvpd, _secretBuffState);
+        ModifierSystem.SecretBuffs(infinityData, prestigeData, _secretBuffState);
     }
 
 
     public void UpdatePanelLifetime()
     {
-        ModifierSystem.UpdatePanelLifetime(dvid, dvst, dvpd, pp);
+        ModifierSystem.UpdatePanelLifetime(infinityData, skillTreeData, prestigeData, prestigePlus);
     }
 
     private void UpdatePlanetMulti()
     {
-        ModifierSystem.UpdatePlanetMulti(dvid, dvst, dvpd, pp, _secretBuffState, maxInfinityBuff);
+        ModifierSystem.UpdatePlanetMulti(infinityData, skillTreeData, prestigeData, prestigePlus, _secretBuffState, maxInfinityBuff);
     }
 
     private void UpdateDataCenterMulti()
     {
-        ModifierSystem.UpdateDataCenterMulti(dvid, dvst, dvpd, pp, maxInfinityBuff);
+        ModifierSystem.UpdateDataCenterMulti(infinityData, skillTreeData, prestigeData, prestigePlus, maxInfinityBuff);
     }
 
     private void UpdateServerMulti()
     {
-        ModifierSystem.UpdateServerMulti(dvid, dvst, dvpd, pp, _secretBuffState, maxInfinityBuff);
+        ModifierSystem.UpdateServerMulti(infinityData, skillTreeData, prestigeData, prestigePlus, _secretBuffState, maxInfinityBuff);
     }
 
     private void UpdateManagerMulti()
     {
-        ModifierSystem.UpdateManagerMulti(dvid, dvst, dvpd, pp, _secretBuffState, maxInfinityBuff);
+        ModifierSystem.UpdateManagerMulti(infinityData, skillTreeData, prestigeData, prestigePlus, _secretBuffState, maxInfinityBuff);
     }
 
     private void UpdateAssemblyLineMulti()
     {
-        ModifierSystem.UpdateAssemblyLineMulti(dvid, dvst, dvpd, pp, _secretBuffState, maxInfinityBuff);
+        ModifierSystem.UpdateAssemblyLineMulti(infinityData, skillTreeData, prestigeData, prestigePlus, _secretBuffState, maxInfinityBuff);
     }
 
     private void UpdateSciencePerSec()
     {
-        ModifierSystem.UpdateSciencePerSec(dvid, dvst, dvpd, pp, _secretBuffState);
+        ModifierSystem.UpdateSciencePerSec(infinityData, skillTreeData, prestigeData, prestigePlus, _secretBuffState);
     }
 
     private void UpdateMoneyPerSecMulti()
     {
-        ModifierSystem.UpdateMoneyPerSecMulti(dvid, dvst, dvpd, pp, _secretBuffState);
+        ModifierSystem.UpdateMoneyPerSecMulti(infinityData, skillTreeData, prestigeData, prestigePlus, _secretBuffState);
     }
 
     #endregion
@@ -867,62 +868,68 @@ public class GameManager : MonoBehaviour
 
     private double StellarGalaxies()
     {
-        double galaxiesEngulfed = ProductionMath.GalaxiesEngulfed(dvid, false, false, Time.deltaTime);
-        return ProductionMath.StellarGalaxies(dvst, galaxiesEngulfed);
+        double galaxiesEngulfed = ProductionMath.GalaxiesEngulfed(infinityData, false, false, Time.deltaTime);
+        return ProductionMath.StellarGalaxies(skillTreeData, galaxiesEngulfed);
     }
 
     private double StellarSacrificesRequiredBots()
     {
-        double starsSurrounded = ProductionMath.StarsSurrounded(dvid, false, false, Time.deltaTime);
-        return ProductionMath.StellarSacrificesRequiredBots(dvst, starsSurrounded);
+        double starsSurrounded = ProductionMath.StarsSurrounded(infinityData, false, false, Time.deltaTime);
+        return ProductionMath.StellarSacrificesRequiredBots(skillTreeData, starsSurrounded);
     }
 
     public double GalaxiesEngulfed(bool multipliedByDeltaTime = false, bool floored = true)
     {
-        return ProductionMath.GalaxiesEngulfed(dvid, multipliedByDeltaTime, floored, Time.deltaTime);
+        return ProductionMath.GalaxiesEngulfed(infinityData, multipliedByDeltaTime, floored, Time.deltaTime);
     }
 
     public double StarsSurrounded(bool multipliedByDeltaTime = false, bool floored = true)
     {
-        return ProductionMath.StarsSurrounded(dvid, multipliedByDeltaTime, floored, Time.deltaTime);
+        return ProductionMath.StarsSurrounded(infinityData, multipliedByDeltaTime, floored, Time.deltaTime);
     }
 
     private double GlobalBuff()
     {
-        return ModifierSystem.GlobalBuff(dvst, pp);
+        return ModifierSystem.GlobalBuff(skillTreeData, prestigePlus);
     }
 
     private double AmountForBuildingBoostAfterX()
     {
-        return ProductionMath.AmountForBuildingBoostAfterX(dvst);
+        return ProductionMath.AmountForBuildingBoostAfterX(skillTreeData);
     }
 
     private double DivisionForBoostAfterX()
     {
-        return ProductionMath.DivisionForBoostAfterX(dvst);
+        return ProductionMath.DivisionForBoostAfterX(skillTreeData);
     }
 
     private double MoneyMultipliers()
     {
-        if (GlobalStatPipeline.TryCalculateMoneyMultiplier(dvid, dvst, dvpd, pp, _secretBuffState,
+        if (GlobalStatPipeline.TryCalculateMoneyMultiplier(infinityData, skillTreeData, prestigeData, prestigePlus, _secretBuffState,
                 out StatResult result))
         {
             return result.Value;
         }
 
-        return ModifierSystem.MoneyMultipliers(dvid, dvst, dvpd, pp, _secretBuffState);
+        return ModifierSystem.MoneyMultipliers(infinityData, skillTreeData, prestigeData, prestigePlus, _secretBuffState);
     }
 
     private double ScienceMultipliers()
     {
-        if (GlobalStatPipeline.TryCalculateScienceMultiplier(dvid, dvst, dvpd, pp, _secretBuffState,
+        if (GlobalStatPipeline.TryCalculateScienceMultiplier(infinityData, skillTreeData, prestigeData, prestigePlus, _secretBuffState,
                 out StatResult result))
         {
             return result.Value;
         }
 
-        return ModifierSystem.ScienceMultipliers(dvid, dvst, dvpd, pp, _secretBuffState);
+        return ModifierSystem.ScienceMultipliers(infinityData, skillTreeData, prestigeData, prestigePlus, _secretBuffState);
     }
 
     #endregion
 }
+
+
+
+
+
+

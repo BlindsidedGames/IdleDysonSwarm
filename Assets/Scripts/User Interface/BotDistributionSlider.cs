@@ -8,15 +8,15 @@ public class BotDistributionSlider : MonoBehaviour
     [SerializeField] private TMP_Text workers;
     [SerializeField] private TMP_Text researchers;
     [SerializeField] private Slider slider;
-    private DysonVersePrestigeData dvpd => oracle.saveSettings.dysonVerseSaveData.dysonVersePrestigeData;
+    private DysonVersePrestigeData prestigeData => oracle.saveSettings.dysonVerseSaveData.dysonVersePrestigeData;
 
     private void Start()
     {
         if (!oracle.saveSettings.prestigePlus.botMultitasking)
         {
-            slider.value = (float)dvpd.botDistribution;
-            workers.text = $"{(1f - dvpd.botDistribution).ToString("P0")}";
-            researchers.text = $"{dvpd.botDistribution.ToString("P0")}";
+            slider.value = (float)prestigeData.botDistribution;
+            workers.text = $"{(1f - prestigeData.botDistribution).ToString("P0")}";
+            researchers.text = $"{prestigeData.botDistribution.ToString("P0")}";
         }
         else
         {
@@ -29,7 +29,7 @@ public class BotDistributionSlider : MonoBehaviour
 
     public void SetSlider()
     {
-        slider.value = (float)dvpd.botDistribution;
+        slider.value = (float)prestigeData.botDistribution;
         Slide(slider.value);
     }
 
@@ -38,10 +38,10 @@ public class BotDistributionSlider : MonoBehaviour
         if (!oracle.saveSettings.prestigePlus.botMultitasking)
         {
             f = Mathf.Round(f * 100f) / 100f;
-            dvpd.botDistribution = f;
+            prestigeData.botDistribution = f;
             // Debug.Log(SaveSystem.Instance.saveData.botDistribution);
-            workers.text = $"{(1f - dvpd.botDistribution).ToString("P0")}";
-            researchers.text = $"{dvpd.botDistribution.ToString("P0")}";
+            workers.text = $"{(1f - prestigeData.botDistribution).ToString("P0")}";
+            researchers.text = $"{prestigeData.botDistribution.ToString("P0")}";
         }
         else
         {

@@ -5,9 +5,9 @@
 - If interrupted, the next agent should read this file first and resume from the last entry.
 
 ## Current Phase
-- Phase: Phase 4 (research data migration)
+- Phase: Phase 8 (generic building presenter)
 - Owner: Codex
-- Date: 2026-01-10
+- Date: 2026-01-12
 
 ## Last Completed
 - Added save gating and autosave scheduling guardrails in `Assets/Scripts/Expansion/Oracle.cs`.
@@ -81,18 +81,30 @@
 - Added parity checks for money/science multipliers.
 - Ran facility parity suite after research migration: all deltas within epsilon (31 results).
 - Updated research asset creator to pull cost/exponent/name defaults from in-scene research components when available.
+- Added tinker stats to the data-driven pipeline and wired `ManualBotCreation` to use them (bot yield, assembly yield, cooldown).
+- Added `FacilityRuntimeBuilder` helper and updated production + Oracle breakdowns to use it.
+- Added `FacilityBreakdownPopup` and `FacilityPresenter` scripts for UI breakdown wiring.
+- Removed legacy fallback formulas in `ProductionSystem` and `ModifierSystem` so data-driven stats are authoritative.
+- Ran editor tools to generate core research definitions, game data assets/registry, and refreshed skill definitions + effects (including tinker effects).
+- Wired `FacilityBreakdownPopup` and `FacilityPresenter` in the Game scene and added a close button for the popup.
+- Added running totals to facility breakdown entries for clarity.
+- Passed prestige context into facility production runtimes so on-card values match breakdown totals.
+- Completed play-mode sanity checks (research labels/costs, auto-buy toggles, panel lifetime upgrades, manual tinker, skill tree flows).
+- Added `FacilityBuildingPresenter` and collapsed per-facility managers into thin wrappers.
+- Updated `BotsAutoBuy` to reference the generic presenter base.
+- Moved facility cost/exponent + display verb fields into `FacilityDefinition` assets and updated the presenter to use them.
+- Building UI references now live directly on `Building` (no `BuildingReferences` field); added a migration tool to copy existing references.
+- Reintroduced `BuildingReferences` as the primary UI wiring and hid redundant inspector fields in `Building`.
+- Removed legacy manager scripts and wired the scene to use `FacilityBuildingPresenter` directly.
+- Removed stale UnityEvent targets referencing `DataCenterManager` from scene/prefab button handlers.
+- Removed default facility-type auto-assign logic in `FacilityBuildingPresenter` after manager wrappers were removed.
 
 ## In Progress
 - None
 
 ## Next Steps
-- If not already done: run `Tools/Idle Dyson/Create Core Research Definitions` to generate research assets + effects.
-- If not already done: run `Tools/Idle Dyson/Create Game Data Assets` (or re-run `Create Game Data Registry In Scene`) to create/assign `ResearchDatabase`.
-- If not already done: re-run `Tools/Idle Dyson/Create All Skill Definitions + Effects` to refresh skill assets (requirements/exclusives).
-- Play-mode sanity check: research costs/labels (definitions applied), auto-buy toggles, panel lifetime upgrades.
-- Play-mode sanity check: skill tree purchase/unassign, auto-assign queue, preset save/load, line colors.
 - Load an existing save to confirm skill ownership + auto-assign lists migrate correctly.
-- Re-run `Debug/Run Facility Parity Suite` and confirm deltas are still zero (including modifier checks).
+- Verify breakdown UI in play mode (open/close + totals match cards).
 
 ## Files Touched
 - `Assets/Scripts/Data/ResearchIdMap.cs`
@@ -128,6 +140,9 @@
 - `Assets/Scripts/Systems/Facilities/FacilityRuntime.cs`
 - `Assets/Scripts/Systems/Facilities/FacilityLegacyBridge.cs`
 - `Assets/Scripts/Systems/Facilities/FacilityEffectPipeline.cs`
+- `Assets/Scripts/Systems/Facilities/FacilityRuntimeBuilder.cs`
+- `Assets/Scripts/Systems/Facilities/FacilityBreakdownPopup.cs`
+- `Assets/Scripts/Systems/Facilities/FacilityPresenter.cs`
 - `Assets/Scripts/Expansion/Oracle.cs`
 - `Assets/Scripts/Data/EffectDatabase.cs`
 - `Assets/Scripts/Data/GameDataRegistry.cs`
@@ -153,11 +168,29 @@
 - `Assets/Scripts/SkillTresStuff/SkillsAutoAssignment.cs`
 - `Assets/Scripts/SkillTresStuff/SkillTreeConfirmationManager.cs`
 - `Assets/Scripts/SkillTresStuff/SkillTreeManager.cs`
+- `Assets/Scripts/Buildings/ManualBotCreation.cs`
+- `Assets/Scripts/Buildings/FacilityBuildingPresenter.cs`
+- `Assets/Scripts/Buildings/AssemblyLineManager.cs`
+- `Assets/Scripts/Buildings/ManagerManager.cs`
+- `Assets/Scripts/Buildings/ServerManager.cs`
+- `Assets/Scripts/Buildings/DataCenterManager.cs`
+- `Assets/Scripts/Buildings/PlanetManager.cs`
+- `Assets/Scripts/Buildings/BotsAutoBuy.cs`
+- `Assets/Scripts/Buildings/Building.cs`
+- `Assets/Scripts/Buildings/BuildingReferences.cs`
+- `Assets/Scripts/Buildings/FacilityBuildingPresenter.cs`
+- `Assets/Scripts/Data/FacilityDefinition.cs`
+- `Assets/Editor/FacilityDefinitionSync.cs`
+- `Assets/Data/Facilities/assembly_lines.asset`
+- `Assets/Data/Facilities/ai_managers.asset`
+- `Assets/Data/Facilities/servers.asset`
+- `Assets/Data/Facilities/data_centers.asset`
+- `Assets/Data/Facilities/planets.asset`
+- `Assets/Scenes/Game.unity`
+- `Assets/Prefabs/Buildings/Building.prefab`
 
 ## Manual Unity Editor Steps Pending
-- If not already done: run `Tools/Idle Dyson/Create Core Research Definitions`.
-- If not already done: run `Tools/Idle Dyson/Create Game Data Assets` (or assign `ResearchDatabase` on `GameDataRegistry` manually).
-- If not already done: run `Tools/Idle Dyson/Create All Skill Definitions + Effects` after the skill tree migration changes.
+- None currently noted.
 
 ## Save Migration Status
 - saveVersion: v3 (research levels migration)
@@ -171,16 +204,17 @@
 - Parity checks: Stellar sacrifice bot drain, shoulders-of-the-fallen bonuses, shoulders-of-giants/what-could-have-been accruals matched.
 - Parity checks: Facility modifier parity checks run (passed).
 - Parity checks: Panel lifetime parity check run (passed).
-- Data-driven effects: pipeline validated via parity suite; asset generation still required to fully enable definitions.
-- Data-driven effects: shoulders accrual stats + shoulder surgery bonus mapped, assets pending rebuild if not already run.
-- Research data scaffolding: definitions/database added; asset generation still required to validate costs in-editor.
+- Data-driven effects: assets regenerated and parity suite rerun; deltas within acceptable parameters.
+- Research data scaffolding: assets generated and database assigned in scene.
 - Research data migration: research levels dictionary + pipeline integration in place; parity suite run for global stats.
 - Modifier breakdown integration: parity suite re-run after breakdown changes (passed).
 - Data-driven facility parity comparisons updated (parity suite re-run passed).
-- Offline simulation: not verified
+- Data-driven runtime is now authoritative (legacy fallback in production/modifier paths removed).
+- Tinker pipeline added; assets regenerated; play-mode verification pending.
+- Offline simulation: parity harness added; 1s step run shows sub-1% drift.
 - Breakdown UI: not verified
 - Skill tree migration: code updated, needs play-mode validation + migration spot check
 - Skill tree migration: play-mode sanity check reported OK, still need migration spot check on older save
 
 ## Notes / Blockers
-- None
+- `DysonVerseSkillTreeData` bools and `SetSkillsOnOracle` still exist for UI/legacy consumers; full removal remains a large follow-up if you want to eliminate dvst usage entirely.

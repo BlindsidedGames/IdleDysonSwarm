@@ -10,6 +10,11 @@ namespace Systems.Stats
         public const string MoneyMultiUpgradePerSecond = "Global.MoneyMultiUpgradePerSecond";
         public const string PanelsPerSecond = "Global.PanelsPerSecond";
         public const string PanelLifetime = "Global.PanelLifetime";
+        public const string TinkerBotYield = "Global.Tinker.BotYield";
+        public const string TinkerAssemblyYield = "Global.Tinker.AssemblyYield";
+        public const string TinkerCooldownSeconds = "Global.Tinker.CooldownSeconds";
+        public const string TinkerAutoRate = "Global.Tinker.AutoRate";
+        public const string TinkerSecondaryRate = "Global.Tinker.SecondaryRate";
         public const string AssemblyLineProduction = "Facility.AssemblyLine.Production";
         public const string ManagerProduction = "Facility.Manager.Production";
         public const string ServerProduction = "Facility.Server.Production";

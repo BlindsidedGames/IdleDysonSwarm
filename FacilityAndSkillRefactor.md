@@ -1,5 +1,8 @@
 # Facility and Skill Refactor Plan
 
+## Continuity Note
+- Continue through remaining phases without stopping; update `RefactorProgress.md` after each phase so progress survives context limits.
+
 ## Goals
 - Move facility production and skill effects to a data-driven system that is easy to extend with new facilities, skills, and upgrades.
 - Provide a reliable, complete per-facility breakdown popup that explains every contributing effect in order.
@@ -46,6 +49,8 @@
 - Provide a stat breakdown trace with deterministic ordering:
   - Base value -> additive -> multiplicative -> power/override -> clamp.
 - Provide per-facility breakdown entries that include source, condition, and value.
+- Make the tinker/manual creation system data-driven so future features (auto tinker, secondary bar) are additive.
+- Replace per-building subclasses with a single data-driven presenter so new facilities require no new code.
 
 ## RefactorProgress Tracking (Agent Continuity)
 - Create `RefactorProgress.md` at the project root and update it after each phase or major step.
@@ -198,10 +203,26 @@ Keep these as code-backed effects but still return breakdown entries:
   - Show: base, additive, multipliers, conditionals, final.
 - Keep existing card UI and wire new breakdown button/tooltip.
 
+### Phase 6.5: Tinker System Data-Driven (Manual Bot Creation)
+- Add tinker stats to the global stat pipeline:
+  - `Tinker.BotYield`, `Tinker.AssemblyYield`, `Tinker.CooldownSeconds`.
+  - Provide breakdown contributions for manual labour and future auto/secondary effects.
+- Convert `manualLabour` and `versatileProductionTactics` to tinker-targeted effects.
+- Update `ManualBotCreation` to read pipeline values and log/emit breakdowns (UI later).
+- Keep `manualCreationTime` in save data; treat it as the base cooldown state.
+- Leave room for future: `AutoTinkerRate`, `SecondaryTinkerRate` as additional stats.
+
 ### Phase 7: Remove Legacy Paths
 - Remove old `SetSkillsOnOracle` and `DysonVerseSkillTreeData` bool usage from runtime.
 - Replace `ModifierSystem`/`ProductionSystem` calls with new pipeline.
 - Remove `SkillTreeItem` dependencies if fully migrated.
+
+### Phase 8: Generic Building Presenter
+- Replace `AssemblyLineManager`, `ManagerManager`, etc. with a single `FacilityBuildingPresenter` (name TBD).
+- Presenter reads `FacilityDefinition` + `FacilityRuntime` for cost, owned, and production text.
+- `BuildingReferences` stays as the UI wiring surface to avoid prefab churn.
+- Add a small data-driven format map for per-facility labels/phrasing (optional per-facility overrides).
+- Once validated, delete the old subclasses and update prefabs to use the new presenter.
 
 ## Manual Unity Editor Setup (Required)
 - Create ScriptableObjects:
@@ -213,8 +234,12 @@ Keep these as code-backed effects but still return breakdown entries:
   - `Assets/Data/Databases/ResearchDatabase.asset`.
 - Update scene references:
   - Replace or extend facility UI components to reference `FacilityDefinition`.
-  - Add `FacilityPresenter` to each facility card prefab/GO.
-  - Assign `FacilityBreakdownPopup` prefab reference in the UI manager.
+  - Add `FacilityPresenter` to each facility card prefab/GO:
+    - Set `facilityId` (`assembly_lines`, `ai_managers`, `servers`, `data_centers`, `planets`).
+    - Wire the card's breakdown/details button to `breakdownButton`.
+    - Assign the scene `FacilityBreakdownPopup` or leave null to auto-find.
+  - Add `FacilityBreakdownPopup` to the UI canvas and assign:
+    - `root`, `titleText`, `valueText`, `breakdownText`.
   - Update `SkillTreeManager` nodes to reference `SkillDefinition` assets.
 - Assign database references:
   - Add database references to `Oracle` or a new `GameDataRegistry` component.

@@ -28,12 +28,12 @@ namespace Systems.Stats
             GameDataRegistry registry = GameDataRegistry.Instance;
             if (registry == null || registry.skillDatabase == null) return effects;
 
-            DysonVerseSkillTreeData dvst = context.SkillTreeData;
-            DysonVerseInfinityData dvid = context.InfinityData;
+            DysonVerseSkillTreeData skillTreeData = context.SkillTreeData;
+            DysonVerseInfinityData infinityData = context.InfinityData;
             foreach (SkillDefinition skill in registry.skillDatabase.skills)
             {
                 if (skill == null) continue;
-                if (!IsSkillOwned(skill, dvst, dvid)) continue;
+                if (!IsSkillOwned(skill, skillTreeData, infinityData)) continue;
                 if (skill.effects == null) continue;
 
                 foreach (EffectDefinition effect in skill.effects)
@@ -157,16 +157,17 @@ namespace Systems.Stats
             }
         }
 
-        private static bool IsSkillOwned(SkillDefinition skill, DysonVerseSkillTreeData dvst, DysonVerseInfinityData dvid)
+        private static bool IsSkillOwned(SkillDefinition skill, DysonVerseSkillTreeData skillTreeData, DysonVerseInfinityData infinityData)
         {
             if (skill == null || string.IsNullOrEmpty(skill.id)) return false;
-            if (dvid != null && dvid.skillOwnedById != null &&
-                dvid.skillOwnedById.TryGetValue(skill.id, out bool owned))
+            if (infinityData != null && infinityData.skillOwnedById != null &&
+                infinityData.skillOwnedById.TryGetValue(skill.id, out bool owned))
             {
                 return owned;
             }
 
-            return SkillFlagAccessor.TryGetFlag(dvst, skill.id, out bool legacyOwned) && legacyOwned;
+            return SkillFlagAccessor.TryGetFlag(skillTreeData, skill.id, out bool legacyOwned) && legacyOwned;
         }
     }
 }
+

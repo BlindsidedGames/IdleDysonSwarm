@@ -8,102 +8,102 @@ namespace Systems.Facilities
     public static class FacilityLegacyBridge
     {
         public static FacilityRuntime BuildAssemblyLineRuntime(FacilityDefinition definition,
-            DysonVerseInfinityData dvid, DysonVerseSkillTreeData dvst)
+            DysonVerseInfinityData infinityData, DysonVerseSkillTreeData skillTreeData)
         {
             if (definition == null) return null;
 
             var state = new FacilityState
             {
                 FacilityId = definition.id,
-                ManualOwned = dvid.assemblyLines[1],
-                AutoOwned = dvid.assemblyLines[0],
-                EffectiveCount = dvid.assemblyLines[0] + dvid.assemblyLines[1]
+                ManualOwned = infinityData.assemblyLines[1],
+                AutoOwned = infinityData.assemblyLines[0],
+                EffectiveCount = infinityData.assemblyLines[0] + infinityData.assemblyLines[1]
             };
 
             var runtime = new FacilityRuntime(definition, state);
-            List<StatEffect> effects = BuildAssemblyLineEffects(definition.productionStatId, state, dvid, dvst);
+            List<StatEffect> effects = BuildAssemblyLineEffects(definition.productionStatId, state, infinityData, skillTreeData);
             runtime.RecalculateProduction(ToLegacyFloat(definition.baseProduction), effects);
             return runtime;
         }
 
         public static FacilityRuntime BuildAiManagerRuntime(FacilityDefinition definition,
-            DysonVerseInfinityData dvid, DysonVerseSkillTreeData dvst)
+            DysonVerseInfinityData infinityData, DysonVerseSkillTreeData skillTreeData)
         {
             if (definition == null) return null;
 
             var state = new FacilityState
             {
                 FacilityId = definition.id,
-                ManualOwned = dvid.managers[1],
-                AutoOwned = dvid.managers[0],
-                EffectiveCount = dvid.managers[0] + dvid.managers[1]
+                ManualOwned = infinityData.managers[1],
+                AutoOwned = infinityData.managers[0],
+                EffectiveCount = infinityData.managers[0] + infinityData.managers[1]
             };
 
             var runtime = new FacilityRuntime(definition, state);
-            List<StatEffect> effects = BuildAiManagerEffects(definition.productionStatId, state, dvid, dvst);
+            List<StatEffect> effects = BuildAiManagerEffects(definition.productionStatId, state, infinityData, skillTreeData);
             runtime.RecalculateProduction(ToLegacyFloat(definition.baseProduction), effects);
             return runtime;
         }
 
         public static FacilityRuntime BuildServerRuntime(FacilityDefinition definition,
-            DysonVerseInfinityData dvid, DysonVerseSkillTreeData dvst)
+            DysonVerseInfinityData infinityData, DysonVerseSkillTreeData skillTreeData)
         {
             if (definition == null) return null;
 
             var state = new FacilityState
             {
                 FacilityId = definition.id,
-                ManualOwned = dvid.servers[1],
-                AutoOwned = dvid.servers[0],
-                EffectiveCount = dvid.servers[0] + dvid.servers[1]
+                ManualOwned = infinityData.servers[1],
+                AutoOwned = infinityData.servers[0],
+                EffectiveCount = infinityData.servers[0] + infinityData.servers[1]
             };
 
             var runtime = new FacilityRuntime(definition, state);
-            List<StatEffect> effects = BuildServerEffects(definition.productionStatId, state, dvid, dvst);
+            List<StatEffect> effects = BuildServerEffects(definition.productionStatId, state, infinityData, skillTreeData);
             runtime.RecalculateProduction(ToLegacyFloat(definition.baseProduction), effects);
             return runtime;
         }
 
         public static FacilityRuntime BuildDataCenterRuntime(FacilityDefinition definition,
-            DysonVerseInfinityData dvid, DysonVerseSkillTreeData dvst)
+            DysonVerseInfinityData infinityData, DysonVerseSkillTreeData skillTreeData)
         {
             if (definition == null) return null;
 
             var state = new FacilityState
             {
                 FacilityId = definition.id,
-                ManualOwned = dvid.dataCenters[1],
-                AutoOwned = dvid.dataCenters[0],
-                EffectiveCount = dvid.dataCenters[0] + dvid.dataCenters[1]
+                ManualOwned = infinityData.dataCenters[1],
+                AutoOwned = infinityData.dataCenters[0],
+                EffectiveCount = infinityData.dataCenters[0] + infinityData.dataCenters[1]
             };
 
             var runtime = new FacilityRuntime(definition, state);
-            List<StatEffect> effects = BuildDataCenterEffects(definition.productionStatId, state, dvid, dvst);
+            List<StatEffect> effects = BuildDataCenterEffects(definition.productionStatId, state, infinityData, skillTreeData);
             runtime.RecalculateProduction(ToLegacyFloat(definition.baseProduction), effects);
             return runtime;
         }
 
         public static FacilityRuntime BuildPlanetRuntime(FacilityDefinition definition,
-            DysonVerseInfinityData dvid, DysonVersePrestigeData dvpd, DysonVerseSkillTreeData dvst)
+            DysonVerseInfinityData infinityData, DysonVersePrestigeData prestigeData, DysonVerseSkillTreeData skillTreeData)
         {
             if (definition == null) return null;
 
             var state = new FacilityState
             {
                 FacilityId = definition.id,
-                ManualOwned = dvid.planets[1],
-                AutoOwned = dvid.planets[0],
-                EffectiveCount = dvid.planets[0] + dvid.planets[1]
+                ManualOwned = infinityData.planets[1],
+                AutoOwned = infinityData.planets[0],
+                EffectiveCount = infinityData.planets[0] + infinityData.planets[1]
             };
 
             var runtime = new FacilityRuntime(definition, state);
-            List<StatEffect> effects = BuildPlanetEffects(definition.productionStatId, state, dvid, dvpd, dvst);
+            List<StatEffect> effects = BuildPlanetEffects(definition.productionStatId, state, infinityData, prestigeData, skillTreeData);
             runtime.RecalculateProduction(ToLegacyFloat(definition.baseProduction), effects);
             return runtime;
         }
 
         private static List<StatEffect> BuildAssemblyLineEffects(string statId, FacilityState state,
-            DysonVerseInfinityData dvid, DysonVerseSkillTreeData dvst)
+            DysonVerseInfinityData infinityData, DysonVerseSkillTreeData skillTreeData)
         {
             var effects = new List<StatEffect>
             {
@@ -122,12 +122,12 @@ namespace Systems.Facilities
                     SourceName = "Assembly Line Modifier",
                     TargetStatId = statId,
                     Operation = StatOperation.Multiply,
-                    Value = dvid.assemblyLineModifier,
+                    Value = infinityData.assemblyLineModifier,
                     Order = 10
                 }
             };
 
-            if (dvst.stayingPower)
+            if (skillTreeData.stayingPower)
             {
                 effects.Add(new StatEffect
                 {
@@ -135,13 +135,13 @@ namespace Systems.Facilities
                     SourceName = "Staying Power",
                     TargetStatId = statId,
                     Operation = StatOperation.Multiply,
-                    Value = 1 + 0.01f * dvid.panelLifetime,
+                    Value = 1 + 0.01f * infinityData.panelLifetime,
                     Order = 20,
                     ConditionId = "panel_lifetime"
                 });
             }
 
-            if (dvst.rule34 && dvid.assemblyLines[1] >= 69)
+            if (skillTreeData.rule34 && infinityData.assemblyLines[1] >= 69)
             {
                 effects.Add(new StatEffect
                 {
@@ -155,7 +155,7 @@ namespace Systems.Facilities
                 });
             }
 
-            if (dvst.superchargedPower)
+            if (skillTreeData.superchargedPower)
             {
                 effects.Add(new StatEffect
                 {
@@ -172,7 +172,7 @@ namespace Systems.Facilities
         }
 
         private static List<StatEffect> BuildAiManagerEffects(string statId, FacilityState state,
-            DysonVerseInfinityData dvid, DysonVerseSkillTreeData dvst)
+            DysonVerseInfinityData infinityData, DysonVerseSkillTreeData skillTreeData)
         {
             var effects = new List<StatEffect>
             {
@@ -191,12 +191,12 @@ namespace Systems.Facilities
                     SourceName = "AI Manager Modifier",
                     TargetStatId = statId,
                     Operation = StatOperation.Multiply,
-                    Value = dvid.managerModifier,
+                    Value = infinityData.managerModifier,
                     Order = 10
                 }
             };
 
-            if (dvst.rule34 && dvid.managers[1] >= 69)
+            if (skillTreeData.rule34 && infinityData.managers[1] >= 69)
             {
                 effects.Add(new StatEffect
                 {
@@ -210,7 +210,7 @@ namespace Systems.Facilities
                 });
             }
 
-            if (dvst.superchargedPower)
+            if (skillTreeData.superchargedPower)
             {
                 effects.Add(new StatEffect
                 {
@@ -227,7 +227,7 @@ namespace Systems.Facilities
         }
 
         private static List<StatEffect> BuildServerEffects(string statId, FacilityState state,
-            DysonVerseInfinityData dvid, DysonVerseSkillTreeData dvst)
+            DysonVerseInfinityData infinityData, DysonVerseSkillTreeData skillTreeData)
         {
             var effects = new List<StatEffect>
             {
@@ -246,12 +246,12 @@ namespace Systems.Facilities
                     SourceName = "Server Modifier",
                     TargetStatId = statId,
                     Operation = StatOperation.Multiply,
-                    Value = dvid.serverModifier,
+                    Value = infinityData.serverModifier,
                     Order = 10
                 }
             };
 
-            if (dvst.rule34 && dvid.servers[1] >= 69)
+            if (skillTreeData.rule34 && infinityData.servers[1] >= 69)
             {
                 effects.Add(new StatEffect
                 {
@@ -265,7 +265,7 @@ namespace Systems.Facilities
                 });
             }
 
-            if (dvst.superchargedPower)
+            if (skillTreeData.superchargedPower)
             {
                 effects.Add(new StatEffect
                 {
@@ -282,7 +282,7 @@ namespace Systems.Facilities
         }
 
         private static List<StatEffect> BuildDataCenterEffects(string statId, FacilityState state,
-            DysonVerseInfinityData dvid, DysonVerseSkillTreeData dvst)
+            DysonVerseInfinityData infinityData, DysonVerseSkillTreeData skillTreeData)
         {
             var effects = new List<StatEffect>
             {
@@ -301,12 +301,12 @@ namespace Systems.Facilities
                     SourceName = "Data Center Modifier",
                     TargetStatId = statId,
                     Operation = StatOperation.Multiply,
-                    Value = dvid.dataCenterModifier,
+                    Value = infinityData.dataCenterModifier,
                     Order = 10
                 }
             };
 
-            if (dvst.rule34 && dvid.dataCenters[1] >= 69)
+            if (skillTreeData.rule34 && infinityData.dataCenters[1] >= 69)
             {
                 effects.Add(new StatEffect
                 {
@@ -320,7 +320,7 @@ namespace Systems.Facilities
                 });
             }
 
-            if (dvst.superchargedPower)
+            if (skillTreeData.superchargedPower)
             {
                 effects.Add(new StatEffect
                 {
@@ -333,7 +333,7 @@ namespace Systems.Facilities
                 });
             }
 
-            if (dvid.rudimentrySingularityProduction > 0)
+            if (infinityData.rudimentrySingularityProduction > 0)
             {
                 effects.Add(new StatEffect
                 {
@@ -341,13 +341,13 @@ namespace Systems.Facilities
                     SourceName = "Rudimentary Singularity",
                     TargetStatId = statId,
                     Operation = StatOperation.Add,
-                    Value = dvid.rudimentrySingularityProduction,
+                    Value = infinityData.rudimentrySingularityProduction,
                     Order = 40
                 });
             }
 
-            double serversTotal = dvid.servers[0] + dvid.servers[1];
-            if (dvst.parallelComputation && serversTotal > 1)
+            double serversTotal = infinityData.servers[0] + infinityData.servers[1];
+            if (skillTreeData.parallelComputation && serversTotal > 1)
             {
                 effects.Add(new StatEffect
                 {
@@ -365,7 +365,7 @@ namespace Systems.Facilities
         }
 
         private static List<StatEffect> BuildPlanetEffects(string statId, FacilityState state,
-            DysonVerseInfinityData dvid, DysonVersePrestigeData dvpd, DysonVerseSkillTreeData dvst)
+            DysonVerseInfinityData infinityData, DysonVersePrestigeData prestigeData, DysonVerseSkillTreeData skillTreeData)
         {
             var effects = new List<StatEffect>
             {
@@ -384,12 +384,12 @@ namespace Systems.Facilities
                     SourceName = "Planet Modifier",
                     TargetStatId = statId,
                     Operation = StatOperation.Multiply,
-                    Value = dvid.planetModifier,
+                    Value = infinityData.planetModifier,
                     Order = 10
                 }
             };
 
-            if (dvst.rule34 && dvid.planets[1] >= 69)
+            if (skillTreeData.rule34 && infinityData.planets[1] >= 69)
             {
                 effects.Add(new StatEffect
                 {
@@ -403,7 +403,7 @@ namespace Systems.Facilities
                 });
             }
 
-            if (dvst.superchargedPower)
+            if (skillTreeData.superchargedPower)
             {
                 effects.Add(new StatEffect
                 {
@@ -416,9 +416,9 @@ namespace Systems.Facilities
                 });
             }
 
-            if (dvst.pocketDimensions)
+            if (skillTreeData.pocketDimensions)
             {
-                double pocketDimensionsProduction = ComputePocketDimensionsProduction(dvid, dvpd, dvst);
+                double pocketDimensionsProduction = ComputePocketDimensionsProduction(infinityData, prestigeData, skillTreeData);
                 if (pocketDimensionsProduction > 0)
                 {
                     effects.Add(new StatEffect
@@ -436,60 +436,60 @@ namespace Systems.Facilities
             return effects;
         }
 
-        internal static StatResult CalculatePlanetGeneration(DysonVerseInfinityData dvid, DysonVerseSkillTreeData dvst)
+        internal static StatResult CalculatePlanetGeneration(DysonVerseInfinityData infinityData, DysonVerseSkillTreeData skillTreeData)
         {
-            List<StatEffect> effects = BuildPlanetGenerationEffects(StatId.PlanetsPerSecond, dvid, dvst);
+            List<StatEffect> effects = BuildPlanetGenerationEffects(StatId.PlanetsPerSecond, infinityData, skillTreeData);
             return StatCalculator.Calculate(0, effects);
         }
 
-        internal static double ComputeScientificPlanetsProduction(DysonVerseInfinityData dvid,
-            DysonVerseSkillTreeData dvst)
+        internal static double ComputeScientificPlanetsProduction(DysonVerseInfinityData infinityData,
+            DysonVerseSkillTreeData skillTreeData)
         {
-            double production = dvid.researchers > 1 && dvst.scientificPlanets
-                ? System.Math.Log10(dvid.researchers)
+            double production = infinityData.researchers > 1 && skillTreeData.scientificPlanets
+                ? System.Math.Log10(infinityData.researchers)
                 : 0;
-            if (dvst.hubbleTelescope) production *= 2;
-            if (dvst.jamesWebbTelescope) production *= 4;
-            if (dvst.terraformingProtocols) production += dvst.fragments;
+            if (skillTreeData.hubbleTelescope) production *= 2;
+            if (skillTreeData.jamesWebbTelescope) production *= 4;
+            if (skillTreeData.terraformingProtocols) production += skillTreeData.fragments;
             return production;
         }
 
-        internal static double ComputePlanetAssemblyProduction(DysonVerseInfinityData dvid,
-            DysonVerseSkillTreeData dvst)
+        internal static double ComputePlanetAssemblyProduction(DysonVerseInfinityData infinityData,
+            DysonVerseSkillTreeData skillTreeData)
         {
-            double totalAssemblyLines = dvid.assemblyLines[0] + dvid.assemblyLines[1];
-            return dvst.planetAssembly && totalAssemblyLines >= 10
+            double totalAssemblyLines = infinityData.assemblyLines[0] + infinityData.assemblyLines[1];
+            return skillTreeData.planetAssembly && totalAssemblyLines >= 10
                 ? System.Math.Log10(totalAssemblyLines)
                 : 0;
         }
 
-        internal static double ComputeShellWorldsProduction(DysonVerseInfinityData dvid,
-            DysonVerseSkillTreeData dvst)
+        internal static double ComputeShellWorldsProduction(DysonVerseInfinityData infinityData,
+            DysonVerseSkillTreeData skillTreeData)
         {
-            double totalPlanets = dvid.planets[0] + dvid.planets[1];
-            return dvst.planetAssembly && totalPlanets >= 2
+            double totalPlanets = infinityData.planets[0] + infinityData.planets[1];
+            return skillTreeData.planetAssembly && totalPlanets >= 2
                 ? System.Math.Log(totalPlanets, 2)
                 : 0;
         }
 
-        internal static double ComputeStellarSacrificesProduction(DysonVerseInfinityData dvid,
-            DysonVerseSkillTreeData dvst)
+        internal static double ComputeStellarSacrificesProduction(DysonVerseInfinityData infinityData,
+            DysonVerseSkillTreeData skillTreeData)
         {
-            double starsSurrounded = ProductionMath.StarsSurrounded(dvid, false, false, 0);
-            double galaxiesEngulfed = ProductionMath.GalaxiesEngulfed(dvid, false, false, 0);
-            double stellarGalaxies = ProductionMath.StellarGalaxies(dvst, galaxiesEngulfed);
-            double botsRequired = ProductionMath.StellarSacrificesRequiredBots(dvst, starsSurrounded);
-            return dvst.stellarSacrifices && dvid.bots >= botsRequired && stellarGalaxies > 0
+            double starsSurrounded = ProductionMath.StarsSurrounded(infinityData, false, false, 0);
+            double galaxiesEngulfed = ProductionMath.GalaxiesEngulfed(infinityData, false, false, 0);
+            double stellarGalaxies = ProductionMath.StellarGalaxies(skillTreeData, galaxiesEngulfed);
+            double botsRequired = ProductionMath.StellarSacrificesRequiredBots(skillTreeData, starsSurrounded);
+            return skillTreeData.stellarSacrifices && infinityData.bots >= botsRequired && stellarGalaxies > 0
                 ? stellarGalaxies
                 : 0;
         }
 
         private static List<StatEffect> BuildPlanetGenerationEffects(string statId,
-            DysonVerseInfinityData dvid, DysonVerseSkillTreeData dvst)
+            DysonVerseInfinityData infinityData, DysonVerseSkillTreeData skillTreeData)
         {
             var effects = new List<StatEffect>();
 
-            if (dvst.scientificPlanets)
+            if (skillTreeData.scientificPlanets)
             {
                 effects.Add(new StatEffect
                 {
@@ -497,12 +497,12 @@ namespace Systems.Facilities
                     SourceName = "Scientific Planets",
                     TargetStatId = statId,
                     Operation = StatOperation.Add,
-                    Value = ComputeScientificPlanetsProduction(dvid, dvst),
+                    Value = ComputeScientificPlanetsProduction(infinityData, skillTreeData),
                     Order = 0
                 });
             }
 
-            if (dvst.planetAssembly)
+            if (skillTreeData.planetAssembly)
             {
                 effects.Add(new StatEffect
                 {
@@ -510,12 +510,12 @@ namespace Systems.Facilities
                     SourceName = "Planet Assembly",
                     TargetStatId = statId,
                     Operation = StatOperation.Add,
-                    Value = ComputePlanetAssemblyProduction(dvid, dvst),
+                    Value = ComputePlanetAssemblyProduction(infinityData, skillTreeData),
                     Order = 10
                 });
             }
 
-            if (dvst.shellWorlds)
+            if (skillTreeData.shellWorlds)
             {
                 effects.Add(new StatEffect
                 {
@@ -523,12 +523,12 @@ namespace Systems.Facilities
                     SourceName = "Shell Worlds",
                     TargetStatId = statId,
                     Operation = StatOperation.Add,
-                    Value = ComputeShellWorldsProduction(dvid, dvst),
+                    Value = ComputeShellWorldsProduction(infinityData, skillTreeData),
                     Order = 20
                 });
             }
 
-            if (dvst.stellarSacrifices)
+            if (skillTreeData.stellarSacrifices)
             {
                 effects.Add(new StatEffect
                 {
@@ -536,7 +536,7 @@ namespace Systems.Facilities
                     SourceName = "Stellar Sacrifices",
                     TargetStatId = statId,
                     Operation = StatOperation.Add,
-                    Value = ComputeStellarSacrificesProduction(dvid, dvst),
+                    Value = ComputeStellarSacrificesProduction(infinityData, skillTreeData),
                     Order = 30
                 });
             }
@@ -549,35 +549,35 @@ namespace Systems.Facilities
             return (double)(float)value;
         }
 
-        internal static double ComputePocketDimensionsProduction(DysonVerseInfinityData dvid,
-            DysonVersePrestigeData dvpd, DysonVerseSkillTreeData dvst)
+        internal static double ComputePocketDimensionsProduction(DysonVerseInfinityData infinityData,
+            DysonVersePrestigeData prestigeData, DysonVerseSkillTreeData skillTreeData)
         {
-            double production = dvst.pocketDimensions && dvid.workers > 1 ? System.Math.Log10(dvid.workers) : 0;
+            double production = skillTreeData.pocketDimensions && infinityData.workers > 1 ? System.Math.Log10(infinityData.workers) : 0;
 
-            if (dvst.pocketMultiverse)
+            if (skillTreeData.pocketMultiverse)
             {
-                double multiplier = dvst.pocketDimensions && dvid.researchers > 1f ? System.Math.Log10(dvid.researchers) : 0;
-                if (dvid.researchers > 0 && multiplier > 0)
+                double multiplier = skillTreeData.pocketDimensions && infinityData.researchers > 1f ? System.Math.Log10(infinityData.researchers) : 0;
+                if (infinityData.researchers > 0 && multiplier > 0)
                 {
                     production *= multiplier;
                 }
             }
             else
             {
-                double add = dvst.pocketProtectors && dvst.pocketDimensions && dvid.researchers > 1f
-                    ? System.Math.Log10(dvid.researchers)
+                double add = skillTreeData.pocketProtectors && skillTreeData.pocketDimensions && infinityData.researchers > 1f
+                    ? System.Math.Log10(infinityData.researchers)
                     : 0;
                 production += add;
             }
 
-            if (dvst.dimensionalCatCables) production *= 5;
-            if (dvst.solarBubbles) production *= 1 + 0.01f * dvid.panelLifetime;
-            if (dvst.pocketAndroids)
-                production *= dvpd.pocketAndroidsTimer > 3564 ? 100 : 1 + dvpd.pocketAndroidsTimer / 36;
-            if (dvst.quantumComputing)
+            if (skillTreeData.dimensionalCatCables) production *= 5;
+            if (skillTreeData.solarBubbles) production *= 1 + 0.01f * infinityData.panelLifetime;
+            if (skillTreeData.pocketAndroids)
+                production *= prestigeData.pocketAndroidsTimer > 3564 ? 100 : 1 + prestigeData.pocketAndroidsTimer / 36;
+            if (skillTreeData.quantumComputing)
             {
-                double quantumMulti = 1 + (dvid.rudimentrySingularityProduction >= 1
-                    ? System.Math.Log(dvid.rudimentrySingularityProduction, 2)
+                double quantumMulti = 1 + (infinityData.rudimentrySingularityProduction >= 1
+                    ? System.Math.Log(infinityData.rudimentrySingularityProduction, 2)
                     : 0);
                 production *= quantumMulti;
             }
@@ -586,3 +586,4 @@ namespace Systems.Facilities
         }
     }
 }
+

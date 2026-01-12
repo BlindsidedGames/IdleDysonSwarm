@@ -33,13 +33,13 @@ namespace Systems.Stats
                 return false;
             }
 
-            DysonVerseInfinityData dvid = context.InfinityData;
+            DysonVerseInfinityData infinityData = context.InfinityData;
             foreach (ResearchDefinition research in registry.researchDatabase.research)
             {
                 if (research == null || string.IsNullOrEmpty(research.id)) continue;
                 if (research.effects == null || research.effects.Count == 0) continue;
 
-                double level = GetResearchLevel(dvid, research);
+                double level = GetResearchLevel(infinityData, research);
                 if (level <= 0) continue;
 
                 foreach (EffectDefinition effect in research.effects)
@@ -74,23 +74,23 @@ namespace Systems.Stats
             return true;
         }
 
-        private static double GetResearchLevel(DysonVerseInfinityData dvid, ResearchDefinition research)
+        private static double GetResearchLevel(DysonVerseInfinityData infinityData, ResearchDefinition research)
         {
             if (research == null) return 0;
 
             double level = 0;
-            if (dvid != null && dvid.researchLevelsById != null &&
-                dvid.researchLevelsById.TryGetValue(research.id, out double stored))
+            if (infinityData != null && infinityData.researchLevelsById != null &&
+                infinityData.researchLevelsById.TryGetValue(research.id, out double stored))
             {
                 level = stored;
             }
-            else if (ResearchIdMap.TryGetLegacyLevel(dvid, research.id, out double legacy))
+            else if (ResearchIdMap.TryGetLegacyLevel(infinityData, research.id, out double legacy))
             {
                 level = legacy;
-                if (dvid != null)
+                if (infinityData != null)
                 {
-                    dvid.researchLevelsById ??= new Dictionary<string, double>();
-                    dvid.researchLevelsById[research.id] = legacy;
+                    infinityData.researchLevelsById ??= new Dictionary<string, double>();
+                    infinityData.researchLevelsById[research.id] = legacy;
                 }
             }
 
@@ -118,31 +118,31 @@ namespace Systems.Stats
         private static bool TryGetUpgradePercent(ResearchDefinition research, EffectContext context, out double percent)
         {
             percent = 0;
-            DysonVerseInfinityData dvid = context.InfinityData;
-            if (dvid == null || research == null) return false;
+            DysonVerseInfinityData infinityData = context.InfinityData;
+            if (infinityData == null || research == null) return false;
 
             switch (research.id)
             {
                 case ResearchIdMap.MoneyMultiplier:
-                    percent = dvid.moneyMultiUpgradePercent;
+                    percent = infinityData.moneyMultiUpgradePercent;
                     return true;
                 case ResearchIdMap.ScienceBoost:
-                    percent = dvid.scienceBoostPercent;
+                    percent = infinityData.scienceBoostPercent;
                     return true;
                 case ResearchIdMap.AssemblyLineUpgrade:
-                    percent = dvid.assemblyLineUpgradePercent;
+                    percent = infinityData.assemblyLineUpgradePercent;
                     return true;
                 case ResearchIdMap.AiManagerUpgrade:
-                    percent = dvid.aiManagerUpgradePercent;
+                    percent = infinityData.aiManagerUpgradePercent;
                     return true;
                 case ResearchIdMap.ServerUpgrade:
-                    percent = dvid.serverUpgradePercent;
+                    percent = infinityData.serverUpgradePercent;
                     return true;
                 case ResearchIdMap.DataCenterUpgrade:
-                    percent = dvid.dataCenterUpgradePercent;
+                    percent = infinityData.dataCenterUpgradePercent;
                     return true;
                 case ResearchIdMap.PlanetUpgrade:
-                    percent = dvid.planetUpgradePercent;
+                    percent = infinityData.planetUpgradePercent;
                     return true;
                 default:
                     return false;
@@ -220,3 +220,4 @@ namespace Systems.Stats
         }
     }
 }
+

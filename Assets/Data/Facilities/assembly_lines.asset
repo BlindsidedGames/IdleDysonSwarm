@@ -19,7 +19,10 @@ MonoBehaviour:
   tags:
   - facility
   - assembly
-  baseCost: 1
-  costExponent: 1.15
+  baseCost: 100
+  costExponent: 1.22
   baseProduction: 0.1
   productionStatId: Facility.AssemblyLine.Production
+  wordUsed: Producing
+  productionWordUsed: Bot
+  purchasePrompt: Purchase an Assembly Line

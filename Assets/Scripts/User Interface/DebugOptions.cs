@@ -6,9 +6,9 @@ using static Expansion.Oracle;
 
 public class DebugOptions : MonoBehaviour
 {
-    private DysonVerseInfinityData dvid => oracle.saveSettings.dysonVerseSaveData.dysonVerseInfinityData;
-    private DysonVerseSkillTreeData dvst => oracle.saveSettings.dysonVerseSaveData.dysonVerseSkillTreeData;
-    private PrestigePlus pp => oracle.saveSettings.prestigePlus;
+    private DysonVerseInfinityData infinityData => oracle.saveSettings.dysonVerseSaveData.dysonVerseInfinityData;
+    private DysonVerseSkillTreeData skillTreeData => oracle.saveSettings.dysonVerseSaveData.dysonVerseSkillTreeData;
+    private PrestigePlus prestigePlus => oracle.saveSettings.prestigePlus;
     private SaveDataPrestige sdp => oracle.saveSettings.sdPrestige;
 
     [SerializeField] private Button debugCurrencyButton;
@@ -57,13 +57,13 @@ public class DebugOptions : MonoBehaviour
     public void AddBots()
     {
         double number;
-        if (double.TryParse(inputField.text, out number)) dvid.bots += number;
+        if (double.TryParse(inputField.text, out number)) infinityData.bots += number;
     }
 
     private void SetSkillPoints()
     {
         long number;
-        if (long.TryParse(inputField.text, out number)) dvst.skillPointsTree += number;
+        if (long.TryParse(inputField.text, out number)) skillTreeData.skillPointsTree += number;
         _gameManager.AutoAssignSkillsInvoke();
     }
 
@@ -77,7 +77,7 @@ public class DebugOptions : MonoBehaviour
     private void AddQuantumShards()
     {
         long number;
-        if (long.TryParse(inputField.text, out number)) pp.points += number;
+        if (long.TryParse(inputField.text, out number)) prestigePlus.points += number;
     }
 
     private void AddSM()

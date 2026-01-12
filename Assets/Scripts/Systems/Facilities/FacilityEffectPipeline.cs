@@ -189,50 +189,50 @@ namespace Systems.Facilities
             result = null;
             if (definition == null) return false;
 
-            DysonVerseInfinityData dvid = context.InfinityData;
-            DysonVersePrestigeData dvpd = context.PrestigeData;
-            DysonVerseSkillTreeData dvst = context.SkillTreeData;
-            PrestigePlus pp = context.PrestigePlus;
-            SecretBuffState secrets = ModifierSystem.BuildSecretBuffState(dvpd);
+            DysonVerseInfinityData infinityData = context.InfinityData;
+            DysonVersePrestigeData prestigeData = context.PrestigeData;
+            DysonVerseSkillTreeData skillTreeData = context.SkillTreeData;
+            PrestigePlus prestigePlus = context.PrestigePlus;
+            SecretBuffState secrets = ModifierSystem.BuildSecretBuffState(prestigeData);
 
             switch (definition.id)
             {
                 case "assembly_lines":
-                    return FacilityModifierPipeline.TryCalculateAssemblyLineModifier(dvid, dvst, dvpd, pp, secrets,
+                    return FacilityModifierPipeline.TryCalculateAssemblyLineModifier(infinityData, skillTreeData, prestigeData, prestigePlus, secrets,
                         DefaultMaxInfinityBuff, out result);
                 case "ai_managers":
-                    return FacilityModifierPipeline.TryCalculateManagerModifier(dvid, dvst, dvpd, pp, secrets,
+                    return FacilityModifierPipeline.TryCalculateManagerModifier(infinityData, skillTreeData, prestigeData, prestigePlus, secrets,
                         DefaultMaxInfinityBuff, out result);
                 case "servers":
-                    return FacilityModifierPipeline.TryCalculateServerModifier(dvid, dvst, dvpd, pp, secrets,
+                    return FacilityModifierPipeline.TryCalculateServerModifier(infinityData, skillTreeData, prestigeData, prestigePlus, secrets,
                         DefaultMaxInfinityBuff, out result);
                 case "data_centers":
-                    return FacilityModifierPipeline.TryCalculateDataCenterModifier(dvid, dvst, dvpd, pp,
+                    return FacilityModifierPipeline.TryCalculateDataCenterModifier(infinityData, skillTreeData, prestigeData, prestigePlus,
                         DefaultMaxInfinityBuff, out result);
                 case "planets":
-                    return FacilityModifierPipeline.TryCalculatePlanetModifier(dvid, dvst, dvpd, pp, secrets,
+                    return FacilityModifierPipeline.TryCalculatePlanetModifier(infinityData, skillTreeData, prestigeData, prestigePlus, secrets,
                         DefaultMaxInfinityBuff, out result);
                 default:
                     return false;
             }
         }
 
-        private static double GetLegacyModifier(FacilityDefinition definition, DysonVerseInfinityData dvid)
+        private static double GetLegacyModifier(FacilityDefinition definition, DysonVerseInfinityData infinityData)
         {
-            if (definition == null || dvid == null) return 1;
+            if (definition == null || infinityData == null) return 1;
 
             switch (definition.id)
             {
                 case "assembly_lines":
-                    return dvid.assemblyLineModifier;
+                    return infinityData.assemblyLineModifier;
                 case "ai_managers":
-                    return dvid.managerModifier;
+                    return infinityData.managerModifier;
                 case "servers":
-                    return dvid.serverModifier;
+                    return infinityData.serverModifier;
                 case "data_centers":
-                    return dvid.dataCenterModifier;
+                    return infinityData.dataCenterModifier;
                 case "planets":
-                    return dvid.planetModifier;
+                    return infinityData.planetModifier;
                 default:
                     return 1;
             }
@@ -249,3 +249,4 @@ namespace Systems.Facilities
         }
     }
 }
+

@@ -10,10 +10,10 @@ using static Expansion.Oracle;
 
 public class SidePanelManager : MonoBehaviour
 {
-    private DysonVerseInfinityData dvid => oracle.saveSettings.dysonVerseSaveData.dysonVerseInfinityData;
-    private DysonVersePrestigeData dvpd => oracle.saveSettings.dysonVerseSaveData.dysonVersePrestigeData;
+    private DysonVerseInfinityData infinityData => oracle.saveSettings.dysonVerseSaveData.dysonVerseInfinityData;
+    private DysonVersePrestigeData prestigeData => oracle.saveSettings.dysonVerseSaveData.dysonVersePrestigeData;
     private SaveDataPrestige sdp => oracle.saveSettings.sdPrestige;
-    private PrestigePlus pp => oracle.saveSettings.prestigePlus;
+    private PrestigePlus prestigePlus => oracle.saveSettings.prestigePlus;
 
     [Header("Infinity"), SerializeField] private SlicedFilledImage InfinityFill;
     [SerializeField] public GameObject InfinityToggle;
@@ -58,11 +58,11 @@ public class SidePanelManager : MonoBehaviour
 
     private void HandleReality()
     {
-        bool show = oracle.saveSettings.prestigePlus.points >= 1 || dvpd.infinityPoints >= 1 ||
+        bool show = oracle.saveSettings.prestigePlus.points >= 1 || prestigeData.infinityPoints >= 1 ||
                     oracle.saveSettings.unlockAllTabs;
         reality.SetActive(show);
         if (!show) return;
-        bool unlocked = oracle.saveSettings.prestigePlus.points >= 1 || dvpd.secretsOfTheUniverse >= 27 ||
+        bool unlocked = oracle.saveSettings.prestigePlus.points >= 1 || prestigeData.secretsOfTheUniverse >= 27 ||
                         oracle.saveSettings.unlockAllTabs;
         realityImage.SetActive(unlocked);
         realityToggle.SetActive(unlocked && SceneManager.GetActiveScene().buildIndex == 1);
@@ -84,7 +84,7 @@ public class SidePanelManager : MonoBehaviour
             {
                 realityFillBar.SetActive(true);
                 realityFillBarWorkers.SetActive(false);
-                RealityUnlockfill.fillAmount = (float)dvpd.secretsOfTheUniverse / 27;
+                RealityUnlockfill.fillAmount = (float)prestigeData.secretsOfTheUniverse / 27;
             }
                 break;
         }
@@ -98,11 +98,11 @@ public class SidePanelManager : MonoBehaviour
 
     private void HandlePrestige()
     {
-        bool show = oracle.saveSettings.prestigePlus.points >= 1 || dvpd.infinityPoints >= 1 ||
+        bool show = oracle.saveSettings.prestigePlus.points >= 1 || prestigeData.infinityPoints >= 1 ||
                     oracle.saveSettings.unlockAllTabs;
         prestige.SetActive(show);
         if (!show) return;
-        bool unlocked = oracle.saveSettings.prestigePlus.points >= 1 || dvpd.infinityPoints >= 42 ||
+        bool unlocked = oracle.saveSettings.prestigePlus.points >= 1 || prestigeData.infinityPoints >= 42 ||
                         oracle.saveSettings.unlockAllTabs;
         PrestigeImage.SetActive(unlocked);
         PrestigeToggle.SetActive(unlocked && SceneManager.GetActiveScene().buildIndex == 1);
@@ -110,7 +110,7 @@ public class SidePanelManager : MonoBehaviour
         PrestigeText.text = oracle.saveSettings.prestigeFirstRun
             ? "Quantum"
             : "<align=\"center\"><sprite=4 color=#C8B3FF>";
-        PrestigeFill.fillAmount = (float)dvpd.infinityPoints / 42;
+        PrestigeFill.fillAmount = (float)prestigeData.infinityPoints / 42;
 
         if (!unlocked || oracle.saveSettings.prestigeFirstRun) return;
         oracle.saveSettings.prestigeFirstRun = true;
@@ -119,39 +119,39 @@ public class SidePanelManager : MonoBehaviour
 
     private void HandleInfinity()
     {
-        bool autoPrestige = !pp.breakTheLoop;
-        double amount = pp.divisionsPurchased > 0 ? 4.2e19 / Math.Pow(10, pp.divisionsPurchased) : 4.2e19;
-        bool unlocked = dvpd.infinityPoints >= 1 || oracle.saveSettings.prestigePlus.points >= 1 ||
+        bool autoPrestige = !prestigePlus.breakTheLoop;
+        double amount = prestigePlus.divisionsPurchased > 0 ? 4.2e19 / Math.Pow(10, prestigePlus.divisionsPurchased) : 4.2e19;
+        bool unlocked = prestigeData.infinityPoints >= 1 || oracle.saveSettings.prestigePlus.points >= 1 ||
                         oracle.saveSettings.unlockAllTabs;
         InfinityImage.SetActive(unlocked);
         InfinityToggle.SetActive(unlocked && SceneManager.GetActiveScene().buildIndex == 1);
         InfinityMenubutton.interactable = unlocked;
-        int ipToGain = StaticMethods.InfinityPointsToGain(amount, dvid.bots);
+        int ipToGain = StaticMethods.InfinityPointsToGain(amount, infinityData.bots);
         InfinityText.text = oracle.saveSettings.infinityFirstRunDone
             ? !autoPrestige
-                ? $"Infinity <size=70%>+{(pp.doubleIP ? ipToGain * 2 : ipToGain)}"
+                ? $"Infinity <size=70%>+{(prestigePlus.doubleIP ? ipToGain * 2 : ipToGain)}"
                 : "Infinity"
             : "<align=\"center\"><sprite=4 color=#C8B3FF>";
 
 
         if (autoPrestige)
         {
-            percent = math.log10(dvid.bots) / math.log10(amount);
-            if (dvid.bots < 1) percent = 0;
+            percent = math.log10(infinityData.bots) / math.log10(amount);
+            if (infinityData.bots < 1) percent = 0;
             InfinityFill.fillAmount = (float)percent;
         }
         else
         {
             double amountForNextPoint =
-                BuyMultiple.BuyX(StaticMethods.InfinityPointsToGain(amount, dvid.bots) + 1, amount,
+                BuyMultiple.BuyX(StaticMethods.InfinityPointsToGain(amount, infinityData.bots) + 1, amount,
                     oracle.infinityExponent, 0);
 
-            percent = (dvid.bots -
-                       BuyMultiple.BuyX(StaticMethods.InfinityPointsToGain(amount, dvid.bots), amount,
+            percent = (infinityData.bots -
+                       BuyMultiple.BuyX(StaticMethods.InfinityPointsToGain(amount, infinityData.bots), amount,
                            oracle.infinityExponent, 0)) /
-                      (amountForNextPoint - BuyMultiple.BuyX(StaticMethods.InfinityPointsToGain(amount, dvid.bots),
+                      (amountForNextPoint - BuyMultiple.BuyX(StaticMethods.InfinityPointsToGain(amount, infinityData.bots),
                           amount, oracle.infinityExponent, 0));
-            if (dvid.bots < 1) percent = 0;
+            if (infinityData.bots < 1) percent = 0;
             InfinityFill.fillAmount = (float)percent;
         }
 
@@ -160,3 +160,4 @@ public class SidePanelManager : MonoBehaviour
         InfinityToggle.GetComponent<Toggle>().isOn = false;
     }
 }
+

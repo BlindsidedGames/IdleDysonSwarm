@@ -7,7 +7,7 @@ using static Expansion.Oracle;
 
 public class SkillsAutoAssignment : MonoBehaviour
 {
-    private DysonVerseSkillTreeData dvst => oracle.saveSettings.dysonVerseSaveData.dysonVerseSkillTreeData;
+    private DysonVerseSkillTreeData skillTreeData => oracle.saveSettings.dysonVerseSaveData.dysonVerseSkillTreeData;
     [SerializeField] private GameManager _gameManager;
 
     private void OnEnable()
@@ -24,7 +24,7 @@ public class SkillsAutoAssignment : MonoBehaviour
 
     private void UnlockSkill()
     {
-        long pointsLeft = dvst.skillPointsTree;
+        long pointsLeft = skillTreeData.skillPointsTree;
         List<string> autoAssignIds = oracle.GetAutoAssignmentSkillIds();
         if (autoAssignIds.Count < 1) return;
         foreach (string skillId in autoAssignIds)
@@ -38,7 +38,7 @@ public class SkillsAutoAssignment : MonoBehaviour
             }
 
             int cost = definition != null ? definition.cost : legacy != null ? legacy.Cost : 0;
-            if (dvst.skillPointsTree < cost) continue;
+            if (skillTreeData.skillPointsTree < cost) continue;
             if (oracle.IsSkillOwned(skillId) || (legacy != null && legacy.Owned)) continue;
 
             bool available = true;
@@ -47,14 +47,14 @@ public class SkillsAutoAssignment : MonoBehaviour
             if (HasExclusiveOwned(definition?.exclusiveWithIds, legacy?.ExclusvieWith)) available = false;
             if (available)
             {
-                dvst.skillPointsTree -= cost;
+                skillTreeData.skillPointsTree -= cost;
                 oracle.SetSkillOwned(skillId, true);
                 bool isFragment = definition != null ? definition.isFragment : legacy != null && legacy.isFragment;
-                if (isFragment) dvst.fragments += 1;
+                if (isFragment) skillTreeData.fragments += 1;
                 pointsLeft -= 1;
             }
 
-            if (pointsLeft != dvst.skillPointsTree) UnlockSkill();
+            if (pointsLeft != skillTreeData.skillPointsTree) UnlockSkill();
             _gameManager.UpdateSkillsInvoke();
         }
     }
@@ -107,3 +107,4 @@ public class SkillsAutoAssignment : MonoBehaviour
         return false;
     }
 }
+

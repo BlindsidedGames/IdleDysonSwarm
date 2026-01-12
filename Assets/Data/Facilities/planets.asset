@@ -19,7 +19,10 @@ MonoBehaviour:
   tags:
   - facility
   - planet
-  baseCost: 1
-  costExponent: 1.15
+  baseCost: 1000000000
+  costExponent: 1.25
   baseProduction: 0.0002777777777777778
   productionStatId: Facility.Planet.Production
+  wordUsed: Creating
+  productionWordUsed: Data Center
+  purchasePrompt: Purchase a Planet

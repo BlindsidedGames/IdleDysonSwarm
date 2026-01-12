@@ -692,7 +692,7 @@ public class ResearchManager : MonoBehaviour
 
     #region RealityMethods
 
-    private DysonVerseSkillTreeData dvst => oracle.saveSettings.dysonVerseSaveData.dysonVerseSkillTreeData;
+    private DysonVerseSkillTreeData skillTreeData => oracle.saveSettings.dysonVerseSaveData.dysonVerseSkillTreeData;
 
     private void PurchaseTranslation(int i)
     {
@@ -700,42 +700,42 @@ public class ResearchManager : MonoBehaviour
         {
             case 1:
                 sp.translation1 = true;
-                dvst.skillPointsTree++;
+                skillTreeData.skillPointsTree++;
                 sp.strangeMatter -= translation1Cost;
                 break;
             case 2:
                 sp.translation2 = true;
-                dvst.skillPointsTree++;
+                skillTreeData.skillPointsTree++;
                 sp.strangeMatter -= translation2Cost;
                 break;
             case 3:
                 sp.translation3 = true;
-                dvst.skillPointsTree++;
+                skillTreeData.skillPointsTree++;
                 sp.strangeMatter -= translation3Cost;
                 break;
             case 4:
                 sp.translation4 = true;
-                dvst.skillPointsTree++;
+                skillTreeData.skillPointsTree++;
                 sp.strangeMatter -= translation4Cost;
                 break;
             case 5:
                 sp.translation5 = true;
-                dvst.skillPointsTree++;
+                skillTreeData.skillPointsTree++;
                 sp.strangeMatter -= translation5Cost;
                 break;
             case 6:
                 sp.translation6 = true;
-                dvst.skillPointsTree++;
+                skillTreeData.skillPointsTree++;
                 sp.strangeMatter -= translation6Cost;
                 break;
             case 7:
                 sp.translation7 = true;
-                dvst.skillPointsTree++;
+                skillTreeData.skillPointsTree++;
                 sp.strangeMatter -= translation7Cost;
                 break;
             case 8:
                 sp.translation8 = true;
-                dvst.skillPointsTree++;
+                skillTreeData.skillPointsTree++;
                 sp.strangeMatter -= translation8Cost;
                 break;
         }
@@ -747,42 +747,42 @@ public class ResearchManager : MonoBehaviour
         {
             case 1:
                 sp.speed1 = true;
-                dvst.skillPointsTree++;
+                skillTreeData.skillPointsTree++;
                 sp.strangeMatter -= speed1Cost;
                 break;
             case 2:
                 sp.speed2 = true;
-                dvst.skillPointsTree++;
+                skillTreeData.skillPointsTree++;
                 sp.strangeMatter -= speed2Cost;
                 break;
             case 3:
                 sp.speed3 = true;
-                dvst.skillPointsTree++;
+                skillTreeData.skillPointsTree++;
                 sp.strangeMatter -= speed3Cost;
                 break;
             case 4:
                 sp.speed4 = true;
-                dvst.skillPointsTree++;
+                skillTreeData.skillPointsTree++;
                 sp.strangeMatter -= speed4Cost;
                 break;
             case 5:
                 sp.speed5 = true;
-                dvst.skillPointsTree++;
+                skillTreeData.skillPointsTree++;
                 sp.strangeMatter -= speed5Cost;
                 break;
             case 6:
                 sp.speed6 = true;
-                dvst.skillPointsTree++;
+                skillTreeData.skillPointsTree++;
                 sp.strangeMatter -= speed6Cost;
                 break;
             case 7:
                 sp.speed7 = true;
-                dvst.skillPointsTree++;
+                skillTreeData.skillPointsTree++;
                 sp.strangeMatter -= speed7Cost;
                 break;
             case 8:
                 sp.speed8 = true;
-                dvst.skillPointsTree++;
+                skillTreeData.skillPointsTree++;
                 sp.strangeMatter -= speed8Cost;
                 break;
         }

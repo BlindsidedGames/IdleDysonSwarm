@@ -14,7 +14,7 @@ public class PanelLifetime1 : MonoBehaviour
     [SerializeField] private double _cost = 1e9f;
     [SerializeField] private int upgrade;
     [SerializeField] private int panelLifetimeToGive;
-    private DysonVerseInfinityData dvid => oracle.saveSettings.dysonVerseSaveData.dysonVerseInfinityData;
+    private DysonVerseInfinityData infinityData => oracle.saveSettings.dysonVerseSaveData.dysonVerseInfinityData;
 
     private void Start()
     {
@@ -34,32 +34,32 @@ public class PanelLifetime1 : MonoBehaviour
             }
             case 1:
             {
-                if (!dvid.panelLifetime1)
-                    references.purchaseButton.interactable = _cost <= dvid.science;
+                if (!infinityData.panelLifetime1)
+                    references.purchaseButton.interactable = _cost <= infinityData.science;
                 else
                     references.purchaseButton.interactable = false;
                 break;
             }
             case 2:
             {
-                if (!dvid.panelLifetime2)
-                    references.purchaseButton.interactable = _cost <= dvid.science;
+                if (!infinityData.panelLifetime2)
+                    references.purchaseButton.interactable = _cost <= infinityData.science;
                 else
                     references.purchaseButton.interactable = false;
                 break;
             }
             case 3:
             {
-                if (!dvid.panelLifetime3)
-                    references.purchaseButton.interactable = _cost <= dvid.science;
+                if (!infinityData.panelLifetime3)
+                    references.purchaseButton.interactable = _cost <= infinityData.science;
                 else
                     references.purchaseButton.interactable = false;
                 break;
             }
             case 4:
             {
-                if (!dvid.panelLifetime4)
-                    references.purchaseButton.interactable = _cost <= dvid.science;
+                if (!infinityData.panelLifetime4)
+                    references.purchaseButton.interactable = _cost <= infinityData.science;
                 else
                     references.purchaseButton.interactable = false;
                 break;
@@ -84,7 +84,7 @@ public class PanelLifetime1 : MonoBehaviour
 
     public void PurchaseUpgrade()
     {
-        if (_cost <= dvid.science)
+        if (_cost <= infinityData.science)
         {
             switch (upgrade)
             {
@@ -116,7 +116,7 @@ public class PanelLifetime1 : MonoBehaviour
             }
 
             Object.FindFirstObjectByType<GameManager>().UpdatePanelLifetime();
-            dvid.science -= _cost;
+            infinityData.science -= _cost;
             UpdateText();
         }
     }
@@ -132,28 +132,28 @@ public class PanelLifetime1 : MonoBehaviour
             }
             case 1:
             {
-                references.buttonCost.text = dvid.panelLifetime1
+                references.buttonCost.text = infinityData.panelLifetime1
                     ? "Purchased"
                     : $"<sprite=1>{CalcUtils.FormatNumber(1000000000)}";
                 break;
             }
             case 2:
             {
-                references.buttonCost.text = dvid.panelLifetime2
+                references.buttonCost.text = infinityData.panelLifetime2
                     ? "Purchased"
                     : $"<sprite=1>{CalcUtils.FormatNumber(_cost)}";
                 break;
             }
             case 3:
             {
-                references.buttonCost.text = dvid.panelLifetime3
+                references.buttonCost.text = infinityData.panelLifetime3
                     ? "Purchased"
                     : $"<sprite=1>{CalcUtils.FormatNumber(_cost)}";
                 break;
             }
             case 4:
             {
-                references.buttonCost.text = dvid.panelLifetime4
+                references.buttonCost.text = infinityData.panelLifetime4
                     ? "Purchased"
                     : $"<sprite=1>{CalcUtils.FormatNumber(_cost)}";
                 break;
@@ -161,3 +161,4 @@ public class PanelLifetime1 : MonoBehaviour
         }
     }
 }
+

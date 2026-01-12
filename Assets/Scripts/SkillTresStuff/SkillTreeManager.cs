@@ -11,8 +11,8 @@ using static Expansion.Oracle;
 [SelectionBase]
 public class SkillTreeManager : MonoBehaviour
 {
-    private DysonVerseSkillTreeData dvst => oracle.saveSettings.dysonVerseSaveData.dysonVerseSkillTreeData;
-    private PrestigePlus pp => oracle.saveSettings.prestigePlus;
+    private DysonVerseSkillTreeData skillTreeData => oracle.saveSettings.dysonVerseSaveData.dysonVerseSkillTreeData;
+    private PrestigePlus prestigePlus => oracle.saveSettings.prestigePlus;
     private LineManager linePrefab => oracle.linePrefab;
 
     [SerializeField] public int skillKey;
@@ -372,12 +372,12 @@ public class SkillTreeManager : MonoBehaviour
 
     private void EnableSKills()
     {
-        if (GetPurityLine()) skillButton.gameObject.SetActive(pp.purity);
-        if (GetIsFragment()) skillButton.gameObject.SetActive(pp.fragments);
-        if (GetTerraLine()) skillButton.gameObject.SetActive(pp.terra);
-        if (GetPowerLine()) skillButton.gameObject.SetActive(pp.power);
-        if (GetParagadeLine()) skillButton.gameObject.SetActive(pp.paragade);
-        if (GetStellarLine()) skillButton.gameObject.SetActive(pp.stellar);
+        if (GetPurityLine()) skillButton.gameObject.SetActive(prestigePlus.purity);
+        if (GetIsFragment()) skillButton.gameObject.SetActive(prestigePlus.fragments);
+        if (GetTerraLine()) skillButton.gameObject.SetActive(prestigePlus.terra);
+        if (GetPowerLine()) skillButton.gameObject.SetActive(prestigePlus.power);
+        if (GetParagadeLine()) skillButton.gameObject.SetActive(prestigePlus.paragade);
+        if (GetStellarLine()) skillButton.gameObject.SetActive(prestigePlus.stellar);
         if (GetFirstRunBlocked())
             skillButton.gameObject.SetActive(oracle.saveSettings.firstInfinityDone);
     }
@@ -404,7 +404,7 @@ public class SkillTreeManager : MonoBehaviour
             {
                 if (!AreRequirementsMet(requiredIds)) available = false;
                 if (!AreRequirementsMet(shadowIds)) available = false;
-                if (dvst.skillPointsTree < cost) available = false;
+                if (skillTreeData.skillPointsTree < cost) available = false;
             }
 
             if (exclusiveIds is { Length: >= 1 })
@@ -489,8 +489,8 @@ public class SkillTreeManager : MonoBehaviour
                 if (oracle.IsSkillOwned(skill.id) && refundable)
                 {
                     oracle.SetSkillOwned(skill.id, false);
-                    dvst.skillPointsTree += skill.cost;
-                    if (skill.isFragment && dvst.fragments >= 1) dvst.fragments -= 1;
+                    skillTreeData.skillPointsTree += skill.cost;
+                    if (skill.isFragment && skillTreeData.fragments >= 1) skillTreeData.fragments -= 1;
                 }
             }
         }
@@ -507,8 +507,8 @@ public class SkillTreeManager : MonoBehaviour
                 if (variable.Value.Owned && refundable)
                 {
                     variable.Value.Owned = false;
-                    dvst.skillPointsTree += variable.Value.Cost;
-                    if (oracle.SkillTree[variable.Key].isFragment && dvst.fragments >= 1) dvst.fragments -= 1;
+                    skillTreeData.skillPointsTree += variable.Value.Cost;
+                    if (oracle.SkillTree[variable.Key].isFragment && skillTreeData.fragments >= 1) skillTreeData.fragments -= 1;
                 }
             }
         }
@@ -546,7 +546,7 @@ public class SkillTreeManager : MonoBehaviour
                 string[] exclusiveIds = GetExclusiveWithIds();
                 if (!owned)
                 {
-                    if (dvst.skillPointsTree < cost) available = false;
+                    if (skillTreeData.skillPointsTree < cost) available = false;
                     if (!AreRequirementsMet(requiredIds)) available = false;
                     if (!AreRequirementsMet(shadowIds)) available = false;
                 }
@@ -589,8 +589,8 @@ public class SkillTreeManager : MonoBehaviour
             if (GetRefundable())
             {
                 oracle.SetSkillOwned(id, false);
-                dvst.skillPointsTree += cost;
-                if (GetIsFragment() && dvst.fragments >= 1) dvst.fragments -= 1;
+                skillTreeData.skillPointsTree += cost;
+                if (GetIsFragment() && skillTreeData.fragments >= 1) skillTreeData.fragments -= 1;
                 List<string> autoIds = oracle.GetAutoAssignmentSkillIds();
                 if (autoIds.Contains(id)) autoIds.Remove(id);
                 oracle.saveSettings.dysonVerseSaveData.skillAutoAssignmentList =
@@ -601,14 +601,14 @@ public class SkillTreeManager : MonoBehaviour
             return;
         }
 
-        if (dvst.skillPointsTree < cost)
+        if (skillTreeData.skillPointsTree < cost)
         {
             UpdateSkills?.Invoke();
             return;
         }
 
-        dvst.skillPointsTree -= cost;
-        if (GetIsFragment()) dvst.fragments += 1;
+        skillTreeData.skillPointsTree -= cost;
+        if (GetIsFragment()) skillTreeData.fragments += 1;
 
         List<string> autoAssignIds = oracle.GetAutoAssignmentSkillIds();
         if (!autoAssignIds.Contains(id) && !IsBlockedFromAutoAssign(id))
@@ -649,3 +649,4 @@ public class SkillTreeManager : MonoBehaviour
         linesMade = true;
     }
 }
+

@@ -19,7 +19,10 @@ MonoBehaviour:
   tags:
   - facility
   - manager
-  baseCost: 1
-  costExponent: 1.15
+  baseCost: 5000
+  costExponent: 1.23
   baseProduction: 0.016666666666666666
   productionStatId: Facility.Manager.Production
+  wordUsed: Generating
+  productionWordUsed: Assembly Line
+  purchasePrompt: Purchase an AI Manager
