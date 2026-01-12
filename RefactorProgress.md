@@ -98,6 +98,9 @@
 - Removed legacy manager scripts and wired the scene to use `FacilityBuildingPresenter` directly.
 - Removed stale UnityEvent targets referencing `DataCenterManager` from scene/prefab button handlers.
 - Removed default facility-type auto-assign logic in `FacilityBuildingPresenter` after manager wrappers were removed.
+- Renamed `dvid`/`dvpd`/`dvst`/`pp` identifiers to descriptive names across the project; fixed `AvocadoFeeder` infinity point feed type.
+- Reviewed secrets-of-the-universe integration: `SecretBuffState` feeds data-driven facility/global multipliers with breakdown entries (no data center secret multiplier, matching legacy).
+- Added explicit secrets-of-the-universe upgrade-percent contributions in facility modifier breakdowns (assembly/manager/server/planet upgrades).
 
 ## In Progress
 - None
@@ -107,55 +110,32 @@
 - Verify breakdown UI in play mode (open/close + totals match cards).
 
 ## Files Touched
-- `Assets/Scripts/Data/ResearchIdMap.cs`
-- `Assets/Scripts/Systems/Stats/ResearchEffectProvider.cs`
-- `Assets/Scripts/Expansion/Oracle.cs`
-- `Assets/Scripts/Systems/Facilities/FacilityLegacyBridge.cs`
 - `FacilityAndSkillRefactor.md`
 - `RefactorProgress.md`
-- `Assets/Scripts/Systems/Stats/StatOperation.cs`
-- `Assets/Scripts/Systems/Stats/StatEffect.cs`
-- `Assets/Scripts/Systems/Stats/Contribution.cs`
-- `Assets/Scripts/Systems/Stats/StatResult.cs`
-- `Assets/Scripts/Systems/Stats/StatCalculator.cs`
-- `Assets/Scripts/Systems/Stats/StatRef.cs`
-- `Assets/Scripts/Systems/Stats/StatId.cs`
-- `Assets/Scripts/Systems/Stats/SkillEffectCatalog.cs`
-- `Assets/Scripts/Systems/Stats/FacilityModifierPipeline.cs`
-- `Assets/Scripts/Systems/ProductionSystem.cs`
-- `Assets/Scripts/Research/Research.cs`
-- `Assets/Scripts/PanelLifetime1.cs`
-- `Assets/Scripts/Systems/Stats/GlobalStatPipeline.cs`
-- `Assets/Scripts/Systems/ModifierSystem.cs`
-- `Assets/Scripts/Systems/GameManager.cs`
-- `Assets/Scripts/Data/FacilityDefinition.cs`
-- `Assets/Scripts/Data/SkillDefinition.cs`
-- `Assets/Scripts/Data/EffectDefinition.cs`
-- `Assets/Scripts/Data/ResearchDefinition.cs`
-- `Assets/Scripts/Data/FacilityDatabase.cs`
-- `Assets/Scripts/Data/SkillDatabase.cs`
-- `Assets/Scripts/Data/ResearchDatabase.cs`
-- `Assets/Scripts/Systems/Facilities/FacilityState.cs`
-- `Assets/Scripts/Systems/Facilities/FacilityBreakdown.cs`
-- `Assets/Scripts/Systems/Facilities/FacilityRuntime.cs`
-- `Assets/Scripts/Systems/Facilities/FacilityLegacyBridge.cs`
-- `Assets/Scripts/Systems/Facilities/FacilityEffectPipeline.cs`
-- `Assets/Scripts/Systems/Facilities/FacilityRuntimeBuilder.cs`
-- `Assets/Scripts/Systems/Facilities/FacilityBreakdownPopup.cs`
-- `Assets/Scripts/Systems/Facilities/FacilityPresenter.cs`
 - `Assets/Scripts/Expansion/Oracle.cs`
-- `Assets/Scripts/Data/EffectDatabase.cs`
-- `Assets/Scripts/Data/GameDataRegistry.cs`
-- `Assets/Editor/GameDataAssetCreator.cs`
-- `Assets/Scripts/Systems/Stats/StatId.cs`
-- `Assets/Scripts/Systems/Stats/SkillEffectProvider.cs`
-- `Assets/Scripts/Systems/Stats/SkillFlagAccessor.cs`
-- `Assets/Scripts/Data/SkillIdMap.cs`
-- `Assets/Scripts/Systems/Stats/GlobalStatPipeline.cs`
-- `Assets/Scripts/Systems/Stats/FacilityModifierPipeline.cs`
-- `Assets/Scripts/Systems/ModifierSystem.cs`
-- `Assets/Scripts/Systems/ProductionSystem.cs`
-- `Assets/Editor/GameDataAssetCreator.cs`
+- `Assets/Scripts/Expansion/ResearchManager.cs`
+- `Assets/Scripts/AutomationButtonEnabler.cs`
+- `Assets/Scripts/AvocadoFeeder.cs`
+- `Assets/Scripts/InfinityManager.cs`
+- `Assets/Scripts/PrestigeFillBar.cs`
+- `Assets/Scripts/PrestigePlusUpdater.cs`
+- `Assets/Scripts/StoryManager.cs`
+- `Assets/Scripts/ToRealityFillbar.cs`
+- `Assets/Scripts/Buildings/BuildingsOverlord.cs`
+- `Assets/Scripts/Buildings/BotPanelManager.cs`
+- `Assets/Scripts/Buildings/ManualBotCreation.cs`
+- `Assets/Scripts/Buildings/FacilityBuildingPresenter.cs`
+- `Assets/Scripts/Buildings/AssemblyLineManager.cs` (deleted)
+- `Assets/Scripts/Buildings/ManagerManager.cs` (deleted)
+- `Assets/Scripts/Buildings/ServerManager.cs` (deleted)
+- `Assets/Scripts/Buildings/DataCenterManager.cs` (deleted)
+- `Assets/Scripts/Buildings/PlanetManager.cs` (deleted)
+- `Assets/Scripts/Buildings/BotsAutoBuy.cs`
+- `Assets/Scripts/Buildings/Building.cs`
+- `Assets/Scripts/Buildings/BuildingReferences.cs`
+- `Assets/Scripts/Research/Research.cs`
+- `Assets/Scripts/Research/ResearchEnabler.cs`
+- `Assets/Scripts/Research/ResearchOverlord.cs`
 - `Assets/Scripts/Research/AssemblyLineUpgrade.cs`
 - `Assets/Scripts/Research/AiManagerUpgrade.cs`
 - `Assets/Scripts/Research/ServerManagerUpgrade.cs`
@@ -168,24 +148,62 @@
 - `Assets/Scripts/SkillTresStuff/SkillsAutoAssignment.cs`
 - `Assets/Scripts/SkillTresStuff/SkillTreeConfirmationManager.cs`
 - `Assets/Scripts/SkillTresStuff/SkillTreeManager.cs`
-- `Assets/Scripts/Buildings/ManualBotCreation.cs`
-- `Assets/Scripts/Buildings/FacilityBuildingPresenter.cs`
-- `Assets/Scripts/Buildings/AssemblyLineManager.cs`
-- `Assets/Scripts/Buildings/ManagerManager.cs`
-- `Assets/Scripts/Buildings/ServerManager.cs`
-- `Assets/Scripts/Buildings/DataCenterManager.cs`
-- `Assets/Scripts/Buildings/PlanetManager.cs`
-- `Assets/Scripts/Buildings/BotsAutoBuy.cs`
-- `Assets/Scripts/Buildings/Building.cs`
-- `Assets/Scripts/Buildings/BuildingReferences.cs`
-- `Assets/Scripts/Buildings/FacilityBuildingPresenter.cs`
+- `Assets/Scripts/User Interface/BotDistributionSlider.cs`
+- `Assets/Scripts/User Interface/DebugOptions.cs`
+- `Assets/Scripts/User Interface/MenuTogglesInitializer.cs`
+- `Assets/Scripts/User Interface/SidePanelManager.cs`
+- `Assets/Scripts/User Interface/WikiCategoryEnabler.cs`
+- `Assets/Scripts/PanelLifetime1.cs`
+- `Assets/Scripts/Data/ResearchIdMap.cs`
 - `Assets/Scripts/Data/FacilityDefinition.cs`
+- `Assets/Scripts/Data/SkillDefinition.cs`
+- `Assets/Scripts/Data/EffectDefinition.cs`
+- `Assets/Scripts/Data/ResearchDefinition.cs`
+- `Assets/Scripts/Data/FacilityDatabase.cs`
+- `Assets/Scripts/Data/SkillDatabase.cs`
+- `Assets/Scripts/Data/ResearchDatabase.cs`
+- `Assets/Scripts/Data/EffectDatabase.cs`
+- `Assets/Scripts/Data/GameDataRegistry.cs`
+- `Assets/Scripts/Data/SkillIdMap.cs`
+- `Assets/Scripts/Systems/GameManager.cs`
+- `Assets/Scripts/Systems/ModifierSystem.cs`
+- `Assets/Scripts/Systems/OfflineProgressSystem.cs`
+- `Assets/Scripts/Systems/ProductionMath.cs`
+- `Assets/Scripts/Systems/ProductionSystem.cs`
+- `Assets/Scripts/Systems/Facilities/FacilityState.cs`
+- `Assets/Scripts/Systems/Facilities/FacilityBreakdown.cs`
+- `Assets/Scripts/Systems/Facilities/FacilityRuntime.cs`
+- `Assets/Scripts/Systems/Facilities/FacilityLegacyBridge.cs`
+- `Assets/Scripts/Systems/Facilities/FacilityEffectPipeline.cs`
+- `Assets/Scripts/Systems/Facilities/FacilityRuntimeBuilder.cs`
+- `Assets/Scripts/Systems/Facilities/FacilityBreakdownPopup.cs`
+- `Assets/Scripts/Systems/Facilities/FacilityPresenter.cs`
+- `Assets/Scripts/Systems/Stats/EffectConditionEvaluator.cs`
+- `Assets/Scripts/Systems/Stats/ResearchEffectProvider.cs`
+- `Assets/Scripts/Systems/Stats/SkillEffectProvider.cs`
+- `Assets/Scripts/Systems/Stats/SkillFlagAccessor.cs`
+- `Assets/Scripts/Systems/Stats/SkillEffectCatalog.cs`
+- `Assets/Scripts/Systems/Stats/FacilityModifierPipeline.cs`
+- `Assets/Scripts/Systems/Stats/GlobalStatPipeline.cs`
+- `Assets/Scripts/Systems/Stats/StatOperation.cs`
+- `Assets/Scripts/Systems/Stats/StatEffect.cs`
+- `Assets/Scripts/Systems/Stats/Contribution.cs`
+- `Assets/Scripts/Systems/Stats/StatResult.cs`
+- `Assets/Scripts/Systems/Stats/StatCalculator.cs`
+- `Assets/Scripts/Systems/Stats/StatRef.cs`
+- `Assets/Scripts/Systems/Stats/StatId.cs`
+- `Assets/Editor/GameDataAssetCreator.cs`
 - `Assets/Editor/FacilityDefinitionSync.cs`
+- `Assets/Data/Databases/EffectDatabase.asset`
 - `Assets/Data/Facilities/assembly_lines.asset`
 - `Assets/Data/Facilities/ai_managers.asset`
 - `Assets/Data/Facilities/servers.asset`
 - `Assets/Data/Facilities/data_centers.asset`
 - `Assets/Data/Facilities/planets.asset`
+- `Assets/Data/Skills/manualLabour.asset`
+- `Assets/Data/Skills/versatileProductionTactics.asset`
+- `Assets/Data/Effects/effect.manualLabour.tinker_assembly_yield.asset`
+- `Assets/Data/Effects/effect.versatileProductionTactics.tinker_assembly_yield.asset`
 - `Assets/Scenes/Game.unity`
 - `Assets/Prefabs/Buildings/Building.prefab`
 
@@ -212,6 +230,7 @@
 - Data-driven runtime is now authoritative (legacy fallback in production/modifier paths removed).
 - Tinker pipeline added; assets regenerated; play-mode verification pending.
 - Offline simulation: parity harness added; 1s step run shows sub-1% drift.
+- Secrets-of-the-universe multipliers are included in facility/global pipelines and appear in breakdown entries when active.
 - Breakdown UI: not verified
 - Skill tree migration: code updated, needs play-mode validation + migration spot check
 - Skill tree migration: play-mode sanity check reported OK, still need migration spot check on older save

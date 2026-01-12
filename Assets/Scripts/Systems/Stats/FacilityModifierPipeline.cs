@@ -8,10 +8,17 @@ namespace Systems.Stats
 {
     public static class FacilityModifierPipeline
     {
+        private const double BaseUpgradePercent = 0.03;
+        private const double UpgradeEpsilon = 1e-12;
+        private const int UpgradeOrderFallback = 0;
         private const int TerraThresholdOrder = 32;
         private const int InfinityOrder = 88;
         private const int SecretOrder = 90;
         private const int AvocatoOrder = 95;
+        private const string AssemblyLineUpgradeEffectId = "effect.research.assembly_line_modifier";
+        private const string ManagerUpgradeEffectId = "effect.research.ai_manager_modifier";
+        private const string ServerUpgradeEffectId = "effect.research.server_modifier";
+        private const string PlanetUpgradeEffectId = "effect.research.planet_modifier";
 
         public static bool TryCalculateAssemblyLineModifier(DysonVerseInfinityData infinityData, DysonVerseSkillTreeData skillTreeData,
             DysonVersePrestigeData prestigeData, PrestigePlus prestigePlus, SecretBuffState secrets, double maxInfinityBuff,
@@ -23,12 +30,57 @@ namespace Systems.Stats
             var context = new EffectContext(infinityData, prestigeData, skillTreeData, prestigePlus);
             bool hasResearch = ResearchEffectProvider.TryBuildGlobalEffects(StatId.AssemblyLineModifier, context,
                 out List<StatEffect> researchEffects);
-            double baseValue = hasResearch
-                ? 1
-                : 1 + infinityData.assemblyLineUpgradeOwned * infinityData.assemblyLineUpgradePercent;
+            double baseValue = 1;
 
             var effects = new List<StatEffect>();
-            if (hasResearch) effects.AddRange(researchEffects);
+            double upgradePercent = infinityData.assemblyLineUpgradePercent;
+            bool applySecretUpgrade = prestigeData != null && prestigeData.secretsOfTheUniverse > 0 &&
+                                      upgradePercent > BaseUpgradePercent + UpgradeEpsilon;
+
+            if (hasResearch)
+            {
+                StatEffect upgradeEffect = PopEffectById(researchEffects, AssemblyLineUpgradeEffectId);
+                int upgradeOrder = UpgradeOrderFallback;
+                string upgradeName = "Assembly Line Upgrades";
+                double upgradeLevel = 0;
+                if (upgradeEffect != null)
+                {
+                    upgradeOrder = upgradeEffect.Order;
+                    if (!string.IsNullOrEmpty(upgradeEffect.SourceName)) upgradeName = upgradeEffect.SourceName;
+                    upgradeLevel = upgradePercent > UpgradeEpsilon ? upgradeEffect.Value / upgradePercent : 0;
+                }
+                else
+                {
+                    upgradeLevel = GetResearchLevel(infinityData, ResearchIdMap.AssemblyLineUpgrade);
+                }
+
+                double baseContribution = upgradeLevel * (applySecretUpgrade ? BaseUpgradePercent : upgradePercent);
+                AddUpgradeEffect(effects, StatId.AssemblyLineModifier, AssemblyLineUpgradeEffectId, upgradeName,
+                    baseContribution, upgradeOrder);
+                if (applySecretUpgrade)
+                {
+                    double secretContribution = upgradeLevel * (upgradePercent - BaseUpgradePercent);
+                    AddUpgradeEffect(effects, StatId.AssemblyLineModifier, "secrets.upgrade_percent.assembly_lines",
+                        "Secrets of the Universe (Assembly Line Upgrades)", secretContribution, upgradeOrder);
+                }
+
+                if (researchEffects != null && researchEffects.Count > 0)
+                {
+                    effects.AddRange(researchEffects);
+                }
+            }
+            else
+            {
+                double upgradeLevel = GetResearchLevel(infinityData, ResearchIdMap.AssemblyLineUpgrade);
+                double basePercent = applySecretUpgrade ? BaseUpgradePercent : upgradePercent;
+                baseValue = 1 + upgradeLevel * basePercent;
+                if (applySecretUpgrade)
+                {
+                    double secretContribution = upgradeLevel * (upgradePercent - BaseUpgradePercent);
+                    AddUpgradeEffect(effects, StatId.AssemblyLineModifier, "secrets.upgrade_percent.assembly_lines",
+                        "Secrets of the Universe (Assembly Line Upgrades)", secretContribution, UpgradeOrderFallback);
+                }
+            }
             effects.AddRange(SkillEffectProvider.BuildGlobalEffects(StatId.AssemblyLineModifier, context));
 
             double terraAmount = GetAssemblyLineTerraAmount(infinityData, skillTreeData);
@@ -55,12 +107,57 @@ namespace Systems.Stats
             var context = new EffectContext(infinityData, prestigeData, skillTreeData, prestigePlus);
             bool hasResearch = ResearchEffectProvider.TryBuildGlobalEffects(StatId.ManagerModifier, context,
                 out List<StatEffect> researchEffects);
-            double baseValue = hasResearch
-                ? 1
-                : 1 + infinityData.aiManagerUpgradeOwned * infinityData.aiManagerUpgradePercent;
+            double baseValue = 1;
 
             var effects = new List<StatEffect>();
-            if (hasResearch) effects.AddRange(researchEffects);
+            double upgradePercent = infinityData.aiManagerUpgradePercent;
+            bool applySecretUpgrade = prestigeData != null && prestigeData.secretsOfTheUniverse > 0 &&
+                                      upgradePercent > BaseUpgradePercent + UpgradeEpsilon;
+
+            if (hasResearch)
+            {
+                StatEffect upgradeEffect = PopEffectById(researchEffects, ManagerUpgradeEffectId);
+                int upgradeOrder = UpgradeOrderFallback;
+                string upgradeName = "AI Manager Upgrades";
+                double upgradeLevel = 0;
+                if (upgradeEffect != null)
+                {
+                    upgradeOrder = upgradeEffect.Order;
+                    if (!string.IsNullOrEmpty(upgradeEffect.SourceName)) upgradeName = upgradeEffect.SourceName;
+                    upgradeLevel = upgradePercent > UpgradeEpsilon ? upgradeEffect.Value / upgradePercent : 0;
+                }
+                else
+                {
+                    upgradeLevel = GetResearchLevel(infinityData, ResearchIdMap.AiManagerUpgrade);
+                }
+
+                double baseContribution = upgradeLevel * (applySecretUpgrade ? BaseUpgradePercent : upgradePercent);
+                AddUpgradeEffect(effects, StatId.ManagerModifier, ManagerUpgradeEffectId, upgradeName, baseContribution,
+                    upgradeOrder);
+                if (applySecretUpgrade)
+                {
+                    double secretContribution = upgradeLevel * (upgradePercent - BaseUpgradePercent);
+                    AddUpgradeEffect(effects, StatId.ManagerModifier, "secrets.upgrade_percent.ai_managers",
+                        "Secrets of the Universe (AI Manager Upgrades)", secretContribution, upgradeOrder);
+                }
+
+                if (researchEffects != null && researchEffects.Count > 0)
+                {
+                    effects.AddRange(researchEffects);
+                }
+            }
+            else
+            {
+                double upgradeLevel = GetResearchLevel(infinityData, ResearchIdMap.AiManagerUpgrade);
+                double basePercent = applySecretUpgrade ? BaseUpgradePercent : upgradePercent;
+                baseValue = 1 + upgradeLevel * basePercent;
+                if (applySecretUpgrade)
+                {
+                    double secretContribution = upgradeLevel * (upgradePercent - BaseUpgradePercent);
+                    AddUpgradeEffect(effects, StatId.ManagerModifier, "secrets.upgrade_percent.ai_managers",
+                        "Secrets of the Universe (AI Manager Upgrades)", secretContribution, UpgradeOrderFallback);
+                }
+            }
             effects.AddRange(SkillEffectProvider.BuildGlobalEffects(StatId.ManagerModifier, context));
 
             double terraAmount = GetManagerTerraAmount(infinityData, skillTreeData);
@@ -86,12 +183,57 @@ namespace Systems.Stats
             var context = new EffectContext(infinityData, prestigeData, skillTreeData, prestigePlus);
             bool hasResearch = ResearchEffectProvider.TryBuildGlobalEffects(StatId.ServerModifier, context,
                 out List<StatEffect> researchEffects);
-            double baseValue = hasResearch
-                ? 1
-                : 1 + infinityData.serverUpgradeOwned * infinityData.serverUpgradePercent;
+            double baseValue = 1;
 
             var effects = new List<StatEffect>();
-            if (hasResearch) effects.AddRange(researchEffects);
+            double upgradePercent = infinityData.serverUpgradePercent;
+            bool applySecretUpgrade = prestigeData != null && prestigeData.secretsOfTheUniverse > 0 &&
+                                      upgradePercent > BaseUpgradePercent + UpgradeEpsilon;
+
+            if (hasResearch)
+            {
+                StatEffect upgradeEffect = PopEffectById(researchEffects, ServerUpgradeEffectId);
+                int upgradeOrder = UpgradeOrderFallback;
+                string upgradeName = "Server Upgrades";
+                double upgradeLevel = 0;
+                if (upgradeEffect != null)
+                {
+                    upgradeOrder = upgradeEffect.Order;
+                    if (!string.IsNullOrEmpty(upgradeEffect.SourceName)) upgradeName = upgradeEffect.SourceName;
+                    upgradeLevel = upgradePercent > UpgradeEpsilon ? upgradeEffect.Value / upgradePercent : 0;
+                }
+                else
+                {
+                    upgradeLevel = GetResearchLevel(infinityData, ResearchIdMap.ServerUpgrade);
+                }
+
+                double baseContribution = upgradeLevel * (applySecretUpgrade ? BaseUpgradePercent : upgradePercent);
+                AddUpgradeEffect(effects, StatId.ServerModifier, ServerUpgradeEffectId, upgradeName, baseContribution,
+                    upgradeOrder);
+                if (applySecretUpgrade)
+                {
+                    double secretContribution = upgradeLevel * (upgradePercent - BaseUpgradePercent);
+                    AddUpgradeEffect(effects, StatId.ServerModifier, "secrets.upgrade_percent.servers",
+                        "Secrets of the Universe (Server Upgrades)", secretContribution, upgradeOrder);
+                }
+
+                if (researchEffects != null && researchEffects.Count > 0)
+                {
+                    effects.AddRange(researchEffects);
+                }
+            }
+            else
+            {
+                double upgradeLevel = GetResearchLevel(infinityData, ResearchIdMap.ServerUpgrade);
+                double basePercent = applySecretUpgrade ? BaseUpgradePercent : upgradePercent;
+                baseValue = 1 + upgradeLevel * basePercent;
+                if (applySecretUpgrade)
+                {
+                    double secretContribution = upgradeLevel * (upgradePercent - BaseUpgradePercent);
+                    AddUpgradeEffect(effects, StatId.ServerModifier, "secrets.upgrade_percent.servers",
+                        "Secrets of the Universe (Server Upgrades)", secretContribution, UpgradeOrderFallback);
+                }
+            }
             effects.AddRange(SkillEffectProvider.BuildGlobalEffects(StatId.ServerModifier, context));
 
             double terraAmount = GetServerTerraAmount(infinityData, skillTreeData);
@@ -144,12 +286,57 @@ namespace Systems.Stats
             var context = new EffectContext(infinityData, prestigeData, skillTreeData, prestigePlus);
             bool hasResearch = ResearchEffectProvider.TryBuildGlobalEffects(StatId.PlanetModifier, context,
                 out List<StatEffect> researchEffects);
-            double baseValue = hasResearch
-                ? 1
-                : 1 + infinityData.planetUpgradeOwned * infinityData.planetUpgradePercent;
+            double baseValue = 1;
 
             var effects = new List<StatEffect>();
-            if (hasResearch) effects.AddRange(researchEffects);
+            double upgradePercent = infinityData.planetUpgradePercent;
+            bool applySecretUpgrade = prestigeData != null && prestigeData.secretsOfTheUniverse > 0 &&
+                                      upgradePercent > BaseUpgradePercent + UpgradeEpsilon;
+
+            if (hasResearch)
+            {
+                StatEffect upgradeEffect = PopEffectById(researchEffects, PlanetUpgradeEffectId);
+                int upgradeOrder = UpgradeOrderFallback;
+                string upgradeName = "Planet Upgrades";
+                double upgradeLevel = 0;
+                if (upgradeEffect != null)
+                {
+                    upgradeOrder = upgradeEffect.Order;
+                    if (!string.IsNullOrEmpty(upgradeEffect.SourceName)) upgradeName = upgradeEffect.SourceName;
+                    upgradeLevel = upgradePercent > UpgradeEpsilon ? upgradeEffect.Value / upgradePercent : 0;
+                }
+                else
+                {
+                    upgradeLevel = GetResearchLevel(infinityData, ResearchIdMap.PlanetUpgrade);
+                }
+
+                double baseContribution = upgradeLevel * (applySecretUpgrade ? BaseUpgradePercent : upgradePercent);
+                AddUpgradeEffect(effects, StatId.PlanetModifier, PlanetUpgradeEffectId, upgradeName, baseContribution,
+                    upgradeOrder);
+                if (applySecretUpgrade)
+                {
+                    double secretContribution = upgradeLevel * (upgradePercent - BaseUpgradePercent);
+                    AddUpgradeEffect(effects, StatId.PlanetModifier, "secrets.upgrade_percent.planets",
+                        "Secrets of the Universe (Planet Upgrades)", secretContribution, upgradeOrder);
+                }
+
+                if (researchEffects != null && researchEffects.Count > 0)
+                {
+                    effects.AddRange(researchEffects);
+                }
+            }
+            else
+            {
+                double upgradeLevel = GetResearchLevel(infinityData, ResearchIdMap.PlanetUpgrade);
+                double basePercent = applySecretUpgrade ? BaseUpgradePercent : upgradePercent;
+                baseValue = 1 + upgradeLevel * basePercent;
+                if (applySecretUpgrade)
+                {
+                    double secretContribution = upgradeLevel * (upgradePercent - BaseUpgradePercent);
+                    AddUpgradeEffect(effects, StatId.PlanetModifier, "secrets.upgrade_percent.planets",
+                        "Secrets of the Universe (Planet Upgrades)", secretContribution, UpgradeOrderFallback);
+                }
+            }
             effects.AddRange(SkillEffectProvider.BuildGlobalEffects(StatId.PlanetModifier, context));
 
             double terraAmount = GetPlanetTerraAmount(infinityData, skillTreeData);
@@ -285,6 +472,59 @@ namespace Systems.Stats
             string name, int order)
         {
             AddMultiplierEffect(effects, id, name, statId, value, order);
+        }
+
+        private static StatEffect PopEffectById(List<StatEffect> effects, string id)
+        {
+            if (effects == null || string.IsNullOrEmpty(id)) return null;
+            for (int i = 0; i < effects.Count; i++)
+            {
+                if (string.Equals(effects[i].Id, id, StringComparison.Ordinal))
+                {
+                    StatEffect effect = effects[i];
+                    effects.RemoveAt(i);
+                    return effect;
+                }
+            }
+
+            return null;
+        }
+
+        private static double GetResearchLevel(DysonVerseInfinityData infinityData, string researchId)
+        {
+            if (infinityData == null || string.IsNullOrEmpty(researchId)) return 0;
+
+            if (infinityData.researchLevelsById != null &&
+                infinityData.researchLevelsById.TryGetValue(researchId, out double stored))
+            {
+                return stored;
+            }
+
+            if (ResearchIdMap.TryGetLegacyLevel(infinityData, researchId, out double legacy))
+            {
+                infinityData.researchLevelsById ??= new Dictionary<string, double>();
+                infinityData.researchLevelsById[researchId] = legacy;
+                return legacy;
+            }
+
+            return 0;
+        }
+
+        private static void AddUpgradeEffect(List<StatEffect> effects, string statId, string id, string name,
+            double value, int order)
+        {
+            if (effects == null) return;
+            if (Math.Abs(value) <= UpgradeEpsilon) return;
+
+            effects.Add(new StatEffect
+            {
+                Id = id,
+                SourceName = name,
+                TargetStatId = statId,
+                Operation = StatOperation.Add,
+                Value = value,
+                Order = order
+            });
         }
 
         private static void AddAvocatoMultiplier(List<StatEffect> effects, string statId, PrestigePlus prestigePlus, string id,
