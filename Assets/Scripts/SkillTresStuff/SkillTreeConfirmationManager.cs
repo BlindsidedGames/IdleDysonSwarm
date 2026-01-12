@@ -1,6 +1,5 @@
 using System.Collections;
 using System.Collections.Generic;
-using Classes;
 using GameData;
 using MPUIKIT;
 using TMPro;
@@ -87,14 +86,18 @@ public class SkillTreeConfirmationManager : MonoBehaviour
     public void SetTexts(string name, string description, string technicalDescription, string cost)
     {
         SkillDefinition definition = skillTreeManager.Definition;
-        SkillTreeItem legacy = null;
         if (definition == null)
         {
-            oracle.SkillTree.TryGetValue(skillTreeManager.skillKey, out legacy);
+            string resolvedId = skillTreeManager.SkillId;
+            GameDataRegistry registry = GameDataRegistry.Instance;
+            if (!string.IsNullOrEmpty(resolvedId) && registry != null && registry.skillDatabase != null)
+            {
+                registry.skillDatabase.TryGet(resolvedId, out definition);
+            }
         }
 
-        bool refundable = definition != null ? definition.refundable : legacy == null || legacy.Refundable;
-        bool isFragment = definition != null ? definition.isFragment : legacy != null && legacy.isFragment;
+        bool refundable = definition == null || definition.refundable;
+        bool isFragment = definition != null && definition.isFragment;
         bool owned = skillTreeManager.IsOwned;
 
         notRefundableMessage.SetActive(!refundable);
@@ -125,27 +128,6 @@ public class SkillTreeConfirmationManager : MonoBehaviour
                 for (int i = 0; i < definition.exclusiveWithIds.Length; i++)
                 {
                     string exclusiveName = ResolveSkillName(definition.exclusiveWithIds[i]);
-                    if (makeComma)
-                    {
-                        cost += $"<br>Exclusive With: {exclusiveName}";
-                        makeComma = false;
-                    }
-                    else
-                    {
-                        cost += $", {exclusiveName}";
-                    }
-                }
-            }
-        }
-        else if (legacy != null && legacy.ExclusvieWith != null)
-        {
-            if (legacy.ExclusvieWith.Length >= 1 && !refundable)
-            {
-                bool makeComma = true;
-
-                for (int i = 0; i < legacy.ExclusvieWith.Length; i++)
-                {
-                    string exclusiveName = oracle.SkillTree[legacy.ExclusvieWith[i]].SkillName;
                     if (makeComma)
                     {
                         cost += $"<br>Exclusive With: {exclusiveName}";

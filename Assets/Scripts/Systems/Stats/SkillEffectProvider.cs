@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using GameData;
 using Systems.Facilities;
+using Systems.Skills;
 using static Expansion.Oracle;
 
 namespace Systems.Stats
@@ -160,6 +161,12 @@ namespace Systems.Stats
         private static bool IsSkillOwned(SkillDefinition skill, DysonVerseSkillTreeData skillTreeData, DysonVerseInfinityData infinityData)
         {
             if (skill == null || string.IsNullOrEmpty(skill.id)) return false;
+            if (infinityData != null && infinityData.skillStateById != null &&
+                infinityData.skillStateById.TryGetValue(skill.id, out SkillState state))
+            {
+                return state != null && state.owned;
+            }
+
             if (infinityData != null && infinityData.skillOwnedById != null &&
                 infinityData.skillOwnedById.TryGetValue(skill.id, out bool owned))
             {

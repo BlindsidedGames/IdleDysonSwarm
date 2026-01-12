@@ -109,8 +109,8 @@ namespace Systems
                 ui.ReturnScreenSliderParentGameObject.SetActive(true);
                 for (int i = 0; i < minutes; i++)
                 {
-                    if (context.skillTreeData.androids) context.prestigeData.androidsSkillTimer += 60;
-                    if (context.skillTreeData.pocketAndroids) context.prestigeData.pocketAndroidsTimer += 60;
+                    if (context.skillTreeData.androids) AddSkillTimerSeconds(context.infinityData, "androids", 60);
+                    if (context.skillTreeData.pocketAndroids) AddSkillTimerSeconds(context.infinityData, "pocketAndroids", 60);
 
 
                     double p = context.infinityData.totalPlanetProduction * 60;
@@ -169,8 +169,8 @@ namespace Systems
                 }
             }
 
-            if (context.skillTreeData.androids) context.prestigeData.androidsSkillTimer += remainder;
-            if (context.skillTreeData.pocketAndroids) context.prestigeData.pocketAndroidsTimer += remainder;
+            if (context.skillTreeData.androids) AddSkillTimerSeconds(context.infinityData, "androids", remainder);
+            if (context.skillTreeData.pocketAndroids) AddSkillTimerSeconds(context.infinityData, "pocketAndroids", remainder);
 
 
             double p1 = context.infinityData.totalPlanetProduction * remainder;

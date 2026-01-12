@@ -104,8 +104,8 @@ namespace Systems.Stats
                     return true;
                 }
                 case "effect.pocket_dimensions.planets":
-                    value = infinityData != null && prestigeData != null && skillTreeData != null
-                        ? FacilityLegacyBridge.ComputePocketDimensionsProduction(infinityData, prestigeData, skillTreeData)
+                    value = infinityData != null && skillTreeData != null
+                        ? FacilityLegacyBridge.ComputePocketDimensionsProduction(infinityData, skillTreeData)
                         : 0;
                     return true;
             }
@@ -242,7 +242,7 @@ namespace Systems.Stats
                 if (IsModifierSkill(effectId, "superRadiantScattering"))
                 {
                     value = skillTreeData != null && skillTreeData.superRadiantScattering
-                        ? 1 + 0.01 * skillTreeData.superRadiantScatteringTimer
+                        ? 1 + 0.01 * GetSkillTimerSeconds(infinityData, "superRadiantScattering")
                         : 1;
                     return true;
                 }
@@ -751,7 +751,7 @@ namespace Systems.Stats
                         return true;
                     case "superRadiantScattering":
                         value = skillTreeData != null && skillTreeData.superRadiantScattering
-                            ? 1 + 0.01 * skillTreeData.superRadiantScatteringTimer
+                            ? 1 + 0.01 * GetSkillTimerSeconds(infinityData, "superRadiantScattering")
                             : 1;
                         return true;
                     default:
@@ -845,7 +845,7 @@ namespace Systems.Stats
                         return true;
                     case "superRadiantScattering":
                         value = skillTreeData != null && skillTreeData.superRadiantScattering
-                            ? 1 + 0.01 * skillTreeData.superRadiantScatteringTimer
+                            ? 1 + 0.01 * GetSkillTimerSeconds(infinityData, "superRadiantScattering")
                             : 1;
                         return true;
                     default:
@@ -907,13 +907,14 @@ namespace Systems.Stats
                     value = managersTotal >= 1 ? 5 * Math.Log10(managersTotal) : 0;
                     return true;
                 case "androids":
-                    if (skillTreeData == null || prestigeData == null || !skillTreeData.androids)
+                    if (skillTreeData == null || infinityData == null || !skillTreeData.androids)
                     {
                         value = 0;
                         return true;
                     }
 
-                    value = Math.Floor(prestigeData.androidsSkillTimer > 600 ? 200 : prestigeData.androidsSkillTimer / 3);
+                    double androidsTimer = GetSkillTimerSeconds(infinityData, "androids");
+                    value = Math.Floor(androidsTimer > 600 ? 200 : androidsTimer / 3);
                     return true;
                 case "renewableEnergy":
                     if (skillTreeData == null || infinityData == null || !skillTreeData.renewableEnergy)
@@ -1081,7 +1082,7 @@ namespace Systems.Stats
                             return true;
                         }
 
-                        value = ComputePocketDimensionsWithShoulderSurgery(infinityData, prestigeData, skillTreeData);
+                        value = ComputePocketDimensionsWithShoulderSurgery(infinityData, skillTreeData);
                         return true;
                     default:
                         return false;
@@ -1182,9 +1183,9 @@ namespace Systems.Stats
         }
 
         private static double ComputePocketDimensionsWithShoulderSurgery(DysonVerseInfinityData infinityData,
-            DysonVersePrestigeData prestigeData, DysonVerseSkillTreeData skillTreeData)
+            DysonVerseSkillTreeData skillTreeData)
         {
-            double production = FacilityLegacyBridge.ComputePocketDimensionsProduction(infinityData, prestigeData, skillTreeData);
+            double production = FacilityLegacyBridge.ComputePocketDimensionsProduction(infinityData, skillTreeData);
             if (skillTreeData.shouldersOfTheFallen && skillTreeData.shoulderSurgery && infinityData.scienceBoostOwned > 0)
             {
                 production += Math.Log(infinityData.scienceBoostOwned, 2);

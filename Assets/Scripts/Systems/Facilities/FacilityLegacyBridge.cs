@@ -418,7 +418,7 @@ namespace Systems.Facilities
 
             if (skillTreeData.pocketDimensions)
             {
-                double pocketDimensionsProduction = ComputePocketDimensionsProduction(infinityData, prestigeData, skillTreeData);
+                double pocketDimensionsProduction = ComputePocketDimensionsProduction(infinityData, skillTreeData);
                 if (pocketDimensionsProduction > 0)
                 {
                     effects.Add(new StatEffect
@@ -550,7 +550,7 @@ namespace Systems.Facilities
         }
 
         internal static double ComputePocketDimensionsProduction(DysonVerseInfinityData infinityData,
-            DysonVersePrestigeData prestigeData, DysonVerseSkillTreeData skillTreeData)
+            DysonVerseSkillTreeData skillTreeData)
         {
             double production = skillTreeData.pocketDimensions && infinityData.workers > 1 ? System.Math.Log10(infinityData.workers) : 0;
 
@@ -573,7 +573,10 @@ namespace Systems.Facilities
             if (skillTreeData.dimensionalCatCables) production *= 5;
             if (skillTreeData.solarBubbles) production *= 1 + 0.01f * infinityData.panelLifetime;
             if (skillTreeData.pocketAndroids)
-                production *= prestigeData.pocketAndroidsTimer > 3564 ? 100 : 1 + prestigeData.pocketAndroidsTimer / 36;
+            {
+                double pocketAndroidsTimer = GetSkillTimerSeconds(infinityData, "pocketAndroids");
+                production *= pocketAndroidsTimer > 3564 ? 100 : 1 + pocketAndroidsTimer / 36;
+            }
             if (skillTreeData.quantumComputing)
             {
                 double quantumMulti = 1 + (infinityData.rudimentrySingularityProduction >= 1

@@ -237,7 +237,11 @@ namespace Systems
             if (skillTreeData.burnOut) lifetime -= 5;
             if (skillTreeData.artificiallyEnhancedPanels && infinityData.managers[0] + infinityData.managers[1] >= 1)
                 lifetime += 5 * Math.Log10(infinityData.managers[0] + infinityData.managers[1]);
-            if (skillTreeData.androids) lifetime += Math.Floor(prestigeData.androidsSkillTimer > 600 ? 200 : prestigeData.androidsSkillTimer / 3);
+            if (skillTreeData.androids)
+            {
+                double androidsTimer = GetSkillTimerSeconds(infinityData, "androids");
+                lifetime += Math.Floor(androidsTimer > 600 ? 200 : androidsTimer / 3);
+            }
             if (skillTreeData.renewableEnergy && infinityData.workers >= 1e7f)
                 lifetime *= 1 + 0.1 * Math.Log10(infinityData.workers / 1e6f);
             if (skillTreeData.stellarDominance)
@@ -269,7 +273,7 @@ namespace Systems
         {
             double boost1 = infinityData.planetUpgradeOwned * infinityData.planetUpgradePercent;
             double totalBoost = 1 + boost1;
-            totalBoost *= GlobalBuff(skillTreeData, prestigePlus);
+            totalBoost *= GlobalBuff(infinityData, skillTreeData, prestigePlus);
             if (skillTreeData.planetsTree) totalBoost *= 2;
             if ((skillTreeData.terraIrradiant ? infinityData.planets[1] * 12 : infinityData.planets[1]) >= 50 && !skillTreeData.supernova)
                 totalBoost *= 2;
@@ -331,7 +335,7 @@ namespace Systems
                 : infinityData.dataCenters[1];
             double boost1 = infinityData.dataCenterUpgradeOwned * infinityData.dataCenterUpgradePercent;
             double totalBoost = 1 + boost1;
-            totalBoost *= GlobalBuff(skillTreeData, prestigePlus);
+            totalBoost *= GlobalBuff(infinityData, skillTreeData, prestigePlus);
             if (skillTreeData.dataCenterTree) totalBoost *= 2;
             if (terraAmount >= 50 && !skillTreeData.supernova) totalBoost *= 2;
             if (terraAmount >= 100 && !skillTreeData.supernova) totalBoost *= 2;
@@ -381,7 +385,7 @@ namespace Systems
                 : infinityData.servers[1];
             double boost1 = infinityData.serverUpgradeOwned * infinityData.serverUpgradePercent;
             double totalBoost = 1 + boost1;
-            totalBoost *= GlobalBuff(skillTreeData, prestigePlus);
+            totalBoost *= GlobalBuff(infinityData, skillTreeData, prestigePlus);
             if (skillTreeData.serverTree) totalBoost *= 2;
             if (terraAmount >= 50 && !skillTreeData.supernova) totalBoost *= 2;
             if (terraAmount >= 100 && !skillTreeData.supernova) totalBoost *= 2;
@@ -434,7 +438,7 @@ namespace Systems
                 : infinityData.managers[1];
             double boost1 = infinityData.aiManagerUpgradeOwned * infinityData.aiManagerUpgradePercent;
             double totalBoost = 1 + boost1;
-            totalBoost *= GlobalBuff(skillTreeData, prestigePlus);
+            totalBoost *= GlobalBuff(infinityData, skillTreeData, prestigePlus);
             if (skillTreeData.aiManagerTree) totalBoost *= 2;
             if (terraAmount >= 50 && !skillTreeData.supernova) totalBoost *= 2;
             if (terraAmount >= 100 && !skillTreeData.supernova) totalBoost *= 2;
@@ -483,7 +487,7 @@ namespace Systems
 
             double boost1 = infinityData.assemblyLineUpgradeOwned * infinityData.assemblyLineUpgradePercent;
             double totalBoost = 1 + boost1;
-            totalBoost *= GlobalBuff(skillTreeData, prestigePlus);
+            totalBoost *= GlobalBuff(infinityData, skillTreeData, prestigePlus);
             if (skillTreeData.assemblyLineTree) totalBoost *= 2;
             if (terraAmount >= 50 && !skillTreeData.supernova) totalBoost *= 2;
             if (terraAmount >= 100 && !skillTreeData.supernova) totalBoost *= 2;
@@ -552,11 +556,15 @@ namespace Systems
             }
         }
 
-        public static double GlobalBuff(DysonVerseSkillTreeData skillTreeData, PrestigePlus prestigePlus)
+        public static double GlobalBuff(DysonVerseInfinityData infinityData, DysonVerseSkillTreeData skillTreeData, PrestigePlus prestigePlus)
         {
             double multi = 1f;
             if (skillTreeData.purityOfSEssence && skillTreeData.skillPointsTree > 0) multi *= 1.42f * skillTreeData.skillPointsTree;
-            if (skillTreeData.superRadiantScattering) multi *= 1 + 0.01f * skillTreeData.superRadiantScatteringTimer;
+            if (skillTreeData.superRadiantScattering)
+            {
+                double scatteringTimer = GetSkillTimerSeconds(infinityData, "superRadiantScattering");
+                multi *= 1 + 0.01f * scatteringTimer;
+            }
             if (prestigePlus.avocatoPurchased)
             {
                 if (prestigePlus.avocatoIP >= 10)
@@ -578,7 +586,7 @@ namespace Systems
             double moneyBoost = infinityData.moneyMultiUpgradeOwned * infinityData.moneyMultiUpgradePercent;
             if (skillTreeData.regulatedAcademia) moneyBoost *= 1.02f + 1.01f * (skillTreeData.fragments - 1);
             double totalBoost = 1 + moneyBoost;
-            totalBoost *= GlobalBuff(skillTreeData, prestigePlus);
+            totalBoost *= GlobalBuff(infinityData, skillTreeData, prestigePlus);
             if (skillTreeData.startHereTree) totalBoost *= 1.2f;
             totalBoost *= 1 + prestigePlus.cash * 5 / 100;
             totalBoost *= secrets.CashMulti;
@@ -643,7 +651,7 @@ namespace Systems
             double scienceBoost = infinityData.scienceBoostOwned * infinityData.scienceBoostPercent;
             if (skillTreeData.regulatedAcademia) scienceBoost *= 1.02f + 1.01f * (skillTreeData.fragments - 1);
             double totalBoost = 1 + scienceBoost;
-            totalBoost *= GlobalBuff(skillTreeData, prestigePlus);
+            totalBoost *= GlobalBuff(infinityData, skillTreeData, prestigePlus);
             if (skillTreeData.doubleScienceTree) totalBoost *= 2;
             if (skillTreeData.startHereTree) totalBoost *= 1.2f;
             if (skillTreeData.producedAsScienceTree)

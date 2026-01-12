@@ -1,5 +1,4 @@
 using System.Collections.Generic;
-using Classes;
 using GameData;
 using Systems.Stats;
 using UnityEngine;
@@ -26,28 +25,17 @@ public class SetSkillsOnOracle : MonoBehaviour
     private void UpdateSavedSkills()
     {
         GameDataRegistry registry = GameDataRegistry.Instance;
-        if (registry != null && registry.skillDatabase != null && registry.skillDatabase.skills.Count > 0)
+        if (registry == null || registry.skillDatabase == null || registry.skillDatabase.skills.Count == 0)
         {
-            foreach (SkillDefinition skill in registry.skillDatabase.skills)
-            {
-                if (skill == null || string.IsNullOrEmpty(skill.id)) continue;
-                bool owned = oracle.IsSkillOwned(skill.id);
-                SkillFlagAccessor.TrySetFlag(skillTreeData, skill.id, owned);
-
-                if (SkillIdMap.TryGetLegacyKey(skill.id, out int key) &&
-                    oracle.SkillTree.TryGetValue(key, out SkillTreeItem item))
-                {
-                    item.Owned = owned;
-                }
-            }
-
+            Debug.LogWarning("Skill sync skipped: SkillDatabase not available.");
             return;
         }
 
-        foreach (KeyValuePair<int, SkillTreeItem> variable in oracle.SkillTree)
+        foreach (SkillDefinition skill in registry.skillDatabase.skills)
         {
-            if (!SkillIdMap.TryGetId(variable.Key, out string id)) continue;
-            SkillFlagAccessor.TrySetFlag(skillTreeData, id, variable.Value.Owned);
+            if (skill == null || string.IsNullOrEmpty(skill.id)) continue;
+            bool owned = oracle.IsSkillOwned(skill.id);
+            SkillFlagAccessor.TrySetFlag(skillTreeData, skill.id, owned);
         }
     }
 }

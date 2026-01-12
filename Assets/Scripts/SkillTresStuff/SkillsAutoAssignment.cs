@@ -1,5 +1,4 @@
 using System.Collections.Generic;
-using Classes;
 using GameData;
 using UnityEngine;
 using static Expansion.Oracle;
@@ -31,26 +30,20 @@ public class SkillsAutoAssignment : MonoBehaviour
         {
             if (string.IsNullOrEmpty(skillId)) continue;
             SkillDefinition definition = ResolveSkillDefinition(skillId);
-            SkillTreeItem legacy = null;
-            if (definition == null && SkillIdMap.TryGetLegacyKey(skillId, out int legacyKey))
-            {
-                oracle.SkillTree?.TryGetValue(legacyKey, out legacy);
-            }
-
-            int cost = definition != null ? definition.cost : legacy != null ? legacy.Cost : 0;
+            if (definition == null) continue;
+            int cost = definition.cost;
             if (skillTreeData.skillPointsTree < cost) continue;
-            if (oracle.IsSkillOwned(skillId) || (legacy != null && legacy.Owned)) continue;
+            if (oracle.IsSkillOwned(skillId)) continue;
 
             bool available = true;
-            if (!AreRequirementsMet(definition?.requiredSkillIds, legacy?.RequiredSkill)) available = false;
-            if (!AreRequirementsMet(definition?.shadowRequirementIds, legacy?.ShadowRequirements)) available = false;
-            if (HasExclusiveOwned(definition?.exclusiveWithIds, legacy?.ExclusvieWith)) available = false;
+            if (!AreRequirementsMet(definition.requiredSkillIds)) available = false;
+            if (!AreRequirementsMet(definition.shadowRequirementIds)) available = false;
+            if (HasExclusiveOwned(definition.exclusiveWithIds)) available = false;
             if (available)
             {
                 skillTreeData.skillPointsTree -= cost;
                 oracle.SetSkillOwned(skillId, true);
-                bool isFragment = definition != null ? definition.isFragment : legacy != null && legacy.isFragment;
-                if (isFragment) skillTreeData.fragments += 1;
+                if (definition.isFragment) skillTreeData.fragments += 1;
                 pointsLeft -= 1;
             }
 
@@ -67,7 +60,7 @@ public class SkillsAutoAssignment : MonoBehaviour
         return definition;
     }
 
-    private bool AreRequirementsMet(string[] requirementIds, int[] legacyKeys)
+    private bool AreRequirementsMet(string[] requirementIds)
     {
         if (requirementIds != null && requirementIds.Length > 0)
         {
@@ -76,18 +69,10 @@ public class SkillsAutoAssignment : MonoBehaviour
                     return false;
             return true;
         }
-
-        if (legacyKeys != null && legacyKeys.Length > 0)
-        {
-            foreach (int key in legacyKeys)
-                if (!oracle.SkillTree[key].Owned)
-                    return false;
-        }
-
         return true;
     }
 
-    private bool HasExclusiveOwned(string[] exclusiveIds, int[] legacyKeys)
+    private bool HasExclusiveOwned(string[] exclusiveIds)
     {
         if (exclusiveIds != null && exclusiveIds.Length > 0)
         {
@@ -96,14 +81,6 @@ public class SkillsAutoAssignment : MonoBehaviour
                     return true;
             return false;
         }
-
-        if (legacyKeys != null && legacyKeys.Length > 0)
-        {
-            foreach (int key in legacyKeys)
-                if (oracle.SkillTree[key].Owned)
-                    return true;
-        }
-
         return false;
     }
 }
