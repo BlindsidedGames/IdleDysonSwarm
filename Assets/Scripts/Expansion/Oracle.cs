@@ -12,6 +12,7 @@ using Systems;
 using Systems.Debugging;
 using Systems.Facilities;
 using Systems.Migrations;
+using Systems.Skills;
 using Systems.Stats;
 using TMPro;
 using UnityEngine;
@@ -66,7 +67,7 @@ namespace Expansion
         public bool Loaded;
         private bool _isSaveReady;
         private bool _autoSaveScheduled;
-        private const int CurrentSaveVersion = 3;
+        private const int CurrentSaveVersion = 4;
 
         #region SaveAndLoadFromClipboard
 
@@ -120,6 +121,19 @@ namespace Expansion
         private void SaveDictionaries()
         {
             infinityData.SkillTreeSaveData = new Dictionary<int, bool>();
+            if (infinityData.skillStateById != null && infinityData.skillStateById.Count > 0)
+            {
+                foreach (KeyValuePair<string, SkillState> entry in infinityData.skillStateById)
+                {
+                    if (SkillIdMap.TryGetLegacyKey(entry.Key, out int key))
+                    {
+                        infinityData.SkillTreeSaveData[key] = entry.Value.owned;
+                    }
+                }
+
+                return;
+            }
+
             if (infinityData.skillOwnedById != null && infinityData.skillOwnedById.Count > 0)
             {
                 foreach (KeyValuePair<string, bool> entry in infinityData.skillOwnedById)
@@ -234,36 +248,96 @@ namespace Expansion
                 summary: "Populate research level ids from legacy fields.",
                 apply: _ => { MigrateResearchLevelsToIds(); }));
 
+            registry.AddStep(new MigrationStep(
+                targetVersion: 4,
+                name: "Skill state to ids",
+                summary: "Populate skill state dictionary from legacy skill ownership and timers.",
+                apply: _ => { MigrateSkillStateToIds(); }));
+
             return registry;
         }
 
         private void EnsureSkillOwnershipData()
         {
             if (infinityData == null) return;
-            infinityData.skillOwnedById ??= new Dictionary<string, bool>();
-            if (infinityData.skillOwnedById.Count > 0) return;
+            EnsureSkillStateData();
+            SyncSkillOwnedByIdFromState();
+        }
 
-            if (infinityData.SkillTreeSaveData != null && infinityData.SkillTreeSaveData.Count > 0)
+        private void EnsureSkillStateData()
+        {
+            if (infinityData == null) return;
+            infinityData.skillStateById ??= new Dictionary<string, SkillState>();
+            if (infinityData.skillStateById.Count == 0)
             {
-                foreach (KeyValuePair<int, bool> entry in infinityData.SkillTreeSaveData)
+                if (infinityData.skillOwnedById != null && infinityData.skillOwnedById.Count > 0)
                 {
-                    if (SkillIdMap.TryGetId(entry.Key, out string id))
+                    foreach (KeyValuePair<string, bool> entry in infinityData.skillOwnedById)
                     {
-                        infinityData.skillOwnedById[id] = entry.Value;
+                        EnsureSkillStateEntry(entry.Key, entry.Value);
                     }
                 }
-
-                return;
+                else if (infinityData.SkillTreeSaveData != null && infinityData.SkillTreeSaveData.Count > 0)
+                {
+                    foreach (KeyValuePair<int, bool> entry in infinityData.SkillTreeSaveData)
+                    {
+                        if (SkillIdMap.TryGetId(entry.Key, out string id))
+                        {
+                            EnsureSkillStateEntry(id, entry.Value);
+                        }
+                    }
+                }
+                else
+                {
+                    GameDataRegistry registry = GameDataRegistry.Instance;
+                    if (registry != null && registry.skillDatabase != null && registry.skillDatabase.skills.Count > 0)
+                    {
+                        foreach (SkillDefinition skill in registry.skillDatabase.skills)
+                        {
+                            if (skill == null || string.IsNullOrEmpty(skill.id)) continue;
+                            bool owned = SkillFlagAccessor.TryGetFlag(skillTreeData, skill.id, out bool flag) && flag;
+                            EnsureSkillStateEntry(skill.id, owned);
+                        }
+                    }
+                }
             }
 
-            if (SkillTree == null || SkillTree.Count == 0) return;
-            foreach (KeyValuePair<int, SkillTreeItem> entry in SkillTree)
+        }
+
+        private void MigrateLegacySkillTimersToState()
+        {
+            if (infinityData == null) return;
+
+            if (prestigeData != null)
             {
-                if (entry.Value == null) continue;
-                if (SkillIdMap.TryGetId(entry.Key, out string id))
+                if (prestigeData.androidsSkillTimer > 0)
                 {
-                    infinityData.skillOwnedById[id] = entry.Value.Owned;
+                    SetSkillTimerSeconds(infinityData, "androids", prestigeData.androidsSkillTimer);
                 }
+
+                if (prestigeData.pocketAndroidsTimer > 0)
+                {
+                    SetSkillTimerSeconds(infinityData, "pocketAndroids", prestigeData.pocketAndroidsTimer);
+                }
+
+                prestigeData.androidsSkillTimer = 0;
+                prestigeData.pocketAndroidsTimer = 0;
+            }
+
+            if (skillTreeData != null)
+            {
+                if (skillTreeData.superRadiantScatteringTimer > 0)
+                {
+                    SetSkillTimerSeconds(infinityData, "superRadiantScattering", skillTreeData.superRadiantScatteringTimer);
+                }
+
+                if (skillTreeData.idleElectricSheepTimer > 0)
+                {
+                    SetSkillTimerSeconds(infinityData, "idleElectricSheep", skillTreeData.idleElectricSheepTimer);
+                }
+
+                skillTreeData.superRadiantScatteringTimer = 0;
+                skillTreeData.idleElectricSheepTimer = 0;
             }
         }
 
@@ -368,6 +442,19 @@ namespace Expansion
                     infinityData.skillOwnedById[id] = entry.Value.Owned;
                 }
             }
+        }
+
+        private void MigrateSkillStateToIds()
+        {
+            if (infinityData == null) return;
+            infinityData.skillStateById ??= new Dictionary<string, SkillState>();
+            if (infinityData.skillStateById.Count == 0)
+            {
+                EnsureSkillStateData();
+            }
+
+            MigrateLegacySkillTimersToState();
+            SyncSkillOwnedByIdFromState();
         }
 
         private void MigrateSkillAutoAssignmentIds()
@@ -1007,7 +1094,7 @@ namespace Expansion
             double researchers = infinityData.researchers;
             double panelLifetime = infinityData.panelLifetime;
             double panelsPerSec = infinityData.panelsPerSec;
-            double pocketAndroidsTimer = prestigeData.pocketAndroidsTimer;
+            double pocketAndroidsTimer = GetSkillTimerSeconds(infinityData, "pocketAndroids");
             double bots = infinityData.bots;
 
             bool rule34 = skillTreeData.rule34;
@@ -1098,7 +1185,7 @@ namespace Expansion
                 infinityData.workers = 1_000_000;
                 infinityData.researchers = 250_000;
                 infinityData.panelLifetime = 15;
-                prestigeData.pocketAndroidsTimer = 1800;
+                SetSkillTimerSeconds(infinityData, "pocketAndroids", 1800);
 
                 skillTreeData.pocketDimensions = true;
                 skillTreeData.pocketMultiverse = true;
@@ -1207,7 +1294,7 @@ namespace Expansion
                 infinityData.researchers = researchers;
                 infinityData.panelLifetime = panelLifetime;
                 infinityData.panelsPerSec = panelsPerSec;
-                prestigeData.pocketAndroidsTimer = pocketAndroidsTimer;
+                SetSkillTimerSeconds(infinityData, "pocketAndroids", pocketAndroidsTimer);
                 infinityData.bots = bots;
 
                 skillTreeData.rule34 = rule34;
@@ -1336,7 +1423,7 @@ namespace Expansion
 
             if (awaySeconds <= 0 || stepSeconds <= 0)
             {
-                return CaptureOfflineParitySnapshot(infinityData, prestigeData);
+                return CaptureOfflineParitySnapshot(infinityData);
             }
 
             double remainder = awaySeconds % stepSeconds;
@@ -1351,7 +1438,7 @@ namespace Expansion
                 ApplyOfflineStep(infinityData, prestigeData, skillTreeData, prestigePlus, remainder, recalcDeltaSeconds);
             }
 
-            return CaptureOfflineParitySnapshot(infinityData, prestigeData);
+            return CaptureOfflineParitySnapshot(infinityData);
         }
 
         private static OfflineParitySnapshot SimulateOnlineProgress(SaveDataSettings settings,
@@ -1373,7 +1460,7 @@ namespace Expansion
 
             if (awaySeconds <= 0 || stepSeconds <= 0)
             {
-                return CaptureOfflineParitySnapshot(infinityData, prestigeData);
+                return CaptureOfflineParitySnapshot(infinityData);
             }
 
             double remaining = awaySeconds;
@@ -1394,14 +1481,14 @@ namespace Expansion
                 remaining -= delta;
             }
 
-            return CaptureOfflineParitySnapshot(infinityData, prestigeData);
+            return CaptureOfflineParitySnapshot(infinityData);
         }
 
         private static void ApplyOfflineStep(DysonVerseInfinityData infinityData, DysonVersePrestigeData prestigeData,
             DysonVerseSkillTreeData skillTreeData, PrestigePlus prestigePlus, double stepSeconds, double recalcDeltaSeconds)
         {
-            if (skillTreeData.androids) prestigeData.androidsSkillTimer += stepSeconds;
-            if (skillTreeData.pocketAndroids) prestigeData.pocketAndroidsTimer += stepSeconds;
+            if (skillTreeData.androids) AddSkillTimerSeconds(infinityData, "androids", stepSeconds);
+            if (skillTreeData.pocketAndroids) AddSkillTimerSeconds(infinityData, "pocketAndroids", stepSeconds);
 
             double planets = infinityData.totalPlanetProduction * stepSeconds;
             infinityData.planets[0] += planets;
@@ -1455,8 +1542,7 @@ namespace Expansion
                                                     settings.timeLastInfinity / 10);
         }
 
-        private static OfflineParitySnapshot CaptureOfflineParitySnapshot(DysonVerseInfinityData infinityData,
-            DysonVersePrestigeData prestigeData)
+        private static OfflineParitySnapshot CaptureOfflineParitySnapshot(DysonVerseInfinityData infinityData)
         {
             return new OfflineParitySnapshot
             {
@@ -1474,8 +1560,8 @@ namespace Expansion
                 ManagersManual = infinityData.managers[1],
                 AssemblyLinesAuto = infinityData.assemblyLines[0],
                 AssemblyLinesManual = infinityData.assemblyLines[1],
-                AndroidsSkillTimer = prestigeData.androidsSkillTimer,
-                PocketAndroidsTimer = prestigeData.pocketAndroidsTimer,
+                AndroidsSkillTimer = GetSkillTimerSeconds(infinityData, "androids"),
+                PocketAndroidsTimer = GetSkillTimerSeconds(infinityData, "pocketAndroids"),
                 ScienceBoostOwned = infinityData.scienceBoostOwned,
                 MoneyMultiUpgradeOwned = infinityData.moneyMultiUpgradeOwned
             };
@@ -1578,6 +1664,7 @@ namespace Expansion
         private void SyncSkillOwnershipFromSkillTreeData()
         {
             if (infinityData == null || skillTreeData == null) return;
+            infinityData.skillStateById ??= new Dictionary<string, SkillState>();
             infinityData.skillOwnedById ??= new Dictionary<string, bool>();
             infinityData.skillOwnedById.Clear();
 
@@ -1588,19 +1675,14 @@ namespace Expansion
                 {
                     if (skill == null || string.IsNullOrEmpty(skill.id)) continue;
                     bool owned = SkillFlagAccessor.TryGetFlag(skillTreeData, skill.id, out bool flag) && flag;
-                    infinityData.skillOwnedById[skill.id] = owned;
+                    EnsureSkillStateEntry(skill.id, owned);
                 }
 
+                SyncSkillOwnedByIdFromState();
                 return;
             }
 
-            if (SkillTree == null) return;
-            foreach (KeyValuePair<int, SkillTreeItem> entry in SkillTree)
-            {
-                if (!SkillIdMap.TryGetId(entry.Key, out string id)) continue;
-                bool owned = SkillFlagAccessor.TryGetFlag(skillTreeData, id, out bool flag) && flag;
-                infinityData.skillOwnedById[id] = owned;
-            }
+            Debug.LogWarning("Skill sync skipped: SkillDatabase not available.");
         }
 
         private void AppendFacilityBreakdown(StringBuilder builder, string label, string facilityId)
@@ -1819,7 +1901,7 @@ namespace Expansion
             double scientificDelta = scientificResult.Value - legacyScientific;
             results?.Add(new ParityResult("Shoulders Of The Fallen (Scientific)", scientificDelta));
 
-            double pocketBase = FacilityLegacyBridge.ComputePocketDimensionsProduction(infinityData, prestigeData, skillTreeData);
+            double pocketBase = FacilityLegacyBridge.ComputePocketDimensionsProduction(infinityData, skillTreeData);
             double shoulderSurgeryBonus = skillTreeData.shouldersOfTheFallen && skillTreeData.shoulderSurgery && infinityData.scienceBoostOwned > 0
                 ? Math.Log(infinityData.scienceBoostOwned, 2)
                 : 0;
@@ -1860,7 +1942,7 @@ namespace Expansion
             builder.AppendLine($"Delta: {pocketDelta}");
             builder.AppendLine(
                 $"Inputs: workers={infinityData.workers}, researchers={infinityData.researchers}, panelLifetime={infinityData.panelLifetime}, " +
-                $"pocketAndroidsTimer={prestigeData.pocketAndroidsTimer}, scienceBoostOwned={infinityData.scienceBoostOwned}");
+                $"pocketAndroidsTimer={GetSkillTimerSeconds(infinityData, "pocketAndroids")}, scienceBoostOwned={infinityData.scienceBoostOwned}");
             builder.AppendLine("Breakdown:");
             foreach (Contribution contribution in pocketResult.Contributions)
             {
@@ -1882,7 +1964,7 @@ namespace Expansion
             if (skillTreeData.shouldersOfTheFallen && infinityData.scienceBoostOwned > 0)
                 scientificPlanetsProduction += Math.Log(infinityData.scienceBoostOwned, 2);
 
-            double pocketDimensionsProduction = FacilityLegacyBridge.ComputePocketDimensionsProduction(infinityData, prestigeData, skillTreeData);
+            double pocketDimensionsProduction = FacilityLegacyBridge.ComputePocketDimensionsProduction(infinityData, skillTreeData);
             if (skillTreeData.shouldersOfTheFallen && skillTreeData.shoulderSurgery && infinityData.scienceBoostOwned > 0)
                 pocketDimensionsProduction += Math.Log(infinityData.scienceBoostOwned, 2);
 
@@ -2102,7 +2184,7 @@ namespace Expansion
                 legacyComputed *= 1.5f;
             if (skillTreeData.pocketDimensions)
             {
-                double pocketDimensionsProduction = FacilityLegacyBridge.ComputePocketDimensionsProduction(infinityData, prestigeData, skillTreeData);
+                double pocketDimensionsProduction = FacilityLegacyBridge.ComputePocketDimensionsProduction(infinityData, skillTreeData);
                 if (pocketDimensionsProduction > 0)
                     legacyComputed += pocketDimensionsProduction;
             }
@@ -2117,7 +2199,7 @@ namespace Expansion
             builder.AppendLine($"Delta: {delta}");
             builder.AppendLine(
                 $"Inputs: count={infinityData.planets[0] + infinityData.planets[1]}, modifier={infinityData.planetModifier}, " +
-                $"workers={infinityData.workers}, researchers={infinityData.researchers}, pocketAndroidsTimer={prestigeData.pocketAndroidsTimer}");
+                $"workers={infinityData.workers}, researchers={infinityData.researchers}, pocketAndroidsTimer={GetSkillTimerSeconds(infinityData, "pocketAndroids")}");
             builder.AppendLine("Breakdown:");
             foreach (Contribution contribution in runtime.Breakdown.Contributions)
             {
@@ -2137,7 +2219,7 @@ namespace Expansion
                 if (skillTreeData.pocketDimensions)
                 {
                     double pocketDimensionsProduction =
-                        FacilityLegacyBridge.ComputePocketDimensionsProduction(infinityData, prestigeData, skillTreeData);
+                        FacilityLegacyBridge.ComputePocketDimensionsProduction(infinityData, skillTreeData);
                     if (pocketDimensionsProduction > 0)
                         dataDrivenExpected += pocketDimensionsProduction;
                 }
@@ -2469,13 +2551,26 @@ namespace Expansion
         public bool IsSkillOwned(string skillId)
         {
             if (string.IsNullOrEmpty(skillId)) return false;
+            if (infinityData != null && infinityData.skillStateById != null &&
+                infinityData.skillStateById.TryGetValue(skillId, out SkillState state))
+            {
+                return state != null && state.owned;
+            }
+
             if (infinityData != null && infinityData.skillOwnedById != null &&
                 infinityData.skillOwnedById.TryGetValue(skillId, out bool owned))
             {
+                EnsureSkillStateEntry(skillId, owned);
                 return owned;
             }
 
-            return SkillFlagAccessor.TryGetFlag(skillTreeData, skillId, out bool legacyOwned) && legacyOwned;
+            if (SkillFlagAccessor.TryGetFlag(skillTreeData, skillId, out bool legacyOwned) && legacyOwned)
+            {
+                EnsureSkillStateEntry(skillId, legacyOwned);
+                return true;
+            }
+
+            return false;
         }
 
         public void SetSkillOwned(string skillId, bool owned)
@@ -2483,8 +2578,8 @@ namespace Expansion
             if (string.IsNullOrEmpty(skillId)) return;
             if (infinityData == null) return;
 
-            infinityData.skillOwnedById ??= new Dictionary<string, bool>();
-            infinityData.skillOwnedById[skillId] = owned;
+            SetSkillStateOwned(skillId, owned);
+            SyncSkillOwnedByIdFromState();
 
             if (SkillIdMap.TryGetLegacyKey(skillId, out int key))
             {
@@ -2497,6 +2592,93 @@ namespace Expansion
             }
 
             SkillFlagAccessor.TrySetFlag(skillTreeData, skillId, owned);
+        }
+
+        private void SetSkillStateOwned(string skillId, bool owned)
+        {
+            if (string.IsNullOrEmpty(skillId) || infinityData == null) return;
+            infinityData.skillStateById ??= new Dictionary<string, SkillState>();
+            if (!infinityData.skillStateById.TryGetValue(skillId, out SkillState state) || state == null)
+            {
+                state = new SkillState();
+                infinityData.skillStateById[skillId] = state;
+            }
+
+            state.owned = owned;
+            state.level = owned ? Math.Max(state.level, 1) : 0;
+        }
+
+        private void EnsureSkillStateEntry(string skillId, bool owned)
+        {
+            if (string.IsNullOrEmpty(skillId) || infinityData == null) return;
+            SkillState state = GetOrCreateSkillState(skillId);
+            if (state == null) return;
+
+            state.owned = owned;
+            if (owned && state.level < 1) state.level = 1;
+        }
+
+        private void SyncSkillOwnedByIdFromState()
+        {
+            if (infinityData == null) return;
+            infinityData.skillOwnedById ??= new Dictionary<string, bool>();
+            infinityData.skillOwnedById.Clear();
+            if (infinityData.skillStateById == null) return;
+
+            foreach (KeyValuePair<string, SkillState> entry in infinityData.skillStateById)
+            {
+                if (entry.Value == null) continue;
+                infinityData.skillOwnedById[entry.Key] = entry.Value.owned;
+            }
+        }
+
+        private SkillState GetOrCreateSkillState(string skillId)
+        {
+            if (string.IsNullOrEmpty(skillId) || infinityData == null) return null;
+            infinityData.skillStateById ??= new Dictionary<string, SkillState>();
+            if (!infinityData.skillStateById.TryGetValue(skillId, out SkillState state) || state == null)
+            {
+                state = new SkillState();
+                infinityData.skillStateById[skillId] = state;
+            }
+
+            return state;
+        }
+
+        private static SkillState GetOrCreateSkillStateEntry(DysonVerseInfinityData infinityData, string skillId)
+        {
+            if (infinityData == null || string.IsNullOrEmpty(skillId)) return null;
+            infinityData.skillStateById ??= new Dictionary<string, SkillState>();
+            if (!infinityData.skillStateById.TryGetValue(skillId, out SkillState state) || state == null)
+            {
+                state = new SkillState();
+                infinityData.skillStateById[skillId] = state;
+            }
+
+            return state;
+        }
+
+        public static double GetSkillTimerSeconds(DysonVerseInfinityData infinityData, string skillId)
+        {
+            if (infinityData?.skillStateById == null || string.IsNullOrEmpty(skillId)) return 0;
+            return infinityData.skillStateById.TryGetValue(skillId, out SkillState state) && state != null
+                ? state.timerSeconds
+                : 0;
+        }
+
+        public static void SetSkillTimerSeconds(DysonVerseInfinityData infinityData, string skillId, double timerSeconds)
+        {
+            SkillState state = GetOrCreateSkillStateEntry(infinityData, skillId);
+            if (state == null) return;
+            state.timerSeconds = timerSeconds;
+        }
+
+        public static void AddSkillTimerSeconds(DysonVerseInfinityData infinityData, string skillId, double deltaSeconds)
+        {
+            if (deltaSeconds == 0) return;
+            SkillState state = GetOrCreateSkillStateEntry(infinityData, skillId);
+            if (state == null) return;
+            state.timerSeconds += deltaSeconds;
         }
 
         public static double GetResearchLevel(string researchId)
@@ -2576,6 +2758,7 @@ namespace Expansion
         {
             if (infinityData != null)
             {
+                infinityData.skillStateById?.Clear();
                 infinityData.skillOwnedById?.Clear();
                 infinityData.SkillTreeSaveData?.Clear();
             }
@@ -2614,8 +2797,6 @@ namespace Expansion
         public void DysonInfinity()
         {
             saveSettings.firstInfinityDone = true;
-            prestigeData.androidsSkillTimer = 0;
-            prestigeData.pocketAndroidsTimer = 0;
             int bankedSkills = 0;
             if (IsSkillOwned("banking")) bankedSkills++;
             if (IsSkillOwned("investmentPortfolio")) bankedSkills++;
@@ -2648,15 +2829,13 @@ namespace Expansion
             skillTreeData.fragments = 0;
             _gameManager.AutoAssignSkillsInvoke();
             WipeSaveButtonUpdate();
-            skillTreeData.superRadiantScatteringTimer = 0;
+            SetSkillTimerSeconds(infinityData, "superRadiantScattering", 0);
             Rotator.ResetPanelsStatic();
         }
 
         public void ManualDysonInfinity()
         {
             saveSettings.firstInfinityDone = true;
-            prestigeData.androidsSkillTimer = 0;
-            prestigeData.pocketAndroidsTimer = 0;
             int bankedSkills = 0;
             if (IsSkillOwned("banking")) bankedSkills++;
             if (IsSkillOwned("investmentPortfolio")) bankedSkills++;
@@ -2681,7 +2860,7 @@ namespace Expansion
             skillTreeData.fragments = 0;
             _gameManager.AutoAssignSkillsInvoke();
             WipeSaveButtonUpdate();
-            skillTreeData.superRadiantScatteringTimer = 0;
+            SetSkillTimerSeconds(infinityData, "superRadiantScattering", 0);
             saveSettings.infinityInProgress = false;
             Rotator.ResetPanelsStatic();
         }
@@ -2702,7 +2881,7 @@ namespace Expansion
                 {
                     ResetSkillOwnership();
                     StartCoroutine(PrestigeDoubleWiper());
-                    skillTreeData.superRadiantScatteringTimer = 0;
+                    SetSkillTimerSeconds(infinityData, "superRadiantScattering", 0);
                 }
                     break;
             }
@@ -2724,8 +2903,8 @@ namespace Expansion
             prestigeData.infinityAutoResearch = saveSettings.prestigePlus.automation;
             saveSettings.lastInfinityPointsGained = 0;
             saveSettings.timeLastInfinity = 0;
-            prestigeData.androidsSkillTimer = 0;
-            prestigeData.pocketAndroidsTimer = 0;
+            SetSkillTimerSeconds(infinityData, "androids", 0);
+            SetSkillTimerSeconds(infinityData, "pocketAndroids", 0);
             skillTreeData.fragments = 0;
             skillTreeData.skillPointsTree = 0 + ArtifactSkillPoints();
             _skillTreeConfirmationManager.CloseConfirm();
@@ -3005,6 +3184,7 @@ namespace Expansion
         public class DysonVerseInfinityData
         {
             public Dictionary<int, bool> SkillTreeSaveData;
+            public Dictionary<string, SkillState> skillStateById = new Dictionary<string, SkillState>();
             public Dictionary<string, bool> skillOwnedById = new Dictionary<string, bool>();
             public Dictionary<string, double> researchLevelsById = new Dictionary<string, double>();
             [Header("Money")] public double money;

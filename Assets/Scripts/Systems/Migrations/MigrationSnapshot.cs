@@ -3,12 +3,15 @@ using System.Collections.Generic;
 using System.Globalization;
 using Expansion;
 using GameData;
+using Systems.Skills;
 
 namespace Systems.Migrations
 {
     public sealed class MigrationSnapshot
     {
         public int SaveVersion { get; private set; }
+        public int SkillStateCount { get; private set; }
+        public int SkillStateOwnedCount { get; private set; }
         public int SkillOwnedByIdCount { get; private set; }
         public int SkillOwnedTrueCount { get; private set; }
         public int LegacySkillTreeSaveCount { get; private set; }
@@ -39,12 +42,12 @@ namespace Systems.Migrations
 
             Oracle.DysonVerseSaveData dysonVerse = saveData.dysonVerseSaveData;
             Oracle.DysonVerseInfinityData infinityData = dysonVerse?.dysonVerseInfinityData;
-            Oracle.DysonVersePrestigeData prestigeData = dysonVerse?.dysonVersePrestigeData;
-            Oracle.DysonVerseSkillTreeData skillTreeData = dysonVerse?.dysonVerseSkillTreeData;
 
             if (infinityData != null)
             {
                 snapshot.LegacySkillTreeSaveCount = infinityData.SkillTreeSaveData?.Count ?? 0;
+                snapshot.SkillStateCount = infinityData.skillStateById?.Count ?? 0;
+                snapshot.SkillStateOwnedCount = CountOwnedStates(infinityData.skillStateById);
                 snapshot.SkillOwnedByIdCount = infinityData.skillOwnedById?.Count ?? 0;
                 snapshot.SkillOwnedTrueCount = CountTrue(infinityData.skillOwnedById);
                 snapshot.ResearchLevelsByIdCount = infinityData.researchLevelsById?.Count ?? 0;
@@ -69,16 +72,12 @@ namespace Systems.Migrations
                 snapshot.AutoAssignmentIdCounts[5] = dysonVerse.skillAutoAssignmentIds5?.Count ?? 0;
             }
 
-            if (prestigeData != null)
+            if (infinityData != null)
             {
-                snapshot.AndroidsSkillTimer = prestigeData.androidsSkillTimer;
-                snapshot.PocketAndroidsTimer = prestigeData.pocketAndroidsTimer;
-            }
-
-            if (skillTreeData != null)
-            {
-                snapshot.SuperRadiantScatteringTimer = skillTreeData.superRadiantScatteringTimer;
-                snapshot.IdleElectricSheepTimer = skillTreeData.idleElectricSheepTimer;
+                snapshot.AndroidsSkillTimer = Oracle.GetSkillTimerSeconds(infinityData, "androids");
+                snapshot.PocketAndroidsTimer = Oracle.GetSkillTimerSeconds(infinityData, "pocketAndroids");
+                snapshot.SuperRadiantScatteringTimer = Oracle.GetSkillTimerSeconds(infinityData, "superRadiantScattering");
+                snapshot.IdleElectricSheepTimer = Oracle.GetSkillTimerSeconds(infinityData, "idleElectricSheep");
             }
 
             return snapshot;
@@ -101,6 +100,12 @@ namespace Systems.Migrations
             {
                 yield return
                     $"skillOwnedById: {before.SkillOwnedByIdCount} ({before.SkillOwnedTrueCount} owned) -> {SkillOwnedByIdCount} ({SkillOwnedTrueCount} owned)";
+            }
+
+            if (SkillStateCount != before.SkillStateCount || SkillStateOwnedCount != before.SkillStateOwnedCount)
+            {
+                yield return
+                    $"skillStateById: {before.SkillStateCount} ({before.SkillStateOwnedCount} owned) -> {SkillStateCount} ({SkillStateOwnedCount} owned)";
             }
 
             if (LegacySkillTreeSaveCount != before.LegacySkillTreeSaveCount)
@@ -147,6 +152,18 @@ namespace Systems.Migrations
             foreach (KeyValuePair<string, bool> entry in values)
             {
                 if (entry.Value) count++;
+            }
+
+            return count;
+        }
+
+        private static int CountOwnedStates(Dictionary<string, SkillState> values)
+        {
+            if (values == null) return 0;
+            int count = 0;
+            foreach (KeyValuePair<string, SkillState> entry in values)
+            {
+                if (entry.Value != null && entry.Value.owned) count++;
             }
 
             return count;

@@ -730,7 +730,8 @@ public class GameManager : MonoBehaviour
 
         if (skillTreeData.pocketAndroids)
         {
-            double pocketAndroidsMultiplier = prestigeData.pocketAndroidsTimer > 3564 ? 100 : 1 + prestigeData.pocketAndroidsTimer / 36;
+            double pocketAndroidsTimer = GetSkillTimerSeconds(infinityData, "pocketAndroids");
+            double pocketAndroidsMultiplier = pocketAndroidsTimer > 3564 ? 100 : 1 + pocketAndroidsTimer / 36;
             multiplier *= pocketAndroidsMultiplier;
             if (addDataCenterLineBreak) dataCenterProductionDetailText += "<br>";
             addDataCenterLineBreak = true;
@@ -782,16 +783,25 @@ public class GameManager : MonoBehaviour
             $"<br>Galaxies Engulfed: {scienceColor}{CalcUtils.FormatNumber(GalaxiesEngulfed(false, false))}</color><br>";
 
         if (skillTreeData.androids)
+        {
+            double androidsTimer = GetSkillTimerSeconds(infinityData, "androids");
             skillTimersDisplayText +=
-                $"<br>Androids: {scienceColor}{CalcUtils.FormatTimeLarge(prestigeData.androidsSkillTimer >= 600 ? 600 : prestigeData.androidsSkillTimer)}</color><br><size=80%>Granting: {scienceColor}{CalcUtils.FormatNumber(Math.Floor(prestigeData.androidsSkillTimer > 600 ? 200 : prestigeData.androidsSkillTimer / 3))}s Lifetime</color>.<br></size>";
+                $"<br>Androids: {scienceColor}{CalcUtils.FormatTimeLarge(androidsTimer >= 600 ? 600 : androidsTimer)}</color><br><size=80%>Granting: {scienceColor}{CalcUtils.FormatNumber(Math.Floor(androidsTimer > 600 ? 200 : androidsTimer / 3))}s Lifetime</color>.<br></size>";
+        }
 
         if (skillTreeData.pocketAndroids)
+        {
+            double pocketAndroidsTimer = GetSkillTimerSeconds(infinityData, "pocketAndroids");
             skillTimersDisplayText +=
-                $"<br>Pocket Androids: {scienceColor}{CalcUtils.FormatTimeLarge(prestigeData.pocketAndroidsTimer >= 3600 ? 3600 : prestigeData.pocketAndroidsTimer)}</color><br><size=80%>Multiplying Data Center Production by: {scienceColor}{CalcUtils.FormatNumber(prestigeData.pocketAndroidsTimer > 3564 ? 100 : 1 + prestigeData.pocketAndroidsTimer / 36)}</color>.<br></size>";
+                $"<br>Pocket Androids: {scienceColor}{CalcUtils.FormatTimeLarge(pocketAndroidsTimer >= 3600 ? 3600 : pocketAndroidsTimer)}</color><br><size=80%>Multiplying Data Center Production by: {scienceColor}{CalcUtils.FormatNumber(pocketAndroidsTimer > 3564 ? 100 : 1 + pocketAndroidsTimer / 36)}</color>.<br></size>";
+        }
 
         if (skillTreeData.superRadiantScattering)
+        {
+            double scatteringTimer = GetSkillTimerSeconds(infinityData, "superRadiantScattering");
             skillTimersDisplayText +=
-                $"<br>Scattering: {scienceColor}{CalcUtils.FormatTimeLarge(skillTreeData.superRadiantScatteringTimer)}</color><br><size=80%>Multiplying All Production by: {scienceColor}{CalcUtils.FormatNumber(1 + 0.01f * skillTreeData.superRadiantScatteringTimer)}</color>.<br></size>";
+                $"<br>Scattering: {scienceColor}{CalcUtils.FormatTimeLarge(scatteringTimer)}</color><br><size=80%>Multiplying All Production by: {scienceColor}{CalcUtils.FormatNumber(1 + 0.01f * scatteringTimer)}</color>.<br></size>";
+        }
 
 
         skillTimersText.text = skillTimersDisplayText;
@@ -890,7 +900,7 @@ public class GameManager : MonoBehaviour
 
     private double GlobalBuff()
     {
-        return ModifierSystem.GlobalBuff(skillTreeData, prestigePlus);
+        return ModifierSystem.GlobalBuff(infinityData, skillTreeData, prestigePlus);
     }
 
     private double AmountForBuildingBoostAfterX()

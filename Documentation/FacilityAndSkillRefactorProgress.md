@@ -109,6 +109,10 @@
 - Load an existing save to confirm skill ownership + auto-assign lists migrate correctly.
 - Verify breakdown UI in play mode (open/close + totals match cards).
 
+## Known Issues / Problems
+- Breakdown shows Pocket Dimensions under Planets even though it produces Data Centers; need an upstream-source section on the Data Centers breakdown with line breaks (include planet production + pocket dimensions amounts).
+- Planet breakdown misses scientific planets production lines, so some planet production is never shown in details.
+
 ## Files Touched
 - `Documentation/FacilityAndSkillRefactor.md`
 - `Documentation/FacilityAndSkillRefactorProgress.md`

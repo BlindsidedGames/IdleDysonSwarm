@@ -38,9 +38,9 @@ namespace Systems
             CalculatePlanetProduction(infinityData, skillTreeData, prestigeData, deltaTime);
             CalculatePlanetsPerSecond(infinityData, skillTreeData, deltaTime);
             CalculateShouldersSkills(infinityData, skillTreeData, prestigeData, deltaTime);
-            if (skillTreeData.androids) prestigeData.androidsSkillTimer += deltaTime;
-            if (skillTreeData.pocketAndroids) prestigeData.pocketAndroidsTimer += deltaTime;
-            if (skillTreeData.superRadiantScattering) skillTreeData.superRadiantScatteringTimer += deltaTime;
+            if (skillTreeData.androids) AddSkillTimerSeconds(infinityData, "androids", deltaTime);
+            if (skillTreeData.pocketAndroids) AddSkillTimerSeconds(infinityData, "pocketAndroids", deltaTime);
+            if (skillTreeData.superRadiantScattering) AddSkillTimerSeconds(infinityData, "superRadiantScattering", deltaTime);
         }
 
         public static void CalculatePlanetsPerSecond(DysonVerseInfinityData infinityData, DysonVerseSkillTreeData skillTreeData,
@@ -133,8 +133,10 @@ namespace Systems
             if (skillTreeData.solarBubbles) dataCenterProductionTemp *= 1 + 0.01 * infinityData.panelLifetime;
 
             if (skillTreeData.pocketAndroids)
-                dataCenterProductionTemp *=
-                    prestigeData.pocketAndroidsTimer > 3564 ? 100 : 1 + prestigeData.pocketAndroidsTimer / 36;
+            {
+                double pocketAndroidsTimer = GetSkillTimerSeconds(infinityData, "pocketAndroids");
+                dataCenterProductionTemp *= pocketAndroidsTimer > 3564 ? 100 : 1 + pocketAndroidsTimer / 36;
+            }
 
             if (skillTreeData.quantumComputing)
             {
