@@ -39,11 +39,10 @@ namespace Systems.Stats
 
             if (hasResearch)
             {
-                StatEffect upgradeEffect = PopEffectById(researchEffects, AssemblyLineUpgradeEffectId);
                 int upgradeOrder = UpgradeOrderFallback;
                 string upgradeName = "Assembly Line Upgrades";
-                double upgradeLevel = 0;
-                if (upgradeEffect != null)
+                double upgradeLevel;
+                if (TryPopEffectById(researchEffects, AssemblyLineUpgradeEffectId, out StatEffect upgradeEffect))
                 {
                     upgradeOrder = upgradeEffect.Order;
                     if (!string.IsNullOrEmpty(upgradeEffect.SourceName)) upgradeName = upgradeEffect.SourceName;
@@ -116,11 +115,10 @@ namespace Systems.Stats
 
             if (hasResearch)
             {
-                StatEffect upgradeEffect = PopEffectById(researchEffects, ManagerUpgradeEffectId);
                 int upgradeOrder = UpgradeOrderFallback;
                 string upgradeName = "AI Manager Upgrades";
-                double upgradeLevel = 0;
-                if (upgradeEffect != null)
+                double upgradeLevel;
+                if (TryPopEffectById(researchEffects, ManagerUpgradeEffectId, out StatEffect upgradeEffect))
                 {
                     upgradeOrder = upgradeEffect.Order;
                     if (!string.IsNullOrEmpty(upgradeEffect.SourceName)) upgradeName = upgradeEffect.SourceName;
@@ -192,11 +190,10 @@ namespace Systems.Stats
 
             if (hasResearch)
             {
-                StatEffect upgradeEffect = PopEffectById(researchEffects, ServerUpgradeEffectId);
                 int upgradeOrder = UpgradeOrderFallback;
                 string upgradeName = "Server Upgrades";
-                double upgradeLevel = 0;
-                if (upgradeEffect != null)
+                double upgradeLevel;
+                if (TryPopEffectById(researchEffects, ServerUpgradeEffectId, out StatEffect upgradeEffect))
                 {
                     upgradeOrder = upgradeEffect.Order;
                     if (!string.IsNullOrEmpty(upgradeEffect.SourceName)) upgradeName = upgradeEffect.SourceName;
@@ -295,11 +292,10 @@ namespace Systems.Stats
 
             if (hasResearch)
             {
-                StatEffect upgradeEffect = PopEffectById(researchEffects, PlanetUpgradeEffectId);
                 int upgradeOrder = UpgradeOrderFallback;
                 string upgradeName = "Planet Upgrades";
-                double upgradeLevel = 0;
-                if (upgradeEffect != null)
+                double upgradeLevel;
+                if (TryPopEffectById(researchEffects, PlanetUpgradeEffectId, out StatEffect upgradeEffect))
                 {
                     upgradeOrder = upgradeEffect.Order;
                     if (!string.IsNullOrEmpty(upgradeEffect.SourceName)) upgradeName = upgradeEffect.SourceName;
@@ -474,20 +470,21 @@ namespace Systems.Stats
             AddMultiplierEffect(effects, id, name, statId, value, order);
         }
 
-        private static StatEffect PopEffectById(List<StatEffect> effects, string id)
+        private static bool TryPopEffectById(List<StatEffect> effects, string id, out StatEffect effect)
         {
-            if (effects == null || string.IsNullOrEmpty(id)) return null;
+            effect = default;
+            if (effects == null || string.IsNullOrEmpty(id)) return false;
             for (int i = 0; i < effects.Count; i++)
             {
                 if (string.Equals(effects[i].Id, id, StringComparison.Ordinal))
                 {
-                    StatEffect effect = effects[i];
+                    effect = effects[i];
                     effects.RemoveAt(i);
-                    return effect;
+                    return true;
                 }
             }
 
-            return null;
+            return false;
         }
 
         private static double GetResearchLevel(DysonVerseInfinityData infinityData, string researchId)

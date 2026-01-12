@@ -18,6 +18,7 @@ MonoBehaviour:
   baseCost: 100000000
   exponent: 1.6
   maxLevel: -1
+  autoBuyGroup: 6
   prerequisiteResearchIds: []
   effects:
   - {fileID: 11400000, guid: 04fe752419149bc48a2c9ca97b8002b6, type: 2}

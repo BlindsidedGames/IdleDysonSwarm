@@ -2,6 +2,8 @@ using System;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
+using Systems.Debugging;
+using Systems.Stats;
 using static Expansion.Oracle;
 
 public class DebugOptions : MonoBehaviour
@@ -26,6 +28,13 @@ public class DebugOptions : MonoBehaviour
     [SerializeField] private Button setTinker;
     [SerializeField] private Button setTinker0;
 
+    [Header("Debug Telemetry")]
+    [SerializeField] private Button logBreakdowns;
+    [SerializeField] private Button runFacilityParity;
+    [SerializeField] private Button runOfflineParity;
+    [SerializeField] private Button exportLastReport;
+    [SerializeField] private Button toggleStatTiming;
+    [SerializeField] private TMP_Text statTimingStatusText;
 
     [SerializeField] private GameManager _gameManager;
     [SerializeField] private SidePanelManager SidePanelManager;
@@ -44,6 +53,7 @@ public class DebugOptions : MonoBehaviour
         setTinker0.onClick.AddListener(SetTinkerO);
         addInfinityPoints.onClick.AddListener(AddInfinityPoints);
         debugPurchaseHandler.SetDebugState();
+        WireDebugTelemetryButtons();
 
     }
 
@@ -128,6 +138,48 @@ public class DebugOptions : MonoBehaviour
         SidePanelManager.PrestigeToggle.GetComponentInChildren<MenuToggleController>().Toggle(false);
         SidePanelManager.realityToggle.GetComponentInChildren<MenuToggleController>().Toggle(false);
         SidePanelManager.simulationsToggle.GetComponentInChildren<MenuToggleController>().Toggle(false);
+    }
+
+    private void WireDebugTelemetryButtons()
+    {
+        if (logBreakdowns != null)
+            logBreakdowns.onClick.AddListener(() => oracle.DebugLogDataDrivenBreakdowns());
+        if (runFacilityParity != null)
+            runFacilityParity.onClick.AddListener(() => oracle.DebugRunFacilityParityTests());
+        if (runOfflineParity != null)
+            runOfflineParity.onClick.AddListener(() => oracle.DebugRunOfflineProgressParity());
+        if (exportLastReport != null)
+            exportLastReport.onClick.AddListener(ExportDebugReport);
+        if (toggleStatTiming != null)
+            toggleStatTiming.onClick.AddListener(ToggleStatTimingCapture);
+
+        UpdateStatTimingLabel();
+    }
+
+    private void ToggleStatTimingCapture()
+    {
+        StatTimingTracker.Enabled = !StatTimingTracker.Enabled;
+        UpdateStatTimingLabel();
+    }
+
+    private void UpdateStatTimingLabel()
+    {
+        if (statTimingStatusText != null)
+        {
+            statTimingStatusText.text = $"Stat Timing: {(StatTimingTracker.Enabled ? "On" : "Off")}";
+        }
+    }
+
+    private void ExportDebugReport()
+    {
+        string path = DebugReportRecorder.ExportLastReport();
+        if (string.IsNullOrEmpty(path))
+        {
+            Debug.LogWarning("Export failed: no debug report has been recorded yet.");
+            return;
+        }
+
+        Debug.Log($"Exported debug report to {path}");
     }
 
     public static event Action AutoAssign;

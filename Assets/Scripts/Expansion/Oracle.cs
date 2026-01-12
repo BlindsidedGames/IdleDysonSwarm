@@ -9,7 +9,9 @@ using Classes;
 using Sirenix.OdinInspector;
 using Sirenix.Serialization;
 using Systems;
+using Systems.Debugging;
 using Systems.Facilities;
+using Systems.Migrations;
 using Systems.Stats;
 using TMPro;
 using UnityEngine;
@@ -158,27 +160,81 @@ namespace Expansion
         {
             if (saveSettings == null) return;
 
-            if (saveSettings.saveVersion < 0) saveSettings.saveVersion = 0;
-
-            if (saveSettings.saveVersion < 2)
+            MigrationRegistry registry = BuildMigrationRegistry();
+            if (registry.LatestVersion != CurrentSaveVersion)
             {
-                saveSettings.lastMigratedFromVersion = saveSettings.saveVersion;
-                MigrateSkillOwnershipToIds();
-                MigrateSkillAutoAssignmentIds();
-                saveSettings.saveVersion = 2;
+                Debug.LogWarning(
+                    $"Migration registry latest version {registry.LatestVersion} does not match CurrentSaveVersion {CurrentSaveVersion}.");
             }
 
-            if (saveSettings.saveVersion < 3)
-            {
-                saveSettings.lastMigratedFromVersion = saveSettings.saveVersion;
-                MigrateResearchLevelsToIds();
-                saveSettings.saveVersion = 3;
-            }
+            MigrationRunOptions options = BuildMigrationOptions(false);
+            MigrationRunner.Run(this, registry, options);
+        }
 
-            EnsureSkillOwnershipData();
-            EnsureSkillAutoAssignmentIds();
-            EnsureResearchLevelData();
-            saveSettings.lastSuccessfulLoadUtc = DateTime.UtcNow.ToString(CultureInfo.InvariantCulture);
+        public MigrationRunResult RunMigrationDryRun()
+        {
+            if (saveSettings == null) return null;
+
+            MigrationRegistry registry = BuildMigrationRegistry();
+            MigrationRunOptions options = BuildMigrationOptions(true);
+            options.ThrowOnError = false;
+            return MigrationRunner.Run(this, registry, options);
+        }
+
+        public MigrationRunResult RunMigrationDryRun(SaveDataSettings saveData)
+        {
+            if (saveData == null) return null;
+
+            SaveDataSettings original = saveSettings;
+            try
+            {
+                saveSettings = saveData;
+                return RunMigrationDryRun();
+            }
+            finally
+            {
+                saveSettings = original;
+            }
+        }
+
+        private MigrationRunOptions BuildMigrationOptions(bool dryRun)
+        {
+            return new MigrationRunOptions
+            {
+                DryRun = dryRun,
+                CaptureSnapshots = dryRun,
+                IncludeEnsureStep = true,
+                ThrowOnError = !dryRun,
+                UpdateLastSuccessfulLoadUtc = !dryRun,
+                EnsureAction = _ =>
+                {
+                    EnsureSkillOwnershipData();
+                    EnsureSkillAutoAssignmentIds();
+                    EnsureResearchLevelData();
+                }
+            };
+        }
+
+        private MigrationRegistry BuildMigrationRegistry()
+        {
+            var registry = new MigrationRegistry();
+            registry.AddStep(new MigrationStep(
+                targetVersion: 2,
+                name: "Skill ownership + auto-assign ids",
+                summary: "Populate skill ownership and auto-assign id lists from legacy data.",
+                apply: _ =>
+                {
+                    MigrateSkillOwnershipToIds();
+                    MigrateSkillAutoAssignmentIds();
+                }));
+
+            registry.AddStep(new MigrationStep(
+                targetVersion: 3,
+                name: "Research levels to ids",
+                summary: "Populate research level ids from legacy fields.",
+                apply: _ => { MigrateResearchLevelsToIds(); }));
+
+            return registry;
         }
 
         private void EnsureSkillOwnershipData()
@@ -616,7 +672,9 @@ namespace Expansion
             }
 
             AppendDataDrivenComparison(builder, "Assembly Lines", definition, dataDrivenExpected, results);
-            Debug.Log(builder.ToString());
+            string report = builder.ToString();
+            DebugReportRecorder.Record("Data-Driven Breakdowns", report);
+            Debug.Log(report);
         }
 
         private void DebugCompareAiManagerProduction()
@@ -680,7 +738,9 @@ namespace Expansion
             }
 
             AppendDataDrivenComparison(builder, "AI Managers", definition, dataDrivenExpected, results);
-            Debug.Log(builder.ToString());
+            string report = builder.ToString();
+            DebugReportRecorder.Record("Offline Progress Parity", report);
+            Debug.Log(report);
         }
 
         private void DebugCompareServerProduction()
@@ -2271,11 +2331,17 @@ namespace Expansion
 
             if (failed == 0)
             {
-                Debug.Log($"Parity suite: all deltas within {ParityEpsilon}. Results={results.Count}, Skipped={skipped}");
+                string report =
+                    $"Parity suite: all deltas within {ParityEpsilon}. Results={results.Count}, Skipped={skipped}";
+                DebugReportRecorder.Record("Facility Parity Suite", report);
+                Debug.Log(report);
             }
             else
             {
-                Debug.Log($"Parity suite: {failed} mismatches (epsilon {ParityEpsilon}). Results={results.Count}, Skipped={skipped}\n{builder}");
+                string report =
+                    $"Parity suite: {failed} mismatches (epsilon {ParityEpsilon}). Results={results.Count}, Skipped={skipped}\n{builder}";
+                DebugReportRecorder.Record("Facility Parity Suite", report);
+                Debug.Log(report);
             }
         }
 

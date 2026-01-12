@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using Classes;
 using Expansion;
 using GameData;
 using TMPro;
@@ -20,10 +19,7 @@ public class SkillTreeManager : MonoBehaviour
     [SerializeField] private string skillId;
     private SkillDefinition _cachedDefinition;
     private string _cachedSkillId;
-    private string[] _cachedRequiredSkillIds;
-    private string[] _cachedShadowRequirementIds;
-    private string[] _cachedExclusiveWithIds;
-    private string[] _cachedUnrefundableWithIds;
+    private bool _loggedMissingDefinition;
     [SerializeField] private Button skillButton;
     [SerializeField] private GameObject purchasedImage;
     [SerializeField] private TMP_Text skillnameText;
@@ -109,6 +105,12 @@ public class SkillTreeManager : MonoBehaviour
             return _cachedDefinition;
         }
 
+        if (!_loggedMissingDefinition)
+        {
+            Debug.LogWarning($"SkillDefinition not found for id '{resolvedId}'.");
+            _loggedMissingDefinition = true;
+        }
+
         return null;
     }
 
@@ -136,24 +138,16 @@ public class SkillTreeManager : MonoBehaviour
         return null;
     }
 
-    private bool TryGetLegacySkill(out SkillTreeItem item)
-    {
-        item = null;
-        return skillKey > 0 && oracle.SkillTree != null && oracle.SkillTree.TryGetValue(skillKey, out item);
-    }
-
     private bool IsOwnedInternal()
     {
         string id = ResolveSkillId();
-        if (!string.IsNullOrEmpty(id)) return oracle.IsSkillOwned(id);
-        return TryGetLegacySkill(out SkillTreeItem item) && item.Owned;
+        return !string.IsNullOrEmpty(id) && oracle.IsSkillOwned(id);
     }
 
     private string GetDisplayName()
     {
         SkillDefinition definition = ResolveSkillDefinition();
         if (definition != null && !string.IsNullOrEmpty(definition.displayName)) return definition.displayName;
-        if (TryGetLegacySkill(out SkillTreeItem item) && !string.IsNullOrEmpty(item.SkillName)) return item.SkillName;
         return ResolveSkillId() ?? string.Empty;
     }
 
@@ -161,12 +155,6 @@ public class SkillTreeManager : MonoBehaviour
     {
         SkillDefinition definition = ResolveSkillDefinition();
         if (definition != null && !string.IsNullOrEmpty(definition.displayName)) return definition.displayName;
-        if (TryGetLegacySkill(out SkillTreeItem item))
-        {
-            if (!string.IsNullOrEmpty(item.SkillNamePopup)) return item.SkillNamePopup;
-            if (!string.IsNullOrEmpty(item.SkillName)) return item.SkillName;
-        }
-
         return ResolveSkillId() ?? string.Empty;
     }
 
@@ -174,7 +162,6 @@ public class SkillTreeManager : MonoBehaviour
     {
         SkillDefinition definition = ResolveSkillDefinition();
         if (definition != null && !string.IsNullOrEmpty(definition.description)) return definition.description;
-        if (TryGetLegacySkill(out SkillTreeItem item)) return item.SkillDescription;
         return string.Empty;
     }
 
@@ -183,144 +170,85 @@ public class SkillTreeManager : MonoBehaviour
         SkillDefinition definition = ResolveSkillDefinition();
         if (definition != null && !string.IsNullOrEmpty(definition.technicalDescription))
             return definition.technicalDescription;
-        if (TryGetLegacySkill(out SkillTreeItem item)) return item.SkillTechnicalDescription;
         return string.Empty;
     }
 
     private int GetCost()
     {
         SkillDefinition definition = ResolveSkillDefinition();
-        if (definition != null) return definition.cost;
-        if (TryGetLegacySkill(out SkillTreeItem item)) return item.Cost;
-        return 0;
+        return definition != null ? definition.cost : 0;
     }
 
     private bool GetRefundable()
     {
         SkillDefinition definition = ResolveSkillDefinition();
-        if (definition != null) return definition.refundable;
-        if (TryGetLegacySkill(out SkillTreeItem item)) return item.Refundable;
-        return true;
+        return definition == null || definition.refundable;
     }
 
     private bool GetIsFragment()
     {
         SkillDefinition definition = ResolveSkillDefinition();
-        if (definition != null) return definition.isFragment;
-        if (TryGetLegacySkill(out SkillTreeItem item)) return item.isFragment;
-        return false;
+        return definition != null && definition.isFragment;
     }
 
     private bool GetPurityLine()
     {
         SkillDefinition definition = ResolveSkillDefinition();
-        if (definition != null) return definition.purityLine;
-        if (TryGetLegacySkill(out SkillTreeItem item)) return item.purityLine;
-        return false;
+        return definition != null && definition.purityLine;
     }
 
     private bool GetTerraLine()
     {
         SkillDefinition definition = ResolveSkillDefinition();
-        if (definition != null) return definition.terraLine;
-        if (TryGetLegacySkill(out SkillTreeItem item)) return item.terraLine;
-        return false;
+        return definition != null && definition.terraLine;
     }
 
     private bool GetPowerLine()
     {
         SkillDefinition definition = ResolveSkillDefinition();
-        if (definition != null) return definition.powerLine;
-        if (TryGetLegacySkill(out SkillTreeItem item)) return item.powerLine;
-        return false;
+        return definition != null && definition.powerLine;
     }
 
     private bool GetParagadeLine()
     {
         SkillDefinition definition = ResolveSkillDefinition();
-        if (definition != null) return definition.paragadeLine;
-        if (TryGetLegacySkill(out SkillTreeItem item)) return item.paragadeLine;
-        return false;
+        return definition != null && definition.paragadeLine;
     }
 
     private bool GetStellarLine()
     {
         SkillDefinition definition = ResolveSkillDefinition();
-        if (definition != null) return definition.stellarLine;
-        if (TryGetLegacySkill(out SkillTreeItem item)) return item.stellarLine;
-        return false;
+        return definition != null && definition.stellarLine;
     }
 
     private bool GetFirstRunBlocked()
     {
         SkillDefinition definition = ResolveSkillDefinition();
-        if (definition != null) return definition.firstRunBlocked;
-        if (TryGetLegacySkill(out SkillTreeItem item)) return item.firstRunBlocked;
-        return false;
+        return definition != null && definition.firstRunBlocked;
     }
 
     private string[] GetRequiredSkillIds()
     {
         SkillDefinition definition = ResolveSkillDefinition();
-        if (definition != null && definition.requiredSkillIds != null && definition.requiredSkillIds.Length > 0)
-            return definition.requiredSkillIds;
-
-        if (_cachedRequiredSkillIds != null) return _cachedRequiredSkillIds;
-        if (TryGetLegacySkill(out SkillTreeItem item))
-            _cachedRequiredSkillIds = ConvertLegacyKeys(item.RequiredSkill);
-        return _cachedRequiredSkillIds;
+        return definition != null ? definition.requiredSkillIds : null;
     }
 
     private string[] GetShadowRequirementIds()
     {
         SkillDefinition definition = ResolveSkillDefinition();
-        if (definition != null && definition.shadowRequirementIds != null &&
-            definition.shadowRequirementIds.Length > 0)
-            return definition.shadowRequirementIds;
-
-        if (_cachedShadowRequirementIds != null) return _cachedShadowRequirementIds;
-        if (TryGetLegacySkill(out SkillTreeItem item))
-            _cachedShadowRequirementIds = ConvertLegacyKeys(item.ShadowRequirements);
-        return _cachedShadowRequirementIds;
+        return definition != null ? definition.shadowRequirementIds : null;
     }
 
     private string[] GetExclusiveWithIds()
     {
         SkillDefinition definition = ResolveSkillDefinition();
-        if (definition != null && definition.exclusiveWithIds != null && definition.exclusiveWithIds.Length > 0)
-            return definition.exclusiveWithIds;
-
-        if (_cachedExclusiveWithIds != null) return _cachedExclusiveWithIds;
-        if (TryGetLegacySkill(out SkillTreeItem item))
-            _cachedExclusiveWithIds = ConvertLegacyKeys(item.ExclusvieWith);
-        return _cachedExclusiveWithIds;
+        return definition != null ? definition.exclusiveWithIds : null;
     }
 
     private string[] GetUnrefundableWithIds()
     {
         SkillDefinition definition = ResolveSkillDefinition();
-        if (definition != null && definition.unrefundableWithIds != null && definition.unrefundableWithIds.Length > 0)
-            return definition.unrefundableWithIds;
-
-        if (_cachedUnrefundableWithIds != null) return _cachedUnrefundableWithIds;
-        if (TryGetLegacySkill(out SkillTreeItem item))
-            _cachedUnrefundableWithIds = ConvertLegacyKeys(item.UnrefundableWith);
-        return _cachedUnrefundableWithIds;
-    }
-
-    private static string[] ConvertLegacyKeys(int[] keys)
-    {
-        if (keys == null || keys.Length == 0) return null;
-        var ids = new List<string>(keys.Length);
-        for (int i = 0; i < keys.Length; i++)
-        {
-            if (SkillIdMap.TryGetId(keys[i], out string id))
-            {
-                ids.Add(id);
-            }
-        }
-
-        return ids.Count > 0 ? ids.ToArray() : null;
+        return definition != null ? definition.unrefundableWithIds : null;
     }
 
     private bool AreRequirementsMet(string[] requiredIds)
@@ -386,6 +314,11 @@ public class SkillTreeManager : MonoBehaviour
     {
         EnableSKills();
         purchasedImage.SetActive(false);
+        if (ResolveSkillDefinition() == null)
+        {
+            skillButton.interactable = false;
+            return;
+        }
         bool available = true;
         bool owned = IsOwnedInternal();
         int cost = GetCost();
@@ -468,48 +401,33 @@ public class SkillTreeManager : MonoBehaviour
     public void ResetSkills()
     {
         SkillDatabase database = GameDataRegistry.Instance != null ? GameDataRegistry.Instance.skillDatabase : null;
-        if (database != null && database.skills.Count > 0)
+        if (database == null || database.skills.Count == 0)
         {
-            foreach (SkillDefinition skill in database.skills)
+            Debug.LogWarning("Skill reset skipped: SkillDatabase not available.");
+            return;
+        }
+
+        foreach (SkillDefinition skill in database.skills)
+        {
+            if (skill == null || string.IsNullOrEmpty(skill.id)) continue;
+            bool refundable = skill.refundable;
+            if (refundable && skill.unrefundableWithIds != null)
             {
-                if (skill == null || string.IsNullOrEmpty(skill.id)) continue;
-                bool refundable = skill.refundable;
-                if (refundable && skill.unrefundableWithIds != null)
+                foreach (string id in skill.unrefundableWithIds)
                 {
-                    foreach (string id in skill.unrefundableWithIds)
+                    if (oracle.IsSkillOwned(id))
                     {
-                        if (oracle.IsSkillOwned(id))
-                        {
-                            refundable = false;
-                            break;
-                        }
+                        refundable = false;
+                        break;
                     }
                 }
-
-                if (oracle.IsSkillOwned(skill.id) && refundable)
-                {
-                    oracle.SetSkillOwned(skill.id, false);
-                    skillTreeData.skillPointsTree += skill.cost;
-                    if (skill.isFragment && skillTreeData.fragments >= 1) skillTreeData.fragments -= 1;
-                }
             }
-        }
-        else
-        {
-            foreach (KeyValuePair<int, SkillTreeItem> variable in oracle.SkillTree)
-            {
-                bool refundable = variable.Value.Refundable;
-                if (variable.Value.UnrefundableWith != null)
-                    foreach (int skill in variable.Value.UnrefundableWith)
-                        if (oracle.SkillTree[skill].Owned)
-                            refundable = false;
 
-                if (variable.Value.Owned && refundable)
-                {
-                    variable.Value.Owned = false;
-                    skillTreeData.skillPointsTree += variable.Value.Cost;
-                    if (oracle.SkillTree[variable.Key].isFragment && skillTreeData.fragments >= 1) skillTreeData.fragments -= 1;
-                }
+            if (oracle.IsSkillOwned(skill.id) && refundable)
+            {
+                oracle.SetSkillOwned(skill.id, false);
+                skillTreeData.skillPointsTree += skill.cost;
+                if (skill.isFragment && skillTreeData.fragments >= 1) skillTreeData.fragments -= 1;
             }
         }
 
@@ -576,7 +494,14 @@ public class SkillTreeManager : MonoBehaviour
             return;
         }
 
-        int cost = GetCost();
+        SkillDefinition definition = ResolveSkillDefinition();
+        if (definition == null)
+        {
+            UpdateSkills?.Invoke();
+            return;
+        }
+
+        int cost = definition.cost;
         bool owned = IsOwnedInternal();
         if (owned)
         {
@@ -590,7 +515,7 @@ public class SkillTreeManager : MonoBehaviour
             {
                 oracle.SetSkillOwned(id, false);
                 skillTreeData.skillPointsTree += cost;
-                if (GetIsFragment() && skillTreeData.fragments >= 1) skillTreeData.fragments -= 1;
+                if (definition.isFragment && skillTreeData.fragments >= 1) skillTreeData.fragments -= 1;
                 List<string> autoIds = oracle.GetAutoAssignmentSkillIds();
                 if (autoIds.Contains(id)) autoIds.Remove(id);
                 oracle.saveSettings.dysonVerseSaveData.skillAutoAssignmentList =
@@ -608,7 +533,7 @@ public class SkillTreeManager : MonoBehaviour
         }
 
         skillTreeData.skillPointsTree -= cost;
-        if (GetIsFragment()) skillTreeData.fragments += 1;
+        if (definition.isFragment) skillTreeData.fragments += 1;
 
         List<string> autoAssignIds = oracle.GetAutoAssignmentSkillIds();
         if (!autoAssignIds.Contains(id) && !IsBlockedFromAutoAssign(id))

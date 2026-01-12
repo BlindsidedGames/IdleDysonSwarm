@@ -6,7 +6,7 @@ using Systems.Stats;
 using System.Collections.Generic;
 using Expansion;
 using Classes;
-using ResearchComponent = Research.Research;
+using ResearchComponent = Research.ResearchPresenter;
 
 public static class GameDataAssetCreator
 {
@@ -307,61 +307,71 @@ public static class GameDataAssetCreator
 
         var specs = new List<ResearchSpec>
         {
-            new ResearchSpec(ResearchIdMap.MoneyMultiplier, moneyName, moneyCost, moneyExponent, -1, new[]
+            new ResearchSpec(ResearchIdMap.MoneyMultiplier, moneyName, moneyCost, moneyExponent, -1,
+                ResearchAutoBuyGroup.Money, null, new[]
             {
                 new ResearchEffectSpec("effect.research.money_multiplier", "Money Multiplier",
                     StatId.MoneyMultiplier, StatOperation.Add, 0, 0, 0, null, null)
             }),
-            new ResearchSpec(ResearchIdMap.ScienceBoost, scienceName, scienceCost, scienceExponent, -1, new[]
+            new ResearchSpec(ResearchIdMap.ScienceBoost, scienceName, scienceCost, scienceExponent, -1,
+                ResearchAutoBuyGroup.Science, null, new[]
             {
                 new ResearchEffectSpec("effect.research.science_multiplier", "Science Multiplier",
                     StatId.ScienceMultiplier, StatOperation.Add, 0, 0, 0, null, null)
             }),
-            new ResearchSpec(ResearchIdMap.AssemblyLineUpgrade, assemblyName, assemblyCost, assemblyExponent, -1, new[]
+            new ResearchSpec(ResearchIdMap.AssemblyLineUpgrade, assemblyName, assemblyCost, assemblyExponent, -1,
+                ResearchAutoBuyGroup.Assembly, null, new[]
             {
                 new ResearchEffectSpec("effect.research.assembly_line_modifier", "Assembly Line Upgrades",
                     StatId.AssemblyLineModifier, StatOperation.Add, 0, 0, 0, null, null)
             }),
-            new ResearchSpec(ResearchIdMap.AiManagerUpgrade, managerName, managerCost, managerExponent, -1, new[]
+            new ResearchSpec(ResearchIdMap.AiManagerUpgrade, managerName, managerCost, managerExponent, -1,
+                ResearchAutoBuyGroup.Ai, null, new[]
             {
                 new ResearchEffectSpec("effect.research.ai_manager_modifier", "AI Manager Upgrades",
                     StatId.ManagerModifier, StatOperation.Add, 0, 0, 0, null, null)
             }),
-            new ResearchSpec(ResearchIdMap.ServerUpgrade, serverName, serverCost, serverExponent, -1, new[]
+            new ResearchSpec(ResearchIdMap.ServerUpgrade, serverName, serverCost, serverExponent, -1,
+                ResearchAutoBuyGroup.Server, null, new[]
             {
                 new ResearchEffectSpec("effect.research.server_modifier", "Server Upgrades",
                     StatId.ServerModifier, StatOperation.Add, 0, 0, 0, null, null)
             }),
-            new ResearchSpec(ResearchIdMap.DataCenterUpgrade, dataCenterName, dataCenterCost, dataCenterExponent, -1, new[]
+            new ResearchSpec(ResearchIdMap.DataCenterUpgrade, dataCenterName, dataCenterCost, dataCenterExponent, -1,
+                ResearchAutoBuyGroup.DataCenter, null, new[]
             {
                 new ResearchEffectSpec("effect.research.data_center_modifier", "Data Center Upgrades",
                     StatId.DataCenterModifier, StatOperation.Add, 0, 0, 0, null, null)
             }),
-            new ResearchSpec(ResearchIdMap.PlanetUpgrade, planetName, planetCost, planetExponent, -1, new[]
+            new ResearchSpec(ResearchIdMap.PlanetUpgrade, planetName, planetCost, planetExponent, -1,
+                ResearchAutoBuyGroup.Planet, null, new[]
             {
                 new ResearchEffectSpec("effect.research.planet_modifier", "Planet Upgrades",
                     StatId.PlanetModifier, StatOperation.Add, 0, 0, 0, null, null)
             }),
             new ResearchSpec(ResearchIdMap.PanelLifetime1, panelLifetime1Name, panelLifetime1Cost,
-                panelLifetime1Exponent, 1, new[]
+                panelLifetime1Exponent, 1, ResearchAutoBuyGroup.None, null, new[]
             {
                 new ResearchEffectSpec("effect.research.panel_lifetime_1", "Panel Lifetime I",
                     StatId.PanelLifetime, StatOperation.Add, 0, 1, 0, null, null)
             }),
             new ResearchSpec(ResearchIdMap.PanelLifetime2, panelLifetime2Name, panelLifetime2Cost,
-                panelLifetime2Exponent, 1, new[]
+                panelLifetime2Exponent, 1, ResearchAutoBuyGroup.None,
+                new[] { ResearchIdMap.PanelLifetime1 }, new[]
             {
                 new ResearchEffectSpec("effect.research.panel_lifetime_2", "Panel Lifetime II",
                     StatId.PanelLifetime, StatOperation.Add, 0, 2, 0, null, null)
             }),
             new ResearchSpec(ResearchIdMap.PanelLifetime3, panelLifetime3Name, panelLifetime3Cost,
-                panelLifetime3Exponent, 1, new[]
+                panelLifetime3Exponent, 1, ResearchAutoBuyGroup.None,
+                new[] { ResearchIdMap.PanelLifetime2 }, new[]
             {
                 new ResearchEffectSpec("effect.research.panel_lifetime_3", "Panel Lifetime III",
                     StatId.PanelLifetime, StatOperation.Add, 0, 3, 0, null, null)
             }),
             new ResearchSpec(ResearchIdMap.PanelLifetime4, panelLifetime4Name, panelLifetime4Cost,
-                panelLifetime4Exponent, 1, new[]
+                panelLifetime4Exponent, 1, ResearchAutoBuyGroup.None,
+                new[] { ResearchIdMap.PanelLifetime3 }, new[]
             {
                 new ResearchEffectSpec("effect.research.panel_lifetime_4", "Panel Lifetime IV",
                     StatId.PanelLifetime, StatOperation.Add, 0, 4, 0, null, null)
@@ -577,6 +587,15 @@ public static class GameDataAssetCreator
         definition.baseCost = spec.BaseCost;
         definition.exponent = spec.Exponent;
         definition.maxLevel = spec.MaxLevel;
+        if (definition.autoBuyGroup == ResearchAutoBuyGroup.Inherit)
+        {
+            definition.autoBuyGroup = spec.AutoBuyGroup;
+        }
+        if ((definition.prerequisiteResearchIds == null || definition.prerequisiteResearchIds.Length == 0) &&
+            spec.PrerequisiteResearchIds != null && spec.PrerequisiteResearchIds.Length > 0)
+        {
+            definition.prerequisiteResearchIds = spec.PrerequisiteResearchIds;
+        }
     }
 
     private static void ApplyEffectDefaults(EffectDefinition definition, EffectSpec spec)
@@ -679,11 +698,13 @@ public static class GameDataAssetCreator
         foreach (ResearchComponent component in components)
         {
             if (component == null) continue;
-            string id = component.ResearchIdValue;
+            ResearchDefinition resolved = component.ResolvedDefinition;
+            if (resolved == null) continue;
+            string id = resolved.id;
             if (string.IsNullOrEmpty(id)) continue;
             if (!defaults.ContainsKey(id))
             {
-                defaults.Add(id, new ResearchDefaults(component.baseCost, component.exponent, component.nameText));
+                defaults.Add(id, new ResearchDefaults(resolved.baseCost, resolved.exponent, resolved.displayName));
             }
         }
 
@@ -777,13 +798,15 @@ public static class GameDataAssetCreator
     private readonly struct ResearchSpec
     {
         public ResearchSpec(string id, string name, double baseCost, double exponent, int maxLevel,
-            ResearchEffectSpec[] effects)
+            ResearchAutoBuyGroup autoBuyGroup, string[] prerequisiteResearchIds, ResearchEffectSpec[] effects)
         {
             Id = id;
             Name = name;
             BaseCost = baseCost;
             Exponent = exponent;
             MaxLevel = maxLevel;
+            AutoBuyGroup = autoBuyGroup;
+            PrerequisiteResearchIds = prerequisiteResearchIds;
             Effects = effects;
         }
 
@@ -792,6 +815,8 @@ public static class GameDataAssetCreator
         public double BaseCost { get; }
         public double Exponent { get; }
         public int MaxLevel { get; }
+        public ResearchAutoBuyGroup AutoBuyGroup { get; }
+        public string[] PrerequisiteResearchIds { get; }
         public ResearchEffectSpec[] Effects { get; }
     }
 
