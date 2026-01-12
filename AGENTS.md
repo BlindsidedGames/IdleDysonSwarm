@@ -13,7 +13,7 @@
 - Save data lives in `Oracle.SaveDataSettings` with nested DysonVerse and Prestige classes.
 - Persistence uses Easy Save 3 (`ES3.Save/Load`) with an Odin-serialized fallback.
 - When adding new fields, update defaults in `Oracle.WipeSaveData()` and consider migration logic in `Oracle.Load()`.
-- When adding a migration, bump `CurrentSaveVersion` in `Oracle.cs`, add a migration step in `ApplyMigrations()`, and note it in `RefactorProgress.md`.
+- When adding a migration, bump `CurrentSaveVersion` in `Oracle.cs`, add a migration step in `ApplyMigrations()`, and note it in `Documentation/FacilityAndSkillRefactorProgress.md` (and `Documentation/ResearchRefactorProgress.md` for research-specific work).
 
 ## UI + tooling
 - UI uses TextMeshPro (`TMP_Text`) and custom UI components (for example, `SlicedFilledImage`).

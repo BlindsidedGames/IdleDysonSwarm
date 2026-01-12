@@ -18,6 +18,7 @@ MonoBehaviour:
   baseCost: 1e+18
   exponent: 1
   maxLevel: 1
-  prerequisiteResearchIds: []
+  autoBuyGroup: 1
+  prerequisiteResearchIds: [research.panel_lifetime_3]
   effects:
   - {fileID: 11400000, guid: 3d69011b469ee334f90ac156065eab16, type: 2}

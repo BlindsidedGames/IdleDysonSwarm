@@ -12,6 +12,7 @@ namespace GameData
         public double baseCost = 1;
         public double exponent = 1.15;
         public int maxLevel = -1;
+        public ResearchAutoBuyGroup autoBuyGroup = ResearchAutoBuyGroup.Inherit;
         public string[] prerequisiteResearchIds;
         public List<EffectDefinition> effects = new List<EffectDefinition>();
     }

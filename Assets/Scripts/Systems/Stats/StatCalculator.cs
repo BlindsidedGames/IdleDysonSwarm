@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 
 namespace Systems.Stats
@@ -7,6 +8,21 @@ namespace Systems.Stats
     public static class StatCalculator
     {
         public static StatResult Calculate(double baseValue, IEnumerable<StatEffect> effects)
+        {
+            if (!StatTimingTracker.Enabled)
+            {
+                return CalculateInternal(baseValue, effects, out _, out _);
+            }
+
+            long start = Stopwatch.GetTimestamp();
+            StatResult timedResult = CalculateInternal(baseValue, effects, out string label, out int effectCount);
+            long elapsed = Stopwatch.GetTimestamp() - start;
+            StatTimingTracker.Record(label, elapsed, effectCount);
+            return timedResult;
+        }
+
+        private static StatResult CalculateInternal(double baseValue, IEnumerable<StatEffect> effects,
+            out string label, out int effectCount)
         {
             var result = new StatResult { Value = baseValue };
             result.Contributions.Add(new Contribution
@@ -18,12 +34,21 @@ namespace Systems.Stats
                 Order = int.MinValue
             });
 
+            label = "stat.none";
+            effectCount = 0;
+
             if (effects == null)
             {
                 return result;
             }
 
             var ordered = effects.OrderBy(effect => effect.Order).ToList();
+            effectCount = ordered.Count;
+            if (ordered.Count > 0 && !string.IsNullOrEmpty(ordered[0].TargetStatId))
+            {
+                label = ordered[0].TargetStatId;
+            }
+
             ApplyEffects(result, ordered);
 
             return result;
