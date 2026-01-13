@@ -34,6 +34,19 @@ namespace IdleDysonSwarm.Data.Conditions
         public abstract bool Evaluate(EffectContext context);
 
         /// <summary>
+        /// Evaluate this condition with optional facility state context.
+        /// Default implementation ignores state and calls Evaluate(context).
+        /// Override in conditions that need facility state (e.g., FacilityStateCondition).
+        /// </summary>
+        /// <param name="context">The current game state context.</param>
+        /// <param name="state">Optional facility state for context-dependent conditions.</param>
+        /// <returns>True if the condition is met, false otherwise.</returns>
+        public virtual bool EvaluateWithState(EffectContext context, Systems.Facilities.FacilityState state)
+        {
+            return Evaluate(context);
+        }
+
+        /// <summary>
         /// Get a human-readable description of this condition.
         /// </summary>
         /// <returns>Description string for debugging/display.</returns>
