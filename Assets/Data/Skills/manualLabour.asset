@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a7893ea89ef8ebd41958ad2a303d4fc9, type: 3}
   m_Name: manualLabour
   m_EditorClassIdentifier: Assembly-CSharp::GameData.SkillDefinition
-  id: manualLabour
+  _id: {fileID: 11400000, guid: 52d54bbdf61f70c488f9a3be109b60d5, type: 2}
   displayName: Manual Labour
   description: You like to get your hands dirty, so you set to work setting up Assembly
     Lines yourself.

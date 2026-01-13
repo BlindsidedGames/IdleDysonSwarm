@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a7893ea89ef8ebd41958ad2a303d4fc9, type: 3}
   m_Name: solarBubbles
   m_EditorClassIdentifier: Assembly-CSharp::GameData.SkillDefinition
-  id: solarBubbles
+  _id: {fileID: 11400000, guid: 71bddbae6495e6f4488a39f13e4f870e, type: 2}
   displayName: Solar Bubbles
   description: You noticed a significant efficiency potential. By introducing tiny
     condensed spheres (nicknamed bubbles) of solar energy, your panels in the pocket

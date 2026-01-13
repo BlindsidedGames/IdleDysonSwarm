@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a7893ea89ef8ebd41958ad2a303d4fc9, type: 3}
   m_Name: powerUnderwhelming
   m_EditorClassIdentifier: Assembly-CSharp::GameData.SkillDefinition
-  id: powerUnderwhelming
+  _id: {fileID: 11400000, guid: f4c050980289ef343b9cb04a7712486e, type: 2}
   displayName: Power Underwhelming
   description: Use Science to boost Science, how? We will never know.
   technicalDescription: <color=#A3FFFE>Science</color> production <color=#A3FFFE>^1.05</color>.

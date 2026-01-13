@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a7893ea89ef8ebd41958ad2a303d4fc9, type: 3}
   m_Name: doubleScienceTree
   m_EditorClassIdentifier: Assembly-CSharp::GameData.SkillDefinition
-  id: doubleScienceTree
+  _id: {fileID: 11400000, guid: 7cb3f07a8d2035d4dadbc8045ea1319a, type: 2}
   displayName: Science *2
   description: Breakthroughs in CPU manufacturing allow your science bots to calculate
     twice as much data.

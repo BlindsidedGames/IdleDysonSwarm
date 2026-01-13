@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a7893ea89ef8ebd41958ad2a303d4fc9, type: 3}
   m_Name: renegade
   m_EditorClassIdentifier: Assembly-CSharp::GameData.SkillDefinition
-  id: renegade
+  _id: {fileID: 11400000, guid: 58c2cdeaddffcc8489c8e836919a329c, type: 2}
   displayName: Renegade
   description: Fear is but a tool for the strong to make the weak be more productive.
     Red solar panels spread fear across your galaxies, forcing your population to

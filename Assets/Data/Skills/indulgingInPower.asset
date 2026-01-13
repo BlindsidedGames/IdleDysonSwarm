@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a7893ea89ef8ebd41958ad2a303d4fc9, type: 3}
   m_Name: indulgingInPower
   m_EditorClassIdentifier: Assembly-CSharp::GameData.SkillDefinition
-  id: indulgingInPower
+  _id: {fileID: 11400000, guid: 668c26ca1ee5bb942a8b05725232a2f3, type: 2}
   displayName: Indulging in Power
   description: Where is all this power coming from? You decide to take it anyway.
   technicalDescription: <color=#A3FFFE>100%</color> stronger Assembly Lines, AI Managers,

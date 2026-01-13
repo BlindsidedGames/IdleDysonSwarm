@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a7893ea89ef8ebd41958ad2a303d4fc9, type: 3}
   m_Name: aiManagerTree
   m_EditorClassIdentifier: Assembly-CSharp::GameData.SkillDefinition
-  id: aiManagerTree
+  _id: {fileID: 11400000, guid: 58e596ba0bf2df0448891a5991a95c69, type: 2}
   displayName: AI Managers
   description: This breakthrough technology halves the resources required for your
     AI Managers to run, giving them twice the yield.

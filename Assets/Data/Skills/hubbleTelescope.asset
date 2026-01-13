@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a7893ea89ef8ebd41958ad2a303d4fc9, type: 3}
   m_Name: hubbleTelescope
   m_EditorClassIdentifier: Assembly-CSharp::GameData.SkillDefinition
-  id: hubbleTelescope
+  _id: {fileID: 11400000, guid: 90695402b38ef764b91d198aac63512f, type: 2}
   displayName: Hubble Telescope
   description: A space telescope that was launched into low Earth orbit in 1990 and
     remains in operation to this day.

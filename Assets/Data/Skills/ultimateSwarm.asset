@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a7893ea89ef8ebd41958ad2a303d4fc9, type: 3}
   m_Name: ultimateSwarm
   m_EditorClassIdentifier: Assembly-CSharp::GameData.SkillDefinition
-  id: ultimateSwarm
+  _id: {fileID: 11400000, guid: 9973d23c259d3bb429a34b421ef53fce, type: 2}
   displayName: Ultimate Swarm
   description: 'Pushing the limits is what you do best. '
   technicalDescription: Increase the production multiplier from <color=#A3FFFE>3%</color>

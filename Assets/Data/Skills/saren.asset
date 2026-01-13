@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a7893ea89ef8ebd41958ad2a303d4fc9, type: 3}
   m_Name: saren
   m_EditorClassIdentifier: Assembly-CSharp::GameData.SkillDefinition
-  id: saren
+  _id: {fileID: 11400000, guid: 9d477c68ccc4279418748d5f2a203d1a, type: 2}
   displayName: Saren
   description: 'Utilize your overwhelming firepower (Daka daka) to enslave other
     spacefaring races. Humanity first! '

@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a7893ea89ef8ebd41958ad2a303d4fc9, type: 3}
   m_Name: workerBoost
   m_EditorClassIdentifier: Assembly-CSharp::GameData.SkillDefinition
-  id: workerBoost
+  _id: {fileID: 11400000, guid: ba4b66ae413ad1b4d957b14f3f428205, type: 2}
   displayName: Worker Boost
   description: Additional worker bots can now be used as home assistants... At a
     cost of course!

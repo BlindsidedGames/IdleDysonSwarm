@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a7893ea89ef8ebd41958ad2a303d4fc9, type: 3}
   m_Name: terraNullius
   m_EditorClassIdentifier: Assembly-CSharp::GameData.SkillDefinition
-  id: terraNullius
+  _id: {fileID: 11400000, guid: 3e0d71b55c0ca9f4388d8466b0caf79b, type: 2}
   displayName: Terra Nullius
   description: There aren't any planets like yours. And that's because you are amazing!
     Also because each planet is filled to the brim with Assembly Lines, Managers,

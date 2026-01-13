@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a7893ea89ef8ebd41958ad2a303d4fc9, type: 3}
   m_Name: hypercubeNetworks
   m_EditorClassIdentifier: Assembly-CSharp::GameData.SkillDefinition
-  id: hypercubeNetworks
+  _id: {fileID: 11400000, guid: e14f0eb7fe362b44b9ad1e65c8e00d84, type: 2}
   displayName: Hypercube Networks
   description: 'Fancy name for a fancy boost. You always excelled in geometry, time
     to apply the knowledge to your dyson swarm empire. '

@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4e156fa476b9ff14aade11d0e4f5325b, type: 3}
   m_Name: research.assembly_line_upgrade
   m_EditorClassIdentifier: Assembly-CSharp::GameData.ResearchDefinition
-  id: research.assembly_line_upgrade
+  _id: {fileID: 11400000, guid: 135bc22b32904184c8d3a1ac12d35e47, type: 2}
   displayName: Assembly Line
   description: 
   baseCost: 50000
