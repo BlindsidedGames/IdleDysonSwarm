@@ -110,18 +110,12 @@ namespace IdleDysonSwarm.Editor
                     continue;
                 }
 
-                // Get the current string ID value using reflection
-                PropertyInfo idProperty = typeof(TDefinition).GetProperty("id", BindingFlags.Public | BindingFlags.Instance);
-                if (idProperty == null)
-                {
-                    Debug.LogError($"[IdAssetLinker] Definition type {typeof(TDefinition).Name} has no 'id' property!");
-                    continue;
-                }
+                // Use the asset name as the ID - Unity asset names match the ID strings
+                string stringId = definition.name;
 
-                string stringId = idProperty.GetValue(definition) as string;
                 if (string.IsNullOrEmpty(stringId))
                 {
-                    Debug.LogWarning($"[IdAssetLinker] Definition has empty ID: {assetPath}");
+                    Debug.LogWarning($"[IdAssetLinker] Definition has empty name: {assetPath}");
                     continue;
                 }
 
