@@ -48,17 +48,9 @@ namespace IdleDysonSwarm.Data
                 _id = name;
             }
 
-            // Enforce naming convention: lowercase_snake_case
-            // Valid: assembly_lines, ai_managers, pocket_dimensions
-            // Invalid: AssemblyLines, assembly-lines, assembly lines
-            if (!Regex.IsMatch(_id, @"^[a-z][a-z0-9_]*$"))
-            {
-                Debug.LogWarning(
-                    $"[GameId] ID '{_id}' should use lowercase_snake_case format (e.g., 'assembly_lines'). " +
-                    $"Asset: {name}",
-                    this
-                );
-            }
+            // Note: Naming convention validation disabled for backward compatibility
+            // Legacy IDs use camelCase and dots (e.g., 'doubleScienceTree', 'research.panel_lifetime_1')
+            // These cannot be changed without breaking save data compatibility
 
             // Warn if ID doesn't match asset name
             if (_id != name)
