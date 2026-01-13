@@ -1,3 +1,4 @@
+using Systems.Facilities;
 using Systems.Stats;
 using UnityEngine;
 
@@ -19,6 +20,14 @@ namespace IdleDysonSwarm.Data.Conditions
                 return true; // No condition = always true (NOT null = true)
 
             return !_condition.Evaluate(context);
+        }
+
+        public override bool EvaluateWithState(EffectContext context, FacilityState state)
+        {
+            if (_condition == null)
+                return true; // No condition = always true (NOT null = true)
+
+            return !_condition.EvaluateWithState(context, state);
         }
 
         protected override string GenerateDescription()

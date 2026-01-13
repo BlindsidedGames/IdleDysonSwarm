@@ -1,5 +1,6 @@
 using System.Linq;
 using System.Text;
+using Systems.Facilities;
 using Systems.Stats;
 using UnityEngine;
 
@@ -26,6 +27,23 @@ namespace IdleDysonSwarm.Data.Conditions
                     continue;
 
                 if (condition.Evaluate(context))
+                    return true;
+            }
+
+            return false;
+        }
+
+        public override bool EvaluateWithState(EffectContext context, FacilityState state)
+        {
+            if (_conditions == null || _conditions.Length == 0)
+                return true; // No conditions = always true
+
+            foreach (var condition in _conditions)
+            {
+                if (condition == null)
+                    continue;
+
+                if (condition.EvaluateWithState(context, state))
                     return true;
             }
 
