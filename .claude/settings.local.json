@@ -1,0 +1,13 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(git commit:*)",
+      "Bash(git push:*)",
+      "Bash(git checkout:*)",
+      "Bash(git add:*)",
+      "mcp__UnityMCP__execute_menu_item",
+      "mcp__UnityMCP__read_console",
+      "mcp__UnityMCP__refresh_unity"
+    ]
+  }
+}
