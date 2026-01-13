@@ -1,4 +1,5 @@
 using GameData;
+using IdleDysonSwarm.Data;
 using Systems.Stats;
 using static Expansion.Oracle;
 
@@ -6,6 +7,18 @@ namespace Systems.Facilities
 {
     public static class FacilityRuntimeBuilder
     {
+        /// <summary>
+        /// Builds a facility runtime using a strongly-typed facility ID asset.
+        /// </summary>
+        public static bool TryBuildRuntime(FacilityId facilityId, DysonVerseInfinityData infinityData,
+            DysonVersePrestigeData prestigeData, DysonVerseSkillTreeData skillTreeData, PrestigePlus prestigePlus, out FacilityRuntime runtime)
+        {
+            return TryBuildRuntime(facilityId?.Value, infinityData, prestigeData, skillTreeData, prestigePlus, out runtime);
+        }
+
+        /// <summary>
+        /// Builds a facility runtime using a string facility ID (backward compatibility).
+        /// </summary>
         public static bool TryBuildRuntime(string facilityId, DysonVerseInfinityData infinityData,
             DysonVersePrestigeData prestigeData, DysonVerseSkillTreeData skillTreeData, PrestigePlus prestigePlus, out FacilityRuntime runtime)
         {
@@ -26,6 +39,17 @@ namespace Systems.Facilities
             return runtime != null;
         }
 
+        /// <summary>
+        /// Builds facility state using a strongly-typed facility ID asset.
+        /// </summary>
+        public static FacilityState BuildFacilityState(FacilityId facilityId, DysonVerseInfinityData infinityData)
+        {
+            return BuildFacilityState(facilityId?.Value, infinityData);
+        }
+
+        /// <summary>
+        /// Builds facility state using a string facility ID (backward compatibility).
+        /// </summary>
         public static FacilityState BuildFacilityState(string facilityId, DysonVerseInfinityData infinityData)
         {
             if (string.IsNullOrEmpty(facilityId) || infinityData == null) return null;

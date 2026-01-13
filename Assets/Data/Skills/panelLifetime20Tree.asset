@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a7893ea89ef8ebd41958ad2a303d4fc9, type: 3}
   m_Name: panelLifetime20Tree
   m_EditorClassIdentifier: Assembly-CSharp::GameData.SkillDefinition
-  id: panelLifetime20Tree
+  _id: {fileID: 11400000, guid: 0a0e9dbe04e7bcf42bbcd4d90a9df8a9, type: 2}
   displayName: 20s Lifetime
   description: One of your ships discovers a new material orbiting a black hole,
     you manage to find a way to drastically increase panel lifetime.

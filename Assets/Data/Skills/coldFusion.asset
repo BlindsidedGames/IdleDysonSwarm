@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a7893ea89ef8ebd41958ad2a303d4fc9, type: 3}
   m_Name: coldFusion
   m_EditorClassIdentifier: Assembly-CSharp::GameData.SkillDefinition
-  id: coldFusion
+  _id: {fileID: 11400000, guid: da19e65f730b5ee44831cf02053b6f00, type: 2}
   displayName: Cold Fusion
   description: Theoretical made fact. Your army of scientists manage to solve cold
     fusion. What more lays in front of you? The future is a bright one.

@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a7893ea89ef8ebd41958ad2a303d4fc9, type: 3}
   m_Name: shouldersOfTheEnlightened
   m_EditorClassIdentifier: Assembly-CSharp::GameData.SkillDefinition
-  id: shouldersOfTheEnlightened
+  _id: {fileID: 11400000, guid: f2cea51caff3505458dab0c7eb4b9b8c, type: 2}
   displayName: Shoulders of the Enlightened
   description: The "Shoulders of the Enlightened" are a pair of mysterious and powerful
     artifacts that grant immense knowledge and understanding to their bearer, along

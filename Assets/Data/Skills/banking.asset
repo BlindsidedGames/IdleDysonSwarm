@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a7893ea89ef8ebd41958ad2a303d4fc9, type: 3}
   m_Name: banking
   m_EditorClassIdentifier: Assembly-CSharp::GameData.SkillDefinition
-  id: banking
+  _id: {fileID: 11400000, guid: 9cc31a3c475b15f4190bfe3452ed2d3e, type: 2}
   displayName: Banking
   description: After much thought, you decide the multiverse is real and focus on
     sending some of your knowledge to the next universe.

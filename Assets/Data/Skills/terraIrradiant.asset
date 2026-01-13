@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a7893ea89ef8ebd41958ad2a303d4fc9, type: 3}
   m_Name: terraIrradiant
   m_EditorClassIdentifier: Assembly-CSharp::GameData.SkillDefinition
-  id: terraIrradiant
+  _id: {fileID: 11400000, guid: 6cbba34bb2497b34b80c90de5202042c, type: 2}
   displayName: Terra Irradient
   description: You aren't quite sure why, but every planet you manually spend resources
     to get shines bright like a diamond. It might have to do with bombing the planet

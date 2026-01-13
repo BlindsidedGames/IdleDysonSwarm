@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 115bda21744dd8648b5c65fcc91c666b, type: 3}
   m_Name: ai_managers
   m_EditorClassIdentifier: Assembly-CSharp::GameData.FacilityDefinition
-  id: ai_managers
+  _id: {fileID: 11400000, guid: a2bfbaf4830f7a04bb52f12ff32fb517, type: 2}
   displayName: AI Managers
   description: AI managers that produce assembly lines.
   icon: {fileID: 0}

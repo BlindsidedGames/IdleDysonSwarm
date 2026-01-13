@@ -1,3 +1,4 @@
+using IdleDysonSwarm.Data;
 using UnityEngine;
 
 namespace GameData
@@ -5,7 +6,17 @@ namespace GameData
     [CreateAssetMenu(menuName = "Idle Dyson/Facility Definition")]
     public sealed class FacilityDefinition : ScriptableObject
     {
-        public string id;
+        [SerializeField] private FacilityId _id;
+
+        /// <summary>
+        /// Strongly-typed facility ID asset reference.
+        /// </summary>
+        public FacilityId Id => _id;
+
+        /// <summary>
+        /// String representation of the facility ID for backward compatibility.
+        /// </summary>
+        public string id => _id != null ? _id.Value : string.Empty;
         public string displayName;
         [TextArea] public string description;
         public Sprite icon;

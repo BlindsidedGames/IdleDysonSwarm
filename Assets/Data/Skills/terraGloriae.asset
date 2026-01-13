@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a7893ea89ef8ebd41958ad2a303d4fc9, type: 3}
   m_Name: terraGloriae
   m_EditorClassIdentifier: Assembly-CSharp::GameData.SkillDefinition
-  id: terraGloriae
+  _id: {fileID: 11400000, guid: ccbdb1093d0c815489522ddd4a3f6f17, type: 2}
   displayName: Terra Gloriae
   description: '"Glory to your planets". The new galactic mega corporation motto,
     that surprisingly reduces the cost of getting more planets. Maybe you should

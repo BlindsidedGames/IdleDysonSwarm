@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a7893ea89ef8ebd41958ad2a303d4fc9, type: 3}
   m_Name: androids
   m_EditorClassIdentifier: Assembly-CSharp::GameData.SkillDefinition
-  id: androids
+  _id: {fileID: 11400000, guid: dd81068499d37e4488122cb7fa0b6735, type: 2}
   displayName: Androids
   description: Androids actively repair panels while in orbit, greatly improving
     panel lifetime.

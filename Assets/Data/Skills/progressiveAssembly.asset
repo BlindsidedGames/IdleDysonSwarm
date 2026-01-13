@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a7893ea89ef8ebd41958ad2a303d4fc9, type: 3}
   m_Name: progressiveAssembly
   m_EditorClassIdentifier: Assembly-CSharp::GameData.SkillDefinition
-  id: progressiveAssembly
+  _id: {fileID: 11400000, guid: 7fd5506f5efc13e4281dd2505cdfd02f, type: 2}
   displayName: Progressive Assembly
   description: You find a fragment of another universe. You use this knowledge to
     improve your Assembly Lines, I wonder what other parts of this universe you can

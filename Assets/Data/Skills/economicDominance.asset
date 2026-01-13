@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a7893ea89ef8ebd41958ad2a303d4fc9, type: 3}
   m_Name: economicDominance
   m_EditorClassIdentifier: Assembly-CSharp::GameData.SkillDefinition
-  id: economicDominance
+  _id: {fileID: 11400000, guid: c34f2ad3bec7c134ab12338c4f252b07, type: 2}
   displayName: Economic Dominance
   description: Shift your goals to economic growth with singular focus.
   technicalDescription: <color=#A3FFFE>20x Cash</color>, <color=#A3FFFE>0.25x Science</color>

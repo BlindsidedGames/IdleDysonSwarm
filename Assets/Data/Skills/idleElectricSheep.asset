@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a7893ea89ef8ebd41958ad2a303d4fc9, type: 3}
   m_Name: idleElectricSheep
   m_EditorClassIdentifier: Assembly-CSharp::GameData.SkillDefinition
-  id: idleElectricSheep
+  _id: {fileID: 11400000, guid: 9f7153d7b06f96144a6d1408e4a13930, type: 2}
   displayName: Idle Electric Sheep
   description: Counting sheep is such a breeze, Helps me fall asleep with ease, One
     by one they jump the fence, Takes me to dreamland in suspense. <br>White and

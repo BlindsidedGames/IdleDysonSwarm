@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using IdleDysonSwarm.Data;
 using UnityEngine;
 
 namespace GameData
@@ -6,7 +7,17 @@ namespace GameData
     [CreateAssetMenu(menuName = "Idle Dyson/Skill Definition")]
     public sealed class SkillDefinition : ScriptableObject
     {
-        public string id;
+        [SerializeField] private SkillId _id;
+
+        /// <summary>
+        /// Strongly-typed skill ID asset reference.
+        /// </summary>
+        public SkillId Id => _id;
+
+        /// <summary>
+        /// String representation of the skill ID for backward compatibility.
+        /// </summary>
+        public string id => _id != null ? _id.Value : string.Empty;
         public string displayName;
         [TextArea] public string description;
         [TextArea] public string technicalDescription;

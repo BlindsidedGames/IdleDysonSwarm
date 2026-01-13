@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a7893ea89ef8ebd41958ad2a303d4fc9, type: 3}
   m_Name: planetsTree
   m_EditorClassIdentifier: Assembly-CSharp::GameData.SkillDefinition
-  id: planetsTree
+  _id: {fileID: 11400000, guid: fe4641d2c8384f5479332f4d21b000cd, type: 2}
   displayName: Planets
   description: Through more efficient use of space and construction equipment, Data
     Center build time is halved.

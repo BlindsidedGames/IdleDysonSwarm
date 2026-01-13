@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a7893ea89ef8ebd41958ad2a303d4fc9, type: 3}
   m_Name: shouldersOfTheRevolution
   m_EditorClassIdentifier: Assembly-CSharp::GameData.SkillDefinition
-  id: shouldersOfTheRevolution
+  _id: {fileID: 11400000, guid: a19156f32cc95a343b4ec8d94880a708, type: 2}
   displayName: 'Shoulders of the Revolution '
   description: The "Shoulders of the Revolution" is a phrase that refers to a powerful
     financial system that harnesses the latest advancements in science to dramatically

@@ -542,7 +542,17 @@ public static class GameDataAssetCreator
     {
         if (definition == null) return;
 
-        if (string.IsNullOrEmpty(definition.id)) definition.id = spec.Id;
+        if (string.IsNullOrEmpty(definition.id))
+        {
+            // Use reflection to set private _id field
+            var idField = typeof(FacilityDefinition).GetField("_id", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance);
+            if (idField != null)
+            {
+                var facilityIdPath = $"Assets/Data/IDs/Facilities/{spec.Id}.asset";
+                var facilityId = AssetDatabase.LoadAssetAtPath<IdleDysonSwarm.Data.FacilityId>(facilityIdPath);
+                if (facilityId != null) idField.SetValue(definition, facilityId);
+            }
+        }
         if (string.IsNullOrEmpty(definition.displayName)) definition.displayName = spec.Name;
         if (string.IsNullOrEmpty(definition.description)) definition.description = spec.Description;
         if (definition.tags == null || definition.tags.Length == 0) definition.tags = spec.Tags;
@@ -575,14 +585,31 @@ public static class GameDataAssetCreator
     private static void ApplySkillDefaults(SkillDefinition definition, SkillSpec spec)
     {
         if (definition == null) return;
-        if (string.IsNullOrEmpty(definition.id)) definition.id = spec.Id;
+        if (string.IsNullOrEmpty(definition.id))
+        {
+            // Use reflection to set private _id field
+            var idField = typeof(SkillDefinition).GetField("_id", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance);
+            if (idField != null)
+            {
+                var skillIdPath = $"Assets/Data/IDs/Skills/{spec.Id}.asset";
+                var skillId = AssetDatabase.LoadAssetAtPath<IdleDysonSwarm.Data.SkillId>(skillIdPath);
+                if (skillId != null) idField.SetValue(definition, skillId);
+            }
+        }
         if (string.IsNullOrEmpty(definition.displayName)) definition.displayName = spec.Name;
     }
 
     private static void ApplyResearchDefaults(ResearchDefinition definition, ResearchSpec spec)
     {
         if (definition == null) return;
-        definition.id = spec.Id;
+        // Use reflection to set private _id field
+        var idField = typeof(ResearchDefinition).GetField("_id", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance);
+        if (idField != null)
+        {
+            var researchIdPath = $"Assets/Data/IDs/Research/{spec.Id}.asset";
+            var researchId = AssetDatabase.LoadAssetAtPath<IdleDysonSwarm.Data.ResearchId>(researchIdPath);
+            if (researchId != null) idField.SetValue(definition, researchId);
+        }
         if (string.IsNullOrEmpty(definition.displayName)) definition.displayName = spec.Name;
         definition.baseCost = spec.BaseCost;
         definition.exponent = spec.Exponent;
@@ -619,7 +646,14 @@ public static class GameDataAssetCreator
     {
         if (definition == null || item == null) return;
 
-        definition.id = skillId;
+        // Use reflection to set private _id field
+        var idField = typeof(SkillDefinition).GetField("_id", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance);
+        if (idField != null)
+        {
+            var skillIdPath = $"Assets/Data/IDs/Skills/{skillId}.asset";
+            var skillIdAsset = AssetDatabase.LoadAssetAtPath<IdleDysonSwarm.Data.SkillId>(skillIdPath);
+            if (skillIdAsset != null) idField.SetValue(definition, skillIdAsset);
+        }
         if (string.IsNullOrEmpty(definition.displayName)) definition.displayName = item.SkillName;
         if (string.IsNullOrEmpty(definition.description)) definition.description = item.SkillDescription;
         if (string.IsNullOrEmpty(definition.technicalDescription))
