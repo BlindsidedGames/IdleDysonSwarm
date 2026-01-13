@@ -73,3 +73,15 @@ apps/**/src-tauri/gen/
 .DS_Store
 Thumbs.db
 
+# Claude Code temporary directories
+tmpclaude-*
+
+# Claude local settings
+.claude/settings.local.json
+
+# Plastic SCM
+.plastic/
+
+# Unity auto-generated solution files
+*.slnx
+
