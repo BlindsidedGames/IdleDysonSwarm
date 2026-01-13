@@ -19,6 +19,7 @@ MonoBehaviour:
   value: 2
   perLevel: 0
   order: 20
+  _condition: {fileID: 11400000, guid: 81443427a9abead47af4d02969791819, type: 2}
   conditionId: servers_69
   targetFacilityIds:
   - servers
