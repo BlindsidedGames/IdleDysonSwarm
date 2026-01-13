@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a7893ea89ef8ebd41958ad2a303d4fc9, type: 3}
   m_Name: panelWarranty
   m_EditorClassIdentifier: Assembly-CSharp::GameData.SkillDefinition
-  id: panelWarranty
+  _id: {fileID: 11400000, guid: 4a2ca4331c5e5194793a0e8b551b8353, type: 2}
   displayName: Panel Warranty
   description: You find a fragment of another universe. You use this knowledge to
     improve your Solar Panels, I wonder what other parts of this universe you can

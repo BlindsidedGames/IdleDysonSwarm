@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a7893ea89ef8ebd41958ad2a303d4fc9, type: 3}
   m_Name: superRadiantScattering
   m_EditorClassIdentifier: Assembly-CSharp::GameData.SkillDefinition
-  id: superRadiantScattering
+  _id: {fileID: 11400000, guid: f92cea335ec0f6646b06dd2580e4b57d, type: 2}
   displayName: Super-Radiant Scattering
   description: Scattering... Something... Causes a perpetually increasing value to
     affect everything you touch.

@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a7893ea89ef8ebd41958ad2a303d4fc9, type: 3}
   m_Name: jamesWebbTelescope
   m_EditorClassIdentifier: Assembly-CSharp::GameData.SkillDefinition
-  id: jamesWebbTelescope
+  _id: {fileID: 11400000, guid: 64c9c74c556902849b6cf69825b2810d, type: 2}
   displayName: James Webb Telescope
   description: Equipped with high-resolution and high-sensitivity instruments, allowing
     it to view objects too old, distant, or faint for the Hubble Space Telescope.

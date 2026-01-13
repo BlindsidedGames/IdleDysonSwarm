@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a7893ea89ef8ebd41958ad2a303d4fc9, type: 3}
   m_Name: quantumComputing
   m_EditorClassIdentifier: Assembly-CSharp::GameData.SkillDefinition
-  id: quantumComputing
+  _id: {fileID: 11400000, guid: 4d180dace51d134478d45c64c965d98f, type: 2}
   displayName: 'Quantum Computing '
   description: Using the same old server line-up seriously dampers with your progress.
     By utilizing quantum mechanics, you can now have servers that are simultaneously

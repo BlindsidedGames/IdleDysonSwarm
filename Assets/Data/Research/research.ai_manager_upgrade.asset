@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4e156fa476b9ff14aade11d0e4f5325b, type: 3}
   m_Name: research.ai_manager_upgrade
   m_EditorClassIdentifier: Assembly-CSharp::GameData.ResearchDefinition
-  id: research.ai_manager_upgrade
+  _id: {fileID: 11400000, guid: c5ee32ac44bf95a41942277cc2ffcb5f, type: 2}
   displayName: AI Manager
   description: 
   baseCost: 1000000

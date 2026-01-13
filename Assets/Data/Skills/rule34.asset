@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a7893ea89ef8ebd41958ad2a303d4fc9, type: 3}
   m_Name: rule34
   m_EditorClassIdentifier: Assembly-CSharp::GameData.SkillDefinition
-  id: rule34
+  _id: {fileID: 11400000, guid: f5d96aba7a7b67041b724ea6bd08ec05, type: 2}
   displayName: Rule 34
   description: Avocados are cool, and so are you. If you found this well done.
   technicalDescription: Building production is multiplied by <color=#A3FFFE>2</color>

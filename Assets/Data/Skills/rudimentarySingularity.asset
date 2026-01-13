@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a7893ea89ef8ebd41958ad2a303d4fc9, type: 3}
   m_Name: rudimentarySingularity
   m_EditorClassIdentifier: Assembly-CSharp::GameData.SkillDefinition
-  id: rudimentarySingularity
+  _id: {fileID: 11400000, guid: 607ac965a8498d5459aee6af9b9ee0e9, type: 2}
   displayName: Rudimentary Singularity
   description: Folding particles back in on themselves allow you to form the universes
     first singularities. Perhaps this technology could benefit your AI Managers somehow?

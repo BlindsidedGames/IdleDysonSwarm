@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 115bda21744dd8648b5c65fcc91c666b, type: 3}
   m_Name: servers
   m_EditorClassIdentifier: Assembly-CSharp::GameData.FacilityDefinition
-  id: servers
+  _id: {fileID: 11400000, guid: 3c96fbf9fe6d7f34c8a544d94b87e2c6, type: 2}
   displayName: Servers
   description: Servers that produce AI managers.
   icon: {fileID: 0}

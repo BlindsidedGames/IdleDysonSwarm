@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a7893ea89ef8ebd41958ad2a303d4fc9, type: 3}
   m_Name: shoulderSurgery
   m_EditorClassIdentifier: Assembly-CSharp::GameData.SkillDefinition
-  id: shoulderSurgery
+  _id: {fileID: 11400000, guid: 11dc07b9236d6564d99eef6288a648d5, type: 2}
   displayName: Shoulder Surgery
   description: Transplanting these weird looking shoulders should be fine, right?
   technicalDescription: <color=#A3FFFE>Shoulders of the Fallen</color> now also affect

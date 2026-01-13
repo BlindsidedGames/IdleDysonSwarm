@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a7893ea89ef8ebd41958ad2a303d4fc9, type: 3}
   m_Name: terraEculeo
   m_EditorClassIdentifier: Assembly-CSharp::GameData.SkillDefinition
-  id: terraEculeo
+  _id: {fileID: 11400000, guid: 8f16dce69c534474691683eb995de9db, type: 2}
   displayName: Terra Eculeo
   description: 'Your planets are the biggest wheel of progress. They spin around
     and make more servers, they sure look like a spring in Denver. '

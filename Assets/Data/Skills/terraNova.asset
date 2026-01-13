@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a7893ea89ef8ebd41958ad2a303d4fc9, type: 3}
   m_Name: terraNova
   m_EditorClassIdentifier: Assembly-CSharp::GameData.SkillDefinition
-  id: terraNova
+  _id: {fileID: 11400000, guid: 353370c7fe6cc2c429c746696bc28544, type: 2}
   displayName: Terra Nova
   description: Earth is threatened with extinction in the year 2149. The Shannon
     family transport themselves back a million years, where colonies of humans have

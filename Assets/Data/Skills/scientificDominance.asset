@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a7893ea89ef8ebd41958ad2a303d4fc9, type: 3}
   m_Name: scientificDominance
   m_EditorClassIdentifier: Assembly-CSharp::GameData.SkillDefinition
-  id: scientificDominance
+  _id: {fileID: 11400000, guid: 3152e272ddf297c419269e7a83bec25b, type: 2}
   displayName: Scientific Dominance
   description: Shift your goals into the research sector with singular focus.
   technicalDescription: <color=#A3FFFE>20x Science</color>, <color=#A3FFFE>0.25x
