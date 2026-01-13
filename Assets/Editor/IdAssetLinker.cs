@@ -34,20 +34,12 @@ namespace IdleDysonSwarm.Editor
             AssetDatabase.SaveAssets();
             AssetDatabase.Refresh();
 
-            Debug.Log($"[IdAssetLinker] Linking complete! " +
-                     $"Linked {facilityCount} facilities, " +
+            Debug.Log($"[IdAssetLinker] ==========================================");
+            Debug.Log($"[IdAssetLinker] LINKING COMPLETE!");
+            Debug.Log($"[IdAssetLinker] Linked {facilityCount} facilities, " +
                      $"{skillCount} skills, " +
                      $"{researchCount} research");
-
-            EditorUtility.DisplayDialog(
-                "ID Asset Linking Complete",
-                $"Successfully linked:\n" +
-                $"• {facilityCount} Facility definitions\n" +
-                $"• {skillCount} Skill definitions\n" +
-                $"• {researchCount} Research definitions\n\n" +
-                $"Check console for details.",
-                "OK"
-            );
+            Debug.Log($"[IdAssetLinker] ==========================================");
         }
 
         [MenuItem("Tools/Idle Dyson Swarm/Link Facility IDs", priority = 31)]
