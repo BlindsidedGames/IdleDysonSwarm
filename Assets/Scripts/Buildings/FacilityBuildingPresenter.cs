@@ -1,4 +1,5 @@
 using UnityEngine;
+using Expansion;
 using GameData;
 using IdleDysonSwarm.Services;
 using static Blindsided.Utilities.CalcUtils;
@@ -198,12 +199,12 @@ namespace Buildings
                         : ManuallyPurchasedBuildings;
                     double totalDisplay = AutoPurchasedBuildings + manualDisplay;
                     return
-                        $"Planets {textColourOrange}{FormatNumber(totalDisplay)}<size=70%>{textColourGreen}({FormatNumber(manualDisplay)})";
+                        $"Planets {Oracle.textColourOrange}{FormatNumber(totalDisplay)}<size=70%>{Oracle.textColourGreen}({FormatNumber(manualDisplay)})";
                 }
 
                 string terraBonus = GetTerraBonusText();
                 return
-                    $"{GetDisplayName()} {textColourOrange}{FormatNumber(TotalBuildings)}<size=70%>{textColourGreen}({FormatNumber(ManuallyPurchasedBuildings)}{terraBonus})";
+                    $"{GetDisplayName()} {Oracle.textColourOrange}{FormatNumber(TotalBuildings)}<size=70%>{Oracle.textColourGreen}({FormatNumber(ManuallyPurchasedBuildings)}{terraBonus})";
             }
         }
 
@@ -214,8 +215,8 @@ namespace Buildings
                 string purchasePrompt = GetPurchasePrompt();
                 string word = GetWordUsed();
                 string productionWord = GetProductionWordUsed();
-                return $"{(Production > 0 ? $"{word} " : "")}{textColourOrange}" +
-                       $"{(Production >= 1 ? $"{FormatNumber(Production)}</color> {productionWord}s /s" : Production > 0 ? $"1</color> {productionWord} /{textColourOrange}{FormatNumber(1 / Production < 60 ? 1 / Production : 1 / Production / 60)}</color>{(1 / Production < 60 ? "s" : " Min")}" : purchasePrompt)}";
+                return $"{(Production > 0 ? $"{word} " : "")}{Oracle.textColourOrange}" +
+                       $"{(Production >= 1 ? $"{FormatNumber(Production)}</color> {productionWord}s /s" : Production > 0 ? $"1</color> {productionWord} /{Oracle.textColourOrange}{FormatNumber(1 / Production < 60 ? 1 / Production : 1 / Production / 60)}</color>{(1 / Production < 60 ? "s" : " Min")}" : purchasePrompt)}";
             }
         }
 
@@ -279,7 +280,7 @@ namespace Buildings
                 ? planetCounts[1] * 12
                 : planetCounts[1];
 
-            return $"{textColourBlue}+{FormatNumber(terraBonus)}";
+            return $"{Oracle.textColourBlue}+{FormatNumber(terraBonus)}";
         }
 
         private string GetWordUsed()

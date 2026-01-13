@@ -1,4 +1,6 @@
 using GameData;
+using IdleDysonSwarm.Data;
+using Systems.Facilities;
 
 namespace IdleDysonSwarm.Services
 {
@@ -17,36 +19,43 @@ namespace IdleDysonSwarm.Services
 
         public bool TryGetFacility(string id, out FacilityDefinition definition)
         {
+            definition = null;
             return _registry != null && _registry.TryGetFacility(id, out definition);
         }
 
         public bool TryGetFacility(FacilityId id, out FacilityDefinition definition)
         {
+            definition = null;
             return _registry != null && _registry.TryGetFacility(id, out definition);
         }
 
         public bool TryGetSkill(string id, out SkillDefinition definition)
         {
+            definition = null;
             return _registry != null && _registry.TryGetSkill(id, out definition);
         }
 
         public bool TryGetSkill(SkillId id, out SkillDefinition definition)
         {
+            definition = null;
             return _registry != null && _registry.TryGetSkill(id, out definition);
         }
 
         public bool TryGetResearch(string id, out ResearchDefinition definition)
         {
+            definition = null;
             return _registry != null && _registry.TryGetResearch(id, out definition);
         }
 
         public bool TryGetResearch(ResearchId id, out ResearchDefinition definition)
         {
+            definition = null;
             return _registry != null && _registry.TryGetResearch(id, out definition);
         }
 
         public bool TryGetEffect(string id, out EffectDefinition definition)
         {
+            definition = null;
             return _registry != null && _registry.TryGetEffect(id, out definition);
         }
     }
