@@ -19,6 +19,7 @@ MonoBehaviour:
   value: 2
   perLevel: 0
   order: 20
+  _condition: {fileID: 11400000, guid: d39788aa6ef47314f87f5443791d7109, type: 2}
   conditionId: ai_managers_69
   targetFacilityIds:
   - ai_managers

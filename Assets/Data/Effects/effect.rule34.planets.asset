@@ -19,6 +19,7 @@ MonoBehaviour:
   value: 2
   perLevel: 0
   order: 20
+  _condition: {fileID: 11400000, guid: 2403ce23c9168cc4393d15686358d810, type: 2}
   conditionId: planets_69
   targetFacilityIds:
   - planets

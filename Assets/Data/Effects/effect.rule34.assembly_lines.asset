@@ -19,6 +19,7 @@ MonoBehaviour:
   value: 2
   perLevel: 0
   order: 30
+  _condition: {fileID: 11400000, guid: bf69a4e2a0abff949a50bafd6dbc055e, type: 2}
   conditionId: assembly_lines_69
   targetFacilityIds:
   - assembly_lines
