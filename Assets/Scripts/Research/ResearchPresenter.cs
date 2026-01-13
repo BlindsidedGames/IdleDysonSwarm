@@ -1,12 +1,13 @@
 using System;
 using Buildings;
+using Expansion;
 using GameData;
+using IdleDysonSwarm.Services;
 using UnityEngine;
 #if UNITY_EDITOR
 using UnityEditor;
 #endif
 using static Blindsided.Utilities.CalcUtils;
-using static Expansion.Oracle;
 
 namespace Research
 {
@@ -28,6 +29,7 @@ namespace Research
 
         private ResearchDefinition _resolvedDefinition;
         private string _resolvedId;
+        private IGameStateService _gameState;
 
         private double BaseCostValue => _resolvedDefinition != null ? _resolvedDefinition.baseCost : DefaultBaseCost;
 
@@ -38,7 +40,7 @@ namespace Research
                 ? _resolvedDefinition.displayName
                 : ResolvedResearchId;
 
-        private double BaseCostCalculated => StaticSkillTreeData.repeatableResearch
+        private double BaseCostCalculated => _gameState.SkillTreeData.repeatableResearch
             ? BaseCostValue > 0
                 ? BaseCostValue
                 : 1 / (1 + CurrentLevel * (BoostPercent > 0 ? BoostPercent : 1))
@@ -52,6 +54,8 @@ namespace Research
 
         private void Awake()
         {
+            _gameState = ServiceLocator.Get<IGameStateService>();
+
             ResolveDefinition();
             if (buildingReferences == null)
             {
@@ -108,8 +112,8 @@ namespace Research
 
         public double CurrentLevel
         {
-            get => GetResearchLevel(ResolvedResearchId);
-            set => SetResearchLevel(ResolvedResearchId, ClampLevel(value));
+            get => _gameState.GetResearchLevel(ResolvedResearchId);
+            set => _gameState.SetResearchLevel(ResolvedResearchId, ClampLevel(value));
         }
 
         public string ResearchIdValue => ResolvedResearchId;
@@ -126,10 +130,10 @@ namespace Research
 
         public double BoostPercent => CurrentLevel * Percent * 100;
 
-        public string OwnedText => $"{DisplayName} boosts {textColourBlue}{FormatNumber(CurrentLevel)}</color>";
+        public string OwnedText => $"{DisplayName} boosts {Oracle.textColourBlue}{FormatNumber(CurrentLevel)}</color>";
 
         public string ProductionText => CurrentLevel > 0
-            ? $"Boosting by {textColourBlue}{FormatNumber(BoostPercent)}%</color>"
+            ? $"Boosting by {Oracle.textColourBlue}{FormatNumber(BoostPercent)}%</color>"
             : "Purchase for a boost!";
 
         public bool CanAutoBuy => IsAutoBuyEnabled && Affordable() > 0 && PrerequisitesMet && !IsMaxed;
@@ -138,37 +142,28 @@ namespace Research
         {
             get
             {
-                if (!StaticPrestigeData.infinityAutoResearch) return false;
+                if (!_gameState.PrestigeData.infinityAutoResearch) return false;
 
-                switch (ResolvedAutoBuyGroup)
+                var saveSettings = _gameState.SaveSettings;
+                return ResolvedAutoBuyGroup switch
                 {
-                    case ResearchAutoBuyGroup.None:
-                        return true;
-                    case ResearchAutoBuyGroup.Science:
-                        return StaticSaveSettings.infinityAutoResearchToggleScience;
-                    case ResearchAutoBuyGroup.Money:
-                        return StaticSaveSettings.infinityAutoResearchToggleMoney;
-                    case ResearchAutoBuyGroup.Assembly:
-                        return StaticSaveSettings.infinityAutoResearchToggleAssembly;
-                    case ResearchAutoBuyGroup.Ai:
-                        return StaticSaveSettings.infinityAutoResearchToggleAi;
-                    case ResearchAutoBuyGroup.Server:
-                        return StaticSaveSettings.infinityAutoResearchToggleServer;
-                    case ResearchAutoBuyGroup.DataCenter:
-                        return StaticSaveSettings.infinityAutoResearchToggleDataCenter;
-                    case ResearchAutoBuyGroup.Planet:
-                        return StaticSaveSettings.infinityAutoResearchTogglePlanet;
-                    case ResearchAutoBuyGroup.Inherit:
-                    default:
-                        return false;
-                }
+                    ResearchAutoBuyGroup.None => true,
+                    ResearchAutoBuyGroup.Science => saveSettings.infinityAutoResearchToggleScience,
+                    ResearchAutoBuyGroup.Money => saveSettings.infinityAutoResearchToggleMoney,
+                    ResearchAutoBuyGroup.Assembly => saveSettings.infinityAutoResearchToggleAssembly,
+                    ResearchAutoBuyGroup.Ai => saveSettings.infinityAutoResearchToggleAi,
+                    ResearchAutoBuyGroup.Server => saveSettings.infinityAutoResearchToggleServer,
+                    ResearchAutoBuyGroup.DataCenter => saveSettings.infinityAutoResearchToggleDataCenter,
+                    ResearchAutoBuyGroup.Planet => saveSettings.infinityAutoResearchTogglePlanet,
+                    _ => false
+                };
             }
         }
 
         public long Affordable()
         {
             if (IsMaxed) return 0;
-            long affordable = MaxAffordableForCost(Science, BaseCostCalculated);
+            long affordable = MaxAffordableForCost(_gameState.Science, BaseCostCalculated);
             return ClampToRemaining(affordable);
         }
 
@@ -189,13 +184,13 @@ namespace Research
         public bool TryAutoPurchase()
         {
             if (!CanAutoBuy) return false;
-            if (BuyMaxCost() > Science) return false;
+            if (BuyMaxCost() > _gameState.Science) return false;
 
             long affordable = Affordable();
             if (affordable <= 0) return false;
 
             double previousLevel = CurrentLevel;
-            Science -= BuyMaxCost();
+            _gameState.Science -= BuyMaxCost();
             CurrentLevel = previousLevel + affordable;
             HandlePostPurchase(previousLevel, CurrentLevel);
             UpdateCostText();
@@ -207,10 +202,10 @@ namespace Research
             if (!PrerequisitesMet || IsMaxed) return;
 
             long numberToBuy = NumberToBuy();
-            if (numberToBuy <= 0 || Cost() > Science) return;
+            if (numberToBuy <= 0 || Cost() > _gameState.Science) return;
 
             double previousLevel = CurrentLevel;
-            Science -= Cost();
+            _gameState.Science -= Cost();
             CurrentLevel = previousLevel + numberToBuy;
             HandlePostPurchase(previousLevel, CurrentLevel);
             UpdateCostText();
@@ -232,7 +227,7 @@ namespace Research
         {
             if (buildingReferences == null) return;
 
-            bool canPurchase = Cost() <= Science && NumberToBuy() > 0 && !IsAutoBuyEnabled && PrerequisitesMet && !IsMaxed;
+            bool canPurchase = Cost() <= _gameState.Science && NumberToBuy() > 0 && !IsAutoBuyEnabled && PrerequisitesMet && !IsMaxed;
             buildingReferences.purchaseButton.interactable = canPurchase;
         }
 
@@ -268,7 +263,7 @@ namespace Research
 
             bool purchased = IsMaxed;
             bool shouldShow = PrerequisitesMet || CurrentLevel > 0;
-            if (purchased && StaticSaveSettings.hidePurchased)
+            if (purchased && _gameState.SaveSettings.hidePurchased)
             {
                 shouldShow = false;
             }
@@ -284,21 +279,22 @@ namespace Research
             if (IsMaxed) return 0;
 
             long number = 0;
-            switch (StaticResearchBuyMode)
+            bool roundedBulkBuy = _gameState.RoundedBulkBuy;
+            switch (_gameState.ResearchBuyMode)
             {
-                case BuyMode.Buy1:
+                case Oracle.BuyMode.Buy1:
                     number = 1;
                     break;
-                case BuyMode.Buy10:
-                    number = StaticRoundedBulkBuy ? 10 - (int)CurrentLevel % 10 : 10;
+                case Oracle.BuyMode.Buy10:
+                    number = roundedBulkBuy ? 10 - (int)CurrentLevel % 10 : 10;
                     break;
-                case BuyMode.Buy50:
-                    number = StaticRoundedBulkBuy ? 50 - (int)CurrentLevel % 50 : 50;
+                case Oracle.BuyMode.Buy50:
+                    number = roundedBulkBuy ? 50 - (int)CurrentLevel % 50 : 50;
                     break;
-                case BuyMode.Buy100:
-                    number = StaticRoundedBulkBuy ? 100 - (int)CurrentLevel % 100 : 100;
+                case Oracle.BuyMode.Buy100:
+                    number = roundedBulkBuy ? 100 - (int)CurrentLevel % 100 : 100;
                     break;
-                case BuyMode.BuyMax:
+                case Oracle.BuyMode.BuyMax:
                     number = Affordable() > 0 ? Affordable() : 1;
                     break;
             }
@@ -465,7 +461,7 @@ namespace Research
             foreach (string prerequisite in _resolvedDefinition.prerequisiteResearchIds)
             {
                 if (string.IsNullOrEmpty(prerequisite)) continue;
-                if (GetResearchLevel(prerequisite) <= 0)
+                if (_gameState.GetResearchLevel(prerequisite) <= 0)
                 {
                     return false;
                 }
@@ -474,29 +470,22 @@ namespace Research
             return true;
         }
 
-        private static double GetPercentForResearch(string researchId)
+        private double GetPercentForResearch(string researchId)
         {
             if (string.IsNullOrEmpty(researchId)) return 0;
 
-            switch (researchId)
+            var infinityData = _gameState.InfinityData;
+            return researchId switch
             {
-                case ResearchIdMap.MoneyMultiplier:
-                    return StaticInfinityData.moneyMultiUpgradePercent;
-                case ResearchIdMap.ScienceBoost:
-                    return StaticInfinityData.scienceBoostPercent;
-                case ResearchIdMap.AssemblyLineUpgrade:
-                    return StaticInfinityData.assemblyLineUpgradePercent;
-                case ResearchIdMap.AiManagerUpgrade:
-                    return StaticInfinityData.aiManagerUpgradePercent;
-                case ResearchIdMap.ServerUpgrade:
-                    return StaticInfinityData.serverUpgradePercent;
-                case ResearchIdMap.DataCenterUpgrade:
-                    return StaticInfinityData.dataCenterUpgradePercent;
-                case ResearchIdMap.PlanetUpgrade:
-                    return StaticInfinityData.planetUpgradePercent;
-                default:
-                    return 0;
-            }
+                ResearchIdMap.MoneyMultiplier => infinityData.moneyMultiUpgradePercent,
+                ResearchIdMap.ScienceBoost => infinityData.scienceBoostPercent,
+                ResearchIdMap.AssemblyLineUpgrade => infinityData.assemblyLineUpgradePercent,
+                ResearchIdMap.AiManagerUpgrade => infinityData.aiManagerUpgradePercent,
+                ResearchIdMap.ServerUpgrade => infinityData.serverUpgradePercent,
+                ResearchIdMap.DataCenterUpgrade => infinityData.dataCenterUpgradePercent,
+                ResearchIdMap.PlanetUpgrade => infinityData.planetUpgradePercent,
+                _ => 0
+            };
         }
 
         private static ResearchAutoBuyGroup MapAutoBuyGroupFromId(string researchId)

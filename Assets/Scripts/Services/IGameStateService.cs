@@ -1,4 +1,7 @@
 using Expansion;
+using Buildings;
+using Systems;
+using static Expansion.Oracle;
 
 namespace IdleDysonSwarm.Services
 {
@@ -44,5 +47,30 @@ namespace IdleDysonSwarm.Services
         /// Gets the save data settings (contains all save data)
         /// </summary>
         SaveDataSettings SaveSettings { get; }
+
+        /// <summary>
+        /// Gets or sets the current science currency
+        /// </summary>
+        double Science { get; set; }
+
+        /// <summary>
+        /// Gets the current research buy mode (Buy1, Buy10, Buy50, Buy100, BuyMax)
+        /// </summary>
+        BuyMode ResearchBuyMode { get; }
+
+        /// <summary>
+        /// Gets whether rounded bulk buying is enabled
+        /// </summary>
+        bool RoundedBulkBuy { get; }
+
+        /// <summary>
+        /// Gets the current research level for a given research ID
+        /// </summary>
+        double GetResearchLevel(string researchId);
+
+        /// <summary>
+        /// Sets the research level for a given research ID
+        /// </summary>
+        void SetResearchLevel(string researchId, double level);
     }
 }

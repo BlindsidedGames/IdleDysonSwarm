@@ -1,4 +1,5 @@
 using GameData;
+using IdleDysonSwarm.Data;
 using Systems.Facilities;
 
 namespace IdleDysonSwarm.Services
@@ -78,8 +79,8 @@ namespace IdleDysonSwarm.Services
                     infinityData.servers[1] = manual;
                     break;
                 case "data_centers":
-                    infinityData.datacenters[0] = auto;
-                    infinityData.datacenters[1] = manual;
+                    infinityData.dataCenters[0] = auto;
+                    infinityData.dataCenters[1] = manual;
                     break;
                 case "planets":
                     infinityData.planets[0] = auto;
@@ -98,7 +99,7 @@ namespace IdleDysonSwarm.Services
                 "assembly_lines" => infinityData.assemblyLines,
                 "ai_managers" => infinityData.managers,
                 "servers" => infinityData.servers,
-                "data_centers" => infinityData.datacenters,
+                "data_centers" => infinityData.dataCenters,
                 "planets" => infinityData.planets,
                 _ => new double[2] // Default: [0, 0]
             };
