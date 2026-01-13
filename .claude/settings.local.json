@@ -7,7 +7,14 @@
       "Bash(git add:*)",
       "mcp__UnityMCP__execute_menu_item",
       "mcp__UnityMCP__read_console",
-      "mcp__UnityMCP__refresh_unity"
+      "mcp__UnityMCP__refresh_unity",
+      "Bash(gh pr list:*)",
+      "Bash(gh pr view:*)",
+      "Bash(gh repo view:*)",
+      "Bash(curl:*)",
+      "Bash(git pull:*)",
+      "Bash(grep:*)",
+      "Bash(gh pr create:*)"
     ]
   }
 }
