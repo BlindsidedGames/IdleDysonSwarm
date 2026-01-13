@@ -47,7 +47,7 @@ namespace Systems.Stats
                     if (effect == null) continue;
                     if (!MatchesStat(effect, targetStatId)) continue;
                     if (!MatchesFacility(effect, facility)) continue;
-                    if (!EffectConditionEvaluator.IsConditionMet(effect.conditionId, facility, state, context)) continue;
+                    if (!EffectConditionEvaluator.IsConditionMet(effect, facility, state, context)) continue;
 
                     double value = ResolveEffectValue(research, effect, level, context, facility, state);
                     if (ShouldSkipEffect(effect.operation, value)) continue;
