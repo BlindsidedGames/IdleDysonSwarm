@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4e156fa476b9ff14aade11d0e4f5325b, type: 3}
   m_Name: research.data_center_upgrade
   m_EditorClassIdentifier: Assembly-CSharp::GameData.ResearchDefinition
-  id: research.data_center_upgrade
+  _id: {fileID: 11400000, guid: bb916090b3da137408764d54a4715fbb, type: 2}
   displayName: Data Center
   description: 
   baseCost: 1000000000

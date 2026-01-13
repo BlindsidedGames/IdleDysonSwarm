@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a7893ea89ef8ebd41958ad2a303d4fc9, type: 3}
   m_Name: scientificRevolution
   m_EditorClassIdentifier: Assembly-CSharp::GameData.SkillDefinition
-  id: scientificRevolution
+  _id: {fileID: 11400000, guid: 6a1b5e32b2dda7649badd266af54703d, type: 2}
   displayName: Scientific Revolution
   description: Self improving bots create a surge in scientific progress.
   technicalDescription: Multiplies <color=#A3FFFE>Science</color> by <color=#A3FFFE>5</color>

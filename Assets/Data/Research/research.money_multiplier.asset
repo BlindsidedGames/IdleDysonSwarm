@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4e156fa476b9ff14aade11d0e4f5325b, type: 3}
   m_Name: research.money_multiplier
   m_EditorClassIdentifier: Assembly-CSharp::GameData.ResearchDefinition
-  id: research.money_multiplier
+  _id: {fileID: 11400000, guid: 1fb97efe6ef041b428efdbd7b4606a6a, type: 2}
   displayName: Cash
   description: 
   baseCost: 5000

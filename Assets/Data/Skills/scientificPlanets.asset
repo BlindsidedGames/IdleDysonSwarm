@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a7893ea89ef8ebd41958ad2a303d4fc9, type: 3}
   m_Name: scientificPlanets
   m_EditorClassIdentifier: Assembly-CSharp::GameData.SkillDefinition
-  id: scientificPlanets
+  _id: {fileID: 11400000, guid: 04381be2fb188974b8438c9db54d3fa0, type: 2}
   displayName: Scientific Planets
   description: 'Teach some of your Scientists to discover planets for you.  '
   technicalDescription: Produces <color=#91DD8F>Planets</color> based on <color=#91DD8F>Log10(<color=#A3FFFE>Science

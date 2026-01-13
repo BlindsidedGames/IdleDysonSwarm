@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a7893ea89ef8ebd41958ad2a303d4fc9, type: 3}
   m_Name: monetaryPolicy
   m_EditorClassIdentifier: Assembly-CSharp::GameData.SkillDefinition
-  id: monetaryPolicy
+  _id: {fileID: 11400000, guid: 2e18cba85174efd489f2b356a752402e, type: 2}
   displayName: Monetary Policy
   description: You find a fragment of another universe. You use this knowledge to
     improve your Cash gain, I wonder what other parts of this universe you can find?

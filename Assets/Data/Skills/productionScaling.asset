@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a7893ea89ef8ebd41958ad2a303d4fc9, type: 3}
   m_Name: productionScaling
   m_EditorClassIdentifier: Assembly-CSharp::GameData.SkillDefinition
-  id: productionScaling
+  _id: {fileID: 11400000, guid: d130abd2c70f9844c8477db1ed8118a8, type: 2}
   displayName: Production Scaling
   description: You find a fragment of another universe. You use this knowledge to
     improve your entire production line, I wonder what other parts of this universe

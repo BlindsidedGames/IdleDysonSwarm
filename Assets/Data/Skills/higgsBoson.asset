@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a7893ea89ef8ebd41958ad2a303d4fc9, type: 3}
   m_Name: higgsBoson
   m_EditorClassIdentifier: Assembly-CSharp::GameData.SkillDefinition
-  id: higgsBoson
+  _id: {fileID: 11400000, guid: fe37b6a98d7a69d40af92a64b04f27f9, type: 2}
   displayName: Higgs Boson
   description: Surrounding black holes is unheard of, but you manage it after years
     of research!

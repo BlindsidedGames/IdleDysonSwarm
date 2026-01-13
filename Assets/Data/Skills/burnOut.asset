@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a7893ea89ef8ebd41958ad2a303d4fc9, type: 3}
   m_Name: burnOut
   m_EditorClassIdentifier: Assembly-CSharp::GameData.SkillDefinition
-  id: burnOut
+  _id: {fileID: 11400000, guid: 34e633d7d8111684abd2aaeed1d4bdbe, type: 2}
   displayName: Burnout
   description: You experiment with lower orbits. The heat of the sun degrades your
     panels faster but the energy output is greatly improved!

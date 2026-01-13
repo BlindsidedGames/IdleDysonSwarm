@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a7893ea89ef8ebd41958ad2a303d4fc9, type: 3}
   m_Name: galacticPradigmShift
   m_EditorClassIdentifier: Assembly-CSharp::GameData.SkillDefinition
-  id: galacticPradigmShift
+  _id: {fileID: 11400000, guid: 9a8cf26259500f049a16fa84d20e0c3b, type: 2}
   displayName: Galactic Paradigm Shift
   description: The Galactic Paradigm Shift is a significant increase in Planet production
     within a galaxy. The effects of this change impact intergalactic civilizations

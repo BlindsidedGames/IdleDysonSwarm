@@ -12,13 +12,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4e156fa476b9ff14aade11d0e4f5325b, type: 3}
   m_Name: research.panel_lifetime_4
   m_EditorClassIdentifier: Assembly-CSharp::GameData.ResearchDefinition
-  id: research.panel_lifetime_4
+  _id: {fileID: 11400000, guid: d0b930d1143b8bb4e9eb5f3e7a194491, type: 2}
   displayName: Panel Lifetime IV
   description: 
   baseCost: 1e+18
   exponent: 1
   maxLevel: 1
   autoBuyGroup: 1
-  prerequisiteResearchIds: [research.panel_lifetime_3]
+  prerequisiteResearchIds:
+  - research.panel_lifetime_3
   effects:
   - {fileID: 11400000, guid: 3d69011b469ee334f90ac156065eab16, type: 2}

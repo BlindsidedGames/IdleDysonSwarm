@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4e156fa476b9ff14aade11d0e4f5325b, type: 3}
   m_Name: research.panel_lifetime_1
   m_EditorClassIdentifier: Assembly-CSharp::GameData.ResearchDefinition
-  id: research.panel_lifetime_1
+  _id: {fileID: 11400000, guid: 77fae5da204f1154aa758f8cb1689a67, type: 2}
   displayName: Panel Lifetime I
   description: 
   baseCost: 1000000000

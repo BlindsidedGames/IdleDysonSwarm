@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a7893ea89ef8ebd41958ad2a303d4fc9, type: 3}
   m_Name: assemblyMegaLines
   m_EditorClassIdentifier: Assembly-CSharp::GameData.SkillDefinition
-  id: assemblyMegaLines
+  _id: {fileID: 11400000, guid: 8e3ba9c36ab490f4d84c68499018bf25, type: 2}
   displayName: Assembly Megalines
   description: More Planets allow for larger Assembly Lines. Mega-Assembly Lines
     that is. Probably a good idea to let the bots handle this.

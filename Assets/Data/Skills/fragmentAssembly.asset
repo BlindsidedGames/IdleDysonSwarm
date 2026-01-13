@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a7893ea89ef8ebd41958ad2a303d4fc9, type: 3}
   m_Name: fragmentAssembly
   m_EditorClassIdentifier: Assembly-CSharp::GameData.SkillDefinition
-  id: fragmentAssembly
+  _id: {fileID: 11400000, guid: a5741a6af3a19c54aa6e6934c83ece24, type: 2}
   displayName: Fragment Assembly
   description: As you begin to piece the fragments together, you manage to decipher
     ways to improve all of your buildings.

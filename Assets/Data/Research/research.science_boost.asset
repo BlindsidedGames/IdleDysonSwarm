@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4e156fa476b9ff14aade11d0e4f5325b, type: 3}
   m_Name: research.science_boost
   m_EditorClassIdentifier: Assembly-CSharp::GameData.ResearchDefinition
-  id: research.science_boost
+  _id: {fileID: 11400000, guid: 4e07278f832ffeb4ba6625cbe1211319, type: 2}
   displayName: Science
   description: 
   baseCost: 10000

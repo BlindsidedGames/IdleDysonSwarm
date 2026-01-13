@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a7893ea89ef8ebd41958ad2a303d4fc9, type: 3}
   m_Name: shouldersOfTheFallen
   m_EditorClassIdentifier: Assembly-CSharp::GameData.SkillDefinition
-  id: shouldersOfTheFallen
+  _id: {fileID: 11400000, guid: 09eb80e30ee5b2c4abf5de87ae1552c1, type: 2}
   displayName: Shoulders of the Fallen
   description: The Shoulders of the Fallen are a revered artifact said to have belonged
     to great leaders of a lost civilization. They possess the power to enhance Planet

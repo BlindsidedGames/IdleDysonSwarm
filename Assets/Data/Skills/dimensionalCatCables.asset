@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a7893ea89ef8ebd41958ad2a303d4fc9, type: 3}
   m_Name: dimensionalCatCables
   m_EditorClassIdentifier: Assembly-CSharp::GameData.SkillDefinition
-  id: dimensionalCatCables
+  _id: {fileID: 11400000, guid: bfb9e9438727ce5478020430fc23bf00, type: 2}
   displayName: Dimensional CAT cables
   description: Meow. Linking up your fancy dimensional Data Centers with your regular
     old boring Data Centers makes them far more capable. The resources needed do
