@@ -2,6 +2,7 @@ using TMPro;
 using UnityEngine;
 using Blindsided.Utilities;
 using static Expansion.Oracle;
+using static IdleDysonSwarm.Systems.Constants.QuantumConstants;
 
 public class ToRealityFillbar : MonoBehaviour
 {
@@ -16,12 +17,12 @@ public class ToRealityFillbar : MonoBehaviour
 
     private void Update()
     {
-        percent = prestigeData.infinityPoints / 42f;
+        percent = prestigeData.infinityPoints / (float)IPToQuantumConversion;
         fill.fillAmount = percent;
-        fillText.text = prestigeData.infinityPoints < 42
-            ? $" {prestigeData.infinityPoints}/42"
+        fillText.text = prestigeData.infinityPoints < IPToQuantumConversion
+            ? $" {prestigeData.infinityPoints}/{IPToQuantumConversion}"
             : "";
-        bool earned = prestigeData.infinityPoints >= 42;
+        bool earned = prestigeData.infinityPoints >= IPToQuantumConversion;
         exitDysonVerse.SetActive(earned);
     }
 }

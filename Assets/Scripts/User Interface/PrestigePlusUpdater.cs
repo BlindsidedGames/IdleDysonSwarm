@@ -4,6 +4,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using Blindsided.Utilities;
 using static Expansion.Oracle;
+using static IdleDysonSwarm.Systems.Constants.QuantumConstants;
 
 
 public class PrestigePlusUpdater : MonoBehaviour
@@ -41,16 +42,6 @@ public class PrestigePlusUpdater : MonoBehaviour
     private DysonVersePrestigeData prestigeData => oracle.saveSettings.dysonVerseSaveData.dysonVersePrestigeData;
     private DysonVerseSaveData dysonVerseSaveData => oracle.saveSettings.dysonVerseSaveData;
 
-    private const int BreakTheLoopCost = 6;
-    private const int QuantumEntanglementCost = 12;
-    private const int avocatoCost = 42;
-
-    private const int FragmentCost = 2;
-    private const int PurityCost = 3;
-    private const int TerraCost = 2;
-    private const int PowerCost = 2;
-    private const int ParagadeCost = 1;
-    private const int StellarCost = 4;
     private long pointsRemaining => prestigePlus.points - prestigePlus.spentPoints;
 
 
@@ -66,7 +57,7 @@ public class PrestigePlusUpdater : MonoBehaviour
 
         secretsButton.onClick.AddListener(PurchaseSecrets);
         secretsButton.transform.GetComponentInChildren<TMP_Text>().text =
-            prestigePlus.secrets >= 27 ? "Purchased" : "1<sprite=5, color=#000000>";
+            prestigePlus.secrets >= MaxSecrets ? "Purchased" : "1<sprite=5, color=#000000>";
         divisionButton.onClick.AddListener(PurchaseDivision);
         divisionButton.transform.GetComponentInChildren<TMP_Text>().text =
             prestigePlus.divisionsPurchased >= 19 ? "Purchased" : $"{CalcUtils.FormatNumber(divisionCost)}<sprite=5, color=#000000>";
@@ -101,8 +92,8 @@ public class PrestigePlusUpdater : MonoBehaviour
     private void Update()
     {
         prestigeButtonText.text = prestigePlus.quantumEntanglement
-            ? $"Leap for {(long)Math.Floor((prestigeData.infinityPoints - prestigeData.spentInfinityPoints) / 42f):N0}<sprite=5, color=#000000>"
-            : "Engage Quantum Leap (<color=#FFA45E>42 IP</color>)";
+            ? $"Leap for {(long)Math.Floor((prestigeData.infinityPoints - prestigeData.spentInfinityPoints) / (float)IPToQuantumConversion):N0}<sprite=5, color=#000000>"
+            : "Engage Quantum Leap (<color=#FFA45E>{IPToQuantumConversion} IP</color>)";
         pointsText.text =
             $"You have: <color=#FFA45E>{CalcUtils.FormatNumber(prestigePlus.points - prestigePlus.spentPoints)}<size=70%><color=#91DD8F>({CalcUtils.FormatNumber(prestigePlus.spentPoints)})</size></color> {"<sprite=5>"}";
         cashText.text = $"5% Cash - <color=#91DD8F>{prestigePlus.cash * 5}%";
@@ -126,12 +117,12 @@ public class PrestigePlusUpdater : MonoBehaviour
         multiTaskingButton.interactable = !prestigePlus.botMultitasking && activate;
         doubleIpButton.interactable = !prestigePlus.doubleIP && activate;
         automationButton.interactable = !prestigePlus.automation && activate;
-        secretsButton.interactable = prestigePlus.secrets < 27 && activate &&
+        secretsButton.interactable = prestigePlus.secrets < MaxSecrets && activate &&
                                      (prestigePlus.botMultitasking || prestigePlus.doubleIP);
         divisionButton.interactable = !(prestigePlus.divisionsPurchased >= 19) && prestigePlus.points - prestigePlus.spentPoints >= divisionCost &&
                                       prestigePlus.botMultitasking && prestigePlus.doubleIP;
 
-        avocatoButton.interactable = !prestigePlus.avocatoPurchased && pointsRemaining >= avocatoCost;
+        avocatoButton.interactable = !prestigePlus.avocatoPurchased && pointsRemaining >= AvocadoCost;
 
         breakTheLoopButton.interactable = !prestigePlus.breakTheLoop && pointsRemaining >= BreakTheLoopCost;
         quantumEntanglementButton.interactable = !prestigePlus.quantumEntanglement && pointsRemaining >= QuantumEntanglementCost;
@@ -146,10 +137,10 @@ public class PrestigePlusUpdater : MonoBehaviour
 
     private void PurchaseAvocato()
     {
-        if (pointsRemaining < avocatoCost) return;
+        if (pointsRemaining < AvocadoCost) return;
         avocatoButton.transform.GetComponentInChildren<TMP_Text>().text = "Purchased";
         prestigePlus.avocatoPurchased = true;
-        prestigePlus.spentPoints += avocatoCost;
+        prestigePlus.spentPoints += AvocadoCost;
     }
 
     private void PurchaseDivision()
@@ -164,11 +155,11 @@ public class PrestigePlusUpdater : MonoBehaviour
     private void PurchaseSecrets()
     {
         if (pointsRemaining < 1) return;
-        prestigePlus.secrets += prestigePlus.secrets >= 27 ? 0 : 3;
-        prestigeData.secretsOfTheUniverse += prestigeData.secretsOfTheUniverse >= 27 ? 0 : 3;
+        prestigePlus.secrets += prestigePlus.secrets >= MaxSecrets ? 0 : SecretsPerPurchase;
+        prestigeData.secretsOfTheUniverse += prestigeData.secretsOfTheUniverse >= MaxSecrets ? 0 : SecretsPerPurchase;
         prestigePlus.spentPoints++;
         secretsButton.transform.GetComponentInChildren<TMP_Text>().text =
-            prestigePlus.secrets >= 27 ? "Purchased" : "1<sprite=5, color=#000000>";
+            prestigePlus.secrets >= MaxSecrets ? "Purchased" : "1<sprite=5, color=#000000>";
     }
 
     private void PurchaseMultiTasking()
@@ -264,7 +255,7 @@ public class PrestigePlusUpdater : MonoBehaviour
     private void PurchaseInfluence()
     {
         if (pointsRemaining < 1) return;
-        prestigePlus.influence += 4;
+        prestigePlus.influence += InfluenceSpeedPerLevel;
         prestigePlus.spentPoints++;
     }
 
