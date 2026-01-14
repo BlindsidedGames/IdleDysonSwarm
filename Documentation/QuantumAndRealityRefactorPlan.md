@@ -19,18 +19,31 @@
 
 ## Executive Summary
 
-This refactor addresses **two distinct but interconnected systems** that have been conflated in the codebase:
+This refactor addresses **three distinct but interconnected systems** that have been conflated in the codebase:
 
 ### 1. Quantum Leap System (Currently: "PrestigePlus")
 - Converts 42 Infinity Points → 1 Quantum Point
 - Quantum Points purchase upgrades affecting Infinity mechanics
 - Includes: Automation, Double IP, Secrets (permanent), Avocado unlock, etc.
 
-### 2. Reality System (Currently: "Reality" tabs)
-- **Tab 1 - Universe/Influence:** Worker generation → Influence currency → Dream1 economy
-- **Tab 2 - AI/Community:** Hunters, Gatherers, Housing, Workers, Cities → Factories → Space
+### 2. Reality System - Universe/Influence (Currently: "Reality" Tab 1)
+- Worker generation → Influence currency
+- Feeds into Dream1 economy and Avocado
+
+### 3. Reality System - Dream1 Simulation (Currently: "Reality" Tab 2)
+- **Foundational Era:** Hunters, Gatherers → Community → Housing → Villages → Cities
+- **Information Era:** Factories → Bots → Rockets → Space Factories
+- **Space Age:** Solar/Fusion → Energy → Railgun → Swarm Panels
+- **Prestige:** Disasters → Strange Matter → Counter Measures
 
 The systems are connected: Quantum Points → Influence Speed → Influence Currency → Dream1 Resources
+
+### Offline Time System (DoubleTime)
+Reality/Dream1 has an offline time accumulation system:
+- Offline seconds accumulate into `sdPrestige.doubleTime`
+- Player controls consumption speed via slider (`doubleTimeRate`)
+- When active, all Dream1 production is multiplied by `(doubleTimeRate + 1)`
+- This is a **manual boost system**, not automatic offline simulation
 
 ---
 
@@ -431,15 +444,42 @@ Railgun fires → Swarm Panels launched
 
 ### Simulation Prestige (Strange Matter)
 
-**Location:** SimulationPrestigeManager.cs
+**Location:** SimulationPrestigeManager.cs, ResearchManager.cs
 
-**Disaster Progression:**
+**Disaster Stage System:**
+
+The disaster system uses `disasterStage` to track progression. Players must **purchase counter measures** with Strange Matter to advance to harder challenges:
+
+| Stage | Disaster | Trigger | Reward | Counter to Advance |
+|-------|----------|---------|--------|-------------------|
+| 0/1 | Meteor Storm | 1+ city | +1 SM | counterMeteor (4 SM) |
+| 2 | AI Takeover | 100+ bots | +10 SM | counterAi (42 SM) |
+| 3 | Global Warming | 5+ space factories | +20 SM | counterGw (128 SM) |
+| 42 | Complete | N/A | N/A | Unlocks Black Hole |
+
+**Key Mechanic:** Counter measures don't prevent disasters - they unlock harder challenges with better rewards.
+
+**Black Hole (Manual Prestige):**
+- Available after purchasing all counter measures (stage 42)
+- Converts Swarm Panels → Strange Matter (1:1)
+- Requires player to manually trigger
+
+**Double Wipe Workaround:**
+
+SimulationPrestigeManager.cs:81-86 calls `WipeDream1Save()` twice with a frame delay:
+```csharp
+private IEnumerator WipeForPrestige()
+{
+    oracle.WipeDream1Save();
+    yield return 0;
+    oracle.WipeDream1Save();  // Second wipe catches timer state leakage
+    ApplyResearch?.Invoke();
+}
 ```
-Stage 1: Meteor Storm (triggers at 1+ city)     → +1 Strange Matter
-Stage 2: AI Takeover (triggers at 100+ bots)    → +10 Strange Matter
-Stage 3: Global Warming (triggers at 5+ SFacs)  → +20 Strange Matter
-Black Hole (manual): Converts Swarm Panels      → +swarmPanels Strange Matter
-```
+
+This is an **intentional workaround** for timer state synchronization. Local `xxxTime` fields on MonoBehaviours persist across prestige, and during the frame between wipes, `Update()` methods can reconstruct partial data from stale timer values. The second wipe ensures clean state.
+
+**Proper fix (future):** Either save timer states in `SaveDataDream1` so the wipe clears them, or explicitly reset all timer fields on prestige.
 
 ---
 
@@ -576,18 +616,165 @@ Oracle.cs:3523: `workerBoostAcivator` missing 't'
 
 ---
 
+## Dream1 System Issues
+
+### Bug: SpaceAgeManager Fill Bar Wrong Variable
+
+**Location:** SpaceAgeManager.cs:148-149
+
+```csharp
+factoriesFillBar.fillAmount =
+    (float)StaticMethods.FillBar(sd1.cities, _factoriesDuration, multi, _factoriesTime);
+factoriesFillText.text = StaticMethods.TimerText(sd1.cities, _factoriesDuration, multi, _factoriesTime);
+```
+
+**Issue:** Uses `sd1.cities` instead of `sd1.spaceFactories`. The fill bar checks `buildings > 0` to determine if progress should display, so this shows incorrect progress for Space Factory production.
+
+**Fix:** Change `sd1.cities` to `sd1.spaceFactories` on both lines.
+
+### Code Smell: Railgun Firing Condition Confusing
+
+**Location:** SpaceAgeManager.cs:188-191
+
+```csharp
+if (sd1.railgunCharge >= sd1.railgunMaxCharge && sd1.dysonPanels >=
+    (oracle.saveSettings.sdPrestige.doubleTimeRate >= 1 && sdp.doDoubleTime
+        ? 10 * oracle.saveSettings.sdPrestige.doubleTimeRate
+        : 10) && !_firing)
+```
+
+**Issue:** The nested ternary with `doubleTimeRate >= 1` check separate from `doDoubleTime` is confusing and error-prone.
+
+**Proposed Fix:** Extract to named method:
+```csharp
+private int GetDysonPanelsRequiredToFire()
+{
+    const int basePanelsRequired = 10;
+    if (!sdp.doDoubleTime || sdp.doubleTimeRate < 1)
+        return basePanelsRequired;
+    return basePanelsRequired * (int)sdp.doubleTimeRate;
+}
+```
+
+### Architecture: Production Timer Pattern Duplicated 13+ Times
+
+**Locations:** FoundationalEraManager.cs, InformationEraManager.cs, SpaceAgeManager.cs
+
+Every production building uses the same pattern:
+```csharp
+double multi = 1 + (sd1.xxx > 0 ? Math.Log10(sd1.xxx) : 0);
+if (sp.doDoubleTime) multi *= sp.doubleTimeRate + 1;
+// optional boosts
+if (sd1.xxx >= 1) xxxTime += Time.deltaTime * (float)multi;
+while (xxxTime >= xxxDuration)
+{
+    xxxTime -= xxxDuration;
+    // produce something
+}
+```
+
+**Impact:** ~300+ lines of duplicated code across three managers.
+
+**Fix:** Extract to reusable `ProductionTimer` utility class (Phase 7).
+
+### Architecture: Timer State Not Saved
+
+**Issue:** Local `xxxTime` fields (hunterTime, gatherTime, communityTime, housingTime, villagesTime, workersTime, citiesTime, factoriesTime, botsTime, _factoriesTime, _fireTime) are MonoBehaviour instance fields, NOT saved to `SaveDataDream1`.
+
+**Impact:**
+- Progress towards next production tick is lost on save/quit
+- Causes the double-wipe workaround necessity in prestige
+
+**Fix:** Add timer fields to `SaveDataDream1` so they persist (Phase 7).
+
+### Architecture: Research Manager Pattern Duplicated 6 Times
+
+**Location:** InformationEraManager.cs
+
+Engineering, Shipping, WorldTrade, WorldPeace, Mathematics, AdvancedPhysics all use near-identical:
+- Button click handler
+- Manager method with progress tracking
+- UI update logic
+
+**Fix:** Create data-driven research system with ScriptableObjects (Phase 6 or later).
+
+### Design Note: Bots Soft-Start Ramp-Up (NOT A BUG)
+
+**Location:** InformationEraManager.cs:390
+
+```csharp
+if (sd1.bots < 100) multi *= sd1.bots / 100;
+```
+
+This is **intentional design** creating a soft-start for rocket production:
+- Early bots feel impactful ("more bots = faster rockets")
+- Diminishing returns as you approach 100
+- After 100, Log10 scaling takes over naturally
+
+This creates smooth game feel rather than a cliff at 100. NOT a bug.
+
+---
+
 ## Refactoring Phases
 
 ### Phase Overview
 
 | Phase | Focus | Scope | Risk | Breaks Saves? |
 |-------|-------|-------|------|---------------|
+| 0 | Bug Fixes | Low | Low | No |
 | 1 | Extract Constants | Low | Low | No |
 | 2 | Create Services | Medium | Medium | No |
 | 3 | Rename Data Classes | High | Medium | Yes (migration) |
 | 4 | Rename Files | Medium | Low | No |
 | 5 | Consolidate UI Logic | Low | Low | No |
 | 6 | Data-Driven Upgrades | High | Medium | No |
+| 7 | Dream1 Architecture | High | Medium | Yes (timer save) |
+
+### Phase 0: Bug Fixes
+
+**Goal:** Fix confirmed bugs before refactoring.
+
+**Bug 1: SpaceAgeManager Fill Bar**
+
+**File:** SpaceAgeManager.cs:148-149
+
+**Current:**
+```csharp
+factoriesFillBar.fillAmount =
+    (float)StaticMethods.FillBar(sd1.cities, _factoriesDuration, multi, _factoriesTime);
+factoriesFillText.text = StaticMethods.TimerText(sd1.cities, _factoriesDuration, multi, _factoriesTime);
+```
+
+**Fixed:**
+```csharp
+factoriesFillBar.fillAmount =
+    (float)StaticMethods.FillBar(sd1.spaceFactories, _factoriesDuration, multi, _factoriesTime);
+factoriesFillText.text = StaticMethods.TimerText(sd1.spaceFactories, _factoriesDuration, multi, _factoriesTime);
+```
+
+**Bug 2: Railgun Firing Condition Cleanup**
+
+**File:** SpaceAgeManager.cs:188-196
+
+Extract confusing condition to named method:
+```csharp
+private int GetDysonPanelsRequiredToFire()
+{
+    const int basePanelsRequired = 10;
+    if (!sdp.doDoubleTime || sdp.doubleTimeRate < 1)
+        return basePanelsRequired;
+    return basePanelsRequired * (int)sdp.doubleTimeRate;
+}
+
+// In RailgunManagement():
+int panelsRequired = GetDysonPanelsRequiredToFire();
+if (sd1.railgunCharge >= sd1.railgunMaxCharge &&
+    sd1.dysonPanels >= panelsRequired &&
+    !_firing)
+{
+    // ...
+}
+```
 
 ### Phase 1: Extract Constants
 
@@ -635,6 +822,54 @@ namespace IdleDysonSwarm.Systems.Reality
 
         // Avocado Thresholds
         public const int AvocadoLogThreshold = 10;
+    }
+}
+
+namespace IdleDysonSwarm.Systems.Dream1
+{
+    public static class Dream1Constants
+    {
+        // Foundational Era
+        public const int HunterCost = 100;
+        public const int GathererCost = 100;
+        public const int HousingToVillageRatio = 10;
+        public const int VillageToCityRatio = 25;
+
+        // Production Durations (seconds)
+        public const float HunterDuration = 3f;
+        public const float GathererDuration = 3f;
+        public const float CommunityDuration = 3f;
+        public const float HousingDuration = 20f;
+        public const float VillageDuration = 12f;
+        public const float WorkerDuration = 4f;
+        public const float CityDuration = 3f;
+        public const float FactoryDuration = 30f;
+        public const float BotDuration = 20f;
+        public const float SpaceFactoryDuration = 2f;
+
+        // Information Era Research Costs
+        public const int EngineeringCost = 1000;
+        public const int ShippingCost = 5000;
+        public const int WorldTradeCost = 7000;
+        public const int WorldPeaceCost = 8000;
+        public const int MathematicsCost = 10000;
+        public const int AdvancedPhysicsCost = 11000;
+
+        // Space Age
+        public const int SolarCost = 50;
+        public const int FusionCost = 100000;
+        public const int RailgunMaxCharge = 25000000;
+        public const int RailgunBasePanelsRequired = 10;
+        public const int DysonPanelCap = 1000;
+        public const int RocketsPerSpaceFactory = 10;
+
+        // Disaster Counter Measure Costs (Strange Matter)
+        public const int CounterMeteorCost = 4;
+        public const int CounterAiCost = 42;
+        public const int CounterGwCost = 128;
+
+        // Bots Soft-Start Threshold (intentional design)
+        public const int BotsSoftStartThreshold = 100;
     }
 }
 ```
@@ -848,6 +1083,95 @@ public class QuantumData
 
 This is a larger undertaking that could be part of a broader data-driven overhaul. Defer until after core refactor is stable.
 
+### Phase 7: Dream1 Architecture Improvements
+
+**Goal:** Reduce code duplication and improve state management in Dream1 system.
+
+#### 7.1 Extract ProductionTimer Utility
+
+Create reusable production timer class:
+
+**New File:** `Assets/Scripts/Systems/Dream1/ProductionTimer.cs`
+
+```csharp
+namespace IdleDysonSwarm.Systems.Dream1
+{
+    [Serializable]
+    public class ProductionTimer
+    {
+        public double currentTime;
+        public double duration;
+
+        /// <summary>
+        /// Updates timer and returns number of items produced.
+        /// </summary>
+        public int Update(double sourceCount, double baseMultiplier, float deltaTime)
+        {
+            if (sourceCount < 1) return 0;
+
+            double multi = 1 + Math.Log10(sourceCount);
+            multi *= baseMultiplier;
+
+            currentTime += deltaTime * multi;
+
+            int produced = 0;
+            while (currentTime >= duration)
+            {
+                currentTime -= duration;
+                produced++;
+            }
+            return produced;
+        }
+
+        public float FillAmount => (float)(currentTime / duration);
+        public float TimeRemaining(double multi) => (float)((duration - currentTime) / multi);
+    }
+}
+```
+
+#### 7.2 Save Timer State
+
+Add timer fields to `SaveDataDream1`:
+
+```csharp
+// Add to SaveDataDream1
+public ProductionTimer hunterTimer = new() { duration = 3 };
+public ProductionTimer gathererTimer = new() { duration = 3 };
+public ProductionTimer communityTimer = new() { duration = 3 };
+public ProductionTimer housingTimer = new() { duration = 20 };
+public ProductionTimer villagesTimer = new() { duration = 12 };
+public ProductionTimer workersTimer = new() { duration = 4 };
+public ProductionTimer citiesTimer = new() { duration = 3 };
+public ProductionTimer factoriesTimer = new() { duration = 30 };
+public ProductionTimer botsTimer = new() { duration = 20 };
+public ProductionTimer spaceFactoriesTimer = new() { duration = 2 };
+```
+
+**Benefits:**
+- Timer progress persists across save/quit
+- Eliminates need for double-wipe workaround in prestige
+- Reduces code duplication significantly
+
+#### 7.3 Research System Data-Driven (Optional)
+
+Create research definition ScriptableObject:
+
+```csharp
+[CreateAssetMenu(fileName = "NewResearch", menuName = "Dream1/Research Definition")]
+public class Dream1ResearchDefinition : ScriptableObject
+{
+    public string displayName;
+    public long influenceCost;
+    public float researchDuration;
+    public Dream1ResearchDefinition[] prerequisites;
+    public UnityEvent onComplete;
+}
+```
+
+This would allow moving all 6 research definitions out of code and into assets.
+
+**Note:** Phase 7 requires careful save migration since timer state structure changes.
+
 ---
 
 ## Editor Scripts Required
@@ -1032,9 +1356,9 @@ namespace IdleDysonSwarm.Editor
 ### Recommended Sequence
 
 ```
-Phase 1 (Constants)          [Low risk, foundation]
+Phase 0 (Bug Fixes)          [Critical correctness - do first]
          ↓
-    Bug Fixes                [Critical correctness]
+Phase 1 (Constants)          [Low risk, foundation]
          ↓
 Phase 2 (Services)           [Enables testing]
          ↓
@@ -1045,15 +1369,19 @@ Phase 5 (UI Consolidation)   [Quick wins]
 Phase 3 (Data Renames)       [Requires migration]
          ↓
 Phase 6 (Data-Driven)        [Optional, larger scope]
+         ↓
+Phase 7 (Dream1 Architecture) [Timer state, code dedup]
 ```
 
 ### Dependencies
 
+- Phase 0 has no dependencies (pure bug fixes)
 - Phase 2 depends on Phase 1 (services use constants)
 - Phase 3 depends on Phase 2 (services abstract data access)
 - Phase 4 can happen anytime after Phase 1
 - Phase 5 depends on Phase 2 (uses service properties)
 - Phase 6 depends on all previous phases
+- Phase 7 can be done independently but benefits from Phase 1 constants
 
 ---
 
@@ -1063,7 +1391,7 @@ Phase 6 (Data-Driven)        [Optional, larger scope]
 
 | File | Phases | Changes |
 |------|--------|---------|
-| Oracle.cs | 3 | Rename PrestigePlus→QuantumData, SaveData→InfluenceSystemData, Extract AvocadoData |
+| Oracle.cs | 3,7 | Rename PrestigePlus→QuantumData, SaveData→InfluenceSystemData, Extract AvocadoData, Add timer fields |
 | InceptionController.cs | 1,2,4 | Constants, service injection, rename to WorkerController |
 | PrestigePlusUpdater.cs | 1,2,4 | Constants, service injection, rename to QuantumUpgradeUI |
 | RealityPanelManager.cs | 1,2,5 | Constants, service injection, conditions |
@@ -1072,6 +1400,11 @@ Phase 6 (Data-Driven)        [Optional, larger scope]
 | ModifierSystem.cs | 1,3 | Constants for Avocado threshold, use AvocadoData |
 | PrestigeThresholdCondition.cs | 3 | Update enum names |
 | WorkerCountCondition.cs | 2 | Service injection |
+| SpaceAgeManager.cs | 0,1,7 | Bug fix (fill bar), constants, ProductionTimer |
+| InformationEraManager.cs | 1,7 | Constants, ProductionTimer |
+| FoundationalEraManager.cs | 1,7 | Constants, ProductionTimer |
+| SimulationPrestigeManager.cs | 7 | Remove double-wipe after timer state saved |
+| ResearchManager.cs | 1 | Constants for counter measure costs |
 
 ### New Files to Create
 
@@ -1079,6 +1412,7 @@ Phase 6 (Data-Driven)        [Optional, larger scope]
 |------|-------|---------|
 | QuantumConstants.cs | 1 | Quantum system constants |
 | RealityConstants.cs | 1 | Reality system constants |
+| Dream1Constants.cs | 1 | Dream1 system constants |
 | AvocadoConstants.cs | 1 | Avocado system constants (Log threshold) |
 | IQuantumService.cs | 2 | Quantum service interface |
 | QuantumService.cs | 2 | Quantum service implementation |
@@ -1091,6 +1425,8 @@ Phase 6 (Data-Driven)        [Optional, larger scope]
 | ConstantMigrationValidator.cs | 1 | Editor: Validate constants |
 | SaveCompatibilityTester.cs | 3 | Editor: Test save migration |
 | ServiceRegistrationValidator.cs | 2 | Editor: Validate services |
+| ProductionTimer.cs | 7 | Reusable production timer utility |
+| Dream1TimerMigration.cs | 7 | Migration: Add timer state to SaveDataDream1 |
 
 ---
 
@@ -1151,7 +1487,37 @@ Phase 6 (Data-Driven)        [Optional, larger scope]
 | ModifierSystem.cs | 572 | `>= 10` |
 | ModifierSystem.cs | 574 | `>= 10` |
 
+### Dream1 Magic Numbers
+
+#### Production Durations
+| Value | Meaning | File | Line |
+|-------|---------|------|------|
+| 3 | Hunter/Gatherer/Community/City duration | FoundationalEraManager.cs | 16,24,34,60 |
+| 20 | Housing duration | FoundationalEraManager.cs | 41 |
+| 12 | Village duration | FoundationalEraManager.cs | 48 |
+| 4 | Worker duration | FoundationalEraManager.cs | 54 |
+| 30 | Factory duration | InformationEraManager.cs | 160 |
+| 20 | Bot duration | InformationEraManager.cs | 166 |
+| 2 | Space Factory duration | SpaceAgeManager.cs | 71 |
+
+#### Ratios and Thresholds
+| Value | Meaning | File | Line |
+|-------|---------|------|------|
+| 10 | Housing → Village ratio | FoundationalEraManager.cs | 97 |
+| 25 | Village → City ratio | FoundationalEraManager.cs | 111 |
+| 10 | Rockets → Space Factory | InformationEraManager.cs | ~419 |
+| 100 | Bots soft-start threshold | InformationEraManager.cs | 390 |
+| 1000 | Dyson Panel inventory cap | SpaceAgeManager.cs | 143,157 |
+| 25000000 | Railgun max charge | Oracle.cs (SaveDataDream1) |
+
+#### Counter Measure Costs (Strange Matter)
+| Value | Meaning | File | Line |
+|-------|---------|------|------|
+| 4 | Counter Meteor cost | ResearchManager.cs | ~20 |
+| 42 | Counter AI cost | ResearchManager.cs | ~21 |
+| 128 | Counter Global Warming cost | ResearchManager.cs | ~22 |
+
 ---
 
-**Document Status:** Planning Complete - Ready for Phase 1 Implementation
-**Next Step:** User approval → Begin Phase 1 (Extract Constants)
+**Document Status:** Planning Complete - Ready for Phase 0 Implementation
+**Next Step:** User approval → Begin Phase 0 (Bug Fixes)
