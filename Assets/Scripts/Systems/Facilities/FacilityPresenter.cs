@@ -11,6 +11,16 @@ namespace Systems.Facilities
 
         private void Start()
         {
+            // Auto-find breakdown button if not assigned in inspector
+            if (breakdownButton == null)
+            {
+                var buttonTransform = transform.Find("Container/Content/Right/Button_Right/BreakdownButton");
+                if (buttonTransform != null)
+                {
+                    breakdownButton = buttonTransform.GetComponent<Button>();
+                }
+            }
+
             if (breakdownButton != null)
             {
                 breakdownButton.onClick.AddListener(ShowBreakdown);
