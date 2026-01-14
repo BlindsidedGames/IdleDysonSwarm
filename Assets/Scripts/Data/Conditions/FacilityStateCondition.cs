@@ -56,7 +56,7 @@ namespace IdleDysonSwarm.Data.Conditions
         /// <summary>
         /// Evaluate with facility state context.
         /// </summary>
-        public bool EvaluateWithState(EffectContext context, FacilityState state)
+        public override bool EvaluateWithState(EffectContext context, FacilityState state)
         {
             if (state == null)
                 return false;
