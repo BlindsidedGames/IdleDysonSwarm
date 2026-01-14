@@ -145,8 +145,8 @@ public class SpaceAgeManager : MonoBehaviour
             if (sd1.spaceFactories >= 1) _factoriesTime += Time.deltaTime * (float)multi;
 
             factoriesFillBar.fillAmount =
-                (float)StaticMethods.FillBar(sd1.cities, _factoriesDuration, multi, _factoriesTime);
-            factoriesFillText.text = StaticMethods.TimerText(sd1.cities, _factoriesDuration, multi, _factoriesTime);
+                (float)StaticMethods.FillBar(sd1.spaceFactories, _factoriesDuration, multi, _factoriesTime);
+            factoriesFillText.text = StaticMethods.TimerText(sd1.spaceFactories, _factoriesDuration, multi, _factoriesTime);
 
             while (_factoriesTime >= _factoriesDuration)
             {
@@ -162,7 +162,7 @@ public class SpaceAgeManager : MonoBehaviour
             factoriesInventoryFillBar.fillAmount = 1;
             factoriesInventoryBarText.text = $"{sd1.dysonPanels}/1000";
             factoriesFillBar.fillAmount = 1;
-            factoriesFillText.text = StaticMethods.TimerText(sd1.cities, _factoriesDuration, multi, _factoriesTime);
+            factoriesFillText.text = StaticMethods.TimerText(sd1.spaceFactories, _factoriesDuration, multi, _factoriesTime);
         }
     }
 
@@ -185,10 +185,10 @@ public class SpaceAgeManager : MonoBehaviour
             }
         }
 
-        if (sd1.railgunCharge >= sd1.railgunMaxCharge && sd1.dysonPanels >=
-            (oracle.saveSettings.sdPrestige.doubleTimeRate >= 1 && sdp.doDoubleTime
-                ? 10 * oracle.saveSettings.sdPrestige.doubleTimeRate
-                : 10) && !_firing)
+        int panelsRequired = GetDysonPanelsRequiredToFire();
+        if (sd1.railgunCharge >= sd1.railgunMaxCharge &&
+            sd1.dysonPanels >= panelsRequired &&
+            !_firing)
         {
             _firing = true;
             _fireTime = 0;
@@ -228,6 +228,14 @@ public class SpaceAgeManager : MonoBehaviour
         if (sd1.railgunCharge < sd1.railgunMaxCharge / 10f || _fireTimes <= 0) _firing = false;
 
         railgunsFillBar.fillAmount = fill;
+    }
+
+    private int GetDysonPanelsRequiredToFire()
+    {
+        const int basePanelsRequired = 10;
+        if (!sdp.doDoubleTime || sdp.doubleTimeRate < 1)
+            return basePanelsRequired;
+        return basePanelsRequired * (int)sdp.doubleTimeRate;
     }
 
     #endregion
