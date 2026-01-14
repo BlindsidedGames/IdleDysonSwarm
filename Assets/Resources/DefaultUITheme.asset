@@ -1,0 +1,25 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e12928f340f48d54ca628b20a4fc45e5, type: 3}
+  m_Name: DefaultUITheme
+  m_EditorClassIdentifier:
+  accentColor: {r: 1, g: 0.643, b: 0.369, a: 1}
+  highlightColor: {r: 0, g: 0.882, b: 1, a: 1}
+  positiveColor: {r: 0.569, g: 0.867, b: 0.561, a: 1}
+  warningColor: {r: 1, g: 0.922, b: 0.231, a: 1}
+  negativeColor: {r: 1, g: 0.341, b: 0.341, a: 1}
+  panelBackground: {r: 0.1, g: 0.1, b: 0.15, a: 0.95}
+  borderColor: {r: 0.3, g: 0.3, b: 0.4, a: 1}
+  buttonNormal: {r: 0.2, g: 0.2, b: 0.3, a: 1}
+  buttonHighlighted: {r: 0.3, g: 0.3, b: 0.4, a: 1}
+  buttonPressed: {r: 0.15, g: 0.15, b: 0.2, a: 1}
+  buttonDisabled: {r: 0.15, g: 0.15, b: 0.2, a: 0.5}
