@@ -14,7 +14,8 @@
       "Bash(curl:*)",
       "Bash(git pull:*)",
       "Bash(grep:*)",
-      "Bash(gh pr create:*)"
+      "Bash(gh pr create:*)",
+      "mcp__UnityMCP__manage_editor"
     ]
   }
 }
