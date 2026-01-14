@@ -1,163 +1,49 @@
-using System;
-using Systems;
-using TMPro;
-using Unity.Mathematics;
 using UnityEngine;
-using UnityEngine.SceneManagement;
-using UnityEngine.UI;
-using Blindsided.Utilities;
-using static Expansion.Oracle;
 
+/// <summary>
+/// Coordinator for side panel managers. Provides backward-compatible access
+/// to panel toggle GameObjects for DebugOptions and Oracle references.
+/// </summary>
+/// <remarks>
+/// The actual panel logic has been split into:
+/// - InfinityPanelManager: Handles Infinity tab UI
+/// - PrestigePanelManager: Handles Prestige/Quantum tab UI
+/// - RealityPanelManager: Handles Reality tab UI
+/// - OfflineTimeFillBar: Handles offline time display
+/// </remarks>
 public class SidePanelManager : MonoBehaviour
 {
-    private DysonVerseInfinityData infinityData => oracle.saveSettings.dysonVerseSaveData.dysonVerseInfinityData;
-    private DysonVersePrestigeData prestigeData => oracle.saveSettings.dysonVerseSaveData.dysonVersePrestigeData;
-    private SaveDataPrestige sdp => oracle.saveSettings.sdPrestige;
-    private PrestigePlus prestigePlus => oracle.saveSettings.prestigePlus;
+    [Header("Panel Managers")]
+    [SerializeField] private InfinityPanelManager _infinityPanelManager;
+    [SerializeField] private PrestigePanelManager _prestigePanelManager;
+    [SerializeField] private RealityPanelManager _realityPanelManager;
 
-    [Header("Infinity"), SerializeField] private SlicedFilledImage InfinityFill;
-    [SerializeField] public GameObject InfinityToggle;
-    [SerializeField] public GameObject InfinityImage;
-    [SerializeField] public TMP_Text InfinityText;
-    [SerializeField] public Button InfinityMenubutton;
+    /// <summary>
+    /// Backward-compatible accessor for DebugOptions and Oracle.
+    /// </summary>
+    public GameObject InfinityToggle => _infinityPanelManager.InfinityToggle;
 
-    [Header("Infinity"), SerializeField] private SlicedFilledImage PrestigeFill;
-    [SerializeField] public GameObject prestige;
-    [SerializeField] public GameObject PrestigeToggle;
-    [SerializeField] public GameObject PrestigeImage;
-    [SerializeField] public TMP_Text PrestigeText;
-    [SerializeField] public Button PrestigeMenubutton;
+    /// <summary>
+    /// Backward-compatible accessor for DebugOptions and Oracle.
+    /// </summary>
+    public GameObject PrestigeToggle => _prestigePanelManager.PrestigeToggle;
 
-    [Header("Reality"), SerializeField] private SlicedFilledImage RealityUnlockfill;
-    [SerializeField] public GameObject realityFillBar;
-    [SerializeField] public GameObject realityFillBarWorkers;
-    [SerializeField] public GameObject reality;
-    [SerializeField] public GameObject realityToggle;
-    [SerializeField] public GameObject realityImage;
-    [SerializeField] public TMP_Text realityText;
-    [SerializeField] public Button realityMenuButton;
-    [SerializeField] public GameObject simulations;
-    [SerializeField] public GameObject simulationsToggle;
+    /// <summary>
+    /// Backward-compatible accessor for DebugOptions.
+    /// Note: lowercase 'r' to match original field name.
+    /// </summary>
+    public GameObject realityToggle => _realityPanelManager.RealityToggle;
 
-    [Header("OfflineTime"), SerializeField]
-    private SlicedFilledImage OfflineTimeFillBar;
-
-    private double percent;
+    /// <summary>
+    /// Backward-compatible accessor for DebugOptions.
+    /// </summary>
+    public GameObject simulationsToggle => _realityPanelManager.SimulationsToggle;
 
     private void Update()
     {
-        HandlePrestige();
-        HandleInfinity();
-        HandleReality();
-        #if UNITY_IOS || UNITY_ANDROID
+#if UNITY_IOS || UNITY_ANDROID
         if (Input.GetKeyDown(KeyCode.Escape))
             gameObject.SetActive(false);
-        #endif
-        OfflineTimeFillBar.fillAmount = (float)(oracle.saveSettings.offlineTime / oracle.saveSettings.maxOfflineTime);
-    }
-
-    private void HandleReality()
-    {
-        bool show = oracle.saveSettings.prestigePlus.points >= 1 || prestigeData.infinityPoints >= 1 ||
-                    oracle.saveSettings.unlockAllTabs;
-        reality.SetActive(show);
-        if (!show) return;
-        bool unlocked = oracle.saveSettings.prestigePlus.points >= 1 || prestigeData.secretsOfTheUniverse >= 27 ||
-                        oracle.saveSettings.unlockAllTabs;
-        realityImage.SetActive(unlocked);
-        realityToggle.SetActive(unlocked && SceneManager.GetActiveScene().buildIndex == 1);
-        simulations.SetActive(unlocked);
-        realityMenuButton.interactable = unlocked;
-        realityText.text = oracle.saveSettings.realityFirstRun
-            ? "Reality"
-            : "<align=\"center\"><sprite=4 color=#CCC2C5>";
-
-        switch (unlocked)
-        {
-            case true:
-            {
-                realityFillBar.SetActive(false);
-                realityFillBarWorkers.SetActive(true);
-            }
-                break;
-            case false:
-            {
-                realityFillBar.SetActive(true);
-                realityFillBarWorkers.SetActive(false);
-                RealityUnlockfill.fillAmount = (float)prestigeData.secretsOfTheUniverse / 27;
-            }
-                break;
-        }
-
-
-        if (!unlocked || oracle.saveSettings.realityFirstRun) return;
-        oracle.saveSettings.realityFirstRun = true;
-        realityToggle.GetComponent<Toggle>().isOn = false;
-        simulationsToggle.GetComponent<Toggle>().isOn = false;
-    }
-
-    private void HandlePrestige()
-    {
-        bool show = oracle.saveSettings.prestigePlus.points >= 1 || prestigeData.infinityPoints >= 1 ||
-                    oracle.saveSettings.unlockAllTabs;
-        prestige.SetActive(show);
-        if (!show) return;
-        bool unlocked = oracle.saveSettings.prestigePlus.points >= 1 || prestigeData.infinityPoints >= 42 ||
-                        oracle.saveSettings.unlockAllTabs;
-        PrestigeImage.SetActive(unlocked);
-        PrestigeToggle.SetActive(unlocked && SceneManager.GetActiveScene().buildIndex == 1);
-        PrestigeMenubutton.interactable = unlocked;
-        PrestigeText.text = oracle.saveSettings.prestigeFirstRun
-            ? "Quantum"
-            : "<align=\"center\"><sprite=4 color=#C8B3FF>";
-        PrestigeFill.fillAmount = (float)prestigeData.infinityPoints / 42;
-
-        if (!unlocked || oracle.saveSettings.prestigeFirstRun) return;
-        oracle.saveSettings.prestigeFirstRun = true;
-        PrestigeToggle.GetComponent<Toggle>().isOn = false;
-    }
-
-    private void HandleInfinity()
-    {
-        bool autoPrestige = !prestigePlus.breakTheLoop;
-        double amount = prestigePlus.divisionsPurchased > 0 ? 4.2e19 / Math.Pow(10, prestigePlus.divisionsPurchased) : 4.2e19;
-        bool unlocked = prestigeData.infinityPoints >= 1 || oracle.saveSettings.prestigePlus.points >= 1 ||
-                        oracle.saveSettings.unlockAllTabs;
-        InfinityImage.SetActive(unlocked);
-        InfinityToggle.SetActive(unlocked && SceneManager.GetActiveScene().buildIndex == 1);
-        InfinityMenubutton.interactable = unlocked;
-        int ipToGain = StaticMethods.InfinityPointsToGain(amount, infinityData.bots);
-        InfinityText.text = oracle.saveSettings.infinityFirstRunDone
-            ? !autoPrestige
-                ? $"Infinity <size=70%>+{(prestigePlus.doubleIP ? ipToGain * 2 : ipToGain)}"
-                : "Infinity"
-            : "<align=\"center\"><sprite=4 color=#C8B3FF>";
-
-
-        if (autoPrestige)
-        {
-            percent = math.log10(infinityData.bots) / math.log10(amount);
-            if (infinityData.bots < 1) percent = 0;
-            InfinityFill.fillAmount = (float)percent;
-        }
-        else
-        {
-            double amountForNextPoint =
-                BuyMultiple.BuyX(StaticMethods.InfinityPointsToGain(amount, infinityData.bots) + 1, amount,
-                    oracle.infinityExponent, 0);
-
-            percent = (infinityData.bots -
-                       BuyMultiple.BuyX(StaticMethods.InfinityPointsToGain(amount, infinityData.bots), amount,
-                           oracle.infinityExponent, 0)) /
-                      (amountForNextPoint - BuyMultiple.BuyX(StaticMethods.InfinityPointsToGain(amount, infinityData.bots),
-                          amount, oracle.infinityExponent, 0));
-            if (infinityData.bots < 1) percent = 0;
-            InfinityFill.fillAmount = (float)percent;
-        }
-
-        if (!unlocked || oracle.saveSettings.infinityFirstRunDone) return;
-        oracle.saveSettings.infinityFirstRunDone = true;
-        InfinityToggle.GetComponent<Toggle>().isOn = false;
+#endif
     }
 }
-
