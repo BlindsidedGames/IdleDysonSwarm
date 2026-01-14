@@ -101,7 +101,8 @@ The systems are connected: Quantum Points → Influence Speed → Influence Curr
                      ▼                                 ▼
 ┌─────────────────────────────┐       ┌─────────────────────────────────────┐
 │      AVOCADO SYSTEM         │       │    REALITY SYSTEM - DREAM1          │
-│   (Global Multiplier)       │       │    (SaveDataDream1, SaveDataPrestige)│
+│      (AvocadoData)          │       │    (SaveDataDream1, SaveDataPrestige)│
+│   Cross-System Aggregator   │       │                                      │
 ├─────────────────────────────┤       ├─────────────────────────────────────┤
 │  Consumes:                  │       │  Foundational Era:                   │
 │  • Infinity Points          │       │    Hunters/Gatherers → Community    │
@@ -112,8 +113,8 @@ The systems are connected: Quantum Points → Influence Speed → Influence Curr
 │  • Log10(x) multiplier      │       │                                      │
 │  • Applied to all facilities│       │  Space Age:                          │
 │                             │       │    Solar → Space Factories → Railgun│
-└─────────────────────────────┘       │                                      │
-                                      │  Prestige: Disasters → Strange Matter│
+│  Unlocked via: 42 Quantum   │       │                                      │
+└─────────────────────────────┘       │  Prestige: Disasters → Strange Matter│
                                       └─────────────────────────────────────┘
 ```
 
@@ -132,7 +133,13 @@ The systems are connected: Quantum Points → Influence Speed → Influence Curr
 | Oracle.cs | `Expansion/` | `SaveData` class (lines 3453-3465) |
 | InceptionController.cs | `Expansion/` | Worker generation & influence conversion |
 | RealityPanelManager.cs | `User Interface/` | Reality tab visibility and unlock |
-| AvocadoFeeder.cs | `Systems/Avocado/` | Influence → Avocado consumption |
+
+#### Avocado System (Cross-System Aggregator)
+| File | Path | Purpose |
+|------|------|---------|
+| Oracle.cs | `Expansion/` | `AvocadoData` class (NEW - extracted from PrestigePlus) |
+| AvocadoFeeder.cs | `Systems/Avocado/` | Feeds IP, Influence, Strange Matter into Avocado |
+| ModifierSystem.cs | `Systems/` | Calculates GlobalBuff from Avocado accumulators |
 
 #### Reality System - Dream1 Simulation
 | File | Path | Purpose |
@@ -181,7 +188,7 @@ public class PrestigePlus  // RENAME TO: QuantumData
     // Premium Unlocks
     public bool breakTheLoop;        // Cost: 6 - DysonVerse upgrade
     public bool quantumEntanglement; // Cost: 12 - Auto-prestige at 42 IP
-    public bool avocatoPurchased;    // Cost: 42 - Unlocks Avocado system
+    public bool avocatoPurchased;    // Cost: 42 - Unlocks Avocado system (MOVE TO: AvocadoData)
 
     // Fragment System (DysonVerse upgrades, cost varies)
     public bool fragments;  // 2
@@ -191,13 +198,47 @@ public class PrestigePlus  // RENAME TO: QuantumData
     public bool paragade;   // 1
     public bool stellar;    // 4
 
-    // Avocado Accumulators (fed from other systems)
-    public double avocatoIP;
-    public double avocatoInfluence;
-    public double avocatoStrangeMatter;
-    public double avocatoOverflow;
+    // EXTRACT TO: AvocadoData (cross-system aggregator)
+    // public double avocatoIP;
+    // public double avocatoInfluence;
+    // public double avocatoStrangeMatter;
+    // public double avocatoOverflow;
 }
 ```
+
+### New Data Structure: AvocadoData
+
+**Extracted from:** `PrestigePlus` (currently nested in QuantumData)
+
+Avocado is a cross-system aggregator that consumes resources from Infinity, Reality, and Dream1 to produce a global multiplier. It deserves its own data structure.
+
+```csharp
+[Serializable]
+public class AvocadoData
+{
+    // Unlock State (migrated from PrestigePlus.avocatoPurchased)
+    public bool unlocked;
+
+    // Accumulated Resources (fed from multiple systems)
+    public double infinityPoints;      // Fed from DysonVersePrestigeData
+    public double influence;           // Fed from InfluenceSystemData
+    public double strangeMatter;       // Fed from Dream1 (SaveDataPrestige)
+    public double overflowMultiplier;  // Bonus multiplier
+
+    // Calculated at runtime (not saved)
+    // GlobalBuff = Log10(IP) × Log10(Influence) × Log10(StrangeMatter) × (1 + Overflow)
+}
+```
+
+**Migration Required:** Fields move from `PrestigePlus` to new `AvocadoData`:
+
+| Old Location | New Location |
+|--------------|--------------|
+| `prestigePlus.avocatoPurchased` | `avocadoData.unlocked` |
+| `prestigePlus.avocatoIP` | `avocadoData.infinityPoints` |
+| `prestigePlus.avocatoInfluence` | `avocadoData.influence` |
+| `prestigePlus.avocatoStrangeMatter` | `avocadoData.strangeMatter` |
+| `prestigePlus.avocatoOverflow` | `avocadoData.overflowMultiplier` |
 
 ### Quantum Leap Conversion
 
@@ -663,19 +704,50 @@ namespace IdleDysonSwarm.Services
         // Events
         event Action<long> OnInfluenceGathered;
     }
+
+    public interface IAvocadoService
+    {
+        // State
+        bool IsUnlocked { get; }
+        double AccumulatedIP { get; }
+        double AccumulatedInfluence { get; }
+        double AccumulatedStrangeMatter { get; }
+        double OverflowMultiplier { get; }
+
+        // Calculations
+        double GlobalBuff { get; }
+        bool HasMinimumIP { get; }         // >= 10 for log calculation
+        bool HasMinimumInfluence { get; }  // >= 10 for log calculation
+        bool HasMinimumStrangeMatter { get; }  // >= 10 for log calculation
+
+        // Actions
+        void FeedIP(double amount);
+        void FeedInfluence(long amount);
+        void FeedStrangeMatter(double amount);
+        void AddOverflow(double amount);
+
+        // Events
+        event Action<double> OnGlobalBuffChanged;
+        event Action OnFed;
+    }
 }
 ```
 
-### Phase 3: Rename Data Classes
+### Phase 3: Rename Data Classes & Extract AvocadoData
 
-**Goal:** Clear, unambiguous names for data structures.
+**Goal:** Clear, unambiguous names for data structures; extract cross-system Avocado data.
 
-**Requires Save Migration** using `[JsonProperty]` attributes.
+**Requires Save Migration** using `[JsonProperty]` attributes and a migration script.
+
+#### Class Renames
 
 | Current Class | New Class | Location |
 |---------------|-----------|----------|
 | `PrestigePlus` | `QuantumData` | Oracle.cs |
 | `SaveData` | `InfluenceSystemData` | Oracle.cs |
+| *(new)* | `AvocadoData` | Oracle.cs |
+
+#### Field Renames
 
 | Current Field | New Field | Class |
 |---------------|-----------|-------|
@@ -683,7 +755,54 @@ namespace IdleDysonSwarm.Services
 | `SaveData.influence` | `InfluenceSystemData.influenceBalance` | InfluenceSystemData |
 | `SaveData.workerAutoConvert` | `InfluenceSystemData.autoGatherInfluence` | InfluenceSystemData |
 
-**Migration Pattern:**
+#### Avocado Extraction (Requires Migration Script)
+
+| Current Field | New Field | New Class |
+|---------------|-----------|-----------|
+| `PrestigePlus.avocatoPurchased` | `AvocadoData.unlocked` | AvocadoData |
+| `PrestigePlus.avocatoIP` | `AvocadoData.infinityPoints` | AvocadoData |
+| `PrestigePlus.avocatoInfluence` | `AvocadoData.influence` | AvocadoData |
+| `PrestigePlus.avocatoStrangeMatter` | `AvocadoData.strangeMatter` | AvocadoData |
+| `PrestigePlus.avocatoOverflow` | `AvocadoData.overflowMultiplier` | AvocadoData |
+
+**Migration Script Required:** `AvocadoDataMigration.cs`
+
+This migration must:
+1. Check if old `prestigePlus.avocato*` fields exist in save
+2. Copy values to new `avocadoData.*` fields
+3. Preserve all accumulated progress (IP, Influence, Strange Matter, Overflow)
+4. Migrate `avocatoPurchased` → `unlocked`
+
+```csharp
+// Migration example (Version 5)
+public class AvocadoDataMigration : IMigration
+{
+    public int Version => 5;
+
+    public void Migrate(SaveDataSettings settings)
+    {
+        // Create new AvocadoData if not exists
+        settings.avocadoData ??= new AvocadoData();
+
+        // Migrate from old PrestigePlus fields
+        var pp = settings.prestigePlus;
+        settings.avocadoData.unlocked = pp.avocatoPurchased;
+        settings.avocadoData.infinityPoints = pp.avocatoIP;
+        settings.avocadoData.influence = pp.avocatoInfluence;
+        settings.avocadoData.strangeMatter = pp.avocatoStrangeMatter;
+        settings.avocadoData.overflowMultiplier = pp.avocatoOverflow;
+
+        // Zero out old fields (optional, for cleanliness)
+        pp.avocatoIP = 0;
+        pp.avocatoInfluence = 0;
+        pp.avocatoStrangeMatter = 0;
+        pp.avocatoOverflow = 0;
+    }
+}
+```
+
+**JSON Compatibility:** For backwards compatibility with saves created before migration:
+
 ```csharp
 [Serializable]
 public class QuantumData
@@ -693,6 +812,11 @@ public class QuantumData
 
     [JsonProperty("influence")]  // Old name for compatibility
     public long influenceSpeedLevel;
+
+    // Legacy fields - kept for loading old saves, migration copies to AvocadoData
+    [JsonProperty("avocatoPurchased")]
+    [Obsolete("Use AvocadoData.unlocked - migrated in v5")]
+    public bool _legacyAvocatoPurchased;
 
     // ... etc
 }
@@ -939,13 +1063,13 @@ Phase 6 (Data-Driven)        [Optional, larger scope]
 
 | File | Phases | Changes |
 |------|--------|---------|
-| Oracle.cs | 3 | Rename PrestigePlus→QuantumData, SaveData→InfluenceSystemData |
+| Oracle.cs | 3 | Rename PrestigePlus→QuantumData, SaveData→InfluenceSystemData, Extract AvocadoData |
 | InceptionController.cs | 1,2,4 | Constants, service injection, rename to WorkerController |
 | PrestigePlusUpdater.cs | 1,2,4 | Constants, service injection, rename to QuantumUpgradeUI |
 | RealityPanelManager.cs | 1,2,5 | Constants, service injection, conditions |
 | ToRealityFillbar.cs | 1,2,4 | Constants, service injection, rename to QuantumProgressBar |
-| AvocadoFeeder.cs | 1,2 | Constants, service injection |
-| ModifierSystem.cs | 1 | Constants for Avocado threshold |
+| AvocadoFeeder.cs | 1,2,3 | Constants, service injection, use AvocadoData |
+| ModifierSystem.cs | 1,3 | Constants for Avocado threshold, use AvocadoData |
 | PrestigeThresholdCondition.cs | 3 | Update enum names |
 | WorkerCountCondition.cs | 2 | Service injection |
 
@@ -955,10 +1079,14 @@ Phase 6 (Data-Driven)        [Optional, larger scope]
 |------|-------|---------|
 | QuantumConstants.cs | 1 | Quantum system constants |
 | RealityConstants.cs | 1 | Reality system constants |
+| AvocadoConstants.cs | 1 | Avocado system constants (Log threshold) |
 | IQuantumService.cs | 2 | Quantum service interface |
 | QuantumService.cs | 2 | Quantum service implementation |
 | IWorkerService.cs | 2 | Worker service interface |
 | WorkerService.cs | 2 | Worker service implementation |
+| IAvocadoService.cs | 2 | Avocado service interface |
+| AvocadoService.cs | 2 | Avocado service implementation |
+| AvocadoDataMigration.cs | 3 | Migration: Extract AvocadoData from PrestigePlus |
 | ReferenceUpdaterTool.cs | 4 | Editor: Update references |
 | ConstantMigrationValidator.cs | 1 | Editor: Validate constants |
 | SaveCompatibilityTester.cs | 3 | Editor: Test save migration |
