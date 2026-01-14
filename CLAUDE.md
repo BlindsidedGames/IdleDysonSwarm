@@ -296,9 +296,22 @@ docs: Add comprehensive README for service layer
 test: Add unit tests for mock service layer
 ```
 
+### Pre-PR Code Simplification
+
+**Before creating a PR, run the `code-simplify` agent on all modified files.**
+
+The agent will:
+- Identify and remove dead code, unused variables, and redundant patterns
+- Flag over-abstraction and unnecessary complexity
+- Suggest control flow improvements
+- Report findings by confidence level
+
+This ensures PRs are clean and don't introduce unnecessary complexity.
+
 ### Before Merging to Main
 
 - [ ] Code compiles without errors
+- [ ] Code simplification agent has been run on changed files
 - [ ] Existing functionality unchanged (for refactors)
 - [ ] Save compatibility verified with existing saves
 - [ ] PR created with summary of changes
