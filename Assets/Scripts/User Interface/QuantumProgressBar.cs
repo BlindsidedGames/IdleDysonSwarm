@@ -4,7 +4,7 @@ using Blindsided.Utilities;
 using static Expansion.Oracle;
 using static IdleDysonSwarm.Systems.Constants.QuantumConstants;
 
-public class ToRealityFillbar : MonoBehaviour
+public class QuantumProgressBar : MonoBehaviour
 {
     [SerializeField] private SlicedFilledImage fill;
     [SerializeField] private TMP_Text fillText;
