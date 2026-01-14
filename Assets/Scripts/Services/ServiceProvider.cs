@@ -7,7 +7,7 @@ namespace IdleDysonSwarm.Services
     /// MonoBehaviour that registers all services with the ServiceLocator at startup.
     /// Add this component to a GameObject in your scene to enable dependency injection.
     /// </summary>
-    [DefaultExecutionOrder(-1000)] // Execute before other scripts
+    [DefaultExecutionOrder(-2000)] // Execute very early, before presenters call ServiceLocator.Get
     public sealed class ServiceProvider : MonoBehaviour
     {
         [Header("Dependencies")]
@@ -28,15 +28,17 @@ namespace IdleDysonSwarm.Services
 
         private void RegisterServices()
         {
-            // Validate dependencies
+            // Validate dependencies - use FindFirstObjectByType as fallback since
+            // GameDataRegistry.Instance may not be set yet if its Awake() hasn't run
             if (gameDataRegistry == null)
             {
-                gameDataRegistry = GameDataRegistry.Instance;
+                gameDataRegistry = FindFirstObjectByType<GameDataRegistry>();
                 if (gameDataRegistry == null)
                 {
-                    Debug.LogError("[ServiceProvider] GameDataRegistry not found! Services will not work correctly.");
+                    Debug.LogError("[ServiceProvider] GameDataRegistry not found in scene! Services will not work correctly.");
                     return;
                 }
+                Debug.Log("[ServiceProvider] GameDataRegistry found via FindFirstObjectByType");
             }
 
             Debug.Log("[ServiceProvider] Registering services...");
