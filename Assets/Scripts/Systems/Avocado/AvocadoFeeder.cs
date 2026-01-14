@@ -1,12 +1,11 @@
 using System;
-using System.Collections;
-using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.Serialization;
 using Blindsided.Utilities;
 using static Expansion.Oracle;
+using static IdleDysonSwarm.Systems.Constants.RealityConstants;
 
 public class AvocadoFeeder : MonoBehaviour
 {
@@ -66,9 +65,9 @@ public class AvocadoFeeder : MonoBehaviour
     public void UpdateText()
     {
         gameObject.SetActive(prestigePlus.avocatoPurchased);
-        double infinityPointsMultiplier = prestigePlus.avocatoIP >= 10 ? Math.Log10(prestigePlus.avocatoIP) : 0;
-        double influenceMultiplier = prestigePlus.avocatoInfluence >= 10 ? Math.Log10(prestigePlus.avocatoInfluence) : 0;
-        double strangeMatterMultiplier = prestigePlus.avocatoStrangeMatter >= 10 ? Math.Log10(prestigePlus.avocatoStrangeMatter) : 0;
+        double infinityPointsMultiplier = prestigePlus.avocatoIP >= AvocadoLogThreshold ? Math.Log10(prestigePlus.avocatoIP) : 0;
+        double influenceMultiplier = prestigePlus.avocatoInfluence >= AvocadoLogThreshold ? Math.Log10(prestigePlus.avocatoInfluence) : 0;
+        double strangeMatterMultiplier = prestigePlus.avocatoStrangeMatter >= AvocadoLogThreshold ? Math.Log10(prestigePlus.avocatoStrangeMatter) : 0;
         double overflowMultiplier = 1 + prestigePlus.avocatoOverflow;
 
         feedInfinityPointsText.text =

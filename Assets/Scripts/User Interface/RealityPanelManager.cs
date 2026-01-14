@@ -4,6 +4,7 @@ using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 using Blindsided.Utilities;
 using static Expansion.Oracle;
+using static IdleDysonSwarm.Systems.Constants.QuantumConstants;
 
 /// <summary>
 /// Manages the Reality tab UI in the side panel.
@@ -67,7 +68,7 @@ public class RealityPanelManager : MonoBehaviour
         if (!show) return;
 
         bool unlocked = PrestigePlus.points >= 1
-            || PrestigeData.secretsOfTheUniverse >= 27
+            || PrestigeData.secretsOfTheUniverse >= MaxSecrets
             || oracle.saveSettings.unlockAllTabs;
 
         _realityImage.SetActive(unlocked);
@@ -99,7 +100,7 @@ public class RealityPanelManager : MonoBehaviour
             _realityFillBar.SetActive(true);
             _realityFillBarWorkers.SetActive(false);
             if (_realityUnlockFill != null)
-                _realityUnlockFill.fillAmount = (float)PrestigeData.secretsOfTheUniverse / 27;
+                _realityUnlockFill.fillAmount = (float)PrestigeData.secretsOfTheUniverse / MaxSecrets;
         }
     }
 

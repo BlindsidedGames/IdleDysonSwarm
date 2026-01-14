@@ -1,6 +1,7 @@
 using System;
 using Systems.Stats;
 using static Expansion.Oracle;
+using static IdleDysonSwarm.Systems.Constants.RealityConstants;
 
 namespace Systems
 {
@@ -567,11 +568,11 @@ namespace Systems
             }
             if (prestigePlus.avocatoPurchased)
             {
-                if (prestigePlus.avocatoIP >= 10)
+                if (prestigePlus.avocatoIP >= AvocadoLogThreshold)
                     multi *= Math.Log10(prestigePlus.avocatoIP);
-                if (prestigePlus.avocatoInfluence >= 10)
+                if (prestigePlus.avocatoInfluence >= AvocadoLogThreshold)
                     multi *= Math.Log10(prestigePlus.avocatoInfluence);
-                if (prestigePlus.avocatoStrangeMatter >= 10)
+                if (prestigePlus.avocatoStrangeMatter >= AvocadoLogThreshold)
                     multi *= Math.Log10(prestigePlus.avocatoStrangeMatter);
                 if (prestigePlus.avocatoOverflow >= 1)
                     multi *= 1 + prestigePlus.avocatoOverflow;
