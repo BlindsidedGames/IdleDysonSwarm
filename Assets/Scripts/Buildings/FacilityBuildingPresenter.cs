@@ -1,7 +1,8 @@
 using UnityEngine;
+using Expansion;
 using GameData;
+using IdleDysonSwarm.Services;
 using static Blindsided.Utilities.CalcUtils;
-using static Expansion.Oracle;
 
 namespace Buildings
 {
@@ -19,6 +20,15 @@ namespace Buildings
 
         [SerializeField] private FacilityType facilityType = FacilityType.Unknown;
         private FacilityDefinition cachedDefinition;
+
+        private IGameStateService _gameState;
+        private IFacilityService _facilityService;
+
+        private void Awake()
+        {
+            _gameState = ServiceLocator.Get<IGameStateService>();
+            _facilityService = ServiceLocator.Get<IFacilityService>();
+        }
 
         public string FacilityId => GetFacilityId();
 
@@ -54,42 +64,25 @@ namespace Buildings
         {
             get
             {
-                switch (facilityType)
+                string id = GetFacilityId();
+                if (string.IsNullOrEmpty(id))
                 {
-                    case FacilityType.AssemblyLines:
-                        return StaticInfinityData.assemblyLines[1];
-                    case FacilityType.AiManagers:
-                        return StaticInfinityData.managers[1];
-                    case FacilityType.Servers:
-                        return StaticInfinityData.servers[1];
-                    case FacilityType.DataCenters:
-                        return StaticInfinityData.dataCenters[1];
-                    case FacilityType.Planets:
-                        return StaticInfinityData.planets[1];
-                    default:
-                        return 0;
+                    return 0;
                 }
+
+                double[] counts = _facilityService.GetFacilityCount(id);
+                return counts[1]; // Manual count at index 1
             }
             set
             {
-                switch (facilityType)
+                string id = GetFacilityId();
+                if (string.IsNullOrEmpty(id))
                 {
-                    case FacilityType.AssemblyLines:
-                        StaticInfinityData.assemblyLines[1] = value;
-                        break;
-                    case FacilityType.AiManagers:
-                        StaticInfinityData.managers[1] = value;
-                        break;
-                    case FacilityType.Servers:
-                        StaticInfinityData.servers[1] = value;
-                        break;
-                    case FacilityType.DataCenters:
-                        StaticInfinityData.dataCenters[1] = value;
-                        break;
-                    case FacilityType.Planets:
-                        StaticInfinityData.planets[1] = value;
-                        break;
+                    return;
                 }
+
+                double[] counts = _facilityService.GetFacilityCount(id);
+                _facilityService.SetFacilityCount(id, value, counts[0]); // Keep auto count, update manual
             }
         }
 
@@ -97,42 +90,25 @@ namespace Buildings
         {
             get
             {
-                switch (facilityType)
+                string id = GetFacilityId();
+                if (string.IsNullOrEmpty(id))
                 {
-                    case FacilityType.AssemblyLines:
-                        return StaticInfinityData.assemblyLines[0];
-                    case FacilityType.AiManagers:
-                        return StaticInfinityData.managers[0];
-                    case FacilityType.Servers:
-                        return StaticInfinityData.servers[0];
-                    case FacilityType.DataCenters:
-                        return StaticInfinityData.dataCenters[0];
-                    case FacilityType.Planets:
-                        return StaticInfinityData.planets[0];
-                    default:
-                        return 0;
+                    return 0;
                 }
+
+                double[] counts = _facilityService.GetFacilityCount(id);
+                return counts[0]; // Auto count at index 0
             }
             set
             {
-                switch (facilityType)
+                string id = GetFacilityId();
+                if (string.IsNullOrEmpty(id))
                 {
-                    case FacilityType.AssemblyLines:
-                        StaticInfinityData.assemblyLines[0] = value;
-                        break;
-                    case FacilityType.AiManagers:
-                        StaticInfinityData.managers[0] = value;
-                        break;
-                    case FacilityType.Servers:
-                        StaticInfinityData.servers[0] = value;
-                        break;
-                    case FacilityType.DataCenters:
-                        StaticInfinityData.dataCenters[0] = value;
-                        break;
-                    case FacilityType.Planets:
-                        StaticInfinityData.planets[0] = value;
-                        break;
+                    return;
                 }
+
+                double[] counts = _facilityService.GetFacilityCount(id);
+                _facilityService.SetFacilityCount(id, counts[1], value); // Keep manual count, update auto
             }
         }
 
@@ -140,9 +116,10 @@ namespace Buildings
         {
             get
             {
-                if (facilityType == FacilityType.AssemblyLines && StaticSkillTreeData.assemblyMegaLines)
+                if (facilityType == FacilityType.AssemblyLines && _gameState.SkillTreeData.assemblyMegaLines)
                 {
-                    double totalPlanets = StaticInfinityData.planets[0] + StaticInfinityData.planets[1];
+                    double[] planetCounts = _facilityService.GetFacilityCount("planets");
+                    double totalPlanets = planetCounts[0] + planetCounts[1];
                     if (totalPlanets > 0)
                     {
                         return BaseCost / totalPlanets;
@@ -157,21 +134,16 @@ namespace Buildings
         {
             get
             {
-                switch (facilityType)
+                var infinityData = _gameState.InfinityData;
+                return facilityType switch
                 {
-                    case FacilityType.AssemblyLines:
-                        return StaticInfinityData.assemblyLineBotProduction;
-                    case FacilityType.AiManagers:
-                        return StaticInfinityData.managerAssemblyLineProduction;
-                    case FacilityType.Servers:
-                        return StaticInfinityData.serverManagerProduction;
-                    case FacilityType.DataCenters:
-                        return StaticInfinityData.dataCenterServerProduction;
-                    case FacilityType.Planets:
-                        return StaticInfinityData.planetsDataCenterProduction;
-                    default:
-                        return 0;
-                }
+                    FacilityType.AssemblyLines => infinityData.assemblyLineBotProduction,
+                    FacilityType.AiManagers => infinityData.managerAssemblyLineProduction,
+                    FacilityType.Servers => infinityData.serverManagerProduction,
+                    FacilityType.DataCenters => infinityData.dataCenterServerProduction,
+                    FacilityType.Planets => infinityData.planetsDataCenterProduction,
+                    _ => 0
+                };
             }
         }
 
@@ -179,13 +151,14 @@ namespace Buildings
         {
             get
             {
+                var prestigeData = _gameState.PrestigeData;
                 bool infinityUnlocked = facilityType switch
                 {
-                    FacilityType.AssemblyLines => StaticPrestigeData.infinityAssemblyLines,
-                    FacilityType.AiManagers => StaticPrestigeData.infinityAiManagers,
-                    FacilityType.Servers => StaticPrestigeData.infinityServers,
-                    FacilityType.DataCenters => StaticPrestigeData.infinityDataCenter,
-                    FacilityType.Planets => StaticPrestigeData.infinityPlanets,
+                    FacilityType.AssemblyLines => prestigeData.infinityAssemblyLines,
+                    FacilityType.AiManagers => prestigeData.infinityAiManagers,
+                    FacilityType.Servers => prestigeData.infinityServers,
+                    FacilityType.DataCenters => prestigeData.infinityDataCenter,
+                    FacilityType.Planets => prestigeData.infinityPlanets,
                     _ => false
                 };
 
@@ -197,18 +170,19 @@ namespace Buildings
         {
             get
             {
-                if (!StaticPrestigeData.infinityAutoBots)
+                if (!_gameState.PrestigeData.infinityAutoBots)
                 {
                     return false;
                 }
 
+                var saveSettings = _gameState.SaveSettings;
                 return facilityType switch
                 {
-                    FacilityType.AssemblyLines => StaticSaveSettings.infinityAutoAssembly,
-                    FacilityType.AiManagers => StaticSaveSettings.infinityAutoManagers,
-                    FacilityType.Servers => StaticSaveSettings.infinityAutoServers,
-                    FacilityType.DataCenters => StaticSaveSettings.infinityAutoDataCenters,
-                    FacilityType.Planets => StaticSaveSettings.infinityAutoPlanets,
+                    FacilityType.AssemblyLines => saveSettings.infinityAutoAssembly,
+                    FacilityType.AiManagers => saveSettings.infinityAutoManagers,
+                    FacilityType.Servers => saveSettings.infinityAutoServers,
+                    FacilityType.DataCenters => saveSettings.infinityAutoDataCenters,
+                    FacilityType.Planets => saveSettings.infinityAutoPlanets,
                     _ => false
                 };
             }
@@ -220,17 +194,17 @@ namespace Buildings
             {
                 if (facilityType == FacilityType.Planets)
                 {
-                    double manualDisplay = StaticSkillTreeData.terraIrradiant
+                    double manualDisplay = _gameState.SkillTreeData.terraIrradiant
                         ? ManuallyPurchasedBuildings * 12
                         : ManuallyPurchasedBuildings;
                     double totalDisplay = AutoPurchasedBuildings + manualDisplay;
                     return
-                        $"Planets {textColourOrange}{FormatNumber(totalDisplay)}<size=70%>{textColourGreen}({FormatNumber(manualDisplay)})";
+                        $"Planets {Oracle.textColourOrange}{FormatNumber(totalDisplay)}<size=70%>{Oracle.textColourGreen}({FormatNumber(manualDisplay)})";
                 }
 
                 string terraBonus = GetTerraBonusText();
                 return
-                    $"{GetDisplayName()} {textColourOrange}{FormatNumber(TotalBuildings)}<size=70%>{textColourGreen}({FormatNumber(ManuallyPurchasedBuildings)}{terraBonus})";
+                    $"{GetDisplayName()} {Oracle.textColourOrange}{FormatNumber(TotalBuildings)}<size=70%>{Oracle.textColourGreen}({FormatNumber(ManuallyPurchasedBuildings)}{terraBonus})";
             }
         }
 
@@ -241,8 +215,8 @@ namespace Buildings
                 string purchasePrompt = GetPurchasePrompt();
                 string word = GetWordUsed();
                 string productionWord = GetProductionWordUsed();
-                return $"{(Production > 0 ? $"{word} " : "")}{textColourOrange}" +
-                       $"{(Production >= 1 ? $"{FormatNumber(Production)}</color> {productionWord}s /s" : Production > 0 ? $"1</color> {productionWord} /{textColourOrange}{FormatNumber(1 / Production < 60 ? 1 / Production : 1 / Production / 60)}</color>{(1 / Production < 60 ? "s" : " Min")}" : purchasePrompt)}";
+                return $"{(Production > 0 ? $"{word} " : "")}{Oracle.textColourOrange}" +
+                       $"{(Production >= 1 ? $"{FormatNumber(Production)}</color> {productionWord}s /s" : Production > 0 ? $"1</color> {productionWord} /{Oracle.textColourOrange}{FormatNumber(1 / Production < 60 ? 1 / Production : 1 / Production / 60)}</color>{(1 / Production < 60 ? "s" : " Min")}" : purchasePrompt)}";
             }
         }
 
@@ -286,12 +260,13 @@ namespace Buildings
 
         private string GetTerraBonusText()
         {
+            var skillTreeData = _gameState.SkillTreeData;
             bool hasTerraBonus = facilityType switch
             {
-                FacilityType.AssemblyLines => StaticSkillTreeData.terraNullius,
-                FacilityType.AiManagers => StaticSkillTreeData.terraInfirma,
-                FacilityType.Servers => StaticSkillTreeData.terraEculeo,
-                FacilityType.DataCenters => StaticSkillTreeData.terraFirma,
+                FacilityType.AssemblyLines => skillTreeData.terraNullius,
+                FacilityType.AiManagers => skillTreeData.terraInfirma,
+                FacilityType.Servers => skillTreeData.terraEculeo,
+                FacilityType.DataCenters => skillTreeData.terraFirma,
                 _ => false
             };
 
@@ -300,11 +275,12 @@ namespace Buildings
                 return "";
             }
 
-            double terraBonus = StaticSkillTreeData.terraIrradiant
-                ? StaticInfinityData.planets[1] * 12
-                : StaticInfinityData.planets[1];
+            double[] planetCounts = _facilityService.GetFacilityCount("planets");
+            double terraBonus = skillTreeData.terraIrradiant
+                ? planetCounts[1] * 12
+                : planetCounts[1];
 
-            return $"{textColourBlue}+{FormatNumber(terraBonus)}";
+            return $"{Oracle.textColourBlue}+{FormatNumber(terraBonus)}";
         }
 
         private string GetWordUsed()
