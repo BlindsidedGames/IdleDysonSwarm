@@ -15,7 +15,8 @@
       "Bash(git pull:*)",
       "Bash(grep:*)",
       "Bash(gh pr create:*)",
-      "mcp__UnityMCP__manage_editor"
+      "mcp__UnityMCP__manage_editor",
+      "Bash(git mv:*)"
     ]
   }
 }
