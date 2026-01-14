@@ -1,3 +1,4 @@
+using Systems.Facilities;
 using Systems.Stats;
 using UnityEngine;
 
@@ -41,7 +42,7 @@ namespace IdleDysonSwarm.Data.Conditions
         /// <param name="context">The current game state context.</param>
         /// <param name="state">Optional facility state for context-dependent conditions.</param>
         /// <returns>True if the condition is met, false otherwise.</returns>
-        public virtual bool EvaluateWithState(EffectContext context, Systems.Facilities.FacilityState state)
+        public virtual bool EvaluateWithState(EffectContext context, FacilityState state)
         {
             return Evaluate(context);
         }
