@@ -276,6 +276,7 @@ public bool TryGetFacility(string id, out FacilityDefinition definition)
 3. **Feature parity required** - Refactors must not break existing functionality
 4. **No broken saves** - Save compatibility must be verified before merging
 5. **PR for every merge** - All changes reach main through pull requests
+6. **NEVER use `git reset --hard` without asking** - This command destroys uncommitted changes permanently. Always ask the user for confirmation before running any destructive git commands (`reset --hard`, `clean -fd`, `checkout .`, etc.)
 
 ### Branch Naming
 

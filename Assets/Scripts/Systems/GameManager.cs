@@ -37,12 +37,6 @@ public class GameManager : MonoBehaviour
 
     [SerializeField] private GameObject[] infinityButton;
 
-    [Space(10), SerializeField] private GameObject planetProductionDisplay;
-    [SerializeField] private TMP_Text totalPlanetsProduction;
-    [SerializeField] private GameObject dataCenterProductionDisplay;
-    [SerializeField] private TMP_Text totalDataCenterText;
-    [SerializeField] private GameObject serverProductionDisplay;
-    [SerializeField] private TMP_Text totalServerProduction;
 
 
     [Header("ReturnScreen"), SerializeField]
@@ -619,22 +613,6 @@ public class GameManager : MonoBehaviour
                 runAge.text = $"Run time: {CalcUtils.FormatTimeLarge(seconds)}";
             }
 
-//serverProduction
-        bool coldFusion = skillTreeData.rudimentarySingularity && infinityData.managers[0] + infinityData.managers[1] > 0;
-        serverProductionDisplay.SetActive(coldFusion);
-
-        /*coldFusionText.gameObject.SetActive(coldFusion);
-        if (skillTreeData.rudimentarySingularity)
-            coldFusionText.text =
-                $"Rudimentary Singularity <color=#FFA45E>+{CalcUtils.FormatNumber(infinityData.rudimentrySingularityProduction)} </color>";*/
-
-        totalServerProduction.text =
-            $"Server Production <color=#FFA45E>+{CalcUtils.FormatNumber(infinityData.rudimentrySingularityProduction)}";
-//planetsProduction
-        bool scientificPlanetsActive = infinityData.researchers > 1 && skillTreeData.scientificPlanets;
-        bool displayPlanetProduction =
-            scientificPlanetsActive || skillTreeData.stellarSacrifices || skillTreeData.planetAssembly || skillTreeData.shellWorlds;
-        planetProductionDisplay.SetActive(displayPlanetProduction);
 
         string planetProductionDetailText = "";
         bool addPlanetLineBreak = false;
@@ -678,12 +656,6 @@ public class GameManager : MonoBehaviour
         }
 
         /*planetProductionText.text = planetProductionDetailText;*/
-        totalPlanetsProduction.text =
-            $"Planet Production <color=#FFA45E>+{CalcUtils.FormatNumber(infinityData.totalPlanetProduction)}";
-//DataCenterProduction
-        bool dataCenterProductionActive = infinityData.workers > 1 && skillTreeData.pocketDimensions || skillTreeData.pocketProtectors;
-
-        dataCenterProductionDisplay.SetActive(dataCenterProductionActive);
 
 
         string dataCenterProductionDetailText = "";
@@ -751,8 +723,6 @@ public class GameManager : MonoBehaviour
 
 
         /*pocketDimensionsText.text = dataCenterProductionDetailText;*/
-        totalDataCenterText.text =
-            $"Data Center Production <color=#FFA45E>+{CalcUtils.FormatNumber(infinityData.pocketDimensionsProduction)}";
 
         string skillTimersDisplayText = "";
 
