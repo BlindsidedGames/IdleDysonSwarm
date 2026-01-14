@@ -90,7 +90,7 @@ The systems are connected: Quantum Points → Influence Speed → Influence Curr
                                       ▼
 ┌─────────────────────────────────────────────────────────────────────────────┐
 │                    REALITY SYSTEM - UNIVERSE/INFLUENCE                       │
-│              (SaveData → WorkerData, InceptionController)                   │
+│         (SaveData → InfluenceSystemData, InceptionController)                   │
 ├─────────────────────────────────────────────────────────────────────────────┤
 │  Workers accumulate → 128 batch → Convert to Influence Currency             │
 │  Universe Designation counter increments                                     │
@@ -256,23 +256,23 @@ private void PurchaseSecrets()
 
 ## Reality System - Universe/Influence
 
-### Data Structure: SaveData → WorkerData
+### Data Structure: SaveData → InfluenceSystemData
 
 **Current Location:** Oracle.cs lines 3453-3465
 
 ```csharp
 [Serializable]
-public class SaveData  // RENAME TO: WorkerData
+public class SaveData  // RENAME TO: InfluenceSystemData
 {
-    // Worker Generation
+    // Worker Generation (produces influence)
     public long workersReadyToGo;      // Current batch (0-128)
-    public long universesConsumed;     // RENAME: workerBatchesProcessed (counter)
+    public long universesConsumed;     // Counter for Universe Designation display
     public bool workerAutoConvert;     // RENAME: autoGatherInfluence
 
     // Influence Currency
     public long influence;             // RENAME: influenceBalance (currency)
 
-    // Dream1 Purchase Multipliers
+    // Dream1 Purchase Multipliers (spend influence)
     public long huntersPerPurchase = 1;
     public long gatherersPerPurchase = 1;
 }
@@ -483,16 +483,18 @@ switch (secretsOfTheUniverse)
 
 The name "PrestigePlus" doesn't indicate what it is. Should be "QuantumData" or "QuantumLeapData".
 
-#### 3. Off-by-One Bug in Offline Progress
+#### 3. Minor Bug in Offline Progress (Edge Case)
 
 **Location:** InceptionController.cs:69-71
 
 ```csharp
-// BUG: This always adds 0!
+// BUG: In offline progress with autoConvert=false, overflow calculation is wrong
 oracle.saveSettings.saveData.workersReadyToGo = 128;  // Clamps first
 oracle.saveSettings.saveData.universesConsumed +=
     128 - oracle.saveSettings.saveData.workersReadyToGo;  // 128 - 128 = 0
 ```
+
+**Impact:** Minor - only affects offline progress when auto-convert is disabled and accumulated time exceeds 128 workers worth. Normal gameplay increments `universesConsumed` correctly in `RunWorkers()` (line 108).
 
 **Fix:** Calculate overflow before clamping.
 
@@ -673,14 +675,13 @@ namespace IdleDysonSwarm.Services
 | Current Class | New Class | Location |
 |---------------|-----------|----------|
 | `PrestigePlus` | `QuantumData` | Oracle.cs |
-| `SaveData` | `WorkerData` | Oracle.cs |
+| `SaveData` | `InfluenceSystemData` | Oracle.cs |
 
 | Current Field | New Field | Class |
 |---------------|-----------|-------|
 | `PrestigePlus.influence` | `QuantumData.influenceSpeedLevel` | QuantumData |
-| `SaveData.influence` | `WorkerData.influenceBalance` | WorkerData |
-| `SaveData.universesConsumed` | `WorkerData.workerBatchesProcessed` | WorkerData |
-| `SaveData.workerAutoConvert` | `WorkerData.autoGatherInfluence` | WorkerData |
+| `SaveData.influence` | `InfluenceSystemData.influenceBalance` | InfluenceSystemData |
+| `SaveData.workerAutoConvert` | `InfluenceSystemData.autoGatherInfluence` | InfluenceSystemData |
 
 **Migration Pattern:**
 ```csharp
@@ -938,7 +939,7 @@ Phase 6 (Data-Driven)        [Optional, larger scope]
 
 | File | Phases | Changes |
 |------|--------|---------|
-| Oracle.cs | 3 | Rename PrestigePlus→QuantumData, SaveData→WorkerData |
+| Oracle.cs | 3 | Rename PrestigePlus→QuantumData, SaveData→InfluenceSystemData |
 | InceptionController.cs | 1,2,4 | Constants, service injection, rename to WorkerController |
 | PrestigePlusUpdater.cs | 1,2,4 | Constants, service injection, rename to QuantumUpgradeUI |
 | RealityPanelManager.cs | 1,2,5 | Constants, service injection, conditions |
