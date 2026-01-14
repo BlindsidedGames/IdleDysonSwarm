@@ -40,8 +40,9 @@ public class InfinityPanelManager : MonoBehaviour
 
     private void Awake()
     {
-        if (_infinityFillObject != null)
-            _infinityFill = _infinityFillObject.GetComponent<SlicedFilledImage>();
+        // Get the Fill child's SlicedFilledImage, not the parent background's
+        if (_infinityFillObject != null && _infinityFillObject.transform.childCount > 0)
+            _infinityFill = _infinityFillObject.transform.GetChild(0).GetComponent<SlicedFilledImage>();
         if (_infinityTextObject != null)
             _infinityText = _infinityTextObject.GetComponent<TMP_Text>();
         if (_infinityMenuButtonObject != null)
