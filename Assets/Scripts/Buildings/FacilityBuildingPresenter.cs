@@ -24,8 +24,9 @@ namespace Buildings
         private IGameStateService _gameState;
         private IFacilityService _facilityService;
 
-        private void Awake()
+        protected override void Awake()
         {
+            base.Awake();
             _gameState = ServiceLocator.Get<IGameStateService>();
             _facilityService = ServiceLocator.Get<IFacilityService>();
         }
