@@ -65,8 +65,16 @@ This call will:
 
 **DO NOT** call this multiple times - one call handles everything.
 
-### 3. Check Console AFTER Refresh Completes
-Only after the refresh call returns, check for errors:
+### 3. WAIT After Refresh Completes (CRITICAL)
+**After `refresh_unity` returns, wait 5-10 seconds before making ANY other MCP calls.**
+
+Unity may still be finalizing internal state even after the refresh call returns. Making MCP calls too quickly can cause:
+- Refreshing during a refresh (causes errors)
+- Stale or incomplete results
+- Connection issues
+
+### 4. Check Console AFTER Waiting
+Only after waiting 5-10 seconds, check for errors:
 
 ```
 read_console(action="get", types=["error", "warning"])
@@ -89,10 +97,11 @@ Edit script...
 [Wait 2-3 seconds for Unity to detect change]
 refresh_unity(scope="scripts", compile="request", wait_for_ready=true)
 [This blocks until compilation is complete]
+[Wait 5-10 seconds after refresh returns]
 read_console(action="get", types=["error", "warning"])
 ```
 
-### 4. If Connection Times Out
+### 5. If Connection Times Out
 Sometimes the refresh call may timeout if compilation takes too long. In this case:
 1. Wait a few seconds
 2. Check console directly: `read_console(action="get", types=["error"])`
@@ -382,6 +391,7 @@ set_active_instance(instance="ProjectName@hash")
 
 **DON'T:**
 - Make changes while Unity is compiling
+- Make MCP calls immediately after refresh (wait 5-10 seconds)
 - Use large page sizes (causes token bloat)
 - Enable previews unless needed
 - Proceed without checking for errors
@@ -410,11 +420,16 @@ set_active_instance(instance="ProjectName@hash")
    → This blocks until compilation is complete
    → DO NOT call multiple times
 
-6. Check console for results
+6. WAIT after refresh completes (CRITICAL)
+   → Pause 5-10 seconds after refresh returns
+   → Unity may still be finalizing internal state
+   → Making MCP calls too soon causes "refresh during refresh" errors
+
+7. Check console for results
    → read_console(action="get", types=["error", "warning"])
    → If errors exist, fix them and repeat from step 2
 
-7. Proceed to next task
+8. Proceed to next task
    → Only after confirming no errors
 ```
 
@@ -422,6 +437,7 @@ set_active_instance(instance="ProjectName@hash")
 - ONE refresh call, not multiple
 - Wait for Unity to detect file changes before refreshing
 - The `wait_for_ready=true` parameter handles the waiting for you
-- Check console AFTER refresh completes, not during
+- **WAIT 5-10 seconds after refresh returns before any other MCP calls**
+- Check console AFTER waiting, not immediately after refresh
 
 This workflow ensures safe, reliable Unity development via MCP.

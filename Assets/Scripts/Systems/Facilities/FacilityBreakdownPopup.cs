@@ -8,15 +8,29 @@ using UnityEngine;
 using UnityEngine.UI;
 using static Expansion.Oracle;
 
+// Color constants for breakdown text formatting
+// Using colors from UITheme: accent (orange) for delta, positive (green) for total
+
 namespace Systems.Facilities
 {
     public sealed class FacilityBreakdownPopup : MonoBehaviour
     {
+        // Rich text color tags matching UITheme colors
+        private const string ColorDelta = "<color=#FFA45E>"; // Orange (accent) for positive delta
+        private const string ColorNegative = "<color=#FF5757>"; // Red (negative) for negative delta
+        private const string ColorTotal = "<color=#91DD8F>"; // Green (positive)
+        private const string ColorValue = "<color=#00E1FF>"; // Cyan (highlight) for operation values
+        private const string ColorEnd = "</color>";
+        private const float RefreshInterval = 0.1f; // 10Hz refresh rate
+
         [SerializeField] private GameObject root;
         [SerializeField] private TMP_Text titleText;
         [SerializeField] private TMP_Text valueText;
         [SerializeField] private TMP_Text breakdownText;
         [SerializeField] private Button closeButton;
+
+        private string _currentFacilityId;
+        private float _refreshTimer;
 
         private void Awake()
         {
@@ -34,6 +48,28 @@ namespace Systems.Facilities
         public void ShowFacility(string facilityId)
         {
             if (string.IsNullOrEmpty(facilityId)) return;
+
+            _currentFacilityId = facilityId;
+            _refreshTimer = 0f;
+            RefreshContent();
+
+            if (root != null) root.SetActive(true);
+        }
+
+        private void Update()
+        {
+            if (root == null || !root.activeSelf || string.IsNullOrEmpty(_currentFacilityId)) return;
+
+            _refreshTimer += Time.deltaTime;
+            if (_refreshTimer >= RefreshInterval)
+            {
+                _refreshTimer = 0f;
+                RefreshContent();
+            }
+        }
+
+        private void RefreshContent()
+        {
             if (oracle == null)
             {
                 Debug.LogWarning("Oracle not ready for facility breakdown popup.");
@@ -45,26 +81,25 @@ namespace Systems.Facilities
             DysonVerseSkillTreeData skillTreeData = oracle.saveSettings.dysonVerseSaveData.dysonVerseSkillTreeData;
             PrestigePlus prestigePlus = oracle.saveSettings.prestigePlus;
 
-            if (!FacilityRuntimeBuilder.TryBuildRuntime(facilityId, infinityData, prestigeData, skillTreeData, prestigePlus, out FacilityRuntime runtime))
+            if (!FacilityRuntimeBuilder.TryBuildRuntime(_currentFacilityId, infinityData, prestigeData, skillTreeData, prestigePlus, out FacilityRuntime runtime))
             {
-                ApplyFallbackText(facilityId);
+                ApplyFallbackText(_currentFacilityId);
                 return;
             }
 
             string displayName = runtime.Definition != null && !string.IsNullOrEmpty(runtime.Definition.displayName)
                 ? runtime.Definition.displayName
-                : facilityId;
+                : _currentFacilityId;
 
             if (titleText != null) titleText.text = displayName;
-            if (valueText != null) valueText.text = CalcUtils.FormatNumber(runtime.State.ProductionRate);
+            if (valueText != null) valueText.text = $"{ColorTotal}{CalcUtils.FormatNumber(runtime.State.ProductionRate)}{ColorEnd}";
             if (breakdownText != null)
                 breakdownText.text = BuildBreakdownText(runtime, infinityData, prestigeData, skillTreeData, prestigePlus);
-
-            if (root != null) root.SetActive(true);
         }
 
         public void Hide()
         {
+            _currentFacilityId = null;
             if (root != null) root.SetActive(false);
         }
 
@@ -89,6 +124,7 @@ namespace Systems.Facilities
             AppendFacilityBreakdown(builder, runtime, facilityId);
             AppendUpstreamBreakdownSections(builder, facilityId, infinityData, prestigeData, skillTreeData, prestigePlus);
             AppendPlanetGenerationSection(builder, facilityId, infinityData, skillTreeData, prestigeData, prestigePlus);
+            AppendLegend(builder);
 
             return builder.ToString();
         }
@@ -129,15 +165,37 @@ namespace Systems.Facilities
                     ? contribution.SourceId
                     : contribution.SourceName;
                 runningTotal += contribution.Delta;
-                builder.Append(source)
-                    .Append(" [")
-                    .Append(contribution.Operation)
-                    .Append("] ")
-                    .Append(CalcUtils.FormatNumber(contribution.Value))
-                    .Append(" (delta ")
+
+                // Format: "Source ×1.5 (delta, total)" with colored values
+                // Use symbols: × for Multiply, ^ for Power, + for Add, = for Override
+                string opSymbol = GetOperationSymbol(contribution.Operation);
+
+                // For Override on "Base", just show the source name without operation
+                bool isBaseOverride = contribution.Operation == StatOperation.Override &&
+                                      source.Equals("Base", StringComparison.OrdinalIgnoreCase);
+
+                builder.Append(source);
+
+                if (!isBaseOverride)
+                {
+                    builder.Append(' ')
+                        .Append(ColorValue)
+                        .Append(opSymbol)
+                        .Append(CalcUtils.FormatNumber(contribution.Value))
+                        .Append(ColorEnd);
+                }
+
+                // Use red for negative delta, orange for positive
+                string deltaColor = contribution.Delta < 0 ? ColorNegative : ColorDelta;
+
+                builder.Append(" (")
+                    .Append(deltaColor)
                     .Append(CalcUtils.FormatNumber(contribution.Delta))
-                    .Append(", total ")
+                    .Append(ColorEnd)
+                    .Append(", ")
+                    .Append(ColorTotal)
                     .Append(CalcUtils.FormatNumber(runningTotal))
+                    .Append(ColorEnd)
                     .Append(')');
 
                 if (!string.IsNullOrEmpty(contribution.ConditionText))
@@ -147,6 +205,20 @@ namespace Systems.Facilities
 
                 builder.AppendLine();
             }
+        }
+
+        private static string GetOperationSymbol(StatOperation operation)
+        {
+            return operation switch
+            {
+                StatOperation.Add => "+",
+                StatOperation.Multiply => "×",
+                StatOperation.Power => "^",
+                StatOperation.Override => "=",
+                StatOperation.ClampMin => "≥",
+                StatOperation.ClampMax => "≤",
+                _ => operation.ToString()
+            };
         }
 
         private static void AppendUpstreamBreakdownSections(StringBuilder builder, string facilityId,
@@ -209,6 +281,21 @@ namespace Systems.Facilities
 
             string header = $"Planet Generation ({CalcUtils.FormatNumber(totalResult.Value)}/s)";
             AppendContributionSection(builder, header, totalResult.Contributions);
+        }
+
+        private static void AppendLegend(StringBuilder builder)
+        {
+            if (builder == null) return;
+            builder.AppendLine();
+            builder.Append("<size=80%>Effect, ")
+                .Append(ColorValue).Append("Value").Append(ColorEnd)
+                .Append(", ")
+                .Append(ColorDelta).Append("+Delta").Append(ColorEnd)
+                .Append("/")
+                .Append(ColorNegative).Append("-Delta").Append(ColorEnd)
+                .Append(", ")
+                .Append(ColorTotal).Append("Total").Append(ColorEnd)
+                .Append("</size>");
         }
 
         private static void AppendBonusSections(StringBuilder builder, string facilityId, IReadOnlyList<Contribution> contributions)
@@ -405,4 +492,3 @@ namespace Systems.Facilities
             };
     }
 }
-
