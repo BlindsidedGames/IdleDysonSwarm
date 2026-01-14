@@ -329,3 +329,6 @@ When working on this project, I (Claude) will:
 6. **Test save compatibility** - Remind about testing saves before PR
 7. **Never force push** - Unless explicitly requested and safe to do so
 8. **Create PR for main** - Never commit directly to main
+9. **Provide PR links** - Always provide the GitHub PR creation link when ready for review:
+   - Format: `https://github.com/BlindsidedGames/IdleDysonSwarm/pull/new/branch-name`
+   - Include a brief description of what the PR contains
