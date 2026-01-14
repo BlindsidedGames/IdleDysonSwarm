@@ -1,27 +1,12 @@
 {
   "permissions": {
     "allow": [
-      "Bash(git commit:*)",
-      "Bash(git push:*)",
-      "Bash(git checkout:*)",
-      "Bash(git add:*)",
-      "mcp__UnityMCP__execute_menu_item",
-      "mcp__UnityMCP__read_console",
-      "mcp__UnityMCP__refresh_unity",
-      "Bash(gh pr list:*)",
-      "Bash(gh pr view:*)",
-      "Bash(gh repo view:*)",
-      "Bash(curl:*)",
-      "Bash(git pull:*)",
-      "Bash(grep:*)",
-      "Bash(gh pr create:*)",
-      "mcp__UnityMCP__manage_editor",
-      "Bash(git mv:*)",
-      "Bash(xargs git rm --cached)",
-      "Bash(git fsck:*)",
-      "Bash(powershell -Command \"gh pr create --title ''feat: Facility breakdown improvements and cleanup'' --body ''## Summary\n- Enhanced facility breakdown popup with colored output, symbols for operations, and 10Hz auto-refresh\n- Auto-wire breakdown buttons in FacilityPresenter via Transform.Find\n- Remove redundant production text displays \\(Planet Production, Data Center Production, Server Production\\) from GameManager - now shown in Details breakdown\n- Remove tmpclaude temp files from repository\n- Add git safety rule to CLAUDE.md for destructive commands\n- Update Unity MCP skill documentation with refresh wait guidance\n\nGenerated with [Claude Code]\\(https://claude.com/claude-code\\)''\")",
-      "Bash(powershell:*)",
-      "Bash(\"C:\\\\Program Files\\\\GitHub CLI\\\\gh.exe\" pr create --title \"feat: Facility breakdown improvements and cleanup\" --body \"## Summary\n- Enhanced facility breakdown popup with colored output, symbols for operations, and 10Hz auto-refresh\n- Auto-wire breakdown buttons in FacilityPresenter via Transform.Find\n- Remove redundant production text displays \\(Planet Production, Data Center Production, Server Production\\) from GameManager - now shown in Details breakdown\n- Remove tmpclaude temp files from repository\n- Add git safety rule to CLAUDE.md for destructive commands\n- Update Unity MCP skill documentation with refresh wait guidance\n\nGenerated with [Claude Code]\\(https://claude.com/claude-code\\)\")"
+      "Bash(*)",
+      "mcp__UnityMCP__*",
+      "Edit(*)",
+      "Write(*)",
+      "Bash(git -C \"c:\\\\Users\\\\mattr\\\\Documents\\\\Unity\\\\Projects\\\\Idle Dyson Swarm\" add -A)",
+      "Bash(git -C \"c:\\\\Users\\\\mattr\\\\Documents\\\\Unity\\\\Projects\\\\Idle Dyson Swarm\" commit -m \"$\\(cat <<''EOF''\nrefactor: Rename Reality/Quantum files for clarity \\(Phase 4\\)\n\nFile renames:\n- InceptionController.cs → WorkerController.cs\n- PrestigePlusUpdater.cs → QuantumUpgradeUI.cs  \n- ToRealityFillbar.cs → QuantumProgressBar.cs\n\nClass names updated to match file names.\nUpdated comment reference in WorkerService.cs.\n\nCo-Authored-By: Claude Opus 4.5 <noreply@anthropic.com>\nEOF\n\\)\")"
     ]
   }
 }

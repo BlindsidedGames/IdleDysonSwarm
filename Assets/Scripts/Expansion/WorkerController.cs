@@ -6,7 +6,7 @@ using Blindsided.Utilities;
 using static Expansion.Oracle;
 using static IdleDysonSwarm.Systems.Constants.RealityConstants;
 
-public class InceptionController : MonoBehaviour
+public class WorkerController : MonoBehaviour
 {
     [SerializeField] private Button gatherInfluenceButton;
     [SerializeField] private TMP_Text influenceDisplay;
