@@ -31,7 +31,7 @@ This document defines git workflow rules for the Idle Dyson Swarm project. These
 3. Test thoroughly (especially save compatibility)
 4. Create PR to main
 5. Merge PR (squash or merge commit based on preference)
-6. Delete feature branch
+6. Keep branches for history (do not delete after merge)
 ```
 
 ### Creating a Branch
@@ -179,10 +179,9 @@ git push -u origin feature/my-feature
 gh pr create --title "feat: Add my-feature" --body "..."
 
 # After PR approval/review, merge via GitHub
-# Then clean up local branch
+# Then sync local main (keep branches for history)
 git checkout main
 git pull origin main
-git branch -d feature/my-feature
 ```
 
 ---
