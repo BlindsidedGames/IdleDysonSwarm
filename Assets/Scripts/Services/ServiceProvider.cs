@@ -56,6 +56,19 @@ namespace IdleDysonSwarm.Services
             ServiceLocator.Register<IFacilityService>(facilityService);
             Debug.Log("  ✓ IFacilityService registered");
 
+            // Register Quantum/Reality system services
+            var quantumService = new QuantumService();
+            ServiceLocator.Register<IQuantumService>(quantumService);
+            Debug.Log("  ✓ IQuantumService registered");
+
+            var workerService = new WorkerService();
+            ServiceLocator.Register<IWorkerService>(workerService);
+            Debug.Log("  ✓ IWorkerService registered");
+
+            var avocadoService = new AvocadoService();
+            ServiceLocator.Register<IAvocadoService>(avocadoService);
+            Debug.Log("  ✓ IAvocadoService registered");
+
             Debug.Log("[ServiceProvider] All services registered successfully!");
         }
 
@@ -69,6 +82,9 @@ namespace IdleDysonSwarm.Services
             allRegistered &= CheckService<IGameStateService>();
             allRegistered &= CheckService<IGameDataService>();
             allRegistered &= CheckService<IFacilityService>();
+            allRegistered &= CheckService<IQuantumService>();
+            allRegistered &= CheckService<IWorkerService>();
+            allRegistered &= CheckService<IAvocadoService>();
 
             if (allRegistered)
             {
