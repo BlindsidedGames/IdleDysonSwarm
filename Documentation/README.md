@@ -22,20 +22,15 @@ The codebase modernization is **complete**. The architecture is now solid and re
 
 | Document | Purpose | Status |
 |----------|---------|--------|
-| [OverhaulPlans.md](OverhaulPlans.md) | System improvement tracking | Updated |
-| [ArchitecturalImprovementRoadmap.md](ArchitecturalImprovementRoadmap.md) | Phases 1-5 detailed plans | Phases 1-3 Complete |
-| [ImplementationOrder.md](ImplementationOrder.md) | Why phases are ordered as they are | Reference |
-| [Phase1-TypedIDs-Summary.md](Phase1-TypedIDs-Summary.md) | Typed ID implementation details | Complete |
-| [Phase2-ScriptableConditions-Summary.md](Phase2-ScriptableConditions-Summary.md) | Condition system details | Complete |
-| [Services README](../Assets/Scripts/Services/README.md) | Service layer documentation | Complete |
+| [OverhaulPlans.md](OverhaulPlans.md) | System improvement tracking | Active |
+| [RealitySystemAnalysis.md](RealitySystemAnalysis.md) | Reality system deep dive | Active |
+| [Services README](../Assets/Scripts/Services/README.md) | Service layer documentation | Reference |
 
 ### 📦 Archive
-- **[Archive/CompletedRefactors/](Archive/CompletedRefactors/)** - Progress logs from completed work
-  - Facility & Skill, Research, Save Migration, Debug, Skill Tree refactors
-
-### 🔧 Legacy (Historical Reference)
-- [RECCOMMENDATIONS.md](RECCOMMENDATIONS.md) - Original recommendations (completed)
-- [FacilityAndSkillRefactor.md](FacilityAndSkillRefactor.md) - Original refactor plan (completed)
+- **[Archive/](Archive/)** - Completed work and historical reference
+  - Architectural roadmaps (Phases 1-3 complete)
+  - Refactor plans (Facility, Skill, Research, Save Migration, Debug)
+  - Phase summaries and implementation rationale
 
 ---
 
@@ -165,4 +160,4 @@ The architecture is solid. Potential next directions:
 
 ---
 
-**Last Major Update:** 2026-01-14 (Documentation cleanup, status update)
+**Last Major Update:** 2026-01-15 (Archived completed docs, added Reality system analysis)
