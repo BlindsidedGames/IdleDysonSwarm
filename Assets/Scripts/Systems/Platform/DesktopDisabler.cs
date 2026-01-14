@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class desktopDisabler : MonoBehaviour
+public class DesktopDisabler : MonoBehaviour
 {
     [SerializeField] private GameObject desktop;
     [SerializeField] private GameObject desktopEnable;

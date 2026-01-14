@@ -1,6 +1,6 @@
 using UnityEngine;
 
-public class ScreenSafeRea : MonoBehaviour
+public class ScreenSafeArea : MonoBehaviour
 {
     private RectTransform _rectTransform;
     private Vector2 maxAnchor;

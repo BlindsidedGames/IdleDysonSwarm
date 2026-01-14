@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
 
-public class Avocadotextchanger : MonoBehaviour
+public class AvocadoTextChanger : MonoBehaviour
 {
     private float time;
     private bool toggle;

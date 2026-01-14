@@ -5,7 +5,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using Blindsided.Utilities;
 
-public class disclaimerDisabler : MonoBehaviour
+public class DisclaimerDisabler : MonoBehaviour
 {
     [SerializeField] private SlicedFilledImage buttonfill;
     [SerializeField] private Button close;
