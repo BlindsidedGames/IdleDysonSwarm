@@ -42,34 +42,61 @@ manage_scene(action="get_active")
 
 ## After Script Changes
 
-### 1. Monitor Compilation
-Immediately check for compilation errors:
+### CRITICAL: Wait for Compilation
+
+**DO NOT call refresh_unity or read_console multiple times in quick succession.**
+
+Unity needs time to detect file changes and compile. The proper workflow is:
+
+### 1. Wait for Unity to Detect Changes (3-5 seconds)
+After editing a script, Unity needs a moment to detect the file change and begin compilation. **Do not immediately call refresh or check console.**
+
+### 2. Single Refresh Call with Wait
+Use ONE refresh call with `wait_for_ready=true`:
+
+```
+refresh_unity(scope="scripts", compile="request", wait_for_ready=true)
+```
+
+This call will:
+- Trigger asset refresh
+- Request compilation
+- **Block until Unity is ready** (compilation complete)
+
+**DO NOT** call this multiple times - one call handles everything.
+
+### 3. Check Console AFTER Refresh Completes
+Only after the refresh call returns, check for errors:
 
 ```
 read_console(action="get", types=["error", "warning"])
 ```
 
-### 2. Poll Editor State
-Wait for compilation to complete:
+### Common Mistake to Avoid
 
+❌ **Wrong approach (causes issues):**
 ```
-Read resource: mcpforunity://editor_state
-Poll: isCompiling field until false
-```
-
-### 3. Verify Success
-Confirm no errors before proceeding:
-
-```
-read_console(action="get", types=["error"])
+Edit script...
+refresh_unity(...)  // Call 1
+refresh_unity(...)  // Call 2 - unnecessary!
+read_console(...)   // May see stale results
+refresh_unity(...)  // Call 3 - still unnecessary!
 ```
 
-### 4. Refresh if Needed
-If assets don't update automatically:
-
+✅ **Correct approach:**
 ```
+Edit script...
+[Wait 2-3 seconds for Unity to detect change]
 refresh_unity(scope="scripts", compile="request", wait_for_ready=true)
+[This blocks until compilation is complete]
+read_console(action="get", types=["error", "warning"])
 ```
+
+### 4. If Connection Times Out
+Sometimes the refresh call may timeout if compilation takes too long. In this case:
+1. Wait a few seconds
+2. Check console directly: `read_console(action="get", types=["error"])`
+3. Do NOT retry refresh multiple times
 
 ## Resource vs Tool Usage
 
@@ -365,30 +392,36 @@ set_active_instance(instance="ProjectName@hash")
 ## Example: Complete Script Modification Workflow
 
 ```
-1. Read mcpforunity://editor_state
-   → Verify isCompiling: false
+1. Check existing state (optional but recommended)
+   → read_console(action="get", types=["error"])
+   → Verify no pre-existing errors
 
-2. read_console(action="get", types=["error"])
-   → Verify no existing errors
-
-3. Read script content
+2. Read script content
    → Read("Assets/Scripts/MyScript.cs")
 
-4. Modify script
+3. Modify script
    → Edit(...) or script_apply_edits(...)
 
-5. Monitor compilation
+4. WAIT for Unity to detect changes
+   → Pause 2-3 seconds (Unity needs time to notice file changes)
+
+5. Single refresh call with wait
+   → refresh_unity(scope="scripts", compile="request", wait_for_ready=true)
+   → This blocks until compilation is complete
+   → DO NOT call multiple times
+
+6. Check console for results
    → read_console(action="get", types=["error", "warning"])
+   → If errors exist, fix them and repeat from step 2
 
-6. Poll editor state
-   → Read mcpforunity://editor_state until isCompiling: false
-
-7. Verify success
-   → read_console(action="get", types=["error"])
-   → If errors exist, fix them and repeat from step 4
-
-8. Proceed to next task
+7. Proceed to next task
    → Only after confirming no errors
 ```
+
+**Key Points:**
+- ONE refresh call, not multiple
+- Wait for Unity to detect file changes before refreshing
+- The `wait_for_ready=true` parameter handles the waiting for you
+- Check console AFTER refresh completes, not during
 
 This workflow ensures safe, reliable Unity development via MCP.
