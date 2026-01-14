@@ -5,6 +5,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using Blindsided.Utilities;
 using static Expansion.Oracle;
+using static IdleDysonSwarm.Systems.Constants.Dream1Constants;
 
 public class SpaceAgeManager : MonoBehaviour
 {
@@ -140,7 +141,7 @@ public class SpaceAgeManager : MonoBehaviour
         if (sdp.sfActivator2) multi *= 2;
         if (sdp.sfActivator3) multi *= 2;
 
-        if (sd1.dysonPanels < 1000)
+        if (sd1.dysonPanels < DysonPanelCap)
         {
             if (sd1.spaceFactories >= 1) _factoriesTime += Time.deltaTime * (float)multi;
 
@@ -154,13 +155,13 @@ public class SpaceAgeManager : MonoBehaviour
                 sd1.dysonPanels++;
             }
 
-            factoriesInventoryFillBar.fillAmount = sd1.dysonPanels / 1000f;
-            factoriesInventoryBarText.text = $"{sd1.dysonPanels}/1000";
+            factoriesInventoryFillBar.fillAmount = sd1.dysonPanels / (float)DysonPanelCap;
+            factoriesInventoryBarText.text = $"{sd1.dysonPanels}/{DysonPanelCap}";
         }
         else
         {
             factoriesInventoryFillBar.fillAmount = 1;
-            factoriesInventoryBarText.text = $"{sd1.dysonPanels}/1000";
+            factoriesInventoryBarText.text = $"{sd1.dysonPanels}/{DysonPanelCap}";
             factoriesFillBar.fillAmount = 1;
             factoriesFillText.text = StaticMethods.TimerText(sd1.spaceFactories, _factoriesDuration, multi, _factoriesTime);
         }
@@ -232,10 +233,9 @@ public class SpaceAgeManager : MonoBehaviour
 
     private int GetDysonPanelsRequiredToFire()
     {
-        const int basePanelsRequired = 10;
         if (!sdp.doDoubleTime || sdp.doubleTimeRate < 1)
-            return basePanelsRequired;
-        return basePanelsRequired * (int)sdp.doubleTimeRate;
+            return RailgunBasePanelsRequired;
+        return RailgunBasePanelsRequired * (int)sdp.doubleTimeRate;
     }
 
     #endregion
