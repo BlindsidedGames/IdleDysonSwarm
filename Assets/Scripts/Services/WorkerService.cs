@@ -120,7 +120,7 @@ namespace IdleDysonSwarm.Services
         public event Action OnWorkerBatchCompleted;
 
         /// <summary>
-        /// Called externally when a worker batch is completed (e.g., by InceptionController).
+        /// Called externally when a worker batch is completed (e.g., by WorkerController).
         /// </summary>
         internal void NotifyWorkerBatchCompleted()
         {

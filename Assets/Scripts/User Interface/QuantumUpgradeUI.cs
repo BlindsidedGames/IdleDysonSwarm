@@ -7,7 +7,7 @@ using static Expansion.Oracle;
 using static IdleDysonSwarm.Systems.Constants.QuantumConstants;
 
 
-public class PrestigePlusUpdater : MonoBehaviour
+public class QuantumUpgradeUI : MonoBehaviour
 {
     [SerializeField] private TMP_Text pointsText;
     [SerializeField] private TMP_Text influenceText;
