@@ -32,6 +32,22 @@ PrefabInstance:
       propertyPath: m_AnchoredPosition.y
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 361113782652836614, guid: 247830d86bfc9714dbbf4a1ca0107011, type: 3}
+      propertyPath: m_AnchorMax.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 361113782652836614, guid: 247830d86bfc9714dbbf4a1ca0107011, type: 3}
+      propertyPath: m_AnchorMin.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 361113782652836614, guid: 247830d86bfc9714dbbf4a1ca0107011, type: 3}
+      propertyPath: m_SizeDelta.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 361113782652836614, guid: 247830d86bfc9714dbbf4a1ca0107011, type: 3}
+      propertyPath: m_AnchoredPosition.x
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 806418741097828122, guid: 247830d86bfc9714dbbf4a1ca0107011, type: 3}
       propertyPath: m_AnchorMax.y
       value: 0
@@ -228,6 +244,10 @@ PrefabInstance:
       propertyPath: m_AnchoredPosition.y
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 4954428224332451645, guid: 247830d86bfc9714dbbf4a1ca0107011, type: 3}
+      propertyPath: m_MinHeight
+      value: 125
+      objectReference: {fileID: 0}
     - target: {fileID: 4972459859932635571, guid: 247830d86bfc9714dbbf4a1ca0107011, type: 3}
       propertyPath: m_Name
       value: Infinity Variant
@@ -308,13 +328,17 @@ PrefabInstance:
       propertyPath: m_AnchoredPosition.y
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 6804365571358682885, guid: 247830d86bfc9714dbbf4a1ca0107011, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 6837311970100268387, guid: 247830d86bfc9714dbbf4a1ca0107011, type: 3}
       propertyPath: m_text
       value: Secret of the Universe
       objectReference: {fileID: 0}
     - target: {fileID: 6837311970100268387, guid: 247830d86bfc9714dbbf4a1ca0107011, type: 3}
       propertyPath: m_fontSize
-      value: 20
+      value: 18
       objectReference: {fileID: 0}
     - target: {fileID: 7210030659101798083, guid: 247830d86bfc9714dbbf4a1ca0107011, type: 3}
       propertyPath: m_Interactable
@@ -475,6 +499,30 @@ PrefabInstance:
 
         You manage to reveal one of the
         letters..'
+      objectReference: {fileID: 0}
+    - target: {fileID: 8554333476264447631, guid: 247830d86bfc9714dbbf4a1ca0107011, type: 3}
+      propertyPath: m_AnchorMax.y
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 8554333476264447631, guid: 247830d86bfc9714dbbf4a1ca0107011, type: 3}
+      propertyPath: m_AnchorMin.y
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 8554333476264447631, guid: 247830d86bfc9714dbbf4a1ca0107011, type: 3}
+      propertyPath: m_SizeDelta.x
+      value: 170
+      objectReference: {fileID: 0}
+    - target: {fileID: 8554333476264447631, guid: 247830d86bfc9714dbbf4a1ca0107011, type: 3}
+      propertyPath: m_SizeDelta.y
+      value: 30
+      objectReference: {fileID: 0}
+    - target: {fileID: 8554333476264447631, guid: 247830d86bfc9714dbbf4a1ca0107011, type: 3}
+      propertyPath: m_AnchoredPosition.x
+      value: 85
+      objectReference: {fileID: 0}
+    - target: {fileID: 8554333476264447631, guid: 247830d86bfc9714dbbf4a1ca0107011, type: 3}
+      propertyPath: m_AnchoredPosition.y
+      value: -71
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
