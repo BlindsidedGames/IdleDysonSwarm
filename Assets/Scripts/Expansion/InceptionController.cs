@@ -4,6 +4,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using Blindsided.Utilities;
 using static Expansion.Oracle;
+using static IdleDysonSwarm.Systems.Constants.RealityConstants;
 
 public class InceptionController : MonoBehaviour
 {
@@ -23,10 +24,10 @@ public class InceptionController : MonoBehaviour
 
     private void Update()
     {
-        workerGenerationSpeed = 4 + oracle.saveSettings.prestigePlus.influence;
-        realityInactive.color = oracle.saveSettings.saveData.workersReadyToGo >= 128 && !oracle.saveSettings.saveData.workerAutoConvert ? color_Ready : color_White;
+        workerGenerationSpeed = BaseWorkerGenerationSpeed + oracle.saveSettings.prestigePlus.influence;
+        realityInactive.color = oracle.saveSettings.saveData.workersReadyToGo >= WorkerBatchSize && !oracle.saveSettings.saveData.workerAutoConvert ? color_Ready : color_White;
         RunWorkers();
-        gatherInfluenceButton.interactable = oracle.saveSettings.saveData.workersReadyToGo >= 128;
+        gatherInfluenceButton.interactable = oracle.saveSettings.saveData.workersReadyToGo >= WorkerBatchSize;
         influenceDisplay.text = $"Influence: {oracle.saveSettings.saveData.influence:N0}";
     }
 
@@ -64,9 +65,9 @@ public class InceptionController : MonoBehaviour
                 break;
             case false:
                 long total = oracle.saveSettings.saveData.workersReadyToGo + amountWhileAway;
-                if (total >= 128)
+                if (total >= WorkerBatchSize)
                 {
-                    oracle.saveSettings.saveData.workersReadyToGo = 128;
+                    oracle.saveSettings.saveData.workersReadyToGo = WorkerBatchSize;
                     oracle.saveSettings.saveData.universesConsumed +=
                         128 - oracle.saveSettings.saveData.workersReadyToGo;
                 }
@@ -88,11 +89,11 @@ public class InceptionController : MonoBehaviour
         consumingText.text = "Consuming";
         switch (oracle.saveSettings.saveData.workersReadyToGo)
         {
-            case >= 128 when
+            case >= WorkerBatchSize when
                 !oracle.saveSettings.saveData.workerAutoConvert:
                 consumingText.text = "Consumption Halted";
                 return;
-            case >= 128:
+            case >= WorkerBatchSize:
                 SendWorkers();
                 break;
         }
@@ -115,16 +116,16 @@ public class InceptionController : MonoBehaviour
     private void UpdateWorkersReadyToGo()
     {
         if (oracle.saveSettings.saveData.workersReadyToGo < 0) oracle.saveSettings.saveData.workersReadyToGo = 0;
-        workersReadyToGofill.fillAmount = (float)oracle.saveSettings.saveData.workersReadyToGo / 128;
-        workersReadyToGofillSideMenu.fillAmount = (float)oracle.saveSettings.saveData.workersReadyToGo / 128;
-        preWorkerCounter.text = $"{oracle.saveSettings.saveData.workersReadyToGo}/128";
+        workersReadyToGofill.fillAmount = (float)oracle.saveSettings.saveData.workersReadyToGo / (float)WorkerBatchSize;
+        workersReadyToGofillSideMenu.fillAmount = (float)oracle.saveSettings.saveData.workersReadyToGo / (float)WorkerBatchSize;
+        preWorkerCounter.text = $"{oracle.saveSettings.saveData.workersReadyToGo}/{WorkerBatchSize}";
         universeDesignation.text =
             $"Universe Designation: {oracle.saveSettings.saveData.universesConsumed + 1:N0}";
     }
 
     private void SendWorkers()
     {
-        oracle.saveSettings.saveData.influence += 128;
+        oracle.saveSettings.saveData.influence += WorkerBatchSize;
         oracle.saveSettings.saveData.workersReadyToGo = 0;
         UpdateWorkersReadyToGo();
     }

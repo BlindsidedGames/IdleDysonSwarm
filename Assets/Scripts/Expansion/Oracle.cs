@@ -21,6 +21,7 @@ using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 using GameData;
 using static LoadScreenMethods;
+using static IdleDysonSwarm.Systems.Constants.QuantumConstants;
 
 
 namespace Expansion
@@ -2873,8 +2874,8 @@ namespace Expansion
                 case true:
                 {
                     saveSettings.prestigePlus.points +=
-                        (long)Math.Floor((prestigeData.infinityPoints - prestigeData.spentInfinityPoints) / 42f);
-                    prestigeData.infinityPoints -= (long)Math.Floor((prestigeData.infinityPoints - prestigeData.spentInfinityPoints) / 42f) * 42;
+                        (long)Math.Floor((prestigeData.infinityPoints - prestigeData.spentInfinityPoints) / (float)IPToQuantumConversion);
+                    prestigeData.infinityPoints -= (long)Math.Floor((prestigeData.infinityPoints - prestigeData.spentInfinityPoints) / (float)IPToQuantumConversion) * IPToQuantumConversion;
                 }
                     break;
                 case false:
