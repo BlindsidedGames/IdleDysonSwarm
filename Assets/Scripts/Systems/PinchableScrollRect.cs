@@ -1,7 +1,8 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.InputSystem;
+using UnityEngine.InputSystem.EnhancedTouch;
 using UnityEngine.UI;
+using Touch = UnityEngine.InputSystem.EnhancedTouch.Touch;
 
 public class PinchableScrollRect : ScrollRect
 {
@@ -17,14 +18,24 @@ public class PinchableScrollRect : ScrollRect
     private readonly float _mouseWheelSensitivity = 1;
     private bool blockPan;
 
-    protected override void Awake()
+    protected override void OnEnable()
     {
-        Input.multiTouchEnabled = true;
+        base.OnEnable();
+        EnhancedTouchSupport.Enable();
+    }
+
+    protected override void OnDisable()
+    {
+        base.OnDisable();
+        EnhancedTouchSupport.Disable();
     }
 
     private void Update()
     {
-        if (Input.touchCount == 2)
+        var activeTouches = Touch.activeTouches;
+        int touchCount = activeTouches.Count;
+
+        if (touchCount == 2)
         {
             if (!_isPincching)
             {
@@ -37,23 +48,28 @@ public class PinchableScrollRect : ScrollRect
         else
         {
             _isPincching = false;
-            if (Input.touchCount == 0) blockPan = false;
+            if (touchCount == 0) blockPan = false;
         }
 
         //pc input
-        var scrollWheelInput = Input.GetAxis("Mouse ScrollWheel");
-        if (Mathf.Abs(scrollWheelInput) > float.Epsilon)
+        var mouse = Mouse.current;
+        if (mouse != null)
         {
-            _currentZoom *= 1 + scrollWheelInput * _mouseWheelSensitivity;
-            _currentZoom = Mathf.Clamp(_currentZoom, _minZoom, _maxZoom);
-            _startPinchScreenPosition = Input.mousePosition;
-            RectTransformUtility.ScreenPointToLocalPointInRectangle(content, _startPinchScreenPosition, null,
-                out _startPinchCenterPosition);
-            Vector2 pivotPosition =
-                new Vector3(content.pivot.x * content.rect.size.x, content.pivot.y * content.rect.size.y);
-            var posFromBottomLeft = pivotPosition + _startPinchCenterPosition;
-            SetPivot(content,
-                new Vector2(posFromBottomLeft.x / content.rect.width, posFromBottomLeft.y / content.rect.height));
+            Vector2 scrollDelta = mouse.scroll.ReadValue();
+            float scrollWheelInput = scrollDelta.y * 0.01f; // Scale to match old GetAxis behavior
+            if (Mathf.Abs(scrollWheelInput) > float.Epsilon)
+            {
+                _currentZoom *= 1 + scrollWheelInput * _mouseWheelSensitivity;
+                _currentZoom = Mathf.Clamp(_currentZoom, _minZoom, _maxZoom);
+                _startPinchScreenPosition = mouse.position.ReadValue();
+                RectTransformUtility.ScreenPointToLocalPointInRectangle(content, _startPinchScreenPosition, null,
+                    out _startPinchCenterPosition);
+                Vector2 pivotPosition =
+                    new Vector3(content.pivot.x * content.rect.size.x, content.pivot.y * content.rect.size.y);
+                var posFromBottomLeft = pivotPosition + _startPinchCenterPosition;
+                SetPivot(content,
+                    new Vector2(posFromBottomLeft.x / content.rect.width, posFromBottomLeft.y / content.rect.height));
+            }
         }
         //pc input end
 
@@ -70,8 +86,9 @@ public class PinchableScrollRect : ScrollRect
 
     private void OnPinchStart()
     {
-        var pos1 = Input.touches[0].position;
-        var pos2 = Input.touches[1].position;
+        var activeTouches = Touch.activeTouches;
+        var pos1 = activeTouches[0].screenPosition;
+        var pos2 = activeTouches[1].screenPosition;
 
         _startPinchDist = Distance(pos1, pos2) * content.localScale.x;
         _startPinchZoom = _currentZoom;
@@ -90,7 +107,8 @@ public class PinchableScrollRect : ScrollRect
 
     private void OnPinch()
     {
-        var currentPinchDist = Distance(Input.touches[0].position, Input.touches[1].position) * content.localScale.x;
+        var activeTouches = Touch.activeTouches;
+        var currentPinchDist = Distance(activeTouches[0].screenPosition, activeTouches[1].screenPosition) * content.localScale.x;
         _currentZoom = currentPinchDist / _startPinchDist * _startPinchZoom;
         _currentZoom = Mathf.Clamp(_currentZoom, _minZoom, _maxZoom);
     }

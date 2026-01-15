@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityEngine.InputSystem;
 
 /// <summary>
 /// Coordinator for side panel managers. Provides backward-compatible access
@@ -42,7 +43,8 @@ public class SidePanelManager : MonoBehaviour
     private void Update()
     {
 #if UNITY_IOS || UNITY_ANDROID
-        if (Input.GetKeyDown(KeyCode.Escape))
+        var keyboard = Keyboard.current;
+        if (keyboard != null && keyboard.escapeKey.wasPressedThisFrame)
             gameObject.SetActive(false);
 #endif
     }
