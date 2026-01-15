@@ -68,7 +68,7 @@ namespace Expansion
         public bool Loaded;
         private bool _isSaveReady;
         private bool _autoSaveScheduled;
-        private const int CurrentSaveVersion = 4;
+        private const int CurrentSaveVersion = 5;
 
         #region SaveAndLoadFromClipboard
 
@@ -254,6 +254,12 @@ namespace Expansion
                 name: "Skill state to ids",
                 summary: "Populate skill state dictionary from legacy skill ownership and timers.",
                 apply: _ => { MigrateSkillStateToIds(); }));
+
+            registry.AddStep(new MigrationStep(
+                targetVersion: 5,
+                name: "Extract AvocadoData",
+                summary: "Migrate avocato fields from PrestigePlus to new AvocadoData structure.",
+                apply: _ => { MigrateAvocadoData(); }));
 
             return registry;
         }
@@ -491,6 +497,42 @@ namespace Expansion
             if (data.skillAutoAssignmentIds5 == null || data.skillAutoAssignmentIds5.Count == 0)
             {
                 data.skillAutoAssignmentIds5 = SkillIdMap.ConvertKeysToIds(data.skillAutoAssignmentList5);
+            }
+        }
+
+        /// <summary>
+        /// Migrates avocato fields from PrestigePlus to new AvocadoData structure.
+        /// This preserves all accumulated progress while moving to cleaner data organization.
+        /// </summary>
+        private void MigrateAvocadoData()
+        {
+            if (saveSettings == null) return;
+
+            var pp = saveSettings.prestigePlus;
+            var avocado = saveSettings.avocadoData;
+
+            // Only migrate if AvocadoData hasn't been populated yet
+            // (check if unlocked is false AND legacy field is true, or any accumulated values exist)
+            bool needsMigration = !avocado.unlocked && pp.avocatoPurchased;
+            bool hasLegacyData = pp.avocatoIP > 0 || pp.avocatoInfluence > 0 ||
+                                 pp.avocatoStrangeMatter > 0 || pp.avocatoOverflow > 0;
+
+            if (needsMigration || hasLegacyData)
+            {
+                // Migrate unlock state
+                avocado.unlocked = pp.avocatoPurchased;
+
+                // Migrate accumulated values (add to any existing values in case of partial migration)
+                avocado.infinityPoints += pp.avocatoIP;
+                avocado.influence += pp.avocatoInfluence;
+                avocado.strangeMatter += pp.avocatoStrangeMatter;
+                avocado.overflowMultiplier += pp.avocatoOverflow;
+
+                // Clear legacy fields to prevent double-counting on future loads
+                pp.avocatoIP = 0;
+                pp.avocatoInfluence = 0;
+                pp.avocatoStrangeMatter = 0;
+                pp.avocatoOverflow = 0;
             }
         }
 
@@ -3033,6 +3075,7 @@ namespace Expansion
             public SaveDataPrestige sdPrestige = new SaveDataPrestige();
             public SaveDataDream1 sdSimulation = new SaveDataDream1();
             public PrestigePlus prestigePlus = new PrestigePlus();
+            public AvocadoData avocadoData = new AvocadoData();
         }
 
         [Serializable]
@@ -3448,6 +3491,30 @@ namespace Expansion
             public long influence;
             public long cash;
             public long science;
+        }
+
+        /// <summary>
+        /// Cross-system aggregator that consumes resources from Infinity, Reality, and Dream1
+        /// to produce a global multiplier applied to all facilities.
+        /// Extracted from PrestigePlus in save version 5.
+        /// </summary>
+        [Serializable]
+        public class AvocadoData
+        {
+            /// <summary>Whether the Avocado system has been unlocked (costs 42 Quantum Points).</summary>
+            public bool unlocked;
+
+            /// <summary>Accumulated Infinity Points fed to Avocado.</summary>
+            public double infinityPoints;
+
+            /// <summary>Accumulated Influence currency fed to Avocado.</summary>
+            public double influence;
+
+            /// <summary>Accumulated Strange Matter fed to Avocado.</summary>
+            public double strangeMatter;
+
+            /// <summary>Overflow multiplier bonus.</summary>
+            public double overflowMultiplier;
         }
 
 //permaData

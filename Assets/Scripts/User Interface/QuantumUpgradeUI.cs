@@ -38,6 +38,7 @@ public class QuantumUpgradeUI : MonoBehaviour
 
     private int divisionCost => prestigePlus.divisionsPurchased >= 1 ? (int)Math.Pow(2, prestigePlus.divisionsPurchased) * 2 : 2;
     private PrestigePlus prestigePlus => oracle.saveSettings.prestigePlus;
+    private AvocadoData avocadoData => oracle.saveSettings.avocadoData;
     private DysonVerseInfinityData infinityData => oracle.saveSettings.dysonVerseSaveData.dysonVerseInfinityData;
     private DysonVersePrestigeData prestigeData => oracle.saveSettings.dysonVerseSaveData.dysonVersePrestigeData;
     private DysonVerseSaveData dysonVerseSaveData => oracle.saveSettings.dysonVerseSaveData;
@@ -139,7 +140,8 @@ public class QuantumUpgradeUI : MonoBehaviour
     {
         if (pointsRemaining < AvocadoCost) return;
         avocatoButton.transform.GetComponentInChildren<TMP_Text>().text = "Purchased";
-        prestigePlus.avocatoPurchased = true;
+        avocadoData.unlocked = true;
+        prestigePlus.avocatoPurchased = true; // Keep legacy field in sync
         prestigePlus.spentPoints += AvocadoCost;
     }
 

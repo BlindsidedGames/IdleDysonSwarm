@@ -9,7 +9,7 @@ using static IdleDysonSwarm.Systems.Constants.RealityConstants;
 
 public class AvocadoFeeder : MonoBehaviour
 {
-    private PrestigePlus prestigePlus => oracle.saveSettings.prestigePlus;
+    private AvocadoData avocadoData => oracle.saveSettings.avocadoData;
     private DysonVersePrestigeData prestigeData => oracle.saveSettings.dysonVerseSaveData.dysonVersePrestigeData;
     private SaveDataPrestige saveDataPrestige => oracle.saveSettings.sdPrestige;
     private SaveData saveData => oracle.saveSettings.saveData;
@@ -36,7 +36,7 @@ public class AvocadoFeeder : MonoBehaviour
         if (prestigeData.infinityPoints - prestigeData.spentInfinityPoints > 0)
         {
             long availableInfinityPoints = prestigeData.infinityPoints - prestigeData.spentInfinityPoints;
-            prestigePlus.avocatoIP += availableInfinityPoints;
+            avocadoData.infinityPoints += availableInfinityPoints;
             prestigeData.infinityPoints -= availableInfinityPoints;
             UpdateText();
         }
@@ -46,7 +46,7 @@ public class AvocadoFeeder : MonoBehaviour
     {
         if (saveData.influence > 0)
         {
-            prestigePlus.avocatoInfluence += saveData.influence;
+            avocadoData.influence += saveData.influence;
             saveData.influence = 0;
             UpdateText();
         }
@@ -56,7 +56,7 @@ public class AvocadoFeeder : MonoBehaviour
     {
         if (saveDataPrestige.strangeMatter > 0)
         {
-            prestigePlus.avocatoStrangeMatter += saveDataPrestige.strangeMatter;
+            avocadoData.strangeMatter += saveDataPrestige.strangeMatter;
             saveDataPrestige.strangeMatter = 0;
             UpdateText();
         }
@@ -64,11 +64,11 @@ public class AvocadoFeeder : MonoBehaviour
 
     public void UpdateText()
     {
-        gameObject.SetActive(prestigePlus.avocatoPurchased);
-        double infinityPointsMultiplier = prestigePlus.avocatoIP >= AvocadoLogThreshold ? Math.Log10(prestigePlus.avocatoIP) : 0;
-        double influenceMultiplier = prestigePlus.avocatoInfluence >= AvocadoLogThreshold ? Math.Log10(prestigePlus.avocatoInfluence) : 0;
-        double strangeMatterMultiplier = prestigePlus.avocatoStrangeMatter >= AvocadoLogThreshold ? Math.Log10(prestigePlus.avocatoStrangeMatter) : 0;
-        double overflowMultiplier = 1 + prestigePlus.avocatoOverflow;
+        gameObject.SetActive(avocadoData.unlocked);
+        double infinityPointsMultiplier = avocadoData.infinityPoints >= AvocadoLogThreshold ? Math.Log10(avocadoData.infinityPoints) : 0;
+        double influenceMultiplier = avocadoData.influence >= AvocadoLogThreshold ? Math.Log10(avocadoData.influence) : 0;
+        double strangeMatterMultiplier = avocadoData.strangeMatter >= AvocadoLogThreshold ? Math.Log10(avocadoData.strangeMatter) : 0;
+        double overflowMultiplier = 1 + avocadoData.overflowMultiplier;
 
         feedInfinityPointsText.text =
             $"Infinity Multiplier - <color=#00E1FF>x{CalcUtils.FormatNumber(infinityPointsMultiplier)}";
