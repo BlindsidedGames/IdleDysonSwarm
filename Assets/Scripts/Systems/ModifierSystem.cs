@@ -15,8 +15,144 @@ namespace Systems
         public double ScienceMulti = 1;
     }
 
+    /// <summary>
+    /// Defines the type of buff applied by a secret level.
+    /// </summary>
+    internal enum SecretBuffType
+    {
+        PlanetMulti,
+        ServerMulti,
+        AiMulti,
+        AssemblyMulti,
+        CashMulti,
+        ScienceMulti,
+        AssemblyLineUpgradePercent,
+        ServerUpgradePercent,
+        AiManagerUpgradePercent,
+        PlanetUpgradePercent
+    }
+
+    /// <summary>
+    /// Represents a single secret buff entry in the progression table.
+    /// </summary>
+    internal readonly struct SecretBuffEntry
+    {
+        public readonly int Level;
+        public readonly SecretBuffType BuffType;
+        public readonly double Value;
+
+        public SecretBuffEntry(int level, SecretBuffType buffType, double value)
+        {
+            Level = level;
+            BuffType = buffType;
+            Value = value;
+        }
+    }
+
     public static class ModifierSystem
     {
+        /// <summary>
+        /// Table-driven secret buff progression. Each entry defines a level, buff type, and value.
+        /// Buffs are applied in order from lowest level to highest, with higher levels overwriting lower values.
+        /// </summary>
+        private static readonly SecretBuffEntry[] SecretBuffTable =
+        {
+            // Level 1 - Assembly Line Upgrade Percent
+            new SecretBuffEntry(1, SecretBuffType.AssemblyLineUpgradePercent, 0.06),
+            // Level 2 - Cash Multiplier
+            new SecretBuffEntry(2, SecretBuffType.CashMulti, 2),
+            // Level 3 - Server Upgrade Percent
+            new SecretBuffEntry(3, SecretBuffType.ServerUpgradePercent, 0.06),
+            // Level 4 - Assembly Line Upgrade Percent (overwrite)
+            new SecretBuffEntry(4, SecretBuffType.AssemblyLineUpgradePercent, 0.09),
+            // Level 5 - AI Manager Upgrade Percent
+            new SecretBuffEntry(5, SecretBuffType.AiManagerUpgradePercent, 0.06),
+            // Level 6 - Science Multiplier
+            new SecretBuffEntry(6, SecretBuffType.ScienceMulti, 2),
+            // Level 7 - Planet Upgrade Percent
+            new SecretBuffEntry(7, SecretBuffType.PlanetUpgradePercent, 0.06),
+            // Level 8 - Cash Multiplier (overwrite)
+            new SecretBuffEntry(8, SecretBuffType.CashMulti, 4),
+            // Level 9 - Server Upgrade Percent (overwrite)
+            new SecretBuffEntry(9, SecretBuffType.ServerUpgradePercent, 0.09),
+            // Level 10 - Science Multiplier (overwrite)
+            new SecretBuffEntry(10, SecretBuffType.ScienceMulti, 4),
+            // Level 11 - Science Multiplier (overwrite)
+            new SecretBuffEntry(11, SecretBuffType.ScienceMulti, 6),
+            // Level 12 - Assembly Line Upgrade Percent (overwrite)
+            new SecretBuffEntry(12, SecretBuffType.AssemblyLineUpgradePercent, 0.12),
+            // Level 13 - AI Manager Upgrade Percent (overwrite)
+            new SecretBuffEntry(13, SecretBuffType.AiManagerUpgradePercent, 0.09),
+            // Level 14 - Planet Upgrade Percent (overwrite)
+            new SecretBuffEntry(14, SecretBuffType.PlanetUpgradePercent, 0.09),
+            // Level 15 - Science Multiplier (overwrite)
+            new SecretBuffEntry(15, SecretBuffType.ScienceMulti, 8),
+            // Level 16 - Assembly Multiplier
+            new SecretBuffEntry(16, SecretBuffType.AssemblyMulti, 2),
+            // Level 17 - Planet Multiplier
+            new SecretBuffEntry(17, SecretBuffType.PlanetMulti, 2),
+            // Level 18 - Planet Multiplier (overwrite)
+            new SecretBuffEntry(18, SecretBuffType.PlanetMulti, 5),
+            // Level 19 - Cash Multiplier (overwrite)
+            new SecretBuffEntry(19, SecretBuffType.CashMulti, 6),
+            // Level 20 - Server Multiplier
+            new SecretBuffEntry(20, SecretBuffType.ServerMulti, 2),
+            // Level 21 - Server Multiplier (overwrite)
+            new SecretBuffEntry(21, SecretBuffType.ServerMulti, 3),
+            // Level 22 - Science Multiplier (overwrite)
+            new SecretBuffEntry(22, SecretBuffType.ScienceMulti, 10),
+            // Level 23 - Assembly Multiplier (overwrite)
+            new SecretBuffEntry(23, SecretBuffType.AssemblyMulti, 7),
+            // Level 24 - AI Multiplier
+            new SecretBuffEntry(24, SecretBuffType.AiMulti, 2.5),
+            // Level 25 - Cash Multiplier (overwrite)
+            new SecretBuffEntry(25, SecretBuffType.CashMulti, 8),
+            // Level 26 - AI Multiplier (overwrite)
+            new SecretBuffEntry(26, SecretBuffType.AiMulti, 3),
+            // Level 27 - AI Multiplier (overwrite)
+            new SecretBuffEntry(27, SecretBuffType.AiMulti, 42),
+        };
+
+        /// <summary>
+        /// Applies a single buff entry to the appropriate target.
+        /// </summary>
+        private static void ApplyBuff(SecretBuffEntry entry, SecretBuffState secrets, DysonVerseInfinityData infinityData)
+        {
+            switch (entry.BuffType)
+            {
+                case SecretBuffType.PlanetMulti:
+                    secrets.PlanetMulti = entry.Value;
+                    break;
+                case SecretBuffType.ServerMulti:
+                    secrets.ServerMulti = entry.Value;
+                    break;
+                case SecretBuffType.AiMulti:
+                    secrets.AiMulti = entry.Value;
+                    break;
+                case SecretBuffType.AssemblyMulti:
+                    secrets.AssemblyMulti = entry.Value;
+                    break;
+                case SecretBuffType.CashMulti:
+                    secrets.CashMulti = entry.Value;
+                    break;
+                case SecretBuffType.ScienceMulti:
+                    secrets.ScienceMulti = entry.Value;
+                    break;
+                case SecretBuffType.AssemblyLineUpgradePercent:
+                    if (infinityData != null) infinityData.assemblyLineUpgradePercent = (float)entry.Value;
+                    break;
+                case SecretBuffType.ServerUpgradePercent:
+                    if (infinityData != null) infinityData.serverUpgradePercent = (float)entry.Value;
+                    break;
+                case SecretBuffType.AiManagerUpgradePercent:
+                    if (infinityData != null) infinityData.aiManagerUpgradePercent = (float)entry.Value;
+                    break;
+                case SecretBuffType.PlanetUpgradePercent:
+                    if (infinityData != null) infinityData.planetUpgradePercent = (float)entry.Value;
+                    break;
+            }
+        }
+
         public static void CalculateModifiers(DysonVerseInfinityData infinityData, DysonVerseSkillTreeData skillTreeData,
             DysonVersePrestigeData prestigeData, PrestigePlus prestigePlus, SecretBuffState secrets, double maxInfinityBuff)
         {
@@ -31,174 +167,49 @@ namespace Systems
             UpdatePanelLifetime(infinityData, skillTreeData, prestigeData, prestigePlus);
         }
 
+        /// <summary>
+        /// Applies secret buffs based on the player's current secrets level.
+        /// Uses table-driven approach - iterates through all buffs up to the current level.
+        /// </summary>
         public static void SecretBuffs(DysonVerseInfinityData infinityData, DysonVersePrestigeData prestigeData,
             SecretBuffState secrets)
         {
-            switch (prestigeData.secretsOfTheUniverse)
+            if (prestigeData == null || secrets == null) return;
+
+            long currentLevel = prestigeData.secretsOfTheUniverse;
+            if (currentLevel <= 0) return;
+
+            // Apply all buffs from level 1 up to current level
+            // Higher levels overwrite values set by lower levels (same as original behavior)
+            foreach (var entry in SecretBuffTable)
             {
-                case 27:
-                    secrets.AiMulti = 42;
-                    goto case 26;
-                case 26:
-                    secrets.AiMulti = 3;
-                    goto case 25;
-                case 25:
-                    secrets.CashMulti = 8;
-                    goto case 24;
-                case 24:
-                    secrets.AiMulti = 2.5f;
-                    goto case 23;
-                case 23:
-                    secrets.AssemblyMulti = 7;
-                    goto case 22;
-                case 22:
-                    secrets.ScienceMulti = 10;
-                    goto case 21;
-                case 21:
-                    secrets.ServerMulti = 3;
-                    goto case 20;
-                case 20:
-                    secrets.ServerMulti = 2;
-                    goto case 19;
-                case 19:
-                    secrets.CashMulti = 6;
-                    goto case 18;
-                case 18:
-                    secrets.PlanetMulti = 5;
-                    goto case 17;
-                case 17:
-                    secrets.PlanetMulti = 2;
-                    goto case 16;
-                case 16:
-                    secrets.AssemblyMulti = 2;
-                    goto case 15;
-                case 15:
-                    secrets.ScienceMulti = 8;
-                    goto case 14;
-                case 14:
-                    infinityData.planetUpgradePercent = 0.09f;
-                    goto case 13;
-                case 13:
-                    infinityData.aiManagerUpgradePercent = 0.09f;
-                    goto case 12;
-                case 12:
-                    infinityData.assemblyLineUpgradePercent = 0.12f;
-                    goto case 11;
-                case 11:
-                    secrets.ScienceMulti = 6;
-                    goto case 10;
-                case 10:
-                    secrets.ScienceMulti = 4;
-                    goto case 9;
-                case 9:
-                    infinityData.serverUpgradePercent = 0.09f;
-                    goto case 8;
-                case 8:
-                    secrets.CashMulti = 4;
-                    goto case 7;
-                case 7:
-                    infinityData.planetUpgradePercent = 0.06f;
-                    goto case 6;
-                case 6:
-                    secrets.ScienceMulti = 2;
-                    goto case 5;
-                case 5:
-                    infinityData.aiManagerUpgradePercent = 0.06f;
-                    goto case 4;
-                case 4:
-                    infinityData.assemblyLineUpgradePercent = 0.09f;
-                    goto case 3;
-                case 3:
-                    infinityData.serverUpgradePercent = 0.06f;
-                    goto case 2;
-                case 2:
-                    secrets.CashMulti = 2;
-                    goto case 1;
-                case 1:
-                    infinityData.assemblyLineUpgradePercent = 0.06f;
-                    break;
+                if (entry.Level <= currentLevel)
+                {
+                    ApplyBuff(entry, secrets, infinityData);
+                }
             }
         }
 
+        /// <summary>
+        /// Builds a SecretBuffState containing only the multiplier buffs for the given prestige data.
+        /// Does not modify infinityData - only returns multiplier values.
+        /// </summary>
         public static SecretBuffState BuildSecretBuffState(DysonVersePrestigeData prestigeData)
         {
             var secrets = new SecretBuffState();
             if (prestigeData == null) return secrets;
 
-            switch (prestigeData.secretsOfTheUniverse)
+            long currentLevel = prestigeData.secretsOfTheUniverse;
+            if (currentLevel <= 0) return secrets;
+
+            // Apply only multiplier buffs (skip upgrade percent buffs since infinityData is null)
+            foreach (var entry in SecretBuffTable)
             {
-                case 27:
-                    secrets.AiMulti = 42;
-                    goto case 26;
-                case 26:
-                    secrets.AiMulti = 3;
-                    goto case 25;
-                case 25:
-                    secrets.CashMulti = 8;
-                    goto case 24;
-                case 24:
-                    secrets.AiMulti = 2.5;
-                    goto case 23;
-                case 23:
-                    secrets.AssemblyMulti = 7;
-                    goto case 22;
-                case 22:
-                    secrets.ScienceMulti = 10;
-                    goto case 21;
-                case 21:
-                    secrets.ServerMulti = 3;
-                    goto case 20;
-                case 20:
-                    secrets.ServerMulti = 2;
-                    goto case 19;
-                case 19:
-                    secrets.CashMulti = 6;
-                    goto case 18;
-                case 18:
-                    secrets.PlanetMulti = 5;
-                    goto case 17;
-                case 17:
-                    secrets.PlanetMulti = 2;
-                    goto case 16;
-                case 16:
-                    secrets.AssemblyMulti = 2;
-                    goto case 15;
-                case 15:
-                    secrets.ScienceMulti = 8;
-                    goto case 14;
-                case 14:
-                    goto case 13;
-                case 13:
-                    goto case 12;
-                case 12:
-                    goto case 11;
-                case 11:
-                    secrets.ScienceMulti = 6;
-                    goto case 10;
-                case 10:
-                    secrets.ScienceMulti = 4;
-                    goto case 9;
-                case 9:
-                    goto case 8;
-                case 8:
-                    secrets.CashMulti = 4;
-                    goto case 7;
-                case 7:
-                    goto case 6;
-                case 6:
-                    secrets.ScienceMulti = 2;
-                    goto case 5;
-                case 5:
-                    goto case 4;
-                case 4:
-                    goto case 3;
-                case 3:
-                    goto case 2;
-                case 2:
-                    secrets.CashMulti = 2;
-                    goto case 1;
-                case 1:
-                    break;
+                if (entry.Level <= currentLevel)
+                {
+                    // Pass null for infinityData - ApplyBuff will skip upgrade percent buffs
+                    ApplyBuff(entry, secrets, null);
+                }
             }
 
             return secrets;

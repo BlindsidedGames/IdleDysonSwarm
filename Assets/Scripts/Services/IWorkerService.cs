@@ -93,6 +93,17 @@ namespace IdleDysonSwarm.Services
         /// <param name="amount">Amount to add.</param>
         void AddInfluence(long amount);
 
+        /// <summary>
+        /// Increments the worker count by one and tracks universe consumption.
+        /// Used during real-time worker generation.
+        /// </summary>
+        void IncrementWorker();
+
+        /// <summary>
+        /// Ensures worker count is non-negative (clamps to 0 if negative).
+        /// </summary>
+        void ClampWorkersNonNegative();
+
         #endregion
 
         #region Events

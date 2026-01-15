@@ -54,51 +54,18 @@ namespace Systems.Facilities
         {
             if (string.IsNullOrEmpty(facilityId) || infinityData == null) return null;
 
-            switch (facilityId)
+            if (!FacilityCountAccessor.TryGetCount(infinityData, facilityId, out var counts))
             {
-                case "assembly_lines":
-                    return new FacilityState
-                    {
-                        FacilityId = facilityId,
-                        ManualOwned = infinityData.assemblyLines[1],
-                        AutoOwned = infinityData.assemblyLines[0],
-                        EffectiveCount = infinityData.assemblyLines[0] + infinityData.assemblyLines[1]
-                    };
-                case "ai_managers":
-                    return new FacilityState
-                    {
-                        FacilityId = facilityId,
-                        ManualOwned = infinityData.managers[1],
-                        AutoOwned = infinityData.managers[0],
-                        EffectiveCount = infinityData.managers[0] + infinityData.managers[1]
-                    };
-                case "servers":
-                    return new FacilityState
-                    {
-                        FacilityId = facilityId,
-                        ManualOwned = infinityData.servers[1],
-                        AutoOwned = infinityData.servers[0],
-                        EffectiveCount = infinityData.servers[0] + infinityData.servers[1]
-                    };
-                case "data_centers":
-                    return new FacilityState
-                    {
-                        FacilityId = facilityId,
-                        ManualOwned = infinityData.dataCenters[1],
-                        AutoOwned = infinityData.dataCenters[0],
-                        EffectiveCount = infinityData.dataCenters[0] + infinityData.dataCenters[1]
-                    };
-                case "planets":
-                    return new FacilityState
-                    {
-                        FacilityId = facilityId,
-                        ManualOwned = infinityData.planets[1],
-                        AutoOwned = infinityData.planets[0],
-                        EffectiveCount = infinityData.planets[0] + infinityData.planets[1]
-                    };
-                default:
-                    return null;
+                return null;
             }
+
+            return new FacilityState
+            {
+                FacilityId = facilityId,
+                ManualOwned = counts[1],
+                AutoOwned = counts[0],
+                EffectiveCount = counts[0] + counts[1]
+            };
         }
     }
 }

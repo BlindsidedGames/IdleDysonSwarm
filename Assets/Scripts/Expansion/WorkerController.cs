@@ -1,4 +1,3 @@
-using System;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
@@ -62,32 +61,7 @@ public class WorkerController : MonoBehaviour
 
     private void ApplyReturnValues(double time)
     {
-        int amountWhileAway = (int)Math.Round(time * workerGenerationSpeed);
-
-
-        switch (oracle.saveSettings.saveData.workerAutoConvert)
-        {
-            case true:
-                oracle.saveSettings.saveData.influence += amountWhileAway;
-                oracle.saveSettings.saveData.universesConsumed += amountWhileAway;
-                break;
-            case false:
-                long total = oracle.saveSettings.saveData.workersReadyToGo + amountWhileAway;
-                if (total >= WorkerBatchSize)
-                {
-                    oracle.saveSettings.saveData.workersReadyToGo = WorkerBatchSize;
-                    oracle.saveSettings.saveData.universesConsumed +=
-                        WorkerBatchSize - oracle.saveSettings.saveData.workersReadyToGo;
-                }
-                else
-                {
-                    oracle.saveSettings.saveData.workersReadyToGo += amountWhileAway;
-                    oracle.saveSettings.saveData.universesConsumed += amountWhileAway;
-                }
-
-                break;
-        }
-
+        _workerService.ApplyOfflineProgress(time);
         UpdateWorkersReadyToGo();
     }
 
@@ -112,8 +86,7 @@ public class WorkerController : MonoBehaviour
         if (!(workerGenerationTime >= 1)) return;
         while (workerGenerationTime > 1)
         {
-            oracle.saveSettings.saveData.workersReadyToGo++;
-            oracle.saveSettings.saveData.universesConsumed++;
+            _workerService.IncrementWorker();
             workerGenerationTime -= 1;
         }
 
@@ -122,7 +95,7 @@ public class WorkerController : MonoBehaviour
 
     private void UpdateWorkersReadyToGo()
     {
-        if (oracle.saveSettings.saveData.workersReadyToGo < 0) oracle.saveSettings.saveData.workersReadyToGo = 0;
+        _workerService.ClampWorkersNonNegative();
         workersReadyToGofill.fillAmount = _workerService.WorkerFillPercent;
         workersReadyToGofillSideMenu.fillAmount = _workerService.WorkerFillPercent;
         preWorkerCounter.text = $"{_workerService.WorkersReady}/{WorkerBatchSize}";
@@ -132,8 +105,7 @@ public class WorkerController : MonoBehaviour
 
     private void SendWorkers()
     {
-        oracle.saveSettings.saveData.influence += WorkerBatchSize;
-        oracle.saveSettings.saveData.workersReadyToGo = 0;
+        _workerService.TryGatherInfluence();
         UpdateWorkersReadyToGo();
     }
 

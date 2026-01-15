@@ -111,6 +111,20 @@ namespace IdleDysonSwarm.Services
             }
         }
 
+        public void IncrementWorker()
+        {
+            SaveData.workersReadyToGo++;
+            SaveData.universesConsumed++;
+        }
+
+        public void ClampWorkersNonNegative()
+        {
+            if (SaveData.workersReadyToGo < 0)
+            {
+                SaveData.workersReadyToGo = 0;
+            }
+        }
+
         #endregion
 
         #region Events

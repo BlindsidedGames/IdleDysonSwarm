@@ -1,5 +1,6 @@
 using System;
 using UnityEngine;
+using UnityEngine.InputSystem;
 
 public class WikiSetter : MonoBehaviour
 {
@@ -17,7 +18,8 @@ public class WikiSetter : MonoBehaviour
 
     private void Update()
     {
-        if (Input.GetKeyDown(KeyCode.LeftCommand) && Input.GetKeyDown(KeyCode.Comma))
+        var keyboard = Keyboard.current;
+        if (keyboard != null && keyboard.leftCommandKey.wasPressedThisFrame && keyboard.commaKey.wasPressedThisFrame)
         {
             settings.GroupEnableDisableMenu();
             settings.SetCanvasColors();
