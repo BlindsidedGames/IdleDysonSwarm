@@ -17,14 +17,11 @@ public class SpaceAgeManager : MonoBehaviour
     // Production timer for space factories
     private ProductionTimer _spaceFactoriesTimer;
 
-    private void Awake()
-    {
-        // Initialize timer with saved progress
-        _spaceFactoriesTimer = new ProductionTimer(_factoriesDuration, sd1.spaceFactoriesTimerProgress);
-    }
-
     private void Start()
     {
+        // Initialize timer with saved progress (must be in Start, after Oracle is initialized)
+        _spaceFactoriesTimer = new ProductionTimer(_factoriesDuration, sd1.spaceFactoriesTimerProgress);
+
         solarBuyButton.onClick.AddListener(BuySolar);
         fusionBuyButton.onClick.AddListener(BuyFusion);
     }

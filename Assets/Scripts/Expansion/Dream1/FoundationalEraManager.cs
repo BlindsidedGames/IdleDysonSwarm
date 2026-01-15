@@ -65,9 +65,9 @@ public class FoundationalEraManager : MonoBehaviour
     private SaveData sd => oracle.saveSettings.saveData;
     private SaveDataPrestige sp => oracle.saveSettings.sdPrestige;
 
-    private void Awake()
+    private void Start()
     {
-        // Initialize timers with saved progress
+        // Initialize timers with saved progress (must be in Start, after Oracle is initialized)
         _hunterTimer = new ProductionTimer(hunterDuration, sd1.hunterTimerProgress);
         _gathererTimer = new ProductionTimer(gatherDuration, sd1.gathererTimerProgress);
         _communityTimer = new ProductionTimer(communityDuration, sd1.communityTimerProgress);
@@ -75,10 +75,7 @@ public class FoundationalEraManager : MonoBehaviour
         _villagesTimer = new ProductionTimer(villagesDuration, sd1.villagesTimerProgress);
         _workersTimer = new ProductionTimer(workersDuration, sd1.workersTimerProgress);
         _citiesTimer = new ProductionTimer(citiesDuration, sd1.citiesTimerProgress);
-    }
 
-    private void Start()
-    {
         hunterBuyButton.onClick.AddListener(OnHunterBuy);
         gathererBuyButton.onClick.AddListener(OnGathererBuy);
         communityBoostButton.onClick.AddListener(OnCommunityBoost);
