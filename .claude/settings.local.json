@@ -13,7 +13,10 @@
       "Bash(git push:*)",
       "Bash(gh pr create:*)",
       "Bash(gh pr edit:*)",
-      "Bash(gh pr view:*)"
+      "Bash(gh pr view:*)",
+      "Bash(gh pr list:*)",
+      "Bash(git pull:*)",
+      "Bash(git stash:*)"
     ],
     "deny": [
       "Bash(git * --force *)",
