@@ -1,5 +1,6 @@
 using Blindsided.Utilities;
 using GameData;
+using UnityEngine;
 using static Expansion.Oracle;
 
 namespace IdleDysonSwarm.Services
@@ -191,8 +192,17 @@ namespace IdleDysonSwarm.Services
                 return false;
 
             // Deduct primary cost
+            string costFacilityId = definition.costFacilityId.Value;
             double primaryCost = GetCost(facilityId, quantity);
-            DeductFacilityCost(definition.costFacilityId.Value, primaryCost);
+
+            double[] costFacilityBefore = _facilityService.GetFacilityCount(costFacilityId);
+            Debug.Log($"[MegaStructure] Purchasing {quantity} {facilityId}, cost: {primaryCost} {costFacilityId}");
+            Debug.Log($"[MegaStructure] {costFacilityId} before: auto={costFacilityBefore[0]}, manual={costFacilityBefore[1]}");
+
+            DeductFacilityCost(costFacilityId, primaryCost);
+
+            double[] costFacilityAfter = _facilityService.GetFacilityCount(costFacilityId);
+            Debug.Log($"[MegaStructure] {costFacilityId} after: auto={costFacilityAfter[0]}, manual={costFacilityAfter[1]}");
 
             // Deduct secondary cost (if any)
             if (definition.secondaryCostFacilityId != null &&
@@ -205,6 +215,8 @@ namespace IdleDysonSwarm.Services
             // Add purchased mega-structure
             double[] currentCounts = _facilityService.GetFacilityCount(facilityId);
             _facilityService.SetFacilityCount(facilityId, currentCounts[1] + quantity, currentCounts[0]);
+
+            Debug.Log($"[MegaStructure] Purchase complete. {facilityId} now: manual={currentCounts[1] + quantity}");
 
             return true;
         }

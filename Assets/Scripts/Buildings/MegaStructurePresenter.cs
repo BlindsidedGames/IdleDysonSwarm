@@ -1,6 +1,7 @@
 using Blindsided.Utilities;
 using GameData;
 using IdleDysonSwarm.Services;
+using Systems.Facilities;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
@@ -25,6 +26,8 @@ namespace Buildings
         [SerializeField] private MegaStructureType megaStructureType = MegaStructureType.Unknown;
         [SerializeField] private BuildingReferences buildingReferences;
         [SerializeField] private GameObject lockedOverlay;
+        [SerializeField] private Button breakdownButton;
+        [SerializeField] private FacilityBreakdownPopup breakdownPopup;
 
         private TMP_Text _buildingText;
         private TMP_Text _productionText;
@@ -54,22 +57,44 @@ namespace Buildings
             {
                 _purchaseButton.onClick.AddListener(PurchaseMegaStructure);
             }
+
+            if (breakdownButton != null)
+            {
+                breakdownButton.onClick.AddListener(ShowBreakdown);
+            }
         }
 
         private void Update()
         {
             bool isUnlocked = _megaStructureService.IsUnlocked(FacilityId);
+            UpdateVisibility(isUnlocked);
 
-            // Show/hide locked overlay
+            if (!isUnlocked) return;
+
+            UpdateUI();
+        }
+
+        private void UpdateVisibility(bool isUnlocked)
+        {
+            // Use CanvasGroup or scale to hide instead of SetActive
+            // This allows Update() to keep running so we can detect unlock
+            Transform container = transform.Find("Container");
+            if (container != null)
+            {
+                container.gameObject.SetActive(isUnlocked);
+            }
+
+            // Also control LayoutElement to collapse space when hidden
+            var layoutElement = GetComponent<UnityEngine.UI.LayoutElement>();
+            if (layoutElement != null)
+            {
+                layoutElement.ignoreLayout = !isUnlocked;
+            }
+
+            // Show/hide locked overlay (optional additional indicator)
             if (lockedOverlay != null)
             {
                 lockedOverlay.SetActive(!isUnlocked);
-            }
-
-            // Update UI if unlocked
-            if (isUnlocked)
-            {
-                UpdateUI();
             }
         }
 
@@ -117,9 +142,30 @@ namespace Buildings
             string facilityId = FacilityId;
             int numberToBuy = NumberToBuy();
 
+            Debug.Log($"[MegaStructurePresenter] Attempting to purchase {numberToBuy} {facilityId}");
+
             if (_megaStructureService.TryPurchase(facilityId, numberToBuy))
             {
+                Debug.Log($"[MegaStructurePresenter] Purchase successful");
                 UpdateUI();
+            }
+            else
+            {
+                Debug.Log($"[MegaStructurePresenter] Purchase failed");
+            }
+        }
+
+        public void ShowBreakdown()
+        {
+            if (breakdownPopup == null)
+                breakdownPopup = FacilityBreakdownPopup.Instance;
+
+            if (breakdownPopup == null)
+                breakdownPopup = Object.FindFirstObjectByType<FacilityBreakdownPopup>();
+
+            if (breakdownPopup != null)
+            {
+                breakdownPopup.ShowFacility(FacilityId);
             }
         }
 
@@ -267,7 +313,7 @@ namespace Buildings
                 string facilityId = FacilityId;
                 double primaryCost = _megaStructureService.GetCost(facilityId, NumberToBuy());
 
-                string costStr = $"{CalcUtils.FormatNumber(primaryCost)} {CostFacilityName}";
+                string costStr = $"{CalcUtils.FormatNumber(primaryCost)} {AbbreviatedCostName}";
 
                 // Add secondary cost for Galactic Brain
                 if (megaStructureType == MegaStructureType.GalacticBrains)
@@ -275,15 +321,25 @@ namespace Buildings
                     double secondaryCost = _megaStructureService.GetSecondaryCost(facilityId, NumberToBuy());
                     if (secondaryCost > 0)
                     {
-                        string secondaryName = "Birch Planets";
-                        if (_dataService.TryGetFacility("birch_planets", out FacilityDefinition secondaryDef))
-                            secondaryName = secondaryDef.displayName;
-
-                        costStr += $"\n{CalcUtils.FormatNumber(secondaryCost)} {secondaryName}";
+                        costStr += $"\n{CalcUtils.FormatNumber(secondaryCost)} BiPl";
                     }
                 }
 
                 return costStr;
+            }
+        }
+
+        private string AbbreviatedCostName
+        {
+            get
+            {
+                return megaStructureType switch
+                {
+                    MegaStructureType.MatrioshkaBrains => "Pl",
+                    MegaStructureType.BirchPlanets => "MaBr",
+                    MegaStructureType.GalacticBrains => "MaBr",
+                    _ => "Units"
+                };
             }
         }
 
