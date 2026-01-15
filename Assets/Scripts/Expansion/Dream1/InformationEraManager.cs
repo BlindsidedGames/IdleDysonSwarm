@@ -17,15 +17,12 @@ public class InformationEraManager : MonoBehaviour
     private ProductionTimer _factoriesTimer;
     private ProductionTimer _botsTimer;
 
-    private void Awake()
-    {
-        // Initialize timers with saved progress
-        _factoriesTimer = new ProductionTimer(factoriesDuration, sd1.factoriesTimerProgress);
-        _botsTimer = new ProductionTimer(botsDuration, sd1.botsTimerProgress);
-    }
-
     private void Start()
     {
+        // Initialize timers with saved progress (must be in Start, after Oracle is initialized)
+        _factoriesTimer = new ProductionTimer(factoriesDuration, sd1.factoriesTimerProgress);
+        _botsTimer = new ProductionTimer(botsDuration, sd1.botsTimerProgress);
+
         engineeringButton.onClick.AddListener(OnEngineeringButtonClick);
         shippingButton.onClick.AddListener(OnShippingButtonClick);
         worldTradeButton.onClick.AddListener(OnWorldTradeButtonClick);
