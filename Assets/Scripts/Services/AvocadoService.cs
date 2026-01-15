@@ -11,15 +11,16 @@ namespace IdleDysonSwarm.Services
     /// </summary>
     public sealed class AvocadoService : IAvocadoService
     {
+        private AvocadoData AvocadoData => StaticSaveSettings.avocadoData;
         private PrestigePlus PrestigePlus => StaticSaveSettings.prestigePlus;
 
         #region State Properties
 
-        public bool IsUnlocked => PrestigePlus.avocatoPurchased;
-        public double AccumulatedIP => PrestigePlus.avocatoIP;
-        public double AccumulatedInfluence => PrestigePlus.avocatoInfluence;
-        public double AccumulatedStrangeMatter => PrestigePlus.avocatoStrangeMatter;
-        public double OverflowMultiplier => PrestigePlus.avocatoOverflow;
+        public bool IsUnlocked => AvocadoData.unlocked;
+        public double AccumulatedIP => AvocadoData.infinityPoints;
+        public double AccumulatedInfluence => AvocadoData.influence;
+        public double AccumulatedStrangeMatter => AvocadoData.strangeMatter;
+        public double OverflowMultiplier => AvocadoData.overflowMultiplier;
 
         #endregion
 
@@ -70,13 +71,23 @@ namespace IdleDysonSwarm.Services
 
         #region Actions
 
+        /// <summary>
+        /// Unlocks the Avocado system. Called when the player purchases the unlock from Quantum upgrades.
+        /// Also sets the legacy field for backward compatibility during the transition period.
+        /// </summary>
+        public void Unlock()
+        {
+            AvocadoData.unlocked = true;
+            PrestigePlus.avocatoPurchased = true; // Keep legacy field in sync
+        }
+
         public void FeedIP(double amount)
         {
             if (amount <= 0 || !IsUnlocked)
                 return;
 
             double previousBuff = GlobalBuff;
-            PrestigePlus.avocatoIP += amount;
+            AvocadoData.infinityPoints += amount;
 
             OnFed?.Invoke();
 
@@ -93,7 +104,7 @@ namespace IdleDysonSwarm.Services
                 return;
 
             double previousBuff = GlobalBuff;
-            PrestigePlus.avocatoInfluence += amount;
+            AvocadoData.influence += amount;
 
             OnFed?.Invoke();
 
@@ -110,7 +121,7 @@ namespace IdleDysonSwarm.Services
                 return;
 
             double previousBuff = GlobalBuff;
-            PrestigePlus.avocatoStrangeMatter += amount;
+            AvocadoData.strangeMatter += amount;
 
             OnFed?.Invoke();
 
@@ -127,7 +138,7 @@ namespace IdleDysonSwarm.Services
                 return;
 
             double previousBuff = GlobalBuff;
-            PrestigePlus.avocatoOverflow += amount;
+            AvocadoData.overflowMultiplier += amount;
 
             OnFed?.Invoke();
 

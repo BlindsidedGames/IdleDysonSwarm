@@ -93,6 +93,11 @@ namespace IdleDysonSwarm.Services
         #region Actions
 
         /// <summary>
+        /// Unlocks the Avocado system. Called when the player purchases the unlock from Quantum upgrades.
+        /// </summary>
+        void Unlock();
+
+        /// <summary>
         /// Feeds Infinity Points into the Avocado.
         /// </summary>
         /// <param name="amount">Amount of IP to feed.</param>

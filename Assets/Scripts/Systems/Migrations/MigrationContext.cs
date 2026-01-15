@@ -19,5 +19,7 @@ namespace Systems.Migrations
         public Oracle.DysonVerseInfinityData InfinityData => DysonVerseSaveData?.dysonVerseInfinityData;
         public Oracle.DysonVersePrestigeData PrestigeData => DysonVerseSaveData?.dysonVersePrestigeData;
         public Oracle.DysonVerseSkillTreeData SkillTreeData => DysonVerseSaveData?.dysonVerseSkillTreeData;
+        public Oracle.PrestigePlus PrestigePlus => SaveData?.prestigePlus;
+        public Oracle.AvocadoData AvocadoData => SaveData?.avocadoData;
     }
 }

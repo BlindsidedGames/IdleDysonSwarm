@@ -25,6 +25,20 @@ namespace Systems.Migrations
         public double SuperRadiantScatteringTimer { get; private set; }
         public double IdleElectricSheepTimer { get; private set; }
 
+        // AvocadoData tracking (Phase 3 migration)
+        public bool AvocadoUnlocked { get; private set; }
+        public double AvocadoInfinityPoints { get; private set; }
+        public double AvocadoInfluence { get; private set; }
+        public double AvocadoStrangeMatter { get; private set; }
+        public double AvocadoOverflowMultiplier { get; private set; }
+
+        // Legacy avocato fields (pre-migration)
+        public bool LegacyAvocatoPurchased { get; private set; }
+        public double LegacyAvocatoIP { get; private set; }
+        public double LegacyAvocatoInfluence { get; private set; }
+        public double LegacyAvocatoStrangeMatter { get; private set; }
+        public double LegacyAvocatoOverflow { get; private set; }
+
         public static MigrationSnapshot Capture(Oracle.SaveDataSettings saveData)
         {
             var snapshot = new MigrationSnapshot
@@ -78,6 +92,28 @@ namespace Systems.Migrations
                 snapshot.PocketAndroidsTimer = Oracle.GetSkillTimerSeconds(infinityData, "pocketAndroids");
                 snapshot.SuperRadiantScatteringTimer = Oracle.GetSkillTimerSeconds(infinityData, "superRadiantScattering");
                 snapshot.IdleElectricSheepTimer = Oracle.GetSkillTimerSeconds(infinityData, "idleElectricSheep");
+            }
+
+            // Capture AvocadoData state
+            Oracle.AvocadoData avocadoData = saveData.avocadoData;
+            if (avocadoData != null)
+            {
+                snapshot.AvocadoUnlocked = avocadoData.unlocked;
+                snapshot.AvocadoInfinityPoints = avocadoData.infinityPoints;
+                snapshot.AvocadoInfluence = avocadoData.influence;
+                snapshot.AvocadoStrangeMatter = avocadoData.strangeMatter;
+                snapshot.AvocadoOverflowMultiplier = avocadoData.overflowMultiplier;
+            }
+
+            // Capture legacy avocato fields (for verifying migration)
+            Oracle.PrestigePlus prestigePlus = saveData.prestigePlus;
+            if (prestigePlus != null)
+            {
+                snapshot.LegacyAvocatoPurchased = prestigePlus.avocatoPurchased;
+                snapshot.LegacyAvocatoIP = prestigePlus.avocatoIP;
+                snapshot.LegacyAvocatoInfluence = prestigePlus.avocatoInfluence;
+                snapshot.LegacyAvocatoStrangeMatter = prestigePlus.avocatoStrangeMatter;
+                snapshot.LegacyAvocatoOverflow = prestigePlus.avocatoOverflow;
             }
 
             return snapshot;
@@ -142,6 +178,39 @@ namespace Systems.Migrations
                     $"pocket: {FormatDouble(before.PocketAndroidsTimer)} -> {FormatDouble(PocketAndroidsTimer)}, " +
                     $"superRadiant: {FormatDouble(before.SuperRadiantScatteringTimer)} -> {FormatDouble(SuperRadiantScatteringTimer)}, " +
                     $"idleSheep: {FormatDouble(before.IdleElectricSheepTimer)} -> {FormatDouble(IdleElectricSheepTimer)}";
+            }
+
+            // AvocadoData migration tracking
+            if (AvocadoUnlocked != before.AvocadoUnlocked)
+            {
+                yield return $"avocadoData.unlocked: {before.AvocadoUnlocked} -> {AvocadoUnlocked}";
+            }
+
+            if (!NearlyEqual(AvocadoInfinityPoints, before.AvocadoInfinityPoints) ||
+                !NearlyEqual(AvocadoInfluence, before.AvocadoInfluence) ||
+                !NearlyEqual(AvocadoStrangeMatter, before.AvocadoStrangeMatter) ||
+                !NearlyEqual(AvocadoOverflowMultiplier, before.AvocadoOverflowMultiplier))
+            {
+                yield return
+                    $"avocadoData: IP {FormatDouble(before.AvocadoInfinityPoints)} -> {FormatDouble(AvocadoInfinityPoints)}, " +
+                    $"influence {FormatDouble(before.AvocadoInfluence)} -> {FormatDouble(AvocadoInfluence)}, " +
+                    $"strangeMatter {FormatDouble(before.AvocadoStrangeMatter)} -> {FormatDouble(AvocadoStrangeMatter)}, " +
+                    $"overflow {FormatDouble(before.AvocadoOverflowMultiplier)} -> {FormatDouble(AvocadoOverflowMultiplier)}";
+            }
+
+            // Legacy avocato fields (should be zeroed after migration)
+            if (LegacyAvocatoPurchased != before.LegacyAvocatoPurchased ||
+                !NearlyEqual(LegacyAvocatoIP, before.LegacyAvocatoIP) ||
+                !NearlyEqual(LegacyAvocatoInfluence, before.LegacyAvocatoInfluence) ||
+                !NearlyEqual(LegacyAvocatoStrangeMatter, before.LegacyAvocatoStrangeMatter) ||
+                !NearlyEqual(LegacyAvocatoOverflow, before.LegacyAvocatoOverflow))
+            {
+                yield return
+                    $"legacy avocato: purchased {before.LegacyAvocatoPurchased} -> {LegacyAvocatoPurchased}, " +
+                    $"IP {FormatDouble(before.LegacyAvocatoIP)} -> {FormatDouble(LegacyAvocatoIP)}, " +
+                    $"influence {FormatDouble(before.LegacyAvocatoInfluence)} -> {FormatDouble(LegacyAvocatoInfluence)}, " +
+                    $"strangeMatter {FormatDouble(before.LegacyAvocatoStrangeMatter)} -> {FormatDouble(LegacyAvocatoStrangeMatter)}, " +
+                    $"overflow {FormatDouble(before.LegacyAvocatoOverflow)} -> {FormatDouble(LegacyAvocatoOverflow)}";
             }
         }
 

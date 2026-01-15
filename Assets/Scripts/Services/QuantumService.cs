@@ -13,6 +13,7 @@ namespace IdleDysonSwarm.Services
     public sealed class QuantumService : IQuantumService
     {
         private PrestigePlus PrestigePlus => StaticSaveSettings.prestigePlus;
+        private AvocadoData AvocadoData => StaticSaveSettings.avocadoData;
         private DysonVersePrestigeData PrestigeData => StaticPrestigeData;
 
         #region State Properties
@@ -197,7 +198,8 @@ namespace IdleDysonSwarm.Services
                     return true;
 
                 case QuantumUpgradeType.Avocado:
-                    PrestigePlus.avocatoPurchased = true;
+                    AvocadoData.unlocked = true;
+                    PrestigePlus.avocatoPurchased = true; // Keep legacy field in sync
                     return true;
 
                 case QuantumUpgradeType.Fragments:
