@@ -76,9 +76,6 @@ Thumbs.db
 # Claude Code temporary directories
 tmpclaude-*
 
-# Claude local settings
-.claude/settings.local.json
-
 # Plastic SCM
 .plastic/
 
