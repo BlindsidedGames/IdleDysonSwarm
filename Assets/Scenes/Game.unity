@@ -26013,7 +26013,6 @@ MonoBehaviour:
   factoriesFillText: {fileID: 410271358}
   factoriesInventoryFillBar: {fileID: 1069073248}
   factoriesInventoryBarText: {fileID: 679165496}
-  _factoriesTime: 0
   _factoriesDuration: 2
   railgunsTitleText: {fileID: 936417156}
   railgunsFillBar: {fileID: 31438719}
@@ -47265,12 +47264,10 @@ MonoBehaviour:
   factoriesFillText: {fileID: 19121386}
   factoriesBoostFillBar: {fileID: 748860071}
   factoriesBoostBarText: {fileID: 623652229}
-  factoriesTime: 0
   factoriesDuration: 30
   botsTitleText: {fileID: 1507609008}
   botsFillBar: {fileID: 821212577}
   botsFillText: {fileID: 286250833}
-  botsTime: 0
   botsDuration: 20
   rocketsTitleText: {fileID: 1356356461}
   rocketsFillBar: {fileID: 65035406}
@@ -91669,6 +91666,7 @@ RectTransform:
   m_Children:
   - {fileID: 1824325568}
   - {fileID: 807222031}
+  - {fileID: 1476567070}
   - {fileID: 103150991}
   - {fileID: 1095138130}
   m_Father: {fileID: 183848091}
@@ -111223,13 +111221,11 @@ MonoBehaviour:
   hunterTitleText: {fileID: 750980532}
   hunterTimerText: {fileID: 171128405}
   hunterFillBar: {fileID: 843656576}
-  hunterTime: 0
   hunterDuration: 3
   gathererBuyButton: {fileID: 1000102360}
   gathererTitleText: {fileID: 1010867908}
   gathererTimerText: {fileID: 1813317930}
   gathererFillBar: {fileID: 230800373}
-  gatherTime: 0
   gatherDuration: 3
   communityBoostButton: {fileID: 2009987722}
   communityBoostButtonGO: {fileID: 2009987719}
@@ -111238,29 +111234,24 @@ MonoBehaviour:
   communityBoostTimerText: {fileID: 403165755}
   communityFillBar: {fileID: 648693937}
   communityBoostFillBar: {fileID: 1617999909}
-  communityTime: 0
   communityDuration: 3
   housingTitleText: {fileID: 1524984399}
   housingTimerText: {fileID: 1450227585}
   housingFillBar: {fileID: 322215978}
   housingToVillageFillBar: {fileID: 399633608}
-  housingTime: 0
   housingDuration: 20
   villagesTitleText: {fileID: 1448145274}
   villagesTimerText: {fileID: 19001914}
   villagesFillBar: {fileID: 2116301986}
   villagesToCityFillBar: {fileID: 1604973039}
-  villagesTime: 0
   villagesDuration: 12
   workersTitleText: {fileID: 2032193467}
   workersTimerText: {fileID: 2133162779}
   workersFillBar: {fileID: 1295506223}
-  workersTime: 0
   workersDuration: 4
   citiesTitleText: {fileID: 1807351582}
   citiesTimerText: {fileID: 1281555330}
   citiesFillBar: {fileID: 1007068489}
-  citiesTime: 0
   citiesDuration: 3
 --- !u!1 &638994587
 GameObject:
@@ -124143,6 +124134,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::IdleDysonSwarm.Services.ServiceProvider
   gameDataRegistry: {fileID: 0}
+  quantumUpgradeDatabase: {fileID: 0}
 --- !u!1 &717929707
 GameObject:
   m_ObjectHideFlags: 0
@@ -249124,6 +249116,62 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1476562005}
   m_CullTransparentMesh: 1
+--- !u!1 &1476567069
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1476567070}
+  - component: {fileID: 1476567071}
+  m_Layer: 5
+  m_Name: flexiospace
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!224 &1476567070
+RectTransform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1476567069}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 515518504}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_AnchorMin: {x: 0, y: 0}
+  m_AnchorMax: {x: 0, y: 0}
+  m_AnchoredPosition: {x: 0, y: 0}
+  m_SizeDelta: {x: 0, y: 0}
+  m_Pivot: {x: 0.5, y: 0.5}
+--- !u!114 &1476567071
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1476567069}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 306cc8c2b49d7114eaa3623786fc2126, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.LayoutElement
+  m_IgnoreLayout: 0
+  m_MinWidth: -1
+  m_MinHeight: -1
+  m_PreferredWidth: -1
+  m_PreferredHeight: -1
+  m_FlexibleWidth: -1
+  m_FlexibleHeight: 9999
+  m_LayoutPriority: 1
 --- !u!1 &1476598422
 GameObject:
   m_ObjectHideFlags: 0
@@ -312983,7 +313031,7 @@ MonoBehaviour:
   m_HandleRect: {fileID: 321736273}
   m_Direction: 0
   m_Value: 0
-  m_Size: 0.49999976
+  m_Size: 0.5
   m_NumberOfSteps: 0
   m_OnValueChanged:
     m_PersistentCalls:
@@ -363426,6 +363474,17 @@ MonoBehaviour:
       fusionGeneration: 1250000
       swarmPanels: 0
       swarmPanelGeneration: 3212
+      hunterTimerProgress: 0
+      gathererTimerProgress: 0
+      communityTimerProgress: 0
+      housingTimerProgress: 0
+      villagesTimerProgress: 0
+      workersTimerProgress: 0
+      citiesTimerProgress: 0
+      factoriesTimerProgress: 0
+      botsTimerProgress: 0
+      spaceFactoriesTimerProgress: 0
+      railgunFireProgress: 0
     prestigePlus:
       points: 0
       spentPoints: 0
@@ -363450,6 +363509,12 @@ MonoBehaviour:
       influence: 0
       cash: 0
       science: 0
+    avocadoData:
+      unlocked: 0
+      infinityPoints: 0
+      influence: 0
+      strangeMatter: 0
+      overflowMultiplier: 0
   slider: {fileID: 1405103730}
 --- !u!4 &2109451766
 Transform:
