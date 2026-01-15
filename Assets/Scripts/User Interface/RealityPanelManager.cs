@@ -3,6 +3,7 @@ using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 using Blindsided.Utilities;
+using IdleDysonSwarm.Services;
 using static Expansion.Oracle;
 using static IdleDysonSwarm.Systems.Constants.QuantumConstants;
 
@@ -28,6 +29,7 @@ public class RealityPanelManager : MonoBehaviour
     private SlicedFilledImage _realityUnlockFill;
     private TMP_Text _realityText;
     private Button _realityMenuButton;
+    private IWorkerService _workerService;
 
     /// <summary>
     /// Public accessor for backward compatibility with DebugOptions and Oracle.
@@ -45,6 +47,8 @@ public class RealityPanelManager : MonoBehaviour
 
     private void Awake()
     {
+        _workerService = ServiceLocator.Get<IWorkerService>();
+
         if (_realityUnlockFillObject != null)
             _realityUnlockFill = _realityUnlockFillObject.GetComponent<SlicedFilledImage>();
         if (_realityTextObject != null)
@@ -67,8 +71,7 @@ public class RealityPanelManager : MonoBehaviour
         _reality.SetActive(show);
         if (!show) return;
 
-        bool unlocked = PrestigePlus.points >= 1
-            || PrestigeData.secretsOfTheUniverse >= MaxSecrets
+        bool unlocked = _workerService.IsRealityUnlocked
             || oracle.saveSettings.unlockAllTabs;
 
         _realityImage.SetActive(unlocked);
