@@ -1,0 +1,37 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 115bda21744dd8648b5c65fcc91c666b, type: 3}
+  m_Name: matrioshka_brains
+  m_EditorClassIdentifier: Assembly-CSharp::GameData.FacilityDefinition
+  _id: {fileID: 11400000, guid: f98c1db2e5e178544adca614a222630e, type: 2}
+  displayName: Matrioshka Brains
+  description: Massive stellar computing structures that consume planets to produce
+    more planets.
+  icon: {fileID: 0}
+  tags:
+  - facility
+  - mega-structure
+  - matrioshka
+  baseCost: 0
+  costExponent: 1
+  baseProduction: 0.01
+  productionStatId: Facility.MatrioshkaBrain.Production
+  wordUsed: Synthesizing
+  productionWordUsed: Planet
+  purchasePrompt: Construct a Matrioshka Brain
+  usesFacilityCost: 1
+  costFacilityId: {fileID: 11400000, guid: 8ac9f40771445e047b67a4078b73b2f6, type: 2}
+  baseFacilityCost: 100
+  facilityCostExponent: 1.5
+  secondaryCostFacilityId: {fileID: 0}
+  secondaryBaseCost: 0
+  secondaryCostExponent: 1.5

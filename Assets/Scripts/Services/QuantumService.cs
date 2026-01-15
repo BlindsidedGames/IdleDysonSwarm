@@ -56,6 +56,9 @@ namespace IdleDysonSwarm.Services
         public bool IsPowerUnlocked => PrestigePlus.power;
         public bool IsParagadeUnlocked => PrestigePlus.paragade;
         public bool IsStellarUnlocked => PrestigePlus.stellar;
+        public bool IsMatrioshkaBrainsUnlocked => PrestigeData.unlockedMatrioshkaBrains;
+        public bool IsBirchPlanetsUnlocked => PrestigeData.unlockedBirchPlanets;
+        public bool IsGalacticBrainsUnlocked => PrestigeData.unlockedGalacticBrains;
 
         #endregion
 
@@ -114,6 +117,9 @@ namespace IdleDysonSwarm.Services
                 QuantumUpgradeType.InfluenceSpeed => BasicUpgradeCost,
                 QuantumUpgradeType.CashBonus => BasicUpgradeCost,
                 QuantumUpgradeType.ScienceBonus => BasicUpgradeCost,
+                QuantumUpgradeType.MatrioshkaBrains => MegaStructureUnlockCost,
+                QuantumUpgradeType.BirchPlanets => MegaStructureUnlockCost * 2,
+                QuantumUpgradeType.GalacticBrains => MegaStructureUnlockCost * 4,
                 _ => int.MaxValue
             };
         }
@@ -168,6 +174,9 @@ namespace IdleDysonSwarm.Services
                 QuantumUpgradeType.Power => IsPowerUnlocked,
                 QuantumUpgradeType.Paragade => IsParagadeUnlocked,
                 QuantumUpgradeType.Stellar => IsStellarUnlocked,
+                QuantumUpgradeType.MatrioshkaBrains => IsMatrioshkaBrainsUnlocked,
+                QuantumUpgradeType.BirchPlanets => IsBirchPlanetsUnlocked,
+                QuantumUpgradeType.GalacticBrains => IsGalacticBrainsUnlocked,
                 _ => false
             };
         }
@@ -193,6 +202,9 @@ namespace IdleDysonSwarm.Services
                 QuantumUpgradeType.Power => IsPowerUnlocked,
                 QuantumUpgradeType.Paragade => IsParagadeUnlocked,
                 QuantumUpgradeType.Stellar => IsStellarUnlocked,
+                QuantumUpgradeType.MatrioshkaBrains => IsMatrioshkaBrainsUnlocked,
+                QuantumUpgradeType.BirchPlanets => IsBirchPlanetsUnlocked,
+                QuantumUpgradeType.GalacticBrains => IsGalacticBrainsUnlocked,
                 // Repeatable upgrades are never "purchased" (always available)
                 QuantumUpgradeType.InfluenceSpeed => false,
                 QuantumUpgradeType.CashBonus => false,
@@ -321,6 +333,18 @@ namespace IdleDysonSwarm.Services
 
                 case QuantumUpgradeType.ScienceBonus:
                     PrestigePlus.science++;
+                    return true;
+
+                case QuantumUpgradeType.MatrioshkaBrains:
+                    PrestigeData.unlockedMatrioshkaBrains = true;
+                    return true;
+
+                case QuantumUpgradeType.BirchPlanets:
+                    PrestigeData.unlockedBirchPlanets = true;
+                    return true;
+
+                case QuantumUpgradeType.GalacticBrains:
+                    PrestigeData.unlockedGalacticBrains = true;
                     return true;
 
                 default:
