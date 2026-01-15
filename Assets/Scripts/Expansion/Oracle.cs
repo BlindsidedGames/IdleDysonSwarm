@@ -578,7 +578,8 @@ namespace Expansion
                 if (!oracle.saveSettings.infinityInProgress)
                 {
                     oracle.saveSettings.infinityInProgress = true;
-                    prestigePlus.avocatoOverflow++;
+                    oracle.saveSettings.avocadoData.overflowMultiplier++;
+                    prestigePlus.avocatoOverflow++; // Keep legacy field in sync
                     prestigeData.infinityPoints += 1000;
                     _gameManager.Prestige();
                 }
