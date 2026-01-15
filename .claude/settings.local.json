@@ -2,11 +2,20 @@
   "permissions": {
     "allow": [
       "Bash(*)",
-      "mcp__UnityMCP__*",
       "Edit(*)",
       "Write(*)",
-      "Bash(git -C \"c:\\\\Users\\\\mattr\\\\Documents\\\\Unity\\\\Projects\\\\Idle Dyson Swarm\" add -A)",
-      "Bash(git -C \"c:\\\\Users\\\\mattr\\\\Documents\\\\Unity\\\\Projects\\\\Idle Dyson Swarm\" commit -m \"$\\(cat <<''EOF''\nrefactor: Rename Reality/Quantum files for clarity \\(Phase 4\\)\n\nFile renames:\n- InceptionController.cs → WorkerController.cs\n- PrestigePlusUpdater.cs → QuantumUpgradeUI.cs  \n- ToRealityFillbar.cs → QuantumProgressBar.cs\n\nClass names updated to match file names.\nUpdated comment reference in WorkerService.cs.\n\nCo-Authored-By: Claude Opus 4.5 <noreply@anthropic.com>\nEOF\n\\)\")"
+      "mcp__UnityMCP__*"
+    ],
+    "deny": [
+      "Bash(git * --force *)",
+      "Bash(git push --force*)",
+      "Bash(git push -f*)",
+      "Bash(git reset --hard*)",
+      "Bash(git clean -fd*)",
+      "Bash(git branch -D*)",
+      "Bash(rm -rf*)",
+      "Bash(del /s*)",
+      "Bash(rmdir /s*)"
     ]
   }
 }
