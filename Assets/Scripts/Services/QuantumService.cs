@@ -36,7 +36,7 @@ namespace IdleDysonSwarm.Services
         public bool IsBreakTheLoopUnlocked => PrestigePlus.breakTheLoop;
         public bool IsQuantumEntanglementUnlocked => PrestigePlus.quantumEntanglement;
         public bool IsAutomationUnlocked => PrestigePlus.automation;
-        public bool IsAvocadoUnlocked => PrestigePlus.avocatoPurchased;
+        public bool IsAvocadoUnlocked => AvocadoData.unlocked;
         public bool IsFragmentsUnlocked => PrestigePlus.fragments;
         public bool IsPurityUnlocked => PrestigePlus.purity;
         public bool IsTerraUnlocked => PrestigePlus.terra;

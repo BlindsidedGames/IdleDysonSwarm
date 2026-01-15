@@ -64,7 +64,7 @@ public class QuantumUpgradeUI : MonoBehaviour
             prestigePlus.divisionsPurchased >= 19 ? "Purchased" : $"{CalcUtils.FormatNumber(divisionCost)}<sprite=5, color=#000000>";
 
         avocatoButton.onClick.AddListener(PurchaseAvocato);
-        if (prestigePlus.avocatoPurchased) avocatoButton.transform.GetComponentInChildren<TMP_Text>().text = "Purchased";
+        if (avocadoData.unlocked) avocatoButton.transform.GetComponentInChildren<TMP_Text>().text = "Purchased";
 
         breakTheLoopButton.onClick.AddListener(PurchaseBreakTheLoop);
         if (prestigePlus.breakTheLoop) breakTheLoopButton.transform.GetComponentInChildren<TMP_Text>().text = "Purchased";
@@ -123,7 +123,7 @@ public class QuantumUpgradeUI : MonoBehaviour
         divisionButton.interactable = !(prestigePlus.divisionsPurchased >= 19) && prestigePlus.points - prestigePlus.spentPoints >= divisionCost &&
                                       prestigePlus.botMultitasking && prestigePlus.doubleIP;
 
-        avocatoButton.interactable = !prestigePlus.avocatoPurchased && pointsRemaining >= AvocadoCost;
+        avocatoButton.interactable = !avocadoData.unlocked && pointsRemaining >= AvocadoCost;
 
         breakTheLoopButton.interactable = !prestigePlus.breakTheLoop && pointsRemaining >= BreakTheLoopCost;
         quantumEntanglementButton.interactable = !prestigePlus.quantumEntanglement && pointsRemaining >= QuantumEntanglementCost;
