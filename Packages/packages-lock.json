@@ -7,7 +7,7 @@
       "dependencies": {
         "com.unity.nuget.newtonsoft-json": "3.0.2"
       },
-      "hash": "a160cb2d14c05d0bd0b3275491320cc1ec5eab2f"
+      "hash": "efcf03b541bbb0c87636c1ebebd27077a2af7ff0"
     },
     "com.febucci.custom-hierarchy": {
       "version": "https://github.com/febucci/unitypackage-custom-hierarchy.git",

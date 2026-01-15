@@ -20,7 +20,11 @@ namespace Systems.Facilities
             { "ai_managers", "managers" },
             { "servers", "servers" },
             { "data_centers", "dataCenters" },
-            { "planets", "planets" }
+            { "planets", "planets" },
+            // Mega-structures
+            { "matrioshka_brains", "matrioshkaBrains" },
+            { "birch_planets", "birchPlanets" },
+            { "galactic_brains", "galacticBrains" }
         };
 
         private static readonly Dictionary<string, FieldInfo> FieldCache = new Dictionary<string, FieldInfo>();

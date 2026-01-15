@@ -36,6 +36,10 @@ public class QuantumUpgradeUI : MonoBehaviour
     [SerializeField] private Button cashButton;
     [SerializeField] private Button scienceButton;
 
+    [Header("Mega-Structure Unlocks")]
+    [SerializeField] private Button megaStructuresButton;
+    [SerializeField] private TMP_Text megaStructuresTitleText;
+
     private int divisionCost => prestigePlus.divisionsPurchased >= 1 ? (int)Math.Pow(2, prestigePlus.divisionsPurchased) * 2 : 2;
     private PrestigePlus prestigePlus => oracle.saveSettings.prestigePlus;
     private AvocadoData avocadoData => oracle.saveSettings.avocadoData;
@@ -88,6 +92,13 @@ public class QuantumUpgradeUI : MonoBehaviour
         influenceButton.onClick.AddListener(PurchaseInfluence);
         cashButton.onClick.AddListener(PurchaseCashPercent);
         scienceButton.onClick.AddListener(PurchaseSciencePercent);
+
+        // Mega-structure unlock button (sequential unlocks)
+        if (megaStructuresButton != null)
+        {
+            megaStructuresButton.onClick.AddListener(PurchaseMegaStructure);
+            UpdateMegaStructureButtonText();
+        }
     }
 
     private void Update()
@@ -134,6 +145,32 @@ public class QuantumUpgradeUI : MonoBehaviour
         powerButton.interactable = !prestigePlus.power && pointsRemaining >= PowerCost;
         paragadeButton.interactable = !prestigePlus.paragade && pointsRemaining >= ParagadeCost;
         stellarButton.interactable = !prestigePlus.stellar && pointsRemaining >= StellarCost;
+
+        // Mega-structure unlock button
+        if (megaStructuresButton != null)
+        {
+            int nextCost = GetNextMegaStructureCost();
+            bool allUnlocked = prestigeData.unlockedGalacticBrains;
+            megaStructuresButton.interactable = !allUnlocked && pointsRemaining >= nextCost;
+        }
+
+        // Update mega-structure title text to show next unlock
+        if (megaStructuresTitleText != null)
+        {
+            string nextName = GetNextMegaStructureName();
+            int unlockedCount = (prestigeData.unlockedMatrioshkaBrains ? 1 : 0) +
+                                (prestigeData.unlockedBirchPlanets ? 1 : 0) +
+                                (prestigeData.unlockedGalacticBrains ? 1 : 0);
+
+            if (unlockedCount >= 3)
+            {
+                megaStructuresTitleText.text = "Mega-Structures - <color=#91DD8F>All Unlocked";
+            }
+            else
+            {
+                megaStructuresTitleText.text = nextName;
+            }
+        }
     }
 
     private void PurchaseAvocato()
@@ -274,5 +311,70 @@ public class QuantumUpgradeUI : MonoBehaviour
         prestigePlus.science++;
         prestigePlus.spentPoints++;
     }
+
+    #region Mega-Structure Unlocks
+
+    private int GetNextMegaStructureCost()
+    {
+        if (!prestigeData.unlockedMatrioshkaBrains)
+            return MatrioshkaBrainsCost;
+        if (!prestigeData.unlockedBirchPlanets)
+            return BirchPlanetsCost;
+        if (!prestigeData.unlockedGalacticBrains)
+            return GalacticBrainsCost;
+        return 0; // All unlocked
+    }
+
+    private string GetNextMegaStructureName()
+    {
+        if (!prestigeData.unlockedMatrioshkaBrains)
+            return "Matrioshka Brains";
+        if (!prestigeData.unlockedBirchPlanets)
+            return "Birch Planets";
+        if (!prestigeData.unlockedGalacticBrains)
+            return "Galactic Brains";
+        return "All Unlocked";
+    }
+
+    private void UpdateMegaStructureButtonText()
+    {
+        if (megaStructuresButton == null) return;
+        var buttonText = megaStructuresButton.transform.GetComponentInChildren<TMP_Text>();
+        if (buttonText == null) return;
+
+        if (prestigeData.unlockedGalacticBrains)
+        {
+            buttonText.text = "Purchased";
+        }
+        else
+        {
+            int cost = GetNextMegaStructureCost();
+            buttonText.text = $"{cost}<sprite=5, color=#000000>";
+        }
+    }
+
+    private void PurchaseMegaStructure()
+    {
+        int cost = GetNextMegaStructureCost();
+        if (pointsRemaining < cost || cost == 0) return;
+
+        if (!prestigeData.unlockedMatrioshkaBrains)
+        {
+            prestigeData.unlockedMatrioshkaBrains = true;
+        }
+        else if (!prestigeData.unlockedBirchPlanets)
+        {
+            prestigeData.unlockedBirchPlanets = true;
+        }
+        else if (!prestigeData.unlockedGalacticBrains)
+        {
+            prestigeData.unlockedGalacticBrains = true;
+        }
+
+        prestigePlus.spentPoints += cost;
+        UpdateMegaStructureButtonText();
+    }
+
+    #endregion
 }
 
