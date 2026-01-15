@@ -1,6 +1,5 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
+using IdleDysonSwarm.Services;
 using static Expansion.Oracle;
 
 public class StoryManager : MonoBehaviour
@@ -48,6 +47,12 @@ public class StoryManager : MonoBehaviour
     [SerializeField] private GameObject C6C2;
     [SerializeField] private GameObject C6C3;
     private PrestigePlus prestigePlus => oracle.saveSettings.prestigePlus;
+    private IWorkerService _workerService;
+
+    private void Awake()
+    {
+        _workerService = ServiceLocator.Get<IWorkerService>();
+    }
 
     private void Update()
     {
@@ -80,12 +85,13 @@ public class StoryManager : MonoBehaviour
         C4C9.SetActive(infinityCount >= 8 || leap);
         C4C10.SetActive(infinityCount >= 9 || leap);
 
-        C5.SetActive(prestigeData.secretsOfTheUniverse >= 27 || leap);
-        C5C1.SetActive(prestigeData.secretsOfTheUniverse >= 27 || leap);
-        C5C2.SetActive(prestigeData.secretsOfTheUniverse >= 27 || leap);
-        C5C3.SetActive(prestigeData.secretsOfTheUniverse >= 27 || leap);
-        C5C4.SetActive(prestigeData.secretsOfTheUniverse >= 27 || leap);
-        C5C5.SetActive(prestigeData.secretsOfTheUniverse >= 27 || leap);
+        bool realityUnlocked = _workerService.IsRealityUnlocked;
+        C5.SetActive(realityUnlocked);
+        C5C1.SetActive(realityUnlocked);
+        C5C2.SetActive(realityUnlocked);
+        C5C3.SetActive(realityUnlocked);
+        C5C4.SetActive(realityUnlocked);
+        C5C5.SetActive(realityUnlocked);
 
         C6.SetActive(sp.translation8);
         C6C1.SetActive(sp.translation8);
