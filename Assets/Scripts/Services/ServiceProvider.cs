@@ -83,6 +83,10 @@ namespace IdleDysonSwarm.Services
             ServiceLocator.Register<IAvocadoService>(avocadoService);
             Debug.Log("  ✓ IAvocadoService registered");
 
+            var megaStructureService = new MegaStructureService(gameStateService, facilityService, gameDataService);
+            ServiceLocator.Register<IMegaStructureService>(megaStructureService);
+            Debug.Log("  ✓ IMegaStructureService registered");
+
             Debug.Log("[ServiceProvider] All services registered successfully!");
         }
 
@@ -99,6 +103,7 @@ namespace IdleDysonSwarm.Services
             allRegistered &= CheckService<IQuantumService>();
             allRegistered &= CheckService<IWorkerService>();
             allRegistered &= CheckService<IAvocadoService>();
+            allRegistered &= CheckService<IMegaStructureService>();
 
             if (allRegistered)
             {

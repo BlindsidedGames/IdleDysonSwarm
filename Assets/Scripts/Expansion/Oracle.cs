@@ -261,6 +261,12 @@ namespace Expansion
                 summary: "Migrate avocato fields from PrestigePlus to new AvocadoData structure.",
                 apply: _ => { MigrateAvocadoData(); }));
 
+            registry.AddStep(new MigrationStep(
+                targetVersion: 6,
+                name: "Initialize Mega-Structure Data",
+                summary: "Ensure mega-structure facility arrays are initialized for existing saves.",
+                apply: _ => { MigrateMegaStructureData(); }));
+
             return registry;
         }
 
@@ -534,6 +540,33 @@ namespace Expansion
                 pp.avocatoStrangeMatter = 0;
                 pp.avocatoOverflow = 0;
             }
+        }
+
+        private void MigrateMegaStructureData()
+        {
+            // Initialize mega-structure arrays for existing saves
+            if (infinityData != null)
+            {
+                if (infinityData.matrioshkaBrains == null || infinityData.matrioshkaBrains.Length != 2)
+                    infinityData.matrioshkaBrains = new double[] { 0, 0 };
+
+                if (infinityData.birchPlanets == null || infinityData.birchPlanets.Length != 2)
+                    infinityData.birchPlanets = new double[] { 0, 0 };
+
+                if (infinityData.galacticBrains == null || infinityData.galacticBrains.Length != 2)
+                    infinityData.galacticBrains = new double[] { 0, 0 };
+
+                // Initialize modifier values to 1 (no modifier)
+                if (infinityData.matrioshkaBrainModifier == 0)
+                    infinityData.matrioshkaBrainModifier = 1;
+                if (infinityData.birchPlanetModifier == 0)
+                    infinityData.birchPlanetModifier = 1;
+                if (infinityData.galacticBrainModifier == 0)
+                    infinityData.galacticBrainModifier = 1;
+            }
+
+            // Initialize unlock flags (default to false - must be unlocked via Quantum upgrades)
+            // No action needed here since bool defaults to false
         }
 
         private void SaveInternal(bool force)
@@ -3223,6 +3256,11 @@ namespace Expansion
 
             [Space(10), Header("Distribution"), Range(0, 1)]
             public double botDistribution = 0.5f;
+
+            [Space(10), Header("Mega-Structure Unlocks")]
+            public bool unlockedMatrioshkaBrains;
+            public bool unlockedBirchPlanets;
+            public bool unlockedGalacticBrains;
         }
 
         [Serializable]
@@ -3271,6 +3309,19 @@ namespace Expansion
             public double planetModifier = 1;
             public double dataCenterProduction;
             public double planetsDataCenterProduction;
+
+            [Space(10), Header("Mega-Structures")]
+            public double[] matrioshkaBrains = { 0, 0 };
+            public double matrioshkaBrainModifier = 1;
+            public double matrioshkaBrainPlanetProduction;
+
+            public double[] birchPlanets = { 0, 0 };
+            public double birchPlanetModifier = 1;
+            public double birchPlanetMatrioshkaProduction;
+
+            public double[] galacticBrains = { 0, 0 };
+            public double galacticBrainModifier = 1;
+            public double galacticBrainBirchProduction;
 
             public double pocketDimensionsProduction;
             public double quantumComputingProduction;

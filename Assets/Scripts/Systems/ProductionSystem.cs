@@ -37,6 +37,7 @@ namespace Systems
             CalculateDataCenterProduction(infinityData, skillTreeData, prestigeData, prestigePlus, deltaTime);
             CalculatePlanetProduction(infinityData, skillTreeData, prestigeData, deltaTime);
             CalculatePlanetsPerSecond(infinityData, skillTreeData, deltaTime);
+            CalculateMegaStructureProduction(infinityData, skillTreeData, prestigeData, prestigePlus, deltaTime);
             CalculateShouldersSkills(infinityData, skillTreeData, prestigeData, deltaTime);
             if (skillTreeData.androids) AddSkillTimerSeconds(infinityData, "androids", deltaTime);
             if (skillTreeData.pocketAndroids) AddSkillTimerSeconds(infinityData, "pocketAndroids", deltaTime);
@@ -296,6 +297,66 @@ namespace Systems
             skillTreeData.powerOverwhelming
                 ? Math.Pow(infinityData.panelsPerSec * infinityData.panelLifetime * infinityData.moneyMulti, 1.03)
                 : infinityData.panelsPerSec * infinityData.panelLifetime * infinityData.moneyMulti;
+
+        /// <summary>
+        /// Calculates production for mega-structure facilities.
+        /// Each tier produces the facility below it.
+        /// </summary>
+        public static void CalculateMegaStructureProduction(
+            DysonVerseInfinityData infinityData,
+            DysonVerseSkillTreeData skillTreeData,
+            DysonVersePrestigeData prestigeData,
+            PrestigePlus prestigePlus,
+            double deltaTime)
+        {
+            // Matrioshka Brains → produce Planets
+            if (prestigeData.unlockedMatrioshkaBrains)
+            {
+                if (FacilityRuntimeBuilder.TryBuildRuntime("matrioshka_brains", infinityData, prestigeData,
+                        skillTreeData, prestigePlus, out FacilityRuntime matrioshkaRuntime))
+                {
+                    double planetProduction = matrioshkaRuntime.State.ProductionRate;
+                    infinityData.matrioshkaBrainPlanetProduction = planetProduction;
+                    infinityData.planets[0] += planetProduction * deltaTime;
+                }
+                else
+                {
+                    infinityData.matrioshkaBrainPlanetProduction = 0;
+                }
+            }
+
+            // Birch Planets → produce Matrioshka Brains
+            if (prestigeData.unlockedBirchPlanets)
+            {
+                if (FacilityRuntimeBuilder.TryBuildRuntime("birch_planets", infinityData, prestigeData,
+                        skillTreeData, prestigePlus, out FacilityRuntime birchRuntime))
+                {
+                    double matrioshkaProduction = birchRuntime.State.ProductionRate;
+                    infinityData.birchPlanetMatrioshkaProduction = matrioshkaProduction;
+                    infinityData.matrioshkaBrains[0] += matrioshkaProduction * deltaTime;
+                }
+                else
+                {
+                    infinityData.birchPlanetMatrioshkaProduction = 0;
+                }
+            }
+
+            // Galactic Brains → produce Birch Planets
+            if (prestigeData.unlockedGalacticBrains)
+            {
+                if (FacilityRuntimeBuilder.TryBuildRuntime("galactic_brains", infinityData, prestigeData,
+                        skillTreeData, prestigePlus, out FacilityRuntime galacticRuntime))
+                {
+                    double birchProduction = galacticRuntime.State.ProductionRate;
+                    infinityData.galacticBrainBirchProduction = birchProduction;
+                    infinityData.birchPlanets[0] += birchProduction * deltaTime;
+                }
+                else
+                {
+                    infinityData.galacticBrainBirchProduction = 0;
+                }
+            }
+        }
 
     }
 }
