@@ -1,6 +1,10 @@
 using UnityEngine;
 using UnityEngine.EventSystems;
+using UnityEngine.InputSystem;
+using UnityEngine.InputSystem.EnhancedTouch;
 using UnityEngine.UI;
+using Touch = UnityEngine.InputSystem.EnhancedTouch.Touch;
+using TouchPhase = UnityEngine.InputSystem.TouchPhase;
 
 namespace Blindsided.Utilities
 {
@@ -23,6 +27,16 @@ namespace Blindsided.Utilities
         private int panFingerId;          // Touch mode only
         private bool wasZoomingLastFrame; // Touch mode only
 
+        private void OnEnable()
+        {
+            EnhancedTouchSupport.Enable();
+        }
+
+        private void OnDisable()
+        {
+            EnhancedTouchSupport.Disable();
+        }
+
         private void Start()
         {
             ResetCamera = Camera.main.transform.position;
@@ -36,7 +50,7 @@ namespace Blindsided.Utilities
         private void Update()
         {
             if (!EventSystem.current.IsPointerOverGameObject()) {
-                if (Input.touchSupported && Application.platform != RuntimePlatform.WebGLPlayer) {
+                if (Touchscreen.current != null && Application.platform != RuntimePlatform.WebGLPlayer) {
                     HandleTouch();
                 }
                 else {
@@ -50,40 +64,41 @@ namespace Blindsided.Utilities
 
         private void HandleTouch()
         {
-            switch (Input.touchCount) {
+            var activeTouches = Touch.activeTouches;
+            int touchCount = activeTouches.Count;
+
+            switch (touchCount) {
 
                 case 1: // Panning
                     wasZoomingLastFrame = false;
 
                     // If the touch began, capture its position and its finger ID.
                     // Otherwise, if the finger ID of the touch doesn't match, skip it.
-                    Touch touch = Input.GetTouch(0);
+                    Touch touch = activeTouches[0];
                     if (touch.phase == TouchPhase.Began) {
-                        Origin = Camera.main.ScreenToWorldPoint(Input.mousePosition);
-                        panFingerId = touch.fingerId;
+                        Origin = Camera.main.ScreenToWorldPoint((Vector3)touch.screenPosition);
+                        panFingerId = touch.finger.index;
                     }
-                    else if (touch.fingerId == panFingerId && touch.phase == TouchPhase.Moved) {
-                        difference = Camera.main.ScreenToWorldPoint(Input.mousePosition) - Camera.main.transform.position;
+                    else if (touch.finger.index == panFingerId && touch.phase == TouchPhase.Moved) {
+                        difference = Camera.main.ScreenToWorldPoint((Vector3)touch.screenPosition) - Camera.main.transform.position;
                         Camera.main.transform.position = Origin - difference;
                     }
                     break;
 
                 case 2: // Zooming
-                    //Vector2[] newPositions = { Input.GetTouch(0).position, Input.GetTouch(1).position };
                     if (!wasZoomingLastFrame) {
-                        //lastZoomPositions = newPositions;
                         wasZoomingLastFrame = true;
                     }
                     else {
-                        Touch touch1 = Input.GetTouch(0);
-                        Touch touch2 = Input.GetTouch(1);
+                        Touch touch1 = activeTouches[0];
+                        Touch touch2 = activeTouches[1];
 
                         if (touch1.phase == TouchPhase.Began && touch2.phase == TouchPhase.Began) {
-                            lastDist = Vector2.Distance(touch1.position, touch2.position);
+                            lastDist = Vector2.Distance(touch1.screenPosition, touch2.screenPosition);
                         }
 
                         if (touch1.phase == TouchPhase.Moved && touch2.phase == TouchPhase.Moved) {
-                            float newDist = Vector2.Distance(touch1.position, touch2.position);
+                            float newDist = Vector2.Distance(touch1.screenPosition, touch2.screenPosition);
                             touchDist = lastDist - newDist;
                             lastDist = newDist;
 
@@ -103,11 +118,16 @@ namespace Blindsided.Utilities
 
         private void HandleMouse()
         {
-            if (Input.GetMouseButton(0)) {
-                difference = Camera.main.ScreenToWorldPoint(Input.mousePosition) - Camera.main.transform.position;
+            var mouse = Mouse.current;
+            if (mouse == null) return;
+
+            Vector2 mousePosition = mouse.position.ReadValue();
+
+            if (mouse.leftButton.isPressed) {
+                difference = Camera.main.ScreenToWorldPoint((Vector3)mousePosition) - Camera.main.transform.position;
                 if (!drag) {
                     drag = true;
-                    Origin = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+                    Origin = Camera.main.ScreenToWorldPoint((Vector3)mousePosition);
                 }
             }
             else {
@@ -117,10 +137,10 @@ namespace Blindsided.Utilities
             if (drag) Camera.main.transform.position = Origin - difference;
 
             float fov = Camera.main.orthographicSize;
-            fov -= Input.GetAxis("Mouse ScrollWheel") * zoomSensitivity;
+            Vector2 scrollDelta = mouse.scroll.ReadValue();
+            fov -= scrollDelta.y * zoomSensitivity * 0.01f; // Scale down as scroll.y is much larger than old GetAxis
             fov = Mathf.Clamp(fov, minFOV, maxFOV);
             Camera.main.orthographicSize = fov;
-            //if (Input.GetMouseButton(1)) Camera.main.transform.position = ResetCamera;
         }
     }
 }

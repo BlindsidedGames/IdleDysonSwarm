@@ -1,5 +1,6 @@
 using UnityEngine;
 using UnityEngine.EventSystems;
+using UnityEngine.InputSystem;
 
 /// <summary>
 ///     Zooms the attached image in or out.
@@ -36,7 +37,9 @@ public class ZoomImage : MonoBehaviour, IScrollHandler
         Debug.Log("scrolling");
         Vector2 relativeMousePosition;
 
-        RectTransformUtility.ScreenPointToLocalPointInRectangle(_thisTransform, Input.mousePosition, null,
+        var mouse = Mouse.current;
+        Vector2 mousePosition = mouse != null ? mouse.position.ReadValue() : Vector2.zero;
+        RectTransformUtility.ScreenPointToLocalPointInRectangle(_thisTransform, mousePosition, null,
             out relativeMousePosition);
 
         var delta = eventData.scrollDelta.y;
