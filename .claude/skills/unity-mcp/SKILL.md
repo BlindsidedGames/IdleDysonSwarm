@@ -30,10 +30,12 @@ If true: Wait before proceeding
 **IMPORTANT:** The console may contain stale data. Always refresh before reading:
 
 ```
-refresh_unity(scope="scripts", compile="request", wait_for_ready=true)
-[Wait 10 seconds]
+refresh_unity(scope="scripts", compile="request", wait_for_ready=false)
+[Wait 10-15 seconds for compilation to complete]
 read_console(action="get", types=["error"])
 ```
+
+**NOTE:** Use `wait_for_ready=false` due to a known bug where `wait_for_ready=true` causes Unity to loop refreshes repeatedly. Handle the wait client-side instead.
 
 This ensures you see current compilation errors, not cached/stale results.
 
@@ -55,17 +57,19 @@ Unity needs time to detect file changes and compile. The proper workflow is:
 ### 1. Wait for Unity to Detect Changes (3-5 seconds)
 After editing a script, Unity needs a moment to detect the file change and begin compilation. **Do not immediately call refresh or check console.**
 
-### 2. Single Refresh Call with Wait (CALL ONLY ONCE!)
-Use **exactly ONE** refresh call with `wait_for_ready=true`:
+### 2. Single Refresh Call (CALL ONLY ONCE!)
+Use **exactly ONE** refresh call with `wait_for_ready=false`:
 
 ```
-refresh_unity(scope="scripts", compile="request", wait_for_ready=true)
+refresh_unity(scope="scripts", compile="request", wait_for_ready=false)
 ```
+
+⚠️ **CRITICAL: Always use `wait_for_ready=false`** - there is a known bug where `wait_for_ready=true` causes Unity to loop refreshes repeatedly until timeout.
 
 This call will:
 - Trigger asset refresh
 - Request compilation
-- **Block until Unity is ready** (compilation complete)
+- Return immediately (you handle the wait)
 
 ⚠️ **CRITICAL: Call refresh_unity ONLY ONE TIME per script modification cycle.**
 
@@ -73,19 +77,25 @@ This call will:
 - Call refresh_unity multiple times
 - Call refresh_unity again if the first call times out
 - Call refresh_unity repeatedly to "check" if compilation is done
+- Use `wait_for_ready=true` (causes looping bug)
 
-One call handles everything. If it times out, proceed to wait and check console instead of retrying.
+One call handles everything.
 
-### 3. MANDATORY 10-SECOND WAIT After Refresh (CRITICAL)
-**After `refresh_unity` returns (or times out), you MUST wait at least 10 seconds before making ANY other MCP calls.**
+### 3. MANDATORY 10-15 SECOND WAIT After Refresh (CRITICAL)
+**After `refresh_unity` returns, you MUST wait at least 10-15 seconds before making ANY other MCP calls.**
 
-This is non-negotiable. Unity's internal state takes time to stabilize after compilation. Making MCP calls too quickly can cause:
-- "Refreshing during a refresh" errors
+This is non-negotiable. Unity needs time to:
+1. Detect the compilation request
+2. Compile scripts
+3. Perform domain reload
+4. Stabilize internal state
+
+Making MCP calls too quickly can cause:
 - Stale or incomplete results
 - Connection issues
 - Corrupted editor state
 
-**Simply pause and wait. Do not try to check status, read resources, or call any MCP tools during this 10-second window.**
+**Simply pause and wait. Do not try to check status, read resources, or call any MCP tools during this wait window.**
 
 ### 4. Check Console AFTER the 10-Second Wait
 Only after waiting the full 10 seconds, check for errors:
@@ -124,18 +134,18 @@ read_console(...)   // Too soon - Unity still settling
 ```
 Edit script...
 [Wait 3-5 seconds for Unity to detect change]
-refresh_unity(scope="scripts", compile="request", wait_for_ready=true)  // ONE call only!
-[MANDATORY: Wait 10 seconds - no MCP calls during this time]
+refresh_unity(scope="scripts", compile="request", wait_for_ready=false)  // ONE call only!
+[MANDATORY: Wait 10-15 seconds - no MCP calls during this time]
 read_console(action="get", types=["error", "warning"])
 ```
 
-**Remember: ONE refresh call, then 10 seconds of silence, then check console.**
+**Remember: ONE refresh call (with wait_for_ready=false), then 10-15 seconds of silence, then check console.**
 
-### 5. If Connection Times Out
-Sometimes the refresh call may timeout if compilation takes too long. In this case:
-1. **Still wait the full 10 seconds** - compilation may still be in progress
-2. Check console directly: `read_console(action="get", types=["error"])`
-3. **Do NOT retry refresh** - the compilation is already happening, another refresh call will cause errors
+### 5. After the Wait
+After waiting 10-15 seconds:
+1. Check console: `read_console(action="get", types=["error"])`
+2. If Unity is still compiling, wait a few more seconds and check again
+3. **Do NOT call refresh_unity again** - one call is enough
 
 ## Resource vs Tool Usage
 
@@ -312,12 +322,14 @@ create_script(
 ### 3. Trigger Refresh and Compilation
 **CRITICAL:** You must refresh before checking console - the console won't update automatically!
 ```
-refresh_unity(scope="scripts", compile="request", wait_for_ready=true)
+refresh_unity(scope="scripts", compile="request", wait_for_ready=false)
 ```
+
+**NOTE:** Always use `wait_for_ready=false` due to a known looping bug with `wait_for_ready=true`.
 
 ### 4. Wait for Stabilization
 ```
-[MANDATORY: Wait 10 seconds - no MCP calls during this time]
+[MANDATORY: Wait 10-15 seconds - no MCP calls during this time]
 ```
 
 ### 5. Check for Compilation Errors
@@ -376,8 +388,8 @@ Always verify properties exist before setting:
 
 ### Compilation Errors
 ```
-1. Call refresh_unity(scope="scripts", compile="request", wait_for_ready=true)
-2. Wait 10 seconds for stabilization
+1. Call refresh_unity(scope="scripts", compile="request", wait_for_ready=false)
+2. Wait 10-15 seconds for compilation to complete
 3. Read console: read_console(action="get", types=["error"])
 4. Identify the error message and file
 5. Fix the error in the script
@@ -459,15 +471,15 @@ set_active_instance(instance="ProjectName@hash")
    → Pause 3-5 seconds (Unity needs time to notice file changes)
 
 5. Call refresh_unity EXACTLY ONCE
-   → refresh_unity(scope="scripts", compile="request", wait_for_ready=true)
-   → This blocks until compilation is complete
+   → refresh_unity(scope="scripts", compile="request", wait_for_ready=false)
+   ⚠️ ALWAYS use wait_for_ready=false (wait_for_ready=true has a looping bug)
    ⚠️ NEVER call this again - one call only!
 
-6. MANDATORY 10-SECOND WAIT (NON-NEGOTIABLE)
-   → After refresh returns, wait a full 10 seconds
+6. MANDATORY 10-15 SECOND WAIT (NON-NEGOTIABLE)
+   → After refresh returns, wait 10-15 seconds
    → Do NOT make any MCP calls during this time
    → Do NOT check editor_state, console, or any resource
-   → Just wait - Unity is stabilizing
+   → Just wait - Unity is compiling and stabilizing
 
 7. Check console for results
    → read_console(action="get", types=["error", "warning"])
@@ -478,11 +490,11 @@ set_active_instance(instance="ProjectName@hash")
 ```
 
 **Key Points:**
+- ⚠️ **ALWAYS use `wait_for_ready=false`** - the `wait_for_ready=true` option has a bug that causes looping refreshes
 - ⚠️ **ONE refresh call per modification cycle - NEVER call it multiple times**
-- ⚠️ **MANDATORY 10-second wait after refresh before ANY MCP calls**
+- ⚠️ **MANDATORY 10-15 second wait after refresh before ANY MCP calls**
 - Wait for Unity to detect file changes before refreshing
-- The `wait_for_ready=true` parameter handles the compilation wait for you
-- If refresh times out, still wait 10 seconds - do NOT retry refresh
-- Check console AFTER the 10-second wait, not immediately after refresh
+- Handle the compilation wait client-side (since wait_for_ready=false)
+- Check console AFTER the wait period, not immediately after refresh
 
 This workflow ensures safe, reliable Unity development via MCP.
