@@ -4,7 +4,16 @@
       "Bash(*)",
       "Edit(*)",
       "Write(*)",
-      "mcp__UnityMCP__*"
+      "mcp__UnityMCP__*",
+      "mcp__UnityMCP__read_console",
+      "Bash(git checkout:*)",
+      "mcp__UnityMCP__refresh_unity",
+      "Bash(git add:*)",
+      "Bash(git commit:*)",
+      "Bash(git push:*)",
+      "Bash(gh pr create:*)",
+      "Bash(gh pr edit:*)",
+      "Bash(gh pr view:*)"
     ],
     "deny": [
       "Bash(git * --force *)",
