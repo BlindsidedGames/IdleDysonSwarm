@@ -4,6 +4,7 @@ using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 using Blindsided.Utilities;
+using IdleDysonSwarm.Systems.Dream1;
 using static Expansion.Oracle;
 
 public class InformationEraManager : MonoBehaviour
@@ -11,6 +12,17 @@ public class InformationEraManager : MonoBehaviour
     private SaveDataDream1 sd1 => oracle.saveSettings.sdSimulation;
     private SaveData sd => oracle.saveSettings.saveData;
     private SaveDataPrestige sp => oracle.saveSettings.sdPrestige;
+
+    // Production timers
+    private ProductionTimer _factoriesTimer;
+    private ProductionTimer _botsTimer;
+
+    private void Awake()
+    {
+        // Initialize timers with saved progress
+        _factoriesTimer = new ProductionTimer(factoriesDuration, sd1.factoriesTimerProgress);
+        _botsTimer = new ProductionTimer(botsDuration, sd1.botsTimerProgress);
+    }
 
     private void Start()
     {
@@ -38,6 +50,24 @@ public class InformationEraManager : MonoBehaviour
         BotsManagement();
         RocketsManagement();
         UpdateButtonsInteractable();
+        SyncTimerProgress();
+    }
+
+    /// <summary>
+    /// Gets the global multiplier from DoubleTime.
+    /// </summary>
+    private double GetGlobalMultiplier()
+    {
+        return sp.doDoubleTime ? sp.doubleTimeRate + 1 : 1;
+    }
+
+    /// <summary>
+    /// Syncs timer progress to save data for persistence.
+    /// </summary>
+    private void SyncTimerProgress()
+    {
+        sd1.factoriesTimerProgress = _factoriesTimer.currentTime;
+        sd1.botsTimerProgress = _botsTimer.currentTime;
     }
 
     private void OnFactoriesBoost()
@@ -156,13 +186,11 @@ public class InformationEraManager : MonoBehaviour
     [SerializeField] private TMP_Text factoriesFillText;
     [SerializeField] private SlicedFilledImage factoriesBoostFillBar;
     [SerializeField] private TMP_Text factoriesBoostBarText;
-    [SerializeField] private float factoriesTime;
     [SerializeField] private float factoriesDuration = 30;
 
     [Space(10), SerializeField]  private TMP_Text botsTitleText;
     [SerializeField] private SlicedFilledImage botsFillBar;
     [SerializeField] private TMP_Text botsFillText;
-    [SerializeField] private float botsTime;
     [SerializeField] private float botsDuration = 20;
 
     [Space(10), SerializeField]  private TMP_Text rocketsTitleText;
@@ -360,56 +388,61 @@ public class InformationEraManager : MonoBehaviour
 
         factoriesTitleText.text = $"Factories <size=70%> {sd1.factories:N0}";
 
+        // Build custom multiplier (factories has extra bonuses)
+        double globalMulti = GetGlobalMultiplier();
+        if (sd1.factoriesBoostTime > 0) globalMulti *= 2;
+        if (sd1.shippingComplete) globalMulti *= 2;
+        if (sd1.worldTradeComplete) globalMulti *= 2;
 
-        double multi = 1 + (sd1.factories > 0 ? Math.Log10(sd1.factories) : 0);
-        if (sp.doDoubleTime) multi *= sp.doubleTimeRate + 1;
-        if (sd1.factoriesBoostTime > 0) multi *= 2;
-        if (sd1.shippingComplete) multi *= 2;
-        if (sd1.worldTradeComplete) multi *= 2;
+        // Use standard Log10 multiplier via ProductionTimer
+        int produced = _factoriesTimer.Update(sd1.factories, globalMulti, Time.deltaTime);
 
-        if (sd1.factories >= 1) factoriesTime += Time.deltaTime * (float)multi;
-
-        factoriesFillBar.fillAmount =
-            (float)StaticMethods.FillBar(sd1.factories, factoriesDuration, multi, factoriesTime);
-        factoriesFillText.text = StaticMethods.TimerText(sd1.factories, factoriesDuration, multi, factoriesTime);
-
-        while (factoriesTime >= factoriesDuration)
+        // Apply production
+        for (int i = 0; i < produced; i++)
         {
-            factoriesTime -= factoriesDuration;
             sd1.bots += sp.factoriesBoostActivator ? sd1.factories * 9 : sd1.factories;
         }
+
+        double effectiveMulti = _factoriesTimer.GetEffectiveMultiplier(sd1.factories, globalMulti);
+        factoriesFillBar.fillAmount =
+            (float)StaticMethods.FillBar(sd1.factories, factoriesDuration, effectiveMulti, _factoriesTimer.currentTime);
+        factoriesFillText.text = StaticMethods.TimerText(sd1.factories, factoriesDuration, effectiveMulti, _factoriesTimer.currentTime);
     }
 
-    private double botsFillSpeed;
+    private double _botsFillSpeed;
 
     private void BotsManagement()
     {
         botsTitleText.text = $"Bots <size=70%> {sd1.bots:N0}";
 
-        double multi = 1 + (sd1.bots > 0 ? Math.Log10(sd1.bots) : 0);
-        if (sd1.bots < 100) multi *= sd1.bots / 100;
-        if (sp.doDoubleTime) multi *= sp.doubleTimeRate + 1;
-        if (sd1.worldPeaceComplete) multi *= 2;
-        if (sp.botsBoost1Activator) multi *= 2;
+        // Bots has special soft-start: reduced production when bots < 100
+        double baseMulti = 1 + (sd1.bots > 0 ? Math.Log10(sd1.bots) : 0);
+        if (sd1.bots < 100 && sd1.bots > 0) baseMulti *= sd1.bots / 100.0;
 
-        if (sd1.bots >= 1) botsTime += Time.deltaTime * (float)multi;
+        double globalMulti = GetGlobalMultiplier();
+        if (sd1.worldPeaceComplete) globalMulti *= 2;
+        if (sp.botsBoost1Activator) globalMulti *= 2;
 
-        botsFillSpeed = 1 / (botsDuration / multi);
+        // Use custom multiplier since bots has special soft-start logic
+        double effectiveMulti = baseMulti * globalMulti;
+        int produced = _botsTimer.UpdateWithCustomMultiplier(baseMulti, globalMulti, Time.deltaTime);
 
-        botsFillBar.fillAmount = (float)StaticMethods.FillBar(sd1.bots, botsDuration, multi, botsTime);
-        botsFillText.text = StaticMethods.TimerText(sd1.bots, botsDuration, multi, botsTime);
-
-        while (botsTime >= botsDuration)
+        // Apply production
+        for (int i = 0; i < produced; i++)
         {
-            botsTime -= botsDuration;
             sd1.rockets += sp.botsBoost2Activator ? 2 : 1;
         }
+
+        _botsFillSpeed = effectiveMulti > 0 ? effectiveMulti / botsDuration : 0;
+
+        botsFillBar.fillAmount = (float)StaticMethods.FillBar(sd1.bots, botsDuration, effectiveMulti, _botsTimer.currentTime);
+        botsFillText.text = StaticMethods.TimerText(sd1.bots, botsDuration, effectiveMulti, _botsTimer.currentTime);
     }
 
     private void RocketsManagement()
     {
         rocketsTitleText.text =
-            $"Rockets <size=70%> Launching <color=#A3FFFE>{botsFillSpeed / sd1.rocketsPerSpaceFactory:F1}</color> Factories/s";
+            $"Rockets <size=70%> Launching <color=#A3FFFE>{_botsFillSpeed / sd1.rocketsPerSpaceFactory:F1}</color> Factories/s";
         if (sd1.rockets < 1) return;
 
         rocketsFillBar.fillAmount =
