@@ -4,6 +4,7 @@ using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 using Blindsided.Utilities;
+using IdleDysonSwarm.Systems.Dream1;
 using static Expansion.Oracle;
 using static IdleDysonSwarm.Systems.Constants.Dream1Constants;
 
@@ -13,8 +14,15 @@ public class SpaceAgeManager : MonoBehaviour
     private SaveData sd => oracle.saveSettings.saveData;
     private SaveDataPrestige sdp => oracle.saveSettings.sdPrestige;
 
+    // Production timer for space factories
+    private ProductionTimer _spaceFactoriesTimer;
+
     private void Start()
     {
+        // Initialize timer with saved progress (must be in Start, after Oracle is initialized)
+        _spaceFactoriesTimer = new ProductionTimer(_factoriesDuration, sd1.spaceFactoriesTimerProgress);
+        _fireTime = sd1.railgunFireProgress;
+
         solarBuyButton.onClick.AddListener(BuySolar);
         fusionBuyButton.onClick.AddListener(BuyFusion);
     }
@@ -32,6 +40,24 @@ public class SpaceAgeManager : MonoBehaviour
         SpaceFactoryManagement();
         RailgunManagement();
         FireRailGun();
+        SyncTimerProgress();
+    }
+
+    /// <summary>
+    /// Gets the global multiplier from DoubleTime.
+    /// </summary>
+    private double GetGlobalMultiplier()
+    {
+        return sdp.doDoubleTime ? sdp.doubleTimeRate + 1 : 1;
+    }
+
+    /// <summary>
+    /// Syncs timer progress to save data for persistence.
+    /// </summary>
+    private void SyncTimerProgress()
+    {
+        sd1.spaceFactoriesTimerProgress = _spaceFactoriesTimer.currentTime;
+        sd1.railgunFireProgress = _fireTime;
     }
 
     private void BuySolar()
@@ -68,7 +94,6 @@ public class SpaceAgeManager : MonoBehaviour
     [SerializeField] private TMP_Text factoriesFillText;
     [SerializeField] private SlicedFilledImage factoriesInventoryFillBar;
     [SerializeField] private TMP_Text factoriesInventoryBarText;
-    [SerializeField] private float _factoriesTime;
     [SerializeField] private float _factoriesDuration = 2;
 
     [Space(10), SerializeField]  private TMP_Text railgunsTitleText;
@@ -135,25 +160,22 @@ public class SpaceAgeManager : MonoBehaviour
         factoriesTitleText.text = $"Space Factories <size=70%> {sd1.spaceFactories:N0}";
         if (sd1.spaceFactories < 1) return;
 
-        double multi = 1 + (sd1.spaceFactories > 0 ? Math.Log10(sd1.spaceFactories) : 0);
-        if (sdp.doDoubleTime) multi *= oracle.saveSettings.sdPrestige.doubleTimeRate + 1;
-        if (sdp.sfActivator1) multi *= 2;
-        if (sdp.sfActivator2) multi *= 2;
-        if (sdp.sfActivator3) multi *= 2;
+        // Build global multiplier with space factory boosts
+        double globalMulti = GetGlobalMultiplier();
+        if (sdp.sfActivator1) globalMulti *= 2;
+        if (sdp.sfActivator2) globalMulti *= 2;
+        if (sdp.sfActivator3) globalMulti *= 2;
+
+        double effectiveMulti = _spaceFactoriesTimer.GetEffectiveMultiplier(sd1.spaceFactories, globalMulti);
 
         if (sd1.dysonPanels < DysonPanelCap)
         {
-            if (sd1.spaceFactories >= 1) _factoriesTime += Time.deltaTime * (float)multi;
+            int produced = _spaceFactoriesTimer.Update(sd1.spaceFactories, globalMulti, Time.deltaTime);
+            sd1.dysonPanels += produced;
 
             factoriesFillBar.fillAmount =
-                (float)StaticMethods.FillBar(sd1.spaceFactories, _factoriesDuration, multi, _factoriesTime);
-            factoriesFillText.text = StaticMethods.TimerText(sd1.spaceFactories, _factoriesDuration, multi, _factoriesTime);
-
-            while (_factoriesTime >= _factoriesDuration)
-            {
-                _factoriesTime -= _factoriesDuration;
-                sd1.dysonPanels++;
-            }
+                (float)StaticMethods.FillBar(sd1.spaceFactories, _factoriesDuration, effectiveMulti, _spaceFactoriesTimer.currentTime);
+            factoriesFillText.text = StaticMethods.TimerText(sd1.spaceFactories, _factoriesDuration, effectiveMulti, _spaceFactoriesTimer.currentTime);
 
             factoriesInventoryFillBar.fillAmount = sd1.dysonPanels / (float)DysonPanelCap;
             factoriesInventoryBarText.text = $"{sd1.dysonPanels}/{DysonPanelCap}";
@@ -163,7 +185,7 @@ public class SpaceAgeManager : MonoBehaviour
             factoriesInventoryFillBar.fillAmount = 1;
             factoriesInventoryBarText.text = $"{sd1.dysonPanels}/{DysonPanelCap}";
             factoriesFillBar.fillAmount = 1;
-            factoriesFillText.text = StaticMethods.TimerText(sd1.spaceFactories, _factoriesDuration, multi, _factoriesTime);
+            factoriesFillText.text = StaticMethods.TimerText(sd1.spaceFactories, _factoriesDuration, effectiveMulti, _spaceFactoriesTimer.currentTime);
         }
     }
 

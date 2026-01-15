@@ -1,5 +1,7 @@
 using System;
 using Expansion;
+using IdleDysonSwarm.Data;
+using UnityEngine;
 using static Expansion.Oracle;
 using static IdleDysonSwarm.Systems.Constants.QuantumConstants;
 using static IdleDysonSwarm.Systems.Constants.RealityConstants;
@@ -12,9 +14,20 @@ namespace IdleDysonSwarm.Services
     /// </summary>
     public sealed class QuantumService : IQuantumService
     {
+        private readonly QuantumUpgradeDatabase _database;
+
         private PrestigePlus PrestigePlus => StaticSaveSettings.prestigePlus;
         private AvocadoData AvocadoData => StaticSaveSettings.avocadoData;
         private DysonVersePrestigeData PrestigeData => StaticPrestigeData;
+
+        /// <summary>
+        /// Creates a QuantumService with the specified upgrade database.
+        /// </summary>
+        /// <param name="database">The quantum upgrade database (can be null for fallback behavior).</param>
+        public QuantumService(QuantumUpgradeDatabase database = null)
+        {
+            _database = database;
+        }
 
         #region State Properties
 
@@ -49,6 +62,38 @@ namespace IdleDysonSwarm.Services
         #region Calculations
 
         public int GetUpgradeCost(QuantumUpgradeType upgrade)
+        {
+            // Try database lookup first
+            if (_database != null && _database.TryGet(upgrade.ToString(), out var definition))
+            {
+                int purchaseCount = GetPurchaseCount(upgrade);
+                return definition.GetCostForPurchaseCount(purchaseCount);
+            }
+
+            // Fallback to constants for backward compatibility
+            return GetUpgradeCostFallback(upgrade);
+        }
+
+        /// <summary>
+        /// Gets the current purchase count for repeatable upgrades.
+        /// </summary>
+        private int GetPurchaseCount(QuantumUpgradeType upgrade)
+        {
+            return upgrade switch
+            {
+                QuantumUpgradeType.Division => (int)DivisionsPurchased,
+                QuantumUpgradeType.Secrets => (int)(PermanentSecrets / SecretsPerPurchase),
+                QuantumUpgradeType.InfluenceSpeed => (int)(InfluenceSpeedLevel / InfluenceSpeedPerLevel),
+                QuantumUpgradeType.CashBonus => (int)CashBonusLevel,
+                QuantumUpgradeType.ScienceBonus => (int)ScienceBonusLevel,
+                _ => IsUpgradePurchasedState(upgrade) ? 1 : 0
+            };
+        }
+
+        /// <summary>
+        /// Fallback cost calculation using constants (for when database is unavailable).
+        /// </summary>
+        private int GetUpgradeCostFallback(QuantumUpgradeType upgrade)
         {
             return upgrade switch
             {
@@ -91,6 +136,46 @@ namespace IdleDysonSwarm.Services
         }
 
         public bool IsUpgradePurchased(QuantumUpgradeType upgrade)
+        {
+            // Try database lookup for repeatability/max purchases
+            if (_database != null && _database.TryGet(upgrade.ToString(), out var definition))
+            {
+                int purchaseCount = GetPurchaseCount(upgrade);
+                return !definition.CanPurchaseMore(purchaseCount);
+            }
+
+            // Fallback to hardcoded checks
+            return IsUpgradePurchasedFallback(upgrade);
+        }
+
+        /// <summary>
+        /// Gets whether a specific upgrade is in the "unlocked" state.
+        /// Used for one-time unlocks to determine purchase count.
+        /// </summary>
+        private bool IsUpgradePurchasedState(QuantumUpgradeType upgrade)
+        {
+            return upgrade switch
+            {
+                QuantumUpgradeType.BotMultitasking => IsBotMultitaskingUnlocked,
+                QuantumUpgradeType.DoubleIP => IsDoubleIPUnlocked,
+                QuantumUpgradeType.BreakTheLoop => IsBreakTheLoopUnlocked,
+                QuantumUpgradeType.QuantumEntanglement => IsQuantumEntanglementUnlocked,
+                QuantumUpgradeType.Automation => IsAutomationUnlocked,
+                QuantumUpgradeType.Avocado => IsAvocadoUnlocked,
+                QuantumUpgradeType.Fragments => IsFragmentsUnlocked,
+                QuantumUpgradeType.Purity => IsPurityUnlocked,
+                QuantumUpgradeType.Terra => IsTerraUnlocked,
+                QuantumUpgradeType.Power => IsPowerUnlocked,
+                QuantumUpgradeType.Paragade => IsParagadeUnlocked,
+                QuantumUpgradeType.Stellar => IsStellarUnlocked,
+                _ => false
+            };
+        }
+
+        /// <summary>
+        /// Fallback purchased check (for when database is unavailable).
+        /// </summary>
+        private bool IsUpgradePurchasedFallback(QuantumUpgradeType upgrade)
         {
             return upgrade switch
             {
