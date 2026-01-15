@@ -1,6 +1,6 @@
 {
   "dependencies": {
-    "com.coplaydev.unity-mcp": "https://github.com/CoplayDev/unity-mcp.git?path=/MCPForUnity",
+    "com.coplaydev.unity-mcp": "https://github.com/BlindsidedGames/unity-mcp.git?path=/MCPForUnity#fix/unity6-compilation-loop",
     "com.febucci.custom-hierarchy": "https://github.com/febucci/unitypackage-custom-hierarchy.git",
     "com.unity.ads": "4.16.4",
     "com.unity.ai.navigation": "2.0.9",

@@ -1,13 +1,13 @@
 {
   "dependencies": {
     "com.coplaydev.unity-mcp": {
-      "version": "https://github.com/CoplayDev/unity-mcp.git?path=/MCPForUnity",
+      "version": "https://github.com/BlindsidedGames/unity-mcp.git?path=/MCPForUnity#fix/unity6-compilation-loop",
       "depth": 0,
       "source": "git",
       "dependencies": {
         "com.unity.nuget.newtonsoft-json": "3.0.2"
       },
-      "hash": "b611b268efc4e670ff3cd6e536766b4407dbe0a9"
+      "hash": "a160cb2d14c05d0bd0b3275491320cc1ec5eab2f"
     },
     "com.febucci.custom-hierarchy": {
       "version": "https://github.com/febucci/unitypackage-custom-hierarchy.git",
