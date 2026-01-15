@@ -23,7 +23,11 @@ namespace IdleDysonSwarm.Services
         Stellar,
         InfluenceSpeed,
         CashBonus,
-        ScienceBonus
+        ScienceBonus,
+        // Mega-structure unlocks
+        MatrioshkaBrains,
+        BirchPlanets,
+        GalacticBrains
     }
 
     /// <summary>
@@ -146,6 +150,21 @@ namespace IdleDysonSwarm.Services
         /// Whether Stellar upgrade is unlocked.
         /// </summary>
         bool IsStellarUnlocked { get; }
+
+        /// <summary>
+        /// Whether Matrioshka Brains mega-structure is unlocked.
+        /// </summary>
+        bool IsMatrioshkaBrainsUnlocked { get; }
+
+        /// <summary>
+        /// Whether Birch Planets mega-structure is unlocked.
+        /// </summary>
+        bool IsBirchPlanetsUnlocked { get; }
+
+        /// <summary>
+        /// Whether Galactic Brains mega-structure is unlocked.
+        /// </summary>
+        bool IsGalacticBrainsUnlocked { get; }
 
         #endregion
 

@@ -370,6 +370,55 @@ namespace Blindsided.Utilities
             return (int)n;
         }
 
+        /// <summary>
+        /// Calculate facility cost for mega-structure purchases.
+        /// Uses the same exponential scaling formula as BuyXCost.
+        /// </summary>
+        /// <param name="numberToBuy">Number of mega-structures to purchase.</param>
+        /// <param name="baseFacilityCost">Base amount of facilities consumed.</param>
+        /// <param name="exponent">Cost scaling exponent (typically 1.5).</param>
+        /// <param name="currentOwned">Current number of this mega-structure owned.</param>
+        /// <returns>Total facilities that will be consumed.</returns>
+        public static double FacilityCost(
+            double numberToBuy,
+            double baseFacilityCost,
+            double exponent,
+            double currentOwned)
+        {
+            if (numberToBuy <= 0) return 0;
+            if (exponent <= 1) return baseFacilityCost * numberToBuy;
+
+            return baseFacilityCost
+                   * Math.Pow(exponent, currentOwned)
+                   * ((Math.Pow(exponent, numberToBuy) - 1) / (exponent - 1));
+        }
+
+        /// <summary>
+        /// Calculate max affordable mega-structures based on available facilities.
+        /// </summary>
+        /// <param name="availableFacilities">Total facilities available to spend.</param>
+        /// <param name="baseFacilityCost">Base amount of facilities consumed.</param>
+        /// <param name="exponent">Cost scaling exponent (typically 1.5).</param>
+        /// <param name="currentOwned">Current number of this mega-structure owned.</param>
+        /// <returns>Maximum number of mega-structures that can be purchased.</returns>
+        public static int MaxAffordableFacility(
+            double availableFacilities,
+            double baseFacilityCost,
+            double exponent,
+            double currentOwned)
+        {
+            if (availableFacilities <= 0 || baseFacilityCost <= 0) return 0;
+            if (exponent <= 1) return (int)Math.Floor(availableFacilities / baseFacilityCost);
+
+            double n = Math.Floor(Math.Log(
+                availableFacilities * (exponent - 1)
+                / (baseFacilityCost * Math.Pow(exponent, currentOwned))
+                + 1,
+                exponent));
+
+            return n < 0 ? 0 : (int)n;
+        }
+
         public static double TriangleNumber(double n) => n * (n + 1) / 2;
         public static (int, double) RecalculateLevel(double xpForFirstLevel, double exponent, double totalXp)
         {

@@ -242,6 +242,13 @@ namespace Systems.Facilities
             for (int i = 0; i < specs.Count; i++)
             {
                 UpstreamBreakdownSpec spec = specs[i];
+
+                // Skip mega-structures that aren't unlocked yet
+                if (!IsMegaStructureUnlocked(spec.FacilityId, prestigeData))
+                {
+                    continue;
+                }
+
                 if (!FacilityRuntimeBuilder.TryBuildRuntime(spec.FacilityId, infinityData, prestigeData, skillTreeData, prestigePlus,
                         out FacilityRuntime runtime))
                 {
@@ -267,6 +274,19 @@ namespace Systems.Facilities
                 AppendSummaryLine(builder, summaryLine);
                 AppendBonusSummaryLines(builder, upstreamFacilityId, runtime.Breakdown.Contributions);
             }
+        }
+
+        private static bool IsMegaStructureUnlocked(string facilityId, DysonVersePrestigeData prestigeData)
+        {
+            if (prestigeData == null) return true; // Allow non-mega-structures through
+
+            return facilityId switch
+            {
+                "matrioshka_brains" => prestigeData.unlockedMatrioshkaBrains,
+                "birch_planets" => prestigeData.unlockedBirchPlanets,
+                "galactic_brains" => prestigeData.unlockedGalacticBrains,
+                _ => true // Non-mega-structures are always "unlocked"
+            };
         }
 
         private static void AppendPlanetGenerationSection(StringBuilder builder, string facilityId,
@@ -494,6 +514,28 @@ namespace Systems.Facilities
                     new List<UpstreamBreakdownSpec>
                     {
                         new UpstreamBreakdownSpec("Produced by", "ai_managers")
+                    }
+                },
+                // Mega-structure upstream sources
+                {
+                    "planets",
+                    new List<UpstreamBreakdownSpec>
+                    {
+                        new UpstreamBreakdownSpec("Produced by", "matrioshka_brains")
+                    }
+                },
+                {
+                    "matrioshka_brains",
+                    new List<UpstreamBreakdownSpec>
+                    {
+                        new UpstreamBreakdownSpec("Produced by", "birch_planets")
+                    }
+                },
+                {
+                    "birch_planets",
+                    new List<UpstreamBreakdownSpec>
+                    {
+                        new UpstreamBreakdownSpec("Produced by", "galactic_brains")
                     }
                 }
             };
