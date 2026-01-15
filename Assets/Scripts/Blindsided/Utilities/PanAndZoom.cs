@@ -2,6 +2,10 @@ using System;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.EventSystems;
+using UnityEngine.InputSystem;
+using UnityEngine.InputSystem.EnhancedTouch;
+using Touch = UnityEngine.InputSystem.EnhancedTouch.Touch;
+using TouchPhase = UnityEngine.InputSystem.TouchPhase;
 
 namespace Blindsided.Utilities
 {
@@ -63,9 +67,19 @@ namespace Blindsided.Utilities
         /// <summary> The point of contact if it exists in Screen space. </summary>
         public Vector2 touchPosition { get; private set; }
 
+        private void OnEnable()
+        {
+            EnhancedTouchSupport.Enable();
+        }
+
+        private void OnDisable()
+        {
+            EnhancedTouchSupport.Disable();
+        }
+
         private void Start()
         {
-            canUseMouse = Application.platform != RuntimePlatform.Android && Application.platform != RuntimePlatform.IPhonePlayer && Input.mousePresent;
+            canUseMouse = Application.platform != RuntimePlatform.Android && Application.platform != RuntimePlatform.IPhonePlayer && Mouse.current != null;
         }
 
         private void Update()
@@ -85,56 +99,63 @@ namespace Blindsided.Utilities
 
         private void UpdateWithMouse()
         {
-            if (Input.GetMouseButtonDown(0)) {
+            var mouse = Mouse.current;
+            if (mouse == null) return;
+
+            Vector2 mousePosition = mouse.position.ReadValue();
+
+            if (mouse.leftButton.wasPressedThisFrame) {
                 if (ignoreUI || !IsPointerOverUIObject()) {
-                    touch0StartPosition = Input.mousePosition;
+                    touch0StartPosition = mousePosition;
                     touch0StartTime = Time.time;
                     touchPosition = touch0StartPosition;
 
                     isTouching = true;
 
-                    if (onStartTouch != null) onStartTouch(Input.mousePosition);
+                    if (onStartTouch != null) onStartTouch(mousePosition);
                 }
             }
 
-            if (Input.GetMouseButton(0) && isTouching) {
-                Vector2 move = (Vector2)Input.mousePosition - touchPosition;
-                touchPosition = Input.mousePosition;
+            if (mouse.leftButton.isPressed && isTouching) {
+                Vector2 move = mousePosition - touchPosition;
+                touchPosition = mousePosition;
 
                 if (move != Vector2.zero) {
                     OnSwipe(move);
                 }
             }
 
-            if (Input.GetMouseButtonUp(0) && isTouching) {
+            if (mouse.leftButton.wasReleasedThisFrame && isTouching) {
 
                 if (Time.time - touch0StartTime <= maxDurationForTap
-                    && Vector2.Distance(Input.mousePosition, touch0StartPosition) <= maxDistanceForTap) {
-                    OnClick(Input.mousePosition);
+                    && Vector2.Distance(mousePosition, touch0StartPosition) <= maxDistanceForTap) {
+                    OnClick(mousePosition);
                 }
 
-                if (onEndTouch != null) onEndTouch(Input.mousePosition);
+                if (onEndTouch != null) onEndTouch(mousePosition);
                 isTouching = false;
                 cameraControlEnabled = true;
             }
 
-            if (Input.mouseScrollDelta.y != 0) {
-                OnPinch(Input.mousePosition, 1, Input.mouseScrollDelta.y < 0 ? 1 / mouseScrollSpeed : mouseScrollSpeed, Vector2.right);
+            Vector2 scrollDelta = mouse.scroll.ReadValue();
+            if (scrollDelta.y != 0) {
+                OnPinch(mousePosition, 1, scrollDelta.y < 0 ? 1 / mouseScrollSpeed : mouseScrollSpeed, Vector2.right);
             }
         }
 
         private void UpdateWithTouch()
         {
-            int touchCount = Input.touches.Length;
+            var activeTouches = Touch.activeTouches;
+            int touchCount = activeTouches.Count;
 
             if (touchCount == 1) {
-                Touch touch = Input.touches[0];
+                Touch touch = activeTouches[0];
 
                 switch (touch.phase) {
                     case TouchPhase.Began:
                     {
                         if (ignoreUI || !IsPointerOverUIObject()) {
-                            touch0StartPosition = touch.position;
+                            touch0StartPosition = touch.screenPosition;
                             touch0StartTime = Time.time;
                             touchPosition = touch0StartPosition;
 
@@ -147,22 +168,22 @@ namespace Blindsided.Utilities
                     }
                     case TouchPhase.Moved:
                     {
-                        touchPosition = touch.position;
-                        if (touch.deltaPosition != Vector2.zero && isTouching) {
+                        touchPosition = touch.screenPosition;
+                        if (touch.delta != Vector2.zero && isTouching) {
 
-                            OnSwipe(touch.deltaPosition);
+                            OnSwipe(touch.delta);
                         }
                         break;
                     }
                     case TouchPhase.Ended:
                     {
                         if (Time.time - touch0StartTime <= maxDurationForTap
-                            && Vector2.Distance(touch.position, touch0StartPosition) <= maxDistanceForTap
+                            && Vector2.Distance(touch.screenPosition, touch0StartPosition) <= maxDistanceForTap
                             && isTouching) {
-                            OnClick(touch.position);
+                            OnClick(touch.screenPosition);
                         }
 
-                        if (onEndTouch != null) onEndTouch(touch.position);
+                        if (onEndTouch != null) onEndTouch(touch.screenPosition);
                         isTouching = false;
                         cameraControlEnabled = true;
                         break;
@@ -173,19 +194,19 @@ namespace Blindsided.Utilities
                 }
             }
             else if (touchCount == 2) {
-                Touch touch0 = Input.touches[0];
-                Touch touch1 = Input.touches[1];
+                Touch touch0 = activeTouches[0];
+                Touch touch1 = activeTouches[1];
 
                 if (touch0.phase == TouchPhase.Ended || touch1.phase == TouchPhase.Ended) return;
 
                 isTouching = true;
 
-                float previousDistance = Vector2.Distance(touch0.position - touch0.deltaPosition, touch1.position - touch1.deltaPosition);
+                float previousDistance = Vector2.Distance(touch0.screenPosition - touch0.delta, touch1.screenPosition - touch1.delta);
 
-                float currentDistance = Vector2.Distance(touch0.position, touch1.position);
+                float currentDistance = Vector2.Distance(touch0.screenPosition, touch1.screenPosition);
 
                 if (previousDistance != currentDistance) {
-                    OnPinch((touch0.position + touch1.position) / 2, previousDistance, currentDistance, (touch1.position - touch0.position).normalized);
+                    OnPinch((touch0.screenPosition + touch1.screenPosition) / 2, previousDistance, currentDistance, (touch1.screenPosition - touch0.screenPosition).normalized);
                 }
             }
             else {
@@ -246,7 +267,13 @@ namespace Blindsided.Utilities
 
             if (EventSystem.current == null) return false;
             PointerEventData eventDataCurrentPosition = new PointerEventData(EventSystem.current);
-            eventDataCurrentPosition.position = new Vector2(Input.mousePosition.x, Input.mousePosition.y);
+            var mouse = Mouse.current;
+            if (mouse != null) {
+                eventDataCurrentPosition.position = mouse.position.ReadValue();
+            }
+            else {
+                eventDataCurrentPosition.position = touchPosition;
+            }
             List<RaycastResult> results = new List<RaycastResult>();
             EventSystem.current.RaycastAll(eventDataCurrentPosition, results);
 

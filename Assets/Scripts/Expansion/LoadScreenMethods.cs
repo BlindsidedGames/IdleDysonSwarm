@@ -1,5 +1,6 @@
 using System;
 using UnityEngine;
+using UnityEngine.InputSystem;
 using UnityEngine.Purchasing;
 
 public class LoadScreenMethods : MonoBehaviour
@@ -43,7 +44,8 @@ public class LoadScreenMethods : MonoBehaviour
 
     private void Update()
     {
-        if (Input.GetMouseButtonDown(0)) afkTime = 0;
+        var mouse = Mouse.current;
+        if (mouse != null && mouse.leftButton.wasPressedThisFrame) afkTime = 0;
 
         afkTime += Time.deltaTime;
         screensaverWindow.SetActive(afkTime >= windowActivationTime);
