@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityEngine.EventSystems;
 using UnityEngine.InputSystem;
 using UnityEngine.InputSystem.EnhancedTouch;
 using UnityEngine.UI;
@@ -82,6 +83,11 @@ public class PinchableScrollRect : ScrollRect
     {
         if (_isPincching || blockPan) return;
         base.SetContentAnchoredPosition(position);
+    }
+
+    public override void OnScroll(PointerEventData eventData)
+    {
+        // Don't pass scroll to base class - we handle mouse wheel for zooming in Update()
     }
 
     private void OnPinchStart()
