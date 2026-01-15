@@ -82,6 +82,10 @@ tmpclaude-*
 # Plastic SCM
 .plastic/
 
+# Unity UserSettings (editor preferences)
+UserSettings/Layouts/
+UserSettings/Search.settings
+
 # Unity auto-generated solution files
 *.slnx
 
