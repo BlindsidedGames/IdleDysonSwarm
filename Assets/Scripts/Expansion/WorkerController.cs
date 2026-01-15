@@ -3,6 +3,7 @@ using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 using Blindsided.Utilities;
+using IdleDysonSwarm.Services;
 using static Expansion.Oracle;
 using static IdleDysonSwarm.Systems.Constants.RealityConstants;
 
@@ -15,6 +16,13 @@ public class WorkerController : MonoBehaviour
     [SerializeField] private Color color_White = Color.white;
     [SerializeField] private Color color_Ready;
 
+    private IWorkerService _workerService;
+
+    private void Awake()
+    {
+        _workerService = ServiceLocator.Get<IWorkerService>();
+    }
+
     private void Start()
     {
         UpdateWorkersReadyToGo();
@@ -24,11 +32,11 @@ public class WorkerController : MonoBehaviour
 
     private void Update()
     {
-        workerGenerationSpeed = BaseWorkerGenerationSpeed + oracle.saveSettings.prestigePlus.influence;
-        realityInactive.color = oracle.saveSettings.saveData.workersReadyToGo >= WorkerBatchSize && !oracle.saveSettings.saveData.workerAutoConvert ? color_Ready : color_White;
+        workerGenerationSpeed = _workerService.WorkerGenerationSpeed;
+        realityInactive.color = _workerService.CanGather && !_workerService.AutoGatherEnabled ? color_Ready : color_White;
         RunWorkers();
-        gatherInfluenceButton.interactable = oracle.saveSettings.saveData.workersReadyToGo >= WorkerBatchSize;
-        influenceDisplay.text = $"Influence: {oracle.saveSettings.saveData.influence:N0}";
+        gatherInfluenceButton.interactable = _workerService.CanGather;
+        influenceDisplay.text = $"Influence: {_workerService.InfluenceBalance:N0}";
     }
 
     private void OnEnable()
@@ -69,7 +77,7 @@ public class WorkerController : MonoBehaviour
                 {
                     oracle.saveSettings.saveData.workersReadyToGo = WorkerBatchSize;
                     oracle.saveSettings.saveData.universesConsumed +=
-                        128 - oracle.saveSettings.saveData.workersReadyToGo;
+                        WorkerBatchSize - oracle.saveSettings.saveData.workersReadyToGo;
                 }
                 else
                 {
@@ -87,15 +95,14 @@ public class WorkerController : MonoBehaviour
     private void RunWorkers()
     {
         consumingText.text = "Consuming";
-        switch (oracle.saveSettings.saveData.workersReadyToGo)
+        if (_workerService.CanGather)
         {
-            case >= WorkerBatchSize when
-                !oracle.saveSettings.saveData.workerAutoConvert:
+            if (!_workerService.AutoGatherEnabled)
+            {
                 consumingText.text = "Consumption Halted";
                 return;
-            case >= WorkerBatchSize:
-                SendWorkers();
-                break;
+            }
+            SendWorkers();
         }
 
         workerGenerationTime += workerGenerationSpeed * Time.deltaTime;
@@ -116,11 +123,11 @@ public class WorkerController : MonoBehaviour
     private void UpdateWorkersReadyToGo()
     {
         if (oracle.saveSettings.saveData.workersReadyToGo < 0) oracle.saveSettings.saveData.workersReadyToGo = 0;
-        workersReadyToGofill.fillAmount = (float)oracle.saveSettings.saveData.workersReadyToGo / (float)WorkerBatchSize;
-        workersReadyToGofillSideMenu.fillAmount = (float)oracle.saveSettings.saveData.workersReadyToGo / (float)WorkerBatchSize;
-        preWorkerCounter.text = $"{oracle.saveSettings.saveData.workersReadyToGo}/{WorkerBatchSize}";
+        workersReadyToGofill.fillAmount = _workerService.WorkerFillPercent;
+        workersReadyToGofillSideMenu.fillAmount = _workerService.WorkerFillPercent;
+        preWorkerCounter.text = $"{_workerService.WorkersReady}/{WorkerBatchSize}";
         universeDesignation.text =
-            $"Universe Designation: {oracle.saveSettings.saveData.universesConsumed + 1:N0}";
+            $"Universe Designation: {_workerService.WorkerBatchesProcessed + 1:N0}";
     }
 
     private void SendWorkers()

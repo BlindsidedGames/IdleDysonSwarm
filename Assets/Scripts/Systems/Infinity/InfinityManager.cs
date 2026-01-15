@@ -5,6 +5,7 @@ using UnityEngine.UI;
 using UnityEngine.Serialization;
 using Blindsided.Utilities;
 using static Expansion.Oracle;
+using static IdleDysonSwarm.Systems.Constants.QuantumConstants;
 
 public class InfinityManager : MonoBehaviour
 {
@@ -43,7 +44,7 @@ public class InfinityManager : MonoBehaviour
     private readonly int autoResearchCost = 3;
     private readonly int autoBotsCost = 3;
 
-    private readonly int maxSecrets = 27;
+    private readonly int maxSecrets = MaxSecrets;
     private readonly int maxSkills = 10;
 
     private DysonVerseInfinityData infinityData => oracle.saveSettings.dysonVerseSaveData.dysonVerseInfinityData;
@@ -255,7 +256,7 @@ public class InfinityManager : MonoBehaviour
 
     public void PurchaseSecret()
     {
-        if (prestigeData.secretsOfTheUniverse >= 27) return;
+        if (prestigeData.secretsOfTheUniverse >= maxSecrets) return;
         prestigeData.spentInfinityPoints += 1;
         prestigeData.secretsOfTheUniverse += 1;
     }
