@@ -19,7 +19,8 @@
       "Bash(git stash:*)",
       "mcp__UnityMCP__execute_menu_item",
       "Bash(git rm:*)",
-      "mcp__UnityMCP__manage_editor"
+      "mcp__UnityMCP__manage_editor",
+      "Bash(ls:*)"
     ],
     "deny": [
       "Bash(git * --force *)",
