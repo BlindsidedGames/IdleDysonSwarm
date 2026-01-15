@@ -4,6 +4,7 @@ using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 using Blindsided.Utilities;
+using IdleDysonSwarm.Systems.Dream1;
 using static Expansion.Oracle;
 
 public class FoundationalEraManager : MonoBehaviour
@@ -12,15 +13,12 @@ public class FoundationalEraManager : MonoBehaviour
     [SerializeField] private TMP_Text hunterTitleText;
     [SerializeField] private TMP_Text hunterTimerText;
     [SerializeField] private SlicedFilledImage hunterFillBar;
-    [SerializeField] private float hunterTime;
     [SerializeField] private float hunterDuration = 3;
-
 
     [Space(10), SerializeField]  private Button gathererBuyButton;
     [SerializeField] private TMP_Text gathererTitleText;
     [SerializeField] private TMP_Text gathererTimerText;
     [SerializeField] private SlicedFilledImage gathererFillBar;
-    [SerializeField] private float gatherTime;
     [SerializeField] private float gatherDuration = 3;
 
     [Space(10), SerializeField]  private Button communityBoostButton;
@@ -30,39 +28,54 @@ public class FoundationalEraManager : MonoBehaviour
     [SerializeField] private TMP_Text communityBoostTimerText;
     [SerializeField] private SlicedFilledImage communityFillBar;
     [SerializeField] private SlicedFilledImage communityBoostFillBar;
-    [SerializeField] private float communityTime;
     [SerializeField] private float communityDuration = 3;
 
     [Space(10), SerializeField]  private TMP_Text housingTitleText;
     [SerializeField] private TMP_Text housingTimerText;
     [SerializeField] private SlicedFilledImage housingFillBar;
     [SerializeField] private SlicedFilledImage housingToVillageFillBar;
-    [SerializeField] private float housingTime;
     [SerializeField] private float housingDuration = 20;
 
     [Space(10), SerializeField]  private TMP_Text villagesTitleText;
     [SerializeField] private TMP_Text villagesTimerText;
     [SerializeField] private SlicedFilledImage villagesFillBar;
     [SerializeField] private SlicedFilledImage villagesToCityFillBar;
-    [SerializeField] private float villagesTime;
     [SerializeField] private float villagesDuration = 12;
 
     [Space(10), SerializeField]  private TMP_Text workersTitleText;
     [SerializeField] private TMP_Text workersTimerText;
     [SerializeField] private SlicedFilledImage workersFillBar;
-    [SerializeField] private float workersTime;
     [SerializeField] private float workersDuration = 4;
 
     [Space(10), SerializeField]  private TMP_Text citiesTitleText;
     [SerializeField] private TMP_Text citiesTimerText;
     [SerializeField] private SlicedFilledImage citiesFillBar;
-    [SerializeField] private float citiesTime;
     [SerializeField] private float citiesDuration = 3;
+
+    // Production timers (use ProductionTimer utility for consistency)
+    private ProductionTimer _hunterTimer;
+    private ProductionTimer _gathererTimer;
+    private ProductionTimer _communityTimer;
+    private ProductionTimer _housingTimer;
+    private ProductionTimer _villagesTimer;
+    private ProductionTimer _workersTimer;
+    private ProductionTimer _citiesTimer;
 
     private SaveDataDream1 sd1 => oracle.saveSettings.sdSimulation;
     private SaveData sd => oracle.saveSettings.saveData;
     private SaveDataPrestige sp => oracle.saveSettings.sdPrestige;
 
+    private void Awake()
+    {
+        // Initialize timers with saved progress
+        _hunterTimer = new ProductionTimer(hunterDuration, sd1.hunterTimerProgress);
+        _gathererTimer = new ProductionTimer(gatherDuration, sd1.gathererTimerProgress);
+        _communityTimer = new ProductionTimer(communityDuration, sd1.communityTimerProgress);
+        _housingTimer = new ProductionTimer(housingDuration, sd1.housingTimerProgress);
+        _villagesTimer = new ProductionTimer(villagesDuration, sd1.villagesTimerProgress);
+        _workersTimer = new ProductionTimer(workersDuration, sd1.workersTimerProgress);
+        _citiesTimer = new ProductionTimer(citiesDuration, sd1.citiesTimerProgress);
+    }
 
     private void Start()
     {
@@ -83,6 +96,29 @@ public class FoundationalEraManager : MonoBehaviour
         WorkerManagement();
         CityManagement();
         SetButtonsInteractable();
+        SyncTimerProgress();
+    }
+
+    /// <summary>
+    /// Syncs timer progress to save data for persistence.
+    /// </summary>
+    private void SyncTimerProgress()
+    {
+        sd1.hunterTimerProgress = _hunterTimer.currentTime;
+        sd1.gathererTimerProgress = _gathererTimer.currentTime;
+        sd1.communityTimerProgress = _communityTimer.currentTime;
+        sd1.housingTimerProgress = _housingTimer.currentTime;
+        sd1.villagesTimerProgress = _villagesTimer.currentTime;
+        sd1.workersTimerProgress = _workersTimer.currentTime;
+        sd1.citiesTimerProgress = _citiesTimer.currentTime;
+    }
+
+    /// <summary>
+    /// Gets the global multiplier from DoubleTime.
+    /// </summary>
+    private double GetGlobalMultiplier()
+    {
+        return sp.doDoubleTime ? sp.doubleTimeRate + 1 : 1;
     }
 
     private void SetButtonsInteractable()
@@ -124,40 +160,26 @@ public class FoundationalEraManager : MonoBehaviour
     {
         hunterTitleText.text = $"Hunters <size=70%> {sd1.hunters:N0}";
 
+        double globalMulti = GetGlobalMultiplier();
+        int produced = _hunterTimer.Update(sd1.hunters, globalMulti, Time.deltaTime);
+        sd1.community += produced;
 
-        double multi = 1 + (sd1.hunters > 0 ? Math.Log10(sd1.hunters) : 0);
-        if (sp.doDoubleTime) multi *= sp.doubleTimeRate + 1;
-
-        if (sd1.hunters >= 1) hunterTime += Time.deltaTime * (float)multi;
-
-        hunterFillBar.fillAmount = (float)StaticMethods.FillBar(sd1.hunters, hunterDuration, multi, hunterTime);
-        hunterTimerText.text = StaticMethods.TimerText(sd1.hunters, hunterDuration, multi, hunterTime);
-
-        while (hunterTime >= hunterDuration)
-        {
-            hunterTime -= hunterDuration;
-            sd1.community++;
-        }
+        double effectiveMulti = _hunterTimer.GetEffectiveMultiplier(sd1.hunters, globalMulti);
+        hunterFillBar.fillAmount = (float)StaticMethods.FillBar(sd1.hunters, hunterDuration, effectiveMulti, _hunterTimer.currentTime);
+        hunterTimerText.text = StaticMethods.TimerText(sd1.hunters, hunterDuration, effectiveMulti, _hunterTimer.currentTime);
     }
 
     private void GathererManagement()
     {
         gathererTitleText.text = $"Gatherers <size=70%> {sd1.gatherers:N0}";
 
+        double globalMulti = GetGlobalMultiplier();
+        int produced = _gathererTimer.Update(sd1.gatherers, globalMulti, Time.deltaTime);
+        sd1.community += produced;
 
-        double multi = 1 + (sd1.gatherers > 0 ? Math.Log10(sd1.gatherers) : 0);
-        if (sp.doDoubleTime) multi *= sp.doubleTimeRate + 1;
-        if (sd1.gatherers >= 1) gatherTime += Time.deltaTime * (float)multi;
-
-        gathererFillBar.fillAmount = (float)StaticMethods.FillBar(sd1.gatherers, gatherDuration, multi, gatherTime);
-        gathererTimerText.text = StaticMethods.TimerText(sd1.gatherers, gatherDuration, multi, gatherTime);
-
-
-        while (gatherTime >= gatherDuration)
-        {
-            gatherTime -= gatherDuration;
-            sd1.community++;
-        }
+        double effectiveMulti = _gathererTimer.GetEffectiveMultiplier(sd1.gatherers, globalMulti);
+        gathererFillBar.fillAmount = (float)StaticMethods.FillBar(sd1.gatherers, gatherDuration, effectiveMulti, _gathererTimer.currentTime);
+        gathererTimerText.text = StaticMethods.TimerText(sd1.gatherers, gatherDuration, effectiveMulti, _gathererTimer.currentTime);
     }
 
     private void ManageCommunityBoost()
@@ -185,27 +207,23 @@ public class FoundationalEraManager : MonoBehaviour
 
         communityTitleText.text = $"Community <size=70%> {sd1.community:N0}";
 
+        // Community has special boost from communityBoostTime
+        double globalMulti = GetGlobalMultiplier();
+        if (sd1.communityBoostTime > 0) globalMulti *= 2;
 
-        double multi = 1 + (sd1.community > 0 ? Math.Log10(sd1.community) : 0);
-        if (sp.doDoubleTime) multi *= sp.doubleTimeRate + 1;
-        if (sd1.communityBoostTime > 0) multi *= 2;
-        if (sd1.community >= 1) communityTime += Time.deltaTime * (float)multi;
+        int produced = _communityTimer.Update(sd1.community, globalMulti, Time.deltaTime);
+        sd1.housing += produced;
 
-        _communityProduction = 1 / (communityDuration / multi);
+        double effectiveMulti = _communityTimer.GetEffectiveMultiplier(sd1.community, globalMulti);
+        _communityProduction = effectiveMulti > 0 ? effectiveMulti / communityDuration : 0;
 
         communityFillBar.fillAmount =
-            communityTime / multi < 0.2f ? 1 : communityTime > 0 ? communityTime / communityDuration : 0;
-        communityTimerText.text = communityDuration / multi < 0.2f
+            communityDuration / effectiveMulti < 0.2f ? 1 : _communityTimer.FillAmount;
+        communityTimerText.text = communityDuration / effectiveMulti < 0.2f
             ? $"{CalcUtils.FormatNumber(_communityProduction)}/s"
             : sd1.community > 0
-                ? $"{communityDuration / multi - communityTime / multi:F1}s"
+                ? $"{_communityTimer.GetTimeRemaining(effectiveMulti):F1}s"
                 : "";
-
-        while (communityTime >= communityDuration)
-        {
-            communityTime -= communityDuration;
-            sd1.housing++;
-        }
     }
 
     private void HousingManagement()
@@ -214,22 +232,16 @@ public class FoundationalEraManager : MonoBehaviour
         {
             housingFillBar.fillAmount = 0;
             housingTimerText.text = "";
+            return;
         }
 
-        if (sd1.housing < 1) return;
+        double globalMulti = GetGlobalMultiplier();
+        int produced = _housingTimer.Update(sd1.housing, globalMulti, Time.deltaTime);
+        sd1.workers += produced;
 
-        double multi = 1 + (sd1.housing > 0 ? Math.Log10(sd1.housing) : 0);
-        if (sp.doDoubleTime) multi *= sp.doubleTimeRate + 1;
-
-        if (sd1.housing >= 1) housingTime += Time.deltaTime * (float)multi;
-        housingFillBar.fillAmount = housingTime / housingDuration;
-        housingTimerText.text = $"{housingDuration / multi - housingTime / multi:F1}s";
-
-        while (housingTime >= housingDuration)
-        {
-            housingTime -= housingDuration;
-            sd1.workers++;
-        }
+        double effectiveMulti = _housingTimer.GetEffectiveMultiplier(sd1.housing, globalMulti);
+        housingFillBar.fillAmount = _housingTimer.FillAmount;
+        housingTimerText.text = $"{_housingTimer.GetTimeRemaining(effectiveMulti):F1}s";
     }
 
     private void VillageManagement()
@@ -238,64 +250,52 @@ public class FoundationalEraManager : MonoBehaviour
         {
             villagesFillBar.fillAmount = 0;
             villagesTimerText.text = "";
+            return;
         }
 
-        if (sd1.villages < 1) return;
+        double globalMulti = GetGlobalMultiplier();
+        int produced = _villagesTimer.Update(sd1.villages, globalMulti, Time.deltaTime);
+        sd1.workers += produced * 2; // Villages produce 2 workers per tick
 
-        double multi = 1 + Math.Log10(sd1.villages);
-        if (sp.doDoubleTime) multi *= sp.doubleTimeRate + 1;
-
-        villagesTime += Time.deltaTime * (float)multi;
-        villagesFillBar.fillAmount = villagesTime / villagesDuration;
-        villagesTimerText.text = $"{villagesDuration / multi - villagesTime / multi:F1}s";
-
-        while (villagesTime >= villagesDuration)
-        {
-            villagesTime -= villagesDuration;
-            sd1.workers += 2;
-        }
+        double effectiveMulti = _villagesTimer.GetEffectiveMultiplier(sd1.villages, globalMulti);
+        villagesFillBar.fillAmount = _villagesTimer.FillAmount;
+        villagesTimerText.text = $"{_villagesTimer.GetTimeRemaining(effectiveMulti):F1}s";
     }
 
     private void WorkerManagement()
     {
         workersTitleText.text = $"Workers <size=70%> {sd1.workers:N0}";
 
+        // Workers have special boost from workerBoostActivator
+        double globalMulti = GetGlobalMultiplier();
+        if (sp.workerBoostAcivator && sd1.workers > 0)
+            globalMulti *= 1 + Math.Log10(sd1.workers);
 
-        double multi = 1 + (sd1.workers > 0 ? Math.Log10(sd1.workers) : 0);
-        if (sp.doDoubleTime) multi *= sp.doubleTimeRate + 1;
-        if (sp.workerBoostAcivator) multi *= 1 + Math.Log10(sd1.workers);
+        int produced = _workersTimer.Update(sd1.workers, globalMulti, Time.deltaTime);
+        sd1.housing += produced;
 
-        if (sd1.workers >= 1) workersTime += Time.deltaTime * (float)multi;
-
-        workersFillBar.fillAmount = (float)StaticMethods.FillBar(sd1.workers, workersDuration, multi, workersTime);
-        workersTimerText.text = StaticMethods.TimerText(sd1.workers, workersDuration, multi, workersTime);
-
-        while (workersTime >= workersDuration)
-        {
-            workersTime -= workersDuration;
-            sd1.housing++;
-        }
+        double effectiveMulti = _workersTimer.GetEffectiveMultiplier(sd1.workers, globalMulti);
+        workersFillBar.fillAmount = (float)StaticMethods.FillBar(sd1.workers, workersDuration, effectiveMulti, _workersTimer.currentTime);
+        workersTimerText.text = StaticMethods.TimerText(sd1.workers, workersDuration, effectiveMulti, _workersTimer.currentTime);
     }
 
     private void CityManagement()
     {
         citiesTitleText.text = $"Cities <size=70%> {sd1.cities:N0}";
 
-        double multi = 1 + (sd1.cities > 0 ? Math.Log10(sd1.cities) : 0);
-        if (sp.doDoubleTime) multi *= sp.doubleTimeRate + 1;
+        double globalMulti = GetGlobalMultiplier();
+        int produced = _citiesTimer.Update(sd1.cities, globalMulti, Time.deltaTime);
 
-        if (sd1.cities >= 1) citiesTime += Time.deltaTime * (float)multi;
-
-        citiesFillBar.fillAmount = (float)StaticMethods.FillBar(sd1.cities, citiesDuration, multi, citiesTime);
-        citiesTimerText.text = StaticMethods.TimerText(sd1.cities, citiesDuration, multi, citiesTime);
-
-
-        while (citiesTime >= citiesDuration)
+        // Apply production per tick
+        for (int i = 0; i < produced; i++)
         {
-            citiesTime -= citiesDuration;
             sd1.workers += 5;
             if (sd1.engineeringComplete) sd1.factories += sp.citiesBoostActivator ? 10 : 1;
         }
+
+        double effectiveMulti = _citiesTimer.GetEffectiveMultiplier(sd1.cities, globalMulti);
+        citiesFillBar.fillAmount = (float)StaticMethods.FillBar(sd1.cities, citiesDuration, effectiveMulti, _citiesTimer.currentTime);
+        citiesTimerText.text = StaticMethods.TimerText(sd1.cities, citiesDuration, effectiveMulti, _citiesTimer.currentTime);
     }
 
     #region buttonMethods
