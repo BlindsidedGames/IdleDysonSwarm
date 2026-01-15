@@ -17,7 +17,8 @@
       "Bash(gh pr list:*)",
       "Bash(git pull:*)",
       "Bash(git stash:*)",
-      "mcp__UnityMCP__execute_menu_item"
+      "mcp__UnityMCP__execute_menu_item",
+      "Bash(git rm:*)"
     ],
     "deny": [
       "Bash(git * --force *)",
