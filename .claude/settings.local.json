@@ -27,7 +27,15 @@
       "mcp__UnityMCP__get_test_job",
       "Bash(git commit -m \"$\\(cat <<''EOF''\nchore: Update Unity editor assets\n\n- Regenerate font SDF assets\n- Update Game scene with editor changes\n- Update Unity connect settings\n\nCo-Authored-By: Claude Opus 4.5 <noreply@anthropic.com>\nEOF\n\\)\")",
       "Bash(find:*)",
-      "mcp__UnityMCP__manage_scene"
+      "mcp__UnityMCP__manage_scene",
+      "Skill(unity-mcp)",
+      "Skill(unity-mcp:*)",
+      "mcp__UnityMCP__manage_asset",
+      "mcp__UnityMCP__find_gameobjects",
+      "mcp__UnityMCP__batch_execute",
+      "mcp__UnityMCP__manage_gameobject",
+      "mcp__UnityMCP__manage_components",
+      "mcp__UnityMCP__manage_prefabs"
     ]
   }
 }
