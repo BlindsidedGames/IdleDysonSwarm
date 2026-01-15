@@ -21,6 +21,7 @@ public class SpaceAgeManager : MonoBehaviour
     {
         // Initialize timer with saved progress (must be in Start, after Oracle is initialized)
         _spaceFactoriesTimer = new ProductionTimer(_factoriesDuration, sd1.spaceFactoriesTimerProgress);
+        _fireTime = sd1.railgunFireProgress;
 
         solarBuyButton.onClick.AddListener(BuySolar);
         fusionBuyButton.onClick.AddListener(BuyFusion);
