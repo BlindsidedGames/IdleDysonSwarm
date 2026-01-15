@@ -1,3 +1,4 @@
+using Systems.Facilities;
 using TMPro;
 using UnityEngine;
 using UnityEngine.SceneManagement;
@@ -89,6 +90,10 @@ public class ButtonThings : MonoBehaviour
 
     public void GroupEnableDisableMenu()
     {
+        // Close any open facility breakdown popup when switching tabs
+        if (FacilityBreakdownPopup.Instance != null)
+            FacilityBreakdownPopup.Instance.Hide();
+
         for (int i = 0; i < _groupDisable.ToDisable.Length; i++) _groupDisable.ToDisable[i].SetActive(false);
         for (int i = 0; i < _groupDisable.ToEnable.Length; i++) _groupDisable.ToEnable[i].SetActive(true);
         GroupEnable();

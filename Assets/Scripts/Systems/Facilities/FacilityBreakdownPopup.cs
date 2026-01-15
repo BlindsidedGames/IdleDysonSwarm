@@ -15,6 +15,11 @@ namespace Systems.Facilities
 {
     public sealed class FacilityBreakdownPopup : MonoBehaviour
     {
+        /// <summary>
+        /// Static instance for global access (e.g., closing popup on tab switch).
+        /// </summary>
+        public static FacilityBreakdownPopup Instance { get; private set; }
+
         // Rich text color tags matching UITheme colors
         private const string ColorDelta = "<color=#FFA45E>"; // Orange (accent) for positive delta
         private const string ColorNegative = "<color=#FF5757>"; // Red (negative) for negative delta
@@ -34,6 +39,8 @@ namespace Systems.Facilities
 
         private void Awake()
         {
+            Instance = this;
+
             if (root == null)
             {
                 root = gameObject;
