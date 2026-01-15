@@ -412,9 +412,18 @@ public class InformationEraManager : MonoBehaviour
     {
         botsTitleText.text = $"Bots <size=70%> {sd1.bots:N0}";
 
+        // Guard: no production without bots
+        if (sd1.bots < 1)
+        {
+            botsFillBar.fillAmount = 0;
+            botsFillText.text = "";
+            _botsFillSpeed = 0;
+            return;
+        }
+
         // Bots has special soft-start: reduced production when bots < 100
-        double baseMulti = 1 + (sd1.bots > 0 ? Math.Log10(sd1.bots) : 0);
-        if (sd1.bots < 100 && sd1.bots > 0) baseMulti *= sd1.bots / 100.0;
+        double baseMulti = 1 + Math.Log10(sd1.bots);
+        if (sd1.bots < 100) baseMulti *= sd1.bots / 100.0;
 
         double globalMulti = GetGlobalMultiplier();
         if (sd1.worldPeaceComplete) globalMulti *= 2;
