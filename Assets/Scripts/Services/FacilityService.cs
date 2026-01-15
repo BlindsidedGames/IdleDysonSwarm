@@ -1,6 +1,7 @@
 using GameData;
 using IdleDysonSwarm.Data;
 using Systems.Facilities;
+using UnityEngine;
 
 namespace IdleDysonSwarm.Services
 {
@@ -63,29 +64,9 @@ namespace IdleDysonSwarm.Services
         {
             var infinityData = _gameState.InfinityData;
 
-            // Map facility ID to array field
-            switch (facilityId)
+            if (!FacilityCountAccessor.TrySetCount(infinityData, facilityId, auto, manual))
             {
-                case "assembly_lines":
-                    infinityData.assemblyLines[0] = auto;
-                    infinityData.assemblyLines[1] = manual;
-                    break;
-                case "ai_managers":
-                    infinityData.managers[0] = auto;
-                    infinityData.managers[1] = manual;
-                    break;
-                case "servers":
-                    infinityData.servers[0] = auto;
-                    infinityData.servers[1] = manual;
-                    break;
-                case "data_centers":
-                    infinityData.dataCenters[0] = auto;
-                    infinityData.dataCenters[1] = manual;
-                    break;
-                case "planets":
-                    infinityData.planets[0] = auto;
-                    infinityData.planets[1] = manual;
-                    break;
+                Debug.LogWarning($"Failed to set facility count for '{facilityId}'");
             }
         }
 
@@ -93,16 +74,12 @@ namespace IdleDysonSwarm.Services
         {
             var infinityData = _gameState.InfinityData;
 
-            // Map facility ID to array field
-            return facilityId switch
+            if (FacilityCountAccessor.TryGetCount(infinityData, facilityId, out var counts))
             {
-                "assembly_lines" => infinityData.assemblyLines,
-                "ai_managers" => infinityData.managers,
-                "servers" => infinityData.servers,
-                "data_centers" => infinityData.dataCenters,
-                "planets" => infinityData.planets,
-                _ => new double[2] // Default: [0, 0]
-            };
+                return counts;
+            }
+
+            return new double[2]; // Default: [0, 0]
         }
     }
 }
