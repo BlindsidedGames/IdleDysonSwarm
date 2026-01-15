@@ -23,7 +23,7 @@ MonoBehaviour:
   - matrioshka
   baseCost: 0
   costExponent: 1
-  baseProduction: 0.01
+  baseProduction: 1
   productionStatId: Facility.MatrioshkaBrain.Production
   wordUsed: Synthesizing
   productionWordUsed: Planet

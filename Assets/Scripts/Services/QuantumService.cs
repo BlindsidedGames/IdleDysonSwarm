@@ -117,9 +117,9 @@ namespace IdleDysonSwarm.Services
                 QuantumUpgradeType.InfluenceSpeed => BasicUpgradeCost,
                 QuantumUpgradeType.CashBonus => BasicUpgradeCost,
                 QuantumUpgradeType.ScienceBonus => BasicUpgradeCost,
-                QuantumUpgradeType.MatrioshkaBrains => MegaStructureUnlockCost,
-                QuantumUpgradeType.BirchPlanets => MegaStructureUnlockCost * 2,
-                QuantumUpgradeType.GalacticBrains => MegaStructureUnlockCost * 4,
+                QuantumUpgradeType.MatrioshkaBrains => MatrioshkaBrainsCost,
+                QuantumUpgradeType.BirchPlanets => BirchPlanetsCost,
+                QuantumUpgradeType.GalacticBrains => GalacticBrainsCost,
                 _ => int.MaxValue
             };
         }

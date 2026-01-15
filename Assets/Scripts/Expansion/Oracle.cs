@@ -68,7 +68,9 @@ namespace Expansion
         public bool Loaded;
         private bool _isSaveReady;
         private bool _autoSaveScheduled;
-        private const int CurrentSaveVersion = 5;
+        // IMPORTANT: When adding a migration step in BuildMigrationRegistry(),
+        // you MUST also update this constant to match the new LatestVersion.
+        private const int CurrentSaveVersion = 6;
 
         #region SaveAndLoadFromClipboard
 
@@ -178,8 +180,14 @@ namespace Expansion
             MigrationRegistry registry = BuildMigrationRegistry();
             if (registry.LatestVersion != CurrentSaveVersion)
             {
-                Debug.LogWarning(
-                    $"Migration registry latest version {registry.LatestVersion} does not match CurrentSaveVersion {CurrentSaveVersion}.");
+                string message =
+                    $"Migration registry latest version {registry.LatestVersion} does not match CurrentSaveVersion {CurrentSaveVersion}.";
+#if UNITY_EDITOR
+                Debug.LogError(message);
+                throw new InvalidOperationException(message);
+#else
+                Debug.LogWarning(message);
+#endif
             }
 
             MigrationRunOptions options = BuildMigrationOptions(false);

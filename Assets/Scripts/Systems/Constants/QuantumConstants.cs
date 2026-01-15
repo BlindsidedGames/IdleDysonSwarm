@@ -89,10 +89,19 @@ namespace IdleDysonSwarm.Systems.Constants
         public const int StellarCost = 4;
 
         /// <summary>
-        /// Base cost to unlock mega-structure facilities.
-        /// Matrioshka Brains = 1x, Birch Planets = 2x, Galactic Brains = 4x.
+        /// Cost to unlock Matrioshka Brains mega-structure.
         /// </summary>
-        public const int MegaStructureUnlockCost = 5;
+        public const int MatrioshkaBrainsCost = 5;
+
+        /// <summary>
+        /// Cost to unlock Birch Planets mega-structure.
+        /// </summary>
+        public const int BirchPlanetsCost = 10;
+
+        /// <summary>
+        /// Cost to unlock Galactic Brains mega-structure.
+        /// </summary>
+        public const int GalacticBrainsCost = 20;
 
         #endregion
     }

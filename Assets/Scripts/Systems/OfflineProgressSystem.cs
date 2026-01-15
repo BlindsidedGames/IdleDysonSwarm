@@ -98,6 +98,11 @@ namespace Systems
             double lines = 0;
             double bots = 0;
 
+            // Mega-structures
+            double matrioshkaBrains = 0;
+            double birchPlanets = 0;
+            double galacticBrains = 0;
+
             double money = 0;
             double science = 0;
             double decayed = 0;
@@ -112,6 +117,30 @@ namespace Systems
                     if (context.skillTreeData.androids) AddSkillTimerSeconds(context.infinityData, "androids", 60);
                     if (context.skillTreeData.pocketAndroids) AddSkillTimerSeconds(context.infinityData, "pocketAndroids", 60);
 
+                    // Mega-structures: process top-down (galactic → birch → matrioshka → planets)
+                    if (context.prestigeData.unlockedGalacticBrains)
+                    {
+                        double gb = context.infinityData.galacticBrainBirchProduction * 60;
+                        galacticBrains += gb;
+                        context.infinityData.birchPlanets[0] += gb;
+                        context.CalculateProduction();
+                    }
+
+                    if (context.prestigeData.unlockedBirchPlanets)
+                    {
+                        double bp = context.infinityData.birchPlanetMatrioshkaProduction * 60;
+                        birchPlanets += bp;
+                        context.infinityData.matrioshkaBrains[0] += bp;
+                        context.CalculateProduction();
+                    }
+
+                    if (context.prestigeData.unlockedMatrioshkaBrains)
+                    {
+                        double mb = context.infinityData.matrioshkaBrainPlanetProduction * 60;
+                        matrioshkaBrains += mb;
+                        context.infinityData.planets[0] += mb;
+                        context.CalculateProduction();
+                    }
 
                     double p = context.infinityData.totalPlanetProduction * 60;
                     planets += p;
@@ -172,6 +201,30 @@ namespace Systems
             if (context.skillTreeData.androids) AddSkillTimerSeconds(context.infinityData, "androids", remainder);
             if (context.skillTreeData.pocketAndroids) AddSkillTimerSeconds(context.infinityData, "pocketAndroids", remainder);
 
+            // Mega-structures remainder: process top-down
+            if (context.prestigeData.unlockedGalacticBrains)
+            {
+                double gb1 = context.infinityData.galacticBrainBirchProduction * remainder;
+                galacticBrains += gb1;
+                context.infinityData.birchPlanets[0] += gb1;
+                context.CalculateProduction();
+            }
+
+            if (context.prestigeData.unlockedBirchPlanets)
+            {
+                double bp1 = context.infinityData.birchPlanetMatrioshkaProduction * remainder;
+                birchPlanets += bp1;
+                context.infinityData.matrioshkaBrains[0] += bp1;
+                context.CalculateProduction();
+            }
+
+            if (context.prestigeData.unlockedMatrioshkaBrains)
+            {
+                double mb1 = context.infinityData.matrioshkaBrainPlanetProduction * remainder;
+                matrioshkaBrains += mb1;
+                context.infinityData.planets[0] += mb1;
+                context.CalculateProduction();
+            }
 
             double p1 = context.infinityData.totalPlanetProduction * remainder;
             planets += p1;
@@ -220,6 +273,19 @@ namespace Systems
             yield return 0;
 
             string textBuilder = "";
+
+            // Mega-structures (show if unlocked and produced any)
+            if (context.prestigeData.unlockedGalacticBrains && galacticBrains > 0)
+                textBuilder +=
+                    $"\nGalactic Brains produced {color}{CalcUtils.FormatNumber(galacticBrains)}</color> Birch Planets";
+
+            if (context.prestigeData.unlockedBirchPlanets && birchPlanets > 0)
+                textBuilder +=
+                    $"\nBirch Planets produced {color}{CalcUtils.FormatNumber(birchPlanets)}</color> Matrioshka Brains";
+
+            if (context.prestigeData.unlockedMatrioshkaBrains && matrioshkaBrains > 0)
+                textBuilder +=
+                    $"\nMatrioshka Brains produced {color}{CalcUtils.FormatNumber(matrioshkaBrains)}</color> Planets";
 
             if (context.infinityData.planets[0] + context.infinityData.planets[1] > 0)
                 textBuilder +=
