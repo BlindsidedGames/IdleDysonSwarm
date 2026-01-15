@@ -3739,6 +3739,21 @@ namespace Expansion
 
             [Space(10)] public long swarmPanels;
             public long swarmPanelGeneration = 3212;
+
+            // Timer progress state (persists across save/load)
+            // These track partial progress towards the next production tick
+            [Space(10), Header("Timer Progress")]
+            public float hunterTimerProgress;
+            public float gathererTimerProgress;
+            public float communityTimerProgress;
+            public float housingTimerProgress;
+            public float villagesTimerProgress;
+            public float workersTimerProgress;
+            public float citiesTimerProgress;
+            public float factoriesTimerProgress;
+            public float botsTimerProgress;
+            public float spaceFactoriesTimerProgress;
+            public float railgunFireProgress;
         }
 
 
