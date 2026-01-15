@@ -81,8 +81,7 @@ public class SimulationPrestigeManager : MonoBehaviour
     private IEnumerator WipeForPrestige()
     {
         oracle.WipeDream1Save();
-        yield return 0;
-        oracle.WipeDream1Save();
+        yield return null;
         ApplyResearch?.Invoke();
     }
 }
