@@ -557,7 +557,21 @@ namespace Systems
             }
         }
 
+        /// <summary>
+        /// Calculates the global buff multiplier from skill tree bonuses and Avocado contributions.
+        /// </summary>
+        /// <remarks>
+        /// Legacy overload that uses StaticSaveSettings.avocadoData for backward compatibility.
+        /// </remarks>
         public static double GlobalBuff(DysonVerseInfinityData infinityData, DysonVerseSkillTreeData skillTreeData, PrestigePlus prestigePlus)
+        {
+            return GlobalBuff(infinityData, skillTreeData, StaticSaveSettings?.avocadoData ?? new AvocadoData());
+        }
+
+        /// <summary>
+        /// Calculates the global buff multiplier from skill tree bonuses and Avocado contributions.
+        /// </summary>
+        public static double GlobalBuff(DysonVerseInfinityData infinityData, DysonVerseSkillTreeData skillTreeData, AvocadoData avocadoData)
         {
             double multi = 1f;
             if (skillTreeData.purityOfSEssence && skillTreeData.skillPointsTree > 0) multi *= 1.42f * skillTreeData.skillPointsTree;
@@ -566,16 +580,16 @@ namespace Systems
                 double scatteringTimer = GetSkillTimerSeconds(infinityData, "superRadiantScattering");
                 multi *= 1 + 0.01f * scatteringTimer;
             }
-            if (prestigePlus.avocatoPurchased)
+            if (avocadoData != null && avocadoData.unlocked)
             {
-                if (prestigePlus.avocatoIP >= AvocadoLogThreshold)
-                    multi *= Math.Log10(prestigePlus.avocatoIP);
-                if (prestigePlus.avocatoInfluence >= AvocadoLogThreshold)
-                    multi *= Math.Log10(prestigePlus.avocatoInfluence);
-                if (prestigePlus.avocatoStrangeMatter >= AvocadoLogThreshold)
-                    multi *= Math.Log10(prestigePlus.avocatoStrangeMatter);
-                if (prestigePlus.avocatoOverflow >= 1)
-                    multi *= 1 + prestigePlus.avocatoOverflow;
+                if (avocadoData.infinityPoints >= AvocadoLogThreshold)
+                    multi *= Math.Log10(avocadoData.infinityPoints);
+                if (avocadoData.influence >= AvocadoLogThreshold)
+                    multi *= Math.Log10(avocadoData.influence);
+                if (avocadoData.strangeMatter >= AvocadoLogThreshold)
+                    multi *= Math.Log10(avocadoData.strangeMatter);
+                if (avocadoData.overflowMultiplier >= 1)
+                    multi *= 1 + avocadoData.overflowMultiplier;
             }
 
             return multi;

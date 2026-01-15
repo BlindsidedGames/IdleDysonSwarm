@@ -527,17 +527,19 @@ namespace Systems.Stats
         private static void AddAvocatoMultiplier(List<StatEffect> effects, string statId, PrestigePlus prestigePlus, string id,
             int order)
         {
-            if (effects == null || prestigePlus == null || !prestigePlus.avocatoPurchased) return;
+            // Use AvocadoData for the actual values (migration moves data there)
+            AvocadoData avocadoData = StaticSaveSettings?.avocadoData;
+            if (effects == null || avocadoData == null || !avocadoData.unlocked) return;
 
             double multi = 1;
-            if (prestigePlus.avocatoIP >= 10)
-                multi *= Math.Log10(prestigePlus.avocatoIP);
-            if (prestigePlus.avocatoInfluence >= 10)
-                multi *= Math.Log10(prestigePlus.avocatoInfluence);
-            if (prestigePlus.avocatoStrangeMatter >= 10)
-                multi *= Math.Log10(prestigePlus.avocatoStrangeMatter);
-            if (prestigePlus.avocatoOverflow >= 1)
-                multi *= 1 + prestigePlus.avocatoOverflow;
+            if (avocadoData.infinityPoints >= 10)
+                multi *= Math.Log10(avocadoData.infinityPoints);
+            if (avocadoData.influence >= 10)
+                multi *= Math.Log10(avocadoData.influence);
+            if (avocadoData.strangeMatter >= 10)
+                multi *= Math.Log10(avocadoData.strangeMatter);
+            if (avocadoData.overflowMultiplier >= 1)
+                multi *= 1 + avocadoData.overflowMultiplier;
 
             AddMultiplierEffect(effects, id, "Avocato Multiplier", statId, multi, order);
         }
