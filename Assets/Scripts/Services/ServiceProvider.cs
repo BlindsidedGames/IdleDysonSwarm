@@ -1,4 +1,5 @@
 using GameData;
+using IdleDysonSwarm.Data;
 using UnityEngine;
 
 namespace IdleDysonSwarm.Services
@@ -14,6 +15,10 @@ namespace IdleDysonSwarm.Services
         [SerializeField]
         [Tooltip("Reference to the GameDataRegistry (definitions database)")]
         private GameDataRegistry gameDataRegistry;
+
+        [SerializeField]
+        [Tooltip("Reference to the QuantumUpgradeDatabase (optional - falls back to constants if missing)")]
+        private QuantumUpgradeDatabase quantumUpgradeDatabase;
 
         private void Awake()
         {
@@ -57,7 +62,16 @@ namespace IdleDysonSwarm.Services
             Debug.Log("  ✓ IFacilityService registered");
 
             // Register Quantum/Reality system services
-            var quantumService = new QuantumService();
+            // QuantumUpgradeDatabase is optional - service falls back to constants if missing
+            if (quantumUpgradeDatabase == null)
+            {
+                quantumUpgradeDatabase = Resources.Load<QuantumUpgradeDatabase>("QuantumUpgradeDatabase");
+                if (quantumUpgradeDatabase == null)
+                {
+                    Debug.LogWarning("[ServiceProvider] QuantumUpgradeDatabase not found - using constant fallbacks");
+                }
+            }
+            var quantumService = new QuantumService(quantumUpgradeDatabase);
             ServiceLocator.Register<IQuantumService>(quantumService);
             Debug.Log("  ✓ IQuantumService registered");
 
