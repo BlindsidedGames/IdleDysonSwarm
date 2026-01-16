@@ -14,17 +14,16 @@ using static IdleDysonSwarm.Systems.Constants.QuantumConstants;
 /// </summary>
 public class RealityPanelManager : MonoBehaviour
 {
-    [Header("UI References")]
-    [SerializeField] private GameObject _realityUnlockFillObject;
-    [SerializeField] private GameObject _realityFillBar;
-    [SerializeField] private GameObject _realityFillBarWorkers;
-    [SerializeField] private GameObject _reality;
-    [SerializeField] private GameObject _realityToggle;
-    [SerializeField] private GameObject _realityImage;
-    [SerializeField] private GameObject _realityTextObject;
-    [SerializeField] private GameObject _realityMenuButtonObject;
-    [SerializeField] private GameObject _simulations;
-    [SerializeField] private GameObject _simulationsToggle;
+    private GameObject _realityUnlockFillObject;
+    private GameObject _realityFillBar;
+    private GameObject _realityFillBarWorkers;
+    private GameObject _reality;
+    private GameObject _realityToggle;
+    private GameObject _realityImage;
+    private GameObject _realityTextObject;
+    private GameObject _realityMenuButtonObject;
+    private GameObject _simulations;
+    private GameObject _simulationsToggle;
 
     private SlicedFilledImage _realityUnlockFill;
     private TMP_Text _realityText;
@@ -48,6 +47,35 @@ public class RealityPanelManager : MonoBehaviour
     private void Awake()
     {
         _workerService = ServiceLocator.Get<IWorkerService>();
+    }
+
+    /// <summary>
+    /// Sets UI references from a SidePanelReferences component.
+    /// Called by SidePanelController when switching between panel variants.
+    /// </summary>
+    public void SetReferences(SidePanelReferences refs)
+    {
+        if (refs == null) return;
+
+        _realityUnlockFillObject = refs.realityUnlockFillObject;
+        _realityFillBar = refs.realityFillBar;
+        _realityFillBarWorkers = refs.realityFillBarWorkers;
+        _reality = refs.reality;
+        _realityToggle = refs.realityToggle;
+        _realityImage = refs.realityImage;
+        _realityTextObject = refs.realityTextObject;
+        _realityMenuButtonObject = refs.realityMenuButtonObject;
+        _simulations = refs.simulations;
+        _simulationsToggle = refs.simulationsToggle;
+
+        CacheComponents();
+    }
+
+    private void CacheComponents()
+    {
+        _realityUnlockFill = null;
+        _realityText = null;
+        _realityMenuButton = null;
 
         if (_realityUnlockFillObject != null)
             _realityUnlockFill = _realityUnlockFillObject.GetComponent<SlicedFilledImage>();
@@ -64,6 +92,9 @@ public class RealityPanelManager : MonoBehaviour
 
     private void UpdateRealityPanel()
     {
+        // Skip update if references not yet set
+        if (_reality == null || _realityToggle == null) return;
+
         bool show = PrestigePlus.points >= 1
             || PrestigeData.infinityPoints >= 1
             || oracle.saveSettings.unlockAllTabs;
@@ -93,6 +124,8 @@ public class RealityPanelManager : MonoBehaviour
 
     private void UpdateFillBarMode(bool unlocked)
     {
+        if (_realityFillBar == null || _realityFillBarWorkers == null) return;
+
         if (unlocked)
         {
             _realityFillBar.SetActive(false);
