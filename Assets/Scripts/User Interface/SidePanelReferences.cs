@@ -7,6 +7,10 @@ using UnityEngine;
 /// </summary>
 public class SidePanelReferences : MonoBehaviour
 {
+    [Header("Panel Mode")]
+    [Tooltip("When true, toggles are hidden since the panel is always visible")]
+    public bool isPermanentPanel;
+
     [Header("Infinity Panel")]
     public GameObject infinityFillObject;
     public GameObject infinityToggle;

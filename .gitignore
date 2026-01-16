@@ -86,3 +86,6 @@ UserSettings/Search.settings
 # Unity auto-generated solution files
 *.slnx
 
+# Claude Code local settings
+.claude/settings.local.json
+
