@@ -27,9 +27,7 @@ public class SidePanelReferences : MonoBehaviour
     public GameObject prestigeMenuButtonObject;
 
     [Header("Reality Panel")]
-    public GameObject realityUnlockFillObject;
-    public GameObject realityFillBar;
-    public GameObject realityFillBarWorkers;
+    public GameObject realityFillObject;
     public GameObject reality;
     public GameObject realityToggle;
     public GameObject realityImage;

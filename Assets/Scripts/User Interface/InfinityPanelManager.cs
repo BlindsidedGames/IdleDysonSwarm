@@ -54,8 +54,8 @@ public class InfinityPanelManager : MonoBehaviour
         _infinityText = null;
         _infinityMenuButton = null;
 
-        if (_infinityFillObject != null && _infinityFillObject.transform.childCount > 0)
-            _infinityFill = _infinityFillObject.transform.GetChild(0).GetComponent<SlicedFilledImage>();
+        if (_infinityFillObject != null)
+            _infinityFill = _infinityFillObject.GetComponent<SlicedFilledImage>();
         if (_infinityTextObject != null)
             _infinityText = _infinityTextObject.GetComponent<TMP_Text>();
         if (_infinityMenuButtonObject != null)

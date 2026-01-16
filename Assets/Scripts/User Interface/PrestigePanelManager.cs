@@ -57,8 +57,8 @@ public class PrestigePanelManager : MonoBehaviour
         _prestigeText = null;
         _prestigeMenuButton = null;
 
-        if (_prestigeFillObject != null && _prestigeFillObject.transform.childCount > 0)
-            _prestigeFill = _prestigeFillObject.transform.GetChild(0).GetComponent<SlicedFilledImage>();
+        if (_prestigeFillObject != null)
+            _prestigeFill = _prestigeFillObject.GetComponent<SlicedFilledImage>();
         if (_prestigeTextObject != null)
             _prestigeText = _prestigeTextObject.GetComponent<TMP_Text>();
         if (_prestigeMenuButtonObject != null)
