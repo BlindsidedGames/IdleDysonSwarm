@@ -21,6 +21,7 @@ public class PrestigePanelManager : MonoBehaviour
     private SlicedFilledImage _prestigeFill;
     private TMP_Text _prestigeText;
     private Button _prestigeMenuButton;
+    private bool _isPermanentPanel;
 
     /// <summary>
     /// Public accessor for backward compatibility with DebugOptions and Oracle.
@@ -45,6 +46,7 @@ public class PrestigePanelManager : MonoBehaviour
         _prestigeImage = refs.prestigeImage;
         _prestigeTextObject = refs.prestigeTextObject;
         _prestigeMenuButtonObject = refs.prestigeMenuButtonObject;
+        _isPermanentPanel = refs.isPermanentPanel;
 
         CacheComponents();
     }
@@ -85,7 +87,8 @@ public class PrestigePanelManager : MonoBehaviour
             || oracle.saveSettings.unlockAllTabs;
 
         _prestigeImage.SetActive(unlocked);
-        _prestigeToggle.SetActive(unlocked && SceneManager.GetActiveScene().buildIndex == 1);
+        // Hide toggle in permanent mode since the panel is always visible
+        _prestigeToggle.SetActive(!_isPermanentPanel && unlocked && SceneManager.GetActiveScene().buildIndex == 1);
         if (_prestigeMenuButton != null)
             _prestigeMenuButton.interactable = unlocked;
 

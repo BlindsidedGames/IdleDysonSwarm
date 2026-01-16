@@ -29,6 +29,7 @@ public class RealityPanelManager : MonoBehaviour
     private TMP_Text _realityText;
     private Button _realityMenuButton;
     private IWorkerService _workerService;
+    private bool _isPermanentPanel;
 
     /// <summary>
     /// Public accessor for backward compatibility with DebugOptions and Oracle.
@@ -67,6 +68,7 @@ public class RealityPanelManager : MonoBehaviour
         _realityMenuButtonObject = refs.realityMenuButtonObject;
         _simulations = refs.simulations;
         _simulationsToggle = refs.simulationsToggle;
+        _isPermanentPanel = refs.isPermanentPanel;
 
         CacheComponents();
     }
@@ -106,8 +108,10 @@ public class RealityPanelManager : MonoBehaviour
             || oracle.saveSettings.unlockAllTabs;
 
         _realityImage.SetActive(unlocked);
-        _realityToggle.SetActive(unlocked && SceneManager.GetActiveScene().buildIndex == 1);
+        // Hide toggles in permanent mode since the panel is always visible
+        _realityToggle.SetActive(!_isPermanentPanel && unlocked && SceneManager.GetActiveScene().buildIndex == 1);
         _simulations.SetActive(unlocked);
+        _simulationsToggle.SetActive(!_isPermanentPanel && unlocked && SceneManager.GetActiveScene().buildIndex == 1);
         if (_realityMenuButton != null)
             _realityMenuButton.interactable = unlocked;
 
