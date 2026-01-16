@@ -22,6 +22,7 @@ public class SidePanelController : MonoBehaviour
     [SerializeField] private PrestigePanelManager _prestigePanelManager;
     [SerializeField] private RealityPanelManager _realityPanelManager;
     [SerializeField] private OfflineTimeFillBar _offlineTimeFillBar;
+    [SerializeField] private GameManager _gameManager;
 
     [Header("Settings")]
     [SerializeField] private float _widthThreshold = 900f;
@@ -103,5 +104,6 @@ public class SidePanelController : MonoBehaviour
         _prestigePanelManager?.SetReferences(refs);
         _realityPanelManager?.SetReferences(refs);
         _offlineTimeFillBar?.SetReferences(refs);
+        _gameManager?.SetSkillsReferences(refs);
     }
 }

@@ -76,16 +76,15 @@ namespace Buildings
 
         private void UpdateVisibility(bool isUnlocked)
         {
-            // Use CanvasGroup or scale to hide instead of SetActive
+            // Use buildingReferences GameObject for visibility control
             // This allows Update() to keep running so we can detect unlock
-            Transform container = transform.Find("Container");
-            if (container != null)
+            if (buildingReferences != null)
             {
-                container.gameObject.SetActive(isUnlocked);
+                buildingReferences.gameObject.SetActive(isUnlocked);
             }
 
             // Also control LayoutElement to collapse space when hidden
-            var layoutElement = GetComponent<UnityEngine.UI.LayoutElement>();
+            var layoutElement = GetComponent<LayoutElement>();
             if (layoutElement != null)
             {
                 layoutElement.ignoreLayout = !isUnlocked;
