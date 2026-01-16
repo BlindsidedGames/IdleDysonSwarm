@@ -19,33 +19,35 @@ public class SidePanelManager : MonoBehaviour
     [SerializeField] private PrestigePanelManager _prestigePanelManager;
     [SerializeField] private RealityPanelManager _realityPanelManager;
 
-    /// <summary>
-    /// Backward-compatible accessor for DebugOptions and Oracle.
-    /// </summary>
-    public GameObject InfinityToggle => _infinityPanelManager.InfinityToggle;
+    private SidePanelReferences _currentReferences;
 
     /// <summary>
     /// Backward-compatible accessor for DebugOptions and Oracle.
     /// </summary>
-    public GameObject PrestigeToggle => _prestigePanelManager.PrestigeToggle;
+    public GameObject InfinityToggle => _currentReferences?.infinityToggle;
+
+    /// <summary>
+    /// Backward-compatible accessor for DebugOptions and Oracle.
+    /// </summary>
+    public GameObject PrestigeToggle => _currentReferences?.prestigeToggle;
 
     /// <summary>
     /// Backward-compatible accessor for DebugOptions.
     /// Note: lowercase 'r' to match original field name.
     /// </summary>
-    public GameObject realityToggle => _realityPanelManager.RealityToggle;
+    public GameObject realityToggle => _currentReferences?.realityToggle;
 
     /// <summary>
     /// Backward-compatible accessor for DebugOptions.
     /// </summary>
-    public GameObject simulationsToggle => _realityPanelManager.SimulationsToggle;
+    public GameObject simulationsToggle => _currentReferences?.simulationsToggle;
 
-    private void Update()
+    /// <summary>
+    /// Sets the current panel references.
+    /// Called by SidePanelController when switching between panel variants.
+    /// </summary>
+    public void SetReferences(SidePanelReferences refs)
     {
-#if UNITY_IOS || UNITY_ANDROID
-        var keyboard = Keyboard.current;
-        if (keyboard != null && keyboard.escapeKey.wasPressedThisFrame)
-            gameObject.SetActive(false);
-#endif
+        _currentReferences = refs;
     }
 }

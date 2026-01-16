@@ -7,12 +7,24 @@ using static Expansion.Oracle;
 /// </summary>
 public class OfflineTimeFillBar : MonoBehaviour
 {
-    [SerializeField] private GameObject _fillBarObject;
-
+    private GameObject _fillBarObject;
     private SlicedFilledImage _fillBar;
 
-    private void Awake()
+    /// <summary>
+    /// Sets UI references from a SidePanelReferences component.
+    /// Called by SidePanelController when switching between panel variants.
+    /// </summary>
+    public void SetReferences(SidePanelReferences refs)
     {
+        if (refs == null) return;
+
+        _fillBarObject = refs.offlineTimeFillBarObject;
+        CacheComponents();
+    }
+
+    private void CacheComponents()
+    {
+        _fillBar = null;
         if (_fillBarObject != null)
             _fillBar = _fillBarObject.GetComponent<SlicedFilledImage>();
     }
