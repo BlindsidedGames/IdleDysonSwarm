@@ -23,6 +23,7 @@ public class InfinityPanelManager : MonoBehaviour
     private SlicedFilledImage _infinityFill;
     private TMP_Text _infinityText;
     private Button _infinityMenuButton;
+    private bool _isPermanentPanel;
 
     /// <summary>
     /// Public accessor for backward compatibility with DebugOptions and Oracle.
@@ -42,6 +43,7 @@ public class InfinityPanelManager : MonoBehaviour
         _infinityImage = refs.infinityImage;
         _infinityTextObject = refs.infinityTextObject;
         _infinityMenuButtonObject = refs.infinityMenuButtonObject;
+        _isPermanentPanel = refs.isPermanentPanel;
 
         CacheComponents();
     }
@@ -52,8 +54,8 @@ public class InfinityPanelManager : MonoBehaviour
         _infinityText = null;
         _infinityMenuButton = null;
 
-        if (_infinityFillObject != null && _infinityFillObject.transform.childCount > 0)
-            _infinityFill = _infinityFillObject.transform.GetChild(0).GetComponent<SlicedFilledImage>();
+        if (_infinityFillObject != null)
+            _infinityFill = _infinityFillObject.GetComponent<SlicedFilledImage>();
         if (_infinityTextObject != null)
             _infinityText = _infinityTextObject.GetComponent<TMP_Text>();
         if (_infinityMenuButtonObject != null)
@@ -87,7 +89,8 @@ public class InfinityPanelManager : MonoBehaviour
             || oracle.saveSettings.unlockAllTabs;
 
         _infinityImage.SetActive(unlocked);
-        _infinityToggle.SetActive(unlocked && SceneManager.GetActiveScene().buildIndex == 1);
+        // Hide toggle in permanent mode since the panel is always visible
+        _infinityToggle.SetActive(!_isPermanentPanel && unlocked && SceneManager.GetActiveScene().buildIndex == 1);
         if (_infinityMenuButton != null)
             _infinityMenuButton.interactable = unlocked;
 

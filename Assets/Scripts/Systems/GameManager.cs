@@ -85,11 +85,39 @@ public class GameManager : MonoBehaviour
     [SerializeField, FormerlySerializedAs("_skillTreeConfirmationManager")]
     private SkillTreeConfirmationManager skillTreeConfirmationManager;
     private readonly SecretBuffState _secretBuffState = new SecretBuffState();
+    private bool _isPermanentPanel;
 
     #endregion
 
     public static event Action UpdateSkills;
     public static event Action AssignSkills;
+
+    /// <summary>
+    /// Sets Skills UI references from a SidePanelReferences component.
+    /// Called by SidePanelController when switching between panel variants.
+    /// </summary>
+    public void SetSkillsReferences(SidePanelReferences refs)
+    {
+        if (refs == null) return;
+
+        _isPermanentPanel = refs.isPermanentPanel;
+
+        // Update fill bar references
+        if (refs.skillsFillObject != null)
+            skillsFill = refs.skillsFillObject.GetComponent<SlicedFilledImage>();
+        if (refs.skillsFillBar != null)
+            skillsFillBar = refs.skillsFillBar;
+
+        // Update other Skills UI references
+        if (refs.skillsIcon != null)
+            skillsIcon = refs.skillsIcon;
+        if (refs.skillsToggle != null)
+            skillsToggle = refs.skillsToggle;
+        if (refs.skillsTextObject != null)
+            skillsText = refs.skillsTextObject.GetComponent<TMP_Text>();
+        if (refs.skillsMenuButtonObject != null)
+            skillsMenuButton = refs.skillsMenuButtonObject.GetComponent<Button>();
+    }
 
     #region Main
 
@@ -297,26 +325,31 @@ public class GameManager : MonoBehaviour
         skillTreePoints.text =
             $"Skill points: {skillPointColor}{skillTreeData.skillPointsTree}</color>";
         string color = "<color=#91DD8F>";
-        skillsText.text = oracle.saveSettings.skillsFirstRunDone
-            ? "Skills"
-            : "<align=\"center\"><sprite=4 color=#C8B3FF>";
+        if (skillsText != null)
+        {
+            skillsText.text = oracle.saveSettings.skillsFirstRunDone
+                ? "Skills"
+                : "<align=\"center\"><sprite=4 color=#C8B3FF>";
+        }
         if (skillTreeData.skillPointsTree > 0 || prestigeData.permanentSkillPoint > 0 || prestigeData.infinityPoints > 0 ||
             prestigeData.spentInfinityPoints > 0)
         {
-            skillsIcon.SetActive(true);
-            if (SceneManager.GetActiveScene().buildIndex == 1) skillsToggle.SetActive(true);
+            if (skillsIcon != null) skillsIcon.SetActive(true);
+            // Hide toggle in permanent mode since the panel is always visible
+            if (skillsToggle != null && !_isPermanentPanel && SceneManager.GetActiveScene().buildIndex == 1)
+                skillsToggle.SetActive(true);
             skillsButton[0].SetActive(!oracle.saveSettings.skillsButtonToggle);
             if (!oracle.saveSettings.skillsFirstRunDone) skillsButton[1].SetActive(true);
             oracle.saveSettings.skillsFirstRunDone = true;
-            skillsMenuButton.interactable = true;
+            if (skillsMenuButton != null) skillsMenuButton.interactable = true;
         }
         else if (skillTreeData.skillPointsTree == 0 && prestigeData.permanentSkillPoint == 0 && prestigeData.infinityPoints == 0 &&
                  prestigeData.spentInfinityPoints == 0 && !oracle.saveSettings.skillsFirstRunDone)
         {
-            skillsIcon.SetActive(oracle.saveSettings.skillsFirstRunDone);
-            skillsToggle.SetActive(false);
+            if (skillsIcon != null) skillsIcon.SetActive(oracle.saveSettings.skillsFirstRunDone);
+            if (skillsToggle != null) skillsToggle.SetActive(false);
             skillsButton[0].SetActive(false);
-            skillsMenuButton.interactable = false;
+            if (skillsMenuButton != null) skillsMenuButton.interactable = false;
         }
 
         switch (infinityData.goalSetter)
@@ -324,14 +357,14 @@ public class GameManager : MonoBehaviour
             case 0:
             {
                 goal.text = $"{color}Goal: Create {CalcUtils.FormatNumber(10)} Bots";
-                skillsFill.fillAmount = (float)infinityData.bots / 10;
+                if (skillsFill != null) skillsFill.fillAmount = (float)infinityData.bots / 10;
                 if (infinityData.bots >= 10)
                 {
-                    skillsFillBar.SetActive(true);
+                    if (skillsFillBar != null) skillsFillBar.SetActive(true);
                     infinityData.goalSetter = 1;
                     skillTreeData.skillPointsTree += 1;
                     AssignSkills?.Invoke();
-                    if (skillsMenuButton.interactable == false)
+                    if (skillsMenuButton != null && skillsMenuButton.interactable == false)
                     {
                         oracle.saveSettings.skillsButtonToggle = false;
                         skillsButton[0].SetActive(true);
@@ -345,14 +378,14 @@ public class GameManager : MonoBehaviour
             case 1:
             {
                 goal.text = $"{color}Goal: Build {CalcUtils.FormatNumber(5)} Assembly Lines";
-                skillsFill.fillAmount = (float)(infinityData.assemblyLines[1] / 5);
+                if (skillsFill != null) skillsFill.fillAmount = (float)(infinityData.assemblyLines[1] / 5);
                 if (infinityData.assemblyLines[1] >= 5)
                 {
                     infinityData.goalSetter = 2;
                     skillTreeData.skillPointsTree += 1;
                     AssignSkills?.Invoke();
                     UpdateSkills?.Invoke();
-                    skillsFillBar.SetActive(true);
+                    if (skillsFillBar != null) skillsFillBar.SetActive(true);
                 }
 
                 break;
@@ -360,14 +393,14 @@ public class GameManager : MonoBehaviour
             case 2:
             {
                 goal.text = $"{color}Goal: Have {CalcUtils.FormatNumber(20000)} active Panels";
-                skillsFill.fillAmount = (float)(infinityData.panelsPerSec * infinityData.panelLifetime / 20000);
+                if (skillsFill != null) skillsFill.fillAmount = (float)(infinityData.panelsPerSec * infinityData.panelLifetime / 20000);
                 if (infinityData.panelsPerSec * infinityData.panelLifetime >= 20000)
                 {
                     infinityData.goalSetter = 3;
                     skillTreeData.skillPointsTree += 1;
                     AssignSkills?.Invoke();
                     UpdateSkills?.Invoke();
-                    skillsFillBar.SetActive(true);
+                    if (skillsFillBar != null) skillsFillBar.SetActive(true);
                 }
 
                 break;
@@ -375,7 +408,7 @@ public class GameManager : MonoBehaviour
             case 3:
             {
                 goal.text = $"{color}Goal: Own {CalcUtils.FormatNumber(20)} Planets";
-                skillsFill.fillAmount =
+                if (skillsFill != null) skillsFill.fillAmount =
                     (float)(infinityData.planets[0] + (skillTreeData.terraIrradiant ? infinityData.planets[1] * 12 : infinityData.planets[1]) / 20);
                 if (infinityData.planets[0] + (skillTreeData.terraIrradiant ? infinityData.planets[1] * 12 : infinityData.planets[1]) >= 20)
                 {
@@ -383,7 +416,7 @@ public class GameManager : MonoBehaviour
                     skillTreeData.skillPointsTree += 1;
                     AssignSkills?.Invoke();
                     UpdateSkills?.Invoke();
-                    skillsFillBar.SetActive(true);
+                    if (skillsFillBar != null) skillsFillBar.SetActive(true);
                 }
 
                 break;
@@ -392,14 +425,14 @@ public class GameManager : MonoBehaviour
             {
                 goal.text = $"{color}Goal: {CalcUtils.FormatNumber(1000000000000)} total panels decayed";
 
-                skillsFill.fillAmount = (float)infinityData.totalPanelsDecayed / 1000000000000;
+                if (skillsFill != null) skillsFill.fillAmount = (float)infinityData.totalPanelsDecayed / 1000000000000;
                 if (infinityData.totalPanelsDecayed >= 1000000000000)
                 {
                     infinityData.goalSetter = 5;
                     skillTreeData.skillPointsTree += 1;
                     AssignSkills?.Invoke();
                     UpdateSkills?.Invoke();
-                    skillsFillBar.SetActive(true);
+                    if (skillsFillBar != null) skillsFillBar.SetActive(true);
                 }
 
                 break;
@@ -407,14 +440,14 @@ public class GameManager : MonoBehaviour
             case 5:
             {
                 goal.text = $"{color}Goal: Surround {CalcUtils.FormatNumber(1000000000)} Stars";
-                skillsFill.fillAmount = (float)(infinityData.panelsPerSec * infinityData.panelLifetime / 20000 / 1000000000);
+                if (skillsFill != null) skillsFill.fillAmount = (float)(infinityData.panelsPerSec * infinityData.panelLifetime / 20000 / 1000000000);
                 if (infinityData.panelsPerSec * infinityData.panelLifetime / 20000 >= 1000000000)
                 {
                     infinityData.goalSetter = 6;
                     skillTreeData.skillPointsTree += 1;
                     AssignSkills?.Invoke();
                     UpdateSkills?.Invoke();
-                    skillsFillBar.SetActive(true);
+                    if (skillsFillBar != null) skillsFillBar.SetActive(true);
                 }
 
                 break;
@@ -422,14 +455,14 @@ public class GameManager : MonoBehaviour
             case 6:
             {
                 goal.text = $"{color}Goal: Surround {CalcUtils.FormatNumber(10000000000)} Stars";
-                skillsFill.fillAmount = (float)(infinityData.panelsPerSec * infinityData.panelLifetime / 20000 / 10000000000);
+                if (skillsFill != null) skillsFill.fillAmount = (float)(infinityData.panelsPerSec * infinityData.panelLifetime / 20000 / 10000000000);
                 if (infinityData.panelsPerSec * infinityData.panelLifetime / 20000 >= 10000000000)
                 {
                     infinityData.goalSetter = 7;
                     skillTreeData.skillPointsTree += 1;
                     AssignSkills?.Invoke();
                     UpdateSkills?.Invoke();
-                    skillsFillBar.SetActive(true);
+                    if (skillsFillBar != null) skillsFillBar.SetActive(true);
                 }
 
                 break;
@@ -437,14 +470,14 @@ public class GameManager : MonoBehaviour
             case 7:
             {
                 goal.text = $"{color}Goal: Engulf a Galaxy";
-                skillsFill.fillAmount = (float)(infinityData.panelsPerSec * infinityData.panelLifetime / 20000 / 100000000000 / 1);
+                if (skillsFill != null) skillsFill.fillAmount = (float)(infinityData.panelsPerSec * infinityData.panelLifetime / 20000 / 100000000000 / 1);
                 if (infinityData.panelsPerSec * infinityData.panelLifetime / 20000 / 100000000000 > 1)
                 {
                     infinityData.goalSetter = 8;
                     skillTreeData.skillPointsTree += 1;
                     AssignSkills?.Invoke();
                     UpdateSkills?.Invoke();
-                    skillsFillBar.SetActive(true);
+                    if (skillsFillBar != null) skillsFillBar.SetActive(true);
                 }
 
                 break;
@@ -452,14 +485,14 @@ public class GameManager : MonoBehaviour
             case 8:
             {
                 goal.text = $"{color}Goal: Engulf {CalcUtils.FormatNumber(10)} Galaxies";
-                skillsFill.fillAmount = (float)(infinityData.panelsPerSec * infinityData.panelLifetime / 20000 / 100000000000 / 10);
+                if (skillsFill != null) skillsFill.fillAmount = (float)(infinityData.panelsPerSec * infinityData.panelLifetime / 20000 / 100000000000 / 10);
                 if (infinityData.panelsPerSec * infinityData.panelLifetime / 20000 / 100000000000 > 10)
                 {
                     infinityData.goalSetter = 9;
                     skillTreeData.skillPointsTree += 1;
                     AssignSkills?.Invoke();
                     UpdateSkills?.Invoke();
-                    skillsFillBar.SetActive(true);
+                    if (skillsFillBar != null) skillsFillBar.SetActive(true);
                 }
 
                 break;
@@ -467,14 +500,14 @@ public class GameManager : MonoBehaviour
             case 9:
             {
                 goal.text = $"{color}Goal: Engulf {CalcUtils.FormatNumber(100)} Galaxies";
-                skillsFill.fillAmount = (float)(infinityData.panelsPerSec * infinityData.panelLifetime / 20000 / 100000000000 / 100);
+                if (skillsFill != null) skillsFill.fillAmount = (float)(infinityData.panelsPerSec * infinityData.panelLifetime / 20000 / 100000000000 / 100);
                 if (infinityData.panelsPerSec * infinityData.panelLifetime / 20000 / 100000000000 > 100)
                 {
                     infinityData.goalSetter = 10;
                     skillTreeData.skillPointsTree += 1;
                     AssignSkills?.Invoke();
                     UpdateSkills?.Invoke();
-                    skillsFillBar.SetActive(false);
+                    if (skillsFillBar != null) skillsFillBar.SetActive(false);
                 }
 
                 break;

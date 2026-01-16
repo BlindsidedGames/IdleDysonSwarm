@@ -105,7 +105,7 @@ public class QuantumUpgradeUI : MonoBehaviour
     {
         prestigeButtonText.text = prestigePlus.quantumEntanglement
             ? $"Leap for {(long)Math.Floor((prestigeData.infinityPoints - prestigeData.spentInfinityPoints) / (float)IPToQuantumConversion):N0}<sprite=5, color=#000000>"
-            : "Engage Quantum Leap (<color=#FFA45E>{IPToQuantumConversion} IP</color>)";
+            : $"Engage Quantum Leap (<color=#FFA45E>{IPToQuantumConversion} IP</color>)";
         pointsText.text =
             $"You have: <color=#FFA45E>{CalcUtils.FormatNumber(prestigePlus.points - prestigePlus.spentPoints)}<size=70%><color=#91DD8F>({CalcUtils.FormatNumber(prestigePlus.spentPoints)})</size></color> {"<sprite=5>"}";
         cashText.text = $"5% Cash - <color=#91DD8F>{prestigePlus.cash * 5}%";

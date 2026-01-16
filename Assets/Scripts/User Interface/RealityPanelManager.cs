@@ -9,14 +9,12 @@ using static IdleDysonSwarm.Systems.Constants.QuantumConstants;
 
 /// <summary>
 /// Manages the Reality tab UI in the side panel.
-/// Handles dual-mode display (locked progress bar vs unlocked worker bar),
-/// visibility state, and first-run transitions.
+/// Shows unlock progress (secrets) before Reality is unlocked,
+/// and worker batch progress after unlock.
 /// </summary>
 public class RealityPanelManager : MonoBehaviour
 {
-    private GameObject _realityUnlockFillObject;
-    private GameObject _realityFillBar;
-    private GameObject _realityFillBarWorkers;
+    private GameObject _realityFillObject;
     private GameObject _reality;
     private GameObject _realityToggle;
     private GameObject _realityImage;
@@ -25,10 +23,11 @@ public class RealityPanelManager : MonoBehaviour
     private GameObject _simulations;
     private GameObject _simulationsToggle;
 
-    private SlicedFilledImage _realityUnlockFill;
+    private SlicedFilledImage _realityFill;
     private TMP_Text _realityText;
     private Button _realityMenuButton;
     private IWorkerService _workerService;
+    private bool _isPermanentPanel;
 
     /// <summary>
     /// Public accessor for backward compatibility with DebugOptions and Oracle.
@@ -57,9 +56,7 @@ public class RealityPanelManager : MonoBehaviour
     {
         if (refs == null) return;
 
-        _realityUnlockFillObject = refs.realityUnlockFillObject;
-        _realityFillBar = refs.realityFillBar;
-        _realityFillBarWorkers = refs.realityFillBarWorkers;
+        _realityFillObject = refs.realityFillObject;
         _reality = refs.reality;
         _realityToggle = refs.realityToggle;
         _realityImage = refs.realityImage;
@@ -67,18 +64,19 @@ public class RealityPanelManager : MonoBehaviour
         _realityMenuButtonObject = refs.realityMenuButtonObject;
         _simulations = refs.simulations;
         _simulationsToggle = refs.simulationsToggle;
+        _isPermanentPanel = refs.isPermanentPanel;
 
         CacheComponents();
     }
 
     private void CacheComponents()
     {
-        _realityUnlockFill = null;
+        _realityFill = null;
         _realityText = null;
         _realityMenuButton = null;
 
-        if (_realityUnlockFillObject != null)
-            _realityUnlockFill = _realityUnlockFillObject.GetComponent<SlicedFilledImage>();
+        if (_realityFillObject != null)
+            _realityFill = _realityFillObject.GetComponent<SlicedFilledImage>();
         if (_realityTextObject != null)
             _realityText = _realityTextObject.GetComponent<TMP_Text>();
         if (_realityMenuButtonObject != null)
@@ -106,8 +104,10 @@ public class RealityPanelManager : MonoBehaviour
             || oracle.saveSettings.unlockAllTabs;
 
         _realityImage.SetActive(unlocked);
-        _realityToggle.SetActive(unlocked && SceneManager.GetActiveScene().buildIndex == 1);
+        // Hide toggles in permanent mode since the panel is always visible
+        _realityToggle.SetActive(!_isPermanentPanel && unlocked && SceneManager.GetActiveScene().buildIndex == 1);
         _simulations.SetActive(unlocked);
+        _simulationsToggle.SetActive(!_isPermanentPanel && unlocked && SceneManager.GetActiveScene().buildIndex == 1);
         if (_realityMenuButton != null)
             _realityMenuButton.interactable = unlocked;
 
@@ -118,25 +118,23 @@ public class RealityPanelManager : MonoBehaviour
                 : "<align=\"center\"><sprite=4 color=#CCC2C5>";
         }
 
-        UpdateFillBarMode(unlocked);
+        UpdateFillBar(unlocked);
         HandleFirstRun(unlocked);
     }
 
-    private void UpdateFillBarMode(bool unlocked)
+    private void UpdateFillBar(bool unlocked)
     {
-        if (_realityFillBar == null || _realityFillBarWorkers == null) return;
+        if (_realityFill == null) return;
 
         if (unlocked)
         {
-            _realityFillBar.SetActive(false);
-            _realityFillBarWorkers.SetActive(true);
+            // Show progress toward gathering Influence (128 workers needed)
+            _realityFill.fillAmount = _workerService.WorkerFillPercent;
         }
         else
         {
-            _realityFillBar.SetActive(true);
-            _realityFillBarWorkers.SetActive(false);
-            if (_realityUnlockFill != null)
-                _realityUnlockFill.fillAmount = (float)PrestigeData.secretsOfTheUniverse / MaxSecrets;
+            // Show progress toward unlocking Reality (secrets of the universe)
+            _realityFill.fillAmount = (float)PrestigeData.secretsOfTheUniverse / MaxSecrets;
         }
     }
 

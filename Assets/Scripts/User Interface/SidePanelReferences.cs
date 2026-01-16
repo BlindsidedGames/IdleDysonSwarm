@@ -7,6 +7,10 @@ using UnityEngine;
 /// </summary>
 public class SidePanelReferences : MonoBehaviour
 {
+    [Header("Panel Mode")]
+    [Tooltip("When true, toggles are hidden since the panel is always visible")]
+    public bool isPermanentPanel;
+
     [Header("Infinity Panel")]
     public GameObject infinityFillObject;
     public GameObject infinityToggle;
@@ -23,9 +27,7 @@ public class SidePanelReferences : MonoBehaviour
     public GameObject prestigeMenuButtonObject;
 
     [Header("Reality Panel")]
-    public GameObject realityUnlockFillObject;
-    public GameObject realityFillBar;
-    public GameObject realityFillBarWorkers;
+    public GameObject realityFillObject;
     public GameObject reality;
     public GameObject realityToggle;
     public GameObject realityImage;
@@ -33,6 +35,14 @@ public class SidePanelReferences : MonoBehaviour
     public GameObject realityMenuButtonObject;
     public GameObject simulations;
     public GameObject simulationsToggle;
+
+    [Header("Skills Panel")]
+    public GameObject skillsFillObject;
+    public GameObject skillsFillBar;
+    public GameObject skillsIcon;
+    public GameObject skillsToggle;
+    public GameObject skillsTextObject;
+    public GameObject skillsMenuButtonObject;
 
     [Header("Offline Time")]
     public GameObject offlineTimeFillBarObject;

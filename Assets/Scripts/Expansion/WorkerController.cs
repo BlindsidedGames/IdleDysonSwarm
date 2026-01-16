@@ -97,7 +97,9 @@ public class WorkerController : MonoBehaviour
     {
         _workerService.ClampWorkersNonNegative();
         workersReadyToGofill.fillAmount = _workerService.WorkerFillPercent;
-        workersReadyToGofillSideMenu.fillAmount = _workerService.WorkerFillPercent;
+        // Side menu fill bar is now managed by RealityPanelManager via SidePanelReferences
+        if (workersReadyToGofillSideMenu != null)
+            workersReadyToGofillSideMenu.fillAmount = _workerService.WorkerFillPercent;
         preWorkerCounter.text = $"{_workerService.WorkersReady}/{WorkerBatchSize}";
         universeDesignation.text =
             $"Universe Designation: {_workerService.WorkerBatchesProcessed + 1:N0}";
