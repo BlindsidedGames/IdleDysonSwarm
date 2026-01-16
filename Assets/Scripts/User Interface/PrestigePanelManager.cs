@@ -11,13 +11,12 @@ using static Expansion.Oracle;
 /// </summary>
 public class PrestigePanelManager : MonoBehaviour
 {
-    [Header("UI References")]
-    [SerializeField] private GameObject _prestigeFillObject;
-    [SerializeField] private GameObject _prestige;
-    [SerializeField] private GameObject _prestigeToggle;
-    [SerializeField] private GameObject _prestigeImage;
-    [SerializeField] private GameObject _prestigeTextObject;
-    [SerializeField] private GameObject _prestigeMenuButtonObject;
+    private GameObject _prestigeFillObject;
+    private GameObject _prestige;
+    private GameObject _prestigeToggle;
+    private GameObject _prestigeImage;
+    private GameObject _prestigeTextObject;
+    private GameObject _prestigeMenuButtonObject;
 
     private SlicedFilledImage _prestigeFill;
     private TMP_Text _prestigeText;
@@ -32,9 +31,30 @@ public class PrestigePanelManager : MonoBehaviour
         oracle.saveSettings.dysonVerseSaveData.dysonVersePrestigeData;
     private PrestigePlus PrestigePlus => oracle.saveSettings.prestigePlus;
 
-    private void Awake()
+    /// <summary>
+    /// Sets UI references from a SidePanelReferences component.
+    /// Called by SidePanelController when switching between panel variants.
+    /// </summary>
+    public void SetReferences(SidePanelReferences refs)
     {
-        // Get the Fill child's SlicedFilledImage, not the parent background's
+        if (refs == null) return;
+
+        _prestigeFillObject = refs.prestigeFillObject;
+        _prestige = refs.prestige;
+        _prestigeToggle = refs.prestigeToggle;
+        _prestigeImage = refs.prestigeImage;
+        _prestigeTextObject = refs.prestigeTextObject;
+        _prestigeMenuButtonObject = refs.prestigeMenuButtonObject;
+
+        CacheComponents();
+    }
+
+    private void CacheComponents()
+    {
+        _prestigeFill = null;
+        _prestigeText = null;
+        _prestigeMenuButton = null;
+
         if (_prestigeFillObject != null && _prestigeFillObject.transform.childCount > 0)
             _prestigeFill = _prestigeFillObject.transform.GetChild(0).GetComponent<SlicedFilledImage>();
         if (_prestigeTextObject != null)
@@ -50,6 +70,9 @@ public class PrestigePanelManager : MonoBehaviour
 
     private void UpdatePrestigePanel()
     {
+        // Skip update if references not yet set
+        if (_prestige == null || _prestigeToggle == null) return;
+
         bool show = PrestigePlus.points >= 1
             || PrestigeData.infinityPoints >= 1
             || oracle.saveSettings.unlockAllTabs;
