@@ -36,6 +36,14 @@ public class SidePanelReferences : MonoBehaviour
     public GameObject simulations;
     public GameObject simulationsToggle;
 
+    [Header("Skills Panel")]
+    public GameObject skillsFillObject;
+    public GameObject skillsFillBar;
+    public GameObject skillsIcon;
+    public GameObject skillsToggle;
+    public GameObject skillsTextObject;
+    public GameObject skillsMenuButtonObject;
+
     [Header("Offline Time")]
     public GameObject offlineTimeFillBarObject;
 }

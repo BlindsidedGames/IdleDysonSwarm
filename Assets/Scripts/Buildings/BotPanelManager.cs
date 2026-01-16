@@ -14,6 +14,11 @@ public class BotPanelManager : MonoBehaviour
 
     [SerializeField] private GameObject questionmarkPanel;
 
+    [Header("Mega-Structures")]
+    [SerializeField] private GameObject matrioshkaBrainsPanel;
+    [SerializeField] private GameObject birchPlanetsPanel;
+    [SerializeField] private GameObject galacticBrainsPanel;
+
     [SerializeField] private MPImage assemblyLines;
     [SerializeField] private MPImage managers;
     [SerializeField] private MPImage servers;
@@ -22,6 +27,8 @@ public class BotPanelManager : MonoBehaviour
 
     private DysonVerseInfinityData infinityData => oracle.saveSettings.dysonVerseSaveData.dysonVerseInfinityData;
     private DysonVerseSkillTreeData skillTreeData => oracle.saveSettings.dysonVerseSaveData.dysonVerseSkillTreeData;
+    private DysonVersePrestigeData prestigeData => oracle.saveSettings.dysonVerseSaveData.dysonVersePrestigeData;
+    private PrestigePlus prestigePlus => oracle.saveSettings.prestigePlus;
 
     private void Update()
     {
@@ -33,8 +40,10 @@ public class BotPanelManager : MonoBehaviour
         dataCenterPanel.SetActive(hasServers || infinityData.dataCenters[0] + infinityData.dataCenters[1] > 0);
         bool hasDataCenters = infinityData.dataCenters[0] + infinityData.dataCenters[1] >= 1;
         planetPanel.SetActive(hasDataCenters || infinityData.planets[0] + infinityData.planets[1] > 0);
-        questionmarkPanel.SetActive(!hasDataCenters && infinityData.planets[0] + infinityData.planets[1] == 0);
         clickPanel.SetActive(isClickPanelActive && !hasDataCenters || skillTreeData.manualLabour);
+
+        // Mega-structure visibility and questionmark panel
+        UpdateMegaStructureVisibility(hasDataCenters);
 
         assemblyLines.fillAmount = infinityData.assemblyLineProduction >= 5 ? 1 : (float)(infinityData.assemblyLines[0] % 1);
         managers.fillAmount = infinityData.managerProduction >= 5 ? 1 : (float)(infinityData.managers[0] % 1);
@@ -47,5 +56,40 @@ public class BotPanelManager : MonoBehaviour
             infinityData.planetAssemblyProduction + infinityData.shellWorldsProduction >= 5
                 ? 1
                 : (float)(infinityData.planets[0] % 1);
+    }
+
+    private void UpdateMegaStructureVisibility(bool hasDataCenters)
+    {
+        bool hasQuantumReset = prestigePlus.points >= 1;
+        double totalPlanets = infinityData.planets[0] + infinityData.planets[1];
+        double totalMatrioshka = infinityData.matrioshkaBrains[0] + infinityData.matrioshkaBrains[1];
+        double totalBirch = infinityData.birchPlanets[0] + infinityData.birchPlanets[1];
+        double totalGalactic = infinityData.galacticBrains[0] + infinityData.galacticBrains[1];
+
+        bool matrioshkaUnlocked = prestigeData.unlockedMatrioshkaBrains;
+        bool birchUnlocked = prestigeData.unlockedBirchPlanets;
+        bool galacticUnlocked = prestigeData.unlockedGalacticBrains;
+
+        // Show panels when:
+        // 1. You have at least one of that mega-structure, OR
+        // 2. You have the unlock AND the prerequisite facility
+        bool showMatrioshka = totalMatrioshka > 0 || (matrioshkaUnlocked && totalPlanets > 0);
+        bool showBirch = totalBirch > 0 || (birchUnlocked && totalMatrioshka > 0);
+        bool showGalactic = totalGalactic > 0 || (galacticUnlocked && totalBirch > 0);
+
+        if (matrioshkaBrainsPanel != null)
+            matrioshkaBrainsPanel.SetActive(showMatrioshka);
+        if (birchPlanetsPanel != null)
+            birchPlanetsPanel.SetActive(showBirch);
+        if (galacticBrainsPanel != null)
+            galacticBrainsPanel.SetActive(showGalactic);
+
+        // Simplified ??? logic:
+        // - Pre-quantum: Show unless planets are visible
+        // - Post-quantum: Show unless galactic brains are visible
+        bool planetsVisible = planetPanel != null && planetPanel.activeSelf;
+        bool showQuestion = hasQuantumReset ? !showGalactic : !planetsVisible;
+
+        questionmarkPanel.SetActive(showQuestion);
     }
 }
