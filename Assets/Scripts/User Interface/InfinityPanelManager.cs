@@ -14,12 +14,11 @@ using static Expansion.Oracle;
 /// </summary>
 public class InfinityPanelManager : MonoBehaviour
 {
-    [Header("UI References")]
-    [SerializeField] private GameObject _infinityFillObject;
-    [SerializeField] private GameObject _infinityToggle;
-    [SerializeField] private GameObject _infinityImage;
-    [SerializeField] private GameObject _infinityTextObject;
-    [SerializeField] private GameObject _infinityMenuButtonObject;
+    private GameObject _infinityFillObject;
+    private GameObject _infinityToggle;
+    private GameObject _infinityImage;
+    private GameObject _infinityTextObject;
+    private GameObject _infinityMenuButtonObject;
 
     private SlicedFilledImage _infinityFill;
     private TMP_Text _infinityText;
@@ -30,17 +29,29 @@ public class InfinityPanelManager : MonoBehaviour
     /// </summary>
     public GameObject InfinityToggle => _infinityToggle;
 
-    private DysonVerseInfinityData InfinityData =>
-        oracle.saveSettings.dysonVerseSaveData.dysonVerseInfinityData;
-    private DysonVersePrestigeData PrestigeData =>
-        oracle.saveSettings.dysonVerseSaveData.dysonVersePrestigeData;
-    private PrestigePlus PrestigePlus => oracle.saveSettings.prestigePlus;
-
-    private double _percent;
-
-    private void Awake()
+    /// <summary>
+    /// Sets UI references from a SidePanelReferences component.
+    /// Called by SidePanelController when switching between panel variants.
+    /// </summary>
+    public void SetReferences(SidePanelReferences refs)
     {
-        // Get the Fill child's SlicedFilledImage, not the parent background's
+        if (refs == null) return;
+
+        _infinityFillObject = refs.infinityFillObject;
+        _infinityToggle = refs.infinityToggle;
+        _infinityImage = refs.infinityImage;
+        _infinityTextObject = refs.infinityTextObject;
+        _infinityMenuButtonObject = refs.infinityMenuButtonObject;
+
+        CacheComponents();
+    }
+
+    private void CacheComponents()
+    {
+        _infinityFill = null;
+        _infinityText = null;
+        _infinityMenuButton = null;
+
         if (_infinityFillObject != null && _infinityFillObject.transform.childCount > 0)
             _infinityFill = _infinityFillObject.transform.GetChild(0).GetComponent<SlicedFilledImage>();
         if (_infinityTextObject != null)
@@ -49,6 +60,14 @@ public class InfinityPanelManager : MonoBehaviour
             _infinityMenuButton = _infinityMenuButtonObject.GetComponent<Button>();
     }
 
+    private DysonVerseInfinityData InfinityData =>
+        oracle.saveSettings.dysonVerseSaveData.dysonVerseInfinityData;
+    private DysonVersePrestigeData PrestigeData =>
+        oracle.saveSettings.dysonVerseSaveData.dysonVersePrestigeData;
+    private PrestigePlus PrestigePlus => oracle.saveSettings.prestigePlus;
+
+    private double _percent;
+
     private void Update()
     {
         UpdateInfinityPanel();
@@ -56,6 +75,9 @@ public class InfinityPanelManager : MonoBehaviour
 
     private void UpdateInfinityPanel()
     {
+        // Skip update if references not yet set
+        if (_infinityToggle == null || _infinityImage == null) return;
+
         bool autoPrestige = !PrestigePlus.breakTheLoop;
         double amount = PrestigePlus.divisionsPurchased > 0
             ? 4.2e19 / Math.Pow(10, PrestigePlus.divisionsPurchased)

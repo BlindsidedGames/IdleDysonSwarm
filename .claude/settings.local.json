@@ -35,7 +35,10 @@
       "mcp__UnityMCP__batch_execute",
       "mcp__UnityMCP__manage_gameobject",
       "mcp__UnityMCP__manage_components",
-      "mcp__UnityMCP__manage_prefabs"
+      "mcp__UnityMCP__manage_prefabs",
+      "mcp__UnityMCP__set_active_instance",
+      "mcp__unityMCP__manage_scene",
+      "mcp__unityMCP__find_gameobjects"
     ]
   }
 }
