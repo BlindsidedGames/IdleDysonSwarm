@@ -38,12 +38,25 @@ namespace IdleDysonSwarm.Services
             DysonVersePrestigeData prestigeData = _gameState.PrestigeData;
             if (prestigeData == null) return false;
 
-            return facilityId switch
+            // Check if unlocked via Quantum Points
+            bool hasUnlock = facilityId switch
             {
                 "matrioshka_brains" => prestigeData.unlockedMatrioshkaBrains,
                 "birch_planets" => prestigeData.unlockedBirchPlanets,
                 "galactic_brains" => prestigeData.unlockedGalacticBrains,
                 _ => false
+            };
+
+            if (!hasUnlock) return false;
+
+            // Also check prerequisite facility exists
+            // Matrioshka needs planets, Birch needs matrioshka, Galactic needs birch
+            return facilityId switch
+            {
+                "matrioshka_brains" => GetTotalOwned("planets") > 0,
+                "birch_planets" => GetTotalOwned("matrioshka_brains") > 0,
+                "galactic_brains" => GetTotalOwned("birch_planets") > 0,
+                _ => true
             };
         }
 
