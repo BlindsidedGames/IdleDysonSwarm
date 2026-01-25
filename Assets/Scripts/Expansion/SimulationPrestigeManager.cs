@@ -21,6 +21,8 @@ public class SimulationPrestigeManager : MonoBehaviour
 
     public static event Action ApplyResearch;
 
+    public static void InvokeApplyResearch() => ApplyResearch?.Invoke();
+
     private void Start()
     {
         blackHole.onClick.AddListener(BlackHole);

@@ -1,55 +1,30 @@
 using System;
 using Systems;
-using TMPro;
 using UnityEngine;
-using UnityEngine.UI;
 using Blindsided.Utilities;
 using IdleDysonSwarm.Systems.Dream1;
+using IdleDysonSwarm.UI;
+using IdleDysonSwarm.UI.Simulation;
 using static Expansion.Oracle;
 
 public class FoundationalEraManager : MonoBehaviour
 {
-    [Space(10), SerializeField]  private Button hunterBuyButton;
-    [SerializeField] private TMP_Text hunterTitleText;
-    [SerializeField] private TMP_Text hunterTimerText;
-    [SerializeField] private SlicedFilledImage hunterFillBar;
+    [Header("Panel References")]
+    [SerializeField] private SimulationGenericPanelReferences hunterPanel;
+    [SerializeField] private SimulationGenericPanelReferences gathererPanel;
+    [SerializeField] private SimulationGenericPanelReferences communityPanel;
+    [SerializeField] private SimulationGenericPanelReferences housingPanel;
+    [SerializeField] private SimulationGenericPanelReferences villagesPanel;
+    [SerializeField] private SimulationGenericPanelReferences workersPanel;
+    [SerializeField] private SimulationGenericPanelReferences citiesPanel;
+
+    [Header("Production Durations")]
     [SerializeField] private float hunterDuration = 3;
-
-    [Space(10), SerializeField]  private Button gathererBuyButton;
-    [SerializeField] private TMP_Text gathererTitleText;
-    [SerializeField] private TMP_Text gathererTimerText;
-    [SerializeField] private SlicedFilledImage gathererFillBar;
     [SerializeField] private float gatherDuration = 3;
-
-    [Space(10), SerializeField]  private Button communityBoostButton;
-    [SerializeField] private GameObject communityBoostButtonGO;
-    [SerializeField] private TMP_Text communityTitleText;
-    [SerializeField] private TMP_Text communityTimerText;
-    [SerializeField] private TMP_Text communityBoostTimerText;
-    [SerializeField] private SlicedFilledImage communityFillBar;
-    [SerializeField] private SlicedFilledImage communityBoostFillBar;
     [SerializeField] private float communityDuration = 3;
-
-    [Space(10), SerializeField]  private TMP_Text housingTitleText;
-    [SerializeField] private TMP_Text housingTimerText;
-    [SerializeField] private SlicedFilledImage housingFillBar;
-    [SerializeField] private SlicedFilledImage housingToVillageFillBar;
     [SerializeField] private float housingDuration = 20;
-
-    [Space(10), SerializeField]  private TMP_Text villagesTitleText;
-    [SerializeField] private TMP_Text villagesTimerText;
-    [SerializeField] private SlicedFilledImage villagesFillBar;
-    [SerializeField] private SlicedFilledImage villagesToCityFillBar;
     [SerializeField] private float villagesDuration = 12;
-
-    [Space(10), SerializeField]  private TMP_Text workersTitleText;
-    [SerializeField] private TMP_Text workersTimerText;
-    [SerializeField] private SlicedFilledImage workersFillBar;
     [SerializeField] private float workersDuration = 4;
-
-    [Space(10), SerializeField]  private TMP_Text citiesTitleText;
-    [SerializeField] private TMP_Text citiesTimerText;
-    [SerializeField] private SlicedFilledImage citiesFillBar;
     [SerializeField] private float citiesDuration = 3;
 
     // Production timers (use ProductionTimer utility for consistency)
@@ -65,6 +40,9 @@ public class FoundationalEraManager : MonoBehaviour
     private SaveData sd => oracle.saveSettings.saveData;
     private SaveDataPrestige sp => oracle.saveSettings.sdPrestige;
 
+    private const int HousingToVillageCost = 10;
+    private const int VillageToCitiesCost = 25;
+
     private void Start()
     {
         // Initialize timers with saved progress (must be in Start, after Oracle is initialized)
@@ -76,14 +54,56 @@ public class FoundationalEraManager : MonoBehaviour
         _workersTimer = new ProductionTimer(workersDuration, sd1.workersTimerProgress);
         _citiesTimer = new ProductionTimer(citiesDuration, sd1.citiesTimerProgress);
 
-        hunterBuyButton.onClick.AddListener(OnHunterBuy);
-        gathererBuyButton.onClick.AddListener(OnGathererBuy);
-        communityBoostButton.onClick.AddListener(OnCommunityBoost);
+        // Set panel types and configure UI elements
+        if (hunterPanel != null)
+        {
+            hunterPanel.panelType = SimulationPanelType.ProductionBasic;
+            hunterPanel.ConfigureUIElements();
+        }
+        if (gathererPanel != null)
+        {
+            gathererPanel.panelType = SimulationPanelType.ProductionBasic;
+            gathererPanel.ConfigureUIElements();
+        }
+        if (communityPanel != null)
+        {
+            communityPanel.panelType = SimulationPanelType.ProductionBoost;
+            communityPanel.ConfigureUIElements();
+        }
+        if (housingPanel != null)
+        {
+            housingPanel.panelType = SimulationPanelType.ConversionDual;
+            housingPanel.ConfigureUIElements();
+        }
+        if (villagesPanel != null)
+        {
+            villagesPanel.panelType = SimulationPanelType.ConversionDual;
+            villagesPanel.ConfigureUIElements();
+        }
+        if (workersPanel != null)
+        {
+            workersPanel.panelType = SimulationPanelType.ConversionDisplay;
+            workersPanel.ConfigureUIElements();
+        }
+        if (citiesPanel != null)
+        {
+            citiesPanel.panelType = SimulationPanelType.ConversionDisplay;
+            citiesPanel.ConfigureUIElements();
+        }
+
+        // Setup button listeners
+        if (hunterPanel?.actionButton != null)
+            hunterPanel.actionButton.onClick.AddListener(OnHunterBuy);
+        if (gathererPanel?.actionButton != null)
+            gathererPanel.actionButton.onClick.AddListener(OnGathererBuy);
+        if (communityPanel?.actionButton != null)
+            communityPanel.actionButton.onClick.AddListener(OnCommunityBoost);
     }
 
     private void Update()
     {
-        BuildingManagement();
+        UpdateVisibility();
+        BuildingConversions();
         HunterManagement();
         GathererManagement();
         ManageCommunityBoost();
@@ -96,9 +116,21 @@ public class FoundationalEraManager : MonoBehaviour
         SyncTimerProgress();
     }
 
-    /// <summary>
-    /// Syncs timer progress to save data for persistence.
-    /// </summary>
+    private void UpdateVisibility()
+    {
+        // Visibility logic from Dream1BuildingEnabler
+        if (communityPanel != null)
+            communityPanel.gameObject.SetActive(sd1.hunters >= 1 || sd1.gatherers >= 1);
+        if (housingPanel != null)
+            housingPanel.gameObject.SetActive(sd1.housing >= 1 || sd1.villages >= 1 || sd1.cities >= 1);
+        if (villagesPanel != null)
+            villagesPanel.gameObject.SetActive(sd1.villages >= 1 || sd1.cities >= 1);
+        if (workersPanel != null)
+            workersPanel.gameObject.SetActive(sd1.workers >= 1);
+        if (citiesPanel != null)
+            citiesPanel.gameObject.SetActive(sd1.cities >= 1);
+    }
+
     private void SyncTimerProgress()
     {
         sd1.hunterTimerProgress = _hunterTimer.currentTime;
@@ -110,9 +142,6 @@ public class FoundationalEraManager : MonoBehaviour
         sd1.citiesTimerProgress = _citiesTimer.currentTime;
     }
 
-    /// <summary>
-    /// Gets the global multiplier from DoubleTime.
-    /// </summary>
     private double GetGlobalMultiplier()
     {
         return sp.doDoubleTime ? sp.doubleTimeRate + 1 : 1;
@@ -120,89 +149,90 @@ public class FoundationalEraManager : MonoBehaviour
 
     private void SetButtonsInteractable()
     {
-        hunterBuyButton.interactable = sd.influence >= sd1.hunterCost;
-        gathererBuyButton.interactable = sd.influence >= sd1.gathererCost;
-        communityBoostButton.interactable = sd.influence >= sd1.communityBoostCost;
+        if (hunterPanel?.actionButton != null)
+            hunterPanel.actionButton.interactable = sd.influence >= sd1.hunterCost;
+        if (gathererPanel?.actionButton != null)
+            gathererPanel.actionButton.interactable = sd.influence >= sd1.gathererCost;
+        if (communityPanel?.actionButton != null)
+            communityPanel.actionButton.interactable = sd.influence >= sd1.communityBoostCost;
     }
 
-    private void BuildingManagement()
+    private void BuildingConversions()
     {
-        const int housingToVillageCost = 10;
-        if (sd1.housing >= housingToVillageCost)
+        // Housing to Villages conversion
+        if (sd1.housing >= HousingToVillageCost)
         {
-            sd1.housing -= housingToVillageCost;
+            sd1.housing -= HousingToVillageCost;
             sd1.villages++;
         }
 
-        housingToVillageFillBar.fillAmount = _communityProduction > 10 ? 1 :
-            sd1.housing >= 1                                           ? (float)sd1.housing / housingToVillageCost : 0;
-        string housingText = _communityProduction > 10
-            ? $"{CalcUtils.FormatNumber(_communityProduction / housingToVillageCost)} Villages/s"
-            : $"{sd1.housing:N0}";
-        housingTitleText.text = $"Housing <size=70%> {housingText}";
-
-        const int villageToCitiesCost = 25;
-        if (sd1.villages >= villageToCitiesCost)
+        // Villages to Cities conversion
+        if (sd1.villages >= VillageToCitiesCost)
         {
-            sd1.villages -= villageToCitiesCost;
+            sd1.villages -= VillageToCitiesCost;
             sd1.cities++;
         }
-
-        villagesToCityFillBar.fillAmount = (float)sd1.villages / villageToCitiesCost;
-        villagesTitleText.text = $"Villages <size=70%> {sd1.villages:N0}";
     }
 
+    private double _communityProduction;
 
     private void HunterManagement()
     {
-        hunterTitleText.text = $"Hunters <size=70%> {sd1.hunters:N0}";
+        if (hunterPanel == null) return;
+
+        hunterPanel.titleText.text = $"Hunters <size=70%>{UIThemeProvider.TextColourBlue}{sd1.hunters:N0}</color>";
 
         double globalMulti = GetGlobalMultiplier();
         int produced = _hunterTimer.Update(sd1.hunters, globalMulti, Time.deltaTime);
         sd1.community += produced;
 
         double effectiveMulti = _hunterTimer.GetEffectiveMultiplier(sd1.hunters, globalMulti);
-        hunterFillBar.fillAmount = (float)StaticMethods.FillBar(sd1.hunters, hunterDuration, effectiveMulti, _hunterTimer.currentTime);
-        hunterTimerText.text = StaticMethods.TimerText(sd1.hunters, hunterDuration, effectiveMulti, _hunterTimer.currentTime);
+        hunterPanel.fill1.fillAmount = (float)StaticMethods.FillBar(sd1.hunters, hunterDuration, effectiveMulti, _hunterTimer.currentTime);
+        hunterPanel.fillBar1Text.text = StaticMethods.TimerText(sd1.hunters, hunterDuration, effectiveMulti, _hunterTimer.currentTime, mspace: true, colourOverride: UIThemeProvider.TextColourBlue);
     }
 
     private void GathererManagement()
     {
-        gathererTitleText.text = $"Gatherers <size=70%> {sd1.gatherers:N0}";
+        if (gathererPanel == null) return;
+
+        gathererPanel.titleText.text = $"Gatherers <size=70%>{UIThemeProvider.TextColourBlue}{sd1.gatherers:N0}</color>";
 
         double globalMulti = GetGlobalMultiplier();
         int produced = _gathererTimer.Update(sd1.gatherers, globalMulti, Time.deltaTime);
         sd1.community += produced;
 
         double effectiveMulti = _gathererTimer.GetEffectiveMultiplier(sd1.gatherers, globalMulti);
-        gathererFillBar.fillAmount = (float)StaticMethods.FillBar(sd1.gatherers, gatherDuration, effectiveMulti, _gathererTimer.currentTime);
-        gathererTimerText.text = StaticMethods.TimerText(sd1.gatherers, gatherDuration, effectiveMulti, _gathererTimer.currentTime);
+        gathererPanel.fill1.fillAmount = (float)StaticMethods.FillBar(sd1.gatherers, gatherDuration, effectiveMulti, _gathererTimer.currentTime);
+        gathererPanel.fillBar1Text.text = StaticMethods.TimerText(sd1.gatherers, gatherDuration, effectiveMulti, _gathererTimer.currentTime, mspace: true, colourOverride: UIThemeProvider.TextColourBlue);
     }
 
     private void ManageCommunityBoost()
     {
+        if (communityPanel == null) return;
+
         if (sd1.communityBoostTime > 0)
         {
             sd1.communityBoostTime -= Time.deltaTime;
-            communityBoostFillBar.fillAmount =
-                (float)(sd1.communityBoostTime / sd1.communityBoostDuration);
-            communityBoostTimerText.text = $"{CalcUtils.FormatTimeLarge(sd1.communityBoostTime)}";
+            communityPanel.fill2.fillAmount = (float)(sd1.communityBoostTime / sd1.communityBoostDuration);
+            communityPanel.fillBar2Text.text = CalcUtils.FormatTime(sd1.communityBoostTime, shortForm: true, colourOverride: UIThemeProvider.TextColourBlue);
         }
         else
         {
             sd1.communityBoostTime = 0;
-            communityBoostFillBar.fillAmount = 0;
-            communityBoostTimerText.text = "0s";
+            communityPanel.fill2.fillAmount = 0;
+            communityPanel.fillBar2Text.text = "0s";
         }
     }
 
-    private double _communityProduction;
-
     private void CommunityManagement()
     {
-        communityBoostButtonGO.SetActive(sd1.communityBoostTime < 10);
+        if (communityPanel == null) return;
 
-        communityTitleText.text = $"Community <size=70%> {sd1.community:N0}";
+        // Hide boost button when boost is active (time remaining > 10s)
+        if (communityPanel.actionButton != null)
+            communityPanel.actionButton.gameObject.SetActive(sd1.communityBoostTime < 10);
+
+        communityPanel.titleText.text = $"Community <size=70%>{UIThemeProvider.TextColourBlue}{sd1.community:N0}</color>";
 
         // Community has special boost from communityBoostTime
         double globalMulti = GetGlobalMultiplier();
@@ -214,39 +244,52 @@ public class FoundationalEraManager : MonoBehaviour
         double effectiveMulti = _communityTimer.GetEffectiveMultiplier(sd1.community, globalMulti);
         _communityProduction = effectiveMulti > 0 ? effectiveMulti / communityDuration : 0;
 
-        communityFillBar.fillAmount =
-            communityDuration / effectiveMulti < 0.2f ? 1 : _communityTimer.FillAmount;
-        communityTimerText.text = communityDuration / effectiveMulti < 0.2f
-            ? $"{CalcUtils.FormatNumber(_communityProduction)}/s"
-            : sd1.community > 0
-                ? $"{_communityTimer.GetTimeRemaining(effectiveMulti):F1}s"
-                : "";
+        communityPanel.fill1.fillAmount = (float)StaticMethods.FillBar(sd1.community, communityDuration, effectiveMulti, _communityTimer.currentTime);
+        communityPanel.fillBar1Text.text = StaticMethods.TimerText(sd1.community, communityDuration, effectiveMulti, _communityTimer.currentTime, mspace: true, colourOverride: UIThemeProvider.TextColourBlue);
     }
 
     private void HousingManagement()
     {
-        if (sd1.housing == 0)
-        {
-            housingFillBar.fillAmount = 0;
-            housingTimerText.text = "";
-            return;
-        }
+        if (housingPanel == null) return;
+
+        // Title shows count and conversion info
+        string housingText = _communityProduction > 10
+            ? $"{CalcUtils.FormatNumber(_communityProduction / HousingToVillageCost, colourOverride: UIThemeProvider.TextColourBlue)} Villages/s"
+            : $"{UIThemeProvider.TextColourBlue}{sd1.housing:N0}</color>";
+        housingPanel.titleText.text = $"Housing <size=70%>{housingText}";
+
+        // Secondary fill bar shows conversion progress to villages
+        housingPanel.fill2.fillAmount = _communityProduction > 10 ? 1 :
+            sd1.housing >= 1 ? (float)sd1.housing / HousingToVillageCost : 0;
+        housingPanel.fillBar2Text.text = $"{UIThemeProvider.TextColourBlue}{(int)sd1.housing % HousingToVillageCost}</color> / {UIThemeProvider.TextColourBlue}{HousingToVillageCost}</color>";
 
         double globalMulti = GetGlobalMultiplier();
         int produced = _housingTimer.Update(sd1.housing, globalMulti, Time.deltaTime);
         sd1.workers += produced;
 
+        // When housing is 0, keep fill bar and timer text at last value to prevent flickering
+        if (sd1.housing == 0)
+            return;
+
         double effectiveMulti = _housingTimer.GetEffectiveMultiplier(sd1.housing, globalMulti);
-        housingFillBar.fillAmount = _housingTimer.FillAmount;
-        housingTimerText.text = $"{_housingTimer.GetTimeRemaining(effectiveMulti):F1}s";
+        housingPanel.fill1.fillAmount = (float)StaticMethods.FillBar(sd1.housing, housingDuration, effectiveMulti, _housingTimer.currentTime);
+        housingPanel.fillBar1Text.text = StaticMethods.TimerText(sd1.housing, housingDuration, effectiveMulti, _housingTimer.currentTime, mspace: true, colourOverride: UIThemeProvider.TextColourBlue);
     }
 
     private void VillageManagement()
     {
+        if (villagesPanel == null) return;
+
+        villagesPanel.titleText.text = $"Villages <size=70%>{UIThemeProvider.TextColourBlue}{sd1.villages:N0}</color>";
+
+        // Secondary fill bar shows conversion progress to cities
+        villagesPanel.fill2.fillAmount = (float)sd1.villages / VillageToCitiesCost;
+        villagesPanel.fillBar2Text.text = $"{UIThemeProvider.TextColourBlue}{(int)sd1.villages % VillageToCitiesCost}</color> / {UIThemeProvider.TextColourBlue}{VillageToCitiesCost}</color>";
+
         if (sd1.villages == 0)
         {
-            villagesFillBar.fillAmount = 0;
-            villagesTimerText.text = "";
+            villagesPanel.fill1.fillAmount = 0;
+            villagesPanel.fillBar1Text.text = "";
             return;
         }
 
@@ -255,13 +298,15 @@ public class FoundationalEraManager : MonoBehaviour
         sd1.workers += produced * 2; // Villages produce 2 workers per tick
 
         double effectiveMulti = _villagesTimer.GetEffectiveMultiplier(sd1.villages, globalMulti);
-        villagesFillBar.fillAmount = _villagesTimer.FillAmount;
-        villagesTimerText.text = $"{_villagesTimer.GetTimeRemaining(effectiveMulti):F1}s";
+        villagesPanel.fill1.fillAmount = (float)StaticMethods.FillBar(sd1.villages, villagesDuration, effectiveMulti, _villagesTimer.currentTime);
+        villagesPanel.fillBar1Text.text = StaticMethods.TimerText(sd1.villages, villagesDuration, effectiveMulti, _villagesTimer.currentTime, mspace: true, colourOverride: UIThemeProvider.TextColourBlue);
     }
 
     private void WorkerManagement()
     {
-        workersTitleText.text = $"Workers <size=70%> {sd1.workers:N0}";
+        if (workersPanel == null) return;
+
+        workersPanel.titleText.text = $"Workers <size=70%>{UIThemeProvider.TextColourBlue}{sd1.workers:N0}</color>";
 
         // Workers have special boost from workerBoostActivator
         double globalMulti = GetGlobalMultiplier();
@@ -272,13 +317,15 @@ public class FoundationalEraManager : MonoBehaviour
         sd1.housing += produced;
 
         double effectiveMulti = _workersTimer.GetEffectiveMultiplier(sd1.workers, globalMulti);
-        workersFillBar.fillAmount = (float)StaticMethods.FillBar(sd1.workers, workersDuration, effectiveMulti, _workersTimer.currentTime);
-        workersTimerText.text = StaticMethods.TimerText(sd1.workers, workersDuration, effectiveMulti, _workersTimer.currentTime);
+        workersPanel.fill1.fillAmount = (float)StaticMethods.FillBar(sd1.workers, workersDuration, effectiveMulti, _workersTimer.currentTime);
+        workersPanel.fillBar1Text.text = StaticMethods.TimerText(sd1.workers, workersDuration, effectiveMulti, _workersTimer.currentTime, mspace: true, colourOverride: UIThemeProvider.TextColourBlue);
     }
 
     private void CityManagement()
     {
-        citiesTitleText.text = $"Cities <size=70%> {sd1.cities:N0}";
+        if (citiesPanel == null) return;
+
+        citiesPanel.titleText.text = $"Cities <size=70%>{UIThemeProvider.TextColourBlue}{sd1.cities:N0}</color>";
 
         double globalMulti = GetGlobalMultiplier();
         int produced = _citiesTimer.Update(sd1.cities, globalMulti, Time.deltaTime);
@@ -291,11 +338,11 @@ public class FoundationalEraManager : MonoBehaviour
         }
 
         double effectiveMulti = _citiesTimer.GetEffectiveMultiplier(sd1.cities, globalMulti);
-        citiesFillBar.fillAmount = (float)StaticMethods.FillBar(sd1.cities, citiesDuration, effectiveMulti, _citiesTimer.currentTime);
-        citiesTimerText.text = StaticMethods.TimerText(sd1.cities, citiesDuration, effectiveMulti, _citiesTimer.currentTime);
+        citiesPanel.fill1.fillAmount = (float)StaticMethods.FillBar(sd1.cities, citiesDuration, effectiveMulti, _citiesTimer.currentTime);
+        citiesPanel.fillBar1Text.text = StaticMethods.TimerText(sd1.cities, citiesDuration, effectiveMulti, _citiesTimer.currentTime, mspace: true, colourOverride: UIThemeProvider.TextColourBlue);
     }
 
-    #region buttonMethods
+    #region Button Methods
 
     private void OnCommunityBoost()
     {

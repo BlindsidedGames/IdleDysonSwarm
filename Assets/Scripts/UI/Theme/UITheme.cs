@@ -44,12 +44,36 @@ namespace IdleDysonSwarm.UI
         [Tooltip("Button disabled state")]
         public Color buttonDisabled = new Color(0.15f, 0.15f, 0.2f, 0.5f);
 
+        [Header("Era Colors - Simulation")]
+        [Tooltip("Foundational Era primary color (purple)")]
+        public Color foundationalEraColor = new Color(0.545f, 0.361f, 0.663f); // #8B5CAA
+
+        [Tooltip("Information Era primary color (teal)")]
+        public Color informationEraColor = new Color(0.439f, 0.659f, 0.561f); // #70A88F
+
+        [Tooltip("Space Age primary color (bright green)")]
+        public Color spaceAgeColor = new Color(0.569f, 0.867f, 0.561f); // #91DD8F
+
+        [Header("Era Colors - Reality")]
+        [Tooltip("Reality primary color (light purple)")]
+        public Color realityColor = new Color(0.784f, 0.702f, 1f); // #C8B3FF
+
+        [Tooltip("Anomaly research color")]
+        public Color anomalyColor = new Color(0.6f, 0.4f, 0.8f); // #9966CC
+
         // Cached rich text color tags for performance
         private string _accentTag;
         private string _highlightTag;
         private string _positiveTag;
         private string _warningTag;
         private string _negativeTag;
+
+        // Era color cached tags
+        private string _foundationalEraTag;
+        private string _informationEraTag;
+        private string _spaceAgeTag;
+        private string _realityTag;
+        private string _anomalyTag;
 
         /// <summary>
         /// Rich text color tag for accent color (e.g., "&lt;color=#FFA45E&gt;")
@@ -77,6 +101,31 @@ namespace IdleDysonSwarm.UI
         public string NegativeTag => _negativeTag ??= $"<color=#{ColorUtility.ToHtmlStringRGB(negativeColor)}>";
 
         /// <summary>
+        /// Rich text color tag for Foundational Era color
+        /// </summary>
+        public string FoundationalEraTag => _foundationalEraTag ??= $"<color=#{ColorUtility.ToHtmlStringRGB(foundationalEraColor)}>";
+
+        /// <summary>
+        /// Rich text color tag for Information Era color
+        /// </summary>
+        public string InformationEraTag => _informationEraTag ??= $"<color=#{ColorUtility.ToHtmlStringRGB(informationEraColor)}>";
+
+        /// <summary>
+        /// Rich text color tag for Space Age color
+        /// </summary>
+        public string SpaceAgeTag => _spaceAgeTag ??= $"<color=#{ColorUtility.ToHtmlStringRGB(spaceAgeColor)}>";
+
+        /// <summary>
+        /// Rich text color tag for Reality color
+        /// </summary>
+        public string RealityTag => _realityTag ??= $"<color=#{ColorUtility.ToHtmlStringRGB(realityColor)}>";
+
+        /// <summary>
+        /// Rich text color tag for Anomaly color
+        /// </summary>
+        public string AnomalyTag => _anomalyTag ??= $"<color=#{ColorUtility.ToHtmlStringRGB(anomalyColor)}>";
+
+        /// <summary>
         /// Wraps text in the accent color.
         /// </summary>
         public string Accent(string text) => $"{AccentTag}{text}</color>";
@@ -101,6 +150,31 @@ namespace IdleDysonSwarm.UI
         /// </summary>
         public string Negative(string text) => $"{NegativeTag}{text}</color>";
 
+        /// <summary>
+        /// Wraps text in the Foundational Era color.
+        /// </summary>
+        public string FoundationalEra(string text) => $"{FoundationalEraTag}{text}</color>";
+
+        /// <summary>
+        /// Wraps text in the Information Era color.
+        /// </summary>
+        public string InformationEra(string text) => $"{InformationEraTag}{text}</color>";
+
+        /// <summary>
+        /// Wraps text in the Space Age color.
+        /// </summary>
+        public string SpaceAge(string text) => $"{SpaceAgeTag}{text}</color>";
+
+        /// <summary>
+        /// Wraps text in the Reality color.
+        /// </summary>
+        public string Reality(string text) => $"{RealityTag}{text}</color>";
+
+        /// <summary>
+        /// Wraps text in the Anomaly color.
+        /// </summary>
+        public string Anomaly(string text) => $"{AnomalyTag}{text}</color>";
+
         private void OnValidate()
         {
             // Clear cached tags when colors change in editor
@@ -109,6 +183,13 @@ namespace IdleDysonSwarm.UI
             _positiveTag = null;
             _warningTag = null;
             _negativeTag = null;
+
+            // Clear era color cached tags
+            _foundationalEraTag = null;
+            _informationEraTag = null;
+            _spaceAgeTag = null;
+            _realityTag = null;
+            _anomalyTag = null;
         }
     }
 }

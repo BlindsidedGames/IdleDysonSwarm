@@ -346,6 +346,8 @@ The skill provides expert guidance for:
 - Querying Unity state
 - Managing Unity assets
 
+**Workflow tip:** Always call `refresh_unity` before `read_console` after making script changes. This ensures Unity recompiles and any errors are present in the console before reading it.
+
 See `.claude/skills/unity-mcp.md` for complete documentation.
 
 ## Important Rules
