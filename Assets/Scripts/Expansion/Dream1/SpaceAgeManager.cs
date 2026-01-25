@@ -276,20 +276,28 @@ public class SpaceAgeManager : MonoBehaviour
         _fireTime += deltaCalc * Time.deltaTime;
         float fill = _fireTime / timeToFill;
 
+        double chargePerShot = sd1.railgunMaxCharge / 10.0;
+        long panelsPerShot = sdp.doubleTimeRate >= 1 && sdp.doDoubleTime
+            ? 1 * sdp.doubleTimeRate
+            : 1;
+
         if (_fireTime >= timeToFill)
         {
+            // Guard: stop firing if insufficient charge or panels (prevents negative after prestige wipe)
+            if (sd1.railgunCharge < chargePerShot || sd1.dysonPanels < panelsPerShot)
+            {
+                _firing = false;
+                return;
+            }
+
             _fireTime = 0;
-            sd1.railgunCharge -= sd1.railgunMaxCharge / 10f;
-            sd1.dysonPanels -= sdp.doubleTimeRate >= 1 && sdp.doDoubleTime
-                ? 1 * sdp.doubleTimeRate
-                : 1;
-            sd1.swarmPanels += sdp.doubleTimeRate >= 1 && sdp.doDoubleTime
-                ? 1 * sdp.doubleTimeRate
-                : 1;
+            sd1.railgunCharge -= chargePerShot;
+            sd1.dysonPanels -= panelsPerShot;
+            sd1.swarmPanels += panelsPerShot;
             _fireTimes--;
         }
 
-        if (sd1.railgunCharge < sd1.railgunMaxCharge / 10f || _fireTimes <= 0) _firing = false;
+        if (sd1.railgunCharge < chargePerShot || _fireTimes <= 0) _firing = false;
 
         railgunsPanel.fill1.fillAmount = fill;
         railgunsPanel.fillBar1Text.text = $"{UIThemeProvider.TextColourBlue}{_fireTimes}</color> / {UIThemeProvider.TextColourBlue}{_timesToFire}</color>";
@@ -343,6 +351,14 @@ public class SpaceAgeManager : MonoBehaviour
     private IEnumerator WipeForPrestige()
     {
         oracle.WipeDream1Save();
+
+        // Reset local firing state to prevent negative railgunCharge
+        _firing = false;
+        _fireTime = 0;
+        _fireTimes = 0;
+
+        // Reset production timer to match wiped save data
+        _spaceFactoriesTimer = new ProductionTimer(_factoriesDuration, 0);
 
         // Explicitly hide the swarm stats panel after wipe
         if (swarmStatsPanel != null)

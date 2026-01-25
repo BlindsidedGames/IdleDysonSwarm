@@ -324,32 +324,6 @@ Include:
 - Testing checklist (compilation, save compatibility)
 - Breaking changes (if any)
 
-## Unity MCP Integration
-
-**CRITICAL: When working with Unity (scripts, GameObjects, scenes, assets), automatically use the Unity MCP skill:**
-
-```
-/unity-mcp
-```
-
-The skill provides expert guidance for:
-- Safe script modification workflows
-- Efficient GameObject and component operations
-- Proper compilation monitoring
-- Performance-optimized queries
-- Error handling patterns
-
-**Auto-invoke the skill when:**
-- Creating or modifying C# scripts
-- Working with GameObjects or components
-- Performing scene operations
-- Querying Unity state
-- Managing Unity assets
-
-**Workflow tip:** Always call `refresh_unity` before `read_console` after making script changes. This ensures Unity recompiles and any errors are present in the console before reading it.
-
-See `.claude/skills/unity-mcp.md` for complete documentation.
-
 ## Important Rules
 
 ### Code Quality
