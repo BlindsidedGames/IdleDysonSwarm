@@ -122,10 +122,13 @@ namespace Blindsided.Utilities
             bool hideDecimal = false,
             float fontWeight = 0f,
             bool useMspace = false,
-            float mspaceSize = 0.5f)
+            float mspaceSize = 0.6f,
+            string colourOverride = "")
         {
             string mspaceStart = useMspace ? $"<mspace={mspaceSize}em>" : "";
             string mspaceEnd = useMspace ? "</mspace>" : "";
+            string colourStart = string.IsNullOrEmpty(colourOverride) ? "" : colourOverride;
+            string colourEnd = string.IsNullOrEmpty(colourOverride) ? "" : "</color>";
 
             if (x == 0)
             {
@@ -133,7 +136,7 @@ namespace Blindsided.Utilities
                 string zeroPrefix = Prefix.Length > 0 ? Prefix[0] : "";
                 if (fontWeight > 0f && !string.IsNullOrEmpty(zeroPrefix))
                     zeroPrefix = $"<font-weight={fontWeight}>{zeroPrefix}</font-weight>";
-                return $"{mspaceStart}{zeroStr}{mspaceEnd}{zeroPrefix}";
+                return $"{colourStart}{mspaceStart}{zeroStr}{mspaceEnd}{colourEnd}{zeroPrefix}";
             }
 
             double absX = Math.Abs(x);
@@ -167,64 +170,90 @@ namespace Blindsided.Utilities
                     string sciStr = x.ToString("0.00e0");
                     if (useMspace)
                         sciStr = sciStr.Replace(".", $"{mspaceEnd}.{mspaceStart}");
-                    return $"{mspaceStart}{sciStr}{mspaceEnd}";
+                    return $"{colourStart}{mspaceStart}{sciStr}{mspaceEnd}{colourEnd}";
                 }
 
-                return $"{mspaceStart}{mantissaStr}{suffix}{mspaceEnd}";
+                return $"{colourStart}{mspaceStart}{mantissaStr}{mspaceEnd}{colourEnd}{suffix}";
             }
 
             if (StaticNumberFormatting == NumberTypes.Engineering)
             {
-                if (absX > 1000) return $"{mspaceStart}{mantissaStr}e{exponentGroup * 3}{mspaceEnd}";
-                return $"{mspaceStart}{mantissaStr}{suffix}{mspaceEnd}";
+                if (absX > 1000) return $"{colourStart}{mspaceStart}{mantissaStr}e{exponentGroup * 3}{mspaceEnd}{colourEnd}";
+                return $"{colourStart}{mspaceStart}{mantissaStr}{mspaceEnd}{colourEnd}{suffix}";
             }
 
             if (exponentGroup < Prefix.Length)
             {
                 if (hideDecimal && absX < 100)
-                    return Math.Floor(x).ToString();
-                return $"{mspaceStart}{mantissaStr}{mspaceEnd}{weightedSuffix}";
+                    return $"{colourStart}{Math.Floor(x)}{colourEnd}";
+                return $"{colourStart}{mspaceStart}{mantissaStr}{mspaceEnd}{colourEnd}{weightedSuffix}";
             }
 
             string fallback = x.ToString("0.00e0");
             if (useMspace)
                 fallback = fallback.Replace(".", $"{mspaceEnd}.{mspaceStart}");
-            return $"{mspaceStart}{fallback}{mspaceEnd}";
+            return $"{colourStart}{mspaceStart}{fallback}{mspaceEnd}{colourEnd}";
         }
 
-//true = Joules
-//false = Watts
-        public static readonly string[] EnergyPrefixJ = { "J", "KJ", "MJ", "GJ", "TJ", "PJ", "EJ", "ZJ", "YJ" };
-        public static readonly string[] EnergyPrefixW = { "W", "KW", "MW", "GW", "TW", "PW", "EW", "ZW", "YW" };
+        // Energy prefixes: true = Joules, false = Watts
+        // Standard SI: J, K, M, G, T, P, E, Z, Y, R, Q (up to 10^30)
+        // Extended: Continue with game-specific suffixes
+        public static readonly string[] EnergyPrefixJ =
+        {
+            "J", "KJ", "MJ", "GJ", "TJ", "PJ", "EJ", "ZJ", "YJ", "RJ", "QJ",
+            "UJ", "DJ", "TrJ", "QaJ", "QiJ", "SxJ", "SpJ", "OcJ", "NoJ", "DcJ"
+        };
+
+        public static readonly string[] EnergyPrefixW =
+        {
+            "W", "KW", "MW", "GW", "TW", "PW", "EW", "ZW", "YW", "RW", "QW",
+            "UW", "DW", "TrW", "QaW", "QiW", "SxW", "SpW", "OcW", "NoW", "DcW"
+        };
 
         public static Dictionary<string, string> replacements = new()
         {
             { "{colorHighlight}", textColourBlue }
         };
 
-        public static string FormatEnergy(double x, bool type)
+        public static string FormatEnergy(
+            double x,
+            bool isJoules,
+            bool useMspace = false,
+            float mspaceSize = 0.6f,
+            string colourOverride = "")
         {
-            int sign = Math.Sign(x);
-            double e = Math.Max(0, Math.Log(sign * x) / Math.Log(10));
-            int o = 2 - (int)Math.Floor(e % 3);
-            e = Math.Floor(e / 3);
-            double m = x / Math.Pow(10, e * 3);
-            m = Math.Truncate(m * Math.Pow(10, o)) / Math.Pow(10, o);
+            string[] prefixes = isJoules ? EnergyPrefixJ : EnergyPrefixW;
+            string mspaceStart = useMspace ? $"<mspace={mspaceSize}em>" : "";
+            string mspaceEnd = useMspace ? "</mspace>" : "";
+            string colourStart = string.IsNullOrEmpty(colourOverride) ? "" : colourOverride;
+            string colourEnd = string.IsNullOrEmpty(colourOverride) ? "" : "</color>";
 
-            string ms = $"{m}";
-            int d = ms.Length;
-            if (sign == -1) d--;
+            if (x == 0)
+                return $"{colourStart}{mspaceStart}0.00{mspaceEnd}{colourEnd} {prefixes[0]}";
 
-            if (o == 2 && d == 1)
-                ms = $"{ms}.00";
-            if (o == 2 && d == 3)
-                ms = $"{ms}0";
-            if (o == 1 && d == 2)
-                ms = $"{ms}.0";
+            double absX = Math.Abs(x);
+            int exponentGroup = Math.Max((int)Math.Floor(Math.Log10(absX) / 3), 0);
 
-            if (e < EnergyPrefixJ.Length) return type ? $"{ms}{EnergyPrefixJ[(int)e]}" : $"{ms}{EnergyPrefixW[(int)e]}";
+            double scale = Math.Pow(10, exponentGroup * 3);
+            double mantissa = x / scale;
 
-            return $"{ms}e{(int)e * 3}";
+            int integerDigits = Math.Abs(mantissa) < 1
+                ? 1
+                : (int)Math.Floor(Math.Log10(Math.Abs(mantissa))) + 1;
+            int digitsAfterDecimal = Math.Max(0, 3 - integerDigits);
+
+            double factor = Math.Pow(10, digitsAfterDecimal);
+            mantissa = Math.Truncate(mantissa * factor) / factor;
+
+            string mantissaStr = mantissa.ToString("F" + digitsAfterDecimal);
+
+            if (useMspace)
+                mantissaStr = mantissaStr.Replace(".", $"{mspaceEnd}.{mspaceStart}");
+
+            if (exponentGroup < prefixes.Length)
+                return $"{colourStart}{mspaceStart}{mantissaStr}{mspaceEnd}{colourEnd} {prefixes[exponentGroup]}";
+
+            return $"{colourStart}{mspaceStart}{mantissaStr}e{exponentGroup * 3}{mspaceEnd}{colourEnd}";
         }
 
         public static string FormatUnits(
@@ -233,7 +262,7 @@ namespace Blindsided.Utilities
             float mspaceSize = 0.6f,
             bool isMs = false)
         {
-            string usemSpace = mspace ? $"<mspace={mspaceSize}>" : "";
+            string usemSpace = mspace ? $"<mspace={mspaceSize}em>" : "";
             string endMSpace = mspace ? "</mspace>" : "";
             return $"{usemSpace}{(isMs ? $"{units:D2}" : $"{units}")}{endMSpace}";
         }
@@ -243,7 +272,7 @@ namespace Blindsided.Utilities
             bool showDecimal = false,
             bool shortForm = false,
             bool mspace = true,
-            float mspaceSize = 20f,
+            float mspaceSize = 0.6f,
             bool ultraShort = false,
             bool absoluteValue = true,
             string colourOverride = "")
@@ -262,27 +291,28 @@ namespace Blindsided.Utilities
                 return "None";
             }
 
-            string mspaceStart = mspace ? $"<mspace={mspaceSize}>" : "";
+            string mspaceStart = mspace ? $"<mspace={mspaceSize}em>" : "";
             string mspaceEnd = mspace ? "</mspace>" : "";
-            string endColour = string.IsNullOrEmpty(colourOverride) ? "" : "</color>";
+            string colourStart = string.IsNullOrEmpty(colourOverride) ? "" : colourOverride;
+            string colourEnd = string.IsNullOrEmpty(colourOverride) ? "" : "</color>";
 
             TimeSpan timespan = TimeSpan.FromSeconds(Math.Abs(time));
             string outputTime = mspaceStart;
             outputTime += !absoluteValue && time < 0 ? "-" : "";
             outputTime += timespan.Days == 0
                 ? ""
-                : $"{FormatUnits(timespan.Days, mspace, mspaceSize)}{colourOverride}{(shortForm ? "d" : $" {Plural("Day", timespan.Days)}")}{endColour} ";
+                : $"{colourStart}{FormatUnits(timespan.Days, mspace, mspaceSize)}{colourEnd}{(shortForm ? "d" : $" {Plural("Day", timespan.Days)}")} ";
             outputTime += timespan.Hours == 0
                 ? ""
-                : $"{FormatUnits(timespan.Hours, mspace, mspaceSize)}{colourOverride}{(shortForm ? "h" : $" {Plural("Hour", timespan.Hours)}")}{endColour} ";
+                : $"{colourStart}{FormatUnits(timespan.Hours, mspace, mspaceSize)}{colourEnd}{(shortForm ? "h" : $" {Plural("Hour", timespan.Hours)}")} ";
             outputTime += timespan.Minutes == 0
                 ? ""
-                : $"{FormatUnits(timespan.Minutes, mspace, mspaceSize)}{colourOverride}{(shortForm ? "m" : $" {Plural("Minute", timespan.Minutes)}")}{endColour} ";
+                : $"{colourStart}{FormatUnits(timespan.Minutes, mspace, mspaceSize)}{colourEnd}{(shortForm ? "m" : $" {Plural("Minute", timespan.Minutes)}")} ";
             string shownDecimal = timespan.Milliseconds == 0 || !showDecimal
                 ? ""
                 : $"{(mspace ? $"{mspaceEnd}.{mspaceStart}" : ".")}{FormatUnits(timespan.Milliseconds / 10, mspace, mspaceSize, true)}";
             outputTime +=
-                $"{FormatUnits(timespan.Seconds, mspace, mspaceSize)}{shownDecimal}{colourOverride}{(shortForm ? "s" : $" {Plural("Second", timespan.Seconds)}")}{endColour}";
+                $"{colourStart}{FormatUnits(timespan.Seconds, mspace, mspaceSize)}{shownDecimal}{colourEnd}{(shortForm ? "s" : $" {Plural("Second", timespan.Seconds)}")}";
             outputTime += mspaceEnd;
             return outputTime;
         }

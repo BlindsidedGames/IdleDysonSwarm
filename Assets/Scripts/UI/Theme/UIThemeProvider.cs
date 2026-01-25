@@ -60,6 +60,62 @@ namespace IdleDysonSwarm.UI
         /// </summary>
         public static string TextColourRed => ActiveTheme?.NegativeTag ?? "<color=#FF5757>";
 
+        // Era Colors - Simulation
+
+        /// <summary>
+        /// Foundational Era color tag.
+        /// </summary>
+        public static string TextColourFoundational => ActiveTheme?.FoundationalEraTag ?? "<color=#8B5CAA>";
+
+        /// <summary>
+        /// Information Era color tag.
+        /// </summary>
+        public static string TextColourInformation => ActiveTheme?.InformationEraTag ?? "<color=#70A88F>";
+
+        /// <summary>
+        /// Space Age color tag.
+        /// </summary>
+        public static string TextColourSpaceAge => ActiveTheme?.SpaceAgeTag ?? "<color=#91DD8F>";
+
+        // Era Colors - Reality
+
+        /// <summary>
+        /// Reality color tag.
+        /// </summary>
+        public static string TextColourReality => ActiveTheme?.RealityTag ?? "<color=#C8B3FF>";
+
+        /// <summary>
+        /// Anomaly color tag.
+        /// </summary>
+        public static string TextColourAnomaly => ActiveTheme?.AnomalyTag ?? "<color=#9966CC>";
+
+        // Direct Color access for panel backgrounds, MPImage tinting, etc.
+
+        /// <summary>
+        /// Foundational Era color for UI elements.
+        /// </summary>
+        public static Color FoundationalEraColor => ActiveTheme?.foundationalEraColor ?? new Color(0.545f, 0.361f, 0.663f);
+
+        /// <summary>
+        /// Information Era color for UI elements.
+        /// </summary>
+        public static Color InformationEraColor => ActiveTheme?.informationEraColor ?? new Color(0.439f, 0.659f, 0.561f);
+
+        /// <summary>
+        /// Space Age color for UI elements.
+        /// </summary>
+        public static Color SpaceAgeColor => ActiveTheme?.spaceAgeColor ?? new Color(0.569f, 0.867f, 0.561f);
+
+        /// <summary>
+        /// Reality color for UI elements.
+        /// </summary>
+        public static Color RealityColor => ActiveTheme?.realityColor ?? new Color(0.784f, 0.702f, 1f);
+
+        /// <summary>
+        /// Anomaly color for UI elements.
+        /// </summary>
+        public static Color AnomalyColor => ActiveTheme?.anomalyColor ?? new Color(0.6f, 0.4f, 0.8f);
+
         private static void Initialize()
         {
             _initialized = true;
