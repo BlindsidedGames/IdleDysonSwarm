@@ -42,6 +42,9 @@ public class FoundationalEraManager : MonoBehaviour
 
     private const int HousingToVillageCost = 10;
     private const int VillageToCitiesCost = 25;
+    private const float InfoUpdateInterval = 0.1f; // 10hz debounce for info descriptions
+
+    private float _infoUpdateTimer;
 
     private void Start()
     {
@@ -59,36 +62,43 @@ public class FoundationalEraManager : MonoBehaviour
         {
             hunterPanel.panelType = SimulationPanelType.ProductionBasic;
             hunterPanel.ConfigureUIElements();
+            if (hunterPanel.infoTitleText != null) hunterPanel.infoTitleText.text = "Hunters Info";
         }
         if (gathererPanel != null)
         {
             gathererPanel.panelType = SimulationPanelType.ProductionBasic;
             gathererPanel.ConfigureUIElements();
+            if (gathererPanel.infoTitleText != null) gathererPanel.infoTitleText.text = "Gatherers Info";
         }
         if (communityPanel != null)
         {
             communityPanel.panelType = SimulationPanelType.ProductionBoost;
             communityPanel.ConfigureUIElements();
+            if (communityPanel.infoTitleText != null) communityPanel.infoTitleText.text = "Community Info";
         }
         if (housingPanel != null)
         {
             housingPanel.panelType = SimulationPanelType.ConversionDual;
             housingPanel.ConfigureUIElements();
+            if (housingPanel.infoTitleText != null) housingPanel.infoTitleText.text = "Housing Info";
         }
         if (villagesPanel != null)
         {
             villagesPanel.panelType = SimulationPanelType.ConversionDual;
             villagesPanel.ConfigureUIElements();
+            if (villagesPanel.infoTitleText != null) villagesPanel.infoTitleText.text = "Villages Info";
         }
         if (workersPanel != null)
         {
             workersPanel.panelType = SimulationPanelType.ConversionDisplay;
             workersPanel.ConfigureUIElements();
+            if (workersPanel.infoTitleText != null) workersPanel.infoTitleText.text = "Workers Info";
         }
         if (citiesPanel != null)
         {
             citiesPanel.panelType = SimulationPanelType.ConversionDisplay;
             citiesPanel.ConfigureUIElements();
+            if (citiesPanel.infoTitleText != null) citiesPanel.infoTitleText.text = "Cities Info";
         }
 
         // Setup button listeners
@@ -114,6 +124,7 @@ public class FoundationalEraManager : MonoBehaviour
         CityManagement();
         SetButtonsInteractable();
         SyncTimerProgress();
+        UpdateInfoDescriptions();
     }
 
     private void UpdateVisibility()
@@ -341,6 +352,164 @@ public class FoundationalEraManager : MonoBehaviour
         citiesPanel.fill1.fillAmount = (float)StaticMethods.FillBar(sd1.cities, citiesDuration, effectiveMulti, _citiesTimer.currentTime);
         citiesPanel.fillBar1Text.text = StaticMethods.TimerText(sd1.cities, citiesDuration, effectiveMulti, _citiesTimer.currentTime, mspace: true, colourOverride: UIThemeProvider.TextColourBlue);
     }
+
+    #region Info Descriptions
+
+    private void UpdateInfoDescriptions()
+    {
+        _infoUpdateTimer += Time.deltaTime;
+        if (_infoUpdateTimer < InfoUpdateInterval) return;
+        _infoUpdateTimer = 0;
+
+        UpdateHunterInfoDescription();
+        UpdateGathererInfoDescription();
+        UpdateCommunityInfoDescription();
+        UpdateHousingInfoDescription();
+        UpdateVillagesInfoDescription();
+        UpdateWorkersInfoDescription();
+        UpdateCitiesInfoDescription();
+    }
+
+    private void UpdateHunterInfoDescription()
+    {
+        if (hunterPanel?.infoDescriptionText == null) return;
+
+        double globalMulti = GetGlobalMultiplier();
+        double effectiveMulti = _hunterTimer.GetEffectiveMultiplier(sd1.hunters, globalMulti);
+        double rate = effectiveMulti > 0 ? effectiveMulti / hunterDuration : 0;
+
+        string blue = UIThemeProvider.TextColourBlue;
+        hunterPanel.infoDescriptionText.text =
+            $"Influence heroic hunters to gather meat for your communities.\n\n" +
+            $"Output: {blue}1</color> community/cycle\n" +
+            $"Base Duration: {blue}{hunterDuration}</color>s\n" +
+            $"Speed Multiplier: ({blue}1</color> + Log{blue}₁₀</color>({blue}{sd1.hunters:N0}</color>)) × {blue}{globalMulti:N1}</color>\n" +
+            $"Current Rate: {blue}{CalcUtils.FormatNumber(rate)}</color> community/s";
+    }
+
+    private void UpdateGathererInfoDescription()
+    {
+        if (gathererPanel?.infoDescriptionText == null) return;
+
+        double globalMulti = GetGlobalMultiplier();
+        double effectiveMulti = _gathererTimer.GetEffectiveMultiplier(sd1.gatherers, globalMulti);
+        double rate = effectiveMulti > 0 ? effectiveMulti / gatherDuration : 0;
+
+        string blue = UIThemeProvider.TextColourBlue;
+        gathererPanel.infoDescriptionText.text =
+            $"Influence villagers to gather greens for your communities.\n\n" +
+            $"Output: {blue}1</color> community/cycle\n" +
+            $"Base Duration: {blue}{gatherDuration}</color>s\n" +
+            $"Speed Multiplier: ({blue}1</color> + Log{blue}₁₀</color>({blue}{sd1.gatherers:N0}</color>)) × {blue}{globalMulti:N1}</color>\n" +
+            $"Current Rate: {blue}{CalcUtils.FormatNumber(rate)}</color> community/s";
+    }
+
+    private void UpdateCommunityInfoDescription()
+    {
+        if (communityPanel?.infoDescriptionText == null) return;
+
+        double globalMulti = GetGlobalMultiplier();
+        if (sd1.communityBoostTime > 0) globalMulti *= 2;
+        double effectiveMulti = _communityTimer.GetEffectiveMultiplier(sd1.community, globalMulti);
+        double rate = effectiveMulti > 0 ? effectiveMulti / communityDuration : 0;
+
+        string blue = UIThemeProvider.TextColourBlue;
+        string boostStatus = sd1.communityBoostTime > 0 ? $" (Boosted {blue}×2</color>)" : "";
+        communityPanel.infoDescriptionText.text =
+            $"Over time community brings people closer together, some decide to settle and build houses! Boosting community is free and doubles the speed of community.\n\n" +
+            $"Output: {blue}1</color> housing/cycle\n" +
+            $"Base Duration: {blue}{communityDuration}</color>s\n" +
+            $"Speed Multiplier: ({blue}1</color> + Log{blue}₁₀</color>({blue}{sd1.community:N0}</color>)) × {blue}{globalMulti:N1}</color>{boostStatus}\n" +
+            $"Current Rate: {blue}{CalcUtils.FormatNumber(rate)}</color> housing/s";
+    }
+
+    private void UpdateHousingInfoDescription()
+    {
+        if (housingPanel?.infoDescriptionText == null) return;
+
+        double globalMulti = GetGlobalMultiplier();
+        double effectiveMulti = _housingTimer.GetEffectiveMultiplier(sd1.housing, globalMulti);
+        double rate = effectiveMulti > 0 ? effectiveMulti / housingDuration : 0;
+
+        string blue = UIThemeProvider.TextColourBlue;
+        housingPanel.infoDescriptionText.text =
+            $"Housing produces workers. Reaching {blue}{HousingToVillageCost}</color> housing automatically converts into a village.\n\n" +
+            $"Output: {blue}1</color> worker/cycle\n" +
+            $"Base Duration: {blue}{housingDuration}</color>s\n" +
+            $"Speed Multiplier: ({blue}1</color> + Log{blue}₁₀</color>({blue}{sd1.housing:N0}</color>)) × {blue}{globalMulti:N1}</color>\n" +
+            $"Current Rate: {blue}{CalcUtils.FormatNumber(rate)}</color> worker/s\n" +
+            $"Conversion: {blue}{HousingToVillageCost}</color> housing → {blue}1</color> village";
+    }
+
+    private void UpdateVillagesInfoDescription()
+    {
+        if (villagesPanel?.infoDescriptionText == null) return;
+
+        double globalMulti = GetGlobalMultiplier();
+        double effectiveMulti = _villagesTimer.GetEffectiveMultiplier(sd1.villages, globalMulti);
+        double rate = effectiveMulti > 0 ? effectiveMulti * 2 / villagesDuration : 0; // Villages produce 2 workers per cycle
+
+        string blue = UIThemeProvider.TextColourBlue;
+        villagesPanel.infoDescriptionText.text =
+            $"As settlements expand into villages, more workers join the cause. When enough villages unite, they form a bustling city.\n\n" +
+            $"Output: {blue}2</color> workers/cycle\n" +
+            $"Base Duration: {blue}{villagesDuration}</color>s\n" +
+            $"Speed Multiplier: ({blue}1</color> + Log{blue}₁₀</color>({blue}{sd1.villages:N0}</color>)) × {blue}{globalMulti:N1}</color>\n" +
+            $"Current Rate: {blue}{CalcUtils.FormatNumber(rate)}</color> workers/s\n" +
+            $"Conversion: {blue}{VillageToCitiesCost}</color> villages → {blue}1</color> city";
+    }
+
+    private void UpdateWorkersInfoDescription()
+    {
+        if (workersPanel?.infoDescriptionText == null) return;
+
+        double globalMulti = GetGlobalMultiplier();
+        bool hasBoost = sp.workerBoostAcivator && sd1.workers > 0;
+        double boostMulti = hasBoost ? 1 + Math.Log10(sd1.workers) : 1;
+        double adjustedGlobalMulti = globalMulti * boostMulti;
+        double effectiveMulti = _workersTimer.GetEffectiveMultiplier(sd1.workers, adjustedGlobalMulti);
+        double rate = effectiveMulti > 0 ? effectiveMulti / workersDuration : 0;
+
+        string blue = UIThemeProvider.TextColourBlue;
+        // When boosted, formula is (1 + Log₁₀(workers))² × globalMulti
+        string speedFormula = hasBoost
+            ? $"({blue}1</color> + Log{blue}₁₀</color>({blue}{sd1.workers:N0}</color>))² × {blue}{globalMulti:N1}</color>"
+            : $"({blue}1</color> + Log{blue}₁₀</color>({blue}{sd1.workers:N0}</color>)) × {blue}{globalMulti:N1}</color>";
+        workersPanel.infoDescriptionText.text =
+            $"The workforce builds new housing, expanding civilization's reach. A larger workforce builds exponentially faster.\n\n" +
+            $"Output: {blue}1</color> housing/cycle\n" +
+            $"Base Duration: {blue}{workersDuration}</color>s\n" +
+            $"Speed Multiplier: {speedFormula}\n" +
+            $"Current Rate: {blue}{CalcUtils.FormatNumber(rate)}</color> housing/s";
+    }
+
+    private void UpdateCitiesInfoDescription()
+    {
+        if (citiesPanel?.infoDescriptionText == null) return;
+
+        double globalMulti = GetGlobalMultiplier();
+        double effectiveMulti = _citiesTimer.GetEffectiveMultiplier(sd1.cities, globalMulti);
+        double rate = effectiveMulti > 0 ? effectiveMulti / citiesDuration : 0;
+        int factoriesPerCycle = sp.citiesBoostActivator ? 10 : 1;
+
+        string blue = UIThemeProvider.TextColourBlue;
+        string factoryLine = sd1.engineeringComplete
+            ? $"Output: {blue}{factoriesPerCycle}</color> factories/cycle\n"
+            : "Complete Engineering to unlock factory production.\n";
+        string factoryRate = sd1.engineeringComplete
+            ? $"Current Rate: {blue}{CalcUtils.FormatNumber(rate * factoriesPerCycle)}</color> factories/s\n"
+            : "";
+        citiesPanel.infoDescriptionText.text =
+            $"Great cities are centers of production, training workers for the cause.\n\n" +
+            $"Output: {blue}5</color> workers/cycle\n" +
+            factoryLine +
+            $"Base Duration: {blue}{citiesDuration}</color>s\n" +
+            $"Speed Multiplier: ({blue}1</color> + Log{blue}₁₀</color>({blue}{sd1.cities:N0}</color>)) × {blue}{globalMulti:N1}</color>\n" +
+            $"Current Rate: {blue}{CalcUtils.FormatNumber(rate * 5)}</color> workers/s\n" +
+            factoryRate;
+    }
+
+    #endregion
 
     #region Button Methods
 
