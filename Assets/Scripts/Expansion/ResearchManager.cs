@@ -1,3 +1,4 @@
+using IdleDysonSwarm.UI;
 using Sirenix.OdinInspector;
 using TMPro;
 using UnityEngine;
@@ -6,20 +7,123 @@ using static Expansion.Oracle;
 
 public class ResearchManager : MonoBehaviour
 {
+    [TabGroup("Headers")]
     [SerializeField] private TMP_Text ResearchHeader;
+    [TabGroup("Headers")]
     [SerializeField] private TMP_Text SimulationHeader;
-
-    [SerializeField] private GameObject realityCategory;
-    [SerializeField] private GameObject anomalyCategory;
-    [SerializeField] private GameObject translationCategory;
-    [SerializeField] private GameObject speedCategory;
-    [SerializeField] private GameObject qolComplete;
 
     #region Simulation References
 
-    #region Costs
+    [TabGroup("Simulation", "Categories")]
+    [SerializeField] private GameObject simulationCategory;
+    [TabGroup("Simulation", "Categories")]
+    [SerializeField] private GameObject counterMeasuresCategory;
+    [TabGroup("Simulation", "Categories")]
+    [SerializeField] private GameObject foundationalEraCategory;
+    [TabGroup("Simulation", "Categories")]
+    [SerializeField] private GameObject educationCategory;
+    [TabGroup("Simulation", "Categories")]
+    [SerializeField] private GameObject informationEraCategory;
+    [TabGroup("Simulation", "Categories")]
+    [SerializeField] private GameObject spaceAgeCategory;
 
-    // Costs
+    [TabGroup("Simulation", "Panels")]
+    [FoldoutGroup("Simulation/Panels/Countermeasures")]
+    [SerializeField] private UpgradePanelReferences _counterMeteorPanel;
+    [FoldoutGroup("Simulation/Panels/Countermeasures")]
+    [SerializeField] private UpgradePanelReferences _counterAiPanel;
+    [FoldoutGroup("Simulation/Panels/Countermeasures")]
+    [SerializeField] private UpgradePanelReferences _counterGwPanel;
+
+    [TabGroup("Simulation", "Panels")]
+    [FoldoutGroup("Simulation/Panels/Education")]
+    [SerializeField] private UpgradePanelReferences _engineering1Panel;
+    [FoldoutGroup("Simulation/Panels/Education")]
+    [SerializeField] private UpgradePanelReferences _engineering2Panel;
+    [FoldoutGroup("Simulation/Panels/Education")]
+    [SerializeField] private UpgradePanelReferences _engineering3Panel;
+    [FoldoutGroup("Simulation/Panels/Education")]
+    [SerializeField] private UpgradePanelReferences _shipping1Panel;
+    [FoldoutGroup("Simulation/Panels/Education")]
+    [SerializeField] private UpgradePanelReferences _shipping2Panel;
+    [FoldoutGroup("Simulation/Panels/Education")]
+    [SerializeField] private UpgradePanelReferences _worldTrade1Panel;
+    [FoldoutGroup("Simulation/Panels/Education")]
+    [SerializeField] private UpgradePanelReferences _worldTrade2Panel;
+    [FoldoutGroup("Simulation/Panels/Education")]
+    [SerializeField] private UpgradePanelReferences _worldTrade3Panel;
+    [FoldoutGroup("Simulation/Panels/Education")]
+    [SerializeField] private UpgradePanelReferences _worldPeace1Panel;
+    [FoldoutGroup("Simulation/Panels/Education")]
+    [SerializeField] private UpgradePanelReferences _worldPeace2Panel;
+    [FoldoutGroup("Simulation/Panels/Education")]
+    [SerializeField] private UpgradePanelReferences _worldPeace3Panel;
+    [FoldoutGroup("Simulation/Panels/Education")]
+    [SerializeField] private UpgradePanelReferences _worldPeace4Panel;
+    [FoldoutGroup("Simulation/Panels/Education")]
+    [SerializeField] private UpgradePanelReferences _mathematics1Panel;
+    [FoldoutGroup("Simulation/Panels/Education")]
+    [SerializeField] private UpgradePanelReferences _mathematics2Panel;
+    [FoldoutGroup("Simulation/Panels/Education")]
+    [SerializeField] private UpgradePanelReferences _mathematics3Panel;
+    [FoldoutGroup("Simulation/Panels/Education")]
+    [SerializeField] private UpgradePanelReferences _advancedPhysics1Panel;
+    [FoldoutGroup("Simulation/Panels/Education")]
+    [SerializeField] private UpgradePanelReferences _advancedPhysics2Panel;
+    [FoldoutGroup("Simulation/Panels/Education")]
+    [SerializeField] private UpgradePanelReferences _advancedPhysics3Panel;
+    [FoldoutGroup("Simulation/Panels/Education")]
+    [SerializeField] private UpgradePanelReferences _advancedPhysics4Panel;
+
+    [TabGroup("Simulation", "Panels")]
+    [FoldoutGroup("Simulation/Panels/Foundational Era")]
+    [SerializeField] private UpgradePanelReferences _hunter1Panel;
+    [FoldoutGroup("Simulation/Panels/Foundational Era")]
+    [SerializeField] private UpgradePanelReferences _hunter2Panel;
+    [FoldoutGroup("Simulation/Panels/Foundational Era")]
+    [SerializeField] private UpgradePanelReferences _hunter3Panel;
+    [FoldoutGroup("Simulation/Panels/Foundational Era")]
+    [SerializeField] private UpgradePanelReferences _hunter4Panel;
+    [FoldoutGroup("Simulation/Panels/Foundational Era")]
+    [SerializeField] private UpgradePanelReferences _gathering1Panel;
+    [FoldoutGroup("Simulation/Panels/Foundational Era")]
+    [SerializeField] private UpgradePanelReferences _gathering2Panel;
+    [FoldoutGroup("Simulation/Panels/Foundational Era")]
+    [SerializeField] private UpgradePanelReferences _gathering3Panel;
+    [FoldoutGroup("Simulation/Panels/Foundational Era")]
+    [SerializeField] private UpgradePanelReferences _gathering4Panel;
+    [FoldoutGroup("Simulation/Panels/Foundational Era")]
+    [SerializeField] private UpgradePanelReferences _workerBoostPanel;
+    [FoldoutGroup("Simulation/Panels/Foundational Era")]
+    [SerializeField] private UpgradePanelReferences _citiesBoostPanel;
+
+    [TabGroup("Simulation", "Panels")]
+    [FoldoutGroup("Simulation/Panels/Information Era")]
+    [SerializeField] private UpgradePanelReferences _factoriesBoostPanel;
+    [FoldoutGroup("Simulation/Panels/Information Era")]
+    [SerializeField] private UpgradePanelReferences _bots1Panel;
+    [FoldoutGroup("Simulation/Panels/Information Era")]
+    [SerializeField] private UpgradePanelReferences _bots2Panel;
+    [FoldoutGroup("Simulation/Panels/Information Era")]
+    [SerializeField] private UpgradePanelReferences _rockets1Panel;
+    [FoldoutGroup("Simulation/Panels/Information Era")]
+    [SerializeField] private UpgradePanelReferences _rockets2Panel;
+    [FoldoutGroup("Simulation/Panels/Information Era")]
+    [SerializeField] private UpgradePanelReferences _rockets3Panel;
+
+    [TabGroup("Simulation", "Panels")]
+    [FoldoutGroup("Simulation/Panels/Space Age")]
+    [SerializeField] private UpgradePanelReferences _sfacs1Panel;
+    [FoldoutGroup("Simulation/Panels/Space Age")]
+    [SerializeField] private UpgradePanelReferences _sfacs2Panel;
+    [FoldoutGroup("Simulation/Panels/Space Age")]
+    [SerializeField] private UpgradePanelReferences _sfacs3Panel;
+    [FoldoutGroup("Simulation/Panels/Space Age")]
+    [SerializeField] private UpgradePanelReferences _railgun1Panel;
+    [FoldoutGroup("Simulation/Panels/Space Age")]
+    [SerializeField] private UpgradePanelReferences _railgun2Panel;
+
+    #region Costs
 
     private readonly int counterMeteorCost = 4;
     private readonly int counterAiCost = 42;
@@ -50,7 +154,6 @@ public class ResearchManager : MonoBehaviour
     private readonly int advancedPhysics3Cost = 381;
     private readonly int advancedPhysics4Cost = 654;
 
-    // Foundational Era  
     private readonly int hunter1Cost = 2;
     private readonly int hunter2Cost = 20;
     private readonly int hunter3Cost = 40;
@@ -62,10 +165,8 @@ public class ResearchManager : MonoBehaviour
     private readonly int gatherer4Cost = 40;
 
     private readonly int workerBoostCost = 42;
-
     private readonly int citiesBoostCost = 1337;
 
-    // Information Era
     private readonly int factoriesBoostCost = 21;
 
     private readonly int bots1Cost = 211;
@@ -75,7 +176,6 @@ public class ResearchManager : MonoBehaviour
     private readonly int rockets2Cost = 2222;
     private readonly int rockets3Cost = 3333;
 
-    // Space Age
     private readonly int sfacs1Cost = 1221;
     private readonly int sfacs2Cost = 12221;
     private readonly int sfacs3Cost = 122221;
@@ -85,239 +185,157 @@ public class ResearchManager : MonoBehaviour
 
     #endregion
 
-    [SerializeField] private GameObject simulationCategory;
-    [SerializeField] private GameObject counterMeasuresCategory;
-    [SerializeField] private GameObject foundationalEraCategory;
-    [SerializeField] private GameObject educationCategory;
-    [SerializeField] private GameObject informationEraCategory;
-    [SerializeField] private GameObject spaceAgeCategory;
-
-    // Countermeasures
-    [SerializeField] private Button _counterMeteor;
-    [SerializeField] private GameObject _counterMeteorGo;
-    [SerializeField] private Button _counterAi;
-    [SerializeField] private GameObject _counterAiGo;
-    [SerializeField] private Button _counterGw;
-    [SerializeField] private GameObject _counterGwGo;
-
-    // Education
-    [SerializeField] private Button _engineering1;
-    [SerializeField] private GameObject _engineering1Go;
-    [SerializeField] private Button _engineering2;
-    [SerializeField] private GameObject _engineering2Go;
-    [SerializeField] private Button _engineering3;
-    [SerializeField] private GameObject _engineering3Go;
-
-    [SerializeField] private Button _shipping1;
-    [SerializeField] private GameObject _shipping1Go;
-    [SerializeField] private Button _shipping2;
-    [SerializeField] private GameObject _shipping2Go;
-
-    [SerializeField] private Button _worldTrade1;
-    [SerializeField] private GameObject _worldTrade1Go;
-    [SerializeField] private Button _worldTrade2;
-    [SerializeField] private GameObject _worldTrade2Go;
-    [SerializeField] private Button _worldTrade3;
-    [SerializeField] private GameObject _worldTrade3Go;
-
-    [SerializeField] private Button _worldPeace1;
-    [SerializeField] private GameObject _worldPeace1Go;
-    [SerializeField] private Button _worldPeace2;
-    [SerializeField] private GameObject _worldPeace2Go;
-    [SerializeField] private Button _worldPeace3;
-    [SerializeField] private GameObject _worldPeace3Go;
-    [SerializeField] private Button _worldPeace4;
-    [SerializeField] private GameObject _worldPeace4Go;
-
-    [SerializeField] private Button _mathematics1;
-    [SerializeField] private GameObject _mathematics1Go;
-    [SerializeField] private Button _mathematics2;
-    [SerializeField] private GameObject _mathematics2Go;
-    [SerializeField] private Button _mathematics3;
-    [SerializeField] private GameObject _mathematics3Go;
-
-    [SerializeField] private Button _advancedPhysics1;
-    [SerializeField] private GameObject _advancedPhysics1Go;
-    [SerializeField] private Button _advancedPhysics2;
-    [SerializeField] private GameObject _advancedPhysics2Go;
-    [SerializeField] private Button _advancedPhysics3;
-    [SerializeField] private GameObject _advancedPhysics3Go;
-    [SerializeField] private Button _advancedPhysics4;
-    [SerializeField] private GameObject _advancedPhysics4Go;
-
-    // Foundational
-    [SerializeField] private Button _hunter1;
-    [SerializeField] private GameObject _hunter1Go;
-    [SerializeField] private Button _hunter2;
-    [SerializeField] private GameObject _hunter2Go;
-    [SerializeField] private Button _hunter3;
-    [SerializeField] private GameObject _hunter3Go;
-    [SerializeField] private Button _hunter4;
-    [SerializeField] private GameObject _hunter4Go;
-
-    [SerializeField] private Button _gathering1;
-    [SerializeField] private GameObject _gathering1Go;
-    [SerializeField] private Button _gathering2;
-    [SerializeField] private GameObject _gathering2Go;
-    [SerializeField] private Button _gathering3;
-    [SerializeField] private GameObject _gathering3Go;
-    [SerializeField] private Button _gathering4;
-    [SerializeField] private GameObject _gathering4Go;
-
-    [SerializeField] private Button _workerBoost;
-    [SerializeField] private GameObject _workerBoostGo;
-
-    [SerializeField] private Button _citiesBoost;
-    [SerializeField] private GameObject _citiesBoostGo;
-
-    // Information
-    [SerializeField] private Button _factoriesBoost;
-    [SerializeField] private GameObject _factoriesBoostGo;
-
-    [SerializeField] private Button _bots1;
-    [SerializeField] private GameObject _bots1Go;
-    [SerializeField] private Button _bots2;
-    [SerializeField] private GameObject _bots2Go;
-
-    [SerializeField] private Button _rockets1;
-    [SerializeField] private GameObject _rockets1Go;
-    [SerializeField] private Button _rockets2;
-    [SerializeField] private GameObject _rockets2Go;
-    [SerializeField] private Button _rockets3;
-    [SerializeField] private GameObject _rockets3Go;
-
-    // Space Age
-    [SerializeField] private Button _sfacs1;
-    [SerializeField] private GameObject _sfacs1Go;
-    [SerializeField] private Button _sfacs2;
-    [SerializeField] private GameObject _sfacs2Go;
-    [SerializeField] private Button _sfacs3;
-    [SerializeField] private GameObject _sfacs3Go;
-
-
-    [SerializeField] private Button _railgun1;
-    [SerializeField] private GameObject _railgun1Go;
-    [SerializeField] private Button _railgun2;
-    [SerializeField] private GameObject _railgun2Go;
-
     #endregion
 
     #region Reality References
 
-    #region Costs
+    [TabGroup("Reality", "Categories")]
+    [SerializeField] private GameObject realityCategory;
+    [TabGroup("Reality", "Categories")]
+    [SerializeField] private GameObject anomalyCategory;
+    [TabGroup("Reality", "Categories")]
+    [SerializeField] private GameObject translationCategory;
+    [TabGroup("Reality", "Categories")]
+    [SerializeField] private GameObject speedCategory;
+    [TabGroup("Reality", "Categories")]
+    [SerializeField] private GameObject qolComplete;
 
-    // Translation
-    [OnValueChanged("SetCostsToAnomaly")] public int translation1Cost = 4;
-    [OnValueChanged("SetCostsToAnomaly")] public int translation2Cost = 32;
-    [OnValueChanged("SetCostsToAnomaly")] public int translation3Cost = 128;
-    [OnValueChanged("SetCostsToAnomaly")] public int translation4Cost = 512;
-    [OnValueChanged("SetCostsToAnomaly")] public int translation5Cost = 8192;
-    [OnValueChanged("SetCostsToAnomaly")] public int translation6Cost = 65536;
-    [OnValueChanged("SetCostsToAnomaly")] public int translation7Cost = 1048576;
-    [OnValueChanged("SetCostsToAnomaly")] public int translation8Cost = 16777216;
+    [TabGroup("Reality", "Panels")]
+    [FoldoutGroup("Reality/Panels/Translation")]
+    [SerializeField] private UpgradePanelReferences _translation1Panel;
+    [FoldoutGroup("Reality/Panels/Translation")]
+    [SerializeField] private UpgradePanelReferences _translation2Panel;
+    [FoldoutGroup("Reality/Panels/Translation")]
+    [SerializeField] private UpgradePanelReferences _translation3Panel;
+    [FoldoutGroup("Reality/Panels/Translation")]
+    [SerializeField] private UpgradePanelReferences _translation4Panel;
+    [FoldoutGroup("Reality/Panels/Translation")]
+    [SerializeField] private UpgradePanelReferences _translation5Panel;
+    [FoldoutGroup("Reality/Panels/Translation")]
+    [SerializeField] private UpgradePanelReferences _translation6Panel;
+    [FoldoutGroup("Reality/Panels/Translation")]
+    [SerializeField] private UpgradePanelReferences _translation7Panel;
+    [FoldoutGroup("Reality/Panels/Translation")]
+    [SerializeField] private UpgradePanelReferences _translation8Panel;
 
+    [TabGroup("Reality", "Panels")]
+    [FoldoutGroup("Reality/Panels/Speed")]
+    [SerializeField] private UpgradePanelReferences _speed1Panel;
+    [FoldoutGroup("Reality/Panels/Speed")]
+    [SerializeField] private UpgradePanelReferences _speed2Panel;
+    [FoldoutGroup("Reality/Panels/Speed")]
+    [SerializeField] private UpgradePanelReferences _speed3Panel;
+    [FoldoutGroup("Reality/Panels/Speed")]
+    [SerializeField] private UpgradePanelReferences _speed4Panel;
+    [FoldoutGroup("Reality/Panels/Speed")]
+    [SerializeField] private UpgradePanelReferences _speed5Panel;
+    [FoldoutGroup("Reality/Panels/Speed")]
+    [SerializeField] private UpgradePanelReferences _speed6Panel;
+    [FoldoutGroup("Reality/Panels/Speed")]
+    [SerializeField] private UpgradePanelReferences _speed7Panel;
+    [FoldoutGroup("Reality/Panels/Speed")]
+    [SerializeField] private UpgradePanelReferences _speed8Panel;
 
-    // Speed    
-    [OnValueChanged("SetCostsToAnomaly")] public int speed1Cost = 16;
-    [OnValueChanged("SetCostsToAnomaly")] public int speed2Cost = 256;
-    [OnValueChanged("SetCostsToAnomaly")] public int speed3Cost = 4096;
-    [OnValueChanged("SetCostsToAnomaly")] public int speed4Cost = 16384;
-    [OnValueChanged("SetCostsToAnomaly")] public int speed5Cost = 262144;
-    [OnValueChanged("SetCostsToAnomaly")] public int speed6Cost = 4194304;
-    [OnValueChanged("SetCostsToAnomaly")] public int speed7Cost = 67108864;
-    [OnValueChanged("SetCostsToAnomaly")] public int speed8Cost = 268435456;
+    [TabGroup("Reality", "Panels")]
+    [FoldoutGroup("Reality/Panels/QOL")]
+    [SerializeField] private UpgradePanelReferences _doubleTimePanel;
+    [FoldoutGroup("Reality/Panels/QOL")]
+    [SerializeField] private UpgradePanelReferences _autoGatherInfluencePanel;
 
-    // Translation
-    [SerializeField] private TMP_Text translation1Text;
-    [SerializeField] private TMP_Text translation2Text;
-    [SerializeField] private TMP_Text translation3Text;
-    [SerializeField] private TMP_Text translation4Text;
-    [SerializeField] private TMP_Text translation5Text;
-    [SerializeField] private TMP_Text translation6Text;
-    [SerializeField] private TMP_Text translation7Text;
-    [SerializeField] private TMP_Text translation8Text;
+    [TabGroup("Reality", "Costs")]
+    [FoldoutGroup("Reality/Costs/Translation Costs")]
+    [OnValueChanged("UpdateTranslationCostTexts")] public int translation1Cost = 8;
+    [FoldoutGroup("Reality/Costs/Translation Costs")]
+    [OnValueChanged("UpdateTranslationCostTexts")] public int translation2Cost = 16;
+    [FoldoutGroup("Reality/Costs/Translation Costs")]
+    [OnValueChanged("UpdateTranslationCostTexts")] public int translation3Cost = 32;
+    [FoldoutGroup("Reality/Costs/Translation Costs")]
+    [OnValueChanged("UpdateTranslationCostTexts")] public int translation4Cost = 64;
+    [FoldoutGroup("Reality/Costs/Translation Costs")]
+    [OnValueChanged("UpdateTranslationCostTexts")] public int translation5Cost = 128;
+    [FoldoutGroup("Reality/Costs/Translation Costs")]
+    [OnValueChanged("UpdateTranslationCostTexts")] public int translation6Cost = 256;
+    [FoldoutGroup("Reality/Costs/Translation Costs")]
+    [OnValueChanged("UpdateTranslationCostTexts")] public int translation7Cost = 512;
+    [FoldoutGroup("Reality/Costs/Translation Costs")]
+    [OnValueChanged("UpdateTranslationCostTexts")] public int translation8Cost = 1024;
 
+    [TabGroup("Reality", "Costs")]
+    [FoldoutGroup("Reality/Costs/Speed Costs")]
+    [OnValueChanged("UpdateSpeedCostTexts")] public int speed1Cost = 2048;
+    [FoldoutGroup("Reality/Costs/Speed Costs")]
+    [OnValueChanged("UpdateSpeedCostTexts")] public int speed2Cost = 4096;
+    [FoldoutGroup("Reality/Costs/Speed Costs")]
+    [OnValueChanged("UpdateSpeedCostTexts")] public int speed3Cost = 8192;
+    [FoldoutGroup("Reality/Costs/Speed Costs")]
+    [OnValueChanged("UpdateSpeedCostTexts")] public int speed4Cost = 16384;
+    [FoldoutGroup("Reality/Costs/Speed Costs")]
+    [OnValueChanged("UpdateSpeedCostTexts")] public int speed5Cost = 32768;
+    [FoldoutGroup("Reality/Costs/Speed Costs")]
+    [OnValueChanged("UpdateSpeedCostTexts")] public int speed6Cost = 65536;
+    [FoldoutGroup("Reality/Costs/Speed Costs")]
+    [OnValueChanged("UpdateSpeedCostTexts")] public int speed7Cost = 131072;
+    [FoldoutGroup("Reality/Costs/Speed Costs")]
+    [OnValueChanged("UpdateSpeedCostTexts")] public int speed8Cost = 262144;
 
-    // Speed    
-    [SerializeField] private TMP_Text speed1Text;
-    [SerializeField] private TMP_Text speed2Text;
-    [SerializeField] private TMP_Text speed3Text;
-    [SerializeField] private TMP_Text speed4Text;
-    [SerializeField] private TMP_Text speed5Text;
-    [SerializeField] private TMP_Text speed6Text;
-    [SerializeField] private TMP_Text speed7Text;
-    [SerializeField] private TMP_Text speed8Text;
+    [TabGroup("Reality", "Costs")]
+    [FoldoutGroup("Reality/Costs/QOL Costs")]
+    private readonly int doubleTimeCost = 5;
+    [FoldoutGroup("Reality/Costs/QOL Costs")]
+    private readonly int automateGatherInfluenceCost = 10;
 
-    [ContextMenu("SetCosts")]
-    public void SetCostsToAnomaly()
+    [ContextMenu("Update Cost Texts")]
+    public void UpdateAllCostTexts()
     {
-        translation1Text.text = $"Translation I<size=70%> - {translation1Cost:N0}sm";
-        translation2Text.text = $"Translation II<size=70%> - {translation2Cost:N0}sm";
-        translation3Text.text = $"Translation III<size=70%> - {translation3Cost:N0}sm";
-        translation4Text.text = $"Translation IV<size=70%> - {translation4Cost:N0}sm";
-        translation5Text.text = $"Translation V<size=70%> - {translation5Cost:N0}sm";
-        translation6Text.text = $"Translation VI<size=70%> - {translation6Cost:N0}sm";
-        translation7Text.text = $"Translation VII<size=70%> - {translation7Cost:N0}sm";
-        translation8Text.text = $"Translation VIII<size=70%> - {translation8Cost:N0}sm";
-
-        speed1Text.text = $"Speed Reduction I<size=70%> - {speed1Cost:N0}sm";
-        speed2Text.text = $"Speed Reduction II<size=70%> - {speed2Cost:N0}sm";
-        speed3Text.text = $"Speed Reduction III<size=70%> - {speed3Cost:N0}sm";
-        speed4Text.text = $"Speed Reduction IV<size=70%> - {speed4Cost:N0}sm";
-        speed5Text.text = $"Speed Reduction V<size=70%> - {speed5Cost:N0}sm";
-        speed6Text.text = $"Speed Reduction VI<size=70%> - {speed6Cost:N0}sm";
-        speed7Text.text = $"Speed Reduction VII<size=70%> - {speed7Cost:N0}sm";
-        speed8Text.text = $"Speed Reduction VIII<size=70%> - {speed8Cost:N0}sm";
+        UpdateTranslationCostTexts();
+        UpdateSpeedCostTexts();
     }
 
-    // QOL
-    private readonly int doubleTimecost = 5;
-    private readonly int automateGatherInfluencecost = 10;
+    private void UpdateTranslationCostTexts()
+    {
+        var highlight = UIThemeProvider.TextColourBlue;
+        SetTitleText(_translation1Panel, FormatCost("Translation I", translation1Cost, highlight));
+        SetTitleText(_translation2Panel, FormatCost("Translation II", translation2Cost, highlight));
+        SetTitleText(_translation3Panel, FormatCost("Translation III", translation3Cost, highlight));
+        SetTitleText(_translation4Panel, FormatCost("Translation IV", translation4Cost, highlight));
+        SetTitleText(_translation5Panel, FormatCost("Translation V", translation5Cost, highlight));
+        SetTitleText(_translation6Panel, FormatCost("Translation VI", translation6Cost, highlight));
+        SetTitleText(_translation7Panel, FormatCost("Translation VII", translation7Cost, highlight));
+        SetTitleText(_translation8Panel, FormatCost("Translation VIII", translation8Cost, highlight));
+    }
 
-    #endregion
+    private void UpdateSpeedCostTexts()
+    {
+        var highlight = UIThemeProvider.TextColourBlue;
+        SetTitleText(_speed1Panel, FormatCost("Speed Reduction I", speed1Cost, highlight));
+        SetTitleText(_speed2Panel, FormatCost("Speed Reduction II", speed2Cost, highlight));
+        SetTitleText(_speed3Panel, FormatCost("Speed Reduction III", speed3Cost, highlight));
+        SetTitleText(_speed4Panel, FormatCost("Speed Reduction IV", speed4Cost, highlight));
+        SetTitleText(_speed5Panel, FormatCost("Speed Reduction V", speed5Cost, highlight));
+        SetTitleText(_speed6Panel, FormatCost("Speed Reduction VI", speed6Cost, highlight));
+        SetTitleText(_speed7Panel, FormatCost("Speed Reduction VII", speed7Cost, highlight));
+        SetTitleText(_speed8Panel, FormatCost("Speed Reduction VIII", speed8Cost, highlight));
+    }
 
-    // Translation
-    [SerializeField] private Button _translation1;
-    [SerializeField] private GameObject _translation1Go;
-    [SerializeField] private Button _translation2;
-    [SerializeField] private GameObject _translation2Go;
-    [SerializeField] private Button _translation3;
-    [SerializeField] private GameObject _translation3Go;
-    [SerializeField] private Button _translation4;
-    [SerializeField] private GameObject _translation4Go;
-    [SerializeField] private Button _translation5;
-    [SerializeField] private GameObject _translation5Go;
-    [SerializeField] private Button _translation6;
-    [SerializeField] private GameObject _translation6Go;
-    [SerializeField] private Button _translation7;
-    [SerializeField] private GameObject _translation7Go;
-    [SerializeField] private Button _translation8;
+    private void SetTitleText(UpgradePanelReferences panel, string text)
+    {
+        if (panel != null && panel.titleText != null)
+            panel.titleText.text = text;
+    }
 
-    [SerializeField] private GameObject _translation8Go;
+    private void SetPanelText(UpgradePanelReferences panel, string title, string description)
+    {
+        if (panel == null) return;
+        if (panel.titleText != null)
+            panel.titleText.text = title;
+        if (panel.descriptionText != null)
+            panel.descriptionText.text = description;
+    }
 
-    // Speed
-    [SerializeField] private Button _speed1;
-    [SerializeField] private GameObject _speed1Go;
-    [SerializeField] private Button _speed2;
-    [SerializeField] private GameObject _speed2Go;
-    [SerializeField] private Button _speed3;
-    [SerializeField] private GameObject _speed3Go;
-    [SerializeField] private Button _speed4;
-    [SerializeField] private GameObject _speed4Go;
-    [SerializeField] private Button _speed5;
-    [SerializeField] private GameObject _speed5Go;
-    [SerializeField] private Button _speed6;
-    [SerializeField] private GameObject _speed6Go;
-    [SerializeField] private Button _speed7;
-    [SerializeField] private GameObject _speed7Go;
-    [SerializeField] private Button _speed8;
-    [SerializeField] private GameObject _speed8Go;
-
-    // QOL
-    [SerializeField] private Button _doubleTime;
-    [SerializeField] private GameObject _doubleTimeGo;
-    [SerializeField] private Button _autoGatherInfluence;
-    [SerializeField] private GameObject _autoGatherInfluenceGo;
+    private string FormatCost(string name, int cost, string colorTag)
+    {
+        return $"{name}<size=70%> - {colorTag}{cost:N0}</color>sm";
+    }
 
     #endregion
 
@@ -340,96 +358,94 @@ public class ResearchManager : MonoBehaviour
 
     private void Start()
     {
+        InvokeRepeating(nameof(UpdateAndEnableResearches), 0, .1f);
+
         #region SimulationListeners
 
-        InvokeRepeating(nameof(UpdateAndEnableResearches), 0, .1f);
         // Countermeasures
-        _counterMeteor.onClick.AddListener(PurchaseCounterMeteor);
-        _counterAi.onClick.AddListener(PurchaseCounterAi);
-        _counterGw.onClick.AddListener(PurchaseCounterGw);
-        // Research
-        _engineering1.onClick.AddListener(() => PurchaseEducation(1));
-        _engineering2.onClick.AddListener(() => PurchaseEducation(2));
-        _engineering3.onClick.AddListener(() => PurchaseEducation(3));
+        if (_counterMeteorPanel != null) _counterMeteorPanel.purchaseButton.onClick.AddListener(PurchaseCounterMeteor);
+        if (_counterAiPanel != null) _counterAiPanel.purchaseButton.onClick.AddListener(PurchaseCounterAi);
+        if (_counterGwPanel != null) _counterGwPanel.purchaseButton.onClick.AddListener(PurchaseCounterGw);
 
-        _shipping1.onClick.AddListener(() => PurchaseEducation(4));
-        _shipping2.onClick.AddListener(() => PurchaseEducation(5));
+        // Education
+        if (_engineering1Panel != null) _engineering1Panel.purchaseButton.onClick.AddListener(() => PurchaseEducation(1));
+        if (_engineering2Panel != null) _engineering2Panel.purchaseButton.onClick.AddListener(() => PurchaseEducation(2));
+        if (_engineering3Panel != null) _engineering3Panel.purchaseButton.onClick.AddListener(() => PurchaseEducation(3));
+        if (_shipping1Panel != null) _shipping1Panel.purchaseButton.onClick.AddListener(() => PurchaseEducation(4));
+        if (_shipping2Panel != null) _shipping2Panel.purchaseButton.onClick.AddListener(() => PurchaseEducation(5));
+        if (_worldTrade1Panel != null) _worldTrade1Panel.purchaseButton.onClick.AddListener(() => PurchaseEducation(6));
+        if (_worldTrade2Panel != null) _worldTrade2Panel.purchaseButton.onClick.AddListener(() => PurchaseEducation(7));
+        if (_worldTrade3Panel != null) _worldTrade3Panel.purchaseButton.onClick.AddListener(() => PurchaseEducation(8));
+        if (_worldPeace1Panel != null) _worldPeace1Panel.purchaseButton.onClick.AddListener(() => PurchaseEducation(9));
+        if (_worldPeace2Panel != null) _worldPeace2Panel.purchaseButton.onClick.AddListener(() => PurchaseEducation(10));
+        if (_worldPeace3Panel != null) _worldPeace3Panel.purchaseButton.onClick.AddListener(() => PurchaseEducation(11));
+        if (_worldPeace4Panel != null) _worldPeace4Panel.purchaseButton.onClick.AddListener(() => PurchaseEducation(12));
+        if (_mathematics1Panel != null) _mathematics1Panel.purchaseButton.onClick.AddListener(() => PurchaseEducation(13));
+        if (_mathematics2Panel != null) _mathematics2Panel.purchaseButton.onClick.AddListener(() => PurchaseEducation(14));
+        if (_mathematics3Panel != null) _mathematics3Panel.purchaseButton.onClick.AddListener(() => PurchaseEducation(15));
+        if (_advancedPhysics1Panel != null) _advancedPhysics1Panel.purchaseButton.onClick.AddListener(() => PurchaseEducation(16));
+        if (_advancedPhysics2Panel != null) _advancedPhysics2Panel.purchaseButton.onClick.AddListener(() => PurchaseEducation(17));
+        if (_advancedPhysics3Panel != null) _advancedPhysics3Panel.purchaseButton.onClick.AddListener(() => PurchaseEducation(18));
+        if (_advancedPhysics4Panel != null) _advancedPhysics4Panel.purchaseButton.onClick.AddListener(() => PurchaseEducation(19));
 
-        _worldTrade1.onClick.AddListener(() => PurchaseEducation(6));
-        _worldTrade2.onClick.AddListener(() => PurchaseEducation(7));
-        _worldTrade3.onClick.AddListener(() => PurchaseEducation(8));
-
-        _worldPeace1.onClick.AddListener(() => PurchaseEducation(9));
-        _worldPeace2.onClick.AddListener(() => PurchaseEducation(10));
-        _worldPeace3.onClick.AddListener(() => PurchaseEducation(11));
-        _worldPeace4.onClick.AddListener(() => PurchaseEducation(12));
-
-        _mathematics1.onClick.AddListener(() => PurchaseEducation(13));
-        _mathematics2.onClick.AddListener(() => PurchaseEducation(14));
-        _mathematics3.onClick.AddListener(() => PurchaseEducation(15));
-
-        _advancedPhysics1.onClick.AddListener(() => PurchaseEducation(16));
-        _advancedPhysics2.onClick.AddListener(() => PurchaseEducation(17));
-        _advancedPhysics3.onClick.AddListener(() => PurchaseEducation(18));
-        _advancedPhysics4.onClick.AddListener(() => PurchaseEducation(19));
         // Foundational Era
-        _hunter1.onClick.AddListener(() => PurchaseFoundation(1));
-        _hunter2.onClick.AddListener(() => PurchaseFoundation(2));
-        _hunter3.onClick.AddListener(() => PurchaseFoundation(3));
-        _hunter4.onClick.AddListener(() => PurchaseFoundation(4));
+        if (_hunter1Panel != null) _hunter1Panel.purchaseButton.onClick.AddListener(() => PurchaseFoundation(1));
+        if (_hunter2Panel != null) _hunter2Panel.purchaseButton.onClick.AddListener(() => PurchaseFoundation(2));
+        if (_hunter3Panel != null) _hunter3Panel.purchaseButton.onClick.AddListener(() => PurchaseFoundation(3));
+        if (_hunter4Panel != null) _hunter4Panel.purchaseButton.onClick.AddListener(() => PurchaseFoundation(4));
+        if (_gathering1Panel != null) _gathering1Panel.purchaseButton.onClick.AddListener(() => PurchaseFoundation(5));
+        if (_gathering2Panel != null) _gathering2Panel.purchaseButton.onClick.AddListener(() => PurchaseFoundation(6));
+        if (_gathering3Panel != null) _gathering3Panel.purchaseButton.onClick.AddListener(() => PurchaseFoundation(7));
+        if (_gathering4Panel != null) _gathering4Panel.purchaseButton.onClick.AddListener(() => PurchaseFoundation(8));
+        if (_workerBoostPanel != null) _workerBoostPanel.purchaseButton.onClick.AddListener(() => PurchaseFoundation(9));
+        if (_citiesBoostPanel != null) _citiesBoostPanel.purchaseButton.onClick.AddListener(() => PurchaseFoundation(10));
 
-        _gathering1.onClick.AddListener(() => PurchaseFoundation(5));
-        _gathering2.onClick.AddListener(() => PurchaseFoundation(6));
-        _gathering3.onClick.AddListener(() => PurchaseFoundation(7));
-        _gathering4.onClick.AddListener(() => PurchaseFoundation(8));
-
-        _workerBoost.onClick.AddListener(() => PurchaseFoundation(9));
-
-        _citiesBoost.onClick.AddListener(() => PurchaseFoundation(10));
         // Information Era
-        _factoriesBoost.onClick.AddListener(() => PurchaseInformation(1));
+        if (_factoriesBoostPanel != null) _factoriesBoostPanel.purchaseButton.onClick.AddListener(() => PurchaseInformation(1));
+        if (_bots1Panel != null) _bots1Panel.purchaseButton.onClick.AddListener(() => PurchaseInformation(2));
+        if (_bots2Panel != null) _bots2Panel.purchaseButton.onClick.AddListener(() => PurchaseInformation(3));
+        if (_rockets1Panel != null) _rockets1Panel.purchaseButton.onClick.AddListener(() => PurchaseInformation(4));
+        if (_rockets2Panel != null) _rockets2Panel.purchaseButton.onClick.AddListener(() => PurchaseInformation(5));
+        if (_rockets3Panel != null) _rockets3Panel.purchaseButton.onClick.AddListener(() => PurchaseInformation(6));
 
-        _bots1.onClick.AddListener(() => PurchaseInformation(2));
-        _bots2.onClick.AddListener(() => PurchaseInformation(3));
-
-        _rockets1.onClick.AddListener(() => PurchaseInformation(4));
-        _rockets2.onClick.AddListener(() => PurchaseInformation(5));
-        _rockets3.onClick.AddListener(() => PurchaseInformation(6));
         // Space Age
-        _sfacs1.onClick.AddListener(() => PurchaseSpaceAge(1));
-        _sfacs2.onClick.AddListener(() => PurchaseSpaceAge(2));
-        _sfacs3.onClick.AddListener(() => PurchaseSpaceAge(3));
-
-        _railgun1.onClick.AddListener(() => PurchaseSpaceAge(4));
-        _railgun2.onClick.AddListener(() => PurchaseSpaceAge(5));
+        if (_sfacs1Panel != null) _sfacs1Panel.purchaseButton.onClick.AddListener(() => PurchaseSpaceAge(1));
+        if (_sfacs2Panel != null) _sfacs2Panel.purchaseButton.onClick.AddListener(() => PurchaseSpaceAge(2));
+        if (_sfacs3Panel != null) _sfacs3Panel.purchaseButton.onClick.AddListener(() => PurchaseSpaceAge(3));
+        if (_railgun1Panel != null) _railgun1Panel.purchaseButton.onClick.AddListener(() => PurchaseSpaceAge(4));
+        if (_railgun2Panel != null) _railgun2Panel.purchaseButton.onClick.AddListener(() => PurchaseSpaceAge(5));
 
         #endregion
 
         #region RealityListeners
 
-        _translation1.onClick.AddListener(() => PurchaseTranslation(1));
-        _translation2.onClick.AddListener(() => PurchaseTranslation(2));
-        _translation3.onClick.AddListener(() => PurchaseTranslation(3));
-        _translation4.onClick.AddListener(() => PurchaseTranslation(4));
-        _translation5.onClick.AddListener(() => PurchaseTranslation(5));
-        _translation6.onClick.AddListener(() => PurchaseTranslation(6));
-        _translation7.onClick.AddListener(() => PurchaseTranslation(7));
-        _translation8.onClick.AddListener(() => PurchaseTranslation(8));
+        // Translation
+        if (_translation1Panel != null) _translation1Panel.purchaseButton.onClick.AddListener(() => PurchaseTranslation(1));
+        if (_translation2Panel != null) _translation2Panel.purchaseButton.onClick.AddListener(() => PurchaseTranslation(2));
+        if (_translation3Panel != null) _translation3Panel.purchaseButton.onClick.AddListener(() => PurchaseTranslation(3));
+        if (_translation4Panel != null) _translation4Panel.purchaseButton.onClick.AddListener(() => PurchaseTranslation(4));
+        if (_translation5Panel != null) _translation5Panel.purchaseButton.onClick.AddListener(() => PurchaseTranslation(5));
+        if (_translation6Panel != null) _translation6Panel.purchaseButton.onClick.AddListener(() => PurchaseTranslation(6));
+        if (_translation7Panel != null) _translation7Panel.purchaseButton.onClick.AddListener(() => PurchaseTranslation(7));
+        if (_translation8Panel != null) _translation8Panel.purchaseButton.onClick.AddListener(() => PurchaseTranslation(8));
 
-        _speed1.onClick.AddListener(() => PurchaseSpeed(1));
-        _speed2.onClick.AddListener(() => PurchaseSpeed(2));
-        _speed3.onClick.AddListener(() => PurchaseSpeed(3));
-        _speed4.onClick.AddListener(() => PurchaseSpeed(4));
-        _speed5.onClick.AddListener(() => PurchaseSpeed(5));
-        _speed6.onClick.AddListener(() => PurchaseSpeed(6));
-        _speed7.onClick.AddListener(() => PurchaseSpeed(7));
-        _speed8.onClick.AddListener(() => PurchaseSpeed(8));
+        // Speed
+        if (_speed1Panel != null) _speed1Panel.purchaseButton.onClick.AddListener(() => PurchaseSpeed(1));
+        if (_speed2Panel != null) _speed2Panel.purchaseButton.onClick.AddListener(() => PurchaseSpeed(2));
+        if (_speed3Panel != null) _speed3Panel.purchaseButton.onClick.AddListener(() => PurchaseSpeed(3));
+        if (_speed4Panel != null) _speed4Panel.purchaseButton.onClick.AddListener(() => PurchaseSpeed(4));
+        if (_speed5Panel != null) _speed5Panel.purchaseButton.onClick.AddListener(() => PurchaseSpeed(5));
+        if (_speed6Panel != null) _speed6Panel.purchaseButton.onClick.AddListener(() => PurchaseSpeed(6));
+        if (_speed7Panel != null) _speed7Panel.purchaseButton.onClick.AddListener(() => PurchaseSpeed(7));
+        if (_speed8Panel != null) _speed8Panel.purchaseButton.onClick.AddListener(() => PurchaseSpeed(8));
 
-        _doubleTime.onClick.AddListener(PurchaseDoubleTime);
-
-        _autoGatherInfluence.onClick.AddListener(PurchaseAutomateInfluence);
+        // QOL
+        if (_doubleTimePanel != null) _doubleTimePanel.purchaseButton.onClick.AddListener(PurchaseDoubleTime);
+        if (_autoGatherInfluencePanel != null) _autoGatherInfluencePanel.purchaseButton.onClick.AddListener(PurchaseAutomateInfluence);
 
         #endregion
+
+        InitializeUpgradePanels();
     }
 
     private void Update()
@@ -791,17 +807,298 @@ public class ResearchManager : MonoBehaviour
     private void PurchaseDoubleTime()
     {
         sp.doubleTimeOwned = true;
-        sp.strangeMatter -= doubleTimecost;
+        sp.strangeMatter -= doubleTimeCost;
         sp.doubleTime = 600;
     }
 
     private void PurchaseAutomateInfluence()
     {
         oracle.saveSettings.saveData.workerAutoConvert = true;
-        sp.strangeMatter -= automateGatherInfluencecost;
+        sp.strangeMatter -= automateGatherInfluenceCost;
     }
 
     #endregion
+
+    private void InitializeUpgradePanels()
+    {
+        var highlight = UIThemeProvider.TextColourBlue;
+
+        #region Countermeasures
+
+        SetPanelText(_counterMeteorPanel,
+            FormatCost("Counteract Meteor Storm", counterMeteorCost, highlight),
+            "Override the simulation deleting all space rocks.");
+
+        SetPanelText(_counterAiPanel,
+            FormatCost("Counteract AI Overlords", counterAiCost, highlight),
+            "Squish some bugs, no more Overlords.");
+
+        SetPanelText(_counterGwPanel,
+            FormatCost("Counteract Global Warming", counterGwCost, highlight),
+            "Switching to friendlier rocket fuel should help.");
+
+        #endregion
+
+        #region Education
+
+        SetPanelText(_engineering1Panel,
+            FormatCost("Engineering I", engineering1Cost, highlight),
+            $"Better algorithms. {highlight}10</color>m -> {highlight}5</color>m");
+
+        SetPanelText(_engineering2Panel,
+            FormatCost("Engineering II", engineering2Cost, highlight),
+            $"Even better algorithms. {highlight}5</color>m -> {highlight}1</color>m");
+
+        SetPanelText(_engineering3Panel,
+            FormatCost("Engineering III", engineering3Cost, highlight),
+            "I'm over this, aren't you?");
+
+        SetPanelText(_shipping1Panel,
+            FormatCost("Shipping I", shipping1Cost, highlight),
+            $"Ship with ships or.. Trucks. {highlight}30</color>m -> {highlight}10</color>m");
+
+        SetPanelText(_shipping2Panel,
+            FormatCost("Shipping II", shipping2Cost, highlight),
+            "Just teleport the stuff already.");
+
+        SetPanelText(_worldTrade1Panel,
+            FormatCost("World Trade I", worldTrade1Cost, highlight),
+            $"Global trading in its raw form. {highlight}1</color>h -> {highlight}30</color>m");
+
+        SetPanelText(_worldTrade2Panel,
+            FormatCost("World Trade II", worldTrade2Cost, highlight),
+            $"Zip here, zip there, zip everywhere. {highlight}30</color>m -> {highlight}10</color>m");
+
+        SetPanelText(_worldTrade3Panel,
+            FormatCost("World Trade III", worldTrade3Cost, highlight),
+            "No push button anymore.");
+
+        SetPanelText(_worldPeace1Panel,
+            FormatCost("World Peace I", worldPeace1Cost, highlight),
+            $"Put those weapons away. {highlight}2</color>h -> {highlight}1</color>h");
+
+        SetPanelText(_worldPeace2Panel,
+            FormatCost("World Peace II", worldPeace2Cost, highlight),
+            $"Global contracting. {highlight}1</color>h -> {highlight}30</color>m");
+
+        SetPanelText(_worldPeace3Panel,
+            FormatCost("World Peace III", worldPeace3Cost, highlight),
+            $"No more hackers. {highlight}30</color>m -> {highlight}10</color>m");
+
+        SetPanelText(_worldPeace4Panel,
+            FormatCost("World Peace IV", worldPeace4Cost, highlight),
+            "Toggle booleans, why waste CPU on war.");
+
+        SetPanelText(_mathematics1Panel,
+            FormatCost("Mathematics I", mathematics1Cost, highlight),
+            $"{highlight}1</color>+{highlight}1</color>=a, a = window. {highlight}1</color>h -> {highlight}30</color>m");
+
+        SetPanelText(_mathematics2Panel,
+            FormatCost("Mathematics II", mathematics2Cost, highlight),
+            $"{highlight}3.14159265358979323</color> = Yum. {highlight}30</color>m -> {highlight}10</color>m");
+
+        SetPanelText(_mathematics3Panel,
+            FormatCost("Mathematics III", mathematics3Cost, highlight),
+            $"Division by {highlight}0</color>, oh its free?");
+
+        SetPanelText(_advancedPhysics1Panel,
+            FormatCost("Advanced Physics I", advancedPhysics1Cost, highlight),
+            $"Jenga Training. {highlight}2</color>h -> {highlight}1</color>h");
+
+        SetPanelText(_advancedPhysics2Panel,
+            FormatCost("Advanced Physics II", advancedPhysics2Cost, highlight),
+            $"Parkour. {highlight}1</color>h -> {highlight}30</color>m");
+
+        SetPanelText(_advancedPhysics3Panel,
+            FormatCost("Advanced Physics III", advancedPhysics3Cost, highlight),
+            $"Thrust Vectors. {highlight}30</color>m -> {highlight}10</color>m");
+
+        SetPanelText(_advancedPhysics4Panel,
+            FormatCost("Advanced Physics IV", advancedPhysics4Cost, highlight),
+            "Fusion is for fusing, fission no more.");
+
+        #endregion
+
+        #region Foundational Era
+
+        SetPanelText(_hunter1Panel,
+            FormatCost("Start with 1 Hunter", hunter1Cost, highlight),
+            "Override saveData: You've done this part before.");
+
+        SetPanelText(_hunter2Panel,
+            FormatCost("Start with 10 Hunters", hunter2Cost, highlight),
+            "Override saveData: A head start never hurt.");
+
+        SetPanelText(_hunter3Panel,
+            FormatCost("Start with 1000 Hunters", hunter3Cost, highlight),
+            "Override saveData: Skip the early grind.");
+
+        SetPanelText(_hunter4Panel,
+            FormatCost("Purchase buys 1000 Hunters", hunter4Cost, highlight),
+            "Tweak things.. A little?");
+
+        SetPanelText(_gathering1Panel,
+            FormatCost("Start with 1 Gatherer", gatherer1Cost, highlight),
+            "Override saveData: Time is precious.");
+
+        SetPanelText(_gathering2Panel,
+            FormatCost("Start with 10 Gatherers", gatherer2Cost, highlight),
+            "Override saveData: Why start from scratch?");
+
+        SetPanelText(_gathering3Panel,
+            FormatCost("Start with 1000 Gatherer", gatherer3Cost, highlight),
+            "Override saveData: Been there, done that.");
+
+        SetPanelText(_gathering4Panel,
+            FormatCost("Purchase buys 1000 Gatherers", gatherer4Cost, highlight),
+            "Twice, why? Just because.");
+
+        SetPanelText(_workerBoostPanel,
+            FormatCost("Log10 Workers", workerBoostCost, highlight),
+            "Workers make other workers work more.");
+
+        SetPanelText(_citiesBoostPanel,
+            FormatCost("City Booster", citiesBoostCost, highlight),
+            "Cram more factories into each City.");
+
+        #endregion
+
+        #region Information Era
+
+        SetPanelText(_factoriesBoostPanel,
+            FormatCost("Factories", factoriesBoostCost, highlight),
+            $"More assembly lines = more bots {highlight}10</color>x more.");
+
+        SetPanelText(_bots1Panel,
+            FormatCost("Bots I", bots1Cost, highlight),
+            "Double the arms, double the work.");
+
+        SetPanelText(_bots2Panel,
+            FormatCost("Bots II", bots2Cost, highlight),
+            "Project stacking, produce double the rockets.");
+
+        SetPanelText(_rockets1Panel,
+            FormatCost("Rockets I", rockets1Cost, highlight),
+            "Bigger rockets carry more materials.");
+
+        SetPanelText(_rockets2Panel,
+            FormatCost("Rockets II", rockets2Cost, highlight),
+            "Better packing, no more gaps.");
+
+        SetPanelText(_rockets3Panel,
+            FormatCost("Rockets III", rockets3Cost, highlight),
+            "It's bigger on the inside?");
+
+        #endregion
+
+        #region Space Age
+
+        SetPanelText(_sfacs1Panel,
+            FormatCost("Space Factories I", sfacs1Cost, highlight),
+            $"{highlight}1</color>*{highlight}2</color> = {highlight}2</color>");
+
+        SetPanelText(_sfacs2Panel,
+            FormatCost("Space Factories II", sfacs2Cost, highlight),
+            $"{highlight}1</color>*{highlight}2</color>*{highlight}2</color> = {highlight}4</color>");
+
+        SetPanelText(_sfacs3Panel,
+            FormatCost("Space Factories III", sfacs3Cost, highlight),
+            $"{highlight}1</color>*{highlight}2</color>*{highlight}2</color>*{highlight}2</color> = {highlight}8</color>");
+
+        SetPanelText(_railgun1Panel,
+            FormatCost("Railguns I", railguns1Cost, highlight),
+            "Better Lubrication allows faster firing.");
+
+        SetPanelText(_railgun2Panel,
+            FormatCost("Railguns II", railguns2Cost, highlight),
+            "Break physics, we're tired of waiting around.");
+
+        #endregion
+
+        #region Reality - Translation
+
+        SetPanelText(_translation1Panel,
+            FormatCost("Translation I", translation1Cost, highlight),
+            $"Begin deciphering the anomaly's code.\nGain {highlight}1</color> skill point.");
+
+        SetPanelText(_translation2Panel,
+            FormatCost("Translation II", translation2Cost, highlight),
+            $"The patterns are starting to make sense.\nGain {highlight}1</color> skill point.");
+
+        SetPanelText(_translation3Panel,
+            FormatCost("Translation III", translation3Cost, highlight),
+            $"Progress! More symbols decoded.\nGain {highlight}1</color> skill point.");
+
+        SetPanelText(_translation4Panel,
+            FormatCost("Translation IV", translation4Cost, highlight),
+            $"Halfway through the translation.\nGain {highlight}1</color> skill point.");
+
+        SetPanelText(_translation5Panel,
+            FormatCost("Translation V", translation5Cost, highlight),
+            $"The anomaly's secrets unfold.\nGain {highlight}1</color> skill point.");
+
+        SetPanelText(_translation6Panel,
+            FormatCost("Translation VI", translation6Cost, highlight),
+            $"Almost there, keep translating.\nGain {highlight}1</color> skill point.");
+
+        SetPanelText(_translation7Panel,
+            FormatCost("Translation VII", translation7Cost, highlight),
+            $"The final pieces fall into place.\nGain {highlight}1</color> skill point.");
+
+        SetPanelText(_translation8Panel,
+            FormatCost("Translation VIII", translation8Cost, highlight),
+            $"Finally finish translating the anomaly!\nGain {highlight}1</color> skill point.");
+
+        #endregion
+
+        #region Reality - Speed
+
+        SetPanelText(_speed1Panel,
+            FormatCost("Speed Reduction I", speed1Cost, highlight),
+            $"{highlight}100</color>% -> {highlight}95</color>% - Magnetic fields?\nGain {highlight}1</color> skill point.");
+
+        SetPanelText(_speed2Panel,
+            FormatCost("Speed Reduction II", speed2Cost, highlight),
+            $"{highlight}95</color>% -> {highlight}90</color>% - Throw it at a wall?\nGain {highlight}1</color> skill point.");
+
+        SetPanelText(_speed3Panel,
+            FormatCost("Speed Reduction III", speed3Cost, highlight),
+            $"{highlight}90</color>% -> {highlight}80</color>% - Smack it with a bat?\nGain {highlight}1</color> skill point.");
+
+        SetPanelText(_speed4Panel,
+            FormatCost("Speed Reduction IV", speed4Cost, highlight),
+            $"{highlight}80</color>% -> {highlight}70</color>% - Put it under a metal press?\nGain {highlight}1</color> skill point.");
+
+        SetPanelText(_speed5Panel,
+            FormatCost("Speed Reduction V", speed5Cost, highlight),
+            $"{highlight}70</color>% -> {highlight}50</color>% - Bombard it with radiation?\nGain {highlight}1</color> skill point.");
+
+        SetPanelText(_speed6Panel,
+            FormatCost("Speed Reduction VI", speed6Cost, highlight),
+            $"{highlight}50</color>% -> {highlight}25</color>% - Design an inception machine.\nGain {highlight}1</color> skill point.");
+
+        SetPanelText(_speed7Panel,
+            FormatCost("Speed Reduction VII", speed7Cost, highlight),
+            $"{highlight}25</color>% -> {highlight}10</color>% - Go down a few layers.\nGain {highlight}1</color> skill point.");
+
+        SetPanelText(_speed8Panel,
+            FormatCost("Speed Reduction VIII", speed8Cost, highlight),
+            $"{highlight}10</color>% -> {highlight}0</color>% - Comprehention.\nGain {highlight}1</color> skill point.");
+
+        #endregion
+
+        #region Reality - QOL
+
+        SetPanelText(_autoGatherInfluencePanel,
+            FormatCost("Automate Gather Influence", automateGatherInfluenceCost, highlight),
+            "No longer feel the need to click gather influence");
+
+        SetPanelText(_doubleTimePanel,
+            FormatCost("Enable Time Multiplier", doubleTimeCost, highlight),
+            "Gather time while offline, spend it while online.");
+
+        #endregion
+    }
 
     private void UpdateAndEnableResearches()
     {
@@ -817,15 +1114,11 @@ public class ResearchManager : MonoBehaviour
                                      sp.counterMeteor && !sp.factoriesBoost || sp.counterMeteor && !sp.bots2 ||
                                      sp.counterMeteor && !sp.rockets3 || sp.counterGw && !sp.railguns2 ||
                                      sp.counterGw && !sp.sfacs3);
+
         counterMeasuresCategory.SetActive(!sp.counterGw);
-
-        _counterMeteor.interactable = sp.strangeMatter >= counterMeteorCost;
-        _counterMeteorGo.SetActive(!sp.counterMeteor);
-        _counterAi.interactable = sp.strangeMatter >= counterAiCost;
-        _counterAiGo.SetActive(sp.counterMeteor && !sp.counterAi);
-        _counterGw.interactable = sp.strangeMatter >= counterGwCost;
-        _counterGwGo.SetActive(sp.counterAi && !sp.counterGw);
-
+        UpdatePanel(_counterMeteorPanel, sp.strangeMatter >= counterMeteorCost, !sp.counterMeteor);
+        UpdatePanel(_counterAiPanel, sp.strangeMatter >= counterAiCost, sp.counterMeteor && !sp.counterAi);
+        UpdatePanel(_counterGwPanel, sp.strangeMatter >= counterGwCost, sp.counterAi && !sp.counterGw);
 
         educationCategory.SetActive(sp.counterMeteor && !sp.engineering3 || sp.engineering3 && !sp.shipping2 ||
                                     sp.counterGw && !sp.shipping2 ||
@@ -841,151 +1134,59 @@ public class ResearchManager : MonoBehaviour
                                     sp.advancedPhysics2 && !sp.advancedPhysics3 ||
                                     sp.advancedPhysics3 && !sp.advancedPhysics4);
 
-        _engineering1.interactable = sp.strangeMatter >= engineering1Cost;
-        _engineering1Go.SetActive(sp.counterMeteor && !sp.engineering1);
-        _engineering2.interactable = sp.strangeMatter >= engineering2Cost;
-        _engineering2Go.SetActive(sp.engineering1 && !sp.engineering2);
-        _engineering3.interactable = sp.strangeMatter >= engineering3Cost;
-        _engineering3Go.SetActive(sp.engineering2 && !sp.engineering3);
+        UpdatePanel(_engineering1Panel, sp.strangeMatter >= engineering1Cost, sp.counterMeteor && !sp.engineering1);
+        UpdatePanel(_engineering2Panel, sp.strangeMatter >= engineering2Cost, sp.engineering1 && !sp.engineering2);
+        UpdatePanel(_engineering3Panel, sp.strangeMatter >= engineering3Cost, sp.engineering2 && !sp.engineering3);
+        UpdatePanel(_shipping1Panel, sp.strangeMatter >= shipping1Cost, sp.engineering1 && !sp.shipping1);
+        UpdatePanel(_shipping2Panel, sp.strangeMatter >= shipping2Cost, sp.shipping1 && !sp.shipping2);
+        UpdatePanel(_worldTrade1Panel, sp.strangeMatter >= worldTrade1Cost, sp.shipping1 && !sp.worldTrade1);
+        UpdatePanel(_worldTrade2Panel, sp.strangeMatter >= worldTrade2Cost, sp.worldTrade1 && !sp.worldTrade2);
+        UpdatePanel(_worldTrade3Panel, sp.strangeMatter >= worldTrade3Cost, sp.worldTrade2 && !sp.worldTrade3);
+        UpdatePanel(_worldPeace1Panel, sp.strangeMatter >= worldPeace1Cost, sp.worldTrade1 && !sp.worldPeace1);
+        UpdatePanel(_worldPeace2Panel, sp.strangeMatter >= worldPeace2Cost, sp.worldPeace1 && !sp.worldPeace2);
+        UpdatePanel(_worldPeace3Panel, sp.strangeMatter >= worldPeace3Cost, sp.worldPeace2 && !sp.worldPeace3);
+        UpdatePanel(_worldPeace4Panel, sp.strangeMatter >= worldPeace4Cost, sp.worldPeace3 && !sp.worldPeace4);
+        UpdatePanel(_mathematics1Panel, sp.strangeMatter >= mathematics1Cost, sp.counterAi && !sp.mathematics1);
+        UpdatePanel(_mathematics2Panel, sp.strangeMatter >= mathematics2Cost, sp.mathematics1 && !sp.mathematics2);
+        UpdatePanel(_mathematics3Panel, sp.strangeMatter >= mathematics3Cost, sp.mathematics2 && !sp.mathematics3);
+        UpdatePanel(_advancedPhysics1Panel, sp.strangeMatter >= advancedPhysics1Cost, sp.mathematics1 && !sp.advancedPhysics1);
+        UpdatePanel(_advancedPhysics2Panel, sp.strangeMatter >= advancedPhysics2Cost, sp.advancedPhysics1 && !sp.advancedPhysics2);
+        UpdatePanel(_advancedPhysics3Panel, sp.strangeMatter >= advancedPhysics3Cost, sp.advancedPhysics2 && !sp.advancedPhysics3);
+        UpdatePanel(_advancedPhysics4Panel, sp.strangeMatter >= advancedPhysics4Cost, sp.advancedPhysics3 && !sp.advancedPhysics4);
 
-        _shipping1.interactable = sp.strangeMatter >= shipping1Cost;
-        _shipping1Go.SetActive(sp.engineering1 && !sp.shipping1);
-        _shipping2.interactable = sp.strangeMatter >= shipping2Cost;
-        _shipping2Go.SetActive(sp.shipping1 && !sp.shipping2);
-
-        _worldTrade1.interactable = sp.strangeMatter >= worldTrade1Cost;
-        _worldTrade1Go.SetActive(sp.shipping1 && !sp.worldTrade1);
-        _worldTrade2.interactable = sp.strangeMatter >= worldTrade2Cost;
-        _worldTrade2Go.SetActive(sp.worldTrade1 && !sp.worldTrade2);
-        _worldTrade3.interactable = sp.strangeMatter >= worldTrade3Cost;
-        _worldTrade3Go.SetActive(sp.worldTrade2 && !sp.worldTrade3);
-
-        _worldPeace1.interactable = sp.strangeMatter >= worldPeace1Cost;
-        _worldPeace1Go.SetActive(sp.worldTrade1 && !sp.worldPeace1);
-        _worldPeace2.interactable = sp.strangeMatter >= worldPeace2Cost;
-        _worldPeace2Go.SetActive(sp.worldPeace1 && !sp.worldPeace2);
-        _worldPeace3.interactable = sp.strangeMatter >= worldPeace3Cost;
-        _worldPeace3Go.SetActive(sp.worldPeace2 && !sp.worldPeace3);
-        _worldPeace4.interactable = sp.strangeMatter >= worldPeace4Cost;
-        _worldPeace4Go.SetActive(sp.worldPeace3 && !sp.worldPeace4);
-
-        _mathematics1.interactable = sp.strangeMatter >= mathematics1Cost;
-        _mathematics1Go.SetActive(sp.counterAi && !sp.mathematics1);
-        _mathematics2.interactable = sp.strangeMatter >= mathematics2Cost;
-        _mathematics2Go.SetActive(sp.mathematics1 && !sp.mathematics2);
-        _mathematics3.interactable = sp.strangeMatter >= mathematics3Cost;
-        _mathematics3Go.SetActive(sp.mathematics2 && !sp.mathematics3);
-
-        _advancedPhysics1.interactable = sp.strangeMatter >= advancedPhysics1Cost;
-        _advancedPhysics1Go.SetActive(sp.mathematics1 && !sp.advancedPhysics1);
-        _advancedPhysics2.interactable = sp.strangeMatter >= advancedPhysics2Cost;
-        _advancedPhysics2Go.SetActive(sp.advancedPhysics1 && !sp.advancedPhysics2);
-        _advancedPhysics3.interactable = sp.strangeMatter >= advancedPhysics3Cost;
-        _advancedPhysics3Go.SetActive(sp.advancedPhysics2 && !sp.advancedPhysics3);
-        _advancedPhysics4.interactable = sp.strangeMatter >= advancedPhysics4Cost;
-        _advancedPhysics4Go.SetActive(sp.advancedPhysics3 && !sp.advancedPhysics4);
-
-        // Foundational Era    
         foundationalEraCategory.SetActive(!sp.hunter4 || !sp.gatherer4 || !sp.workerBoost || !sp.citiesBoost);
-        _hunter1.interactable = sp.strangeMatter >= hunter1Cost;
-        _hunter1Go.SetActive(!sp.hunter1);
-        _hunter2.interactable = sp.strangeMatter >= hunter2Cost;
-        _hunter2Go.SetActive(sp.hunter1 && !sp.hunter2);
-        _hunter3.interactable = sp.strangeMatter >= hunter3Cost;
-        _hunter3Go.SetActive(sp.hunter2 && !sp.hunter3);
-        _hunter4.interactable = sp.strangeMatter >= hunter4Cost;
-        _hunter4Go.SetActive(sp.hunter2 && !sp.hunter4);
+        UpdatePanel(_hunter1Panel, sp.strangeMatter >= hunter1Cost, !sp.hunter1);
+        UpdatePanel(_hunter2Panel, sp.strangeMatter >= hunter2Cost, sp.hunter1 && !sp.hunter2);
+        UpdatePanel(_hunter3Panel, sp.strangeMatter >= hunter3Cost, sp.hunter2 && !sp.hunter3);
+        UpdatePanel(_hunter4Panel, sp.strangeMatter >= hunter4Cost, sp.hunter2 && !sp.hunter4);
+        UpdatePanel(_gathering1Panel, sp.strangeMatter >= gatherer1Cost, !sp.gatherer1);
+        UpdatePanel(_gathering2Panel, sp.strangeMatter >= gatherer2Cost, sp.gatherer1 && !sp.gatherer2);
+        UpdatePanel(_gathering3Panel, sp.strangeMatter >= gatherer3Cost, sp.gatherer2 && !sp.gatherer3);
+        UpdatePanel(_gathering4Panel, sp.strangeMatter >= gatherer4Cost, sp.gatherer2 && !sp.gatherer4);
+        UpdatePanel(_workerBoostPanel, sp.strangeMatter >= workerBoostCost, !sp.workerBoost);
+        UpdatePanel(_citiesBoostPanel, sp.strangeMatter >= citiesBoostCost, sp.counterMeteor && !sp.citiesBoost);
 
-        _gathering1.interactable = sp.strangeMatter >= gatherer1Cost;
-        _gathering1Go.SetActive(!sp.gatherer1);
-        _gathering2.interactable = sp.strangeMatter >= gatherer2Cost;
-        _gathering2Go.SetActive(sp.gatherer1 && !sp.gatherer2);
-        _gathering3.interactable = sp.strangeMatter >= gatherer3Cost;
-        _gathering3Go.SetActive(sp.gatherer2 && !sp.gatherer3);
-        _gathering4.interactable = sp.strangeMatter >= gatherer4Cost;
-        _gathering4Go.SetActive(sp.gatherer2 && !sp.gatherer4);
-
-        _workerBoost.interactable = sp.strangeMatter >= workerBoostCost;
-        _workerBoostGo.SetActive(!sp.workerBoost);
-
-        _citiesBoost.interactable = sp.strangeMatter >= citiesBoostCost;
-        _citiesBoostGo.SetActive(sp.counterMeteor && !sp.citiesBoost);
-
-// Information Era
         informationEraCategory.SetActive(sp.counterAi && !sp.factoriesBoost || sp.counterAi && !sp.bots2 ||
                                          sp.counterAi && !sp.rockets3);
-        _factoriesBoost.interactable = sp.strangeMatter >= factoriesBoostCost;
-        _factoriesBoostGo.SetActive(sp.counterAi && !sp.factoriesBoost);
+        UpdatePanel(_factoriesBoostPanel, sp.strangeMatter >= factoriesBoostCost, sp.counterAi && !sp.factoriesBoost);
+        UpdatePanel(_bots1Panel, sp.strangeMatter >= bots1Cost, sp.counterAi && !sp.bots1);
+        UpdatePanel(_bots2Panel, sp.strangeMatter >= bots2Cost, sp.bots1 && !sp.bots2);
+        UpdatePanel(_rockets1Panel, sp.strangeMatter >= rockets1Cost, sp.counterGw && !sp.rockets1);
+        UpdatePanel(_rockets2Panel, sp.strangeMatter >= rockets2Cost, sp.rockets1 && !sp.rockets2);
+        UpdatePanel(_rockets3Panel, sp.strangeMatter >= rockets3Cost, sp.rockets2 && !sp.rockets3);
 
-        _bots1.interactable = sp.strangeMatter >= bots1Cost;
-        _bots1Go.SetActive(sp.counterAi && !sp.bots1);
-        _bots2.interactable = sp.strangeMatter >= bots2Cost;
-        _bots2Go.SetActive(sp.bots1 && !sp.bots2);
-
-        _rockets1.interactable = sp.strangeMatter >= rockets1Cost;
-        _rockets1Go.SetActive(sp.counterGw && !sp.rockets1);
-        _rockets2.interactable = sp.strangeMatter >= rockets2Cost;
-        _rockets2Go.SetActive(sp.rockets1 && !sp.rockets2);
-        _rockets3.interactable = sp.strangeMatter >= rockets3Cost;
-        _rockets3Go.SetActive(sp.rockets2 && !sp.rockets3);
-// Space Age
         spaceAgeCategory.SetActive(sp.counterGw && !sp.railguns2 || sp.counterGw && !sp.sfacs3);
-
-        _sfacs1.interactable = sp.strangeMatter >= sfacs1Cost;
-        _sfacs1Go.SetActive(sp.counterGw && !sp.sfacs1);
-        _sfacs2.interactable = sp.strangeMatter >= sfacs2Cost;
-        _sfacs2Go.SetActive(sp.sfacs1 && !sp.sfacs2);
-        _sfacs3.interactable = sp.strangeMatter >= sfacs3Cost;
-        _sfacs3Go.SetActive(sp.sfacs2 && !sp.sfacs3);
-
-        _railgun1.interactable = sp.strangeMatter >= railguns1Cost;
-        _railgun1Go.SetActive(sp.counterGw && !sp.railguns1);
-        _railgun2.interactable = sp.strangeMatter >= railguns2Cost;
-        _railgun2Go.SetActive(sp.railguns1 && !sp.railguns2);
+        UpdatePanel(_sfacs1Panel, sp.strangeMatter >= sfacs1Cost, sp.counterGw && !sp.sfacs1);
+        UpdatePanel(_sfacs2Panel, sp.strangeMatter >= sfacs2Cost, sp.sfacs1 && !sp.sfacs2);
+        UpdatePanel(_sfacs3Panel, sp.strangeMatter >= sfacs3Cost, sp.sfacs2 && !sp.sfacs3);
+        UpdatePanel(_railgun1Panel, sp.strangeMatter >= railguns1Cost, sp.counterGw && !sp.railguns1);
+        UpdatePanel(_railgun2Panel, sp.strangeMatter >= railguns2Cost, sp.railguns1 && !sp.railguns2);
 
         #endregion
 
         #region RealityEnablers
 
-        _translation1.interactable = sp.strangeMatter >= translation1Cost;
-        _translation1Go.SetActive(!sp.translation1);
-        _translation2.interactable = sp.strangeMatter >= translation2Cost;
-        _translation2Go.SetActive(sp.translation1 && !sp.translation2);
-        _translation3.interactable = sp.strangeMatter >= translation3Cost;
-        _translation3Go.SetActive(sp.translation2 && !sp.translation3);
-        _translation4.interactable = sp.strangeMatter >= translation4Cost;
-        _translation4Go.SetActive(sp.translation3 && !sp.translation4);
-        _translation5.interactable = sp.strangeMatter >= translation5Cost;
-        _translation5Go.SetActive(sp.translation4 && !sp.translation5);
-        _translation6.interactable = sp.strangeMatter >= translation6Cost;
-        _translation6Go.SetActive(sp.translation5 && !sp.translation6);
-        _translation7.interactable = sp.strangeMatter >= translation7Cost;
-        _translation7Go.SetActive(sp.translation6 && !sp.translation7);
-        _translation8.interactable = sp.strangeMatter >= translation8Cost;
-        _translation8Go.SetActive(sp.translation7 && !sp.translation8);
-
-        _speed1.interactable = sp.strangeMatter >= speed1Cost;
-        _speed1Go.SetActive(!sp.speed1);
-        _speed2.interactable = sp.strangeMatter >= speed2Cost;
-        _speed2Go.SetActive(sp.speed1 && !sp.speed2);
-        _speed3.interactable = sp.strangeMatter >= speed3Cost;
-        _speed3Go.SetActive(sp.speed2 && !sp.speed3);
-        _speed4.interactable = sp.strangeMatter >= speed4Cost;
-        _speed4Go.SetActive(sp.speed3 && !sp.speed4);
-        _speed5.interactable = sp.strangeMatter >= speed5Cost;
-        _speed5Go.SetActive(sp.speed4 && !sp.speed5);
-        _speed6.interactable = sp.strangeMatter >= speed6Cost;
-        _speed6Go.SetActive(sp.speed5 && !sp.speed6);
-        _speed7.interactable = sp.strangeMatter >= speed7Cost;
-        _speed7Go.SetActive(sp.speed6 && !sp.speed7);
-        _speed8.interactable = sp.strangeMatter >= speed8Cost;
-        _speed8Go.SetActive(sp.speed7 && !sp.speed8);
-
-        _doubleTime.interactable = sp.strangeMatter >= doubleTimecost;
-        _doubleTimeGo.SetActive(!sp.doubleTimeOwned);
-
-        _autoGatherInfluence.interactable = sp.strangeMatter >= automateGatherInfluencecost;
-        _autoGatherInfluenceGo.SetActive(!oracle.saveSettings.saveData.workerAutoConvert);
+        UpdateRealityPanels();
 
         realityCategory.SetActive(!sp.speed8 || !sp.translation8 || !sp.doubleTimeOwned ||
                                   !oracle.saveSettings.saveData.workerAutoConvert);
@@ -997,6 +1198,39 @@ public class ResearchManager : MonoBehaviour
         #endregion
     }
 
+    private void UpdateRealityPanels()
+    {
+        // Translation panels
+        UpdatePanel(_translation1Panel, sp.strangeMatter >= translation1Cost, !sp.translation1);
+        UpdatePanel(_translation2Panel, sp.strangeMatter >= translation2Cost, sp.translation1 && !sp.translation2);
+        UpdatePanel(_translation3Panel, sp.strangeMatter >= translation3Cost, sp.translation2 && !sp.translation3);
+        UpdatePanel(_translation4Panel, sp.strangeMatter >= translation4Cost, sp.translation3 && !sp.translation4);
+        UpdatePanel(_translation5Panel, sp.strangeMatter >= translation5Cost, sp.translation4 && !sp.translation5);
+        UpdatePanel(_translation6Panel, sp.strangeMatter >= translation6Cost, sp.translation5 && !sp.translation6);
+        UpdatePanel(_translation7Panel, sp.strangeMatter >= translation7Cost, sp.translation6 && !sp.translation7);
+        UpdatePanel(_translation8Panel, sp.strangeMatter >= translation8Cost, sp.translation7 && !sp.translation8);
+
+        // Speed panels
+        UpdatePanel(_speed1Panel, sp.strangeMatter >= speed1Cost, !sp.speed1);
+        UpdatePanel(_speed2Panel, sp.strangeMatter >= speed2Cost, sp.speed1 && !sp.speed2);
+        UpdatePanel(_speed3Panel, sp.strangeMatter >= speed3Cost, sp.speed2 && !sp.speed3);
+        UpdatePanel(_speed4Panel, sp.strangeMatter >= speed4Cost, sp.speed3 && !sp.speed4);
+        UpdatePanel(_speed5Panel, sp.strangeMatter >= speed5Cost, sp.speed4 && !sp.speed5);
+        UpdatePanel(_speed6Panel, sp.strangeMatter >= speed6Cost, sp.speed5 && !sp.speed6);
+        UpdatePanel(_speed7Panel, sp.strangeMatter >= speed7Cost, sp.speed6 && !sp.speed7);
+        UpdatePanel(_speed8Panel, sp.strangeMatter >= speed8Cost, sp.speed7 && !sp.speed8);
+
+        // QOL panels
+        UpdatePanel(_doubleTimePanel, sp.strangeMatter >= doubleTimeCost, !sp.doubleTimeOwned);
+        UpdatePanel(_autoGatherInfluencePanel, sp.strangeMatter >= automateGatherInfluenceCost, !oracle.saveSettings.saveData.workerAutoConvert);
+    }
+
+    private void UpdatePanel(UpgradePanelReferences panel, bool canAfford, bool shouldShow)
+    {
+        if (panel == null) return;
+        panel.SetInteractable(canAfford);
+        panel.SetVisible(shouldShow);
+    }
 
     private void ApplyResearch()
     {
@@ -1065,7 +1299,6 @@ public class ResearchManager : MonoBehaviour
         if (sp.sfacs1) sp.sfActivator1 = true;
         if (sp.sfacs2) sp.sfActivator2 = true;
         if (sp.sfacs3) sp.sfActivator3 = true;
-
 
         if (sp.railguns1) sp.railgunActivator1 = true;
         if (sp.railguns2) sp.railgunActivator2 = true;

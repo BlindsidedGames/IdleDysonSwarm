@@ -383,7 +383,7 @@ public class FoundationalEraManager : MonoBehaviour
             $"Influence heroic hunters to gather meat for your communities.\n\n" +
             $"Output: {blue}1</color> community/cycle\n" +
             $"Base Duration: {blue}{hunterDuration}</color>s\n" +
-            $"Speed Multiplier: ({blue}1</color> + Log{blue}₁₀</color>({blue}{sd1.hunters:N0}</color>)) × {blue}{globalMulti:N1}</color>\n" +
+            $"Speed Multiplier: ({blue}1</color> + Log{blue}₁₀</color>({blue}{sd1.hunters:N0}</color>)) × {blue}{globalMulti:N1}</color> = {blue}{effectiveMulti:N2}</color>\n" +
             $"Current Rate: {blue}{CalcUtils.FormatNumber(rate)}</color> community/s";
     }
 
@@ -400,7 +400,7 @@ public class FoundationalEraManager : MonoBehaviour
             $"Influence villagers to gather greens for your communities.\n\n" +
             $"Output: {blue}1</color> community/cycle\n" +
             $"Base Duration: {blue}{gatherDuration}</color>s\n" +
-            $"Speed Multiplier: ({blue}1</color> + Log{blue}₁₀</color>({blue}{sd1.gatherers:N0}</color>)) × {blue}{globalMulti:N1}</color>\n" +
+            $"Speed Multiplier: ({blue}1</color> + Log{blue}₁₀</color>({blue}{sd1.gatherers:N0}</color>)) × {blue}{globalMulti:N1}</color> = {blue}{effectiveMulti:N2}</color>\n" +
             $"Current Rate: {blue}{CalcUtils.FormatNumber(rate)}</color> community/s";
     }
 
@@ -419,7 +419,7 @@ public class FoundationalEraManager : MonoBehaviour
             $"Over time community brings people closer together, some decide to settle and build houses! Boosting community is free and doubles the speed of community.\n\n" +
             $"Output: {blue}1</color> housing/cycle\n" +
             $"Base Duration: {blue}{communityDuration}</color>s\n" +
-            $"Speed Multiplier: ({blue}1</color> + Log{blue}₁₀</color>({blue}{sd1.community:N0}</color>)) × {blue}{globalMulti:N1}</color>{boostStatus}\n" +
+            $"Speed Multiplier: ({blue}1</color> + Log{blue}₁₀</color>({blue}{sd1.community:N0}</color>)) × {blue}{globalMulti:N1}</color>{boostStatus} = {blue}{effectiveMulti:N2}</color>\n" +
             $"Current Rate: {blue}{CalcUtils.FormatNumber(rate)}</color> housing/s";
     }
 
@@ -436,7 +436,7 @@ public class FoundationalEraManager : MonoBehaviour
             $"Housing produces workers. Reaching {blue}{HousingToVillageCost}</color> housing automatically converts into a village.\n\n" +
             $"Output: {blue}1</color> worker/cycle\n" +
             $"Base Duration: {blue}{housingDuration}</color>s\n" +
-            $"Speed Multiplier: ({blue}1</color> + Log{blue}₁₀</color>({blue}{sd1.housing:N0}</color>)) × {blue}{globalMulti:N1}</color>\n" +
+            $"Speed Multiplier: ({blue}1</color> + Log{blue}₁₀</color>({blue}{sd1.housing:N0}</color>)) × {blue}{globalMulti:N1}</color> = {blue}{effectiveMulti:N2}</color>\n" +
             $"Current Rate: {blue}{CalcUtils.FormatNumber(rate)}</color> worker/s\n" +
             $"Conversion: {blue}{HousingToVillageCost}</color> housing → {blue}1</color> village";
     }
@@ -454,7 +454,7 @@ public class FoundationalEraManager : MonoBehaviour
             $"As settlements expand into villages, more workers join the cause. When enough villages unite, they form a bustling city.\n\n" +
             $"Output: {blue}2</color> workers/cycle\n" +
             $"Base Duration: {blue}{villagesDuration}</color>s\n" +
-            $"Speed Multiplier: ({blue}1</color> + Log{blue}₁₀</color>({blue}{sd1.villages:N0}</color>)) × {blue}{globalMulti:N1}</color>\n" +
+            $"Speed Multiplier: ({blue}1</color> + Log{blue}₁₀</color>({blue}{sd1.villages:N0}</color>)) × {blue}{globalMulti:N1}</color> = {blue}{effectiveMulti:N2}</color>\n" +
             $"Current Rate: {blue}{CalcUtils.FormatNumber(rate)}</color> workers/s\n" +
             $"Conversion: {blue}{VillageToCitiesCost}</color> villages → {blue}1</color> city";
     }
@@ -479,7 +479,7 @@ public class FoundationalEraManager : MonoBehaviour
             $"The workforce builds new housing, expanding civilization's reach. A larger workforce builds exponentially faster.\n\n" +
             $"Output: {blue}1</color> housing/cycle\n" +
             $"Base Duration: {blue}{workersDuration}</color>s\n" +
-            $"Speed Multiplier: {speedFormula}\n" +
+            $"Speed Multiplier: {speedFormula} = {blue}{effectiveMulti:N2}</color>\n" +
             $"Current Rate: {blue}{CalcUtils.FormatNumber(rate)}</color> housing/s";
     }
 
@@ -504,7 +504,7 @@ public class FoundationalEraManager : MonoBehaviour
             $"Output: {blue}5</color> workers/cycle\n" +
             factoryLine +
             $"Base Duration: {blue}{citiesDuration}</color>s\n" +
-            $"Speed Multiplier: ({blue}1</color> + Log{blue}₁₀</color>({blue}{sd1.cities:N0}</color>)) × {blue}{globalMulti:N1}</color>\n" +
+            $"Speed Multiplier: ({blue}1</color> + Log{blue}₁₀</color>({blue}{sd1.cities:N0}</color>)) × {blue}{globalMulti:N1}</color> = {blue}{effectiveMulti:N2}</color>\n" +
             $"Current Rate: {blue}{CalcUtils.FormatNumber(rate * 5)}</color> workers/s\n" +
             factoryRate;
     }
