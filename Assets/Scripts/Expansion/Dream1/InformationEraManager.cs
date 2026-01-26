@@ -670,7 +670,7 @@ public class InformationEraManager : MonoBehaviour
         if (sd1.worldTradeComplete) globalMulti *= 2;
         double effectiveMulti = _factoriesTimer.GetEffectiveMultiplier(sd1.factories, globalMulti);
         double rate = effectiveMulti > 0 ? effectiveMulti / factoriesDuration : 0;
-        long botsPerCycle = sp.factoriesBoostActivator ? sd1.factories * 9 : sd1.factories;
+        double botsPerCycle = sp.factoriesBoostActivator ? sd1.factories * 9 : sd1.factories;
 
         string blue = UIThemeProvider.TextColourBlue;
         string boostStatus = hasBoostedTime ? $" (Boosted {blue}×2</color>)" : "";
@@ -680,7 +680,7 @@ public class InformationEraManager : MonoBehaviour
             $"The engines of automation. Factories produce bots that will carry civilization to the stars. Boost costs {blue}5,000</color> Influence and doubles factory speed.\n\n" +
             $"Output: {blue}{botsPerCycle:N0}</color> bots/cycle\n" +
             $"Base Duration: {blue}{factoriesDuration}</color>s\n" +
-            $"Speed Multiplier: ({blue}1</color> + Log{blue}₁₀</color>({blue}{sd1.factories:N0}</color>)) × {blue}{globalMulti:N1}</color>{boostStatus}{shippingBonus}{tradeBonus}\n" +
+            $"Speed Multiplier: ({blue}1</color> + Log{blue}₁₀</color>({blue}{sd1.factories:N0}</color>)) × {blue}{globalMulti:N1}</color>{boostStatus}{shippingBonus}{tradeBonus} = {blue}{effectiveMulti:N2}</color>\n" +
             $"Current Rate: {blue}{CalcUtils.FormatNumber(rate * botsPerCycle)}</color> bots/s";
     }
 
@@ -704,7 +704,7 @@ public class InformationEraManager : MonoBehaviour
             $"Tireless mechanical workers assembling rockets for the final frontier. Bots ramp up slowly until reaching critical mass at {blue}100</color> units.\n\n" +
             $"Output: {blue}{rocketsPerCycle}</color> rockets/cycle\n" +
             $"Base Duration: {blue}{botsDuration}</color>s\n" +
-            $"Speed Multiplier: ({blue}1</color> + Log{blue}₁₀</color>({blue}{sd1.bots:N0}</color>)){softStartNote} × {blue}{globalMulti:N1}</color>{peaceBonus}\n" +
+            $"Speed Multiplier: ({blue}1</color> + Log{blue}₁₀</color>({blue}{sd1.bots:N0}</color>)){softStartNote} × {blue}{globalMulti:N1}</color>{peaceBonus} = {blue}{effectiveMulti:N2}</color>\n" +
             $"Current Rate: {blue}{CalcUtils.FormatNumber(rate * rocketsPerCycle)}</color> rockets/s";
     }
 

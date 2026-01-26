@@ -42,6 +42,10 @@ public class SpaceAgeManager : MonoBehaviour
     private float _fireTime;
     private int _fireTimes;
 
+    // Info description update debounce
+    private const float InfoUpdateInterval = 0.1f; // 10hz
+    private float _infoUpdateTimer;
+
     private void Start()
     {
         // Initialize timer with saved progress (must be in Start, after Oracle is initialized)
@@ -82,6 +86,13 @@ public class SpaceAgeManager : MonoBehaviour
             fusionPanel.actionButton.onClick.AddListener(BuyFusion);
         if (swarmStatsPanel?.actionButton != null)
             swarmStatsPanel.actionButton.onClick.AddListener(OnBlackHoleClick);
+
+        // Set info title texts
+        if (solarPanel?.infoTitleText != null) solarPanel.infoTitleText.text = "Solar Panels Info";
+        if (fusionPanel?.infoTitleText != null) fusionPanel.infoTitleText.text = "Fusion Info";
+        if (spaceFactoriesPanel?.infoTitleText != null) spaceFactoriesPanel.infoTitleText.text = "Space Factories Info";
+        if (railgunsPanel?.infoTitleText != null) railgunsPanel.infoTitleText.text = "Railguns Info";
+        if (swarmStatsPanel?.infoTitleText != null) swarmStatsPanel.infoTitleText.text = "Swarm Stats Info";
     }
 
     private void Update()
@@ -98,6 +109,14 @@ public class SpaceAgeManager : MonoBehaviour
         FireRailGun();
         SwarmStatsManagement();
         SyncTimerProgress();
+
+        // Update info descriptions at 10hz
+        _infoUpdateTimer += Time.deltaTime;
+        if (_infoUpdateTimer >= InfoUpdateInterval)
+        {
+            _infoUpdateTimer = 0;
+            UpdateInfoDescriptions();
+        }
     }
 
     private void UpdateVisibility()
@@ -382,6 +401,147 @@ public class SpaceAgeManager : MonoBehaviour
     {
         sd1.fusion++;
         sd.influence -= sd1.fusionCost;
+    }
+
+    #endregion
+
+    #region Info Descriptions
+
+    private void UpdateInfoDescriptions()
+    {
+        UpdateSolarInfoDescription();
+        UpdateFusionInfoDescription();
+        UpdateSpaceFactoriesInfoDescription();
+        UpdateRailgunsInfoDescription();
+        UpdateSwarmStatsInfoDescription();
+    }
+
+    private void UpdateSolarInfoDescription()
+    {
+        if (solarPanel?.infoDescriptionText == null) return;
+
+        string blue = UIThemeProvider.TextColourBlue;
+        double mathBonus = sd1.mathematicsComplete ? 2 : 1;
+        double doubleTimeMulti = sdp.doDoubleTime ? sdp.doubleTimeRate + 1 : 1;
+        double energyPerPanel = sd1.solarPanelGeneration * mathBonus * doubleTimeMulti;
+        double totalEnergy = sd1.solarPanels * energyPerPanel;
+
+        string mathBonusText = sd1.mathematicsComplete ? $" × Math {blue}×2</color>" : "";
+        string doubleTimeText = sdp.doDoubleTime ? $" × DoubleTime {blue}×{sdp.doubleTimeRate + 1}</color>" : "";
+
+        solarPanel.infoDescriptionText.text =
+            $"Harness the power of your local star with photovoltaic technology. In exchange for influence, you can purchase solar panels that steadily generate energy to fuel your growing infrastructure.\n\n" +
+            $"Cost: {blue}{sd1.solarCost:N0}</color> Influence\n" +
+            $"Output: {blue}100</color>W/panel{mathBonusText}{doubleTimeText}\n" +
+            $"Owned: {blue}{sd1.solarPanels:N0}</color> panels\n" +
+            $"Total Generation: {CalcUtils.FormatEnergy(totalEnergy, false, colourOverride: blue)}";
+    }
+
+    private void UpdateFusionInfoDescription()
+    {
+        if (fusionPanel?.infoDescriptionText == null) return;
+
+        string blue = UIThemeProvider.TextColourBlue;
+        double mathBonus = sd1.mathematicsComplete ? 2 : 1;
+        double doubleTimeMulti = sdp.doDoubleTime ? sdp.doubleTimeRate + 1 : 1;
+        double energyPerReactor = sd1.fusionGeneration * mathBonus * doubleTimeMulti;
+        double totalEnergy = sd1.fusion * energyPerReactor;
+
+        string mathBonusText = sd1.mathematicsComplete ? $" × Math {blue}×2</color>" : "";
+        string doubleTimeText = sdp.doDoubleTime ? $" × DoubleTime {blue}×{sdp.doubleTimeRate + 1}</color>" : "";
+
+        fusionPanel.infoDescriptionText.text =
+            $"The pinnacle of terrestrial energy production. Drop {blue}100,000</color> influence down a well, get a fusion reactor that produces {blue}1.25</color>MW of energy. That's how it works okay? Don't question it.\n\n" +
+            $"Cost: {blue}{sd1.fusionCost:N0}</color> Influence\n" +
+            $"Output: {blue}1.25</color>MW/reactor{mathBonusText}{doubleTimeText}\n" +
+            $"Owned: {blue}{sd1.fusion:N0}</color> reactors\n" +
+            $"Total Generation: {CalcUtils.FormatEnergy(totalEnergy, false, colourOverride: blue)}";
+    }
+
+    private void UpdateSpaceFactoriesInfoDescription()
+    {
+        if (spaceFactoriesPanel?.infoDescriptionText == null) return;
+
+        string blue = UIThemeProvider.TextColourBlue;
+        double globalMulti = GetGlobalMultiplier();
+        int boostCount = 0;
+        if (sdp.sfActivator1) { globalMulti *= 2; boostCount++; }
+        if (sdp.sfActivator2) { globalMulti *= 2; boostCount++; }
+        if (sdp.sfActivator3) { globalMulti *= 2; boostCount++; }
+
+        double effectiveMulti = _spaceFactoriesTimer.GetEffectiveMultiplier(sd1.spaceFactories, globalMulti);
+        double rate = effectiveMulti > 0 ? effectiveMulti / _factoriesDuration : 0;
+
+        string boostText = boostCount > 0 ? $" × Boost {blue}×{1 << boostCount}</color>" : "";
+
+        spaceFactoriesPanel.infoDescriptionText.text =
+            $"Orbital manufacturing at its finest. Space Factories produce specialized solar panels designed for extreme conditions, ready to be launched into the heart of your star system. Each factory can store up to {blue}1,000</color> panels awaiting launch.\n\n" +
+            $"Output: {blue}1</color> panel/cycle\n" +
+            $"Base Duration: {blue}{_factoriesDuration}</color>s\n" +
+            $"Speed Multiplier: ({blue}1</color> + Log{blue}₁₀</color>({blue}{sd1.spaceFactories:N0}</color>)) × {blue}{globalMulti:N1}</color>{boostText} = {blue}{effectiveMulti:N2}</color>\n" +
+            $"Current Rate: {blue}{CalcUtils.FormatNumber(rate)}</color> panels/s\n" +
+            $"Storage: {blue}{sd1.dysonPanels:N0}</color> / {blue}{DysonPanelCap}</color>";
+    }
+
+    private void UpdateRailgunsInfoDescription()
+    {
+        if (railgunsPanel?.infoDescriptionText == null) return;
+
+        string blue = UIThemeProvider.TextColourBlue;
+        float fireTime = _totalFireTime;
+        if (sdp.railgunActivator1) fireTime = 2.5f;
+        if (sdp.railgunActivator2) fireTime = 1f;
+
+        long panelsPerShot = sdp.doDoubleTime && sdp.doubleTimeRate >= 1 ? sdp.doubleTimeRate : 1;
+        int panelsRequired = GetDysonPanelsRequiredToFire();
+
+        string speedBonus = "";
+        if (sdp.railgunActivator2) speedBonus = $" (Boosted {blue}×5</color>)";
+        else if (sdp.railgunActivator1) speedBonus = $" (Boosted {blue}×2</color>)";
+
+        // Calculate time till charged
+        double energyNeeded = sd1.railgunMaxCharge - sd1.railgunCharge;
+        double solarEnergy = sd1.solarPanels * sd1.solarPanelGeneration * (sd1.mathematicsComplete ? 2 : 1);
+        double fusionEnergy = sd1.fusion * sd1.fusionGeneration;
+        double swarmEnergy = sd1.swarmPanels * sd1.swarmPanelGeneration;
+        double doubleTimeMulti = sdp.doDoubleTime ? sdp.doubleTimeRate + 1 : 1;
+        double energyPerSecond = (solarEnergy + fusionEnergy + swarmEnergy) * doubleTimeMulti;
+
+        string timeTillChargedText = "";
+        if (sd1.railgunCharge < sd1.railgunMaxCharge && energyPerSecond > 0)
+        {
+            double timeTillCharged = energyNeeded / energyPerSecond;
+            timeTillChargedText = $"\nTime Till Charged: {blue}{CalcUtils.FormatTime(timeTillCharged, shortForm: true)}</color>";
+        }
+        else if (sd1.railgunCharge >= sd1.railgunMaxCharge)
+        {
+            timeTillChargedText = $"\nTime Till Charged: {blue}Ready!</color>";
+        }
+
+        railgunsPanel.infoDescriptionText.text =
+            $"Electromagnetic launch systems that convert raw energy into orbital velocity. Railguns absorb energy until fully charged, then unleash {blue}10</color> shots in rapid succession, hurling specialized solar panels toward their destiny in the swarm.\n\n" +
+            $"Charge Required: {blue}25</color> MJ\n" +
+            $"Panels Required: {blue}{panelsRequired}</color>\n" +
+            $"Shots Per Volley: {blue}{_timesToFire}</color>\n" +
+            $"Fire Time: {blue}{fireTime}</color>s{speedBonus}\n" +
+            $"Panels Per Shot: {blue}{panelsPerShot}</color>\n" +
+            $"Current Charge: {CalcUtils.FormatEnergy(sd1.railgunCharge, true, colourOverride: blue)} / {blue}25</color> MJ{timeTillChargedText}";
+    }
+
+    private void UpdateSwarmStatsInfoDescription()
+    {
+        if (swarmStatsPanel?.infoDescriptionText == null) return;
+
+        string blue = UIThemeProvider.TextColourBlue;
+        long doubleTimeMulti = sdp.doDoubleTime ? sdp.doubleTimeRate + 1 : 1;
+        double totalEnergy = sd1.swarmPanels * sd1.swarmPanelGeneration * doubleTimeMulti;
+
+        swarmStatsPanel.infoDescriptionText.text =
+            $"The culmination of your civilization's efforts. Each panel orbiting your star generates energy while waiting to be converted. Influence the black hole to harvest Strange Matter equal to your launched panels.\n\n" +
+            $"Panels Launched: {blue}{sd1.swarmPanels:N0}</color>\n" +
+            $"Energy Per Panel: {CalcUtils.FormatEnergy(sd1.swarmPanelGeneration * doubleTimeMulti, false, colourOverride: blue)}\n" +
+            $"Total Generation: {CalcUtils.FormatEnergy(totalEnergy, false, colourOverride: blue)}\n" +
+            $"Strange Matter on Prestige: {blue}{sd1.swarmPanels:N0}</color> SM";
     }
 
     #endregion
