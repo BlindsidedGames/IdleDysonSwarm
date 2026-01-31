@@ -6,7 +6,7 @@ namespace IdleDysonSwarm.Data
     /// Strongly-typed identifier for skill types.
     /// </summary>
     /// <remarks>
-    /// Skills: manualLabour, assemblyLineTree, rule34, pocketDimensions, etc.
+    /// Skills: manualLabour, assemblyLineTree, avocados, pocketDimensions, etc.
     ///
     /// Usage in MonoBehaviour:
     /// [SerializeField] private SkillId skillId;

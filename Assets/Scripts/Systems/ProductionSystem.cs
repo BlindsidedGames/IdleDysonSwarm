@@ -91,7 +91,7 @@ namespace Systems
         {
             double planetsTotal = infinityData.planets[0] + infinityData.planets[1];
             double baseProduction = planetsTotal * 0.0002777777777777778f * infinityData.planetModifier;
-            if (skillTreeData.rule34 && infinityData.planets[1] >= 69) baseProduction *= 2;
+            if (skillTreeData.avocados && infinityData.planets[1] >= 69) baseProduction *= 2;
             if (skillTreeData.superchargedPower) baseProduction *= 1.5f;
 
             infinityData.planetsDataCenterProduction = baseProduction;

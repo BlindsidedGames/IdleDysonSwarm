@@ -1,0 +1,19 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ec1e57c5047884d459cb9658eb0efc42, type: 3}
+  m_Name: cond_first_assembly_line
+  m_EditorClassIdentifier: Assembly-CSharp::IdleDysonSwarm.Data.Conditions.FacilityCountCondition
+  _description: 
+  _facilityId: {fileID: 11400000, guid: 3591d7035410d2041962d5dcfc341f99, type: 2}
+  _countType: 0
+  _operator: 2
+  _threshold: 1

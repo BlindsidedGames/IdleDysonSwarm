@@ -1,0 +1,18 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c146eb1ed6f001944badc0e21fa745a9, type: 3}
+  m_Name: cond_first_influence
+  m_EditorClassIdentifier: Assembly-CSharp::IdleDysonSwarm.Data.Conditions.ResourceThresholdCondition
+  _description:
+  _resourceType: 1
+  _operator: 2
+  _threshold: 1

@@ -317,19 +317,19 @@ namespace Systems.Stats
                 StatId.AssemblyLineProduction, StatOperation.Multiply, 1, 20, null,
                 new[] { "assembly_lines" }, null));
 
-            specs.Add(new SkillEffectSpec("rule34", "effect.rule34.assembly_lines", "Rule 34",
+            specs.Add(new SkillEffectSpec("avocados", "effect.avocados.assembly_lines", "Avocados",
                 StatId.AssemblyLineProduction, StatOperation.Multiply, 2, 30, "assembly_lines_69",
                 new[] { "assembly_lines" }, null));
-            specs.Add(new SkillEffectSpec("rule34", "effect.rule34.ai_managers", "Rule 34",
+            specs.Add(new SkillEffectSpec("avocados", "effect.avocados.ai_managers", "Avocados",
                 StatId.ManagerProduction, StatOperation.Multiply, 2, 20, "ai_managers_69",
                 new[] { "ai_managers" }, null));
-            specs.Add(new SkillEffectSpec("rule34", "effect.rule34.servers", "Rule 34",
+            specs.Add(new SkillEffectSpec("avocados", "effect.avocados.servers", "Avocados",
                 StatId.ServerProduction, StatOperation.Multiply, 2, 20, "servers_69",
                 new[] { "servers" }, null));
-            specs.Add(new SkillEffectSpec("rule34", "effect.rule34.data_centers", "Rule 34",
+            specs.Add(new SkillEffectSpec("avocados", "effect.avocados.data_centers", "Avocados",
                 StatId.DataCenterProduction, StatOperation.Multiply, 2, 20, "data_centers_69",
                 new[] { "data_centers" }, null));
-            specs.Add(new SkillEffectSpec("rule34", "effect.rule34.planets", "Rule 34",
+            specs.Add(new SkillEffectSpec("avocados", "effect.avocados.planets", "Avocados",
                 StatId.PlanetProduction, StatOperation.Multiply, 2, 20, "planets_69",
                 new[] { "planets" }, null));
 
