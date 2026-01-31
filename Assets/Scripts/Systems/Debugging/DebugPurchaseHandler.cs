@@ -22,17 +22,55 @@ public class DebugPurchaseHandler : MonoBehaviour
     [SerializeField] private TMP_Text purchasedTip3Text;
     private readonly string doubleIP = "ids.doubleip";
     private readonly string debug = "ids.devoptions";
+
+    private StoreController _storeController;
+
     private void Start()
     {
         SetDebugState();
         SetDoubleIpState();
-        if (CodelessIAPStoreListener.Instance.StoreController.products.WithID(doubleIP).hasReceipt)
+        CheckProductEntitlements();
+    }
+
+    private void CheckProductEntitlements()
+    {
+        _storeController = UnityIAPServices.StoreController();
+        _storeController.OnCheckEntitlement += OnCheckEntitlement;
+
+        var products = _storeController.GetProducts();
+        foreach (var product in products)
+        {
+            if (product.definition.id == doubleIP || product.definition.id == debug)
+            {
+                _storeController.CheckEntitlement(product);
+            }
+        }
+    }
+
+    private void OnCheckEntitlement(Entitlement entitlement)
+    {
+        bool isEntitled = entitlement.Status == EntitlementStatus.FullyEntitled ||
+                          entitlement.Status == EntitlementStatus.EntitledButNotFinished ||
+                          entitlement.Status == EntitlementStatus.EntitledUntilConsumed;
+
+        if (!isEntitled) return;
+
+        string productId = entitlement.Product.definition.id;
+        if (productId == doubleIP)
         {
             PurchaseDoubleIpSuccessful();
         }
-        if (CodelessIAPStoreListener.Instance.StoreController.products.WithID(debug).hasReceipt)
+        else if (productId == debug)
         {
             PurchaseDevOptionsSuccessful();
+        }
+    }
+
+    private void OnDestroy()
+    {
+        if (_storeController != null)
+        {
+            _storeController.OnCheckEntitlement -= OnCheckEntitlement;
         }
     }
 

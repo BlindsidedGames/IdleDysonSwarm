@@ -126,15 +126,30 @@ namespace Systems.Stats
 
                 if (IsModifierSkill(effectId, "versatileProductionTactics"))
                 {
-                    if (skillTreeData == null || infinityData == null || !skillTreeData.versatileProductionTactics)
+                    // Check if this is the assembly_lines or planets modifier
+                    if (effectId.EndsWith("assembly_lines_modifier", StringComparison.Ordinal))
                     {
-                        value = 1;
+                        // Assembly Lines always get 1.5x bonus
+                        value = skillTreeData != null && skillTreeData.versatileProductionTactics ? 1.5 : 1;
                         return true;
                     }
 
-                    double planetsTotal = infinityData.planets[0] +
-                                          (skillTreeData.terraIrradiant ? infinityData.planets[1] * 12 : infinityData.planets[1]);
-                    value = planetsTotal >= 100 ? 2 : 1.5;
+                    if (effectId.EndsWith("planets_modifier", StringComparison.Ordinal))
+                    {
+                        // Planets get 1.5x bonus only when >= 100 planets
+                        if (skillTreeData == null || infinityData == null || !skillTreeData.versatileProductionTactics)
+                        {
+                            value = 1;
+                            return true;
+                        }
+
+                        double planetsTotal = infinityData.planets[0] +
+                                              (skillTreeData.terraIrradiant ? infinityData.planets[1] * 12 : infinityData.planets[1]);
+                        value = planetsTotal >= 100 ? 1.5 : 1;
+                        return true;
+                    }
+
+                    value = 1;
                     return true;
                 }
 
@@ -382,6 +397,9 @@ namespace Systems.Stats
             specs.Add(new SkillEffectSpec("versatileProductionTactics",
                 ModifierEffectId("versatileProductionTactics", "assembly_lines"), "Versatile Production Tactics",
                 StatId.AssemblyLineModifier, StatOperation.Multiply, 1, 62, null, null, null));
+            specs.Add(new SkillEffectSpec("versatileProductionTactics",
+                ModifierEffectId("versatileProductionTactics", "planets"), "Versatile Production Tactics",
+                StatId.PlanetModifier, StatOperation.Multiply, 1, 62, null, null, null));
             specs.Add(new SkillEffectSpec("oneMinutePlan",
                 ModifierEffectId("oneMinutePlan", "assembly_lines"), "One Minute Plan",
                 StatId.AssemblyLineModifier, StatOperation.Multiply, 1, 63, null, null, null));
