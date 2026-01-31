@@ -39,7 +39,6 @@ MonoBehaviour:
     - Assembly-CSharp-firstpass
     - MCPForUnity.Runtime
     - MPUIKit
-    - Purchasing.Common
     showAdvancedSettings: 0
   addMgrToSceneAutomatically: 0
   autoUpdateReferences: 1

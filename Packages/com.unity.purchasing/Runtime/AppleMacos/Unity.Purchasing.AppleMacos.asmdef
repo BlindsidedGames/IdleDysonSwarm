@@ -1,0 +1,25 @@
+{
+    "name": "Unity.Purchasing.AppleMacos",
+    "rootNamespace": "",
+    "references": [
+        "Unity.Purchasing",
+        "Unity.Purchasing.Utilities"
+    ],
+    "includePlatforms": [
+        "macOSStandalone"
+    ],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": false,
+    "defineConstraints": [],
+    "versionDefines": [
+        {
+            "name": "com.unity.ads",
+            "expression": "4.16.4",
+            "define": "IAP_UNITY_ATTRIBUTION"
+        }
+    ],
+    "noEngineReferences": false
+}
