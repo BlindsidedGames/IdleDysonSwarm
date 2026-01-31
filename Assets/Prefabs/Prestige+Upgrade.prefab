@@ -104,6 +104,7 @@ MonoBehaviour:
   m_VerticalAlignment: 256
   m_textAlignment: 65535
   m_characterSpacing: 0
+  m_characterHorizontalScale: 1
   m_wordSpacing: 0
   m_lineSpacing: 0
   m_lineSpacingMax: 0
@@ -299,6 +300,11 @@ MonoBehaviour:
   m_Rectangle:
     m_CornerRadius: {x: 8, y: 8, z: 8, w: 8}
     m_UniformCornerRadius: 1
+  m_ChamferBox:
+    m_ChamferSize: 0
+  m_Parallelogram:
+    m_Skew: 0
+    m_CornerRadius: 0
   m_Circle:
     m_Radius: 0
     m_FitRadius: 0
@@ -425,8 +431,8 @@ MonoBehaviour:
       m_Calls: []
   m_text: 1<sprite=5, color=#000000>
   m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: 3079981d1e439524fbb88b3a43b4c219, type: 2}
-  m_sharedMaterial: {fileID: 8614727323866032098, guid: 3079981d1e439524fbb88b3a43b4c219, type: 2}
+  m_fontAsset: {fileID: 11400000, guid: 71a7f103694aafc4eb5bac74c8173a79, type: 2}
+  m_sharedMaterial: {fileID: -6419816020481481130, guid: 71a7f103694aafc4eb5bac74c8173a79, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []
@@ -461,6 +467,7 @@ MonoBehaviour:
   m_VerticalAlignment: 512
   m_textAlignment: 65535
   m_characterSpacing: 0
+  m_characterHorizontalScale: 1
   m_wordSpacing: 0
   m_lineSpacing: 0
   m_lineSpacingMax: 0
@@ -598,6 +605,7 @@ MonoBehaviour:
   m_VerticalAlignment: 256
   m_textAlignment: 65535
   m_characterSpacing: 0
+  m_characterHorizontalScale: 1
   m_wordSpacing: 0
   m_lineSpacing: 0
   m_lineSpacingMax: 0
@@ -810,6 +818,11 @@ MonoBehaviour:
   m_Rectangle:
     m_CornerRadius: {x: 8, y: 8, z: 8, w: 8}
     m_UniformCornerRadius: 1
+  m_ChamferBox:
+    m_ChamferSize: 0
+  m_Parallelogram:
+    m_Skew: 0
+    m_CornerRadius: 0
   m_Circle:
     m_Radius: 0
     m_FitRadius: 0
