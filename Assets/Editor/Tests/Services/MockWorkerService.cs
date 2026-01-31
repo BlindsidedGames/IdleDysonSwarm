@@ -50,6 +50,7 @@ namespace Tests.Services
             _workersReady = 0;
 
             OnInfluenceGathered?.Invoke(MockWorkerBatchSize);
+            OnWorkerBatchCompleted?.Invoke();
 
             return true;
         }

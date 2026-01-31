@@ -141,12 +141,12 @@ namespace Systems.Facilities
                 });
             }
 
-            if (skillTreeData.rule34 && infinityData.assemblyLines[1] >= 69)
+            if (skillTreeData.avocados && infinityData.assemblyLines[1] >= 69)
             {
                 effects.Add(new StatEffect
                 {
-                    Id = "skill.rule34",
-                    SourceName = "Rule 34",
+                    Id = "skill.avocados",
+                    SourceName = "Avocados",
                     TargetStatId = statId,
                     Operation = StatOperation.Multiply,
                     Value = 2,
@@ -196,12 +196,12 @@ namespace Systems.Facilities
                 }
             };
 
-            if (skillTreeData.rule34 && infinityData.managers[1] >= 69)
+            if (skillTreeData.avocados && infinityData.managers[1] >= 69)
             {
                 effects.Add(new StatEffect
                 {
-                    Id = "skill.rule34",
-                    SourceName = "Rule 34",
+                    Id = "skill.avocados",
+                    SourceName = "Avocados",
                     TargetStatId = statId,
                     Operation = StatOperation.Multiply,
                     Value = 2,
@@ -251,12 +251,12 @@ namespace Systems.Facilities
                 }
             };
 
-            if (skillTreeData.rule34 && infinityData.servers[1] >= 69)
+            if (skillTreeData.avocados && infinityData.servers[1] >= 69)
             {
                 effects.Add(new StatEffect
                 {
-                    Id = "skill.rule34",
-                    SourceName = "Rule 34",
+                    Id = "skill.avocados",
+                    SourceName = "Avocados",
                     TargetStatId = statId,
                     Operation = StatOperation.Multiply,
                     Value = 2,
@@ -306,12 +306,12 @@ namespace Systems.Facilities
                 }
             };
 
-            if (skillTreeData.rule34 && infinityData.dataCenters[1] >= 69)
+            if (skillTreeData.avocados && infinityData.dataCenters[1] >= 69)
             {
                 effects.Add(new StatEffect
                 {
-                    Id = "skill.rule34",
-                    SourceName = "Rule 34",
+                    Id = "skill.avocados",
+                    SourceName = "Avocados",
                     TargetStatId = statId,
                     Operation = StatOperation.Multiply,
                     Value = 2,
@@ -389,12 +389,12 @@ namespace Systems.Facilities
                 }
             };
 
-            if (skillTreeData.rule34 && infinityData.planets[1] >= 69)
+            if (skillTreeData.avocados && infinityData.planets[1] >= 69)
             {
                 effects.Add(new StatEffect
                 {
-                    Id = "skill.rule34",
-                    SourceName = "Rule 34",
+                    Id = "skill.avocados",
+                    SourceName = "Avocados",
                     TargetStatId = statId,
                     Operation = StatOperation.Multiply,
                     Value = 2,

@@ -39,7 +39,7 @@ namespace GameData
             { 31, "tasteOfPower" },
             { 32, "indulgingInPower" },
             { 33, "addictionToPower" },
-            { 34, "rule34" },
+            { 34, "avocados" },
             { 35, "progressiveAssembly" },
             { 36, "regulatedAcademia" },
             { 37, "panelWarranty" },

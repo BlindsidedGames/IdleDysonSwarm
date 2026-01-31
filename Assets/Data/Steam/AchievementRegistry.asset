@@ -1,0 +1,42 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 778f53e1a69bb734b89a26cd661ecd78, type: 3}
+  m_Name: AchievementRegistry
+  m_EditorClassIdentifier: Assembly-CSharp::IdleDysonSwarm.Data.Steam.AchievementRegistry
+  achievements:
+  - {fileID: 11400000, guid: 628a77fd4997fbd4e8136a247f7f8c7a, type: 2}
+  - {fileID: 11400000, guid: 5d71cb88aad20224fa9f7e0b2a0286c0, type: 2}
+  - {fileID: 11400000, guid: d1bde2f214e20914498bc36557e024f1, type: 2}
+  - {fileID: 11400000, guid: d7d5c4113c71ddc4db51eb2866994f0a, type: 2}
+  - {fileID: 11400000, guid: c5fa3100bb91dce41be83b0714603c55, type: 2}
+  - {fileID: 11400000, guid: b1c2d3e4f5a60001000000000000a001, type: 2}
+  - {fileID: 11400000, guid: b1c2d3e4f5a60002000000000000a002, type: 2}
+  - {fileID: 11400000, guid: b1c2d3e4f5a60003000000000000a003, type: 2}
+  - {fileID: 11400000, guid: b1c2d3e4f5a60004000000000000a004, type: 2}
+  - {fileID: 11400000, guid: b1c2d3e4f5a60005000000000000a005, type: 2}
+  - {fileID: 11400000, guid: b1c2d3e4f5a60006000000000000a006, type: 2}
+  - {fileID: 11400000, guid: b1c2d3e4f5a60007000000000000a007, type: 2}
+  - {fileID: 11400000, guid: b1c2d3e4f5a60008000000000000a008, type: 2}
+  - {fileID: 11400000, guid: b1c2d3e4f5a60009000000000000a009, type: 2}
+  - {fileID: 11400000, guid: b1c2d3e4f5a6000a000000000000a00a, type: 2}
+  - {fileID: 11400000, guid: b1c2d3e4f5a6000b000000000000a00b, type: 2}
+  - {fileID: 11400000, guid: b1c2d3e4f5a6000c000000000000a00c, type: 2}
+  - {fileID: 11400000, guid: b1c2d3e4f5a6000d000000000000a00d, type: 2}
+  - {fileID: 11400000, guid: b1c2d3e4f5a6000e000000000000a00e, type: 2}
+  - {fileID: 11400000, guid: b1c2d3e4f5a6000f000000000000a00f, type: 2}
+  - {fileID: 11400000, guid: a1c2d3e4f5a60042000000000000a042, type: 2}
+  - {fileID: 11400000, guid: a1c2d3e4f5a60020000000000000a020, type: 2}
+  - {fileID: 11400000, guid: a1c2d3e4f5a60021000000000000a021, type: 2}
+  - {fileID: 11400000, guid: a1c2d3e4f5a60050000000000000a050, type: 2}
+  - {fileID: 11400000, guid: a1c2d3e4f5a60060000000000000a060, type: 2}
+  - {fileID: 11400000, guid: a1c2d3e4f5a60070000000000000a070, type: 2}
+  - {fileID: 11400000, guid: a1c2d3e4f5a60080000000000000a080, type: 2}

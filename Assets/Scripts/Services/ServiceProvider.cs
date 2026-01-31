@@ -1,5 +1,6 @@
 using GameData;
 using IdleDysonSwarm.Data;
+using IdleDysonSwarm.Services.Steam;
 using UnityEngine;
 
 namespace IdleDysonSwarm.Services
@@ -87,6 +88,11 @@ namespace IdleDysonSwarm.Services
             ServiceLocator.Register<IMegaStructureService>(megaStructureService);
             Debug.Log("  ✓ IMegaStructureService registered");
 
+            // Register Steam integration service
+            var steamService = new SteamIntegrationService();
+            ServiceLocator.Register<ISteamIntegrationService>(steamService);
+            Debug.Log("  ✓ ISteamIntegrationService registered");
+
             Debug.Log("[ServiceProvider] All services registered successfully!");
         }
 
@@ -104,6 +110,7 @@ namespace IdleDysonSwarm.Services
             allRegistered &= CheckService<IWorkerService>();
             allRegistered &= CheckService<IAvocadoService>();
             allRegistered &= CheckService<IMegaStructureService>();
+            allRegistered &= CheckService<ISteamIntegrationService>();
 
             if (allRegistered)
             {

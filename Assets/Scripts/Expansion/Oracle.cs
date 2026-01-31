@@ -810,7 +810,7 @@ namespace Expansion
             double legacyComputed = (infinityData.assemblyLines[0] + infinityData.assemblyLines[1]) * 0.1f * infinityData.assemblyLineModifier;
             if (skillTreeData.stayingPower)
                 legacyComputed *= 1 + 0.01f * infinityData.panelLifetime;
-            if (skillTreeData.rule34 && infinityData.assemblyLines[1] >= 69)
+            if (skillTreeData.avocados && infinityData.assemblyLines[1] >= 69)
                 legacyComputed *= 2;
             if (skillTreeData.superchargedPower)
                 legacyComputed *= 1.5f;
@@ -837,7 +837,7 @@ namespace Expansion
                 dataDrivenExpected = (infinityData.assemblyLines[0] + infinityData.assemblyLines[1]) * 0.1f * dataDrivenModifier;
                 if (skillTreeData.stayingPower)
                     dataDrivenExpected *= 1 + 0.01f * infinityData.panelLifetime;
-                if (skillTreeData.rule34 && infinityData.assemblyLines[1] >= 69)
+                if (skillTreeData.avocados && infinityData.assemblyLines[1] >= 69)
                     dataDrivenExpected *= 2;
                 if (skillTreeData.superchargedPower)
                     dataDrivenExpected *= 1.5f;
@@ -877,7 +877,7 @@ namespace Expansion
 
             double legacyCached = infinityData.assemblyLineProduction;
             double legacyComputed = (infinityData.managers[0] + infinityData.managers[1]) * 0.0166666666666667f * infinityData.managerModifier;
-            if (skillTreeData.rule34 && infinityData.managers[1] >= 69)
+            if (skillTreeData.avocados && infinityData.managers[1] >= 69)
                 legacyComputed *= 2;
             if (skillTreeData.superchargedPower)
                 legacyComputed *= 1.5f;
@@ -903,7 +903,7 @@ namespace Expansion
             {
                 dataDrivenExpected = (infinityData.managers[0] + infinityData.managers[1]) * 0.0166666666666667f *
                                      dataDrivenModifier;
-                if (skillTreeData.rule34 && infinityData.managers[1] >= 69)
+                if (skillTreeData.avocados && infinityData.managers[1] >= 69)
                     dataDrivenExpected *= 2;
                 if (skillTreeData.superchargedPower)
                     dataDrivenExpected *= 1.5f;
@@ -943,7 +943,7 @@ namespace Expansion
 
             double legacyCached = infinityData.managerProduction;
             double legacyComputed = (infinityData.servers[0] + infinityData.servers[1]) * 0.0016666666666667f * infinityData.serverModifier;
-            if (skillTreeData.rule34 && infinityData.servers[1] >= 69)
+            if (skillTreeData.avocados && infinityData.servers[1] >= 69)
                 legacyComputed *= 2;
             if (skillTreeData.superchargedPower)
                 legacyComputed *= 1.5f;
@@ -968,7 +968,7 @@ namespace Expansion
             if (TryGetDataDrivenModifier("servers", out double dataDrivenModifier))
             {
                 dataDrivenExpected = (infinityData.servers[0] + infinityData.servers[1]) * 0.0016666666666667f * dataDrivenModifier;
-                if (skillTreeData.rule34 && infinityData.servers[1] >= 69)
+                if (skillTreeData.avocados && infinityData.servers[1] >= 69)
                     dataDrivenExpected *= 2;
                 if (skillTreeData.superchargedPower)
                     dataDrivenExpected *= 1.5f;
@@ -1006,7 +1006,7 @@ namespace Expansion
 
             double legacyCached = infinityData.serverProduction;
             double legacyComputed = (infinityData.dataCenters[0] + infinityData.dataCenters[1]) * 0.0011111111f * infinityData.dataCenterModifier;
-            if (skillTreeData.rule34 && infinityData.dataCenters[1] >= 69)
+            if (skillTreeData.avocados && infinityData.dataCenters[1] >= 69)
                 legacyComputed *= 2;
             if (skillTreeData.superchargedPower)
                 legacyComputed *= 1.5f;
@@ -1038,7 +1038,7 @@ namespace Expansion
             {
                 dataDrivenExpected =
                     (infinityData.dataCenters[0] + infinityData.dataCenters[1]) * 0.0011111111f * dataDrivenModifier;
-                if (skillTreeData.rule34 && infinityData.dataCenters[1] >= 69)
+                if (skillTreeData.avocados && infinityData.dataCenters[1] >= 69)
                     dataDrivenExpected *= 2;
                 if (skillTreeData.superchargedPower)
                     dataDrivenExpected *= 1.5f;
@@ -1182,7 +1182,7 @@ namespace Expansion
             double pocketAndroidsTimer = GetSkillTimerSeconds(infinityData, "pocketAndroids");
             double bots = infinityData.bots;
 
-            bool rule34 = skillTreeData.rule34;
+            bool avocados = skillTreeData.avocados;
             bool stayingPower = skillTreeData.stayingPower;
             bool superchargedPower = skillTreeData.superchargedPower;
             bool parallelComputation = skillTreeData.parallelComputation;
@@ -1225,7 +1225,7 @@ namespace Expansion
                 infinityData.assemblyLineModifier = 25;
                 infinityData.panelLifetime = 20;
                 skillTreeData.stayingPower = true;
-                skillTreeData.rule34 = true;
+                skillTreeData.avocados = true;
                 skillTreeData.superchargedPower = true;
 
                 SyncSkillOwnershipFromSkillTreeData();
@@ -1235,7 +1235,7 @@ namespace Expansion
                 infinityData.managers[1] = 70;
                 infinityData.managerModifier = 131;
                 skillTreeData.stayingPower = false;
-                skillTreeData.rule34 = true;
+                skillTreeData.avocados = true;
                 skillTreeData.superchargedPower = true;
 
                 SyncSkillOwnershipFromSkillTreeData();
@@ -1244,7 +1244,7 @@ namespace Expansion
                 infinityData.servers[0] = 1000;
                 infinityData.servers[1] = 70;
                 infinityData.serverModifier = 114.231998421252;
-                skillTreeData.rule34 = true;
+                skillTreeData.avocados = true;
                 skillTreeData.superchargedPower = true;
 
                 SyncSkillOwnershipFromSkillTreeData();
@@ -1256,7 +1256,7 @@ namespace Expansion
                 infinityData.servers[0] = 200;
                 infinityData.servers[1] = 50;
                 infinityData.rudimentrySingularityProduction = 42.5;
-                skillTreeData.rule34 = true;
+                skillTreeData.avocados = true;
                 skillTreeData.superchargedPower = true;
                 skillTreeData.rudimentarySingularity = true;
                 skillTreeData.parallelComputation = true;
@@ -1382,7 +1382,7 @@ namespace Expansion
                 SetSkillTimerSeconds(infinityData, "pocketAndroids", pocketAndroidsTimer);
                 infinityData.bots = bots;
 
-                skillTreeData.rule34 = rule34;
+                skillTreeData.avocados = avocados;
                 skillTreeData.stayingPower = stayingPower;
                 skillTreeData.superchargedPower = superchargedPower;
                 skillTreeData.parallelComputation = parallelComputation;
@@ -2263,7 +2263,7 @@ namespace Expansion
 
             double legacyCached = infinityData.dataCenterProduction;
             double legacyComputed = (infinityData.planets[0] + infinityData.planets[1]) * 0.0002777777777777778f * infinityData.planetModifier;
-            if (skillTreeData.rule34 && infinityData.planets[1] >= 69)
+            if (skillTreeData.avocados && infinityData.planets[1] >= 69)
                 legacyComputed *= 2;
             if (skillTreeData.superchargedPower)
                 legacyComputed *= 1.5f;
@@ -2297,7 +2297,7 @@ namespace Expansion
             {
                 dataDrivenExpected =
                     (infinityData.planets[0] + infinityData.planets[1]) * 0.0002777777777777778f * dataDrivenModifier;
-                if (skillTreeData.rule34 && infinityData.planets[1] >= 69)
+                if (skillTreeData.avocados && infinityData.planets[1] >= 69)
                     dataDrivenExpected *= 2;
                 if (skillTreeData.superchargedPower)
                     dataDrivenExpected *= 1.5f;
@@ -3409,7 +3409,7 @@ namespace Expansion
             public bool stayingPower;
 
             public bool higgsBoson;
-            public bool rule34;
+            public bool avocados;
 
             public bool androids;
             public bool superchargedPower;
