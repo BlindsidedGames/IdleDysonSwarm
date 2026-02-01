@@ -107,6 +107,7 @@ namespace IdleDysonSwarm.Services.Steam
                 steamService.UpdateExponentStats();
                 steamService.UpdateSkillPointsStat();
                 steamService.UpdateSecretsFoundStat();
+                steamService.UpdateSecretsOfTheUniverseStat();
             }
 
             // Flush to Steam

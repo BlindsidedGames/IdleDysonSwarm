@@ -502,9 +502,26 @@ namespace IdleDysonSwarm.Services.Steam
                 // Show progress for EASTER_SECRETS achievement
                 // TODO: Set correct total once all secrets are identified
                 #if !DISABLESTEAMWORKS
-                const int totalSecrets = 10; // Placeholder - update when total is known
+                const int totalSecrets = 7; // Avocado meditation sequence secrets
                 SteamUserStats.IndicateAchievementProgress("EASTER_SECRETS", (uint)secretsFound, (uint)totalSecrets);
                 #endif
+            }
+        }
+
+        /// <summary>
+        /// Updates Secrets of the Universe stat.
+        /// </summary>
+        public void UpdateSecretsOfTheUniverseStat()
+        {
+            if (!IsAvailable)
+                return;
+
+            int secrets = (int)(PrestigeData?.secretsOfTheUniverse ?? 0);
+            int currentStat = GetIntStat("SECRETE_OF_THE_UNIVERSE");
+
+            if (secrets != currentStat)
+            {
+                SetStat("SECRETE_OF_THE_UNIVERSE", secrets);
             }
         }
 
