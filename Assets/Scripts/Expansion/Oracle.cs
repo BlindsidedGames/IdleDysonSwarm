@@ -3,6 +3,8 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
+using System.IO.Compression;
+using CompressionLevel = System.IO.Compression.CompressionLevel;
 using System.Text;
 using System.Threading.Tasks;
 using Classes;
@@ -15,6 +17,7 @@ using Systems.Facilities;
 using Systems.Migrations;
 using Systems.Skills;
 using Systems.Stats;
+using Systems.Save;
 using TMPro;
 using UnityEngine;
 using UnityEngine.Networking;
@@ -32,6 +35,8 @@ namespace Expansion
 {
     public class Oracle : SerializedMonoBehaviour
     {
+        private const string CompressedSavePrefix = "IDSZ1:";
+        private const string BinarySavePrefix = "IDB1:";
         public Button recoveryButton;
         public TMP_Text recoveryText;
 
@@ -75,7 +80,7 @@ namespace Expansion
         // IMPORTANT: When adding a migration step in BuildMigrationRegistry(),
         // you MUST also update this constant to match the new LatestVersion.
         // IMPORTANT: Save v7 introduces skill bitsets (see SkillIdMap/SkillBitsetUtility).
-        private const int CurrentSaveVersion = 7;
+        private const int CurrentSaveVersion = 8;
 
         #region SaveAndLoadFromClipboard
 
@@ -87,8 +92,25 @@ namespace Expansion
             bool doubleIpUnlocked = saveSettings.doubleIp || PlayerPrefs.GetInt("doubleip", 0) == 1;
             saveSettings = new SaveDataSettings();
             string clipboard = GUIUtility.systemCopyBuffer;
-            byte[] bytes = beta ? Encoding.ASCII.GetBytes(clipboard) : Convert.FromBase64String(clipboard);
-            saveSettings = SirenixSerializationUtility.DeserializeValue<SaveDataSettings>(bytes, DataFormat.JSON);
+            if (beta)
+            {
+                byte[] bytes = Encoding.ASCII.GetBytes(clipboard);
+                saveSettings = SirenixSerializationUtility.DeserializeValue<SaveDataSettings>(bytes, DataFormat.JSON);
+            }
+            else if (TryDecodeExportDto(clipboard, out byte[] dtoBytes))
+            {
+                saveSettings = SirenixSerializationUtility.DeserializeValue<SaveDataSettings>(dtoBytes, DataFormat.Binary);
+            }
+            else if (clipboard.StartsWith(BinarySavePrefix, StringComparison.Ordinal))
+            {
+                byte[] bytes = DecodeBinaryClipboardBytes(clipboard);
+                saveSettings = SirenixSerializationUtility.DeserializeValue<SaveDataSettings>(bytes, DataFormat.Binary);
+            }
+            else
+            {
+                byte[] bytes = DecodeClipboardBytes(clipboard);
+                saveSettings = SirenixSerializationUtility.DeserializeValue<SaveDataSettings>(bytes, DataFormat.JSON);
+            }
 
             LoadDictionaries();
             if (!oracle.saveSettings.cheater && saveSettings.maxOfflineTime < 86400)
@@ -143,14 +165,26 @@ namespace Expansion
             SaveDictionaries();
             byte[] fullBytes = SirenixSerializationUtility.SerializeValue(saveSettings, DataFormat.JSON);
             SaveDataSettings snapshot = CreateSaveSnapshotForStorage(includeBase64Fields: false);
-            byte[] bytes = SirenixSerializationUtility.SerializeValue(snapshot, DataFormat.JSON);
-            string compactJson = Encoding.UTF8.GetString(bytes);
-            string compactClipboard = beta ? compactJson : Convert.ToBase64String(bytes);
+            if (beta)
+            {
+                byte[] bytes = SirenixSerializationUtility.SerializeValue(snapshot, DataFormat.JSON);
+                string compactJson = Encoding.UTF8.GetString(bytes);
+                GUIUtility.systemCopyBuffer = compactJson;
+                string fullClipboardJson = Encoding.UTF8.GetString(fullBytes);
+                Debug.Log(
+                    $"SaveToClipboard size: {fullBytes.Length} -> {bytes.Length} bytes (raw JSON), " +
+                    $"{fullClipboardJson.Length} -> {compactJson.Length} chars (clipboard).");
+                return;
+            }
+
+            byte[] binaryBytes = SirenixSerializationUtility.SerializeValue(snapshot, DataFormat.Binary);
+            string compactClipboard = EncodeBinaryClipboardBytes(binaryBytes, compress: true);
             GUIUtility.systemCopyBuffer = compactClipboard;
-            string fullClipboard = beta ? Encoding.UTF8.GetString(fullBytes) : Convert.ToBase64String(fullBytes);
+            string fullClipboardBinary = EncodeBinaryClipboardBytes(SirenixSerializationUtility.SerializeValue(saveSettings, DataFormat.Binary),
+                compress: true);
             Debug.Log(
-                $"SaveToClipboard size: {fullBytes.Length} -> {bytes.Length} bytes (raw JSON), " +
-                $"{fullClipboard.Length} -> {compactClipboard.Length} chars (clipboard).");
+                $"SaveToClipboard size: {fullBytes.Length} -> {binaryBytes.Length} bytes (binary), " +
+                $"{fullClipboardBinary.Length} -> {compactClipboard.Length} chars (clipboard).");
         }
 
         [TabGroup("SaveData", "Buttons"), Button]
@@ -159,8 +193,17 @@ namespace Expansion
             SaveDictionaries();
             byte[] fullBytes = SirenixSerializationUtility.SerializeValue(saveSettings, DataFormat.JSON);
             SaveDataSettings snapshot = CreateSaveSnapshotForStorage(includeBase64Fields: false);
-            byte[] bytes = SirenixSerializationUtility.SerializeValue(snapshot, DataFormat.JSON);
-            string json = Encoding.UTF8.GetString(bytes);
+            byte[] bytes = SirenixSerializationUtility.SerializeValue(snapshot, DataFormat.Binary);
+            byte[] compressed = CompressBytes(bytes);
+            var dto = new ExportSaveDto
+            {
+                version = CurrentSaveVersion,
+                format = "binary+gzip+base64",
+                rawBytes = bytes.Length,
+                compressedBytes = compressed.Length,
+                data = Convert.ToBase64String(compressed)
+            };
+            string json = JsonUtility.ToJson(dto);
 
             string folderPath = GetSaveDebugFolderPath();
             Directory.CreateDirectory(folderPath);
@@ -168,14 +211,94 @@ namespace Expansion
             File.WriteAllText(filePath, json, Encoding.UTF8);
 
             Debug.Log($"Save debug JSON written to: {filePath}");
-            string fullClipboard = beta ? Encoding.UTF8.GetString(fullBytes) : Convert.ToBase64String(fullBytes);
-            string compactClipboard = beta ? json : Convert.ToBase64String(bytes);
+            string debugFullClipboard = beta ? Encoding.UTF8.GetString(fullBytes) : EncodeClipboardBytes(fullBytes, compress: true);
+            string debugCompactClipboard = beta ? json : EncodeBinaryClipboardBytes(bytes, compress: true);
             Debug.Log(
                 $"ExportSaveDebugJson size: {fullBytes.Length} -> {bytes.Length} bytes (raw JSON), " +
-                $"{fullClipboard.Length} -> {compactClipboard.Length} chars (clipboard).");
+                $"{debugFullClipboard.Length} -> {debugCompactClipboard.Length} chars (clipboard).");
 #if UNITY_EDITOR
             AssetDatabase.Refresh();
 #endif
+        }
+
+        private static string EncodeClipboardBytes(byte[] bytes, bool compress)
+        {
+            if (bytes == null || bytes.Length == 0) return string.Empty;
+            if (!compress) return Convert.ToBase64String(bytes);
+            byte[] compressed = CompressBytes(bytes);
+            return CompressedSavePrefix + Convert.ToBase64String(compressed);
+        }
+
+        private static byte[] DecodeClipboardBytes(string clipboard)
+        {
+            if (string.IsNullOrEmpty(clipboard)) return Array.Empty<byte>();
+            if (clipboard.StartsWith(CompressedSavePrefix, StringComparison.Ordinal))
+            {
+                string payload = clipboard.Substring(CompressedSavePrefix.Length);
+                byte[] compressed = Convert.FromBase64String(payload);
+                return DecompressBytes(compressed);
+            }
+
+            return Convert.FromBase64String(clipboard);
+        }
+
+        private static string EncodeBinaryClipboardBytes(byte[] bytes, bool compress)
+        {
+            if (bytes == null || bytes.Length == 0) return string.Empty;
+            if (compress)
+            {
+                byte[] compressed = CompressBytes(bytes);
+                return BinarySavePrefix + Convert.ToBase64String(compressed);
+            }
+
+            return BinarySavePrefix + Convert.ToBase64String(bytes);
+        }
+
+        private static byte[] DecodeBinaryClipboardBytes(string clipboard)
+        {
+            if (string.IsNullOrEmpty(clipboard)) return Array.Empty<byte>();
+            if (!clipboard.StartsWith(BinarySavePrefix, StringComparison.Ordinal)) return Array.Empty<byte>();
+            string payload = clipboard.Substring(BinarySavePrefix.Length);
+            byte[] bytes = Convert.FromBase64String(payload);
+            return DecompressBytes(bytes);
+        }
+
+        private static bool TryDecodeExportDto(string clipboard, out byte[] bytes)
+        {
+            bytes = Array.Empty<byte>();
+            if (string.IsNullOrWhiteSpace(clipboard)) return false;
+            if (!clipboard.TrimStart().StartsWith("{", StringComparison.Ordinal)) return false;
+            try
+            {
+                ExportSaveDto dto = JsonUtility.FromJson<ExportSaveDto>(clipboard);
+                if (dto == null || string.IsNullOrEmpty(dto.data)) return false;
+                byte[] compressed = Convert.FromBase64String(dto.data);
+                bytes = DecompressBytes(compressed);
+                return bytes.Length > 0;
+            }
+            catch
+            {
+                return false;
+            }
+        }
+
+        private static byte[] CompressBytes(byte[] bytes)
+        {
+            using var output = new MemoryStream();
+            using (var gzip = new GZipStream(output, CompressionLevel.Optimal, leaveOpen: true))
+            {
+                gzip.Write(bytes, 0, bytes.Length);
+            }
+            return output.ToArray();
+        }
+
+        private static byte[] DecompressBytes(byte[] bytes)
+        {
+            using var input = new MemoryStream(bytes);
+            using var gzip = new GZipStream(input, CompressionMode.Decompress);
+            using var output = new MemoryStream();
+            gzip.CopyTo(output);
+            return output.ToArray();
         }
 
         [TabGroup("SaveData", "Buttons"), Button]
@@ -361,6 +484,8 @@ namespace Expansion
                     EnsureSkillOwnershipData();
                     EnsureSkillAutoAssignmentIds();
                     EnsureResearchLevelData();
+                    EnsurePackedSettingsFlags();
+                    EnsureInfinitySparseArrays();
                 }
             };
         }
@@ -410,6 +535,12 @@ namespace Expansion
                 {
                     MigrateSkillBitsets();
                 }));
+
+            registry.AddStep(new MigrationStep(
+                targetVersion: 8,
+                name: "Packed settings flags",
+                summary: "Pack SaveDataSettings boolean flags into bitfields.",
+                apply: _ => { PackSettingsFlags(); }));
 
             return registry;
         }
@@ -853,6 +984,126 @@ namespace Expansion
         {
             EnsureSkillOwnedBitset();
             EnsureSkillAutoAssignmentBitsets();
+        }
+
+        private void PackSettingsFlags()
+        {
+            if (saveSettings == null) return;
+            saveSettings.packedSettingsFlags = BuildSettingsFlags(saveSettings);
+            saveSettings.hasPackedSettingsFlags = true;
+        }
+
+        private void EnsurePackedSettingsFlags()
+        {
+            if (saveSettings == null) return;
+            if (!saveSettings.hasPackedSettingsFlags) return;
+            ApplySettingsFlags(saveSettings, saveSettings.packedSettingsFlags);
+        }
+
+        private static ulong BuildSettingsFlags(SaveDataSettings settings)
+        {
+            if (settings == null) return 0;
+            ulong flags = 0;
+            SetFlag(ref flags, 0, settings.roundedBulkBuy);
+            SetFlag(ref flags, 1, settings.researchRoundedBulkBuy);
+            SetFlag(ref flags, 2, settings.debugOptions);
+            SetFlag(ref flags, 3, settings.doubleIp);
+            SetFlag(ref flags, 4, settings.unlockAllTabs);
+            SetFlag(ref flags, 5, settings.avotation);
+            SetFlag(ref flags, 6, settings.infinityInProgress);
+            SetFlag(ref flags, 7, settings.tutorial);
+            SetFlag(ref flags, 8, settings.globalMute);
+            SetFlag(ref flags, 9, settings.cheater);
+            SetFlag(ref flags, 10, settings.hidePurchased);
+            SetFlag(ref flags, 11, settings.buyMax);
+            SetFlag(ref flags, 12, settings.skillsBuyOnTap);
+            SetFlag(ref flags, 13, settings.botsButtonToggle);
+            SetFlag(ref flags, 14, settings.researchbuttonToggle);
+            SetFlag(ref flags, 15, settings.skillsButtonToggle);
+            SetFlag(ref flags, 16, settings.skillsFirstRunDone);
+            SetFlag(ref flags, 17, settings.infinityButtonToggle);
+            SetFlag(ref flags, 18, settings.infinityFirstRunDone);
+            SetFlag(ref flags, 19, settings.realityButtonToggle);
+            SetFlag(ref flags, 20, settings.realityFirstRun);
+            SetFlag(ref flags, 21, settings.simulationsButtonToggle);
+            SetFlag(ref flags, 22, settings.prestigeButtonToggle);
+            SetFlag(ref flags, 23, settings.prestigeFirstRun);
+            SetFlag(ref flags, 24, settings.storyButtonToggle);
+            SetFlag(ref flags, 25, settings.wikiButtonToggle);
+            SetFlag(ref flags, 26, settings.statisticsButtonToggle);
+            SetFlag(ref flags, 27, settings.settingsButtonToggle);
+            SetFlag(ref flags, 28, settings.infinityAutoResearchToggleAi);
+            SetFlag(ref flags, 29, settings.infinityAutoResearchToggleAssembly);
+            SetFlag(ref flags, 30, settings.infinityAutoResearchToggleMoney);
+            SetFlag(ref flags, 31, settings.infinityAutoResearchTogglePlanet);
+            SetFlag(ref flags, 32, settings.infinityAutoResearchToggleServer);
+            SetFlag(ref flags, 33, settings.infinityAutoResearchToggleDataCenter);
+            SetFlag(ref flags, 34, settings.infinityAutoResearchToggleScience);
+            SetFlag(ref flags, 35, settings.infinityAutoAssembly);
+            SetFlag(ref flags, 36, settings.infinityAutoManagers);
+            SetFlag(ref flags, 37, settings.infinityAutoServers);
+            SetFlag(ref flags, 38, settings.infinityAutoDataCenters);
+            SetFlag(ref flags, 39, settings.infinityAutoPlanets);
+            SetFlag(ref flags, 40, settings.firstReality);
+            SetFlag(ref flags, 41, settings.firstInfinityDone);
+            return flags;
+        }
+
+        private static void ApplySettingsFlags(SaveDataSettings settings, ulong flags)
+        {
+            if (settings == null) return;
+            settings.roundedBulkBuy = GetFlag(flags, 0);
+            settings.researchRoundedBulkBuy = GetFlag(flags, 1);
+            settings.debugOptions = GetFlag(flags, 2);
+            settings.doubleIp = GetFlag(flags, 3);
+            settings.unlockAllTabs = GetFlag(flags, 4);
+            settings.avotation = GetFlag(flags, 5);
+            settings.infinityInProgress = GetFlag(flags, 6);
+            settings.tutorial = GetFlag(flags, 7);
+            settings.globalMute = GetFlag(flags, 8);
+            settings.cheater = GetFlag(flags, 9);
+            settings.hidePurchased = GetFlag(flags, 10);
+            settings.buyMax = GetFlag(flags, 11);
+            settings.skillsBuyOnTap = GetFlag(flags, 12);
+            settings.botsButtonToggle = GetFlag(flags, 13);
+            settings.researchbuttonToggle = GetFlag(flags, 14);
+            settings.skillsButtonToggle = GetFlag(flags, 15);
+            settings.skillsFirstRunDone = GetFlag(flags, 16);
+            settings.infinityButtonToggle = GetFlag(flags, 17);
+            settings.infinityFirstRunDone = GetFlag(flags, 18);
+            settings.realityButtonToggle = GetFlag(flags, 19);
+            settings.realityFirstRun = GetFlag(flags, 20);
+            settings.simulationsButtonToggle = GetFlag(flags, 21);
+            settings.prestigeButtonToggle = GetFlag(flags, 22);
+            settings.prestigeFirstRun = GetFlag(flags, 23);
+            settings.storyButtonToggle = GetFlag(flags, 24);
+            settings.wikiButtonToggle = GetFlag(flags, 25);
+            settings.statisticsButtonToggle = GetFlag(flags, 26);
+            settings.settingsButtonToggle = GetFlag(flags, 27);
+            settings.infinityAutoResearchToggleAi = GetFlag(flags, 28);
+            settings.infinityAutoResearchToggleAssembly = GetFlag(flags, 29);
+            settings.infinityAutoResearchToggleMoney = GetFlag(flags, 30);
+            settings.infinityAutoResearchTogglePlanet = GetFlag(flags, 31);
+            settings.infinityAutoResearchToggleServer = GetFlag(flags, 32);
+            settings.infinityAutoResearchToggleDataCenter = GetFlag(flags, 33);
+            settings.infinityAutoResearchToggleScience = GetFlag(flags, 34);
+            settings.infinityAutoAssembly = GetFlag(flags, 35);
+            settings.infinityAutoManagers = GetFlag(flags, 36);
+            settings.infinityAutoServers = GetFlag(flags, 37);
+            settings.infinityAutoDataCenters = GetFlag(flags, 38);
+            settings.infinityAutoPlanets = GetFlag(flags, 39);
+            settings.firstReality = GetFlag(flags, 40);
+            settings.firstInfinityDone = GetFlag(flags, 41);
+        }
+
+        private static void SetFlag(ref ulong flags, int bit, bool value)
+        {
+            if (value) flags |= 1UL << bit;
+        }
+
+        private static bool GetFlag(ulong flags, int bit)
+        {
+            return (flags & (1UL << bit)) != 0;
         }
 
         /// <summary>
@@ -2921,6 +3172,20 @@ namespace Expansion
                 : null;
             ClearSkillTreeFlagsForSave(saveData?.dysonVerseSkillTreeData);
 
+            if (infData.researchLevelsById != null && infData.researchLevelsById.Count > 0)
+            {
+                var filtered = new Dictionary<string, double>();
+                foreach (KeyValuePair<string, double> entry in infData.researchLevelsById)
+                {
+                    if (entry.Value == 0) continue;
+                    filtered[entry.Key] = entry.Value;
+                }
+
+                infData.researchLevelsById = filtered;
+            }
+
+            PopulateSparseArrays(infData);
+
             if (infData.skillStateById != null)
             {
                 Dictionary<string, SkillState> filtered = new Dictionary<string, SkillState>();
@@ -2996,6 +3261,118 @@ namespace Expansion
                 if (field.FieldType != typeof(bool)) continue;
                 field.SetValue(data, false);
             }
+        }
+
+        private static List<int> BuildSparseIndices(double[] values, List<int> indices, List<double> outputValues)
+        {
+            indices ??= new List<int>();
+            outputValues ??= new List<double>();
+            indices.Clear();
+            outputValues.Clear();
+            if (values == null) return indices;
+
+            for (int i = 0; i < values.Length; i++)
+            {
+                if (values[i] == 0) continue;
+                indices.Add(i);
+                outputValues.Add(values[i]);
+            }
+
+            return indices;
+        }
+
+        private static double[] RestoreSparseArray(double[] existing, int length, List<int> indices, List<double> values)
+        {
+            bool hasSparse = indices != null && values != null && indices.Count > 0 && values.Count > 0;
+            if (!hasSparse)
+            {
+                if (existing != null && existing.Length == length) return existing;
+                return new double[length];
+            }
+
+            double[] result = new double[length];
+            int count = Math.Min(indices.Count, values.Count);
+            for (int i = 0; i < count; i++)
+            {
+                int index = indices[i];
+                if (index < 0 || index >= length) continue;
+                result[index] = values[i];
+            }
+
+            return result;
+        }
+
+        private static void PopulateSparseArrays(DysonVerseInfinityData data)
+        {
+            if (data == null) return;
+            data.assemblyLinesSparseIndices = BuildSparseIndices(data.assemblyLines, data.assemblyLinesSparseIndices,
+                data.assemblyLinesSparseValues);
+            data.managersSparseIndices = BuildSparseIndices(data.managers, data.managersSparseIndices,
+                data.managersSparseValues);
+            data.serversSparseIndices = BuildSparseIndices(data.servers, data.serversSparseIndices,
+                data.serversSparseValues);
+            data.dataCentersSparseIndices = BuildSparseIndices(data.dataCenters, data.dataCentersSparseIndices,
+                data.dataCentersSparseValues);
+            data.planetsSparseIndices = BuildSparseIndices(data.planets, data.planetsSparseIndices,
+                data.planetsSparseValues);
+            data.matrioshkaBrainsSparseIndices = BuildSparseIndices(data.matrioshkaBrains, data.matrioshkaBrainsSparseIndices,
+                data.matrioshkaBrainsSparseValues);
+            data.birchPlanetsSparseIndices = BuildSparseIndices(data.birchPlanets, data.birchPlanetsSparseIndices,
+                data.birchPlanetsSparseValues);
+            data.galacticBrainsSparseIndices = BuildSparseIndices(data.galacticBrains, data.galacticBrainsSparseIndices,
+                data.galacticBrainsSparseValues);
+
+            data.assemblyLines = null;
+            data.managers = null;
+            data.servers = null;
+            data.dataCenters = null;
+            data.planets = null;
+            data.matrioshkaBrains = null;
+            data.birchPlanets = null;
+            data.galacticBrains = null;
+        }
+
+        private void EnsureInfinitySparseArrays()
+        {
+            if (infinityData == null) return;
+            infinityData.assemblyLines = RestoreSparseArray(infinityData.assemblyLines, 2,
+                infinityData.assemblyLinesSparseIndices, infinityData.assemblyLinesSparseValues);
+            infinityData.managers = RestoreSparseArray(infinityData.managers, 2,
+                infinityData.managersSparseIndices, infinityData.managersSparseValues);
+            infinityData.servers = RestoreSparseArray(infinityData.servers, 2,
+                infinityData.serversSparseIndices, infinityData.serversSparseValues);
+            infinityData.dataCenters = RestoreSparseArray(infinityData.dataCenters, 2,
+                infinityData.dataCentersSparseIndices, infinityData.dataCentersSparseValues);
+            infinityData.planets = RestoreSparseArray(infinityData.planets, 2,
+                infinityData.planetsSparseIndices, infinityData.planetsSparseValues);
+            infinityData.matrioshkaBrains = RestoreSparseArray(infinityData.matrioshkaBrains, 2,
+                infinityData.matrioshkaBrainsSparseIndices, infinityData.matrioshkaBrainsSparseValues);
+            infinityData.birchPlanets = RestoreSparseArray(infinityData.birchPlanets, 2,
+                infinityData.birchPlanetsSparseIndices, infinityData.birchPlanetsSparseValues);
+            infinityData.galacticBrains = RestoreSparseArray(infinityData.galacticBrains, 2,
+                infinityData.galacticBrainsSparseIndices, infinityData.galacticBrainsSparseValues);
+
+            if (IsSparseEmpty(infinityData.assemblyLinesSparseIndices, infinityData.assemblyLinesSparseValues) &&
+                IsArrayEmpty(infinityData.assemblyLines))
+            {
+                Debug.LogWarning("Sparse facility data missing; assemblyLines restored to zeros.");
+            }
+        }
+
+        private static bool IsSparseEmpty(List<int> indices, List<double> values)
+        {
+            return indices == null || values == null || indices.Count == 0 || values.Count == 0;
+        }
+
+        private static bool IsArrayEmpty(double[] values)
+        {
+            if (values == null) return true;
+            for (int i = 0; i < values.Length; i++)
+            {
+                if (values[i] != 0) return false;
+            }
+
+            return true;
         }
 
         private byte[] BuildOwnedBitsetFromRuntime()
@@ -3669,6 +4046,8 @@ namespace Expansion
             public int lastMigratedFromVersion;
             public string lastSuccessfulLoadUtc;
             public bool hasFixedIP;
+            public bool hasPackedSettingsFlags;
+            public ulong packedSettingsFlags;
             public BuyMode buyMode = BuyMode.Buy1;
             public BuyMode researchBuyMode = BuyMode.Buy1;
             public bool roundedBulkBuy;
@@ -3907,37 +4286,53 @@ namespace Expansion
             public double panelLifetime = 10f;
 
             [Space(10), Header("Producers")] public double[] assemblyLines = { 0, 0 };
+            public List<int> assemblyLinesSparseIndices = new List<int>();
+            public List<double> assemblyLinesSparseValues = new List<double>();
 
             public double assemblyLineModifier = 1;
             public double botProduction;
             public double assemblyLineBotProduction;
             public double[] managers = { 0, 0 };
+            public List<int> managersSparseIndices = new List<int>();
+            public List<double> managersSparseValues = new List<double>();
             public double managerModifier = 1;
             public double assemblyLineProduction;
             public double managerAssemblyLineProduction;
             public double[] servers = { 0, 0 };
+            public List<int> serversSparseIndices = new List<int>();
+            public List<double> serversSparseValues = new List<double>();
             public double serverModifier = 1;
             public double managerProduction;
             public double serverManagerProduction;
             public double[] dataCenters = { 0, 0 };
+            public List<int> dataCentersSparseIndices = new List<int>();
+            public List<double> dataCentersSparseValues = new List<double>();
             public double dataCenterModifier = 1;
             public double serverProduction;
             public double dataCenterServerProduction;
             public double[] planets = { 0, 0 };
+            public List<int> planetsSparseIndices = new List<int>();
+            public List<double> planetsSparseValues = new List<double>();
             public double planetModifier = 1;
             public double dataCenterProduction;
             public double planetsDataCenterProduction;
 
             [Space(10), Header("Mega-Structures")]
             public double[] matrioshkaBrains = { 0, 0 };
+            public List<int> matrioshkaBrainsSparseIndices = new List<int>();
+            public List<double> matrioshkaBrainsSparseValues = new List<double>();
             public double matrioshkaBrainModifier = 1;
             public double matrioshkaBrainPlanetProduction;
 
             public double[] birchPlanets = { 0, 0 };
+            public List<int> birchPlanetsSparseIndices = new List<int>();
+            public List<double> birchPlanetsSparseValues = new List<double>();
             public double birchPlanetModifier = 1;
             public double birchPlanetMatrioshkaProduction;
 
             public double[] galacticBrains = { 0, 0 };
+            public List<int> galacticBrainsSparseIndices = new List<int>();
+            public List<double> galacticBrainsSparseValues = new List<double>();
             public double galacticBrainModifier = 1;
             public double galacticBrainBirchProduction;
 
