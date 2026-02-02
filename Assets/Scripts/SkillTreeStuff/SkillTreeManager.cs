@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using Expansion;
 using GameData;
+using IdleDysonSwarm.UI;
 using TMPro;
 using UnityEngine;
 using UnityEngine.EventSystems;
@@ -24,11 +25,44 @@ public class SkillTreeManager : MonoBehaviour, IPointerClickHandler
     [SerializeField] private Button skillButton;
     [SerializeField] private GameObject purchasedImage;
     [SerializeField] private TMP_Text skillnameText;
+    [SerializeField] private GameObject searchResultHighlight;
     [SerializeField] private bool linesMade;
-    [SerializeField] private Color[] noRequiredSkillsColors;
-    [SerializeField] private Color[] fragmentSkillsColors;
-    [SerializeField] private Color[] normalSkillColours;
-    [SerializeField] private Color[] exclusiveLockSkillColours;
+
+    private enum SkillTreeColorType
+    {
+        NoRequired,
+        Fragment,
+        Normal,
+        ExclusiveLock
+    }
+
+    private static readonly UITheme.SkillTreeButtonColors FallbackNoRequiredColors = new UITheme.SkillTreeButtonColors
+    {
+        normal = new Color(0.32941177f, 0.63529414f, 0.67058825f),
+        pressed = new Color(0.2576f, 0.4390621f, 0.46f),
+        disabled = new Color(0.21350001f, 0.33587933f, 0.35f)
+    };
+
+    private static readonly UITheme.SkillTreeButtonColors FallbackFragmentColors = new UITheme.SkillTreeButtonColors
+    {
+        normal = new Color(0.67058825f, 0.32941177f, 0.49019608f),
+        pressed = new Color(0.46f, 0.2576f, 0.35298392f),
+        disabled = new Color(0.35f, 0.21350001f, 0.2778276f)
+    };
+
+    private static readonly UITheme.SkillTreeButtonColors FallbackNormalColors = new UITheme.SkillTreeButtonColors
+    {
+        normal = new Color(0.5019608f, 0.32941177f, 0.67058825f),
+        pressed = new Color(0.35686275f, 0.25490198f, 0.45882353f),
+        disabled = new Color(0.2784314f, 0.21176471f, 0.34509805f)
+    };
+
+    private static readonly UITheme.SkillTreeButtonColors FallbackExclusiveLockColors = new UITheme.SkillTreeButtonColors
+    {
+        normal = new Color(0.4f, 0.4f, 0.4f),
+        pressed = new Color(0.29803923f, 0.29803923f, 0.29803923f),
+        disabled = new Color(0.2f, 0.2f, 0.2f)
+    };
 
     public static event Action UpdateSkills;
     public static event Action ApplySkills;
@@ -44,27 +78,16 @@ public class SkillTreeManager : MonoBehaviour, IPointerClickHandler
 
     private void Start()
     {
+        CacheSearchHighlight();
         string[] requiredIds = GetRequiredSkillIds();
         if (requiredIds is not { Length: >= 1 })
         {
-            ColorBlock colours = skillButton.colors;
-            colours.normalColor = noRequiredSkillsColors[0];
-            colours.highlightedColor = noRequiredSkillsColors[0];
-            colours.pressedColor = noRequiredSkillsColors[1];
-            colours.selectedColor = noRequiredSkillsColors[0];
-            colours.disabledColor = noRequiredSkillsColors[2];
-            skillButton.colors = colours;
+            ApplySkillButtonColors(SkillTreeColorType.NoRequired);
         }
 
         if (GetIsFragment())
         {
-            ColorBlock colours = skillButton.colors;
-            colours.normalColor = fragmentSkillsColors[0];
-            colours.highlightedColor = fragmentSkillsColors[0];
-            colours.pressedColor = fragmentSkillsColors[1];
-            colours.selectedColor = fragmentSkillsColors[0];
-            colours.disabledColor = fragmentSkillsColors[2];
-            skillButton.colors = colours;
+            ApplySkillButtonColors(SkillTreeColorType.Fragment);
         }
 
         skillnameText.text = GetDisplayName();
@@ -99,6 +122,20 @@ public class SkillTreeManager : MonoBehaviour, IPointerClickHandler
         }
 
         forwarder.Initialize(this);
+    }
+
+    private void CacheSearchHighlight()
+    {
+        if (searchResultHighlight != null) return;
+        Transform highlight = transform.Find("treeButton/SearchResultHighlight");
+        if (highlight == null)
+        {
+            highlight = transform.Find("SearchResultHighlight");
+        }
+        if (highlight != null)
+        {
+            searchResultHighlight = highlight.gameObject;
+        }
     }
 
     private sealed class RightClickForwarder : MonoBehaviour, IPointerClickHandler
@@ -442,23 +479,11 @@ public class SkillTreeManager : MonoBehaviour, IPointerClickHandler
                 if (HasExclusiveOwned(exclusiveIds))
                 {
                     available = false;
-                    ColorBlock colours = skillButton.colors;
-                    colours.normalColor = exclusiveLockSkillColours[0];
-                    colours.highlightedColor = exclusiveLockSkillColours[0];
-                    colours.pressedColor = exclusiveLockSkillColours[1];
-                    colours.selectedColor = exclusiveLockSkillColours[0];
-                    colours.disabledColor = exclusiveLockSkillColours[2];
-                    skillButton.colors = colours;
+                    ApplySkillButtonColors(SkillTreeColorType.ExclusiveLock);
                 }
                 else
                 {
-                    ColorBlock colours = skillButton.colors;
-                    colours.normalColor = normalSkillColours[0];
-                    colours.highlightedColor = normalSkillColours[0];
-                    colours.pressedColor = normalSkillColours[1];
-                    colours.selectedColor = normalSkillColours[0];
-                    colours.disabledColor = normalSkillColours[2];
-                    skillButton.colors = colours;
+                    ApplySkillButtonColors(SkillTreeColorType.Normal);
                 }
             }
         }
@@ -469,29 +494,57 @@ public class SkillTreeManager : MonoBehaviour, IPointerClickHandler
             {
                 if (HasExclusiveOwned(exclusiveIds))
                 {
-                    ColorBlock colours = skillButton.colors;
-                    colours.normalColor = exclusiveLockSkillColours[0];
-                    colours.highlightedColor = exclusiveLockSkillColours[0];
-                    colours.pressedColor = exclusiveLockSkillColours[1];
-                    colours.selectedColor = exclusiveLockSkillColours[0];
-                    colours.disabledColor = exclusiveLockSkillColours[2];
-                    skillButton.colors = colours;
+                    ApplySkillButtonColors(SkillTreeColorType.ExclusiveLock);
                 }
                 else
                 {
-                    ColorBlock colours = skillButton.colors;
-                    colours.normalColor = normalSkillColours[0];
-                    colours.highlightedColor = normalSkillColours[0];
-                    colours.pressedColor = normalSkillColours[1];
-                    colours.selectedColor = normalSkillColours[0];
-                    colours.disabledColor = normalSkillColours[2];
-                    skillButton.colors = colours;
+                    ApplySkillButtonColors(SkillTreeColorType.Normal);
                 }
             }
         }
 
         skillButton.interactable = available;
         ApplySkills?.Invoke();
+    }
+
+    private void ApplySkillButtonColors(SkillTreeColorType colorType)
+    {
+        if (skillButton == null) return;
+        UITheme.SkillTreeButtonColors colors = ResolveSkillTreeColors(colorType);
+        ColorBlock colourBlock = skillButton.colors;
+        colourBlock.normalColor = colors.normal;
+        colourBlock.highlightedColor = colors.normal;
+        colourBlock.pressedColor = colors.pressed;
+        colourBlock.selectedColor = colors.normal;
+        colourBlock.disabledColor = colors.disabled;
+        skillButton.colors = colourBlock;
+    }
+
+    private UITheme.SkillTreeButtonColors ResolveSkillTreeColors(SkillTreeColorType colorType)
+    {
+        UITheme theme = UIThemeProvider.ActiveTheme;
+        if (theme != null
+            && theme.skillTreeNoRequired != null
+            && theme.skillTreeFragment != null
+            && theme.skillTreeNormal != null
+            && theme.skillTreeExclusiveLock != null)
+        {
+            return colorType switch
+            {
+                SkillTreeColorType.NoRequired => theme.skillTreeNoRequired,
+                SkillTreeColorType.Fragment => theme.skillTreeFragment,
+                SkillTreeColorType.ExclusiveLock => theme.skillTreeExclusiveLock,
+                _ => theme.skillTreeNormal
+            };
+        }
+
+        return colorType switch
+        {
+            SkillTreeColorType.NoRequired => FallbackNoRequiredColors,
+            SkillTreeColorType.Fragment => FallbackFragmentColors,
+            SkillTreeColorType.ExclusiveLock => FallbackExclusiveLockColors,
+            _ => FallbackNormalColors
+        };
     }
 
 
