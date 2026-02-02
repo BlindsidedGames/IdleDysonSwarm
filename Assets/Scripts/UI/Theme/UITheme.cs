@@ -9,6 +9,14 @@ namespace IdleDysonSwarm.UI
     [CreateAssetMenu(fileName = "UITheme", menuName = "Idle Dyson Swarm/UI Theme")]
     public class UITheme : ScriptableObject
     {
+        [System.Serializable]
+        public class SkillTreeButtonColors
+        {
+            public Color normal;
+            public Color pressed;
+            public Color disabled;
+        }
+
         [Header("Text Colors")]
         [Tooltip("Primary accent color for important values (orange)")]
         public Color accentColor = new Color(1f, 0.643f, 0.369f); // #FFA45E
@@ -60,6 +68,35 @@ namespace IdleDysonSwarm.UI
 
         [Tooltip("Anomaly research color")]
         public Color anomalyColor = new Color(0.6f, 0.4f, 0.8f); // #9966CC
+
+        [Header("Skill Tree Button Colors")]
+        public SkillTreeButtonColors skillTreeNoRequired = new SkillTreeButtonColors
+        {
+            normal = new Color(0.32941177f, 0.63529414f, 0.67058825f),
+            pressed = new Color(0.2576f, 0.4390621f, 0.46f),
+            disabled = new Color(0.21350001f, 0.33587933f, 0.35f)
+        };
+
+        public SkillTreeButtonColors skillTreeFragment = new SkillTreeButtonColors
+        {
+            normal = new Color(0.67058825f, 0.32941177f, 0.49019608f),
+            pressed = new Color(0.46f, 0.2576f, 0.35298392f),
+            disabled = new Color(0.35f, 0.21350001f, 0.2778276f)
+        };
+
+        public SkillTreeButtonColors skillTreeNormal = new SkillTreeButtonColors
+        {
+            normal = new Color(0.5019608f, 0.32941177f, 0.67058825f),
+            pressed = new Color(0.35686275f, 0.25490198f, 0.45882353f),
+            disabled = new Color(0.2784314f, 0.21176471f, 0.34509805f)
+        };
+
+        public SkillTreeButtonColors skillTreeExclusiveLock = new SkillTreeButtonColors
+        {
+            normal = new Color(0.4f, 0.4f, 0.4f),
+            pressed = new Color(0.29803923f, 0.29803923f, 0.29803923f),
+            disabled = new Color(0.2f, 0.2f, 0.2f)
+        };
 
         // Cached rich text color tags for performance
         private string _accentTag;
