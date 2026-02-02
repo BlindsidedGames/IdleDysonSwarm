@@ -36,6 +36,11 @@ public class QuantumUpgradeUI : MonoBehaviour
     [SerializeField] private Button cashButton;
     [SerializeField] private Button scienceButton;
 
+    [Header("Hold to Purchase")]
+    [SerializeField] private HoldToPurchase influenceHoldToPurchase;
+    [SerializeField] private HoldToPurchase cashHoldToPurchase;
+    [SerializeField] private HoldToPurchase scienceHoldToPurchase;
+
     [Header("Mega-Structure Unlocks")]
     [SerializeField] private Button megaStructuresButton;
     [SerializeField] private TMP_Text megaStructuresTitleText;
@@ -92,6 +97,13 @@ public class QuantumUpgradeUI : MonoBehaviour
         influenceButton.onClick.AddListener(PurchaseInfluence);
         cashButton.onClick.AddListener(PurchaseCashPercent);
         scienceButton.onClick.AddListener(PurchaseSciencePercent);
+
+        if (influenceHoldToPurchase != null)
+            influenceHoldToPurchase.onRepeat.AddListener(PurchaseInfluence);
+        if (cashHoldToPurchase != null)
+            cashHoldToPurchase.onRepeat.AddListener(PurchaseCashPercent);
+        if (scienceHoldToPurchase != null)
+            scienceHoldToPurchase.onRepeat.AddListener(PurchaseSciencePercent);
 
         // Mega-structure unlock button (sequential unlocks)
         if (megaStructuresButton != null)

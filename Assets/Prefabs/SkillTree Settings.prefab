@@ -155,6 +155,7 @@ MonoBehaviour:
   m_VerticalAlignment: 512
   m_textAlignment: 65535
   m_characterSpacing: 0
+  m_characterHorizontalScale: 1
   m_wordSpacing: 0
   m_lineSpacing: 0
   m_lineSpacingMax: 0
@@ -291,6 +292,7 @@ MonoBehaviour:
   m_VerticalAlignment: 512
   m_textAlignment: 65535
   m_characterSpacing: 0
+  m_characterHorizontalScale: 1
   m_wordSpacing: 0
   m_lineSpacing: 0
   m_lineSpacingMax: 0
@@ -427,6 +429,7 @@ MonoBehaviour:
   m_VerticalAlignment: 512
   m_textAlignment: 65535
   m_characterSpacing: 0
+  m_characterHorizontalScale: 1
   m_wordSpacing: 0
   m_lineSpacing: 0
   m_lineSpacingMax: 0
@@ -564,6 +567,7 @@ MonoBehaviour:
   m_VerticalAlignment: 512
   m_textAlignment: 65535
   m_characterSpacing: 0
+  m_characterHorizontalScale: 1
   m_wordSpacing: 0
   m_lineSpacing: 0
   m_lineSpacingMax: 0
@@ -720,6 +724,7 @@ MonoBehaviour:
   m_VerticalAlignment: 512
   m_textAlignment: 65535
   m_characterSpacing: 0
+  m_characterHorizontalScale: 1
   m_wordSpacing: 0
   m_lineSpacing: 0
   m_lineSpacingMax: 0
@@ -856,6 +861,7 @@ MonoBehaviour:
   m_VerticalAlignment: 512
   m_textAlignment: 65535
   m_characterSpacing: 0
+  m_characterHorizontalScale: 1
   m_wordSpacing: 0
   m_lineSpacing: 0
   m_lineSpacingMax: 0
@@ -1097,6 +1103,11 @@ MonoBehaviour:
   m_Rectangle:
     m_CornerRadius: {x: 8, y: 8, z: 8, w: 8}
     m_UniformCornerRadius: 1
+  m_ChamferBox:
+    m_ChamferSize: 0
+  m_Parallelogram:
+    m_Skew: 0
+    m_CornerRadius: 0
   m_Circle:
     m_Radius: 0
     m_FitRadius: 0
@@ -1414,6 +1425,7 @@ MonoBehaviour:
   m_VerticalAlignment: 512
   m_textAlignment: 65535
   m_characterSpacing: 0
+  m_characterHorizontalScale: 1
   m_wordSpacing: 0
   m_lineSpacing: 0
   m_lineSpacingMax: 0
@@ -1655,6 +1667,11 @@ MonoBehaviour:
   m_Rectangle:
     m_CornerRadius: {x: 8, y: 8, z: 8, w: 8}
     m_UniformCornerRadius: 1
+  m_ChamferBox:
+    m_ChamferSize: 0
+  m_Parallelogram:
+    m_Skew: 0
+    m_CornerRadius: 0
   m_Circle:
     m_Radius: 0
     m_FitRadius: 0
@@ -2096,6 +2113,11 @@ MonoBehaviour:
   m_Rectangle:
     m_CornerRadius: {x: 8, y: 8, z: 8, w: 8}
     m_UniformCornerRadius: 1
+  m_ChamferBox:
+    m_ChamferSize: 0
+  m_Parallelogram:
+    m_Skew: 0
+    m_CornerRadius: 0
   m_Circle:
     m_Radius: 0
     m_FitRadius: 0
@@ -2222,8 +2244,8 @@ MonoBehaviour:
       m_Calls: []
   m_text: Load
   m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: 3079981d1e439524fbb88b3a43b4c219, type: 2}
-  m_sharedMaterial: {fileID: 8614727323866032098, guid: 3079981d1e439524fbb88b3a43b4c219, type: 2}
+  m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
+  m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []
@@ -2247,7 +2269,7 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 33.5
+  m_fontSize: 35.8
   m_fontSizeBase: 24
   m_fontWeight: 400
   m_enableAutoSizing: 1
@@ -2258,6 +2280,7 @@ MonoBehaviour:
   m_VerticalAlignment: 512
   m_textAlignment: 65535
   m_characterSpacing: 0
+  m_characterHorizontalScale: 1
   m_wordSpacing: 0
   m_lineSpacing: 0
   m_lineSpacingMax: 0
@@ -2469,6 +2492,7 @@ MonoBehaviour:
   m_VerticalAlignment: 512
   m_textAlignment: 65535
   m_characterSpacing: 0
+  m_characterHorizontalScale: 1
   m_wordSpacing: 0
   m_lineSpacing: 0
   m_lineSpacingMax: 0
@@ -2605,6 +2629,7 @@ MonoBehaviour:
   m_VerticalAlignment: 512
   m_textAlignment: 65535
   m_characterSpacing: 0
+  m_characterHorizontalScale: 1
   m_wordSpacing: 0
   m_lineSpacing: 0
   m_lineSpacingMax: 0
@@ -2828,6 +2853,7 @@ MonoBehaviour:
   m_VerticalAlignment: 512
   m_textAlignment: 65535
   m_characterSpacing: 0
+  m_characterHorizontalScale: 1
   m_wordSpacing: 0
   m_lineSpacing: 0
   m_lineSpacingMax: 0
@@ -3044,6 +3070,11 @@ MonoBehaviour:
   m_Rectangle:
     m_CornerRadius: {x: 8, y: 8, z: 8, w: 8}
     m_UniformCornerRadius: 1
+  m_ChamferBox:
+    m_ChamferSize: 0
+  m_Parallelogram:
+    m_Skew: 0
+    m_CornerRadius: 0
   m_Circle:
     m_Radius: 0
     m_FitRadius: 0
@@ -3450,6 +3481,7 @@ MonoBehaviour:
   m_VerticalAlignment: 512
   m_textAlignment: 65535
   m_characterSpacing: 0
+  m_characterHorizontalScale: 1
   m_wordSpacing: 0
   m_lineSpacing: 0
   m_lineSpacingMax: 0
@@ -3606,6 +3638,7 @@ MonoBehaviour:
   m_VerticalAlignment: 512
   m_textAlignment: 65535
   m_characterSpacing: 0
+  m_characterHorizontalScale: 1
   m_wordSpacing: 0
   m_lineSpacing: 0
   m_lineSpacingMax: 0
@@ -3710,7 +3743,7 @@ GameObject:
   - component: {fileID: 7470765846404378247}
   - component: {fileID: 705298108683648600}
   m_Layer: 5
-  m_Name: Button
+  m_Name: SetPreset3Name_Button
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -3800,7 +3833,7 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
-      - m_Target: {fileID: 7470765846947645698}
+      - m_Target: {fileID: 0}
         m_TargetAssemblyTypeName: SkillTreeSettingsManager, Assembly-CSharp
         m_MethodName: RenamePreset
         m_Mode: 3
@@ -3891,6 +3924,11 @@ MonoBehaviour:
   m_Rectangle:
     m_CornerRadius: {x: 8, y: 8, z: 8, w: 8}
     m_UniformCornerRadius: 1
+  m_ChamferBox:
+    m_ChamferSize: 0
+  m_Parallelogram:
+    m_Skew: 0
+    m_CornerRadius: 0
   m_Circle:
     m_Radius: 0
     m_FitRadius: 0
@@ -4017,8 +4055,8 @@ MonoBehaviour:
       m_Calls: []
   m_text: Reset Skill Tree
   m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: 3079981d1e439524fbb88b3a43b4c219, type: 2}
-  m_sharedMaterial: {fileID: 8614727323866032098, guid: 3079981d1e439524fbb88b3a43b4c219, type: 2}
+  m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
+  m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []
@@ -4053,6 +4091,7 @@ MonoBehaviour:
   m_VerticalAlignment: 512
   m_textAlignment: 65535
   m_characterSpacing: 0
+  m_characterHorizontalScale: 1
   m_wordSpacing: 0
   m_lineSpacing: 0
   m_lineSpacingMax: 0
@@ -4179,6 +4218,11 @@ MonoBehaviour:
   m_Rectangle:
     m_CornerRadius: {x: 8, y: 8, z: 8, w: 8}
     m_UniformCornerRadius: 1
+  m_ChamferBox:
+    m_ChamferSize: 0
+  m_Parallelogram:
+    m_Skew: 0
+    m_CornerRadius: 0
   m_Circle:
     m_Radius: 0
     m_FitRadius: 0
@@ -4305,8 +4349,8 @@ MonoBehaviour:
       m_Calls: []
   m_text: Load
   m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: 3079981d1e439524fbb88b3a43b4c219, type: 2}
-  m_sharedMaterial: {fileID: 8614727323866032098, guid: 3079981d1e439524fbb88b3a43b4c219, type: 2}
+  m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
+  m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []
@@ -4330,7 +4374,7 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 33.5
+  m_fontSize: 35.8
   m_fontSizeBase: 24
   m_fontWeight: 400
   m_enableAutoSizing: 1
@@ -4341,6 +4385,7 @@ MonoBehaviour:
   m_VerticalAlignment: 512
   m_textAlignment: 65535
   m_characterSpacing: 0
+  m_characterHorizontalScale: 1
   m_wordSpacing: 0
   m_lineSpacing: 0
   m_lineSpacingMax: 0
@@ -4672,6 +4717,11 @@ MonoBehaviour:
   m_Rectangle:
     m_CornerRadius: {x: 8, y: 8, z: 8, w: 8}
     m_UniformCornerRadius: 1
+  m_ChamferBox:
+    m_ChamferSize: 0
+  m_Parallelogram:
+    m_Skew: 0
+    m_CornerRadius: 0
   m_Circle:
     m_Radius: 0
     m_FitRadius: 0
@@ -4819,7 +4869,7 @@ MonoBehaviour:
     m_SelectedTrigger: Selected
     m_DisabledTrigger: Disabled
   m_Interactable: 1
-  m_TargetGraphic: {fileID: 0}
+  m_TargetGraphic: {fileID: 8853218365205608625}
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
@@ -4902,6 +4952,11 @@ MonoBehaviour:
   m_Rectangle:
     m_CornerRadius: {x: 8, y: 8, z: 8, w: 8}
     m_UniformCornerRadius: 1
+  m_ChamferBox:
+    m_ChamferSize: 0
+  m_Parallelogram:
+    m_Skew: 0
+    m_CornerRadius: 0
   m_Circle:
     m_Radius: 0
     m_FitRadius: 0
@@ -5227,8 +5282,8 @@ MonoBehaviour:
       m_Calls: []
   m_text: Save
   m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: 3079981d1e439524fbb88b3a43b4c219, type: 2}
-  m_sharedMaterial: {fileID: 8614727323866032098, guid: 3079981d1e439524fbb88b3a43b4c219, type: 2}
+  m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
+  m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []
@@ -5252,7 +5307,7 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 33.5
+  m_fontSize: 35.8
   m_fontSizeBase: 24
   m_fontWeight: 400
   m_enableAutoSizing: 1
@@ -5263,6 +5318,7 @@ MonoBehaviour:
   m_VerticalAlignment: 512
   m_textAlignment: 65535
   m_characterSpacing: 0
+  m_characterHorizontalScale: 1
   m_wordSpacing: 0
   m_lineSpacing: 0
   m_lineSpacingMax: 0
@@ -5542,6 +5598,11 @@ MonoBehaviour:
   m_Rectangle:
     m_CornerRadius: {x: 8, y: 8, z: 8, w: 8}
     m_UniformCornerRadius: 1
+  m_ChamferBox:
+    m_ChamferSize: 0
+  m_Parallelogram:
+    m_Skew: 0
+    m_CornerRadius: 0
   m_Circle:
     m_Radius: 0
     m_FitRadius: 0
@@ -5784,6 +5845,11 @@ MonoBehaviour:
   m_Rectangle:
     m_CornerRadius: {x: 8, y: 8, z: 8, w: 8}
     m_UniformCornerRadius: 1
+  m_ChamferBox:
+    m_ChamferSize: 0
+  m_Parallelogram:
+    m_Skew: 0
+    m_CornerRadius: 0
   m_Circle:
     m_Radius: 0
     m_FitRadius: 0
@@ -5947,6 +6013,7 @@ MonoBehaviour:
   m_VerticalAlignment: 512
   m_textAlignment: 65535
   m_characterSpacing: 0
+  m_characterHorizontalScale: 1
   m_wordSpacing: 0
   m_lineSpacing: 0
   m_lineSpacingMax: 0
@@ -6178,6 +6245,7 @@ MonoBehaviour:
   m_VerticalAlignment: 512
   m_textAlignment: 65535
   m_characterSpacing: 0
+  m_characterHorizontalScale: 1
   m_wordSpacing: 0
   m_lineSpacing: 0
   m_lineSpacingMax: 0
@@ -6366,6 +6434,7 @@ MonoBehaviour:
   m_VerticalAlignment: 512
   m_textAlignment: 65535
   m_characterSpacing: 0
+  m_characterHorizontalScale: 1
   m_wordSpacing: 0
   m_lineSpacing: 0
   m_lineSpacingMax: 0
@@ -6570,6 +6639,11 @@ MonoBehaviour:
   m_Rectangle:
     m_CornerRadius: {x: 8, y: 8, z: 8, w: 8}
     m_UniformCornerRadius: 1
+  m_ChamferBox:
+    m_ChamferSize: 0
+  m_Parallelogram:
+    m_Skew: 0
+    m_CornerRadius: 0
   m_Circle:
     m_Radius: 0
     m_FitRadius: 0
@@ -6696,8 +6770,8 @@ MonoBehaviour:
       m_Calls: []
   m_text: Save
   m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: 3079981d1e439524fbb88b3a43b4c219, type: 2}
-  m_sharedMaterial: {fileID: 8614727323866032098, guid: 3079981d1e439524fbb88b3a43b4c219, type: 2}
+  m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
+  m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []
@@ -6721,7 +6795,7 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 33.5
+  m_fontSize: 35.8
   m_fontSizeBase: 24
   m_fontWeight: 400
   m_enableAutoSizing: 1
@@ -6732,6 +6806,7 @@ MonoBehaviour:
   m_VerticalAlignment: 512
   m_textAlignment: 65535
   m_characterSpacing: 0
+  m_characterHorizontalScale: 1
   m_wordSpacing: 0
   m_lineSpacing: 0
   m_lineSpacingMax: 0
@@ -6868,6 +6943,7 @@ MonoBehaviour:
   m_VerticalAlignment: 512
   m_textAlignment: 65535
   m_characterSpacing: 0
+  m_characterHorizontalScale: 1
   m_wordSpacing: 0
   m_lineSpacing: 0
   m_lineSpacingMax: 0
@@ -7004,6 +7080,7 @@ MonoBehaviour:
   m_VerticalAlignment: 512
   m_textAlignment: 65535
   m_characterSpacing: 0
+  m_characterHorizontalScale: 1
   m_wordSpacing: 0
   m_lineSpacing: 0
   m_lineSpacingMax: 0
@@ -7227,6 +7304,7 @@ MonoBehaviour:
   m_VerticalAlignment: 512
   m_textAlignment: 65535
   m_characterSpacing: 0
+  m_characterHorizontalScale: 1
   m_wordSpacing: 0
   m_lineSpacing: 0
   m_lineSpacingMax: 0
@@ -7363,6 +7441,7 @@ MonoBehaviour:
   m_VerticalAlignment: 512
   m_textAlignment: 65535
   m_characterSpacing: 0
+  m_characterHorizontalScale: 1
   m_wordSpacing: 0
   m_lineSpacing: 0
   m_lineSpacingMax: 0
@@ -7579,6 +7658,11 @@ MonoBehaviour:
   m_Rectangle:
     m_CornerRadius: {x: 8, y: 8, z: 8, w: 8}
     m_UniformCornerRadius: 1
+  m_ChamferBox:
+    m_ChamferSize: 0
+  m_Parallelogram:
+    m_Skew: 0
+    m_CornerRadius: 0
   m_Circle:
     m_Radius: 0
     m_FitRadius: 0
@@ -7787,6 +7871,11 @@ MonoBehaviour:
   m_Rectangle:
     m_CornerRadius: {x: 8, y: 8, z: 8, w: 8}
     m_UniformCornerRadius: 1
+  m_ChamferBox:
+    m_ChamferSize: 0
+  m_Parallelogram:
+    m_Skew: 0
+    m_CornerRadius: 0
   m_Circle:
     m_Radius: 0
     m_FitRadius: 0
@@ -7913,8 +8002,8 @@ MonoBehaviour:
       m_Calls: []
   m_text: Load
   m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: 3079981d1e439524fbb88b3a43b4c219, type: 2}
-  m_sharedMaterial: {fileID: 8614727323866032098, guid: 3079981d1e439524fbb88b3a43b4c219, type: 2}
+  m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
+  m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []
@@ -7938,7 +8027,7 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 33.5
+  m_fontSize: 35.8
   m_fontSizeBase: 24
   m_fontWeight: 400
   m_enableAutoSizing: 1
@@ -7949,6 +8038,7 @@ MonoBehaviour:
   m_VerticalAlignment: 512
   m_textAlignment: 65535
   m_characterSpacing: 0
+  m_characterHorizontalScale: 1
   m_wordSpacing: 0
   m_lineSpacing: 0
   m_lineSpacingMax: 0
@@ -8165,6 +8255,11 @@ MonoBehaviour:
   m_Rectangle:
     m_CornerRadius: {x: 8, y: 8, z: 8, w: 8}
     m_UniformCornerRadius: 1
+  m_ChamferBox:
+    m_ChamferSize: 0
+  m_Parallelogram:
+    m_Skew: 0
+    m_CornerRadius: 0
   m_Circle:
     m_Radius: 0
     m_FitRadius: 0
@@ -8327,6 +8422,7 @@ MonoBehaviour:
   m_VerticalAlignment: 512
   m_textAlignment: 65535
   m_characterSpacing: 0
+  m_characterHorizontalScale: 1
   m_wordSpacing: 0
   m_lineSpacing: 0
   m_lineSpacingMax: 0
@@ -8427,8 +8523,8 @@ MonoBehaviour:
       m_Calls: []
   m_text: Load
   m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: 3079981d1e439524fbb88b3a43b4c219, type: 2}
-  m_sharedMaterial: {fileID: 8614727323866032098, guid: 3079981d1e439524fbb88b3a43b4c219, type: 2}
+  m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
+  m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []
@@ -8452,7 +8548,7 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 33.5
+  m_fontSize: 35.8
   m_fontSizeBase: 24
   m_fontWeight: 400
   m_enableAutoSizing: 1
@@ -8463,6 +8559,7 @@ MonoBehaviour:
   m_VerticalAlignment: 512
   m_textAlignment: 65535
   m_characterSpacing: 0
+  m_characterHorizontalScale: 1
   m_wordSpacing: 0
   m_lineSpacing: 0
   m_lineSpacingMax: 0
@@ -8507,7 +8604,6 @@ GameObject:
   - component: {fileID: 7470765846947645699}
   - component: {fileID: 7470765846947645708}
   - component: {fileID: 7470765846947645709}
-  - component: {fileID: 7470765846947645698}
   m_Layer: 5
   m_Name: SkillTree Settings
   m_TagString: Untagged
@@ -8573,42 +8669,6 @@ MonoBehaviour:
   m_FillOrigin: 0
   m_UseSpriteMesh: 0
   m_PixelsPerUnitMultiplier: 1
---- !u!114 &7470765846947645698
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7470765846947645696}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 95f70ddad0a77444fb8b9885bd248d8a, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  _gameManager: {fileID: 0}
-  _skillTreeManager: {fileID: 0}
-  feedbackMessage: {fileID: 7470765846189858724}
-  preset1Save: {fileID: 7470765846604664987}
-  preset1Load: {fileID: 7470765846744710867}
-  preset2Save: {fileID: 7470765846456878390}
-  preset2Load: {fileID: 7470765846878181549}
-  preset3Save: {fileID: 7470765846479649446}
-  preset3Load: {fileID: 7470765847494688972}
-  preset4Save: {fileID: 7470765848006522456}
-  preset4Load: {fileID: 7470765847037935272}
-  preset5Save: {fileID: 7470765846461509716}
-  preset5Load: {fileID: 7470765846485207435}
-  resetSkills: {fileID: 7470765847191440360}
-  preset1Text: {fileID: 7470765846365469398}
-  preset2Text: {fileID: 7470765847875092743}
-  preset3Text: {fileID: 7470765847812478562}
-  preset4Text: {fileID: 7470765847319206359}
-  preset5Text: {fileID: 7470765847053665816}
-  rename1: {fileID: 7470765846091887140}
-  rename2: {fileID: 7470765847968528948}
-  rename3: {fileID: 7470765846470951760}
-  rename4: {fileID: 7470765847913452822}
-  rename5: {fileID: 7470765848049314636}
 --- !u!1 &7470765846953028029
 GameObject:
   m_ObjectHideFlags: 0
@@ -8623,7 +8683,7 @@ GameObject:
   - component: {fileID: 7470765846953028031}
   - component: {fileID: 6325809499613298305}
   m_Layer: 5
-  m_Name: Button
+  m_Name: SetPreset5Name_Button
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -8713,7 +8773,7 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
-      - m_Target: {fileID: 7470765846947645698}
+      - m_Target: {fileID: 0}
         m_TargetAssemblyTypeName: SkillTreeSettingsManager, Assembly-CSharp
         m_MethodName: RenamePreset
         m_Mode: 3
@@ -8804,6 +8864,11 @@ MonoBehaviour:
   m_Rectangle:
     m_CornerRadius: {x: 8, y: 8, z: 8, w: 8}
     m_UniformCornerRadius: 1
+  m_ChamferBox:
+    m_ChamferSize: 0
+  m_Parallelogram:
+    m_Skew: 0
+    m_CornerRadius: 0
   m_Circle:
     m_Radius: 0
     m_FitRadius: 0
@@ -8930,8 +8995,8 @@ MonoBehaviour:
       m_Calls: []
   m_text: X
   m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: 3079981d1e439524fbb88b3a43b4c219, type: 2}
-  m_sharedMaterial: {fileID: 8614727323866032098, guid: 3079981d1e439524fbb88b3a43b4c219, type: 2}
+  m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
+  m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []
@@ -8955,7 +9020,7 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 33.5
+  m_fontSize: 35.8
   m_fontSizeBase: 24
   m_fontWeight: 400
   m_enableAutoSizing: 1
@@ -8966,6 +9031,7 @@ MonoBehaviour:
   m_VerticalAlignment: 1024
   m_textAlignment: 65535
   m_characterSpacing: 0
+  m_characterHorizontalScale: 1
   m_wordSpacing: 0
   m_lineSpacing: 0
   m_lineSpacingMax: 0
@@ -9213,6 +9279,7 @@ MonoBehaviour:
   m_VerticalAlignment: 512
   m_textAlignment: 65535
   m_characterSpacing: 0
+  m_characterHorizontalScale: 1
   m_wordSpacing: 0
   m_lineSpacing: 0
   m_lineSpacingMax: 0
@@ -9369,6 +9436,7 @@ MonoBehaviour:
   m_VerticalAlignment: 512
   m_textAlignment: 65535
   m_characterSpacing: 0
+  m_characterHorizontalScale: 1
   m_wordSpacing: 0
   m_lineSpacing: 0
   m_lineSpacingMax: 0
@@ -9585,6 +9653,11 @@ MonoBehaviour:
   m_Rectangle:
     m_CornerRadius: {x: 8, y: 8, z: 8, w: 8}
     m_UniformCornerRadius: 1
+  m_ChamferBox:
+    m_ChamferSize: 0
+  m_Parallelogram:
+    m_Skew: 0
+    m_CornerRadius: 0
   m_Circle:
     m_Radius: 0
     m_FitRadius: 0
@@ -9747,6 +9820,7 @@ MonoBehaviour:
   m_VerticalAlignment: 512
   m_textAlignment: 65535
   m_characterSpacing: 0
+  m_characterHorizontalScale: 1
   m_wordSpacing: 0
   m_lineSpacing: 0
   m_lineSpacingMax: 0
@@ -9847,8 +9921,8 @@ MonoBehaviour:
       m_Calls: []
   m_text: Save
   m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: 3079981d1e439524fbb88b3a43b4c219, type: 2}
-  m_sharedMaterial: {fileID: 8614727323866032098, guid: 3079981d1e439524fbb88b3a43b4c219, type: 2}
+  m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
+  m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []
@@ -9872,7 +9946,7 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 33.5
+  m_fontSize: 35.8
   m_fontSizeBase: 24
   m_fontWeight: 400
   m_enableAutoSizing: 1
@@ -9883,6 +9957,7 @@ MonoBehaviour:
   m_VerticalAlignment: 512
   m_textAlignment: 65535
   m_characterSpacing: 0
+  m_characterHorizontalScale: 1
   m_wordSpacing: 0
   m_lineSpacing: 0
   m_lineSpacingMax: 0
@@ -10020,6 +10095,7 @@ MonoBehaviour:
   m_VerticalAlignment: 512
   m_textAlignment: 65535
   m_characterSpacing: 0
+  m_characterHorizontalScale: 1
   m_wordSpacing: 0
   m_lineSpacing: 0
   m_lineSpacingMax: 0
@@ -10281,6 +10357,11 @@ MonoBehaviour:
   m_Rectangle:
     m_CornerRadius: {x: 8, y: 8, z: 8, w: 8}
     m_UniformCornerRadius: 1
+  m_ChamferBox:
+    m_ChamferSize: 0
+  m_Parallelogram:
+    m_Skew: 0
+    m_CornerRadius: 0
   m_Circle:
     m_Radius: 0
     m_FitRadius: 0
@@ -10530,6 +10611,7 @@ MonoBehaviour:
   m_VerticalAlignment: 512
   m_textAlignment: 65535
   m_characterSpacing: 0
+  m_characterHorizontalScale: 1
   m_wordSpacing: 0
   m_lineSpacing: 0
   m_lineSpacingMax: 0
@@ -10717,8 +10799,8 @@ MonoBehaviour:
       m_Calls: []
   m_text: Save
   m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: 3079981d1e439524fbb88b3a43b4c219, type: 2}
-  m_sharedMaterial: {fileID: 8614727323866032098, guid: 3079981d1e439524fbb88b3a43b4c219, type: 2}
+  m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
+  m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []
@@ -10742,7 +10824,7 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 33.5
+  m_fontSize: 35.8
   m_fontSizeBase: 24
   m_fontWeight: 400
   m_enableAutoSizing: 1
@@ -10753,6 +10835,7 @@ MonoBehaviour:
   m_VerticalAlignment: 512
   m_textAlignment: 65535
   m_characterSpacing: 0
+  m_characterHorizontalScale: 1
   m_wordSpacing: 0
   m_lineSpacing: 0
   m_lineSpacingMax: 0
@@ -10969,6 +11052,11 @@ MonoBehaviour:
   m_Rectangle:
     m_CornerRadius: {x: 8, y: 8, z: 8, w: 8}
     m_UniformCornerRadius: 1
+  m_ChamferBox:
+    m_ChamferSize: 0
+  m_Parallelogram:
+    m_Skew: 0
+    m_CornerRadius: 0
   m_Circle:
     m_Radius: 0
     m_FitRadius: 0
@@ -11131,6 +11219,7 @@ MonoBehaviour:
   m_VerticalAlignment: 512
   m_textAlignment: 65535
   m_characterSpacing: 0
+  m_characterHorizontalScale: 1
   m_wordSpacing: 0
   m_lineSpacing: 0
   m_lineSpacingMax: 0
@@ -11517,6 +11606,7 @@ MonoBehaviour:
   m_VerticalAlignment: 512
   m_textAlignment: 65535
   m_characterSpacing: 0
+  m_characterHorizontalScale: 1
   m_wordSpacing: 0
   m_lineSpacing: 0
   m_lineSpacingMax: 0
@@ -11760,6 +11850,7 @@ MonoBehaviour:
   m_VerticalAlignment: 512
   m_textAlignment: 65535
   m_characterSpacing: 0
+  m_characterHorizontalScale: 1
   m_wordSpacing: 0
   m_lineSpacing: 0
   m_lineSpacingMax: 0
@@ -11976,6 +12067,11 @@ MonoBehaviour:
   m_Rectangle:
     m_CornerRadius: {x: 8, y: 8, z: 8, w: 8}
     m_UniformCornerRadius: 1
+  m_ChamferBox:
+    m_ChamferSize: 0
+  m_Parallelogram:
+    m_Skew: 0
+    m_CornerRadius: 0
   m_Circle:
     m_Radius: 0
     m_FitRadius: 0
@@ -12102,8 +12198,8 @@ MonoBehaviour:
       m_Calls: []
   m_text: Save
   m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: 3079981d1e439524fbb88b3a43b4c219, type: 2}
-  m_sharedMaterial: {fileID: 8614727323866032098, guid: 3079981d1e439524fbb88b3a43b4c219, type: 2}
+  m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
+  m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []
@@ -12127,7 +12223,7 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 33.5
+  m_fontSize: 35.8
   m_fontSizeBase: 24
   m_fontWeight: 400
   m_enableAutoSizing: 1
@@ -12138,6 +12234,7 @@ MonoBehaviour:
   m_VerticalAlignment: 512
   m_textAlignment: 65535
   m_characterSpacing: 0
+  m_characterHorizontalScale: 1
   m_wordSpacing: 0
   m_lineSpacing: 0
   m_lineSpacingMax: 0
@@ -12274,6 +12371,7 @@ MonoBehaviour:
   m_VerticalAlignment: 512
   m_textAlignment: 65535
   m_characterSpacing: 0
+  m_characterHorizontalScale: 1
   m_wordSpacing: 0
   m_lineSpacing: 0
   m_lineSpacingMax: 0
@@ -12411,6 +12509,7 @@ MonoBehaviour:
   m_VerticalAlignment: 512
   m_textAlignment: 65535
   m_characterSpacing: 0
+  m_characterHorizontalScale: 1
   m_wordSpacing: 0
   m_lineSpacing: 0
   m_lineSpacingMax: 0
@@ -12809,6 +12908,11 @@ MonoBehaviour:
   m_Rectangle:
     m_CornerRadius: {x: 8, y: 8, z: 8, w: 8}
     m_UniformCornerRadius: 1
+  m_ChamferBox:
+    m_ChamferSize: 0
+  m_Parallelogram:
+    m_Skew: 0
+    m_CornerRadius: 0
   m_Circle:
     m_Radius: 0
     m_FitRadius: 0
@@ -12957,7 +13061,7 @@ GameObject:
   - component: {fileID: 7470765847547725985}
   - component: {fileID: 512124479006980780}
   m_Layer: 5
-  m_Name: Button
+  m_Name: SetPreset2Name_Button
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -13047,7 +13151,7 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
-      - m_Target: {fileID: 7470765846947645698}
+      - m_Target: {fileID: 0}
         m_TargetAssemblyTypeName: SkillTreeSettingsManager, Assembly-CSharp
         m_MethodName: RenamePreset
         m_Mode: 3
@@ -13138,6 +13242,11 @@ MonoBehaviour:
   m_Rectangle:
     m_CornerRadius: {x: 8, y: 8, z: 8, w: 8}
     m_UniformCornerRadius: 1
+  m_ChamferBox:
+    m_ChamferSize: 0
+  m_Parallelogram:
+    m_Skew: 0
+    m_CornerRadius: 0
   m_Circle:
     m_Radius: 0
     m_FitRadius: 0
@@ -13610,6 +13719,7 @@ MonoBehaviour:
   m_VerticalAlignment: 512
   m_textAlignment: 65535
   m_characterSpacing: 0
+  m_characterHorizontalScale: 1
   m_wordSpacing: 0
   m_lineSpacing: 0
   m_lineSpacingMax: 0
@@ -13851,6 +13961,11 @@ MonoBehaviour:
   m_Rectangle:
     m_CornerRadius: {x: 8, y: 8, z: 8, w: 8}
     m_UniformCornerRadius: 1
+  m_ChamferBox:
+    m_ChamferSize: 0
+  m_Parallelogram:
+    m_Skew: 0
+    m_CornerRadius: 0
   m_Circle:
     m_Radius: 0
     m_FitRadius: 0
@@ -13924,7 +14039,7 @@ GameObject:
   - component: {fileID: 7470765847660321556}
   - component: {fileID: 569892295907366406}
   m_Layer: 5
-  m_Name: Button
+  m_Name: SetPreset1Name_Button
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -14014,7 +14129,7 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
-      - m_Target: {fileID: 7470765846947645698}
+      - m_Target: {fileID: 0}
         m_TargetAssemblyTypeName: SkillTreeSettingsManager, Assembly-CSharp
         m_MethodName: RenamePreset
         m_Mode: 3
@@ -14105,6 +14220,11 @@ MonoBehaviour:
   m_Rectangle:
     m_CornerRadius: {x: 8, y: 8, z: 8, w: 8}
     m_UniformCornerRadius: 1
+  m_ChamferBox:
+    m_ChamferSize: 0
+  m_Parallelogram:
+    m_Skew: 0
+    m_CornerRadius: 0
   m_Circle:
     m_Radius: 0
     m_FitRadius: 0
@@ -14347,6 +14467,11 @@ MonoBehaviour:
   m_Rectangle:
     m_CornerRadius: {x: 8, y: 8, z: 8, w: 8}
     m_UniformCornerRadius: 1
+  m_ChamferBox:
+    m_ChamferSize: 0
+  m_Parallelogram:
+    m_Skew: 0
+    m_CornerRadius: 0
   m_Circle:
     m_Radius: 0
     m_FitRadius: 0
@@ -14509,6 +14634,7 @@ MonoBehaviour:
   m_VerticalAlignment: 512
   m_textAlignment: 65535
   m_characterSpacing: 0
+  m_characterHorizontalScale: 1
   m_wordSpacing: 0
   m_lineSpacing: 0
   m_lineSpacingMax: 0
@@ -14750,6 +14876,11 @@ MonoBehaviour:
   m_Rectangle:
     m_CornerRadius: {x: 8, y: 8, z: 8, w: 8}
     m_UniformCornerRadius: 1
+  m_ChamferBox:
+    m_ChamferSize: 0
+  m_Parallelogram:
+    m_Skew: 0
+    m_CornerRadius: 0
   m_Circle:
     m_Radius: 0
     m_FitRadius: 0
@@ -15154,6 +15285,11 @@ MonoBehaviour:
   m_Rectangle:
     m_CornerRadius: {x: 8, y: 8, z: 8, w: 8}
     m_UniformCornerRadius: 1
+  m_ChamferBox:
+    m_ChamferSize: 0
+  m_Parallelogram:
+    m_Skew: 0
+    m_CornerRadius: 0
   m_Circle:
     m_Radius: 0
     m_FitRadius: 0
@@ -15316,6 +15452,7 @@ MonoBehaviour:
   m_VerticalAlignment: 512
   m_textAlignment: 65535
   m_characterSpacing: 0
+  m_characterHorizontalScale: 1
   m_wordSpacing: 0
   m_lineSpacing: 0
   m_lineSpacingMax: 0
@@ -15363,7 +15500,7 @@ GameObject:
   - component: {fileID: 7470765847777721944}
   - component: {fileID: 5826673403897894912}
   m_Layer: 5
-  m_Name: Button
+  m_Name: SetPreset4Name_Button
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -15453,7 +15590,7 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
-      - m_Target: {fileID: 7470765846947645698}
+      - m_Target: {fileID: 0}
         m_TargetAssemblyTypeName: SkillTreeSettingsManager, Assembly-CSharp
         m_MethodName: RenamePreset
         m_Mode: 3
@@ -15544,6 +15681,11 @@ MonoBehaviour:
   m_Rectangle:
     m_CornerRadius: {x: 8, y: 8, z: 8, w: 8}
     m_UniformCornerRadius: 1
+  m_ChamferBox:
+    m_ChamferSize: 0
+  m_Parallelogram:
+    m_Skew: 0
+    m_CornerRadius: 0
   m_Circle:
     m_Radius: 0
     m_FitRadius: 0
@@ -15759,6 +15901,7 @@ MonoBehaviour:
   m_VerticalAlignment: 512
   m_textAlignment: 65535
   m_characterSpacing: 0
+  m_characterHorizontalScale: 1
   m_wordSpacing: 0
   m_lineSpacing: 0
   m_lineSpacingMax: 0
@@ -15879,8 +16022,8 @@ MonoBehaviour:
       m_Calls: []
   m_text: Load
   m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: 3079981d1e439524fbb88b3a43b4c219, type: 2}
-  m_sharedMaterial: {fileID: 8614727323866032098, guid: 3079981d1e439524fbb88b3a43b4c219, type: 2}
+  m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
+  m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []
@@ -15904,7 +16047,7 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 33.5
+  m_fontSize: 35.8
   m_fontSizeBase: 24
   m_fontWeight: 400
   m_enableAutoSizing: 1
@@ -15915,6 +16058,7 @@ MonoBehaviour:
   m_VerticalAlignment: 512
   m_textAlignment: 65535
   m_characterSpacing: 0
+  m_characterHorizontalScale: 1
   m_wordSpacing: 0
   m_lineSpacing: 0
   m_lineSpacingMax: 0
@@ -16052,6 +16196,7 @@ MonoBehaviour:
   m_VerticalAlignment: 512
   m_textAlignment: 65535
   m_characterSpacing: 0
+  m_characterHorizontalScale: 1
   m_wordSpacing: 0
   m_lineSpacing: 0
   m_lineSpacingMax: 0
@@ -16376,6 +16521,7 @@ MonoBehaviour:
   m_VerticalAlignment: 512
   m_textAlignment: 65535
   m_characterSpacing: 0
+  m_characterHorizontalScale: 1
   m_wordSpacing: 0
   m_lineSpacing: 0
   m_lineSpacingMax: 0
@@ -17013,6 +17159,11 @@ MonoBehaviour:
   m_Rectangle:
     m_CornerRadius: {x: 8, y: 8, z: 8, w: 8}
     m_UniformCornerRadius: 1
+  m_ChamferBox:
+    m_ChamferSize: 0
+  m_Parallelogram:
+    m_Skew: 0
+    m_CornerRadius: 0
   m_Circle:
     m_Radius: 0
     m_FitRadius: 0
@@ -17374,6 +17525,7 @@ MonoBehaviour:
   m_VerticalAlignment: 512
   m_textAlignment: 65535
   m_characterSpacing: 0
+  m_characterHorizontalScale: 1
   m_wordSpacing: 0
   m_lineSpacing: 0
   m_lineSpacingMax: 0
@@ -17578,6 +17730,11 @@ MonoBehaviour:
   m_Rectangle:
     m_CornerRadius: {x: 8, y: 8, z: 8, w: 8}
     m_UniformCornerRadius: 1
+  m_ChamferBox:
+    m_ChamferSize: 0
+  m_Parallelogram:
+    m_Skew: 0
+    m_CornerRadius: 0
   m_Circle:
     m_Radius: 0
     m_FitRadius: 0
@@ -18094,6 +18251,7 @@ MonoBehaviour:
   m_VerticalAlignment: 512
   m_textAlignment: 65535
   m_characterSpacing: 0
+  m_characterHorizontalScale: 1
   m_wordSpacing: 0
   m_lineSpacing: 0
   m_lineSpacingMax: 0

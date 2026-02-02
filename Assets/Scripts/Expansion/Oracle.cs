@@ -3144,6 +3144,7 @@ namespace Expansion
             public List<int> skillAutoAssignmentList5 = new List<int>();
             public double botDistPreset5;
             public string preset5Name = "Preset 5";
+            public int selectedPreset = 1;
             public List<string> skillAutoAssignmentIds = new List<string>();
             public List<string> skillAutoAssignmentIds1 = new List<string>();
             public List<string> skillAutoAssignmentIds2 = new List<string>();
