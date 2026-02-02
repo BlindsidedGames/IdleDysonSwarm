@@ -17,8 +17,8 @@ public class SkillTreeManager : MonoBehaviour, IPointerClickHandler
     private LineManager linePrefab => oracle.linePrefab;
 
     [SerializeField] public int skillKey;
-    [SerializeField] private SkillDefinition skillDefinition;
-    [SerializeField] private string skillId;
+    [SerializeField, HideInInspector] private SkillDefinition skillDefinition;
+    [SerializeField, HideInInspector] private string skillId;
     private SkillDefinition _cachedDefinition;
     private string _cachedSkillId;
     private bool _loggedMissingDefinition;
@@ -136,6 +136,13 @@ public class SkillTreeManager : MonoBehaviour, IPointerClickHandler
         {
             searchResultHighlight = highlight.gameObject;
         }
+    }
+
+    public void SetSearchHighlight(bool enabled)
+    {
+        CacheSearchHighlight();
+        if (searchResultHighlight == null) return;
+        searchResultHighlight.SetActive(enabled);
     }
 
     private sealed class RightClickForwarder : MonoBehaviour, IPointerClickHandler
