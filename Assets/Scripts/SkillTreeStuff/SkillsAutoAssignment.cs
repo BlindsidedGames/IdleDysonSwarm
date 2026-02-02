@@ -23,33 +23,40 @@ public class SkillsAutoAssignment : MonoBehaviour
 
     private void UnlockSkill()
     {
-        long pointsLeft = skillTreeData.skillPointsTree;
         List<string> autoAssignIds = oracle.GetAutoAssignmentSkillIds();
         if (autoAssignIds.Count < 1) return;
-        foreach (string skillId in autoAssignIds)
+        bool assignedAny;
+        do
         {
-            if (string.IsNullOrEmpty(skillId)) continue;
-            SkillDefinition definition = ResolveSkillDefinition(skillId);
-            if (definition == null) continue;
-            int cost = definition.cost;
-            if (skillTreeData.skillPointsTree < cost) continue;
-            if (oracle.IsSkillOwned(skillId)) continue;
-
-            bool available = true;
-            if (!AreRequirementsMet(definition.requiredSkillIds)) available = false;
-            if (!AreRequirementsMet(definition.shadowRequirementIds)) available = false;
-            if (HasExclusiveOwned(definition.exclusiveWithIds)) available = false;
-            if (available)
+            assignedAny = false;
+            foreach (string skillId in autoAssignIds)
             {
+                if (string.IsNullOrEmpty(skillId)) continue;
+                SkillDefinition definition = ResolveSkillDefinition(skillId);
+                if (definition == null) continue;
+                int cost = definition.cost;
+                if (skillTreeData.skillPointsTree < cost) continue;
+                if (oracle.IsSkillOwned(skillId)) continue;
+
+                bool available = true;
+                if (!AreRequirementsMet(definition.requiredSkillIds)) available = false;
+                if (!AreRequirementsMet(definition.shadowRequirementIds)) available = false;
+                if (HasExclusiveOwned(definition.exclusiveWithIds)) available = false;
+                if (!available) continue;
+
                 skillTreeData.skillPointsTree -= cost;
                 oracle.SetSkillOwned(skillId, true);
                 if (definition.isFragment) skillTreeData.fragments += 1;
-                pointsLeft -= 1;
+                assignedAny = true;
+
+                if (skillTreeData.skillPointsTree <= 0) break;
             }
 
-            if (pointsLeft != skillTreeData.skillPointsTree) UnlockSkill();
-            _gameManager.UpdateSkillsInvoke();
-        }
+            if (assignedAny)
+            {
+                _gameManager.UpdateSkillsInvoke();
+            }
+        } while (assignedAny && skillTreeData.skillPointsTree > 0);
     }
 
     private SkillDefinition ResolveSkillDefinition(string id)

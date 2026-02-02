@@ -8,6 +8,7 @@ using System.Threading.Tasks;
 using Classes;
 using Sirenix.OdinInspector;
 using Sirenix.Serialization;
+using SirenixSerializationUtility = Sirenix.Serialization.SerializationUtility;
 using Systems;
 using Systems.Debugging;
 using Systems.Facilities;
@@ -22,6 +23,9 @@ using UnityEngine.UI;
 using GameData;
 using static LoadScreenMethods;
 using static IdleDysonSwarm.Systems.Constants.QuantumConstants;
+#if UNITY_EDITOR
+using UnityEditor;
+#endif
 
 
 namespace Expansion
@@ -83,7 +87,7 @@ namespace Expansion
             saveSettings = new SaveDataSettings();
             string clipboard = GUIUtility.systemCopyBuffer;
             byte[] bytes = beta ? Encoding.ASCII.GetBytes(clipboard) : Convert.FromBase64String(clipboard);
-            saveSettings = SerializationUtility.DeserializeValue<SaveDataSettings>(bytes, DataFormat.JSON);
+            saveSettings = SirenixSerializationUtility.DeserializeValue<SaveDataSettings>(bytes, DataFormat.JSON);
 
             LoadDictionaries();
             if (!oracle.saveSettings.cheater && saveSettings.maxOfflineTime < 86400)
@@ -99,8 +103,27 @@ namespace Expansion
         private void FixSkillpoints()
         {
             if (saveSettings.hasFixedIP) return;
-            skillTreeData.skillPointsTree = prestigeData.permanentSkillPoint + ArtifactSkillPoints() + infinityData.goalSetter > 0 ? infinityData.goalSetter : 0;
+            long totalEarned = prestigeData.permanentSkillPoint + ArtifactSkillPoints();
+            if (infinityData.goalSetter > 0) totalEarned += infinityData.goalSetter;
+            int spent = CountAssignedSkillPoints();
+            long recalculated = totalEarned - spent;
+            skillTreeData.skillPointsTree = recalculated < 0 ? 0 : recalculated;
             saveSettings.hasFixedIP = true;
+        }
+
+        private int CountAssignedSkillPoints()
+        {
+            GameDataRegistry registry = GameDataRegistry.Instance;
+            if (registry == null || registry.skillDatabase == null) return 0;
+
+            int total = 0;
+            foreach (SkillDefinition skill in registry.skillDatabase.skills)
+            {
+                if (skill == null || string.IsNullOrEmpty(skill.id)) continue;
+                if (IsSkillOwned(skill.id)) total += skill.cost;
+            }
+
+            return total;
         }
 
         private void LoadDictionaries()
@@ -117,8 +140,93 @@ namespace Expansion
         public void SaveToClipboard()
         {
             SaveDictionaries();
-            byte[] bytes = SerializationUtility.SerializeValue(saveSettings, DataFormat.JSON);
+            byte[] bytes = SirenixSerializationUtility.SerializeValue(saveSettings, DataFormat.JSON);
             GUIUtility.systemCopyBuffer = beta ? Encoding.UTF8.GetString(bytes) : Convert.ToBase64String(bytes);
+        }
+
+        [TabGroup("SaveData", "Buttons"), Button]
+        public void ExportSaveDebugJson()
+        {
+            SaveDictionaries();
+            byte[] bytes = SirenixSerializationUtility.SerializeValue(saveSettings, DataFormat.JSON);
+            string json = Encoding.UTF8.GetString(bytes);
+
+            string folderPath = GetSaveDebugFolderPath();
+            Directory.CreateDirectory(folderPath);
+            string filePath = Path.Combine(folderPath, $"save-debug-{DateTime.UtcNow:yyyyMMdd-HHmmss}.json");
+            File.WriteAllText(filePath, json, Encoding.UTF8);
+
+            Debug.Log($"Save debug JSON written to: {filePath}");
+#if UNITY_EDITOR
+            AssetDatabase.Refresh();
+#endif
+        }
+
+        [TabGroup("SaveData", "Buttons"), Button]
+        public void PreviewSkillPointRecalc()
+        {
+            SkillPointRecalcResult result = CalculateSkillPointRecalc();
+            LogSkillPointRecalc(result, apply: false);
+        }
+
+        [TabGroup("SaveData", "Buttons"), Button]
+        public void ApplySkillPointRecalc()
+        {
+            SkillPointRecalcResult result = CalculateSkillPointRecalc();
+            skillTreeData.skillPointsTree = result.Recalculated;
+            LogSkillPointRecalc(result, apply: true);
+            UpdateSkills?.Invoke();
+        }
+
+        private SkillPointRecalcResult CalculateSkillPointRecalc()
+        {
+            long earnedKnown = 0;
+            if (prestigeData != null) earnedKnown += prestigeData.permanentSkillPoint;
+            earnedKnown += ArtifactSkillPoints();
+            if (infinityData != null && infinityData.goalSetter > 0) earnedKnown += infinityData.goalSetter;
+
+            int spent = CountAssignedSkillPoints();
+            long recalculated = earnedKnown - spent;
+            if (recalculated < 0) recalculated = 0;
+
+            return new SkillPointRecalcResult(earnedKnown, spent, skillTreeData.skillPointsTree, recalculated);
+        }
+
+        private void LogSkillPointRecalc(SkillPointRecalcResult result, bool apply)
+        {
+            string note =
+                "Note: This uses known sources (permanent IP, artifact points, goalSetter) and ignores points awarded" +
+                " by research/debug/manual adjustments.";
+            string action = apply ? "Applied" : "Preview";
+            Debug.Log(
+                $"{action} SkillPointRecalc -> earnedKnown: {result.EarnedKnown}, spent: {result.Spent}, " +
+                $"current: {result.Current}, recalculated: {result.Recalculated}. {note}");
+        }
+
+        private readonly struct SkillPointRecalcResult
+        {
+            public long EarnedKnown { get; }
+            public int Spent { get; }
+            public long Current { get; }
+            public long Recalculated { get; }
+
+            public SkillPointRecalcResult(long earnedKnown, int spent, long current, long recalculated)
+            {
+                EarnedKnown = earnedKnown;
+                Spent = spent;
+                Current = current;
+                Recalculated = recalculated;
+            }
+        }
+
+        private string GetSaveDebugFolderPath()
+        {
+#if UNITY_EDITOR
+            string projectRoot = Path.GetFullPath(Path.Combine(Application.dataPath, ".."));
+            return Path.Combine(projectRoot, "Documentation", "savedebugging");
+#else
+            return Path.Combine(Application.persistentDataPath, "savedebugging");
+#endif
         }
 
         private void SaveDictionaries()
@@ -1460,8 +1568,8 @@ namespace Expansion
             }
 
             SaveDataSettings originalSettings = saveSettings;
-            SaveDataSettings offlineSettings = (SaveDataSettings)SerializationUtility.CreateCopy(saveSettings);
-            SaveDataSettings onlineSettings = (SaveDataSettings)SerializationUtility.CreateCopy(saveSettings);
+            SaveDataSettings offlineSettings = (SaveDataSettings)SirenixSerializationUtility.CreateCopy(saveSettings);
+            SaveDataSettings onlineSettings = (SaveDataSettings)SirenixSerializationUtility.CreateCopy(saveSettings);
 
             OfflineParitySnapshot offlineSnapshot;
             OfflineParitySnapshot onlineSnapshot;
@@ -2598,7 +2706,7 @@ namespace Expansion
             if (!File.Exists(filePath)) return;
 
             byte[] bytes = File.ReadAllBytes(filePath);
-            saveSettings = SerializationUtility.DeserializeValue<SaveDataSettings>(bytes, DataFormat.JSON);
+            saveSettings = SirenixSerializationUtility.DeserializeValue<SaveDataSettings>(bytes, DataFormat.JSON);
             LoadDictionaries();
             FixSkillpoints();
             if (!oracle.saveSettings.cheater && oracle.saveSettings.maxOfflineTime < 86400)
@@ -3836,4 +3944,5 @@ namespace Expansion
 
     }
 }
+
 
