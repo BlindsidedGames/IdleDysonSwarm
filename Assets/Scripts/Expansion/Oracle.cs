@@ -92,26 +92,28 @@ namespace Expansion
             bool doubleIpUnlocked = saveSettings.doubleIp || PlayerPrefs.GetInt("doubleip", 0) == 1;
             saveSettings = new SaveDataSettings();
             string clipboard = GUIUtility.systemCopyBuffer;
-            if (beta)
+            if (TryDecodeExportDto(clipboard, out byte[] dtoBytes) &&
+                TryDeserializeSaveSettings(dtoBytes, DataFormat.Binary, out saveSettings))
             {
-                byte[] bytes = Encoding.ASCII.GetBytes(clipboard);
-                saveSettings = SirenixSerializationUtility.DeserializeValue<SaveDataSettings>(bytes, DataFormat.JSON);
+                // ExportSaveDebugJson DTO (binary+gzip+base64)
             }
-            else if (TryDecodeExportDto(clipboard, out byte[] dtoBytes))
+            else if (LooksLikeJson(clipboard) &&
+                     TryDeserializeSaveSettings(Encoding.UTF8.GetBytes(clipboard), DataFormat.JSON, out saveSettings))
             {
-                saveSettings = SirenixSerializationUtility.DeserializeValue<SaveDataSettings>(dtoBytes, DataFormat.Binary);
+                // Raw JSON
             }
-            else if (clipboard.StartsWith(BinarySavePrefix, StringComparison.Ordinal))
+            else if (clipboard.StartsWith(BinarySavePrefix, StringComparison.Ordinal) &&
+                     TryDeserializeSaveSettings(DecodeBinaryClipboardBytes(clipboard), DataFormat.Binary, out saveSettings))
             {
-                byte[] bytes = DecodeBinaryClipboardBytes(clipboard);
-                saveSettings = SirenixSerializationUtility.DeserializeValue<SaveDataSettings>(bytes, DataFormat.Binary);
+                // Binary save prefix
             }
-            else
+            else if (!TryDeserializeFromBase64Payload(clipboard, out saveSettings))
             {
-                byte[] bytes = DecodeClipboardBytes(clipboard);
-                saveSettings = SirenixSerializationUtility.DeserializeValue<SaveDataSettings>(bytes, DataFormat.JSON);
+                Debug.LogError("LoadFromClipboard failed to decode save data. Clipboard format not recognized.");
+                return;
             }
 
+            // LogImportFacilityState("PostDeserialize");
             LoadDictionaries();
             if (!oracle.saveSettings.cheater && saveSettings.maxOfflineTime < 86400)
                 oracle.saveSettings.maxOfflineTime = 86400;
@@ -119,8 +121,99 @@ namespace Expansion
             saveSettings.doubleIp = doubleIpUnlocked;
             FixSkillpoints();
             ApplyMigrations();
+            // LogImportFacilityState("PostMigration");
             SaveInternal(true);
             SceneManager.LoadScene(0);
+        }
+
+        private static bool TryDeserializeFromBase64Payload(string clipboard, out SaveDataSettings settings)
+        {
+            settings = null;
+            if (string.IsNullOrWhiteSpace(clipboard)) return false;
+
+            byte[] bytes;
+            try
+            {
+                bytes = DecodeClipboardBytes(clipboard);
+            }
+            catch
+            {
+                return false;
+            }
+
+            if (TryDeserializeJsonBytes(bytes, out settings)) return true;
+            if (LooksLikeJsonBytes(bytes)) return false;
+
+            if (LooksLikeGzip(bytes))
+            {
+                try
+                {
+                    byte[] decompressed = DecompressBytes(bytes);
+                    if (TryDeserializeJsonBytes(decompressed, out settings)) return true;
+                    if (LooksLikeJsonBytes(decompressed)) return false;
+                    return TryDeserializeSaveSettings(decompressed, DataFormat.Binary, out settings);
+                }
+                catch
+                {
+                    return false;
+                }
+            }
+
+            return TryDeserializeSaveSettings(bytes, DataFormat.Binary, out settings);
+        }
+
+        private static bool TryDeserializeSaveSettings(byte[] bytes, DataFormat format, out SaveDataSettings settings)
+        {
+            settings = null;
+            if (bytes == null || bytes.Length == 0) return false;
+            try
+            {
+                settings = SirenixSerializationUtility.DeserializeValue<SaveDataSettings>(bytes, format);
+                return settings != null;
+            }
+            catch
+            {
+                return false;
+            }
+        }
+
+        private static bool TryDeserializeJsonBytes(byte[] bytes, out SaveDataSettings settings)
+        {
+            settings = null;
+            if (bytes == null || bytes.Length == 0) return false;
+            byte[] trimmed = StripUtf8Bom(bytes);
+            return TryDeserializeSaveSettings(trimmed, DataFormat.JSON, out settings);
+        }
+
+        private static bool LooksLikeGzip(byte[] bytes)
+        {
+            return bytes != null && bytes.Length >= 2 && bytes[0] == 0x1F && bytes[1] == 0x8B;
+        }
+
+        private static bool LooksLikeJsonBytes(byte[] bytes)
+        {
+            if (bytes == null || bytes.Length == 0) return false;
+            for (int i = 0; i < bytes.Length; i++)
+            {
+                byte b = bytes[i];
+                if (b == 0x20 || b == 0x09 || b == 0x0A || b == 0x0D) continue;
+                return b == (byte)'{';
+            }
+
+            return false;
+        }
+
+        private static byte[] StripUtf8Bom(byte[] bytes)
+        {
+            if (bytes == null || bytes.Length < 3) return bytes;
+            if (bytes[0] == 0xEF && bytes[1] == 0xBB && bytes[2] == 0xBF)
+            {
+                byte[] trimmed = new byte[bytes.Length - 3];
+                Buffer.BlockCopy(bytes, 3, trimmed, 0, trimmed.Length);
+                return trimmed;
+            }
+
+            return bytes;
         }
 
         private void FixSkillpoints()
@@ -164,7 +257,7 @@ namespace Expansion
         {
             SaveDictionaries();
             byte[] fullBytes = SirenixSerializationUtility.SerializeValue(saveSettings, DataFormat.JSON);
-            SaveDataSettings snapshot = CreateSaveSnapshotForStorage(includeBase64Fields: false);
+            SaveDataSettings snapshot = CreateSaveSnapshotForStorage(includeBase64Fields: false, compactFacilityArrays: true);
             if (beta)
             {
                 byte[] bytes = SirenixSerializationUtility.SerializeValue(snapshot, DataFormat.JSON);
@@ -192,7 +285,7 @@ namespace Expansion
         {
             SaveDictionaries();
             byte[] fullBytes = SirenixSerializationUtility.SerializeValue(saveSettings, DataFormat.JSON);
-            SaveDataSettings snapshot = CreateSaveSnapshotForStorage(includeBase64Fields: false);
+            SaveDataSettings snapshot = CreateSaveSnapshotForStorage(includeBase64Fields: false, compactFacilityArrays: true);
             byte[] bytes = SirenixSerializationUtility.SerializeValue(snapshot, DataFormat.Binary);
             byte[] compressed = CompressBytes(bytes);
             var dto = new ExportSaveDto
@@ -280,6 +373,13 @@ namespace Expansion
             {
                 return false;
             }
+        }
+
+        private static bool LooksLikeJson(string clipboard)
+        {
+            if (string.IsNullOrWhiteSpace(clipboard)) return false;
+            string trimmed = clipboard.TrimStart();
+            return trimmed.StartsWith("{", StringComparison.Ordinal) && trimmed.Contains("\"saveVersion\"");
         }
 
         private static byte[] CompressBytes(byte[] bytes)
@@ -3148,18 +3248,18 @@ namespace Expansion
         {
             SaveDictionaries();
             // IMPORTANT: Save a compact snapshot (bitsets + pruned skill state) for smaller ES3 saves.
-            SaveDataSettings snapshot = CreateSaveSnapshotForStorage(includeBase64Fields: true);
+            SaveDataSettings snapshot = CreateSaveSnapshotForStorage(includeBase64Fields: true, compactFacilityArrays: false);
             ES3.Save("saveSettings", snapshot);
         }
 
-        private SaveDataSettings CreateSaveSnapshotForStorage(bool includeBase64Fields)
+        private SaveDataSettings CreateSaveSnapshotForStorage(bool includeBase64Fields, bool compactFacilityArrays)
         {
             SaveDataSettings snapshot = (SaveDataSettings)SirenixSerializationUtility.CreateCopy(saveSettings);
-            CompactSkillTreeDataForSave(snapshot, includeBase64Fields);
+            CompactSkillTreeDataForSave(snapshot, includeBase64Fields, compactFacilityArrays);
             return snapshot;
         }
 
-        private void CompactSkillTreeDataForSave(SaveDataSettings snapshot, bool includeBase64Fields)
+        private void CompactSkillTreeDataForSave(SaveDataSettings snapshot, bool includeBase64Fields, bool compactFacilityArrays)
         {
             if (snapshot == null) return;
             DysonVerseSaveData saveData = snapshot.dysonVerseSaveData;
@@ -3184,7 +3284,8 @@ namespace Expansion
                 infData.researchLevelsById = filtered;
             }
 
-            PopulateSparseArrays(infData);
+            PopulateSparseArrays(infData, compactFacilityArrays);
+            GuardSparseArrayFallbacks(infData);
 
             if (infData.skillStateById != null)
             {
@@ -3251,6 +3352,34 @@ namespace Expansion
             }
         }
 
+        private static void GuardSparseArrayFallbacks(DysonVerseInfinityData data)
+        {
+            if (data == null) return;
+            GuardSparseArrayFallback(ref data.assemblyLines, data.assemblyLinesSparseIndices, data.assemblyLinesSparseValues,
+                "assemblyLines");
+            GuardSparseArrayFallback(ref data.managers, data.managersSparseIndices, data.managersSparseValues, "managers");
+            GuardSparseArrayFallback(ref data.servers, data.serversSparseIndices, data.serversSparseValues, "servers");
+            GuardSparseArrayFallback(ref data.dataCenters, data.dataCentersSparseIndices, data.dataCentersSparseValues,
+                "dataCenters");
+            GuardSparseArrayFallback(ref data.planets, data.planetsSparseIndices, data.planetsSparseValues, "planets");
+            GuardSparseArrayFallback(ref data.matrioshkaBrains, data.matrioshkaBrainsSparseIndices,
+                data.matrioshkaBrainsSparseValues, "matrioshkaBrains");
+            GuardSparseArrayFallback(ref data.birchPlanets, data.birchPlanetsSparseIndices, data.birchPlanetsSparseValues,
+                "birchPlanets");
+            GuardSparseArrayFallback(ref data.galacticBrains, data.galacticBrainsSparseIndices,
+                data.galacticBrainsSparseValues, "galacticBrains");
+        }
+
+        private static void GuardSparseArrayFallback(ref double[] values, List<int> indices, List<double> sparseValues,
+            string label)
+        {
+            if (!IsSparseEmpty(indices, sparseValues)) return;
+            if (values == null || values.Length == 0) return;
+            if (IsArrayEmpty(values)) return;
+
+            Debug.LogWarning($"Sparse facility list empty for {label}; preserving array data in save snapshot.");
+        }
+
         private static void ClearSkillTreeFlagsForSave(DysonVerseSkillTreeData data)
         {
             if (data == null) return;
@@ -3263,13 +3392,13 @@ namespace Expansion
             }
         }
 
-        private static List<int> BuildSparseIndices(double[] values, List<int> indices, List<double> outputValues)
+        private static void BuildSparseIndices(double[] values, ref List<int> indices, ref List<double> outputValues)
         {
             indices ??= new List<int>();
             outputValues ??= new List<double>();
             indices.Clear();
             outputValues.Clear();
-            if (values == null) return indices;
+            if (values == null) return;
 
             for (int i = 0; i < values.Length; i++)
             {
@@ -3277,8 +3406,6 @@ namespace Expansion
                 indices.Add(i);
                 outputValues.Add(values[i]);
             }
-
-            return indices;
         }
 
         private static double[] RestoreSparseArray(double[] existing, int length, List<int> indices, List<double> values)
@@ -3302,25 +3429,20 @@ namespace Expansion
             return result;
         }
 
-        private static void PopulateSparseArrays(DysonVerseInfinityData data)
+        private static void PopulateSparseArrays(DysonVerseInfinityData data, bool compactArrays)
         {
             if (data == null) return;
-            data.assemblyLinesSparseIndices = BuildSparseIndices(data.assemblyLines, data.assemblyLinesSparseIndices,
-                data.assemblyLinesSparseValues);
-            data.managersSparseIndices = BuildSparseIndices(data.managers, data.managersSparseIndices,
-                data.managersSparseValues);
-            data.serversSparseIndices = BuildSparseIndices(data.servers, data.serversSparseIndices,
-                data.serversSparseValues);
-            data.dataCentersSparseIndices = BuildSparseIndices(data.dataCenters, data.dataCentersSparseIndices,
-                data.dataCentersSparseValues);
-            data.planetsSparseIndices = BuildSparseIndices(data.planets, data.planetsSparseIndices,
-                data.planetsSparseValues);
-            data.matrioshkaBrainsSparseIndices = BuildSparseIndices(data.matrioshkaBrains, data.matrioshkaBrainsSparseIndices,
-                data.matrioshkaBrainsSparseValues);
-            data.birchPlanetsSparseIndices = BuildSparseIndices(data.birchPlanets, data.birchPlanetsSparseIndices,
-                data.birchPlanetsSparseValues);
-            data.galacticBrainsSparseIndices = BuildSparseIndices(data.galacticBrains, data.galacticBrainsSparseIndices,
-                data.galacticBrainsSparseValues);
+            BuildSparseIndices(data.assemblyLines, ref data.assemblyLinesSparseIndices, ref data.assemblyLinesSparseValues);
+            BuildSparseIndices(data.managers, ref data.managersSparseIndices, ref data.managersSparseValues);
+            BuildSparseIndices(data.servers, ref data.serversSparseIndices, ref data.serversSparseValues);
+            BuildSparseIndices(data.dataCenters, ref data.dataCentersSparseIndices, ref data.dataCentersSparseValues);
+            BuildSparseIndices(data.planets, ref data.planetsSparseIndices, ref data.planetsSparseValues);
+            BuildSparseIndices(data.matrioshkaBrains, ref data.matrioshkaBrainsSparseIndices,
+                ref data.matrioshkaBrainsSparseValues);
+            BuildSparseIndices(data.birchPlanets, ref data.birchPlanetsSparseIndices, ref data.birchPlanetsSparseValues);
+            BuildSparseIndices(data.galacticBrains, ref data.galacticBrainsSparseIndices, ref data.galacticBrainsSparseValues);
+
+            if (!compactArrays) return;
 
             data.assemblyLines = null;
             data.managers = null;
@@ -3355,7 +3477,11 @@ namespace Expansion
             if (IsSparseEmpty(infinityData.assemblyLinesSparseIndices, infinityData.assemblyLinesSparseValues) &&
                 IsArrayEmpty(infinityData.assemblyLines))
             {
-                Debug.LogWarning("Sparse facility data missing; assemblyLines restored to zeros.");
+                Debug.LogWarning(
+                    $"Sparse facility data missing; assemblyLines restored to zeros. " +
+                    $"saveVersion={saveSettings?.saveVersion}, " +
+                    $"assemblyLines=[{FormatCounts(infinityData.assemblyLines)}], " +
+                    $"sparseCount={infinityData.assemblyLinesSparseIndices?.Count ?? 0}");
             }
         }
 
@@ -3373,6 +3499,42 @@ namespace Expansion
             }
 
             return true;
+        }
+
+        private static string FormatCounts(double[] values)
+        {
+            if (values == null) return "null";
+            if (values.Length == 0) return "empty";
+            if (values.Length == 1) return values[0].ToString(CultureInfo.InvariantCulture);
+            return $"{values[0].ToString(CultureInfo.InvariantCulture)}, {values[1].ToString(CultureInfo.InvariantCulture)}";
+        }
+
+        private void LogImportFacilityState(string label)
+        {
+            if (infinityData == null)
+            {
+                Debug.LogWarning($"[ImportDebug:{label}] Infinity data is null.");
+                return;
+            }
+
+            Debug.Log(
+                $"[ImportDebug:{label}] " +
+                $"assemblyLines=[{FormatCounts(infinityData.assemblyLines)}] sparse={FormatSparseCounts(infinityData.assemblyLinesSparseIndices, infinityData.assemblyLinesSparseValues)}; " +
+                $"managers=[{FormatCounts(infinityData.managers)}] sparse={FormatSparseCounts(infinityData.managersSparseIndices, infinityData.managersSparseValues)}; " +
+                $"servers=[{FormatCounts(infinityData.servers)}] sparse={FormatSparseCounts(infinityData.serversSparseIndices, infinityData.serversSparseValues)}; " +
+                $"dataCenters=[{FormatCounts(infinityData.dataCenters)}] sparse={FormatSparseCounts(infinityData.dataCentersSparseIndices, infinityData.dataCentersSparseValues)}; " +
+                $"planets=[{FormatCounts(infinityData.planets)}] sparse={FormatSparseCounts(infinityData.planetsSparseIndices, infinityData.planetsSparseValues)}; " +
+                $"matrioshkaBrains=[{FormatCounts(infinityData.matrioshkaBrains)}] sparse={FormatSparseCounts(infinityData.matrioshkaBrainsSparseIndices, infinityData.matrioshkaBrainsSparseValues)}; " +
+                $"birchPlanets=[{FormatCounts(infinityData.birchPlanets)}] sparse={FormatSparseCounts(infinityData.birchPlanetsSparseIndices, infinityData.birchPlanetsSparseValues)}; " +
+                $"galacticBrains=[{FormatCounts(infinityData.galacticBrains)}] sparse={FormatSparseCounts(infinityData.galacticBrainsSparseIndices, infinityData.galacticBrainsSparseValues)}"
+            );
+        }
+
+        private static string FormatSparseCounts(List<int> indices, List<double> values)
+        {
+            int indexCount = indices?.Count ?? 0;
+            int valueCount = values?.Count ?? 0;
+            return $"{indexCount}/{valueCount}";
         }
 
         private byte[] BuildOwnedBitsetFromRuntime()
