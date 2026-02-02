@@ -25,7 +25,7 @@ MonoBehaviour:
   m_MinSize: {x: 400, y: 168}
   m_MaxSize: {x: 32384, y: 24288}
   vertical: 0
-  controlID: 26023
+  controlID: 26667
   draggingID: 0
 --- !u!114 &2
 MonoBehaviour:
@@ -156,7 +156,7 @@ MonoBehaviour:
   m_MinSize: {x: 200, y: 56}
   m_MaxSize: {x: 16192, y: 8096}
   vertical: 0
-  controlID: 26091
+  controlID: 26619
   draggingID: 0
 --- !u!114 &4
 MonoBehaviour:
@@ -177,8 +177,8 @@ MonoBehaviour:
     y: 0
     width: 506
     height: 1284.6667
-  m_MinSize: {x: 200, y: 200}
-  m_MaxSize: {x: 4000, y: 4000}
+  m_MinSize: {x: 201, y: 226}
+  m_MaxSize: {x: 4001, y: 4026}
   m_ActualView: {fileID: 5}
   m_Panes:
   - {fileID: 5}
@@ -224,11 +224,11 @@ MonoBehaviour:
     m_DynamicPanelBehavior: 0
   m_SceneHierarchy:
     m_TreeViewState:
-      scrollPos: {x: 0, y: 302.33325}
+      scrollPos: {x: 0, y: 314.33325}
       m_SelectedIDs:
-      - m_Data: -243630
+      - m_Data: 76854
       m_LastClickedID:
-        m_Data: -243630
+        m_Data: 76854
       m_ExpandedIDs:
       - m_Data: -243534
       - m_Data: -226036
@@ -1203,7 +1203,7 @@ MonoBehaviour:
   m_MinSize: {x: 100, y: 168}
   m_MaxSize: {x: 8096, y: 24288}
   vertical: 1
-  controlID: 25994
+  controlID: 26594
   draggingID: 0
 --- !u!114 &12
 MonoBehaviour:
@@ -1443,8 +1443,8 @@ MonoBehaviour:
       m_ResourceFile: 
   m_ListAreaState:
     m_SelectedInstanceIDs:
-    - m_Data: -243630
-    m_LastClickedInstanceID: -243630
+    - m_Data: 76854
+    m_LastClickedInstanceID: 76854
     m_HadKeyboardFocusLastEvent: 0
     m_ExpandedInstanceIDs: []
     m_RenameOverlay:

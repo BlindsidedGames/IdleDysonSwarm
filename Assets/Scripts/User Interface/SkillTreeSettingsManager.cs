@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using TMPro;
@@ -21,6 +22,27 @@ public class SkillTreeSettingsManager : MonoBehaviour
     [SerializeField] private Button preset4Load;
     [SerializeField] private Button preset5Save;
     [SerializeField] private Button preset5Load;
+    [Header("Preset Clipboard (Designers: wire these to UI if you want clipboard import/export)")]
+    [SerializeField, Tooltip("Copy preset to clipboard as JSON for sharing.")]
+    private Button preset1Export;
+    [SerializeField, Tooltip("Paste preset JSON from clipboard into preset slot.")]
+    private Button preset1Import;
+    [SerializeField, Tooltip("Copy preset to clipboard as JSON for sharing.")]
+    private Button preset2Export;
+    [SerializeField, Tooltip("Paste preset JSON from clipboard into preset slot.")]
+    private Button preset2Import;
+    [SerializeField, Tooltip("Copy preset to clipboard as JSON for sharing.")]
+    private Button preset3Export;
+    [SerializeField, Tooltip("Paste preset JSON from clipboard into preset slot.")]
+    private Button preset3Import;
+    [SerializeField, Tooltip("Copy preset to clipboard as JSON for sharing.")]
+    private Button preset4Export;
+    [SerializeField, Tooltip("Paste preset JSON from clipboard into preset slot.")]
+    private Button preset4Import;
+    [SerializeField, Tooltip("Copy preset to clipboard as JSON for sharing.")]
+    private Button preset5Export;
+    [SerializeField, Tooltip("Paste preset JSON from clipboard into preset slot.")]
+    private Button preset5Import;
     [SerializeField] private Button preset1Set;
     [SerializeField] private Button preset2Set;
     [SerializeField] private Button preset3Set;
@@ -77,6 +99,12 @@ public class SkillTreeSettingsManager : MonoBehaviour
         preset5Save.onClick.AddListener(() => SavePreset(5));
         preset5Load.onClick.AddListener(() => SetFeedbackText("Preset 5 Loaded"));
         preset5Load.onClick.AddListener(() => LoadPreset(5));
+
+        WirePresetClipboardButtons(preset1Export, preset1Import, 1);
+        WirePresetClipboardButtons(preset2Export, preset2Import, 2);
+        WirePresetClipboardButtons(preset3Export, preset3Import, 3);
+        WirePresetClipboardButtons(preset4Export, preset4Import, 4);
+        WirePresetClipboardButtons(preset5Export, preset5Import, 5);
 
         resetSkills.onClick.AddListener(() => SetFeedbackText("Skill Tree Reset"));
 
@@ -202,6 +230,82 @@ public class SkillTreeSettingsManager : MonoBehaviour
     {
         if (button == null) return;
         button.onClick.AddListener(() => RenamePreset(presetIndex));
+    }
+
+    private void WirePresetClipboardButtons(Button exportButton, Button importButton, int presetIndex)
+    {
+        if (exportButton != null)
+            exportButton.onClick.AddListener(() => ExportPresetToClipboard(presetIndex));
+        if (importButton != null)
+            importButton.onClick.AddListener(() => ImportPresetFromClipboard(presetIndex));
+    }
+
+    private void ExportPresetToClipboard(int presetIndex)
+    {
+        if (!TryGetSaveData(out DysonVerseSaveData saveData)) return;
+
+        SkillPresetClipboard payload = new SkillPresetClipboard
+        {
+            version = 1,
+            presetName = GetPresetName(saveData, presetIndex),
+            botDistribution = GetPresetBotDistribution(saveData, presetIndex),
+            skillIds = oracle.GetPresetAutoAssignmentSkillIds(presetIndex).ToArray()
+        };
+
+        GUIUtility.systemCopyBuffer = JsonUtility.ToJson(payload);
+        SetFeedbackText($"Preset {presetIndex} Copied");
+    }
+
+    private void ImportPresetFromClipboard(int presetIndex)
+    {
+        if (!TryGetSaveData(out DysonVerseSaveData saveData)) return;
+
+        string clipboard = GUIUtility.systemCopyBuffer;
+        if (string.IsNullOrWhiteSpace(clipboard))
+        {
+            SetFeedbackText("Clipboard Empty");
+            return;
+        }
+
+        SkillPresetClipboard payload;
+        try
+        {
+            payload = JsonUtility.FromJson<SkillPresetClipboard>(clipboard);
+        }
+        catch (Exception)
+        {
+            SetFeedbackText("Invalid Preset Data");
+            return;
+        }
+
+        if (payload == null || payload.skillIds == null)
+        {
+            SetFeedbackText("Invalid Preset Data");
+            return;
+        }
+
+        if (payload.version > 1)
+        {
+            SetFeedbackText("Unsupported Preset Version");
+            return;
+        }
+
+        SetPresetName(saveData, presetIndex, payload.presetName);
+        SetPresetBotDistribution(saveData, presetIndex, payload.botDistribution);
+
+        var dedupedIds = new List<string>(payload.skillIds.Length);
+        var seen = new HashSet<string>();
+        foreach (string id in payload.skillIds)
+        {
+            if (string.IsNullOrEmpty(id)) continue;
+            if (!seen.Add(id)) continue;
+            dedupedIds.Add(id);
+        }
+        oracle.SetPresetAutoAssignmentSkillIds(presetIndex, dedupedIds);
+
+        SetPresetTexts();
+        UpdateSidePanelPresetLabels();
+        SetFeedbackText($"Preset {presetIndex} Imported");
     }
 
     private void RegisterPresetToggleBindings(SidePanelReferences panel, ref PresetToggleBindings bindings)
@@ -423,6 +527,76 @@ public class SkillTreeSettingsManager : MonoBehaviour
         return trimmed.Substring(0, length);
     }
 
+    private static string GetPresetName(DysonVerseSaveData saveData, int presetIndex)
+    {
+        return presetIndex switch
+        {
+            1 => saveData.preset1Name,
+            2 => saveData.preset2Name,
+            3 => saveData.preset3Name,
+            4 => saveData.preset4Name,
+            5 => saveData.preset5Name,
+            _ => string.Empty
+        };
+    }
+
+    private static void SetPresetName(DysonVerseSaveData saveData, int presetIndex, string name)
+    {
+        switch (presetIndex)
+        {
+            case 1:
+                saveData.preset1Name = name;
+                break;
+            case 2:
+                saveData.preset2Name = name;
+                break;
+            case 3:
+                saveData.preset3Name = name;
+                break;
+            case 4:
+                saveData.preset4Name = name;
+                break;
+            case 5:
+                saveData.preset5Name = name;
+                break;
+        }
+    }
+
+    private static float GetPresetBotDistribution(DysonVerseSaveData saveData, int presetIndex)
+    {
+        return presetIndex switch
+        {
+            1 => (float)saveData.botDistPreset1,
+            2 => (float)saveData.botDistPreset2,
+            3 => (float)saveData.botDistPreset3,
+            4 => (float)saveData.botDistPreset4,
+            5 => (float)saveData.botDistPreset5,
+            _ => 0f
+        };
+    }
+
+    private static void SetPresetBotDistribution(DysonVerseSaveData saveData, int presetIndex, float value)
+    {
+        switch (presetIndex)
+        {
+            case 1:
+                saveData.botDistPreset1 = value;
+                break;
+            case 2:
+                saveData.botDistPreset2 = value;
+                break;
+            case 3:
+                saveData.botDistPreset3 = value;
+                break;
+            case 4:
+                saveData.botDistPreset4 = value;
+                break;
+            case 5:
+                saveData.botDistPreset5 = value;
+                break;
+        }
+    }
+
     private void SyncSidePanelsToPreset(int presetIndex)
     {
         SyncSidePanelToPreset(permanentSidePanel, presetIndex);
@@ -445,6 +619,15 @@ public class SkillTreeSettingsManager : MonoBehaviour
         _suppressToggleCallbacks = false;
 
         UpdatePresetTextVisibility(texts, presetIndex);
+    }
+
+    [Serializable]
+    private sealed class SkillPresetClipboard
+    {
+        public int version;
+        public string presetName;
+        public float botDistribution;
+        public string[] skillIds;
     }
 
     private sealed class PresetToggleBindings

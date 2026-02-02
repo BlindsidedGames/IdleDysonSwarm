@@ -93,11 +93,8 @@ public class LineManager : MonoBehaviour
         }
 
         bool queued = false;
-        List<string> autoIds = oracle.GetAutoAssignmentSkillIds();
         string resolvedEndId = ResolveEndSkillId();
-        if (!string.IsNullOrEmpty(resolvedEndId) && autoIds.Contains(resolvedEndId)) queued = true;
-        if (!queued && oracle.saveSettings.dysonVerseSaveData.skillAutoAssignmentList.Contains(endSkillKey))
-            queued = true;
+        queued = oracle.IsAutoAssignmentQueued(endSkillKey, resolvedEndId);
 
         if (startOwned && endOwned)
             lr.color = colorOwned;

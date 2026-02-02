@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using Expansion;
 using GameData;
 using IdleDysonSwarm.UI;
+using Systems.Skills;
 using TMPro;
 using UnityEngine;
 using UnityEngine.EventSystems;
@@ -592,6 +593,7 @@ public class SkillTreeManager : MonoBehaviour, IPointerClickHandler
             oracle.saveSettings.dysonVerseSaveData.skillAutoAssignmentIds.Clear();
         if (oracle.saveSettings.dysonVerseSaveData.skillAutoAssignmentList.Count >= 1)
             oracle.saveSettings.dysonVerseSaveData.skillAutoAssignmentList.Clear();
+        oracle.SetAutoAssignmentSkillIds(new List<string>());
 
         UpdateSkills?.Invoke();
     }
@@ -718,8 +720,7 @@ public class SkillTreeManager : MonoBehaviour, IPointerClickHandler
                     if (dependentDef.isFragment && skillTreeData.fragments >= 1) skillTreeData.fragments -= 1;
                     List<string> autoIds = oracle.GetAutoAssignmentSkillIds();
                     if (autoIds.Contains(dependentId)) autoIds.Remove(dependentId);
-                    oracle.saveSettings.dysonVerseSaveData.skillAutoAssignmentList =
-                        SkillIdMap.ConvertIdsToKeys(autoIds);
+                    oracle.SetAutoAssignmentSkillIds(autoIds);
                 }
             }
 
@@ -728,8 +729,7 @@ public class SkillTreeManager : MonoBehaviour, IPointerClickHandler
             if (definition.isFragment && skillTreeData.fragments >= 1) skillTreeData.fragments -= 1;
             List<string> autoIdsRoot = oracle.GetAutoAssignmentSkillIds();
             if (autoIdsRoot.Contains(id)) autoIdsRoot.Remove(id);
-            oracle.saveSettings.dysonVerseSaveData.skillAutoAssignmentList =
-                SkillIdMap.ConvertIdsToKeys(autoIdsRoot);
+            oracle.SetAutoAssignmentSkillIds(autoIdsRoot);
 
             UpdateSkills?.Invoke();
             return;
@@ -748,8 +748,7 @@ public class SkillTreeManager : MonoBehaviour, IPointerClickHandler
         if (!autoAssignIds.Contains(id) && !IsBlockedFromAutoAssign(id))
         {
             autoAssignIds.Add(id);
-            oracle.saveSettings.dysonVerseSaveData.skillAutoAssignmentList =
-                SkillIdMap.ConvertIdsToKeys(autoAssignIds);
+            oracle.SetAutoAssignmentSkillIds(autoAssignIds);
         }
 
         oracle.SetSkillOwned(id, true);
