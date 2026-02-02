@@ -99,6 +99,7 @@ public class SkillTreeSearchController : MonoBehaviour
         for (int i = 0; i < _entries.Count; i++)
         {
             SearchEntry entry = _entries[i];
+            if (entry.manager == null) continue;
             int score = ScoreEntry(tokens, query, entry);
             entry.manager.SetSearchHighlight(score > 0);
         }
@@ -106,9 +107,15 @@ public class SkillTreeSearchController : MonoBehaviour
 
     private void ClearHighlights()
     {
-        for (int i = 0; i < _entries.Count; i++)
+        for (int i = _entries.Count - 1; i >= 0; i--)
         {
-            _entries[i].manager.SetSearchHighlight(false);
+            SearchEntry entry = _entries[i];
+            if (entry.manager == null)
+            {
+                _entries.RemoveAt(i);
+                continue;
+            }
+            entry.manager.SetSearchHighlight(false);
         }
     }
 

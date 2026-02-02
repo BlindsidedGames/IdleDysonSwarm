@@ -112,6 +112,9 @@ namespace GameData
             { 104, "stellarDominance" }
         };
 
+        // IMPORTANT: Legacy keys define the bitset index (key-1). Do not reorder or reuse keys.
+        public static int MaxLegacyKey { get; } = GetMaxLegacyKey();
+
         private static Dictionary<string, int> _idToLegacyKey;
 
         public static bool TryGetId(int legacyKey, out string id)
@@ -168,6 +171,17 @@ namespace GameData
                 if (string.IsNullOrEmpty(entry.Value)) continue;
                 _idToLegacyKey[entry.Value] = entry.Key;
             }
+        }
+
+        private static int GetMaxLegacyKey()
+        {
+            int max = 0;
+            foreach (int key in LegacyKeyToId.Keys)
+            {
+                if (key > max) max = key;
+            }
+
+            return max;
         }
     }
 }

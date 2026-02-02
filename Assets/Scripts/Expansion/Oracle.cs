@@ -74,7 +74,8 @@ namespace Expansion
         private bool _autoSaveScheduled;
         // IMPORTANT: When adding a migration step in BuildMigrationRegistry(),
         // you MUST also update this constant to match the new LatestVersion.
-        private const int CurrentSaveVersion = 6;
+        // IMPORTANT: Save v7 introduces skill bitsets (see SkillIdMap/SkillBitsetUtility).
+        private const int CurrentSaveVersion = 7;
 
         #region SaveAndLoadFromClipboard
 
@@ -140,15 +141,25 @@ namespace Expansion
         public void SaveToClipboard()
         {
             SaveDictionaries();
-            byte[] bytes = SirenixSerializationUtility.SerializeValue(saveSettings, DataFormat.JSON);
-            GUIUtility.systemCopyBuffer = beta ? Encoding.UTF8.GetString(bytes) : Convert.ToBase64String(bytes);
+            byte[] fullBytes = SirenixSerializationUtility.SerializeValue(saveSettings, DataFormat.JSON);
+            SaveDataSettings snapshot = CreateSaveSnapshotForStorage(includeBase64Fields: false);
+            byte[] bytes = SirenixSerializationUtility.SerializeValue(snapshot, DataFormat.JSON);
+            string compactJson = Encoding.UTF8.GetString(bytes);
+            string compactClipboard = beta ? compactJson : Convert.ToBase64String(bytes);
+            GUIUtility.systemCopyBuffer = compactClipboard;
+            string fullClipboard = beta ? Encoding.UTF8.GetString(fullBytes) : Convert.ToBase64String(fullBytes);
+            Debug.Log(
+                $"SaveToClipboard size: {fullBytes.Length} -> {bytes.Length} bytes (raw JSON), " +
+                $"{fullClipboard.Length} -> {compactClipboard.Length} chars (clipboard).");
         }
 
         [TabGroup("SaveData", "Buttons"), Button]
         public void ExportSaveDebugJson()
         {
             SaveDictionaries();
-            byte[] bytes = SirenixSerializationUtility.SerializeValue(saveSettings, DataFormat.JSON);
+            byte[] fullBytes = SirenixSerializationUtility.SerializeValue(saveSettings, DataFormat.JSON);
+            SaveDataSettings snapshot = CreateSaveSnapshotForStorage(includeBase64Fields: false);
+            byte[] bytes = SirenixSerializationUtility.SerializeValue(snapshot, DataFormat.JSON);
             string json = Encoding.UTF8.GetString(bytes);
 
             string folderPath = GetSaveDebugFolderPath();
@@ -157,6 +168,11 @@ namespace Expansion
             File.WriteAllText(filePath, json, Encoding.UTF8);
 
             Debug.Log($"Save debug JSON written to: {filePath}");
+            string fullClipboard = beta ? Encoding.UTF8.GetString(fullBytes) : Convert.ToBase64String(fullBytes);
+            string compactClipboard = beta ? json : Convert.ToBase64String(bytes);
+            Debug.Log(
+                $"ExportSaveDebugJson size: {fullBytes.Length} -> {bytes.Length} bytes (raw JSON), " +
+                $"{fullClipboard.Length} -> {compactClipboard.Length} chars (clipboard).");
 #if UNITY_EDITOR
             AssetDatabase.Refresh();
 #endif
@@ -299,7 +315,8 @@ namespace Expansion
             }
 
             MigrationRunOptions options = BuildMigrationOptions(false);
-            MigrationRunner.Run(this, registry, options);
+            MigrationRunResult result = MigrationRunner.Run(this, registry, options);
+            Debug.Log(result.ToReportString());
         }
 
         public MigrationRunResult RunMigrationDryRun()
@@ -309,7 +326,9 @@ namespace Expansion
             MigrationRegistry registry = BuildMigrationRegistry();
             MigrationRunOptions options = BuildMigrationOptions(true);
             options.ThrowOnError = false;
-            return MigrationRunner.Run(this, registry, options);
+            MigrationRunResult result = MigrationRunner.Run(this, registry, options);
+            Debug.Log(result.ToReportString());
+            return result;
         }
 
         public MigrationRunResult RunMigrationDryRun(SaveDataSettings saveData)
@@ -383,6 +402,15 @@ namespace Expansion
                 summary: "Ensure mega-structure facility arrays are initialized for existing saves.",
                 apply: _ => { MigrateMegaStructureData(); }));
 
+            registry.AddStep(new MigrationStep(
+                targetVersion: 7,
+                name: "Skill bitsets",
+                summary: "Populate compact skill ownership and auto-assign bitsets from legacy data.",
+                apply: _ =>
+                {
+                    MigrateSkillBitsets();
+                }));
+
             return registry;
         }
 
@@ -390,7 +418,9 @@ namespace Expansion
         {
             if (infinityData == null) return;
             EnsureSkillStateData();
-            SyncSkillOwnedByIdFromState();
+            EnsureSkillOwnedBitset();
+            SyncSkillOwnedByIdFromBitset();
+            SyncSkillFlagsFromBitset();
         }
 
         private void EnsureSkillStateData()
@@ -431,6 +461,134 @@ namespace Expansion
                 }
             }
 
+        }
+
+        private void EnsureSkillOwnedBitset()
+        {
+            if (infinityData == null) return;
+            if (infinityData.skillOwnedBits == null || infinityData.skillOwnedBits.Length == 0)
+            {
+                if (!string.IsNullOrEmpty(infinityData.skillOwnedBitsBase64))
+                {
+                    infinityData.skillOwnedBits = Convert.FromBase64String(infinityData.skillOwnedBitsBase64);
+                }
+                else
+                {
+                    infinityData.skillOwnedBits = SkillBitsetUtility.CreateEmptyBitset();
+                    PopulateOwnedBitsetFromLegacySources(infinityData.skillOwnedBits);
+                }
+                return;
+            }
+
+            infinityData.skillOwnedBits = SkillBitsetUtility.EnsureSize(infinityData.skillOwnedBits);
+            if (infinityData.skillOwnedBits.Length == 0)
+            {
+                infinityData.skillOwnedBits = SkillBitsetUtility.CreateEmptyBitset();
+                PopulateOwnedBitsetFromLegacySources(infinityData.skillOwnedBits);
+            }
+        }
+
+        private void PopulateOwnedBitsetFromLegacySources(byte[] bits)
+        {
+            if (bits == null || infinityData == null) return;
+
+            GameDataRegistry registry = GameDataRegistry.Instance;
+            if (registry != null && registry.skillDatabase != null && registry.skillDatabase.skills.Count > 0)
+            {
+                foreach (SkillDefinition skill in registry.skillDatabase.skills)
+                {
+                    if (skill == null || string.IsNullOrEmpty(skill.id)) continue;
+                    if (!TryGetOwnedFromLegacySources(skill.id)) continue;
+                    if (SkillBitsetUtility.TryGetIndex(skill.id, out int index))
+                    {
+                        SkillBitsetUtility.SetBit(bits, index, true);
+                    }
+                }
+
+                return;
+            }
+
+            if (infinityData.skillStateById != null)
+            {
+                foreach (KeyValuePair<string, SkillState> entry in infinityData.skillStateById)
+                {
+                    if (entry.Value == null || !entry.Value.owned) continue;
+                    if (SkillBitsetUtility.TryGetIndex(entry.Key, out int index))
+                    {
+                        SkillBitsetUtility.SetBit(bits, index, true);
+                    }
+                }
+            }
+        }
+
+        private bool TryGetOwnedFromLegacySources(string skillId)
+        {
+            if (string.IsNullOrEmpty(skillId)) return false;
+
+            if (infinityData != null && infinityData.skillStateById != null &&
+                infinityData.skillStateById.TryGetValue(skillId, out SkillState state) && state != null)
+            {
+                return state.owned;
+            }
+
+            if (infinityData != null && infinityData.skillOwnedById != null &&
+                infinityData.skillOwnedById.TryGetValue(skillId, out bool owned))
+            {
+                return owned;
+            }
+
+            if (infinityData != null && infinityData.SkillTreeSaveData != null &&
+                SkillIdMap.TryGetLegacyKey(skillId, out int key) &&
+                infinityData.SkillTreeSaveData.TryGetValue(key, out bool legacyOwned))
+            {
+                return legacyOwned;
+            }
+
+            if (SkillFlagAccessor.TryGetFlag(skillTreeData, skillId, out bool flag))
+            {
+                return flag;
+            }
+
+            return false;
+        }
+
+        private void SyncSkillOwnedByIdFromBitset()
+        {
+            if (infinityData == null) return;
+            infinityData.skillOwnedById ??= new Dictionary<string, bool>();
+            infinityData.skillOwnedById.Clear();
+
+            GameDataRegistry registry = GameDataRegistry.Instance;
+            if (registry == null || registry.skillDatabase == null || registry.skillDatabase.skills.Count == 0) return;
+            if (infinityData.skillOwnedBits == null || infinityData.skillOwnedBits.Length == 0) return;
+
+            foreach (SkillDefinition skill in registry.skillDatabase.skills)
+            {
+                if (skill == null || string.IsNullOrEmpty(skill.id)) continue;
+                bool owned = TryGetOwnedFromBitset(skill.id);
+                infinityData.skillOwnedById[skill.id] = owned;
+                if (infinityData.skillStateById != null &&
+                    infinityData.skillStateById.TryGetValue(skill.id, out SkillState state) && state != null)
+                {
+                    state.owned = owned;
+                    if (owned && state.level < 1) state.level = 1;
+                    if (!owned) state.level = 0;
+                }
+            }
+        }
+
+        private void SyncSkillFlagsFromBitset()
+        {
+            GameDataRegistry registry = GameDataRegistry.Instance;
+            if (registry == null || registry.skillDatabase == null || registry.skillDatabase.skills.Count == 0) return;
+            if (infinityData?.skillOwnedBits == null || infinityData.skillOwnedBits.Length == 0) return;
+
+            foreach (SkillDefinition skill in registry.skillDatabase.skills)
+            {
+                if (skill == null || string.IsNullOrEmpty(skill.id)) continue;
+                bool owned = TryGetOwnedFromBitset(skill.id);
+                SkillFlagAccessor.TrySetFlag(skillTreeData, skill.id, owned);
+            }
         }
 
         private void MigrateLegacySkillTimersToState()
@@ -509,6 +667,75 @@ namespace Expansion
             if (data.skillAutoAssignmentIds5.Count == 0 && data.skillAutoAssignmentList5.Count > 0)
             {
                 data.skillAutoAssignmentIds5 = SkillIdMap.ConvertKeysToIds(data.skillAutoAssignmentList5);
+            }
+
+            EnsureSkillAutoAssignmentBitsets();
+        }
+
+        private void EnsureSkillAutoAssignmentBitsets()
+        {
+            DysonVerseSaveData data = saveSettings?.dysonVerseSaveData;
+            if (data == null) return;
+
+            if (data.skillAutoAssignmentBits == null || data.skillAutoAssignmentBits.Length == 0)
+            {
+                if (!string.IsNullOrEmpty(data.skillAutoAssignmentBitsBase64))
+                {
+                    data.skillAutoAssignmentBits = Convert.FromBase64String(data.skillAutoAssignmentBitsBase64);
+                    if (data.skillAutoAssignmentIds == null || data.skillAutoAssignmentIds.Count == 0)
+                        data.skillAutoAssignmentIds = SkillBitsetUtility.ConvertBitsetToIds(data.skillAutoAssignmentBits);
+                }
+                else
+                {
+                    data.skillAutoAssignmentBits = SkillBitsetUtility.BuildBitsetFromIds(data.skillAutoAssignmentIds);
+                }
+            }
+            else
+            {
+                data.skillAutoAssignmentBits = SkillBitsetUtility.EnsureSize(data.skillAutoAssignmentBits);
+                if (data.skillAutoAssignmentIds == null || data.skillAutoAssignmentIds.Count == 0)
+                    data.skillAutoAssignmentIds = SkillBitsetUtility.ConvertBitsetToIds(data.skillAutoAssignmentBits);
+            }
+
+            EnsurePresetBitset(ref data.skillAutoAssignmentBits1, data.skillAutoAssignmentBitsBase64_1,
+                ref data.skillAutoAssignmentIds1, data.skillAutoAssignmentList1);
+            EnsurePresetBitset(ref data.skillAutoAssignmentBits2, data.skillAutoAssignmentBitsBase64_2,
+                ref data.skillAutoAssignmentIds2, data.skillAutoAssignmentList2);
+            EnsurePresetBitset(ref data.skillAutoAssignmentBits3, data.skillAutoAssignmentBitsBase64_3,
+                ref data.skillAutoAssignmentIds3, data.skillAutoAssignmentList3);
+            EnsurePresetBitset(ref data.skillAutoAssignmentBits4, data.skillAutoAssignmentBitsBase64_4,
+                ref data.skillAutoAssignmentIds4, data.skillAutoAssignmentList4);
+            EnsurePresetBitset(ref data.skillAutoAssignmentBits5, data.skillAutoAssignmentBitsBase64_5,
+                ref data.skillAutoAssignmentIds5, data.skillAutoAssignmentList5);
+        }
+
+        private void EnsurePresetBitset(ref byte[] bits, string base64, ref List<string> ids, List<int> legacyList)
+        {
+            if (bits == null || bits.Length == 0)
+            {
+                if (!string.IsNullOrEmpty(base64))
+                {
+                    bits = Convert.FromBase64String(base64);
+                    if (ids == null || ids.Count == 0)
+                    {
+                        ids = SkillBitsetUtility.ConvertBitsetToIds(bits);
+                    }
+                }
+                else
+                {
+                    if (ids == null || ids.Count == 0)
+                    {
+                        ids = SkillIdMap.ConvertKeysToIds(legacyList);
+                    }
+                    bits = SkillBitsetUtility.BuildBitsetFromIds(ids);
+                }
+                return;
+            }
+
+            bits = SkillBitsetUtility.EnsureSize(bits);
+            if (ids == null || ids.Count == 0)
+            {
+                ids = SkillBitsetUtility.ConvertBitsetToIds(bits);
             }
         }
 
@@ -620,6 +847,12 @@ namespace Expansion
             {
                 data.skillAutoAssignmentIds5 = SkillIdMap.ConvertKeysToIds(data.skillAutoAssignmentList5);
             }
+        }
+
+        private void MigrateSkillBitsets()
+        {
+            EnsureSkillOwnedBitset();
+            EnsureSkillAutoAssignmentBitsets();
         }
 
         /// <summary>
@@ -2663,7 +2896,127 @@ namespace Expansion
         public void SaveState()
         {
             SaveDictionaries();
-            ES3.Save("saveSettings", saveSettings);
+            // IMPORTANT: Save a compact snapshot (bitsets + pruned skill state) for smaller ES3 saves.
+            SaveDataSettings snapshot = CreateSaveSnapshotForStorage(includeBase64Fields: true);
+            ES3.Save("saveSettings", snapshot);
+        }
+
+        private SaveDataSettings CreateSaveSnapshotForStorage(bool includeBase64Fields)
+        {
+            SaveDataSettings snapshot = (SaveDataSettings)SirenixSerializationUtility.CreateCopy(saveSettings);
+            CompactSkillTreeDataForSave(snapshot, includeBase64Fields);
+            return snapshot;
+        }
+
+        private void CompactSkillTreeDataForSave(SaveDataSettings snapshot, bool includeBase64Fields)
+        {
+            if (snapshot == null) return;
+            DysonVerseSaveData saveData = snapshot.dysonVerseSaveData;
+            DysonVerseInfinityData infData = saveData?.dysonVerseInfinityData;
+            if (infData == null) return;
+
+            infData.skillOwnedBits = BuildOwnedBitsetFromRuntime();
+            infData.skillOwnedBitsBase64 = includeBase64Fields
+                ? Convert.ToBase64String(infData.skillOwnedBits ?? Array.Empty<byte>())
+                : null;
+            ClearSkillTreeFlagsForSave(saveData?.dysonVerseSkillTreeData);
+
+            if (infData.skillStateById != null)
+            {
+                Dictionary<string, SkillState> filtered = new Dictionary<string, SkillState>();
+                foreach (KeyValuePair<string, SkillState> entry in infData.skillStateById)
+                {
+                    if (entry.Value == null) continue;
+                    bool keep = entry.Value.timerSeconds != 0 ||
+                                entry.Value.secondaryTimerSeconds != 0 ||
+                                entry.Value.level > 1;
+                    if (keep)
+                    {
+                        filtered[entry.Key] = entry.Value;
+                    }
+                }
+
+                infData.skillStateById = filtered;
+            }
+
+            infData.skillOwnedById = null;
+            infData.SkillTreeSaveData = null;
+
+            if (saveData != null)
+            {
+                saveData.skillAutoAssignmentBits = SkillBitsetUtility.BuildBitsetFromIds(GetAutoAssignmentSkillIds());
+                saveData.skillAutoAssignmentBits1 = SkillBitsetUtility.BuildBitsetFromIds(GetPresetAutoAssignmentSkillIds(1));
+                saveData.skillAutoAssignmentBits2 = SkillBitsetUtility.BuildBitsetFromIds(GetPresetAutoAssignmentSkillIds(2));
+                saveData.skillAutoAssignmentBits3 = SkillBitsetUtility.BuildBitsetFromIds(GetPresetAutoAssignmentSkillIds(3));
+                saveData.skillAutoAssignmentBits4 = SkillBitsetUtility.BuildBitsetFromIds(GetPresetAutoAssignmentSkillIds(4));
+                saveData.skillAutoAssignmentBits5 = SkillBitsetUtility.BuildBitsetFromIds(GetPresetAutoAssignmentSkillIds(5));
+
+                if (includeBase64Fields)
+                {
+                    saveData.skillAutoAssignmentBitsBase64 = Convert.ToBase64String(saveData.skillAutoAssignmentBits ?? Array.Empty<byte>());
+                    saveData.skillAutoAssignmentBitsBase64_1 = Convert.ToBase64String(saveData.skillAutoAssignmentBits1 ?? Array.Empty<byte>());
+                    saveData.skillAutoAssignmentBitsBase64_2 = Convert.ToBase64String(saveData.skillAutoAssignmentBits2 ?? Array.Empty<byte>());
+                    saveData.skillAutoAssignmentBitsBase64_3 = Convert.ToBase64String(saveData.skillAutoAssignmentBits3 ?? Array.Empty<byte>());
+                    saveData.skillAutoAssignmentBitsBase64_4 = Convert.ToBase64String(saveData.skillAutoAssignmentBits4 ?? Array.Empty<byte>());
+                    saveData.skillAutoAssignmentBitsBase64_5 = Convert.ToBase64String(saveData.skillAutoAssignmentBits5 ?? Array.Empty<byte>());
+                }
+                else
+                {
+                    saveData.skillAutoAssignmentBitsBase64 = null;
+                    saveData.skillAutoAssignmentBitsBase64_1 = null;
+                    saveData.skillAutoAssignmentBitsBase64_2 = null;
+                    saveData.skillAutoAssignmentBitsBase64_3 = null;
+                    saveData.skillAutoAssignmentBitsBase64_4 = null;
+                    saveData.skillAutoAssignmentBitsBase64_5 = null;
+                }
+
+                saveData.skillAutoAssignmentIds = new List<string>();
+                saveData.skillAutoAssignmentIds1 = new List<string>();
+                saveData.skillAutoAssignmentIds2 = new List<string>();
+                saveData.skillAutoAssignmentIds3 = new List<string>();
+                saveData.skillAutoAssignmentIds4 = new List<string>();
+                saveData.skillAutoAssignmentIds5 = new List<string>();
+
+                saveData.skillAutoAssignmentList = new List<int>();
+                saveData.skillAutoAssignmentList1 = new List<int>();
+                saveData.skillAutoAssignmentList2 = new List<int>();
+                saveData.skillAutoAssignmentList3 = new List<int>();
+                saveData.skillAutoAssignmentList4 = new List<int>();
+                saveData.skillAutoAssignmentList5 = new List<int>();
+            }
+        }
+
+        private static void ClearSkillTreeFlagsForSave(DysonVerseSkillTreeData data)
+        {
+            if (data == null) return;
+            System.Reflection.FieldInfo[] fields = typeof(DysonVerseSkillTreeData).GetFields();
+            for (int i = 0; i < fields.Length; i++)
+            {
+                System.Reflection.FieldInfo field = fields[i];
+                if (field.FieldType != typeof(bool)) continue;
+                field.SetValue(data, false);
+            }
+        }
+
+        private byte[] BuildOwnedBitsetFromRuntime()
+        {
+            byte[] bits = SkillBitsetUtility.CreateEmptyBitset();
+
+            GameDataRegistry registry = GameDataRegistry.Instance;
+            if (registry != null && registry.skillDatabase != null && registry.skillDatabase.skills.Count > 0)
+            {
+                foreach (SkillDefinition skill in registry.skillDatabase.skills)
+                {
+                    if (skill == null || string.IsNullOrEmpty(skill.id)) continue;
+                    if (!IsSkillOwned(skill.id)) continue;
+                    if (SkillBitsetUtility.TryGetIndex(skill.id, out int index))
+                    {
+                        SkillBitsetUtility.SetBit(bits, index, true);
+                    }
+                }
+            }
+
+            return bits;
         }
 
         public void Load()
@@ -2744,6 +3097,7 @@ namespace Expansion
         public bool IsSkillOwned(string skillId)
         {
             if (string.IsNullOrEmpty(skillId)) return false;
+            if (TryGetOwnedFromBitset(skillId, out bool ownedFromBits)) return ownedFromBits;
             if (infinityData != null && infinityData.skillStateById != null &&
                 infinityData.skillStateById.TryGetValue(skillId, out SkillState state))
             {
@@ -2766,6 +3120,22 @@ namespace Expansion
             return false;
         }
 
+        private bool TryGetOwnedFromBitset(string skillId, out bool owned)
+        {
+            owned = false;
+            if (string.IsNullOrEmpty(skillId)) return false;
+            if (infinityData == null || infinityData.skillOwnedBits == null || infinityData.skillOwnedBits.Length == 0)
+                return false;
+            if (!SkillBitsetUtility.TryGetIndex(skillId, out int index)) return false;
+            owned = SkillBitsetUtility.GetBit(infinityData.skillOwnedBits, index);
+            return true;
+        }
+
+        private bool TryGetOwnedFromBitset(string skillId)
+        {
+            return TryGetOwnedFromBitset(skillId, out bool owned) && owned;
+        }
+
         public void SetSkillOwned(string skillId, bool owned)
         {
             if (string.IsNullOrEmpty(skillId)) return;
@@ -2782,6 +3152,15 @@ namespace Expansion
                 {
                     item.Owned = owned;
                 }
+            }
+
+            if (infinityData.skillOwnedBits == null || infinityData.skillOwnedBits.Length == 0)
+            {
+                infinityData.skillOwnedBits = SkillBitsetUtility.CreateEmptyBitset();
+            }
+            if (SkillBitsetUtility.TryGetIndex(skillId, out int index))
+            {
+                SkillBitsetUtility.SetBit(infinityData.skillOwnedBits, index, owned);
             }
 
             SkillFlagAccessor.TrySetFlag(skillTreeData, skillId, owned);
@@ -2822,6 +3201,24 @@ namespace Expansion
             {
                 if (entry.Value == null) continue;
                 infinityData.skillOwnedById[entry.Key] = entry.Value.owned;
+            }
+
+            if (infinityData.skillOwnedBits == null || infinityData.skillOwnedBits.Length == 0)
+            {
+                infinityData.skillOwnedBits = SkillBitsetUtility.CreateEmptyBitset();
+            }
+            else
+            {
+                infinityData.skillOwnedBits = SkillBitsetUtility.EnsureSize(infinityData.skillOwnedBits);
+            }
+
+            foreach (KeyValuePair<string, SkillState> entry in infinityData.skillStateById)
+            {
+                if (entry.Value == null || !entry.Value.owned) continue;
+                if (SkillBitsetUtility.TryGetIndex(entry.Key, out int index))
+                {
+                    SkillBitsetUtility.SetBit(infinityData.skillOwnedBits, index, true);
+                }
             }
         }
 
@@ -2931,11 +3328,17 @@ namespace Expansion
             DysonVerseSaveData data = saveSettings?.dysonVerseSaveData;
             if (data == null) return new List<string>();
             data.skillAutoAssignmentIds ??= new List<string>();
-            if (data.skillAutoAssignmentIds.Count == 0 && data.skillAutoAssignmentList.Count > 0)
+            if (data.skillAutoAssignmentBits != null && data.skillAutoAssignmentBits.Length > 0)
+            {
+                if (data.skillAutoAssignmentIds.Count == 0)
+                    data.skillAutoAssignmentIds = SkillBitsetUtility.ConvertBitsetToIds(data.skillAutoAssignmentBits);
+            }
+            else if (data.skillAutoAssignmentIds.Count == 0 && data.skillAutoAssignmentList.Count > 0)
             {
                 data.skillAutoAssignmentIds = SkillIdMap.ConvertKeysToIds(data.skillAutoAssignmentList);
             }
 
+            data.skillAutoAssignmentBits = SkillBitsetUtility.BuildBitsetFromIds(data.skillAutoAssignmentIds);
             return data.skillAutoAssignmentIds;
         }
 
@@ -2945,6 +3348,110 @@ namespace Expansion
             if (data == null) return;
             data.skillAutoAssignmentIds = ids ?? new List<string>();
             data.skillAutoAssignmentList = SkillIdMap.ConvertIdsToKeys(data.skillAutoAssignmentIds);
+            data.skillAutoAssignmentBits = SkillBitsetUtility.BuildBitsetFromIds(data.skillAutoAssignmentIds);
+        }
+
+        public List<string> GetPresetAutoAssignmentSkillIds(int presetIndex)
+        {
+            DysonVerseSaveData data = saveSettings?.dysonVerseSaveData;
+            if (data == null) return new List<string>();
+
+            switch (presetIndex)
+            {
+                case 1:
+                    return ResolvePresetIds(ref data.skillAutoAssignmentBits1, ref data.skillAutoAssignmentIds1,
+                        data.skillAutoAssignmentList1);
+                case 2:
+                    return ResolvePresetIds(ref data.skillAutoAssignmentBits2, ref data.skillAutoAssignmentIds2,
+                        data.skillAutoAssignmentList2);
+                case 3:
+                    return ResolvePresetIds(ref data.skillAutoAssignmentBits3, ref data.skillAutoAssignmentIds3,
+                        data.skillAutoAssignmentList3);
+                case 4:
+                    return ResolvePresetIds(ref data.skillAutoAssignmentBits4, ref data.skillAutoAssignmentIds4,
+                        data.skillAutoAssignmentList4);
+                case 5:
+                    return ResolvePresetIds(ref data.skillAutoAssignmentBits5, ref data.skillAutoAssignmentIds5,
+                        data.skillAutoAssignmentList5);
+                default:
+                    return new List<string>();
+            }
+        }
+
+        public void SetPresetAutoAssignmentSkillIds(int presetIndex, List<string> ids)
+        {
+            DysonVerseSaveData data = saveSettings?.dysonVerseSaveData;
+            if (data == null) return;
+            List<string> safeIds = ids ?? new List<string>();
+            List<int> legacyList = SkillIdMap.ConvertIdsToKeys(safeIds);
+            byte[] bits = SkillBitsetUtility.BuildBitsetFromIds(safeIds);
+
+            switch (presetIndex)
+            {
+                case 1:
+                    data.skillAutoAssignmentIds1 = safeIds;
+                    data.skillAutoAssignmentList1 = legacyList;
+                    data.skillAutoAssignmentBits1 = bits;
+                    break;
+                case 2:
+                    data.skillAutoAssignmentIds2 = safeIds;
+                    data.skillAutoAssignmentList2 = legacyList;
+                    data.skillAutoAssignmentBits2 = bits;
+                    break;
+                case 3:
+                    data.skillAutoAssignmentIds3 = safeIds;
+                    data.skillAutoAssignmentList3 = legacyList;
+                    data.skillAutoAssignmentBits3 = bits;
+                    break;
+                case 4:
+                    data.skillAutoAssignmentIds4 = safeIds;
+                    data.skillAutoAssignmentList4 = legacyList;
+                    data.skillAutoAssignmentBits4 = bits;
+                    break;
+                case 5:
+                    data.skillAutoAssignmentIds5 = safeIds;
+                    data.skillAutoAssignmentList5 = legacyList;
+                    data.skillAutoAssignmentBits5 = bits;
+                    break;
+            }
+        }
+
+        public bool IsAutoAssignmentQueued(int legacyKey, string skillId = null)
+        {
+            DysonVerseSaveData data = saveSettings?.dysonVerseSaveData;
+            if (data == null) return false;
+
+            if (!string.IsNullOrEmpty(skillId))
+            {
+                if (data.skillAutoAssignmentBits != null && data.skillAutoAssignmentBits.Length > 0 &&
+                    SkillBitsetUtility.TryGetIndex(skillId, out int index))
+                {
+                    return SkillBitsetUtility.GetBit(data.skillAutoAssignmentBits, index);
+                }
+
+                if (data.skillAutoAssignmentIds != null && data.skillAutoAssignmentIds.Contains(skillId)) return true;
+            }
+
+            if (legacyKey > 0 && data.skillAutoAssignmentList != null && data.skillAutoAssignmentList.Contains(legacyKey))
+                return true;
+
+            return false;
+        }
+
+        private List<string> ResolvePresetIds(ref byte[] bits, ref List<string> ids, List<int> legacyList)
+        {
+            ids ??= new List<string>();
+            if (bits != null && bits.Length > 0)
+            {
+                if (ids.Count == 0) ids = SkillBitsetUtility.ConvertBitsetToIds(bits);
+            }
+            else if (ids.Count == 0 && legacyList != null && legacyList.Count > 0)
+            {
+                ids = SkillIdMap.ConvertKeysToIds(legacyList);
+            }
+
+            bits = SkillBitsetUtility.BuildBitsetFromIds(ids);
+            return ids;
         }
 
         private void ResetSkillOwnership()
@@ -3259,38 +3766,44 @@ namespace Expansion
             public List<string> skillAutoAssignmentIds3 = new List<string>();
             public List<string> skillAutoAssignmentIds4 = new List<string>();
             public List<string> skillAutoAssignmentIds5 = new List<string>();
+            [ES3NonSerializable] public byte[] skillAutoAssignmentBits;
+            [ES3NonSerializable] public byte[] skillAutoAssignmentBits1;
+            [ES3NonSerializable] public byte[] skillAutoAssignmentBits2;
+            [ES3NonSerializable] public byte[] skillAutoAssignmentBits3;
+            [ES3NonSerializable] public byte[] skillAutoAssignmentBits4;
+            [ES3NonSerializable] public byte[] skillAutoAssignmentBits5;
+            public string skillAutoAssignmentBitsBase64;
+            public string skillAutoAssignmentBitsBase64_1;
+            public string skillAutoAssignmentBitsBase64_2;
+            public string skillAutoAssignmentBitsBase64_3;
+            public string skillAutoAssignmentBitsBase64_4;
+            public string skillAutoAssignmentBitsBase64_5;
         }
 
         public void SaveList(int listNum)
         {
             DysonVerseSaveData data = saveSettings.dysonVerseSaveData;
             List<string> ids = new List<string>(GetAutoAssignmentSkillIds());
-            List<int> legacyList = SkillIdMap.ConvertIdsToKeys(ids);
             switch (listNum)
             {
                 case 1:
-                    data.skillAutoAssignmentIds1 = ids;
-                    data.skillAutoAssignmentList1 = legacyList;
+                    SetPresetAutoAssignmentSkillIds(1, ids);
                     data.botDistPreset1 = prestigeData.botDistribution;
                     break;
                 case 2:
-                    data.skillAutoAssignmentIds2 = ids;
-                    data.skillAutoAssignmentList2 = legacyList;
+                    SetPresetAutoAssignmentSkillIds(2, ids);
                     data.botDistPreset2 = prestigeData.botDistribution;
                     break;
                 case 3:
-                    data.skillAutoAssignmentIds3 = ids;
-                    data.skillAutoAssignmentList3 = legacyList;
+                    SetPresetAutoAssignmentSkillIds(3, ids);
                     data.botDistPreset3 = prestigeData.botDistribution;
                     break;
                 case 4:
-                    data.skillAutoAssignmentIds4 = ids;
-                    data.skillAutoAssignmentList4 = legacyList;
+                    SetPresetAutoAssignmentSkillIds(4, ids);
                     data.botDistPreset4 = prestigeData.botDistribution;
                     break;
                 case 5:
-                    data.skillAutoAssignmentIds5 = ids;
-                    data.skillAutoAssignmentList5 = legacyList;
+                    SetPresetAutoAssignmentSkillIds(5, ids);
                     data.botDistPreset5 = prestigeData.botDistribution;
                     break;
             }
@@ -3305,42 +3818,27 @@ namespace Expansion
             switch (listNum)
             {
                 case 1:
-                    if (data.skillAutoAssignmentIds1.Count > 0)
-                        ids.AddRange(data.skillAutoAssignmentIds1);
-                    else
-                        ids.AddRange(SkillIdMap.ConvertKeysToIds(data.skillAutoAssignmentList1));
+                    ids.AddRange(GetPresetAutoAssignmentSkillIds(1));
                     prestigeData.botDistribution = data.botDistPreset1;
                     slider.SetSlider();
                     break;
                 case 2:
-                    if (data.skillAutoAssignmentIds2.Count > 0)
-                        ids.AddRange(data.skillAutoAssignmentIds2);
-                    else
-                        ids.AddRange(SkillIdMap.ConvertKeysToIds(data.skillAutoAssignmentList2));
+                    ids.AddRange(GetPresetAutoAssignmentSkillIds(2));
                     prestigeData.botDistribution = data.botDistPreset2;
                     slider.SetSlider();
                     break;
                 case 3:
-                    if (data.skillAutoAssignmentIds3.Count > 0)
-                        ids.AddRange(data.skillAutoAssignmentIds3);
-                    else
-                        ids.AddRange(SkillIdMap.ConvertKeysToIds(data.skillAutoAssignmentList3));
+                    ids.AddRange(GetPresetAutoAssignmentSkillIds(3));
                     prestigeData.botDistribution = data.botDistPreset3;
                     slider.SetSlider();
                     break;
                 case 4:
-                    if (data.skillAutoAssignmentIds4.Count > 0)
-                        ids.AddRange(data.skillAutoAssignmentIds4);
-                    else
-                        ids.AddRange(SkillIdMap.ConvertKeysToIds(data.skillAutoAssignmentList4));
+                    ids.AddRange(GetPresetAutoAssignmentSkillIds(4));
                     prestigeData.botDistribution = data.botDistPreset4;
                     slider.SetSlider();
                     break;
                 case 5:
-                    if (data.skillAutoAssignmentIds5.Count > 0)
-                        ids.AddRange(data.skillAutoAssignmentIds5);
-                    else
-                        ids.AddRange(SkillIdMap.ConvertKeysToIds(data.skillAutoAssignmentList5));
+                    ids.AddRange(GetPresetAutoAssignmentSkillIds(5));
                     prestigeData.botDistribution = data.botDistPreset5;
                     slider.SetSlider();
                     break;
@@ -3348,6 +3846,7 @@ namespace Expansion
 
             data.skillAutoAssignmentIds = ids;
             data.skillAutoAssignmentList = SkillIdMap.ConvertIdsToKeys(ids);
+            data.skillAutoAssignmentBits = SkillBitsetUtility.BuildBitsetFromIds(ids);
         }
 
         [Serializable]
@@ -3386,6 +3885,8 @@ namespace Expansion
             public Dictionary<int, bool> SkillTreeSaveData;
             public Dictionary<string, SkillState> skillStateById = new Dictionary<string, SkillState>();
             public Dictionary<string, bool> skillOwnedById = new Dictionary<string, bool>();
+            [ES3NonSerializable] public byte[] skillOwnedBits;
+            public string skillOwnedBitsBase64;
             public Dictionary<string, double> researchLevelsById = new Dictionary<string, double>();
             [Header("Money")] public double money;
 

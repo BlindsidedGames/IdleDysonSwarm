@@ -51,7 +51,7 @@ public class SkillTreeConfirmationManager : MonoBehaviour
         List<string> autoIds = oracle.GetAutoAssignmentSkillIds();
         if (!autoIds.Contains(skillId)) return;
         autoIds.Remove(skillId);
-        oracle.saveSettings.dysonVerseSaveData.skillAutoAssignmentList = SkillIdMap.ConvertIdsToKeys(autoIds);
+        oracle.SetAutoAssignmentSkillIds(autoIds);
         _gameManager.UpdateSkillsInvoke();
         autoAssignRemovalButton.gameObject.SetActive(false);
         autoAssignAddButton.gameObject.SetActive(true);
@@ -64,7 +64,7 @@ public class SkillTreeConfirmationManager : MonoBehaviour
         List<string> autoIds = oracle.GetAutoAssignmentSkillIds();
         if (autoIds.Contains(skillId)) return;
         autoIds.Add(skillId);
-        oracle.saveSettings.dysonVerseSaveData.skillAutoAssignmentList = SkillIdMap.ConvertIdsToKeys(autoIds);
+        oracle.SetAutoAssignmentSkillIds(autoIds);
         _gameManager.UpdateSkillsInvoke();
         autoAssignAddButton.gameObject.SetActive(false);
         autoAssignRemovalButton.gameObject.SetActive(true);
