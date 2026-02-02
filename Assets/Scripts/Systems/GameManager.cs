@@ -75,6 +75,9 @@ public class GameManager : MonoBehaviour
     private SlicedFilledImage skillsFill;
 
     [SerializeField] private GameObject skillsIcon;
+    [SerializeField] private Image skillsIconImage;
+    private Color _skillsIconBaseColor = Color.white;
+    private bool _skillsIconBaseColorSet;
     [SerializeField] private GameObject skillsToggle;
     [SerializeField] private GameObject[] skillsButton;
     [SerializeField, FormerlySerializedAs("skillsfillbar")] private GameObject skillsFillBar;
@@ -111,6 +114,15 @@ public class GameManager : MonoBehaviour
         // Update other Skills UI references
         if (refs.skillsIcon != null)
             skillsIcon = refs.skillsIcon;
+        if (refs.skillsIconImage != null)
+        {
+            skillsIconImage = refs.skillsIconImage;
+            if (!_skillsIconBaseColorSet)
+            {
+                _skillsIconBaseColor = skillsIconImage.color;
+                _skillsIconBaseColorSet = true;
+            }
+        }
         if (refs.skillsToggle != null)
             skillsToggle = refs.skillsToggle;
         if (refs.skillsTextObject != null)
@@ -327,14 +339,19 @@ public class GameManager : MonoBehaviour
         string color = "<color=#91DD8F>";
         if (skillsText != null)
         {
-            skillsText.text = oracle.saveSettings.skillsFirstRunDone
-                ? "Skills"
-                : "<align=\"center\"><sprite=4 color=#C8B3FF>";
+            long availableSkillPoints = skillTreeData.skillPointsTree;
+            skillsText.text = availableSkillPoints > 0
+                ? $"Skills (<color=#54FF00>{availableSkillPoints}</color>)"
+                : "Skills";
         }
         if (skillTreeData.skillPointsTree > 0 || prestigeData.permanentSkillPoint > 0 || prestigeData.infinityPoints > 0 ||
             prestigeData.spentInfinityPoints > 0)
         {
             if (skillsIcon != null) skillsIcon.SetActive(true);
+            if (skillsIconImage != null)
+                skillsIconImage.color = oracle.saveSettings.dysonVerseSaveData.dysonVerseSkillTreeData.skillPointsTree > 0
+                    ? new Color(0.32884598f, 1f, 0f, 1f)
+                    : _skillsIconBaseColor;
             // Hide toggle in permanent mode since the panel is always visible
             if (skillsToggle != null && !_isPermanentPanel && SceneManager.GetActiveScene().buildIndex == 1)
                 skillsToggle.SetActive(true);
@@ -348,8 +365,13 @@ public class GameManager : MonoBehaviour
         {
             if (skillsIcon != null) skillsIcon.SetActive(oracle.saveSettings.skillsFirstRunDone);
             if (skillsToggle != null) skillsToggle.SetActive(false);
+            if (skillsIconImage != null) skillsIconImage.color = _skillsIconBaseColor;
             skillsButton[0].SetActive(false);
             if (skillsMenuButton != null) skillsMenuButton.interactable = false;
+        }
+        else
+        {
+            if (skillsIconImage != null) skillsIconImage.color = _skillsIconBaseColor;
         }
 
         switch (infinityData.goalSetter)

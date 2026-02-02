@@ -1,12 +1,13 @@
 using System;
+using Blindsided.Utilities;
 using MPUIKIT;
 using TMPro;
-using Unity.Mathematics;
 using UnityEngine;
+using UnityEngine.InputSystem;
 using UnityEngine.UI;
-using Blindsided.Utilities;
 using Systems.Stats;
 using static Expansion.Oracle;
+using IdleDysonSwarm.UI;
 
 public class ManualBotCreation : MonoBehaviour
 {
@@ -16,6 +17,7 @@ public class ManualBotCreation : MonoBehaviour
     [SerializeField] private Button _button;
 
     [SerializeField] private MPImage fill;
+
     private DysonVerseInfinityData infinityData => oracle.saveSettings.dysonVerseSaveData.dysonVerseInfinityData;
     private DysonVerseSkillTreeData skillTreeData => oracle.saveSettings.dysonVerseSaveData.dysonVerseSkillTreeData;
     private DysonVersePrestigeData prestigeData => oracle.saveSettings.dysonVerseSaveData.dysonVersePrestigeData;
@@ -23,18 +25,65 @@ public class ManualBotCreation : MonoBehaviour
     private PrestigePlus prestigePlus => oracle.saveSettings.prestigePlus;
     private bool running;
     private float time;
+    private bool pointerHeld;
+    [SerializeField] private float holdRepeatDelay = 0.5f;
+    private float heldTime;
+    private Color baseFillColor;
+    private Color heldFillColor;
+    private bool lastHeldVisual;
+    private bool lastManualLabour;
+    private double lastCooldownSeconds;
 
     private void Start()
     {
         fill.fillAmount = 0;
-        counter.text = $"{GetTinkerCooldownSeconds():F1}s";
+        lastCooldownSeconds = GetTinkerCooldownSeconds();
+        counter.text = $"{CalcUtils.FormatNumber(lastCooldownSeconds, useMspace: true)}s";
         clickHere.SetActive(true);
+        baseFillColor = fill.color;
+        var highlight = UIThemeProvider.ActiveTheme != null
+            ? UIThemeProvider.ActiveTheme.highlightColor
+            : new Color(0f, 0.882f, 1f);
+        heldFillColor = new Color(highlight.r, highlight.g, highlight.b, 0.6f);
+        lastManualLabour = skillTreeData.manualLabour;
+    }
+
+    private void OnDisable()
+    {
+        pointerHeld = false;
+    }
+
+    private bool IsPointerHeld()
+    {
+        var mouse = Mouse.current;
+        if (mouse != null && mouse.leftButton.isPressed)
+            return true;
+
+        var touchscreen = Touchscreen.current;
+        if (touchscreen != null && touchscreen.primaryTouch.press.isPressed)
+            return true;
+
+        return false;
     }
 
     private void Update()
     {
         double botYield = 1;
         double assemblyProduction = 0;
+        bool manualLabourNow = skillTreeData.manualLabour;
+        bool manualLabourChanged = manualLabourNow != lastManualLabour;
+        if (manualLabourChanged)
+        {
+            if (manualLabourNow)
+            {
+                dvsd.manualCreationTime = 0.2f;
+            }
+            else if (dvsd.manualCreationTime < 0.5f)
+            {
+                dvsd.manualCreationTime = 0.5f;
+            }
+        }
+
         double cooldownSeconds = GetTinkerCooldownSeconds();
         if (TryGetTinkerStats(out GlobalStatPipeline.TinkerResult tinker))
         {
@@ -43,38 +92,97 @@ public class ManualBotCreation : MonoBehaviour
             cooldownSeconds = Math.Max(0.01, tinker.Cooldown.Value);
         }
 
-        description.text = skillTreeData.manualLabour
-            ? $"Having nothing better to do you decide to set up some more assembly lines. Masterfully made you will produce <color=#00E1FF>{CalcUtils.FormatNumber(assemblyProduction)}"
-            : "Manually put together a new bot from parts in your shed. <br>There has to be a better way of going about this...";
+        if (cooldownSeconds != lastCooldownSeconds || manualLabourChanged)
+        {
+            lastCooldownSeconds = cooldownSeconds;
+            lastManualLabour = manualLabourNow;
+            time = 0f;
+            fill.fillAmount = 0f;
+            counter.text = $"{CalcUtils.FormatNumber(cooldownSeconds, useMspace: true)}s";
+        }
+
+        if (manualLabourNow)
+        {
+            string warning = assemblyProduction <= 0
+                ? " <color=#B0B0B0>(Requires an AI Manager!)</color>"
+                : string.Empty;
+            description.text =
+                $"Having nothing better to do you decide to set up some more assembly lines. Masterfully made you will produce <color=#00E1FF>{CalcUtils.FormatNumber(assemblyProduction)}</color>{warning}";
+        }
+        else
+        {
+            description.text =
+                "Manually put together a new bot from parts in your shed. <br>There has to be a better way of going about this... <br><size=90%><color=#B0B0B0>Tip: The tinker panel goes away after you have 10 assembly lines and 1 manager (or any data center).</color></size>";
+        }
+        pointerHeld = IsPointerHeld();
+        if (pointerHeld)
+        {
+            heldTime += Time.deltaTime;
+        }
+        else
+        {
+            heldTime = 0f;
+        }
+
+        bool autoRepeatActive = pointerHeld && heldTime >= holdRepeatDelay;
+
+        if (!running && autoRepeatActive)
+        {
+            StartButton();
+        }
+
+        ApplyHeldVisuals(pointerHeld);
+
         if (running)
         {
             if (time < cooldownSeconds)
             {
                 time += Time.deltaTime;
-                fill.fillAmount = time / (float)cooldownSeconds;
-                counter.text = $"{(cooldownSeconds - time):F1}s";
+                fill.fillAmount = autoRepeatActive ? 1f : time / (float)cooldownSeconds;
+                counter.text = $"{CalcUtils.FormatNumber(cooldownSeconds - time, useMspace: true)}s";
             }
             else
             {
-                fill.fillAmount = 0;
-                clickHere.SetActive(true);
-                _button.interactable = true;
-                infinityData.bots += botYield;
-
-
                 if (skillTreeData.manualLabour)
+                {
                     infinityData.assemblyLines[0] += assemblyProduction;
+                }
+                else
+                {
+                    infinityData.bots += botYield;
+                }
                 if (dvsd.manualCreationTime >= 1 && !skillTreeData.manualLabour)
                     dvsd.manualCreationTime -= 1;
                 else
                 {
-                    dvsd.manualCreationTime = 0.2f;
+                    dvsd.manualCreationTime = skillTreeData.manualLabour ? 0.2f : 0.5f;
                 }
 
-                running = false;
-                counter.text = $"{cooldownSeconds:F1}s";
+                if (autoRepeatActive)
+                {
+                    time = 0f;
+                    fill.fillAmount = 1f;
+                    counter.text = $"{CalcUtils.FormatNumber(cooldownSeconds, useMspace: true)}s";
+                }
+                else
+                {
+                    fill.fillAmount = 0f;
+                    clickHere.SetActive(true);
+                    _button.interactable = true;
+                    running = false;
+                    counter.text = $"{CalcUtils.FormatNumber(cooldownSeconds, useMspace: true)}s";
+                }
             }
         }
+    }
+
+    private void ApplyHeldVisuals(bool isHeld)
+    {
+        if (fill == null || lastHeldVisual == isHeld)
+            return;
+
+        fill.color = isHeld ? heldFillColor : baseFillColor;
+        lastHeldVisual = isHeld;
     }
 
     public void StartButton()
@@ -103,5 +211,5 @@ public class ManualBotCreation : MonoBehaviour
     {
         return GlobalStatPipeline.TryCalculateTinkerStats(infinityData, skillTreeData, prestigeData, prestigePlus, dvsd.manualCreationTime, out result);
     }
-}
 
+}

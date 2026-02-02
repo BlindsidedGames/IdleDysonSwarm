@@ -4,11 +4,12 @@ using Expansion;
 using GameData;
 using TMPro;
 using UnityEngine;
+using UnityEngine.EventSystems;
 using UnityEngine.UI;
 using static Expansion.Oracle;
 
 [SelectionBase]
-public class SkillTreeManager : MonoBehaviour
+public class SkillTreeManager : MonoBehaviour, IPointerClickHandler
 {
     private DysonVerseSkillTreeData skillTreeData => oracle.saveSettings.dysonVerseSaveData.dysonVerseSkillTreeData;
     private PrestigePlus prestigePlus => oracle.saveSettings.prestigePlus;
@@ -68,6 +69,7 @@ public class SkillTreeManager : MonoBehaviour
 
         skillnameText.text = GetDisplayName();
         skillButton.onClick.AddListener(Clicked);
+        EnsureRightClickForwarder();
         UpdateSkill();
     }
 
@@ -77,6 +79,45 @@ public class SkillTreeManager : MonoBehaviour
         GameManager.UpdateSkills -= UpdateSkill;
         Oracle.UpdateSkills -= UpdateSkill;
         DebugOptions.UpdateSkills -= UpdateSkill;
+    }
+
+    public void OnPointerClick(PointerEventData eventData)
+    {
+        if (eventData != null && eventData.button == PointerEventData.InputButton.Right)
+        {
+            Clicked();
+        }
+    }
+
+    private void EnsureRightClickForwarder()
+    {
+        if (skillButton == null) return;
+        RightClickForwarder forwarder = skillButton.GetComponent<RightClickForwarder>();
+        if (forwarder == null)
+        {
+            forwarder = skillButton.gameObject.AddComponent<RightClickForwarder>();
+        }
+
+        forwarder.Initialize(this);
+    }
+
+    private sealed class RightClickForwarder : MonoBehaviour, IPointerClickHandler
+    {
+        private SkillTreeManager _manager;
+
+        public void Initialize(SkillTreeManager manager)
+        {
+            _manager = manager;
+        }
+
+        public void OnPointerClick(PointerEventData eventData)
+        {
+            if (_manager == null) return;
+            if (eventData != null && eventData.button == PointerEventData.InputButton.Right)
+            {
+                _manager.Clicked();
+            }
+        }
     }
 
     public string SkillId => ResolveSkillId();
@@ -183,6 +224,62 @@ public class SkillTreeManager : MonoBehaviour
     {
         SkillDefinition definition = ResolveSkillDefinition();
         return definition == null || definition.refundable;
+    }
+
+    private bool IsRefundableConsideringLocks(string id)
+    {
+        if (string.IsNullOrEmpty(id)) return false;
+        GameDataRegistry registry = GameDataRegistry.Instance;
+        if (registry == null || registry.skillDatabase == null) return false;
+        if (!registry.skillDatabase.TryGet(id, out SkillDefinition definition)) return false;
+
+        bool refundable = definition.refundable;
+        if (refundable && definition.unrefundableWithIds != null)
+        {
+            foreach (string otherId in definition.unrefundableWithIds)
+            {
+                if (oracle.IsSkillOwned(otherId))
+                {
+                    refundable = false;
+                    break;
+                }
+            }
+        }
+
+        return refundable;
+    }
+
+    private List<string> GetOwnedDependentSkillIdsRecursive(string rootId)
+    {
+        List<string> dependents = new List<string>();
+        if (string.IsNullOrEmpty(rootId)) return dependents;
+        HashSet<string> visited = new HashSet<string> { rootId };
+        Queue<string> toVisit = new Queue<string>();
+        toVisit.Enqueue(rootId);
+
+        while (toVisit.Count > 0)
+        {
+            string current = toVisit.Dequeue();
+            foreach (SkillTreeManager skill in oracle.allSkillTreeManagers)
+            {
+                if (skill == null) continue;
+                if (!skill.IsOwned) continue;
+                string id = skill.SkillId;
+                if (string.IsNullOrEmpty(id) || visited.Contains(id)) continue;
+                string[] required = skill.GetRequiredSkillIds();
+                if (required == null || required.Length == 0) continue;
+                for (int i = 0; i < required.Length; i++)
+                {
+                    if (required[i] != current) continue;
+                    visited.Add(id);
+                    dependents.Add(id);
+                    toVisit.Enqueue(id);
+                    break;
+                }
+            }
+        }
+
+        return dependents;
     }
 
     private bool GetIsFragment()
@@ -445,44 +542,68 @@ public class SkillTreeManager : MonoBehaviour
         {
             case true:
             {
-                PurchaseSkill();
+                bool owned = IsOwnedInternal();
+                if (!owned && !GetRefundable())
+                {
+                    ShowConfirmation(false);
+                }
+                else
+                {
+                    PurchaseSkill();
+                }
             }
                 break;
             case false:
             {
-                SkillTreeConfirmationManager stcm = oracle._skillTreeConfirmationManager;
-                stcm.skillTreeManager = this;
-                stcm.CloseConfirm();
-                stcm.confirmButtonText.text = "Assign";
-                int cost = GetCost();
-                stcm.SetTexts(GetPopupName(), GetDescription(), GetTechnicalDescription(), $"Cost: {cost}");
-                stcm.SetPosition(GetComponent<RectTransform>().localPosition);
-                bool available = true;
-                bool owned = IsOwnedInternal();
-                string[] requiredIds = GetRequiredSkillIds();
-                string[] shadowIds = GetShadowRequirementIds();
-                string[] exclusiveIds = GetExclusiveWithIds();
-                if (!owned)
-                {
-                    if (skillTreeData.skillPointsTree < cost) available = false;
-                    if (!AreRequirementsMet(requiredIds)) available = false;
-                    if (!AreRequirementsMet(shadowIds)) available = false;
-                }
-
-                if (HasExclusiveOwned(exclusiveIds)) available = false;
-
-
-                if (owned)
-                {
-                    if (IsRequiredByOtherSkills()) available = false;
-                    if (!GetRefundable()) available = false;
-                    stcm.confirmButtonText.text = "Un-Assign";
-                }
-
-                stcm.confirm.interactable = available;
+                ShowConfirmation(true);
             }
                 break;
         }
+    }
+
+    private void ShowConfirmation(bool allowUnassign)
+    {
+        SkillTreeConfirmationManager stcm = oracle._skillTreeConfirmationManager;
+        stcm.skillTreeManager = this;
+        stcm.CloseConfirm();
+        stcm.confirmButtonText.text = "Assign";
+        int cost = GetCost();
+        stcm.SetTexts(GetPopupName(), GetDescription(), GetTechnicalDescription(), $"Cost: {cost}");
+        stcm.SetPosition(GetComponent<RectTransform>().localPosition);
+        bool available = true;
+        bool owned = IsOwnedInternal();
+        string[] requiredIds = GetRequiredSkillIds();
+        string[] shadowIds = GetShadowRequirementIds();
+        string[] exclusiveIds = GetExclusiveWithIds();
+        if (!owned)
+        {
+            if (skillTreeData.skillPointsTree < cost) available = false;
+            if (!AreRequirementsMet(requiredIds)) available = false;
+            if (!AreRequirementsMet(shadowIds)) available = false;
+        }
+
+        if (HasExclusiveOwned(exclusiveIds)) available = false;
+
+        if (allowUnassign && owned)
+        {
+            List<string> dependents = GetOwnedDependentSkillIdsRecursive(ResolveSkillId());
+            if (dependents.Count > 0)
+            {
+                foreach (string dependentId in dependents)
+                {
+                    if (!IsRefundableConsideringLocks(dependentId))
+                    {
+                        available = false;
+                        break;
+                    }
+                }
+            }
+
+            if (!IsRefundableConsideringLocks(ResolveSkillId())) available = false;
+            stcm.confirmButtonText.text = "Un-Assign";
+        }
+
+        stcm.confirm.interactable = available;
     }
 
     public void PurchaseSkill()
@@ -505,22 +626,50 @@ public class SkillTreeManager : MonoBehaviour
         bool owned = IsOwnedInternal();
         if (owned)
         {
-            if (IsRequiredByOtherSkills())
+            List<string> dependents = GetOwnedDependentSkillIdsRecursive(id);
+            if (dependents.Count > 0)
+            {
+                foreach (string dependentId in dependents)
+                {
+                    if (!IsRefundableConsideringLocks(dependentId))
+                    {
+                        UpdateSkills?.Invoke();
+                        return;
+                    }
+                }
+            }
+
+            if (!IsRefundableConsideringLocks(id))
             {
                 UpdateSkills?.Invoke();
                 return;
             }
 
-            if (GetRefundable())
+            GameDataRegistry registry = GameDataRegistry.Instance;
+            SkillDatabase database = registry != null ? registry.skillDatabase : null;
+            if (dependents.Count > 0 && database != null)
             {
-                oracle.SetSkillOwned(id, false);
-                skillTreeData.skillPointsTree += cost;
-                if (definition.isFragment && skillTreeData.fragments >= 1) skillTreeData.fragments -= 1;
-                List<string> autoIds = oracle.GetAutoAssignmentSkillIds();
-                if (autoIds.Contains(id)) autoIds.Remove(id);
-                oracle.saveSettings.dysonVerseSaveData.skillAutoAssignmentList =
-                    SkillIdMap.ConvertIdsToKeys(autoIds);
+                foreach (string dependentId in dependents)
+                {
+                    if (!database.TryGet(dependentId, out SkillDefinition dependentDef)) continue;
+                    if (!oracle.IsSkillOwned(dependentId)) continue;
+                    oracle.SetSkillOwned(dependentId, false);
+                    skillTreeData.skillPointsTree += dependentDef.cost;
+                    if (dependentDef.isFragment && skillTreeData.fragments >= 1) skillTreeData.fragments -= 1;
+                    List<string> autoIds = oracle.GetAutoAssignmentSkillIds();
+                    if (autoIds.Contains(dependentId)) autoIds.Remove(dependentId);
+                    oracle.saveSettings.dysonVerseSaveData.skillAutoAssignmentList =
+                        SkillIdMap.ConvertIdsToKeys(autoIds);
+                }
             }
+
+            oracle.SetSkillOwned(id, false);
+            skillTreeData.skillPointsTree += cost;
+            if (definition.isFragment && skillTreeData.fragments >= 1) skillTreeData.fragments -= 1;
+            List<string> autoIdsRoot = oracle.GetAutoAssignmentSkillIds();
+            if (autoIdsRoot.Contains(id)) autoIdsRoot.Remove(id);
+            oracle.saveSettings.dysonVerseSaveData.skillAutoAssignmentList =
+                SkillIdMap.ConvertIdsToKeys(autoIdsRoot);
 
             UpdateSkills?.Invoke();
             return;

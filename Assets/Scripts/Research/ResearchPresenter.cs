@@ -41,9 +41,7 @@ namespace Research
                 : ResolvedResearchId;
 
         private double BaseCostCalculated => _gameState.SkillTreeData.repeatableResearch
-            ? BaseCostValue > 0
-                ? BaseCostValue
-                : 1 / (1 + CurrentLevel * (BoostPercent > 0 ? BoostPercent : 1))
+            ? GetRepeatableBaseCost()
             : BaseCostValue;
 
         private int MaxLevel => _resolvedDefinition != null ? _resolvedDefinition.maxLevel : -1;
@@ -132,9 +130,43 @@ namespace Research
 
         public string OwnedText => $"{DisplayName} boosts {Oracle.textColourBlue}{FormatNumber(CurrentLevel)}</color>";
 
-        public string ProductionText => CurrentLevel > 0
-            ? $"Boosting by {Oracle.textColourBlue}{FormatNumber(BoostPercent)}%</color>"
-            : "Purchase for a boost!";
+        private string PerLevelSuffix
+        {
+            get
+            {
+                if (Percent <= 0) return string.Empty;
+                return $" ({Oracle.textColourBlue}{FormatNumber(Percent * 100)}</color>% per level)";
+            }
+        }
+
+        private double NextBoostPercent
+        {
+            get
+            {
+                if (Percent <= 0) return 0;
+                double nextLevel = CurrentLevel + Math.Max(0, NumberToBuy());
+                return nextLevel * Percent * 100;
+            }
+        }
+
+        public string ProductionText
+        {
+            get
+            {
+                if (CurrentLevel <= 0)
+                {
+                    return $"Purchase for a boost!{PerLevelSuffix}";
+                }
+
+                if (NumberToBuy() > 0 && NextBoostPercent > 0)
+                {
+                    return $"Boosting by {Oracle.textColourBlue}{FormatNumber(BoostPercent)}%</color> " +
+                           $"-> {Oracle.textColourBlue}{FormatNumber(NextBoostPercent)}%</color>";
+                }
+
+                return $"Boosting by {Oracle.textColourBlue}{FormatNumber(BoostPercent)}%</color>";
+            }
+        }
 
         public bool CanAutoBuy => IsAutoBuyEnabled && Affordable() > 0 && PrerequisitesMet && !IsMaxed;
 
@@ -178,7 +210,7 @@ namespace Research
         {
             if (IsMaxed) return 0;
             long affordable = Affordable();
-            return CostForAmount(affordable, BaseCostValue);
+            return CostForAmount(affordable, BaseCostCalculated);
         }
 
         public bool TryAutoPurchase()
@@ -315,6 +347,16 @@ namespace Research
             if (remaining <= 0) return 0;
             long remainingWhole = (long)Math.Floor(remaining);
             return Math.Min(amount, remainingWhole);
+        }
+
+        private double GetRepeatableBaseCost()
+        {
+            if (BaseCostValue <= 0) return BaseCostValue;
+            double boostPercent = BoostPercent;
+            if (boostPercent <= 0) return BaseCostValue;
+
+            double divisor = 1d + (boostPercent / 100d);
+            return divisor > 0 ? BaseCostValue / divisor : BaseCostValue;
         }
 
         private string ResolvedResearchId

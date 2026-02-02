@@ -6,6 +6,9 @@ using UnityEngine;
 #if !DISABLESTEAMWORKS
 using Steamworks;
 #endif
+#if UNITY_EDITOR && !DISABLESTEAMWORKS
+using UnityEditor;
+#endif
 
 namespace IdleDysonSwarm.Platform
 {
@@ -43,6 +46,77 @@ namespace IdleDysonSwarm.Platform
                 return _instance;
             }
         }
+
+        #if UNITY_EDITOR && !DISABLESTEAMWORKS
+        static SteamManager()
+        {
+            EditorApplication.playModeStateChanged += OnPlayModeStateChanged;
+            EditorApplication.quitting += OnEditorQuitting;
+            AssemblyReloadEvents.beforeAssemblyReload += OnBeforeAssemblyReload;
+        }
+
+        private static void OnPlayModeStateChanged(PlayModeStateChange state)
+        {
+            if (state == PlayModeStateChange.ExitingPlayMode)
+            {
+                EditorShutdown();
+            }
+        }
+
+        private static void OnEditorQuitting()
+        {
+            EditorShutdown();
+        }
+
+        private static void OnBeforeAssemblyReload()
+        {
+            EditorShutdown();
+        }
+
+        [InitializeOnLoadMethod]
+        private static void EditorWatchdogInit()
+        {
+            EditorApplication.update += EditorWatchdogUpdate;
+        }
+
+        private static void EditorWatchdogUpdate()
+        {
+            if (EditorApplication.isPlayingOrWillChangePlaymode)
+            {
+                return;
+            }
+
+            if (!_everInitialized)
+            {
+                return;
+            }
+
+            EditorShutdown();
+        }
+
+        private static void EditorShutdown()
+        {
+            if (!_everInitialized)
+            {
+                return;
+            }
+
+            try
+            {
+                SteamAPI.Shutdown();
+            }
+            catch (System.DllNotFoundException)
+            {
+                // Ignore shutdown when Steam API isn't loaded in the editor.
+            }
+
+            _everInitialized = false;
+            if (_instance != null)
+            {
+                _instance._initialized = false;
+            }
+        }
+        #endif
 
         [AOT.MonoPInvokeCallback(typeof(SteamAPIWarningMessageHook_t))]
         private static void SteamAPIDebugTextHook(int severity, System.Text.StringBuilder message)

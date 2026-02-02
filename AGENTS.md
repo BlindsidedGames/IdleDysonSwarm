@@ -40,3 +40,12 @@ This file is a lightweight, human-readable map of the project so future agents c
 ## Notes
 - Primary source code lives in `Assets/Scripts/` and `Assets/Editor/`.
 - Avoid modifying third-party code under `Assets/Plugins/` unless explicitly requested.
+
+## Steam build/upload (Windows)
+When asked to do a Windows Steam build/upload for Idle Dyson Swarm:
+- Ensure the Windows build output exists at `C:\Users\mattr\Documents\Unity\Builds\IdleDysonSwarm`.
+- Upload via SteamCMD using `C:\Users\mattr\Documents\steamcmd\Scripts\upload_idle_dyson_swarm_windows.bat`.
+- Steam AppID: `4348570`, Windows depot: `4348571`.
+- SteamCMD VDFs live at:
+  - `C:\Users\mattr\Documents\steamcmd\Scripts\app_build_4348570_windows.vdf`
+  - `C:\Users\mattr\Documents\steamcmd\Scripts\depot_build_4348571_windows.vdf`

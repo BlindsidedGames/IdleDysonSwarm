@@ -1,4 +1,6 @@
+using TMPro;
 using UnityEngine;
+using UnityEngine.UI;
 
 /// <summary>
 /// Holds all UI element references for a SidePanel instance.
@@ -40,9 +42,23 @@ public class SidePanelReferences : MonoBehaviour
     public GameObject skillsFillObject;
     public GameObject skillsFillBar;
     public GameObject skillsIcon;
+    public Image skillsIconImage;
     public GameObject skillsToggle;
     public GameObject skillsTextObject;
     public GameObject skillsMenuButtonObject;
+    public TMP_Text skillsPresetFeedbackText;
+    [Header("Skills Presets")]
+    public GameObject skillsPresetTogglesRoot;
+    public Toggle skillsPresetToggle1;
+    public Toggle skillsPresetToggle2;
+    public Toggle skillsPresetToggle3;
+    public Toggle skillsPresetToggle4;
+    public Toggle skillsPresetToggle5;
+    public TMP_Text skillsPresetToggleText1;
+    public TMP_Text skillsPresetToggleText2;
+    public TMP_Text skillsPresetToggleText3;
+    public TMP_Text skillsPresetToggleText4;
+    public TMP_Text skillsPresetToggleText5;
 
     [Header("Offline Time")]
     public GameObject offlineTimeFillBarObject;

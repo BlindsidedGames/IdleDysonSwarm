@@ -214,7 +214,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4954428224332451645, guid: 247830d86bfc9714dbbf4a1ca0107011, type: 3}
       propertyPath: m_MinHeight
-      value: 100
+      value: 115
       objectReference: {fileID: 0}
     - target: {fileID: 4972459859932635571, guid: 247830d86bfc9714dbbf4a1ca0107011, type: 3}
       propertyPath: m_Name
