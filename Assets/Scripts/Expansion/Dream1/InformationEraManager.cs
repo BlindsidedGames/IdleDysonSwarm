@@ -208,6 +208,8 @@ public class InformationEraManager : MonoBehaviour
 
         if (!sd1.engineeringComplete)
         {
+            if (engineeringPanel.fillBarArea != null)
+                engineeringPanel.fillBarArea.SetActive(true);
             if (engineeringPanel.actionButton != null)
                 engineeringPanel.actionButton.gameObject.SetActive(!sd1.engineering);
             engineeringPanel.titleText.text = !sd1.engineering
@@ -243,6 +245,8 @@ public class InformationEraManager : MonoBehaviour
 
         if (!sd1.shippingComplete)
         {
+            if (shippingPanel.fillBarArea != null)
+                shippingPanel.fillBarArea.SetActive(true);
             if (shippingPanel.actionButton != null)
                 shippingPanel.actionButton.gameObject.SetActive(!sd1.shipping);
             shippingPanel.titleText.text = !sd1.shipping
@@ -278,6 +282,8 @@ public class InformationEraManager : MonoBehaviour
 
         if (!sd1.worldTradeComplete)
         {
+            if (worldTradePanel.fillBarArea != null)
+                worldTradePanel.fillBarArea.SetActive(true);
             if (worldTradePanel.actionButton != null)
                 worldTradePanel.actionButton.gameObject.SetActive(!sd1.worldTrade);
             worldTradePanel.titleText.text = !sd1.worldTrade
@@ -313,6 +319,8 @@ public class InformationEraManager : MonoBehaviour
 
         if (!sd1.worldPeaceComplete)
         {
+            if (worldPeacePanel.fillBarArea != null)
+                worldPeacePanel.fillBarArea.SetActive(true);
             if (worldPeacePanel.actionButton != null)
                 worldPeacePanel.actionButton.gameObject.SetActive(!sd1.worldPeace);
             worldPeacePanel.titleText.text = !sd1.worldPeace
@@ -348,6 +356,8 @@ public class InformationEraManager : MonoBehaviour
 
         if (!sd1.mathematicsComplete)
         {
+            if (mathematicsPanel.fillBarArea != null)
+                mathematicsPanel.fillBarArea.SetActive(true);
             if (mathematicsPanel.actionButton != null)
                 mathematicsPanel.actionButton.gameObject.SetActive(!sd1.mathematics);
             mathematicsPanel.titleText.text = !sd1.mathematics
@@ -387,6 +397,8 @@ public class InformationEraManager : MonoBehaviour
 
         if (!sd1.advancedPhysicsComplete)
         {
+            if (advancedPhysicsPanel.fillBarArea != null)
+                advancedPhysicsPanel.fillBarArea.SetActive(true);
             if (advancedPhysicsPanel.actionButton != null)
                 advancedPhysicsPanel.actionButton.gameObject.SetActive(!sd1.advancedPhysics);
             advancedPhysicsPanel.titleText.text = !sd1.advancedPhysics

@@ -53,7 +53,7 @@ This file tracks work done across Claude Code sessions. Updated automatically vi
 - `Assets/Scripts/User Interface/RealityPanelManager.cs`
 - `Assets/Scripts/User Interface/OfflineTimeFillBar.cs`
 
-**Scene Wiring (Completed via MCP):**
+**Scene Wiring (Completed):**
 - Added 4 new components to SidePanel GameObject
 - Wired all 26 UI references across the panel managers
 - Saved scene successfully

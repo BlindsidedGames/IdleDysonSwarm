@@ -109,7 +109,7 @@ public class SkillTreeManager : MonoBehaviour, IPointerClickHandler
     {
         if (eventData != null && eventData.button == PointerEventData.InputButton.Right)
         {
-            Clicked();
+            RightClicked();
         }
     }
 
@@ -160,7 +160,7 @@ public class SkillTreeManager : MonoBehaviour, IPointerClickHandler
             if (_manager == null) return;
             if (eventData != null && eventData.button == PointerEventData.InputButton.Right)
             {
-                _manager.Clicked();
+                _manager.RightClicked();
             }
         }
     }
@@ -296,35 +296,103 @@ public class SkillTreeManager : MonoBehaviour, IPointerClickHandler
 
     private List<string> GetOwnedDependentSkillIdsRecursive(string rootId)
     {
+        return GetDependentSkillIdsRecursive(rootId, ownedOnly: true);
+    }
+
+    private List<string> GetAllDependentSkillIdsRecursive(string rootId)
+    {
+        return GetDependentSkillIdsRecursive(rootId, ownedOnly: false);
+    }
+
+    private List<string> GetDependentSkillIdsRecursive(string rootId, bool ownedOnly)
+    {
         List<string> dependents = new List<string>();
         if (string.IsNullOrEmpty(rootId)) return dependents;
-        HashSet<string> visited = new HashSet<string> { rootId };
+        HashSet<string> visited = new HashSet<string>(StringComparer.Ordinal) { rootId };
         Queue<string> toVisit = new Queue<string>();
         toVisit.Enqueue(rootId);
+
+        GameDataRegistry registry = GameDataRegistry.Instance;
+        SkillDatabase database = registry != null ? registry.skillDatabase : null;
+        bool useDatabase = database != null && database.skills != null && database.skills.Count > 0;
 
         while (toVisit.Count > 0)
         {
             string current = toVisit.Dequeue();
-            foreach (SkillTreeManager skill in oracle.allSkillTreeManagers)
+            if (useDatabase)
             {
-                if (skill == null) continue;
-                if (!skill.IsOwned) continue;
-                string id = skill.SkillId;
-                if (string.IsNullOrEmpty(id) || visited.Contains(id)) continue;
-                string[] required = skill.GetRequiredSkillIds();
-                if (required == null || required.Length == 0) continue;
-                for (int i = 0; i < required.Length; i++)
+                foreach (SkillDefinition definition in database.skills)
                 {
-                    if (required[i] != current) continue;
-                    visited.Add(id);
-                    dependents.Add(id);
-                    toVisit.Enqueue(id);
-                    break;
+                    if (definition == null) continue;
+                    string id = definition.id;
+                    if (string.IsNullOrEmpty(id) || visited.Contains(id)) continue;
+                    if (ownedOnly && !oracle.IsSkillOwned(id)) continue;
+                    string[] required = definition.requiredSkillIds;
+                    if (required == null || required.Length == 0) continue;
+                    for (int i = 0; i < required.Length; i++)
+                    {
+                        if (required[i] != current) continue;
+                        visited.Add(id);
+                        dependents.Add(id);
+                        toVisit.Enqueue(id);
+                        break;
+                    }
+                }
+            }
+            else
+            {
+                foreach (SkillTreeManager skill in oracle.allSkillTreeManagers)
+                {
+                    if (skill == null) continue;
+                    if (ownedOnly && !skill.IsOwned) continue;
+                    string id = skill.SkillId;
+                    if (string.IsNullOrEmpty(id) || visited.Contains(id)) continue;
+                    string[] required = skill.GetRequiredSkillIds();
+                    if (required == null || required.Length == 0) continue;
+                    for (int i = 0; i < required.Length; i++)
+                    {
+                        if (required[i] != current) continue;
+                        visited.Add(id);
+                        dependents.Add(id);
+                        toVisit.Enqueue(id);
+                        break;
+                    }
                 }
             }
         }
 
         return dependents;
+    }
+
+    private void RemoveFromAutoAssignAndPresets(List<string> ids)
+    {
+        if (ids == null || ids.Count == 0) return;
+
+        HashSet<string> toRemove = new HashSet<string>(StringComparer.Ordinal);
+        foreach (string id in ids)
+        {
+            if (!string.IsNullOrEmpty(id))
+            {
+                toRemove.Add(id);
+            }
+        }
+
+        if (toRemove.Count == 0) return;
+
+        List<string> autoIds = oracle.GetAutoAssignmentSkillIds();
+        if (autoIds.RemoveAll(id => toRemove.Contains(id)) > 0)
+        {
+            oracle.SetAutoAssignmentSkillIds(autoIds);
+        }
+
+        for (int presetIndex = 1; presetIndex <= 5; presetIndex++)
+        {
+            List<string> presetIds = oracle.GetPresetAutoAssignmentSkillIds(presetIndex);
+            if (presetIds.RemoveAll(id => toRemove.Contains(id)) > 0)
+            {
+                oracle.SetPresetAutoAssignmentSkillIds(presetIndex, presetIds);
+            }
+        }
     }
 
     private bool GetIsFragment()
@@ -623,6 +691,18 @@ public class SkillTreeManager : MonoBehaviour, IPointerClickHandler
         }
     }
 
+    private void RightClicked()
+    {
+        if (!IsOwnedInternal()) return;
+        if (oracle.saveSettings.skillsBuyOnTap)
+        {
+            PurchaseSkill();
+            return;
+        }
+
+        ShowConfirmation(true);
+    }
+
     private void ShowConfirmation(bool allowUnassign)
     {
         SkillTreeConfirmationManager stcm = oracle._skillTreeConfirmationManager;
@@ -689,6 +769,7 @@ public class SkillTreeManager : MonoBehaviour, IPointerClickHandler
         if (owned)
         {
             List<string> dependents = GetOwnedDependentSkillIdsRecursive(id);
+            List<string> allDependents = GetAllDependentSkillIdsRecursive(id);
             if (dependents.Count > 0)
             {
                 foreach (string dependentId in dependents)
@@ -718,10 +799,11 @@ public class SkillTreeManager : MonoBehaviour, IPointerClickHandler
                     oracle.SetSkillOwned(dependentId, false);
                     skillTreeData.skillPointsTree += dependentDef.cost;
                     if (dependentDef.isFragment && skillTreeData.fragments >= 1) skillTreeData.fragments -= 1;
-                    List<string> autoIds = oracle.GetAutoAssignmentSkillIds();
-                    if (autoIds.Contains(dependentId)) autoIds.Remove(dependentId);
-                    oracle.SetAutoAssignmentSkillIds(autoIds);
                 }
+            }
+            if (allDependents.Count > 0)
+            {
+                RemoveFromAutoAssignAndPresets(allDependents);
             }
 
             oracle.SetSkillOwned(id, false);
