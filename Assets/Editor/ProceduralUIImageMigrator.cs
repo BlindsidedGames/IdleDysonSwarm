@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using UnityEditor;
 using UnityEditor.SceneManagement;
 using UnityEngine;
@@ -100,12 +101,188 @@ public static class ProceduralUIImageMigrator
             return false;
 
         var go = old.gameObject;
-        string json = EditorJsonUtility.ToJson(old);
+        var data = CaptureSerializedProperties(old);
         Object.DestroyImmediate(old, true);
         var replacement = go.AddComponent<ProceduralUIImage>();
-        EditorJsonUtility.FromJsonOverwrite(json, replacement);
+        ApplySerializedProperties(replacement, data);
         EditorUtility.SetDirty(go);
         return true;
+    }
+
+    private struct SerializedPropData
+    {
+        public string Path;
+        public SerializedPropertyType Type;
+        public object Value;
+    }
+
+    private static List<SerializedPropData> CaptureSerializedProperties(Object src)
+    {
+        var data = new List<SerializedPropData>();
+        var srcSO = new SerializedObject(src);
+        var prop = srcSO.GetIterator();
+        if (prop.NextVisible(true))
+        {
+            do
+            {
+                if (prop.propertyPath == "m_Script")
+                    continue;
+
+                if (prop.propertyType == SerializedPropertyType.Generic)
+                    continue;
+
+                data.Add(new SerializedPropData
+                {
+                    Path = prop.propertyPath,
+                    Type = prop.propertyType,
+                    Value = GetPropertyValue(prop)
+                });
+            }
+            while (prop.NextVisible(true));
+        }
+
+        return data;
+    }
+
+    private static void ApplySerializedProperties(Object dst, List<SerializedPropData> data)
+    {
+        var dstSO = new SerializedObject(dst);
+        foreach (var entry in data)
+        {
+            var prop = dstSO.FindProperty(entry.Path);
+            if (prop == null)
+                continue;
+
+            SetPropertyValue(prop, entry.Type, entry.Value);
+        }
+        dstSO.ApplyModifiedPropertiesWithoutUndo();
+    }
+
+    private static object GetPropertyValue(SerializedProperty src)
+    {
+        switch (src.propertyType)
+        {
+            case SerializedPropertyType.Integer:
+            case SerializedPropertyType.LayerMask:
+            case SerializedPropertyType.ArraySize:
+                return src.intValue;
+            case SerializedPropertyType.Boolean:
+                return src.boolValue;
+            case SerializedPropertyType.Float:
+                return src.floatValue;
+            case SerializedPropertyType.String:
+                return src.stringValue;
+            case SerializedPropertyType.Color:
+                return src.colorValue;
+            case SerializedPropertyType.ObjectReference:
+                return src.objectReferenceValue;
+            case SerializedPropertyType.Enum:
+                return src.enumValueIndex;
+            case SerializedPropertyType.Vector2:
+                return src.vector2Value;
+            case SerializedPropertyType.Vector3:
+                return src.vector3Value;
+            case SerializedPropertyType.Vector4:
+                return src.vector4Value;
+            case SerializedPropertyType.Rect:
+                return src.rectValue;
+            case SerializedPropertyType.Bounds:
+                return src.boundsValue;
+            case SerializedPropertyType.Quaternion:
+                return src.quaternionValue;
+            case SerializedPropertyType.AnimationCurve:
+                return src.animationCurveValue;
+            case SerializedPropertyType.Vector2Int:
+                return src.vector2IntValue;
+            case SerializedPropertyType.Vector3Int:
+                return src.vector3IntValue;
+            case SerializedPropertyType.RectInt:
+                return src.rectIntValue;
+            case SerializedPropertyType.BoundsInt:
+                return src.boundsIntValue;
+            case SerializedPropertyType.ExposedReference:
+                return src.exposedReferenceValue;
+            case SerializedPropertyType.ManagedReference:
+                return src.managedReferenceValue;
+            case SerializedPropertyType.Gradient:
+                return src.gradientValue;
+            default:
+                return null;
+        }
+    }
+
+    private static void SetPropertyValue(SerializedProperty dst, SerializedPropertyType type, object value)
+    {
+        switch (type)
+        {
+            case SerializedPropertyType.Integer:
+            case SerializedPropertyType.LayerMask:
+            case SerializedPropertyType.ArraySize:
+                dst.intValue = value is int i ? i : dst.intValue;
+                break;
+            case SerializedPropertyType.Boolean:
+                if (value is bool b) dst.boolValue = b;
+                break;
+            case SerializedPropertyType.Float:
+                if (value is float f) dst.floatValue = f;
+                break;
+            case SerializedPropertyType.String:
+                dst.stringValue = value as string;
+                break;
+            case SerializedPropertyType.Color:
+                if (value is Color c) dst.colorValue = c;
+                break;
+            case SerializedPropertyType.ObjectReference:
+                dst.objectReferenceValue = value as Object;
+                break;
+            case SerializedPropertyType.Enum:
+                if (value is int e) dst.enumValueIndex = e;
+                break;
+            case SerializedPropertyType.Vector2:
+                if (value is Vector2 v2) dst.vector2Value = v2;
+                break;
+            case SerializedPropertyType.Vector3:
+                if (value is Vector3 v3) dst.vector3Value = v3;
+                break;
+            case SerializedPropertyType.Vector4:
+                if (value is Vector4 v4) dst.vector4Value = v4;
+                break;
+            case SerializedPropertyType.Rect:
+                if (value is Rect r) dst.rectValue = r;
+                break;
+            case SerializedPropertyType.Bounds:
+                if (value is Bounds bnd) dst.boundsValue = bnd;
+                break;
+            case SerializedPropertyType.Quaternion:
+                if (value is Quaternion q) dst.quaternionValue = q;
+                break;
+            case SerializedPropertyType.AnimationCurve:
+                dst.animationCurveValue = value as AnimationCurve;
+                break;
+            case SerializedPropertyType.Vector2Int:
+                if (value is Vector2Int v2i) dst.vector2IntValue = v2i;
+                break;
+            case SerializedPropertyType.Vector3Int:
+                if (value is Vector3Int v3i) dst.vector3IntValue = v3i;
+                break;
+            case SerializedPropertyType.RectInt:
+                if (value is RectInt ri) dst.rectIntValue = ri;
+                break;
+            case SerializedPropertyType.BoundsInt:
+                if (value is BoundsInt bi) dst.boundsIntValue = bi;
+                break;
+            case SerializedPropertyType.ExposedReference:
+                dst.exposedReferenceValue = value as Object;
+                break;
+            case SerializedPropertyType.ManagedReference:
+                dst.managedReferenceValue = value;
+                break;
+            case SerializedPropertyType.Gradient:
+                dst.gradientValue = value as Gradient;
+                break;
+            default:
+                break;
+        }
     }
 
     private static T[] FindAll<T>() where T : Object
