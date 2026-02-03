@@ -8,6 +8,7 @@ using UnityEngine.UI;
 
 public class SoundController : MonoBehaviour
 {
+    private const float MinLinearVolume = 0.0001f;
     [SerializeField] private AudioMixer mixer;
     [SerializeField] private Slider music;
     [SerializeField] private Slider buttons;
@@ -38,13 +39,15 @@ public class SoundController : MonoBehaviour
 
     private void SetMusicVolume(float value)
     {
-        mixer.SetFloat("musicVolume", Mathf.Log10(value) * 20);
+        float clamped = Mathf.Max(value, MinLinearVolume);
+        mixer.SetFloat("musicVolume", Mathf.Log10(clamped) * 20);
         PlayerPrefs.SetFloat("musicVolume", music.value);
     }
 
     private void SetButtonsVolume(float value)
     {
-        mixer.SetFloat("buttonVolume", Mathf.Log10(value) * 20);
+        float clamped = Mathf.Max(value, MinLinearVolume);
+        mixer.SetFloat("buttonVolume", Mathf.Log10(clamped) * 20);
         PlayerPrefs.SetFloat("buttonVolume", buttons.value);
     }
 
@@ -56,7 +59,9 @@ public class SoundController : MonoBehaviour
 
     private void LoadVolume()
     {
-        mixer.SetFloat("musicVolume", Mathf.Log10(PlayerPrefs.GetFloat("musicVolume", .7f)) * 20);
-        mixer.SetFloat("buttonVolume", Mathf.Log10(PlayerPrefs.GetFloat("buttonVolume", .5f)) * 20);
+        float musicValue = Mathf.Max(PlayerPrefs.GetFloat("musicVolume", .7f), MinLinearVolume);
+        float buttonValue = Mathf.Max(PlayerPrefs.GetFloat("buttonVolume", .5f), MinLinearVolume);
+        mixer.SetFloat("musicVolume", Mathf.Log10(musicValue) * 20);
+        mixer.SetFloat("buttonVolume", Mathf.Log10(buttonValue) * 20);
     }
 }
