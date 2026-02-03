@@ -15,8 +15,8 @@ MonoBehaviour:
   _id: {fileID: 11400000, guid: 607ac965a8498d5459aee6af9b9ee0e9, type: 2}
   displayName: Rudimentary Singularity
   description: Folding particles back in on themselves allow you to form the universes
-    first singularities. Perhaps this technology could benefit your AI Managers somehow?
-  technicalDescription: <color=#A3FFFE>AI Managers</color> produce <color=#A3FFFE>Servers</color>
+    first singularities. Perhaps this technology could benefit your Data Centers somehow?
+  technicalDescription: <color=#A3FFFE>Data Centers</color> produce <color=#A3FFFE>Servers</color>
     based on <color=#91DD8F>Log2(<color=#A3FFFE>Assembly Line Production</color>)</color>
     <color=#A3FFFE>^</color> <color=#91DD8F>Log10(<color=#A3FFFE>Assembly Line Production</color>)</color>.
     <br><br>Requires at least 1 production from AI Managers.

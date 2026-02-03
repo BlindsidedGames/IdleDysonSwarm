@@ -3247,6 +3247,7 @@ namespace Expansion
         public void SaveState()
         {
             SaveDictionaries();
+            PackSettingsFlags();
             // IMPORTANT: Save a compact snapshot (bitsets + pruned skill state) for smaller ES3 saves.
             SaveDataSettings snapshot = CreateSaveSnapshotForStorage(includeBase64Fields: true, compactFacilityArrays: false);
             ES3.Save("saveSettings", snapshot);
@@ -5011,4 +5012,3 @@ namespace Expansion
 
     }
 }
-
