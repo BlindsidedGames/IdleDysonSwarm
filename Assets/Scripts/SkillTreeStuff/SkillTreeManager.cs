@@ -385,7 +385,13 @@ public class SkillTreeManager : MonoBehaviour, IPointerClickHandler
             oracle.SetAutoAssignmentSkillIds(autoIds);
         }
 
-        for (int presetIndex = 1; presetIndex <= 5; presetIndex++)
+        int presetIndex = 1;
+        if (oracle != null && oracle.saveSettings != null && oracle.saveSettings.dysonVerseSaveData != null)
+        {
+            presetIndex = oracle.saveSettings.dysonVerseSaveData.selectedPreset;
+        }
+
+        presetIndex = Mathf.Clamp(presetIndex, 1, 5);
         {
             List<string> presetIds = oracle.GetPresetAutoAssignmentSkillIds(presetIndex);
             if (presetIds.RemoveAll(id => toRemove.Contains(id)) > 0)
