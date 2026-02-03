@@ -549,8 +549,12 @@ namespace Blindsided.ProceduralUIImage {
         }
 
         public override Material GetModifiedMaterial(Material baseMaterial) {
+            if (baseMaterial == null) {
+                return null;
+            }
 
-            Material mat = base.GetModifiedMaterial(baseMaterial);
+            bool hasStencil = baseMaterial.HasProperty("_Stencil");
+            Material mat = hasStencil ? base.GetModifiedMaterial(baseMaterial) : baseMaterial;
 
 
             if (m_Material && MaterialMode == MaterialMode.Shared) {

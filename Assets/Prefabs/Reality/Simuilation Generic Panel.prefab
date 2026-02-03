@@ -77,7 +77,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 156626518176388212}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 141109fb25f0083469e71ce8cb3e75c8, type: 3}
+  m_Script: {fileID: 11500000, guid: 2ad3e1b5170d2bc4aac50c1b5fe11d3a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: MPUIKit::MPUIKIT.MPImage
   m_Material: {fileID: 0}
@@ -2578,7 +2578,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 5426023073344458622}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 141109fb25f0083469e71ce8cb3e75c8, type: 3}
+  m_Script: {fileID: 11500000, guid: 2ad3e1b5170d2bc4aac50c1b5fe11d3a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: MPUIKit::MPUIKIT.MPImage
   m_Material: {fileID: 0}
@@ -2784,7 +2784,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 5455135774355571437}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 141109fb25f0083469e71ce8cb3e75c8, type: 3}
+  m_Script: {fileID: 11500000, guid: 2ad3e1b5170d2bc4aac50c1b5fe11d3a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: MPUIKit::MPUIKIT.MPImage
   m_Material: {fileID: 0}
@@ -3401,7 +3401,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 7658305841501194900}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 141109fb25f0083469e71ce8cb3e75c8, type: 3}
+  m_Script: {fileID: 11500000, guid: 2ad3e1b5170d2bc4aac50c1b5fe11d3a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: MPUIKit::MPUIKIT.MPImage
   m_Material: {fileID: 0}
@@ -3694,7 +3694,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 7821866315120672295}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 141109fb25f0083469e71ce8cb3e75c8, type: 3}
+  m_Script: {fileID: 11500000, guid: 2ad3e1b5170d2bc4aac50c1b5fe11d3a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: MPUIKit::MPUIKIT.MPImage
   m_Material: {fileID: 0}
@@ -3882,7 +3882,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 8322647812372443626}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 141109fb25f0083469e71ce8cb3e75c8, type: 3}
+  m_Script: {fileID: 11500000, guid: 2ad3e1b5170d2bc4aac50c1b5fe11d3a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: MPUIKit::MPUIKIT.MPImage
   m_Material: {fileID: 0}
@@ -4155,7 +4155,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 8574465641800585730}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 141109fb25f0083469e71ce8cb3e75c8, type: 3}
+  m_Script: {fileID: 11500000, guid: 2ad3e1b5170d2bc4aac50c1b5fe11d3a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: MPUIKit::MPUIKIT.MPImage
   m_Material: {fileID: 0}
@@ -4321,3 +4321,4 @@ MonoBehaviour:
   m_FlexibleWidth: -1
   m_FlexibleHeight: -1
   m_LayoutPriority: 1
+

@@ -93,5 +93,8 @@ UserSettings/Search.settings
 # Local beta keys (do not commit)
 Documentation/Idle_Dyson_Swarm_Keys/
 
+# Editor console snapshot (agent helper)
+Documentation/Console/editor-console.json
+
 # Claude temp cwd markers
 **/tmpclaude-*-cwd

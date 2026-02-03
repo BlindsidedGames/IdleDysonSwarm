@@ -1,6 +1,6 @@
 using System;
 using Blindsided.Utilities;
-using MPUIKIT;
+using Blindsided.ProceduralUIImage;
 using TMPro;
 using UnityEngine;
 using UnityEngine.InputSystem;
@@ -16,7 +16,7 @@ public class ManualBotCreation : MonoBehaviour
     [SerializeField] private GameObject clickHere;
     [SerializeField] private Button _button;
 
-    [SerializeField] private MPImage fill;
+    [SerializeField] private ProceduralUIImage fill;
 
     private DysonVerseInfinityData infinityData => oracle.saveSettings.dysonVerseSaveData.dysonVerseInfinityData;
     private DysonVerseSkillTreeData skillTreeData => oracle.saveSettings.dysonVerseSaveData.dysonVerseSkillTreeData;
@@ -213,3 +213,4 @@ public class ManualBotCreation : MonoBehaviour
     }
 
 }
+
