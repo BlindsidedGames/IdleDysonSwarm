@@ -16,6 +16,23 @@ public static class ProceduralUIImageMigrator
         AssetDatabase.Refresh();
     }
 
+    [MenuItem("Tools/Procedural UIImage/Migrate MPImage (Current Scene + Prefabs, Preserve Overrides)")]
+    public static void MigrateCurrentSceneWithOverrides()
+    {
+        var scene = SceneManager.GetActiveScene();
+        if (!scene.IsValid())
+            return;
+
+        var overrides = CapturePrefabInstanceOverrides(scene);
+
+        MigratePrefabs();
+        MigrateCurrentSceneIncludingPrefabInstances(scene);
+        RestorePrefabInstanceOverrides(overrides);
+
+        AssetDatabase.SaveAssets();
+        AssetDatabase.Refresh();
+    }
+
     [MenuItem("Tools/Procedural UIImage/Migrate MPImage (Prefabs)")]
     public static void MigratePrefabsOnly()
     {
@@ -46,6 +63,20 @@ public static class ProceduralUIImageMigrator
             if (mp.gameObject.scene != scene) continue;
             if (PrefabUtility.IsPartOfPrefabInstance(mp))
                 continue;
+            changed |= Replace(mp);
+        }
+
+        if (changed)
+            EditorSceneManager.SaveScene(scene);
+    }
+
+    private static void MigrateCurrentSceneIncludingPrefabInstances(Scene scene)
+    {
+        bool changed = false;
+        foreach (var mp in FindAll<MPImage>())
+        {
+            if (mp == null || mp.gameObject == null) continue;
+            if (mp.gameObject.scene != scene) continue;
             changed |= Replace(mp);
         }
 
@@ -109,6 +140,12 @@ public static class ProceduralUIImageMigrator
         return true;
     }
 
+    private struct PrefabOverrideData
+    {
+        public GlobalObjectId GameObjectId;
+        public List<SerializedPropData> Properties;
+    }
+
     private struct SerializedPropData
     {
         public string Path;
@@ -144,6 +181,44 @@ public static class ProceduralUIImageMigrator
         return data;
     }
 
+    private static List<SerializedPropData> CaptureSerializedProperties(Object src, PropertyModification[] mods)
+    {
+        var data = new List<SerializedPropData>();
+        if (mods == null || mods.Length == 0)
+            return data;
+
+        var seen = new HashSet<string>();
+        var srcSO = new SerializedObject(src);
+        foreach (var mod in mods)
+        {
+            if (mod == null)
+                continue;
+
+            string path = mod.propertyPath;
+            if (string.IsNullOrEmpty(path) || path == "m_Script")
+                continue;
+
+            if (!seen.Add(path))
+                continue;
+
+            var prop = srcSO.FindProperty(path);
+            if (prop == null)
+                continue;
+
+            if (prop.propertyType == SerializedPropertyType.Generic)
+                continue;
+
+            data.Add(new SerializedPropData
+            {
+                Path = path,
+                Type = prop.propertyType,
+                Value = GetPropertyValue(prop)
+            });
+        }
+
+        return data;
+    }
+
     private static void ApplySerializedProperties(Object dst, List<SerializedPropData> data)
     {
         var dstSO = new SerializedObject(dst);
@@ -156,6 +231,52 @@ public static class ProceduralUIImageMigrator
             SetPropertyValue(prop, entry.Type, entry.Value);
         }
         dstSO.ApplyModifiedPropertiesWithoutUndo();
+    }
+
+    private static List<PrefabOverrideData> CapturePrefabInstanceOverrides(Scene scene)
+    {
+        var results = new List<PrefabOverrideData>();
+        foreach (var mp in FindAll<MPImage>())
+        {
+            if (mp == null || mp.gameObject == null) continue;
+            if (mp.gameObject.scene != scene) continue;
+            if (!PrefabUtility.IsPartOfPrefabInstance(mp)) continue;
+
+            var mods = PrefabUtility.GetPropertyModifications(mp);
+            if (mods == null || mods.Length == 0) continue;
+
+            var data = CaptureSerializedProperties(mp, mods);
+            if (data.Count == 0) continue;
+
+            results.Add(new PrefabOverrideData
+            {
+                GameObjectId = GlobalObjectId.GetGlobalObjectIdSlow(mp.gameObject),
+                Properties = data
+            });
+        }
+
+        return results;
+    }
+
+    private static void RestorePrefabInstanceOverrides(List<PrefabOverrideData> overrides)
+    {
+        if (overrides == null || overrides.Count == 0)
+            return;
+
+        foreach (var entry in overrides)
+        {
+            Object obj = GlobalObjectId.GlobalObjectIdentifierToObjectSlow(entry.GameObjectId);
+            var go = obj as GameObject;
+            if (go == null)
+                continue;
+
+            var image = go.GetComponent<ProceduralUIImage>();
+            if (image == null)
+                continue;
+
+            ApplySerializedProperties(image, entry.Properties);
+            EditorUtility.SetDirty(go);
+        }
     }
 
     private static object GetPropertyValue(SerializedProperty src)
