@@ -189,6 +189,31 @@ public class GameManager : MonoBehaviour
         if (trigger) Prestige();
     }
 
+    private static bool TryParseUtc(string value, out DateTime result)
+    {
+        return DateTime.TryParse(value, CultureInfo.InvariantCulture,
+            DateTimeStyles.AssumeUniversal | DateTimeStyles.AdjustToUniversal, out result);
+    }
+
+    private DateTime GetSaveStartedUtc()
+    {
+        if (!TryParseUtc(oracle.saveSettings.dateStarted, out DateTime dateStarted))
+        {
+            dateStarted = DateTime.UtcNow;
+            oracle.saveSettings.dateStarted = dateStarted.ToString(CultureInfo.InvariantCulture);
+        }
+
+        return dateStarted;
+    }
+
+    private DateTime GetRunStartUtc()
+    {
+        if (TryParseUtc(dysonVerseSaveData.lastCollapseDate, out DateTime runStarted))
+            return runStarted;
+
+        return GetSaveStartedUtc();
+    }
+
     public void CalculateProduction()
     {
         ProductionSystem.CalculateProduction(infinityData, skillTreeData, prestigeData, prestigePlus, Time.deltaTime);
@@ -196,9 +221,7 @@ public class GameManager : MonoBehaviour
 
     private double CurrentRunTime()
     {
-        DateTime dateStarted = string.IsNullOrEmpty(dysonVerseSaveData.lastCollapseDate)
-            ? DateTime.Parse(oracle.saveSettings.dateStarted, CultureInfo.InvariantCulture)
-            : DateTime.Parse(dysonVerseSaveData.lastCollapseDate, CultureInfo.InvariantCulture);
+        DateTime dateStarted = GetRunStartUtc();
         DateTime dateNow = DateTime.UtcNow;
         TimeSpan timespan = dateNow - dateStarted;
         return timespan.TotalSeconds;
@@ -644,29 +667,23 @@ public class GameManager : MonoBehaviour
         string scientists = CalcUtils.FormatNumber(infinityData.researchers);
         scienceStats.text =
             $"{scienceColor}{scientists}</color> Science Bots producing {scienceColor}{sciencePerSecondText}</color><sprite=0>/s ";
-        if (string.IsNullOrEmpty(oracle.saveSettings.dateStarted))
-            oracle.saveSettings.dateStarted = DateTime.UtcNow.ToString(CultureInfo.InvariantCulture);
-        if (!string.IsNullOrEmpty(oracle.saveSettings.dateStarted))
-        {
-            DateTime dateStarted = DateTime.Parse(oracle.saveSettings.dateStarted, CultureInfo.InvariantCulture);
-            DateTime dateNow = DateTime.UtcNow;
-            TimeSpan timespan = dateNow - dateStarted;
-            double seconds = timespan.TotalSeconds;
-            if (seconds < 0) seconds = 0;
-            saveAge.text = $"Save age: {CalcUtils.FormatTimeLarge(seconds)}";
-        }
+        DateTime saveStarted = GetSaveStartedUtc();
+        DateTime saveNow = DateTime.UtcNow;
+        TimeSpan saveTimespan = saveNow - saveStarted;
+        double saveSeconds = saveTimespan.TotalSeconds;
+        if (saveSeconds < 0) saveSeconds = 0;
+        saveAge.text = $"Save age: {CalcUtils.FormatTimeLarge(saveSeconds)}";
 
         runAge.text = "";
         if (prestigeData.infinityPoints >= 1)
-            if (!string.IsNullOrEmpty(dysonVerseSaveData.lastCollapseDate))
-            {
-                DateTime dateStarted = DateTime.Parse(dysonVerseSaveData.lastCollapseDate, CultureInfo.InvariantCulture);
-                DateTime dateNow = DateTime.UtcNow;
-                TimeSpan timespan = dateNow - dateStarted;
-                double seconds = timespan.TotalSeconds;
-                if (seconds < 0) seconds = 0;
-                runAge.text = $"Run time: {CalcUtils.FormatTimeLarge(seconds)}";
-            }
+        {
+            DateTime runStarted = GetRunStartUtc();
+            DateTime runNow = DateTime.UtcNow;
+            TimeSpan runTimespan = runNow - runStarted;
+            double runSeconds = runTimespan.TotalSeconds;
+            if (runSeconds < 0) runSeconds = 0;
+            runAge.text = $"Run time: {CalcUtils.FormatTimeLarge(runSeconds)}";
+        }
 
 
         string planetProductionDetailText = "";
@@ -962,7 +979,6 @@ public class GameManager : MonoBehaviour
 
     #endregion
 }
-
 
 
 
