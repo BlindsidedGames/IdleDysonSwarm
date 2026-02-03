@@ -1,7 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using GameData;
-using MPUIKIT;
+using Blindsided.ProceduralUIImage;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
@@ -25,7 +25,7 @@ public class SkillTreeConfirmationManager : MonoBehaviour
     [SerializeField] private TMP_Text costText;
 
     [SerializeField] private Image[] highlights;
-    [SerializeField] private MPImage background;
+    [SerializeField] private ProceduralUIImage background;
 
     [SerializeField] private Color[] normalColours;
     [SerializeField] private Color[] fragmentColours;
@@ -177,3 +177,4 @@ public class SkillTreeConfirmationManager : MonoBehaviour
         return id;
     }
 }
+

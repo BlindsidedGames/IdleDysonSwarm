@@ -1,10 +1,12 @@
+using System;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEditor;
 using UnityEditor.SceneManagement;
 using UnityEngine;
 using UnityEngine.SceneManagement;
-using MPUIKIT;
 using Blindsided.ProceduralUIImage;
+using Object = UnityEngine.Object;
 
 public static class ProceduralUIImageMigrator
 {
@@ -57,7 +59,7 @@ public static class ProceduralUIImageMigrator
             return;
 
         bool changed = false;
-        foreach (var mp in FindAll<MPImage>())
+        foreach (var mp in FindAllMpImages())
         {
             if (mp == null || mp.gameObject == null) continue;
             if (mp.gameObject.scene != scene) continue;
@@ -73,7 +75,7 @@ public static class ProceduralUIImageMigrator
     private static void MigrateCurrentSceneIncludingPrefabInstances(Scene scene)
     {
         bool changed = false;
-        foreach (var mp in FindAll<MPImage>())
+        foreach (var mp in FindAllMpImages())
         {
             if (mp == null || mp.gameObject == null) continue;
             if (mp.gameObject.scene != scene) continue;
@@ -93,7 +95,7 @@ public static class ProceduralUIImageMigrator
             var scene = EditorSceneManager.OpenScene(path, OpenSceneMode.Single);
 
             bool changed = false;
-            foreach (var mp in FindAll<MPImage>())
+            foreach (var mp in FindAllMpImages())
             {
                 if (mp == null || mp.gameObject == null) continue;
                 if (mp.gameObject.scene != scene) continue;
@@ -114,7 +116,7 @@ public static class ProceduralUIImageMigrator
             var root = PrefabUtility.LoadPrefabContents(path);
 
             bool changed = false;
-            foreach (var mp in root.GetComponentsInChildren<MPImage>(true))
+            foreach (var mp in GetComponentsInChildren(root, GetMpImageType()))
             {
                 changed |= Replace(mp);
             }
@@ -126,7 +128,7 @@ public static class ProceduralUIImageMigrator
         }
     }
 
-    private static bool Replace(MPImage old)
+    private static bool Replace(Component old)
     {
         if (old == null || old.gameObject == null)
             return false;
@@ -236,7 +238,7 @@ public static class ProceduralUIImageMigrator
     private static List<PrefabOverrideData> CapturePrefabInstanceOverrides(Scene scene)
     {
         var results = new List<PrefabOverrideData>();
-        foreach (var mp in FindAll<MPImage>())
+        foreach (var mp in FindAllMpImages())
         {
             if (mp == null || mp.gameObject == null) continue;
             if (mp.gameObject.scene != scene) continue;
@@ -406,12 +408,46 @@ public static class ProceduralUIImageMigrator
         }
     }
 
-    private static T[] FindAll<T>() where T : Object
+    private static Component[] FindAllMpImages()
     {
+        var type = GetMpImageType();
+        if (type == null)
+        {
+            Debug.LogWarning("ProceduralUIImageMigrator: MPUIKIT.MPImage type not found. MPUIKit may be removed.");
+            return Array.Empty<Component>();
+        }
+
 #if UNITY_2022_2_OR_NEWER
-        return Object.FindObjectsByType<T>(FindObjectsInactive.Include, FindObjectsSortMode.None);
+        return Object.FindObjectsByType(type, FindObjectsInactive.Include, FindObjectsSortMode.None)
+            .OfType<Component>()
+            .ToArray();
 #else
-        return Object.FindObjectsOfType<T>(true);
+        return Object.FindObjectsOfType(type, true).OfType<Component>().ToArray();
 #endif
+    }
+
+    private static Type GetMpImageType()
+    {
+        const string typeName = "MPUIKIT.MPImage";
+        var type = Type.GetType($"{typeName}, MPUIKit");
+        if (type != null)
+            return type;
+
+        foreach (var asm in AppDomain.CurrentDomain.GetAssemblies())
+        {
+            type = asm.GetType(typeName);
+            if (type != null)
+                return type;
+        }
+
+        return null;
+    }
+
+    private static Component[] GetComponentsInChildren(GameObject root, Type type)
+    {
+        if (root == null || type == null)
+            return Array.Empty<Component>();
+
+        return root.GetComponentsInChildren(type, true).OfType<Component>().ToArray();
     }
 }

@@ -1,4 +1,4 @@
-using MPUIKIT;
+using Blindsided.ProceduralUIImage;
 using TMPro;
 using UnityEngine;
 using Blindsided.Utilities;
@@ -6,7 +6,7 @@ using static Expansion.Oracle;
 
 public class ArtifactController : MonoBehaviour
 {
-    [SerializeField] private MPImage artifactFill;
+    [SerializeField] private ProceduralUIImage artifactFill;
     [SerializeField] private TMP_Text theArtifactText;
     private float artifactTime;
     [SerializeField] private TMP_Text artifactBarUndefinedText;
@@ -66,3 +66,4 @@ public class ArtifactController : MonoBehaviour
         return text;
     }
 }
+

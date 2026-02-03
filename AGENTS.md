@@ -36,10 +36,12 @@ This file is a lightweight, human-readable map of the project so future agents c
 ### Documentation
 - `Documentation/ALLACHIEVEMENTS.md` and `Documentation/AchievementIdeas.md`.
 - `Documentation/Archive/` legacy plans, refactors, and notes.
+- `Documentation/Console/editor-console.json` Unity Editor log snapshot for agents.
 
 ## Notes
 - Primary source code lives in `Assets/Scripts/` and `Assets/Editor/`.
 - Avoid modifying third-party code under `Assets/Plugins/` unless explicitly requested.
+- Console log buffer lives in `Assets/Editor/ConsoleLogBuffer.cs` and writes filtered logs to `Documentation/Console/editor-console.json`. Filters/clear: `Tools/Console Log Buffer/...`.
 
 ## Steam build/upload (Windows)
 When asked to do a Windows Steam build/upload for Idle Dyson Swarm:

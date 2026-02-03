@@ -1,5 +1,5 @@
 using System;
-using MPUIKIT;
+using Blindsided.ProceduralUIImage;
 using Systems;
 using TMPro;
 using Unity.Mathematics;
@@ -10,7 +10,7 @@ using static Expansion.Oracle;
 
 public class PrestigeFillBar : MonoBehaviour
 {
-    [SerializeField] private MPImage fill;
+    [SerializeField] private ProceduralUIImage fill;
     [SerializeField] private TMP_Text fillText;
     [SerializeField] private GameObject realityBreak;
 
@@ -87,4 +87,5 @@ public class PrestigeFillBar : MonoBehaviour
         }
     }
 }
+
 

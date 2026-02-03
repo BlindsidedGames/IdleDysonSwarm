@@ -1,4 +1,4 @@
-using MPUIKIT;
+using Blindsided.ProceduralUIImage;
 using UnityEngine;
 using static Expansion.Oracle;
 
@@ -19,11 +19,11 @@ public class BotPanelManager : MonoBehaviour
     [SerializeField] private GameObject birchPlanetsPanel;
     [SerializeField] private GameObject galacticBrainsPanel;
 
-    [SerializeField] private MPImage assemblyLines;
-    [SerializeField] private MPImage managers;
-    [SerializeField] private MPImage servers;
-    [SerializeField] private MPImage dataCenters;
-    [SerializeField] private MPImage planets;
+    [SerializeField] private ProceduralUIImage assemblyLines;
+    [SerializeField] private ProceduralUIImage managers;
+    [SerializeField] private ProceduralUIImage servers;
+    [SerializeField] private ProceduralUIImage dataCenters;
+    [SerializeField] private ProceduralUIImage planets;
 
     private DysonVerseInfinityData infinityData => oracle.saveSettings.dysonVerseSaveData.dysonVerseInfinityData;
     private DysonVerseSkillTreeData skillTreeData => oracle.saveSettings.dysonVerseSaveData.dysonVerseSkillTreeData;
@@ -93,3 +93,4 @@ public class BotPanelManager : MonoBehaviour
         questionmarkPanel.SetActive(showQuestion);
     }
 }
+

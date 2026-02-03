@@ -1,4 +1,4 @@
-using MPUIKIT;
+using Blindsided.ProceduralUIImage;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
@@ -54,8 +54,8 @@ public class WorkerController : MonoBehaviour
 
     private float workerGenerationSpeed;
     private float workerGenerationTime;
-    [SerializeField] private MPImage workerGenerationBar;
-    [SerializeField] private MPImage workersReadyToGofill;
+    [SerializeField] private ProceduralUIImage workerGenerationBar;
+    [SerializeField] private ProceduralUIImage workersReadyToGofill;
     [SerializeField] private TMP_Text universeDesignation;
     [SerializeField] private TMP_Text preWorkerCounter;
 
@@ -110,3 +110,4 @@ public class WorkerController : MonoBehaviour
 
     #endregion
 }
+

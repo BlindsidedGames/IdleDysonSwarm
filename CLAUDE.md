@@ -232,6 +232,24 @@ public void Science_CanBeModified()
 4. Verify research purchasing works
 5. Check Unity Console for errors
 
+## Console Log Buffer (No MCP)
+
+For agent-friendly console access, a lightweight Editor script writes a JSON snapshot of recent logs.
+
+**Output file:**
+- `Documentation/Console/editor-console.json`
+
+**Controls (Unity menu):**
+- `Tools/Console Log Buffer/Filter/Include Logs`
+- `Tools/Console Log Buffer/Filter/Include Warnings`
+- `Tools/Console Log Buffer/Filter/Include Errors`
+- `Tools/Console Log Buffer/Clear`
+
+**Behavior:**
+- Keeps last 1000 entries in memory.
+- Writes a filtered snapshot to the JSON file when new logs arrive.
+- Clears on Editor restart/domain reload (static init).
+
 ## Common Errors & Solutions
 
 ### Missing Typed ID Using Directive

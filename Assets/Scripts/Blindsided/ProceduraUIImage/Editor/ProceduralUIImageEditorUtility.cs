@@ -3,6 +3,8 @@ using UnityEngine;
 
 namespace Blindsided.ProceduralUIImage.Editor {
     internal static class ProceduralUIImageEditorUtility {
+        private static Sprite _emptySprite;
+
         public static void CornerRadiusModeGUI(Rect rect, ref SerializedProperty property, string[] toolBarHeading,
             string label = "Corner Radius") {
             bool boolVal = property.boolValue;
@@ -20,6 +22,16 @@ namespace Blindsided.ProceduralUIImage.Editor {
             }
             if (EditorGUI.EndChangeCheck()) {
                 property.boolValue = boolVal;
+            }
+        }
+
+        internal static Sprite EmptySprite {
+            get {
+                if (_emptySprite == null) {
+                    _emptySprite = Resources.Load<Sprite>("mpui_default_empty_sprite");
+                }
+
+                return _emptySprite;
             }
         }
     }

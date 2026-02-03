@@ -1,5 +1,5 @@
 using IdleDysonSwarm.UI.Simulation;
-using MPUIKIT;
+using Blindsided.ProceduralUIImage;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
@@ -26,8 +26,8 @@ public class SimulationGenericPanelReferences : MonoBehaviour
     [Tooltip("Primary fill bar GameObject (for SetActive)")]
     public GameObject fillBar1;
 
-    [Tooltip("Primary fill bar MPImage (for fillAmount)")]
-    public MPImage fill1;
+    [Tooltip("Primary fill bar ProceduralUIImage (for fillAmount)")]
+    public ProceduralUIImage fill1;
 
     [Tooltip("Primary fill bar text GameObject (for SetActive)")]
     public GameObject fillBar1TextObject;
@@ -38,8 +38,8 @@ public class SimulationGenericPanelReferences : MonoBehaviour
     [Tooltip("Secondary fill bar GameObject (for SetActive)")]
     public GameObject fillBar2;
 
-    [Tooltip("Secondary fill bar MPImage (for fillAmount)")]
-    public MPImage fill2;
+    [Tooltip("Secondary fill bar ProceduralUIImage (for fillAmount)")]
+    public ProceduralUIImage fill2;
 
     [Tooltip("Secondary fill bar text GameObject (for SetActive)")]
     public GameObject fillBar2TextObject;
@@ -136,3 +136,4 @@ public class SimulationGenericPanelReferences : MonoBehaviour
         }
     }
 }
+
