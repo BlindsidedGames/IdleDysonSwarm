@@ -3616,8 +3616,17 @@ namespace Expansion
 
         private void AwayForSeconds()
         {
-            if (string.IsNullOrEmpty(oracle.saveSettings.dateQuitString)) return;
-            DateTime dateStarted = DateTime.Parse(oracle.saveSettings.dateQuitString, CultureInfo.InvariantCulture);
+            DateTime dateStarted;
+            if (!DateTime.TryParse(oracle.saveSettings.dateQuitString, CultureInfo.InvariantCulture,
+                    DateTimeStyles.AssumeUniversal | DateTimeStyles.AdjustToUniversal, out dateStarted))
+            {
+                if (!DateTime.TryParse(oracle.saveSettings.dateStarted, CultureInfo.InvariantCulture,
+                        DateTimeStyles.AssumeUniversal | DateTimeStyles.AdjustToUniversal, out dateStarted))
+                {
+                    dateStarted = DateTime.UtcNow;
+                }
+            }
+
             DateTime dateNow = DateTime.UtcNow;
             TimeSpan timespan = dateNow - dateStarted;
             float seconds = (float)timespan.TotalSeconds;
@@ -5002,5 +5011,4 @@ namespace Expansion
 
     }
 }
-
 
