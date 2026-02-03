@@ -37,7 +37,6 @@ MonoBehaviour:
     assemblyNames:
     - Assembly-CSharp
     - Assembly-CSharp-firstpass
-    - MCPForUnity.Runtime
     - MPUIKit
     showAdvancedSettings: 0
   addMgrToSceneAutomatically: 0

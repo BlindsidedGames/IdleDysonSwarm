@@ -1,0 +1,29 @@
+namespace Blindsided.ProceduralUIImage
+{
+    public enum DrawShape {
+        None = 0,
+        Circle,
+        Triangle,
+        Rectangle,
+        ChamferBox,
+        Parallelogram,
+        Pentagon,
+        Hexagon,
+        NStarPolygon
+    }
+
+    public enum GradientType {
+        Linear,
+        Corner,
+        Radial
+    }
+
+    public enum MaterialMode {
+        Dynamic,
+        Shared
+    }
+    
+    public enum CornerStyleType {
+        Sharp, Rounded, Cropped, BoxCut, CircleCut
+    }
+}
