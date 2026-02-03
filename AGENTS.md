@@ -11,6 +11,9 @@ This file is a lightweight, human-readable map of the project so future agents c
 - `Library/`, `Temp/`, `Logs/`, `UserSettings/` generated Unity output (not source).
 - `Documentation/` project docs, plans, and references.
 - `Recordings/` image sequences and captures.
+- `STRUCTURE.md` additional high-level project map.
+- `UIElementsSchema/` UIElements schema assets.
+- `steam_appid.txt` Steam AppID for local runs.
 
 ### Assets
 - `Assets/Scenes/` game scenes (e.g., `Load.unity`, `Game.unity`).
@@ -19,23 +22,35 @@ This file is a lightweight, human-readable map of the project so future agents c
   - `Assets/Scripts/Services/` service layer + service locator.
   - `Assets/Scripts/Data/` ScriptableObject definitions, IDs, and condition system.
   - `Assets/Scripts/Buildings/` building logic and presenters.
+  - `Assets/Scripts/Classes/` shared classes and helpers.
   - `Assets/Scripts/Expansion/` Oracle, research, Dream1 era logic.
+  - `Assets/Scripts/Incremental/` incremental game loop logic.
   - `Assets/Scripts/Research/` research UI helpers.
   - `Assets/Scripts/SkillTreeStuff/` skill tree logic and UI.
   - `Assets/Scripts/User Interface/` UI panels, toggles, side-panel logic.
   - `Assets/Scripts/UI/` UI theme and simulation types.
+  - `Assets/Scripts/UnityPurchasing/` in-app purchase integration.
+  - `Assets/Scripts/Editor/` editor-side code in the Scripts tree.
   - `Assets/Scripts/NewsTicker/` news feed handling.
   - `Assets/Scripts/Blindsided/Utilities/` shared utility components.
+- `Assets/Data/` top-level ScriptableObjects and config assets.
 - `Assets/Prefabs/` prefab variants (notably `Assets/Prefabs/Buildings/`).
+- `Assets/Presets/` Unity presets.
 - `Assets/Resources/` runtime resources (IAP catalog, audio).
+- `Assets/Editor Default Resources/` editor-only assets.
 - `Assets/Plugins/` third-party plugins (Easy Save 3, Sirenix, Google Play Games, etc.).
+- `Assets/ExternalDependencyManager/` EDM4U Google dependency manager.
+- `Assets/KeyStore/` Android keystore material.
 - `Assets/MPUIKit/`, `Assets/TextMesh Pro/`, `Assets/Fonts/`, `Assets/Sprites/`, `Assets/Sounds/` UI + art assets.
 - `Assets/Extensions/` platform extensions (Google Play Games, etc.).
 - `Assets/Editor/` editor tooling and validation helpers.
 
 ### Documentation
 - `Documentation/ALLACHIEVEMENTS.md` and `Documentation/AchievementIdeas.md`.
+- `Documentation/AchievementPackageForEve/` achievement package materials.
 - `Documentation/Archive/` legacy plans, refactors, and notes.
+- `Documentation/SaveBackups/` save data backups.
+- `Documentation/savedebugging/` save debugging notes.
 - `Documentation/Console/editor-console.json` Unity Editor log snapshot for agents.
 
 ## Notes
