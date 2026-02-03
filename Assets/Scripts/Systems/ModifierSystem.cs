@@ -243,7 +243,8 @@ namespace Systems
 
             if (skillTreeData.citadelCouncil && infinityData.totalPanelsDecayed > 1) lifetime += Math.Log(infinityData.totalPanelsDecayed, 1.2);
 
-            if (skillTreeData.panelWarranty) lifetime += 5 * skillTreeData.fragments > 1 ? Math.Pow(2, skillTreeData.fragments - 1) : 1;
+            if (skillTreeData.panelWarranty)
+                lifetime += skillTreeData.fragments > 1 ? 5 * Math.Pow(2, skillTreeData.fragments - 1) : 1;
 
             if (skillTreeData.panelLifetime20Tree) lifetime += 20;
             if (skillTreeData.burnOut) lifetime -= 5;
@@ -719,4 +720,3 @@ namespace Systems
         }
     }
 }
-
