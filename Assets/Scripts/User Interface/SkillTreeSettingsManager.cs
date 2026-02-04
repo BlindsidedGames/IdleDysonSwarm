@@ -12,36 +12,25 @@ public class SkillTreeSettingsManager : MonoBehaviour
     [SerializeField] private GameManager _gameManager;
     [SerializeField] private SkillTreeManager _skillTreeManager;
     [SerializeField] private TMP_Text feedbackMessage;
-    [SerializeField] private Button preset1Save;
-    [SerializeField] private Button preset1Load;
-    [SerializeField] private Button preset2Save;
-    [SerializeField] private Button preset2Load;
-    [SerializeField] private Button preset3Save;
-    [SerializeField] private Button preset3Load;
-    [SerializeField] private Button preset4Save;
-    [SerializeField] private Button preset4Load;
-    [SerializeField] private Button preset5Save;
-    [SerializeField] private Button preset5Load;
-    [Header("Preset Clipboard (Designers: wire these to UI if you want clipboard import/export)")]
-    [SerializeField, Tooltip("Copy preset to clipboard as JSON for sharing.")]
+    [SerializeField]
     private Button preset1Export;
-    [SerializeField, Tooltip("Paste preset JSON from clipboard into preset slot.")]
+    [SerializeField]
     private Button preset1Import;
-    [SerializeField, Tooltip("Copy preset to clipboard as JSON for sharing.")]
+    [SerializeField]
     private Button preset2Export;
-    [SerializeField, Tooltip("Paste preset JSON from clipboard into preset slot.")]
+    [SerializeField]
     private Button preset2Import;
-    [SerializeField, Tooltip("Copy preset to clipboard as JSON for sharing.")]
+    [SerializeField]
     private Button preset3Export;
-    [SerializeField, Tooltip("Paste preset JSON from clipboard into preset slot.")]
+    [SerializeField]
     private Button preset3Import;
-    [SerializeField, Tooltip("Copy preset to clipboard as JSON for sharing.")]
+    [SerializeField]
     private Button preset4Export;
-    [SerializeField, Tooltip("Paste preset JSON from clipboard into preset slot.")]
+    [SerializeField]
     private Button preset4Import;
-    [SerializeField, Tooltip("Copy preset to clipboard as JSON for sharing.")]
+    [SerializeField]
     private Button preset5Export;
-    [SerializeField, Tooltip("Paste preset JSON from clipboard into preset slot.")]
+    [SerializeField]
     private Button preset5Import;
     [SerializeField] private Button preset1Set;
     [SerializeField] private Button preset2Set;
@@ -71,34 +60,20 @@ public class SkillTreeSettingsManager : MonoBehaviour
     private bool _suppressToggleCallbacks;
     private Coroutine _permanentFeedbackRoutine;
     private Coroutine _temporaryFeedbackRoutine;
+    private Coroutine _feedbackRoutine;
+    private string _defaultFeedbackMessage;
     private int _currentPresetIndex = 1;
+    private const float FeedbackResetSeconds = 2f;
 
     private void Start()
     {
-        preset1Save.onClick.AddListener(() => SetFeedbackText("Preset 1 Saved"));
-        preset1Save.onClick.AddListener(() => SavePreset(1));
-        preset1Load.onClick.AddListener(() => SetFeedbackText("Preset 1 Loaded"));
-        preset1Load.onClick.AddListener(() => LoadPreset(1));
+        if (feedbackMessage != null)
+            _defaultFeedbackMessage = feedbackMessage.text;
 
-        preset2Save.onClick.AddListener(() => SetFeedbackText("Preset 2 Saved"));
-        preset2Save.onClick.AddListener(() => SavePreset(2));
-        preset2Load.onClick.AddListener(() => SetFeedbackText("Preset 2 Loaded"));
-        preset2Load.onClick.AddListener(() => LoadPreset(2));
-
-        preset3Save.onClick.AddListener(() => SetFeedbackText("Preset 3 Saved"));
-        preset3Save.onClick.AddListener(() => SavePreset(3));
-        preset3Load.onClick.AddListener(() => SetFeedbackText("Preset 3 Loaded"));
-        preset3Load.onClick.AddListener(() => LoadPreset(3));
-
-        preset4Save.onClick.AddListener(() => SetFeedbackText("Preset 4 Saved"));
-        preset4Save.onClick.AddListener(() => SavePreset(4));
-        preset4Load.onClick.AddListener(() => SetFeedbackText("Preset 4 Loaded"));
-        preset4Load.onClick.AddListener(() => LoadPreset(4));
-
-        preset5Save.onClick.AddListener(() => SetFeedbackText("Preset 5 Saved"));
-        preset5Save.onClick.AddListener(() => SavePreset(5));
-        preset5Load.onClick.AddListener(() => SetFeedbackText("Preset 5 Loaded"));
-        preset5Load.onClick.AddListener(() => LoadPreset(5));
+        if (TryGetSaveData(out _))
+        {
+            SetPresetTexts();
+        }
 
         WirePresetClipboardButtons(preset1Export, preset1Import, 1);
         WirePresetClipboardButtons(preset2Export, preset2Import, 2);
@@ -253,7 +228,8 @@ public class SkillTreeSettingsManager : MonoBehaviour
         };
 
         GUIUtility.systemCopyBuffer = JsonUtility.ToJson(payload);
-        SetFeedbackText($"Preset {presetIndex} Copied");
+        string presetName = GetPresetDisplayName(saveData, presetIndex);
+        ShowTimedFeedback($"Preset {presetName} Exported");
     }
 
     private void ImportPresetFromClipboard(int presetIndex)
@@ -305,7 +281,14 @@ public class SkillTreeSettingsManager : MonoBehaviour
 
         SetPresetTexts();
         UpdateSidePanelPresetLabels();
-        SetFeedbackText($"Preset {presetIndex} Imported");
+
+        if (presetIndex == _currentPresetIndex)
+        {
+            LoadPreset(presetIndex);
+        }
+
+        string presetName = GetPresetDisplayName(saveData, presetIndex);
+        ShowTimedFeedback($"Preset {presetName} Imported");
     }
 
     private void RegisterPresetToggleBindings(SidePanelReferences panel, ref PresetToggleBindings bindings)
@@ -540,6 +523,12 @@ public class SkillTreeSettingsManager : MonoBehaviour
         };
     }
 
+    private static string GetPresetDisplayName(DysonVerseSaveData saveData, int presetIndex)
+    {
+        string name = GetPresetName(saveData, presetIndex);
+        return string.IsNullOrWhiteSpace(name) ? $"Preset {presetIndex}" : name.Trim();
+    }
+
     private static void SetPresetName(DysonVerseSaveData saveData, int presetIndex, string name)
     {
         switch (presetIndex)
@@ -691,5 +680,27 @@ public class SkillTreeSettingsManager : MonoBehaviour
 
         yield return new WaitForSeconds(0.5f);
         text.gameObject.SetActive(false);
+    }
+
+    private void ShowTimedFeedback(string text)
+    {
+        if (feedbackMessage == null) return;
+
+        if (_feedbackRoutine != null)
+        {
+            StopCoroutine(_feedbackRoutine);
+        }
+
+        _feedbackRoutine = StartCoroutine(PlayTimedFeedback(text));
+    }
+
+    private IEnumerator PlayTimedFeedback(string text)
+    {
+        SetFeedbackText(text);
+
+        yield return new WaitForSeconds(FeedbackResetSeconds);
+
+        SetFeedbackText(_defaultFeedbackMessage);
+        _feedbackRoutine = null;
     }
 }
