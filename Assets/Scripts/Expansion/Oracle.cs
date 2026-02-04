@@ -910,22 +910,27 @@ namespace Expansion
 
             if (data.skillAutoAssignmentBits == null || data.skillAutoAssignmentBits.Length == 0)
             {
-                if (!string.IsNullOrEmpty(data.skillAutoAssignmentBitsBase64))
+                if (data.skillAutoAssignmentIds == null || data.skillAutoAssignmentIds.Count == 0)
                 {
-                    data.skillAutoAssignmentBits = Convert.FromBase64String(data.skillAutoAssignmentBitsBase64);
-                    if (data.skillAutoAssignmentIds == null || data.skillAutoAssignmentIds.Count == 0)
-                        data.skillAutoAssignmentIds = SkillBitsetUtility.ConvertBitsetToIds(data.skillAutoAssignmentBits);
+                    if (data.skillAutoAssignmentList != null && data.skillAutoAssignmentList.Count > 0)
+                        data.skillAutoAssignmentIds = SkillIdMap.ConvertKeysToIds(data.skillAutoAssignmentList);
+                    else if (!string.IsNullOrEmpty(data.skillAutoAssignmentBitsBase64))
+                        data.skillAutoAssignmentIds = SkillBitsetUtility.ConvertBitsetToIds(
+                            Convert.FromBase64String(data.skillAutoAssignmentBitsBase64));
                 }
-                else
-                {
-                    data.skillAutoAssignmentBits = SkillBitsetUtility.BuildBitsetFromIds(data.skillAutoAssignmentIds);
-                }
+
+                data.skillAutoAssignmentBits = SkillBitsetUtility.BuildBitsetFromIds(data.skillAutoAssignmentIds);
             }
             else
             {
                 data.skillAutoAssignmentBits = SkillBitsetUtility.EnsureSize(data.skillAutoAssignmentBits);
                 if (data.skillAutoAssignmentIds == null || data.skillAutoAssignmentIds.Count == 0)
-                    data.skillAutoAssignmentIds = SkillBitsetUtility.ConvertBitsetToIds(data.skillAutoAssignmentBits);
+                {
+                    if (data.skillAutoAssignmentList != null && data.skillAutoAssignmentList.Count > 0)
+                        data.skillAutoAssignmentIds = SkillIdMap.ConvertKeysToIds(data.skillAutoAssignmentList);
+                    else
+                        data.skillAutoAssignmentIds = SkillBitsetUtility.ConvertBitsetToIds(data.skillAutoAssignmentBits);
+                }
             }
 
             EnsurePresetBitset(ref data.skillAutoAssignmentBits1, data.skillAutoAssignmentBitsBase64_1,
@@ -944,29 +949,25 @@ namespace Expansion
         {
             if (bits == null || bits.Length == 0)
             {
-                if (!string.IsNullOrEmpty(base64))
+                if (ids == null || ids.Count == 0)
                 {
-                    bits = Convert.FromBase64String(base64);
-                    if (ids == null || ids.Count == 0)
-                    {
-                        ids = SkillBitsetUtility.ConvertBitsetToIds(bits);
-                    }
-                }
-                else
-                {
-                    if (ids == null || ids.Count == 0)
-                    {
+                    if (legacyList != null && legacyList.Count > 0)
                         ids = SkillIdMap.ConvertKeysToIds(legacyList);
-                    }
-                    bits = SkillBitsetUtility.BuildBitsetFromIds(ids);
+                    else if (!string.IsNullOrEmpty(base64))
+                        ids = SkillBitsetUtility.ConvertBitsetToIds(Convert.FromBase64String(base64));
                 }
+
+                bits = SkillBitsetUtility.BuildBitsetFromIds(ids);
                 return;
             }
 
             bits = SkillBitsetUtility.EnsureSize(bits);
             if (ids == null || ids.Count == 0)
             {
-                ids = SkillBitsetUtility.ConvertBitsetToIds(bits);
+                if (legacyList != null && legacyList.Count > 0)
+                    ids = SkillIdMap.ConvertKeysToIds(legacyList);
+                else
+                    ids = SkillBitsetUtility.ConvertBitsetToIds(bits);
             }
         }
 
@@ -3991,13 +3992,12 @@ namespace Expansion
         private List<string> ResolvePresetIds(ref byte[] bits, ref List<string> ids, List<int> legacyList)
         {
             ids ??= new List<string>();
-            if (bits != null && bits.Length > 0)
+            if (ids.Count == 0)
             {
-                if (ids.Count == 0) ids = SkillBitsetUtility.ConvertBitsetToIds(bits);
-            }
-            else if (ids.Count == 0 && legacyList != null && legacyList.Count > 0)
-            {
-                ids = SkillIdMap.ConvertKeysToIds(legacyList);
+                if (legacyList != null && legacyList.Count > 0)
+                    ids = SkillIdMap.ConvertKeysToIds(legacyList);
+                else if (bits != null && bits.Length > 0)
+                    ids = SkillBitsetUtility.ConvertBitsetToIds(bits);
             }
 
             bits = SkillBitsetUtility.BuildBitsetFromIds(ids);
