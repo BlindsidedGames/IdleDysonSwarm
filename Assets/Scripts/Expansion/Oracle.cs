@@ -3617,6 +3617,7 @@ namespace Expansion
 
         private void AwayForSeconds()
         {
+            if (string.IsNullOrEmpty(oracle.saveSettings.dateQuitString)) return;
             DateTime dateStarted;
             if (!DateTime.TryParse(oracle.saveSettings.dateQuitString, CultureInfo.InvariantCulture,
                     DateTimeStyles.AssumeUniversal | DateTimeStyles.AdjustToUniversal, out dateStarted))
