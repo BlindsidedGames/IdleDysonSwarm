@@ -90,14 +90,14 @@ public class SkillTreeSettingsManager : MonoBehaviour
 
     private void OnEnable()
     {
-        Oracle.UpdateSkills += HandleUpdateSkills;
+        UpdateSkills += HandleUpdateSkills;
         StartPresetTextInitialization();
         StartCoroutine(InitializePresetToggleBindings());
     }
 
     private void OnDisable()
     {
-        Oracle.UpdateSkills -= HandleUpdateSkills;
+        UpdateSkills -= HandleUpdateSkills;
         if (_presetInitRoutine != null)
         {
             StopCoroutine(_presetInitRoutine);
