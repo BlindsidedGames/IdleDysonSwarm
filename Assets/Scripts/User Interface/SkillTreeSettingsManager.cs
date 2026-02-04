@@ -60,10 +60,21 @@ public class SkillTreeSettingsManager : MonoBehaviour
     private bool _suppressToggleCallbacks;
     private Coroutine _permanentFeedbackRoutine;
     private Coroutine _temporaryFeedbackRoutine;
+    private Coroutine _feedbackRoutine;
+    private string _defaultFeedbackMessage;
     private int _currentPresetIndex = 1;
+    private const float FeedbackResetSeconds = 2f;
 
     private void Start()
     {
+        if (feedbackMessage != null)
+            _defaultFeedbackMessage = feedbackMessage.text;
+
+        if (TryGetSaveData(out _))
+        {
+            SetPresetTexts();
+        }
+
         WirePresetClipboardButtons(preset1Export, preset1Import, 1);
         WirePresetClipboardButtons(preset2Export, preset2Import, 2);
         WirePresetClipboardButtons(preset3Export, preset3Import, 3);
@@ -217,7 +228,8 @@ public class SkillTreeSettingsManager : MonoBehaviour
         };
 
         GUIUtility.systemCopyBuffer = JsonUtility.ToJson(payload);
-        SetFeedbackText($"Preset {presetIndex} Copied");
+        string presetName = GetPresetDisplayName(saveData, presetIndex);
+        ShowTimedFeedback($"Preset {presetName} Exported");
     }
 
     private void ImportPresetFromClipboard(int presetIndex)
@@ -269,7 +281,14 @@ public class SkillTreeSettingsManager : MonoBehaviour
 
         SetPresetTexts();
         UpdateSidePanelPresetLabels();
-        SetFeedbackText($"Preset {presetIndex} Imported");
+
+        if (presetIndex == _currentPresetIndex)
+        {
+            LoadPreset(presetIndex);
+        }
+
+        string presetName = GetPresetDisplayName(saveData, presetIndex);
+        ShowTimedFeedback($"Preset {presetName} Imported");
     }
 
     private void RegisterPresetToggleBindings(SidePanelReferences panel, ref PresetToggleBindings bindings)
@@ -504,6 +523,12 @@ public class SkillTreeSettingsManager : MonoBehaviour
         };
     }
 
+    private static string GetPresetDisplayName(DysonVerseSaveData saveData, int presetIndex)
+    {
+        string name = GetPresetName(saveData, presetIndex);
+        return string.IsNullOrWhiteSpace(name) ? $"Preset {presetIndex}" : name.Trim();
+    }
+
     private static void SetPresetName(DysonVerseSaveData saveData, int presetIndex, string name)
     {
         switch (presetIndex)
@@ -655,5 +680,27 @@ public class SkillTreeSettingsManager : MonoBehaviour
 
         yield return new WaitForSeconds(0.5f);
         text.gameObject.SetActive(false);
+    }
+
+    private void ShowTimedFeedback(string text)
+    {
+        if (feedbackMessage == null) return;
+
+        if (_feedbackRoutine != null)
+        {
+            StopCoroutine(_feedbackRoutine);
+        }
+
+        _feedbackRoutine = StartCoroutine(PlayTimedFeedback(text));
+    }
+
+    private IEnumerator PlayTimedFeedback(string text)
+    {
+        SetFeedbackText(text);
+
+        yield return new WaitForSeconds(FeedbackResetSeconds);
+
+        SetFeedbackText(_defaultFeedbackMessage);
+        _feedbackRoutine = null;
     }
 }
