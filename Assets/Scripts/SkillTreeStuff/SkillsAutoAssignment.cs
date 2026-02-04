@@ -34,15 +34,20 @@ public class SkillsAutoAssignment : MonoBehaviour
                 if (string.IsNullOrEmpty(skillId)) continue;
                 SkillDefinition definition = ResolveSkillDefinition(skillId);
                 if (definition == null) continue;
-                int cost = definition.cost;
-                if (skillTreeData.skillPointsTree < cost) continue;
                 if (oracle.IsSkillOwned(skillId)) continue;
 
+                int cost = definition.cost;
                 bool available = true;
+                if (skillTreeData.skillPointsTree < cost) available = false;
                 if (!AreRequirementsMet(definition.requiredSkillIds)) available = false;
                 if (!AreRequirementsMet(definition.shadowRequirementIds)) available = false;
                 if (HasExclusiveOwned(definition.exclusiveWithIds)) available = false;
-                if (!available) continue;
+
+                if (!available)
+                {
+                    // Fail-fast: preserve player-defined order by stopping at the first blocked skill.
+                    break;
+                }
 
                 skillTreeData.skillPointsTree -= cost;
                 oracle.SetSkillOwned(skillId, true);
@@ -91,4 +96,3 @@ public class SkillsAutoAssignment : MonoBehaviour
         return false;
     }
 }
-
