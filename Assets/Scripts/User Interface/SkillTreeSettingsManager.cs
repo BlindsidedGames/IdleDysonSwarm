@@ -61,6 +61,7 @@ public class SkillTreeSettingsManager : MonoBehaviour
     private Coroutine _permanentFeedbackRoutine;
     private Coroutine _temporaryFeedbackRoutine;
     private Coroutine _feedbackRoutine;
+    private Coroutine _presetInitRoutine;
     private string _defaultFeedbackMessage;
     private int _currentPresetIndex = 1;
     private const float FeedbackResetSeconds = 2f;
@@ -70,10 +71,7 @@ public class SkillTreeSettingsManager : MonoBehaviour
         if (feedbackMessage != null)
             _defaultFeedbackMessage = feedbackMessage.text;
 
-        if (TryGetSaveData(out _))
-        {
-            SetPresetTexts();
-        }
+        StartPresetTextInitialization();
 
         WirePresetClipboardButtons(preset1Export, preset1Import, 1);
         WirePresetClipboardButtons(preset2Export, preset2Import, 2);
@@ -92,13 +90,48 @@ public class SkillTreeSettingsManager : MonoBehaviour
 
     private void OnEnable()
     {
+        Oracle.UpdateSkills += HandleUpdateSkills;
+        StartPresetTextInitialization();
         StartCoroutine(InitializePresetToggleBindings());
     }
 
     private void OnDisable()
     {
+        Oracle.UpdateSkills -= HandleUpdateSkills;
+        if (_presetInitRoutine != null)
+        {
+            StopCoroutine(_presetInitRoutine);
+            _presetInitRoutine = null;
+        }
         UnregisterPresetToggleBindings(ref _permanentBindings);
         UnregisterPresetToggleBindings(ref _temporaryBindings);
+    }
+
+    private void HandleUpdateSkills()
+    {
+        if (!TryGetSaveData(out _)) return;
+        SetPresetTexts();
+    }
+
+    private void StartPresetTextInitialization()
+    {
+        if (_presetInitRoutine != null)
+        {
+            StopCoroutine(_presetInitRoutine);
+        }
+
+        _presetInitRoutine = StartCoroutine(WaitForSaveThenSetPresetTexts());
+    }
+
+    private IEnumerator WaitForSaveThenSetPresetTexts()
+    {
+        while (!TryGetSaveData(out _))
+        {
+            yield return null;
+        }
+
+        SetPresetTexts();
+        _presetInitRoutine = null;
     }
     
     private IEnumerator InitializePresetToggleBindings()
