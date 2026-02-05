@@ -1,0 +1,19 @@
+fileFormatVersion: 2
+guid: 39ec208e78505e342a2829289445b934
+timeCreated: 1438909233
+licenseType: Store
+MonoImporter:
+  serializedVersion: 2
+  defaultReferences: []
+  executionOrder: 0
+  icon: {instanceID: 0}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 211046
+  packageName: Quantum Console
+  packageVersion: 2.6.7
+  assetPath: Assets/Plugins/QFSW/Quantum Console/Source/Extras/exec/CSharpCompiler/CustomReportPrinter.cs
+  uploadId: 759935

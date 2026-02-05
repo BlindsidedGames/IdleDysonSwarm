@@ -1,0 +1,15 @@
+fileFormatVersion: 2
+guid: fcb592e7f51614bc6be3d2034b632324
+NativeFormatImporter:
+  externalObjects: {}
+  mainObjectFileID: 9100000
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 211046
+  packageName: Quantum Console
+  packageVersion: 2.6.7
+  assetPath: Assets/Plugins/QFSW/Quantum Console/Source/Demo Scene/Animations/Robot.controller
+  uploadId: 759935

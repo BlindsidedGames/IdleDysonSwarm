@@ -1,0 +1,19 @@
+fileFormatVersion: 2
+guid: 3c958f403b85740698edbcc10c951bce
+MonoImporter:
+  externalObjects: {}
+  serializedVersion: 2
+  defaultReferences:
+  - banner: {fileID: 2800000, guid: 0a00d33b88ebe3f4eb5dfb0d2a1c0726, type: 3}
+  executionOrder: 0
+  icon: {instanceID: 0}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 211046
+  packageName: Quantum Console
+  packageVersion: 2.6.7
+  assetPath: Assets/Plugins/QFSW/Quantum Console/Source/Scripts/Editor/QuantumThemeInspector.cs
+  uploadId: 759935

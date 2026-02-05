@@ -1,3 +1,7 @@
+#if !DISABLESTEAMWORKS && UNITY_STANDALONE
+#define STEAMWORKS_ENABLED
+#endif
+
 using System;
 using System.Collections.Generic;
 using Blindsided.Utilities;
@@ -8,7 +12,7 @@ using IdleDysonSwarm.Data.Steam;
 using Systems.Stats;
 using UnityEngine;
 using static Expansion.Oracle;
-#if !DISABLESTEAMWORKS
+#if STEAMWORKS_ENABLED
 using Steamworks;
 #endif
 
@@ -20,7 +24,9 @@ namespace IdleDysonSwarm.Services.Steam
     /// </summary>
     public sealed class SteamIntegrationService : ISteamIntegrationService
     {
+        #pragma warning disable CS0414
         private ProgressionTier _lastTier = ProgressionTier.EarlyGame;
+        #pragma warning restore CS0414
         private readonly HashSet<string> _foundSecrets = new HashSet<string>();
         private AchievementRegistry _achievementRegistry;
 
@@ -39,7 +45,7 @@ namespace IdleDysonSwarm.Services.Steam
         {
             get
             {
-                #if !DISABLESTEAMWORKS
+                #if STEAMWORKS_ENABLED
                 return IdleDysonSwarm.Platform.SteamManager.Initialized;
                 #else
                 return false;
@@ -110,7 +116,7 @@ namespace IdleDysonSwarm.Services.Steam
             if (!IsAvailable)
                 return;
 
-            #if !DISABLESTEAMWORKS
+            #if STEAMWORKS_ENABLED
             var tier = CurrentTier;
 
             // Check for tier change
@@ -237,7 +243,7 @@ namespace IdleDysonSwarm.Services.Steam
             if (!IsAvailable)
                 return;
 
-            #if !DISABLESTEAMWORKS
+            #if STEAMWORKS_ENABLED
             SteamFriends.ClearRichPresence();
             #endif
         }
@@ -251,7 +257,7 @@ namespace IdleDysonSwarm.Services.Steam
             if (!IsAvailable || string.IsNullOrEmpty(achievementId))
                 return false;
 
-            #if !DISABLESTEAMWORKS
+            #if STEAMWORKS_ENABLED
             if (SteamUserStats.GetAchievement(achievementId, out bool achieved))
                 return achieved;
             #endif
@@ -268,7 +274,7 @@ namespace IdleDysonSwarm.Services.Steam
             if (IsAchievementUnlocked(achievementId))
                 return true;
 
-            #if !DISABLESTEAMWORKS
+            #if STEAMWORKS_ENABLED
             if (SteamUserStats.SetAchievement(achievementId))
             {
                 SteamUserStats.StoreStats();
@@ -344,7 +350,7 @@ namespace IdleDysonSwarm.Services.Steam
             if (!IsAvailable || string.IsNullOrEmpty(statName))
                 return;
 
-            #if !DISABLESTEAMWORKS
+            #if STEAMWORKS_ENABLED
             SteamUserStats.SetStat(statName, value);
             #endif
         }
@@ -354,7 +360,7 @@ namespace IdleDysonSwarm.Services.Steam
             if (!IsAvailable || string.IsNullOrEmpty(statName))
                 return;
 
-            #if !DISABLESTEAMWORKS
+            #if STEAMWORKS_ENABLED
             SteamUserStats.SetStat(statName, value);
             #endif
         }
@@ -364,7 +370,7 @@ namespace IdleDysonSwarm.Services.Steam
             if (!IsAvailable || string.IsNullOrEmpty(statName))
                 return 0;
 
-            #if !DISABLESTEAMWORKS
+            #if STEAMWORKS_ENABLED
             if (SteamUserStats.GetStat(statName, out int value))
                 return value;
             #endif
@@ -377,7 +383,7 @@ namespace IdleDysonSwarm.Services.Steam
             if (!IsAvailable || string.IsNullOrEmpty(statName))
                 return 0f;
 
-            #if !DISABLESTEAMWORKS
+            #if STEAMWORKS_ENABLED
             if (SteamUserStats.GetStat(statName, out float value))
                 return value;
             #endif
@@ -390,7 +396,7 @@ namespace IdleDysonSwarm.Services.Steam
             if (!IsAvailable)
                 return;
 
-            #if !DISABLESTEAMWORKS
+            #if STEAMWORKS_ENABLED
             SteamUserStats.StoreStats();
             #endif
         }
@@ -414,7 +420,7 @@ namespace IdleDysonSwarm.Services.Steam
                     SetStat("HIGHEST_BOT_EXPONENT", exponent);
 
                     // Show progress for BOTS_42QI achievement (target: exponent 19 = 42Qi)
-                    #if !DISABLESTEAMWORKS
+                    #if STEAMWORKS_ENABLED
                     SteamUserStats.IndicateAchievementProgress("BOTS_42QI", (uint)exponent, 19);
                     #endif
                 }
@@ -449,7 +455,7 @@ namespace IdleDysonSwarm.Services.Steam
                 SetStat("SKILL_POINTS_ASSIGNED", totalAssigned);
 
                 // Show progress for SKILLS_ASSIGNED achievement (target: 42 skill points)
-                #if !DISABLESTEAMWORKS
+                #if STEAMWORKS_ENABLED
                 SteamUserStats.IndicateAchievementProgress("SKILLS_ASSIGNED", (uint)totalAssigned, 42);
                 #endif
             }
@@ -501,7 +507,7 @@ namespace IdleDysonSwarm.Services.Steam
 
                 // Show progress for EASTER_SECRETS achievement
                 // TODO: Set correct total once all secrets are identified
-                #if !DISABLESTEAMWORKS
+                #if STEAMWORKS_ENABLED
                 const int totalSecrets = 7; // Avocado meditation sequence secrets
                 SteamUserStats.IndicateAchievementProgress("EASTER_SECRETS", (uint)secretsFound, (uint)totalSecrets);
                 #endif
@@ -529,8 +535,10 @@ namespace IdleDysonSwarm.Services.Steam
 
         #region Events
 
+        #pragma warning disable CS0067
         public event Action<string> OnAchievementUnlocked;
         public event Action<ProgressionTier> OnTierChanged;
+        #pragma warning restore CS0067
 
         #endregion
 

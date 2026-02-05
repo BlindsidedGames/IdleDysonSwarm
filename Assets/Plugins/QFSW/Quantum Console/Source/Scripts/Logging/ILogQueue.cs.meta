@@ -1,0 +1,10 @@
+﻿fileFormatVersion: 2
+guid: b76bcf3d7eaa412cb2428e464882ed89
+timeCreated: 1615123713
+AssetOrigin:
+  serializedVersion: 1
+  productId: 211046
+  packageName: Quantum Console
+  packageVersion: 2.6.7
+  assetPath: Assets/Plugins/QFSW/Quantum Console/Source/Scripts/Logging/ILogQueue.cs
+  uploadId: 759935

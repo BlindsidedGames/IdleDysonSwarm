@@ -1,0 +1,18 @@
+fileFormatVersion: 2
+guid: e04a3eb24be1a7f4f80c1c53290fed34
+MonoImporter:
+  externalObjects: {}
+  serializedVersion: 2
+  defaultReferences: []
+  executionOrder: 0
+  icon: {instanceID: 0}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 211046
+  packageName: Quantum Console
+  packageVersion: 2.6.7
+  assetPath: Assets/Plugins/QFSW/Quantum Console/Source/Scripts/Serialization/Serializers/Vector3IntSerializer.cs
+  uploadId: 759935

@@ -1,0 +1,19 @@
+fileFormatVersion: 2
+guid: f183a6a7c8672b9448d3c1023b68df30
+timeCreated: 1554340584
+licenseType: Store
+MonoImporter:
+  serializedVersion: 2
+  defaultReferences: []
+  executionOrder: 0
+  icon: {instanceID: 0}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 211046
+  packageName: Quantum Console
+  packageVersion: 2.6.7
+  assetPath: Assets/Plugins/QFSW/Quantum Console/Source/Scripts/Logging/Log.cs
+  uploadId: 759935

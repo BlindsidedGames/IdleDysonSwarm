@@ -1,0 +1,20 @@
+fileFormatVersion: 2
+guid: 9e07451b78498b4408061ec6a2cc95dd
+timeCreated: 1543091613
+licenseType: Store
+MonoImporter:
+  externalObjects: {}
+  serializedVersion: 2
+  defaultReferences: []
+  executionOrder: 0
+  icon: {instanceID: 0}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 211046
+  packageName: Quantum Console
+  packageVersion: 2.6.7
+  assetPath: Assets/Plugins/QFSW/Quantum Console/Source/Scripts/Internal/CustomParameter.cs
+  uploadId: 759935

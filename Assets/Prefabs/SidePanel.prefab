@@ -2055,8 +2055,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4e8f00e9e08e4ab45a0813cd8f322dc8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PlatformEnabler
-  _enableOnAndroid: 1
-  _enableOnIOS: 1
+  _enableOnAndroid: 0
+  _enableOnIOS: 0
   _enableOnDesktop: 0
   _setActiveState: 1
   _targetObjects:
@@ -5151,7 +5151,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5285817192988943538, guid: eef951a81180c124ba4cec72b04a536e, type: 3}
       propertyPath: m_AnchoredPosition.y
-      value: -501
+      value: -551
       objectReference: {fileID: 0}
     - target: {fileID: 5285817192988943538, guid: eef951a81180c124ba4cec72b04a536e, type: 3}
       propertyPath: m_LocalEulerAnglesHint.x

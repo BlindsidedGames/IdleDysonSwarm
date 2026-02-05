@@ -1,0 +1,15 @@
+fileFormatVersion: 2
+guid: 769f3deee63c82a4c9896ac917227625
+NativeFormatImporter:
+  externalObjects: {}
+  mainObjectFileID: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 211046
+  packageName: Quantum Console
+  packageVersion: 2.6.7
+  assetPath: Assets/Plugins/QFSW/Quantum Console/Source/Prefabs/Default Theme (SRP).asset
+  uploadId: 759935

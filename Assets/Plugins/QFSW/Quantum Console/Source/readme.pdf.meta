@@ -1,0 +1,15 @@
+fileFormatVersion: 2
+guid: ed61ebfbaaf591f40a51900ce1a5c898
+timeCreated: 1541374714
+licenseType: Store
+DefaultImporter:
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 211046
+  packageName: Quantum Console
+  packageVersion: 2.6.7
+  assetPath: Assets/Plugins/QFSW/Quantum Console/Source/readme.pdf
+  uploadId: 759935

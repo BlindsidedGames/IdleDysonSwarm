@@ -1,0 +1,15 @@
+fileFormatVersion: 2
+guid: 509dd06e376974a80be87395ca1da5b8
+NativeFormatImporter:
+  externalObjects: {}
+  mainObjectFileID: 7400000
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 211046
+  packageName: Quantum Console
+  packageVersion: 2.6.7
+  assetPath: Assets/Plugins/QFSW/Quantum Console/Source/Demo Scene/Animations/GateOpen.anim
+  uploadId: 759935

@@ -1434,6 +1434,9 @@ namespace Expansion
         {
             if (saveSettings == null) return;
 
+            if (saveSettings.prestigePlus == null) saveSettings.prestigePlus = new PrestigePlus();
+            if (saveSettings.avocadoData == null) saveSettings.avocadoData = new AvocadoData();
+
             var pp = saveSettings.prestigePlus;
             var avocado = saveSettings.avocadoData;
 

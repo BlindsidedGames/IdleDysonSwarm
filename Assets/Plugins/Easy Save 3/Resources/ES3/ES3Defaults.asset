@@ -37,6 +37,15 @@ MonoBehaviour:
     assemblyNames:
     - Assembly-CSharp
     - Assembly-CSharp-firstpass
+    - QFSW.QC
+    - QFSW.QC.Demo
+    - QFSW.QC.Extras
+    - QFSW.QC.Grammar
+    - QFSW.QC.Parsers
+    - QFSW.QC.ScanRules
+    - QFSW.QC.Serializers
+    - QFSW.QC.Suggestors
+    - QFSW.QC.UI
     showAdvancedSettings: 0
   addMgrToSceneAutomatically: 0
   autoUpdateReferences: 1
