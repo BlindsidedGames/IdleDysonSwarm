@@ -53,8 +53,15 @@ public class LoadScreenMethods : MonoBehaviour
 
     private void Update()
     {
+        bool userInteracted = false;
+
         var mouse = Mouse.current;
-        if (mouse != null && mouse.leftButton.wasPressedThisFrame) afkTime = 0;
+        if (mouse != null && mouse.leftButton.wasPressedThisFrame) userInteracted = true;
+
+        var touchscreen = Touchscreen.current;
+        if (touchscreen != null && touchscreen.primaryTouch.press.wasPressedThisFrame) userInteracted = true;
+
+        if (userInteracted) afkTime = 0;
 
         afkTime += Time.deltaTime;
         screensaverWindow.SetActive(afkTime >= windowActivationTime);
