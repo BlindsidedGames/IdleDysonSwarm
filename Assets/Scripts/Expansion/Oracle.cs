@@ -121,9 +121,50 @@ namespace Expansion
             saveSettings.doubleIp = doubleIpUnlocked;
             FixSkillpoints();
             ApplyMigrations();
+            SyncAutoAssignFromSelectedPreset(runAutoAssign: false);
+            LogPresetAutoAssignState("PostMigration/Clipboard");
             // LogImportFacilityState("PostMigration");
             SaveInternal(true);
             SceneManager.LoadScene(0);
+        }
+
+        private void LogPresetAutoAssignState(string label)
+        {
+            DysonVerseSaveData data = saveSettings?.dysonVerseSaveData;
+            if (data == null)
+            {
+                Debug.Log($"[PresetAutoAssign:{label}] save data missing");
+                return;
+            }
+
+            Debug.Log(
+                $"[PresetAutoAssign:{label}] " +
+                $"p1={FormatPresetList(data.skillAutoAssignmentIds1)} " +
+                $"p2={FormatPresetList(data.skillAutoAssignmentIds2)} " +
+                $"p3={FormatPresetList(data.skillAutoAssignmentIds3)} " +
+                $"p4={FormatPresetList(data.skillAutoAssignmentIds4)} " +
+                $"p5={FormatPresetList(data.skillAutoAssignmentIds5)}");
+        }
+
+        private void SyncAutoAssignFromSelectedPreset(bool runAutoAssign)
+        {
+            DysonVerseSaveData data = saveSettings?.dysonVerseSaveData;
+            if (data == null) return;
+            int presetIndex = Mathf.Clamp(data.selectedPreset, 1, 5);
+            List<string> presetIds = GetPresetAutoAssignmentSkillIds(presetIndex);
+            if (presetIds == null || presetIds.Count == 0) return;
+            SetAutoAssignmentSkillIds(new List<string>(presetIds));
+            if (runAutoAssign && _gameManager != null)
+            {
+                _gameManager.AutoAssignSkillsInvoke();
+            }
+        }
+
+        private static string FormatPresetList(List<string> ids)
+        {
+            if (ids == null) return "null";
+            if (ids.Count == 0) return "empty";
+            return $"{ids.Count}:[{string.Join(",", ids)}]";
         }
 
         private static bool TryDeserializeFromBase64Payload(string clipboard, out SaveDataSettings settings)
@@ -906,7 +947,46 @@ namespace Expansion
                 data.skillAutoAssignmentIds5 = SkillIdMap.ConvertKeysToIds(data.skillAutoAssignmentList5);
             }
 
+            EnsurePresetAutoAssignOrderFromLegacyBits(data);
             EnsureSkillAutoAssignmentBitsets();
+        }
+
+        private void EnsurePresetAutoAssignOrderFromLegacyBits(DysonVerseSaveData data)
+        {
+            if (data == null) return;
+
+            EnsurePresetAutoAssignOrderFromLegacyBits(ref data.skillAutoAssignmentIds1, ref data.skillAutoAssignmentBits1,
+                ref data.skillAutoAssignmentBitsBase64_1, ref data.skillAutoAssignmentList1);
+            EnsurePresetAutoAssignOrderFromLegacyBits(ref data.skillAutoAssignmentIds2, ref data.skillAutoAssignmentBits2,
+                ref data.skillAutoAssignmentBitsBase64_2, ref data.skillAutoAssignmentList2);
+            EnsurePresetAutoAssignOrderFromLegacyBits(ref data.skillAutoAssignmentIds3, ref data.skillAutoAssignmentBits3,
+                ref data.skillAutoAssignmentBitsBase64_3, ref data.skillAutoAssignmentList3);
+            EnsurePresetAutoAssignOrderFromLegacyBits(ref data.skillAutoAssignmentIds4, ref data.skillAutoAssignmentBits4,
+                ref data.skillAutoAssignmentBitsBase64_4, ref data.skillAutoAssignmentList4);
+            EnsurePresetAutoAssignOrderFromLegacyBits(ref data.skillAutoAssignmentIds5, ref data.skillAutoAssignmentBits5,
+                ref data.skillAutoAssignmentBitsBase64_5, ref data.skillAutoAssignmentList5);
+        }
+
+        private void EnsurePresetAutoAssignOrderFromLegacyBits(ref List<string> ids, ref byte[] bits, ref string base64,
+            ref List<int> legacyList)
+        {
+            bool hadBits = (bits != null && bits.Length > 0) || !string.IsNullOrEmpty(base64);
+            if ((ids == null || ids.Count == 0) && hadBits)
+            {
+                ids = TryGetPresetIdsFromLegacyOrBits(legacyList, bits, base64);
+                if (ids.Count > 0)
+                {
+                    List<string> before = new List<string>(ids);
+                    ids = BuildDependencySafeOrder(ids);
+                    legacyList = SkillIdMap.ConvertIdsToKeys(ids);
+                    Debug.Log(
+                        $"[PresetAutoAssign:Ensure] rebuilt from bits; " +
+                        $"before={FormatPresetList(before)} after={FormatPresetList(ids)}");
+                }
+            }
+
+            bits = null;
+            base64 = null;
         }
 
         private void EnsureSkillAutoAssignmentBitsets()
@@ -963,11 +1043,16 @@ namespace Expansion
             if (ids == null || ids.Count == 0)
             {
                 ids = TryGetPresetIdsFromLegacyOrBits(legacyList, bits, base64);
-                if (ids.Count > 0)
-                {
-                    ids = BuildDependencySafeOrder(ids);
-                    legacyList = SkillIdMap.ConvertIdsToKeys(ids);
-                }
+            }
+
+            if (ids.Count > 0)
+            {
+                List<string> before = new List<string>(ids);
+                ids = BuildDependencySafeOrder(ids);
+                legacyList = SkillIdMap.ConvertIdsToKeys(ids);
+                Debug.Log(
+                    $"[PresetAutoAssign:Migrate] reordered; " +
+                    $"before={FormatPresetList(before)} after={FormatPresetList(ids)}");
             }
 
             bits = null;
@@ -3714,6 +3799,7 @@ namespace Expansion
             }
 
             ApplyMigrations();
+            SyncAutoAssignFromSelectedPreset(runAutoAssign: true);
             UpdateSkills?.Invoke();
             StartCoroutine(AwayForCoroutine());
             SetSaveReady(true);
