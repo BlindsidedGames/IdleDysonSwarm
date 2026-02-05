@@ -80,7 +80,7 @@ namespace Expansion
         // IMPORTANT: When adding a migration step in BuildMigrationRegistry(),
         // you MUST also update this constant to match the new LatestVersion.
         // IMPORTANT: Save v7 introduces skill bitsets (see SkillIdMap/SkillBitsetUtility).
-        private const int CurrentSaveVersion = 8;
+        private const int CurrentSaveVersion = 9;
 
         #region SaveAndLoadFromClipboard
 
@@ -642,6 +642,12 @@ namespace Expansion
                 summary: "Pack SaveDataSettings boolean flags into bitfields.",
                 apply: _ => { PackSettingsFlags(); }));
 
+            registry.AddStep(new MigrationStep(
+                targetVersion: 9,
+                name: "Preset auto-assign order",
+                summary: "Rebuild preset auto-assign lists with dependency-safe order from legacy bitsets.",
+                apply: _ => { MigratePresetAutoAssignOrder(); }));
+
             return registry;
         }
 
@@ -932,42 +938,170 @@ namespace Expansion
                         data.skillAutoAssignmentIds = SkillBitsetUtility.ConvertBitsetToIds(data.skillAutoAssignmentBits);
                 }
             }
-
-            EnsurePresetBitset(ref data.skillAutoAssignmentBits1, data.skillAutoAssignmentBitsBase64_1,
-                ref data.skillAutoAssignmentIds1, data.skillAutoAssignmentList1);
-            EnsurePresetBitset(ref data.skillAutoAssignmentBits2, data.skillAutoAssignmentBitsBase64_2,
-                ref data.skillAutoAssignmentIds2, data.skillAutoAssignmentList2);
-            EnsurePresetBitset(ref data.skillAutoAssignmentBits3, data.skillAutoAssignmentBitsBase64_3,
-                ref data.skillAutoAssignmentIds3, data.skillAutoAssignmentList3);
-            EnsurePresetBitset(ref data.skillAutoAssignmentBits4, data.skillAutoAssignmentBitsBase64_4,
-                ref data.skillAutoAssignmentIds4, data.skillAutoAssignmentList4);
-            EnsurePresetBitset(ref data.skillAutoAssignmentBits5, data.skillAutoAssignmentBitsBase64_5,
-                ref data.skillAutoAssignmentIds5, data.skillAutoAssignmentList5);
         }
 
-        private void EnsurePresetBitset(ref byte[] bits, string base64, ref List<string> ids, List<int> legacyList)
+        private void MigratePresetAutoAssignOrder()
         {
-            if (bits == null || bits.Length == 0)
-            {
-                if (ids == null || ids.Count == 0)
-                {
-                    if (legacyList != null && legacyList.Count > 0)
-                        ids = SkillIdMap.ConvertKeysToIds(legacyList);
-                    else if (!string.IsNullOrEmpty(base64))
-                        ids = SkillBitsetUtility.ConvertBitsetToIds(Convert.FromBase64String(base64));
-                }
+            DysonVerseSaveData data = saveSettings?.dysonVerseSaveData;
+            if (data == null) return;
 
-                bits = SkillBitsetUtility.BuildBitsetFromIds(ids);
-                return;
-            }
+            MigratePresetAutoAssignOrder(ref data.skillAutoAssignmentIds1, ref data.skillAutoAssignmentBits1,
+                ref data.skillAutoAssignmentBitsBase64_1, ref data.skillAutoAssignmentList1);
+            MigratePresetAutoAssignOrder(ref data.skillAutoAssignmentIds2, ref data.skillAutoAssignmentBits2,
+                ref data.skillAutoAssignmentBitsBase64_2, ref data.skillAutoAssignmentList2);
+            MigratePresetAutoAssignOrder(ref data.skillAutoAssignmentIds3, ref data.skillAutoAssignmentBits3,
+                ref data.skillAutoAssignmentBitsBase64_3, ref data.skillAutoAssignmentList3);
+            MigratePresetAutoAssignOrder(ref data.skillAutoAssignmentIds4, ref data.skillAutoAssignmentBits4,
+                ref data.skillAutoAssignmentBitsBase64_4, ref data.skillAutoAssignmentList4);
+            MigratePresetAutoAssignOrder(ref data.skillAutoAssignmentIds5, ref data.skillAutoAssignmentBits5,
+                ref data.skillAutoAssignmentBitsBase64_5, ref data.skillAutoAssignmentList5);
+        }
 
-            bits = SkillBitsetUtility.EnsureSize(bits);
+        private void MigratePresetAutoAssignOrder(ref List<string> ids, ref byte[] bits, ref string base64,
+            ref List<int> legacyList)
+        {
             if (ids == null || ids.Count == 0)
             {
-                if (legacyList != null && legacyList.Count > 0)
-                    ids = SkillIdMap.ConvertKeysToIds(legacyList);
-                else
-                    ids = SkillBitsetUtility.ConvertBitsetToIds(bits);
+                ids = TryGetPresetIdsFromLegacyOrBits(legacyList, bits, base64);
+                if (ids.Count > 0)
+                {
+                    ids = BuildDependencySafeOrder(ids);
+                    legacyList = SkillIdMap.ConvertIdsToKeys(ids);
+                }
+            }
+
+            bits = null;
+            base64 = null;
+        }
+
+        private List<string> TryGetPresetIdsFromLegacyOrBits(List<int> legacyList, byte[] bits, string base64)
+        {
+            if (legacyList != null && legacyList.Count > 0)
+                return SkillIdMap.ConvertKeysToIds(legacyList);
+
+            if (bits != null && bits.Length > 0)
+                return SkillBitsetUtility.ConvertBitsetToIds(bits);
+
+            if (!string.IsNullOrEmpty(base64))
+                return SkillBitsetUtility.ConvertBitsetToIds(Convert.FromBase64String(base64));
+
+            return new List<string>();
+        }
+
+        private List<string> BuildDependencySafeOrder(List<string> ids)
+        {
+            if (ids == null || ids.Count <= 1) return ids ?? new List<string>();
+
+            GameDataRegistry registry = GameDataRegistry.Instance;
+            if (registry == null || registry.skillDatabase == null) return ids;
+
+            var orderedInput = new List<string>();
+            var seen = new HashSet<string>(StringComparer.Ordinal);
+            foreach (string id in ids)
+            {
+                if (string.IsNullOrEmpty(id) || !seen.Add(id)) continue;
+                orderedInput.Add(id);
+            }
+
+            if (orderedInput.Count <= 1) return orderedInput;
+
+            var index = new Dictionary<string, int>(orderedInput.Count, StringComparer.Ordinal);
+            for (int i = 0; i < orderedInput.Count; i++)
+                index[orderedInput[i]] = i;
+
+            var selected = new HashSet<string>(orderedInput, StringComparer.Ordinal);
+            var indegree = new Dictionary<string, int>(orderedInput.Count, StringComparer.Ordinal);
+            var adjacency = new Dictionary<string, List<string>>(orderedInput.Count, StringComparer.Ordinal);
+
+            foreach (string id in orderedInput)
+            {
+                indegree[id] = 0;
+                adjacency[id] = new List<string>();
+            }
+
+            foreach (string id in orderedInput)
+            {
+                if (!registry.skillDatabase.TryGet(id, out SkillDefinition definition) || definition == null) continue;
+                AppendDependencies(id, definition.requiredSkillIds, selected, indegree, adjacency);
+                AppendDependencies(id, definition.shadowRequirementIds, selected, indegree, adjacency);
+            }
+
+            var remaining = new HashSet<string>(orderedInput, StringComparer.Ordinal);
+            var topo = new List<string>(orderedInput.Count);
+
+            while (remaining.Count > 0)
+            {
+                bool progressed = false;
+                for (int i = 0; i < orderedInput.Count; i++)
+                {
+                    string id = orderedInput[i];
+                    if (!remaining.Contains(id)) continue;
+                    if (indegree[id] != 0) continue;
+
+                    remaining.Remove(id);
+                    topo.Add(id);
+                    foreach (string neighbor in adjacency[id])
+                    {
+                        indegree[neighbor]--;
+                    }
+                    progressed = true;
+                }
+
+                if (progressed) continue;
+
+                // Cycle or missing prereqs inside selection; preserve original order for remaining.
+                foreach (string id in orderedInput)
+                {
+                    if (!remaining.Contains(id)) continue;
+                    topo.Add(id);
+                }
+                break;
+            }
+
+            // Filter out exclusives that would block later auto-assign.
+            var accepted = new List<string>(topo.Count);
+            var acceptedSet = new HashSet<string>(StringComparer.Ordinal);
+            foreach (string id in topo)
+            {
+                if (!registry.skillDatabase.TryGet(id, out SkillDefinition definition) || definition == null)
+                {
+                    accepted.Add(id);
+                    acceptedSet.Add(id);
+                    continue;
+                }
+
+                if (definition.exclusiveWithIds != null && definition.exclusiveWithIds.Length > 0)
+                {
+                    bool blocked = false;
+                    foreach (string exclusiveId in definition.exclusiveWithIds)
+                    {
+                        if (acceptedSet.Contains(exclusiveId))
+                        {
+                            blocked = true;
+                            break;
+                        }
+                    }
+
+                    if (blocked) continue;
+                }
+
+                accepted.Add(id);
+                acceptedSet.Add(id);
+            }
+
+            return accepted;
+        }
+
+        private static void AppendDependencies(string id, string[] requirements, HashSet<string> selected,
+            Dictionary<string, int> indegree, Dictionary<string, List<string>> adjacency)
+        {
+            if (requirements == null || requirements.Length == 0) return;
+            foreach (string req in requirements)
+            {
+                if (string.IsNullOrEmpty(req)) continue;
+                if (!selected.Contains(req)) continue;
+                adjacency[req].Add(id);
+                indegree[id] += 1;
             }
         }
 
@@ -3313,20 +3447,20 @@ namespace Expansion
             if (saveData != null)
             {
                 saveData.skillAutoAssignmentBits = SkillBitsetUtility.BuildBitsetFromIds(GetAutoAssignmentSkillIds());
-                saveData.skillAutoAssignmentBits1 = SkillBitsetUtility.BuildBitsetFromIds(GetPresetAutoAssignmentSkillIds(1));
-                saveData.skillAutoAssignmentBits2 = SkillBitsetUtility.BuildBitsetFromIds(GetPresetAutoAssignmentSkillIds(2));
-                saveData.skillAutoAssignmentBits3 = SkillBitsetUtility.BuildBitsetFromIds(GetPresetAutoAssignmentSkillIds(3));
-                saveData.skillAutoAssignmentBits4 = SkillBitsetUtility.BuildBitsetFromIds(GetPresetAutoAssignmentSkillIds(4));
-                saveData.skillAutoAssignmentBits5 = SkillBitsetUtility.BuildBitsetFromIds(GetPresetAutoAssignmentSkillIds(5));
+                saveData.skillAutoAssignmentBits1 = null;
+                saveData.skillAutoAssignmentBits2 = null;
+                saveData.skillAutoAssignmentBits3 = null;
+                saveData.skillAutoAssignmentBits4 = null;
+                saveData.skillAutoAssignmentBits5 = null;
 
                 if (includeBase64Fields)
                 {
                     saveData.skillAutoAssignmentBitsBase64 = Convert.ToBase64String(saveData.skillAutoAssignmentBits ?? Array.Empty<byte>());
-                    saveData.skillAutoAssignmentBitsBase64_1 = Convert.ToBase64String(saveData.skillAutoAssignmentBits1 ?? Array.Empty<byte>());
-                    saveData.skillAutoAssignmentBitsBase64_2 = Convert.ToBase64String(saveData.skillAutoAssignmentBits2 ?? Array.Empty<byte>());
-                    saveData.skillAutoAssignmentBitsBase64_3 = Convert.ToBase64String(saveData.skillAutoAssignmentBits3 ?? Array.Empty<byte>());
-                    saveData.skillAutoAssignmentBitsBase64_4 = Convert.ToBase64String(saveData.skillAutoAssignmentBits4 ?? Array.Empty<byte>());
-                    saveData.skillAutoAssignmentBitsBase64_5 = Convert.ToBase64String(saveData.skillAutoAssignmentBits5 ?? Array.Empty<byte>());
+                    saveData.skillAutoAssignmentBitsBase64_1 = null;
+                    saveData.skillAutoAssignmentBitsBase64_2 = null;
+                    saveData.skillAutoAssignmentBitsBase64_3 = null;
+                    saveData.skillAutoAssignmentBitsBase64_4 = null;
+                    saveData.skillAutoAssignmentBitsBase64_5 = null;
                 }
                 else
                 {
@@ -3339,18 +3473,8 @@ namespace Expansion
                 }
 
                 saveData.skillAutoAssignmentIds = new List<string>();
-                saveData.skillAutoAssignmentIds1 = new List<string>();
-                saveData.skillAutoAssignmentIds2 = new List<string>();
-                saveData.skillAutoAssignmentIds3 = new List<string>();
-                saveData.skillAutoAssignmentIds4 = new List<string>();
-                saveData.skillAutoAssignmentIds5 = new List<string>();
 
                 saveData.skillAutoAssignmentList = new List<int>();
-                saveData.skillAutoAssignmentList1 = new List<int>();
-                saveData.skillAutoAssignmentList2 = new List<int>();
-                saveData.skillAutoAssignmentList3 = new List<int>();
-                saveData.skillAutoAssignmentList4 = new List<int>();
-                saveData.skillAutoAssignmentList5 = new List<int>();
             }
         }
 
@@ -3910,20 +4034,15 @@ namespace Expansion
             switch (presetIndex)
             {
                 case 1:
-                    return ResolvePresetIds(ref data.skillAutoAssignmentBits1, ref data.skillAutoAssignmentIds1,
-                        data.skillAutoAssignmentList1);
+                    return ResolvePresetIds(ref data.skillAutoAssignmentIds1, data.skillAutoAssignmentList1);
                 case 2:
-                    return ResolvePresetIds(ref data.skillAutoAssignmentBits2, ref data.skillAutoAssignmentIds2,
-                        data.skillAutoAssignmentList2);
+                    return ResolvePresetIds(ref data.skillAutoAssignmentIds2, data.skillAutoAssignmentList2);
                 case 3:
-                    return ResolvePresetIds(ref data.skillAutoAssignmentBits3, ref data.skillAutoAssignmentIds3,
-                        data.skillAutoAssignmentList3);
+                    return ResolvePresetIds(ref data.skillAutoAssignmentIds3, data.skillAutoAssignmentList3);
                 case 4:
-                    return ResolvePresetIds(ref data.skillAutoAssignmentBits4, ref data.skillAutoAssignmentIds4,
-                        data.skillAutoAssignmentList4);
+                    return ResolvePresetIds(ref data.skillAutoAssignmentIds4, data.skillAutoAssignmentList4);
                 case 5:
-                    return ResolvePresetIds(ref data.skillAutoAssignmentBits5, ref data.skillAutoAssignmentIds5,
-                        data.skillAutoAssignmentList5);
+                    return ResolvePresetIds(ref data.skillAutoAssignmentIds5, data.skillAutoAssignmentList5);
                 default:
                     return new List<string>();
             }
@@ -3935,34 +4054,28 @@ namespace Expansion
             if (data == null) return;
             List<string> safeIds = ids ?? new List<string>();
             List<int> legacyList = SkillIdMap.ConvertIdsToKeys(safeIds);
-            byte[] bits = SkillBitsetUtility.BuildBitsetFromIds(safeIds);
 
             switch (presetIndex)
             {
                 case 1:
                     data.skillAutoAssignmentIds1 = safeIds;
                     data.skillAutoAssignmentList1 = legacyList;
-                    data.skillAutoAssignmentBits1 = bits;
                     break;
                 case 2:
                     data.skillAutoAssignmentIds2 = safeIds;
                     data.skillAutoAssignmentList2 = legacyList;
-                    data.skillAutoAssignmentBits2 = bits;
                     break;
                 case 3:
                     data.skillAutoAssignmentIds3 = safeIds;
                     data.skillAutoAssignmentList3 = legacyList;
-                    data.skillAutoAssignmentBits3 = bits;
                     break;
                 case 4:
                     data.skillAutoAssignmentIds4 = safeIds;
                     data.skillAutoAssignmentList4 = legacyList;
-                    data.skillAutoAssignmentBits4 = bits;
                     break;
                 case 5:
                     data.skillAutoAssignmentIds5 = safeIds;
                     data.skillAutoAssignmentList5 = legacyList;
-                    data.skillAutoAssignmentBits5 = bits;
                     break;
             }
         }
@@ -3989,18 +4102,15 @@ namespace Expansion
             return false;
         }
 
-        private List<string> ResolvePresetIds(ref byte[] bits, ref List<string> ids, List<int> legacyList)
+        private List<string> ResolvePresetIds(ref List<string> ids, List<int> legacyList)
         {
             ids ??= new List<string>();
             if (ids.Count == 0)
             {
                 if (legacyList != null && legacyList.Count > 0)
                     ids = SkillIdMap.ConvertKeysToIds(legacyList);
-                else if (bits != null && bits.Length > 0)
-                    ids = SkillBitsetUtility.ConvertBitsetToIds(bits);
             }
 
-            bits = SkillBitsetUtility.BuildBitsetFromIds(ids);
             return ids;
         }
 
