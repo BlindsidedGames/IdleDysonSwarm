@@ -1,0 +1,19 @@
+fileFormatVersion: 2
+guid: 3dfc88ca39a87dc46bc7fd337be863bb
+timeCreated: 1440503653
+licenseType: Store
+MonoImporter:
+  serializedVersion: 2
+  defaultReferences: []
+  executionOrder: 0
+  icon: {instanceID: 0}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 211046
+  packageName: Quantum Console
+  packageVersion: 2.6.7
+  assetPath: Assets/Plugins/QFSW/Quantum Console/Source/Extras/exec/CSharpCompiler/ScriptBundleLoader.cs
+  uploadId: 759935

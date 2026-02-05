@@ -1,0 +1,16 @@
+fileFormatVersion: 2
+guid: 9ed2a051c32b4fe47a5e4fb95c20b03f
+timeCreated: 1541120106
+licenseType: Store
+NativeFormatImporter:
+  mainObjectFileID: 100100000
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 211046
+  packageName: Quantum Console
+  packageVersion: 2.6.7
+  assetPath: Assets/Plugins/QFSW/Quantum Console/Source/Prefabs/Quantum Console.prefab
+  uploadId: 759935

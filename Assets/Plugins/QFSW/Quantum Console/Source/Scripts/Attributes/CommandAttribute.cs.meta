@@ -1,0 +1,18 @@
+fileFormatVersion: 2
+guid: 8115824be443344f29ef0da5a1c05a3b
+MonoImporter:
+  externalObjects: {}
+  serializedVersion: 2
+  defaultReferences: []
+  executionOrder: 0
+  icon: {instanceID: 0}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 211046
+  packageName: Quantum Console
+  packageVersion: 2.6.7
+  assetPath: Assets/Plugins/QFSW/Quantum Console/Source/Scripts/Attributes/CommandAttribute.cs
+  uploadId: 759935

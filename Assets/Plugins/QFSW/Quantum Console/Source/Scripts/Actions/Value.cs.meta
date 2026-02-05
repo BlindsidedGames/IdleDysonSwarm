@@ -1,0 +1,18 @@
+fileFormatVersion: 2
+guid: aa35d5d3d1cdc54429fbcd0a8754323f
+MonoImporter:
+  externalObjects: {}
+  serializedVersion: 2
+  defaultReferences: []
+  executionOrder: 0
+  icon: {instanceID: 0}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 211046
+  packageName: Quantum Console
+  packageVersion: 2.6.7
+  assetPath: Assets/Plugins/QFSW/Quantum Console/Source/Scripts/Actions/Value.cs
+  uploadId: 759935

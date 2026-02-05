@@ -1,7 +1,6 @@
 using System;
 using UnityEngine;
 using UnityEngine.InputSystem;
-using UnityEngine.Purchasing;
 
 public class LoadScreenMethods : MonoBehaviour
 {
@@ -19,57 +18,28 @@ public class LoadScreenMethods : MonoBehaviour
 
     public bool gotDebug;
     public bool gotDoubleIp;
-    private readonly string doubleIP = "ids.doubleip";
-    private readonly string debug = "ids.devoptions";
-
-    private StoreController _storeController;
+    private const string DebugPrefKey = "debug";
+    private const string DoubleIpPrefKey = "doubleip";
 
     private void Start()
     {
         InvokeRepeating(nameof(RotateScreenSaverText), 0, 1);
-        CheckProductEntitlements();
+        RefreshUnlockFlags();
     }
 
-    private void CheckProductEntitlements()
+    private void RefreshUnlockFlags()
     {
-        _storeController = UnityIAPServices.StoreController();
-        _storeController.OnCheckEntitlement += OnCheckEntitlement;
+        bool debugUnlocked = PlayerPrefs.GetInt(DebugPrefKey, 0) == 1;
+        bool doubleIpUnlocked = PlayerPrefs.GetInt(DoubleIpPrefKey, 0) == 1;
 
-        var products = _storeController.GetProducts();
-        foreach (var product in products)
+        if (Expansion.Oracle.oracle != null)
         {
-            if (product.definition.id == doubleIP || product.definition.id == debug)
-            {
-                _storeController.CheckEntitlement(product);
-            }
+            debugUnlocked |= Expansion.Oracle.oracle.saveSettings.debugOptions;
+            doubleIpUnlocked |= Expansion.Oracle.oracle.saveSettings.doubleIp;
         }
-    }
 
-    private void OnCheckEntitlement(Entitlement entitlement)
-    {
-        bool isEntitled = entitlement.Status == EntitlementStatus.FullyEntitled ||
-                          entitlement.Status == EntitlementStatus.EntitledButNotFinished ||
-                          entitlement.Status == EntitlementStatus.EntitledUntilConsumed;
-
-        if (!isEntitled) return;
-
-        string productId = entitlement.Product.definition.id;
-        if (productId == doubleIP)
-        {
-            SetDoubleIp();
-        }
-        else if (productId == debug)
-        {
-            SetDebug();
-        }
-    }
-
-    private void OnDestroy()
-    {
-        if (_storeController != null)
-        {
-            _storeController.OnCheckEntitlement -= OnCheckEntitlement;
-        }
+        gotDebug = debugUnlocked;
+        gotDoubleIp = doubleIpUnlocked;
     }
 
     public void SetDebug()

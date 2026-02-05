@@ -1,0 +1,18 @@
+fileFormatVersion: 2
+guid: a01c376fe68c3c3498d2b9e431470c5c
+MonoImporter:
+  externalObjects: {}
+  serializedVersion: 2
+  defaultReferences: []
+  executionOrder: 0
+  icon: {instanceID: 0}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 211046
+  packageName: Quantum Console
+  packageVersion: 2.6.7
+  assetPath: Assets/Plugins/QFSW/Quantum Console/Source/Scripts/Suggestions/Tags/InlineSuggestionsTag.cs
+  uploadId: 759935

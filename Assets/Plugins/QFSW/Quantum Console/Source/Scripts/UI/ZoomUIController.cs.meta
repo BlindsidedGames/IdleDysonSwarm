@@ -1,0 +1,18 @@
+fileFormatVersion: 2
+guid: 302ba813ec8ed7b4da5659d8529ab761
+MonoImporter:
+  externalObjects: {}
+  serializedVersion: 2
+  defaultReferences: []
+  executionOrder: 0
+  icon: {instanceID: 0}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 211046
+  packageName: Quantum Console
+  packageVersion: 2.6.7
+  assetPath: Assets/Plugins/QFSW/Quantum Console/Source/Scripts/UI/ZoomUIController.cs
+  uploadId: 759935

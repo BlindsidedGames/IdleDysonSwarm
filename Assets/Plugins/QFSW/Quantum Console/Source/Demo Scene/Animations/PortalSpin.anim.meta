@@ -1,0 +1,15 @@
+fileFormatVersion: 2
+guid: 369af09a6286845af89edd5fb87ea4ab
+NativeFormatImporter:
+  externalObjects: {}
+  mainObjectFileID: 7400000
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 211046
+  packageName: Quantum Console
+  packageVersion: 2.6.7
+  assetPath: Assets/Plugins/QFSW/Quantum Console/Source/Demo Scene/Animations/PortalSpin.anim
+  uploadId: 759935

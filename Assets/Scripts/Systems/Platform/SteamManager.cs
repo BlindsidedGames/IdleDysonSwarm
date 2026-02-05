@@ -2,11 +2,15 @@
 // Handles Steam API initialization and callback processing for Idle Dyson Swarm
 // Based on Steamworks.NET patterns
 
+#if !DISABLESTEAMWORKS && UNITY_STANDALONE
+#define STEAMWORKS_ENABLED
+#endif
+
 using UnityEngine;
-#if !DISABLESTEAMWORKS
+#if STEAMWORKS_ENABLED
 using Steamworks;
 #endif
-#if UNITY_EDITOR && !DISABLESTEAMWORKS
+#if UNITY_EDITOR && STEAMWORKS_ENABLED
 using UnityEditor;
 #endif
 
@@ -19,7 +23,7 @@ namespace IdleDysonSwarm.Platform
     [DisallowMultipleComponent]
     public class SteamManager : MonoBehaviour
     {
-        #if !DISABLESTEAMWORKS
+        #if STEAMWORKS_ENABLED
         private static SteamManager _instance;
         private static bool _everInitialized;
 
@@ -47,7 +51,7 @@ namespace IdleDysonSwarm.Platform
             }
         }
 
-        #if UNITY_EDITOR && !DISABLESTEAMWORKS
+        #if UNITY_EDITOR && STEAMWORKS_ENABLED
         static SteamManager()
         {
             EditorApplication.playModeStateChanged += OnPlayModeStateChanged;

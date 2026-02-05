@@ -1,0 +1,14 @@
+fileFormatVersion: 2
+guid: 786923d329e69bf40b3d855b3e56d0cc
+AssemblyDefinitionImporter:
+  externalObjects: {}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 211046
+  packageName: Quantum Console
+  packageVersion: 2.6.7
+  assetPath: Assets/Plugins/QFSW/Quantum Console/Source/Scripts/Suggestions/Suggestors/QFSW.QC.Suggestors.asmdef
+  uploadId: 759935

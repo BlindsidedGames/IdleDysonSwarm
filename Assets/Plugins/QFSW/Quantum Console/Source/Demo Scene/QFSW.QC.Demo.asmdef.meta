@@ -1,0 +1,14 @@
+fileFormatVersion: 2
+guid: 81dcdc43a74004ddaa6ad1d5df1941d9
+AssemblyDefinitionImporter:
+  externalObjects: {}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 211046
+  packageName: Quantum Console
+  packageVersion: 2.6.7
+  assetPath: Assets/Plugins/QFSW/Quantum Console/Source/Demo Scene/QFSW.QC.Demo.asmdef
+  uploadId: 759935
