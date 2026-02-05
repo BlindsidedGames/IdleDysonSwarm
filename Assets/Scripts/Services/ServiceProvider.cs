@@ -21,6 +21,11 @@ namespace IdleDysonSwarm.Services
         [Tooltip("Reference to the QuantumUpgradeDatabase (optional - falls back to constants if missing)")]
         private QuantumUpgradeDatabase quantumUpgradeDatabase;
 
+        [Header("Logging")]
+        [SerializeField]
+        [Tooltip("Enable verbose service registration logs.")]
+        private bool logRegistration = false;
+
         private void Awake()
         {
             RegisterServices();
@@ -47,20 +52,20 @@ namespace IdleDysonSwarm.Services
                 Debug.Log("[ServiceProvider] GameDataRegistry found via FindFirstObjectByType");
             }
 
-            Debug.Log("[ServiceProvider] Registering services...");
+            if (logRegistration) Debug.Log("[ServiceProvider] Registering services...");
 
             // Register core services
             var gameStateService = new GameStateService();
             ServiceLocator.Register<IGameStateService>(gameStateService);
-            Debug.Log("  ✓ IGameStateService registered");
+            if (logRegistration) Debug.Log("  ✓ IGameStateService registered");
 
             var gameDataService = new GameDataService(gameDataRegistry);
             ServiceLocator.Register<IGameDataService>(gameDataService);
-            Debug.Log("  ✓ IGameDataService registered");
+            if (logRegistration) Debug.Log("  ✓ IGameDataService registered");
 
             var facilityService = new FacilityService(gameStateService);
             ServiceLocator.Register<IFacilityService>(facilityService);
-            Debug.Log("  ✓ IFacilityService registered");
+            if (logRegistration) Debug.Log("  ✓ IFacilityService registered");
 
             // Register Quantum/Reality system services
             // QuantumUpgradeDatabase is optional - service falls back to constants if missing
@@ -74,26 +79,26 @@ namespace IdleDysonSwarm.Services
             }
             var quantumService = new QuantumService(quantumUpgradeDatabase);
             ServiceLocator.Register<IQuantumService>(quantumService);
-            Debug.Log("  ✓ IQuantumService registered");
+            if (logRegistration) Debug.Log("  ✓ IQuantumService registered");
 
             var workerService = new WorkerService();
             ServiceLocator.Register<IWorkerService>(workerService);
-            Debug.Log("  ✓ IWorkerService registered");
+            if (logRegistration) Debug.Log("  ✓ IWorkerService registered");
 
             var avocadoService = new AvocadoService();
             ServiceLocator.Register<IAvocadoService>(avocadoService);
-            Debug.Log("  ✓ IAvocadoService registered");
+            if (logRegistration) Debug.Log("  ✓ IAvocadoService registered");
 
             var megaStructureService = new MegaStructureService(gameStateService, facilityService, gameDataService);
             ServiceLocator.Register<IMegaStructureService>(megaStructureService);
-            Debug.Log("  ✓ IMegaStructureService registered");
+            if (logRegistration) Debug.Log("  ✓ IMegaStructureService registered");
 
             // Register Steam integration service
             var steamService = new SteamIntegrationService();
             ServiceLocator.Register<ISteamIntegrationService>(steamService);
-            Debug.Log("  ✓ ISteamIntegrationService registered");
+            if (logRegistration) Debug.Log("  ✓ ISteamIntegrationService registered");
 
-            Debug.Log("[ServiceProvider] All services registered successfully!");
+            if (logRegistration) Debug.Log("[ServiceProvider] All services registered successfully!");
         }
 
         [ContextMenu("Verify Services")]
