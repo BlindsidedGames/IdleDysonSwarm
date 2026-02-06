@@ -11,7 +11,7 @@ namespace Editor
     /// </summary>
     public static class CreateMegaStructureAssets
     {
-        [MenuItem("Tools/Mega-Structures/Create All Assets")]
+        [MenuItem(IdleDysonEditorMenu.DataMegaStructures + "Create All Assets")]
         public static void CreateAllAssets()
         {
             CreateFacilityIdAssets();
@@ -21,7 +21,7 @@ namespace Editor
             Debug.Log("[CreateMegaStructureAssets] All mega-structure assets created successfully!");
         }
 
-        [MenuItem("Tools/Mega-Structures/Create FacilityId Assets")]
+        [MenuItem(IdleDysonEditorMenu.DataMegaStructures + "Create FacilityId Assets")]
         public static void CreateFacilityIdAssets()
         {
             const string basePath = "Assets/Data/IDs/Facilities/";
@@ -44,7 +44,7 @@ namespace Editor
             Debug.Log("[CreateMegaStructureAssets] FacilityId assets created.");
         }
 
-        [MenuItem("Tools/Mega-Structures/Create FacilityDefinition Assets")]
+        [MenuItem(IdleDysonEditorMenu.DataMegaStructures + "Create FacilityDefinition Assets")]
         public static void CreateFacilityDefinitionAssets()
         {
             const string basePath = "Assets/Data/Facilities/";

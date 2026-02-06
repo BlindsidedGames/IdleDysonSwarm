@@ -17,7 +17,7 @@ namespace IdleDysonSwarm.Editor
         private const string CONDITIONS_OUTPUT_PATH = "Assets/Data/Conditions";
         private const string FACILITY_IDS_PATH = "Assets/Data/IDs/Facilities";
 
-        [MenuItem("Tools/Idle Dyson Swarm/Migrate Conditions/Scan ConditionIds", priority = 50)]
+        [MenuItem(IdleDysonEditorMenu.MigrationConditions + "Scan Condition IDs", priority = 50)]
         public static void ScanConditionIds()
         {
             Debug.Log("[ConditionMigrationTool] Scanning for conditionIds in EffectDefinitions...");
@@ -43,7 +43,7 @@ namespace IdleDysonSwarm.Editor
             }
         }
 
-        [MenuItem("Tools/Idle Dyson Swarm/Migrate Conditions/Generate Condition Assets", priority = 51)]
+        [MenuItem(IdleDysonEditorMenu.MigrationConditions + "Generate Condition Assets", priority = 51)]
         public static void GenerateConditionAssets()
         {
             Debug.Log("[ConditionMigrationTool] Generating condition assets...");

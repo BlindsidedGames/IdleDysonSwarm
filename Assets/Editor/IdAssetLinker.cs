@@ -22,7 +22,7 @@ namespace IdleDysonSwarm.Editor
         private const string SKILL_IDS_PATH = "Assets/Data/IDs/Skills";
         private const string RESEARCH_IDS_PATH = "Assets/Data/IDs/Research";
 
-        [MenuItem("Tools/Idle Dyson Swarm/Link ID Assets to Definitions", priority = 30)]
+        [MenuItem(IdleDysonEditorMenu.DataIds + "Link ID Assets To Definitions", priority = 30)]
         public static void LinkAllIdAssets()
         {
             Debug.Log("[IdAssetLinker] Starting ID asset linking...");
@@ -42,7 +42,7 @@ namespace IdleDysonSwarm.Editor
             Debug.Log($"[IdAssetLinker] ==========================================");
         }
 
-        [MenuItem("Tools/Idle Dyson Swarm/Link Facility IDs", priority = 31)]
+        [MenuItem(IdleDysonEditorMenu.DataIds + "Link Facility IDs", priority = 31)]
         public static int LinkFacilityIdAssets()
         {
             Debug.Log("[IdAssetLinker] Linking Facility ID assets...");
@@ -52,7 +52,7 @@ namespace IdleDysonSwarm.Editor
             );
         }
 
-        [MenuItem("Tools/Idle Dyson Swarm/Link Skill IDs", priority = 32)]
+        [MenuItem(IdleDysonEditorMenu.DataIds + "Link Skill IDs", priority = 32)]
         public static int LinkSkillIdAssets()
         {
             Debug.Log("[IdAssetLinker] Linking Skill ID assets...");
@@ -62,7 +62,7 @@ namespace IdleDysonSwarm.Editor
             );
         }
 
-        [MenuItem("Tools/Idle Dyson Swarm/Link Research IDs", priority = 33)]
+        [MenuItem(IdleDysonEditorMenu.DataIds + "Link Research IDs", priority = 33)]
         public static int LinkResearchIdAssets()
         {
             Debug.Log("[IdAssetLinker] Linking Research ID assets...");

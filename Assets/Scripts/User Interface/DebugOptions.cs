@@ -52,7 +52,8 @@ public class DebugOptions : MonoBehaviour
         setTinker.onClick.AddListener(SetTinker);
         setTinker0.onClick.AddListener(SetTinkerO);
         addInfinityPoints.onClick.AddListener(AddInfinityPoints);
-        debugPurchaseHandler.SetDebugState();
+        if (debugPurchaseHandler != null)
+            debugPurchaseHandler.SetDebugState();
         WireDebugTelemetryButtons();
 
     }

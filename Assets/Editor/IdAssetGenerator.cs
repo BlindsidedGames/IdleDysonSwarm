@@ -19,7 +19,7 @@ namespace IdleDysonSwarm.Editor
         private const string SKILL_IDS_PATH = ID_ASSETS_ROOT + "/Skills";
         private const string RESEARCH_IDS_PATH = ID_ASSETS_ROOT + "/Research";
 
-        [MenuItem("Tools/Idle Dyson Swarm/Generate All ID Assets", priority = 1)]
+        [MenuItem(IdleDysonEditorMenu.DataIds + "Generate All ID Assets", priority = 1)]
         public static void GenerateAllIdAssets()
         {
             Debug.Log("[IdAssetGenerator] Starting ID asset generation...");
@@ -47,7 +47,7 @@ namespace IdleDysonSwarm.Editor
             );
         }
 
-        [MenuItem("Tools/Idle Dyson Swarm/Generate Facility IDs", priority = 11)]
+        [MenuItem(IdleDysonEditorMenu.DataIds + "Generate Facility IDs", priority = 11)]
         public static int GenerateFacilityIds()
         {
             Debug.Log("[IdAssetGenerator] Generating Facility IDs...");
@@ -76,7 +76,7 @@ namespace IdleDysonSwarm.Editor
             return count;
         }
 
-        [MenuItem("Tools/Idle Dyson Swarm/Generate Skill IDs", priority = 12)]
+        [MenuItem(IdleDysonEditorMenu.DataIds + "Generate Skill IDs", priority = 12)]
         public static int GenerateSkillIds()
         {
             Debug.Log("[IdAssetGenerator] Generating Skill IDs...");
@@ -132,7 +132,7 @@ namespace IdleDysonSwarm.Editor
             return count;
         }
 
-        [MenuItem("Tools/Idle Dyson Swarm/Generate Research IDs", priority = 13)]
+        [MenuItem(IdleDysonEditorMenu.DataIds + "Generate Research IDs", priority = 13)]
         public static int GenerateResearchIds()
         {
             Debug.Log("[IdAssetGenerator] Generating Research IDs...");
@@ -239,7 +239,7 @@ namespace IdleDysonSwarm.Editor
         /// <summary>
         /// Validates all ID assets in a directory.
         /// </summary>
-        [MenuItem("Tools/Idle Dyson Swarm/Validate All ID Assets", priority = 21)]
+        [MenuItem(IdleDysonEditorMenu.DataIds + "Validate All ID Assets", priority = 21)]
         public static void ValidateAllIdAssets()
         {
             Debug.Log("[IdAssetGenerator] Validating ID assets...");

@@ -6,7 +6,7 @@ using UnityEngine;
 
 public static class DebugTelemetryMenu
 {
-    [MenuItem("Tools/Idle Dyson/Debug/Log Data-Driven Breakdowns")]
+    [MenuItem(IdleDysonEditorMenu.Debug + "Log Data-Driven Breakdowns")]
     private static void LogDataDrivenBreakdowns()
     {
         Oracle oracle = UnityEngine.Object.FindFirstObjectByType<Oracle>();
@@ -19,7 +19,7 @@ public static class DebugTelemetryMenu
         oracle.DebugLogDataDrivenBreakdowns();
     }
 
-    [MenuItem("Tools/Idle Dyson/Debug/Run Facility Parity Suite")]
+    [MenuItem(IdleDysonEditorMenu.Debug + "Run Facility Parity Suite")]
     private static void RunFacilityParitySuite()
     {
         Oracle oracle = UnityEngine.Object.FindFirstObjectByType<Oracle>();
@@ -32,7 +32,7 @@ public static class DebugTelemetryMenu
         oracle.DebugRunFacilityParityTests();
     }
 
-    [MenuItem("Tools/Idle Dyson/Debug/Run Offline Progress Parity")]
+    [MenuItem(IdleDysonEditorMenu.Debug + "Run Offline Progress Parity")]
     private static void RunOfflineProgressParity()
     {
         Oracle oracle = UnityEngine.Object.FindFirstObjectByType<Oracle>();
@@ -45,7 +45,7 @@ public static class DebugTelemetryMenu
         oracle.DebugRunOfflineProgressParity();
     }
 
-    [MenuItem("Tools/Idle Dyson/Debug/Export Last Debug Report")]
+    [MenuItem(IdleDysonEditorMenu.Debug + "Export Last Debug Report")]
     private static void ExportLastDebugReport()
     {
         string path = DebugReportRecorder.ExportLastReport();
@@ -58,7 +58,7 @@ public static class DebugTelemetryMenu
         Debug.Log($"Exported debug report to {path}");
     }
 
-    [MenuItem("Tools/Idle Dyson/Debug/Open Last Debug Report")]
+    [MenuItem(IdleDysonEditorMenu.Debug + "Open Last Debug Report")]
     private static void OpenLastDebugReport()
     {
         string path = EnsureReportExported();
@@ -71,7 +71,7 @@ public static class DebugTelemetryMenu
         EditorUtility.RevealInFinder(path);
     }
 
-    [MenuItem("Tools/Idle Dyson/Debug/Copy Last Debug Report Path")]
+    [MenuItem(IdleDysonEditorMenu.Debug + "Copy Last Debug Report Path")]
     private static void CopyLastDebugReportPath()
     {
         string path = EnsureReportExported();
@@ -85,21 +85,21 @@ public static class DebugTelemetryMenu
         Debug.Log($"Copied debug report path to clipboard: {path}");
     }
 
-    [MenuItem("Tools/Idle Dyson/Debug/Toggle Stat Timing Capture")]
+    [MenuItem(IdleDysonEditorMenu.Debug + "Toggle Stat Timing Capture")]
     private static void ToggleStatTimingCapture()
     {
         StatTimingTracker.Enabled = !StatTimingTracker.Enabled;
         Debug.Log($"Stat timing capture: {(StatTimingTracker.Enabled ? "On" : "Off")}");
     }
 
-    [MenuItem("Tools/Idle Dyson/Debug/Clear Stat Timing Data")]
+    [MenuItem(IdleDysonEditorMenu.Debug + "Clear Stat Timing Data")]
     private static void ClearStatTimingData()
     {
         StatTimingTracker.Clear();
         Debug.Log("Cleared stat timing data.");
     }
 
-    [MenuItem("Tools/Idle Dyson/Debug/Log Stat Timing Summary")]
+    [MenuItem(IdleDysonEditorMenu.Debug + "Log Stat Timing Summary")]
     private static void LogStatTimingSummary()
     {
         string report = StatTimingTracker.BuildReport();
