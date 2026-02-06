@@ -12,7 +12,7 @@ namespace IdleDysonSwarm.Editor
     /// </summary>
     public static class IdAssetValidator
     {
-        [MenuItem("Tools/Idle Dyson Swarm/Validate ID System", priority = 40)]
+        [MenuItem(IdleDysonEditorMenu.DataIds + "Validate ID System", priority = 40)]
         public static void ValidateIdSystem()
         {
             Debug.Log("[IdAssetValidator] Starting comprehensive ID system validation...");

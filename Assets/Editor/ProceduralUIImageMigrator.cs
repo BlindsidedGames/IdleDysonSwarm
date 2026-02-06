@@ -10,7 +10,7 @@ using Object = UnityEngine.Object;
 
 public static class ProceduralUIImageMigrator
 {
-    [MenuItem("Tools/Procedural UIImage/Migrate MPImage (Current Scene)")]
+    [MenuItem(IdleDysonEditorMenu.MigrationUI + "Procedural UIImage/Migrate MPImage (Current Scene)")]
     public static void MigrateAll()
     {
         MigrateCurrentScene();
@@ -18,7 +18,7 @@ public static class ProceduralUIImageMigrator
         AssetDatabase.Refresh();
     }
 
-    [MenuItem("Tools/Procedural UIImage/Migrate MPImage (Current Scene + Prefabs, Preserve Overrides)")]
+    [MenuItem(IdleDysonEditorMenu.MigrationUI + "Procedural UIImage/Migrate MPImage (Current Scene + Prefabs, Preserve Overrides)")]
     public static void MigrateCurrentSceneWithOverrides()
     {
         var scene = SceneManager.GetActiveScene();
@@ -35,7 +35,7 @@ public static class ProceduralUIImageMigrator
         AssetDatabase.Refresh();
     }
 
-    [MenuItem("Tools/Procedural UIImage/Migrate MPImage (Prefabs)")]
+    [MenuItem(IdleDysonEditorMenu.MigrationUI + "Procedural UIImage/Migrate MPImage (Prefabs)")]
     public static void MigratePrefabsOnly()
     {
         MigratePrefabs();
@@ -43,7 +43,7 @@ public static class ProceduralUIImageMigrator
         AssetDatabase.Refresh();
     }
 
-    [MenuItem("Tools/Procedural UIImage/Migrate MPImage (All Scenes + Prefabs)")]
+    [MenuItem(IdleDysonEditorMenu.MigrationUI + "Procedural UIImage/Migrate MPImage (All Scenes + Prefabs)")]
     public static void MigrateAllScenesAndPrefabs()
     {
         MigrateScenes();

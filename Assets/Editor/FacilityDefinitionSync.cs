@@ -9,7 +9,7 @@ public static class FacilityDefinitionSync
 {
     private const string FacilityDatabasePath = "Assets/Data/Databases/FacilityDatabase.asset";
 
-    [MenuItem("Tools/Idle Dyson/Sync Facility Definitions From Scene")]
+    [MenuItem(IdleDysonEditorMenu.DataFacilities + "Sync Definitions From Scene")]
     public static void SyncFacilityDefinitionsFromScene()
     {
         FacilityDatabase database = AssetDatabase.LoadAssetAtPath<FacilityDatabase>(FacilityDatabasePath);
@@ -56,7 +56,7 @@ public static class FacilityDefinitionSync
         Debug.Log($"Synced {updated} facility definitions from scene.");
     }
 
-    [MenuItem("Tools/Idle Dyson/Migrate Building UI References")]
+    [MenuItem(IdleDysonEditorMenu.MigrationUI + "Migrate Building UI References")]
     public static void MigrateBuildingUiReferences()
     {
         Building[] buildings = Object.FindObjectsByType<Building>(FindObjectsInactive.Include, FindObjectsSortMode.None);

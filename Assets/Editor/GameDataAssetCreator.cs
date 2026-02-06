@@ -17,7 +17,7 @@ public static class GameDataAssetCreator
     private const string EffectsFolder = "Assets/Data/Effects";
     private const string ResearchFolder = "Assets/Data/Research";
 
-    [MenuItem("Tools/Idle Dyson/Create Game Data Assets")]
+    [MenuItem(IdleDysonEditorMenu.DataCreate + "Game Data Assets")]
     public static void CreateGameDataAssets()
     {
         EnsureFolder("Assets", "Data");
@@ -33,7 +33,7 @@ public static class GameDataAssetCreator
         AssetDatabase.Refresh();
     }
 
-    [MenuItem("Tools/Idle Dyson/Create Game Data Registry In Scene")]
+    [MenuItem(IdleDysonEditorMenu.DataCreate + "Game Data Registry In Scene")]
     public static void CreateRegistryInScene()
     {
         CreateGameDataAssets();
@@ -61,7 +61,7 @@ public static class GameDataAssetCreator
         }
     }
 
-    [MenuItem("Tools/Idle Dyson/Create Core Facility Definitions")]
+    [MenuItem(IdleDysonEditorMenu.DataCreate + "Core Facility Definitions")]
     public static void CreateCoreFacilityDefinitions()
     {
         CreateGameDataAssets();
@@ -107,7 +107,7 @@ public static class GameDataAssetCreator
         AssetDatabase.Refresh();
     }
 
-    [MenuItem("Tools/Idle Dyson/Create Core Facility Skill Effects")]
+    [MenuItem(IdleDysonEditorMenu.DataCreate + "Core Facility Skill Effects")]
     public static void CreateCoreFacilitySkillEffects()
     {
         CreateGameDataAssets();
@@ -216,7 +216,7 @@ public static class GameDataAssetCreator
         AssetDatabase.Refresh();
     }
 
-    [MenuItem("Tools/Idle Dyson/Create Core Research Definitions")]
+    [MenuItem(IdleDysonEditorMenu.DataCreate + "Core Research Definitions")]
     public static void CreateCoreResearchDefinitions()
     {
         CreateGameDataAssets();
@@ -415,7 +415,7 @@ public static class GameDataAssetCreator
         AssetDatabase.Refresh();
     }
 
-    [MenuItem("Tools/Idle Dyson/Create All Skill Definitions + Effects")]
+    [MenuItem(IdleDysonEditorMenu.DataCreate + "All Skill Definitions + Effects")]
     public static void CreateAllSkillDefinitionsAndEffects()
     {
         CreateGameDataAssets();

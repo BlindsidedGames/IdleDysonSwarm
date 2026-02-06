@@ -8,14 +8,14 @@ namespace IdleDysonSwarm.Editor
 {
     /// <summary>
     /// Editor utility to create Quantum Upgrade ScriptableObject assets.
-    /// Run from menu: Tools/Idle Dyson/Create Quantum Upgrade Assets
+    /// Run from menu: Tools/Idle Dyson/Data/Create/Quantum Upgrade Assets
     /// </summary>
     public static class QuantumUpgradeAssetCreator
     {
         private const string BasePath = "Assets/Data/QuantumUpgrades";
         private const string DatabasePath = "Assets/Data/Databases/QuantumUpgradeDatabase.asset";
 
-        [MenuItem("Tools/Idle Dyson/Create Quantum Upgrade Assets")]
+        [MenuItem(IdleDysonEditorMenu.DataCreate + "Quantum Upgrade Assets")]
         public static void CreateAllAssets()
         {
             // Ensure directory exists

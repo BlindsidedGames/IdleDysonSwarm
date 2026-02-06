@@ -14,7 +14,7 @@ namespace IdleDysonSwarm.Editor
     {
         private const string CONDITIONS_PATH = "Assets/Data/Conditions";
 
-        [MenuItem("Tools/Idle Dyson Swarm/Migrate Conditions/Assign Conditions to Effects", priority = 52)]
+        [MenuItem(IdleDysonEditorMenu.MigrationConditions + "Assign Conditions To Effects", priority = 52)]
         public static void AssignConditionsToEffects()
         {
             Debug.Log("[ConditionAssignmentTool] Starting automatic condition assignment...");
@@ -120,7 +120,7 @@ namespace IdleDysonSwarm.Editor
             return result;
         }
 
-        [MenuItem("Tools/Idle Dyson Swarm/Migrate Conditions/Report Effect Conditions", priority = 53)]
+        [MenuItem(IdleDysonEditorMenu.MigrationConditions + "Report Effect Conditions", priority = 53)]
         public static void ReportEffectConditions()
         {
             Debug.Log("[ConditionAssignmentTool] Generating condition usage report...");

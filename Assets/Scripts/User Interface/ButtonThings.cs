@@ -94,8 +94,19 @@ public class ButtonThings : MonoBehaviour
         if (FacilityBreakdownPopup.Instance != null)
             FacilityBreakdownPopup.Instance.Hide();
 
-        for (int i = 0; i < _groupDisable.ToDisable.Length; i++) _groupDisable.ToDisable[i].SetActive(false);
-        for (int i = 0; i < _groupDisable.ToEnable.Length; i++) _groupDisable.ToEnable[i].SetActive(true);
+        if (_groupDisable != null)
+        {
+            for (int i = 0; i < _groupDisable.ToDisable.Length; i++)
+            {
+                if (_groupDisable.ToDisable[i] != null) _groupDisable.ToDisable[i].SetActive(false);
+            }
+
+            for (int i = 0; i < _groupDisable.ToEnable.Length; i++)
+            {
+                if (_groupDisable.ToEnable[i] != null) _groupDisable.ToEnable[i].SetActive(true);
+            }
+        }
+
         GroupEnable();
         GroupDisable();
         PlayerPrefs.SetInt("initialScreen", defaultScreen);

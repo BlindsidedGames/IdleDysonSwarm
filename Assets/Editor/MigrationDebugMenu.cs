@@ -9,7 +9,7 @@ using SirenixSerializationUtility = Sirenix.Serialization.SerializationUtility;
 
 public static class MigrationDebugMenu
 {
-    [MenuItem("Tools/Idle Dyson/Debug/Run Save Migration Dry-Run")]
+    [MenuItem(IdleDysonEditorMenu.Debug + "Run Save Migration Dry-Run")]
     private static void RunSaveMigrationDryRun()
     {
         Oracle oracle = UnityEngine.Object.FindFirstObjectByType<Oracle>();
@@ -29,7 +29,7 @@ public static class MigrationDebugMenu
         Debug.Log(result.ToReportString());
     }
 
-    [MenuItem("Tools/Idle Dyson/Debug/Run Save Migration Dry-Run (Clipboard)")]
+    [MenuItem(IdleDysonEditorMenu.Debug + "Run Save Migration Dry-Run (Clipboard)")]
     private static void RunSaveMigrationDryRunFromClipboard()
     {
         Oracle oracle = UnityEngine.Object.FindFirstObjectByType<Oracle>();

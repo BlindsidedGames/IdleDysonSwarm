@@ -36,43 +36,43 @@ internal static class ConsoleLogBuffer
         EditorApplication.quitting += OnEditorQuitting;
     }
 
-    [MenuItem("Tools/Console Log Buffer/Clear")]
+    [MenuItem(IdleDysonEditorMenu.ConsoleLogBuffer + "Clear")]
     private static void ClearMenu()
     {
         ClearBuffer("Manual clear");
     }
 
-    [MenuItem("Tools/Console Log Buffer/Filter/Include Logs")]
+    [MenuItem(IdleDysonEditorMenu.ConsoleLogBuffer + "Filter/Include Logs")]
     private static void ToggleIncludeLogs()
     {
         ToggleFilter(LogTypeMask.Log);
     }
 
-    [MenuItem("Tools/Console Log Buffer/Filter/Include Logs", true)]
+    [MenuItem(IdleDysonEditorMenu.ConsoleLogBuffer + "Filter/Include Logs", true)]
     private static bool ToggleIncludeLogsValidate()
     {
         return ValidateFilterMenu(LogTypeMask.Log);
     }
 
-    [MenuItem("Tools/Console Log Buffer/Filter/Include Warnings")]
+    [MenuItem(IdleDysonEditorMenu.ConsoleLogBuffer + "Filter/Include Warnings")]
     private static void ToggleIncludeWarnings()
     {
         ToggleFilter(LogTypeMask.Warning);
     }
 
-    [MenuItem("Tools/Console Log Buffer/Filter/Include Warnings", true)]
+    [MenuItem(IdleDysonEditorMenu.ConsoleLogBuffer + "Filter/Include Warnings", true)]
     private static bool ToggleIncludeWarningsValidate()
     {
         return ValidateFilterMenu(LogTypeMask.Warning);
     }
 
-    [MenuItem("Tools/Console Log Buffer/Filter/Include Errors")]
+    [MenuItem(IdleDysonEditorMenu.ConsoleLogBuffer + "Filter/Include Errors")]
     private static void ToggleIncludeErrors()
     {
         ToggleFilter(LogTypeMask.Error);
     }
 
-    [MenuItem("Tools/Console Log Buffer/Filter/Include Errors", true)]
+    [MenuItem(IdleDysonEditorMenu.ConsoleLogBuffer + "Filter/Include Errors", true)]
     private static bool ToggleIncludeErrorsValidate()
     {
         return ValidateFilterMenu(LogTypeMask.Error);
@@ -244,13 +244,13 @@ internal static class ConsoleLogBuffer
         switch (flag)
         {
             case LogTypeMask.Log:
-                return "Tools/Console Log Buffer/Filter/Include Logs";
+                return IdleDysonEditorMenu.ConsoleLogBuffer + "Filter/Include Logs";
             case LogTypeMask.Warning:
-                return "Tools/Console Log Buffer/Filter/Include Warnings";
+                return IdleDysonEditorMenu.ConsoleLogBuffer + "Filter/Include Warnings";
             case LogTypeMask.Error:
-                return "Tools/Console Log Buffer/Filter/Include Errors";
+                return IdleDysonEditorMenu.ConsoleLogBuffer + "Filter/Include Errors";
             default:
-                return "Tools/Console Log Buffer/Filter";
+                return IdleDysonEditorMenu.ConsoleLogBuffer + "Filter";
         }
     }
 
