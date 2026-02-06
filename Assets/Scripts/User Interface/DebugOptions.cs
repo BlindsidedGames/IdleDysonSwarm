@@ -60,9 +60,7 @@ public class DebugOptions : MonoBehaviour
 
     private void Update()
     {
-        debugCurrencyButton.interactable = oracle.saveSettings.prestigePlus.points >= 100000 &&
-                                           oracle.saveSettings.sdPrestige.strangeMatter >= 500000 &&
-                                           PlayerPrefs.GetInt("debug", 0) == 0;
+        debugCurrencyButton.interactable = !oracle.saveSettings.debugOptions;
     }
 
     public void AddBots()

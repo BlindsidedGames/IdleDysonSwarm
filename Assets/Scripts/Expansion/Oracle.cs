@@ -85,11 +85,27 @@ namespace Expansion
         #region SaveAndLoadFromClipboard
 
         [TabGroup("SaveData", "Buttons")] public bool beta;
+
+        [TabGroup("SaveData", "Buttons"), Button("Unlock Dev Options (Testing)")]
+        public void UnlockDevOptionsForTesting()
+        {
+            if (saveSettings == null) saveSettings = new SaveDataSettings();
+
+            saveSettings.debugOptions = true;
+            PlayerPrefs.SetInt("debug", 1);
+            PlayerPrefs.Save();
+            if (lsm != null) lsm.SetDebug();
+
+            Debug.Log("Dev options unlocked for testing.");
+        }
+
         [TabGroup("SaveData", "Buttons"), Button]
         public void LoadFromClipboard()
         {
-            bool devOptions = saveSettings.debugOptions;
-            bool doubleIpUnlocked = saveSettings.doubleIp || PlayerPrefs.GetInt("doubleip", 0) == 1;
+            bool previousDevOptions = saveSettings != null && saveSettings.debugOptions;
+            bool previousDoubleIp = saveSettings != null && saveSettings.doubleIp;
+            bool debugPrefUnlocked = PlayerPrefs.GetInt("debug", 0) == 1;
+            bool doubleIpPrefUnlocked = PlayerPrefs.GetInt("doubleip", 0) == 1;
             saveSettings = new SaveDataSettings();
             string clipboard = GUIUtility.systemCopyBuffer;
             if (TryDecodeExportDto(clipboard, out byte[] dtoBytes) &&
@@ -117,8 +133,10 @@ namespace Expansion
             LoadDictionaries();
             if (!oracle.saveSettings.cheater && saveSettings.maxOfflineTime < 86400)
                 oracle.saveSettings.maxOfflineTime = 86400;
-            saveSettings.debugOptions = devOptions;
-            saveSettings.doubleIp = doubleIpUnlocked;
+            saveSettings.debugOptions = saveSettings.debugOptions || previousDevOptions || debugPrefUnlocked;
+            saveSettings.doubleIp = saveSettings.doubleIp || previousDoubleIp || doubleIpPrefUnlocked;
+            if (saveSettings.debugOptions) PlayerPrefs.SetInt("debug", 1);
+            if (saveSettings.doubleIp) PlayerPrefs.SetInt("doubleip", 1);
             FixSkillpoints();
             ApplyMigrations();
             SyncAutoAssignFromSelectedPreset(runAutoAssign: false);
@@ -1539,8 +1557,12 @@ namespace Expansion
                 saveSettings.frameRate != 0
                     ? saveSettings.frameRate
                     : Mathf.RoundToInt((float)Screen.currentResolution.refreshRateRatio.value);
+            bool debugUnlocked = saveSettings.debugOptions || PlayerPrefs.GetInt("debug", 0) == 1;
             bool doubleIpUnlocked = saveSettings.doubleIp || PlayerPrefs.GetInt("doubleip", 0) == 1;
+            saveSettings.debugOptions = debugUnlocked;
             saveSettings.doubleIp = doubleIpUnlocked;
+            if (saveSettings.debugOptions) PlayerPrefs.SetInt("debug", 1);
+            if (saveSettings.doubleIp) PlayerPrefs.SetInt("doubleip", 1);
             if (lsm != null) lsm.CloseLoadScreen();
 
             bool fileExists = File.Exists(Application.persistentDataPath + "/" + fileName + ".idsOdin");
@@ -1683,7 +1705,11 @@ namespace Expansion
 
         public void WipeAllData()
         {
+            bool debugUnlocked = (saveSettings != null && saveSettings.debugOptions) || PlayerPrefs.GetInt("debug", 0) == 1;
+            bool doubleIpUnlocked = (saveSettings != null && saveSettings.doubleIp) || PlayerPrefs.GetInt("doubleip", 0) == 1;
             saveSettings = new SaveDataSettings();
+            saveSettings.debugOptions = debugUnlocked;
+            saveSettings.doubleIp = doubleIpUnlocked;
             saveSettings.saveVersion = CurrentSaveVersion;
             ES3.Save("saveSettings", saveSettings);
             SceneManager.LoadScene(0);
@@ -1692,7 +1718,8 @@ namespace Expansion
         [ContextMenu("WipeSaveData")]
         public void WipeSaveData()
         {
-            bool doubleIpUnlocked = saveSettings.doubleIp || PlayerPrefs.GetInt("doubleip", 0) == 1;
+            bool debugUnlocked = (saveSettings != null && saveSettings.debugOptions) || PlayerPrefs.GetInt("debug", 0) == 1;
+            bool doubleIpUnlocked = (saveSettings != null && saveSettings.doubleIp) || PlayerPrefs.GetInt("doubleip", 0) == 1;
             foreach (KeyValuePair<int, SkillTreeItem> var in SkillTree) var.Value.Owned = false;
             saveSettings = new SaveDataSettings
             {
@@ -1709,6 +1736,7 @@ namespace Expansion
             };
             if (Loaded)
                 saveSettings.firstReality = true;
+            saveSettings.debugOptions = debugUnlocked;
             saveSettings.doubleIp = doubleIpUnlocked;
             saveSettings.saveVersion = CurrentSaveVersion;
         }

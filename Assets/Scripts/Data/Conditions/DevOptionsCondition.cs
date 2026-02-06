@@ -17,11 +17,6 @@ namespace IdleDysonSwarm.Data.Conditions
         public override bool Evaluate(EffectContext context)
         {
             bool isEnabled = StaticSaveSettings?.debugOptions ?? false;
-            if (!isEnabled)
-            {
-                // Mirror UI unlock logic: allow PlayerPrefs flag to count as enabled.
-                isEnabled = PlayerPrefs.GetInt("debug", 0) == 1;
-            }
             return isEnabled == _mustBeEnabled;
         }
 
@@ -33,10 +28,6 @@ namespace IdleDysonSwarm.Data.Conditions
         public override string GetCurrentValuePreview(EffectContext context)
         {
             bool isEnabled = StaticSaveSettings?.debugOptions ?? false;
-            if (!isEnabled)
-            {
-                isEnabled = PlayerPrefs.GetInt("debug", 0) == 1;
-            }
             bool conditionMet = isEnabled == _mustBeEnabled;
             return $"Enabled: {isEnabled} ({(conditionMet ? "MET" : "NOT MET")})";
         }
