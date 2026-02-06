@@ -127,6 +127,8 @@ public class GameManager : MonoBehaviour
             skillsToggle = refs.skillsToggle;
         if (refs.skillsTextObject != null)
             skillsText = refs.skillsTextObject.GetComponent<TMP_Text>();
+        if (refs.skillTimersText != null)
+            skillTimersText = refs.skillTimersText;
         if (refs.skillsMenuButtonObject != null)
             skillsMenuButton = refs.skillsMenuButtonObject.GetComponent<Button>();
     }
@@ -846,7 +848,8 @@ public class GameManager : MonoBehaviour
         }
 
 
-        skillTimersText.text = skillTimersDisplayText;
+        if (skillTimersText != null)
+            skillTimersText.text = skillTimersDisplayText;
     }
 
     #endregion
@@ -979,7 +982,6 @@ public class GameManager : MonoBehaviour
 
     #endregion
 }
-
 
 
 
