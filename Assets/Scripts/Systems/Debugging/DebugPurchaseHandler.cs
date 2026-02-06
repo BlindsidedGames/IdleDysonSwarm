@@ -36,7 +36,7 @@ public class DebugPurchaseHandler : MonoBehaviour
 
     public void SetDebugState()
     {
-        bool debugUnlocked = oracle.saveSettings.debugOptions || PlayerPrefs.GetInt(DebugPrefKey, 0) == 1;
+        bool debugUnlocked = oracle.saveSettings.debugOptions;
         debugCategrory.SetActive(debugUnlocked);
         purchaseDebugButton.interactable = false;
         currencyButton.interactable = false;
@@ -67,6 +67,7 @@ public class DebugPurchaseHandler : MonoBehaviour
     {
         oracle.saveSettings.debugOptions = true;
         PlayerPrefs.SetInt(DebugPrefKey, 1);
+        PlayerPrefs.Save();
         SetDebugState();
     }
     public void PurchaseDoubleIpSuccessful()
