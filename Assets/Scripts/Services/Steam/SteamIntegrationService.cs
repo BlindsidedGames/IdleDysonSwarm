@@ -326,7 +326,7 @@ namespace IdleDysonSwarm.Services.Steam
 
             if (_foundSecrets.Add(secretId))
             {
-                // New secret discovered - update stat immediately
+                // Steam tracking is save-driven; this call just nudges an immediate refresh.
                 UpdateSecretsFoundStat();
             }
         }
@@ -334,7 +334,7 @@ namespace IdleDysonSwarm.Services.Steam
         /// <summary>
         /// Gets the number of secrets found.
         /// </summary>
-        public int FoundSecretsCount => _foundSecrets.Count;
+        public int FoundSecretsCount => GetSaveDrivenSecretsFoundCount();
 
         /// <summary>
         /// Checks if a specific secret has been found.
@@ -498,7 +498,7 @@ namespace IdleDysonSwarm.Services.Steam
             if (!IsAvailable)
                 return;
 
-            int secretsFound = _foundSecrets.Count;
+            int secretsFound = GetSaveDrivenSecretsFoundCount();
             int currentStat = GetIntStat("SECRETS_FOUND");
 
             if (secretsFound != currentStat)
@@ -512,6 +512,14 @@ namespace IdleDysonSwarm.Services.Steam
                 SteamUserStats.IndicateAchievementProgress("EASTER_SECRETS", (uint)secretsFound, (uint)totalSecrets);
                 #endif
             }
+        }
+
+        private static int GetSaveDrivenSecretsFoundCount()
+        {
+            SaveDataSettings settings = StaticSaveSettings;
+            if (settings == null) return 0;
+            if (settings.avotation) return 7;
+            return Mathf.Clamp(settings.avotationProgressStep, 0, 7);
         }
 
         /// <summary>

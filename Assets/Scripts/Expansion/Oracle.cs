@@ -80,7 +80,7 @@ namespace Expansion
         // IMPORTANT: When adding a migration step in BuildMigrationRegistry(),
         // you MUST also update this constant to match the new LatestVersion.
         // IMPORTANT: Save v7 introduces skill bitsets (see SkillIdMap/SkillBitsetUtility).
-        private const int CurrentSaveVersion = 9;
+        private const int CurrentSaveVersion = 10;
 
         #region SaveAndLoadFromClipboard
 
@@ -689,7 +689,31 @@ namespace Expansion
                 summary: "Rebuild preset auto-assign lists with dependency-safe order from legacy bitsets.",
                 apply: _ => { MigratePresetAutoAssignOrder(); }));
 
+            registry.AddStep(new MigrationStep(
+                targetVersion: 10,
+                name: "Avotation progress persistence",
+                summary: "Initialize and normalize Avotation step progress for persistent secret tracking.",
+                apply: _ => { MigrateAvotationProgress(); }));
+
             return registry;
+        }
+
+        private void MigrateAvotationProgress()
+        {
+            if (saveSettings == null) return;
+
+            saveSettings.avotationProgressStep = Mathf.Clamp(saveSettings.avotationProgressStep, 0, 7);
+
+            // Legacy complete flag remains canonical for the +4 skill-point reward.
+            if (saveSettings.avotation)
+            {
+                saveSettings.avotationProgressStep = 7;
+            }
+            else if (saveSettings.avotationProgressStep >= 7)
+            {
+                saveSettings.avotation = true;
+                saveSettings.avotationProgressStep = 7;
+            }
         }
 
         private void EnsureSkillOwnershipData()
@@ -4428,6 +4452,7 @@ namespace Expansion
             public bool doubleIp;
             public bool unlockAllTabs;
             public bool avotation;
+            public int avotationProgressStep;
             public int infinityPointsToBreakFor;
             public bool infinityInProgress;
 

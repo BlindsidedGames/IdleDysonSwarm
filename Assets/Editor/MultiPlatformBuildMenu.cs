@@ -70,7 +70,7 @@ public static class MultiPlatformBuildMenu
 
         PrepareCleanBuildFolder(windowsOutputRoot);
         PrepareCleanBuildFolder(androidOutputRoot);
-        PrepareCleanBuildFolder(iosOutputRoot);
+        EnsureBuildFolderExists(iosOutputRoot);
 
         BuildResult windowsResult = BuildResult.Unknown;
         BuildResult androidResult = BuildResult.Unknown;
@@ -141,7 +141,7 @@ public static class MultiPlatformBuildMenu
         BuildTargetGroup originalTargetGroup = BuildPipeline.GetBuildTargetGroup(originalTarget);
 
         PrepareCleanBuildFolder(androidOutputRoot);
-        PrepareCleanBuildFolder(iosOutputRoot);
+        EnsureBuildFolderExists(iosOutputRoot);
 
         BuildResult androidResult = BuildResult.Unknown;
         BuildResult iosResult = BuildResult.Unknown;
@@ -254,6 +254,14 @@ public static class MultiPlatformBuildMenu
             }
         }
         else
+        {
+            Directory.CreateDirectory(path);
+        }
+    }
+
+    private static void EnsureBuildFolderExists(string path)
+    {
+        if (!Directory.Exists(path))
         {
             Directory.CreateDirectory(path);
         }
