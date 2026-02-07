@@ -7,7 +7,9 @@ using UnityEngine;
 
 public static class MultiPlatformBuildMenu
 {
-    private const string MenuRoot = IdleDysonEditorMenu.Build;
+    // These actions are build/publishing oriented and are more discoverable under the shared Tools/Build menu
+    // than under game-specific editor tooling.
+    private const string MenuRoot = "Tools/Build/Idle Dyson Swarm/";
     private const string BuildRootPath = "/Users/matthewrushworth/Builds";
     private const string GameBuildRootPath = BuildRootPath + "/Idle Dyson Swarm";
     private const string WindowsBuildPath = GameBuildRootPath + "/Windows";

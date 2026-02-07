@@ -85,9 +85,11 @@ public class AvocadoMeditation : MonoBehaviour
             helpSkipButton.onClick.AddListener(OnHelpSkipClicked);
         }
 
+        // If the player already completed the sequence in a previous session, we should NOT
+        // automatically pop the completion/meditation screen on app start.
         if (oracle.saveSettings.avotation || ProgressStep >= TotalSteps)
         {
-            CompleteSequenceIfNeeded();
+            CompleteSequenceIfNeeded(showMeditation: false);
         }
 
         ResetHelpState();
@@ -126,16 +128,20 @@ public class AvocadoMeditation : MonoBehaviour
 
         if (ProgressStep >= TotalSteps)
         {
-            CompleteSequenceIfNeeded();
+            // Only show the meditation screen at the moment the sequence is completed.
+            CompleteSequenceIfNeeded(showMeditation: true);
             return;
         }
 
         RefreshUi();
     }
 
-    private void CompleteSequenceIfNeeded()
+    private void CompleteSequenceIfNeeded(bool showMeditation)
     {
-        avoMeditate.SetActive(true);
+        if (avoMeditate != null)
+        {
+            avoMeditate.SetActive(showMeditation);
+        }
 
         if (!oracle.saveSettings.avotation)
         {

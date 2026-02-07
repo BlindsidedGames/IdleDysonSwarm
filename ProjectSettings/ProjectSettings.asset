@@ -143,7 +143,7 @@ PlayerSettings:
   loadStoreDebugModeEnabled: 0
   visionOSBundleVersion: 1.0
   tvOSBundleVersion: 1.0
-  bundleVersion: 3.0.317
+  bundleVersion: 3.0.318
   preloadedAssets: []
   metroInputSource: 0
   wsaTransparentSwapchain: 0
@@ -172,10 +172,10 @@ PlayerSettings:
   buildNumber:
     Standalone: 283
     VisionOS: 0
-    iPhone: 317
+    iPhone: 318
     tvOS: 0
   overrideDefaultApplicationIdentifier: 1
-  AndroidBundleVersionCode: 317
+  AndroidBundleVersionCode: 318
   AndroidMinSdkVersion: 25
   AndroidTargetSdkVersion: 35
   AndroidPreferredInstallLocation: 1
@@ -259,7 +259,7 @@ PlayerSettings:
   clonedFromGUID: 10ad67313f4034357812315f3c407484
   templatePackageId: com.unity.template.2d@6.1.0
   templateDefaultScene: Assets/Scenes/SampleScene.unity
-  useCustomMainManifest: 0
+  useCustomMainManifest: 1
   useCustomLauncherManifest: 0
   useCustomMainGradleTemplate: 0
   useCustomLauncherGradleManifest: 0

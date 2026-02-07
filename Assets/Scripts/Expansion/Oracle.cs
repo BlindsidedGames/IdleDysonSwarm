@@ -1711,10 +1711,161 @@ namespace Expansion
 
         #region SaveMethods
 
+        private static void DeleteDefaultEs3SaveArtifacts()
+        {
+            // Some devices end up with a truncated/corrupted ES3 file (or encryption mismatch),
+            // which can make even ES3.KeyExists throw on startup. If that happens, the only
+            // practical recovery is to delete the ES3 file and start fresh.
+            try
+            {
+                ES3Settings settings = new ES3Settings();
+
+                // Primary delete via ES3 API (handles PlayerPrefs vs File location).
+                try { ES3.DeleteFile(settings); }
+                catch (Exception e) { Debug.LogWarning($"[SaveRecovery] ES3.DeleteFile failed: {e.Message}"); }
+
+                // Also delete ES3 temp/backup artifacts if using file storage.
+                if (settings.location == ES3.Location.File)
+                {
+                    string fullPath = settings.FullPath;
+                    if (!string.IsNullOrEmpty(fullPath))
+                    {
+                        // ES3IO uses these suffixes internally.
+                        TryDeleteFile(fullPath + ".tmp");
+                        TryDeleteFile(fullPath + ".tmp.bak");
+                        TryDeleteFile(fullPath + ".bac");
+                    }
+                }
+            }
+            catch (Exception e)
+            {
+                Debug.LogWarning($"[SaveRecovery] Failed deleting ES3 artifacts: {e.Message}");
+            }
+        }
+
+        private static void TryDeleteFile(string path)
+        {
+            try
+            {
+                if (File.Exists(path)) File.Delete(path);
+            }
+            catch (Exception e)
+            {
+                Debug.LogWarning($"[SaveRecovery] Failed deleting '{path}': {e.Message}");
+            }
+        }
+
+        private static void ArchiveDefaultEs3SaveArtifacts(string reason)
+        {
+            // Best-effort: keep a copy of the broken save on disk for support/debugging.
+            // This only applies when ES3 is writing to a file (default for this project).
+            try
+            {
+                ES3Settings settings = new ES3Settings();
+                if (settings.location != ES3.Location.File) return;
+
+                string fullPath = settings.FullPath;
+                if (string.IsNullOrEmpty(fullPath)) return;
+                if (!File.Exists(fullPath)) return;
+
+                string stamp = DateTime.UtcNow.ToString("yyyyMMdd_HHmmss", CultureInfo.InvariantCulture);
+                string archivePath = $"{fullPath}.corrupt.{stamp}";
+
+                int counter = 1;
+                while (File.Exists(archivePath) && counter < 50)
+                {
+                    archivePath = $"{fullPath}.corrupt.{stamp}.{counter}";
+                    counter++;
+                }
+
+                File.Move(fullPath, archivePath);
+                Debug.LogWarning($"[SaveRecovery] Archived broken ES3 save to '{archivePath}' (reason={reason}).");
+
+                // Also archive temp/backup artifacts if they exist.
+                TryArchiveFile(fullPath + ".tmp", $"{archivePath}.tmp");
+                TryArchiveFile(fullPath + ".tmp.bak", $"{archivePath}.tmp.bak");
+                TryArchiveFile(fullPath + ".bac", $"{archivePath}.bac");
+            }
+            catch (Exception e)
+            {
+                Debug.LogWarning($"[SaveRecovery] Failed archiving ES3 artifacts: {e.Message}");
+            }
+        }
+
+        private static void TryArchiveFile(string sourcePath, string destPath)
+        {
+            try
+            {
+                if (!File.Exists(sourcePath)) return;
+                if (File.Exists(destPath)) return;
+                File.Move(sourcePath, destPath);
+            }
+            catch (Exception e)
+            {
+                Debug.LogWarning($"[SaveRecovery] Failed archiving '{sourcePath}': {e.Message}");
+            }
+        }
+
+        private static bool TryLoadSaveSettingsFromEs3File(string fullPath, out SaveDataSettings settings)
+        {
+            settings = null;
+            try
+            {
+                if (string.IsNullOrEmpty(fullPath)) return false;
+                if (!File.Exists(fullPath)) return false;
+                if (!ES3.KeyExists("saveSettings", fullPath)) return false;
+                settings = ES3.Load<SaveDataSettings>("saveSettings", fullPath);
+                return settings != null;
+            }
+            catch
+            {
+                settings = null;
+                return false;
+            }
+        }
+
+        private static bool TryRecoverDefaultEs3Save(out SaveDataSettings recovered, out string recoveredFromPath)
+        {
+            recovered = null;
+            recoveredFromPath = null;
+            try
+            {
+                ES3Settings settings = new ES3Settings();
+                if (settings.location != ES3.Location.File) return false;
+                string fullPath = settings.FullPath;
+                if (string.IsNullOrEmpty(fullPath)) return false;
+
+                // ES3 writes via a temp file and keeps a copy of the previous file at "<fullPath>.tmp.bak".
+                // If the main file is corrupt/truncated, the backup often still contains the last good save.
+                string[] candidates =
+                {
+                    fullPath + ".tmp",
+                    fullPath + ".tmp.bak",
+                    fullPath + ".bac",
+                    fullPath
+                };
+
+                foreach (string candidate in candidates)
+                {
+                    if (!TryLoadSaveSettingsFromEs3File(candidate, out SaveDataSettings candidateSettings)) continue;
+                    recovered = candidateSettings;
+                    recoveredFromPath = candidate;
+                    return true;
+                }
+            }
+            catch
+            {
+                // ignored
+            }
+
+            return false;
+        }
+
         public void WipeAllData()
         {
             bool debugUnlocked = (saveSettings != null && saveSettings.debugOptions) || PlayerPrefs.GetInt("debug", 0) == 1;
             bool doubleIpUnlocked = (saveSettings != null && saveSettings.doubleIp) || PlayerPrefs.GetInt("doubleip", 0) == 1;
+            DeleteDefaultEs3SaveArtifacts();
             saveSettings = new SaveDataSettings();
             saveSettings.debugOptions = debugUnlocked;
             saveSettings.doubleIp = doubleIpUnlocked;
@@ -3840,23 +3991,72 @@ namespace Expansion
             SetSaveReady(false);
             WipeSaveData();
 
-            if (ES3.KeyExists("saveSettings"))
+            bool hasEs3Save = false;
+            bool es3Broken = false;
+            try
             {
-                saveSettings = ES3.Load<SaveDataSettings>("saveSettings");
-                LoadDictionaries();
-                FixSkillpoints();
-                if (!oracle.saveSettings.cheater && oracle.saveSettings.maxOfflineTime < 86400)
-                    oracle.saveSettings.maxOfflineTime = 86400;
-                Loaded = true;
-                Debug.Log("Loaded with ES3");
+                hasEs3Save = ES3.KeyExists("saveSettings");
             }
-            else if (File.Exists(Application.persistentDataPath + "/" + fileName + ".idsOdin"))
+            catch (Exception e)
+            {
+                Debug.LogError($"[SaveRecovery] ES3.KeyExists failed; will attempt recovery. {e}");
+                hasEs3Save = false;
+                es3Broken = true;
+            }
+
+            if (hasEs3Save)
+            {
+                try
+                {
+                    saveSettings = ES3.Load<SaveDataSettings>("saveSettings");
+                    LoadDictionaries();
+                    FixSkillpoints();
+                    if (!oracle.saveSettings.cheater && oracle.saveSettings.maxOfflineTime < 86400)
+                        oracle.saveSettings.maxOfflineTime = 86400;
+                    saveSettings.lastSuccessfulLoadUtc = DateTime.UtcNow.ToString(CultureInfo.InvariantCulture);
+                    Loaded = true;
+                    Debug.Log("Loaded with ES3");
+                }
+                catch (Exception e)
+                {
+                    Debug.LogError($"[SaveRecovery] ES3.Load failed; will attempt recovery. {e}");
+                    es3Broken = true;
+                }
+            }
+
+            if (!Loaded && es3Broken)
+            {
+                // Try to recover from ES3's backup artifacts first, without wiping the user.
+                if (TryRecoverDefaultEs3Save(out SaveDataSettings recovered, out string recoveredFrom))
+                {
+                    saveSettings = recovered;
+                    LoadDictionaries();
+                    FixSkillpoints();
+                    if (!oracle.saveSettings.cheater && oracle.saveSettings.maxOfflineTime < 86400)
+                        oracle.saveSettings.maxOfflineTime = 86400;
+                    saveSettings.lastSuccessfulLoadUtc = DateTime.UtcNow.ToString(CultureInfo.InvariantCulture);
+                    Loaded = true;
+                    Debug.LogWarning($"[SaveRecovery] Recovered saveSettings from '{recoveredFrom}'.");
+
+                    // Rewrite a fresh default ES3 file so future loads don't depend on the backup artifact.
+                    try { SaveInternal(true); }
+                    catch (Exception e) { Debug.LogWarning($"[SaveRecovery] Failed rewriting recovered save: {e.Message}"); }
+                }
+                else
+                {
+                    // No recoverable ES3 backup found. Preserve the broken file for support/debugging,
+                    // then allow the rest of the normal load flow to continue (Odin or new save).
+                    ArchiveDefaultEs3SaveArtifacts("unrecoverable");
+                }
+            }
+
+            if (!Loaded && File.Exists(Application.persistentDataPath + "/" + fileName + ".idsOdin"))
             {
                 LoadState(Application.persistentDataPath + "/" + fileName + ".idsOdin");
                 //File.Delete(Application.persistentDataPath + "/" + fileName + ".idsOdin");
                 Debug.Log("Loaded with Odin");
             }
-            else
+            else if (!Loaded)
             {
                 saveSettings.dateStarted = DateTime.UtcNow.ToString(CultureInfo.InvariantCulture);
                 Loaded = true;
