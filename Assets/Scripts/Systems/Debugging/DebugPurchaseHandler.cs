@@ -1,3 +1,4 @@
+using System.Collections;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
@@ -22,10 +23,20 @@ public class DebugPurchaseHandler : MonoBehaviour
     private const string DebugPrefKey = "debug";
     private const string DoubleIpPrefKey = "doubleip";
 
+    private void OnEnable()
+    {
+        DebugOptionsChanged += HandleDebugOptionsChanged;
+        StartCoroutine(RefreshWhenOracleReady());
+    }
+
+    private void OnDisable()
+    {
+        DebugOptionsChanged -= HandleDebugOptionsChanged;
+    }
+
     private void Start()
     {
-        SetDebugState();
-        SetDoubleIpState();
+        RefreshState();
         SetTipTextUnavailable();
     }
 
@@ -36,14 +47,19 @@ public class DebugPurchaseHandler : MonoBehaviour
 
     public void SetDebugState()
     {
+        RefreshState();
+    }
+
+    public void RefreshState()
+    {
+        if (oracle == null || oracle.saveSettings == null) return;
+
         bool debugUnlocked = oracle.saveSettings.debugOptions;
         debugCategrory.SetActive(debugUnlocked);
         purchaseDebugButton.interactable = false;
         currencyButton.interactable = false;
         purchasedDebugText.text = debugUnlocked ? "Purchased" : "Unavailable";
-
-        //purchasedText.text = (PlayerPrefs.GetInt("debug", 0) == 1) ? "Purchased" : "100k Quantum shards and 500k Strange Matter";
-        //purchaseCategory.SetActive(!debugUnlocked);
+        SetDoubleIpState();
     }
 
     public void SetDoubleIpState()
@@ -68,7 +84,8 @@ public class DebugPurchaseHandler : MonoBehaviour
         oracle.saveSettings.debugOptions = true;
         PlayerPrefs.SetInt(DebugPrefKey, 1);
         PlayerPrefs.Save();
-        SetDebugState();
+        NotifyDebugOptionsChanged();
+        RefreshState();
     }
     public void PurchaseDoubleIpSuccessful()
     {
@@ -82,5 +99,16 @@ public class DebugPurchaseHandler : MonoBehaviour
         if (purchasedTip1Text != null) purchasedTip1Text.text = "Unavailable";
         if (purchasedTip2Text != null) purchasedTip2Text.text = "Unavailable";
         if (purchasedTip3Text != null) purchasedTip3Text.text = "Unavailable";
+    }
+
+    private void HandleDebugOptionsChanged()
+    {
+        RefreshState();
+    }
+
+    private IEnumerator RefreshWhenOracleReady()
+    {
+        yield return new WaitUntil(() => oracle != null && oracle.saveSettings != null);
+        RefreshState();
     }
 }

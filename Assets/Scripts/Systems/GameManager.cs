@@ -81,6 +81,7 @@ public class GameManager : MonoBehaviour
     [SerializeField] private GameObject skillsToggle;
     [SerializeField] private GameObject[] skillsButton;
     [SerializeField, FormerlySerializedAs("skillsfillbar")] private GameObject skillsFillBar;
+    [SerializeField] private GameObject skillsPresetSwitchingSection;
     [SerializeField] private TMP_Text skillsText;
     [SerializeField, FormerlySerializedAs("skillsMenubutton")] private Button skillsMenuButton;
     [SerializeField] private double maxInfinityBuff = 1e44;
@@ -110,6 +111,10 @@ public class GameManager : MonoBehaviour
             skillsFill = refs.skillsFillObject.GetComponent<SlicedFilledImage>();
         if (refs.skillsFillBar != null)
             skillsFillBar = refs.skillsFillBar;
+        if (refs.skillsPresetSwitchingSection != null)
+            skillsPresetSwitchingSection = refs.skillsPresetSwitchingSection;
+        else if (refs.skillsPresetTogglesRoot != null)
+            skillsPresetSwitchingSection = refs.skillsPresetTogglesRoot;
 
         // Update other Skills UI references
         if (refs.skillsIcon != null)
@@ -362,15 +367,25 @@ public class GameManager : MonoBehaviour
         skillTreePoints.text =
             $"Skill points: {skillPointColor}{skillTreeData.skillPointsTree}</color>";
         string color = "<color=#91DD8F>";
+        bool wasSkillsFirstRunDone = oracle.saveSettings.skillsFirstRunDone;
+        bool skillsUnlocked =
+            oracle.saveSettings.skillsFirstRunDone ||
+            skillTreeData.skillPointsTree > 0 ||
+            prestigeData.permanentSkillPoint > 0 ||
+            prestigeData.infinityPoints > 0 ||
+            prestigeData.spentInfinityPoints > 0;
+
         if (skillsText != null)
         {
             long availableSkillPoints = skillTreeData.skillPointsTree;
-            skillsText.text = availableSkillPoints > 0
-                ? $"Skills (<color=#54FF00>{availableSkillPoints}</color>)"
-                : "Skills";
+            skillsText.text = oracle.saveSettings.skillsFirstRunDone
+                ? availableSkillPoints > 0
+                    ? $"Skills (<color=#54FF00>{availableSkillPoints}</color>)"
+                    : "Skills"
+                : "<align=\"center\"><sprite=4 color=#C8B3FF>";
         }
-        if (skillTreeData.skillPointsTree > 0 || prestigeData.permanentSkillPoint > 0 || prestigeData.infinityPoints > 0 ||
-            prestigeData.spentInfinityPoints > 0)
+
+        if (skillsUnlocked)
         {
             if (skillsIcon != null) skillsIcon.SetActive(true);
             if (skillsIconImage != null)
@@ -378,25 +393,38 @@ public class GameManager : MonoBehaviour
                     ? new Color(0.32884598f, 1f, 0f, 1f)
                     : _skillsIconBaseColor;
             // Hide toggle in permanent mode since the panel is always visible
-            if (skillsToggle != null && !_isPermanentPanel && SceneManager.GetActiveScene().buildIndex == 1)
-                skillsToggle.SetActive(true);
-            skillsButton[0].SetActive(!oracle.saveSettings.skillsButtonToggle);
-            if (!oracle.saveSettings.skillsFirstRunDone) skillsButton[1].SetActive(true);
+            if (skillsToggle != null)
+                skillsToggle.SetActive(!_isPermanentPanel && SceneManager.GetActiveScene().buildIndex == 1);
+            if (skillsButton != null && skillsButton.Length > 0 && skillsButton[0] != null)
+                skillsButton[0].SetActive(!oracle.saveSettings.skillsButtonToggle);
+            if (skillsButton != null && skillsButton.Length > 1 && skillsButton[1] != null && !oracle.saveSettings.skillsFirstRunDone)
+                skillsButton[1].SetActive(true);
+            if (skillsPresetSwitchingSection != null)
+                skillsPresetSwitchingSection.SetActive(true);
+            if (!wasSkillsFirstRunDone && skillsToggle != null)
+            {
+                Toggle toggle = skillsToggle.GetComponent<Toggle>();
+                if (toggle != null)
+                    toggle.isOn = false;
+            }
             oracle.saveSettings.skillsFirstRunDone = true;
             if (skillsMenuButton != null) skillsMenuButton.interactable = true;
         }
-        else if (skillTreeData.skillPointsTree == 0 && prestigeData.permanentSkillPoint == 0 && prestigeData.infinityPoints == 0 &&
-                 prestigeData.spentInfinityPoints == 0 && !oracle.saveSettings.skillsFirstRunDone)
-        {
-            if (skillsIcon != null) skillsIcon.SetActive(oracle.saveSettings.skillsFirstRunDone);
-            if (skillsToggle != null) skillsToggle.SetActive(false);
-            if (skillsIconImage != null) skillsIconImage.color = _skillsIconBaseColor;
-            skillsButton[0].SetActive(false);
-            if (skillsMenuButton != null) skillsMenuButton.interactable = false;
-        }
         else
         {
+            // Locked state mirrors Infinity-style behavior.
+            if (skillsIcon != null) skillsIcon.SetActive(false);
+            if (skillsToggle != null)
+                skillsToggle.SetActive(false);
             if (skillsIconImage != null) skillsIconImage.color = _skillsIconBaseColor;
+            if (skillsButton != null && skillsButton.Length > 0 && skillsButton[0] != null)
+                skillsButton[0].SetActive(false);
+            if (skillsButton != null && skillsButton.Length > 1 && skillsButton[1] != null)
+                skillsButton[1].SetActive(false);
+            if (skillsPresetSwitchingSection != null)
+                skillsPresetSwitchingSection.SetActive(false);
+            if (skillsMenuButton != null) skillsMenuButton.interactable = false;
+            if (skillsFillBar != null) skillsFillBar.SetActive(true);
         }
 
         switch (infinityData.goalSetter)
@@ -982,7 +1010,3 @@ public class GameManager : MonoBehaviour
 
     #endregion
 }
-
-
-
-

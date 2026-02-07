@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
-using IdleDysonSwarm.Services;
 using static Expansion.Oracle;
 
 public class AvocadoMeditation : MonoBehaviour
@@ -29,13 +28,6 @@ public class AvocadoMeditation : MonoBehaviour
     [Header("Help Settings")]
     [SerializeField] private float helpCountdownSeconds = 120f;
 
-    private const string SecretStep1 = "AVO_MEDITATION_STEP_1";
-    private const string SecretStep2 = "AVO_MEDITATION_STEP_2";
-    private const string SecretStep3 = "AVO_MEDITATION_STEP_3";
-    private const string SecretStep4 = "AVO_MEDITATION_STEP_4";
-    private const string SecretStep5 = "AVO_MEDITATION_STEP_5";
-    private const string SecretStep6 = "AVO_MEDITATION_STEP_6";
-    private const string SecretStep7 = "AVO_MEDITATION_STEP_7";
     private const int TotalSteps = 7;
     private const string FinalMessage = "Skill points granted: 4. Well done!";
 
@@ -53,6 +45,7 @@ public class AvocadoMeditation : MonoBehaviour
     private float _countdownRemaining;
     private bool _helpActivatedForStep;
     private bool _countdownRunning;
+    private bool _initialized;
 
     private int ProgressStep
     {
@@ -62,22 +55,29 @@ public class AvocadoMeditation : MonoBehaviour
 
     private void Start()
     {
+        StartCoroutine(InitializeWhenOracleReady());
+    }
+
+    private IEnumerator InitializeWhenOracleReady()
+    {
+        yield return new WaitUntil(() => oracle != null && oracle.saveSettings != null && oracle.Loaded);
+
         if (oracle.saveSettings.avotation && ProgressStep < TotalSteps)
         {
             ProgressStep = TotalSteps;
         }
 
-        firstButton.onClick.AddListener(() => TryCompleteStep(0, SecretStep1));
-        secondButton.onClick.AddListener(() => TryCompleteStep(1, SecretStep2));
-        thirdButton.onClick.AddListener(() => TryCompleteStep(2, SecretStep3));
-        fourthButton.onClick.AddListener(() => TryCompleteStep(3, SecretStep4));
-        fifthButton.onClick.AddListener(() => TryCompleteStep(4, SecretStep5));
-        sixthButton.onClick.AddListener(() => TryCompleteStep(5, SecretStep6));
-        seventhButton.onClick.AddListener(() => TryCompleteStep(6, SecretStep7));
+        firstButton.onClick.AddListener(() => TryCompleteStep(0));
+        secondButton.onClick.AddListener(() => TryCompleteStep(1));
+        thirdButton.onClick.AddListener(() => TryCompleteStep(2));
+        fourthButton.onClick.AddListener(() => TryCompleteStep(3));
+        fifthButton.onClick.AddListener(() => TryCompleteStep(4));
+        sixthButton.onClick.AddListener(() => TryCompleteStep(5));
+        seventhButton.onClick.AddListener(() => TryCompleteStep(6));
 
         if (seventhButtonAlt != null)
         {
-            seventhButtonAlt.onClick.AddListener(() => TryCompleteStep(6, SecretStep7));
+            seventhButtonAlt.onClick.AddListener(() => TryCompleteStep(6));
         }
 
         if (helpSkipButton != null)
@@ -92,10 +92,13 @@ public class AvocadoMeditation : MonoBehaviour
 
         ResetHelpState();
         RefreshUi();
+        _initialized = true;
     }
 
     private void Update()
     {
+        if (!_initialized) return;
+
         if (!_countdownRunning || oracle.saveSettings.avotation)
         {
             return;
@@ -111,13 +114,14 @@ public class AvocadoMeditation : MonoBehaviour
         RefreshHelpButtonUi();
     }
 
-    private void TryCompleteStep(int requiredStepIndex, string secretId)
+    private void TryCompleteStep(int requiredStepIndex)
     {
+        if (!_initialized) return;
         if (oracle.saveSettings.avotation) return;
         if (ProgressStep != requiredStepIndex) return;
 
         ProgressStep = requiredStepIndex + 1;
-        RegisterSecretStep(secretId);
+        PersistProgressState();
         ResetHelpState();
 
         if (ProgressStep >= TotalSteps)
@@ -140,12 +144,14 @@ public class AvocadoMeditation : MonoBehaviour
         }
 
         ProgressStep = TotalSteps;
+        PersistProgressState();
         ResetHelpState();
         RefreshUi();
     }
 
     private void OnHelpSkipClicked()
     {
+        if (!_initialized) return;
         if (oracle.saveSettings.avotation || ProgressStep >= TotalSteps) return;
 
         if (!_helpActivatedForStep)
@@ -160,7 +166,7 @@ public class AvocadoMeditation : MonoBehaviour
         if (_countdownRunning) return;
 
         // Skip reveals exactly one secret step.
-        TryCompleteStep(ProgressStep, string.Empty);
+        TryCompleteStep(ProgressStep);
     }
 
     private void RefreshUi()
@@ -192,18 +198,37 @@ public class AvocadoMeditation : MonoBehaviour
     private void RefreshProgressImages()
     {
         bool completed = oracle.saveSettings.avotation || ProgressStep >= TotalSteps;
-        int shown = Mathf.Clamp(ProgressStep, 0, TotalSteps);
+        List<GameObject> revealImages = GetRevealProgressImages();
+        int shown = Mathf.Clamp(ProgressStep, 0, revealImages.Count);
 
-        for (int i = 0; i < progressImages.Count; i++)
+        for (int i = 0; i < revealImages.Count; i++)
         {
-            if (progressImages[i] == null) continue;
-            progressImages[i].SetActive(!completed && i < shown);
+            GameObject image = revealImages[i];
+            if (image == null) continue;
+            image.SetActive(!completed && i < shown);
         }
 
         if (completionImage != null)
         {
             completionImage.SetActive(completed);
         }
+    }
+
+    private List<GameObject> GetRevealProgressImages()
+    {
+        var revealImages = new List<GameObject>(progressImages.Count);
+        var seen = new HashSet<GameObject>();
+
+        for (int i = 0; i < progressImages.Count; i++)
+        {
+            GameObject image = progressImages[i];
+            if (image == null) continue;
+            if (image == completionImage) continue;
+            if (!seen.Add(image)) continue;
+            revealImages.Add(image);
+        }
+
+        return revealImages;
     }
 
     private void RefreshHintUi()
@@ -261,11 +286,10 @@ public class AvocadoMeditation : MonoBehaviour
         _countdownRemaining = 0f;
     }
 
-    private void RegisterSecretStep(string secretId)
+    private void PersistProgressState()
     {
-        if (ServiceLocator.TryGet<ISteamIntegrationService>(out var service))
-        {
-            service.RegisterSecretFound(secretId);
-        }
+        if (oracle == null || oracle.saveSettings == null) return;
+        if (oracle.saveSettings.avotation) ProgressStep = TotalSteps;
+        oracle.Save();
     }
 }

@@ -13,9 +13,11 @@ public class DebugOptions : MonoBehaviour
     private PrestigePlus prestigePlus => oracle.saveSettings.prestigePlus;
     private SaveDataPrestige sdp => oracle.saveSettings.sdPrestige;
 
+    [Header("Dev Unlock")]
     [SerializeField] private Button debugCurrencyButton;
+    [SerializeField] private GameObject debugCategory;
+    [SerializeField] private GameObject purchaseCategory;
 
-    [SerializeField] private DebugPurchaseHandler debugPurchaseHandler;
     [SerializeField] private TMP_InputField inputField;
     [SerializeField] private Button addBots;
     [SerializeField] private Button addSkills;
@@ -39,6 +41,17 @@ public class DebugOptions : MonoBehaviour
     [SerializeField] private GameManager _gameManager;
     [SerializeField] private SidePanelManager SidePanelManager;
 
+    private void OnEnable()
+    {
+        DebugOptionsChanged += HandleDebugOptionsChanged;
+        EnsureDebugCategoryReferences();
+        RefreshDebugUnlockUi();
+    }
+
+    private void OnDisable()
+    {
+        DebugOptionsChanged -= HandleDebugOptionsChanged;
+    }
 
     private void Start()
     {
@@ -52,15 +65,18 @@ public class DebugOptions : MonoBehaviour
         setTinker.onClick.AddListener(SetTinker);
         setTinker0.onClick.AddListener(SetTinkerO);
         addInfinityPoints.onClick.AddListener(AddInfinityPoints);
-        if (debugPurchaseHandler != null)
-            debugPurchaseHandler.SetDebugState();
+        if (debugCurrencyButton != null)
+            debugCurrencyButton.onClick.AddListener(UnlockDevOptionsFromPurchase);
         WireDebugTelemetryButtons();
+        EnsureDebugCategoryReferences();
+        RefreshDebugUnlockUi();
 
     }
 
     private void Update()
     {
-        debugCurrencyButton.interactable = !oracle.saveSettings.debugOptions;
+        if (debugCurrencyButton != null)
+            debugCurrencyButton.interactable = !oracle.saveSettings.debugOptions;
     }
 
     public void AddBots()
@@ -179,6 +195,38 @@ public class DebugOptions : MonoBehaviour
         }
 
         Debug.Log($"Exported debug report to {path}");
+    }
+
+    private void UnlockDevOptionsFromPurchase()
+    {
+        oracle.saveSettings.debugOptions = true;
+        PlayerPrefs.SetInt("debug", 1);
+        PlayerPrefs.Save();
+        NotifyDebugOptionsChanged();
+        RefreshDebugUnlockUi();
+    }
+
+    private void HandleDebugOptionsChanged()
+    {
+        RefreshDebugUnlockUi();
+    }
+
+    private void EnsureDebugCategoryReferences()
+    {
+        if (debugCategory == null)
+            debugCategory = transform.Find("Buyables/Scroll View/Viewport/Content/Debug")?.gameObject;
+        if (purchaseCategory == null)
+            purchaseCategory = transform.Find("Buyables/Scroll View/Viewport/Content/Purchase")?.gameObject;
+    }
+
+    private void RefreshDebugUnlockUi()
+    {
+        if (oracle == null || oracle.saveSettings == null) return;
+        EnsureDebugCategoryReferences();
+
+        bool unlocked = oracle.saveSettings.debugOptions;
+        if (debugCategory != null) debugCategory.SetActive(unlocked);
+        if (purchaseCategory != null) purchaseCategory.SetActive(!unlocked);
     }
 
     public static event Action AutoAssign;

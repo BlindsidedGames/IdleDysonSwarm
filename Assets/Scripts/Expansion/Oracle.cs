@@ -59,6 +59,12 @@ namespace Expansion
         [SerializeField] private bool offlineParityApplyInfinityPointsBonus = true;
 
         public static event Action UpdateSkills;
+        public static event Action DebugOptionsChanged;
+
+        public static void NotifyDebugOptionsChanged()
+        {
+            DebugOptionsChanged?.Invoke();
+        }
 
         private DysonVerseInfinityData infinityData => saveSettings.dysonVerseSaveData.dysonVerseInfinityData;
         private DysonVersePrestigeData prestigeData => saveSettings.dysonVerseSaveData.dysonVersePrestigeData;
@@ -95,6 +101,7 @@ namespace Expansion
             PlayerPrefs.SetInt("debug", 1);
             PlayerPrefs.Save();
             if (lsm != null) lsm.SetDebug();
+            NotifyDebugOptionsChanged();
 
             Debug.Log("Dev options unlocked for testing.");
         }
@@ -137,6 +144,7 @@ namespace Expansion
             saveSettings.doubleIp = saveSettings.doubleIp || previousDoubleIp || doubleIpPrefUnlocked;
             if (saveSettings.debugOptions) PlayerPrefs.SetInt("debug", 1);
             if (saveSettings.doubleIp) PlayerPrefs.SetInt("doubleip", 1);
+            NotifyDebugOptionsChanged();
             FixSkillpoints();
             ApplyMigrations();
             SyncAutoAssignFromSelectedPreset(runAutoAssign: false);
@@ -1711,6 +1719,7 @@ namespace Expansion
             saveSettings.debugOptions = debugUnlocked;
             saveSettings.doubleIp = doubleIpUnlocked;
             saveSettings.saveVersion = CurrentSaveVersion;
+            NotifyDebugOptionsChanged();
             ES3.Save("saveSettings", saveSettings);
             SceneManager.LoadScene(0);
         }
@@ -1739,6 +1748,7 @@ namespace Expansion
             saveSettings.debugOptions = debugUnlocked;
             saveSettings.doubleIp = doubleIpUnlocked;
             saveSettings.saveVersion = CurrentSaveVersion;
+            NotifyDebugOptionsChanged();
         }
 
         [ContextMenu("WipeDream1Save")]
