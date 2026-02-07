@@ -47,6 +47,7 @@ public class SidePanelReferences : MonoBehaviour
     public GameObject skillsTextObject;
     public TMP_Text skillTimersText;
     public GameObject skillsMenuButtonObject;
+    public GameObject skillsPresetSwitchingSection;
     public TMP_Text skillsPresetFeedbackText;
     [Header("Skills Presets")]
     public GameObject skillsPresetTogglesRoot;

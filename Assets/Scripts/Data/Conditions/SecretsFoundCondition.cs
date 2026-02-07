@@ -1,7 +1,6 @@
-using IdleDysonSwarm.Services;
-using IdleDysonSwarm.Services.Steam;
 using Systems.Stats;
 using UnityEngine;
+using static Expansion.Oracle;
 
 namespace IdleDysonSwarm.Data.Conditions
 {
@@ -27,12 +26,10 @@ namespace IdleDysonSwarm.Data.Conditions
 
         private int GetSecretsFoundCount()
         {
-            if (ServiceLocator.TryGet<ISteamIntegrationService>(out var service) &&
-                service is SteamIntegrationService steamService)
-            {
-                return steamService.FoundSecretsCount;
-            }
-            return 0;
+            SaveDataSettings settings = StaticSaveSettings;
+            if (settings == null) return 0;
+            if (settings.avotation) return 7;
+            return Mathf.Clamp(settings.avotationProgressStep, 0, 7);
         }
 
         protected override string GenerateDescription()
