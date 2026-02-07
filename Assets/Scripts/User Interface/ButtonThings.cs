@@ -54,7 +54,9 @@ public class ButtonThings : MonoBehaviour
 
     public void WipeExpansionSave()
     {
-        oracle.WipeSaveData();
+        // WipeSaveData only resets in-memory state; it does not delete the underlying ES3 file.
+        // When the ES3 file is corrupted/truncated, users must delete the file to recover.
+        oracle.WipeAllData();
     }
 
     public void LoadSceneByInt(int scene)

@@ -11,6 +11,7 @@ GameObject:
   - component: {fileID: 3847999072503527525}
   - component: {fileID: 3847999072503527514}
   - component: {fileID: 3847999072503527515}
+  - component: {fileID: 3847999072503527516}
   m_Layer: 5
   m_Name: Version Number
   m_TagString: Untagged
@@ -65,7 +66,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: 'Build: 300
+  m_text: 'Build:
 
 '
   m_isRightToLeft: 0
@@ -138,3 +139,17 @@ MonoBehaviour:
   m_hasFontAssetChanged: 0
   m_baseMaterial: {fileID: 0}
   m_maskOffset: {x: 0, y: 0, z: 0, w: 0}
+--- !u!114 &3847999072503527516
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3847999072503527526}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b7493fd6bab84b3fb9563283836bcace, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  prefix: 'Build: '
+  unknownVersionFallback: unknown
