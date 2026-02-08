@@ -8,6 +8,7 @@ using UnityEngine.UI;
 using UnityEngine.Serialization;
 using Systems;
 using Systems.Stats;
+using Blindsided.ProceduralUIImage;
 using Blindsided.Utilities;
 using static Expansion.Oracle;
 
@@ -73,6 +74,7 @@ public class GameManager : MonoBehaviour
 
     [Header("SkillsMenuItems"), SerializeField, FormerlySerializedAs("SkillsFill")]
     private SlicedFilledImage skillsFill;
+    private ProceduralUIImage _skillsFillProcedural;
 
     [SerializeField] private GameObject skillsIcon;
     [SerializeField] private Image skillsIconImage;
@@ -108,7 +110,13 @@ public class GameManager : MonoBehaviour
 
         // Update fill bar references
         if (refs.skillsFillObject != null)
-            skillsFill = refs.skillsFillObject.GetComponent<SlicedFilledImage>();
+        {
+            // Prefer ProceduralUIImage (new), fall back to legacy SlicedFilledImage.
+            _skillsFillProcedural = refs.skillsFillObject.GetComponent<ProceduralUIImage>();
+            skillsFill = _skillsFillProcedural == null
+                ? refs.skillsFillObject.GetComponent<SlicedFilledImage>()
+                : null;
+        }
         if (refs.skillsFillBar != null)
             skillsFillBar = refs.skillsFillBar;
         if (refs.skillsPresetSwitchingSection != null)
@@ -136,6 +144,12 @@ public class GameManager : MonoBehaviour
             skillTimersText = refs.skillTimersText;
         if (refs.skillsMenuButtonObject != null)
             skillsMenuButton = refs.skillsMenuButtonObject.GetComponent<Button>();
+    }
+
+    private void SetSkillsFill(float fill)
+    {
+        if (_skillsFillProcedural != null) _skillsFillProcedural.fillAmount = fill;
+        else if (skillsFill != null) skillsFill.fillAmount = fill;
     }
 
     #region Main
@@ -423,16 +437,16 @@ public class GameManager : MonoBehaviour
                 skillsButton[1].SetActive(false);
             if (skillsPresetSwitchingSection != null)
                 skillsPresetSwitchingSection.SetActive(false);
-            if (skillsMenuButton != null) skillsMenuButton.interactable = false;
-            if (skillsFillBar != null) skillsFillBar.SetActive(true);
-        }
+	            if (skillsMenuButton != null) skillsMenuButton.interactable = false;
+	            if (skillsFillBar != null) skillsFillBar.SetActive(true);
+	        }
 
-        switch (infinityData.goalSetter)
-        {
+	        switch (infinityData.goalSetter)
+	        {
             case 0:
             {
                 goal.text = $"{color}Goal: Create {CalcUtils.FormatNumber(10)} Bots";
-                if (skillsFill != null) skillsFill.fillAmount = (float)infinityData.bots / 10;
+                SetSkillsFill((float)infinityData.bots / 10);
                 if (infinityData.bots >= 10)
                 {
                     if (skillsFillBar != null) skillsFillBar.SetActive(true);
@@ -453,7 +467,7 @@ public class GameManager : MonoBehaviour
             case 1:
             {
                 goal.text = $"{color}Goal: Build {CalcUtils.FormatNumber(5)} Assembly Lines";
-                if (skillsFill != null) skillsFill.fillAmount = (float)(infinityData.assemblyLines[1] / 5);
+                SetSkillsFill((float)(infinityData.assemblyLines[1] / 5));
                 if (infinityData.assemblyLines[1] >= 5)
                 {
                     infinityData.goalSetter = 2;
@@ -468,7 +482,7 @@ public class GameManager : MonoBehaviour
             case 2:
             {
                 goal.text = $"{color}Goal: Have {CalcUtils.FormatNumber(20000)} active Panels";
-                if (skillsFill != null) skillsFill.fillAmount = (float)(infinityData.panelsPerSec * infinityData.panelLifetime / 20000);
+                SetSkillsFill((float)(infinityData.panelsPerSec * infinityData.panelLifetime / 20000));
                 if (infinityData.panelsPerSec * infinityData.panelLifetime >= 20000)
                 {
                     infinityData.goalSetter = 3;
@@ -483,8 +497,8 @@ public class GameManager : MonoBehaviour
             case 3:
             {
                 goal.text = $"{color}Goal: Own {CalcUtils.FormatNumber(20)} Planets";
-                if (skillsFill != null) skillsFill.fillAmount =
-                    (float)(infinityData.planets[0] + (skillTreeData.terraIrradiant ? infinityData.planets[1] * 12 : infinityData.planets[1]) / 20);
+                SetSkillsFill((float)(infinityData.planets[0] +
+                                      (skillTreeData.terraIrradiant ? infinityData.planets[1] * 12 : infinityData.planets[1]) / 20));
                 if (infinityData.planets[0] + (skillTreeData.terraIrradiant ? infinityData.planets[1] * 12 : infinityData.planets[1]) >= 20)
                 {
                     infinityData.goalSetter = 4;
@@ -500,7 +514,7 @@ public class GameManager : MonoBehaviour
             {
                 goal.text = $"{color}Goal: {CalcUtils.FormatNumber(1000000000000)} total panels decayed";
 
-                if (skillsFill != null) skillsFill.fillAmount = (float)infinityData.totalPanelsDecayed / 1000000000000;
+                SetSkillsFill((float)infinityData.totalPanelsDecayed / 1000000000000);
                 if (infinityData.totalPanelsDecayed >= 1000000000000)
                 {
                     infinityData.goalSetter = 5;
@@ -515,7 +529,7 @@ public class GameManager : MonoBehaviour
             case 5:
             {
                 goal.text = $"{color}Goal: Surround {CalcUtils.FormatNumber(1000000000)} Stars";
-                if (skillsFill != null) skillsFill.fillAmount = (float)(infinityData.panelsPerSec * infinityData.panelLifetime / 20000 / 1000000000);
+                SetSkillsFill((float)(infinityData.panelsPerSec * infinityData.panelLifetime / 20000 / 1000000000));
                 if (infinityData.panelsPerSec * infinityData.panelLifetime / 20000 >= 1000000000)
                 {
                     infinityData.goalSetter = 6;
@@ -530,7 +544,7 @@ public class GameManager : MonoBehaviour
             case 6:
             {
                 goal.text = $"{color}Goal: Surround {CalcUtils.FormatNumber(10000000000)} Stars";
-                if (skillsFill != null) skillsFill.fillAmount = (float)(infinityData.panelsPerSec * infinityData.panelLifetime / 20000 / 10000000000);
+                SetSkillsFill((float)(infinityData.panelsPerSec * infinityData.panelLifetime / 20000 / 10000000000));
                 if (infinityData.panelsPerSec * infinityData.panelLifetime / 20000 >= 10000000000)
                 {
                     infinityData.goalSetter = 7;
@@ -545,7 +559,7 @@ public class GameManager : MonoBehaviour
             case 7:
             {
                 goal.text = $"{color}Goal: Engulf a Galaxy";
-                if (skillsFill != null) skillsFill.fillAmount = (float)(infinityData.panelsPerSec * infinityData.panelLifetime / 20000 / 100000000000 / 1);
+                SetSkillsFill((float)(infinityData.panelsPerSec * infinityData.panelLifetime / 20000 / 100000000000 / 1));
                 if (infinityData.panelsPerSec * infinityData.panelLifetime / 20000 / 100000000000 > 1)
                 {
                     infinityData.goalSetter = 8;
@@ -560,7 +574,7 @@ public class GameManager : MonoBehaviour
             case 8:
             {
                 goal.text = $"{color}Goal: Engulf {CalcUtils.FormatNumber(10)} Galaxies";
-                if (skillsFill != null) skillsFill.fillAmount = (float)(infinityData.panelsPerSec * infinityData.panelLifetime / 20000 / 100000000000 / 10);
+                SetSkillsFill((float)(infinityData.panelsPerSec * infinityData.panelLifetime / 20000 / 100000000000 / 10));
                 if (infinityData.panelsPerSec * infinityData.panelLifetime / 20000 / 100000000000 > 10)
                 {
                     infinityData.goalSetter = 9;
@@ -575,7 +589,7 @@ public class GameManager : MonoBehaviour
             case 9:
             {
                 goal.text = $"{color}Goal: Engulf {CalcUtils.FormatNumber(100)} Galaxies";
-                if (skillsFill != null) skillsFill.fillAmount = (float)(infinityData.panelsPerSec * infinityData.panelLifetime / 20000 / 100000000000 / 100);
+                SetSkillsFill((float)(infinityData.panelsPerSec * infinityData.panelLifetime / 20000 / 100000000000 / 100));
                 if (infinityData.panelsPerSec * infinityData.panelLifetime / 20000 / 100000000000 > 100)
                 {
                     infinityData.goalSetter = 10;

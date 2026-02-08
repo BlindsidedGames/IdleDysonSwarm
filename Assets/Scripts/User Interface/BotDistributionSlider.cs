@@ -42,6 +42,9 @@ public class BotDistributionSlider : MonoBehaviour
             // Debug.Log(SaveSystem.Instance.saveData.botDistribution);
             workers.text = $"{(1f - prestigeData.botDistribution).ToString("P0")}";
             researchers.text = $"{prestigeData.botDistribution.ToString("P0")}";
+
+            // Keep the active preset slot in sync as the player tweaks this slider.
+            oracle.SyncSelectedPresetBotDistributionFromCurrent();
         }
         else
         {

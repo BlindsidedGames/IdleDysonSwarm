@@ -2,6 +2,7 @@ using TMPro;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
+using Blindsided.ProceduralUIImage;
 using Blindsided.Utilities;
 using IdleDysonSwarm.Services;
 using static Expansion.Oracle;
@@ -23,7 +24,8 @@ public class RealityPanelManager : MonoBehaviour
     private GameObject _simulations;
     private GameObject _simulationsToggle;
 
-    private SlicedFilledImage _realityFill;
+    private ProceduralUIImage _realityFillProcedural;
+    private SlicedFilledImage _realityFillSliced;
     private TMP_Text _realityText;
     private Button _realityMenuButton;
     private IWorkerService _workerService;
@@ -71,12 +73,17 @@ public class RealityPanelManager : MonoBehaviour
 
     private void CacheComponents()
     {
-        _realityFill = null;
+        _realityFillProcedural = null;
+        _realityFillSliced = null;
         _realityText = null;
         _realityMenuButton = null;
 
         if (_realityFillObject != null)
-            _realityFill = _realityFillObject.GetComponent<SlicedFilledImage>();
+        {
+            _realityFillProcedural = _realityFillObject.GetComponent<ProceduralUIImage>();
+            if (_realityFillProcedural == null)
+                _realityFillSliced = _realityFillObject.GetComponent<SlicedFilledImage>();
+        }
         if (_realityTextObject != null)
             _realityText = _realityTextObject.GetComponent<TMP_Text>();
         if (_realityMenuButtonObject != null)
@@ -124,18 +131,22 @@ public class RealityPanelManager : MonoBehaviour
 
     private void UpdateFillBar(bool unlocked)
     {
-        if (_realityFill == null) return;
+        if (_realityFillProcedural == null && _realityFillSliced == null) return;
 
+        float fill;
         if (unlocked)
         {
             // Show progress toward gathering Influence (128 workers needed)
-            _realityFill.fillAmount = _workerService.WorkerFillPercent;
+            fill = _workerService.WorkerFillPercent;
         }
         else
         {
             // Show progress toward unlocking Reality (secrets of the universe)
-            _realityFill.fillAmount = (float)PrestigeData.secretsOfTheUniverse / MaxSecrets;
+            fill = (float)PrestigeData.secretsOfTheUniverse / MaxSecrets;
         }
+
+        if (_realityFillProcedural != null) _realityFillProcedural.fillAmount = fill;
+        else if (_realityFillSliced != null) _realityFillSliced.fillAmount = fill;
     }
 
     private void HandleFirstRun(bool unlocked)

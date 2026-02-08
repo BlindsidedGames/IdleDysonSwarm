@@ -2,6 +2,7 @@ using TMPro;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
+using Blindsided.ProceduralUIImage;
 using Blindsided.Utilities;
 using static Expansion.Oracle;
 
@@ -18,7 +19,8 @@ public class PrestigePanelManager : MonoBehaviour
     private GameObject _prestigeTextObject;
     private GameObject _prestigeMenuButtonObject;
 
-    private SlicedFilledImage _prestigeFill;
+    private ProceduralUIImage _prestigeFillProcedural;
+    private SlicedFilledImage _prestigeFillSliced;
     private TMP_Text _prestigeText;
     private Button _prestigeMenuButton;
     private bool _isPermanentPanel;
@@ -53,12 +55,17 @@ public class PrestigePanelManager : MonoBehaviour
 
     private void CacheComponents()
     {
-        _prestigeFill = null;
+        _prestigeFillProcedural = null;
+        _prestigeFillSliced = null;
         _prestigeText = null;
         _prestigeMenuButton = null;
 
         if (_prestigeFillObject != null)
-            _prestigeFill = _prestigeFillObject.GetComponent<SlicedFilledImage>();
+        {
+            _prestigeFillProcedural = _prestigeFillObject.GetComponent<ProceduralUIImage>();
+            if (_prestigeFillProcedural == null)
+                _prestigeFillSliced = _prestigeFillObject.GetComponent<SlicedFilledImage>();
+        }
         if (_prestigeTextObject != null)
             _prestigeText = _prestigeTextObject.GetComponent<TMP_Text>();
         if (_prestigeMenuButtonObject != null)
@@ -99,8 +106,12 @@ public class PrestigePanelManager : MonoBehaviour
                 : "<align=\"center\"><sprite=4 color=#C8B3FF>";
         }
 
-        if (_prestigeFill != null)
-            _prestigeFill.fillAmount = (float)PrestigeData.infinityPoints / 42;
+        if (_prestigeFillProcedural != null || _prestigeFillSliced != null)
+        {
+            float fill = (float)PrestigeData.infinityPoints / 42;
+            if (_prestigeFillProcedural != null) _prestigeFillProcedural.fillAmount = fill;
+            else if (_prestigeFillSliced != null) _prestigeFillSliced.fillAmount = fill;
+        }
 
         HandleFirstRun(unlocked);
     }
