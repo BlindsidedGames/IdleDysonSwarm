@@ -217,13 +217,19 @@ public class SkillTreeSettingsManager : MonoBehaviour
             oracle.SaveList(_currentPresetIndex);
         }
 
-        _skillTreeManager.ResetSkills();
-        oracle.LoadList(presetSlot);
-        oracle.InvokeUpdateSkills();
-        _gameManager.AutoAssignSkillsInvoke();
-
         _currentPresetIndex = presetSlot;
         saveData.selectedPreset = presetSlot;
+
+        // Switching presets temporarily clears the live auto-assign list; suppress preset syncing
+        // during that reset/load to avoid accidentally overwriting a slot with an empty list.
+        using (oracle.SuppressPresetSync())
+        {
+            _skillTreeManager.ResetSkills();
+            oracle.LoadList(presetSlot);
+            oracle.InvokeUpdateSkills();
+        }
+
+        _gameManager.AutoAssignSkillsInvoke();
         SyncSidePanelsToPreset(presetSlot);
         UpdateSidePanelPresetLabels();
     }
@@ -252,12 +258,18 @@ public class SkillTreeSettingsManager : MonoBehaviour
     {
         if (!TryGetSaveData(out DysonVerseSaveData saveData)) return;
 
+        // If exporting the active preset, prefer the live list (what the player just edited)
+        // even if they haven't swapped presets yet.
+        string[] exportedSkillIds = presetIndex == _currentPresetIndex
+            ? oracle.GetAutoAssignmentSkillIds().ToArray()
+            : oracle.GetPresetAutoAssignmentSkillIds(presetIndex).ToArray();
+
         SkillPresetClipboard payload = new SkillPresetClipboard
         {
             version = 1,
             presetName = GetPresetName(saveData, presetIndex),
             botDistribution = GetPresetBotDistribution(saveData, presetIndex),
-            skillIds = oracle.GetPresetAutoAssignmentSkillIds(presetIndex).ToArray()
+            skillIds = exportedSkillIds
         };
 
         GUIUtility.systemCopyBuffer = JsonUtility.ToJson(payload);

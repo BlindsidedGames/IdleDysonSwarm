@@ -5,6 +5,7 @@ using Unity.Mathematics;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
+using Blindsided.ProceduralUIImage;
 using Blindsided.Utilities;
 using static Expansion.Oracle;
 
@@ -20,7 +21,8 @@ public class InfinityPanelManager : MonoBehaviour
     private GameObject _infinityTextObject;
     private GameObject _infinityMenuButtonObject;
 
-    private SlicedFilledImage _infinityFill;
+    private ProceduralUIImage _infinityFillProcedural;
+    private SlicedFilledImage _infinityFillSliced;
     private TMP_Text _infinityText;
     private Button _infinityMenuButton;
     private bool _isPermanentPanel;
@@ -50,12 +52,18 @@ public class InfinityPanelManager : MonoBehaviour
 
     private void CacheComponents()
     {
-        _infinityFill = null;
+        _infinityFillProcedural = null;
+        _infinityFillSliced = null;
         _infinityText = null;
         _infinityMenuButton = null;
 
         if (_infinityFillObject != null)
-            _infinityFill = _infinityFillObject.GetComponent<SlicedFilledImage>();
+        {
+            // Prefer ProceduralUIImage (new), fall back to legacy SlicedFilledImage.
+            _infinityFillProcedural = _infinityFillObject.GetComponent<ProceduralUIImage>();
+            if (_infinityFillProcedural == null)
+                _infinityFillSliced = _infinityFillObject.GetComponent<SlicedFilledImage>();
+        }
         if (_infinityTextObject != null)
             _infinityText = _infinityTextObject.GetComponent<TMP_Text>();
         if (_infinityMenuButtonObject != null)
@@ -110,7 +118,7 @@ public class InfinityPanelManager : MonoBehaviour
 
     private void UpdateFillBar(bool autoPrestige, double amount)
     {
-        if (_infinityFill == null) return;
+        if (_infinityFillProcedural == null && _infinityFillSliced == null) return;
 
         if (autoPrestige)
         {
@@ -126,7 +134,10 @@ public class InfinityPanelManager : MonoBehaviour
             _percent = (InfinityData.bots - amountForCurrentPoint) / (amountForNextPoint - amountForCurrentPoint);
             if (InfinityData.bots < 1) _percent = 0;
         }
-        _infinityFill.fillAmount = (float)_percent;
+
+        float fill = (float)_percent;
+        if (_infinityFillProcedural != null) _infinityFillProcedural.fillAmount = fill;
+        else if (_infinityFillSliced != null) _infinityFillSliced.fillAmount = fill;
     }
 
     private void HandleFirstRun(bool unlocked)

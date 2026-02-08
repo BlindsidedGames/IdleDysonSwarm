@@ -83,6 +83,9 @@ namespace Expansion
         public bool Loaded;
         private bool _isSaveReady;
         private bool _autoSaveScheduled;
+        private bool _quickSaveScheduled;
+        private int _suppressPresetSyncDepth;
+        private const float QuickSaveDelaySeconds = 0.25f;
         // IMPORTANT: When adding a migration step in BuildMigrationRegistry(),
         // you MUST also update this constant to match the new LatestVersion.
         // IMPORTANT: Save v7 introduces skill bitsets (see SkillIdMap/SkillBitsetUtility).
@@ -580,11 +583,98 @@ namespace Expansion
             if (_isSaveReady) ScheduleAutoSave();
         }
 
+        public IDisposable SuppressPresetSync()
+        {
+            _suppressPresetSyncDepth++;
+            return new PresetSyncScope(this);
+        }
+
+        private sealed class PresetSyncScope : IDisposable
+        {
+            private Oracle _owner;
+
+            public PresetSyncScope(Oracle owner)
+            {
+                _owner = owner;
+            }
+
+            public void Dispose()
+            {
+                if (_owner == null) return;
+                _owner._suppressPresetSyncDepth = Mathf.Max(0, _owner._suppressPresetSyncDepth - 1);
+                _owner = null;
+            }
+        }
+
+        private bool IsPresetSyncSuppressed()
+        {
+            return _suppressPresetSyncDepth > 0;
+        }
+
         private void ScheduleAutoSave()
         {
             if (_autoSaveScheduled) return;
             InvokeRepeating(nameof(Save), 60, 60);
             _autoSaveScheduled = true;
+        }
+
+        private void ScheduleQuickSave()
+        {
+            if (!_isSaveReady) return;
+            // Debounce rapid UI interactions (skill assign/unassign, sliders, etc.)
+            CancelInvoke(nameof(QuickSave));
+            Invoke(nameof(QuickSave), QuickSaveDelaySeconds);
+            _quickSaveScheduled = true;
+        }
+
+        private void QuickSave()
+        {
+            _quickSaveScheduled = false;
+            SaveInternal(false);
+        }
+
+        public void SyncSelectedPresetAutoAssignFromCurrent()
+        {
+            if (IsPresetSyncSuppressed()) return;
+
+            DysonVerseSaveData data = saveSettings?.dysonVerseSaveData;
+            if (data == null) return;
+
+            int presetIndex = Mathf.Clamp(data.selectedPreset, 1, 5);
+            // Clone to avoid sharing list references between "current" and slot storage.
+            List<string> ids = new List<string>(GetAutoAssignmentSkillIds());
+            SetPresetAutoAssignmentSkillIds(presetIndex, ids);
+            SyncSelectedPresetBotDistributionFromCurrent();
+        }
+
+        public void SyncSelectedPresetBotDistributionFromCurrent()
+        {
+            if (IsPresetSyncSuppressed()) return;
+
+            DysonVerseSaveData data = saveSettings?.dysonVerseSaveData;
+            if (data == null) return;
+
+            int presetIndex = Mathf.Clamp(data.selectedPreset, 1, 5);
+            switch (presetIndex)
+            {
+                case 1:
+                    data.botDistPreset1 = prestigeData.botDistribution;
+                    break;
+                case 2:
+                    data.botDistPreset2 = prestigeData.botDistribution;
+                    break;
+                case 3:
+                    data.botDistPreset3 = prestigeData.botDistribution;
+                    break;
+                case 4:
+                    data.botDistPreset4 = prestigeData.botDistribution;
+                    break;
+                case 5:
+                    data.botDistPreset5 = prestigeData.botDistribution;
+                    break;
+            }
+
+            ScheduleQuickSave();
         }
 
         private void ApplyMigrations()
@@ -4375,6 +4465,13 @@ namespace Expansion
             data.skillAutoAssignmentIds = ids ?? new List<string>();
             data.skillAutoAssignmentList = SkillIdMap.ConvertIdsToKeys(data.skillAutoAssignmentIds);
             data.skillAutoAssignmentBits = SkillBitsetUtility.BuildBitsetFromIds(data.skillAutoAssignmentIds);
+
+            // Keep the active preset slot as the single source of truth for export/import.
+            if (!IsPresetSyncSuppressed())
+            {
+                SyncSelectedPresetAutoAssignFromCurrent();
+                ScheduleQuickSave();
+            }
         }
 
         public List<string> GetPresetAutoAssignmentSkillIds(int presetIndex)

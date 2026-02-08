@@ -1,4 +1,5 @@
 using UnityEngine;
+using Blindsided.ProceduralUIImage;
 using Blindsided.Utilities;
 using static Expansion.Oracle;
 
@@ -8,7 +9,8 @@ using static Expansion.Oracle;
 public class OfflineTimeFillBar : MonoBehaviour
 {
     private GameObject _fillBarObject;
-    private SlicedFilledImage _fillBar;
+    private ProceduralUIImage _fillBarProcedural;
+    private SlicedFilledImage _fillBarSliced;
 
     /// <summary>
     /// Sets UI references from a SidePanelReferences component.
@@ -24,14 +26,22 @@ public class OfflineTimeFillBar : MonoBehaviour
 
     private void CacheComponents()
     {
-        _fillBar = null;
+        _fillBarProcedural = null;
+        _fillBarSliced = null;
         if (_fillBarObject != null)
-            _fillBar = _fillBarObject.GetComponent<SlicedFilledImage>();
+        {
+            _fillBarProcedural = _fillBarObject.GetComponent<ProceduralUIImage>();
+            if (_fillBarProcedural == null)
+                _fillBarSliced = _fillBarObject.GetComponent<SlicedFilledImage>();
+        }
     }
 
     private void Update()
     {
-        if (_fillBar != null)
-            _fillBar.fillAmount = (float)(oracle.saveSettings.offlineTime / oracle.saveSettings.maxOfflineTime);
+        if (_fillBarProcedural == null && _fillBarSliced == null) return;
+
+        float fill = (float)(oracle.saveSettings.offlineTime / oracle.saveSettings.maxOfflineTime);
+        if (_fillBarProcedural != null) _fillBarProcedural.fillAmount = fill;
+        else if (_fillBarSliced != null) _fillBarSliced.fillAmount = fill;
     }
 }
