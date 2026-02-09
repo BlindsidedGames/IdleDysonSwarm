@@ -10,6 +10,7 @@ This file is a lightweight, human-readable map of the project so future agents c
 - `ProjectSettings/` Unity project configuration.
 - `Library/`, `Temp/`, `Logs/`, `UserSettings/` generated Unity output (not source).
 - `Documentation/` project docs, plans, and references.
+- `Documentation/Code/` (create as needed) design/contract notes for complex or central scripts.
 - `Recordings/` image sequences and captures.
 - `STRUCTURE.md` additional high-level project map.
 - `UIElementsSchema/` UIElements schema assets.
@@ -57,6 +58,22 @@ This file is a lightweight, human-readable map of the project so future agents c
 - Primary source code lives in `Assets/Scripts/` and `Assets/Editor/`.
 - Avoid modifying third-party code under `Assets/Plugins/` unless explicitly requested.
 - Console log buffer lives in `Assets/Editor/ConsoleLogBuffer.cs` and writes filtered logs to `Documentation/Console/editor-console.json`. Filters/clear: `Tools/Console Log Buffer/...`.
+
+## Documentation maintenance (required)
+When editing any script (C# under `Assets/Scripts/**` or `Assets/Editor/**`, plus any build/tooling scripts in-repo), do a documentation pass as part of the same change.
+
+If the code is unclear, do not guess. Use repo search to find who calls it / what it calls, inspect referenced assets (ScriptableObjects, prefabs, scenes), and then document what you learned in that same edit.
+
+Minimum per-script documentation standard (in the file being edited):
+- Add or update a top-of-file header comment with: purpose, where it runs (runtime/editor), primary entry points (Unity event methods, menu items, callbacks), and what it owns vs delegates.
+- Add or update an "Interacts with" section listing the key classes/services it calls, and the key callers that invoke it (paths/class names).
+- Add or update "Change notes": what breaks if you change public methods, events, serialized fields, save keys, or ScriptableObject IDs; list the other places/assets that must be updated together.
+
+For complex/central scripts, also add/refresh a companion doc under `Documentation/Code/` (create folder as needed) named after the script/class. That doc should capture: contract/behavior expectations, data flow, save/load implications, performance pitfalls, and quick verification steps.
+
+Any time you add a new system/service/subsystem, rename/move script folders, or change how major systems connect, update `AGENTS.md` (and `STRUCTURE.md` when it's a structural change) in the same PR.
+
+Do not do "documentation cleanup" inside `Assets/Plugins/**` unless explicitly requested; instead document integration points and expectations in our code (and optionally `Documentation/Code/`).
 
 ## Steam build/upload (Windows)
 When asked to do a Windows Steam build/upload for Idle Dyson Swarm:

@@ -33,6 +33,7 @@ public class ManualBotCreation : MonoBehaviour
     private bool lastHeldVisual;
     private bool lastManualLabour;
     private double lastCooldownSeconds;
+    private const double HoldPermanentBarThresholdSeconds = 0.5;
 
     private void Start()
     {
@@ -92,6 +93,10 @@ public class ManualBotCreation : MonoBehaviour
             cooldownSeconds = Math.Max(0.01, tinker.Cooldown.Value);
         }
 
+        // Holding should always auto-repeat once it kicks in, but the "permanent" held visual (filled bar + tint)
+        // should only be shown once the cooldown has reached 0.5s, or if Manual Labour is assigned.
+        bool allowPermanentHeldVisual = manualLabourNow || cooldownSeconds <= HoldPermanentBarThresholdSeconds;
+
         if (cooldownSeconds != lastCooldownSeconds || manualLabourChanged)
         {
             lastCooldownSeconds = cooldownSeconds;
@@ -131,14 +136,15 @@ public class ManualBotCreation : MonoBehaviour
             StartButton();
         }
 
-        ApplyHeldVisuals(pointerHeld);
+        ApplyHeldVisuals(pointerHeld && allowPermanentHeldVisual);
 
         if (running)
         {
             if (time < cooldownSeconds)
             {
                 time += Time.deltaTime;
-                fill.fillAmount = autoRepeatActive ? 1f : time / (float)cooldownSeconds;
+                float pct = time / (float)cooldownSeconds;
+                fill.fillAmount = (autoRepeatActive && allowPermanentHeldVisual) ? 1f : pct;
                 counter.text = $"{CalcUtils.FormatNumber(cooldownSeconds - time, useMspace: true)}s";
             }
             else
@@ -161,7 +167,7 @@ public class ManualBotCreation : MonoBehaviour
                 if (autoRepeatActive)
                 {
                     time = 0f;
-                    fill.fillAmount = 1f;
+                    fill.fillAmount = allowPermanentHeldVisual ? 1f : 0f;
                     counter.text = $"{CalcUtils.FormatNumber(cooldownSeconds, useMspace: true)}s";
                 }
                 else
@@ -213,4 +219,3 @@ public class ManualBotCreation : MonoBehaviour
     }
 
 }
-
