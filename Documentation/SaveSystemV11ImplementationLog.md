@@ -30,8 +30,8 @@ Primary design doc: `Documentation/SaveSystemV11Plan.md`.
 - Created/updated plan doc: `Documentation/SaveSystemV11Plan.md`.
 - Added expanded test strategy to plan (phase gates, fixtures, adversarial cases).
 - Phase 0 (characterization) started:
-  - Added `Assets/Editor/Tests/Save/OracleSaveCodecCharacterizationTests.cs`.
-  - Added `Assets/Editor/Tests/Save/OracleSparseFacilityCharacterizationTests.cs`.
+  - Added codec characterization tests (now `Assets/Editor/Tests/Save/SaveCodecCharacterizationTests.cs`).
+  - Added facility sparse characterization tests (now `Assets/Editor/Tests/Save/FacilityArrayNormalizerTests.cs`).
   - Added fixtures folder `Assets/Editor/Tests/Save/Fixtures/` (empty for now).
 - Phase 1 (codec extraction) started:
   - Added `Assets/Scripts/Systems/Save/SaveCodec.cs` (codec extracted from Oracle logic).
@@ -66,6 +66,18 @@ Primary design doc: `Documentation/SaveSystemV11Plan.md`.
 - Prevented forced canonical write from corrupting offline-time math:
   - `SaveInternal(force, updateQuitTime)` can write the canonical file without overwriting `dateQuitString`.
   - Conversion saves (legacy -> canonical) and clipboard imports use `updateQuitTime:false` so `AwayForSeconds()` still measures the real away time.
+- Oracle extraction progress:
+  - Added `Assets/Scripts/Systems/Save/FacilityArrayNormalizer.cs` and switched Oracle to call it for facility array normalization.
+  - Removed legacy facility sparse array helpers from `Assets/Scripts/Expansion/Oracle.cs` (kept only the Ensure step that calls the normalizer).
+  - Removed duplicated clipboard codec helpers from `Assets/Scripts/Expansion/Oracle.cs` (canonical codec is now `Assets/Scripts/Systems/Save/SaveCodec.cs`).
+  - Extracted legacy-load candidate selection and legacy `.idsOdin` JSON parsing into `Assets/Scripts/Systems/Save/SaveLoadCandidateSelector.cs`.
+  - Extracted snapshot compaction (skill bits, auto-assign bits, facility normalization, dictionary filtering) into `Assets/Scripts/Systems/Save/SaveSnapshotBuilder.cs`.
+  - Updated tests:
+    - Replaced sparse-characterization tests with `Assets/Editor/Tests/Save/FacilityArrayNormalizerTests.cs`.
+    - Updated codec characterization to target `SaveCodec` (`Assets/Editor/Tests/Save/SaveCodecCharacterizationTests.cs`).
+  - Updated Unity-generated csproj compile includes for the new/renamed files:
+    - `Assembly-CSharp.csproj`
+    - `Assembly-CSharp-Editor.csproj`
 
 ## Checkpoint Summary (2026-02-09)
 This checkpoint switches the project to an Odin-only canonical save pipeline while keeping ES3 as a legacy import fallback.

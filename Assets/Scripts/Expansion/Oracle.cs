@@ -3,8 +3,6 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
-using System.IO.Compression;
-using CompressionLevel = System.IO.Compression.CompressionLevel;
 using System.Text;
 using System.Threading.Tasks;
 using Classes;
@@ -35,8 +33,6 @@ namespace Expansion
 {
     public class Oracle : SerializedMonoBehaviour
     {
-        private const string CompressedSavePrefix = "IDSZ1:";
-        private const string BinarySavePrefix = "IDB1:";
         public Button recoveryButton;
         public TMP_Text recoveryText;
 
@@ -125,7 +121,6 @@ namespace Expansion
 
             saveSettings = decoded;
 
-            // LogImportFacilityState("PostDeserialize");
             LoadDictionaries();
             if (!oracle.saveSettings.cheater && saveSettings.maxOfflineTime < 86400)
                 oracle.saveSettings.maxOfflineTime = 86400;
@@ -138,7 +133,6 @@ namespace Expansion
             ApplyMigrations();
             SyncAutoAssignFromSelectedPreset(runAutoAssign: false);
             LogPresetAutoAssignState("PostMigration/Clipboard");
-            // LogImportFacilityState("PostMigration");
             SaveInternal(true, updateQuitTime: false);
             SceneManager.LoadScene(0);
         }
@@ -182,96 +176,6 @@ namespace Expansion
             return $"{ids.Count}:[{string.Join(",", ids)}]";
         }
 
-        private static bool TryDeserializeFromBase64Payload(string clipboard, out SaveDataSettings settings)
-        {
-            settings = null;
-            if (string.IsNullOrWhiteSpace(clipboard)) return false;
-
-            byte[] bytes;
-            try
-            {
-                bytes = DecodeClipboardBytes(clipboard);
-            }
-            catch
-            {
-                return false;
-            }
-
-            if (TryDeserializeJsonBytes(bytes, out settings)) return true;
-            if (LooksLikeJsonBytes(bytes)) return false;
-
-            if (LooksLikeGzip(bytes))
-            {
-                try
-                {
-                    byte[] decompressed = DecompressBytes(bytes);
-                    if (TryDeserializeJsonBytes(decompressed, out settings)) return true;
-                    if (LooksLikeJsonBytes(decompressed)) return false;
-                    return TryDeserializeSaveSettings(decompressed, DataFormat.Binary, out settings);
-                }
-                catch
-                {
-                    return false;
-                }
-            }
-
-            return TryDeserializeSaveSettings(bytes, DataFormat.Binary, out settings);
-        }
-
-        private static bool TryDeserializeSaveSettings(byte[] bytes, DataFormat format, out SaveDataSettings settings)
-        {
-            settings = null;
-            if (bytes == null || bytes.Length == 0) return false;
-            try
-            {
-                settings = SirenixSerializationUtility.DeserializeValue<SaveDataSettings>(bytes, format);
-                return settings != null;
-            }
-            catch
-            {
-                return false;
-            }
-        }
-
-        private static bool TryDeserializeJsonBytes(byte[] bytes, out SaveDataSettings settings)
-        {
-            settings = null;
-            if (bytes == null || bytes.Length == 0) return false;
-            byte[] trimmed = StripUtf8Bom(bytes);
-            return TryDeserializeSaveSettings(trimmed, DataFormat.JSON, out settings);
-        }
-
-        private static bool LooksLikeGzip(byte[] bytes)
-        {
-            return bytes != null && bytes.Length >= 2 && bytes[0] == 0x1F && bytes[1] == 0x8B;
-        }
-
-        private static bool LooksLikeJsonBytes(byte[] bytes)
-        {
-            if (bytes == null || bytes.Length == 0) return false;
-            for (int i = 0; i < bytes.Length; i++)
-            {
-                byte b = bytes[i];
-                if (b == 0x20 || b == 0x09 || b == 0x0A || b == 0x0D) continue;
-                return b == (byte)'{';
-            }
-
-            return false;
-        }
-
-        private static byte[] StripUtf8Bom(byte[] bytes)
-        {
-            if (bytes == null || bytes.Length < 3) return bytes;
-            if (bytes[0] == 0xEF && bytes[1] == 0xBB && bytes[2] == 0xBF)
-            {
-                byte[] trimmed = new byte[bytes.Length - 3];
-                Buffer.BlockCopy(bytes, 3, trimmed, 0, trimmed.Length);
-                return trimmed;
-            }
-
-            return bytes;
-        }
-
         private void FixSkillpoints()
         {
             if (saveSettings.hasFixedIP) return;
@@ -313,7 +217,11 @@ namespace Expansion
         {
             SaveDictionaries();
             byte[] fullBytes = SirenixSerializationUtility.SerializeValue(saveSettings, DataFormat.JSON);
-            SaveDataSettings snapshot = CreateSaveSnapshotForStorage(includeBase64Fields: false, compactFacilityArrays: true);
+            SaveDataSettings snapshot = SaveSnapshotBuilder.CreateSaveSnapshotForStorage(
+                saveSettings,
+                includeBase64Fields: false,
+                buildOwnedBitsetFromRuntime: BuildOwnedBitsetFromRuntime,
+                getAutoAssignmentSkillIds: GetAutoAssignmentSkillIds);
             if (beta)
             {
                 byte[] bytes = SirenixSerializationUtility.SerializeValue(snapshot, DataFormat.JSON);
@@ -341,7 +249,11 @@ namespace Expansion
         {
             SaveDictionaries();
             byte[] fullBytes = SirenixSerializationUtility.SerializeValue(saveSettings, DataFormat.JSON);
-            SaveDataSettings snapshot = CreateSaveSnapshotForStorage(includeBase64Fields: false, compactFacilityArrays: true);
+            SaveDataSettings snapshot = SaveSnapshotBuilder.CreateSaveSnapshotForStorage(
+                saveSettings,
+                includeBase64Fields: false,
+                buildOwnedBitsetFromRuntime: BuildOwnedBitsetFromRuntime,
+                getAutoAssignmentSkillIds: GetAutoAssignmentSkillIds);
             byte[] bytes = SirenixSerializationUtility.SerializeValue(snapshot, DataFormat.Binary);
             byte[] compressed = SaveCodec.CompressBytes(bytes);
             var dto = new ExportSaveDto
@@ -360,7 +272,7 @@ namespace Expansion
             File.WriteAllText(filePath, json, Encoding.UTF8);
 
             Debug.Log($"Save debug JSON written to: {filePath}");
-            string debugFullClipboard = beta ? Encoding.UTF8.GetString(fullBytes) : EncodeClipboardBytes(fullBytes, compress: true);
+            string debugFullClipboard = beta ? Encoding.UTF8.GetString(fullBytes) : SaveCodec.EncodeBinary(fullBytes, compress: true);
             string debugCompactClipboard = beta ? json : SaveCodec.EncodeBinary(bytes, compress: true);
             Debug.Log(
                 $"ExportSaveDebugJson size: {fullBytes.Length} -> {bytes.Length} bytes (raw JSON), " +
@@ -368,93 +280,6 @@ namespace Expansion
 #if UNITY_EDITOR
             AssetDatabase.Refresh();
 #endif
-        }
-
-        private static string EncodeClipboardBytes(byte[] bytes, bool compress)
-        {
-            if (bytes == null || bytes.Length == 0) return string.Empty;
-            if (!compress) return Convert.ToBase64String(bytes);
-            byte[] compressed = CompressBytes(bytes);
-            return CompressedSavePrefix + Convert.ToBase64String(compressed);
-        }
-
-        private static byte[] DecodeClipboardBytes(string clipboard)
-        {
-            if (string.IsNullOrEmpty(clipboard)) return Array.Empty<byte>();
-            if (clipboard.StartsWith(CompressedSavePrefix, StringComparison.Ordinal))
-            {
-                string payload = clipboard.Substring(CompressedSavePrefix.Length);
-                byte[] compressed = Convert.FromBase64String(payload);
-                return DecompressBytes(compressed);
-            }
-
-            return Convert.FromBase64String(clipboard);
-        }
-
-        private static string EncodeBinaryClipboardBytes(byte[] bytes, bool compress)
-        {
-            if (bytes == null || bytes.Length == 0) return string.Empty;
-            if (compress)
-            {
-                byte[] compressed = CompressBytes(bytes);
-                return BinarySavePrefix + Convert.ToBase64String(compressed);
-            }
-
-            return BinarySavePrefix + Convert.ToBase64String(bytes);
-        }
-
-        private static byte[] DecodeBinaryClipboardBytes(string clipboard)
-        {
-            if (string.IsNullOrEmpty(clipboard)) return Array.Empty<byte>();
-            if (!clipboard.StartsWith(BinarySavePrefix, StringComparison.Ordinal)) return Array.Empty<byte>();
-            string payload = clipboard.Substring(BinarySavePrefix.Length);
-            byte[] bytes = Convert.FromBase64String(payload);
-            return DecompressBytes(bytes);
-        }
-
-        private static bool TryDecodeExportDto(string clipboard, out byte[] bytes)
-        {
-            bytes = Array.Empty<byte>();
-            if (string.IsNullOrWhiteSpace(clipboard)) return false;
-            if (!clipboard.TrimStart().StartsWith("{", StringComparison.Ordinal)) return false;
-            try
-            {
-                ExportSaveDto dto = JsonUtility.FromJson<ExportSaveDto>(clipboard);
-                if (dto == null || string.IsNullOrEmpty(dto.data)) return false;
-                byte[] compressed = Convert.FromBase64String(dto.data);
-                bytes = DecompressBytes(compressed);
-                return bytes.Length > 0;
-            }
-            catch
-            {
-                return false;
-            }
-        }
-
-        private static bool LooksLikeJson(string clipboard)
-        {
-            if (string.IsNullOrWhiteSpace(clipboard)) return false;
-            string trimmed = clipboard.TrimStart();
-            return trimmed.StartsWith("{", StringComparison.Ordinal) && trimmed.Contains("\"saveVersion\"");
-        }
-
-        private static byte[] CompressBytes(byte[] bytes)
-        {
-            using var output = new MemoryStream();
-            using (var gzip = new GZipStream(output, CompressionLevel.Optimal, leaveOpen: true))
-            {
-                gzip.Write(bytes, 0, bytes.Length);
-            }
-            return output.ToArray();
-        }
-
-        private static byte[] DecompressBytes(byte[] bytes)
-        {
-            using var input = new MemoryStream(bytes);
-            using var gzip = new GZipStream(input, CompressionMode.Decompress);
-            using var output = new MemoryStream();
-            gzip.CopyTo(output);
-            return output.ToArray();
         }
 
         [TabGroup("SaveData", "Buttons"), Button]
@@ -3636,359 +3461,34 @@ namespace Expansion
 	            }
 	        }
 
-	        public void SaveState()
-	        {
-	            SaveDictionaries();
-	            PackSettingsFlags();
-	            SaveDataSettings snapshot = CreateSaveSnapshotForStorage(includeBase64Fields: false, compactFacilityArrays: false);
+		        public void SaveState()
+		        {
+		            SaveDictionaries();
+		            PackSettingsFlags();
+		            SaveDataSettings snapshot = SaveSnapshotBuilder.CreateSaveSnapshotForStorage(
+		                saveSettings,
+		                includeBase64Fields: false,
+		                buildOwnedBitsetFromRuntime: BuildOwnedBitsetFromRuntime,
+		                getAutoAssignmentSkillIds: GetAutoAssignmentSkillIds);
 
-	            SaveSystem saveSystem = SaveSystem.CreateDefault();
-	            if (!saveSystem.TrySave(snapshot, out _, out string error))
+		            SaveSystem saveSystem = SaveSystem.CreateDefault();
+		            if (!saveSystem.TrySave(snapshot, out _, out string error))
 	            {
 	                Debug.LogError($"[Save] Failed writing canonical save file: {error}");
-	            }
-	        }
+		            }
+		        }
 
-        private SaveDataSettings CreateSaveSnapshotForStorage(bool includeBase64Fields, bool compactFacilityArrays)
-        {
-            SaveDataSettings snapshot = (SaveDataSettings)SirenixSerializationUtility.CreateCopy(saveSettings);
-            CompactSkillTreeDataForSave(snapshot, includeBase64Fields, compactFacilityArrays);
-            return snapshot;
-        }
+			        private void EnsureInfinitySparseArrays()
+			        {
+			            if (infinityData == null) return;
+			            // Legacy bridge: older clipboard exports may have nulled dense arrays and relied on sparse lists.
+		            // V11 canonical format keeps dense arrays only; we merge sparse into dense then discard sparse.
+		            FacilityArrayNormalizer.Normalize(infinityData);
+		        }
 
-        private void CompactSkillTreeDataForSave(SaveDataSettings snapshot, bool includeBase64Fields, bool compactFacilityArrays)
-        {
-            if (snapshot == null) return;
-            DysonVerseSaveData saveData = snapshot.dysonVerseSaveData;
-            DysonVerseInfinityData infData = saveData?.dysonVerseInfinityData;
-            if (infData == null) return;
-
-            infData.skillOwnedBits = BuildOwnedBitsetFromRuntime();
-            infData.skillOwnedBitsBase64 = includeBase64Fields
-                ? Convert.ToBase64String(infData.skillOwnedBits ?? Array.Empty<byte>())
-                : null;
-            ClearSkillTreeFlagsForSave(saveData?.dysonVerseSkillTreeData);
-
-	            if (infData.researchLevelsById != null && infData.researchLevelsById.Count > 0)
-	            {
-	                var filtered = new Dictionary<string, double>();
-	                foreach (KeyValuePair<string, double> entry in infData.researchLevelsById)
-	                {
-	                    if (entry.Value == 0) continue;
-	                    filtered[entry.Key] = entry.Value;
-	                }
-
-	                infData.researchLevelsById = filtered;
-	            }
-
-	            // Facility arrays are fixed-size (2 slots: manual/auto) and tiny in the binary format.
-	            // Avoid saving multiple representations (dense + sparse) and avoid nulling dense arrays
-	            // because it has proven fragile and can lead to data loss when one representation is missing.
-	            EnsureInfinityFacilityArrays(infData);
-	            ClearInfinityFacilitySparseLists(infData);
-
-	            if (infData.skillStateById != null)
-	            {
-	                Dictionary<string, SkillState> filtered = new Dictionary<string, SkillState>();
-	                foreach (KeyValuePair<string, SkillState> entry in infData.skillStateById)
-                {
-                    if (entry.Value == null) continue;
-                    bool keep = entry.Value.timerSeconds != 0 ||
-                                entry.Value.secondaryTimerSeconds != 0 ||
-                                entry.Value.level > 1;
-                    if (keep)
-                    {
-                        filtered[entry.Key] = entry.Value;
-                    }
-                }
-
-                infData.skillStateById = filtered;
-            }
-
-	            infData.skillOwnedById = null;
-	            infData.SkillTreeSaveData = null;
-
-            if (saveData != null)
-            {
-                saveData.skillAutoAssignmentBits = SkillBitsetUtility.BuildBitsetFromIds(GetAutoAssignmentSkillIds());
-                saveData.skillAutoAssignmentBits1 = null;
-                saveData.skillAutoAssignmentBits2 = null;
-                saveData.skillAutoAssignmentBits3 = null;
-                saveData.skillAutoAssignmentBits4 = null;
-                saveData.skillAutoAssignmentBits5 = null;
-
-                if (includeBase64Fields)
-                {
-                    saveData.skillAutoAssignmentBitsBase64 = Convert.ToBase64String(saveData.skillAutoAssignmentBits ?? Array.Empty<byte>());
-                    saveData.skillAutoAssignmentBitsBase64_1 = null;
-                    saveData.skillAutoAssignmentBitsBase64_2 = null;
-                    saveData.skillAutoAssignmentBitsBase64_3 = null;
-                    saveData.skillAutoAssignmentBitsBase64_4 = null;
-                    saveData.skillAutoAssignmentBitsBase64_5 = null;
-                }
-                else
-                {
-                    saveData.skillAutoAssignmentBitsBase64 = null;
-                    saveData.skillAutoAssignmentBitsBase64_1 = null;
-                    saveData.skillAutoAssignmentBitsBase64_2 = null;
-                    saveData.skillAutoAssignmentBitsBase64_3 = null;
-                    saveData.skillAutoAssignmentBitsBase64_4 = null;
-                    saveData.skillAutoAssignmentBitsBase64_5 = null;
-                }
-
-                saveData.skillAutoAssignmentIds = new List<string>();
-
-                saveData.skillAutoAssignmentList = new List<int>();
-            }
-        }
-
-        private static void GuardSparseArrayFallbacks(DysonVerseInfinityData data)
-        {
-            if (data == null) return;
-            GuardSparseArrayFallback(ref data.assemblyLines, data.assemblyLinesSparseIndices, data.assemblyLinesSparseValues,
-                "assemblyLines");
-            GuardSparseArrayFallback(ref data.managers, data.managersSparseIndices, data.managersSparseValues, "managers");
-            GuardSparseArrayFallback(ref data.servers, data.serversSparseIndices, data.serversSparseValues, "servers");
-            GuardSparseArrayFallback(ref data.dataCenters, data.dataCentersSparseIndices, data.dataCentersSparseValues,
-                "dataCenters");
-            GuardSparseArrayFallback(ref data.planets, data.planetsSparseIndices, data.planetsSparseValues, "planets");
-            GuardSparseArrayFallback(ref data.matrioshkaBrains, data.matrioshkaBrainsSparseIndices,
-                data.matrioshkaBrainsSparseValues, "matrioshkaBrains");
-            GuardSparseArrayFallback(ref data.birchPlanets, data.birchPlanetsSparseIndices, data.birchPlanetsSparseValues,
-                "birchPlanets");
-            GuardSparseArrayFallback(ref data.galacticBrains, data.galacticBrainsSparseIndices,
-                data.galacticBrainsSparseValues, "galacticBrains");
-        }
-
-        private static void GuardSparseArrayFallback(ref double[] values, List<int> indices, List<double> sparseValues,
-            string label)
-        {
-            if (!IsSparseEmpty(indices, sparseValues)) return;
-            if (values == null || values.Length == 0) return;
-            if (IsArrayEmpty(values)) return;
-
-            Debug.LogWarning($"Sparse facility list empty for {label}; preserving array data in save snapshot.");
-        }
-
-        private static void ClearSkillTreeFlagsForSave(DysonVerseSkillTreeData data)
-        {
-            if (data == null) return;
-            System.Reflection.FieldInfo[] fields = typeof(DysonVerseSkillTreeData).GetFields();
-            for (int i = 0; i < fields.Length; i++)
-            {
-                System.Reflection.FieldInfo field = fields[i];
-                if (field.FieldType != typeof(bool)) continue;
-                field.SetValue(data, false);
-            }
-        }
-
-        private static void BuildSparseIndices(double[] values, ref List<int> indices, ref List<double> outputValues)
-        {
-            indices ??= new List<int>();
-            outputValues ??= new List<double>();
-            indices.Clear();
-            outputValues.Clear();
-            if (values == null) return;
-
-            for (int i = 0; i < values.Length; i++)
-            {
-                if (values[i] == 0) continue;
-                indices.Add(i);
-                outputValues.Add(values[i]);
-            }
-        }
-
-        private static double[] RestoreSparseArray(double[] existing, int length, List<int> indices, List<double> values)
-        {
-            bool hasSparse = indices != null && values != null && indices.Count > 0 && values.Count > 0;
-            if (!hasSparse)
-            {
-                if (existing != null && existing.Length == length) return existing;
-                return new double[length];
-            }
-
-            double[] result = new double[length];
-            int count = Math.Min(indices.Count, values.Count);
-            for (int i = 0; i < count; i++)
-            {
-                int index = indices[i];
-                if (index < 0 || index >= length) continue;
-                result[index] = values[i];
-            }
-
-            return result;
-        }
-
-	        private static void PopulateSparseArrays(DysonVerseInfinityData data, bool compactArrays)
+	        private byte[] BuildOwnedBitsetFromRuntime()
 	        {
-	            if (data == null) return;
-	            BuildSparseIndices(data.assemblyLines, ref data.assemblyLinesSparseIndices, ref data.assemblyLinesSparseValues);
-            BuildSparseIndices(data.managers, ref data.managersSparseIndices, ref data.managersSparseValues);
-            BuildSparseIndices(data.servers, ref data.serversSparseIndices, ref data.serversSparseValues);
-            BuildSparseIndices(data.dataCenters, ref data.dataCentersSparseIndices, ref data.dataCentersSparseValues);
-            BuildSparseIndices(data.planets, ref data.planetsSparseIndices, ref data.planetsSparseValues);
-            BuildSparseIndices(data.matrioshkaBrains, ref data.matrioshkaBrainsSparseIndices,
-                ref data.matrioshkaBrainsSparseValues);
-            BuildSparseIndices(data.birchPlanets, ref data.birchPlanetsSparseIndices, ref data.birchPlanetsSparseValues);
-            BuildSparseIndices(data.galacticBrains, ref data.galacticBrainsSparseIndices, ref data.galacticBrainsSparseValues);
-
-            if (!compactArrays) return;
-
-            data.assemblyLines = null;
-            data.managers = null;
-            data.servers = null;
-            data.dataCenters = null;
-            data.planets = null;
-            data.matrioshkaBrains = null;
-            data.birchPlanets = null;
-	            data.galacticBrains = null;
-	        }
-
-	        private static void EnsureInfinityFacilityArrays(DysonVerseInfinityData data)
-	        {
-	            if (data == null) return;
-
-	            data.assemblyLines = EnsureFacilityArray(data.assemblyLines, 2);
-	            MergeSparseIntoArray(data.assemblyLines, data.assemblyLinesSparseIndices, data.assemblyLinesSparseValues);
-
-	            data.managers = EnsureFacilityArray(data.managers, 2);
-	            MergeSparseIntoArray(data.managers, data.managersSparseIndices, data.managersSparseValues);
-
-	            data.servers = EnsureFacilityArray(data.servers, 2);
-	            MergeSparseIntoArray(data.servers, data.serversSparseIndices, data.serversSparseValues);
-
-	            data.dataCenters = EnsureFacilityArray(data.dataCenters, 2);
-	            MergeSparseIntoArray(data.dataCenters, data.dataCentersSparseIndices, data.dataCentersSparseValues);
-
-	            data.planets = EnsureFacilityArray(data.planets, 2);
-	            MergeSparseIntoArray(data.planets, data.planetsSparseIndices, data.planetsSparseValues);
-
-	            data.matrioshkaBrains = EnsureFacilityArray(data.matrioshkaBrains, 2);
-	            MergeSparseIntoArray(data.matrioshkaBrains, data.matrioshkaBrainsSparseIndices, data.matrioshkaBrainsSparseValues);
-
-	            data.birchPlanets = EnsureFacilityArray(data.birchPlanets, 2);
-	            MergeSparseIntoArray(data.birchPlanets, data.birchPlanetsSparseIndices, data.birchPlanetsSparseValues);
-
-	            data.galacticBrains = EnsureFacilityArray(data.galacticBrains, 2);
-	            MergeSparseIntoArray(data.galacticBrains, data.galacticBrainsSparseIndices, data.galacticBrainsSparseValues);
-	        }
-
-	        private static double[] EnsureFacilityArray(double[] existing, int length)
-	        {
-	            if (existing != null && existing.Length == length) return existing;
-	            var result = new double[length];
-	            if (existing == null) return result;
-	            int copy = Math.Min(existing.Length, length);
-	            for (int i = 0; i < copy; i++)
-	            {
-	                result[i] = existing[i];
-	            }
-	            return result;
-	        }
-
-	        private static void MergeSparseIntoArray(double[] dense, List<int> indices, List<double> values)
-	        {
-	            if (dense == null) return;
-	            if (indices == null || values == null) return;
-	            int count = Math.Min(indices.Count, values.Count);
-	            for (int i = 0; i < count; i++)
-	            {
-	                int index = indices[i];
-	                if (index < 0 || index >= dense.Length) continue;
-	                double sparseValue = values[i];
-	                if (sparseValue > dense[index])
-	                {
-	                    dense[index] = sparseValue;
-	                }
-	            }
-	        }
-
-	        private static void ClearInfinityFacilitySparseLists(DysonVerseInfinityData data)
-	        {
-	            if (data == null) return;
-
-	            data.assemblyLinesSparseIndices = null;
-	            data.assemblyLinesSparseValues = null;
-	            data.managersSparseIndices = null;
-	            data.managersSparseValues = null;
-	            data.serversSparseIndices = null;
-	            data.serversSparseValues = null;
-	            data.dataCentersSparseIndices = null;
-	            data.dataCentersSparseValues = null;
-	            data.planetsSparseIndices = null;
-	            data.planetsSparseValues = null;
-	            data.matrioshkaBrainsSparseIndices = null;
-	            data.matrioshkaBrainsSparseValues = null;
-	            data.birchPlanetsSparseIndices = null;
-	            data.birchPlanetsSparseValues = null;
-	            data.galacticBrainsSparseIndices = null;
-	            data.galacticBrainsSparseValues = null;
-	        }
-
-	        private void EnsureInfinitySparseArrays()
-	        {
-	            if (infinityData == null) return;
-	            // Legacy bridge: older clipboard exports may have nulled dense arrays and relied on sparse lists.
-	            // V11 canonical format keeps dense arrays only; we merge sparse into dense then discard sparse.
-	            EnsureInfinityFacilityArrays(infinityData);
-	            ClearInfinityFacilitySparseLists(infinityData);
-	        }
-
-        private static bool IsSparseEmpty(List<int> indices, List<double> values)
-        {
-            return indices == null || values == null || indices.Count == 0 || values.Count == 0;
-        }
-
-        private static bool IsArrayEmpty(double[] values)
-        {
-            if (values == null) return true;
-            for (int i = 0; i < values.Length; i++)
-            {
-                if (values[i] != 0) return false;
-            }
-
-            return true;
-        }
-
-        private static string FormatCounts(double[] values)
-        {
-            if (values == null) return "null";
-            if (values.Length == 0) return "empty";
-            if (values.Length == 1) return values[0].ToString(CultureInfo.InvariantCulture);
-            return $"{values[0].ToString(CultureInfo.InvariantCulture)}, {values[1].ToString(CultureInfo.InvariantCulture)}";
-        }
-
-        private void LogImportFacilityState(string label)
-        {
-            if (infinityData == null)
-            {
-                Debug.LogWarning($"[ImportDebug:{label}] Infinity data is null.");
-                return;
-            }
-
-            Debug.Log(
-                $"[ImportDebug:{label}] " +
-                $"assemblyLines=[{FormatCounts(infinityData.assemblyLines)}] sparse={FormatSparseCounts(infinityData.assemblyLinesSparseIndices, infinityData.assemblyLinesSparseValues)}; " +
-                $"managers=[{FormatCounts(infinityData.managers)}] sparse={FormatSparseCounts(infinityData.managersSparseIndices, infinityData.managersSparseValues)}; " +
-                $"servers=[{FormatCounts(infinityData.servers)}] sparse={FormatSparseCounts(infinityData.serversSparseIndices, infinityData.serversSparseValues)}; " +
-                $"dataCenters=[{FormatCounts(infinityData.dataCenters)}] sparse={FormatSparseCounts(infinityData.dataCentersSparseIndices, infinityData.dataCentersSparseValues)}; " +
-                $"planets=[{FormatCounts(infinityData.planets)}] sparse={FormatSparseCounts(infinityData.planetsSparseIndices, infinityData.planetsSparseValues)}; " +
-                $"matrioshkaBrains=[{FormatCounts(infinityData.matrioshkaBrains)}] sparse={FormatSparseCounts(infinityData.matrioshkaBrainsSparseIndices, infinityData.matrioshkaBrainsSparseValues)}; " +
-                $"birchPlanets=[{FormatCounts(infinityData.birchPlanets)}] sparse={FormatSparseCounts(infinityData.birchPlanetsSparseIndices, infinityData.birchPlanetsSparseValues)}; " +
-                $"galacticBrains=[{FormatCounts(infinityData.galacticBrains)}] sparse={FormatSparseCounts(infinityData.galacticBrainsSparseIndices, infinityData.galacticBrainsSparseValues)}"
-            );
-        }
-
-        private static string FormatSparseCounts(List<int> indices, List<double> values)
-        {
-            int indexCount = indices?.Count ?? 0;
-            int valueCount = values?.Count ?? 0;
-            return $"{indexCount}/{valueCount}";
-        }
-
-        private byte[] BuildOwnedBitsetFromRuntime()
-        {
-            byte[] bits = SkillBitsetUtility.CreateEmptyBitset();
+	            byte[] bits = SkillBitsetUtility.CreateEmptyBitset();
 
             GameDataRegistry registry = GameDataRegistry.Instance;
             if (registry != null && registry.skillDatabase != null && registry.skillDatabase.skills.Count > 0)
@@ -4005,130 +3505,6 @@ namespace Expansion
             }
 
             return bits;
-        }
-
-        private enum SaveLoadSource
-        {
-            CanonicalFile,
-            Es3,
-            Es3Recovered,
-            LegacyOdinJson
-        }
-
-        private readonly struct SaveLoadCandidate
-        {
-            public SaveLoadCandidate(SaveLoadSource source, SaveDataSettings settings, string debugPath = null)
-            {
-                Source = source;
-                Settings = settings;
-                DebugPath = debugPath;
-                SaveVersion = settings?.saveVersion ?? 0;
-                TimestampUtc = TryGetCandidateTimestampUtc(settings, out DateTime utc) ? utc : (DateTime?)null;
-            }
-
-            public SaveLoadSource Source { get; }
-            public SaveDataSettings Settings { get; }
-            public string DebugPath { get; }
-            public int SaveVersion { get; }
-            public DateTime? TimestampUtc { get; }
-        }
-
-        private static bool TryGetCandidateTimestampUtc(SaveDataSettings settings, out DateTime utc)
-        {
-            utc = default;
-            if (settings == null) return false;
-            if (TryParseInvariantUtc(settings.lastSuccessfulLoadUtc, out utc)) return true;
-            if (TryParseInvariantUtc(settings.dateQuitString, out utc)) return true;
-            return TryParseInvariantUtc(settings.dateStarted, out utc);
-        }
-
-        private static bool TryParseInvariantUtc(string value, out DateTime utc)
-        {
-            utc = default;
-            if (string.IsNullOrWhiteSpace(value)) return false;
-            return DateTime.TryParse(
-                value,
-                CultureInfo.InvariantCulture,
-                DateTimeStyles.AssumeUniversal | DateTimeStyles.AdjustToUniversal,
-                out utc);
-        }
-
-        private static int SourcePriority(SaveLoadSource source)
-        {
-            // Higher = preferred tie-break when candidates look identical.
-            switch (source)
-            {
-                case SaveLoadSource.Es3:
-                    return 3;
-                case SaveLoadSource.Es3Recovered:
-                    return 2;
-                case SaveLoadSource.LegacyOdinJson:
-                    return 1;
-                case SaveLoadSource.CanonicalFile:
-                    return 0;
-                default:
-                    return 0;
-            }
-        }
-
-        private static bool IsBetterCandidate(SaveLoadCandidate candidate, SaveLoadCandidate best)
-        {
-            if (candidate.Settings == null) return false;
-            if (best.Settings == null) return true;
-
-            if (candidate.SaveVersion != best.SaveVersion)
-            {
-                return candidate.SaveVersion > best.SaveVersion;
-            }
-
-            if (candidate.TimestampUtc.HasValue || best.TimestampUtc.HasValue)
-            {
-                if (!best.TimestampUtc.HasValue) return true;
-                if (!candidate.TimestampUtc.HasValue) return false;
-                if (candidate.TimestampUtc.Value != best.TimestampUtc.Value)
-                {
-                    return candidate.TimestampUtc.Value > best.TimestampUtc.Value;
-                }
-            }
-
-            int candidatePriority = SourcePriority(candidate.Source);
-            int bestPriority = SourcePriority(best.Source);
-            if (candidatePriority != bestPriority)
-            {
-                return candidatePriority > bestPriority;
-            }
-
-            return false;
-        }
-
-        private static bool TryLoadLegacyOdinJsonSave(string filePath, out SaveDataSettings settings, out string error)
-        {
-            settings = null;
-            error = null;
-            try
-            {
-                if (string.IsNullOrWhiteSpace(filePath) || !File.Exists(filePath))
-                {
-                    error = "File not found.";
-                    return false;
-                }
-
-                byte[] bytes = File.ReadAllBytes(filePath);
-                settings = SirenixSerializationUtility.DeserializeValue<SaveDataSettings>(bytes, DataFormat.JSON);
-                if (settings == null)
-                {
-                    error = "Deserialized null settings.";
-                    return false;
-                }
-
-                return true;
-            }
-            catch (Exception ex)
-            {
-                settings = null;
-                error = ex.Message;
-                return false;
-            }
         }
 
         private void ApplyLoadedSettings(SaveDataSettings loaded, string sourceLog)
@@ -4180,7 +3556,7 @@ namespace Expansion
                         {
                             SaveDataSettings es3Loaded = ES3.Load<SaveDataSettings>("saveSettings");
                             SaveLoadCandidate candidate = new SaveLoadCandidate(SaveLoadSource.Es3, es3Loaded);
-                            if (IsBetterCandidate(candidate, best)) best = candidate;
+                            if (SaveLoadCandidateSelector.IsBetterCandidate(candidate, best)) best = candidate;
                         }
                         catch (Exception e)
                         {
@@ -4200,15 +3576,15 @@ namespace Expansion
                 if (TryRecoverDefaultEs3Save(out SaveDataSettings recovered, out string recoveredFrom))
                 {
                     SaveLoadCandidate recoveredCandidate = new SaveLoadCandidate(SaveLoadSource.Es3Recovered, recovered, recoveredFrom);
-                    if (IsBetterCandidate(recoveredCandidate, best)) best = recoveredCandidate;
+                    if (SaveLoadCandidateSelector.IsBetterCandidate(recoveredCandidate, best)) best = recoveredCandidate;
                 }
 
                 // Legacy Odin JSON file (pre-canonical / pre-ES3 deprecation).
                 string legacyOdinPath = Path.Combine(Application.persistentDataPath, fileName + ".idsOdin");
-                if (TryLoadLegacyOdinJsonSave(legacyOdinPath, out SaveDataSettings legacyOdin, out string odinError))
+                if (SaveLoadCandidateSelector.TryLoadLegacyOdinJsonSave(legacyOdinPath, out SaveDataSettings legacyOdin, out string odinError))
                 {
                     SaveLoadCandidate legacyCandidate = new SaveLoadCandidate(SaveLoadSource.LegacyOdinJson, legacyOdin, legacyOdinPath);
-                    if (IsBetterCandidate(legacyCandidate, best)) best = legacyCandidate;
+                    if (SaveLoadCandidateSelector.IsBetterCandidate(legacyCandidate, best)) best = legacyCandidate;
                 }
                 else if (!string.IsNullOrEmpty(odinError) && File.Exists(legacyOdinPath))
                 {
