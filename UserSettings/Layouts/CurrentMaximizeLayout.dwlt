@@ -24,7 +24,7 @@ MonoBehaviour:
   m_MinSize: {x: 500, y: 112}
   m_MaxSize: {x: 40480, y: 16192}
   vertical: 0
-  controlID: 16561
+  controlID: 24925
   draggingID: 0
 --- !u!114 &2
 MonoBehaviour:
@@ -47,7 +47,7 @@ MonoBehaviour:
     m_TextWithWhitespace: "Game\u200B"
   m_Pos:
     serializedVersion: 2
-    x: 2734.5
+    x: 2735.5
     y: 95
     width: 1103.5
     height: 508
@@ -155,7 +155,7 @@ MonoBehaviour:
   m_MinSize: {x: 200, y: 56}
   m_MaxSize: {x: 16192, y: 8096}
   vertical: 0
-  controlID: 16557
+  controlID: 24645
   draggingID: 0
 --- !u!114 &4
 MonoBehaviour:
@@ -204,7 +204,7 @@ MonoBehaviour:
     m_TextWithWhitespace: "Hierarchy\u200B"
   m_Pos:
     serializedVersion: 2
-    x: 56
+    x: 57
     y: 95
     width: 480
     height: 940
@@ -223,16 +223,93 @@ MonoBehaviour:
     m_DynamicPanelBehavior: 0
   m_SceneHierarchy:
     m_TreeViewState:
-      scrollPos: {x: 0, y: 159}
+      scrollPos: {x: 0, y: 0}
       m_SelectedIDs:
-      - m_Data: 52644
+      - m_Data: 55866
       m_LastClickedID:
-        m_Data: 52644
+        m_Data: 55866
       m_ExpandedIDs:
+      - m_Data: -187478
+      - m_Data: -187468
+      - m_Data: -187458
+      - m_Data: -187408
+      - m_Data: -187398
       - m_Data: -140112
+      - m_Data: -25220
+      - m_Data: -25206
+      - m_Data: -25172
+      - m_Data: -25164
+      - m_Data: -25148
+      - m_Data: -22332
+      - m_Data: -22320
+      - m_Data: -22314
+      - m_Data: -22308
+      - m_Data: -22298
+      - m_Data: -22292
+      - m_Data: -22278
+      - m_Data: -22258
+      - m_Data: -22252
+      - m_Data: -22244
+      - m_Data: -22236
+      - m_Data: -22220
+      - m_Data: -17296
+      - m_Data: -17286
+      - m_Data: -17278
+      - m_Data: -17270
+      - m_Data: -17258
+      - m_Data: -17252
+      - m_Data: -17238
+      - m_Data: -17216
+      - m_Data: -17208
+      - m_Data: -17200
+      - m_Data: -17192
+      - m_Data: -17176
+      - m_Data: -17040
+      - m_Data: -17032
+      - m_Data: -17016
       - m_Data: -16882
       - m_Data: -16874
       - m_Data: -16858
+      - m_Data: -16674
+      - m_Data: -16662
+      - m_Data: -16656
+      - m_Data: -16650
+      - m_Data: -16640
+      - m_Data: -16634
+      - m_Data: -16620
+      - m_Data: -16600
+      - m_Data: -16594
+      - m_Data: -16586
+      - m_Data: -16578
+      - m_Data: -16562
+      - m_Data: -14198
+      - m_Data: -14188
+      - m_Data: -14176
+      - m_Data: -14136
+      - m_Data: -9822
+      - m_Data: -9812
+      - m_Data: -9804
+      - m_Data: -9796
+      - m_Data: -9784
+      - m_Data: -9778
+      - m_Data: -9764
+      - m_Data: -9742
+      - m_Data: -9734
+      - m_Data: -9726
+      - m_Data: -9718
+      - m_Data: -9702
+      - m_Data: -7362
+      - m_Data: -7352
+      - m_Data: -7344
+      - m_Data: -7336
+      - m_Data: -7324
+      - m_Data: -7318
+      - m_Data: -7304
+      - m_Data: -7282
+      - m_Data: -7274
+      - m_Data: -7266
+      - m_Data: -7258
+      - m_Data: -7242
       - m_Data: -1326
       - m_Data: -12
       - m_Data: 46344
@@ -251,13 +328,13 @@ MonoBehaviour:
       - m_Data: 58018
       - m_Data: 58846
       - m_Data: 59446
+      - m_Data: 59534
       - m_Data: 60670
       - m_Data: 60820
       - m_Data: 60850
       - m_Data: 62118
       - m_Data: 63566
       - m_Data: 67084
-      - m_Data: 67162
       - m_Data: 67538
       - m_Data: 68692
       - m_Data: 71740
@@ -335,7 +412,7 @@ MonoBehaviour:
     m_TextWithWhitespace: "Inspector\u200B"
   m_Pos:
     serializedVersion: 2
-    x: 537
+    x: 538
     y: 95
     width: 503
     height: 940
@@ -359,7 +436,7 @@ MonoBehaviour:
     m_ControlHash: -371814159
     m_PrefName: Preview_InspectorPreview
   m_LastInspectedObjectInstanceID: -1
-  m_LastVerticalScrollValue: 0
+  m_LastVerticalScrollValue: 47
   m_GlobalObjectId: 
   m_InspectorMode: 0
   m_LockTracker:
@@ -389,7 +466,7 @@ MonoBehaviour:
   m_MinSize: {x: 300, y: 112}
   m_MaxSize: {x: 24288, y: 16192}
   vertical: 0
-  controlID: 16562
+  controlID: 24926
   draggingID: 0
 --- !u!114 &9
 MonoBehaviour:
@@ -438,7 +515,7 @@ MonoBehaviour:
     m_TextWithWhitespace: "Scene\u200B"
   m_Pos:
     serializedVersion: 2
-    x: 1042
+    x: 1043
     y: 95
     width: 1690.5
     height: 940
@@ -1054,9 +1131,9 @@ MonoBehaviour:
   m_AudioPlay: 0
   m_DebugDrawModesUseInteractiveLightBakingData: 0
   m_Position:
-    m_Target: {x: 1409.7178, y: 781.45294, z: -2.6917384}
+    m_Target: {x: 646.3057, y: 637.1148, z: -4.0475683}
     speed: 2
-    m_Value: {x: 1409.7178, y: 781.45294, z: -2.6917384}
+    m_Value: {x: 646.3057, y: 637.1148, z: -4.0475683}
   m_RenderMode: 0
   m_CameraMode:
     drawMode: 0
@@ -1106,9 +1183,9 @@ MonoBehaviour:
     speed: 2
     m_Value: {x: 0, y: 0, z: 0, w: 1}
   m_Size:
-    m_Target: 279.1846
+    m_Target: 414.7676
     speed: 2
-    m_Value: 279.1846
+    m_Value: 414.7676
   m_Ortho:
     m_Target: 1
     speed: 2
@@ -1166,7 +1243,7 @@ MonoBehaviour:
   m_MinSize: {x: 200, y: 112}
   m_MaxSize: {x: 16192, y: 16192}
   vertical: 1
-  controlID: 16572
+  controlID: 24995
   draggingID: 0
 --- !u!114 &12
 MonoBehaviour:
@@ -1218,7 +1295,7 @@ MonoBehaviour:
   m_MinSize: {x: 200, y: 56}
   m_MaxSize: {x: 16192, y: 8096}
   vertical: 0
-  controlID: 16597
+  controlID: 25051
   draggingID: 0
 --- !u!114 &14
 MonoBehaviour:
@@ -1267,7 +1344,7 @@ MonoBehaviour:
     m_TextWithWhitespace: "Console\u200B"
   m_Pos:
     serializedVersion: 2
-    x: 2734.5
+    x: 2735.5
     y: 629
     width: 592
     height: 406
@@ -1331,7 +1408,7 @@ MonoBehaviour:
     m_TextWithWhitespace: "Project\u200B"
   m_Pos:
     serializedVersion: 2
-    x: 3328.5
+    x: 3329.5
     y: 629
     width: 509.5
     height: 406
@@ -1359,7 +1436,7 @@ MonoBehaviour:
     m_SkipHidden: 0
     m_SearchArea: 1
     m_Folders:
-    - Assets/Scripts/Buildings
+    - Assets/Prefabs/Buildings
     m_Globs: []
     m_ProductIds: 
     m_AnyWithAssetOrigin: 0
@@ -1369,18 +1446,18 @@ MonoBehaviour:
   m_ViewMode: 1
   m_StartGridSize: 56
   m_LastFolders:
-  - Assets/Scripts/Buildings
+  - Assets/Prefabs/Buildings
   m_LastFoldersGridSize: 56
   m_LastProjectPath: /Users/matthewrushworth/Projects/Idle Dyson Swarm
   m_LockTracker:
     m_IsLocked: 0
   m_LastLocalAssetsSearchArea: 1
   m_FolderTreeState:
-    scrollPos: {x: 0, y: 562}
+    scrollPos: {x: 0, y: 543}
     m_SelectedIDs:
-    - m_Data: 117658
+    - m_Data: 486428
     m_LastClickedID:
-      m_Data: 117658
+      m_Data: 486428
     m_ExpandedIDs:
     - m_Data: 0
     - m_Data: 90970
@@ -1388,6 +1465,7 @@ MonoBehaviour:
     - m_Data: 90974
     - m_Data: 90976
     - m_Data: 90978
+    - m_Data: 91142
     - m_Data: 91150
     - m_Data: 1000000000
     m_RenameOverlay:
@@ -1455,8 +1533,8 @@ MonoBehaviour:
       m_ResourceFile: 
   m_ListAreaState:
     m_SelectedInstanceIDs:
-    - m_Data: 52644
-    m_LastClickedInstanceID: 52644
+    - m_Data: 55866
+    m_LastClickedInstanceID: 55866
     m_HadKeyboardFocusLastEvent: 1
     m_ExpandedInstanceIDs: []
     m_RenameOverlay:
