@@ -85,11 +85,11 @@ namespace Expansion
         private bool _autoSaveScheduled;
         private bool _quickSaveScheduled;
         private int _suppressPresetSyncDepth;
-        private const float QuickSaveDelaySeconds = 0.25f;
-        // IMPORTANT: When adding a migration step in BuildMigrationRegistry(),
-        // you MUST also update this constant to match the new LatestVersion.
-        // IMPORTANT: Save v7 introduces skill bitsets (see SkillIdMap/SkillBitsetUtility).
-        private const int CurrentSaveVersion = 10;
+	        private const float QuickSaveDelaySeconds = 0.25f;
+	        // IMPORTANT: When adding a migration step in BuildMigrationRegistry(),
+	        // you MUST also update this constant to match the new LatestVersion.
+	        // IMPORTANT: Save v7 introduces skill bitsets (see SkillIdMap/SkillBitsetUtility).
+	        private const int CurrentSaveVersion = 11;
 
         #region SaveAndLoadFromClipboard
 
@@ -116,28 +116,14 @@ namespace Expansion
             bool previousDoubleIp = saveSettings != null && saveSettings.doubleIp;
             bool debugPrefUnlocked = PlayerPrefs.GetInt("debug", 0) == 1;
             bool doubleIpPrefUnlocked = PlayerPrefs.GetInt("doubleip", 0) == 1;
-            saveSettings = new SaveDataSettings();
             string clipboard = GUIUtility.systemCopyBuffer;
-            if (TryDecodeExportDto(clipboard, out byte[] dtoBytes) &&
-                TryDeserializeSaveSettings(dtoBytes, DataFormat.Binary, out saveSettings))
-            {
-                // ExportSaveDebugJson DTO (binary+gzip+base64)
-            }
-            else if (LooksLikeJson(clipboard) &&
-                     TryDeserializeSaveSettings(Encoding.UTF8.GetBytes(clipboard), DataFormat.JSON, out saveSettings))
-            {
-                // Raw JSON
-            }
-            else if (clipboard.StartsWith(BinarySavePrefix, StringComparison.Ordinal) &&
-                     TryDeserializeSaveSettings(DecodeBinaryClipboardBytes(clipboard), DataFormat.Binary, out saveSettings))
-            {
-                // Binary save prefix
-            }
-            else if (!TryDeserializeFromBase64Payload(clipboard, out saveSettings))
+            if (!SaveCodec.TryDecodeSaveSettings(clipboard, out SaveDataSettings decoded))
             {
                 Debug.LogError("LoadFromClipboard failed to decode save data. Clipboard format not recognized.");
                 return;
             }
+
+            saveSettings = decoded;
 
             // LogImportFacilityState("PostDeserialize");
             LoadDictionaries();
@@ -153,7 +139,7 @@ namespace Expansion
             SyncAutoAssignFromSelectedPreset(runAutoAssign: false);
             LogPresetAutoAssignState("PostMigration/Clipboard");
             // LogImportFacilityState("PostMigration");
-            SaveInternal(true);
+            SaveInternal(true, updateQuitTime: false);
             SceneManager.LoadScene(0);
         }
 
@@ -341,9 +327,9 @@ namespace Expansion
             }
 
             byte[] binaryBytes = SirenixSerializationUtility.SerializeValue(snapshot, DataFormat.Binary);
-            string compactClipboard = EncodeBinaryClipboardBytes(binaryBytes, compress: true);
+            string compactClipboard = SaveCodec.EncodeBinary(binaryBytes, compress: true);
             GUIUtility.systemCopyBuffer = compactClipboard;
-            string fullClipboardBinary = EncodeBinaryClipboardBytes(SirenixSerializationUtility.SerializeValue(saveSettings, DataFormat.Binary),
+            string fullClipboardBinary = SaveCodec.EncodeBinary(SirenixSerializationUtility.SerializeValue(saveSettings, DataFormat.Binary),
                 compress: true);
             Debug.Log(
                 $"SaveToClipboard size: {fullBytes.Length} -> {binaryBytes.Length} bytes (binary), " +
@@ -357,7 +343,7 @@ namespace Expansion
             byte[] fullBytes = SirenixSerializationUtility.SerializeValue(saveSettings, DataFormat.JSON);
             SaveDataSettings snapshot = CreateSaveSnapshotForStorage(includeBase64Fields: false, compactFacilityArrays: true);
             byte[] bytes = SirenixSerializationUtility.SerializeValue(snapshot, DataFormat.Binary);
-            byte[] compressed = CompressBytes(bytes);
+            byte[] compressed = SaveCodec.CompressBytes(bytes);
             var dto = new ExportSaveDto
             {
                 version = CurrentSaveVersion,
@@ -375,7 +361,7 @@ namespace Expansion
 
             Debug.Log($"Save debug JSON written to: {filePath}");
             string debugFullClipboard = beta ? Encoding.UTF8.GetString(fullBytes) : EncodeClipboardBytes(fullBytes, compress: true);
-            string debugCompactClipboard = beta ? json : EncodeBinaryClipboardBytes(bytes, compress: true);
+            string debugCompactClipboard = beta ? json : SaveCodec.EncodeBinary(bytes, compress: true);
             Debug.Log(
                 $"ExportSaveDebugJson size: {fullBytes.Length} -> {bytes.Length} bytes (raw JSON), " +
                 $"{debugFullClipboard.Length} -> {debugCompactClipboard.Length} chars (clipboard).");
@@ -677,11 +663,11 @@ namespace Expansion
             ScheduleQuickSave();
         }
 
-        private void ApplyMigrations()
-        {
-            if (saveSettings == null) return;
+	        private void ApplyMigrations()
+	        {
+	            if (saveSettings == null) return;
 
-            MigrationRegistry registry = BuildMigrationRegistry();
+	            MigrationRegistry registry = BuildMigrationRegistry();
             if (registry.LatestVersion != CurrentSaveVersion)
             {
                 string message =
@@ -692,12 +678,24 @@ namespace Expansion
 #else
                 Debug.LogWarning(message);
 #endif
-            }
+	            }
 
-            MigrationRunOptions options = BuildMigrationOptions(false);
-            MigrationRunResult result = MigrationRunner.Run(this, registry, options);
-            Debug.Log(result.ToReportString());
-        }
+	            MigrationRunOptions options = BuildMigrationOptions(false);
+	            // Transactional migration: run against a deep copy and only commit on success.
+	            SaveDataSettings original = saveSettings;
+	            SaveDataSettings working = (SaveDataSettings)SirenixSerializationUtility.CreateCopy(original);
+	            saveSettings = working;
+	            try
+	            {
+	                MigrationRunResult result = MigrationRunner.Run(this, registry, options);
+	                Debug.Log(result.ToReportString());
+	            }
+	            catch
+	            {
+	                saveSettings = original;
+	                throw;
+	            }
+	        }
 
         public MigrationRunResult RunMigrationDryRun()
         {
@@ -747,72 +745,32 @@ namespace Expansion
             };
         }
 
-        private MigrationRegistry BuildMigrationRegistry()
-        {
-            var registry = new MigrationRegistry();
-            registry.AddStep(new MigrationStep(
-                targetVersion: 2,
-                name: "Skill ownership + auto-assign ids",
-                summary: "Populate skill ownership and auto-assign id lists from legacy data.",
-                apply: _ =>
-                {
-                    MigrateSkillOwnershipToIds();
-                    MigrateSkillAutoAssignmentIds();
-                }));
+	        private MigrationRegistry BuildMigrationRegistry()
+	        {
+	            var registry = new MigrationRegistry();
+	            registry.AddStep(new MigrationStep(
+	                targetVersion: 11,
+	                name: "Consolidated migration (V11)",
+	                summary: "Upgrade any legacy save to V11 in a single step (skipping intermediate chains).",
+	                apply: _ => { MigrateToV11(); }));
 
-            registry.AddStep(new MigrationStep(
-                targetVersion: 3,
-                name: "Research levels to ids",
-                summary: "Populate research level ids from legacy fields.",
-                apply: _ => { MigrateResearchLevelsToIds(); }));
+	            return registry;
+	        }
 
-            registry.AddStep(new MigrationStep(
-                targetVersion: 4,
-                name: "Skill state to ids",
-                summary: "Populate skill state dictionary from legacy skill ownership and timers.",
-                apply: _ => { MigrateSkillStateToIds(); }));
-
-            registry.AddStep(new MigrationStep(
-                targetVersion: 5,
-                name: "Extract AvocadoData",
-                summary: "Migrate avocato fields from PrestigePlus to new AvocadoData structure.",
-                apply: _ => { MigrateAvocadoData(); }));
-
-            registry.AddStep(new MigrationStep(
-                targetVersion: 6,
-                name: "Initialize Mega-Structure Data",
-                summary: "Ensure mega-structure facility arrays are initialized for existing saves.",
-                apply: _ => { MigrateMegaStructureData(); }));
-
-            registry.AddStep(new MigrationStep(
-                targetVersion: 7,
-                name: "Skill bitsets",
-                summary: "Populate compact skill ownership and auto-assign bitsets from legacy data.",
-                apply: _ =>
-                {
-                    MigrateSkillBitsets();
-                }));
-
-            registry.AddStep(new MigrationStep(
-                targetVersion: 8,
-                name: "Packed settings flags",
-                summary: "Pack SaveDataSettings boolean flags into bitfields.",
-                apply: _ => { PackSettingsFlags(); }));
-
-            registry.AddStep(new MigrationStep(
-                targetVersion: 9,
-                name: "Preset auto-assign order",
-                summary: "Rebuild preset auto-assign lists with dependency-safe order from legacy bitsets.",
-                apply: _ => { MigratePresetAutoAssignOrder(); }));
-
-            registry.AddStep(new MigrationStep(
-                targetVersion: 10,
-                name: "Avotation progress persistence",
-                summary: "Initialize and normalize Avotation step progress for persistent secret tracking.",
-                apply: _ => { MigrateAvotationProgress(); }));
-
-            return registry;
-        }
+	        private void MigrateToV11()
+	        {
+	            // Apply all prior migrations idempotently in one pass.
+	            MigrateSkillOwnershipToIds();
+	            MigrateSkillAutoAssignmentIds();
+	            MigrateResearchLevelsToIds();
+	            MigrateSkillStateToIds();
+	            MigrateAvocadoData();
+	            MigrateMegaStructureData();
+	            MigrateSkillBitsets();
+	            PackSettingsFlags();
+	            MigratePresetAutoAssignOrder();
+	            MigrateAvotationProgress();
+	        }
 
         private void MigrateAvotationProgress()
         {
@@ -1632,10 +1590,13 @@ namespace Expansion
             // No action needed here since bool defaults to false
         }
 
-        private void SaveInternal(bool force)
+        private void SaveInternal(bool force, bool updateQuitTime = true)
         {
             if (!_isSaveReady && !force) return;
-            saveSettings.dateQuitString = DateTime.UtcNow.ToString(CultureInfo.InvariantCulture);
+            if (updateQuitTime)
+            {
+                saveSettings.dateQuitString = DateTime.UtcNow.ToString(CultureInfo.InvariantCulture);
+            }
             SaveState();
         }
 
@@ -1663,7 +1624,9 @@ namespace Expansion
             if (saveSettings.doubleIp) PlayerPrefs.SetInt("doubleip", 1);
             if (lsm != null) lsm.CloseLoadScreen();
 
-            bool fileExists = File.Exists(Application.persistentDataPath + "/" + fileName + ".idsOdin");
+	            string canonicalPath = SavePaths.GetCanonicalSavePath();
+	            string legacyOdinPath = Path.Combine(Application.persistentDataPath, fileName + ".idsOdin");
+	            bool fileExists = File.Exists(canonicalPath) || File.Exists(legacyOdinPath);
 
             recoveryText.text = fileExists ? "Attempt Recovery" : "No Save found";
             recoveryButton.interactable = fileExists;
@@ -1799,39 +1762,12 @@ namespace Expansion
 
         private string _json;
 
-        #region SaveMethods
-
-        private static void DeleteDefaultEs3SaveArtifacts()
-        {
-            // Some devices end up with a truncated/corrupted ES3 file (or encryption mismatch),
-            // which can make even ES3.KeyExists throw on startup. If that happens, the only
-            // practical recovery is to delete the ES3 file and start fresh.
-            try
-            {
-                ES3Settings settings = new ES3Settings();
-
-                // Primary delete via ES3 API (handles PlayerPrefs vs File location).
-                try { ES3.DeleteFile(settings); }
-                catch (Exception e) { Debug.LogWarning($"[SaveRecovery] ES3.DeleteFile failed: {e.Message}"); }
-
-                // Also delete ES3 temp/backup artifacts if using file storage.
-                if (settings.location == ES3.Location.File)
-                {
-                    string fullPath = settings.FullPath;
-                    if (!string.IsNullOrEmpty(fullPath))
-                    {
-                        // ES3IO uses these suffixes internally.
-                        TryDeleteFile(fullPath + ".tmp");
-                        TryDeleteFile(fullPath + ".tmp.bak");
-                        TryDeleteFile(fullPath + ".bac");
-                    }
-                }
-            }
-            catch (Exception e)
-            {
-                Debug.LogWarning($"[SaveRecovery] Failed deleting ES3 artifacts: {e.Message}");
-            }
-        }
+	        #region SaveMethods
+	
+	        private static void DeleteDefaultEs3SaveArtifacts()
+	        {
+	            LegacyEs3Save.DeleteDefaultArtifacts();
+	        }
 
         private static void TryDeleteFile(string path)
         {
@@ -1845,125 +1781,44 @@ namespace Expansion
             }
         }
 
-        private static void ArchiveDefaultEs3SaveArtifacts(string reason)
-        {
-            // Best-effort: keep a copy of the broken save on disk for support/debugging.
-            // This only applies when ES3 is writing to a file (default for this project).
-            try
-            {
-                ES3Settings settings = new ES3Settings();
-                if (settings.location != ES3.Location.File) return;
+	        private static void ArchiveDefaultEs3SaveArtifacts(string reason)
+	        {
+	            LegacyEs3Save.ArchiveDefaultArtifacts(reason);
+	        }
 
-                string fullPath = settings.FullPath;
-                if (string.IsNullOrEmpty(fullPath)) return;
-                if (!File.Exists(fullPath)) return;
+	        private static bool TryRecoverDefaultEs3Save(out SaveDataSettings recovered, out string recoveredFromPath)
+	        {
+	            return LegacyEs3Save.TryRecoverDefaultSave(out recovered, out recoveredFromPath);
+	        }
 
-                string stamp = DateTime.UtcNow.ToString("yyyyMMdd_HHmmss", CultureInfo.InvariantCulture);
-                string archivePath = $"{fullPath}.corrupt.{stamp}";
-
-                int counter = 1;
-                while (File.Exists(archivePath) && counter < 50)
-                {
-                    archivePath = $"{fullPath}.corrupt.{stamp}.{counter}";
-                    counter++;
-                }
-
-                File.Move(fullPath, archivePath);
-                Debug.LogWarning($"[SaveRecovery] Archived broken ES3 save to '{archivePath}' (reason={reason}).");
-
-                // Also archive temp/backup artifacts if they exist.
-                TryArchiveFile(fullPath + ".tmp", $"{archivePath}.tmp");
-                TryArchiveFile(fullPath + ".tmp.bak", $"{archivePath}.tmp.bak");
-                TryArchiveFile(fullPath + ".bac", $"{archivePath}.bac");
-            }
-            catch (Exception e)
-            {
-                Debug.LogWarning($"[SaveRecovery] Failed archiving ES3 artifacts: {e.Message}");
-            }
-        }
-
-        private static void TryArchiveFile(string sourcePath, string destPath)
-        {
-            try
-            {
-                if (!File.Exists(sourcePath)) return;
-                if (File.Exists(destPath)) return;
-                File.Move(sourcePath, destPath);
-            }
-            catch (Exception e)
-            {
-                Debug.LogWarning($"[SaveRecovery] Failed archiving '{sourcePath}': {e.Message}");
-            }
-        }
-
-        private static bool TryLoadSaveSettingsFromEs3File(string fullPath, out SaveDataSettings settings)
-        {
-            settings = null;
-            try
-            {
-                if (string.IsNullOrEmpty(fullPath)) return false;
-                if (!File.Exists(fullPath)) return false;
-                if (!ES3.KeyExists("saveSettings", fullPath)) return false;
-                settings = ES3.Load<SaveDataSettings>("saveSettings", fullPath);
-                return settings != null;
-            }
-            catch
-            {
-                settings = null;
-                return false;
-            }
-        }
-
-        private static bool TryRecoverDefaultEs3Save(out SaveDataSettings recovered, out string recoveredFromPath)
-        {
-            recovered = null;
-            recoveredFromPath = null;
-            try
-            {
-                ES3Settings settings = new ES3Settings();
-                if (settings.location != ES3.Location.File) return false;
-                string fullPath = settings.FullPath;
-                if (string.IsNullOrEmpty(fullPath)) return false;
-
-                // ES3 writes via a temp file and keeps a copy of the previous file at "<fullPath>.tmp.bak".
-                // If the main file is corrupt/truncated, the backup often still contains the last good save.
-                string[] candidates =
-                {
-                    fullPath + ".tmp",
-                    fullPath + ".tmp.bak",
-                    fullPath + ".bac",
-                    fullPath
-                };
-
-                foreach (string candidate in candidates)
-                {
-                    if (!TryLoadSaveSettingsFromEs3File(candidate, out SaveDataSettings candidateSettings)) continue;
-                    recovered = candidateSettings;
-                    recoveredFromPath = candidate;
-                    return true;
-                }
-            }
-            catch
-            {
-                // ignored
-            }
-
-            return false;
-        }
-
-        public void WipeAllData()
-        {
-            bool debugUnlocked = (saveSettings != null && saveSettings.debugOptions) || PlayerPrefs.GetInt("debug", 0) == 1;
-            bool doubleIpUnlocked = (saveSettings != null && saveSettings.doubleIp) || PlayerPrefs.GetInt("doubleip", 0) == 1;
-            DeleteDefaultEs3SaveArtifacts();
-            saveSettings = new SaveDataSettings();
-            saveSettings.debugOptions = debugUnlocked;
-            saveSettings.doubleIp = doubleIpUnlocked;
-            saveSettings.saveVersion = CurrentSaveVersion;
-            NotifyDebugOptionsChanged();
-            ES3.Save("saveSettings", saveSettings);
-            SceneManager.LoadScene(0);
-        }
+	        public void WipeAllData()
+	        {
+	            bool debugUnlocked = (saveSettings != null && saveSettings.debugOptions) || PlayerPrefs.GetInt("debug", 0) == 1;
+	            bool doubleIpUnlocked = (saveSettings != null && saveSettings.doubleIp) || PlayerPrefs.GetInt("doubleip", 0) == 1;
+	            DeleteDefaultEs3SaveArtifacts();
+	            // Also delete the canonical Odin-only save file + backups so the wipe is complete.
+	            TryDeleteFile(SavePaths.GetCanonicalSavePath());
+	            TryDeleteFile(Path.Combine(Application.persistentDataPath, fileName + ".idsOdin"));
+	            try
+	            {
+	                string backupFolder = SavePaths.GetBackupFolderPath();
+	                if (Directory.Exists(backupFolder))
+	                {
+	                    Directory.Delete(backupFolder, recursive: true);
+	                }
+	            }
+	            catch (Exception e)
+	            {
+	                Debug.LogWarning($"[SaveRecovery] Failed deleting save backups: {e.Message}");
+	            }
+	            saveSettings = new SaveDataSettings();
+	            saveSettings.debugOptions = debugUnlocked;
+	            saveSettings.doubleIp = doubleIpUnlocked;
+	            saveSettings.saveVersion = CurrentSaveVersion;
+	            NotifyDebugOptionsChanged();
+	            SaveInternal(force: true, updateQuitTime: false);
+	            SceneManager.LoadScene(0);
+	        }
 
         [ContextMenu("WipeSaveData")]
         public void WipeSaveData()
@@ -3758,26 +3613,41 @@ namespace Expansion
             SaveInternal(false);
         }
 
-        public void AttemptSaveRecovery()
-        {
-            if (File.Exists(Application.persistentDataPath + "/" + fileName + ".idsOdin"))
-            {
-                byte[] bytes = File.ReadAllBytes(Application.persistentDataPath + "/" + fileName + ".idsOdin");
-                Debug.Log("Copied to clipboard");
+	        public void AttemptSaveRecovery()
+	        {
+	            string canonicalPath = SavePaths.GetCanonicalSavePath();
+	            if (File.Exists(canonicalPath))
+	            {
+	                string text = File.ReadAllText(canonicalPath, Encoding.UTF8);
+	                GUIUtility.systemCopyBuffer = text;
+	                recoveryText.text = "Save Copied";
+	                Debug.Log("Copied canonical save to clipboard");
+	                return;
+	            }
 
-                GUIUtility.systemCopyBuffer = beta ? Encoding.UTF8.GetString(bytes) : Convert.ToBase64String(bytes);
-                recoveryText.text = "Save Copied";
-            }
-        }
+	            string legacyOdinPath = Path.Combine(Application.persistentDataPath, fileName + ".idsOdin");
+	            if (File.Exists(legacyOdinPath))
+	            {
+	                byte[] bytes = File.ReadAllBytes(legacyOdinPath);
+	                Debug.Log("Copied to clipboard");
 
-        public void SaveState()
-        {
-            SaveDictionaries();
-            PackSettingsFlags();
-            // IMPORTANT: Save a compact snapshot (bitsets + pruned skill state) for smaller ES3 saves.
-            SaveDataSettings snapshot = CreateSaveSnapshotForStorage(includeBase64Fields: true, compactFacilityArrays: false);
-            ES3.Save("saveSettings", snapshot);
-        }
+	                GUIUtility.systemCopyBuffer = beta ? Encoding.UTF8.GetString(bytes) : Convert.ToBase64String(bytes);
+	                recoveryText.text = "Save Copied";
+	            }
+	        }
+
+	        public void SaveState()
+	        {
+	            SaveDictionaries();
+	            PackSettingsFlags();
+	            SaveDataSettings snapshot = CreateSaveSnapshotForStorage(includeBase64Fields: false, compactFacilityArrays: false);
+
+	            SaveSystem saveSystem = SaveSystem.CreateDefault();
+	            if (!saveSystem.TrySave(snapshot, out _, out string error))
+	            {
+	                Debug.LogError($"[Save] Failed writing canonical save file: {error}");
+	            }
+	        }
 
         private SaveDataSettings CreateSaveSnapshotForStorage(bool includeBase64Fields, bool compactFacilityArrays)
         {
@@ -3799,25 +3669,28 @@ namespace Expansion
                 : null;
             ClearSkillTreeFlagsForSave(saveData?.dysonVerseSkillTreeData);
 
-            if (infData.researchLevelsById != null && infData.researchLevelsById.Count > 0)
-            {
-                var filtered = new Dictionary<string, double>();
-                foreach (KeyValuePair<string, double> entry in infData.researchLevelsById)
-                {
-                    if (entry.Value == 0) continue;
-                    filtered[entry.Key] = entry.Value;
-                }
+	            if (infData.researchLevelsById != null && infData.researchLevelsById.Count > 0)
+	            {
+	                var filtered = new Dictionary<string, double>();
+	                foreach (KeyValuePair<string, double> entry in infData.researchLevelsById)
+	                {
+	                    if (entry.Value == 0) continue;
+	                    filtered[entry.Key] = entry.Value;
+	                }
 
-                infData.researchLevelsById = filtered;
-            }
+	                infData.researchLevelsById = filtered;
+	            }
 
-            PopulateSparseArrays(infData, compactFacilityArrays);
-            GuardSparseArrayFallbacks(infData);
+	            // Facility arrays are fixed-size (2 slots: manual/auto) and tiny in the binary format.
+	            // Avoid saving multiple representations (dense + sparse) and avoid nulling dense arrays
+	            // because it has proven fragile and can lead to data loss when one representation is missing.
+	            EnsureInfinityFacilityArrays(infData);
+	            ClearInfinityFacilitySparseLists(infData);
 
-            if (infData.skillStateById != null)
-            {
-                Dictionary<string, SkillState> filtered = new Dictionary<string, SkillState>();
-                foreach (KeyValuePair<string, SkillState> entry in infData.skillStateById)
+	            if (infData.skillStateById != null)
+	            {
+	                Dictionary<string, SkillState> filtered = new Dictionary<string, SkillState>();
+	                foreach (KeyValuePair<string, SkillState> entry in infData.skillStateById)
                 {
                     if (entry.Value == null) continue;
                     bool keep = entry.Value.timerSeconds != 0 ||
@@ -3832,8 +3705,8 @@ namespace Expansion
                 infData.skillStateById = filtered;
             }
 
-            infData.skillOwnedById = null;
-            infData.SkillTreeSaveData = null;
+	            infData.skillOwnedById = null;
+	            infData.SkillTreeSaveData = null;
 
             if (saveData != null)
             {
@@ -3946,10 +3819,10 @@ namespace Expansion
             return result;
         }
 
-        private static void PopulateSparseArrays(DysonVerseInfinityData data, bool compactArrays)
-        {
-            if (data == null) return;
-            BuildSparseIndices(data.assemblyLines, ref data.assemblyLinesSparseIndices, ref data.assemblyLinesSparseValues);
+	        private static void PopulateSparseArrays(DysonVerseInfinityData data, bool compactArrays)
+	        {
+	            if (data == null) return;
+	            BuildSparseIndices(data.assemblyLines, ref data.assemblyLinesSparseIndices, ref data.assemblyLinesSparseValues);
             BuildSparseIndices(data.managers, ref data.managersSparseIndices, ref data.managersSparseValues);
             BuildSparseIndices(data.servers, ref data.serversSparseIndices, ref data.serversSparseValues);
             BuildSparseIndices(data.dataCenters, ref data.dataCentersSparseIndices, ref data.dataCentersSparseValues);
@@ -3968,39 +3841,98 @@ namespace Expansion
             data.planets = null;
             data.matrioshkaBrains = null;
             data.birchPlanets = null;
-            data.galacticBrains = null;
-        }
+	            data.galacticBrains = null;
+	        }
 
-        private void EnsureInfinitySparseArrays()
-        {
-            if (infinityData == null) return;
-            infinityData.assemblyLines = RestoreSparseArray(infinityData.assemblyLines, 2,
-                infinityData.assemblyLinesSparseIndices, infinityData.assemblyLinesSparseValues);
-            infinityData.managers = RestoreSparseArray(infinityData.managers, 2,
-                infinityData.managersSparseIndices, infinityData.managersSparseValues);
-            infinityData.servers = RestoreSparseArray(infinityData.servers, 2,
-                infinityData.serversSparseIndices, infinityData.serversSparseValues);
-            infinityData.dataCenters = RestoreSparseArray(infinityData.dataCenters, 2,
-                infinityData.dataCentersSparseIndices, infinityData.dataCentersSparseValues);
-            infinityData.planets = RestoreSparseArray(infinityData.planets, 2,
-                infinityData.planetsSparseIndices, infinityData.planetsSparseValues);
-            infinityData.matrioshkaBrains = RestoreSparseArray(infinityData.matrioshkaBrains, 2,
-                infinityData.matrioshkaBrainsSparseIndices, infinityData.matrioshkaBrainsSparseValues);
-            infinityData.birchPlanets = RestoreSparseArray(infinityData.birchPlanets, 2,
-                infinityData.birchPlanetsSparseIndices, infinityData.birchPlanetsSparseValues);
-            infinityData.galacticBrains = RestoreSparseArray(infinityData.galacticBrains, 2,
-                infinityData.galacticBrainsSparseIndices, infinityData.galacticBrainsSparseValues);
+	        private static void EnsureInfinityFacilityArrays(DysonVerseInfinityData data)
+	        {
+	            if (data == null) return;
 
-            if (IsSparseEmpty(infinityData.assemblyLinesSparseIndices, infinityData.assemblyLinesSparseValues) &&
-                IsArrayEmpty(infinityData.assemblyLines))
-            {
-                Debug.LogWarning(
-                    $"Sparse facility data missing; assemblyLines restored to zeros. " +
-                    $"saveVersion={saveSettings?.saveVersion}, " +
-                    $"assemblyLines=[{FormatCounts(infinityData.assemblyLines)}], " +
-                    $"sparseCount={infinityData.assemblyLinesSparseIndices?.Count ?? 0}");
-            }
-        }
+	            data.assemblyLines = EnsureFacilityArray(data.assemblyLines, 2);
+	            MergeSparseIntoArray(data.assemblyLines, data.assemblyLinesSparseIndices, data.assemblyLinesSparseValues);
+
+	            data.managers = EnsureFacilityArray(data.managers, 2);
+	            MergeSparseIntoArray(data.managers, data.managersSparseIndices, data.managersSparseValues);
+
+	            data.servers = EnsureFacilityArray(data.servers, 2);
+	            MergeSparseIntoArray(data.servers, data.serversSparseIndices, data.serversSparseValues);
+
+	            data.dataCenters = EnsureFacilityArray(data.dataCenters, 2);
+	            MergeSparseIntoArray(data.dataCenters, data.dataCentersSparseIndices, data.dataCentersSparseValues);
+
+	            data.planets = EnsureFacilityArray(data.planets, 2);
+	            MergeSparseIntoArray(data.planets, data.planetsSparseIndices, data.planetsSparseValues);
+
+	            data.matrioshkaBrains = EnsureFacilityArray(data.matrioshkaBrains, 2);
+	            MergeSparseIntoArray(data.matrioshkaBrains, data.matrioshkaBrainsSparseIndices, data.matrioshkaBrainsSparseValues);
+
+	            data.birchPlanets = EnsureFacilityArray(data.birchPlanets, 2);
+	            MergeSparseIntoArray(data.birchPlanets, data.birchPlanetsSparseIndices, data.birchPlanetsSparseValues);
+
+	            data.galacticBrains = EnsureFacilityArray(data.galacticBrains, 2);
+	            MergeSparseIntoArray(data.galacticBrains, data.galacticBrainsSparseIndices, data.galacticBrainsSparseValues);
+	        }
+
+	        private static double[] EnsureFacilityArray(double[] existing, int length)
+	        {
+	            if (existing != null && existing.Length == length) return existing;
+	            var result = new double[length];
+	            if (existing == null) return result;
+	            int copy = Math.Min(existing.Length, length);
+	            for (int i = 0; i < copy; i++)
+	            {
+	                result[i] = existing[i];
+	            }
+	            return result;
+	        }
+
+	        private static void MergeSparseIntoArray(double[] dense, List<int> indices, List<double> values)
+	        {
+	            if (dense == null) return;
+	            if (indices == null || values == null) return;
+	            int count = Math.Min(indices.Count, values.Count);
+	            for (int i = 0; i < count; i++)
+	            {
+	                int index = indices[i];
+	                if (index < 0 || index >= dense.Length) continue;
+	                double sparseValue = values[i];
+	                if (sparseValue > dense[index])
+	                {
+	                    dense[index] = sparseValue;
+	                }
+	            }
+	        }
+
+	        private static void ClearInfinityFacilitySparseLists(DysonVerseInfinityData data)
+	        {
+	            if (data == null) return;
+
+	            data.assemblyLinesSparseIndices = null;
+	            data.assemblyLinesSparseValues = null;
+	            data.managersSparseIndices = null;
+	            data.managersSparseValues = null;
+	            data.serversSparseIndices = null;
+	            data.serversSparseValues = null;
+	            data.dataCentersSparseIndices = null;
+	            data.dataCentersSparseValues = null;
+	            data.planetsSparseIndices = null;
+	            data.planetsSparseValues = null;
+	            data.matrioshkaBrainsSparseIndices = null;
+	            data.matrioshkaBrainsSparseValues = null;
+	            data.birchPlanetsSparseIndices = null;
+	            data.birchPlanetsSparseValues = null;
+	            data.galacticBrainsSparseIndices = null;
+	            data.galacticBrainsSparseValues = null;
+	        }
+
+	        private void EnsureInfinitySparseArrays()
+	        {
+	            if (infinityData == null) return;
+	            // Legacy bridge: older clipboard exports may have nulled dense arrays and relied on sparse lists.
+	            // V11 canonical format keeps dense arrays only; we merge sparse into dense then discard sparse.
+	            EnsureInfinityFacilityArrays(infinityData);
+	            ClearInfinityFacilitySparseLists(infinityData);
+	        }
 
         private static bool IsSparseEmpty(List<int> indices, List<double> values)
         {
@@ -4075,78 +4007,239 @@ namespace Expansion
             return bits;
         }
 
+        private enum SaveLoadSource
+        {
+            CanonicalFile,
+            Es3,
+            Es3Recovered,
+            LegacyOdinJson
+        }
+
+        private readonly struct SaveLoadCandidate
+        {
+            public SaveLoadCandidate(SaveLoadSource source, SaveDataSettings settings, string debugPath = null)
+            {
+                Source = source;
+                Settings = settings;
+                DebugPath = debugPath;
+                SaveVersion = settings?.saveVersion ?? 0;
+                TimestampUtc = TryGetCandidateTimestampUtc(settings, out DateTime utc) ? utc : (DateTime?)null;
+            }
+
+            public SaveLoadSource Source { get; }
+            public SaveDataSettings Settings { get; }
+            public string DebugPath { get; }
+            public int SaveVersion { get; }
+            public DateTime? TimestampUtc { get; }
+        }
+
+        private static bool TryGetCandidateTimestampUtc(SaveDataSettings settings, out DateTime utc)
+        {
+            utc = default;
+            if (settings == null) return false;
+            if (TryParseInvariantUtc(settings.lastSuccessfulLoadUtc, out utc)) return true;
+            if (TryParseInvariantUtc(settings.dateQuitString, out utc)) return true;
+            return TryParseInvariantUtc(settings.dateStarted, out utc);
+        }
+
+        private static bool TryParseInvariantUtc(string value, out DateTime utc)
+        {
+            utc = default;
+            if (string.IsNullOrWhiteSpace(value)) return false;
+            return DateTime.TryParse(
+                value,
+                CultureInfo.InvariantCulture,
+                DateTimeStyles.AssumeUniversal | DateTimeStyles.AdjustToUniversal,
+                out utc);
+        }
+
+        private static int SourcePriority(SaveLoadSource source)
+        {
+            // Higher = preferred tie-break when candidates look identical.
+            switch (source)
+            {
+                case SaveLoadSource.Es3:
+                    return 3;
+                case SaveLoadSource.Es3Recovered:
+                    return 2;
+                case SaveLoadSource.LegacyOdinJson:
+                    return 1;
+                case SaveLoadSource.CanonicalFile:
+                    return 0;
+                default:
+                    return 0;
+            }
+        }
+
+        private static bool IsBetterCandidate(SaveLoadCandidate candidate, SaveLoadCandidate best)
+        {
+            if (candidate.Settings == null) return false;
+            if (best.Settings == null) return true;
+
+            if (candidate.SaveVersion != best.SaveVersion)
+            {
+                return candidate.SaveVersion > best.SaveVersion;
+            }
+
+            if (candidate.TimestampUtc.HasValue || best.TimestampUtc.HasValue)
+            {
+                if (!best.TimestampUtc.HasValue) return true;
+                if (!candidate.TimestampUtc.HasValue) return false;
+                if (candidate.TimestampUtc.Value != best.TimestampUtc.Value)
+                {
+                    return candidate.TimestampUtc.Value > best.TimestampUtc.Value;
+                }
+            }
+
+            int candidatePriority = SourcePriority(candidate.Source);
+            int bestPriority = SourcePriority(best.Source);
+            if (candidatePriority != bestPriority)
+            {
+                return candidatePriority > bestPriority;
+            }
+
+            return false;
+        }
+
+        private static bool TryLoadLegacyOdinJsonSave(string filePath, out SaveDataSettings settings, out string error)
+        {
+            settings = null;
+            error = null;
+            try
+            {
+                if (string.IsNullOrWhiteSpace(filePath) || !File.Exists(filePath))
+                {
+                    error = "File not found.";
+                    return false;
+                }
+
+                byte[] bytes = File.ReadAllBytes(filePath);
+                settings = SirenixSerializationUtility.DeserializeValue<SaveDataSettings>(bytes, DataFormat.JSON);
+                if (settings == null)
+                {
+                    error = "Deserialized null settings.";
+                    return false;
+                }
+
+                return true;
+            }
+            catch (Exception ex)
+            {
+                settings = null;
+                error = ex.Message;
+                return false;
+            }
+        }
+
+        private void ApplyLoadedSettings(SaveDataSettings loaded, string sourceLog)
+        {
+            saveSettings = loaded;
+            LoadDictionaries();
+            FixSkillpoints();
+            if (!oracle.saveSettings.cheater && oracle.saveSettings.maxOfflineTime < 86400)
+                oracle.saveSettings.maxOfflineTime = 86400;
+            saveSettings.lastSuccessfulLoadUtc = DateTime.UtcNow.ToString(CultureInfo.InvariantCulture);
+            Loaded = true;
+            Debug.Log($"Loaded with {sourceLog}");
+        }
+
         public void Load()
         {
             Loaded = false;
             SetSaveReady(false);
             WipeSaveData();
 
-            bool hasEs3Save = false;
-            bool es3Broken = false;
-            try
+            // Canonical on-disk save: text file containing the exact clipboard string (IDB1:...).
+            // This path is intended to replace ES3 as the primary persistence mechanism, while ES3 remains
+            // as a legacy import/fallback during the transition period.
+            bool loadedFromCanonical = false;
+            SaveSystem saveSystem = SaveSystem.CreateDefault();
+            if (saveSystem.Storage.Exists())
             {
-                hasEs3Save = ES3.KeyExists("saveSettings");
-            }
-            catch (Exception e)
-            {
-                Debug.LogError($"[SaveRecovery] ES3.KeyExists failed; will attempt recovery. {e}");
-                hasEs3Save = false;
-                es3Broken = true;
-            }
-
-            if (hasEs3Save)
-            {
-                try
+                if (saveSystem.TryLoad(out SaveDataSettings canonicalLoaded, out string canonicalError))
                 {
-                    saveSettings = ES3.Load<SaveDataSettings>("saveSettings");
-                    LoadDictionaries();
-                    FixSkillpoints();
-                    if (!oracle.saveSettings.cheater && oracle.saveSettings.maxOfflineTime < 86400)
-                        oracle.saveSettings.maxOfflineTime = 86400;
-                    saveSettings.lastSuccessfulLoadUtc = DateTime.UtcNow.ToString(CultureInfo.InvariantCulture);
-                    Loaded = true;
-                    Debug.Log("Loaded with ES3");
-                }
-                catch (Exception e)
-                {
-                    Debug.LogError($"[SaveRecovery] ES3.Load failed; will attempt recovery. {e}");
-                    es3Broken = true;
-                }
-            }
-
-            if (!Loaded && es3Broken)
-            {
-                // Try to recover from ES3's backup artifacts first, without wiping the user.
-                if (TryRecoverDefaultEs3Save(out SaveDataSettings recovered, out string recoveredFrom))
-                {
-                    saveSettings = recovered;
-                    LoadDictionaries();
-                    FixSkillpoints();
-                    if (!oracle.saveSettings.cheater && oracle.saveSettings.maxOfflineTime < 86400)
-                        oracle.saveSettings.maxOfflineTime = 86400;
-                    saveSettings.lastSuccessfulLoadUtc = DateTime.UtcNow.ToString(CultureInfo.InvariantCulture);
-                    Loaded = true;
-                    Debug.LogWarning($"[SaveRecovery] Recovered saveSettings from '{recoveredFrom}'.");
-
-                    // Rewrite a fresh default ES3 file so future loads don't depend on the backup artifact.
-                    try { SaveInternal(true); }
-                    catch (Exception e) { Debug.LogWarning($"[SaveRecovery] Failed rewriting recovered save: {e.Message}"); }
+                    loadedFromCanonical = true;
+                    ApplyLoadedSettings(canonicalLoaded, "canonical save file");
                 }
                 else
                 {
+                    Debug.LogError($"[SaveRecovery] Canonical save load failed; falling back to ES3. {canonicalError}");
+                }
+            }
+
+            if (!Loaded)
+            {
+                SaveLoadCandidate best = default;
+
+                bool es3Broken = false;
+                try
+                {
+                    if (ES3.KeyExists("saveSettings"))
+                    {
+                        try
+                        {
+                            SaveDataSettings es3Loaded = ES3.Load<SaveDataSettings>("saveSettings");
+                            SaveLoadCandidate candidate = new SaveLoadCandidate(SaveLoadSource.Es3, es3Loaded);
+                            if (IsBetterCandidate(candidate, best)) best = candidate;
+                        }
+                        catch (Exception e)
+                        {
+                            Debug.LogError($"[SaveRecovery] ES3.Load failed; will attempt recovery. {e}");
+                            es3Broken = true;
+                        }
+                    }
+                }
+                catch (Exception e)
+                {
+                    Debug.LogError($"[SaveRecovery] ES3.KeyExists failed; will attempt recovery. {e}");
+                    es3Broken = true;
+                }
+
+                // Attempt ES3 artifact recovery even if the main load succeeded. If the main ES3 load
+                // silently returned defaults, the backup often still contains the last good save.
+                if (TryRecoverDefaultEs3Save(out SaveDataSettings recovered, out string recoveredFrom))
+                {
+                    SaveLoadCandidate recoveredCandidate = new SaveLoadCandidate(SaveLoadSource.Es3Recovered, recovered, recoveredFrom);
+                    if (IsBetterCandidate(recoveredCandidate, best)) best = recoveredCandidate;
+                }
+
+                // Legacy Odin JSON file (pre-canonical / pre-ES3 deprecation).
+                string legacyOdinPath = Path.Combine(Application.persistentDataPath, fileName + ".idsOdin");
+                if (TryLoadLegacyOdinJsonSave(legacyOdinPath, out SaveDataSettings legacyOdin, out string odinError))
+                {
+                    SaveLoadCandidate legacyCandidate = new SaveLoadCandidate(SaveLoadSource.LegacyOdinJson, legacyOdin, legacyOdinPath);
+                    if (IsBetterCandidate(legacyCandidate, best)) best = legacyCandidate;
+                }
+                else if (!string.IsNullOrEmpty(odinError) && File.Exists(legacyOdinPath))
+                {
+                    Debug.LogWarning($"[SaveRecovery] Failed loading legacy Odin JSON save '{legacyOdinPath}': {odinError}");
+                }
+
+                if (best.Settings != null)
+                {
+                    switch (best.Source)
+                    {
+                        case SaveLoadSource.Es3Recovered:
+                            Debug.LogWarning($"[SaveRecovery] Loaded best candidate from ES3 artifacts '{best.DebugPath}'.");
+                            ApplyLoadedSettings(best.Settings, "ES3 (recovered)");
+                            break;
+                        case SaveLoadSource.LegacyOdinJson:
+                            ApplyLoadedSettings(best.Settings, "Odin (legacy JSON)");
+                            break;
+                        default:
+                            ApplyLoadedSettings(best.Settings, "ES3");
+                            break;
+                    }
+                }
+                else if (es3Broken)
+                {
                     // No recoverable ES3 backup found. Preserve the broken file for support/debugging,
-                    // then allow the rest of the normal load flow to continue (Odin or new save).
+                    // then allow the rest of the normal load flow to continue (new save).
                     ArchiveDefaultEs3SaveArtifacts("unrecoverable");
                 }
             }
 
-            if (!Loaded && File.Exists(Application.persistentDataPath + "/" + fileName + ".idsOdin"))
-            {
-                LoadState(Application.persistentDataPath + "/" + fileName + ".idsOdin");
-                //File.Delete(Application.persistentDataPath + "/" + fileName + ".idsOdin");
-                Debug.Log("Loaded with Odin");
-            }
-            else if (!Loaded)
+            if (!Loaded)
             {
                 saveSettings.dateStarted = DateTime.UtcNow.ToString(CultureInfo.InvariantCulture);
                 Loaded = true;
@@ -4158,6 +4251,20 @@ namespace Expansion
             UpdateSkills?.Invoke();
             StartCoroutine(AwayForCoroutine());
             SetSaveReady(true);
+
+            // If we loaded from a legacy source (ES3 or old .idsOdin), immediately write the canonical file so
+            // future launches use the Odin-only pipeline.
+            if (!loadedFromCanonical)
+            {
+                try
+                {
+                    SaveInternal(force: true, updateQuitTime: false);
+                }
+                catch (Exception e)
+                {
+                    Debug.LogWarning($"[Save] Failed writing canonical save after legacy load: {e.Message}");
+                }
+            }
         }
 
         public void LoadState(string filePath)

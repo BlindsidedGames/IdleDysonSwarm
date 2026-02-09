@@ -1,7 +1,7 @@
 # Save System V11 Plan (Odin-Only, Single Canonical Save String)
 
-Status: Draft (for review/approval before any code changes)
-Last updated: 2026-02-08
+Status: In progress (implementation underway; see `Documentation/SaveSystemV11ImplementationLog.md`)
+Last updated: 2026-02-09
 
 ## Goals
 - Make **one canonical save format** used for:
