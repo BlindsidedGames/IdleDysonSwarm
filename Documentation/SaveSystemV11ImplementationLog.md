@@ -72,6 +72,13 @@ Primary design doc: `Documentation/SaveSystemV11Plan.md`.
   - Removed duplicated clipboard codec helpers from `Assets/Scripts/Expansion/Oracle.cs` (canonical codec is now `Assets/Scripts/Systems/Save/SaveCodec.cs`).
   - Extracted legacy-load candidate selection and legacy `.idsOdin` JSON parsing into `Assets/Scripts/Systems/Save/SaveLoadCandidateSelector.cs`.
   - Extracted snapshot compaction (skill bits, auto-assign bits, facility normalization, dictionary filtering) into `Assets/Scripts/Systems/Save/SaveSnapshotBuilder.cs`.
+  - Split Oracle into partials to reduce the monolithic file size:
+    - Clipboard UI + debug export: `Assets/Scripts/Expansion/Oracle.Clipboard.cs`
+    - Save scheduling + preset sync triggers: `Assets/Scripts/Expansion/Oracle.SaveScheduling.cs`
+    - Skill presets: `Assets/Scripts/Expansion/Oracle.SkillPresets.cs`
+    - Skill points + recalc tooling: `Assets/Scripts/Expansion/Oracle.SkillPoints.cs`
+    - Skill tree dictionary bridge: `Assets/Scripts/Expansion/Oracle.SkillTreeDictionaries.cs`
+    - Migration orchestration: `Assets/Scripts/Expansion/Oracle.Migrations.cs`
   - Updated tests:
     - Replaced sparse-characterization tests with `Assets/Editor/Tests/Save/FacilityArrayNormalizerTests.cs`.
     - Updated codec characterization to target `SaveCodec` (`Assets/Editor/Tests/Save/SaveCodecCharacterizationTests.cs`).
