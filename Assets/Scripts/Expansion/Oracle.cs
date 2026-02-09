@@ -45,6 +45,8 @@ namespace Expansion
     /// <para>Disk persistence + legacy load selection: <c>Assets/Scripts/Expansion/Oracle.Persistence.cs</c>.</para>
     /// <para>Clipboard UI entrypoints: <c>Assets/Scripts/Expansion/Oracle.Clipboard.cs</c>.</para>
     /// <para>Migrations + ensure steps: <c>Assets/Scripts/Expansion/Oracle.Migrations.cs</c>.</para>
+    /// <para>Change notes: <see cref="SaveDataSettings"/> includes tab preset override preferences (Bots/Research) that
+    /// export/import with the save.</para>
     /// </remarks>
     public partial class Oracle : SerializedMonoBehaviour
     {
@@ -2765,6 +2767,13 @@ private void PackSettingsFlags()
             public bool infinityAutoServers = true;
             public bool infinityAutoDataCenters = true;
             public bool infinityAutoPlanets = true;
+
+            [Space(10)]
+            [Tooltip("Skill preset override when opening the Bots tab. 0=Off, 1-5=preset slot.")]
+            public int botsTabPresetOverride;
+
+            [Tooltip("Skill preset override when opening the Research tab. 0=Off, 1-5=preset slot.")]
+            public int researchTabPresetOverride;
             public bool firstReality;
             public bool firstInfinityDone;
 

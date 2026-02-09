@@ -7,6 +7,34 @@ using UnityEngine.Events;
 using UnityEngine.UI;
 using static Expansion.Oracle;
 
+/// <summary>
+/// Skill tree settings UI controller (preset names, clipboard import/export, and preset switching UI bindings).
+/// </summary>
+/// <remarks>
+/// Purpose:
+/// - Owns the Skills preset UX: naming, clipboard import/export, side-panel preset toggle switching, and tab-based
+///   "preset automation" (Bots/Research can auto-switch presets when opened).
+///
+/// Where it runs:
+/// - Runtime (UI scene object; intended to remain enabled so it can respond to save/load and tab clicks).
+///
+/// Primary entry points:
+/// - <see cref="Start"/>: wires buttons and kicks off initial preset text setup.
+/// - <see cref="OnEnable"/> / <see cref="OnDisable"/>: registers/unregisters event and UI bindings.
+/// - Toggle callbacks (side panel + automation), clipboard handlers, and tab button listeners.
+///
+/// Interacts with:
+/// - Calls into: <c>Expansion.Oracle</c> (saveSettings, SaveList/LoadList, preset data), <c>SkillTreeManager</c>
+///   (ResetSkills), <c>GameManager</c> (AutoAssignSkillsInvoke), <c>SidePanelReferences</c> (toggle + feedback UI),
+///   <c>PresetAutomationReferences</c> (Bots/Research automation UI).
+/// - Called by: Unity lifecycle + UI events; <c>GameManager.UpdateSkills</c> event.
+///
+/// Change notes:
+/// - Public/serialized fields here are wired in prefabs/scenes; renaming fields requires updating Unity references.
+/// - Preset automation preferences persist in <c>Oracle.SaveDataSettings</c> (export/import with save).
+/// - Preset switching touches live auto-assign state; keep <c>oracle.SuppressPresetSync()</c> usage intact when
+///   changing switch behavior.
+/// </remarks>
 public class SkillTreeSettingsManager : MonoBehaviour
 {
     [SerializeField] private GameManager _gameManager;
@@ -55,16 +83,28 @@ public class SkillTreeSettingsManager : MonoBehaviour
     [SerializeField] private SidePanelReferences permanentSidePanel;
     [SerializeField] private SidePanelReferences temporarySidePanel;
 
+    [Header("Preset Automation (Tab Overrides)")]
+    [SerializeField] private PresetAutomationReferences botsPresetAutomation;
+    [SerializeField] private PresetAutomationReferences researchPresetAutomation;
+
     private PresetToggleBindings _permanentBindings;
     private PresetToggleBindings _temporaryBindings;
+    private AutomationBindings _botsAutomationBindings;
+    private AutomationBindings _researchAutomationBindings;
     private bool _suppressToggleCallbacks;
     private Coroutine _permanentFeedbackRoutine;
     private Coroutine _temporaryFeedbackRoutine;
     private Coroutine _feedbackRoutine;
     private Coroutine _presetInitRoutine;
+    private Coroutine _toggleBindingInitRoutine;
     private string _defaultFeedbackMessage;
     private int _currentPresetIndex = 1;
     private const float FeedbackResetSeconds = 2f;
+    private bool _initialAutomationApplied;
+    private readonly HashSet<Button> _registeredBotsTabButtons = new HashSet<Button>();
+    private readonly HashSet<Button> _registeredResearchTabButtons = new HashSet<Button>();
+    private UnityAction _botsTabClickHandler;
+    private UnityAction _researchTabClickHandler;
 
     private void Start()
     {
@@ -92,7 +132,12 @@ public class SkillTreeSettingsManager : MonoBehaviour
     {
         UpdateSkills += HandleUpdateSkills;
         StartPresetTextInitialization();
-        StartCoroutine(InitializePresetToggleBindings());
+        if (_toggleBindingInitRoutine != null)
+        {
+            StopCoroutine(_toggleBindingInitRoutine);
+            _toggleBindingInitRoutine = null;
+        }
+        _toggleBindingInitRoutine = StartCoroutine(InitializePresetToggleBindings());
     }
 
     private void OnDisable()
@@ -105,6 +150,14 @@ public class SkillTreeSettingsManager : MonoBehaviour
         }
         UnregisterPresetToggleBindings(ref _permanentBindings);
         UnregisterPresetToggleBindings(ref _temporaryBindings);
+        UnregisterAutomationBindings(ref _botsAutomationBindings);
+        UnregisterAutomationBindings(ref _researchAutomationBindings);
+        UnregisterTabButtonBindings();
+        if (_toggleBindingInitRoutine != null)
+        {
+            StopCoroutine(_toggleBindingInitRoutine);
+            _toggleBindingInitRoutine = null;
+        }
     }
 
     private void HandleUpdateSkills()
@@ -136,15 +189,35 @@ public class SkillTreeSettingsManager : MonoBehaviour
     
     private IEnumerator InitializePresetToggleBindings()
     {
-        yield return null;
-        if (TryGetSaveData(out DysonVerseSaveData saveData))
-            _currentPresetIndex = Mathf.Clamp(saveData.selectedPreset, 1, 5);
-        else
-            _currentPresetIndex = 1;
+        // Wait until Oracle has loaded/created save settings and save data.
+        DysonVerseSaveData saveData;
+        while (!TryGetSaveData(out saveData) || !TryGetSettings(out _))
+            yield return null;
+
+        _currentPresetIndex = Mathf.Clamp(saveData.selectedPreset, 1, 5);
 
         RegisterPresetToggleBindings(permanentSidePanel, ref _permanentBindings);
         RegisterPresetToggleBindings(temporarySidePanel, ref _temporaryBindings);
         UpdateSidePanelPresetLabels();
+
+        RegisterAutomationBindings(
+            botsPresetAutomation,
+            s => s.botsTabPresetOverride,
+            (s, v) => s.botsTabPresetOverride = v,
+            ref _botsAutomationBindings);
+        RegisterAutomationBindings(
+            researchPresetAutomation,
+            s => s.researchTabPresetOverride,
+            (s, v) => s.researchTabPresetOverride = v,
+            ref _researchAutomationBindings);
+        UpdateAutomationPresetLabels(saveData);
+        SyncAutomationUiToSavedOverrides();
+        RegisterTabButtonBindings();
+
+        // Apply any initial-screen automation after bindings exist and Oracle has finished loading.
+        yield return null;
+        TryApplyInitialTabAutomation();
+        _toggleBindingInitRoutine = null;
     }
 
     public void SetPresetTexts()
@@ -166,6 +239,9 @@ public class SkillTreeSettingsManager : MonoBehaviour
             : oracle.saveSettings.dysonVerseSaveData.preset5Name;
 
         UpdateSidePanelPresetLabels();
+        if (TryGetSaveData(out DysonVerseSaveData saveData))
+            UpdateAutomationPresetLabels(saveData);
+        SyncAutomationUiToSavedOverrides();
     }
 
     public void RenamePreset(int preset)
@@ -274,7 +350,7 @@ public class SkillTreeSettingsManager : MonoBehaviour
 
         GUIUtility.systemCopyBuffer = JsonUtility.ToJson(payload);
         string presetName = GetPresetDisplayName(saveData, presetIndex);
-        ShowTimedFeedback($"Preset {presetName} Exported");
+        ShowTimedFeedback($"{presetName} Exported");
     }
 
     private void ImportPresetFromClipboard(int presetIndex)
@@ -333,7 +409,7 @@ public class SkillTreeSettingsManager : MonoBehaviour
         }
 
         string presetName = GetPresetDisplayName(saveData, presetIndex);
-        ShowTimedFeedback($"Preset {presetName} Imported");
+        ShowTimedFeedback($"{presetName} Imported");
     }
 
     private void RegisterPresetToggleBindings(SidePanelReferences panel, ref PresetToggleBindings bindings)
@@ -435,7 +511,7 @@ public class SkillTreeSettingsManager : MonoBehaviour
         if (loadPreset)
         {
             LoadPreset(presetIndex);
-            ShowSidePanelFeedback(panel, $"Preset {presetIndex} Loaded");
+            ShowSidePanelFeedback(panel, BuildPresetFeedback(presetIndex, loaded: true));
         }
         else
         {
@@ -460,7 +536,7 @@ public class SkillTreeSettingsManager : MonoBehaviour
 
         UpdatePresetTextVisibility(texts, presetIndex);
         LoadPreset(presetIndex);
-        ShowSidePanelFeedback(panel, $"Preset {presetIndex} Reloaded");
+        ShowSidePanelFeedback(panel, BuildPresetFeedback(presetIndex, loaded: false));
     }
 
     private static bool AnyToggleOn(Toggle[] toggles)
@@ -514,6 +590,35 @@ public class SkillTreeSettingsManager : MonoBehaviour
 
         UpdateSidePanelPresetLabels(permanentSidePanel, saveData);
         UpdateSidePanelPresetLabels(temporarySidePanel, saveData);
+    }
+
+    private void UpdateAutomationPresetLabels(DysonVerseSaveData saveData)
+    {
+        UpdateAutomationPresetLabels(botsPresetAutomation, saveData);
+        UpdateAutomationPresetLabels(researchPresetAutomation, saveData);
+    }
+
+    private void SyncAutomationUiToSavedOverrides()
+    {
+        if (!TryGetSettings(out SaveDataSettings settings)) return;
+
+        if (botsPresetAutomation != null)
+            SyncAutomationSelection(GetAutomationToggles(botsPresetAutomation), GetAutomationLabels(botsPresetAutomation),
+                Mathf.Clamp(settings.botsTabPresetOverride, 0, 5));
+        if (researchPresetAutomation != null)
+            SyncAutomationSelection(GetAutomationToggles(researchPresetAutomation), GetAutomationLabels(researchPresetAutomation),
+                Mathf.Clamp(settings.researchTabPresetOverride, 0, 5));
+    }
+
+    private static void UpdateAutomationPresetLabels(PresetAutomationReferences refs, DysonVerseSaveData saveData)
+    {
+        if (refs == null || saveData == null) return;
+        if (refs.presetLabel1 != null) refs.presetLabel1.text = GetPresetShortLabel(saveData, 1);
+        if (refs.presetLabel2 != null) refs.presetLabel2.text = GetPresetShortLabel(saveData, 2);
+        if (refs.presetLabel3 != null) refs.presetLabel3.text = GetPresetShortLabel(saveData, 3);
+        if (refs.presetLabel4 != null) refs.presetLabel4.text = GetPresetShortLabel(saveData, 4);
+        if (refs.presetLabel5 != null) refs.presetLabel5.text = GetPresetShortLabel(saveData, 5);
+        // Off label text is authored in the prefab; code only hides/shows it.
     }
 
     private static void UpdateSidePanelPresetLabels(SidePanelReferences panel, DysonVerseSaveData saveData)
@@ -690,6 +795,231 @@ public class SkillTreeSettingsManager : MonoBehaviour
         return saveData != null;
     }
 
+    private static bool TryGetSettings(out SaveDataSettings settings)
+    {
+        settings = oracle?.saveSettings;
+        return settings != null;
+    }
+
+    private string BuildPresetFeedback(int presetIndex, bool loaded)
+    {
+        if (TryGetSaveData(out DysonVerseSaveData saveData))
+        {
+            string name = GetPresetDisplayName(saveData, presetIndex);
+            return loaded ? $"{name} Loaded" : $"{name} Reloaded";
+        }
+
+        return loaded ? $"Preset {presetIndex} Loaded" : $"Preset {presetIndex} Reloaded";
+    }
+
+    private void RegisterAutomationBindings(
+        PresetAutomationReferences refs,
+        Func<SaveDataSettings, int> getOverrideValue,
+        Action<SaveDataSettings, int> setOverrideValue,
+        ref AutomationBindings bindings)
+    {
+        if (refs == null) return;
+
+        Toggle[] toggles = GetAutomationToggles(refs);
+        TMP_Text[] labels = GetAutomationLabels(refs);
+        UnityAction<bool>[] handlers = new UnityAction<bool>[toggles.Length];
+
+        for (int i = 0; i < toggles.Length; i++)
+        {
+            Toggle toggle = toggles[i];
+            if (toggle == null) continue;
+
+            int overrideValue = i < 5 ? i + 1 : 0; // last toggle is Off
+            UnityAction<bool> handler = isOn =>
+            {
+                if (_suppressToggleCallbacks) return;
+                if (!TryGetSettings(out SaveDataSettings settings)) return;
+                if (!isOn)
+                {
+                    // Enforce one selected at all times (Off exists to disable).
+                    if (!AnyToggleOn(toggles))
+                    {
+                        _suppressToggleCallbacks = true;
+                        toggle.isOn = true;
+                        _suppressToggleCallbacks = false;
+                    }
+                    return;
+                }
+
+                _suppressToggleCallbacks = true;
+                for (int j = 0; j < toggles.Length; j++)
+                {
+                    if (toggles[j] == null) continue;
+                    toggles[j].isOn = j == i;
+                }
+                _suppressToggleCallbacks = false;
+
+                setOverrideValue(settings, Mathf.Clamp(overrideValue, 0, 5));
+                UpdateAutomationTextVisibility(labels, selectedOverrideValue: overrideValue);
+            };
+
+            toggle.onValueChanged.AddListener(handler);
+            handlers[i] = handler;
+        }
+        bindings = new AutomationBindings(toggles, labels, handlers);
+
+        // Sync initial selection from saved preference (preferred) or current UI state.
+        int initialOverride = 0;
+        if (TryGetSettings(out SaveDataSettings settings))
+            initialOverride = Mathf.Clamp(getOverrideValue(settings), 0, 5);
+        SyncAutomationSelection(toggles, labels, initialOverride);
+    }
+
+    private void UnregisterAutomationBindings(ref AutomationBindings bindings)
+    {
+        if (bindings == null) return;
+
+        for (int i = 0; i < bindings.Toggles.Length; i++)
+        {
+            Toggle toggle = bindings.Toggles[i];
+            UnityAction<bool> handler = bindings.Handlers[i];
+            if (toggle == null || handler == null) continue;
+            toggle.onValueChanged.RemoveListener(handler);
+        }
+
+        bindings = null;
+    }
+
+    private void HandleBotsTabOpened()
+    {
+        HandleAutomationTabOpened(s => s.botsTabPresetOverride);
+    }
+
+    private void HandleResearchTabOpened()
+    {
+        HandleAutomationTabOpened(s => s.researchTabPresetOverride);
+    }
+
+    private void HandleAutomationTabOpened(Func<SaveDataSettings, int> getOverrideValue)
+    {
+        if (!TryGetSaveData(out DysonVerseSaveData saveData)) return;
+        if (!TryGetSettings(out SaveDataSettings settings)) return;
+        int targetPreset = Mathf.Clamp(getOverrideValue(settings), 0, 5);
+        if (targetPreset <= 0) return;
+        if (targetPreset == _currentPresetIndex) return;
+
+        LoadPreset(targetPreset);
+
+        string name = GetPresetDisplayName(saveData, targetPreset);
+        ShowSidePanelFeedback(permanentSidePanel, $"{name} Loaded");
+        ShowSidePanelFeedback(temporarySidePanel, $"{name} Loaded");
+    }
+
+    private void RegisterTabButtonBindings()
+    {
+        UnregisterTabButtonBindings();
+
+        _botsTabClickHandler = HandleBotsTabOpened;
+        _researchTabClickHandler = HandleResearchTabOpened;
+
+        TryRegisterTabButton(permanentSidePanel != null ? permanentSidePanel.botsTabButton : null, _registeredBotsTabButtons, _botsTabClickHandler);
+        TryRegisterTabButton(temporarySidePanel != null ? temporarySidePanel.botsTabButton : null, _registeredBotsTabButtons, _botsTabClickHandler);
+
+        TryRegisterTabButton(permanentSidePanel != null ? permanentSidePanel.researchTabButton : null, _registeredResearchTabButtons, _researchTabClickHandler);
+        TryRegisterTabButton(temporarySidePanel != null ? temporarySidePanel.researchTabButton : null, _registeredResearchTabButtons, _researchTabClickHandler);
+    }
+
+    private void UnregisterTabButtonBindings()
+    {
+        foreach (Button button in _registeredBotsTabButtons)
+        {
+            if (button == null) continue;
+            if (_botsTabClickHandler != null) button.onClick.RemoveListener(_botsTabClickHandler);
+        }
+        _registeredBotsTabButtons.Clear();
+
+        foreach (Button button in _registeredResearchTabButtons)
+        {
+            if (button == null) continue;
+            if (_researchTabClickHandler != null) button.onClick.RemoveListener(_researchTabClickHandler);
+        }
+        _registeredResearchTabButtons.Clear();
+    }
+
+    private static void TryRegisterTabButton(Button button, HashSet<Button> registered, UnityAction handler)
+    {
+        if (button == null || handler == null) return;
+        if (!registered.Add(button)) return; // dedupe (overlay/permanent may point to the same button)
+        button.onClick.AddListener(handler);
+    }
+
+    private void TryApplyInitialTabAutomation()
+    {
+        if (_initialAutomationApplied) return;
+        if (!TryGetSettings(out SaveDataSettings settings)) return;
+
+        int initialScreen = PlayerPrefs.GetInt("initialScreen", 8);
+        int targetPreset = 0;
+        if (IsBotsInitialScreen(initialScreen))
+            targetPreset = Mathf.Clamp(settings.botsTabPresetOverride, 0, 5);
+        else if (IsResearchInitialScreen(initialScreen))
+            targetPreset = Mathf.Clamp(settings.researchTabPresetOverride, 0, 5);
+
+        if (targetPreset <= 0) { _initialAutomationApplied = true; return; }
+
+        HandleAutomationTabOpened(_ => targetPreset);
+        _initialAutomationApplied = true;
+    }
+
+    private static bool IsBotsInitialScreen(int initialScreen) => initialScreen == 1 || initialScreen == 9;
+    private static bool IsResearchInitialScreen(int initialScreen) => initialScreen == 2;
+
+    private static Toggle[] GetAutomationToggles(PresetAutomationReferences refs)
+    {
+        return new[]
+        {
+            refs.presetToggle1,
+            refs.presetToggle2,
+            refs.presetToggle3,
+            refs.presetToggle4,
+            refs.presetToggle5,
+            refs.offToggle
+        };
+    }
+
+    private static TMP_Text[] GetAutomationLabels(PresetAutomationReferences refs)
+    {
+        return new[]
+        {
+            refs.presetLabel1,
+            refs.presetLabel2,
+            refs.presetLabel3,
+            refs.presetLabel4,
+            refs.presetLabel5,
+            refs.offLabel
+        };
+    }
+
+    private void SyncAutomationSelection(Toggle[] toggles, TMP_Text[] labels, int overrideValue)
+    {
+        _suppressToggleCallbacks = true;
+        for (int i = 0; i < toggles.Length; i++)
+        {
+            if (toggles[i] == null) continue;
+            toggles[i].isOn = (overrideValue == 0 && i == 5) || (overrideValue > 0 && i == overrideValue - 1);
+        }
+        _suppressToggleCallbacks = false;
+
+        UpdateAutomationTextVisibility(labels, overrideValue);
+    }
+
+    private static void UpdateAutomationTextVisibility(TMP_Text[] labels, int selectedOverrideValue)
+    {
+        // selectedOverrideValue: 1-5 for preset, 0 for off
+        for (int i = 0; i < labels.Length; i++)
+        {
+            TMP_Text label = labels[i];
+            if (label == null) continue;
+            bool isSelected = (selectedOverrideValue == 0 && i == 5) || (selectedOverrideValue > 0 && i == selectedOverrideValue - 1);
+            label.gameObject.SetActive(!isSelected);
+        }
+    }
+
     private void ShowSidePanelFeedback(SidePanelReferences panel, string baseText)
     {
         if (panel == null || panel.skillsPresetFeedbackText == null) return;
@@ -747,5 +1077,22 @@ public class SkillTreeSettingsManager : MonoBehaviour
 
         SetFeedbackText(_defaultFeedbackMessage);
         _feedbackRoutine = null;
+    }
+
+    private sealed class AutomationBindings
+    {
+        public AutomationBindings(
+            Toggle[] toggles,
+            TMP_Text[] labels,
+            UnityAction<bool>[] handlers)
+        {
+            Toggles = toggles;
+            Labels = labels;
+            Handlers = handlers;
+        }
+
+        public Toggle[] Toggles { get; }
+        public TMP_Text[] Labels { get; }
+        public UnityAction<bool>[] Handlers { get; }
     }
 }
