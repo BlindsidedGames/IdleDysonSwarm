@@ -41842,7 +41842,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: -899.11975, y: 31}
+  m_AnchoredPosition: {x: -899.1199, y: 31}
   m_SizeDelta: {x: 0, y: 55}
   m_Pivot: {x: 0, y: 1}
 --- !u!114 &223457327
@@ -53498,6 +53498,17 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 608804c7a450fec48abf68c15dab8b44, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &276168319 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 491934944748457233, guid: 6c68d4a1005822840ad87fa6b688cf51, type: 3}
+  m_PrefabInstance: {fileID: 7439785}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 276168311}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4e29b1a8efbd4b44bb3f3716e73f07ff, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
 --- !u!1 &276407625
@@ -339517,6 +339528,8 @@ MonoBehaviour:
   temporarySidePanel: {fileID: 1573630062}
   botsPresetAutomation: {fileID: 1209963592}
   researchPresetAutomation: {fileID: 395573139}
+  botsBottomBarTabButton: {fileID: 2062416496}
+  researchBottomBarTabButton: {fileID: 276168319}
 --- !u!1 &1853045248
 GameObject:
   m_ObjectHideFlags: 0
@@ -342156,7 +342169,7 @@ MonoBehaviour:
   m_HandleRect: {fileID: 321736273}
   m_Direction: 0
   m_Value: 0
-  m_Size: 0.5000001
+  m_Size: 0.9998371
   m_NumberOfSteps: 0
   m_OnValueChanged:
     m_PersistentCalls:
@@ -375111,6 +375124,17 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 608804c7a450fec48abf68c15dab8b44, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &2062416496 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 491934944748457233, guid: 6c68d4a1005822840ad87fa6b688cf51, type: 3}
+  m_PrefabInstance: {fileID: 491934944050329466}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2062416488}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4e29b1a8efbd4b44bb3f3716e73f07ff, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
 --- !u!1 &2062924596

@@ -26,7 +26,7 @@ using static Expansion.Oracle;
 /// Interacts with:
 /// - Calls into: <c>Expansion.Oracle</c> (saveSettings, SaveList/LoadList, preset data), <c>SkillTreeManager</c>
 ///   (ResetSkills), <c>GameManager</c> (AutoAssignSkillsInvoke), <c>SidePanelReferences</c> (toggle + feedback UI),
-///   <c>PresetAutomationReferences</c> (Bots/Research automation UI).
+///   <c>PresetAutomationReferences</c> (Bots/Research automation UI + optional bottom-bar tab buttons).
 /// - Called by: Unity lifecycle + UI events; <c>GameManager.UpdateSkills</c> event.
 ///
 /// Change notes:
@@ -86,6 +86,10 @@ public class SkillTreeSettingsManager : MonoBehaviour
     [Header("Preset Automation (Tab Overrides)")]
     [SerializeField] private PresetAutomationReferences botsPresetAutomation;
     [SerializeField] private PresetAutomationReferences researchPresetAutomation;
+    [SerializeField, Tooltip("Optional: bottom bar (or other) button that opens the Bots tab. When clicked, preset automation will apply the Bots tab override, same as SidePanelReferences.botsTabButton.")]
+    private Button botsBottomBarTabButton;
+    [SerializeField, Tooltip("Optional: bottom bar (or other) button that opens the Research tab. When clicked, preset automation will apply the Research tab override, same as SidePanelReferences.researchTabButton.")]
+    private Button researchBottomBarTabButton;
 
     private PresetToggleBindings _permanentBindings;
     private PresetToggleBindings _temporaryBindings;
@@ -922,6 +926,10 @@ public class SkillTreeSettingsManager : MonoBehaviour
 
         TryRegisterTabButton(permanentSidePanel != null ? permanentSidePanel.researchTabButton : null, _registeredResearchTabButtons, _researchTabClickHandler);
         TryRegisterTabButton(temporarySidePanel != null ? temporarySidePanel.researchTabButton : null, _registeredResearchTabButtons, _researchTabClickHandler);
+
+        // Optional bottom-bar (or other navigation) tab buttons. These mirror the side-panel tab buttons.
+        TryRegisterTabButton(botsBottomBarTabButton, _registeredBotsTabButtons, _botsTabClickHandler);
+        TryRegisterTabButton(researchBottomBarTabButton, _registeredResearchTabButtons, _researchTabClickHandler);
     }
 
     private void UnregisterTabButtonBindings()
