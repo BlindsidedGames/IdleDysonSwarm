@@ -2044,6 +2044,8 @@ MonoBehaviour:
   skillsPresetToggleText3: {fileID: 1394084590074216784}
   skillsPresetToggleText4: {fileID: 2958408231053969609}
   skillsPresetToggleText5: {fileID: 8057023988754483522}
+  botsTabButton: {fileID: 4136836901760751414}
+  researchTabButton: {fileID: 196971250025335779}
   offlineTimeFillBarObject: {fileID: 1201183462717138170}
 --- !u!114 &4496486030987805430
 MonoBehaviour:
@@ -7520,6 +7522,17 @@ RectTransform:
   m_CorrespondingSourceObject: {fileID: 5285817192988943538, guid: eef951a81180c124ba4cec72b04a536e, type: 3}
   m_PrefabInstance: {fileID: 6366613852617128962}
   m_PrefabAsset: {fileID: 0}
+--- !u!114 &4136836901760751414 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 7003729294882925364, guid: eef951a81180c124ba4cec72b04a536e, type: 3}
+  m_PrefabInstance: {fileID: 6366613852617128962}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4e29b1a8efbd4b44bb3f3716e73f07ff, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1001 &6411997087601214764
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -8859,6 +8872,17 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: eef951a81180c124ba4cec72b04a536e, type: 3}
+--- !u!114 &196971250025335779 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 7003729294882925364, guid: eef951a81180c124ba4cec72b04a536e, type: 3}
+  m_PrefabInstance: {fileID: 7172535329281794263}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4e29b1a8efbd4b44bb3f3716e73f07ff, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!224 &3085819352839472229 stripped
 RectTransform:
   m_CorrespondingSourceObject: {fileID: 5285817192988943538, guid: eef951a81180c124ba4cec72b04a536e, type: 3}
