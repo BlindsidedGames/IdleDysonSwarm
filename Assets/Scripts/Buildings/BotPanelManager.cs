@@ -2,6 +2,28 @@ using Blindsided.ProceduralUIImage;
 using UnityEngine;
 using static Expansion.Oracle;
 
+/// <summary>
+/// BotPanelManager
+/// Runtime: yes (scene UI).
+///
+/// Purpose:
+/// Controls visibility and progress bar presentation for the bot/facility panels (including mega-structures).
+/// Progress bars are driven by facility production rates and "in-progress" fractional counts stored in
+/// <see cref="DysonVerseInfinityData"/>.
+///
+/// Primary entry points:
+/// - <see cref="Update"/>: toggles panel visibility and updates progress bars each frame.
+///
+/// Interacts with:
+/// - Expansion.Oracle (oracle.saveSettings.dysonVerseSaveData.dysonVerseInfinityData et al)
+/// - <see cref="ProgressBarFlickerManager"/> (solid-vs-progressing bar rule)
+/// - Blindsided.ProceduralUIImage.ProceduralUIImage (fillAmount)
+///
+/// Change notes:
+/// - Serialized references (panels, images, progress bar roots) must be wired in the relevant prefab/scene.
+/// - If you change which production rate feeds a bar, also update the matching "toggle off when not producing"
+///   condition so bars don't appear dead.
+/// </summary>
 public class BotPanelManager : MonoBehaviour
 {
     [SerializeField] private GameObject clickPanel;
@@ -25,6 +47,18 @@ public class BotPanelManager : MonoBehaviour
     [SerializeField] private ProceduralUIImage dataCenters;
     [SerializeField] private ProceduralUIImage planets;
 
+    [Header("Progress Bar Roots (Optional)")]
+    [Tooltip("Optional root GameObject to toggle the Assembly Lines progress bar on/off when nothing is producing it.")]
+    [SerializeField] private GameObject assemblyLinesProgressBarRoot;
+    [Tooltip("Optional root GameObject to toggle the Managers progress bar on/off when nothing is producing it.")]
+    [SerializeField] private GameObject managersProgressBarRoot;
+    [Tooltip("Optional root GameObject to toggle the Servers progress bar on/off when nothing is producing it.")]
+    [SerializeField] private GameObject serversProgressBarRoot;
+    [Tooltip("Optional root GameObject to toggle the Data Centers progress bar on/off when nothing is producing it.")]
+    [SerializeField] private GameObject dataCentersProgressBarRoot;
+    [Tooltip("Optional root GameObject to toggle the Planets progress bar on/off when nothing is producing it.")]
+    [SerializeField] private GameObject planetsProgressBarRoot;
+
     [Header("Mega-Structure Fill Bars")]
     [Tooltip("Fill bar for Matrioshka Brains 'in-progress' production.")]
     [SerializeField] private ProceduralUIImage matrioshkaBrainsFill;
@@ -32,6 +66,14 @@ public class BotPanelManager : MonoBehaviour
     [SerializeField] private ProceduralUIImage birchPlanetsFill;
     [Tooltip("Fill bar for Galactic Brains (if you have a bar for it).")]
     [SerializeField] private ProceduralUIImage galacticBrainsFill;
+
+    [Header("Mega-Structure Progress Bar Roots (Optional)")]
+    [Tooltip("Optional root GameObject to toggle the Matrioshka Brains progress bar on/off when nothing is producing it.")]
+    [SerializeField] private GameObject matrioshkaBrainsProgressBarRoot;
+    [Tooltip("Optional root GameObject to toggle the Birch Planets progress bar on/off when nothing is producing it.")]
+    [SerializeField] private GameObject birchPlanetsProgressBarRoot;
+    [Tooltip("Optional root GameObject to toggle the Galactic Brains progress bar on/off when nothing is producing it.")]
+    [SerializeField] private GameObject galacticBrainsProgressBarRoot;
 
     private DysonVerseInfinityData infinityData => oracle.saveSettings.dysonVerseSaveData.dysonVerseInfinityData;
     private DysonVerseSkillTreeData skillTreeData => oracle.saveSettings.dysonVerseSaveData.dysonVerseSkillTreeData;
@@ -53,29 +95,81 @@ public class BotPanelManager : MonoBehaviour
         // Mega-structure visibility and questionmark panel
         UpdateMegaStructureVisibility(hasDataCenters);
 
-        assemblyLines.fillAmount = infinityData.assemblyLineProduction >= 5 ? 1 : (float)(infinityData.assemblyLines[0] % 1);
-        managers.fillAmount = infinityData.managerProduction >= 5 ? 1 : (float)(infinityData.managers[0] % 1);
-        servers.fillAmount =
-            infinityData.serverProduction + infinityData.rudimentrySingularityProduction >= 5 ? 1 : (float)(infinityData.servers[0] % 1);
-        dataCenters.fillAmount = infinityData.dataCenterProduction + infinityData.pocketDimensionsProduction >= 5
-            ? 1
-            : (float)(infinityData.dataCenters[0] % 1);
-        planets.fillAmount = infinityData.scientificPlanetsProduction + infinityData.stellarSacrificesProduction +
-            infinityData.planetAssemblyProduction + infinityData.shellWorldsProduction >= 5
-                ? 1
-                : (float)(infinityData.planets[0] % 1);
+        // Producer tiers
+        SetFacilityProgressBar(
+            assemblyLines,
+            assemblyLinesProgressBarRoot,
+            infinityData.assemblyLineProduction,
+            infinityData.assemblyLines[0]);
+
+        SetFacilityProgressBar(
+            managers,
+            managersProgressBarRoot,
+            infinityData.managerProduction,
+            infinityData.managers[0]);
+
+        SetFacilityProgressBar(
+            servers,
+            serversProgressBarRoot,
+            infinityData.serverProduction + infinityData.rudimentrySingularityProduction,
+            infinityData.servers[0]);
+
+        SetFacilityProgressBar(
+            dataCenters,
+            dataCentersProgressBarRoot,
+            infinityData.dataCenterProduction + infinityData.pocketDimensionsProduction,
+            infinityData.dataCenters[0]);
+
+        SetFacilityProgressBar(
+            planets,
+            planetsProgressBarRoot,
+            infinityData.scientificPlanetsProduction + infinityData.stellarSacrificesProduction +
+            infinityData.planetAssemblyProduction + infinityData.shellWorldsProduction,
+            infinityData.planets[0]);
 
         // Mega-structure progress (these are produced by the tier above them).
-        if (matrioshkaBrainsFill != null)
-            matrioshkaBrainsFill.fillAmount = infinityData.birchPlanetMatrioshkaProduction >= 5
-                ? 1
-                : (float)(infinityData.matrioshkaBrains[0] % 1);
-        if (birchPlanetsFill != null)
-            birchPlanetsFill.fillAmount = infinityData.galacticBrainBirchProduction >= 5
-                ? 1
-                : (float)(infinityData.birchPlanets[0] % 1);
-        if (galacticBrainsFill != null)
-            galacticBrainsFill.fillAmount = (float)(infinityData.galacticBrains[0] % 1);
+        SetFacilityProgressBar(
+            matrioshkaBrainsFill,
+            matrioshkaBrainsProgressBarRoot,
+            infinityData.birchPlanetMatrioshkaProduction,
+            infinityData.matrioshkaBrains[0]);
+
+        SetFacilityProgressBar(
+            birchPlanetsFill,
+            birchPlanetsProgressBarRoot,
+            infinityData.galacticBrainBirchProduction,
+            infinityData.birchPlanets[0]);
+
+        // Galactic Brains are currently the top tier; there is no "producer" above them in the production system.
+        // If/when a production rate exists, pass it here to enable auto-toggle and solid-fill behavior.
+        SetFacilityProgressBar(
+            galacticBrainsFill,
+            galacticBrainsProgressBarRoot,
+            0,
+            infinityData.galacticBrains[0]);
+    }
+
+    private static void SetFacilityProgressBar(
+        ProceduralUIImage fillImage,
+        GameObject progressBarRoot,
+        double productionPerSecond,
+        double runningCountWithFraction)
+    {
+        if (fillImage == null)
+            return;
+
+        bool hasProduction = productionPerSecond > 0;
+        if (progressBarRoot != null)
+            progressBarRoot.SetActive(hasProduction);
+
+        if (!hasProduction)
+        {
+            // Avoid leaving stale fill visible if the root isn't wired or is shared.
+            fillImage.fillAmount = 0;
+            return;
+        }
+
+        fillImage.fillAmount = ProgressBarFlickerManager.ComputeFillAmount(productionPerSecond, runningCountWithFraction);
     }
 
     private void UpdateMegaStructureVisibility(bool hasDataCenters)

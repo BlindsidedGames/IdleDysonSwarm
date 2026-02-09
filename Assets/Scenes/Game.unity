@@ -41575,7 +41575,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: -899.1198, y: 31}
+  m_AnchoredPosition: {x: -899.11975, y: 31}
   m_SizeDelta: {x: 0, y: 55}
   m_Pivot: {x: 0, y: 1}
 --- !u!114 &223457327
@@ -79001,6 +79001,11 @@ RectTransform:
   m_CorrespondingSourceObject: {fileID: 5781355219342884152, guid: 98222156e02dd51479ae310daf2626b9, type: 3}
   m_PrefabInstance: {fileID: 412968735}
   m_PrefabAsset: {fileID: 0}
+--- !u!1 &413164446 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 3281897250688815528, guid: 247830d86bfc9714dbbf4a1ca0107011, type: 3}
+  m_PrefabInstance: {fileID: 288763502}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &413378523
 GameObject:
   m_ObjectHideFlags: 0
@@ -91558,6 +91563,11 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 474172900}
   m_CullTransparentMesh: 1
+--- !u!1 &475618833 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 3281897250688815528, guid: 247830d86bfc9714dbbf4a1ca0107011, type: 3}
+  m_PrefabInstance: {fileID: 1122383122}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &475957800
 GameObject:
   m_ObjectHideFlags: 0
@@ -121456,6 +121466,11 @@ MonoBehaviour:
   m_FlexibleWidth: -1
   m_FlexibleHeight: -1
   m_LayoutPriority: 1
+--- !u!1 &641821493 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 3281897250688815528, guid: 247830d86bfc9714dbbf4a1ca0107011, type: 3}
+  m_PrefabInstance: {fileID: 620226101}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &642159166 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 8365709615824847231, guid: 6c68d4a1005822840ad87fa6b688cf51, type: 3}
@@ -130533,6 +130548,11 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 683734837}
   m_CullTransparentMesh: 1
+--- !u!1 &683852704 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 6386769653165351644, guid: 9e03b35f186cacd4fa09c13eb2318589, type: 3}
+  m_PrefabInstance: {fileID: 646369421}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &683901300
 GameObject:
   m_ObjectHideFlags: 0
@@ -145814,9 +145834,17 @@ MonoBehaviour:
   servers: {fileID: 45511641}
   dataCenters: {fileID: 1581953281}
   planets: {fileID: 1299375796}
+  assemblyLinesProgressBarRoot: {fileID: 2016178899}
+  managersProgressBarRoot: {fileID: 1436132246}
+  serversProgressBarRoot: {fileID: 475618833}
+  dataCentersProgressBarRoot: {fileID: 413164446}
+  planetsProgressBarRoot: {fileID: 641821493}
   matrioshkaBrainsFill: {fileID: 929191127}
   birchPlanetsFill: {fileID: 1785389238}
   galacticBrainsFill: {fileID: 825908785}
+  matrioshkaBrainsProgressBarRoot: {fileID: 2096545771}
+  birchPlanetsProgressBarRoot: {fileID: 946312008}
+  galacticBrainsProgressBarRoot: {fileID: 683852704}
 --- !u!1 &782538228
 GameObject:
   m_ObjectHideFlags: 0
@@ -174043,6 +174071,11 @@ MonoBehaviour:
   m_ChildScaleWidth: 0
   m_ChildScaleHeight: 0
   m_ReverseArrangement: 0
+--- !u!1 &946312008 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 6386769653165351644, guid: 9e03b35f186cacd4fa09c13eb2318589, type: 3}
+  m_PrefabInstance: {fileID: 1839440834}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1001 &946549682
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -259827,6 +259860,11 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1434999025}
   m_CullTransparentMesh: 1
+--- !u!1 &1436132246 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 3281897250688815528, guid: 247830d86bfc9714dbbf4a1ca0107011, type: 3}
+  m_PrefabInstance: {fileID: 530388803}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &1436878107
 GameObject:
   m_ObjectHideFlags: 0
@@ -364222,6 +364260,11 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2015399611}
   m_CullTransparentMesh: 1
+--- !u!1 &2016178899 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 3281897250688815528, guid: 247830d86bfc9714dbbf4a1ca0107011, type: 3}
+  m_PrefabInstance: {fileID: 7806472730904507485}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &2016957700
 GameObject:
   m_ObjectHideFlags: 0
@@ -377983,6 +378026,11 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2096413269}
   m_CullTransparentMesh: 1
+--- !u!1 &2096545771 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 6386769653165351644, guid: 9e03b35f186cacd4fa09c13eb2318589, type: 3}
+  m_PrefabInstance: {fileID: 1256389610}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &2096581404
 GameObject:
   m_ObjectHideFlags: 0
@@ -389103,6 +389151,7 @@ MonoBehaviour:
     - Name: 
       Entry: 8
       Data: 
+  beta: 0
   recoveryButton: {fileID: 687595187}
   recoveryText: {fileID: 438082819}
   prestigeButton: {fileID: 2067238867}
@@ -389123,7 +389172,6 @@ MonoBehaviour:
   skillsHolder: {fileID: 1246707435}
   listOfSkillsNotToAutoBuy: 0b0000000c0000003b000000
   Loaded: 0
-  beta: 0
   bsGamesData:
     latestGameName: 
     latestGameLink: 
