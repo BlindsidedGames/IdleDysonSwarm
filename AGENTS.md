@@ -2,6 +2,13 @@
 
 This file is a lightweight, human-readable map of the project so future agents can orient quickly.
 
+## Clarifying questions (required)
+Do not make assumptions.
+
+If a request, requirement, expected behavior, acceptance criteria, asset reference, platform target, build step, or test/verification approach is ambiguous or underspecified, stop and ask the user clarifying questions before changing code/content.
+
+If multiple interpretations are plausible, enumerate the competing interpretations briefly and ask which one is intended.
+
 ## Project structure (high level)
 
 ### Root
