@@ -34,6 +34,9 @@
   - The selected toggle hides its label text to reveal the icon (including Off).
 - Tab open detection:
   - Uses `SidePanelReferences.botsTabButton` / `SidePanelReferences.researchTabButton` (wired on both overlay and permanent refs).
+  - Also supports optional bottom-bar (or other) navigation buttons wired directly on `SkillTreeSettingsManager`:
+    - `botsBottomBarTabButton`
+    - `researchBottomBarTabButton`
   - When clicked, if the override is enabled (1-5), it switches presets and shows feedback.
 - Initial screen behavior:
   - After save/settings exist, `PlayerPrefs initialScreen` is checked:
@@ -58,4 +61,3 @@
   - Preset 1-5 labels show short labels derived from preset names.
 4. Save persistence:
   - Export/import save retains `botsTabPresetOverride` and `researchTabPresetOverride`.
-
