@@ -34,6 +34,8 @@ using static Expansion.Oracle;
 /// - Preset automation preferences persist in <c>Oracle.SaveDataSettings</c> (export/import with save).
 /// - Preset switching touches live auto-assign state; keep <c>oracle.SuppressPresetSync()</c> usage intact when
 ///   changing switch behavior.
+/// - Toggle binding loops must not capture the loop index variable inside closures; always capture a per-iteration
+///   index value to avoid incorrect UI state (for example all toggles being forced off).
 /// </remarks>
 public class SkillTreeSettingsManager : MonoBehaviour
 {
@@ -830,10 +832,11 @@ public class SkillTreeSettingsManager : MonoBehaviour
 
         for (int i = 0; i < toggles.Length; i++)
         {
-            Toggle toggle = toggles[i];
+            int toggleIndex = i; // capture per-iteration index for the closure
+            Toggle toggle = toggles[toggleIndex];
             if (toggle == null) continue;
 
-            int overrideValue = i < 5 ? i + 1 : 0; // last toggle is Off
+            int overrideValue = toggleIndex < 5 ? toggleIndex + 1 : 0; // last toggle is Off
             UnityAction<bool> handler = isOn =>
             {
                 if (_suppressToggleCallbacks) return;
@@ -854,7 +857,7 @@ public class SkillTreeSettingsManager : MonoBehaviour
                 for (int j = 0; j < toggles.Length; j++)
                 {
                     if (toggles[j] == null) continue;
-                    toggles[j].isOn = j == i;
+                    toggles[j].isOn = j == toggleIndex;
                 }
                 _suppressToggleCallbacks = false;
 

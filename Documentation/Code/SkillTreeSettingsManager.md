@@ -32,6 +32,9 @@
 - Tab preset automation toggles:
   - Selecting a slot only updates the override preference (no immediate preset switching).
   - The selected toggle hides its label text to reveal the icon (including Off).
+  - Implementation detail: automation toggle callbacks must capture a per-iteration index value (do not reference the
+    `for` loop variable directly inside the closure) or the handler can end up forcing all toggles off, which makes
+    the checkmark graphic appear "broken" even though labels update.
 - Tab open detection:
   - Uses `SidePanelReferences.botsTabButton` / `SidePanelReferences.researchTabButton` (wired on both overlay and permanent refs).
   - Also supports optional bottom-bar (or other) navigation buttons wired directly on `SkillTreeSettingsManager`:
@@ -59,5 +62,6 @@
 3. Toggle UX:
   - Selecting any automation toggle hides its label, showing the icon.
   - Preset 1-5 labels show short labels derived from preset names.
+  - Clicking automation toggles immediately shows the checkmark on the selected toggle (no need to tab-swap).
 4. Save persistence:
   - Export/import save retains `botsTabPresetOverride` and `researchTabPresetOverride`.
