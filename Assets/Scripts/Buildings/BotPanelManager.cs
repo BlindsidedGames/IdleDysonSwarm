@@ -25,6 +25,14 @@ public class BotPanelManager : MonoBehaviour
     [SerializeField] private ProceduralUIImage dataCenters;
     [SerializeField] private ProceduralUIImage planets;
 
+    [Header("Mega-Structure Fill Bars")]
+    [Tooltip("Fill bar for Matrioshka Brains 'in-progress' production.")]
+    [SerializeField] private ProceduralUIImage matrioshkaBrainsFill;
+    [Tooltip("Fill bar for Birch Planets 'in-progress' production.")]
+    [SerializeField] private ProceduralUIImage birchPlanetsFill;
+    [Tooltip("Fill bar for Galactic Brains (if you have a bar for it).")]
+    [SerializeField] private ProceduralUIImage galacticBrainsFill;
+
     private DysonVerseInfinityData infinityData => oracle.saveSettings.dysonVerseSaveData.dysonVerseInfinityData;
     private DysonVerseSkillTreeData skillTreeData => oracle.saveSettings.dysonVerseSaveData.dysonVerseSkillTreeData;
     private DysonVersePrestigeData prestigeData => oracle.saveSettings.dysonVerseSaveData.dysonVersePrestigeData;
@@ -56,6 +64,18 @@ public class BotPanelManager : MonoBehaviour
             infinityData.planetAssemblyProduction + infinityData.shellWorldsProduction >= 5
                 ? 1
                 : (float)(infinityData.planets[0] % 1);
+
+        // Mega-structure progress (these are produced by the tier above them).
+        if (matrioshkaBrainsFill != null)
+            matrioshkaBrainsFill.fillAmount = infinityData.birchPlanetMatrioshkaProduction >= 5
+                ? 1
+                : (float)(infinityData.matrioshkaBrains[0] % 1);
+        if (birchPlanetsFill != null)
+            birchPlanetsFill.fillAmount = infinityData.galacticBrainBirchProduction >= 5
+                ? 1
+                : (float)(infinityData.birchPlanets[0] % 1);
+        if (galacticBrainsFill != null)
+            galacticBrainsFill.fillAmount = (float)(infinityData.galacticBrains[0] % 1);
     }
 
     private void UpdateMegaStructureVisibility(bool hasDataCenters)
@@ -93,4 +113,3 @@ public class BotPanelManager : MonoBehaviour
         questionmarkPanel.SetActive(showQuestion);
     }
 }
-
