@@ -244,17 +244,16 @@ namespace Systems
                 return;
             }
 
-            double calculatedAwayTime = 0f;
-            switch (awayTime >= context.saveSettings.maxOfflineTime - context.saveSettings.offlineTime)
+            double calculatedAwayTime;
+            if (awayTime >= context.saveSettings.maxOfflineTime - context.saveSettings.offlineTime)
             {
-                case true:
-                    calculatedAwayTime = context.saveSettings.maxOfflineTime - context.saveSettings.offlineTime;
-                    context.saveSettings.offlineTime = context.saveSettings.maxOfflineTime;
-                    break;
-                case false:
-                    context.saveSettings.offlineTime += awayTime;
-                    calculatedAwayTime = awayTime;
-                    break;
+                calculatedAwayTime = context.saveSettings.maxOfflineTime - context.saveSettings.offlineTime;
+                context.saveSettings.offlineTime = context.saveSettings.maxOfflineTime;
+            }
+            else
+            {
+                context.saveSettings.offlineTime += awayTime;
+                calculatedAwayTime = awayTime;
             }
 
             string text1 = $"You gained {color}{CalcUtils.FormatTimeLarge(calculatedAwayTime)}</color> offline time ";
