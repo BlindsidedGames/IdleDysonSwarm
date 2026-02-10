@@ -128,8 +128,8 @@ public class InfinityPanelManager : MonoBehaviour
         else
         {
             int currentIp = StaticMethods.InfinityPointsToGain(amount, InfinityData.bots);
-            double amountForNextPoint = BuyMultiple.BuyX(currentIp + 1, amount, oracle.infinityExponent, 0);
-            double amountForCurrentPoint = BuyMultiple.BuyX(currentIp, amount, oracle.infinityExponent, 0);
+            double amountForNextPoint = CalcUtils.BuyXCost(currentIp + 1, amount, oracle.infinityExponent, 0);
+            double amountForCurrentPoint = CalcUtils.BuyXCost(currentIp, amount, oracle.infinityExponent, 0);
 
             _percent = (InfinityData.bots - amountForCurrentPoint) / (amountForNextPoint - amountForCurrentPoint);
             if (InfinityData.bots < 1) _percent = 0;
