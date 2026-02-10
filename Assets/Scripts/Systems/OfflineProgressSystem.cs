@@ -51,6 +51,27 @@ namespace Systems
         public TMP_Text Amounts;
     }
 
+    /// <summary>
+    /// Mutable accumulator for production totals during offline time processing.
+    /// Passed by reference to <see cref="OfflineProgressSystem.ProcessTimeStep"/> so each
+    /// tick (full-minute or remainder) adds to the running totals.
+    /// </summary>
+    internal struct OfflineAccumulator
+    {
+        public double planets;
+        public double dataCenters;
+        public double servers;
+        public double managers;
+        public double lines;
+        public double bots;
+        public double matrioshkaBrains;
+        public double birchPlanets;
+        public double galacticBrains;
+        public double money;
+        public double science;
+        public double decayed;
+    }
+
     public static class OfflineProgressSystem
     {
         private static bool ValidateContext(OfflineProgressContext context)
@@ -119,6 +140,87 @@ namespace Systems
             data.researchLevelsById ??= new System.Collections.Generic.Dictionary<string, double>();
         }
 
+        /// <summary>
+        /// Advances offline production for a single time step, accumulating results into <paramref name="acc"/>.
+        /// Called once per minute in the main loop, then once more for the sub-minute remainder.
+        /// </summary>
+        private static void ProcessTimeStep(double seconds, OfflineProgressContext context, ref OfflineAccumulator acc)
+        {
+            if (context.skillTreeData.androids) AddSkillTimerSeconds(context.infinityData, "androids", seconds);
+            if (context.skillTreeData.pocketAndroids) AddSkillTimerSeconds(context.infinityData, "pocketAndroids", seconds);
+
+            // Mega-structures: process top-down (galactic → birch → matrioshka → planets)
+            if (context.prestigeData.unlockedGalacticBrains)
+            {
+                double gb = context.infinityData.galacticBrainBirchProduction * seconds;
+                acc.galacticBrains += gb;
+                context.infinityData.birchPlanets[0] += gb;
+                context.CalculateProduction();
+            }
+
+            if (context.prestigeData.unlockedBirchPlanets)
+            {
+                double bp = context.infinityData.birchPlanetMatrioshkaProduction * seconds;
+                acc.birchPlanets += bp;
+                context.infinityData.matrioshkaBrains[0] += bp;
+                context.CalculateProduction();
+            }
+
+            if (context.prestigeData.unlockedMatrioshkaBrains)
+            {
+                double mb = context.infinityData.matrioshkaBrainPlanetProduction * seconds;
+                acc.matrioshkaBrains += mb;
+                context.infinityData.planets[0] += mb;
+                context.CalculateProduction();
+            }
+
+            double p = context.infinityData.totalPlanetProduction * seconds;
+            acc.planets += p;
+            context.infinityData.planets[0] += p;
+            context.CalculateShouldersSkills(seconds);
+            context.CalculateProduction();
+
+            double da = context.infinityData.dataCenterProduction * seconds;
+            acc.dataCenters += da;
+            context.infinityData.dataCenters[0] += da;
+            context.CalculateProduction();
+
+            double s = context.infinityData.serverProduction * seconds;
+            acc.servers += s;
+            context.infinityData.servers[0] += s;
+            context.CalculateProduction();
+
+            double m = context.infinityData.managerProduction * seconds;
+            acc.managers += m;
+            context.infinityData.managers[0] += m;
+            context.CalculateProduction();
+
+            double l = context.infinityData.assemblyLineProduction * seconds;
+            acc.lines += l;
+            context.infinityData.assemblyLines[0] += l;
+            context.CalculateProduction();
+
+            double b = context.infinityData.botProduction * seconds;
+            acc.bots += b;
+            context.infinityData.bots += b;
+            context.CalculateProduction();
+
+            context.SetBotDistribution();
+
+            double mo = context.MoneyToAdd() * seconds;
+            acc.money += mo;
+            context.infinityData.money += mo;
+
+            double sc = context.ScienceToAdd() * seconds;
+            acc.science += sc;
+            context.infinityData.science += sc;
+
+            double d = context.infinityData.panelsPerSec * seconds;
+            acc.decayed += d;
+            context.infinityData.totalPanelsDecayed += d;
+            context.CalculateProduction();
+        }
+
         public static void ApplyReturnValues(double awayTime, OfflineProgressContext context, OfflineProgressUI ui)
         {
             if (!ValidateContext(context)) return;
@@ -142,17 +244,16 @@ namespace Systems
                 return;
             }
 
-            double calculatedAwayTime = 0f;
-            switch (awayTime >= context.saveSettings.maxOfflineTime - context.saveSettings.offlineTime)
+            double calculatedAwayTime;
+            if (awayTime >= context.saveSettings.maxOfflineTime - context.saveSettings.offlineTime)
             {
-                case true:
-                    calculatedAwayTime = context.saveSettings.maxOfflineTime - context.saveSettings.offlineTime;
-                    context.saveSettings.offlineTime = context.saveSettings.maxOfflineTime;
-                    break;
-                case false:
-                    context.saveSettings.offlineTime += awayTime;
-                    calculatedAwayTime = awayTime;
-                    break;
+                calculatedAwayTime = context.saveSettings.maxOfflineTime - context.saveSettings.offlineTime;
+                context.saveSettings.offlineTime = context.saveSettings.maxOfflineTime;
+            }
+            else
+            {
+                context.saveSettings.offlineTime += awayTime;
+                calculatedAwayTime = awayTime;
             }
 
             string text1 = $"You gained {color}{CalcUtils.FormatTimeLarge(calculatedAwayTime)}</color> offline time ";
@@ -181,21 +282,7 @@ namespace Systems
             double remainder = awayTime % 60;
             double minutes = (awayTime - remainder) / 60;
 
-            double planets = 0;
-            double dataCenters = 0;
-            double servers = 0;
-            double managers = 0;
-            double lines = 0;
-            double bots = 0;
-
-            // Mega-structures
-            double matrioshkaBrains = 0;
-            double birchPlanets = 0;
-            double galacticBrains = 0;
-
-            double money = 0;
-            double science = 0;
-            double decayed = 0;
+            var acc = new OfflineAccumulator();
 
             if (minutes >= 1)
             {
@@ -204,82 +291,7 @@ namespace Systems
                 ui?.ReturnScreenSliderParentGameObject?.SetActive(true);
                 for (int i = 0; i < minutes; i++)
                 {
-                    if (context.skillTreeData.androids) AddSkillTimerSeconds(context.infinityData, "androids", 60);
-                    if (context.skillTreeData.pocketAndroids) AddSkillTimerSeconds(context.infinityData, "pocketAndroids", 60);
-
-                    // Mega-structures: process top-down (galactic → birch → matrioshka → planets)
-                    if (context.prestigeData.unlockedGalacticBrains)
-                    {
-                        double gb = context.infinityData.galacticBrainBirchProduction * 60;
-                        galacticBrains += gb;
-                        context.infinityData.birchPlanets[0] += gb;
-                        context.CalculateProduction();
-                    }
-
-                    if (context.prestigeData.unlockedBirchPlanets)
-                    {
-                        double bp = context.infinityData.birchPlanetMatrioshkaProduction * 60;
-                        birchPlanets += bp;
-                        context.infinityData.matrioshkaBrains[0] += bp;
-                        context.CalculateProduction();
-                    }
-
-                    if (context.prestigeData.unlockedMatrioshkaBrains)
-                    {
-                        double mb = context.infinityData.matrioshkaBrainPlanetProduction * 60;
-                        matrioshkaBrains += mb;
-                        context.infinityData.planets[0] += mb;
-                        context.CalculateProduction();
-                    }
-
-                    double p = context.infinityData.totalPlanetProduction * 60;
-                    planets += p;
-
-                    context.infinityData.planets[0] += p;
-                    context.CalculateShouldersSkills(60);
-                    context.CalculateProduction();
-
-                    double da = context.infinityData.dataCenterProduction * 60;
-                    dataCenters += da;
-                    context.infinityData.dataCenters[0] += da;
-                    context.CalculateProduction();
-
-                    double s = context.infinityData.serverProduction * 60;
-                    servers += s;
-                    context.infinityData.servers[0] += s;
-                    context.CalculateProduction();
-
-                    double m = context.infinityData.managerProduction * 60;
-                    managers += m;
-                    context.infinityData.managers[0] += m;
-                    context.CalculateProduction();
-
-                    double l = context.infinityData.assemblyLineProduction * 60;
-                    lines += l;
-                    context.infinityData.assemblyLines[0] += l;
-                    context.CalculateProduction();
-
-                    double b = context.infinityData.botProduction * 60;
-                    bots += b;
-
-                    context.infinityData.bots += b;
-                    context.CalculateProduction();
-
-                    context.SetBotDistribution();
-
-                    double mo = context.MoneyToAdd() * 60;
-                    money += mo;
-                    context.infinityData.money += mo;
-
-                    double sc = context.ScienceToAdd() * 60;
-                    science += sc;
-                    context.infinityData.science += sc;
-
-                    double d = context.infinityData.panelsPerSec * 60;
-                    decayed += d;
-                    context.infinityData.totalPanelsDecayed += d;
-                    context.CalculateProduction();
-
+                    ProcessTimeStep(60, context, ref acc);
 
                     sliderFill++;
                     if (ui?.ReturnScreenSlider != null)
@@ -289,127 +301,58 @@ namespace Systems
                 }
             }
 
-            if (context.skillTreeData.androids) AddSkillTimerSeconds(context.infinityData, "androids", remainder);
-            if (context.skillTreeData.pocketAndroids) AddSkillTimerSeconds(context.infinityData, "pocketAndroids", remainder);
-
-            // Mega-structures remainder: process top-down
-            if (context.prestigeData.unlockedGalacticBrains)
-            {
-                double gb1 = context.infinityData.galacticBrainBirchProduction * remainder;
-                galacticBrains += gb1;
-                context.infinityData.birchPlanets[0] += gb1;
-                context.CalculateProduction();
-            }
-
-            if (context.prestigeData.unlockedBirchPlanets)
-            {
-                double bp1 = context.infinityData.birchPlanetMatrioshkaProduction * remainder;
-                birchPlanets += bp1;
-                context.infinityData.matrioshkaBrains[0] += bp1;
-                context.CalculateProduction();
-            }
-
-            if (context.prestigeData.unlockedMatrioshkaBrains)
-            {
-                double mb1 = context.infinityData.matrioshkaBrainPlanetProduction * remainder;
-                matrioshkaBrains += mb1;
-                context.infinityData.planets[0] += mb1;
-                context.CalculateProduction();
-            }
-
-            double p1 = context.infinityData.totalPlanetProduction * remainder;
-            planets += p1;
-            context.infinityData.planets[0] += p1;
-            context.CalculateShouldersSkills(remainder);
-            context.CalculateProduction();
-
-            double da1 = context.infinityData.dataCenterProduction * remainder;
-            dataCenters += da1;
-            context.infinityData.dataCenters[0] += da1;
-            context.CalculateProduction();
-
-            double s1 = context.infinityData.serverProduction * remainder;
-            servers += s1;
-            context.infinityData.servers[0] += s1;
-            context.CalculateProduction();
-
-            double m1 = context.infinityData.managerProduction * remainder;
-            managers += m1;
-            context.infinityData.managers[0] += m1;
-            context.CalculateProduction();
-
-            double l1 = context.infinityData.assemblyLineProduction * remainder;
-            lines += l1;
-            context.infinityData.assemblyLines[0] += l1;
-            context.CalculateProduction();
-
-            double b1 = context.infinityData.botProduction * remainder;
-            bots += b1;
-            context.infinityData.bots += b1;
-            context.CalculateProduction();
-
-            context.SetBotDistribution();
-
-            double mo1 = context.MoneyToAdd() * remainder;
-            money += mo1;
-            context.infinityData.money += mo1;
-
-            double sc1 = context.ScienceToAdd() * remainder;
-            science += sc1;
-            context.infinityData.science += sc1;
-
-            double d1 = context.infinityData.panelsPerSec * remainder;
-            decayed += d1;
-            context.infinityData.totalPanelsDecayed += d1;
+            ProcessTimeStep(remainder, context, ref acc);
             yield return 0;
 
             string textBuilder = "";
 
             // Mega-structures (show if unlocked and produced any)
-            if (context.prestigeData.unlockedGalacticBrains && galacticBrains > 0)
+            if (context.prestigeData.unlockedGalacticBrains && acc.galacticBrains > 0)
                 textBuilder +=
-                    $"\nGalactic Brains produced {color}{CalcUtils.FormatNumber(galacticBrains)}</color> Birch Planets";
+                    $"\nGalactic Brains produced {color}{CalcUtils.FormatNumber(acc.galacticBrains)}</color> Birch Planets";
 
-            if (context.prestigeData.unlockedBirchPlanets && birchPlanets > 0)
+            if (context.prestigeData.unlockedBirchPlanets && acc.birchPlanets > 0)
                 textBuilder +=
-                    $"\nBirch Planets produced {color}{CalcUtils.FormatNumber(birchPlanets)}</color> Matrioshka Brains";
+                    $"\nBirch Planets produced {color}{CalcUtils.FormatNumber(acc.birchPlanets)}</color> Matrioshka Brains";
 
-            if (context.prestigeData.unlockedMatrioshkaBrains && matrioshkaBrains > 0)
+            if (context.prestigeData.unlockedMatrioshkaBrains && acc.matrioshkaBrains > 0)
                 textBuilder +=
-                    $"\nMatrioshka Brains produced {color}{CalcUtils.FormatNumber(matrioshkaBrains)}</color> Planets";
+                    $"\nMatrioshka Brains produced {color}{CalcUtils.FormatNumber(acc.matrioshkaBrains)}</color> Planets";
+
+            // Planets is the top of the standard facility chain, so both Planets and Data Centers
+            // are shown once the player has any planets (intentional duplicate condition).
+            if (context.infinityData.planets[0] + context.infinityData.planets[1] > 0)
+                textBuilder +=
+                    $"\nYou gained {color}{CalcUtils.FormatNumber(acc.planets)}</color> Planets ";
 
             if (context.infinityData.planets[0] + context.infinityData.planets[1] > 0)
                 textBuilder +=
-                    $"\nYou gained {color}{CalcUtils.FormatNumber(planets)}</color> Planets ";
-
-            if (context.infinityData.planets[0] + context.infinityData.planets[1] > 0)
-                textBuilder +=
-                    $"\nYou gained {color}{CalcUtils.FormatNumber(dataCenters)}</color> Data Centers";
+                    $"\nYou gained {color}{CalcUtils.FormatNumber(acc.dataCenters)}</color> Data Centers";
 
             if (context.infinityData.dataCenters[0] + context.infinityData.dataCenters[1] > 0)
                 textBuilder +=
-                    $"\nYou gained {color}{CalcUtils.FormatNumber(servers)}</color> Servers";
+                    $"\nYou gained {color}{CalcUtils.FormatNumber(acc.servers)}</color> Servers";
 
             if (context.infinityData.servers[0] + context.infinityData.servers[1] > 0)
                 textBuilder +=
-                    $"\nYou gained {color}{CalcUtils.FormatNumber(managers)}</color> Managers";
+                    $"\nYou gained {color}{CalcUtils.FormatNumber(acc.managers)}</color> Managers";
 
             if (context.infinityData.managers[0] + context.infinityData.managers[1] > 0)
                 textBuilder +=
-                    $"\nYou gained {color}{CalcUtils.FormatNumber(lines)}</color> Assembly Lines";
+                    $"\nYou gained {color}{CalcUtils.FormatNumber(acc.lines)}</color> Assembly Lines";
 
             if (context.infinityData.assemblyLines[0] + context.infinityData.assemblyLines[1] > 0)
                 textBuilder +=
-                    $"\nYour assembly lines produced {color}{CalcUtils.FormatNumber(bots)}</color> Bots";
+                    $"\nYour assembly lines produced {color}{CalcUtils.FormatNumber(acc.bots)}</color> Bots";
 
             textBuilder +=
-                $"\n\nYou earned {color}{CalcUtils.FormatNumber(money)}</color> Cash";
+                $"\n\nYou earned {color}{CalcUtils.FormatNumber(acc.money)}</color> Cash";
 
             textBuilder +=
-                $"\nYou earned {colorS}{CalcUtils.FormatNumber(science)}</color> Research Points";
+                $"\nYou earned {colorS}{CalcUtils.FormatNumber(acc.science)}</color> Research Points";
 
             textBuilder +=
-                $"\n{colorS}{CalcUtils.FormatNumber(decayed)}</color> Panels Decayed";
+                $"\n{colorS}{CalcUtils.FormatNumber(acc.decayed)}</color> Panels Decayed";
 
             if (context.prestigeData.infinityPoints > startingIP)
                 textBuilder +=
