@@ -349,22 +349,9 @@ namespace Buildings
         private int NumberToBuy()
         {
             int maxAffordable = _megaStructureService.MaxAffordable(FacilityId);
-
-            return StaticBuyMode switch
-            {
-                BuyMode.Buy1 => 1,
-                BuyMode.Buy10 => StaticRoundedBulkBuy
-                    ? 10 - (int)ManuallyPurchased % 10
-                    : 10,
-                BuyMode.Buy50 => StaticRoundedBulkBuy
-                    ? 50 - (int)ManuallyPurchased % 50
-                    : 50,
-                BuyMode.Buy100 => StaticRoundedBulkBuy
-                    ? 100 - (int)ManuallyPurchased % 100
-                    : 100,
-                BuyMode.BuyMax => maxAffordable > 0 ? maxAffordable : 1,
-                _ => 1
-            };
+            return (int)BuyModeHelper.GetAmountToBuy(
+                StaticBuyMode, StaticRoundedBulkBuy,
+                (long)ManuallyPurchased, maxAffordable);
         }
 
         #endregion
