@@ -102,32 +102,9 @@ namespace Buildings
 
         public long NumberToBuy()
         {
-            long number = 0;
-            switch (StaticBuyMode)
-            {
-                case BuyMode.Buy1:
-                    number = 1;
-                    break;
-                case BuyMode.Buy10:
-                {
-                    number = StaticRoundedBulkBuy ? 10 - (int)ManuallyPurchasedBuildings % 10 : 10;
-                }
-                    break;
-                case BuyMode.Buy50:
-                {
-                    number = StaticRoundedBulkBuy ? 50 - (int)ManuallyPurchasedBuildings % 50 : 50;
-                }
-                    break;
-                case BuyMode.Buy100:
-                {
-                    number = StaticRoundedBulkBuy ? 100 - (int)ManuallyPurchasedBuildings % 100 : 100;
-                }
-                    break;
-                case BuyMode.BuyMax:
-                    number = Affordable() > 0 ? Affordable() : 1;
-                    break;
-            }
-            return number;
+            return BuyModeHelper.GetAmountToBuy(
+                StaticBuyMode, StaticRoundedBulkBuy,
+                (long)ManuallyPurchasedBuildings, Affordable());
         }
 
         public void UpdateCostText()
