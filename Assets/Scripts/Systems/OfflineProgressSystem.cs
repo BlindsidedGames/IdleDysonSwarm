@@ -8,6 +8,24 @@ using static Expansion.Oracle;
 
 namespace Systems
 {
+    /*
+     * OfflineProgressSystem
+     * Purpose: Applies and simulates "away time" (offline/consumable time) progress for DysonVerse in fixed time steps.
+     * Runs: Runtime (coroutines executed from GameManager when returning from idle or spending stored offline time).
+     * Entry points:
+     * - ApplyReturnValues(double, OfflineProgressContext, OfflineProgressUI): Updates saveSettings.offlineTime and UI text for "Welcome Back".
+     * - CalculateAwayValues(double, OfflineProgressContext, OfflineProgressUI): Coroutine that advances production and resources, optionally updating UI.
+     *
+     * Interacts with:
+     * - Expansion.Oracle (skill timers via AddSkillTimerSeconds; saveSettings via caller context)
+     * - GameManager (creates context/UI; provides delegates like CalculateProduction, MoneyToAdd, etc.)
+     * - ProductionSystem / other systems indirectly via GameManager delegates
+     *
+     * Change notes:
+     * - Any changes to OfflineProgressContext fields/delegates require updating GameManager.CreateOfflineProgressContext().
+     * - UI fields are optional; this system must not crash if return-screen UI is absent in a scene/prefab variant.
+     */
+
     public sealed class OfflineProgressContext
     {
         public DysonVerseInfinityData infinityData;
@@ -35,14 +53,83 @@ namespace Systems
 
     public static class OfflineProgressSystem
     {
+        private static bool ValidateContext(OfflineProgressContext context)
+        {
+            if (context == null)
+            {
+                Debug.LogError("OfflineProgressSystem: context is null.");
+                return false;
+            }
+
+            if (context.infinityData == null || context.prestigeData == null || context.skillTreeData == null || context.saveSettings == null)
+            {
+                Debug.LogError(
+                    "OfflineProgressSystem: missing required save references. " +
+                    $"infinityData={(context.infinityData != null)}, prestigeData={(context.prestigeData != null)}, " +
+                    $"skillTreeData={(context.skillTreeData != null)}, saveSettings={(context.saveSettings != null)}");
+                return false;
+            }
+
+            if (context.SetBotDistribution == null ||
+                context.CalculateShouldersSkills == null ||
+                context.CalculateProduction == null ||
+                context.MoneyToAdd == null ||
+                context.ScienceToAdd == null)
+            {
+                Debug.LogError(
+                    "OfflineProgressSystem: missing required delegates. " +
+                    $"SetBotDistribution={(context.SetBotDistribution != null)}, " +
+                    $"CalculateShouldersSkills={(context.CalculateShouldersSkills != null)}, " +
+                    $"CalculateProduction={(context.CalculateProduction != null)}, " +
+                    $"MoneyToAdd={(context.MoneyToAdd != null)}, ScienceToAdd={(context.ScienceToAdd != null)}");
+                return false;
+            }
+
+            return true;
+        }
+
+        private static void EnsureArray2(ref double[] arr)
+        {
+            if (arr is { Length: >= 2 }) return;
+            double a0 = 0;
+            double a1 = 0;
+            if (arr is { Length: 1 })
+            {
+                a0 = arr[0];
+            }
+            arr = new[] { a0, a1 };
+        }
+
+        private static void SanitizeInfinityData(DysonVerseInfinityData data)
+        {
+            if (data == null) return;
+
+            // Older save versions or ES3 migrations can leave new arrays null; keep offline progression resilient.
+            EnsureArray2(ref data.assemblyLines);
+            EnsureArray2(ref data.managers);
+            EnsureArray2(ref data.servers);
+            EnsureArray2(ref data.dataCenters);
+            EnsureArray2(ref data.planets);
+            EnsureArray2(ref data.matrioshkaBrains);
+            EnsureArray2(ref data.birchPlanets);
+            EnsureArray2(ref data.galacticBrains);
+
+            data.skillStateById ??= new System.Collections.Generic.Dictionary<string, SkillState>();
+            data.skillOwnedById ??= new System.Collections.Generic.Dictionary<string, bool>();
+            data.researchLevelsById ??= new System.Collections.Generic.Dictionary<string, double>();
+        }
+
         public static void ApplyReturnValues(double awayTime, OfflineProgressContext context, OfflineProgressUI ui)
         {
+            if (!ValidateContext(context)) return;
+            SanitizeInfinityData(context.infinityData);
+
             string color = "<color=#91DD8F>";
             string colorS = "<color=#00E1FF>";
-            ui.AwayForHeader.gameObject.SetActive(true);
-            ui.AwayForHeader.text = "Welcome Back!";
-            ui.ReturnScreen.SetActive(awayTime >= 60 || awayTime < 0);
-            ui.OfflineTimeInstructions.SetActive(true);
+            ui?.AwayForHeader?.gameObject.SetActive(true);
+            if (ui?.AwayForHeader != null) ui.AwayForHeader.text = "Welcome Back!";
+            ui?.ReturnScreen?.SetActive(awayTime >= 60 || awayTime < 0);
+            ui?.OfflineTimeInstructions?.SetActive(true);
             if (awayTime < 0)
             {
                 context.saveSettings.cheater = true;
@@ -51,7 +138,7 @@ namespace Systems
                 string text = $"You were away for {color}{CalcUtils.FormatTimeLarge(awayTime)}</color>";
                 text +=
                     "<br>You're probably cheating: Offline time disabled. <br>Please wipe your save to continue using offline time.";
-                ui.AwayFor.text = text;
+                if (ui?.AwayFor != null) ui.AwayFor.text = text;
                 return;
             }
 
@@ -70,16 +157,19 @@ namespace Systems
 
             string text1 = $"You gained {color}{CalcUtils.FormatTimeLarge(calculatedAwayTime)}</color> offline time ";
             text1 += $"<br>You have {colorS}{CalcUtils.FormatTimeLarge(context.saveSettings.offlineTime)}</color> stored";
-            ui.AwayFor.text = text1;
-            ui.Amounts.text = "";
+            if (ui?.AwayFor != null) ui.AwayFor.text = text1;
+            if (ui?.Amounts != null) ui.Amounts.text = "";
         }
 
         public static IEnumerator CalculateAwayValues(double awayTime, OfflineProgressContext context, OfflineProgressUI ui)
         {
+            if (!ValidateContext(context)) yield break;
+            SanitizeInfinityData(context.infinityData);
+
             string color = "<color=#91DD8F>";
             string colorS = "<color=#00E1FF>";
-            ui.AwayForHeader.gameObject.SetActive(false);
-            ui.AwayFor.text = $"Advanced {color}{CalcUtils.FormatTimeLarge(awayTime)}";
+            ui?.AwayForHeader?.gameObject.SetActive(false);
+            if (ui?.AwayFor != null) ui.AwayFor.text = $"Advanced {color}{CalcUtils.FormatTimeLarge(awayTime)}";
 
             long startingIP = context.prestigeData.infinityPoints;
             context.prestigeData.infinityPoints += context.saveSettings.lastInfinityPointsGained >= 1
@@ -110,8 +200,8 @@ namespace Systems
             if (minutes >= 1)
             {
                 int sliderFill = 0;
-                ui.OfflineProgressLayoutElement.minHeight = 7;
-                ui.ReturnScreenSliderParentGameObject.SetActive(true);
+                if (ui?.OfflineProgressLayoutElement != null) ui.OfflineProgressLayoutElement.minHeight = 7;
+                ui?.ReturnScreenSliderParentGameObject?.SetActive(true);
                 for (int i = 0; i < minutes; i++)
                 {
                     if (context.skillTreeData.androids) AddSkillTimerSeconds(context.infinityData, "androids", 60);
@@ -192,7 +282,8 @@ namespace Systems
 
 
                     sliderFill++;
-                    ui.ReturnScreenSlider.fillAmount = (float)(sliderFill / minutes);
+                    if (ui?.ReturnScreenSlider != null)
+                        ui.ReturnScreenSlider.fillAmount = (float)(sliderFill / minutes);
 
                     yield return 0;
                 }
@@ -327,13 +418,12 @@ namespace Systems
             textBuilder +=
                 $"<br><br>{colorS}{CalcUtils.FormatTimeLarge(context.saveSettings.offlineTime)}</color> remaining";
 
-            ui.Amounts.text = textBuilder;
+            if (ui?.Amounts != null) ui.Amounts.text = textBuilder;
 
-            ui.OfflineProgressLayoutElement.minHeight = 3;
-            ui.ReturnScreenSliderParentGameObject.SetActive(false);
-            ui.OfflineTimeInstructions.SetActive(false);
-            ui.ReturnScreen.SetActive(true);
+            if (ui?.OfflineProgressLayoutElement != null) ui.OfflineProgressLayoutElement.minHeight = 3;
+            ui?.ReturnScreenSliderParentGameObject?.SetActive(false);
+            ui?.OfflineTimeInstructions?.SetActive(false);
+            ui?.ReturnScreen?.SetActive(true);
         }
     }
 }
-

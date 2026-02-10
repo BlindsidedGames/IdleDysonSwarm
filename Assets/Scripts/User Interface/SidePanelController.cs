@@ -4,6 +4,27 @@ using UnityEngine;
 /// Controls which SidePanel variant is active based on screen width.
 /// Switches between overlay (collapsible) and permanent (always visible) modes.
 /// </summary>
+/// <remarks>
+/// Purpose:
+/// - Chooses between overlay vs permanent side panel layouts based on safe-area width and updates dependent managers
+///   with the correct <see cref="SidePanelReferences"/>.
+///
+/// Where it runs:
+/// - Runtime (scene component; evaluates in <see cref="Start"/> and <see cref="Update"/>).
+///
+/// Primary entry points:
+/// - <see cref="Start"/>: Initializes based on current width.
+/// - <see cref="Update"/>: Swaps layouts when crossing the width threshold.
+///
+/// Interacts with:
+/// - <see cref="SidePanelManager"/>, <see cref="InfinityPanelManager"/>, <see cref="PrestigePanelManager"/>,
+///   <see cref="RealityPanelManager"/>, <see cref="OfflineTimeFillBar"/> (rebinds active references).
+/// - <see cref="GameManager"/> (rebinds skill UI references for the active panel).
+///
+/// Change notes:
+/// - Serialized references must be wired for both overlay and permanent variants.
+/// - The bottom panel lip is intentionally kept active in both modes to support the offline time display.
+/// </remarks>
 public class SidePanelController : MonoBehaviour
 {
     [Header("Panel Variants")]
@@ -84,7 +105,7 @@ public class SidePanelController : MonoBehaviour
             _bottomPanel.SetActive(!usePermanent);
 
         if (_bottomPanelLip != null)
-            _bottomPanelLip.SetActive(!usePermanent);
+            _bottomPanelLip.SetActive(true);
 
         // When switching to permanent mode, hide the overlay if it was open
         if (usePermanent && _overlayPanel != null)
