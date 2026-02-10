@@ -67,9 +67,26 @@ namespace Expansion
             return LegacyEs3Save.TryRecoverDefaultSave(out recovered, out recoveredFromPath);
         }
 
+        /// <summary>
+        /// Hard wipe: deletes the run save and clears debug entitlement.
+        /// </summary>
         public void WipeAllData()
         {
-            bool debugUnlocked = (saveSettings != null && saveSettings.debugOptions) || PlayerPrefs.GetInt("debug", 0) == 1;
+            PlayerEntitlementsStore.ClearDebugEntitlement();
+            WipeAllDataInternal(enableDebugAfterWipe: false);
+        }
+
+        /// <summary>
+        /// Soft wipe: deletes the run save but preserves debug entitlement. Debug is re-enabled after wipe if entitled.
+        /// </summary>
+        public void WipeAllDataKeepDebugEntitlement()
+        {
+            bool entitled = PlayerEntitlementsStore.DebugEntitlementPurchased;
+            WipeAllDataInternal(enableDebugAfterWipe: entitled);
+        }
+
+        private void WipeAllDataInternal(bool enableDebugAfterWipe)
+        {
             bool doubleIpUnlocked = (saveSettings != null && saveSettings.doubleIp) || PlayerPrefs.GetInt("doubleip", 0) == 1;
             DeleteDefaultEs3SaveArtifacts();
 
@@ -90,7 +107,8 @@ namespace Expansion
             }
 
             saveSettings = new SaveDataSettings();
-            saveSettings.debugOptions = debugUnlocked;
+            saveSettings.debugOptions = enableDebugAfterWipe;
+            saveSettings.debugEverEnabled = enableDebugAfterWipe;
             saveSettings.doubleIp = doubleIpUnlocked;
             saveSettings.saveVersion = CurrentSaveVersion;
             NotifyDebugOptionsChanged();
@@ -101,7 +119,7 @@ namespace Expansion
         [ContextMenu("WipeSaveData")]
         public void WipeSaveData()
         {
-            bool debugUnlocked = (saveSettings != null && saveSettings.debugOptions) || PlayerPrefs.GetInt("debug", 0) == 1;
+            bool previousDebugEnabled = saveSettings != null && saveSettings.debugOptions;
             bool doubleIpUnlocked = (saveSettings != null && saveSettings.doubleIp) || PlayerPrefs.GetInt("doubleip", 0) == 1;
             foreach (KeyValuePair<int, SkillTreeItem> var in SkillTree) var.Value.Owned = false;
             saveSettings = new SaveDataSettings
@@ -119,7 +137,14 @@ namespace Expansion
             };
             if (Loaded)
                 saveSettings.firstReality = true;
-            saveSettings.debugOptions = debugUnlocked;
+            // Preserve current debug enabled state, but do not re-enable based on legacy prefs.
+            // Debug entitlement is stored outside the save; debug enable/disable is per-save.
+            saveSettings.debugOptions = previousDebugEnabled;
+            if (saveSettings.debugOptions)
+            {
+                saveSettings.debugEverEnabled = true;
+                PlayerEntitlementsStore.DebugEntitlementPurchased = true;
+            }
             saveSettings.doubleIp = doubleIpUnlocked;
             saveSettings.saveVersion = CurrentSaveVersion;
             NotifyDebugOptionsChanged();
