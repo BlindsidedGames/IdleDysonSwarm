@@ -9,6 +9,32 @@ using Systems.Stats;
 using static Expansion.Oracle;
 using IdleDysonSwarm.UI;
 
+/// <summary>
+/// ManualBotCreation
+/// Runtime: yes (scene UI / button).
+///
+/// Purpose:
+/// Drives the "tinker" click/hold UI that manually produces early-game units.
+/// By default it produces Bots; once the Manual Labour skill is assigned and you have at least one AI Manager,
+/// it switches to producing Assembly Lines instead.
+///
+/// Primary entry points:
+/// - <see cref="Start"/>: initializes UI state and cached values.
+/// - <see cref="Update"/>: handles input, cooldown timing, UI text, and award logic.
+/// - <see cref="StartButton"/>: invoked by the UI Button and by hold-to-repeat when eligible.
+///
+/// Interacts with:
+/// - Expansion.Oracle save graph (<see cref="DysonVerseSaveData"/>, <see cref="DysonVerseInfinityData"/>,
+///   <see cref="DysonVerseSkillTreeData"/>)
+/// - <see cref="GlobalStatPipeline"/> (tinker stats: yield/cooldown)
+/// - IdleDysonSwarm.UI.UIThemeProvider (highlight color)
+///
+/// Change notes:
+/// - Production target is gated by skill + manager count. If you change the "has manager" rule, keep it consistent
+///   with other UI gates (e.g. <see cref="BotPanelManager"/> uses managers[1] to decide if you have a manager).
+/// - This script writes to <see cref="DysonVerseSaveData.manualCreationTime"/>; changing its semantics can affect
+///   other tinker/cooldown behaviors that read the same value.
+/// </summary>
 public class ManualBotCreation : MonoBehaviour
 {
     [SerializeField] private TMP_Text counter;
@@ -31,7 +57,7 @@ public class ManualBotCreation : MonoBehaviour
     private Color baseFillColor;
     private Color heldFillColor;
     private bool lastHeldVisual;
-    private bool lastManualLabour;
+    private bool lastManualLabourEffective;
     private double lastCooldownSeconds;
     private const double HoldPermanentBarThresholdSeconds = 0.5;
 
@@ -46,7 +72,7 @@ public class ManualBotCreation : MonoBehaviour
             ? UIThemeProvider.ActiveTheme.highlightColor
             : new Color(0f, 0.882f, 1f);
         heldFillColor = new Color(highlight.r, highlight.g, highlight.b, 0.6f);
-        lastManualLabour = skillTreeData.manualLabour;
+        lastManualLabourEffective = IsManualLabourEffective();
     }
 
     private void OnDisable()
@@ -71,11 +97,12 @@ public class ManualBotCreation : MonoBehaviour
     {
         double botYield = 1;
         double assemblyProduction = 0;
-        bool manualLabourNow = skillTreeData.manualLabour;
-        bool manualLabourChanged = manualLabourNow != lastManualLabour;
-        if (manualLabourChanged)
+        bool manualLabourSkillNow = skillTreeData.manualLabour;
+        bool manualLabourEffectiveNow = IsManualLabourEffective();
+        bool manualLabourModeChanged = manualLabourEffectiveNow != lastManualLabourEffective;
+        if (manualLabourModeChanged)
         {
-            if (manualLabourNow)
+            if (manualLabourEffectiveNow)
             {
                 dvsd.manualCreationTime = 0.2f;
             }
@@ -94,25 +121,35 @@ public class ManualBotCreation : MonoBehaviour
         }
 
         // Holding should always auto-repeat once it kicks in, but the "permanent" held visual (filled bar + tint)
-        // should only be shown once the cooldown has reached 0.5s, or if Manual Labour is assigned.
-        bool allowPermanentHeldVisual = manualLabourNow || cooldownSeconds <= HoldPermanentBarThresholdSeconds;
+        // should only be shown once the cooldown has reached 0.5s, or if Manual Labour is active.
+        bool allowPermanentHeldVisual = manualLabourEffectiveNow || cooldownSeconds <= HoldPermanentBarThresholdSeconds;
 
-        if (cooldownSeconds != lastCooldownSeconds || manualLabourChanged)
+        if (cooldownSeconds != lastCooldownSeconds || manualLabourModeChanged)
         {
             lastCooldownSeconds = cooldownSeconds;
-            lastManualLabour = manualLabourNow;
+            lastManualLabourEffective = manualLabourEffectiveNow;
             time = 0f;
             fill.fillAmount = 0f;
             counter.text = $"{CalcUtils.FormatNumber(cooldownSeconds, useMspace: true)}s";
         }
 
-        if (manualLabourNow)
+        if (manualLabourSkillNow)
         {
-            string warning = assemblyProduction <= 0
-                ? " <color=#B0B0B0>(Requires an AI Manager!)</color>"
-                : string.Empty;
-            description.text =
-                $"Having nothing better to do you decide to set up some more assembly lines. Masterfully made you will produce <color=#00E1FF>{CalcUtils.FormatNumber(assemblyProduction)}</color>{warning}";
+            if (manualLabourEffectiveNow)
+            {
+                // Manual labour is active and can actually create assembly lines now that a manager exists.
+                string warning = assemblyProduction <= 0
+                    ? " <color=#B0B0B0>(Requires an AI Manager!)</color>"
+                    : string.Empty;
+                description.text =
+                    $"Having nothing better to do you decide to set up some more assembly lines. Masterfully made you will produce <color=#00E1FF>{CalcUtils.FormatNumber(assemblyProduction)}</color>{warning}";
+            }
+            else
+            {
+                // Avoid a dead tinker window: until the first manager exists, keep producing bots.
+                description.text =
+                    $"You have the knowledge to automate assembly lines, but without an AI Manager you still have to tinker together bots. You will produce <color=#00E1FF>{CalcUtils.FormatNumber(botYield)}</color> <color=#B0B0B0>(Get 1 AI Manager to unlock assembly line tinkering.)</color>";
+            }
         }
         else
         {
@@ -149,7 +186,7 @@ public class ManualBotCreation : MonoBehaviour
             }
             else
             {
-                if (skillTreeData.manualLabour)
+                if (manualLabourEffectiveNow)
                 {
                     infinityData.assemblyLines[0] += assemblyProduction;
                 }
@@ -157,11 +194,11 @@ public class ManualBotCreation : MonoBehaviour
                 {
                     infinityData.bots += botYield;
                 }
-                if (dvsd.manualCreationTime >= 1 && !skillTreeData.manualLabour)
+                if (dvsd.manualCreationTime >= 1 && !manualLabourEffectiveNow)
                     dvsd.manualCreationTime -= 1;
                 else
                 {
-                    dvsd.manualCreationTime = skillTreeData.manualLabour ? 0.2f : 0.5f;
+                    dvsd.manualCreationTime = manualLabourEffectiveNow ? 0.2f : 0.5f;
                 }
 
                 if (autoRepeatActive)
@@ -216,6 +253,21 @@ public class ManualBotCreation : MonoBehaviour
     private bool TryGetTinkerStats(out GlobalStatPipeline.TinkerResult result)
     {
         return GlobalStatPipeline.TryCalculateTinkerStats(infinityData, skillTreeData, prestigeData, prestigePlus, dvsd.manualCreationTime, out result);
+    }
+
+    private bool HasAtLeastOneAiManager()
+    {
+        // Convention used elsewhere: managers[1] tracks owned/whole-count (see BotPanelManager click-panel gating).
+        return infinityData.managers != null &&
+               infinityData.managers.Length > 1 &&
+               infinityData.managers[1] >= 1;
+    }
+
+    private bool IsManualLabourEffective()
+    {
+        // Manual Labour should not "dead-end" the tinker window: only switch to assembly line creation
+        // once the first manager exists.
+        return skillTreeData.manualLabour && HasAtLeastOneAiManager();
     }
 
 }
