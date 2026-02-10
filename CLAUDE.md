@@ -123,38 +123,66 @@ string text = $"{Oracle.textColourBlue}Science</color>";
 - `PrestigePlus`: Access via `Oracle.StaticSaveSettings.prestigePlus` (not StaticPrestigePlus)
 - `SecretBuffState`: Build via `ModifierSystem.BuildSecretBuffState(Oracle.StaticPrestigeData)` (not StaticSecrets)
 
-## File Organization
+## Project Structure
+
+### Root
+
+- `Assets/` Unity assets, code, scenes, prefabs, plugins.
+- `Packages/` Unity package manifest + lock data.
+- `ProjectSettings/` Unity project configuration.
+- `Library/`, `Temp/`, `Logs/`, `UserSettings/` generated Unity output (not source).
+- `Documentation/` project docs, plans, and references.
+- `Documentation/Code/` (create as needed) design/contract notes for complex or central scripts.
+- `Recordings/` image sequences and captures.
+- `STRUCTURE.md` additional high-level project map.
+- `UIElementsSchema/` UIElements schema assets.
+- `steam_appid.txt` Steam AppID for local runs.
+
+### Assets (Scripts)
 
 ```
-Assets/
-├── Scripts/
-│   ├── Buildings/          # Facility and building logic
-│   │   ├── FacilityBuildingPresenter.cs
-│   │   ├── FacilityDefinition.cs
-│   │   └── FacilityRuntimeBuilder.cs
-│   ├── Data/               # Typed IDs and data structures
-│   │   ├── TypedIds.cs
-│   │   └── GameDataRegistry.cs
-│   ├── Research/           # Research system
-│   │   ├── ResearchPresenter.cs
-│   │   └── ResearchDefinition.cs
-│   ├── Services/           # Service layer (Phase 3)
-│   │   ├── IGameStateService.cs
-│   │   ├── GameStateService.cs
-│   │   ├── ServiceLocator.cs
-│   │   └── README.md
-│   ├── Conditions/         # Scriptable conditions (Phase 2)
-│   │   └── ScriptableCondition.cs
-│   └── Systems/            # Game systems (ModifierSystem, etc.)
-├── Tests/
-│   └── Services/           # Unit tests
-│       ├── MockGameStateService.cs
-│       └── ServiceLayerExampleTests.cs
-└── ScriptableObjects/      # ScriptableObject assets
-    ├── Facilities/
-    ├── Research/
-    └── Conditions/
+Assets/Scripts/
+├── Buildings/              # Building logic and presenters
+├── Classes/                # Shared classes and helpers
+├── Conditions/             # Scriptable conditions (Phase 2)
+├── Data/                   # ScriptableObject definitions, typed IDs, condition system
+├── Editor/                 # Editor-side code in the Scripts tree
+├── Expansion/              # Oracle, research, Dream1 era logic
+├── Incremental/            # Incremental game loop logic
+├── NewsTicker/             # News feed handling
+├── Research/               # Research UI helpers
+├── Services/               # Service layer + service locator
+├── SkillTreeStuff/         # Skill tree logic and UI
+├── Systems/                # Core gameplay systems, stats, facilities, migrations, platform, audio
+├── UI/                     # UI theme and simulation types
+├── UnityPurchasing/        # In-app purchase integration
+├── User Interface/         # UI panels, toggles, side-panel logic
+└── Blindsided/Utilities/   # Shared utility components
 ```
+
+### Assets (Other)
+
+- `Assets/Scenes/` game scenes (`Load.unity`, `Game.unity`).
+- `Assets/Data/` top-level ScriptableObjects and config assets.
+- `Assets/Prefabs/` prefab variants (notably `Assets/Prefabs/Buildings/`).
+- `Assets/Presets/` Unity presets.
+- `Assets/Resources/` runtime resources (IAP catalog, audio).
+- `Assets/Editor/` editor tooling and validation helpers.
+- `Assets/Editor Default Resources/` editor-only assets.
+- `Assets/Plugins/` third-party plugins (Easy Save 3, Sirenix, Google Play Games, etc.).
+- `Assets/ExternalDependencyManager/` EDM4U Google dependency manager.
+- `Assets/KeyStore/` Android keystore material.
+- `Assets/Extensions/` platform extensions (Google Play Games, etc.).
+- `Assets/MPUIKit/`, `Assets/TextMesh Pro/`, `Assets/Fonts/`, `Assets/Sprites/`, `Assets/Sounds/` UI + art assets.
+
+### Documentation
+
+- `Documentation/ALLACHIEVEMENTS.md` and `Documentation/AchievementIdeas.md`.
+- `Documentation/AchievementPackageForEve/` achievement package materials.
+- `Documentation/Archive/` legacy plans, refactors, and notes.
+- `Documentation/SaveBackups/` save data backups.
+- `Documentation/savedebugging/` save debugging notes.
+- `Documentation/Console/editor-console.json` Unity Editor log snapshot for agents.
 
 ## Common Patterns
 
@@ -342,6 +370,10 @@ Include:
 - Testing checklist (compilation, save compatibility)
 - Breaking changes (if any)
 
+## Clarifying Questions (Required)
+
+Do not make assumptions. If a request, requirement, expected behavior, acceptance criteria, asset reference, platform target, build step, or test/verification approach is ambiguous or underspecified, **stop and ask the user clarifying questions before changing code/content**. If multiple interpretations are plausible, enumerate them briefly and ask which one is intended.
+
 ## Important Rules
 
 ### Code Quality
@@ -351,6 +383,7 @@ Include:
 3. **XML documentation** - Document all public APIs
 4. **Follow naming conventions** - See Code Style section above
 5. **Test compilation** - Always verify changes compile successfully
+6. **Avoid modifying third-party code** under `Assets/Plugins/` unless explicitly requested
 
 ### Service Layer (Modern Code)
 
@@ -365,11 +398,45 @@ Include:
 2. **Know data access patterns** - PrestigePlus via StaticSaveSettings, Secrets via ModifierSystem
 3. **Avoid breaking changes** - Oracle code still used throughout codebase
 
+## Documentation Maintenance (Required)
+
+When editing any script (C# under `Assets/Scripts/**` or `Assets/Editor/**`, plus any build/tooling scripts in-repo), do a documentation pass as part of the same change.
+
+If the code is unclear, do not guess. Use repo search to find who calls it / what it calls, inspect referenced assets (ScriptableObjects, prefabs, scenes), and then document what you learned in that same edit.
+
+### Minimum Per-Script Documentation Standard
+
+In the file being edited:
+- **Header comment**: purpose, where it runs (runtime/editor), primary entry points (Unity event methods, menu items, callbacks), what it owns vs delegates.
+- **Interacts with**: key classes/services it calls, and key callers that invoke it (paths/class names).
+- **Change notes**: what breaks if you change public methods, events, serialized fields, save keys, or ScriptableObject IDs; list the other places/assets that must be updated together.
+
+### Complex/Central Scripts
+
+Also add/refresh a companion doc under `Documentation/Code/` named after the script/class. That doc should capture: contract/behavior expectations, data flow, save/load implications, performance pitfalls, and quick verification steps.
+
+### Structural Changes
+
+When adding a new system/service/subsystem, renaming/moving script folders, or changing how major systems connect, update `AGENTS.md` (and `STRUCTURE.md` when it's a structural change) in the same PR.
+
+Do not do "documentation cleanup" inside `Assets/Plugins/**` unless explicitly requested; instead document integration points and expectations in our code.
+
+## Steam Build/Upload (Windows)
+
+When asked to do a Windows Steam build/upload for Idle Dyson Swarm:
+- Ensure the Windows build output exists at `C:\Users\mattr\Documents\Unity\Builds\IdleDysonSwarm`.
+- Upload via SteamCMD using `C:\Users\mattr\Documents\steamcmd\Scripts\upload_idle_dyson_swarm_windows.bat`.
+- Steam AppID: `4348570`, Windows depot: `4348571`.
+- SteamCMD VDFs live at:
+  - `C:\Users\mattr\Documents\steamcmd\Scripts\app_build_4348570_windows.vdf`
+  - `C:\Users\mattr\Documents\steamcmd\Scripts\depot_build_4348571_windows.vdf`
+
 ## Resources
 
 - **Service Layer**: See `Assets/Scripts/Services/README.md`
 - **Migration Plans**: Check git history for phase documentation
 - **Testing Patterns**: See `Assets/Tests/Services/ServiceLayerExampleTests.cs`
+- **Project Map**: See `AGENTS.md` and `STRUCTURE.md`
 
 ## Questions?
 

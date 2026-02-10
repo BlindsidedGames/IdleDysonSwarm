@@ -9,22 +9,15 @@ namespace Expansion
     /// Skill point reconciliation and debug tooling.
     /// </summary>
     /// <remarks>
-    /// This contains the historical "FixSkillpoints" logic plus editor buttons for recalculation.
+    /// Runtime.
+    /// <para>Primary entry points: <see cref="PreviewSkillPointRecalc"/>, <see cref="ApplySkillPointRecalc"/>.</para>
+    /// This contains editor/debug buttons for recalculating skill points from known sources.
     /// It is grouped here so future extraction to a dedicated skill system does not require touching clipboard/disk save code.
+    /// <para>Change notes: this is intentionally manual. Importing/loading a save does not auto-reconcile skill points,
+    /// and there is no persisted "already fixed" flag in the save.</para>
     /// </remarks>
     public partial class Oracle
     {
-        private void FixSkillpoints()
-        {
-            if (saveSettings.hasFixedIP) return;
-            long totalEarned = prestigeData.permanentSkillPoint + ArtifactSkillPoints();
-            if (infinityData.goalSetter > 0) totalEarned += infinityData.goalSetter;
-            int spent = CountAssignedSkillPoints();
-            long recalculated = totalEarned - spent;
-            skillTreeData.skillPointsTree = recalculated < 0 ? 0 : recalculated;
-            saveSettings.hasFixedIP = true;
-        }
-
         private int CountAssignedSkillPoints()
         {
             GameDataRegistry registry = GameDataRegistry.Instance;
@@ -98,4 +91,3 @@ namespace Expansion
         }
     }
 }
-

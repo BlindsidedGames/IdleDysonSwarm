@@ -46,7 +46,8 @@ namespace Expansion
     /// <para>Clipboard UI entrypoints: <c>Assets/Scripts/Expansion/Oracle.Clipboard.cs</c>.</para>
     /// <para>Migrations + ensure steps: <c>Assets/Scripts/Expansion/Oracle.Migrations.cs</c>.</para>
     /// <para>Change notes: <see cref="SaveDataSettings"/> includes tab preset override preferences (Bots/Research) that
-    /// export/import with the save.</para>
+    /// export/import with the save. Skill point reconciliation is a manual fix tool (see
+    /// <c>Assets/Scripts/Expansion/Oracle.SkillPoints.cs</c>).</para>
     /// </remarks>
     public partial class Oracle : SerializedMonoBehaviour
     {
@@ -2708,7 +2709,6 @@ private void PackSettingsFlags()
             public int saveVersion;
             public int lastMigratedFromVersion;
             public string lastSuccessfulLoadUtc;
-            public bool hasFixedIP;
             public bool hasPackedSettingsFlags;
             public ulong packedSettingsFlags;
             public BuyMode buyMode = BuyMode.Buy1;
