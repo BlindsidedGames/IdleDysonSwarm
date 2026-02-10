@@ -72,7 +72,7 @@ public class PrestigeFillBar : MonoBehaviour
         else
         {
             double amountForNextPoint =
-                BuyMultiple.BuyX(ipToGain + 1, amount, oracle.infinityExponent, 0);
+                CalcUtils.BuyXCost(ipToGain + 1, amount, oracle.infinityExponent, 0);
 
             fill.fillAmount = (prestigePlus.doubleIP ? ipToGain * 2 : ipToGain) /
                               (float)oracle.saveSettings.infinityPointsToBreakFor;

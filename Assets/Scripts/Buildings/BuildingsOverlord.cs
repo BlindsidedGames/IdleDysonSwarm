@@ -1,3 +1,4 @@
+using Blindsided.Utilities;
 using UnityEngine;
 using static Expansion.Oracle;
 
@@ -11,28 +12,28 @@ public class BuildingsOverlord : MonoBehaviour
         {
             case BuyMode.Buy1:
             {
-                return BuyMultiple.BuyX(1, baseCost, costMulti, owned - minusX);
+                return CalcUtils.BuyXCost(1, baseCost, costMulti, owned - minusX);
             }
             case BuyMode.Buy10:
             {
                 return !oracle.saveSettings.roundedBulkBuy
-                    ? BuyMultiple.BuyX(10, baseCost, costMulti, owned - minusX)
-                    : BuyMultiple.BuyX(10f - owned % 10, baseCost, costMulti, owned - minusX);
+                    ? CalcUtils.BuyXCost(10, baseCost, costMulti, owned - minusX)
+                    : CalcUtils.BuyXCost(10f - owned % 10, baseCost, costMulti, owned - minusX);
             }
             case BuyMode.Buy50:
             {
                 return !oracle.saveSettings.roundedBulkBuy
-                    ? BuyMultiple.BuyX(50, baseCost, costMulti, owned - minusX)
-                    : BuyMultiple.BuyX(50f - owned % 50, baseCost, costMulti, owned - minusX);
+                    ? CalcUtils.BuyXCost(50, baseCost, costMulti, owned - minusX)
+                    : CalcUtils.BuyXCost(50f - owned % 50, baseCost, costMulti, owned - minusX);
             }
             case BuyMode.Buy100:
             {
                 return !oracle.saveSettings.roundedBulkBuy
-                    ? BuyMultiple.BuyX(100, baseCost, costMulti, owned - minusX)
-                    : BuyMultiple.BuyX(100f - owned % 100, baseCost, costMulti, owned - minusX);
+                    ? CalcUtils.BuyXCost(100, baseCost, costMulti, owned - minusX)
+                    : CalcUtils.BuyXCost(100f - owned % 100, baseCost, costMulti, owned - minusX);
             }
             case BuyMode.BuyMax:
-                return BuyMultiple.BuyX(MaxAffordable(baseCost, costMulti, owned - minusX), baseCost, costMulti,
+                return CalcUtils.BuyXCost(MaxAffordable(baseCost, costMulti, owned - minusX), baseCost, costMulti,
                     owned - minusX);
         }
 
@@ -41,7 +42,7 @@ public class BuildingsOverlord : MonoBehaviour
 
     public int MaxAffordable(double baseCost, double costMulti, long ownedMinusX)
     {
-        int maxAffordable = BuyMultiple.MaxAffordable((float)infinityData.money, baseCost, costMulti,
+        int maxAffordable = CalcUtils.MaxAffordable((float)infinityData.money, baseCost, costMulti,
             ownedMinusX);
         if (maxAffordable < 1) maxAffordable = 1;
         return maxAffordable;

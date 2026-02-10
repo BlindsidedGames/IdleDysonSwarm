@@ -22,6 +22,6 @@ namespace Systems
             return "";
         }
 
-        public static int InfinityPointsToGain(double botsRequired, double bots) => BuyMultiple.MaxAffordable(bots, botsRequired, oracle.infinityExponent, 0);
+        public static int InfinityPointsToGain(double botsRequired, double bots) => CalcUtils.MaxAffordable(bots, botsRequired, oracle.infinityExponent, 0);
     }
 }
