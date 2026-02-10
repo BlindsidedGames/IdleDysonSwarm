@@ -1,4 +1,5 @@
 using System;
+using Blindsided.Utilities;
 using Buildings;
 using Expansion;
 using GameData;
@@ -310,28 +311,10 @@ namespace Research
         {
             if (IsMaxed) return 0;
 
-            long number = 0;
-            bool roundedBulkBuy = _gameState.RoundedBulkBuy;
-            switch (_gameState.ResearchBuyMode)
-            {
-                case Oracle.BuyMode.Buy1:
-                    number = 1;
-                    break;
-                case Oracle.BuyMode.Buy10:
-                    number = roundedBulkBuy ? 10 - (int)CurrentLevel % 10 : 10;
-                    break;
-                case Oracle.BuyMode.Buy50:
-                    number = roundedBulkBuy ? 50 - (int)CurrentLevel % 50 : 50;
-                    break;
-                case Oracle.BuyMode.Buy100:
-                    number = roundedBulkBuy ? 100 - (int)CurrentLevel % 100 : 100;
-                    break;
-                case Oracle.BuyMode.BuyMax:
-                    number = Affordable() > 0 ? Affordable() : 1;
-                    break;
-            }
-
-            return ClampToRemaining(number);
+            long amount = BuyModeHelper.GetAmountToBuy(
+                _gameState.ResearchBuyMode, _gameState.RoundedBulkBuy,
+                (long)CurrentLevel, Affordable());
+            return ClampToRemaining(amount);
         }
 
         private double ClampLevel(double level)
