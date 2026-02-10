@@ -18,10 +18,14 @@ namespace Expansion
     /// Disk persistence and legacy load selection for <see cref="Oracle"/>.
     /// </summary>
     /// <remarks>
+    /// Runtime.
+    /// <para>Primary entry points: <see cref="Load"/>, <see cref="WipeAllData"/>, <see cref="LoadState"/>.</para>
     /// Canonical persistence stores the exact same save string used by clipboard export/import (prefix <c>IDB1:</c>).
     /// <para>Codec: <see cref="SaveCodec"/>.</para>
     /// <para>Snapshot compaction: <see cref="SaveSnapshotBuilder"/>.</para>
     /// <para>Persistence orchestration: <see cref="SaveSystem"/> + <see cref="OdinStringFileStorage"/>.</para>
+    /// <para>Change notes: loading/importing a save does not automatically reconcile skill points; the fix tool is
+    /// a user-invoked action (see <c>Assets/Scripts/Expansion/Oracle.SkillPoints.cs</c>).</para>
     /// </remarks>
     public partial class Oracle
     {
@@ -175,7 +179,6 @@ namespace Expansion
         {
             saveSettings = loaded;
             LoadDictionaries();
-            FixSkillpoints();
             if (!oracle.saveSettings.cheater && oracle.saveSettings.maxOfflineTime < 86400)
                 oracle.saveSettings.maxOfflineTime = 86400;
             saveSettings.lastSuccessfulLoadUtc = DateTime.UtcNow.ToString(CultureInfo.InvariantCulture);
@@ -319,7 +322,6 @@ namespace Expansion
             byte[] bytes = File.ReadAllBytes(filePath);
             saveSettings = SirenixSerializationUtility.DeserializeValue<SaveDataSettings>(bytes, DataFormat.JSON);
             LoadDictionaries();
-            FixSkillpoints();
             if (!oracle.saveSettings.cheater && oracle.saveSettings.maxOfflineTime < 86400)
                 oracle.saveSettings.maxOfflineTime = 86400;
             Loaded = true;
@@ -356,4 +358,3 @@ namespace Expansion
         }
     }
 }
-
