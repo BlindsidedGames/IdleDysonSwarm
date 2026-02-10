@@ -15,7 +15,6 @@ namespace Expansion
     {
         private bool _isSaveReady;
         private bool _autoSaveScheduled;
-        private bool _quickSaveScheduled;
         private int _suppressPresetSyncDepth;
 
         private const float QuickSaveDelaySeconds = 0.25f;
@@ -67,12 +66,10 @@ namespace Expansion
             // Debounce rapid UI interactions (skill assign/unassign, sliders, etc.)
             CancelInvoke(nameof(QuickSave));
             Invoke(nameof(QuickSave), QuickSaveDelaySeconds);
-            _quickSaveScheduled = true;
         }
 
         private void QuickSave()
         {
-            _quickSaveScheduled = false;
             SaveInternal(false);
         }
 
