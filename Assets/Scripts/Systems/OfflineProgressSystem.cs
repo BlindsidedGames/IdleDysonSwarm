@@ -319,6 +319,8 @@ namespace Systems
                 textBuilder +=
                     $"\nMatrioshka Brains produced {color}{CalcUtils.FormatNumber(acc.matrioshkaBrains)}</color> Planets";
 
+            // Planets is the top of the standard facility chain, so both Planets and Data Centers
+            // are shown once the player has any planets (intentional duplicate condition).
             if (context.infinityData.planets[0] + context.infinityData.planets[1] > 0)
                 textBuilder +=
                     $"\nYou gained {color}{CalcUtils.FormatNumber(acc.planets)}</color> Planets ";
