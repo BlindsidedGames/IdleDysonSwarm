@@ -139,24 +139,9 @@ namespace Blindsided.Utilities
                 return $"{colourStart}{mspaceStart}{zeroStr}{mspaceEnd}{colourEnd}{zeroPrefix}";
             }
 
+            var (exponentGroup, mantissa, mantissaStr) =
+                FormatMantissaExponent(x, mspaceStart, mspaceEnd, useMspace);
             double absX = Math.Abs(x);
-            int exponentGroup = Math.Max((int)Math.Floor(Math.Log10(absX) / 3), 0);
-
-            double scale = Math.Pow(10, exponentGroup * 3);
-            double mantissa = x / scale;
-
-            int integerDigits = Math.Abs(mantissa) < 1
-                ? 1
-                : (int)Math.Floor(Math.Log10(Math.Abs(mantissa))) + 1;
-            int digitsAfterDecimal = Math.Max(0, 3 - integerDigits);
-
-            double factor = Math.Pow(10, digitsAfterDecimal);
-            mantissa = Math.Truncate(mantissa * factor) / factor;
-
-            string mantissaStr = mantissa.ToString("F" + digitsAfterDecimal);
-
-            if (useMspace)
-                mantissaStr = mantissaStr.Replace(".", $"{mspaceEnd}.{mspaceStart}");
 
             string suffix = exponentGroup < Prefix.Length ? Prefix[exponentGroup] : "";
             string weightedSuffix = suffix;
@@ -215,22 +200,16 @@ namespace Blindsided.Utilities
             { "{colorHighlight}", textColourBlue }
         };
 
-        public static string FormatEnergy(
+        /// <summary>
+        /// Computes the exponent group, truncated mantissa, and formatted mantissa string
+        /// for a non-zero value. Shared by <see cref="FormatNumber"/> and <see cref="FormatEnergy"/>.
+        /// </summary>
+        private static (int exponentGroup, double mantissa, string mantissaStr) FormatMantissaExponent(
             double x,
-            bool isJoules,
-            bool useMspace = false,
-            float mspaceSize = 0.6f,
-            string colourOverride = "")
+            string mspaceStart,
+            string mspaceEnd,
+            bool useMspace)
         {
-            string[] prefixes = isJoules ? EnergyPrefixJ : EnergyPrefixW;
-            string mspaceStart = useMspace ? $"<mspace={mspaceSize}em>" : "";
-            string mspaceEnd = useMspace ? "</mspace>" : "";
-            string colourStart = string.IsNullOrEmpty(colourOverride) ? "" : colourOverride;
-            string colourEnd = string.IsNullOrEmpty(colourOverride) ? "" : "</color>";
-
-            if (x == 0)
-                return $"{colourStart}{mspaceStart}0.00{mspaceEnd}{colourEnd} {prefixes[0]}";
-
             double absX = Math.Abs(x);
             int exponentGroup = Math.Max((int)Math.Floor(Math.Log10(absX) / 3), 0);
 
@@ -249,6 +228,28 @@ namespace Blindsided.Utilities
 
             if (useMspace)
                 mantissaStr = mantissaStr.Replace(".", $"{mspaceEnd}.{mspaceStart}");
+
+            return (exponentGroup, mantissa, mantissaStr);
+        }
+
+        public static string FormatEnergy(
+            double x,
+            bool isJoules,
+            bool useMspace = false,
+            float mspaceSize = 0.6f,
+            string colourOverride = "")
+        {
+            string[] prefixes = isJoules ? EnergyPrefixJ : EnergyPrefixW;
+            string mspaceStart = useMspace ? $"<mspace={mspaceSize}em>" : "";
+            string mspaceEnd = useMspace ? "</mspace>" : "";
+            string colourStart = string.IsNullOrEmpty(colourOverride) ? "" : colourOverride;
+            string colourEnd = string.IsNullOrEmpty(colourOverride) ? "" : "</color>";
+
+            if (x == 0)
+                return $"{colourStart}{mspaceStart}0.00{mspaceEnd}{colourEnd} {prefixes[0]}";
+
+            var (exponentGroup, _, mantissaStr) =
+                FormatMantissaExponent(x, mspaceStart, mspaceEnd, useMspace);
 
             if (exponentGroup < prefixes.Length)
                 return $"{colourStart}{mspaceStart}{mantissaStr}{mspaceEnd}{colourEnd} {prefixes[exponentGroup]}";
