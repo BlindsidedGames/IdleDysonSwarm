@@ -18,6 +18,9 @@ namespace Expansion
     /// Clipboard import/export entrypoints for <see cref="Oracle"/>.
     /// </summary>
     /// <remarks>
+    /// Runtime.
+    /// <para>Primary entry points: <see cref="LoadFromClipboard"/>, <see cref="SaveToClipboard"/>,
+    /// <see cref="ExportSaveDebugJson"/>, <see cref="AttemptSaveRecovery"/>.</para>
     /// High-level save system map:
     /// <para>Canonical codec: <see cref="SaveCodec"/> (prefix <c>IDB1:</c>).</para>
     /// <para>Snapshot compaction: <see cref="SaveSnapshotBuilder"/>.</para>
@@ -25,6 +28,8 @@ namespace Expansion
     /// <para>Legacy ES3 import/recovery: <see cref="LegacyEs3Save"/>.</para>
     /// <para>Legacy candidate selection: <see cref="SaveLoadCandidateSelector"/>.</para>
     /// <para>Implementation log: <c>Documentation/SaveSystemV11ImplementationLog.md</c>.</para>
+    /// <para>Change notes: skill point reconciliation is intentionally manual (see <c>Assets/Scripts/Expansion/Oracle.SkillPoints.cs</c>)
+    /// and is not run automatically as part of clipboard import.</para>
     /// </remarks>
     public partial class Oracle
     {
@@ -68,7 +73,6 @@ namespace Expansion
             if (saveSettings.debugOptions) PlayerPrefs.SetInt("debug", 1);
             if (saveSettings.doubleIp) PlayerPrefs.SetInt("doubleip", 1);
             NotifyDebugOptionsChanged();
-            FixSkillpoints();
             ApplyMigrations();
             SyncAutoAssignFromSelectedPreset(runAutoAssign: false);
             LogPresetAutoAssignState("PostMigration/Clipboard");
