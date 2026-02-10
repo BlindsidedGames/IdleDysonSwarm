@@ -40,9 +40,9 @@ namespace Expansion
         {
             if (saveSettings == null) saveSettings = new SaveDataSettings();
 
+            PlayerEntitlementsStore.DebugEntitlementPurchased = true;
             saveSettings.debugOptions = true;
-            PlayerPrefs.SetInt("debug", 1);
-            PlayerPrefs.Save();
+            saveSettings.debugEverEnabled = true;
             if (lsm != null) lsm.SetDebug();
             NotifyDebugOptionsChanged();
 
@@ -54,7 +54,6 @@ namespace Expansion
         {
             bool previousDevOptions = saveSettings != null && saveSettings.debugOptions;
             bool previousDoubleIp = saveSettings != null && saveSettings.doubleIp;
-            bool debugPrefUnlocked = PlayerPrefs.GetInt("debug", 0) == 1;
             bool doubleIpPrefUnlocked = PlayerPrefs.GetInt("doubleip", 0) == 1;
             string clipboard = GUIUtility.systemCopyBuffer;
             if (!SaveCodec.TryDecodeSaveSettings(clipboard, out SaveDataSettings decoded))
@@ -68,10 +67,14 @@ namespace Expansion
             LoadDictionaries();
             if (!oracle.saveSettings.cheater && saveSettings.maxOfflineTime < 86400)
                 oracle.saveSettings.maxOfflineTime = 86400;
-            saveSettings.debugOptions = saveSettings.debugOptions || previousDevOptions || debugPrefUnlocked;
+            saveSettings.debugOptions = saveSettings.debugOptions || previousDevOptions;
             saveSettings.doubleIp = saveSettings.doubleIp || previousDoubleIp || doubleIpPrefUnlocked;
-            if (saveSettings.debugOptions) PlayerPrefs.SetInt("debug", 1);
             if (saveSettings.doubleIp) PlayerPrefs.SetInt("doubleip", 1);
+            if (saveSettings.debugOptions)
+            {
+                PlayerEntitlementsStore.DebugEntitlementPurchased = true;
+                saveSettings.debugEverEnabled = true;
+            }
             NotifyDebugOptionsChanged();
             ApplyMigrations();
             SyncAutoAssignFromSelectedPreset(runAutoAssign: false);

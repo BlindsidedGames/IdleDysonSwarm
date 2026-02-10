@@ -2,8 +2,27 @@ using System.Collections;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
+using Systems.Save;
 using static Expansion.Oracle;
 
+/*
+Purpose (runtime): Handles purchase-gating of debug/dev options via in-game currency and updates
+the associated UI state in the purchase/store panel.
+
+Primary entry points:
+- Unity: OnEnable/OnDisable (subscribe), Start (initial refresh), RefreshState() (recompute UI).
+- UI: PurshaseWithInGameCurrency() (button click; legacy method name used by UnityEvents).
+
+Interacts with:
+- Expansion.Oracle (saveSettings, DebugOptionsChanged event, NotifyDebugOptionsChanged()).
+- Systems.Save.PlayerEntitlementsStore (debug entitlement persistence across wipes).
+- UnityEngine.PlayerPrefs ("doubleip" legacy).
+
+Change notes:
+- Costs are hard-coded here; if you change the intended price, keep this file in sync with
+  `Assets/Scripts/User Interface/DebugOptions.cs`.
+- Do not grant debug entitlement without updating PlayerEntitlementsStore.
+*/
 public class DebugPurchaseHandler : MonoBehaviour
 {
     [SerializeField] private GameObject debugCategrory;
@@ -20,8 +39,10 @@ public class DebugPurchaseHandler : MonoBehaviour
     [SerializeField] private TMP_Text purchasedTip1Text;
     [SerializeField] private TMP_Text purchasedTip2Text;
     [SerializeField] private TMP_Text purchasedTip3Text;
-    private const string DebugPrefKey = "debug";
     private const string DoubleIpPrefKey = "doubleip";
+
+    private const long DevOptionsQuantumShardCost = 100_000;
+    private const long DevOptionsStrangeMatterCost = 500_000;
 
     private void OnEnable()
     {
@@ -40,11 +61,6 @@ public class DebugPurchaseHandler : MonoBehaviour
         SetTipTextUnavailable();
     }
 
-    private void Update()
-    {
-        currencyButton.interactable = false;
-    }
-
     public void SetDebugState()
     {
         RefreshState();
@@ -55,10 +71,17 @@ public class DebugPurchaseHandler : MonoBehaviour
         if (oracle == null || oracle.saveSettings == null) return;
 
         bool debugUnlocked = oracle.saveSettings.debugOptions;
-        debugCategrory.SetActive(debugUnlocked);
+        bool debugEntitled = PlayerEntitlementsStore.DebugEntitlementPurchased;
+        if (debugCategrory != null) debugCategrory.SetActive(debugUnlocked);
         purchaseDebugButton.interactable = false;
-        currencyButton.interactable = false;
-        purchasedDebugText.text = debugUnlocked ? "Purchased" : "Unavailable";
+        if (currencyButton != null)
+            currencyButton.interactable = !debugUnlocked && (debugEntitled || CanAffordDevOptions());
+
+        if (purchasedDebugText != null)
+        {
+            if (debugEntitled) purchasedDebugText.text = "Purchased";
+            else purchasedDebugText.text = CanAffordDevOptions() ? "Available" : "Unavailable";
+        }
         SetDoubleIpState();
     }
 
@@ -69,21 +92,44 @@ public class DebugPurchaseHandler : MonoBehaviour
         purchasedDoubleIpText.text = doubleIpUnlocked ? "Purchased" : "Unavailable";
     }
 
+    private bool CanAffordDevOptions()
+    {
+        if (oracle == null || oracle.saveSettings == null) return false;
+        return oracle.saveSettings.prestigePlus.points >= DevOptionsQuantumShardCost
+               && oracle.saveSettings.sdPrestige.strangeMatter >= DevOptionsStrangeMatterCost;
+    }
+
     public void PurshaseWithInGameCurrency()
     {
-        if (oracle.saveSettings.prestigePlus.points >= 100000 && oracle.saveSettings.sdPrestige.strangeMatter >= 500000)
+        if (oracle == null || oracle.saveSettings == null) return;
+        if (oracle.saveSettings.debugOptions) return;
+
+        if (PlayerEntitlementsStore.DebugEntitlementPurchased)
         {
-            oracle.saveSettings.prestigePlus.points -= 100000;
-            oracle.saveSettings.sdPrestige.strangeMatter -= 500000;
-            PurchaseDevOptionsSuccessful();
+            // Entitlement exists; enabling is free.
+            oracle.saveSettings.debugOptions = true;
+            oracle.saveSettings.debugEverEnabled = true;
+            NotifyDebugOptionsChanged();
+            RefreshState();
+            return;
         }
+
+        if (!CanAffordDevOptions())
+        {
+            RefreshState();
+            return;
+        }
+
+        oracle.saveSettings.prestigePlus.points -= DevOptionsQuantumShardCost;
+        oracle.saveSettings.sdPrestige.strangeMatter -= DevOptionsStrangeMatterCost;
+        PlayerEntitlementsStore.DebugEntitlementPurchased = true;
+        PurchaseDevOptionsSuccessful();
     }
 
     public void PurchaseDevOptionsSuccessful()
     {
         oracle.saveSettings.debugOptions = true;
-        PlayerPrefs.SetInt(DebugPrefKey, 1);
-        PlayerPrefs.Save();
+        oracle.saveSettings.debugEverEnabled = true;
         NotifyDebugOptionsChanged();
         RefreshState();
     }
