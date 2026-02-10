@@ -1,7 +1,22 @@
 using System;
+using Systems.Save;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
+/*
+Purpose (runtime): Load screen + screensaver controller, also exposes unlock flags for UI.
+
+Primary entry points:
+- Unity: Awake (singleton), Start (init + refresh unlock flags), Update (screensaver), CloseLoadScreen.
+
+Interacts with:
+- Systems.Save.PlayerEntitlementsStore (debug entitlement).
+- UnityEngine.PlayerPrefs ("doubleip" legacy).
+- Expansion.Oracle.saveSettings (per-save debug enabled + double ip enabled).
+
+Change notes:
+- Debug entitlement is no longer sourced from PlayerPrefs("debug"); it migrates to PlayerEntitlementsStore.
+*/
 public class LoadScreenMethods : MonoBehaviour
 {
     [SerializeField] private GameObject _LoadScreen;
@@ -18,7 +33,6 @@ public class LoadScreenMethods : MonoBehaviour
 
     public bool gotDebug;
     public bool gotDoubleIp;
-    private const string DebugPrefKey = "debug";
     private const string DoubleIpPrefKey = "doubleip";
 
     private void Start()
@@ -29,7 +43,8 @@ public class LoadScreenMethods : MonoBehaviour
 
     private void RefreshUnlockFlags()
     {
-        bool debugUnlocked = PlayerPrefs.GetInt(DebugPrefKey, 0) == 1;
+        PlayerEntitlementsStore.EnsureLoaded();
+        bool debugUnlocked = PlayerEntitlementsStore.DebugEntitlementPurchased;
         bool doubleIpUnlocked = PlayerPrefs.GetInt(DoubleIpPrefKey, 0) == 1;
 
         if (Expansion.Oracle.oracle != null)

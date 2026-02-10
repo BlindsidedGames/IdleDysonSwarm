@@ -4,8 +4,26 @@ using UnityEngine;
 using UnityEngine.UI;
 using Systems.Debugging;
 using Systems.Stats;
+using Systems.Save;
 using static Expansion.Oracle;
 
+/*
+Purpose (runtime): Debug/dev options panel controller. Owns wiring for debug UI buttons and
+gates the dev-options category behind an in-game currency purchase (Quantum Shards + Strange Matter).
+
+Primary entry points:
+- Unity: OnEnable/OnDisable (subscribe to debug option change), Start (wire button listeners), Update (refresh unlock button state).
+- UI: debug currency button click -> AttemptPurchaseDevOptionsWithCurrency().
+
+Interacts with:
+- Expansion.Oracle (saveSettings, DebugOptionsChanged event, NotifyDebugOptionsChanged()).
+- Systems.Save.PlayerEntitlementsStore (debug entitlement persistence across soft wipes).
+- Systems.Stats.StatTimingTracker and Systems.Debugging.DebugReportRecorder for telemetry buttons.
+
+Change notes:
+- The "dev unlock" purchase MUST deduct resources before setting saveSettings.debugOptions / entitlement.
+- If you change currency fields (prestigePlus.points, sdPrestige.strangeMatter) or costs, update both the afford check and any UI text that references the price.
+*/
 public class DebugOptions : MonoBehaviour
 {
     private DysonVerseInfinityData infinityData => oracle.saveSettings.dysonVerseSaveData.dysonVerseInfinityData;
@@ -13,10 +31,21 @@ public class DebugOptions : MonoBehaviour
     private PrestigePlus prestigePlus => oracle.saveSettings.prestigePlus;
     private SaveDataPrestige sdp => oracle.saveSettings.sdPrestige;
 
+    // Dev options purchase cost (in-game currency).
+    private const long DevOptionsQuantumShardCost = 100_000;
+    private const long DevOptionsStrangeMatterCost = 500_000;
+
     [Header("Dev Unlock")]
     [SerializeField] private Button debugCurrencyButton;
+    [SerializeField] private TMP_Text debugCurrencyButtonText;
     [SerializeField] private GameObject debugCategory;
     [SerializeField] private GameObject purchaseCategory;
+    [Tooltip("Optional: if this component is moved to a different place in the hierarchy, set this to the debug UI root so auto-find still works.")]
+    [SerializeField] private Transform debugUiRoot;
+
+    [Header("Dev Tools")]
+    [SerializeField] private Button recalculateSkillPointsButton;
+    [SerializeField] private Button disableDebugButton;
 
     [SerializeField] private TMP_InputField inputField;
     [SerializeField] private Button addBots;
@@ -66,7 +95,13 @@ public class DebugOptions : MonoBehaviour
         setTinker0.onClick.AddListener(SetTinkerO);
         addInfinityPoints.onClick.AddListener(AddInfinityPoints);
         if (debugCurrencyButton != null)
-            debugCurrencyButton.onClick.AddListener(UnlockDevOptionsFromPurchase);
+            debugCurrencyButton.onClick.AddListener(AttemptPurchaseDevOptionsWithCurrency);
+        if (debugCurrencyButtonText == null && debugCurrencyButton != null)
+            debugCurrencyButtonText = debugCurrencyButton.GetComponentInChildren<TMP_Text>(includeInactive: true);
+        if (recalculateSkillPointsButton != null)
+            recalculateSkillPointsButton.onClick.AddListener(RecalculateSkillPoints);
+        if (disableDebugButton != null)
+            disableDebugButton.onClick.AddListener(DisableDebugOptions);
         WireDebugTelemetryButtons();
         EnsureDebugCategoryReferences();
         RefreshDebugUnlockUi();
@@ -75,8 +110,7 @@ public class DebugOptions : MonoBehaviour
 
     private void Update()
     {
-        if (debugCurrencyButton != null)
-            debugCurrencyButton.interactable = !oracle.saveSettings.debugOptions;
+        RefreshDevUnlockButtonState();
     }
 
     public void AddBots()
@@ -197,13 +231,46 @@ public class DebugOptions : MonoBehaviour
         Debug.Log($"Exported debug report to {path}");
     }
 
-    private void UnlockDevOptionsFromPurchase()
+    private void AttemptPurchaseDevOptionsWithCurrency()
     {
+        if (oracle == null || oracle.saveSettings == null) return;
+        if (oracle.saveSettings.debugOptions) return;
+
+        // If the entitlement already exists, this is just an "Enable Debug" action.
+        if (PlayerEntitlementsStore.DebugEntitlementPurchased)
+        {
+            oracle.saveSettings.debugOptions = true;
+            oracle.saveSettings.debugEverEnabled = true;
+            NotifyDebugOptionsChanged();
+            RefreshDebugUnlockUi();
+            RefreshDevUnlockButtonState();
+            return;
+        }
+
+        long quantumShards = oracle.saveSettings.prestigePlus.points;
+        long strangeMatter = oracle.saveSettings.sdPrestige.strangeMatter;
+
+        bool canAfford = quantumShards >= DevOptionsQuantumShardCost && strangeMatter >= DevOptionsStrangeMatterCost;
+        if (!canAfford)
+        {
+            // Keep this as a warning rather than a UI popup: this is a debug/dev panel.
+            Debug.LogWarning(
+                $"Cannot unlock dev options: requires {DevOptionsQuantumShardCost} Quantum Shards and {DevOptionsStrangeMatterCost} Strange Matter. " +
+                $"You have {quantumShards} Quantum Shards and {strangeMatter} Strange Matter.");
+            RefreshDevUnlockButtonState();
+            return;
+        }
+
+        oracle.saveSettings.prestigePlus.points -= DevOptionsQuantumShardCost;
+        oracle.saveSettings.sdPrestige.strangeMatter -= DevOptionsStrangeMatterCost;
+
+        PlayerEntitlementsStore.DebugEntitlementPurchased = true;
         oracle.saveSettings.debugOptions = true;
-        PlayerPrefs.SetInt("debug", 1);
-        PlayerPrefs.Save();
+        oracle.saveSettings.debugEverEnabled = true;
+
         NotifyDebugOptionsChanged();
         RefreshDebugUnlockUi();
+        RefreshDevUnlockButtonState();
     }
 
     private void HandleDebugOptionsChanged()
@@ -213,10 +280,11 @@ public class DebugOptions : MonoBehaviour
 
     private void EnsureDebugCategoryReferences()
     {
+        Transform root = debugUiRoot != null ? debugUiRoot : transform;
         if (debugCategory == null)
-            debugCategory = transform.Find("Buyables/Scroll View/Viewport/Content/Debug")?.gameObject;
+            debugCategory = root.Find("Buyables/Scroll View/Viewport/Content/Debug")?.gameObject;
         if (purchaseCategory == null)
-            purchaseCategory = transform.Find("Buyables/Scroll View/Viewport/Content/Purchase")?.gameObject;
+            purchaseCategory = root.Find("Buyables/Scroll View/Viewport/Content/Purchase")?.gameObject;
     }
 
     private void RefreshDebugUnlockUi()
@@ -226,7 +294,74 @@ public class DebugOptions : MonoBehaviour
 
         bool unlocked = oracle.saveSettings.debugOptions;
         if (debugCategory != null) debugCategory.SetActive(unlocked);
+        else Debug.LogWarning("[DebugOptions] debugCategory reference missing; cannot toggle debug UI. Assign it in the inspector or set debugUiRoot.");
+
         if (purchaseCategory != null) purchaseCategory.SetActive(!unlocked);
+        else Debug.LogWarning("[DebugOptions] purchaseCategory reference missing; cannot toggle purchase UI. Assign it in the inspector or set debugUiRoot.");
+    }
+
+    private void RefreshDevUnlockButtonState()
+    {
+        if (debugCurrencyButton == null) return;
+        if (oracle == null || oracle.saveSettings == null)
+        {
+            debugCurrencyButton.interactable = false;
+            RefreshDevUnlockButtonText(isUnlocked: false, isEntitled: false);
+            return;
+        }
+
+        bool unlocked = oracle.saveSettings.debugOptions;
+        if (unlocked)
+        {
+            debugCurrencyButton.interactable = false;
+            RefreshDevUnlockButtonText(isUnlocked: true, isEntitled: PlayerEntitlementsStore.DebugEntitlementPurchased);
+            return;
+        }
+
+        bool entitled = PlayerEntitlementsStore.DebugEntitlementPurchased;
+        if (entitled)
+        {
+            // Entitlement exists; allow re-enabling debug without repurchase.
+            debugCurrencyButton.interactable = true;
+            RefreshDevUnlockButtonText(isUnlocked: false, isEntitled: true);
+            return;
+        }
+
+        long quantumShards = oracle.saveSettings.prestigePlus.points;
+        long strangeMatter = oracle.saveSettings.sdPrestige.strangeMatter;
+        bool canAfford = quantumShards >= DevOptionsQuantumShardCost && strangeMatter >= DevOptionsStrangeMatterCost;
+        debugCurrencyButton.interactable = canAfford;
+        RefreshDevUnlockButtonText(isUnlocked: false, isEntitled: false);
+    }
+
+    private void RefreshDevUnlockButtonText(bool isUnlocked, bool isEntitled)
+    {
+        if (debugCurrencyButtonText == null) return;
+
+        // Requirement: show "Free" when entitlement exists; show cost otherwise.
+        if (!isUnlocked && isEntitled)
+        {
+            debugCurrencyButtonText.text = "Free";
+            return;
+        }
+
+        // Keep the existing wording consistent with the button art/text expectation.
+        debugCurrencyButtonText.text = "100k Quantum shards and 500k Strange Matter";
+    }
+
+    private void RecalculateSkillPoints()
+    {
+        if (oracle == null) return;
+        oracle.ApplySkillPointRecalc();
+    }
+
+    private void DisableDebugOptions()
+    {
+        if (oracle == null || oracle.saveSettings == null) return;
+        oracle.saveSettings.debugOptions = false;
+        NotifyDebugOptionsChanged();
+        RefreshDebugUnlockUi();
+        RefreshDevUnlockButtonState();
     }
 
     public static event Action AutoAssign;

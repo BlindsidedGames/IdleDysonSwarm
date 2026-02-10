@@ -235,12 +235,21 @@ private void PackSettingsFlags()
                 saveSettings.frameRate != 0
                     ? saveSettings.frameRate
                     : Mathf.RoundToInt((float)Screen.currentResolution.refreshRateRatio.value);
-            bool debugUnlocked = saveSettings.debugOptions || PlayerPrefs.GetInt("debug", 0) == 1;
             bool doubleIpUnlocked = saveSettings.doubleIp || PlayerPrefs.GetInt("doubleip", 0) == 1;
-            saveSettings.debugOptions = debugUnlocked;
             saveSettings.doubleIp = doubleIpUnlocked;
-            if (saveSettings.debugOptions) PlayerPrefs.SetInt("debug", 1);
             if (saveSettings.doubleIp) PlayerPrefs.SetInt("doubleip", 1);
+
+            // Debug entitlement is now stored separately from PlayerPrefs.
+            // If a save loads with debug enabled, treat that as proof of entitlement and "ever enabled".
+            if (saveSettings.debugOptions)
+            {
+                saveSettings.debugEverEnabled = true;
+                if (!PlayerEntitlementsStore.DebugEntitlementPurchased)
+                    PlayerEntitlementsStore.DebugEntitlementPurchased = true;
+            }
+
+            // Ensure any UI listening for debug state refreshes after load.
+            NotifyDebugOptionsChanged();
             if (lsm != null) lsm.CloseLoadScreen();
 
 	            string canonicalPath = SavePaths.GetCanonicalSavePath();
@@ -2716,6 +2725,9 @@ private void PackSettingsFlags()
             public bool roundedBulkBuy;
             public bool researchRoundedBulkBuy;
             public bool debugOptions;
+            // True once debug options have ever been enabled on this save. Used for "tainted" UI indicators.
+            // Note: disabling debug does not clear this.
+            public bool debugEverEnabled;
             public bool doubleIp;
             public bool unlockAllTabs;
             public bool avotation;
@@ -3503,6 +3515,9 @@ private void PackSettingsFlags()
                 oracle = this;
             else
                 Destroy(gameObject);
+
+            // Load entitlements early so debug gating doesn't depend on PlayerPrefs.
+            PlayerEntitlementsStore.EnsureLoaded();
         }
 
         #endregion
