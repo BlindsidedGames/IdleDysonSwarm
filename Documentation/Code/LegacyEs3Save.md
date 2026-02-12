@@ -7,7 +7,8 @@
 - Recovery candidate ranking must prioritize:
   1. higher `saveVersion`,
   2. newer parsed timestamp (`lastSuccessfulLoadUtc`, then `dateQuitString`, then `dateStarted`),
-  3. trust order (`main` > `.bac` > `.tmp.bak` > `.tmp` > archived `.corrupt.*`).
+  3. trust order (`main` > `.bac` > `.tmp.bak` > `.tmp` > archived `.corrupt.*`),
+  4. deterministic path comparison as final tie-break.
 - Must support both current unencrypted ES3 files and legacy AES-encrypted ES3 files.
 
 ## Data flow
@@ -16,7 +17,7 @@
 3. For each candidate:
    - try default ES3 settings (`ES3.KeyExists` + `ES3.Load`),
    - then try legacy AES settings with known/default password candidates.
-4. Sort candidates by version/timestamp/trust and return the ordered list.
+4. Sort candidates by version/timestamp/trust with deterministic path tie-break and return the ordered list.
 5. `TryRecoverDefaultSave` picks index `0` from that list.
 
 ## Save/load implications
@@ -32,4 +33,5 @@
 1. Plain ES3 file: `TryRecoverDefaultSave` returns that file.
 2. AES-encrypted ES3 file (password `password`): recovery succeeds without emitting warning-level probe logs.
 3. Archived encrypted file (`SaveFile.es3.corrupt.*`) with missing main file: candidate list includes archived file.
-4. Random invalid file: methods return no candidate without throwing.
+4. Two candidates tied on version/timestamp/trust: returned order stays stable across repeated scans.
+5. Random invalid file: methods return no candidate without throwing.
