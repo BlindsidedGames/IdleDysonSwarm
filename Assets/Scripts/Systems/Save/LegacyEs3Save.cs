@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
 using Expansion;
@@ -6,9 +7,42 @@ using UnityEngine;
 
 namespace Systems.Save
 {
+    public readonly struct LegacyEs3RecoveryCandidate
+    {
+        public LegacyEs3RecoveryCandidate(string path, Oracle.SaveDataSettings settings, DateTime? timestampUtc, int trust)
+        {
+            Path = path;
+            Settings = settings;
+            SaveVersion = settings?.saveVersion ?? 0;
+            TimestampUtc = timestampUtc;
+            Trust = trust;
+        }
+
+        public string Path { get; }
+        public Oracle.SaveDataSettings Settings { get; }
+        public int SaveVersion { get; }
+        public DateTime? TimestampUtc { get; }
+        public int Trust { get; }
+    }
+
     /// <summary>
-    /// Legacy ES3 save helpers kept for importing older saves during the Odin-only transition.
+    /// Purpose: legacy ES3 artifact helpers used to import pre-canonical saves during startup recovery.
+    /// Where it runs: runtime only (called from Oracle load/wipe flows).
+    /// Primary entry points: <see cref="DeleteDefaultArtifacts"/>, <see cref="ArchiveDefaultArtifacts"/>,
+    /// <see cref="TryRecoverDefaultSave"/>, <see cref="GetRecoverableCandidates"/>.
+    /// Owns: ES3 file artifact probing, candidate ranking, and legacy format load attempts.
+    /// Delegates: selected save adoption/migrations to <c>Expansion.Oracle</c>.
     /// </summary>
+    /// <remarks>
+    /// Interacts with:
+    /// - Calls into: Easy Save 3 APIs (<c>ES3</c>/<c>ES3Settings</c>) and filesystem APIs.
+    /// - Called by: <c>Assets/Scripts/Expansion/Oracle.Persistence.cs</c>.
+    ///
+    /// Change notes:
+    /// - The key name <c>saveSettings</c> and ES3 default path assumptions must remain aligned with legacy builds.
+    /// - Candidate trust/order affects which historical artifact is chosen when multiple saves exist.
+    /// - Removing legacy AES fallback will regress recovery for encrypted ES3 files archived as <c>.corrupt.*</c>.
+    /// </remarks>
     public static class LegacyEs3Save
     {
         public static void DeleteDefaultArtifacts()
@@ -86,54 +120,12 @@ namespace Systems.Save
             recoveredFromPath = null;
             try
             {
-                ES3Settings settings = new ES3Settings();
-                if (settings.location != ES3.Location.File) return false;
-                string fullPath = settings.FullPath;
-                if (string.IsNullOrEmpty(fullPath)) return false;
+                List<LegacyEs3RecoveryCandidate> candidates = GetRecoverableCandidates();
+                if (candidates.Count == 0) return false;
 
-                // ES3 writes via a temp file and keeps a copy of the previous file at "<fullPath>.tmp.bak".
-                // If the main file is corrupt/truncated or silently loads defaults, the backup artifacts
-                // often still contain the last good save.
-                //
-                // Try all candidates and pick the "best" by:
-                // - saveVersion (higher wins)
-                // - timestamp (later wins; best-effort parse)
-                // - file trust (main > .bac > .tmp.bak > .tmp)
-                string[] candidates =
-                {
-                    fullPath,
-                    fullPath + ".bac",
-                    fullPath + ".tmp.bak",
-                    fullPath + ".tmp"
-                };
-
-                Oracle.SaveDataSettings best = null;
-                string bestPath = null;
-                int bestVersion = -1;
-                DateTime? bestUtc = null;
-                int bestTrust = -1;
-
-                foreach (string candidate in candidates)
-                {
-                    if (!TryLoadSaveSettingsFromEs3File(candidate, out Oracle.SaveDataSettings candidateSettings)) continue;
-
-                    int version = candidateSettings?.saveVersion ?? 0;
-                    DateTime? utc = TryGetCandidateTimestampUtc(candidateSettings, out DateTime parsed) ? parsed : (DateTime?)null;
-                    int trust = GetCandidateTrust(candidate);
-
-                    if (IsBetter(version, utc, trust, bestVersion, bestUtc, bestTrust))
-                    {
-                        best = candidateSettings;
-                        bestPath = candidate;
-                        bestVersion = version;
-                        bestUtc = utc;
-                        bestTrust = trust;
-                    }
-                }
-
-                if (best == null) return false;
-                recovered = best;
-                recoveredFromPath = bestPath;
+                LegacyEs3RecoveryCandidate best = candidates[0];
+                recovered = best.Settings;
+                recoveredFromPath = best.Path;
                 return true;
             }
             catch
@@ -142,6 +134,94 @@ namespace Systems.Save
             }
 
             return false;
+        }
+
+        public static List<LegacyEs3RecoveryCandidate> GetRecoverableCandidates()
+        {
+            var recoverable = new List<LegacyEs3RecoveryCandidate>();
+            try
+            {
+                ES3Settings settings = new ES3Settings();
+                if (settings.location != ES3.Location.File) return recoverable;
+
+                string fullPath = settings.FullPath;
+                if (string.IsNullOrEmpty(fullPath)) return recoverable;
+
+                foreach (string candidatePath in BuildCandidatePathList(fullPath))
+                {
+                    if (!TryLoadSaveSettingsFromEs3File(candidatePath, out Oracle.SaveDataSettings candidateSettings))
+                        continue;
+
+                    DateTime? utc = TryGetCandidateTimestampUtc(candidateSettings, out DateTime parsed)
+                        ? parsed
+                        : (DateTime?)null;
+                    int trust = GetCandidateTrust(candidatePath);
+
+                    var candidate = new LegacyEs3RecoveryCandidate(candidatePath, candidateSettings, utc, trust);
+                    InsertCandidateByPriority(recoverable, candidate);
+                }
+            }
+            catch
+            {
+                // ignored
+            }
+
+            return recoverable;
+        }
+
+        private static List<string> BuildCandidatePathList(string fullPath)
+        {
+            var candidates = new List<string>
+            {
+                fullPath,
+                fullPath + ".bac",
+                fullPath + ".tmp.bak",
+                fullPath + ".tmp"
+            };
+
+            // Also scan for previously-archived files (*.corrupt.*) from earlier failed load attempts.
+            // These were moved aside before AES fallback existed, so they may actually be valid.
+            try
+            {
+                string dir = Path.GetDirectoryName(fullPath);
+                string baseName = Path.GetFileName(fullPath);
+                if (!string.IsNullOrEmpty(dir) && Directory.Exists(dir))
+                {
+                    foreach (string archived in Directory.GetFiles(dir, baseName + ".corrupt.*"))
+                    {
+                        candidates.Add(archived);
+                    }
+                }
+            }
+            catch
+            {
+                // Non-critical — just skip archived file discovery.
+            }
+
+            return candidates;
+        }
+
+        private static void InsertCandidateByPriority(
+            List<LegacyEs3RecoveryCandidate> ordered,
+            LegacyEs3RecoveryCandidate candidate)
+        {
+            for (int i = 0; i < ordered.Count; i++)
+            {
+                LegacyEs3RecoveryCandidate current = ordered[i];
+                if (IsBetter(
+                        candidate.SaveVersion,
+                        candidate.TimestampUtc,
+                        candidate.Trust,
+                        current.SaveVersion,
+                        current.TimestampUtc,
+                        current.Trust))
+                {
+                    ordered.Insert(i, candidate);
+                    return;
+                }
+            }
+
+            ordered.Add(candidate);
         }
 
         private static bool IsBetter(
@@ -169,6 +249,7 @@ namespace Systems.Save
         {
             // Higher = more trusted.
             if (string.IsNullOrEmpty(candidatePath)) return 0;
+            if (candidatePath.Contains(".corrupt.")) return 0; // Previously archived — least trusted but still worth trying.
             if (candidatePath.EndsWith(".tmp", StringComparison.OrdinalIgnoreCase)) return 1;
             if (candidatePath.EndsWith(".tmp.bak", StringComparison.OrdinalIgnoreCase)) return 2;
             if (candidatePath.EndsWith(".bac", StringComparison.OrdinalIgnoreCase)) return 3;
@@ -212,12 +293,83 @@ namespace Systems.Save
         private static bool TryLoadSaveSettingsFromEs3File(string fullPath, out Oracle.SaveDataSettings settings)
         {
             settings = null;
+            if (string.IsNullOrEmpty(fullPath)) return false;
+            if (!File.Exists(fullPath)) return false;
+
+            // 1) Try with current defaults (no encryption, file location).
+            if (TryEs3KeyExistsAndLoad(fullPath, null, out settings))
+                return true;
+
+            // 2) Older production installs wrote encrypted ES3 files even when current defaults are unencrypted.
+            //    Probe legacy AES settings so encrypted saves are treated as recoverable instead of unrecoverable.
+            if (TryLoadSaveSettingsFromLegacyAes(fullPath, out settings))
+            {
+                return true;
+            }
+
+            return false;
+        }
+
+        private static bool TryLoadSaveSettingsFromLegacyAes(string fullPath, out Oracle.SaveDataSettings settings)
+        {
+            settings = null;
+
+            foreach (string password in EnumerateLegacyAesPasswords())
+            {
+                ES3Settings aesSettings = new ES3Settings(fullPath)
+                {
+                    encryptionType = ES3.EncryptionType.AES,
+                    encryptionPassword = password,
+                    compressionType = ES3.CompressionType.None
+                };
+
+                if (!TryEs3KeyExistsAndLoad(fullPath, aesSettings, out settings)) continue;
+
+                return true;
+            }
+
+            return false;
+        }
+
+        private static System.Collections.Generic.IEnumerable<string> EnumerateLegacyAesPasswords()
+        {
+            var passwords = new System.Collections.Generic.List<string>();
             try
             {
-                if (string.IsNullOrEmpty(fullPath)) return false;
-                if (!File.Exists(fullPath)) return false;
-                if (!ES3.KeyExists("saveSettings", fullPath)) return false;
-                settings = ES3.Load<Oracle.SaveDataSettings>("saveSettings", fullPath);
+                ES3Settings defaults = new ES3Settings();
+                if (!string.IsNullOrWhiteSpace(defaults.encryptionPassword))
+                {
+                    passwords.Add(defaults.encryptionPassword);
+                }
+            }
+            catch
+            {
+                // ignored
+            }
+
+            // Legacy ES3 defaults commonly used this password.
+            if (!passwords.Contains("password"))
+            {
+                passwords.Add("password");
+            }
+
+            return passwords;
+        }
+
+        private static bool TryEs3KeyExistsAndLoad(string fullPath, ES3Settings overrideSettings,
+            out Oracle.SaveDataSettings settings)
+        {
+            settings = null;
+            try
+            {
+                bool exists = overrideSettings != null
+                    ? ES3.KeyExists("saveSettings", overrideSettings)
+                    : ES3.KeyExists("saveSettings", fullPath);
+                if (!exists) return false;
+
+                settings = overrideSettings != null
+                    ? ES3.Load<Oracle.SaveDataSettings>("saveSettings", overrideSettings)
+                    : ES3.Load<Oracle.SaveDataSettings>("saveSettings", fullPath);
                 return settings != null;
             }
             catch
