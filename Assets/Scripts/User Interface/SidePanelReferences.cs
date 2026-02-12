@@ -20,11 +20,14 @@ using UnityEngine.UI;
 /// - Read by: <c>Assets/Scripts/User Interface/SidePanelController.cs</c> (selects active refs),
 ///   <c>Assets/Scripts/Systems/GameManager.cs</c> (skills fill/preset section refs),
 ///   <c>Assets/Scripts/User Interface/SkillTreeSettingsManager.cs</c> (preset toggles + tab preset automation via
-///   Bots/Research tab buttons).
+///   Bots/Research tab buttons),
+///   <c>Assets/Scripts/Systems/OfflineTimeManager.cs</c> (quick offline-time spend buttons on overlay/permanent panels).
 ///
 /// Change notes:
 /// - Adding/removing fields requires updating prefab/scene wiring for both overlay and permanent variants.
 /// - <see cref="botsTabButton"/> / <see cref="researchTabButton"/> are used to detect tab opens for preset automation.
+/// - <see cref="quickOfflineTwoMinutesButton"/>, <see cref="quickOfflineTenMinutesButton"/>, and
+///   <see cref="quickOfflineOneHourButton"/> must be wired on both panel variants for quick-spend behavior.
 /// </remarks>
 public class SidePanelReferences : MonoBehaviour
 {
@@ -90,4 +93,9 @@ public class SidePanelReferences : MonoBehaviour
 
     [Header("Offline Time")]
     public GameObject offlineTimeFillBarObject;
+
+    [Header("Offline Time Quick Spend")]
+    public Button quickOfflineTwoMinutesButton;
+    public Button quickOfflineTenMinutesButton;
+    public Button quickOfflineOneHourButton;
 }
