@@ -46,7 +46,6 @@ namespace Expansion
         private void ApplyMigrations()
         {
             if (saveSettings == null) return;
-            EnsureSaveSettingsShape();
 
             MigrationRegistry registry = BuildMigrationRegistry();
             if (registry.LatestVersion != CurrentSaveVersion)
@@ -83,7 +82,6 @@ namespace Expansion
         public MigrationRunResult RunMigrationDryRun()
         {
             if (saveSettings == null) return null;
-            EnsureSaveSettingsShape();
 
             MigrationRegistry registry = BuildMigrationRegistry();
             MigrationRunOptions options = BuildMigrationOptions(true);
