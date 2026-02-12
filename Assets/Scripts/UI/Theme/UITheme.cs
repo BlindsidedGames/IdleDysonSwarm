@@ -2,10 +2,31 @@ using UnityEngine;
 
 namespace IdleDysonSwarm.UI
 {
-    /// <summary>
-    /// ScriptableObject that defines the color palette and text formatting for the UI.
-    /// Create assets via Assets > Create > Idle Dyson Swarm > UI Theme.
-    /// </summary>
+    /*
+    Purpose:
+    - Central ScriptableObject theme definition for UI colors and rich-text color tags, including skill-tree button
+      state palettes.
+
+    Where it runs:
+    - Runtime + editor data asset; read by runtime UI systems and edited through Unity inspector.
+
+    Primary entry points:
+    - Field values are consumed by UI systems directly.
+    - Cached tag getters (AccentTag, HighlightTag, etc.) are read by UI formatting code.
+    - OnValidate clears cached tags when edited in the inspector.
+
+    Interacts with:
+    - Calls into: UnityEngine.ColorUtility (HTML color tag generation).
+    - Called by: UIThemeProvider and any UI/runtime script using theme colors, including SkillTreeManager button
+      coloring paths.
+
+    Change notes:
+    - Serialized field names are asset schema; renames require migration of existing UITheme assets.
+    - SkillTreeButtonColors additions/changes must remain compatible with existing theme assets loaded from
+      Resources/DefaultUITheme.asset.
+    - If defaults change here, verify both fallback behavior and any authored UITheme assets so visuals remain
+      intentional.
+    */
     [CreateAssetMenu(fileName = "UITheme", menuName = "Idle Dyson Swarm/UI Theme")]
     public class UITheme : ScriptableObject
     {
@@ -15,6 +36,8 @@ namespace IdleDysonSwarm.UI
             public Color normal;
             public Color pressed;
             public Color disabled;
+            [Tooltip("Used in description mode when a skill cannot currently be purchased but should remain clickable.")]
+            public Color notPurchasableNormal;
         }
 
         [Header("Text Colors")]
@@ -74,28 +97,32 @@ namespace IdleDysonSwarm.UI
         {
             normal = new Color(0.32941177f, 0.63529414f, 0.67058825f),
             pressed = new Color(0.2576f, 0.4390621f, 0.46f),
-            disabled = new Color(0.21350001f, 0.33587933f, 0.35f)
+            disabled = new Color(0.21350001f, 0.33587933f, 0.35f),
+            notPurchasableNormal = new Color(0.21350001f, 0.33587933f, 0.35f)
         };
 
         public SkillTreeButtonColors skillTreeFragment = new SkillTreeButtonColors
         {
             normal = new Color(0.67058825f, 0.32941177f, 0.49019608f),
             pressed = new Color(0.46f, 0.2576f, 0.35298392f),
-            disabled = new Color(0.35f, 0.21350001f, 0.2778276f)
+            disabled = new Color(0.35f, 0.21350001f, 0.2778276f),
+            notPurchasableNormal = new Color(0.35f, 0.21350001f, 0.2778276f)
         };
 
         public SkillTreeButtonColors skillTreeNormal = new SkillTreeButtonColors
         {
             normal = new Color(0.5019608f, 0.32941177f, 0.67058825f),
             pressed = new Color(0.35686275f, 0.25490198f, 0.45882353f),
-            disabled = new Color(0.2784314f, 0.21176471f, 0.34509805f)
+            disabled = new Color(0.2784314f, 0.21176471f, 0.34509805f),
+            notPurchasableNormal = new Color(0.2784314f, 0.21176471f, 0.34509805f)
         };
 
         public SkillTreeButtonColors skillTreeExclusiveLock = new SkillTreeButtonColors
         {
             normal = new Color(0.4f, 0.4f, 0.4f),
             pressed = new Color(0.29803923f, 0.29803923f, 0.29803923f),
-            disabled = new Color(0.2f, 0.2f, 0.2f)
+            disabled = new Color(0.2f, 0.2f, 0.2f),
+            notPurchasableNormal = new Color(0.2f, 0.2f, 0.2f)
         };
 
         // Cached rich text color tags for performance
