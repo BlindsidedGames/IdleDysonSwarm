@@ -12,17 +12,41 @@ using UnityEngine;
 namespace Expansion
 {
     /// <summary>
-    /// Migration orchestration for <see cref="Oracle.SaveDataSettings"/>.
+    /// Migration orchestration and save-shape normalization for <see cref="Oracle.SaveDataSettings"/>.
     /// </summary>
     /// <remarks>
-    /// The project uses a single consolidated V11 migration step to upgrade any legacy save in one pass.
-    /// This file groups the orchestration logic so clipboard/disk IO can stay separate.
+    /// Purpose: run versioned migration steps and enforce non-null save containers/collections used by migration logic.
+    /// Runs: runtime during load flow (invoked from <c>Oracle.Load()</c> via <c>ApplyMigrations()</c>).
+    /// Primary entry points: <c>ApplyMigrations()</c>, <c>RunMigrationDryRun()</c>, and migration ensure hooks in
+    /// <c>BuildMigrationOptions()</c>.
+    /// Owns: migration orchestration, save-version upgrade transforms, and defensive shape normalization for migrated
+    /// save data.
+    /// Delegates: save codec/disk IO to Oracle persistence partials and migration execution plumbing to
+    /// <see cref="MigrationRunner"/>.
+    ///
+    /// Interacts with:
+    /// - Calls into <see cref="Systems.Migrations.MigrationRunner"/> and <see cref="Systems.Migrations.MigrationRegistry"/>.
+    /// - Uses <see cref="SkillIdMap"/>, <see cref="SkillBitsetUtility"/>, <see cref="ResearchIdMap"/>, and
+    ///   <see cref="FacilityArrayNormalizer"/> for data transforms.
+    /// - Reads runtime skill definitions from <see cref="GameDataRegistry"/>.
+    /// - Called by load flow in <c>Assets/Scripts/Expansion/Oracle.cs</c> (<c>Start()</c> -> <c>Load()</c>).
+    ///
+    /// Change notes:
+    /// - Changing migration order, target versions, or ensure hooks can invalidate legacy save upgrades; keep
+    ///   <c>CurrentSaveVersion</c> and registry latest version aligned.
+    /// - Changing skill/research mapping behavior requires coordinated updates in Skill/Research ID maps and any
+    ///   bitset conversion helpers.
+    /// - Null-normalization helpers in this file are relied on by migration steps; removing them can reintroduce
+    ///   load-time NullReference failures for legacy/partial clipboard saves.
+    /// - Base64 decode guards in migration paths intentionally prefer dropping malformed legacy payloads over failing
+    ///   load; changing this behavior can bring back load-blocking exceptions for damaged clipboard exports.
     /// </remarks>
     public partial class Oracle
     {
         private void ApplyMigrations()
         {
             if (saveSettings == null) return;
+            EnsureSaveSettingsShape();
 
             MigrationRegistry registry = BuildMigrationRegistry();
             if (registry.LatestVersion != CurrentSaveVersion)
@@ -47,8 +71,10 @@ namespace Expansion
                 MigrationRunResult result = MigrationRunner.Run(this, registry, options);
                 Debug.Log(result.ToReportString());
             }
-            catch
+            catch (Exception ex)
             {
+                Debug.LogWarning(
+                    $"[Migrations] ApplyMigrations failed. Restoring original save snapshot before rethrow. Error: {ex.Message}");
                 saveSettings = original;
                 throw;
             }
@@ -57,6 +83,7 @@ namespace Expansion
         public MigrationRunResult RunMigrationDryRun()
         {
             if (saveSettings == null) return null;
+            EnsureSaveSettingsShape();
 
             MigrationRegistry registry = BuildMigrationRegistry();
             MigrationRunOptions options = BuildMigrationOptions(true);
@@ -93,6 +120,8 @@ namespace Expansion
                 UpdateLastSuccessfulLoadUtc = !dryRun,
                 EnsureAction = _ =>
                 {
+                    EnsureSaveSettingsShape();
+                    EnsureDysonVerseSaveShape();
                     EnsureSkillOwnershipData();
                     EnsureSkillAutoAssignmentIds();
                     EnsureResearchLevelData();
@@ -116,6 +145,8 @@ namespace Expansion
 
         private void MigrateToV11()
         {
+            EnsureSaveSettingsShape();
+
             // Apply all prior migrations idempotently in one pass.
             MigrateSkillOwnershipToIds();
             MigrateSkillAutoAssignmentIds();
@@ -211,7 +242,13 @@ namespace Expansion
             {
                 if (!string.IsNullOrEmpty(infinityData.skillOwnedBitsBase64))
                 {
-                    infinityData.skillOwnedBits = Convert.FromBase64String(infinityData.skillOwnedBitsBase64);
+                    if (!TryDecodeBase64Bytes(infinityData.skillOwnedBitsBase64, "skillOwnedBitsBase64", out byte[] decodedBits))
+                    {
+                        decodedBits = SkillBitsetUtility.CreateEmptyBitset();
+                        PopulateOwnedBitsetFromLegacySources(decodedBits);
+                    }
+
+                    infinityData.skillOwnedBits = decodedBits;
                 }
                 else
                 {
@@ -371,40 +408,34 @@ namespace Expansion
 
         private void EnsureSkillAutoAssignmentIds()
         {
-            DysonVerseSaveData data = saveSettings?.dysonVerseSaveData;
+            DysonVerseSaveData data = EnsureDysonVerseSaveShape();
             if (data == null) return;
 
-            data.skillAutoAssignmentIds ??= new List<string>();
             if (data.skillAutoAssignmentIds.Count == 0 && data.skillAutoAssignmentList.Count > 0)
             {
                 data.skillAutoAssignmentIds = SkillIdMap.ConvertKeysToIds(data.skillAutoAssignmentList);
             }
 
-            data.skillAutoAssignmentIds1 ??= new List<string>();
             if (data.skillAutoAssignmentIds1.Count == 0 && data.skillAutoAssignmentList1.Count > 0)
             {
                 data.skillAutoAssignmentIds1 = SkillIdMap.ConvertKeysToIds(data.skillAutoAssignmentList1);
             }
 
-            data.skillAutoAssignmentIds2 ??= new List<string>();
             if (data.skillAutoAssignmentIds2.Count == 0 && data.skillAutoAssignmentList2.Count > 0)
             {
                 data.skillAutoAssignmentIds2 = SkillIdMap.ConvertKeysToIds(data.skillAutoAssignmentList2);
             }
 
-            data.skillAutoAssignmentIds3 ??= new List<string>();
             if (data.skillAutoAssignmentIds3.Count == 0 && data.skillAutoAssignmentList3.Count > 0)
             {
                 data.skillAutoAssignmentIds3 = SkillIdMap.ConvertKeysToIds(data.skillAutoAssignmentList3);
             }
 
-            data.skillAutoAssignmentIds4 ??= new List<string>();
             if (data.skillAutoAssignmentIds4.Count == 0 && data.skillAutoAssignmentList4.Count > 0)
             {
                 data.skillAutoAssignmentIds4 = SkillIdMap.ConvertKeysToIds(data.skillAutoAssignmentList4);
             }
 
-            data.skillAutoAssignmentIds5 ??= new List<string>();
             if (data.skillAutoAssignmentIds5.Count == 0 && data.skillAutoAssignmentList5.Count > 0)
             {
                 data.skillAutoAssignmentIds5 = SkillIdMap.ConvertKeysToIds(data.skillAutoAssignmentList5);
@@ -454,7 +485,7 @@ namespace Expansion
 
         private void EnsureSkillAutoAssignmentBitsets()
         {
-            DysonVerseSaveData data = saveSettings?.dysonVerseSaveData;
+            DysonVerseSaveData data = EnsureDysonVerseSaveShape();
             if (data == null) return;
 
             if (data.skillAutoAssignmentBits == null || data.skillAutoAssignmentBits.Length == 0)
@@ -464,8 +495,13 @@ namespace Expansion
                     if (data.skillAutoAssignmentList != null && data.skillAutoAssignmentList.Count > 0)
                         data.skillAutoAssignmentIds = SkillIdMap.ConvertKeysToIds(data.skillAutoAssignmentList);
                     else if (!string.IsNullOrEmpty(data.skillAutoAssignmentBitsBase64))
-                        data.skillAutoAssignmentIds = SkillBitsetUtility.ConvertBitsetToIds(
-                            Convert.FromBase64String(data.skillAutoAssignmentBitsBase64));
+                    {
+                        if (TryDecodeBase64Bytes(data.skillAutoAssignmentBitsBase64, "skillAutoAssignmentBitsBase64",
+                                out byte[] decodedBits))
+                        {
+                            data.skillAutoAssignmentIds = SkillBitsetUtility.ConvertBitsetToIds(decodedBits);
+                        }
+                    }
                 }
 
                 data.skillAutoAssignmentBits = SkillBitsetUtility.BuildBitsetFromIds(data.skillAutoAssignmentIds);
@@ -559,7 +595,7 @@ namespace Expansion
 
         private void MigrateSkillAutoAssignmentIds()
         {
-            DysonVerseSaveData data = saveSettings?.dysonVerseSaveData;
+            DysonVerseSaveData data = EnsureDysonVerseSaveShape();
             if (data == null) return;
 
             if (data.skillAutoAssignmentIds == null || data.skillAutoAssignmentIds.Count == 0)
@@ -593,6 +629,54 @@ namespace Expansion
             }
         }
 
+        private DysonVerseSaveData EnsureDysonVerseSaveShape()
+        {
+            SaveDataSettings root = EnsureSaveSettingsShape();
+            if (root == null) return null;
+            DysonVerseSaveData data = root.dysonVerseSaveData;
+
+            data.dysonVerseInfinityData ??= new DysonVerseInfinityData();
+            data.dysonVersePrestigeData ??= new DysonVersePrestigeData();
+            data.dysonVerseSkillTreeData ??= new DysonVerseSkillTreeData();
+
+            data.skillAutoAssignmentList ??= new List<int>();
+            data.skillAutoAssignmentList1 ??= new List<int>();
+            data.skillAutoAssignmentList2 ??= new List<int>();
+            data.skillAutoAssignmentList3 ??= new List<int>();
+            data.skillAutoAssignmentList4 ??= new List<int>();
+            data.skillAutoAssignmentList5 ??= new List<int>();
+
+            data.skillAutoAssignmentIds ??= new List<string>();
+            data.skillAutoAssignmentIds1 ??= new List<string>();
+            data.skillAutoAssignmentIds2 ??= new List<string>();
+            data.skillAutoAssignmentIds3 ??= new List<string>();
+            data.skillAutoAssignmentIds4 ??= new List<string>();
+            data.skillAutoAssignmentIds5 ??= new List<string>();
+
+            data.preset1Name ??= "Preset 1";
+            data.preset2Name ??= "Preset 2";
+            data.preset3Name ??= "Preset 3";
+            data.preset4Name ??= "Preset 4";
+            data.preset5Name ??= "Preset 5";
+            data.selectedPreset = Mathf.Clamp(data.selectedPreset, 1, 5);
+
+            return data;
+        }
+
+        private SaveDataSettings EnsureSaveSettingsShape()
+        {
+            if (saveSettings == null) return null;
+
+            saveSettings.saveData ??= new SaveData();
+            saveSettings.dysonVerseSaveData ??= new DysonVerseSaveData();
+            saveSettings.sdPrestige ??= new SaveDataPrestige();
+            saveSettings.sdSimulation ??= new SaveDataDream1();
+            saveSettings.prestigePlus ??= new PrestigePlus();
+            saveSettings.avocadoData ??= new AvocadoData();
+
+            return saveSettings;
+        }
+
         private void MigrateSkillBitsets()
         {
             EnsureSkillOwnedBitset();
@@ -601,7 +685,7 @@ namespace Expansion
 
         private void MigratePresetAutoAssignOrder()
         {
-            DysonVerseSaveData data = saveSettings?.dysonVerseSaveData;
+            DysonVerseSaveData data = EnsureDysonVerseSaveShape();
             if (data == null) return;
 
             MigratePresetAutoAssignOrder(ref data.skillAutoAssignmentIds1, ref data.skillAutoAssignmentBits1,
@@ -647,9 +731,33 @@ namespace Expansion
                 return SkillBitsetUtility.ConvertBitsetToIds(bits);
 
             if (!string.IsNullOrEmpty(base64))
-                return SkillBitsetUtility.ConvertBitsetToIds(Convert.FromBase64String(base64));
+            {
+                if (TryDecodeBase64Bytes(base64, "presetAutoAssignmentBitsBase64", out byte[] decodedBits))
+                {
+                    return SkillBitsetUtility.ConvertBitsetToIds(decodedBits);
+                }
+            }
 
             return new List<string>();
+        }
+
+        private bool TryDecodeBase64Bytes(string base64, string label, out byte[] bytes)
+        {
+            bytes = null;
+            if (string.IsNullOrEmpty(base64)) return false;
+
+            try
+            {
+                bytes = Convert.FromBase64String(base64);
+                return true;
+            }
+            catch (FormatException ex)
+            {
+                Debug.LogWarning(
+                    $"[Migrations] Ignoring invalid base64 payload ({label}). " +
+                    $"This save will continue with fallback defaults. Error: {ex.Message}");
+                return false;
+            }
         }
 
         private List<string> BuildDependencySafeOrder(List<string> ids)
