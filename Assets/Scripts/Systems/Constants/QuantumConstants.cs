@@ -91,17 +91,17 @@ namespace IdleDysonSwarm.Systems.Constants
         /// <summary>
         /// Cost to unlock Matrioshka Brains mega-structure.
         /// </summary>
-        public const int MatrioshkaBrainsCost = 5;
+        public const int MatrioshkaBrainsCost = 2;
 
         /// <summary>
         /// Cost to unlock Birch Planets mega-structure.
         /// </summary>
-        public const int BirchPlanetsCost = 10;
+        public const int BirchPlanetsCost = 4;
 
         /// <summary>
         /// Cost to unlock Galactic Brains mega-structure.
         /// </summary>
-        public const int GalacticBrainsCost = 20;
+        public const int GalacticBrainsCost = 8;
 
         #endregion
     }
