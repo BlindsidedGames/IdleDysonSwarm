@@ -12,7 +12,26 @@ using Blindsided.ProceduralUIImage;
 using Blindsided.Utilities;
 using static Expansion.Oracle;
 
-
+/// <summary>
+/// Purpose: Runtime coordinator for DysonVerse simulation ticks, HUD text refresh, skill UI state, and offline/return flows.
+/// Where it runs: Runtime MonoBehaviour in gameplay scenes (not editor-only).
+/// Primary entry points: Start(), Update(), OnEnable(), OnDisable(), SetSkillsReferences(...), UpdateSkillsInvoke(),
+/// and serialized UI button/event hookups that call public methods on this component.
+/// Owns vs delegates: Owns scene UI references/state wiring and high-level update order; delegates formulas/stat math to
+/// systems like ProductionSystem/ModifierSystem/OfflineProgressSystem and reads/writes save state through Oracle.
+///
+/// Interacts with:
+/// - Calls: Expansion.Oracle save data accessors, Systems.ProductionSystem, Systems.ModifierSystem, Systems.OfflineProgressSystem,
+///   Systems.Stats pipelines, TMPro UI widgets, and Unity scene/loading APIs.
+/// - Called by: Unity lifecycle callbacks, inspector-bound UI events, and SidePanelController.SetSkillsReferences
+///   (Assets/Scripts/User Interface/SidePanelController.cs).
+///
+/// Change notes:
+/// - Serialized fields are scene/prefab contracts; renaming/removing them can break bindings in Game.unity and UI prefabs.
+/// - Public events (UpdateSkills/AssignSkills) are cross-script contracts; changing signatures/names requires subscriber updates.
+/// - Public methods used by UI/events (for example SetSkillsReferences) must keep behavior compatible with callers.
+/// - Save-facing keys/data paths are owned by Oracle/save models; changing accessed fields requires coordinated migration updates.
+/// </summary>
 public class GameManager : MonoBehaviour
 {
     #region SerializedFields
@@ -676,17 +695,17 @@ public class GameManager : MonoBehaviour
         string color = "<color=#FFA45E>";
         string scienceColor = "<color=#00E1FF>";
 
-        totalBots.text = $"Total Bots: {CalcUtils.FormatNumber(infinityData.bots)}";
+        totalBots.text = $"Total Bots: {CalcUtils.FormatNumber(infinityData.bots, useMspace: true)}";
 
         //research FF5A6E
-        researchPoints.text = $"<sprite=0>{CalcUtils.FormatNumber(infinityData.science)}";
-        sciencePerSecondText = CalcUtils.FormatNumber(ScienceToAdd());
+        researchPoints.text = $"<sprite=0>{CalcUtils.FormatNumber(infinityData.science, useMspace: true)}";
+        sciencePerSecondText = CalcUtils.FormatNumber(ScienceToAdd(), useMspace: true);
 
         researchPerSec.text = $"<sprite=0>{sciencePerSecondText} /s";
         //cash
-        cash.text = $"${CalcUtils.FormatNumber(infinityData.money)}";
+        cash.text = $"${CalcUtils.FormatNumber(infinityData.money, useMspace: true)}";
         cashPerSec.text =
-            $"${CalcUtils.FormatNumber(MoneyToAdd())} /s";
+            $"${CalcUtils.FormatNumber(MoneyToAdd(), useMspace: true)} /s";
         //workerPanels
         //solarStats
         if (infinityData.panelsPerSec * infinityData.panelLifetime < 20000)
