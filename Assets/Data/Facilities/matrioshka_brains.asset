@@ -30,8 +30,8 @@ MonoBehaviour:
   purchasePrompt: Construct a Matrioshka Brain
   usesFacilityCost: 1
   costFacilityId: {fileID: 11400000, guid: 8ac9f40771445e047b67a4078b73b2f6, type: 2}
-  baseFacilityCost: 100
-  facilityCostExponent: 1.5
+  baseFacilityCost: 10
+  facilityCostExponent: 1.25
   secondaryCostFacilityId: {fileID: 0}
   secondaryBaseCost: 0
   secondaryCostExponent: 1.5

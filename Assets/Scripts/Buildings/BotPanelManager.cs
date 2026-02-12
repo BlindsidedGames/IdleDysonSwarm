@@ -95,58 +95,63 @@ public class BotPanelManager : MonoBehaviour
         // Mega-structure visibility and questionmark panel
         UpdateMegaStructureVisibility(hasDataCenters);
 
-        // Producer tiers
+        // Each bar shows what that facility is PRODUCING (not how it's being produced).
+        // Assembly Lines → producing Bots
         SetFacilityProgressBar(
             assemblyLines,
             assemblyLinesProgressBarRoot,
-            infinityData.assemblyLineProduction,
-            infinityData.assemblyLines[0]);
+            infinityData.botProduction,
+            infinityData.bots);
 
+        // AI Managers → producing Assembly Lines
         SetFacilityProgressBar(
             managers,
             managersProgressBarRoot,
-            infinityData.managerProduction,
-            infinityData.managers[0]);
+            infinityData.assemblyLineProduction,
+            infinityData.assemblyLines[0]);
 
+        // Servers → producing AI Managers
         SetFacilityProgressBar(
             servers,
             serversProgressBarRoot,
-            infinityData.serverProduction + infinityData.rudimentrySingularityProduction,
-            infinityData.servers[0]);
+            infinityData.managerProduction,
+            infinityData.managers[0]);
 
+        // Data Centers → producing Servers
         SetFacilityProgressBar(
             dataCenters,
             dataCentersProgressBarRoot,
-            infinityData.dataCenterProduction + infinityData.pocketDimensionsProduction,
-            infinityData.dataCenters[0]);
+            infinityData.serverProduction + infinityData.rudimentrySingularityProduction,
+            infinityData.servers[0]);
 
+        // Planets → producing Data Centers
         SetFacilityProgressBar(
             planets,
             planetsProgressBarRoot,
-            infinityData.scientificPlanetsProduction + infinityData.stellarSacrificesProduction +
-            infinityData.planetAssemblyProduction + infinityData.shellWorldsProduction,
-            infinityData.planets[0]);
+            infinityData.dataCenterProduction + infinityData.pocketDimensionsProduction,
+            infinityData.dataCenters[0]);
 
-        // Mega-structure progress (these are produced by the tier above them).
+        // Mega-structure bars also show what each facility is producing (one tier down).
+        // Matrioshka Brains → producing Planets
         SetFacilityProgressBar(
             matrioshkaBrainsFill,
             matrioshkaBrainsProgressBarRoot,
-            infinityData.birchPlanetMatrioshkaProduction,
-            infinityData.matrioshkaBrains[0]);
+            infinityData.matrioshkaBrainPlanetProduction,
+            infinityData.planets[0]);
 
+        // Birch Planets → producing Matrioshka Brains
         SetFacilityProgressBar(
             birchPlanetsFill,
             birchPlanetsProgressBarRoot,
-            infinityData.galacticBrainBirchProduction,
-            infinityData.birchPlanets[0]);
+            infinityData.birchPlanetMatrioshkaProduction,
+            infinityData.matrioshkaBrains[0]);
 
-        // Galactic Brains are currently the top tier; there is no "producer" above them in the production system.
-        // If/when a production rate exists, pass it here to enable auto-toggle and solid-fill behavior.
+        // Galactic Brains → producing Birch Planets
         SetFacilityProgressBar(
             galacticBrainsFill,
             galacticBrainsProgressBarRoot,
-            0,
-            infinityData.galacticBrains[0]);
+            infinityData.galacticBrainBirchProduction,
+            infinityData.birchPlanets[0]);
     }
 
     private static void SetFacilityProgressBar(

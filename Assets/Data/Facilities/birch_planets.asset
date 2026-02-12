@@ -30,8 +30,8 @@ MonoBehaviour:
   purchasePrompt: Construct a Birch Planet
   usesFacilityCost: 1
   costFacilityId: {fileID: 11400000, guid: f98c1db2e5e178544adca614a222630e, type: 2}
-  baseFacilityCost: 1000
-  facilityCostExponent: 1.5
+  baseFacilityCost: 100
+  facilityCostExponent: 1.25
   secondaryCostFacilityId: {fileID: 0}
   secondaryBaseCost: 0
   secondaryCostExponent: 1.5
