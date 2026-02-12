@@ -10,6 +10,35 @@ using UnityEngine.EventSystems;
 using UnityEngine.UI;
 using static Expansion.Oracle;
 
+/*
+Purpose:
+- Owns one skill node's runtime behavior in the skill tree: presentation, availability checks, click handling,
+  purchase/unassign, and line generation.
+
+Where it runs:
+- Runtime on each skill node GameObject in the skill tree UI.
+
+Primary entry points:
+- Unity lifecycle: OnEnable, Start, OnDisable.
+- UI input: Clicked, RightClicked, OnPointerClick.
+- Refresh path: UpdateSkill (from local and global update events).
+- Mutations: PurchaseSkill, ResetSkills.
+
+Interacts with:
+- Calls into: Expansion.Oracle (save data, ownership reads/writes, events, auto-assign APIs), GameDataRegistry/
+  SkillDatabase/SkillDefinition (skill metadata), SkillTreeConfirmationManager (description/confirm modal),
+  UIThemeProvider/UITheme (color sets), GameManager and DebugOptions update events.
+- Called by: Unity UI Button events, Unity lifecycle, Oracle/GameManager/DebugOptions skill update events,
+  and other systems that invoke SkillTreeManager.UpdateSkills.
+
+Change notes:
+- Serialized references (skillButton, purchasedImage, texts, ids/keys) are scene/prefab wired; renames require
+  updating Unity references.
+- Skill availability logic must stay aligned across UpdateSkill, ShowConfirmation, and PurchaseSkill; changing one
+  without the others can allow visual state and purchase rules to diverge.
+- skillKey/SkillId/SkillDefinition mapping relies on SkillIdMap + SkillDatabase + Oracle skill flags; ID changes
+  must be coordinated with save data migration and any ScriptableObject ID updates.
+*/
 [SelectionBase]
 public class SkillTreeManager : MonoBehaviour, IPointerClickHandler
 {
@@ -41,28 +70,32 @@ public class SkillTreeManager : MonoBehaviour, IPointerClickHandler
     {
         normal = new Color(0.32941177f, 0.63529414f, 0.67058825f),
         pressed = new Color(0.2576f, 0.4390621f, 0.46f),
-        disabled = new Color(0.21350001f, 0.33587933f, 0.35f)
+        disabled = new Color(0.21350001f, 0.33587933f, 0.35f),
+        notPurchasableNormal = new Color(0.21350001f, 0.33587933f, 0.35f)
     };
 
     private static readonly UITheme.SkillTreeButtonColors FallbackFragmentColors = new UITheme.SkillTreeButtonColors
     {
         normal = new Color(0.67058825f, 0.32941177f, 0.49019608f),
         pressed = new Color(0.46f, 0.2576f, 0.35298392f),
-        disabled = new Color(0.35f, 0.21350001f, 0.2778276f)
+        disabled = new Color(0.35f, 0.21350001f, 0.2778276f),
+        notPurchasableNormal = new Color(0.35f, 0.21350001f, 0.2778276f)
     };
 
     private static readonly UITheme.SkillTreeButtonColors FallbackNormalColors = new UITheme.SkillTreeButtonColors
     {
         normal = new Color(0.5019608f, 0.32941177f, 0.67058825f),
         pressed = new Color(0.35686275f, 0.25490198f, 0.45882353f),
-        disabled = new Color(0.2784314f, 0.21176471f, 0.34509805f)
+        disabled = new Color(0.2784314f, 0.21176471f, 0.34509805f),
+        notPurchasableNormal = new Color(0.2784314f, 0.21176471f, 0.34509805f)
     };
 
     private static readonly UITheme.SkillTreeButtonColors FallbackExclusiveLockColors = new UITheme.SkillTreeButtonColors
     {
         normal = new Color(0.4f, 0.4f, 0.4f),
         pressed = new Color(0.29803923f, 0.29803923f, 0.29803923f),
-        disabled = new Color(0.2f, 0.2f, 0.2f)
+        disabled = new Color(0.2f, 0.2f, 0.2f),
+        notPurchasableNormal = new Color(0.2f, 0.2f, 0.2f)
     };
 
     public static event Action UpdateSkills;
@@ -541,6 +574,14 @@ public class SkillTreeManager : MonoBehaviour, IPointerClickHandler
         string[] requiredIds = GetRequiredSkillIds();
         string[] shadowIds = GetShadowRequirementIds();
         string[] exclusiveIds = GetExclusiveWithIds();
+        bool exclusiveOwned = HasExclusiveOwned(exclusiveIds);
+        bool canPurchaseNow = !owned
+                              && AreRequirementsMet(requiredIds)
+                              && AreRequirementsMet(shadowIds)
+                              && skillTreeData.skillPointsTree >= cost
+                              && !exclusiveOwned;
+        SkillTreeColorType colorType = ResolveCurrentColorType(exclusiveOwned);
+        bool useNotPurchasableVisual = !oracle.saveSettings.skillsBuyOnTap && !owned && !canPurchaseNow;
 
         if (oracle.saveSettings.skillsBuyOnTap)
         {
@@ -555,51 +596,52 @@ public class SkillTreeManager : MonoBehaviour, IPointerClickHandler
                 if (!AreRequirementsMet(shadowIds)) available = false;
                 if (skillTreeData.skillPointsTree < cost) available = false;
             }
-
-            if (exclusiveIds is { Length: >= 1 })
-            {
-                if (HasExclusiveOwned(exclusiveIds))
-                {
-                    available = false;
-                    ApplySkillButtonColors(SkillTreeColorType.ExclusiveLock);
-                }
-                else
-                {
-                    ApplySkillButtonColors(SkillTreeColorType.Normal);
-                }
-            }
+            if (exclusiveOwned) available = false;
         }
         else
         {
             if (owned) purchasedImage.SetActive(true);
-            if (exclusiveIds is { Length: >= 1 })
-            {
-                if (HasExclusiveOwned(exclusiveIds))
-                {
-                    ApplySkillButtonColors(SkillTreeColorType.ExclusiveLock);
-                }
-                else
-                {
-                    ApplySkillButtonColors(SkillTreeColorType.Normal);
-                }
-            }
         }
 
-        skillButton.interactable = available;
+        ApplySkillButtonColors(colorType, useNotPurchasableVisual);
+        skillButton.interactable = oracle.saveSettings.skillsBuyOnTap ? available : true;
         ApplySkills?.Invoke();
     }
 
-    private void ApplySkillButtonColors(SkillTreeColorType colorType)
+    private SkillTreeColorType ResolveCurrentColorType(bool exclusiveOwned)
+    {
+        if (exclusiveOwned) return SkillTreeColorType.ExclusiveLock;
+        if (GetIsFragment()) return SkillTreeColorType.Fragment;
+        string[] requiredIds = GetRequiredSkillIds();
+        if (requiredIds == null || requiredIds.Length == 0) return SkillTreeColorType.NoRequired;
+        return SkillTreeColorType.Normal;
+    }
+
+    private void ApplySkillButtonColors(SkillTreeColorType colorType, bool useNotPurchasableNormal = false)
     {
         if (skillButton == null) return;
         UITheme.SkillTreeButtonColors colors = ResolveSkillTreeColors(colorType);
+        Color normalColor = colors.normal;
+        if (useNotPurchasableNormal)
+        {
+            normalColor = ResolveNotPurchasableNormalColor(colors);
+        }
+
         ColorBlock colourBlock = skillButton.colors;
-        colourBlock.normalColor = colors.normal;
-        colourBlock.highlightedColor = colors.normal;
+        colourBlock.normalColor = normalColor;
+        colourBlock.highlightedColor = normalColor;
         colourBlock.pressedColor = colors.pressed;
-        colourBlock.selectedColor = colors.normal;
+        colourBlock.selectedColor = normalColor;
         colourBlock.disabledColor = colors.disabled;
         skillButton.colors = colourBlock;
+    }
+
+    private static Color ResolveNotPurchasableNormalColor(UITheme.SkillTreeButtonColors colors)
+    {
+        Color fallback = Color.Lerp(colors.normal, Color.black, 0.35f);
+        fallback.a = colors.normal.a;
+        if (colors.notPurchasableNormal.a <= 0f) return fallback;
+        return colors.notPurchasableNormal;
     }
 
     private UITheme.SkillTreeButtonColors ResolveSkillTreeColors(SkillTreeColorType colorType)
@@ -870,4 +912,3 @@ public class SkillTreeManager : MonoBehaviour, IPointerClickHandler
         linesMade = true;
     }
 }
-
