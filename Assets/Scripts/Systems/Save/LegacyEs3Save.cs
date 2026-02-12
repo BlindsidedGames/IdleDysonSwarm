@@ -41,6 +41,7 @@ namespace Systems.Save
     /// Change notes:
     /// - The key name <c>saveSettings</c> and ES3 default path assumptions must remain aligned with legacy builds.
     /// - Candidate trust/order affects which historical artifact is chosen when multiple saves exist.
+    /// - Candidate ordering uses a deterministic path tie-break so console index mapping remains stable across rescans.
     /// - Removing legacy AES fallback will regress recovery for encrypted ES3 files archived as <c>.corrupt.*</c>.
     /// </remarks>
     public static class LegacyEs3Save
@@ -219,9 +220,29 @@ namespace Systems.Save
                     ordered.Insert(i, candidate);
                     return;
                 }
+
+                if (HasSamePriority(candidate, current) && CompareCandidatePath(candidate.Path, current.Path) < 0)
+                {
+                    ordered.Insert(i, candidate);
+                    return;
+                }
             }
 
             ordered.Add(candidate);
+        }
+
+        private static bool HasSamePriority(LegacyEs3RecoveryCandidate left, LegacyEs3RecoveryCandidate right)
+        {
+            return left.SaveVersion == right.SaveVersion &&
+                   left.TimestampUtc == right.TimestampUtc &&
+                   left.Trust == right.Trust;
+        }
+
+        private static int CompareCandidatePath(string leftPath, string rightPath)
+        {
+            int caseInsensitive = string.Compare(leftPath, rightPath, StringComparison.OrdinalIgnoreCase);
+            if (caseInsensitive != 0) return caseInsensitive;
+            return string.Compare(leftPath, rightPath, StringComparison.Ordinal);
         }
 
         private static bool IsBetter(
