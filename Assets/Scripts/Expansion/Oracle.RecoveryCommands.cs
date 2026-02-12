@@ -5,6 +5,7 @@ using System.IO;
 using System.Text;
 using QFSW.QC;
 using Systems.Save;
+using UnityEngine;
 
 namespace Expansion
 {
@@ -23,12 +24,17 @@ namespace Expansion
     /// Change notes:
     /// - Command aliases (<c>recover</c>, <c>recover-list</c>, <c>recover-apply</c>) are part of support workflow;
     ///   changing them breaks runbooks.
-    /// - <see cref="RecoverApply"/> uses 1-based candidate indexing from <see cref="RecoverList"/>.
+    /// - <see cref="RecoverApply"/> uses 1-based candidate indexing from <see cref="RecoverList"/>, backed by the same
+    ///   in-memory snapshot to keep index->candidate mapping stable.
     /// - Overwriting canonical save intentionally requires an explicit overwrite flag.
+    /// - Recovery apply must run the same entitlement/debug post-load sync used by startup/clipboard flows.
     /// - Backup naming/location must remain stable for support to locate pre-recovery canonical snapshots.
     /// </remarks>
     public partial class Oracle
     {
+        private List<LegacyEs3RecoveryCandidate> _recoveryListSnapshot;
+        private DateTime _recoveryListSnapshotUtc;
+
         [Command("recover", "List recoverable legacy ES3 candidates with indexes for manual selection.",
             MonoTargetType.Single)]
         public string RecoverPreview()
@@ -41,7 +47,7 @@ namespace Expansion
             MonoTargetType.Single)]
         public string RecoverList()
         {
-            List<LegacyEs3RecoveryCandidate> candidates = LegacyEs3Save.GetRecoverableCandidates();
+            List<LegacyEs3RecoveryCandidate> candidates = RefreshRecoveryListSnapshot();
             if (candidates.Count == 0)
             {
                 return "[SaveRecovery] No recoverable ES3 artifacts were found.";
@@ -53,7 +59,9 @@ namespace Expansion
                 : "No canonical save exists; run `recover-apply <index>`.";
 
             StringBuilder output = new StringBuilder();
-            output.Append($"[SaveRecovery] Found {candidates.Count} recoverable candidate(s). ");
+            output.Append(
+                $"[SaveRecovery] Snapshot UTC {_recoveryListSnapshotUtc.ToString("yyyy-MM-dd HH:mm:ss", CultureInfo.InvariantCulture)}. ");
+            output.Append($"Found {candidates.Count} recoverable candidate(s). ");
             output.Append(canonicalStatus);
             for (int i = 0; i < candidates.Count; i++)
             {
@@ -113,9 +121,11 @@ namespace Expansion
 
             ApplyLoadedSettings(candidate.Settings, "ES3 (manual recover)");
             ApplyMigrations();
+            RunPostLoadEntitlementSync();
             SyncAutoAssignFromSelectedPreset(runAutoAssign: true);
             UpdateSkills?.Invoke();
             SaveInternal(force: true, updateQuitTime: false);
+            ClearRecoveryListSnapshot();
 
             if (!string.IsNullOrEmpty(backupPath))
             {
@@ -127,37 +137,10 @@ namespace Expansion
                    $"out of {totalCount} candidate(s).";
         }
 
-        private static bool TryGetCandidateByIndex(int index, out LegacyEs3RecoveryCandidate candidate, out int totalCount,
+        private bool TryGetCandidateByIndex(int index, out LegacyEs3RecoveryCandidate candidate, out int totalCount,
             out string error)
         {
-            candidate = default;
-            totalCount = 0;
-            error = null;
-
-            if (index < 1)
-            {
-                error = "[SaveRecovery] Candidate index must be 1 or greater. Run `recover-list` first.";
-                return false;
-            }
-
-            List<LegacyEs3RecoveryCandidate> candidates = LegacyEs3Save.GetRecoverableCandidates();
-            totalCount = candidates.Count;
-            if (totalCount == 0)
-            {
-                error = "[SaveRecovery] No recoverable ES3 artifacts were found.";
-                return false;
-            }
-
-            int zeroBasedIndex = index - 1;
-            if (zeroBasedIndex >= totalCount)
-            {
-                error = $"[SaveRecovery] Candidate #{index} is out of range (found {totalCount}). " +
-                        "Run `recover-list` to see valid indexes.";
-                return false;
-            }
-
-            candidate = candidates[zeroBasedIndex];
-            return true;
+            return TryGetCandidateByIndexInternal(index, out candidate, out totalCount, out error);
         }
 
         private static string FormatCandidateLine(int index, LegacyEs3RecoveryCandidate candidate, bool includePath)
@@ -221,6 +204,80 @@ namespace Expansion
                 error = ex.Message;
                 return false;
             }
+        }
+
+        private bool TryGetCandidateByIndexInternal(int index, out LegacyEs3RecoveryCandidate candidate, out int totalCount,
+            out string error)
+        {
+            candidate = default;
+            totalCount = 0;
+            error = null;
+
+            if (index < 1)
+            {
+                error = "[SaveRecovery] Candidate index must be 1 or greater. Run `recover` first.";
+                return false;
+            }
+
+            // Use the same ordered snapshot produced by recover/recover-list so index->candidate mapping stays stable.
+            List<LegacyEs3RecoveryCandidate> candidates = GetOrCreateRecoveryListSnapshot();
+            totalCount = candidates.Count;
+            if (totalCount == 0)
+            {
+                error = "[SaveRecovery] No recoverable ES3 artifacts were found.";
+                return false;
+            }
+
+            int zeroBasedIndex = index - 1;
+            if (zeroBasedIndex >= totalCount)
+            {
+                error = $"[SaveRecovery] Candidate #{index} is out of range (found {totalCount}). " +
+                        "Run `recover` to refresh valid indexes.";
+                return false;
+            }
+
+            candidate = candidates[zeroBasedIndex];
+            return true;
+        }
+
+        private List<LegacyEs3RecoveryCandidate> GetOrCreateRecoveryListSnapshot()
+        {
+            if (_recoveryListSnapshot != null)
+            {
+                return _recoveryListSnapshot;
+            }
+
+            return RefreshRecoveryListSnapshot();
+        }
+
+        private List<LegacyEs3RecoveryCandidate> RefreshRecoveryListSnapshot()
+        {
+            _recoveryListSnapshot = LegacyEs3Save.GetRecoverableCandidates();
+            _recoveryListSnapshotUtc = DateTime.UtcNow;
+            return _recoveryListSnapshot;
+        }
+
+        private void ClearRecoveryListSnapshot()
+        {
+            _recoveryListSnapshot = null;
+            _recoveryListSnapshotUtc = default;
+        }
+
+        private void RunPostLoadEntitlementSync()
+        {
+            // Match startup/clipboard normalization so UI + entitlement-dependent systems are correct immediately.
+            bool doubleIpUnlocked = saveSettings.doubleIp || PlayerPrefs.GetInt("doubleip", 0) == 1;
+            saveSettings.doubleIp = doubleIpUnlocked;
+            if (saveSettings.doubleIp) PlayerPrefs.SetInt("doubleip", 1);
+
+            if (saveSettings.debugOptions)
+            {
+                saveSettings.debugEverEnabled = true;
+                if (!PlayerEntitlementsStore.DebugEntitlementPurchased)
+                    PlayerEntitlementsStore.DebugEntitlementPurchased = true;
+            }
+
+            NotifyDebugOptionsChanged();
         }
     }
 }
