@@ -111,7 +111,21 @@ private void PackSettingsFlags()
         {
             if (saveSettings == null) return;
             if (!saveSettings.hasPackedSettingsFlags) return;
+
+            // Preserve deserialized defaults for fields added after the packed flags
+            // were last written — their bits will be 0 in old saves even though the
+            // field initializer defaulted them to true.
+            bool savedScreensaverEnabled = saveSettings.screensaverEnabled;
+
             ApplySettingsFlags(saveSettings, saveSettings.packedSettingsFlags);
+
+            // Bit 42 (screensaverEnabled) was added after initial flag packing.
+            // If the old packed value had bit 42 unset, restore the deserialized default
+            // so existing players keep the screensaver enabled.
+            if ((saveSettings.packedSettingsFlags & (1UL << 42)) == 0)
+            {
+                saveSettings.screensaverEnabled = savedScreensaverEnabled;
+            }
         }
 
         private static ulong BuildSettingsFlags(SaveDataSettings settings)
@@ -160,6 +174,7 @@ private void PackSettingsFlags()
             SetFlag(ref flags, 39, settings.infinityAutoPlanets);
             SetFlag(ref flags, 40, settings.firstReality);
             SetFlag(ref flags, 41, settings.firstInfinityDone);
+            SetFlag(ref flags, 42, settings.screensaverEnabled);
             return flags;
         }
 
@@ -208,6 +223,7 @@ private void PackSettingsFlags()
             settings.infinityAutoPlanets = GetFlag(flags, 39);
             settings.firstReality = GetFlag(flags, 40);
             settings.firstInfinityDone = GetFlag(flags, 41);
+            settings.screensaverEnabled = GetFlag(flags, 42);
         }
 
         private static void SetFlag(ref ulong flags, int bit, bool value)
@@ -2743,6 +2759,7 @@ private void PackSettingsFlags()
 
             [Space(10)] public bool tutorial;
             public bool globalMute;
+            public bool screensaverEnabled = true;
             public bool cheater;
             public bool hidePurchased = true;
             public bool buyMax = true;

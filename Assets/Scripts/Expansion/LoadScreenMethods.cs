@@ -79,7 +79,10 @@ public class LoadScreenMethods : MonoBehaviour
         if (userInteracted) afkTime = 0;
 
         afkTime += Time.deltaTime;
-        screensaverWindow.SetActive(afkTime >= windowActivationTime);
+        bool screensaverOn = Expansion.Oracle.oracle != null
+            && Expansion.Oracle.oracle.saveSettings.screensaverEnabled
+            && afkTime >= windowActivationTime;
+        screensaverWindow.SetActive(screensaverOn);
     }
 
     private void RotateScreenSaverText()
