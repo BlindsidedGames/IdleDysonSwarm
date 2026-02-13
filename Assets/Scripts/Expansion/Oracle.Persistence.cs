@@ -20,12 +20,21 @@ namespace Expansion
     /// <remarks>
     /// Runtime.
     /// <para>Primary entry points: <see cref="Load"/>, <see cref="WipeAllData"/>, <see cref="LoadState"/>.</para>
+    /// <para>Owns: startup load-source selection and wipe orchestration.</para>
+    /// <para>Delegates: ES3 artifact probing to <see cref="LegacyEs3Save"/>, codec/storage to
+    /// <see cref="SaveCodec"/>/<see cref="SaveSystem"/>.</para>
     /// Canonical persistence stores the exact same save string used by clipboard export/import (prefix <c>IDB1:</c>).
     /// <para>Codec: <see cref="SaveCodec"/>.</para>
     /// <para>Snapshot compaction: <see cref="SaveSnapshotBuilder"/>.</para>
     /// <para>Persistence orchestration: <see cref="SaveSystem"/> + <see cref="OdinStringFileStorage"/>.</para>
-    /// <para>Change notes: loading/importing a save does not automatically reconcile skill points; the fix tool is
-    /// a user-invoked action (see <c>Assets/Scripts/Expansion/Oracle.SkillPoints.cs</c>).</para>
+    /// <para>Interacts with:
+    /// callers include Unity lifecycle via <c>Oracle.Start()</c> and debug UI buttons; callees include
+    /// <see cref="SaveLoadCandidateSelector"/>, <see cref="LegacyEs3Save"/>, and migration routines in
+    /// <c>Assets/Scripts/Expansion/Oracle.Migrations.cs</c>.</para>
+    /// <para>Change notes:
+    /// changing legacy keys/paths (<c>saveSettings</c>, <c>.idsOdin</c>, canonical file path) can strand old saves;
+    /// loading/importing a save does not automatically reconcile skill points (manual tool in
+    /// <c>Assets/Scripts/Expansion/Oracle.SkillPoints.cs</c>).</para>
     /// </remarks>
     public partial class Oracle
     {

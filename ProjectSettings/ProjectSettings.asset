@@ -61,8 +61,8 @@ PlayerSettings:
   iosUseCustomAppBackgroundBehavior: 0
   allowedAutorotateToPortrait: 1
   allowedAutorotateToPortraitUpsideDown: 1
-  allowedAutorotateToLandscapeRight: 0
-  allowedAutorotateToLandscapeLeft: 0
+  allowedAutorotateToLandscapeRight: 1
+  allowedAutorotateToLandscapeLeft: 1
   useOSAutorotation: 1
   use32BitDisplayBuffer: 1
   preserveFramebufferAlpha: 0
@@ -72,7 +72,7 @@ PlayerSettings:
   androidUseSwappy: 0
   androidDisplayOptions: 1
   androidBlitType: 0
-  androidResizeableActivity: 0
+  androidResizeableActivity: 1
   androidDefaultWindowWidth: 1920
   androidDefaultWindowHeight: 1080
   androidMinimumWindowWidth: 400
@@ -143,7 +143,7 @@ PlayerSettings:
   loadStoreDebugModeEnabled: 0
   visionOSBundleVersion: 1.0
   tvOSBundleVersion: 1.0
-  bundleVersion: 3.0.321
+  bundleVersion: 3.0.324
   preloadedAssets: []
   metroInputSource: 0
   wsaTransparentSwapchain: 0
@@ -172,10 +172,10 @@ PlayerSettings:
   buildNumber:
     Standalone: 283
     VisionOS: 0
-    iPhone: 321
+    iPhone: 324
     tvOS: 0
   overrideDefaultApplicationIdentifier: 1
-  AndroidBundleVersionCode: 321
+  AndroidBundleVersionCode: 324
   AndroidMinSdkVersion: 25
   AndroidTargetSdkVersion: 35
   AndroidPreferredInstallLocation: 1
@@ -203,7 +203,7 @@ PlayerSettings:
   VisionOSTargetOSVersionString: 1.0
   uIPrerenderedIcon: 0
   uIRequiresPersistentWiFi: 0
-  uIRequiresFullScreen: 1
+  uIRequiresFullScreen: 0
   uIStatusBarHidden: 0
   uIExitOnSuspend: 0
   uIStatusBarStyle: 1
