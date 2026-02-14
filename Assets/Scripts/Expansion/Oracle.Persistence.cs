@@ -200,7 +200,21 @@ namespace Expansion
 
         public void SaveForQuit()
         {
-            SaveInternal(force: true, updateQuitTime: true);
+            if (!_isSaveReady || !Loaded || saveSettings == null)
+            {
+                string reason = "unknown";
+                if (saveSettings == null) reason = "missing_save_settings";
+                else if (!_isSaveReady) reason = "not_ready";
+                else if (!Loaded) reason = "not_loaded";
+
+                Debug.LogWarning(
+                    $"[OfflineTimeDiag] SaveForQuitBlocked | phase=SaveForQuit, platform={Application.platform}, " +
+                    $"reason={reason}, ready={_isSaveReady.ToString().ToLowerInvariant()}, loaded={Loaded.ToString().ToLowerInvariant()}, " +
+                    $"dateQuitBefore='{FormatDebugString(saveSettings?.dateQuitString)}'");
+                return;
+            }
+
+            SaveInternal(force: false, updateQuitTime: true);
         }
 
         private void SetDateQuitString(string value, bool isQuitTimestamp = false)

@@ -25,11 +25,13 @@
 
 ## Save lifecycle semantics
 - `Oracle.Save()` is a regular autosave path and **does not** update `dateQuitString`.
-- Quit/focus-loss timestamp should be written only by `Oracle.SaveForQuit()`, which is called from:
+- `Oracle.SaveForQuit()` writes the quit timestamp only when the runtime is ready + loaded (`_isSaveReady && Loaded && saveSettings != null`).
+- `Oracle.SaveForQuit()` is called from:
   - `Oracle.OnApplicationQuit`
   - `Oracle.OnApplicationFocus` when focus is lost (non-editor builds)
   - `Oracle.OnApplicationPause` while paused (iOS/Android)
 - `Oracle.SaveInternal` now uses `SetDateQuitString(string value, bool isQuitTimestamp = false)` to update `dateQuitString` only when `isQuitTimestamp` is explicitly true.
+- `Oracle.SaveForQuit()` now emits `[OfflineTimeDiag] SaveForQuitBlocked` when lifecycle persistence is attempted before readiness/loading and skips writing.
 
 ## Save/load implications
 - Legacy ES3 key name remains `saveSettings`; changing this breaks import of historic installs.
