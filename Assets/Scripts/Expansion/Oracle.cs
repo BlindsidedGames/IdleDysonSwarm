@@ -309,26 +309,47 @@ private void PackSettingsFlags()
 
         private void OnApplicationQuit()
         {
-            Save();
+            Debug.LogWarning(
+                $"[OfflineTimeDiag] AppLifecycle | phase=OnApplicationQuit, platform={Application.platform}, " +
+                $"ready={_isSaveReady.ToString().ToLowerInvariant()}, loaded={Loaded.ToString().ToLowerInvariant()}, " +
+                $"dateQuitBefore='{FormatDebugString(saveSettings?.dateQuitString)}'");
+            SaveForQuit();
         }
 
         #if !UNITY_EDITOR
-    void OnApplicationFocus(bool focus)
-    {
-        if (focus)
+        #if UNITY_IOS || UNITY_ANDROID
+        void OnApplicationPause(bool pauseStatus)
         {
+            if (!pauseStatus) return;
+
+            Debug.LogWarning(
+                $"[OfflineTimeDiag] AppLifecycle | phase=OnApplicationPause, platform={Application.platform}, " +
+                $"ready={_isSaveReady.ToString().ToLowerInvariant()}, loaded={Loaded.ToString().ToLowerInvariant()}, " +
+                $"dateQuitBefore='{FormatDebugString(saveSettings?.dateQuitString)}'");
+            SaveForQuit();
+        }
+        #endif
+
+        void OnApplicationFocus(bool focus)
+        {
+            if (focus)
+            {
 #if UNITY_IOS
             Load();
 #elif UNITY_ANDROID
             Load();
 #endif
-        }
-        if (!focus)
-        {
-            Save();
-        }
-    }
-        #endif
+            }
+                if (!focus)
+                {
+                    Debug.LogWarning(
+                        $"[OfflineTimeDiag] AppLifecycle | phase=OnApplicationFocusLost, platform={Application.platform}, " +
+                        $"ready={_isSaveReady.ToString().ToLowerInvariant()}, loaded={Loaded.ToString().ToLowerInvariant()}, " +
+                        $"dateQuitBefore='{FormatDebugString(saveSettings?.dateQuitString)}'");
+                    SaveForQuit();
+                }
+            }
+            #endif
 
 
         #region NewsTicker

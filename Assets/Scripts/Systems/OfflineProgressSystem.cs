@@ -1,5 +1,6 @@
 using System;
 using System.Collections;
+using System.Globalization;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
@@ -13,10 +14,11 @@ namespace Systems
      * OfflineProgressSystem
      * Purpose: Applies and simulates "away time" (offline/consumable time) progress for DysonVerse in fixed time steps.
      * Runs: Runtime (coroutines executed from GameManager when returning from idle or spending stored offline time).
+     * Diagnostics: emits a single tagged warning in ApplyReturnValues for each return grant.
      * Entry points:
      * - ApplyReturnValues(double, OfflineProgressContext, OfflineProgressUI): Updates saveSettings.offlineTime and UI text for "Welcome Back".
      * - CalculateAwayValues(double, OfflineProgressContext, OfflineProgressUI): Coroutine that advances production and resources, optionally updating UI.
-     *
+     * 
      * Interacts with:
      * - Expansion.Oracle (skill timers via AddSkillTimerSeconds; saveSettings via caller context)
      * - GameManager (creates context/UI; provides delegates like CalculateProduction, MoneyToAdd, etc.)
@@ -227,6 +229,11 @@ namespace Systems
             if (!ValidateContext(context)) return;
             SanitizeInfinityData(context.infinityData);
 
+            double beforeOfflineTime = context.saveSettings.offlineTime;
+            bool capApplied = false;
+            double calculatedAwayTime;
+            string result = "ok";
+
             string color = "<color=#91DD8F>";
             string colorS = "<color=#00E1FF>";
             ui?.AwayForHeader?.gameObject.SetActive(true);
@@ -235,6 +242,7 @@ namespace Systems
             ui?.OfflineTimeInstructions?.SetActive(true);
             if (awayTime < 0)
             {
+                result = "cheater_reset";
                 context.saveSettings.cheater = true;
                 context.saveSettings.offlineTime = 0;
                 context.saveSettings.maxOfflineTime = 0;
@@ -242,14 +250,21 @@ namespace Systems
                 text +=
                     "<br>You're probably cheating: Offline time disabled. <br>Please wipe your save to continue using offline time.";
                 if (ui?.AwayFor != null) ui.AwayFor.text = text;
+                Debug.LogWarning(
+                    "[OfflineTimeDiag] ApplyReturnValues | " +
+                    $"platform={Application.platform}, " +
+                    $"result={result}, awayRaw={awayTime.ToString("F3", CultureInfo.InvariantCulture)}, " +
+                    $"beforeOfflineTime={beforeOfflineTime.ToString(CultureInfo.InvariantCulture)}, " +
+                    $"afterOfflineTime={context.saveSettings.offlineTime.ToString(CultureInfo.InvariantCulture)}, " +
+                    $"maxOfflineTime={context.saveSettings.maxOfflineTime.ToString(CultureInfo.InvariantCulture)}");
                 return;
             }
 
-            double calculatedAwayTime;
             if (awayTime >= context.saveSettings.maxOfflineTime - context.saveSettings.offlineTime)
             {
                 calculatedAwayTime = context.saveSettings.maxOfflineTime - context.saveSettings.offlineTime;
                 context.saveSettings.offlineTime = context.saveSettings.maxOfflineTime;
+                capApplied = true;
             }
             else
             {
@@ -261,6 +276,15 @@ namespace Systems
             text1 += $"<br>You have {colorS}{CalcUtils.FormatTimeLarge(context.saveSettings.offlineTime)}</color> stored";
             if (ui?.AwayFor != null) ui.AwayFor.text = text1;
             if (ui?.Amounts != null) ui.Amounts.text = "";
+            Debug.LogWarning(
+                "[OfflineTimeDiag] ApplyReturnValues | " +
+                $"platform={Application.platform}, " +
+                $"result={result}, awayRaw={awayTime.ToString("F3", CultureInfo.InvariantCulture)}, " +
+                $"applied={calculatedAwayTime.ToString("F3", CultureInfo.InvariantCulture)}, " +
+                $"beforeOfflineTime={beforeOfflineTime.ToString(CultureInfo.InvariantCulture)}, " +
+                $"afterOfflineTime={context.saveSettings.offlineTime.ToString(CultureInfo.InvariantCulture)}, " +
+                $"capApplied={capApplied.ToString().ToLowerInvariant()}, " +
+                $"maxOfflineTime={context.saveSettings.maxOfflineTime.ToString(CultureInfo.InvariantCulture)}");
         }
 
         public static IEnumerator CalculateAwayValues(double awayTime, OfflineProgressContext context, OfflineProgressUI ui)
