@@ -21,6 +21,8 @@ namespace Expansion
     /// Runtime.
     /// <para>Primary entry points: <see cref="Load"/>, <see cref="WipeAllData"/>, <see cref="LoadState"/>.</para>
     /// <para>Owns: startup load-source selection and wipe orchestration.</para>
+    /// <para>Diagnostics: writes one tagged warning per save lifecycle event plus offline-time replay data via
+    /// <see cref="AwayForSeconds"/>.</para>
     /// <para>Delegates: ES3 artifact probing to <see cref="LegacyEs3Save"/>, codec/storage to
     /// <see cref="SaveCodec"/>/<see cref="SaveSystem"/>.</para>
     /// Canonical persistence stores the exact same save string used by clipboard export/import (prefix <c>IDB1:</c>).
@@ -38,15 +40,40 @@ namespace Expansion
     /// </remarks>
     public partial class Oracle
     {
-        private void SaveInternal(bool force, bool updateQuitTime = true)
+        private void SaveInternal(bool force, bool updateQuitTime = false)
         {
-            if (!_isSaveReady && !force) return;
+            if (!_isSaveReady && !force)
+            {
+                if (updateQuitTime)
+                {
+                    Debug.LogWarning(
+                        $"[OfflineTimeDiag] SaveInternalBlocked | phase=SaveInternal, reason=not_ready, platform={Application.platform}, " +
+                        $"ready={_isSaveReady.ToString().ToLowerInvariant()}, loaded={Loaded.ToString().ToLowerInvariant()}, " +
+                        $"dateQuitBefore='{FormatDebugString(saveSettings?.dateQuitString)}'");
+                }
+                return;
+            }
+            string dateSource = "none";
             if (updateQuitTime)
             {
-                saveSettings.dateQuitString = DateTime.UtcNow.ToString(CultureInfo.InvariantCulture);
+                dateSource = "updated";
+                SetDateQuitString(DateTime.UtcNow.ToString(CultureInfo.InvariantCulture), isQuitTimestamp: true);
             }
 
-            SaveState();
+            bool saved = TrySaveState(out string saveError);
+            string status = saved ? "ok" : "failed";
+            string details = $"phase=SaveInternal, platform={Application.platform}, force={force.ToString().ToLowerInvariant()}, dateSource={dateSource}, " +
+                             $"saveResult={status}, path='{SavePaths.GetCanonicalSavePath()}', quit={FormatDebugString(saveSettings.dateQuitString)}, " +
+                             $"offlineTime={saveSettings.offlineTime.ToString(CultureInfo.InvariantCulture)}, " +
+                             $"maxOfflineTime={saveSettings.maxOfflineTime.ToString(CultureInfo.InvariantCulture)}, " +
+                             $"loaded={Loaded.ToString().ToLowerInvariant()}, ready={_isSaveReady.ToString().ToLowerInvariant()}";
+            if (!string.IsNullOrWhiteSpace(saveError))
+            {
+                details += $", error={FormatDebugString(saveError)}";
+            }
+
+            Debug.LogWarning($"[OfflineTimeDiag] {details}");
+            if (!saved) return;
         }
 
         private static void DeleteDefaultEs3SaveArtifacts()
@@ -168,11 +195,23 @@ namespace Expansion
         [ContextMenu("Save")]
         public void Save()
         {
-            SaveInternal(false);
+            SaveInternal(false, updateQuitTime: false);
         }
 
-        public void SaveState()
+        public void SaveForQuit()
         {
+            SaveInternal(force: true, updateQuitTime: true);
+        }
+
+        private void SetDateQuitString(string value, bool isQuitTimestamp = false)
+        {
+            if (!isQuitTimestamp || saveSettings == null) return;
+            saveSettings.dateQuitString = value;
+        }
+
+        public bool TrySaveState(out string error)
+        {
+            error = null;
             SaveDictionaries();
             PackSettingsFlags();
             SaveDataSettings snapshot = SaveSnapshotBuilder.CreateSaveSnapshotForStorage(
@@ -182,10 +221,19 @@ namespace Expansion
                 getAutoAssignmentSkillIds: GetAutoAssignmentSkillIds);
 
             SaveSystem saveSystem = SaveSystem.CreateDefault();
-            if (!saveSystem.TrySave(snapshot, out _, out string error))
+            if (!saveSystem.TrySave(snapshot, out _, out string saveError))
             {
+                error = saveError;
                 Debug.LogError($"[Save] Failed writing canonical save file: {error}");
+                return false;
             }
+
+            return true;
+        }
+
+        public void SaveState()
+        {
+            TrySaveState(out string _);
         }
 
         private byte[] BuildOwnedBitsetFromRuntime()
@@ -371,14 +419,21 @@ namespace Expansion
 
         private void AwayForSeconds()
         {
-            if (string.IsNullOrEmpty(oracle.saveSettings.dateQuitString)) return;
+            if (string.IsNullOrEmpty(oracle.saveSettings.dateQuitString))
+            {
+                Debug.LogWarning($"[OfflineTimeDiag] AwayForSeconds | platform={Application.platform}, dateQuitString_missing=true");
+                return;
+            }
             DateTime dateStarted;
+            string dateSource = "quitString";
             if (!DateTime.TryParse(oracle.saveSettings.dateQuitString, CultureInfo.InvariantCulture,
                     DateTimeStyles.AssumeUniversal | DateTimeStyles.AdjustToUniversal, out dateStarted))
             {
+                dateSource = "dateStartedFallback";
                 if (!DateTime.TryParse(oracle.saveSettings.dateStarted, CultureInfo.InvariantCulture,
                         DateTimeStyles.AssumeUniversal | DateTimeStyles.AdjustToUniversal, out dateStarted))
                 {
+                    dateSource = "runtimeUtcFallback";
                     dateStarted = DateTime.UtcNow;
                 }
             }
@@ -386,9 +441,33 @@ namespace Expansion
             DateTime dateNow = DateTime.UtcNow;
             TimeSpan timespan = dateNow - dateStarted;
             float seconds = (float)timespan.TotalSeconds;
+            float clampedSeconds = Math.Max(0, seconds);
+            Debug.LogWarning(
+                "[OfflineTimeDiag] AwayForSeconds | " +
+                    $"platform={Application.platform}, " +
+                    $"dateSource={dateSource}, " +
+                $"dateQuit='{FormatDebugString(oracle.saveSettings.dateQuitString)}', " +
+                $"dateStarted='{FormatDebugString(oracle.saveSettings.dateStarted)}', " +
+                $"resolvedStart='{FormatUtc(dateStarted)}', now='{FormatUtc(dateNow)}', " +
+                $"awayRawSeconds={seconds.ToString("F3", CultureInfo.InvariantCulture)}, " +
+                $"awayClampedSeconds={clampedSeconds.ToString("F3", CultureInfo.InvariantCulture)}, " +
+                $"offlineTime={saveSettings.offlineTime.ToString(CultureInfo.InvariantCulture)}, " +
+                $"maxOfflineTime={saveSettings.maxOfflineTime.ToString(CultureInfo.InvariantCulture)}, " +
+                $"doubleTimeBefore={saveSettings.sdPrestige.doubleTime.ToString(CultureInfo.InvariantCulture)}");
             if (seconds < 0) seconds = 0;
             saveSettings.sdPrestige.doubleTime += seconds;
             AwayFor?.Invoke(seconds);
+        }
+
+        private static string FormatDebugString(string value)
+        {
+            return string.IsNullOrWhiteSpace(value) ? "n/a" : value;
+        }
+
+        private static string FormatUtc(DateTime value)
+        {
+            if (value == default) return "0001-01-01T00:00:00.0000000Z";
+            return value.ToString("o", CultureInfo.InvariantCulture);
         }
     }
 }
