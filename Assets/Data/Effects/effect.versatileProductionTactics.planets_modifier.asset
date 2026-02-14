@@ -6,20 +6,17 @@ MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: e43fa0fc22f4af64ab7fb6a2ce9da960, type: 3}
-  m_Name: effect.versatileProductionTactics.assembly_lines_modifier
   m_EditorClassIdentifier: Assembly-CSharp::GameData.EffectDefinition
-  id: effect.versatileProductionTactics.assembly_lines_modifier
+  m_Name: effect.versatileProductionTactics.planets_modifier
+  id: effect.versatileProductionTactics.planets_modifier
   displayName: Versatile Production Tactics
-  targetStatId: Facility.Manager.Production
+  targetStatId: Facility.Planet.Modifier
   operation: 1
   value: 1
   perLevel: 0
   order: 62
   conditionId: 
-  targetFacilityIds:
-  - ai_managers
+  targetFacilityIds: []
   targetFacilityTags: []
