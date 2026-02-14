@@ -23,6 +23,14 @@ using static Expansion.Oracle;
 /// - <see cref="OnEnable"/> / <see cref="OnDisable"/>: registers/unregisters event and UI bindings.
 /// - Toggle callbacks (side panel + automation), clipboard handlers, and tab button listeners.
 ///
+/// Owns:
+/// - Wiring of settings preset controls (buttons, toggles, labels, and clipboard path).
+/// - Runtime preset selection routing for permanent side panel, temporary side panel, and settings preset toggles.
+/// - Text sync for preset labels and user-facing feedback messages.
+/// Delegates to:
+/// - <c>Oracle</c> for load/save + skill-auto-assignment list persistence.
+/// - <c>SkillTreeManager</c> and <c>GameManager</c> for reset + re-assign execution.
+///
 /// Interacts with:
 /// - Calls into: <c>Expansion.Oracle</c> (saveSettings, SaveList/LoadList, preset data), <c>SkillTreeManager</c>
 ///   (ResetSkills), <c>GameManager</c> (AutoAssignSkillsInvoke), <c>SidePanelReferences</c> (toggle + feedback UI),
@@ -85,6 +93,19 @@ public class SkillTreeSettingsManager : MonoBehaviour
     [SerializeField] private SidePanelReferences permanentSidePanel;
     [SerializeField] private SidePanelReferences temporarySidePanel;
 
+    [Header("Skill Tree Settings Preset Toggles")]
+    [SerializeField] private Toggle settingsPresetToggle1;
+    [SerializeField] private Toggle settingsPresetToggle2;
+    [SerializeField] private Toggle settingsPresetToggle3;
+    [SerializeField] private Toggle settingsPresetToggle4;
+    [SerializeField] private Toggle settingsPresetToggle5;
+    [SerializeField] private TMP_Text settingsPresetToggleText1;
+    [SerializeField] private TMP_Text settingsPresetToggleText2;
+    [SerializeField] private TMP_Text settingsPresetToggleText3;
+    [SerializeField] private TMP_Text settingsPresetToggleText4;
+    [SerializeField] private TMP_Text settingsPresetToggleText5;
+    [SerializeField] private TMP_Text settingsPresetFeedbackText;
+
     [Header("Preset Automation (Tab Overrides)")]
     [SerializeField] private PresetAutomationReferences botsPresetAutomation;
     [SerializeField] private PresetAutomationReferences researchPresetAutomation;
@@ -95,11 +116,13 @@ public class SkillTreeSettingsManager : MonoBehaviour
 
     private PresetToggleBindings _permanentBindings;
     private PresetToggleBindings _temporaryBindings;
+    private PresetToggleBindings _settingsPanelBindings;
     private AutomationBindings _botsAutomationBindings;
     private AutomationBindings _researchAutomationBindings;
     private bool _suppressToggleCallbacks;
     private Coroutine _permanentFeedbackRoutine;
     private Coroutine _temporaryFeedbackRoutine;
+    private Coroutine _settingsFeedbackRoutine;
     private Coroutine _feedbackRoutine;
     private Coroutine _presetInitRoutine;
     private Coroutine _toggleBindingInitRoutine;
@@ -156,9 +179,15 @@ public class SkillTreeSettingsManager : MonoBehaviour
         }
         UnregisterPresetToggleBindings(ref _permanentBindings);
         UnregisterPresetToggleBindings(ref _temporaryBindings);
+        UnregisterPresetToggleBindings(ref _settingsPanelBindings);
         UnregisterAutomationBindings(ref _botsAutomationBindings);
         UnregisterAutomationBindings(ref _researchAutomationBindings);
         UnregisterTabButtonBindings();
+        if (_settingsFeedbackRoutine != null)
+        {
+            StopCoroutine(_settingsFeedbackRoutine);
+            _settingsFeedbackRoutine = null;
+        }
         if (_toggleBindingInitRoutine != null)
         {
             StopCoroutine(_toggleBindingInitRoutine);
@@ -204,6 +233,10 @@ public class SkillTreeSettingsManager : MonoBehaviour
 
         RegisterPresetToggleBindings(permanentSidePanel, ref _permanentBindings);
         RegisterPresetToggleBindings(temporarySidePanel, ref _temporaryBindings);
+        RegisterPresetToggleBindings(settingsPresetToggle1, settingsPresetToggle2, settingsPresetToggle3,
+            settingsPresetToggle4, settingsPresetToggle5,
+            settingsPresetToggleText1, settingsPresetToggleText2, settingsPresetToggleText3, settingsPresetToggleText4,
+            settingsPresetToggleText5, settingsPresetFeedbackText, ref _settingsPanelBindings);
         UpdateSidePanelPresetLabels();
 
         RegisterAutomationBindings(
@@ -424,6 +457,36 @@ public class SkillTreeSettingsManager : MonoBehaviour
 
         Toggle[] toggles = GetPresetToggles(panel);
         TMP_Text[] texts = GetPresetTexts(panel);
+        RegisterPresetToggleBindings(toggles, texts, panel, null, ref bindings);
+    }
+
+    private void RegisterPresetToggleBindings(
+        Toggle toggle1,
+        Toggle toggle2,
+        Toggle toggle3,
+        Toggle toggle4,
+        Toggle toggle5,
+        TMP_Text text1,
+        TMP_Text text2,
+        TMP_Text text3,
+        TMP_Text text4,
+        TMP_Text text5,
+        TMP_Text feedbackText,
+        ref PresetToggleBindings bindings)
+    {
+        Toggle[] toggles = new[] { toggle1, toggle2, toggle3, toggle4, toggle5 };
+        TMP_Text[] texts = new[] { text1, text2, text3, text4, text5 };
+        RegisterPresetToggleBindings(toggles, texts, null, feedbackText, ref bindings);
+    }
+
+    private void RegisterPresetToggleBindings(
+        Toggle[] toggles,
+        TMP_Text[] texts,
+        SidePanelReferences feedbackPanel,
+        TMP_Text feedbackTextOverride,
+        ref PresetToggleBindings bindings)
+    {
+        if (toggles == null || texts == null) return;
         UnityAction<bool>[] handlers = new UnityAction<bool>[toggles.Length];
 
         for (int i = 0; i < toggles.Length; i++)
@@ -436,20 +499,20 @@ public class SkillTreeSettingsManager : MonoBehaviour
                 if (_suppressToggleCallbacks) return;
                 if (isOn)
                 {
-                    ApplyPresetSelection(panel, presetIndex, loadPreset: true);
+                    ApplyPresetSelection(toggles, texts, presetIndex, true, feedbackPanel, feedbackTextOverride);
                     return;
                 }
 
                 if (presetIndex != _currentPresetIndex) return;
                 if (AnyToggleOn(toggles)) return;
-                ReloadPresetSelection(panel, presetIndex);
+                ReloadPresetSelection(toggles, texts, presetIndex, feedbackPanel, feedbackTextOverride);
             };
             toggle.onValueChanged.AddListener(handler);
             handlers[i] = handler;
         }
 
-        bindings = new PresetToggleBindings(panel, toggles, texts, handlers);
-        SyncInitialPresetSelection(panel, toggles, texts);
+        bindings = new PresetToggleBindings(toggles, texts, handlers);
+        SyncInitialPresetSelection(toggles, texts);
     }
 
     private void UnregisterPresetToggleBindings(ref PresetToggleBindings bindings)
@@ -467,7 +530,7 @@ public class SkillTreeSettingsManager : MonoBehaviour
         bindings = null;
     }
 
-    private void SyncInitialPresetSelection(SidePanelReferences panel, Toggle[] toggles, TMP_Text[] texts)
+    private void SyncInitialPresetSelection(Toggle[] toggles, TMP_Text[] texts)
     {
         int selectedIndex = -1;
         for (int i = 0; i < toggles.Length; i++)
@@ -486,7 +549,7 @@ public class SkillTreeSettingsManager : MonoBehaviour
 
         if (selectedIndex > 0)
         {
-            ApplyPresetSelection(panel, selectedIndex, loadPreset: false);
+            ApplyPresetSelection(toggles, texts, selectedIndex, loadPreset: false);
         }
         else
         {
@@ -494,18 +557,23 @@ public class SkillTreeSettingsManager : MonoBehaviour
         }
     }
 
-    private void ApplyPresetSelection(SidePanelReferences panel, int presetIndex, bool loadPreset)
+    private void ApplyPresetSelection(
+        Toggle[] toggles,
+        TMP_Text[] texts,
+        int presetIndex,
+        bool loadPreset,
+        SidePanelReferences feedbackPanel = null,
+        TMP_Text feedbackTextOverride = null)
     {
-        Toggle[] toggles = GetPresetToggles(panel);
-        TMP_Text[] texts = GetPresetTexts(panel);
-
+        if (toggles == null || texts == null) return;
+        int count = Mathf.Min(toggles.Length, texts.Length);
         if (loadPreset && presetIndex != _currentPresetIndex && _currentPresetIndex > 0)
         {
             oracle.SaveList(_currentPresetIndex);
         }
 
         _suppressToggleCallbacks = true;
-        for (int i = 0; i < toggles.Length; i++)
+        for (int i = 0; i < count; i++)
         {
             if (toggles[i] == null) continue;
             toggles[i].isOn = i + 1 == presetIndex;
@@ -517,7 +585,7 @@ public class SkillTreeSettingsManager : MonoBehaviour
         if (loadPreset)
         {
             LoadPreset(presetIndex);
-            ShowSidePanelFeedback(panel, BuildPresetFeedback(presetIndex, loaded: true));
+            ShowPresetSelectionFeedback(feedbackPanel, feedbackTextOverride, BuildPresetFeedback(presetIndex, loaded: true));
         }
         else
         {
@@ -527,13 +595,18 @@ public class SkillTreeSettingsManager : MonoBehaviour
         }
     }
 
-    private void ReloadPresetSelection(SidePanelReferences panel, int presetIndex)
+    private void ReloadPresetSelection(
+        Toggle[] toggles,
+        TMP_Text[] texts,
+        int presetIndex,
+        SidePanelReferences feedbackPanel = null,
+        TMP_Text feedbackTextOverride = null)
     {
-        Toggle[] toggles = GetPresetToggles(panel);
-        TMP_Text[] texts = GetPresetTexts(panel);
+        if (toggles == null || texts == null) return;
+        int count = Mathf.Min(toggles.Length, texts.Length);
 
         _suppressToggleCallbacks = true;
-        for (int i = 0; i < toggles.Length; i++)
+        for (int i = 0; i < count; i++)
         {
             if (toggles[i] == null) continue;
             toggles[i].isOn = i + 1 == presetIndex;
@@ -542,7 +615,7 @@ public class SkillTreeSettingsManager : MonoBehaviour
 
         UpdatePresetTextVisibility(texts, presetIndex);
         LoadPreset(presetIndex);
-        ShowSidePanelFeedback(panel, BuildPresetFeedback(presetIndex, loaded: false));
+        ShowPresetSelectionFeedback(feedbackPanel, feedbackTextOverride, BuildPresetFeedback(presetIndex, loaded: false));
     }
 
     private static bool AnyToggleOn(Toggle[] toggles)
@@ -590,12 +663,37 @@ public class SkillTreeSettingsManager : MonoBehaviour
         };
     }
 
+    private Toggle[] GetSettingsPresetToggles()
+    {
+        return new[]
+        {
+            settingsPresetToggle1,
+            settingsPresetToggle2,
+            settingsPresetToggle3,
+            settingsPresetToggle4,
+            settingsPresetToggle5
+        };
+    }
+
+    private TMP_Text[] GetSettingsPresetTexts()
+    {
+        return new[]
+        {
+            settingsPresetToggleText1,
+            settingsPresetToggleText2,
+            settingsPresetToggleText3,
+            settingsPresetToggleText4,
+            settingsPresetToggleText5
+        };
+    }
+
     private void UpdateSidePanelPresetLabels()
     {
         if (!TryGetSaveData(out DysonVerseSaveData saveData)) return;
 
         UpdateSidePanelPresetLabels(permanentSidePanel, saveData);
         UpdateSidePanelPresetLabels(temporarySidePanel, saveData);
+        UpdateSidePanelPresetLabels(GetSettingsPresetToggles(), GetSettingsPresetTexts(), saveData);
     }
 
     private void UpdateAutomationPresetLabels(DysonVerseSaveData saveData)
@@ -635,6 +733,19 @@ public class SkillTreeSettingsManager : MonoBehaviour
         for (int i = 0; i < textObjects.Length; i++)
         {
             TMP_Text text = textObjects[i];
+            if (text == null) continue;
+            text.text = GetPresetShortLabel(saveData, i + 1);
+        }
+    }
+
+    private static void UpdateSidePanelPresetLabels(Toggle[] toggles, TMP_Text[] texts, DysonVerseSaveData saveData)
+    {
+        if (texts == null || saveData == null) return;
+
+        int textCount = Mathf.Min(toggles != null ? toggles.Length : 0, texts.Length);
+        for (int i = 0; i < textCount; i++)
+        {
+            TMP_Text text = texts[i];
             if (text == null) continue;
             text.text = GetPresetShortLabel(saveData, i + 1);
         }
@@ -746,17 +857,22 @@ public class SkillTreeSettingsManager : MonoBehaviour
     {
         SyncSidePanelToPreset(permanentSidePanel, presetIndex);
         SyncSidePanelToPreset(temporarySidePanel, presetIndex);
+        SyncSidePanelToPreset(GetSettingsPresetToggles(), GetSettingsPresetTexts(), presetIndex);
     }
 
     private void SyncSidePanelToPreset(SidePanelReferences panel, int presetIndex)
     {
         if (panel == null) return;
+        SyncSidePanelToPreset(GetPresetToggles(panel), GetPresetTexts(panel), presetIndex);
+    }
 
-        Toggle[] toggles = GetPresetToggles(panel);
-        TMP_Text[] texts = GetPresetTexts(panel);
+    private void SyncSidePanelToPreset(Toggle[] toggles, TMP_Text[] texts, int presetIndex)
+    {
+        if (toggles == null || texts == null) return;
+        int count = Mathf.Min(toggles.Length, texts.Length);
 
         _suppressToggleCallbacks = true;
-        for (int i = 0; i < toggles.Length; i++)
+        for (int i = 0; i < count; i++)
         {
             if (toggles[i] == null) continue;
             toggles[i].isOn = i + 1 == presetIndex;
@@ -778,18 +894,15 @@ public class SkillTreeSettingsManager : MonoBehaviour
     private sealed class PresetToggleBindings
     {
         public PresetToggleBindings(
-            SidePanelReferences panel,
             Toggle[] toggles,
             TMP_Text[] texts,
             UnityAction<bool>[] handlers)
         {
-            Panel = panel;
             Toggles = toggles;
             Texts = texts;
             Handlers = handlers;
         }
 
-        public SidePanelReferences Panel { get; }
         public Toggle[] Toggles { get; }
         public TMP_Text[] Texts { get; }
         public UnityAction<bool>[] Handlers { get; }
@@ -913,8 +1026,9 @@ public class SkillTreeSettingsManager : MonoBehaviour
         LoadPreset(targetPreset);
 
         string name = GetPresetDisplayName(saveData, targetPreset);
-        ShowSidePanelFeedback(permanentSidePanel, $"{name} Loaded");
-        ShowSidePanelFeedback(temporarySidePanel, $"{name} Loaded");
+        ShowPresetSelectionFeedback(permanentSidePanel, null, $"{name} Loaded");
+        ShowPresetSelectionFeedback(temporarySidePanel, null, $"{name} Loaded");
+        ShowPresetSelectionFeedback(null, settingsPresetFeedbackText, $"{name} Loaded");
     }
 
     private void RegisterTabButtonBindings()
@@ -1031,11 +1145,34 @@ public class SkillTreeSettingsManager : MonoBehaviour
         }
     }
 
+    private void ShowPresetSelectionFeedback(SidePanelReferences panel, TMP_Text feedbackTextOverride, string baseText)
+    {
+        if (feedbackTextOverride != null)
+        {
+            if (_settingsFeedbackRoutine != null)
+            {
+                StopCoroutine(_settingsFeedbackRoutine);
+            }
+
+            _settingsFeedbackRoutine = StartCoroutine(PlaySidePanelFeedback(feedbackTextOverride, baseText));
+            return;
+        }
+
+        ShowSidePanelFeedback(panel, baseText);
+    }
+
     private void ShowSidePanelFeedback(SidePanelReferences panel, string baseText)
     {
         if (panel == null || panel.skillsPresetFeedbackText == null) return;
 
-        Coroutine routine = panel == permanentSidePanel ? _permanentFeedbackRoutine : _temporaryFeedbackRoutine;
+        Coroutine routine;
+        if (panel == permanentSidePanel)
+            routine = _permanentFeedbackRoutine;
+        else if (panel == temporarySidePanel)
+            routine = _temporaryFeedbackRoutine;
+        else
+            routine = null;
+
         if (routine != null)
         {
             StopCoroutine(routine);
