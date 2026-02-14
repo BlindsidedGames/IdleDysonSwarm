@@ -17,8 +17,8 @@ MonoBehaviour:
   description: Stuff happens, and your production layout is prepared for everything
     and anything. This allows for a flexible production boost, boosting the highest
     and the lowest layer of the dyson swarm.
-  technicalDescription: You now produce <color=#A3FFFE>50%</color> more <color=#A3FFFE>Assembly
-    Lines</color>. Additionally, after <color=#A3FFFE>100 Planets</color>, <color=#A3FFFE>Planets</color>
+  technicalDescription: You now produce <color=#A3FFFE>50%</color> more <color=#A3FFFE>AI
+    Managers</color>. Additionally, after <color=#A3FFFE>100 Planets</color>, <color=#A3FFFE>Planets</color>
     production boosted by <color=#A3FFFE>50%</color>
   cost: 1
   refundable: 1
@@ -36,4 +36,4 @@ MonoBehaviour:
   unrefundableWithIds: []
   effects:
   - {fileID: 11400000, guid: a6b82eec160715a4fb1611bd18289bfc, type: 2}
-  - {fileID: 11400000, guid: e4e96832a2f46d14bbc0cfd705837d6b, type: 2}
+  - {fileID: 11400000, guid: 139f5528b770437ca38e767b053234db, type: 2}
