@@ -37,6 +37,8 @@ The system should still advance save data even without UI.
 - `SaveDataSettings.offlineTime` is increased in `ApplyReturnValues` and decreased elsewhere when spent.
 - `CalculateAwayValues` mutates `DysonVerseInfinityData` and `DysonVersePrestigeData` in-place.
 - Some `DysonVerseInfinityData` arrays are expected to be length 2. Older saves/migrations can leave new arrays null; the system now sanitizes these arrays before simulation.
+- On desktop/mobile startup, return-time diagnostics are now emitted as one `[OfflineTimeDiag]` warning from `Oracle.AwayForSeconds` and one from
+  `Systems.OfflineProgressSystem.ApplyReturnValues` whenever grant processing occurs.
 
 ## Performance Notes
 - The coroutine steps once per simulated minute and yields each iteration; large `awayTime` values can take noticeable real time to simulate.
@@ -49,4 +51,3 @@ The system should still advance save data even without UI.
    - production/resources advance by the selected amount
 3. Temporarily unassign one or more return-screen UI references on `GameManager` (e.g., `awayForHeader`) and repeat step 2.
    - Expect: simulation still runs; UI updates are skipped where references are missing.
-
