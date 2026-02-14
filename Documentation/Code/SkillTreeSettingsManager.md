@@ -1,67 +1,115 @@
 # SkillTreeSettingsManager
 
-## Purpose
-- Owns the Skills preset UX in the Skill Tree Settings UI:
+## Purpose and scope
+- Owns the Skill Tree Settings preset UX.
+- Manages:
   - Preset naming
-  - Clipboard import/export
-  - Side panel preset toggles (5 slots) switching
-  - Tab "preset automation" overrides for Bots/Research (5 slots + Off), which auto-switch presets when those tabs are opened
+  - Clipboard export/import
+  - Preset toggle binding in:
+    - permanent side panel (`SidePanelReferences`)
+    - temporary side panel (`SidePanelReferences`)
+    - settings window (`settingsPresetToggle*` / `settingsPresetToggleText*`)
+  - Bots/Research preset automation overrides and tab-open preset application
 
-## Runtime Context
-- Runtime MonoBehaviour.
-- Intended to remain enabled so it can:
-  - react to save data becoming available
-  - keep preset labels in sync with renamed presets
-  - listen for tab button clicks and apply preset automation
+## Runtime context / entry points
+- Runtime `MonoBehaviour` tied to the Skill Tree settings UI.
+- Lifecycle:
+  - `Start()`
+  - `OnEnable()/OnDisable()`
+  - `HandleUpdateSkills()`
+- Preset switching is user-driven through:
+  - side-panel toggles
+  - settings-window toggles
+  - tab-open automation handlers
+- Export/import and rename controls are wired from Inspector button/field references.
 
-## Key Data
-- Current preset slot: `DysonVerseSaveData.selectedPreset` (1-5).
-- Preset names: `DysonVerseSaveData.preset1Name..preset5Name`.
-- Tab preset automation preferences (persist/export/import with save):
-  - `Oracle.SaveDataSettings.botsTabPresetOverride` (0=Off, 1-5)
-  - `Oracle.SaveDataSettings.researchTabPresetOverride` (0=Off, 1-5)
+## Interacts with
+- Calls:
+  - `Expansion.Oracle`
+  - `SkillTreeManager`
+  - `GameManager`
+  - `SidePanelReferences`
+  - `PresetAutomationReferences`
+- Called by:
+  - UI button/toggle events on settings and side panels
+  - `UpdateSkills` event (`Oracle -> UI`) and tab button clicks
 
-## Data Flow / Switching Behavior
-- Side panel preset toggles:
-  - Selecting a slot triggers a full preset switch:
-    - Save old slot (if needed)
-    - Reset/refund skill state
-    - Load new slot data into live auto-assign list
-    - Auto-assign
-  - Feedback is shown through `SidePanelReferences.skillsPresetFeedbackText` using the preset display name.
-- Tab preset automation toggles:
-  - Selecting a slot only updates the override preference (no immediate preset switching).
-  - The selected toggle hides its label text to reveal the icon (including Off).
-  - Implementation detail: automation toggle callbacks must capture a per-iteration index value (do not reference the
-    `for` loop variable directly inside the closure) or the handler can end up forcing all toggles off, which makes
-    the checkmark graphic appear "broken" even though labels update.
-- Tab open detection:
-  - Uses `SidePanelReferences.botsTabButton` / `SidePanelReferences.researchTabButton` (wired on both overlay and permanent refs).
-  - Also supports optional bottom-bar (or other) navigation buttons wired directly on `SkillTreeSettingsManager`:
-    - `botsBottomBarTabButton`
-    - `researchBottomBarTabButton`
-  - When clicked, if the override is enabled (1-5), it switches presets and shows feedback.
-- Initial screen behavior:
-  - After save/settings exist, `PlayerPrefs initialScreen` is checked:
-    - Bots: 1 or 9
-    - Research: 2
-  - If the tab has an override enabled, it applies it once on startup.
+## Data flow and behavior
+### Preset switching
+- Persistent source of truth: `DysonVerseSaveData.selectedPreset` (1-5), default 1.
+- `ApplyPresetSelection(..., loadPreset: true)` triggers:
+  - optional `oracle.SaveList(current)` when switching away
+  - callback suppression and radio-button state sync
+  - `LoadPreset` for the target slot
+  - UI label visibility sync (`selected text hidden`, others shown)
+- `LoadPreset` persists slot changes by:
+  - `SaveList(previous)` (before reset/load)
+  - `ResetSkills()`
+  - `oracle.LoadList(target)`
+  - `InvokeUpdateSkills()`
+  - `AutoAssignSkillsInvoke()`
+- `SuppressPresetSync()` remains around reset/load to avoid writing empty active state back into storage.
 
-## Performance / Pitfalls
-- Avoid duplicating `onClick` listeners:
-  - Overlay/permanent can point to the same `Button`; code dedupes registrations.
-- Preset switching mutates live auto-assign state:
-  - Keep `oracle.SuppressPresetSync()` usage intact to avoid overwriting slots during the temporary clear/load phase.
+### Preset labels
+- Side panel + temporary + settings labels all map to short labels generated from preset names.
+- Empty/default names collapse to short index labels (`1`..`5`).
 
-## Verification Checklist (Manual)
-1. With both overlay + permanent SidePanelReferences wired:
-  - Clicking Bots tab auto-switches to the configured preset override (unless Off).
-  - Clicking Research tab auto-switches similarly.
-2. Switching between overlay/permanent layouts still works:
-  - Tab auto-switch triggers regardless of which layout is currently active.
-3. Toggle UX:
-  - Selecting any automation toggle hides its label, showing the icon.
-  - Preset 1-5 labels show short labels derived from preset names.
-  - Clicking automation toggles immediately shows the checkmark on the selected toggle (no need to tab-swap).
-4. Save persistence:
-  - Export/import save retains `botsTabPresetOverride` and `researchTabPresetOverride`.
+### Clipboard share / move
+- `ExportPresetToClipboard(slot)` serializes:
+  - `version`
+  - preset name
+  - bot distribution
+  - IDs from active list for current slot, explicit slot list for others
+- `ImportPresetFromClipboard(slot)` validates JSON/version, de-dupes IDs, updates:
+  - preset name
+  - bot distribution
+  - preset ID list
+  - then reloads if importing the active slot
+
+### Preset automation
+- Persistent settings:
+  - `SaveDataSettings.botsTabPresetOverride`
+  - `SaveDataSettings.researchTabPresetOverride`
+- On tab open, handler applies override preset when enabled (1-5), otherwise no-op.
+- Feedback now routes:
+  - side panels via `SkillsPresetFeedbackText`
+  - settings window via `settingsPresetFeedbackText`
+
+## Wiring changes in this patch
+- Added serialized settings-window fields:
+  - `settingsPresetToggle1..5`
+  - `settingsPresetToggleText1..5`
+  - `settingsPresetFeedbackText`
+- Added shared binding logic that no longer requires `SidePanelReferences` for settings toggles:
+  - `RegisterPresetToggleBindings(Toggle[]... , TMP_Text[]..., TMP_Text feedbackTextOverride, ...)`
+- Added array-label/sync helpers for settings panel:
+  - `UpdateSidePanelPresetLabels(Toggle[]..., TMP_Text[]..., DysonVerseSaveData)`
+  - `SyncSidePanelToPreset(Toggle[]..., TMP_Text[]..., int)`
+
+## Save/load path trace points (relevant to this script)
+- `Oracle.SaveList(listNum)` stores `skillAutoAssignmentIds*` and `botDistPreset*` for each slot.
+- `Oracle.LoadList(listNum)` restores list + distribution into live `dysonVerseSaveData`.
+- Preset names are persisted in:
+  - `DysonVerseSaveData.preset1Name` through `preset5Name`
+- Override settings are persisted as part of `SaveDataSettings`.
+
+## Risks and observed caveats
+- `Oracle.SetPresetAutoAssignmentSkillIds()` does not schedule quick-save directly.
+- `Oracle.SaveList()` also does not schedule quick-save directly.
+- Existing behavior depends on the broader save pipeline (`SetAutoAssignmentSkillIds` and auto-save cadence) to persist changes.
+  In short: presets remain functional, but rapid forced-quit right after heavy preset edits can still be exposed to existing autosave timing.
+
+## Verification checklist
+1. Change names in settings and confirm:
+  - side panel labels
+  - temporary panel labels
+  - settings window labels
+  all reflect the new short names.
+2. Select presets from each of the three toggle groups:
+  - active state and feedback are correct
+  - data reload occurs as expected
+  - cross-group selection stays synced.
+3. Configure and trigger Bots/Research overrides from both side-tab and optional bottom-bar buttons.
+4. Export/import valid payload and invalid payload paths:
+  - valid payload imports and applies
+  - invalid JSON/version/empty buffer shows correct feedback and no mutation.
