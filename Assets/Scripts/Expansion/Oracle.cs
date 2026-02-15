@@ -2603,6 +2603,8 @@ private void PackSettingsFlags()
         [ContextMenu("DysonInfinity")]
         public void DysonInfinity()
         {
+            saveSettings.offlineTimeUsedPreviousInfinity = saveSettings.offlineTimeUsedThisInfinity;
+            saveSettings.offlineTimeUsedThisInfinity = 0;
             saveSettings.firstInfinityDone = true;
             int bankedSkills = 0;
             if (IsSkillOwned("banking")) bankedSkills++;
@@ -2642,6 +2644,8 @@ private void PackSettingsFlags()
 
         public void ManualDysonInfinity()
         {
+            saveSettings.offlineTimeUsedPreviousInfinity = saveSettings.offlineTimeUsedThisInfinity;
+            saveSettings.offlineTimeUsedThisInfinity = 0;
             saveSettings.firstInfinityDone = true;
             int bankedSkills = 0;
             if (IsSkillOwned("banking")) bankedSkills++;
@@ -2710,6 +2714,8 @@ private void PackSettingsFlags()
             prestigeData.infinityAutoResearch = saveSettings.prestigePlus.automation;
             saveSettings.lastInfinityPointsGained = 0;
             saveSettings.timeLastInfinity = 0;
+            saveSettings.offlineTimeUsedThisInfinity = 0;
+            saveSettings.offlineTimeUsedPreviousInfinity = 0;
             SetSkillTimerSeconds(infinityData, "androids", 0);
             SetSkillTimerSeconds(infinityData, "pocketAndroids", 0);
             skillTreeData.fragments = 0;
@@ -2808,6 +2814,8 @@ private void PackSettingsFlags()
             public bool skillsBuyOnTap;
 
             public double offlineTime;
+            public double offlineTimeUsedThisInfinity;
+            public double offlineTimeUsedPreviousInfinity;
             public double maxOfflineTime = 86400;
             [Space(10)] public int frameRate;
             [Space(10)] public bool botsButtonToggle;

@@ -31,6 +31,16 @@ using static Expansion.Oracle;
 /// - Public events (UpdateSkills/AssignSkills) are cross-script contracts; changing signatures/names requires subscriber updates.
 /// - Public methods used by UI/events (for example SetSkillsReferences) must keep behavior compatible with callers.
 /// - Save-facing keys/data paths are owned by Oracle/save models; changing accessed fields requires coordinated migration updates.
+/// - Side-panel run-info lines include offline spend counters sourced from
+///   <see cref="Expansion.Oracle.SaveDataSettings.offlineTimeUsedThisInfinity"/> and
+///   <see cref="Expansion.Oracle.SaveDataSettings.offlineTimeUsedPreviousInfinity"/> rendered on a separate line
+///   in short time form.
+/// - Timer value strings should pass <c>colourOverride</c> into <see cref="CalcUtils.FormatTime"/> rather than wrapping
+///   the full output in a color tag, so unit suffixes remain uncolored.
+/// - Stats ordering/section headers in <c>skillTimersDisplayText</c> are a UX contract:
+///   bold General metrics, then bold Infinity section, then bold Skills section.
+/// - General metrics, s/IP, and Run/Offline Current/Previous rows use the same small text scale as skill detail lines.
+/// - Skill rows render at small text scale with bold skill names.
 /// </summary>
 public class GameManager : MonoBehaviour
 {
@@ -860,52 +870,65 @@ public class GameManager : MonoBehaviour
         /*pocketDimensionsText.text = dataCenterProductionDetailText;*/
 
         string skillTimersDisplayText = "";
+        const string halfHeightBreak = "<br><size=50%> </size><br>";
+        const string smallTextStart = "<size=80%>";
+        const string smallTextEnd = "</size>";
 
-        skillTimersDisplayText += $"Cash Multiplier: {scienceColor}{CalcUtils.FormatNumber(MoneyMultipliers())}</color>";
+        skillTimersDisplayText += "<b>General</b>";
+        skillTimersDisplayText +=
+            $"{smallTextStart}<br>Cash Multiplier: {scienceColor}{CalcUtils.FormatNumber(MoneyMultipliers())}</color>";
         skillTimersDisplayText +=
             $"<br>Research Multiplier: {scienceColor}{CalcUtils.FormatNumber(ScienceMultipliers())}</color>";
         skillTimersDisplayText +=
-            $"<br>Panel Lifetime: {scienceColor}{CalcUtils.FormatNumber(infinityData.panelLifetime)} s</color><br>";
+            $"<br>Panel Lifetime: {CalcUtils.FormatTime(infinityData.panelLifetime, shortForm: true, mspace: false, colourOverride: scienceColor)}";
 
         skillTimersDisplayText +=
-            $"<br>Current Infinity Time: {scienceColor}{CalcUtils.FormatTimeLarge(CurrentRunTime())}</color><br>";
-        if (oracle.saveSettings.timeLastInfinity > 0)
-            skillTimersDisplayText +=
-                $"Last Infinity Time: {scienceColor}{CalcUtils.FormatTimeLarge(oracle.saveSettings.timeLastInfinity)}</color><br>";
-        if (oracle.saveSettings.lastInfinityPointsGained > 0)
-        {
-            double ipPerSec = oracle.saveSettings.lastInfinityPointsGained / oracle.saveSettings.timeLastInfinity;
-            skillTimersDisplayText += ipPerSec >= 1
-                ? $"IP/s: {scienceColor}{CalcUtils.FormatNumber(ipPerSec)}</color><br>"
-                : $"s/IP: {scienceColor}{CalcUtils.FormatNumber(1 / ipPerSec)}</color><br>";
-        }
-
-        skillTimersDisplayText +=
-            $"<br>Active Panels: {scienceColor}{CalcUtils.FormatNumber(infinityData.panelsPerSec * infinityData.panelLifetime)}</color>";
+            $"{halfHeightBreak}Active Panels: {scienceColor}{CalcUtils.FormatNumber(infinityData.panelsPerSec * infinityData.panelLifetime)}</color>";
         skillTimersDisplayText +=
             $"<br>Stars Surrounded: {scienceColor}{CalcUtils.FormatNumber(StarsSurrounded(false, false))}</color>";
         skillTimersDisplayText +=
-            $"<br>Galaxies Engulfed: {scienceColor}{CalcUtils.FormatNumber(GalaxiesEngulfed(false, false))}</color><br>";
+            $"<br>Galaxies Engulfed: {scienceColor}{CalcUtils.FormatNumber(GalaxiesEngulfed(false, false))}</color>{smallTextEnd}";
+
+        double secondsPerIp = oracle.saveSettings.lastInfinityPointsGained > 0
+            ? oracle.saveSettings.timeLastInfinity / oracle.saveSettings.lastInfinityPointsGained
+            : 0;
+
+        skillTimersDisplayText += "<br><br><b>Infinity</b>";
+        skillTimersDisplayText +=
+            $"<br>{smallTextStart}s/IP: {CalcUtils.FormatTime(secondsPerIp, showDecimal: true, shortForm: true, mspace: false, colourOverride: scienceColor)}{smallTextEnd}";
+        skillTimersDisplayText += $"{halfHeightBreak}{smallTextStart}<b>Run Time</b>";
+        skillTimersDisplayText +=
+            $"<br>Current: {CalcUtils.FormatTime(CurrentRunTime(), shortForm: true, mspace: false, colourOverride: scienceColor)}";
+        skillTimersDisplayText +=
+            $"<br>Previous: {CalcUtils.FormatTime(oracle.saveSettings.timeLastInfinity, shortForm: true, mspace: false, colourOverride: scienceColor)}{smallTextEnd}";
+
+        skillTimersDisplayText += $"{halfHeightBreak}{smallTextStart}<b>Offline Time Used</b>";
+        skillTimersDisplayText +=
+            $"<br>Current: {CalcUtils.FormatTime(oracle.saveSettings.offlineTimeUsedThisInfinity, shortForm: true, mspace: false, colourOverride: scienceColor)}";
+        skillTimersDisplayText +=
+            $"<br>Previous: {CalcUtils.FormatTime(oracle.saveSettings.offlineTimeUsedPreviousInfinity, shortForm: true, mspace: false, colourOverride: scienceColor)}{smallTextEnd}<br>";
+
+        skillTimersDisplayText += "<br><b>Skills</b>";
 
         if (skillTreeData.androids)
         {
             double androidsTimer = GetSkillTimerSeconds(infinityData, "androids");
             skillTimersDisplayText +=
-                $"<br>Androids: {scienceColor}{CalcUtils.FormatTimeLarge(androidsTimer >= 600 ? 600 : androidsTimer)}</color><br><size=80%>Granting: {scienceColor}{CalcUtils.FormatNumber(Math.Floor(androidsTimer > 600 ? 200 : androidsTimer / 3))}s Lifetime</color>.<br></size>";
+                $"<br>{smallTextStart}<b>Androids</b>: {CalcUtils.FormatTime(androidsTimer >= 600 ? 600 : androidsTimer, shortForm: true, mspace: false, colourOverride: scienceColor)}<br>Granting: {scienceColor}{CalcUtils.FormatNumber(Math.Floor(androidsTimer > 600 ? 200 : androidsTimer / 3))}</color>s Lifetime.{smallTextEnd}";
         }
 
         if (skillTreeData.pocketAndroids)
         {
             double pocketAndroidsTimer = GetSkillTimerSeconds(infinityData, "pocketAndroids");
             skillTimersDisplayText +=
-                $"<br>Pocket Androids: {scienceColor}{CalcUtils.FormatTimeLarge(pocketAndroidsTimer >= 3600 ? 3600 : pocketAndroidsTimer)}</color><br><size=80%>Multiplying Data Center Production by: {scienceColor}{CalcUtils.FormatNumber(pocketAndroidsTimer > 3564 ? 100 : 1 + pocketAndroidsTimer / 36)}</color>.<br></size>";
+                $"<br>{smallTextStart}<b>Pocket Androids</b>: {CalcUtils.FormatTime(pocketAndroidsTimer >= 3600 ? 3600 : pocketAndroidsTimer, shortForm: true, mspace: false, colourOverride: scienceColor)}<br>Multiplying Data Center Production by: {scienceColor}{CalcUtils.FormatNumber(pocketAndroidsTimer > 3564 ? 100 : 1 + pocketAndroidsTimer / 36)}</color>.{smallTextEnd}";
         }
 
         if (skillTreeData.superRadiantScattering)
         {
             double scatteringTimer = GetSkillTimerSeconds(infinityData, "superRadiantScattering");
             skillTimersDisplayText +=
-                $"<br>Scattering: {scienceColor}{CalcUtils.FormatTimeLarge(scatteringTimer)}</color><br><size=80%>Multiplying All Production by: {scienceColor}{CalcUtils.FormatNumber(1 + 0.01f * scatteringTimer)}</color>.<br></size>";
+                $"<br>{smallTextStart}<b>Scattering</b>: {CalcUtils.FormatTime(scatteringTimer, shortForm: true, mspace: false, colourOverride: scienceColor)}<br>Multiplying All Production by: {scienceColor}{CalcUtils.FormatNumber(1 + 0.01f * scatteringTimer)}</color>.{smallTextEnd}";
         }
 
 
