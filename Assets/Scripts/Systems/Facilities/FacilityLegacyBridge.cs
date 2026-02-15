@@ -3,6 +3,25 @@ using GameData;
 using Systems.Stats;
 using static Expansion.Oracle;
 
+/*
+ * FacilityLegacyBridge
+ * Purpose: Builds characterization runtimes that mirror legacy facility production formulas for parity/debug checks.
+ * Runs: Runtime debug and migration-parity tooling paths.
+ * Primary entry points: BuildAssemblyLineRuntime(), BuildAiManagerRuntime(), BuildServerRuntime(),
+ * BuildDataCenterRuntime(), BuildPlanetRuntime().
+ * Owns vs delegates: Owns legacy-style StatEffect composition; delegates stat evaluation to FacilityRuntime/StatCalculator.
+ *
+ * Interacts with:
+ * - Assets/Scripts/Expansion/Oracle.cs (parity/debug context menu actions call these builders)
+ * - Assets/Scripts/Systems/Facilities/FacilityRuntime.cs (applies effects into a production breakdown)
+ * - Assets/Scripts/Systems/ProductionSystem.cs (runtime behavior that parity compares against)
+ *
+ * Change notes:
+ * - This file is a parity reference; production formula edits must stay synchronized with ProductionSystem and
+ *   SkillEffectCatalog dynamic values or debug deltas become misleading.
+ * - Contribution Id/SourceName/Order values are surfaced in debug breakdown output and should remain stable.
+ * - Parallel Computation is intentionally a multiplicative production contribution here to match runtime behavior.
+ */
 namespace Systems.Facilities
 {
     public static class FacilityLegacyBridge
@@ -354,8 +373,8 @@ namespace Systems.Facilities
                     Id = "skill.parallel_computation",
                     SourceName = "Parallel Computation",
                     TargetStatId = statId,
-                    Operation = StatOperation.Add,
-                    Value = 0.1f * System.Math.Log(serversTotal, 2),
+                    Operation = StatOperation.Multiply,
+                    Value = 1 + 0.1f * System.Math.Log(serversTotal, 2),
                     Order = 50,
                     ConditionId = "servers_total_gt_1"
                 });
@@ -589,4 +608,3 @@ namespace Systems.Facilities
         }
     }
 }
-
