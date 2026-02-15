@@ -28,6 +28,25 @@ using static IdleDysonSwarm.Systems.Constants.QuantumConstants;
 using UnityEditor;
 #endif
 
+/*
+ * Oracle (Core Partial)
+ * Purpose: Main game-state root that coordinates save state, debug tooling, and parity/diagnostic helpers.
+ * Runs: Runtime (MonoBehaviour in Game scene), with editor-only utilities enabled via context menus.
+ * Primary entry points in this file: DebugRunFacilityParityTests(), DebugCompareDataCenterProduction(), debug logging
+ * helpers for data-driven breakdowns.
+ * Owns vs delegates: Owns orchestration and persisted state containers; delegates production/stat formulas to
+ * ProductionSystem, FacilityRuntimeBuilder, and legacy bridge/stat calculators.
+ *
+ * Interacts with:
+ * - Assets/Scripts/Systems/ProductionSystem.cs (authoritative runtime production behavior)
+ * - Assets/Scripts/Systems/Facilities/FacilityLegacyBridge.cs (legacy characterization runtime for parity checks)
+ * - Assets/Scripts/Systems/Stats/*.cs pipelines (data-driven stat computation and contribution breakdowns)
+ *
+ * Change notes:
+ * - Parity formulas in debug helpers must track runtime formula ordering exactly, or false-positive parity deltas appear.
+ * - Debug contribution ids/order are used for diagnosis; keep labels stable when adjusting formulas.
+ * - Changes here do not migrate saves directly but can change interpretation of existing save-state numbers.
+ */
 
 namespace Expansion
 {
@@ -661,8 +680,10 @@ private void PackSettingsFlags()
                 legacyComputed *= 1.5f;
             legacyComputed += infinityData.rudimentrySingularityProduction;
             double serversTotal = infinityData.servers[0] + infinityData.servers[1];
-            if (skillTreeData.parallelComputation && serversTotal > 1)
-                legacyComputed += 0.1f * Math.Log(serversTotal, 2);
+            double parallelMultiplier = skillTreeData.parallelComputation && serversTotal > 1
+                ? 1 + 0.1f * Math.Log(serversTotal, 2)
+                : 1;
+            legacyComputed *= parallelMultiplier;
 
             double updated = runtime.State.ProductionRate;
             double delta = updated - legacyComputed;
@@ -692,8 +713,7 @@ private void PackSettingsFlags()
                 if (skillTreeData.superchargedPower)
                     dataDrivenExpected *= 1.5f;
                 dataDrivenExpected += infinityData.rudimentrySingularityProduction;
-                if (skillTreeData.parallelComputation && serversTotal > 1)
-                    dataDrivenExpected += 0.1f * Math.Log(serversTotal, 2);
+                dataDrivenExpected *= parallelMultiplier;
             }
 
             AppendDataDrivenComparison(builder, "Data Centers", definition, dataDrivenExpected, results);

@@ -5,6 +5,26 @@ using Systems;
 using Systems.Facilities;
 using static Expansion.Oracle;
 
+/*
+ * SkillEffectCatalog
+ * Purpose: Declares canonical skill-to-effect mappings and resolves dynamic effect values used by the stat pipeline.
+ * Runs: Runtime and editor tooling (shared static catalog consumed by gameplay and asset generation paths).
+ * Primary entry points: GetAll(), TryResolveDynamicValue().
+ * Owns vs delegates: Owns effect ids/order/operations and dynamic math; delegates effect application/filtering to
+ * SkillEffectProvider and formula consumers in stat/facility pipelines.
+ *
+ * Interacts with:
+ * - Assets/Scripts/Systems/Stats/SkillEffectProvider.cs (builds active StatEffect instances from these specs)
+ * - Assets/Scripts/Systems/Stats/FacilityModifierPipeline.cs (consumes global modifier effects)
+ * - Assets/Scripts/Systems/Facilities/FacilityLegacyBridge.cs (shared helper for pocket-dimensions formula)
+ * - Assets/Editor/GameDataAssetCreator.cs (uses catalog/spec parity for generated EffectDefinition assets)
+ *
+ * Change notes:
+ * - Changing effect id/operation/order/value can alter live balance and breakdown ordering across runtime + editor.
+ * - Parallel Computation must stay aligned with effect asset defaults and generator defaults
+ *   (effect.parallel_computation.data_centers).
+ * - Renaming ids/stat targets requires synchronized updates in effect assets, skill assets, and any debug parity math.
+ */
 namespace Systems.Stats
 {
     public readonly struct SkillEffectSpec
@@ -95,12 +115,12 @@ namespace Systems.Stats
                 {
                     if (skillTreeData == null || infinityData == null || !skillTreeData.parallelComputation)
                     {
-                        value = 0;
+                        value = 1;
                         return true;
                     }
 
                     double serversTotal = infinityData.servers[0] + infinityData.servers[1];
-                    value = serversTotal > 1 ? 0.1f * Math.Log(serversTotal, 2) : 0;
+                    value = serversTotal > 1 ? 1 + 0.1f * Math.Log(serversTotal, 2) : 1;
                     return true;
                 }
                 case "effect.pocket_dimensions.planets":
@@ -353,7 +373,7 @@ namespace Systems.Stats
                 "Rudimentary Singularity", StatId.DataCenterProduction, StatOperation.Add, 0, 40, null,
                 new[] { "data_centers" }, null));
             specs.Add(new SkillEffectSpec("parallelComputation", "effect.parallel_computation.data_centers",
-                "Parallel Computation", StatId.DataCenterProduction, StatOperation.Add, 0, 50, null,
+                "Parallel Computation", StatId.DataCenterProduction, StatOperation.Multiply, 1, 50, null,
                 new[] { "data_centers" }, null));
 
             specs.Add(new SkillEffectSpec("pocketDimensions", "effect.pocket_dimensions.planets",
@@ -1268,4 +1288,3 @@ namespace Systems.Stats
         }
     }
 }
-

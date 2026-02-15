@@ -5,6 +5,27 @@ using Systems.Stats;
 using Unity.Mathematics;
 using static Expansion.Oracle;
 
+/*
+ * ProductionSystem
+ * Purpose: Executes per-tick production for facilities, currencies, and derived progression values.
+ * Runs: Runtime gameplay tick (called each frame by GameManager and by OfflineProgressContext delegates).
+ * Primary entry points: CalculateProduction(), CalculateDataCenterProduction(), MoneyToAdd(), ScienceToAdd().
+ * Owns vs delegates: Owns production update ordering and resource accumulation; delegates stat math to
+ * FacilityRuntimeBuilder, GlobalStatPipeline, and ProductionMath.
+ *
+ * Interacts with:
+ * - Assets/Scripts/Systems/GameManager.cs (main runtime caller)
+ * - Assets/Scripts/Systems/OfflineProgressSystem.cs (offline simulation uses produced rates)
+ * - Assets/Scripts/Systems/Facilities/FacilityRuntimeBuilder.cs (data-driven facility production rates)
+ * - Assets/Scripts/Systems/Stats/GlobalStatPipeline.cs (global panel/science/money/shoulders rates)
+ *
+ * Change notes:
+ * - The meaning of infinityData.*Production fields is consumed by UI and offline simulation; keep naming/assignment
+ *   semantics stable when adjusting formulas.
+ * - Data center -> server production must remain strictly deltaTime-scaled in this system to avoid frame-rate
+ *   dependent gains.
+ * - Any formula changes here should be mirrored in Oracle parity/debug helpers and legacy bridge characterization.
+ */
 namespace Systems
 {
     public static class ProductionSystem
@@ -156,22 +177,12 @@ namespace Systems
         public static void CalculateDataCenterProduction(DysonVerseInfinityData infinityData, DysonVerseSkillTreeData skillTreeData,
             DysonVersePrestigeData prestigeData, PrestigePlus prestigePlus, double deltaTime)
         {
-            double serversTotal = infinityData.servers[0] + infinityData.servers[1];
-            double parallelBonus = skillTreeData.parallelComputation && serversTotal > 1
-                ? 0.1f * Math.Log(serversTotal, 2)
-                : 0;
-
             double baseProduction;
             double finalProduction;
             if (FacilityRuntimeBuilder.TryBuildRuntime("data_centers", infinityData, prestigeData, skillTreeData, prestigePlus,
                     out FacilityRuntime runtime))
             {
                 finalProduction = runtime.State.ProductionRate;
-                if (parallelBonus > 0)
-                {
-                    finalProduction -= parallelBonus;
-                }
-
                 baseProduction = finalProduction - infinityData.rudimentrySingularityProduction;
             }
             else
@@ -182,10 +193,7 @@ namespace Systems
 
             infinityData.dataCenterServerProduction = baseProduction;
             infinityData.serverProduction = finalProduction;
-
-            infinityData.servers[0] += skillTreeData.parallelComputation && serversTotal > 1
-                ? infinityData.serverProduction * deltaTime + parallelBonus
-                : infinityData.serverProduction * deltaTime;
+            infinityData.servers[0] += infinityData.serverProduction * deltaTime;
         }
 
         public static void CalculateServerProduction(DysonVerseInfinityData infinityData, DysonVerseSkillTreeData skillTreeData,
@@ -360,4 +368,3 @@ namespace Systems
 
     }
 }
-

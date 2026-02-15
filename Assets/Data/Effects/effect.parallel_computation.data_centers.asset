@@ -15,8 +15,8 @@ MonoBehaviour:
   id: effect.parallel_computation.data_centers
   displayName: Parallel Computation
   targetStatId: Facility.DataCenter.Production
-  operation: 0
-  value: 0
+  operation: 1
+  value: 1
   perLevel: 0
   order: 50
   conditionId: 
