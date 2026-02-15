@@ -22,7 +22,7 @@ MonoBehaviour:
     you.
   technicalDescription: Doubles the effect running offline time has.
   cost: 2
-  refundable: 0
+  refundable: 1
   isFragment: 0
   purityLine: 0
   terraLine: 0
