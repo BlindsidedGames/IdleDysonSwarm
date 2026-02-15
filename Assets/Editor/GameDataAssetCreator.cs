@@ -8,6 +8,25 @@ using Expansion;
 using Classes;
 using ResearchComponent = Research.ResearchPresenter;
 
+/*
+ * GameDataAssetCreator
+ * Purpose: Creates/refreshes data-driven ScriptableObject assets (facilities, skills, effects, research) from editor
+ * defaults and scene-linked data.
+ * Runs: Unity Editor only (MenuItem commands).
+ * Primary entry points: CreateGameDataAssets(), CreateCoreFacilitySkillEffects(), CreateCoreSkillEffects().
+ * Owns vs delegates: Owns asset creation/default wiring; delegates authoritative runtime effect math to
+ * SkillEffectCatalog and scene data sources (Oracle skill tree / research presenters).
+ *
+ * Interacts with:
+ * - Assets/Scripts/Systems/Stats/SkillEffectCatalog.cs (catalog-driven effect definitions)
+ * - Assets/Data/Skills/*.asset and Assets/Data/Effects/*.asset (generated/updated assets)
+ * - Assets/Scenes/Game.unity Oracle + research presenter components (source for id/default mapping)
+ *
+ * Change notes:
+ * - EffectSpec ids/operations/targetStatId must remain aligned with runtime resolver logic and existing save-compatible ids.
+ * - Parallel Computation defaults here must match effect.parallel_computation.data_centers asset and catalog settings.
+ * - Re-running these menu items overwrites defaults on matched assets; treat changes as data migrations.
+ */
 public static class GameDataAssetCreator
 {
     private const string DataFolder = "Assets/Data";
@@ -170,7 +189,7 @@ public static class GameDataAssetCreator
             new SkillSpec("parallelComputation", "Parallel Computation", new[]
             {
                 new EffectSpec("effect.parallel_computation.data_centers", "Parallel Computation",
-                    StatId.DataCenterProduction, StatOperation.Add, 0, 50, "servers_total_gt_1", new[] { "data_centers" })
+                    StatId.DataCenterProduction, StatOperation.Multiply, 1, 50, "servers_total_gt_1", new[] { "data_centers" })
             }),
             new SkillSpec("pocketDimensions", "Pocket Dimensions", new[]
             {
