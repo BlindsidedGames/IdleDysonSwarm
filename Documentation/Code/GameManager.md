@@ -23,6 +23,24 @@
   - Writes computed values into scene TMP labels (cash/science, per-second rates, bot/panel stats, timers).
 - Side panel swapping:
   - `SidePanelController` passes `SidePanelReferences` into `SetSkillsReferences` so skill UI links remain valid.
+- Side-panel run info:
+  - `UpdateTextFields()` assembles `skillTimersDisplayText` for the blue bottom stats block.
+  - Includes current/last infinity timing, IP rate, offline-spend counters, panel/stellar progression, and skill timers.
+  - Section order:
+    - Bold `General` section (`Cash Multiplier`, `Research Multiplier`, `Panel Lifetime`, then `Active Panels`, `Stars Surrounded`, `Galaxies Engulfed`)
+    - Bold `Infinity` section with `s/IP`, `Run Time` (`Current`/`Previous`), and `Offline Time Used` (`Current`/`Previous`)
+    - Bold `Skills` section for skill timers/effects
+  - Uses a half-height spacer (`<br><size=50%> </size><br>`) between selected subsection transitions
+    (for example `Panel Lifetime -> Active Panels`, `s/IP -> Run Time`, `Run Time -> Offline Time Used`).
+  - Infinity/offline source fields:
+    - `oracle.saveSettings.offlineTimeUsedThisInfinity`
+    - `oracle.saveSettings.offlineTimeUsedPreviousInfinity`
+  - Timer labels (panel lifetime, current/last infinity, offline usage, skill timers) render with `CalcUtils.FormatTime(...)`
+    and pass `colourOverride` into the method so numeric values are colored but unit suffixes (`d/h/m/s`) are not.
+  - General metrics, `s/IP`, and `Current`/`Previous` rows under `Run Time` and `Offline Time Used`
+    are rendered at small text size (`<size=80%>`).
+  - Skill rows are rendered at small text size with bold skill names.
+  - `s/IP` is rendered with `showDecimal: true` to preserve sub-second precision.
 
 ## Save / Load Implications
 - Mutates values in save-backed structures through `Oracle` references, so runtime changes persist into future saves.
@@ -42,3 +60,6 @@
    - science per second
    - total bots
 3. Verify values still increment correctly over time and no TMP rich-text warnings/errors appear in console.
+4. Spend offline time and confirm the blue side-panel run-info block updates:
+   - `Offline Time Used (This Infinity)` increases by spent seconds.
+   - `Offline Time Used (Previous Infinity)` remains unchanged until the next Infinity reset.

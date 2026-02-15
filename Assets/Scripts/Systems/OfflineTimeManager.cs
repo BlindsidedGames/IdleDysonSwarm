@@ -20,16 +20,20 @@ using static Expansion.Oracle;
 /// Primary entry points:
 /// - <see cref="Start"/>: Initializes button wiring and max values.
 /// - <see cref="SpendTime"/> / <see cref="SpendAgain"/>: Confirmed spend flow from the modal.
+/// - <see cref="SpendOfflineTime(double)"/>: Side-panel quick-spend flow.
 /// - <see cref="SetTimeDisplay"/>: Refreshes availability/interactability state.
 ///
 /// Interacts with:
 /// - Calls: <see cref="GameManager.RunAwayTime(double)"/> to apply spent time.
-/// - Reads/writes: <see cref="Expansion.Oracle.SaveDataSettings.offlineTime"/> and max values.
+/// - Reads/writes: <see cref="Expansion.Oracle.SaveDataSettings.offlineTime"/>, max values, and
+///   per-infinity offline spend counters.
 /// - Called by: UI Button/Slider events from offline-time modal and side-panel quick-spend buttons via
 ///   <see cref="SidePanelReferences"/>.
 ///
 /// Change notes:
 /// - Changing spend behavior or caps impacts all offline-time entry points (modal, spend-again, and side-panel quick buttons).
+/// - <see cref="TrySpendOfflineTime(double, out double)"/> is the single accounting path; keep all callers routed
+///   through it so offline spend counters stay accurate.
 /// - Renaming serialized fields requires re-wiring scene/prefab references, including both overlay and permanent panel refs.
 /// - If this component is hosted outside the offline-time modal, <see cref="_offlineTimeWindowRoot"/> should point at
 ///   the modal root so spend actions hide the window without disabling this manager.
@@ -134,11 +138,15 @@ public class OfflineTimeManager : MonoBehaviour
         }
 
         HideOfflineTimeWindow();
-        _gameManager.RunAwayTime(timeSlider.value > ss.offlineTime ? ss.offlineTime : timeSlider.value);
-        ss.offlineTime -= timeSlider.value > ss.offlineTime ? ss.offlineTime : timeSlider.value;
-        spendAgain.SetActive(timeSlider.value < ss.offlineTime);
-        spendAgainButtonText.text = CalcUtils.FormatTimeLarge(timeSlider.value);
-        sliderText.text = CalcUtils.FormatTimeLarge(timeSlider.value);
+        if (!TrySpendOfflineTime(timeSlider.value, out double spentSeconds))
+        {
+            doubleTap = false;
+            return;
+        }
+
+        spendAgain.SetActive(spentSeconds < ss.offlineTime);
+        spendAgainButtonText.text = CalcUtils.FormatTimeLarge(spentSeconds);
+        sliderText.text = CalcUtils.FormatTimeLarge(spentSeconds);
         doubleTap = false;
     }
 
@@ -146,11 +154,15 @@ public class OfflineTimeManager : MonoBehaviour
     {
         if (!HasSaveSettings()) return;
         HideOfflineTimeWindow();
-        _gameManager.RunAwayTime(timeSlider.value > ss.offlineTime ? ss.offlineTime : timeSlider.value);
-        ss.offlineTime -= timeSlider.value > ss.offlineTime ? ss.offlineTime : timeSlider.value;
-        spendAgain.SetActive(timeSlider.value < ss.offlineTime);
-        spendAgainButtonText.text = CalcUtils.FormatTimeLarge(timeSlider.value);
-        sliderText.text = CalcUtils.FormatTimeLarge(timeSlider.value);
+        if (!TrySpendOfflineTime(timeSlider.value, out double spentSeconds))
+        {
+            doubleTap = false;
+            return;
+        }
+
+        spendAgain.SetActive(spentSeconds < ss.offlineTime);
+        spendAgainButtonText.text = CalcUtils.FormatTimeLarge(spentSeconds);
+        sliderText.text = CalcUtils.FormatTimeLarge(spentSeconds);
         doubleTap = false;
     }
 
@@ -207,15 +219,25 @@ public class OfflineTimeManager : MonoBehaviour
     private void SpendOfflineTime(double requestedSeconds)
     {
         if (!HasSaveSettings()) return;
-        if (requestedSeconds <= 0 || ss.offlineTime < requestedSeconds) return;
-
-        _gameManager.RunAwayTime(requestedSeconds);
-        ss.offlineTime -= requestedSeconds;
+        if (!TrySpendOfflineTime(requestedSeconds, out _)) return;
 
         SetTimeDisplay();
         SetSliderMaxToAll();
         SetDoublerActive();
         doubleTap = false;
+    }
+
+    private bool TrySpendOfflineTime(double requestedSeconds, out double spentSeconds)
+    {
+        spentSeconds = 0;
+        if (!HasSaveSettings()) return false;
+        if (requestedSeconds <= 0 || ss.offlineTime <= 0) return false;
+
+        spentSeconds = Math.Min(requestedSeconds, ss.offlineTime);
+        _gameManager.RunAwayTime(spentSeconds);
+        ss.offlineTime -= spentSeconds;
+        ss.offlineTimeUsedThisInfinity += spentSeconds;
+        return true;
     }
 
     private void SetQuickButtonsInteractable()
