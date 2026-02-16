@@ -51,6 +51,8 @@ using UnityEditor;
  * - Infinity reset boundary ordering must keep offline usage rollover before Infinity data is reinitialized.
  * - Parity formulas in debug helpers must track runtime formula ordering exactly, or false-positive parity deltas appear.
  * - Debug contribution ids/order are used for diagnosis; keep labels stable when adjusting formulas.
+ * - Startup frame cap fallback defaults to 60 FPS when saveSettings.frameRate is unset (0); keep this aligned
+ *   with player-facing FPS controls and defaults if changed.
  * - Changes here do not migrate saves directly but can change interpretation of existing save-state numbers.
  * - Lifecycle callbacks are routed through RuntimeSeams; callback policy changes must stay aligned with
  *   OfflineLifecycleCoordinator tests.
@@ -277,9 +279,9 @@ private void PackSettingsFlags()
             Load();
             Loaded = true;
             Application.targetFrameRate =
-                saveSettings.frameRate != 0
+                saveSettings.frameRate > 0
                     ? saveSettings.frameRate
-                    : Mathf.RoundToInt((float)Screen.currentResolution.refreshRateRatio.value);
+                    : 60;
             bool doubleIpUnlocked = saveSettings.doubleIp || PlayerPrefs.GetInt("doubleip", 0) == 1;
             saveSettings.doubleIp = doubleIpUnlocked;
             if (saveSettings.doubleIp) PlayerPrefs.SetInt("doubleip", 1);

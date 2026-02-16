@@ -23,13 +23,14 @@ Primary entry points:
 - UI input: Clicked, RightClicked, OnPointerClick.
 - Refresh path: UpdateSkill (from local and global update events).
 - Mutations: PurchaseSkill, ResetSkills.
+- Confirmation read API: TryGetNotRefundableReasonLabel.
 
 Interacts with:
 - Calls into: Expansion.Oracle (save data, ownership reads/writes, events, auto-assign APIs), GameDataRegistry/
   SkillDatabase/SkillDefinition (skill metadata), SkillTreeConfirmationManager (description/confirm modal),
   UIThemeProvider/UITheme (color sets), GameManager and DebugOptions update events.
 - Called by: Unity UI Button events, Unity lifecycle, Oracle/GameManager/DebugOptions skill update events,
-  and other systems that invoke SkillTreeManager.UpdateSkills.
+  SkillTreeConfirmationManager (reason label queries), and other systems that invoke SkillTreeManager.UpdateSkills.
 
 Change notes:
 - Serialized references (skillButton, purchasedImage, texts, ids/keys) are scene/prefab wired; renames require
@@ -38,6 +39,10 @@ Change notes:
   without the others can allow visual state and purchase rules to diverge.
 - skillKey/SkillId/SkillDefinition mapping relies on SkillIdMap + SkillDatabase + Oracle skill flags; ID changes
   must be coordinated with save data migration and any ScriptableObject ID updates.
+- Effective non-refundable visuals and labels are computed from direct refundable flags, dynamic unrefundable locks,
+  and transitive required-skill ancestry of assigned direct non-refundable skills; changing that contract affects both
+  node coloring and confirmation warnings. Owned refundable/non-refundable skills use dedicated button color sets and
+  the purchased overlay is kept hidden.
 */
 [SelectionBase]
 public class SkillTreeManager : MonoBehaviour, IPointerClickHandler
@@ -62,9 +67,22 @@ public class SkillTreeManager : MonoBehaviour, IPointerClickHandler
     {
         NoRequired,
         Fragment,
+        Owned,
+        NonRefundable,
+        NonRefundableOwned,
         Normal,
         ExclusiveLock
     }
+
+    private enum NotRefundableReasonType
+    {
+        None,
+        DirectIntrinsic,
+        DirectDynamicLock,
+        RequiredByDirectNonRefundableSkill
+    }
+
+    private const string NotRefundableWithRequiredSkillsLabel = "Not Refundable (Including Required Skills)";
 
     private static readonly UITheme.SkillTreeButtonColors FallbackNoRequiredColors = new UITheme.SkillTreeButtonColors
     {
@@ -89,6 +107,31 @@ public class SkillTreeManager : MonoBehaviour, IPointerClickHandler
         disabled = new Color(0.2784314f, 0.21176471f, 0.34509805f),
         notPurchasableNormal = new Color(0.2784314f, 0.21176471f, 0.34509805f)
     };
+
+    private static readonly UITheme.SkillTreeButtonColors FallbackOwnedColors = new UITheme.SkillTreeButtonColors
+    {
+        normal = new Color(0.32941177f, 0.67058825f, 0.32941177f),
+        pressed = new Color(0.239f, 0.49f, 0.239f),
+        disabled = new Color(0.17f, 0.34f, 0.17f),
+        notPurchasableNormal = new Color(0.17f, 0.34f, 0.17f)
+    };
+
+    private static readonly UITheme.SkillTreeButtonColors FallbackNonRefundableColors = new UITheme.SkillTreeButtonColors
+    {
+        normal = new Color(0.45f, 0.18f, 0.18f),
+        pressed = new Color(0.35f, 0.12f, 0.12f),
+        disabled = new Color(0.22f, 0.08f, 0.08f),
+        notPurchasableNormal = new Color(0.22f, 0.08f, 0.08f)
+    };
+
+    private static readonly UITheme.SkillTreeButtonColors FallbackNonRefundableOwnedColors =
+        new UITheme.SkillTreeButtonColors
+        {
+            normal = new Color(0.75f, 0.2f, 0.2f),
+            pressed = new Color(0.55f, 0.12f, 0.12f),
+            disabled = new Color(0.35f, 0.08f, 0.08f),
+            notPurchasableNormal = new Color(0.35f, 0.08f, 0.08f)
+        };
 
     private static readonly UITheme.SkillTreeButtonColors FallbackExclusiveLockColors = new UITheme.SkillTreeButtonColors
     {
@@ -203,6 +246,25 @@ public class SkillTreeManager : MonoBehaviour, IPointerClickHandler
     public SkillDefinition Definition => ResolveSkillDefinition();
 
     public bool IsOwned => IsOwnedInternal();
+
+    public bool TryGetNotRefundableReasonLabel(out string label)
+    {
+        if (!TryResolveNotRefundableReason(out NotRefundableReasonType reasonType, out string reasonSkillId))
+        {
+            label = null;
+            return false;
+        }
+
+        label = reasonType switch
+        {
+            NotRefundableReasonType.DirectIntrinsic => NotRefundableWithRequiredSkillsLabel,
+            NotRefundableReasonType.DirectDynamicLock => $"Not Refundable (Due to: {ResolveSkillName(reasonSkillId)})",
+            NotRefundableReasonType.RequiredByDirectNonRefundableSkill =>
+                $"Not Refundable (Required by: {ResolveSkillName(reasonSkillId)})",
+            _ => NotRefundableWithRequiredSkillsLabel
+        };
+        return true;
+    }
 
     private SkillDefinition ResolveSkillDefinition()
     {
@@ -325,6 +387,162 @@ public class SkillTreeManager : MonoBehaviour, IPointerClickHandler
         }
 
         return refundable;
+    }
+
+    private bool IsEffectivelyNotRefundable()
+    {
+        return TryResolveNotRefundableReason(out _, out _);
+    }
+
+    private bool TryResolveNotRefundableReason(out NotRefundableReasonType reasonType, out string reasonSkillId)
+    {
+        reasonType = NotRefundableReasonType.None;
+        reasonSkillId = null;
+
+        SkillDefinition definition = ResolveSkillDefinition();
+        if (definition == null) return false;
+
+        if (!definition.refundable)
+        {
+            reasonType = NotRefundableReasonType.DirectIntrinsic;
+            return true;
+        }
+
+        if (TryGetDynamicLockingSkillId(definition, out string lockingSkillId))
+        {
+            reasonType = NotRefundableReasonType.DirectDynamicLock;
+            reasonSkillId = lockingSkillId;
+            return true;
+        }
+
+        string currentSkillId = ResolveSkillId();
+        if (TryGetRequiringDirectNonRefundableSkillId(currentSkillId, out string requiringSkillId))
+        {
+            reasonType = NotRefundableReasonType.RequiredByDirectNonRefundableSkill;
+            reasonSkillId = requiringSkillId;
+            return true;
+        }
+
+        return false;
+    }
+
+    private bool TryGetDynamicLockingSkillId(SkillDefinition definition, out string lockingSkillId)
+    {
+        lockingSkillId = null;
+        if (definition == null || definition.unrefundableWithIds == null || definition.unrefundableWithIds.Length == 0)
+            return false;
+        if (!IsOwnedInternal()) return false;
+
+        foreach (string otherId in definition.unrefundableWithIds)
+        {
+            if (string.IsNullOrEmpty(otherId)) continue;
+            if (!oracle.IsSkillOwned(otherId)) continue;
+            lockingSkillId = otherId;
+            return true;
+        }
+
+        return false;
+    }
+
+    private bool TryGetRequiringDirectNonRefundableSkillId(string currentSkillId, out string requiringSkillId)
+    {
+        requiringSkillId = null;
+        if (string.IsNullOrEmpty(currentSkillId)) return false;
+        if (!IsOwnedInternal()) return false;
+
+        GameDataRegistry registry = GameDataRegistry.Instance;
+        SkillDatabase database = registry != null ? registry.skillDatabase : null;
+        if (database != null && database.skills != null && database.skills.Count > 0)
+        {
+            foreach (SkillDefinition candidate in database.skills)
+            {
+                if (candidate == null || string.IsNullOrEmpty(candidate.id)) continue;
+                if (candidate.refundable) continue;
+                if (!oracle.IsSkillOwned(candidate.id)) continue;
+                if (candidate.id == currentSkillId) continue;
+                if (!IsInRequiredChain(candidate.id, currentSkillId, database)) continue;
+
+                requiringSkillId = candidate.id;
+                return true;
+            }
+
+            return false;
+        }
+
+        if (oracle == null || oracle.allSkillTreeManagers == null) return false;
+        foreach (SkillTreeManager manager in oracle.allSkillTreeManagers)
+        {
+            if (manager == null || manager == this) continue;
+            string candidateSkillId = manager.SkillId;
+            if (string.IsNullOrEmpty(candidateSkillId) || candidateSkillId == currentSkillId) continue;
+            if (!manager.IsOwned) continue;
+            SkillDefinition candidateDefinition = manager.Definition;
+            if (candidateDefinition == null || candidateDefinition.refundable) continue;
+            if (!IsInRequiredChain(candidateSkillId, currentSkillId, null)) continue;
+
+            requiringSkillId = candidateSkillId;
+            return true;
+        }
+
+        return false;
+    }
+
+    private bool IsInRequiredChain(string rootSkillId, string targetSkillId, SkillDatabase database)
+    {
+        if (string.IsNullOrEmpty(rootSkillId) || string.IsNullOrEmpty(targetSkillId)) return false;
+        HashSet<string> visited = new HashSet<string>(StringComparer.Ordinal) { rootSkillId };
+        Queue<string> toVisit = new Queue<string>();
+        toVisit.Enqueue(rootSkillId);
+
+        while (toVisit.Count > 0)
+        {
+            string current = toVisit.Dequeue();
+            string[] requiredIds = GetRequiredIdsBySkillId(current, database);
+            if (requiredIds == null || requiredIds.Length == 0) continue;
+
+            foreach (string requiredId in requiredIds)
+            {
+                if (string.IsNullOrEmpty(requiredId)) continue;
+                if (requiredId == targetSkillId) return true;
+                if (!visited.Add(requiredId)) continue;
+                toVisit.Enqueue(requiredId);
+            }
+        }
+
+        return false;
+    }
+
+    private string[] GetRequiredIdsBySkillId(string id, SkillDatabase database)
+    {
+        if (string.IsNullOrEmpty(id)) return null;
+        if (database != null && database.TryGet(id, out SkillDefinition definition))
+        {
+            return definition.requiredSkillIds;
+        }
+
+        if (oracle == null || oracle.allSkillTreeManagers == null) return null;
+        foreach (SkillTreeManager manager in oracle.allSkillTreeManagers)
+        {
+            if (manager == null) continue;
+            if (!string.Equals(manager.SkillId, id, StringComparison.Ordinal)) continue;
+            return manager.GetRequiredSkillIds();
+        }
+
+        return null;
+    }
+
+    private string ResolveSkillName(string id)
+    {
+        if (string.IsNullOrEmpty(id)) return string.Empty;
+        GameDataRegistry registry = GameDataRegistry.Instance;
+        if (registry != null && registry.skillDatabase != null &&
+            registry.skillDatabase.TryGet(id, out SkillDefinition definition) &&
+            !string.IsNullOrEmpty(definition.displayName))
+        {
+            return definition.displayName;
+        }
+
+        return id;
     }
 
     private List<string> GetOwnedDependentSkillIdsRecursive(string rootId)
@@ -562,7 +780,7 @@ public class SkillTreeManager : MonoBehaviour, IPointerClickHandler
     private void UpdateSkill()
     {
         EnableSKills();
-        purchasedImage.SetActive(false);
+        if (purchasedImage != null) purchasedImage.SetActive(false);
         if (ResolveSkillDefinition() == null)
         {
             skillButton.interactable = false;
@@ -580,7 +798,8 @@ public class SkillTreeManager : MonoBehaviour, IPointerClickHandler
                               && AreRequirementsMet(shadowIds)
                               && skillTreeData.skillPointsTree >= cost
                               && !exclusiveOwned;
-        SkillTreeColorType colorType = ResolveCurrentColorType(exclusiveOwned);
+        bool isEffectivelyNotRefundable = IsEffectivelyNotRefundable();
+        SkillTreeColorType colorType = ResolveCurrentColorType(exclusiveOwned, isEffectivelyNotRefundable, owned);
         bool useNotPurchasableVisual = !oracle.saveSettings.skillsBuyOnTap && !owned && !canPurchaseNow;
 
         if (oracle.saveSettings.skillsBuyOnTap)
@@ -588,7 +807,6 @@ public class SkillTreeManager : MonoBehaviour, IPointerClickHandler
             if (owned)
             {
                 available = false;
-                purchasedImage.SetActive(true);
             }
             else
             {
@@ -598,19 +816,18 @@ public class SkillTreeManager : MonoBehaviour, IPointerClickHandler
             }
             if (exclusiveOwned) available = false;
         }
-        else
-        {
-            if (owned) purchasedImage.SetActive(true);
-        }
 
         ApplySkillButtonColors(colorType, useNotPurchasableVisual);
         skillButton.interactable = oracle.saveSettings.skillsBuyOnTap ? available : true;
         ApplySkills?.Invoke();
     }
 
-    private SkillTreeColorType ResolveCurrentColorType(bool exclusiveOwned)
+    private SkillTreeColorType ResolveCurrentColorType(bool exclusiveOwned, bool isEffectivelyNotRefundable, bool owned)
     {
         if (exclusiveOwned) return SkillTreeColorType.ExclusiveLock;
+        if (isEffectivelyNotRefundable && owned) return SkillTreeColorType.NonRefundableOwned;
+        if (isEffectivelyNotRefundable) return SkillTreeColorType.NonRefundable;
+        if (owned) return SkillTreeColorType.Owned;
         if (GetIsFragment()) return SkillTreeColorType.Fragment;
         string[] requiredIds = GetRequiredSkillIds();
         if (requiredIds == null || requiredIds.Length == 0) return SkillTreeColorType.NoRequired;
@@ -647,27 +864,16 @@ public class SkillTreeManager : MonoBehaviour, IPointerClickHandler
     private UITheme.SkillTreeButtonColors ResolveSkillTreeColors(SkillTreeColorType colorType)
     {
         UITheme theme = UIThemeProvider.ActiveTheme;
-        if (theme != null
-            && theme.skillTreeNoRequired != null
-            && theme.skillTreeFragment != null
-            && theme.skillTreeNormal != null
-            && theme.skillTreeExclusiveLock != null)
-        {
-            return colorType switch
-            {
-                SkillTreeColorType.NoRequired => theme.skillTreeNoRequired,
-                SkillTreeColorType.Fragment => theme.skillTreeFragment,
-                SkillTreeColorType.ExclusiveLock => theme.skillTreeExclusiveLock,
-                _ => theme.skillTreeNormal
-            };
-        }
-
         return colorType switch
         {
-            SkillTreeColorType.NoRequired => FallbackNoRequiredColors,
-            SkillTreeColorType.Fragment => FallbackFragmentColors,
-            SkillTreeColorType.ExclusiveLock => FallbackExclusiveLockColors,
-            _ => FallbackNormalColors
+            SkillTreeColorType.NoRequired => theme?.skillTreeNoRequired ?? FallbackNoRequiredColors,
+            SkillTreeColorType.Fragment => theme?.skillTreeFragment ?? FallbackFragmentColors,
+            SkillTreeColorType.Owned => theme?.skillTreeOwned ?? FallbackOwnedColors,
+            SkillTreeColorType.NonRefundable => theme?.skillTreeNonRefundable ?? FallbackNonRefundableColors,
+            SkillTreeColorType.NonRefundableOwned =>
+                theme?.skillTreeNonRefundableOwned ?? FallbackNonRefundableOwnedColors,
+            SkillTreeColorType.ExclusiveLock => theme?.skillTreeExclusiveLock ?? FallbackExclusiveLockColors,
+            _ => theme?.skillTreeNormal ?? FallbackNormalColors
         };
     }
 

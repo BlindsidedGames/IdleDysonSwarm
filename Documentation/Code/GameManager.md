@@ -41,6 +41,7 @@
     are rendered at small text size (`<size=80%>`).
   - Skill rows are rendered at small text size with bold skill names.
   - `s/IP` is rendered with `showDecimal: true` to preserve sub-second precision.
+  - `Run Time` (`Current`/`Previous`) rows are also rendered with `showDecimal: true` for sub-second precision.
 
 ## Save / Load Implications
 - Mutates values in save-backed structures through `Oracle` references, so runtime changes persist into future saves.
@@ -61,5 +62,6 @@
    - total bots
 3. Verify values still increment correctly over time and no TMP rich-text warnings/errors appear in console.
 4. Spend offline time and confirm the blue side-panel run-info block updates:
+   - `Run Time` `Current`/`Previous` values show decimal seconds when sub-second precision exists.
    - `Offline Time Used (This Infinity)` increases by spent seconds.
    - `Offline Time Used (Previous Infinity)` remains unchanged until the next Infinity reset.
