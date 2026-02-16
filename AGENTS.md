@@ -27,6 +27,7 @@ If multiple interpretations are plausible, enumerate the competing interpretatio
 - `Assets/Scenes/` game scenes (e.g., `Load.unity`, `Game.unity`).
 - `Assets/Scripts/` gameplay and UI code.
   - `Assets/Scripts/Systems/` core gameplay systems, stats, facilities, migrations, platform, audio.
+    - `Assets/Scripts/Systems/Save/` canonical save pipeline, lifecycle/offline-time seams (`IClock`, `ISaveStore`, `ILifecycleEvents`), recovery helpers.
   - `Assets/Scripts/Services/` service layer + service locator.
   - `Assets/Scripts/Data/` ScriptableObject definitions, IDs, and condition system.
   - `Assets/Scripts/Buildings/` building logic and presenters.
@@ -65,6 +66,7 @@ If multiple interpretations are plausible, enumerate the competing interpretatio
 - Primary source code lives in `Assets/Scripts/` and `Assets/Editor/`.
 - Avoid modifying third-party code under `Assets/Plugins/` unless explicitly requested.
 - Console log buffer lives in `Assets/Editor/ConsoleLogBuffer.cs` and writes filtered logs to `Documentation/Console/editor-console.json`. Filters/clear: `Tools/Console Log Buffer/...`.
+- Offline progression lifecycle routing now flows through `Assets/Scripts/Expansion/Oracle.RuntimeSeams.cs` + `Assets/Scripts/Systems/Save/OfflineLifecycleCoordinator.cs`; keep `Documentation/Code/OfflineProgressExecutionMap.md` updated when this wiring changes.
 
 ## Documentation maintenance (required)
 When editing any script (C# under `Assets/Scripts/**` or `Assets/Editor/**`, plus any build/tooling scripts in-repo), do a documentation pass as part of the same change.

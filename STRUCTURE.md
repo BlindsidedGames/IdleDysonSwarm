@@ -10,6 +10,7 @@
 - `Assets/Scenes/` game scenes (`Load.unity`, `Game.unity`).
 - `Assets/Scripts/` gameplay code.
   - `Assets/Scripts/Systems/` core gameplay loop, production, UI helpers.
+    - `Assets/Scripts/Systems/Save/` canonical save pipeline, storage adapters, and offline/lifecycle seam abstractions.
   - `Assets/Scripts/Expansion/` Oracle, research, and Dream1 era systems.
   - `Assets/Scripts/Buildings/` building logic and UI managers.
   - `Assets/Scripts/SkillTresStuff/` skill tree logic and UI.
