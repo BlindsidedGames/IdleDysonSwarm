@@ -36,6 +36,8 @@ namespace Expansion
     /// <c>Assets/Scripts/Expansion/Oracle.Migrations.cs</c>.</para>
     /// <para>Change notes:
     /// changing legacy keys/paths (<c>saveSettings</c>, <c>.idsOdin</c>, canonical file path) can strand old saves;
+    /// lifecycle-triggered saves are routed through <c>SaveForLifecycleTrigger(LifecycleSaveTrigger)</c>, so trigger
+    /// enum changes must stay aligned with <c>Oracle.RuntimeSeams</c> and <c>OfflineLifecycleCoordinator</c>;
     /// loading/importing a save does not automatically reconcile skill points (manual tool in
     /// <c>Assets/Scripts/Expansion/Oracle.SkillPoints.cs</c>).</para>
     /// </remarks>
@@ -202,6 +204,14 @@ namespace Expansion
 
         public void SaveForQuit()
         {
+            SaveForLifecycleTrigger(LifecycleSaveTrigger.Quit);
+        }
+
+        private void SaveForLifecycleTrigger(LifecycleSaveTrigger trigger)
+        {
+            string phase = GetLifecyclePhaseLabel(trigger);
+            bool updateQuitTime = ShouldUpdateQuitTimestamp(trigger);
+
             if (!_isSaveReady || !Loaded || saveSettings == null)
             {
                 string reason = "unknown";
@@ -210,13 +220,24 @@ namespace Expansion
                 else if (!Loaded) reason = "not_loaded";
 
                 Debug.LogWarning(
-                    $"[OfflineTimeDiag] SaveForQuitBlocked | phase=SaveForQuit, platform={Application.platform}, " +
+                    $"[OfflineTimeDiag] SaveForQuitBlocked | phase={phase}, platform={Application.platform}, " +
                     $"reason={reason}, ready={_isSaveReady.ToString().ToLowerInvariant()}, loaded={Loaded.ToString().ToLowerInvariant()}, " +
                     $"dateQuitBefore='{FormatDebugString(saveSettings?.dateQuitString)}'");
                 return;
             }
 
-            SaveInternal(force: false, updateQuitTime: true);
+            SaveInternal(force: false, updateQuitTime: updateQuitTime);
+        }
+
+        private static bool ShouldUpdateQuitTimestamp(LifecycleSaveTrigger trigger)
+        {
+            return trigger switch
+            {
+                LifecycleSaveTrigger.Pause => true,
+                LifecycleSaveTrigger.FocusLost => true,
+                LifecycleSaveTrigger.Quit => true,
+                _ => false
+            };
         }
 
         private void SetDateQuitString(string value, bool isQuitTimestamp = false)

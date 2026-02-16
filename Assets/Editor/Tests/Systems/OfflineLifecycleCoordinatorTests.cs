@@ -17,6 +17,7 @@ using Systems.Save;
  *
  * Change notes:
  * - Any lifecycle policy changes in OfflineLifecycleCoordinator should update expected phase/order assertions here.
+ * - Focus-loss save behavior is platform policy; keep both enabled/disabled expectations covered.
  */
 namespace Tests.Systems
 {
@@ -27,21 +28,22 @@ namespace Tests.Systems
         public void FocusLostPauseQuit_TriggersSaveForEachLifecycleEvent()
         {
             var lifecycleEvents = new ManualLifecycleEvents();
-            var savePhases = new List<string>();
+            var savePhases = new List<LifecycleSaveTrigger>();
             int reloadCount = 0;
 
             using var coordinator = new OfflineLifecycleCoordinator(
                 lifecycleEvents,
                 phase => savePhases.Add(phase),
                 () => reloadCount++,
-                reloadOnFocusGain: false);
+                reloadOnFocusGain: false,
+                saveOnFocusLoss: true);
 
             lifecycleEvents.RaiseFocusChanged(false);
             lifecycleEvents.RaisePauseChanged(true);
             lifecycleEvents.RaiseQuitRequested();
 
             CollectionAssert.AreEqual(
-                new[] { "OnApplicationFocusLost", "OnApplicationPause", "OnApplicationQuit" },
+                new[] { LifecycleSaveTrigger.FocusLost, LifecycleSaveTrigger.Pause, LifecycleSaveTrigger.Quit },
                 savePhases);
             Assert.AreEqual(0, reloadCount);
         }
@@ -50,20 +52,21 @@ namespace Tests.Systems
         public void PauseTruePauseFalseQuit_OnlyPauseTrueAndQuitTriggerSave()
         {
             var lifecycleEvents = new ManualLifecycleEvents();
-            var savePhases = new List<string>();
+            var savePhases = new List<LifecycleSaveTrigger>();
 
             using var coordinator = new OfflineLifecycleCoordinator(
                 lifecycleEvents,
                 phase => savePhases.Add(phase),
                 () => { },
-                reloadOnFocusGain: false);
+                reloadOnFocusGain: false,
+                saveOnFocusLoss: false);
 
             lifecycleEvents.RaisePauseChanged(true);
             lifecycleEvents.RaisePauseChanged(false);
             lifecycleEvents.RaiseQuitRequested();
 
             CollectionAssert.AreEqual(
-                new[] { "OnApplicationPause", "OnApplicationQuit" },
+                new[] { LifecycleSaveTrigger.Pause, LifecycleSaveTrigger.Quit },
                 savePhases);
         }
 
@@ -71,14 +74,15 @@ namespace Tests.Systems
         public void RapidFocusToggles_RequestsSaveOnlyOnFocusLoss()
         {
             var lifecycleEvents = new ManualLifecycleEvents();
-            var savePhases = new List<string>();
+            var savePhases = new List<LifecycleSaveTrigger>();
             int reloadCount = 0;
 
             using var coordinator = new OfflineLifecycleCoordinator(
                 lifecycleEvents,
                 phase => savePhases.Add(phase),
                 () => reloadCount++,
-                reloadOnFocusGain: false);
+                reloadOnFocusGain: false,
+                saveOnFocusLoss: true);
 
             lifecycleEvents.RaiseFocusChanged(false);
             lifecycleEvents.RaiseFocusChanged(true);
@@ -86,7 +90,7 @@ namespace Tests.Systems
             lifecycleEvents.RaiseFocusChanged(true);
 
             CollectionAssert.AreEqual(
-                new[] { "OnApplicationFocusLost", "OnApplicationFocusLost" },
+                new[] { LifecycleSaveTrigger.FocusLost, LifecycleSaveTrigger.FocusLost },
                 savePhases);
             Assert.AreEqual(0, reloadCount);
         }
@@ -102,7 +106,8 @@ namespace Tests.Systems
                 lifecycleEvents,
                 _ => saveCount++,
                 () => reloadCount++,
-                reloadOnFocusGain: true);
+                reloadOnFocusGain: true,
+                saveOnFocusLoss: true);
 
             lifecycleEvents.RaiseFocusChanged(true);
             lifecycleEvents.RaiseFocusChanged(false);
@@ -123,7 +128,8 @@ namespace Tests.Systems
                 lifecycleEvents,
                 _ => saveCount++,
                 () => reloadCount++,
-                reloadOnFocusGain: true);
+                reloadOnFocusGain: true,
+                saveOnFocusLoss: true);
 
             coordinator.Dispose();
 
@@ -134,6 +140,24 @@ namespace Tests.Systems
 
             Assert.AreEqual(0, saveCount);
             Assert.AreEqual(0, reloadCount);
+        }
+
+        [Test]
+        public void FocusLossDisabled_DoesNotRequestSave()
+        {
+            var lifecycleEvents = new ManualLifecycleEvents();
+            int saveCount = 0;
+
+            using var coordinator = new OfflineLifecycleCoordinator(
+                lifecycleEvents,
+                _ => saveCount++,
+                () => { },
+                reloadOnFocusGain: false,
+                saveOnFocusLoss: false);
+
+            lifecycleEvents.RaiseFocusChanged(false);
+
+            Assert.AreEqual(0, saveCount);
         }
     }
 }
