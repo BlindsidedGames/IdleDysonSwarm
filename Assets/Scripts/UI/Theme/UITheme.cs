@@ -23,7 +23,8 @@ namespace IdleDysonSwarm.UI
     Change notes:
     - Serialized field names are asset schema; renames require migration of existing UITheme assets.
     - SkillTreeButtonColors additions/changes must remain compatible with existing theme assets loaded from
-      Resources/DefaultUITheme.asset.
+      Resources/DefaultUITheme.asset; newly added groups (for example owned and non-refundable variants) must have
+      safe defaults.
     - If defaults change here, verify both fallback behavior and any authored UITheme assets so visuals remain
       intentional.
     */
@@ -123,6 +124,30 @@ namespace IdleDysonSwarm.UI
             pressed = new Color(0.29803923f, 0.29803923f, 0.29803923f),
             disabled = new Color(0.2f, 0.2f, 0.2f),
             notPurchasableNormal = new Color(0.2f, 0.2f, 0.2f)
+        };
+
+        public SkillTreeButtonColors skillTreeOwned = new SkillTreeButtonColors
+        {
+            normal = new Color(0.32941177f, 0.67058825f, 0.32941177f),
+            pressed = new Color(0.239f, 0.49f, 0.239f),
+            disabled = new Color(0.17f, 0.34f, 0.17f),
+            notPurchasableNormal = new Color(0.17f, 0.34f, 0.17f)
+        };
+
+        public SkillTreeButtonColors skillTreeNonRefundable = new SkillTreeButtonColors
+        {
+            normal = new Color(0.45f, 0.18f, 0.18f),
+            pressed = new Color(0.35f, 0.12f, 0.12f),
+            disabled = new Color(0.22f, 0.08f, 0.08f),
+            notPurchasableNormal = new Color(0.22f, 0.08f, 0.08f)
+        };
+
+        public SkillTreeButtonColors skillTreeNonRefundableOwned = new SkillTreeButtonColors
+        {
+            normal = new Color(0.75f, 0.2f, 0.2f),
+            pressed = new Color(0.55f, 0.12f, 0.12f),
+            disabled = new Color(0.35f, 0.08f, 0.08f),
+            notPurchasableNormal = new Color(0.35f, 0.08f, 0.08f)
         };
 
         // Cached rich text color tags for performance

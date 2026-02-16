@@ -7,6 +7,31 @@ using UnityEngine;
 using UnityEngine.UI;
 using static Expansion.Oracle;
 
+/*
+Purpose:
+- Controls the skill confirmation popup: title/description/cost text, assign/unassign button states, auto-assign
+  actions, and not-refundable warning messaging.
+
+Where it runs:
+- Runtime on the skill tree confirmation panel object.
+
+Primary entry points:
+- Unity lifecycle: Start.
+- Popup flow: SetPosition, SetTexts, CloseConfirm.
+- Button callbacks: RemoveSkillFromAutoAssign, AddSkillToAutoAssign.
+
+Interacts with:
+- Calls into: SkillTreeManager (selection context, purchase call, not-refundable reason labels), Oracle save APIs
+  (auto-assign list reads/writes), GameDataRegistry/SkillDatabase (fallback skill lookup).
+- Called by: SkillTreeManager.ShowConfirmation and Unity UI button events.
+
+Change notes:
+- Serialized fields map to prefab references in Panel.prefab; renames/type changes require prefab rewiring.
+- Not-refundable warning copy now comes from SkillTreeManager.TryGetNotRefundableReasonLabel; changing that method
+  changes popup text and warning visibility behavior.
+- Color arrays (normalColours, fragmentColours, nonRefundableColours) are popup-local presentation data and are
+  independent of the skill-node button colors sourced from UITheme.
+*/
 public class SkillTreeConfirmationManager : MonoBehaviour
 {
     [SerializeField] private GameManager _gameManager;
@@ -17,6 +42,7 @@ public class SkillTreeConfirmationManager : MonoBehaviour
     [SerializeField] private Button autoAssignRemovalButton;
     [SerializeField] private Button autoAssignAddButton;
     [SerializeField] private GameObject notRefundableMessage;
+    [SerializeField] private TMP_Text notRefundableMessageText;
     public TMP_Text confirmButtonText;
 
     [SerializeField] private TMP_Text nameText;
@@ -96,11 +122,23 @@ public class SkillTreeConfirmationManager : MonoBehaviour
             }
         }
 
-        bool refundable = definition == null || definition.refundable;
+        string notRefundableLabel = string.Empty;
+        bool isNotRefundable = false;
+        if (skillTreeManager != null)
+        {
+            isNotRefundable = skillTreeManager.TryGetNotRefundableReasonLabel(out notRefundableLabel);
+        }
         bool isFragment = definition != null && definition.isFragment;
+        bool isDirectIntrinsicNonRefundable = definition != null && !definition.refundable;
         bool owned = skillTreeManager.IsOwned;
 
-        notRefundableMessage.SetActive(!refundable);
+        notRefundableMessage.SetActive(isNotRefundable);
+        TMP_Text notRefundableText = ResolveNotRefundableMessageText();
+        if (notRefundableText != null)
+        {
+            notRefundableText.text = isNotRefundable ? notRefundableLabel : "Not Refundable";
+        }
+
         string skillId = skillTreeManager.SkillId;
         if (string.IsNullOrEmpty(skillId)) SkillIdMap.TryGetId(skillTreeManager.skillKey, out skillId);
         List<string> autoAssignIds = oracle.GetAutoAssignmentSkillIds();
@@ -110,7 +148,7 @@ public class SkillTreeConfirmationManager : MonoBehaviour
         nameText.text = name;
         descText.text = description;
         technicalDescText.text = technicalDescription;
-        if (isFragment && refundable)
+        if (isFragment && !isNotRefundable)
         {
             string fragmentPlusOrMinus = owned ? "-1" : "+1";
             cost +=
@@ -121,7 +159,7 @@ public class SkillTreeConfirmationManager : MonoBehaviour
 
         if (definition != null && definition.exclusiveWithIds != null)
         {
-            if (definition.exclusiveWithIds.Length >= 1 && !refundable)
+            if (definition.exclusiveWithIds.Length >= 1 && isDirectIntrinsicNonRefundable)
             {
                 bool makeComma = true;
 
@@ -141,13 +179,13 @@ public class SkillTreeConfirmationManager : MonoBehaviour
             }
         }
 
-        if (isFragment)
+        if (isFragment && !isNotRefundable)
         {
             foreach (Image image in highlights) image.color = fragmentColours[0];
             background.color = fragmentColours[1];
             background.OutlineColor = fragmentColours[0];
         }
-        else if (!refundable)
+        else if (isNotRefundable)
         {
             foreach (Image image in highlights) image.color = nonRefundableColours[0];
             background.color = nonRefundableColours[1];
@@ -161,6 +199,14 @@ public class SkillTreeConfirmationManager : MonoBehaviour
         }
 
         costText.text = cost;
+    }
+
+    private TMP_Text ResolveNotRefundableMessageText()
+    {
+        if (notRefundableMessageText != null) return notRefundableMessageText;
+        if (notRefundableMessage == null) return null;
+        notRefundableMessageText = notRefundableMessage.GetComponent<TMP_Text>();
+        return notRefundableMessageText;
     }
 
     private string ResolveSkillName(string id)
@@ -177,4 +223,3 @@ public class SkillTreeConfirmationManager : MonoBehaviour
         return id;
     }
 }
-
