@@ -11,11 +11,11 @@ namespace Expansion
      * Runs: Runtime (Oracle MonoBehaviour in scene) and editor tests that exercise seam-backed helpers.
      * Primary entry points:
      * - EnsureRuntimeSeamsInitialized()
-     * - OnLifecycleSaveRequested(string phase)
+     * - OnLifecycleSaveRequested(LifecycleSaveTrigger trigger)
      * - OnLifecycleReloadRequested()
      * Owns vs delegates:
      * - Owns dependency wiring and lifecycle coordinator subscription.
-     * - Delegates actual persistence to Oracle.SaveForQuit()/Oracle.Load() and Systems.Save abstractions.
+     * - Delegates actual persistence to Oracle.SaveForLifecycleTrigger()/Oracle.Load() and Systems.Save abstractions.
      *
      * Interacts with:
      * - Systems.Save.IClock/SystemClock
@@ -25,6 +25,7 @@ namespace Expansion
      *
      * Change notes:
      * - Lifecycle routing changes here affect save-on-background/quit behavior on all platforms.
+     * - Focus-loss save policy is mobile-only; desktop focus changes must not stamp quit timestamps.
      * - If seam initialization order changes, ensure Oracle.Awake still initializes before any save/load callback.
      */
     public partial class Oracle
@@ -52,7 +53,8 @@ namespace Expansion
                     _lifecycleEvents,
                     OnLifecycleSaveRequested,
                     OnLifecycleReloadRequested,
-                    ShouldReloadOnFocusGain());
+                    ShouldReloadOnFocusGain(),
+                    ShouldSaveOnFocusLoss());
             }
         }
 
@@ -70,13 +72,23 @@ namespace Expansion
 #endif
         }
 
-        private void OnLifecycleSaveRequested(string phase)
+        private static bool ShouldSaveOnFocusLoss()
         {
+#if !UNITY_EDITOR && (UNITY_IOS || UNITY_ANDROID)
+            return true;
+#else
+            return false;
+#endif
+        }
+
+        private void OnLifecycleSaveRequested(LifecycleSaveTrigger trigger)
+        {
+            string phase = GetLifecyclePhaseLabel(trigger);
             Debug.LogWarning(
                 $"[OfflineTimeDiag] AppLifecycle | phase={phase}, platform={Application.platform}, " +
                 $"ready={_isSaveReady.ToString().ToLowerInvariant()}, loaded={Loaded.ToString().ToLowerInvariant()}, " +
                 $"dateQuitBefore='{FormatDebugString(saveSettings?.dateQuitString)}'");
-            SaveForQuit();
+            SaveForLifecycleTrigger(trigger);
         }
 
         private void OnLifecycleReloadRequested()
@@ -104,6 +116,17 @@ namespace Expansion
         {
             if (value == default) return "0001-01-01T00:00:00.0000000Z";
             return value.ToString("o", CultureInfo.InvariantCulture);
+        }
+
+        private static string GetLifecyclePhaseLabel(LifecycleSaveTrigger trigger)
+        {
+            return trigger switch
+            {
+                LifecycleSaveTrigger.Pause => "OnApplicationPause",
+                LifecycleSaveTrigger.FocusLost => "OnApplicationFocusLost",
+                LifecycleSaveTrigger.Quit => "OnApplicationQuit",
+                _ => "unknown"
+            };
         }
     }
 }

@@ -84,11 +84,29 @@ Any time you add a new system/service/subsystem, rename/move script folders, or 
 
 Do not do "documentation cleanup" inside `Assets/Plugins/**` unless explicitly requested; instead document integration points and expectations in our code (and optionally `Documentation/Code/`).
 
-## Steam build/upload (Windows)
-When asked to do a Windows Steam build/upload for Idle Dyson Swarm:
-- Ensure the Windows build output exists at `C:\Users\mattr\Documents\Unity\Builds\IdleDysonSwarm`.
-- Upload via SteamCMD using `C:\Users\mattr\Documents\steamcmd\Scripts\upload_idle_dyson_swarm_windows.bat`.
-- Steam AppID: `4348570`, Windows depot: `4348571`.
-- SteamCMD VDFs live at:
-  - `C:\Users\mattr\Documents\steamcmd\Scripts\app_build_4348570_windows.vdf`
-  - `C:\Users\mattr\Documents\steamcmd\Scripts\depot_build_4348571_windows.vdf`
+## Steam build/upload (Windows + Desktop)
+When asked to do a Steam build/upload for Idle Dyson Swarm:
+- Steam AppID: `4348570`.
+- Depot IDs:
+  - Windows: `4348571`
+  - Linux: `4348572`
+  - macOS: `4348573`
+
+Windows-only upload flow:
+- Ensure the Windows build output exists at `/Users/matthewrushworth/Builds/Idle Dyson Swarm/Windows`.
+- Upload via SteamCMD using `/Users/matthewrushworth/Builds/steamcmd/Scripts/idle-dyson-swarm/upload_idle_dyson_swarm_windows.sh`.
+- SteamCMD VDFs:
+  - `/Users/matthewrushworth/Builds/steamcmd/Scripts/idle-dyson-swarm/app_build_4348570_windows.vdf`
+  - `/Users/matthewrushworth/Builds/steamcmd/Scripts/idle-dyson-swarm/depot_build_4348571_windows.vdf`
+
+Desktop multi-depot upload flow:
+- Ensure build outputs exist at:
+  - `/Users/matthewrushworth/Builds/Idle Dyson Swarm/Windows`
+  - `/Users/matthewrushworth/Builds/Idle Dyson Swarm/Linux`
+  - `/Users/matthewrushworth/Builds/Idle Dyson Swarm/MacOS`
+- Upload via SteamCMD using `/Users/matthewrushworth/Builds/steamcmd/Scripts/idle-dyson-swarm/upload_idle_dyson_swarm_desktop.sh`.
+- SteamCMD VDFs:
+  - `/Users/matthewrushworth/Builds/steamcmd/Scripts/idle-dyson-swarm/app_build_4348570_desktop.vdf`
+  - `/Users/matthewrushworth/Builds/steamcmd/Scripts/idle-dyson-swarm/depot_build_4348571_windows.vdf`
+  - `/Users/matthewrushworth/Builds/steamcmd/Scripts/idle-dyson-swarm/depot_build_4348572_linux.vdf`
+  - `/Users/matthewrushworth/Builds/steamcmd/Scripts/idle-dyson-swarm/depot_build_4348573_macos.vdf`

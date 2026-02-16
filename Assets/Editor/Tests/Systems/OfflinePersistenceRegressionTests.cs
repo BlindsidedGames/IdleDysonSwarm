@@ -21,6 +21,7 @@ using Systems.Save;
  *
  * Change notes:
  * - If save timestamping or away-time application changes, keep this matrix aligned to avoid silent regressions.
+ * - This harness uses focus-loss save enabled to model mobile background behavior.
  */
 namespace Tests.Systems
 {
@@ -76,7 +77,7 @@ namespace Tests.Systems
             {
                 current.dateQuitString = clock.UtcNow.ToString(CultureInfo.InvariantCulture);
                 Assert.IsTrue(saveStore.TrySave(current, out _, out string saveError), saveError);
-            }, () => { }, reloadOnFocusGain: false);
+            }, () => { }, reloadOnFocusGain: false, saveOnFocusLoss: true);
 
             lifecycleEvents.RaiseFocusChanged(false);
             clock.UtcNow = clock.UtcNow.AddSeconds(awaySeconds);
