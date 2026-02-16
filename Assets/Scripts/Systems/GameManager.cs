@@ -37,6 +37,8 @@ using static Expansion.Oracle;
 ///   in short time form.
 /// - Timer value strings should pass <c>colourOverride</c> into <see cref="CalcUtils.FormatTime"/> rather than wrapping
 ///   the full output in a color tag, so unit suffixes remain uncolored.
+/// - Infinity section <c>Run Time</c> rows (`Current`/`Previous`) intentionally pass <c>showDecimal: true</c>
+///   to preserve sub-second precision in the side-panel stats block.
 /// - Stats ordering/section headers in <c>skillTimersDisplayText</c> are a UX contract:
 ///   bold General metrics, then bold Infinity section, then bold Skills section.
 /// - General metrics, s/IP, and Run/Offline Current/Previous rows use the same small text scale as skill detail lines.
@@ -898,9 +900,9 @@ public class GameManager : MonoBehaviour
             $"<br>{smallTextStart}s/IP: {CalcUtils.FormatTime(secondsPerIp, showDecimal: true, shortForm: true, mspace: false, colourOverride: scienceColor)}{smallTextEnd}";
         skillTimersDisplayText += $"{halfHeightBreak}{smallTextStart}<b>Run Time</b>";
         skillTimersDisplayText +=
-            $"<br>Current: {CalcUtils.FormatTime(CurrentRunTime(), shortForm: true, mspace: false, colourOverride: scienceColor)}";
+            $"<br>Current: {CalcUtils.FormatTime(CurrentRunTime(), showDecimal: true, shortForm: true, mspace: false, colourOverride: scienceColor)}";
         skillTimersDisplayText +=
-            $"<br>Previous: {CalcUtils.FormatTime(oracle.saveSettings.timeLastInfinity, shortForm: true, mspace: false, colourOverride: scienceColor)}{smallTextEnd}";
+            $"<br>Previous: {CalcUtils.FormatTime(oracle.saveSettings.timeLastInfinity, showDecimal: true, shortForm: true, mspace: false, colourOverride: scienceColor)}{smallTextEnd}";
 
         skillTimersDisplayText += $"{halfHeightBreak}{smallTextStart}<b>Offline Time Used</b>";
         skillTimersDisplayText +=
