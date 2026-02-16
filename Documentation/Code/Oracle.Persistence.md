@@ -2,13 +2,14 @@
 
 ## Contract / behavior expectations
 - `Load()` must prefer canonical save storage first (`idle_dyson_swarm_save.txt`) and only fall back to legacy sources when canonical load is missing or invalid.
+- Canonical load/save now routes through `ISaveStore` (default `CanonicalSaveStore`) rather than directly constructing `SaveSystem` at each call site.
 - Legacy fallback selection is version/timestamp/source-priority based through `SaveLoadCandidateSelector`.
 - If no candidate can be loaded and ES3 access was broken, legacy ES3 artifacts are archived as `.corrupt.*` for support triage.
 - If load succeeds from any legacy source, canonical save is immediately rewritten so subsequent launches avoid legacy paths.
 
 ## Data flow
 1. `Load()` resets in-memory state with `WipeSaveData()`.
-2. Attempts canonical load via `SaveSystem`.
+2. Attempts canonical load via `_saveStore` (`CanonicalSaveStore -> SaveSystem`).
 3. If needed, probes:
    - `ES3` default key (`saveSettings`),
    - `LegacyEs3Save.TryRecoverDefaultSave` (main + backup + archived artifacts),
@@ -18,18 +19,20 @@
 
 ## Offline timing diagnostics
 - Runtime emits `[OfflineTimeDiag]` warnings from:
-  - `Oracle.OnApplicationQuit`, `Oracle.OnApplicationFocus`, and `Oracle.OnApplicationPause` (platform/ready/loaded/dateQuit pre-save) via `SaveForQuit`
+  - `Oracle.RuntimeSeams` lifecycle router (`OnApplicationQuit`, `OnApplicationFocus`, `OnApplicationPause`) via `OfflineLifecycleCoordinator` -> `SaveForQuit`
   - `Oracle.SaveInternal` (save lifecycle snapshots when quit timestamp is updated or save fails)
-  - `Oracle.AwayForSeconds` (chosen source, parsed timestamps, and resolved away span)
+  - `Oracle.AwayForSeconds` via `OfflineAwayTimeCalculator` (chosen source, parsed timestamps, and resolved away span)
   - `Systems.OfflineProgressSystem.ApplyReturnValues` (pre/post `offlineTime` grant)
 
 ## Save lifecycle semantics
 - `Oracle.Save()` is a regular autosave path and **does not** update `dateQuitString`.
 - `Oracle.SaveForQuit()` writes the quit timestamp only when the runtime is ready + loaded (`_isSaveReady && Loaded && saveSettings != null`).
+- Quit timestamp writes now use `IClock.UtcNow` seam to support deterministic tests.
 - `Oracle.SaveForQuit()` is called from:
-  - `Oracle.OnApplicationQuit`
-  - `Oracle.OnApplicationFocus` when focus is lost (non-editor builds)
-  - `Oracle.OnApplicationPause` while paused (iOS/Android)
+  - `OfflineLifecycleCoordinator` callbacks from `Oracle` lifecycle events:
+    - `OnApplicationQuit`
+    - `OnApplicationFocus` when focus is lost (non-editor builds)
+    - `OnApplicationPause` while paused (iOS/Android)
 - `Oracle.SaveInternal` now uses `SetDateQuitString(string value, bool isQuitTimestamp = false)` to update `dateQuitString` only when `isQuitTimestamp` is explicitly true.
 - `Oracle.SaveForQuit()` now emits `[OfflineTimeDiag] SaveForQuitBlocked` when lifecycle persistence is attempted before readiness/loading and skips writing.
 
@@ -44,7 +47,11 @@
 - Keep heavy deserialization off hot loops; startup load path runs on app launch and scene entry.
 
 ## Quick verification steps
-1. Launch with valid canonical save: confirm `Loaded with canonical save file`.
-2. Remove canonical file but keep valid ES3 file: confirm ES3 fallback loads and canonical file is rewritten.
-3. Provide AES-encrypted `SaveFile.es3` legacy artifact: confirm recovery succeeds (no `unrecoverable` archive on first run with fix).
-4. With only invalid artifacts: confirm archive still occurs and a new save is created.
+1. Run EditMode headless tests:
+   - `OfflineAwayTimeCalculatorTests`
+   - `OfflineLifecycleCoordinatorTests`
+   - `OfflinePersistenceRegressionTests`
+2. Launch with valid canonical save: confirm `Loaded with canonical save file`.
+3. Remove canonical file but keep valid ES3 file: confirm ES3 fallback loads and canonical file is rewritten.
+4. Provide AES-encrypted `SaveFile.es3` legacy artifact: confirm recovery succeeds (no `unrecoverable` archive on first run with fix).
+5. With only invalid artifacts: confirm archive still occurs and a new save is created.

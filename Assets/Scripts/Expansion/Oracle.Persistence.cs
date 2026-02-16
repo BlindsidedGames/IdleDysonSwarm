@@ -24,11 +24,12 @@ namespace Expansion
     /// <para>Diagnostics: writes one tagged warning per save lifecycle event plus offline-time replay data via
     /// <see cref="AwayForSeconds"/>.</para>
     /// <para>Delegates: ES3 artifact probing to <see cref="LegacyEs3Save"/>, codec/storage to
-    /// <see cref="SaveCodec"/>/<see cref="SaveSystem"/>.</para>
+    /// <see cref="SaveCodec"/>/<see cref="SaveSystem"/>/<see cref="ISaveStore"/>.</para>
     /// Canonical persistence stores the exact same save string used by clipboard export/import (prefix <c>IDB1:</c>).
     /// <para>Codec: <see cref="SaveCodec"/>.</para>
     /// <para>Snapshot compaction: <see cref="SaveSnapshotBuilder"/>.</para>
-    /// <para>Persistence orchestration: <see cref="SaveSystem"/> + <see cref="OdinStringFileStorage"/>.</para>
+    /// <para>Persistence orchestration: <see cref="ISaveStore"/> (default: <see cref="CanonicalSaveStore"/> wrapping
+    /// <see cref="SaveSystem"/> + <see cref="OdinStringFileStorage"/>).</para>
     /// <para>Interacts with:
     /// callers include Unity lifecycle via <c>Oracle.Start()</c> and debug UI buttons; callees include
     /// <see cref="SaveLoadCandidateSelector"/>, <see cref="LegacyEs3Save"/>, and migration routines in
@@ -42,6 +43,7 @@ namespace Expansion
     {
         private void SaveInternal(bool force, bool updateQuitTime = false)
         {
+            EnsureRuntimeSeamsInitialized();
             if (!_isSaveReady && !force)
             {
                 if (updateQuitTime)
@@ -57,7 +59,7 @@ namespace Expansion
             if (updateQuitTime)
             {
                 dateSource = "updated";
-                SetDateQuitString(DateTime.UtcNow.ToString(CultureInfo.InvariantCulture), isQuitTimestamp: true);
+                SetDateQuitString(_clock.UtcNow.ToString(CultureInfo.InvariantCulture), isQuitTimestamp: true);
             }
 
             bool saved = TrySaveState(out string saveError);
@@ -225,6 +227,7 @@ namespace Expansion
 
         public bool TrySaveState(out string error)
         {
+            EnsureRuntimeSeamsInitialized();
             error = null;
             SaveDictionaries();
             PackSettingsFlags();
@@ -234,8 +237,7 @@ namespace Expansion
                 buildOwnedBitsetFromRuntime: BuildOwnedBitsetFromRuntime,
                 getAutoAssignmentSkillIds: GetAutoAssignmentSkillIds);
 
-            SaveSystem saveSystem = SaveSystem.CreateDefault();
-            if (!saveSystem.TrySave(snapshot, out _, out string saveError))
+            if (!_saveStore.TrySave(snapshot, out _, out string saveError))
             {
                 error = saveError;
                 Debug.LogError($"[Save] Failed writing canonical save file: {error}");
@@ -273,17 +275,19 @@ namespace Expansion
 
         private void ApplyLoadedSettings(SaveDataSettings loaded, string sourceLog)
         {
+            EnsureRuntimeSeamsInitialized();
             saveSettings = loaded;
             LoadDictionaries();
             if (!oracle.saveSettings.cheater && oracle.saveSettings.maxOfflineTime < 86400)
                 oracle.saveSettings.maxOfflineTime = 86400;
-            saveSettings.lastSuccessfulLoadUtc = DateTime.UtcNow.ToString(CultureInfo.InvariantCulture);
+            saveSettings.lastSuccessfulLoadUtc = _clock.UtcNow.ToString(CultureInfo.InvariantCulture);
             Loaded = true;
             Debug.Log($"Loaded with {sourceLog}");
         }
 
         public void Load()
         {
+            EnsureRuntimeSeamsInitialized();
             Loaded = false;
             SetSaveReady(false);
             WipeSaveData();
@@ -292,10 +296,9 @@ namespace Expansion
             // This path is intended to replace ES3 as the primary persistence mechanism, while ES3 remains
             // as a legacy import/fallback during the transition period.
             bool loadedFromCanonical = false;
-            SaveSystem saveSystem = SaveSystem.CreateDefault();
-            if (saveSystem.Storage.Exists())
+            if (_saveStore.Exists())
             {
-                if (saveSystem.TryLoad(out SaveDataSettings canonicalLoaded, out string canonicalError))
+                if (_saveStore.TryLoad(out SaveDataSettings canonicalLoaded, out string canonicalError))
                 {
                     loadedFromCanonical = true;
                     ApplyLoadedSettings(canonicalLoaded, "canonical save file");
@@ -385,7 +388,7 @@ namespace Expansion
 
             if (!Loaded)
             {
-                saveSettings.dateStarted = DateTime.UtcNow.ToString(CultureInfo.InvariantCulture);
+                saveSettings.dateStarted = _clock.UtcNow.ToString(CultureInfo.InvariantCulture);
                 Loaded = true;
                 Debug.Log("Made new save");
             }
@@ -433,44 +436,28 @@ namespace Expansion
 
         private void AwayForSeconds()
         {
-            if (string.IsNullOrEmpty(oracle.saveSettings.dateQuitString))
+            EnsureRuntimeSeamsInitialized();
+            OfflineAwayTimeCalculator.AwayTimeComputation computation = _awayTimeCalculator.Compute(oracle.saveSettings);
+            if (!computation.HasQuitTimestampInput)
             {
                 Debug.LogWarning($"[OfflineTimeDiag] AwayForSeconds | platform={Application.platform}, dateQuitString_missing=true");
                 return;
             }
-            DateTime dateStarted;
-            string dateSource = "quitString";
-            if (!DateTime.TryParse(oracle.saveSettings.dateQuitString, CultureInfo.InvariantCulture,
-                    DateTimeStyles.AssumeUniversal | DateTimeStyles.AdjustToUniversal, out dateStarted))
-            {
-                dateSource = "dateStartedFallback";
-                if (!DateTime.TryParse(oracle.saveSettings.dateStarted, CultureInfo.InvariantCulture,
-                        DateTimeStyles.AssumeUniversal | DateTimeStyles.AdjustToUniversal, out dateStarted))
-                {
-                    dateSource = "runtimeUtcFallback";
-                    dateStarted = DateTime.UtcNow;
-                }
-            }
 
-            DateTime dateNow = DateTime.UtcNow;
-            TimeSpan timespan = dateNow - dateStarted;
-            float seconds = (float)timespan.TotalSeconds;
-            float clampedSeconds = Math.Max(0, seconds);
             Debug.LogWarning(
                 "[OfflineTimeDiag] AwayForSeconds | " +
                     $"platform={Application.platform}, " +
-                    $"dateSource={dateSource}, " +
+                    $"dateSource={computation.SourceLabel}, " +
                 $"dateQuit='{FormatDebugString(oracle.saveSettings.dateQuitString)}', " +
                 $"dateStarted='{FormatDebugString(oracle.saveSettings.dateStarted)}', " +
-                $"resolvedStart='{FormatUtc(dateStarted)}', now='{FormatUtc(dateNow)}', " +
-                $"awayRawSeconds={seconds.ToString("F3", CultureInfo.InvariantCulture)}, " +
-                $"awayClampedSeconds={clampedSeconds.ToString("F3", CultureInfo.InvariantCulture)}, " +
+                $"resolvedStart='{FormatUtcForOfflineDiag(computation.ResolvedStartUtc)}', now='{FormatUtcForOfflineDiag(computation.NowUtc)}', " +
+                $"awayRawSeconds={computation.RawSeconds.ToString("F3", CultureInfo.InvariantCulture)}, " +
+                $"awayClampedSeconds={computation.ClampedSeconds.ToString("F3", CultureInfo.InvariantCulture)}, " +
                 $"offlineTime={saveSettings.offlineTime.ToString(CultureInfo.InvariantCulture)}, " +
                 $"maxOfflineTime={saveSettings.maxOfflineTime.ToString(CultureInfo.InvariantCulture)}, " +
                 $"doubleTimeBefore={saveSettings.sdPrestige.doubleTime.ToString(CultureInfo.InvariantCulture)}");
-            if (seconds < 0) seconds = 0;
-            saveSettings.sdPrestige.doubleTime += seconds;
-            AwayFor?.Invoke(seconds);
+            saveSettings.sdPrestige.doubleTime += computation.ClampedSeconds;
+            AwayFor?.Invoke(computation.ClampedSeconds);
         }
 
         private static string FormatDebugString(string value)
@@ -478,10 +465,6 @@ namespace Expansion
             return string.IsNullOrWhiteSpace(value) ? "n/a" : value;
         }
 
-        private static string FormatUtc(DateTime value)
-        {
-            if (value == default) return "0001-01-01T00:00:00.0000000Z";
-            return value.ToString("o", CultureInfo.InvariantCulture);
-        }
+        // FormatUtcForOfflineDiag moved to Oracle.RuntimeSeams.cs so all offline/lifecycle diagnostics share one formatter.
     }
 }

@@ -22,6 +22,8 @@ using static Expansion.Oracle;
  * Change notes:
  * - The meaning of infinityData.*Production fields is consumed by UI and offline simulation; keep naming/assignment
  *   semantics stable when adjusting formulas.
+ * - Facility card production fields for data centers/planets should represent the same total per-second amount that is
+ *   actually applied to resources each tick (avoid base-only display fields that diverge from runtime totals).
  * - Data center -> server production must remain strictly deltaTime-scaled in this system to avoid frame-rate
  *   dependent gains.
  * - Any formula changes here should be mirrored in Oracle parity/debug helpers and legacy bridge characterization.
@@ -115,11 +117,11 @@ namespace Systems
             if (skillTreeData.avocados && infinityData.planets[1] >= 69) baseProduction *= 2;
             if (skillTreeData.superchargedPower) baseProduction *= 1.5f;
 
-            infinityData.planetsDataCenterProduction = baseProduction;
-
             bool hasRuntime = FacilityRuntimeBuilder.TryBuildRuntime("planets", infinityData, prestigeData, skillTreeData, null,
                 out FacilityRuntime runtime);
             infinityData.dataCenterProduction = hasRuntime ? runtime.State.ProductionRate : 0;
+            // UI-facing "Planets -> Data Centers" should mirror applied gain, not base-only production.
+            infinityData.planetsDataCenterProduction = infinityData.dataCenterProduction;
 
             double dataCenterProductionTemp = skillTreeData.pocketDimensions && infinityData.workers > 1
                 ? Math.Log10(infinityData.workers)
@@ -177,21 +179,19 @@ namespace Systems
         public static void CalculateDataCenterProduction(DysonVerseInfinityData infinityData, DysonVerseSkillTreeData skillTreeData,
             DysonVersePrestigeData prestigeData, PrestigePlus prestigePlus, double deltaTime)
         {
-            double baseProduction;
             double finalProduction;
             if (FacilityRuntimeBuilder.TryBuildRuntime("data_centers", infinityData, prestigeData, skillTreeData, prestigePlus,
                     out FacilityRuntime runtime))
             {
                 finalProduction = runtime.State.ProductionRate;
-                baseProduction = finalProduction - infinityData.rudimentrySingularityProduction;
             }
             else
             {
-                baseProduction = 0;
                 finalProduction = 0;
             }
 
-            infinityData.dataCenterServerProduction = baseProduction;
+            // UI-facing "Data Centers -> Servers" should mirror applied gain, not base-only production.
+            infinityData.dataCenterServerProduction = finalProduction;
             infinityData.serverProduction = finalProduction;
             infinityData.servers[0] += infinityData.serverProduction * deltaTime;
         }

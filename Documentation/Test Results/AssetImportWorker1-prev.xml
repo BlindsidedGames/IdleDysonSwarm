@@ -1,0 +1,807 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="106" result="Failed(Child)" total="106" passed="102" failed="4" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-02-16 00:13:03Z" end-time="2026-02-16 00:13:03Z" duration="0.0764617">
+  <test-suite type="TestSuite" id="1138" name="Idle Dyson Swarm" fullname="Idle Dyson Swarm" runstate="Runnable" testcasecount="106" result="Failed" site="Child" start-time="2026-02-16 00:13:03Z" end-time="2026-02-16 00:13:03Z" duration="0.076462" total="106" passed="102" failed="4" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="EditMode" />
+    </properties>
+    <failure>
+      <message><![CDATA[One or more child tests had errors]]></message>
+    </failure>
+    <test-suite type="Assembly" id="1127" name="Assembly-CSharp-Editor.dll" fullname="/Users/matthewrushworth/Projects/Idle Dyson Swarm/Library/ScriptAssemblies/Assembly-CSharp-Editor.dll" runstate="Runnable" testcasecount="106" result="Failed" site="Child" start-time="2026-02-16 00:13:03Z" end-time="2026-02-16 00:13:03Z" duration="0.074211" total="106" passed="102" failed="4" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="10104" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="EditMode" />
+        <property name="EditorOnly" value="True" />
+      </properties>
+      <failure>
+        <message><![CDATA[One or more child tests had errors]]></message>
+      </failure>
+      <test-suite type="TestSuite" id="1128" name="Tests" fullname="Tests" runstate="Runnable" testcasecount="106" result="Failed" site="Child" start-time="2026-02-16 00:13:03Z" end-time="2026-02-16 00:13:03Z" duration="0.073358" total="106" passed="102" failed="4" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <failure>
+          <message><![CDATA[One or more child tests had errors]]></message>
+        </failure>
+        <test-suite type="TestSuite" id="1132" name="Investigations" fullname="Tests.Investigations" runstate="Runnable" testcasecount="4" result="Failed" site="Child" start-time="2026-02-16 00:13:03Z" end-time="2026-02-16 00:13:03Z" duration="0.018124" total="4" passed="0" failed="4" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <failure>
+            <message><![CDATA[One or more child tests had errors]]></message>
+          </failure>
+          <test-suite type="TestFixture" id="1122" name="ProductionUiMismatchTests" fullname="Tests.Investigations.ProductionUiMismatchTests" classname="Tests.Investigations.ProductionUiMismatchTests" runstate="Runnable" testcasecount="4" result="Failed" site="Child" start-time="2026-02-16 00:13:03Z" end-time="2026-02-16 00:13:03Z" duration="0.017801" total="4" passed="0" failed="4" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <failure>
+              <message><![CDATA[One or more child tests had errors]]></message>
+            </failure>
+            <test-case id="1125" name="DataCenters_Control_NoRudimentary_ParityHolds" fullname="Tests.Investigations.ProductionUiMismatchTests.DataCenters_Control_NoRudimentary_ParityHolds" methodname="DataCenters_Control_NoRudimentary_ParityHolds" classname="Tests.Investigations.ProductionUiMismatchTests" runstate="Runnable" seed="407581522" result="Failed" label="Error" start-time="2026-02-16 00:13:03Z" end-time="2026-02-16 00:13:03Z" duration="0.016558" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <failure>
+                <message><![CDATA[System.NullReferenceException : Object reference not set to an instance of an object]]></message>
+                <stack-trace><![CDATA[  at Systems.Stats.FacilityModifierPipeline.AddAvocatoMultiplier (System.Collections.Generic.List`1[T] effects, System.String statId, Expansion.Oracle+PrestigePlus prestigePlus, System.String id, System.Int32 order) [0x00000] in /Users/matthewrushworth/Projects/Idle Dyson Swarm/Assets/Scripts/Systems/Stats/FacilityModifierPipeline.cs:531 
+  at Systems.Stats.FacilityModifierPipeline.TryCalculateDataCenterModifier (Expansion.Oracle+DysonVerseInfinityData infinityData, Expansion.Oracle+DysonVerseSkillTreeData skillTreeData, Expansion.Oracle+DysonVersePrestigeData prestigeData, Expansion.Oracle+PrestigePlus prestigePlus, System.Double maxInfinityBuff, Systems.Stats.StatResult& result) [0x000ac] in /Users/matthewrushworth/Projects/Idle Dyson Swarm/Assets/Scripts/Systems/Stats/FacilityModifierPipeline.cs:270 
+  at Systems.Facilities.FacilityEffectPipeline.TryBuildModifierResult (GameData.FacilityDefinition definition, Systems.Stats.EffectContext context, Systems.Stats.StatResult& result) [0x000c8] in /Users/matthewrushworth/Projects/Idle Dyson Swarm/Assets/Scripts/Systems/Facilities/FacilityEffectPipeline.cs:210 
+  at Systems.Facilities.FacilityEffectPipeline.BuildModifierEffects (GameData.FacilityDefinition definition, Systems.Stats.EffectContext context, System.String displayName) [0x0001a] in /Users/matthewrushworth/Projects/Idle Dyson Swarm/Assets/Scripts/Systems/Facilities/FacilityEffectPipeline.cs:61 
+  at Systems.Facilities.FacilityEffectPipeline.BuildProductionEffects (GameData.FacilityDefinition definition, Systems.Facilities.FacilityState state, Systems.Stats.EffectContext context) [0x0009f] in /Users/matthewrushworth/Projects/Idle Dyson Swarm/Assets/Scripts/Systems/Facilities/FacilityEffectPipeline.cs:47 
+  at Systems.Facilities.FacilityEffectPipeline.BuildRuntimeFromDefinitions (GameData.FacilityDefinition definition, Systems.Facilities.FacilityState state, Systems.Stats.EffectContext context) [0x00015] in /Users/matthewrushworth/Projects/Idle Dyson Swarm/Assets/Scripts/Systems/Facilities/FacilityEffectPipeline.cs:21 
+  at Systems.Facilities.FacilityRuntimeBuilder.TryBuildRuntime (System.String facilityId, Expansion.Oracle+DysonVerseInfinityData infinityData, Expansion.Oracle+DysonVersePrestigeData prestigeData, Expansion.Oracle+DysonVerseSkillTreeData skillTreeData, Expansion.Oracle+PrestigePlus prestigePlus, Systems.Facilities.FacilityRuntime& runtime) [0x00046] in /Users/matthewrushworth/Projects/Idle Dyson Swarm/Assets/Scripts/Systems/Facilities/FacilityRuntimeBuilder.cs:38 
+  at Systems.ProductionSystem.CalculateDataCenterProduction (Expansion.Oracle+DysonVerseInfinityData infinityData, Expansion.Oracle+DysonVerseSkillTreeData skillTreeData, Expansion.Oracle+DysonVersePrestigeData prestigeData, Expansion.Oracle+PrestigePlus prestigePlus, System.Double deltaTime) [0x00000] in /Users/matthewrushworth/Projects/Idle Dyson Swarm/Assets/Scripts/Systems/ProductionSystem.cs:182 
+  at Tests.Investigations.ProductionUiMismatchTests.DataCenters_Control_NoRudimentary_ParityHolds () [0x0003f] in /Users/matthewrushworth/Projects/Idle Dyson Swarm/Assets/Editor/Tests/Investigations/ProductionUiMismatchTests.cs:95 
+  at (wrapper managed-to-native) System.Reflection.RuntimeMethodInfo.InternalInvoke(System.Reflection.RuntimeMethodInfo,object,object[],System.Exception&)
+  at System.Reflection.RuntimeMethodInfo.Invoke (System.Object obj, System.Reflection.BindingFlags invokeAttr, System.Reflection.Binder binder, System.Object[] parameters, System.Globalization.CultureInfo culture) [0x0006a] in <032c206a1674455bacfc3546f1de5ef3>:0 ]]></stack-trace>
+              </failure>
+            </test-case>
+            <test-case id="1123" name="DataCenters_DisplayedRate_Equals_AppliedServerGainRate" fullname="Tests.Investigations.ProductionUiMismatchTests.DataCenters_DisplayedRate_Equals_AppliedServerGainRate" methodname="DataCenters_DisplayedRate_Equals_AppliedServerGainRate" classname="Tests.Investigations.ProductionUiMismatchTests" runstate="Runnable" seed="350197462" result="Failed" label="Error" start-time="2026-02-16 00:13:03Z" end-time="2026-02-16 00:13:03Z" duration="0.000250" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <failure>
+                <message><![CDATA[System.NullReferenceException : Object reference not set to an instance of an object]]></message>
+                <stack-trace><![CDATA[  at Systems.Stats.FacilityModifierPipeline.AddAvocatoMultiplier (System.Collections.Generic.List`1[T] effects, System.String statId, Expansion.Oracle+PrestigePlus prestigePlus, System.String id, System.Int32 order) [0x00000] in /Users/matthewrushworth/Projects/Idle Dyson Swarm/Assets/Scripts/Systems/Stats/FacilityModifierPipeline.cs:531 
+  at Systems.Stats.FacilityModifierPipeline.TryCalculateDataCenterModifier (Expansion.Oracle+DysonVerseInfinityData infinityData, Expansion.Oracle+DysonVerseSkillTreeData skillTreeData, Expansion.Oracle+DysonVersePrestigeData prestigeData, Expansion.Oracle+PrestigePlus prestigePlus, System.Double maxInfinityBuff, Systems.Stats.StatResult& result) [0x000ac] in /Users/matthewrushworth/Projects/Idle Dyson Swarm/Assets/Scripts/Systems/Stats/FacilityModifierPipeline.cs:270 
+  at Systems.Facilities.FacilityEffectPipeline.TryBuildModifierResult (GameData.FacilityDefinition definition, Systems.Stats.EffectContext context, Systems.Stats.StatResult& result) [0x000c8] in /Users/matthewrushworth/Projects/Idle Dyson Swarm/Assets/Scripts/Systems/Facilities/FacilityEffectPipeline.cs:210 
+  at Systems.Facilities.FacilityEffectPipeline.BuildModifierEffects (GameData.FacilityDefinition definition, Systems.Stats.EffectContext context, System.String displayName) [0x0001a] in /Users/matthewrushworth/Projects/Idle Dyson Swarm/Assets/Scripts/Systems/Facilities/FacilityEffectPipeline.cs:61 
+  at Systems.Facilities.FacilityEffectPipeline.BuildProductionEffects (GameData.FacilityDefinition definition, Systems.Facilities.FacilityState state, Systems.Stats.EffectContext context) [0x0009f] in /Users/matthewrushworth/Projects/Idle Dyson Swarm/Assets/Scripts/Systems/Facilities/FacilityEffectPipeline.cs:47 
+  at Systems.Facilities.FacilityEffectPipeline.BuildRuntimeFromDefinitions (GameData.FacilityDefinition definition, Systems.Facilities.FacilityState state, Systems.Stats.EffectContext context) [0x00015] in /Users/matthewrushworth/Projects/Idle Dyson Swarm/Assets/Scripts/Systems/Facilities/FacilityEffectPipeline.cs:21 
+  at Systems.Facilities.FacilityRuntimeBuilder.TryBuildRuntime (System.String facilityId, Expansion.Oracle+DysonVerseInfinityData infinityData, Expansion.Oracle+DysonVersePrestigeData prestigeData, Expansion.Oracle+DysonVerseSkillTreeData skillTreeData, Expansion.Oracle+PrestigePlus prestigePlus, Systems.Facilities.FacilityRuntime& runtime) [0x00046] in /Users/matthewrushworth/Projects/Idle Dyson Swarm/Assets/Scripts/Systems/Facilities/FacilityRuntimeBuilder.cs:38 
+  at Systems.ProductionSystem.CalculateDataCenterProduction (Expansion.Oracle+DysonVerseInfinityData infinityData, Expansion.Oracle+DysonVerseSkillTreeData skillTreeData, Expansion.Oracle+DysonVersePrestigeData prestigeData, Expansion.Oracle+PrestigePlus prestigePlus, System.Double deltaTime) [0x00000] in /Users/matthewrushworth/Projects/Idle Dyson Swarm/Assets/Scripts/Systems/ProductionSystem.cs:182 
+  at Tests.Investigations.ProductionUiMismatchTests.DataCenters_DisplayedRate_Equals_AppliedServerGainRate () [0x0004e] in /Users/matthewrushworth/Projects/Idle Dyson Swarm/Assets/Editor/Tests/Investigations/ProductionUiMismatchTests.cs:49 
+  at (wrapper managed-to-native) System.Reflection.RuntimeMethodInfo.InternalInvoke(System.Reflection.RuntimeMethodInfo,object,object[],System.Exception&)
+  at System.Reflection.RuntimeMethodInfo.Invoke (System.Object obj, System.Reflection.BindingFlags invokeAttr, System.Reflection.Binder binder, System.Object[] parameters, System.Globalization.CultureInfo culture) [0x0006a] in <032c206a1674455bacfc3546f1de5ef3>:0 ]]></stack-trace>
+              </failure>
+            </test-case>
+            <test-case id="1126" name="Planets_Control_NoPocketDimensions_ParityHolds" fullname="Tests.Investigations.ProductionUiMismatchTests.Planets_Control_NoPocketDimensions_ParityHolds" methodname="Planets_Control_NoPocketDimensions_ParityHolds" classname="Tests.Investigations.ProductionUiMismatchTests" runstate="Runnable" seed="898510072" result="Failed" label="Error" start-time="2026-02-16 00:13:03Z" end-time="2026-02-16 00:13:03Z" duration="0.000215" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <failure>
+                <message><![CDATA[System.NullReferenceException : Object reference not set to an instance of an object]]></message>
+                <stack-trace><![CDATA[  at Systems.Stats.FacilityModifierPipeline.AddAvocatoMultiplier (System.Collections.Generic.List`1[T] effects, System.String statId, Expansion.Oracle+PrestigePlus prestigePlus, System.String id, System.Int32 order) [0x00000] in /Users/matthewrushworth/Projects/Idle Dyson Swarm/Assets/Scripts/Systems/Stats/FacilityModifierPipeline.cs:531 
+  at Systems.Stats.FacilityModifierPipeline.TryCalculatePlanetModifier (Expansion.Oracle+DysonVerseInfinityData infinityData, Expansion.Oracle+DysonVerseSkillTreeData skillTreeData, Expansion.Oracle+DysonVersePrestigeData prestigeData, Expansion.Oracle+PrestigePlus prestigePlus, Systems.SecretBuffState secrets, System.Double maxInfinityBuff, Systems.Stats.StatResult& result) [0x00217] in /Users/matthewrushworth/Projects/Idle Dyson Swarm/Assets/Scripts/Systems/Stats/FacilityModifierPipeline.cs:344 
+  at Systems.Facilities.FacilityEffectPipeline.TryBuildModifierResult (GameData.FacilityDefinition definition, Systems.Stats.EffectContext context, Systems.Stats.StatResult& result) [0x000dc] in /Users/matthewrushworth/Projects/Idle Dyson Swarm/Assets/Scripts/Systems/Facilities/FacilityEffectPipeline.cs:213 
+  at Systems.Facilities.FacilityEffectPipeline.BuildModifierEffects (GameData.FacilityDefinition definition, Systems.Stats.EffectContext context, System.String displayName) [0x0001a] in /Users/matthewrushworth/Projects/Idle Dyson Swarm/Assets/Scripts/Systems/Facilities/FacilityEffectPipeline.cs:61 
+  at Systems.Facilities.FacilityEffectPipeline.BuildProductionEffects (GameData.FacilityDefinition definition, Systems.Facilities.FacilityState state, Systems.Stats.EffectContext context) [0x0009f] in /Users/matthewrushworth/Projects/Idle Dyson Swarm/Assets/Scripts/Systems/Facilities/FacilityEffectPipeline.cs:47 
+  at Systems.Facilities.FacilityEffectPipeline.BuildRuntimeFromDefinitions (GameData.FacilityDefinition definition, Systems.Facilities.FacilityState state, Systems.Stats.EffectContext context) [0x00015] in /Users/matthewrushworth/Projects/Idle Dyson Swarm/Assets/Scripts/Systems/Facilities/FacilityEffectPipeline.cs:21 
+  at Systems.Facilities.FacilityRuntimeBuilder.TryBuildRuntime (System.String facilityId, Expansion.Oracle+DysonVerseInfinityData infinityData, Expansion.Oracle+DysonVersePrestigeData prestigeData, Expansion.Oracle+DysonVerseSkillTreeData skillTreeData, Expansion.Oracle+PrestigePlus prestigePlus, Systems.Facilities.FacilityRuntime& runtime) [0x00046] in /Users/matthewrushworth/Projects/Idle Dyson Swarm/Assets/Scripts/Systems/Facilities/FacilityRuntimeBuilder.cs:38 
+  at Systems.ProductionSystem.CalculatePlanetProduction (Expansion.Oracle+DysonVerseInfinityData infinityData, Expansion.Oracle+DysonVerseSkillTreeData skillTreeData, Expansion.Oracle+DysonVersePrestigeData prestigeData, System.Double deltaTime) [0x00065] in /Users/matthewrushworth/Projects/Idle Dyson Swarm/Assets/Scripts/Systems/ProductionSystem.cs:120 
+  at Tests.Investigations.ProductionUiMismatchTests.Planets_Control_NoPocketDimensions_ParityHolds () [0x00047] in /Users/matthewrushworth/Projects/Idle Dyson Swarm/Assets/Editor/Tests/Investigations/ProductionUiMismatchTests.cs:118 
+  at (wrapper managed-to-native) System.Reflection.RuntimeMethodInfo.InternalInvoke(System.Reflection.RuntimeMethodInfo,object,object[],System.Exception&)
+  at System.Reflection.RuntimeMethodInfo.Invoke (System.Object obj, System.Reflection.BindingFlags invokeAttr, System.Reflection.Binder binder, System.Object[] parameters, System.Globalization.CultureInfo culture) [0x0006a] in <032c206a1674455bacfc3546f1de5ef3>:0 ]]></stack-trace>
+              </failure>
+            </test-case>
+            <test-case id="1124" name="Planets_DisplayedRate_Equals_AppliedDataCenterGainRate" fullname="Tests.Investigations.ProductionUiMismatchTests.Planets_DisplayedRate_Equals_AppliedDataCenterGainRate" methodname="Planets_DisplayedRate_Equals_AppliedDataCenterGainRate" classname="Tests.Investigations.ProductionUiMismatchTests" runstate="Runnable" seed="977217062" result="Failed" label="Error" start-time="2026-02-16 00:13:03Z" end-time="2026-02-16 00:13:03Z" duration="0.000214" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <failure>
+                <message><![CDATA[System.NullReferenceException : Object reference not set to an instance of an object]]></message>
+                <stack-trace><![CDATA[  at Systems.Stats.FacilityModifierPipeline.AddAvocatoMultiplier (System.Collections.Generic.List`1[T] effects, System.String statId, Expansion.Oracle+PrestigePlus prestigePlus, System.String id, System.Int32 order) [0x00000] in /Users/matthewrushworth/Projects/Idle Dyson Swarm/Assets/Scripts/Systems/Stats/FacilityModifierPipeline.cs:531 
+  at Systems.Stats.FacilityModifierPipeline.TryCalculatePlanetModifier (Expansion.Oracle+DysonVerseInfinityData infinityData, Expansion.Oracle+DysonVerseSkillTreeData skillTreeData, Expansion.Oracle+DysonVersePrestigeData prestigeData, Expansion.Oracle+PrestigePlus prestigePlus, Systems.SecretBuffState secrets, System.Double maxInfinityBuff, Systems.Stats.StatResult& result) [0x00217] in /Users/matthewrushworth/Projects/Idle Dyson Swarm/Assets/Scripts/Systems/Stats/FacilityModifierPipeline.cs:344 
+  at Systems.Facilities.FacilityEffectPipeline.TryBuildModifierResult (GameData.FacilityDefinition definition, Systems.Stats.EffectContext context, Systems.Stats.StatResult& result) [0x000dc] in /Users/matthewrushworth/Projects/Idle Dyson Swarm/Assets/Scripts/Systems/Facilities/FacilityEffectPipeline.cs:213 
+  at Systems.Facilities.FacilityEffectPipeline.BuildModifierEffects (GameData.FacilityDefinition definition, Systems.Stats.EffectContext context, System.String displayName) [0x0001a] in /Users/matthewrushworth/Projects/Idle Dyson Swarm/Assets/Scripts/Systems/Facilities/FacilityEffectPipeline.cs:61 
+  at Systems.Facilities.FacilityEffectPipeline.BuildProductionEffects (GameData.FacilityDefinition definition, Systems.Facilities.FacilityState state, Systems.Stats.EffectContext context) [0x0009f] in /Users/matthewrushworth/Projects/Idle Dyson Swarm/Assets/Scripts/Systems/Facilities/FacilityEffectPipeline.cs:47 
+  at Systems.Facilities.FacilityEffectPipeline.BuildRuntimeFromDefinitions (GameData.FacilityDefinition definition, Systems.Facilities.FacilityState state, Systems.Stats.EffectContext context) [0x00015] in /Users/matthewrushworth/Projects/Idle Dyson Swarm/Assets/Scripts/Systems/Facilities/FacilityEffectPipeline.cs:21 
+  at Systems.Facilities.FacilityRuntimeBuilder.TryBuildRuntime (System.String facilityId, Expansion.Oracle+DysonVerseInfinityData infinityData, Expansion.Oracle+DysonVersePrestigeData prestigeData, Expansion.Oracle+DysonVerseSkillTreeData skillTreeData, Expansion.Oracle+PrestigePlus prestigePlus, Systems.Facilities.FacilityRuntime& runtime) [0x00046] in /Users/matthewrushworth/Projects/Idle Dyson Swarm/Assets/Scripts/Systems/Facilities/FacilityRuntimeBuilder.cs:38 
+  at Systems.ProductionSystem.CalculatePlanetProduction (Expansion.Oracle+DysonVerseInfinityData infinityData, Expansion.Oracle+DysonVerseSkillTreeData skillTreeData, Expansion.Oracle+DysonVersePrestigeData prestigeData, System.Double deltaTime) [0x00065] in /Users/matthewrushworth/Projects/Idle Dyson Swarm/Assets/Scripts/Systems/ProductionSystem.cs:120 
+  at Tests.Investigations.ProductionUiMismatchTests.Planets_DisplayedRate_Equals_AppliedDataCenterGainRate () [0x00047] in /Users/matthewrushworth/Projects/Idle Dyson Swarm/Assets/Editor/Tests/Investigations/ProductionUiMismatchTests.cs:72 
+  at (wrapper managed-to-native) System.Reflection.RuntimeMethodInfo.InternalInvoke(System.Reflection.RuntimeMethodInfo,object,object[],System.Exception&)
+  at System.Reflection.RuntimeMethodInfo.Invoke (System.Object obj, System.Reflection.BindingFlags invokeAttr, System.Reflection.Binder binder, System.Object[] parameters, System.Globalization.CultureInfo culture) [0x0006a] in <032c206a1674455bacfc3546f1de5ef3>:0 ]]></stack-trace>
+              </failure>
+            </test-case>
+          </test-suite>
+        </test-suite>
+        <test-suite type="TestSuite" id="1131" name="Save" fullname="Tests.Save" runstate="Runnable" testcasecount="18" result="Passed" start-time="2026-02-16 00:13:03Z" end-time="2026-02-16 00:13:03Z" duration="0.030719" total="18" passed="18" failed="0" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <test-suite type="TestFixture" id="1098" name="CanonicalSaveStoreTests" fullname="Tests.Save.CanonicalSaveStoreTests" classname="Tests.Save.CanonicalSaveStoreTests" runstate="Runnable" testcasecount="2" result="Passed" start-time="2026-02-16 00:13:03Z" end-time="2026-02-16 00:13:03Z" duration="0.003466" total="2" passed="2" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <test-case id="1099" name="TrySaveThenTryLoad_RoundTripsCanonicalSettings" fullname="Tests.Save.CanonicalSaveStoreTests.TrySaveThenTryLoad_RoundTripsCanonicalSettings" methodname="TrySaveThenTryLoad_RoundTripsCanonicalSettings" classname="Tests.Save.CanonicalSaveStoreTests" runstate="Runnable" seed="111776317" result="Passed" start-time="2026-02-16 00:13:03Z" end-time="2026-02-16 00:13:03Z" duration="0.000924" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1100" name="TrySaveTwice_TryLoadReturnsLatestSnapshot" fullname="Tests.Save.CanonicalSaveStoreTests.TrySaveTwice_TryLoadReturnsLatestSnapshot" methodname="TrySaveTwice_TryLoadReturnsLatestSnapshot" classname="Tests.Save.CanonicalSaveStoreTests" runstate="Runnable" seed="1226007045" result="Passed" start-time="2026-02-16 00:13:03Z" end-time="2026-02-16 00:13:03Z" duration="0.001246" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+          </test-suite>
+          <test-suite type="TestFixture" id="1101" name="FacilityArrayNormalizerTests" fullname="Tests.Save.FacilityArrayNormalizerTests" classname="Tests.Save.FacilityArrayNormalizerTests" runstate="Runnable" testcasecount="5" result="Passed" start-time="2026-02-16 00:13:03Z" end-time="2026-02-16 00:13:03Z" duration="0.002098" total="5" passed="5" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <test-case id="1106" name="ClearSparseLists_SetsAllSparseListsToNull" fullname="Tests.Save.FacilityArrayNormalizerTests.ClearSparseLists_SetsAllSparseListsToNull" methodname="ClearSparseLists_SetsAllSparseListsToNull" classname="Tests.Save.FacilityArrayNormalizerTests" runstate="Runnable" seed="766070654" result="Passed" start-time="2026-02-16 00:13:03Z" end-time="2026-02-16 00:13:03Z" duration="0.000045" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1104" name="EnsureDenseArraysAndMergeSparse_UsesMaxPerSlot" fullname="Tests.Save.FacilityArrayNormalizerTests.EnsureDenseArraysAndMergeSparse_UsesMaxPerSlot" methodname="EnsureDenseArraysAndMergeSparse_UsesMaxPerSlot" classname="Tests.Save.FacilityArrayNormalizerTests" runstate="Runnable" seed="1441672627" result="Passed" start-time="2026-02-16 00:13:03Z" end-time="2026-02-16 00:13:03Z" duration="0.000029" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1105" name="EnsureDenseArraysAndMergeSparse_WhenDenseWrongLength_EnsuresTwoSlots" fullname="Tests.Save.FacilityArrayNormalizerTests.EnsureDenseArraysAndMergeSparse_WhenDenseWrongLength_EnsuresTwoSlots" methodname="EnsureDenseArraysAndMergeSparse_WhenDenseWrongLength_EnsuresTwoSlots" classname="Tests.Save.FacilityArrayNormalizerTests" runstate="Runnable" seed="56719925" result="Passed" start-time="2026-02-16 00:13:03Z" end-time="2026-02-16 00:13:03Z" duration="0.000023" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1103" name="Normalize_WithDenseNullAndSparsePresent_RestoresDenseAndClearsSparse" fullname="Tests.Save.FacilityArrayNormalizerTests.Normalize_WithDenseNullAndSparsePresent_RestoresDenseAndClearsSparse" methodname="Normalize_WithDenseNullAndSparsePresent_RestoresDenseAndClearsSparse" classname="Tests.Save.FacilityArrayNormalizerTests" runstate="Runnable" seed="573814582" result="Passed" start-time="2026-02-16 00:13:03Z" end-time="2026-02-16 00:13:03Z" duration="0.000027" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1102" name="Normalize_WithNullData_DoesNotThrow" fullname="Tests.Save.FacilityArrayNormalizerTests.Normalize_WithNullData_DoesNotThrow" methodname="Normalize_WithNullData_DoesNotThrow" classname="Tests.Save.FacilityArrayNormalizerTests" runstate="Runnable" seed="64772652" result="Passed" start-time="2026-02-16 00:13:03Z" end-time="2026-02-16 00:13:03Z" duration="0.000012" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+          </test-suite>
+          <test-suite type="TestFixture" id="1107" name="OdinStringFileStorageTests" fullname="Tests.Save.OdinStringFileStorageTests" classname="Tests.Save.OdinStringFileStorageTests" runstate="Runnable" testcasecount="2" result="Passed" start-time="2026-02-16 00:13:03Z" end-time="2026-02-16 00:13:03Z" duration="0.002743" total="2" passed="2" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <test-case id="1108" name="WriteAndRead_RoundTripsText_AndCreatesBackups" fullname="Tests.Save.OdinStringFileStorageTests.WriteAndRead_RoundTripsText_AndCreatesBackups" methodname="WriteAndRead_RoundTripsText_AndCreatesBackups" classname="Tests.Save.OdinStringFileStorageTests" runstate="Runnable" seed="1465727047" result="Passed" start-time="2026-02-16 00:13:03Z" end-time="2026-02-16 00:13:03Z" duration="0.001418" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1109" name="WriteAtomic_WithEmptyText_DoesNotOverwriteExisting" fullname="Tests.Save.OdinStringFileStorageTests.WriteAtomic_WithEmptyText_DoesNotOverwriteExisting" methodname="WriteAtomic_WithEmptyText_DoesNotOverwriteExisting" classname="Tests.Save.OdinStringFileStorageTests" runstate="Runnable" seed="2144782004" result="Passed" start-time="2026-02-16 00:13:03Z" end-time="2026-02-16 00:13:03Z" duration="0.000286" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+          </test-suite>
+          <test-suite type="TestFixture" id="1110" name="SaveCodecCharacterizationTests" fullname="Tests.Save.SaveCodecCharacterizationTests" classname="Tests.Save.SaveCodecCharacterizationTests" runstate="Runnable" testcasecount="2" result="Passed" start-time="2026-02-16 00:13:03Z" end-time="2026-02-16 00:13:03Z" duration="0.011201" total="2" passed="2" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <test-case id="1111" name="EncodeBinary_CompressTrue_TryDecodeBinary_RoundTripsBinaryPayload" fullname="Tests.Save.SaveCodecCharacterizationTests.EncodeBinary_CompressTrue_TryDecodeBinary_RoundTripsBinaryPayload" methodname="EncodeBinary_CompressTrue_TryDecodeBinary_RoundTripsBinaryPayload" classname="Tests.Save.SaveCodecCharacterizationTests" runstate="Runnable" seed="1855484778" result="Passed" start-time="2026-02-16 00:13:03Z" end-time="2026-02-16 00:13:03Z" duration="0.010201" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1112" name="EncodeBinary_CompressTrue_UsesGzipHeader" fullname="Tests.Save.SaveCodecCharacterizationTests.EncodeBinary_CompressTrue_UsesGzipHeader" methodname="EncodeBinary_CompressTrue_UsesGzipHeader" classname="Tests.Save.SaveCodecCharacterizationTests" runstate="Runnable" seed="54885153" result="Passed" start-time="2026-02-16 00:13:03Z" end-time="2026-02-16 00:13:03Z" duration="0.000043" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+          </test-suite>
+          <test-suite type="TestFixture" id="1113" name="SaveCodecTests" fullname="Tests.Save.SaveCodecTests" classname="Tests.Save.SaveCodecTests" runstate="Runnable" testcasecount="6" result="Passed" start-time="2026-02-16 00:13:03Z" end-time="2026-02-16 00:13:03Z" duration="0.005812" total="6" passed="6" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <test-case id="1115" name="EncodeBinary_CompressFalse_TryDecodeBinary_RoundTripsBytes" fullname="Tests.Save.SaveCodecTests.EncodeBinary_CompressFalse_TryDecodeBinary_RoundTripsBytes" methodname="EncodeBinary_CompressFalse_TryDecodeBinary_RoundTripsBytes" classname="Tests.Save.SaveCodecTests" runstate="Runnable" seed="1765478109" result="Passed" start-time="2026-02-16 00:13:03Z" end-time="2026-02-16 00:13:03Z" duration="0.000033" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1114" name="EncodeBinary_CompressTrue_TryDecodeBinary_RoundTripsBytes" fullname="Tests.Save.SaveCodecTests.EncodeBinary_CompressTrue_TryDecodeBinary_RoundTripsBytes" methodname="EncodeBinary_CompressTrue_TryDecodeBinary_RoundTripsBytes" classname="Tests.Save.SaveCodecTests" runstate="Runnable" seed="764416296" result="Passed" start-time="2026-02-16 00:13:03Z" end-time="2026-02-16 00:13:03Z" duration="0.000048" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1118" name="TryDecodeSaveSettings_ExportDtoJson_Works" fullname="Tests.Save.SaveCodecTests.TryDecodeSaveSettings_ExportDtoJson_Works" methodname="TryDecodeSaveSettings_ExportDtoJson_Works" classname="Tests.Save.SaveCodecTests" runstate="Runnable" seed="158641151" result="Passed" start-time="2026-02-16 00:13:03Z" end-time="2026-02-16 00:13:03Z" duration="0.000807" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1116" name="TryDecodeSaveSettings_Idb1Binary_Works" fullname="Tests.Save.SaveCodecTests.TryDecodeSaveSettings_Idb1Binary_Works" methodname="TryDecodeSaveSettings_Idb1Binary_Works" classname="Tests.Save.SaveCodecTests" runstate="Runnable" seed="1506117177" result="Passed" start-time="2026-02-16 00:13:03Z" end-time="2026-02-16 00:13:03Z" duration="0.000693" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1119" name="TryDecodeSaveSettings_LegacyBase64OfGzippedBinary_Works" fullname="Tests.Save.SaveCodecTests.TryDecodeSaveSettings_LegacyBase64OfGzippedBinary_Works" methodname="TryDecodeSaveSettings_LegacyBase64OfGzippedBinary_Works" classname="Tests.Save.SaveCodecTests" runstate="Runnable" seed="2136111771" result="Passed" start-time="2026-02-16 00:13:03Z" end-time="2026-02-16 00:13:03Z" duration="0.000972" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1117" name="TryDecodeSaveSettings_RawJson_Works" fullname="Tests.Save.SaveCodecTests.TryDecodeSaveSettings_RawJson_Works" methodname="TryDecodeSaveSettings_RawJson_Works" classname="Tests.Save.SaveCodecTests" runstate="Runnable" seed="1300822995" result="Passed" start-time="2026-02-16 00:13:03Z" end-time="2026-02-16 00:13:03Z" duration="0.000903" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+          </test-suite>
+          <test-suite type="TestFixture" id="1120" name="SaveSystemTests" fullname="Tests.Save.SaveSystemTests" classname="Tests.Save.SaveSystemTests" runstate="Runnable" testcasecount="1" result="Passed" start-time="2026-02-16 00:13:03Z" end-time="2026-02-16 00:13:03Z" duration="0.002310" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <test-case id="1121" name="SaveThenLoad_RoundTripsSettings" fullname="Tests.Save.SaveSystemTests.SaveThenLoad_RoundTripsSettings" methodname="SaveThenLoad_RoundTripsSettings" classname="Tests.Save.SaveSystemTests" runstate="Runnable" seed="1826130094" result="Passed" start-time="2026-02-16 00:13:03Z" end-time="2026-02-16 00:13:03Z" duration="0.001241" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+          </test-suite>
+        </test-suite>
+        <test-suite type="TestSuite" id="1130" name="Services" fullname="Tests.Services" runstate="Runnable" testcasecount="29" result="Passed" start-time="2026-02-16 00:13:03Z" end-time="2026-02-16 00:13:03Z" duration="0.004430" total="29" passed="29" failed="0" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <test-suite type="TestFixture" id="1067" name="ServiceLayerExampleTests" fullname="Tests.Services.ServiceLayerExampleTests" classname="Tests.Services.ServiceLayerExampleTests" runstate="Runnable" testcasecount="9" result="Passed" start-time="2026-02-16 00:13:03Z" end-time="2026-02-16 00:13:03Z" duration="0.000999" total="9" passed="9" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <test-case id="1076" name="Example_TestingPresenterLogic" fullname="Tests.Services.ServiceLayerExampleTests.Example_TestingPresenterLogic" methodname="Example_TestingPresenterLogic" classname="Tests.Services.ServiceLayerExampleTests" runstate="Runnable" seed="687745283" result="Passed" start-time="2026-02-16 00:13:03Z" end-time="2026-02-16 00:13:03Z" duration="0.000056" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1075" name="InfinityData_CanBeModified" fullname="Tests.Services.ServiceLayerExampleTests.InfinityData_CanBeModified" methodname="InfinityData_CanBeModified" classname="Tests.Services.ServiceLayerExampleTests" runstate="Runnable" seed="1821045058" result="Passed" start-time="2026-02-16 00:13:03Z" end-time="2026-02-16 00:13:03Z" duration="0.000035" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1074" name="PrestigeData_IsAccessible" fullname="Tests.Services.ServiceLayerExampleTests.PrestigeData_IsAccessible" methodname="PrestigeData_IsAccessible" classname="Tests.Services.ServiceLayerExampleTests" runstate="Runnable" seed="47960525" result="Passed" start-time="2026-02-16 00:13:03Z" end-time="2026-02-16 00:13:03Z" duration="0.000034" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1072" name="ResearchBuyMode_CanBeConfigured" fullname="Tests.Services.ServiceLayerExampleTests.ResearchBuyMode_CanBeConfigured" methodname="ResearchBuyMode_CanBeConfigured" classname="Tests.Services.ServiceLayerExampleTests" runstate="Runnable" seed="286551985" result="Passed" start-time="2026-02-16 00:13:03Z" end-time="2026-02-16 00:13:03Z" duration="0.000036" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1071" name="ResearchLevel_CanBeSetAndRetrieved" fullname="Tests.Services.ServiceLayerExampleTests.ResearchLevel_CanBeSetAndRetrieved" methodname="ResearchLevel_CanBeSetAndRetrieved" classname="Tests.Services.ServiceLayerExampleTests" runstate="Runnable" seed="1492799353" result="Passed" start-time="2026-02-16 00:13:03Z" end-time="2026-02-16 00:13:03Z" duration="0.000034" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1070" name="ResearchLevel_DefaultsToZero" fullname="Tests.Services.ServiceLayerExampleTests.ResearchLevel_DefaultsToZero" methodname="ResearchLevel_DefaultsToZero" classname="Tests.Services.ServiceLayerExampleTests" runstate="Runnable" seed="1458678513" result="Passed" start-time="2026-02-16 00:13:03Z" end-time="2026-02-16 00:13:03Z" duration="0.000030" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1073" name="RoundedBulkBuy_CanBeConfigured" fullname="Tests.Services.ServiceLayerExampleTests.RoundedBulkBuy_CanBeConfigured" methodname="RoundedBulkBuy_CanBeConfigured" classname="Tests.Services.ServiceLayerExampleTests" runstate="Runnable" seed="2073790589" result="Passed" start-time="2026-02-16 00:13:03Z" end-time="2026-02-16 00:13:03Z" duration="0.000036" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1069" name="Science_CanBeModified" fullname="Tests.Services.ServiceLayerExampleTests.Science_CanBeModified" methodname="Science_CanBeModified" classname="Tests.Services.ServiceLayerExampleTests" runstate="Runnable" seed="983053340" result="Passed" start-time="2026-02-16 00:13:03Z" end-time="2026-02-16 00:13:03Z" duration="0.000032" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1068" name="Science_CanBeSetAndRetrieved" fullname="Tests.Services.ServiceLayerExampleTests.Science_CanBeSetAndRetrieved" methodname="Science_CanBeSetAndRetrieved" classname="Tests.Services.ServiceLayerExampleTests" runstate="Runnable" seed="754738644" result="Passed" start-time="2026-02-16 00:13:03Z" end-time="2026-02-16 00:13:03Z" duration="0.000028" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+          </test-suite>
+          <test-suite type="TestFixture" id="1077" name="WorkerServiceTests" fullname="Tests.Services.WorkerServiceTests" classname="Tests.Services.WorkerServiceTests" runstate="Runnable" testcasecount="20" result="Passed" start-time="2026-02-16 00:13:03Z" end-time="2026-02-16 00:13:03Z" duration="0.002275" total="20" passed="20" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <test-case id="1082" name="ApplyOfflineProgress_WithAutoGather_AddsToInfluence" fullname="Tests.Services.WorkerServiceTests.ApplyOfflineProgress_WithAutoGather_AddsToInfluence" methodname="ApplyOfflineProgress_WithAutoGather_AddsToInfluence" classname="Tests.Services.WorkerServiceTests" runstate="Runnable" seed="986341798" result="Passed" start-time="2026-02-16 00:13:03Z" end-time="2026-02-16 00:13:03Z" duration="0.000030" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1083" name="ApplyOfflineProgress_WithManualGather_AccumulatesWorkers" fullname="Tests.Services.WorkerServiceTests.ApplyOfflineProgress_WithManualGather_AccumulatesWorkers" methodname="ApplyOfflineProgress_WithManualGather_AccumulatesWorkers" classname="Tests.Services.WorkerServiceTests" runstate="Runnable" seed="683821023" result="Passed" start-time="2026-02-16 00:13:03Z" end-time="2026-02-16 00:13:03Z" duration="0.000023" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1084" name="ApplyOfflineProgress_WithManualGather_CapsAtBatchSize" fullname="Tests.Services.WorkerServiceTests.ApplyOfflineProgress_WithManualGather_CapsAtBatchSize" methodname="ApplyOfflineProgress_WithManualGather_CapsAtBatchSize" classname="Tests.Services.WorkerServiceTests" runstate="Runnable" seed="750364820" result="Passed" start-time="2026-02-16 00:13:03Z" end-time="2026-02-16 00:13:03Z" duration="0.000030" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1085" name="ApplyOfflineProgress_WithPartialWorkers_AccumulatesCorrectly" fullname="Tests.Services.WorkerServiceTests.ApplyOfflineProgress_WithPartialWorkers_AccumulatesCorrectly" methodname="ApplyOfflineProgress_WithPartialWorkers_AccumulatesCorrectly" classname="Tests.Services.WorkerServiceTests" runstate="Runnable" seed="1238266546" result="Passed" start-time="2026-02-16 00:13:03Z" end-time="2026-02-16 00:13:03Z" duration="0.000025" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1095" name="CanGather_WhenFull_ReturnsTrue" fullname="Tests.Services.WorkerServiceTests.CanGather_WhenFull_ReturnsTrue" methodname="CanGather_WhenFull_ReturnsTrue" classname="Tests.Services.WorkerServiceTests" runstate="Runnable" seed="943106021" result="Passed" start-time="2026-02-16 00:13:03Z" end-time="2026-02-16 00:13:03Z" duration="0.000019" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1096" name="CanGather_WhenNotFull_ReturnsFalse" fullname="Tests.Services.WorkerServiceTests.CanGather_WhenNotFull_ReturnsFalse" methodname="CanGather_WhenNotFull_ReturnsFalse" classname="Tests.Services.WorkerServiceTests" runstate="Runnable" seed="321414629" result="Passed" start-time="2026-02-16 00:13:03Z" end-time="2026-02-16 00:13:03Z" duration="0.000022" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1093" name="ClampWorkersNonNegative_WithNegativeWorkers_ClampsToZero" fullname="Tests.Services.WorkerServiceTests.ClampWorkersNonNegative_WithNegativeWorkers_ClampsToZero" methodname="ClampWorkersNonNegative_WithNegativeWorkers_ClampsToZero" classname="Tests.Services.WorkerServiceTests" runstate="Runnable" seed="696962775" result="Passed" start-time="2026-02-16 00:13:03Z" end-time="2026-02-16 00:13:03Z" duration="0.000022" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1094" name="ClampWorkersNonNegative_WithPositiveWorkers_DoesNotChange" fullname="Tests.Services.WorkerServiceTests.ClampWorkersNonNegative_WithPositiveWorkers_DoesNotChange" methodname="ClampWorkersNonNegative_WithPositiveWorkers_DoesNotChange" classname="Tests.Services.WorkerServiceTests" runstate="Runnable" seed="941438819" result="Passed" start-time="2026-02-16 00:13:03Z" end-time="2026-02-16 00:13:03Z" duration="0.000026" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1092" name="IncrementWorker_IncreasesBatchesProcessed" fullname="Tests.Services.WorkerServiceTests.IncrementWorker_IncreasesBatchesProcessed" methodname="IncrementWorker_IncreasesBatchesProcessed" classname="Tests.Services.WorkerServiceTests" runstate="Runnable" seed="1049827876" result="Passed" start-time="2026-02-16 00:13:03Z" end-time="2026-02-16 00:13:03Z" duration="0.000025" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1091" name="IncrementWorker_IncreasesWorkerCount" fullname="Tests.Services.WorkerServiceTests.IncrementWorker_IncreasesWorkerCount" methodname="IncrementWorker_IncreasesWorkerCount" classname="Tests.Services.WorkerServiceTests" runstate="Runnable" seed="1298520666" result="Passed" start-time="2026-02-16 00:13:03Z" end-time="2026-02-16 00:13:03Z" duration="0.000020" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1081" name="TryGatherInfluence_FiresEvent" fullname="Tests.Services.WorkerServiceTests.TryGatherInfluence_FiresEvent" methodname="TryGatherInfluence_FiresEvent" classname="Tests.Services.WorkerServiceTests" runstate="Runnable" seed="1975227194" result="Passed" start-time="2026-02-16 00:13:03Z" end-time="2026-02-16 00:13:03Z" duration="0.000021" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1078" name="TryGatherInfluence_WithFullBatch_Succeeds" fullname="Tests.Services.WorkerServiceTests.TryGatherInfluence_WithFullBatch_Succeeds" methodname="TryGatherInfluence_WithFullBatch_Succeeds" classname="Tests.Services.WorkerServiceTests" runstate="Runnable" seed="526880913" result="Passed" start-time="2026-02-16 00:13:03Z" end-time="2026-02-16 00:13:03Z" duration="0.000023" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1079" name="TryGatherInfluence_WithPartialBatch_Fails" fullname="Tests.Services.WorkerServiceTests.TryGatherInfluence_WithPartialBatch_Fails" methodname="TryGatherInfluence_WithPartialBatch_Fails" classname="Tests.Services.WorkerServiceTests" runstate="Runnable" seed="800373040" result="Passed" start-time="2026-02-16 00:13:03Z" end-time="2026-02-16 00:13:03Z" duration="0.000024" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1080" name="TryGatherInfluence_WithZeroWorkers_Fails" fullname="Tests.Services.WorkerServiceTests.TryGatherInfluence_WithZeroWorkers_Fails" methodname="TryGatherInfluence_WithZeroWorkers_Fails" classname="Tests.Services.WorkerServiceTests" runstate="Runnable" seed="1088910147" result="Passed" start-time="2026-02-16 00:13:03Z" end-time="2026-02-16 00:13:03Z" duration="0.000022" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1090" name="TrySpendInfluence_FiresEvent" fullname="Tests.Services.WorkerServiceTests.TrySpendInfluence_FiresEvent" methodname="TrySpendInfluence_FiresEvent" classname="Tests.Services.WorkerServiceTests" runstate="Runnable" seed="1751739349" result="Passed" start-time="2026-02-16 00:13:03Z" end-time="2026-02-16 00:13:03Z" duration="0.000029" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1087" name="TrySpendInfluence_WithInsufficientBalance_Fails" fullname="Tests.Services.WorkerServiceTests.TrySpendInfluence_WithInsufficientBalance_Fails" methodname="TrySpendInfluence_WithInsufficientBalance_Fails" classname="Tests.Services.WorkerServiceTests" runstate="Runnable" seed="244442496" result="Passed" start-time="2026-02-16 00:13:03Z" end-time="2026-02-16 00:13:03Z" duration="0.000024" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1089" name="TrySpendInfluence_WithNegativeAmount_Fails" fullname="Tests.Services.WorkerServiceTests.TrySpendInfluence_WithNegativeAmount_Fails" methodname="TrySpendInfluence_WithNegativeAmount_Fails" classname="Tests.Services.WorkerServiceTests" runstate="Runnable" seed="1018724354" result="Passed" start-time="2026-02-16 00:13:03Z" end-time="2026-02-16 00:13:03Z" duration="0.000022" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1086" name="TrySpendInfluence_WithSufficientBalance_Succeeds" fullname="Tests.Services.WorkerServiceTests.TrySpendInfluence_WithSufficientBalance_Succeeds" methodname="TrySpendInfluence_WithSufficientBalance_Succeeds" classname="Tests.Services.WorkerServiceTests" runstate="Runnable" seed="1266049746" result="Passed" start-time="2026-02-16 00:13:03Z" end-time="2026-02-16 00:13:03Z" duration="0.000026" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1088" name="TrySpendInfluence_WithZeroAmount_Fails" fullname="Tests.Services.WorkerServiceTests.TrySpendInfluence_WithZeroAmount_Fails" methodname="TrySpendInfluence_WithZeroAmount_Fails" classname="Tests.Services.WorkerServiceTests" runstate="Runnable" seed="273053543" result="Passed" start-time="2026-02-16 00:13:03Z" end-time="2026-02-16 00:13:03Z" duration="0.000021" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1097" name="WorkerFillPercent_CalculatesCorrectly" fullname="Tests.Services.WorkerServiceTests.WorkerFillPercent_CalculatesCorrectly" methodname="WorkerFillPercent_CalculatesCorrectly" classname="Tests.Services.WorkerServiceTests" runstate="Runnable" seed="767827641" result="Passed" start-time="2026-02-16 00:13:03Z" end-time="2026-02-16 00:13:03Z" duration="0.000023" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+          </test-suite>
+        </test-suite>
+        <test-suite type="TestSuite" id="1129" name="Systems" fullname="Tests.Systems" runstate="Runnable" testcasecount="55" result="Passed" start-time="2026-02-16 00:13:03Z" end-time="2026-02-16 00:13:03Z" duration="0.019199" total="55" passed="55" failed="0" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <test-suite type="TestFixture" id="1005" name="FacilityCountAccessorTests" fullname="Tests.Systems.FacilityCountAccessorTests" classname="Tests.Systems.FacilityCountAccessorTests" runstate="Runnable" testcasecount="21" result="Passed" start-time="2026-02-16 00:13:03Z" end-time="2026-02-16 00:13:03Z" duration="0.001960" total="21" passed="21" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <test-case id="1026" name="AllFacilities_RoundTrip_ProducesConsistentResults" fullname="Tests.Systems.FacilityCountAccessorTests.AllFacilities_RoundTrip_ProducesConsistentResults" methodname="AllFacilities_RoundTrip_ProducesConsistentResults" classname="Tests.Systems.FacilityCountAccessorTests" runstate="Runnable" seed="120775296" result="Passed" start-time="2026-02-16 00:13:03Z" end-time="2026-02-16 00:13:03Z" duration="0.000056" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1024" name="IsKnownFacility_NullOrEmpty_ReturnsFalse" fullname="Tests.Systems.FacilityCountAccessorTests.IsKnownFacility_NullOrEmpty_ReturnsFalse" methodname="IsKnownFacility_NullOrEmpty_ReturnsFalse" classname="Tests.Systems.FacilityCountAccessorTests" runstate="Runnable" seed="364442989" result="Passed" start-time="2026-02-16 00:13:03Z" end-time="2026-02-16 00:13:03Z" duration="0.000024" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1023" name="IsKnownFacility_UnknownFacility_ReturnsFalse" fullname="Tests.Systems.FacilityCountAccessorTests.IsKnownFacility_UnknownFacility_ReturnsFalse" methodname="IsKnownFacility_UnknownFacility_ReturnsFalse" classname="Tests.Systems.FacilityCountAccessorTests" runstate="Runnable" seed="310061681" result="Passed" start-time="2026-02-16 00:13:03Z" end-time="2026-02-16 00:13:03Z" duration="0.000034" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1022" name="IsKnownFacility_ValidFacilities_ReturnsTrue" fullname="Tests.Systems.FacilityCountAccessorTests.IsKnownFacility_ValidFacilities_ReturnsTrue" methodname="IsKnownFacility_ValidFacilities_ReturnsTrue" classname="Tests.Systems.FacilityCountAccessorTests" runstate="Runnable" seed="1903991323" result="Passed" start-time="2026-02-16 00:13:03Z" end-time="2026-02-16 00:13:03Z" duration="0.000027" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1025" name="SetThenGet_ProducesConsistentResults" fullname="Tests.Systems.FacilityCountAccessorTests.SetThenGet_ProducesConsistentResults" methodname="SetThenGet_ProducesConsistentResults" classname="Tests.Systems.FacilityCountAccessorTests" runstate="Runnable" seed="157148808" result="Passed" start-time="2026-02-16 00:13:03Z" end-time="2026-02-16 00:13:03Z" duration="0.000038" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1007" name="TryGetCount_AiManagers_ReturnsCorrectArray" fullname="Tests.Systems.FacilityCountAccessorTests.TryGetCount_AiManagers_ReturnsCorrectArray" methodname="TryGetCount_AiManagers_ReturnsCorrectArray" classname="Tests.Systems.FacilityCountAccessorTests" runstate="Runnable" seed="1883657379" result="Passed" start-time="2026-02-16 00:13:03Z" end-time="2026-02-16 00:13:03Z" duration="0.000026" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1006" name="TryGetCount_AssemblyLines_ReturnsCorrectArray" fullname="Tests.Systems.FacilityCountAccessorTests.TryGetCount_AssemblyLines_ReturnsCorrectArray" methodname="TryGetCount_AssemblyLines_ReturnsCorrectArray" classname="Tests.Systems.FacilityCountAccessorTests" runstate="Runnable" seed="318562152" result="Passed" start-time="2026-02-16 00:13:03Z" end-time="2026-02-16 00:13:03Z" duration="0.000036" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1009" name="TryGetCount_DataCenters_ReturnsCorrectArray" fullname="Tests.Systems.FacilityCountAccessorTests.TryGetCount_DataCenters_ReturnsCorrectArray" methodname="TryGetCount_DataCenters_ReturnsCorrectArray" classname="Tests.Systems.FacilityCountAccessorTests" runstate="Runnable" seed="21711060" result="Passed" start-time="2026-02-16 00:13:03Z" end-time="2026-02-16 00:13:03Z" duration="0.000027" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1014" name="TryGetCount_EmptyFacilityId_ReturnsFalse" fullname="Tests.Systems.FacilityCountAccessorTests.TryGetCount_EmptyFacilityId_ReturnsFalse" methodname="TryGetCount_EmptyFacilityId_ReturnsFalse" classname="Tests.Systems.FacilityCountAccessorTests" runstate="Runnable" seed="1913992594" result="Passed" start-time="2026-02-16 00:13:03Z" end-time="2026-02-16 00:13:03Z" duration="0.000022" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1012" name="TryGetCount_NullData_ReturnsFalse" fullname="Tests.Systems.FacilityCountAccessorTests.TryGetCount_NullData_ReturnsFalse" methodname="TryGetCount_NullData_ReturnsFalse" classname="Tests.Systems.FacilityCountAccessorTests" runstate="Runnable" seed="1064906381" result="Passed" start-time="2026-02-16 00:13:03Z" end-time="2026-02-16 00:13:03Z" duration="0.000026" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1013" name="TryGetCount_NullFacilityId_ReturnsFalse" fullname="Tests.Systems.FacilityCountAccessorTests.TryGetCount_NullFacilityId_ReturnsFalse" methodname="TryGetCount_NullFacilityId_ReturnsFalse" classname="Tests.Systems.FacilityCountAccessorTests" runstate="Runnable" seed="615905688" result="Passed" start-time="2026-02-16 00:13:03Z" end-time="2026-02-16 00:13:03Z" duration="0.000026" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1010" name="TryGetCount_Planets_ReturnsCorrectArray" fullname="Tests.Systems.FacilityCountAccessorTests.TryGetCount_Planets_ReturnsCorrectArray" methodname="TryGetCount_Planets_ReturnsCorrectArray" classname="Tests.Systems.FacilityCountAccessorTests" runstate="Runnable" seed="1941043985" result="Passed" start-time="2026-02-16 00:13:03Z" end-time="2026-02-16 00:13:03Z" duration="0.000032" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1008" name="TryGetCount_Servers_ReturnsCorrectArray" fullname="Tests.Systems.FacilityCountAccessorTests.TryGetCount_Servers_ReturnsCorrectArray" methodname="TryGetCount_Servers_ReturnsCorrectArray" classname="Tests.Systems.FacilityCountAccessorTests" runstate="Runnable" seed="1854182711" result="Passed" start-time="2026-02-16 00:13:03Z" end-time="2026-02-16 00:13:03Z" duration="0.000032" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1011" name="TryGetCount_UnknownFacility_ReturnsFalse" fullname="Tests.Systems.FacilityCountAccessorTests.TryGetCount_UnknownFacility_ReturnsFalse" methodname="TryGetCount_UnknownFacility_ReturnsFalse" classname="Tests.Systems.FacilityCountAccessorTests" runstate="Runnable" seed="1490885433" result="Passed" start-time="2026-02-16 00:13:03Z" end-time="2026-02-16 00:13:03Z" duration="0.000027" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1016" name="TrySetCount_AiManagers_SetsCorrectValues" fullname="Tests.Systems.FacilityCountAccessorTests.TrySetCount_AiManagers_SetsCorrectValues" methodname="TrySetCount_AiManagers_SetsCorrectValues" classname="Tests.Systems.FacilityCountAccessorTests" runstate="Runnable" seed="134999359" result="Passed" start-time="2026-02-16 00:13:03Z" end-time="2026-02-16 00:13:03Z" duration="0.000031" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1015" name="TrySetCount_AssemblyLines_SetsCorrectValues" fullname="Tests.Systems.FacilityCountAccessorTests.TrySetCount_AssemblyLines_SetsCorrectValues" methodname="TrySetCount_AssemblyLines_SetsCorrectValues" classname="Tests.Systems.FacilityCountAccessorTests" runstate="Runnable" seed="2015793594" result="Passed" start-time="2026-02-16 00:13:03Z" end-time="2026-02-16 00:13:03Z" duration="0.000027" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1018" name="TrySetCount_DataCenters_SetsCorrectValues" fullname="Tests.Systems.FacilityCountAccessorTests.TrySetCount_DataCenters_SetsCorrectValues" methodname="TrySetCount_DataCenters_SetsCorrectValues" classname="Tests.Systems.FacilityCountAccessorTests" runstate="Runnable" seed="1028123534" result="Passed" start-time="2026-02-16 00:13:03Z" end-time="2026-02-16 00:13:03Z" duration="0.000036" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1021" name="TrySetCount_NullData_ReturnsFalse" fullname="Tests.Systems.FacilityCountAccessorTests.TrySetCount_NullData_ReturnsFalse" methodname="TrySetCount_NullData_ReturnsFalse" classname="Tests.Systems.FacilityCountAccessorTests" runstate="Runnable" seed="597088199" result="Passed" start-time="2026-02-16 00:13:03Z" end-time="2026-02-16 00:13:03Z" duration="0.000025" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1019" name="TrySetCount_Planets_SetsCorrectValues" fullname="Tests.Systems.FacilityCountAccessorTests.TrySetCount_Planets_SetsCorrectValues" methodname="TrySetCount_Planets_SetsCorrectValues" classname="Tests.Systems.FacilityCountAccessorTests" runstate="Runnable" seed="1195360829" result="Passed" start-time="2026-02-16 00:13:03Z" end-time="2026-02-16 00:13:03Z" duration="0.000027" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1017" name="TrySetCount_Servers_SetsCorrectValues" fullname="Tests.Systems.FacilityCountAccessorTests.TrySetCount_Servers_SetsCorrectValues" methodname="TrySetCount_Servers_SetsCorrectValues" classname="Tests.Systems.FacilityCountAccessorTests" runstate="Runnable" seed="1615877954" result="Passed" start-time="2026-02-16 00:13:03Z" end-time="2026-02-16 00:13:03Z" duration="0.000031" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1020" name="TrySetCount_UnknownFacility_ReturnsFalse" fullname="Tests.Systems.FacilityCountAccessorTests.TrySetCount_UnknownFacility_ReturnsFalse" methodname="TrySetCount_UnknownFacility_ReturnsFalse" classname="Tests.Systems.FacilityCountAccessorTests" runstate="Runnable" seed="430567032" result="Passed" start-time="2026-02-16 00:13:03Z" end-time="2026-02-16 00:13:03Z" duration="0.000022" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+          </test-suite>
+          <test-suite type="TestFixture" id="1027" name="ModifierSystemTests" fullname="Tests.Systems.ModifierSystemTests" classname="Tests.Systems.ModifierSystemTests" runstate="Runnable" testcasecount="15" result="Passed" start-time="2026-02-16 00:13:03Z" end-time="2026-02-16 00:13:03Z" duration="0.002407" total="15" passed="15" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <test-case id="1041" name="BuildSecretBuffState_DoesNotModifyInfinityData" fullname="Tests.Systems.ModifierSystemTests.BuildSecretBuffState_DoesNotModifyInfinityData" methodname="BuildSecretBuffState_DoesNotModifyInfinityData" classname="Tests.Systems.ModifierSystemTests" runstate="Runnable" seed="1558479059" result="Passed" start-time="2026-02-16 00:13:03Z" end-time="2026-02-16 00:13:03Z" duration="0.000033" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1038" name="BuildSecretBuffState_Level0_ReturnsDefaultState" fullname="Tests.Systems.ModifierSystemTests.BuildSecretBuffState_Level0_ReturnsDefaultState" methodname="BuildSecretBuffState_Level0_ReturnsDefaultState" classname="Tests.Systems.ModifierSystemTests" runstate="Runnable" seed="1102746519" result="Passed" start-time="2026-02-16 00:13:03Z" end-time="2026-02-16 00:13:03Z" duration="0.000031" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1039" name="BuildSecretBuffState_Level27_ReturnsMaxMultipliers" fullname="Tests.Systems.ModifierSystemTests.BuildSecretBuffState_Level27_ReturnsMaxMultipliers" methodname="BuildSecretBuffState_Level27_ReturnsMaxMultipliers" classname="Tests.Systems.ModifierSystemTests" runstate="Runnable" seed="340286484" result="Passed" start-time="2026-02-16 00:13:03Z" end-time="2026-02-16 00:13:03Z" duration="0.000029" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1040" name="BuildSecretBuffState_NullPrestigeData_ReturnsDefaultState" fullname="Tests.Systems.ModifierSystemTests.BuildSecretBuffState_NullPrestigeData_ReturnsDefaultState" methodname="BuildSecretBuffState_NullPrestigeData_ReturnsDefaultState" classname="Tests.Systems.ModifierSystemTests" runstate="Runnable" seed="963154943" result="Passed" start-time="2026-02-16 00:13:03Z" end-time="2026-02-16 00:13:03Z" duration="0.000031" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1042" name="SecretBuffs_And_BuildSecretBuffState_ProduceSameMultipliers" fullname="Tests.Systems.ModifierSystemTests.SecretBuffs_And_BuildSecretBuffState_ProduceSameMultipliers" methodname="SecretBuffs_And_BuildSecretBuffState_ProduceSameMultipliers" classname="Tests.Systems.ModifierSystemTests" runstate="Runnable" seed="1948024368" result="Passed" start-time="2026-02-16 00:13:03Z" end-time="2026-02-16 00:13:03Z" duration="0.000307" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1028" name="SecretBuffs_Level0_ReturnsDefaultMultipliers" fullname="Tests.Systems.ModifierSystemTests.SecretBuffs_Level0_ReturnsDefaultMultipliers" methodname="SecretBuffs_Level0_ReturnsDefaultMultipliers" classname="Tests.Systems.ModifierSystemTests" runstate="Runnable" seed="2022992929" result="Passed" start-time="2026-02-16 00:13:03Z" end-time="2026-02-16 00:13:03Z" duration="0.000034" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1029" name="SecretBuffs_Level1_AppliesOnlyFirstBuff" fullname="Tests.Systems.ModifierSystemTests.SecretBuffs_Level1_AppliesOnlyFirstBuff" methodname="SecretBuffs_Level1_AppliesOnlyFirstBuff" classname="Tests.Systems.ModifierSystemTests" runstate="Runnable" seed="2008527061" result="Passed" start-time="2026-02-16 00:13:03Z" end-time="2026-02-16 00:13:03Z" duration="0.000025" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1032" name="SecretBuffs_Level10_OverwritesScienceMultiplier" fullname="Tests.Systems.ModifierSystemTests.SecretBuffs_Level10_OverwritesScienceMultiplier" methodname="SecretBuffs_Level10_OverwritesScienceMultiplier" classname="Tests.Systems.ModifierSystemTests" runstate="Runnable" seed="1788453150" result="Passed" start-time="2026-02-16 00:13:03Z" end-time="2026-02-16 00:13:03Z" duration="0.000022" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1030" name="SecretBuffs_Level2_AppliesCashMultiplier" fullname="Tests.Systems.ModifierSystemTests.SecretBuffs_Level2_AppliesCashMultiplier" methodname="SecretBuffs_Level2_AppliesCashMultiplier" classname="Tests.Systems.ModifierSystemTests" runstate="Runnable" seed="1698734806" result="Passed" start-time="2026-02-16 00:13:03Z" end-time="2026-02-16 00:13:03Z" duration="0.000028" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1033" name="SecretBuffs_Level20_AppliesServerMultiplier" fullname="Tests.Systems.ModifierSystemTests.SecretBuffs_Level20_AppliesServerMultiplier" methodname="SecretBuffs_Level20_AppliesServerMultiplier" classname="Tests.Systems.ModifierSystemTests" runstate="Runnable" seed="1812854290" result="Passed" start-time="2026-02-16 00:13:03Z" end-time="2026-02-16 00:13:03Z" duration="0.000027" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1035" name="SecretBuffs_Level27_AppliesAllUpgradePercents" fullname="Tests.Systems.ModifierSystemTests.SecretBuffs_Level27_AppliesAllUpgradePercents" methodname="SecretBuffs_Level27_AppliesAllUpgradePercents" classname="Tests.Systems.ModifierSystemTests" runstate="Runnable" seed="51211395" result="Passed" start-time="2026-02-16 00:13:03Z" end-time="2026-02-16 00:13:03Z" duration="0.000026" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1034" name="SecretBuffs_Level27_AppliesMaxAiMultiplier" fullname="Tests.Systems.ModifierSystemTests.SecretBuffs_Level27_AppliesMaxAiMultiplier" methodname="SecretBuffs_Level27_AppliesMaxAiMultiplier" classname="Tests.Systems.ModifierSystemTests" runstate="Runnable" seed="580493828" result="Passed" start-time="2026-02-16 00:13:03Z" end-time="2026-02-16 00:13:03Z" duration="0.000027" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1031" name="SecretBuffs_Level6_AppliesScienceMultiplier" fullname="Tests.Systems.ModifierSystemTests.SecretBuffs_Level6_AppliesScienceMultiplier" methodname="SecretBuffs_Level6_AppliesScienceMultiplier" classname="Tests.Systems.ModifierSystemTests" runstate="Runnable" seed="905868231" result="Passed" start-time="2026-02-16 00:13:03Z" end-time="2026-02-16 00:13:03Z" duration="0.000024" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1036" name="SecretBuffs_NullPrestigeData_DoesNotThrow" fullname="Tests.Systems.ModifierSystemTests.SecretBuffs_NullPrestigeData_DoesNotThrow" methodname="SecretBuffs_NullPrestigeData_DoesNotThrow" classname="Tests.Systems.ModifierSystemTests" runstate="Runnable" seed="1487662416" result="Passed" start-time="2026-02-16 00:13:03Z" end-time="2026-02-16 00:13:03Z" duration="0.000028" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1037" name="SecretBuffs_NullSecrets_DoesNotThrow" fullname="Tests.Systems.ModifierSystemTests.SecretBuffs_NullSecrets_DoesNotThrow" methodname="SecretBuffs_NullSecrets_DoesNotThrow" classname="Tests.Systems.ModifierSystemTests" runstate="Runnable" seed="165214346" result="Passed" start-time="2026-02-16 00:13:03Z" end-time="2026-02-16 00:13:03Z" duration="0.000023" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+          </test-suite>
+          <test-suite type="TestFixture" id="1043" name="OfflineAwayTimeCalculatorTests" fullname="Tests.Systems.OfflineAwayTimeCalculatorTests" classname="Tests.Systems.OfflineAwayTimeCalculatorTests" runstate="Runnable" testcasecount="6" result="Passed" start-time="2026-02-16 00:13:03Z" end-time="2026-02-16 00:13:03Z" duration="0.001305" total="6" passed="6" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <test-case id="1049" name="Compute_FutureQuitTimestamp_ClampsNegativeAwayTimeToZero" fullname="Tests.Systems.OfflineAwayTimeCalculatorTests.Compute_FutureQuitTimestamp_ClampsNegativeAwayTimeToZero" methodname="Compute_FutureQuitTimestamp_ClampsNegativeAwayTimeToZero" classname="Tests.Systems.OfflineAwayTimeCalculatorTests" runstate="Runnable" seed="1589899617" result="Passed" start-time="2026-02-16 00:13:03Z" end-time="2026-02-16 00:13:03Z" duration="0.000037" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1047" name="Compute_InvalidQuitAndStarted_UsesRuntimeFallback" fullname="Tests.Systems.OfflineAwayTimeCalculatorTests.Compute_InvalidQuitAndStarted_UsesRuntimeFallback" methodname="Compute_InvalidQuitAndStarted_UsesRuntimeFallback" classname="Tests.Systems.OfflineAwayTimeCalculatorTests" runstate="Runnable" seed="222073731" result="Passed" start-time="2026-02-16 00:13:03Z" end-time="2026-02-16 00:13:03Z" duration="0.000043" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1046" name="Compute_InvalidQuitString_FallsBackToDateStarted" fullname="Tests.Systems.OfflineAwayTimeCalculatorTests.Compute_InvalidQuitString_FallsBackToDateStarted" methodname="Compute_InvalidQuitString_FallsBackToDateStarted" classname="Tests.Systems.OfflineAwayTimeCalculatorTests" runstate="Runnable" seed="1290481915" result="Passed" start-time="2026-02-16 00:13:03Z" end-time="2026-02-16 00:13:03Z" duration="0.000023" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1044" name="Compute_MissingQuitString_ReturnsMissingSourceAndZero" fullname="Tests.Systems.OfflineAwayTimeCalculatorTests.Compute_MissingQuitString_ReturnsMissingSourceAndZero" methodname="Compute_MissingQuitString_ReturnsMissingSourceAndZero" classname="Tests.Systems.OfflineAwayTimeCalculatorTests" runstate="Runnable" seed="564921322" result="Passed" start-time="2026-02-16 00:13:03Z" end-time="2026-02-16 00:13:03Z" duration="0.000025" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1048" name="Compute_OffsetTimestamp_ParsesAsUtc" fullname="Tests.Systems.OfflineAwayTimeCalculatorTests.Compute_OffsetTimestamp_ParsesAsUtc" methodname="Compute_OffsetTimestamp_ParsesAsUtc" classname="Tests.Systems.OfflineAwayTimeCalculatorTests" runstate="Runnable" seed="1247578223" result="Passed" start-time="2026-02-16 00:13:03Z" end-time="2026-02-16 00:13:03Z" duration="0.000023" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1045" name="Compute_ValidQuitString_UsesQuitTimestamp" fullname="Tests.Systems.OfflineAwayTimeCalculatorTests.Compute_ValidQuitString_UsesQuitTimestamp" methodname="Compute_ValidQuitString_UsesQuitTimestamp" classname="Tests.Systems.OfflineAwayTimeCalculatorTests" runstate="Runnable" seed="411833309" result="Passed" start-time="2026-02-16 00:13:03Z" end-time="2026-02-16 00:13:03Z" duration="0.000022" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+          </test-suite>
+          <test-suite type="TestFixture" id="1050" name="OfflineLifecycleCoordinatorTests" fullname="Tests.Systems.OfflineLifecycleCoordinatorTests" classname="Tests.Systems.OfflineLifecycleCoordinatorTests" runstate="Runnable" testcasecount="5" result="Passed" start-time="2026-02-16 00:13:03Z" end-time="2026-02-16 00:13:03Z" duration="0.001211" total="5" passed="5" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <test-case id="1055" name="Dispose_UnsubscribesFromEvents" fullname="Tests.Systems.OfflineLifecycleCoordinatorTests.Dispose_UnsubscribesFromEvents" methodname="Dispose_UnsubscribesFromEvents" classname="Tests.Systems.OfflineLifecycleCoordinatorTests" runstate="Runnable" seed="639284871" result="Passed" start-time="2026-02-16 00:13:03Z" end-time="2026-02-16 00:13:03Z" duration="0.000031" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1054" name="FocusGainReloadEnabled_ReloadsOnEachFocusGain" fullname="Tests.Systems.OfflineLifecycleCoordinatorTests.FocusGainReloadEnabled_ReloadsOnEachFocusGain" methodname="FocusGainReloadEnabled_ReloadsOnEachFocusGain" classname="Tests.Systems.OfflineLifecycleCoordinatorTests" runstate="Runnable" seed="698146548" result="Passed" start-time="2026-02-16 00:13:03Z" end-time="2026-02-16 00:13:03Z" duration="0.000020" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1051" name="FocusLostPauseQuit_TriggersSaveForEachLifecycleEvent" fullname="Tests.Systems.OfflineLifecycleCoordinatorTests.FocusLostPauseQuit_TriggersSaveForEachLifecycleEvent" methodname="FocusLostPauseQuit_TriggersSaveForEachLifecycleEvent" classname="Tests.Systems.OfflineLifecycleCoordinatorTests" runstate="Runnable" seed="647600194" result="Passed" start-time="2026-02-16 00:13:03Z" end-time="2026-02-16 00:13:03Z" duration="0.000033" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1052" name="PauseTruePauseFalseQuit_OnlyPauseTrueAndQuitTriggerSave" fullname="Tests.Systems.OfflineLifecycleCoordinatorTests.PauseTruePauseFalseQuit_OnlyPauseTrueAndQuitTriggerSave" methodname="PauseTruePauseFalseQuit_OnlyPauseTrueAndQuitTriggerSave" classname="Tests.Systems.OfflineLifecycleCoordinatorTests" runstate="Runnable" seed="45761851" result="Passed" start-time="2026-02-16 00:13:03Z" end-time="2026-02-16 00:13:03Z" duration="0.000024" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1053" name="RapidFocusToggles_RequestsSaveOnlyOnFocusLoss" fullname="Tests.Systems.OfflineLifecycleCoordinatorTests.RapidFocusToggles_RequestsSaveOnlyOnFocusLoss" methodname="RapidFocusToggles_RequestsSaveOnlyOnFocusLoss" classname="Tests.Systems.OfflineLifecycleCoordinatorTests" runstate="Runnable" seed="204452098" result="Passed" start-time="2026-02-16 00:13:03Z" end-time="2026-02-16 00:13:03Z" duration="0.000023" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+          </test-suite>
+          <test-suite type="TestFixture" id="1056" name="OfflinePersistenceRegressionTests" fullname="Tests.Systems.OfflinePersistenceRegressionTests" classname="Tests.Systems.OfflinePersistenceRegressionTests" runstate="Runnable" testcasecount="3" result="Passed" start-time="2026-02-16 00:13:03Z" end-time="2026-02-16 00:13:03Z" duration="0.007428" total="3" passed="3" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <test-suite type="ParameterizedMethod" id="1060" name="ReopenCycle_PersistsLatestProgress_AndGrantsOfflineTime" fullname="Tests.Systems.OfflinePersistenceRegressionTests.ReopenCycle_PersistsLatestProgress_AndGrantsOfflineTime" classname="Tests.Systems.OfflinePersistenceRegressionTests" runstate="Runnable" testcasecount="3" result="Passed" start-time="2026-02-16 00:13:03Z" end-time="2026-02-16 00:13:03Z" duration="0.006459" total="3" passed="3" failed="0" inconclusive="0" skipped="0" asserts="0">
+              <properties />
+              <test-case id="1057" name="ReopenCycle_PersistsLatestProgress_AndGrantsOfflineTime(120.0d)" fullname="Tests.Systems.OfflinePersistenceRegressionTests.ReopenCycle_PersistsLatestProgress_AndGrantsOfflineTime(120.0d)" methodname="ReopenCycle_PersistsLatestProgress_AndGrantsOfflineTime" classname="Tests.Systems.OfflinePersistenceRegressionTests" runstate="Runnable" seed="748517227" result="Passed" start-time="2026-02-16 00:13:03Z" end-time="2026-02-16 00:13:03Z" duration="0.002203" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <output><![CDATA[[OfflineTimeDiag] ApplyReturnValues | platform=OSXEditor, result=ok, awayRaw=120.000, applied=120.000, beforeOfflineTime=0, afterOfflineTime=120, capApplied=false, maxOfflineTime=100000
+[OfflineTimeDiag] ApplyReturnValues | platform=OSXEditor, result=ok, awayRaw=60.000, applied=60.000, beforeOfflineTime=120, afterOfflineTime=180, capApplied=false, maxOfflineTime=100000
+]]></output>
+              </test-case>
+              <test-case id="1058" name="ReopenCycle_PersistsLatestProgress_AndGrantsOfflineTime(900.0d)" fullname="Tests.Systems.OfflinePersistenceRegressionTests.ReopenCycle_PersistsLatestProgress_AndGrantsOfflineTime(900.0d)" methodname="ReopenCycle_PersistsLatestProgress_AndGrantsOfflineTime" classname="Tests.Systems.OfflinePersistenceRegressionTests" runstate="Runnable" seed="962056478" result="Passed" start-time="2026-02-16 00:13:03Z" end-time="2026-02-16 00:13:03Z" duration="0.001986" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <output><![CDATA[[OfflineTimeDiag] ApplyReturnValues | platform=OSXEditor, result=ok, awayRaw=900.000, applied=900.000, beforeOfflineTime=0, afterOfflineTime=900, capApplied=false, maxOfflineTime=100000
+[OfflineTimeDiag] ApplyReturnValues | platform=OSXEditor, result=ok, awayRaw=450.000, applied=450.000, beforeOfflineTime=900, afterOfflineTime=1350, capApplied=false, maxOfflineTime=100000
+]]></output>
+              </test-case>
+              <test-case id="1059" name="ReopenCycle_PersistsLatestProgress_AndGrantsOfflineTime(3600.0d)" fullname="Tests.Systems.OfflinePersistenceRegressionTests.ReopenCycle_PersistsLatestProgress_AndGrantsOfflineTime(3600.0d)" methodname="ReopenCycle_PersistsLatestProgress_AndGrantsOfflineTime" classname="Tests.Systems.OfflinePersistenceRegressionTests" runstate="Runnable" seed="442706677" result="Passed" start-time="2026-02-16 00:13:03Z" end-time="2026-02-16 00:13:03Z" duration="0.001864" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <output><![CDATA[[OfflineTimeDiag] ApplyReturnValues | platform=OSXEditor, result=ok, awayRaw=3600.000, applied=3600.000, beforeOfflineTime=0, afterOfflineTime=3600, capApplied=false, maxOfflineTime=100000
+[OfflineTimeDiag] ApplyReturnValues | platform=OSXEditor, result=ok, awayRaw=1800.000, applied=1800.000, beforeOfflineTime=3600, afterOfflineTime=5400, capApplied=false, maxOfflineTime=100000
+]]></output>
+              </test-case>
+            </test-suite>
+          </test-suite>
+          <test-suite type="TestFixture" id="1061" name="OfflineProgressSystemTests" fullname="Tests.Systems.OfflineProgressSystemTests" classname="Tests.Systems.OfflineProgressSystemTests" runstate="Runnable" testcasecount="5" result="Passed" start-time="2026-02-16 00:13:03Z" end-time="2026-02-16 00:13:03Z" duration="0.003398" total="5" passed="5" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <test-case id="1064" name="ApplyReturnValues_AwayTimeOverCap_ClampsToMaxOfflineTime" fullname="Tests.Systems.OfflineProgressSystemTests.ApplyReturnValues_AwayTimeOverCap_ClampsToMaxOfflineTime" methodname="ApplyReturnValues_AwayTimeOverCap_ClampsToMaxOfflineTime" classname="Tests.Systems.OfflineProgressSystemTests" runstate="Runnable" seed="1323828661" result="Passed" start-time="2026-02-16 00:13:03Z" end-time="2026-02-16 00:13:03Z" duration="0.000321" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[OfflineTimeDiag] ApplyReturnValues | platform=OSXEditor, result=ok, awayRaw=300.000, applied=100.000, beforeOfflineTime=500, afterOfflineTime=600, capApplied=true, maxOfflineTime=600
+]]></output>
+            </test-case>
+            <test-case id="1065" name="ApplyReturnValues_NegativeAwayTime_MarksCheaterAndClearsOfflineTime" fullname="Tests.Systems.OfflineProgressSystemTests.ApplyReturnValues_NegativeAwayTime_MarksCheaterAndClearsOfflineTime" methodname="ApplyReturnValues_NegativeAwayTime_MarksCheaterAndClearsOfflineTime" classname="Tests.Systems.OfflineProgressSystemTests" runstate="Runnable" seed="656831963" result="Passed" start-time="2026-02-16 00:13:03Z" end-time="2026-02-16 00:13:03Z" duration="0.000295" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[OfflineTimeDiag] ApplyReturnValues | platform=OSXEditor, result=cheater_reset, awayRaw=-5.000, beforeOfflineTime=200, afterOfflineTime=0, maxOfflineTime=0
+]]></output>
+            </test-case>
+            <test-case id="1062" name="ApplyReturnValues_PositiveAwayTime_AddsToOfflinePool" fullname="Tests.Systems.OfflineProgressSystemTests.ApplyReturnValues_PositiveAwayTime_AddsToOfflinePool" methodname="ApplyReturnValues_PositiveAwayTime_AddsToOfflinePool" classname="Tests.Systems.OfflineProgressSystemTests" runstate="Runnable" seed="1672070449" result="Passed" start-time="2026-02-16 00:13:03Z" end-time="2026-02-16 00:13:03Z" duration="0.000294" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[OfflineTimeDiag] ApplyReturnValues | platform=OSXEditor, result=ok, awayRaw=120.000, applied=120.000, beforeOfflineTime=30, afterOfflineTime=150, capApplied=false, maxOfflineTime=600
+]]></output>
+            </test-case>
+            <test-case id="1066" name="ApplyReturnValues_TwoValidReopens_AccumulatesAcrossRuns" fullname="Tests.Systems.OfflineProgressSystemTests.ApplyReturnValues_TwoValidReopens_AccumulatesAcrossRuns" methodname="ApplyReturnValues_TwoValidReopens_AccumulatesAcrossRuns" classname="Tests.Systems.OfflineProgressSystemTests" runstate="Runnable" seed="1577217179" result="Passed" start-time="2026-02-16 00:13:03Z" end-time="2026-02-16 00:13:03Z" duration="0.000578" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[OfflineTimeDiag] ApplyReturnValues | platform=OSXEditor, result=ok, awayRaw=120.000, applied=120.000, beforeOfflineTime=0, afterOfflineTime=120, capApplied=false, maxOfflineTime=1000
+[OfflineTimeDiag] ApplyReturnValues | platform=OSXEditor, result=ok, awayRaw=300.000, applied=300.000, beforeOfflineTime=120, afterOfflineTime=420, capApplied=false, maxOfflineTime=1000
+]]></output>
+            </test-case>
+            <test-case id="1063" name="ApplyReturnValues_ZeroAwayTime_DoesNotChangeOfflinePool" fullname="Tests.Systems.OfflineProgressSystemTests.ApplyReturnValues_ZeroAwayTime_DoesNotChangeOfflinePool" methodname="ApplyReturnValues_ZeroAwayTime_DoesNotChangeOfflinePool" classname="Tests.Systems.OfflineProgressSystemTests" runstate="Runnable" seed="1468790500" result="Passed" start-time="2026-02-16 00:13:03Z" end-time="2026-02-16 00:13:03Z" duration="0.000284" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[OfflineTimeDiag] ApplyReturnValues | platform=OSXEditor, result=ok, awayRaw=0.000, applied=0.000, beforeOfflineTime=45, afterOfflineTime=45, capApplied=false, maxOfflineTime=600
+Saving results to: /Users/matthewrushworth/Library/Application Support/BlindsidedGames/Idle Dyson Swarm/TestResults.xml
+]]></output>
+            </test-case>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>
