@@ -30,22 +30,30 @@ using UnityEditor;
 
 /*
  * Oracle (Core Partial)
- * Purpose: Main game-state root that coordinates save state, debug tooling, and parity/diagnostic helpers.
+ * Purpose: Main game-state root that coordinates save state, Infinity/Quantum resets, debug tooling, and parity helpers.
  * Runs: Runtime (MonoBehaviour in Game scene), with editor-only utilities enabled via context menus.
- * Primary entry points in this file: DebugRunFacilityParityTests(), DebugCompareDataCenterProduction(), debug logging
- * helpers for data-driven breakdowns.
+ * Primary entry points in this file: Start(), Update(), Awake(), lifecycle callbacks (OnApplicationQuit/Pause/Focus),
+ * DysonInfinity(), ManualDysonInfinity(), EnactPrestigePlus(), PrestigeDoubleWiper(), plus debug parity/log helpers.
  * Owns vs delegates: Owns orchestration and persisted state containers; delegates production/stat formulas to
- * ProductionSystem, FacilityRuntimeBuilder, and legacy bridge/stat calculators.
+ * ProductionSystem, FacilityRuntimeBuilder, and legacy bridge/stat calculators. Delegates lifecycle routing and
+ * seam-backed time/save abstractions to Oracle.RuntimeSeams + Systems.Save helpers.
  *
  * Interacts with:
+ * - Called by Assets/Scripts/Systems/GameManager.cs (Prestige flow), plus Unity context menus/inspector wiring.
  * - Assets/Scripts/Systems/ProductionSystem.cs (authoritative runtime production behavior)
  * - Assets/Scripts/Systems/Facilities/FacilityLegacyBridge.cs (legacy characterization runtime for parity checks)
  * - Assets/Scripts/Systems/Stats/*.cs pipelines (data-driven stat computation and contribution breakdowns)
+ * - Assets/Scripts/Expansion/Oracle.RuntimeSeams.cs (IClock/ISaveStore/ILifecycleEvents wiring + lifecycle policy)
  *
  * Change notes:
+ * - SaveDataSettings field names are persistence/export keys; renaming `offlineTimeUsedThisInfinity` or
+ *   `offlineTimeUsedPreviousInfinity` requires compatibility/migration coordination.
+ * - Infinity reset boundary ordering must keep offline usage rollover before Infinity data is reinitialized.
  * - Parity formulas in debug helpers must track runtime formula ordering exactly, or false-positive parity deltas appear.
  * - Debug contribution ids/order are used for diagnosis; keep labels stable when adjusting formulas.
  * - Changes here do not migrate saves directly but can change interpretation of existing save-state numbers.
+ * - Lifecycle callbacks are routed through RuntimeSeams; callback policy changes must stay aligned with
+ *   OfflineLifecycleCoordinator tests.
  */
 
 namespace Expansion
@@ -65,8 +73,10 @@ namespace Expansion
     /// <para>Clipboard UI entrypoints: <c>Assets/Scripts/Expansion/Oracle.Clipboard.cs</c>.</para>
     /// <para>Migrations + ensure steps: <c>Assets/Scripts/Expansion/Oracle.Migrations.cs</c>.</para>
     /// <para>Change notes: <see cref="SaveDataSettings"/> includes tab preset override preferences (Bots/Research) that
-    /// export/import with the save. Skill point reconciliation is a manual fix tool (see
-    /// <c>Assets/Scripts/Expansion/Oracle.SkillPoints.cs</c>).</para>
+    /// export/import with the save. Infinity reset boundaries in this class also roll
+    /// <see cref="SaveDataSettings.offlineTimeUsedThisInfinity"/> into
+    /// <see cref="SaveDataSettings.offlineTimeUsedPreviousInfinity"/>. Skill point reconciliation is a manual fix
+    /// tool (see <c>Assets/Scripts/Expansion/Oracle.SkillPoints.cs</c>).</para>
     /// </remarks>
     public partial class Oracle : SerializedMonoBehaviour
     {
@@ -328,47 +338,25 @@ private void PackSettingsFlags()
 
         private void OnApplicationQuit()
         {
-            Debug.LogWarning(
-                $"[OfflineTimeDiag] AppLifecycle | phase=OnApplicationQuit, platform={Application.platform}, " +
-                $"ready={_isSaveReady.ToString().ToLowerInvariant()}, loaded={Loaded.ToString().ToLowerInvariant()}, " +
-                $"dateQuitBefore='{FormatDebugString(saveSettings?.dateQuitString)}'");
-            SaveForQuit();
+            EnsureRuntimeSeamsInitialized();
+            _lifecycleEvents?.RaiseQuitRequested();
         }
 
         #if !UNITY_EDITOR
         #if UNITY_IOS || UNITY_ANDROID
         void OnApplicationPause(bool pauseStatus)
         {
-            if (!pauseStatus) return;
-
-            Debug.LogWarning(
-                $"[OfflineTimeDiag] AppLifecycle | phase=OnApplicationPause, platform={Application.platform}, " +
-                $"ready={_isSaveReady.ToString().ToLowerInvariant()}, loaded={Loaded.ToString().ToLowerInvariant()}, " +
-                $"dateQuitBefore='{FormatDebugString(saveSettings?.dateQuitString)}'");
-            SaveForQuit();
+            EnsureRuntimeSeamsInitialized();
+            _lifecycleEvents?.RaisePauseChanged(pauseStatus);
         }
         #endif
 
         void OnApplicationFocus(bool focus)
         {
-            if (focus)
-            {
-#if UNITY_IOS
-            Load();
-#elif UNITY_ANDROID
-            Load();
+            EnsureRuntimeSeamsInitialized();
+            _lifecycleEvents?.RaiseFocusChanged(focus);
+        }
 #endif
-            }
-                if (!focus)
-                {
-                    Debug.LogWarning(
-                        $"[OfflineTimeDiag] AppLifecycle | phase=OnApplicationFocusLost, platform={Application.platform}, " +
-                        $"ready={_isSaveReady.ToString().ToLowerInvariant()}, loaded={Loaded.ToString().ToLowerInvariant()}, " +
-                        $"dateQuitBefore='{FormatDebugString(saveSettings?.dateQuitString)}'");
-                    SaveForQuit();
-                }
-            }
-            #endif
 
 
         #region NewsTicker
@@ -3584,6 +3572,7 @@ private void PackSettingsFlags()
 
             // Load entitlements early so debug gating doesn't depend on PlayerPrefs.
             PlayerEntitlementsStore.EnsureLoaded();
+            EnsureRuntimeSeamsInitialized();
         }
 
         #endregion

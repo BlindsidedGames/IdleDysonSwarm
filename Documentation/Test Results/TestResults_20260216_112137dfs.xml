@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="4" result="Failed(Child)" total="4" passed="2" failed="2" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-02-16 00:21:14Z" end-time="2026-02-16 00:21:14Z" duration="0.0721627">
+  <test-suite type="TestSuite" id="1133" name="Idle Dyson Swarm" fullname="Idle Dyson Swarm" runstate="Runnable" testcasecount="106" result="Failed" site="Child" start-time="2026-02-16 00:21:14Z" end-time="2026-02-16 00:21:14Z" duration="0.072163" total="4" passed="2" failed="2" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="EditMode" />
+    </properties>
+    <failure>
+      <message><![CDATA[One or more child tests had errors]]></message>
+    </failure>
+    <test-suite type="Assembly" id="1123" name="Assembly-CSharp-Editor.dll" fullname="/Users/matthewrushworth/Projects/Idle Dyson Swarm/Library/ScriptAssemblies/Assembly-CSharp-Editor.dll" runstate="Runnable" testcasecount="106" result="Failed" site="Child" start-time="2026-02-16 00:21:14Z" end-time="2026-02-16 00:21:14Z" duration="0.066901" total="4" passed="2" failed="2" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="10104" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="EditMode" />
+        <property name="EditorOnly" value="True" />
+      </properties>
+      <failure>
+        <message><![CDATA[One or more child tests had errors]]></message>
+      </failure>
+      <test-suite type="TestSuite" id="1124" name="Tests" fullname="Tests" runstate="Runnable" testcasecount="106" result="Failed" site="Child" start-time="2026-02-16 00:21:14Z" end-time="2026-02-16 00:21:14Z" duration="0.066191" total="4" passed="2" failed="2" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <failure>
+          <message><![CDATA[One or more child tests had errors]]></message>
+        </failure>
+        <test-suite type="TestSuite" id="1128" name="Investigations" fullname="Tests.Investigations" runstate="Runnable" testcasecount="4" result="Failed" site="Child" start-time="2026-02-16 00:21:14Z" end-time="2026-02-16 00:21:14Z" duration="0.065789" total="4" passed="2" failed="2" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <failure>
+            <message><![CDATA[One or more child tests had errors]]></message>
+          </failure>
+          <test-suite type="TestFixture" id="1118" name="ProductionUiMismatchTests" fullname="Tests.Investigations.ProductionUiMismatchTests" classname="Tests.Investigations.ProductionUiMismatchTests" runstate="Runnable" testcasecount="4" result="Failed" site="Child" start-time="2026-02-16 00:21:14Z" end-time="2026-02-16 00:21:14Z" duration="0.065107" total="4" passed="2" failed="2" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <failure>
+              <message><![CDATA[One or more child tests had errors]]></message>
+            </failure>
+            <test-case id="1121" name="DataCenters_Control_NoRudimentary_ParityHolds" fullname="Tests.Investigations.ProductionUiMismatchTests.DataCenters_Control_NoRudimentary_ParityHolds" methodname="DataCenters_Control_NoRudimentary_ParityHolds" classname="Tests.Investigations.ProductionUiMismatchTests" runstate="Runnable" seed="1980982476" result="Passed" start-time="2026-02-16 00:21:14Z" end-time="2026-02-16 00:21:14Z" duration="0.051868" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1119" name="DataCenters_DisplayedRate_Equals_AppliedServerGainRate" fullname="Tests.Investigations.ProductionUiMismatchTests.DataCenters_DisplayedRate_Equals_AppliedServerGainRate" methodname="DataCenters_DisplayedRate_Equals_AppliedServerGainRate" classname="Tests.Investigations.ProductionUiMismatchTests" runstate="Runnable" seed="1344988290" result="Failed" start-time="2026-02-16 00:21:14Z" end-time="2026-02-16 00:21:14Z" duration="0.005778" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <failure>
+                <message><![CDATA[  Displayed data center server rate should match actual server gain per second.
+  Expected: 5.1111111138015985d +/- 1.0000000000000001E-09d
+  But was:  0.11111111380159855d
+]]></message>
+                <stack-trace><![CDATA[at Tests.Investigations.ProductionUiMismatchTests.DataCenters_DisplayedRate_Equals_AppliedServerGainRate () [0x00089] in /Users/matthewrushworth/Projects/Idle Dyson Swarm/Assets/Editor/Tests/Investigations/ProductionUiMismatchTests.cs:53
+]]></stack-trace>
+              </failure>
+            </test-case>
+            <test-case id="1122" name="Planets_Control_NoPocketDimensions_ParityHolds" fullname="Tests.Investigations.ProductionUiMismatchTests.Planets_Control_NoPocketDimensions_ParityHolds" methodname="Planets_Control_NoPocketDimensions_ParityHolds" classname="Tests.Investigations.ProductionUiMismatchTests" runstate="Runnable" seed="601720095" result="Passed" start-time="2026-02-16 00:21:14Z" end-time="2026-02-16 00:21:14Z" duration="0.000839" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1120" name="Planets_DisplayedRate_Equals_AppliedDataCenterGainRate" fullname="Tests.Investigations.ProductionUiMismatchTests.Planets_DisplayedRate_Equals_AppliedDataCenterGainRate" methodname="Planets_DisplayedRate_Equals_AppliedDataCenterGainRate" classname="Tests.Investigations.ProductionUiMismatchTests" runstate="Runnable" seed="900938443" result="Failed" start-time="2026-02-16 00:21:14Z" end-time="2026-02-16 00:21:14Z" duration="0.000401" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <failure>
+                <message><![CDATA[  Displayed planet data center rate should match actual data center gain per second.
+  Expected: 2.0277777784503996d +/- 1.0000000000000001E-09d
+  But was:  0.027777778450399637d
+]]></message>
+                <stack-trace><![CDATA[at Tests.Investigations.ProductionUiMismatchTests.Planets_DisplayedRate_Equals_AppliedDataCenterGainRate () [0x00080] in /Users/matthewrushworth/Projects/Idle Dyson Swarm/Assets/Editor/Tests/Investigations/ProductionUiMismatchTests.cs:76
+]]></stack-trace>
+              </failure>
+              <output><![CDATA[Saving results to: /Users/matthewrushworth/Library/Application Support/BlindsidedGames/Idle Dyson Swarm/TestResults.xml
+]]></output>
+            </test-case>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

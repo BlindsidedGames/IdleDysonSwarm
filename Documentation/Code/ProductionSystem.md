@@ -6,9 +6,13 @@
 ## Contract / behavior expectations
 - `CalculateProduction(...)` defines facility update ordering for each tick.
 - `CalculateDataCenterProduction(...)` writes:
-  - `infinityData.dataCenterServerProduction` = data-center production before rudimentary singularity add-on.
+  - `infinityData.dataCenterServerProduction` = total runtime data-center production (matches applied server gain per second).
   - `infinityData.serverProduction` = final runtime production from the data-center pipeline.
   - `infinityData.servers[0] += infinityData.serverProduction * deltaTime`.
+- `CalculatePlanetProduction(...)` writes:
+  - `infinityData.planetsDataCenterProduction` = total runtime planet production (matches applied data-center gain per second).
+  - `infinityData.dataCenterProduction` = final runtime production from the planet pipeline.
+  - `infinityData.dataCenters[0] += infinityData.dataCenterProduction * deltaTime`.
 - Parallel Computation is now fully represented inside the data-driven runtime pipeline; there is no separate post-pipeline add/subtract path in `ProductionSystem`.
 
 ## Data flow
@@ -20,7 +24,8 @@
 ## Save/load implications
 - No save-field additions/removals.
 - Existing values are recalculated from current state each tick.
-- Behavior change affects `serverProduction` magnitude (by design) but does not require migration.
+- `dataCenterServerProduction` and `planetsDataCenterProduction` now represent total applied gain rates (not base-only values).
+- No migration required because these are derived runtime fields.
 
 ## Performance pitfalls
 - Keep production methods allocation-free; they run every frame.
@@ -28,8 +33,8 @@
 - Keep updates deltaTime-scaled to avoid frame-rate dependent gains.
 
 ## Quick verification steps
-1. Enable Parallel Computation with `serversTotal > 1`; verify `serverProduction` already includes the multiplier.
-2. Confirm `CalculateDataCenterProduction` has no standalone additive parallel increment.
-3. Confirm offline progression uses `serverProduction * seconds` with no extra parallel term.
-4. Compare realtime and offline gains over the same simulated duration for consistency.
-5. Use Oracle parity logs to confirm expected/data-driven values remain aligned.
+1. Enable Rudimentary Singularity and verify `dataCenterServerProduction == serverProduction` and both match `servers` delta over 1 second.
+2. Enable Pocket Dimensions and verify `planetsDataCenterProduction == dataCenterProduction` and both match `dataCenters` delta over 1 second.
+3. Confirm facility card production text, bot-panel progress bar rates, and facility breakdown popup all show the same total rate.
+4. Confirm offline progression uses `serverProduction * seconds` and `dataCenterProduction * seconds` with no extra duplicate add.
+5. Compare realtime and offline gains over the same simulated duration for consistency.

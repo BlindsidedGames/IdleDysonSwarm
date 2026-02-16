@@ -23,6 +23,8 @@ using static Expansion.Oracle;
 /// - Serialized references (panels, images, progress bar roots) must be wired in the relevant prefab/scene.
 /// - If you change which production rate feeds a bar, also update the matching "toggle off when not producing"
 ///   condition so bars don't appear dead.
+/// - Keep bar rates aligned with the same total applied production used by facility cards and breakdown popup
+///   (avoid manually re-adding bonus subcomponents that are already included in runtime totals).
 /// </summary>
 public class BotPanelManager : MonoBehaviour
 {
@@ -121,14 +123,14 @@ public class BotPanelManager : MonoBehaviour
         SetFacilityProgressBar(
             dataCenters,
             dataCentersProgressBarRoot,
-            infinityData.serverProduction + infinityData.rudimentrySingularityProduction,
+            infinityData.serverProduction,
             infinityData.servers[0]);
 
         // Planets → producing Data Centers
         SetFacilityProgressBar(
             planets,
             planetsProgressBarRoot,
-            infinityData.dataCenterProduction + infinityData.pocketDimensionsProduction,
+            infinityData.dataCenterProduction,
             infinityData.dataCenters[0]);
 
         // Mega-structure bars also show what each facility is producing (one tier down).
