@@ -37,11 +37,11 @@
 1. Trigger:
    - `OnApplicationQuit()`
    - `OnApplicationPause(true)` (mobile, non-editor)
-   - `OnApplicationFocus(false)` (non-editor)
+   - `OnApplicationFocus(false)` (mobile, non-editor only)
 2. Service chain:
    - callbacks raise `ManualLifecycleEvents`
-   - `OfflineLifecycleCoordinator` maps event -> `OnLifecycleSaveRequested(phase)`
-   - `SaveForQuit()`
+   - `OfflineLifecycleCoordinator` maps event -> `OnLifecycleSaveRequested(trigger)`
+   - `SaveForLifecycleTrigger(trigger)`
    - `SaveInternal(force:false, updateQuitTime:true)`
    - `TrySaveState()`
 3. Persistence:
@@ -51,6 +51,7 @@
 4. Side effects:
    - offline diagnostic logs (`[OfflineTimeDiag]`)
    - latest save state and quit timestamp persisted atomically
+   - desktop focus changes do not enter this path, preventing quit-timestamp churn from alt-tab/startup focus races
 
 ### Focus gain reload path (mobile builds)
 1. Trigger: `OnApplicationFocus(true)` (mobile player builds)
@@ -103,6 +104,7 @@
   - `focus lost -> pause -> quit`
   - `pause true -> pause false -> quit`
   - rapid focus toggles
+  - focus-loss disabled policy
   - focus-gain reload enabled policy
   - unsubscribe/dispose behavior
 

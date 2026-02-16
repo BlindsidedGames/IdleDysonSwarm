@@ -2,6 +2,13 @@ using System;
 
 namespace Systems.Save
 {
+    public enum LifecycleSaveTrigger
+    {
+        Pause,
+        FocusLost,
+        Quit
+    }
+
     /*
      * OfflineLifecycleCoordinator
      * Purpose (runtime): Centralizes lifecycle-trigger policy for save-on-background/quit and optional focus reload.
@@ -11,7 +18,8 @@ namespace Systems.Save
      * - Dispose() (unsubscribes)
      * Owns vs delegates:
      * - Owns the lifecycle policy matrix:
-     *   pause(true) => request save, focus(false) => request save, quit => request save, focus(true) => optional reload.
+     *   pause(true) => request save, focus(false) => optional save (platform policy), quit => request save,
+     *   focus(true) => optional reload.
      * - Delegates actual save/load work to injected callbacks.
      *
      * Interacts with:
@@ -21,26 +29,31 @@ namespace Systems.Save
      *
      * Change notes:
      * - Callback ordering materially affects persistence reliability; keep pause/focus/quit routing consistent.
+     * - Focus-loss save policy is platform-configurable via constructor; mobile and desktop expectations differ.
      * - If focus-gain reload policy changes, update mobile behavior tests and Oracle integration docs together.
      */
     public sealed class OfflineLifecycleCoordinator : IDisposable
     {
         private readonly ILifecycleEvents _events;
-        private readonly Action<string> _requestSaveForQuit;
+        private readonly Action<LifecycleSaveTrigger> _requestSaveForLifecycle;
         private readonly Action _requestReloadOnFocusGain;
         private readonly bool _reloadOnFocusGain;
+        private readonly bool _saveOnFocusLoss;
         private bool _disposed;
 
         public OfflineLifecycleCoordinator(
             ILifecycleEvents lifecycleEvents,
-            Action<string> requestSaveForQuit,
+            Action<LifecycleSaveTrigger> requestSaveForLifecycle,
             Action requestReloadOnFocusGain,
-            bool reloadOnFocusGain)
+            bool reloadOnFocusGain,
+            bool saveOnFocusLoss)
         {
             _events = lifecycleEvents ?? throw new ArgumentNullException(nameof(lifecycleEvents));
-            _requestSaveForQuit = requestSaveForQuit ?? throw new ArgumentNullException(nameof(requestSaveForQuit));
+            _requestSaveForLifecycle =
+                requestSaveForLifecycle ?? throw new ArgumentNullException(nameof(requestSaveForLifecycle));
             _requestReloadOnFocusGain = requestReloadOnFocusGain ?? throw new ArgumentNullException(nameof(requestReloadOnFocusGain));
             _reloadOnFocusGain = reloadOnFocusGain;
+            _saveOnFocusLoss = saveOnFocusLoss;
 
             _events.PauseChanged += HandlePauseChanged;
             _events.FocusChanged += HandleFocusChanged;
@@ -60,7 +73,7 @@ namespace Systems.Save
         private void HandlePauseChanged(bool paused)
         {
             if (!paused) return;
-            _requestSaveForQuit("OnApplicationPause");
+            _requestSaveForLifecycle(LifecycleSaveTrigger.Pause);
         }
 
         private void HandleFocusChanged(bool focused)
@@ -75,12 +88,15 @@ namespace Systems.Save
                 return;
             }
 
-            _requestSaveForQuit("OnApplicationFocusLost");
+            if (_saveOnFocusLoss)
+            {
+                _requestSaveForLifecycle(LifecycleSaveTrigger.FocusLost);
+            }
         }
 
         private void HandleQuitRequested()
         {
-            _requestSaveForQuit("OnApplicationQuit");
+            _requestSaveForLifecycle(LifecycleSaveTrigger.Quit);
         }
     }
 }
