@@ -7,6 +7,33 @@ using IdleDysonSwarm.UI;
 using IdleDysonSwarm.UI.Simulation;
 using static Expansion.Oracle;
 
+/*
+Purpose (runtime): Controls Simulation Information Era research/production progression, UI panel state,
+and per-frame application of Information Era timers.
+
+Primary entry points:
+- Unity: Start (panel setup + button listeners), Update (visibility, progression, production, info text).
+- Button callbacks: OnEngineeringButtonClick/OnShippingButtonClick/.../OnFactoriesBoost.
+- Research loops: EngineeringManager, ShippingManager, WorldTradeManager, WorldPeaceManager,
+  MathematicsManager, AdvancedPhysicsManager.
+
+Owns vs delegates:
+- Owns Information Era state transitions and updates to SaveDataDream1 values for this era.
+- Delegates timer math to ProductionTimer and formatting/panel rendering to CalcUtils/UIThemeProvider/
+  SimulationGenericPanelReferences.
+
+Interacts with:
+- Calls into Oracle save containers (SaveDataDream1, SaveDataPrestige, SaveData) and ProductionTimer.
+- Called by Game scene runtime update loop and button events on SimulationGenericPanelReferences.
+
+Change notes:
+- Mathematics completion parity now sets sdSimulation.solarPanelGeneration to at least 200 and marks
+  mathematicsComplete; keep this in sync with ResearchManager and Oracle.Migrations normalization.
+- Serialized panel references are scene-wired; renaming/removing fields requires matching updates in
+  Assets/Scenes/Game.unity.
+- Changing research completion booleans or progress fields can break unlock chains consumed by
+  SpaceAgeManager and other era managers.
+*/
 public class InformationEraManager : MonoBehaviour
 {
     [Header("Category Headers")]
@@ -39,7 +66,17 @@ public class InformationEraManager : MonoBehaviour
     private ProductionTimer _botsTimer;
 
     private const float InfoUpdateInterval = 0.1f; // 10hz debounce for info descriptions
+    private const long MathematicsLegacySolarGeneration = 200;
     private float _infoUpdateTimer;
+
+    private static void ApplyMathematicsCompletionParity(SaveDataDream1 simulation)
+    {
+        if (simulation == null) return;
+
+        simulation.mathematicsComplete = true;
+        if (simulation.solarPanelGeneration < MathematicsLegacySolarGeneration)
+            simulation.solarPanelGeneration = MathematicsLegacySolarGeneration;
+    }
 
     private void Start()
     {
@@ -386,8 +423,7 @@ public class InformationEraManager : MonoBehaviour
         sd1.mathematicsProgress += multi;
         if (sd1.mathematicsProgress >= sd1.mathematicsResearchTime)
         {
-            sd1.solarPanelGeneration *= 2;
-            sd1.mathematicsComplete = true;
+            ApplyMathematicsCompletionParity(sd1);
         }
     }
 
@@ -646,11 +682,11 @@ public class InformationEraManager : MonoBehaviour
             : "";
 
         mathematicsPanel.infoDescriptionText.text =
-            $"The language of the universe. Advanced mathematical models optimize solar panel efficiency, doubling their energy output.\n\n" +
+            $"The language of the universe. Legacy simulation math paths stack two separate solar bonuses once complete.\n\n" +
             $"Status: {blue}{status}</color>\n" +
             $"Cost: {blue}{sd1.mathematicsCost:N0}</color> Influence\n" +
             $"Research Time: {blue}{CalcUtils.FormatTime(sd1.mathematicsResearchTime, shortForm: true)}</color>{timeRemaining}\n" +
-            $"Effect: Solar panel generation ×{blue}2</color>";
+            $"Effect: Solar panel total output {blue}x4</color> after completion";
     }
 
     private void UpdateAdvancedPhysicsInfoDescription()
@@ -801,3 +837,4 @@ public class InformationEraManager : MonoBehaviour
 
     #endregion
 }
+

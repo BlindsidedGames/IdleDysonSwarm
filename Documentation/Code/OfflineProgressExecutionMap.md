@@ -29,8 +29,10 @@
 4. Side effects:
    - `ApplyLoadedSettings(...)`
    - `ApplyMigrations()`
-   - `AwayForCoroutine()` then `AwayForSeconds()`
-   - autosave readiness via `SetSaveReady(true)`
+   - cold-start gate start (`_coldStartReplayPending=true` on first load only)
+   - `AwayForCoroutine()` one frame later (`yield return null`) then `AwayForSeconds()`
+   - quit timestamp consumed in memory after replay when replay used quit input
+   - autosave readiness via `SetSaveReady(true)` released after cold-start replay finalization (immediate on non-cold loads)
    - canonical rewrite after legacy load
 
 ### Quit/background save path
@@ -42,7 +44,9 @@
    - callbacks raise `ManualLifecycleEvents`
    - `OfflineLifecycleCoordinator` maps event -> `OnLifecycleSaveRequested(trigger)`
    - `SaveForLifecycleTrigger(trigger)`
-   - `SaveInternal(force:false, updateQuitTime:true)`
+   - normal path: `SaveInternal(force:false, updateQuitTime:true)`
+   - cold-start gate first request only: `SaveInternal(force:true, updateQuitTime:false)`
+   - cold-start gate additional requests: debounced/skipped
    - `TrySaveState()`
 3. Persistence:
    - `SetDateQuitString(_clock.UtcNow.ToString(...), isQuitTimestamp:true)`
@@ -51,6 +55,7 @@
 4. Side effects:
    - offline diagnostic logs (`[OfflineTimeDiag]`)
    - latest save state and quit timestamp persisted atomically
+   - during cold-start gate, one save can persist latest state without advancing quit timestamp
    - desktop focus changes do not enter this path, preventing quit-timestamp churn from alt-tab/startup focus races
 
 ### Focus gain reload path (mobile builds)
@@ -116,6 +121,11 @@
 - `Assets/Editor/Tests/Systems/OfflinePersistenceRegressionTests.cs`
   - matrix-driven reopen windows: 2m / 15m / 60m.
   - verifies latest progress persists and offline time is granted across repeated close/open cycles.
+- `Assets/Editor/Tests/Systems/OracleColdStartOfflineReplayGateTests.cs`
+  - verifies first cold-start gated lifecycle save suppresses quit timestamp update.
+  - verifies duplicate lifecycle requests in the same cold-start gate are debounced.
+  - verifies post-gate lifecycle save resumes quit timestamp updates.
+  - verifies replay consumes `dateQuitString` in memory after grant.
 - `Assets/Editor/Tests/Save/CanonicalSaveStoreTests.cs`
   - canonical save-store roundtrip and latest-write-wins persistence.
 
