@@ -26,6 +26,8 @@ namespace Expansion
      * Change notes:
      * - Lifecycle routing changes here affect save-on-background/quit behavior on all platforms.
      * - Focus-loss save policy is mobile-only; desktop focus changes must not stamp quit timestamps.
+     * - Cold-start replay gating for lifecycle save behavior is enforced in Oracle.Persistence (SaveForLifecycleTrigger);
+     *   this file should continue routing events only, without duplicating save policy state.
      * - If seam initialization order changes, ensure Oracle.Awake still initializes before any save/load callback.
      */
     public partial class Oracle
@@ -51,10 +53,12 @@ namespace Expansion
             {
                 _offlineLifecycleCoordinator = new OfflineLifecycleCoordinator(
                     _lifecycleEvents,
-                    OnLifecycleSaveRequested,
-                    OnLifecycleReloadRequested,
+                    OnLifecycleSaveRequested, // Save triggers
+                    OnLifecycleReloadRequested, // Optional reload on focus (mobile only, now disabled)
+                    OnLifecycleFocusGained, // Optional offline time on focus (mobile only)
                     ShouldReloadOnFocusGain(),
-                    ShouldSaveOnFocusLoss());
+                    ShouldSaveOnFocusLoss(),
+                    ShouldSaveOnPause());
             }
         }
 
@@ -65,11 +69,9 @@ namespace Expansion
 
         private static bool ShouldReloadOnFocusGain()
         {
-#if !UNITY_EDITOR && (UNITY_IOS || UNITY_ANDROID)
-            return true;
-#else
+            // By design, mobile now relies on OnLifecycleFocusGained to grant offline time 
+            // without fully reloading the game on focus/unfocus.
             return false;
-#endif
         }
 
         private static bool ShouldSaveOnFocusLoss()
@@ -77,6 +79,16 @@ namespace Expansion
 #if !UNITY_EDITOR && (UNITY_IOS || UNITY_ANDROID)
             return true;
 #else
+            return false;
+#endif
+        }
+
+        private static bool ShouldSaveOnPause()
+        {
+#if !UNITY_EDITOR && (UNITY_IOS || UNITY_ANDROID)
+            return true;
+#else
+            // Desktop pause (minimizing) should NOT stamp the quit timestamp to prevent gaining offline time while playing.
             return false;
 #endif
         }
@@ -94,6 +106,14 @@ namespace Expansion
         private void OnLifecycleReloadRequested()
         {
             Load();
+        }
+
+        private void OnLifecycleFocusGained()
+        {
+            Debug.LogWarning(
+                $"[OfflineTimeDiag] AppLifecycle | phase=OnApplicationFocusGained, platform={Application.platform}, " +
+                $"routing=AwayForSeconds");
+            AwayForSeconds();
         }
 
         internal void ConfigureRuntimeSeamsForTests(
