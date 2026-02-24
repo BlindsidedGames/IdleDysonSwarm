@@ -35,8 +35,10 @@ namespace Tests.Systems
                 lifecycleEvents,
                 phase => savePhases.Add(phase),
                 () => reloadCount++,
+                null,
                 reloadOnFocusGain: false,
-                saveOnFocusLoss: true);
+                saveOnFocusLoss: true,
+                saveOnPause: true);
 
             lifecycleEvents.RaiseFocusChanged(false);
             lifecycleEvents.RaisePauseChanged(true);
@@ -58,8 +60,10 @@ namespace Tests.Systems
                 lifecycleEvents,
                 phase => savePhases.Add(phase),
                 () => { },
+                null,
                 reloadOnFocusGain: false,
-                saveOnFocusLoss: false);
+                saveOnFocusLoss: false,
+                saveOnPause: true);
 
             lifecycleEvents.RaisePauseChanged(true);
             lifecycleEvents.RaisePauseChanged(false);
@@ -81,8 +85,10 @@ namespace Tests.Systems
                 lifecycleEvents,
                 phase => savePhases.Add(phase),
                 () => reloadCount++,
+                null,
                 reloadOnFocusGain: false,
-                saveOnFocusLoss: true);
+                saveOnFocusLoss: true,
+                saveOnPause: true);
 
             lifecycleEvents.RaiseFocusChanged(false);
             lifecycleEvents.RaiseFocusChanged(true);
@@ -106,8 +112,10 @@ namespace Tests.Systems
                 lifecycleEvents,
                 _ => saveCount++,
                 () => reloadCount++,
+                null,
                 reloadOnFocusGain: true,
-                saveOnFocusLoss: true);
+                saveOnFocusLoss: true,
+                saveOnPause: true);
 
             lifecycleEvents.RaiseFocusChanged(true);
             lifecycleEvents.RaiseFocusChanged(false);
@@ -128,8 +136,10 @@ namespace Tests.Systems
                 lifecycleEvents,
                 _ => saveCount++,
                 () => reloadCount++,
+                null,
                 reloadOnFocusGain: true,
-                saveOnFocusLoss: true);
+                saveOnFocusLoss: true,
+                saveOnPause: true);
 
             coordinator.Dispose();
 
@@ -152,8 +162,10 @@ namespace Tests.Systems
                 lifecycleEvents,
                 _ => saveCount++,
                 () => { },
+                null,
                 reloadOnFocusGain: false,
-                saveOnFocusLoss: false);
+                saveOnFocusLoss: false,
+                saveOnPause: true);
 
             lifecycleEvents.RaiseFocusChanged(false);
 

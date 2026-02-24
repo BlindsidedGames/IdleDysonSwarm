@@ -77,7 +77,7 @@ namespace Tests.Systems
             {
                 current.dateQuitString = clock.UtcNow.ToString(CultureInfo.InvariantCulture);
                 Assert.IsTrue(saveStore.TrySave(current, out _, out string saveError), saveError);
-            }, () => { }, reloadOnFocusGain: false, saveOnFocusLoss: true);
+            }, () => { }, null, reloadOnFocusGain: false, saveOnFocusLoss: true, saveOnPause: true);
 
             lifecycleEvents.RaiseFocusChanged(false);
             clock.UtcNow = clock.UtcNow.AddSeconds(awaySeconds);

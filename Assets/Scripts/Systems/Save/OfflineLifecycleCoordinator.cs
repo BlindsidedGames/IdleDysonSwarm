@@ -18,9 +18,9 @@ namespace Systems.Save
      * - Dispose() (unsubscribes)
      * Owns vs delegates:
      * - Owns the lifecycle policy matrix:
-     *   pause(true) => request save, focus(false) => optional save (platform policy), quit => request save,
-     *   focus(true) => optional reload.
-     * - Delegates actual save/load work to injected callbacks.
+     *   pause(saveOnPause) => request save, focus(false) => optional save (platform policy), quit => request save,
+     *   focus(true) => optional reload or optional offline time calculation.
+     * - Delegates actual save/load/time work to injected callbacks.
      *
      * Interacts with:
      * - Systems.Save.ILifecycleEvents
@@ -37,23 +37,29 @@ namespace Systems.Save
         private readonly ILifecycleEvents _events;
         private readonly Action<LifecycleSaveTrigger> _requestSaveForLifecycle;
         private readonly Action _requestReloadOnFocusGain;
+        private readonly Action _requestOfflineTimeOnFocusGain;
         private readonly bool _reloadOnFocusGain;
         private readonly bool _saveOnFocusLoss;
+        private readonly bool _saveOnPause;
         private bool _disposed;
 
         public OfflineLifecycleCoordinator(
             ILifecycleEvents lifecycleEvents,
             Action<LifecycleSaveTrigger> requestSaveForLifecycle,
             Action requestReloadOnFocusGain,
+            Action requestOfflineTimeOnFocusGain,
             bool reloadOnFocusGain,
-            bool saveOnFocusLoss)
+            bool saveOnFocusLoss,
+            bool saveOnPause)
         {
             _events = lifecycleEvents ?? throw new ArgumentNullException(nameof(lifecycleEvents));
             _requestSaveForLifecycle =
                 requestSaveForLifecycle ?? throw new ArgumentNullException(nameof(requestSaveForLifecycle));
-            _requestReloadOnFocusGain = requestReloadOnFocusGain ?? throw new ArgumentNullException(nameof(requestReloadOnFocusGain));
+            _requestReloadOnFocusGain = requestReloadOnFocusGain; // Can be null if unused
+            _requestOfflineTimeOnFocusGain = requestOfflineTimeOnFocusGain; // Can be null if unused
             _reloadOnFocusGain = reloadOnFocusGain;
             _saveOnFocusLoss = saveOnFocusLoss;
+            _saveOnPause = saveOnPause;
 
             _events.PauseChanged += HandlePauseChanged;
             _events.FocusChanged += HandleFocusChanged;
@@ -73,16 +79,23 @@ namespace Systems.Save
         private void HandlePauseChanged(bool paused)
         {
             if (!paused) return;
-            _requestSaveForLifecycle(LifecycleSaveTrigger.Pause);
+            if (_saveOnPause)
+            {
+                _requestSaveForLifecycle(LifecycleSaveTrigger.Pause);
+            }
         }
 
         private void HandleFocusChanged(bool focused)
         {
             if (focused)
             {
-                if (_reloadOnFocusGain)
+                if (_reloadOnFocusGain && _requestReloadOnFocusGain != null)
                 {
                     _requestReloadOnFocusGain();
+                }
+                else if (_requestOfflineTimeOnFocusGain != null)
+                {
+                    _requestOfflineTimeOnFocusGain();
                 }
 
                 return;
