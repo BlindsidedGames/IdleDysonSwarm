@@ -238,7 +238,7 @@ namespace Systems
             string colorS = "<color=#00E1FF>";
             ui?.AwayForHeader?.gameObject.SetActive(true);
             if (ui?.AwayForHeader != null) ui.AwayForHeader.text = "Welcome Back!";
-            ui?.ReturnScreen?.SetActive(awayTime >= 60 || awayTime < 0);
+            ui?.ReturnScreen?.SetActive(awayTime >= 120 || awayTime < 0);
             ui?.OfflineTimeInstructions?.SetActive(true);
             if (awayTime < 0)
             {
