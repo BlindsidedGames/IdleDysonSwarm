@@ -5,6 +5,33 @@ using UnityEngine;
 using UnityEngine.UI;
 using static Expansion.Oracle;
 
+/*
+Purpose (runtime): Drives the Research and Simulation upgrade shop UI, purchase actions, and permanent
+simulation unlock application during prestige resets.
+
+Primary entry points:
+- Unity: Start (bind listeners), OnEnable/OnDisable (ApplyResearch event wiring), UpdateAndEnableResearches.
+- Runtime callbacks: PurchaseCounterMeteor/PurchaseCounterAi/PurchaseCounterGw/PurchaseEducation/
+  PurchaseFoundation/PurchaseInformation/PurchaseSpace.
+- Prestige callback: ApplyResearch (reapply permanent simulation unlocks to wiped simulation saves).
+
+Owns vs delegates:
+- Owns panel visibility/interactability rules and purchase side effects on save data.
+- Delegates visual widget behavior to UpgradePanelReferences and simulation runtime effects to era managers.
+
+Interacts with:
+- Calls: SimulationPrestigeManager.ApplyResearch event and Oracle save containers
+  (SaveDataPrestige, SaveDataDream1, SaveData).
+- Called by: Game scene UI button events bound in Start and prestige flow that invokes ApplyResearch.
+
+Change notes:
+- Mathematics permanent unlock parity now also normalizes sdSimulation.solarPanelGeneration to at least 200;
+  changing this must be mirrored in InformationEraManager and Oracle.Migrations normalization.
+- Purchase case IDs map directly to specific panels/listeners; changing IDs or ordering requires coordinated
+  updates in Start listener bindings and panel gating logic.
+- Serialized panel references and cost constants are scene-coupled; renaming/removing fields requires scene
+  prefab updates in Assets/Scenes/Game.unity.
+*/
 public class ResearchManager : MonoBehaviour
 {
     [TabGroup("Headers")]
@@ -341,6 +368,16 @@ public class ResearchManager : MonoBehaviour
 
     private SaveDataDream1 sd1 => oracle.saveSettings.sdSimulation;
     private SaveDataPrestige sp => oracle.saveSettings.sdPrestige;
+    private const long MathematicsLegacySolarGeneration = 200;
+
+    private static void ApplyMathematicsCompletionParity(SaveDataDream1 simulation)
+    {
+        if (simulation == null) return;
+
+        simulation.mathematicsComplete = true;
+        if (simulation.solarPanelGeneration < MathematicsLegacySolarGeneration)
+            simulation.solarPanelGeneration = MathematicsLegacySolarGeneration;
+    }
 
     #region Listeners
 
@@ -658,7 +695,7 @@ public class ResearchManager : MonoBehaviour
             case 15:
                 sp.mathematics3 = true;
                 sp.strangeMatter -= mathematics3Cost;
-                sd1.mathematicsComplete = true;
+                ApplyMathematicsCompletionParity(sd1);
                 break;
             case 16:
                 sp.advancedPhysics1 = true;
@@ -1264,7 +1301,7 @@ public class ResearchManager : MonoBehaviour
 
         if (sp.mathematics1) sd1.mathematicsResearchTime = 1800;
         if (sp.mathematics2) sd1.mathematicsResearchTime = 600;
-        if (sp.mathematics3) sd1.mathematicsComplete = true;
+        if (sp.mathematics3) ApplyMathematicsCompletionParity(sd1);
 
         if (sp.advancedPhysics1) sd1.advancedPhysicsResearchTime = 3600;
         if (sp.advancedPhysics2) sd1.advancedPhysicsResearchTime = 1800;

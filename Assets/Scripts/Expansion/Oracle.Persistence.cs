@@ -38,11 +38,47 @@ namespace Expansion
     /// changing legacy keys/paths (<c>saveSettings</c>, <c>.idsOdin</c>, canonical file path) can strand old saves;
     /// lifecycle-triggered saves are routed through <c>SaveForLifecycleTrigger(LifecycleSaveTrigger)</c>, so trigger
     /// enum changes must stay aligned with <c>Oracle.RuntimeSeams</c> and <c>OfflineLifecycleCoordinator</c>;
+    /// cold-start offline replay now gates lifecycle quit-timestamp updates until startup replay completes;
     /// loading/importing a save does not automatically reconcile skill points (manual tool in
     /// <c>Assets/Scripts/Expansion/Oracle.SkillPoints.cs</c>).</para>
     /// </remarks>
     public partial class Oracle
     {
+        private bool _hasCompletedInitialLoad;
+        private bool _coldStartReplayPending;
+        private bool _coldStartGateSaveUsed;
+
+        private bool IsColdStartLoad()
+        {
+            return !_hasCompletedInitialLoad;
+        }
+
+        private void BeginColdStartGate(bool isColdStartLoad)
+        {
+            _coldStartReplayPending = isColdStartLoad;
+            _coldStartGateSaveUsed = false;
+            if (!isColdStartLoad) return;
+
+            Debug.LogWarning(
+                "[OfflineTimeDiag] ColdStartGate | " +
+                $"reason=cold_start_gate_pending, platform={Application.platform}, " +
+                $"ready={_isSaveReady.ToString().ToLowerInvariant()}, loaded={Loaded.ToString().ToLowerInvariant()}, " +
+                $"dateQuitBefore='{FormatDebugString(saveSettings?.dateQuitString)}'");
+        }
+
+        private void FinalizeColdStartGate()
+        {
+            if (!_coldStartReplayPending) return;
+
+            _coldStartReplayPending = false;
+            _coldStartGateSaveUsed = false;
+            Debug.LogWarning(
+                "[OfflineTimeDiag] ColdStartGate | " +
+                $"reason=cold_start_gate_released, platform={Application.platform}, " +
+                $"ready={_isSaveReady.ToString().ToLowerInvariant()}, loaded={Loaded.ToString().ToLowerInvariant()}, " +
+                $"dateQuitBefore='{FormatDebugString(saveSettings?.dateQuitString)}'");
+        }
+
         private void SaveInternal(bool force, bool updateQuitTime = false)
         {
             EnsureRuntimeSeamsInitialized();
@@ -210,14 +246,25 @@ namespace Expansion
         private void SaveForLifecycleTrigger(LifecycleSaveTrigger trigger)
         {
             string phase = GetLifecyclePhaseLabel(trigger);
-            bool updateQuitTime = ShouldUpdateQuitTimestamp(trigger);
+            bool allowColdStartGateSave = _coldStartReplayPending && !_coldStartGateSaveUsed;
+            bool updateQuitTime = ShouldUpdateQuitTimestamp(trigger) && !allowColdStartGateSave;
 
-            if (!_isSaveReady || !Loaded || saveSettings == null)
+            if (_coldStartReplayPending && _coldStartGateSaveUsed)
+            {
+                Debug.LogWarning(
+                    "[OfflineTimeDiag] SaveForQuitBlocked | " +
+                    $"phase={phase}, platform={Application.platform}, reason=cold_start_gate_debounced, " +
+                    $"ready={_isSaveReady.ToString().ToLowerInvariant()}, loaded={Loaded.ToString().ToLowerInvariant()}, " +
+                    $"dateQuitBefore='{FormatDebugString(saveSettings?.dateQuitString)}'");
+                return;
+            }
+
+            if (!Loaded || saveSettings == null || (!_isSaveReady && !allowColdStartGateSave))
             {
                 string reason = "unknown";
                 if (saveSettings == null) reason = "missing_save_settings";
-                else if (!_isSaveReady) reason = "not_ready";
                 else if (!Loaded) reason = "not_loaded";
+                else if (!_isSaveReady) reason = "not_ready";
 
                 Debug.LogWarning(
                     $"[OfflineTimeDiag] SaveForQuitBlocked | phase={phase}, platform={Application.platform}, " +
@@ -226,7 +273,17 @@ namespace Expansion
                 return;
             }
 
-            SaveInternal(force: false, updateQuitTime: updateQuitTime);
+            if (allowColdStartGateSave)
+            {
+                _coldStartGateSaveUsed = true;
+                Debug.LogWarning(
+                    "[OfflineTimeDiag] SaveForQuit | " +
+                    $"phase={phase}, platform={Application.platform}, reason=cold_start_gate_pending, " +
+                    $"ready={_isSaveReady.ToString().ToLowerInvariant()}, loaded={Loaded.ToString().ToLowerInvariant()}, " +
+                    $"dateQuitBefore='{FormatDebugString(saveSettings?.dateQuitString)}'");
+            }
+
+            SaveInternal(force: allowColdStartGateSave, updateQuitTime: updateQuitTime);
         }
 
         private static bool ShouldUpdateQuitTimestamp(LifecycleSaveTrigger trigger)
@@ -309,8 +366,15 @@ namespace Expansion
         public void Load()
         {
             EnsureRuntimeSeamsInitialized();
+            bool isColdStartLoad = IsColdStartLoad();
+            if (isColdStartLoad)
+            {
+                _hasCompletedInitialLoad = true;
+            }
+
             Loaded = false;
             SetSaveReady(false);
+            BeginColdStartGate(isColdStartLoad);
             WipeSaveData();
 
             // Canonical on-disk save: text file containing the exact clipboard string (IDB1:...).
@@ -417,8 +481,11 @@ namespace Expansion
             ApplyMigrations();
             SyncAutoAssignFromSelectedPreset(runAutoAssign: true);
             UpdateSkills?.Invoke();
-            StartCoroutine(AwayForCoroutine());
-            SetSaveReady(true);
+            StartCoroutine(AwayForCoroutine(isColdStartLoad));
+            if (!isColdStartLoad)
+            {
+                SetSaveReady(true);
+            }
 
             // If we loaded from a legacy source (ES3 or old .idsOdin), immediately write the canonical file so
             // future launches use the Odin-only pipeline.
@@ -449,10 +516,33 @@ namespace Expansion
 
         public static event Action<double> AwayFor;
 
-        private IEnumerator AwayForCoroutine()
+        private IEnumerator AwayForCoroutine(bool isColdStartLoad)
         {
-            yield return new WaitForSeconds(.1f);
-            AwayForSeconds();
+            yield return null;
+            try
+            {
+                AwayForSeconds();
+            }
+            finally
+            {
+                if (isColdStartLoad)
+                {
+                    FinalizeColdStartGate();
+                    SetSaveReady(true);
+                }
+            }
+        }
+
+        private void ConsumeQuitTimestampAfterReplay(OfflineAwayTimeCalculator.AwayTimeComputation computation)
+        {
+            if (!computation.HasQuitTimestampInput) return;
+            if (saveSettings == null || string.IsNullOrWhiteSpace(saveSettings.dateQuitString)) return;
+
+            saveSettings.dateQuitString = string.Empty;
+            Debug.LogWarning(
+                "[OfflineTimeDiag] AwayForSeconds | " +
+                $"platform={Application.platform}, reason=quit_timestamp_consumed_in_memory, " +
+                $"dateSource={computation.SourceLabel}");
         }
 
         private void AwayForSeconds()
@@ -479,6 +569,7 @@ namespace Expansion
                 $"doubleTimeBefore={saveSettings.sdPrestige.doubleTime.ToString(CultureInfo.InvariantCulture)}");
             saveSettings.sdPrestige.doubleTime += computation.ClampedSeconds;
             AwayFor?.Invoke(computation.ClampedSeconds);
+            ConsumeQuitTimestampAfterReplay(computation);
         }
 
         private static string FormatDebugString(string value)
