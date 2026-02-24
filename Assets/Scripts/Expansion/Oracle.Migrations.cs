@@ -40,6 +40,9 @@ namespace Expansion
     ///   load-time NullReference failures for legacy/partial clipboard saves.
     /// - Base64 decode guards in migration paths intentionally prefer dropping malformed legacy payloads over failing
     ///   load; changing this behavior can bring back load-blocking exceptions for damaged clipboard exports.
+    /// - EnsureSimulationMathematicsParity() keeps mathematics3 permanent unlock saves aligned with legacy
+    ///   solar generation expectations; changing this rule requires matching updates in ResearchManager and
+    ///   InformationEraManager.
     /// </remarks>
     public partial class Oracle
     {
@@ -125,6 +128,7 @@ namespace Expansion
                     EnsureResearchLevelData();
                     EnsurePackedSettingsFlags();
                     EnsureInfinitySparseArrays();
+                    EnsureSimulationMathematicsParity();
                 }
             };
         }
@@ -183,6 +187,18 @@ namespace Expansion
             // Legacy bridge: older clipboard exports may have nulled dense arrays and relied on sparse lists.
             // V11 canonical format keeps dense arrays only; we merge sparse into dense then discard sparse.
             FacilityArrayNormalizer.Normalize(infinityData);
+        }
+
+        private void EnsureSimulationMathematicsParity()
+        {
+            SaveDataPrestige prestige = saveSettings?.sdPrestige;
+            SaveDataDream1 simulation = saveSettings?.sdSimulation;
+            if (prestige == null || simulation == null) return;
+            if (!prestige.mathematics3) return;
+
+            simulation.mathematicsComplete = true;
+            if (simulation.solarPanelGeneration < 200)
+                simulation.solarPanelGeneration = 200;
         }
 
         private void EnsureSkillOwnershipData()

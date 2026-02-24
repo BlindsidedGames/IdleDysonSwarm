@@ -8,6 +8,31 @@ using IdleDysonSwarm.UI.Simulation;
 using static Expansion.Oracle;
 using static IdleDysonSwarm.Systems.Constants.Dream1Constants;
 
+/*
+Purpose (runtime): Manages Simulation Space Age energy production, railgun/swarm flow, prestige trigger UI,
+and Space Age panel updates.
+
+Primary entry points:
+- Unity: Start (panel setup/listeners), Update (production loops + UI refresh).
+- Space Age loops: AddEnergy, SpaceFactoryManagement, RailgunManagement, FireRailGun.
+- Prestige flow: OnBlackHoleClick -> Prestige -> WipeForPrestige.
+
+Owns vs delegates:
+- Owns Space Age state mutation in SaveDataDream1 for solar/fusion/swarm systems.
+- Delegates timer behavior to ProductionTimer and text formatting to CalcUtils/UIThemeProvider.
+
+Interacts with:
+- Calls Oracle save data (SaveDataDream1/SaveDataPrestige/SaveData), SimulationPrestigeManager.InvokeApplyResearch,
+  and SimulationGenericPanelReferences.
+- Called by Game scene update loop and UI button events wired in Start.
+
+Change notes:
+- Solar info text now reads sdSimulation.solarPanelGeneration directly; changing Mathematics parity in
+  ResearchManager/InformationEraManager/Oracle.Migrations must keep this display path accurate.
+- Black hole prestige wipe invokes ApplyResearch on next frame; changes to that ordering affect post-wipe
+  unlock restoration and visible panel states.
+- Serialized panel references are scene-coupled and must stay aligned with Assets/Scenes/Game.unity.
+*/
 public class SpaceAgeManager : MonoBehaviour
 {
     [Header("Energy Panel References")]
@@ -426,13 +451,17 @@ public class SpaceAgeManager : MonoBehaviour
         double energyPerPanel = sd1.solarPanelGeneration * mathBonus * doubleTimeMulti;
         double totalEnergy = sd1.solarPanels * energyPerPanel;
 
-        string mathBonusText = sd1.mathematicsComplete ? $" × Math {blue}×2</color>" : "";
-        string doubleTimeText = sdp.doDoubleTime ? $" × DoubleTime {blue}×{sdp.doubleTimeRate + 1}</color>" : "";
+        string activeMultipliers = "";
+        if (sd1.mathematicsComplete) activeMultipliers += $" x Math {blue}x2</color>";
+        if (sdp.doDoubleTime) activeMultipliers += $" x DoubleTime {blue}x{sdp.doubleTimeRate + 1}</color>";
+        if (string.IsNullOrEmpty(activeMultipliers)) activeMultipliers = " none";
 
         solarPanel.infoDescriptionText.text =
             $"Harness the power of your local star with photovoltaic technology. In exchange for influence, you can purchase solar panels that steadily generate energy to fuel your growing infrastructure.\n\n" +
             $"Cost: {blue}{sd1.solarCost:N0}</color> Influence\n" +
-            $"Output: {blue}100</color>W/panel{mathBonusText}{doubleTimeText}\n" +
+            $"Base Output: {CalcUtils.FormatEnergy(sd1.solarPanelGeneration, false, colourOverride: blue)}/panel\n" +
+            $"Active Multipliers:{activeMultipliers}\n" +
+            $"Effective Output: {CalcUtils.FormatEnergy(energyPerPanel, false, colourOverride: blue)}/panel\n" +
             $"Owned: {blue}{sd1.solarPanels:N0}</color> panels\n" +
             $"Total Generation: {CalcUtils.FormatEnergy(totalEnergy, false, colourOverride: blue)}";
     }
@@ -546,3 +575,4 @@ public class SpaceAgeManager : MonoBehaviour
 
     #endregion
 }
+

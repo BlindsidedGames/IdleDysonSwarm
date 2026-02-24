@@ -9,6 +9,8 @@
 - Oracle lifecycle callbacks must only raise lifecycle events; policy routing lives in `OfflineLifecycleCoordinator`.
 - Focus-loss save requests are mobile-only (`iOS`/`Android` player builds). Desktop focus loss must not route to `SaveForQuit()`.
 - Save requests are routed with `LifecycleSaveTrigger` and flow through `SaveForLifecycleTrigger(...)` so readiness guards and quit-time policy stay centralized.
+- Cold-start replay gate policy (one gated save, quit-stamp suppression, debounce, release timing) is owned by
+  `Oracle.Persistence`; runtime seams here should not duplicate that policy.
 
 ## Data flow
 1. `Oracle.Awake()` calls `EnsureRuntimeSeamsInitialized()`.
@@ -18,6 +20,7 @@
    - `OnLifecycleSaveRequested(trigger)` -> `SaveForLifecycleTrigger(trigger)` for quit, mobile pause, and mobile focus-loss.
    - `OnLifecycleReloadRequested()` -> `Load()` (mobile focus gain policy only)
 5. `Oracle.Persistence` uses initialized seams for timestamping (`IClock`) and canonical persistence (`ISaveStore`).
+6. On cold start, `Oracle.Persistence` delays save-readiness release until one-frame replay processing completes.
 
 ## Save/load implications
 - `IClock` controls all seam-backed quit/load timestamps used by offline-time diagnostics.
