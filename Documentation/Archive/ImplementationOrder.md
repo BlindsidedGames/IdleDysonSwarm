@@ -647,6 +647,6 @@ This order is battle-tested:
 ---
 
 **Document Version:** 1.0
-**Author:** Claude (Sonnet 4.5)
+**Author:** Archived assistant note (legacy)
 **Date:** 2026-01-13
 **Status:** Finalized

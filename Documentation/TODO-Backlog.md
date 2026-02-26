@@ -37,4 +37,4 @@ Source: Consolidated from the shared screenshots and direct requests.
 ## Tooling / Process (Requested Additions)
 - [ ] Create an editor window for balance tuning/testing.
 - [ ] Update `AGENTS.md`.
-- [ ] Remove all Claude-related project content/references.
+- [x] Remove legacy assistant-related project content/references (completed 2026-02-26).

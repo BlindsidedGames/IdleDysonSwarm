@@ -3,7 +3,7 @@
 **Date:** 2026-01-15
 **Branch:** `refactor/reality-system-cleanup`
 **Status:** Planning Phase
-**Author:** Claude (Opus 4.5)
+**Author:** Archived assistant note (legacy)
 
 ---
 

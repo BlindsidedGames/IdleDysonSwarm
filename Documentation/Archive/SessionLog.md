@@ -1,6 +1,6 @@
-# Claude Session Log
+# Assistant Session Log
 
-This file tracks work done across Claude Code sessions. Updated automatically via pre-commit hook.
+This file tracks work done across assistant sessions. Updated automatically via pre-commit hook.
 
 ---
 
