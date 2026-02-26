@@ -94,7 +94,7 @@ Idle Dyson Swarm is an incremental idle game where players build a Dyson Swarm t
 ## Development Workflow
 
 ### Git Workflow
-See [../.claude/git-workflow.md](../.claude/git-workflow.md) for detailed git rules:
+See [../.agents/workflows/git-auto-pr.md](../.agents/workflows/git-auto-pr.md) for detailed git rules:
 - Never work directly on main
 - Commit after each phase
 - PR for every merge to main
@@ -111,7 +111,7 @@ See [../.claude/git-workflow.md](../.claude/git-workflow.md) for detailed git ru
 ### For AI Agents
 - Read relevant documentation before starting work
 - Use progress trackers for multi-session work
-- Follow git workflow rules in `.claude/git-workflow.md`
+- Follow git workflow rules in `.agents/workflows/git-auto-pr.md`
 - Check Unity console for compilation errors after script changes
 
 ---

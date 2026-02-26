@@ -53,7 +53,10 @@ sysinfo.txt
 
 # Builds
 *.apk
+*.aab
+*.app
 *.unitypackage
+*.log
 
 # Crashlytics generated file
 crashlytics-build.properties
@@ -73,9 +76,6 @@ apps/**/src-tauri/gen/
 .DS_Store
 Thumbs.db
 
-# Claude Code temporary directories
-tmpclaude-*
-
 # Plastic SCM
 .plastic/
 
@@ -86,15 +86,8 @@ UserSettings/Search.settings
 # Unity auto-generated solution files
 *.slnx
 
-# Claude Code local settings
-.claude/settings.local.json
-
-
 # Local beta keys (do not commit)
 Documentation/Idle_Dyson_Swarm_Keys/
 
 # Editor console snapshot (agent helper)
 Documentation/Console/editor-console.json
-
-# Claude temp cwd markers
-**/tmpclaude-*-cwd
