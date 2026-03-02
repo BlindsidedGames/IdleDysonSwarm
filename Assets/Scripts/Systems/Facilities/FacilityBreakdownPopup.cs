@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using Blindsided.Utilities;
+using IdleDysonSwarm.Systems.Balance;
 using Systems.Stats;
 using TMPro;
 using UnityEngine;
@@ -233,7 +234,8 @@ namespace Systems.Facilities
             PrestigePlus prestigePlus)
         {
             if (builder == null || string.IsNullOrEmpty(facilityId)) return;
-            if (!UpstreamBreakdownMap.TryGetValue(facilityId, out List<UpstreamBreakdownSpec> specs) || specs.Count == 0)
+            List<UpstreamBreakdownSpec> specs = GetUpstreamSpecs(facilityId);
+            if (specs == null || specs.Count == 0)
             {
                 return;
             }
@@ -278,14 +280,22 @@ namespace Systems.Facilities
 
         private static bool IsMegaStructureUnlocked(string facilityId, DysonVersePrestigeData prestigeData)
         {
-            if (prestigeData == null) return true; // Allow non-mega-structures through
+            if (prestigeData == null)
+            {
+                return true;
+            }
+
+            if (BalanceRuntime.TryGetFacilityEntry(facilityId, out var entry))
+            {
+                return BalanceRuntime.IsQuantumGateUnlocked(entry.quantumGate, prestigeData);
+            }
 
             return facilityId switch
             {
                 "matrioshka_brains" => prestigeData.unlockedMatrioshkaBrains,
                 "birch_planets" => prestigeData.unlockedBirchPlanets,
                 "galactic_brains" => prestigeData.unlockedGalacticBrains,
-                _ => true // Non-mega-structures are always "unlocked"
+                _ => true
             };
         }
 
@@ -446,7 +456,47 @@ namespace Systems.Facilities
         private static IReadOnlyList<BonusContributionSpec> GetBonusSpecs(string facilityId)
         {
             if (string.IsNullOrEmpty(facilityId)) return null;
-            return BonusContributionMap.TryGetValue(facilityId, out List<BonusContributionSpec> specs) ? specs : null;
+            if (BalanceRuntime.TryGetFacilityEntry(facilityId, out var entry) &&
+                entry.bonusContributionRules != null &&
+                entry.bonusContributionRules.Count > 0)
+            {
+                var runtimeSpecs = new List<BonusContributionSpec>(entry.bonusContributionRules.Count);
+                for (int i = 0; i < entry.bonusContributionRules.Count; i++)
+                {
+                    var rule = entry.bonusContributionRules[i];
+                    if (rule == null || string.IsNullOrEmpty(rule.sourceId)) continue;
+                    runtimeSpecs.Add(new BonusContributionSpec(rule.sourceId, rule.label));
+                }
+
+                if (runtimeSpecs.Count > 0) return runtimeSpecs;
+            }
+
+            return BonusContributionMap.TryGetValue(facilityId, out List<BonusContributionSpec> fallbackSpecs)
+                ? fallbackSpecs
+                : null;
+        }
+
+        private static List<UpstreamBreakdownSpec> GetUpstreamSpecs(string facilityId)
+        {
+            if (string.IsNullOrEmpty(facilityId)) return null;
+            if (BalanceRuntime.TryGetFacilityEntry(facilityId, out var entry) &&
+                entry.upstreamFacilityIds != null &&
+                entry.upstreamFacilityIds.Count > 0)
+            {
+                var specs = new List<UpstreamBreakdownSpec>(entry.upstreamFacilityIds.Count);
+                for (int i = 0; i < entry.upstreamFacilityIds.Count; i++)
+                {
+                    string upstreamId = entry.upstreamFacilityIds[i];
+                    if (string.IsNullOrEmpty(upstreamId)) continue;
+                    specs.Add(new UpstreamBreakdownSpec("Produced by", upstreamId));
+                }
+
+                if (specs.Count > 0) return specs;
+            }
+
+            return UpstreamBreakdownMap.TryGetValue(facilityId, out List<UpstreamBreakdownSpec> fallbackSpecs)
+                ? fallbackSpecs
+                : null;
         }
 
         private struct UpstreamBreakdownSpec

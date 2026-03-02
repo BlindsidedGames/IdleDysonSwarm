@@ -12,6 +12,9 @@ namespace GameData
         public const string ServerUpgrade = "research.server_upgrade";
         public const string DataCenterUpgrade = "research.data_center_upgrade";
         public const string PlanetUpgrade = "research.planet_upgrade";
+        public const string MatrioshkaBrainsUpgrade = "research.matrioshka_brains_upgrade";
+        public const string BirchPlanetsUpgrade = "research.birch_planets_upgrade";
+        public const string GalacticBrainsUpgrade = "research.galactic_brains_upgrade";
         public const string PanelLifetime1 = "research.panel_lifetime_1";
         public const string PanelLifetime2 = "research.panel_lifetime_2";
         public const string PanelLifetime3 = "research.panel_lifetime_3";
@@ -26,6 +29,9 @@ namespace GameData
             ServerUpgrade,
             DataCenterUpgrade,
             PlanetUpgrade,
+            MatrioshkaBrainsUpgrade,
+            BirchPlanetsUpgrade,
+            GalacticBrainsUpgrade,
             PanelLifetime1,
             PanelLifetime2,
             PanelLifetime3,
@@ -61,6 +67,15 @@ namespace GameData
                     return true;
                 case PlanetUpgrade:
                     level = infinityData.planetUpgradeOwned;
+                    return true;
+                case MatrioshkaBrainsUpgrade:
+                    level = infinityData.matrioshkaUpgradeOwned;
+                    return true;
+                case BirchPlanetsUpgrade:
+                    level = infinityData.birchUpgradeOwned;
+                    return true;
+                case GalacticBrainsUpgrade:
+                    level = infinityData.galacticUpgradeOwned;
                     return true;
                 case PanelLifetime1:
                     level = infinityData.panelLifetime1 ? 1 : 0;
@@ -105,6 +120,15 @@ namespace GameData
                     return true;
                 case PlanetUpgrade:
                     infinityData.planetUpgradeOwned = (long)level;
+                    return true;
+                case MatrioshkaBrainsUpgrade:
+                    infinityData.matrioshkaUpgradeOwned = (long)level;
+                    return true;
+                case BirchPlanetsUpgrade:
+                    infinityData.birchUpgradeOwned = (long)level;
+                    return true;
+                case GalacticBrainsUpgrade:
+                    infinityData.galacticUpgradeOwned = (long)level;
                     return true;
                 case PanelLifetime1:
                     infinityData.panelLifetime1 = level >= 1;

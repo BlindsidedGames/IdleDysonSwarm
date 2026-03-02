@@ -25,6 +25,9 @@ namespace Systems.Stats
         public const string ServerModifier = "Facility.Server.Modifier";
         public const string DataCenterModifier = "Facility.DataCenter.Modifier";
         public const string PlanetModifier = "Facility.Planet.Modifier";
+        public const string MatrioshkaModifier = "Facility.Matrioshka.Modifier";
+        public const string BirchModifier = "Facility.Birch.Modifier";
+        public const string GalacticModifier = "Facility.Galactic.Modifier";
         public const string PlanetsPerSecond = "Global.PlanetsPerSecond";
     }
 }

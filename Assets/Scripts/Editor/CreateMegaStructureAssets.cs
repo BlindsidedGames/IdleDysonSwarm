@@ -80,7 +80,9 @@ namespace Editor
                 wordUsed: "Synthesizing",
                 productionWordUsed: "Planet",
                 purchasePrompt: "Construct a Matrioshka Brain",
-                usesFacilityCost: true,
+                baseCashCost: 100,
+                cashCostExponent: 1.5,
+                usesFacilityCost: false,
                 costFacilityId: planetsId,
                 baseFacilityCost: 100,
                 facilityCostExponent: 1.5
@@ -98,7 +100,9 @@ namespace Editor
                 wordUsed: "Assembling",
                 productionWordUsed: "Matrioshka Brain",
                 purchasePrompt: "Construct a Birch Planet",
-                usesFacilityCost: true,
+                baseCashCost: 1000,
+                cashCostExponent: 1.5,
+                usesFacilityCost: false,
                 costFacilityId: matrioshkaId,
                 baseFacilityCost: 1000,
                 facilityCostExponent: 1.5
@@ -116,7 +120,9 @@ namespace Editor
                 wordUsed: "Manifesting",
                 productionWordUsed: "Birch Planet",
                 purchasePrompt: "Construct a Galactic Brain",
-                usesFacilityCost: true,
+                baseCashCost: 10000,
+                cashCostExponent: 1.5,
+                usesFacilityCost: false,
                 costFacilityId: matrioshkaId,
                 baseFacilityCost: 10000,
                 facilityCostExponent: 1.5,
@@ -127,6 +133,18 @@ namespace Editor
 
             AssetDatabase.SaveAssets();
             Debug.Log("[CreateMegaStructureAssets] FacilityDefinition assets created.");
+        }
+
+        [MenuItem(IdleDysonEditorMenu.DataMegaStructures + "Migrate Existing Definitions To Cash Costs")]
+        public static void MigrateExistingDefinitionsToCashCosts()
+        {
+            MigrateDefinition("Assets/Data/Facilities/matrioshka_brains.asset");
+            MigrateDefinition("Assets/Data/Facilities/birch_planets.asset");
+            MigrateDefinition("Assets/Data/Facilities/galactic_brains.asset");
+
+            AssetDatabase.SaveAssets();
+            AssetDatabase.Refresh();
+            Debug.Log("[CreateMegaStructureAssets] Existing mega definitions migrated to cash costs.");
         }
 
         private static void CreateFacilityId(string basePath, string idValue)
@@ -162,6 +180,8 @@ namespace Editor
             string wordUsed,
             string productionWordUsed,
             string purchasePrompt,
+            double baseCashCost,
+            double cashCostExponent,
             bool usesFacilityCost,
             FacilityId costFacilityId,
             double baseFacilityCost,
@@ -192,9 +212,9 @@ namespace Editor
                 tagsProperty.GetArrayElementAtIndex(i).stringValue = tags[i];
             }
 
-            // Standard facility fields - mega-structures don't use currency cost
-            serialized.FindProperty("baseCost").doubleValue = 0;
-            serialized.FindProperty("costExponent").doubleValue = 1;
+            // Standard facility fields - mega-structures now use normal facility cash costs.
+            serialized.FindProperty("baseCost").doubleValue = baseCashCost;
+            serialized.FindProperty("costExponent").doubleValue = cashCostExponent;
             serialized.FindProperty("baseProduction").doubleValue = baseProduction;
             serialized.FindProperty("productionStatId").stringValue = productionStatId;
             serialized.FindProperty("wordUsed").stringValue = wordUsed;
@@ -216,6 +236,41 @@ namespace Editor
 
             AssetDatabase.CreateAsset(definition, assetPath);
             Debug.Log($"[CreateMegaStructureAssets] Created FacilityDefinition: {assetPath}");
+        }
+
+        private static void MigrateDefinition(string path)
+        {
+            FacilityDefinition definition = AssetDatabase.LoadAssetAtPath<FacilityDefinition>(path);
+            if (definition == null)
+            {
+                return;
+            }
+
+            var serialized = new SerializedObject(definition);
+
+            bool usesFacilityCost = serialized.FindProperty("usesFacilityCost").boolValue;
+            double baseCost = serialized.FindProperty("baseCost").doubleValue;
+            double costExponent = serialized.FindProperty("costExponent").doubleValue;
+            double legacyBaseFacilityCost = serialized.FindProperty("baseFacilityCost").doubleValue;
+            double legacyFacilityExponent = serialized.FindProperty("facilityCostExponent").doubleValue;
+
+            if (baseCost <= 0)
+            {
+                serialized.FindProperty("baseCost").doubleValue = legacyBaseFacilityCost > 0 ? legacyBaseFacilityCost : 100;
+            }
+
+            if (costExponent <= 1)
+            {
+                serialized.FindProperty("costExponent").doubleValue = legacyFacilityExponent > 1 ? legacyFacilityExponent : 1.5;
+            }
+
+            if (usesFacilityCost)
+            {
+                serialized.FindProperty("usesFacilityCost").boolValue = false;
+            }
+
+            serialized.ApplyModifiedPropertiesWithoutUndo();
+            EditorUtility.SetDirty(definition);
         }
     }
 }

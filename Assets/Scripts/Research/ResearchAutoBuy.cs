@@ -1,26 +1,61 @@
+using GameData;
 using UnityEngine;
 using static Expansion.Oracle;
 
+/*
+ * ResearchAutoBuy
+ * Purpose: Runs iterative auto-purchase for scene-wired research presenters while infinity auto-research is enabled.
+ * Runs: Runtime.
+ * Primary entry points: Awake(), OnEnable(), Update().
+ * Owns vs delegates: Owns presenter discovery + iteration cap; delegates per-research affordability and purchase logic
+ * to ResearchPresenter.
+ *
+ * Interacts with:
+ * - Assets/Scripts/Research/ResearchPresenter.cs
+ * - Assets/Scripts/Data/ResearchIdMap.cs
+ * - Assets/Scenes/Game.unity (scene presenter wiring)
+ *
+ * Change notes:
+ * - Hidden runtime presenter creation is intentionally removed; missing scene wiring now logs a warning instead.
+ * - RequiredSceneMegaResearchIds must stay aligned with mega research cards/presenters in Game.unity.
+ */
 namespace Research
 {
+    /// <summary>
+    /// Purpose (runtime): Runs infinity research auto-buy loops against scene-wired <see cref="ResearchPresenter"/> instances.
+    /// Primary entry points: Unity <c>Awake</c>, <c>OnEnable</c>, and <c>Update</c>.
+    /// Owns vs delegates: Owns presenter discovery + iteration limits; delegates purchase rules to each presenter.
+    /// Interacts with: calls <see cref="ResearchPresenter.TryAutoPurchase"/> and reads Oracle auto-research flags.
+    /// Change notes: adding/removing expected presenter IDs must stay aligned with Game scene wiring and ResearchIdMap IDs.
+    /// </summary>
     public class ResearchAutoBuy : MonoBehaviour
     {
         private const int MaxIterationsPerUpdate = 100;
+        private static readonly string[] RequiredSceneMegaResearchIds =
+        {
+            ResearchIdMap.MatrioshkaBrainsUpgrade,
+            ResearchIdMap.BirchPlanetsUpgrade,
+            ResearchIdMap.GalacticBrainsUpgrade
+        };
+
         private ResearchPresenter[] presenters;
+        private bool _hasWarnedMissingScenePresenters;
 
         private void Awake()
         {
             RefreshPresenters();
+            WarnIfMissingRequiredMegaPresenters();
         }
 
         private void OnEnable()
         {
             RefreshPresenters();
+            WarnIfMissingRequiredMegaPresenters();
         }
 
         private void Update()
         {
-            if (!StaticPrestigeData.infinityAutoResearch) return;
+            if (StaticPrestigeData == null || !StaticPrestigeData.infinityAutoResearch) return;
 
             if (presenters == null || presenters.Length == 0)
             {
@@ -50,6 +85,68 @@ namespace Research
         {
             presenters = FindObjectsByType<ResearchPresenter>(FindObjectsInactive.Include,
                 FindObjectsSortMode.None);
+        }
+
+        private void WarnIfMissingRequiredMegaPresenters()
+        {
+            if (_hasWarnedMissingScenePresenters || presenters == null)
+            {
+                return;
+            }
+
+            string missing = string.Empty;
+            int missingCount = 0;
+
+            for (int i = 0; i < RequiredSceneMegaResearchIds.Length; i++)
+            {
+                string researchId = RequiredSceneMegaResearchIds[i];
+                if (HasPresenter(presenters, researchId))
+                {
+                    continue;
+                }
+
+                if (missingCount > 0)
+                {
+                    missing += ", ";
+                }
+
+                missing += researchId;
+                missingCount++;
+            }
+
+            if (missingCount <= 0)
+            {
+                return;
+            }
+
+            _hasWarnedMissingScenePresenters = true;
+            Debug.LogWarning(
+                $"[ResearchAutoBuy] Missing scene ResearchPresenter wiring for mega research IDs: {missing}. " +
+                "Automation will only run for presenters that exist in scene; hidden fallback creation has been removed.");
+        }
+
+        private static bool HasPresenter(ResearchPresenter[] existing, string researchId)
+        {
+            if (existing == null || string.IsNullOrEmpty(researchId))
+            {
+                return false;
+            }
+
+            for (int i = 0; i < existing.Length; i++)
+            {
+                ResearchPresenter presenter = existing[i];
+                if (presenter == null)
+                {
+                    continue;
+                }
+
+                if (string.Equals(presenter.ResearchIdValue, researchId, System.StringComparison.Ordinal))
+                {
+                    return true;
+                }
+            }
+
+            return false;
         }
     }
 }

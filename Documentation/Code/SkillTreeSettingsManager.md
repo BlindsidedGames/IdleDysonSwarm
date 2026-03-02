@@ -5,6 +5,7 @@
 - Manages:
   - Preset naming
   - Clipboard export/import
+  - Settings toggle for whether auto-assign can assign intrinsic non-refundable skills
   - Preset toggle binding in:
     - permanent side panel (`SidePanelReferences`)
     - temporary side panel (`SidePanelReferences`)
@@ -63,8 +64,13 @@
 - `ImportPresetFromClipboard(slot)` validates JSON/version, de-dupes IDs, updates:
   - preset name
   - bot distribution
-  - preset ID list
+  - preset ID list (dependency-safe normalized order)
   - then reloads if importing the active slot
+
+### Auto-assign settings
+- `autoAssignNonRefundableToggle` binds to `SaveDataSettings.autoAssignNonRefundableSkills`.
+- When enabled, auto-assign may purchase intrinsic non-refundable skills.
+- When disabled, those skills are skipped by auto-assign while refundable skills remain eligible.
 
 ### Preset automation
 - Persistent settings:
@@ -92,6 +98,7 @@
 - Preset names are persisted in:
   - `DysonVerseSaveData.preset1Name` through `preset5Name`
 - Override settings are persisted as part of `SaveDataSettings`.
+- Non-refundable auto-assign preference persists as `SaveDataSettings.autoAssignNonRefundableSkills`.
 
 ## Risks and observed caveats
 - `Oracle.SetPresetAutoAssignmentSkillIds()` does not schedule quick-save directly.
@@ -113,3 +120,6 @@
 4. Export/import valid payload and invalid payload paths:
   - valid payload imports and applies
   - invalid JSON/version/empty buffer shows correct feedback and no mutation.
+5. Toggle `autoAssignNonRefundableToggle` and verify:
+  - value persists after save/load
+  - auto-assign respects the setting during skill assignment.

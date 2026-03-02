@@ -1,0 +1,32 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0139bc50b7bdef44396c78d1332a9adf, type: 3}
+  m_Name: bots1
+  m_EditorClassIdentifier: Assembly-CSharp::IdleDysonSwarm.Data.Balance.SimulationUpgradeDefinition
+  key: bots1
+  layer: 0
+  category: 3
+  title: Bots I
+  description: Bots I
+  cost: 211
+  prerequisites:
+  - key: counterAi
+    mustBeOwned: 1
+  purchaseEffects:
+  - effectType: 0
+    targetKey: bots1
+    boolValue: 1
+    numericValue: 0
+  - effectType: 0
+    targetKey: botsBoost1Activator
+    boolValue: 1
+    numericValue: 0

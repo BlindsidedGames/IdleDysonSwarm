@@ -5,6 +5,7 @@ using TMPro;
 using UnityEngine;
 using UnityEngine.Events;
 using UnityEngine.UI;
+using Systems.Skills;
 using static Expansion.Oracle;
 
 /// <summary>
@@ -42,6 +43,8 @@ using static Expansion.Oracle;
 /// - Preset automation preferences persist in <c>Oracle.SaveDataSettings</c> (export/import with save).
 /// - Preset switching touches live auto-assign state; keep <c>oracle.SuppressPresetSync()</c> usage intact when
 ///   changing switch behavior.
+/// - <c>autoAssignNonRefundableToggle</c> is optional and persists to
+///   <c>SaveDataSettings.autoAssignNonRefundableSkills</c>; keep null-safe wiring for scene variants.
 /// - Toggle binding loops must not capture the loop index variable inside closures; always capture a per-iteration
 ///   index value to avoid incorrect UI state (for example all toggles being forced off).
 /// </remarks>
@@ -105,6 +108,7 @@ public class SkillTreeSettingsManager : MonoBehaviour
     [SerializeField] private TMP_Text settingsPresetToggleText4;
     [SerializeField] private TMP_Text settingsPresetToggleText5;
     [SerializeField] private TMP_Text settingsPresetFeedbackText;
+    [SerializeField] private Toggle autoAssignNonRefundableToggle;
 
     [Header("Preset Automation (Tab Overrides)")]
     [SerializeField] private PresetAutomationReferences botsPresetAutomation;
@@ -134,6 +138,7 @@ public class SkillTreeSettingsManager : MonoBehaviour
     private readonly HashSet<Button> _registeredResearchTabButtons = new HashSet<Button>();
     private UnityAction _botsTabClickHandler;
     private UnityAction _researchTabClickHandler;
+    private UnityAction<bool> _autoAssignNonRefundableToggleHandler;
 
     private void Start()
     {
@@ -193,6 +198,7 @@ public class SkillTreeSettingsManager : MonoBehaviour
             StopCoroutine(_toggleBindingInitRoutine);
             _toggleBindingInitRoutine = null;
         }
+        UnbindAutoAssignNonRefundableToggle();
     }
 
     private void HandleUpdateSkills()
@@ -237,6 +243,7 @@ public class SkillTreeSettingsManager : MonoBehaviour
             settingsPresetToggle4, settingsPresetToggle5,
             settingsPresetToggleText1, settingsPresetToggleText2, settingsPresetToggleText3, settingsPresetToggleText4,
             settingsPresetToggleText5, settingsPresetFeedbackText, ref _settingsPanelBindings);
+        BindAutoAssignNonRefundableToggle();
         UpdateSidePanelPresetLabels();
 
         RegisterAutomationBindings(
@@ -281,6 +288,7 @@ public class SkillTreeSettingsManager : MonoBehaviour
         if (TryGetSaveData(out DysonVerseSaveData saveData))
             UpdateAutomationPresetLabels(saveData);
         SyncAutomationUiToSavedOverrides();
+        SyncAutoAssignNonRefundableToggleFromSettings();
     }
 
     public void RenamePreset(int preset)
@@ -437,7 +445,8 @@ public class SkillTreeSettingsManager : MonoBehaviour
             if (!seen.Add(id)) continue;
             dedupedIds.Add(id);
         }
-        oracle.SetPresetAutoAssignmentSkillIds(presetIndex, dedupedIds);
+        List<string> normalizedIds = SkillAutoAssignOrderUtility.BuildDependencySafeOrder(dedupedIds);
+        oracle.SetPresetAutoAssignmentSkillIds(presetIndex, normalizedIds);
 
         SetPresetTexts();
         UpdateSidePanelPresetLabels();
@@ -918,6 +927,51 @@ public class SkillTreeSettingsManager : MonoBehaviour
     {
         settings = oracle?.saveSettings;
         return settings != null;
+    }
+
+    /// <summary>
+    /// Wires the optional toggle that controls whether auto-assign can spend non-refundable skills.
+    /// </summary>
+    private void BindAutoAssignNonRefundableToggle()
+    {
+        if (autoAssignNonRefundableToggle == null) return;
+        UnbindAutoAssignNonRefundableToggle();
+        SyncAutoAssignNonRefundableToggleFromSettings();
+
+        _autoAssignNonRefundableToggleHandler = isOn =>
+        {
+            if (_suppressToggleCallbacks) return;
+            if (!TryGetSettings(out SaveDataSettings settings)) return;
+            settings.autoAssignNonRefundableSkills = isOn;
+            ShowTimedFeedback(isOn
+                ? "Auto-Assign Non-Refundables Enabled"
+                : "Auto-Assign Non-Refundables Disabled");
+        };
+
+        autoAssignNonRefundableToggle.onValueChanged.AddListener(_autoAssignNonRefundableToggleHandler);
+    }
+
+    /// <summary>
+    /// Removes runtime listener for the optional non-refundable auto-assign toggle.
+    /// </summary>
+    private void UnbindAutoAssignNonRefundableToggle()
+    {
+        if (autoAssignNonRefundableToggle == null || _autoAssignNonRefundableToggleHandler == null) return;
+        autoAssignNonRefundableToggle.onValueChanged.RemoveListener(_autoAssignNonRefundableToggleHandler);
+        _autoAssignNonRefundableToggleHandler = null;
+    }
+
+    /// <summary>
+    /// Applies current save value to the optional non-refundable auto-assign toggle.
+    /// </summary>
+    private void SyncAutoAssignNonRefundableToggleFromSettings()
+    {
+        if (autoAssignNonRefundableToggle == null) return;
+        if (!TryGetSettings(out SaveDataSettings settings)) return;
+
+        _suppressToggleCallbacks = true;
+        autoAssignNonRefundableToggle.isOn = settings.autoAssignNonRefundableSkills;
+        _suppressToggleCallbacks = false;
     }
 
     private string BuildPresetFeedback(int presetIndex, bool loaded)

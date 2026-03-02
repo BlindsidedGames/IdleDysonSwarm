@@ -1,4 +1,6 @@
 using Blindsided.ProceduralUIImage;
+using IdleDysonSwarm.Systems.Balance;
+using Systems.Facilities;
 using UnityEngine;
 using static Expansion.Oracle;
 
@@ -191,12 +193,9 @@ public class BotPanelManager : MonoBehaviour
         bool birchUnlocked = prestigeData.unlockedBirchPlanets;
         bool galacticUnlocked = prestigeData.unlockedGalacticBrains;
 
-        // Show panels when:
-        // 1. You have at least one of that mega-structure, OR
-        // 2. You have the unlock AND the prerequisite facility
-        bool showMatrioshka = totalMatrioshka > 0 || (matrioshkaUnlocked && totalPlanets > 0);
-        bool showBirch = totalBirch > 0 || (birchUnlocked && totalMatrioshka > 0);
-        bool showGalactic = totalGalactic > 0 || (galacticUnlocked && totalBirch > 0);
+        bool showMatrioshka = totalMatrioshka > 0 || IsMegaEligible("matrioshka_brains", totalPlanets);
+        bool showBirch = totalBirch > 0 || IsMegaEligible("birch_planets", totalMatrioshka);
+        bool showGalactic = totalGalactic > 0 || IsMegaEligible("galactic_brains", totalBirch);
 
         if (matrioshkaBrainsPanel != null)
             matrioshkaBrainsPanel.SetActive(showMatrioshka);
@@ -212,5 +211,42 @@ public class BotPanelManager : MonoBehaviour
         bool showQuestion = hasQuantumReset ? !showGalactic : !planetsVisible;
 
         questionmarkPanel.SetActive(showQuestion);
+    }
+
+    private bool IsMegaEligible(string facilityId, double fallbackPrerequisiteTotal)
+    {
+        if (string.IsNullOrEmpty(facilityId))
+        {
+            return false;
+        }
+
+        if (BalanceRuntime.TryGetFacilityEntry(facilityId, out var entry))
+        {
+            if (!BalanceRuntime.IsQuantumGateUnlocked(entry.quantumGate, prestigeData))
+            {
+                return false;
+            }
+
+            if (string.IsNullOrWhiteSpace(entry.prerequisiteFacilityId))
+            {
+                return true;
+            }
+
+            if (!FacilityCountAccessor.TryGetCount(infinityData, entry.prerequisiteFacilityId, out double[] counts))
+            {
+                return false;
+            }
+
+            double total = counts[0] + counts[1];
+            return total >= entry.prerequisiteOwned;
+        }
+
+        return facilityId switch
+        {
+            "matrioshka_brains" => prestigeData.unlockedMatrioshkaBrains && fallbackPrerequisiteTotal > 0,
+            "birch_planets" => prestigeData.unlockedBirchPlanets && fallbackPrerequisiteTotal > 0,
+            "galactic_brains" => prestigeData.unlockedGalacticBrains && fallbackPrerequisiteTotal > 0,
+            _ => false
+        };
     }
 }

@@ -3,24 +3,53 @@ using GameData;
 using UnityEngine;
 using static Expansion.Oracle;
 
+/*
+Purpose:
+- Executes skill auto-assignment from the current queued id list.
+- Applies skills in dependency-safe queue order while preserving queue entries that are temporarily blocked.
 
+Where it runs:
+- Runtime on the skill auto-assignment scene object.
+
+Primary entry points:
+- Unity lifecycle: OnEnable, OnDisable.
+- Assignment triggers: UnlockSkill via GameManager.AssignSkills and DebugOptions.AutoAssign.
+
+Interacts with:
+- Calls into: Oracle save state (queued ids, owned flags, settings), GameDataRegistry/SkillDatabase, GameManager.
+- Called by: GameManager.AutoAssignSkillsInvoke and DebugOptions auto-assign action.
+
+Change notes:
+- Queue processing is skip-blocked (not fail-fast) so malformed order does not strand assignable points.
+- Save setting SaveDataSettings.autoAssignNonRefundableSkills controls whether intrinsic non-refundable skills
+  (SkillDefinition.refundable == false) are eligible for auto-assignment.
+*/
 public class SkillsAutoAssignment : MonoBehaviour
 {
     private DysonVerseSkillTreeData skillTreeData => oracle.saveSettings.dysonVerseSaveData.dysonVerseSkillTreeData;
     [SerializeField] private GameManager _gameManager;
 
+    /// <summary>
+    /// Subscribes assignment callbacks.
+    /// </summary>
     private void OnEnable()
     {
         GameManager.AssignSkills += UnlockSkill;
         DebugOptions.AutoAssign += UnlockSkill;
     }
 
+    /// <summary>
+    /// Unsubscribes assignment callbacks.
+    /// </summary>
     private void OnDisable()
     {
         GameManager.AssignSkills -= UnlockSkill;
         DebugOptions.AutoAssign -= UnlockSkill;
     }
 
+    /// <summary>
+    /// Applies queued skills while points remain, skipping blocked entries and continuing through the queue.
+    /// </summary>
     private void UnlockSkill()
     {
         List<string> autoAssignIds = oracle.GetAutoAssignmentSkillIds();
@@ -42,11 +71,11 @@ public class SkillsAutoAssignment : MonoBehaviour
                 if (!AreRequirementsMet(definition.requiredSkillIds)) available = false;
                 if (!AreRequirementsMet(definition.shadowRequirementIds)) available = false;
                 if (HasExclusiveOwned(definition.exclusiveWithIds)) available = false;
+                if (!oracle.saveSettings.autoAssignNonRefundableSkills && !definition.refundable) available = false;
 
                 if (!available)
                 {
-                    // Fail-fast: preserve player-defined order by stopping at the first blocked skill.
-                    break;
+                    continue;
                 }
 
                 skillTreeData.skillPointsTree -= cost;
@@ -64,6 +93,11 @@ public class SkillsAutoAssignment : MonoBehaviour
         } while (assignedAny && skillTreeData.skillPointsTree > 0);
     }
 
+    /// <summary>
+    /// Resolves a skill definition from registry by id.
+    /// </summary>
+    /// <param name="id">Skill id.</param>
+    /// <returns>Skill definition or null when missing.</returns>
     private SkillDefinition ResolveSkillDefinition(string id)
     {
         GameDataRegistry registry = GameDataRegistry.Instance;
@@ -72,6 +106,11 @@ public class SkillsAutoAssignment : MonoBehaviour
         return definition;
     }
 
+    /// <summary>
+    /// Returns true when all requirement ids are currently owned.
+    /// </summary>
+    /// <param name="requirementIds">Required skill ids.</param>
+    /// <returns>True when requirements are met.</returns>
     private bool AreRequirementsMet(string[] requirementIds)
     {
         if (requirementIds != null && requirementIds.Length > 0)
@@ -84,6 +123,11 @@ public class SkillsAutoAssignment : MonoBehaviour
         return true;
     }
 
+    /// <summary>
+    /// Returns true when any exclusive skill is currently owned.
+    /// </summary>
+    /// <param name="exclusiveIds">Exclusive skill ids.</param>
+    /// <returns>True when a conflict exists.</returns>
     private bool HasExclusiveOwned(string[] exclusiveIds)
     {
         if (exclusiveIds != null && exclusiveIds.Length > 0)

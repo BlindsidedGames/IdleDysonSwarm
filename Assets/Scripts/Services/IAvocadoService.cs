@@ -11,7 +11,7 @@ namespace IdleDysonSwarm.Services
     /// Avocado is unlocked by spending 42 Quantum Points.
     /// The global buff is calculated as:
     /// Log10(IP) × Log10(Influence) × Log10(StrangeMatter) × (1 + Overflow)
-    /// Each component only contributes if its value is >= 10 (AvocadoLogThreshold).
+    /// Each component only contributes if its value reaches the configured Avocado threshold.
     /// </remarks>
     public interface IAvocadoService
     {
@@ -54,17 +54,17 @@ namespace IdleDysonSwarm.Services
         double GlobalBuff { get; }
 
         /// <summary>
-        /// Whether IP meets the minimum threshold (>= 10) to contribute to multiplier.
+        /// Whether IP meets the minimum threshold to contribute to multiplier.
         /// </summary>
         bool HasMinimumIP { get; }
 
         /// <summary>
-        /// Whether Influence meets the minimum threshold (>= 10) to contribute to multiplier.
+        /// Whether Influence meets the minimum threshold to contribute to multiplier.
         /// </summary>
         bool HasMinimumInfluence { get; }
 
         /// <summary>
-        /// Whether Strange Matter meets the minimum threshold (>= 10) to contribute to multiplier.
+        /// Whether Strange Matter meets the minimum threshold to contribute to multiplier.
         /// </summary>
         bool HasMinimumStrangeMatter { get; }
 

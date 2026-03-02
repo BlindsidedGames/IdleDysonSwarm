@@ -1,0 +1,32 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0139bc50b7bdef44396c78d1332a9adf, type: 3}
+  m_Name: gatherer4
+  m_EditorClassIdentifier: Assembly-CSharp::IdleDysonSwarm.Data.Balance.SimulationUpgradeDefinition
+  key: gatherer4
+  layer: 0
+  category: 2
+  title: Purchase buys 1000 Gatherers
+  description: Purchase buys 1000 Gatherers
+  cost: 40
+  prerequisites:
+  - key: gatherer2
+    mustBeOwned: 1
+  purchaseEffects:
+  - effectType: 0
+    targetKey: gatherer4
+    boolValue: 1
+    numericValue: 0
+  - effectType: 5
+    targetKey: gatherersPerPurchase
+    boolValue: 1
+    numericValue: 1000

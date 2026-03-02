@@ -1,0 +1,19 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6f39365ba62ab8f4d8b626ccc2f19a4f, type: 3}
+  m_Name: BalanceToolRegistry
+  m_EditorClassIdentifier: Assembly-CSharp::IdleDysonSwarm.Data.Balance.BalanceToolRegistry
+  facilityDatabase: {fileID: 11400000, guid: c9a87aa0dbef4a24f88744836b912116, type: 2}
+  facilityBalanceProfile: {fileID: 11400000, guid: dbe607c3f1c1660449b44c0db1a90d8d, type: 2}
+  simulationUpgradeDatabase: {fileID: 11400000, guid: 821b8c9913ca34649963f6ddc94d999b, type: 2}
+  realitySystemTuning: {fileID: 11400000, guid: a9b0cc9dbe9c67440b59be303fda7e5d, type: 2}
+  diagnosticsReportTitle: Balance Validation

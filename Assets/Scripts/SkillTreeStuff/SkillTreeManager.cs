@@ -43,6 +43,8 @@ Change notes:
   and transitive required-skill ancestry of assigned direct non-refundable skills; changing that contract affects both
   node coloring and confirmation warnings. Owned refundable/non-refundable skills use dedicated button color sets and
   the purchased overlay is kept hidden.
+- Queue insertion no longer uses legacy hardcoded blocked-skill lists; non-refundable queue behavior is now controlled
+  by SaveDataSettings.autoAssignNonRefundableSkills at assignment time.
 */
 [SelectionBase]
 public class SkillTreeManager : MonoBehaviour, IPointerClickHandler
@@ -759,12 +761,6 @@ public class SkillTreeManager : MonoBehaviour, IPointerClickHandler
         return false;
     }
 
-    private bool IsBlockedFromAutoAssign(string id)
-    {
-        if (string.IsNullOrEmpty(id)) return true;
-        return SkillIdMap.TryGetLegacyKey(id, out int key) && oracle.listOfSkillsNotToAutoBuy.Contains(key);
-    }
-
     private void EnableSKills()
     {
         if (GetPurityLine()) skillButton.gameObject.SetActive(prestigePlus.purity);
@@ -1081,7 +1077,7 @@ public class SkillTreeManager : MonoBehaviour, IPointerClickHandler
         if (definition.isFragment) skillTreeData.fragments += 1;
 
         List<string> autoAssignIds = oracle.GetAutoAssignmentSkillIds();
-        if (!autoAssignIds.Contains(id) && !IsBlockedFromAutoAssign(id))
+        if (!autoAssignIds.Contains(id))
         {
             autoAssignIds.Add(id);
             oracle.SetAutoAssignmentSkillIds(autoAssignIds);

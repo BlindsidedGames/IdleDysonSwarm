@@ -4,8 +4,8 @@ using UnityEngine;
 using UnityEngine.UI;
 using Blindsided.Utilities;
 using IdleDysonSwarm.Services;
+using IdleDysonSwarm.Systems.Balance;
 using static Expansion.Oracle;
-using static IdleDysonSwarm.Systems.Constants.RealityConstants;
 
 public class WorkerController : MonoBehaviour
 {
@@ -97,7 +97,7 @@ public class WorkerController : MonoBehaviour
     {
         _workerService.ClampWorkersNonNegative();
         workersReadyToGofill.fillAmount = _workerService.WorkerFillPercent;
-        preWorkerCounter.text = $"{_workerService.WorkersReady}/{WorkerBatchSize}";
+        preWorkerCounter.text = $"{_workerService.WorkersReady}/{BalanceRuntime.WorkerBatchSize}";
         universeDesignation.text =
             $"Universe Designation: {_workerService.WorkerBatchesProcessed + 1:N0}";
     }

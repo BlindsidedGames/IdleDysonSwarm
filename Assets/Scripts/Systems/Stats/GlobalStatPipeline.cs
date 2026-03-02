@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using GameData;
+using IdleDysonSwarm.Systems.Balance;
 using Systems;
 using static Expansion.Oracle;
 
@@ -215,12 +216,13 @@ namespace Systems.Stats
             AvocadoData avocadoData = StaticSaveSettings?.avocadoData;
             if (avocadoData == null || !avocadoData.unlocked) return;
 
+            int threshold = BalanceRuntime.AvocadoLogThreshold;
             double multi = 1;
-            if (avocadoData.infinityPoints >= 10)
+            if (avocadoData.infinityPoints >= threshold)
                 multi *= Math.Log10(avocadoData.infinityPoints);
-            if (avocadoData.influence >= 10)
+            if (avocadoData.influence >= threshold)
                 multi *= Math.Log10(avocadoData.influence);
-            if (avocadoData.strangeMatter >= 10)
+            if (avocadoData.strangeMatter >= threshold)
                 multi *= Math.Log10(avocadoData.strangeMatter);
             if (avocadoData.overflowMultiplier >= 1)
                 multi *= 1 + avocadoData.overflowMultiplier;

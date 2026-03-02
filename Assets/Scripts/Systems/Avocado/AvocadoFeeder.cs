@@ -4,8 +4,8 @@ using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.Serialization;
 using Blindsided.Utilities;
+using IdleDysonSwarm.Systems.Balance;
 using static Expansion.Oracle;
-using static IdleDysonSwarm.Systems.Constants.RealityConstants;
 
 public class AvocadoFeeder : MonoBehaviour
 {
@@ -65,9 +65,10 @@ public class AvocadoFeeder : MonoBehaviour
     public void UpdateText()
     {
         gameObject.SetActive(avocadoData.unlocked);
-        double infinityPointsMultiplier = avocadoData.infinityPoints >= AvocadoLogThreshold ? Math.Log10(avocadoData.infinityPoints) : 0;
-        double influenceMultiplier = avocadoData.influence >= AvocadoLogThreshold ? Math.Log10(avocadoData.influence) : 0;
-        double strangeMatterMultiplier = avocadoData.strangeMatter >= AvocadoLogThreshold ? Math.Log10(avocadoData.strangeMatter) : 0;
+        int threshold = BalanceRuntime.AvocadoLogThreshold;
+        double infinityPointsMultiplier = avocadoData.infinityPoints >= threshold ? Math.Log10(avocadoData.infinityPoints) : 0;
+        double influenceMultiplier = avocadoData.influence >= threshold ? Math.Log10(avocadoData.influence) : 0;
+        double strangeMatterMultiplier = avocadoData.strangeMatter >= threshold ? Math.Log10(avocadoData.strangeMatter) : 0;
         double overflowMultiplier = 1 + avocadoData.overflowMultiplier;
 
         feedInfinityPointsText.text =
