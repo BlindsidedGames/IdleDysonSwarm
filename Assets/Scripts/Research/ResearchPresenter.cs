@@ -4,14 +4,45 @@ using Buildings;
 using Expansion;
 using GameData;
 using IdleDysonSwarm.Services;
+using Systems.Facilities;
 using UnityEngine;
 #if UNITY_EDITOR
 using UnityEditor;
 #endif
 using static Blindsided.Utilities.CalcUtils;
 
+/*
+ * ResearchPresenter
+ * Purpose: Binds a research definition to one UI card and handles visibility, affordability, purchase, and text updates.
+ * Runs: Runtime (with editor OnValidate helper for authoring).
+ * Primary entry points: Awake(), OnEnable(), Update(), PurchaseResearch().
+ * Owns vs delegates: Owns per-card UI behavior; delegates save/state persistence to IGameStateService and ID mapping
+ * to ResearchIdMap.
+ *
+ * Interacts with:
+ * - Assets/Scripts/Buildings/BuildingReferences.cs
+ * - Assets/Scripts/Services/IGameStateService.cs
+ * - Assets/Scripts/Data/ResearchIdMap.cs
+ * - Assets/Scripts/Expansion/Oracle.cs
+ *
+ * Change notes:
+ * - Building reference name mapping in GetBuildingReferenceName() must stay in sync with card names in Game.unity.
+ * - Purchase listener binding is now idempotent and can bind after delayed reference resolution; avoid manual duplicate
+ * listener registration elsewhere.
+ * - Runtime state-dependent UI updates are intentionally deferred until Oracle save state is ready to prevent
+ * pre-load startup null faults.
+ */
 namespace Research
 {
+    /// <summary>
+    /// Purpose (runtime): Drives a single research card's visibility, pricing, affordability, text, and purchase flow.
+    /// Primary entry points: Unity <c>Awake</c>, <c>OnEnable</c>, <c>Update</c>, plus purchase button callback.
+    /// Owns vs delegates: Owns card state presentation and purchase execution; delegates save/game-state reads to
+    /// <see cref="IGameStateService"/> and research definition lookup to the data registry.
+    /// Interacts with: <see cref="BuildingReferences"/>, <see cref="Oracle"/>, <see cref="ResearchIdMap"/>,
+    /// and scene UI button events.
+    /// Change notes: ID mappings and building reference names must remain aligned with scene card object names.
+    /// </summary>
     public class ResearchPresenter : MonoBehaviour
     {
         private const double DefaultBaseCost = 1d;
@@ -31,6 +62,7 @@ namespace Research
         private ResearchDefinition _resolvedDefinition;
         private string _resolvedId;
         private IGameStateService _gameState;
+        private bool _isPurchaseListenerBound;
 
         private double BaseCostValue => _resolvedDefinition != null ? _resolvedDefinition.baseCost : DefaultBaseCost;
 
@@ -51,6 +83,15 @@ namespace Research
 
         private bool PrerequisitesMet => _resolvedDefinition == null || HasMetPrerequisites();
 
+        /// <summary>
+        /// Determines whether save-backed runtime state is available for prerequisite and cost logic.
+        /// </summary>
+        /// <returns>True when settings and infinity data are available.</returns>
+        private bool IsRuntimeStateReady()
+        {
+            return _gameState != null && _gameState.SaveSettings != null && _gameState.InfinityData != null;
+        }
+
         private void Awake()
         {
             _gameState = ServiceLocator.Get<IGameStateService>();
@@ -61,17 +102,19 @@ namespace Research
                 buildingReferences = GetComponent<BuildingReferences>();
             }
             ResolveBuildingReferences();
-
-            if (buildingReferences != null)
-            {
-                buildingReferences.purchaseButton.onClick.AddListener(PurchaseResearch);
-            }
+            TryBindPurchaseButton();
         }
 
         private void OnEnable()
         {
             ResolveDefinition();
             ResolveBuildingReferences();
+            TryBindPurchaseButton();
+            if (!IsRuntimeStateReady())
+            {
+                return;
+            }
+
             UpdateVisibility();
         }
 
@@ -101,7 +144,9 @@ namespace Research
                 ResolveBuildingReferences();
             }
 
+            TryBindPurchaseButton();
             if (buildingReferences == null) return;
+            if (!IsRuntimeStateReady()) return;
 
             UpdateVisibility();
             UpdateCostText();
@@ -188,6 +233,9 @@ namespace Research
                     ResearchAutoBuyGroup.Server => saveSettings.infinityAutoResearchToggleServer,
                     ResearchAutoBuyGroup.DataCenter => saveSettings.infinityAutoResearchToggleDataCenter,
                     ResearchAutoBuyGroup.Planet => saveSettings.infinityAutoResearchTogglePlanet,
+                    ResearchAutoBuyGroup.MatrioshkaBrains => saveSettings.infinityAutoResearchToggleMatrioshkaBrains,
+                    ResearchAutoBuyGroup.BirchPlanets => saveSettings.infinityAutoResearchToggleBirchPlanets,
+                    ResearchAutoBuyGroup.GalacticBrains => saveSettings.infinityAutoResearchToggleGalacticBrains,
                     _ => false
                 };
             }
@@ -293,6 +341,7 @@ namespace Research
         private void UpdateVisibility()
         {
             if (buildingReferences == null) return;
+            if (!IsRuntimeStateReady()) return;
 
             bool purchased = IsMaxed;
             bool shouldShow = PrerequisitesMet || CurrentLevel > 0;
@@ -429,9 +478,21 @@ namespace Research
                 if (reference != null && string.Equals(reference.name, targetName, StringComparison.Ordinal))
                 {
                     buildingReferences = reference;
+                    _isPurchaseListenerBound = false;
                     break;
                 }
             }
+        }
+
+        private void TryBindPurchaseButton()
+        {
+            if (_isPurchaseListenerBound || buildingReferences == null || buildingReferences.purchaseButton == null)
+            {
+                return;
+            }
+
+            buildingReferences.purchaseButton.onClick.AddListener(PurchaseResearch);
+            _isPurchaseListenerBound = true;
         }
 #if UNITY_EDITOR
         private static ResearchDefinition FindDefinitionById(string researchId)
@@ -478,15 +539,40 @@ namespace Research
 
         private bool HasMetPrerequisites()
         {
-            if (_resolvedDefinition == null || _resolvedDefinition.prerequisiteResearchIds == null)
+            if (!IsRuntimeStateReady())
+            {
+                return false;
+            }
+
+            if (_resolvedDefinition == null)
             {
                 return true;
             }
 
-            foreach (string prerequisite in _resolvedDefinition.prerequisiteResearchIds)
+            if (_resolvedDefinition.prerequisiteResearchIds != null)
             {
-                if (string.IsNullOrEmpty(prerequisite)) continue;
-                if (_gameState.GetResearchLevel(prerequisite) <= 0)
+                foreach (string prerequisite in _resolvedDefinition.prerequisiteResearchIds)
+                {
+                    if (string.IsNullOrEmpty(prerequisite)) continue;
+                    if (_gameState.GetResearchLevel(prerequisite) <= 0)
+                    {
+                        return false;
+                    }
+                }
+            }
+
+            if (!string.IsNullOrEmpty(_resolvedDefinition.prerequisiteFacilityId))
+            {
+                if (!FacilityCountAccessor.TryGetCount(_gameState.InfinityData, _resolvedDefinition.prerequisiteFacilityId,
+                        out double[] counts) || counts == null || counts.Length < 2)
+                {
+                    return false;
+                }
+
+                double requiredOwned = _resolvedDefinition.prerequisiteFacilityOwned > 0
+                    ? _resolvedDefinition.prerequisiteFacilityOwned
+                    : 1;
+                if (counts[0] + counts[1] < requiredOwned)
                 {
                     return false;
                 }
@@ -500,6 +586,7 @@ namespace Research
             if (string.IsNullOrEmpty(researchId)) return 0;
 
             var infinityData = _gameState.InfinityData;
+            if (infinityData == null) return 0;
             return researchId switch
             {
                 ResearchIdMap.MoneyMultiplier => infinityData.moneyMultiUpgradePercent,
@@ -509,6 +596,9 @@ namespace Research
                 ResearchIdMap.ServerUpgrade => infinityData.serverUpgradePercent,
                 ResearchIdMap.DataCenterUpgrade => infinityData.dataCenterUpgradePercent,
                 ResearchIdMap.PlanetUpgrade => infinityData.planetUpgradePercent,
+                ResearchIdMap.MatrioshkaBrainsUpgrade => infinityData.matrioshkaUpgradePercent,
+                ResearchIdMap.BirchPlanetsUpgrade => infinityData.birchUpgradePercent,
+                ResearchIdMap.GalacticBrainsUpgrade => infinityData.galacticUpgradePercent,
                 _ => 0
             };
         }
@@ -531,6 +621,12 @@ namespace Research
                     return ResearchAutoBuyGroup.DataCenter;
                 case ResearchIdMap.PlanetUpgrade:
                     return ResearchAutoBuyGroup.Planet;
+                case ResearchIdMap.MatrioshkaBrainsUpgrade:
+                    return ResearchAutoBuyGroup.MatrioshkaBrains;
+                case ResearchIdMap.BirchPlanetsUpgrade:
+                    return ResearchAutoBuyGroup.BirchPlanets;
+                case ResearchIdMap.GalacticBrainsUpgrade:
+                    return ResearchAutoBuyGroup.GalacticBrains;
                 case ResearchIdMap.PanelLifetime1:
                 case ResearchIdMap.PanelLifetime2:
                 case ResearchIdMap.PanelLifetime3:
@@ -559,6 +655,12 @@ namespace Research
                     return "Research_DataCenterMulti";
                 case ResearchIdMap.PlanetUpgrade:
                     return "Research_PlanetMulti";
+                case ResearchIdMap.MatrioshkaBrainsUpgrade:
+                    return "Research_MatrioshkaMulti";
+                case ResearchIdMap.BirchPlanetsUpgrade:
+                    return "Research_BirchMulti";
+                case ResearchIdMap.GalacticBrainsUpgrade:
+                    return "Research_GalacticMulti";
                 case ResearchIdMap.PanelLifetime1:
                     return "Research_PanelLifetime1";
                 case ResearchIdMap.PanelLifetime2:

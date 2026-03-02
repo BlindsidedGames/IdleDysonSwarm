@@ -39,6 +39,9 @@ Confirmation label API:
 - Skill ownership is stored in Oracle/skill-tree save flags keyed by skill IDs.
 - Costs/fragments are read from `SkillDefinition` and applied to `skillPointsTree` / `fragments`.
 - Auto-assign and preset queues are modified on assign/unassign and when dependent skills are removed.
+- Legacy per-skill blocklist queue exclusions have been retired; queue insertions now include assigned skills and
+  non-refundable queue behavior is governed only by `SaveDataSettings.autoAssignNonRefundableSkills` during
+  auto-assignment execution.
 - Any ID/schema change must be coordinated with `SkillIdMap`, `SkillDatabase`, and save migration compatibility.
 
 ## Visual-state behavior (current)

@@ -43,9 +43,13 @@ namespace Expansion
     /// - EnsureSimulationMathematicsParity() keeps mathematics3 permanent unlock saves aligned with legacy
     ///   solar generation expectations; changing this rule requires matching updates in ResearchManager and
     ///   InformationEraManager.
+    /// - EnsureMegaResearchPercentDefaults() normalizes legacy mega research percent fields to non-zero defaults;
+    ///   changing defaults affects displayed boost text and mega production modifier scaling on load.
     /// </remarks>
     public partial class Oracle
     {
+        private const double DefaultMegaResearchPercent = 0.03d;
+
         private void ApplyMigrations()
         {
             if (saveSettings == null) return;
@@ -126,6 +130,7 @@ namespace Expansion
                     EnsureSkillOwnershipData();
                     EnsureSkillAutoAssignmentIds();
                     EnsureResearchLevelData();
+                    EnsureMegaResearchPercentDefaults();
                     EnsurePackedSettingsFlags();
                     EnsureInfinitySparseArrays();
                     EnsureSimulationMathematicsParity();
@@ -485,7 +490,7 @@ namespace Expansion
                 if (ids.Count > 0)
                 {
                     List<string> before = new List<string>(ids);
-                    ids = BuildDependencySafeOrder(ids);
+                    ids = SkillAutoAssignOrderUtility.BuildDependencySafeOrder(ids);
                     legacyList = SkillIdMap.ConvertIdsToKeys(ids);
                     Debug.Log(
                         $"[PresetAutoAssign:Ensure] rebuilt from bits; " +
@@ -546,6 +551,26 @@ namespace Expansion
 
             ResearchIdMap.ApplyLevelsToLegacy(infinityData, infinityData.researchLevelsById);
             ResearchIdMap.PopulateLevelsFromLegacy(infinityData, infinityData.researchLevelsById);
+        }
+
+        private void EnsureMegaResearchPercentDefaults()
+        {
+            if (infinityData == null) return;
+
+            if (infinityData.matrioshkaUpgradePercent <= 0d)
+            {
+                infinityData.matrioshkaUpgradePercent = DefaultMegaResearchPercent;
+            }
+
+            if (infinityData.birchUpgradePercent <= 0d)
+            {
+                infinityData.birchUpgradePercent = DefaultMegaResearchPercent;
+            }
+
+            if (infinityData.galacticUpgradePercent <= 0d)
+            {
+                infinityData.galacticUpgradePercent = DefaultMegaResearchPercent;
+            }
         }
 
         private void MigrateResearchLevelsToIds()
@@ -697,6 +722,9 @@ namespace Expansion
             EnsureSkillAutoAssignmentBitsets();
         }
 
+        /// <summary>
+        /// Normalizes preset auto-assignment queues into dependency-safe order.
+        /// </summary>
         private void MigratePresetAutoAssignOrder()
         {
             DysonVerseSaveData data = EnsureDysonVerseSaveShape();
@@ -725,7 +753,7 @@ namespace Expansion
             if (ids.Count > 0)
             {
                 List<string> before = new List<string>(ids);
-                ids = BuildDependencySafeOrder(ids);
+                ids = SkillAutoAssignOrderUtility.BuildDependencySafeOrder(ids);
                 legacyList = SkillIdMap.ConvertIdsToKeys(ids);
                 Debug.Log(
                     $"[PresetAutoAssign:Migrate] reordered; " +
@@ -771,125 +799,6 @@ namespace Expansion
                     $"[Migrations] Ignoring invalid base64 payload ({label}). " +
                     $"This save will continue with fallback defaults. Error: {ex.Message}");
                 return false;
-            }
-        }
-
-        private List<string> BuildDependencySafeOrder(List<string> ids)
-        {
-            if (ids == null || ids.Count <= 1) return ids ?? new List<string>();
-
-            GameDataRegistry registry = GameDataRegistry.Instance;
-            if (registry == null || registry.skillDatabase == null) return ids;
-
-            var orderedInput = new List<string>();
-            var seen = new HashSet<string>(StringComparer.Ordinal);
-            foreach (string id in ids)
-            {
-                if (string.IsNullOrEmpty(id) || !seen.Add(id)) continue;
-                orderedInput.Add(id);
-            }
-
-            if (orderedInput.Count <= 1) return orderedInput;
-
-            var index = new Dictionary<string, int>(orderedInput.Count, StringComparer.Ordinal);
-            for (int i = 0; i < orderedInput.Count; i++)
-                index[orderedInput[i]] = i;
-
-            var selected = new HashSet<string>(orderedInput, StringComparer.Ordinal);
-            var indegree = new Dictionary<string, int>(orderedInput.Count, StringComparer.Ordinal);
-            var adjacency = new Dictionary<string, List<string>>(orderedInput.Count, StringComparer.Ordinal);
-
-            foreach (string id in orderedInput)
-            {
-                indegree[id] = 0;
-                adjacency[id] = new List<string>();
-            }
-
-            foreach (string id in orderedInput)
-            {
-                if (!registry.skillDatabase.TryGet(id, out SkillDefinition definition) || definition == null) continue;
-                AppendDependencies(id, definition.requiredSkillIds, selected, indegree, adjacency);
-                AppendDependencies(id, definition.shadowRequirementIds, selected, indegree, adjacency);
-            }
-
-            var remaining = new HashSet<string>(orderedInput, StringComparer.Ordinal);
-            var topo = new List<string>(orderedInput.Count);
-
-            while (remaining.Count > 0)
-            {
-                bool progressed = false;
-                for (int i = 0; i < orderedInput.Count; i++)
-                {
-                    string id = orderedInput[i];
-                    if (!remaining.Contains(id)) continue;
-                    if (indegree[id] != 0) continue;
-
-                    remaining.Remove(id);
-                    topo.Add(id);
-                    foreach (string neighbor in adjacency[id])
-                    {
-                        indegree[neighbor]--;
-                    }
-
-                    progressed = true;
-                }
-
-                if (progressed) continue;
-
-                // Cycle or missing prereqs inside selection; preserve original order for remaining.
-                foreach (string id in orderedInput)
-                {
-                    if (!remaining.Contains(id)) continue;
-                    topo.Add(id);
-                }
-
-                break;
-            }
-
-            // Filter out exclusives that would block later auto-assign.
-            var accepted = new List<string>(topo.Count);
-            var acceptedSet = new HashSet<string>(StringComparer.Ordinal);
-            foreach (string id in topo)
-            {
-                if (!registry.skillDatabase.TryGet(id, out SkillDefinition definition) || definition == null)
-                {
-                    accepted.Add(id);
-                    acceptedSet.Add(id);
-                    continue;
-                }
-
-                if (definition.exclusiveWithIds != null && definition.exclusiveWithIds.Length > 0)
-                {
-                    bool blocked = false;
-                    foreach (string exclusiveId in definition.exclusiveWithIds)
-                    {
-                        if (acceptedSet.Contains(exclusiveId))
-                        {
-                            blocked = true;
-                            break;
-                        }
-                    }
-
-                    if (blocked) continue;
-                }
-
-                accepted.Add(id);
-                acceptedSet.Add(id);
-            }
-
-            return accepted;
-        }
-
-        private static void AppendDependencies(string id, string[] requirements, HashSet<string> selected,
-            Dictionary<string, int> indegree, Dictionary<string, List<string>> adjacency)
-        {
-            if (requirements == null || requirements.Length == 0) return;
-            foreach (string req in requirements)
-            {
-                if (string.IsNullOrEmpty(req)) continue;
-                if (!selected.Contains(req)) continue;
-                adjacency[req].Add(id);
-                indegree[id] += 1;
             }
         }
 

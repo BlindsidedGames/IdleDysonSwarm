@@ -1,10 +1,10 @@
 using System;
 using Expansion;
 using IdleDysonSwarm.Data;
+using IdleDysonSwarm.Systems.Balance;
 using UnityEngine;
 using static Expansion.Oracle;
 using static IdleDysonSwarm.Systems.Constants.QuantumConstants;
-using static IdleDysonSwarm.Systems.Constants.RealityConstants;
 
 namespace IdleDysonSwarm.Services
 {
@@ -213,7 +213,7 @@ namespace IdleDysonSwarm.Services
             };
         }
 
-        public int CalculatedWorkerSpeed => BaseWorkerGenerationSpeed + (int)InfluenceSpeedLevel;
+        public int CalculatedWorkerSpeed => BalanceRuntime.BaseWorkerGenerationSpeed + (int)InfluenceSpeedLevel;
 
         public double CashMultiplier => 1 + (CashBonusLevel * CashBonusPerPoint);
 

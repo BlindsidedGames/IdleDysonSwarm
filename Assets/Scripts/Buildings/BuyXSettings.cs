@@ -42,11 +42,24 @@ public class BuyXSettings : MonoBehaviour
 
     private BuyMode CurrentMode
     {
-        get => buyModeTarget == BuyModeTarget.Buildings
-            ? oracle.saveSettings.buyMode
-            : oracle.saveSettings.researchBuyMode;
+        get
+        {
+            if (!HasSaveSettings())
+            {
+                return BuyMode.Buy1;
+            }
+
+            return buyModeTarget == BuyModeTarget.Buildings
+                ? oracle.saveSettings.buyMode
+                : oracle.saveSettings.researchBuyMode;
+        }
         set
         {
+            if (!HasSaveSettings())
+            {
+                return;
+            }
+
             if (buyModeTarget == BuyModeTarget.Buildings)
                 oracle.saveSettings.buyMode = value;
             else
@@ -56,11 +69,11 @@ public class BuyXSettings : MonoBehaviour
 
     private void Start()
     {
-        one.onClick.AddListener(() => SetMode(BuyMode.Buy1, one));
-        ten.onClick.AddListener(() => SetMode(BuyMode.Buy10, ten));
-        fifty.onClick.AddListener(() => SetMode(BuyMode.Buy50, fifty));
-        onehundred.onClick.AddListener(() => SetMode(BuyMode.Buy100, onehundred));
-        max.onClick.AddListener(() => SetMode(BuyMode.BuyMax, max));
+        if (one != null) one.onClick.AddListener(() => SetMode(BuyMode.Buy1, one));
+        if (ten != null) ten.onClick.AddListener(() => SetMode(BuyMode.Buy10, ten));
+        if (fifty != null) fifty.onClick.AddListener(() => SetMode(BuyMode.Buy50, fifty));
+        if (onehundred != null) onehundred.onClick.AddListener(() => SetMode(BuyMode.Buy100, onehundred));
+        if (max != null) max.onClick.AddListener(() => SetMode(BuyMode.BuyMax, max));
     }
 
     private void OnEnable()
@@ -73,22 +86,32 @@ public class BuyXSettings : MonoBehaviour
     /// </summary>
     public void SetButton()
     {
+        if (!HasSaveSettings())
+        {
+            return;
+        }
+
         var current = CurrentMode;
-        one.interactable = current != BuyMode.Buy1;
-        ten.interactable = current != BuyMode.Buy10;
-        fifty.interactable = current != BuyMode.Buy50;
-        onehundred.interactable = current != BuyMode.Buy100;
-        max.interactable = current != BuyMode.BuyMax;
+        if (one != null) one.interactable = current != BuyMode.Buy1;
+        if (ten != null) ten.interactable = current != BuyMode.Buy10;
+        if (fifty != null) fifty.interactable = current != BuyMode.Buy50;
+        if (onehundred != null) onehundred.interactable = current != BuyMode.Buy100;
+        if (max != null) max.interactable = current != BuyMode.BuyMax;
     }
 
     private void SetMode(BuyMode m, Button b)
     {
         CurrentMode = m;
-        one.interactable = true;
-        ten.interactable = true;
-        fifty.interactable = true;
-        onehundred.interactable = true;
-        max.interactable = true;
-        b.interactable = false;
+        if (one != null) one.interactable = true;
+        if (ten != null) ten.interactable = true;
+        if (fifty != null) fifty.interactable = true;
+        if (onehundred != null) onehundred.interactable = true;
+        if (max != null) max.interactable = true;
+        if (b != null) b.interactable = false;
+    }
+
+    private static bool HasSaveSettings()
+    {
+        return oracle != null && oracle.saveSettings != null;
     }
 }

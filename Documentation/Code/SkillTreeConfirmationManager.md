@@ -5,7 +5,6 @@
 - opening/closing and positioning the popup,
 - rendering skill text (name, description, technical description, cost),
 - driving assign/unassign actions through the selected `SkillTreeManager`,
-- toggling auto-assign add/remove actions,
 - rendering not-refundable warning visibility and reason copy.
 
 The popup must stay consistent with `SkillTreeManager` rules for refundability and reason labeling.
@@ -16,7 +15,7 @@ The popup must stay consistent with `SkillTreeManager` rules for refundability a
 - resolves the active `SkillDefinition`,
 - asks `skillTreeManager.TryGetNotRefundableReasonLabel(out label)` for warning state and copy,
 - updates message visibility/copy and popup colors (normal/fragment/non-refundable),
-- updates auto-assign button visibility from Oracle auto-assignment IDs.
+- keeps legacy auto-assign add/remove controls hidden (queue edits now flow through assign/unassign actions only).
 3. Confirm button calls `skillTreeManager.PurchaseSkill()` to execute assign/unassign mutation.
 
 ## Not-refundable message behavior
@@ -29,7 +28,7 @@ The popup must stay consistent with `SkillTreeManager` rules for refundability a
 
 ## Save/load implications
 - No direct save schema changes are owned here.
-- Writes occur only through Oracle auto-assign list updates and `PurchaseSkill()` delegation.
+- Writes occur through `PurchaseSkill()` delegation only.
 
 ## Performance notes
 - `SetTexts()` executes on popup open, not per-frame; database lookups and label resolution are acceptable.

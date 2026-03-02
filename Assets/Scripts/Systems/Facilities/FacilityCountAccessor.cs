@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using System.Reflection;
+using IdleDysonSwarm.Systems.Balance;
 using UnityEngine;
 using static Expansion.Oracle;
 
@@ -12,9 +13,9 @@ namespace Systems.Facilities
     public static class FacilityCountAccessor
     {
         /// <summary>
-        /// Maps facility IDs to their corresponding field names in DysonVerseInfinityData.
+        /// Legacy fallback map used when balance profile assets are unavailable.
         /// </summary>
-        private static readonly Dictionary<string, string> FacilityFieldMap = new Dictionary<string, string>
+        private static readonly Dictionary<string, string> LegacyFacilityFieldMap = new Dictionary<string, string>
         {
             { "assembly_lines", "assemblyLines" },
             { "ai_managers", "managers" },
@@ -98,14 +99,27 @@ namespace Systems.Facilities
         /// <returns>True if the facility ID is mapped to a field.</returns>
         public static bool IsKnownFacility(string facilityId)
         {
-            return !string.IsNullOrEmpty(facilityId) && FacilityFieldMap.ContainsKey(facilityId);
+            if (string.IsNullOrEmpty(facilityId)) return false;
+            if (BalanceRuntime.TryGetFacilityEntry(facilityId, out _)) return true;
+            return LegacyFacilityFieldMap.ContainsKey(facilityId);
         }
 
         private static FieldInfo GetFacilityField(string facilityId)
         {
             if (FieldCache.TryGetValue(facilityId, out FieldInfo cached)) return cached;
 
-            if (!FacilityFieldMap.TryGetValue(facilityId, out string fieldName))
+            string fieldName = null;
+            if (BalanceRuntime.TryGetFacilityEntry(facilityId, out var entry) &&
+                !string.IsNullOrEmpty(entry.countFieldName))
+            {
+                fieldName = entry.countFieldName;
+            }
+            else if (LegacyFacilityFieldMap.TryGetValue(facilityId, out string legacyFieldName))
+            {
+                fieldName = legacyFieldName;
+            }
+
+            if (string.IsNullOrEmpty(fieldName))
             {
                 if (MissingFacilities.Add(facilityId))
                     Debug.LogWarning($"Facility '{facilityId}' is not mapped in FacilityCountAccessor.");

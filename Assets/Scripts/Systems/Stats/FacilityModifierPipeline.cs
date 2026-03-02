@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using GameData;
+using IdleDysonSwarm.Systems.Balance;
 using Systems;
 using static Expansion.Oracle;
 
@@ -19,6 +20,9 @@ namespace Systems.Stats
         private const string ManagerUpgradeEffectId = "effect.research.ai_manager_modifier";
         private const string ServerUpgradeEffectId = "effect.research.server_modifier";
         private const string PlanetUpgradeEffectId = "effect.research.planet_modifier";
+        private const string MatrioshkaUpgradeEffectId = "effect.research.matrioshka_modifier";
+        private const string BirchUpgradeEffectId = "effect.research.birch_modifier";
+        private const string GalacticUpgradeEffectId = "effect.research.galactic_modifier";
 
         public static bool TryCalculateAssemblyLineModifier(DysonVerseInfinityData infinityData, DysonVerseSkillTreeData skillTreeData,
             DysonVersePrestigeData prestigeData, PrestigePlus prestigePlus, SecretBuffState secrets, double maxInfinityBuff,
@@ -347,6 +351,164 @@ namespace Systems.Stats
             return true;
         }
 
+        public static bool TryCalculateMatrioshkaModifier(DysonVerseInfinityData infinityData, DysonVerseSkillTreeData skillTreeData,
+            DysonVersePrestigeData prestigeData, PrestigePlus prestigePlus, double maxInfinityBuff, out StatResult result)
+        {
+            result = null;
+            if (!IsReady() || infinityData == null) return false;
+
+            var context = new EffectContext(infinityData, prestigeData, skillTreeData, prestigePlus);
+            bool hasResearch = ResearchEffectProvider.TryBuildGlobalEffects(StatId.MatrioshkaModifier, context,
+                out List<StatEffect> researchEffects);
+            double baseValue = 1;
+
+            var effects = new List<StatEffect>();
+            double upgradePercent = infinityData.matrioshkaUpgradePercent;
+
+            if (hasResearch)
+            {
+                int upgradeOrder = UpgradeOrderFallback;
+                string upgradeName = "Matrioshka Brains Upgrades";
+                double upgradeLevel;
+                if (TryPopEffectById(researchEffects, MatrioshkaUpgradeEffectId, out StatEffect upgradeEffect))
+                {
+                    upgradeOrder = upgradeEffect.Order;
+                    if (!string.IsNullOrEmpty(upgradeEffect.SourceName)) upgradeName = upgradeEffect.SourceName;
+                    upgradeLevel = upgradePercent > UpgradeEpsilon ? upgradeEffect.Value / upgradePercent : 0;
+                }
+                else
+                {
+                    upgradeLevel = GetResearchLevel(infinityData, ResearchIdMap.MatrioshkaBrainsUpgrade);
+                }
+
+                double baseContribution = upgradeLevel * upgradePercent;
+                AddUpgradeEffect(effects, StatId.MatrioshkaModifier, MatrioshkaUpgradeEffectId, upgradeName, baseContribution,
+                    upgradeOrder);
+                if (researchEffects != null && researchEffects.Count > 0)
+                {
+                    effects.AddRange(researchEffects);
+                }
+            }
+            else
+            {
+                double upgradeLevel = GetResearchLevel(infinityData, ResearchIdMap.MatrioshkaBrainsUpgrade);
+                baseValue = 1 + upgradeLevel * upgradePercent;
+            }
+
+            effects.AddRange(SkillEffectProvider.BuildGlobalEffects(StatId.MatrioshkaModifier, context));
+            AddInfinityMultiplier(effects, StatId.MatrioshkaModifier, prestigeData, 5, maxInfinityBuff,
+                "prestige.infinity.matrioshka_brains", "Infinity Buff", InfinityOrder);
+            AddAvocatoMultiplier(effects, StatId.MatrioshkaModifier, prestigePlus, "prestige.avocato_modifier", AvocatoOrder);
+
+            result = StatCalculator.Calculate(baseValue, effects);
+            return true;
+        }
+
+        public static bool TryCalculateBirchModifier(DysonVerseInfinityData infinityData, DysonVerseSkillTreeData skillTreeData,
+            DysonVersePrestigeData prestigeData, PrestigePlus prestigePlus, double maxInfinityBuff, out StatResult result)
+        {
+            result = null;
+            if (!IsReady() || infinityData == null) return false;
+
+            var context = new EffectContext(infinityData, prestigeData, skillTreeData, prestigePlus);
+            bool hasResearch = ResearchEffectProvider.TryBuildGlobalEffects(StatId.BirchModifier, context,
+                out List<StatEffect> researchEffects);
+            double baseValue = 1;
+
+            var effects = new List<StatEffect>();
+            double upgradePercent = infinityData.birchUpgradePercent;
+
+            if (hasResearch)
+            {
+                int upgradeOrder = UpgradeOrderFallback;
+                string upgradeName = "Birch Planets Upgrades";
+                double upgradeLevel;
+                if (TryPopEffectById(researchEffects, BirchUpgradeEffectId, out StatEffect upgradeEffect))
+                {
+                    upgradeOrder = upgradeEffect.Order;
+                    if (!string.IsNullOrEmpty(upgradeEffect.SourceName)) upgradeName = upgradeEffect.SourceName;
+                    upgradeLevel = upgradePercent > UpgradeEpsilon ? upgradeEffect.Value / upgradePercent : 0;
+                }
+                else
+                {
+                    upgradeLevel = GetResearchLevel(infinityData, ResearchIdMap.BirchPlanetsUpgrade);
+                }
+
+                double baseContribution = upgradeLevel * upgradePercent;
+                AddUpgradeEffect(effects, StatId.BirchModifier, BirchUpgradeEffectId, upgradeName, baseContribution, upgradeOrder);
+                if (researchEffects != null && researchEffects.Count > 0)
+                {
+                    effects.AddRange(researchEffects);
+                }
+            }
+            else
+            {
+                double upgradeLevel = GetResearchLevel(infinityData, ResearchIdMap.BirchPlanetsUpgrade);
+                baseValue = 1 + upgradeLevel * upgradePercent;
+            }
+
+            effects.AddRange(SkillEffectProvider.BuildGlobalEffects(StatId.BirchModifier, context));
+            AddInfinityMultiplier(effects, StatId.BirchModifier, prestigeData, 10, maxInfinityBuff,
+                "prestige.infinity.birch_planets", "Infinity Buff", InfinityOrder);
+            AddAvocatoMultiplier(effects, StatId.BirchModifier, prestigePlus, "prestige.avocato_modifier", AvocatoOrder);
+
+            result = StatCalculator.Calculate(baseValue, effects);
+            return true;
+        }
+
+        public static bool TryCalculateGalacticModifier(DysonVerseInfinityData infinityData, DysonVerseSkillTreeData skillTreeData,
+            DysonVersePrestigeData prestigeData, PrestigePlus prestigePlus, double maxInfinityBuff, out StatResult result)
+        {
+            result = null;
+            if (!IsReady() || infinityData == null) return false;
+
+            var context = new EffectContext(infinityData, prestigeData, skillTreeData, prestigePlus);
+            bool hasResearch = ResearchEffectProvider.TryBuildGlobalEffects(StatId.GalacticModifier, context,
+                out List<StatEffect> researchEffects);
+            double baseValue = 1;
+
+            var effects = new List<StatEffect>();
+            double upgradePercent = infinityData.galacticUpgradePercent;
+
+            if (hasResearch)
+            {
+                int upgradeOrder = UpgradeOrderFallback;
+                string upgradeName = "Galactic Brains Upgrades";
+                double upgradeLevel;
+                if (TryPopEffectById(researchEffects, GalacticUpgradeEffectId, out StatEffect upgradeEffect))
+                {
+                    upgradeOrder = upgradeEffect.Order;
+                    if (!string.IsNullOrEmpty(upgradeEffect.SourceName)) upgradeName = upgradeEffect.SourceName;
+                    upgradeLevel = upgradePercent > UpgradeEpsilon ? upgradeEffect.Value / upgradePercent : 0;
+                }
+                else
+                {
+                    upgradeLevel = GetResearchLevel(infinityData, ResearchIdMap.GalacticBrainsUpgrade);
+                }
+
+                double baseContribution = upgradeLevel * upgradePercent;
+                AddUpgradeEffect(effects, StatId.GalacticModifier, GalacticUpgradeEffectId, upgradeName, baseContribution,
+                    upgradeOrder);
+                if (researchEffects != null && researchEffects.Count > 0)
+                {
+                    effects.AddRange(researchEffects);
+                }
+            }
+            else
+            {
+                double upgradeLevel = GetResearchLevel(infinityData, ResearchIdMap.GalacticBrainsUpgrade);
+                baseValue = 1 + upgradeLevel * upgradePercent;
+            }
+
+            effects.AddRange(SkillEffectProvider.BuildGlobalEffects(StatId.GalacticModifier, context));
+            AddInfinityMultiplier(effects, StatId.GalacticModifier, prestigeData, 20, maxInfinityBuff,
+                "prestige.infinity.galactic_brains", "Infinity Buff", InfinityOrder);
+            AddAvocatoMultiplier(effects, StatId.GalacticModifier, prestigePlus, "prestige.avocato_modifier", AvocatoOrder);
+
+            result = StatCalculator.Calculate(baseValue, effects);
+            return true;
+        }
+
         private static bool IsReady()
         {
             return true;
@@ -531,12 +693,13 @@ namespace Systems.Stats
             AvocadoData avocadoData = StaticSaveSettings?.avocadoData;
             if (effects == null || avocadoData == null || !avocadoData.unlocked) return;
 
+            int threshold = BalanceRuntime.AvocadoLogThreshold;
             double multi = 1;
-            if (avocadoData.infinityPoints >= 10)
+            if (avocadoData.infinityPoints >= threshold)
                 multi *= Math.Log10(avocadoData.infinityPoints);
-            if (avocadoData.influence >= 10)
+            if (avocadoData.influence >= threshold)
                 multi *= Math.Log10(avocadoData.influence);
-            if (avocadoData.strangeMatter >= 10)
+            if (avocadoData.strangeMatter >= threshold)
                 multi *= Math.Log10(avocadoData.strangeMatter);
             if (avocadoData.overflowMultiplier >= 1)
                 multi *= 1 + avocadoData.overflowMultiplier;

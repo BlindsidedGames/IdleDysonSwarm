@@ -1,7 +1,7 @@
 using System;
 using Expansion;
+using IdleDysonSwarm.Systems.Balance;
 using static Expansion.Oracle;
-using static IdleDysonSwarm.Systems.Constants.RealityConstants;
 
 namespace IdleDysonSwarm.Services
 {
@@ -51,9 +51,9 @@ namespace IdleDysonSwarm.Services
             }
         }
 
-        public bool HasMinimumIP => AccumulatedIP >= AvocadoLogThreshold;
-        public bool HasMinimumInfluence => AccumulatedInfluence >= AvocadoLogThreshold;
-        public bool HasMinimumStrangeMatter => AccumulatedStrangeMatter >= AvocadoLogThreshold;
+        public bool HasMinimumIP => AccumulatedIP >= BalanceRuntime.AvocadoLogThreshold;
+        public bool HasMinimumInfluence => AccumulatedInfluence >= BalanceRuntime.AvocadoLogThreshold;
+        public bool HasMinimumStrangeMatter => AccumulatedStrangeMatter >= BalanceRuntime.AvocadoLogThreshold;
 
         public double IPContribution =>
             HasMinimumIP ? Math.Log10(AccumulatedIP) : 0;

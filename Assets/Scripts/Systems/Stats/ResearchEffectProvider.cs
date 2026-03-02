@@ -144,6 +144,15 @@ namespace Systems.Stats
                 case ResearchIdMap.PlanetUpgrade:
                     percent = infinityData.planetUpgradePercent;
                     return true;
+                case ResearchIdMap.MatrioshkaBrainsUpgrade:
+                    percent = infinityData.matrioshkaUpgradePercent;
+                    return true;
+                case ResearchIdMap.BirchPlanetsUpgrade:
+                    percent = infinityData.birchUpgradePercent;
+                    return true;
+                case ResearchIdMap.GalacticBrainsUpgrade:
+                    percent = infinityData.galacticUpgradePercent;
+                    return true;
                 default:
                     return false;
             }

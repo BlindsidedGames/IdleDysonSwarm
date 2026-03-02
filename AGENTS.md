@@ -41,9 +41,11 @@ If multiple interpretations are plausible, enumerate the competing interpretatio
 - `Assets/Scenes/` game scenes (e.g., `Load.unity`, `Game.unity`).
 - `Assets/Scripts/` gameplay and UI code.
   - `Assets/Scripts/Systems/` core gameplay systems, stats, facilities, migrations, platform, audio.
+    - `Assets/Scripts/Systems/Balance/` runtime balance accessors, fallback catalogs, and validation helpers.
     - `Assets/Scripts/Systems/Save/` canonical save pipeline, lifecycle/offline-time seams (`IClock`, `ISaveStore`, `ILifecycleEvents`), recovery helpers.
   - `Assets/Scripts/Services/` service layer + service locator.
   - `Assets/Scripts/Data/` ScriptableObject definitions, IDs, and condition system.
+    - `Assets/Scripts/Data/Balance/` ScriptableObject balance profiles/databases (`FacilityBalanceProfile`, `SimulationUpgradeDatabase`, `RealitySystemTuning`, registry).
   - `Assets/Scripts/Buildings/` building logic and presenters.
   - `Assets/Scripts/Classes/` shared classes and helpers.
   - `Assets/Scripts/Expansion/` Oracle, research, Dream1 era logic.
@@ -67,6 +69,7 @@ If multiple interpretations are plausible, enumerate the competing interpretatio
 - `Assets/MPUIKit/`, `Assets/TextMesh Pro/`, `Assets/Fonts/`, `Assets/Sprites/`, `Assets/Sounds/` UI + art assets.
 - `Assets/Extensions/` platform extensions (Google Play Games, etc.).
 - `Assets/Editor/` editor tooling and validation helpers.
+  - `Assets/Editor/Balance/` balance data seeding utilities and the `BalanceTuningWindow`.
 
 ### Documentation
 - `Documentation/ALLACHIEVEMENTS.md` and `Documentation/AchievementIdeas.md`.

@@ -21,14 +21,14 @@ MonoBehaviour:
   - facility
   - mega-structure
   - matrioshka
-  baseCost: 0
-  costExponent: 1
+  baseCost: 1000000000
+  costExponent: 1.1
   baseProduction: 1
   productionStatId: Facility.MatrioshkaBrain.Production
   wordUsed: Synthesizing
   productionWordUsed: Planet
   purchasePrompt: Construct a Matrioshka Brain
-  usesFacilityCost: 1
+  usesFacilityCost: 0
   costFacilityId: {fileID: 11400000, guid: 8ac9f40771445e047b67a4078b73b2f6, type: 2}
   baseFacilityCost: 10
   facilityCostExponent: 1.25

@@ -1,5 +1,4 @@
 using System.Collections;
-using System.Collections.Generic;
 using GameData;
 using Blindsided.ProceduralUIImage;
 using TMPro;
@@ -10,7 +9,7 @@ using static Expansion.Oracle;
 /*
 Purpose:
 - Controls the skill confirmation popup: title/description/cost text, assign/unassign button states, auto-assign
-  actions, and not-refundable warning messaging.
+  visibility policy, and not-refundable warning messaging.
 
 Where it runs:
 - Runtime on the skill tree confirmation panel object.
@@ -18,11 +17,10 @@ Where it runs:
 Primary entry points:
 - Unity lifecycle: Start.
 - Popup flow: SetPosition, SetTexts, CloseConfirm.
-- Button callbacks: RemoveSkillFromAutoAssign, AddSkillToAutoAssign.
 
 Interacts with:
 - Calls into: SkillTreeManager (selection context, purchase call, not-refundable reason labels), Oracle save APIs
-  (auto-assign list reads/writes), GameDataRegistry/SkillDatabase (fallback skill lookup).
+  (skill ownership state), GameDataRegistry/SkillDatabase (fallback skill lookup).
 - Called by: SkillTreeManager.ShowConfirmation and Unity UI button events.
 
 Change notes:
@@ -31,10 +29,14 @@ Change notes:
   changes popup text and warning visibility behavior.
 - Color arrays (normalColours, fragmentColours, nonRefundableColours) are popup-local presentation data and are
   independent of the skill-node button colors sourced from UITheme.
+- Manual per-skill add/remove auto-assign controls are intentionally disabled; queue changes now flow through
+  assign/unassign actions only.
 */
+/// <summary>
+/// UI controller for skill assign/unassign confirmation popups.
+/// </summary>
 public class SkillTreeConfirmationManager : MonoBehaviour
 {
-    [SerializeField] private GameManager _gameManager;
     [SerializeField] public Button confirm;
     [SerializeField] private Button cancel;
     public SkillTreeManager skillTreeManager;
@@ -57,43 +59,21 @@ public class SkillTreeConfirmationManager : MonoBehaviour
     [SerializeField] private Color[] fragmentColours;
     [SerializeField] private Color[] nonRefundableColours;
 
+    /// <summary>
+    /// Wires popup button actions.
+    /// </summary>
     private void Start()
     {
         confirm.onClick.AddListener(() => skillTreeManager.PurchaseSkill());
         cancel.onClick.AddListener(CloseConfirm);
-        autoAssignRemovalButton.onClick.AddListener(RemoveSkillFromAutoAssign);
-        autoAssignAddButton.onClick.AddListener(AddSkillToAutoAssign);
     }
 
+    /// <summary>
+    /// Hides the confirmation popup.
+    /// </summary>
     public void CloseConfirm()
     {
         confirmationGo.SetActive(false);
-    }
-
-    private void RemoveSkillFromAutoAssign()
-    {
-        string skillId = skillTreeManager.SkillId;
-        if (string.IsNullOrEmpty(skillId) && !SkillIdMap.TryGetId(skillTreeManager.skillKey, out skillId)) return;
-        List<string> autoIds = oracle.GetAutoAssignmentSkillIds();
-        if (!autoIds.Contains(skillId)) return;
-        autoIds.Remove(skillId);
-        oracle.SetAutoAssignmentSkillIds(autoIds);
-        _gameManager.UpdateSkillsInvoke();
-        autoAssignRemovalButton.gameObject.SetActive(false);
-        autoAssignAddButton.gameObject.SetActive(true);
-    }
-
-    private void AddSkillToAutoAssign()
-    {
-        string skillId = skillTreeManager.SkillId;
-        if (string.IsNullOrEmpty(skillId) && !SkillIdMap.TryGetId(skillTreeManager.skillKey, out skillId)) return;
-        List<string> autoIds = oracle.GetAutoAssignmentSkillIds();
-        if (autoIds.Contains(skillId)) return;
-        autoIds.Add(skillId);
-        oracle.SetAutoAssignmentSkillIds(autoIds);
-        _gameManager.UpdateSkillsInvoke();
-        autoAssignAddButton.gameObject.SetActive(false);
-        autoAssignRemovalButton.gameObject.SetActive(true);
     }
 
     public void SetPosition(Vector3 pos)
@@ -109,6 +89,13 @@ public class SkillTreeConfirmationManager : MonoBehaviour
         confirmationGo.SetActive(true);
     }
 
+    /// <summary>
+    /// Updates popup text and visual state for the selected skill.
+    /// </summary>
+    /// <param name="name">Display name.</param>
+    /// <param name="description">Primary description text.</param>
+    /// <param name="technicalDescription">Technical description text.</param>
+    /// <param name="cost">Base cost text.</param>
     public void SetTexts(string name, string description, string technicalDescription, string cost)
     {
         SkillDefinition definition = skillTreeManager.Definition;
@@ -139,12 +126,8 @@ public class SkillTreeConfirmationManager : MonoBehaviour
             notRefundableText.text = isNotRefundable ? notRefundableLabel : "Not Refundable";
         }
 
-        string skillId = skillTreeManager.SkillId;
-        if (string.IsNullOrEmpty(skillId)) SkillIdMap.TryGetId(skillTreeManager.skillKey, out skillId);
-        List<string> autoAssignIds = oracle.GetAutoAssignmentSkillIds();
-        bool queued = !string.IsNullOrEmpty(skillId) && autoAssignIds.Contains(skillId);
-        autoAssignRemovalButton.gameObject.SetActive(queued);
-        autoAssignAddButton.gameObject.SetActive(!queued);
+        if (autoAssignRemovalButton != null) autoAssignRemovalButton.gameObject.SetActive(false);
+        if (autoAssignAddButton != null) autoAssignAddButton.gameObject.SetActive(false);
         nameText.text = name;
         descText.text = description;
         technicalDescText.text = technicalDescription;

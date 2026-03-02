@@ -21,14 +21,14 @@ MonoBehaviour:
   - facility
   - mega-structure
   - birch
-  baseCost: 0
-  costExponent: 1
-  baseProduction: 0.001
+  baseCost: 100000000000
+  costExponent: 1.2
+  baseProduction: 0.01
   productionStatId: Facility.BirchPlanet.Production
   wordUsed: Assembling
   productionWordUsed: Matrioshka Brain
   purchasePrompt: Construct a Birch Planet
-  usesFacilityCost: 1
+  usesFacilityCost: 0
   costFacilityId: {fileID: 11400000, guid: f98c1db2e5e178544adca614a222630e, type: 2}
   baseFacilityCost: 100
   facilityCostExponent: 1.25

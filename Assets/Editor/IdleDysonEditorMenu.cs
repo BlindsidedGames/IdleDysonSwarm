@@ -3,6 +3,7 @@ public static class IdleDysonEditorMenu
     public const string Root = "Tools/Idle Dyson/";
     public const string Build = Root + "Build/";
     public const string Debug = Root + "Debug/";
+    public const string Balance = Root + "Balance/";
     public const string Data = Root + "Data/";
     public const string DataCreate = Data + "Create/";
     public const string DataIds = Data + "IDs/";

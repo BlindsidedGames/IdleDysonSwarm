@@ -1,5 +1,7 @@
 using Blindsided.Utilities;
 using GameData;
+using IdleDysonSwarm.Data.Balance;
+using IdleDysonSwarm.Systems.Balance;
 using UnityEngine;
 using static Expansion.Oracle;
 
@@ -7,7 +9,7 @@ namespace IdleDysonSwarm.Services
 {
     /// <summary>
     /// Service for handling mega-structure facility purchases.
-    /// Mega-structures cost other facilities instead of currency.
+    /// Mega-structures use cash purchase flow while retaining quantum unlock gates.
     /// </summary>
     public class MegaStructureService : IMegaStructureService
     {
@@ -27,59 +29,55 @@ namespace IdleDysonSwarm.Services
 
         public bool IsMegaStructure(string facilityId)
         {
-            if (!_dataService.TryGetFacility(facilityId, out FacilityDefinition definition))
-                return false;
+            if (BalanceRuntime.TryGetFacilityEntry(facilityId, out var entry))
+                return entry.group == FacilityGroup.Mega;
 
-            return definition.usesFacilityCost;
+            return facilityId == "matrioshka_brains" || facilityId == "birch_planets" || facilityId == "galactic_brains";
         }
 
         public bool IsUnlocked(string facilityId)
         {
+            if (!IsMegaStructure(facilityId))
+                return true;
+
             DysonVersePrestigeData prestigeData = _gameState.PrestigeData;
             if (prestigeData == null) return false;
 
-            // Check if unlocked via Quantum Points
-            bool hasUnlock = facilityId switch
+            QuantumMegaUnlockGate gate = QuantumMegaUnlockGate.None;
+            string prerequisiteId = null;
+            double prerequisiteOwned = 0;
+            if (BalanceRuntime.TryGetFacilityEntry(facilityId, out var entry))
             {
-                "matrioshka_brains" => prestigeData.unlockedMatrioshkaBrains,
-                "birch_planets" => prestigeData.unlockedBirchPlanets,
-                "galactic_brains" => prestigeData.unlockedGalacticBrains,
-                _ => false
-            };
-
-            if (!hasUnlock) return false;
-
-            // Also check prerequisite facility exists
-            // Matrioshka needs planets, Birch needs matrioshka, Galactic needs birch
-            return facilityId switch
+                gate = entry.quantumGate;
+                prerequisiteId = entry.prerequisiteFacilityId;
+                prerequisiteOwned = entry.prerequisiteOwned;
+            }
+            else
             {
-                "matrioshka_brains" => GetTotalOwned("planets") > 0,
-                "birch_planets" => GetTotalOwned("matrioshka_brains") > 0,
-                "galactic_brains" => GetTotalOwned("birch_planets") > 0,
-                _ => true
-            };
-        }
+                gate = facilityId switch
+                {
+                    "matrioshka_brains" => QuantumMegaUnlockGate.MatrioshkaBrains,
+                    "birch_planets" => QuantumMegaUnlockGate.BirchPlanets,
+                    "galactic_brains" => QuantumMegaUnlockGate.GalacticBrains,
+                    _ => QuantumMegaUnlockGate.None
+                };
+            }
 
-        public string GetCostFacilityId(string facilityId)
-        {
-            if (!_dataService.TryGetFacility(facilityId, out FacilityDefinition definition))
-                return null;
+            if (!BalanceRuntime.IsQuantumGateUnlocked(gate, prestigeData))
+                return false;
 
-            if (!definition.usesFacilityCost || definition.costFacilityId == null)
-                return null;
+            if (string.IsNullOrEmpty(prerequisiteId))
+            {
+                return facilityId switch
+                {
+                    "matrioshka_brains" => GetTotalOwned("planets") > 0,
+                    "birch_planets" => GetTotalOwned("matrioshka_brains") > 0,
+                    "galactic_brains" => GetTotalOwned("birch_planets") > 0,
+                    _ => true
+                };
+            }
 
-            return definition.costFacilityId.Value;
-        }
-
-        public string GetSecondaryCostFacilityId(string facilityId)
-        {
-            if (!_dataService.TryGetFacility(facilityId, out FacilityDefinition definition))
-                return null;
-
-            if (definition.secondaryCostFacilityId == null)
-                return null;
-
-            return definition.secondaryCostFacilityId.Value;
+            return GetTotalOwned(prerequisiteId) >= prerequisiteOwned;
         }
 
         public double GetCost(string facilityId, int quantity = 1)
@@ -87,67 +85,24 @@ namespace IdleDysonSwarm.Services
             if (!_dataService.TryGetFacility(facilityId, out FacilityDefinition definition))
                 return 0;
 
-            if (!definition.usesFacilityCost)
+            if (quantity <= 0)
                 return 0;
 
-            double currentOwned = GetTotalOwned(facilityId);
-
-            return CalcUtils.FacilityCost(
-                quantity,
-                definition.baseFacilityCost,
-                definition.facilityCostExponent,
-                currentOwned);
-        }
-
-        public double GetSecondaryCost(string facilityId, int quantity = 1)
-        {
-            if (!_dataService.TryGetFacility(facilityId, out FacilityDefinition definition))
-                return 0;
-
-            if (definition.secondaryCostFacilityId == null ||
-                string.IsNullOrEmpty(definition.secondaryCostFacilityId.Value))
-                return 0;
-
-            double currentOwned = GetTotalOwned(facilityId);
-
-            return CalcUtils.FacilityCost(
-                quantity,
-                definition.secondaryBaseCost,
-                definition.secondaryCostExponent,
-                currentOwned);
+            double currentOwned = GetManualOwned(facilityId);
+            return CalcUtils.BuyXCost(quantity, definition.baseCost, definition.costExponent, currentOwned);
         }
 
         public bool CanAfford(string facilityId, int quantity = 1)
         {
-            if (!_dataService.TryGetFacility(facilityId, out FacilityDefinition definition))
+            if (quantity <= 0)
                 return false;
 
-            if (!definition.usesFacilityCost)
+            if (!IsUnlocked(facilityId))
                 return false;
 
-            // Check primary cost
-            string costFacilityId = definition.costFacilityId?.Value;
-            if (string.IsNullOrEmpty(costFacilityId))
-                return false;
-
-            double primaryCost = GetCost(facilityId, quantity);
-            double availablePrimary = GetTotalOwned(costFacilityId);
-
-            if (availablePrimary < primaryCost)
-                return false;
-
-            // Check secondary cost (if any)
-            if (definition.secondaryCostFacilityId != null &&
-                !string.IsNullOrEmpty(definition.secondaryCostFacilityId.Value))
-            {
-                double secondaryCost = GetSecondaryCost(facilityId, quantity);
-                double availableSecondary = GetTotalOwned(definition.secondaryCostFacilityId.Value);
-
-                if (availableSecondary < secondaryCost)
-                    return false;
-            }
-
-            return true;
+            double cost = GetCost(facilityId, quantity);
+            double money = _gameState.InfinityData != null ? _gameState.InfinityData.money : 0;
+            return money >= cost;
         }
 
         public int MaxAffordable(string facilityId)
@@ -155,39 +110,10 @@ namespace IdleDysonSwarm.Services
             if (!_dataService.TryGetFacility(facilityId, out FacilityDefinition definition))
                 return 0;
 
-            if (!definition.usesFacilityCost)
-                return 0;
-
-            string costFacilityId = definition.costFacilityId?.Value;
-            if (string.IsNullOrEmpty(costFacilityId))
-                return 0;
-
-            double currentOwned = GetTotalOwned(facilityId);
-            double availablePrimary = GetTotalOwned(costFacilityId);
-
-            int maxFromPrimary = CalcUtils.MaxAffordableFacility(
-                availablePrimary,
-                definition.baseFacilityCost,
-                definition.facilityCostExponent,
-                currentOwned);
-
-            // Check secondary cost constraint
-            if (definition.secondaryCostFacilityId != null &&
-                !string.IsNullOrEmpty(definition.secondaryCostFacilityId.Value))
-            {
-                double availableSecondary = GetTotalOwned(definition.secondaryCostFacilityId.Value);
-
-                int maxFromSecondary = CalcUtils.MaxAffordableFacility(
-                    availableSecondary,
-                    definition.secondaryBaseCost,
-                    definition.secondaryCostExponent,
-                    currentOwned);
-
-                // Return the minimum of both constraints
-                return maxFromPrimary < maxFromSecondary ? maxFromPrimary : maxFromSecondary;
-            }
-
-            return maxFromPrimary;
+            double money = _gameState.InfinityData != null ? _gameState.InfinityData.money : 0;
+            double currentOwned = GetManualOwned(facilityId);
+            long max = CalcUtils.MaxAffordable(money, definition.baseCost, definition.costExponent, currentOwned);
+            return max < 0 ? 0 : (int)max;
         }
 
         public bool TryPurchase(string facilityId, int quantity = 1)
@@ -195,42 +121,20 @@ namespace IdleDysonSwarm.Services
             if (quantity <= 0)
                 return false;
 
-            if (!_dataService.TryGetFacility(facilityId, out FacilityDefinition definition))
-                return false;
-
-            if (!definition.usesFacilityCost)
-                return false;
-
             if (!CanAfford(facilityId, quantity))
                 return false;
 
-            // Deduct primary cost
-            string costFacilityId = definition.costFacilityId.Value;
-            double primaryCost = GetCost(facilityId, quantity);
+            DysonVerseInfinityData infinity = _gameState.InfinityData;
+            if (infinity == null)
+                return false;
 
-            double[] costFacilityBefore = _facilityService.GetFacilityCount(costFacilityId);
-            Debug.Log($"[MegaStructure] Purchasing {quantity} {facilityId}, cost: {primaryCost} {costFacilityId}");
-            Debug.Log($"[MegaStructure] {costFacilityId} before: auto={costFacilityBefore[0]}, manual={costFacilityBefore[1]}");
+            double cost = GetCost(facilityId, quantity);
+            infinity.money -= cost;
 
-            DeductFacilityCost(costFacilityId, primaryCost);
-
-            double[] costFacilityAfter = _facilityService.GetFacilityCount(costFacilityId);
-            Debug.Log($"[MegaStructure] {costFacilityId} after: auto={costFacilityAfter[0]}, manual={costFacilityAfter[1]}");
-
-            // Deduct secondary cost (if any)
-            if (definition.secondaryCostFacilityId != null &&
-                !string.IsNullOrEmpty(definition.secondaryCostFacilityId.Value))
-            {
-                double secondaryCost = GetSecondaryCost(facilityId, quantity);
-                DeductFacilityCost(definition.secondaryCostFacilityId.Value, secondaryCost);
-            }
-
-            // Add purchased mega-structure
             double[] currentCounts = _facilityService.GetFacilityCount(facilityId);
             _facilityService.SetFacilityCount(facilityId, currentCounts[1] + quantity, currentCounts[0]);
 
-            Debug.Log($"[MegaStructure] Purchase complete. {facilityId} now: manual={currentCounts[1] + quantity}");
-
+            Debug.Log($"[MegaStructure] Purchased {quantity} {facilityId} for ${CalcUtils.FormatNumber(cost)}.");
             return true;
         }
 
@@ -240,22 +144,10 @@ namespace IdleDysonSwarm.Services
             return counts[0] + counts[1];
         }
 
-        private void DeductFacilityCost(string facilityId, double amount)
+        private double GetManualOwned(string facilityId)
         {
-            if (amount <= 0) return;
-
             double[] counts = _facilityService.GetFacilityCount(facilityId);
-
-            // Deduct from auto-purchased first, then manual
-            if (counts[0] >= amount)
-            {
-                _facilityService.SetFacilityCount(facilityId, counts[1], counts[0] - amount);
-            }
-            else
-            {
-                double manualDeduct = amount - counts[0];
-                _facilityService.SetFacilityCount(facilityId, counts[1] - manualDeduct, 0);
-            }
+            return counts[1];
         }
     }
 }

@@ -10,8 +10,8 @@ using static Expansion.Oracle;
 namespace Buildings
 {
     /// <summary>
-    /// Presenter for mega-structure facilities that are purchased with other facilities.
-    /// Unlike regular buildings that cost money, mega-structures consume lower-tier facilities.
+    /// Presenter for mega-structure facilities that are purchased with cash.
+    /// Unlock visibility remains gated by quantum unlock flags and facility progression prerequisites.
     /// </summary>
     public class MegaStructurePresenter : MonoBehaviour
     {
@@ -132,7 +132,7 @@ namespace Buildings
             // Update amount to buy text
             if (_amountToBuyText != null)
             {
-                _amountToBuyText.text = $"+{numberToBuy}";
+                _amountToBuyText.text = IsMegaAutoEnabled() ? "Auto" : $"+{numberToBuy}";
             }
         }
 
@@ -242,26 +242,6 @@ namespace Buildings
             }
         }
 
-        private string CostFacilityName
-        {
-            get
-            {
-                string costFacilityId = _megaStructureService.GetCostFacilityId(FacilityId);
-                if (string.IsNullOrEmpty(costFacilityId)) return "";
-
-                if (_dataService.TryGetFacility(costFacilityId, out FacilityDefinition costDef))
-                    return costDef.displayName;
-
-                return costFacilityId switch
-                {
-                    "planets" => "Planets",
-                    "matrioshka_brains" => "Matrioshka Brains",
-                    "birch_planets" => "Birch Planets",
-                    _ => costFacilityId
-                };
-            }
-        }
-
         private FacilityDefinition Definition
         {
             get
@@ -310,36 +290,33 @@ namespace Buildings
             get
             {
                 string facilityId = FacilityId;
-                double primaryCost = _megaStructureService.GetCost(facilityId, NumberToBuy());
-
-                string costStr = $"{CalcUtils.FormatNumber(primaryCost)} {AbbreviatedCostName}";
-
-                // Add secondary cost for Galactic Brain
-                if (megaStructureType == MegaStructureType.GalacticBrains)
-                {
-                    double secondaryCost = _megaStructureService.GetSecondaryCost(facilityId, NumberToBuy());
-                    if (secondaryCost > 0)
-                    {
-                        costStr += $"\n{CalcUtils.FormatNumber(secondaryCost)} BiPl";
-                    }
-                }
-
-                return costStr;
+                double cashCost = _megaStructureService.GetCost(facilityId, NumberToBuy());
+                return $"${CalcUtils.FormatNumber(cashCost)}";
             }
         }
 
-        private string AbbreviatedCostName
+        /// <summary>
+        /// Attempts an automated purchase using the current buy mode quantity.
+        /// </summary>
+        public void AutoPurchase()
         {
-            get
+            string facilityId = FacilityId;
+            int numberToBuy = NumberToBuy();
+            if (string.IsNullOrEmpty(facilityId) || numberToBuy <= 0)
             {
-                return megaStructureType switch
-                {
-                    MegaStructureType.MatrioshkaBrains => "Pl",
-                    MegaStructureType.BirchPlanets => "MaBr",
-                    MegaStructureType.GalacticBrains => "MaBr",
-                    _ => "Units"
-                };
+                return;
             }
+
+            _megaStructureService.TryPurchase(facilityId, numberToBuy);
+        }
+
+        /// <summary>
+        /// Gets the quantity this presenter would purchase for the current buy mode.
+        /// </summary>
+        /// <returns>Quantity to buy for automation checks.</returns>
+        public int GetAutoPurchaseAmount()
+        {
+            return NumberToBuy();
         }
 
         #endregion
@@ -352,6 +329,22 @@ namespace Buildings
             return (int)BuyModeHelper.GetAmountToBuy(
                 StaticBuyMode, StaticRoundedBulkBuy,
                 (long)ManuallyPurchased, maxAffordable);
+        }
+
+        private bool IsMegaAutoEnabled()
+        {
+            if (StaticPrestigeData == null || !StaticPrestigeData.infinityAutoBots || StaticSaveSettings == null)
+            {
+                return false;
+            }
+
+            return FacilityId switch
+            {
+                "matrioshka_brains" => StaticSaveSettings.infinityAutoMatrioshkaBrains,
+                "birch_planets" => StaticSaveSettings.infinityAutoBirchPlanets,
+                "galactic_brains" => StaticSaveSettings.infinityAutoGalacticBrains,
+                _ => false
+            };
         }
 
         #endregion

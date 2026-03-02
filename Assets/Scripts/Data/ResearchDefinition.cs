@@ -25,6 +25,8 @@ namespace GameData
         public int maxLevel = -1;
         public ResearchAutoBuyGroup autoBuyGroup = ResearchAutoBuyGroup.Inherit;
         public string[] prerequisiteResearchIds;
+        public string prerequisiteFacilityId;
+        public double prerequisiteFacilityOwned;
         public List<EffectDefinition> effects = new List<EffectDefinition>();
     }
 }

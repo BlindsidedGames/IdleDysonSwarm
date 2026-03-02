@@ -1,7 +1,7 @@
 using System;
+using IdleDysonSwarm.Systems.Balance;
 using Systems.Stats;
 using static Expansion.Oracle;
-using static IdleDysonSwarm.Systems.Constants.RealityConstants;
 
 namespace Systems
 {
@@ -594,11 +594,12 @@ namespace Systems
             }
             if (avocadoData != null && avocadoData.unlocked)
             {
-                if (avocadoData.infinityPoints >= AvocadoLogThreshold)
+                int threshold = BalanceRuntime.AvocadoLogThreshold;
+                if (avocadoData.infinityPoints >= threshold)
                     multi *= Math.Log10(avocadoData.infinityPoints);
-                if (avocadoData.influence >= AvocadoLogThreshold)
+                if (avocadoData.influence >= threshold)
                     multi *= Math.Log10(avocadoData.influence);
-                if (avocadoData.strangeMatter >= AvocadoLogThreshold)
+                if (avocadoData.strangeMatter >= threshold)
                     multi *= Math.Log10(avocadoData.strangeMatter);
                 if (avocadoData.overflowMultiplier >= 1)
                     multi *= 1 + avocadoData.overflowMultiplier;

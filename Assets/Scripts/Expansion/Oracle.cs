@@ -16,6 +16,8 @@ using Systems.Migrations;
 using Systems.Skills;
 using Systems.Stats;
 using Systems.Save;
+using IdleDysonSwarm.Data.Balance;
+using IdleDysonSwarm.Systems.Balance;
 using TMPro;
 using UnityEngine;
 using UnityEngine.Networking;
@@ -53,6 +55,8 @@ using UnityEditor;
  * - Debug contribution ids/order are used for diagnosis; keep labels stable when adjusting formulas.
  * - Startup frame cap fallback defaults to 60 FPS when saveSettings.frameRate is unset (0); keep this aligned
  *   with player-facing FPS controls and defaults if changed.
+ * - Static accessor properties now return preload-safe defaults until saveSettings is available; systems that
+ *   require persisted state should gate on IsRuntimeStateReady.
  * - Changes here do not migrate saves directly but can change interpretation of existing save-state numbers.
  * - Lifecycle callbacks are routed through RuntimeSeams; callback policy changes must stay aligned with
  *   OfflineLifecycleCoordinator tests.
@@ -122,7 +126,6 @@ namespace Expansion
         public Dictionary<int, SkillTreeItem> SkillTree = new Dictionary<int, SkillTreeItem>();
         public List<SkillTreeManager> allSkillTreeManagers = new List<SkillTreeManager>();
         public GameObject skillsHolder;
-        public List<int> listOfSkillsNotToAutoBuy = new List<int>();
 
 	        //public List<int> skillAutoAssignmentList = new();
 	        public bool Loaded;
@@ -147,6 +150,13 @@ private void PackSettingsFlags()
             // were last written — their bits will be 0 in old saves even though the
             // field initializer defaulted them to true.
             bool savedScreensaverEnabled = saveSettings.screensaverEnabled;
+            bool savedAutoMatrioshka = saveSettings.infinityAutoMatrioshkaBrains;
+            bool savedAutoBirch = saveSettings.infinityAutoBirchPlanets;
+            bool savedAutoGalactic = saveSettings.infinityAutoGalacticBrains;
+            bool savedAutoResearchMatrioshka = saveSettings.infinityAutoResearchToggleMatrioshkaBrains;
+            bool savedAutoResearchBirch = saveSettings.infinityAutoResearchToggleBirchPlanets;
+            bool savedAutoResearchGalactic = saveSettings.infinityAutoResearchToggleGalacticBrains;
+            bool savedAutoAssignNonRefundable = saveSettings.autoAssignNonRefundableSkills;
 
             ApplySettingsFlags(saveSettings, saveSettings.packedSettingsFlags);
 
@@ -156,6 +166,41 @@ private void PackSettingsFlags()
             if ((saveSettings.packedSettingsFlags & (1UL << 42)) == 0)
             {
                 saveSettings.screensaverEnabled = savedScreensaverEnabled;
+            }
+
+            if ((saveSettings.packedSettingsFlags & (1UL << 43)) == 0)
+            {
+                saveSettings.infinityAutoMatrioshkaBrains = savedAutoMatrioshka;
+            }
+
+            if ((saveSettings.packedSettingsFlags & (1UL << 44)) == 0)
+            {
+                saveSettings.infinityAutoBirchPlanets = savedAutoBirch;
+            }
+
+            if ((saveSettings.packedSettingsFlags & (1UL << 45)) == 0)
+            {
+                saveSettings.infinityAutoGalacticBrains = savedAutoGalactic;
+            }
+
+            if ((saveSettings.packedSettingsFlags & (1UL << 46)) == 0)
+            {
+                saveSettings.infinityAutoResearchToggleMatrioshkaBrains = savedAutoResearchMatrioshka;
+            }
+
+            if ((saveSettings.packedSettingsFlags & (1UL << 47)) == 0)
+            {
+                saveSettings.infinityAutoResearchToggleBirchPlanets = savedAutoResearchBirch;
+            }
+
+            if ((saveSettings.packedSettingsFlags & (1UL << 48)) == 0)
+            {
+                saveSettings.infinityAutoResearchToggleGalacticBrains = savedAutoResearchGalactic;
+            }
+
+            if ((saveSettings.packedSettingsFlags & (1UL << 49)) == 0)
+            {
+                saveSettings.autoAssignNonRefundableSkills = savedAutoAssignNonRefundable;
             }
         }
 
@@ -206,6 +251,13 @@ private void PackSettingsFlags()
             SetFlag(ref flags, 40, settings.firstReality);
             SetFlag(ref flags, 41, settings.firstInfinityDone);
             SetFlag(ref flags, 42, settings.screensaverEnabled);
+            SetFlag(ref flags, 43, settings.infinityAutoMatrioshkaBrains);
+            SetFlag(ref flags, 44, settings.infinityAutoBirchPlanets);
+            SetFlag(ref flags, 45, settings.infinityAutoGalacticBrains);
+            SetFlag(ref flags, 46, settings.infinityAutoResearchToggleMatrioshkaBrains);
+            SetFlag(ref flags, 47, settings.infinityAutoResearchToggleBirchPlanets);
+            SetFlag(ref flags, 48, settings.infinityAutoResearchToggleGalacticBrains);
+            SetFlag(ref flags, 49, settings.autoAssignNonRefundableSkills);
             return flags;
         }
 
@@ -255,6 +307,13 @@ private void PackSettingsFlags()
             settings.firstReality = GetFlag(flags, 40);
             settings.firstInfinityDone = GetFlag(flags, 41);
             settings.screensaverEnabled = GetFlag(flags, 42);
+            settings.infinityAutoMatrioshkaBrains = GetFlag(flags, 43);
+            settings.infinityAutoBirchPlanets = GetFlag(flags, 44);
+            settings.infinityAutoGalacticBrains = GetFlag(flags, 45);
+            settings.infinityAutoResearchToggleMatrioshkaBrains = GetFlag(flags, 46);
+            settings.infinityAutoResearchToggleBirchPlanets = GetFlag(flags, 47);
+            settings.infinityAutoResearchToggleGalacticBrains = GetFlag(flags, 48);
+            settings.autoAssignNonRefundableSkills = GetFlag(flags, 49);
         }
 
         private static void SetFlag(ref ulong flags, int bit, bool value)
@@ -412,21 +471,59 @@ private void PackSettingsFlags()
         public static string textColourBlue = "<color=#00E1FF>";
         public static string textColourGreen = "<color=#91DD8F>";
 
-        public static BuyMode StaticBuyMode => oracle.saveSettings.buyMode;
-        public static BuyMode StaticResearchBuyMode => oracle.saveSettings.researchBuyMode;
-        public static NumberTypes StaticNumberFormatting => oracle.saveSettings.numberFormatting;
-        public static bool StaticRoundedBulkBuy => oracle.saveSettings.roundedBulkBuy;
+        /// <summary>
+        /// Whether Oracle singleton and loaded save containers are currently available.
+        /// </summary>
+        public static bool IsRuntimeStateReady =>
+            oracle != null &&
+            oracle.saveSettings != null &&
+            oracle.saveSettings.dysonVerseSaveData != null;
 
-        public static double Money { get => oracle.saveSettings.dysonVerseSaveData.dysonVerseInfinityData.money; set => oracle.saveSettings.dysonVerseSaveData.dysonVerseInfinityData.money = value; }
+        public static BuyMode StaticBuyMode => StaticSaveSettings != null ? StaticSaveSettings.buyMode : BuyMode.Buy1;
+        public static BuyMode StaticResearchBuyMode => StaticSaveSettings != null ? StaticSaveSettings.researchBuyMode : BuyMode.Buy1;
+        public static NumberTypes StaticNumberFormatting => StaticSaveSettings != null ? StaticSaveSettings.numberFormatting : NumberTypes.Standard;
+        public static bool StaticRoundedBulkBuy => StaticSaveSettings != null && StaticSaveSettings.roundedBulkBuy;
 
-        public static double Science { get => oracle.saveSettings.dysonVerseSaveData.dysonVerseInfinityData.science; set => oracle.saveSettings.dysonVerseSaveData.dysonVerseInfinityData.science = value; }
+        public static double Money
+        {
+            get => StaticInfinityData != null ? StaticInfinityData.money : 0d;
+            set
+            {
+                if (StaticInfinityData != null)
+                {
+                    StaticInfinityData.money = value;
+                }
+            }
+        }
 
-        public static double Bots { get => oracle.saveSettings.dysonVerseSaveData.dysonVerseInfinityData.bots; set => oracle.saveSettings.dysonVerseSaveData.dysonVerseInfinityData.bots = value; }
+        public static double Science
+        {
+            get => StaticInfinityData != null ? StaticInfinityData.science : 0d;
+            set
+            {
+                if (StaticInfinityData != null)
+                {
+                    StaticInfinityData.science = value;
+                }
+            }
+        }
 
-        public static SaveDataSettings StaticSaveSettings => oracle.saveSettings;
-        public static DysonVerseInfinityData StaticInfinityData => oracle.saveSettings.dysonVerseSaveData.dysonVerseInfinityData;
-        public static DysonVersePrestigeData StaticPrestigeData => oracle.saveSettings.dysonVerseSaveData.dysonVersePrestigeData;
-        public static DysonVerseSkillTreeData StaticSkillTreeData => oracle.saveSettings.dysonVerseSaveData.dysonVerseSkillTreeData;
+        public static double Bots
+        {
+            get => StaticInfinityData != null ? StaticInfinityData.bots : 0d;
+            set
+            {
+                if (StaticInfinityData != null)
+                {
+                    StaticInfinityData.bots = value;
+                }
+            }
+        }
+
+        public static SaveDataSettings StaticSaveSettings => oracle != null ? oracle.saveSettings : null;
+        public static DysonVerseInfinityData StaticInfinityData => IsRuntimeStateReady ? oracle.saveSettings.dysonVerseSaveData.dysonVerseInfinityData : null;
+        public static DysonVersePrestigeData StaticPrestigeData => IsRuntimeStateReady ? oracle.saveSettings.dysonVerseSaveData.dysonVersePrestigeData : null;
+        public static DysonVerseSkillTreeData StaticSkillTreeData => IsRuntimeStateReady ? oracle.saveSettings.dysonVerseSaveData.dysonVerseSkillTreeData : null;
 
         #endregion
 
@@ -2447,11 +2544,16 @@ private void PackSettingsFlags()
             return data.skillAutoAssignmentIds;
         }
 
+        /// <summary>
+        /// Sets the live auto-assignment queue using dependency-safe ordering.
+        /// </summary>
+        /// <param name="ids">Queued skill ids.</param>
         public void SetAutoAssignmentSkillIds(List<string> ids)
         {
             DysonVerseSaveData data = saveSettings?.dysonVerseSaveData;
             if (data == null) return;
-            data.skillAutoAssignmentIds = ids ?? new List<string>();
+            List<string> orderedIds = SkillAutoAssignOrderUtility.BuildDependencySafeOrder(ids ?? new List<string>());
+            data.skillAutoAssignmentIds = orderedIds;
             data.skillAutoAssignmentList = SkillIdMap.ConvertIdsToKeys(data.skillAutoAssignmentIds);
             data.skillAutoAssignmentBits = SkillBitsetUtility.BuildBitsetFromIds(data.skillAutoAssignmentIds);
 
@@ -2485,11 +2587,16 @@ private void PackSettingsFlags()
             }
         }
 
+        /// <summary>
+        /// Sets a preset slot auto-assignment queue using dependency-safe ordering.
+        /// </summary>
+        /// <param name="presetIndex">Preset index (1-5).</param>
+        /// <param name="ids">Queued skill ids.</param>
         public void SetPresetAutoAssignmentSkillIds(int presetIndex, List<string> ids)
         {
             DysonVerseSaveData data = saveSettings?.dysonVerseSaveData;
             if (data == null) return;
-            List<string> safeIds = ids ?? new List<string>();
+            List<string> safeIds = SkillAutoAssignOrderUtility.BuildDependencySafeOrder(ids ?? new List<string>());
             List<int> legacyList = SkillIdMap.ConvertIdsToKeys(safeIds);
 
             switch (presetIndex)
@@ -2690,6 +2797,10 @@ private void PackSettingsFlags()
 
         private IEnumerator PrestigeDoubleWiper()
         {
+            bool unlockedMatrioshkaBrains = prestigeData.unlockedMatrioshkaBrains;
+            bool unlockedBirchPlanets = prestigeData.unlockedBirchPlanets;
+            bool unlockedGalacticBrains = prestigeData.unlockedGalacticBrains;
+
             saveSettings.dysonVerseSaveData.dysonVersePrestigeData = new DysonVersePrestigeData();
             saveSettings.dysonVerseSaveData.dysonVerseInfinityData = new DysonVerseInfinityData();
             _gameManager.CalculateProduction();
@@ -2702,6 +2813,9 @@ private void PackSettingsFlags()
                 saveSettings.prestigePlus.secrets > 1 ? saveSettings.prestigePlus.secrets : 0;
             prestigeData.infinityAutoBots = saveSettings.prestigePlus.automation;
             prestigeData.infinityAutoResearch = saveSettings.prestigePlus.automation;
+            prestigeData.unlockedMatrioshkaBrains = unlockedMatrioshkaBrains;
+            prestigeData.unlockedBirchPlanets = unlockedBirchPlanets;
+            prestigeData.unlockedGalacticBrains = unlockedGalacticBrains;
             saveSettings.lastInfinityPointsGained = 0;
             saveSettings.timeLastInfinity = 0;
             saveSettings.offlineTimeUsedThisInfinity = 0;
@@ -2723,23 +2837,31 @@ private void PackSettingsFlags()
         public int ArtifactSkillPoints()
         {
             int points = 0;
-            if (sp.translation1) points++;
-            if (sp.translation2) points++;
-            if (sp.translation3) points++;
-            if (sp.translation4) points++;
-            if (sp.translation5) points++;
-            if (sp.translation6) points++;
-            if (sp.translation7) points++;
-            if (sp.translation8) points++;
 
-            if (sp.speed1) points++;
-            if (sp.speed2) points++;
-            if (sp.speed3) points++;
-            if (sp.speed4) points++;
-            if (sp.speed5) points++;
-            if (sp.speed6) points++;
-            if (sp.speed7) points++;
-            if (sp.speed8) points++;
+            IReadOnlyList<SimulationUpgradeSpec> specs = SimulationUpgradeDefaultsCatalog.All;
+            for (int i = 0; i < specs.Count; i++)
+            {
+                SimulationUpgradeSpec spec = specs[i];
+                if (spec == null || spec.Layer != SimulationUpgradeLayer.Reality)
+                {
+                    continue;
+                }
+
+                if (!SimulationUpgradeStateAccessor.TryGetOwned(spec.Key, sp, saveSettings.saveData, out bool owned) || !owned)
+                {
+                    continue;
+                }
+
+                IReadOnlyList<SimulationUpgradeEffect> effects = spec.Effects;
+                for (int j = 0; j < effects.Count; j++)
+                {
+                    SimulationUpgradeEffect effect = effects[j];
+                    if (effect != null && effect.effectType == SimulationUpgradeEffectType.AddSkillPoints)
+                    {
+                        points += (int)Math.Round(effect.numericValue);
+                    }
+                }
+            }
 
             if (saveSettings.avotation) points += 4;
 
@@ -2830,11 +2952,21 @@ private void PackSettingsFlags()
             public bool infinityAutoResearchToggleServer = true;
             public bool infinityAutoResearchToggleDataCenter = true;
             public bool infinityAutoResearchToggleScience = true;
+            public bool infinityAutoResearchToggleMatrioshkaBrains = true;
+            public bool infinityAutoResearchToggleBirchPlanets = true;
+            public bool infinityAutoResearchToggleGalacticBrains = true;
             [Space(10)] public bool infinityAutoAssembly = true;
             public bool infinityAutoManagers = true;
             public bool infinityAutoServers = true;
             public bool infinityAutoDataCenters = true;
             public bool infinityAutoPlanets = true;
+            public bool infinityAutoMatrioshkaBrains = true;
+            public bool infinityAutoBirchPlanets = true;
+            public bool infinityAutoGalacticBrains = true;
+            /// <summary>
+            /// When true, auto-assignment can spend intrinsic non-refundable skills.
+            /// </summary>
+            public bool autoAssignNonRefundableSkills = true;
 
             [Space(10)]
             [Tooltip("Skill preset override when opening the Bots tab. 0=Off, 1-5=preset slot.")]
@@ -3109,6 +3241,15 @@ private void PackSettingsFlags()
 
             public long planetUpgradeOwned;
             public double planetUpgradePercent = 0.03;
+
+            public long matrioshkaUpgradeOwned;
+            public double matrioshkaUpgradePercent = 0.03;
+
+            public long birchUpgradeOwned;
+            public double birchUpgradePercent = 0.03;
+
+            public long galacticUpgradeOwned;
+            public double galacticUpgradePercent = 0.03;
 
             public bool panelLifetime1;
             public bool panelLifetime2;

@@ -1,0 +1,32 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0139bc50b7bdef44396c78d1332a9adf, type: 3}
+  m_Name: translation6
+  m_EditorClassIdentifier: Assembly-CSharp::IdleDysonSwarm.Data.Balance.SimulationUpgradeDefinition
+  key: translation6
+  layer: 1
+  category: 5
+  title: Translation VI
+  description: Translation VI
+  cost: 256
+  prerequisites:
+  - key: translation5
+    mustBeOwned: 1
+  purchaseEffects:
+  - effectType: 0
+    targetKey: translation6
+    boolValue: 1
+    numericValue: 0
+  - effectType: 2
+    targetKey: 
+    boolValue: 1
+    numericValue: 1

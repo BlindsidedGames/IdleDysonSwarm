@@ -11,7 +11,9 @@
 - `Assets/Scenes/` game scenes (`Load.unity`, `Game.unity`).
 - `Assets/Scripts/` gameplay code.
   - `Assets/Scripts/Systems/` core gameplay loop, production, UI helpers.
+    - `Assets/Scripts/Systems/Balance/` runtime balance accessors, fallback catalogs, and validators.
     - `Assets/Scripts/Systems/Save/` canonical save pipeline, storage adapters, and offline/lifecycle seam abstractions.
+  - `Assets/Scripts/Data/Balance/` balance ScriptableObjects and registries.
   - `Assets/Scripts/Expansion/` Oracle, research, and Dream1 era systems.
   - `Assets/Scripts/Buildings/` building logic and UI managers.
   - `Assets/Scripts/SkillTreeStuff/` skill tree logic and UI.
@@ -25,3 +27,4 @@
 - `Assets/Plugins/` third-party plugins (Easy Save 3, Sirenix, StansAssets, platform plugins).
 - `Assets/ExternalDependencyManager/` external dependency tooling.
 - `Assets/MPUIKit/`, `Assets/TextMesh Pro/`, `Assets/Fonts/`, `Assets/Sprites/`, `Assets/Sounds/` assets and UI resources.
+- `Assets/Editor/Balance/` balance tooling editor window and asset creators.

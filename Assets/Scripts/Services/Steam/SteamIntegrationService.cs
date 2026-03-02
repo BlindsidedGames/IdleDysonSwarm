@@ -9,6 +9,7 @@ using Expansion;
 using GameData;
 using IdleDysonSwarm.Data.Conditions;
 using IdleDysonSwarm.Data.Steam;
+using IdleDysonSwarm.Systems.Balance;
 using Systems.Stats;
 using UnityEngine;
 using static Expansion.Oracle;
@@ -198,14 +199,15 @@ namespace IdleDysonSwarm.Services.Steam
                 return 1.0;
 
             double multi = 1.0;
+            int threshold = BalanceRuntime.AvocadoLogThreshold;
 
-            if (AvocadoData.infinityPoints >= 10)
+            if (AvocadoData.infinityPoints >= threshold)
                 multi *= Math.Log10(AvocadoData.infinityPoints);
 
-            if (AvocadoData.influence >= 10)
+            if (AvocadoData.influence >= threshold)
                 multi *= Math.Log10(AvocadoData.influence);
 
-            if (AvocadoData.strangeMatter >= 10)
+            if (AvocadoData.strangeMatter >= threshold)
                 multi *= Math.Log10(AvocadoData.strangeMatter);
 
             if (AvocadoData.overflowMultiplier >= 1)

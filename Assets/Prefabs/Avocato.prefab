@@ -232,6 +232,7 @@ MonoBehaviour:
   m_VerticalAlignment: 512
   m_textAlignment: 65535
   m_characterSpacing: 0
+  m_characterHorizontalScale: 1
   m_wordSpacing: 0
   m_lineSpacing: 0
   m_lineSpacingMax: 0
@@ -842,6 +843,7 @@ MonoBehaviour:
   m_VerticalAlignment: 512
   m_textAlignment: 65535
   m_characterSpacing: 0
+  m_characterHorizontalScale: 1
   m_wordSpacing: 0
   m_lineSpacing: 0
   m_lineSpacingMax: 0
@@ -1100,11 +1102,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6a803279048d64b47b153e854eb9382c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  feedIP: {fileID: 6543482415420386093}
-  feedInfluence: {fileID: 8564448956219863858}
-  feedStrangeMatter: {fileID: 1823324023478600369}
-  feedIpText: {fileID: 6511460611721333886}
-  feedInfulenceText: {fileID: 3016161997783038605}
+  feedInfinityPointsButton: {fileID: 6543482415420386093}
+  feedInfluenceButton: {fileID: 8564448956219863858}
+  feedStrangeMatterButton: {fileID: 1823324023478600369}
+  feedInfinityPointsText: {fileID: 6511460611721333886}
+  feedInfluenceText: {fileID: 3016161997783038605}
   feedStrangeMatterText: {fileID: 7883996365177351465}
   overflowText: {fileID: 1039971387247553391}
   totalBoostText: {fileID: 1067216541558578585}
@@ -1212,6 +1214,7 @@ MonoBehaviour:
   m_VerticalAlignment: 512
   m_textAlignment: 65535
   m_characterSpacing: 0
+  m_characterHorizontalScale: 1
   m_wordSpacing: 0
   m_lineSpacing: 0
   m_lineSpacingMax: 0
@@ -1337,7 +1340,7 @@ MonoBehaviour:
 
 
     Side note: these buffs all multiply with
-    eachother to equal the total boost you see at the bottom, they do not affect 
+    each other to equal the total boost you see at the bottom, they do not affect 
     the currencies you spend to increase them.'
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 34bc7e54620b8d34d88b7e42acd6b463, type: 2}
@@ -1376,6 +1379,7 @@ MonoBehaviour:
   m_VerticalAlignment: 256
   m_textAlignment: 65535
   m_characterSpacing: 0
+  m_characterHorizontalScale: 1
   m_wordSpacing: 0
   m_lineSpacing: 0
   m_lineSpacingMax: 0
@@ -1587,6 +1591,7 @@ MonoBehaviour:
   m_VerticalAlignment: 512
   m_textAlignment: 65535
   m_characterSpacing: 0
+  m_characterHorizontalScale: 1
   m_wordSpacing: 0
   m_lineSpacing: 0
   m_lineSpacingMax: 0
@@ -1726,6 +1731,7 @@ MonoBehaviour:
   m_VerticalAlignment: 256
   m_textAlignment: 65535
   m_characterSpacing: 0
+  m_characterHorizontalScale: 1
   m_wordSpacing: 0
   m_lineSpacing: 0
   m_lineSpacingMax: 0
@@ -1863,6 +1869,7 @@ MonoBehaviour:
   m_VerticalAlignment: 512
   m_textAlignment: 65535
   m_characterSpacing: 0
+  m_characterHorizontalScale: 1
   m_wordSpacing: 0
   m_lineSpacing: 0
   m_lineSpacingMax: 0
@@ -2019,6 +2026,7 @@ MonoBehaviour:
   m_VerticalAlignment: 512
   m_textAlignment: 65535
   m_characterSpacing: 0
+  m_characterHorizontalScale: 1
   m_wordSpacing: 0
   m_lineSpacing: 0
   m_lineSpacingMax: 0
@@ -2560,6 +2568,7 @@ MonoBehaviour:
   m_VerticalAlignment: 512
   m_textAlignment: 65535
   m_characterSpacing: 0
+  m_characterHorizontalScale: 1
   m_wordSpacing: 0
   m_lineSpacing: 0
   m_lineSpacingMax: 0
@@ -2696,6 +2705,7 @@ MonoBehaviour:
   m_VerticalAlignment: 512
   m_textAlignment: 65535
   m_characterSpacing: 0
+  m_characterHorizontalScale: 1
   m_wordSpacing: 0
   m_lineSpacing: 0
   m_lineSpacingMax: 0
@@ -2833,6 +2843,7 @@ MonoBehaviour:
   m_VerticalAlignment: 512
   m_textAlignment: 65535
   m_characterSpacing: 0
+  m_characterHorizontalScale: 1
   m_wordSpacing: 0
   m_lineSpacing: 0
   m_lineSpacingMax: 0
@@ -2990,6 +3001,7 @@ MonoBehaviour:
   m_VerticalAlignment: 512
   m_textAlignment: 65535
   m_characterSpacing: 0
+  m_characterHorizontalScale: 1
   m_wordSpacing: 0
   m_lineSpacing: 0
   m_lineSpacingMax: 0

@@ -21,14 +21,14 @@ MonoBehaviour:
   - facility
   - mega-structure
   - galactic
-  baseCost: 0
-  costExponent: 1
-  baseProduction: 0.0001
+  baseCost: 10000000000
+  costExponent: 1.15
+  baseProduction: 0.1
   productionStatId: Facility.GalacticBrain.Production
   wordUsed: Manifesting
   productionWordUsed: Birch Planet
   purchasePrompt: Construct a Galactic Brain
-  usesFacilityCost: 1
+  usesFacilityCost: 0
   costFacilityId: {fileID: 11400000, guid: f98c1db2e5e178544adca614a222630e, type: 2}
   baseFacilityCost: 1000
   facilityCostExponent: 1.25

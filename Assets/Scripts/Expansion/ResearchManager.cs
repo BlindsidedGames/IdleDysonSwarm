@@ -1,4 +1,8 @@
+using System;
+using System.Collections.Generic;
 using IdleDysonSwarm.UI;
+using IdleDysonSwarm.Data.Balance;
+using IdleDysonSwarm.Systems.Balance;
 using Sirenix.OdinInspector;
 using TMPro;
 using UnityEngine;
@@ -152,63 +156,84 @@ public class ResearchManager : MonoBehaviour
 
     #region Costs
 
-    private readonly int counterMeteorCost = 4;
-    private readonly int counterAiCost = 42;
-    private readonly int counterGwCost = 128;
+    private int counterMeteorCost => GetUpgradeCost("counterMeteor");
+    private int counterAiCost => GetUpgradeCost("counterAi");
+    private int counterGwCost => GetUpgradeCost("counterGw");
 
-    private readonly int engineering1Cost = 2;
-    private readonly int engineering2Cost = 10;
-    private readonly int engineering3Cost = 42;
+    private int engineering1Cost => GetUpgradeCost("engineering1");
+    private int engineering2Cost => GetUpgradeCost("engineering2");
+    private int engineering3Cost => GetUpgradeCost("engineering3");
 
-    private readonly int shipping1Cost = 18;
-    private readonly int shipping2Cost = 27;
+    private int shipping1Cost => GetUpgradeCost("shipping1");
+    private int shipping2Cost => GetUpgradeCost("shipping2");
 
-    private readonly int worldTrade1Cost = 44;
-    private readonly int worldTrade2Cost = 88;
-    private readonly int worldTrade3Cost = 124;
+    private int worldTrade1Cost => GetUpgradeCost("worldTrade1");
+    private int worldTrade2Cost => GetUpgradeCost("worldTrade2");
+    private int worldTrade3Cost => GetUpgradeCost("worldTrade3");
 
-    private readonly int worldPeace1Cost = 52;
-    private readonly int worldPeace2Cost = 74;
-    private readonly int worldPeace3Cost = 188;
-    private readonly int worldPeace4Cost = 324;
+    private int worldPeace1Cost => GetUpgradeCost("worldPeace1");
+    private int worldPeace2Cost => GetUpgradeCost("worldPeace2");
+    private int worldPeace3Cost => GetUpgradeCost("worldPeace3");
+    private int worldPeace4Cost => GetUpgradeCost("worldPeace4");
 
-    private readonly int mathematics1Cost = 44;
-    private readonly int mathematics2Cost = 88;
-    private readonly int mathematics3Cost = 124;
+    private int mathematics1Cost => GetUpgradeCost("mathematics1");
+    private int mathematics2Cost => GetUpgradeCost("mathematics2");
+    private int mathematics3Cost => GetUpgradeCost("mathematics3");
 
-    private readonly int advancedPhysics1Cost = 92;
-    private readonly int advancedPhysics2Cost = 126;
-    private readonly int advancedPhysics3Cost = 381;
-    private readonly int advancedPhysics4Cost = 654;
+    private int advancedPhysics1Cost => GetUpgradeCost("advancedPhysics1");
+    private int advancedPhysics2Cost => GetUpgradeCost("advancedPhysics2");
+    private int advancedPhysics3Cost => GetUpgradeCost("advancedPhysics3");
+    private int advancedPhysics4Cost => GetUpgradeCost("advancedPhysics4");
 
-    private readonly int hunter1Cost = 2;
-    private readonly int hunter2Cost = 20;
-    private readonly int hunter3Cost = 40;
-    private readonly int hunter4Cost = 40;
+    private int hunter1Cost => GetUpgradeCost("hunter1");
+    private int hunter2Cost => GetUpgradeCost("hunter2");
+    private int hunter3Cost => GetUpgradeCost("hunter3");
+    private int hunter4Cost => GetUpgradeCost("hunter4");
 
-    private readonly int gatherer1Cost = 2;
-    private readonly int gatherer2Cost = 20;
-    private readonly int gatherer3Cost = 40;
-    private readonly int gatherer4Cost = 40;
+    private int gatherer1Cost => GetUpgradeCost("gatherer1");
+    private int gatherer2Cost => GetUpgradeCost("gatherer2");
+    private int gatherer3Cost => GetUpgradeCost("gatherer3");
+    private int gatherer4Cost => GetUpgradeCost("gatherer4");
 
-    private readonly int workerBoostCost = 42;
-    private readonly int citiesBoostCost = 1337;
+    private int workerBoostCost => GetUpgradeCost("workerBoost");
+    private int citiesBoostCost => GetUpgradeCost("citiesBoost");
 
-    private readonly int factoriesBoostCost = 21;
+    private int factoriesBoostCost => GetUpgradeCost("factoriesBoost");
 
-    private readonly int bots1Cost = 211;
-    private readonly int bots2Cost = 1111;
+    private int bots1Cost => GetUpgradeCost("bots1");
+    private int bots2Cost => GetUpgradeCost("bots2");
 
-    private readonly int rockets1Cost = 1111;
-    private readonly int rockets2Cost = 2222;
-    private readonly int rockets3Cost = 3333;
+    private int rockets1Cost => GetUpgradeCost("rockets1");
+    private int rockets2Cost => GetUpgradeCost("rockets2");
+    private int rockets3Cost => GetUpgradeCost("rockets3");
 
-    private readonly int sfacs1Cost = 1221;
-    private readonly int sfacs2Cost = 12221;
-    private readonly int sfacs3Cost = 122221;
+    private int sfacs1Cost => GetUpgradeCost("sfacs1");
+    private int sfacs2Cost => GetUpgradeCost("sfacs2");
+    private int sfacs3Cost => GetUpgradeCost("sfacs3");
 
-    private readonly int railguns1Cost = 1221;
-    private readonly int railguns2Cost = 12221;
+    private int railguns1Cost => GetUpgradeCost("railguns1");
+    private int railguns2Cost => GetUpgradeCost("railguns2");
+
+    private int translation1Cost => GetUpgradeCost("translation1");
+    private int translation2Cost => GetUpgradeCost("translation2");
+    private int translation3Cost => GetUpgradeCost("translation3");
+    private int translation4Cost => GetUpgradeCost("translation4");
+    private int translation5Cost => GetUpgradeCost("translation5");
+    private int translation6Cost => GetUpgradeCost("translation6");
+    private int translation7Cost => GetUpgradeCost("translation7");
+    private int translation8Cost => GetUpgradeCost("translation8");
+
+    private int speed1Cost => GetUpgradeCost("speed1");
+    private int speed2Cost => GetUpgradeCost("speed2");
+    private int speed3Cost => GetUpgradeCost("speed3");
+    private int speed4Cost => GetUpgradeCost("speed4");
+    private int speed5Cost => GetUpgradeCost("speed5");
+    private int speed6Cost => GetUpgradeCost("speed6");
+    private int speed7Cost => GetUpgradeCost("speed7");
+    private int speed8Cost => GetUpgradeCost("speed8");
+
+    private int doubleTimeCost => GetUpgradeCost("doubleTimeOwned");
+    private int automateGatherInfluenceCost => GetUpgradeCost("workerAutoConvert");
 
     #endregion
 
@@ -269,48 +294,6 @@ public class ResearchManager : MonoBehaviour
     [FoldoutGroup("Reality/Panels/QOL")]
     [SerializeField] private UpgradePanelReferences _autoGatherInfluencePanel;
 
-    [TabGroup("Reality", "Costs")]
-    [FoldoutGroup("Reality/Costs/Translation Costs")]
-    [OnValueChanged("UpdateTranslationCostTexts")] public int translation1Cost = 8;
-    [FoldoutGroup("Reality/Costs/Translation Costs")]
-    [OnValueChanged("UpdateTranslationCostTexts")] public int translation2Cost = 16;
-    [FoldoutGroup("Reality/Costs/Translation Costs")]
-    [OnValueChanged("UpdateTranslationCostTexts")] public int translation3Cost = 32;
-    [FoldoutGroup("Reality/Costs/Translation Costs")]
-    [OnValueChanged("UpdateTranslationCostTexts")] public int translation4Cost = 64;
-    [FoldoutGroup("Reality/Costs/Translation Costs")]
-    [OnValueChanged("UpdateTranslationCostTexts")] public int translation5Cost = 128;
-    [FoldoutGroup("Reality/Costs/Translation Costs")]
-    [OnValueChanged("UpdateTranslationCostTexts")] public int translation6Cost = 256;
-    [FoldoutGroup("Reality/Costs/Translation Costs")]
-    [OnValueChanged("UpdateTranslationCostTexts")] public int translation7Cost = 512;
-    [FoldoutGroup("Reality/Costs/Translation Costs")]
-    [OnValueChanged("UpdateTranslationCostTexts")] public int translation8Cost = 1024;
-
-    [TabGroup("Reality", "Costs")]
-    [FoldoutGroup("Reality/Costs/Speed Costs")]
-    [OnValueChanged("UpdateSpeedCostTexts")] public int speed1Cost = 2048;
-    [FoldoutGroup("Reality/Costs/Speed Costs")]
-    [OnValueChanged("UpdateSpeedCostTexts")] public int speed2Cost = 4096;
-    [FoldoutGroup("Reality/Costs/Speed Costs")]
-    [OnValueChanged("UpdateSpeedCostTexts")] public int speed3Cost = 8192;
-    [FoldoutGroup("Reality/Costs/Speed Costs")]
-    [OnValueChanged("UpdateSpeedCostTexts")] public int speed4Cost = 16384;
-    [FoldoutGroup("Reality/Costs/Speed Costs")]
-    [OnValueChanged("UpdateSpeedCostTexts")] public int speed5Cost = 32768;
-    [FoldoutGroup("Reality/Costs/Speed Costs")]
-    [OnValueChanged("UpdateSpeedCostTexts")] public int speed6Cost = 65536;
-    [FoldoutGroup("Reality/Costs/Speed Costs")]
-    [OnValueChanged("UpdateSpeedCostTexts")] public int speed7Cost = 131072;
-    [FoldoutGroup("Reality/Costs/Speed Costs")]
-    [OnValueChanged("UpdateSpeedCostTexts")] public int speed8Cost = 262144;
-
-    [TabGroup("Reality", "Costs")]
-    [FoldoutGroup("Reality/Costs/QOL Costs")]
-    private readonly int doubleTimeCost = 5;
-    [FoldoutGroup("Reality/Costs/QOL Costs")]
-    private readonly int automateGatherInfluenceCost = 10;
-
     [ContextMenu("Update Cost Texts")]
     public void UpdateAllCostTexts()
     {
@@ -362,6 +345,11 @@ public class ResearchManager : MonoBehaviour
     private string FormatCost(string name, int cost, string colorTag)
     {
         return $"{name}<size=70%> - {colorTag}{cost:N0}</color>sm";
+    }
+
+    private int GetUpgradeCost(string key)
+    {
+        return BalanceRuntime.GetUpgradeCost(key, SimulationUpgradeDefaultsCatalog.GetDefaultCost(key));
     }
 
     #endregion
@@ -492,366 +480,239 @@ public class ResearchManager : MonoBehaviour
 
     #region SimulationMethods
 
-    private void PurchaseSpaceAge(int i)
+    private static readonly string[] EducationUpgradeKeys =
     {
-        switch (i)
-        {
-            case 1:
-                sp.sfacs1 = true;
-                sp.strangeMatter -= sfacs1Cost;
-                sp.sfActivator1 = true;
-                break;
-            case 2:
-                sp.sfacs2 = true;
-                sp.strangeMatter -= sfacs2Cost;
-                sp.sfActivator2 = true;
-                break;
-            case 3:
-                sp.sfacs3 = true;
-                sp.strangeMatter -= sfacs3Cost;
-                sp.sfActivator3 = true;
-                break;
-            case 4:
-                sp.railguns1 = true;
-                sp.strangeMatter -= railguns1Cost;
-                sp.railgunActivator1 = true;
-                break;
-            case 5:
-                sp.railguns2 = true;
-                sp.strangeMatter -= railguns2Cost;
-                sp.railgunActivator2 = true;
-                break;
-        }
-    }
+        null,
+        "engineering1",
+        "engineering2",
+        "engineering3",
+        "shipping1",
+        "shipping2",
+        "worldTrade1",
+        "worldTrade2",
+        "worldTrade3",
+        "worldPeace1",
+        "worldPeace2",
+        "worldPeace3",
+        "worldPeace4",
+        "mathematics1",
+        "mathematics2",
+        "mathematics3",
+        "advancedPhysics1",
+        "advancedPhysics2",
+        "advancedPhysics3",
+        "advancedPhysics4"
+    };
 
-    private void PurchaseInformation(int i)
+    private static readonly string[] FoundationalUpgradeKeys =
     {
-        switch (i)
-        {
-            case 1:
-                sp.factoriesBoost = true;
-                sp.strangeMatter -= factoriesBoostCost;
-                sp.factoriesBoostActivator = true;
-                break;
-            case 2:
-                sp.bots1 = true;
-                sp.strangeMatter -= bots1Cost;
-                sp.botsBoost1Activator = true;
-                break;
-            case 3:
-                sp.bots2 = true;
-                sp.strangeMatter -= bots2Cost;
-                sp.botsBoost2Activator = true;
-                break;
-            case 4:
-                sp.rockets1 = true;
-                sp.strangeMatter -= rockets1Cost;
-                sd1.rocketsPerSpaceFactory = 5;
-                break;
-            case 5:
-                sp.rockets2 = true;
-                sp.strangeMatter -= rockets2Cost;
-                sd1.rocketsPerSpaceFactory = 3;
-                break;
-            case 6:
-                sp.rockets3 = true;
-                sp.strangeMatter -= rockets3Cost;
-                sd1.rocketsPerSpaceFactory = 1;
-                break;
-        }
-    }
+        null,
+        "hunter1",
+        "hunter2",
+        "hunter3",
+        "hunter4",
+        "gatherer1",
+        "gatherer2",
+        "gatherer3",
+        "gatherer4",
+        "workerBoost",
+        "citiesBoost"
+    };
 
-    private void PurchaseFoundation(int i)
+    private static readonly string[] InformationUpgradeKeys =
     {
-        switch (i)
-        {
-            case 1:
-                sp.hunter1 = true;
-                sp.strangeMatter -= hunter1Cost;
-                if (sd1.hunters < 1) sd1.hunters = 1;
-                break;
-            case 2:
-                sp.hunter2 = true;
-                sp.strangeMatter -= hunter2Cost;
-                if (sd1.hunters < 10) sd1.hunters = 10;
-                break;
-            case 3:
-                sp.hunter3 = true;
-                sp.strangeMatter -= hunter3Cost;
-                if (sd1.hunters < 1000) sd1.hunters = 1000;
-                break;
-            case 4:
-                sp.hunter4 = true;
-                sp.strangeMatter -= hunter4Cost;
-                oracle.saveSettings.saveData.huntersPerPurchase = 1000;
-                break;
-            case 5:
-                sp.gatherer1 = true;
-                sp.strangeMatter -= gatherer1Cost;
-                if (sd1.gatherers < 1) sd1.gatherers = 1;
-                break;
-            case 6:
-                sp.gatherer2 = true;
-                sp.strangeMatter -= gatherer2Cost;
-                if (sd1.gatherers < 10) sd1.gatherers = 10;
-                break;
-            case 7:
-                sp.gatherer3 = true;
-                sp.strangeMatter -= gatherer3Cost;
-                if (sd1.gatherers < 1000) sd1.gatherers = 1000;
-                break;
-            case 8:
-                sp.gatherer4 = true;
-                sp.strangeMatter -= gatherer4Cost;
-                oracle.saveSettings.saveData.gatherersPerPurchase = 1000;
-                break;
-            case 9:
-                sp.workerBoost = true;
-                sp.strangeMatter -= workerBoostCost;
-                sp.workerBoostAcivator = true;
-                break;
-            case 10:
-                sp.citiesBoost = true;
-                sp.strangeMatter -= citiesBoostCost;
-                sp.citiesBoostActivator = true;
-                break;
-        }
-    }
+        null,
+        "factoriesBoost",
+        "bots1",
+        "bots2",
+        "rockets1",
+        "rockets2",
+        "rockets3"
+    };
 
-    private void PurchaseEducation(int i)
+    private static readonly string[] SpaceAgeUpgradeKeys =
     {
-        switch (i)
-        {
-            case 1:
-                sp.engineering1 = true;
-                sp.strangeMatter -= engineering1Cost;
-                sd1.engineeringResearchTime = 300;
-                break;
-            case 2:
-                sp.engineering2 = true;
-                sp.strangeMatter -= engineering2Cost;
-                sd1.engineeringResearchTime = 60;
-                break;
-            case 3:
-                sp.engineering3 = true;
-                sp.strangeMatter -= engineering3Cost;
-                sd1.engineeringComplete = true;
-                break;
-            case 4:
-                sp.shipping1 = true;
-                sp.strangeMatter -= shipping1Cost;
-                sd1.shippingResearchTime = 600;
-                break;
-            case 5:
-                sp.shipping2 = true;
-                sp.strangeMatter -= shipping2Cost;
-                sd1.shippingComplete = true;
-                break;
-            case 6:
-                sp.worldTrade1 = true;
-                sp.strangeMatter -= worldTrade1Cost;
-                sd1.worldTradeResearchTime = 1800;
-                break;
-            case 7:
-                sp.worldTrade2 = true;
-                sp.strangeMatter -= worldTrade2Cost;
-                sd1.worldTradeResearchTime = 600;
-                break;
-            case 8:
-                sp.worldTrade3 = true;
-                sp.strangeMatter -= worldTrade3Cost;
-                sd1.worldTradeComplete = true;
-                break;
-            case 9:
-                sp.worldPeace1 = true;
-                sp.strangeMatter -= worldPeace1Cost;
-                sd1.worldPeaceResearchTime = 3600;
-                break;
-            case 10:
-                sp.worldPeace2 = true;
-                sp.strangeMatter -= worldPeace2Cost;
-                sd1.worldPeaceResearchTime = 1800;
-                break;
-            case 11:
-                sp.worldPeace3 = true;
-                sp.strangeMatter -= worldPeace3Cost;
-                sd1.worldPeaceResearchTime = 600;
-                break;
-            case 12:
-                sp.worldPeace4 = true;
-                sp.strangeMatter -= worldPeace4Cost;
-                sd1.worldPeaceComplete = true;
-                break;
-            case 13:
-                sp.mathematics1 = true;
-                sp.strangeMatter -= mathematics1Cost;
-                sd1.mathematicsResearchTime = 1800;
-                break;
-            case 14:
-                sp.mathematics2 = true;
-                sp.strangeMatter -= mathematics2Cost;
-                sd1.mathematicsResearchTime = 600;
-                break;
-            case 15:
-                sp.mathematics3 = true;
-                sp.strangeMatter -= mathematics3Cost;
-                ApplyMathematicsCompletionParity(sd1);
-                break;
-            case 16:
-                sp.advancedPhysics1 = true;
-                sp.strangeMatter -= advancedPhysics1Cost;
-                sd1.advancedPhysicsResearchTime = 3600;
-                break;
-            case 17:
-                sp.advancedPhysics2 = true;
-                sp.strangeMatter -= advancedPhysics2Cost;
-                sd1.advancedPhysicsResearchTime = 1800;
-                break;
-            case 18:
-                sp.advancedPhysics3 = true;
-                sp.strangeMatter -= advancedPhysics3Cost;
-                sd1.advancedPhysicsResearchTime = 600;
-                break;
-            case 19:
-                sp.advancedPhysics4 = true;
-                sp.strangeMatter -= advancedPhysics4Cost;
-                sd1.advancedPhysicsComplete = true;
-                break;
-        }
-    }
+        null,
+        "sfacs1",
+        "sfacs2",
+        "sfacs3",
+        "railguns1",
+        "railguns2"
+    };
 
-    private void PurchaseCounterGw()
+    private static readonly string[] TranslationUpgradeKeys =
     {
-        sp.counterGw = true;
-        sp.strangeMatter -= counterGwCost;
-        sp.disasterStage = 42;
-    }
+        null,
+        "translation1",
+        "translation2",
+        "translation3",
+        "translation4",
+        "translation5",
+        "translation6",
+        "translation7",
+        "translation8"
+    };
 
-    private void PurchaseCounterAi()
+    private static readonly string[] SpeedUpgradeKeys =
     {
-        sp.counterAi = true;
-        sp.strangeMatter -= counterAiCost;
-        sp.disasterStage = 3;
-    }
+        null,
+        "speed1",
+        "speed2",
+        "speed3",
+        "speed4",
+        "speed5",
+        "speed6",
+        "speed7",
+        "speed8"
+    };
 
-    private void PurchaseCounterMeteor()
-    {
-        sp.counterMeteor = true;
-        sp.strangeMatter -= counterMeteorCost;
-        sp.disasterStage = 2;
-    }
+    private void PurchaseSpaceAge(int i) => TryPurchaseIndexed(SpaceAgeUpgradeKeys, i);
+
+    private void PurchaseInformation(int i) => TryPurchaseIndexed(InformationUpgradeKeys, i);
+
+    private void PurchaseFoundation(int i) => TryPurchaseIndexed(FoundationalUpgradeKeys, i);
+
+    private void PurchaseEducation(int i) => TryPurchaseIndexed(EducationUpgradeKeys, i);
+
+    private void PurchaseCounterGw() => TryPurchaseUpgrade("counterGw");
+
+    private void PurchaseCounterAi() => TryPurchaseUpgrade("counterAi");
+
+    private void PurchaseCounterMeteor() => TryPurchaseUpgrade("counterMeteor");
 
     #endregion
 
     #region RealityMethods
 
-    private DysonVerseSkillTreeData skillTreeData => oracle.saveSettings.dysonVerseSaveData.dysonVerseSkillTreeData;
+    private void PurchaseTranslation(int i) => TryPurchaseIndexed(TranslationUpgradeKeys, i);
 
-    private void PurchaseTranslation(int i)
+    private void PurchaseSpeed(int i) => TryPurchaseIndexed(SpeedUpgradeKeys, i);
+
+    private void PurchaseDoubleTime() => TryPurchaseUpgrade("doubleTimeOwned");
+
+    private void PurchaseAutomateInfluence() => TryPurchaseUpgrade("workerAutoConvert");
+
+    private bool TryPurchaseIndexed(IReadOnlyList<string> keys, int index)
     {
-        switch (i)
+        if (keys == null || index < 1 || index >= keys.Count)
         {
-            case 1:
-                sp.translation1 = true;
-                skillTreeData.skillPointsTree++;
-                sp.strangeMatter -= translation1Cost;
-                break;
-            case 2:
-                sp.translation2 = true;
-                skillTreeData.skillPointsTree++;
-                sp.strangeMatter -= translation2Cost;
-                break;
-            case 3:
-                sp.translation3 = true;
-                skillTreeData.skillPointsTree++;
-                sp.strangeMatter -= translation3Cost;
-                break;
-            case 4:
-                sp.translation4 = true;
-                skillTreeData.skillPointsTree++;
-                sp.strangeMatter -= translation4Cost;
-                break;
-            case 5:
-                sp.translation5 = true;
-                skillTreeData.skillPointsTree++;
-                sp.strangeMatter -= translation5Cost;
-                break;
-            case 6:
-                sp.translation6 = true;
-                skillTreeData.skillPointsTree++;
-                sp.strangeMatter -= translation6Cost;
-                break;
-            case 7:
-                sp.translation7 = true;
-                skillTreeData.skillPointsTree++;
-                sp.strangeMatter -= translation7Cost;
-                break;
-            case 8:
-                sp.translation8 = true;
-                skillTreeData.skillPointsTree++;
-                sp.strangeMatter -= translation8Cost;
-                break;
+            return false;
         }
+
+        return TryPurchaseUpgrade(keys[index]);
     }
 
-    private void PurchaseSpeed(int i)
+    private bool TryPurchaseUpgrade(string key)
     {
-        switch (i)
+        if (string.IsNullOrWhiteSpace(key))
         {
-            case 1:
-                sp.speed1 = true;
-                skillTreeData.skillPointsTree++;
-                sp.strangeMatter -= speed1Cost;
-                break;
-            case 2:
-                sp.speed2 = true;
-                skillTreeData.skillPointsTree++;
-                sp.strangeMatter -= speed2Cost;
-                break;
-            case 3:
-                sp.speed3 = true;
-                skillTreeData.skillPointsTree++;
-                sp.strangeMatter -= speed3Cost;
-                break;
-            case 4:
-                sp.speed4 = true;
-                skillTreeData.skillPointsTree++;
-                sp.strangeMatter -= speed4Cost;
-                break;
-            case 5:
-                sp.speed5 = true;
-                skillTreeData.skillPointsTree++;
-                sp.strangeMatter -= speed5Cost;
-                break;
-            case 6:
-                sp.speed6 = true;
-                skillTreeData.skillPointsTree++;
-                sp.strangeMatter -= speed6Cost;
-                break;
-            case 7:
-                sp.speed7 = true;
-                skillTreeData.skillPointsTree++;
-                sp.strangeMatter -= speed7Cost;
-                break;
-            case 8:
-                sp.speed8 = true;
-                skillTreeData.skillPointsTree++;
-                sp.strangeMatter -= speed8Cost;
-                break;
+            return false;
         }
+
+        if (IsUpgradeOwned(key))
+        {
+            return false;
+        }
+
+        if (!ArePrerequisitesMet(key))
+        {
+            return false;
+        }
+
+        int cost = GetUpgradeCost(key);
+        if (sp.strangeMatter < cost)
+        {
+            return false;
+        }
+
+        IReadOnlyList<SimulationUpgradeEffect> effects = ResolveUpgradeEffects(key);
+        if (effects == null || effects.Count == 0)
+        {
+            Debug.LogWarning($"[ResearchManager] No upgrade effects configured for '{key}'.");
+            return false;
+        }
+
+        SimulationUpgradeEffectApplier.ApplyEffects(effects, oracle.saveSettings);
+        sp.strangeMatter -= cost;
+
+        if (string.Equals(key, "mathematics3", StringComparison.Ordinal))
+        {
+            ApplyMathematicsCompletionParity(sd1);
+        }
+
+        return true;
     }
 
-    private void PurchaseDoubleTime()
+    private bool ArePrerequisitesMet(string key)
     {
-        sp.doubleTimeOwned = true;
-        sp.strangeMatter -= doubleTimeCost;
-        sp.doubleTime = 600;
+        IReadOnlyList<SimulationUpgradePrerequisite> prerequisites = ResolveUpgradePrerequisites(key);
+        if (prerequisites == null || prerequisites.Count == 0)
+        {
+            return true;
+        }
+
+        for (int i = 0; i < prerequisites.Count; i++)
+        {
+            SimulationUpgradePrerequisite prerequisite = prerequisites[i];
+            if (prerequisite == null || string.IsNullOrWhiteSpace(prerequisite.key))
+            {
+                continue;
+            }
+
+            bool owned = IsUpgradeOwned(prerequisite.key);
+            if (prerequisite.mustBeOwned && !owned)
+            {
+                return false;
+            }
+
+            if (!prerequisite.mustBeOwned && owned)
+            {
+                return false;
+            }
+        }
+
+        return true;
     }
 
-    private void PurchaseAutomateInfluence()
+    private bool IsUpgradeOwned(string key)
     {
-        oracle.saveSettings.saveData.workerAutoConvert = true;
-        sp.strangeMatter -= automateGatherInfluenceCost;
+        return SimulationUpgradeStateAccessor.TryGetOwned(
+            key,
+            sp,
+            oracle.saveSettings.saveData,
+            out bool owned) && owned;
+    }
+
+    private IReadOnlyList<SimulationUpgradePrerequisite> ResolveUpgradePrerequisites(string key)
+    {
+        SimulationUpgradeDatabase database = BalanceRuntime.UpgradeDatabase;
+        if (database != null &&
+            database.TryGet(key, out SimulationUpgradeDefinition definition) &&
+            definition.prerequisites != null &&
+            definition.prerequisites.Count > 0)
+        {
+            return definition.prerequisites;
+        }
+
+        return SimulationUpgradeDefaultsCatalog.TryGetSpec(key, out SimulationUpgradeSpec spec)
+            ? spec.Prerequisites
+            : Array.Empty<SimulationUpgradePrerequisite>();
+    }
+
+    private IReadOnlyList<SimulationUpgradeEffect> ResolveUpgradeEffects(string key)
+    {
+        SimulationUpgradeDatabase database = BalanceRuntime.UpgradeDatabase;
+        if (database != null &&
+            database.TryGet(key, out SimulationUpgradeDefinition definition) &&
+            definition.purchaseEffects != null &&
+            definition.purchaseEffects.Count > 0)
+        {
+            return definition.purchaseEffects;
+        }
+
+        return SimulationUpgradeDefaultsCatalog.TryGetSpec(key, out SimulationUpgradeSpec spec)
+            ? spec.Effects
+            : Array.Empty<SimulationUpgradeEffect>();
     }
 
     #endregion
@@ -1141,125 +1002,112 @@ public class ResearchManager : MonoBehaviour
     {
         SimulationHeader.text = $"Simulation: {sp.simulationCount:N0}";
 
-        #region SimulationEnablers
+        bool counterVisible = false;
+        counterVisible |= UpdateUpgradePanel(_counterMeteorPanel, "counterMeteor");
+        counterVisible |= UpdateUpgradePanel(_counterAiPanel, "counterAi");
+        counterVisible |= UpdateUpgradePanel(_counterGwPanel, "counterGw");
+        counterMeasuresCategory.SetActive(counterVisible);
 
-        simulationCategory.SetActive(!sp.counterGw || sp.counterMeteor && !sp.engineering3 ||
-                                     sp.counterGw && !sp.shipping2 ||
-                                     sp.counterGw && !sp.worldTrade3 || sp.counterGw && !sp.worldPeace4 ||
-                                     sp.counterGw && !sp.mathematics3 || sp.counterGw && !sp.advancedPhysics4 ||
-                                     !sp.hunter4 || !sp.gatherer4 || !sp.workerBoost || !sp.citiesBoost ||
-                                     sp.counterMeteor && !sp.factoriesBoost || sp.counterMeteor && !sp.bots2 ||
-                                     sp.counterMeteor && !sp.rockets3 || sp.counterGw && !sp.railguns2 ||
-                                     sp.counterGw && !sp.sfacs3);
+        bool educationVisible = false;
+        educationVisible |= UpdateUpgradePanel(_engineering1Panel, "engineering1");
+        educationVisible |= UpdateUpgradePanel(_engineering2Panel, "engineering2");
+        educationVisible |= UpdateUpgradePanel(_engineering3Panel, "engineering3");
+        educationVisible |= UpdateUpgradePanel(_shipping1Panel, "shipping1");
+        educationVisible |= UpdateUpgradePanel(_shipping2Panel, "shipping2");
+        educationVisible |= UpdateUpgradePanel(_worldTrade1Panel, "worldTrade1");
+        educationVisible |= UpdateUpgradePanel(_worldTrade2Panel, "worldTrade2");
+        educationVisible |= UpdateUpgradePanel(_worldTrade3Panel, "worldTrade3");
+        educationVisible |= UpdateUpgradePanel(_worldPeace1Panel, "worldPeace1");
+        educationVisible |= UpdateUpgradePanel(_worldPeace2Panel, "worldPeace2");
+        educationVisible |= UpdateUpgradePanel(_worldPeace3Panel, "worldPeace3");
+        educationVisible |= UpdateUpgradePanel(_worldPeace4Panel, "worldPeace4");
+        educationVisible |= UpdateUpgradePanel(_mathematics1Panel, "mathematics1");
+        educationVisible |= UpdateUpgradePanel(_mathematics2Panel, "mathematics2");
+        educationVisible |= UpdateUpgradePanel(_mathematics3Panel, "mathematics3");
+        educationVisible |= UpdateUpgradePanel(_advancedPhysics1Panel, "advancedPhysics1");
+        educationVisible |= UpdateUpgradePanel(_advancedPhysics2Panel, "advancedPhysics2");
+        educationVisible |= UpdateUpgradePanel(_advancedPhysics3Panel, "advancedPhysics3");
+        educationVisible |= UpdateUpgradePanel(_advancedPhysics4Panel, "advancedPhysics4");
+        educationCategory.SetActive(educationVisible);
 
-        counterMeasuresCategory.SetActive(!sp.counterGw);
-        UpdatePanel(_counterMeteorPanel, sp.strangeMatter >= counterMeteorCost, !sp.counterMeteor);
-        UpdatePanel(_counterAiPanel, sp.strangeMatter >= counterAiCost, sp.counterMeteor && !sp.counterAi);
-        UpdatePanel(_counterGwPanel, sp.strangeMatter >= counterGwCost, sp.counterAi && !sp.counterGw);
+        bool foundationalVisible = false;
+        foundationalVisible |= UpdateUpgradePanel(_hunter1Panel, "hunter1");
+        foundationalVisible |= UpdateUpgradePanel(_hunter2Panel, "hunter2");
+        foundationalVisible |= UpdateUpgradePanel(_hunter3Panel, "hunter3");
+        foundationalVisible |= UpdateUpgradePanel(_hunter4Panel, "hunter4");
+        foundationalVisible |= UpdateUpgradePanel(_gathering1Panel, "gatherer1");
+        foundationalVisible |= UpdateUpgradePanel(_gathering2Panel, "gatherer2");
+        foundationalVisible |= UpdateUpgradePanel(_gathering3Panel, "gatherer3");
+        foundationalVisible |= UpdateUpgradePanel(_gathering4Panel, "gatherer4");
+        foundationalVisible |= UpdateUpgradePanel(_workerBoostPanel, "workerBoost");
+        foundationalVisible |= UpdateUpgradePanel(_citiesBoostPanel, "citiesBoost");
+        foundationalEraCategory.SetActive(foundationalVisible);
 
-        educationCategory.SetActive(sp.counterMeteor && !sp.engineering3 || sp.engineering3 && !sp.shipping2 ||
-                                    sp.counterGw && !sp.shipping2 ||
-                                    sp.counterGw && !sp.worldTrade3 || sp.counterGw && !sp.worldPeace4 ||
-                                    sp.counterGw && !sp.mathematics3 || sp.counterGw && !sp.advancedPhysics4 ||
-                                    sp.worldTrade1 && !sp.worldTrade2 || sp.worldTrade2 && !sp.worldTrade3 ||
-                                    sp.worldTrade1 && !sp.worldPeace1 || sp.worldPeace1 && !sp.worldPeace2 ||
-                                    sp.worldPeace2 && !sp.worldPeace3 || sp.worldPeace3 && !sp.worldPeace4 ||
-                                    sp.counterAi && !sp.mathematics1 || sp.mathematics1 && !sp.mathematics2 ||
-                                    sp.mathematics2 && !sp.mathematics3 ||
-                                    sp.mathematics1 && !sp.advancedPhysics1 ||
-                                    sp.advancedPhysics1 && !sp.advancedPhysics2 ||
-                                    sp.advancedPhysics2 && !sp.advancedPhysics3 ||
-                                    sp.advancedPhysics3 && !sp.advancedPhysics4);
+        bool informationVisible = false;
+        informationVisible |= UpdateUpgradePanel(_factoriesBoostPanel, "factoriesBoost");
+        informationVisible |= UpdateUpgradePanel(_bots1Panel, "bots1");
+        informationVisible |= UpdateUpgradePanel(_bots2Panel, "bots2");
+        informationVisible |= UpdateUpgradePanel(_rockets1Panel, "rockets1");
+        informationVisible |= UpdateUpgradePanel(_rockets2Panel, "rockets2");
+        informationVisible |= UpdateUpgradePanel(_rockets3Panel, "rockets3");
+        informationEraCategory.SetActive(informationVisible);
 
-        UpdatePanel(_engineering1Panel, sp.strangeMatter >= engineering1Cost, sp.counterMeteor && !sp.engineering1);
-        UpdatePanel(_engineering2Panel, sp.strangeMatter >= engineering2Cost, sp.engineering1 && !sp.engineering2);
-        UpdatePanel(_engineering3Panel, sp.strangeMatter >= engineering3Cost, sp.engineering2 && !sp.engineering3);
-        UpdatePanel(_shipping1Panel, sp.strangeMatter >= shipping1Cost, sp.engineering1 && !sp.shipping1);
-        UpdatePanel(_shipping2Panel, sp.strangeMatter >= shipping2Cost, sp.shipping1 && !sp.shipping2);
-        UpdatePanel(_worldTrade1Panel, sp.strangeMatter >= worldTrade1Cost, sp.shipping1 && !sp.worldTrade1);
-        UpdatePanel(_worldTrade2Panel, sp.strangeMatter >= worldTrade2Cost, sp.worldTrade1 && !sp.worldTrade2);
-        UpdatePanel(_worldTrade3Panel, sp.strangeMatter >= worldTrade3Cost, sp.worldTrade2 && !sp.worldTrade3);
-        UpdatePanel(_worldPeace1Panel, sp.strangeMatter >= worldPeace1Cost, sp.worldTrade1 && !sp.worldPeace1);
-        UpdatePanel(_worldPeace2Panel, sp.strangeMatter >= worldPeace2Cost, sp.worldPeace1 && !sp.worldPeace2);
-        UpdatePanel(_worldPeace3Panel, sp.strangeMatter >= worldPeace3Cost, sp.worldPeace2 && !sp.worldPeace3);
-        UpdatePanel(_worldPeace4Panel, sp.strangeMatter >= worldPeace4Cost, sp.worldPeace3 && !sp.worldPeace4);
-        UpdatePanel(_mathematics1Panel, sp.strangeMatter >= mathematics1Cost, sp.counterAi && !sp.mathematics1);
-        UpdatePanel(_mathematics2Panel, sp.strangeMatter >= mathematics2Cost, sp.mathematics1 && !sp.mathematics2);
-        UpdatePanel(_mathematics3Panel, sp.strangeMatter >= mathematics3Cost, sp.mathematics2 && !sp.mathematics3);
-        UpdatePanel(_advancedPhysics1Panel, sp.strangeMatter >= advancedPhysics1Cost, sp.mathematics1 && !sp.advancedPhysics1);
-        UpdatePanel(_advancedPhysics2Panel, sp.strangeMatter >= advancedPhysics2Cost, sp.advancedPhysics1 && !sp.advancedPhysics2);
-        UpdatePanel(_advancedPhysics3Panel, sp.strangeMatter >= advancedPhysics3Cost, sp.advancedPhysics2 && !sp.advancedPhysics3);
-        UpdatePanel(_advancedPhysics4Panel, sp.strangeMatter >= advancedPhysics4Cost, sp.advancedPhysics3 && !sp.advancedPhysics4);
+        bool spaceVisible = false;
+        spaceVisible |= UpdateUpgradePanel(_sfacs1Panel, "sfacs1");
+        spaceVisible |= UpdateUpgradePanel(_sfacs2Panel, "sfacs2");
+        spaceVisible |= UpdateUpgradePanel(_sfacs3Panel, "sfacs3");
+        spaceVisible |= UpdateUpgradePanel(_railgun1Panel, "railguns1");
+        spaceVisible |= UpdateUpgradePanel(_railgun2Panel, "railguns2");
+        spaceAgeCategory.SetActive(spaceVisible);
 
-        foundationalEraCategory.SetActive(!sp.hunter4 || !sp.gatherer4 || !sp.workerBoost || !sp.citiesBoost);
-        UpdatePanel(_hunter1Panel, sp.strangeMatter >= hunter1Cost, !sp.hunter1);
-        UpdatePanel(_hunter2Panel, sp.strangeMatter >= hunter2Cost, sp.hunter1 && !sp.hunter2);
-        UpdatePanel(_hunter3Panel, sp.strangeMatter >= hunter3Cost, sp.hunter2 && !sp.hunter3);
-        UpdatePanel(_hunter4Panel, sp.strangeMatter >= hunter4Cost, sp.hunter2 && !sp.hunter4);
-        UpdatePanel(_gathering1Panel, sp.strangeMatter >= gatherer1Cost, !sp.gatherer1);
-        UpdatePanel(_gathering2Panel, sp.strangeMatter >= gatherer2Cost, sp.gatherer1 && !sp.gatherer2);
-        UpdatePanel(_gathering3Panel, sp.strangeMatter >= gatherer3Cost, sp.gatherer2 && !sp.gatherer3);
-        UpdatePanel(_gathering4Panel, sp.strangeMatter >= gatherer4Cost, sp.gatherer2 && !sp.gatherer4);
-        UpdatePanel(_workerBoostPanel, sp.strangeMatter >= workerBoostCost, !sp.workerBoost);
-        UpdatePanel(_citiesBoostPanel, sp.strangeMatter >= citiesBoostCost, sp.counterMeteor && !sp.citiesBoost);
+        simulationCategory.SetActive(counterVisible || educationVisible || foundationalVisible || informationVisible || spaceVisible);
 
-        informationEraCategory.SetActive(sp.counterAi && !sp.factoriesBoost || sp.counterAi && !sp.bots2 ||
-                                         sp.counterAi && !sp.rockets3);
-        UpdatePanel(_factoriesBoostPanel, sp.strangeMatter >= factoriesBoostCost, sp.counterAi && !sp.factoriesBoost);
-        UpdatePanel(_bots1Panel, sp.strangeMatter >= bots1Cost, sp.counterAi && !sp.bots1);
-        UpdatePanel(_bots2Panel, sp.strangeMatter >= bots2Cost, sp.bots1 && !sp.bots2);
-        UpdatePanel(_rockets1Panel, sp.strangeMatter >= rockets1Cost, sp.counterGw && !sp.rockets1);
-        UpdatePanel(_rockets2Panel, sp.strangeMatter >= rockets2Cost, sp.rockets1 && !sp.rockets2);
-        UpdatePanel(_rockets3Panel, sp.strangeMatter >= rockets3Cost, sp.rockets2 && !sp.rockets3);
-
-        spaceAgeCategory.SetActive(sp.counterGw && !sp.railguns2 || sp.counterGw && !sp.sfacs3);
-        UpdatePanel(_sfacs1Panel, sp.strangeMatter >= sfacs1Cost, sp.counterGw && !sp.sfacs1);
-        UpdatePanel(_sfacs2Panel, sp.strangeMatter >= sfacs2Cost, sp.sfacs1 && !sp.sfacs2);
-        UpdatePanel(_sfacs3Panel, sp.strangeMatter >= sfacs3Cost, sp.sfacs2 && !sp.sfacs3);
-        UpdatePanel(_railgun1Panel, sp.strangeMatter >= railguns1Cost, sp.counterGw && !sp.railguns1);
-        UpdatePanel(_railgun2Panel, sp.strangeMatter >= railguns2Cost, sp.railguns1 && !sp.railguns2);
-
-        #endregion
-
-        #region RealityEnablers
-
-        UpdateRealityPanels();
-
-        realityCategory.SetActive(!sp.speed8 || !sp.translation8 || !sp.doubleTimeOwned ||
-                                  !oracle.saveSettings.saveData.workerAutoConvert);
-        anomalyCategory.SetActive(!sp.translation8 || !sp.speed8);
-        translationCategory.SetActive(!sp.translation8);
-        speedCategory.SetActive(!sp.speed8);
-        qolComplete.SetActive(!sp.doubleTimeOwned || !oracle.saveSettings.saveData.workerAutoConvert);
-
-        #endregion
+        UpdateRealityPanels(out bool translationVisible, out bool speedVisible, out bool qolVisible);
+        realityCategory.SetActive(translationVisible || speedVisible || qolVisible);
+        anomalyCategory.SetActive(translationVisible || speedVisible);
+        translationCategory.SetActive(translationVisible);
+        speedCategory.SetActive(speedVisible);
+        qolComplete.SetActive(qolVisible);
     }
 
-    private void UpdateRealityPanels()
+    private void UpdateRealityPanels(out bool translationVisible, out bool speedVisible, out bool qolVisible)
     {
-        // Translation panels
-        UpdatePanel(_translation1Panel, sp.strangeMatter >= translation1Cost, !sp.translation1);
-        UpdatePanel(_translation2Panel, sp.strangeMatter >= translation2Cost, sp.translation1 && !sp.translation2);
-        UpdatePanel(_translation3Panel, sp.strangeMatter >= translation3Cost, sp.translation2 && !sp.translation3);
-        UpdatePanel(_translation4Panel, sp.strangeMatter >= translation4Cost, sp.translation3 && !sp.translation4);
-        UpdatePanel(_translation5Panel, sp.strangeMatter >= translation5Cost, sp.translation4 && !sp.translation5);
-        UpdatePanel(_translation6Panel, sp.strangeMatter >= translation6Cost, sp.translation5 && !sp.translation6);
-        UpdatePanel(_translation7Panel, sp.strangeMatter >= translation7Cost, sp.translation6 && !sp.translation7);
-        UpdatePanel(_translation8Panel, sp.strangeMatter >= translation8Cost, sp.translation7 && !sp.translation8);
+        translationVisible = false;
+        translationVisible |= UpdateUpgradePanel(_translation1Panel, "translation1");
+        translationVisible |= UpdateUpgradePanel(_translation2Panel, "translation2");
+        translationVisible |= UpdateUpgradePanel(_translation3Panel, "translation3");
+        translationVisible |= UpdateUpgradePanel(_translation4Panel, "translation4");
+        translationVisible |= UpdateUpgradePanel(_translation5Panel, "translation5");
+        translationVisible |= UpdateUpgradePanel(_translation6Panel, "translation6");
+        translationVisible |= UpdateUpgradePanel(_translation7Panel, "translation7");
+        translationVisible |= UpdateUpgradePanel(_translation8Panel, "translation8");
 
-        // Speed panels
-        UpdatePanel(_speed1Panel, sp.strangeMatter >= speed1Cost, !sp.speed1);
-        UpdatePanel(_speed2Panel, sp.strangeMatter >= speed2Cost, sp.speed1 && !sp.speed2);
-        UpdatePanel(_speed3Panel, sp.strangeMatter >= speed3Cost, sp.speed2 && !sp.speed3);
-        UpdatePanel(_speed4Panel, sp.strangeMatter >= speed4Cost, sp.speed3 && !sp.speed4);
-        UpdatePanel(_speed5Panel, sp.strangeMatter >= speed5Cost, sp.speed4 && !sp.speed5);
-        UpdatePanel(_speed6Panel, sp.strangeMatter >= speed6Cost, sp.speed5 && !sp.speed6);
-        UpdatePanel(_speed7Panel, sp.strangeMatter >= speed7Cost, sp.speed6 && !sp.speed7);
-        UpdatePanel(_speed8Panel, sp.strangeMatter >= speed8Cost, sp.speed7 && !sp.speed8);
+        speedVisible = false;
+        speedVisible |= UpdateUpgradePanel(_speed1Panel, "speed1");
+        speedVisible |= UpdateUpgradePanel(_speed2Panel, "speed2");
+        speedVisible |= UpdateUpgradePanel(_speed3Panel, "speed3");
+        speedVisible |= UpdateUpgradePanel(_speed4Panel, "speed4");
+        speedVisible |= UpdateUpgradePanel(_speed5Panel, "speed5");
+        speedVisible |= UpdateUpgradePanel(_speed6Panel, "speed6");
+        speedVisible |= UpdateUpgradePanel(_speed7Panel, "speed7");
+        speedVisible |= UpdateUpgradePanel(_speed8Panel, "speed8");
 
-        // QOL panels
-        UpdatePanel(_doubleTimePanel, sp.strangeMatter >= doubleTimeCost, !sp.doubleTimeOwned);
-        UpdatePanel(_autoGatherInfluencePanel, sp.strangeMatter >= automateGatherInfluenceCost, !oracle.saveSettings.saveData.workerAutoConvert);
+        qolVisible = false;
+        qolVisible |= UpdateUpgradePanel(_doubleTimePanel, "doubleTimeOwned");
+        qolVisible |= UpdateUpgradePanel(_autoGatherInfluencePanel, "workerAutoConvert");
+    }
+
+    private bool UpdateUpgradePanel(UpgradePanelReferences panel, string key)
+    {
+        bool shouldShow = !IsUpgradeOwned(key) && ArePrerequisitesMet(key);
+        bool canAfford = CanAffordUpgrade(key);
+        UpdatePanel(panel, canAfford, shouldShow);
+        return panel != null && shouldShow;
+    }
+
+    private bool CanAffordUpgrade(string key)
+    {
+        return sp.strangeMatter >= GetUpgradeCost(key);
     }
 
     private void UpdatePanel(UpgradePanelReferences panel, bool canAfford, bool shouldShow)
@@ -1271,75 +1119,63 @@ public class ResearchManager : MonoBehaviour
 
     private void ApplyResearch()
     {
-        #region SimulationApplication
+        SimulationUpgradeDatabase database = BalanceRuntime.UpgradeDatabase;
+        IReadOnlyList<SimulationUpgradeDefinition> definitions = database != null ? database.GetAll() : null;
 
-        // Countermeasures
-        if (!sp.counterMeteor)
+        if (definitions != null && definitions.Count > 0)
+        {
+            for (int i = 0; i < definitions.Count; i++)
+            {
+                SimulationUpgradeDefinition definition = definitions[i];
+                if (definition == null ||
+                    definition.layer != SimulationUpgradeLayer.Simulation ||
+                    string.IsNullOrWhiteSpace(definition.key) ||
+                    !IsUpgradeOwned(definition.key))
+                {
+                    continue;
+                }
+
+                SimulationUpgradeEffectApplier.ApplyEffects(ResolveUpgradeEffects(definition.key), oracle.saveSettings);
+            }
+        }
+        else
+        {
+            IReadOnlyList<SimulationUpgradeSpec> specs = SimulationUpgradeDefaultsCatalog.All;
+            for (int i = 0; i < specs.Count; i++)
+            {
+                SimulationUpgradeSpec spec = specs[i];
+                if (spec == null ||
+                    spec.Layer != SimulationUpgradeLayer.Simulation ||
+                    string.IsNullOrWhiteSpace(spec.Key) ||
+                    !IsUpgradeOwned(spec.Key))
+                {
+                    continue;
+                }
+
+                SimulationUpgradeEffectApplier.ApplyEffects(spec.Effects, oracle.saveSettings);
+            }
+        }
+
+        if (IsUpgradeOwned("mathematics3"))
+        {
+            ApplyMathematicsCompletionParity(sd1);
+        }
+
+        if (!IsUpgradeOwned("counterMeteor"))
+        {
             sp.disasterStage = 1;
-        else if (sp.counterMeteor && !sp.counterAi)
+        }
+        else if (!IsUpgradeOwned("counterAi"))
+        {
             sp.disasterStage = 2;
-        else if (sp.counterAi && !sp.counterGw)
+        }
+        else if (!IsUpgradeOwned("counterGw"))
+        {
             sp.disasterStage = 3;
-        else if (sp.counterGw) sp.disasterStage = 42;
-
-        // Education Upgrades
-        if (sp.engineering1) sd1.engineeringResearchTime = 300;
-        if (sp.engineering2) sd1.engineeringResearchTime = 60;
-        if (sp.engineering3) sd1.engineeringComplete = true;
-
-        if (sp.shipping1) sd1.shippingResearchTime = 600;
-        if (sp.shipping2) sd1.shippingComplete = true;
-
-        if (sp.worldTrade1) sd1.worldTradeResearchTime = 1800;
-        if (sp.worldTrade2) sd1.worldTradeResearchTime = 600;
-        if (sp.worldTrade3) sd1.worldTradeComplete = true;
-
-        if (sp.worldPeace1) sd1.worldPeaceResearchTime = 3600;
-        if (sp.worldPeace2) sd1.worldPeaceResearchTime = 1800;
-        if (sp.worldPeace3) sd1.worldPeaceResearchTime = 600;
-        if (sp.worldPeace4) sd1.worldPeaceComplete = true;
-
-        if (sp.mathematics1) sd1.mathematicsResearchTime = 1800;
-        if (sp.mathematics2) sd1.mathematicsResearchTime = 600;
-        if (sp.mathematics3) ApplyMathematicsCompletionParity(sd1);
-
-        if (sp.advancedPhysics1) sd1.advancedPhysicsResearchTime = 3600;
-        if (sp.advancedPhysics2) sd1.advancedPhysicsResearchTime = 1800;
-        if (sp.advancedPhysics3) sd1.advancedPhysicsResearchTime = 600;
-        if (sp.advancedPhysics4) sd1.advancedPhysicsComplete = true;
-
-        // Foundational Era
-        if (sp.hunter1) sd1.hunters = 1;
-        if (sp.hunter2) sd1.hunters = 10;
-        if (sp.hunter3) sd1.hunters = 1000;
-        if (sp.hunter4) oracle.saveSettings.saveData.huntersPerPurchase = 1000;
-
-        if (sp.gatherer1) sd1.gatherers = 1;
-        if (sp.gatherer2) sd1.gatherers = 10;
-        if (sp.gatherer3) sd1.gatherers = 1000;
-        if (sp.gatherer4) oracle.saveSettings.saveData.gatherersPerPurchase = 1000;
-
-        if (sp.workerBoost) sp.workerBoostAcivator = true;
-        if (sp.citiesBoost) sp.citiesBoostActivator = true;
-
-        // Information Era
-        if (sp.factoriesBoost) sp.factoriesBoostActivator = true;
-
-        if (sp.bots1) sp.botsBoost1Activator = true;
-        if (sp.bots2) sp.botsBoost2Activator = true;
-
-        if (sp.rockets1) sd1.rocketsPerSpaceFactory = 5;
-        if (sp.rockets2) sd1.rocketsPerSpaceFactory = 3;
-        if (sp.rockets3) sd1.rocketsPerSpaceFactory = 1;
-
-        // Space Age
-        if (sp.sfacs1) sp.sfActivator1 = true;
-        if (sp.sfacs2) sp.sfActivator2 = true;
-        if (sp.sfacs3) sp.sfActivator3 = true;
-
-        if (sp.railguns1) sp.railgunActivator1 = true;
-        if (sp.railguns2) sp.railgunActivator2 = true;
-
-        #endregion
+        }
+        else
+        {
+            sp.disasterStage = 42;
+        }
     }
 }

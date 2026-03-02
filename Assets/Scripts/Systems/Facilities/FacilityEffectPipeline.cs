@@ -1,6 +1,8 @@
 using System;
 using System.Collections.Generic;
 using GameData;
+using IdleDysonSwarm.Data.Balance;
+using IdleDysonSwarm.Systems.Balance;
 using Systems;
 using Systems.Stats;
 using static Expansion.Oracle;
@@ -195,22 +197,37 @@ namespace Systems.Facilities
             PrestigePlus prestigePlus = context.PrestigePlus;
             SecretBuffState secrets = ModifierSystem.BuildSecretBuffState(prestigeData);
 
-            switch (definition.id)
+            FacilityModifierKind modifierKind = FacilityModifierKind.None;
+            if (BalanceRuntime.TryGetFacilityEntry(definition.id, out var entry))
             {
-                case "assembly_lines":
+                modifierKind = entry.modifierKind;
+            }
+
+            switch (modifierKind)
+            {
+                case FacilityModifierKind.AssemblyLines:
                     return FacilityModifierPipeline.TryCalculateAssemblyLineModifier(infinityData, skillTreeData, prestigeData, prestigePlus, secrets,
                         DefaultMaxInfinityBuff, out result);
-                case "ai_managers":
+                case FacilityModifierKind.AiManagers:
                     return FacilityModifierPipeline.TryCalculateManagerModifier(infinityData, skillTreeData, prestigeData, prestigePlus, secrets,
                         DefaultMaxInfinityBuff, out result);
-                case "servers":
+                case FacilityModifierKind.Servers:
                     return FacilityModifierPipeline.TryCalculateServerModifier(infinityData, skillTreeData, prestigeData, prestigePlus, secrets,
                         DefaultMaxInfinityBuff, out result);
-                case "data_centers":
+                case FacilityModifierKind.DataCenters:
                     return FacilityModifierPipeline.TryCalculateDataCenterModifier(infinityData, skillTreeData, prestigeData, prestigePlus,
                         DefaultMaxInfinityBuff, out result);
-                case "planets":
+                case FacilityModifierKind.Planets:
                     return FacilityModifierPipeline.TryCalculatePlanetModifier(infinityData, skillTreeData, prestigeData, prestigePlus, secrets,
+                        DefaultMaxInfinityBuff, out result);
+                case FacilityModifierKind.MatrioshkaBrains:
+                    return FacilityModifierPipeline.TryCalculateMatrioshkaModifier(infinityData, skillTreeData, prestigeData, prestigePlus,
+                        DefaultMaxInfinityBuff, out result);
+                case FacilityModifierKind.BirchPlanets:
+                    return FacilityModifierPipeline.TryCalculateBirchModifier(infinityData, skillTreeData, prestigeData, prestigePlus,
+                        DefaultMaxInfinityBuff, out result);
+                case FacilityModifierKind.GalacticBrains:
+                    return FacilityModifierPipeline.TryCalculateGalacticModifier(infinityData, skillTreeData, prestigeData, prestigePlus,
                         DefaultMaxInfinityBuff, out result);
                 default:
                     return false;
@@ -221,21 +238,21 @@ namespace Systems.Facilities
         {
             if (definition == null || infinityData == null) return 1;
 
-            switch (definition.id)
+            if (BalanceRuntime.TryGetFacilityEntry(definition.id, out var entry) &&
+                !string.IsNullOrEmpty(entry.modifierFieldName))
             {
-                case "assembly_lines":
-                    return infinityData.assemblyLineModifier;
-                case "ai_managers":
-                    return infinityData.managerModifier;
-                case "servers":
-                    return infinityData.serverModifier;
-                case "data_centers":
-                    return infinityData.dataCenterModifier;
-                case "planets":
-                    return infinityData.planetModifier;
-                default:
-                    return 1;
+                var field = typeof(DysonVerseInfinityData).GetField(entry.modifierFieldName);
+                if (field != null && field.FieldType == typeof(double))
+                {
+                    return (double)field.GetValue(infinityData);
+                }
+                if (field != null && field.FieldType == typeof(float))
+                {
+                    return (float)field.GetValue(infinityData);
+                }
             }
+
+            return 1;
         }
 
         private static bool ShouldApplyMultiplier(double value)

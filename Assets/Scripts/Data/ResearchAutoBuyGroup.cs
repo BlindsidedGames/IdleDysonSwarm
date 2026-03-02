@@ -10,6 +10,9 @@ namespace GameData
         Ai = 5,
         Server = 6,
         DataCenter = 7,
-        Planet = 8
+        Planet = 8,
+        MatrioshkaBrains = 9,
+        BirchPlanets = 10,
+        GalacticBrains = 11
     }
 }
