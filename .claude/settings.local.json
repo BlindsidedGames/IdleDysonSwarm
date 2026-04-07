@@ -1,0 +1,12 @@
+{
+  "permissions": {
+    "allow": [
+      "Read",
+      "List",
+      "Glob",
+      "Grep",
+      "Bash(*)",
+      "WebFetch(domain:docs.github.com)"
+    ]
+  }
+}
