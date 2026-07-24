@@ -12,6 +12,7 @@ namespace Systems.Save
      * - ISaveStore.TryLoad(...)
      * - ISaveStore.TrySave(...)
      * - CanonicalSaveStore.CreateDefault(SavePreparationPipeline)
+     * - CanonicalSaveStore startup candidate preparation/commit support
      * Owns vs delegates:
      * - Owns the store-level contract expected by Oracle save lifecycle code.
      * - Delegates preparation/encoding/storage to SaveSystem, SavePreparationPipeline, and ITransactionalSaveStorage.
@@ -147,6 +148,31 @@ namespace Systems.Save
         }
 
         /// <summary>
+        /// Prepares one discovered candidate without storage mutation.
+        /// </summary>
+        /// <param name="candidate">The read-only descriptor.</param>
+        /// <param name="preparation">The classified preparation result.</param>
+        /// <param name="error">The read or preparation failure.</param>
+        /// <returns><see langword="true"/> only when the candidate is publishable.</returns>
+        public bool TryPrepareCandidate(
+            SaveStorageCandidate candidate,
+            out PreparedSaveResult preparation,
+            out string error)
+        {
+            return _saveSystem.TryPrepareCandidate(candidate, out preparation, out error);
+        }
+
+        /// <summary>
+        /// Prepares clipboard or support text without writing it.
+        /// </summary>
+        /// <param name="text">The candidate envelope.</param>
+        /// <returns>The classified preparation result.</returns>
+        public PreparedSaveResult PrepareText(string text)
+        {
+            return _saveSystem.PrepareText(text);
+        }
+
+        /// <summary>
         /// Prepares and transactionally commits one discovered candidate.
         /// </summary>
         /// <param name="candidate">The read-only candidate.</param>
@@ -159,6 +185,21 @@ namespace Systems.Save
             out string error)
         {
             return _saveSystem.TryCommitCandidate(candidate, out preparation, out error);
+        }
+
+        /// <summary>
+        /// Reads one filesystem-backed artifact for an explicit support copy action.
+        /// </summary>
+        /// <param name="candidate">The discovered descriptor.</param>
+        /// <param name="text">The exact trimmed artifact text.</param>
+        /// <param name="error">The read failure.</param>
+        /// <returns><see langword="true"/> when text is available.</returns>
+        public bool TryReadCandidateText(
+            SaveStorageCandidate candidate,
+            out string text,
+            out string error)
+        {
+            return _saveSystem.TryReadCandidateText(candidate, out text, out error);
         }
     }
 }

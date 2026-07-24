@@ -7,7 +7,9 @@
 - `TryLoad` reads primary text, prepares it completely, and returns only isolated publishable settings.
 - `TrySave` prepares a caller-owned snapshot, writes canonical output to temp, and commits only after exact temp reread verification.
 - `DiscoverCandidates` returns read-only canonical and explicit legacy descriptors.
+- `TryPrepareCandidate` classifies a discovered candidate without writing it.
 - `TryCommitCandidate` prepares a discovered text or decoded legacy candidate before any canonical write.
+- `PrepareText` and `TryReadCandidateText` support explicit startup clipboard/copy actions without bypassing preparation or storage ownership.
 
 ## Data flow
 
@@ -23,12 +25,17 @@ Candidate commit:
 
 read-only descriptor → text read or adapter-decoded settings → preparation → same verified transaction as a normal save.
 
+Startup selection:
+
+discovery → read-only `TryPrepareCandidate` attempts → `StartupSaveRecoveryCoordinator` decision → optional verified winner commit → one-shot Oracle publication.
+
 ## Save/load implications
 
 - A failed preparation never calls transactional storage.
 - Future, corrupt, migration-failing, validation-failing, or serialization-failing candidates cannot be committed.
-- `LastLoadPreparation` retains classification for Stage 3 startup recovery policy.
-- When Oracle sees an existing canonical artifact that does not prepare, ordinary canonical writes remain blocked so the artifact cannot be silently overwritten before recovery.
+- `LastLoadPreparation` retains primary-load classification for diagnostics.
+- Future/all-invalid startup outcomes never call transactional storage.
+- When startup cannot produce a prepared winner, ordinary canonical writes remain blocked so artifacts cannot be silently overwritten before explicit recovery/reset.
 
 ## Performance pitfalls
 
@@ -42,3 +49,4 @@ read-only descriptor → text read or adapter-decoded settings → preparation �
 3. Confirm a successful load returns an object distinct from its decoded source.
 4. Confirm every rejected candidate leaves canonical bytes unchanged.
 5. Confirm `UserSettings/EditorUserSettings.asset` remains excluded.
+6. Run `StartupSaveRecoveryStage3Tests`.

@@ -20,7 +20,7 @@ namespace Expansion
     /// <remarks>
     /// Runtime.
     /// <para>Primary entry points: <see cref="Load"/>, <see cref="WipeAllData"/>, <see cref="LoadState"/>.</para>
-    /// <para>Owns: startup load-source selection, post-preparation publication, and wipe orchestration.</para>
+    /// <para>Owns: compatibility load fallback, post-preparation publication, and wipe orchestration.</para>
     /// <para>Diagnostics: writes one tagged warning per save lifecycle event plus offline-time replay data via
     /// <see cref="AwayForSeconds"/>.</para>
     /// <para>Delegates: ES3 artifact probing to <see cref="LegacyEs3Save"/>, codec/storage to
@@ -32,7 +32,8 @@ namespace Expansion
     /// wrapping <see cref="SaveSystem"/>, <see cref="SavePreparationPipeline"/>, and
     /// <see cref="OdinStringFileStorage"/>).</para>
     /// <para>Interacts with:
-    /// callers include Unity lifecycle via <c>Oracle.Start()</c> and debug UI buttons; callees include
+    /// callers include Unity lifecycle via <c>Oracle.Start()</c> and debug UI buttons; prepared startup selection
+    /// delegates to <c>Assets/Scripts/Expansion/Oracle.StartupRecovery.cs</c>; compatibility callees include
     /// <see cref="SaveLoadCandidateSelector"/>, <see cref="LegacyEs3Save"/>, and migration routines in
     /// <c>Assets/Scripts/Expansion/Oracle.Migrations.cs</c>.</para>
     /// <para>Change notes:
@@ -396,6 +397,13 @@ namespace Expansion
             SetSaveReady(false);
             BeginColdStartGate(isColdStartLoad);
             WipeSaveData();
+
+            // Production startup uses Stage 3 prepared candidate orchestration. Non-production test stores retain
+            // the compatibility path below so narrow lifecycle seam tests do not need filesystem recovery behavior.
+            if (TryRunPreparedStartupRecovery(isColdStartLoad))
+            {
+                return;
+            }
 
             // Canonical on-disk save: text file containing the exact clipboard string (IDB1:...).
             // This path is intended to replace ES3 as the primary persistence mechanism, while ES3 remains

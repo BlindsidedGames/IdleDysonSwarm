@@ -3,31 +3,31 @@
 ## Contract / behavior expectations
 - `Load()` prefers canonical save storage first (`idle_dyson_swarm_save.txt`).
 - Canonical load/save routes through `IPreparedSaveStore` (default `CanonicalSaveStore`) and publishes canonical settings only after decode, schema gate, deep-copy migration/normalization, and validation succeed.
-- An existing canonical artifact that does not prepare is preserved and blocks ordinary canonical writes until explicit recovery/reset clears the block.
-- Stage 2 discovers canonical temp/backups and explicit legacy candidates but does not yet select/restore them automatically; that startup decision and blocking UI belong to Stage 3.
-- Legacy fallback selection is version/timestamp/source-priority based through `SaveLoadCandidateSelector`.
-- If no candidate can be loaded and ES3 access was broken, legacy ES3 artifacts are archived as `.corrupt.*` for support triage.
-- If load succeeds from any legacy source, canonical save is immediately rewritten so subsequent launches avoid legacy paths.
+- Production startup delegates selection to `Oracle.StartupRecovery` and `StartupSaveRecoveryCoordinator`.
+- A valid primary publishes without a write. Otherwise canonical temp/backups are prepared newest-first; the first valid candidate is restored with the verified transactional writer, followed by explicit legacy candidates if needed.
+- Any encountered future schema stops fallback. All-invalid or recovery-write-failed outcomes preserve artifacts and block startup, canonical writes, offline replay, and new-save creation.
+- A true first run is only the no-artifact outcome; undecodable legacy paths count as artifacts.
+- Successful automatic recovery is logged but does not interrupt the player.
+- Narrow tests that inject a non-production `ISaveStore` retain the prior compatibility load path.
 - Cold start now opens a replay gate (`_coldStartReplayPending`) that allows at most one lifecycle save before replay completes, and suppresses quit-timestamp updates during that gated save.
 - Startup replay now runs one frame after `Load()` (`yield return null`) instead of a fixed `0.1s` delay.
 - After replay applies with a quit timestamp input, `dateQuitString` is consumed in memory (cleared) to reduce duplicate replay windows.
 
 ## Data flow
 1. `Load()` resets in-memory state with `WipeSaveData()`.
-2. Attempts canonical load via `_saveStore` (`CanonicalSaveStore -> SaveSystem -> SavePreparationPipeline`).
-   - Success publishes the already migrated/validated copy.
-   - Failure preserves the artifact and enables the canonical write block.
-3. If needed, probes:
-   - `ES3` default key (`saveSettings`),
-   - `LegacyEs3Save.TryRecoverDefaultSave` (main + backup + archived artifacts),
-   - legacy Odin JSON (`betaTestTwo.idsOdin`).
-4. Best candidate is applied with `ApplyLoadedSettings()`.
-5. Legacy/new state still runs `ApplyMigrations()`; already prepared canonical state skips the duplicate migration pass.
-6. Replay coroutine runs one frame later:
+2. Production `CanonicalSaveStore` startup discovers canonical and explicit legacy candidates without mutation.
+3. `StartupSaveRecoveryCoordinator` prepares in order:
+   - primary,
+   - canonical temp/backups newest-first,
+   - explicit legacy candidates newest-first.
+4. Primary success publishes directly. A recovery winner is transactionally committed before publication.
+5. `StartupRecoveryPublicationGate` authorizes exactly one `ApplyLoadedSettings()` call and one replay schedule.
+6. Blocking outcomes keep the persistent Load-scene canvas open and pause scaled gameplay.
+7. Replay coroutine runs one frame later only after successful publication:
    - computes away span (`AwayForSeconds`)
    - dispatches `AwayFor` subscribers
    - consumes `dateQuitString` in memory when replay used quit timestamp input
-7. Cold-start gate releases and autosave readiness is restored.
+8. Cold-start gate releases and autosave readiness is restored.
 
 ## Offline timing diagnostics
 - Runtime emits `[OfflineTimeDiag]` warnings from:
@@ -61,8 +61,9 @@
 - Legacy Odin filename remains derived from `fileName` (`betaTestTwo.idsOdin`).
 - Canonical file path is managed by `SavePaths`; changing path/name requires coordinated temp/backup discovery, wipe, and recovery updates.
 - Verified canonical writes create/read/prepare a temp file before backing up and atomically replacing canonical data.
-- A failed canonical preparation may allow a legacy candidate to run in memory, but it cannot overwrite the failed artifact before Stage 3 recovery policy.
-- Recovery behavior relies on `LegacyEs3Save` trust ordering; changing it can alter which artifact wins for users with multiple backups.
+- A failed primary is preserved as a rotating backup before a verified recovery winner replaces canonical storage.
+- Startup clipboard import clears historical `dateQuitString`, records a fresh successful-load timestamp, commits transactionally, then reloads from scene zero.
+- Blocking support export copies artifact bytes into a new local folder and never moves or overwrites sources.
 
 ## Performance pitfalls
 - Artifact recovery can scan multiple files (`main`, `.bac`, `.tmp.bak`, `.tmp`, `.corrupt.*`), so avoid expensive parsing in each probe.
@@ -77,4 +78,6 @@
 2. Launch with valid canonical save: confirm `Loaded with canonical save file` and no second migration pass.
 3. Remove canonical file but keep valid ES3 file: confirm ES3 fallback loads and canonical file is rewritten.
 4. Provide AES-encrypted `SaveFile.es3` legacy artifact: confirm recovery succeeds (no `unrecoverable` archive on first run with fix).
-5. With an invalid canonical artifact: confirm it remains byte-identical and ordinary save attempts are blocked.
+5. With an invalid canonical plus valid backup: confirm silent automatic restore and failed-primary backup preservation.
+6. With all invalid or future-version artifacts: confirm the blocking Load-scene panel appears, gameplay remains paused, and no offline replay/write occurs.
+7. Verify copy/details/export actions are non-destructive and reset requires arm then confirm.

@@ -21,19 +21,21 @@
 1. Trigger: `Oracle.Start()` (`Assets/Scripts/Expansion/Oracle.cs`)
 2. Service chain:
    - `Load()`
-   - canonical load via `_saveStore.TryLoad(...)` (`CanonicalSaveStore -> SaveSystem`)
-   - legacy fallback selection (`SaveLoadCandidateSelector`, ES3 probes, legacy Odin file probes)
+   - deterministic recovery via `StartupSaveRecoveryCoordinator`
+   - read-only primary/temp/backup/legacy preparation through `CanonicalSaveStore -> SaveSystem`
+   - verified transactional restore before publication when primary is invalid
 3. Persistence:
    - canonical: `ISaveStore` (`Assets/Scripts/Systems/Save/ISaveStore.cs`)
    - underlying storage: `SaveSystem` + `ISaveStorage` (`OdinStringFileStorage`)
 4. Side effects:
-   - `ApplyLoadedSettings(...)`
-   - `ApplyMigrations()`
+   - one-shot `ApplyLoadedSettings(...)` only for a prepared winner
    - cold-start gate start (`_coldStartReplayPending=true` on first load only)
+   - `StartupRecoveryPublicationGate` authorizes one replay schedule
    - `AwayForCoroutine()` one frame later (`yield return null`) then `AwayForSeconds()`
    - quit timestamp consumed in memory after replay when replay used quit input
    - autosave readiness via `SetSaveReady(true)` released after cold-start replay finalization (immediate on non-cold loads)
    - canonical rewrite after legacy load
+   - future/all-invalid/write-failed outcomes instead keep load/save readiness false, pause gameplay, and schedule no replay
 
 ### Quit/background save path
 1. Trigger:
@@ -128,6 +130,9 @@
   - verifies replay consumes `dateQuitString` in memory after grant.
 - `Assets/Editor/Tests/Save/CanonicalSaveStoreTests.cs`
   - canonical save-store roundtrip and latest-write-wins persistence.
+- `Assets/Editor/Tests/Save/StartupSaveRecoveryStage3Tests.cs`
+  - deterministic automatic recovery, future/all-invalid blocking, failed-primary preservation, and one-shot publication/replay.
+  - explicit clipboard baseline, support export immutability, first-run distinction, and two-step reset authorization.
 
 ## Headless test commands
 

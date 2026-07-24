@@ -2,7 +2,7 @@
  * Purpose: Exposes existing ES3 and legacy Odin readers as explicit read-only prepared-save candidate descriptors.
  * Runs: Runtime recovery discovery and Unity Editor tests where adapter output is injected.
  * Primary entry points: LegacySaveCandidateAdapter.Discover and FromExistingAdapterResults.
- * Owns: Adapter invocation and deterministic descriptor ordering only.
+ * Owns: Adapter invocation plus deterministic descriptors for both decoded and still-invalid legacy artifacts.
  * Delegates: ES3 probing to LegacyEs3Save and Odin JSON decoding to SaveLoadCandidateSelector.
  *
  * Interacts with:
@@ -12,12 +12,14 @@
  *
  * Change notes:
  * - Discovery must remain read-only; archiving/deleting legacy artifacts is not permitted here.
+ * - Undecodable artifact paths must remain visible so startup blocks instead of treating corruption as first launch.
  * - Adapter-decoded settings are immutable inputs and are deep-copied by SavePreparationPipeline.
  * - ES3 remains best-effort until an authentic fixture is available.
  */
 
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using Expansion;
 
@@ -35,8 +37,9 @@ namespace Systems.Save
         /// <returns>Deterministically ordered explicit legacy candidates.</returns>
         public static IReadOnlyList<SaveStorageCandidate> Discover(string legacyOdinPath)
         {
-            return FromExistingAdapterResults(
+            return FromExistingAdapterResultsAndArtifacts(
                 LegacyEs3Save.GetRecoverableCandidates(),
+                LegacyEs3Save.GetExistingArtifactPaths(),
                 legacyOdinPath);
         }
 
@@ -50,6 +53,24 @@ namespace Systems.Save
             IEnumerable<LegacyEs3RecoveryCandidate> es3Candidates,
             string legacyOdinPath)
         {
+            return FromExistingAdapterResultsAndArtifacts(
+                es3Candidates,
+                Array.Empty<string>(),
+                legacyOdinPath);
+        }
+
+        /// <summary>
+        /// Converts decoded results and preserves descriptors for existing artifacts that failed adapter decoding.
+        /// </summary>
+        /// <param name="es3Candidates">The decoded read-only ES3 results.</param>
+        /// <param name="es3ArtifactPaths">Every existing ES3 artifact path.</param>
+        /// <param name="legacyOdinPath">The exact legacy Odin JSON path.</param>
+        /// <returns>Deterministically ordered decoded and invalid legacy candidates.</returns>
+        public static IReadOnlyList<SaveStorageCandidate> FromExistingAdapterResultsAndArtifacts(
+            IEnumerable<LegacyEs3RecoveryCandidate> es3Candidates,
+            IEnumerable<string> es3ArtifactPaths,
+            string legacyOdinPath)
+        {
             var candidates = new List<SaveStorageCandidate>();
             foreach (LegacyEs3RecoveryCandidate legacy in es3Candidates ??
                                                               Array.Empty<LegacyEs3RecoveryCandidate>())
@@ -61,11 +82,28 @@ namespace Systems.Save
                     legacy.Settings));
             }
 
-            if (SaveLoadCandidateSelector.TryLoadLegacyOdinJsonSave(
+            var decodedEs3Paths = new HashSet<string>(
+                candidates.Select(candidate => candidate.Path),
+                StringComparer.Ordinal);
+            foreach (string path in es3ArtifactPaths ?? Array.Empty<string>())
+            {
+                if (string.IsNullOrWhiteSpace(path) || decodedEs3Paths.Contains(path) || !File.Exists(path))
+                {
+                    continue;
+                }
+
+                candidates.Add(new SaveStorageCandidate(
+                    SaveStorageCandidateSource.LegacyEs3,
+                    path,
+                    File.GetLastWriteTimeUtc(path)));
+            }
+
+            bool odinDecoded = SaveLoadCandidateSelector.TryLoadLegacyOdinJsonSave(
                     legacyOdinPath,
                     out Oracle.SaveDataSettings odin,
                     out _) &&
-                odin != null)
+                odin != null;
+            if (odinDecoded)
             {
                 DateTime? timestamp = SaveLoadCandidateSelector.TryGetCandidateTimestampUtc(odin, out DateTime utc)
                     ? utc
@@ -75,6 +113,13 @@ namespace Systems.Save
                     legacyOdinPath,
                     timestamp,
                     odin));
+            }
+            else if (!string.IsNullOrWhiteSpace(legacyOdinPath) && File.Exists(legacyOdinPath))
+            {
+                candidates.Add(new SaveStorageCandidate(
+                    SaveStorageCandidateSource.LegacyOdinJson,
+                    legacyOdinPath,
+                    File.GetLastWriteTimeUtc(legacyOdinPath)));
             }
 
             return candidates

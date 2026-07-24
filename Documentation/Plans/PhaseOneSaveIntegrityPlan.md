@@ -1,6 +1,6 @@
 # Phase One Save-Integrity Implementation Plan
 
-Status: Stage 2 implemented locally; awaiting review before Stage 3
+Status: Stage 3 implemented locally; awaiting final review before Stage 4
 Last updated: 2026-07-24
 Primary validation target: Windows Editor and Windows player
 Deferred validation targets: macOS, iOS, and other device-specific coverage
@@ -210,7 +210,7 @@ Required Stage 2 tests:
 - Future, corrupt, and migration-failing candidates cannot be committed.
 - Lowercase input normalizes to uppercase output only after a successful prepared save.
 
-Stage 2 does not yet change the startup UI.
+Stage 2 provides the preparation, transaction, and discovery foundation consumed by Stage 3.
 
 ## Stage 3 — Startup recovery and blocking recovery UI
 
@@ -245,6 +245,15 @@ Required Stage 3 tests:
 - Recovery writes preserve the failed primary for support.
 - Startup publishes exactly one prepared candidate.
 - Offline replay runs once and only after a successful startup load.
+
+Stage 3 implementation notes:
+
+- `StartupSaveRecoveryCoordinator` owns deterministic primary/canonical/legacy selection without publishing state.
+- Automatic canonical or legacy recovery remains silent and uses the verified transactional writer.
+- Future, all-invalid, and recovery-write-failed outcomes keep `Loaded` and save readiness false, do not schedule offline replay, and display the persistent Load-scene blocking panel.
+- The panel provides primary-copy, classified-details copy, byte-preserving local artifact export, startup-only prepared clipboard import, and an arm-then-confirm permanent reset.
+- Undecodable legacy paths remain explicit artifacts so corruption cannot be mistaken for a first launch.
+- Startup clipboard import clears the historical quit timestamp and establishes a fresh local load timestamp before verified commit; Stage 4 still owns unifying the remaining in-game/manual/console entry points.
 
 ## Stage 4 — Clipboard/manual recovery unification and scoped cleanup
 

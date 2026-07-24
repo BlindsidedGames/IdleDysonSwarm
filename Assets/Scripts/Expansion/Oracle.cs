@@ -326,6 +326,9 @@ private void PackSettingsFlags()
             return (flags & (1UL << bit)) != 0;
         }
 
+        /// <summary>
+        /// Initializes gameplay only after prepared startup recovery either succeeds or confirms a true first run.
+        /// </summary>
         private void Start()
         {
             SkillTreeManager[] listOfSkillTreeManagersToAdd = skillsHolder.GetComponentsInChildren<SkillTreeManager>();
@@ -336,6 +339,12 @@ private void PackSettingsFlags()
             Loaded = false;
             SetSaveReady(false);
             Load();
+            if (_startupRecoveryBlocked)
+            {
+                ShowBlockingStartupRecovery();
+                return;
+            }
+
             Loaded = true;
             Application.targetFrameRate =
                 saveSettings.frameRate > 0

@@ -29,7 +29,8 @@ namespace Systems.Save
     /// Purpose: legacy ES3 artifact helpers used to import pre-canonical saves during startup recovery.
     /// Where it runs: runtime only (called from Oracle load/wipe flows).
     /// Primary entry points: <see cref="DeleteDefaultArtifacts"/>, <see cref="ArchiveDefaultArtifacts"/>,
-    /// <see cref="TryRecoverDefaultSave"/>, <see cref="GetRecoverableCandidates"/>.
+    /// <see cref="TryRecoverDefaultSave"/>, <see cref="GetRecoverableCandidates"/>,
+    /// <see cref="GetExistingArtifactPaths"/>.
     /// Owns: ES3 file artifact probing, candidate ranking, and legacy format load attempts.
     /// Delegates: selected save adoption/migrations to <c>Expansion.Oracle</c>.
     /// </summary>
@@ -170,6 +171,29 @@ namespace Systems.Save
             return recoverable;
         }
 
+        /// <summary>
+        /// Returns every existing default ES3 main/temp/backup/archive artifact path without reading or changing it.
+        /// </summary>
+        /// <returns>Deterministically ordered existing artifact paths.</returns>
+        public static IReadOnlyList<string> GetExistingArtifactPaths()
+        {
+            try
+            {
+                ES3Settings settings = new ES3Settings();
+                if (settings.location != ES3.Location.File || string.IsNullOrEmpty(settings.FullPath))
+                {
+                    return Array.Empty<string>();
+                }
+
+                return BuildCandidatePathList(settings.FullPath)
+                    .FindAll(File.Exists);
+            }
+            catch
+            {
+                return Array.Empty<string>();
+            }
+        }
+
         private static List<string> BuildCandidatePathList(string fullPath)
         {
             var candidates = new List<string>
@@ -188,7 +212,9 @@ namespace Systems.Save
                 string baseName = Path.GetFileName(fullPath);
                 if (!string.IsNullOrEmpty(dir) && Directory.Exists(dir))
                 {
-                    foreach (string archived in Directory.GetFiles(dir, baseName + ".corrupt.*"))
+                    string[] archivedPaths = Directory.GetFiles(dir, baseName + ".corrupt.*");
+                    Array.Sort(archivedPaths, StringComparer.Ordinal);
+                    foreach (string archived in archivedPaths)
                     {
                         candidates.Add(archived);
                     }

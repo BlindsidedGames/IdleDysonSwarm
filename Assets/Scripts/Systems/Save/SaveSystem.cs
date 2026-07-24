@@ -1,7 +1,7 @@
 /*
  * Purpose: Orchestrates prepared canonical loads, verified transactional saves, and read-only candidate operations.
  * Runs: Runtime persistence and Unity Editor save-integrity tests.
- * Primary entry points: TryLoad, TrySave, DiscoverCandidates, and TryCommitCandidate.
+ * Primary entry points: TryLoad, TrySave, DiscoverCandidates, TryPrepareCandidate, and TryCommitCandidate.
  * Owns: Coordination between preparation and transactional storage without publishing runtime state.
  * Delegates: Decode/migration/validation to SavePreparationPipeline and files/backups/atomic replacement to storage.
  *
@@ -14,7 +14,7 @@
  * Change notes:
  * - TryLoad returns only successful prepared settings; callers may publish them after this method succeeds.
  * - TrySave never writes caller-owned settings directly and verifies the exact reread temp artifact before replacement.
- * - Candidate commits must prepare first; failed future/corrupt/migration/validation candidates cannot touch canonical data.
+ * - Candidate preparation is read-only; commits must prepare first and rejected candidates cannot touch canonical data.
  */
 
 using System;
@@ -146,13 +146,13 @@ namespace Systems.Save
         }
 
         /// <summary>
-        /// Prepares a discovered candidate and transactionally commits it only when every stage succeeds.
+        /// Reads and prepares one discovered candidate without writing or publishing it.
         /// </summary>
         /// <param name="candidate">The read-only candidate descriptor.</param>
-        /// <param name="preparation">The candidate's classified preparation result.</param>
-        /// <param name="error">The read, preparation, or transaction failure.</param>
-        /// <returns><see langword="true"/> only after the candidate is committed canonically.</returns>
-        public bool TryCommitCandidate(
+        /// <param name="preparation">The classified preparation result.</param>
+        /// <param name="error">The read or preparation failure.</param>
+        /// <returns><see langword="true"/> only when the candidate is publishable.</returns>
+        public bool TryPrepareCandidate(
             SaveStorageCandidate candidate,
             out PreparedSaveResult preparation,
             out string error)
@@ -186,7 +186,64 @@ namespace Systems.Save
                 preparation = Preparation.PrepareText(text);
             }
 
+            if (!preparation.Succeeded)
+            {
+                error = preparation.Error;
+                return false;
+            }
+
+            return true;
+        }
+
+        /// <summary>
+        /// Prepares clipboard or support text without reading or changing storage.
+        /// </summary>
+        /// <param name="text">The candidate envelope text.</param>
+        /// <returns>The classified preparation result.</returns>
+        public PreparedSaveResult PrepareText(string text)
+        {
+            return Preparation.PrepareText(text);
+        }
+
+        /// <summary>
+        /// Prepares a discovered candidate and transactionally commits it only when every stage succeeds.
+        /// </summary>
+        /// <param name="candidate">The read-only candidate descriptor.</param>
+        /// <param name="preparation">The candidate's classified preparation result.</param>
+        /// <param name="error">The read, preparation, or transaction failure.</param>
+        /// <returns><see langword="true"/> only after the candidate is committed canonically.</returns>
+        public bool TryCommitCandidate(
+            SaveStorageCandidate candidate,
+            out PreparedSaveResult preparation,
+            out string error)
+        {
+            if (!TryPrepareCandidate(candidate, out preparation, out error))
+            {
+                return false;
+            }
             return TryCommitPrepared(preparation, out _, out error);
+        }
+
+        /// <summary>
+        /// Reads a filesystem-backed candidate for explicit support copy actions without changing it.
+        /// </summary>
+        /// <param name="candidate">The discovered descriptor.</param>
+        /// <param name="text">The exact trimmed text returned by storage.</param>
+        /// <param name="error">The read failure.</param>
+        /// <returns><see langword="true"/> when candidate text is available.</returns>
+        public bool TryReadCandidateText(
+            SaveStorageCandidate candidate,
+            out string text,
+            out string error)
+        {
+            text = string.Empty;
+            if (_transactionalStorage == null)
+            {
+                error = "Storage does not support candidate reads.";
+                return false;
+            }
+
+            return _transactionalStorage.TryReadCandidateText(candidate, out text, out error);
         }
 
         /// <summary>
