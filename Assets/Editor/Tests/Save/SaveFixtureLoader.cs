@@ -1,8 +1,8 @@
 /*
  * Purpose: Loads immutable save-compatibility fixtures and their manifest for EditMode characterization tests.
  * Runs: Unity Editor test assemblies only.
- * Primary entry points: SaveFixtureLoader.LoadManifest, GetFixture, LoadBytes, TryDecode, and ReadSentinelValue.
- * Owns: Test-only path resolution, fresh byte reads, SHA-256 fingerprints, manifest parsing, and format-specific decode routing.
+ * Primary entry points: SaveFixtureLoader.LoadManifest, GetFixture, LoadBytes, TryDecode, CreateDeepCopy, and ReadSentinelValue.
+ * Owns: Test-only path resolution, fresh byte reads, deep copies, SHA-256 fingerprints, manifest parsing, and decode routing.
  * Delegates: Envelope decoding and Odin deserialization to Systems.Save.SaveCodec.
  *
  * Interacts with:
@@ -155,6 +155,36 @@ namespace Tests.Save
                 default:
                     return false;
             }
+        }
+
+        /// <summary>
+        /// Creates an independent Odin deep copy for migration and normalization characterization.
+        /// </summary>
+        /// <param name="settings">The decoded source object to copy.</param>
+        /// <returns>An independent deep copy of the complete save graph.</returns>
+        internal static Oracle.SaveDataSettings CreateDeepCopy(Oracle.SaveDataSettings settings)
+        {
+            if (settings == null)
+            {
+                throw new ArgumentNullException(nameof(settings));
+            }
+
+            return (Oracle.SaveDataSettings)SerializationUtility.CreateCopy(settings);
+        }
+
+        /// <summary>
+        /// Computes a deterministic SHA-256 digest of an Odin-binary serialized save graph.
+        /// </summary>
+        /// <param name="settings">The save graph to serialize and hash.</param>
+        /// <returns>The lowercase hexadecimal SHA-256 digest.</returns>
+        internal static string ComputeSaveDataSha256(Oracle.SaveDataSettings settings)
+        {
+            if (settings == null)
+            {
+                throw new ArgumentNullException(nameof(settings));
+            }
+
+            return ComputeSha256(SaveCodec.SerializeSaveSettingsBinary(settings));
         }
 
         /// <summary>

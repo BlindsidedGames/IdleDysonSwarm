@@ -12,8 +12,7 @@
  *
  * Change notes:
  * - Guaranteed fixtures must never be regenerated or rewritten by tests.
- * - Lowercase idb1 is intentionally characterized as unsupported in Stage 1A; changing that assertion requires the
- *   narrowly scoped Stage 1B production compatibility change and its review.
+ * - Uppercase and lowercase IDB1 input are compatibility guarantees; canonical output remains uppercase IDB1.
  * - Sentinel changes require evidence that the source artifact changed intentionally; never refresh hashes silently.
  */
 
@@ -151,10 +150,10 @@ namespace Tests.Save
         }
 
         /// <summary>
-        /// Records the current lowercase idb1 failure as the explicit narrowly scoped Stage 1B compatibility change.
+        /// Verifies lowercase idb1 input decodes while canonical re-encoding remains uppercase IDB1.
         /// </summary>
         [Test]
-        public void CanonicalLowercaseIdb1_CurrentlyFailsAndDefinesStage1BCompatibilityWork()
+        public void CanonicalLowercaseIdb1_DecodesAndReencodesWithUppercaseCanonicalPrefix()
         {
             SaveFixtureDefinition fixture = SaveFixtureLoader.GetFixture(_manifest, Schema8CanonicalIdb1Id);
             string uppercase = SaveFixtureLoader.LoadText(fixture);
@@ -162,12 +161,18 @@ namespace Tests.Save
             Oracle publicationBefore = Oracle.oracle;
             string fixtureFingerprintBefore = SaveFixtureLoader.ComputeFixtureDirectoryFingerprint();
 
-            bool decoded = SaveCodec.TryDecodeSaveSettings(lowercase, out Oracle.SaveDataSettings settings);
+            bool decoded = SaveCodec.TryDecodeSaveSettings(
+                lowercase,
+                out Oracle.SaveDataSettings settings,
+                out SaveDecodeFailureReason failureReason);
 
-            Assert.IsFalse(
-                decoded,
-                "When Stage 1B adds case-insensitive IDB1 input support, update this characterization to require success.");
-            Assert.IsNull(settings, "Failed lowercase decoding must not return publishable settings.");
+            Assert.IsTrue(decoded);
+            Assert.AreEqual(SaveDecodeFailureReason.None, failureReason);
+            Assert.IsNotNull(settings);
+            Assert.AreEqual(fixture.sourceSchema, settings.saveVersion);
+            string reencoded = SaveCodec.EncodeBinary(SaveCodec.SerializeSaveSettingsBinary(settings), compress: true);
+            Assert.IsTrue(reencoded.StartsWith(SaveCodec.BinarySavePrefix, StringComparison.Ordinal));
+            Assert.IsFalse(reencoded.StartsWith("idb1:", StringComparison.Ordinal));
             Assert.AreSame(publicationBefore, Oracle.oracle, "Decoder characterization must not publish runtime state.");
             Assert.AreEqual(
                 fixtureFingerprintBefore,
@@ -176,21 +181,31 @@ namespace Tests.Save
         }
 
         /// <summary>
-        /// Verifies malformed and unsupported envelopes fail without runtime publication or fixture writes.
+        /// Verifies malformed and unsupported envelopes return classified failures without publication or fixture writes.
         /// </summary>
         /// <param name="candidate">The malformed or unsupported candidate text.</param>
-        [TestCase("IDB1:not-valid-base64")]
-        [TestCase("IDB2:SGVsbG8=")]
-        [TestCase("IDSZ2:SGVsbG8=")]
-        public void MalformedOrUnsupportedEnvelope_FailsWithoutPublicationOrWrites(string candidate)
+        /// <param name="expectedFailure">The expected stable failure classification.</param>
+        [TestCase("", SaveDecodeFailureReason.EmptyInput)]
+        [TestCase("IDB1:", SaveDecodeFailureReason.TruncatedPayload)]
+        [TestCase("IDB1:not-valid-base64", SaveDecodeFailureReason.InvalidBase64)]
+        [TestCase("IDB1:AAAA", SaveDecodeFailureReason.CorruptPayload)]
+        [TestCase("IDB2:SGVsbG8=", SaveDecodeFailureReason.UnsupportedEnvelope)]
+        [TestCase("IDSZ2:SGVsbG8=", SaveDecodeFailureReason.UnsupportedEnvelope)]
+        public void MalformedOrUnsupportedEnvelope_ReturnsClassifiedFailureWithoutPublicationOrWrites(
+            string candidate,
+            SaveDecodeFailureReason expectedFailure)
         {
             Oracle publicationBefore = Oracle.oracle;
             string fixtureFingerprintBefore = SaveFixtureLoader.ComputeFixtureDirectoryFingerprint();
 
-            bool decoded = SaveCodec.TryDecodeSaveSettings(candidate, out Oracle.SaveDataSettings settings);
+            bool decoded = SaveCodec.TryDecodeSaveSettings(
+                candidate,
+                out Oracle.SaveDataSettings settings,
+                out SaveDecodeFailureReason failureReason);
 
             Assert.IsFalse(decoded);
             Assert.IsNull(settings);
+            Assert.AreEqual(expectedFailure, failureReason);
             Assert.AreSame(publicationBefore, Oracle.oracle, "Failed decoding must not publish runtime state.");
             Assert.AreEqual(
                 fixtureFingerprintBefore,

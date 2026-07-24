@@ -1,3 +1,21 @@
+/*
+ * Purpose: Executes an ordered migration registry against Oracle save data with optional snapshots and ensure steps.
+ * Runs: Runtime load migration and Unity Editor migration/compatibility tests.
+ * Primary entry point: MigrationRunner.Run.
+ * Owns: Version ordering, future-version rejection, step execution, snapshot capture, and dry-run restoration.
+ * Delegates: Version transforms to MigrationStep actions and shape normalization to the caller-provided ensure action.
+ *
+ * Interacts with:
+ * - Assets/Scripts/Expansion/Oracle.Migrations.cs.
+ * - Systems.Migrations.MigrationRegistry, MigrationRunOptions, MigrationRunResult, and MigrationSnapshot.
+ * - Assets/Editor/Tests/Save/SaveMigrationFixtureCharacterizationTests.cs.
+ *
+ * Change notes:
+ * - Future schemas must stop before context creation, step execution, or ensure/normalization actions.
+ * - Migration ordering and version advancement are save-compatibility contracts coordinated with Oracle.CurrentSaveVersion.
+ * - Dry runs temporarily replace Oracle.saveSettings and must always restore the original reference.
+ */
+
 using System;
 using System.Globalization;
 using Expansion;
@@ -5,8 +23,18 @@ using Sirenix.Serialization;
 
 namespace Systems.Migrations
 {
+    /// <summary>
+    /// Executes versioned save migrations and rejects unsupported future schemas before normalization.
+    /// </summary>
     public static class MigrationRunner
     {
+        /// <summary>
+        /// Runs the supplied migration registry against the Oracle save selected by the caller.
+        /// </summary>
+        /// <param name="oracle">The Oracle instance owning the selected save reference.</param>
+        /// <param name="registry">The ordered migration registry.</param>
+        /// <param name="options">Execution, snapshot, and ensure-step options.</param>
+        /// <returns>The non-throwing run result unless <see cref="MigrationRunOptions.ThrowOnError"/> requests exceptions.</returns>
         public static MigrationRunResult Run(Oracle oracle, MigrationRegistry registry, MigrationRunOptions options)
         {
             if (oracle == null) throw new ArgumentNullException(nameof(oracle));
@@ -25,6 +53,18 @@ namespace Systems.Migrations
             if (originalSave == null)
             {
                 result.Succeeded = false;
+                return result;
+            }
+
+            if (originalSave.saveVersion > registry.LatestVersion)
+            {
+                result.Succeeded = false;
+                if (options.ThrowOnError)
+                {
+                    throw new InvalidOperationException(
+                        $"Save schema {originalSave.saveVersion} is newer than supported schema {registry.LatestVersion}.");
+                }
+
                 return result;
             }
 
