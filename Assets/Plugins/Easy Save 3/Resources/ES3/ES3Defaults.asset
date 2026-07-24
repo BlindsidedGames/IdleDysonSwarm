@@ -37,7 +37,6 @@ MonoBehaviour:
     assemblyNames:
     - Assembly-CSharp
     - Assembly-CSharp-firstpass
-    - MCPForUnity.Runtime
     - QFSW.QC
     - QFSW.QC.Demo
     - QFSW.QC.Extras
@@ -50,6 +49,7 @@ MonoBehaviour:
     showAdvancedSettings: 0
   addMgrToSceneAutomatically: 0
   autoUpdateReferences: 1
+  onlyAddReferencesFromObjectsWithES3Referenceable: 0
   addAllPrefabsToManager: 1
   collectDependenciesDepth: 4
   collectDependenciesTimeout: 10
