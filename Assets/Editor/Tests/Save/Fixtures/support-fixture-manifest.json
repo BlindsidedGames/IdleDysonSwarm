@@ -1,0 +1,52 @@
+{
+  "fixtures": [
+    {
+      "id": "support-case-01-attached",
+      "fixturePath": "Assets/Editor/Tests/Save/Fixtures/support-case-01-attached-idb1.txt",
+      "sourceSchema": 11,
+      "sha256": "341450a13e25b60000674f5e1c0a3f56d2511ccebddaf6c138596e8ab0423219",
+      "format": "idb1-binary-gzip-base64",
+      "provenanceMonth": "2026-02",
+      "neutralCase": "historical-attached-save",
+      "expectedOutcome": "prepared-primary",
+      "expectedDecodeFailure": "None",
+      "limitation": "Exact attachment bytes; no surrounding mailbox content retained."
+    },
+    {
+      "id": "support-case-02-inline-a",
+      "fixturePath": "Assets/Editor/Tests/Save/Fixtures/support-case-02-inline-idb1.txt",
+      "sourceSchema": 0,
+      "sha256": "1453170946da5fb204a098ae4bec40a14d30640acad6c98bbb0d78fdd0ba2ee4",
+      "format": "idb1-binary-gzip-base64",
+      "provenanceMonth": "2026-02",
+      "neutralCase": "historical-inline-save-a",
+      "expectedOutcome": "prepared-primary",
+      "expectedDecodeFailure": "None",
+      "limitation": "Exact contiguous envelope token; surrounding mailbox whitespace and content excluded."
+    },
+    {
+      "id": "support-case-03-inline-b",
+      "fixturePath": "Assets/Editor/Tests/Save/Fixtures/support-case-03-inline-idb1.txt",
+      "sourceSchema": 10,
+      "sha256": "341747c7adae709990d93c028aa08345409985214fe8ee49314777abb3d6827a",
+      "format": "idb1-binary-gzip-base64",
+      "provenanceMonth": "2026-02",
+      "neutralCase": "historical-inline-save-b",
+      "expectedOutcome": "prepared-primary",
+      "expectedDecodeFailure": "None",
+      "limitation": "Exact contiguous envelope token; surrounding mailbox whitespace and content excluded."
+    },
+    {
+      "id": "support-case-04-cross-platform-import",
+      "fixturePath": "Assets/Editor/Tests/Save/Fixtures/support-case-04-cross-platform-import-idb1.txt",
+      "sourceSchema": -1,
+      "sha256": "29c53565a5072fcf548a909ed11f5b62af7d692188499b59a7dca46115fb4ce1",
+      "format": "idb1-binary-gzip-base64",
+      "provenanceMonth": "2026-03",
+      "neutralCase": "cross-platform-import-sample",
+      "expectedOutcome": "blocked-invalid-base64",
+      "expectedDecodeFailure": "InvalidBase64",
+      "limitation": "Exact malformed envelope token from a reported import failure; it is intentionally preserved and must not be repaired in place."
+    }
+  ]
+}

@@ -1,7 +1,7 @@
 # Phase One Save-Integrity Implementation Plan
 
 Status: Stage 3 implemented locally; awaiting final review before Stage 4
-Last updated: 2026-07-24
+Last updated: 2026-07-25
 Primary validation target: Windows Editor and Windows player
 Deferred validation targets: macOS, iOS, and other device-specific coverage
 
@@ -12,6 +12,11 @@ Phase One hardens the existing save system without broadly rewriting `Oracle` or
 **No Phase One save-system implementation may begin until the separate Unity 6.5 migration described as PR 0 has been reviewed and accepted.**
 
 The first unit after that gate is a tests-only fixture and decoder characterization change. It must not modify production save behavior.
+
+Post-Stage 3 fixture intake adds four neutral player-provided support envelopes without changing runtime behavior. Three
+decode and prepare through the current pipeline (source schemas 11, 0, and 10). The historical cross-platform import sample
+is byte-preserved as a classified `InvalidBase64` / `AllCandidatesInvalid` blocking case. Hashes, privacy rules, and usage
+are documented in `Documentation/Code/SupportSaveRegressionFixtures.md`.
 
 ## Current baseline and evidence
 

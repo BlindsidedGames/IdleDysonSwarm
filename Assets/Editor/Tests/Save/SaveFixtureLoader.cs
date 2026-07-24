@@ -1,13 +1,15 @@
 /*
  * Purpose: Loads immutable save-compatibility fixtures and their manifest for EditMode characterization tests.
  * Runs: Unity Editor test assemblies only.
- * Primary entry points: SaveFixtureLoader.LoadManifest, GetFixture, LoadBytes, TryDecode, CreateDeepCopy, and ReadSentinelValue.
+ * Primary entry points: SaveFixtureLoader.LoadManifest, LoadSupportManifest, GetFixture, LoadBytes, TryDecode,
+ * CreateDeepCopy, and ReadSentinelValue.
  * Owns: Test-only path resolution, fresh byte reads, deep copies, SHA-256 fingerprints, manifest parsing, and decode routing.
  * Delegates: Envelope decoding and Odin deserialization to Systems.Save.SaveCodec.
  *
  * Interacts with:
  * - Assets/Editor/Tests/Save/Fixtures/fixture-manifest.json: fixture metadata and durable sentinel contract.
- * - Assets/Editor/Tests/Save/SaveCodecFixtureCharacterizationTests.cs: only caller.
+ * - Assets/Editor/Tests/Save/Fixtures/support-fixture-manifest.json: privacy-safe support regression metadata.
+ * - Assets/Editor/Tests/Save/SaveCodecFixtureCharacterizationTests.cs and SupportSaveFixtureRegressionTests.cs.
  * - Systems.Save.SaveCodec: production decoder entry points under characterization.
  *
  * Change notes:
@@ -37,6 +39,33 @@ namespace Tests.Save
     internal sealed class SaveFixtureManifest
     {
         public SaveFixtureDefinition[] fixtures = Array.Empty<SaveFixtureDefinition>();
+    }
+
+    /// <summary>
+    /// Describes the controlled, privacy-safe support-save regression fixture manifest.
+    /// </summary>
+    [Serializable]
+    internal sealed class SupportSaveFixtureManifest
+    {
+        public SupportSaveFixtureDefinition[] fixtures = Array.Empty<SupportSaveFixtureDefinition>();
+    }
+
+    /// <summary>
+    /// Describes one neutral support-save envelope and its immutable regression contract.
+    /// </summary>
+    [Serializable]
+    internal sealed class SupportSaveFixtureDefinition
+    {
+        public string id;
+        public string fixturePath;
+        public int sourceSchema;
+        public string sha256;
+        public string format;
+        public string provenanceMonth;
+        public string neutralCase;
+        public string expectedOutcome;
+        public string expectedDecodeFailure;
+        public string limitation;
     }
 
     /// <summary>
@@ -72,6 +101,8 @@ namespace Tests.Save
     internal static class SaveFixtureLoader
     {
         internal const string ManifestPath = "Assets/Editor/Tests/Save/Fixtures/fixture-manifest.json";
+        internal const string SupportManifestPath =
+            "Assets/Editor/Tests/Save/Fixtures/support-fixture-manifest.json";
         internal const string FixtureDirectoryPath = "Assets/Editor/Tests/Save/Fixtures";
         internal const string OdinJsonFormat = "odin-json";
         internal const string DebugDtoFormat = "debug-dto-binary-gzip-base64";
@@ -88,6 +119,24 @@ namespace Tests.Save
             if (manifest == null || manifest.fixtures == null)
             {
                 throw new InvalidDataException($"Fixture manifest '{ManifestPath}' is missing or invalid.");
+            }
+
+            return manifest;
+        }
+
+        /// <summary>
+        /// Reads and parses a fresh privacy-safe support fixture manifest instance from disk.
+        /// </summary>
+        /// <returns>The parsed support fixture manifest.</returns>
+        internal static SupportSaveFixtureManifest LoadSupportManifest()
+        {
+            string json = File.ReadAllText(ResolveProjectPath(SupportManifestPath), Encoding.UTF8);
+            SupportSaveFixtureManifest manifest =
+                JsonUtility.FromJson<SupportSaveFixtureManifest>(json);
+            if (manifest == null || manifest.fixtures == null)
+            {
+                throw new InvalidDataException(
+                    $"Support fixture manifest '{SupportManifestPath}' is missing or invalid.");
             }
 
             return manifest;

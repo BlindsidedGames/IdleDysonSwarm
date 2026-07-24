@@ -36,6 +36,8 @@ discovery → read-only `TryPrepareCandidate` attempts → `StartupSaveRecoveryC
 - `LastLoadPreparation` retains primary-load classification for diagnostics.
 - Future/all-invalid startup outcomes never call transactional storage.
 - When startup cannot produce a prepared winner, ordinary canonical writes remain blocked so artifacts cannot be silently overwritten before explicit recovery/reset.
+- `SupportSaveFixtureRegressionTests` runs privacy-safe real support envelopes through decode, preparation, and Stage 3
+  primary selection. See `Documentation/Code/SupportSaveRegressionFixtures.md`.
 
 ## Performance pitfalls
 
@@ -50,3 +52,4 @@ discovery → read-only `TryPrepareCandidate` attempts → `StartupSaveRecoveryC
 4. Confirm every rejected candidate leaves canonical bytes unchanged.
 5. Confirm `UserSettings/EditorUserSettings.asset` remains excluded.
 6. Run `StartupSaveRecoveryStage3Tests`.
+7. Run `SupportSaveFixtureRegressionTests`.
