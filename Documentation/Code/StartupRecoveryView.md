@@ -1,42 +1,66 @@
 # StartupRecoveryView
 
-## Contract
+## Purpose
 
-`StartupRecoveryView` is the blocking player-facing surface hosted dynamically on the persistent canvas created by `Load.unity`. It receives an already classified `StartupRecoveryInteractionSession`; it does not implement save decoding, migration, candidate ordering, validation, storage replacement, or Oracle publication.
+`StartupRecoveryView` is the blocking player interface shown only when startup cannot safely publish a save. It explains the classified recovery outcome and exposes explicit import, export, copy, and two-step reset actions.
 
-The view appears only for:
+The view does not inspect, decode, migrate, delete, publish, or store save data. Those responsibilities remain in `StartupRecoveryInteractionSession`, `StartupSaveRecoveryCoordinator`, and the Stage 2 preparation/storage pipeline.
 
-- unsupported future schema,
-- all discovered candidates invalid,
-- valid recovery candidate whose safe canonical restore failed.
+## Visual contract
 
-## User-visible behavior
+The recovery modal follows the existing Idle Dyson Swarm UI:
 
-- Plain-language status explicitly says artifacts were preserved.
-- `Copy Primary Save` copies raw primary text without changing it.
-- `Copy Recovery Details` copies classifications, timestamps, and support paths.
-- `Export Save Artifacts` creates a new byte-preserving local bundle under `save_recovery_exports`.
-- `Import Save from Clipboard` prepares, clears historical replay input, transactionally commits, then reloads scene zero.
-- `Reset Save...` only arms the warning; `Confirm Permanent Reset` is a distinct second action.
-- Scaled gameplay is paused while blocked and restored before import reload or confirmed reset.
+- Lexend/TextMesh Pro default game font.
+- Near-black modal fill, purple-grey information cards, coloured outlines, and the active `UITheme`.
+- Large rectangular touch actions with rounded corners and explicit pressed/highlight states.
+- A light-purple primary import action, neutral support actions, and a separately styled red destructive action.
+- Title-case modal heading, left-aligned explanatory card copy, and short cyan feedback.
 
-## Save/load implications
+Long filesystem paths never appear in the primary layout. Players can copy the full classified recovery report when exact locations are useful for support.
 
-- The view is shown before Oracle closes the persistent Load-scene canvas.
-- `Loaded` and save readiness remain false, canonical writes remain blocked, and offline replay is not scheduled.
-- No button publishes directly into the partially initialized Game scene.
-- Import preserves the failed primary through the normal transactional backup step.
+## Responsive behaviour
 
-## Performance pitfalls
+The view is created under the persistent Load-scene canvas and applies the current `Screen.safeArea`.
 
-- The UI is constructed once at runtime only for exceptional blocked startup.
-- Artifact export can copy several save files and runs only after an explicit click.
-- Support reports include local paths and should be shared deliberately by the player.
+- Narrow or portrait safe areas use one action per row and a nearly full-height modal.
+- Wide landscape safe areas use two action columns and cap the modal at `1560 x 1080` canvas units.
+- Content is vertically scrollable by touch drag, mouse wheel, or scrollbar.
+- Rotating a device or resizing a desktop window re-evaluates the safe area and layout without recreating the session.
+- Reset confirmation expands inside the same scroll view and scrolls the warning into view.
+
+The responsive thresholds and panel bounds are covered by EditMode tests in `StartupSaveRecoveryStage3Tests`.
+
+## Data and interaction flow
+
+1. `Oracle` receives a blocking `StartupSaveRecoveryResult`.
+2. `LoadScreenMethods` hosts `StartupRecoveryView` on the persistent canvas.
+3. `Show` renders only the immutable result summary and pauses scaled gameplay.
+4. Copy/export actions are read-only.
+5. Clipboard import is prepared and committed by `StartupRecoveryInteractionSession`; the view hides only after success.
+6. Reset requires `ArmReset` and a distinct `ConfirmReset` action.
+7. Gameplay time is restored before a successful import reload, reset, or unexpected view destruction.
+
+## Save and load implications
+
+- The screen must never imply that an artifact was deleted or repaired when the pipeline only preserved it.
+- Invalid clipboard text remains classified and cannot be published by this view.
+- Import success may trigger a clean startup reload only after verified transactional persistence.
+- Destructive reset wording and the two-action gate are part of the save-integrity contract.
+- Do not add automatic recovery writes, background retries, or lifecycle/offline-time work to the presentation.
+
+## Performance notes
+
+The hierarchy is built once and reused. Responsive layout runs only when screen size, canvas size, or safe-area values change. Procedural images are limited to modal cards, actions, and the scrollbar; avoid adding per-frame material or object allocation.
 
 ## Quick verification
 
-1. Start with valid primary: no recovery panel appears.
-2. Start with corrupt primary plus valid backup: automatic recovery is silent.
-3. Start with all-invalid files: panel appears and game simulation is paused.
-4. Exercise copy/details/export and verify source hashes/timestamps remain unchanged.
-5. Click reset once, cancel, and verify no data changes; then verify the separate confirmation is required.
+1. Run the targeted `StartupSaveRecoveryStage3Tests` EditMode suite.
+2. Run the complete EditMode baseline.
+3. In the Load scene, use an isolated invalid canonical save to show recovery.
+4. Inspect phone portrait and desktop landscape:
+   - no clipped or overlapping copy;
+   - panel remains within safe-area margins;
+   - phone actions are one column and desktop actions are two columns;
+   - touch/mouse scrolling reaches every action;
+   - reset confirmation is visibly destructive and requires a second click.
+5. Confirm showing/dismissing the interface does not modify tracked files or source save artifacts.

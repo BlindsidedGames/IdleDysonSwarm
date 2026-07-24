@@ -1,14 +1,15 @@
 /*
  * Purpose: Verifies Stage 3 startup selection, blocking outcomes, one-shot publication/replay, and explicit actions.
  * Runs: Unity EditMode test runner only against disposable filesystem roots.
- * Primary entry points: NUnit startup recovery, interaction, export, and reset tests.
- * Owns: Recovery artifact arrangements and byte-preservation assertions.
+ * Primary entry points: NUnit startup recovery, interaction, export, reset, and responsive-layout tests.
+ * Owns: Recovery artifact arrangements, byte-preservation assertions, and phone/desktop layout boundary checks.
  * Delegates: Production policy/storage behavior to StartupSaveRecoveryCoordinator, CanonicalSaveStore, and related services.
  *
  * Interacts with:
  * - Assets/Scripts/Systems/Save/StartupSaveRecoveryCoordinator.cs.
  * - Assets/Scripts/Systems/Save/StartupRecoveryInteractionSession.cs.
  * - Assets/Scripts/Systems/Save/OdinStringFileStorage.cs.
+ * - Assets/Scripts/User Interface/StartupRecoveryView.cs.
  *
  * Change notes:
  * - Every blocked-outcome test must assert source bytes remain unchanged and no backup/write appears.
@@ -21,9 +22,11 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
 using System.Linq;
+using System.Reflection;
 using Expansion;
 using NUnit.Framework;
 using Systems.Save;
+using UnityEngine;
 
 namespace Tests.Save
 {
@@ -366,6 +369,63 @@ namespace Tests.Save
             Assert.AreEqual(1, resetCount);
             Assert.IsFalse(gate.IsArmed);
             Assert.IsFalse(gate.TryConfirm(() => resetCount++));
+        }
+
+        /// <summary>
+        /// Verifies a phone portrait safe area receives a single-column modal that remains inside its margins.
+        /// </summary>
+        [Test]
+        public void RecoveryViewLayout_PhonePortraitUsesCompactSafeAreaPanel()
+        {
+            var safeArea = new Vector2(1284f, 2778f);
+
+            bool compact = InvokeRecoveryLayoutMethod<bool>("IsCompactLayout", safeArea);
+            Vector2 panel = InvokeRecoveryLayoutMethod<Vector2>(
+                "CalculatePanelSize",
+                safeArea,
+                compact);
+
+            Assert.IsTrue(compact);
+            Assert.Less(panel.x, safeArea.x);
+            Assert.Less(panel.y, safeArea.y);
+            Assert.GreaterOrEqual(safeArea.x - panel.x, 88f);
+            Assert.GreaterOrEqual(safeArea.y - panel.y, 88f);
+        }
+
+        /// <summary>
+        /// Verifies a desktop landscape safe area receives the bounded two-column modal dimensions.
+        /// </summary>
+        [Test]
+        public void RecoveryViewLayout_DesktopLandscapeUsesBoundedWidePanel()
+        {
+            var safeArea = new Vector2(2778f, 1284f);
+
+            bool compact = InvokeRecoveryLayoutMethod<bool>("IsCompactLayout", safeArea);
+            Vector2 panel = InvokeRecoveryLayoutMethod<Vector2>(
+                "CalculatePanelSize",
+                safeArea,
+                compact);
+
+            Assert.IsFalse(compact);
+            Assert.AreEqual(new Vector2(1560f, 1080f), panel);
+            Assert.Less(panel.x, safeArea.x);
+            Assert.Less(panel.y, safeArea.y);
+        }
+
+        /// <summary>
+        /// Invokes one private pure layout method so tests can lock responsive policy without widening runtime API.
+        /// </summary>
+        /// <typeparam name="T">The expected method result type.</typeparam>
+        /// <param name="methodName">The private static method name.</param>
+        /// <param name="arguments">The method arguments.</param>
+        /// <returns>The strongly typed result.</returns>
+        private static T InvokeRecoveryLayoutMethod<T>(string methodName, params object[] arguments)
+        {
+            MethodInfo method = typeof(StartupRecoveryView).GetMethod(
+                methodName,
+                BindingFlags.NonPublic | BindingFlags.Static);
+            Assert.IsNotNull(method, $"Missing recovery layout method {methodName}.");
+            return (T)method.Invoke(null, arguments);
         }
 
         /// <summary>
