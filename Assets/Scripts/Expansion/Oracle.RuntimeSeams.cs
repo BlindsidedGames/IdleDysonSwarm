@@ -19,7 +19,7 @@ namespace Expansion
      *
      * Interacts with:
      * - Systems.Save.IClock/SystemClock
-     * - Systems.Save.ISaveStore/CanonicalSaveStore
+     * - Systems.Save.SavePreparationPipeline/ISaveStore/CanonicalSaveStore
      * - Systems.Save.ILifecycleEvents/OfflineLifecycleCoordinator/OfflineAwayTimeCalculator
      * - Oracle lifecycle callbacks in Assets/Scripts/Expansion/Oracle.cs
      *
@@ -28,11 +28,16 @@ namespace Expansion
      * - Focus-loss save policy is mobile-only; desktop focus changes must not stamp quit timestamps.
      * - Cold-start replay gating for lifecycle save behavior is enforced in Oracle.Persistence (SaveForLifecycleTrigger);
      *   this file should continue routing events only, without duplicating save policy state.
+     * - CanonicalSaveStore must receive the Oracle-bound preparation pipeline before any load can publish state.
      * - If seam initialization order changes, ensure Oracle.Awake still initializes before any save/load callback.
      */
     public partial class Oracle
     {
         private IClock _clock;
+        /// <summary>
+        /// Owns decode, schema policy, migration, normalization, validation, and canonical re-encoding before publication.
+        /// </summary>
+        private SavePreparationPipeline _savePreparationPipeline;
         private ISaveStore _saveStore;
         private OfflineAwayTimeCalculator _awayTimeCalculator;
         private ManualLifecycleEvents _lifecycleEvents;
@@ -41,7 +46,8 @@ namespace Expansion
         private void EnsureRuntimeSeamsInitialized()
         {
             _clock ??= new SystemClock();
-            _saveStore ??= CanonicalSaveStore.CreateDefault();
+            _savePreparationPipeline ??= CreateSavePreparationPipeline();
+            _saveStore ??= CanonicalSaveStore.CreateDefault(_savePreparationPipeline);
             _awayTimeCalculator ??= new OfflineAwayTimeCalculator(_clock);
 
             if (_lifecycleEvents == null)

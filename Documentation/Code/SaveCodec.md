@@ -20,7 +20,8 @@ The classified overload returns `SaveDecodeFailureReason` for empty input, unsup
 
 - Changing prefix recognition or decode order can strand historical clipboard or canonical artifacts.
 - Serializer changes require all guaranteed fixtures to decode before release.
-- A successful decode does not imply the schema is supported; `MigrationRunner` owns the future-version gate.
+- A successful decode does not imply the schema is supported; `SavePreparationPipeline` owns the pre-migration
+  future-version gate and `MigrationRunner` retains a defensive secondary gate.
 - Lowercase input does not change output casing. Re-encoding still produces uppercase `IDB1:`.
 
 ## Performance pitfalls

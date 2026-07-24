@@ -4,7 +4,9 @@
 
 `Systems.Migrations.MigrationRunner` executes the ordered registry supplied by `Oracle.Migrations`. It must reject a save whose schema is newer than `MigrationRegistry.LatestVersion` before it creates a migration context, applies a step, or invokes the ensure/normalization action.
 
-Callers that require transactional behavior must provide an isolated deep copy. A failed run may leave that working copy partially changed, but the original decoded object and source artifact remain untouched.
+`SavePreparationPipeline` provides the isolated deep copy used by production canonical load/save preparation. A failed
+run may leave that private working copy partially changed, but the original decoded object and source artifact remain
+untouched.
 
 ## Data flow
 
@@ -20,7 +22,7 @@ Callers that require transactional behavior must provide an isolated deep copy. 
 
 - `MigrationRegistry.LatestVersion` must remain aligned with `Oracle.CurrentSaveVersion`.
 - Future-version rejection prevents downgrade and normalization of unsupported data.
-- Production load orchestration remains responsible for publishing only a successful prepared copy.
+- `SavePreparationPipeline` and `SaveSystem` publish/commit only a successful prepared copy.
 - `UpdateLastSuccessfulLoadUtc` is disabled in deterministic fixture characterization so migration tests do not introduce clock-driven state.
 
 ## Performance pitfalls

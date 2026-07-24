@@ -29,6 +29,7 @@ namespace Expansion
     /// - Overwriting canonical save intentionally requires an explicit overwrite flag.
     /// - Recovery apply must run the same entitlement/debug post-load sync used by startup/clipboard flows.
     /// - Backup naming/location must remain stable for support to locate pre-recovery canonical snapshots.
+    /// - Explicit approved recovery clears the unprepared-canonical write block only after the prior artifact is backed up.
     /// </remarks>
     public partial class Oracle
     {
@@ -124,6 +125,7 @@ namespace Expansion
             RunPostLoadEntitlementSync();
             SyncAutoAssignFromSelectedPreset(runAutoAssign: true);
             UpdateSkills?.Invoke();
+            _canonicalWriteBlockedByUnpreparedArtifact = false;
             SaveInternal(force: true, updateQuitTime: false);
             ClearRecoveryListSnapshot();
 

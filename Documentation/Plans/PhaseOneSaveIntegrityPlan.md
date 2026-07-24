@@ -1,6 +1,6 @@
 # Phase One Save-Integrity Implementation Plan
 
-Status: finalized design; implementation blocked by the PR 0 acceptance gate
+Status: Stage 2 implemented locally; awaiting review before Stage 3
 Last updated: 2026-07-24
 Primary validation target: Windows Editor and Windows player
 Deferred validation targets: macOS, iOS, and other device-specific coverage

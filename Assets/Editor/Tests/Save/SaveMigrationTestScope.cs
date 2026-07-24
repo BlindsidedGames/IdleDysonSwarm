@@ -1,7 +1,7 @@
 /*
  * Purpose: Provides an isolated Oracle and real data registries for fixture-backed migration characterization.
  * Runs: Unity EditMode test runner only.
- * Primary entry points: constructor, RunProductionMigration, RunMigration, and Dispose.
+ * Primary entry points: constructor, CreatePreparationPipeline, RunProductionMigration, RunMigration, and Dispose.
  * Owns: Temporary singleton wiring, hidden GameObjects, migration-builder reflection, and save-write recording.
  * Delegates: Migration transforms and normalization to Oracle.Migrations and Systems.Migrations.MigrationRunner.
  *
@@ -66,6 +66,15 @@ namespace Tests.Save
         /// Gets the number of unexpected persistence writes requested during characterization.
         /// </summary>
         internal int SaveWriteCount => _saveStore.SaveCount;
+
+        /// <summary>
+        /// Creates the production-equivalent prepared-save pipeline bound to this isolated Oracle.
+        /// </summary>
+        /// <returns>A schema 11 preparation pipeline using the real migration registry and normalization.</returns>
+        internal SavePreparationPipeline CreatePreparationPipeline()
+        {
+            return new SavePreparationPipeline(11, RunProductionMigration);
+        }
 
         /// <summary>
         /// Creates hidden Oracle and registry objects wired to the project's real ID databases.

@@ -17,8 +17,8 @@ namespace Expansion
     /// <remarks>
     /// Purpose: run versioned migration steps and enforce non-null save containers/collections used by migration logic.
     /// Runs: runtime during load flow (invoked from <c>Oracle.Load()</c> via <c>ApplyMigrations()</c>).
-    /// Primary entry points: <c>ApplyMigrations()</c>, <c>RunMigrationDryRun()</c>, and migration ensure hooks in
-    /// <c>BuildMigrationOptions()</c>.
+    /// Primary entry points: <c>CreateSavePreparationPipeline()</c>, <c>ApplyMigrations()</c>,
+    /// <c>RunMigrationDryRun()</c>, and migration ensure hooks in <c>BuildMigrationOptions()</c>.
     /// Owns: migration orchestration, save-version upgrade transforms, and defensive shape normalization for migrated
     /// save data.
     /// Delegates: save codec/disk IO to Oracle persistence partials and migration execution plumbing to
@@ -49,6 +49,39 @@ namespace Expansion
     public partial class Oracle
     {
         private const double DefaultMegaResearchPercent = 0.03d;
+
+        /// <summary>
+        /// Creates the production decode/version/migration/validation pipeline bound to this Oracle's migration code.
+        /// </summary>
+        /// <returns>A preparation pipeline that migrates isolated candidates to the current schema.</returns>
+        private SavePreparationPipeline CreateSavePreparationPipeline()
+        {
+            return new SavePreparationPipeline(CurrentSaveVersion, RunPreparedSaveMigration);
+        }
+
+        /// <summary>
+        /// Runs production migration and normalization against an isolated candidate without publishing it.
+        /// </summary>
+        /// <param name="workingCopy">The pipeline-owned deep copy.</param>
+        /// <returns>The non-throwing migration result.</returns>
+        private MigrationRunResult RunPreparedSaveMigration(SaveDataSettings workingCopy)
+        {
+            SaveDataSettings publishedBefore = saveSettings;
+            try
+            {
+                saveSettings = workingCopy;
+                MigrationRegistry registry = BuildMigrationRegistry();
+                MigrationRunOptions options = BuildMigrationOptions(false);
+                options.CaptureSnapshots = false;
+                options.ThrowOnError = false;
+                options.UpdateLastSuccessfulLoadUtc = false;
+                return MigrationRunner.Run(this, registry, options);
+            }
+            finally
+            {
+                saveSettings = publishedBefore;
+            }
+        }
 
         private void ApplyMigrations()
         {

@@ -4,39 +4,19 @@ using Systems.Save;
 
 namespace Tests.Save
 {
+    /// <summary>
+    /// Verifies prepared transactional SaveSystem round trips.
+    /// </summary>
     [TestFixture]
     public sealed class SaveSystemTests
     {
-        private sealed class InMemoryStorage : ISaveStorage
-        {
-            public string DebugName => "in-memory";
-
-            public string Text { get; private set; } = string.Empty;
-
-            public bool Exists()
-            {
-                return !string.IsNullOrWhiteSpace(Text);
-            }
-
-            public bool TryReadText(out string text, out string error)
-            {
-                text = Text;
-                error = null;
-                return Exists();
-            }
-
-            public bool TryWriteTextAtomic(string text, out string error)
-            {
-                error = null;
-                Text = text;
-                return true;
-            }
-        }
-
+        /// <summary>
+        /// Verifies a current snapshot is prepared, transactionally stored, and prepared again before load publication.
+        /// </summary>
         [Test]
         public void SaveThenLoad_RoundTripsSettings()
         {
-            var storage = new InMemoryStorage();
+            var storage = new InMemoryTransactionalSaveStorage();
             var system = new SaveSystem(storage);
 
             var settings = new Oracle.SaveDataSettings();
