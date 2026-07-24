@@ -9,6 +9,7 @@ public class ES3Defaults : ScriptableObject
 
     public bool addMgrToSceneAutomatically = false;
     public bool autoUpdateReferences = true;
+    public bool onlyAddReferencesFromObjectsWithES3Referenceable = false;
     public bool addAllPrefabsToManager = true;
     public int collectDependenciesDepth = 4;
     public int collectDependenciesTimeout = 10;

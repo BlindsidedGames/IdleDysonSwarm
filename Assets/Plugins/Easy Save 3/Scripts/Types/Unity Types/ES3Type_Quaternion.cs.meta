@@ -14,6 +14,6 @@ AssetOrigin:
   serializedVersion: 1
   productId: 768
   packageName: Easy Save - The Complete Save Game & Data Serializer System
-  packageVersion: 3.5.25
+  packageVersion: 3.5.27
   assetPath: Assets/Plugins/Easy Save 3/Scripts/Types/Unity Types/ES3Type_Quaternion.cs
-  uploadId: 816548
+  uploadId: 955488

@@ -174,7 +174,9 @@ namespace ES3Internal
             {
                 PlayerPrefs.SetString(settings.FullPath, PlayerPrefs.GetString(temporaryFilePath));
                 PlayerPrefs.DeleteKey(temporaryFilePath);
+#if !DONT_SAVE_PLAYERPREFS // Added to give option of deferring PlayerPrefs.Save() to a later time as this can be expensive if there is a lot of data.
                 PlayerPrefs.Save();
+#endif
             }
         }
     }

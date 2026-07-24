@@ -58,5 +58,11 @@ namespace ES3Types
 				}
 			}
 		}
+
+		[RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)]
+		static void ResetStaticVariables()
+		{
+			Instance = null;
+		}
 	}
 }

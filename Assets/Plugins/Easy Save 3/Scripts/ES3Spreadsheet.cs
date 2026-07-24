@@ -17,10 +17,10 @@ public class ES3Spreadsheet
 
 	private const string QUOTE = "\"";
 	private const char QUOTE_CHAR = '"';
-	private const char COMMA_CHAR = ',';
+	private const char SEPARATOR = ',';
 	private const char NEWLINE_CHAR = '\n';
 	private const string ESCAPED_QUOTE = "\"\"";
-	private static char[] CHARS_TO_ESCAPE = { ',', '"', '\n'};
+	private static char[] CHARS_TO_ESCAPE = { SEPARATOR, '"', '\n'};
 
 	public int ColumnCount
 	{
@@ -199,11 +199,11 @@ public class ES3Spreadsheet
 					}
 				}
 				// If this is the end of a column, row, or the stream, add the value to the spreadsheet.
-				else if(c == COMMA_CHAR || c == NEWLINE_CHAR || c_int == -1)
+				else if(c == SEPARATOR || c == NEWLINE_CHAR || c_int == -1)
 				{
 					SetCell(col, row, value);
 					value = null;
-					if(c == COMMA_CHAR)
+					if(c == SEPARATOR)
 						col++;
 					else if(c == NEWLINE_CHAR)
 					{
@@ -268,7 +268,7 @@ public class ES3Spreadsheet
 				for(int col = 0; col < cols; col++)
 				{
 					if(col != 0)
-						writer.Write(COMMA_CHAR);
+						writer.Write(SEPARATOR);
 
                     writer.Write( Escape(array [col, row]) );
 				}

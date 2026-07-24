@@ -232,7 +232,7 @@ public class ES3SlotMenuItems : MonoBehaviour
     static void AddEventSystemToSceneIfNotExists()
     {
 #if UNITY_2022_3_OR_NEWER
-        if (UnityEngine.Object.FindFirstObjectByType<EventSystem>() == null)
+        if (UnityEngine.Object.FindAnyObjectByType<EventSystem>() == null)
 #else
         if (UnityEngine.Object.FindObjectOfType<EventSystem>() == null)
 #endif

@@ -118,16 +118,25 @@ public class ES3ReferenceMgrEditor : UnityEditor.Editor
         serializedObject.ApplyModifiedProperties();
 
         EditorGUILayout.LabelField("Reference count", mgr.refId.Count.ToString());
-        EditorGUILayout.LabelField("Prefab count", mgr.prefabs.Count.ToString());
+        EditorGUILayout.LabelField("ES3Prefab count", mgr.prefabs.Count.ToString());
 
-        if (GUILayout.Button("Refresh"))
+        if (GUILayout.Button("Add all scene references"))
         {
             mgr.RefreshDependencies();
         }
 
-        if (GUILayout.Button("Optimize"))
+        if (GUILayout.Button("Remove all references not in this scene"))
         {
             mgr.Optimize();
+        }
+
+        if (GUILayout.Button("Clear all references"))
+        {
+            if (EditorUtility.DisplayDialog("Are you sure?", "This will remove all references and their IDs from the manager and invalidate them, which will also invalidate any save data containing these IDs.", "Clear References", "Cancel"))
+            {
+                Undo.RecordObject(mgr, "Clear Reference Manager");
+                mgr.Clear();
+            }
         }
     }
 
