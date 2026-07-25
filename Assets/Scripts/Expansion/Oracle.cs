@@ -60,6 +60,8 @@ using UnityEditor;
  * - Changes here do not migrate saves directly but can change interpretation of existing save-state numbers.
  * - Lifecycle callbacks are routed through RuntimeSeams; callback policy changes must stay aligned with
  *   OfflineLifecycleCoordinator tests.
+ * - Bot overflow recovery recognizes both the historical Infinity/NaN marker and the finite sentinel produced by
+ *   Oracle.Migrations before save validation; keep those checks aligned so prepared saves retain the reset signal.
  */
 
 namespace Expansion
@@ -380,7 +382,7 @@ private void PackSettingsFlags()
         private void Update()
         {
             prestigeButton.interactable = prestigeData.infinityPoints >= 42;
-            if (double.IsInfinity(infinityData.bots) || double.IsNaN(infinityData.bots))
+            if (IsBotOverflowSignal(infinityData.bots))
                 if (!oracle.saveSettings.infinityInProgress)
                 {
                     oracle.saveSettings.infinityInProgress = true;

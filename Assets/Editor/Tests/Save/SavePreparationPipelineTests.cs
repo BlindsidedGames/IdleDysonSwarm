@@ -13,10 +13,13 @@
  * Change notes:
  * - Successful results must be isolated schema 11 graphs with uppercase canonical output.
  * - Failed results, including null durable skill-state values, must never expose Settings or CanonicalText.
+ * - The legacy non-finite bots overflow marker must prepare to a finite runtime sentinel, while non-finite values
+ *   in other durable fields remain validation failures.
  * - Fixture and decoded-source immutability remain hard compatibility gates.
  */
 
 using System;
+using System.Reflection;
 using Expansion;
 using NUnit.Framework;
 using Systems.Migrations;
@@ -136,20 +139,84 @@ namespace Tests.Save
         }
 
         /// <summary>
-        /// Verifies non-finite numeric state is classified as invalid after schema preparation.
+        /// Verifies the historically supported non-finite bots marker prepares to a finite, canonical runtime signal.
         /// </summary>
-        [Test]
-        public void NonFiniteNumericState_ReturnsValidationFailure()
+        /// <param name="useInfinity">Whether to exercise Infinity instead of NaN.</param>
+        [TestCase(false, TestName = "BotOverflowSignal_NaN_PreparesAsFiniteCanonicalRuntimeSignal")]
+        [TestCase(true, TestName = "BotOverflowSignal_Infinity_PreparesAsFiniteCanonicalRuntimeSignal")]
+        public void BotOverflowSignal_PreparesAsFiniteCanonicalRuntimeSignal(bool useInfinity)
         {
             var source = new Oracle.SaveDataSettings { saveVersion = 11 };
-            source.dysonVerseSaveData.dysonVerseInfinityData.money = double.NaN;
-            SavePreparationPipeline pipeline = SavePreparationPipeline.CreateCurrentSchemaOnly(11);
+            double sourceSignal = useInfinity ? double.PositiveInfinity : double.NaN;
+            source.dysonVerseSaveData.dysonVerseInfinityData.bots = sourceSignal;
+            source.dysonVerseSaveData.dysonVersePrestigeData.infinityPoints = 17;
+            source.avocadoData.overflowMultiplier = 9d;
+            source.prestigePlus.avocatoOverflow = 4d;
+            string sourceHashBefore = SaveFixtureLoader.ComputeSaveDataSha256(source);
 
-            PreparedSaveResult result = pipeline.PrepareSettings(source);
+            using var scope = new SaveMigrationTestScope();
+            PreparedSaveResult result = scope.CreatePreparationPipeline().PrepareSettings(source);
+
+            AssertPreparedV11(result);
+            Assert.AreEqual(double.MaxValue, result.Settings.dysonVerseSaveData.dysonVerseInfinityData.bots);
+            Assert.AreEqual(17, result.Settings.dysonVerseSaveData.dysonVersePrestigeData.infinityPoints);
+            Assert.AreEqual(9d, result.Settings.avocadoData.overflowMultiplier);
+            Assert.AreEqual(4d, result.Settings.prestigePlus.avocatoOverflow);
+            Assert.IsTrue(
+                SaveCodec.TryDecodeSaveSettings(result.CanonicalText, out Oracle.SaveDataSettings canonicalRoundTrip));
+            Assert.AreEqual(double.MaxValue, canonicalRoundTrip.dysonVerseSaveData.dysonVerseInfinityData.bots);
+            Assert.AreEqual(sourceHashBefore, SaveFixtureLoader.ComputeSaveDataSha256(source));
+            Assert.AreEqual(
+                useInfinity,
+                double.IsPositiveInfinity(source.dysonVerseSaveData.dysonVerseInfinityData.bots));
+            Assert.AreEqual(
+                !useInfinity,
+                double.IsNaN(source.dysonVerseSaveData.dysonVerseInfinityData.bots));
+            Assert.AreEqual(0, scope.SaveWriteCount);
+            Assert.IsFalse(scope.Subject.Loaded);
+        }
+
+        /// <summary>
+        /// Verifies runtime recognizes the prepared finite marker without broadening normal bots overflow detection.
+        /// </summary>
+        [Test]
+        public void PreparedBotOverflowSentinel_IsRecognizedOnlyByOverflowContract()
+        {
+            MethodInfo method = typeof(Oracle).GetMethod(
+                "IsBotOverflowSignal",
+                BindingFlags.NonPublic | BindingFlags.Static);
+
+            Assert.IsNotNull(method);
+            Assert.IsTrue((bool)method.Invoke(null, new object[] { double.NaN }));
+            Assert.IsTrue((bool)method.Invoke(null, new object[] { double.PositiveInfinity }));
+            Assert.IsTrue((bool)method.Invoke(null, new object[] { double.NegativeInfinity }));
+            Assert.IsTrue((bool)method.Invoke(null, new object[] { double.MaxValue }));
+            Assert.IsFalse((bool)method.Invoke(null, new object[] { double.Epsilon }));
+            Assert.IsFalse((bool)method.Invoke(null, new object[] { 0d }));
+            Assert.IsFalse((bool)method.Invoke(null, new object[] { 1d }));
+        }
+
+        /// <summary>
+        /// Verifies non-finite state outside the supported bots marker remains invalid after production normalization.
+        /// </summary>
+        /// <param name="useInfinity">Whether to exercise Infinity instead of NaN.</param>
+        [TestCase(false, TestName = "NonBotNumericState_NaN_ReturnsValidationFailure")]
+        [TestCase(true, TestName = "NonBotNumericState_Infinity_ReturnsValidationFailure")]
+        public void NonBotNonFiniteNumericState_ReturnsValidationFailure(bool useInfinity)
+        {
+            var source = new Oracle.SaveDataSettings { saveVersion = 11 };
+            source.dysonVerseSaveData.dysonVerseInfinityData.money =
+                useInfinity ? double.PositiveInfinity : double.NaN;
+            string sourceHashBefore = SaveFixtureLoader.ComputeSaveDataSha256(source);
+
+            using var scope = new SaveMigrationTestScope();
+            PreparedSaveResult result = scope.CreatePreparationPipeline().PrepareSettings(source);
 
             AssertFailure(result, PreparedSaveFailureReason.ValidationFailed);
             StringAssert.Contains("non-finite", result.Error);
-            Assert.IsTrue(double.IsNaN(source.dysonVerseSaveData.dysonVerseInfinityData.money));
+            Assert.AreEqual(sourceHashBefore, SaveFixtureLoader.ComputeSaveDataSha256(source));
+            Assert.AreEqual(0, scope.SaveWriteCount);
+            Assert.IsFalse(scope.Subject.Loaded);
         }
 
         /// <summary>

@@ -45,10 +45,14 @@ namespace Expansion
     ///   InformationEraManager.
     /// - EnsureMegaResearchPercentDefaults() normalizes legacy mega research percent fields to non-zero defaults;
     ///   changing defaults affects displayed boost text and mega production modifier scaling on load.
+    /// - EnsureBotOverflowSignalIsFinite() converts the historically supported non-finite bot-overflow marker to
+    ///   the reserved finite runtime sentinel before graph validation. Keep it aligned with IsBotOverflowSignal()
+    ///   in Oracle.cs so the existing overflow reward/reset path still consumes the marker after publication.
     /// </remarks>
     public partial class Oracle
     {
         private const double DefaultMegaResearchPercent = 0.03d;
+        private const double PreparedBotOverflowSentinel = double.MaxValue;
 
         /// <summary>
         /// Creates the production decode/version/migration/validation pipeline bound to this Oracle's migration code.
@@ -160,6 +164,7 @@ namespace Expansion
                 {
                     EnsureSaveSettingsShape();
                     EnsureDysonVerseSaveShape();
+                    EnsureBotOverflowSignalIsFinite();
                     EnsureSkillOwnershipData();
                     EnsureSkillAutoAssignmentIds();
                     EnsureResearchLevelData();
@@ -169,6 +174,36 @@ namespace Expansion
                     EnsureSimulationMathematicsParity();
                 }
             };
+        }
+
+        /// <summary>
+        /// Replaces the legacy Infinity/NaN bots overflow marker with a finite value reserved for runtime handling.
+        /// </summary>
+        private void EnsureBotOverflowSignalIsFinite()
+        {
+            if (infinityData == null || !IsNonFiniteBotOverflowSignal(infinityData.bots)) return;
+
+            infinityData.bots = PreparedBotOverflowSentinel;
+        }
+
+        /// <summary>
+        /// Determines whether the supplied bots value is the legacy non-finite overflow marker.
+        /// </summary>
+        /// <param name="bots">The persisted bots value.</param>
+        /// <returns><see langword="true"/> for positive/negative Infinity or NaN; otherwise <see langword="false"/>.</returns>
+        private static bool IsNonFiniteBotOverflowSignal(double bots)
+        {
+            return double.IsInfinity(bots) || double.IsNaN(bots);
+        }
+
+        /// <summary>
+        /// Determines whether runtime should consume the bots overflow marker through the existing reward/reset path.
+        /// </summary>
+        /// <param name="bots">The prepared or legacy bots value.</param>
+        /// <returns><see langword="true"/> for the legacy non-finite marker or its finite prepared representation.</returns>
+        internal static bool IsBotOverflowSignal(double bots)
+        {
+            return IsNonFiniteBotOverflowSignal(bots) || bots == PreparedBotOverflowSentinel;
         }
 
         private MigrationRegistry BuildMigrationRegistry()

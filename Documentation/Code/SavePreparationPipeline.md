@@ -10,7 +10,9 @@ The stages are fixed:
 2. Reject schemas newer than 11 before migration or normalization.
 3. Deep-copy decoded/caller-owned state.
 4. Run Oracle's production migration and normalization against the copy.
-5. Validate required containers, durable identifiers and skill-state values, dense facility arrays, and finite numeric state.
+5. Normalize the historically supported non-finite `bots` overflow marker to a reserved finite runtime sentinel, then
+   validate required containers, durable identifiers and skill-state values, dense facility arrays, and all remaining
+   numeric state.
 6. Serialize only the validated copy into uppercase canonical output.
 
 ## Data flow
@@ -22,7 +24,12 @@ Runtime Oracle creates the pipeline with `CreateSavePreparationPipeline()` and s
 ## Save/load implications
 
 - Decoded source objects, fixture artifacts, and caller-owned runtime snapshots are never mutated.
-- Future, corrupt, migration-failing, invalid-shape, null skill-state, and non-finite candidates are non-publishable and non-committable.
+- The historical Infinity/NaN `bots` marker prepares to a finite sentinel that the existing runtime overflow
+  reward/reset path consumes after publication. This avoids lifecycle side effects during preparation and keeps the
+  signal durable across a canonical round trip.
+- Non-finite values in every other durable field remain non-publishable and non-committable.
+- Future, corrupt, migration-failing, invalid-shape, and null skill-state candidates are also non-publishable and
+  non-committable.
 - Current-schema-only tools may use `CreateCurrentSchemaOnly(11)`; it deliberately rejects older schemas because it has no Oracle migration context.
 - Lowercase `idb1:` input remains accepted, but prepared canonical output is always uppercase.
 
@@ -37,5 +44,8 @@ Runtime Oracle creates the pipeline with `CreateSavePreparationPipeline()` and s
 1. Run `SavePreparationPipelineTests`.
 2. Confirm all three immutable fixtures prepare to schema 11.
 3. Confirm source hashes remain unchanged.
-4. Confirm future/migration/null-skill-state/non-finite failures expose no settings or canonical text.
-5. Confirm successful output begins with uppercase `IDB1:`.
+4. Confirm Infinity and NaN `bots` markers prepare to the finite runtime sentinel without mutating the source or
+   triggering writes/lifecycle state.
+5. Confirm non-finite values outside `bots`, plus future/migration/null-skill-state failures, expose no settings or
+   canonical text.
+6. Confirm successful output begins with uppercase `IDB1:`.
