@@ -33,6 +33,8 @@ namespace Expansion
     /// - Existing canonical data is replaced only when the command's explicit overwrite flag is true.
     /// - Verified transactional storage preserves the previous canonical artifact before replacement.
     /// - Explicit approved recovery clears the unprepared-canonical write block only after verified commit succeeds.
+    /// - When startup is blocked, a verified apply reloads the initial scene instead of publishing into the partially
+    ///   initialized runtime.
     /// </remarks>
     public partial class Oracle
     {
@@ -124,7 +126,8 @@ namespace Expansion
         }
 
         /// <summary>
-        /// Prepares, transactionally commits, then publishes one explicitly selected legacy candidate.
+        /// Prepares and transactionally commits one explicitly selected legacy candidate, then either publishes it
+        /// into a ready runtime or requests a clean reload from a blocked startup.
         /// </summary>
         /// <param name="index">The one-based snapshot index.</param>
         /// <param name="overwriteCanonical">Whether replacing an existing canonical artifact is approved.</param>
@@ -176,12 +179,23 @@ namespace Expansion
                 return $"[SaveRecovery] Recovery rejected without changing live or stored state. {importError}";
             }
 
+            ClearRecoveryListSnapshot();
+            if (_startupRecoveryBlocked)
+            {
+                string outcome = canonicalExists
+                    ? $"[SaveRecovery] Recovery applied from candidate #{index} ('{candidate.Path}'). " +
+                      "The previous canonical artifact was preserved in the rotating backup folder."
+                    : $"[SaveRecovery] Recovery applied from candidate #{index} ('{candidate.Path}') " +
+                      $"out of {totalCount} candidate(s).";
+                CompleteBlockingStartupRecoveryImport();
+                return outcome + " Restarting safely from the repaired save.";
+            }
+
             ApplyLoadedSettings(committed, "prepared ES3 (manual recover)");
             RunPostLoadEntitlementSync();
             SyncAutoAssignFromSelectedPreset(runAutoAssign: true);
             UpdateSkills?.Invoke();
             _canonicalWriteBlockedByUnpreparedArtifact = false;
-            ClearRecoveryListSnapshot();
 
             if (canonicalExists)
             {

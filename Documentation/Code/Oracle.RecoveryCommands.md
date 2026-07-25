@@ -8,7 +8,8 @@
 - If canonical save already exists, `recover-apply` must require explicit overwrite (`recover-apply <index> true`) to avoid accidental clobbering.
 - Before overwrite, canonical save must be backed up into `SavePaths.GetBackupFolderPath()`.
 - A successful, explicitly approved recovery clears the canonical-write safety block that is set when startup finds an existing canonical artifact that cannot be prepared.
-- Recovery apply must run entitlement/debug post-load normalization (double-IP PlayerPrefs sync, debug entitlement sync, debug notify).
+- Recovery apply in an initialized runtime must run entitlement/debug post-load normalization immediately. A blocked startup defers that normalization to the clean startup reload.
+- If recovery is applied while startup is blocked, the verified canonical repair must be followed by the same clean scene-zero reload as recovery-screen import. The command must not partially publish into the blocked runtime.
 
 ## Data flow
 1. Commands invoke `LegacyEs3Save.GetRecoverableCandidates()` to get best-first candidates.
@@ -18,17 +19,16 @@
    - validates index bounds,
    - resolves candidate index against the stored snapshot (or creates one if none exists),
    - validates overwrite flag against canonical presence,
-   - backs up existing canonical save if overwrite is requested,
-   - applies recovered settings (`ApplyLoadedSettings`),
-   - runs migrations and preset sync,
-   - runs post-load entitlement/debug sync,
+   - prepares and transactionally commits the candidate, preserving the prior canonical artifact when overwrite is requested,
    - clears the failed-canonical write block only after the candidate is accepted and any required backup succeeds,
-   - writes canonical save via `SaveInternal(force: true, updateQuitTime: false)`.
+   - in an initialized runtime, applies the committed settings and runs preset plus entitlement/debug sync,
+   - when startup is already blocked, keeps runtime save readiness disabled and reloads scene zero so the repaired canonical save initializes through the normal startup path instead of partially publishing.
 
 ## Save/load implications
 - Recovery command writes canonical save immediately, making recovered data the new source of truth.
 - Existing canonical save is only replaced when explicitly requested with overwrite flag.
 - Failed canonical artifacts remain protected from ordinary saves; only this explicit recovery path (or an explicit wipe) may clear that protection.
+- A blocked-startup recovery commit does not publish into the partially initialized Oracle. It clears the transient blocked state and immediately requests a clean reload.
 - Backup files are named `manual_recover_preexisting_*.txt` to aid support workflows.
 
 ## Performance pitfalls
@@ -42,6 +42,6 @@
 4. Run `recover-apply 2 true` and verify:
    - backup file is created in save backup folder,
    - a prior failed-canonical write block is cleared only after the backup/recovery selection succeeds,
-   - recovered save becomes active,
    - canonical save is rewritten,
-   - debug/double-IP UI state updates immediately without restart.
+   - a normally initialized session loads the repaired save after a clean reload,
+   - debug/double-IP state is normalized during that startup.

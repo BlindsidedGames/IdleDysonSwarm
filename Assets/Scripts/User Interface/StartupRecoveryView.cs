@@ -14,7 +14,8 @@
  *
  * Change notes:
  * - The view must not decode, migrate, validate, delete, or publish save data itself.
- * - Gameplay time remains paused while the view is blocking and is restored before reset/reload.
+ * - Gameplay time remains paused while the view is blocking and is restored before reset/reload, including a
+ *   successful recovery triggered through Quantum Console.
  * - Permanent reset requires a separate arm action followed by an explicit confirm action.
  * - Layout changes must be checked in portrait and landscape safe areas; action labels are part of the player contract.
  */
@@ -97,6 +98,18 @@ public sealed class StartupRecoveryView : MonoBehaviour
         _scrollRect.verticalNormalizedPosition = 1f;
         UpdateSafeAreaAndLayout(force: true);
         PauseGameplay();
+    }
+
+    /// <summary>
+    /// Dismisses the blocking presentation and restores its captured time scale after a verified import commit.
+    /// </summary>
+    internal void DismissAfterSuccessfulImport()
+    {
+        ReleaseGameplayPause();
+        if (_root != null)
+        {
+            _root.SetActive(false);
+        }
     }
 
     /// <summary>
@@ -670,8 +683,7 @@ public sealed class StartupRecoveryView : MonoBehaviour
         }
 
         _feedback.text = "Save imported and verified. Restarting safely...";
-        ReleaseGameplayPause();
-        _root.SetActive(false);
+        DismissAfterSuccessfulImport();
         _importSucceeded();
     }
 

@@ -14,7 +14,8 @@
  * Change notes:
  * - Blocking outcomes must keep Loaded/save-ready false and must not schedule offline replay or canonical writes.
  * - Automatic recovery publishes exactly once only after verified canonical restoration.
- * - Clipboard import commits safely, then reloads scene zero rather than publishing into the blocked runtime.
+ * - Successful blocking recovery imports commit safely, then reload scene zero rather than publishing into the
+ *   partially initialized runtime.
  */
 
 using System;
@@ -35,6 +36,7 @@ namespace Expansion
         private StartupSaveRecoveryResult _startupRecoveryResult;
         private StartupRecoveryInteractionSession _startupRecoveryInteraction;
         private bool _startupRecoveryBlocked;
+        private Action _reloadAfterStartupRecoveryImport = ReloadAfterStartupRecoveryImport;
 
         /// <summary>
         /// Runs prepared startup selection for the production canonical store.
@@ -156,7 +158,7 @@ namespace Expansion
             view.Show(
                 _startupRecoveryInteraction,
                 ConfirmStartupRecoveryReset,
-                ReloadAfterStartupRecoveryImport);
+                CompleteBlockingStartupRecoveryImport);
         }
 
         /// <summary>
@@ -168,7 +170,27 @@ namespace Expansion
         }
 
         /// <summary>
-        /// Reloads the initial scene after a verified clipboard import is safely committed.
+        /// Ends a verified blocking recovery session and requests a clean startup from the committed canonical save.
+        /// </summary>
+        private void CompleteBlockingStartupRecoveryImport()
+        {
+            if (LoadScreenMethods.lsm != null &&
+                LoadScreenMethods.lsm.TryGetComponent(out StartupRecoveryView view))
+            {
+                view.DismissAfterSuccessfulImport();
+            }
+
+            _startupRecoveryBlocked = false;
+            _startupRecoveryInteraction = null;
+            _startupRecoveryResult = null;
+            _canonicalWriteBlockedByUnpreparedArtifact = false;
+            Loaded = false;
+            SetSaveReady(false);
+            (_reloadAfterStartupRecoveryImport ?? ReloadAfterStartupRecoveryImport).Invoke();
+        }
+
+        /// <summary>
+        /// Reloads the initial scene after a verified blocking recovery import is safely committed.
         /// </summary>
         private static void ReloadAfterStartupRecoveryImport()
         {

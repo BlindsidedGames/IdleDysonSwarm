@@ -18,9 +18,11 @@
  */
 
 using System;
+using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
 using System.Linq;
+using System.Reflection;
 using Expansion;
 using NUnit.Framework;
 using Systems.Save;
@@ -300,6 +302,78 @@ namespace Tests.Save
         }
 
         /// <summary>
+        /// Verifies console recovery during a blocked startup commits the repair and requests a clean startup reload.
+        /// </summary>
+        [Test]
+        public void ConsoleRecovery_DuringBlockedStartup_CommitsThenLeavesRecoveryThroughCleanReload()
+        {
+            string root = Path.Combine(
+                Path.GetTempPath(),
+                "ids-console-blocked-recovery-" + Guid.NewGuid().ToString("N"));
+            string filePath = Path.Combine(root, "save.txt");
+            string backupPath = Path.Combine(root, "backups");
+            Directory.CreateDirectory(root);
+            Directory.CreateDirectory(backupPath);
+            try
+            {
+                using var migrationScope = new SaveMigrationTestScope();
+                var storage = new OdinStringFileStorage(filePath, backupPath, maxBackups: 5);
+                var store = new CanonicalSaveStore(
+                    new SaveSystem(storage, migrationScope.CreatePreparationPipeline()));
+                const string invalidCanonical = "IDB1:not-valid-base64";
+                File.WriteAllText(filePath, invalidCanonical);
+
+                Oracle oracle = migrationScope.Subject;
+                SetPrivateField(oracle, "_saveStore", store);
+                SetPrivateField(
+                    oracle,
+                    "_recoveryListSnapshot",
+                    new List<LegacyEs3RecoveryCandidate>
+                    {
+                        new LegacyEs3RecoveryCandidate(
+                            "test-only-blocked-startup.es3",
+                            CreateSettings(450d),
+                            new DateTime(2026, 7, 25, 4, 5, 6, DateTimeKind.Utc),
+                            trust: 4)
+                    });
+                SetPrivateField(oracle, "_startupRecoveryBlocked", true);
+                SetPrivateField(oracle, "_canonicalWriteBlockedByUnpreparedArtifact", true);
+                int reloadCount = 0;
+                SetPrivateField(
+                    oracle,
+                    "_reloadAfterStartupRecoveryImport",
+                    (Action)(() => reloadCount++));
+
+                string result = oracle.RecoverApply(index: 1, overwriteCanonical: true);
+
+                Assert.IsTrue(store.TryLoad(out Oracle.SaveDataSettings committed, out string loadError), loadError);
+                Assert.AreEqual(450d, committed.dysonVerseSaveData.dysonVerseInfinityData.money);
+                Assert.IsTrue(
+                    Directory.GetFiles(backupPath)
+                        .Any(path => File.ReadAllText(path) == invalidCanonical),
+                    "The blocked canonical artifact was not preserved before recovery.");
+                Assert.AreEqual(1, reloadCount);
+                Assert.IsFalse(oracle.Loaded);
+                Assert.IsFalse(GetPrivateField<bool>(oracle, "_startupRecoveryBlocked"));
+                Assert.IsFalse(GetPrivateField<bool>(oracle, "_canonicalWriteBlockedByUnpreparedArtifact"));
+                Assert.IsFalse(GetPrivateField<bool>(oracle, "_isSaveReady"));
+                Assert.IsNull(GetPrivateField<object>(oracle, "_startupRecoveryInteraction"));
+                StringAssert.Contains("Restarting safely from the repaired save", result);
+            }
+            finally
+            {
+                try
+                {
+                    Directory.Delete(root, recursive: true);
+                }
+                catch
+                {
+                    // Best-effort test cleanup.
+                }
+            }
+        }
+
+        /// <summary>
         /// Runs one assertion against disposable production transactional storage.
         /// </summary>
         /// <param name="pipeline">The preparation pipeline under test.</param>
@@ -359,6 +433,30 @@ namespace Tests.Save
             return SaveCodec.EncodeBinary(
                 SaveCodec.SerializeSaveSettingsBinary(settings),
                 compress: true);
+        }
+
+        /// <summary>
+        /// Sets one private Oracle field without widening the runtime API for test-only state arrangement.
+        /// </summary>
+        private static void SetPrivateField(object target, string fieldName, object value)
+        {
+            FieldInfo field = target.GetType().GetField(
+                fieldName,
+                BindingFlags.Instance | BindingFlags.NonPublic);
+            Assert.IsNotNull(field, $"Missing private field {fieldName}.");
+            field.SetValue(target, value);
+        }
+
+        /// <summary>
+        /// Reads one private Oracle field for focused recovery transition assertions.
+        /// </summary>
+        private static T GetPrivateField<T>(object target, string fieldName)
+        {
+            FieldInfo field = target.GetType().GetField(
+                fieldName,
+                BindingFlags.Instance | BindingFlags.NonPublic);
+            Assert.IsNotNull(field, $"Missing private field {fieldName}.");
+            return (T)field.GetValue(target);
         }
     }
 }

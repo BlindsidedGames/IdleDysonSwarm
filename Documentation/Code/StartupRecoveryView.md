@@ -37,6 +37,7 @@ The responsive thresholds and panel bounds are covered by EditMode tests in `Sta
 3. `Show` renders only the immutable result summary and pauses scaled gameplay.
 4. Copy/export actions are read-only.
 5. Clipboard import is prepared and committed by `StartupRecoveryInteractionSession`; the view hides only after success.
+   Quantum Console recovery during the same blocked state uses this clean-reload completion path after its own verified commit.
 6. Reset requires `ArmReset` and a distinct `ConfirmReset` action.
 7. Gameplay time is restored before a successful import reload, reset, or unexpected view destruction.
 
