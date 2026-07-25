@@ -19,6 +19,8 @@
 - Source of truth:
   - `oracle.saveSettings.dysonVerseSaveData` and nested `infinityData`, `prestigeData`, `skillTreeData`, `prestigePlus`.
 - Per-frame:
+  - Defers production and ordinary threshold prestige while `Oracle.IsBotOverflowSignal(...)` identifies a prepared
+    finite bots-overflow sentinel, leaving Oracle's established special overflow reward/reset path authoritative.
   - Calls system helpers (`ProductionSystem`, `ModifierSystem`) to recalculate production and multipliers.
   - Writes computed values into scene TMP labels (cash/science, per-second rates, bot/panel stats, timers).
 - Side panel swapping:
@@ -47,6 +49,10 @@
 - Mutates values in save-backed structures through `Oracle` references, so runtime changes persist into future saves.
 - Any field/path changes under `DysonVerseSaveData` consumed here must be coordinated with migration logic in `Oracle.Migrations`.
 - UI formatting changes in this class alter player-facing numeric rendering but not persisted numeric values.
+- Removing the overflow-sentinel guard can let production or the ordinary prestige path consume a prepared historical
+  overflow marker before Oracle applies its special overflow rewards.
+- Oracle migration clears stale `infinityInProgress` state on prepared overflow markers, and `DysonInfinity()` clears
+  it after a successful reset; GameManager's deferral relies on both guarantees.
 
 ## Performance Pitfalls
 - `Update()` drives many text and stat updates; avoid adding unnecessary allocations or repeated expensive calculations.
@@ -65,3 +71,5 @@
    - `Run Time` `Current`/`Previous` values show decimal seconds when sub-second precision exists.
    - `Offline Time Used (This Infinity)` increases by spent seconds.
    - `Offline Time Used (Previous Infinity)` remains unchanged until the next Infinity reset.
+5. Load a prepared save containing the finite bots-overflow sentinel and confirm GameManager does not run production
+   or ordinary threshold prestige before Oracle consumes the marker.

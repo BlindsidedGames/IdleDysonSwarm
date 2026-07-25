@@ -43,6 +43,9 @@ using static Expansion.Oracle;
 ///   bold General metrics, then bold Infinity section, then bold Skills section.
 /// - General metrics, s/IP, and Run/Offline Current/Previous rows use the same small text scale as skill detail lines.
 /// - Skill rows render at small text scale with bold skill names.
+/// - Update() must defer production and ordinary threshold prestige while Oracle is holding the prepared finite
+///   bots-overflow sentinel, so Oracle's established special overflow reward/reset path consumes it first regardless
+///   of Unity script execution order.
 /// </summary>
 public class GameManager : MonoBehaviour
 {
@@ -233,6 +236,8 @@ public class GameManager : MonoBehaviour
 
     private void Update()
     {
+        if (IsBotOverflowSignal(infinityData.bots)) return;
+
         SetBotDistribution();
         CalculateProduction();
         ManageGoal();

@@ -1,3 +1,16 @@
+3.5.27
+- Performance enhancements.
+- Updates for Unity 6.6.
+- Reference manager now ignores all objects from namespaces prefixed with 'UnityEditor' to account for assets with incorrect hide flags.
+- Added explicit support for SortedDictionary.
+
+3.5.26
+- Updates for Unity 6.5
+- Performance and UX updates for referencing.
+- You can now specify that only GameObjects with ES3Referenceable Components will be added to the reference manager from within settings.
+- Reuse of WaitForSeconds to reduce GC.
+- Added RuntimeInitializeOnLoad attributes to ES3Type templates as required by latest version of Unity.
+
 3.5.25
 - Added ES3.LoadImageInto methods allowing you to load data into an existing Texture2D.
 

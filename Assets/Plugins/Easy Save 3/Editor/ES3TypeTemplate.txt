@@ -40,6 +40,12 @@ namespace ES3Types
 				}
 			}
 		}
+
+		[RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)]
+		static void ResetStaticVariables()
+		{
+			Instance = null;
+		}
 	}
 
 
@@ -50,6 +56,12 @@ namespace ES3Types
 		public ES3UserType_[es3TypeSuffix]Array() : base(typeof([fullType][]), ES3UserType_[es3TypeSuffix].Instance)
 		{
 			Instance = this;
+		}
+
+		[RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)]
+		static void ResetStaticVariables()
+		{
+			Instance = null;
 		}
 	}
 }

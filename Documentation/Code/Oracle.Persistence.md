@@ -1,29 +1,33 @@
 # Oracle.Persistence
 
 ## Contract / behavior expectations
-- `Load()` must prefer canonical save storage first (`idle_dyson_swarm_save.txt`) and only fall back to legacy sources when canonical load is missing or invalid.
-- Canonical load/save now routes through `ISaveStore` (default `CanonicalSaveStore`) rather than directly constructing `SaveSystem` at each call site.
-- Legacy fallback selection is version/timestamp/source-priority based through `SaveLoadCandidateSelector`.
-- If no candidate can be loaded and ES3 access was broken, legacy ES3 artifacts are archived as `.corrupt.*` for support triage.
-- If load succeeds from any legacy source, canonical save is immediately rewritten so subsequent launches avoid legacy paths.
+- `Load()` prefers canonical save storage first (`idle_dyson_swarm_save.txt`).
+- Canonical load/save routes through `IPreparedSaveStore` (default `CanonicalSaveStore`) and publishes canonical settings only after decode, schema gate, deep-copy migration/normalization, and validation succeed.
+- Production startup delegates selection to `Oracle.StartupRecovery` and `StartupSaveRecoveryCoordinator`.
+- A valid primary publishes without a write. Otherwise canonical temp/backups are prepared newest-first; the first valid candidate is restored with the verified transactional writer, followed by explicit legacy candidates if needed.
+- Any encountered future schema stops fallback. All-invalid or recovery-write-failed outcomes preserve artifacts and block startup, canonical writes, offline replay, and new-save creation.
+- A true first run is only the no-artifact outcome; undecodable legacy paths count as artifacts.
+- Successful automatic recovery is logged but does not interrupt the player.
+- Narrow tests that inject a non-production `ISaveStore` retain the prior compatibility load path.
 - Cold start now opens a replay gate (`_coldStartReplayPending`) that allows at most one lifecycle save before replay completes, and suppresses quit-timestamp updates during that gated save.
 - Startup replay now runs one frame after `Load()` (`yield return null`) instead of a fixed `0.1s` delay.
 - After replay applies with a quit timestamp input, `dateQuitString` is consumed in memory (cleared) to reduce duplicate replay windows.
 
 ## Data flow
 1. `Load()` resets in-memory state with `WipeSaveData()`.
-2. Attempts canonical load via `_saveStore` (`CanonicalSaveStore -> SaveSystem`).
-3. If needed, probes:
-   - `ES3` default key (`saveSettings`),
-   - `LegacyEs3Save.TryRecoverDefaultSave` (main + backup + archived artifacts),
-   - legacy Odin JSON (`betaTestTwo.idsOdin`).
-4. Best candidate is applied with `ApplyLoadedSettings()`.
-5. Migrations run (`ApplyMigrations()`), runtime sync hooks run.
-6. Replay coroutine runs one frame later:
+2. Production `CanonicalSaveStore` startup discovers canonical and explicit legacy candidates without mutation.
+3. `StartupSaveRecoveryCoordinator` prepares in order:
+   - primary,
+   - canonical temp/backups newest-first,
+   - explicit legacy candidates newest-first.
+4. Primary success publishes directly. A recovery winner is transactionally committed before publication.
+5. `StartupRecoveryPublicationGate` authorizes exactly one `ApplyLoadedSettings()` call and one replay schedule.
+6. Blocking outcomes keep the persistent Load-scene canvas open and pause scaled gameplay.
+7. Replay coroutine runs one frame later only after successful publication:
    - computes away span (`AwayForSeconds`)
    - dispatches `AwayFor` subscribers
    - consumes `dateQuitString` in memory when replay used quit timestamp input
-7. Cold-start gate releases and autosave readiness is restored.
+8. Cold-start gate releases and autosave readiness is restored.
 
 ## Offline timing diagnostics
 - Runtime emits `[OfflineTimeDiag]` warnings from:
@@ -55,8 +59,17 @@
 ## Save/load implications
 - Legacy ES3 key name remains `saveSettings`; changing this breaks import of historic installs.
 - Legacy Odin filename remains derived from `fileName` (`betaTestTwo.idsOdin`).
-- Canonical file path is managed by `SavePaths`; changing path/name requires coordinated wipe/recovery updates.
-- Recovery behavior relies on `LegacyEs3Save` trust ordering; changing it can alter which artifact wins for users with multiple backups.
+- Canonical file path is managed by `SavePaths`; changing path/name requires coordinated temp/backup discovery, wipe, and recovery updates.
+- Verified canonical writes create/read/prepare a temp file before backing up and atomically replacing canonical data.
+- A failed primary is preserved as a rotating backup before a verified recovery winner replaces canonical storage.
+- Startup clipboard import clears historical `dateQuitString`, records a fresh successful-load timestamp, commits transactionally, then reloads from scene zero.
+- In-game clipboard, startup clipboard, Quantum Console legacy recovery, and support-assisted file restore all delegate
+  to `SaveRecoveryImportCoordinator`.
+- Explicit imports return settings for publication only after verified transactional commit; invalid input cannot change
+  live or on-disk state.
+- Existing canonical data requires an explicit overwrite decision. The in-game confirmation and blocking recovery action
+  are explicit decisions; Quantum Console requires its `true` flag; `LoadState(string)` defaults to no overwrite.
+- Blocking support export copies artifact bytes into a new local folder and never moves or overwrites sources.
 
 ## Performance pitfalls
 - Artifact recovery can scan multiple files (`main`, `.bac`, `.tmp.bak`, `.tmp`, `.corrupt.*`), so avoid expensive parsing in each probe.
@@ -68,7 +81,11 @@
    - `OfflineLifecycleCoordinatorTests`
    - `OfflinePersistenceRegressionTests`
    - `OracleColdStartOfflineReplayGateTests`
-2. Launch with valid canonical save: confirm `Loaded with canonical save file`.
+2. Launch with valid canonical save: confirm `Loaded with canonical save file` and no second migration pass.
 3. Remove canonical file but keep valid ES3 file: confirm ES3 fallback loads and canonical file is rewritten.
 4. Provide AES-encrypted `SaveFile.es3` legacy artifact: confirm recovery succeeds (no `unrecoverable` archive on first run with fix).
-5. With only invalid artifacts: confirm archive still occurs and a new save is created.
+5. With an invalid canonical plus valid backup: confirm silent automatic restore and failed-primary backup preservation.
+6. With all invalid or future-version artifacts: confirm the blocking Load-scene panel appears, gameplay remains paused, and no offline replay/write occurs.
+7. Verify copy/details/export actions are non-destructive and reset requires arm then confirm.
+8. Run `SaveRecoveryStage4Tests`; confirm supported clipboard families share preparation, invalid imports preserve
+   canonical bytes, offline input is cleared, and legacy overwrite requires explicit approval.

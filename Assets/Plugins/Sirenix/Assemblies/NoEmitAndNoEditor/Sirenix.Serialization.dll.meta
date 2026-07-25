@@ -1,15 +1,9 @@
 fileFormatVersion: 2
 guid: d2a8f0021d6b47c5923d8972dfb81ef1
-AssetOrigin:
-  serializedVersion: 1
-  productId: 89041
-  packageName: Odin Inspector and Serializer
-  packageVersion: 4.0.1.2
-  assetPath: Assets/Plugins/Sirenix/Assemblies/NoEmitAndNoEditor/Sirenix.Serialization.dll
-  uploadId: 835510
+timeCreated: 1488828285
 PluginImporter:
   externalObjects: {}
-  serializedVersion: 3
+  serializedVersion: 2
   iconMap: {}
   executionOrder: {}
   defineConstraints: []
@@ -18,10 +12,39 @@ PluginImporter:
   isExplicitlyReferenced: 0
   validateReferences: 1
   platformData:
-    Android:
+  - first:
+      : Linux
+    second:
       enabled: 1
       settings: {}
-    Any:
+  - first:
+      : LinuxUniversal
+    second:
+      enabled: 1
+      settings: {}
+  - first:
+      : OSXIntel
+    second:
+      enabled: 1
+      settings: {}
+  - first:
+      : OSXIntel64
+    second:
+      enabled: 1
+      settings: {}
+  - first:
+      : PSM
+    second:
+      enabled: 0
+      settings: {}
+  - first:
+      Android: Android
+    second:
+      enabled: 1
+      settings: {}
+  - first:
+      Any: 
+    second:
       enabled: 0
       settings:
         Exclude Android: 0
@@ -46,33 +69,49 @@ PluginImporter:
         Exclude XboxOne: 1
         Exclude iOS: 1
         Exclude tvOS: 1
-    Editor:
+  - first:
+      Editor: Editor
+    second:
       enabled: 0
       settings:
         DefaultValueInitialized: true
-    Linux64:
+  - first:
+      Standalone: Linux64
+    second:
       enabled: 1
       settings:
         CPU: 
-    OSXUniversal:
+  - first:
+      Standalone: OSXUniversal
+    second:
       enabled: 1
       settings:
         CPU: 
-    Win:
+  - first:
+      Standalone: Win
+    second:
       enabled: 1
       settings:
         CPU: 
-    Win64:
+  - first:
+      Standalone: Win64
+    second:
       enabled: 1
       settings:
         CPU: 
-    WindowsStoreApps:
+  - first:
+      Windows Store Apps: WindowsStoreApps
+    second:
       enabled: 0
       settings:
         CPU: AnyCPU
-    iOS:
-      enabled: 1
-      settings: {}
   userData: 
   assetBundleName: 
   assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 89041
+  packageName: Odin Inspector and Serializer
+  packageVersion: 4.0.2.3
+  assetPath: Assets/Plugins/Sirenix/Assemblies/NoEmitAndNoEditor/Sirenix.Serialization.dll
+  uploadId: 957408

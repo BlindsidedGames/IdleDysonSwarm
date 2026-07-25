@@ -30,17 +30,22 @@ namespace ES3Internal
                 {
                     Undo.RecordObject(es3Go, "Marked Component to save");
                     es3Go.components.Remove(component);
+                    EditorUtility.SetDirty(es3Go);
                 }
 
                 if (!markedToBeSaved && newMarkedToBeSaved)
                 {
                     Undo.RecordObject(es3Go, "Unmarked Component to save");
                     es3Go.components.Add(component);
+                    EditorUtility.SetDirty(es3Go);
                 }
             }
 
             if (es3Go.components.RemoveAll(t => t == null) > 0)
+            {
                 Undo.RecordObject(es3Go, "Removed null Component from ES3GameObject");
+                EditorUtility.SetDirty(es3Go);
+            }
         }
     }
 }

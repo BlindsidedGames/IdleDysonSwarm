@@ -3,10 +3,9 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
+using System.Text;
 using Classes;
 using GameData;
-using Sirenix.Serialization;
-using SirenixSerializationUtility = Sirenix.Serialization.SerializationUtility;
 using Systems.Save;
 using Systems.Skills;
 using UnityEngine;
@@ -15,12 +14,13 @@ using UnityEngine.SceneManagement;
 namespace Expansion
 {
     /// <summary>
-    /// Disk persistence and legacy load selection for <see cref="Oracle"/>.
+    /// Prepared canonical persistence and legacy load selection for <see cref="Oracle"/>.
     /// </summary>
     /// <remarks>
     /// Runtime.
     /// <para>Primary entry points: <see cref="Load"/>, <see cref="WipeAllData"/>, <see cref="LoadState"/>.</para>
-    /// <para>Owns: startup load-source selection and wipe orchestration.</para>
+    /// <para>Owns: compatibility load fallback, post-preparation publication, support-assisted restore, and wipe
+    /// orchestration.</para>
     /// <para>Diagnostics: writes one tagged warning per save lifecycle event plus offline-time replay data via
     /// <see cref="AwayForSeconds"/>.</para>
     /// <para>Delegates: ES3 artifact probing to <see cref="LegacyEs3Save"/>, codec/storage to
@@ -28,16 +28,20 @@ namespace Expansion
     /// Canonical persistence stores the exact same save string used by clipboard export/import (prefix <c>IDB1:</c>).
     /// <para>Codec: <see cref="SaveCodec"/>.</para>
     /// <para>Snapshot compaction: <see cref="SaveSnapshotBuilder"/>.</para>
-    /// <para>Persistence orchestration: <see cref="ISaveStore"/> (default: <see cref="CanonicalSaveStore"/> wrapping
-    /// <see cref="SaveSystem"/> + <see cref="OdinStringFileStorage"/>).</para>
+    /// <para>Persistence orchestration: <see cref="IPreparedSaveStore"/> (default: <see cref="CanonicalSaveStore"/>
+    /// wrapping <see cref="SaveSystem"/>, <see cref="SavePreparationPipeline"/>, and
+    /// <see cref="OdinStringFileStorage"/>).</para>
     /// <para>Interacts with:
-    /// callers include Unity lifecycle via <c>Oracle.Start()</c> and debug UI buttons; callees include
+    /// callers include Unity lifecycle via <c>Oracle.Start()</c> and debug UI buttons; prepared startup selection
+    /// delegates to <c>Assets/Scripts/Expansion/Oracle.StartupRecovery.cs</c>; compatibility callees include
     /// <see cref="SaveLoadCandidateSelector"/>, <see cref="LegacyEs3Save"/>, and migration routines in
     /// <c>Assets/Scripts/Expansion/Oracle.Migrations.cs</c>.</para>
     /// <para>Change notes:
     /// changing legacy keys/paths (<c>saveSettings</c>, <c>.idsOdin</c>, canonical file path) can strand old saves;
     /// lifecycle-triggered saves are routed through <c>SaveForLifecycleTrigger(LifecycleSaveTrigger)</c>, so trigger
     /// enum changes must stay aligned with <c>Oracle.RuntimeSeams</c> and <c>OfflineLifecycleCoordinator</c>;
+    /// canonical settings are published only after complete preparation; invalid canonical artifacts are preserved;
+    /// support-assisted <see cref="LoadState(string)"/> refuses to replace canonical data without explicit approval;
     /// cold-start offline replay now gates lifecycle quit-timestamp updates until startup replay completes;
     /// loading/importing a save does not automatically reconcile skill points (manual tool in
     /// <c>Assets/Scripts/Expansion/Oracle.SkillPoints.cs</c>).</para>
@@ -47,6 +51,7 @@ namespace Expansion
         private bool _hasCompletedInitialLoad;
         private bool _coldStartReplayPending;
         private bool _coldStartGateSaveUsed;
+        private bool _canonicalWriteBlockedByUnpreparedArtifact;
 
         private bool IsColdStartLoad()
         {
@@ -187,6 +192,7 @@ namespace Expansion
             saveSettings.debugEverEnabled = enableDebugAfterWipe;
             saveSettings.doubleIp = doubleIpUnlocked;
             saveSettings.saveVersion = CurrentSaveVersion;
+            _canonicalWriteBlockedByUnpreparedArtifact = false;
             NotifyDebugOptionsChanged();
             SaveInternal(force: true, updateQuitTime: false);
             SceneManager.LoadScene(0);
@@ -303,10 +309,21 @@ namespace Expansion
             saveSettings.dateQuitString = value;
         }
 
+        /// <summary>
+        /// Builds a snapshot and commits it only when no unprepared canonical artifact is awaiting recovery.
+        /// </summary>
+        /// <param name="error">The snapshot, preparation, policy, or transaction failure.</param>
+        /// <returns><see langword="true"/> only after verified canonical replacement.</returns>
         public bool TrySaveState(out string error)
         {
             EnsureRuntimeSeamsInitialized();
             error = null;
+            if (_canonicalWriteBlockedByUnpreparedArtifact)
+            {
+                error = "Canonical writes are blocked because the existing artifact did not prepare successfully.";
+                return false;
+            }
+
             SaveDictionaries();
             PackSettingsFlags();
             SaveDataSettings snapshot = SaveSnapshotBuilder.CreateSaveSnapshotForStorage(
@@ -351,6 +368,11 @@ namespace Expansion
             return bits;
         }
 
+        /// <summary>
+        /// Publishes settings only after the caller's source-specific preparation or legacy migration contract succeeds.
+        /// </summary>
+        /// <param name="loaded">The settings selected for publication.</param>
+        /// <param name="sourceLog">The diagnostic source label.</param>
         private void ApplyLoadedSettings(SaveDataSettings loaded, string sourceLog)
         {
             EnsureRuntimeSeamsInitialized();
@@ -377,19 +399,31 @@ namespace Expansion
             BeginColdStartGate(isColdStartLoad);
             WipeSaveData();
 
+            // Production startup uses Stage 3 prepared candidate orchestration. Non-production test stores retain
+            // the compatibility path below so narrow lifecycle seam tests do not need filesystem recovery behavior.
+            if (TryRunPreparedStartupRecovery(isColdStartLoad))
+            {
+                return;
+            }
+
             // Canonical on-disk save: text file containing the exact clipboard string (IDB1:...).
             // This path is intended to replace ES3 as the primary persistence mechanism, while ES3 remains
             // as a legacy import/fallback during the transition period.
+            bool canonicalArtifactExists = _saveStore.Exists();
             bool loadedFromCanonical = false;
-            if (_saveStore.Exists())
+            bool loadedPreparedCanonical = false;
+            _canonicalWriteBlockedByUnpreparedArtifact = false;
+            if (canonicalArtifactExists)
             {
                 if (_saveStore.TryLoad(out SaveDataSettings canonicalLoaded, out string canonicalError))
                 {
                     loadedFromCanonical = true;
+                    loadedPreparedCanonical = _saveStore is IPreparedSaveStore;
                     ApplyLoadedSettings(canonicalLoaded, "canonical save file");
                 }
                 else
                 {
+                    _canonicalWriteBlockedByUnpreparedArtifact = true;
                     Debug.LogError($"[SaveRecovery] Canonical save load failed; falling back to ES3. {canonicalError}");
                 }
             }
@@ -478,7 +512,10 @@ namespace Expansion
                 Debug.Log("Made new save");
             }
 
-            ApplyMigrations();
+            if (!loadedPreparedCanonical)
+            {
+                ApplyMigrations();
+            }
             SyncAutoAssignFromSelectedPreset(runAutoAssign: true);
             UpdateSkills?.Invoke();
             StartCoroutine(AwayForCoroutine(isColdStartLoad));
@@ -487,9 +524,9 @@ namespace Expansion
                 SetSaveReady(true);
             }
 
-            // If we loaded from a legacy source (ES3 or old .idsOdin), immediately write the canonical file so
-            // future launches use the Odin-only pipeline.
-            if (!loadedFromCanonical)
+            // If no canonical artifact existed and we loaded a legacy source, write the prepared canonical form.
+            // Never overwrite an existing artifact that failed preparation; Stage 3 recovery owns that decision.
+            if (!loadedFromCanonical && !canonicalArtifactExists)
             {
                 try
                 {
@@ -502,16 +539,81 @@ namespace Expansion
             }
         }
 
+        /// <summary>
+        /// Attempts a support-assisted file restore without permission to replace existing canonical data.
+        /// </summary>
+        /// <param name="filePath">The supported save text file path.</param>
         public void LoadState(string filePath)
         {
-            if (!File.Exists(filePath)) return;
+            if (!TryLoadState(filePath, overwriteCanonical: false, out string error))
+            {
+                Debug.LogError($"[SaveRecovery] Support-assisted restore was not applied. {error}");
+            }
+        }
 
-            byte[] bytes = File.ReadAllBytes(filePath);
-            saveSettings = SirenixSerializationUtility.DeserializeValue<SaveDataSettings>(bytes, DataFormat.JSON);
-            LoadDictionaries();
-            if (!oracle.saveSettings.cheater && oracle.saveSettings.maxOfflineTime < 86400)
-                oracle.saveSettings.maxOfflineTime = 86400;
-            Loaded = true;
+        /// <summary>
+        /// Prepares and transactionally commits a support-provided save file before publishing it.
+        /// </summary>
+        /// <param name="filePath">The supported save text file path.</param>
+        /// <param name="overwriteCanonical">
+        /// Whether the caller has explicitly approved replacement of an existing canonical artifact.
+        /// </param>
+        /// <param name="error">The read, preparation, policy, or transactional write failure.</param>
+        /// <returns><see langword="true"/> only after verified commit and runtime publication.</returns>
+        public bool TryLoadState(string filePath, bool overwriteCanonical, out string error)
+        {
+            error = null;
+            if (string.IsNullOrWhiteSpace(filePath) || !File.Exists(filePath))
+            {
+                error = $"Save file was not found at '{filePath}'.";
+                return false;
+            }
+
+            if (!TryGetSaveRecoveryImportCoordinator(
+                    out SaveRecoveryImportCoordinator coordinator,
+                    out _,
+                    out string storeError))
+            {
+                error = storeError;
+                return false;
+            }
+
+            string text;
+            try
+            {
+                text = File.ReadAllText(filePath, Encoding.UTF8);
+            }
+            catch (Exception ex)
+            {
+                error = $"Failed reading support save file: {ex.Message}";
+                return false;
+            }
+
+            if (!coordinator.TryImportText(
+                    text,
+                    overwriteCanonical,
+                    imported =>
+                    {
+                        imported.doubleIp =
+                            imported.doubleIp || PlayerPrefs.GetInt("doubleip", 0) == 1;
+                        if (imported.debugOptions)
+                        {
+                            imported.debugEverEnabled = true;
+                        }
+                    },
+                    out _,
+                    out SaveDataSettings committed,
+                    out error))
+            {
+                return false;
+            }
+
+            ApplyLoadedSettings(committed, "prepared support-assisted restore");
+            RunPostLoadEntitlementSync();
+            SyncAutoAssignFromSelectedPreset(runAutoAssign: true);
+            UpdateSkills?.Invoke();
+            _canonicalWriteBlockedByUnpreparedArtifact = false;
+            return true;
         }
 
         public static event Action<double> AwayFor;

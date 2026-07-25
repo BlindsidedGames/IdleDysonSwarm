@@ -3,7 +3,8 @@
 ## Contract / behavior expectations
 - `EnsureRuntimeSeamsInitialized()` must provide non-null defaults for:
   - `IClock` (`SystemClock`)
-  - `ISaveStore` (`CanonicalSaveStore.CreateDefault()`)
+  - `SavePreparationPipeline` (bound to Oracle production migrations)
+  - `IPreparedSaveStore` (`CanonicalSaveStore.CreateDefault(preparation)`)
   - `OfflineAwayTimeCalculator`
   - `ManualLifecycleEvents` + `OfflineLifecycleCoordinator`
 - Oracle lifecycle callbacks must only raise lifecycle events; policy routing lives in `OfflineLifecycleCoordinator`.
@@ -19,12 +20,15 @@
 4. `OfflineLifecycleCoordinator` maps event to:
    - `OnLifecycleSaveRequested(trigger)` -> `SaveForLifecycleTrigger(trigger)` for quit, mobile pause, and mobile focus-loss.
    - `OnLifecycleReloadRequested()` -> `Load()` (mobile focus gain policy only)
-5. `Oracle.Persistence` uses initialized seams for timestamping (`IClock`) and canonical persistence (`ISaveStore`).
-6. On cold start, `Oracle.Persistence` delays save-readiness release until one-frame replay processing completes.
+5. `Oracle.Persistence` uses initialized seams for timestamping (`IClock`) and prepared canonical persistence (`IPreparedSaveStore`).
+6. Canonical loads publish only successful prepared settings; canonical saves use verified temp-file transactions.
+7. On cold start, `Oracle.Persistence` delays save-readiness release until one-frame replay processing completes.
 
 ## Save/load implications
 - `IClock` controls all seam-backed quit/load timestamps used by offline-time diagnostics.
 - Replacing `ISaveStore` in tests changes where canonical snapshots are read/written but keeps Oracle behavior unchanged.
+- The default store must be constructed with Oracle's migration-capable preparation pipeline. The parameterless default
+  is current-schema-only and is intended for support/existence tooling without migration context.
 
 ## Performance pitfalls
 - `Load()` on focus gain is intentionally gated by platform (`!UNITY_EDITOR && (UNITY_IOS || UNITY_ANDROID)`) to avoid expensive reload loops on desktop/editor.
@@ -35,3 +39,4 @@
 1. Run `OfflineLifecycleCoordinatorTests` to validate event routing matrix.
 2. Run `OfflineAwayTimeCalculatorTests` to validate timestamp source/clamp behavior.
 3. Run `OfflinePersistenceRegressionTests` to validate close/open persistence + offline grant matrix.
+4. Run `SavePreparationPipelineTests` and `TransactionalSaveStage2Tests` to validate the publication/storage boundary.

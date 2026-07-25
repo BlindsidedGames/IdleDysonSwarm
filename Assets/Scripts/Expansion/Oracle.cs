@@ -60,6 +60,9 @@ using UnityEditor;
  * - Changes here do not migrate saves directly but can change interpretation of existing save-state numbers.
  * - Lifecycle callbacks are routed through RuntimeSeams; callback policy changes must stay aligned with
  *   OfflineLifecycleCoordinator tests.
+ * - Bot overflow recovery recognizes both the historical Infinity/NaN marker and the finite sentinel produced by
+ *   Oracle.Migrations before save validation. DysonInfinity clears infinityInProgress after consuming the marker;
+ *   keep those paths aligned so prepared and repeated overflows cannot leave runtime progression blocked.
  */
 
 namespace Expansion
@@ -326,6 +329,9 @@ private void PackSettingsFlags()
             return (flags & (1UL << bit)) != 0;
         }
 
+        /// <summary>
+        /// Initializes gameplay only after prepared startup recovery either succeeds or confirms a true first run.
+        /// </summary>
         private void Start()
         {
             SkillTreeManager[] listOfSkillTreeManagersToAdd = skillsHolder.GetComponentsInChildren<SkillTreeManager>();
@@ -336,6 +342,12 @@ private void PackSettingsFlags()
             Loaded = false;
             SetSaveReady(false);
             Load();
+            if (_startupRecoveryBlocked)
+            {
+                ShowBlockingStartupRecovery();
+                return;
+            }
+
             Loaded = true;
             Application.targetFrameRate =
                 saveSettings.frameRate > 0
@@ -371,7 +383,7 @@ private void PackSettingsFlags()
         private void Update()
         {
             prestigeButton.interactable = prestigeData.infinityPoints >= 42;
-            if (double.IsInfinity(infinityData.bots) || double.IsNaN(infinityData.bots))
+            if (IsBotOverflowSignal(infinityData.bots))
                 if (!oracle.saveSettings.infinityInProgress)
                 {
                     oracle.saveSettings.infinityInProgress = true;
@@ -2736,6 +2748,7 @@ private void PackSettingsFlags()
             _gameManager.AutoAssignSkillsInvoke();
             WipeSaveButtonUpdate();
             SetSkillTimerSeconds(infinityData, "superRadiantScattering", 0);
+            saveSettings.infinityInProgress = false;
             Rotator.ResetPanelsStatic();
         }
 

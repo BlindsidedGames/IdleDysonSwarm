@@ -4,6 +4,7 @@ using Expansion;
 using NUnit.Framework;
 using Systems;
 using Systems.Save;
+using Tests.Save;
 
 /*
  * OfflinePersistenceRegressionTests
@@ -12,7 +13,7 @@ using Systems.Save;
  * Primary entry points: NUnit [TestCase] matrix over 2m/15m/60m reopen windows.
  * Owns vs delegates:
  * - Owns scenario orchestration (save on lifecycle event -> reopen -> compute/apply away time).
- * - Delegates persistence encoding to CanonicalSaveStore and away/offline logic to runtime systems.
+ * - Delegates prepared transactional persistence to CanonicalSaveStore and away/offline logic to runtime systems.
  *
  * Interacts with:
  * - Systems.Save.CanonicalSaveStore / SaveSystem / OfflineAwayTimeCalculator / OfflineLifecycleCoordinator
@@ -33,37 +34,12 @@ namespace Tests.Systems
             public DateTime UtcNow { get; set; }
         }
 
-        private sealed class InMemoryStorage : ISaveStorage
-        {
-            public string DebugName => "in-memory";
-            public string Text { get; private set; } = string.Empty;
-
-            public bool Exists()
-            {
-                return !string.IsNullOrWhiteSpace(Text);
-            }
-
-            public bool TryReadText(out string text, out string error)
-            {
-                text = Text;
-                error = Exists() ? null : "File not found.";
-                return Exists();
-            }
-
-            public bool TryWriteTextAtomic(string text, out string error)
-            {
-                Text = text;
-                error = null;
-                return true;
-            }
-        }
-
         [TestCase(120d)]
         [TestCase(900d)]
         [TestCase(3600d)]
         public void ReopenCycle_PersistsLatestProgress_AndGrantsOfflineTime(double awaySeconds)
         {
-            var storage = new InMemoryStorage();
+            var storage = new InMemoryTransactionalSaveStorage();
             var saveStore = new CanonicalSaveStore(new SaveSystem(storage));
             var clock = new FakeClock { UtcNow = new DateTime(2026, 2, 15, 18, 0, 0, DateTimeKind.Utc) };
             var awayCalculator = new OfflineAwayTimeCalculator(clock);
@@ -107,6 +83,7 @@ namespace Tests.Systems
         {
             return new Oracle.SaveDataSettings
             {
+                saveVersion = 11,
                 dateStarted = startedUtc.ToString(CultureInfo.InvariantCulture),
                 offlineTime = 0d,
                 maxOfflineTime = 100000d
