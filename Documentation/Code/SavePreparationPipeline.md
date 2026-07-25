@@ -26,7 +26,8 @@ Runtime Oracle creates the pipeline with `CreateSavePreparationPipeline()` and s
 - Decoded source objects, fixture artifacts, and caller-owned runtime snapshots are never mutated.
 - The historical Infinity/NaN `bots` marker prepares to a finite sentinel that the existing runtime overflow
   reward/reset path consumes after publication. This avoids lifecycle side effects during preparation and keeps the
-  signal durable across a canonical round trip.
+  signal durable across a canonical round trip. Any stale packed or unpacked `infinityInProgress` value is cleared
+  with the marker so runtime cannot defer it permanently.
 - Non-finite values in every other durable field remain non-publishable and non-committable.
 - Future, corrupt, migration-failing, invalid-shape, and null skill-state candidates are also non-publishable and
   non-committable.
@@ -45,7 +46,7 @@ Runtime Oracle creates the pipeline with `CreateSavePreparationPipeline()` and s
 2. Confirm all three immutable fixtures prepare to schema 11.
 3. Confirm source hashes remain unchanged.
 4. Confirm Infinity and NaN `bots` markers prepare to the finite runtime sentinel without mutating the source or
-   triggering writes/lifecycle state.
+   triggering writes/lifecycle state, and clear stale packed/unpacked `infinityInProgress` state.
 5. Confirm non-finite values outside `bots`, plus future/migration/null-skill-state failures, expose no settings or
    canonical text.
 6. Confirm successful output begins with uppercase `IDB1:`.

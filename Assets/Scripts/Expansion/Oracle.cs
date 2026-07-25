@@ -61,7 +61,8 @@ using UnityEditor;
  * - Lifecycle callbacks are routed through RuntimeSeams; callback policy changes must stay aligned with
  *   OfflineLifecycleCoordinator tests.
  * - Bot overflow recovery recognizes both the historical Infinity/NaN marker and the finite sentinel produced by
- *   Oracle.Migrations before save validation; keep those checks aligned so prepared saves retain the reset signal.
+ *   Oracle.Migrations before save validation. DysonInfinity clears infinityInProgress after consuming the marker;
+ *   keep those paths aligned so prepared and repeated overflows cannot leave runtime progression blocked.
  */
 
 namespace Expansion
@@ -2747,6 +2748,7 @@ private void PackSettingsFlags()
             _gameManager.AutoAssignSkillsInvoke();
             WipeSaveButtonUpdate();
             SetSkillTimerSeconds(infinityData, "superRadiantScattering", 0);
+            saveSettings.infinityInProgress = false;
             Rotator.ResetPanelsStatic();
         }
 

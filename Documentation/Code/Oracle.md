@@ -25,8 +25,8 @@ This document focuses on the reset and save-schema contracts relevant to offline
 - Migration ensure-step normalizes mega research percent defaults:
   - `matrioshkaUpgradePercent`, `birchUpgradePercent`, `galacticUpgradePercent` are set to `0.03` when loaded as `<= 0`.
 - Migration/preparation converts the historically supported Infinity/NaN `bots` overflow marker to a reserved finite
-  sentinel before graph validation. `Oracle.Update()` recognizes that sentinel and applies the same overflow
-  reward/reset path that previously consumed the non-finite marker.
+  sentinel and clears stale `infinityInProgress` state before graph validation. `Oracle.Update()` recognizes that
+  sentinel and applies the same overflow reward/reset path that previously consumed the non-finite marker.
 
 ## Data Flow
 - Counters are incremented by `OfflineTimeManager` when time is consumed.
@@ -40,6 +40,8 @@ This document focuses on the reset and save-schema contracts relevant to offline
 - Legacy saves that persisted mega percent values as `0` are normalized to `0.03` during migration ensure-step.
 - The prepared finite bots sentinel is canonical and remains recognizable after another save round trip; migration
   itself does not award currency, reset state, publish data, or invoke gameplay lifecycle methods.
+- `DysonInfinity()` clears `infinityInProgress` after consuming an overflow marker, matching the manual Infinity path
+  so a later overflow remains eligible for the same reward/reset handling.
 - Infinity/NaN values outside the supported `bots` marker remain invalid and block publication/persistence.
 - Export/import and canonical save persistence include these fields as part of the standard save payload.
 - Artifact skill point counting uses existing persisted flags; no schema additions required.
@@ -50,6 +52,8 @@ This document focuses on the reset and save-schema contracts relevant to offline
 - Removing static accessor null guards can reintroduce pre-load startup crashes in presenters/services that resolve before `Oracle.Start()`.
 - Changing either the migration sentinel or runtime overflow predicate independently can lose a pending historical
   overflow reward/reset after a save is prepared.
+- Preserving `infinityInProgress` on a prepared overflow candidate, or failing to clear it after `DysonInfinity()`,
+  makes GameManager defer the marker while Oracle refuses to consume it, blocking progression.
 
 ## Quick Verification Steps
 1. Spend offline time in a run and note `offlineTimeUsedThisInfinity`.
@@ -61,6 +65,9 @@ This document focuses on the reset and save-schema contracts relevant to offline
 4. Buy one translation or speed upgrade and verify `ArtifactSkillPoints()` increases by the configured `AddSkillPoints` amount.
 5. Load a legacy save with mega research percent at `0` and verify values normalize to `0.03` and mega boost text is non-zero after purchase.
 6. Prepare saves whose `bots` value is NaN and Infinity; verify each becomes the finite sentinel, round-trips through
-   canonical encoding, and is still recognized by the runtime overflow predicate.
+   canonical encoding, clears stale packed/unpacked transition state, and is still recognized by the runtime
+   overflow predicate.
 7. Prepare a save with NaN/Infinity in another durable numeric field and verify validation rejects it without
    publishable settings, canonical output, storage writes, or lifecycle effects.
+8. Consume two overflow markers in sequence and verify each grants the overflow reward/reset and leaves
+   `infinityInProgress` false.

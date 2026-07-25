@@ -51,6 +51,8 @@
 - UI formatting changes in this class alter player-facing numeric rendering but not persisted numeric values.
 - Removing the overflow-sentinel guard can let production or the ordinary prestige path consume a prepared historical
   overflow marker before Oracle applies its special overflow rewards.
+- Oracle migration clears stale `infinityInProgress` state on prepared overflow markers, and `DysonInfinity()` clears
+  it after a successful reset; GameManager's deferral relies on both guarantees.
 
 ## Performance Pitfalls
 - `Update()` drives many text and stat updates; avoid adding unnecessary allocations or repeated expensive calculations.

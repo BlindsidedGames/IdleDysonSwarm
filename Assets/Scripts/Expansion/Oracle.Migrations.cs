@@ -46,8 +46,9 @@ namespace Expansion
     /// - EnsureMegaResearchPercentDefaults() normalizes legacy mega research percent fields to non-zero defaults;
     ///   changing defaults affects displayed boost text and mega production modifier scaling on load.
     /// - EnsureBotOverflowSignalIsFinite() converts the historically supported non-finite bot-overflow marker to
-    ///   the reserved finite runtime sentinel before graph validation. Keep it aligned with IsBotOverflowSignal()
-    ///   in Oracle.cs so the existing overflow reward/reset path still consumes the marker after publication.
+    ///   the reserved finite runtime sentinel and clears stale transition state before graph validation. Keep it
+    ///   aligned with IsBotOverflowSignal() in Oracle.cs so the existing overflow reward/reset path still consumes
+    ///   the marker after publication.
     /// </remarks>
     public partial class Oracle
     {
@@ -164,12 +165,12 @@ namespace Expansion
                 {
                     EnsureSaveSettingsShape();
                     EnsureDysonVerseSaveShape();
-                    EnsureBotOverflowSignalIsFinite();
                     EnsureSkillOwnershipData();
                     EnsureSkillAutoAssignmentIds();
                     EnsureResearchLevelData();
                     EnsureMegaResearchPercentDefaults();
                     EnsurePackedSettingsFlags();
+                    EnsureBotOverflowSignalIsFinite();
                     EnsureInfinitySparseArrays();
                     EnsureSimulationMathematicsParity();
                 }
@@ -177,13 +178,18 @@ namespace Expansion
         }
 
         /// <summary>
-        /// Replaces the legacy Infinity/NaN bots overflow marker with a finite value reserved for runtime handling.
+        /// Normalizes legacy and canonical bots overflow markers plus stale transition state for runtime handling.
         /// </summary>
         private void EnsureBotOverflowSignalIsFinite()
         {
-            if (infinityData == null || !IsNonFiniteBotOverflowSignal(infinityData.bots)) return;
+            if (infinityData == null || !IsBotOverflowSignal(infinityData.bots)) return;
 
             infinityData.bots = PreparedBotOverflowSentinel;
+            saveSettings.infinityInProgress = false;
+            if (saveSettings.hasPackedSettingsFlags)
+            {
+                saveSettings.packedSettingsFlags &= ~(1UL << 6);
+            }
         }
 
         /// <summary>
