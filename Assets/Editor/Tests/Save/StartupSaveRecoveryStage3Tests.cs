@@ -2,7 +2,7 @@
  * Purpose: Verifies Stage 3 startup selection, blocking outcomes, one-shot publication/replay, and explicit actions.
  * Runs: Unity EditMode test runner only against disposable filesystem roots.
  * Primary entry points: NUnit startup recovery, interaction, export, reset, and responsive-layout tests.
- * Owns: Recovery artifact arrangements, byte-preservation assertions, and phone/desktop layout boundary checks.
+ * Owns: Recovery artifact arrangements, byte-preservation/reset-boundary assertions, and phone/desktop layout checks.
  * Delegates: Production policy/storage behavior to StartupSaveRecoveryCoordinator, CanonicalSaveStore, and related services.
  *
  * Interacts with:
@@ -13,6 +13,7 @@
  *
  * Change notes:
  * - Every blocked-outcome test must assert source bytes remain unchanged and no backup/write appears.
+ * - Reset gate tests must prove artifacts survive every action before the distinct final confirmation.
  * - Recovery selection tests use explicit timestamps to prevent filesystem-order dependence.
  * - Fixtures are created independently per test so no decoded object is reused or mutated across cases.
  */
@@ -359,16 +360,41 @@ namespace Tests.Save
         {
             var gate = new StartupRecoveryResetGate();
             int resetCount = 0;
-
-            Assert.IsFalse(gate.TryConfirm(() => resetCount++));
-            gate.Arm();
-            gate.Cancel();
-            Assert.IsFalse(gate.TryConfirm(() => resetCount++));
-            gate.Arm();
-            Assert.IsTrue(gate.TryConfirm(() => resetCount++));
-            Assert.AreEqual(1, resetCount);
-            Assert.IsFalse(gate.IsArmed);
-            Assert.IsFalse(gate.TryConfirm(() => resetCount++));
+            string root = Path.Combine(
+                Path.GetTempPath(),
+                "ids-reset-gate-" + Guid.NewGuid().ToString("N"));
+            string supportArtifact = Path.Combine(root, "failed-primary.txt");
+            Directory.CreateDirectory(root);
+            File.WriteAllText(supportArtifact, "support-evidence");
+            try
+            {
+                Assert.IsFalse(gate.TryConfirm(() => resetCount++));
+                Assert.IsTrue(File.Exists(supportArtifact));
+                gate.Arm();
+                Assert.IsTrue(File.Exists(supportArtifact));
+                gate.Cancel();
+                Assert.IsFalse(gate.TryConfirm(() => resetCount++));
+                Assert.IsTrue(File.Exists(supportArtifact));
+                gate.Arm();
+                Assert.IsTrue(
+                    gate.TryConfirm(
+                        () =>
+                        {
+                            resetCount++;
+                            File.Delete(supportArtifact);
+                        }));
+                Assert.AreEqual(1, resetCount);
+                Assert.IsFalse(File.Exists(supportArtifact));
+                Assert.IsFalse(gate.IsArmed);
+                Assert.IsFalse(gate.TryConfirm(() => resetCount++));
+            }
+            finally
+            {
+                if (Directory.Exists(root))
+                {
+                    Directory.Delete(root, recursive: true);
+                }
+            }
         }
 
         /// <summary>

@@ -2,17 +2,19 @@
  * Purpose: Provides explicit non-destructive support actions for one blocked startup recovery result.
  * Runs: Runtime blocking recovery UI and Unity EditMode interaction tests.
  * Primary entry points: TryGetPrimaryText, BuildSupportReport, TryExportArtifacts, and TryImportClipboardText.
- * Owns: Support report formatting and the safe startup-only clipboard import baseline.
- * Delegates: Preparation/transactional writes to CanonicalSaveStore and file copies to SaveArtifactExporter.
+ * Owns: Support report formatting and explicit actions for one blocked startup result.
+ * Delegates: Safe clipboard import to SaveRecoveryImportCoordinator and file copies to SaveArtifactExporter.
  *
  * Interacts with:
  * - Assets/Scripts/User Interface/StartupRecoveryView.cs.
  * - Assets/Scripts/Systems/Save/StartupSaveRecoveryResult.cs.
  * - Assets/Scripts/Systems/Save/SaveArtifactExporter.cs.
+ * - Assets/Scripts/Systems/Save/SaveRecoveryImportCoordinator.cs.
  *
  * Change notes:
  * - Import never publishes directly; it commits canonically and requires a clean startup reload.
- * - Imported historical quit timestamps are cleared before commit so recovery cannot grant duplicate offline time.
+ * - Startup import uses the same Stage 4 path as in-game/manual imports and explicitly authorizes replacement because
+ *   the blocking screen requires a deliberate player action.
  * - Export/copy actions are read-only with respect to every discovered source artifact.
  */
 
@@ -29,6 +31,7 @@ namespace Systems.Save
     public sealed class StartupRecoveryInteractionSession
     {
         private readonly CanonicalSaveStore _store;
+        private readonly SaveRecoveryImportCoordinator _importCoordinator;
         private readonly Func<DateTime> _utcNow;
 
         /// <summary>
@@ -45,6 +48,7 @@ namespace Systems.Save
             _store = store ?? throw new ArgumentNullException(nameof(store));
             Result = result ?? throw new ArgumentNullException(nameof(result));
             _utcNow = utcNow ?? (() => DateTime.UtcNow);
+            _importCoordinator = new SaveRecoveryImportCoordinator(_store, _utcNow);
         }
 
         /// <summary>
@@ -145,17 +149,13 @@ namespace Systems.Save
         /// <returns><see langword="true"/> only after verified canonical replacement.</returns>
         public bool TryImportClipboardText(string clipboardText, out string error)
         {
-            PreparedSaveResult prepared = _store.PrepareText(clipboardText);
-            if (!prepared.Succeeded)
-            {
-                error = prepared.Error;
-                return false;
-            }
-
-            DateTime now = _utcNow().ToUniversalTime();
-            prepared.Settings.dateQuitString = string.Empty;
-            prepared.Settings.lastSuccessfulLoadUtc = now.ToString(CultureInfo.InvariantCulture);
-            return _store.TrySave(prepared.Settings, out _, out error);
+            return _importCoordinator.TryImportText(
+                clipboardText,
+                allowCanonicalOverwrite: true,
+                beforeCommit: null,
+                out _,
+                out _,
+                out error);
         }
     }
 }

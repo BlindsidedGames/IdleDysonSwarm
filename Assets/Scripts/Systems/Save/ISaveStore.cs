@@ -12,7 +12,7 @@ namespace Systems.Save
      * - ISaveStore.TryLoad(...)
      * - ISaveStore.TrySave(...)
      * - CanonicalSaveStore.CreateDefault(SavePreparationPipeline)
-     * - CanonicalSaveStore startup candidate preparation/commit support
+     * - CanonicalSaveStore candidate/settings preparation and commit support
      * Owns vs delegates:
      * - Owns the store-level contract expected by Oracle save lifecycle code.
      * - Delegates preparation/encoding/storage to SaveSystem, SavePreparationPipeline, and ITransactionalSaveStorage.
@@ -26,6 +26,7 @@ namespace Systems.Save
      * - Changing contract behavior (e.g. TrySave returning false on partial success) affects startup load fallback
      *   and quit-save persistence flow.
      * - TryLoad may return settings only after SaveSystem preparation succeeds.
+     * - PrepareSettings must remain read-only and return an isolated graph for import finalization.
      * - Keep this abstraction aligned with SaveSystem expectations to avoid split-brain persistence behavior.
      */
     /// <summary>
@@ -170,6 +171,16 @@ namespace Systems.Save
         public PreparedSaveResult PrepareText(string text)
         {
             return _saveSystem.PrepareText(text);
+        }
+
+        /// <summary>
+        /// Prepares caller-owned settings on an isolated graph without writing them.
+        /// </summary>
+        /// <param name="settings">The source settings.</param>
+        /// <returns>The classified isolated preparation result.</returns>
+        public PreparedSaveResult PrepareSettings(Oracle.SaveDataSettings settings)
+        {
+            return _saveSystem.Preparation.PrepareSettings(settings);
         }
 
         /// <summary>

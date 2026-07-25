@@ -3,10 +3,9 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
+using System.Text;
 using Classes;
 using GameData;
-using Sirenix.Serialization;
-using SirenixSerializationUtility = Sirenix.Serialization.SerializationUtility;
 using Systems.Save;
 using Systems.Skills;
 using UnityEngine;
@@ -20,7 +19,8 @@ namespace Expansion
     /// <remarks>
     /// Runtime.
     /// <para>Primary entry points: <see cref="Load"/>, <see cref="WipeAllData"/>, <see cref="LoadState"/>.</para>
-    /// <para>Owns: compatibility load fallback, post-preparation publication, and wipe orchestration.</para>
+    /// <para>Owns: compatibility load fallback, post-preparation publication, support-assisted restore, and wipe
+    /// orchestration.</para>
     /// <para>Diagnostics: writes one tagged warning per save lifecycle event plus offline-time replay data via
     /// <see cref="AwayForSeconds"/>.</para>
     /// <para>Delegates: ES3 artifact probing to <see cref="LegacyEs3Save"/>, codec/storage to
@@ -41,6 +41,7 @@ namespace Expansion
     /// lifecycle-triggered saves are routed through <c>SaveForLifecycleTrigger(LifecycleSaveTrigger)</c>, so trigger
     /// enum changes must stay aligned with <c>Oracle.RuntimeSeams</c> and <c>OfflineLifecycleCoordinator</c>;
     /// canonical settings are published only after complete preparation; invalid canonical artifacts are preserved;
+    /// support-assisted <see cref="LoadState(string)"/> refuses to replace canonical data without explicit approval;
     /// cold-start offline replay now gates lifecycle quit-timestamp updates until startup replay completes;
     /// loading/importing a save does not automatically reconcile skill points (manual tool in
     /// <c>Assets/Scripts/Expansion/Oracle.SkillPoints.cs</c>).</para>
@@ -538,16 +539,81 @@ namespace Expansion
             }
         }
 
+        /// <summary>
+        /// Attempts a support-assisted file restore without permission to replace existing canonical data.
+        /// </summary>
+        /// <param name="filePath">The supported save text file path.</param>
         public void LoadState(string filePath)
         {
-            if (!File.Exists(filePath)) return;
+            if (!TryLoadState(filePath, overwriteCanonical: false, out string error))
+            {
+                Debug.LogError($"[SaveRecovery] Support-assisted restore was not applied. {error}");
+            }
+        }
 
-            byte[] bytes = File.ReadAllBytes(filePath);
-            saveSettings = SirenixSerializationUtility.DeserializeValue<SaveDataSettings>(bytes, DataFormat.JSON);
-            LoadDictionaries();
-            if (!oracle.saveSettings.cheater && oracle.saveSettings.maxOfflineTime < 86400)
-                oracle.saveSettings.maxOfflineTime = 86400;
-            Loaded = true;
+        /// <summary>
+        /// Prepares and transactionally commits a support-provided save file before publishing it.
+        /// </summary>
+        /// <param name="filePath">The supported save text file path.</param>
+        /// <param name="overwriteCanonical">
+        /// Whether the caller has explicitly approved replacement of an existing canonical artifact.
+        /// </param>
+        /// <param name="error">The read, preparation, policy, or transactional write failure.</param>
+        /// <returns><see langword="true"/> only after verified commit and runtime publication.</returns>
+        public bool TryLoadState(string filePath, bool overwriteCanonical, out string error)
+        {
+            error = null;
+            if (string.IsNullOrWhiteSpace(filePath) || !File.Exists(filePath))
+            {
+                error = $"Save file was not found at '{filePath}'.";
+                return false;
+            }
+
+            if (!TryGetSaveRecoveryImportCoordinator(
+                    out SaveRecoveryImportCoordinator coordinator,
+                    out _,
+                    out string storeError))
+            {
+                error = storeError;
+                return false;
+            }
+
+            string text;
+            try
+            {
+                text = File.ReadAllText(filePath, Encoding.UTF8);
+            }
+            catch (Exception ex)
+            {
+                error = $"Failed reading support save file: {ex.Message}";
+                return false;
+            }
+
+            if (!coordinator.TryImportText(
+                    text,
+                    overwriteCanonical,
+                    imported =>
+                    {
+                        imported.doubleIp =
+                            imported.doubleIp || PlayerPrefs.GetInt("doubleip", 0) == 1;
+                        if (imported.debugOptions)
+                        {
+                            imported.debugEverEnabled = true;
+                        }
+                    },
+                    out _,
+                    out SaveDataSettings committed,
+                    out error))
+            {
+                return false;
+            }
+
+            ApplyLoadedSettings(committed, "prepared support-assisted restore");
+            RunPostLoadEntitlementSync();
+            SyncAutoAssignFromSelectedPreset(runAutoAssign: true);
+            UpdateSkills?.Invoke();
+            _canonicalWriteBlockedByUnpreparedArtifact = false;
+            return true;
         }
 
         public static event Action<double> AwayFor;

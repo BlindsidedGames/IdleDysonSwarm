@@ -12,7 +12,8 @@
 - `Assets/Scripts/` gameplay code.
   - `Assets/Scripts/Systems/` core gameplay loop, production, UI helpers.
     - `Assets/Scripts/Systems/Balance/` runtime balance accessors, fallback catalogs, and validators.
-    - `Assets/Scripts/Systems/Save/` canonical save pipeline, storage adapters, and offline/lifecycle seam abstractions.
+    - `Assets/Scripts/Systems/Save/` canonical preparation/storage, startup recovery, explicit recovery-import
+      coordination, and offline/lifecycle seams.
   - `Assets/Scripts/Data/Balance/` balance ScriptableObjects and registries.
   - `Assets/Scripts/Expansion/` Oracle, research, and Dream1 era systems.
   - `Assets/Scripts/Buildings/` building logic and UI managers.

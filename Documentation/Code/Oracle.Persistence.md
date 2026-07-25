@@ -63,6 +63,12 @@
 - Verified canonical writes create/read/prepare a temp file before backing up and atomically replacing canonical data.
 - A failed primary is preserved as a rotating backup before a verified recovery winner replaces canonical storage.
 - Startup clipboard import clears historical `dateQuitString`, records a fresh successful-load timestamp, commits transactionally, then reloads from scene zero.
+- In-game clipboard, startup clipboard, Quantum Console legacy recovery, and support-assisted file restore all delegate
+  to `SaveRecoveryImportCoordinator`.
+- Explicit imports return settings for publication only after verified transactional commit; invalid input cannot change
+  live or on-disk state.
+- Existing canonical data requires an explicit overwrite decision. The in-game confirmation and blocking recovery action
+  are explicit decisions; Quantum Console requires its `true` flag; `LoadState(string)` defaults to no overwrite.
 - Blocking support export copies artifact bytes into a new local folder and never moves or overwrites sources.
 
 ## Performance pitfalls
@@ -81,3 +87,5 @@
 5. With an invalid canonical plus valid backup: confirm silent automatic restore and failed-primary backup preservation.
 6. With all invalid or future-version artifacts: confirm the blocking Load-scene panel appears, gameplay remains paused, and no offline replay/write occurs.
 7. Verify copy/details/export actions are non-destructive and reset requires arm then confirm.
+8. Run `SaveRecoveryStage4Tests`; confirm supported clipboard families share preparation, invalid imports preserve
+   canonical bytes, offline input is cleared, and legacy overwrite requires explicit approval.

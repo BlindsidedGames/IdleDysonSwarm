@@ -1,6 +1,6 @@
 # Phase One Save-Integrity Implementation Plan
 
-Status: Stage 3 implemented locally; awaiting final review before Stage 4
+Status: Stage 4 implemented and validated locally on macOS; awaiting final Phase One review
 Last updated: 2026-07-25
 Primary validation target: Windows Editor and Windows player
 Deferred validation targets: macOS, iOS, and other device-specific coverage
@@ -290,6 +290,22 @@ Required Stage 4 tests:
 - Legacy recovery cannot overwrite a valid canonical save without explicit approval.
 - Reset requires two distinct confirmations and preserves support artifacts until the final confirmation.
 
+Stage 4 implementation notes:
+
+- `SaveRecoveryImportCoordinator` is the shared explicit-import boundary for the in-game clipboard confirmation,
+  blocking startup clipboard import, Quantum Console legacy recovery, and support-assisted file restore.
+- Every import prepares untrusted input first, requires explicit approval before replacing an existing canonical
+  artifact, clears historical quit-time input, and returns runtime-publishable settings only after verified
+  transactional commit.
+- The in-game recovery-copy action now discovers candidates deterministically and copies only a successfully prepared,
+  uppercase canonical `IDB1:` envelope without modifying any artifact.
+- Quantum Console recovery retains its command names and one-based snapshot contract, but no longer has a parallel
+  backup/write/publication path.
+- `LoadState(string)` remains as a non-overwriting compatibility entry point; explicitly approved support tooling can
+  call `TryLoadState(path, true, out error)`.
+- macOS Unity `6000.5.5f1` validation passed: Stage 4 targeted EditMode tests 10/10 and full EditMode baseline
+  187/187.
+
 ## Delivery sequence
 
 Use separate, reviewable changes:
@@ -305,15 +321,16 @@ Do not combine gameplay cleanup or unrelated audit findings with these changes.
 
 ## Validation target and deferred work
 
-Phase One acceptance is based on:
+This checkpoint's Phase One acceptance is based on the user-approved macOS-only validation pass:
 
-- Windows Unity Editor compilation.
+- macOS Unity `6000.5.5f1` Editor compilation/import.
 - Targeted save EditMode tests.
-- Full EditMode baseline with known unrelated failures identified.
-- Windows player build.
-- Windows manual smoke using copies of representative saves and recovery scenarios.
+- Full EditMode baseline with unrelated warnings identified.
+- macOS Editor smoke using controlled copies or disposable artifacts for representative recovery scenarios.
 
-macOS and iOS compatibility testing is deferred. After Phase One is stable on Windows, repeat the fixture suite and platform lifecycle/recovery smoke on macOS before shipping from the MacBook. iOS device lifecycle and storage behavior require a later device-specific validation pass.
+Windows player/build checks are not required for this pass. Windows, iOS-device, and Android-device lifecycle/storage
+validation remain later platform-specific release checks; macOS Editor validation alone is not evidence of those player
+environments.
 
 ## Phase One definition of done
 
@@ -329,4 +346,5 @@ Phase One is complete when:
 - Clipboard import grants no extra offline time.
 - Save-scoped obsolete duplication is removed only where coverage proves it safe.
 - Required code and integration documentation is current.
-- Windows validation passes for the save-integrity surface, with unrelated baseline failures explicitly recorded.
+- macOS Unity `6000.5.5f1` validation passes for the save-integrity surface, with unrelated baseline warnings or
+  failures explicitly recorded.
