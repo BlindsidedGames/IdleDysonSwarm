@@ -10,7 +10,7 @@ Start with [STRUCTURE.md](STRUCTURE.md) for the project map and `.agents/workflo
 
 Do not guess. If the requested behaviour, target platform, asset, acceptance criteria, or validation approach is unclear or has multiple reasonable interpretations, stop and ask for direction before changing code or content. Preserve existing behaviour unless a behaviour change is requested, and keep changes within the requested scope.
 
-Never commit or share production/player save data, account identifiers, or other personal data. Use synthetic, minimised fixtures; redact any diagnostic material before adding it to the repository.
+Player save fixtures owned by the user, or explicitly authorized by the user for repository use, may be committed when needed for regression coverage. Never commit personally identifiable information, including account identifiers, or unrelated personal context. Retain only the payload data necessary for the test, and redact or remove PII and extraneous support or mailbox material before committing.
 
 ## Save and offline-progress contract
 
