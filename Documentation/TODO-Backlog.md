@@ -36,6 +36,10 @@ Source: Consolidated from the shared screenshots and direct requests.
 | P0 | Investigate offline-time state bug from forwarded invariel report: while offline time is running, IDS appears to behave as if `Break the Loop` (multiple IP) and `Quantum Entanglement` (don't reset) are active; repro save file is available in `dev-todo` from invariel. |
 
 ## Features / Improvements
+
+### Future / Deferred Direction
+- [ ] [Monetization, renewable cross-promotion, and deep-reset galvanization direction](FutureMonetizationAndProgressionDirection.md) — deliberately deferred until baseline architecture cleanup is complete and the open entitlement, policy, UX, save, and balance questions are resolved.
+
 ### Manual Labor / Skill Tree
 | Priority | Item |
 | --- | --- |
