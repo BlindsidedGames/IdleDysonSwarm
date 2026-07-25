@@ -10,7 +10,7 @@ The stages are fixed:
 2. Reject schemas newer than 11 before migration or normalization.
 3. Deep-copy decoded/caller-owned state.
 4. Run Oracle's production migration and normalization against the copy.
-5. Validate required containers, durable identifiers, dense facility arrays, and finite numeric state.
+5. Validate required containers, durable identifiers and skill-state values, dense facility arrays, and finite numeric state.
 6. Serialize only the validated copy into uppercase canonical output.
 
 ## Data flow
@@ -22,7 +22,7 @@ Runtime Oracle creates the pipeline with `CreateSavePreparationPipeline()` and s
 ## Save/load implications
 
 - Decoded source objects, fixture artifacts, and caller-owned runtime snapshots are never mutated.
-- Future, corrupt, migration-failing, invalid-shape, and non-finite candidates are non-publishable and non-committable.
+- Future, corrupt, migration-failing, invalid-shape, null skill-state, and non-finite candidates are non-publishable and non-committable.
 - Current-schema-only tools may use `CreateCurrentSchemaOnly(11)`; it deliberately rejects older schemas because it has no Oracle migration context.
 - Lowercase `idb1:` input remains accepted, but prepared canonical output is always uppercase.
 
@@ -37,5 +37,5 @@ Runtime Oracle creates the pipeline with `CreateSavePreparationPipeline()` and s
 1. Run `SavePreparationPipelineTests`.
 2. Confirm all three immutable fixtures prepare to schema 11.
 3. Confirm source hashes remain unchanged.
-4. Confirm future/migration/non-finite failures expose no settings or canonical text.
+4. Confirm future/migration/null-skill-state/non-finite failures expose no settings or canonical text.
 5. Confirm successful output begins with uppercase `IDB1:`.

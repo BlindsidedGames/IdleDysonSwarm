@@ -2,7 +2,7 @@
  * Purpose: Validates prepared save graphs before they can be published or committed to canonical storage.
  * Runs: Runtime save/load preparation and Unity Editor save-integrity tests.
  * Primary entry point: SaveDataValidator.TryValidate.
- * Owns: Required shape, durable-ID, dense facility-array, and finite-number validation.
+ * Owns: Required shape, durable-ID key/value, dense facility-array, and finite-number validation.
  * Delegates: Migration and normalization to Oracle migration code before validation begins.
  *
  * Interacts with:
@@ -12,6 +12,7 @@
  *
  * Change notes:
  * - New required persisted containers or identifier maps must be added to the explicit shape checks.
+ * - Stable-ID skill-state entries must have non-null values so published state remains safe to persist.
  * - Facility storage remains eight dense two-slot arrays; changing that contract requires migration and test updates.
  * - Rejecting additional numeric states can make historical saves unloadable and requires fixture evidence.
  */
@@ -93,6 +94,17 @@ namespace Systems.Save
                 !ValidateStringKeys(infinity.skillOwnedById.Keys, "skillOwnedById", out error) ||
                 !ValidateStringKeys(infinity.researchLevelsById.Keys, "researchLevelsById", out error))
             {
+                return false;
+            }
+
+            foreach (var entry in infinity.skillStateById)
+            {
+                if (entry.Value != null)
+                {
+                    continue;
+                }
+
+                error = $"skillStateById contains a null value for durable identifier '{entry.Key}'.";
                 return false;
             }
 

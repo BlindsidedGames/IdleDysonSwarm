@@ -12,7 +12,7 @@
  *
  * Change notes:
  * - Successful results must be isolated schema 11 graphs with uppercase canonical output.
- * - Failed results must never expose Settings or CanonicalText.
+ * - Failed results, including null durable skill-state values, must never expose Settings or CanonicalText.
  * - Fixture and decoded-source immutability remain hard compatibility gates.
  */
 
@@ -150,6 +150,31 @@ namespace Tests.Save
             AssertFailure(result, PreparedSaveFailureReason.ValidationFailed);
             StringAssert.Contains("non-finite", result.Error);
             Assert.IsTrue(double.IsNaN(source.dysonVerseSaveData.dysonVerseInfinityData.money));
+        }
+
+        /// <summary>
+        /// Verifies a null stable-ID skill state remains isolated and cannot become publishable runtime state.
+        /// </summary>
+        [Test]
+        public void NullSkillStateValue_ReturnsValidationFailureWithoutPublication()
+        {
+            const string malformedSkillId = "malformed-null-state";
+            var source = new Oracle.SaveDataSettings { saveVersion = 11 };
+            source.dysonVerseSaveData.dysonVerseInfinityData.skillStateById[malformedSkillId] = null;
+            string sourceHashBefore = SaveFixtureLoader.ComputeSaveDataSha256(source);
+
+            using var scope = new SaveMigrationTestScope();
+            PreparedSaveResult result = scope.CreatePreparationPipeline().PrepareSettings(source);
+
+            AssertFailure(result, PreparedSaveFailureReason.ValidationFailed);
+            StringAssert.Contains("skillStateById", result.Error);
+            StringAssert.Contains("null value", result.Error);
+            Assert.IsTrue(
+                source.dysonVerseSaveData.dysonVerseInfinityData.skillStateById.ContainsKey(malformedSkillId));
+            Assert.IsNull(source.dysonVerseSaveData.dysonVerseInfinityData.skillStateById[malformedSkillId]);
+            Assert.AreEqual(sourceHashBefore, SaveFixtureLoader.ComputeSaveDataSha256(source));
+            Assert.AreEqual(0, scope.SaveWriteCount);
+            Assert.IsFalse(scope.Subject.Loaded);
         }
 
         /// <summary>
