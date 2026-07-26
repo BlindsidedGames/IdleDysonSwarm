@@ -132,6 +132,31 @@ namespace Buildings
             }
         }
 
+        public bool WouldOfflineAutoPurchase(
+            double availableMoney,
+            double predictedAutoPlanets)
+        {
+            if (!AutoBuy || !Systems.Numeric.NumericSafety.IsFinite(availableMoney))
+                return false;
+
+            double predictedBaseCost = BaseCost;
+            if (facilityType == FacilityType.AssemblyLines &&
+                _gameState.SkillTreeData.assemblyMegaLines)
+            {
+                double[] planetCounts = _facilityService.GetFacilityCount("planets");
+                double totalPlanets = predictedAutoPlanets + planetCounts[1];
+                if (totalPlanets > 0d)
+                    predictedBaseCost = BaseCost / totalPlanets;
+            }
+
+            long affordable = MaxAffordableLong(
+                availableMoney,
+                predictedBaseCost,
+                CostExponent,
+                CurrentLevel);
+            return affordable > 0L;
+        }
+
         public override double Production
         {
             get

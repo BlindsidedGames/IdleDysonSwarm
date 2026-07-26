@@ -9,6 +9,7 @@ using Blindsided.Utilities;
 using Systems.Debugging;
 using Systems.Skills;
 using Systems.Numeric;
+using Systems.Simulation;
 using static Expansion.Oracle;
 
 namespace Systems
@@ -49,6 +50,18 @@ namespace Systems
         /// Buy Max attempt per enabled target. Tests and non-gameplay callers may omit it.
         /// </summary>
         public Action RunAutomationTick;
+        /// <summary>
+        /// Canonical whole-game 0.1-second tick. Runtime supplies Dyson and Dream
+        /// production, forced Buy Max automation, timer synchronization, Double Time,
+        /// and reset evaluation in the same order as active play.
+        /// </summary>
+        public Action RunCanonicalWholeGameTick;
+        public Action<double> RunCanonicalWholeGameRemainder;
+        /// <summary>
+        /// Attempts a verified analytical interval and returns the exact number of
+        /// canonical ticks consumed. Returning zero selects the time-sliced fallback.
+        /// </summary>
+        public Func<long, long> RunAnalyticalTicks;
     }
 
     public sealed class OfflineProgressUI
@@ -82,6 +95,38 @@ namespace Systems
         public double money;
         public double science;
         public double decayed;
+    }
+
+    internal readonly struct OfflineStateSnapshot
+    {
+        public OfflineStateSnapshot(DysonVerseInfinityData data)
+        {
+            planets = data.planets[0];
+            dataCenters = data.dataCenters[0];
+            servers = data.servers[0];
+            managers = data.managers[0];
+            lines = data.assemblyLines[0];
+            bots = data.bots;
+            matrioshkaBrains = data.matrioshkaBrains[0];
+            birchPlanets = data.birchPlanets[0];
+            galacticBrains = data.galacticBrains[0];
+            money = data.money;
+            science = data.science;
+            decayed = data.totalPanelsDecayed;
+        }
+
+        public readonly double planets;
+        public readonly double dataCenters;
+        public readonly double servers;
+        public readonly double managers;
+        public readonly double lines;
+        public readonly double bots;
+        public readonly double matrioshkaBrains;
+        public readonly double birchPlanets;
+        public readonly double galacticBrains;
+        public readonly double money;
+        public readonly double science;
+        public readonly double decayed;
     }
 
     public static class OfflineProgressSystem
@@ -181,21 +226,39 @@ namespace Systems
             double beforeScience = data.science;
             double beforeDecayed = data.totalPanelsDecayed;
 
-            context.SetBotDistribution();
-            ProductionSystem.CalculateProduction(
-                data,
-                context.skillTreeData,
-                context.prestigeData,
-                context.prestigePlus,
-                seconds,
-                recomputeDerivedState: false);
-            if (runAutomation)
-                context.RunAutomationTick?.Invoke();
-            ProductionSystem.RecalculateDerivedState(
-                data,
-                context.skillTreeData,
-                context.prestigeData,
-                context.prestigePlus);
+            bool canonicalWholeTick =
+                runAutomation &&
+                Math.Abs(seconds - SimulationTickSeconds) <= SimulationTickSeconds * 1e-9d &&
+                context.RunCanonicalWholeGameTick != null;
+            if (canonicalWholeTick)
+            {
+                context.RunCanonicalWholeGameTick();
+            }
+            else if (!runAutomation &&
+                     seconds > 0d &&
+                     seconds < SimulationTickSeconds &&
+                     context.RunCanonicalWholeGameRemainder != null)
+            {
+                context.RunCanonicalWholeGameRemainder(seconds);
+            }
+            else
+            {
+                context.SetBotDistribution();
+                ProductionSystem.CalculateProduction(
+                    data,
+                    context.skillTreeData,
+                    context.prestigeData,
+                    context.prestigePlus,
+                    seconds,
+                    recomputeDerivedState: false);
+                if (runAutomation)
+                    context.RunAutomationTick?.Invoke();
+                ProductionSystem.RecalculateDerivedState(
+                    data,
+                    context.skillTreeData,
+                    context.prestigeData,
+                    context.prestigePlus);
+            }
 
             acc.planets += Math.Max(0d, data.planets[0] - beforePlanets);
             acc.dataCenters += Math.Max(0d, data.dataCenters[0] - beforeDataCenters);
@@ -294,6 +357,15 @@ namespace Systems
                 calculatedAwayTime = awayTime;
             }
 
+            SaveDataPrestige dreamPrestige = context.saveSettings.sdPrestige;
+            if (dreamPrestige != null)
+            {
+                double currentDreamBank = NumericSafety.ClampContinuous(dreamPrestige.doubleTime);
+                dreamPrestige.doubleTime = Math.Min(
+                    NumericSafety.StoredTimeMaximumSeconds,
+                    NumericSafety.Add(currentDreamBank, calculatedAwayTime).Value);
+            }
+
             string text1 = $"You gained {color}{CalcUtils.FormatTimeLarge(calculatedAwayTime)}</color> offline time ";
             text1 += $"<br>You have {colorS}{CalcUtils.FormatTimeLarge(context.saveSettings.offlineTime)}</color> stored";
             if (ui?.AwayFor != null) ui.AwayFor.text = text1;
@@ -373,11 +445,30 @@ namespace Systems
                 var sliceTimer = Stopwatch.StartNew();
                 if (ui?.OfflineProgressLayoutElement != null) ui.OfflineProgressLayoutElement.minHeight = 7;
                 ui?.ReturnScreenSliderParentGameObject?.SetActive(true);
-                for (long i = 0; i < fixedTicks; i++)
+                long processedTicks = 0L;
+                while (processedTicks < fixedTicks)
                 {
-                    ProcessTimeStep(SimulationTickSeconds, context, ref acc);
+                    long remainingTicks = fixedTicks - processedTicks;
+                    var beforeAnalytical =
+                        new OfflineStateSnapshot(context.infinityData);
+                    long analyticallyProcessed =
+                        context.RunAnalyticalTicks?.Invoke(remainingTicks) ?? 0L;
+                    if (analyticallyProcessed > 0L &&
+                        analyticallyProcessed <= remainingTicks)
+                    {
+                        CaptureAnalyticalDelta(
+                            beforeAnalytical,
+                            context.infinityData,
+                            ref acc);
+                        processedTicks += analyticallyProcessed;
+                    }
+                    else
+                    {
+                        ProcessTimeStep(SimulationTickSeconds, context, ref acc);
+                        processedTicks++;
+                    }
 
-                    sliderFill++;
+                    sliderFill = processedTicks;
                     if (ui?.ReturnScreenSlider != null)
                         ui.ReturnScreenSlider.fillAmount = (float)((double)sliderFill / fixedTicks);
 
@@ -456,6 +547,27 @@ namespace Systems
             ui?.ReturnScreenSliderParentGameObject?.SetActive(false);
             ui?.OfflineTimeInstructions?.SetActive(false);
             ui?.ReturnScreen?.SetActive(true);
+        }
+
+        private static void CaptureAnalyticalDelta(
+            OfflineStateSnapshot before,
+            DysonVerseInfinityData data,
+            ref OfflineAccumulator acc)
+        {
+            acc.planets += Math.Max(0d, data.planets[0] - before.planets);
+            acc.dataCenters += Math.Max(0d, data.dataCenters[0] - before.dataCenters);
+            acc.servers += Math.Max(0d, data.servers[0] - before.servers);
+            acc.managers += Math.Max(0d, data.managers[0] - before.managers);
+            acc.lines += Math.Max(0d, data.assemblyLines[0] - before.lines);
+            acc.bots += Math.Max(0d, data.bots - before.bots);
+            acc.matrioshkaBrains +=
+                Math.Max(0d, data.matrioshkaBrains[0] - before.matrioshkaBrains);
+            acc.birchPlanets += Math.Max(0d, data.birchPlanets[0] - before.birchPlanets);
+            acc.galacticBrains +=
+                Math.Max(0d, data.galacticBrains[0] - before.galacticBrains);
+            acc.money += Math.Max(0d, data.money - before.money);
+            acc.science += Math.Max(0d, data.science - before.science);
+            acc.decayed += Math.Max(0d, data.totalPanelsDecayed - before.decayed);
         }
     }
 }

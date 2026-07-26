@@ -1,4 +1,5 @@
 using GameData;
+using Systems.Simulation;
 using UnityEngine;
 using static Expansion.Oracle;
 
@@ -85,6 +86,46 @@ namespace Research
             {
                 if (forceBuyMax) oracle.saveSettings.researchBuyMode = previousMode;
             }
+        }
+
+        public bool WouldOfflinePurchase(DysonAnalyticalState state)
+        {
+            if (!isActiveAndEnabled ||
+                StaticPrestigeData == null ||
+                !StaticPrestigeData.infinityAutoResearch)
+            {
+                return false;
+            }
+
+            if (presenters == null || presenters.Length == 0)
+                RefreshPresenters();
+            for (int i = 0; i < presenters.Length; i++)
+            {
+                if (presenters[i] != null &&
+                    presenters[i].WouldOfflineAutoPurchase(state))
+                {
+                    return true;
+                }
+            }
+            return false;
+        }
+
+        public void SkipAutomationTicks(long ticks)
+        {
+            if (!isActiveAndEnabled ||
+                StaticPrestigeData == null ||
+                !StaticPrestigeData.infinityAutoResearch ||
+                ticks <= 0L)
+            {
+                return;
+            }
+
+            if (presenters == null || presenters.Length == 0)
+                RefreshPresenters();
+            if (presenters.Length == 0) return;
+            int offset = (int)(ticks % presenters.Length);
+            _firstPresenterIndex =
+                (_firstPresenterIndex + offset) % presenters.Length;
         }
 
         private void RefreshPresenters()

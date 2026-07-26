@@ -49,6 +49,23 @@ public class FoundationalEraManager : MonoBehaviour
 
     private double _infoUpdateTimer;
     private double _tickGlobalMultiplier = 1d;
+    private double _tickSeconds = TickSeconds;
+
+    public bool SupportsAnalyticalOffline =>
+        hunterPanel != null &&
+        gathererPanel != null &&
+        communityPanel != null &&
+        housingPanel != null &&
+        villagesPanel != null &&
+        workersPanel != null &&
+        citiesPanel != null;
+    public double HunterDurationSeconds => hunterDuration;
+    public double GathererDurationSeconds => gatherDuration;
+    public double CommunityDurationSeconds => communityDuration;
+    public double HousingDurationSeconds => housingDuration;
+    public double VillagesDurationSeconds => villagesDuration;
+    public double WorkersDurationSeconds => workersDuration;
+    public double CitiesDurationSeconds => citiesDuration;
 
     private void OnEnable()
     {
@@ -139,6 +156,7 @@ public class FoundationalEraManager : MonoBehaviour
         _communityProduction = 0d;
         _infoUpdateTimer = 0d;
         _tickGlobalMultiplier = 1d;
+        _tickSeconds = TickSeconds;
     }
 
     private void Update()
@@ -149,9 +167,11 @@ public class FoundationalEraManager : MonoBehaviour
 
     public void RunProductionTick(
         bool engineeringCompleteAtStart,
-        double globalMultiplier)
+        double globalMultiplier,
+        double deltaSeconds = TickSeconds)
     {
         _tickGlobalMultiplier = globalMultiplier;
+        _tickSeconds = deltaSeconds;
         // Production inputs are captured before any output is applied so a
         // facility produced during this tick cannot itself produce until the
         // next canonical tick.
@@ -257,7 +277,7 @@ public class FoundationalEraManager : MonoBehaviour
         hunterPanel.titleText.text = $"Hunters <size=70%>{UIThemeProvider.TextColourBlue}{sd1.hunters:N0}</color>";
 
         double globalMulti = GetGlobalMultiplier();
-        int produced = _hunterTimer.Update(sourceCount, globalMulti, TickSeconds);
+        int produced = _hunterTimer.Update(sourceCount, globalMulti, _tickSeconds);
         sd1.community = NumericSafety.Add(sd1.community, produced).Value;
 
         double effectiveMulti = _hunterTimer.GetEffectiveMultiplier(sd1.hunters, globalMulti);
@@ -272,7 +292,7 @@ public class FoundationalEraManager : MonoBehaviour
         gathererPanel.titleText.text = $"Gatherers <size=70%>{UIThemeProvider.TextColourBlue}{sd1.gatherers:N0}</color>";
 
         double globalMulti = GetGlobalMultiplier();
-        int produced = _gathererTimer.Update(sourceCount, globalMulti, TickSeconds);
+        int produced = _gathererTimer.Update(sourceCount, globalMulti, _tickSeconds);
         sd1.community = NumericSafety.Add(sd1.community, produced).Value;
 
         double effectiveMulti = _gathererTimer.GetEffectiveMultiplier(sd1.gatherers, globalMulti);
@@ -286,7 +306,7 @@ public class FoundationalEraManager : MonoBehaviour
 
         if (sd1.communityBoostTime > 0)
         {
-            sd1.communityBoostTime = Math.Max(0d, sd1.communityBoostTime - TickSeconds);
+            sd1.communityBoostTime = Math.Max(0d, sd1.communityBoostTime - _tickSeconds);
             communityPanel.fill2.fillAmount = (float)(sd1.communityBoostTime / sd1.communityBoostDuration);
             communityPanel.fillBar2Text.text = CalcUtils.FormatTime(sd1.communityBoostTime, shortForm: true, colourOverride: UIThemeProvider.TextColourBlue);
         }
@@ -312,7 +332,7 @@ public class FoundationalEraManager : MonoBehaviour
         double globalMulti = GetGlobalMultiplier();
         if (sd1.communityBoostTime > 0) globalMulti *= 2;
 
-        int produced = _communityTimer.Update(sourceCount, globalMulti, TickSeconds);
+        int produced = _communityTimer.Update(sourceCount, globalMulti, _tickSeconds);
         sd1.housing = NumericSafety.Add(sd1.housing, produced).Value;
 
         double effectiveMulti = _communityTimer.GetEffectiveMultiplier(sd1.community, globalMulti);
@@ -340,7 +360,7 @@ public class FoundationalEraManager : MonoBehaviour
         housingPanel.fillBar2Text.text = $"{UIThemeProvider.TextColourBlue}{housingRemainder}</color> / {UIThemeProvider.TextColourBlue}{HousingToVillageCost}</color>";
 
         double globalMulti = GetGlobalMultiplier();
-        int produced = _housingTimer.Update(sourceCount, globalMulti, TickSeconds);
+        int produced = _housingTimer.Update(sourceCount, globalMulti, _tickSeconds);
         sd1.workers = NumericSafety.Add(sd1.workers, produced).Value;
 
         // When housing is 0, keep fill bar and timer text at last value to prevent flickering
@@ -373,7 +393,7 @@ public class FoundationalEraManager : MonoBehaviour
         }
 
         double globalMulti = GetGlobalMultiplier();
-        int produced = _villagesTimer.Update(sourceCount, globalMulti, TickSeconds);
+        int produced = _villagesTimer.Update(sourceCount, globalMulti, _tickSeconds);
         sd1.workers = NumericSafety.Add(
             sd1.workers,
             NumericSafety.Multiply(produced, 2d).Value).Value;
@@ -394,7 +414,7 @@ public class FoundationalEraManager : MonoBehaviour
         if (sp.workerBoostAcivator && sourceCount > 0)
             globalMulti *= 1 + Math.Log10(sourceCount);
 
-        int produced = _workersTimer.Update(sourceCount, globalMulti, TickSeconds);
+        int produced = _workersTimer.Update(sourceCount, globalMulti, _tickSeconds);
         sd1.housing = NumericSafety.Add(sd1.housing, produced).Value;
 
         double effectiveMulti = _workersTimer.GetEffectiveMultiplier(sd1.workers, globalMulti);
@@ -409,7 +429,7 @@ public class FoundationalEraManager : MonoBehaviour
         citiesPanel.titleText.text = $"Cities <size=70%>{UIThemeProvider.TextColourBlue}{sd1.cities:N0}</color>";
 
         double globalMulti = GetGlobalMultiplier();
-        int produced = _citiesTimer.Update(sourceCount, globalMulti, TickSeconds);
+        int produced = _citiesTimer.Update(sourceCount, globalMulti, _tickSeconds);
 
         double workersProduced = NumericSafety.Multiply(produced, 5d).Value;
         sd1.workers = NumericSafety.Add(sd1.workers, workersProduced).Value;
@@ -429,7 +449,7 @@ public class FoundationalEraManager : MonoBehaviour
 
     private void UpdateInfoDescriptions()
     {
-        _infoUpdateTimer += TickSeconds;
+        _infoUpdateTimer += _tickSeconds;
         if (_infoUpdateTimer < InfoUpdateInterval) return;
         _infoUpdateTimer = 0;
 

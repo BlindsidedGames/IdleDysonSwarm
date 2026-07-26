@@ -831,6 +831,391 @@ namespace Tests.Systems
         }
 
         [Test]
+        public void DreamDoubleTime_AnalyticalBatchMatchesSequentialTicksThroughDepletion()
+        {
+            const double startingBank = 2.35d;
+            const int rate = 10;
+            const long ticks = 100L;
+            double sequentialBank = startingBank;
+            for (long i = 0L; i < ticks; i++)
+            {
+                DreamDoubleTimeTick tick =
+                    DreamDoubleTimeMath.Prepare(true, sequentialBank, rate, 0.1d);
+                sequentialBank = Math.Max(0d, sequentialBank - tick.BankConsumed);
+            }
+
+            double analyticalBank = DreamDoubleTimeMath.RemainingBankAfterTicks(
+                true,
+                startingBank,
+                rate,
+                ticks,
+                0.1d);
+
+            Assert.AreEqual(sequentialBank, analyticalBank, 1e-12d);
+            Assert.AreEqual(0d, analyticalBank, 0d);
+        }
+
+        [Test]
+        public void DreamAnalytical_ResearchStopsBeforeCompletionTick()
+        {
+            var dream = new Oracle.SaveDataDream1
+            {
+                engineering = true,
+                engineeringProgress = 0d,
+                engineeringResearchTime = 10d
+            };
+            var prestige = new Oracle.SaveDataPrestige();
+
+            long horizon = DreamAnalyticalOfflineSimulation.GetQuietTickHorizon(
+                dream,
+                prestige,
+                CreateDreamTiming(),
+                1000L);
+
+            Assert.AreEqual(99L, horizon);
+            Assert.IsTrue(DreamAnalyticalOfflineSimulation.AdvanceQuietTicks(
+                dream,
+                prestige,
+                CreateDreamTiming(),
+                horizon));
+            Assert.AreEqual(9.9d, dream.engineeringProgress, 1e-12d);
+            Assert.IsFalse(dream.engineeringComplete);
+        }
+
+        [Test]
+        public void DreamAnalytical_ProductionTimerStopsBeforeOutputTick()
+        {
+            var dream = new Oracle.SaveDataDream1 { hunters = 1L };
+            var prestige = new Oracle.SaveDataPrestige();
+
+            long horizon = DreamAnalyticalOfflineSimulation.GetQuietTickHorizon(
+                dream,
+                prestige,
+                CreateDreamTiming(),
+                1000L);
+
+            Assert.AreEqual(29L, horizon);
+            Assert.IsTrue(DreamAnalyticalOfflineSimulation.AdvanceQuietTicks(
+                dream,
+                prestige,
+                CreateDreamTiming(),
+                horizon));
+            Assert.AreEqual(2.9d, dream.hunterTimerProgress, 1e-12d);
+            Assert.AreEqual(0d, dream.community, 0d);
+        }
+
+        [Test]
+        public void DreamAnalytical_DoubleTimeStopsBeforePartialMultiplierTick()
+        {
+            var dream = new Oracle.SaveDataDream1();
+            var prestige = new Oracle.SaveDataPrestige
+            {
+                doubleTimeOwned = true,
+                doubleTime = 2.35d,
+                doubleTimeRate = 10
+            };
+
+            long horizon = DreamAnalyticalOfflineSimulation.GetQuietTickHorizon(
+                dream,
+                prestige,
+                CreateDreamTiming(),
+                1000L);
+
+            Assert.AreEqual(2L, horizon);
+            Assert.IsTrue(DreamAnalyticalOfflineSimulation.AdvanceQuietTicks(
+                dream,
+                prestige,
+                CreateDreamTiming(),
+                horizon));
+            Assert.AreEqual(0.35d, prestige.doubleTime, 1e-12d);
+            Assert.AreEqual(
+                0L,
+                DreamAnalyticalOfflineSimulation.GetQuietTickHorizon(
+                    dream,
+                    prestige,
+                    CreateDreamTiming(),
+                    1000L));
+        }
+
+        [Test]
+        public void DreamAnalytical_ConversionDueUsesCanonicalBoundaryTick()
+        {
+            var dream = new Oracle.SaveDataDream1 { housing = 10d };
+
+            Assert.AreEqual(
+                0L,
+                DreamAnalyticalOfflineSimulation.GetQuietTickHorizon(
+                    dream,
+                    new Oracle.SaveDataPrestige(),
+                    CreateDreamTiming(),
+                    1000L));
+        }
+
+        [Test]
+        public void DreamAnalytical_RailgunChargeStopsAtStartFiringBoundary()
+        {
+            var dream = new Oracle.SaveDataDream1
+            {
+                solarPanels = 1d,
+                solarPanelGeneration = 100L,
+                railgunMaxCharge = 25d,
+                dysonPanels = 1L
+            };
+            var prestige = new Oracle.SaveDataPrestige();
+
+            long horizon = DreamAnalyticalOfflineSimulation.GetQuietTickHorizon(
+                dream,
+                prestige,
+                CreateDreamTiming(),
+                1000L);
+
+            Assert.AreEqual(2L, horizon);
+            Assert.IsTrue(DreamAnalyticalOfflineSimulation.AdvanceQuietTicks(
+                dream,
+                prestige,
+                CreateDreamTiming(),
+                horizon));
+            Assert.AreEqual(20d, dream.railgunCharge, 1e-12d);
+            Assert.AreEqual(0d, dream.energy, 1e-12d);
+        }
+
+        [Test]
+        public void DreamAnalytical_StoredEnergyBatchesUntilRailgunStartBoundary()
+        {
+            var dream = new Oracle.SaveDataDream1
+            {
+                energy = 1d,
+                solarPanels = 1d,
+                solarPanelGeneration = 100L,
+                railgunMaxCharge = 25d,
+                dysonPanels = 1L
+            };
+            var prestige = new Oracle.SaveDataPrestige();
+
+            long horizon = DreamAnalyticalOfflineSimulation.GetQuietTickHorizon(
+                dream,
+                prestige,
+                CreateDreamTiming(),
+                1000L);
+
+            Assert.AreEqual(2L, horizon);
+            Assert.IsTrue(DreamAnalyticalOfflineSimulation.AdvanceQuietTicks(
+                dream,
+                prestige,
+                CreateDreamTiming(),
+                horizon));
+            Assert.AreEqual(21d, dream.railgunCharge, 1e-12d);
+            Assert.AreEqual(0d, dream.energy, 1e-12d);
+        }
+
+        [Test]
+        public void DreamAnalytical_FullRailgunWithoutPanelsBatchesEnergyAtStoredTimeCap()
+        {
+            var dream = new Oracle.SaveDataDream1
+            {
+                solarPanels = 1d,
+                solarPanelGeneration = 1L,
+                railgunCharge = 25d,
+                railgunMaxCharge = 25d,
+                dysonPanels = 0L
+            };
+            var prestige = new Oracle.SaveDataPrestige();
+            const long ticksAtStoredTimeCap = 420000000L;
+            var stopwatch = System.Diagnostics.Stopwatch.StartNew();
+
+            long horizon = DreamAnalyticalOfflineSimulation.GetQuietTickHorizon(
+                dream,
+                prestige,
+                CreateDreamTiming(),
+                ticksAtStoredTimeCap);
+            Assert.AreEqual(ticksAtStoredTimeCap, horizon);
+            Assert.IsTrue(DreamAnalyticalOfflineSimulation.AdvanceQuietTicks(
+                dream,
+                prestige,
+                CreateDreamTiming(),
+                horizon));
+
+            stopwatch.Stop();
+            Assert.AreEqual(42000000d, dream.energy, 1e-7d);
+            Assert.Less(stopwatch.Elapsed.TotalMilliseconds, 8d);
+        }
+
+        [Test]
+        public void DreamAnalytical_QuietBatchMatchesSequentialTimerResearchBoostAndEnergy()
+        {
+            const long ticks = 100L;
+            var analytical = new Oracle.SaveDataDream1
+            {
+                hunters = 10L,
+                hunterTimerProgress = 1d,
+                engineering = true,
+                engineeringResearchTime = 1000d,
+                communityBoostTime = 20d,
+                factoriesBoostTime = 20d,
+                solarPanels = 3d,
+                solarPanelGeneration = 2L,
+                railgunMaxCharge = 1000d
+            };
+            var prestige = new Oracle.SaveDataPrestige
+            {
+                doubleTimeOwned = true,
+                doubleTime = 1000d,
+                doubleTimeRate = 1
+            };
+            var timing = new DreamOfflineTiming(
+                hunter: 1000d,
+                gatherer: 1000d,
+                community: 1000d,
+                housing: 1000d,
+                villages: 1000d,
+                workers: 1000d,
+                cities: 1000d,
+                factories: 1000d,
+                bots: 1000d,
+                spaceFactories: 1000d,
+                railgunFiring: false);
+
+            double expectedHunterProgress = analytical.hunterTimerProgress;
+            double expectedResearch = analytical.engineeringProgress;
+            double expectedCharge = analytical.railgunCharge;
+            double expectedBank = prestige.doubleTime;
+            for (long i = 0; i < ticks; i++)
+            {
+                DreamDoubleTimeTick tick = DreamDoubleTimeMath.Prepare(
+                    true,
+                    expectedBank,
+                    prestige.doubleTimeRate,
+                    0.1d);
+                expectedHunterProgress +=
+                    (1d + Math.Log10(analytical.hunters)) *
+                    tick.EffectiveMultiplier *
+                    0.1d;
+                expectedResearch += tick.EffectiveMultiplier * 0.1d;
+                expectedCharge +=
+                    analytical.solarPanels *
+                    analytical.solarPanelGeneration *
+                    tick.EffectiveMultiplier *
+                    0.1d;
+                expectedBank -= tick.BankConsumed;
+            }
+
+            Assert.AreEqual(
+                ticks,
+                DreamAnalyticalOfflineSimulation.GetQuietTickHorizon(
+                    analytical,
+                    prestige,
+                    timing,
+                    ticks));
+            Assert.IsTrue(DreamAnalyticalOfflineSimulation.AdvanceQuietTicks(
+                analytical,
+                prestige,
+                timing,
+                ticks));
+
+            Assert.AreEqual(expectedHunterProgress, analytical.hunterTimerProgress, 1e-10d);
+            Assert.AreEqual(expectedResearch, analytical.engineeringProgress, 1e-10d);
+            Assert.AreEqual(expectedCharge, analytical.railgunCharge, 1e-10d);
+            Assert.AreEqual(expectedBank, prestige.doubleTime, 1e-10d);
+            Assert.AreEqual(10d, analytical.communityBoostTime, 1e-12d);
+            Assert.AreEqual(10d, analytical.factoriesBoostTime, 1e-12d);
+        }
+
+        [Test]
+        public void DreamAnalytical_EventSplitMatchesSequentialProductionAcrossManyCycles()
+        {
+            const long ticks = 1000L;
+            DreamOfflineTiming timing = new DreamOfflineTiming(
+                hunter: 3d,
+                gatherer: double.MaxValue,
+                community: double.MaxValue,
+                housing: double.MaxValue,
+                villages: double.MaxValue,
+                workers: double.MaxValue,
+                cities: double.MaxValue,
+                factories: double.MaxValue,
+                bots: double.MaxValue,
+                spaceFactories: double.MaxValue,
+                railgunFiring: false);
+            var analytical = new Oracle.SaveDataDream1 { hunters = 10L };
+            var sequential = new Oracle.SaveDataDream1 { hunters = 10L };
+            var analyticalPrestige = new Oracle.SaveDataPrestige();
+            var sequentialTimer = new ProductionTimer(timing.Hunter);
+
+            long remaining = ticks;
+            int canonicalBoundaryTicks = 0;
+            while (remaining > 0L)
+            {
+                long horizon =
+                    DreamAnalyticalOfflineSimulation.GetQuietTickHorizon(
+                        analytical,
+                        analyticalPrestige,
+                        timing,
+                        remaining);
+                if (horizon >= 2L)
+                {
+                    Assert.IsTrue(
+                        DreamAnalyticalOfflineSimulation.AdvanceQuietTicks(
+                            analytical,
+                            analyticalPrestige,
+                            timing,
+                            horizon));
+                    remaining -= horizon;
+                    continue;
+                }
+
+                var boundaryTimer = new ProductionTimer(
+                    timing.Hunter,
+                    analytical.hunterTimerProgress);
+                int produced =
+                    boundaryTimer.Update(analytical.hunters, 1d, 0.1d);
+                analytical.hunterTimerProgress = boundaryTimer.currentTime;
+                analytical.community += produced;
+                remaining--;
+                canonicalBoundaryTicks++;
+            }
+
+            for (long tick = 0L; tick < ticks; tick++)
+            {
+                sequential.community +=
+                    sequentialTimer.Update(sequential.hunters, 1d, 0.1d);
+            }
+            sequential.hunterTimerProgress = sequentialTimer.currentTime;
+
+            Assert.Greater(canonicalBoundaryTicks, 1);
+            Assert.AreEqual(sequential.community, analytical.community, 0d);
+            Assert.AreEqual(
+                sequential.hunterTimerProgress,
+                analytical.hunterTimerProgress,
+                1e-9d);
+        }
+
+        [Test]
+        public void DreamAnalytical_BoostExpiryIncludesLastBoostedTick()
+        {
+            var dream = new Oracle.SaveDataDream1
+            {
+                community = 1d,
+                communityBoostTime = 0.15d
+            };
+            var prestige = new Oracle.SaveDataPrestige();
+
+            long horizon = DreamAnalyticalOfflineSimulation.GetQuietTickHorizon(
+                dream,
+                prestige,
+                CreateDreamTiming(),
+                100L);
+
+            Assert.AreEqual(2L, horizon);
+            Assert.IsTrue(DreamAnalyticalOfflineSimulation.AdvanceQuietTicks(
+                dream,
+                prestige,
+                CreateDreamTiming(),
+                horizon));
+            Assert.AreEqual(0d, dream.communityBoostTime, 0d);
+            Assert.AreEqual(0.4d, dream.communityTimerProgress, 1e-12d);
+        }
+
+        [Test]
         public void DreamProductionSnapshot_NewFacilityStartsWorkingNextTick()
         {
             var factoryTimer = new ProductionTimer(0.1d);
@@ -853,6 +1238,22 @@ namespace Tests.Systems
             rockets += botTimer.Update(botsAtStart, 1d, 0.1d);
 
             Assert.AreEqual(1d, rockets);
+        }
+
+        private static DreamOfflineTiming CreateDreamTiming(bool railgunFiring = false)
+        {
+            return new DreamOfflineTiming(
+                hunter: 3d,
+                gatherer: 3d,
+                community: 3d,
+                housing: 20d,
+                villages: 12d,
+                workers: 4d,
+                cities: 3d,
+                factories: 30d,
+                bots: 20d,
+                spaceFactories: 2d,
+                railgunFiring);
         }
 
         [TestCase(Oracle.BuyMode.Buy1, 1L)]
@@ -987,6 +1388,129 @@ namespace Tests.Systems
                         UnityEngine.Object.DestroyImmediate(presenterObject);
                     }
                 });
+        }
+
+        [Test]
+        public void ResearchOfflineEventDetection_UsesPredictedFacilityPrerequisite()
+        {
+            WithRuntimeOracle(
+                runtimeOracle =>
+                {
+                    Oracle.DysonVerseInfinityData infinity =
+                        runtimeOracle.saveSettings.dysonVerseSaveData.dysonVerseInfinityData;
+                    infinity.science = 100d;
+                    infinity.galacticBrains = new[] { 0d, 0d };
+                    runtimeOracle.saveSettings.dysonVerseSaveData
+                        .dysonVersePrestigeData.infinityAutoResearch = true;
+                    var gameState = new GameStateService();
+                    ServiceLocator.Register<IGameStateService>(gameState);
+                    var definition = ScriptableObject.CreateInstance<ResearchDefinition>();
+                    definition.baseCost = 1d;
+                    definition.exponent = 1d;
+                    definition.prerequisiteFacilityId = "galactic_brains";
+                    definition.prerequisiteFacilityOwned = 1d;
+                    var presenterObject =
+                        new GameObject("predicted-prerequisite-research");
+                    try
+                    {
+                        ResearchPresenter presenter =
+                            presenterObject.AddComponent<ResearchPresenter>();
+                        SetPrivateField(
+                            presenter,
+                            "autoBuyGroupOverride",
+                            ResearchAutoBuyGroup.None);
+                        SetPrivateField(presenter, "definition", definition);
+                        SetPrivateField(presenter, "_resolvedDefinition", definition);
+                        SetPrivateField<IGameStateService>(
+                            presenter,
+                            "_gameState",
+                            gameState);
+
+                        Assert.IsFalse(
+                            presenter.WouldOfflineAutoPurchase(
+                                AnalyticalOfflineSimulation.CreateStateForTests(
+                                    science: 100d,
+                                    galacticBrains: 0d)));
+                        Assert.IsTrue(
+                            presenter.WouldOfflineAutoPurchase(
+                                AnalyticalOfflineSimulation.CreateStateForTests(
+                                    science: 100d,
+                                    galacticBrains: 1d)));
+                    }
+                    finally
+                    {
+                        UnityEngine.Object.DestroyImmediate(presenterObject);
+                        UnityEngine.Object.DestroyImmediate(definition);
+                    }
+                });
+        }
+
+        [Test]
+        public void DreamAnalytical_RailgunFireProgressForcesCanonicalBoundary()
+        {
+            var dream = new Oracle.SaveDataDream1
+            {
+                railgunFireProgress = 0.01d
+            };
+
+            Assert.AreEqual(
+                0L,
+                DreamAnalyticalOfflineSimulation.GetQuietTickHorizon(
+                    dream,
+                    new Oracle.SaveDataPrestige(),
+                    CreateDreamTiming(),
+                    1000L));
+        }
+
+        [TestCase(true, 0d, 0d, 0d)]
+        [TestCase(false, 1d, 0d, 0d)]
+        [TestCase(false, 0d, 1d, 0d)]
+        [TestCase(false, 0d, 0d, 0.01d)]
+        public void DreamAnalytical_ActiveClockStateIsNeverClassifiedIdle(
+            bool railgunFiring,
+            double communityBoost,
+            double factoryBoost,
+            double railgunProgress)
+        {
+            var dream = new Oracle.SaveDataDream1
+            {
+                communityBoostTime = communityBoost,
+                factoriesBoostTime = factoryBoost,
+                railgunFireProgress = railgunProgress
+            };
+
+            Assert.IsFalse(
+                DreamAnalyticalOfflineSimulation.IsClockIdle(
+                    dream,
+                    railgunFiring));
+        }
+
+        [Test]
+        public void DreamAnalytical_ZeroProductionActiveBoostStillExpires()
+        {
+            var dream = new Oracle.SaveDataDream1
+            {
+                communityBoostTime = 0.5d,
+                factoriesBoostTime = 0.5d
+            };
+            var prestige = new Oracle.SaveDataPrestige();
+            DreamOfflineTiming timing = CreateDreamTiming();
+
+            long horizon = DreamAnalyticalOfflineSimulation.GetQuietTickHorizon(
+                dream,
+                prestige,
+                timing,
+                100L);
+
+            Assert.AreEqual(5L, horizon);
+            Assert.IsTrue(
+                DreamAnalyticalOfflineSimulation.AdvanceQuietTicks(
+                    dream,
+                    prestige,
+                    timing,
+                    horizon));
+            Assert.AreEqual(0d, dream.communityBoostTime, 0d);
+            Assert.AreEqual(0d, dream.factoriesBoostTime, 0d);
         }
 
         [Test]

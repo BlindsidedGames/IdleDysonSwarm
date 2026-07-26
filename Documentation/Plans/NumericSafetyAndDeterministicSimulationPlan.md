@@ -38,20 +38,27 @@ Implemented and locally validated:
   arithmetic saturates finitely near the cap.
 - Privacy-minimized local Diagnostics configuration and handled-exception
   reporting code.
-- Local validation currently passes 304/304 Unity EditMode tests and a macOS
+- Event-aware offline fast-forward for verified affine Dyson production,
+  facility/mega/research automation affordability, active Dream production
+  timers, research, boost expiry, conversions, energy/railgun charging, and
+  Dream Double Time depletion. Every material boundary is executed by the
+  canonical 0.1-second scheduler before analytical batching resumes, so
+  repeated Infinity and Dream resets continue through the remaining time.
+- Local validation currently passes 343/343 Unity EditMode tests and a macOS
   Universal IL2CPP player build. Temporary Diagnostics validation probes are
   absent from source and generated player metadata.
 
 Still outstanding:
 
-- Event-aware analytical fast-forward. Long offline durations still replay
-  0.1-second ticks and are not practical at the full stored-time cap.
-- Dream offline progression and automatic Infinity/Dream reset continuation
-  through remaining offline time.
 - Representative iOS, Android, Windows, and physical-device builds; background
-  and resume profiling; and the complete performance matrix. The completed
-  macOS Universal IL2CPP build is a local compilation gate, not store or device
-  validation.
+  and resume profiling; and representative mobile performance validation.
+  Locally, verified constant-production Dyson and Dream states consume the full
+  42,000,000-second bank in one sub-8-ms analytical operation. States with
+  changing skill timers, continuously changing nonlinear modifiers, or dense
+  railgun/production/purchase events intentionally use the bounded 4-ms
+  canonical fallback and may need multiple rendered frames. The completed
+  macOS Universal IL2CPP build is a local compilation gate, not store or
+  physical-device validation.
 - Unity Dashboard project verification, symbol upload, forced live report,
   Discord alerts, storefront disclosures, and privacy-policy review. These are
   release gates and were not performed by the local implementation.
@@ -210,6 +217,33 @@ Required behavior:
 - Run automatic Infinity and Dream resets fully, then continue simulating the remaining time.
 - Keep the existing progress screen as a time-sliced fallback.
 - Typical offline cases should complete in one analytical slice.
+
+### Local analytical implementation status
+
+The current uncommitted PR 8 work adds a verified affine fast path for Dyson
+intervals whose production transition is demonstrably linear. It constructs the
+start-of-tick discrete transition, validates it at quarter, midpoint,
+three-quarter, and endpoint states, applies it by cached saturating matrix
+exponentiation, and stops before the next automation purchase, automatic
+Infinity, or finite bot-cap boundary. Standard facilities, mega-structures, and
+research expose non-mutating affordability checks against the predicted state.
+The canonical boundary tick uses forced Buy Max without changing the saved
+online mode, then rebuilds the transition. Persistent skill-timer and research
+accrual side effects select the canonical fallback instead of being skipped.
+
+Dream batching computes the next quiet horizon from every persisted production
+timer, active research completion, boost expiry, housing/village and
+rocket/factory conversion, railgun charge/firing boundary, reset threshold, and
+Double Time depletion. It advances timer/research progress, boost time, energy,
+railgun charge, and Double Time algebraically only before that boundary. The
+boundary itself runs through the canonical whole-game tick, including
+start-of-tick production, forced offline Buy Max, durable timer synchronization,
+Double Time consumption, Dream reset, and Infinity reset. Simulation then
+continues with the remaining ticks. The fallback yields after a 4 ms work budget
+and never approximates or discards elapsed time. A final sub-tick remainder
+advances Dyson and Dream together through the same production, durable-state,
+Double Time, and reset order, while deliberately omitting automation so it
+cannot create an extra purchase phase.
 
 ### Whole-game stored time
 

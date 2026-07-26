@@ -7,6 +7,7 @@ using IdleDysonSwarm.Services;
 using Systems.Facilities;
 using Systems.Debugging;
 using Systems.Numeric;
+using Systems.Simulation;
 using UnityEngine;
 #if UNITY_EDITOR
 using UnityEditor;
@@ -287,6 +288,22 @@ namespace Research
             HandlePostPurchase(previousLevel, CurrentLevel);
             UpdateCostText();
             return true;
+        }
+
+        public bool WouldOfflineAutoPurchase(DysonAnalyticalState predictedState)
+        {
+            if (!IsAutoBuyEnabled ||
+                !HasMetPrerequisites(predictedState) ||
+                IsMaxed ||
+                !NumericSafety.IsFinite(predictedState.Science))
+            {
+                return false;
+            }
+
+            long affordable = MaxAffordableForCost(
+                predictedState.Science,
+                BaseCostCalculated);
+            return ClampToRemaining(affordable) > 0L;
         }
 
         private void PurchaseResearch()
@@ -613,6 +630,49 @@ namespace Research
             }
 
             return true;
+        }
+
+        private bool HasMetPrerequisites(DysonAnalyticalState predictedState)
+        {
+            if (!IsRuntimeStateReady())
+                return false;
+            if (_resolvedDefinition == null)
+                return true;
+
+            if (_resolvedDefinition.prerequisiteResearchIds != null)
+            {
+                foreach (string prerequisite in _resolvedDefinition.prerequisiteResearchIds)
+                {
+                    if (string.IsNullOrEmpty(prerequisite)) continue;
+                    if (_gameState.GetResearchLevel(prerequisite) <= 0d)
+                        return false;
+                }
+            }
+
+            if (string.IsNullOrEmpty(_resolvedDefinition.prerequisiteFacilityId))
+                return true;
+            if (!predictedState.TryGetFacilityCount(
+                    _resolvedDefinition.prerequisiteFacilityId,
+                    out double predictedAutoOwned))
+            {
+                return false;
+            }
+            if (!FacilityCountAccessor.TryGetCount(
+                    _gameState.InfinityData,
+                    _resolvedDefinition.prerequisiteFacilityId,
+                    out double[] currentCounts) ||
+                currentCounts == null ||
+                currentCounts.Length < 2)
+            {
+                return false;
+            }
+
+            double requiredOwned = _resolvedDefinition.prerequisiteFacilityOwned > 0d
+                ? _resolvedDefinition.prerequisiteFacilityOwned
+                : 1d;
+            return NumericSafety.Add(
+                predictedAutoOwned,
+                currentCounts[1]).Value >= requiredOwned;
         }
 
         private double GetPercentForResearch(string researchId)

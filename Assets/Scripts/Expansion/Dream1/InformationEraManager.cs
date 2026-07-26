@@ -73,6 +73,20 @@ public class InformationEraManager : MonoBehaviour
     private const long MathematicsLegacySolarGeneration = 200;
     private double _infoUpdateTimer;
     private double _tickGlobalMultiplier = 1d;
+    private double _tickSeconds = TickSeconds;
+
+    public bool SupportsAnalyticalOffline =>
+        engineeringPanel != null &&
+        shippingPanel != null &&
+        worldTradePanel != null &&
+        worldPeacePanel != null &&
+        mathematicsPanel != null &&
+        advancedPhysicsPanel != null &&
+        factoriesPanel != null &&
+        botsPanel != null &&
+        rocketsPanel != null;
+    public double FactoriesDurationSeconds => factoriesDuration;
+    public double BotsDurationSeconds => botsDuration;
 
     private void OnEnable()
     {
@@ -185,6 +199,7 @@ public class InformationEraManager : MonoBehaviour
         _botsFillSpeed = 0d;
         _infoUpdateTimer = 0d;
         _tickGlobalMultiplier = 1d;
+        _tickSeconds = TickSeconds;
     }
 
     private void Update()
@@ -193,9 +208,12 @@ public class InformationEraManager : MonoBehaviour
         UpdateButtonsInteractable();
     }
 
-    public void RunProductionTick(double globalMultiplier)
+    public void RunProductionTick(
+        double globalMultiplier,
+        double deltaSeconds = TickSeconds)
     {
         _tickGlobalMultiplier = globalMultiplier;
+        _tickSeconds = deltaSeconds;
         // Capture producer counts before applying any outputs. Factory-created
         // bots therefore cannot launch rockets until the next logical tick.
         double factoriesAtStart = sd1.factories;
@@ -316,7 +334,7 @@ public class InformationEraManager : MonoBehaviour
         }
 
         if (!sd1.engineering || sd1.engineeringComplete) return;
-        double multi = TickSeconds * GetGlobalMultiplier();
+        double multi = _tickSeconds * GetGlobalMultiplier();
         sd1.engineeringProgress = NumericSafety.Add(sd1.engineeringProgress, multi).Value;
         if (sd1.engineeringProgress >= sd1.engineeringResearchTime) sd1.engineeringComplete = true;
     }
@@ -352,7 +370,7 @@ public class InformationEraManager : MonoBehaviour
         }
 
         if (!sd1.shipping || sd1.shippingComplete) return;
-        double multi = TickSeconds * GetGlobalMultiplier();
+        double multi = _tickSeconds * GetGlobalMultiplier();
         sd1.shippingProgress = NumericSafety.Add(sd1.shippingProgress, multi).Value;
         if (sd1.shippingProgress >= sd1.shippingResearchTime) sd1.shippingComplete = true;
     }
@@ -388,7 +406,7 @@ public class InformationEraManager : MonoBehaviour
         }
 
         if (!sd1.worldTrade || sd1.worldTradeComplete) return;
-        double multi = TickSeconds * GetGlobalMultiplier();
+        double multi = _tickSeconds * GetGlobalMultiplier();
         sd1.worldTradeProgress = NumericSafety.Add(sd1.worldTradeProgress, multi).Value;
         if (sd1.worldTradeProgress >= sd1.worldTradeResearchTime) sd1.worldTradeComplete = true;
     }
@@ -424,7 +442,7 @@ public class InformationEraManager : MonoBehaviour
         }
 
         if (!sd1.worldPeace || sd1.worldPeaceComplete) return;
-        double multi = TickSeconds * GetGlobalMultiplier();
+        double multi = _tickSeconds * GetGlobalMultiplier();
         sd1.worldPeaceProgress = NumericSafety.Add(sd1.worldPeaceProgress, multi).Value;
         if (sd1.worldPeaceProgress >= sd1.worldPeaceResearchTime) sd1.worldPeaceComplete = true;
     }
@@ -460,7 +478,7 @@ public class InformationEraManager : MonoBehaviour
         }
 
         if (!sd1.mathematics || sd1.mathematicsComplete) return;
-        double multi = TickSeconds * GetGlobalMultiplier();
+        double multi = _tickSeconds * GetGlobalMultiplier();
         sd1.mathematicsProgress = NumericSafety.Add(sd1.mathematicsProgress, multi).Value;
         if (sd1.mathematicsProgress >= sd1.mathematicsResearchTime)
         {
@@ -499,7 +517,7 @@ public class InformationEraManager : MonoBehaviour
         }
 
         if (!sd1.advancedPhysics || sd1.advancedPhysicsComplete) return;
-        double multi = TickSeconds * GetGlobalMultiplier();
+        double multi = _tickSeconds * GetGlobalMultiplier();
         sd1.advancedPhysicsProgress = NumericSafety.Add(sd1.advancedPhysicsProgress, multi).Value;
         if (sd1.advancedPhysicsProgress >= sd1.advancedPhysicsResearchTime) sd1.advancedPhysicsComplete = true;
     }
@@ -514,7 +532,7 @@ public class InformationEraManager : MonoBehaviour
 
         if (sd1.factoriesBoostTime > 0)
         {
-            sd1.factoriesBoostTime = Math.Max(0d, sd1.factoriesBoostTime - TickSeconds);
+            sd1.factoriesBoostTime = Math.Max(0d, sd1.factoriesBoostTime - _tickSeconds);
             factoriesPanel.fill2.fillAmount = (float)(sd1.factoriesBoostTime / sd1.factoriesBoostDuration);
             factoriesPanel.fillBar2Text.text = CalcUtils.FormatTime(sd1.factoriesBoostTime, shortForm: true, colourOverride: UIThemeProvider.TextColourBlue);
         }
@@ -543,7 +561,7 @@ public class InformationEraManager : MonoBehaviour
         if (sd1.worldTradeComplete) globalMulti *= 2;
 
         // Use standard Log10 multiplier via ProductionTimer
-        int produced = _factoriesTimer.Update(sourceCount, globalMulti, TickSeconds);
+        int produced = _factoriesTimer.Update(sourceCount, globalMulti, _tickSeconds);
 
         double perCycle = sp.factoriesBoostActivator
             ? NumericSafety.Multiply(sourceCount, 9d).Value
@@ -584,7 +602,7 @@ public class InformationEraManager : MonoBehaviour
 
         // Use custom multiplier since bots has special soft-start logic
         double effectiveMulti = baseMulti * globalMulti;
-        int produced = _botsTimer.UpdateWithCustomMultiplier(baseMulti, globalMulti, TickSeconds);
+        int produced = _botsTimer.UpdateWithCustomMultiplier(baseMulti, globalMulti, _tickSeconds);
 
         // Apply production
         double rocketsProduced = (double)produced * (sp.botsBoost2Activator ? 2d : 1d);
@@ -635,7 +653,7 @@ public class InformationEraManager : MonoBehaviour
 
     private void UpdateInfoDescriptions()
     {
-        _infoUpdateTimer += TickSeconds;
+        _infoUpdateTimer += _tickSeconds;
         if (_infoUpdateTimer < InfoUpdateInterval) return;
         _infoUpdateTimer = 0;
 

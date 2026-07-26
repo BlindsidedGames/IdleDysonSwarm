@@ -50,6 +50,27 @@ namespace Systems.Simulation
                 NumericSafety.Add(1d, consumed / tickSeconds).Value;
             return new DreamDoubleTimeTick(true, effectiveMultiplier, consumed);
         }
+
+        public static double RemainingBankAfterTicks(
+            bool owned,
+            double bankSeconds,
+            int rate,
+            long ticks,
+            double tickSeconds)
+        {
+            double bank = NumericSafety.ClampContinuous(bankSeconds);
+            if (!owned || bank <= 0d || ticks <= 0L ||
+                !NumericSafety.IsFinite(tickSeconds) || tickSeconds <= 0d)
+            {
+                return bank;
+            }
+
+            int safeRate = Math.Max(0, Math.Min(10, rate));
+            if (safeRate == 0) return bank;
+            double elapsed = NumericSafety.Multiply(ticks, tickSeconds).Value;
+            double requested = NumericSafety.Multiply(elapsed, safeRate).Value;
+            return Math.Max(0d, bank - Math.Min(bank, requested));
+        }
     }
 
     public static class DeterministicSimulation

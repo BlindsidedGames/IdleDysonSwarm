@@ -1,5 +1,6 @@
 using UnityEngine;
 using IdleDysonSwarm.Services;
+using Systems.Simulation;
 using static Expansion.Oracle;
 
 namespace Buildings
@@ -60,6 +61,55 @@ namespace Buildings
             {
                 if (forceBuyMax) oracle.saveSettings.buyMode = previousMode;
             }
+        }
+
+        public bool WouldOfflinePurchase(DysonAnalyticalState state)
+        {
+            if (!isActiveAndEnabled) return false;
+            return WouldPurchase(assemblyLineManager, state) ||
+                   WouldPurchase(aiManager, state) ||
+                   WouldPurchase(serverManager, state) ||
+                   WouldPurchase(dataCenterManager, state) ||
+                   WouldPurchase(planetManager, state) ||
+                   WouldPurchase(
+                       matrioshkaPresenter,
+                       state,
+                       oracle.saveSettings.infinityAutoMatrioshkaBrains) ||
+                   WouldPurchase(
+                       birchPresenter,
+                       state,
+                       oracle.saveSettings.infinityAutoBirchPlanets) ||
+                   WouldPurchase(
+                       galacticPresenter,
+                       state,
+                       oracle.saveSettings.infinityAutoGalacticBrains);
+        }
+
+        public void SkipAutomationTicks(long ticks)
+        {
+            if (!isActiveAndEnabled || ticks <= 0L) return;
+            int offset = (int)(ticks % AutomationTargetCount);
+            autoBuyOrderIndex =
+                (autoBuyOrderIndex + offset) % AutomationTargetCount;
+        }
+
+        private static bool WouldPurchase(
+            FacilityBuildingPresenter presenter,
+            DysonAnalyticalState state)
+        {
+            return presenter != null &&
+                   presenter.WouldOfflineAutoPurchase(
+                       state.Money,
+                       state.Planets);
+        }
+
+        private static bool WouldPurchase(
+            MegaStructurePresenter presenter,
+            DysonAnalyticalState state,
+            bool toggleEnabled)
+        {
+            return presenter != null &&
+                   presenter.WouldOfflineAutoPurchase(state, toggleEnabled);
         }
 
         private void TryPurchaseTarget(int target)

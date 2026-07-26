@@ -75,6 +75,16 @@ public class SpaceAgeManager : MonoBehaviour
     private const float InfoUpdateInterval = 0.1f; // 10hz
     private double _infoUpdateTimer;
     private double _tickGlobalMultiplier = 1d;
+    private double _tickSeconds = TickSeconds;
+
+    public bool SupportsAnalyticalOffline =>
+        solarPanel != null &&
+        fusionPanel != null &&
+        spaceFactoriesPanel != null &&
+        railgunsPanel != null &&
+        swarmStatsPanel != null;
+    public double SpaceFactoriesDurationSeconds => _factoriesDuration;
+    public bool IsRailgunFiring => _firing;
 
     private void OnEnable()
     {
@@ -147,6 +157,7 @@ public class SpaceAgeManager : MonoBehaviour
             new ProductionTimer(_factoriesDuration, sd1.spaceFactoriesTimerProgress);
         _infoUpdateTimer = 0d;
         _tickGlobalMultiplier = 1d;
+        _tickSeconds = TickSeconds;
     }
 
     private void Update()
@@ -155,9 +166,12 @@ public class SpaceAgeManager : MonoBehaviour
         UpdateButtonsInteractable();
     }
 
-    public void RunProductionTick(double globalMultiplier)
+    public void RunProductionTick(
+        double globalMultiplier,
+        double deltaSeconds = TickSeconds)
     {
         _tickGlobalMultiplier = globalMultiplier;
+        _tickSeconds = deltaSeconds;
         AddEnergy();
         SolarManagement();
         FusionManagement();
@@ -175,7 +189,7 @@ public class SpaceAgeManager : MonoBehaviour
     {
         SyncTimerProgress();
 
-        _infoUpdateTimer += TickSeconds;
+        _infoUpdateTimer += _tickSeconds;
         if (_infoUpdateTimer >= InfoUpdateInterval)
         {
             _infoUpdateTimer = 0;
@@ -227,13 +241,17 @@ public class SpaceAgeManager : MonoBehaviour
 
     private void AddEnergy()
     {
-        double energyDelta = CalculateEnergyDelta(sd1, GetGlobalMultiplier());
+        double energyDelta = CalculateEnergyDelta(
+            sd1,
+            GetGlobalMultiplier(),
+            _tickSeconds);
         sd1.energy = NumericSafety.Add(sd1.energy, energyDelta).Value;
     }
 
     public static double CalculateEnergyDelta(
         SaveDataDream1 simulation,
-        double globalMultiplier)
+        double globalMultiplier,
+        double deltaSeconds = TickSeconds)
     {
         if (simulation == null) return 0d;
 
@@ -254,7 +272,7 @@ public class SpaceAgeManager : MonoBehaviour
             dysonPanelEnergy).Value;
         return NumericSafety.Multiply(
             NumericSafety.Multiply(combined, globalMultiplier).Value,
-            TickSeconds).Value;
+            deltaSeconds).Value;
     }
 
     private void SolarManagement()
@@ -304,7 +322,7 @@ public class SpaceAgeManager : MonoBehaviour
 
         if (sd1.dysonPanels < DysonPanelCap)
         {
-            int produced = _spaceFactoriesTimer.Update(sd1.spaceFactories, globalMulti, TickSeconds);
+            int produced = _spaceFactoriesTimer.Update(sd1.spaceFactories, globalMulti, _tickSeconds);
             sd1.dysonPanels = Math.Min(
                 DysonPanelCap,
                 NumericSafety.Add(sd1.dysonPanels, produced).Value);
@@ -382,7 +400,7 @@ public class SpaceAgeManager : MonoBehaviour
 
         double deltaCalc = _timesToFire / (double)_totalFireTime;
         double timeToFill = _totalFireTime / _timesToFire;
-        _fireTime += deltaCalc * TickSeconds;
+        _fireTime += deltaCalc * _tickSeconds;
         float fill = (float)(_fireTime / timeToFill);
 
         double chargePerShot = sd1.railgunMaxCharge / 10.0;

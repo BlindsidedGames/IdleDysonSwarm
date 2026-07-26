@@ -1,8 +1,11 @@
 using Blindsided.Utilities;
 using GameData;
+using IdleDysonSwarm.Data.Balance;
 using IdleDysonSwarm.Services;
+using IdleDysonSwarm.Systems.Balance;
 using Systems.Facilities;
 using Systems.Numeric;
+using Systems.Simulation;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
@@ -320,6 +323,37 @@ namespace Buildings
             return NumberToBuy();
         }
 
+        public bool WouldOfflineAutoPurchase(
+            DysonAnalyticalState state,
+            bool toggleEnabled)
+        {
+            if (!toggleEnabled ||
+                !isActiveAndEnabled ||
+                _gameState == null ||
+                _gameState.PrestigeData == null ||
+                !_gameState.PrestigeData.infinityAutoBots ||
+                Definition == null ||
+                !IsPredictedUnlocked(state))
+            {
+                return false;
+            }
+
+            double manualOwned = ManuallyPurchased;
+            NumericResult<double> next =
+                NumericSafety.Add(manualOwned, 1d);
+            if (!next.IsSuccess || next.Value <= manualOwned)
+                return false;
+
+            double nextCost = CalcUtils.BuyXCost(
+                1,
+                Definition.baseCost,
+                Definition.costExponent,
+                manualOwned);
+            return NumericSafety.IsFinite(nextCost) &&
+                   nextCost > 0d &&
+                   state.Money >= nextCost;
+        }
+
         #endregion
 
         #region Purchase Calculation
@@ -347,6 +381,66 @@ namespace Buildings
                 "galactic_brains" => StaticSaveSettings.infinityAutoGalacticBrains,
                 _ => false
             };
+        }
+
+        private bool IsPredictedUnlocked(DysonAnalyticalState state)
+        {
+            string facilityId = FacilityId;
+            QuantumMegaUnlockGate gate;
+            string prerequisiteId;
+            double prerequisiteOwned;
+            if (BalanceRuntime.TryGetFacilityEntry(facilityId, out var entry))
+            {
+                gate = entry.quantumGate;
+                prerequisiteId = entry.prerequisiteFacilityId;
+                prerequisiteOwned = entry.prerequisiteOwned;
+            }
+            else
+            {
+                gate = facilityId switch
+                {
+                    "matrioshka_brains" => QuantumMegaUnlockGate.MatrioshkaBrains,
+                    "birch_planets" => QuantumMegaUnlockGate.BirchPlanets,
+                    "galactic_brains" => QuantumMegaUnlockGate.GalacticBrains,
+                    _ => QuantumMegaUnlockGate.None
+                };
+                prerequisiteId = facilityId switch
+                {
+                    "matrioshka_brains" => "planets",
+                    "birch_planets" => "matrioshka_brains",
+                    "galactic_brains" => "birch_planets",
+                    _ => null
+                };
+                prerequisiteOwned = string.IsNullOrEmpty(prerequisiteId) ? 0d : 1d;
+            }
+
+            if (!BalanceRuntime.IsQuantumGateUnlocked(
+                    gate,
+                    _gameState.PrestigeData))
+            {
+                return false;
+            }
+
+            if (string.IsNullOrEmpty(prerequisiteId))
+                return true;
+            return PredictedTotal(prerequisiteId, state) >= prerequisiteOwned;
+        }
+
+        private double PredictedTotal(
+            string facilityId,
+            DysonAnalyticalState state)
+        {
+            double predictedAuto = facilityId switch
+            {
+                "planets" => state.Planets,
+                "matrioshka_brains" => state.MatrioshkaBrains,
+                "birch_planets" => state.BirchPlanets,
+                "galactic_brains" => state.GalacticBrains,
+                _ => 0d
+            };
+            double[] current = _facilityService.GetFacilityCount(facilityId);
+            double manual = current is { Length: >= 2 } ? current[1] : 0d;
+            return NumericSafety.Add(predictedAuto, manual).Value;
         }
 
         #endregion

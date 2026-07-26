@@ -294,15 +294,46 @@ public class GameManager : MonoBehaviour
 
     private void RunSimulationTick()
     {
+        RunSimulationTick(forceOfflineBuyMax: false);
+    }
+
+    private void RunSimulationTick(bool forceOfflineBuyMax)
+    {
+        RunSimulationStep(
+            SimulationTickSeconds,
+            runAutomation: true,
+            forceOfflineBuyMax: forceOfflineBuyMax);
+    }
+
+    private void RunSimulationRemainder(double deltaSeconds)
+    {
+        if (!NumericSafety.IsFinite(deltaSeconds) ||
+            deltaSeconds <= 0d ||
+            deltaSeconds >= SimulationTickSeconds)
+        {
+            return;
+        }
+
+        RunSimulationStep(
+            deltaSeconds,
+            runAutomation: false,
+            forceOfflineBuyMax: true);
+    }
+
+    private void RunSimulationStep(
+        double deltaSeconds,
+        bool runAutomation,
+        bool forceOfflineBuyMax)
+    {
         bool dreamEngineeringCompleteAtStart =
             oracle.saveSettings.sdSimulation.engineeringComplete;
         DreamDoubleTimeTick dreamDoubleTimeTick = doubleTimeManager != null
-            ? doubleTimeManager.PrepareSimulationTick(SimulationTickSeconds)
+            ? doubleTimeManager.PrepareSimulationTick(deltaSeconds)
             : DreamDoubleTimeMath.Prepare(
                 oracle.saveSettings.sdPrestige.doubleTimeOwned,
                 oracle.saveSettings.sdPrestige.doubleTime,
                 oracle.saveSettings.sdPrestige.doubleTimeRate,
-                SimulationTickSeconds);
+                deltaSeconds);
         if (doubleTimeManager == null)
             oracle.saveSettings.sdPrestige.doDoubleTime = dreamDoubleTimeTick.Active;
 
@@ -315,7 +346,7 @@ public class GameManager : MonoBehaviour
                     skillTreeData,
                     prestigeData,
                     prestigePlus,
-                    SimulationTickSeconds,
+                    deltaSeconds,
                     recomputeDerivedState: false);
             },
             dreamProduction: () =>
@@ -324,20 +355,25 @@ public class GameManager : MonoBehaviour
                 // local input snapshot, this prevents newly produced
                 // facilities from working until the next logical tick.
                 spaceAgeManager?.RunProductionTick(
-                    dreamDoubleTimeTick.EffectiveMultiplier);
+                    dreamDoubleTimeTick.EffectiveMultiplier,
+                    deltaSeconds);
                 informationEraManager?.RunProductionTick(
-                    dreamDoubleTimeTick.EffectiveMultiplier);
+                    dreamDoubleTimeTick.EffectiveMultiplier,
+                    deltaSeconds);
                 foundationalEraManager?.RunProductionTick(
                     dreamEngineeringCompleteAtStart,
-                    dreamDoubleTimeTick.EffectiveMultiplier);
+                    dreamDoubleTimeTick.EffectiveMultiplier,
+                    deltaSeconds);
             },
             dysonAutomation: () =>
             {
-                botsAutoBuy?.RunAutomationTick();
-                researchAutoBuy?.RunAutomationTick();
+                if (!runAutomation) return;
+                botsAutoBuy?.RunAutomationTick(forceOfflineBuyMax);
+                researchAutoBuy?.RunAutomationTick(forceOfflineBuyMax);
             },
             dreamAutomation: () =>
             {
+                if (!runAutomation) return;
                 foundationalEraManager?.RunAutomationTick();
                 informationEraManager?.RunAutomationTick();
                 spaceAgeManager?.RunAutomationTick();
@@ -540,8 +576,121 @@ public class GameManager : MonoBehaviour
             {
                 botsAutoBuy?.RunAutomationTick(forceBuyMax: true);
                 researchAutoBuy?.RunAutomationTick(forceBuyMax: true);
-            }
+            },
+            RunCanonicalWholeGameTick = () =>
+                RunSimulationTick(forceOfflineBuyMax: true),
+            RunCanonicalWholeGameRemainder = RunSimulationRemainder,
+            RunAnalyticalTicks = TryRunAnalyticalOfflineTicks
         };
+    }
+
+    private long TryRunAnalyticalOfflineTicks(long requestedTicks)
+    {
+        if (requestedTicks < 2L ||
+            prestigePlus.breakTheLoop ||
+            AnalyticalOfflineSimulation.HasPersistentSideEffects(skillTreeData))
+        {
+            return 0L;
+        }
+
+        if ((prestigeData.infinityAutoBots && botsAutoBuy == null) ||
+            (prestigeData.infinityAutoResearch && researchAutoBuy == null))
+        {
+            return 0L;
+        }
+
+        bool dreamIdle = DreamAnalyticalOfflineSimulation.IsClockIdle(
+            oracle.saveSettings.sdSimulation,
+            spaceAgeManager != null && spaceAgeManager.IsRailgunFiring);
+        DreamOfflineTiming dreamTiming = default;
+        long dreamHorizon = requestedTicks;
+        if (!dreamIdle)
+        {
+            if (!TryGetDreamOfflineTiming(out dreamTiming))
+                return 0L;
+            dreamHorizon = DreamAnalyticalOfflineSimulation.GetQuietTickHorizon(
+                oracle.saveSettings.sdSimulation,
+                oracle.saveSettings.sdPrestige,
+                dreamTiming,
+                requestedTicks);
+            if (dreamHorizon < 2L) return 0L;
+        }
+
+        double resetThreshold = prestigePlus.divisionsPurchased > 0
+            ? 4.2e19 / Math.Pow(10d, prestigePlus.divisionsPurchased)
+            : 4.2e19;
+        resetThreshold = Math.Min(resetThreshold, double.MaxValue);
+        long processed = AnalyticalOfflineSimulation.TryAdvanceDyson(
+            infinityData,
+            skillTreeData,
+            prestigeData,
+            prestigePlus,
+            dreamHorizon,
+            resetThreshold,
+            HasOfflineAutomationEvent);
+        if (processed <= 0L) return 0L;
+
+        Oracle.SaveDataPrestige dreamPrestige = oracle.saveSettings.sdPrestige;
+        if (!dreamIdle)
+        {
+            DreamAnalyticalOfflineSimulation.AdvanceValidatedQuietTicks(
+                oracle.saveSettings.sdSimulation,
+                dreamPrestige,
+                dreamTiming,
+                processed);
+            SimulationPrestigeManager.InvokeResetSimulationRuntime();
+        }
+        else if (dreamPrestige != null)
+        {
+            dreamPrestige.doubleTime = DreamDoubleTimeMath.RemainingBankAfterTicks(
+                dreamPrestige.doubleTimeOwned,
+                dreamPrestige.doubleTime,
+                dreamPrestige.doubleTimeRate,
+                processed,
+                SimulationTickSeconds);
+            dreamPrestige.doDoubleTime =
+                dreamPrestige.doubleTimeOwned && dreamPrestige.doubleTime > 0d;
+        }
+
+        botsAutoBuy?.SkipAutomationTicks(processed);
+        researchAutoBuy?.SkipAutomationTicks(processed);
+        return processed;
+    }
+
+    private bool HasOfflineAutomationEvent(DysonAnalyticalState state)
+    {
+        return (botsAutoBuy != null &&
+                botsAutoBuy.WouldOfflinePurchase(state)) ||
+               (researchAutoBuy != null &&
+                researchAutoBuy.WouldOfflinePurchase(state));
+    }
+
+    private bool TryGetDreamOfflineTiming(out DreamOfflineTiming timing)
+    {
+        timing = default;
+        if (foundationalEraManager == null ||
+            informationEraManager == null ||
+            spaceAgeManager == null ||
+            !foundationalEraManager.SupportsAnalyticalOffline ||
+            !informationEraManager.SupportsAnalyticalOffline ||
+            !spaceAgeManager.SupportsAnalyticalOffline)
+        {
+            return false;
+        }
+
+        timing = new DreamOfflineTiming(
+            foundationalEraManager.HunterDurationSeconds,
+            foundationalEraManager.GathererDurationSeconds,
+            foundationalEraManager.CommunityDurationSeconds,
+            foundationalEraManager.HousingDurationSeconds,
+            foundationalEraManager.VillagesDurationSeconds,
+            foundationalEraManager.WorkersDurationSeconds,
+            foundationalEraManager.CitiesDurationSeconds,
+            informationEraManager.FactoriesDurationSeconds,
+            informationEraManager.BotsDurationSeconds,
+            spaceAgeManager.SpaceFactoriesDurationSeconds,
+            spaceAgeManager.IsRailgunFiring);
+        return true;
     }
 
     private OfflineProgressUI CreateOfflineProgressUi()
