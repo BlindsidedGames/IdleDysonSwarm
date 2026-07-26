@@ -100,6 +100,12 @@ namespace IdleDysonSwarm.Services
         void IncrementWorker();
 
         /// <summary>
+        /// Applies a completed batch of generated workers without per-worker loops.
+        /// </summary>
+        /// <param name="amount">Finite positive whole workers generated.</param>
+        void AddGeneratedWorkers(long amount);
+
+        /// <summary>
         /// Ensures worker count is non-negative (clamps to 0 if negative).
         /// </summary>
         void ClampWorkersNonNegative();

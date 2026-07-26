@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
+using Systems.Numeric;
 using Blindsided.Utilities;
 using static Expansion.Oracle;
 
@@ -99,20 +100,34 @@ public class OfflineTimeManager : MonoBehaviour
     public void SetDoublerActive()
     {
         if (!HasSaveSettings()) return;
-        doublerText.gameObject.SetActive(ss.offlineTime >= ss.maxOfflineTime);
-        doublerButtonObj.SetActive(ss.offlineTime >= ss.maxOfflineTime);
+        bool maxed = ss.maxOfflineTime >= NumericSafety.StoredTimeMaximumSeconds;
+        doublerText.gameObject.SetActive(maxed || ss.offlineTime >= ss.maxOfflineTime);
+        doublerText.text = maxed ? "Maxed" : doublerText.text;
+        doublerButtonObj.SetActive(!maxed && ss.offlineTime >= ss.maxOfflineTime);
     }
 
     private void DoubleOfflineTime()
     {
         if (!HasSaveSettings()) return;
         if (ss.offlineTime < ss.maxOfflineTime) return;
-        ss.maxOfflineTime *= 2;
+        if (ss.maxOfflineTime >= NumericSafety.StoredTimeMaximumSeconds)
+        {
+            ss.maxOfflineTime = NumericSafety.StoredTimeMaximumSeconds;
+            doublerText.text = "Maxed";
+            doublerButtonObj.SetActive(false);
+            return;
+        }
+
+        ss.maxOfflineTime = Math.Min(
+            NumericSafety.StoredTimeMaximumSeconds,
+            NumericSafety.Multiply(ss.maxOfflineTime, 2d).Value);
         ss.offlineTime = 0;
         SetTimeDisplay();
         SetSliderMaxToAll();
         doublerText.text = $"New Max: {CalcUtils.FormatTimeLarge(ss.maxOfflineTime)}";
-        doublerButtonObj.SetActive(ss.offlineTime >= ss.maxOfflineTime);
+        bool maxed = ss.maxOfflineTime >= NumericSafety.StoredTimeMaximumSeconds;
+        doublerText.text = maxed ? "Maxed" : $"New Max: {CalcUtils.FormatTimeLarge(ss.maxOfflineTime)}";
+        doublerButtonObj.SetActive(!maxed && ss.offlineTime >= ss.maxOfflineTime);
     }
 
     public void SetTimeDisplay()
@@ -231,12 +246,43 @@ public class OfflineTimeManager : MonoBehaviour
     {
         spentSeconds = 0;
         if (!HasSaveSettings()) return false;
-        if (requestedSeconds <= 0 || ss.offlineTime <= 0) return false;
+        if (!NumericSafety.IsFinite(requestedSeconds) || requestedSeconds <= 0d)
+            return false;
+        if (!NumericSafety.IsFinite(ss.offlineTime) || ss.offlineTime <= 0d)
+        {
+            if (double.IsPositiveInfinity(ss.offlineTime))
+            {
+                double repairedCapacity = NumericSafety.IsFinite(ss.maxOfflineTime)
+                    ? Math.Min(
+                        Math.Max(0d, ss.maxOfflineTime),
+                        NumericSafety.StoredTimeMaximumSeconds)
+                    : 86400d;
+                ss.offlineTime = repairedCapacity;
+                ss.cheater = true;
+                Systems.Debugging.NumericDiagnostics.Report(
+                    "NS-OFFLINE-SPEND-BANK-CAP",
+                    "source=offline_time_manager");
+            }
+            else if (!NumericSafety.IsFinite(ss.offlineTime))
+            {
+                Systems.Debugging.NumericDiagnostics.Report(
+                    "NS-OFFLINE-SPEND-BANK",
+                    "source=offline_time_manager");
+                ss.offlineTime = 0d;
+            }
+            else
+            {
+                ss.offlineTime = 0d;
+            }
+            return false;
+        }
 
         spentSeconds = Math.Min(requestedSeconds, ss.offlineTime);
         _gameManager.RunAwayTime(spentSeconds);
-        ss.offlineTime -= spentSeconds;
-        ss.offlineTimeUsedThisInfinity += spentSeconds;
+        ss.offlineTime = NumericSafety.Subtract(ss.offlineTime, spentSeconds).Value;
+        ss.offlineTimeUsedThisInfinity = NumericSafety.Add(
+            NumericSafety.ClampContinuous(ss.offlineTimeUsedThisInfinity),
+            spentSeconds).Value;
         return true;
     }
 
@@ -262,7 +308,9 @@ public class OfflineTimeManager : MonoBehaviour
         doublerButton.onClick.AddListener(DoubleOfflineTime);
         BindQuickOfflineTimeButtons();
         BindModalControls();
-        if (ss.maxOfflineTime >= 8640000) ss.maxOfflineTime = 86400;
+        ss.maxOfflineTime = Math.Min(
+            Math.Max(86400d, ss.maxOfflineTime),
+            NumericSafety.StoredTimeMaximumSeconds);
         _lastKnownOfflineTime = ss.offlineTime;
         SetQuickButtonsInteractable();
         _initialized = true;

@@ -1,6 +1,7 @@
 using System;
 using GameData;
 using Systems.Facilities;
+using Systems.Numeric;
 using Systems.Stats;
 using Unity.Mathematics;
 using static Expansion.Oracle;
@@ -32,6 +33,22 @@ namespace Systems
 {
     public static class ProductionSystem
     {
+        private static void Accumulate(ref double target, double rate, double deltaTime)
+        {
+            NumericResult<double> delta = NumericSafety.Multiply(rate, deltaTime);
+            if (!delta.IsSuccess) return;
+            NumericResult<double> total = NumericSafety.Add(target, delta.Value);
+            if (total.IsSuccess) target = total.Value;
+        }
+
+        private static void Accumulate(double[] target, int index, double rate, double deltaTime)
+        {
+            if (target == null || index < 0 || index >= target.Length) return;
+            double value = target[index];
+            Accumulate(ref value, rate, deltaTime);
+            target[index] = value;
+        }
+
         public static void SetBotDistribution(DysonVerseInfinityData infinityData, DysonVersePrestigeData prestigeData, PrestigePlus prestigePlus)
         {
             if (!prestigePlus.botMultitasking)
@@ -49,22 +66,99 @@ namespace Systems
         }
 
         public static void CalculateProduction(DysonVerseInfinityData infinityData, DysonVerseSkillTreeData skillTreeData,
-            DysonVersePrestigeData prestigeData, PrestigePlus prestigePlus, double deltaTime)
+            DysonVersePrestigeData prestigeData, PrestigePlus prestigePlus, double deltaTime,
+            bool recomputeDerivedState = true)
         {
-            CalculateMoney(infinityData, skillTreeData, deltaTime);
-            CalculateScience(infinityData, skillTreeData, deltaTime);
-            CalculatePanelsPerSec(infinityData, skillTreeData, deltaTime);
-            CalculateAssemblyLineProduction(infinityData, skillTreeData, prestigeData, prestigePlus, deltaTime);
-            CalculateManagerProduction(infinityData, skillTreeData, prestigeData, prestigePlus, deltaTime);
-            CalculateServerProduction(infinityData, skillTreeData, prestigeData, prestigePlus, deltaTime);
-            CalculateDataCenterProduction(infinityData, skillTreeData, prestigeData, prestigePlus, deltaTime);
-            CalculatePlanetProduction(infinityData, skillTreeData, prestigeData, deltaTime);
-            CalculatePlanetsPerSecond(infinityData, skillTreeData, deltaTime);
-            CalculateMegaStructureProduction(infinityData, skillTreeData, prestigeData, prestigePlus, deltaTime);
-            CalculateShouldersSkills(infinityData, skillTreeData, prestigeData, deltaTime);
-            if (skillTreeData.androids) AddSkillTimerSeconds(infinityData, "androids", deltaTime);
-            if (skillTreeData.pocketAndroids) AddSkillTimerSeconds(infinityData, "pocketAndroids", deltaTime);
-            if (skillTreeData.superRadiantScattering) AddSkillTimerSeconds(infinityData, "superRadiantScattering", deltaTime);
+            if (infinityData == null || skillTreeData == null || prestigeData == null || prestigePlus == null)
+                return;
+            if (!NumericSafety.IsFinite(deltaTime) || deltaTime < 0d)
+                return;
+
+            if (deltaTime > 0d)
+            {
+                // Apply only rates captured at tick start. Rate recomputation happens after every
+                // delta has been committed, so a newly produced facility starts next tick.
+                double moneyRate =
+                    NumericSafety.ClampContinuous(MoneyToAdd(infinityData, skillTreeData));
+                double scienceRate =
+                    NumericSafety.ClampContinuous(ScienceToAdd(infinityData, skillTreeData));
+                double panelRate = infinityData.panelsPerSec;
+                double botRate = infinityData.botProduction;
+                double lineRate = infinityData.assemblyLineProduction;
+                double managerRate = infinityData.managerProduction;
+                double serverRate = infinityData.serverProduction;
+                double dataCenterRate = infinityData.dataCenterProduction;
+                double planetRate = NumericSafety.Add(
+                    infinityData.totalPlanetProduction,
+                    infinityData.matrioshkaBrainPlanetProduction).Value;
+                double matrioshkaRate = infinityData.birchPlanetMatrioshkaProduction;
+                double birchRate = infinityData.galacticBrainBirchProduction;
+
+                Accumulate(ref infinityData.money, moneyRate, deltaTime);
+                Accumulate(ref infinityData.science, scienceRate, deltaTime);
+                Accumulate(ref infinityData.totalPanelsDecayed, panelRate, deltaTime);
+                Accumulate(ref infinityData.bots, botRate, deltaTime);
+                Accumulate(infinityData.assemblyLines, 0, lineRate, deltaTime);
+                Accumulate(infinityData.managers, 0, managerRate, deltaTime);
+                Accumulate(infinityData.servers, 0, serverRate, deltaTime);
+                Accumulate(infinityData.dataCenters, 0, dataCenterRate, deltaTime);
+                Accumulate(infinityData.planets, 0, planetRate, deltaTime);
+                Accumulate(infinityData.matrioshkaBrains, 0, matrioshkaRate, deltaTime);
+                Accumulate(infinityData.birchPlanets, 0, birchRate, deltaTime);
+
+                CalculateShouldersSkills(infinityData, skillTreeData, prestigeData, deltaTime);
+                if (skillTreeData.androids) AddSkillTimerSeconds(infinityData, "androids", deltaTime);
+                if (skillTreeData.pocketAndroids) AddSkillTimerSeconds(infinityData, "pocketAndroids", deltaTime);
+                if (skillTreeData.superRadiantScattering)
+                    AddSkillTimerSeconds(infinityData, "superRadiantScattering", deltaTime);
+            }
+
+            if (recomputeDerivedState)
+                RecalculateDerivedState(infinityData, skillTreeData, prestigeData, prestigePlus);
+        }
+
+        public static void RecalculateDerivedState(
+            DysonVerseInfinityData infinityData,
+            DysonVerseSkillTreeData skillTreeData,
+            DysonVersePrestigeData prestigeData,
+            PrestigePlus prestigePlus)
+        {
+            CalculatePanelsPerSec(infinityData, skillTreeData, 0d);
+            CalculateAssemblyLineProduction(infinityData, skillTreeData, prestigeData, prestigePlus, 0d);
+            CalculateManagerProduction(infinityData, skillTreeData, prestigeData, prestigePlus, 0d);
+            CalculateServerProduction(infinityData, skillTreeData, prestigeData, prestigePlus, 0d);
+            CalculateDataCenterProduction(infinityData, skillTreeData, prestigeData, prestigePlus, 0d);
+            CalculatePlanetProduction(infinityData, skillTreeData, prestigeData, 0d);
+            CalculatePlanetsPerSecond(infinityData, skillTreeData, 0d);
+            CalculateMegaStructureProduction(infinityData, skillTreeData, prestigeData, prestigePlus, 0d);
+            ClampDerivedRates(infinityData);
+        }
+
+        private static void ClampDerivedRates(DysonVerseInfinityData data)
+        {
+            data.panelsPerSec = NumericSafety.ClampContinuous(data.panelsPerSec);
+            data.botProduction = NumericSafety.ClampContinuous(data.botProduction);
+            data.assemblyLineBotProduction =
+                NumericSafety.ClampContinuous(data.assemblyLineBotProduction);
+            data.assemblyLineProduction = NumericSafety.ClampContinuous(data.assemblyLineProduction);
+            data.managerAssemblyLineProduction =
+                NumericSafety.ClampContinuous(data.managerAssemblyLineProduction);
+            data.managerProduction = NumericSafety.ClampContinuous(data.managerProduction);
+            data.serverManagerProduction =
+                NumericSafety.ClampContinuous(data.serverManagerProduction);
+            data.serverProduction = NumericSafety.ClampContinuous(data.serverProduction);
+            data.dataCenterServerProduction =
+                NumericSafety.ClampContinuous(data.dataCenterServerProduction);
+            data.dataCenterProduction = NumericSafety.ClampContinuous(data.dataCenterProduction);
+            data.planetsDataCenterProduction =
+                NumericSafety.ClampContinuous(data.planetsDataCenterProduction);
+            data.totalPlanetProduction = NumericSafety.ClampContinuous(data.totalPlanetProduction);
+            data.matrioshkaBrainPlanetProduction =
+                NumericSafety.ClampContinuous(data.matrioshkaBrainPlanetProduction);
+            data.birchPlanetMatrioshkaProduction =
+                NumericSafety.ClampContinuous(data.birchPlanetMatrioshkaProduction);
+            data.galacticBrainBirchProduction =
+                NumericSafety.ClampContinuous(data.galacticBrainBirchProduction);
         }
 
         public static void CalculatePlanetsPerSecond(DysonVerseInfinityData infinityData, DysonVerseSkillTreeData skillTreeData,
@@ -88,12 +182,19 @@ namespace Systems
                 infinityData.stellarSacrificesProduction = 0;
             }
 
-            infinityData.planets[0] += infinityData.totalPlanetProduction * deltaTime;
+            Accumulate(infinityData.planets, 0, infinityData.totalPlanetProduction, deltaTime);
 
             if (skillTreeData.shouldersOfTheFallen && infinityData.scienceBoostOwned > 0)
             {
-                infinityData.scientificPlanetsProduction += math.log2(infinityData.scienceBoostOwned);
-                if (skillTreeData.shoulderSurgery) infinityData.pocketDimensionsProduction += Math.Log(infinityData.scienceBoostOwned, 2);
+                infinityData.scientificPlanetsProduction = NumericSafety.Add(
+                    infinityData.scientificPlanetsProduction,
+                    math.log2(infinityData.scienceBoostOwned)).Value;
+                if (skillTreeData.shoulderSurgery)
+                {
+                    infinityData.pocketDimensionsProduction = NumericSafety.Add(
+                        infinityData.pocketDimensionsProduction,
+                        Math.Log(infinityData.scienceBoostOwned, 2)).Value;
+                }
             }
         }
 
@@ -173,7 +274,7 @@ namespace Systems
 
             infinityData.pocketDimensionsProduction = dataCenterProductionTemp;
 
-            infinityData.dataCenters[0] += infinityData.dataCenterProduction * deltaTime;
+            Accumulate(infinityData.dataCenters, 0, infinityData.dataCenterProduction, deltaTime);
         }
 
         public static void CalculateDataCenterProduction(DysonVerseInfinityData infinityData, DysonVerseSkillTreeData skillTreeData,
@@ -193,7 +294,7 @@ namespace Systems
             // UI-facing "Data Centers -> Servers" should mirror applied gain, not base-only production.
             infinityData.dataCenterServerProduction = finalProduction;
             infinityData.serverProduction = finalProduction;
-            infinityData.servers[0] += infinityData.serverProduction * deltaTime;
+            Accumulate(infinityData.servers, 0, infinityData.serverProduction, deltaTime);
         }
 
         public static void CalculateServerProduction(DysonVerseInfinityData infinityData, DysonVerseSkillTreeData skillTreeData,
@@ -210,7 +311,7 @@ namespace Systems
 
             infinityData.serverManagerProduction = infinityData.managerProduction;
 
-            infinityData.managers[0] += infinityData.managerProduction * deltaTime;
+            Accumulate(infinityData.managers, 0, infinityData.managerProduction, deltaTime);
         }
 
         public static void CalculateManagerProduction(DysonVerseInfinityData infinityData, DysonVerseSkillTreeData skillTreeData,
@@ -240,7 +341,7 @@ namespace Systems
 
             infinityData.rudimentrySingularityProduction = rudimentaryProduction;
             infinityData.managerAssemblyLineProduction = infinityData.assemblyLineProduction;
-            infinityData.assemblyLines[0] += infinityData.assemblyLineProduction * deltaTime;
+            Accumulate(infinityData.assemblyLines, 0, infinityData.assemblyLineProduction, deltaTime);
         }
 
         public static void CalculateAssemblyLineProduction(DysonVerseInfinityData infinityData, DysonVerseSkillTreeData skillTreeData,
@@ -258,7 +359,7 @@ namespace Systems
 
             infinityData.assemblyLineBotProduction = infinityData.botProduction;
 
-            infinityData.bots += infinityData.botProduction * deltaTime;
+            Accumulate(ref infinityData.bots, infinityData.botProduction, deltaTime);
 
             if (skillTreeData.stellarSacrifices)
             {
@@ -268,7 +369,16 @@ namespace Systems
                 double botsRequired = ProductionMath.StellarSacrificesRequiredBots(skillTreeData, starsSurrounded);
 
                 if (infinityData.bots >= botsRequired && stellarGalaxies > 0)
-                    infinityData.bots -= botsRequired * deltaTime;
+                {
+                    NumericResult<double> sacrifice =
+                        NumericSafety.Multiply(botsRequired, deltaTime);
+                    if (sacrifice.IsSuccess && sacrifice.Value <= infinityData.bots)
+                    {
+                        DebitResult debit =
+                            EconomyTransaction.TryDebit(infinityData.bots, sacrifice.Value);
+                        if (debit.Succeeded) infinityData.bots = debit.Balance;
+                    }
+                }
             }
         }
 
@@ -278,17 +388,17 @@ namespace Systems
             if (GlobalStatPipeline.TryCalculatePanelsPerSecond(infinityData, skillTreeData, null, null, out StatResult result))
             {
                 infinityData.panelsPerSec = result.Value;
-                infinityData.totalPanelsDecayed += infinityData.panelsPerSec * deltaTime;
+                Accumulate(ref infinityData.totalPanelsDecayed, infinityData.panelsPerSec, deltaTime);
                 return;
             }
             infinityData.panelsPerSec = 0;
-            infinityData.totalPanelsDecayed += infinityData.panelsPerSec * deltaTime;
+            Accumulate(ref infinityData.totalPanelsDecayed, infinityData.panelsPerSec, deltaTime);
         }
 
         public static void CalculateScience(DysonVerseInfinityData infinityData, DysonVerseSkillTreeData skillTreeData,
             double deltaTime)
         {
-            infinityData.science += ScienceToAdd(infinityData, skillTreeData) * deltaTime;
+            Accumulate(ref infinityData.science, ScienceToAdd(infinityData, skillTreeData), deltaTime);
         }
 
         public static double ScienceToAdd(DysonVerseInfinityData infinityData, DysonVerseSkillTreeData skillTreeData) =>
@@ -298,7 +408,7 @@ namespace Systems
 
         public static void CalculateMoney(DysonVerseInfinityData infinityData, DysonVerseSkillTreeData skillTreeData, double deltaTime)
         {
-            infinityData.money += MoneyToAdd(infinityData, skillTreeData) * deltaTime;
+            Accumulate(ref infinityData.money, MoneyToAdd(infinityData, skillTreeData), deltaTime);
         }
 
         public static double MoneyToAdd(DysonVerseInfinityData infinityData, DysonVerseSkillTreeData skillTreeData) =>
@@ -325,7 +435,7 @@ namespace Systems
                 {
                     double planetProduction = matrioshkaRuntime.State.ProductionRate;
                     infinityData.matrioshkaBrainPlanetProduction = planetProduction;
-                    infinityData.planets[0] += planetProduction * deltaTime;
+                    Accumulate(infinityData.planets, 0, planetProduction, deltaTime);
                 }
                 else
                 {
@@ -341,7 +451,7 @@ namespace Systems
                 {
                     double matrioshkaProduction = birchRuntime.State.ProductionRate;
                     infinityData.birchPlanetMatrioshkaProduction = matrioshkaProduction;
-                    infinityData.matrioshkaBrains[0] += matrioshkaProduction * deltaTime;
+                    Accumulate(infinityData.matrioshkaBrains, 0, matrioshkaProduction, deltaTime);
                 }
                 else
                 {
@@ -357,7 +467,7 @@ namespace Systems
                 {
                     double birchProduction = galacticRuntime.State.ProductionRate;
                     infinityData.galacticBrainBirchProduction = birchProduction;
-                    infinityData.birchPlanets[0] += birchProduction * deltaTime;
+                    Accumulate(infinityData.birchPlanets, 0, birchProduction, deltaTime);
                 }
                 else
                 {

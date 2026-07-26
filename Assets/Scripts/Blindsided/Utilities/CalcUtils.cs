@@ -1,6 +1,8 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Systems.Numeric;
+using Systems.Debugging;
 using UnityEngine;
 using static Expansion.Oracle;
 
@@ -130,6 +132,14 @@ namespace Blindsided.Utilities
             string colourStart = string.IsNullOrEmpty(colourOverride) ? "" : colourOverride;
             string colourEnd = string.IsNullOrEmpty(colourOverride) ? "" : "</color>";
 
+            if (x == double.MaxValue)
+                return $"{colourStart}{mspaceStart}MAX{mspaceEnd}{colourEnd}";
+            if (!NumericSafety.IsFinite(x))
+            {
+                NumericDiagnostics.Report("NS-UI-NONFINITE", "formatter=number");
+                return $"{colourStart}{mspaceStart}ERR{mspaceEnd}{colourEnd}";
+            }
+
             if (x == 0)
             {
                 string zeroStr = hideDecimal ? "0" : "0.00";
@@ -245,6 +255,14 @@ namespace Blindsided.Utilities
             string colourStart = string.IsNullOrEmpty(colourOverride) ? "" : colourOverride;
             string colourEnd = string.IsNullOrEmpty(colourOverride) ? "" : "</color>";
 
+            if (x == double.MaxValue)
+                return $"{colourStart}{mspaceStart}MAX{mspaceEnd}{colourEnd}";
+            if (!NumericSafety.IsFinite(x) || x < 0d)
+            {
+                NumericDiagnostics.Report("NS-UI-NONFINITE", "formatter=energy");
+                return $"{colourStart}{mspaceStart}ERR{mspaceEnd}{colourEnd}";
+            }
+
             if (x == 0)
                 return $"{colourStart}{mspaceStart}0.00{mspaceEnd}{colourEnd} {prefixes[0]}";
 
@@ -278,11 +296,11 @@ namespace Blindsided.Utilities
             bool absoluteValue = true,
             string colourOverride = "")
         {
-            if (double.IsNaN(time))
-                return "NaN";
+            if (!NumericSafety.IsFinite(time))
+                return "ERR";
 
             if (time > TimeSpan.MaxValue.TotalSeconds || time < -TimeSpan.MaxValue.TotalSeconds)
-                return "Infinity";
+                return time > 0d ? "MAX" : "ERR";
 
             if (ultraShort)
             {
@@ -320,6 +338,8 @@ namespace Blindsided.Utilities
 
         public static string FormatTimeLarge(double time)
         {
+            if (!NumericSafety.IsFinite(time) || time < 0d) return "ERR";
+            if (time == double.MaxValue) return "MAX";
             time = Math.Floor(time);
 
             double days = Math.Floor(time / 86400);
@@ -367,20 +387,40 @@ namespace Blindsided.Utilities
             double currentLevel,
             double costMultiplier = 1f)
         {
-            double cost = costMultiplier
-                          * baseCost
-                          * Math.Pow(exponent, currentLevel)
-                          * ((Math.Pow(exponent, numberToBuy) - 1) / (exponent - 1));
+            if (!NumericSafety.IsFinite(numberToBuy) || numberToBuy <= 0d ||
+                !NumericSafety.IsFinite(baseCost) || baseCost <= 0d ||
+                !NumericSafety.IsFinite(exponent) || exponent < 1d ||
+                !NumericSafety.IsFinite(currentLevel) || currentLevel < 0d ||
+                !NumericSafety.IsFinite(costMultiplier) || costMultiplier <= 0d)
+            {
+                return 0d;
+            }
 
-            return cost;
+            NumericResult<double> levelPower = NumericSafety.Power(exponent, currentLevel);
+            if (!levelPower.IsSuccess) return 0d;
+            NumericResult<double> firstCost = NumericSafety.Multiply(costMultiplier, baseCost);
+            if (!firstCost.IsSuccess) return 0d;
+            firstCost = NumericSafety.Multiply(firstCost.Value, levelPower.Value);
+            if (!firstCost.IsSuccess) return 0d;
+            if (firstCost.IsSaturated) return double.MaxValue;
+
+            if (Math.Abs(exponent - 1d) <= 1e-12d)
+            {
+                return NumericSafety.Multiply(firstCost.Value, numberToBuy).Value;
+            }
+
+            NumericResult<double> powered = NumericSafety.Power(exponent, numberToBuy);
+            if (powered.IsSaturated) return double.MaxValue;
+
+            NumericResult<double> series = NumericSafety.Divide(powered.Value - 1d, exponent - 1d);
+            if (!series.IsSuccess) return 0d;
+            return NumericSafety.Multiply(firstCost.Value, series.Value).Value;
         }
 
         public static double BuyMaxCost(double currencyOwned, double baseCost, double exponent, double currentLevel)
         {
-            double n = Math.Floor(Math.Log(
-                currencyOwned * (exponent - 1f) / (baseCost * Math.Pow(exponent, currentLevel)) + 1,
-                exponent));
-            return BuyXCost(n, baseCost, exponent, currentLevel);
+            long quantity = MaxAffordableLong(currencyOwned, baseCost, exponent, currentLevel);
+            return BuyXCost(quantity, baseCost, exponent, currentLevel);
         }
 
         public static int MaxAffordable(
@@ -390,15 +430,79 @@ namespace Blindsided.Utilities
             double currentLevel,
             double costMultiplier = 1f)
         {
-            double n = Math.Floor(Math.Log(
-                currencyOwned * (exponent - 1)
-                / (costMultiplier * baseCost * Math.Pow(exponent, currentLevel))
-                + 1,
-                exponent));
+            long result = MaxAffordableLong(currencyOwned, baseCost, exponent, currentLevel, costMultiplier);
+            return result > int.MaxValue ? int.MaxValue : (int)result;
+        }
 
-            if (n < 0) n = 0;
+        public static long MaxAffordableLong(
+            double currencyOwned,
+            double baseCost,
+            double exponent,
+            double currentLevel,
+            double costMultiplier = 1d)
+        {
+            if (!NumericSafety.IsFinite(currencyOwned) || currencyOwned <= 0d ||
+                !NumericSafety.IsFinite(baseCost) || baseCost <= 0d ||
+                !NumericSafety.IsFinite(exponent) || exponent < 1d ||
+                !NumericSafety.IsFinite(currentLevel) || currentLevel < 0d ||
+                !NumericSafety.IsFinite(costMultiplier) || costMultiplier <= 0d)
+            {
+                return 0L;
+            }
 
-            return (int)n;
+            if (Math.Abs(exponent - 1d) <= 1e-12d)
+            {
+                double linear = Math.Floor(currencyOwned / (baseCost * costMultiplier));
+                return linear >= long.MaxValue ? long.MaxValue : linear <= 0d ? 0L : (long)linear;
+            }
+
+            double logExponent = Math.Log(exponent);
+            double logRatio = Math.Log(currencyOwned) + Math.Log(exponent - 1d) -
+                              Math.Log(costMultiplier) - Math.Log(baseCost) -
+                              currentLevel * logExponent;
+            if (double.IsNaN(logRatio)) return 0L;
+
+            double logOnePlusRatio = logRatio > 700d
+                ? logRatio
+                : Math.Log(1d + Math.Exp(logRatio));
+            double estimate = Math.Floor(logOnePlusRatio / logExponent);
+            long quantity = estimate >= long.MaxValue ? long.MaxValue : estimate <= 0d ? 0L : (long)estimate;
+
+            for (int correction = 0;
+                 correction < 16 && quantity > 0 &&
+                 BuyXCost(quantity, baseCost, exponent, currentLevel, costMultiplier) > currencyOwned;
+                 correction++)
+            {
+                quantity--;
+            }
+
+            if (quantity > 0 &&
+                BuyXCost(quantity, baseCost, exponent, currentLevel, costMultiplier) > currencyOwned)
+            {
+                long low = 0L;
+                long high = quantity;
+                while (low < high)
+                {
+                    long distance = high - low;
+                    long midpoint = low + (distance / 2L) + (distance % 2L);
+                    double midpointCost = BuyXCost(midpoint, baseCost, exponent, currentLevel, costMultiplier);
+                    if (midpointCost > 0d && midpointCost <= currencyOwned && midpointCost != double.MaxValue)
+                        low = midpoint;
+                    else
+                        high = midpoint - 1L;
+                }
+                quantity = low;
+            }
+
+            for (int correction = 0; correction < 16 && quantity < long.MaxValue; correction++)
+            {
+                long next = quantity + 1L;
+                double nextCost = BuyXCost(next, baseCost, exponent, currentLevel, costMultiplier);
+                if (nextCost <= 0d || nextCost > currencyOwned || nextCost == double.MaxValue) break;
+                quantity = next;
+            }
+
+            return quantity;
         }
 
         /// <summary>

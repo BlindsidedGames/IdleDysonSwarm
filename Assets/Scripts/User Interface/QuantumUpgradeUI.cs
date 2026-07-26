@@ -3,6 +3,7 @@ using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 using Blindsided.Utilities;
+using Systems.Numeric;
 using static Expansion.Oracle;
 using static IdleDysonSwarm.Systems.Constants.QuantumConstants;
 
@@ -45,14 +46,31 @@ public class QuantumUpgradeUI : MonoBehaviour
     [SerializeField] private Button megaStructuresButton;
     [SerializeField] private TMP_Text megaStructuresTitleText;
 
-    private int divisionCost => prestigePlus.divisionsPurchased >= 1 ? (int)Math.Pow(2, prestigePlus.divisionsPurchased) * 2 : 2;
+    private int divisionCost => prestigePlus.divisionsPurchased >= 19
+        ? int.MaxValue
+        : prestigePlus.divisionsPurchased >= 1
+            ? (int)(2L << (int)prestigePlus.divisionsPurchased)
+            : 2;
     private PrestigePlus prestigePlus => oracle.saveSettings.prestigePlus;
     private AvocadoData avocadoData => oracle.saveSettings.avocadoData;
     private DysonVerseInfinityData infinityData => oracle.saveSettings.dysonVerseSaveData.dysonVerseInfinityData;
     private DysonVersePrestigeData prestigeData => oracle.saveSettings.dysonVerseSaveData.dysonVersePrestigeData;
     private DysonVerseSaveData dysonVerseSaveData => oracle.saveSettings.dysonVerseSaveData;
 
-    private long pointsRemaining => prestigePlus.points - prestigePlus.spentPoints;
+    private long pointsRemaining =>
+        prestigePlus.points >= prestigePlus.spentPoints
+            ? prestigePlus.points - prestigePlus.spentPoints
+            : 0L;
+
+    private bool TrySpendPoints(long cost)
+    {
+        DiscreteDebitResult debit = EconomyTransaction.TryDebit(pointsRemaining, cost);
+        if (!debit.Succeeded) return false;
+        NumericResult<long> spent = NumericSafety.Add(prestigePlus.spentPoints, debit.Charged);
+        if (!spent.IsSuccess) return false;
+        prestigePlus.spentPoints = spent.Value;
+        return true;
+    }
 
 
     private void Start()
@@ -119,9 +137,9 @@ public class QuantumUpgradeUI : MonoBehaviour
             ? $"Leap for {(long)Math.Floor((prestigeData.infinityPoints - prestigeData.spentInfinityPoints) / (float)IPToQuantumConversion):N0}<sprite=5, color=#000000>"
             : $"Engage Quantum Leap (<color=#FFA45E>{IPToQuantumConversion} IP</color>)";
         pointsText.text =
-            $"You have: <color=#FFA45E>{CalcUtils.FormatNumber(prestigePlus.points - prestigePlus.spentPoints)}<size=70%><color=#91DD8F>({CalcUtils.FormatNumber(prestigePlus.spentPoints)})</size></color> {"<sprite=5>"}";
-        cashText.text = $"5% Cash - <color=#91DD8F>{prestigePlus.cash * 5}%";
-        scienceText.text = $"5% Science - <color=#91DD8F>{prestigePlus.science * 5}%";
+            $"You have: <color=#FFA45E>{CalcUtils.FormatNumber(pointsRemaining)}<size=70%><color=#91DD8F>({CalcUtils.FormatNumber(prestigePlus.spentPoints)})</size></color> {"<sprite=5>"}";
+        cashText.text = $"5% Cash - <color=#91DD8F>{NumericSafety.Multiply(prestigePlus.cash, 5L).Value}%";
+        scienceText.text = $"5% Science - <color=#91DD8F>{NumericSafety.Multiply(prestigePlus.science, 5L).Value}%";
         influenceText.text = $"4 Influence /sec <color=#91DD8F>+{prestigePlus.influence}";
 
         secretsTitleText.text = prestigePlus.secrets > 0
@@ -131,7 +149,7 @@ public class QuantumUpgradeUI : MonoBehaviour
             ? $"Division - <color=#91DD8F>{CalcUtils.FormatNumber(Math.Pow(10, prestigePlus.divisionsPurchased))}"
             : "Division";
 
-        bool activate = prestigePlus.points - prestigePlus.spentPoints >= 1;
+        bool activate = pointsRemaining >= 1;
 
 
         influenceButton.interactable = activate;
@@ -143,7 +161,7 @@ public class QuantumUpgradeUI : MonoBehaviour
         automationButton.interactable = !prestigePlus.automation && activate;
         secretsButton.interactable = prestigePlus.secrets < MaxSecrets && activate &&
                                      (prestigePlus.botMultitasking || prestigePlus.doubleIP);
-        divisionButton.interactable = !(prestigePlus.divisionsPurchased >= 19) && prestigePlus.points - prestigePlus.spentPoints >= divisionCost &&
+        divisionButton.interactable = !(prestigePlus.divisionsPurchased >= 19) && pointsRemaining >= divisionCost &&
                                       prestigePlus.botMultitasking && prestigePlus.doubleIP;
 
         avocatoButton.interactable = !avocadoData.unlocked && pointsRemaining >= AvocadoCost;
@@ -187,141 +205,136 @@ public class QuantumUpgradeUI : MonoBehaviour
 
     private void PurchaseAvocato()
     {
-        if (pointsRemaining < AvocadoCost) return;
+        if (avocadoData.unlocked || !TrySpendPoints(AvocadoCost)) return;
         avocatoButton.transform.GetComponentInChildren<TMP_Text>().text = "Purchased";
         avocadoData.unlocked = true;
         prestigePlus.avocatoPurchased = true; // Keep legacy field in sync
-        prestigePlus.spentPoints += AvocadoCost;
     }
 
     private void PurchaseDivision()
     {
-        if (pointsRemaining < divisionCost) return;
-        prestigePlus.spentPoints += divisionCost;
-        prestigePlus.divisionsPurchased++;
+        if (prestigePlus.divisionsPurchased >= 19 || !TrySpendPoints(divisionCost)) return;
+        prestigePlus.divisionsPurchased =
+            NumericSafety.Add(prestigePlus.divisionsPurchased, 1L).Value;
         divisionButton.transform.GetComponentInChildren<TMP_Text>().text =
             prestigePlus.divisionsPurchased >= 19 ? "Purchased" : $"{CalcUtils.FormatNumber(divisionCost)}<sprite=5, color=#000000>";
     }
 
     private void PurchaseSecrets()
     {
-        if (pointsRemaining < 1) return;
-        prestigePlus.secrets += prestigePlus.secrets >= MaxSecrets ? 0 : SecretsPerPurchase;
-        prestigeData.secretsOfTheUniverse += prestigeData.secretsOfTheUniverse >= MaxSecrets ? 0 : SecretsPerPurchase;
-        prestigePlus.spentPoints++;
+        if (prestigePlus.secrets >= MaxSecrets || !TrySpendPoints(1L)) return;
+        prestigePlus.secrets = Math.Min(
+            MaxSecrets,
+            NumericSafety.Add(prestigePlus.secrets, SecretsPerPurchase).Value);
+        prestigeData.secretsOfTheUniverse = Math.Min(
+            MaxSecrets,
+            NumericSafety.Add(prestigeData.secretsOfTheUniverse, SecretsPerPurchase).Value);
         secretsButton.transform.GetComponentInChildren<TMP_Text>().text =
             prestigePlus.secrets >= MaxSecrets ? "Purchased" : "1<sprite=5, color=#000000>";
     }
 
     private void PurchaseMultiTasking()
     {
-        if (pointsRemaining < 1) return;
+        if (prestigePlus.botMultitasking || !TrySpendPoints(1L)) return;
         multiTaskingButton.transform.GetComponentInChildren<TMP_Text>().text = "Purchased";
         prestigePlus.botMultitasking = true;
-        prestigePlus.spentPoints++;
     }
 
     private void PurchaseDoubleIP()
     {
-        if (pointsRemaining < 1) return;
+        if (prestigePlus.doubleIP || !TrySpendPoints(1L)) return;
         doubleIpButton.transform.GetComponentInChildren<TMP_Text>().text = "Purchased";
         prestigePlus.doubleIP = true;
-        prestigePlus.spentPoints++;
     }
 
     private void PurchaseBreakTheLoop()
     {
-        if (pointsRemaining < BreakTheLoopCost) return;
+        if (prestigePlus.breakTheLoop || !TrySpendPoints(BreakTheLoopCost)) return;
         breakTheLoopButton.transform.GetComponentInChildren<TMP_Text>().text = "Purchased";
         prestigePlus.breakTheLoop = true;
-        prestigePlus.spentPoints += BreakTheLoopCost;
     }
 
     private void PurchaseQuantumEntanglement()
     {
-        if (pointsRemaining < QuantumEntanglementCost) return;
+        if (prestigePlus.quantumEntanglement || !TrySpendPoints(QuantumEntanglementCost)) return;
         quantumEntanglementButton.transform.GetComponentInChildren<TMP_Text>().text = "Purchased";
         prestigePlus.quantumEntanglement = true;
-        prestigePlus.spentPoints += QuantumEntanglementCost;
     }
 
     private void PurchaseAutomation()
     {
-        if (pointsRemaining < 1) return;
+        if (prestigePlus.automation || !TrySpendPoints(1L)) return;
         automationButton.transform.GetComponentInChildren<TMP_Text>().text = "Purchased";
         prestigePlus.automation = true;
         prestigeData.infinityAutoBots = true;
         prestigeData.infinityAutoResearch = true;
-        prestigePlus.spentPoints++;
     }
 
     private void PurchaseFragments()
     {
-        if (pointsRemaining < FragmentCost) return;
+        if (prestigePlus.fragments || !TrySpendPoints(FragmentCost)) return;
         fragmentsButton.transform.GetComponentInChildren<TMP_Text>().text = "Purchased";
         prestigePlus.fragments = true;
-        prestigePlus.spentPoints += FragmentCost;
     }
 
     private void PurchasePurity()
     {
-        if (pointsRemaining < PurityCost) return;
+        if (prestigePlus.purity || !TrySpendPoints(PurityCost)) return;
         purityButton.transform.GetComponentInChildren<TMP_Text>().text = "Purchased";
         prestigePlus.purity = true;
-        prestigePlus.spentPoints += PurityCost;
     }
 
     private void PurchaseTerra()
     {
-        if (pointsRemaining < TerraCost) return;
+        if (prestigePlus.terra || !TrySpendPoints(TerraCost)) return;
         terraButton.transform.GetComponentInChildren<TMP_Text>().text = "Purchased";
         prestigePlus.terra = true;
-        prestigePlus.spentPoints += TerraCost;
     }
 
     private void PurchasePower()
     {
-        if (pointsRemaining < PowerCost) return;
+        if (prestigePlus.power || !TrySpendPoints(PowerCost)) return;
         powerButton.transform.GetComponentInChildren<TMP_Text>().text = "Purchased";
         prestigePlus.power = true;
-        prestigePlus.spentPoints += PowerCost;
     }
 
     private void PurchaseParagade()
     {
-        if (pointsRemaining < ParagadeCost) return;
+        if (prestigePlus.paragade || !TrySpendPoints(ParagadeCost)) return;
         paragadeButton.transform.GetComponentInChildren<TMP_Text>().text = "Purchased";
         prestigePlus.paragade = true;
-        prestigePlus.spentPoints += ParagadeCost;
     }
 
     private void PurchaseStellar()
     {
-        if (pointsRemaining < StellarCost) return;
+        if (prestigePlus.stellar || !TrySpendPoints(StellarCost)) return;
         stellarButton.transform.GetComponentInChildren<TMP_Text>().text = "Purchased";
         prestigePlus.stellar = true;
-        prestigePlus.spentPoints += StellarCost;
     }
 
     private void PurchaseInfluence()
     {
-        if (pointsRemaining < 1) return;
-        prestigePlus.influence += InfluenceSpeedPerLevel;
-        prestigePlus.spentPoints++;
+        NumericResult<long> next =
+            NumericSafety.Add(prestigePlus.influence, InfluenceSpeedPerLevel);
+        if (!next.IsSuccess || next.Value <= prestigePlus.influence) return;
+        if (!TrySpendPoints(1L)) return;
+        prestigePlus.influence = next.Value;
     }
 
     private void PurchaseCashPercent()
     {
-        if (pointsRemaining < 1) return;
-        prestigePlus.cash++;
-        prestigePlus.spentPoints++;
+        NumericResult<long> next = NumericSafety.Add(prestigePlus.cash, 1L);
+        if (!next.IsSuccess || next.Value <= prestigePlus.cash) return;
+        if (!TrySpendPoints(1L)) return;
+        prestigePlus.cash = next.Value;
     }
 
     private void PurchaseSciencePercent()
     {
-        if (pointsRemaining < 1) return;
-        prestigePlus.science++;
-        prestigePlus.spentPoints++;
+        NumericResult<long> next = NumericSafety.Add(prestigePlus.science, 1L);
+        if (!next.IsSuccess || next.Value <= prestigePlus.science) return;
+        if (!TrySpendPoints(1L)) return;
+        prestigePlus.science = next.Value;
     }
 
     #region Mega-Structure Unlocks
@@ -368,7 +381,7 @@ public class QuantumUpgradeUI : MonoBehaviour
     private void PurchaseMegaStructure()
     {
         int cost = GetNextMegaStructureCost();
-        if (pointsRemaining < cost || cost == 0) return;
+        if (cost == 0 || !TrySpendPoints(cost)) return;
 
         if (!prestigeData.unlockedMatrioshkaBrains)
         {
@@ -383,10 +396,8 @@ public class QuantumUpgradeUI : MonoBehaviour
             prestigeData.unlockedGalacticBrains = true;
         }
 
-        prestigePlus.spentPoints += cost;
         UpdateMegaStructureButtonText();
     }
 
     #endregion
 }
-

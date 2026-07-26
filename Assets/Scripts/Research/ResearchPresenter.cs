@@ -5,6 +5,8 @@ using Expansion;
 using GameData;
 using IdleDysonSwarm.Services;
 using Systems.Facilities;
+using Systems.Debugging;
+using Systems.Numeric;
 using UnityEngine;
 #if UNITY_EDITOR
 using UnityEditor;
@@ -265,14 +267,23 @@ namespace Research
         public bool TryAutoPurchase()
         {
             if (!CanAutoBuy) return false;
-            if (BuyMaxCost() > _gameState.Science) return false;
 
-            long affordable = Affordable();
-            if (affordable <= 0) return false;
+            long quantity = NumberToBuy();
+            if (quantity <= 0) return false;
 
             double previousLevel = CurrentLevel;
-            _gameState.Science -= BuyMaxCost();
-            CurrentLevel = previousLevel + affordable;
+            NumericResult<double> nextLevel = NumericSafety.Add(previousLevel, quantity);
+            if (!nextLevel.IsSuccess || nextLevel.Value <= previousLevel) return false;
+
+            DebitResult debit = EconomyTransaction.TryDebit(_gameState.Science, Cost(), quantity);
+            if (!debit.Succeeded)
+            {
+                ReportUnexpectedTransactionFailure(debit.Status);
+                return false;
+            }
+
+            _gameState.Science = debit.Balance;
+            CurrentLevel = nextLevel.Value;
             HandlePostPurchase(previousLevel, CurrentLevel);
             UpdateCostText();
             return true;
@@ -283,13 +294,35 @@ namespace Research
             if (!PrerequisitesMet || IsMaxed) return;
 
             long numberToBuy = NumberToBuy();
-            if (numberToBuy <= 0 || Cost() > _gameState.Science) return;
+            if (numberToBuy <= 0) return;
 
             double previousLevel = CurrentLevel;
-            _gameState.Science -= Cost();
-            CurrentLevel = previousLevel + numberToBuy;
+            NumericResult<double> nextLevel = NumericSafety.Add(previousLevel, numberToBuy);
+            if (!nextLevel.IsSuccess || nextLevel.Value <= previousLevel) return;
+
+            DebitResult debit = EconomyTransaction.TryDebit(_gameState.Science, Cost(), numberToBuy);
+            if (!debit.Succeeded)
+            {
+                ReportUnexpectedTransactionFailure(debit.Status);
+                return;
+            }
+
+            _gameState.Science = debit.Balance;
+            CurrentLevel = nextLevel.Value;
             HandlePostPurchase(previousLevel, CurrentLevel);
             UpdateCostText();
+        }
+
+        private static void ReportUnexpectedTransactionFailure(TransactionStatus status)
+        {
+            if (status == TransactionStatus.InsufficientFunds ||
+                status == TransactionStatus.InvalidQuantity ||
+                status == TransactionStatus.Maxed)
+            {
+                return;
+            }
+
+            NumericDiagnostics.Report("NS-TRANSACTION-RESEARCH", $"status={status}");
         }
 
         private void HandlePostPurchase(double previousLevel, double newLevel)
@@ -360,9 +393,10 @@ namespace Research
         {
             if (IsMaxed) return 0;
 
+            long owned = NumericSafety.ToLongFloor(CurrentLevel).Value;
             long amount = BuyModeHelper.GetAmountToBuy(
                 _gameState.ResearchBuyMode, _gameState.RoundedBulkBuy,
-                (long)CurrentLevel, Affordable());
+                owned, Affordable());
             return ClampToRemaining(amount);
         }
 
@@ -520,10 +554,10 @@ namespace Research
             if (costBase <= 0) return 0;
             if (IsLinearExponent)
             {
-                return (long)Math.Floor(currencyOwned / costBase);
+                return NumericSafety.ToLongFloor(currencyOwned / costBase).Value;
             }
 
-            return MaxAffordable(currencyOwned, costBase, ExponentValue, CurrentLevel);
+            return MaxAffordableLong(currencyOwned, costBase, ExponentValue, CurrentLevel);
         }
 
         private double CostForAmount(double amount, double costBase)
@@ -531,7 +565,7 @@ namespace Research
             if (amount <= 0 || costBase <= 0) return 0;
             if (IsLinearExponent)
             {
-                return costBase * amount;
+                return NumericSafety.Multiply(costBase, amount).Value;
             }
 
             return BuyXCost(amount, costBase, ExponentValue, CurrentLevel);

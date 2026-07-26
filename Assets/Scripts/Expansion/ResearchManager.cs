@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using IdleDysonSwarm.UI;
 using IdleDysonSwarm.Data.Balance;
 using IdleDysonSwarm.Systems.Balance;
+using Systems.Numeric;
 using Sirenix.OdinInspector;
 using TMPro;
 using UnityEngine;
@@ -620,10 +621,8 @@ public class ResearchManager : MonoBehaviour
         }
 
         int cost = GetUpgradeCost(key);
-        if (sp.strangeMatter < cost)
-        {
-            return false;
-        }
+        DiscreteDebitResult debit = EconomyTransaction.TryDebit(sp.strangeMatter, cost);
+        if (!debit.Succeeded) return false;
 
         IReadOnlyList<SimulationUpgradeEffect> effects = ResolveUpgradeEffects(key);
         if (effects == null || effects.Count == 0)
@@ -633,7 +632,7 @@ public class ResearchManager : MonoBehaviour
         }
 
         SimulationUpgradeEffectApplier.ApplyEffects(effects, oracle.saveSettings);
-        sp.strangeMatter -= cost;
+        sp.strangeMatter = debit.Balance;
 
         if (string.Equals(key, "mathematics3", StringComparison.Ordinal))
         {

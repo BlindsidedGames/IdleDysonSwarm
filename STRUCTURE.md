@@ -2,6 +2,7 @@
 
 ## Root
 - `.agents/workflows/` assistant workflow playbooks.
+- `Tools/Unity/` project-scoped command-line Unity launchers.
 - `Assets/` game content, scripts, scenes, plugins.
 - `Packages/` Unity package manifest and lock data.
 - `ProjectSettings/` Unity project configuration.

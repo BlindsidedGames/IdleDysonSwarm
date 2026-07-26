@@ -3,6 +3,7 @@ using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 using Systems.Save;
+using Systems.Numeric;
 using static Expansion.Oracle;
 
 /*
@@ -120,8 +121,16 @@ public class DebugPurchaseHandler : MonoBehaviour
             return;
         }
 
-        oracle.saveSettings.prestigePlus.points -= DevOptionsQuantumShardCost;
-        oracle.saveSettings.sdPrestige.strangeMatter -= DevOptionsStrangeMatterCost;
+        TransactionStatus debit = EconomyTransaction.TryDebitPair(
+            ref oracle.saveSettings.prestigePlus.points,
+            DevOptionsQuantumShardCost,
+            ref oracle.saveSettings.sdPrestige.strangeMatter,
+            DevOptionsStrangeMatterCost);
+        if (debit != TransactionStatus.Success)
+        {
+            RefreshState();
+            return;
+        }
         PlayerEntitlementsStore.DebugEntitlementPurchased = true;
         PurchaseDevOptionsSuccessful();
     }

@@ -6,6 +6,7 @@ using Blindsided.ProceduralUIImage;
 using Blindsided.Utilities;
 using IdleDysonSwarm.Services;
 using static Expansion.Oracle;
+using Systems.Numeric;
 using static IdleDysonSwarm.Systems.Constants.QuantumConstants;
 
 /// <summary>
@@ -137,12 +138,16 @@ public class RealityPanelManager : MonoBehaviour
         if (unlocked)
         {
             // Show progress toward gathering Influence (128 workers needed)
-            fill = _workerService.WorkerFillPercent;
+            fill = NumericUiAdapter.ToUnitInterval(
+                _workerService.WorkerFillPercent,
+                "reality_worker_progress");
         }
         else
         {
             // Show progress toward unlocking Reality (secrets of the universe)
-            fill = (float)PrestigeData.secretsOfTheUniverse / MaxSecrets;
+            fill = NumericUiAdapter.ToUnitInterval(
+                PrestigeData.secretsOfTheUniverse / (double)MaxSecrets,
+                "reality_unlock_progress");
         }
 
         if (_realityFillProcedural != null) _realityFillProcedural.fillAmount = fill;

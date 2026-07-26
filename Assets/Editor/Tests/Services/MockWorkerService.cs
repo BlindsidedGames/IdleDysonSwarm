@@ -102,8 +102,21 @@ namespace Tests.Services
 
         public void IncrementWorker()
         {
-            _workersReady++;
-            _workerBatchesProcessed++;
+            AddGeneratedWorkers(1L);
+        }
+
+        public void AddGeneratedWorkers(long amount)
+        {
+            if (amount <= 0L) return;
+            _workerBatchesProcessed = SaturatingAdd(_workerBatchesProcessed, amount);
+            if (_autoGatherEnabled)
+            {
+                _influenceBalance = SaturatingAdd(_influenceBalance, amount);
+                _workersReady = 0L;
+                return;
+            }
+
+            _workersReady = Math.Min(MockWorkerBatchSize, SaturatingAdd(_workersReady, amount));
         }
 
         public void ClampWorkersNonNegative()
@@ -145,6 +158,11 @@ namespace Tests.Services
         /// Sets the worker batches processed for testing.
         /// </summary>
         public void SetWorkerBatchesProcessed(long count) => _workerBatchesProcessed = count;
+
+        private static long SaturatingAdd(long left, long right)
+        {
+            return right > 0L && left > long.MaxValue - right ? long.MaxValue : left + right;
+        }
 
         #endregion
     }

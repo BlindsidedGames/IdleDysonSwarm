@@ -37,7 +37,7 @@ namespace Tests.Save
             var store = new CanonicalSaveStore(new SaveSystem(storage));
 
             var settings = new Oracle.SaveDataSettings();
-            settings.saveVersion = 11;
+            settings.saveVersion = 12;
             settings.dysonVerseSaveData.dysonVerseInfinityData.money = 42;
             settings.dysonVerseSaveData.dysonVerseInfinityData.science = 99;
 
@@ -45,7 +45,7 @@ namespace Tests.Save
             Assert.Greater(stats.EncodedChars, 0);
 
             Assert.IsTrue(store.TryLoad(out Oracle.SaveDataSettings loaded, out string loadError), loadError);
-            Assert.AreEqual(11, loaded.saveVersion);
+            Assert.AreEqual(12, loaded.saveVersion);
             Assert.AreEqual(42, loaded.dysonVerseSaveData.dysonVerseInfinityData.money);
             Assert.AreEqual(99, loaded.dysonVerseSaveData.dysonVerseInfinityData.science);
         }
@@ -60,12 +60,12 @@ namespace Tests.Save
             var store = new CanonicalSaveStore(new SaveSystem(storage));
 
             var first = new Oracle.SaveDataSettings();
-            first.saveVersion = 11;
+            first.saveVersion = 12;
             first.dysonVerseSaveData.dysonVerseInfinityData.money = 100;
             Assert.IsTrue(store.TrySave(first, out _, out string firstSaveError), firstSaveError);
 
             var second = new Oracle.SaveDataSettings();
-            second.saveVersion = 11;
+            second.saveVersion = 12;
             second.dysonVerseSaveData.dysonVerseInfinityData.money = 250;
             Assert.IsTrue(store.TrySave(second, out _, out string secondSaveError), secondSaveError);
 

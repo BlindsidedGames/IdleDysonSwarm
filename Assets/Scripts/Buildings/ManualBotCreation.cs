@@ -6,6 +6,7 @@ using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.UI;
 using Systems.Stats;
+using Systems.Numeric;
 using static Expansion.Oracle;
 using IdleDysonSwarm.UI;
 
@@ -188,14 +189,15 @@ public class ManualBotCreation : MonoBehaviour
             {
                 if (manualLabourEffectiveNow)
                 {
-                    infinityData.assemblyLines[0] += assemblyProduction;
+                    infinityData.assemblyLines[0] =
+                        NumericSafety.Add(infinityData.assemblyLines[0], assemblyProduction).Value;
                 }
                 else
                 {
-                    infinityData.bots += botYield;
+                    infinityData.bots = NumericSafety.Add(infinityData.bots, botYield).Value;
                 }
                 if (dvsd.manualCreationTime >= 1 && !manualLabourEffectiveNow)
-                    dvsd.manualCreationTime -= 1;
+                    dvsd.manualCreationTime = Math.Max(0d, dvsd.manualCreationTime - 1d);
                 else
                 {
                     dvsd.manualCreationTime = manualLabourEffectiveNow ? 0.2f : 0.5f;

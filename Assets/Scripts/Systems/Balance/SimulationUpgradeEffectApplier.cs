@@ -1,4 +1,5 @@
 using IdleDysonSwarm.Data.Balance;
+using Systems.Numeric;
 using UnityEngine;
 using static Expansion.Oracle;
 
@@ -106,7 +107,13 @@ namespace IdleDysonSwarm.Systems.Balance
                 case SimulationUpgradeEffectType.AddSkillPoints:
                     if (skillTree != null)
                     {
-                        skillTree.skillPointsTree += (int)System.Math.Round(effect.numericValue);
+                        NumericResult<long> amount =
+                            NumericSafety.ToLong(System.Math.Round(effect.numericValue));
+                        if (amount.IsSuccess)
+                        {
+                            skillTree.skillPointsTree =
+                                NumericSafety.Add(skillTree.skillPointsTree, amount.Value).Value;
+                        }
                     }
 
                     break;

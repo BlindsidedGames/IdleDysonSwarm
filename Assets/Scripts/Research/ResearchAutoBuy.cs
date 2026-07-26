@@ -30,7 +30,6 @@ namespace Research
     /// </summary>
     public class ResearchAutoBuy : MonoBehaviour
     {
-        private const int MaxIterationsPerUpdate = 100;
         private static readonly string[] RequiredSceneMegaResearchIds =
         {
             ResearchIdMap.MatrioshkaBrainsUpgrade,
@@ -40,6 +39,7 @@ namespace Research
 
         private ResearchPresenter[] presenters;
         private bool _hasWarnedMissingScenePresenters;
+        private int _firstPresenterIndex;
 
         private void Awake()
         {
@@ -53,32 +53,38 @@ namespace Research
             WarnIfMissingRequiredMegaPresenters();
         }
 
-        private void Update()
+        public void RunAutomationTick(bool forceBuyMax = false)
         {
+            if (!isActiveAndEnabled) return;
             if (StaticPrestigeData == null || !StaticPrestigeData.infinityAutoResearch) return;
 
-            if (presenters == null || presenters.Length == 0)
+            BuyMode previousMode = oracle.saveSettings.researchBuyMode;
+            if (forceBuyMax) oracle.saveSettings.researchBuyMode = BuyMode.BuyMax;
+            try
             {
-                RefreshPresenters();
-            }
-
-            bool purchased;
-            int iterations = 0;
-            do
-            {
-                purchased = false;
-                for (int i = 0; i < presenters.Length; i++)
+                if (presenters == null || presenters.Length == 0)
                 {
-                    ResearchPresenter presenter = presenters[i];
-                    if (presenter == null) continue;
-                    if (presenter.TryAutoPurchase())
-                    {
-                        purchased = true;
-                    }
+                    RefreshPresenters();
                 }
 
-                iterations++;
-            } while (purchased && iterations < MaxIterationsPerUpdate);
+                if (presenters.Length == 0)
+                {
+                    return;
+                }
+
+                int first = _firstPresenterIndex % presenters.Length;
+                for (int offset = 0; offset < presenters.Length; offset++)
+                {
+                    ResearchPresenter presenter = presenters[(first + offset) % presenters.Length];
+                    if (presenter != null) presenter.TryAutoPurchase();
+                }
+
+                _firstPresenterIndex = (first + 1) % presenters.Length;
+            }
+            finally
+            {
+                if (forceBuyMax) oracle.saveSettings.researchBuyMode = previousMode;
+            }
         }
 
         private void RefreshPresenters()

@@ -53,7 +53,7 @@ namespace Tests.Save
 
                 Assert.IsTrue(system.TryLoad(out Oracle.SaveDataSettings loaded, out string loadError), loadError);
                 Assert.AreNotSame(source, loaded);
-                Assert.AreEqual(11, loaded.saveVersion);
+                Assert.AreEqual(12, loaded.saveVersion);
                 Assert.AreEqual(123.456d, loaded.dysonVerseSaveData.dysonVerseInfinityData.money);
                 Assert.IsTrue(system.LastLoadPreparation.Succeeded);
             });
@@ -76,7 +76,7 @@ namespace Tests.Save
                     replaceExistingFile: (_, _) => throw new IOException("Injected replace failure."));
                 var failingSystem = new SaveSystem(
                     failingStorage,
-                    SavePreparationPipeline.CreateCurrentSchemaOnly(11));
+                    SavePreparationPipeline.CreateCurrentSchemaOnly(12));
 
                 Assert.IsFalse(
                     failingSystem.TrySave(CreateSettings(20d), out _, out string replaceError),
@@ -106,7 +106,7 @@ namespace Tests.Save
             {
                 Assert.IsTrue(system.TrySave(CreateSettings(30d), out _, out string seedError), seedError);
                 string canonicalBefore = File.ReadAllText(filePath);
-                SavePreparationPipeline pipeline = SavePreparationPipeline.CreateCurrentSchemaOnly(11);
+                SavePreparationPipeline pipeline = SavePreparationPipeline.CreateCurrentSchemaOnly(12);
 
                 bool saved = storage.TryWriteTextVerified(
                     "IDB1:AAAA",
@@ -221,7 +221,7 @@ namespace Tests.Save
         {
             AssertRejectedTextCandidate(
                 "IDB1:AAAA",
-                SavePreparationPipeline.CreateCurrentSchemaOnly(11),
+                SavePreparationPipeline.CreateCurrentSchemaOnly(12),
                 PreparedSaveFailureReason.DecodeFailed);
         }
 
@@ -232,8 +232,8 @@ namespace Tests.Save
         public void FutureCandidate_CannotCommit()
         {
             AssertRejectedTextCandidate(
-                Encode(CreateSettings(90d, schema: 12)),
-                SavePreparationPipeline.CreateCurrentSchemaOnly(11),
+                Encode(CreateSettings(90d, schema: 13)),
+                SavePreparationPipeline.CreateCurrentSchemaOnly(12),
                 PreparedSaveFailureReason.UnsupportedFutureVersion);
         }
 
@@ -278,7 +278,7 @@ namespace Tests.Save
                     replaceExistingFile: (_, _) => throw new IOException("Injected replace failure."));
                 var failingSystem = new SaveSystem(
                     failingStorage,
-                    SavePreparationPipeline.CreateCurrentSchemaOnly(11));
+                    SavePreparationPipeline.CreateCurrentSchemaOnly(12));
 
                 Assert.IsTrue(failingSystem.TryLoad(out Oracle.SaveDataSettings loaded, out string loadError), loadError);
                 Assert.IsTrue(File.ReadAllText(filePath).StartsWith("idb1:", StringComparison.Ordinal));
@@ -287,7 +287,7 @@ namespace Tests.Save
 
                 var successfulSystem = new SaveSystem(
                     new OdinStringFileStorage(filePath, backupPath),
-                    SavePreparationPipeline.CreateCurrentSchemaOnly(11));
+                    SavePreparationPipeline.CreateCurrentSchemaOnly(12));
                 Assert.IsTrue(successfulSystem.TrySave(loaded, out _, out string saveError), saveError);
                 Assert.IsTrue(
                     File.ReadAllText(filePath).StartsWith(SaveCodec.BinarySavePrefix, StringComparison.Ordinal));
@@ -323,7 +323,7 @@ namespace Tests.Save
                     error);
 
                 Assert.IsTrue(result.Succeeded);
-                Assert.AreEqual(11, result.PreparedSchema);
+                Assert.AreEqual(12, result.PreparedSchema);
                 Assert.IsTrue(File.ReadAllText(filePath).StartsWith(SaveCodec.BinarySavePrefix, StringComparison.Ordinal));
                 Assert.AreEqual(legacyHashBefore, SaveFixtureLoader.ComputeSaveDataSha256(legacy));
                 Assert.AreEqual(8, legacy.saveVersion);
@@ -438,7 +438,7 @@ namespace Tests.Save
                 var storage = new OdinStringFileStorage(filePath, backupPath, maxBackups: 5);
                 var system = new SaveSystem(
                     storage,
-                    SavePreparationPipeline.CreateCurrentSchemaOnly(11));
+                    SavePreparationPipeline.CreateCurrentSchemaOnly(12));
                 assertion(storage, system, filePath, backupPath);
             }
             finally
@@ -460,7 +460,7 @@ namespace Tests.Save
         /// <param name="money">The durable money sentinel.</param>
         /// <param name="schema">The source schema.</param>
         /// <returns>The settings.</returns>
-        private static Oracle.SaveDataSettings CreateSettings(double money, int schema = 11)
+        private static Oracle.SaveDataSettings CreateSettings(double money, int schema = 12)
         {
             var settings = new Oracle.SaveDataSettings { saveVersion = schema };
             settings.dysonVerseSaveData.dysonVerseInfinityData.money = money;

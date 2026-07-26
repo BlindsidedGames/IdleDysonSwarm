@@ -138,22 +138,18 @@
 
 ### EditMode (primary)
 ```bash
-/Applications/Unity/Hub/Editor/6000.3.7f1/Unity.app/Contents/MacOS/Unity \
-  -batchmode -nographics -quit \
-  -projectPath "/Users/matthewrushworth/Projects/Idle Dyson Swarm" \
-  -runTests -testPlatform EditMode \
-  -testResults "/Users/matthewrushworth/Projects/Idle Dyson Swarm/Documentation/TestResults/editmode-results.xml" \
-  -logFile "/Users/matthewrushworth/Projects/Idle Dyson Swarm/Documentation/TestResults/editmode.log"
+Tools/Unity/run-tests.sh \
+  --platform EditMode \
+  --results "/Users/matthewrushworth/Projects/Idle Dyson Swarm/Documentation/TestResults/editmode-results.xml" \
+  --log "/Users/matthewrushworth/Projects/Idle Dyson Swarm/Documentation/TestResults/editmode.log"
 ```
 
 ### PlayMode (smoke/integration when needed)
 ```bash
-/Applications/Unity/Hub/Editor/6000.3.7f1/Unity.app/Contents/MacOS/Unity \
-  -batchmode -nographics -quit \
-  -projectPath "/Users/matthewrushworth/Projects/Idle Dyson Swarm" \
-  -runTests -testPlatform PlayMode \
-  -testResults "/Users/matthewrushworth/Projects/Idle Dyson Swarm/Documentation/TestResults/playmode-results.xml" \
-  -logFile "/Users/matthewrushworth/Projects/Idle Dyson Swarm/Documentation/TestResults/playmode.log"
+Tools/Unity/run-tests.sh \
+  --platform PlayMode \
+  --results "/Users/matthewrushworth/Projects/Idle Dyson Swarm/Documentation/TestResults/playmode-results.xml" \
+  --log "/Users/matthewrushworth/Projects/Idle Dyson Swarm/Documentation/TestResults/playmode.log"
 ```
 
 ## Ranked fix proposal template from failing tests

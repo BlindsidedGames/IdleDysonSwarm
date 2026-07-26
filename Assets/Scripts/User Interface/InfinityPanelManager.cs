@@ -8,6 +8,7 @@ using UnityEngine.UI;
 using Blindsided.ProceduralUIImage;
 using Blindsided.Utilities;
 using static Expansion.Oracle;
+using Systems.Numeric;
 
 /// <summary>
 /// Manages the Infinity tab UI in the side panel.
@@ -102,12 +103,12 @@ public class InfinityPanelManager : MonoBehaviour
         if (_infinityMenuButton != null)
             _infinityMenuButton.interactable = unlocked;
 
-        int ipToGain = StaticMethods.InfinityPointsToGain(amount, InfinityData.bots);
+        long ipToGain = StaticMethods.InfinityPointsToGain(amount, InfinityData.bots);
         if (_infinityText != null)
         {
             _infinityText.text = oracle.saveSettings.infinityFirstRunDone
                 ? !autoPrestige
-                    ? $"Infinity <size=70%>+{(PrestigePlus.doubleIP ? ipToGain * 2 : ipToGain)}"
+                    ? $"Infinity <size=70%>+{(PrestigePlus.doubleIP ? NumericSafety.Add(ipToGain, ipToGain).Value : ipToGain)}"
                     : "Infinity"
                 : "<align=\"center\"><sprite=4 color=#C8B3FF>";
         }
@@ -127,7 +128,7 @@ public class InfinityPanelManager : MonoBehaviour
         }
         else
         {
-            int currentIp = StaticMethods.InfinityPointsToGain(amount, InfinityData.bots);
+            long currentIp = StaticMethods.InfinityPointsToGain(amount, InfinityData.bots);
             double amountForNextPoint = CalcUtils.BuyXCost(currentIp + 1, amount, oracle.infinityExponent, 0);
             double amountForCurrentPoint = CalcUtils.BuyXCost(currentIp, amount, oracle.infinityExponent, 0);
 
@@ -135,7 +136,7 @@ public class InfinityPanelManager : MonoBehaviour
             if (InfinityData.bots < 1) _percent = 0;
         }
 
-        float fill = (float)_percent;
+        float fill = NumericUiAdapter.ToUnitInterval(_percent, "infinity_panel_progress");
         if (_infinityFillProcedural != null) _infinityFillProcedural.fillAmount = fill;
         else if (_infinityFillSliced != null) _infinityFillSliced.fillAmount = fill;
     }

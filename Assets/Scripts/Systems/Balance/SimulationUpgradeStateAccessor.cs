@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Reflection;
+using Systems.Numeric;
 using static Expansion.Oracle;
 
 /*
@@ -229,7 +230,8 @@ namespace IdleDysonSwarm.Systems.Balance
         /// <returns>True when field exists and assignment succeeds.</returns>
         private static bool TrySetNumeric(object target, string key, double value, Dictionary<string, FieldInfo> cache)
         {
-            if (target == null || string.IsNullOrWhiteSpace(key))
+            if (target == null || string.IsNullOrWhiteSpace(key) ||
+                !NumericSafety.IsFinite(value) || value < 0d)
             {
                 return false;
             }
@@ -242,25 +244,29 @@ namespace IdleDysonSwarm.Systems.Balance
             Type fieldType = field.FieldType;
             if (fieldType == typeof(double))
             {
-                field.SetValue(target, value);
+                field.SetValue(target, NumericSafety.ClampContinuous(value));
                 return true;
             }
 
             if (fieldType == typeof(float))
             {
-                field.SetValue(target, (float)value);
+                field.SetValue(target, (float)Math.Min(float.MaxValue, value));
                 return true;
             }
 
             if (fieldType == typeof(int))
             {
-                field.SetValue(target, (int)Math.Round(value));
+                NumericResult<int> converted = NumericSafety.ToInt(Math.Round(value));
+                if (!converted.IsSuccess) return false;
+                field.SetValue(target, converted.Value);
                 return true;
             }
 
             if (fieldType == typeof(long))
             {
-                field.SetValue(target, (long)Math.Round(value));
+                NumericResult<long> converted = NumericSafety.ToLong(Math.Round(value));
+                if (!converted.IsSuccess) return false;
+                field.SetValue(target, converted.Value);
                 return true;
             }
 
@@ -277,6 +283,31 @@ namespace IdleDysonSwarm.Systems.Balance
         /// <returns>True when field exists and max assignment succeeds.</returns>
         private static bool TryMaxNumeric(object target, string key, double candidate, Dictionary<string, FieldInfo> cache)
         {
+            if (target == null || string.IsNullOrWhiteSpace(key) ||
+                !NumericSafety.IsFinite(candidate) || candidate < 0d ||
+                !TryResolveField(target.GetType(), key, cache, out FieldInfo field))
+            {
+                return false;
+            }
+
+            if (field.FieldType == typeof(long))
+            {
+                NumericResult<long> converted = NumericSafety.ToLong(Math.Round(candidate));
+                if (!converted.IsSuccess) return false;
+                long currentLong = (long)field.GetValue(target);
+                field.SetValue(target, Math.Max(currentLong, converted.Value));
+                return true;
+            }
+
+            if (field.FieldType == typeof(int))
+            {
+                NumericResult<int> converted = NumericSafety.ToInt(Math.Round(candidate));
+                if (!converted.IsSuccess) return false;
+                int currentInt = (int)field.GetValue(target);
+                field.SetValue(target, Math.Max(currentInt, converted.Value));
+                return true;
+            }
+
             if (!TryGetNumeric(target, key, cache, out double current))
             {
                 return false;

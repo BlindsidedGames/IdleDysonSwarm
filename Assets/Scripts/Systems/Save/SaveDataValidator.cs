@@ -27,7 +27,7 @@ using UnityEngine;
 namespace Systems.Save
 {
     /// <summary>
-    /// Enforces the minimum publishable and persistable V11 save contract.
+    /// Enforces the minimum publishable and persistable V12 save contract.
     /// </summary>
     public static class SaveDataValidator
     {
@@ -84,7 +84,8 @@ namespace Systems.Save
             Oracle.DysonVerseInfinityData infinity = dyson.dysonVerseInfinityData;
             if (infinity.skillStateById == null ||
                 infinity.skillOwnedById == null ||
-                infinity.researchLevelsById == null)
+                infinity.researchLevelsById == null ||
+                infinity.researchProgressById == null)
             {
                 error = "A required durable-ID dictionary is null.";
                 return false;
@@ -92,7 +93,8 @@ namespace Systems.Save
 
             if (!ValidateStringKeys(infinity.skillStateById.Keys, "skillStateById", out error) ||
                 !ValidateStringKeys(infinity.skillOwnedById.Keys, "skillOwnedById", out error) ||
-                !ValidateStringKeys(infinity.researchLevelsById.Keys, "researchLevelsById", out error))
+                !ValidateStringKeys(infinity.researchLevelsById.Keys, "researchLevelsById", out error) ||
+                !ValidateStringKeys(infinity.researchProgressById.Keys, "researchProgressById", out error))
             {
                 return false;
             }

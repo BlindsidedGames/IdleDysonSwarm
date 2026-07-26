@@ -3,6 +3,7 @@ using UnityEngine;
 using Blindsided.Utilities;
 using static Expansion.Oracle;
 using static IdleDysonSwarm.Systems.Constants.QuantumConstants;
+using Systems.Numeric;
 
 public class QuantumProgressBar : MonoBehaviour
 {
@@ -17,7 +18,9 @@ public class QuantumProgressBar : MonoBehaviour
 
     private void Update()
     {
-        percent = prestigeData.infinityPoints / (float)IPToQuantumConversion;
+        percent = NumericUiAdapter.ToUnitInterval(
+            prestigeData.infinityPoints / (double)IPToQuantumConversion,
+            "quantum_progress");
         fill.fillAmount = percent;
         fillText.text = prestigeData.infinityPoints < IPToQuantumConversion
             ? $" {prestigeData.infinityPoints}/{IPToQuantumConversion}"
@@ -26,4 +29,3 @@ public class QuantumProgressBar : MonoBehaviour
         exitDysonVerse.SetActive(earned);
     }
 }
-

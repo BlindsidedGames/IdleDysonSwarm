@@ -1,11 +1,14 @@
 using System;
 using System.Collections;
+using Stopwatch = System.Diagnostics.Stopwatch;
 using System.Globalization;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 using Blindsided.Utilities;
+using Systems.Debugging;
 using Systems.Skills;
+using Systems.Numeric;
 using static Expansion.Oracle;
 
 namespace Systems
@@ -34,12 +37,18 @@ namespace Systems
         public DysonVerseInfinityData infinityData;
         public DysonVersePrestigeData prestigeData;
         public DysonVerseSkillTreeData skillTreeData;
+        public PrestigePlus prestigePlus;
         public SaveDataSettings saveSettings;
         public Action SetBotDistribution;
         public Action<double> CalculateShouldersSkills;
         public Action CalculateProduction;
         public Func<double> MoneyToAdd;
         public Func<double> ScienceToAdd;
+        /// <summary>
+        /// Optional offline automation phase. The runtime binding uses one deterministic
+        /// Buy Max attempt per enabled target. Tests and non-gameplay callers may omit it.
+        /// </summary>
+        public Action RunAutomationTick;
     }
 
     public sealed class OfflineProgressUI
@@ -77,6 +86,8 @@ namespace Systems
 
     public static class OfflineProgressSystem
     {
+        private const double SimulationTickSeconds = 0.1d;
+        private const double DefaultStoredTimeCapacitySeconds = 86400d;
         private static bool ValidateContext(OfflineProgressContext context)
         {
             if (context == null)
@@ -93,6 +104,8 @@ namespace Systems
                     $"skillTreeData={(context.skillTreeData != null)}, saveSettings={(context.saveSettings != null)}");
                 return false;
             }
+
+            context.prestigePlus ??= context.saveSettings.prestigePlus ?? new PrestigePlus();
 
             if (context.SetBotDistribution == null ||
                 context.CalculateShouldersSkills == null ||
@@ -141,93 +154,96 @@ namespace Systems
             data.skillStateById ??= new System.Collections.Generic.Dictionary<string, SkillState>();
             data.skillOwnedById ??= new System.Collections.Generic.Dictionary<string, bool>();
             data.researchLevelsById ??= new System.Collections.Generic.Dictionary<string, double>();
+            data.researchProgressById ??= new System.Collections.Generic.Dictionary<string, double>();
         }
 
         /// <summary>
-        /// Advances offline production for a single time step, accumulating results into <paramref name="acc"/>.
-        /// Called once per minute in the main loop, then once more for the sub-minute remainder.
+        /// Advances offline production for one canonical simulation tick, accumulating
+        /// results into <paramref name="acc"/>.
         /// </summary>
-        private static void ProcessTimeStep(double seconds, OfflineProgressContext context, ref OfflineAccumulator acc)
+        private static void ProcessTimeStep(
+            double seconds,
+            OfflineProgressContext context,
+            ref OfflineAccumulator acc,
+            bool runAutomation = true)
         {
-            if (context.skillTreeData.androids) AddSkillTimerSeconds(context.infinityData, "androids", seconds);
-            if (context.skillTreeData.pocketAndroids) AddSkillTimerSeconds(context.infinityData, "pocketAndroids", seconds);
-
-            // Mega-structures: process top-down (galactic → birch → matrioshka → planets)
-            if (context.prestigeData.unlockedGalacticBrains)
-            {
-                double gb = context.infinityData.galacticBrainBirchProduction * seconds;
-                acc.galacticBrains += gb;
-                context.infinityData.birchPlanets[0] += gb;
-                context.CalculateProduction();
-            }
-
-            if (context.prestigeData.unlockedBirchPlanets)
-            {
-                double bp = context.infinityData.birchPlanetMatrioshkaProduction * seconds;
-                acc.birchPlanets += bp;
-                context.infinityData.matrioshkaBrains[0] += bp;
-                context.CalculateProduction();
-            }
-
-            if (context.prestigeData.unlockedMatrioshkaBrains)
-            {
-                double mb = context.infinityData.matrioshkaBrainPlanetProduction * seconds;
-                acc.matrioshkaBrains += mb;
-                context.infinityData.planets[0] += mb;
-                context.CalculateProduction();
-            }
-
-            double p = context.infinityData.totalPlanetProduction * seconds;
-            acc.planets += p;
-            context.infinityData.planets[0] += p;
-            context.CalculateShouldersSkills(seconds);
-            context.CalculateProduction();
-
-            double da = context.infinityData.dataCenterProduction * seconds;
-            acc.dataCenters += da;
-            context.infinityData.dataCenters[0] += da;
-            context.CalculateProduction();
-
-            double s = context.infinityData.serverProduction * seconds;
-            acc.servers += s;
-            context.infinityData.servers[0] += s;
-            context.CalculateProduction();
-
-            double m = context.infinityData.managerProduction * seconds;
-            acc.managers += m;
-            context.infinityData.managers[0] += m;
-            context.CalculateProduction();
-
-            double l = context.infinityData.assemblyLineProduction * seconds;
-            acc.lines += l;
-            context.infinityData.assemblyLines[0] += l;
-            context.CalculateProduction();
-
-            double b = context.infinityData.botProduction * seconds;
-            acc.bots += b;
-            context.infinityData.bots += b;
-            context.CalculateProduction();
+            DysonVerseInfinityData data = context.infinityData;
+            double beforePlanets = data.planets[0];
+            double beforeDataCenters = data.dataCenters[0];
+            double beforeServers = data.servers[0];
+            double beforeManagers = data.managers[0];
+            double beforeLines = data.assemblyLines[0];
+            double beforeBots = data.bots;
+            double beforeMatrioshka = data.matrioshkaBrains[0];
+            double beforeBirch = data.birchPlanets[0];
+            double beforeGalactic = data.galacticBrains[0];
+            double beforeMoney = data.money;
+            double beforeScience = data.science;
+            double beforeDecayed = data.totalPanelsDecayed;
 
             context.SetBotDistribution();
+            ProductionSystem.CalculateProduction(
+                data,
+                context.skillTreeData,
+                context.prestigeData,
+                context.prestigePlus,
+                seconds,
+                recomputeDerivedState: false);
+            if (runAutomation)
+                context.RunAutomationTick?.Invoke();
+            ProductionSystem.RecalculateDerivedState(
+                data,
+                context.skillTreeData,
+                context.prestigeData,
+                context.prestigePlus);
 
-            double mo = context.MoneyToAdd() * seconds;
-            acc.money += mo;
-            context.infinityData.money += mo;
-
-            double sc = context.ScienceToAdd() * seconds;
-            acc.science += sc;
-            context.infinityData.science += sc;
-
-            double d = context.infinityData.panelsPerSec * seconds;
-            acc.decayed += d;
-            context.infinityData.totalPanelsDecayed += d;
-            context.CalculateProduction();
+            acc.planets += Math.Max(0d, data.planets[0] - beforePlanets);
+            acc.dataCenters += Math.Max(0d, data.dataCenters[0] - beforeDataCenters);
+            acc.servers += Math.Max(0d, data.servers[0] - beforeServers);
+            acc.managers += Math.Max(0d, data.managers[0] - beforeManagers);
+            acc.lines += Math.Max(0d, data.assemblyLines[0] - beforeLines);
+            acc.bots += Math.Max(0d, data.bots - beforeBots);
+            acc.matrioshkaBrains += Math.Max(0d, data.matrioshkaBrains[0] - beforeMatrioshka);
+            acc.birchPlanets += Math.Max(0d, data.birchPlanets[0] - beforeBirch);
+            acc.galacticBrains += Math.Max(0d, data.galacticBrains[0] - beforeGalactic);
+            acc.money += Math.Max(0d, data.money - beforeMoney);
+            acc.science += Math.Max(0d, data.science - beforeScience);
+            acc.decayed += Math.Max(0d, data.totalPanelsDecayed - beforeDecayed);
         }
 
         public static void ApplyReturnValues(double awayTime, OfflineProgressContext context, OfflineProgressUI ui)
         {
             if (!ValidateContext(context)) return;
             SanitizeInfinityData(context.infinityData);
+            if (!NumericSafety.IsFinite(context.saveSettings.maxOfflineTime) ||
+                context.saveSettings.maxOfflineTime <= 0d)
+            {
+                context.saveSettings.maxOfflineTime = DefaultStoredTimeCapacitySeconds;
+                NumericDiagnostics.Report("NS-OFFLINE-CAP", "source=apply_return");
+            }
+
+            double effectiveCapacity = Math.Min(
+                context.saveSettings.maxOfflineTime,
+                NumericSafety.StoredTimeMaximumSeconds);
+            if (double.IsPositiveInfinity(context.saveSettings.offlineTime))
+            {
+                context.saveSettings.offlineTime = effectiveCapacity;
+                context.saveSettings.cheater = true;
+                NumericDiagnostics.Report("NS-OFFLINE-BANK-CAP", "source=apply_return");
+            }
+            else if (!NumericSafety.IsFinite(context.saveSettings.offlineTime) ||
+                     context.saveSettings.offlineTime < 0d)
+            {
+                context.saveSettings.offlineTime = 0d;
+                NumericDiagnostics.Report("NS-OFFLINE-BANK", "source=apply_return");
+            }
+            else if (context.saveSettings.offlineTime > effectiveCapacity)
+            {
+                bool exceedsGlobalCap =
+                    context.saveSettings.offlineTime > NumericSafety.StoredTimeMaximumSeconds;
+                context.saveSettings.offlineTime = effectiveCapacity;
+                if (exceedsGlobalCap) context.saveSettings.cheater = true;
+            }
 
             double beforeOfflineTime = context.saveSettings.offlineTime;
             bool capApplied = false;
@@ -240,15 +256,19 @@ namespace Systems
             if (ui?.AwayForHeader != null) ui.AwayForHeader.text = "Welcome Back!";
             ui?.ReturnScreen?.SetActive(awayTime >= 120 || awayTime < 0);
             ui?.OfflineTimeInstructions?.SetActive(true);
+            if (!NumericSafety.IsFinite(awayTime))
+            {
+                result = "invalid_duration_zero_grant";
+                awayTime = 0d;
+                NumericDiagnostics.Report("NS-OFFLINE-DURATION", "source=apply_return");
+            }
             if (awayTime < 0)
             {
-                result = "cheater_reset";
+                result = "backward_clock_zero_grant";
                 context.saveSettings.cheater = true;
-                context.saveSettings.offlineTime = 0;
-                context.saveSettings.maxOfflineTime = 0;
-                string text = $"You were away for {color}{CalcUtils.FormatTimeLarge(awayTime)}</color>";
-                text +=
-                    "<br>You're probably cheating: Offline time disabled. <br>Please wipe your save to continue using offline time.";
+                awayTime = 0d;
+                NumericDiagnostics.Report("NS-CLOCK-BACKWARD", "source=offline_progress");
+                string text = "The device clock moved backward. No stored time was granted for this interval.";
                 if (ui?.AwayFor != null) ui.AwayFor.text = text;
                 Debug.LogWarning(
                     "[OfflineTimeDiag] ApplyReturnValues | " +
@@ -257,18 +277,20 @@ namespace Systems
                     $"beforeOfflineTime={beforeOfflineTime.ToString(CultureInfo.InvariantCulture)}, " +
                     $"afterOfflineTime={context.saveSettings.offlineTime.ToString(CultureInfo.InvariantCulture)}, " +
                     $"maxOfflineTime={context.saveSettings.maxOfflineTime.ToString(CultureInfo.InvariantCulture)}");
-                return;
             }
 
-            if (awayTime >= context.saveSettings.maxOfflineTime - context.saveSettings.offlineTime)
+            double capacity = effectiveCapacity;
+            double availableCapacity = Math.Max(0d, capacity - context.saveSettings.offlineTime);
+            if (awayTime >= availableCapacity)
             {
-                calculatedAwayTime = context.saveSettings.maxOfflineTime - context.saveSettings.offlineTime;
-                context.saveSettings.offlineTime = context.saveSettings.maxOfflineTime;
+                calculatedAwayTime = availableCapacity;
+                context.saveSettings.offlineTime = capacity;
                 capApplied = true;
             }
             else
             {
-                context.saveSettings.offlineTime += awayTime;
+                context.saveSettings.offlineTime =
+                    NumericSafety.Add(context.saveSettings.offlineTime, awayTime).Value;
                 calculatedAwayTime = awayTime;
             }
 
@@ -291,6 +313,12 @@ namespace Systems
         {
             if (!ValidateContext(context)) yield break;
             SanitizeInfinityData(context.infinityData);
+            if (!NumericSafety.IsFinite(awayTime) || awayTime <= 0d)
+            {
+                if (!NumericSafety.IsFinite(awayTime))
+                    NumericDiagnostics.Report("NS-OFFLINE-DURATION", "source=calculate_away");
+                yield break;
+            }
 
             string color = "<color=#91DD8F>";
             string colorS = "<color=#00E1FF>";
@@ -298,35 +326,71 @@ namespace Systems
             if (ui?.AwayFor != null) ui.AwayFor.text = $"Advanced {color}{CalcUtils.FormatTimeLarge(awayTime)}";
 
             long startingIP = context.prestigeData.infinityPoints;
-            context.prestigeData.infinityPoints += context.saveSettings.lastInfinityPointsGained >= 1
-                ? (long)Math.Floor(awayTime * context.saveSettings.lastInfinityPointsGained /
-                                   context.saveSettings.timeLastInfinity / 10)
-                : 0;
+            long passiveInfinityGain = 0L;
+            if (context.saveSettings.lastInfinityPointsGained >= 1 &&
+                NumericSafety.IsFinite(context.saveSettings.timeLastInfinity) &&
+                context.saveSettings.timeLastInfinity > 0d)
+            {
+                NumericResult<double> scaledAway = NumericSafety.Multiply(
+                    awayTime,
+                    context.saveSettings.lastInfinityPointsGained);
+                NumericResult<double> perPreviousRun = NumericSafety.Divide(
+                    scaledAway.Value,
+                    context.saveSettings.timeLastInfinity);
+                NumericResult<double> passiveRate = NumericSafety.Divide(
+                    perPreviousRun.Value,
+                    10d);
+                NumericResult<long> converted = passiveRate.IsSuccess
+                    ? NumericSafety.ToLongFloor(passiveRate.Value)
+                    : new NumericResult<long>(0L, passiveRate.Status);
+                if (converted.IsSuccess) passiveInfinityGain = converted.Value;
+            }
 
-            if (context.skillTreeData.idleElectricSheep) awayTime *= 2;
-            double remainder = awayTime % 60;
-            double minutes = (awayTime - remainder) / 60;
+            context.prestigeData.infinityPoints =
+                NumericSafety.Add(context.prestigeData.infinityPoints, passiveInfinityGain).Value;
+
+            if (context.skillTreeData.idleElectricSheep)
+                awayTime = NumericSafety.Multiply(awayTime, 2d).Value;
+            double tickEpsilon = SimulationTickSeconds * 1e-9d;
+            NumericResult<long> fixedTickResult = NumericSafety.ToLongFloor(
+                Math.Floor((awayTime + tickEpsilon) / SimulationTickSeconds));
+            if (!fixedTickResult.IsSuccess)
+            {
+                NumericDiagnostics.Report(
+                    "NS-OFFLINE-TICK-COUNT",
+                    $"status={fixedTickResult.Status}");
+                yield break;
+            }
+            long fixedTicks = fixedTickResult.Value;
+            double remainder = awayTime - fixedTicks * SimulationTickSeconds;
+            if (remainder < tickEpsilon) remainder = 0d;
 
             var acc = new OfflineAccumulator();
 
-            if (minutes >= 1)
+            if (fixedTicks >= 1)
             {
-                int sliderFill = 0;
+                long sliderFill = 0;
+                var sliceTimer = Stopwatch.StartNew();
                 if (ui?.OfflineProgressLayoutElement != null) ui.OfflineProgressLayoutElement.minHeight = 7;
                 ui?.ReturnScreenSliderParentGameObject?.SetActive(true);
-                for (int i = 0; i < minutes; i++)
+                for (long i = 0; i < fixedTicks; i++)
                 {
-                    ProcessTimeStep(60, context, ref acc);
+                    ProcessTimeStep(SimulationTickSeconds, context, ref acc);
 
                     sliderFill++;
                     if (ui?.ReturnScreenSlider != null)
-                        ui.ReturnScreenSlider.fillAmount = (float)(sliderFill / minutes);
+                        ui.ReturnScreenSlider.fillAmount = (float)((double)sliderFill / fixedTicks);
 
-                    yield return 0;
+                    if (sliceTimer.Elapsed.TotalMilliseconds >= 4d)
+                    {
+                        sliceTimer.Restart();
+                        yield return 0;
+                    }
                 }
             }
 
-            ProcessTimeStep(remainder, context, ref acc);
+            if (remainder > 0d)
+                ProcessTimeStep(remainder, context, ref acc, runAutomation: false);
             yield return 0;
 
             string textBuilder = "";

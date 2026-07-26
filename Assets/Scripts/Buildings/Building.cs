@@ -3,6 +3,8 @@ using UnityEngine;
 using Blindsided.Utilities;
 using TMPro;
 using UnityEngine.UI;
+using Systems.Debugging;
+using Systems.Numeric;
 using static Blindsided.Utilities.CalcUtils;
 using static Expansion.Oracle;
 
@@ -42,7 +44,7 @@ namespace Buildings
         public virtual bool AutoBuy => throw new NotImplementedException();
         public bool DoAutoBuy => AutoBuy && Affordable() > 0;
 
-        public long Affordable() => MaxAffordable(Money, ModifiedBaseCost, CostExponent, CurrentLevel);
+        public long Affordable() => MaxAffordableLong(Money, ModifiedBaseCost, CostExponent, CurrentLevel);
 
         public double Cost() => BuyXCost(NumberToBuy(), ModifiedBaseCost, CostExponent, CurrentLevel);
         public double BuyMaxCost() => BuyXCost(Affordable(), ModifiedBaseCost, CostExponent, CurrentLevel);
@@ -72,23 +74,55 @@ namespace Buildings
 
         public void PurchaseBuilding()
         {
-            if (Cost() <= Money)
+            long quantity = NumberToBuy();
+            if (quantity <= 0) return;
+
+            double currentOwned = ManuallyPurchasedBuildings;
+            NumericResult<double> ownership = NumericSafety.Add(currentOwned, quantity);
+            if (!ownership.IsSuccess || ownership.Value <= currentOwned) return;
+
+            DebitResult debit = EconomyTransaction.TryDebit(Money, Cost(), quantity);
+            if (!debit.Succeeded)
             {
-                long currentlyAffordable = NumberToBuy();
-                Money -= Cost();
-                ManuallyPurchasedBuildings += currentlyAffordable;
-                UpdateCostText();
+                ReportUnexpectedTransactionFailure(debit.Status);
+                return;
             }
+
+            Money = debit.Balance;
+            ManuallyPurchasedBuildings = ownership.Value;
+            UpdateCostText();
         }
         public void AutoPurchase()
         {
-            if (BuyMaxCost() <= Money)
+            long quantity = NumberToBuy();
+            if (quantity <= 0) return;
+
+            double currentOwned = ManuallyPurchasedBuildings;
+            NumericResult<double> ownership = NumericSafety.Add(currentOwned, quantity);
+            if (!ownership.IsSuccess || ownership.Value <= currentOwned) return;
+
+            DebitResult debit = EconomyTransaction.TryDebit(Money, Cost(), quantity);
+            if (!debit.Succeeded)
             {
-                long currentlyAffordable = Affordable();
-                Money -= BuyMaxCost();
-                ManuallyPurchasedBuildings += currentlyAffordable;
-                UpdateCostText();
+                ReportUnexpectedTransactionFailure(debit.Status);
+                return;
             }
+
+            Money = debit.Balance;
+            ManuallyPurchasedBuildings = ownership.Value;
+            UpdateCostText();
+        }
+
+        private static void ReportUnexpectedTransactionFailure(TransactionStatus status)
+        {
+            if (status == TransactionStatus.InsufficientFunds ||
+                status == TransactionStatus.InvalidQuantity ||
+                status == TransactionStatus.Maxed)
+            {
+                return;
+            }
+
+            NumericDiagnostics.Report("NS-TRANSACTION-FACILITY", $"status={status}");
         }
 
         private void SetProductionSec()
@@ -102,9 +136,10 @@ namespace Buildings
 
         public long NumberToBuy()
         {
+            long owned = NumericSafety.ToLongFloor(ManuallyPurchasedBuildings).Value;
             return BuyModeHelper.GetAmountToBuy(
                 StaticBuyMode, StaticRoundedBulkBuy,
-                (long)ManuallyPurchasedBuildings, Affordable());
+                owned, Affordable());
         }
 
         public void UpdateCostText()

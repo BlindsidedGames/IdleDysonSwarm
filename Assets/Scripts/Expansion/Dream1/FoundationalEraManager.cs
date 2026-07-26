@@ -1,5 +1,6 @@
 using System;
 using Systems;
+using Systems.Numeric;
 using UnityEngine;
 using Blindsided.Utilities;
 using IdleDysonSwarm.Systems.Dream1;
@@ -9,6 +10,7 @@ using static Expansion.Oracle;
 
 public class FoundationalEraManager : MonoBehaviour
 {
+    private const double TickSeconds = 0.1d;
     [Header("Panel References")]
     [SerializeField] private SimulationGenericPanelReferences hunterPanel;
     [SerializeField] private SimulationGenericPanelReferences gathererPanel;
@@ -35,6 +37,7 @@ public class FoundationalEraManager : MonoBehaviour
     private ProductionTimer _villagesTimer;
     private ProductionTimer _workersTimer;
     private ProductionTimer _citiesTimer;
+    private bool _timersInitialized;
 
     private SaveDataDream1 sd1 => oracle.saveSettings.sdSimulation;
     private SaveData sd => oracle.saveSettings.saveData;
@@ -44,7 +47,20 @@ public class FoundationalEraManager : MonoBehaviour
     private const int VillageToCitiesCost = 25;
     private const float InfoUpdateInterval = 0.1f; // 10hz debounce for info descriptions
 
-    private float _infoUpdateTimer;
+    private double _infoUpdateTimer;
+    private double _tickGlobalMultiplier = 1d;
+
+    private void OnEnable()
+    {
+        SimulationPrestigeManager.ResetSimulationRuntime += ResetSimulationRuntime;
+        if (_timersInitialized)
+            ResetSimulationRuntime();
+    }
+
+    private void OnDisable()
+    {
+        SimulationPrestigeManager.ResetSimulationRuntime -= ResetSimulationRuntime;
+    }
 
     private void Start()
     {
@@ -56,6 +72,7 @@ public class FoundationalEraManager : MonoBehaviour
         _villagesTimer = new ProductionTimer(villagesDuration, sd1.villagesTimerProgress);
         _workersTimer = new ProductionTimer(workersDuration, sd1.workersTimerProgress);
         _citiesTimer = new ProductionTimer(citiesDuration, sd1.citiesTimerProgress);
+        _timersInitialized = true;
 
         // Set panel types and configure UI elements
         if (hunterPanel != null)
@@ -110,19 +127,59 @@ public class FoundationalEraManager : MonoBehaviour
             communityPanel.actionButton.onClick.AddListener(OnCommunityBoost);
     }
 
+    private void ResetSimulationRuntime()
+    {
+        _hunterTimer = new ProductionTimer(hunterDuration, sd1.hunterTimerProgress);
+        _gathererTimer = new ProductionTimer(gatherDuration, sd1.gathererTimerProgress);
+        _communityTimer = new ProductionTimer(communityDuration, sd1.communityTimerProgress);
+        _housingTimer = new ProductionTimer(housingDuration, sd1.housingTimerProgress);
+        _villagesTimer = new ProductionTimer(villagesDuration, sd1.villagesTimerProgress);
+        _workersTimer = new ProductionTimer(workersDuration, sd1.workersTimerProgress);
+        _citiesTimer = new ProductionTimer(citiesDuration, sd1.citiesTimerProgress);
+        _communityProduction = 0d;
+        _infoUpdateTimer = 0d;
+        _tickGlobalMultiplier = 1d;
+    }
+
     private void Update()
     {
         UpdateVisibility();
-        BuildingConversions();
-        HunterManagement();
-        GathererManagement();
-        ManageCommunityBoost();
-        CommunityManagement();
-        HousingManagement();
-        VillageManagement();
-        WorkerManagement();
-        CityManagement();
         SetButtonsInteractable();
+    }
+
+    public void RunProductionTick(
+        bool engineeringCompleteAtStart,
+        double globalMultiplier)
+    {
+        _tickGlobalMultiplier = globalMultiplier;
+        // Production inputs are captured before any output is applied so a
+        // facility produced during this tick cannot itself produce until the
+        // next canonical tick.
+        double huntersAtStart = sd1.hunters;
+        double gatherersAtStart = sd1.gatherers;
+        double communityAtStart = sd1.community;
+        double housingAtStart = sd1.housing;
+        double villagesAtStart = sd1.villages;
+        double workersAtStart = sd1.workers;
+        double citiesAtStart = sd1.cities;
+
+        HunterManagement(huntersAtStart);
+        GathererManagement(gatherersAtStart);
+        CommunityManagement(communityAtStart);
+        HousingManagement(housingAtStart);
+        VillageManagement(villagesAtStart);
+        WorkerManagement(workersAtStart);
+        CityManagement(citiesAtStart, engineeringCompleteAtStart);
+        ManageCommunityBoost();
+    }
+
+    public void RunAutomationTick()
+    {
+        BuildingConversions();
+    }
+
+    public void CompleteSimulationTick()
+    {
         SyncTimerProgress();
         UpdateInfoDescriptions();
     }
@@ -155,7 +212,7 @@ public class FoundationalEraManager : MonoBehaviour
 
     private double GetGlobalMultiplier()
     {
-        return sp.doDoubleTime ? sp.doubleTimeRate + 1 : 1;
+        return _tickGlobalMultiplier;
     }
 
     private void SetButtonsInteractable()
@@ -173,44 +230,50 @@ public class FoundationalEraManager : MonoBehaviour
         // Housing to Villages conversion
         if (sd1.housing >= HousingToVillageCost)
         {
-            sd1.housing -= HousingToVillageCost;
-            sd1.villages++;
+            EconomyTransaction.TryPurchase(
+                ref sd1.housing,
+                HousingToVillageCost,
+                ref sd1.villages,
+                1d);
         }
 
         // Villages to Cities conversion
         if (sd1.villages >= VillageToCitiesCost)
         {
-            sd1.villages -= VillageToCitiesCost;
-            sd1.cities++;
+            EconomyTransaction.TryPurchase(
+                ref sd1.villages,
+                VillageToCitiesCost,
+                ref sd1.cities,
+                1d);
         }
     }
 
     private double _communityProduction;
 
-    private void HunterManagement()
+    private void HunterManagement(double sourceCount)
     {
         if (hunterPanel == null) return;
 
         hunterPanel.titleText.text = $"Hunters <size=70%>{UIThemeProvider.TextColourBlue}{sd1.hunters:N0}</color>";
 
         double globalMulti = GetGlobalMultiplier();
-        int produced = _hunterTimer.Update(sd1.hunters, globalMulti, Time.deltaTime);
-        sd1.community += produced;
+        int produced = _hunterTimer.Update(sourceCount, globalMulti, TickSeconds);
+        sd1.community = NumericSafety.Add(sd1.community, produced).Value;
 
         double effectiveMulti = _hunterTimer.GetEffectiveMultiplier(sd1.hunters, globalMulti);
         hunterPanel.fill1.fillAmount = (float)StaticMethods.FillBar(sd1.hunters, hunterDuration, effectiveMulti, _hunterTimer.currentTime);
         hunterPanel.fillBar1Text.text = StaticMethods.TimerText(sd1.hunters, hunterDuration, effectiveMulti, _hunterTimer.currentTime, mspace: true, colourOverride: UIThemeProvider.TextColourBlue);
     }
 
-    private void GathererManagement()
+    private void GathererManagement(double sourceCount)
     {
         if (gathererPanel == null) return;
 
         gathererPanel.titleText.text = $"Gatherers <size=70%>{UIThemeProvider.TextColourBlue}{sd1.gatherers:N0}</color>";
 
         double globalMulti = GetGlobalMultiplier();
-        int produced = _gathererTimer.Update(sd1.gatherers, globalMulti, Time.deltaTime);
-        sd1.community += produced;
+        int produced = _gathererTimer.Update(sourceCount, globalMulti, TickSeconds);
+        sd1.community = NumericSafety.Add(sd1.community, produced).Value;
 
         double effectiveMulti = _gathererTimer.GetEffectiveMultiplier(sd1.gatherers, globalMulti);
         gathererPanel.fill1.fillAmount = (float)StaticMethods.FillBar(sd1.gatherers, gatherDuration, effectiveMulti, _gathererTimer.currentTime);
@@ -223,7 +286,7 @@ public class FoundationalEraManager : MonoBehaviour
 
         if (sd1.communityBoostTime > 0)
         {
-            sd1.communityBoostTime -= Time.deltaTime;
+            sd1.communityBoostTime = Math.Max(0d, sd1.communityBoostTime - TickSeconds);
             communityPanel.fill2.fillAmount = (float)(sd1.communityBoostTime / sd1.communityBoostDuration);
             communityPanel.fillBar2Text.text = CalcUtils.FormatTime(sd1.communityBoostTime, shortForm: true, colourOverride: UIThemeProvider.TextColourBlue);
         }
@@ -235,7 +298,7 @@ public class FoundationalEraManager : MonoBehaviour
         }
     }
 
-    private void CommunityManagement()
+    private void CommunityManagement(double sourceCount)
     {
         if (communityPanel == null) return;
 
@@ -249,8 +312,8 @@ public class FoundationalEraManager : MonoBehaviour
         double globalMulti = GetGlobalMultiplier();
         if (sd1.communityBoostTime > 0) globalMulti *= 2;
 
-        int produced = _communityTimer.Update(sd1.community, globalMulti, Time.deltaTime);
-        sd1.housing += produced;
+        int produced = _communityTimer.Update(sourceCount, globalMulti, TickSeconds);
+        sd1.housing = NumericSafety.Add(sd1.housing, produced).Value;
 
         double effectiveMulti = _communityTimer.GetEffectiveMultiplier(sd1.community, globalMulti);
         _communityProduction = effectiveMulti > 0 ? effectiveMulti / communityDuration : 0;
@@ -259,7 +322,7 @@ public class FoundationalEraManager : MonoBehaviour
         communityPanel.fillBar1Text.text = StaticMethods.TimerText(sd1.community, communityDuration, effectiveMulti, _communityTimer.currentTime, mspace: true, colourOverride: UIThemeProvider.TextColourBlue);
     }
 
-    private void HousingManagement()
+    private void HousingManagement(double sourceCount)
     {
         if (housingPanel == null) return;
 
@@ -271,12 +334,14 @@ public class FoundationalEraManager : MonoBehaviour
 
         // Secondary fill bar shows conversion progress to villages
         housingPanel.fill2.fillAmount = _communityProduction > 10 ? 1 :
-            sd1.housing >= 1 ? (float)sd1.housing / HousingToVillageCost : 0;
-        housingPanel.fillBar2Text.text = $"{UIThemeProvider.TextColourBlue}{(int)sd1.housing % HousingToVillageCost}</color> / {UIThemeProvider.TextColourBlue}{HousingToVillageCost}</color>";
+            sd1.housing >= 1 ? (float)Math.Min(1d, sd1.housing / HousingToVillageCost) : 0;
+        int housingRemainder = NumericSafety.ToInt(
+            Math.Floor(sd1.housing % HousingToVillageCost)).Value;
+        housingPanel.fillBar2Text.text = $"{UIThemeProvider.TextColourBlue}{housingRemainder}</color> / {UIThemeProvider.TextColourBlue}{HousingToVillageCost}</color>";
 
         double globalMulti = GetGlobalMultiplier();
-        int produced = _housingTimer.Update(sd1.housing, globalMulti, Time.deltaTime);
-        sd1.workers += produced;
+        int produced = _housingTimer.Update(sourceCount, globalMulti, TickSeconds);
+        sd1.workers = NumericSafety.Add(sd1.workers, produced).Value;
 
         // When housing is 0, keep fill bar and timer text at last value to prevent flickering
         if (sd1.housing == 0)
@@ -287,15 +352,18 @@ public class FoundationalEraManager : MonoBehaviour
         housingPanel.fillBar1Text.text = StaticMethods.TimerText(sd1.housing, housingDuration, effectiveMulti, _housingTimer.currentTime, mspace: true, colourOverride: UIThemeProvider.TextColourBlue);
     }
 
-    private void VillageManagement()
+    private void VillageManagement(double sourceCount)
     {
         if (villagesPanel == null) return;
 
         villagesPanel.titleText.text = $"Villages <size=70%>{UIThemeProvider.TextColourBlue}{sd1.villages:N0}</color>";
 
         // Secondary fill bar shows conversion progress to cities
-        villagesPanel.fill2.fillAmount = (float)sd1.villages / VillageToCitiesCost;
-        villagesPanel.fillBar2Text.text = $"{UIThemeProvider.TextColourBlue}{(int)sd1.villages % VillageToCitiesCost}</color> / {UIThemeProvider.TextColourBlue}{VillageToCitiesCost}</color>";
+        villagesPanel.fill2.fillAmount =
+            (float)Math.Min(1d, sd1.villages / VillageToCitiesCost);
+        int villageRemainder = NumericSafety.ToInt(
+            Math.Floor(sd1.villages % VillageToCitiesCost)).Value;
+        villagesPanel.fillBar2Text.text = $"{UIThemeProvider.TextColourBlue}{villageRemainder}</color> / {UIThemeProvider.TextColourBlue}{VillageToCitiesCost}</color>";
 
         if (sd1.villages == 0)
         {
@@ -305,15 +373,17 @@ public class FoundationalEraManager : MonoBehaviour
         }
 
         double globalMulti = GetGlobalMultiplier();
-        int produced = _villagesTimer.Update(sd1.villages, globalMulti, Time.deltaTime);
-        sd1.workers += produced * 2; // Villages produce 2 workers per tick
+        int produced = _villagesTimer.Update(sourceCount, globalMulti, TickSeconds);
+        sd1.workers = NumericSafety.Add(
+            sd1.workers,
+            NumericSafety.Multiply(produced, 2d).Value).Value;
 
         double effectiveMulti = _villagesTimer.GetEffectiveMultiplier(sd1.villages, globalMulti);
         villagesPanel.fill1.fillAmount = (float)StaticMethods.FillBar(sd1.villages, villagesDuration, effectiveMulti, _villagesTimer.currentTime);
         villagesPanel.fillBar1Text.text = StaticMethods.TimerText(sd1.villages, villagesDuration, effectiveMulti, _villagesTimer.currentTime, mspace: true, colourOverride: UIThemeProvider.TextColourBlue);
     }
 
-    private void WorkerManagement()
+    private void WorkerManagement(double sourceCount)
     {
         if (workersPanel == null) return;
 
@@ -321,31 +391,33 @@ public class FoundationalEraManager : MonoBehaviour
 
         // Workers have special boost from workerBoostActivator
         double globalMulti = GetGlobalMultiplier();
-        if (sp.workerBoostAcivator && sd1.workers > 0)
-            globalMulti *= 1 + Math.Log10(sd1.workers);
+        if (sp.workerBoostAcivator && sourceCount > 0)
+            globalMulti *= 1 + Math.Log10(sourceCount);
 
-        int produced = _workersTimer.Update(sd1.workers, globalMulti, Time.deltaTime);
-        sd1.housing += produced;
+        int produced = _workersTimer.Update(sourceCount, globalMulti, TickSeconds);
+        sd1.housing = NumericSafety.Add(sd1.housing, produced).Value;
 
         double effectiveMulti = _workersTimer.GetEffectiveMultiplier(sd1.workers, globalMulti);
         workersPanel.fill1.fillAmount = (float)StaticMethods.FillBar(sd1.workers, workersDuration, effectiveMulti, _workersTimer.currentTime);
         workersPanel.fillBar1Text.text = StaticMethods.TimerText(sd1.workers, workersDuration, effectiveMulti, _workersTimer.currentTime, mspace: true, colourOverride: UIThemeProvider.TextColourBlue);
     }
 
-    private void CityManagement()
+    private void CityManagement(double sourceCount, bool engineeringCompleteAtStart)
     {
         if (citiesPanel == null) return;
 
         citiesPanel.titleText.text = $"Cities <size=70%>{UIThemeProvider.TextColourBlue}{sd1.cities:N0}</color>";
 
         double globalMulti = GetGlobalMultiplier();
-        int produced = _citiesTimer.Update(sd1.cities, globalMulti, Time.deltaTime);
+        int produced = _citiesTimer.Update(sourceCount, globalMulti, TickSeconds);
 
-        // Apply production per tick
-        for (int i = 0; i < produced; i++)
+        double workersProduced = NumericSafety.Multiply(produced, 5d).Value;
+        sd1.workers = NumericSafety.Add(sd1.workers, workersProduced).Value;
+        if (engineeringCompleteAtStart)
         {
-            sd1.workers += 5;
-            if (sd1.engineeringComplete) sd1.factories += sp.citiesBoostActivator ? 10 : 1;
+            double factoriesProduced =
+                NumericSafety.Multiply(produced, sp.citiesBoostActivator ? 10d : 1d).Value;
+            sd1.factories = NumericSafety.Add(sd1.factories, factoriesProduced).Value;
         }
 
         double effectiveMulti = _citiesTimer.GetEffectiveMultiplier(sd1.cities, globalMulti);
@@ -357,7 +429,7 @@ public class FoundationalEraManager : MonoBehaviour
 
     private void UpdateInfoDescriptions()
     {
-        _infoUpdateTimer += Time.deltaTime;
+        _infoUpdateTimer += TickSeconds;
         if (_infoUpdateTimer < InfoUpdateInterval) return;
         _infoUpdateTimer = 0;
 
@@ -515,20 +587,33 @@ public class FoundationalEraManager : MonoBehaviour
 
     private void OnCommunityBoost()
     {
-        sd.influence -= (int)sd1.communityBoostCost;
+        NumericResult<long> cost = NumericSafety.ToLong(sd1.communityBoostCost);
+        if (!cost.IsSuccess) return;
+        DiscreteDebitResult debit = EconomyTransaction.TryDebit(
+            sd.influence,
+            cost.Value,
+            authoredFree: sd1.communityBoostIsFree);
+        if (!debit.Succeeded) return;
+        sd.influence = debit.Balance;
         sd1.communityBoostTime = sd1.communityBoostDuration;
     }
 
     private void OnGathererBuy()
     {
-        sd.influence -= sd1.gathererCost;
-        sd1.gatherers += sd.gatherersPerPurchase;
+        EconomyTransaction.TryPurchase(
+            ref sd.influence,
+            sd1.gathererCost,
+            ref sd1.gatherers,
+            sd.gatherersPerPurchase);
     }
 
     private void OnHunterBuy()
     {
-        sd.influence -= sd1.hunterCost;
-        sd1.hunters += sd.huntersPerPurchase;
+        EconomyTransaction.TryPurchase(
+            ref sd.influence,
+            sd1.hunterCost,
+            ref sd1.hunters,
+            sd.huntersPerPurchase);
     }
 
     #endregion

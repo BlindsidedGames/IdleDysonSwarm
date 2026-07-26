@@ -4,6 +4,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.Serialization;
 using Blindsided.Utilities;
+using Systems.Numeric;
 using static Expansion.Oracle;
 using static IdleDysonSwarm.Systems.Constants.QuantumConstants;
 
@@ -50,6 +51,18 @@ public class InfinityManager : MonoBehaviour
     private DysonVerseInfinityData infinityData => oracle.saveSettings.dysonVerseSaveData.dysonVerseInfinityData;
     private DysonVerseSkillTreeData skillTreeData => oracle.saveSettings.dysonVerseSaveData.dysonVerseSkillTreeData;
     private DysonVersePrestigeData prestigeData => oracle.saveSettings.dysonVerseSaveData.dysonVersePrestigeData;
+
+    private bool TrySpendInfinityPoints(long cost)
+    {
+        if (prestigeData.infinityPoints < prestigeData.spentInfinityPoints) return false;
+        long available = prestigeData.infinityPoints - prestigeData.spentInfinityPoints;
+        DiscreteDebitResult debit = EconomyTransaction.TryDebit(available, cost);
+        if (!debit.Succeeded) return false;
+        NumericResult<long> spent = NumericSafety.Add(prestigeData.spentInfinityPoints, debit.Charged);
+        if (!spent.IsSuccess) return false;
+        prestigeData.spentInfinityPoints = spent.Value;
+        return true;
+    }
 
     private void Start()
     {
@@ -256,69 +269,94 @@ public class InfinityManager : MonoBehaviour
 
     public void PurchaseSecret()
     {
-        if (prestigeData.secretsOfTheUniverse >= maxSecrets) return;
-        prestigeData.spentInfinityPoints += 1;
-        prestigeData.secretsOfTheUniverse += 1;
+        if (prestigeData.secretsOfTheUniverse >= maxSecrets || !TrySpendInfinityPoints(1L)) return;
+        prestigeData.secretsOfTheUniverse =
+            Math.Min(maxSecrets, NumericSafety.Add(prestigeData.secretsOfTheUniverse, 1L).Value);
     }
 
     public void PurchaseSkill()
     {
-        prestigeData.spentInfinityPoints += 1;
-        skillTreeData.skillPointsTree += 1;
-        prestigeData.permanentSkillPoint += 1;
+        if (prestigeData.permanentSkillPoint >= maxSkills) return;
+        NumericResult<long> nextPoints = NumericSafety.Add(skillTreeData.skillPointsTree, 1L);
+        NumericResult<long> nextPermanent =
+            NumericSafety.Add(prestigeData.permanentSkillPoint, 1L);
+        if (!nextPoints.IsSuccess || nextPoints.Value <= skillTreeData.skillPointsTree ||
+            !nextPermanent.IsSuccess ||
+            nextPermanent.Value <= prestigeData.permanentSkillPoint ||
+            !TrySpendInfinityPoints(1L))
+        {
+            return;
+        }
+        skillTreeData.skillPointsTree = nextPoints.Value;
+        prestigeData.permanentSkillPoint = nextPermanent.Value;
         gameManager.AutoAssignSkillsInvoke();
     }
 
     public void PurchaseAssemblyLine()
     {
-        prestigeData.spentInfinityPoints += 1;
+        NumericResult<double> next =
+            NumericSafety.Add(infinityData.assemblyLines[1], 10d);
+        if (prestigeData.infinityAssemblyLines || !next.IsSuccess ||
+            next.Value <= infinityData.assemblyLines[1] ||
+            !TrySpendInfinityPoints(1L)) return;
         prestigeData.infinityAssemblyLines = true;
-        infinityData.assemblyLines[1] += 10;
+        infinityData.assemblyLines[1] = next.Value;
         oracle.WipeSaveButtonUpdate();
     }
 
     public void PurchaseAiManager()
     {
-        prestigeData.spentInfinityPoints += 1;
+        NumericResult<double> next = NumericSafety.Add(infinityData.managers[1], 10d);
+        if (!prestigeData.infinityAssemblyLines || prestigeData.infinityAiManagers ||
+            !next.IsSuccess || next.Value <= infinityData.managers[1] ||
+            !TrySpendInfinityPoints(1L)) return;
         prestigeData.infinityAiManagers = true;
-        infinityData.managers[1] += 10;
+        infinityData.managers[1] = next.Value;
         oracle.WipeSaveButtonUpdate();
     }
 
     public void PurchaseServer()
     {
-        prestigeData.spentInfinityPoints += 1;
+        NumericResult<double> next = NumericSafety.Add(infinityData.servers[1], 10d);
+        if (!prestigeData.infinityAiManagers || prestigeData.infinityServers ||
+            !next.IsSuccess || next.Value <= infinityData.servers[1] ||
+            !TrySpendInfinityPoints(1L)) return;
         prestigeData.infinityServers = true;
-        infinityData.servers[1] += 10;
+        infinityData.servers[1] = next.Value;
         oracle.WipeSaveButtonUpdate();
     }
 
     public void PurchaseDataCenter()
     {
-        prestigeData.spentInfinityPoints += 1;
+        NumericResult<double> next = NumericSafety.Add(infinityData.dataCenters[1], 10d);
+        if (!prestigeData.infinityServers || prestigeData.infinityDataCenter ||
+            !next.IsSuccess || next.Value <= infinityData.dataCenters[1] ||
+            !TrySpendInfinityPoints(1L)) return;
         prestigeData.infinityDataCenter = true;
-        infinityData.dataCenters[1] += 10;
+        infinityData.dataCenters[1] = next.Value;
         oracle.WipeSaveButtonUpdate();
     }
 
     public void PurchasePlanet()
     {
-        prestigeData.spentInfinityPoints += 1;
+        NumericResult<double> next = NumericSafety.Add(infinityData.planets[1], 10d);
+        if (!prestigeData.infinityDataCenter || prestigeData.infinityPlanets ||
+            !next.IsSuccess || next.Value <= infinityData.planets[1] ||
+            !TrySpendInfinityPoints(1L)) return;
         prestigeData.infinityPlanets = true;
-        infinityData.planets[1] += 10;
+        infinityData.planets[1] = next.Value;
         oracle.WipeSaveButtonUpdate();
     }
 
     public void PurchaseAutoResearch()
     {
-        prestigeData.spentInfinityPoints += autoResearchCost;
+        if (prestigeData.infinityAutoResearch || !TrySpendInfinityPoints(autoResearchCost)) return;
         prestigeData.infinityAutoResearch = true;
     }
 
     public void PurchaseAutoBots()
     {
-        prestigeData.spentInfinityPoints += autoBotsCost;
+        if (prestigeData.infinityAutoBots || !TrySpendInfinityPoints(autoBotsCost)) return;
         prestigeData.infinityAutoBots = true;
     }
 }
-

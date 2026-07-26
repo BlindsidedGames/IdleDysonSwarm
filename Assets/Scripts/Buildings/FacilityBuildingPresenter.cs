@@ -1,3 +1,4 @@
+using System;
 using UnityEngine;
 using Expansion;
 using GameData;
@@ -163,7 +164,9 @@ namespace Buildings
                     _ => false
                 };
 
-                return infinityUnlocked ? (int)ManuallyPurchasedBuildings - 10 : (int)ManuallyPurchasedBuildings;
+                return infinityUnlocked
+                    ? Math.Max(0d, ManuallyPurchasedBuildings - 10d)
+                    : Math.Max(0d, ManuallyPurchasedBuildings);
             }
         }
 

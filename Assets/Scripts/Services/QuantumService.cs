@@ -3,6 +3,7 @@ using Expansion;
 using IdleDysonSwarm.Data;
 using IdleDysonSwarm.Systems.Balance;
 using UnityEngine;
+using Systems.Numeric;
 using static Expansion.Oracle;
 using static IdleDysonSwarm.Systems.Constants.QuantumConstants;
 
@@ -32,7 +33,9 @@ namespace IdleDysonSwarm.Services
         #region State Properties
 
         public long TotalPoints => PrestigePlus.points;
-        public long AvailablePoints => PrestigePlus.points - PrestigePlus.spentPoints;
+        public long AvailablePoints => PrestigePlus.points >= PrestigePlus.spentPoints
+            ? PrestigePlus.points - PrestigePlus.spentPoints
+            : 0L;
         public long SpentPoints => PrestigePlus.spentPoints;
         public long InfluenceSpeedLevel => PrestigePlus.influence;
         public long CashBonusLevel => PrestigePlus.cash;
@@ -84,11 +87,11 @@ namespace IdleDysonSwarm.Services
         {
             return upgrade switch
             {
-                QuantumUpgradeType.Division => (int)DivisionsPurchased,
-                QuantumUpgradeType.Secrets => (int)(PermanentSecrets / SecretsPerPurchase),
-                QuantumUpgradeType.InfluenceSpeed => (int)(InfluenceSpeedLevel / InfluenceSpeedPerLevel),
-                QuantumUpgradeType.CashBonus => (int)CashBonusLevel,
-                QuantumUpgradeType.ScienceBonus => (int)ScienceBonusLevel,
+                QuantumUpgradeType.Division => ToBoundedPurchaseCount(DivisionsPurchased),
+                QuantumUpgradeType.Secrets => ToBoundedPurchaseCount(PermanentSecrets / SecretsPerPurchase),
+                QuantumUpgradeType.InfluenceSpeed => ToBoundedPurchaseCount(InfluenceSpeedLevel / InfluenceSpeedPerLevel),
+                QuantumUpgradeType.CashBonus => ToBoundedPurchaseCount(CashBonusLevel),
+                QuantumUpgradeType.ScienceBonus => ToBoundedPurchaseCount(ScienceBonusLevel),
                 _ => IsUpgradePurchasedState(upgrade) ? 1 : 0
             };
         }
@@ -129,11 +132,15 @@ namespace IdleDysonSwarm.Services
         /// </summary>
         private int CalculateDivisionCost()
         {
-            if (DivisionsPurchased >= 1)
-            {
-                return (int)Math.Pow(2, DivisionsPurchased) * 2;
-            }
-            return 2;
+            if (DivisionsPurchased >= 19) return int.MaxValue;
+            return DivisionsPurchased >= 1
+                ? (int)(2L << (int)DivisionsPurchased)
+                : 2;
+        }
+
+        private static int ToBoundedPurchaseCount(long value)
+        {
+            return value <= 0L ? 0 : value >= int.MaxValue ? int.MaxValue : (int)value;
         }
 
         public bool CanAfford(QuantumUpgradeType upgrade)
@@ -213,7 +220,16 @@ namespace IdleDysonSwarm.Services
             };
         }
 
-        public int CalculatedWorkerSpeed => BalanceRuntime.BaseWorkerGenerationSpeed + (int)InfluenceSpeedLevel;
+        public int CalculatedWorkerSpeed
+        {
+            get
+            {
+                long speed = NumericSafety.Add(
+                    (long)BalanceRuntime.BaseWorkerGenerationSpeed,
+                    InfluenceSpeedLevel).Value;
+                return speed >= int.MaxValue ? int.MaxValue : (int)speed;
+            }
+        }
 
         public double CashMultiplier => 1 + (CashBonusLevel * CashBonusPerPoint);
 
@@ -234,6 +250,10 @@ namespace IdleDysonSwarm.Services
                 return false;
 
             int cost = GetUpgradeCost(upgrade);
+            DiscreteDebitResult debit = EconomyTransaction.TryDebit(AvailablePoints, cost);
+            if (!debit.Succeeded) return false;
+            NumericResult<long> spent = NumericSafety.Add(PrestigePlus.spentPoints, debit.Charged);
+            if (!spent.IsSuccess) return false;
 
             // Apply upgrade
             bool success = ApplyUpgrade(upgrade);
@@ -241,7 +261,7 @@ namespace IdleDysonSwarm.Services
                 return false;
 
             // Spend points
-            PrestigePlus.spentPoints += cost;
+            PrestigePlus.spentPoints = spent.Value;
 
             // Fire event
             OnUpgradePurchased?.Invoke(upgrade);
@@ -280,10 +300,11 @@ namespace IdleDysonSwarm.Services
                     if (PermanentSecrets >= MaxSecrets)
                         return false;
                     // Add 3 secrets to both permanent and session storage (capped at 27)
-                    PrestigePlus.secrets += SecretsPerPurchase;
+                    PrestigePlus.secrets = NumericSafety.Add(PrestigePlus.secrets, SecretsPerPurchase).Value;
                     if (PrestigePlus.secrets > MaxSecrets)
                         PrestigePlus.secrets = MaxSecrets;
-                    PrestigeData.secretsOfTheUniverse += SecretsPerPurchase;
+                    PrestigeData.secretsOfTheUniverse =
+                        NumericSafety.Add(PrestigeData.secretsOfTheUniverse, SecretsPerPurchase).Value;
                     if (PrestigeData.secretsOfTheUniverse > MaxSecrets)
                         PrestigeData.secretsOfTheUniverse = MaxSecrets;
                     return true;
@@ -291,7 +312,8 @@ namespace IdleDysonSwarm.Services
                 case QuantumUpgradeType.Division:
                     if (DivisionsPurchased >= 19)
                         return false;
-                    PrestigePlus.divisionsPurchased++;
+                    PrestigePlus.divisionsPurchased =
+                        NumericSafety.Add(PrestigePlus.divisionsPurchased, 1L).Value;
                     return true;
 
                 case QuantumUpgradeType.Avocado:
@@ -324,16 +346,29 @@ namespace IdleDysonSwarm.Services
                     return true;
 
                 case QuantumUpgradeType.InfluenceSpeed:
-                    PrestigePlus.influence += InfluenceSpeedPerLevel;
+                {
+                    NumericResult<long> influence =
+                        NumericSafety.Add(PrestigePlus.influence, InfluenceSpeedPerLevel);
+                    if (!influence.IsSuccess || influence.Value <= PrestigePlus.influence) return false;
+                    PrestigePlus.influence = influence.Value;
                     return true;
+                }
 
                 case QuantumUpgradeType.CashBonus:
-                    PrestigePlus.cash++;
+                {
+                    NumericResult<long> cash = NumericSafety.Add(PrestigePlus.cash, 1L);
+                    if (!cash.IsSuccess || cash.Value <= PrestigePlus.cash) return false;
+                    PrestigePlus.cash = cash.Value;
                     return true;
+                }
 
                 case QuantumUpgradeType.ScienceBonus:
-                    PrestigePlus.science++;
+                {
+                    NumericResult<long> science = NumericSafety.Add(PrestigePlus.science, 1L);
+                    if (!science.IsSuccess || science.Value <= PrestigePlus.science) return false;
+                    PrestigePlus.science = science.Value;
                     return true;
+                }
 
                 case QuantumUpgradeType.MatrioshkaBrains:
                     PrestigeData.unlockedMatrioshkaBrains = true;

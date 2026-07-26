@@ -52,7 +52,7 @@ namespace Tests.Save
 
         private readonly GameDataRegistry _previousRegistry;
         private readonly Oracle _previousOracle;
-        private readonly RecordingSaveStore _saveStore = new RecordingSaveStore();
+        private readonly RecordingSaveStore _saveStore;
         private GameObject _oracleObject;
         private GameObject _registryObject;
         private bool _disposed;
@@ -70,16 +70,16 @@ namespace Tests.Save
         /// <summary>
         /// Creates the production-equivalent prepared-save pipeline bound to this isolated Oracle.
         /// </summary>
-        /// <returns>A schema 11 preparation pipeline using the real migration registry and normalization.</returns>
+        /// <returns>A schema 12 preparation pipeline using the real migration registry and normalization.</returns>
         internal SavePreparationPipeline CreatePreparationPipeline()
         {
-            return new SavePreparationPipeline(11, RunProductionMigration);
+            return new SavePreparationPipeline(12, RunProductionMigration);
         }
 
         /// <summary>
         /// Creates hidden Oracle and registry objects wired to the project's real ID databases.
         /// </summary>
-        internal SaveMigrationTestScope()
+        internal SaveMigrationTestScope(bool allowSaveWrites = false)
         {
             Assert.IsNotNull(RegistryInstanceBackingField);
             Assert.IsNotNull(BuildMigrationRegistryMethod);
@@ -88,6 +88,7 @@ namespace Tests.Save
 
             _previousRegistry = GameDataRegistry.Instance;
             _previousOracle = Expansion.Oracle.oracle;
+            _saveStore = new RecordingSaveStore(allowSaveWrites);
             SetRegistryInstance(null);
             Expansion.Oracle.oracle = null;
 
@@ -204,6 +205,13 @@ namespace Tests.Save
         /// </summary>
         private sealed class RecordingSaveStore : ISaveStore
         {
+            private readonly bool _allowSaveWrites;
+
+            internal RecordingSaveStore(bool allowSaveWrites)
+            {
+                _allowSaveWrites = allowSaveWrites;
+            }
+
             /// <summary>
             /// Gets the number of save attempts.
             /// </summary>
@@ -245,6 +253,11 @@ namespace Tests.Save
             {
                 SaveCount++;
                 stats = default;
+                if (_allowSaveWrites)
+                {
+                    error = null;
+                    return true;
+                }
                 error = "Migration characterization forbids persistence writes.";
                 return false;
             }

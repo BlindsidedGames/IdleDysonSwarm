@@ -2,6 +2,7 @@ using Blindsided.Utilities;
 using GameData;
 using IdleDysonSwarm.Services;
 using Systems.Facilities;
+using Systems.Numeric;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
@@ -326,9 +327,10 @@ namespace Buildings
         private int NumberToBuy()
         {
             int maxAffordable = _megaStructureService.MaxAffordable(FacilityId);
+            long owned = NumericSafety.ToLongFloor(ManuallyPurchased).Value;
             return (int)BuyModeHelper.GetAmountToBuy(
                 StaticBuyMode, StaticRoundedBulkBuy,
-                (long)ManuallyPurchased, maxAffordable);
+                owned, maxAffordable);
         }
 
         private bool IsMegaAutoEnabled()

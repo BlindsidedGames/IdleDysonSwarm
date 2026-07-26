@@ -1,6 +1,7 @@
 using System;
 using Expansion;
 using IdleDysonSwarm.Systems.Balance;
+using Systems.Numeric;
 using static Expansion.Oracle;
 
 namespace IdleDysonSwarm.Services
@@ -87,7 +88,7 @@ namespace IdleDysonSwarm.Services
                 return;
 
             double previousBuff = GlobalBuff;
-            AvocadoData.infinityPoints += amount;
+            AvocadoData.infinityPoints = NumericSafety.Add(AvocadoData.infinityPoints, amount).Value;
 
             OnFed?.Invoke();
 
@@ -104,7 +105,7 @@ namespace IdleDysonSwarm.Services
                 return;
 
             double previousBuff = GlobalBuff;
-            AvocadoData.influence += amount;
+            AvocadoData.influence = NumericSafety.Add(AvocadoData.influence, amount).Value;
 
             OnFed?.Invoke();
 
@@ -121,7 +122,7 @@ namespace IdleDysonSwarm.Services
                 return;
 
             double previousBuff = GlobalBuff;
-            AvocadoData.strangeMatter += amount;
+            AvocadoData.strangeMatter = NumericSafety.Add(AvocadoData.strangeMatter, amount).Value;
 
             OnFed?.Invoke();
 
@@ -138,7 +139,7 @@ namespace IdleDysonSwarm.Services
                 return;
 
             double previousBuff = GlobalBuff;
-            AvocadoData.overflowMultiplier += amount;
+            AvocadoData.overflowMultiplier = NumericSafety.Add(AvocadoData.overflowMultiplier, amount).Value;
 
             OnFed?.Invoke();
 

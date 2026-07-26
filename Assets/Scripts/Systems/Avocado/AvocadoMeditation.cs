@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
+using Systems.Numeric;
 using static Expansion.Oracle;
 
 public class AvocadoMeditation : MonoBehaviour
@@ -145,7 +146,9 @@ public class AvocadoMeditation : MonoBehaviour
 
         if (!oracle.saveSettings.avotation)
         {
-            oracle.saveSettings.dysonVerseSaveData.dysonVerseSkillTreeData.skillPointsTree += 4;
+            DysonVerseSkillTreeData skillTree =
+                oracle.saveSettings.dysonVerseSaveData.dysonVerseSkillTreeData;
+            skillTree.skillPointsTree = NumericSafety.Add(skillTree.skillPointsTree, 4L).Value;
             oracle.saveSettings.avotation = true;
         }
 

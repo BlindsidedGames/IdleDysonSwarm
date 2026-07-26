@@ -7,6 +7,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using Blindsided.Utilities;
 using static Expansion.Oracle;
+using Systems.Numeric;
 
 public class PrestigeFillBar : MonoBehaviour
 {
@@ -54,7 +55,7 @@ public class PrestigeFillBar : MonoBehaviour
     {
         bool autoPrestige = !prestigePlus.breakTheLoop;
         double amount = prestigePlus.divisionsPurchased > 0 ? 4.2e19 / Math.Pow(10, prestigePlus.divisionsPurchased) : 4.2e19;
-        int ipToGain = StaticMethods.InfinityPointsToGain(amount, infinityData.bots);
+        long ipToGain = StaticMethods.InfinityPointsToGain(amount, infinityData.bots);
 
         manualInfinityButtonHolder.SetActive(!autoPrestige);
 
@@ -64,7 +65,7 @@ public class PrestigeFillBar : MonoBehaviour
         {
             percent = math.log10(infinityData.bots) / math.log10(amount);
             if (infinityData.bots < 1) percent = 0;
-            fill.fillAmount = (float)percent;
+            fill.fillAmount = NumericUiAdapter.ToUnitInterval(percent, "infinity_progress");
             fillText.text = $" {percent * 100:N2}%";
             progressToInfinityText.text = "Progress to Infinity";
             realityBreak.SetActive(percent > 0.95f && prestigeData.infinityPoints < 42);
@@ -74,11 +75,18 @@ public class PrestigeFillBar : MonoBehaviour
             double amountForNextPoint =
                 CalcUtils.BuyXCost(ipToGain + 1, amount, oracle.infinityExponent, 0);
 
-            fill.fillAmount = (prestigePlus.doubleIP ? ipToGain * 2 : ipToGain) /
-                              (float)oracle.saveSettings.infinityPointsToBreakFor;
+            double breakTarget = Math.Max(1d, oracle.saveSettings.infinityPointsToBreakFor);
+            double displayedGain = prestigePlus.doubleIP
+                ? NumericSafety.Add(ipToGain, ipToGain).Value
+                : ipToGain;
+            fill.fillAmount = NumericUiAdapter.ToUnitInterval(
+                displayedGain / breakTarget,
+                "auto_infinity_progress");
 
-            ipToGain *= oracle.saveSettings.doubleIp ? 2 : 1;
-            ipToGain *= prestigePlus.doubleIP ? 2 : 1;
+            if (oracle.saveSettings.doubleIp)
+                ipToGain = NumericSafety.Add(ipToGain, ipToGain).Value;
+            if (prestigePlus.doubleIP)
+                ipToGain = NumericSafety.Add(ipToGain, ipToGain).Value;
             fillText.text =
                 $" {ipToGain}/{oracle.saveSettings.infinityPointsToBreakFor}";
             progressToInfinityText.text =
@@ -87,5 +95,3 @@ public class PrestigeFillBar : MonoBehaviour
         }
     }
 }
-
-

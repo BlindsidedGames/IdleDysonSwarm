@@ -11,7 +11,8 @@
  * - Assets/Scripts/Systems/Save/StartupSaveRecoveryResult.cs.
  *
  * Change notes:
- * - Primary success always wins without rewriting it.
+ * - A byte-identical healthy primary wins without rewriting it.
+ * - A primary changed by numeric repair must be transactionally committed before publication.
  * - Canonical recovery candidates are inspected newest-first with deterministic tie-breaks.
  * - Any future-version candidate stops fallback and remains untouched.
  * - Invalid candidates never commit; a valid winner must use the verified transactional writer.
@@ -133,6 +134,26 @@ namespace Systems.Save
             }
 
             attempts.Add(new StartupRecoveryCandidateAttempt(primary, preparation, null));
+            if (preparation.Settings.numericRepairNoticePending)
+            {
+                if (!_store.TryCommitCandidate(
+                        primary,
+                        out PreparedSaveResult committed,
+                        out string commitError))
+                {
+                    attempts.Add(new StartupRecoveryCandidateAttempt(primary, committed, commitError));
+                    return CreateResult(
+                        StartupSaveRecoveryStatus.RecoveryWriteFailed,
+                        null,
+                        primary,
+                        discovered,
+                        attempts,
+                        commitError);
+                }
+
+                preparation = committed;
+            }
+
             return CreateResult(
                 StartupSaveRecoveryStatus.PrimaryReady,
                 preparation.Settings,

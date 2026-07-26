@@ -1,12 +1,17 @@
 using System;
 using System.Collections;
 using System.Globalization;
+using Buildings;
+using Expansion;
+using Research;
 using TMPro;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 using UnityEngine.Serialization;
 using Systems;
+using Systems.Numeric;
+using Systems.Simulation;
 using Systems.Stats;
 using Blindsided.ProceduralUIImage;
 using Blindsided.Utilities;
@@ -44,11 +49,21 @@ using static Expansion.Oracle;
 /// - General metrics, s/IP, and Run/Offline Current/Previous rows use the same small text scale as skill detail lines.
 /// - Skill rows render at small text scale with bold skill names.
 /// - Update() must defer production and ordinary threshold prestige while Oracle is holding the prepared finite
-///   bots-overflow sentinel, so Oracle's established special overflow reward/reset path consumes it first regardless
+///   bot-cap signal, so Oracle's legacy cap reward/reset path consumes it first regardless
 ///   of Unity script execution order.
 /// </summary>
 public class GameManager : MonoBehaviour
 {
+    private const double SimulationTickSeconds = 0.1d;
+    private const int MaximumTicksPerFrame = 10;
+    private double _simulationAccumulator;
+    [SerializeField] private BotsAutoBuy botsAutoBuy;
+    [SerializeField] private ResearchAutoBuy researchAutoBuy;
+    [SerializeField] private FoundationalEraManager foundationalEraManager;
+    [SerializeField] private InformationEraManager informationEraManager;
+    [SerializeField] private SpaceAgeManager spaceAgeManager;
+    [SerializeField] private DoubleTimeManager doubleTimeManager;
+    [SerializeField] private SimulationPrestigeManager simulationPrestigeManager;
     #region SerializedFields
 
     private DysonVerseInfinityData infinityData => oracle.saveSettings.dysonVerseSaveData.dysonVerseInfinityData;
@@ -203,6 +218,13 @@ public class GameManager : MonoBehaviour
 
     private void Start()
     {
+        botsAutoBuy ??= FindAnyObjectByType<BotsAutoBuy>(FindObjectsInactive.Include);
+        researchAutoBuy ??= FindAnyObjectByType<ResearchAutoBuy>(FindObjectsInactive.Include);
+        foundationalEraManager ??= FindAnyObjectByType<FoundationalEraManager>(FindObjectsInactive.Include);
+        informationEraManager ??= FindAnyObjectByType<InformationEraManager>(FindObjectsInactive.Include);
+        spaceAgeManager ??= FindAnyObjectByType<SpaceAgeManager>(FindObjectsInactive.Include);
+        doubleTimeManager ??= FindAnyObjectByType<DoubleTimeManager>(FindObjectsInactive.Include);
+        simulationPrestigeManager ??= FindAnyObjectByType<SimulationPrestigeManager>(FindObjectsInactive.Include);
         CalculateModifiers();
         CalculateProduction();
         InvokeRepeating(nameof(UpdateTextFields), 0, 0.1f);
@@ -217,33 +239,174 @@ public class GameManager : MonoBehaviour
 
     private void CheckIfValuesNegative()
     {
-        if (infinityData.bots < 0 || infinityData.money < 0)
+        bool repaired = false;
+        if (!NumericSafety.IsFinite(infinityData.bots) || infinityData.bots < 0d)
         {
-            infinityData.bots = 10;
-            infinityData.assemblyLines[0] = 0;
-            infinityData.assemblyLines[1] = 0;
-            infinityData.managers[0] = 0;
-            infinityData.managers[1] = 0;
-            infinityData.servers[0] = 0;
-            infinityData.servers[1] = 0;
-            infinityData.planets[0] = 0;
-            infinityData.planets[1] = 0;
-            infinityData.science = 10;
-            infinityData.money = 10;
-            infinityData.totalPanelsDecayed = 0;
+            infinityData.bots = 0d;
+            repaired = true;
         }
+
+        repaired |= RepairRuntimeContinuous(ref infinityData.money);
+        repaired |= RepairRuntimeContinuous(ref infinityData.science);
+        repaired |= RepairRuntimeContinuous(ref infinityData.totalPanelsDecayed);
+        repaired |= RepairRuntimeArray(infinityData.assemblyLines);
+        repaired |= RepairRuntimeArray(infinityData.managers);
+        repaired |= RepairRuntimeArray(infinityData.servers);
+        repaired |= RepairRuntimeArray(infinityData.dataCenters);
+        repaired |= RepairRuntimeArray(infinityData.planets);
+        repaired |= RepairRuntimeArray(infinityData.matrioshkaBrains);
+        repaired |= RepairRuntimeArray(infinityData.birchPlanets);
+        repaired |= RepairRuntimeArray(infinityData.galacticBrains);
+        if (repaired)
+            Systems.Debugging.NumericDiagnostics.Report("NS-RUNTIME-CORE-REPAIR");
+    }
+
+    private static bool RepairRuntimeContinuous(ref double value)
+    {
+        double repaired = NumericSafety.ClampContinuous(value);
+        if (value.Equals(repaired)) return false;
+        value = repaired;
+        return true;
+    }
+
+    private static bool RepairRuntimeArray(double[] values)
+    {
+        if (values == null) return false;
+        bool repaired = false;
+        for (int i = 0; i < values.Length; i++)
+        {
+            double value = values[i];
+            repaired |= RepairRuntimeContinuous(ref value);
+            values[i] = value;
+        }
+        return repaired;
     }
 
     private void Update()
     {
-        if (IsBotOverflowSignal(infinityData.bots)) return;
+        DeterministicSimulation.Advance(
+            ref _simulationAccumulator,
+            Time.deltaTime,
+            SimulationTickSeconds,
+            MaximumTicksPerFrame,
+            RunSimulationTick);
+    }
 
-        SetBotDistribution();
-        CalculateProduction();
+    private void RunSimulationTick()
+    {
+        bool dreamEngineeringCompleteAtStart =
+            oracle.saveSettings.sdSimulation.engineeringComplete;
+        DreamDoubleTimeTick dreamDoubleTimeTick = doubleTimeManager != null
+            ? doubleTimeManager.PrepareSimulationTick(SimulationTickSeconds)
+            : DreamDoubleTimeMath.Prepare(
+                oracle.saveSettings.sdPrestige.doubleTimeOwned,
+                oracle.saveSettings.sdPrestige.doubleTime,
+                oracle.saveSettings.sdPrestige.doubleTimeRate,
+                SimulationTickSeconds);
+        if (doubleTimeManager == null)
+            oracle.saveSettings.sdPrestige.doDoubleTime = dreamDoubleTimeTick.Active;
+
+        DeterministicSimulation.RunWholeGameTick(
+            dysonProduction: () =>
+            {
+                SetBotDistribution();
+                ProductionSystem.CalculateProduction(
+                    infinityData,
+                    skillTreeData,
+                    prestigeData,
+                    prestigePlus,
+                    SimulationTickSeconds,
+                    recomputeDerivedState: false);
+            },
+            dreamProduction: () =>
+            {
+                // Run downstream eras first. Combined with each manager's
+                // local input snapshot, this prevents newly produced
+                // facilities from working until the next logical tick.
+                spaceAgeManager?.RunProductionTick(
+                    dreamDoubleTimeTick.EffectiveMultiplier);
+                informationEraManager?.RunProductionTick(
+                    dreamDoubleTimeTick.EffectiveMultiplier);
+                foundationalEraManager?.RunProductionTick(
+                    dreamEngineeringCompleteAtStart,
+                    dreamDoubleTimeTick.EffectiveMultiplier);
+            },
+            dysonAutomation: () =>
+            {
+                botsAutoBuy?.RunAutomationTick();
+                researchAutoBuy?.RunAutomationTick();
+            },
+            dreamAutomation: () =>
+            {
+                foundationalEraManager?.RunAutomationTick();
+                informationEraManager?.RunAutomationTick();
+                spaceAgeManager?.RunAutomationTick();
+            },
+            recomputeDysonDerivedState: () =>
+                ProductionSystem.RecalculateDerivedState(
+                    infinityData,
+                    skillTreeData,
+                    prestigeData,
+                    prestigePlus),
+            synchronizeDreamDurableState: () =>
+            {
+                foundationalEraManager?.CompleteSimulationTick();
+                informationEraManager?.CompleteSimulationTick();
+                spaceAgeManager?.CompleteSimulationTick();
+            },
+            consumeDreamDoubleTime: () =>
+            {
+                if (doubleTimeManager != null)
+                {
+                    doubleTimeManager.CompleteSimulationTick(dreamDoubleTimeTick);
+                    return;
+                }
+
+                Oracle.SaveDataPrestige dreamPrestige =
+                    oracle.saveSettings.sdPrestige;
+                if (!NumericSafety.IsFinite(dreamPrestige.doubleTime))
+                    dreamPrestige.doubleTime = 0d;
+                dreamPrestige.doubleTime = Math.Max(
+                    0d,
+                    dreamPrestige.doubleTime - dreamDoubleTimeTick.BankConsumed);
+                dreamPrestige.doDoubleTime =
+                    dreamPrestige.doubleTimeOwned && dreamPrestige.doubleTime > 0d;
+            },
+            evaluateDreamReset: () =>
+                simulationPrestigeManager?.EvaluateSimulationTransitions(),
+            evaluateDysonReset: EvaluateSimulationTransitions);
+    }
+
+    private void EvaluateSimulationTransitions()
+    {
+        if (oracle.ProcessBotCapTransition()) return;
+
         ManageGoal();
-        bool trigger = !prestigePlus.breakTheLoop && infinityData.bots >=
-            (prestigePlus.divisionsPurchased > 0 ? 4.2e19 / Math.Pow(10, prestigePlus.divisionsPurchased) : 4.2e19);
-        if (trigger) Prestige();
+        double amount = prestigePlus.divisionsPurchased > 0
+            ? 4.2e19 / Math.Pow(10, prestigePlus.divisionsPurchased)
+            : 4.2e19;
+        if (prestigePlus.breakTheLoop)
+        {
+            if (oracle.saveSettings.infinityInProgress) return;
+
+            long projectedGain = StaticMethods.InfinityPointsToGain(amount, infinityData.bots);
+            if (oracle.saveSettings.doubleIp)
+                projectedGain = NumericSafety.Add(projectedGain, projectedGain).Value;
+            if (prestigePlus.doubleIP)
+                projectedGain = NumericSafety.Add(projectedGain, projectedGain).Value;
+            long threshold = oracle.saveSettings.infinityPointsToBreakFor >= 1
+                ? oracle.saveSettings.infinityPointsToBreakFor
+                : 1;
+            if (projectedGain < threshold) return;
+
+            oracle.saveSettings.infinityInProgress = true;
+            Prestige();
+            return;
+        }
+
+        if (infinityData.bots < amount) return;
+        oracle.saveSettings.infinityInProgress = true;
+        Prestige();
     }
 
     private static bool TryParseUtc(string value, out DateTime result)
@@ -273,7 +436,13 @@ public class GameManager : MonoBehaviour
 
     public void CalculateProduction()
     {
-        ProductionSystem.CalculateProduction(infinityData, skillTreeData, prestigeData, prestigePlus, Time.deltaTime);
+        // Public/legacy delegate is now a side-effect-free derived-rate refresh.
+        ProductionSystem.CalculateProduction(infinityData, skillTreeData, prestigeData, prestigePlus, 0d);
+    }
+
+    private void CalculateProduction(double deltaTime)
+    {
+        ProductionSystem.CalculateProduction(infinityData, skillTreeData, prestigeData, prestigePlus, deltaTime);
     }
 
     private double CurrentRunTime()
@@ -360,12 +529,18 @@ public class GameManager : MonoBehaviour
             infinityData = infinityData,
             prestigeData = prestigeData,
             skillTreeData = skillTreeData,
+            prestigePlus = prestigePlus,
             saveSettings = oracle.saveSettings,
             SetBotDistribution = SetBotDistribution,
             CalculateShouldersSkills = CalculateShouldersSkills,
             CalculateProduction = CalculateProduction,
             MoneyToAdd = MoneyToAdd,
-            ScienceToAdd = ScienceToAdd
+            ScienceToAdd = ScienceToAdd,
+            RunAutomationTick = () =>
+            {
+                botsAutoBuy?.RunAutomationTick(forceBuyMax: true);
+                researchAutoBuy?.RunAutomationTick(forceBuyMax: true);
+            }
         };
     }
 
@@ -391,7 +566,6 @@ public class GameManager : MonoBehaviour
 
     public void RunAwayTime(double awayTime)
     {
-        if (oracle.saveSettings.cheater) return;
         StartCoroutine(CalculateAwayValues(awayTime));
     }
 
@@ -482,12 +656,13 @@ public class GameManager : MonoBehaviour
             case 0:
             {
                 goal.text = $"{color}Goal: Create {CalcUtils.FormatNumber(10)} Bots";
-                SetSkillsFill((float)infinityData.bots / 10);
+                SetSkillsFill((float)Math.Min(1d, infinityData.bots / 10d));
                 if (infinityData.bots >= 10)
                 {
                     if (skillsFillBar != null) skillsFillBar.SetActive(true);
                     infinityData.goalSetter = 1;
-                    skillTreeData.skillPointsTree += 1;
+                    skillTreeData.skillPointsTree =
+                        NumericSafety.Add(skillTreeData.skillPointsTree, 1L).Value;
                     AssignSkills?.Invoke();
                     if (skillsMenuButton != null && skillsMenuButton.interactable == false)
                     {
@@ -507,7 +682,8 @@ public class GameManager : MonoBehaviour
                 if (infinityData.assemblyLines[1] >= 5)
                 {
                     infinityData.goalSetter = 2;
-                    skillTreeData.skillPointsTree += 1;
+                    skillTreeData.skillPointsTree =
+                        NumericSafety.Add(skillTreeData.skillPointsTree, 1L).Value;
                     AssignSkills?.Invoke();
                     UpdateSkills?.Invoke();
                     if (skillsFillBar != null) skillsFillBar.SetActive(true);
@@ -522,7 +698,8 @@ public class GameManager : MonoBehaviour
                 if (infinityData.panelsPerSec * infinityData.panelLifetime >= 20000)
                 {
                     infinityData.goalSetter = 3;
-                    skillTreeData.skillPointsTree += 1;
+                    skillTreeData.skillPointsTree =
+                        NumericSafety.Add(skillTreeData.skillPointsTree, 1L).Value;
                     AssignSkills?.Invoke();
                     UpdateSkills?.Invoke();
                     if (skillsFillBar != null) skillsFillBar.SetActive(true);
@@ -538,7 +715,8 @@ public class GameManager : MonoBehaviour
                 if (infinityData.planets[0] + (skillTreeData.terraIrradiant ? infinityData.planets[1] * 12 : infinityData.planets[1]) >= 20)
                 {
                     infinityData.goalSetter = 4;
-                    skillTreeData.skillPointsTree += 1;
+                    skillTreeData.skillPointsTree =
+                        NumericSafety.Add(skillTreeData.skillPointsTree, 1L).Value;
                     AssignSkills?.Invoke();
                     UpdateSkills?.Invoke();
                     if (skillsFillBar != null) skillsFillBar.SetActive(true);
@@ -550,11 +728,14 @@ public class GameManager : MonoBehaviour
             {
                 goal.text = $"{color}Goal: {CalcUtils.FormatNumber(1000000000000)} total panels decayed";
 
-                SetSkillsFill((float)infinityData.totalPanelsDecayed / 1000000000000);
+                SetSkillsFill((float)Math.Min(
+                    1d,
+                    infinityData.totalPanelsDecayed / 1000000000000d));
                 if (infinityData.totalPanelsDecayed >= 1000000000000)
                 {
                     infinityData.goalSetter = 5;
-                    skillTreeData.skillPointsTree += 1;
+                    skillTreeData.skillPointsTree =
+                        NumericSafety.Add(skillTreeData.skillPointsTree, 1L).Value;
                     AssignSkills?.Invoke();
                     UpdateSkills?.Invoke();
                     if (skillsFillBar != null) skillsFillBar.SetActive(true);
@@ -569,7 +750,8 @@ public class GameManager : MonoBehaviour
                 if (infinityData.panelsPerSec * infinityData.panelLifetime / 20000 >= 1000000000)
                 {
                     infinityData.goalSetter = 6;
-                    skillTreeData.skillPointsTree += 1;
+                    skillTreeData.skillPointsTree =
+                        NumericSafety.Add(skillTreeData.skillPointsTree, 1L).Value;
                     AssignSkills?.Invoke();
                     UpdateSkills?.Invoke();
                     if (skillsFillBar != null) skillsFillBar.SetActive(true);
@@ -584,7 +766,8 @@ public class GameManager : MonoBehaviour
                 if (infinityData.panelsPerSec * infinityData.panelLifetime / 20000 >= 10000000000)
                 {
                     infinityData.goalSetter = 7;
-                    skillTreeData.skillPointsTree += 1;
+                    skillTreeData.skillPointsTree =
+                        NumericSafety.Add(skillTreeData.skillPointsTree, 1L).Value;
                     AssignSkills?.Invoke();
                     UpdateSkills?.Invoke();
                     if (skillsFillBar != null) skillsFillBar.SetActive(true);
@@ -599,7 +782,8 @@ public class GameManager : MonoBehaviour
                 if (infinityData.panelsPerSec * infinityData.panelLifetime / 20000 / 100000000000 > 1)
                 {
                     infinityData.goalSetter = 8;
-                    skillTreeData.skillPointsTree += 1;
+                    skillTreeData.skillPointsTree =
+                        NumericSafety.Add(skillTreeData.skillPointsTree, 1L).Value;
                     AssignSkills?.Invoke();
                     UpdateSkills?.Invoke();
                     if (skillsFillBar != null) skillsFillBar.SetActive(true);
@@ -614,7 +798,8 @@ public class GameManager : MonoBehaviour
                 if (infinityData.panelsPerSec * infinityData.panelLifetime / 20000 / 100000000000 > 10)
                 {
                     infinityData.goalSetter = 9;
-                    skillTreeData.skillPointsTree += 1;
+                    skillTreeData.skillPointsTree =
+                        NumericSafety.Add(skillTreeData.skillPointsTree, 1L).Value;
                     AssignSkills?.Invoke();
                     UpdateSkills?.Invoke();
                     if (skillsFillBar != null) skillsFillBar.SetActive(true);
@@ -629,7 +814,8 @@ public class GameManager : MonoBehaviour
                 if (infinityData.panelsPerSec * infinityData.panelLifetime / 20000 / 100000000000 > 100)
                 {
                     infinityData.goalSetter = 10;
-                    skillTreeData.skillPointsTree += 1;
+                    skillTreeData.skillPointsTree =
+                        NumericSafety.Add(skillTreeData.skillPointsTree, 1L).Value;
                     AssignSkills?.Invoke();
                     UpdateSkills?.Invoke();
                     if (skillsFillBar != null) skillsFillBar.SetActive(false);

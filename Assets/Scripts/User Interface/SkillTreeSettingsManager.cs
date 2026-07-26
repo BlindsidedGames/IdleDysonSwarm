@@ -827,21 +827,23 @@ public class SkillTreeSettingsManager : MonoBehaviour
         }
     }
 
-    private static float GetPresetBotDistribution(DysonVerseSaveData saveData, int presetIndex)
+    private static double GetPresetBotDistribution(DysonVerseSaveData saveData, int presetIndex)
     {
         return presetIndex switch
         {
-            1 => (float)saveData.botDistPreset1,
-            2 => (float)saveData.botDistPreset2,
-            3 => (float)saveData.botDistPreset3,
-            4 => (float)saveData.botDistPreset4,
-            5 => (float)saveData.botDistPreset5,
-            _ => 0f
+            1 => saveData.botDistPreset1,
+            2 => saveData.botDistPreset2,
+            3 => saveData.botDistPreset3,
+            4 => saveData.botDistPreset4,
+            5 => saveData.botDistPreset5,
+            _ => 0d
         };
     }
 
-    private static void SetPresetBotDistribution(DysonVerseSaveData saveData, int presetIndex, float value)
+    private static void SetPresetBotDistribution(DysonVerseSaveData saveData, int presetIndex, double value)
     {
+        if (double.IsNaN(value) || double.IsInfinity(value)) value = 0d;
+        value = Math.Max(0d, Math.Min(1d, value));
         switch (presetIndex)
         {
             case 1:
@@ -896,7 +898,7 @@ public class SkillTreeSettingsManager : MonoBehaviour
     {
         public int version;
         public string presetName;
-        public float botDistribution;
+        public double botDistribution;
         public string[] skillIds;
     }
 

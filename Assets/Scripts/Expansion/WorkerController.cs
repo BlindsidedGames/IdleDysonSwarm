@@ -5,6 +5,7 @@ using UnityEngine.UI;
 using Blindsided.Utilities;
 using IdleDysonSwarm.Services;
 using IdleDysonSwarm.Systems.Balance;
+using Systems.Numeric;
 using static Expansion.Oracle;
 
 public class WorkerController : MonoBehaviour
@@ -52,8 +53,8 @@ public class WorkerController : MonoBehaviour
 
     #region Reality
 
-    private float workerGenerationSpeed;
-    private float workerGenerationTime;
+    private double workerGenerationSpeed;
+    private double workerGenerationTime;
     [SerializeField] private ProceduralUIImage workerGenerationBar;
     [SerializeField] private ProceduralUIImage workersReadyToGofill;
     [SerializeField] private TMP_Text universeDesignation;
@@ -79,16 +80,22 @@ public class WorkerController : MonoBehaviour
             SendWorkers();
         }
 
-        workerGenerationTime += workerGenerationSpeed * Time.deltaTime;
+        NumericResult<double> generatedTime = NumericSafety.Multiply(
+            workerGenerationSpeed,
+            Time.deltaTime);
+        if (generatedTime.IsSuccess)
+            workerGenerationTime = NumericSafety.Add(
+                workerGenerationTime,
+                generatedTime.Value).Value;
 
-        workerGenerationBar.fillAmount = workerGenerationSpeed >= 10 ? 1 : workerGenerationTime / 1;
+        workerGenerationBar.fillAmount = workerGenerationSpeed >= 10
+            ? 1f
+            : NumericUiAdapter.ToUnitInterval(workerGenerationTime, "worker_generation");
 
         if (!(workerGenerationTime >= 1)) return;
-        while (workerGenerationTime > 1)
-        {
-            _workerService.IncrementWorker();
-            workerGenerationTime -= 1;
-        }
+        long completed = NumericSafety.ToLongFloor(workerGenerationTime).Value;
+        _workerService.AddGeneratedWorkers(completed);
+        workerGenerationTime = completed == long.MaxValue ? 0d : workerGenerationTime - completed;
 
         UpdateWorkersReadyToGo();
     }
@@ -96,7 +103,9 @@ public class WorkerController : MonoBehaviour
     private void UpdateWorkersReadyToGo()
     {
         _workerService.ClampWorkersNonNegative();
-        workersReadyToGofill.fillAmount = _workerService.WorkerFillPercent;
+        workersReadyToGofill.fillAmount = NumericUiAdapter.ToUnitInterval(
+            _workerService.WorkerFillPercent,
+            "worker_batch_progress");
         preWorkerCounter.text = $"{_workerService.WorkersReady}/{BalanceRuntime.WorkerBatchSize}";
         universeDesignation.text =
             $"Universe Designation: {_workerService.WorkerBatchesProcessed + 1:N0}";
@@ -110,4 +119,3 @@ public class WorkerController : MonoBehaviour
 
     #endregion
 }
-

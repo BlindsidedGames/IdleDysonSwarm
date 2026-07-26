@@ -5,6 +5,7 @@ using UnityEngine.UI;
 using UnityEngine.Serialization;
 using Blindsided.Utilities;
 using IdleDysonSwarm.Systems.Balance;
+using Systems.Numeric;
 using static Expansion.Oracle;
 
 public class AvocadoFeeder : MonoBehaviour
@@ -36,8 +37,10 @@ public class AvocadoFeeder : MonoBehaviour
         if (prestigeData.infinityPoints - prestigeData.spentInfinityPoints > 0)
         {
             long availableInfinityPoints = prestigeData.infinityPoints - prestigeData.spentInfinityPoints;
-            avocadoData.infinityPoints += availableInfinityPoints;
-            prestigeData.infinityPoints -= availableInfinityPoints;
+            avocadoData.infinityPoints =
+                NumericSafety.Add(avocadoData.infinityPoints, availableInfinityPoints).Value;
+            prestigeData.infinityPoints =
+                EconomyTransaction.TryDebit(prestigeData.infinityPoints, availableInfinityPoints).Balance;
             UpdateText();
         }
     }
@@ -46,7 +49,7 @@ public class AvocadoFeeder : MonoBehaviour
     {
         if (saveData.influence > 0)
         {
-            avocadoData.influence += saveData.influence;
+            avocadoData.influence = NumericSafety.Add(avocadoData.influence, saveData.influence).Value;
             saveData.influence = 0;
             UpdateText();
         }
@@ -56,7 +59,8 @@ public class AvocadoFeeder : MonoBehaviour
     {
         if (saveDataPrestige.strangeMatter > 0)
         {
-            avocadoData.strangeMatter += saveDataPrestige.strangeMatter;
+            avocadoData.strangeMatter =
+                NumericSafety.Add(avocadoData.strangeMatter, saveDataPrestige.strangeMatter).Value;
             saveDataPrestige.strangeMatter = 0;
             UpdateText();
         }

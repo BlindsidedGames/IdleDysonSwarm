@@ -5,6 +5,7 @@ using UnityEngine.UI;
 using Blindsided.ProceduralUIImage;
 using Blindsided.Utilities;
 using static Expansion.Oracle;
+using Systems.Numeric;
 
 /// <summary>
 /// Manages the Prestige/Quantum tab UI in the side panel.
@@ -108,7 +109,9 @@ public class PrestigePanelManager : MonoBehaviour
 
         if (_prestigeFillProcedural != null || _prestigeFillSliced != null)
         {
-            float fill = (float)PrestigeData.infinityPoints / 42;
+            float fill = NumericUiAdapter.ToUnitInterval(
+                PrestigeData.infinityPoints / 42d,
+                "prestige_progress");
             if (_prestigeFillProcedural != null) _prestigeFillProcedural.fillAmount = fill;
             else if (_prestigeFillSliced != null) _prestigeFillSliced.fillAmount = fill;
         }

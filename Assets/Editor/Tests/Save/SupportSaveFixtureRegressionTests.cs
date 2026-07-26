@@ -2,7 +2,7 @@
  * Purpose: Exercises privacy-safe player support saves through production decode, preparation, and startup selection.
  * Runs: Unity EditMode test runner only.
  * Primary entry points: NUnit manifest, immutable-byte, decoder, Stage 2 preparation, and Stage 3 decision tests.
- * Owns: Support-fixture privacy shape, hash enforcement, and read-only pipeline assertions.
+ * Owns: Support-fixture privacy shape, hash enforcement, and durable repaired-primary assertions.
  * Delegates: Fixture reads to SaveFixtureLoader and save behavior to SaveCodec, SaveSystem, and startup recovery.
  *
  * Interacts with:
@@ -158,7 +158,7 @@ namespace Tests.Save
         [TestCase(Case02)]
         [TestCase(Case03)]
         [TestCase(Case04)]
-        public void Fixture_PreparesOrBlocksAsReadOnlyPrimary(string fixtureId)
+        public void Fixture_PreparesAndDurablyCommitsOrBlocksPrimary(string fixtureId)
         {
             SupportSaveFixtureDefinition fixture = GetFixture(fixtureId);
             string text = Encoding.UTF8.GetString(LoadBytes(fixture));
@@ -204,10 +204,21 @@ namespace Tests.Save
             Assert.AreEqual(StartupSaveRecoveryStatus.PrimaryReady, result.Status, result.Error);
             Assert.IsTrue(result.HasPublishableSettings, fixture.id);
             Assert.IsFalse(result.IsBlocking, fixture.id);
-            Assert.AreEqual(11, result.Settings.saveVersion, fixture.id);
-            Assert.AreEqual(text, storage.Text, $"{fixture.id} primary bytes were rewritten during startup.");
+            Assert.AreEqual(12, result.Settings.saveVersion, fixture.id);
+            Assert.AreNotEqual(
+                text,
+                storage.Text,
+                $"{fixture.id} migrated primary was published without a durable canonical commit.");
+            Assert.IsTrue(
+                SaveCodec.TryDecodeSaveSettings(
+                    storage.Text,
+                    out Oracle.SaveDataSettings committed,
+                    out SaveDecodeFailureReason decodeFailure),
+                $"{fixture.id} committed primary did not decode ({decodeFailure}).");
+            Assert.AreEqual(12, committed.saveVersion, fixture.id);
             Assert.IsNull(storage.TempText, fixture.id);
-            Assert.IsEmpty(storage.Backups, fixture.id);
+            Assert.AreEqual(1, storage.Backups.Count, fixture.id);
+            Assert.AreEqual(text, storage.Backups[0], fixture.id);
             Assert.AreEqual(0, scope.SaveWriteCount, $"{fixture.id} preparation requested a save write.");
             Assert.IsFalse(scope.Subject.Loaded, $"{fixture.id} preparation entered Oracle lifecycle.");
             Assert.AreEqual(hashBefore, SaveFixtureLoader.ComputeFileSha256(fixture.fixturePath), fixture.id);

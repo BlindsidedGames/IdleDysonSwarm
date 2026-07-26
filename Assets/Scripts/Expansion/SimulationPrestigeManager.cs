@@ -1,7 +1,8 @@
 ﻿using System;
-using System.Collections;
 using TMPro;
 using UnityEngine;
+using Systems.Numeric;
+using Systems.Simulation;
 using UnityEngine.UI;
 using static Expansion.Oracle;
 
@@ -20,8 +21,10 @@ public class SimulationPrestigeManager : MonoBehaviour
 
 
     public static event Action ApplyResearch;
+    public static event Action ResetSimulationRuntime;
 
     public static void InvokeApplyResearch() => ApplyResearch?.Invoke();
+    public static void InvokeResetSimulationRuntime() => ResetSimulationRuntime?.Invoke();
 
     private void Start()
     {
@@ -31,14 +34,18 @@ public class SimulationPrestigeManager : MonoBehaviour
     private void BlackHole()
     {
         sp.disasterStage = 0;
-        blackHoleAlertEarningsText.text = $"Earned: {(int)sd1.swarmPanels} Strange Matter";
-        Prestige((int)sd1.swarmPanels);
+        blackHoleAlertEarningsText.text = $"Earned: {sd1.swarmPanels} Strange Matter";
+        Prestige(sd1.swarmPanels);
         blackHoleAlert.SetActive(true);
     }
 
     private void Update()
     {
         blackHoleGo.SetActive(sp.counterGw);
+    }
+
+    public void EvaluateSimulationTransitions()
+    {
         switch (sp.disasterStage)
         {
             case 0 or 1:
@@ -73,17 +80,13 @@ public class SimulationPrestigeManager : MonoBehaviour
         }
     }
 
-    private void Prestige(int strangeMatter)
+    private void Prestige(long strangeMatter)
     {
-        sp.simulationCount++;
-        sp.strangeMatter += strangeMatter;
-        StartCoroutine(WipeForPrestige());
-    }
-
-    private IEnumerator WipeForPrestige()
-    {
-        oracle.WipeDream1Save();
-        yield return null;
-        ApplyResearch?.Invoke();
+        sp.simulationCount = NumericSafety.Add(sp.simulationCount, 1L).Value;
+        sp.strangeMatter = NumericSafety.Add(sp.strangeMatter, strangeMatter).Value;
+        DeterministicSimulation.CompleteReset(
+            oracle.WipeDream1Save,
+            () => ResetSimulationRuntime?.Invoke(),
+            () => ApplyResearch?.Invoke());
     }
 }
