@@ -1,5 +1,6 @@
 using System;
 using System.Collections;
+using System.Collections.Generic;
 using System.Globalization;
 using Buildings;
 using Expansion;
@@ -15,6 +16,7 @@ using Systems.Simulation;
 using Systems.Stats;
 using Blindsided.ProceduralUIImage;
 using Blindsided.Utilities;
+using IdleDysonSwarm.Services;
 using static Expansion.Oracle;
 
 /// <summary>
@@ -56,7 +58,33 @@ public class GameManager : MonoBehaviour
 {
     private const double SimulationTickSeconds = 0.1d;
     private const int MaximumTicksPerFrame = 10;
+    private const int MaximumCanonicalOfflineBurstTicks = 4096;
+    private const int MaximumExactDreamBurstTicks = 65536;
+    private const double CanonicalOfflineBurstBudgetMilliseconds = 3d;
     private double _simulationAccumulator;
+    private double _activeAutomationTimeUntilNextEvent =
+        SimulationTickSeconds;
+    private double _activeUnprocessedSeconds;
+    private double _activeInfinityCycleSeconds;
+    private double _activeSimulationBoundaryRemaining = 1d / 60d;
+    private bool _activeAtPostResetStart;
+    private DreamDoubleTimeTick _pendingDreamDoubleTimeTick;
+    private RealityAdvanceResult _pendingRealityAdvance;
+    private double _pendingIntervalSeconds;
+    private bool _pendingDreamEngineeringCompleteAtStart;
+    private bool _botCapHandledAtBoundary;
+    private bool _offlineBreakTargetOverrideActive;
+    private long _offlineBreakTargetOverride;
+    private bool _storedTimeCancellationRequested;
+    private bool _storedTimeJobRunning;
+    private bool _unifiedAccelerationEnabled = true;
+    private string _returnScreenConfirmDefaultText;
+    private readonly List<SimulationQueuedInput> _queuedSimulationInputs =
+        new();
+    private readonly Dictionary<string, Action> _queuedPlayerActions =
+        new();
+    private static GameManager _activeSimulationInstance;
+    public static event Action<long> BreakTargetChangeRequested;
     [SerializeField] private BotsAutoBuy botsAutoBuy;
     [SerializeField] private ResearchAutoBuy researchAutoBuy;
     [SerializeField] private FoundationalEraManager foundationalEraManager;
@@ -64,6 +92,145 @@ public class GameManager : MonoBehaviour
     [SerializeField] private SpaceAgeManager spaceAgeManager;
     [SerializeField] private DoubleTimeManager doubleTimeManager;
     [SerializeField] private SimulationPrestigeManager simulationPrestigeManager;
+    private IWorkerService _workerService;
+
+    private sealed class OfflineInfinityCycleState
+    {
+        private readonly List<InfinityCycleSample> _samples = new(3);
+
+        public OfflineInfinityCycleState(
+            bool breakTheLoop,
+            long capturedBreakTarget,
+            long startingInfinityPoints)
+        {
+            BreakTheLoop = breakTheLoop;
+            CapturedBreakTarget = Math.Max(1L, capturedBreakTarget);
+            CycleStartingInfinityPoints =
+                Math.Max(0L, startingInfinityPoints);
+        }
+
+        public bool BreakTheLoop { get; }
+        public long CapturedBreakTarget { get; }
+        public bool HasPostResetStart { get; private set; }
+        public long CycleStartingInfinityPoints { get; private set; }
+        public double SecondsInCurrentCycle { get; private set; }
+        public bool IsAtPostResetStart =>
+            HasPostResetStart && SecondsInCurrentCycle <= 1e-12d;
+
+        public void SynchronizeBeforeFirstTick(
+            long currentInfinityPoints)
+        {
+            if (HasPostResetStart || SecondsInCurrentCycle > 1e-12d)
+                return;
+            CycleStartingInfinityPoints =
+                Math.Max(0L, currentInfinityPoints);
+        }
+
+        public void AddElapsed(double seconds)
+        {
+            if (!NumericSafety.IsFinite(seconds) || seconds <= 0d)
+                return;
+            SecondsInCurrentCycle = NumericSafety.Add(
+                SecondsInCurrentCycle,
+                seconds).Value;
+        }
+
+        public bool ObservePotentialReset(
+            long currentInfinityPoints,
+            out double completedDurationSeconds,
+            out long completedReward)
+        {
+            completedDurationSeconds = 0d;
+            completedReward = 0L;
+            currentInfinityPoints = Math.Max(0L, currentInfinityPoints);
+            if (currentInfinityPoints <= CycleStartingInfinityPoints)
+                return false;
+
+            bool completedFullCycle =
+                HasPostResetStart && SecondsInCurrentCycle > 0d;
+            if (completedFullCycle)
+            {
+                long reward =
+                    currentInfinityPoints - CycleStartingInfinityPoints;
+                completedDurationSeconds = SecondsInCurrentCycle;
+                long completedDurationTicks = Math.Max(
+                    1L,
+                    NumericSafety.ToLongFloor(
+                        Math.Ceiling(
+                            SecondsInCurrentCycle /
+                            SimulationTickSeconds)).Value);
+                completedReward = reward;
+                _samples.Add(new InfinityCycleSample(
+                    CycleStartingInfinityPoints,
+                    reward,
+                    completedDurationTicks,
+                    SecondsInCurrentCycle));
+                if (_samples.Count > 3)
+                    _samples.RemoveAt(0);
+            }
+
+            HasPostResetStart = true;
+            CycleStartingInfinityPoints = currentInfinityPoints;
+            SecondsInCurrentCycle = 0d;
+            return completedFullCycle;
+        }
+
+        public bool TryGetSamples(
+            out InfinityCycleSample first,
+            out InfinityCycleSample second,
+            out InfinityCycleSample third)
+        {
+            if (_samples.Count < 3)
+            {
+                first = default;
+                second = default;
+                third = default;
+                return false;
+            }
+
+            first = _samples[0];
+            second = _samples[1];
+            third = _samples[2];
+            return true;
+        }
+
+        public void AcceptProjection(long finalInfinityPoints)
+        {
+            HasPostResetStart = true;
+            CycleStartingInfinityPoints =
+                Math.Max(0L, finalInfinityPoints);
+            SecondsInCurrentCycle = 0d;
+            _samples.Clear();
+        }
+
+        public void AcceptProjection(
+            InfinityCycleProjection projection)
+        {
+            HasPostResetStart = true;
+            CycleStartingInfinityPoints = Math.Max(
+                0L,
+                projection.FinalInfinityPoints);
+            SecondsInCurrentCycle = 0d;
+
+            long syntheticStart = Math.Max(
+                0L,
+                projection.FinalInfinityPoints -
+                projection.LastReward);
+            long durationTicks = Math.Max(
+                1L,
+                NumericSafety.ToLongFloor(
+                    Math.Ceiling(
+                        projection.LastDurationSeconds /
+                        SimulationTickSeconds)).Value);
+            _samples.Add(new InfinityCycleSample(
+                syntheticStart,
+                projection.LastReward,
+                durationTicks,
+                projection.LastDurationSeconds));
+            while (_samples.Count > 3)
+                _samples.RemoveAt(0);
+        }
+    }
     #region SerializedFields
 
     private DysonVerseInfinityData infinityData => oracle.saveSettings.dysonVerseSaveData.dysonVerseInfinityData;
@@ -225,6 +392,17 @@ public class GameManager : MonoBehaviour
         spaceAgeManager ??= FindAnyObjectByType<SpaceAgeManager>(FindObjectsInactive.Include);
         doubleTimeManager ??= FindAnyObjectByType<DoubleTimeManager>(FindObjectsInactive.Include);
         simulationPrestigeManager ??= FindAnyObjectByType<SimulationPrestigeManager>(FindObjectsInactive.Include);
+        ServiceLocator.TryGet(out _workerService);
+        if (returnScreenConfirmButton != null)
+        {
+            returnScreenConfirmButton.onClick.AddListener(
+                CancelStoredTimeProcessing);
+            TMP_Text label =
+                returnScreenConfirmButton.GetComponentInChildren<TMP_Text>();
+            _returnScreenConfirmDefaultText = label != null
+                ? label.text
+                : null;
+        }
         CalculateModifiers();
         CalculateProduction();
         InvokeRepeating(nameof(UpdateTextFields), 0, 0.1f);
@@ -284,12 +462,144 @@ public class GameManager : MonoBehaviour
 
     private void Update()
     {
-        DeterministicSimulation.Advance(
-            ref _simulationAccumulator,
-            Time.deltaTime,
-            SimulationTickSeconds,
-            MaximumTicksPerFrame,
-            RunSimulationTick);
+        double elapsed = NumericSafety.IsFinite(Time.deltaTime)
+            ? Math.Max(0d, Time.deltaTime)
+            : 0d;
+        _activeUnprocessedSeconds = NumericSafety.Add(
+            _activeUnprocessedSeconds,
+            elapsed).Value;
+        if (_activeUnprocessedSeconds <= 0d) return;
+
+        var model = new RuntimeEventTimeModel(this);
+        SimulationAdvanceResult result =
+            UnifiedEventTimeSimulation.Advance(
+                new SimulationAdvanceRequest
+                {
+                    StartingState = model,
+                    DurationSeconds = _activeUnprocessedSeconds,
+                    Mode = SimulationAdvanceMode.Active,
+                    AutomationPolicy =
+                        SimulationAutomationPolicy.PreserveConfiguredMode,
+                    AutomationIntervalSeconds = SimulationTickSeconds,
+                    AutomationTimeUntilNextEvent =
+                        _activeAutomationTimeUntilNextEvent,
+                    InfinityMinimumCycleSeconds = 1d / 60d,
+                    ProcessingBudgetMilliseconds = 2d,
+                    AllowAcceleration = true,
+                    CloneStartingState = false,
+                    ProcessPartialEndpoint = false,
+                    QueuedInputs = _queuedSimulationInputs
+                });
+        AdvanceQueuedInputTimes(result.ConsumedSeconds);
+        _activeUnprocessedSeconds = result.RemainingSeconds;
+        _activeAutomationTimeUntilNextEvent =
+            result.AutomationTimeUntilNextEvent;
+        RefreshSimulationPresentation();
+    }
+
+    private void OnEnable()
+    {
+        _activeSimulationInstance = this;
+        AwayFor += ApplyReturnValues;
+        BreakTargetChangeRequested += QueueBreakTargetChange;
+    }
+
+    private void OnDisable()
+    {
+        if (_activeSimulationInstance == this)
+            _activeSimulationInstance = null;
+        _queuedPlayerActions.Clear();
+        _queuedSimulationInputs.Clear();
+        AwayFor -= ApplyReturnValues;
+        BreakTargetChangeRequested -= QueueBreakTargetChange;
+    }
+
+    public static void RequestBreakTargetChange(long target)
+    {
+        BreakTargetChangeRequested?.Invoke(Math.Max(1L, target));
+    }
+
+    public static bool RequestQueuedPlayerAction(
+        SimulationInputKind kind,
+        Action action,
+        string stableId)
+    {
+        if (_activeSimulationInstance == null || action == null)
+            return false;
+        _activeSimulationInstance.QueuePlayerAction(
+            kind,
+            action,
+            stableId);
+        return true;
+    }
+
+    private void QueueBreakTargetChange(long target)
+    {
+        _queuedSimulationInputs.Add(
+            new SimulationQueuedInput(
+                _activeUnprocessedSeconds,
+                SimulationInputKind.BreakTarget,
+                discreteValue: Math.Max(1L, target),
+                id: "break_target"));
+    }
+
+    private void QueuePlayerAction(
+        SimulationInputKind kind,
+        Action action,
+        string stableId)
+    {
+        string id =
+            $"{stableId ?? kind.ToString()}:{Guid.NewGuid():N}";
+        _queuedPlayerActions[id] = action;
+        _queuedSimulationInputs.Add(
+            new SimulationQueuedInput(
+                _activeUnprocessedSeconds,
+                kind,
+                id: id));
+        _queuedSimulationInputs.Sort(
+            (left, right) => left.Time.CompareTo(right.Time));
+    }
+
+    private void ApplyQueuedPlayerAction(SimulationQueuedInput input)
+    {
+        if (string.IsNullOrEmpty(input.Id) ||
+            !_queuedPlayerActions.TryGetValue(
+                input.Id,
+                out Action action))
+        {
+            return;
+        }
+
+        _queuedPlayerActions.Remove(input.Id);
+        action();
+    }
+
+    private void AdvanceQueuedInputTimes(double consumedSeconds)
+    {
+        if (consumedSeconds <= 0d ||
+            _queuedSimulationInputs.Count == 0)
+            return;
+        for (int index = _queuedSimulationInputs.Count - 1;
+             index >= 0;
+             index--)
+        {
+            SimulationQueuedInput input =
+                _queuedSimulationInputs[index];
+            if (input.Time <= consumedSeconds + 1e-12d)
+            {
+                _queuedSimulationInputs.RemoveAt(index);
+                continue;
+            }
+            _queuedSimulationInputs[index] =
+                new SimulationQueuedInput(
+                    input.Time - consumedSeconds,
+                    input.Kind,
+                    input.DiscreteValue,
+                    input.ContinuousValue,
+                    input.Id);
+        }
+        _queuedSimulationInputs.Sort(
+            (left, right) => left.Time.CompareTo(right.Time));
     }
 
     private void RunSimulationTick()
@@ -302,7 +612,8 @@ public class GameManager : MonoBehaviour
         RunSimulationStep(
             SimulationTickSeconds,
             runAutomation: true,
-            forceOfflineBuyMax: forceOfflineBuyMax);
+            forceOfflineBuyMax: forceOfflineBuyMax,
+            updatePresentation: !forceOfflineBuyMax);
     }
 
     private void RunSimulationRemainder(double deltaSeconds)
@@ -317,17 +628,36 @@ public class GameManager : MonoBehaviour
         RunSimulationStep(
             deltaSeconds,
             runAutomation: false,
-            forceOfflineBuyMax: true);
+            forceOfflineBuyMax: true,
+            updatePresentation: false);
     }
 
     private void RunSimulationStep(
         double deltaSeconds,
         bool runAutomation,
-        bool forceOfflineBuyMax)
+        bool forceOfflineBuyMax,
+        bool updatePresentation)
     {
-        bool dreamEngineeringCompleteAtStart =
+        BeginSimulationInterval(deltaSeconds);
+        if (runAutomation)
+        {
+            RunSimulationAutomation(
+                forceOfflineBuyMax
+                    ? SimulationAutomationPolicy.ForceBuyMax
+                    : SimulationAutomationPolicy.PreserveConfiguredMode);
+        }
+        CompleteSimulationInterval(updatePresentation);
+        EvaluateDreamTransition(updatePresentation);
+        EvaluateBotCapTransition();
+        EvaluateInfinityTransition();
+    }
+
+    private void BeginSimulationInterval(double deltaSeconds)
+    {
+        _pendingIntervalSeconds = deltaSeconds;
+        _pendingDreamEngineeringCompleteAtStart =
             oracle.saveSettings.sdSimulation.engineeringComplete;
-        DreamDoubleTimeTick dreamDoubleTimeTick = doubleTimeManager != null
+        _pendingDreamDoubleTimeTick = doubleTimeManager != null
             ? doubleTimeManager.PrepareSimulationTick(deltaSeconds)
             : DreamDoubleTimeMath.Prepare(
                 oracle.saveSettings.sdPrestige.doubleTimeOwned,
@@ -335,88 +665,133 @@ public class GameManager : MonoBehaviour
                 oracle.saveSettings.sdPrestige.doubleTimeRate,
                 deltaSeconds);
         if (doubleTimeManager == null)
-            oracle.saveSettings.sdPrestige.doDoubleTime = dreamDoubleTimeTick.Active;
+            oracle.saveSettings.sdPrestige.doDoubleTime =
+                _pendingDreamDoubleTimeTick.Active;
 
-        DeterministicSimulation.RunWholeGameTick(
-            dysonProduction: () =>
-            {
-                SetBotDistribution();
-                ProductionSystem.CalculateProduction(
-                    infinityData,
-                    skillTreeData,
-                    prestigeData,
-                    prestigePlus,
-                    deltaSeconds,
-                    recomputeDerivedState: false);
-            },
-            dreamProduction: () =>
-            {
-                // Run downstream eras first. Combined with each manager's
-                // local input snapshot, this prevents newly produced
-                // facilities from working until the next logical tick.
-                spaceAgeManager?.RunProductionTick(
-                    dreamDoubleTimeTick.EffectiveMultiplier,
-                    deltaSeconds);
-                informationEraManager?.RunProductionTick(
-                    dreamDoubleTimeTick.EffectiveMultiplier,
-                    deltaSeconds);
-                foundationalEraManager?.RunProductionTick(
-                    dreamEngineeringCompleteAtStart,
-                    dreamDoubleTimeTick.EffectiveMultiplier,
-                    deltaSeconds);
-            },
-            dysonAutomation: () =>
-            {
-                if (!runAutomation) return;
-                botsAutoBuy?.RunAutomationTick(forceOfflineBuyMax);
-                researchAutoBuy?.RunAutomationTick(forceOfflineBuyMax);
-            },
-            dreamAutomation: () =>
-            {
-                if (!runAutomation) return;
-                foundationalEraManager?.RunAutomationTick();
-                informationEraManager?.RunAutomationTick();
-                spaceAgeManager?.RunAutomationTick();
-            },
-            recomputeDysonDerivedState: () =>
-                ProductionSystem.RecalculateDerivedState(
-                    infinityData,
-                    skillTreeData,
-                    prestigeData,
-                    prestigePlus),
-            synchronizeDreamDurableState: () =>
-            {
-                foundationalEraManager?.CompleteSimulationTick();
-                informationEraManager?.CompleteSimulationTick();
-                spaceAgeManager?.CompleteSimulationTick();
-            },
-            consumeDreamDoubleTime: () =>
-            {
-                if (doubleTimeManager != null)
-                {
-                    doubleTimeManager.CompleteSimulationTick(dreamDoubleTimeTick);
-                    return;
-                }
+        SetBotDistribution();
+        ProductionSystem.CalculateProduction(
+            infinityData,
+            skillTreeData,
+            prestigeData,
+            prestigePlus,
+            deltaSeconds,
+            recomputeDerivedState: false);
 
-                Oracle.SaveDataPrestige dreamPrestige =
-                    oracle.saveSettings.sdPrestige;
-                if (!NumericSafety.IsFinite(dreamPrestige.doubleTime))
-                    dreamPrestige.doubleTime = 0d;
-                dreamPrestige.doubleTime = Math.Max(
-                    0d,
-                    dreamPrestige.doubleTime - dreamDoubleTimeTick.BankConsumed);
-                dreamPrestige.doDoubleTime =
-                    dreamPrestige.doubleTimeOwned && dreamPrestige.doubleTime > 0d;
-            },
-            evaluateDreamReset: () =>
-                simulationPrestigeManager?.EvaluateSimulationTransitions(),
-            evaluateDysonReset: EvaluateSimulationTransitions);
+        // Run downstream eras first. Combined with each manager's local input
+        // snapshot, this prevents newly produced facilities from working until
+        // the next logical tick.
+        spaceAgeManager?.RunProductionTick(
+            _pendingDreamDoubleTimeTick.EffectiveMultiplier,
+            deltaSeconds,
+            updatePresentation: false);
+        informationEraManager?.RunProductionTick(
+            _pendingDreamDoubleTimeTick.EffectiveMultiplier,
+            deltaSeconds,
+            updatePresentation: false);
+        foundationalEraManager?.RunProductionTick(
+            _pendingDreamEngineeringCompleteAtStart,
+            _pendingDreamDoubleTimeTick.EffectiveMultiplier,
+            deltaSeconds,
+            updatePresentation: false);
+
+        if (_workerService == null)
+            ServiceLocator.TryGet(out _workerService);
+        _pendingRealityAdvance = _workerService != null
+            ? _workerService.AdvanceSimulation(deltaSeconds)
+            : default;
     }
 
-    private void EvaluateSimulationTransitions()
+    private void RunSimulationAutomation(
+        SimulationAutomationPolicy policy)
     {
-        if (oracle.ProcessBotCapTransition()) return;
+        _activeAtPostResetStart = false;
+        bool forceBuyMax =
+            policy == SimulationAutomationPolicy.ForceBuyMax;
+        botsAutoBuy?.RunAutomationTick(forceBuyMax);
+        researchAutoBuy?.RunAutomationTick(forceBuyMax);
+        foundationalEraManager?.RunAutomationTick();
+        informationEraManager?.RunAutomationTick();
+        spaceAgeManager?.RunAutomationTick();
+    }
 
+    private void CompleteSimulationInterval(bool updatePresentation)
+    {
+        ProductionSystem.RecalculateDerivedState(
+            infinityData,
+            skillTreeData,
+            prestigeData,
+            prestigePlus);
+        foundationalEraManager?.CompleteSimulationTick(updatePresentation);
+        informationEraManager?.CompleteSimulationTick(updatePresentation);
+        spaceAgeManager?.CompleteSimulationTick(updatePresentation);
+
+        if (doubleTimeManager != null)
+        {
+            doubleTimeManager.CompleteSimulationTick(
+                _pendingDreamDoubleTimeTick);
+        }
+        else
+        {
+            Oracle.SaveDataPrestige dreamPrestige =
+                oracle.saveSettings.sdPrestige;
+            if (!NumericSafety.IsFinite(dreamPrestige.doubleTime))
+                dreamPrestige.doubleTime = 0d;
+            dreamPrestige.doubleTime = Math.Max(
+                0d,
+                dreamPrestige.doubleTime -
+                _pendingDreamDoubleTimeTick.BankConsumed);
+            dreamPrestige.doDoubleTime =
+                dreamPrestige.doubleTimeOwned && dreamPrestige.doubleTime > 0d;
+        }
+
+        SimulationStatistics statistics =
+            oracle.saveSettings.simulationStatistics;
+        if (statistics != null)
+        {
+            statistics.RecordSegment(
+                _pendingIntervalSeconds,
+                new SimulationPresentationSummary
+                {
+                    RealityWorkers =
+                        _pendingRealityAdvance.WorkersGenerated,
+                    AutomaticInfluence =
+                        _pendingRealityAdvance.AutomaticInfluence,
+                    RealityCapacityStallSeconds =
+                        _pendingRealityAdvance.StalledSeconds
+                });
+        }
+    }
+
+    private bool EvaluateDreamTransition(bool updatePresentation)
+    {
+        return simulationPrestigeManager != null &&
+               simulationPrestigeManager.EvaluateSimulationTransitions(
+                   updatePresentation);
+    }
+
+    private double TimeToNextDreamMaterialEvent(
+        double maximumSeconds)
+    {
+        if (!TryGetDreamOfflineTiming(out DreamOfflineTiming timing))
+            return maximumSeconds;
+        return DreamAnalyticalOfflineSimulation
+            .GetNextMaterialEventSeconds(
+                oracle.saveSettings.sdSimulation,
+                oracle.saveSettings.sdPrestige,
+                timing,
+                maximumSeconds);
+    }
+
+    private void EvaluateBotCapTransition()
+    {
+        _botCapHandledAtBoundary = oracle.ProcessBotCapTransition();
+    }
+
+    private void EvaluateInfinityTransition(
+        double simulatedCycleSeconds = -1d,
+        bool updatePresentation = false)
+    {
+        if (_botCapHandledAtBoundary) return;
         ManageGoal();
         double amount = prestigePlus.divisionsPurchased > 0
             ? 4.2e19 / Math.Pow(10, prestigePlus.divisionsPurchased)
@@ -430,19 +805,1315 @@ public class GameManager : MonoBehaviour
                 projectedGain = NumericSafety.Add(projectedGain, projectedGain).Value;
             if (prestigePlus.doubleIP)
                 projectedGain = NumericSafety.Add(projectedGain, projectedGain).Value;
-            long threshold = oracle.saveSettings.infinityPointsToBreakFor >= 1
-                ? oracle.saveSettings.infinityPointsToBreakFor
-                : 1;
+            long threshold = CurrentBreakInfinityTarget();
             if (projectedGain < threshold) return;
 
             oracle.saveSettings.infinityInProgress = true;
-            Prestige();
+            Prestige(
+                simulatedCycleSeconds,
+                updatePresentation);
             return;
         }
 
         if (infinityData.bots < amount) return;
         oracle.saveSettings.infinityInProgress = true;
-        Prestige();
+        Prestige(
+            simulatedCycleSeconds,
+            updatePresentation);
+    }
+
+    // Compatibility seam for save-recovery characterization and older scene
+    // tooling. Authoritative runtime ordering is owned by the event scheduler.
+    private void EvaluateSimulationTransitions()
+    {
+        EvaluateDreamTransition(updatePresentation: false);
+        EvaluateBotCapTransition();
+        EvaluateInfinityTransition(
+            simulatedCycleSeconds: _activeInfinityCycleSeconds,
+            updatePresentation: false);
+    }
+
+    private void RefreshSimulationPresentation()
+    {
+        bool engineeringComplete =
+            oracle.saveSettings.sdSimulation.engineeringComplete;
+        spaceAgeManager?.RunProductionTick(
+            1d, 0d, updatePresentation: true);
+        informationEraManager?.RunProductionTick(
+            1d, 0d, updatePresentation: true);
+        foundationalEraManager?.RunProductionTick(
+            engineeringComplete,
+            1d,
+            0d,
+            updatePresentation: true);
+        foundationalEraManager?.CompleteSimulationTick(
+            updatePresentation: true);
+        informationEraManager?.CompleteSimulationTick(
+            updatePresentation: true);
+        spaceAgeManager?.CompleteSimulationTick(
+            updatePresentation: true);
+    }
+
+    private sealed class RuntimeEventTimeModel :
+        IEventTimeSimulationModel
+    {
+        private readonly GameManager _owner;
+        private bool _invalidZeroTimeDreamLoop;
+        public RuntimeEventTimeModel(GameManager owner)
+        {
+            _owner = owner;
+        }
+
+        public IEventTimeSimulationModel Clone() =>
+            new RuntimeEventTimeModel(_owner);
+
+        public bool IsFiniteAndValid(out string diagnosticCode)
+        {
+            if (_invalidZeroTimeDreamLoop)
+            {
+                diagnosticCode = "SIM-DREAM-ZERO-TIME-LOOP";
+                return false;
+            }
+            diagnosticCode = null;
+            DysonVerseInfinityData data = _owner.infinityData;
+            if (data == null ||
+                !NumericSafety.IsFinite(data.bots) ||
+                !NumericSafety.IsFinite(data.money) ||
+                !NumericSafety.IsFinite(data.science))
+            {
+                diagnosticCode = "SIM-ACTIVE-INVALID-DYSON";
+                return false;
+            }
+            return true;
+        }
+
+        public double TimeToNextMaterialEvent(
+            double maximumSeconds,
+            double infinityMinimumCycleSeconds)
+        {
+            double untilInfinityBoundary = Math.Max(
+                1e-12d,
+                _owner._activeSimulationBoundaryRemaining);
+            double dreamBoundary =
+                _owner.TimeToNextDreamMaterialEvent(
+                    maximumSeconds);
+            return Math.Min(
+                untilInfinityBoundary,
+                dreamBoundary);
+        }
+
+        public void AdvanceContinuous(double seconds)
+        {
+            _owner.BeginSimulationInterval(seconds);
+            _owner._activeInfinityCycleSeconds = NumericSafety.Add(
+                _owner._activeInfinityCycleSeconds,
+                seconds).Value;
+            _owner._activeSimulationBoundaryRemaining = Math.Max(
+                0d,
+                _owner._activeSimulationBoundaryRemaining - seconds);
+        }
+
+        public void ApplyProductionArrivals(
+            SimulationPresentationSummary summary)
+        {
+        }
+
+        public void ApplyAutomation(
+            SimulationAutomationPolicy policy,
+            SimulationPresentationSummary summary)
+        {
+            _owner.RunSimulationAutomation(policy);
+        }
+
+        public void ApplyDerivedTimersAndDoubleTime(
+            double seconds,
+            SimulationPresentationSummary summary)
+        {
+            _owner.CompleteSimulationInterval(
+                updatePresentation: false);
+            summary.RealityWorkers = NumericSafety.Add(
+                summary.RealityWorkers,
+                _owner._pendingRealityAdvance.WorkersGenerated).Value;
+            summary.AutomaticInfluence = NumericSafety.Add(
+                summary.AutomaticInfluence,
+                _owner._pendingRealityAdvance.AutomaticInfluence).Value;
+            summary.RealityCapacityStallSeconds =
+                NumericSafety.Add(
+                    summary.RealityCapacityStallSeconds,
+                    _owner._pendingRealityAdvance.StalledSeconds).Value;
+            if (_owner._activeSimulationBoundaryRemaining <= 1e-12d)
+                _owner._activeSimulationBoundaryRemaining =
+                    1d / 60d;
+        }
+
+        public void ApplyDreamReset(
+            SimulationPresentationSummary summary)
+        {
+            SaveDataPrestige prestige =
+                Oracle.oracle.saveSettings.sdPrestige;
+            long countBefore = prestige.simulationCount;
+            long rewardBefore = prestige.strangeMatter;
+            DreamResetCause cause =
+                StoredRuntimeEventTimeModel.DreamCauseForStage(
+                    prestige.disasterStage);
+            bool reset = _owner.EvaluateDreamTransition(
+                updatePresentation: false);
+            if (reset)
+            {
+                StoredRuntimeEventTimeModel.AddDreamSummary(
+                    summary,
+                    cause,
+                    prestige.simulationCount - countBefore,
+                    prestige.strangeMatter - rewardBefore);
+            }
+            _invalidZeroTimeDreamLoop =
+                reset &&
+                _owner.simulationPrestigeManager != null &&
+                _owner.simulationPrestigeManager
+                    .IsAutomaticResetReady();
+        }
+
+        public void ApplyBotCapTransition(
+            SimulationPresentationSummary summary)
+        {
+            long beforeIp = _owner.prestigeData.infinityPoints;
+            long beforeOverflow =
+                Oracle.oracle.saveSettings.avocadoData
+                    .overflowMultiplier >= long.MaxValue
+                    ? long.MaxValue
+                    : (long)Math.Max(
+                        0d,
+                        Oracle.oracle.saveSettings.avocadoData
+                            .overflowMultiplier);
+            _owner.EvaluateBotCapTransition();
+            long ipDelta = Math.Max(
+                0L,
+                _owner.prestigeData.infinityPoints -
+                beforeIp);
+            long afterOverflow =
+                Oracle.oracle.saveSettings.avocadoData
+                    .overflowMultiplier >= long.MaxValue
+                    ? long.MaxValue
+                    : (long)Math.Max(
+                        0d,
+                        Oracle.oracle.saveSettings.avocadoData
+                            .overflowMultiplier);
+            bool specialGranted =
+                afterOverflow > beforeOverflow;
+            summary.BotCapInfinityPoints = NumericSafety.Add(
+                summary.BotCapInfinityPoints,
+                specialGranted
+                    ? Math.Min(1000L, ipDelta)
+                    : 0L).Value;
+            long ordinaryReward = Math.Max(
+                0L,
+                ipDelta -
+                (specialGranted
+                    ? Math.Min(1000L, ipDelta)
+                    : 0L));
+            if (_owner._botCapHandledAtBoundary &&
+                ordinaryReward > 0L)
+            {
+                summary.OrdinaryInfinityCount = NumericSafety.Add(
+                    summary.OrdinaryInfinityCount,
+                    1L).Value;
+                summary.OrdinaryInfinityPoints = NumericSafety.Add(
+                    summary.OrdinaryInfinityPoints,
+                    ordinaryReward).Value;
+            }
+            summary.BotCapOverflowRewards = NumericSafety.Add(
+                summary.BotCapOverflowRewards,
+                Math.Max(0L, afterOverflow - beforeOverflow)).Value;
+        }
+
+        public void ApplyInfinityReset(
+            double minimumCycleSeconds,
+            SimulationPresentationSummary summary)
+        {
+            if (_owner._activeInfinityCycleSeconds + 1e-9d <
+                minimumCycleSeconds)
+            {
+                return;
+            }
+
+            long before = _owner.prestigeData.infinityPoints;
+            _owner.EvaluateInfinityTransition(
+                _owner._activeInfinityCycleSeconds,
+                updatePresentation: false);
+            if (_owner.prestigeData.infinityPoints != before)
+            {
+                long reward = Math.Max(
+                    0L,
+                    _owner.prestigeData.infinityPoints - before);
+                if (_owner.prestigePlus.breakTheLoop)
+                {
+                    summary.BreakInfinityCount = NumericSafety.Add(
+                        summary.BreakInfinityCount,
+                        1L).Value;
+                    summary.BreakInfinityPoints = NumericSafety.Add(
+                        summary.BreakInfinityPoints,
+                        reward).Value;
+                }
+                else
+                {
+                    summary.OrdinaryInfinityCount = NumericSafety.Add(
+                        summary.OrdinaryInfinityCount,
+                        1L).Value;
+                    summary.OrdinaryInfinityPoints = NumericSafety.Add(
+                        summary.OrdinaryInfinityPoints,
+                        reward).Value;
+                }
+                _owner._activeInfinityCycleSeconds = 0d;
+                _owner._activeAtPostResetStart = true;
+            }
+        }
+
+        public void ApplyQueuedInput(
+            SimulationQueuedInput input,
+            SimulationPresentationSummary summary)
+        {
+            if (input.Kind == SimulationInputKind.BreakTarget)
+            {
+                Oracle.oracle.saveSettings.infinityPointsToBreakFor =
+                    input.DiscreteValue >= int.MaxValue
+                        ? int.MaxValue
+                        : (int)Math.Max(1L, input.DiscreteValue);
+                return;
+            }
+
+            _owner.ApplyQueuedPlayerAction(input);
+        }
+
+        public bool TryAccelerate(
+            double maximumSeconds,
+            SimulationAdvanceRequest request,
+            out SimulationAccelerationResult acceleration)
+        {
+            acceleration = default;
+            if (_owner.prestigePlus.breakTheLoop ||
+                !_owner._activeAtPostResetStart ||
+                _owner._activeInfinityCycleSeconds > 1e-12d ||
+                AnalyticalOfflineSimulation.HasPersistentSideEffects(
+                    _owner.skillTreeData) ||
+                !DreamAnalyticalOfflineSimulation.IsClockIdle(
+                    Oracle.oracle.saveSettings.sdSimulation,
+                    _owner.spaceAgeManager != null &&
+                    _owner.spaceAgeManager.IsRailgunFiring))
+            {
+                return false;
+            }
+
+            double threshold =
+                _owner.prestigePlus.divisionsPurchased > 0
+                    ? 4.2e19 / Math.Pow(
+                        10d,
+                        _owner.prestigePlus.divisionsPurchased)
+                    : 4.2e19;
+            if (_owner.infinityData.bots < threshold)
+                return false;
+
+            const double minimumCycle = 1d / 60d;
+            if (request.AutomationTimeUntilNextEvent <= 1e-12d)
+                return false;
+            double automationHorizon =
+                request.AutomationTimeUntilNextEvent;
+            double available = Math.Min(
+                maximumSeconds,
+                automationHorizon);
+            long cycles = NumericSafety.ToLongFloor(
+                Math.Floor(
+                    (available + 1e-12d) /
+                    minimumCycle)).Value;
+            if (cycles < 1L) return false;
+            double consumed = cycles * minimumCycle;
+
+            long rewardPerCycle = 1L;
+            if (Oracle.oracle.saveSettings.doubleIp)
+                rewardPerCycle = NumericSafety.Add(
+                    rewardPerCycle,
+                    rewardPerCycle).Value;
+            if (_owner.prestigePlus.doubleIP)
+                rewardPerCycle = NumericSafety.Add(
+                    rewardPerCycle,
+                    rewardPerCycle).Value;
+            long totalReward =
+                SaturatingMultiply(cycles, rewardPerCycle);
+            _owner.prestigeData.infinityPoints = NumericSafety.Add(
+                _owner.prestigeData.infinityPoints,
+                totalReward).Value;
+            Oracle.oracle.saveSettings.lastInfinityPointsGained =
+                rewardPerCycle >= int.MaxValue
+                    ? int.MaxValue
+                    : (int)rewardPerCycle;
+            Oracle.oracle.saveSettings.timeLastInfinity =
+                minimumCycle;
+            Oracle.oracle.saveSettings.firstInfinityDone = true;
+            Oracle.oracle.saveSettings.simulationStatistics
+                ?.RecordInfinityAggregate(
+                    breakInfinity: false,
+                    cycles,
+                    totalReward,
+                    minimumCycle,
+                    rewardPerCycle);
+
+            SaveDataPrestige dreamPrestige =
+                Oracle.oracle.saveSettings.sdPrestige;
+            int rate = Math.Max(
+                0,
+                Math.Min(10, dreamPrestige.doubleTimeRate));
+            dreamPrestige.doubleTime = Math.Max(
+                0d,
+                dreamPrestige.doubleTime -
+                Math.Min(
+                    dreamPrestige.doubleTime,
+                    NumericSafety.Multiply(
+                        consumed,
+                        rate).Value));
+            dreamPrestige.doDoubleTime =
+                dreamPrestige.doubleTimeOwned &&
+                dreamPrestige.doubleTime > 0d;
+
+            if (_owner._workerService == null)
+                ServiceLocator.TryGet(out _owner._workerService);
+            RealityAdvanceResult reality =
+                _owner._workerService != null
+                    ? _owner._workerService.AdvanceSimulation(consumed)
+                    : default;
+            _owner.RecordRealitySegment(consumed, reality);
+            _owner._activeInfinityCycleSeconds = 0d;
+            _owner._activeSimulationBoundaryRemaining =
+                minimumCycle;
+
+            acceleration = new SimulationAccelerationResult(
+                true,
+                consumed,
+                new SimulationPresentationSummary
+                {
+                    OrdinaryInfinityCount = cycles,
+                    OrdinaryInfinityPoints = totalReward,
+                    RealityWorkers = reality.WorkersGenerated,
+                    AutomaticInfluence = reality.AutomaticInfluence,
+                    RealityCapacityStallSeconds =
+                        reality.StalledSeconds
+                },
+                0d);
+            return true;
+        }
+
+        private static long SaturatingMultiply(long left, long right)
+        {
+            if (left <= 0L || right <= 0L) return 0L;
+            return left > long.MaxValue / right
+                ? long.MaxValue
+                : left * right;
+        }
+    }
+
+    private sealed class StoredRuntimeEventTimeModel :
+        IEventTimeSimulationModel
+    {
+        private readonly GameManager _owner;
+        private readonly OfflineInfinityCycleState _infinityState;
+        private readonly DreamCycleTracker _dreamCycleState = new();
+        private double _automationPhaseSeconds;
+        private double _infinityBoundaryRemaining = 1d / 60d;
+        private bool _invalidZeroTimeDreamLoop;
+
+        public StoredRuntimeEventTimeModel(
+            GameManager owner,
+            OfflineInfinityCycleState infinityState)
+        {
+            _owner = owner;
+            _infinityState = infinityState;
+        }
+
+        public IEventTimeSimulationModel Clone() => this;
+
+        public bool IsFiniteAndValid(out string diagnosticCode)
+        {
+            if (_invalidZeroTimeDreamLoop)
+            {
+                diagnosticCode = "SIM-DREAM-ZERO-TIME-LOOP";
+                return false;
+            }
+            diagnosticCode = null;
+            DysonVerseInfinityData data = _owner.infinityData;
+            if (data == null ||
+                !NumericSafety.IsFinite(data.bots) ||
+                !NumericSafety.IsFinite(data.money) ||
+                !NumericSafety.IsFinite(data.science))
+            {
+                diagnosticCode = "SIM-STORED-INVALID-DYSON";
+                return false;
+            }
+            return true;
+        }
+
+        public double TimeToNextMaterialEvent(
+            double maximumSeconds,
+            double infinityMinimumCycleSeconds)
+        {
+            return Math.Min(
+                Math.Min(
+                    maximumSeconds,
+                    Math.Max(
+                        1e-12d,
+                        _infinityBoundaryRemaining)),
+                _owner.TimeToNextDreamMaterialEvent(
+                    maximumSeconds));
+        }
+
+        public void AdvanceContinuous(double seconds)
+        {
+            _infinityState.SynchronizeBeforeFirstTick(
+                _owner.prestigeData.infinityPoints);
+            _infinityState.AddElapsed(seconds);
+            _dreamCycleState.AddElapsed(seconds);
+            _automationPhaseSeconds = NumericSafety.Add(
+                _automationPhaseSeconds,
+                seconds).Value;
+            _infinityBoundaryRemaining = Math.Max(
+                0d,
+                _infinityBoundaryRemaining - seconds);
+            _owner.BeginSimulationInterval(seconds);
+        }
+
+        public void ApplyProductionArrivals(
+            SimulationPresentationSummary summary)
+        {
+        }
+
+        public void ApplyAutomation(
+            SimulationAutomationPolicy policy,
+            SimulationPresentationSummary summary)
+        {
+            _owner.RunSimulationAutomation(
+                SimulationAutomationPolicy.ForceBuyMax);
+            _automationPhaseSeconds = 0d;
+        }
+
+        public void ApplyDerivedTimersAndDoubleTime(
+            double seconds,
+            SimulationPresentationSummary summary)
+        {
+            _owner.CompleteSimulationInterval(
+                updatePresentation: false);
+            summary.RealityWorkers = NumericSafety.Add(
+                summary.RealityWorkers,
+                _owner._pendingRealityAdvance.WorkersGenerated).Value;
+            summary.AutomaticInfluence = NumericSafety.Add(
+                summary.AutomaticInfluence,
+                _owner._pendingRealityAdvance.AutomaticInfluence).Value;
+            summary.RealityCapacityStallSeconds =
+                NumericSafety.Add(
+                    summary.RealityCapacityStallSeconds,
+                    _owner._pendingRealityAdvance.StalledSeconds).Value;
+            if (_infinityBoundaryRemaining <= 1e-12d)
+                _infinityBoundaryRemaining = 1d / 60d;
+        }
+
+        public void ApplyDreamReset(
+            SimulationPresentationSummary summary)
+        {
+            SaveDataPrestige prestige =
+                Oracle.oracle.saveSettings.sdPrestige;
+            long countBefore = prestige.simulationCount;
+            long strangeMatterBefore = prestige.strangeMatter;
+            DreamResetCause cause = DreamCauseForStage(
+                prestige.disasterStage);
+            bool reset = _owner.EvaluateDreamTransition(
+                updatePresentation: false);
+            if (reset)
+            {
+                _dreamCycleState.ObserveReset(
+                    countBefore,
+                    strangeMatterBefore,
+                    cause,
+                    Oracle.oracle.saveSettings.sdSimulation,
+                    prestige);
+                AddDreamSummary(
+                    summary,
+                    cause,
+                    prestige.simulationCount - countBefore,
+                    prestige.strangeMatter - strangeMatterBefore);
+            }
+            _invalidZeroTimeDreamLoop =
+                reset &&
+                _owner.simulationPrestigeManager != null &&
+                _owner.simulationPrestigeManager
+                    .IsAutomaticResetReady();
+        }
+
+        public void ApplyBotCapTransition(
+            SimulationPresentationSummary summary)
+        {
+            long beforeIp = _owner.prestigeData.infinityPoints;
+            double beforeOverflow =
+                Oracle.oracle.saveSettings.avocadoData
+                    .overflowMultiplier;
+            _owner.EvaluateBotCapTransition();
+            long ipDelta = Math.Max(
+                0L,
+                _owner.prestigeData.infinityPoints -
+                beforeIp);
+            double overflowDelta = Math.Max(
+                0d,
+                Oracle.oracle.saveSettings.avocadoData
+                    .overflowMultiplier -
+                beforeOverflow);
+            bool specialGranted = overflowDelta >= 1d;
+            summary.BotCapInfinityPoints = NumericSafety.Add(
+                summary.BotCapInfinityPoints,
+                specialGranted
+                    ? Math.Min(1000L, ipDelta)
+                    : 0L).Value;
+            long ordinaryReward = Math.Max(
+                0L,
+                ipDelta -
+                (specialGranted
+                    ? Math.Min(1000L, ipDelta)
+                    : 0L));
+            if (_owner._botCapHandledAtBoundary &&
+                ordinaryReward > 0L)
+            {
+                summary.OrdinaryInfinityCount = NumericSafety.Add(
+                    summary.OrdinaryInfinityCount,
+                    1L).Value;
+                summary.OrdinaryInfinityPoints = NumericSafety.Add(
+                    summary.OrdinaryInfinityPoints,
+                    ordinaryReward).Value;
+            }
+            summary.BotCapOverflowRewards = NumericSafety.Add(
+                summary.BotCapOverflowRewards,
+                overflowDelta >= long.MaxValue
+                    ? long.MaxValue
+                    : (long)Math.Floor(overflowDelta)).Value;
+        }
+
+        public void ApplyInfinityReset(
+            double minimumCycleSeconds,
+            SimulationPresentationSummary summary)
+        {
+            if (_infinityState.SecondsInCurrentCycle + 1e-9d <
+                minimumCycleSeconds)
+            {
+                return;
+            }
+            long beforeIp = _owner.prestigeData.infinityPoints;
+            bool previousOverrideActive =
+                _owner._offlineBreakTargetOverrideActive;
+            long previousOverride =
+                _owner._offlineBreakTargetOverride;
+            _owner._offlineBreakTargetOverrideActive =
+                _infinityState.BreakTheLoop;
+            _owner._offlineBreakTargetOverride =
+                _infinityState.CapturedBreakTarget;
+            try
+            {
+                _owner.EvaluateInfinityTransition(
+                    _infinityState.SecondsInCurrentCycle,
+                    updatePresentation: false);
+            }
+            finally
+            {
+                _owner._offlineBreakTargetOverrideActive =
+                    previousOverrideActive;
+                _owner._offlineBreakTargetOverride =
+                    previousOverride;
+            }
+
+            if (_infinityState.ObservePotentialReset(
+                    _owner.prestigeData.infinityPoints,
+                    out double durationSeconds,
+                    out _))
+            {
+                Oracle.oracle.saveSettings.timeLastInfinity =
+                    Math.Max(
+                        durationSeconds,
+                        minimumCycleSeconds);
+                long reward = Math.Max(
+                    0L,
+                    _owner.prestigeData.infinityPoints - beforeIp);
+                if (_infinityState.BreakTheLoop)
+                {
+                    summary.BreakInfinityCount = NumericSafety.Add(
+                        summary.BreakInfinityCount,
+                        1L).Value;
+                    summary.BreakInfinityPoints = NumericSafety.Add(
+                        summary.BreakInfinityPoints,
+                        reward).Value;
+                }
+                else
+                {
+                    summary.OrdinaryInfinityCount = NumericSafety.Add(
+                        summary.OrdinaryInfinityCount,
+                        1L).Value;
+                    summary.OrdinaryInfinityPoints = NumericSafety.Add(
+                        summary.OrdinaryInfinityPoints,
+                        reward).Value;
+                }
+            }
+        }
+
+        public void ApplyQueuedInput(
+            SimulationQueuedInput input,
+            SimulationPresentationSummary summary)
+        {
+            if (input.Kind != SimulationInputKind.BreakTarget)
+                return;
+            _owner._offlineBreakTargetOverrideActive = true;
+            _owner._offlineBreakTargetOverride =
+                Math.Max(1L, input.DiscreteValue);
+        }
+
+        public bool TryAccelerate(
+            double maximumSeconds,
+            SimulationAdvanceRequest request,
+            out SimulationAccelerationResult acceleration)
+        {
+            acceleration = default;
+            if (_automationPhaseSeconds > 1e-9d ||
+                maximumSeconds < SimulationTickSeconds * 2d)
+            {
+                return false;
+            }
+
+            if (TryAggregateStableDreamCycles(
+                    maximumSeconds,
+                    out acceleration))
+            {
+                return true;
+            }
+
+            if (TryAggregateBreakInfinityCycles(
+                    maximumSeconds,
+                    request,
+                    out acceleration))
+            {
+                return true;
+            }
+
+            if (TryAggregateImmediateOrdinaryInfinity(
+                    maximumSeconds,
+                    out acceleration))
+            {
+                return true;
+            }
+
+            long requestedTicks = NumericSafety.ToLongFloor(
+                Math.Floor(
+                    maximumSeconds /
+                    SimulationTickSeconds)).Value;
+            if (requestedTicks < 2L) return false;
+
+            SimulationStatisticsTotals before =
+                CaptureTotals(Oracle.oracle.saveSettings
+                    .simulationStatistics?.lifetime);
+            long processed = _owner.TryRunAnalyticalOfflineTicks(
+                requestedTicks,
+                _infinityState,
+                allowCanonicalFallback: false);
+            if (processed <= 0L) return false;
+
+            double consumed = processed * SimulationTickSeconds;
+            SimulationStatisticsTotals after =
+                CaptureTotals(Oracle.oracle.saveSettings
+                    .simulationStatistics?.lifetime);
+            acceleration = new SimulationAccelerationResult(
+                accepted: true,
+                consumedSeconds: consumed,
+                summary: Difference(before, after),
+                validationError: 0d);
+            return true;
+        }
+
+        private bool TryAggregateBreakInfinityCycles(
+            double maximumSeconds,
+            SimulationAdvanceRequest request,
+            out SimulationAccelerationResult acceleration)
+        {
+            acceleration = default;
+            if (!_infinityState.BreakTheLoop ||
+                !_infinityState.IsAtPostResetStart ||
+                _owner.prestigeData.infinityPoints < 42L ||
+                AnalyticalOfflineSimulation.HasPersistentSideEffects(
+                    _owner.skillTreeData) ||
+                !_infinityState.TryGetSamples(
+                    out InfinityCycleSample first,
+                    out InfinityCycleSample second,
+                    out InfinityCycleSample third) ||
+                !AnalyticalOfflineSimulation.TryCaptureState(
+                    _owner.infinityData,
+                    out _))
+            {
+                return false;
+            }
+
+            double candidateSeconds = maximumSeconds;
+            while (candidateSeconds >= 0.1d)
+            {
+                if (!AdaptiveInfinityCycleSimulation.TryProjectSeconds(
+                        first,
+                        second,
+                        third,
+                        _owner.prestigeData.infinityPoints,
+                        candidateSeconds,
+                        request.InfinityMinimumCycleSeconds,
+                        out InfinityCycleProjection projection))
+                {
+                    candidateSeconds *= 0.5d;
+                    continue;
+                }
+
+                double dreamError = 0d;
+                bool dreamIdle =
+                    DreamAnalyticalOfflineSimulation.IsClockIdle(
+                        Oracle.oracle.saveSettings.sdSimulation,
+                        _owner.spaceAgeManager != null &&
+                        _owner.spaceAgeManager.IsRailgunFiring);
+                if (!dreamIdle)
+                {
+                    if (!_owner.TryGetDreamOfflineTiming(
+                            out DreamOfflineTiming timing) ||
+                        !DreamAdaptiveLongIntervalSimulation.TryAdvance(
+                            Oracle.oracle.saveSettings.sdSimulation,
+                            Oracle.oracle.saveSettings.sdPrestige,
+                            timing,
+                            projection.ConsumedSeconds,
+                            out dreamError))
+                    {
+                        candidateSeconds *= 0.5d;
+                        continue;
+                    }
+                    SimulationPrestigeManager
+                        .InvokeResetSimulationRuntime();
+                }
+                else
+                {
+                    ConsumeIdleDreamDoubleTime(
+                        projection.ConsumedSeconds);
+                }
+
+                long startingIp =
+                    _owner.prestigeData.infinityPoints;
+                _owner.ApplyAdaptiveInfinityProjection(
+                    projection,
+                    _infinityState);
+                long aggregateReward = Math.Max(
+                    0L,
+                    _owner.prestigeData.infinityPoints -
+                    startingIp);
+
+                double phase = projection.ConsumedSeconds %
+                               SimulationTickSeconds;
+                _automationPhaseSeconds =
+                    phase <= 1e-9d ||
+                    SimulationTickSeconds - phase <= 1e-9d
+                        ? 0d
+                        : phase;
+                _infinityBoundaryRemaining =
+                    request.InfinityMinimumCycleSeconds;
+                long automationEvents = NumericSafety.ToLongFloor(
+                    Math.Floor(
+                        (projection.ConsumedSeconds + 1e-12d) /
+                        SimulationTickSeconds)).Value;
+                _owner.botsAutoBuy?.SkipAutomationTicks(
+                    automationEvents);
+                _owner.researchAutoBuy?.SkipAutomationTicks(
+                    automationEvents);
+                RealityAdvanceResult reality =
+                    _owner.AdvanceRealityStoredTime(
+                        projection.ConsumedSeconds);
+                _owner.RecordRealitySegment(
+                    projection.ConsumedSeconds,
+                    reality);
+
+                acceleration = new SimulationAccelerationResult(
+                    true,
+                    projection.ConsumedSeconds,
+                    new SimulationPresentationSummary
+                    {
+                        BreakInfinityCount =
+                            projection.CycleCount,
+                        BreakInfinityPoints =
+                            aggregateReward,
+                        RealityWorkers =
+                            reality.WorkersGenerated,
+                        AutomaticInfluence =
+                            reality.AutomaticInfluence,
+                        RealityCapacityStallSeconds =
+                            reality.StalledSeconds
+                    },
+                    Math.Max(
+                        projection.ValidationError,
+                        dreamError));
+                return true;
+            }
+            return false;
+        }
+
+        private static void ConsumeIdleDreamDoubleTime(
+            double seconds)
+        {
+            SaveDataPrestige dreamPrestige =
+                Oracle.oracle.saveSettings.sdPrestige;
+            if (dreamPrestige == null) return;
+            int rate = Math.Max(
+                0,
+                Math.Min(10, dreamPrestige.doubleTimeRate));
+            double requestedBank = NumericSafety.Multiply(
+                seconds,
+                rate).Value;
+            dreamPrestige.doubleTime = Math.Max(
+                0d,
+                dreamPrestige.doubleTime -
+                Math.Min(
+                    dreamPrestige.doubleTime,
+                    requestedBank));
+            dreamPrestige.doDoubleTime =
+                dreamPrestige.doubleTimeOwned &&
+                dreamPrestige.doubleTime > 0d;
+        }
+
+        private bool TryAggregateStableDreamCycles(
+            double maximumSeconds,
+            out SimulationAccelerationResult acceleration)
+        {
+            acceleration = default;
+            SaveDataPrestige dreamPrestige =
+                Oracle.oracle.saveSettings.sdPrestige;
+            if (dreamPrestige == null ||
+                (dreamPrestige.doubleTimeOwned &&
+                 dreamPrestige.doubleTime > 0d &&
+                 dreamPrestige.doubleTimeRate > 0) ||
+                !_dreamCycleState.TryGetStableCycle(
+                    Oracle.oracle.saveSettings.sdSimulation,
+                    dreamPrestige,
+                    out double cycleSeconds,
+                    out long rewardPerCycle,
+                    out DreamResetCause cause))
+            {
+                return false;
+            }
+
+            long maximumCycles = NumericSafety.ToLongFloor(
+                Math.Floor(
+                    (maximumSeconds + 1e-12d) /
+                    cycleSeconds)).Value;
+            if (maximumCycles < 2L) return false;
+
+            long cycles = FindAutomationAlignedCycleCount(
+                maximumCycles,
+                cycleSeconds);
+            if (cycles < 2L) return false;
+            double consumed = NumericSafety.Multiply(
+                cycles,
+                cycleSeconds).Value;
+            double threshold =
+                _owner.GetOfflineResetBotThreshold(_infinityState);
+            if (!_owner.TryAdvanceDysonWithoutMaterialEvents(
+                    consumed,
+                    threshold))
+            {
+                return false;
+            }
+
+            long totalReward = SaturatingMultiply(
+                cycles,
+                rewardPerCycle);
+            dreamPrestige.simulationCount = NumericSafety.Add(
+                dreamPrestige.simulationCount,
+                cycles).Value;
+            dreamPrestige.strangeMatter = NumericSafety.Add(
+                dreamPrestige.strangeMatter,
+                totalReward).Value;
+            Oracle.oracle.saveSettings.simulationStatistics
+                ?.RecordDreamAggregate(
+                    cause,
+                    cycles,
+                    totalReward,
+                    rewardPerCycle);
+            _dreamCycleState.AcceptAggregate();
+            _infinityState.AddElapsed(consumed);
+            _infinityBoundaryRemaining = 1d / 60d;
+            long automationTicks = NumericSafety.ToLongFloor(
+                Math.Round(
+                    consumed /
+                    SimulationTickSeconds)).Value;
+            _owner.botsAutoBuy?.SkipAutomationTicks(
+                automationTicks);
+            _owner.researchAutoBuy?.SkipAutomationTicks(
+                automationTicks);
+            RealityAdvanceResult reality =
+                _owner.AdvanceRealityStoredTime(consumed);
+            _owner.RecordRealitySegment(consumed, reality);
+
+            var summary = new SimulationPresentationSummary
+            {
+                StrangeMatter = totalReward,
+                RealityWorkers = reality.WorkersGenerated,
+                AutomaticInfluence = reality.AutomaticInfluence,
+                RealityCapacityStallSeconds =
+                    reality.StalledSeconds
+            };
+            switch (cause)
+            {
+                case DreamResetCause.Meteor:
+                    summary.MeteorDreamResets = cycles;
+                    break;
+                case DreamResetCause.ArtificialIntelligence:
+                    summary.AiDreamResets = cycles;
+                    break;
+                case DreamResetCause.GlobalWarming:
+                    summary.GlobalWarmingDreamResets = cycles;
+                    break;
+                case DreamResetCause.BlackHole:
+                    summary.BlackHoleDreamResets = cycles;
+                    break;
+            }
+            acceleration = new SimulationAccelerationResult(
+                true,
+                consumed,
+                summary,
+                0d);
+            return true;
+        }
+
+        private static long FindAutomationAlignedCycleCount(
+            long maximumCycles,
+            double cycleSeconds)
+        {
+            long attempts = Math.Min(10_000L, maximumCycles);
+            for (long offset = 0L;
+                 offset < attempts;
+                 offset++)
+            {
+                long cycles = maximumCycles - offset;
+                double seconds = cycles * cycleSeconds;
+                double ticks = Math.Round(
+                    seconds / SimulationTickSeconds);
+                if (Math.Abs(
+                        seconds -
+                        ticks * SimulationTickSeconds) <=
+                    Math.Max(1e-9d, seconds * 1e-12d))
+                {
+                    return cycles;
+                }
+            }
+            return 0L;
+        }
+
+        public static DreamResetCause DreamCauseForStage(
+            long stage)
+        {
+            return stage switch
+            {
+                2L => DreamResetCause.ArtificialIntelligence,
+                3L => DreamResetCause.GlobalWarming,
+                _ => DreamResetCause.Meteor
+            };
+        }
+
+        public static void AddDreamSummary(
+            SimulationPresentationSummary summary,
+            DreamResetCause cause,
+            long count,
+            long reward)
+        {
+            count = Math.Max(0L, count);
+            reward = Math.Max(0L, reward);
+            summary.StrangeMatter = NumericSafety.Add(
+                summary.StrangeMatter,
+                reward).Value;
+            switch (cause)
+            {
+                case DreamResetCause.Meteor:
+                    summary.MeteorDreamResets = NumericSafety.Add(
+                        summary.MeteorDreamResets,
+                        count).Value;
+                    break;
+                case DreamResetCause.ArtificialIntelligence:
+                    summary.AiDreamResets = NumericSafety.Add(
+                        summary.AiDreamResets,
+                        count).Value;
+                    break;
+                case DreamResetCause.GlobalWarming:
+                    summary.GlobalWarmingDreamResets =
+                        NumericSafety.Add(
+                            summary.GlobalWarmingDreamResets,
+                            count).Value;
+                    break;
+                case DreamResetCause.BlackHole:
+                    summary.BlackHoleDreamResets = NumericSafety.Add(
+                        summary.BlackHoleDreamResets,
+                        count).Value;
+                    break;
+            }
+        }
+
+        private bool TryAggregateImmediateOrdinaryInfinity(
+            double maximumSeconds,
+            out SimulationAccelerationResult acceleration)
+        {
+            acceleration = default;
+            if (_infinityState.BreakTheLoop ||
+                !_infinityState.IsAtPostResetStart ||
+                AnalyticalOfflineSimulation.HasPersistentSideEffects(
+                    _owner.skillTreeData))
+            {
+                return false;
+            }
+
+            double threshold =
+                _owner.GetOfflineResetBotThreshold(_infinityState);
+            if (_owner.infinityData.bots < threshold)
+                return false;
+            if (!AnalyticalOfflineSimulation.TryCaptureState(
+                    _owner.infinityData,
+                    out DysonAnalyticalState postResetState) ||
+                _owner.HasOfflineAutomationEvent(postResetState))
+            {
+                // Crossing an automation boundary is safe only when every
+                // configured target is a proven no-op for this reset state.
+                return false;
+            }
+
+            // Keep aggregate blocks aligned to the independent automation
+            // clock. Each 0.1-second block contains exactly six authored
+            // 1/60-second ordinary Infinity cycles, while Dream may refine the
+            // block further if its long projection cannot yet prove parity.
+            double consumed = Math.Floor(
+                (maximumSeconds + 1e-12d) /
+                SimulationTickSeconds) * SimulationTickSeconds;
+            if (consumed < SimulationTickSeconds) return false;
+
+            bool dreamIdle = DreamAnalyticalOfflineSimulation.IsClockIdle(
+                Oracle.oracle.saveSettings.sdSimulation,
+                _owner.spaceAgeManager != null &&
+                _owner.spaceAgeManager.IsRailgunFiring);
+            DreamOfflineTiming timing = default;
+            if (!dreamIdle)
+            {
+                if (!_owner.TryGetDreamOfflineTiming(out timing) ||
+                    !TryAdvanceDreamForOrdinaryInfinityAggregate(
+                        timing,
+                        ref consumed,
+                        out double dreamError))
+                {
+                    return false;
+                }
+            }
+            else
+            {
+                ConsumeIdleDreamDoubleTime(consumed);
+            }
+
+            const double minimumCycle = 1d / 60d;
+            long cycles = NumericSafety.ToLongFloor(
+                Math.Floor(
+                    (consumed + 1e-12d) /
+                    minimumCycle)).Value;
+            if (cycles < 2L) return false;
+
+            long rewardPerCycle = 1L;
+            if (Oracle.oracle.saveSettings.doubleIp)
+                rewardPerCycle = NumericSafety.Add(
+                    rewardPerCycle,
+                    rewardPerCycle).Value;
+            if (_owner.prestigePlus.doubleIP)
+                rewardPerCycle = NumericSafety.Add(
+                    rewardPerCycle,
+                    rewardPerCycle).Value;
+            long totalReward = SaturatingMultiply(
+                cycles,
+                rewardPerCycle);
+            _owner.prestigeData.infinityPoints = NumericSafety.Add(
+                _owner.prestigeData.infinityPoints,
+                totalReward).Value;
+            Oracle.oracle.saveSettings.lastInfinityPointsGained =
+                rewardPerCycle >= int.MaxValue
+                    ? int.MaxValue
+                    : (int)rewardPerCycle;
+            Oracle.oracle.saveSettings.timeLastInfinity =
+                minimumCycle;
+            Oracle.oracle.saveSettings.firstInfinityDone = true;
+            Oracle.oracle.saveSettings.infinityInProgress = false;
+            Oracle.oracle.saveSettings.simulationStatistics
+                ?.RecordInfinityAggregate(
+                    breakInfinity: false,
+                    cycles,
+                    totalReward,
+                    minimumCycle,
+                    rewardPerCycle);
+            _infinityState.AcceptProjection(
+                _owner.prestigeData.infinityPoints);
+
+            long automationTicks = NumericSafety.ToLongFloor(
+                Math.Floor(
+                    consumed /
+                    SimulationTickSeconds)).Value;
+            _owner.botsAutoBuy?.SkipAutomationTicks(
+                automationTicks);
+            _owner.researchAutoBuy?.SkipAutomationTicks(
+                automationTicks);
+            RealityAdvanceResult reality =
+                _owner.AdvanceRealityStoredTime(consumed);
+            _owner.RecordRealitySegment(consumed, reality);
+            SimulationPrestigeManager.InvokeResetSimulationRuntime();
+
+            acceleration = new SimulationAccelerationResult(
+                true,
+                consumed,
+                new SimulationPresentationSummary
+                {
+                    OrdinaryInfinityCount = cycles,
+                    OrdinaryInfinityPoints = totalReward,
+                    RealityWorkers = reality.WorkersGenerated,
+                    AutomaticInfluence = reality.AutomaticInfluence,
+                    RealityCapacityStallSeconds =
+                        reality.StalledSeconds
+                },
+                0d);
+            return true;
+        }
+
+        private bool TryAdvanceDreamForOrdinaryInfinityAggregate(
+            DreamOfflineTiming timing,
+            ref double consumed,
+            out double validationError)
+        {
+            validationError = double.MaxValue;
+            double candidate = consumed;
+            while (candidate >= 1d)
+            {
+                if (DreamAdaptiveLongIntervalSimulation.TryAdvance(
+                        Oracle.oracle.saveSettings.sdSimulation,
+                        Oracle.oracle.saveSettings.sdPrestige,
+                        timing,
+                        candidate,
+                        out validationError))
+                {
+                    consumed = candidate;
+                    return true;
+                }
+
+                candidate = Math.Floor(
+                    (candidate * 0.5d + 1e-12d) /
+                    SimulationTickSeconds) * SimulationTickSeconds;
+            }
+            return false;
+        }
+
+        private static long SaturatingMultiply(
+            long left,
+            long right)
+        {
+            if (left <= 0L || right <= 0L) return 0L;
+            return left > long.MaxValue / right
+                ? long.MaxValue
+                : left * right;
+        }
+
+        private static SimulationStatisticsTotals CaptureTotals(
+            SimulationStatisticsTotals source)
+        {
+            if (source == null) return new SimulationStatisticsTotals();
+            return new SimulationStatisticsTotals
+            {
+                ordinaryInfinityCount = source.ordinaryInfinityCount,
+                breakInfinityCount = source.breakInfinityCount,
+                ordinaryInfinityPoints = source.ordinaryInfinityPoints,
+                breakInfinityPoints = source.breakInfinityPoints,
+                botCapInfinityPoints = source.botCapInfinityPoints,
+                botCapOverflowRewards = source.botCapOverflowRewards,
+                meteorDreamResets = source.meteorDreamResets,
+                aiDreamResets = source.aiDreamResets,
+                globalWarmingDreamResets =
+                    source.globalWarmingDreamResets,
+                blackHoleDreamResets = source.blackHoleDreamResets,
+                strangeMatter = source.strangeMatter,
+                realityWorkers = source.realityWorkers,
+                automaticInfluence = source.automaticInfluence,
+                manualInfluence = source.manualInfluence,
+                realityCapacityStallSeconds =
+                    source.realityCapacityStallSeconds
+            };
+        }
+
+        private static SimulationPresentationSummary Difference(
+            SimulationStatisticsTotals before,
+            SimulationStatisticsTotals after)
+        {
+            return new SimulationPresentationSummary
+            {
+                OrdinaryInfinityCount = Math.Max(
+                    0L,
+                    after.ordinaryInfinityCount -
+                    before.ordinaryInfinityCount),
+                BreakInfinityCount = Math.Max(
+                    0L,
+                    after.breakInfinityCount -
+                    before.breakInfinityCount),
+                OrdinaryInfinityPoints = Math.Max(
+                    0L,
+                    after.ordinaryInfinityPoints -
+                    before.ordinaryInfinityPoints),
+                BreakInfinityPoints = Math.Max(
+                    0L,
+                    after.breakInfinityPoints -
+                    before.breakInfinityPoints),
+                BotCapInfinityPoints = Math.Max(
+                    0L,
+                    after.botCapInfinityPoints -
+                    before.botCapInfinityPoints),
+                BotCapOverflowRewards = Math.Max(
+                    0L,
+                    after.botCapOverflowRewards -
+                    before.botCapOverflowRewards),
+                MeteorDreamResets = Math.Max(
+                    0L,
+                    after.meteorDreamResets -
+                    before.meteorDreamResets),
+                AiDreamResets = Math.Max(
+                    0L,
+                    after.aiDreamResets -
+                    before.aiDreamResets),
+                GlobalWarmingDreamResets = Math.Max(
+                    0L,
+                    after.globalWarmingDreamResets -
+                    before.globalWarmingDreamResets),
+                BlackHoleDreamResets = Math.Max(
+                    0L,
+                    after.blackHoleDreamResets -
+                    before.blackHoleDreamResets),
+                StrangeMatter = Math.Max(
+                    0L,
+                    after.strangeMatter - before.strangeMatter),
+                RealityWorkers = Math.Max(
+                    0L,
+                    after.realityWorkers - before.realityWorkers),
+                AutomaticInfluence = Math.Max(
+                    0L,
+                    after.automaticInfluence -
+                    before.automaticInfluence),
+                ManualInfluence = Math.Max(
+                    0L,
+                    after.manualInfluence - before.manualInfluence),
+                RealityCapacityStallSeconds = Math.Max(
+                    0d,
+                    after.realityCapacityStallSeconds -
+                    before.realityCapacityStallSeconds)
+            };
+        }
+    }
+
+    private long CurrentBreakInfinityTarget()
+    {
+        if (_offlineBreakTargetOverrideActive)
+            return Math.Max(1L, _offlineBreakTargetOverride);
+        return oracle.saveSettings.infinityPointsToBreakFor >= 1
+            ? oracle.saveSettings.infinityPointsToBreakFor
+            : 1L;
     }
 
     private static bool TryParseUtc(string value, out DateTime result)
@@ -491,49 +2162,64 @@ public class GameManager : MonoBehaviour
 
     public void Prestige()
     {
-        skillTreeConfirmationManager.CloseConfirm();
-        double seconds = CurrentRunTime();
+        Prestige(
+            CurrentRunTime(),
+            updatePresentation: true);
+    }
+
+    private void Prestige(
+        double simulatedCycleSeconds,
+        bool updatePresentation)
+    {
+        if (updatePresentation)
+            skillTreeConfirmationManager.CloseConfirm();
+        double seconds =
+            NumericSafety.IsFinite(simulatedCycleSeconds) &&
+            simulatedCycleSeconds > 0d
+                ? simulatedCycleSeconds
+                : CurrentRunTime();
         if (seconds <= 0) seconds = 10000;
-        string lastCollapseInfo = "";
-
-        lastCollapseInfo = seconds > 10
-            ? $"You broke reality in: {CalcUtils.FormatTimeLarge(seconds)}"
-            : $"You broke reality in: {seconds:F2} Seconds";
-        lastCollapseInfo += $"\nYou have broken reality {prestigeData.infinityPoints + 1} ";
-        lastCollapseInfo += prestigeData.infinityPoints > 1 ? "times" : "time";
-
-        runAgePrestigeScreen.text = lastCollapseInfo;
+        if (updatePresentation)
+        {
+            string lastCollapseInfo = seconds > 10
+                ? $"You broke reality in: {CalcUtils.FormatTimeLarge(seconds)}"
+                : $"You broke reality in: {seconds:F2} Seconds";
+            lastCollapseInfo +=
+                $"\nYou have broken reality {prestigeData.infinityPoints + 1} ";
+            lastCollapseInfo +=
+                prestigeData.infinityPoints > 1 ? "times" : "time";
+            runAgePrestigeScreen.text = lastCollapseInfo;
+        }
 
         oracle.saveSettings.timeLastInfinity = seconds;
 
         dysonVerseSaveData.lastCollapseDate = DateTime.UtcNow.ToString(CultureInfo.InvariantCulture);
-        if (!oracle.saveSettings.infinityFirstRunDone)
+        if (updatePresentation &&
+            !oracle.saveSettings.infinityFirstRunDone)
             foreach (GameObject VARIABLE in infinityButton)
                 VARIABLE.SetActive(true);
 
         switch (prestigePlus.breakTheLoop)
         {
             case true:
-                oracle.ManualDysonInfinity();
+                oracle.AutomaticBreakInfinityReset(
+                    updatePresentation);
                 break;
             default:
-                oracle.DysonInfinity();
+                oracle.DysonInfinity(
+                    updatePresentation);
                 break;
         }
 
-        UpdateSkillsInvoke();
+        if (updatePresentation)
+            UpdateSkillsInvoke();
 
-        if (prestigeData.infinityPoints <= 42 && oracle.saveSettings.prestigePlus.points == 0) prestigeScreen.SetActive(true);
-    }
-
-    private void OnEnable()
-    {
-        AwayFor += ApplyReturnValues;
-    }
-
-    private void OnDisable()
-    {
-        AwayFor -= ApplyReturnValues;
+        if (updatePresentation &&
+            prestigeData.infinityPoints <= 42 &&
+            oracle.saveSettings.prestigePlus.points == 0)
+        {
+            prestigeScreen.SetActive(true);
+        }
     }
 
     // private void SubmitHighScores()
@@ -560,6 +2246,14 @@ public class GameManager : MonoBehaviour
 
     private OfflineProgressContext CreateOfflineProgressContext()
     {
+        var infinityCycleState = new OfflineInfinityCycleState(
+            prestigePlus.breakTheLoop,
+            oracle.saveSettings.infinityPointsToBreakFor,
+            prestigeData.infinityPoints);
+        var eventTimeModel = new StoredRuntimeEventTimeModel(
+            this,
+            infinityCycleState);
+        double automationRemaining = SimulationTickSeconds;
         return new OfflineProgressContext
         {
             infinityData = infinityData,
@@ -578,82 +2272,691 @@ public class GameManager : MonoBehaviour
                 researchAutoBuy?.RunAutomationTick(forceBuyMax: true);
             },
             RunCanonicalWholeGameTick = () =>
-                RunSimulationTick(forceOfflineBuyMax: true),
-            RunCanonicalWholeGameRemainder = RunSimulationRemainder,
-            RunAnalyticalTicks = TryRunAnalyticalOfflineTicks
+                RunOfflineCanonicalTick(infinityCycleState),
+            RunCanonicalWholeGameRemainder = seconds =>
+                RunOfflineCanonicalRemainder(
+                    seconds,
+                    infinityCycleState),
+            RunAnalyticalTicks = ticks =>
+                TryRunAnalyticalOfflineTicks(
+                    ticks,
+                    infinityCycleState),
+            RunUnifiedSimulation = seconds =>
+            {
+                SimulationAdvanceResult result =
+                    UnifiedEventTimeSimulation.Advance(
+                        new SimulationAdvanceRequest
+                        {
+                            StartingState = eventTimeModel,
+                            DurationSeconds = seconds,
+                            Mode = SimulationAdvanceMode.StoredTime,
+                            AutomationPolicy =
+                                SimulationAutomationPolicy.ForceBuyMax,
+                            AutomationIntervalSeconds =
+                                SimulationTickSeconds,
+                            AutomationTimeUntilNextEvent =
+                                automationRemaining,
+                            InfinityMinimumCycleSeconds = 1d / 60d,
+                            ProcessingBudgetMilliseconds = 4d,
+                            AllowAcceleration =
+                                _unifiedAccelerationEnabled,
+                            CloneStartingState = false,
+                            ProcessPartialEndpoint = true
+                        });
+                automationRemaining =
+                    result.AutomationTimeUntilNextEvent;
+                return result;
+            }
         };
     }
 
-    private long TryRunAnalyticalOfflineTicks(long requestedTicks)
+#if UNITY_EDITOR
+    public void SetUnifiedAccelerationForTests(bool enabled)
     {
-        if (requestedTicks < 2L ||
-            prestigePlus.breakTheLoop ||
-            AnalyticalOfflineSimulation.HasPersistentSideEffects(skillTreeData))
-        {
+        _unifiedAccelerationEnabled = enabled;
+    }
+#endif
+
+    private long TryRunAnalyticalOfflineTicks(
+        long requestedTicks,
+        OfflineInfinityCycleState infinityCycleState,
+        bool allowCanonicalFallback = true)
+    {
+        if (requestedTicks < 2L)
             return 0L;
-        }
+        infinityCycleState.SynchronizeBeforeFirstTick(
+            prestigeData.infinityPoints);
 
         if ((prestigeData.infinityAutoBots && botsAutoBuy == null) ||
             (prestigeData.infinityAutoResearch && researchAutoBuy == null))
         {
-            return 0L;
+            return allowCanonicalFallback
+                ? RunCanonicalOfflineBurst(
+                    requestedTicks,
+                    infinityCycleState)
+                : 0L;
         }
 
         bool dreamIdle = DreamAnalyticalOfflineSimulation.IsClockIdle(
             oracle.saveSettings.sdSimulation,
             spaceAgeManager != null && spaceAgeManager.IsRailgunFiring);
+        double resetThreshold = GetOfflineResetBotThreshold(
+            infinityCycleState);
         DreamOfflineTiming dreamTiming = default;
+        bool dreamAdaptive = false;
         long dreamHorizon = requestedTicks;
         if (!dreamIdle)
         {
             if (!TryGetDreamOfflineTiming(out dreamTiming))
-                return 0L;
+                return allowCanonicalFallback
+                    ? RunCanonicalOfflineBurst(
+                        requestedTicks,
+                        infinityCycleState,
+                        maximumTicks: 1)
+                    : 0L;
+            dreamAdaptive =
+                DreamAdaptiveLongIntervalSimulation.CanProject(
+                    oracle.saveSettings.sdSimulation,
+                    oracle.saveSettings.sdPrestige,
+                    dreamTiming);
+            if (dreamAdaptive)
+            {
+                dreamHorizon = requestedTicks;
+            }
+            else
+            {
             dreamHorizon = DreamAnalyticalOfflineSimulation.GetQuietTickHorizon(
                 oracle.saveSettings.sdSimulation,
                 oracle.saveSettings.sdPrestige,
                 dreamTiming,
                 requestedTicks);
-            if (dreamHorizon < 2L) return 0L;
+            if (dreamHorizon < 2L)
+            {
+                return allowCanonicalFallback
+                    ? RunCoupledDreamEventBurst(
+                        requestedTicks,
+                        resetThreshold,
+                        infinityCycleState)
+                    : 0L;
+            }
+            }
         }
 
-        double resetThreshold = prestigePlus.divisionsPurchased > 0
+        if (TryProjectInfinityCycles(
+                infinityCycleState,
+                dreamHorizon,
+                out InfinityCycleProjection projection))
+        {
+            ApplyAdaptiveInfinityProjection(
+                projection,
+                infinityCycleState);
+            AdvanceDreamAndAutomationWithoutDyson(
+                projection.ConsumedTicks,
+                dreamIdle,
+                dreamTiming,
+                dreamAdaptive);
+            return projection.ConsumedTicks;
+        }
+
+        long processed =
+            AnalyticalOfflineSimulation.TryAdvanceDysonWithExactBotDistribution(
+                infinityData,
+                skillTreeData,
+                prestigeData,
+                prestigePlus,
+                dreamHorizon,
+                resetThreshold,
+                HasOfflineAutomationEvent);
+        if (processed <= 0L &&
+            !AnalyticalOfflineSimulation
+                .LastExactBotDistributionAttemptSupported)
+        {
+            processed = AnalyticalOfflineSimulation.TryAdvanceDyson(
+                infinityData,
+                skillTreeData,
+                prestigeData,
+                prestigePlus,
+                dreamHorizon,
+                resetThreshold,
+                HasOfflineAutomationEvent);
+        }
+        if (processed <= 0L)
+        {
+            return allowCanonicalFallback
+                ? RunCanonicalOfflineBurst(
+                    requestedTicks,
+                    infinityCycleState,
+                    maximumTicks: 1)
+                : 0L;
+        }
+
+        infinityCycleState.AddElapsed(
+            processed * SimulationTickSeconds);
+        AdvanceDreamAndAutomationWithoutDyson(
+            processed,
+            dreamIdle,
+            dreamTiming,
+            dreamAdaptive);
+        return processed;
+    }
+
+    private bool TryProjectInfinityCycles(
+        OfflineInfinityCycleState infinityCycleState,
+        long availableTicks,
+        out InfinityCycleProjection projection)
+    {
+        projection = default;
+        return
+            !AnalyticalOfflineSimulation.HasPersistentSideEffects(skillTreeData) &&
+            prestigeData.infinityPoints >= 42L &&
+            infinityCycleState.IsAtPostResetStart &&
+            infinityCycleState.TryGetSamples(
+                out InfinityCycleSample first,
+                out InfinityCycleSample second,
+                out InfinityCycleSample third) &&
+            AdaptiveInfinityCycleSimulation.TryProject(
+                first,
+                second,
+                third,
+                prestigeData.infinityPoints,
+                availableTicks,
+                out projection);
+    }
+
+    private double GetOfflineResetBotThreshold(
+        OfflineInfinityCycleState infinityCycleState)
+    {
+        double ordinaryThreshold = prestigePlus.divisionsPurchased > 0
             ? 4.2e19 / Math.Pow(10d, prestigePlus.divisionsPurchased)
             : 4.2e19;
-        resetThreshold = Math.Min(resetThreshold, double.MaxValue);
-        long processed = AnalyticalOfflineSimulation.TryAdvanceDyson(
+        ordinaryThreshold = Math.Min(
+            ordinaryThreshold,
+            double.MaxValue);
+        if (!infinityCycleState.BreakTheLoop)
+            return ordinaryThreshold;
+
+        long rewardMultiplier = 1L;
+        if (oracle.saveSettings.doubleIp)
+            rewardMultiplier *= 2L;
+        if (prestigePlus.doubleIP)
+            rewardMultiplier *= 2L;
+        long capturedTarget = infinityCycleState.CapturedBreakTarget;
+        long requiredBaseReward =
+            capturedTarget / rewardMultiplier +
+            (capturedTarget % rewardMultiplier == 0L ? 0L : 1L);
+        requiredBaseReward = Math.Max(1L, requiredBaseReward);
+        double threshold = CalcUtils.BuyXCost(
+            requiredBaseReward,
+            ordinaryThreshold,
+            oracle.infinityExponent,
+            0d);
+        return threshold > 0d && NumericSafety.IsFinite(threshold)
+            ? threshold
+            : double.MaxValue;
+    }
+
+    private void ApplyAdaptiveInfinityProjection(
+        InfinityCycleProjection projection,
+        OfflineInfinityCycleState infinityCycleState)
+    {
+        long startingInfinityPoints = prestigeData.infinityPoints;
+        prestigeData.infinityPoints = Math.Max(
+            prestigeData.infinityPoints,
+            projection.FinalInfinityPoints);
+        long aggregateReward = Math.Max(
+            0L,
+            prestigeData.infinityPoints - startingInfinityPoints);
+        oracle.saveSettings.lastInfinityPointsGained =
+            projection.LastReward >= int.MaxValue
+                ? int.MaxValue
+                : (int)Math.Max(1L, projection.LastReward);
+        oracle.saveSettings.timeLastInfinity =
+            projection.LastDurationSeconds;
+        dysonVerseSaveData.lastCollapseDate =
+            DateTime.UtcNow.ToString(CultureInfo.InvariantCulture);
+        oracle.saveSettings.firstInfinityDone = true;
+        oracle.saveSettings.infinityInProgress = false;
+        oracle.saveSettings.botCapTransitionPending = false;
+        oracle.saveSettings.botCapRewardsGranted = false;
+        ProductionSystem.SetBotDistribution(
+            infinityData,
+            prestigeData,
+            prestigePlus);
+        ProductionSystem.RecalculateDerivedState(
             infinityData,
             skillTreeData,
             prestigeData,
-            prestigePlus,
-            dreamHorizon,
-            resetThreshold,
-            HasOfflineAutomationEvent);
-        if (processed <= 0L) return 0L;
+            prestigePlus);
+        oracle.saveSettings.simulationStatistics
+            ?.RecordInfinityAggregate(
+                infinityCycleState.BreakTheLoop,
+                projection.CycleCount,
+                aggregateReward,
+                projection.LastDurationSeconds,
+                projection.LastReward);
+        infinityCycleState.AcceptProjection(projection);
+    }
 
-        Oracle.SaveDataPrestige dreamPrestige = oracle.saveSettings.sdPrestige;
+    private void AdvanceDreamAndAutomationWithoutDyson(
+        long ticks,
+        bool dreamIdle,
+        DreamOfflineTiming dreamTiming,
+        bool dreamAdaptive = false)
+    {
+        if (ticks <= 0L) return;
+        RealityAdvanceResult reality = AdvanceRealityStoredTime(
+            ticks * SimulationTickSeconds);
+        Oracle.SaveDataPrestige dreamPrestige =
+            oracle.saveSettings.sdPrestige;
         if (!dreamIdle)
         {
-            DreamAnalyticalOfflineSimulation.AdvanceValidatedQuietTicks(
-                oracle.saveSettings.sdSimulation,
-                dreamPrestige,
-                dreamTiming,
-                processed);
+            bool advanced = dreamAdaptive &&
+                DreamAdaptiveLongIntervalSimulation.TryAdvance(
+                    oracle.saveSettings.sdSimulation,
+                    dreamPrestige,
+                    dreamTiming,
+                    ticks * SimulationTickSeconds,
+                    out _);
+            if (dreamAdaptive && !advanced)
+            {
+                RunDreamOnlyOfflineBurst(ticks);
+            }
+            else if (!dreamAdaptive)
+            {
+                DreamAnalyticalOfflineSimulation.AdvanceValidatedQuietTicks(
+                    oracle.saveSettings.sdSimulation,
+                    dreamPrestige,
+                    dreamTiming,
+                    ticks);
+            }
             SimulationPrestigeManager.InvokeResetSimulationRuntime();
         }
         else if (dreamPrestige != null)
         {
-            dreamPrestige.doubleTime = DreamDoubleTimeMath.RemainingBankAfterTicks(
-                dreamPrestige.doubleTimeOwned,
-                dreamPrestige.doubleTime,
-                dreamPrestige.doubleTimeRate,
-                processed,
-                SimulationTickSeconds);
+            dreamPrestige.doubleTime =
+                DreamDoubleTimeMath.RemainingBankAfterTicks(
+                    dreamPrestige.doubleTimeOwned,
+                    dreamPrestige.doubleTime,
+                    dreamPrestige.doubleTimeRate,
+                    ticks,
+                    SimulationTickSeconds);
             dreamPrestige.doDoubleTime =
-                dreamPrestige.doubleTimeOwned && dreamPrestige.doubleTime > 0d;
+                dreamPrestige.doubleTimeOwned &&
+                dreamPrestige.doubleTime > 0d;
         }
 
-        botsAutoBuy?.SkipAutomationTicks(processed);
-        researchAutoBuy?.SkipAutomationTicks(processed);
+        botsAutoBuy?.SkipAutomationTicks(ticks);
+        researchAutoBuy?.SkipAutomationTicks(ticks);
+        RecordRealitySegment(
+            ticks * SimulationTickSeconds,
+            reality);
+    }
+
+    private RealityAdvanceResult AdvanceRealityStoredTime(
+        double seconds)
+    {
+        if (_workerService == null)
+            ServiceLocator.TryGet(out _workerService);
+        return _workerService != null
+            ? _workerService.AdvanceSimulation(seconds)
+            : default;
+    }
+
+    private bool TryAdvanceDysonWithoutMaterialEvents(
+        double seconds,
+        double resetThreshold)
+    {
+        if (!NumericSafety.IsFinite(seconds) ||
+            seconds <= 0d ||
+            Math.Abs(
+                seconds / SimulationTickSeconds -
+                Math.Round(
+                    seconds / SimulationTickSeconds)) > 1e-8d ||
+            AnalyticalOfflineSimulation.HasPersistentSideEffects(
+                skillTreeData))
+        {
+            return false;
+        }
+
+        long ticks = NumericSafety.ToLongFloor(
+            Math.Round(
+                seconds /
+                SimulationTickSeconds)).Value;
+        if (ticks < 1L) return false;
+
+        DysonVerseInfinityData candidate;
+        try
+        {
+            candidate =
+                (DysonVerseInfinityData)
+                Sirenix.Serialization.SerializationUtility.CreateCopy(
+                    infinityData);
+        }
+        catch
+        {
+            return false;
+        }
+
+        long processed;
+        if (ticks == 1L)
+        {
+            if (!AnalyticalOfflineSimulation.TryCaptureState(
+                    candidate,
+                    out DysonAnalyticalState start) ||
+                HasOfflineAutomationEvent(start))
+            {
+                return false;
+            }
+            ProductionSystem.SetBotDistribution(
+                candidate,
+                prestigeData,
+                prestigePlus);
+            ProductionSystem.CalculateProduction(
+                candidate,
+                skillTreeData,
+                prestigeData,
+                prestigePlus,
+                SimulationTickSeconds,
+                recomputeDerivedState: false);
+            ProductionSystem.RecalculateDerivedState(
+                candidate,
+                skillTreeData,
+                prestigeData,
+                prestigePlus);
+            processed = 1L;
+        }
+        else
+        {
+            processed =
+                AnalyticalOfflineSimulation
+                    .TryAdvanceDysonWithExactBotDistribution(
+                        candidate,
+                        skillTreeData,
+                        prestigeData,
+                        prestigePlus,
+                        ticks,
+                        resetThreshold,
+                        HasOfflineAutomationEvent);
+            if (processed <= 0L &&
+                !AnalyticalOfflineSimulation
+                    .LastExactBotDistributionAttemptSupported)
+            {
+                processed =
+                    AnalyticalOfflineSimulation.TryAdvanceDyson(
+                        candidate,
+                        skillTreeData,
+                        prestigeData,
+                        prestigePlus,
+                        ticks,
+                        resetThreshold,
+                        HasOfflineAutomationEvent);
+            }
+        }
+
+        if (processed != ticks ||
+            candidate.bots >= resetThreshold ||
+            !AnalyticalOfflineSimulation.TryCaptureState(
+                candidate,
+                out DysonAnalyticalState endpoint) ||
+            HasOfflineAutomationEvent(endpoint))
+        {
+            return false;
+        }
+
+        dysonVerseSaveData.dysonVerseInfinityData =
+            candidate;
+        ProductionSystem.SetBotDistribution(
+            infinityData,
+            prestigeData,
+            prestigePlus);
+        ProductionSystem.RecalculateDerivedState(
+            infinityData,
+            skillTreeData,
+            prestigeData,
+            prestigePlus);
+        return true;
+    }
+
+    private void RecordRealitySegment(
+        double seconds,
+        RealityAdvanceResult reality)
+    {
+        oracle.saveSettings.simulationStatistics?.RecordSegment(
+            seconds,
+            new SimulationPresentationSummary
+            {
+                RealityWorkers = reality.WorkersGenerated,
+                AutomaticInfluence = reality.AutomaticInfluence,
+                RealityCapacityStallSeconds = reality.StalledSeconds
+            });
+    }
+
+    private void RunOfflineCanonicalTick(
+        OfflineInfinityCycleState infinityCycleState)
+    {
+        infinityCycleState.SynchronizeBeforeFirstTick(
+            prestigeData.infinityPoints);
+        infinityCycleState.AddElapsed(SimulationTickSeconds);
+        bool previousOverrideActive =
+            _offlineBreakTargetOverrideActive;
+        long previousOverride = _offlineBreakTargetOverride;
+        _offlineBreakTargetOverrideActive =
+            infinityCycleState.BreakTheLoop;
+        _offlineBreakTargetOverride =
+            infinityCycleState.CapturedBreakTarget;
+        try
+        {
+            RunSimulationTick(forceOfflineBuyMax: true);
+        }
+        finally
+        {
+            _offlineBreakTargetOverrideActive =
+                previousOverrideActive;
+            _offlineBreakTargetOverride = previousOverride;
+        }
+
+        if (infinityCycleState.ObservePotentialReset(
+                prestigeData.infinityPoints,
+                out double completedDurationSeconds,
+                out _))
+        {
+            oracle.saveSettings.timeLastInfinity =
+                completedDurationSeconds;
+        }
+    }
+
+    private void RunOfflineCanonicalRemainder(
+        double seconds,
+        OfflineInfinityCycleState infinityCycleState)
+    {
+        bool previousOverrideActive =
+            _offlineBreakTargetOverrideActive;
+        long previousOverride = _offlineBreakTargetOverride;
+        _offlineBreakTargetOverrideActive =
+            infinityCycleState.BreakTheLoop;
+        _offlineBreakTargetOverride =
+            infinityCycleState.CapturedBreakTarget;
+        try
+        {
+            RunSimulationRemainder(seconds);
+        }
+        finally
+        {
+            _offlineBreakTargetOverrideActive =
+                previousOverrideActive;
+            _offlineBreakTargetOverride = previousOverride;
+        }
+    }
+
+    private long RunCoupledDreamEventBurst(
+        long requestedTicks,
+        double resetThreshold,
+        OfflineInfinityCycleState infinityCycleState)
+    {
+        long limit = Math.Min(
+            requestedTicks,
+            MaximumExactDreamBurstTicks);
+        long totalProcessed = 0L;
+        while (totalProcessed < limit)
+        {
+            long remaining = limit - totalProcessed;
+            if (TryProjectInfinityCycles(
+                    infinityCycleState,
+                    remaining,
+                    out InfinityCycleProjection projection))
+            {
+                ApplyAdaptiveInfinityProjection(
+                    projection,
+                    infinityCycleState);
+                RealityAdvanceResult reality = AdvanceRealityStoredTime(
+                    projection.ConsumedTicks * SimulationTickSeconds);
+                RunDreamOnlyOfflineBurst(
+                    projection.ConsumedTicks);
+                botsAutoBuy?.SkipAutomationTicks(
+                    projection.ConsumedTicks);
+                researchAutoBuy?.SkipAutomationTicks(
+                    projection.ConsumedTicks);
+                totalProcessed += projection.ConsumedTicks;
+                RecordRealitySegment(
+                    projection.ConsumedTicks * SimulationTickSeconds,
+                    reality);
+                continue;
+            }
+
+            long dysonProcessed =
+                AnalyticalOfflineSimulation.TryAdvanceDysonWithExactBotDistribution(
+                    infinityData,
+                    skillTreeData,
+                    prestigeData,
+                    prestigePlus,
+                    remaining,
+                    resetThreshold,
+                    HasOfflineAutomationEvent);
+            if (dysonProcessed <= 0L &&
+                !AnalyticalOfflineSimulation
+                    .LastExactBotDistributionAttemptSupported)
+            {
+                dysonProcessed = AnalyticalOfflineSimulation.TryAdvanceDyson(
+                    infinityData,
+                    skillTreeData,
+                    prestigeData,
+                    prestigePlus,
+                    remaining,
+                    resetThreshold,
+                    HasOfflineAutomationEvent);
+            }
+
+            if (dysonProcessed >= 2L)
+            {
+                RealityAdvanceResult reality = AdvanceRealityStoredTime(
+                    dysonProcessed * SimulationTickSeconds);
+                RunDreamOnlyOfflineBurst(dysonProcessed);
+                botsAutoBuy?.SkipAutomationTicks(dysonProcessed);
+                researchAutoBuy?.SkipAutomationTicks(dysonProcessed);
+                infinityCycleState.AddElapsed(
+                    dysonProcessed * SimulationTickSeconds);
+                totalProcessed += dysonProcessed;
+                RecordRealitySegment(
+                    dysonProcessed * SimulationTickSeconds,
+                    reality);
+                continue;
+            }
+
+            RunOfflineCanonicalTick(infinityCycleState);
+            AnalyticalOfflineSimulation.ConsumeExactBotDistributionPlanTicks(
+                infinityData,
+                1L);
+            totalProcessed++;
+        }
+
+        return totalProcessed;
+    }
+
+    private void RunDreamOnlyOfflineBurst(long ticks)
+    {
+        for (long tick = 0L; tick < ticks; tick++)
+        {
+            bool engineeringCompleteAtStart =
+                oracle.saveSettings.sdSimulation.engineeringComplete;
+            DreamDoubleTimeTick doubleTimeTick = doubleTimeManager != null
+                ? doubleTimeManager.PrepareSimulationTick(SimulationTickSeconds)
+                : DreamDoubleTimeMath.Prepare(
+                    oracle.saveSettings.sdPrestige.doubleTimeOwned,
+                    oracle.saveSettings.sdPrestige.doubleTime,
+                    oracle.saveSettings.sdPrestige.doubleTimeRate,
+                    SimulationTickSeconds);
+            if (doubleTimeManager == null)
+                oracle.saveSettings.sdPrestige.doDoubleTime =
+                    doubleTimeTick.Active;
+
+            spaceAgeManager?.RunProductionTick(
+                doubleTimeTick.EffectiveMultiplier,
+                SimulationTickSeconds,
+                updatePresentation: false);
+            informationEraManager?.RunProductionTick(
+                doubleTimeTick.EffectiveMultiplier,
+                SimulationTickSeconds,
+                updatePresentation: false);
+            foundationalEraManager?.RunProductionTick(
+                engineeringCompleteAtStart,
+                doubleTimeTick.EffectiveMultiplier,
+                SimulationTickSeconds,
+                updatePresentation: false);
+
+            foundationalEraManager?.RunAutomationTick();
+            informationEraManager?.RunAutomationTick();
+            spaceAgeManager?.RunAutomationTick();
+
+            if (doubleTimeManager != null)
+            {
+                doubleTimeManager.CompleteSimulationTick(doubleTimeTick);
+            }
+            else
+            {
+                Oracle.SaveDataPrestige dreamPrestige =
+                    oracle.saveSettings.sdPrestige;
+                if (!NumericSafety.IsFinite(dreamPrestige.doubleTime))
+                    dreamPrestige.doubleTime = 0d;
+                dreamPrestige.doubleTime = Math.Max(
+                    0d,
+                    dreamPrestige.doubleTime - doubleTimeTick.BankConsumed);
+                dreamPrestige.doDoubleTime =
+                    dreamPrestige.doubleTimeOwned && dreamPrestige.doubleTime > 0d;
+            }
+
+            simulationPrestigeManager?.EvaluateSimulationTransitions(
+                updatePresentation: false);
+        }
+
+        foundationalEraManager?.CompleteSimulationTick(updatePresentation: false);
+        informationEraManager?.CompleteSimulationTick(updatePresentation: false);
+        spaceAgeManager?.CompleteSimulationTick(updatePresentation: false);
+    }
+
+    private long RunCanonicalOfflineBurst(
+        long requestedTicks,
+        OfflineInfinityCycleState infinityCycleState,
+        int maximumTicks = MaximumCanonicalOfflineBurstTicks)
+    {
+        long limit = Math.Min(requestedTicks, Math.Max(1, maximumTicks));
+        if (limit <= 0L) return 0L;
+
+        var stopwatch = System.Diagnostics.Stopwatch.StartNew();
+        long processed = 0L;
+        do
+        {
+            RunOfflineCanonicalTick(infinityCycleState);
+            processed++;
+            if ((processed & 63L) == 0L &&
+                stopwatch.Elapsed.TotalMilliseconds >=
+                CanonicalOfflineBurstBudgetMilliseconds)
+            {
+                break;
+            }
+        } while (processed < limit);
+        AnalyticalOfflineSimulation.ConsumeExactBotDistributionPlanTicks(
+            infinityData,
+            processed);
         return processed;
     }
 
@@ -716,6 +3019,153 @@ public class GameManager : MonoBehaviour
     public void RunAwayTime(double awayTime)
     {
         StartCoroutine(CalculateAwayValues(awayTime));
+    }
+
+    public bool RunStoredTimeTransaction(
+        double requestedSeconds,
+        Action<bool, double> completed = null)
+    {
+        if (_storedTimeJobRunning ||
+            !NumericSafety.IsFinite(requestedSeconds) ||
+            requestedSeconds <= 0d ||
+            oracle?.saveSettings == null)
+        {
+            return false;
+        }
+
+        double available = NumericSafety.ClampContinuous(
+            oracle.saveSettings.offlineTime);
+        double spent = Math.Min(requestedSeconds, available);
+        if (spent <= 0d) return false;
+        StartCoroutine(RunStoredTimeTransactionCoroutine(
+            spent,
+            completed));
+        return true;
+    }
+
+    public void CancelStoredTimeProcessing()
+    {
+        if (_storedTimeJobRunning)
+            _storedTimeCancellationRequested = true;
+    }
+
+    private IEnumerator RunStoredTimeTransactionCoroutine(
+        double spentSeconds,
+        Action<bool, double> completed)
+    {
+        _storedTimeJobRunning = true;
+        _storedTimeCancellationRequested = false;
+        SetStoredTimeCancelPresentation(active: true);
+        SaveDataSettings published = oracle.saveSettings;
+        SaveDataSettings candidate;
+        try
+        {
+            candidate =
+                (SaveDataSettings)Sirenix.Serialization.SerializationUtility
+                    .CreateCopy(published);
+        }
+        catch (Exception ex)
+        {
+            Systems.Debugging.NumericDiagnostics.Report(
+                "NS-STORED-CANDIDATE-COPY",
+                $"type={ex.GetType().Name}");
+            _storedTimeJobRunning = false;
+            SetStoredTimeCancelPresentation(active: false);
+            completed?.Invoke(false, 0d);
+            yield break;
+        }
+
+        candidate.offlineTime = NumericSafety.Subtract(
+            NumericSafety.ClampContinuous(candidate.offlineTime),
+            spentSeconds).Value;
+        candidate.offlineTimeUsedThisInfinity = NumericSafety.Add(
+            NumericSafety.ClampContinuous(
+                candidate.offlineTimeUsedThisInfinity),
+            spentSeconds).Value;
+
+        oracle.saveSettings = candidate;
+        SimulationPrestigeManager.InvokeResetSimulationRuntime();
+        IEnumerator inner = CalculateAwayValues(spentSeconds);
+        oracle.saveSettings = published;
+        SimulationPrestigeManager.InvokeResetSimulationRuntime();
+
+        bool succeeded = false;
+        bool simulationFailed = false;
+        while (!_storedTimeCancellationRequested)
+        {
+            oracle.saveSettings = candidate;
+            SimulationPrestigeManager.InvokeResetSimulationRuntime();
+            bool moved;
+            try
+            {
+                moved = inner.MoveNext();
+            }
+            catch (Exception ex)
+            {
+                Systems.Debugging.NumericDiagnostics.Report(
+                    "NS-STORED-SIMULATION",
+                    $"type={ex.GetType().Name}");
+                moved = false;
+                simulationFailed = true;
+            }
+            candidate = oracle.saveSettings;
+            oracle.saveSettings = published;
+            SimulationPrestigeManager.InvokeResetSimulationRuntime();
+
+            if (!moved)
+            {
+                if (simulationFailed)
+                {
+                    oracle.saveSettings = published;
+                    SimulationPrestigeManager.InvokeResetSimulationRuntime();
+                    break;
+                }
+                oracle.saveSettings = candidate;
+                SimulationPrestigeManager.InvokeResetSimulationRuntime();
+                succeeded = oracle.TrySaveState(out string saveError);
+                if (!succeeded)
+                {
+                    Systems.Debugging.NumericDiagnostics.Report(
+                        "NS-STORED-COMMIT",
+                        "committed=false");
+                    Debug.LogError(
+                        $"[StoredTime] Candidate was not published: {saveError}");
+                    oracle.saveSettings = published;
+                    SimulationPrestigeManager.InvokeResetSimulationRuntime();
+                }
+                break;
+            }
+
+            yield return inner.Current;
+        }
+
+        if (_storedTimeCancellationRequested)
+        {
+            oracle.saveSettings = published;
+            SimulationPrestigeManager.InvokeResetSimulationRuntime();
+        }
+
+        _storedTimeCancellationRequested = false;
+        _storedTimeJobRunning = false;
+        SetStoredTimeCancelPresentation(active: false);
+        completed?.Invoke(
+            succeeded,
+            succeeded ? spentSeconds : 0d);
+    }
+
+    private void SetStoredTimeCancelPresentation(bool active)
+    {
+        if (returnScreenConfirmButton == null) return;
+        TMP_Text label =
+            returnScreenConfirmButton.GetComponentInChildren<TMP_Text>();
+        if (label == null) return;
+        if (active)
+        {
+            label.text = "Cancel";
+            return;
+        }
+        if (!string.IsNullOrEmpty(_returnScreenConfirmDefaultText))
+            label.text = _returnScreenConfirmDefaultText;
     }
 
     private IEnumerator CalculateAwayValues(double awayTime)
@@ -1238,6 +3688,41 @@ public class GameManager : MonoBehaviour
         skillTimersDisplayText += "<br><br><b>Infinity</b>";
         skillTimersDisplayText +=
             $"<br>{smallTextStart}s/IP: {CalcUtils.FormatTime(secondsPerIp, showDecimal: true, shortForm: true, mspace: false, colourOverride: scienceColor)}{smallTextEnd}";
+        SimulationStatistics tracked =
+            oracle.saveSettings.simulationStatistics;
+        if (tracked != null && tracked.trackedSinceUpdate)
+        {
+            SimulationStatisticsTotals run =
+                tracked.currentQuantumRun;
+            SimulationStatisticsTotals recent =
+                tracked.recentProcessedSegment;
+            long runInfinityCount = NumericSafety.Add(
+                run.ordinaryInfinityCount,
+                run.breakInfinityCount).Value;
+            long runIp = NumericSafety.Add(
+                NumericSafety.Add(
+                    run.ordinaryInfinityPoints,
+                    run.breakInfinityPoints).Value,
+                run.botCapInfinityPoints).Value;
+            double averageCycle = runInfinityCount > 0L
+                ? run.simulatedSeconds / runInfinityCount
+                : 0d;
+            double trackedSecondsPerIp = runIp > 0L
+                ? run.simulatedSeconds / runIp
+                : 0d;
+            skillTimersDisplayText +=
+                $"{halfHeightBreak}{smallTextStart}<b>Tracked Since Update</b>";
+            skillTimersDisplayText +=
+                $"<br>Current Quantum Run: {CalcUtils.FormatNumber(runInfinityCount)} Infinity / {CalcUtils.FormatNumber(runIp)} IP";
+            skillTimersDisplayText +=
+                $"<br>Ordinary: {CalcUtils.FormatNumber(run.ordinaryInfinityCount)} / Break: {CalcUtils.FormatNumber(run.breakInfinityCount)}";
+            skillTimersDisplayText +=
+                $"<br>Average Cycle: {CalcUtils.FormatTime(averageCycle, showDecimal: true, shortForm: true, mspace: false, colourOverride: scienceColor)}";
+            skillTimersDisplayText +=
+                $"<br>Tracked s/IP: {CalcUtils.FormatTime(trackedSecondsPerIp, showDecimal: true, shortForm: true, mspace: false, colourOverride: scienceColor)}";
+            skillTimersDisplayText +=
+                $"<br>Recent: {CalcUtils.FormatNumber(NumericSafety.Add(recent.ordinaryInfinityCount, recent.breakInfinityCount).Value)} Infinity, {CalcUtils.FormatNumber(NumericSafety.Add(recent.meteorDreamResets, NumericSafety.Add(recent.aiDreamResets, NumericSafety.Add(recent.globalWarmingDreamResets, recent.blackHoleDreamResets).Value).Value).Value)} Dream resets{smallTextEnd}";
+        }
         skillTimersDisplayText += $"{halfHeightBreak}{smallTextStart}<b>Run Time</b>";
         skillTimersDisplayText +=
             $"<br>Current: {CalcUtils.FormatTime(CurrentRunTime(), showDecimal: true, shortForm: true, mspace: false, colourOverride: scienceColor)}";

@@ -2,6 +2,7 @@ using System;
 using Systems;
 using Systems.Debugging;
 using Systems.Numeric;
+using Systems.Simulation;
 using UnityEngine;
 using Blindsided.Utilities;
 using IdleDysonSwarm.Systems.Dream1;
@@ -74,6 +75,7 @@ public class InformationEraManager : MonoBehaviour
     private double _infoUpdateTimer;
     private double _tickGlobalMultiplier = 1d;
     private double _tickSeconds = TickSeconds;
+    private bool _updatePresentation = true;
 
     public bool SupportsAnalyticalOffline =>
         engineeringPanel != null &&
@@ -177,19 +179,40 @@ public class InformationEraManager : MonoBehaviour
 
         // Setup button listeners
         if (engineeringPanel?.actionButton != null)
-            engineeringPanel.actionButton.onClick.AddListener(OnEngineeringButtonClick);
+            engineeringPanel.actionButton.onClick.AddListener(
+                () => QueuePlayerAction(
+                    OnEngineeringButtonClick,
+                    "dream_engineering"));
         if (shippingPanel?.actionButton != null)
-            shippingPanel.actionButton.onClick.AddListener(OnShippingButtonClick);
+            shippingPanel.actionButton.onClick.AddListener(
+                () => QueuePlayerAction(
+                    OnShippingButtonClick,
+                    "dream_shipping"));
         if (worldTradePanel?.actionButton != null)
-            worldTradePanel.actionButton.onClick.AddListener(OnWorldTradeButtonClick);
+            worldTradePanel.actionButton.onClick.AddListener(
+                () => QueuePlayerAction(
+                    OnWorldTradeButtonClick,
+                    "dream_world_trade"));
         if (worldPeacePanel?.actionButton != null)
-            worldPeacePanel.actionButton.onClick.AddListener(OnWorldPeaceButtonClick);
+            worldPeacePanel.actionButton.onClick.AddListener(
+                () => QueuePlayerAction(
+                    OnWorldPeaceButtonClick,
+                    "dream_world_peace"));
         if (mathematicsPanel?.actionButton != null)
-            mathematicsPanel.actionButton.onClick.AddListener(OnMathematicsButtonClick);
+            mathematicsPanel.actionButton.onClick.AddListener(
+                () => QueuePlayerAction(
+                    OnMathematicsButtonClick,
+                    "dream_mathematics"));
         if (advancedPhysicsPanel?.actionButton != null)
-            advancedPhysicsPanel.actionButton.onClick.AddListener(OnAdvancedPhysicsButtonClick);
+            advancedPhysicsPanel.actionButton.onClick.AddListener(
+                () => QueuePlayerAction(
+                    OnAdvancedPhysicsButtonClick,
+                    "dream_advanced_physics"));
         if (factoriesPanel?.actionButton != null)
-            factoriesPanel.actionButton.onClick.AddListener(OnFactoriesBoost);
+            factoriesPanel.actionButton.onClick.AddListener(
+                () => QueuePlayerAction(
+                    OnFactoriesBoost,
+                    "dream_factory_boost"));
     }
 
     private void ResetSimulationRuntime()
@@ -210,10 +233,12 @@ public class InformationEraManager : MonoBehaviour
 
     public void RunProductionTick(
         double globalMultiplier,
-        double deltaSeconds = TickSeconds)
+        double deltaSeconds = TickSeconds,
+        bool updatePresentation = true)
     {
         _tickGlobalMultiplier = globalMultiplier;
         _tickSeconds = deltaSeconds;
+        _updatePresentation = updatePresentation;
         // Capture producer counts before applying any outputs. Factory-created
         // bots therefore cannot launch rockets until the next logical tick.
         double factoriesAtStart = sd1.factories;
@@ -237,10 +262,10 @@ public class InformationEraManager : MonoBehaviour
         RocketsManagement();
     }
 
-    public void CompleteSimulationTick()
+    public void CompleteSimulationTick(bool updatePresentation = true)
     {
         SyncTimerProgress();
-        UpdateInfoDescriptions();
+        if (updatePresentation) UpdateInfoDescriptions();
     }
 
     private void UpdateVisibility()
@@ -306,6 +331,18 @@ public class InformationEraManager : MonoBehaviour
     private void EngineeringManager()
     {
         if (engineeringPanel == null) return;
+        if (!_updatePresentation)
+        {
+            if (sd1.engineering && !sd1.engineeringComplete)
+            {
+                double increment = _tickSeconds * GetGlobalMultiplier();
+                sd1.engineeringProgress =
+                    NumericSafety.Add(sd1.engineeringProgress, increment).Value;
+                if (sd1.engineeringProgress >= sd1.engineeringResearchTime)
+                    sd1.engineeringComplete = true;
+            }
+            return;
+        }
 
         if (!sd1.engineeringComplete)
         {
@@ -342,6 +379,18 @@ public class InformationEraManager : MonoBehaviour
     private void ShippingManager()
     {
         if (shippingPanel == null) return;
+        if (!_updatePresentation)
+        {
+            if (sd1.shipping && !sd1.shippingComplete)
+            {
+                double increment = _tickSeconds * GetGlobalMultiplier();
+                sd1.shippingProgress =
+                    NumericSafety.Add(sd1.shippingProgress, increment).Value;
+                if (sd1.shippingProgress >= sd1.shippingResearchTime)
+                    sd1.shippingComplete = true;
+            }
+            return;
+        }
 
         if (!sd1.shippingComplete)
         {
@@ -378,6 +427,18 @@ public class InformationEraManager : MonoBehaviour
     private void WorldTradeManager()
     {
         if (worldTradePanel == null) return;
+        if (!_updatePresentation)
+        {
+            if (sd1.worldTrade && !sd1.worldTradeComplete)
+            {
+                double increment = _tickSeconds * GetGlobalMultiplier();
+                sd1.worldTradeProgress =
+                    NumericSafety.Add(sd1.worldTradeProgress, increment).Value;
+                if (sd1.worldTradeProgress >= sd1.worldTradeResearchTime)
+                    sd1.worldTradeComplete = true;
+            }
+            return;
+        }
 
         if (!sd1.worldTradeComplete)
         {
@@ -414,6 +475,18 @@ public class InformationEraManager : MonoBehaviour
     private void WorldPeaceManager()
     {
         if (worldPeacePanel == null) return;
+        if (!_updatePresentation)
+        {
+            if (sd1.worldPeace && !sd1.worldPeaceComplete)
+            {
+                double increment = _tickSeconds * GetGlobalMultiplier();
+                sd1.worldPeaceProgress =
+                    NumericSafety.Add(sd1.worldPeaceProgress, increment).Value;
+                if (sd1.worldPeaceProgress >= sd1.worldPeaceResearchTime)
+                    sd1.worldPeaceComplete = true;
+            }
+            return;
+        }
 
         if (!sd1.worldPeaceComplete)
         {
@@ -450,6 +523,18 @@ public class InformationEraManager : MonoBehaviour
     private void MathematicsManager()
     {
         if (mathematicsPanel == null) return;
+        if (!_updatePresentation)
+        {
+            if (sd1.mathematics && !sd1.mathematicsComplete)
+            {
+                double increment = _tickSeconds * GetGlobalMultiplier();
+                sd1.mathematicsProgress =
+                    NumericSafety.Add(sd1.mathematicsProgress, increment).Value;
+                if (sd1.mathematicsProgress >= sd1.mathematicsResearchTime)
+                    ApplyMathematicsCompletionParity(sd1);
+            }
+            return;
+        }
 
         if (!sd1.mathematicsComplete)
         {
@@ -489,6 +574,18 @@ public class InformationEraManager : MonoBehaviour
     private void AdvancedPhysicsManager()
     {
         if (advancedPhysicsPanel == null) return;
+        if (!_updatePresentation)
+        {
+            if (sd1.advancedPhysics && !sd1.advancedPhysicsComplete)
+            {
+                double increment = _tickSeconds * GetGlobalMultiplier();
+                sd1.advancedPhysicsProgress =
+                    NumericSafety.Add(sd1.advancedPhysicsProgress, increment).Value;
+                if (sd1.advancedPhysicsProgress >= sd1.advancedPhysicsResearchTime)
+                    sd1.advancedPhysicsComplete = true;
+            }
+            return;
+        }
 
         if (!sd1.advancedPhysicsComplete)
         {
@@ -533,12 +630,14 @@ public class InformationEraManager : MonoBehaviour
         if (sd1.factoriesBoostTime > 0)
         {
             sd1.factoriesBoostTime = Math.Max(0d, sd1.factoriesBoostTime - _tickSeconds);
+            if (!_updatePresentation) return;
             factoriesPanel.fill2.fillAmount = (float)(sd1.factoriesBoostTime / sd1.factoriesBoostDuration);
             factoriesPanel.fillBar2Text.text = CalcUtils.FormatTime(sd1.factoriesBoostTime, shortForm: true, colourOverride: UIThemeProvider.TextColourBlue);
         }
         else
         {
             sd1.factoriesBoostTime = 0;
+            if (!_updatePresentation) return;
             factoriesPanel.fill2.fillAmount = 0;
             factoriesPanel.fillBar2Text.text = "0s";
         }
@@ -547,12 +646,6 @@ public class InformationEraManager : MonoBehaviour
     private void FactoryManagement(double sourceCount)
     {
         if (factoriesPanel == null) return;
-
-        // Hide boost button when boost is active (time remaining > 10s)
-        if (factoriesPanel.actionButton != null)
-            factoriesPanel.actionButton.gameObject.SetActive(sd1.factoriesBoostTime < 10);
-
-        factoriesPanel.titleText.text = $"Factories <size=70%>{UIThemeProvider.TextColourBlue}{sd1.factories:N0}</color>";
 
         // Build custom multiplier (factories has extra bonuses)
         double globalMulti = GetGlobalMultiplier();
@@ -568,7 +661,12 @@ public class InformationEraManager : MonoBehaviour
             : sourceCount;
         double botsProduced = NumericSafety.Multiply(produced, perCycle).Value;
         sd1.bots = NumericSafety.Add(sd1.bots, botsProduced).Value;
+        if (!_updatePresentation) return;
 
+        // Hide boost button when boost is active (time remaining > 10s)
+        if (factoriesPanel.actionButton != null)
+            factoriesPanel.actionButton.gameObject.SetActive(sd1.factoriesBoostTime < 10);
+        factoriesPanel.titleText.text = $"Factories <size=70%>{UIThemeProvider.TextColourBlue}{sd1.factories:N0}</color>";
         double effectiveMulti = _factoriesTimer.GetEffectiveMultiplier(sd1.factories, globalMulti);
         factoriesPanel.fill1.fillAmount =
             (float)StaticMethods.FillBar(sd1.factories, factoriesDuration, effectiveMulti, _factoriesTimer.currentTime);
@@ -581,11 +679,11 @@ public class InformationEraManager : MonoBehaviour
     {
         if (botsPanel == null) return;
 
-        botsPanel.titleText.text = $"Bots <size=70%>{UIThemeProvider.TextColourBlue}{sd1.bots:N0}</color>";
-
         // Guard: no production without bots
         if (sourceCount < 1)
         {
+            if (!_updatePresentation) return;
+            botsPanel.titleText.text = $"Bots <size=70%>{UIThemeProvider.TextColourBlue}{sd1.bots:N0}</color>";
             botsPanel.fill1.fillAmount = 0;
             botsPanel.fillBar1Text.text = "";
             _botsFillSpeed = 0;
@@ -609,7 +707,9 @@ public class InformationEraManager : MonoBehaviour
         sd1.rockets = NumericSafety.Add(sd1.rockets, rocketsProduced).Value;
 
         _botsFillSpeed = effectiveMulti > 0 ? effectiveMulti / botsDuration : 0;
+        if (!_updatePresentation) return;
 
+        botsPanel.titleText.text = $"Bots <size=70%>{UIThemeProvider.TextColourBlue}{sd1.bots:N0}</color>";
         botsPanel.fill1.fillAmount = (float)StaticMethods.FillBar(sd1.bots, botsDuration, effectiveMulti, _botsTimer.currentTime);
         botsPanel.fillBar1Text.text = StaticMethods.TimerText(sd1.bots, botsDuration, effectiveMulti, _botsTimer.currentTime, mspace: true, colourOverride: UIThemeProvider.TextColourBlue);
     }
@@ -619,9 +719,11 @@ public class InformationEraManager : MonoBehaviour
         if (rocketsPanel == null) return;
 
         double factoriesPerSecond = _botsFillSpeed / sd1.rocketsPerSpaceFactory;
-        rocketsPanel.titleText.text = "Rockets";
-
-        if (rocketsPanel.additionalText != null)
+        if (_updatePresentation)
+        {
+            rocketsPanel.titleText.text = "Rockets";
+        }
+        if (_updatePresentation && rocketsPanel.additionalText != null)
             rocketsPanel.additionalText.text =
                 $"Launching {UIThemeProvider.TextColourBlue}{CalcUtils.FormatNumber(factoriesPerSecond, useMspace: true)}</color> Factories/s";
 
@@ -846,6 +948,19 @@ public class InformationEraManager : MonoBehaviour
     {
         if (!TrySpendInfluence(sd1.factoriesBoostCost)) return;
         sd1.factoriesBoostTime = sd1.factoriesBoostDuration;
+    }
+
+    private static void QueuePlayerAction(
+        Action action,
+        string stableId)
+    {
+        if (!GameManager.RequestQueuedPlayerAction(
+                SimulationInputKind.Purchase,
+                action,
+                stableId))
+        {
+            action();
+        }
     }
 
     private void OnEngineeringButtonClick()

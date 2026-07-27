@@ -52,7 +52,9 @@ namespace Buildings
                 int firstTarget = autoBuyOrderIndex;
                 for (int offset = 0; offset < AutomationTargetCount; offset++)
                 {
-                    TryPurchaseTarget((firstTarget + offset) % AutomationTargetCount);
+                    TryPurchaseTarget(
+                        (firstTarget + offset) % AutomationTargetCount,
+                        updatePresentation: !forceBuyMax);
                 }
 
                 autoBuyOrderIndex = (autoBuyOrderIndex + 1) % AutomationTargetCount;
@@ -112,24 +114,29 @@ namespace Buildings
                    presenter.WouldOfflineAutoPurchase(state, toggleEnabled);
         }
 
-        private void TryPurchaseTarget(int target)
+        private void TryPurchaseTarget(int target, bool updatePresentation)
         {
             switch (target)
             {
                 case 0:
-                    if (assemblyLineAutoBuy) assemblyLineManager.AutoPurchase();
+                    if (assemblyLineAutoBuy)
+                        assemblyLineManager.AutoPurchase(updatePresentation);
                     break;
                 case 1:
-                    if (aiManagerAutoBuy) aiManager.AutoPurchase();
+                    if (aiManagerAutoBuy)
+                        aiManager.AutoPurchase(updatePresentation);
                     break;
                 case 2:
-                    if (serverAutoBuy) serverManager.AutoPurchase();
+                    if (serverAutoBuy)
+                        serverManager.AutoPurchase(updatePresentation);
                     break;
                 case 3:
-                    if (dataCenterAutoBuy) dataCenterManager.AutoPurchase();
+                    if (dataCenterAutoBuy)
+                        dataCenterManager.AutoPurchase(updatePresentation);
                     break;
                 case 4:
-                    if (planetAutoBuy) planetManager.AutoPurchase();
+                    if (planetAutoBuy)
+                        planetManager.AutoPurchase(updatePresentation);
                     break;
                 case 5:
                     if (matrioshkaAutoBuy) matrioshkaPresenter.AutoPurchase();

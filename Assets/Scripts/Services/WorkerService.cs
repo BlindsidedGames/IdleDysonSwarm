@@ -2,6 +2,7 @@ using System;
 using Expansion;
 using IdleDysonSwarm.Systems.Balance;
 using Systems.Numeric;
+using Systems.Simulation;
 using static Expansion.Oracle;
 using static IdleDysonSwarm.Systems.Constants.QuantumConstants;
 
@@ -58,6 +59,12 @@ namespace IdleDysonSwarm.Services
             int batchSize = BalanceRuntime.WorkerBatchSize;
             SaveData.influence = NumericSafety.Add(SaveData.influence, batchSize).Value;
             SaveData.workersReadyToGo = 0;
+            StaticSaveSettings.simulationStatistics?.RecordSegment(
+                0d,
+                new SimulationPresentationSummary
+                {
+                    ManualInfluence = batchSize
+                });
 
             OnInfluenceGathered?.Invoke(batchSize);
 
@@ -66,37 +73,28 @@ namespace IdleDysonSwarm.Services
 
         public void ApplyOfflineProgress(double seconds)
         {
-            NumericResult<double> produced = NumericSafety.Multiply(seconds, WorkerGenerationSpeed);
-            if (!produced.IsSuccess) return;
-            long amountWhileAway = NumericSafety.ToLongFloor(Math.Round(produced.Value)).Value;
+            AdvanceSimulation(seconds);
+        }
 
-            if (AutoGatherEnabled)
-            {
-                // Auto-convert: add directly to influence
-                SaveData.influence = NumericSafety.Add(SaveData.influence, amountWhileAway).Value;
-                SaveData.universesConsumed =
-                    NumericSafety.Add(SaveData.universesConsumed, amountWhileAway).Value;
-            }
-            else
-            {
-                // Manual mode: accumulate workers up to batch size
-                int batchSize = BalanceRuntime.WorkerBatchSize;
-                long total = NumericSafety.Add(SaveData.workersReadyToGo, amountWhileAway).Value;
-                if (total >= batchSize)
-                {
-                    // Calculate overflow before clamping (fixes minor bug in original)
-                    long overflow = SaveData.workersReadyToGo;
-                    SaveData.workersReadyToGo = batchSize;
-                    SaveData.universesConsumed =
-                        NumericSafety.Add(SaveData.universesConsumed, batchSize - overflow).Value;
-                }
-                else
-                {
-                    SaveData.workersReadyToGo = total;
-                    SaveData.universesConsumed =
-                        NumericSafety.Add(SaveData.universesConsumed, amountWhileAway).Value;
-                }
-            }
+        public RealityAdvanceResult AdvanceSimulation(double seconds)
+        {
+            RealityAdvanceResult result = RealitySimulation.Advance(
+                SaveData.workerGenerationProgress,
+                SaveData.workersReadyToGo,
+                SaveData.influence,
+                AutoGatherEnabled,
+                WorkerGenerationSpeed,
+                seconds,
+                BalanceRuntime.WorkerBatchSize);
+            SaveData.workerGenerationProgress = result.FractionalProgress;
+            SaveData.workersReadyToGo = result.WorkersReady;
+            SaveData.influence = result.Influence;
+            SaveData.universesConsumed = NumericSafety.Add(
+                SaveData.universesConsumed,
+                result.WorkersGenerated).Value;
+            if (result.AutomaticInfluence > 0L)
+                OnInfluenceGathered?.Invoke(result.AutomaticInfluence);
+            return result;
         }
 
         public bool TrySpendInfluence(long amount)

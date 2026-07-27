@@ -42,6 +42,7 @@ using static Expansion.Oracle;
 /// </remarks>
 public class OfflineTimeManager : MonoBehaviour
 {
+    private bool _spendInProgress;
     [SerializeField] private TMP_Text timeDisplay;
     [SerializeField] private Button allTime;
     [SerializeField] private Button oneHour;
@@ -277,13 +278,21 @@ public class OfflineTimeManager : MonoBehaviour
             return false;
         }
 
+        if (_spendInProgress) return false;
         spentSeconds = Math.Min(requestedSeconds, ss.offlineTime);
-        _gameManager.RunAwayTime(spentSeconds);
-        ss.offlineTime = NumericSafety.Subtract(ss.offlineTime, spentSeconds).Value;
-        ss.offlineTimeUsedThisInfinity = NumericSafety.Add(
-            NumericSafety.ClampContinuous(ss.offlineTimeUsedThisInfinity),
-            spentSeconds).Value;
-        return true;
+        double requestedSpend = spentSeconds;
+        _spendInProgress = _gameManager.RunStoredTimeTransaction(
+            requestedSpend,
+            (succeeded, _) =>
+            {
+                _spendInProgress = false;
+                SetTimeDisplay();
+                SetSliderMaxToAll();
+                SetDoublerActive();
+            });
+        if (!_spendInProgress)
+            spentSeconds = 0d;
+        return _spendInProgress;
     }
 
     private void SetQuickButtonsInteractable()

@@ -1,4 +1,5 @@
 using System;
+using Systems.Simulation;
 
 namespace IdleDysonSwarm.Services
 {
@@ -79,6 +80,12 @@ namespace IdleDysonSwarm.Services
         /// </summary>
         /// <param name="seconds">Number of offline seconds to process.</param>
         void ApplyOfflineProgress(double seconds);
+
+        /// <summary>
+        /// Advances Reality on the shared simulated timeline while preserving
+        /// fractional worker progress.
+        /// </summary>
+        RealityAdvanceResult AdvanceSimulation(double seconds);
 
         /// <summary>
         /// Spends influence currency.

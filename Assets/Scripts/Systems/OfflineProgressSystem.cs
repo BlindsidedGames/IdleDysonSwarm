@@ -62,6 +62,11 @@ namespace Systems
         /// canonical ticks consumed. Returning zero selects the time-sliced fallback.
         /// </summary>
         public Func<long, long> RunAnalyticalTicks;
+        /// <summary>
+        /// Preferred shared event-time path. The returned result may yield with
+        /// unconsumed simulated time and is safe to resume.
+        /// </summary>
+        public Func<double, SimulationAdvanceResult> RunUnifiedSimulation;
     }
 
     public sealed class OfflineProgressUI
@@ -131,6 +136,12 @@ namespace Systems
 
     public static class OfflineProgressSystem
     {
+        public static SimulationWorkMetrics LastSimulationWorkMetrics
+        {
+            get;
+            private set;
+        } = new();
+
         private const double SimulationTickSeconds = 0.1d;
         private const double DefaultStoredTimeCapacitySeconds = 86400d;
         private static bool ValidateContext(OfflineProgressContext context)
@@ -383,6 +394,8 @@ namespace Systems
 
         public static IEnumerator CalculateAwayValues(double awayTime, OfflineProgressContext context, OfflineProgressUI ui)
         {
+            LastSimulationWorkMetrics =
+                new SimulationWorkMetrics();
             if (!ValidateContext(context)) yield break;
             SanitizeInfinityData(context.infinityData);
             if (!NumericSafety.IsFinite(awayTime) || awayTime <= 0d)
@@ -398,28 +411,6 @@ namespace Systems
             if (ui?.AwayFor != null) ui.AwayFor.text = $"Advanced {color}{CalcUtils.FormatTimeLarge(awayTime)}";
 
             long startingIP = context.prestigeData.infinityPoints;
-            long passiveInfinityGain = 0L;
-            if (context.saveSettings.lastInfinityPointsGained >= 1 &&
-                NumericSafety.IsFinite(context.saveSettings.timeLastInfinity) &&
-                context.saveSettings.timeLastInfinity > 0d)
-            {
-                NumericResult<double> scaledAway = NumericSafety.Multiply(
-                    awayTime,
-                    context.saveSettings.lastInfinityPointsGained);
-                NumericResult<double> perPreviousRun = NumericSafety.Divide(
-                    scaledAway.Value,
-                    context.saveSettings.timeLastInfinity);
-                NumericResult<double> passiveRate = NumericSafety.Divide(
-                    perPreviousRun.Value,
-                    10d);
-                NumericResult<long> converted = passiveRate.IsSuccess
-                    ? NumericSafety.ToLongFloor(passiveRate.Value)
-                    : new NumericResult<long>(0L, passiveRate.Status);
-                if (converted.IsSuccess) passiveInfinityGain = converted.Value;
-            }
-
-            context.prestigeData.infinityPoints =
-                NumericSafety.Add(context.prestigeData.infinityPoints, passiveInfinityGain).Value;
 
             if (context.skillTreeData.idleElectricSheep)
                 awayTime = NumericSafety.Multiply(awayTime, 2d).Value;
@@ -438,8 +429,68 @@ namespace Systems
             if (remainder < tickEpsilon) remainder = 0d;
 
             var acc = new OfflineAccumulator();
+            var simulationSummary =
+                new SimulationPresentationSummary();
+            bool usedUnifiedTimeline =
+                context.RunUnifiedSimulation != null;
 
-            if (fixedTicks >= 1)
+            if (usedUnifiedTimeline)
+            {
+                double remainingSeconds = awayTime;
+                double originalSeconds = awayTime;
+                while (remainingSeconds > tickEpsilon)
+                {
+                    var before = new OfflineStateSnapshot(
+                        context.infinityData);
+                    SimulationAdvanceResult result =
+                        context.RunUnifiedSimulation(remainingSeconds);
+                    simulationSummary.Merge(result?.Summary);
+                    LastSimulationWorkMetrics.Merge(result?.Work);
+                    double consumed = Math.Max(
+                        0d,
+                        Math.Min(
+                            remainingSeconds,
+                            result?.ConsumedSeconds ?? 0d));
+                    if (consumed <= 0d)
+                    {
+                        NumericDiagnostics.Report(
+                            "NS-OFFLINE-EVENT-NO-PROGRESS",
+                            $"status={result?.ValidationStatus}");
+                        yield break;
+                    }
+
+                    CaptureAnalyticalDelta(
+                        before,
+                        context.infinityData,
+                        ref acc);
+                    remainingSeconds = Math.Max(
+                        0d,
+                        remainingSeconds - consumed);
+                    if (ui?.ReturnScreenSlider != null)
+                        ui.ReturnScreenSlider.fillAmount = (float)Math.Min(
+                            1d,
+                            (originalSeconds - remainingSeconds) /
+                            originalSeconds);
+
+                    if (result.ValidationStatus !=
+                            SimulationValidationStatus.Valid &&
+                        result.ValidationStatus !=
+                            SimulationValidationStatus.Yielded)
+                    {
+                        NumericDiagnostics.Report(
+                            "NS-OFFLINE-EVENT-INVALID",
+                            $"status={result.ValidationStatus};code={result.DiagnosticCode}");
+                        yield break;
+                    }
+
+                    if (result.ValidationStatus ==
+                        SimulationValidationStatus.Yielded)
+                    {
+                        yield return 0;
+                    }
+                }
+            }
+            else if (fixedTicks >= 1)
             {
                 long sliderFill = 0;
                 var sliceTimer = Stopwatch.StartNew();
@@ -468,23 +519,55 @@ namespace Systems
                         processedTicks++;
                     }
 
-                    sliderFill = processedTicks;
-                    if (ui?.ReturnScreenSlider != null)
-                        ui.ReturnScreenSlider.fillAmount = (float)((double)sliderFill / fixedTicks);
-
                     if (sliceTimer.Elapsed.TotalMilliseconds >= 4d)
                     {
+                        sliderFill = processedTicks;
+                        if (ui?.ReturnScreenSlider != null)
+                            ui.ReturnScreenSlider.fillAmount =
+                                (float)((double)sliderFill / fixedTicks);
                         sliceTimer.Restart();
                         yield return 0;
                     }
                 }
+                if (ui?.ReturnScreenSlider != null)
+                    ui.ReturnScreenSlider.fillAmount = 1f;
             }
 
-            if (remainder > 0d)
+            if (!usedUnifiedTimeline && remainder > 0d)
                 ProcessTimeStep(remainder, context, ref acc, runAutomation: false);
             yield return 0;
 
             string textBuilder = "";
+
+            if (simulationSummary.CombinedInfinityCount > 0L)
+            {
+                textBuilder +=
+                    $"\nInfinity resets: {color}" +
+                    $"{simulationSummary.CombinedInfinityCount:N0}</color>" +
+                    $" for {color}" +
+                    $"{simulationSummary.CombinedInfinityPoints:N0}</color> IP";
+            }
+            if (simulationSummary.CombinedDreamResets > 0L)
+            {
+                textBuilder +=
+                    $"\nDream resets: {color}" +
+                    $"{simulationSummary.CombinedDreamResets:N0}</color>" +
+                    $" for {color}" +
+                    $"{simulationSummary.StrangeMatter:N0}</color> Strange Matter";
+            }
+            if (simulationSummary.RealityWorkers > 0L ||
+                simulationSummary.AutomaticInfluence > 0L)
+            {
+                textBuilder +=
+                    $"\nReality workers: {color}" +
+                    $"{simulationSummary.RealityWorkers:N0}</color>";
+                if (simulationSummary.AutomaticInfluence > 0L)
+                {
+                    textBuilder +=
+                        $" ({color}" +
+                        $"{simulationSummary.AutomaticInfluence:N0}</color> Influence)";
+                }
+            }
 
             // Mega-structures (show if unlocked and produced any)
             if (context.prestigeData.unlockedGalacticBrains && acc.galacticBrains > 0)

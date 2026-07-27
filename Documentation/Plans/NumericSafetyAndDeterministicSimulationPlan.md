@@ -1,7 +1,7 @@
 # Numeric Safety and Deterministic Simulation Plan
 
-Status: Approved design; local implementation re-review fixes validated, analytical fast-forward pending
-Last updated: 2026-07-26
+Status: Core numeric plan implemented locally; unified event-time follow-on in final validation
+Last updated: 2026-07-27
 
 ## Purpose
 
@@ -24,10 +24,11 @@ Implemented and locally validated:
 - Save schema 12 numeric repair, derived-cache invalidation, repair fixtures,
   durable-before-publication primary repair, and the durable/idempotent legacy
   finite bot-cap transition.
-- Shared 10 Hz active-play ordering for Dyson and Dream, deterministic
-  automation phases, start-of-tick production, synchronous Infinity/Dream
-  reset completion and research reapplication, Dream timer reconstruction,
-  and proportional Double Time depletion.
+- Shared event-time active/stored ordering for Dyson, Dream, and Reality;
+  an independent authored 10 Hz automation clock; start-of-segment
+  production; synchronous Infinity/Dream reset completion and research
+  reapplication; continuous Dream event horizons; Dream timer
+  reconstruction; and proportional Double Time depletion.
 - Canonical 0.1-second offline Dyson replay, one forced-Buy-Max automation
   phase per complete tick, no partial-remainder automation phase, saved
   online-mode restoration, four-millisecond yielding, and stored-time
@@ -44,11 +45,12 @@ Implemented and locally validated:
   Dream Double Time depletion. Every material boundary is executed by the
   canonical 0.1-second scheduler before analytical batching resumes, so
   repeated Infinity and Dream resets continue through the remaining time.
-- Local validation currently passes 343/343 Unity EditMode tests and a macOS
-  Universal IL2CPP player build. Temporary Diagnostics validation probes are
-  absent from source and generated player metadata.
+- The reviewed PR8 checkpoint passed 343/343 Unity EditMode tests and a macOS
+  Universal IL2CPP player build. The unified event-time follow-on adds
+  characterization, performance, statistics, and input-boundary coverage and
+  must record fresh full-suite/build evidence after its final source change.
 
-Still outstanding:
+Separate release validation:
 
 - Representative iOS, Android, Windows, and physical-device builds; background
   and resume profiling; and representative mobile performance validation.
@@ -220,7 +222,7 @@ Required behavior:
 
 ### Local analytical implementation status
 
-The current uncommitted PR 8 work adds a verified affine fast path for Dyson
+The implemented analytical path adds a verified affine fast path for Dyson
 intervals whose production transition is demonstrably linear. It constructs the
 start-of-tick discrete transition, validates it at quarter, midpoint,
 three-quarter, and endpoint states, applies it by cached saturating matrix

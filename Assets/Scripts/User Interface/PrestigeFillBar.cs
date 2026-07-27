@@ -48,7 +48,10 @@ public class PrestigeFillBar : MonoBehaviour
 
     public void SetAmountToBreakFor(float amount)
     {
-        oracle.saveSettings.infinityPointsToBreakFor = (int)Math.Pow(10, ipToBreakForSlider.value) - 1;
+        long target = Math.Max(
+            1L,
+            (long)Math.Pow(10, ipToBreakForSlider.value) - 1L);
+        GameManager.RequestBreakTargetChange(target);
     }
 
     private void Update()
@@ -76,9 +79,15 @@ public class PrestigeFillBar : MonoBehaviour
                 CalcUtils.BuyXCost(ipToGain + 1, amount, oracle.infinityExponent, 0);
 
             double breakTarget = Math.Max(1d, oracle.saveSettings.infinityPointsToBreakFor);
-            double displayedGain = prestigePlus.doubleIP
-                ? NumericSafety.Add(ipToGain, ipToGain).Value
-                : ipToGain;
+            long displayedGain = ipToGain;
+            if (oracle.saveSettings.doubleIp)
+                displayedGain = NumericSafety.Add(
+                    displayedGain,
+                    displayedGain).Value;
+            if (prestigePlus.doubleIP)
+                displayedGain = NumericSafety.Add(
+                    displayedGain,
+                    displayedGain).Value;
             fill.fillAmount = NumericUiAdapter.ToUnitInterval(
                 displayedGain / breakTarget,
                 "auto_infinity_progress");

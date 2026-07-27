@@ -70,6 +70,7 @@ namespace Systems.Save
             RepairTimeBanks(settings, result);
             var visited = new HashSet<object>(ReferenceComparer.Instance);
             RepairGraph(settings, defaults, "saveSettings", visited, result);
+            RepairRealityProgress(settings, result);
             RepairAuthoredDiscreteBounds(settings, result);
 
             if (result.RepairCount > 0)
@@ -299,6 +300,26 @@ namespace Systems.Save
                 10L,
                 "saveSettings.dysonVerseSaveData.dysonVersePrestigeData.permanentSkillPoint",
                 result);
+        }
+
+        private static void RepairRealityProgress(
+            Oracle.SaveDataSettings settings,
+            NumericSaveRepairResult result)
+        {
+            Oracle.SaveData reality = settings.saveData;
+            if (reality == null) return;
+            double original = reality.workerGenerationProgress;
+            double repaired = NumericSafety.IsFinite(original) &&
+                              original >= 0d
+                ? original % 1d
+                : 0d;
+            if (original.Equals(repaired)) return;
+            reality.workerGenerationProgress = repaired;
+            result.Add(
+                "saveSettings.saveData.workerGenerationProgress",
+                original,
+                repaired,
+                "fractional_reality_progress_0_to_1");
         }
 
         private static void ClampLong(

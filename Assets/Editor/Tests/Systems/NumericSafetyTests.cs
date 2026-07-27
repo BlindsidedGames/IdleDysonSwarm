@@ -196,6 +196,13 @@ namespace Tests.Systems
         }
 
         [Test]
+        public void TimerUiAdapters_ZeroBuildingsAndMultiplierIsAnIdleState()
+        {
+            Assert.AreEqual(0d, StaticMethods.FillBar(0d, 3d, 0d, 0d));
+            Assert.AreEqual("", StaticMethods.TimerText(0d, 3d, 0d, 0d));
+        }
+
+        [Test]
         public void Divide_ZeroDenominator_IsExplicit()
         {
             Assert.AreEqual(NumericStatus.DivisionByZero, NumericSafety.Divide(1d, 0d).Status);

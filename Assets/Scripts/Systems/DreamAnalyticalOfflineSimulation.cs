@@ -91,6 +91,259 @@ namespace Systems.Simulation
         private const double HousingConversionCost = 10d;
         private const double VillageConversionCost = 25d;
 
+        /// <summary>
+        /// Returns the continuous simulated time to the next Dream state
+        /// boundary. Automation conversions remain on the independent
+        /// scheduler clock; this horizon covers timer output, research/boost
+        /// expiry, Double Time depletion, and an already-satisfied reset.
+        /// </summary>
+        public static double GetNextMaterialEventSeconds(
+            SaveDataDream1 dream,
+            SaveDataPrestige prestige,
+            DreamOfflineTiming timing,
+            double maximumSeconds)
+        {
+            if (dream == null ||
+                prestige == null ||
+                !NumericSafety.IsFinite(maximumSeconds) ||
+                maximumSeconds <= 0d ||
+                !TimingIsValid(timing))
+            {
+                return maximumSeconds;
+            }
+
+            bool resetReady = prestige.disasterStage switch
+            {
+                0 or 1 => dream.cities >= 1d,
+                2 => dream.bots >= 100d,
+                3 => dream.spaceFactories >= 5d,
+                _ => false
+            };
+            if (resetReady) return 0d;
+
+            int rate = Math.Max(
+                0,
+                Math.Min(10, prestige.doubleTimeRate));
+            bool doubleTimeActive =
+                prestige.doubleTimeOwned &&
+                prestige.doubleTime > 0d;
+            double global = doubleTimeActive
+                ? 1d + rate
+                : 1d;
+            double horizon = maximumSeconds;
+            if (doubleTimeActive && rate > 0)
+            {
+                horizon = Math.Min(
+                    horizon,
+                    prestige.doubleTime / rate);
+            }
+
+            LimitContinuousTimer(
+                ref horizon,
+                dream.hunterTimerProgress,
+                timing.Hunter,
+                TimerRate(dream.hunters, global));
+            LimitContinuousTimer(
+                ref horizon,
+                dream.gathererTimerProgress,
+                timing.Gatherer,
+                TimerRate(dream.gatherers, global));
+            LimitContinuousTimer(
+                ref horizon,
+                dream.communityTimerProgress,
+                timing.Community,
+                TimerRate(
+                    dream.community,
+                    dream.communityBoostTime > 0d
+                        ? global * 2d
+                        : global));
+            LimitContinuousTimer(
+                ref horizon,
+                dream.housingTimerProgress,
+                timing.Housing,
+                TimerRate(dream.housing, global));
+            LimitContinuousTimer(
+                ref horizon,
+                dream.villagesTimerProgress,
+                timing.Villages,
+                TimerRate(dream.villages, global));
+
+            double workerGlobal = global;
+            if (prestige.workerBoostAcivator &&
+                dream.workers > 0d)
+            {
+                workerGlobal *= 1d + Math.Log10(dream.workers);
+            }
+            LimitContinuousTimer(
+                ref horizon,
+                dream.workersTimerProgress,
+                timing.Workers,
+                TimerRate(dream.workers, workerGlobal));
+            LimitContinuousTimer(
+                ref horizon,
+                dream.citiesTimerProgress,
+                timing.Cities,
+                TimerRate(dream.cities, global));
+
+            double factoryGlobal = global;
+            if (dream.factoriesBoostTime > 0d) factoryGlobal *= 2d;
+            if (dream.shippingComplete) factoryGlobal *= 2d;
+            if (dream.worldTradeComplete) factoryGlobal *= 2d;
+            LimitContinuousTimer(
+                ref horizon,
+                dream.factoriesTimerProgress,
+                timing.Factories,
+                TimerRate(dream.factories, factoryGlobal));
+
+            double botRate = 0d;
+            if (dream.bots >= 1d)
+            {
+                botRate = 1d + Math.Log10(dream.bots);
+                if (dream.bots < 100d)
+                    botRate *= dream.bots / 100d;
+                if (dream.worldPeaceComplete) botRate *= 2d;
+                if (prestige.botsBoost1Activator) botRate *= 2d;
+                botRate *= global;
+            }
+            LimitContinuousTimer(
+                ref horizon,
+                dream.botsTimerProgress,
+                timing.Bots,
+                botRate);
+
+            if (dream.dysonPanels <
+                IdleDysonSwarm.Systems.Constants.Dream1Constants
+                    .DysonPanelCap)
+            {
+                double spaceGlobal = global;
+                if (prestige.sfActivator1) spaceGlobal *= 2d;
+                if (prestige.sfActivator2) spaceGlobal *= 2d;
+                if (prestige.sfActivator3) spaceGlobal *= 2d;
+                LimitContinuousTimer(
+                    ref horizon,
+                    dream.spaceFactoriesTimerProgress,
+                    timing.SpaceFactories,
+                    TimerRate(
+                        dream.spaceFactories,
+                        spaceGlobal));
+            }
+
+            LimitContinuousResearch(
+                ref horizon,
+                dream.engineering,
+                dream.engineeringComplete,
+                dream.engineeringProgress,
+                dream.engineeringResearchTime,
+                global);
+            LimitContinuousResearch(
+                ref horizon,
+                dream.shipping,
+                dream.shippingComplete,
+                dream.shippingProgress,
+                dream.shippingResearchTime,
+                global);
+            LimitContinuousResearch(
+                ref horizon,
+                dream.worldTrade,
+                dream.worldTradeComplete,
+                dream.worldTradeProgress,
+                dream.worldTradeResearchTime,
+                global);
+            LimitContinuousResearch(
+                ref horizon,
+                dream.worldPeace,
+                dream.worldPeaceComplete,
+                dream.worldPeaceProgress,
+                dream.worldPeaceResearchTime,
+                global);
+            LimitContinuousResearch(
+                ref horizon,
+                dream.mathematics,
+                dream.mathematicsComplete,
+                dream.mathematicsProgress,
+                dream.mathematicsResearchTime,
+                global);
+            LimitContinuousResearch(
+                ref horizon,
+                dream.advancedPhysics,
+                dream.advancedPhysicsComplete,
+                dream.advancedPhysicsProgress,
+                dream.advancedPhysicsResearchTime,
+                global);
+
+            if (dream.communityBoostTime > 0d)
+                horizon = Math.Min(
+                    horizon,
+                    dream.communityBoostTime);
+            if (dream.factoriesBoostTime > 0d)
+                horizon = Math.Min(
+                    horizon,
+                    dream.factoriesBoostTime);
+            horizon = Math.Max(0d, horizon);
+            // A timer can land a few ULPs below its authored duration. Returning
+            // zero here repeatedly asks the event scheduler to apply an event
+            // without advancing enough time for ProductionTimer to cross the
+            // boundary. Keep true reset-ready events at zero above, but give
+            // timer/research/expiry boundaries the smallest scheduler-visible
+            // positive step so the exact fallback always makes progress.
+            if (horizon <= 1e-12d && maximumSeconds > 1e-12d)
+                return Math.Min(maximumSeconds, 2e-12d);
+            return horizon;
+        }
+
+        private static void LimitContinuousTimer(
+            ref double horizon,
+            double progress,
+            double duration,
+            double ratePerSecond)
+        {
+            if (!NumericSafety.IsFinite(progress) ||
+                !NumericSafety.IsFinite(duration) ||
+                !NumericSafety.IsFinite(ratePerSecond) ||
+                duration <= 0d ||
+                ratePerSecond <= 0d)
+            {
+                return;
+            }
+
+            double remaining = Math.Max(0d, duration - progress);
+            horizon = Math.Min(
+                horizon,
+                remaining / ratePerSecond);
+        }
+
+        private static void LimitContinuousResearch(
+            ref double horizon,
+            bool active,
+            bool complete,
+            double progress,
+            double duration,
+            double ratePerSecond)
+        {
+            if (!active || complete) return;
+            LimitContinuousTimer(
+                ref horizon,
+                progress,
+                duration,
+                ratePerSecond);
+        }
+
+        private static double TimerRate(
+            double source,
+            double globalMultiplier)
+        {
+            if (!NumericSafety.IsFinite(source) ||
+                !NumericSafety.IsFinite(globalMultiplier) ||
+                source < 1d ||
+                globalMultiplier <= 0d)
+            {
+                return 0d;
+            }
+            return NumericSafety.Multiply(
+                1d + Math.Log10(source),
+                globalMultiplier).Value;
+        }
+
         public static long GetQuietTickHorizon(
             SaveDataDream1 dream,
             SaveDataPrestige prestige,

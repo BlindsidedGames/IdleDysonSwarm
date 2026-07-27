@@ -166,7 +166,7 @@ namespace Tests.Systems
         }
 
         [Test]
-        public void OfflineProduction_PassiveInfinityGainSaturatesInsteadOfWrapping()
+        public void OfflineProduction_DoesNotGrantLegacyPassiveInfinityPoints()
         {
             OfflineProgressContext context = CreateProductionContext();
             context.saveSettings.lastInfinityPointsGained = int.MaxValue;
@@ -178,7 +178,7 @@ namespace Tests.Systems
             {
             }
 
-            Assert.AreEqual(long.MaxValue, context.prestigeData.infinityPoints);
+            Assert.AreEqual(0L, context.prestigeData.infinityPoints);
         }
 
         [Test]

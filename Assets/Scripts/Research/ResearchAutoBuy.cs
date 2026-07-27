@@ -77,7 +77,8 @@ namespace Research
                 for (int offset = 0; offset < presenters.Length; offset++)
                 {
                     ResearchPresenter presenter = presenters[(first + offset) % presenters.Length];
-                    if (presenter != null) presenter.TryAutoPurchase();
+                    if (presenter != null)
+                        presenter.TryAutoPurchase(updatePresentation: !forceBuyMax);
                 }
 
                 _firstPresenterIndex = (first + 1) % presenters.Length;

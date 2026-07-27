@@ -1,5 +1,6 @@
 using System;
 using IdleDysonSwarm.Services;
+using Systems.Simulation;
 
 namespace Tests.Services
 {
@@ -79,6 +80,18 @@ namespace Tests.Services
                     _workerBatchesProcessed += amountWhileAway;
                 }
             }
+        }
+
+        public RealityAdvanceResult AdvanceSimulation(double seconds)
+        {
+            ApplyOfflineProgress(seconds);
+            return new RealityAdvanceResult(
+                0d,
+                _workersReady,
+                _influenceBalance,
+                0L,
+                0L,
+                0d);
         }
 
         public bool TrySpendInfluence(long amount)

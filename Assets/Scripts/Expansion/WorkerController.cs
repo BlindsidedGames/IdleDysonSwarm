@@ -40,32 +40,13 @@ public class WorkerController : MonoBehaviour
         influenceDisplay.text = $"Influence: {_workerService.InfluenceBalance:N0}";
     }
 
-    private void OnEnable()
-    {
-        AwayFor += ApplyReturnValues;
-    }
-
-    private void OnDisable()
-    {
-        AwayFor -= ApplyReturnValues;
-    }
-
-
     #region Reality
 
     private double workerGenerationSpeed;
-    private double workerGenerationTime;
     [SerializeField] private ProceduralUIImage workerGenerationBar;
     [SerializeField] private ProceduralUIImage workersReadyToGofill;
     [SerializeField] private TMP_Text universeDesignation;
     [SerializeField] private TMP_Text preWorkerCounter;
-
-    private void ApplyReturnValues(double time)
-    {
-        _workerService.ApplyOfflineProgress(time);
-        UpdateWorkersReadyToGo();
-    }
-
 
     private void RunWorkers()
     {
@@ -80,22 +61,11 @@ public class WorkerController : MonoBehaviour
             SendWorkers();
         }
 
-        NumericResult<double> generatedTime = NumericSafety.Multiply(
-            workerGenerationSpeed,
-            Time.deltaTime);
-        if (generatedTime.IsSuccess)
-            workerGenerationTime = NumericSafety.Add(
-                workerGenerationTime,
-                generatedTime.Value).Value;
-
         workerGenerationBar.fillAmount = workerGenerationSpeed >= 10
             ? 1f
-            : NumericUiAdapter.ToUnitInterval(workerGenerationTime, "worker_generation");
-
-        if (!(workerGenerationTime >= 1)) return;
-        long completed = NumericSafety.ToLongFloor(workerGenerationTime).Value;
-        _workerService.AddGeneratedWorkers(completed);
-        workerGenerationTime = completed == long.MaxValue ? 0d : workerGenerationTime - completed;
+            : NumericUiAdapter.ToUnitInterval(
+                oracle.saveSettings.saveData.workerGenerationProgress,
+                "worker_generation");
 
         UpdateWorkersReadyToGo();
     }

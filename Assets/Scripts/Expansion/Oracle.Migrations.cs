@@ -762,6 +762,9 @@ namespace Expansion
             if (saveSettings == null) return null;
 
             saveSettings.saveData ??= new SaveData();
+            saveSettings.simulationStatistics ??=
+                new Systems.Simulation.SimulationStatistics();
+            saveSettings.simulationStatistics.EnsureShape();
             saveSettings.dysonVerseSaveData ??= new DysonVerseSaveData();
             saveSettings.sdPrestige ??= new SaveDataPrestige();
             saveSettings.sdSimulation ??= new SaveDataDream1();

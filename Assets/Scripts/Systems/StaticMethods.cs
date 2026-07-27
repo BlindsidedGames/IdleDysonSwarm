@@ -14,8 +14,15 @@ namespace Systems
                 !NumericSafety.IsFinite(duration) ||
                 !NumericSafety.IsFinite(multi) ||
                 !NumericSafety.IsFinite(time) ||
+                buildings < 0d ||
                 duration <= 0d ||
-                multi <= 0d)
+                multi < 0d)
+            {
+                NumericDiagnostics.Report("NS-UI-TIMER", "operation=fill");
+                return 0d;
+            }
+            if (buildings == 0d) return 0d;
+            if (multi == 0d)
             {
                 NumericDiagnostics.Report("NS-UI-TIMER", "operation=fill");
                 return 0d;
@@ -34,8 +41,15 @@ namespace Systems
                 !NumericSafety.IsFinite(duration) ||
                 !NumericSafety.IsFinite(multi) ||
                 !NumericSafety.IsFinite(time) ||
+                buildings < 0d ||
                 duration <= 0d ||
-                multi <= 0d)
+                multi < 0d)
+            {
+                NumericDiagnostics.Report("NS-UI-TIMER", "operation=text");
+                return "ERR";
+            }
+            if (buildings == 0d) return "";
+            if (multi == 0d)
             {
                 NumericDiagnostics.Report("NS-UI-TIMER", "operation=text");
                 return "ERR";

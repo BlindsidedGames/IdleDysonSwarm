@@ -17,6 +17,7 @@ using Systems.Numeric;
 using Systems.Skills;
 using Systems.Stats;
 using Systems.Save;
+using Systems.Simulation;
 using IdleDysonSwarm.Data.Balance;
 using IdleDysonSwarm.Systems.Balance;
 using TMPro;
@@ -107,7 +108,6 @@ namespace Expansion
         [SerializeField] private double offlineParityRecalcDeltaSeconds = 0;
         [SerializeField] private double offlineParityAbsoluteTolerance = 0.01;
         [SerializeField] private double offlineParityRelativeTolerance = 0.001;
-        [SerializeField] private bool offlineParityApplyInfinityPointsBonus = true;
 
         public static event Action UpdateSkills;
         public static event Action DebugOptionsChanged;
@@ -1303,16 +1303,10 @@ private void PackSettingsFlags()
             try
             {
                 saveSettings = offlineSettings;
-                ApplyOfflineInfinityPointsBonus(offlineSettings, awaySeconds);
                 offlineSnapshot = SimulateOfflineProgress(offlineSettings, effectiveAwaySeconds, offlineStepSeconds,
                     recalcDeltaSeconds);
 
                 saveSettings = onlineSettings;
-                if (offlineParityApplyInfinityPointsBonus)
-                {
-                    ApplyOfflineInfinityPointsBonus(onlineSettings, awaySeconds);
-                }
-
                 onlineSnapshot = SimulateOnlineProgress(onlineSettings, effectiveAwaySeconds, onlineStepSeconds);
             }
             finally
@@ -1448,24 +1442,6 @@ private void PackSettingsFlags()
             ProductionSystem.CalculateProduction(infinityData, skillTreeData, prestigeData, prestigePlus, recalcDeltaSeconds);
         }
 
-        private static void ApplyOfflineInfinityPointsBonus(SaveDataSettings settings, double awaySeconds)
-        {
-            if (settings == null) return;
-
-            DysonVersePrestigeData prestigeData = settings.dysonVerseSaveData?.dysonVersePrestigeData;
-            if (prestigeData == null) return;
-
-            if (settings.lastInfinityPointsGained < 1) return;
-            if (settings.timeLastInfinity <= 0) return;
-
-            NumericResult<long> gain = NumericSafety.ToLongFloor(
-                awaySeconds * settings.lastInfinityPointsGained /
-                settings.timeLastInfinity / 10d);
-            if (gain.IsSuccess)
-                prestigeData.infinityPoints =
-                    NumericSafety.Add(prestigeData.infinityPoints, gain.Value).Value;
-        }
-
         private static OfflineParitySnapshot CaptureOfflineParitySnapshot(DysonVerseInfinityData infinityData)
         {
             return new OfflineParitySnapshot
@@ -1503,7 +1479,7 @@ private void PackSettingsFlags()
                 $"Steps: offline {offlineStepSeconds.ToString(CultureInfo.InvariantCulture)}s, online {onlineStepSeconds.ToString(CultureInfo.InvariantCulture)}s");
             builder.AppendLine(
                 $"Tolerance: abs {absTolerance.ToString(CultureInfo.InvariantCulture)}, rel {relTolerance.ToString(CultureInfo.InvariantCulture)}");
-            builder.AppendLine($"Online applies IP bonus: {offlineParityApplyInfinityPointsBonus}");
+            builder.AppendLine("Passive offline IP bonus: removed; resets are simulated");
 
             AppendOfflineParityLine(builder, "Bots", offlineSnapshot.Bots, onlineSnapshot.Bots, absTolerance,
                 relTolerance);
@@ -2823,7 +2799,7 @@ private void PackSettingsFlags()
         #region DysonVerseInfinity
 
         [ContextMenu("DysonInfinity")]
-        public void DysonInfinity()
+        public void DysonInfinity(bool updatePresentation = true)
         {
             bool completingBotCapTransition = saveSettings.botCapRewardsGranted;
             saveSettings.offlineTimeUsedPreviousInfinity = saveSettings.offlineTimeUsedThisInfinity;
@@ -2842,6 +2818,11 @@ private void PackSettingsFlags()
             oracle.saveSettings.lastInfinityPointsGained = ipToGain;
             prestigeData.infinityPoints =
                 NumericSafety.Add(prestigeData.infinityPoints, ipToGain).Value;
+            saveSettings.simulationStatistics?.RecordInfinityCycle(
+                breakInfinity: false,
+                saveSettings.timeLastInfinity,
+                ipToGain,
+                completingBotCapTransition);
             infinityData.bots = prestigeData.infinityAssemblyLines ? 10 : 1;
             infinityData.assemblyLines[1] = prestigeData.infinityAssemblyLines ? 10 : 0;
             infinityData.managers[1] = prestigeData.infinityAiManagers ? 10 : 0;
@@ -2851,13 +2832,13 @@ private void PackSettingsFlags()
 
             skillTreeData.skillPointsTree = prestigeData.permanentSkillPoint + bankedSkills + ArtifactSkillPoints();
 
-            if (saveSettings.firstReality)
+            if (updatePresentation && saveSettings.firstReality)
             {
                 SidePanelManager.InfinityToggle.GetComponentInChildren<MenuToggleController>().Toggle(false);
                 saveSettings.firstReality = false;
             }
 
-            if (prestigeData.infinityPoints == 42)
+            if (updatePresentation && prestigeData.infinityPoints == 42)
                 SidePanelManager.PrestigeToggle.GetComponentInChildren<MenuToggleController>().Toggle(false);
             skillTreeData.fragments = 0;
             _gameManager.AutoAssignSkillsInvoke();
@@ -2866,7 +2847,8 @@ private void PackSettingsFlags()
             saveSettings.infinityInProgress = false;
             saveSettings.botCapTransitionPending = false;
             saveSettings.botCapRewardsGranted = false;
-            Rotator.ResetPanelsStatic();
+            if (updatePresentation)
+                Rotator.ResetPanelsStatic();
             if (completingBotCapTransition && !TrySaveState(out string transitionError))
             {
                 Debug.LogError(
@@ -2874,7 +2856,8 @@ private void PackSettingsFlags()
             }
         }
 
-        public void ManualDysonInfinity()
+        public void AutomaticBreakInfinityReset(
+            bool updatePresentation = true)
         {
             bool completingBotCapTransition = saveSettings.botCapRewardsGranted;
             saveSettings.offlineTimeUsedPreviousInfinity = saveSettings.offlineTimeUsedThisInfinity;
@@ -2894,6 +2877,11 @@ private void PackSettingsFlags()
             oracle.saveSettings.lastInfinityPointsGained =
                 finalGain > int.MaxValue ? int.MaxValue : (int)finalGain;
             prestigeData.infinityPoints = NumericSafety.Add(prestigeData.infinityPoints, finalGain).Value;
+            saveSettings.simulationStatistics?.RecordInfinityCycle(
+                breakInfinity: true,
+                saveSettings.timeLastInfinity,
+                finalGain,
+                completingBotCapTransition);
 
             saveSettings.dysonVerseSaveData.dysonVerseInfinityData = new DysonVerseInfinityData();
             infinityData.bots = prestigeData.infinityAssemblyLines ? 10 : 1;
@@ -2912,7 +2900,8 @@ private void PackSettingsFlags()
             saveSettings.infinityInProgress = false;
             saveSettings.botCapTransitionPending = false;
             saveSettings.botCapRewardsGranted = false;
-            Rotator.ResetPanelsStatic();
+            if (updatePresentation)
+                Rotator.ResetPanelsStatic();
             if (completingBotCapTransition && !TrySaveState(out string transitionError))
             {
                 Debug.LogError(
@@ -2920,7 +2909,28 @@ private void PackSettingsFlags()
             }
         }
 
+        [Obsolete(
+            "Break Infinity is automatic; use AutomaticBreakInfinityReset.")]
+        public void ManualDysonInfinity()
+        {
+            AutomaticBreakInfinityReset(
+                updatePresentation: true);
+        }
+
         public void EnactPrestigePlus()
+        {
+            if (GameManager.RequestQueuedPlayerAction(
+                    SimulationInputKind.QuantumAction,
+                    EnactPrestigePlusAtSimulationBoundary,
+                    "quantum_action"))
+            {
+                return;
+            }
+
+            EnactPrestigePlusAtSimulationBoundary();
+        }
+
+        private void EnactPrestigePlusAtSimulationBoundary()
         {
             saveSettings.firstInfinityDone = true;
             switch (prestigePlus.quantumEntanglement)
@@ -2985,6 +2995,7 @@ private void PackSettingsFlags()
             _skillTreeConfirmationManager.CloseConfirm();
             _gameManager.AutoAssignSkillsInvoke();
             Rotator.ResetPanelsStatic();
+            saveSettings.simulationStatistics?.StartNewQuantumRun();
         }
 
         public void WipeSaveButtonUpdate()
@@ -3141,6 +3152,8 @@ private void PackSettingsFlags()
             public bool firstInfinityDone;
 
             public SaveData saveData = new SaveData();
+            public SimulationStatistics simulationStatistics =
+                new SimulationStatistics();
             public DysonVerseSaveData dysonVerseSaveData = new DysonVerseSaveData();
             public SaveDataPrestige sdPrestige = new SaveDataPrestige();
             public SaveDataDream1 sdSimulation = new SaveDataDream1();
@@ -3633,6 +3646,7 @@ private void PackSettingsFlags()
             public long universesConsumed;
             public long workersReadyToGo;
             public bool workerAutoConvert;
+            public double workerGenerationProgress;
 
             public long influence;
 

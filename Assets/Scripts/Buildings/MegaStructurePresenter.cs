@@ -59,7 +59,8 @@ namespace Buildings
         {
             if (_purchaseButton != null)
             {
-                _purchaseButton.onClick.AddListener(PurchaseMegaStructure);
+                _purchaseButton.onClick.AddListener(
+                    RequestMegaStructurePurchase);
             }
 
             if (breakdownButton != null)
@@ -155,6 +156,17 @@ namespace Buildings
             else
             {
                 Debug.Log($"[MegaStructurePresenter] Purchase failed");
+            }
+        }
+
+        private void RequestMegaStructurePurchase()
+        {
+            if (!GameManager.RequestQueuedPlayerAction(
+                    SimulationInputKind.Purchase,
+                    PurchaseMegaStructure,
+                    $"mega:{FacilityId}"))
+            {
+                PurchaseMegaStructure();
             }
         }
 

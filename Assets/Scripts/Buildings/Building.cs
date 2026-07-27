@@ -5,6 +5,7 @@ using TMPro;
 using UnityEngine.UI;
 using Systems.Debugging;
 using Systems.Numeric;
+using Systems.Simulation;
 using static Blindsided.Utilities.CalcUtils;
 using static Expansion.Oracle;
 
@@ -59,7 +60,8 @@ namespace Buildings
         {
             if (purchaseButton != null)
             {
-                purchaseButton.onClick.AddListener(PurchaseBuilding);
+                purchaseButton.onClick.AddListener(
+                    RequestPurchaseBuilding);
             }
         }
         public void Update()
@@ -92,7 +94,18 @@ namespace Buildings
             ManuallyPurchasedBuildings = ownership.Value;
             UpdateCostText();
         }
-        public void AutoPurchase()
+
+        private void RequestPurchaseBuilding()
+        {
+            if (!GameManager.RequestQueuedPlayerAction(
+                    SimulationInputKind.Purchase,
+                    PurchaseBuilding,
+                    $"facility:{wordUsed}"))
+            {
+                PurchaseBuilding();
+            }
+        }
+        public void AutoPurchase(bool updatePresentation = true)
         {
             long quantity = NumberToBuy();
             if (quantity <= 0) return;
@@ -110,7 +123,7 @@ namespace Buildings
 
             Money = debit.Balance;
             ManuallyPurchasedBuildings = ownership.Value;
-            UpdateCostText();
+            if (updatePresentation) UpdateCostText();
         }
 
         private static void ReportUnexpectedTransactionFailure(TransactionStatus status)

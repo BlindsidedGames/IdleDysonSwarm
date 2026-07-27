@@ -265,7 +265,7 @@ namespace Research
             return CostForAmount(affordable, BaseCostCalculated);
         }
 
-        public bool TryAutoPurchase()
+        public bool TryAutoPurchase(bool updatePresentation = true)
         {
             if (!CanAutoBuy) return false;
 
@@ -286,7 +286,7 @@ namespace Research
             _gameState.Science = debit.Balance;
             CurrentLevel = nextLevel.Value;
             HandlePostPurchase(previousLevel, CurrentLevel);
-            UpdateCostText();
+            if (updatePresentation) UpdateCostText();
             return true;
         }
 
@@ -328,6 +328,17 @@ namespace Research
             CurrentLevel = nextLevel.Value;
             HandlePostPurchase(previousLevel, CurrentLevel);
             UpdateCostText();
+        }
+
+        private void RequestResearchPurchase()
+        {
+            if (!GameManager.RequestQueuedPlayerAction(
+                    SimulationInputKind.Purchase,
+                    PurchaseResearch,
+                    $"research:{ResolvedResearchId}"))
+            {
+                PurchaseResearch();
+            }
         }
 
         private static void ReportUnexpectedTransactionFailure(TransactionStatus status)
@@ -542,7 +553,8 @@ namespace Research
                 return;
             }
 
-            buildingReferences.purchaseButton.onClick.AddListener(PurchaseResearch);
+            buildingReferences.purchaseButton.onClick.AddListener(
+                RequestResearchPurchase);
             _isPurchaseListenerBound = true;
         }
 #if UNITY_EDITOR
