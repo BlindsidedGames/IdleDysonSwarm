@@ -413,12 +413,14 @@ namespace Tests.Systems
                 (Oracle.SaveDataSettings)SerializationUtility.CreateCopy(seed);
             PrepareDysonDerivedState();
             SubscribeAndResetRuntime();
+            _gameManager.SetUnifiedAccelerationForTests(false);
             OfflineProgressContext canonical = CreateContext();
             canonical.RunAnalyticalTicks = _ => 0L;
             Run(OfflineProgressSystem.CalculateAwayValues(
                 600d,
                 canonical,
                 ui: null));
+            _gameManager.SetUnifiedAccelerationForTests(true);
 
             long expectedIp = _oracle.saveSettings.dysonVerseSaveData
                 .dysonVersePrestigeData.infinityPoints;
@@ -445,6 +447,21 @@ namespace Tests.Systems
                 $"productionSeconds=" +
                 $"{optimizedWork.ProductionOnlyBlockSeconds:F3}");
             Assert.LessOrEqual(relativeIpError, 0.001d);
+            Assert.AreEqual(
+                _oracle.saveSettings.simulationStatistics.lifetime
+                    .breakInfinityCount,
+                optimized.simulationStatistics.lifetime
+                    .breakInfinityCount,
+                "The accelerator must not invent or omit complete Break Infinity cycles.");
+            Assert.AreEqual(
+                _oracle.saveSettings.lastInfinityPointsGained,
+                optimized.lastInfinityPointsGained,
+                "The final completed cycle reward must match the canonical event-time result.");
+            Assert.AreEqual(
+                _oracle.saveSettings.timeLastInfinity,
+                optimized.timeLastInfinity,
+                1d / 60d,
+                "The final cycle timer may differ by at most one authored Infinity boundary.");
             Oracle.DysonVerseInfinityData expectedData =
                 _oracle.saveSettings.dysonVerseSaveData
                     .dysonVerseInfinityData;
@@ -460,6 +477,52 @@ namespace Tests.Systems
             Assert.Less(expectedData.bots, incompleteCycleThreshold);
             Assert.Less(actualData.bots, incompleteCycleThreshold);
             Assert.IsTrue(NumericSafety.IsFinite(actualData.bots));
+        }
+
+        [Test]
+        public void BreakInfinity_AccelerationIsStableAcrossStoredTimePartitions()
+        {
+            Oracle.SaveDataSettings seed = CreateRepresentativeSettings();
+            EnableRepresentativeBreakInfinity(seed);
+
+            _oracle.saveSettings =
+                (Oracle.SaveDataSettings)SerializationUtility.CreateCopy(seed);
+            PrepareDysonDerivedState();
+            SubscribeAndResetRuntime();
+            Run(OfflineProgressSystem.CalculateAwayValues(
+                600d,
+                CreateContext(),
+                ui: null));
+            Oracle.SaveDataSettings whole =
+                (Oracle.SaveDataSettings)SerializationUtility.CreateCopy(
+                    _oracle.saveSettings);
+
+            _oracle.saveSettings =
+                (Oracle.SaveDataSettings)SerializationUtility.CreateCopy(seed);
+            PrepareDysonDerivedState();
+            SubscribeAndResetRuntime();
+            Run(OfflineProgressSystem.CalculateAwayValues(
+                300d,
+                CreateContext(),
+                ui: null));
+            Run(OfflineProgressSystem.CalculateAwayValues(
+                300d,
+                CreateContext(),
+                ui: null));
+
+            Assert.AreEqual(
+                whole.dysonVerseSaveData.dysonVersePrestigeData
+                    .infinityPoints,
+                _oracle.saveSettings.dysonVerseSaveData
+                    .dysonVersePrestigeData.infinityPoints);
+            Assert.AreEqual(
+                whole.simulationStatistics.lifetime.breakInfinityCount,
+                _oracle.saveSettings.simulationStatistics.lifetime
+                    .breakInfinityCount);
+            AssertRelative(
+                whole.dysonVerseSaveData.dysonVerseInfinityData.bots,
+                _oracle.saveSettings.dysonVerseSaveData
+                    .dysonVerseInfinityData.bots);
         }
 
         [Test]

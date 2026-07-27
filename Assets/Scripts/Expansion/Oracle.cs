@@ -3103,6 +3103,15 @@ private void PackSettingsFlags()
             public double offlineTimeUsedThisInfinity;
             public double offlineTimeUsedPreviousInfinity;
             public double maxOfflineTime = 86400;
+            // Durable event-time clock state. These fields make stored-time
+            // processing independent of how the same duration is partitioned
+            // across jobs or save/reload boundaries.
+            public bool eventTimeClockInitialized;
+            public double simulationAutomationTimeUntilNextEvent = 0.1d;
+            public double simulationInfinityBoundaryRemaining = 1d / 60d;
+            public double simulationInfinityCycleSeconds;
+            public long simulationInfinityCycleStartingPoints;
+            public bool simulationInfinityHasPostResetStart;
             [Space(10)] public int frameRate;
             [Space(10)] public bool botsButtonToggle;
             public bool researchbuttonToggle;

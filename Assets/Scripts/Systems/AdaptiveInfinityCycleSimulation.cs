@@ -187,12 +187,25 @@ namespace Systems.Simulation
                 third.Reward,
                 minimumExponent: -1d,
                 maximumExponent: 4d);
-            long maximumProjectedInfinityPoints =
-                currentInfinityPoints > long.MaxValue / 2L
-                    ? long.MaxValue
-                    : Math.Max(
-                        currentInfinityPoints + 1L,
-                        currentInfinityPoints * 2L);
+            bool locallyConstant =
+                Math.Abs(durationExponent) <= 1e-12d &&
+                Math.Abs(rewardExponent) <= 1e-12d;
+            long maximumProjectedInfinityPoints;
+            if (locallyConstant)
+            {
+                maximumProjectedInfinityPoints = long.MaxValue;
+            }
+            else
+            {
+                long growth = Math.Max(
+                    1L,
+                    currentInfinityPoints / 4L);
+                maximumProjectedInfinityPoints =
+                    currentInfinityPoints >
+                    long.MaxValue - growth
+                        ? long.MaxValue
+                        : currentInfinityPoints + growth;
+            }
 
             long low = 0L;
             long high = ToLongSaturating(
@@ -336,11 +349,16 @@ namespace Systems.Simulation
                     rewardExponent,
                     infinityPoints,
                     minimumValue: 1d);
+                // The recurrence samples each cycle at its starting IP:
+                // x_0, x_1, ... x_(n-1).  Its discrete midpoint is therefore
+                // (n - 1) / 2, not n / 2.  Using n / 2 evaluates even a
+                // single-cycle segment half a reward into the future and
+                // systematically underestimates decreasing cycle durations.
                 double midpointInfinityPoints = SaturatingAddDouble(
                     infinityPoints,
                     SaturatingMultiplyDouble(
                         rewardAtStart,
-                        segmentCycles * 0.5d));
+                        (segmentCycles - 1d) * 0.5d));
                 double rewardAtMidpoint = EvaluatePowerModel(
                     anchor.StartingInfinityPoints,
                     anchor.Reward,

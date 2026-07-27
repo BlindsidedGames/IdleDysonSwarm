@@ -101,12 +101,22 @@ public class GameManager : MonoBehaviour
         public OfflineInfinityCycleState(
             bool breakTheLoop,
             long capturedBreakTarget,
-            long startingInfinityPoints)
+            long startingInfinityPoints,
+            bool hasPostResetStart = false,
+            long cycleStartingInfinityPoints = 0L,
+            double secondsInCurrentCycle = 0d)
         {
             BreakTheLoop = breakTheLoop;
             CapturedBreakTarget = Math.Max(1L, capturedBreakTarget);
-            CycleStartingInfinityPoints =
-                Math.Max(0L, startingInfinityPoints);
+            HasPostResetStart = hasPostResetStart;
+            CycleStartingInfinityPoints = hasPostResetStart
+                ? Math.Max(0L, cycleStartingInfinityPoints)
+                : Math.Max(0L, startingInfinityPoints);
+            SecondsInCurrentCycle =
+                NumericSafety.IsFinite(secondsInCurrentCycle) &&
+                secondsInCurrentCycle >= 0d
+                    ? secondsInCurrentCycle
+                    : 0d;
         }
 
         public bool BreakTheLoop { get; }
@@ -1221,11 +1231,32 @@ public class GameManager : MonoBehaviour
 
         public StoredRuntimeEventTimeModel(
             GameManager owner,
-            OfflineInfinityCycleState infinityState)
+            OfflineInfinityCycleState infinityState,
+            double automationTimeUntilNextEvent,
+            double infinityBoundaryRemaining)
         {
             _owner = owner;
             _infinityState = infinityState;
+            double safeAutomationRemaining =
+                NumericSafety.IsFinite(automationTimeUntilNextEvent) &&
+                automationTimeUntilNextEvent > 1e-12d &&
+                automationTimeUntilNextEvent <=
+                    SimulationTickSeconds + 1e-12d
+                    ? automationTimeUntilNextEvent
+                    : SimulationTickSeconds;
+            _automationPhaseSeconds = Math.Max(
+                0d,
+                SimulationTickSeconds - safeAutomationRemaining);
+            _infinityBoundaryRemaining =
+                NumericSafety.IsFinite(infinityBoundaryRemaining) &&
+                infinityBoundaryRemaining > 1e-12d &&
+                infinityBoundaryRemaining <= 1d / 60d + 1e-12d
+                    ? infinityBoundaryRemaining
+                    : 1d / 60d;
         }
+
+        public double InfinityBoundaryRemaining =>
+            _infinityBoundaryRemaining;
 
         public IEventTimeSimulationModel Clone() => this;
 
@@ -2246,14 +2277,32 @@ public class GameManager : MonoBehaviour
 
     private OfflineProgressContext CreateOfflineProgressContext()
     {
+        if (!oracle.saveSettings.eventTimeClockInitialized)
+        {
+            oracle.saveSettings.eventTimeClockInitialized = true;
+            oracle.saveSettings.simulationAutomationTimeUntilNextEvent =
+                SimulationTickSeconds;
+            oracle.saveSettings.simulationInfinityBoundaryRemaining =
+                1d / 60d;
+            oracle.saveSettings.simulationInfinityCycleSeconds = 0d;
+            oracle.saveSettings.simulationInfinityCycleStartingPoints =
+                prestigeData.infinityPoints;
+            oracle.saveSettings.simulationInfinityHasPostResetStart = false;
+        }
+        double automationRemaining =
+            oracle.saveSettings.simulationAutomationTimeUntilNextEvent;
         var infinityCycleState = new OfflineInfinityCycleState(
             prestigePlus.breakTheLoop,
             oracle.saveSettings.infinityPointsToBreakFor,
-            prestigeData.infinityPoints);
+            prestigeData.infinityPoints,
+            oracle.saveSettings.simulationInfinityHasPostResetStart,
+            oracle.saveSettings.simulationInfinityCycleStartingPoints,
+            oracle.saveSettings.simulationInfinityCycleSeconds);
         var eventTimeModel = new StoredRuntimeEventTimeModel(
             this,
-            infinityCycleState);
-        double automationRemaining = SimulationTickSeconds;
+            infinityCycleState,
+            automationRemaining,
+            oracle.saveSettings.simulationInfinityBoundaryRemaining);
         return new OfflineProgressContext
         {
             infinityData = infinityData,
@@ -2305,6 +2354,16 @@ public class GameManager : MonoBehaviour
                         });
                 automationRemaining =
                     result.AutomationTimeUntilNextEvent;
+                oracle.saveSettings.simulationAutomationTimeUntilNextEvent =
+                    automationRemaining;
+                oracle.saveSettings.simulationInfinityBoundaryRemaining =
+                    eventTimeModel.InfinityBoundaryRemaining;
+                oracle.saveSettings.simulationInfinityCycleSeconds =
+                    infinityCycleState.SecondsInCurrentCycle;
+                oracle.saveSettings.simulationInfinityCycleStartingPoints =
+                    infinityCycleState.CycleStartingInfinityPoints;
+                oracle.saveSettings.simulationInfinityHasPostResetStart =
+                    infinityCycleState.HasPostResetStart;
                 return result;
             }
         };
