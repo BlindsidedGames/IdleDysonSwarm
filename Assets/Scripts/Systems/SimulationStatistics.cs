@@ -233,7 +233,8 @@ namespace Systems.Simulation
             long cycleCount,
             long totalReward,
             double lastDurationSeconds,
-            long lastReward)
+            long lastReward,
+            double aggregateDurationSeconds = 0d)
         {
             EnsureShape();
             cycleCount = Math.Max(0L, cycleCount);
@@ -250,7 +251,9 @@ namespace Systems.Simulation
                 summary.OrdinaryInfinityCount = cycleCount;
                 summary.OrdinaryInfinityPoints = totalReward;
             }
-            RecordEventAtCurrentTime(summary);
+            RecordAggregateEvent(
+                summary,
+                aggregateDurationSeconds);
             lastCompletedCycle.valid = true;
             lastCompletedCycle.breakInfinity = breakInfinity;
             lastCompletedCycle.durationSeconds =
@@ -296,7 +299,8 @@ namespace Systems.Simulation
             DreamResetCause cause,
             long cycleCount,
             long totalStrangeMatter,
-            long lastReward)
+            long lastReward,
+            double aggregateDurationSeconds = 0d)
         {
             EnsureShape();
             cycleCount = Math.Max(0L, cycleCount);
@@ -320,7 +324,9 @@ namespace Systems.Simulation
                     summary.BlackHoleDreamResets = cycleCount;
                     break;
             }
-            RecordEventAtCurrentTime(summary);
+            RecordAggregateEvent(
+                summary,
+                aggregateDurationSeconds);
             lastCompletedCycle.valid = true;
             lastCompletedCycle.breakInfinity = false;
             lastCompletedCycle.durationSeconds = 0d;
@@ -352,6 +358,207 @@ namespace Systems.Simulation
                 trackedSimulatedSeconds,
                 trackedSimulatedSeconds,
                 summary);
+        }
+
+        private void RecordAggregateEvent(
+            SimulationPresentationSummary summary,
+            double aggregateDurationSeconds)
+        {
+            double duration = NumericSafety.ClampContinuous(
+                aggregateDurationSeconds);
+            if (duration <= 0d)
+            {
+                RecordEventAtCurrentTime(summary);
+                return;
+            }
+
+            lifetime.Add(summary, 0d);
+            currentQuantumRun.Add(summary, 0d);
+            recentProcessedSegment.Add(summary, 0d);
+            double end = NumericSafety.Add(
+                trackedSimulatedSeconds,
+                duration).Value;
+            RecordWindowMetricsDistributed(
+                minuteWindows,
+                60L,
+                trackedSimulatedSeconds,
+                end,
+                summary);
+            RecordWindowMetricsDistributed(
+                halfHourWindows,
+                1800L,
+                trackedSimulatedSeconds,
+                end,
+                summary);
+            RecordWindowMetricsDistributed(
+                dailyWindows,
+                86400L,
+                trackedSimulatedSeconds,
+                end,
+                summary);
+        }
+
+        private static void RecordWindowMetricsDistributed(
+            SimulationWindowBucket[] buckets,
+            long widthSeconds,
+            double segmentStartSeconds,
+            double segmentEndSeconds,
+            SimulationPresentationSummary summary)
+        {
+            if (buckets == null ||
+                buckets.Length == 0 ||
+                summary == null)
+            {
+                return;
+            }
+
+            double start = NumericSafety.ClampContinuous(
+                segmentStartSeconds);
+            double end = Math.Max(
+                start,
+                NumericSafety.ClampContinuous(
+                    segmentEndSeconds));
+            double duration = end - start;
+            if (duration <= 0d)
+            {
+                AddWindowMetrics(
+                    PrepareBucket(
+                        buckets,
+                        ToWindowSequence(end, widthSeconds)),
+                    summary.CombinedInfinityCount,
+                    summary.CombinedInfinityPoints,
+                    summary.CombinedDreamResets,
+                    summary.StrangeMatter,
+                    summary.RealityWorkers);
+                return;
+            }
+
+            double lastPoint = Math.Max(
+                start,
+                end - Math.Max(
+                    1e-9d,
+                    Math.Abs(end) * 1e-15d));
+            long firstSequence = ToWindowSequence(
+                start,
+                widthSeconds);
+            long lastSequence = ToWindowSequence(
+                lastPoint,
+                widthSeconds);
+            long retainedFirst = Math.Max(
+                firstSequence,
+                lastSequence - buckets.Length + 1L);
+            for (long sequence = retainedFirst;; sequence++)
+            {
+                double windowStart =
+                    sequence * (double)widthSeconds;
+                double windowEnd = NumericSafety.Add(
+                    windowStart,
+                    widthSeconds).Value;
+                double clippedStart = Math.Max(
+                    start,
+                    windowStart);
+                double clippedEnd = Math.Min(
+                    end,
+                    windowEnd);
+                if (clippedEnd > clippedStart)
+                {
+                    long infinityCount = PortionBetween(
+                        summary.CombinedInfinityCount,
+                        clippedStart - start,
+                        clippedEnd - start,
+                        duration);
+                    long infinityPoints = PortionBetween(
+                        summary.CombinedInfinityPoints,
+                        clippedStart - start,
+                        clippedEnd - start,
+                        duration);
+                    long dreamResets = PortionBetween(
+                        summary.CombinedDreamResets,
+                        clippedStart - start,
+                        clippedEnd - start,
+                        duration);
+                    long strangeMatter = PortionBetween(
+                        summary.StrangeMatter,
+                        clippedStart - start,
+                        clippedEnd - start,
+                        duration);
+                    long realityWorkers = PortionBetween(
+                        summary.RealityWorkers,
+                        clippedStart - start,
+                        clippedEnd - start,
+                        duration);
+                    AddWindowMetrics(
+                        PrepareBucket(buckets, sequence),
+                        infinityCount,
+                        infinityPoints,
+                        dreamResets,
+                        strangeMatter,
+                        realityWorkers);
+                }
+
+                if (sequence == lastSequence)
+                    break;
+            }
+        }
+
+        private static long PortionBetween(
+            long total,
+            double startOffset,
+            double endOffset,
+            double duration)
+        {
+            total = Math.Max(0L, total);
+            if (total == 0L || duration <= 0d)
+                return 0L;
+            long before = ProportionalFloor(
+                total,
+                startOffset,
+                duration);
+            long after = ProportionalFloor(
+                total,
+                endOffset,
+                duration);
+            return Math.Max(0L, after - before);
+        }
+
+        private static long ProportionalFloor(
+            long total,
+            double offset,
+            double duration)
+        {
+            if (offset <= 0d) return 0L;
+            if (offset >= duration) return total;
+            double fraction = Math.Max(
+                0d,
+                Math.Min(1d, offset / duration));
+            double value = total * fraction;
+            return NumericSafety.ToLongFloor(
+                Math.Floor(value + 1e-12d)).Value;
+        }
+
+        private static void AddWindowMetrics(
+            SimulationWindowBucket bucket,
+            long infinityCount,
+            long infinityPoints,
+            long dreamResetCount,
+            long strangeMatter,
+            long realityWorkers)
+        {
+            bucket.infinityCount = NumericSafety.Add(
+                bucket.infinityCount,
+                infinityCount).Value;
+            bucket.infinityPoints = NumericSafety.Add(
+                bucket.infinityPoints,
+                infinityPoints).Value;
+            bucket.dreamResetCount = NumericSafety.Add(
+                bucket.dreamResetCount,
+                dreamResetCount).Value;
+            bucket.strangeMatter = NumericSafety.Add(
+                bucket.strangeMatter,
+                strangeMatter).Value;
+            bucket.realityWorkers = NumericSafety.Add(
+                bucket.realityWorkers,
+                realityWorkers).Value;
         }
 
         private static void RecordWindow(

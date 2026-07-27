@@ -549,6 +549,72 @@ namespace Tests.Systems
         }
 
         [Test]
+        public void Statistics_AggregateEventsAreDistributedAcrossUpcomingInterval()
+        {
+            var statistics = new SimulationStatistics();
+
+            statistics.RecordInfinityAggregate(
+                breakInfinity: true,
+                cycleCount: 120L,
+                totalReward: 1200L,
+                lastDurationSeconds: 1d,
+                lastReward: 10L,
+                aggregateDurationSeconds: 120d);
+            statistics.RecordSegment(
+                120d,
+                new SimulationPresentationSummary());
+
+            Assert.AreEqual(
+                60L,
+                statistics.minuteWindows[0].infinityCount);
+            Assert.AreEqual(
+                600L,
+                statistics.minuteWindows[0].infinityPoints);
+            Assert.AreEqual(
+                60L,
+                statistics.minuteWindows[1].infinityCount);
+            Assert.AreEqual(
+                600L,
+                statistics.minuteWindows[1].infinityPoints);
+            Assert.AreEqual(
+                120L,
+                statistics.lifetime.breakInfinityCount);
+            Assert.AreEqual(
+                120d,
+                statistics.lifetime.simulatedSeconds,
+                0d);
+        }
+
+        [Test]
+        public void Statistics_DistributedAggregatePreservesIntegerTotalsAcrossUnevenWindows()
+        {
+            var statistics = new SimulationStatistics();
+
+            statistics.RecordDreamAggregate(
+                DreamResetCause.Meteor,
+                cycleCount: 7L,
+                totalStrangeMatter: 7L,
+                lastReward: 1L,
+                aggregateDurationSeconds: 90d);
+            statistics.RecordSegment(
+                90d,
+                new SimulationPresentationSummary());
+
+            Assert.AreEqual(
+                4L,
+                statistics.minuteWindows[0].dreamResetCount);
+            Assert.AreEqual(
+                3L,
+                statistics.minuteWindows[1].dreamResetCount);
+            Assert.AreEqual(
+                7L,
+                statistics.lifetime.meteorDreamResets);
+            Assert.AreEqual(
+                7L,
+                statistics.lifetime.strangeMatter);
+        }
+
+        [Test]
         public void Statistics_NewQuantumRunPreservesLifetimeAndHistory()
         {
             var statistics = new SimulationStatistics();

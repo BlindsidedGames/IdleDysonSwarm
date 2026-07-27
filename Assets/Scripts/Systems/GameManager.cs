@@ -1294,7 +1294,8 @@ public class GameManager : MonoBehaviour
                     cycles,
                     totalReward,
                     minimumCycle,
-                    rewardPerCycle);
+                    rewardPerCycle,
+                    consumed);
 
             SaveDataPrestige dreamPrestige =
                 Oracle.oracle.saveSettings.sdPrestige;
@@ -2047,7 +2048,8 @@ public class GameManager : MonoBehaviour
                     cause,
                     cycles,
                     totalReward,
-                    rewardPerCycle);
+                    rewardPerCycle,
+                    consumed);
             _dreamCycleState.AcceptAggregate();
             _infinityState.AddElapsed(consumed);
             _infinityBoundaryRemaining = 1d / 60d;
@@ -2253,7 +2255,8 @@ public class GameManager : MonoBehaviour
                     cycles,
                     totalReward,
                     minimumCycle,
-                    rewardPerCycle);
+                    rewardPerCycle,
+                    consumed);
             _infinityState.AcceptProjection(
                 _owner.prestigeData.infinityPoints);
             ApplyAggregatedOfflineTimeRollover(
@@ -3027,7 +3030,8 @@ public class GameManager : MonoBehaviour
                 projection.CycleCount,
                 aggregateReward,
                 projection.LastDurationSeconds,
-                projection.LastReward);
+                projection.LastReward,
+                projection.ConsumedSeconds);
         infinityCycleState.AcceptProjection(projection);
     }
 
