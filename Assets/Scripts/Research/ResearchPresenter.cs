@@ -267,26 +267,58 @@ namespace Research
 
         public bool TryAutoPurchase(bool updatePresentation = true)
         {
-            if (!CanAutoBuy) return false;
+            return TryAutoPurchase(
+                SimulationAutomationPolicy.PreserveConfiguredMode,
+                updatePresentation);
+        }
 
-            long quantity = NumberToBuy();
-            if (quantity <= 0) return false;
-
+        public bool TryAutoPurchase(
+            SimulationAutomationPolicy policy,
+            bool updatePresentation = true)
+        {
             double previousLevel = CurrentLevel;
-            NumericResult<double> nextLevel = NumericSafety.Add(previousLevel, quantity);
-            if (!nextLevel.IsSuccess || nextLevel.Value <= previousLevel) return false;
-
-            DebitResult debit = EconomyTransaction.TryDebit(_gameState.Science, Cost(), quantity);
-            if (!debit.Succeeded)
+            if (!TryCreateAutomationRule(out var rule) ||
+                !DysonAutomationTransactions.TryPurchaseResearch(
+                    _gameState.SaveSettings,
+                    rule,
+                    policy,
+                    out _))
             {
-                ReportUnexpectedTransactionFailure(debit.Status);
                 return false;
             }
 
-            _gameState.Science = debit.Balance;
-            CurrentLevel = nextLevel.Value;
             HandlePostPurchase(previousLevel, CurrentLevel);
             if (updatePresentation) UpdateCostText();
+            return true;
+        }
+
+        public bool TryCreateAutomationRule(
+            out ResearchAutomationRule rule)
+        {
+            ResearchDefinition resolved = ResolveDefinition();
+            string id = ResolvedResearchId;
+            if (string.IsNullOrEmpty(id))
+            {
+                rule = default;
+                return false;
+            }
+
+            rule = new ResearchAutomationRule(
+                id,
+                BaseCostValue,
+                ExponentValue,
+                MaxLevel,
+                ResolvedAutoBuyGroup,
+                resolved != null
+                    ? resolved.prerequisiteResearchIds
+                    : null,
+                resolved != null
+                    ? resolved.prerequisiteFacilityId
+                    : null,
+                resolved != null
+                    ? resolved.prerequisiteFacilityOwned
+                    : 0d,
+                Percent);
             return true;
         }
 

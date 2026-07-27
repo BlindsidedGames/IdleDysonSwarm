@@ -3288,6 +3288,10 @@ private void PackSettingsFlags()
             public double simulationInfinityCycleSeconds;
             public long simulationInfinityCycleStartingPoints;
             public bool simulationInfinityHasPostResetStart;
+            // Persist the deterministic rotation phases so automation order is
+            // unchanged by frame partitioning, stored-time yielding, or reload.
+            public int dysonAutomationTargetIndex;
+            public int researchAutomationTargetIndex;
             [Space(10)] public int frameRate;
             [Space(10)] public bool botsButtonToggle;
             public bool researchbuttonToggle;
@@ -4062,6 +4066,8 @@ private void PackSettingsFlags()
             public double botsTimerProgress;
             public double spaceFactoriesTimerProgress;
             public double railgunFireProgress;
+            public bool railgunFiring;
+            public int railgunShotsRemaining;
         }
 
 

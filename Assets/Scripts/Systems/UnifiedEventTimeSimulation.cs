@@ -11,6 +11,31 @@ using Systems.Numeric;
 
 namespace Systems.Simulation
 {
+    public static class AutomationRotation
+    {
+        public static int Normalize(int index, int targetCount)
+        {
+            if (targetCount <= 0) return 0;
+            int normalized = index % targetCount;
+            return normalized < 0
+                ? normalized + targetCount
+                : normalized;
+        }
+
+        public static int Advance(
+            int currentIndex,
+            int targetCount,
+            long elapsedTicks)
+        {
+            if (targetCount <= 0 || elapsedTicks <= 0L)
+                return Normalize(currentIndex, targetCount);
+            int offset = (int)(elapsedTicks % targetCount);
+            return Normalize(
+                Normalize(currentIndex, targetCount) + offset,
+                targetCount);
+        }
+    }
+
     public readonly struct InfinityStoredTimeUsage
     {
         public InfinityStoredTimeUsage(

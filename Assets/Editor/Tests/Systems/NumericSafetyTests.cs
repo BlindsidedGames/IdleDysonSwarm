@@ -1664,6 +1664,44 @@ namespace Tests.Systems
                     1000L));
         }
 
+        [Test]
+        public void SaveRepair_LegacyMidVolleyRailgunStateResumes()
+        {
+            var settings = new Oracle.SaveDataSettings();
+            settings.sdSimulation.railgunCharge = 25d;
+            settings.sdSimulation.dysonPanels = 10L;
+            settings.sdSimulation.railgunFireProgress = 0.2d;
+
+            NumericSaveRepair.Repair(settings);
+
+            Assert.IsTrue(settings.sdSimulation.railgunFiring);
+            Assert.AreEqual(
+                10,
+                settings.sdSimulation.railgunShotsRemaining);
+            Assert.AreEqual(
+                0.2d,
+                settings.sdSimulation.railgunFireProgress,
+                0d);
+        }
+
+        [Test]
+        public void SaveRepair_OrphanedRailgunProgressIsCleared()
+        {
+            var settings = new Oracle.SaveDataSettings();
+            settings.sdSimulation.railgunFireProgress = 0.2d;
+
+            NumericSaveRepair.Repair(settings);
+
+            Assert.IsFalse(settings.sdSimulation.railgunFiring);
+            Assert.AreEqual(
+                0,
+                settings.sdSimulation.railgunShotsRemaining);
+            Assert.AreEqual(
+                0d,
+                settings.sdSimulation.railgunFireProgress,
+                0d);
+        }
+
         [TestCase(true, 0d, 0d, 0d)]
         [TestCase(false, 1d, 0d, 0d)]
         [TestCase(false, 0d, 1d, 0d)]

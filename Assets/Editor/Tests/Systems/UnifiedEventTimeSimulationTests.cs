@@ -8,6 +8,42 @@ namespace Tests.Systems
     [TestFixture]
     public sealed class UnifiedEventTimeSimulationTests
     {
+        [TestCase(0, 8, 0)]
+        [TestCase(7, 8, 7)]
+        [TestCase(8, 8, 0)]
+        [TestCase(-1, 8, 7)]
+        [TestCase(42, 0, 0)]
+        public void AutomationRotation_NormalizesPersistedPhase(
+            int input,
+            int targetCount,
+            int expected)
+        {
+            Assert.AreEqual(
+                expected,
+                AutomationRotation.Normalize(input, targetCount));
+        }
+
+        [Test]
+        public void AutomationRotation_SkippedTicksMatchSequentialTicks()
+        {
+            const int targetCount = 8;
+            const long skipped = 42_000_000L;
+            int batched = AutomationRotation.Advance(
+                5,
+                targetCount,
+                skipped);
+            int sequential = 5;
+            for (int i = 0; i < skipped % targetCount; i++)
+            {
+                sequential = AutomationRotation.Advance(
+                    sequential,
+                    targetCount,
+                    1L);
+            }
+
+            Assert.AreEqual(sequential, batched);
+        }
+
         [Test]
         public void StoredTimeAccounting_NoResetAccumulatesCurrentCycle()
         {

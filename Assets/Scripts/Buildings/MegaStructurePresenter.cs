@@ -326,6 +326,51 @@ namespace Buildings
             _megaStructureService.TryPurchase(facilityId, numberToBuy);
         }
 
+        public bool TryCreateAutomationRule(
+            bool toggleEnabled,
+            out DysonFacilityAutomationRule rule)
+        {
+            string facilityId = FacilityId;
+            FacilityDefinition definition = Definition;
+            if (string.IsNullOrEmpty(facilityId) ||
+                definition == null)
+            {
+                rule = default;
+                return false;
+            }
+
+            bool enabled = isActiveAndEnabled &&
+                           _gameState != null &&
+                           _gameState.PrestigeData != null &&
+                           _gameState.PrestigeData.infinityAutoBots &&
+                           toggleEnabled;
+            rule = new DysonFacilityAutomationRule(
+                facilityId,
+                definition.baseCost,
+                definition.costExponent,
+                enabled,
+                _megaStructureService != null &&
+                _megaStructureService.IsUnlocked(facilityId),
+                subtractRetainedTen: false,
+                useAssemblyMegaDiscount: false,
+                maximumQuantity: int.MaxValue);
+            return true;
+        }
+
+        public bool TryAutomationPurchase(
+            bool toggleEnabled,
+            SimulationAutomationPolicy policy)
+        {
+            return TryCreateAutomationRule(
+                       toggleEnabled,
+                       out var rule) &&
+                   DysonAutomationTransactions.TryPurchaseFacility(
+                       _gameState.SaveSettings,
+                       rule,
+                       policy,
+                       out _);
+        }
+
         /// <summary>
         /// Gets the quantity this presenter would purchase for the current buy mode.
         /// </summary>

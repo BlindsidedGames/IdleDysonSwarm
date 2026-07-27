@@ -32,9 +32,6 @@ namespace Buildings
         private bool matrioshkaAutoBuy => ShouldAutoBuyMega(matrioshkaPresenter, oracle.saveSettings.infinityAutoMatrioshkaBrains);
         private bool birchAutoBuy => ShouldAutoBuyMega(birchPresenter, oracle.saveSettings.infinityAutoBirchPlanets);
         private bool galacticAutoBuy => ShouldAutoBuyMega(galacticPresenter, oracle.saveSettings.infinityAutoGalacticBrains);
-        // Rotate purchase order so no facility always buys first.
-        private int autoBuyOrderIndex;
-
         private void Awake()
         {
             _gameState = ServiceLocator.Get<IGameStateService>();
@@ -45,24 +42,25 @@ namespace Buildings
         public void RunAutomationTick(bool forceBuyMax = false)
         {
             if (!isActiveAndEnabled) return;
-            BuyMode previousMode = oracle.saveSettings.buyMode;
-            if (forceBuyMax) oracle.saveSettings.buyMode = BuyMode.BuyMax;
-            try
+            SimulationAutomationPolicy policy = forceBuyMax
+                ? SimulationAutomationPolicy.ForceBuyMax
+                : SimulationAutomationPolicy.PreserveConfiguredMode;
+            int firstTarget = AutomationRotation.Normalize(
+                oracle.saveSettings.dysonAutomationTargetIndex,
+                AutomationTargetCount);
+            for (int offset = 0; offset < AutomationTargetCount; offset++)
             {
-                int firstTarget = autoBuyOrderIndex;
-                for (int offset = 0; offset < AutomationTargetCount; offset++)
-                {
-                    TryPurchaseTarget(
-                        (firstTarget + offset) % AutomationTargetCount,
-                        updatePresentation: !forceBuyMax);
-                }
+                TryPurchaseTarget(
+                    (firstTarget + offset) % AutomationTargetCount,
+                    policy,
+                    updatePresentation: !forceBuyMax);
+            }
 
-                autoBuyOrderIndex = (autoBuyOrderIndex + 1) % AutomationTargetCount;
-            }
-            finally
-            {
-                if (forceBuyMax) oracle.saveSettings.buyMode = previousMode;
-            }
+            oracle.saveSettings.dysonAutomationTargetIndex =
+                AutomationRotation.Advance(
+                    firstTarget,
+                    AutomationTargetCount,
+                    1L);
         }
 
         public bool WouldOfflinePurchase(DysonAnalyticalState state)
@@ -90,9 +88,11 @@ namespace Buildings
         public void SkipAutomationTicks(long ticks)
         {
             if (!isActiveAndEnabled || ticks <= 0L) return;
-            int offset = (int)(ticks % AutomationTargetCount);
-            autoBuyOrderIndex =
-                (autoBuyOrderIndex + offset) % AutomationTargetCount;
+            oracle.saveSettings.dysonAutomationTargetIndex =
+                AutomationRotation.Advance(
+                    oracle.saveSettings.dysonAutomationTargetIndex,
+                    AutomationTargetCount,
+                    ticks);
         }
 
         private static bool WouldPurchase(
@@ -114,38 +114,63 @@ namespace Buildings
                    presenter.WouldOfflineAutoPurchase(state, toggleEnabled);
         }
 
-        private void TryPurchaseTarget(int target, bool updatePresentation)
+        private void TryPurchaseTarget(
+            int target,
+            SimulationAutomationPolicy policy,
+            bool updatePresentation)
         {
             switch (target)
             {
                 case 0:
                     if (assemblyLineAutoBuy)
-                        assemblyLineManager.AutoPurchase(updatePresentation);
+                        assemblyLineManager.TryAutomationPurchase(
+                            policy,
+                            updatePresentation);
                     break;
                 case 1:
                     if (aiManagerAutoBuy)
-                        aiManager.AutoPurchase(updatePresentation);
+                        aiManager.TryAutomationPurchase(
+                            policy,
+                            updatePresentation);
                     break;
                 case 2:
                     if (serverAutoBuy)
-                        serverManager.AutoPurchase(updatePresentation);
+                        serverManager.TryAutomationPurchase(
+                            policy,
+                            updatePresentation);
                     break;
                 case 3:
                     if (dataCenterAutoBuy)
-                        dataCenterManager.AutoPurchase(updatePresentation);
+                        dataCenterManager.TryAutomationPurchase(
+                            policy,
+                            updatePresentation);
                     break;
                 case 4:
                     if (planetAutoBuy)
-                        planetManager.AutoPurchase(updatePresentation);
+                        planetManager.TryAutomationPurchase(
+                            policy,
+                            updatePresentation);
                     break;
                 case 5:
-                    if (matrioshkaAutoBuy) matrioshkaPresenter.AutoPurchase();
+                    if (matrioshkaPresenter != null)
+                        matrioshkaPresenter.TryAutomationPurchase(
+                            oracle.saveSettings
+                                .infinityAutoMatrioshkaBrains,
+                            policy);
                     break;
                 case 6:
-                    if (birchAutoBuy) birchPresenter.AutoPurchase();
+                    if (birchPresenter != null)
+                        birchPresenter.TryAutomationPurchase(
+                            oracle.saveSettings
+                                .infinityAutoBirchPlanets,
+                            policy);
                     break;
                 case 7:
-                    if (galacticAutoBuy) galacticPresenter.AutoPurchase();
+                    if (galacticPresenter != null)
+                        galacticPresenter.TryAutomationPurchase(
+                            oracle.saveSettings
+                                .infinityAutoGalacticBrains,
+                            policy);
                     break;
             }
         }

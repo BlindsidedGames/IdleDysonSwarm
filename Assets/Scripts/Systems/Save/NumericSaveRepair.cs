@@ -71,6 +71,7 @@ namespace Systems.Save
             var visited = new HashSet<object>(ReferenceComparer.Instance);
             RepairGraph(settings, defaults, "saveSettings", visited, result);
             RepairRealityProgress(settings, result);
+            RepairRailgunState(settings, result);
             RepairAuthoredDiscreteBounds(settings, result);
 
             if (result.RepairCount > 0)
@@ -253,6 +254,22 @@ namespace Systems.Save
             Oracle.SaveDataSettings settings,
             NumericSaveRepairResult result)
         {
+            ClampInt(
+                ref settings.dysonAutomationTargetIndex,
+                0,
+                7,
+                "saveSettings.dysonAutomationTargetIndex",
+                result);
+            // Research definitions can change between versions. Negative
+            // phases are never meaningful; upper normalization happens
+            // against the current authored presenter/definition count.
+            ClampInt(
+                ref settings.researchAutomationTargetIndex,
+                0,
+                int.MaxValue,
+                "saveSettings.researchAutomationTargetIndex",
+                result);
+
             Oracle.DysonVerseSaveData dyson = settings.dysonVerseSaveData;
             if (dyson != null)
             {
@@ -335,6 +352,66 @@ namespace Systems.Save
                 "fractional_reality_progress_0_to_1");
         }
 
+        private static void RepairRailgunState(
+            Oracle.SaveDataSettings settings,
+            NumericSaveRepairResult result)
+        {
+            Oracle.SaveDataDream1 dream = settings.sdSimulation;
+            if (dream == null) return;
+
+            int originalShots = dream.railgunShotsRemaining;
+            dream.railgunShotsRemaining = Math.Max(
+                0,
+                Math.Min(10, dream.railgunShotsRemaining));
+            if (dream.railgunShotsRemaining != originalShots)
+            {
+                result.Add(
+                    "saveSettings.sdSimulation.railgunShotsRemaining",
+                    originalShots,
+                    dream.railgunShotsRemaining,
+                    "railgun_shots_0_to_10");
+            }
+
+            if (dream.railgunFiring)
+            {
+                if (dream.railgunShotsRemaining <= 0)
+                {
+                    dream.railgunShotsRemaining = 10;
+                    result.Add(
+                        "saveSettings.sdSimulation.railgunShotsRemaining",
+                        originalShots,
+                        dream.railgunShotsRemaining,
+                        "legacy_firing_volley_restore");
+                }
+                return;
+            }
+
+            if (dream.railgunFireProgress <= 0d) return;
+            if (dream.railgunCharge > 0d &&
+                dream.dysonPanels > 0L)
+            {
+                dream.railgunFiring = true;
+                if (dream.railgunShotsRemaining <= 0)
+                    dream.railgunShotsRemaining = 10;
+                result.Add(
+                    "saveSettings.sdSimulation.railgunFiring",
+                    false,
+                    true,
+                    "legacy_mid_volley_resume");
+                return;
+            }
+
+            double originalProgress =
+                dream.railgunFireProgress;
+            dream.railgunFireProgress = 0d;
+            dream.railgunShotsRemaining = 0;
+            result.Add(
+                "saveSettings.sdSimulation.railgunFireProgress",
+                originalProgress,
+                0d,
+                "orphaned_railgun_progress_clear");
+        }
+
         private static void ClampLong(
             ref long value,
             long minimum,
@@ -345,6 +422,20 @@ namespace Systems.Save
             long replacement = Math.Max(minimum, Math.Min(maximum, value));
             if (replacement == value) return;
             long original = value;
+            value = replacement;
+            result.Add(path, original, replacement, "authored_discrete_bounds");
+        }
+
+        private static void ClampInt(
+            ref int value,
+            int minimum,
+            int maximum,
+            string path,
+            NumericSaveRepairResult result)
+        {
+            int replacement = Math.Max(minimum, Math.Min(maximum, value));
+            if (replacement == value) return;
+            int original = value;
             value = replacement;
             result.Add(path, original, replacement, "authored_discrete_bounds");
         }

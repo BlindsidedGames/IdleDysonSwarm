@@ -269,25 +269,8 @@ public class FoundationalEraManager : MonoBehaviour
 
     private void BuildingConversions()
     {
-        // Housing to Villages conversion
-        if (sd1.housing >= HousingToVillageCost)
-        {
-            EconomyTransaction.TryPurchase(
-                ref sd1.housing,
-                HousingToVillageCost,
-                ref sd1.villages,
-                1d);
-        }
-
-        // Villages to Cities conversion
-        if (sd1.villages >= VillageToCitiesCost)
-        {
-            EconomyTransaction.TryPurchase(
-                ref sd1.villages,
-                VillageToCitiesCost,
-                ref sd1.cities,
-                1d);
-        }
+        DreamAutomationTransactions
+            .ApplyFoundationalConversions(sd1);
     }
 
     private double _communityProduction;

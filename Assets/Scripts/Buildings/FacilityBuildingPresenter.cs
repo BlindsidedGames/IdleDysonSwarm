@@ -3,6 +3,7 @@ using UnityEngine;
 using Expansion;
 using GameData;
 using IdleDysonSwarm.Services;
+using Systems.Simulation;
 using static Blindsided.Utilities.CalcUtils;
 
 namespace Buildings
@@ -33,6 +34,61 @@ namespace Buildings
         }
 
         public string FacilityId => GetFacilityId();
+
+        public bool TryCreateAutomationRule(
+            out DysonFacilityAutomationRule rule)
+        {
+            string id = GetFacilityId();
+            FacilityDefinition definition = Definition;
+            if (string.IsNullOrEmpty(id) || definition == null)
+            {
+                rule = default;
+                return false;
+            }
+
+            bool retainedTen = facilityType switch
+            {
+                FacilityType.AssemblyLines =>
+                    _gameState.PrestigeData.infinityAssemblyLines,
+                FacilityType.AiManagers =>
+                    _gameState.PrestigeData.infinityAiManagers,
+                FacilityType.Servers =>
+                    _gameState.PrestigeData.infinityServers,
+                FacilityType.DataCenters =>
+                    _gameState.PrestigeData.infinityDataCenter,
+                FacilityType.Planets =>
+                    _gameState.PrestigeData.infinityPlanets,
+                _ => false
+            };
+            rule = new DysonFacilityAutomationRule(
+                id,
+                BaseCost,
+                CostExponent,
+                AutoBuy,
+                unlocked: true,
+                subtractRetainedTen: retainedTen,
+                useAssemblyMegaDiscount:
+                    facilityType == FacilityType.AssemblyLines);
+            return true;
+        }
+
+        public bool TryAutomationPurchase(
+            SimulationAutomationPolicy policy,
+            bool updatePresentation)
+        {
+            if (!TryCreateAutomationRule(out var rule) ||
+                !DysonAutomationTransactions.TryPurchaseFacility(
+                    _gameState.SaveSettings,
+                    rule,
+                    policy,
+                    out _))
+            {
+                return false;
+            }
+
+            if (updatePresentation) UpdateCostText();
+            return true;
+        }
 
         protected override double BaseCost
         {

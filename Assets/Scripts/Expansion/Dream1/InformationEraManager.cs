@@ -737,19 +737,7 @@ public class InformationEraManager : MonoBehaviour
             return;
         }
 
-        double conversions = Math.Min(
-            Math.Floor(sd1.rockets / sd1.rocketsPerSpaceFactory),
-            Math.Floor(sd1.factories));
-        if (conversions <= 0d) return;
-
-        double rocketCost = NumericSafety.Multiply(conversions, sd1.rocketsPerSpaceFactory).Value;
-        EconomyTransaction.TryExchange(
-            ref sd1.rockets,
-            rocketCost,
-            ref sd1.factories,
-            conversions,
-            ref sd1.spaceFactories,
-            conversions);
+        DreamAutomationTransactions.ApplyRocketConversions(sd1);
     }
 
     #endregion

@@ -85,7 +85,9 @@ public class SpaceAgeManager : MonoBehaviour
         railgunsPanel != null &&
         swarmStatsPanel != null;
     public double SpaceFactoriesDurationSeconds => _factoriesDuration;
-    public bool IsRailgunFiring => _firing;
+    public bool IsRailgunFiring =>
+        oracle?.saveSettings?.sdSimulation?.railgunFiring ??
+        _firing;
 
     private void OnEnable()
     {
@@ -104,6 +106,8 @@ public class SpaceAgeManager : MonoBehaviour
         // Initialize timer with saved progress (must be in Start, after Oracle is initialized)
         _spaceFactoriesTimer = new ProductionTimer(_factoriesDuration, sd1.spaceFactoriesTimerProgress);
         _fireTime = sd1.railgunFireProgress;
+        _firing = sd1.railgunFiring;
+        _fireTimes = sd1.railgunShotsRemaining;
         _timersInitialized = true;
 
         // Set panel types and configure UI elements
@@ -163,9 +167,9 @@ public class SpaceAgeManager : MonoBehaviour
 
     private void ResetSimulationRuntime()
     {
-        _firing = false;
+        _firing = sd1.railgunFiring;
         _fireTime = sd1.railgunFireProgress;
-        _fireTimes = 0;
+        _fireTimes = sd1.railgunShotsRemaining;
         _spaceFactoriesTimer =
             new ProductionTimer(_factoriesDuration, sd1.spaceFactoriesTimerProgress);
         _infoUpdateTimer = 0d;
@@ -199,8 +203,19 @@ public class SpaceAgeManager : MonoBehaviour
 
     public void RunAutomationTick()
     {
-        RailgunManagement();
-        FireRailGun();
+        if (sdp.railgunActivator1) _totalFireTime = 2.5f;
+        if (sdp.railgunActivator2) _totalFireTime = 1f;
+        DreamAutomationTransactions.ApplyRailgun(
+            sd1,
+            sdp,
+            _tickSeconds,
+            _totalFireTime,
+            _timesToFire,
+            RailgunBasePanelsRequired);
+        _firing = sd1.railgunFiring;
+        _fireTime = sd1.railgunFireProgress;
+        _fireTimes = sd1.railgunShotsRemaining;
+        UpdateRailgunPresentation();
     }
 
     public void CompleteSimulationTick(bool updatePresentation = true)
@@ -253,6 +268,29 @@ public class SpaceAgeManager : MonoBehaviour
     {
         sd1.spaceFactoriesTimerProgress = _spaceFactoriesTimer.currentTime;
         sd1.railgunFireProgress = _fireTime;
+        sd1.railgunFiring = _firing;
+        sd1.railgunShotsRemaining = _fireTimes;
+    }
+
+    private void UpdateRailgunPresentation()
+    {
+        if (!_updatePresentation || railgunsPanel == null)
+            return;
+
+        railgunsPanel.titleText.text =
+            $"Railguns<size=70%> - {CalcUtils.FormatEnergy(sd1.railgunCharge, true, colourOverride: UIThemeProvider.TextColourBlue)} / {UIThemeProvider.TextColourBlue}25</color> MJ";
+        railgunsPanel.fill2.fillAmount =
+            (float)(sd1.railgunCharge /
+                    sd1.railgunMaxCharge);
+        railgunsPanel.fillBar2Text.text =
+            $"{CalcUtils.FormatEnergy(sd1.railgunCharge, true, colourOverride: UIThemeProvider.TextColourBlue)} / {UIThemeProvider.TextColourBlue}25</color> MJ";
+        double timeToFill = _totalFireTime /
+                            Math.Max(1, _timesToFire);
+        railgunsPanel.fill1.fillAmount = _firing
+            ? (float)(_fireTime / timeToFill)
+            : 0f;
+        railgunsPanel.fillBar1Text.text =
+            $"{UIThemeProvider.TextColourBlue}{Math.Max(0, _fireTimes)}</color> / {UIThemeProvider.TextColourBlue}{_timesToFire}</color>";
     }
 
     #region Energy

@@ -41,7 +41,7 @@ namespace Research
 
         private ResearchPresenter[] presenters;
         private bool _hasWarnedMissingScenePresenters;
-        private int _firstPresenterIndex;
+
         private void Awake()
         {
             RefreshPresenters();
@@ -59,34 +59,37 @@ namespace Research
             if (!isActiveAndEnabled) return;
             if (StaticPrestigeData == null || !StaticPrestigeData.infinityAutoResearch) return;
 
-            BuyMode previousMode = oracle.saveSettings.researchBuyMode;
-            if (forceBuyMax) oracle.saveSettings.researchBuyMode = BuyMode.BuyMax;
-            try
+            if (presenters == null || presenters.Length == 0)
             {
-                if (presenters == null || presenters.Length == 0)
-                {
-                    RefreshPresenters();
-                }
-
-                if (presenters.Length == 0)
-                {
-                    return;
-                }
-
-                int first = _firstPresenterIndex % presenters.Length;
-                for (int offset = 0; offset < presenters.Length; offset++)
-                {
-                    ResearchPresenter presenter = presenters[(first + offset) % presenters.Length];
-                    if (presenter != null)
-                        presenter.TryAutoPurchase(updatePresentation: !forceBuyMax);
-                }
-
-                _firstPresenterIndex = (first + 1) % presenters.Length;
+                RefreshPresenters();
             }
-            finally
+
+            if (presenters.Length == 0)
             {
-                if (forceBuyMax) oracle.saveSettings.researchBuyMode = previousMode;
+                return;
             }
+
+            SimulationAutomationPolicy policy = forceBuyMax
+                ? SimulationAutomationPolicy.ForceBuyMax
+                : SimulationAutomationPolicy.PreserveConfiguredMode;
+            int first = AutomationRotation.Normalize(
+                oracle.saveSettings.researchAutomationTargetIndex,
+                presenters.Length);
+            for (int offset = 0; offset < presenters.Length; offset++)
+            {
+                ResearchPresenter presenter =
+                    presenters[(first + offset) % presenters.Length];
+                if (presenter != null)
+                    presenter.TryAutoPurchase(
+                        policy,
+                        updatePresentation: !forceBuyMax);
+            }
+
+            oracle.saveSettings.researchAutomationTargetIndex =
+                AutomationRotation.Advance(
+                    first,
+                    presenters.Length,
+                    1L);
         }
 
         public bool WouldOfflinePurchase(DysonAnalyticalState state)
@@ -124,9 +127,11 @@ namespace Research
             if (presenters == null || presenters.Length == 0)
                 RefreshPresenters();
             if (presenters.Length == 0) return;
-            int offset = (int)(ticks % presenters.Length);
-            _firstPresenterIndex =
-                (_firstPresenterIndex + offset) % presenters.Length;
+            oracle.saveSettings.researchAutomationTargetIndex =
+                AutomationRotation.Advance(
+                    oracle.saveSettings.researchAutomationTargetIndex,
+                    presenters.Length,
+                    ticks);
         }
 
         private void RefreshPresenters()
