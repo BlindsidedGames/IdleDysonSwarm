@@ -296,7 +296,9 @@ namespace Systems.Numeric
             NumericResult<long> nextOwned = NumericSafety.Add(owned, quantity);
             if (quantity <= 0L)
                 return TransactionStatus.InvalidQuantity;
-            if (!nextOwned.IsSuccess || nextOwned.Value <= owned)
+            if (!nextOwned.IsSuccess ||
+                nextOwned.IsSaturated ||
+                nextOwned.Value <= owned)
                 return TransactionStatus.OutputMaxed;
 
             DiscreteDebitResult debit = TryDebit(balance, cost, quantity, authoredFree);
@@ -319,7 +321,9 @@ namespace Systems.Numeric
                 return TransactionStatus.InvalidQuantity;
 
             NumericResult<double> nextOwned = NumericSafety.Add(owned, quantity);
-            if (!nextOwned.IsSuccess || nextOwned.Value <= owned)
+            if (!nextOwned.IsSuccess ||
+                nextOwned.IsSaturated ||
+                nextOwned.Value <= owned)
                 return TransactionStatus.OutputMaxed;
 
             DiscreteDebitResult debit = TryDebit(balance, cost, 1L, authoredFree);
@@ -342,7 +346,9 @@ namespace Systems.Numeric
                 return TransactionStatus.InvalidQuantity;
 
             NumericResult<double> nextOwned = NumericSafety.Add(owned, quantity);
-            if (!nextOwned.IsSuccess || nextOwned.Value <= owned)
+            if (!nextOwned.IsSuccess ||
+                nextOwned.IsSaturated ||
+                nextOwned.Value <= owned)
                 return TransactionStatus.OutputMaxed;
 
             DebitResult debit = TryDebit(balance, cost, 1L, authoredFree);
@@ -385,7 +391,9 @@ namespace Systems.Numeric
                 return TransactionStatus.InvalidQuantity;
 
             NumericResult<double> nextOutput = NumericSafety.Add(output, outputQuantity);
-            if (!nextOutput.IsSuccess || nextOutput.Value <= output)
+            if (!nextOutput.IsSuccess ||
+                nextOutput.IsSaturated ||
+                nextOutput.Value <= output)
                 return TransactionStatus.OutputMaxed;
 
             DebitResult firstDebit = TryDebit(firstBalance, firstCost);
@@ -413,7 +421,9 @@ namespace Systems.Numeric
                 return TransactionStatus.InvalidQuantity;
 
             NumericResult<long> nextOutput = NumericSafety.Add(output, outputQuantity);
-            if (!nextOutput.IsSuccess || nextOutput.Value <= output)
+            if (!nextOutput.IsSuccess ||
+                nextOutput.IsSaturated ||
+                nextOutput.Value <= output)
                 return TransactionStatus.OutputMaxed;
 
             DebitResult continuousDebit = TryDebit(continuousBalance, continuousCost);

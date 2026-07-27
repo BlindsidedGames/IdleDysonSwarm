@@ -69,29 +69,23 @@ namespace IdleDysonSwarm.Systems.Dream1
         /// <param name="globalMultiplier">Combined multiplier (doubleTime, boosts, etc.)</param>
         /// <param name="deltaTime">Time.deltaTime</param>
         /// <returns>Number of production cycles completed this frame.</returns>
-        public int Update(double sourceCount, double globalMultiplier, double deltaTime)
+        public double Update(
+            double sourceCount,
+            double globalMultiplier,
+            double deltaTime)
         {
             if (sourceCount < 1 || duration <= 0 ||
-                double.IsNaN(sourceCount) || double.IsInfinity(sourceCount) ||
-                double.IsNaN(globalMultiplier) || double.IsInfinity(globalMultiplier) ||
+                !NumericSafety.IsFinite(sourceCount) ||
+                !NumericSafety.IsFinite(globalMultiplier) ||
+                !NumericSafety.IsFinite(deltaTime) ||
                 globalMultiplier < 0 || deltaTime < 0)
             {
-                return 0;
+                return 0d;
             }
 
             // Standard Dream1 multiplier formula: 1 + Log10(count)
             double baseMulti = 1 + Math.Log10(sourceCount);
-            double effectiveMulti = baseMulti * globalMultiplier;
-
-            double added = deltaTime * effectiveMulti;
-            currentTime = double.IsInfinity(added) || currentTime > double.MaxValue - added
-                ? double.MaxValue
-                : currentTime + added;
-
-            double completed = Math.Floor(currentTime / duration);
-            int produced = completed >= int.MaxValue ? int.MaxValue : (int)completed;
-            currentTime = completed >= int.MaxValue ? 0d : currentTime - produced * duration;
-            return produced;
+            return Advance(baseMulti, globalMultiplier, deltaTime);
         }
 
         /// <summary>
@@ -102,26 +96,79 @@ namespace IdleDysonSwarm.Systems.Dream1
         /// <param name="globalMultiplier">Combined multiplier (doubleTime, boosts, etc.)</param>
         /// <param name="deltaTime">Time.deltaTime</param>
         /// <returns>Number of production cycles completed this frame.</returns>
-        public int UpdateWithCustomMultiplier(double customBaseMulti, double globalMultiplier, double deltaTime)
+        public double UpdateWithCustomMultiplier(
+            double customBaseMulti,
+            double globalMultiplier,
+            double deltaTime)
         {
             if (duration <= 0 ||
-                double.IsNaN(customBaseMulti) || double.IsInfinity(customBaseMulti) ||
-                double.IsNaN(globalMultiplier) || double.IsInfinity(globalMultiplier) ||
-                customBaseMulti < 0d || globalMultiplier < 0d || deltaTime < 0d)
+                !NumericSafety.IsFinite(customBaseMulti) ||
+                !NumericSafety.IsFinite(globalMultiplier) ||
+                !NumericSafety.IsFinite(deltaTime) ||
+                customBaseMulti < 0d || globalMultiplier < 0d ||
+                deltaTime < 0d)
             {
-                return 0;
+                return 0d;
             }
 
-            double effectiveMulti = customBaseMulti * globalMultiplier;
-            double added = deltaTime * effectiveMulti;
-            currentTime = double.IsInfinity(added) || currentTime > double.MaxValue - added
-                ? double.MaxValue
-                : currentTime + added;
+            return Advance(
+                customBaseMulti,
+                globalMultiplier,
+                deltaTime);
+        }
 
-            double completed = Math.Floor(currentTime / duration);
-            int produced = completed >= int.MaxValue ? int.MaxValue : (int)completed;
-            currentTime = completed >= int.MaxValue ? 0d : currentTime - produced * duration;
-            return produced;
+        private double Advance(
+            double baseMultiplier,
+            double globalMultiplier,
+            double deltaTime)
+        {
+            if (!NumericSafety.IsFinite(currentTime) ||
+                currentTime < 0d)
+            {
+                currentTime = 0d;
+            }
+
+            NumericResult<double> effective =
+                NumericSafety.Multiply(
+                    baseMultiplier,
+                    globalMultiplier);
+            NumericResult<double> added =
+                NumericSafety.Multiply(
+                    deltaTime,
+                    effective.Value);
+            NumericResult<double> accumulated =
+                NumericSafety.Add(
+                    currentTime,
+                    added.Value);
+            if (!effective.IsSuccess ||
+                !added.IsSuccess ||
+                !accumulated.IsSuccess)
+            {
+                return 0d;
+            }
+
+            currentTime = accumulated.Value;
+            NumericResult<double> quotient =
+                NumericSafety.Divide(
+                    currentTime,
+                    duration);
+            if (!quotient.IsSuccess)
+                return 0d;
+            double completed = Math.Floor(quotient.Value);
+            if (!NumericSafety.IsFinite(completed) ||
+                completed <= 0d)
+            {
+                return 0d;
+            }
+
+            double remainder = currentTime % duration;
+            currentTime =
+                NumericSafety.IsFinite(remainder) &&
+                remainder >= 0d &&
+                remainder < duration
+                    ? remainder
+                    : 0d;
+            return Math.Min(double.MaxValue, completed);
         }
 
         /// <summary>

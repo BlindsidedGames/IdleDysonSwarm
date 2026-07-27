@@ -217,6 +217,40 @@ namespace Tests.Systems
         }
 
         [Test]
+        public void Reality_AutoGatherAtInfluenceCapDoesNotOverreportCredit()
+        {
+            RealityAdvanceResult result = RealitySimulation.Advance(
+                0d,
+                0L,
+                long.MaxValue,
+                true,
+                10d,
+                1d,
+                128L);
+
+            Assert.AreEqual(long.MaxValue, result.Influence);
+            Assert.AreEqual(10L, result.WorkersGenerated);
+            Assert.AreEqual(0L, result.AutomaticInfluence);
+        }
+
+        [Test]
+        public void Reality_AutoGatherCreditsOnlyRemainingInfluenceCapacity()
+        {
+            RealityAdvanceResult result = RealitySimulation.Advance(
+                0d,
+                0L,
+                long.MaxValue - 2L,
+                true,
+                10d,
+                1d,
+                128L);
+
+            Assert.AreEqual(long.MaxValue, result.Influence);
+            Assert.AreEqual(10L, result.WorkersGenerated);
+            Assert.AreEqual(2L, result.AutomaticInfluence);
+        }
+
+        [Test]
         public void DreamAdaptive_RepresentativeEighteenHoursValidates()
         {
             var dream = new Expansion.Oracle.SaveDataDream1
@@ -483,6 +517,33 @@ namespace Tests.Systems
                 90d * 60d,
                 statistics.lifetime.simulatedSeconds,
                 1e-9d);
+        }
+
+        [Test]
+        [Timeout(1000)]
+        public void Statistics_MaximumTrackedTimeDoesNotWrapWindowSequence()
+        {
+            var statistics = new SimulationStatistics
+            {
+                trackedSimulatedSeconds = double.MaxValue
+            };
+
+            statistics.RecordSegment(
+                double.MaxValue,
+                new SimulationPresentationSummary
+                {
+                    OrdinaryInfinityCount = 1L
+                });
+
+            int expectedIndex = (int)(
+                long.MaxValue %
+                statistics.minuteWindows.Length);
+            Assert.AreEqual(
+                long.MaxValue,
+                statistics.minuteWindows[expectedIndex].sequence);
+            Assert.AreEqual(
+                1L,
+                statistics.lifetime.ordinaryInfinityCount);
         }
 
         private sealed class FakeModel : IEventTimeSimulationModel

@@ -299,6 +299,23 @@ namespace Tests.Systems
         }
 
         [Test]
+        public void AtomicDiscretePurchase_SaturatingOutputDoesNotDebit()
+        {
+            long balance = 100L;
+            long owned = long.MaxValue - 5L;
+
+            TransactionStatus status = EconomyTransaction.TryPurchase(
+                ref balance,
+                10L,
+                ref owned,
+                10L);
+
+            Assert.AreEqual(TransactionStatus.OutputMaxed, status);
+            Assert.AreEqual(100L, balance);
+            Assert.AreEqual(long.MaxValue - 5L, owned);
+        }
+
+        [Test]
         public void AtomicContinuousPurchase_MaxedOutputDoesNotDebit()
         {
             long balance = 100L;
@@ -368,6 +385,30 @@ namespace Tests.Systems
             Assert.AreEqual(100d, rockets);
             Assert.AreEqual(10d, factories);
             Assert.AreEqual(double.MaxValue, spaceFactories);
+        }
+
+        [Test]
+        public void AtomicContinuousExchange_SaturatingOutputDoesNotDebitEitherInput()
+        {
+            double rockets = 100d;
+            double factories = 10d;
+            double spaceFactories =
+                NumericSafety.BitDecrement(double.MaxValue);
+
+            TransactionStatus status = EconomyTransaction.TryExchange(
+                ref rockets,
+                10d,
+                ref factories,
+                1d,
+                ref spaceFactories,
+                double.MaxValue);
+
+            Assert.AreEqual(TransactionStatus.OutputMaxed, status);
+            Assert.AreEqual(100d, rockets);
+            Assert.AreEqual(10d, factories);
+            Assert.AreEqual(
+                NumericSafety.BitDecrement(double.MaxValue),
+                spaceFactories);
         }
 
         [Test]
@@ -611,10 +652,10 @@ namespace Tests.Systems
             var split = new ProductionTimer(3d);
             var batched = new ProductionTimer(3d);
 
-            int splitProduced = 0;
+            double splitProduced = 0d;
             for (int i = 0; i < 10; i++)
                 splitProduced += split.Update(10d, 2d, 0.1d);
-            int batchedProduced = batched.Update(10d, 2d, 1d);
+            double batchedProduced = batched.Update(10d, 2d, 1d);
 
             Assert.AreEqual(batchedProduced, splitProduced);
             Assert.AreEqual(batched.currentTime, split.currentTime, 1e-12d);
@@ -1173,7 +1214,7 @@ namespace Tests.Systems
                 var boundaryTimer = new ProductionTimer(
                     timing.Hunter,
                     analytical.hunterTimerProgress);
-                int produced =
+                double produced =
                     boundaryTimer.Update(analytical.hunters, 1d, 0.1d);
                 analytical.hunterTimerProgress = boundaryTimer.currentTime;
                 analytical.community += produced;
@@ -1580,10 +1621,32 @@ namespace Tests.Systems
         {
             var timer = new ProductionTimer(0.1d);
 
-            int produced = timer.Update(double.MaxValue, double.MaxValue, 0.1d);
+            double produced = timer.Update(
+                double.MaxValue,
+                double.MaxValue,
+                0.1d);
 
-            Assert.AreEqual(int.MaxValue, produced);
-            Assert.AreEqual(0d, timer.currentTime);
+            Assert.AreEqual(double.MaxValue, produced);
+            Assert.GreaterOrEqual(timer.currentTime, 0d);
+            Assert.Less(timer.currentTime, timer.duration);
+        }
+
+        [Test]
+        public void ProductionTimer_WholeCyclesBeyondIntMaxAreNotDiscarded()
+        {
+            const double duration = 0.125d;
+            double expectedCycles = (double)int.MaxValue + 1d;
+            var timer = new ProductionTimer(
+                duration,
+                expectedCycles * duration + 0.0625d);
+
+            double produced = timer.UpdateWithCustomMultiplier(
+                0d,
+                1d,
+                0d);
+
+            Assert.AreEqual(expectedCycles, produced);
+            Assert.AreEqual(0.0625d, timer.currentTime, 1e-12d);
         }
 
         [Test]

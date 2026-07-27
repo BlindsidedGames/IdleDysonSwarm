@@ -383,9 +383,7 @@ namespace Systems.Simulation
                 long retainedFirst = Math.Max(
                     firstSequence,
                     lastSequence - buckets.Length + 1L);
-                for (long sequence = retainedFirst;
-                     sequence <= lastSequence;
-                     sequence++)
+                for (long sequence = retainedFirst;; sequence++)
                 {
                     SimulationWindowBucket timeBucket =
                         PrepareBucket(buckets, sequence);
@@ -400,6 +398,8 @@ namespace Systems.Simulation
                     timeBucket.simulatedSeconds = NumericSafety.Add(
                         timeBucket.simulatedSeconds,
                         overlap).Value;
+                    if (sequence == lastSequence)
+                        break;
                 }
             }
 
@@ -558,14 +558,18 @@ namespace Systems.Simulation
                 : Math.Max(0d, generatedExact - completed);
             if (autoGather)
             {
-                long finalInfluence =
-                    NumericSafety.Add(influence, completed).Value;
+                long influenceCapacity =
+                    long.MaxValue - influence;
+                long creditedInfluence = Math.Min(
+                    completed,
+                    influenceCapacity);
+                long finalInfluence = influence + creditedInfluence;
                 return new RealityAdvanceResult(
                     remainder,
                     0L,
                     finalInfluence,
                     completed,
-                    completed,
+                    creditedInfluence,
                     0d);
             }
 

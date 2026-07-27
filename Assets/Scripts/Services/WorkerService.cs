@@ -57,8 +57,18 @@ namespace IdleDysonSwarm.Services
                 return false;
 
             int batchSize = BalanceRuntime.WorkerBatchSize;
-            SaveData.influence = NumericSafety.Add(SaveData.influence, batchSize).Value;
-            SaveData.workersReadyToGo = 0;
+            long workers = SaveData.workersReadyToGo;
+            long influence = SaveData.influence;
+            TransactionStatus status = EconomyTransaction.TryPurchase(
+                ref workers,
+                workers,
+                ref influence,
+                batchSize);
+            if (status != TransactionStatus.Success)
+                return false;
+
+            SaveData.workersReadyToGo = workers;
+            SaveData.influence = influence;
             StaticSaveSettings.simulationStatistics?.RecordSegment(
                 0d,
                 new SimulationPresentationSummary
@@ -127,9 +137,16 @@ namespace IdleDysonSwarm.Services
             SaveData.universesConsumed = NumericSafety.Add(SaveData.universesConsumed, amount).Value;
             if (AutoGatherEnabled)
             {
-                SaveData.influence = NumericSafety.Add(SaveData.influence, amount).Value;
+                long influenceBefore = SaveData.influence;
+                SaveData.influence = NumericSafety.Add(
+                    SaveData.influence,
+                    amount).Value;
                 SaveData.workersReadyToGo = 0L;
-                OnInfluenceGathered?.Invoke(amount);
+                long credited = Math.Max(
+                    0L,
+                    SaveData.influence - influenceBefore);
+                if (credited > 0L)
+                    OnInfluenceGathered?.Invoke(credited);
                 return;
             }
 

@@ -297,7 +297,7 @@ public class FoundationalEraManager : MonoBehaviour
         if (hunterPanel == null) return;
 
         double globalMulti = GetGlobalMultiplier();
-        int produced = _hunterTimer.Update(sourceCount, globalMulti, _tickSeconds);
+        double produced = _hunterTimer.Update(sourceCount, globalMulti, _tickSeconds);
         sd1.community = NumericSafety.Add(sd1.community, produced).Value;
         if (!_updatePresentation) return;
 
@@ -312,7 +312,7 @@ public class FoundationalEraManager : MonoBehaviour
         if (gathererPanel == null) return;
 
         double globalMulti = GetGlobalMultiplier();
-        int produced = _gathererTimer.Update(sourceCount, globalMulti, _tickSeconds);
+        double produced = _gathererTimer.Update(sourceCount, globalMulti, _tickSeconds);
         sd1.community = NumericSafety.Add(sd1.community, produced).Value;
         if (!_updatePresentation) return;
 
@@ -350,7 +350,7 @@ public class FoundationalEraManager : MonoBehaviour
         double globalMulti = GetGlobalMultiplier();
         if (sd1.communityBoostTime > 0) globalMulti *= 2;
 
-        int produced = _communityTimer.Update(sourceCount, globalMulti, _tickSeconds);
+        double produced = _communityTimer.Update(sourceCount, globalMulti, _tickSeconds);
         sd1.housing = NumericSafety.Add(sd1.housing, produced).Value;
         double effectiveMulti = _communityTimer.GetEffectiveMultiplier(sd1.community, globalMulti);
         _communityProduction = effectiveMulti > 0 ? effectiveMulti / communityDuration : 0;
@@ -369,7 +369,7 @@ public class FoundationalEraManager : MonoBehaviour
         if (housingPanel == null) return;
 
         double globalMulti = GetGlobalMultiplier();
-        int produced = _housingTimer.Update(sourceCount, globalMulti, _tickSeconds);
+        double produced = _housingTimer.Update(sourceCount, globalMulti, _tickSeconds);
         sd1.workers = NumericSafety.Add(sd1.workers, produced).Value;
         if (!_updatePresentation) return;
 
@@ -402,7 +402,7 @@ public class FoundationalEraManager : MonoBehaviour
         if (sd1.villages != 0)
         {
             double productionMultiplier = GetGlobalMultiplier();
-            int produced = _villagesTimer.Update(
+            double produced = _villagesTimer.Update(
                 sourceCount,
                 productionMultiplier,
                 _tickSeconds);
@@ -443,7 +443,7 @@ public class FoundationalEraManager : MonoBehaviour
         if (sp.workerBoostAcivator && sourceCount > 0)
             globalMulti *= 1 + Math.Log10(sourceCount);
 
-        int produced = _workersTimer.Update(sourceCount, globalMulti, _tickSeconds);
+        double produced = _workersTimer.Update(sourceCount, globalMulti, _tickSeconds);
         sd1.housing = NumericSafety.Add(sd1.housing, produced).Value;
         if (!_updatePresentation) return;
 
@@ -458,7 +458,7 @@ public class FoundationalEraManager : MonoBehaviour
         if (citiesPanel == null) return;
 
         double globalMulti = GetGlobalMultiplier();
-        int produced = _citiesTimer.Update(sourceCount, globalMulti, _tickSeconds);
+        double produced = _citiesTimer.Update(sourceCount, globalMulti, _tickSeconds);
 
         double workersProduced = NumericSafety.Multiply(produced, 5d).Value;
         sd1.workers = NumericSafety.Add(sd1.workers, workersProduced).Value;

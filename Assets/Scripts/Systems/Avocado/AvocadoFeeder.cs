@@ -37,11 +37,15 @@ public class AvocadoFeeder : MonoBehaviour
         if (prestigeData.infinityPoints - prestigeData.spentInfinityPoints > 0)
         {
             long availableInfinityPoints = prestigeData.infinityPoints - prestigeData.spentInfinityPoints;
-            avocadoData.infinityPoints =
-                NumericSafety.Add(avocadoData.infinityPoints, availableInfinityPoints).Value;
-            prestigeData.infinityPoints =
-                EconomyTransaction.TryDebit(prestigeData.infinityPoints, availableInfinityPoints).Balance;
-            UpdateText();
+            if (EconomyTransaction.TryPurchase(
+                    ref prestigeData.infinityPoints,
+                    availableInfinityPoints,
+                    ref avocadoData.infinityPoints,
+                    availableInfinityPoints) ==
+                TransactionStatus.Success)
+            {
+                UpdateText();
+            }
         }
     }
 
@@ -49,9 +53,16 @@ public class AvocadoFeeder : MonoBehaviour
     {
         if (saveData.influence > 0)
         {
-            avocadoData.influence = NumericSafety.Add(avocadoData.influence, saveData.influence).Value;
-            saveData.influence = 0;
-            UpdateText();
+            long availableInfluence = saveData.influence;
+            if (EconomyTransaction.TryPurchase(
+                    ref saveData.influence,
+                    availableInfluence,
+                    ref avocadoData.influence,
+                    availableInfluence) ==
+                TransactionStatus.Success)
+            {
+                UpdateText();
+            }
         }
     }
 
@@ -59,10 +70,17 @@ public class AvocadoFeeder : MonoBehaviour
     {
         if (saveDataPrestige.strangeMatter > 0)
         {
-            avocadoData.strangeMatter =
-                NumericSafety.Add(avocadoData.strangeMatter, saveDataPrestige.strangeMatter).Value;
-            saveDataPrestige.strangeMatter = 0;
-            UpdateText();
+            long availableStrangeMatter =
+                saveDataPrestige.strangeMatter;
+            if (EconomyTransaction.TryPurchase(
+                    ref saveDataPrestige.strangeMatter,
+                    availableStrangeMatter,
+                    ref avocadoData.strangeMatter,
+                    availableStrangeMatter) ==
+                TransactionStatus.Success)
+            {
+                UpdateText();
+            }
         }
     }
 

@@ -197,7 +197,6 @@ namespace Systems.Simulation
         {
             State state = seed;
             double step = seconds / segments;
-            double automationRemainder = 0d;
             for (int segment = 0; segment < segments; segment++)
             {
                 State start = state;
@@ -333,13 +332,19 @@ namespace Systems.Simulation
                     state.Energy,
                     EnergyDelta(start, global, step));
 
-                automationRemainder += step;
+                state.AutomationRemainder = Add(
+                    state.AutomationRemainder,
+                    step);
                 long automationEvents = NumericSafety.ToLongFloor(
                     Math.Floor(
-                        (automationRemainder + 1e-12d) / 0.1d)).Value;
+                        (state.AutomationRemainder + 1e-12d) /
+                        0.1d)).Value;
                 if (automationEvents > 0L)
                 {
-                    automationRemainder -= automationEvents * 0.1d;
+                    state.AutomationRemainder = Math.Max(
+                        0d,
+                        state.AutomationRemainder -
+                        automationEvents * 0.1d);
                     ApplyConversions(
                         ref state,
                         automationEvents,
@@ -405,15 +410,27 @@ namespace Systems.Simulation
             double effectiveMultiplier,
             double seconds)
         {
-            if (effectiveMultiplier <= 0d) return 0d;
+            if (effectiveMultiplier <= 0d ||
+                !NumericSafety.IsFinite(duration) ||
+                duration <= 0d)
+            {
+                return 0d;
+            }
             double total = Add(
                 progress,
                 Multiply(effectiveMultiplier, seconds));
-            double completed = Math.Floor(total / duration);
-            progress = completed >= int.MaxValue
-                ? 0d
-                : Math.Max(0d, total - completed * duration);
-            return Math.Min(int.MaxValue, completed);
+            double completed = Math.Floor(
+                NumericSafety.Divide(
+                    total,
+                    duration).Value);
+            double remainder = total % duration;
+            progress =
+                NumericSafety.IsFinite(remainder) &&
+                remainder >= 0d &&
+                remainder < duration
+                    ? remainder
+                    : 0d;
+            return Math.Min(double.MaxValue, completed);
         }
 
         private static double BaseMultiplier(double source) =>
@@ -494,6 +511,7 @@ namespace Systems.Simulation
             public double FactoriesTimer;
             public double BotsTimer;
             public double SpaceFactoriesTimer;
+            public double AutomationRemainder;
 
             public static State Capture(SaveDataDream1 dream) =>
                 new State
@@ -540,7 +558,8 @@ namespace Systems.Simulation
                         dream.factoriesTimerProgress,
                     BotsTimer = dream.botsTimerProgress,
                     SpaceFactoriesTimer =
-                        dream.spaceFactoriesTimerProgress
+                        dream.spaceFactoriesTimerProgress,
+                    AutomationRemainder = 0d
                 };
 
             public void Apply(SaveDataDream1 dream)
@@ -579,7 +598,8 @@ namespace Systems.Simulation
                 Finite(state.Bots) &&
                 Finite(state.Rockets) &&
                 Finite(state.SpaceFactories) &&
-                Finite(state.Energy);
+                Finite(state.Energy) &&
+                Finite(state.AutomationRemainder);
 
             public static double RelativeError(
                 State left,

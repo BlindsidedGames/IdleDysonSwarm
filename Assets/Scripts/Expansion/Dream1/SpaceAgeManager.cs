@@ -339,7 +339,11 @@ public class SpaceAgeManager : MonoBehaviour
 
         if (sd1.dysonPanels < DysonPanelCap)
         {
-            int produced = _spaceFactoriesTimer.Update(sd1.spaceFactories, globalMulti, _tickSeconds);
+            long produced = NumericSafety.ToLongFloor(
+                _spaceFactoriesTimer.Update(
+                    sd1.spaceFactories,
+                    globalMulti,
+                    _tickSeconds)).Value;
             sd1.dysonPanels = Math.Min(
                 DysonPanelCap,
                 NumericSafety.Add(sd1.dysonPanels, produced).Value);

@@ -654,7 +654,7 @@ public class InformationEraManager : MonoBehaviour
         if (sd1.worldTradeComplete) globalMulti *= 2;
 
         // Use standard Log10 multiplier via ProductionTimer
-        int produced = _factoriesTimer.Update(sourceCount, globalMulti, _tickSeconds);
+        double produced = _factoriesTimer.Update(sourceCount, globalMulti, _tickSeconds);
 
         double perCycle = sp.factoriesBoostActivator
             ? NumericSafety.Multiply(sourceCount, 9d).Value
@@ -700,7 +700,10 @@ public class InformationEraManager : MonoBehaviour
 
         // Use custom multiplier since bots has special soft-start logic
         double effectiveMulti = baseMulti * globalMulti;
-        int produced = _botsTimer.UpdateWithCustomMultiplier(baseMulti, globalMulti, _tickSeconds);
+        double produced = _botsTimer.UpdateWithCustomMultiplier(
+            baseMulti,
+            globalMulti,
+            _tickSeconds);
 
         // Apply production
         double rocketsProduced = (double)produced * (sp.botsBoost2Activator ? 2d : 1d);

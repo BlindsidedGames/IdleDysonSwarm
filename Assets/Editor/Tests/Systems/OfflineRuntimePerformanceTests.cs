@@ -602,6 +602,29 @@ namespace Tests.Systems
         }
 
         [Test]
+        public void ActiveScheduler_PausesWhileStoredCandidateOwnsSimulation()
+        {
+            FieldInfo running = typeof(GameManager).GetField(
+                "_storedTimeJobRunning",
+                BindingFlags.Instance | BindingFlags.NonPublic);
+            FieldInfo pending = typeof(GameManager).GetField(
+                "_activeUnprocessedSeconds",
+                BindingFlags.Instance | BindingFlags.NonPublic);
+            Assert.NotNull(running);
+            Assert.NotNull(pending);
+            running.SetValue(_gameManager, true);
+            pending.SetValue(_gameManager, 0.05d);
+
+            InvokePrivate(_gameManager, "Update");
+
+            Assert.AreEqual(
+                0.05d,
+                (double)pending.GetValue(_gameManager),
+                0d);
+            running.SetValue(_gameManager, false);
+        }
+
+        [Test]
         public void BreakInfinity_ActiveAccelerationIsFrameChunkIndependent()
         {
             Oracle.SaveDataSettings seed = CreateRepresentativeSettings();

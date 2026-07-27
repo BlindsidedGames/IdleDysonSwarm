@@ -478,6 +478,15 @@ public class GameManager : MonoBehaviour
 
     private void Update()
     {
+        // Stored-time simulation owns an isolated candidate save while this
+        // flag is set. Advancing the published save in parallel would either
+        // be lost when the candidate is committed or overwrite the candidate
+        // when the next coroutine slice swaps state. The return screen is a
+        // deliberate simulation pause until that transaction commits,
+        // cancels, or fails.
+        if (_storedTimeJobRunning)
+            return;
+
         double elapsed = NumericSafety.IsFinite(Time.deltaTime)
             ? Math.Max(0d, Time.deltaTime)
             : 0d;
@@ -1923,6 +1932,8 @@ public class GameManager : MonoBehaviour
                 _owner.ApplyAdaptiveInfinityProjection(
                     projection,
                     _infinityState);
+                ApplyAggregatedOfflineTimeRollover(
+                    projection.CycleCount);
                 long aggregateReward = Math.Max(
                     0L,
                     _owner.prestigeData.infinityPoints -
@@ -2254,6 +2265,7 @@ public class GameManager : MonoBehaviour
             _owner.prestigeData.infinityPoints = NumericSafety.Add(
                 _owner.prestigeData.infinityPoints,
                 totalReward).Value;
+            ApplyAggregatedOfflineTimeRollover(cycles);
             Oracle.oracle.saveSettings.lastInfinityPointsGained =
                 rewardPerCycle >= int.MaxValue
                     ? int.MaxValue
@@ -2299,6 +2311,20 @@ public class GameManager : MonoBehaviour
                 },
                 0d);
             return true;
+        }
+
+        private static void ApplyAggregatedOfflineTimeRollover(
+            long cycles)
+        {
+            if (cycles <= 0L) return;
+            SaveDataSettings settings =
+                Oracle.oracle.saveSettings;
+            settings.offlineTimeUsedPreviousInfinity =
+                cycles == 1L
+                    ? NumericSafety.ClampContinuous(
+                        settings.offlineTimeUsedThisInfinity)
+                    : 0d;
+            settings.offlineTimeUsedThisInfinity = 0d;
         }
 
         private bool TryAdvanceDreamForOrdinaryInfinityAggregate(

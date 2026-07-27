@@ -2962,11 +2962,11 @@ private void PackSettingsFlags()
                     long cost = converted * IPToQuantumConversion;
                     if (converted > 0L)
                     {
-                        saveSettings.prestigePlus.points =
-                            NumericSafety.Add(saveSettings.prestigePlus.points, converted).Value;
-                        DiscreteDebitResult debit =
-                            EconomyTransaction.TryDebit(prestigeData.infinityPoints, cost);
-                        if (debit.Succeeded) prestigeData.infinityPoints = debit.Balance;
+                        EconomyTransaction.TryPurchase(
+                            ref prestigeData.infinityPoints,
+                            cost,
+                            ref saveSettings.prestigePlus.points,
+                            converted);
                     }
                 }
                     break;
