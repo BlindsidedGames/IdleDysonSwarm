@@ -219,56 +219,63 @@ namespace Tests.Systems
             AssertDreamEqual(expected, optimized);
         }
 
-        [Test]
-        public void ActiveDysonAutomationAndDream_EighteenHoursCompletesPromptly()
+        [TestCase(60d)]
+        [TestCase(60d * 60d)]
+        [TestCase(18d * 60d * 60d)]
+        public void ActiveDysonAutomationAndDream_WorkScalesWithMaterialEvents(
+            double durationSeconds)
         {
             Oracle.SaveDataSettings seed = CreateRepresentativeSettings();
             EnableRepresentativeDysonAutomation(seed);
 
-            double[] elapsedMilliseconds = new double[3];
-            for (int iteration = 0; iteration < elapsedMilliseconds.Length; iteration++)
-            {
-                double editorStart = UnityEditor.EditorApplication.timeSinceStartup;
-                var stopwatch = System.Diagnostics.Stopwatch.StartNew();
-                _oracle.saveSettings =
-                    (Oracle.SaveDataSettings)SerializationUtility.CreateCopy(seed);
-                PrepareDysonDerivedState();
-                SubscribeAndResetRuntime();
-                Run(OfflineProgressSystem.CalculateAwayValues(
-                    18d * 60d * 60d,
-                    CreateContext(),
-                    ui: null));
-                stopwatch.Stop();
-                elapsedMilliseconds[iteration] =
-                    stopwatch.Elapsed.TotalMilliseconds;
-                double editorElapsed =
-                    (UnityEditor.EditorApplication.timeSinceStartup -
-                     editorStart) * 1000d;
-                TestContext.WriteLine(
-                    $"18h automation iteration {iteration}: " +
-                    $"Stopwatch={elapsedMilliseconds[iteration]:F3}ms, " +
-                    $"EditorClock={editorElapsed:F3}ms");
-                Assert.AreEqual(
-                    elapsedMilliseconds[iteration],
-                    editorElapsed,
-                    100d,
-                    "Independent clocks should agree on complete-runner timing.");
-
-                Assert.IsTrue(NumericSafety.IsFinite(
-                    _oracle.saveSettings.dysonVerseSaveData
-                        .dysonVerseInfinityData.money));
-                Assert.IsTrue(NumericSafety.IsFinite(
-                    _oracle.saveSettings.sdSimulation.workers));
-            }
-
+            double editorStart =
+                UnityEditor.EditorApplication.timeSinceStartup;
+            var stopwatch =
+                System.Diagnostics.Stopwatch.StartNew();
+            _oracle.saveSettings =
+                (Oracle.SaveDataSettings)SerializationUtility.CreateCopy(
+                    seed);
+            PrepareDysonDerivedState();
+            SubscribeAndResetRuntime();
+            Run(OfflineProgressSystem.CalculateAwayValues(
+                durationSeconds,
+                CreateContext(),
+                ui: null));
+            stopwatch.Stop();
+            SimulationWorkMetrics work =
+                OfflineProgressSystem.LastSimulationWorkMetrics;
+            double editorElapsed =
+                (UnityEditor.EditorApplication.timeSinceStartup -
+                 editorStart) * 1000d;
+            TestContext.WriteLine(
+                $"active automation workload {durationSeconds:R}s: " +
+                $"Stopwatch={stopwatch.Elapsed.TotalMilliseconds:F3}ms, " +
+                $"EditorClock={editorElapsed:F3}ms, " +
+                $"events={work.MaterialEvents}, " +
+                $"accepted={work.AccelerationBlocksAccepted}, " +
+                $"rejected={work.AccelerationBlocksRejected}, " +
+                $"accelerated={work.AcceleratedSeconds:F3}s");
+            Assert.AreEqual(
+                stopwatch.Elapsed.TotalMilliseconds,
+                editorElapsed,
+                100d,
+                "Independent clocks should agree on complete-runner timing.");
+            Assert.IsTrue(NumericSafety.IsFinite(
+                _oracle.saveSettings.dysonVerseSaveData
+                    .dysonVerseInfinityData.money));
+            Assert.IsTrue(NumericSafety.IsFinite(
+                _oracle.saveSettings.sdSimulation.workers));
             Assert.Less(
-                elapsedMilliseconds[0],
-                1500d,
-                "Cold representative active automation replay should be prompt.");
+                work.MaterialEvents,
+                4096L,
+                "Work should be bounded by material state changes, not 0.1-second ticks.");
+            Assert.Greater(
+                work.AcceleratedSeconds,
+                durationSeconds * 0.9d);
             Assert.Less(
-                Math.Max(elapsedMilliseconds[1], elapsedMilliseconds[2]),
-                1500d,
-                "Warm representative active automation replay should be near-instant.");
+                stopwatch.Elapsed.TotalMilliseconds,
+                10_000d,
+                "The secondary wall-clock guard should catch catastrophic regressions.");
         }
 
         [Test]
@@ -323,7 +330,7 @@ namespace Tests.Systems
         }
 
         [Test]
-        public void ActiveDysonAutomationAndDream_ActualSceneCoroutineIncludesUiPath()
+        public void ActiveDysonAutomationAndDream_ActualSceneCoroutinePreservesBatchedWork()
         {
             Oracle.SaveDataSettings seed = CreateRepresentativeSettings();
             EnableRepresentativeDysonAutomation(seed);
@@ -341,12 +348,24 @@ namespace Tests.Systems
                 _gameManager,
                 new object[] { 18d * 60d * 60d }));
             stopwatch.Stop();
+            SimulationWorkMetrics work =
+                OfflineProgressSystem.LastSimulationWorkMetrics;
             TestContext.WriteLine(
                 $"18h actual scene coroutine/UI path: " +
-                $"{stopwatch.Elapsed.TotalMilliseconds:F3}ms");
+                $"{stopwatch.Elapsed.TotalMilliseconds:F3}ms, " +
+                $"events={work.MaterialEvents}, " +
+                $"accepted={work.AccelerationBlocksAccepted}, " +
+                $"rejected={work.AccelerationBlocksRejected}, " +
+                $"accelerated={work.AcceleratedSeconds:F3}s");
+            Assert.Less(
+                work.MaterialEvents,
+                4096L);
+            Assert.Greater(
+                work.AcceleratedSeconds,
+                18d * 60d * 60d * 0.9d);
             Assert.Less(
                 stopwatch.Elapsed.TotalMilliseconds,
-                1500d);
+                10_000d);
         }
 
         [Test]
@@ -387,6 +406,267 @@ namespace Tests.Systems
             Assert.IsTrue(NumericSafety.IsFinite(
                 _oracle.saveSettings.dysonVerseSaveData
                     .dysonVerseInfinityData.bots));
+        }
+
+        [TestCase(60d)]
+        [TestCase(60d * 60d)]
+        [TestCase(100d * 24d * 60d * 60d)]
+        public void BreakInfinity_StableCycleWorkScalesWithBoundaries(
+            double durationSeconds)
+        {
+            Oracle.SaveDataSettings seed = CreateRepresentativeSettings();
+            EnableRepresentativeBreakInfinity(seed);
+            _oracle.saveSettings =
+                (Oracle.SaveDataSettings)SerializationUtility.CreateCopy(seed);
+            PrepareDysonDerivedState();
+            SubscribeAndResetRuntime();
+            var stopwatch = System.Diagnostics.Stopwatch.StartNew();
+
+            Run(OfflineProgressSystem.CalculateAwayValues(
+                durationSeconds,
+                CreateContext(),
+                ui: null));
+
+            stopwatch.Stop();
+            SimulationWorkMetrics work =
+                OfflineProgressSystem.LastSimulationWorkMetrics;
+            TestContext.WriteLine(
+                $"stable Break workload {durationSeconds:R}s: " +
+                $"{stopwatch.Elapsed.TotalMilliseconds:F3}ms, " +
+                $"events={work.MaterialEvents}, " +
+                $"breakBlocks={work.BreakInfinityBlocks}, " +
+                $"accelerated={work.AcceleratedSeconds:F3}s");
+            Assert.Less(
+                work.MaterialEvents,
+                256L,
+                "Work should be bounded by signature changes, not elapsed seconds.");
+            Assert.GreaterOrEqual(
+                work.AccelerationBlocksAccepted,
+                1L);
+            Assert.Greater(
+                work.AcceleratedSeconds,
+                durationSeconds * 0.9d);
+            Assert.Less(
+                stopwatch.Elapsed.TotalMilliseconds,
+                1000d);
+        }
+
+        [Test]
+        public void BreakInfinity_WithEnabledAutomationBatchesMinimumCycles()
+        {
+            Oracle.SaveDataSettings seed = CreateRepresentativeSettings();
+            EnableRepresentativeBreakInfinity(seed);
+            EnableRepresentativeDysonAutomation(seed);
+            _oracle.saveSettings =
+                (Oracle.SaveDataSettings)SerializationUtility.CreateCopy(seed);
+            PrepareDysonDerivedState();
+            SubscribeAndResetRuntime();
+            var stopwatch = System.Diagnostics.Stopwatch.StartNew();
+
+            Run(OfflineProgressSystem.CalculateAwayValues(
+                18d * 60d * 60d,
+                CreateContext(),
+                ui: null));
+
+            stopwatch.Stop();
+            SimulationWorkMetrics work =
+                OfflineProgressSystem.LastSimulationWorkMetrics;
+            TestContext.WriteLine(
+                $"18h automated Break workload: " +
+                $"{stopwatch.Elapsed.TotalMilliseconds:F3}ms, " +
+                $"events={work.MaterialEvents}, " +
+                $"breakBlocks={work.BreakInfinityBlocks}, " +
+                $"accelerated={work.AcceleratedSeconds:F3}s");
+            Assert.GreaterOrEqual(work.BreakInfinityBlocks, 1L);
+            Assert.Less(
+                stopwatch.Elapsed.TotalMilliseconds,
+                2500d);
+        }
+
+        [Test]
+        public void BreakInfinity_MinimumCyclesWithAutomationMatchCanonicalReference()
+        {
+            Oracle.SaveDataSettings seed = CreateRepresentativeSettings();
+            EnableRepresentativeBreakInfinity(seed);
+            EnableRepresentativeDysonAutomation(seed);
+            seed.dysonVerseSaveData.dysonVersePrestigeData.infinityPoints =
+                100_000L;
+
+            _oracle.saveSettings =
+                (Oracle.SaveDataSettings)SerializationUtility.CreateCopy(seed);
+            PrepareDysonDerivedState();
+            SubscribeAndResetRuntime();
+            Run(OfflineProgressSystem.CalculateAwayValues(
+                10d,
+                CreateContext(),
+                ui: null));
+            Oracle.SaveDataSettings accelerated =
+                (Oracle.SaveDataSettings)SerializationUtility.CreateCopy(
+                    _oracle.saveSettings);
+
+            _oracle.saveSettings =
+                (Oracle.SaveDataSettings)SerializationUtility.CreateCopy(seed);
+            PrepareDysonDerivedState();
+            SubscribeAndResetRuntime();
+            _gameManager.SetUnifiedAccelerationForTests(false);
+            OfflineProgressContext canonical = CreateContext();
+            canonical.RunAnalyticalTicks = _ => 0L;
+            Run(OfflineProgressSystem.CalculateAwayValues(
+                10d,
+                canonical,
+                ui: null));
+            _gameManager.SetUnifiedAccelerationForTests(true);
+
+            Assert.AreEqual(
+                _oracle.saveSettings.dysonVerseSaveData
+                    .dysonVersePrestigeData.infinityPoints,
+                accelerated.dysonVerseSaveData
+                    .dysonVersePrestigeData.infinityPoints);
+            Assert.AreEqual(
+                _oracle.saveSettings.simulationStatistics.lifetime
+                    .breakInfinityCount,
+                accelerated.simulationStatistics.lifetime
+                    .breakInfinityCount);
+            AssertRelative(
+                _oracle.saveSettings.dysonVerseSaveData
+                    .dysonVerseInfinityData.bots,
+                accelerated.dysonVerseSaveData
+                    .dysonVerseInfinityData.bots);
+        }
+
+        [Test]
+        public void BreakInfinity_ActiveSchedulerMatchesCanonicalReference()
+        {
+            Oracle.SaveDataSettings seed = CreateRepresentativeSettings();
+            EnableRepresentativeBreakInfinity(seed);
+            EnableRepresentativeDysonAutomation(seed);
+            seed.dysonVerseSaveData.dysonVersePrestigeData.infinityPoints =
+                100_000L;
+
+            _oracle.saveSettings =
+                (Oracle.SaveDataSettings)SerializationUtility.CreateCopy(seed);
+            PrepareDysonDerivedState();
+            SubscribeAndResetRuntime();
+            _gameManager.ResetActiveSimulationForTests();
+            SimulationAdvanceResult acceleratedResult =
+                _gameManager.AdvanceActiveSimulationForTests(10d);
+            Oracle.SaveDataSettings accelerated =
+                (Oracle.SaveDataSettings)SerializationUtility.CreateCopy(
+                    _oracle.saveSettings);
+
+            _oracle.saveSettings =
+                (Oracle.SaveDataSettings)SerializationUtility.CreateCopy(seed);
+            PrepareDysonDerivedState();
+            SubscribeAndResetRuntime();
+            _gameManager.ResetActiveSimulationForTests();
+            _gameManager.SetUnifiedAccelerationForTests(false);
+            SimulationAdvanceResult canonicalResult =
+                _gameManager.AdvanceActiveSimulationForTests(10d);
+            _gameManager.SetUnifiedAccelerationForTests(true);
+
+            Assert.NotNull(acceleratedResult);
+            Assert.NotNull(canonicalResult);
+            Assert.AreEqual(
+                _oracle.saveSettings.dysonVerseSaveData
+                    .dysonVersePrestigeData.infinityPoints,
+                accelerated.dysonVerseSaveData
+                    .dysonVersePrestigeData.infinityPoints);
+            Assert.AreEqual(
+                _oracle.saveSettings.simulationStatistics.lifetime
+                    .breakInfinityCount,
+                accelerated.simulationStatistics.lifetime
+                    .breakInfinityCount);
+            AssertRelative(
+                _oracle.saveSettings.dysonVerseSaveData
+                    .dysonVerseInfinityData.bots,
+                accelerated.dysonVerseSaveData
+                    .dysonVerseInfinityData.bots);
+            AssertDreamEqual(
+                _oracle.saveSettings.sdSimulation,
+                accelerated.sdSimulation);
+            TestContext.WriteLine(
+                $"active Break work: attempts=" +
+                $"{acceleratedResult.Work.AccelerationAttempts}, " +
+                $"accepted=" +
+                $"{acceleratedResult.Work.AccelerationBlocksAccepted}, " +
+                $"rejected=" +
+                $"{acceleratedResult.Work.AccelerationBlocksRejected}, " +
+                $"events={acceleratedResult.Work.MaterialEvents}, " +
+                $"breakBlocks=" +
+                $"{acceleratedResult.Work.BreakInfinityBlocks}, " +
+                $"acceleratedSeconds=" +
+                $"{acceleratedResult.Work.AcceleratedSeconds:R}");
+            Assert.GreaterOrEqual(
+                acceleratedResult.Work.BreakInfinityBlocks,
+                1L);
+        }
+
+        [Test]
+        public void BreakInfinity_ActiveAccelerationIsFrameChunkIndependent()
+        {
+            Oracle.SaveDataSettings seed = CreateRepresentativeSettings();
+            EnableRepresentativeBreakInfinity(seed);
+            EnableRepresentativeDysonAutomation(seed);
+            seed.dysonVerseSaveData.dysonVersePrestigeData.infinityPoints =
+                100_000L;
+
+            _oracle.saveSettings =
+                (Oracle.SaveDataSettings)SerializationUtility.CreateCopy(seed);
+            PrepareDysonDerivedState();
+            SubscribeAndResetRuntime();
+            _gameManager.ResetActiveSimulationForTests();
+            _gameManager.AdvanceActiveSimulationForTests(10d);
+            Oracle.SaveDataSettings whole =
+                (Oracle.SaveDataSettings)SerializationUtility.CreateCopy(
+                    _oracle.saveSettings);
+
+            _oracle.saveSettings =
+                (Oracle.SaveDataSettings)SerializationUtility.CreateCopy(seed);
+            PrepareDysonDerivedState();
+            SubscribeAndResetRuntime();
+            _gameManager.ResetActiveSimulationForTests();
+            for (int frame = 0; frame < 100; frame++)
+                _gameManager.AdvanceActiveSimulationForTests(0.1d);
+
+            Assert.AreEqual(
+                whole.dysonVerseSaveData.dysonVersePrestigeData
+                    .infinityPoints,
+                _oracle.saveSettings.dysonVerseSaveData
+                    .dysonVersePrestigeData.infinityPoints);
+            Assert.AreEqual(
+                whole.simulationStatistics.lifetime.breakInfinityCount,
+                _oracle.saveSettings.simulationStatistics.lifetime
+                    .breakInfinityCount);
+            AssertRelative(
+                whole.dysonVerseSaveData.dysonVerseInfinityData.bots,
+                _oracle.saveSettings.dysonVerseSaveData
+                    .dysonVerseInfinityData.bots);
+            AssertDreamEqual(
+                whole.sdSimulation,
+                _oracle.saveSettings.sdSimulation);
+        }
+
+        [Test]
+        public void BreakInfinityReset_RecomputesRestoredFacilityRates()
+        {
+            Oracle.SaveDataSettings seed = CreateRepresentativeSettings();
+            EnableRepresentativeBreakInfinity(seed);
+            _oracle.saveSettings =
+                (Oracle.SaveDataSettings)SerializationUtility.CreateCopy(seed);
+            PrepareDysonDerivedState();
+            SubscribeAndResetRuntime();
+
+            _oracle.AutomaticBreakInfinityReset(
+                updatePresentation: false);
+
+            Oracle.DysonVerseInfinityData data =
+                _oracle.saveSettings.dysonVerseSaveData
+                    .dysonVerseInfinityData;
+            Assert.AreEqual(10d, data.assemblyLines[1]);
+            Assert.Greater(
+                data.botProduction,
+                0d,
+                "Restored facilities must work during the first interval after reset.");
         }
 
         [Test]

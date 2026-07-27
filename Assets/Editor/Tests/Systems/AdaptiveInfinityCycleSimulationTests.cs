@@ -101,5 +101,120 @@ namespace Tests.Systems
                 1_000L - result.ConsumedTicks,
                 40L);
         }
+
+        [Test]
+        public void StableCycleProjection_ComposesDurationAndRewardBoundariesExactly()
+        {
+            const double minimum = 1d / 60d;
+            InfinityCycleEvaluation Evaluate(long points)
+            {
+                long reward = points < 200L ? 5L : 7L;
+                double duration = points < 150L
+                    ? 0.2d
+                    : points < 250L
+                        ? 0.1d
+                        : minimum;
+                return new InfinityCycleEvaluation(
+                    reward,
+                    duration);
+            }
+
+            const long startingPoints = 115L;
+            const double availableSeconds = 10d;
+            bool projected =
+                AdaptiveInfinityCycleSimulation.TryProjectStableCycles(
+                    new InfinityCycleSample(100L, 5L, 2L, 0.2d),
+                    new InfinityCycleSample(105L, 5L, 2L, 0.2d),
+                    new InfinityCycleSample(110L, 5L, 2L, 0.2d),
+                    startingPoints,
+                    availableSeconds,
+                    minimum,
+                    Evaluate,
+                    minimumProjectedCycles: 8L,
+                    out InfinityCycleProjection result);
+
+            Assert.IsTrue(projected);
+            long expectedPoints = startingPoints;
+            long expectedCycles = 0L;
+            double expectedSeconds = 0d;
+            long expectedLastReward = 0L;
+            double expectedLastDuration = 0d;
+            while (true)
+            {
+                InfinityCycleEvaluation cycle =
+                    Evaluate(expectedPoints);
+                if (expectedSeconds + cycle.DurationSeconds >
+                    availableSeconds + 1e-12d)
+                {
+                    break;
+                }
+                expectedSeconds += cycle.DurationSeconds;
+                expectedPoints += cycle.Reward;
+                expectedCycles++;
+                expectedLastReward = cycle.Reward;
+                expectedLastDuration = cycle.DurationSeconds;
+            }
+
+            Assert.AreEqual(expectedCycles, result.CycleCount);
+            Assert.AreEqual(expectedPoints, result.FinalInfinityPoints);
+            Assert.AreEqual(expectedLastReward, result.LastReward);
+            Assert.AreEqual(
+                expectedLastDuration,
+                result.LastDurationSeconds,
+                1e-12d);
+            Assert.AreEqual(
+                expectedSeconds,
+                result.ConsumedSeconds,
+                1e-9d);
+            Assert.AreEqual(0d, result.ValidationError);
+        }
+
+        [Test]
+        public void StableCycleProjection_RejectsUnprovenCycleSignature()
+        {
+            bool projected =
+                AdaptiveInfinityCycleSimulation.TryProjectStableCycles(
+                    new InfinityCycleSample(100L, 5L, 2L, 0.2d),
+                    new InfinityCycleSample(105L, 5L, 2L, 0.2d),
+                    new InfinityCycleSample(110L, 5L, 2L, 0.2d),
+                    currentInfinityPoints: 115L,
+                    availableSeconds: 10d,
+                    minimumCycleSeconds: 1d / 60d,
+                    _ => new InfinityCycleEvaluation(6L, 0.2d),
+                    minimumProjectedCycles: 8L,
+                    out _);
+
+            Assert.IsFalse(projected);
+        }
+
+        [Test]
+        public void StableCycleProjection_RejectsUnrepresentableLongAggregate()
+        {
+            bool projected =
+                AdaptiveInfinityCycleSimulation.TryProjectStableCycles(
+                    new InfinityCycleSample(
+                        long.MaxValue - 30L,
+                        5L,
+                        1L,
+                        0.1d),
+                    new InfinityCycleSample(
+                        long.MaxValue - 25L,
+                        5L,
+                        1L,
+                        0.1d),
+                    new InfinityCycleSample(
+                        long.MaxValue - 20L,
+                        5L,
+                        1L,
+                        0.1d),
+                    currentInfinityPoints: long.MaxValue - 15L,
+                    availableSeconds: 10d,
+                    minimumCycleSeconds: 1d / 60d,
+                    _ => new InfinityCycleEvaluation(5L, 0.1d),
+                    minimumProjectedCycles: 8L,
+                    out _);
+
+            Assert.IsFalse(projected);
+        }
     }
 }

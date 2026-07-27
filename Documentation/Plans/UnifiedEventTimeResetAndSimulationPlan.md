@@ -190,44 +190,61 @@ statistics, rolling history, and aggregate stored-time presentation. Legacy
 passive offline IP has been removed.
 
 Validated accelerators cover stable analytical production, retained-state
-ordinary Infinity, and proven stable Dream intervals. The changing-IP Break
-accelerator remains provisional: its internal coarse/fine integration can
-validate the fitted curve while the fitted curve itself is still wrong
-relative to the true cycle transition.
+ordinary Infinity, proven stable Dream intervals, and a now-authoritative
+stable-signature Break recurrence. The Break recurrence evaluates reward and
+1/60-grid duration as functions of current IP, finds the next IP at which
+either value changes, and applies each constant run arithmetically. It does
+not assume every cycle is identical.
 
-Final local validation on 2026-07-27:
+The exact stable Break path is shared by active and stored time. Active blocks
+stop at the independent 0.1-second automation boundary and advance Dream in
+canonical 1/60-second event slices, so a rendered-frame backlog cannot change
+Dream state. Stored time may use the validated long-Dream projector. Dyson
+automation may be skipped across a Break block only once sampled cycles are
+pinned to the 1/60 minimum, where same-boundary purchases are wiped by the
+reset and cannot affect the reward. Before that stable minimum regime,
+automation-sensitive cycles remain on the exact event path.
 
-- Unity EditMode: 375/375 passed.
-- Unity PlayMode invocation: completed successfully, but this project currently
-  discovers zero PlayMode tests.
-- macOS Universal IL2CPP: temporary player build succeeded for both arm64 and
-  x86_64.
-- A corrected 600-second canonical comparison found 940 IP canonically versus
-  950 IP from the current changing-IP accelerator (1.064% high). The earlier
-  equality claim used a reference path that had not actually disabled the
-  unified accelerator and is withdrawn.
-- A focused 18-hour changing-IP diagnostic completed in about 6.06 seconds
-  after the Dream convergence repair, representing nine Break aggregate
-  blocks but still executing 2,588 exact material boundaries. This is useful
-  diagnostic evidence, not a universal performance target.
-- The representative long-Dream projection now includes housing and village
-  validation. Their bounded modulo-conversion buffers use structural range
-  validation, while economically material continuous fields retain the 0.1%
-  coarse/fine limit. The 18-hour diagnostic converged with workers as the
-  worst field at approximately 0.0637%.
-- A bounded pure-cycle experiment proved isolated Break cycles can match the
-  1/60-second canonical duration and reward at the same IP, but its attempted
-  aggregate did not yet model every cross-reset transition. That experiment
-  was reverted rather than retained as an unproven shortcut.
+Infinity reset completion now immediately rebuilds bot distribution and
+derived production. This fixes the historical dead interval in which retained
+facilities existed after a reset but produced nothing until a later unrelated
+recalculation. With that canonical defect repaired, the earlier 1.064% result
+is obsolete: a corrected 600-second comparison now produces exactly 950 IP in
+both canonical and accelerated paths.
 
-The next required implementation is therefore the plan's originally specified
-pure one-cycle transition: reset retention, Dyson goal milestones, skill
-assignment, modifier rebuilds, automation phase, and other discrete signature
-changes must be explicit state inputs. The aggregate solver may compose that
-trusted transition; it must not validate an empirical curve only against
-itself.
+Focused local validation on 2026-07-27:
 
-Active Break aggregation and developer shadow comparison are not yet
-authoritative. Superseded fixed/canonical paths remain as characterization and
-fallback paths until one-cycle parity, workload-scaled tests, and the final
-full-suite/build gate pass.
+- Full Unity EditMode suite after the final source changes: 391/391 passed.
+- Fresh macOS Universal IL2CPP development build succeeded; the player binary
+  contains both `x86_64` and `arm64` architectures. The temporary build harness
+  was removed after validation and the artifact remains outside the repository.
+- Pure stable-cycle projection: 8/8 tests passed, including changing
+  duration/reward boundaries, refusal of an unproven signature, and refusal of
+  an unrepresentable `long` aggregate.
+- Integrated runtime/offline fixture: 24/24 tests passed.
+- Active Break: a single 10-second backlog matches both the exact canonical
+  scheduler and 100 separate 0.1-second advances for IP, reset counts, bots,
+  and Dream state.
+- Stored Break: the 600-second canonical comparison is 950/950 IP; stable
+  duration fixtures represent 60 seconds, one hour, and 100 days with 32, 44,
+  and 51 exact material events respectively.
+- The representative 18-hour enabled-automation Break fixture completed in
+  about 1.05 seconds, with 25 Break aggregate blocks and 681 exact material
+  events. This is secondary measurement evidence, not a duration-specific
+  acceptance contract.
+- The representative non-reset automation matrix represented 60 seconds, one
+  hour, and 18 hours with 6, 195, and 1,916 material events. A bounded 100-day
+  diagnostic showed that this separate path remains proportional to genuine
+  repeated Buy-Max purchase boundaries: after ten seconds of processing it
+  had represented about 8.6 simulated days, 1,249 analytical blocks, and 8,303
+  scheduler events. It is not per-tick replay, but it still needs a future
+  validated purchase-transition compressor to make very long, purchase-dense
+  intervals near-instant.
+
+The remaining Infinity expansion is the plan's full pure one-cycle transition
+for signatures that are not yet covered by the exact stable evaluator:
+persistent skill side effects, changing pre-minimum automation purchases,
+retained upstream production chains, and other discrete reset-side changes.
+These continue through the exact resumable fallback rather than an unproven
+projection. Superseded canonical paths remain as characterization and safety
+fallbacks until those signatures and developer shadow comparison are covered.

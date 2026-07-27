@@ -2844,6 +2844,15 @@ private void PackSettingsFlags()
             _gameManager.AutoAssignSkillsInvoke();
             WipeSaveButtonUpdate();
             SetSkillTimerSeconds(infinityData, "superRadiantScattering", 0);
+            ProductionSystem.SetBotDistribution(
+                infinityData,
+                prestigeData,
+                prestigePlus);
+            ProductionSystem.RecalculateDerivedState(
+                infinityData,
+                skillTreeData,
+                prestigeData,
+                prestigePlus);
             saveSettings.infinityInProgress = false;
             saveSettings.botCapTransitionPending = false;
             saveSettings.botCapRewardsGranted = false;
@@ -2897,6 +2906,15 @@ private void PackSettingsFlags()
             _gameManager.AutoAssignSkillsInvoke();
             WipeSaveButtonUpdate();
             SetSkillTimerSeconds(infinityData, "superRadiantScattering", 0);
+            ProductionSystem.SetBotDistribution(
+                infinityData,
+                prestigeData,
+                prestigePlus);
+            ProductionSystem.RecalculateDerivedState(
+                infinityData,
+                skillTreeData,
+                prestigeData,
+                prestigePlus);
             saveSettings.infinityInProgress = false;
             saveSettings.botCapTransitionPending = false;
             saveSettings.botCapRewardsGranted = false;

@@ -80,6 +80,20 @@ namespace Systems.Simulation
         }
     }
 
+    public readonly struct InfinityCycleEvaluation
+    {
+        public InfinityCycleEvaluation(
+            long reward,
+            double durationSeconds)
+        {
+            Reward = Math.Max(0L, reward);
+            DurationSeconds = durationSeconds;
+        }
+
+        public long Reward { get; }
+        public double DurationSeconds { get; }
+    }
+
     public static class AdaptiveInfinityCycleSimulation
     {
         private const int CoarseIntegrationSegments = 128;
@@ -297,6 +311,258 @@ namespace Systems.Simulation
                 best.LastDurationSeconds,
                 validationError);
             return true;
+        }
+
+        /// <summary>
+        /// Exactly composes a stable reset recurrence whose integer reward and
+        /// event-grid duration are monotone functions of starting IP. Rather
+        /// than executing every cycle, it finds the next IP at which either
+        /// discrete value changes and applies the entire constant run.
+        /// </summary>
+        public static bool TryProjectStableCycles(
+            InfinityCycleSample first,
+            InfinityCycleSample second,
+            InfinityCycleSample third,
+            long currentInfinityPoints,
+            double availableSeconds,
+            double minimumCycleSeconds,
+            Func<long, InfinityCycleEvaluation> evaluateCycle,
+            long minimumProjectedCycles,
+            out InfinityCycleProjection projection)
+        {
+            projection = default;
+            if (evaluateCycle == null ||
+                currentInfinityPoints < 0L ||
+                !NumericSafety.IsFinite(availableSeconds) ||
+                !NumericSafety.IsFinite(minimumCycleSeconds) ||
+                availableSeconds <= 0d ||
+                minimumCycleSeconds <= 0d ||
+                minimumProjectedCycles <= 0L ||
+                !SamplesAreOrdered(first, second, third))
+            {
+                return false;
+            }
+
+            if (!EvaluationMatchesSample(
+                    evaluateCycle(first.StartingInfinityPoints),
+                    first,
+                    minimumCycleSeconds) ||
+                !EvaluationMatchesSample(
+                    evaluateCycle(second.StartingInfinityPoints),
+                    second,
+                    minimumCycleSeconds) ||
+                !EvaluationMatchesSample(
+                    evaluateCycle(third.StartingInfinityPoints),
+                    third,
+                    minimumCycleSeconds))
+            {
+                return false;
+            }
+
+            double remainingSeconds = availableSeconds;
+            double consumedSeconds = 0d;
+            long infinityPoints = currentInfinityPoints;
+            long cycleCount = 0L;
+            long lastReward = 0L;
+            double lastDuration = 0d;
+            int groups = 0;
+            const int maximumGroups = 4096;
+            while (remainingSeconds + 1e-12d >=
+                       minimumCycleSeconds &&
+                   groups++ < maximumGroups)
+            {
+                InfinityCycleEvaluation evaluation =
+                    evaluateCycle(infinityPoints);
+                if (!IsValidEvaluation(
+                        evaluation,
+                        minimumCycleSeconds))
+                {
+                    return false;
+                }
+
+                long cyclesByTime = ToLongSaturating(
+                    Math.Floor(
+                        (remainingSeconds + 1e-12d) /
+                        evaluation.DurationSeconds));
+                if (cyclesByTime <= 0L)
+                    break;
+
+                long firstChange = FindFirstChangedCycleStart(
+                    infinityPoints,
+                    evaluation,
+                    minimumCycleSeconds,
+                    evaluateCycle);
+                long groupCycles = cyclesByTime;
+                if (firstChange != long.MaxValue)
+                {
+                    long distance =
+                        firstChange - infinityPoints;
+                    long cyclesToChange = Math.Max(
+                        1L,
+                        distance / evaluation.Reward +
+                        (distance % evaluation.Reward == 0L
+                            ? 0L
+                            : 1L));
+                    groupCycles = Math.Min(
+                        groupCycles,
+                        cyclesToChange);
+                }
+
+                long gain = SaturatingMultiplyLong(
+                    evaluation.Reward,
+                    groupCycles);
+                if (gain == long.MaxValue ||
+                    infinityPoints > long.MaxValue - gain ||
+                    cycleCount > long.MaxValue - groupCycles)
+                {
+                    // The canonical long-backed counters cannot represent
+                    // this aggregate exactly. Leave the boundary to the
+                    // saturating canonical path instead of inventing cycles.
+                    return false;
+                }
+                double groupSeconds = NumericSafety.Multiply(
+                    evaluation.DurationSeconds,
+                    groupCycles).Value;
+                if (!NumericSafety.IsFinite(groupSeconds) ||
+                    groupSeconds <= 0d ||
+                    groupSeconds >
+                    remainingSeconds + 1e-9d)
+                {
+                    return false;
+                }
+                infinityPoints += gain;
+                consumedSeconds = NumericSafety.Add(
+                    consumedSeconds,
+                    groupSeconds).Value;
+                remainingSeconds = Math.Max(
+                    0d,
+                    availableSeconds - consumedSeconds);
+                cycleCount += groupCycles;
+                lastReward = evaluation.Reward;
+                lastDuration = evaluation.DurationSeconds;
+            }
+
+            if (cycleCount < minimumProjectedCycles ||
+                groups > maximumGroups ||
+                consumedSeconds <= 0d)
+            {
+                return false;
+            }
+
+            projection = new InfinityCycleProjection(
+                cycleCount,
+                consumedSeconds,
+                infinityPoints,
+                lastReward,
+                lastDuration,
+                0d);
+            return true;
+        }
+
+        private static bool EvaluationMatchesSample(
+            InfinityCycleEvaluation evaluation,
+            InfinityCycleSample sample,
+            double minimumCycleSeconds)
+        {
+            return IsValidEvaluation(
+                       evaluation,
+                       minimumCycleSeconds) &&
+                   evaluation.Reward == sample.Reward &&
+                   Math.Abs(
+                       evaluation.DurationSeconds -
+                       sample.DurationSeconds) <= 1e-9d;
+        }
+
+        private static bool IsValidEvaluation(
+            InfinityCycleEvaluation evaluation,
+            double minimumCycleSeconds)
+        {
+            return evaluation.Reward > 0L &&
+                   NumericSafety.IsFinite(
+                       evaluation.DurationSeconds) &&
+                   evaluation.DurationSeconds + 1e-12d >=
+                       minimumCycleSeconds;
+        }
+
+        private static long FindFirstChangedCycleStart(
+            long startingInfinityPoints,
+            InfinityCycleEvaluation current,
+            double minimumCycleSeconds,
+            Func<long, InfinityCycleEvaluation> evaluateCycle)
+        {
+            if (startingInfinityPoints >= long.MaxValue ||
+                current.Reward >= long.MaxValue)
+            {
+                return long.MaxValue;
+            }
+
+            bool Changed(long points)
+            {
+                InfinityCycleEvaluation candidate =
+                    evaluateCycle(points);
+                return !IsValidEvaluation(
+                           candidate,
+                           minimumCycleSeconds) ||
+                       candidate.Reward != current.Reward ||
+                       Math.Abs(
+                           candidate.DurationSeconds -
+                           current.DurationSeconds) > 1e-12d;
+            }
+
+            long low = startingInfinityPoints;
+            long distance = Math.Max(
+                1L,
+                startingInfinityPoints / 16L);
+            long high;
+            while (true)
+            {
+                high = low > long.MaxValue - distance
+                    ? long.MaxValue
+                    : low + distance;
+                if (Changed(high))
+                    break;
+                if (high == long.MaxValue)
+                    return long.MaxValue;
+                low = high;
+                distance = distance > long.MaxValue / 2L
+                    ? long.MaxValue
+                    : distance * 2L;
+            }
+
+            long left = low + 1L;
+            long right = high;
+            while (left < right)
+            {
+                long middle =
+                    left + (right - left) / 2L;
+                if (Changed(middle))
+                    right = middle;
+                else
+                    left = middle + 1L;
+            }
+            return left;
+        }
+
+        private static long SaturatingMultiplyLong(
+            long left,
+            long right)
+        {
+            if (left <= 0L || right <= 0L)
+                return 0L;
+            return left > long.MaxValue / right
+                ? long.MaxValue
+                : left * right;
+        }
+
+        private static long SaturatingAddLong(
+            long left,
+            long right)
+        {
+            if (left <= 0L) return Math.Max(0L, right);
+            if (right <= 0L) return left;
+            return left > long.MaxValue - right
+                ? long.MaxValue
+                : left + right;
         }
 
         private static bool SamplesAreOrdered(
