@@ -612,6 +612,125 @@ namespace Tests.Systems
                     double.MaxValue));
         }
 
+        [Test]
+        public void AnalyticalResetBoundary_MatchesCanonicalAndRestoresSourceState()
+        {
+            Oracle.DysonVerseInfinityData data =
+                CreateAnalyticalDysonFixture();
+            var skills = new Oracle.DysonVerseSkillTreeData();
+            var prestige = new Oracle.DysonVersePrestigeData();
+            var prestigePlus =
+                new Oracle.PrestigePlus { botMultitasking = true };
+            ProductionSystem.SetBotDistribution(
+                data,
+                prestige,
+                prestigePlus);
+            ProductionSystem.RecalculateDerivedState(
+                data,
+                skills,
+                prestige,
+                prestigePlus);
+            double startingMoney = data.money;
+            double startingScience = data.science;
+            double startingBots = data.bots;
+            double[] startingAssemblyLines =
+                (double[])data.assemblyLines.Clone();
+            const double boundarySeconds = 1d / 60d;
+            double threshold = startingBots +
+                               Math.Max(
+                                   1e-9d,
+                                   data.botProduction *
+                                   boundarySeconds *
+                                   3d);
+
+            bool reached =
+                AnalyticalOfflineSimulation.TryFindResetBoundary(
+                    data,
+                    skills,
+                    prestige,
+                    prestigePlus,
+                    boundarySeconds,
+                    12L,
+                    threshold,
+                    out bool supported,
+                    out long predictedBoundaries);
+
+            Oracle.DysonVerseInfinityData canonical =
+                CreateAnalyticalDysonFixture();
+            ProductionSystem.SetBotDistribution(
+                canonical,
+                prestige,
+                prestigePlus);
+            ProductionSystem.RecalculateDerivedState(
+                canonical,
+                skills,
+                prestige,
+                prestigePlus);
+            long canonicalBoundaries = 0L;
+            for (long boundary = 1L; boundary <= 12L; boundary++)
+            {
+                ProductionSystem.CalculateProduction(
+                    canonical,
+                    skills,
+                    prestige,
+                    prestigePlus,
+                    boundarySeconds,
+                    recomputeDerivedState: false);
+                ProductionSystem.RecalculateDerivedState(
+                    canonical,
+                    skills,
+                    prestige,
+                    prestigePlus);
+                if (canonical.bots + 1e-9d >= threshold)
+                {
+                    canonicalBoundaries = boundary;
+                    break;
+                }
+            }
+
+            Assert.IsTrue(supported);
+            Assert.IsTrue(reached);
+            Assert.AreEqual(canonicalBoundaries, predictedBoundaries);
+            Assert.AreEqual(startingMoney, data.money, 0d);
+            Assert.AreEqual(startingScience, data.science, 0d);
+            Assert.AreEqual(startingBots, data.bots, 0d);
+            CollectionAssert.AreEqual(
+                startingAssemblyLines,
+                data.assemblyLines);
+        }
+
+        [Test]
+        public void AnalyticalResetBoundary_UnsupportedStateIsNotReportedUnreachable()
+        {
+            Oracle.DysonVerseInfinityData data =
+                CreateAnalyticalDysonFixture();
+            var skills = new Oracle.DysonVerseSkillTreeData
+            {
+                shouldersOfGiants = true,
+                scientificPlanets = true
+            };
+
+            bool reached =
+                AnalyticalOfflineSimulation.TryFindResetBoundary(
+                    data,
+                    skills,
+                    new Oracle.DysonVersePrestigeData(),
+                    new Oracle.PrestigePlus
+                    {
+                        botMultitasking = true
+                    },
+                    1d / 60d,
+                    6L,
+                    data.bots + 1d,
+                    out bool supported,
+                    out long boundaries);
+
+            Assert.IsFalse(reached);
+            Assert.IsFalse(supported);
+            Assert.AreEqual(0L, boundaries);
+            Assert.AreEqual(100d, data.bots, 0d);
+        }
+
         [TestCase(2L)]
         [TestCase(10L)]
         [TestCase(1000L)]

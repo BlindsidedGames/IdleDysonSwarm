@@ -1,5 +1,6 @@
 using System;
 using System.Collections;
+using System.Collections.Generic;
 using System.Reflection;
 using Buildings;
 using Expansion;
@@ -690,6 +691,129 @@ namespace Tests.Systems
                 data.botProduction,
                 0d,
                 "Restored facilities must work during the first interval after reset.");
+        }
+
+        [Test]
+        public void BreakInfinityReset_ModelOnlyPathMatchesPresentedDurableState()
+        {
+            Oracle.SaveDataSettings seed = CreateRepresentativeSettings();
+            EnableRepresentativeBreakInfinity(seed);
+            seed.firstReality = false;
+            seed.dysonVerseSaveData.dysonVersePrestigeData
+                .infinityPoints = 1_000L;
+            seed.dysonVerseSaveData.dysonVersePrestigeData
+                .permanentSkillPoint = 1L;
+            seed.dysonVerseSaveData.skillAutoAssignmentIds =
+                new List<string> { "startHereTree" };
+
+            _oracle.saveSettings =
+                (Oracle.SaveDataSettings)SerializationUtility.CreateCopy(seed);
+            PrepareDysonDerivedState();
+            SubscribeAndResetRuntime();
+            _oracle.AutomaticBreakInfinityReset(
+                updatePresentation: false);
+            Oracle.SaveDataSettings modelOnly =
+                (Oracle.SaveDataSettings)SerializationUtility.CreateCopy(
+                    _oracle.saveSettings);
+
+            _oracle.saveSettings =
+                (Oracle.SaveDataSettings)SerializationUtility.CreateCopy(seed);
+            PrepareDysonDerivedState();
+            SubscribeAndResetRuntime();
+            SkillsAutoAssignment autoAssignment =
+                UnityEngine.Object.FindFirstObjectByType<SkillsAutoAssignment>(
+                    FindObjectsInactive.Include);
+            Assert.NotNull(autoAssignment);
+            InvokePrivate(autoAssignment, "OnDisable");
+            InvokePrivate(autoAssignment, "OnEnable");
+            _oracle.AutomaticBreakInfinityReset(
+                updatePresentation: true);
+            Oracle.SaveDataSettings presented = _oracle.saveSettings;
+
+            Assert.AreEqual(
+                modelOnly.dysonVerseSaveData.dysonVersePrestigeData
+                    .infinityPoints,
+                presented.dysonVerseSaveData.dysonVersePrestigeData
+                    .infinityPoints);
+            Assert.AreEqual(
+                modelOnly.lastInfinityPointsGained,
+                presented.lastInfinityPointsGained);
+            Assert.AreEqual(
+                modelOnly.dysonVerseSaveData.dysonVerseSkillTreeData
+                    .skillPointsTree,
+                presented.dysonVerseSaveData.dysonVerseSkillTreeData
+                    .skillPointsTree);
+            Assert.AreEqual(
+                modelOnly.dysonVerseSaveData.dysonVerseSkillTreeData
+                    .startHereTree,
+                presented.dysonVerseSaveData.dysonVerseSkillTreeData
+                    .startHereTree);
+            Assert.AreEqual(
+                modelOnly.dysonVerseSaveData.dysonVerseInfinityData
+                    .skillOwnedById["startHereTree"],
+                presented.dysonVerseSaveData.dysonVerseInfinityData
+                    .skillOwnedById["startHereTree"]);
+            AssertDysonEqual(
+                modelOnly.dysonVerseSaveData.dysonVerseInfinityData,
+                presented.dysonVerseSaveData.dysonVerseInfinityData);
+        }
+
+        [Test]
+        public void BreakInfinityReset_ModelOnlyThroughputScalesWithResetCount()
+        {
+            Oracle.SaveDataSettings seed = CreateRepresentativeSettings();
+            EnableRepresentativeBreakInfinity(seed);
+            seed.firstReality = false;
+            seed.dysonVerseSaveData.dysonVersePrestigeData
+                .infinityPoints = 1_000L;
+            _oracle.saveSettings =
+                (Oracle.SaveDataSettings)SerializationUtility.CreateCopy(seed);
+            PrepareDysonDerivedState();
+            SubscribeAndResetRuntime();
+
+            const int resetCount = 1_000;
+            var stopwatch = System.Diagnostics.Stopwatch.StartNew();
+            for (int index = 0; index < resetCount; index++)
+            {
+                _oracle.AutomaticBreakInfinityReset(
+                    updatePresentation: false);
+            }
+            stopwatch.Stop();
+
+            TestContext.WriteLine(
+                $"{resetCount} model-only Break resets: " +
+                $"{stopwatch.Elapsed.TotalMilliseconds:F3}ms");
+            Assert.Less(
+                stopwatch.Elapsed.TotalMilliseconds,
+                1_000d,
+                "Reset work should scale with reset count without scene/UI traversal.");
+        }
+
+        [Test]
+        public void ResearchAutomation_PresenterOrderIsStableByResearchId()
+        {
+            InvokePrivate(_researchAutoBuy, "RefreshPresenters");
+            FieldInfo field = typeof(ResearchAutoBuy).GetField(
+                "presenters",
+                BindingFlags.Instance | BindingFlags.NonPublic);
+            Assert.NotNull(field);
+            var presenters =
+                (ResearchPresenter[])field.GetValue(_researchAutoBuy);
+            Assert.NotNull(presenters);
+            for (int index = 1; index < presenters.Length; index++)
+            {
+                string previous = presenters[index - 1] != null
+                    ? presenters[index - 1].ResearchIdValue
+                    : string.Empty;
+                string current = presenters[index] != null
+                    ? presenters[index].ResearchIdValue
+                    : string.Empty;
+                Assert.LessOrEqual(
+                    string.CompareOrdinal(previous, current),
+                    0,
+                    $"Research automation order diverged at {index}: " +
+                    $"{previous} then {current}.");
+            }
         }
 
         [Test]

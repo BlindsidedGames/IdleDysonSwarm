@@ -74,6 +74,7 @@ public class GameManager : MonoBehaviour
     private double _pendingIntervalSeconds;
     private bool _pendingDreamEngineeringCompleteAtStart;
     private bool _botCapHandledAtBoundary;
+    private bool _botCapSpecialRewardGrantedAtBoundary;
     private bool _offlineBreakTargetOverrideActive;
     private long _offlineBreakTargetOverride;
     private bool _storedTimeCancellationRequested;
@@ -378,10 +379,23 @@ public class GameManager : MonoBehaviour
             skillsMenuButton = refs.skillsMenuButtonObject.GetComponent<Button>();
     }
 
-    private void SetSkillsFill(float fill)
+    private void SetSkillsFill(double fill)
     {
-        if (_skillsFillProcedural != null) _skillsFillProcedural.fillAmount = fill;
-        else if (skillsFill != null) skillsFill.fillAmount = fill;
+        float adapterValue = NumericSafety.ToFloat(
+            Math.Min(
+                1d,
+                NumericSafety.ClampContinuous(fill))).Value;
+        if (_skillsFillProcedural != null)
+            _skillsFillProcedural.fillAmount = adapterValue;
+        else if (skillsFill != null)
+            skillsFill.fillAmount = adapterValue;
+    }
+
+    private double ActivePanelCount()
+    {
+        return NumericSafety.Multiply(
+            infinityData.panelsPerSec,
+            infinityData.panelLifetime).Value;
     }
 
     #region Main
@@ -393,9 +407,17 @@ public class GameManager : MonoBehaviour
         UpdateSkills?.Invoke();
     }
 
-    public void AutoAssignSkillsInvoke()
+    public void AutoAssignSkillsInvoke(
+        bool updatePresentation = true)
     {
-        AssignSkills?.Invoke();
+        if (updatePresentation)
+        {
+            AssignSkills?.Invoke();
+        }
+        else
+        {
+            oracle.AutoAssignSkillsWithoutPresentation();
+        }
         CalculateModifiers();
     }
 
@@ -874,7 +896,9 @@ public class GameManager : MonoBehaviour
 
     private void EvaluateBotCapTransition()
     {
-        _botCapHandledAtBoundary = oracle.ProcessBotCapTransition();
+        _botCapHandledAtBoundary =
+            oracle.ProcessBotCapTransitionWithOutcome(
+                out _botCapSpecialRewardGrantedAtBoundary);
     }
 
     private void EvaluateInfinityTransition(
@@ -987,9 +1011,13 @@ public class GameManager : MonoBehaviour
             double maximumSeconds,
             double infinityMinimumCycleSeconds)
         {
-            double untilInfinityBoundary = Math.Max(
-                1e-12d,
-                _owner._activeSimulationBoundaryRemaining);
+            double untilInfinityBoundary =
+                _owner.TimeToNextInfinityMaterialEvent(
+                    maximumSeconds,
+                    infinityMinimumCycleSeconds,
+                    _owner._activeInfinityCycleSeconds,
+                    _owner._activeSimulationBoundaryRemaining,
+                    _infinityState);
             double dreamBoundary =
                 _owner.TimeToNextDreamMaterialEvent(
                     maximumSeconds);
@@ -1079,29 +1107,13 @@ public class GameManager : MonoBehaviour
             SimulationPresentationSummary summary)
         {
             long beforeIp = _owner.prestigeData.infinityPoints;
-            long beforeOverflow =
-                Oracle.oracle.saveSettings.avocadoData
-                    .overflowMultiplier >= long.MaxValue
-                    ? long.MaxValue
-                    : (long)Math.Max(
-                        0d,
-                        Oracle.oracle.saveSettings.avocadoData
-                            .overflowMultiplier);
             _owner.EvaluateBotCapTransition();
             long ipDelta = Math.Max(
                 0L,
                 _owner.prestigeData.infinityPoints -
                 beforeIp);
-            long afterOverflow =
-                Oracle.oracle.saveSettings.avocadoData
-                    .overflowMultiplier >= long.MaxValue
-                    ? long.MaxValue
-                    : (long)Math.Max(
-                        0d,
-                        Oracle.oracle.saveSettings.avocadoData
-                            .overflowMultiplier);
             bool specialGranted =
-                afterOverflow > beforeOverflow;
+                _owner._botCapSpecialRewardGrantedAtBoundary;
             summary.BotCapInfinityPoints = NumericSafety.Add(
                 summary.BotCapInfinityPoints,
                 specialGranted
@@ -1125,7 +1137,7 @@ public class GameManager : MonoBehaviour
             }
             summary.BotCapOverflowRewards = NumericSafety.Add(
                 summary.BotCapOverflowRewards,
-                Math.Max(0L, afterOverflow - beforeOverflow)).Value;
+                specialGranted ? 1L : 0L).Value;
         }
 
         public void ApplyInfinityReset(
@@ -1408,14 +1420,9 @@ public class GameManager : MonoBehaviour
                 return false;
             }
 
-            bool reachesAutomation =
-                Math.Abs(
-                    projection.ConsumedSeconds -
-                    automationHorizon) <= 1e-9d;
             _owner.AdvanceDreamForActiveBreakBlock(
                 projection.ConsumedSeconds,
-                request.InfinityMinimumCycleSeconds,
-                reachesAutomation);
+                request.InfinityMinimumCycleSeconds);
 
             long startingIp =
                 _owner.prestigeData.infinityPoints;
@@ -1426,15 +1433,6 @@ public class GameManager : MonoBehaviour
                 0L,
                 _owner.prestigeData.infinityPoints -
                 startingIp);
-            long automationEvents = NumericSafety.ToLongFloor(
-                Math.Floor(
-                    (projection.ConsumedSeconds + 1e-12d) /
-                    SimulationTickSeconds)).Value;
-            _owner.botsAutoBuy?.SkipAutomationTicks(
-                automationEvents);
-            _owner.researchAutoBuy?.SkipAutomationTicks(
-                automationEvents);
-
             if (_owner._workerService == null)
                 ServiceLocator.TryGet(out _owner._workerService);
             RealityAdvanceResult reality =
@@ -1544,12 +1542,17 @@ public class GameManager : MonoBehaviour
             double maximumSeconds,
             double infinityMinimumCycleSeconds)
         {
+            double infinityHorizon =
+                _owner.TimeToNextInfinityMaterialEvent(
+                    maximumSeconds,
+                    infinityMinimumCycleSeconds,
+                    _infinityState.SecondsInCurrentCycle,
+                    _infinityBoundaryRemaining,
+                    _infinityState);
             return Math.Min(
                 Math.Min(
                     maximumSeconds,
-                    Math.Max(
-                        1e-12d,
-                        _infinityBoundaryRemaining)),
+                    infinityHorizon),
                 _owner.TimeToNextDreamMaterialEvent(
                     maximumSeconds));
         }
@@ -1563,6 +1566,8 @@ public class GameManager : MonoBehaviour
             _automationPhaseSeconds = NumericSafety.Add(
                 _automationPhaseSeconds,
                 seconds).Value;
+            _owner.RecordStoredTimeWithoutInfinityReset(
+                seconds);
             _infinityBoundaryRemaining = Math.Max(
                 0d,
                 _infinityBoundaryRemaining - seconds);
@@ -1639,20 +1644,13 @@ public class GameManager : MonoBehaviour
             SimulationPresentationSummary summary)
         {
             long beforeIp = _owner.prestigeData.infinityPoints;
-            double beforeOverflow =
-                Oracle.oracle.saveSettings.avocadoData
-                    .overflowMultiplier;
             _owner.EvaluateBotCapTransition();
             long ipDelta = Math.Max(
                 0L,
                 _owner.prestigeData.infinityPoints -
                 beforeIp);
-            double overflowDelta = Math.Max(
-                0d,
-                Oracle.oracle.saveSettings.avocadoData
-                    .overflowMultiplier -
-                beforeOverflow);
-            bool specialGranted = overflowDelta >= 1d;
+            bool specialGranted =
+                _owner._botCapSpecialRewardGrantedAtBoundary;
             summary.BotCapInfinityPoints = NumericSafety.Add(
                 summary.BotCapInfinityPoints,
                 specialGranted
@@ -1676,9 +1674,7 @@ public class GameManager : MonoBehaviour
             }
             summary.BotCapOverflowRewards = NumericSafety.Add(
                 summary.BotCapOverflowRewards,
-                overflowDelta >= long.MaxValue
-                    ? long.MaxValue
-                    : (long)Math.Floor(overflowDelta)).Value;
+                specialGranted ? 1L : 0L).Value;
         }
 
         public void ApplyInfinityReset(
@@ -1763,6 +1759,22 @@ public class GameManager : MonoBehaviour
             out SimulationAccelerationResult acceleration)
         {
             acceleration = default;
+            maximumSeconds = Math.Min(
+                maximumSeconds,
+                request.AutomationTimeUntilNextEvent);
+            if (maximumSeconds <= 1e-12d)
+            {
+                return false;
+            }
+
+            if (TryAggregateBreakInfinityCycles(
+                    maximumSeconds,
+                    request,
+                    out acceleration))
+            {
+                return true;
+            }
+
             if (_automationPhaseSeconds > 1e-9d ||
                 maximumSeconds < SimulationTickSeconds * 2d)
             {
@@ -1771,14 +1783,6 @@ public class GameManager : MonoBehaviour
 
             if (TryAggregateStableDreamCycles(
                     maximumSeconds,
-                    out acceleration))
-            {
-                return true;
-            }
-
-            if (TryAggregateBreakInfinityCycles(
-                    maximumSeconds,
-                    request,
                     out acceleration))
             {
                 return true;
@@ -1810,10 +1814,12 @@ public class GameManager : MonoBehaviour
             SimulationStatisticsTotals after =
                 CaptureTotals(Oracle.oracle.saveSettings
                     .simulationStatistics?.lifetime);
+            SimulationPresentationSummary difference =
+                Difference(before, after);
             acceleration = new SimulationAccelerationResult(
                 accepted: true,
                 consumedSeconds: consumed,
-                summary: Difference(before, after),
+                summary: difference,
                 validationError: 0d);
             return true;
         }
@@ -1832,14 +1838,10 @@ public class GameManager : MonoBehaviour
                 !_infinityState.TryGetSamples(
                     out InfinityCycleSample first,
                     out InfinityCycleSample second,
-                    out InfinityCycleSample third) ||
-                !AnalyticalOfflineSimulation.TryCaptureState(
-                    _owner.infinityData,
-                    out _))
+                    out InfinityCycleSample third))
             {
                 return false;
             }
-
             double candidateSeconds = maximumSeconds;
             while (candidateSeconds >= 0.1d)
             {
@@ -1875,27 +1877,9 @@ public class GameManager : MonoBehaviour
                                     _infinityState),
                             minimumProjectedCycles: 8L,
                             out projection);
-                if (!projectedStableCycles &&
-                    dysonAutomationEnabled)
+                if (!projectedStableCycles)
                 {
-                    // Before every cycle is pinned to the Infinity boundary,
-                    // an automation purchase can alter the remainder of that
-                    // cycle. The empirical projector cannot cross that event
-                    // safely.
                     return false;
-                }
-                if (!projectedStableCycles &&
-                    !AdaptiveInfinityCycleSimulation.TryProjectSeconds(
-                        first,
-                        second,
-                        third,
-                        _owner.prestigeData.infinityPoints,
-                        candidateSeconds,
-                        request.InfinityMinimumCycleSeconds,
-                        out projection))
-                {
-                    candidateSeconds *= 0.5d;
-                    continue;
                 }
 
                 double dreamError = 0d;
@@ -1933,13 +1917,17 @@ public class GameManager : MonoBehaviour
                     projection,
                     _infinityState);
                 ApplyAggregatedOfflineTimeRollover(
-                    projection.CycleCount);
+                    projection.CycleCount,
+                    projection.ConsumedSeconds,
+                    projection.LastDurationSeconds);
                 long aggregateReward = Math.Max(
                     0L,
                     _owner.prestigeData.infinityPoints -
                     startingIp);
 
-                double phase = projection.ConsumedSeconds %
+                double phase = NumericSafety.Add(
+                                   _automationPhaseSeconds,
+                                   projection.ConsumedSeconds).Value %
                                SimulationTickSeconds;
                 _automationPhaseSeconds =
                     phase <= 1e-9d ||
@@ -1948,14 +1936,6 @@ public class GameManager : MonoBehaviour
                         : phase;
                 _infinityBoundaryRemaining =
                     request.InfinityMinimumCycleSeconds;
-                long automationEvents = NumericSafety.ToLongFloor(
-                    Math.Floor(
-                        (projection.ConsumedSeconds + 1e-12d) /
-                        SimulationTickSeconds)).Value;
-                _owner.botsAutoBuy?.SkipAutomationTicks(
-                    automationEvents);
-                _owner.researchAutoBuy?.SkipAutomationTicks(
-                    automationEvents);
                 RealityAdvanceResult reality =
                     _owner.AdvanceRealityStoredTime(
                         projection.ConsumedSeconds);
@@ -2071,17 +2051,11 @@ public class GameManager : MonoBehaviour
             _dreamCycleState.AcceptAggregate();
             _infinityState.AddElapsed(consumed);
             _infinityBoundaryRemaining = 1d / 60d;
-            long automationTicks = NumericSafety.ToLongFloor(
-                Math.Round(
-                    consumed /
-                    SimulationTickSeconds)).Value;
-            _owner.botsAutoBuy?.SkipAutomationTicks(
-                automationTicks);
-            _owner.researchAutoBuy?.SkipAutomationTicks(
-                automationTicks);
             RealityAdvanceResult reality =
                 _owner.AdvanceRealityStoredTime(consumed);
             _owner.RecordRealitySegment(consumed, reality);
+            _owner.RecordStoredTimeWithoutInfinityReset(
+                consumed);
 
             var summary = new SimulationPresentationSummary
             {
@@ -2265,7 +2239,6 @@ public class GameManager : MonoBehaviour
             _owner.prestigeData.infinityPoints = NumericSafety.Add(
                 _owner.prestigeData.infinityPoints,
                 totalReward).Value;
-            ApplyAggregatedOfflineTimeRollover(cycles);
             Oracle.oracle.saveSettings.lastInfinityPointsGained =
                 rewardPerCycle >= int.MaxValue
                     ? int.MaxValue
@@ -2283,15 +2256,11 @@ public class GameManager : MonoBehaviour
                     rewardPerCycle);
             _infinityState.AcceptProjection(
                 _owner.prestigeData.infinityPoints);
+            ApplyAggregatedOfflineTimeRollover(
+                cycles,
+                consumed,
+                minimumCycle);
 
-            long automationTicks = NumericSafety.ToLongFloor(
-                Math.Floor(
-                    consumed /
-                    SimulationTickSeconds)).Value;
-            _owner.botsAutoBuy?.SkipAutomationTicks(
-                automationTicks);
-            _owner.researchAutoBuy?.SkipAutomationTicks(
-                automationTicks);
             RealityAdvanceResult reality =
                 _owner.AdvanceRealityStoredTime(consumed);
             _owner.RecordRealitySegment(consumed, reality);
@@ -2314,17 +2283,23 @@ public class GameManager : MonoBehaviour
         }
 
         private static void ApplyAggregatedOfflineTimeRollover(
-            long cycles)
+            long cycles,
+            double consumedSeconds,
+            double lastCycleSeconds)
         {
-            if (cycles <= 0L) return;
             SaveDataSettings settings =
                 Oracle.oracle.saveSettings;
+            InfinityStoredTimeUsage usage =
+                InfinityStoredTimeAccounting.CompleteAggregate(
+                    settings.offlineTimeUsedThisInfinity,
+                    settings.offlineTimeUsedPreviousInfinity,
+                    consumedSeconds,
+                    cycles,
+                    lastCycleSeconds);
             settings.offlineTimeUsedPreviousInfinity =
-                cycles == 1L
-                    ? NumericSafety.ClampContinuous(
-                        settings.offlineTimeUsedThisInfinity)
-                    : 0d;
-            settings.offlineTimeUsedThisInfinity = 0d;
+                usage.PreviousInfinity;
+            settings.offlineTimeUsedThisInfinity =
+                usage.CurrentInfinity;
         }
 
         private bool TryAdvanceDreamForOrdinaryInfinityAggregate(
@@ -2760,22 +2735,6 @@ public class GameManager : MonoBehaviour
             }
         }
 
-        if (TryProjectInfinityCycles(
-                infinityCycleState,
-                dreamHorizon,
-                out InfinityCycleProjection projection))
-        {
-            ApplyAdaptiveInfinityProjection(
-                projection,
-                infinityCycleState);
-            AdvanceDreamAndAutomationWithoutDyson(
-                projection.ConsumedTicks,
-                dreamIdle,
-                dreamTiming,
-                dreamAdaptive);
-            return projection.ConsumedTicks;
-        }
-
         long processed =
             AnalyticalOfflineSimulation.TryAdvanceDysonWithExactBotDistribution(
                 infinityData,
@@ -2810,35 +2769,14 @@ public class GameManager : MonoBehaviour
 
         infinityCycleState.AddElapsed(
             processed * SimulationTickSeconds);
+        RecordStoredTimeWithoutInfinityReset(
+            processed * SimulationTickSeconds);
         AdvanceDreamAndAutomationWithoutDyson(
             processed,
             dreamIdle,
             dreamTiming,
             dreamAdaptive);
         return processed;
-    }
-
-    private bool TryProjectInfinityCycles(
-        OfflineInfinityCycleState infinityCycleState,
-        long availableTicks,
-        out InfinityCycleProjection projection)
-    {
-        projection = default;
-        return
-            !AnalyticalOfflineSimulation.HasPersistentSideEffects(skillTreeData) &&
-            prestigeData.infinityPoints >= 42L &&
-            infinityCycleState.IsAtPostResetStart &&
-            infinityCycleState.TryGetSamples(
-                out InfinityCycleSample first,
-                out InfinityCycleSample second,
-                out InfinityCycleSample third) &&
-            AdaptiveInfinityCycleSimulation.TryProject(
-                first,
-                second,
-                third,
-                prestigeData.infinityPoints,
-                availableTicks,
-                out projection);
     }
 
     private double GetOfflineResetBotThreshold(
@@ -2871,6 +2809,81 @@ public class GameManager : MonoBehaviour
         return threshold > 0d && NumericSafety.IsFinite(threshold)
             ? threshold
             : double.MaxValue;
+    }
+
+    private double TimeToNextInfinityMaterialEvent(
+        double maximumSeconds,
+        double minimumCycleSeconds,
+        double elapsedCycleSeconds,
+        double boundaryRemaining,
+        OfflineInfinityCycleState infinityCycleState)
+    {
+        if (!NumericSafety.IsFinite(maximumSeconds) ||
+            maximumSeconds <= 0d ||
+            !NumericSafety.IsFinite(minimumCycleSeconds) ||
+            minimumCycleSeconds <= 0d)
+        {
+            return Math.Max(1e-12d, maximumSeconds);
+        }
+
+        double safeBoundary = NumericSafety.IsFinite(boundaryRemaining) &&
+                              boundaryRemaining > 1e-12d
+            ? Math.Min(boundaryRemaining, minimumCycleSeconds)
+            : minimumCycleSeconds;
+        if (elapsedCycleSeconds + 1e-12d <
+            minimumCycleSeconds ||
+            safeBoundary < minimumCycleSeconds - 1e-12d)
+        {
+            return Math.Min(maximumSeconds, safeBoundary);
+        }
+
+        double resetThreshold =
+            GetOfflineResetBotThreshold(infinityCycleState);
+        if (infinityData.bots + 1e-9d >= resetThreshold)
+            return 1e-12d;
+
+        // Automation is independently scheduled at 10 Hz. We only need to
+        // prove whether Infinity can occur before the next automation event;
+        // automation will then change state and this horizon is recomputed.
+        double searchSeconds = Math.Min(
+            maximumSeconds,
+            SimulationTickSeconds);
+        long searchBoundaries = NumericSafety.ToLongFloor(
+            Math.Floor(
+                searchSeconds /
+                minimumCycleSeconds +
+                1e-9d)).Value;
+        if (searchBoundaries < 1L)
+            return maximumSeconds;
+
+        if (!AnalyticalOfflineSimulation.TryFindResetBoundary(
+                infinityData,
+                skillTreeData,
+                prestigeData,
+                prestigePlus,
+                minimumCycleSeconds,
+                searchBoundaries,
+                resetThreshold,
+                out bool forecastSupported,
+                out long boundaries))
+        {
+            // A supported forecast that does not reach the reset threshold
+            // proves there is no Infinity event before automation. Unsupported
+            // states retain exact canonical boundary polling.
+            if (forecastSupported)
+            {
+                return maximumSeconds;
+            }
+            return Math.Min(
+                maximumSeconds,
+                safeBoundary);
+        }
+
+        return Math.Min(
+            maximumSeconds,
+            NumericSafety.Multiply(
+                boundaries,
+                minimumCycleSeconds).Value);
     }
 
     private bool CanProjectStableBreakCycles(
@@ -3020,8 +3033,7 @@ public class GameManager : MonoBehaviour
 
     private void AdvanceDreamForActiveBreakBlock(
         double seconds,
-        double eventIntervalSeconds,
-        bool runAutomationAtEndpoint)
+        double eventIntervalSeconds)
     {
         if (!NumericSafety.IsFinite(seconds) ||
             seconds <= 0d ||
@@ -3037,8 +3049,6 @@ public class GameManager : MonoBehaviour
             double step = Math.Min(
                 remaining,
                 eventIntervalSeconds);
-            bool finalStep =
-                remaining - step <= 1e-12d;
             bool engineeringCompleteAtStart =
                 oracle.saveSettings.sdSimulation.engineeringComplete;
             DreamDoubleTimeTick doubleTimeTick =
@@ -3070,17 +3080,6 @@ public class GameManager : MonoBehaviour
                 doubleTimeTick.EffectiveMultiplier,
                 step,
                 updatePresentation: false);
-
-            // The accelerated block never crosses an automation boundary.
-            // If it ends exactly on one, Dream automation still runs after
-            // production and before derived/timer completion, as it does in
-            // the canonical shared scheduler.
-            if (finalStep && runAutomationAtEndpoint)
-            {
-                foundationalEraManager?.RunAutomationTick();
-                informationEraManager?.RunAutomationTick();
-                spaceAgeManager?.RunAutomationTick();
-            }
 
             foundationalEraManager?.CompleteSimulationTick(
                 updatePresentation: false);
@@ -3314,12 +3313,29 @@ public class GameManager : MonoBehaviour
             });
     }
 
+    private void RecordStoredTimeWithoutInfinityReset(
+        double seconds)
+    {
+        SaveDataSettings settings = oracle.saveSettings;
+        InfinityStoredTimeUsage usage =
+            InfinityStoredTimeAccounting.AdvanceWithoutReset(
+                settings.offlineTimeUsedThisInfinity,
+                settings.offlineTimeUsedPreviousInfinity,
+                seconds);
+        settings.offlineTimeUsedThisInfinity =
+            usage.CurrentInfinity;
+        settings.offlineTimeUsedPreviousInfinity =
+            usage.PreviousInfinity;
+    }
+
     private void RunOfflineCanonicalTick(
         OfflineInfinityCycleState infinityCycleState)
     {
         infinityCycleState.SynchronizeBeforeFirstTick(
             prestigeData.infinityPoints);
         infinityCycleState.AddElapsed(SimulationTickSeconds);
+        RecordStoredTimeWithoutInfinityReset(
+            SimulationTickSeconds);
         bool previousOverrideActive =
             _offlineBreakTargetOverrideActive;
         long previousOverride = _offlineBreakTargetOverride;
@@ -3352,6 +3368,8 @@ public class GameManager : MonoBehaviour
         double seconds,
         OfflineInfinityCycleState infinityCycleState)
     {
+        RecordStoredTimeWithoutInfinityReset(
+            seconds);
         bool previousOverrideActive =
             _offlineBreakTargetOverrideActive;
         long previousOverride = _offlineBreakTargetOverride;
@@ -3383,29 +3401,6 @@ public class GameManager : MonoBehaviour
         while (totalProcessed < limit)
         {
             long remaining = limit - totalProcessed;
-            if (TryProjectInfinityCycles(
-                    infinityCycleState,
-                    remaining,
-                    out InfinityCycleProjection projection))
-            {
-                ApplyAdaptiveInfinityProjection(
-                    projection,
-                    infinityCycleState);
-                RealityAdvanceResult reality = AdvanceRealityStoredTime(
-                    projection.ConsumedTicks * SimulationTickSeconds);
-                RunDreamOnlyOfflineBurst(
-                    projection.ConsumedTicks);
-                botsAutoBuy?.SkipAutomationTicks(
-                    projection.ConsumedTicks);
-                researchAutoBuy?.SkipAutomationTicks(
-                    projection.ConsumedTicks);
-                totalProcessed += projection.ConsumedTicks;
-                RecordRealitySegment(
-                    projection.ConsumedTicks * SimulationTickSeconds,
-                    reality);
-                continue;
-            }
-
             long dysonProcessed =
                 AnalyticalOfflineSimulation.TryAdvanceDysonWithExactBotDistribution(
                     infinityData,
@@ -3437,6 +3432,8 @@ public class GameManager : MonoBehaviour
                 botsAutoBuy?.SkipAutomationTicks(dysonProcessed);
                 researchAutoBuy?.SkipAutomationTicks(dysonProcessed);
                 infinityCycleState.AddElapsed(
+                    dysonProcessed * SimulationTickSeconds);
+                RecordStoredTimeWithoutInfinityReset(
                     dysonProcessed * SimulationTickSeconds);
                 totalProcessed += dysonProcessed;
                 RecordRealitySegment(
@@ -3661,10 +3658,6 @@ public class GameManager : MonoBehaviour
         candidate.offlineTime = NumericSafety.Subtract(
             NumericSafety.ClampContinuous(candidate.offlineTime),
             spentSeconds).Value;
-        candidate.offlineTimeUsedThisInfinity = NumericSafety.Add(
-            NumericSafety.ClampContinuous(
-                candidate.offlineTimeUsedThisInfinity),
-            spentSeconds).Value;
 
         oracle.saveSettings = candidate;
         SimulationPrestigeManager.InvokeResetSimulationRuntime();
@@ -3876,8 +3869,8 @@ public class GameManager : MonoBehaviour
             case 2:
             {
                 goal.text = $"{color}Goal: Have {CalcUtils.FormatNumber(20000)} active Panels";
-                SetSkillsFill((float)(infinityData.panelsPerSec * infinityData.panelLifetime / 20000));
-                if (infinityData.panelsPerSec * infinityData.panelLifetime >= 20000)
+                SetSkillsFill(ActivePanelCount() / 20000d);
+                if (ActivePanelCount() >= 20000d)
                 {
                     infinityData.goalSetter = 3;
                     skillTreeData.skillPointsTree =
@@ -3928,8 +3921,11 @@ public class GameManager : MonoBehaviour
             case 5:
             {
                 goal.text = $"{color}Goal: Surround {CalcUtils.FormatNumber(1000000000)} Stars";
-                SetSkillsFill((float)(infinityData.panelsPerSec * infinityData.panelLifetime / 20000 / 1000000000));
-                if (infinityData.panelsPerSec * infinityData.panelLifetime / 20000 >= 1000000000)
+                SetSkillsFill(
+                    ActivePanelCount() /
+                    20000d /
+                    1000000000d);
+                if (ActivePanelCount() / 20000d >= 1000000000d)
                 {
                     infinityData.goalSetter = 6;
                     skillTreeData.skillPointsTree =
@@ -3944,8 +3940,11 @@ public class GameManager : MonoBehaviour
             case 6:
             {
                 goal.text = $"{color}Goal: Surround {CalcUtils.FormatNumber(10000000000)} Stars";
-                SetSkillsFill((float)(infinityData.panelsPerSec * infinityData.panelLifetime / 20000 / 10000000000));
-                if (infinityData.panelsPerSec * infinityData.panelLifetime / 20000 >= 10000000000)
+                SetSkillsFill(
+                    ActivePanelCount() /
+                    20000d /
+                    10000000000d);
+                if (ActivePanelCount() / 20000d >= 10000000000d)
                 {
                     infinityData.goalSetter = 7;
                     skillTreeData.skillPointsTree =
@@ -3960,8 +3959,13 @@ public class GameManager : MonoBehaviour
             case 7:
             {
                 goal.text = $"{color}Goal: Engulf a Galaxy";
-                SetSkillsFill((float)(infinityData.panelsPerSec * infinityData.panelLifetime / 20000 / 100000000000 / 1));
-                if (infinityData.panelsPerSec * infinityData.panelLifetime / 20000 / 100000000000 > 1)
+                SetSkillsFill(
+                    ActivePanelCount() /
+                    20000d /
+                    100000000000d);
+                if (ActivePanelCount() /
+                    20000d /
+                    100000000000d > 1d)
                 {
                     infinityData.goalSetter = 8;
                     skillTreeData.skillPointsTree =
@@ -3976,8 +3980,14 @@ public class GameManager : MonoBehaviour
             case 8:
             {
                 goal.text = $"{color}Goal: Engulf {CalcUtils.FormatNumber(10)} Galaxies";
-                SetSkillsFill((float)(infinityData.panelsPerSec * infinityData.panelLifetime / 20000 / 100000000000 / 10));
-                if (infinityData.panelsPerSec * infinityData.panelLifetime / 20000 / 100000000000 > 10)
+                SetSkillsFill(
+                    ActivePanelCount() /
+                    20000d /
+                    100000000000d /
+                    10d);
+                if (ActivePanelCount() /
+                    20000d /
+                    100000000000d > 10d)
                 {
                     infinityData.goalSetter = 9;
                     skillTreeData.skillPointsTree =
@@ -3992,8 +4002,14 @@ public class GameManager : MonoBehaviour
             case 9:
             {
                 goal.text = $"{color}Goal: Engulf {CalcUtils.FormatNumber(100)} Galaxies";
-                SetSkillsFill((float)(infinityData.panelsPerSec * infinityData.panelLifetime / 20000 / 100000000000 / 100));
-                if (infinityData.panelsPerSec * infinityData.panelLifetime / 20000 / 100000000000 > 100)
+                SetSkillsFill(
+                    ActivePanelCount() /
+                    20000d /
+                    100000000000d /
+                    100d);
+                if (ActivePanelCount() /
+                    20000d /
+                    100000000000d > 100d)
                 {
                     infinityData.goalSetter = 10;
                     skillTreeData.skillPointsTree =

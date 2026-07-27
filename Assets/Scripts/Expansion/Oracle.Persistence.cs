@@ -381,8 +381,6 @@ namespace Expansion
             EnsureRuntimeSeamsInitialized();
             saveSettings = loaded;
             LoadDictionaries();
-            if (!oracle.saveSettings.cheater && oracle.saveSettings.maxOfflineTime < 86400)
-                oracle.saveSettings.maxOfflineTime = 86400;
             saveSettings.lastSuccessfulLoadUtc = _clock.UtcNow.ToString(CultureInfo.InvariantCulture);
             Loaded = true;
             Debug.Log($"Loaded with {sourceLog}");

@@ -53,6 +53,8 @@ namespace Systems.Numeric
         {
             if (!IsFinite(left) || !IsFinite(right))
                 return new NumericResult<double>(0d, NumericStatus.InvalidInput);
+            if (!allowNegative && (left < 0d || right < 0d))
+                return new NumericResult<double>(0d, NumericStatus.InvalidInput);
 
             double value = left + right;
             if (double.IsPositiveInfinity(value))
@@ -62,9 +64,45 @@ namespace Systems.Numeric
             return new NumericResult<double>(value, NumericStatus.Success);
         }
 
+        /// <summary>
+        /// Applies one logical unit to a non-negative continuous counter. When
+        /// +1 is smaller than the current double spacing, the value advances
+        /// by exactly one representable step instead of silently staying put.
+        /// </summary>
+        public static NumericResult<double> AddUnit(double value)
+        {
+            if (!IsFinite(value) || value < 0d)
+                return new NumericResult<double>(
+                    0d,
+                    NumericStatus.InvalidInput);
+            if (value == ContinuousMaximum)
+                return new NumericResult<double>(
+                    ContinuousMaximum,
+                    NumericStatus.Saturated);
+
+            double added = value + 1d;
+            if (double.IsPositiveInfinity(added))
+                return new NumericResult<double>(
+                    ContinuousMaximum,
+                    NumericStatus.Saturated);
+            if (added > value && added - value == 1d)
+            {
+                return new NumericResult<double>(
+                    added,
+                    NumericStatus.Success);
+            }
+
+            double next = BitIncrement(value);
+            return new NumericResult<double>(
+                IsFinite(next) ? next : ContinuousMaximum,
+                NumericStatus.Saturated);
+        }
+
         public static NumericResult<double> Subtract(double left, double right, bool allowNegative = false)
         {
             if (!IsFinite(left) || !IsFinite(right))
+                return new NumericResult<double>(0d, NumericStatus.InvalidInput);
+            if (!allowNegative && (left < 0d || right < 0d))
                 return new NumericResult<double>(0d, NumericStatus.InvalidInput);
 
             double value = left - right;
@@ -95,6 +133,8 @@ namespace Systems.Numeric
         public static NumericResult<double> Divide(double numerator, double denominator, bool allowNegative = false)
         {
             if (!IsFinite(numerator) || !IsFinite(denominator))
+                return new NumericResult<double>(0d, NumericStatus.InvalidInput);
+            if (!allowNegative && (numerator < 0d || denominator < 0d))
                 return new NumericResult<double>(0d, NumericStatus.InvalidInput);
             if (denominator == 0d)
                 return new NumericResult<double>(0d, NumericStatus.DivisionByZero);
@@ -211,6 +251,20 @@ namespace Systems.Numeric
 
             long bits = BitConverter.DoubleToInt64Bits(value);
             bits += value > 0d ? -1 : 1;
+            return BitConverter.Int64BitsToDouble(bits);
+        }
+
+        public static double BitIncrement(double value)
+        {
+            if (double.IsNaN(value) ||
+                value == double.PositiveInfinity)
+            {
+                return value;
+            }
+            if (value == 0d) return double.Epsilon;
+
+            long bits = BitConverter.DoubleToInt64Bits(value);
+            bits += value > 0d ? 1 : -1;
             return BitConverter.Int64BitsToDouble(bits);
         }
     }

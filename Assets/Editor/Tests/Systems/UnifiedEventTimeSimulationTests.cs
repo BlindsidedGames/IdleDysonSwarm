@@ -9,6 +9,49 @@ namespace Tests.Systems
     public sealed class UnifiedEventTimeSimulationTests
     {
         [Test]
+        public void StoredTimeAccounting_NoResetAccumulatesCurrentCycle()
+        {
+            InfinityStoredTimeUsage usage =
+                InfinityStoredTimeAccounting.AdvanceWithoutReset(
+                    2d,
+                    7d,
+                    0.15d);
+
+            Assert.AreEqual(2.15d, usage.CurrentInfinity, 1e-12d);
+            Assert.AreEqual(7d, usage.PreviousInfinity, 0d);
+        }
+
+        [Test]
+        public void StoredTimeAccounting_OneResetRollsAllConsumedTime()
+        {
+            InfinityStoredTimeUsage usage =
+                InfinityStoredTimeAccounting.CompleteAggregate(
+                    2d,
+                    7d,
+                    1.2d,
+                    1L,
+                    1.2d);
+
+            Assert.AreEqual(0d, usage.CurrentInfinity, 0d);
+            Assert.AreEqual(3.2d, usage.PreviousInfinity, 1e-12d);
+        }
+
+        [Test]
+        public void StoredTimeAccounting_MultipleResetsPreserveLastCycleDuration()
+        {
+            InfinityStoredTimeUsage usage =
+                InfinityStoredTimeAccounting.CompleteAggregate(
+                    0d,
+                    7d,
+                    6d,
+                    5L,
+                    0.8d);
+
+            Assert.AreEqual(0d, usage.CurrentInfinity, 0d);
+            Assert.AreEqual(0.8d, usage.PreviousInfinity, 1e-12d);
+        }
+
+        [Test]
         public void CoincidentBoundary_UsesApprovedDeterministicOrder()
         {
             var model = new FakeModel { EventHorizon = 0.1d };

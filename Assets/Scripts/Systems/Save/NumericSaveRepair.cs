@@ -234,6 +234,19 @@ namespace Systems.Save
                     settings.maxOfflineTime,
                     "stored_time_capacity_cap_and_comparison_flag");
             }
+            else if (!settings.cheater &&
+                     settings.maxOfflineTime <
+                     DefaultOfflineCapacitySeconds)
+            {
+                double original = settings.maxOfflineTime;
+                settings.maxOfflineTime =
+                    DefaultOfflineCapacitySeconds;
+                result.Add(
+                    "saveSettings.maxOfflineTime",
+                    original,
+                    settings.maxOfflineTime,
+                    "minimum_authored_offline_capacity");
+            }
         }
 
         private static void RepairAuthoredDiscreteBounds(

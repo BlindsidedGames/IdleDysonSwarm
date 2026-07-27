@@ -1,4 +1,6 @@
 using System;
+using System.Collections;
+using System.Text.RegularExpressions;
 using Buildings;
 using NUnit.Framework;
 using Blindsided.Utilities;
@@ -42,10 +44,54 @@ namespace Tests.Systems
                 NumericDiagnostics.Report("NS-DIAGNOSTIC-RATE", "source=fixture");
         }
 
+        [UnityTest]
+        public IEnumerator NumericDiagnostics_PlayModeReportUsesHandledException()
+        {
+            yield return new EnterPlayMode();
+            LogAssert.Expect(
+                LogType.Exception,
+                new Regex(
+                    @"NumericSafetyFaultException: " +
+                    @"\[NumericSafety:NS-DIAGNOSTIC-PLAYMODE\] " +
+                    @"source=fixture"));
+
+            NumericDiagnostics.Report(
+                "NS-DIAGNOSTIC-PLAYMODE",
+                "source=fixture");
+
+            yield return null;
+            yield return new ExitPlayMode();
+        }
+
         [Test]
         public void AddDouble_Overflow_Saturates()
         {
             NumericResult<double> result = NumericSafety.Add(double.MaxValue, double.MaxValue);
+
+            Assert.AreEqual(NumericStatus.Saturated, result.Status);
+            Assert.AreEqual(double.MaxValue, result.Value);
+        }
+
+        [Test]
+        public void AddUnit_AboveExactIntegerRangeAdvancesRepresentableValue()
+        {
+            const double value = 9007199254740992d;
+
+            NumericResult<double> result =
+                NumericSafety.AddUnit(value);
+
+            Assert.AreEqual(NumericStatus.Saturated, result.Status);
+            Assert.AreEqual(
+                NumericSafety.BitIncrement(value),
+                result.Value);
+            Assert.Greater(result.Value, value);
+        }
+
+        [Test]
+        public void AddUnit_AtContinuousMaximumRemainsSafelySaturated()
+        {
+            NumericResult<double> result =
+                NumericSafety.AddUnit(double.MaxValue);
 
             Assert.AreEqual(NumericStatus.Saturated, result.Status);
             Assert.AreEqual(double.MaxValue, result.Value);
@@ -67,6 +113,26 @@ namespace Tests.Systems
             Assert.AreEqual(0d, NumericSafety.Subtract(1d, 2d).Value);
             Assert.AreEqual(NumericStatus.Saturated, NumericSafety.Subtract(1L, 2L).Status);
             Assert.AreEqual(0L, NumericSafety.Subtract(1L, 2L).Value);
+        }
+
+        [Test]
+        public void UnsignedDoubleHelpers_RejectNegativeOperandsConsistently()
+        {
+            Assert.AreEqual(
+                NumericStatus.InvalidInput,
+                NumericSafety.Add(2d, -1d).Status);
+            Assert.AreEqual(
+                NumericStatus.InvalidInput,
+                NumericSafety.Subtract(2d, -1d).Status);
+            Assert.AreEqual(
+                NumericStatus.InvalidInput,
+                NumericSafety.Multiply(2d, -1d).Status);
+            Assert.AreEqual(
+                NumericStatus.InvalidInput,
+                NumericSafety.Divide(2d, -1d).Status);
+            Assert.AreEqual(
+                NumericStatus.Success,
+                NumericSafety.Add(2d, -1d, allowNegative: true).Status);
         }
 
         [Test]
@@ -580,6 +646,94 @@ namespace Tests.Systems
             NumericSaveRepair.Repair(settings);
 
             Assert.AreEqual(86400d, settings.maxOfflineTime);
+        }
+
+        [Test]
+        public void SaveRepair_LowOfflineCapacityIsRaisedBeforePublication()
+        {
+            var settings = new Oracle.SaveDataSettings
+            {
+                maxOfflineTime = 60d
+            };
+
+            NumericSaveRepairResult result =
+                NumericSaveRepair.Repair(settings);
+
+            Assert.AreEqual(86400d, settings.maxOfflineTime);
+            Assert.That(
+                result.Entries,
+                Has.Some.Contains(
+                    "saveSettings.maxOfflineTime|60|86400|" +
+                    "minimum_authored_offline_capacity"));
+        }
+
+        [Test]
+        public void SaveRepair_CheaterLowOfflineCapacityIsPreserved()
+        {
+            var settings = new Oracle.SaveDataSettings
+            {
+                cheater = true,
+                maxOfflineTime = 60d
+            };
+
+            NumericSaveRepair.Repair(settings);
+
+            Assert.AreEqual(60d, settings.maxOfflineTime);
+        }
+
+        [Test]
+        public void DerivedProductionRates_SaturateInsteadOfRemainingNonFinite()
+        {
+            var data = new Oracle.DysonVerseInfinityData
+            {
+                pocketDimensionsProduction =
+                    double.PositiveInfinity,
+                quantumComputingProduction =
+                    double.PositiveInfinity,
+                pocketDimensionsWithoutAnythingElseProduction =
+                    double.PositiveInfinity,
+                pocketProtectorsProduction =
+                    double.PositiveInfinity,
+                pocketMultiverseProduction =
+                    double.PositiveInfinity,
+                scientificPlanetsProduction =
+                    double.PositiveInfinity,
+                stellarSacrificesProduction =
+                    double.PositiveInfinity,
+                rudimentrySingularityProduction =
+                    double.PositiveInfinity,
+                planetAssemblyProduction =
+                    double.PositiveInfinity,
+                shellWorldsProduction =
+                    double.PositiveInfinity
+            };
+
+            ProductionSystem.RecalculateDerivedState(
+                data,
+                new Oracle.DysonVerseSkillTreeData(),
+                new Oracle.DysonVersePrestigeData(),
+                new Oracle.PrestigePlus());
+
+            Assert.IsTrue(NumericSafety.IsFinite(
+                data.pocketDimensionsProduction));
+            Assert.IsTrue(NumericSafety.IsFinite(
+                data.quantumComputingProduction));
+            Assert.IsTrue(NumericSafety.IsFinite(
+                data.pocketDimensionsWithoutAnythingElseProduction));
+            Assert.IsTrue(NumericSafety.IsFinite(
+                data.pocketProtectorsProduction));
+            Assert.IsTrue(NumericSafety.IsFinite(
+                data.pocketMultiverseProduction));
+            Assert.IsTrue(NumericSafety.IsFinite(
+                data.scientificPlanetsProduction));
+            Assert.IsTrue(NumericSafety.IsFinite(
+                data.stellarSacrificesProduction));
+            Assert.IsTrue(NumericSafety.IsFinite(
+                data.rudimentrySingularityProduction));
+            Assert.IsTrue(NumericSafety.IsFinite(
+                data.planetAssemblyProduction));
+            Assert.IsTrue(NumericSafety.IsFinite(
+                data.shellWorldsProduction));
         }
 
         [Test]

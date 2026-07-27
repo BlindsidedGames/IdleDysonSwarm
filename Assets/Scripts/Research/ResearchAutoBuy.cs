@@ -1,3 +1,4 @@
+using System;
 using GameData;
 using Systems.Simulation;
 using UnityEngine;
@@ -41,7 +42,6 @@ namespace Research
         private ResearchPresenter[] presenters;
         private bool _hasWarnedMissingScenePresenters;
         private int _firstPresenterIndex;
-
         private void Awake()
         {
             RefreshPresenters();
@@ -133,6 +133,11 @@ namespace Research
         {
             presenters = FindObjectsByType<ResearchPresenter>(FindObjectsInactive.Include,
                 FindObjectsSortMode.None);
+            Array.Sort(
+                presenters,
+                static (left, right) => string.CompareOrdinal(
+                    left != null ? left.ResearchIdValue : string.Empty,
+                    right != null ? right.ResearchIdValue : string.Empty));
         }
 
         private void WarnIfMissingRequiredMegaPresenters()

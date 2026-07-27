@@ -11,6 +11,60 @@ using Systems.Numeric;
 
 namespace Systems.Simulation
 {
+    public readonly struct InfinityStoredTimeUsage
+    {
+        public InfinityStoredTimeUsage(
+            double currentInfinity,
+            double previousInfinity)
+        {
+            CurrentInfinity = currentInfinity;
+            PreviousInfinity = previousInfinity;
+        }
+
+        public double CurrentInfinity { get; }
+        public double PreviousInfinity { get; }
+    }
+
+    public static class InfinityStoredTimeAccounting
+    {
+        public static InfinityStoredTimeUsage AdvanceWithoutReset(
+            double currentInfinity,
+            double previousInfinity,
+            double seconds)
+        {
+            return new InfinityStoredTimeUsage(
+                NumericSafety.Add(
+                    NumericSafety.ClampContinuous(currentInfinity),
+                    NumericSafety.ClampContinuous(seconds)).Value,
+                NumericSafety.ClampContinuous(previousInfinity));
+        }
+
+        public static InfinityStoredTimeUsage CompleteAggregate(
+            double currentInfinity,
+            double previousInfinity,
+            double consumedSeconds,
+            long completedCycles,
+            double lastCycleSeconds)
+        {
+            if (completedCycles <= 0L)
+            {
+                return AdvanceWithoutReset(
+                    currentInfinity,
+                    previousInfinity,
+                    consumedSeconds);
+            }
+
+            double previous = completedCycles == 1L
+                ? NumericSafety.Add(
+                    NumericSafety.ClampContinuous(currentInfinity),
+                    NumericSafety.ClampContinuous(consumedSeconds)).Value
+                : NumericSafety.ClampContinuous(lastCycleSeconds);
+            return new InfinityStoredTimeUsage(
+                0d,
+                previous);
+        }
+    }
+
     public enum SimulationAdvanceMode
     {
         Active,
@@ -293,18 +347,26 @@ namespace Systems.Simulation
             bool accepted,
             double consumedSeconds,
             SimulationPresentationSummary summary,
-            double validationError = 0d)
+            double validationError = 0d,
+            bool allAutomationEventsHandled = false)
         {
             Accepted = accepted;
             ConsumedSeconds = consumedSeconds;
             Summary = summary;
             ValidationError = validationError;
+            AllAutomationEventsHandled = allAutomationEventsHandled;
         }
 
         public bool Accepted { get; }
         public double ConsumedSeconds { get; }
         public SimulationPresentationSummary Summary { get; }
         public double ValidationError { get; }
+        /// <summary>
+        /// True only when the block applied every Dyson and Dream automation
+        /// event it crossed in canonical order. Partial subsystem handling is
+        /// forbidden.
+        /// </summary>
+        public bool AllAutomationEventsHandled { get; }
     }
 
     /// <summary>
@@ -434,7 +496,8 @@ namespace Systems.Simulation
                             result,
                             block.ConsumedSeconds,
                             request.AutomationIntervalSeconds,
-                            ref automationRemaining);
+                            ref automationRemaining,
+                            block.AllAutomationEventsHandled);
                         result.Summary.Merge(block.Summary);
                         result.Work.AccelerationBlocksAccepted =
                             NumericSafety.Add(
@@ -708,13 +771,19 @@ namespace Systems.Simulation
             SimulationAdvanceResult result,
             double seconds,
             double automationInterval,
-            ref double automationRemaining)
+            ref double automationRemaining,
+            bool allAutomationEventsHandled)
         {
             result.ConsumedSeconds =
                 NumericSafety.Add(result.ConsumedSeconds, seconds).Value;
             result.RemainingSeconds =
                 Math.Max(0d, result.RemainingSeconds - seconds);
             double phase = automationRemaining - seconds;
+            if (!allAutomationEventsHandled)
+            {
+                automationRemaining = Math.Max(0d, phase);
+                return;
+            }
             if (phase > TimeEpsilon)
             {
                 automationRemaining = phase;

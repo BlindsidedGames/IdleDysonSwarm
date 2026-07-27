@@ -101,6 +101,78 @@ namespace Systems.Simulation
             return true;
         }
 
+        public static bool TryFindResetBoundary(
+            DysonVerseInfinityData data,
+            DysonVerseSkillTreeData skills,
+            DysonVersePrestigeData prestige,
+            PrestigePlus prestigePlus,
+            double boundarySeconds,
+            long maximumBoundaries,
+            double resetBotThreshold,
+            out bool supported,
+            out long boundaries)
+        {
+            supported = false;
+            boundaries = 0L;
+            if (data == null || skills == null ||
+                prestige == null || prestigePlus == null ||
+                HasPersistentSideEffects(skills) ||
+                !NumericSafety.IsFinite(boundarySeconds) ||
+                boundarySeconds <= 0d ||
+                maximumBoundaries <= 0L ||
+                !NumericSafety.IsFinite(resetBotThreshold) ||
+                resetBotThreshold <= 0d)
+            {
+                return false;
+            }
+
+            double[] start = Capture(data);
+            if (!AllFiniteNonNegative(start))
+                return false;
+            supported = true;
+            double[] state = start;
+            try
+            {
+                for (long boundary = 1L;
+                     boundary <= maximumBoundaries;
+                     boundary++)
+                {
+                    state = EvaluateNext(
+                        data,
+                        skills,
+                        prestige,
+                        prestigePlus,
+                        state,
+                        boundarySeconds);
+                    if (!AllFiniteNonNegative(state))
+                    {
+                        supported = false;
+                        return false;
+                    }
+                    if (state[(int)StateIndex.Bots] + 1e-9d >=
+                        resetBotThreshold)
+                    {
+                        boundaries = boundary;
+                        return true;
+                    }
+                }
+                return false;
+            }
+            finally
+            {
+                Restore(data, start);
+                ProductionSystem.SetBotDistribution(
+                    data,
+                    prestige,
+                    prestigePlus);
+                ProductionSystem.RecalculateDerivedState(
+                    data,
+                    skills,
+                    prestige,
+                    prestigePlus);
+            }
+        }
+
         private enum StateIndex
         {
             Money,
@@ -862,7 +934,22 @@ namespace Systems.Simulation
             DysonVerseSkillTreeData skills,
             DysonVersePrestigeData prestige,
             PrestigePlus prestigePlus,
-            double[] state)
+            double[] state) =>
+            EvaluateNext(
+                data,
+                skills,
+                prestige,
+                prestigePlus,
+                state,
+                TickSeconds);
+
+        private static double[] EvaluateNext(
+            DysonVerseInfinityData data,
+            DysonVerseSkillTreeData skills,
+            DysonVersePrestigeData prestige,
+            PrestigePlus prestigePlus,
+            double[] state,
+            double intervalSeconds)
         {
             Restore(data, state);
             ProductionSystem.SetBotDistribution(data, prestige, prestigePlus);
@@ -870,23 +957,23 @@ namespace Systems.Simulation
 
             double[] next = (double[])state.Clone();
             Add(ref next[(int)StateIndex.Money],
-                ProductionSystem.MoneyToAdd(data, skills) * TickSeconds);
+                ProductionSystem.MoneyToAdd(data, skills) * intervalSeconds);
             Add(ref next[(int)StateIndex.Science],
-                ProductionSystem.ScienceToAdd(data, skills) * TickSeconds);
-            Add(ref next[(int)StateIndex.PanelsDecayed], data.panelsPerSec * TickSeconds);
-            Add(ref next[(int)StateIndex.Bots], data.botProduction * TickSeconds);
-            Add(ref next[(int)StateIndex.AssemblyLines], data.assemblyLineProduction * TickSeconds);
-            Add(ref next[(int)StateIndex.Managers], data.managerProduction * TickSeconds);
-            Add(ref next[(int)StateIndex.Servers], data.serverProduction * TickSeconds);
-            Add(ref next[(int)StateIndex.DataCenters], data.dataCenterProduction * TickSeconds);
+                ProductionSystem.ScienceToAdd(data, skills) * intervalSeconds);
+            Add(ref next[(int)StateIndex.PanelsDecayed], data.panelsPerSec * intervalSeconds);
+            Add(ref next[(int)StateIndex.Bots], data.botProduction * intervalSeconds);
+            Add(ref next[(int)StateIndex.AssemblyLines], data.assemblyLineProduction * intervalSeconds);
+            Add(ref next[(int)StateIndex.Managers], data.managerProduction * intervalSeconds);
+            Add(ref next[(int)StateIndex.Servers], data.serverProduction * intervalSeconds);
+            Add(ref next[(int)StateIndex.DataCenters], data.dataCenterProduction * intervalSeconds);
             Add(ref next[(int)StateIndex.Planets],
                 NumericSafety.Add(
                     data.totalPlanetProduction,
-                    data.matrioshkaBrainPlanetProduction).Value * TickSeconds);
+                    data.matrioshkaBrainPlanetProduction).Value * intervalSeconds);
             Add(ref next[(int)StateIndex.MatrioshkaBrains],
-                data.birchPlanetMatrioshkaProduction * TickSeconds);
+                data.birchPlanetMatrioshkaProduction * intervalSeconds);
             Add(ref next[(int)StateIndex.BirchPlanets],
-                data.galacticBrainBirchProduction * TickSeconds);
+                data.galacticBrainBirchProduction * intervalSeconds);
             return next;
         }
 

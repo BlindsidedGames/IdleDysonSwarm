@@ -386,6 +386,14 @@ private void PackSettingsFlags()
 
         internal bool ProcessBotCapTransition()
         {
+            return ProcessBotCapTransitionWithOutcome(
+                out _);
+        }
+
+        internal bool ProcessBotCapTransitionWithOutcome(
+            out bool specialRewardGranted)
+        {
+            specialRewardGranted = false;
             BotCapTransitionAction action = BotCapTransitionContract.Classify(
                 infinityData.bots,
                 saveSettings.botCapTransitionPending,
@@ -441,10 +449,14 @@ private void PackSettingsFlags()
                 double previousLegacyOverflow = prestigePlus.avocatoOverflow;
                 long previousInfinityPoints = prestigeData.infinityPoints;
 
+                NumericResult<double> overflowReward =
+                    NumericSafety.AddUnit(previousOverflow);
+                NumericResult<double> legacyOverflowReward =
+                    NumericSafety.AddUnit(previousLegacyOverflow);
                 saveSettings.avocadoData.overflowMultiplier =
-                    NumericSafety.Add(previousOverflow, 1d).Value;
+                    overflowReward.Value;
                 prestigePlus.avocatoOverflow =
-                    NumericSafety.Add(previousLegacyOverflow, 1d).Value;
+                    legacyOverflowReward.Value;
                 prestigeData.infinityPoints =
                     NumericSafety.Add(previousInfinityPoints, 1000L).Value;
                 saveSettings.botCapTransitionPending = false;
@@ -461,6 +473,14 @@ private void PackSettingsFlags()
                     Debug.LogError(
                         $"[NumericSafety:NS-BOT-REWARD-SAVE] Bot-cap rewards were not committed; transition paused: {rewardError}");
                     return true;
+                }
+                specialRewardGranted = true;
+                if (overflowReward.IsSaturated ||
+                    legacyOverflowReward.IsSaturated)
+                {
+                    NumericDiagnostics.Report(
+                        "NS-BOT-OVERFLOW-REWARD-QUANTIZED",
+                        "logical_units=1");
                 }
             }
             else
@@ -2399,17 +2419,34 @@ private void PackSettingsFlags()
 
         public void SetSkillOwned(string skillId, bool owned)
         {
+            SetSkillOwned(
+                skillId,
+                owned,
+                updatePresentation: true);
+        }
+
+        internal void SetSkillOwned(
+            string skillId,
+            bool owned,
+            bool updatePresentation)
+        {
             if (string.IsNullOrEmpty(skillId)) return;
             if (infinityData == null) return;
 
             SetSkillStateOwned(skillId, owned);
-            SyncSkillOwnedByIdFromState();
+            infinityData.skillOwnedById ??=
+                new Dictionary<string, bool>();
+            infinityData.skillOwnedById[skillId] = owned;
 
             if (SkillIdMap.TryGetLegacyKey(skillId, out int key))
             {
                 infinityData.SkillTreeSaveData ??= new Dictionary<int, bool>();
                 infinityData.SkillTreeSaveData[key] = owned;
-                if (SkillTree != null && SkillTree.TryGetValue(key, out SkillTreeItem item))
+                if (updatePresentation &&
+                    SkillTree != null &&
+                    SkillTree.TryGetValue(
+                        key,
+                        out SkillTreeItem item))
                 {
                     item.Owned = owned;
                 }
@@ -2796,6 +2833,128 @@ private void PackSettingsFlags()
             }
         }
 
+        private void ResetInfinityRunState(
+            bool updatePresentation)
+        {
+            if (updatePresentation && SkillTree != null)
+            {
+                foreach (KeyValuePair<int, SkillTreeItem> entry in
+                         SkillTree)
+                {
+                    if (entry.Value != null)
+                        entry.Value.Owned = false;
+                }
+            }
+
+            saveSettings.dysonVerseSaveData
+                    .dysonVerseInfinityData =
+                new DysonVerseInfinityData();
+            saveSettings.dysonVerseSaveData
+                    .dysonVerseSkillTreeData =
+                new DysonVerseSkillTreeData();
+        }
+
+        internal void AutoAssignSkillsWithoutPresentation()
+        {
+            List<string> autoAssignIds =
+                GetAutoAssignmentSkillIds();
+            if (autoAssignIds.Count < 1) return;
+            GameDataRegistry registry =
+                GameDataRegistry.Instance;
+            if (registry == null ||
+                registry.skillDatabase == null)
+            {
+                return;
+            }
+
+            bool assignedAny;
+            int passesRemaining = autoAssignIds.Count;
+            do
+            {
+                assignedAny = false;
+                foreach (string skillId in autoAssignIds)
+                {
+                    if (string.IsNullOrEmpty(skillId) ||
+                        IsSkillOwned(skillId) ||
+                        !registry.skillDatabase.TryGet(
+                            skillId,
+                            out SkillDefinition definition) ||
+                        definition == null)
+                    {
+                        continue;
+                    }
+
+                    if (skillTreeData.skillPointsTree <
+                            definition.cost ||
+                        !RequirementsMet(
+                            definition.requiredSkillIds) ||
+                        !RequirementsMet(
+                            definition.shadowRequirementIds) ||
+                        AnyExclusiveOwned(
+                            definition.exclusiveWithIds) ||
+                        (!saveSettings
+                              .autoAssignNonRefundableSkills &&
+                         !definition.refundable))
+                    {
+                        continue;
+                    }
+
+                    DiscreteDebitResult debit =
+                        EconomyTransaction.TryDebit(
+                            skillTreeData.skillPointsTree,
+                            definition.cost);
+                    if (!debit.Succeeded) continue;
+                    skillTreeData.skillPointsTree =
+                        debit.Balance;
+                    SetSkillOwned(
+                        skillId,
+                        true,
+                        updatePresentation: false);
+                    if (definition.isFragment)
+                    {
+                        skillTreeData.fragments =
+                            NumericSafety.Add(
+                                skillTreeData.fragments,
+                                1L).Value;
+                    }
+                    assignedAny = true;
+                    if (skillTreeData.skillPointsTree <= 0L)
+                        break;
+                }
+                passesRemaining--;
+            } while (assignedAny &&
+                     skillTreeData.skillPointsTree > 0L &&
+                     passesRemaining > 0);
+        }
+
+        private bool RequirementsMet(string[] ids)
+        {
+            if (ids == null || ids.Length == 0)
+                return true;
+            for (int index = 0;
+                 index < ids.Length;
+                 index++)
+            {
+                if (!IsSkillOwned(ids[index]))
+                    return false;
+            }
+            return true;
+        }
+
+        private bool AnyExclusiveOwned(string[] ids)
+        {
+            if (ids == null || ids.Length == 0)
+                return false;
+            for (int index = 0;
+                 index < ids.Length;
+                 index++)
+            {
+                if (IsSkillOwned(ids[index]))
+                    return true;
+            }
+            return false;
+        }
+
         #region DysonVerseInfinity
 
         [ContextMenu("DysonInfinity")]
@@ -2808,9 +2967,7 @@ private void PackSettingsFlags()
             int bankedSkills = 0;
             if (IsSkillOwned("banking")) bankedSkills++;
             if (IsSkillOwned("investmentPortfolio")) bankedSkills++;
-            ResetSkillOwnership();
-
-            saveSettings.dysonVerseSaveData.dysonVerseInfinityData = new DysonVerseInfinityData();
+            ResetInfinityRunState(updatePresentation);
 
             int ipToGain = saveSettings.prestigePlus.doubleIP ? 2 : 1;
             ipToGain *= saveSettings.doubleIp ? 2 : 1;
@@ -2841,7 +2998,8 @@ private void PackSettingsFlags()
             if (updatePresentation && prestigeData.infinityPoints == 42)
                 SidePanelManager.PrestigeToggle.GetComponentInChildren<MenuToggleController>().Toggle(false);
             skillTreeData.fragments = 0;
-            _gameManager.AutoAssignSkillsInvoke();
+            _gameManager.AutoAssignSkillsInvoke(
+                updatePresentation);
             WipeSaveButtonUpdate();
             SetSkillTimerSeconds(infinityData, "superRadiantScattering", 0);
             ProductionSystem.SetBotDistribution(
@@ -2875,7 +3033,6 @@ private void PackSettingsFlags()
             int bankedSkills = 0;
             if (IsSkillOwned("banking")) bankedSkills++;
             if (IsSkillOwned("investmentPortfolio")) bankedSkills++;
-            ResetSkillOwnership();
 
             double amount = prestigePlus.divisionsPurchased > 0 ? 4.2e19 / Math.Pow(10, prestigePlus.divisionsPurchased) : 4.2e19;
             long ipToGain = StaticMethods.InfinityPointsToGain(amount, infinityData.bots);
@@ -2892,7 +3049,7 @@ private void PackSettingsFlags()
                 finalGain,
                 completingBotCapTransition);
 
-            saveSettings.dysonVerseSaveData.dysonVerseInfinityData = new DysonVerseInfinityData();
+            ResetInfinityRunState(updatePresentation);
             infinityData.bots = prestigeData.infinityAssemblyLines ? 10 : 1;
             infinityData.assemblyLines[1] = prestigeData.infinityAssemblyLines ? 10 : 0;
             infinityData.managers[1] = prestigeData.infinityAiManagers ? 10 : 0;
@@ -2903,7 +3060,8 @@ private void PackSettingsFlags()
             skillTreeData.skillPointsTree = prestigeData.permanentSkillPoint + bankedSkills + ArtifactSkillPoints();
 
             skillTreeData.fragments = 0;
-            _gameManager.AutoAssignSkillsInvoke();
+            _gameManager.AutoAssignSkillsInvoke(
+                updatePresentation);
             WipeSaveButtonUpdate();
             SetSkillTimerSeconds(infinityData, "superRadiantScattering", 0);
             ProductionSystem.SetBotDistribution(

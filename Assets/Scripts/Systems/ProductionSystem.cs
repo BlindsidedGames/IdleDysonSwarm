@@ -159,6 +159,27 @@ namespace Systems
                 NumericSafety.ClampContinuous(data.birchPlanetMatrioshkaProduction);
             data.galacticBrainBirchProduction =
                 NumericSafety.ClampContinuous(data.galacticBrainBirchProduction);
+            data.pocketDimensionsProduction =
+                NumericSafety.ClampContinuous(data.pocketDimensionsProduction);
+            data.quantumComputingProduction =
+                NumericSafety.ClampContinuous(data.quantumComputingProduction);
+            data.pocketDimensionsWithoutAnythingElseProduction =
+                NumericSafety.ClampContinuous(
+                    data.pocketDimensionsWithoutAnythingElseProduction);
+            data.pocketProtectorsProduction =
+                NumericSafety.ClampContinuous(data.pocketProtectorsProduction);
+            data.pocketMultiverseProduction =
+                NumericSafety.ClampContinuous(data.pocketMultiverseProduction);
+            data.scientificPlanetsProduction =
+                NumericSafety.ClampContinuous(data.scientificPlanetsProduction);
+            data.stellarSacrificesProduction =
+                NumericSafety.ClampContinuous(data.stellarSacrificesProduction);
+            data.rudimentrySingularityProduction =
+                NumericSafety.ClampContinuous(data.rudimentrySingularityProduction);
+            data.planetAssemblyProduction =
+                NumericSafety.ClampContinuous(data.planetAssemblyProduction);
+            data.shellWorldsProduction =
+                NumericSafety.ClampContinuous(data.shellWorldsProduction);
         }
 
         public static void CalculatePlanetsPerSecond(DysonVerseInfinityData infinityData, DysonVerseSkillTreeData skillTreeData,
