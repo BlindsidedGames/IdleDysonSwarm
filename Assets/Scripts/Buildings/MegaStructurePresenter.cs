@@ -266,7 +266,8 @@ namespace Buildings
                     return _cachedDefinition;
 
                 string id = FacilityId;
-                if (string.IsNullOrEmpty(id))
+                if (string.IsNullOrEmpty(id) ||
+                    _dataService == null)
                     return null;
 
                 if (_dataService.TryGetFacility(id, out FacilityDefinition definition))

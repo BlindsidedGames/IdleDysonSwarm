@@ -9,6 +9,7 @@ namespace Systems.Stats
 {
     public static class FacilityModifierPipeline
     {
+        internal const double DefaultInfinityMultiplierCap = 1e44;
         private const double BaseUpgradePercent = 0.03;
         private const double UpgradeEpsilon = 1e-12;
         private const int UpgradeOrderFallback = 0;
@@ -622,8 +623,20 @@ namespace Systems.Stats
             if (effects == null || prestigeData == null) return;
             if (prestigeData.infinityPoints < minInfinityPoints) return;
 
-            double value = 1 + Math.Clamp((double)prestigeData.infinityPoints, 0d, maxInfinityBuff);
+            double value = CalculateInfinityMultiplier(
+                prestigeData.infinityPoints,
+                maxInfinityBuff);
             AddMultiplierEffect(effects, id, name, statId, value, order);
+        }
+
+        internal static double CalculateInfinityMultiplier(
+            long infinityPoints,
+            double maxInfinityBuff = DefaultInfinityMultiplierCap)
+        {
+            return 1d + Math.Clamp(
+                (double)Math.Max(0L, infinityPoints),
+                0d,
+                maxInfinityBuff);
         }
 
         private static void AddSecretMultiplier(List<StatEffect> effects, string statId, double value, string id,
@@ -725,4 +738,3 @@ namespace Systems.Stats
         }
     }
 }
-

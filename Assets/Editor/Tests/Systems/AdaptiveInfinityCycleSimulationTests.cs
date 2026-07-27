@@ -1,3 +1,4 @@
+using System;
 using NUnit.Framework;
 using Systems.Simulation;
 
@@ -167,6 +168,104 @@ namespace Tests.Systems
                 result.ConsumedSeconds,
                 1e-9d);
             Assert.AreEqual(0d, result.ValidationError);
+        }
+
+        [Test]
+        public void EvaluatedProjection_VaryingCyclesMatchExactRecurrence()
+        {
+            const double minimum = 1d / 60d;
+            InfinityCycleEvaluation Evaluate(long points)
+            {
+                long reward = 5L + points / 100L;
+                double duration = Math.Max(
+                    minimum,
+                    10d / Math.Sqrt(points + 1d));
+                return new InfinityCycleEvaluation(
+                    reward,
+                    duration);
+            }
+
+            long firstStart = 100L;
+            InfinityCycleEvaluation firstEvaluation =
+                Evaluate(firstStart);
+            long secondStart =
+                firstStart + firstEvaluation.Reward;
+            InfinityCycleEvaluation secondEvaluation =
+                Evaluate(secondStart);
+            long thirdStart =
+                secondStart + secondEvaluation.Reward;
+            InfinityCycleEvaluation thirdEvaluation =
+                Evaluate(thirdStart);
+            long currentPoints =
+                thirdStart + thirdEvaluation.Reward;
+            const double availableSeconds = 60d;
+
+            bool projected =
+                AdaptiveInfinityCycleSimulation
+                    .TryProjectValidatedCycles(
+                        new InfinityCycleSample(
+                            firstStart,
+                            firstEvaluation.Reward,
+                            1L,
+                            firstEvaluation.DurationSeconds),
+                        new InfinityCycleSample(
+                            secondStart,
+                            secondEvaluation.Reward,
+                            1L,
+                            secondEvaluation.DurationSeconds),
+                        new InfinityCycleSample(
+                            thirdStart,
+                            thirdEvaluation.Reward,
+                            1L,
+                            thirdEvaluation.DurationSeconds),
+                        currentPoints,
+                        availableSeconds,
+                        minimum,
+                        Evaluate,
+                        out InfinityCycleProjection result);
+
+            Assert.IsTrue(
+                projected,
+                AdaptiveInfinityCycleSimulation
+                    .LastStableProjectionDiagnostic);
+            double projectionBudget =
+                availableSeconds -
+                Math.Max(1d, thirdEvaluation.DurationSeconds * 2d);
+            long expectedPoints = currentPoints;
+            long expectedCycles = 0L;
+            double expectedSeconds = 0d;
+            long expectedLastReward = 0L;
+            double expectedLastDuration = 0d;
+            while (true)
+            {
+                InfinityCycleEvaluation cycle =
+                    Evaluate(expectedPoints);
+                if (expectedSeconds + cycle.DurationSeconds >
+                    projectionBudget + 1e-12d)
+                {
+                    break;
+                }
+                expectedSeconds += cycle.DurationSeconds;
+                expectedPoints += cycle.Reward;
+                expectedCycles++;
+                expectedLastReward = cycle.Reward;
+                expectedLastDuration = cycle.DurationSeconds;
+            }
+
+            Assert.AreEqual(expectedCycles, result.CycleCount);
+            Assert.AreEqual(expectedPoints, result.FinalInfinityPoints);
+            Assert.AreEqual(expectedLastReward, result.LastReward);
+            Assert.AreEqual(
+                expectedLastDuration,
+                result.LastDurationSeconds,
+                1e-12d);
+            Assert.AreEqual(
+                expectedSeconds,
+                result.ConsumedSeconds,
+                1e-9d);
+            Assert.LessOrEqual(
+                result.ValidationError,
+                0.001d);
         }
 
         [Test]

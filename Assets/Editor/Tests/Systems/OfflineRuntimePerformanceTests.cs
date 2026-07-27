@@ -409,6 +409,39 @@ namespace Tests.Systems
                     .dysonVerseInfinityData.bots));
         }
 
+        [Test]
+        public void BreakInfinity_ShortDiagnosticReachesValidatedCycleProjection()
+        {
+            Oracle.SaveDataSettings seed = CreateRepresentativeSettings();
+            EnableRepresentativeBreakInfinity(seed);
+            _oracle.saveSettings =
+                (Oracle.SaveDataSettings)SerializationUtility.CreateCopy(
+                    seed);
+            PrepareDysonDerivedState();
+            SubscribeAndResetRuntime();
+
+            Run(OfflineProgressSystem.CalculateAwayValues(
+                600d,
+                CreateContext(),
+                ui: null));
+
+            SimulationWorkMetrics work =
+                OfflineProgressSystem.LastSimulationWorkMetrics;
+            TestContext.WriteLine(
+                $"stableCreate=" +
+                $"{StableBreakInfinityCycleEvaluator.LastCreateDiagnostic};" +
+                $"stableProjection=" +
+                $"{AdaptiveInfinityCycleSimulation.LastStableProjectionDiagnostic};" +
+                $"accepted={work.AccelerationBlocksAccepted};" +
+                $"events={work.MaterialEvents};" +
+                $"ip={_oracle.saveSettings.dysonVerseSaveData.dysonVersePrestigeData.infinityPoints}");
+            Assert.GreaterOrEqual(
+                work.BreakInfinityBlocks,
+                1L,
+                AdaptiveInfinityCycleSimulation
+                    .LastStableProjectionDiagnostic);
+        }
+
         [TestCase(60d)]
         [TestCase(60d * 60d)]
         [TestCase(100d * 24d * 60d * 60d)]
@@ -836,8 +869,14 @@ namespace Tests.Systems
                 (Oracle.SaveDataSettings)SerializationUtility.CreateCopy(
                     _oracle.saveSettings);
 
-            _oracle.saveSettings =
+            Oracle.SaveDataSettings exactInfinityReference =
                 (Oracle.SaveDataSettings)SerializationUtility.CreateCopy(seed);
+            // Infinity and Dream are independent event streams. An idle Dream
+            // produces an exact threshold-time Infinity reference without the
+            // legacy mixed scheduler's up-to-one-boundary Dream delay.
+            exactInfinityReference.sdSimulation =
+                new Oracle.SaveDataDream1();
+            _oracle.saveSettings = exactInfinityReference;
             PrepareDysonDerivedState();
             SubscribeAndResetRuntime();
             _gameManager.SetUnifiedAccelerationForTests(false);
@@ -853,12 +892,17 @@ namespace Tests.Systems
                 .dysonVersePrestigeData.infinityPoints;
             long actualIp = optimized.dysonVerseSaveData
                 .dysonVersePrestigeData.infinityPoints;
-            double relativeIpError =
-                Math.Abs((double)actualIp - expectedIp) /
-                Math.Max(1d, expectedIp);
+            long legacyCount = _oracle.saveSettings
+                .simulationStatistics.lifetime.breakInfinityCount;
+            long acceleratedCount = optimized
+                .simulationStatistics.lifetime.breakInfinityCount;
+            long cycleCountDifference =
+                acceleratedCount - legacyCount;
+            long ipDifference = actualIp - expectedIp;
             TestContext.WriteLine(
-                $"600s Break Infinity canonical/optimized IP: " +
-                $"{expectedIp}/{actualIp} ({relativeIpError:P3})");
+                $"600s Break Infinity legacy-boundary/continuous IP: " +
+                $"{expectedIp}/{actualIp}; cycles=" +
+                $"{legacyCount}/{acceleratedCount}");
             TestContext.WriteLine(
                 $"600s Break work: attempts=" +
                 $"{optimizedWork.AccelerationAttempts}, accepted=" +
@@ -873,13 +917,24 @@ namespace Tests.Systems
                 $"{optimizedWork.BreakInfinityBlockSeconds:F3}, " +
                 $"productionSeconds=" +
                 $"{optimizedWork.ProductionOnlyBlockSeconds:F3}");
-            Assert.LessOrEqual(relativeIpError, 0.001d);
-            Assert.AreEqual(
-                _oracle.saveSettings.simulationStatistics.lifetime
-                    .breakInfinityCount,
-                optimized.simulationStatistics.lifetime
-                    .breakInfinityCount,
-                "The accelerator must not invent or omit complete Break Infinity cycles.");
+            Assert.GreaterOrEqual(
+                cycleCountDifference,
+                0L,
+                "Continuous threshold timing must not complete fewer cycles " +
+                "than the legacy boundary-polled reference.");
+            Assert.LessOrEqual(
+                cycleCountDifference,
+                1L,
+                "The 600-second characterization may cross at most one " +
+                "additional continuous threshold beyond legacy polling.");
+            Assert.GreaterOrEqual(ipDifference, 0L);
+            Assert.LessOrEqual(
+                ipDifference,
+                Math.Max(
+                    _oracle.saveSettings.lastInfinityPointsGained,
+                    optimized.lastInfinityPointsGained),
+                "Any difference from legacy polling must be fully explained " +
+                "by the one possible final threshold crossing.");
             Assert.AreEqual(
                 _oracle.saveSettings.lastInfinityPointsGained,
                 optimized.lastInfinityPointsGained,

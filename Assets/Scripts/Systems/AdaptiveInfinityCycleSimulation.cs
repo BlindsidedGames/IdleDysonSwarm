@@ -96,8 +96,17 @@ namespace Systems.Simulation
 
     public static class AdaptiveInfinityCycleSimulation
     {
+        public static string LastStableProjectionDiagnostic
+        {
+            get;
+            private set;
+        }
+
         private const int CoarseIntegrationSegments = 128;
         private const int RefinedIntegrationSegments = 256;
+        private const int EvaluatedCoarseIntegrationSegments = 128;
+        private const int EvaluatedRefinedIntegrationSegments = 256;
+        private const int MaximumEvaluatedSearchIterations = 16;
         private const long MinimumProjectedCycles = 8L;
         private const double MaximumValidationError = 0.001d;
 
@@ -314,6 +323,325 @@ namespace Systems.Simulation
         }
 
         /// <summary>
+        /// Uses the adaptive varying-IP projection only when the observed
+        /// samples and the projected endpoint agree with an isolated
+        /// candidate-state cycle evaluator. The projection remains bounded by
+        /// the same 0.1% coarse/refined contract as <see cref="TryProjectSeconds"/>.
+        /// </summary>
+        public static bool TryProjectValidatedCycles(
+            InfinityCycleSample first,
+            InfinityCycleSample second,
+            InfinityCycleSample third,
+            long currentInfinityPoints,
+            double availableSeconds,
+            double minimumCycleSeconds,
+            Func<long, InfinityCycleEvaluation> evaluateCycle,
+            out InfinityCycleProjection projection)
+        {
+            projection = default;
+            LastStableProjectionDiagnostic = null;
+            if (evaluateCycle == null)
+            {
+                LastStableProjectionDiagnostic =
+                    "missing_evaluator";
+                return false;
+            }
+
+            InfinityCycleEvaluation firstEvaluation =
+                evaluateCycle(first.StartingInfinityPoints);
+            InfinityCycleEvaluation secondEvaluation =
+                evaluateCycle(second.StartingInfinityPoints);
+            InfinityCycleEvaluation thirdEvaluation =
+                evaluateCycle(third.StartingInfinityPoints);
+            if (!EvaluationApproximatelyMatchesObservedSample(
+                    firstEvaluation,
+                    first,
+                    minimumCycleSeconds) ||
+                !EvaluationApproximatelyMatchesObservedSample(
+                    secondEvaluation,
+                    second,
+                    minimumCycleSeconds) ||
+                !EvaluationApproximatelyMatchesObservedSample(
+                    thirdEvaluation,
+                    third,
+                    minimumCycleSeconds))
+            {
+                LastStableProjectionDiagnostic =
+                    "adaptive_sample_mismatch:" +
+                    $"first={first.Reward}/" +
+                    $"{first.DurationSeconds:R}->" +
+                    $"{firstEvaluation.Reward}/" +
+                    $"{firstEvaluation.DurationSeconds:R};" +
+                    $"second={second.Reward}/" +
+                    $"{second.DurationSeconds:R}->" +
+                    $"{secondEvaluation.Reward}/" +
+                    $"{secondEvaluation.DurationSeconds:R};" +
+                    $"third={third.Reward}/" +
+                    $"{third.DurationSeconds:R}->" +
+                    $"{thirdEvaluation.Reward}/" +
+                    $"{thirdEvaluation.DurationSeconds:R}";
+                return false;
+            }
+
+            var normalizedFirst = new InfinityCycleSample(
+                first.StartingInfinityPoints,
+                firstEvaluation.Reward,
+                first.DurationTicks,
+                firstEvaluation.DurationSeconds);
+            var normalizedSecond = new InfinityCycleSample(
+                second.StartingInfinityPoints,
+                secondEvaluation.Reward,
+                second.DurationTicks,
+                secondEvaluation.DurationSeconds);
+            var normalizedThird = new InfinityCycleSample(
+                third.StartingInfinityPoints,
+                thirdEvaluation.Reward,
+                third.DurationTicks,
+                thirdEvaluation.DurationSeconds);
+            if (!TryProjectEvaluatedCycles(
+                    normalizedThird,
+                    currentInfinityPoints,
+                    availableSeconds,
+                    minimumCycleSeconds,
+                    evaluateCycle,
+                    out InfinityCycleProjection candidate))
+            {
+                if (string.IsNullOrEmpty(
+                        LastStableProjectionDiagnostic))
+                {
+                    LastStableProjectionDiagnostic =
+                        "evaluated_model_rejected";
+                }
+                return false;
+            }
+
+            // The direct integrator has already evaluated the actual candidate
+            // graph at every exact cycle (for short blocks) or at every
+            // deterministic midpoint (for compressed blocks), and compared
+            // coarse/refined outcomes. Evaluating FinalInfinityPoints here
+            // would describe the *next* cycle rather than the last projected
+            // cycle and would incorrectly reject any genuinely changing
+            // recurrence.
+            projection = candidate;
+            LastStableProjectionDiagnostic =
+                "accepted_evaluated";
+            return true;
+        }
+
+        /// <summary>
+        /// Projects a varying-IP recurrence by sampling the real isolated
+        /// candidate evaluator rather than assuming that duration and reward
+        /// follow one global power curve. Short projections are evaluated
+        /// cycle-by-cycle; larger projections compare two deterministic
+        /// midpoint integrations and are accepted only inside the configured
+        /// validation tolerance.
+        /// </summary>
+        private static bool TryProjectEvaluatedCycles(
+            InfinityCycleSample anchor,
+            long currentInfinityPoints,
+            double availableSeconds,
+            double minimumCycleSeconds,
+            Func<long, InfinityCycleEvaluation> evaluateCycle,
+            out InfinityCycleProjection projection)
+        {
+            projection = default;
+            double correctionReserve = Math.Max(
+                1d,
+                NumericSafety.Multiply(
+                    anchor.DurationSeconds,
+                    2d).Value);
+            double projectionBudget =
+                availableSeconds - correctionReserve;
+            if (projectionBudget <
+                MinimumProjectedCycles * minimumCycleSeconds)
+            {
+                LastStableProjectionDiagnostic =
+                    $"evaluated_budget:{projectionBudget:R}";
+                return false;
+            }
+
+            InfinityCycleEvaluation startingEvaluation =
+                evaluateCycle(currentInfinityPoints);
+            if (!IsValidEvaluation(
+                    startingEvaluation,
+                    minimumCycleSeconds))
+            {
+                LastStableProjectionDiagnostic =
+                    "evaluated_invalid_start";
+                return false;
+            }
+
+            long low = 0L;
+            long high = 0L;
+            long candidate = Math.Max(
+                MinimumProjectedCycles,
+                ToLongSaturating(
+                    Math.Floor(
+                        projectionBudget /
+                        startingEvaluation.DurationSeconds)));
+            EvaluatedProjectionEstimate best = default;
+            for (int iteration = 0;
+                 iteration < MaximumEvaluatedSearchIterations;
+                 iteration++)
+            {
+                EvaluatedProjectionEstimate estimate =
+                    EstimateWithEvaluator(
+                        currentInfinityPoints,
+                        candidate,
+                        EvaluatedRefinedIntegrationSegments,
+                        minimumCycleSeconds,
+                        evaluateCycle);
+                if (!estimate.IsValid)
+                {
+                    LastStableProjectionDiagnostic =
+                        "evaluated_search_invalid";
+                    return false;
+                }
+
+                if (estimate.ConsumedSeconds >
+                    projectionBudget + 1e-12d)
+                {
+                    high = candidate;
+                    break;
+                }
+
+                low = candidate;
+                best = estimate;
+                double remaining =
+                    projectionBudget -
+                    estimate.ConsumedSeconds;
+                long step = ToLongSaturating(
+                    Math.Floor(
+                        remaining /
+                        Math.Max(
+                            minimumCycleSeconds,
+                            estimate.LastDurationSeconds)));
+                if (step <= 0L)
+                {
+                    high = candidate == long.MaxValue
+                        ? long.MaxValue
+                        : candidate + 1L;
+                    break;
+                }
+                if (candidate > long.MaxValue - step)
+                {
+                    high = long.MaxValue;
+                    break;
+                }
+                candidate += step;
+            }
+
+            if (high == 0L)
+            {
+                // The bounded fit did not form a bracket. A conservative
+                // fallback preserves correctness without returning to a
+                // full-range binary search.
+                LastStableProjectionDiagnostic =
+                    "evaluated_unbracketed";
+                return false;
+            }
+
+            while (low + 1L < high)
+            {
+                long middle =
+                    low + (high - low) / 2L;
+                EvaluatedProjectionEstimate estimate =
+                    EstimateWithEvaluator(
+                        currentInfinityPoints,
+                        middle,
+                        EvaluatedRefinedIntegrationSegments,
+                        minimumCycleSeconds,
+                        evaluateCycle);
+                if (!estimate.IsValid)
+                    return false;
+                if (estimate.ConsumedSeconds <=
+                    projectionBudget + 1e-12d)
+                {
+                    low = middle;
+                    best = estimate;
+                }
+                else
+                {
+                    high = middle;
+                }
+            }
+
+            if (low < MinimumProjectedCycles)
+            {
+                LastStableProjectionDiagnostic =
+                    $"evaluated_too_few:{low}";
+                return false;
+            }
+            if (!best.IsValid ||
+                best.CycleCount != low)
+            {
+                best = EstimateWithEvaluator(
+                    currentInfinityPoints,
+                    low,
+                    EvaluatedRefinedIntegrationSegments,
+                    minimumCycleSeconds,
+                    evaluateCycle);
+            }
+            if (!best.IsValid ||
+                best.ConsumedSeconds <= 0d ||
+                best.ConsumedSeconds >
+                    projectionBudget + 1e-12d)
+            {
+                LastStableProjectionDiagnostic =
+                    $"evaluated_best_invalid:" +
+                    $"{best.IsValid}/{best.ConsumedSeconds:R}/" +
+                    $"{projectionBudget:R}";
+                return false;
+            }
+
+            EvaluatedProjectionEstimate coarse =
+                EstimateWithEvaluator(
+                    currentInfinityPoints,
+                    low,
+                    EvaluatedCoarseIntegrationSegments,
+                    minimumCycleSeconds,
+                    evaluateCycle);
+            if (!coarse.IsValid)
+            {
+                LastStableProjectionDiagnostic =
+                    "evaluated_coarse_invalid";
+                return false;
+            }
+
+            double validationError = Math.Max(
+                RelativeError(
+                    coarse.ConsumedSeconds,
+                    best.ConsumedSeconds),
+                RelativeError(
+                    coarse.FinalInfinityPoints,
+                    best.FinalInfinityPoints));
+            validationError = Math.Max(
+                validationError,
+                Math.Max(
+                    RelativeError(
+                        coarse.LastReward,
+                        best.LastReward),
+                    RelativeError(
+                        coarse.LastDurationSeconds,
+                        best.LastDurationSeconds)));
+            if (validationError > MaximumValidationError)
+            {
+                LastStableProjectionDiagnostic =
+                    $"evaluated_divergence:{validationError:R}";
+                return false;
+            }
+
+            projection = new InfinityCycleProjection(
+                best.CycleCount,
+                best.ConsumedSeconds,
+                best.FinalInfinityPoints,
+                best.LastReward,
+                best.LastDurationSeconds,
+                validationError);
+            return true;
+        }
+
+        /// <summary>
         /// Exactly composes a stable reset recurrence whose integer reward and
         /// event-grid duration are monotone functions of starting IP. Rather
         /// than executing every cycle, it finds the next IP at which either
@@ -331,6 +659,7 @@ namespace Systems.Simulation
             out InfinityCycleProjection projection)
         {
             projection = default;
+            LastStableProjectionDiagnostic = null;
             if (evaluateCycle == null ||
                 currentInfinityPoints < 0L ||
                 !NumericSafety.IsFinite(availableSeconds) ||
@@ -340,22 +669,44 @@ namespace Systems.Simulation
                 minimumProjectedCycles <= 0L ||
                 !SamplesAreOrdered(first, second, third))
             {
+                LastStableProjectionDiagnostic =
+                    "invalid_contract";
                 return false;
             }
 
+            InfinityCycleEvaluation firstEvaluation =
+                evaluateCycle(first.StartingInfinityPoints);
+            InfinityCycleEvaluation secondEvaluation =
+                evaluateCycle(second.StartingInfinityPoints);
+            InfinityCycleEvaluation thirdEvaluation =
+                evaluateCycle(third.StartingInfinityPoints);
             if (!EvaluationMatchesSample(
-                    evaluateCycle(first.StartingInfinityPoints),
+                    firstEvaluation,
                     first,
                     minimumCycleSeconds) ||
                 !EvaluationMatchesSample(
-                    evaluateCycle(second.StartingInfinityPoints),
+                    secondEvaluation,
                     second,
                     minimumCycleSeconds) ||
                 !EvaluationMatchesSample(
-                    evaluateCycle(third.StartingInfinityPoints),
+                    thirdEvaluation,
                     third,
                     minimumCycleSeconds))
             {
+                LastStableProjectionDiagnostic =
+                    "sample_mismatch:" +
+                    $"first={first.StartingInfinityPoints}/" +
+                    $"{first.Reward}/{first.DurationSeconds:R}->" +
+                    $"{firstEvaluation.Reward}/" +
+                    $"{firstEvaluation.DurationSeconds:R};" +
+                    $"second={second.StartingInfinityPoints}/" +
+                    $"{second.Reward}/{second.DurationSeconds:R}->" +
+                    $"{secondEvaluation.Reward}/" +
+                    $"{secondEvaluation.DurationSeconds:R};" +
+                    $"third={third.StartingInfinityPoints}/" +
+                    $"{third.Reward}/{third.DurationSeconds:R}->" +
+                    $"{thirdEvaluation.Reward}/" +
+                    $"{thirdEvaluation.DurationSeconds:R}";
                 return false;
             }
 
@@ -377,6 +728,8 @@ namespace Systems.Simulation
                         evaluation,
                         minimumCycleSeconds))
                 {
+                    LastStableProjectionDiagnostic =
+                        "invalid_evaluation";
                     return false;
                 }
 
@@ -446,6 +799,8 @@ namespace Systems.Simulation
                 groups > maximumGroups ||
                 consumedSeconds <= 0d)
             {
+                LastStableProjectionDiagnostic =
+                    "insufficient_projection";
                 return false;
             }
 
@@ -456,6 +811,7 @@ namespace Systems.Simulation
                 lastReward,
                 lastDuration,
                 0d);
+            LastStableProjectionDiagnostic = "accepted";
             return true;
         }
 
@@ -471,6 +827,21 @@ namespace Systems.Simulation
                    Math.Abs(
                        evaluation.DurationSeconds -
                        sample.DurationSeconds) <= 1e-9d;
+        }
+
+        private static bool EvaluationApproximatelyMatchesObservedSample(
+            InfinityCycleEvaluation evaluation,
+            InfinityCycleSample sample,
+            double minimumCycleSeconds)
+        {
+            return IsValidEvaluation(
+                       evaluation,
+                       minimumCycleSeconds) &&
+                   evaluation.Reward == sample.Reward &&
+                   Math.Abs(
+                       evaluation.DurationSeconds -
+                       sample.DurationSeconds) <=
+                   minimumCycleSeconds + 1e-9d;
         }
 
         private static bool IsValidEvaluation(
@@ -663,6 +1034,128 @@ namespace Systems.Simulation
                 Math.Max(minimumCycleSeconds, lastDuration));
         }
 
+        private static EvaluatedProjectionEstimate EstimateWithEvaluator(
+            long startingInfinityPoints,
+            long cycleCount,
+            int requestedSegments,
+            double minimumCycleSeconds,
+            Func<long, InfinityCycleEvaluation> evaluateCycle)
+        {
+            if (cycleCount <= 0L)
+            {
+                InfinityCycleEvaluation current =
+                    evaluateCycle(startingInfinityPoints);
+                return IsValidEvaluation(
+                           current,
+                           minimumCycleSeconds)
+                    ? new EvaluatedProjectionEstimate(
+                        true,
+                        0L,
+                        0d,
+                        startingInfinityPoints,
+                        current.Reward,
+                        current.DurationSeconds)
+                    : default;
+            }
+
+            int segments = (int)Math.Min(
+                Math.Max(1, requestedSegments),
+                cycleCount);
+            long baseCycles = cycleCount / segments;
+            long extraCycles = cycleCount % segments;
+            long infinityPoints = startingInfinityPoints;
+            double totalSeconds = 0d;
+            long lastReward = 0L;
+            double lastDuration = 0d;
+
+            for (int segment = 0;
+                 segment < segments;
+                 segment++)
+            {
+                long segmentCycles =
+                    baseCycles +
+                    (segment < extraCycles ? 1L : 0L);
+                InfinityCycleEvaluation start =
+                    evaluateCycle(infinityPoints);
+                if (!IsValidEvaluation(
+                        start,
+                        minimumCycleSeconds))
+                {
+                    return default;
+                }
+
+                // When the requested segment contains a single cycle this is
+                // the exact recurrence. Larger segments sample the evaluator
+                // at the discrete midpoint cycle, matching x_0...x_(n-1).
+                InfinityCycleEvaluation midpoint = start;
+                if (segmentCycles > 1L)
+                {
+                    double midpointGain =
+                        SaturatingMultiplyDouble(
+                            start.Reward,
+                            (segmentCycles - 1d) * 0.5d);
+                    double midpointPoints =
+                        SaturatingAddDouble(
+                            infinityPoints,
+                            midpointGain);
+                    if (!NumericSafety.IsFinite(midpointPoints) ||
+                        midpointPoints >= long.MaxValue)
+                    {
+                        return default;
+                    }
+                    midpoint = evaluateCycle(
+                        ToLongSaturating(
+                            Math.Round(midpointPoints)));
+                    if (!IsValidEvaluation(
+                            midpoint,
+                            minimumCycleSeconds) ||
+                        midpoint.Reward < start.Reward ||
+                        midpoint.DurationSeconds >
+                            start.DurationSeconds + 1e-12d)
+                    {
+                        return default;
+                    }
+                }
+
+                long segmentGain = SaturatingMultiplyLong(
+                    midpoint.Reward,
+                    segmentCycles);
+                if (segmentGain == long.MaxValue ||
+                    infinityPoints >
+                        long.MaxValue - segmentGain)
+                {
+                    return default;
+                }
+                double segmentSeconds =
+                    NumericSafety.Multiply(
+                        midpoint.DurationSeconds,
+                        segmentCycles).Value;
+                if (!NumericSafety.IsFinite(segmentSeconds) ||
+                    segmentSeconds <= 0d)
+                {
+                    return default;
+                }
+                double nextTotal = NumericSafety.Add(
+                    totalSeconds,
+                    segmentSeconds).Value;
+                if (!NumericSafety.IsFinite(nextTotal))
+                    return default;
+
+                infinityPoints += segmentGain;
+                totalSeconds = nextTotal;
+                lastReward = midpoint.Reward;
+                lastDuration = midpoint.DurationSeconds;
+            }
+
+            return new EvaluatedProjectionEstimate(
+                true,
+                cycleCount,
+                totalSeconds,
+                infinityPoints,
+                lastReward,
+                lastDuration);
+        }
+
         private static double FitExponent(
             long firstInfinityPoints,
             double firstValue,
@@ -827,6 +1320,32 @@ namespace Systems.Simulation
                 LastDurationSeconds = lastDurationSeconds;
             }
 
+            public long CycleCount { get; }
+            public double ConsumedSeconds { get; }
+            public long FinalInfinityPoints { get; }
+            public long LastReward { get; }
+            public double LastDurationSeconds { get; }
+        }
+
+        private readonly struct EvaluatedProjectionEstimate
+        {
+            public EvaluatedProjectionEstimate(
+                bool isValid,
+                long cycleCount,
+                double consumedSeconds,
+                long finalInfinityPoints,
+                long lastReward,
+                double lastDurationSeconds)
+            {
+                IsValid = isValid;
+                CycleCount = cycleCount;
+                ConsumedSeconds = consumedSeconds;
+                FinalInfinityPoints = finalInfinityPoints;
+                LastReward = lastReward;
+                LastDurationSeconds = lastDurationSeconds;
+            }
+
+            public bool IsValid { get; }
             public long CycleCount { get; }
             public double ConsumedSeconds { get; }
             public long FinalInfinityPoints { get; }
