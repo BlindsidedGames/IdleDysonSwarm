@@ -2845,13 +2845,6 @@ private void PackSettingsFlags()
                         entry.Value.Owned = false;
                 }
             }
-
-            saveSettings.dysonVerseSaveData
-                    .dysonVerseInfinityData =
-                new DysonVerseInfinityData();
-            saveSettings.dysonVerseSaveData
-                    .dysonVerseSkillTreeData =
-                new DysonVerseSkillTreeData();
         }
 
         internal void AutoAssignSkillsWithoutPresentation()
@@ -2961,33 +2954,32 @@ private void PackSettingsFlags()
         public void DysonInfinity(bool updatePresentation = true)
         {
             bool completingBotCapTransition = saveSettings.botCapRewardsGranted;
-            saveSettings.offlineTimeUsedPreviousInfinity = saveSettings.offlineTimeUsedThisInfinity;
-            saveSettings.offlineTimeUsedThisInfinity = 0;
-            saveSettings.firstInfinityDone = true;
             int bankedSkills = 0;
             if (IsSkillOwned("banking")) bankedSkills++;
             if (IsSkillOwned("investmentPortfolio")) bankedSkills++;
             ResetInfinityRunState(updatePresentation);
 
-            int ipToGain = saveSettings.prestigePlus.doubleIP ? 2 : 1;
-            ipToGain *= saveSettings.doubleIp ? 2 : 1;
-
-            oracle.saveSettings.lastInfinityPointsGained = ipToGain;
-            prestigeData.infinityPoints =
-                NumericSafety.Add(prestigeData.infinityPoints, ipToGain).Value;
-            saveSettings.simulationStatistics?.RecordInfinityCycle(
-                breakInfinity: false,
-                saveSettings.timeLastInfinity,
-                ipToGain,
-                completingBotCapTransition);
-            infinityData.bots = prestigeData.infinityAssemblyLines ? 10 : 1;
-            infinityData.assemblyLines[1] = prestigeData.infinityAssemblyLines ? 10 : 0;
-            infinityData.managers[1] = prestigeData.infinityAiManagers ? 10 : 0;
-            infinityData.servers[1] = prestigeData.infinityServers ? 10 : 0;
-            infinityData.dataCenters[1] = prestigeData.infinityDataCenter ? 10 : 0;
-            infinityData.planets[1] = prestigeData.infinityPlanets ? 10 : 0;
-
-            skillTreeData.skillPointsTree = prestigeData.permanentSkillPoint + bankedSkills + ArtifactSkillPoints();
+            long ipToGain =
+                saveSettings.prestigePlus.doubleIP ? 2L : 1L;
+            if (saveSettings.doubleIp)
+                ipToGain = NumericSafety.Add(
+                    ipToGain,
+                    ipToGain).Value;
+            if (!InfinityResetTransitions.TryApply(
+                    saveSettings,
+                    new InfinityResetRequest(
+                        breakInfinity: false,
+                        requestedReward: ipToGain,
+                        bankedSkillPoints: bankedSkills,
+                        artifactSkillPoints:
+                            ArtifactSkillPoints(),
+                        botCapTransition:
+                            completingBotCapTransition),
+                    out _))
+            {
+                saveSettings.infinityInProgress = false;
+                return;
+            }
 
             if (updatePresentation && saveSettings.firstReality)
             {
@@ -2997,11 +2989,8 @@ private void PackSettingsFlags()
 
             if (updatePresentation && prestigeData.infinityPoints == 42)
                 SidePanelManager.PrestigeToggle.GetComponentInChildren<MenuToggleController>().Toggle(false);
-            skillTreeData.fragments = 0;
-            _gameManager.AutoAssignSkillsInvoke(
+            _gameManager?.AutoAssignSkillsInvoke(
                 updatePresentation);
-            WipeSaveButtonUpdate();
-            SetSkillTimerSeconds(infinityData, "superRadiantScattering", 0);
             ProductionSystem.SetBotDistribution(
                 infinityData,
                 prestigeData,
@@ -3011,9 +3000,6 @@ private void PackSettingsFlags()
                 skillTreeData,
                 prestigeData,
                 prestigePlus);
-            saveSettings.infinityInProgress = false;
-            saveSettings.botCapTransitionPending = false;
-            saveSettings.botCapRewardsGranted = false;
             if (updatePresentation)
                 Rotator.ResetPanelsStatic();
             if (completingBotCapTransition && !TrySaveState(out string transitionError))
@@ -3027,9 +3013,6 @@ private void PackSettingsFlags()
             bool updatePresentation = true)
         {
             bool completingBotCapTransition = saveSettings.botCapRewardsGranted;
-            saveSettings.offlineTimeUsedPreviousInfinity = saveSettings.offlineTimeUsedThisInfinity;
-            saveSettings.offlineTimeUsedThisInfinity = 0;
-            saveSettings.firstInfinityDone = true;
             int bankedSkills = 0;
             if (IsSkillOwned("banking")) bankedSkills++;
             if (IsSkillOwned("investmentPortfolio")) bankedSkills++;
@@ -3040,30 +3023,26 @@ private void PackSettingsFlags()
             long finalGain = saveSettings.prestigePlus.doubleIP
                 ? NumericSafety.Add(ipToGain, ipToGain).Value
                 : ipToGain;
-            oracle.saveSettings.lastInfinityPointsGained =
-                finalGain > int.MaxValue ? int.MaxValue : (int)finalGain;
-            prestigeData.infinityPoints = NumericSafety.Add(prestigeData.infinityPoints, finalGain).Value;
-            saveSettings.simulationStatistics?.RecordInfinityCycle(
-                breakInfinity: true,
-                saveSettings.timeLastInfinity,
-                finalGain,
-                completingBotCapTransition);
 
             ResetInfinityRunState(updatePresentation);
-            infinityData.bots = prestigeData.infinityAssemblyLines ? 10 : 1;
-            infinityData.assemblyLines[1] = prestigeData.infinityAssemblyLines ? 10 : 0;
-            infinityData.managers[1] = prestigeData.infinityAiManagers ? 10 : 0;
-            infinityData.servers[1] = prestigeData.infinityServers ? 10 : 0;
-            infinityData.dataCenters[1] = prestigeData.infinityDataCenter ? 10 : 0;
-            infinityData.planets[1] = prestigeData.infinityPlanets ? 10 : 0;
+            if (!InfinityResetTransitions.TryApply(
+                    saveSettings,
+                    new InfinityResetRequest(
+                        breakInfinity: true,
+                        requestedReward: finalGain,
+                        bankedSkillPoints: bankedSkills,
+                        artifactSkillPoints:
+                            ArtifactSkillPoints(),
+                        botCapTransition:
+                            completingBotCapTransition),
+                    out _))
+            {
+                saveSettings.infinityInProgress = false;
+                return;
+            }
 
-            skillTreeData.skillPointsTree = prestigeData.permanentSkillPoint + bankedSkills + ArtifactSkillPoints();
-
-            skillTreeData.fragments = 0;
-            _gameManager.AutoAssignSkillsInvoke(
+            _gameManager?.AutoAssignSkillsInvoke(
                 updatePresentation);
-            WipeSaveButtonUpdate();
-            SetSkillTimerSeconds(infinityData, "superRadiantScattering", 0);
             ProductionSystem.SetBotDistribution(
                 infinityData,
                 prestigeData,
@@ -3073,9 +3052,6 @@ private void PackSettingsFlags()
                 skillTreeData,
                 prestigeData,
                 prestigePlus);
-            saveSettings.infinityInProgress = false;
-            saveSettings.botCapTransitionPending = false;
-            saveSettings.botCapRewardsGranted = false;
             if (updatePresentation)
                 Rotator.ResetPanelsStatic();
             if (completingBotCapTransition && !TrySaveState(out string transitionError))

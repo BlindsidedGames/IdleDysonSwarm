@@ -551,17 +551,19 @@ public class SpaceAgeManager : MonoBehaviour
 
     private void Prestige(long strangeMatter)
     {
-        sdp.simulationCount = NumericSafety.Add(sdp.simulationCount, 1L).Value;
-        sdp.strangeMatter = NumericSafety.Add(sdp.strangeMatter, strangeMatter).Value;
-        DeterministicSimulation.CompleteReset(
-            oracle.WipeDream1Save,
-            () =>
-            {
-                SimulationPrestigeManager.InvokeResetSimulationRuntime();
-                if (swarmStatsPanel != null)
-                    swarmStatsPanel.gameObject.SetActive(false);
-            },
-            SimulationPrestigeManager.InvokeApplyResearch);
+        if (!DreamResetTransitions.TryApplyExplicit(
+                oracle.saveSettings,
+                DreamResetCause.BlackHole,
+                strangeMatter,
+                out _))
+        {
+            return;
+        }
+        SimulationPrestigeManager
+            .InvokeResetSimulationRuntime();
+        if (swarmStatsPanel != null)
+            swarmStatsPanel.gameObject.SetActive(false);
+        SimulationPrestigeManager.InvokeApplyResearch();
     }
 
     #endregion

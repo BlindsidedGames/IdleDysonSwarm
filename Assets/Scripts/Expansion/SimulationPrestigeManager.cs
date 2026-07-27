@@ -61,69 +61,53 @@ public class SimulationPrestigeManager : MonoBehaviour
 
     public bool IsAutomaticResetReady()
     {
-        return sp.disasterStage switch
-        {
-            0 or 1 => sd1.cities >= 1d,
-            2 => sd1.bots >= 100d,
-            3 => sd1.spaceFactories >= 5d,
-            _ => false
-        };
+        return DreamResetTransitions.IsAutomaticReady(
+            oracle.saveSettings);
     }
 
     public bool EvaluateSimulationTransitions(
         bool updatePresentation = true)
     {
-        bool reset = false;
-        switch (sp.disasterStage)
+        if (!DreamResetTransitions.TryApplyAutomatic(
+                oracle.saveSettings,
+                out DreamResetOutcome outcome))
         {
-            case 0 or 1:
-                if (sd1.cities >= 1)
-                {
-                    sp.disasterStage = 0;
-                    Prestige(1, DreamResetCause.Meteor);
-                    reset = true;
-                    if (updatePresentation) meteorStormAlert.SetActive(true);
-                }
-
-                break;
-
-            case 2:
-                if (sd1.bots >= 100)
-                {
-                    sp.disasterStage = 0;
-                    Prestige(10, DreamResetCause.ArtificialIntelligence);
-                    reset = true;
-                    if (updatePresentation) aiAlert.SetActive(true);
-                }
-
-                break;
-
-            case 3:
-                if (sd1.spaceFactories >= 5)
-                {
-                    sp.disasterStage = 0;
-                    Prestige(20, DreamResetCause.GlobalWarming);
-                    reset = true;
-                    if (updatePresentation) globalWarmingAlert.SetActive(true);
-                }
-
-                break;
+            return false;
         }
-        return reset;
+
+        ResetSimulationRuntime?.Invoke();
+        ApplyResearch?.Invoke();
+        if (updatePresentation)
+        {
+            switch (outcome.Cause)
+            {
+                case DreamResetCause.Meteor:
+                    meteorStormAlert?.SetActive(true);
+                    break;
+                case DreamResetCause.ArtificialIntelligence:
+                    aiAlert?.SetActive(true);
+                    break;
+                case DreamResetCause.GlobalWarming:
+                    globalWarmingAlert?.SetActive(true);
+                    break;
+            }
+        }
+        return true;
     }
 
     private void Prestige(
         long strangeMatter,
         DreamResetCause cause)
     {
-        sp.simulationCount = NumericSafety.Add(sp.simulationCount, 1L).Value;
-        sp.strangeMatter = NumericSafety.Add(sp.strangeMatter, strangeMatter).Value;
-        oracle.saveSettings.simulationStatistics?.RecordDreamReset(
-            cause,
-            strangeMatter);
-        DeterministicSimulation.CompleteReset(
-            oracle.WipeDream1Save,
-            () => ResetSimulationRuntime?.Invoke(),
-            () => ApplyResearch?.Invoke());
+        if (!DreamResetTransitions.TryApplyExplicit(
+                oracle.saveSettings,
+                cause,
+                strangeMatter,
+                out _))
+        {
+            return;
+        }
+        ResetSimulationRuntime?.Invoke();
+        ApplyResearch?.Invoke();
     }
 }
