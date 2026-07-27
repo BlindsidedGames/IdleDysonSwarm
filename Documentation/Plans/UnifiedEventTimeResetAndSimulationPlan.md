@@ -1,6 +1,6 @@
 # Unified Event-Time Reset and Simulation Plan
 
-Status: Implemented locally; validated with the limits recorded below
+Status: In progress; shared-engine foundation checkpointed locally
 Approved: 2026-07-27
 
 ## Scope and fixed decisions
@@ -157,9 +157,22 @@ cycle, and seconds per IP.
 - No zero-time reward loop, non-finite state, negative bank, or lost time.
   Save failure publishes nothing and cancellation preserves all uncommitted
   time.
-- Active processing targets 2 ms with a hard 4 ms yield slice. Representative
-  goals are 18 hours under 250 ms, stable 42,000,000 seconds under 2 seconds,
-  and supported event-heavy cases under 10 seconds.
+- Active processing targets 2 ms with a hard 4 ms yield slice.
+- Performance acceptance is based on simulated work, not one selected away
+  duration. Fixtures span one minute through 100 days and report:
+  scheduler passes, exact material events, analytical blocks, rejected blocks,
+  reset cycles represented, and simulated seconds per block.
+- A stable interval must require work proportional to logarithmic transition
+  composition, not its number of 0.1-second ticks.
+- A repeated-reset interval must require work proportional to signature
+  changes, validation checkpoints, and aggregate blocks, not the raw number of
+  Infinity or Dream resets represented.
+- Doubling away time without adding a signature change must not approximately
+  double exact event work. Tests compare work-count ratios across the duration
+  matrix rather than accepting one machine-specific elapsed time.
+- Wall-clock measurements remain secondary regression evidence, recorded
+  cold/warm on representative hardware. The four-millisecond yield contract
+  governs responsiveness when exact fallback is genuinely required.
 - Final source changes require the full EditMode suite, relevant PlayMode
   coverage, and supported local IL2CPP builds.
 
@@ -177,9 +190,10 @@ statistics, rolling history, and aggregate stored-time presentation. Legacy
 passive offline IP has been removed.
 
 Validated accelerators cover stable analytical production, retained-state
-ordinary Infinity, representative changing-IP Break cycles, and proven stable
-Dream cycles. Accelerators retain the exact event path as their fallback and
-reject blocks whose validation error exceeds 0.1%.
+ordinary Infinity, and proven stable Dream intervals. The changing-IP Break
+accelerator remains provisional: its internal coarse/fine integration can
+validate the fitted curve while the fitted curve itself is still wrong
+relative to the true cycle transition.
 
 Final local validation on 2026-07-27:
 
@@ -188,37 +202,32 @@ Final local validation on 2026-07-27:
   discovers zero PlayMode tests.
 - macOS Universal IL2CPP: temporary player build succeeded for both arm64 and
   x86_64.
-- Representative 600-second Break replay: canonical and accelerated results
-  both ended at 820 IP.
-- Representative 18-hour stored-time run with active Dyson automation and
-  Dream: approximately 0.72-0.79 seconds in the Editor benchmark; the
-  scene/coroutine/UI path measured approximately 0.73 seconds.
-- Representative 18-hour changing-IP Break run: approximately 0.90 seconds.
-- Stable 42,000,000-second whole-game analytical fixture: approximately
-  0.44 milliseconds after fixture setup.
+- A corrected 600-second canonical comparison found 940 IP canonically versus
+  950 IP from the current changing-IP accelerator (1.064% high). The earlier
+  equality claim used a reference path that had not actually disabled the
+  unified accelerator and is withdrawn.
+- A focused 18-hour changing-IP diagnostic completed in about 6.06 seconds
+  after the Dream convergence repair, representing nine Break aggregate
+  blocks but still executing 2,588 exact material boundaries. This is useful
+  diagnostic evidence, not a universal performance target.
+- The representative long-Dream projection now includes housing and village
+  validation. Their bounded modulo-conversion buffers use structural range
+  validation, while economically material continuous fields retain the 0.1%
+  coarse/fine limit. The 18-hour diagnostic converged with workers as the
+  worst field at approximately 0.0637%.
+- A bounded pure-cycle experiment proved isolated Break cycles can match the
+  1/60-second canonical duration and reward at the same IP, but its attempted
+  aggregate did not yet model every cross-reset transition. That experiment
+  was reverted rather than retained as an unproven shortcut.
 
-The original 250-millisecond 18-hour target is therefore not yet met by the
-event-heavy representative fixtures, although they complete below one second
-on this development machine. The 42,000,000-second stable target is met.
+The next required implementation is therefore the plan's originally specified
+pure one-cycle transition: reset retention, Dyson goal milestones, skill
+assignment, modifier rebuilds, automation phase, and other discrete signature
+changes must be explicit state inputs. The aggregate solver may compose that
+trusted transition; it must not validate an empirical curve only against
+itself.
 
-The current changing-IP Break projection is still expressed in 0.1-second
-units. Break cycles shorter than 0.1 seconds are deliberately rejected by that
-projection and run through the exact event-time fallback so a legitimate
-1/60-second cycle is never rounded into incorrect rewards. Continuous-second
-compression of those extreme Break cycles remains a performance follow-up;
-accuracy is not relaxed.
-
-The adaptive long-Dream validator currently proves convergence for community,
-workers, cities, factories, bots, rockets, space factories, energy, panel
-counts, and finite state. Housing and villages are advanced and covered by
-short exact-parity tests, but they are not yet part of the long-block
-coarse/fine maximum-error gate. Adding them to that gate currently rejects the
-projection and exposes an under-processing defect in the fallback used by the
-high-frequency ordinary-Infinity fixture. That attempted tightening was not
-retained; a future change must solve the fallback/time-accounting interaction
-before the full continuous-state 0.1% proof can be claimed.
-
-Developer shadow comparison is represented by the model contract but is not
-enabled as a live dual-run mode. Superseded fixed/canonical paths remain only
-as conservative characterization and fallback paths until further runtime
-observation justifies deletion.
+Active Break aggregation and developer shadow comparison are not yet
+authoritative. Superseded fixed/canonical paths remain as characterization and
+fallback paths until one-cycle parity, workload-scaled tests, and the final
+full-suite/build gate pass.
