@@ -184,13 +184,30 @@ Original prompt: Create a separate `Idle Dyson Swarm Web` project beside the Uni
 - Normalized Unity asset source hashes and generated-output comparisons across
   LF and CRLF line endings so deterministic data validation produces the same
   result on every supported checkout.
+- Added the versioned `TransactionalGameApplication` boundary with one-shot
+  startup, separate state/durable revisions, serialized checkpoints and
+  commit-first staged publication.
+- Added truthful startup classification for healthy primary, recovered legacy,
+  first run, unsupported future schema, invalid candidates and recovery-write
+  failure. Required migration or repair writes are verified before readiness.
+- Added application import/reload for Unity `IDB1` and canonical `IDSWEB1`
+  saves. Import requires explicit overwrite approval, consumes the remote quit
+  timestamp, commits before publication and installs a new clean session.
+- Added the mapper session seam needed to serialize arbitrary engine snapshots
+  and staged candidates while retaining every source-preserved field.
+- Routed the Basic Dyson no-command golden fixture through the public
+  transactional engine without claiming that slice is the canonical whole-game
+  engine.
+- Current headless validation: 127 tests, TypeScript checks, lint, production
+  build and deterministic verification of 559 Unity assets across 34 types.
 
 ## TODO
 
 - Map the remaining Unity gameplay systems and build a clean,
   dependency-ordered headless port plan.
-- Connect prepared legacy/current saves to the simulation and persistence
-  boundary.
+- Inventory and own the remaining canonical Dyson inputs before connecting the
+  parity slice to real saves: current panels, production multipliers, panel
+  lifetime, facility modifiers and remaining Infinity reward inputs.
 - Complete the remaining early-game tinker behavior in the headless model.
 - Expand Unity golden masters into research behavior.
 - Expand the typed Dyson model from the no-skill chain into the exported

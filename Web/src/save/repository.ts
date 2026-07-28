@@ -1,4 +1,7 @@
-import { type SaveMigrationResult } from './migrate'
+import {
+  UnsupportedFutureSaveSchemaError,
+  type SaveMigrationResult,
+} from './migrate'
 import { deserializeWebSave, serializeWebSave } from './serialization'
 import { PreparedSave } from './prepare'
 
@@ -24,12 +27,13 @@ export interface SaveRepositoryPaths {
 }
 
 export interface SaveRepository {
+  hasCurrent(): Promise<boolean>
   loadCurrent(): Promise<PreparedSave | null>
   migrateLegacyOnFirstLaunch(): Promise<FirstLaunchMigrationResult>
   commit(
     save: PreparedSave,
     target?: SaveCommitTarget,
-  ): Promise<void>
+  ): Promise<PreparedSave>
 }
 
 export type SaveCommitTarget = 'development' | 'canonical-player'
@@ -43,12 +47,24 @@ export type FirstLaunchMigrationResult =
   | { readonly status: 'no-legacy-save' }
   | { readonly status: 'current-invalid'; readonly error: string }
   | {
+      readonly status: 'unsupported-future-version'
+      readonly source: 'current' | 'legacy'
+      readonly candidate?: LegacySaveCandidate
+      readonly error: string
+    }
+  | {
       readonly status: 'migrated'
       readonly source: LegacySaveCandidate
       readonly migration: SaveMigrationResult
+      readonly save: PreparedSave
     }
   | {
       readonly status: 'legacy-invalid'
+      readonly source: LegacySaveCandidate
+      readonly error: string
+    }
+  | {
+      readonly status: 'recovery-write-failed'
       readonly source: LegacySaveCandidate
       readonly error: string
     }
@@ -79,8 +95,12 @@ export class PortableSaveRepository implements SaveRepository {
     this.policy = policy
   }
 
+  async hasCurrent(): Promise<boolean> {
+    return this.storage.exists(this.paths.current)
+  }
+
   async loadCurrent(): Promise<PreparedSave | null> {
-    if (!(await this.storage.exists(this.paths.current))) return null
+    if (!(await this.hasCurrent())) return null
     const decoded = deserializeWebSave(
       await this.storage.readText(this.paths.current),
     )
@@ -93,6 +113,13 @@ export class PortableSaveRepository implements SaveRepository {
     try {
       current = await this.loadCurrent()
     } catch (error) {
+      if (error instanceof UnsupportedFutureSaveSchemaError) {
+        return {
+          status: 'unsupported-future-version',
+          source: 'current',
+          error: error.message,
+        }
+      }
       currentError = error instanceof Error ? error.message : String(error)
     }
     if (current) return { status: 'already-migrated', save: current }
@@ -111,10 +138,14 @@ export class PortableSaveRepository implements SaveRepository {
         }
       | undefined
     for (const source of candidates) {
+      let migration: SaveMigrationResult
+      let prepared: PreparedSave
       try {
-        const { migration, prepared } = PreparedSave.prepareDecoded(
+        const preparation = PreparedSave.prepareDecoded(
           this.decodeLegacy(source.text),
         )
+        migration = preparation.migration
+        prepared = preparation.prepared
         if (!migration.validation.valid) {
           lastFailure = {
             status: 'legacy-invalid',
@@ -123,12 +154,30 @@ export class PortableSaveRepository implements SaveRepository {
           }
           continue
         }
-        await this.storage.copy(source.sourcePath, this.paths.legacyRecovery)
-        await this.commit(prepared)
-        return { status: 'migrated', source, migration }
       } catch (error) {
+        if (error instanceof UnsupportedFutureSaveSchemaError) {
+          return {
+            status: 'unsupported-future-version',
+            source: 'legacy',
+            candidate: source,
+            error: error.message,
+          }
+        }
         lastFailure = {
           status: 'legacy-invalid',
+          source,
+          error: error instanceof Error ? error.message : String(error),
+        }
+        continue
+      }
+
+      try {
+        await this.storage.copy(source.sourcePath, this.paths.legacyRecovery)
+        const committed = await this.commit(prepared)
+        return { status: 'migrated', source, migration, save: committed }
+      } catch (error) {
+        return {
+          status: 'recovery-write-failed',
           source,
           error: error instanceof Error ? error.message : String(error),
         }
@@ -145,7 +194,7 @@ export class PortableSaveRepository implements SaveRepository {
   async commit(
     save: PreparedSave,
     target: SaveCommitTarget = 'development',
-  ): Promise<void> {
+  ): Promise<PreparedSave> {
     if (
       target === 'canonical-player' &&
       !this.policy.allowCanonicalPlayerWrites
@@ -165,10 +214,11 @@ export class PortableSaveRepository implements SaveRepository {
     if (serializeWebSave(verified) !== encoded) {
       throw new Error('Temporary save verification failed before atomic replace.')
     }
-    PreparedSave.fromDecoded(verified)
+    const committed = PreparedSave.fromDecoded(verified)
     await this.storage.replaceAtomically(
       this.paths.temporary,
       this.paths.current,
     )
+    return committed
   }
 }

@@ -212,6 +212,104 @@ describe('transactional simulation engine', () => {
     })
   })
 
+  test('rejects a staged transition created by another engine', () => {
+    const first = new TransactionalSimulationEngine(
+      { value: 1, nested: { values: [] } },
+      definition(),
+    )
+    const second = new TransactionalSimulationEngine(
+      { value: 10, nested: { values: [] } },
+      definition(),
+    )
+    const staged = first.stageDispatch({
+      expectedRevision: 0,
+      command: { kind: 'add', amount: 4 },
+    })
+    if (!(staged.accepted && staged.changed && 'staged' in staged)) {
+      throw new Error('Expected a staged transition.')
+    }
+
+    expect(second.publish(staged.staged)).toMatchObject({
+      accepted: false,
+      code: 'SIM-INVALID-STAGE',
+      revision: 0,
+    })
+    expect(second.snapshot().state.value).toBe(10)
+    expect(first.publish(staged.staged)).toMatchObject({
+      accepted: true,
+      changed: true,
+      revision: 1,
+    })
+    expect(first.snapshot().state.value).toBe(5)
+  })
+
+  test('keeps staged candidates isolated from caller-owned copies', () => {
+    const engine = new TransactionalSimulationEngine(
+      { value: 1, nested: { values: [] } },
+      definition(),
+    )
+    const staged = engine.stageDispatch({
+      expectedRevision: 0,
+      command: { kind: 'add', amount: 4 },
+    })
+    if (!(staged.accepted && staged.changed && 'staged' in staged)) {
+      throw new Error('Expected a staged transition.')
+    }
+
+    const callerCopy = staged.staged.copyCandidate()
+    callerCopy.value = 999
+    callerCopy.nested.values.push(999)
+
+    expect(staged.staged.copyCandidate()).toEqual({
+      value: 5,
+      nested: { values: [5] },
+    })
+    expect(engine.publish(staged.staged)).toMatchObject({
+      accepted: true,
+      changed: true,
+      revision: 1,
+    })
+    expect(engine.snapshot().state).toEqual({
+      value: 5,
+      nested: { values: [5] },
+    })
+  })
+
+  test('rejects a staged transition made stale by another publication', () => {
+    const engine = new TransactionalSimulationEngine(
+      { value: 1, nested: { values: [] } },
+      definition(),
+    )
+    const listener = vi.fn()
+    engine.subscribe(listener)
+    const staged = engine.stageDispatch({
+      expectedRevision: 0,
+      command: { kind: 'add', amount: 4 },
+    })
+    if (!(staged.accepted && staged.changed && 'staged' in staged)) {
+      throw new Error('Expected a staged transition.')
+    }
+
+    expect(engine.dispatch({
+      expectedRevision: 0,
+      command: { kind: 'add', amount: 1 },
+    })).toMatchObject({
+      accepted: true,
+      changed: true,
+      revision: 1,
+    })
+    expect(engine.publish(staged.staged)).toMatchObject({
+      accepted: false,
+      code: 'SIM-STALE-REVISION',
+      revision: 1,
+    })
+    expect(engine.snapshot().state).toEqual({
+      value: 2,
+      nested: { values: [2] },
+    })
+    expect(listener).toHaveBeenCalledOnce()
+  })
+
   test('discards a mutated candidate reported as a no-op', () => {
     const engine = new TransactionalSimulationEngine(
       { value: 1, nested: { values: [] } },

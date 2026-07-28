@@ -253,4 +253,81 @@ describe('portable transactional save repository', () => {
     expect(storage.files.get('/recovery/original-idb1.txt')).toBe('good')
     expect(await repository.loadCurrent()).not.toBeNull()
   })
+
+  test('stops fallback when the current save has a future schema', async () => {
+    const storage = new MemoryStorage()
+    storage.files.set('/current', serializeWebSave({ saveVersion: 13 }))
+    storage.files.set('/legacy', 'good')
+    storage.candidates = [
+      { id: 'legacy', sourcePath: '/legacy', text: 'good' },
+    ]
+    const repository = new PortableSaveRepository(
+      storage,
+      {
+        current: '/current',
+        temporary: '/current.tmp',
+        legacyRecovery: '/recovery/original-idb1.txt',
+      },
+      () => ({ saveVersion: 12 }),
+    )
+
+    await expect(repository.migrateLegacyOnFirstLaunch()).resolves.toMatchObject({
+      status: 'unsupported-future-version',
+      source: 'current',
+    })
+    expect(storage.copies).toEqual([])
+    expect(storage.replacements).toEqual([])
+  })
+
+  test('stops on an encountered future legacy candidate', async () => {
+    const storage = new MemoryStorage()
+    storage.files.set('/future', 'future')
+    storage.files.set('/valid', 'valid')
+    storage.candidates = [
+      { id: 'future', sourcePath: '/future', text: 'future' },
+      { id: 'valid', sourcePath: '/valid', text: 'valid' },
+    ]
+    const repository = new PortableSaveRepository(
+      storage,
+      {
+        current: '/current',
+        temporary: '/current.tmp',
+        legacyRecovery: '/recovery/original-idb1.txt',
+      },
+      (text) => ({ saveVersion: text === 'future' ? 13 : 12 }),
+    )
+
+    await expect(repository.migrateLegacyOnFirstLaunch()).resolves.toMatchObject({
+      status: 'unsupported-future-version',
+      source: 'legacy',
+      candidate: { id: 'future' },
+    })
+    expect(storage.copies).toEqual([])
+    expect(storage.replacements).toEqual([])
+  })
+
+  test('classifies a valid recovery candidate write failure as terminal', async () => {
+    const storage = new MemoryStorage()
+    storage.files.set('/legacy', 'good')
+    storage.candidates = [
+      { id: 'legacy', sourcePath: '/legacy', text: 'good' },
+    ]
+    storage.failAt = 'write'
+    const repository = new PortableSaveRepository(
+      storage,
+      {
+        current: '/current',
+        temporary: '/current.tmp',
+        legacyRecovery: '/recovery/original-idb1.txt',
+      },
+      () => ({ saveVersion: 12 }),
+    )
+
+    await expect(repository.migrateLegacyOnFirstLaunch()).resolves.toMatchObject({
+      status: 'recovery-write-failed',
+      source: { id: 'legacy' },
+      error: 'temporary write failed',
+    })
+    expect(storage.replacements).toEqual([])
+  })
 })

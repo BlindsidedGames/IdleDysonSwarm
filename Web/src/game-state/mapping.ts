@@ -111,6 +111,10 @@ export class HydratedGameStateV1 {
     this.preparedSource = preparedSource
   }
 
+  get initialState(): CanonicalGameStateV1 {
+    return this.state
+  }
+
   copyPreservedSource(): SaveRecord {
     return this.preparedSource.copyValidatedState()
   }
@@ -118,7 +122,17 @@ export class HydratedGameStateV1 {
   prepareReplacement(candidate: unknown): PreparedSave {
     return this.preparedSource.withValidatedState(candidate)
   }
+
+  /**
+   * Maps an arbitrary canonical candidate onto this session's preserved,
+   * prepared Unity source graph without mutating either input.
+   */
+  prepare(candidate: CanonicalGameStateV1): PreparedSave {
+    return dehydrateGameState(this, candidate)
+  }
 }
+
+export { HydratedGameStateV1 as GameStateSessionV1 }
 
 export function hydrateGameState(
   prepared: PreparedSave,
@@ -512,9 +526,10 @@ export function hydrateGameState(
 
 export function dehydrateGameState(
   hydrated: HydratedGameStateV1,
+  candidate: CanonicalGameStateV1 = hydrated.state,
 ): PreparedSave {
   const source = hydrated.copyPreservedSource()
-  const state = hydrated.state
+  const state = candidate
   const canonicalValidation = validateCanonicalGameState(state)
   if (!canonicalValidation.valid) {
     throw new Error(

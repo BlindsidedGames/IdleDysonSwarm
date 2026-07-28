@@ -22,6 +22,20 @@ import { validatePreparedSave, type SaveValidationResult } from './validate'
 
 export const CURRENT_SAVE_SCHEMA = 12
 
+export class UnsupportedFutureSaveSchemaError extends Error {
+  readonly sourceSchema: number
+  readonly supportedSchema: number
+
+  constructor(sourceSchema: number, supportedSchema: number) {
+    super(
+      `Save schema ${sourceSchema} is newer than supported schema ${supportedSchema}.`,
+    )
+    this.name = 'UnsupportedFutureSaveSchemaError'
+    this.sourceSchema = sourceSchema
+    this.supportedSchema = supportedSchema
+  }
+}
+
 export interface SaveMigrationResult {
   readonly save: SaveRecord
   readonly sourceSchema: number
@@ -39,8 +53,9 @@ export function migrateDecodedSave(candidate: unknown): SaveMigrationResult {
       ? save.saveVersion
       : 0
   if (sourceSchema > CURRENT_SAVE_SCHEMA) {
-    throw new Error(
-      `Save schema ${sourceSchema} is newer than supported schema ${CURRENT_SAVE_SCHEMA}.`,
+    throw new UnsupportedFutureSaveSchemaError(
+      sourceSchema,
+      CURRENT_SAVE_SCHEMA,
     )
   }
 

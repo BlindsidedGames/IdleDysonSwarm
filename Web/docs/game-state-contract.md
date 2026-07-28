@@ -13,8 +13,8 @@ These concepts must never share one ambiguous `schema` name:
   decoder, migration, repair and validation pipeline.
 - Canonical game model version: begins at 1 when the typed whole-game mapper is
   implemented.
-- Application snapshot contract version: begins at 1 when the startup and
-  persistence coordinator is implemented.
+- Application snapshot contract version: currently 1, owned by the startup and
+  persistence coordinator.
 
 ## Publication boundary
 
@@ -127,6 +127,24 @@ decision gated on complete mapping coverage and round-trip parity.
 - The executable coverage manifest keeps release canonical writes disabled
   while unmatched paths remain source-preserved.
 
-The next wave builds the startup/application coordinator with separate state
-and durable revisions, then routes existing Dyson/Infinity parity fixtures
-through the public engine.
+## Implemented application checkpoint
+
+- Startup publishes no gameplay state until the selected save has passed
+  migration, repair, validation and any required recovery write.
+- Application state and durable revisions are tracked separately. Ordinary
+  checkpoints capture an exact revision and may finish while active play
+  advances; serialized checkpoint ordering prevents an older write from
+  winning last.
+- Stored-time candidates use a private commit-first stage and remain invisible
+  until the repository verifies their write.
+- Imports accept Unity `IDB1` and canonical `IDSWEB1`, require explicit
+  overwrite approval, consume the remote quit timestamp, commit before
+  publication and install a new clean application session.
+- If a durable commit succeeds but the committed save cannot be reopened, the
+  application blocks instead of resuming stale memory.
+
+The Basic Dyson no-command fixture now runs through a real public engine
+adapter. It remains a parity-only slice, not the canonical whole-game engine.
+Canonical Dyson integration is blocked until the model owns or truthfully
+recomputes current panels, production multipliers, panel lifetime, facility
+modifiers and the remaining Infinity reward inputs.

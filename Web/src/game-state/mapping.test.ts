@@ -8,6 +8,7 @@ import { prepareIdb1Save, PreparedSave } from '../save/prepare'
 import { serializeWebSave } from '../save/serialization'
 import {
   dehydrateGameState,
+  GameStateSessionV1,
   hydrateGameState,
 } from './mapping'
 
@@ -156,6 +157,47 @@ describe('canonical game-state mapping', () => {
         'simulationStatistics.minuteWindows.0.futureBucket',
       ),
     ).toBe('preserve-me')
+  })
+
+  test('prepares an arbitrary canonical candidate against preserved source data', () => {
+    const original = prepareIdb1Save(
+      loadFixture('schema-08-canonical-idb1-main-save.txt'),
+    ).prepared
+    const source = original.copyValidatedState()
+    ;(source.prestigePlus as Record<string, unknown>).futureUnownedField =
+      'preserve-me'
+    const session = hydrateGameState(original.withValidatedState(source))
+    const candidate = {
+      ...session.state,
+      dyson: {
+        ...session.state.dyson,
+        money: session.state.dyson.money + 123,
+      },
+    }
+
+    const prepared = session.prepare(candidate)
+    const roundTripped = hydrateGameState(prepared)
+
+    expect(session).toBeInstanceOf(GameStateSessionV1)
+    expect(roundTripped.state.dyson.money).toBe(candidate.dyson.money)
+    expect(session.state.dyson.money).not.toBe(candidate.dyson.money)
+    expect(
+      getSavePath(
+        prepared.copyValidatedState(),
+        'prestigePlus.futureUnownedField',
+      ),
+    ).toBe('preserve-me')
+  })
+
+  test('keeps the legacy dehydration helper bound to the session state', () => {
+    const prepared = prepareIdb1Save(
+      loadFixture('schema-08-canonical-idb1-main-save.txt'),
+    ).prepared
+    const session = hydrateGameState(prepared)
+
+    expect(
+      dehydrateGameState(session).copyValidatedState(),
+    ).toEqual(session.prepare(session.state).copyValidatedState())
   })
 
   test('rejects invalid canonical ranges before dehydration', () => {

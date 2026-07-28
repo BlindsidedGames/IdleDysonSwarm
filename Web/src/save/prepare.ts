@@ -85,6 +85,29 @@ export interface PreparedLegacySave {
   readonly prepared: PreparedSave
 }
 
+/**
+ * Establishes a fresh local lifecycle baseline before an imported save is
+ * committed. The historical quit timestamp is consumed by the source runtime
+ * and must not award away time again on the importing runtime.
+ *
+ * The stored offline-time bank and all unrecognized fields are intentionally
+ * preserved. Time acquisition remains the caller's responsibility so this
+ * transformation is deterministic and platform independent.
+ */
+export function prepareImportedSave(
+  source: PreparedSave,
+  importedAtUtc: string,
+): PreparedSave {
+  if (importedAtUtc.trim().length === 0) {
+    throw new Error('Import timestamp must not be empty.')
+  }
+
+  const candidate = source.copyValidatedState()
+  candidate.dateQuitString = ''
+  candidate.lastSuccessfulLoadUtc = importedAtUtc
+  return source.withValidatedState(candidate)
+}
+
 export function prepareIdb1Save(text: string): PreparedLegacySave {
   const decoded = decodeIdb1Save(text)
   const { prepared, migration } = PreparedSave.prepareDecoded(decoded.root)

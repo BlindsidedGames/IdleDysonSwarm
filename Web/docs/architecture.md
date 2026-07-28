@@ -11,7 +11,10 @@ future product frontend (not selected)
 application commands and read-only snapshots
   |
   v
-TransactionalSimulationEngine (pure TypeScript)
+TransactionalGameApplication
+  |                 \
+  v                  v
+TransactionalSimulationEngine    verified persistence lane
   |                \
   v                 v
 game-data catalog   save preparation pipeline
@@ -51,17 +54,20 @@ byte views are detached and expose a non-mutating type. Accepted state changes
 publish one monotonically increasing revision; rejected, stale and no-op
 commands publish nothing.
 
-`TransactionalSimulationEngine` now enforces those publication rules for any
-typed state and command union. The version-1 mapper now separates the prepared
-Unity compatibility graph from canonical domain state while privately
-preserving unmapped fields. It is not yet the whole-game engine: domain
-transition functions and the application coordinator remain follow-on work.
+`TransactionalSimulationEngine` enforces those publication rules for any typed
+state and command union. `TransactionalGameApplication` owns that engine, the
+mapper session, application revisions and the single persistence lane. The
+version-1 mapper separates the prepared Unity compatibility graph from
+canonical domain state while privately preserving unmapped fields. It is not
+yet the whole-game engine: remaining domain transition functions are follow-on
+work.
 
 Active-play mutations may publish to memory before a later checkpoint.
 Recovery, import and stored-time work are commit-first flows: their isolated
 candidate cannot become visible until its matching save has been durably
-verified. The engine exposes single-use staged transitions for that coordinator;
-the startup/lifecycle coordinator itself remains follow-on work.
+verified. Startup and import now use this boundary. Stored-time commands will
+use the implemented single-use staged-transition path once that domain command
+is ported.
 
 The existing simulation performance work is accepted for the current stage.
 Further discretionary tuning is deferred until the full gameplay port is
