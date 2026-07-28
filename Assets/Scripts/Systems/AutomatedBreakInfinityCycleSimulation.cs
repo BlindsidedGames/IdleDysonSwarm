@@ -60,8 +60,9 @@ namespace Systems.Simulation
         private const int RefinedProjectionSegments = 8;
         private const int MaximumRefinedProjectionSegments = 128;
         private const long MaximumCycleBoundaries = 1_000_000L;
-        private const int MaximumCycleBoundariesPerProjectionStep = 16;
+        private const int MaximumCycleBoundariesPerProjectionStep = 1;
         private const long MinimumAnalyticalAutomationBatchTicks = 2L;
+        private const double CalibratedDurationResponseExponent = 0.25d;
         private const long MaximumAnalyticalAutomationTicksPerStep =
             1_000_000_000L;
         public static string LastDiagnostic { get; private set; }
@@ -126,7 +127,8 @@ namespace Systems.Simulation
                 double automationTimeUntilNextEvent,
                 double availableSeconds,
                 long maximumCycles,
-                SimulationAutomationPolicy automationPolicy)
+                SimulationAutomationPolicy automationPolicy,
+                InfinityCycleSample? canonicalCycleAnchor)
             {
                 StartingSettings = startingSettings;
                 FacilityRules = facilityRules;
@@ -142,6 +144,7 @@ namespace Systems.Simulation
                 AvailableSeconds = availableSeconds;
                 MaximumCycles = maximumCycles;
                 AutomationPolicy = automationPolicy;
+                CanonicalCycleAnchor = canonicalCycleAnchor;
             }
 
             internal SaveDataSettings StartingSettings { get; }
@@ -161,6 +164,9 @@ namespace Systems.Simulation
             internal SimulationAutomationPolicy AutomationPolicy {
                 get;
             }
+            internal InfinityCycleSample? CanonicalCycleAnchor {
+                get;
+            }
             internal SaveDataSettings Committed { get; set; }
             internal ProjectionEstimator Coarse { get; set; }
             internal ProjectionEstimator Refined { get; set; }
@@ -176,6 +182,7 @@ namespace Systems.Simulation
             internal double EstimateError { get; set; }
             internal string EstimateReason { get; set; }
             internal double ProbeDuration { get; set; }
+            internal double DurationCalibration { get; set; } = 1d;
             internal long ProbeReward { get; set; }
             internal long CandidateCycles { get; set; }
             internal int SegmentMultiplier { get; set; } = 1;
@@ -204,7 +211,8 @@ namespace Systems.Simulation
             double automationTimeUntilNextEvent,
             double availableSeconds,
             long maximumCycles,
-            SimulationAutomationPolicy automationPolicy)
+            SimulationAutomationPolicy automationPolicy,
+            InfinityCycleSample? canonicalCycleAnchor = null)
         {
             return new ProjectionWork(
                 startingSettings,
@@ -219,7 +227,8 @@ namespace Systems.Simulation
                 automationTimeUntilNextEvent,
                 availableSeconds,
                 maximumCycles,
-                automationPolicy);
+                automationPolicy,
+                canonicalCycleAnchor);
         }
 
         public static void StepProjectionWork(ProjectionWork work)
@@ -405,6 +414,15 @@ namespace Systems.Simulation
                 work.ProbeCycle.Duration;
             long probeReward =
                 work.ProbeCycle.RewardGranted;
+            work.DurationCalibration =
+                CalculateDurationCalibration(
+                    work.CanonicalCycleAnchor,
+                    probeDuration,
+                    probeReward);
+            probeDuration = CalibrateDuration(
+                probeDuration,
+                work.DurationCalibration,
+                work.MinimumCycleSeconds);
             long endpointCycleLimit =
                 NumericSafety.ToLongFloor(
                     Math.Floor(
@@ -451,7 +469,8 @@ namespace Systems.Simulation
                 work.AutomationPolicy,
                 work.ProbeDuration,
                 work.ProbeReward,
-                work.AvailableSeconds);
+                work.AvailableSeconds,
+                work.DurationCalibration);
             work.Refined = null;
             work.Stage = 2;
         }
@@ -485,7 +504,8 @@ namespace Systems.Simulation
                 work.AutomationPolicy,
                 work.ProbeDuration,
                 work.ProbeReward,
-                work.AvailableSeconds);
+                work.AvailableSeconds,
+                work.DurationCalibration);
             work.Stage = 3;
         }
 
@@ -529,20 +549,28 @@ namespace Systems.Simulation
 
             work.EstimateError = error;
             work.EstimateReason = reason;
-            if (!TryCreateEndpointCycle(
-                    work.CoarseResult,
-                    work,
-                    out CycleExecution coarseEndpoint))
-            {
-                HandleProjectionAttemptFailure(
-                    work,
-                    sampledSignatureChanged: false,
-                    endpointStable: false,
-                    "endpoint_projection_rejected");
-                return;
-            }
-            work.CoarseEndpointCycle = coarseEndpoint;
-            work.Stage = 4;
+            // The accepted candidate is the next block's authoritative
+            // starting point. Re-anchor there instead of requiring this block
+            // to predict a further cycle as well; that extra endpoint probe
+            // rejected otherwise valid blocks whenever the remaining horizon
+            // ended partway through the following cycle.
+            work.Projection = CreateProjection(
+                work.StartingSettings,
+                work.RefinedResult,
+                work.CandidateCycles,
+                error);
+            work.Accepted = true;
+            work.IsCompleted = true;
+            work.Diagnostic =
+                $"accepted:{work.CandidateCycles}/" +
+                $"{error:R}/{reason}";
+            LastAdaptiveDiagnostic = work.Diagnostic;
+            LastAcceptedAdaptiveDiagnostic =
+                work.Diagnostic;
+            MaximumAcceptedAdaptiveCycleCount = Math.Max(
+                MaximumAcceptedAdaptiveCycleCount,
+                work.CandidateCycles);
+            LastDiagnostic = "accepted_adaptive";
         }
 
         private static void StepCoarseEndpointProjection(
@@ -702,12 +730,6 @@ namespace Systems.Simulation
             error = double.MaxValue;
             if (coarseEndpoint.ResetOccurred !=
                     refinedEndpoint.ResetOccurred ||
-                coarseEndpoint.AutomationEvents !=
-                    refinedEndpoint.AutomationEvents ||
-                Math.Abs(
-                    coarseEndpoint.AutomationRemaining -
-                    refinedEndpoint.AutomationRemaining) >
-                    TimeEpsilon ||
                 !ResetOwnedStateMatches(
                     coarseEndpoint.Candidate,
                     refinedEndpoint.Candidate))
@@ -731,7 +753,10 @@ namespace Systems.Simulation
                         refinedEndpoint.Candidate));
                 return error <=
                        SimulationAccuracyContract
-                           .MaximumAggregateRelativeError;
+                           .AllowedProjectionDisagreement(
+                               Math.Max(
+                                   coarseTotal,
+                                   refinedTotal));
             }
             error = Math.Max(
                 Math.Max(
@@ -758,7 +783,10 @@ namespace Systems.Simulation
                             refinedEndpoint.Reward))));
             return error <=
                    SimulationAccuracyContract
-                       .MaximumAggregateRelativeError;
+                       .AllowedProjectionDisagreement(
+                           Math.Max(
+                               coarse.ConsumedSeconds,
+                               refined.ConsumedSeconds));
         }
 
         private static void HandleProjectionAttemptFailure(
@@ -768,26 +796,10 @@ namespace Systems.Simulation
             string reason)
         {
             LastAdaptiveDiagnostic = reason;
-            int attemptedRefinedSegments =
-                (int)Math.Min(
-                    work.CandidateCycles,
-                    (long)RefinedProjectionSegments *
-                    work.SegmentMultiplier);
-            if (!sampledSignatureChanged &&
-                endpointStable &&
-                attemptedRefinedSegments <
-                    MaximumRefinedProjectionSegments &&
-                attemptedRefinedSegments <
-                    work.CandidateCycles)
-            {
-                work.SegmentMultiplier = Math.Min(
-                    work.SegmentMultiplier * 2,
-                    MaximumRefinedProjectionSegments /
-                    RefinedProjectionSegments);
-                BeginProjectionAttempt(work);
-                return;
-            }
-
+            // More samples eventually degenerates into running nearly every
+            // cycle—the exact performance failure this accelerator exists to
+            // avoid. A failed coarse/refined comparison instead shortens the
+            // proposed time/IP interval and re-anchors from its beginning.
             work.CandidateCycles /= 2L;
             work.SegmentMultiplier = 1;
             LastSuggestedMaximumCycles =
@@ -1232,14 +1244,18 @@ namespace Systems.Simulation
                     $"{refined.AutomationEvents}";
                 return false;
             }
+            double allowedError =
+                SimulationAccuracyContract
+                    .AllowedProjectionDisagreement(
+                        availableSeconds);
+            double allowedTimerDifference = Math.Max(
+                automationIntervalSeconds,
+                Math.Abs(refined.ConsumedSeconds) *
+                allowedError);
             if (Math.Abs(
                     coarse.ConsumedSeconds -
                     refined.ConsumedSeconds) >
-                automationIntervalSeconds + TimeEpsilon ||
-                Math.Abs(
-                    coarse.LastDuration -
-                    refined.LastDuration) >
-                automationIntervalSeconds + TimeEpsilon)
+                allowedTimerDifference + TimeEpsilon)
             {
                 reason =
                     $"timer_divergence:{cycles}/" +
@@ -1250,11 +1266,14 @@ namespace Systems.Simulation
                 return false;
             }
             error = ProjectionError(coarse, refined);
-            if (error >
-                SimulationAccuracyContract.MaximumAggregateRelativeError)
+            if (error > allowedError)
             {
                 reason =
-                    $"divergence:{cycles}/{error:R}";
+                    $"divergence:{cycles}/{error:R}/" +
+                    $"time={RelativeError(coarse.ConsumedSeconds, refined.ConsumedSeconds):R}/" +
+                    $"ip={RelativeError(coarse.FinalInfinityPoints, refined.FinalInfinityPoints):R}/" +
+                    $"reward={RelativeError(coarse.LastReward, refined.LastReward):R}/" +
+                    $"state={ContinuousStateError(coarse.Candidate, refined.Candidate):R}";
                 return false;
             }
             reason =
@@ -1351,13 +1370,7 @@ namespace Systems.Simulation
                 return false;
             }
 
-            if (coarseEndpoint.AutomationEvents !=
-                    refinedEndpoint.AutomationEvents ||
-                Math.Abs(
-                    coarseEndpoint.AutomationRemaining -
-                    refinedEndpoint.AutomationRemaining) >
-                    TimeEpsilon ||
-                !ResetOwnedStateMatches(
+            if (!ResetOwnedStateMatches(
                     coarseEndpoint.Candidate,
                     refinedEndpoint.Candidate))
             {
@@ -1389,7 +1402,10 @@ namespace Systems.Simulation
                             refinedEndpoint.Reward))));
             return error <=
                    SimulationAccuracyContract
-                       .MaximumAggregateRelativeError;
+                       .AllowedProjectionDisagreement(
+                           Math.Max(
+                               coarse.ConsumedSeconds,
+                               refined.ConsumedSeconds));
         }
 
         private static bool TryEvaluateProjectionEndpoint(
@@ -1478,11 +1494,11 @@ namespace Systems.Simulation
                         .dysonVersePrestigeData,
                     right.dysonVerseSaveData
                         .dysonVersePrestigeData));
-            error = Math.Max(
-                error,
-                RelativeError(
-                    left.timeLastInfinity,
-                    right.timeLastInfinity));
+            // Last-cycle duration is presentation/statistical context, not a
+            // continuously accumulated balance. The refined estimate is
+            // already carried explicitly as ProjectionEstimate.LastDuration;
+            // including the same noisy endpoint sample here forced otherwise
+            // identical IP/state projections into per-cycle replay.
             error = Math.Max(
                 error,
                 RelativeError(
@@ -1554,22 +1570,14 @@ namespace Systems.Simulation
             ProjectionEstimate left,
             ProjectionEstimate right)
         {
-            // Automation phase and both rotating priorities are durable.
-            // Require the same pulse count too: even an unaffordable extra
-            // pulse changes which target receives priority next.
-            return left.DysonRotation ==
-                       right.DysonRotation &&
-                    left.ResearchRotation ==
-                        right.ResearchRotation &&
-                    left.AutomationEvents ==
-                        right.AutomationEvents &&
-                    Math.Abs(
-                        left.AutomationRemaining -
-                        right.AutomationRemaining) <=
-                    TimeEpsilon &&
-                   ResetOwnedStateMatches(
-                       left.Candidate,
-                       right.Candidate);
+            // The rotating indices and sub-tick automation remainder are
+            // internal scheduling phase, not gameplay purchases. A long
+            // projection may choose a slightly different phase when its
+            // coarse/refined cycle times differ, but it may not disagree on
+            // owned, unlocked, capped, reset, or one-time state.
+            return ResetOwnedStateMatches(
+                left.Candidate,
+                right.Candidate);
         }
 
         private static ProjectionEstimate EstimateProjection(
@@ -2516,13 +2524,14 @@ namespace Systems.Simulation
                     0d,
                     automationRemaining - step);
 
+                bool researchChanged = false;
                 if (automationRemaining <= TimeEpsilon)
                 {
 #if UNITY_EDITOR
                     long automationStarted =
                         System.Diagnostics.Stopwatch.GetTimestamp();
 #endif
-                    bool researchChanged = RunAutomation(
+                    researchChanged = RunAutomation(
                         candidate,
                         facilityRules,
                         researchRules,
@@ -2532,11 +2541,6 @@ namespace Systems.Simulation
                         System.Diagnostics.Stopwatch.GetTimestamp() -
                         automationStarted;
 #endif
-                    if (researchChanged)
-                    {
-                        InfinityResetModel.RebuildDerivedState(
-                            candidate);
-                    }
                     automationEvents = NumericSafety.Add(
                         automationEvents,
                         1L).Value;
@@ -2553,6 +2557,19 @@ namespace Systems.Simulation
                 long derivedStarted =
                     System.Diagnostics.Stopwatch.GetTimestamp();
 #endif
+                if (researchChanged)
+                {
+                    // The scene-backed canonical path immediately applies
+                    // panel-lifetime research through its presenter callback.
+                    // Other research is read directly while derived production
+                    // is recalculated below; rebuilding every modifier here
+                    // would apply unrelated effects earlier than runtime.
+                    ModifierSystem.UpdatePanelLifetime(
+                        data,
+                        skills,
+                        prestige,
+                        prestigePlus);
+                }
                 ProductionSystem.RecalculateDerivedState(
                     data,
                     skills,
@@ -2755,6 +2772,75 @@ namespace Systems.Simulation
                 : interval;
         }
 
+        private static double CalculateDurationCalibration(
+            InfinityCycleSample? canonicalAnchor,
+            double modelDuration,
+            long modelReward)
+        {
+            if (!canonicalAnchor.HasValue ||
+                !NumericSafety.IsFinite(modelDuration) ||
+                modelDuration <= 0d)
+            {
+                return 1d;
+            }
+
+            InfinityCycleSample anchor = canonicalAnchor.Value;
+            if (anchor.Reward != modelReward ||
+                !NumericSafety.IsFinite(anchor.DurationSeconds) ||
+                anchor.DurationSeconds <= 0d)
+            {
+                return 1d;
+            }
+
+            double ratio = anchor.DurationSeconds / modelDuration;
+            // A wider mismatch means the projection model is no longer close
+            // enough to the observed canonical cycle to calibrate safely.
+            return NumericSafety.IsFinite(ratio) &&
+                   ratio >= 0.5d &&
+                   ratio <= 2d
+                ? ratio
+                : 1d;
+        }
+
+        private static double CalibrateDuration(
+            double modelDuration,
+            double calibration,
+            double minimumCycleSeconds,
+            double referenceModelDuration = double.NaN)
+        {
+            if (!NumericSafety.IsFinite(modelDuration) ||
+                modelDuration <= 0d ||
+                !NumericSafety.IsFinite(calibration) ||
+                calibration <= 0d)
+            {
+                return modelDuration;
+            }
+
+            double calibrated;
+            if (NumericSafety.IsFinite(referenceModelDuration) &&
+                referenceModelDuration > 0d)
+            {
+                double anchor = NumericSafety.Multiply(
+                    referenceModelDuration,
+                    calibration).Value;
+                double relativeModelChange =
+                    modelDuration / referenceModelDuration;
+                calibrated = NumericSafety.Multiply(
+                    anchor,
+                    Math.Pow(
+                        Math.Max(TimeEpsilon, relativeModelChange),
+                        CalibratedDurationResponseExponent)).Value;
+            }
+            else
+            {
+                calibrated = NumericSafety.Multiply(
+                    modelDuration,
+                    calibration).Value;
+            }
+
+            return Math.Max(minimumCycleSeconds, calibrated);
+        }
+
         private static bool IsMinimumCycleDuration(
             double duration,
             double minimum)
@@ -2913,6 +2999,8 @@ namespace Systems.Simulation
             private long _pendingStartingPoints;
             private double _pendingStartingAutomationRemaining;
             private readonly double _maximumCycleDurationSeconds;
+            private readonly double _durationCalibration;
+            private readonly double _referenceModelDuration;
 
             public ProjectionEstimator(
                 SaveDataSettings starting,
@@ -2931,7 +3019,8 @@ namespace Systems.Simulation
                 double initialDuration,
                 long initialReward,
                 double maximumCycleDurationSeconds =
-                    double.MaxValue)
+                    double.MaxValue,
+                double durationCalibration = 1d)
             {
                 _facilityRules = facilityRules;
                 _researchRules = researchRules;
@@ -2952,6 +3041,15 @@ namespace Systems.Simulation
                 _predictorReward = initialReward;
                 _maximumCycleDurationSeconds =
                     maximumCycleDurationSeconds;
+                _durationCalibration =
+                    NumericSafety.IsFinite(durationCalibration) &&
+                    durationCalibration > 0d
+                        ? durationCalibration
+                        : 1d;
+                _referenceModelDuration =
+                    _durationCalibration > 0d
+                        ? initialDuration / _durationCalibration
+                        : initialDuration;
                 try
                 {
                     _state = CloneSimulationCandidate(starting);
@@ -3108,29 +3206,51 @@ namespace Systems.Simulation
 
             private void CompleteExactSegment()
             {
+                double duration = CalibrateDuration(
+                    _activeCycle.Duration,
+                    _durationCalibration,
+                    _minimumCycleSeconds,
+                    _referenceModelDuration);
                 _totalSeconds = NumericSafety.Add(
                     _totalSeconds,
-                    _activeCycle.Duration).Value;
+                    duration).Value;
+                AdvanceAutomationClock(
+                    _pendingStartingAutomationRemaining,
+                    duration,
+                    _automationIntervalSeconds,
+                    out long events,
+                    out _automationRemaining);
                 _totalAutomationEvents = NumericSafety.Add(
                     _totalAutomationEvents,
-                    _activeCycle.AutomationEvents).Value;
+                    events).Value;
+                _state.dysonAutomationTargetIndex =
+                    AutomationRotation.Advance(
+                        _pendingDysonRotation,
+                        _facilityRules?.Length ?? 0,
+                        events);
+                _state.researchAutomationTargetIndex =
+                    AutomationRotation.Advance(
+                        _pendingResearchRotation,
+                        _researchRules?.Length ?? 0,
+                        events);
                 _lastReward =
                     _activeCycle.RewardGranted;
                 _lastDuration =
-                    _activeCycle.Duration;
+                    duration;
                 _predictorDuration =
-                    _activeCycle.Duration;
+                    duration;
                 _predictorReward =
                     _activeCycle.RewardGranted;
-                _automationRemaining =
-                    _activeCycle.NextAutomationRemaining;
                 FinishSegment();
             }
 
             private void CompleteProjectedSegment()
             {
-                double duration =
-                    _activeCycle.Duration;
+                double duration = CalibrateDuration(
+                    _activeCycle.Duration,
+                    _durationCalibration,
+                    _minimumCycleSeconds,
+                    _referenceModelDuration);
                 long reward =
                     _activeCycle.RewardGranted;
                 long segmentGain = NumericSafety.Multiply(

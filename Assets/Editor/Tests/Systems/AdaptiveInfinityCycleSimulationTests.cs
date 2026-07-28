@@ -76,6 +76,158 @@ namespace Tests.Systems
         }
 
         [Test]
+        public void SampledProjection_GrowthLimitBoundsEachCalibrationBlock()
+        {
+            InfinityCycleSample first =
+                new(997L, 1L, 1L, 0.050d);
+            InfinityCycleSample second =
+                new(998L, 1L, 1L, 0.0499d);
+            InfinityCycleSample third =
+                new(999L, 1L, 1L, 0.0498d);
+
+            bool projected =
+                AdaptiveInfinityCycleSimulation
+                    .TryProjectSampledSeconds(
+                        first,
+                        second,
+                        third,
+                        currentInfinityPoints: 1_000L,
+                        availableSeconds: 60d,
+                        minimumCycleSeconds: 1d / 60d,
+                        maximumRelativeIpGrowth: 0.01d,
+                        out InfinityCycleProjection conservative);
+
+            Assert.IsTrue(projected);
+            Assert.GreaterOrEqual(conservative.CycleCount, 8L);
+            Assert.LessOrEqual(
+                conservative.FinalInfinityPoints,
+                1_010L);
+
+            Assert.IsTrue(
+                AdaptiveInfinityCycleSimulation
+                    .TryProjectSampledSeconds(
+                        first,
+                        second,
+                        third,
+                        currentInfinityPoints: 1_000L,
+                        availableSeconds: 60d,
+                        minimumCycleSeconds: 1d / 60d,
+                        maximumRelativeIpGrowth: 0.25d,
+                        out InfinityCycleProjection aggressive));
+            Assert.Greater(
+                aggressive.CycleCount,
+                conservative.CycleCount);
+        }
+
+        [Test]
+        public void SampledProjection_DoesNotExtrapolatePhaseNoiseAsSlowerIpPower()
+        {
+            bool projected =
+                AdaptiveInfinityCycleSimulation
+                    .TryProjectSampledSeconds(
+                        new InfinityCycleSample(
+                            970L,
+                            10L,
+                            1L,
+                            0.050d),
+                        new InfinityCycleSample(
+                            980L,
+                            10L,
+                            1L,
+                            0.051d),
+                        new InfinityCycleSample(
+                            990L,
+                            10L,
+                            1L,
+                            0.052d),
+                        currentInfinityPoints: 1_000L,
+                        availableSeconds: 60d,
+                        minimumCycleSeconds: 1d / 60d,
+                        maximumRelativeIpGrowth: 0.10d,
+                        out InfinityCycleProjection result);
+
+            Assert.IsTrue(projected);
+            Assert.LessOrEqual(
+                result.LastDurationSeconds,
+                0.052d + 1e-12d);
+            Assert.GreaterOrEqual(
+                result.LastReward,
+                10L);
+        }
+
+        [Test]
+        public void CheckpointFeedback_DoesNotShrinkForOneAutomationPhaseSpike()
+        {
+            var feedback = new AdaptiveProjectionCheckpointFeedback();
+
+            feedback.Observe(
+                expectedDurationSeconds: 0.05d,
+                expectedReward: 200L,
+                observedDurationSeconds: 0.06d,
+                observedReward: 200L,
+                tolerance: 0.01d);
+
+            Assert.AreEqual(1d / 6d, feedback.LastError, 1e-12d);
+            Assert.AreEqual(1d / 24d, feedback.ErrorTrend, 1e-12d);
+            Assert.AreEqual(1d, feedback.GrowthAdjustment);
+        }
+
+        [Test]
+        public void CheckpointFeedback_SustainedLargeDriftContractsFutureBlocks()
+        {
+            var feedback = new AdaptiveProjectionCheckpointFeedback();
+
+            for (int observation = 0; observation < 8; observation++)
+            {
+                feedback.Observe(
+                    expectedDurationSeconds: 0.05d,
+                    expectedReward: 200L,
+                    observedDurationSeconds: 0.10d,
+                    observedReward: 100L,
+                    tolerance: 0.01d);
+            }
+
+            Assert.Greater(feedback.ErrorTrend, 0.15d);
+            Assert.Less(feedback.GrowthAdjustment, 1d);
+            Assert.GreaterOrEqual(
+                feedback.GrowthAdjustment,
+                0.25d);
+        }
+
+        [Test]
+        public void CheckpointFeedback_StableObservationsRecoverTowardDefault()
+        {
+            var feedback = new AdaptiveProjectionCheckpointFeedback();
+            for (int observation = 0; observation < 8; observation++)
+            {
+                feedback.Observe(
+                    0.05d,
+                    200L,
+                    0.10d,
+                    100L,
+                    0.01d);
+            }
+            double contracted = feedback.GrowthAdjustment;
+
+            for (int observation = 0; observation < 32; observation++)
+            {
+                feedback.Observe(
+                    0.05d,
+                    200L,
+                    0.05d,
+                    200L,
+                    0.01d);
+            }
+
+            Assert.Greater(
+                feedback.GrowthAdjustment,
+                contracted);
+            Assert.LessOrEqual(
+                feedback.GrowthAdjustment,
+                1d);
+        }
+
+        [Test]
         public void NoisyCycles_AreRejectedForCanonicalResampling()
         {
             bool projected = AdaptiveInfinityCycleSimulation.TryProject(

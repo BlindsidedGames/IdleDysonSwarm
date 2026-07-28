@@ -1,0 +1,144 @@
+{
+  "title": "Current tick-system phone save active versus stored-time Infinity baseline",
+  "capturedUtcDate": "2026-07-28",
+  "baseRevision": "3d581b0",
+  "workingTreeState": "Uncommitted Numeric Safety and tick-system performance work, including the one-ULP event-horizon progress fix",
+  "fixture": {
+    "kind": "private user-supplied IDB1 save",
+    "sha256": "bf8103b9abb238929f3af95647ae38635f2534e627cd61a596000a496ea6e660",
+    "startingInfinityPoints": 897891,
+    "rawArtifactCommitted": false
+  },
+  "method": {
+    "runtime": "Unity 6000.5.5f1 EditMode characterization harness",
+    "activePath": "GameManager shared event-time active simulation",
+    "storedTimePath": "OfflineProgressSystem shared event-time stored-time simulation",
+    "sameStartingSnapshotForEveryPath": true,
+    "dreamStatePreservedFromFixture": true
+  },
+  "runs": [
+    {
+      "simulatedSeconds": 60,
+      "testResult": "Passed",
+      "active": {
+        "resets": 1191,
+        "earnedInfinityPoints": 238212,
+        "finalInfinityPoints": 1136103,
+        "consumedSimulatedSeconds": 59.99999999999939,
+        "remainingSimulatedSeconds": 7.337741525503816e-13,
+        "cpuMilliseconds": 4080.293
+      },
+      "storedTime": {
+        "resets": 1191,
+        "earnedInfinityPoints": 238212,
+        "finalInfinityPoints": 1136103,
+        "cpuMilliseconds": 4047.556,
+        "maximumCoroutineSliceMilliseconds": 26.304
+      },
+      "storedToActiveInfinityPointRatio": 1.0
+    },
+    {
+      "simulatedSeconds": 3600,
+      "testResult": "Comparison completed; NUnit reported its default 180-second timeout after the method returned",
+      "active": {
+        "resets": 178986,
+        "earnedInfinityPoints": 36859768,
+        "finalInfinityPoints": 37757659,
+        "consumedSimulatedSeconds": 3599.99999999983,
+        "remainingSimulatedSeconds": 0.0,
+        "cpuMilliseconds": 249364.312
+      },
+      "storedTime": {
+        "resets": 178986,
+        "earnedInfinityPoints": 36859768,
+        "finalInfinityPoints": 37757659,
+        "cpuMilliseconds": 246684.451,
+        "maximumCoroutineSliceMilliseconds": 21.515
+      },
+      "storedToActiveInfinityPointRatio": 1.0
+    }
+  ],
+  "projectionExperiment": {
+    "description": "Benchmark-only direct Dyson projection with eight exact model warm-up cycles and repeated re-anchored projection blocks. This bypassed the production eligibility gates that reject persistent Dyson skill effects and active Dream state.",
+    "productionReady": false,
+    "runs": [
+      {
+        "simulatedSeconds": 60,
+        "earnedInfinityPoints": 30600,
+        "finalInfinityPoints": 928491,
+        "resets": 153,
+        "cpuMilliseconds": 76.165,
+        "projectionBlocks": 1,
+        "exactModelCycles": 11,
+        "unprocessedSubcycleSeconds": 0.19999982148085849,
+        "earnedIpErrorVersusExact": -0.8715429953150975,
+        "resetCountErrorVersusExact": -0.871536523929471
+      },
+      {
+        "simulatedSeconds": 3600,
+        "earnedInfinityPoints": 1885800,
+        "finalInfinityPoints": 2783691,
+        "resets": 9429,
+        "cpuMilliseconds": 77.645,
+        "projectionBlocks": 2,
+        "exactModelCycles": 9,
+        "unprocessedSubcycleSeconds": 0.29999985760559866,
+        "earnedIpErrorVersusExact": -0.9488385276868807,
+        "resetCountErrorVersusExact": -0.9473199021152492
+      }
+    ],
+    "conclusion": "The projection is fast but invalid for this save. Coarse and refined projections agree with one another while sharing the same missing mechanics, so their small internal disagreement does not predict real baseline error."
+  },
+  "canonicalSampledProjection": {
+    "description": "Current uncommitted Option 1 implementation. Each block is fitted from 12 genuine shared-engine resets grouped into three phase-smoothed samples. It projects a bounded varying-IP block, then requires another genuine sample window. Sustained checkpoint drift contracts future blocks.",
+    "productionReady": false,
+    "dreamStatePreservedFromFixture": true,
+    "runs": [
+      {
+        "simulatedSeconds": 60,
+        "active": {
+          "resets": 1200,
+          "earnedInfinityPoints": 240012,
+          "cpuMilliseconds": 1415.724,
+          "earnedIpRelativeErrorVersusExact": 0.007556
+        },
+        "storedTime": {
+          "resets": 1184,
+          "earnedInfinityPoints": 236812,
+          "cpuMilliseconds": 1492.223,
+          "earnedIpRelativeErrorVersusExact": -0.005877
+        },
+        "allowedAbsoluteRelativeError": 0.01
+      },
+      {
+        "simulatedSeconds": 3600,
+        "active": {
+          "resets": 179770,
+          "earnedInfinityPoints": 37089317,
+          "cpuMilliseconds": 5850.961,
+          "earnedIpRelativeErrorVersusExact": 0.006228
+        },
+        "storedTime": {
+          "resets": 181423,
+          "earnedInfinityPoints": 37585371,
+          "cpuMilliseconds": 3700.147,
+          "earnedIpRelativeErrorVersusExact": 0.019686
+        },
+        "allowedAbsoluteRelativeError": 0.027782
+      }
+    ],
+    "notes": [
+      "Projection error is symmetric: a result may be above or below the exact reference.",
+      "These timings include the complete active or stored-time runner, save-state setup, Dream concurrency, scheduler events, canonical calibration cycles, and projection application.",
+      "The intact Dream state remains a separate long-range performance limiter because automatic Dream reset cycles still use the exact fallback."
+    ]
+  },
+  "findings": [
+    "The shared tick engine produced identical Infinity reset counts, earned IP and final IP in active and stored-time modes for both measured durations.",
+    "Before the canonical-sampled implementation, this real high-frequency Break Infinity state was not performant.",
+    "The exact one-hour reference executed 178986 reset cycles and took approximately four minutes per path.",
+    "The current canonical-sampled implementation processes the same one-hour starting state in approximately 3.7 seconds stored or 5.9 seconds active while remaining inside the duration-scaled error allowance.",
+    "The exact and projected paths are both retained: the former is the truth fixture, while the latter remains uncommitted implementation evidence pending full review.",
+    "Before the event-horizon progress fix, both modes stopped after 48.104731462502023 simulated seconds at a one-ULP reward threshold boundary with SIM-ZERO-TIME-LOOP."
+  ]
+}

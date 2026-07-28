@@ -86,6 +86,7 @@ public class GameManager : MonoBehaviour
     private bool _storedTimeCancellationRequested;
     private bool _storedTimeJobRunning;
     private bool _unifiedAccelerationEnabled = true;
+    private bool _sampledInfinityProjectionEnabled = true;
     private string _returnScreenConfirmDefaultText;
     private readonly List<SimulationQueuedInput> _queuedSimulationInputs =
         new();
@@ -97,6 +98,16 @@ public class GameManager : MonoBehaviour
         get;
         private set;
     }
+#if UNITY_EDITOR
+    public static string CanonicalSampledBlockTrace {
+        get;
+        private set;
+    }
+    public static long CanonicalSampledBlockCount {
+        get;
+        private set;
+    }
+#endif
     [SerializeField] private BotsAutoBuy botsAutoBuy;
     [SerializeField] private ResearchAutoBuy researchAutoBuy;
     [SerializeField] private FoundationalEraManager foundationalEraManager;
@@ -108,7 +119,22 @@ public class GameManager : MonoBehaviour
 
     private sealed class OfflineInfinityCycleState
     {
-        private readonly List<InfinityCycleSample> _samples = new(3);
+        private const int FastCanonicalSampleWindowSize = 12;
+        private const int FastCanonicalSampleGroupSize = 4;
+        private const int SlowCanonicalSampleWindowSize = 24;
+        private const int SlowCanonicalSampleGroupSize = 8;
+        private const int SlowCanonicalRefreshGroupSize = 4;
+        private readonly List<InfinityCycleSample> _samples =
+            new(SlowCanonicalSampleWindowSize);
+        private InfinityCycleSample _latestCanonicalSample;
+        private bool _hasLatestCanonicalSample;
+        private bool _hasProjectionCheckpoint;
+        private double _expectedCheckpointDurationSeconds;
+        private long _expectedCheckpointReward;
+        private double _checkpointTolerance;
+        private bool _useShortSlowRefreshWindow;
+        private readonly AdaptiveProjectionCheckpointFeedback
+            _checkpointFeedback = new();
 
         public OfflineInfinityCycleState(
             bool breakTheLoop,
@@ -138,6 +164,10 @@ public class GameManager : MonoBehaviour
         public double SecondsInCurrentCycle { get; private set; }
         public bool IsAtPostResetStart =>
             HasPostResetStart && SecondsInCurrentCycle <= 1e-12d;
+        public double ProjectionGrowthAdjustment =>
+            _checkpointFeedback.GrowthAdjustment;
+        public double LastCheckpointError =>
+            _checkpointFeedback.LastError;
 
         public void SetCapturedBreakTarget(long target)
         {
@@ -210,7 +240,10 @@ public class GameManager : MonoBehaviour
                         reward,
                         completedDurationTicks,
                         SecondsInCurrentCycle));
-                    if (_samples.Count > 3)
+                    _latestCanonicalSample = _samples[_samples.Count - 1];
+                    _hasLatestCanonicalSample = true;
+                    if (_samples.Count >
+                        SlowCanonicalSampleWindowSize)
                         _samples.RemoveAt(0);
                 }
             }
@@ -234,10 +267,120 @@ public class GameManager : MonoBehaviour
                 return false;
             }
 
-            first = _samples[0];
-            second = _samples[1];
-            third = _samples[2];
+            int start = _samples.Count - 3;
+            first = _samples[start];
+            second = _samples[start + 1];
+            third = _samples[start + 2];
             return true;
+        }
+
+        public bool TryGetSmoothedSamples(
+            out InfinityCycleSample first,
+            out InfinityCycleSample second,
+            out InfinityCycleSample third)
+        {
+            bool crossesAutomationEvents =
+                _samples.Count > 0 &&
+                _samples[_samples.Count - 1].DurationSeconds >=
+                    SimulationTickSeconds - 1e-12d;
+            int windowSize = crossesAutomationEvents
+                ? _useShortSlowRefreshWindow
+                    ? SlowCanonicalSampleGroupSize * 2 +
+                      SlowCanonicalRefreshGroupSize
+                    : SlowCanonicalSampleWindowSize
+                : FastCanonicalSampleWindowSize;
+            int anchorGroupSize = crossesAutomationEvents
+                ? SlowCanonicalSampleGroupSize
+                : FastCanonicalSampleGroupSize;
+            if (_samples.Count < windowSize)
+            {
+                first = default;
+                second = default;
+                third = default;
+                return false;
+            }
+
+            int start = _samples.Count - windowSize;
+            int endpointGroupSize =
+                crossesAutomationEvents &&
+                _useShortSlowRefreshWindow
+                    ? SlowCanonicalRefreshGroupSize
+                    : anchorGroupSize;
+            first = AverageSampleGroup(start, anchorGroupSize);
+            second = AverageSampleGroup(
+                start + anchorGroupSize,
+                anchorGroupSize);
+            third = AverageSampleGroup(
+                start + anchorGroupSize * 2,
+                endpointGroupSize);
+            EvaluateProjectionCheckpoint(third);
+            return true;
+        }
+
+        private void EvaluateProjectionCheckpoint(
+            InfinityCycleSample observed)
+        {
+            if (!_hasProjectionCheckpoint)
+                return;
+
+            _checkpointFeedback.Observe(
+                _expectedCheckpointDurationSeconds,
+                _expectedCheckpointReward,
+                observed.DurationSeconds,
+                observed.Reward,
+                _checkpointTolerance);
+
+            _hasProjectionCheckpoint = false;
+        }
+
+        private InfinityCycleSample AverageSampleGroup(
+            int startIndex,
+            int groupSize)
+        {
+            long rewardTotal = 0L;
+            double durationTotal = 0d;
+            for (int offset = 0;
+                 offset < groupSize;
+                 offset++)
+            {
+                InfinityCycleSample sample =
+                    _samples[startIndex + offset];
+                rewardTotal = NumericSafety.Add(
+                    rewardTotal,
+                    sample.Reward).Value;
+                durationTotal = NumericSafety.Add(
+                    durationTotal,
+                    sample.DurationSeconds).Value;
+            }
+
+            int representativeIndex =
+                startIndex + groupSize / 2;
+            long averageReward = Math.Max(
+                1L,
+                NumericSafety.ToLongFloor(
+                    Math.Round(
+                        (double)rewardTotal /
+                        groupSize)).Value);
+            double averageDuration =
+                durationTotal / groupSize;
+            return new InfinityCycleSample(
+                _samples[representativeIndex]
+                    .StartingInfinityPoints,
+                averageReward,
+                Math.Max(
+                    1L,
+                    NumericSafety.ToLongFloor(
+                        Math.Ceiling(
+                            averageDuration /
+                            SimulationTickSeconds)).Value),
+                averageDuration);
+        }
+
+        public bool TryGetLatestCanonicalSample(
+            out InfinityCycleSample sample)
+        {
+            sample = _latestCanonicalSample;
+            return _hasLatestCanonicalSample;
         }
 
         public void AcceptProjection(long finalInfinityPoints)
@@ -273,8 +416,66 @@ public class GameManager : MonoBehaviour
                 projection.LastReward,
                 durationTicks,
                 projection.LastDurationSeconds));
-            while (_samples.Count > 3)
+            while (_samples.Count > SlowCanonicalSampleWindowSize)
                 _samples.RemoveAt(0);
+        }
+
+        public void RequireCanonicalResampling(
+            InfinityCycleProjection projection,
+            double checkpointTolerance)
+        {
+            // ApplyAdaptiveInfinityProjection records one synthetic endpoint
+            // sample. Discard it: only genuine shared-engine cycles may
+            // validate the next block. Retain the last two canonical groups
+            // and collect one fresh group at the new IP level. This makes a
+            // successful run sample -> project -> resample without paying the
+            // full phase warm-up after every accepted block.
+            if (_samples.Count > 0)
+                _samples.RemoveAt(_samples.Count - 1);
+            bool crossesAutomationEvents =
+                projection.LastDurationSeconds >=
+                    SimulationTickSeconds - 1e-12d;
+            int retainedSamples = crossesAutomationEvents
+                ? SlowCanonicalSampleGroupSize * 2
+                : FastCanonicalSampleGroupSize * 2;
+            while (_samples.Count > retainedSamples)
+                _samples.RemoveAt(0);
+            _hasLatestCanonicalSample = false;
+            _latestCanonicalSample = default;
+            _expectedCheckpointDurationSeconds =
+                projection.LastDurationSeconds;
+            _expectedCheckpointReward =
+                Math.Max(1L, projection.LastReward);
+            _checkpointTolerance =
+                NumericSafety.IsFinite(checkpointTolerance) &&
+                checkpointTolerance > 0d
+                    ? checkpointTolerance
+                    : 0.01d;
+            _hasProjectionCheckpoint = true;
+            _useShortSlowRefreshWindow =
+                crossesAutomationEvents;
+        }
+
+        public void RejectSampledProjection()
+        {
+            // The sampled recurrence did not validate. Do not fall through
+            // to a different approximate model using the same noisy state.
+            // Drop the oldest group, retain the two newest genuine groups,
+            // and gather one fresh group before retrying. Authored signature
+            // changes invalidate the state separately.
+            bool crossesAutomationEvents =
+                _samples.Count > 0 &&
+                _samples[_samples.Count - 1].DurationSeconds >=
+                    SimulationTickSeconds - 1e-12d;
+            int retainedSamples = crossesAutomationEvents
+                ? SlowCanonicalSampleGroupSize * 2
+                : FastCanonicalSampleGroupSize * 2;
+            while (_samples.Count > retainedSamples)
+                _samples.RemoveAt(0);
+            _hasLatestCanonicalSample = false;
+            _latestCanonicalSample = default;
+            if (crossesAutomationEvents)
+                _useShortSlowRefreshWindow = true;
         }
     }
     #region SerializedFields
@@ -673,10 +874,12 @@ public class GameManager : MonoBehaviour
     {
         _queuedSimulationInputs.Add(
             new SimulationQueuedInput(
-                _activeUnprocessedSeconds,
+                0d,
                 SimulationInputKind.BreakTarget,
                 discreteValue: Math.Max(1L, target),
                 id: "break_target"));
+        _queuedSimulationInputs.Sort(
+            (left, right) => left.Time.CompareTo(right.Time));
     }
 
     private OfflineInfinityCycleState GetActiveInfinityCycleState()
@@ -714,7 +917,7 @@ public class GameManager : MonoBehaviour
         _queuedPlayerActions[id] = action;
         _queuedSimulationInputs.Add(
             new SimulationQueuedInput(
-                _activeUnprocessedSeconds,
+                0d,
                 kind,
                 id: id));
         _queuedSimulationInputs.Sort(
@@ -1403,13 +1606,37 @@ public class GameManager : MonoBehaviour
         {
             acceleration = default;
             if (!_infinityState.IsAtPostResetStart ||
-                _owner._activeInfinityCycleSeconds > 1e-12d ||
-                AnalyticalOfflineSimulation.HasPersistentSideEffects(
-                    _owner.skillTreeData) ||
-                !_infinityState.TryGetSamples(
+                _owner._activeInfinityCycleSeconds > 1e-12d)
+            {
+                return false;
+            }
+            if (_owner._sampledInfinityProjectionEnabled &&
+                _infinityState.TryGetSmoothedSamples(
                     out InfinityCycleSample first,
                     out InfinityCycleSample second,
                     out InfinityCycleSample third))
+            {
+                if (TryAccelerateSampledBreakInfinity(
+                        maximumSeconds,
+                        request,
+                        first,
+                        second,
+                        third,
+                        out acceleration))
+                {
+                    return true;
+                }
+
+                _infinityState.RejectSampledProjection();
+                return false;
+            }
+
+            if (AnalyticalOfflineSimulation.HasPersistentSideEffects(
+                    _owner.skillTreeData) ||
+                !_infinityState.TryGetSamples(
+                    out first,
+                    out second,
+                    out third))
             {
                 return false;
             }
@@ -1417,23 +1644,12 @@ public class GameManager : MonoBehaviour
             bool dysonAutomationEnabled =
                 _owner.prestigeData.infinityAutoBots ||
                 _owner.prestigeData.infinityAutoResearch;
-            bool samplesAtMinimum =
-                IsMinimumInfinityCycle(
-                    first.DurationSeconds,
-                    request.InfinityMinimumCycleSeconds) &&
-                IsMinimumInfinityCycle(
-                    second.DurationSeconds,
-                    request.InfinityMinimumCycleSeconds) &&
-                IsMinimumInfinityCycle(
-                    third.DurationSeconds,
-                    request.InfinityMinimumCycleSeconds);
-            if (dysonAutomationEnabled &&
-                !samplesAtMinimum)
+            if (dysonAutomationEnabled)
             {
-                return TryAccelerateAutomatedBreakInfinity(
-                    maximumSeconds,
-                    request,
-                    out acceleration);
+                // Automated Break cycles use the canonical-sampled path.
+                // Until a full smoothed window exists, remain exact rather
+                // than substituting the legacy full-state approximation.
+                return false;
             }
             bool dreamIdle =
                 DreamAnalyticalOfflineSimulation.IsClockIdle(
@@ -1542,6 +1758,188 @@ public class GameManager : MonoBehaviour
             return true;
         }
 
+        private bool TryAccelerateSampledBreakInfinity(
+            double maximumSeconds,
+            SimulationAdvanceRequest request,
+            InfinityCycleSample first,
+            InfinityCycleSample second,
+            InfinityCycleSample third,
+            out SimulationAccelerationResult acceleration)
+        {
+            acceleration = default;
+            if (!HasUsefulSampleProjectionHorizon(
+                    third,
+                    maximumSeconds))
+            {
+                return false;
+            }
+            if (!AdaptiveInfinityCycleSimulation
+                    .TryProjectSampledSeconds(
+                        first,
+                        second,
+                        third,
+                        _owner.prestigeData.infinityPoints,
+                        maximumSeconds,
+                        request.InfinityMinimumCycleSeconds,
+                        SampledProjectionIpGrowthLimit(
+                            maximumSeconds,
+                            _infinityState
+                                .ProjectionGrowthAdjustment),
+                        SimulationAccuracyContract
+                            .AllowedAggregateRelativeError(
+                                maximumSeconds),
+                        out InfinityCycleProjection projection))
+            {
+                return false;
+            }
+
+            SaveDataDream1 projectedDream = null;
+            SaveDataPrestige projectedDreamPrestige = null;
+            double dreamError = 0d;
+            bool dreamIdle =
+                DreamAnalyticalOfflineSimulation.IsClockIdle(
+                    Oracle.oracle.saveSettings.sdSimulation,
+                    _owner.spaceAgeManager != null &&
+                    _owner.spaceAgeManager.IsRailgunFiring);
+            if (!dreamIdle)
+            {
+                if (!_owner.TryGetDreamOfflineTiming(
+                        out DreamOfflineTiming timing))
+                {
+                    return false;
+                }
+                projectedDream =
+                    (SaveDataDream1)Sirenix.Serialization
+                        .SerializationUtility.CreateCopy(
+                            Oracle.oracle.saveSettings.sdSimulation);
+                projectedDreamPrestige =
+                    (SaveDataPrestige)Sirenix.Serialization
+                        .SerializationUtility.CreateCopy(
+                            Oracle.oracle.saveSettings.sdPrestige);
+                if (!DreamAdaptiveLongIntervalSimulation.TryAdvance(
+                        projectedDream,
+                        projectedDreamPrestige,
+                        timing,
+                        projection.ConsumedSeconds,
+                        out dreamError) ||
+                    IsAutomaticDreamResetReady(
+                        projectedDream,
+                        projectedDreamPrestige))
+                {
+                    return false;
+                }
+            }
+
+            AdvanceHandledAutomationClock(
+                request.AutomationTimeUntilNextEvent,
+                projection.ConsumedSeconds,
+                out long handledAutomationEvents,
+                out double nextAutomationRemaining);
+            if (handledAutomationEvents > 0L)
+            {
+                _owner.botsAutoBuy?.SkipAutomationTicks(
+                    handledAutomationEvents);
+                _owner.researchAutoBuy?.SkipAutomationTicks(
+                    handledAutomationEvents);
+            }
+
+            if (dreamIdle)
+            {
+                SaveDataPrestige dreamPrestige =
+                    Oracle.oracle.saveSettings.sdPrestige;
+                int rate = Math.Max(
+                    0,
+                    Math.Min(10, dreamPrestige.doubleTimeRate));
+                dreamPrestige.doubleTime = Math.Max(
+                    0d,
+                    NumericSafety.Subtract(
+                        dreamPrestige.doubleTime,
+                        NumericSafety.Multiply(
+                            rate,
+                            projection.ConsumedSeconds).Value).Value);
+                dreamPrestige.doDoubleTime =
+                    dreamPrestige.doubleTimeOwned &&
+                    dreamPrestige.doubleTime > 0d;
+            }
+            else
+            {
+                Oracle.oracle.saveSettings.sdSimulation =
+                    projectedDream;
+                Oracle.oracle.saveSettings.sdPrestige =
+                    projectedDreamPrestige;
+                SimulationPrestigeManager
+                    .InvokeResetSimulationRuntime();
+            }
+
+            long startingIp =
+                _owner.prestigeData.infinityPoints;
+            _owner.ApplyAdaptiveInfinityProjection(
+                projection,
+                _infinityState);
+            _infinityState.RequireCanonicalResampling(
+                projection,
+                SimulationAccuracyContract
+                    .AllowedAggregateRelativeError(
+                        projection.ConsumedSeconds));
+            long aggregateReward = Math.Max(
+                0L,
+                _owner.prestigeData.infinityPoints -
+                startingIp);
+            if (_owner._workerService == null)
+                ServiceLocator.TryGet(out _owner._workerService);
+            RealityAdvanceResult reality =
+                _owner._workerService != null
+                    ? _owner._workerService.AdvanceSimulation(
+                        projection.ConsumedSeconds)
+                    : default;
+            _owner.RecordRealitySegment(
+                projection.ConsumedSeconds,
+                reality);
+            _owner._activeInfinityCycleSeconds = 0d;
+            _owner._activeAtPostResetStart = true;
+            _owner._activeSimulationBoundaryRemaining =
+                request.InfinityMinimumCycleSeconds;
+
+            acceleration = new SimulationAccelerationResult(
+                true,
+                projection.ConsumedSeconds,
+                new SimulationPresentationSummary
+                {
+                    BreakInfinityCount =
+                        projection.CycleCount,
+                    BreakInfinityPoints =
+                        aggregateReward,
+                    RealityWorkers =
+                        reality.WorkersGenerated,
+                    AutomaticInfluence =
+                        reality.AutomaticInfluence,
+                    RealityCapacityStallSeconds =
+                        reality.StalledSeconds
+                },
+                Math.Max(
+                    projection.ValidationError,
+                    dreamError),
+                allAutomationEventsHandled: true,
+                automationTimeUntilNextEvent:
+                    nextAutomationRemaining);
+            return true;
+        }
+
+        private static bool IsAutomaticDreamResetReady(
+            SaveDataDream1 dream,
+            SaveDataPrestige prestige)
+        {
+            if (dream == null || prestige == null)
+                return false;
+            return prestige.disasterStage switch
+            {
+                0 or 1 => dream.cities >= 1d,
+                2 => dream.bots >= 100d,
+                3 => dream.spaceFactories >= 5d,
+                _ => false
+            };
+        }
+
         private static void AdvanceHandledAutomationClock(
             double startingRemaining,
             double consumedSeconds,
@@ -1645,7 +2043,11 @@ public class GameManager : MonoBehaviour
                     request.AutomationTimeUntilNextEvent,
                     maximumSeconds,
                     cycleLimit,
-                    request.AutomationPolicy);
+                    request.AutomationPolicy,
+                    _infinityState.TryGetLatestCanonicalSample(
+                        out InfinityCycleSample activeAnchor)
+                        ? activeAnchor
+                        : (InfinityCycleSample?)null);
             _owner._activeAutomatedBreakDreamProjectionWork =
                 null;
             return ContinueActiveAutomatedBreakProjection(
@@ -2237,8 +2639,32 @@ public class GameManager : MonoBehaviour
             acceleration = default;
             if (!_infinityState.BreakTheLoop ||
                 !_infinityState.IsAtPostResetStart ||
-                _owner.prestigeData.infinityPoints < 42L ||
-                AnalyticalOfflineSimulation.HasPersistentSideEffects(
+                _owner.prestigeData.infinityPoints < 42L)
+            {
+                return false;
+            }
+            if (_owner._sampledInfinityProjectionEnabled &&
+                _infinityState.TryGetSmoothedSamples(
+                    out InfinityCycleSample first,
+                    out InfinityCycleSample second,
+                    out InfinityCycleSample third))
+            {
+                if (TryAggregateSampledBreakCycles(
+                        maximumSeconds,
+                        request,
+                        first,
+                        second,
+                        third,
+                        out acceleration))
+                {
+                    return true;
+                }
+
+                _infinityState.RejectSampledProjection();
+                return false;
+            }
+
+            if (AnalyticalOfflineSimulation.HasPersistentSideEffects(
                     _owner.skillTreeData))
             {
                 return false;
@@ -2259,13 +2685,12 @@ public class GameManager : MonoBehaviour
             bool dysonAutomationEnabled =
                 _owner.prestigeData.infinityAutoBots ||
                 _owner.prestigeData.infinityAutoResearch;
-            if (dysonAutomationEnabled &&
-                TryAggregateAutomatedBreakCycles(
-                    maximumSeconds,
-                    request,
-                    out acceleration))
+            if (dysonAutomationEnabled)
             {
-                return true;
+                // Automated Break cycles use the canonical-sampled path.
+                // Until a full smoothed window exists, remain exact rather
+                // than substituting the legacy full-state approximation.
+                return false;
             }
 
             InfinityCycleEvaluation currentEvaluation =
@@ -2411,6 +2836,200 @@ public class GameManager : MonoBehaviour
             return false;
         }
 
+        private bool TryAggregateSampledBreakCycles(
+            double maximumSeconds,
+            SimulationAdvanceRequest request,
+            InfinityCycleSample first,
+            InfinityCycleSample second,
+            InfinityCycleSample third,
+            out SimulationAccelerationResult acceleration)
+        {
+            acceleration = default;
+            if (!HasUsefulSampleProjectionHorizon(
+                    third,
+                    maximumSeconds))
+            {
+                return false;
+            }
+            double candidateSeconds = maximumSeconds;
+            for (int attempt = 0;
+                 attempt < 8 &&
+                 candidateSeconds >=
+                     request.InfinityMinimumCycleSeconds * 8d;
+                 attempt++)
+            {
+                if (!AdaptiveInfinityCycleSimulation
+                    .TryProjectSampledSeconds(
+                        first,
+                        second,
+                        third,
+                        _owner.prestigeData.infinityPoints,
+                        candidateSeconds,
+                        request.InfinityMinimumCycleSeconds,
+                        maximumRelativeIpGrowth:
+                            SampledProjectionIpGrowthLimit(
+                                maximumSeconds,
+                                _infinityState
+                                    .ProjectionGrowthAdjustment),
+                        maximumValidationError:
+                            SimulationAccuracyContract
+                                .AllowedAggregateRelativeError(
+                                    candidateSeconds),
+                        out InfinityCycleProjection projection))
+                {
+                    return false;
+                }
+
+                SaveDataDream1 projectedDream = null;
+                SaveDataPrestige projectedDreamPrestige = null;
+                double dreamError = 0d;
+                bool dreamIdle =
+                    DreamAnalyticalOfflineSimulation.IsClockIdle(
+                        Oracle.oracle.saveSettings.sdSimulation,
+                        _owner.spaceAgeManager != null &&
+                        _owner.spaceAgeManager.IsRailgunFiring);
+                if (!dreamIdle)
+                {
+                    if (!_owner.TryGetDreamOfflineTiming(
+                            out DreamOfflineTiming timing))
+                    {
+                        return false;
+                    }
+                    projectedDream =
+                        (SaveDataDream1)Sirenix.Serialization
+                            .SerializationUtility.CreateCopy(
+                                Oracle.oracle.saveSettings.sdSimulation);
+                    projectedDreamPrestige =
+                        (SaveDataPrestige)Sirenix.Serialization
+                            .SerializationUtility.CreateCopy(
+                                Oracle.oracle.saveSettings.sdPrestige);
+                    if (!DreamAdaptiveLongIntervalSimulation.TryAdvance(
+                            projectedDream,
+                            projectedDreamPrestige,
+                            timing,
+                            projection.ConsumedSeconds,
+                            out dreamError) ||
+                        IsAutomaticDreamResetReady(
+                            projectedDream,
+                            projectedDreamPrestige))
+                    {
+                        candidateSeconds *= 0.5d;
+                        continue;
+                    }
+                }
+
+                if (dreamIdle)
+                {
+                    ConsumeIdleDreamDoubleTime(
+                        projection.ConsumedSeconds);
+                }
+                else
+                {
+                    Oracle.oracle.saveSettings.sdSimulation =
+                        projectedDream;
+                    Oracle.oracle.saveSettings.sdPrestige =
+                        projectedDreamPrestige;
+                    SimulationPrestigeManager
+                        .InvokeResetSimulationRuntime();
+                }
+
+                long startingIp =
+                    _owner.prestigeData.infinityPoints;
+                _owner.ApplyAdaptiveInfinityProjection(
+                    projection,
+                    _infinityState);
+                _infinityState.RequireCanonicalResampling(
+                    projection,
+                    SimulationAccuracyContract
+                        .AllowedAggregateRelativeError(
+                            projection.ConsumedSeconds));
+                ApplyAggregatedOfflineTimeRollover(
+                    projection.CycleCount,
+                    projection.ConsumedSeconds,
+                    projection.LastDurationSeconds);
+                long aggregateReward = Math.Max(
+                    0L,
+                    _owner.prestigeData.infinityPoints -
+                    startingIp);
+
+                _infinityBoundaryRemaining =
+                    request.InfinityMinimumCycleSeconds;
+                SkipHandledDysonAutomationEvents(
+                    request.AutomationTimeUntilNextEvent,
+                    projection.ConsumedSeconds);
+                RealityAdvanceResult reality =
+                    _owner.AdvanceRealityStoredTime(
+                        projection.ConsumedSeconds);
+                _owner.RecordRealitySegment(
+                    projection.ConsumedSeconds,
+                    reality);
+
+                acceleration = new SimulationAccelerationResult(
+                    true,
+                    projection.ConsumedSeconds,
+                    new SimulationPresentationSummary
+                    {
+                        BreakInfinityCount =
+                            projection.CycleCount,
+                        BreakInfinityPoints =
+                            aggregateReward,
+                        RealityWorkers =
+                            reality.WorkersGenerated,
+                        AutomaticInfluence =
+                            reality.AutomaticInfluence,
+                        RealityCapacityStallSeconds =
+                            reality.StalledSeconds
+                    },
+                    Math.Max(
+                        projection.ValidationError,
+                        dreamError),
+                    allAutomationEventsHandled: true);
+                LastAutomatedBreakBlockDiagnostic =
+                    "accepted_canonical_sampled";
+#if UNITY_EDITOR
+                string sampleTrace =
+                    $"{first.StartingInfinityPoints}:" +
+                    $"{first.Reward}:{first.DurationSeconds:R}," +
+                    $"{second.StartingInfinityPoints}:" +
+                    $"{second.Reward}:{second.DurationSeconds:R}," +
+                    $"{third.StartingInfinityPoints}:" +
+                    $"{third.Reward}:{third.DurationSeconds:R}" +
+                    $"=>{projection.CycleCount}:" +
+                    $"{projection.ConsumedSeconds:R}:" +
+                    $"{projection.FinalInfinityPoints}:" +
+                    $"{projection.ValidationError:R}:" +
+                    $"checkpoint={_infinityState.LastCheckpointError:R}:" +
+                    $"growth={_infinityState.ProjectionGrowthAdjustment:R}";
+                CanonicalSampledBlockTrace =
+                    string.IsNullOrEmpty(CanonicalSampledBlockTrace)
+                        ? sampleTrace
+                        : CanonicalSampledBlockTrace + "|" + sampleTrace;
+                CanonicalSampledBlockCount =
+                    NumericSafety.Add(
+                        CanonicalSampledBlockCount,
+                        1L).Value;
+#endif
+                return true;
+            }
+
+            return false;
+        }
+
+        private static bool IsAutomaticDreamResetReady(
+            SaveDataDream1 dream,
+            SaveDataPrestige prestige)
+        {
+            if (dream == null || prestige == null)
+                return false;
+            return prestige.disasterStage switch
+            {
+                0 or 1 => dream.cities >= 1d,
+                2 => dream.bots >= 100d,
+                3 => dream.spaceFactories >= 5d,
+                _ => false
+            };
+        }
+
         private bool TryAggregateAutomatedBreakCycles(
             double maximumSeconds,
             SimulationAdvanceRequest request,
@@ -2531,7 +3150,12 @@ public class GameManager : MonoBehaviour
                     maximumSeconds,
                     maximumCycles: requestedCycleLimit,
                     automationPolicy:
-                        SimulationAutomationPolicy.ForceBuyMax);
+                        SimulationAutomationPolicy.ForceBuyMax,
+                    canonicalCycleAnchor:
+                        _infinityState.TryGetLatestCanonicalSample(
+                            out InfinityCycleSample storedAnchor)
+                            ? storedAnchor
+                            : (InfinityCycleSample?)null);
             _automatedBreakDreamProjectionWork = null;
             return ContinueAutomatedBreakProjection(
                 request,
@@ -3391,6 +4015,10 @@ public class GameManager : MonoBehaviour
 
     private OfflineProgressContext CreateOfflineProgressContext()
     {
+#if UNITY_EDITOR
+        CanonicalSampledBlockTrace = null;
+        CanonicalSampledBlockCount = 0L;
+#endif
         _activeAutomatedBreakProjectionWork = null;
         _activeAutomatedBreakDreamProjectionWork = null;
         if (!oracle.saveSettings.eventTimeClockInitialized)
@@ -3489,6 +4117,11 @@ public class GameManager : MonoBehaviour
     public void SetUnifiedAccelerationForTests(bool enabled)
     {
         _unifiedAccelerationEnabled = enabled;
+    }
+
+    public void SetSampledInfinityProjectionForTests(bool enabled)
+    {
+        _sampledInfinityProjectionEnabled = enabled;
     }
 #endif
 
@@ -3640,12 +4273,16 @@ public class GameManager : MonoBehaviour
         double boundaryRemaining,
         OfflineInfinityCycleState infinityCycleState)
     {
+        double minimumProgressSeconds =
+            NumericSafety.BitIncrement(1e-12d);
         if (!NumericSafety.IsFinite(maximumSeconds) ||
             maximumSeconds <= 0d ||
             !NumericSafety.IsFinite(minimumCycleSeconds) ||
             minimumCycleSeconds <= 0d)
         {
-            return Math.Max(1e-12d, maximumSeconds);
+            return Math.Max(
+                minimumProgressSeconds,
+                maximumSeconds);
         }
 
         _ = boundaryRemaining;
@@ -3655,7 +4292,7 @@ public class GameManager : MonoBehaviour
             return Math.Min(
                 maximumSeconds,
                 Math.Max(
-                    1e-12d,
+                    minimumProgressSeconds,
                     minimumCycleSeconds -
                     elapsedCycleSeconds));
 
@@ -3690,7 +4327,9 @@ public class GameManager : MonoBehaviour
         return NumericSafety.IsFinite(eventSeconds)
             ? Math.Min(
                 maximumSeconds,
-                Math.Max(1e-12d, eventSeconds))
+                Math.Max(
+                    minimumProgressSeconds,
+                    eventSeconds))
             : maximumSeconds;
     }
 
@@ -3705,6 +4344,72 @@ public class GameManager : MonoBehaviour
             return false;
         }
         return duration <= NumericSafety.BitIncrement(minimum);
+    }
+
+    private static double SampledProjectionIpGrowthLimit(
+        double simulatedSeconds,
+        double adaptiveAdjustment)
+    {
+        double allowed =
+            SimulationAccuracyContract
+                .AllowedAggregateRelativeError(simulatedSeconds);
+        double scale = 0.50d;
+        if (NumericSafety.IsFinite(simulatedSeconds) &&
+            simulatedSeconds > 60d)
+        {
+            // Longer stored-time requests deliberately use larger IP-growth
+            // blocks. The checkpoint controller can still contract them when
+            // genuine cycles show sustained local drift. This avoids treating
+            // one day or one month as thousands of one-hour-sized blocks.
+            double durationOrders = Math.Clamp(
+                Math.Log10(simulatedSeconds / 60d),
+                0d,
+                6d);
+            scale = NumericSafety.Add(
+                scale,
+                NumericSafety.Multiply(
+                    0.395d,
+                    NumericSafety.Multiply(
+                        durationOrders,
+                        durationOrders).Value).Value).Value;
+        }
+        double durationScaledLimit = Math.Min(
+            0.50d,
+            NumericSafety.Multiply(
+                allowed,
+                scale).Value);
+        double safeAdjustment =
+            NumericSafety.IsFinite(adaptiveAdjustment)
+                ? Math.Clamp(adaptiveAdjustment, 0.25d, 1d)
+                : 0.25d;
+        return NumericSafety.Multiply(
+            durationScaledLimit,
+            safeAdjustment).Value;
+    }
+
+    private static bool HasUsefulSampleProjectionHorizon(
+        InfinityCycleSample latest,
+        double maximumSeconds)
+    {
+        if (!NumericSafety.IsFinite(maximumSeconds) ||
+            maximumSeconds <= 0d)
+        {
+            return false;
+        }
+
+        if (latest.DurationSeconds <
+            SimulationTickSeconds - 1e-12d)
+        {
+            return true;
+        }
+
+        const int slowCalibrationWindowCycles = 24;
+        double calibrationWindowSeconds =
+            NumericSafety.Multiply(
+                latest.DurationSeconds,
+                slowCalibrationWindowCycles).Value;
+        return maximumSeconds + 1e-12d >=
+               calibrationWindowSeconds;
     }
 
     private bool CanProjectStableBreakCycles(
@@ -3797,6 +4502,11 @@ public class GameManager : MonoBehaviour
         oracle.saveSettings.infinityInProgress = false;
         oracle.saveSettings.botCapTransitionPending = false;
         oracle.saveSettings.botCapRewardsGranted = false;
+        ModifierSystem.UpdatePanelLifetime(
+            infinityData,
+            skillTreeData,
+            prestigeData,
+            prestigePlus);
         ProductionSystem.SetBotDistribution(
             infinityData,
             prestigeData,

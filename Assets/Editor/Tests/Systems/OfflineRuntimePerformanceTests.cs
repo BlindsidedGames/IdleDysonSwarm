@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.IO;
 using System.Reflection;
 using Buildings;
 using Expansion;
@@ -10,6 +11,7 @@ using Research;
 using Sirenix.Serialization;
 using Systems;
 using Systems.Numeric;
+using Systems.Save;
 using Systems.Skills;
 using Systems.Simulation;
 using UnityEditor.SceneManagement;
@@ -746,6 +748,1301 @@ namespace Tests.Systems
             Assert.Less(
                 stopwatch.Elapsed.TotalMilliseconds,
                 1000d);
+        }
+
+        [TestCase(60d)]
+        [TestCase(60d * 60d)]
+        [TestCase(18d * 60d * 60d)]
+        [TestCase(24d * 60d * 60d)]
+        [TestCase(7d * 24d * 60d * 60d)]
+        [TestCase(30d * 24d * 60d * 60d)]
+        [TestCase(100d * 24d * 60d * 60d)]
+        [TestCase(NumericSafety.StoredTimeMaximumSeconds)]
+        public void BreakInfinity_AllFiniteQuantumUpgrades_OneMillionIp_Slider100(
+            double durationSeconds)
+        {
+            Oracle.SaveDataSettings seed = CreateRepresentativeSettings();
+            EnableRepresentativeBreakInfinity(seed);
+            EnableAllFiniteQuantumUpgrades(seed);
+            seed.infinityPointsToBreakFor = 100;
+            seed.dysonVerseSaveData.dysonVersePrestigeData.infinityPoints =
+                1_000_000L;
+
+            // This fixture deliberately isolates the requested Dysonverse
+            // workload. Dream has no facilities, active timers, boosts,
+            // Double Time, or automatic-reset state.
+            seed.sdSimulation = new Oracle.SaveDataDream1();
+            seed.sdPrestige.disasterStage = 42L;
+            seed.sdPrestige.doubleTimeOwned = false;
+            seed.sdPrestige.doubleTime = 0d;
+            seed.sdPrestige.doDoubleTime = false;
+
+            _oracle.saveSettings =
+                (Oracle.SaveDataSettings)SerializationUtility.CreateCopy(seed);
+            InitializeResearchAutomation();
+            PrepareDysonDerivedState();
+            SubscribeAndResetRuntime();
+            AutomatedBreakInfinityCycleSimulation.ResetWorkDiagnostics();
+            var stopwatch = System.Diagnostics.Stopwatch.StartNew();
+
+            double maximumSliceMilliseconds = RunMeasured(
+                OfflineProgressSystem.CalculateAwayValues(
+                    durationSeconds,
+                    CreateContext(),
+                    ui: null),
+                out string maximumSliceDiagnostic);
+
+            stopwatch.Stop();
+            SimulationWorkMetrics work =
+                OfflineProgressSystem.LastSimulationWorkMetrics;
+            Oracle.DysonVersePrestigeData prestige =
+                _oracle.saveSettings.dysonVerseSaveData
+                    .dysonVersePrestigeData;
+            long completedCycles =
+                _oracle.saveSettings.simulationStatistics.lifetime
+                    .breakInfinityCount;
+            TestContext.WriteLine(
+                $"1m IP/all finite Quantum/slider 100 " +
+                $"{durationSeconds:R}s: " +
+                $"{stopwatch.Elapsed.TotalMilliseconds:F3}ms, " +
+                $"maxSlice={maximumSliceMilliseconds:F3}ms, " +
+                $"engineSlice=" +
+                $"{OfflineProgressSystem.LastMaximumSimulationSliceMilliseconds:F3}ms, " +
+                $"cycles={completedCycles}, " +
+                $"IP={prestige.infinityPoints}, " +
+                $"events={work.MaterialEvents}, " +
+                $"accepted={work.AccelerationBlocksAccepted}, " +
+                $"rejected={work.AccelerationBlocksRejected}, " +
+                $"breakBlocks={work.BreakInfinityBlocks}, " +
+                $"accelerated={work.AcceleratedSeconds:F3}s, " +
+                $"exact={work.ExactSeconds:F3}s, " +
+                $"facilityRules={BotsAutoBuy.LastRuleCaptureDiagnostic}, " +
+                $"projection={AutomatedBreakInfinityCycleSimulation.LastDiagnostic}, " +
+                $"adaptive={AutomatedBreakInfinityCycleSimulation.LastAdaptiveDiagnostic}, " +
+                $"acceptedDiagnostic={AutomatedBreakInfinityCycleSimulation.LastAcceptedAdaptiveDiagnostic}, " +
+                $"cycleEvaluations={AutomatedBreakInfinityCycleSimulation.DiagnosticCycleEvaluations}, " +
+                $"cycleBoundaries={AutomatedBreakInfinityCycleSimulation.DiagnosticCycleBoundaries}, " +
+                $"automationEvents={AutomatedBreakInfinityCycleSimulation.DiagnosticAutomationEvents}, " +
+                $"trace={AutomatedBreakInfinityCycleSimulation.DiagnosticBlockTrace}, " +
+                $"sampledBlocks={GameManager.CanonicalSampledBlockCount}, " +
+                $"maxSliceDiagnostic={maximumSliceDiagnostic}");
+
+            Assert.IsTrue(NumericSafety.IsFinite(
+                _oracle.saveSettings.dysonVerseSaveData
+                    .dysonVerseInfinityData.bots));
+            Assert.GreaterOrEqual(
+                prestige.infinityPoints,
+                1_000_000L);
+            Assert.Greater(
+                completedCycles,
+                0L);
+
+            long expectedEarnedIp = 0L;
+            long expectedCycles = 0L;
+            if (Math.Abs(durationSeconds - 60d) <= 1e-12d)
+            {
+                expectedEarnedIp = 3_700L;
+                expectedCycles = 37L;
+            }
+            else if (Math.Abs(durationSeconds - 3600d) <= 1e-12d)
+            {
+                expectedEarnedIp = 225_000L;
+                expectedCycles = 2_250L;
+            }
+
+            if (expectedCycles > 0L)
+            {
+                double allowed =
+                    SimulationAccuracyContract
+                        .AllowedAggregateRelativeError(
+                            durationSeconds);
+                Assert.LessOrEqual(
+                    Math.Abs(
+                        (prestige.infinityPoints - 1_000_000L) -
+                        expectedEarnedIp) /
+                    (double)expectedEarnedIp,
+                    allowed);
+                Assert.LessOrEqual(
+                    Math.Abs(completedCycles - expectedCycles) /
+                    (double)expectedCycles,
+                    allowed);
+            }
+        }
+
+        [Test]
+        public void BreakInfinity_AllFiniteQuantum_OneDayFocused()
+        {
+            BreakInfinity_AllFiniteQuantumUpgrades_OneMillionIp_Slider100(
+                24d * 60d * 60d);
+        }
+
+        [Test]
+        public void BreakInfinity_AllFiniteQuantum_OneHourFocused()
+        {
+            BreakInfinity_AllFiniteQuantumUpgrades_OneMillionIp_Slider100(
+                60d * 60d);
+        }
+
+        [Test]
+        public void BreakInfinity_AllFiniteQuantum_OneMonthFocused()
+        {
+            BreakInfinity_AllFiniteQuantumUpgrades_OneMillionIp_Slider100(
+                30d * 24d * 60d * 60d);
+        }
+
+        [Test]
+        public void BreakInfinity_AllFiniteQuantum_StoredCapFocused()
+        {
+            BreakInfinity_AllFiniteQuantumUpgrades_OneMillionIp_Slider100(
+                NumericSafety.StoredTimeMaximumSeconds);
+        }
+
+        [Test]
+        public void BreakInfinity_AllFiniteQuantum_ProjectionIsStableAcrossHourPartitions()
+        {
+            Oracle.SaveDataSettings seed = CreateRepresentativeSettings();
+            EnableRepresentativeBreakInfinity(seed);
+            EnableAllFiniteQuantumUpgrades(seed);
+            seed.infinityPointsToBreakFor = 100;
+            seed.dysonVerseSaveData.dysonVersePrestigeData.infinityPoints =
+                1_000_000L;
+            seed.sdSimulation = new Oracle.SaveDataDream1();
+            seed.sdPrestige.disasterStage = 42L;
+            seed.sdPrestige.doubleTimeOwned = false;
+            seed.sdPrestige.doubleTime = 0d;
+            seed.sdPrestige.doDoubleTime = false;
+
+            _oracle.saveSettings =
+                (Oracle.SaveDataSettings)SerializationUtility.CreateCopy(seed);
+            InitializeResearchAutomation();
+            PrepareDysonDerivedState();
+            SubscribeAndResetRuntime();
+            Run(OfflineProgressSystem.CalculateAwayValues(
+                3600d,
+                CreateContext(),
+                ui: null));
+            long wholeIp = _oracle.saveSettings.dysonVerseSaveData
+                .dysonVersePrestigeData.infinityPoints;
+            long wholeCycles = _oracle.saveSettings.simulationStatistics
+                .lifetime.breakInfinityCount;
+
+            _oracle.saveSettings =
+                (Oracle.SaveDataSettings)SerializationUtility.CreateCopy(seed);
+            InitializeResearchAutomation();
+            PrepareDysonDerivedState();
+            SubscribeAndResetRuntime();
+            Run(OfflineProgressSystem.CalculateAwayValues(
+                1800d,
+                CreateContext(),
+                ui: null));
+            Run(OfflineProgressSystem.CalculateAwayValues(
+                1800d,
+                CreateContext(),
+                ui: null));
+            long splitIp = _oracle.saveSettings.dysonVerseSaveData
+                .dysonVersePrestigeData.infinityPoints;
+            long splitCycles = _oracle.saveSettings.simulationStatistics
+                .lifetime.breakInfinityCount;
+
+            double ipDifference = Math.Abs(wholeIp - splitIp) /
+                                  Math.Max(
+                                      1d,
+                                      Math.Max(wholeIp, splitIp));
+            double cycleDifference =
+                Math.Abs(wholeCycles - splitCycles) /
+                Math.Max(
+                    1d,
+                    Math.Max(wholeCycles, splitCycles));
+            TestContext.WriteLine(
+                $"1h partition characterization: " +
+                $"wholeIp={wholeIp};splitIp={splitIp};" +
+                $"wholeCycles={wholeCycles};splitCycles={splitCycles};" +
+                $"ipDifference={ipDifference:R};" +
+                $"cycleDifference={cycleDifference:R}");
+
+            Assert.Less(ipDifference, 0.25d);
+            Assert.Less(cycleDifference, 0.25d);
+        }
+
+        [Test]
+        public void BreakInfinity_AllFiniteQuantumOneMinuteMatchesCurrentExact()
+        {
+            Oracle.SaveDataSettings seed = CreateRepresentativeSettings();
+            EnableRepresentativeBreakInfinity(seed);
+            EnableAllFiniteQuantumUpgrades(seed);
+            seed.infinityPointsToBreakFor = 100;
+            seed.dysonVerseSaveData.dysonVersePrestigeData.infinityPoints =
+                1_000_000L;
+            seed.sdSimulation = new Oracle.SaveDataDream1();
+            seed.sdPrestige.disasterStage = 42L;
+            seed.sdPrestige.doubleTimeOwned = false;
+            seed.sdPrestige.doubleTime = 0d;
+            seed.sdPrestige.doDoubleTime = false;
+
+            _oracle.saveSettings =
+                (Oracle.SaveDataSettings)SerializationUtility.CreateCopy(seed);
+            InitializeResearchAutomation();
+            PrepareDysonDerivedState();
+            SubscribeAndResetRuntime();
+            Run(OfflineProgressSystem.CalculateAwayValues(
+                60d,
+                CreateContext(),
+                ui: null));
+            long projectedIp = _oracle.saveSettings.dysonVerseSaveData
+                .dysonVersePrestigeData.infinityPoints;
+            long projectedCycles = _oracle.saveSettings
+                .simulationStatistics.lifetime.breakInfinityCount;
+            SimulationWorkMetrics projectedWork =
+                OfflineProgressSystem.LastSimulationWorkMetrics;
+            long projectedSampledBlocks =
+                GameManager.CanonicalSampledBlockCount;
+            string projectedBlock =
+                GameManager.LastAutomatedBreakBlockDiagnostic;
+
+            _oracle.saveSettings =
+                (Oracle.SaveDataSettings)SerializationUtility.CreateCopy(seed);
+            InitializeResearchAutomation();
+            PrepareDysonDerivedState();
+            SubscribeAndResetRuntime();
+            _gameManager.SetSampledInfinityProjectionForTests(false);
+            Run(OfflineProgressSystem.CalculateAwayValues(
+                60d,
+                CreateContext(),
+                ui: null));
+            long exactIp = _oracle.saveSettings.dysonVerseSaveData
+                .dysonVersePrestigeData.infinityPoints;
+            long exactCycles = _oracle.saveSettings
+                .simulationStatistics.lifetime.breakInfinityCount;
+            _gameManager.SetSampledInfinityProjectionForTests(true);
+
+            long projectedEarned = projectedIp - 1_000_000L;
+            long exactEarned = exactIp - 1_000_000L;
+            double ipError = Math.Abs(
+                projectedEarned - exactEarned) /
+                Math.Max(1d, Math.Abs((double)exactEarned));
+            double cycleError = Math.Abs(
+                projectedCycles - exactCycles) /
+                Math.Max(1d, Math.Abs((double)exactCycles));
+            TestContext.WriteLine(
+                $"1m IP current exact comparison: " +
+                $"projectedIp={projectedEarned};" +
+                $"exactIp={exactEarned};" +
+                $"projectedCycles={projectedCycles};" +
+                $"exactCycles={exactCycles};" +
+                $"ipError={ipError:R};" +
+                $"cycleError={cycleError:R};" +
+                $"accepted={projectedWork.AccelerationBlocksAccepted};" +
+                $"rejected={projectedWork.AccelerationBlocksRejected};" +
+                $"accelerated={projectedWork.AcceleratedSeconds:R};" +
+                $"exact={projectedWork.ExactSeconds:R};" +
+                $"block={projectedBlock};" +
+                $"sampledBlocks={projectedSampledBlocks}");
+
+            double allowed = SimulationAccuracyContract
+                .AllowedAggregateRelativeError(60d);
+            Assert.LessOrEqual(ipError, allowed);
+            Assert.LessOrEqual(cycleError, allowed);
+        }
+
+        [Test]
+        public void PrivatePhoneProfile_OneMinuteActiveAndStoredTime()
+        {
+            ComparePrivatePhoneProfile(60d);
+        }
+
+        [Test]
+        [Timeout(600000)]
+        public void PrivatePhoneProfile_OneHourActiveAndStoredTime()
+        {
+            ComparePrivatePhoneProfile(3600d);
+        }
+
+        [TestCase(60d, 238212L, 1191L)]
+        [TestCase(3600d, 36859768L, 178986L)]
+        public void PrivatePhoneProfile_StoredProjectionAgainstCachedExact(
+            double durationSeconds,
+            long exactEarnedIp,
+            long exactCycles)
+        {
+            const string fixturePath =
+                "/private/tmp/idle-dyson-phone-baseline.idb1";
+            if (!File.Exists(fixturePath))
+            {
+                Assert.Ignore(
+                    "Private isolated phone-save fixture is not present.");
+            }
+
+            SavePreparationPipeline pipeline =
+                (SavePreparationPipeline)InvokePrivateWithResult(
+                    _oracle,
+                    "CreateSavePreparationPipeline");
+            PreparedSaveResult preparation =
+                pipeline.PrepareText(File.ReadAllText(fixturePath));
+            Assert.IsTrue(preparation.Succeeded, preparation.Error);
+            Oracle.SaveDataSettings seed = preparation.Settings;
+            long startingIp = seed.dysonVerseSaveData
+                .dysonVersePrestigeData.infinityPoints;
+
+            _oracle.saveSettings =
+                (Oracle.SaveDataSettings)SerializationUtility.CreateCopy(seed);
+            InitializeResearchAutomation();
+            PrepareDysonDerivedState();
+            SubscribeAndResetRuntime();
+            var timer = System.Diagnostics.Stopwatch.StartNew();
+            double maximumSliceMilliseconds = RunMeasured(
+                OfflineProgressSystem.CalculateAwayValues(
+                    durationSeconds,
+                    CreateContext(),
+                    ui: null),
+                out string diagnostic);
+            timer.Stop();
+
+            long projectedIp = _oracle.saveSettings.dysonVerseSaveData
+                .dysonVersePrestigeData.infinityPoints;
+            long projectedEarnedIp = projectedIp - startingIp;
+            long projectedCycles = _oracle.saveSettings
+                .simulationStatistics.lifetime.breakInfinityCount;
+            double ipError =
+                Math.Abs(projectedEarnedIp - exactEarnedIp) /
+                Math.Max(1d, Math.Abs((double)exactEarnedIp));
+            double cycleError =
+                Math.Abs(projectedCycles - exactCycles) /
+                Math.Max(1d, Math.Abs((double)exactCycles));
+            TestContext.WriteLine(
+                $"PRIVATE_PHONE_CACHED_BASELINE " +
+                $"simulated={durationSeconds:R};" +
+                $"exactEarnedIp={exactEarnedIp};" +
+                $"projectedEarnedIp={projectedEarnedIp};" +
+                $"ipError={ipError:R};" +
+                $"exactCycles={exactCycles};" +
+                $"projectedCycles={projectedCycles};" +
+                $"cycleError={cycleError:R};" +
+                $"cpuMs={timer.Elapsed.TotalMilliseconds:F3};" +
+                $"maxSliceMs={maximumSliceMilliseconds:F3};" +
+                $"work={OfflineProgressSystem.LastSimulationWorkMetrics};" +
+                $"sampledBlocks={GameManager.CanonicalSampledBlockCount};" +
+                $"diagnostic={diagnostic}");
+
+            // These exact fixtures remain characterization anchors for
+            // tuning. End-to-end projection accuracy is deliberately not a
+            // release gate yet; the current phase establishes stable,
+            // measurable sample/project/resample behavior first.
+            Assert.Less(ipError, 0.25d);
+            Assert.Less(cycleError, 0.25d);
+        }
+
+        private void ComparePrivatePhoneProfile(double durationSeconds)
+        {
+            const string fixturePath =
+                "/private/tmp/idle-dyson-phone-baseline.idb1";
+            if (!File.Exists(fixturePath))
+            {
+                Assert.Ignore(
+                    "Private isolated phone-save fixture is not present.");
+            }
+
+            SavePreparationPipeline pipeline =
+                (SavePreparationPipeline)InvokePrivateWithResult(
+                    _oracle,
+                    "CreateSavePreparationPipeline");
+            PreparedSaveResult preparation =
+                pipeline.PrepareText(File.ReadAllText(fixturePath));
+            Assert.IsTrue(preparation.Succeeded, preparation.Error);
+            Oracle.SaveDataSettings seed = preparation.Settings;
+            long startingIp = seed.dysonVerseSaveData
+                .dysonVersePrestigeData.infinityPoints;
+
+            _oracle.saveSettings =
+                (Oracle.SaveDataSettings)SerializationUtility.CreateCopy(seed);
+            InitializeResearchAutomation();
+            PrepareDysonDerivedState();
+            SubscribeAndResetRuntime();
+            _gameManager.ResetActiveSimulationForTests();
+            var activeTimer = System.Diagnostics.Stopwatch.StartNew();
+            SimulationAdvanceResult activeResult =
+                _gameManager.AdvanceActiveSimulationForTests(
+                    durationSeconds);
+            activeTimer.Stop();
+            long activeIp = _oracle.saveSettings.dysonVerseSaveData
+                .dysonVersePrestigeData.infinityPoints;
+            long activeCycles = _oracle.saveSettings.simulationStatistics
+                .lifetime.breakInfinityCount;
+
+            _oracle.saveSettings =
+                (Oracle.SaveDataSettings)SerializationUtility.CreateCopy(seed);
+            InitializeResearchAutomation();
+            PrepareDysonDerivedState();
+            SubscribeAndResetRuntime();
+            AutomatedBreakInfinityCycleSimulation.ResetWorkDiagnostics();
+            var storedTimer = System.Diagnostics.Stopwatch.StartNew();
+            double maximumSliceMilliseconds = RunMeasured(
+                OfflineProgressSystem.CalculateAwayValues(
+                    durationSeconds,
+                    CreateContext(),
+                    ui: null),
+                out string maximumSliceDiagnostic);
+            storedTimer.Stop();
+            SimulationWorkMetrics storedWork =
+                OfflineProgressSystem.LastSimulationWorkMetrics;
+            long storedIp = _oracle.saveSettings.dysonVerseSaveData
+                .dysonVersePrestigeData.infinityPoints;
+            long storedCycles = _oracle.saveSettings.simulationStatistics
+                .lifetime.breakInfinityCount;
+
+            TestContext.WriteLine(
+                $"PRIVATE_PHONE_CURRENT simulated={durationSeconds:R};" +
+                $"startingIp={startingIp};" +
+                $"activeEarnedIp={activeIp - startingIp};" +
+                $"activeFinalIp={activeIp};" +
+                $"activeCycles={activeCycles};" +
+                $"activeCpuMs={activeTimer.Elapsed.TotalMilliseconds:F3};" +
+                $"activeConsumed={activeResult?.ConsumedSeconds:R};" +
+                $"activeRemaining={activeResult?.RemainingSeconds:R};" +
+                $"activeStatus={activeResult?.ValidationStatus};" +
+                $"activeCode={activeResult?.DiagnosticCode};" +
+                $"activeAccepted={activeResult?.Work.AccelerationBlocksAccepted};" +
+                $"activeRejected={activeResult?.Work.AccelerationBlocksRejected};" +
+                $"activeExactSeconds={activeResult?.Work.ExactSeconds:R};" +
+                $"activeAcceleratedSeconds={activeResult?.Work.AcceleratedSeconds:R};" +
+                $"activeStop={DescribeActiveInfinityStop()};" +
+                $"eligibility={DescribeAccelerationEligibility()};" +
+                $"storedEarnedIp={storedIp - startingIp};" +
+                $"storedFinalIp={storedIp};" +
+                $"storedCycles={storedCycles};" +
+                $"storedCpuMs={storedTimer.Elapsed.TotalMilliseconds:F3};" +
+                $"storedMaxSliceMs={maximumSliceMilliseconds:F3};" +
+                $"storedAccepted={storedWork.AccelerationBlocksAccepted};" +
+                $"storedRejected={storedWork.AccelerationBlocksRejected};" +
+                $"storedExactSeconds={storedWork.ExactSeconds:R};" +
+                $"storedAcceleratedSeconds={storedWork.AcceleratedSeconds:R};" +
+                $"lastBlock={GameManager.LastAutomatedBreakBlockDiagnostic};" +
+                $"sampledBlocks={GameManager.CanonicalSampledBlockCount};" +
+                $"projection={AutomatedBreakInfinityCycleSimulation.LastDiagnostic};" +
+                $"adaptive={AutomatedBreakInfinityCycleSimulation.LastAdaptiveDiagnostic};" +
+                $"storedToActive=" +
+                $"{RelativeRatio(storedIp - startingIp, activeIp - startingIp):R};" +
+                $"diagnostic={maximumSliceDiagnostic}");
+
+            Assert.NotNull(activeResult);
+            Assert.AreEqual(0d, activeResult.RemainingSeconds, 1e-9d);
+            Assert.Greater(activeIp, startingIp);
+            Assert.Greater(storedIp, startingIp);
+            if (Math.Abs(durationSeconds - 60d) <= 1e-12d)
+            {
+                const long exactEarnedIp = 238212L;
+                Assert.Less(
+                    Math.Abs(
+                        (activeIp - startingIp) -
+                        exactEarnedIp) /
+                    (double)exactEarnedIp,
+                    0.25d);
+                Assert.Less(
+                    Math.Abs(
+                        (storedIp - startingIp) -
+                        exactEarnedIp) /
+                    (double)exactEarnedIp,
+                    0.25d);
+            }
+        }
+
+        [TestCase(60d)]
+        [TestCase(3600d)]
+        public void PrivatePhoneProfile_DysonProjectionBenchmark(
+            double durationSeconds)
+        {
+            const string fixturePath =
+                "/private/tmp/idle-dyson-phone-baseline.idb1";
+            if (!File.Exists(fixturePath))
+            {
+                Assert.Ignore(
+                    "Private isolated phone-save fixture is not present.");
+            }
+
+            SavePreparationPipeline pipeline =
+                (SavePreparationPipeline)InvokePrivateWithResult(
+                    _oracle,
+                    "CreateSavePreparationPipeline");
+            PreparedSaveResult preparation =
+                pipeline.PrepareText(File.ReadAllText(fixturePath));
+            Assert.IsTrue(preparation.Succeeded, preparation.Error);
+            Oracle.SaveDataSettings seed = preparation.Settings;
+            _oracle.saveSettings =
+                (Oracle.SaveDataSettings)SerializationUtility.CreateCopy(seed);
+            InitializeResearchAutomation();
+            PrepareDysonDerivedState();
+            SubscribeAndResetRuntime();
+
+            Assert.IsTrue(
+                _botsAutoBuy.TryCaptureAutomationRules(
+                    out DysonFacilityAutomationRule[] facilityRules),
+                BotsAutoBuy.LastRuleCaptureDiagnostic);
+            Assert.IsTrue(
+                _researchAutoBuy.TryCaptureAutomationRules(
+                    out ResearchAutomationRule[] researchRules));
+            Assert.IsTrue(
+                InfinityResetPolicy.TryCapture(
+                    _oracle.saveSettings,
+                    _oracle.ArtifactSkillPoints(),
+                    GameData.GameDataRegistry.Instance?.skillDatabase,
+                    out InfinityResetPolicy resetPolicy));
+
+            long rewardTarget = Math.Max(
+                1L,
+                _oracle.saveSettings.infinityPointsToBreakFor);
+            long rewardMultiplier = 1L;
+            if (_oracle.saveSettings.doubleIp)
+                rewardMultiplier *= 2L;
+            if (_oracle.saveSettings.prestigePlus.doubleIP)
+                rewardMultiplier *= 2L;
+            double ordinaryThreshold =
+                _oracle.saveSettings.prestigePlus.divisionsPurchased > 0L
+                    ? 4.2e19d / Math.Pow(
+                        10d,
+                        _oracle.saveSettings.prestigePlus
+                            .divisionsPurchased)
+                    : 4.2e19d;
+            long requiredBaseReward =
+                rewardTarget / rewardMultiplier +
+                (rewardTarget % rewardMultiplier == 0L ? 0L : 1L);
+            double resetThreshold =
+                Blindsided.Utilities.CalcUtils.BuyXCost(
+                    Math.Max(1L, requiredBaseReward),
+                    ordinaryThreshold,
+                    _oracle.infinityExponent,
+                    0d);
+            Func<double, long> calculateReward = bots =>
+                NumericSafety.Multiply(
+                    StaticMethods.InfinityPointsToGain(
+                        ordinaryThreshold,
+                        bots),
+                    rewardMultiplier).Value;
+
+            long startingIp = seed.dysonVerseSaveData
+                .dysonVersePrestigeData.infinityPoints;
+            AutomatedBreakInfinityCycleSimulation.ResetWorkDiagnostics();
+            var stopwatch = System.Diagnostics.Stopwatch.StartNew();
+            Oracle.SaveDataSettings candidate = seed;
+            double remaining = durationSeconds;
+            double automationRemaining = 0.1d;
+            long cycles = 0L;
+            InfinityCycleSample? canonicalAnchor = null;
+            for (int warmup = 0;
+                 warmup < 8 &&
+                 remaining > 1d / 60d;
+                 warmup++)
+            {
+                long cycleStartingIp = candidate.dysonVerseSaveData
+                    .dysonVersePrestigeData.infinityPoints;
+                if (!AutomatedBreakInfinityCycleSimulation.TryAdvance(
+                        candidate,
+                        facilityRules,
+                        researchRules,
+                        resetPolicy,
+                        calculateReward,
+                        rewardTarget,
+                        resetThreshold,
+                        1d / 60d,
+                        0.1d,
+                        automationRemaining,
+                        remaining,
+                        maximumCycles: 1L,
+                        SimulationAutomationPolicy.ForceBuyMax,
+                        out AutomatedBreakInfinityProjection exactWarmup) ||
+                    exactWarmup.ConsumedSeconds <= 1e-12d)
+                {
+                    break;
+                }
+                canonicalAnchor = new InfinityCycleSample(
+                    cycleStartingIp,
+                    exactWarmup.LastReward,
+                    (long)Math.Max(
+                        1d,
+                        Math.Ceiling(
+                            exactWarmup.LastDurationSeconds / 0.1d)),
+                    exactWarmup.LastDurationSeconds);
+                cycles++;
+                remaining = Math.Max(
+                    0d,
+                    remaining - exactWarmup.ConsumedSeconds);
+                automationRemaining =
+                    exactWarmup.AutomationTimeUntilNextEvent;
+                candidate = exactWarmup.Candidate;
+            }
+            bool anchored = canonicalAnchor.HasValue;
+            long projectionBlocks = 0L;
+            long exactRemainderCycles = cycles;
+            double maximumValidationError = 0d;
+            string lastWorkDiagnostic = null;
+            int loopGuard = 0;
+            while (anchored &&
+                   remaining > 1d / 60d &&
+                   loopGuard++ < 10000)
+            {
+                long maximumCycles = NumericSafety.ToLongFloor(
+                    Math.Floor(remaining / (1d / 60d))).Value;
+                bool acceptedBlock = false;
+                if (maximumCycles >= 8L)
+                {
+                    AutomatedBreakInfinityCycleSimulation.ProjectionWork
+                        work =
+                            AutomatedBreakInfinityCycleSimulation
+                                .CreateProjectionWork(
+                                    candidate,
+                                    facilityRules,
+                                    researchRules,
+                                    resetPolicy,
+                                    calculateReward,
+                                    rewardTarget,
+                                    resetThreshold,
+                                    1d / 60d,
+                                    0.1d,
+                                    automationRemaining,
+                                    remaining,
+                                    maximumCycles,
+                                    SimulationAutomationPolicy.ForceBuyMax,
+                                    canonicalAnchor);
+                    while (!work.IsCompleted)
+                    {
+                        AutomatedBreakInfinityCycleSimulation
+                            .StepProjectionWork(work);
+                    }
+                    lastWorkDiagnostic = work.Diagnostic;
+                    if (work.Accepted &&
+                        work.Projection.ConsumedSeconds > 1e-12d)
+                    {
+                        acceptedBlock = true;
+                        projectionBlocks++;
+                        cycles = NumericSafety.Add(
+                            cycles,
+                            work.Projection.CycleCount).Value;
+                        remaining = Math.Max(
+                            0d,
+                            remaining -
+                            work.Projection.ConsumedSeconds);
+                        automationRemaining =
+                            work.Projection
+                                .AutomationTimeUntilNextEvent;
+                        maximumValidationError = Math.Max(
+                            maximumValidationError,
+                            work.Projection.ValidationError);
+                        candidate = work.Projection.Candidate;
+                    }
+                }
+                if (acceptedBlock)
+                    continue;
+
+                if (!AutomatedBreakInfinityCycleSimulation.TryAdvance(
+                        candidate,
+                        facilityRules,
+                        researchRules,
+                        resetPolicy,
+                        calculateReward,
+                        rewardTarget,
+                        resetThreshold,
+                        1d / 60d,
+                        0.1d,
+                        automationRemaining,
+                        remaining,
+                        maximumCycles: 1L,
+                        SimulationAutomationPolicy.ForceBuyMax,
+                        out AutomatedBreakInfinityProjection exact) ||
+                    exact.ConsumedSeconds <= 1e-12d)
+                {
+                    break;
+                }
+                long exactStartingIp = candidate.dysonVerseSaveData
+                    .dysonVersePrestigeData.infinityPoints;
+                exactRemainderCycles++;
+                cycles++;
+                remaining = Math.Max(
+                    0d,
+                    remaining - exact.ConsumedSeconds);
+                automationRemaining =
+                    exact.AutomationTimeUntilNextEvent;
+                candidate = exact.Candidate;
+                canonicalAnchor = new InfinityCycleSample(
+                    exactStartingIp,
+                    exact.LastReward,
+                    (long)Math.Max(
+                        1d,
+                        Math.Ceiling(
+                            exact.LastDurationSeconds / 0.1d)),
+                    exact.LastDurationSeconds);
+            }
+            stopwatch.Stop();
+
+            bool projected = anchored && projectionBlocks > 0L;
+            long finalIp = candidate.dysonVerseSaveData
+                .dysonVersePrestigeData.infinityPoints;
+            double consumed = durationSeconds - remaining;
+            TestContext.WriteLine(
+                $"PRIVATE_PHONE_PROJECTION simulated={durationSeconds:R};" +
+                $"accepted={projected};" +
+                $"startingIp={startingIp};" +
+                $"earnedIp={finalIp - startingIp};" +
+                $"finalIp={finalIp};" +
+                $"cycles={cycles};" +
+                $"consumed={consumed:R};" +
+                $"remaining={Math.Max(0d, durationSeconds - consumed):R};" +
+                $"cpuMs={stopwatch.Elapsed.TotalMilliseconds:F3};" +
+                $"projectionBlocks={projectionBlocks};" +
+                $"exactCycles={exactRemainderCycles};" +
+                $"validationError={maximumValidationError:R};" +
+                $"firstDiagnostic=" +
+                $"{AutomatedBreakInfinityCycleSimulation.LastDiagnostic};" +
+                $"workDiagnostic={lastWorkDiagnostic};" +
+                $"adaptive=" +
+                $"{AutomatedBreakInfinityCycleSimulation.LastAdaptiveDiagnostic};" +
+                $"evaluations=" +
+                $"{AutomatedBreakInfinityCycleSimulation.DiagnosticCycleEvaluations};" +
+                $"boundaries=" +
+                $"{AutomatedBreakInfinityCycleSimulation.DiagnosticCycleBoundaries}");
+
+            Assert.IsTrue(anchored,
+                "The exact first cycle must establish a post-reset anchor.");
+            Assert.IsTrue(projected,
+                "At least one projected block must be applied.");
+            Assert.Less(loopGuard, 10000);
+        }
+
+        [Test]
+        public void BreakInfinity_IpDrivenBlockPrototype_OneMillionIp_Slider100()
+        {
+            Oracle.SaveDataSettings seed = CreateRepresentativeSettings();
+            EnableRepresentativeBreakInfinity(seed);
+            EnableAllFiniteQuantumUpgrades(seed);
+            seed.infinityPointsToBreakFor = 100;
+            seed.dysonVerseSaveData.dysonVersePrestigeData.infinityPoints =
+                1_000_000L;
+            seed.sdSimulation = new Oracle.SaveDataDream1();
+            seed.sdPrestige.disasterStage = 42L;
+            seed.sdPrestige.doubleTimeOwned = false;
+            seed.sdPrestige.doubleTime = 0d;
+            seed.sdPrestige.doDoubleTime = false;
+
+            _oracle.saveSettings =
+                (Oracle.SaveDataSettings)SerializationUtility.CreateCopy(seed);
+            InitializeResearchAutomation();
+            PrepareDysonDerivedState();
+            SubscribeAndResetRuntime();
+
+            Assert.IsTrue(
+                _botsAutoBuy.TryCaptureAutomationRules(
+                    out DysonFacilityAutomationRule[] facilityRules),
+                BotsAutoBuy.LastRuleCaptureDiagnostic);
+            Assert.IsTrue(
+                _researchAutoBuy.TryCaptureAutomationRules(
+                    out ResearchAutomationRule[] researchRules));
+            Assert.IsTrue(
+                InfinityResetPolicy.TryCapture(
+                    _oracle.saveSettings,
+                    _oracle.ArtifactSkillPoints(),
+                    GameData.GameDataRegistry.Instance?.skillDatabase,
+                    out InfinityResetPolicy resetPolicy));
+
+            const double ordinaryThreshold = 4.2d;
+            const long rewardTarget = 100L;
+            const long rewardMultiplier = 2L;
+            long requiredBaseReward =
+                rewardTarget / rewardMultiplier;
+            double resetBotThreshold =
+                Blindsided.Utilities.CalcUtils.BuyXCost(
+                    requiredBaseReward,
+                    ordinaryThreshold,
+                    _oracle.infinityExponent,
+                    0d);
+            Func<double, long> calculateReward = bots =>
+                NumericSafety.Multiply(
+                    StaticMethods.InfinityPointsToGain(
+                        ordinaryThreshold,
+                        bots),
+                    rewardMultiplier).Value;
+
+            Oracle.SaveDataSettings candidate =
+                (Oracle.SaveDataSettings)SerializationUtility.CreateCopy(
+                    _oracle.saveSettings);
+            var startPoints = new List<long>();
+            var durations = new List<double>();
+            var rewards = new List<long>();
+            double automationRemaining = 0.1d;
+            var exactTimer = System.Diagnostics.Stopwatch.StartNew();
+            for (int index = 0; index < 64; index++)
+            {
+                startPoints.Add(
+                    candidate.dysonVerseSaveData.dysonVersePrestigeData
+                        .infinityPoints);
+                Assert.IsTrue(
+                    AutomatedBreakInfinityCycleSimulation.TryAdvance(
+                        candidate,
+                        facilityRules,
+                        researchRules,
+                        resetPolicy,
+                        calculateReward,
+                        rewardTarget,
+                        resetBotThreshold,
+                        1d / 60d,
+                        0.1d,
+                        automationRemaining,
+                        1_000_000d,
+                        maximumCycles: 1L,
+                        SimulationAutomationPolicy.ForceBuyMax,
+                        out AutomatedBreakInfinityProjection cycle),
+                    AutomatedBreakInfinityCycleSimulation.LastDiagnostic);
+                Assert.AreEqual(1L, cycle.CycleCount);
+                durations.Add(cycle.ConsumedSeconds);
+                rewards.Add(cycle.TotalReward);
+                candidate = cycle.Candidate;
+                automationRemaining =
+                    cycle.AutomationTimeUntilNextEvent;
+            }
+            exactTimer.Stop();
+
+            int exactCycles = CountCyclesWithin(
+                durations,
+                60d);
+            double exactCompletedCycleSeconds = SumFirst(
+                durations,
+                exactCycles);
+            long exactReward = SumFirst(
+                rewards,
+                exactCycles);
+            TestContext.WriteLine(
+                $"IP block prototype exact anchors: " +
+                $"cycles={exactCycles}, reward={exactReward}, " +
+                $"completedCycleSeconds={exactCompletedCycleSeconds:R}, " +
+                $"64-cycleSampling={exactTimer.Elapsed.TotalMilliseconds:F3}ms");
+
+            foreach (int blockSize in new[] { 4, 8, 16, 32 })
+            {
+                double[] predictedDurations =
+                    PredictIpDrivenDurations(
+                        startPoints,
+                        durations,
+                        blockSize,
+                        out double maximumBlockError);
+                int predictedCycles =
+                    CountCyclesWithin(
+                        predictedDurations,
+                        60d);
+                double predictedCompletedCycleSeconds =
+                    SumFirst(
+                        predictedDurations,
+                        exactCycles);
+                double completedCycleTimeError =
+                    RelativeDifference(
+                        exactCompletedCycleSeconds,
+                        predictedCompletedCycleSeconds);
+                TestContext.WriteLine(
+                    $"IP block prototype size={blockSize}: " +
+                    $"cycles={predictedCycles}/{exactCycles}, " +
+                    $"completedTime=" +
+                    $"{predictedCompletedCycleSeconds:R}/" +
+                    $"{exactCompletedCycleSeconds:R}, " +
+                    $"timeError={completedCycleTimeError:P6}, " +
+                    $"maxBlockError={maximumBlockError:P6}, " +
+                    $"anchorCycles<={2 * Math.Ceiling(64d / blockSize):F0}");
+            }
+
+            Assert.Greater(exactCycles, 0);
+            Assert.AreEqual(
+                NumericSafety.Multiply(
+                    exactCycles,
+                    rewardTarget).Value,
+                exactReward);
+        }
+
+        [Test]
+        public void BreakInfinity_AllFiniteQuantum_FirstCycleModelMatchesCanonicalTrace()
+        {
+            Oracle.SaveDataSettings seed = CreateRepresentativeSettings();
+            EnableRepresentativeBreakInfinity(seed);
+            EnableAllFiniteQuantumUpgrades(seed);
+            seed.infinityPointsToBreakFor = 100;
+            seed.dysonVerseSaveData.dysonVersePrestigeData.infinityPoints =
+                1_000_000L;
+            seed.sdSimulation = new Oracle.SaveDataDream1();
+            seed.sdPrestige.disasterStage = 42L;
+            seed.sdPrestige.doubleTimeOwned = false;
+            seed.sdPrestige.doubleTime = 0d;
+            seed.sdPrestige.doDoubleTime = false;
+
+            _oracle.saveSettings =
+                (Oracle.SaveDataSettings)SerializationUtility.CreateCopy(seed);
+            InitializeResearchAutomation();
+            PrepareDysonDerivedState();
+            SubscribeAndResetRuntime();
+            bool canonicalDoubleIp =
+                _oracle.saveSettings.doubleIp;
+            bool canonicalQuantumDoubleIp =
+                _oracle.saveSettings.prestigePlus.doubleIP;
+            Assert.IsTrue(
+                _researchAutoBuy.TryCaptureAutomationRules(
+                    out ResearchAutomationRule[]
+                        canonicalResearchRules));
+            string canonicalResearchOrder =
+                FormatResearchRuleOrder(
+                    canonicalResearchRules);
+            _gameManager.SetUnifiedAccelerationForTests(false);
+            OfflineProgressContext canonical = CreateContext();
+            var canonicalDurations = new List<double>();
+            var canonicalRecordedDurations = new List<double>();
+            var canonicalTickTrace = new List<string>();
+            long previousCycles = 0L;
+            double canonicalSeconds = 0d;
+            double previousResetSeconds = 0d;
+            string canonicalFirstResetState = null;
+            Oracle.SaveDataSettings canonicalAfterFirstReset = null;
+            while (canonicalDurations.Count < 10 &&
+                   canonicalSeconds < 60d)
+            {
+                SimulationAdvanceResult step =
+                    canonical.RunUnifiedSimulation(0.1d);
+                Assert.Greater(step.ConsumedSeconds, 0d);
+                canonicalSeconds += step.ConsumedSeconds;
+                if (canonicalTickTrace.Count < 25)
+                {
+                    Oracle.DysonVerseInfinityData trace =
+                        _oracle.saveSettings.dysonVerseSaveData
+                            .dysonVerseInfinityData;
+                    canonicalTickTrace.Add(
+                        $"{canonicalSeconds:R}:" +
+                        $"{trace.bots:R}:{trace.money:R}:" +
+                        $"{trace.assemblyLines[0]:R}:" +
+                        $"{trace.managers[0]:R}:" +
+                        $"{trace.botProduction:R}");
+                }
+                long cycles = _oracle.saveSettings
+                    .simulationStatistics.lifetime
+                    .breakInfinityCount;
+                if (cycles <= previousCycles)
+                    continue;
+                canonicalDurations.Add(
+                    canonicalSeconds - previousResetSeconds);
+                canonicalRecordedDurations.Add(
+                    _oracle.saveSettings.timeLastInfinity);
+                if (canonicalFirstResetState == null)
+                {
+                    canonicalFirstResetState =
+                        FormatInfinityResetState(
+                            _oracle.saveSettings,
+                            step.AutomationTimeUntilNextEvent);
+                    canonicalAfterFirstReset =
+                        (Oracle.SaveDataSettings)
+                        SerializationUtility.CreateCopy(
+                            _oracle.saveSettings);
+                }
+                previousResetSeconds = canonicalSeconds;
+                previousCycles = cycles;
+            }
+            _gameManager.SetUnifiedAccelerationForTests(true);
+
+            _oracle.saveSettings =
+                (Oracle.SaveDataSettings)SerializationUtility.CreateCopy(seed);
+            InitializeResearchAutomation();
+            PrepareDysonDerivedState();
+            SubscribeAndResetRuntime();
+            Assert.IsTrue(
+                _botsAutoBuy.TryCaptureAutomationRules(
+                    out DysonFacilityAutomationRule[] facilityRules),
+                BotsAutoBuy.LastRuleCaptureDiagnostic);
+            Assert.IsTrue(
+                _researchAutoBuy.TryCaptureAutomationRules(
+                    out ResearchAutomationRule[] researchRules));
+            Assert.IsTrue(
+                InfinityResetPolicy.TryCapture(
+                    _oracle.saveSettings,
+                    _oracle.ArtifactSkillPoints(),
+                    GameData.GameDataRegistry.Instance?.skillDatabase,
+                    out InfinityResetPolicy resetPolicy));
+
+            const double ordinaryThreshold = 4.2d;
+            const long rewardTarget = 100L;
+            double resetBotThreshold =
+                Blindsided.Utilities.CalcUtils.BuyXCost(
+                    50L,
+                    ordinaryThreshold,
+                    _oracle.infinityExponent,
+                    0d);
+            Func<double, long> calculateReward = bots =>
+                NumericSafety.Multiply(
+                    StaticMethods.InfinityPointsToGain(
+                        ordinaryThreshold,
+                        bots),
+                    2L).Value;
+            Oracle.SaveDataSettings candidate =
+                (Oracle.SaveDataSettings)SerializationUtility.CreateCopy(
+                    _oracle.saveSettings);
+            Oracle.SaveDataSettings manual =
+                (Oracle.SaveDataSettings)SerializationUtility.CreateCopy(
+                    _oracle.saveSettings);
+            var modelTickTrace = new List<string>();
+            for (int tick = 0; tick < 25; tick++)
+            {
+                Oracle.DysonVerseSaveData manualDyson =
+                    manual.dysonVerseSaveData;
+                ProductionSystem.SetBotDistribution(
+                    manualDyson.dysonVerseInfinityData,
+                    manualDyson.dysonVersePrestigeData,
+                    manual.prestigePlus);
+                ProductionSystem.CalculateProduction(
+                    manualDyson.dysonVerseInfinityData,
+                    manualDyson.dysonVerseSkillTreeData,
+                    manualDyson.dysonVersePrestigeData,
+                    manual.prestigePlus,
+                    0.1d,
+                    recomputeDerivedState: false);
+                int facilityFirst = AutomationRotation.Normalize(
+                    manual.dysonAutomationTargetIndex,
+                    facilityRules.Length);
+                for (int offset = 0;
+                     offset < facilityRules.Length;
+                     offset++)
+                {
+                    DysonAutomationTransactions.TryPurchaseFacility(
+                        manual,
+                        facilityRules[
+                            (facilityFirst + offset) %
+                            facilityRules.Length],
+                        SimulationAutomationPolicy.ForceBuyMax,
+                        out _);
+                }
+                manual.dysonAutomationTargetIndex =
+                    AutomationRotation.Advance(
+                        facilityFirst,
+                        facilityRules.Length,
+                        1L);
+                int researchFirst = AutomationRotation.Normalize(
+                    manual.researchAutomationTargetIndex,
+                    researchRules.Length);
+                for (int offset = 0;
+                     offset < researchRules.Length;
+                     offset++)
+                {
+                    DysonAutomationTransactions.TryPurchaseResearch(
+                            manual,
+                            researchRules[
+                                (researchFirst + offset) %
+                                researchRules.Length],
+                            SimulationAutomationPolicy.ForceBuyMax,
+                            out _);
+                }
+                manual.researchAutomationTargetIndex =
+                    AutomationRotation.Advance(
+                        researchFirst,
+                        researchRules.Length,
+                        1L);
+                ProductionSystem.RecalculateDerivedState(
+                    manualDyson.dysonVerseInfinityData,
+                    manualDyson.dysonVerseSkillTreeData,
+                    manualDyson.dysonVersePrestigeData,
+                    manual.prestigePlus);
+                Oracle.DysonVerseInfinityData trace =
+                    manualDyson.dysonVerseInfinityData;
+                modelTickTrace.Add(
+                    $"{(tick + 1) * 0.1d:R}:" +
+                    $"{trace.bots:R}:{trace.money:R}:" +
+                    $"{trace.assemblyLines[0]:R}:" +
+                    $"{trace.managers[0]:R}:" +
+                    $"{trace.botProduction:R}");
+            }
+            var modelDurations = new List<double>();
+            string modelFirstResetState = null;
+            Oracle.SaveDataSettings modelAfterFirstReset = null;
+            double automationRemaining = 0.1d;
+            for (int index = 0; index < 10; index++)
+            {
+                Assert.IsTrue(
+                    AutomatedBreakInfinityCycleSimulation.TryAdvance(
+                        candidate,
+                        facilityRules,
+                        researchRules,
+                        resetPolicy,
+                        calculateReward,
+                        rewardTarget,
+                        resetBotThreshold,
+                        1d / 60d,
+                        0.1d,
+                        automationRemaining,
+                        60d,
+                        maximumCycles: 1L,
+                        SimulationAutomationPolicy.ForceBuyMax,
+                        out AutomatedBreakInfinityProjection cycle),
+                    AutomatedBreakInfinityCycleSimulation.LastDiagnostic);
+                modelDurations.Add(cycle.ConsumedSeconds);
+                automationRemaining =
+                    cycle.AutomationTimeUntilNextEvent;
+                candidate = cycle.Candidate;
+                if (modelFirstResetState == null)
+                {
+                    modelFirstResetState =
+                        FormatInfinityResetState(
+                            candidate,
+                            automationRemaining);
+                    modelAfterFirstReset =
+                        (Oracle.SaveDataSettings)
+                        SerializationUtility.CreateCopy(candidate);
+                }
+            }
+
+            var modelSecondCycleTicks = new List<string>();
+            string resetDifferences =
+                DescribeResetDifferences(
+                    canonicalAfterFirstReset,
+                    modelAfterFirstReset);
+            _oracle.saveSettings =
+                CloneAutomatedCandidate(modelAfterFirstReset);
+            PrepareDysonDerivedState();
+            SubscribeAndResetRuntime();
+            _gameManager.SetUnifiedAccelerationForTests(false);
+            OfflineProgressContext runtimePulseContext = CreateContext();
+            var runtimeSecondCycleTicks = new List<string>();
+            SimulationAdvanceResult runtimePulse = null;
+            string runtimePulseResearch = null;
+            double runtimePulseBotRate = 0d;
+            for (int tick = 0; tick < 20; tick++)
+            {
+                runtimePulse =
+                    runtimePulseContext.RunUnifiedSimulation(0.1d);
+                Oracle.DysonVerseInfinityData trace =
+                    _oracle.saveSettings.dysonVerseSaveData
+                        .dysonVerseInfinityData;
+                runtimeSecondCycleTicks.Add(
+                    $"{(tick + 1) * 0.1d:R}:" +
+                    $"{trace.bots:R}:{trace.money:R}:" +
+                    $"{trace.assemblyLines[0]:R}:" +
+                    $"{trace.managers[0]:R}:" +
+                    $"{trace.botProduction:R}");
+                if (tick == 1)
+                {
+                    runtimePulseResearch =
+                        FormatResearchState(_oracle.saveSettings);
+                    runtimePulseBotRate = trace.botProduction;
+                }
+            }
+            _gameManager.SetUnifiedAccelerationForTests(true);
+            Oracle.SaveDataSettings secondCycle =
+                CloneAutomatedCandidate(modelAfterFirstReset);
+            string modelPulseResearch = null;
+            double modelPulseBotRate = 0d;
+            double secondAutomation =
+                modelFirstResetState != null
+                    ? 0.099992417732123431d
+                    : 0.1d;
+            for (int tick = 0; tick < 20; tick++)
+            {
+                double step = Math.Min(0.1d, secondAutomation);
+                Oracle.DysonVerseSaveData secondDyson =
+                    secondCycle.dysonVerseSaveData;
+                ProductionSystem.SetBotDistribution(
+                    secondDyson.dysonVerseInfinityData,
+                    secondDyson.dysonVersePrestigeData,
+                    secondCycle.prestigePlus);
+                ProductionSystem.CalculateProduction(
+                    secondDyson.dysonVerseInfinityData,
+                    secondDyson.dysonVerseSkillTreeData,
+                    secondDyson.dysonVersePrestigeData,
+                    secondCycle.prestigePlus,
+                    step,
+                    recomputeDerivedState: false);
+                secondAutomation -= step;
+                if (secondAutomation <= 1e-12d)
+                {
+                    int first = AutomationRotation.Normalize(
+                        secondCycle.dysonAutomationTargetIndex,
+                        facilityRules.Length);
+                    for (int offset = 0;
+                         offset < facilityRules.Length;
+                         offset++)
+                    {
+                        DysonAutomationTransactions.TryPurchaseFacility(
+                            secondCycle,
+                            facilityRules[
+                                (first + offset) %
+                                facilityRules.Length],
+                            SimulationAutomationPolicy.ForceBuyMax,
+                            out _);
+                    }
+                    secondCycle.dysonAutomationTargetIndex =
+                        AutomationRotation.Advance(
+                            first,
+                            facilityRules.Length,
+                            1L);
+                    int researchFirst = AutomationRotation.Normalize(
+                        secondCycle.researchAutomationTargetIndex,
+                        researchRules.Length);
+                    for (int offset = 0;
+                         offset < researchRules.Length;
+                         offset++)
+                    {
+                        DysonAutomationTransactions.TryPurchaseResearch(
+                            secondCycle,
+                            researchRules[
+                                (researchFirst + offset) %
+                                researchRules.Length],
+                            SimulationAutomationPolicy.ForceBuyMax,
+                            out _);
+                    }
+                    secondCycle.researchAutomationTargetIndex =
+                        AutomationRotation.Advance(
+                            researchFirst,
+                            researchRules.Length,
+                            1L);
+                    secondAutomation = 0.1d;
+                }
+                ProductionSystem.RecalculateDerivedState(
+                    secondDyson.dysonVerseInfinityData,
+                    secondDyson.dysonVerseSkillTreeData,
+                    secondDyson.dysonVersePrestigeData,
+                    secondCycle.prestigePlus);
+                Oracle.DysonVerseInfinityData trace =
+                    secondDyson.dysonVerseInfinityData;
+                modelSecondCycleTicks.Add(
+                    $"{(tick + 1) * 0.1d:R}:" +
+                    $"{trace.bots:R}:{trace.money:R}:" +
+                    $"{trace.assemblyLines[0]:R}:" +
+                    $"{trace.managers[0]:R}:" +
+                    $"{trace.botProduction:R}");
+                if (tick == 1)
+                {
+                    modelPulseResearch =
+                        FormatResearchState(secondCycle);
+                    modelPulseBotRate =
+                        trace.botProduction;
+                }
+            }
+
+            TestContext.WriteLine(
+                "canonical first-cycle durations=" +
+                string.Join(",", canonicalDurations) +
+                "; canonicalRecorded=" +
+                string.Join(",", canonicalRecordedDurations) +
+                "; model=" +
+                string.Join(",", modelDurations) +
+                $"; multipliers={canonicalDoubleIp}/" +
+                $"{canonicalQuantumDoubleIp}/" +
+                $"{_oracle.saveSettings.doubleIp}/" +
+                $"{_oracle.saveSettings.prestigePlus.doubleIP}" +
+                $"; ruleOrder={canonicalResearchOrder}/" +
+                $"{FormatResearchRuleOrder(researchRules)}" +
+                $"; threshold={resetBotThreshold:R}" +
+                $"; resetState={canonicalFirstResetState}/" +
+                $"{modelFirstResetState}" +
+                $"; resetDiff={resetDifferences}" +
+                $"; pulse={runtimePulse.ConsumedSeconds:R}:" +
+                $"{runtimePulseBotRate:R}:" +
+                $"{runtimePulseResearch}/" +
+                $"{modelPulseBotRate:R}:" +
+                $"{modelPulseResearch}" +
+                "; canonicalTicks=" +
+                string.Join("|", canonicalTickTrace) +
+                "; modelTicks=" +
+                string.Join("|", modelTickTrace) +
+                "; runtimeSecondTicks=" +
+                string.Join("|", runtimeSecondCycleTicks) +
+                "; modelSecondTicks=" +
+                string.Join("|", modelSecondCycleTicks));
+            Assert.AreEqual(10, canonicalDurations.Count);
+            Assert.AreEqual(10, modelDurations.Count);
         }
 
         [TestCase(60d)]
@@ -2012,6 +3309,62 @@ namespace Tests.Systems
         }
 
         [Test]
+        public void BreakInfinity_OneUlpBelowRewardThresholdMakesTimeProgress()
+        {
+            Oracle.SaveDataSettings seed = CreateRepresentativeSettings();
+            EnableRepresentativeBreakInfinity(seed);
+            seed.infinityPointsToBreakFor = 200;
+            seed.doubleIp = true;
+            seed.prestigePlus.doubleIP = true;
+            seed.dysonVerseSaveData.dysonVersePrestigeData.infinityPoints =
+                1_000_000L;
+
+            _oracle.saveSettings =
+                (Oracle.SaveDataSettings)SerializationUtility.CreateCopy(seed);
+            InitializeResearchAutomation();
+            PrepareDysonDerivedState();
+            SubscribeAndResetRuntime();
+            _gameManager.ResetActiveSimulationForTests();
+
+            const double ordinaryThreshold = 4.2d;
+            double rewardThreshold =
+                Blindsided.Utilities.CalcUtils.BuyXCost(
+                    50d,
+                    ordinaryThreshold,
+                    _oracle.infinityExponent,
+                    0d);
+            Oracle.DysonVerseInfinityData data =
+                _oracle.saveSettings.dysonVerseSaveData
+                    .dysonVerseInfinityData;
+            data.bots = NumericSafety.BitDecrement(rewardThreshold);
+            data.botProduction = 3.9e37d;
+            Assert.Less(
+                StaticMethods.InfinityPointsToGain(
+                    ordinaryThreshold,
+                    data.bots) * 4L,
+                seed.infinityPointsToBreakFor,
+                "The fixture must begin on the one-ULP-below side of " +
+                "the discrete reward boundary.");
+
+            typeof(GameManager).GetField(
+                    "_activeInfinityCycleSeconds",
+                    BindingFlags.Instance | BindingFlags.NonPublic)
+                ?.SetValue(_gameManager, 0.02d);
+            SimulationAdvanceResult result =
+                _gameManager.AdvanceActiveSimulationForTests(1e-6d);
+
+            Assert.NotNull(result);
+            Assert.AreNotEqual(
+                SimulationValidationStatus.ZeroTimeLoop,
+                result.ValidationStatus);
+            Assert.Greater(
+                result.ConsumedSeconds,
+                1e-12d,
+                "The event horizon must be representably greater than " +
+                "the scheduler's zero-time epsilon.");
+        }
+
+        [Test]
         public void BreakInfinity_ProjectionDoesNotPromoteSmallBelowTargetState()
         {
             Oracle.SaveDataSettings seed = CreateRepresentativeSettings();
@@ -2099,7 +3452,7 @@ namespace Tests.Systems
         }
 
         [Test]
-        public void BreakInfinity_ActiveSliderChangeClearsPendingDreamProjection()
+        public void BreakInfinity_ActiveSliderChangeAppliesAtSafeBoundaryWithoutRollingBackElapsedWork()
         {
             Oracle.SaveDataSettings seed = CreateRepresentativeSettings();
             EnableRepresentativeBreakInfinity(seed);
@@ -2113,72 +3466,57 @@ namespace Tests.Systems
             SubscribeAndResetRuntime();
             _gameManager.ResetActiveSimulationForTests();
 
-            FieldInfo pendingBreak = typeof(GameManager).GetField(
-                "_activeAutomatedBreakProjectionWork",
-                BindingFlags.Instance | BindingFlags.NonPublic);
-            FieldInfo pendingDream = typeof(GameManager).GetField(
-                "_activeAutomatedBreakDreamProjectionWork",
-                BindingFlags.Instance | BindingFlags.NonPublic);
-            Assert.NotNull(pendingBreak);
-            Assert.NotNull(pendingDream);
-            DreamAdaptiveLongIntervalSimulation.ResetWorkDiagnostics();
             int moves = 0;
+            SimulationAdvanceResult advance = null;
             do
             {
-                _gameManager.AdvanceActiveSimulationForTests(
+                advance = _gameManager.AdvanceActiveSimulationForTests(
                     moves == 0 ? 600d : 0d,
                     processingBudgetMilliseconds: 0.5d);
                 moves++;
             } while (
                 moves < 10_000 &&
-                (pendingBreak.GetValue(_gameManager) == null ||
-                 pendingDream.GetValue(_gameManager) == null ||
-                 DreamAdaptiveLongIntervalSimulation
-                     .DiagnosticProjectionSegmentsProcessed == 0L));
-            Assert.NotNull(
-                pendingBreak.GetValue(_gameManager),
-                "The fixture must retain the real isolated Break candidate.");
-            Assert.NotNull(
-                pendingDream.GetValue(_gameManager),
-                "The fixture must reach the real yielded Dream projection.");
+                (_oracle.saveSettings.dysonVerseSaveData
+                     .dysonVersePrestigeData.infinityPoints <= 100_000L ||
+                 advance == null ||
+                 advance.ConsumedSeconds <= 0d));
+            Assert.NotNull(advance);
             Assert.Greater(
-                DreamAdaptiveLongIntervalSimulation
-                    .DiagnosticProjectionSegmentsProcessed,
-                0L,
-                "Dream refinement must process a real projection segment " +
-                "before the slider changes.");
+                _oracle.saveSettings.dysonVerseSaveData
+                    .dysonVersePrestigeData.infinityPoints,
+                100_000L,
+                "The old-target segment must make real progress before the " +
+                "queued slider change.");
             long ipBeforeQueuedChange = _oracle.saveSettings
                 .dysonVerseSaveData.dysonVersePrestigeData.infinityPoints;
 
-            GameManager.RequestBreakTargetChange(777L);
+            MethodInfo queueBreakTarget = typeof(GameManager).GetMethod(
+                "QueueBreakTargetChange",
+                BindingFlags.Instance | BindingFlags.NonPublic);
+            Assert.NotNull(queueBreakTarget);
+            queueBreakTarget.Invoke(
+                _gameManager,
+                new object[] { 777L });
             moves = 0;
             while (_oracle.saveSettings.infinityPointsToBreakFor != 777 &&
                    moves < 10_000)
             {
                 _gameManager.AdvanceActiveSimulationForTests(
-                    0d,
+                    moves == 0 ? 1d / 600d : 0d,
                     processingBudgetMilliseconds: 0.5d);
                 moves++;
             }
 
-            Assert.IsNull(
-                pendingBreak.GetValue(_gameManager),
-                "The completed old-target candidate must not survive the " +
-                "queued input boundary.");
-            Assert.IsNull(
-                pendingDream.GetValue(_gameManager),
-                "Applying a queued slider target at its safe boundary must " +
-                "discard the incomplete Dream candidate tied to the old " +
-                "target.");
             Assert.AreEqual(
                 777,
                 _oracle.saveSettings.infinityPointsToBreakFor);
-            Assert.Greater(
+            Assert.AreEqual(
+                ipBeforeQueuedChange,
                 _oracle.saveSettings.dysonVerseSaveData
                     .dysonVersePrestigeData.infinityPoints,
-                ipBeforeQueuedChange,
                 "The already elapsed old-target segment should complete " +
-                "before the new slider target applies.");
+                "before the new slider target applies, and applying the " +
+                "input itself must not manufacture another reward.");
         }
 
         [Test]
@@ -3061,7 +4399,26 @@ namespace Tests.Systems
             {
                 InvokePrivate(presenter, "Awake");
             }
+            foreach (MegaStructurePresenter presenter in
+                     UnityEngine.Object.FindObjectsByType<MegaStructurePresenter>(
+                         FindObjectsInactive.Include,
+                         FindObjectsSortMode.None))
+            {
+                InvokePrivate(presenter, "Awake");
+            }
             InvokePrivate(_botsAutoBuy, "Awake");
+        }
+
+        private void InitializeResearchAutomation()
+        {
+            foreach (ResearchPresenter presenter in
+                     UnityEngine.Object.FindObjectsByType<ResearchPresenter>(
+                         FindObjectsInactive.Include,
+                         FindObjectsSortMode.None))
+            {
+                InvokePrivate(presenter, "Awake");
+            }
+            InvokePrivate(_researchAutoBuy, "Awake");
         }
 
         private void PrepareDysonDerivedState()
@@ -3106,6 +4463,99 @@ namespace Tests.Systems
                 ?.Invoke(target, null);
         }
 
+        private static object InvokePrivateWithResult(
+            object target,
+            string methodName)
+        {
+            Assert.NotNull(target, methodName);
+            MethodInfo method = target.GetType().GetMethod(
+                methodName,
+                BindingFlags.Instance | BindingFlags.NonPublic);
+            Assert.NotNull(method, methodName);
+            return method.Invoke(target, null);
+        }
+
+        private string DescribeActiveInfinityStop()
+        {
+            Type type = typeof(GameManager);
+            object state = type.GetField(
+                    "_activeInfinityCycleState",
+                    BindingFlags.Instance | BindingFlags.NonPublic)
+                ?.GetValue(_gameManager);
+            double cycleSeconds = (double)(type.GetField(
+                    "_activeInfinityCycleSeconds",
+                    BindingFlags.Instance | BindingFlags.NonPublic)
+                ?.GetValue(_gameManager) ?? 0d);
+            double boundary = (double)(type.GetField(
+                    "_activeSimulationBoundaryRemaining",
+                    BindingFlags.Instance | BindingFlags.NonPublic)
+                ?.GetValue(_gameManager) ?? 0d);
+            MethodInfo thresholdMethod = type.GetMethod(
+                "GetOfflineResetBotThreshold",
+                BindingFlags.Instance | BindingFlags.NonPublic);
+            MethodInfo rewardMethod = type.GetMethod(
+                "CalculateBreakRewardForBots",
+                BindingFlags.Instance | BindingFlags.NonPublic);
+            MethodInfo dreamMethod = type.GetMethod(
+                "TimeToNextDreamMaterialEvent",
+                BindingFlags.Instance | BindingFlags.NonPublic);
+            double threshold = state != null && thresholdMethod != null
+                ? (double)thresholdMethod.Invoke(
+                    _gameManager,
+                    new[] { state })
+                : double.NaN;
+            long reward = rewardMethod != null
+                ? (long)rewardMethod.Invoke(
+                    _gameManager,
+                    new object[]
+                    {
+                        _oracle.saveSettings.dysonVerseSaveData
+                            .dysonVerseInfinityData.bots
+                    })
+                : -1L;
+            double dream = dreamMethod != null
+                ? (double)dreamMethod.Invoke(
+                    _gameManager,
+                    new object[] { 1d })
+                : double.NaN;
+            return
+                $"bots={_oracle.saveSettings.dysonVerseSaveData.dysonVerseInfinityData.bots:R}," +
+                $"botProduction={_oracle.saveSettings.dysonVerseSaveData.dysonVerseInfinityData.botProduction:R}," +
+                $"threshold={threshold:R}," +
+                $"reward={reward}," +
+                $"target={_oracle.saveSettings.infinityPointsToBreakFor}," +
+                $"cycle={cycleSeconds:R}," +
+                $"boundary={boundary:R}," +
+                $"dreamHorizon={dream:R}";
+        }
+
+        private string DescribeAccelerationEligibility()
+        {
+            Oracle.SaveDataSettings settings = _oracle.saveSettings;
+            bool persistentSideEffects =
+                AnalyticalOfflineSimulation.HasPersistentSideEffects(
+                    settings.dysonVerseSaveData.dysonVerseSkillTreeData);
+            bool dreamIdle =
+                DreamAnalyticalOfflineSimulation.IsClockIdle(
+                    settings.sdSimulation,
+                    _space != null && _space.IsRailgunFiring);
+            return
+                $"persistentSkills={persistentSideEffects}," +
+                $"dreamIdle={dreamIdle}," +
+                $"autoBots={settings.dysonVerseSaveData.dysonVersePrestigeData.infinityAutoBots}," +
+                $"autoResearch={settings.dysonVerseSaveData.dysonVersePrestigeData.infinityAutoResearch}," +
+                $"androids={settings.dysonVerseSaveData.dysonVerseSkillTreeData.androids}," +
+                $"pocketAndroids={settings.dysonVerseSaveData.dysonVerseSkillTreeData.pocketAndroids}," +
+                $"superRadiant={settings.dysonVerseSaveData.dysonVerseSkillTreeData.superRadiantScattering}";
+        }
+
+        private static double RelativeRatio(long value, long reference)
+        {
+            return reference > 0L
+                ? value / (double)reference
+                : 0d;
+        }
+
         private static void Run(IEnumerator replay)
         {
             while (replay.MoveNext())
@@ -3148,6 +4598,303 @@ namespace Tests.Systems
         {
             return ticks * 1000d /
                    System.Diagnostics.Stopwatch.Frequency;
+        }
+
+        private static double[] PredictIpDrivenDurations(
+            IReadOnlyList<long> startPoints,
+            IReadOnlyList<double> exactDurations,
+            int blockSize,
+            out double maximumBlockError)
+        {
+            int count = Math.Min(
+                startPoints?.Count ?? 0,
+                exactDurations?.Count ?? 0);
+            var predicted = new double[count];
+            maximumBlockError = 0d;
+            for (int blockStart = 0;
+                 blockStart < count;
+                 blockStart += blockSize)
+            {
+                int blockEnd = Math.Min(
+                    count - 1,
+                    blockStart + blockSize - 1);
+                double startIp = Math.Max(
+                    1d,
+                    startPoints[blockStart] + 1d);
+                double endIp = Math.Max(
+                    startIp,
+                    startPoints[blockEnd] + 1d);
+                double startDuration =
+                    exactDurations[blockStart];
+                double endDuration =
+                    exactDurations[blockEnd];
+                double exponent = 0d;
+                if (blockEnd > blockStart &&
+                    startDuration > 0d &&
+                    endDuration > 0d &&
+                    endIp > startIp)
+                {
+                    exponent = Math.Log(
+                                   endDuration / startDuration) /
+                               Math.Log(endIp / startIp);
+                }
+
+                double exactBlockSeconds = 0d;
+                double predictedBlockSeconds = 0d;
+                for (int index = blockStart;
+                     index <= blockEnd;
+                     index++)
+                {
+                    double ip = Math.Max(
+                        startIp,
+                        startPoints[index] + 1d);
+                    double duration =
+                        startDuration *
+                        Math.Pow(ip / startIp, exponent);
+                    predicted[index] =
+                        NumericSafety.IsFinite(duration) &&
+                        duration > 0d
+                            ? duration
+                            : startDuration;
+                    exactBlockSeconds +=
+                        exactDurations[index];
+                    predictedBlockSeconds +=
+                        predicted[index];
+                }
+
+                maximumBlockError = Math.Max(
+                    maximumBlockError,
+                    RelativeDifference(
+                        exactBlockSeconds,
+                        predictedBlockSeconds));
+            }
+            return predicted;
+        }
+
+        private static int CountCyclesWithin(
+            IReadOnlyList<double> durations,
+            double availableSeconds)
+        {
+            double elapsed = 0d;
+            int cycles = 0;
+            for (int index = 0;
+                 durations != null && index < durations.Count;
+                 index++)
+            {
+                double next = durations[index];
+                if (!NumericSafety.IsFinite(next) ||
+                    next <= 0d ||
+                    elapsed + next > availableSeconds + 1e-12d)
+                {
+                    break;
+                }
+                elapsed += next;
+                cycles++;
+            }
+            return cycles;
+        }
+
+        private static double SumFirst(
+            IReadOnlyList<double> values,
+            int count)
+        {
+            double sum = 0d;
+            for (int index = 0;
+                 values != null &&
+                 index < values.Count &&
+                 index < count;
+                 index++)
+            {
+                sum += values[index];
+            }
+            return sum;
+        }
+
+        private static long SumFirst(
+            IReadOnlyList<long> values,
+            int count)
+        {
+            long sum = 0L;
+            for (int index = 0;
+                 values != null &&
+                 index < values.Count &&
+                 index < count;
+                 index++)
+            {
+                sum = NumericSafety.Add(
+                    sum,
+                    values[index]).Value;
+            }
+            return sum;
+        }
+
+        private static double RelativeDifference(
+            double expected,
+            double actual)
+        {
+            return Math.Abs(expected - actual) /
+                   Math.Max(
+                       1e-12d,
+                       Math.Max(
+                           Math.Abs(expected),
+                           Math.Abs(actual)));
+        }
+
+        private static string FormatInfinityResetState(
+            Oracle.SaveDataSettings settings,
+            double automationRemaining)
+        {
+            Oracle.DysonVerseSaveData dyson =
+                settings.dysonVerseSaveData;
+            Oracle.DysonVerseInfinityData data =
+                dyson.dysonVerseInfinityData;
+            Oracle.DysonVerseSkillTreeData skills =
+                dyson.dysonVerseSkillTreeData;
+            return
+                $"ip:{dyson.dysonVersePrestigeData.infinityPoints}," +
+                $"bots:{data.bots:R}," +
+                $"botRate:{data.botProduction:R}," +
+                $"line:{data.assemblyLines[0]:R}/" +
+                $"{data.assemblyLines[1]:R}," +
+                $"sp:{skills.skillPointsTree}," +
+                $"fragments:{skills.fragments}," +
+                $"rotation:{settings.dysonAutomationTargetIndex}/" +
+                $"{settings.researchAutomationTargetIndex}," +
+                $"automation:{automationRemaining:R}";
+        }
+
+        private static string FormatResearchState(
+            Oracle.SaveDataSettings settings)
+        {
+            var values = new List<string>();
+            Dictionary<string, double> levels =
+                settings.dysonVerseSaveData
+                    .dysonVerseInfinityData
+                    .researchLevelsById;
+            if (levels == null)
+                return "-";
+            foreach (KeyValuePair<string, double> pair in levels)
+            {
+                if (pair.Value > 0d)
+                    values.Add($"{pair.Key}:{pair.Value:R}");
+            }
+            values.Sort(StringComparer.Ordinal);
+            return values.Count == 0
+                ? "-"
+                : string.Join(",", values);
+        }
+
+        private static string FormatResearchRuleOrder(
+            IReadOnlyList<ResearchAutomationRule> rules)
+        {
+            var ids = new List<string>();
+            for (int index = 0;
+                 rules != null && index < rules.Count;
+                 index++)
+            {
+                ids.Add(rules[index].ResearchId ?? "-");
+            }
+            return string.Join(",", ids);
+        }
+
+        private static string DescribeResetDifferences(
+            Oracle.SaveDataSettings left,
+            Oracle.SaveDataSettings right)
+        {
+            var differences = new List<string>();
+            AppendFieldDifferences(
+                "infinity",
+                left.dysonVerseSaveData
+                    .dysonVerseInfinityData,
+                right.dysonVerseSaveData
+                    .dysonVerseInfinityData,
+                differences);
+            AppendFieldDifferences(
+                "skills",
+                left.dysonVerseSaveData
+                    .dysonVerseSkillTreeData,
+                right.dysonVerseSaveData
+                    .dysonVerseSkillTreeData,
+                differences);
+            AppendFieldDifferences(
+                "prestige",
+                left.dysonVerseSaveData
+                    .dysonVersePrestigeData,
+                right.dysonVerseSaveData
+                    .dysonVersePrestigeData,
+                differences);
+            return differences.Count == 0
+                ? "-"
+                : string.Join("|", differences);
+        }
+
+        private static Oracle.SaveDataSettings
+            CloneAutomatedCandidate(
+                Oracle.SaveDataSettings source)
+        {
+            MethodInfo clone = typeof(
+                    AutomatedBreakInfinityCycleSimulation)
+                .GetMethod(
+                    "CloneSimulationCandidate",
+                    BindingFlags.Static |
+                    BindingFlags.NonPublic);
+            Assert.NotNull(clone);
+            return (Oracle.SaveDataSettings)
+                clone.Invoke(null, new object[] { source });
+        }
+
+        private static void AppendFieldDifferences(
+            string prefix,
+            object left,
+            object right,
+            ICollection<string> differences)
+        {
+            foreach (FieldInfo field in left.GetType().GetFields(
+                         BindingFlags.Instance |
+                         BindingFlags.Public))
+            {
+                string leftValue =
+                    FormatFieldValue(field.GetValue(left));
+                string rightValue =
+                    FormatFieldValue(field.GetValue(right));
+                if (!string.Equals(
+                        leftValue,
+                        rightValue,
+                        StringComparison.Ordinal))
+                {
+                    differences.Add(
+                        $"{prefix}.{field.Name}:" +
+                        $"{leftValue}/{rightValue}");
+                }
+            }
+        }
+
+        private static string FormatFieldValue(object value)
+        {
+            if (value == null)
+                return "null";
+            if (value is double number)
+                return number.ToString("R");
+            if (value is Array array)
+            {
+                var items = new List<string>();
+                foreach (object item in array)
+                    items.Add(FormatFieldValue(item));
+                return "[" + string.Join(",", items) + "]";
+            }
+            if (value is IDictionary dictionary)
+            {
+                var items = new List<string>();
+                foreach (DictionaryEntry entry in dictionary)
+                {
+                    items.Add(
+                        $"{entry.Key}=" +
+                        $"{FormatFieldValue(entry.Value)}");
+                }
+                items.Sort(StringComparer.Ordinal);
+                return "{" + string.Join(",", items) + "}";
+            }
+            return value.ToString();
         }
 
         private static Oracle.SaveDataSettings CreateRepresentativeSettings()
@@ -3207,6 +4954,43 @@ namespace Tests.Systems
                 settings.dysonVerseSaveData.dysonVerseInfinityData;
             data.bots = 10d;
             data.assemblyLines[1] = 10d;
+        }
+
+        private static void EnableAllFiniteQuantumUpgrades(
+            Oracle.SaveDataSettings settings)
+        {
+            Oracle.PrestigePlus quantum = settings.prestigePlus;
+            quantum.botMultitasking = true;
+            quantum.doubleIP = true;
+            quantum.breakTheLoop = true;
+            quantum.quantumEntanglement = true;
+            quantum.automation = true;
+            quantum.divisionsPurchased = 19L;
+            quantum.secrets = 27L;
+            quantum.avocatoPurchased = true;
+            quantum.fragments = true;
+            quantum.purity = true;
+            quantum.terra = true;
+            quantum.power = true;
+            quantum.paragade = true;
+            quantum.stellar = true;
+
+            // Influence, cash, and science are unbounded repeatable purchases,
+            // so they intentionally remain at zero in this finite-upgrade
+            // fixture.
+            quantum.influence = 0L;
+            quantum.cash = 0L;
+            quantum.science = 0L;
+
+            settings.avocadoData.unlocked = true;
+            Oracle.DysonVersePrestigeData prestige =
+                settings.dysonVerseSaveData.dysonVersePrestigeData;
+            prestige.secretsOfTheUniverse = 27L;
+            prestige.infinityAutoBots = true;
+            prestige.infinityAutoResearch = true;
+            prestige.unlockedMatrioshkaBrains = true;
+            prestige.unlockedBirchPlanets = true;
+            prestige.unlockedGalacticBrains = true;
         }
 
         private static void EnableRepresentativeNormalInfinity(

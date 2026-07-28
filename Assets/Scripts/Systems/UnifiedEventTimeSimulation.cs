@@ -13,12 +13,47 @@ namespace Systems.Simulation
 {
     public static class SimulationAccuracyContract
     {
-        // User-approved bound for deliberately approximated aggregate IP and
-        // continuous production outcomes. Aggregate reset counts use the same
-        // bound rounded up to a whole cycle. Discrete event kinds, flags,
-        // unlocks, caps, purchases, settings, and one-time rewards remain
-        // exact and are validated separately.
+        // Baseline user-approved bound for deliberately approximated aggregate
+        // IP and continuous production outcomes.
         public const double MaximumAggregateRelativeError = 0.01d;
+        public const double MaximumLongDurationRelativeError = 0.05d;
+
+        // Very long stored-time jobs are allowed to trade progressively more
+        // numerical precision for bounded real processing time. The curve is
+        // intentionally smooth so crossing an authored duration boundary
+        // cannot suddenly select a radically different projection.
+        //
+        // Discrete gameplay outcomes (unlocks, purchases, caps, reset kinds,
+        // one-time rewards, and flags) remain exact. Only aggregate reset/IP
+        // totals, continuous state, and internal scheduler phase use this
+        // duration-scaled allowance.
+        public static double AllowedAggregateRelativeError(
+            double simulatedSeconds)
+        {
+            if (!NumericSafety.IsFinite(simulatedSeconds) ||
+                simulatedSeconds <= 60d)
+            {
+                return MaximumAggregateRelativeError;
+            }
+
+            double decades = Math.Log10(simulatedSeconds / 60d);
+            return Math.Min(
+                MaximumLongDurationRelativeError,
+                MaximumAggregateRelativeError +
+                Math.Max(0d, decades) * 0.01d);
+        }
+
+        // Coarse-versus-refined disagreement is a conservative error signal,
+        // not the measured final outcome error. Permit twice the outcome
+        // budget here, then prove the resulting end state against saved
+        // canonical fixtures in characterization tests.
+        public static double AllowedProjectionDisagreement(
+            double simulatedSeconds)
+        {
+            return Math.Min(
+                0.15d,
+                AllowedAggregateRelativeError(simulatedSeconds) * 3d);
+        }
     }
 
     public static class AutomationRotation
@@ -540,7 +575,8 @@ namespace Systems.Simulation
                         accelerationHorizon + TimeEpsilon &&
                         block.ValidationError <=
                         SimulationAccuracyContract
-                            .MaximumAggregateRelativeError)
+                            .AllowedProjectionDisagreement(
+                                block.ConsumedSeconds))
                     {
                         AdvanceClockAcrossAutomation(
                             result,

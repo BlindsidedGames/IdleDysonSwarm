@@ -10,6 +10,8 @@ using System.Collections.Generic;
 using Blindsided.Utilities;
 using Expansion;
 using GameData;
+using IdleDysonSwarm.Data.Balance;
+using IdleDysonSwarm.Systems.Balance;
 using Systems.Facilities;
 using Systems.Numeric;
 using static Expansion.Oracle;
@@ -26,7 +28,12 @@ namespace Systems.Simulation
             bool unlocked,
             bool subtractRetainedTen,
             bool useAssemblyMegaDiscount,
-            long maximumQuantity = long.MaxValue)
+            long maximumQuantity = long.MaxValue,
+            bool evaluateUnlockFromState = false,
+            QuantumMegaUnlockGate quantumGate =
+                QuantumMegaUnlockGate.None,
+            string prerequisiteFacilityId = null,
+            double prerequisiteFacilityOwned = 0d)
         {
             FacilityId = facilityId;
             BaseCost = baseCost;
@@ -36,6 +43,11 @@ namespace Systems.Simulation
             SubtractRetainedTen = subtractRetainedTen;
             UseAssemblyMegaDiscount = useAssemblyMegaDiscount;
             MaximumQuantity = maximumQuantity;
+            EvaluateUnlockFromState = evaluateUnlockFromState;
+            QuantumGate = quantumGate;
+            PrerequisiteFacilityId = prerequisiteFacilityId;
+            PrerequisiteFacilityOwned =
+                Math.Max(0d, prerequisiteFacilityOwned);
         }
 
         public string FacilityId { get; }
@@ -46,6 +58,10 @@ namespace Systems.Simulation
         public bool SubtractRetainedTen { get; }
         public bool UseAssemblyMegaDiscount { get; }
         public long MaximumQuantity { get; }
+        public bool EvaluateUnlockFromState { get; }
+        public QuantumMegaUnlockGate QuantumGate { get; }
+        public string PrerequisiteFacilityId { get; }
+        public double PrerequisiteFacilityOwned { get; }
     }
 
     public readonly struct ResearchAutomationRule
@@ -138,12 +154,17 @@ namespace Systems.Simulation
             quantity = 0L;
             if (settings == null ||
                 !rule.Enabled ||
-                !rule.Unlocked ||
                 string.IsNullOrEmpty(rule.FacilityId) ||
                 !NumericSafety.IsFinite(rule.BaseCost) ||
                 rule.BaseCost <= 0d ||
                 !NumericSafety.IsFinite(rule.CostExponent) ||
                 rule.CostExponent <= 0d)
+            {
+                return false;
+            }
+
+            if (!rule.Unlocked &&
+                !IsDynamicallyUnlocked(settings, rule))
             {
                 return false;
             }
@@ -467,7 +488,6 @@ namespace Systems.Simulation
             DysonAnalyticalState state)
         {
             if (!rule.Enabled ||
-                !rule.Unlocked ||
                 rule.MaximumQuantity <= 0L ||
                 string.IsNullOrEmpty(rule.FacilityId) ||
                 !NumericSafety.IsFinite(rule.BaseCost) ||
@@ -476,6 +496,15 @@ namespace Systems.Simulation
                 rule.CostExponent <= 0d ||
                 !NumericSafety.IsFinite(state.Money) ||
                 state.Money < 0d)
+            {
+                return false;
+            }
+
+            if (!rule.Unlocked &&
+                !IsDynamicallyUnlocked(
+                    settings,
+                    rule,
+                    state))
             {
                 return false;
             }
@@ -718,6 +747,86 @@ namespace Systems.Simulation
                 infinity,
                 facilityId,
                 out counts);
+        }
+
+        private static bool IsDynamicallyUnlocked(
+            SaveDataSettings settings,
+            DysonFacilityAutomationRule rule)
+        {
+            if (!rule.EvaluateUnlockFromState ||
+                settings?.dysonVerseSaveData == null ||
+                !BalanceRuntime.IsQuantumGateUnlocked(
+                    rule.QuantumGate,
+                    settings.dysonVerseSaveData
+                        .dysonVersePrestigeData))
+            {
+                return false;
+            }
+            if (string.IsNullOrEmpty(
+                    rule.PrerequisiteFacilityId))
+            {
+                return true;
+            }
+            if (!TryGetFacilityCounts(
+                    settings.dysonVerseSaveData
+                        .dysonVerseInfinityData,
+                    rule.PrerequisiteFacilityId,
+                    out double[] counts) ||
+                counts == null ||
+                counts.Length < 2)
+            {
+                return false;
+            }
+            double required =
+                rule.PrerequisiteFacilityOwned > 0d
+                    ? rule.PrerequisiteFacilityOwned
+                    : 1d;
+            return NumericSafety.Add(
+                NumericSafety.ClampContinuous(counts[0]),
+                NumericSafety.ClampContinuous(counts[1])).Value >=
+                   required;
+        }
+
+        private static bool IsDynamicallyUnlocked(
+            SaveDataSettings settings,
+            DysonFacilityAutomationRule rule,
+            DysonAnalyticalState state)
+        {
+            if (!rule.EvaluateUnlockFromState ||
+                settings?.dysonVerseSaveData == null ||
+                !BalanceRuntime.IsQuantumGateUnlocked(
+                    rule.QuantumGate,
+                    settings.dysonVerseSaveData
+                        .dysonVersePrestigeData))
+            {
+                return false;
+            }
+            if (string.IsNullOrEmpty(
+                    rule.PrerequisiteFacilityId))
+            {
+                return true;
+            }
+            if (!state.TryGetFacilityCount(
+                    rule.PrerequisiteFacilityId,
+                    out double generated) ||
+                !TryGetFacilityCounts(
+                    settings.dysonVerseSaveData
+                        .dysonVerseInfinityData,
+                    rule.PrerequisiteFacilityId,
+                    out double[] counts) ||
+                counts == null ||
+                counts.Length < 2)
+            {
+                return false;
+            }
+            double required =
+                rule.PrerequisiteFacilityOwned > 0d
+                    ? rule.PrerequisiteFacilityOwned
+                    : 1d;
+            return NumericSafety.Add(
+                NumericSafety.ClampContinuous(generated),
+                NumericSafety.ClampContinuous(counts[1])).Value >=
+                   required;
         }
 
         private static bool IsResearchAutomationEnabled(

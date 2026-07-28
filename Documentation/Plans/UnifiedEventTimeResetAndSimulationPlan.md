@@ -61,10 +61,12 @@ same event.
 
 ## Reset acceleration
 
-An exact pure one-cycle transition is the canonical reference and fallback.
-Blocks split at every signature change, including unlocks, first-run events,
-automation, input/mode changes, boost/research expiry, Double Time depletion,
-caps, Quantum actions, and Dream stage changes.
+The authoritative reference and fallback is one cycle through the shared
+scheduler. The isolated pure transition remains a target for parity, but it is
+not used as a calibration source until repeated-cycle—not merely first-cycle—
+parity is proven. Blocks split at every signature change, including unlocks,
+first-run events, automation, input/mode changes, boost/research expiry,
+Double Time depletion, caps, Quantum actions, and Dream stage changes.
 
 Infinity reachability uses monotone bracketing. An unreachable target advances
 without inventing a reset. When a threshold is reached before the 1/60-second
@@ -72,12 +74,16 @@ minimum, production continues and the actual reward at the reset instant is
 awarded.
 
 Ordinary and Break aggregation models changing IP power; it must not assume
-identical cycles. Coarse and deterministically subdivided projections refine
-until aggregate reset count (rounded up to a whole cycle), IP, and affected
-continuous state agree within the user-approved 1%. Discrete reset kinds,
-flags, unlocks, caps, purchases, settings, and one-time rewards remain exact.
-The integer number of cycles fitting the interval is located, the aggregate is
-applied once, and the remainder is advanced normally.
+identical cycles. Accuracy is symmetric: a projection may finish above or
+below the exact reference. During the architecture phase, end-to-end
+percentage accuracy is characterization data rather than a fixed release
+target. Sampling cadence and IP-growth block limits remain explicit tuning
+controls so accuracy can be brought closer to or farther from exact results
+after the stable fast path is established. Local projection self-checks remain
+bounded and discrete reset kinds, flags, unlocks, caps, purchases, settings,
+and one-time rewards remain exact. The integer number of cycles fitting the
+interval is located, the aggregate is applied once, and the remainder is
+advanced normally.
 
 Dream has an independent clock. Stable identical disaster cycles may be
 counted exactly, including many Dream resets inside one Infinity or automation
@@ -153,10 +159,13 @@ cycle, and seconds per IP.
   Quantum; bot cap; and interrupted checkpoints.
 - Results are deterministic across rendered-frame chunking, yield points, and
   stored-time partitioning.
-- Aggregated reset count (rounded up to a whole cycle), IP, and affected
-  continuous state remain within the user-approved 1%; discrete reset kinds,
-  flags, unlocks, caps, purchases, settings, and one-time rewards remain exact;
-  discrete state and cap equality are exact.
+- Aggregated reset count, IP, and affected continuous state are reported
+  against exact short fixtures and across stored-time partitions. No fixed
+  end-to-end percentage is a completion gate during the architecture phase;
+  tuning targets will be chosen from measured gameplay results afterward.
+  Error is symmetric. Discrete reset kinds, flags, unlocks, caps, purchases,
+  settings, and one-time rewards remain exact; discrete state and cap equality
+  are exact.
 - No zero-time reward loop, non-finite state, negative bank, or lost time.
   Save failure publishes nothing and cancellation preserves all uncommitted
   time.
@@ -180,8 +189,9 @@ cycle, and seconds per IP.
 - Final source changes require the full EditMode suite, relevant PlayMode
   coverage, and supported local IL2CPP builds.
 
-If performance requires violating the accuracy contract, implementation stops
-for design review rather than relaxing either requirement.
+If tuning exposes a trade-off that changes gameplay materially rather than
+merely moving an approximate aggregate above or below its reference, it stops
+for design review.
 
 ## Local implementation checkpoint
 
@@ -193,82 +203,67 @@ post-persistence publication, truthful statistics, rolling history, and
 aggregate stored-time presentation. Legacy passive offline IP has been
 removed.
 
-An independent review on 2026-07-28 found that the first automated Break
-projector was still linear for variable-duration cycles: it grouped resets
-into 256-cycle containers but evaluated every reset inside those containers.
-That structure is consistent with a multi-second or tens-of-seconds wait over
-a large reset count and is not accepted as completed batching.
+The original varying-duration projector was still effectively linear and its
+coarse/refined self-check could approve two equally wrong models. The current
+working implementation instead uses canonical-sampled adaptive blocks:
 
-The current unvalidated working changes replace that fixed container with a
-hierarchical projection:
-
-- a stable candidate block may represent the entire remaining reachable
-  interval; failed validation halves the candidate instead of growing upward
-  through many smaller blocks;
-- coarse and refined midpoint integrations begin with 4 and 8 segments;
-- resolution may grow to 128 refined segments before the block is split;
-- elapsed time, IP, last reward, affected continuous state, discrete retained
-  state, automation phase, and the next exact reset signature are checked;
-- any retained purchase, unlock, first-run transition, or other signature
-  change forces a split and exact processing around that boundary;
-- active play and stored time both use resumable projection work;
-- active minimum-duration blocks stop before the independent automation
-  boundary, allowing the shared scheduler to execute
-  production -> automation -> reset in the authored order;
-- threshold scheduling no longer promotes a merely-nearby bot balance to the
-  Break target. The event horizon advances beyond representational rounding
-  without changing a below-threshold starting state.
-- stable cycles longer than five seconds cross the former probe horizon by
-  advancing analytically to each real automation purchase, applying that event
-  exactly, then resuming the analytical interval;
-- the one-cycle probe, coarse/refined samples, and exact endpoint checks retain
-  their isolated in-progress state and process no more than 16 material
-  boundaries in one projection step, preventing an event-dense cycle from
-  hiding an unbounded synchronous loop inside the outer frame budget;
-- every one-cycle probe is also bounded by the simulated time it can usefully
-  consume. Reaching the requested endpoint without a reset records a bounded
-  no-reset result instead of continuing toward the million-boundary safety
-  ceiling; endpoint validation compares the two candidates at the common
-  requested time when neither projection can fit another reset;
-- active Dream research, community/factory boosts, and Double Time advance in
-  the same isolated candidate up to their independent completion, expiry, or
-  depletion boundary;
-- Dream coarse/fine refinement is resumable too: warmup, midpoint projection,
-  exact tail, and validation advance in bounded 32-segment steps, retain the
-  isolated candidate across yields, and publish only after convergence;
-- post-disaster Dream states use validated adaptive projection, including
-  partial charge and bulk railgun volleys with exact discrete shot/panel
-  agreement; disaster stages 0-3 batch only whole ticks proven by the quiet
-  horizon to contain no Dream material event, leaving the exact reset boundary
-  to the canonical Dream-before-Infinity scheduler;
-- failed concurrent Dream validation applies a retry delay instead of
-  rebuilding the same accepted Infinity projection on every 0.1-second
-  event.
+- fast cycles use twelve genuine shared-engine Break resets grouped into three
+  four-cycle samples; slower automation-crossing cycles use twenty-four resets
+  grouped into three eight-cycle samples, then four-cycle refresh samples;
+- those samples fit the local changing-IP reward and duration recurrence;
+- each accepted block is bounded by a duration-scaled percentage of current IP
+  and skips all represented resets;
+- the sampled model enforces the stable-signature gameplay direction: rising
+  IP cannot make the IP-power cycle trend systematically slower and cannot
+  make the slider reward trend systematically smaller;
+- after every projected block the engine runs another genuine sample window;
+  projected versus observed endpoint drift feeds a weighted controller;
+- one phase spike does not contract the block, while sustained drift halves
+  future block growth down to a 25% floor and stable checkpoints recover it;
+- active and stored-time paths both call the same sampled projector. Stored
+  time still forces Buy Max without changing the saved active mode;
+- mode, slider, unlock, cap, one-time reward, reset kind, Dream boundary, and
+  queued input changes remain exact split points;
+- a rejected sample block returns to resumable canonical work and may
+  recalibrate; it never approximates a reset that has not been proven
+  reachable.
 
 The old background task has been removed. Projection work mutates only an
 isolated candidate, can be abandoned without publishing, and is applied only
 after validation. Stored-time publication remains guarded by successful
 persistence.
 
-Both the runtime and Editor/test assemblies compile successfully against the
-current Unity-generated reference sets. Fresh Unity execution is still
-required before this checkpoint can be called complete.
-The previous 391/391 EditMode result and macOS IL2CPP build predate the latest
-hierarchical-projector, active-automation, and threshold changes and therefore
-must not be represented as final evidence. Required reruns are:
+The private phone-save truth fixture remains outside the repository; only its
+hash and aggregate benchmark results are documented. Against exact shared-tick
+references:
 
-- focused one-cycle, threshold, active automation-tie, cancellation, and
-  hierarchical-block tests;
-- exact-reference comparisons for the one-minute, one-hour, 100-day, and
-  42,000,000-second duration matrix;
-- full EditMode and relevant PlayMode suites;
-- a fresh supported IL2CPP build after the final source changes;
-- cold and warm work-count plus wall-clock measurements from the complete
-  stored-time runner, not only the projection helper.
+- one minute exact: 238,212 IP and 1,191 Break resets;
+- one minute sampled stored time: 234,212 IP (1.679% low), about 0.73 seconds;
+- one minute sampled active time: 235,812 IP (1.008% low), about 0.78 seconds;
+- one hour exact: 36,859,768 IP and 178,986 Break resets, about four minutes;
+- one hour sampled stored time: 39,455,800 IP (7.043% high), about 1.13 seconds;
+- one hour sampled active time: 38,871,607 IP (5.458% high), about 2.53 seconds.
 
-The exact fallback remains necessary for persistent skill side effects and
-other discrete reset-side changes that cannot yet be proven stable. Those
-cases remain responsive through cooperative yielding. Both Infinity-cycle
-evaluation and concurrent Dream refinement now retain isolated in-progress
-state across those yields instead of hiding long validation work inside one
-outer scheduler call.
+Whole versus two-half one-hour projection on the 1,000,000-IP/all-finite-
+Quantum fixture differed by 0.130% in final IP and 0.698% in reset count. This
+partition stability is a stronger architecture check than forcing a selected
+exact percentage before tuning.
+
+The isolated continuous pure-cycle model was tested as a cheaper calibration
+source and rejected: although its first cycle matched, repeated cycles produced
+33 resets where the authoritative shared scheduler produced 37 in one minute.
+Canonical samples therefore continue to come from the shared scheduler; the
+non-parity model is not used to bias projected rewards.
+
+These are complete-runner warm development-machine measurements, not device
+guarantees. The benchmark artifact is
+`Documentation/Benchmarks/TickSystemPhoneInfinityBaseline-2026-07-28.json`.
+
+The Infinity accelerator is still uncommitted and awaiting the full regression
+suite and independent review. Long-range Dream reset cycles remain a distinct
+performance limiter: the intact phone save enters the Dream exact fallback
+often enough that day/month whole-game benchmarks are not yet representative
+of Dyson projection throughput. Per the current priority, Dream acceleration
+is paused rather than silently removing Dream state or rewards. The full
+EditMode suite, relevant PlayMode coverage, and a fresh supported IL2CPP build
+must be rerun after final source changes.

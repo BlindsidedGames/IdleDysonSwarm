@@ -345,6 +345,11 @@ namespace Buildings
                            _gameState.PrestigeData != null &&
                            _gameState.PrestigeData.infinityAutoBots &&
                            toggleEnabled;
+            ResolveUnlockRule(
+                facilityId,
+                out QuantumMegaUnlockGate gate,
+                out string prerequisiteId,
+                out double prerequisiteOwned);
             rule = new DysonFacilityAutomationRule(
                 facilityId,
                 definition.baseCost,
@@ -354,7 +359,11 @@ namespace Buildings
                 _megaStructureService.IsUnlocked(facilityId),
                 subtractRetainedTen: false,
                 useAssemblyMegaDiscount: false,
-                maximumQuantity: int.MaxValue);
+                maximumQuantity: int.MaxValue,
+                evaluateUnlockFromState: true,
+                quantumGate: gate,
+                prerequisiteFacilityId: prerequisiteId,
+                prerequisiteFacilityOwned: prerequisiteOwned);
             return true;
         }
 
@@ -444,33 +453,11 @@ namespace Buildings
         private bool IsPredictedUnlocked(DysonAnalyticalState state)
         {
             string facilityId = FacilityId;
-            QuantumMegaUnlockGate gate;
-            string prerequisiteId;
-            double prerequisiteOwned;
-            if (BalanceRuntime.TryGetFacilityEntry(facilityId, out var entry))
-            {
-                gate = entry.quantumGate;
-                prerequisiteId = entry.prerequisiteFacilityId;
-                prerequisiteOwned = entry.prerequisiteOwned;
-            }
-            else
-            {
-                gate = facilityId switch
-                {
-                    "matrioshka_brains" => QuantumMegaUnlockGate.MatrioshkaBrains,
-                    "birch_planets" => QuantumMegaUnlockGate.BirchPlanets,
-                    "galactic_brains" => QuantumMegaUnlockGate.GalacticBrains,
-                    _ => QuantumMegaUnlockGate.None
-                };
-                prerequisiteId = facilityId switch
-                {
-                    "matrioshka_brains" => "planets",
-                    "birch_planets" => "matrioshka_brains",
-                    "galactic_brains" => "birch_planets",
-                    _ => null
-                };
-                prerequisiteOwned = string.IsNullOrEmpty(prerequisiteId) ? 0d : 1d;
-            }
+            ResolveUnlockRule(
+                facilityId,
+                out QuantumMegaUnlockGate gate,
+                out string prerequisiteId,
+                out double prerequisiteOwned);
 
             if (!BalanceRuntime.IsQuantumGateUnlocked(
                     gate,
@@ -482,6 +469,47 @@ namespace Buildings
             if (string.IsNullOrEmpty(prerequisiteId))
                 return true;
             return PredictedTotal(prerequisiteId, state) >= prerequisiteOwned;
+        }
+
+        private static void ResolveUnlockRule(
+            string facilityId,
+            out QuantumMegaUnlockGate gate,
+            out string prerequisiteId,
+            out double prerequisiteOwned)
+        {
+            if (BalanceRuntime.TryGetFacilityEntry(
+                    facilityId,
+                    out var entry))
+            {
+                gate = entry.quantumGate;
+                prerequisiteId =
+                    entry.prerequisiteFacilityId;
+                prerequisiteOwned =
+                    entry.prerequisiteOwned;
+                return;
+            }
+
+            gate = facilityId switch
+            {
+                "matrioshka_brains" =>
+                    QuantumMegaUnlockGate.MatrioshkaBrains,
+                "birch_planets" =>
+                    QuantumMegaUnlockGate.BirchPlanets,
+                "galactic_brains" =>
+                    QuantumMegaUnlockGate.GalacticBrains,
+                _ => QuantumMegaUnlockGate.None
+            };
+            prerequisiteId = facilityId switch
+            {
+                "matrioshka_brains" => "planets",
+                "birch_planets" => "matrioshka_brains",
+                "galactic_brains" => "birch_planets",
+                _ => null
+            };
+            prerequisiteOwned =
+                string.IsNullOrEmpty(prerequisiteId)
+                    ? 0d
+                    : 1d;
         }
 
         private double PredictedTotal(

@@ -194,7 +194,7 @@ namespace Tests.Systems
                 OfferAcceleration = true,
                 AccelerationError =
                     SimulationAccuracyContract
-                        .MaximumAggregateRelativeError * 2d
+                        .AllowedProjectionDisagreement(0.5d) * 2d
             };
             SimulationAdvanceResult result =
                 UnifiedEventTimeSimulation.Advance(

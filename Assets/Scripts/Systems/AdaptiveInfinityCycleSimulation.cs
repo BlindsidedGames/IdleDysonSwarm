@@ -94,6 +94,79 @@ namespace Systems.Simulation
         public double DurationSeconds { get; }
     }
 
+    public sealed class AdaptiveProjectionCheckpointFeedback
+    {
+        private const double TrendWeight = 0.25d;
+        private double _errorTrend;
+        private int _observationCount;
+
+        public double GrowthAdjustment { get; private set; } = 1d;
+        public double LastError { get; private set; }
+        public double ErrorTrend => _errorTrend;
+
+        public void Observe(
+            double expectedDurationSeconds,
+            long expectedReward,
+            double observedDurationSeconds,
+            long observedReward,
+            double tolerance)
+        {
+            double durationError = SymmetricRelativeError(
+                expectedDurationSeconds,
+                observedDurationSeconds);
+            double rewardError = SymmetricRelativeError(
+                expectedReward,
+                observedReward);
+            LastError = Math.Max(durationError, rewardError);
+
+            _errorTrend =
+                _observationCount == 0
+                    ? LastError * TrendWeight
+                    : _errorTrend * (1d - TrendWeight) +
+                      LastError * TrendWeight;
+            _observationCount++;
+
+            double safeTolerance =
+                NumericSafety.IsFinite(tolerance) &&
+                tolerance > 0d
+                    ? tolerance
+                    : 0.01d;
+            double shrinkThreshold = Math.Max(
+                0.15d,
+                safeTolerance * 4d);
+            if (_errorTrend > shrinkThreshold)
+            {
+                GrowthAdjustment = Math.Max(
+                    0.25d,
+                    GrowthAdjustment * 0.5d);
+            }
+            else if (_errorTrend <= shrinkThreshold * 0.25d)
+            {
+                GrowthAdjustment = Math.Min(
+                    1d,
+                    GrowthAdjustment * 1.25d);
+            }
+        }
+
+        private static double SymmetricRelativeError(
+            double expected,
+            double observed)
+        {
+            if (!NumericSafety.IsFinite(expected) ||
+                !NumericSafety.IsFinite(observed))
+            {
+                return double.MaxValue;
+            }
+
+            return Math.Abs(expected - observed) /
+                   Math.Max(
+                       1e-12d,
+                       Math.Max(
+                           Math.Abs(expected),
+                           Math.Abs(observed)));
+        }
+    }
+
     public static class AdaptiveInfinityCycleSimulation
     {
         public static string LastStableProjectionDiagnostic
@@ -140,12 +213,91 @@ namespace Systems.Simulation
             double minimumCycleSeconds,
             out InfinityCycleProjection projection)
         {
+            return TryProjectSecondsWithGrowthLimit(
+                first,
+                second,
+                third,
+                currentInfinityPoints,
+                availableSeconds,
+                minimumCycleSeconds,
+                maximumRelativeIpGrowth: 0.25d,
+                maximumValidationError: MaximumValidationError,
+                enforceMonotoneIpPower: false,
+                out projection);
+        }
+
+        public static bool TryProjectSampledSeconds(
+            InfinityCycleSample first,
+            InfinityCycleSample second,
+            InfinityCycleSample third,
+            long currentInfinityPoints,
+            double availableSeconds,
+            double minimumCycleSeconds,
+            double maximumRelativeIpGrowth,
+            out InfinityCycleProjection projection)
+        {
+            return TryProjectSecondsWithGrowthLimit(
+                first,
+                second,
+                third,
+                currentInfinityPoints,
+                availableSeconds,
+                minimumCycleSeconds,
+                maximumRelativeIpGrowth,
+                maximumValidationError: MaximumValidationError,
+                enforceMonotoneIpPower: true,
+                out projection);
+        }
+
+        public static bool TryProjectSampledSeconds(
+            InfinityCycleSample first,
+            InfinityCycleSample second,
+            InfinityCycleSample third,
+            long currentInfinityPoints,
+            double availableSeconds,
+            double minimumCycleSeconds,
+            double maximumRelativeIpGrowth,
+            double maximumValidationError,
+            out InfinityCycleProjection projection)
+        {
+            return TryProjectSecondsWithGrowthLimit(
+                first,
+                second,
+                third,
+                currentInfinityPoints,
+                availableSeconds,
+                minimumCycleSeconds,
+                maximumRelativeIpGrowth,
+                maximumValidationError,
+                enforceMonotoneIpPower: true,
+                out projection);
+        }
+
+        private static bool TryProjectSecondsWithGrowthLimit(
+            InfinityCycleSample first,
+            InfinityCycleSample second,
+            InfinityCycleSample third,
+            long currentInfinityPoints,
+            double availableSeconds,
+            double minimumCycleSeconds,
+            double maximumRelativeIpGrowth,
+            double maximumValidationError,
+            bool enforceMonotoneIpPower,
+            out InfinityCycleProjection projection)
+        {
             projection = default;
             if (currentInfinityPoints < 0L ||
                 !NumericSafety.IsFinite(availableSeconds) ||
                 !NumericSafety.IsFinite(minimumCycleSeconds) ||
+                !NumericSafety.IsFinite(maximumRelativeIpGrowth) ||
+                !NumericSafety.IsFinite(maximumValidationError) ||
                 availableSeconds <= 0d ||
-                minimumCycleSeconds <= 0d)
+                minimumCycleSeconds <= 0d ||
+                maximumRelativeIpGrowth <= 0d ||
+                maximumValidationError <= 0d ||
+                maximumValidationError >
+                    SimulationAccuracyContract
+                        .MaximumLongDurationRelativeError)
                 return false;
             if (!SamplesAreOrdered(first, second, third))
                 return false;
@@ -182,8 +334,8 @@ namespace Systems.Simulation
             double rewardError = RelativeError(
                 predictedThirdReward,
                 third.Reward);
-            if (durationError > MaximumValidationError ||
-                rewardError > MaximumValidationError)
+            if (durationError > maximumValidationError ||
+                rewardError > maximumValidationError)
             {
                 return false;
             }
@@ -203,19 +355,22 @@ namespace Systems.Simulation
                 second.StartingInfinityPoints,
                 second.DurationSeconds,
                 third.StartingInfinityPoints,
-                third.DurationSeconds);
+                third.DurationSeconds,
+                maximumExponent:
+                    enforceMonotoneIpPower ? 0d : 1d);
             double rewardExponent = FitExponent(
                 second.StartingInfinityPoints,
                 second.Reward,
                 third.StartingInfinityPoints,
                 third.Reward,
-                minimumExponent: -1d,
+                minimumExponent:
+                    enforceMonotoneIpPower ? 0d : -1d,
                 maximumExponent: 4d);
             bool locallyConstant =
                 Math.Abs(durationExponent) <= 1e-12d &&
                 Math.Abs(rewardExponent) <= 1e-12d;
             long maximumProjectedInfinityPoints;
-            if (locallyConstant)
+            if (locallyConstant && !enforceMonotoneIpPower)
             {
                 maximumProjectedInfinityPoints = long.MaxValue;
             }
@@ -223,7 +378,12 @@ namespace Systems.Simulation
             {
                 long growth = Math.Max(
                     1L,
-                    currentInfinityPoints / 4L);
+                    NumericSafety.ToLongFloor(
+                        Math.Floor(
+                            NumericSafety.Multiply(
+                                currentInfinityPoints,
+                                maximumRelativeIpGrowth).Value))
+                        .Value);
                 maximumProjectedInfinityPoints =
                     currentInfinityPoints >
                     long.MaxValue - growth
@@ -310,7 +470,7 @@ namespace Systems.Simulation
             double validationError = Math.Max(
                 blockError,
                 Math.Max(durationError, rewardError));
-            if (validationError > MaximumValidationError)
+            if (validationError > maximumValidationError)
                 return false;
 
             projection = new InfinityCycleProjection(
@@ -1355,7 +1515,8 @@ namespace Systems.Simulation
             long firstInfinityPoints,
             double firstDurationSeconds,
             long secondInfinityPoints,
-            double secondDurationSeconds)
+            double secondDurationSeconds,
+            double maximumExponent = 1d)
         {
             return FitExponent(
                 firstInfinityPoints,
@@ -1363,7 +1524,7 @@ namespace Systems.Simulation
                 secondInfinityPoints,
                 secondDurationSeconds,
                 minimumExponent: -4d,
-                maximumExponent: 1d);
+                maximumExponent);
         }
 
         private static double EvaluatePowerModel(
