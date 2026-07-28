@@ -68,7 +68,15 @@ export interface BasicDysonState {
   scienceMultiplier: number
   panelRateMultiplier: number
   panelLifetime: number
+  planetGenerationPerSecond?: number
   ownedSkills: string[]
+  /**
+   * Pre-materialized canonical effects keyed by target stat. When present,
+   * this replaces the temporary three-skill asset helper for every rate path.
+   */
+  skillEffectsByStat?: Readonly<
+    Record<string, readonly StatEffect[]>
+  >
   facilities: Record<BasicDysonFacilityId, OwnedPair>
   modifiers: Record<BasicDysonFacilityId, number>
   modifierEffectsApplied?: boolean
@@ -118,6 +126,23 @@ function cloneState(state: BasicDysonState): BasicDysonState {
     modifiers: { ...state.modifiers },
     modifierEffectsApplied: state.modifierEffectsApplied ?? false,
     ownedSkills: [...state.ownedSkills],
+    skillEffectsByStat:
+      state.skillEffectsByStat === undefined
+        ? undefined
+        : Object.freeze(
+            Object.fromEntries(
+              Object.entries(state.skillEffectsByStat).map(
+                ([statId, effects]) => [
+                  statId,
+                  Object.freeze(
+                    effects.map((effect) =>
+                      Object.freeze({ ...effect }),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
     rates: cloneRates(state.rates),
     automation: {
       enabledFacilities: [...state.automation.enabledFacilities],
@@ -158,7 +183,7 @@ function facilityRate(
     ? clampContinuous(state.modifiers[id])
     : calculateStat(
         clampContinuous(state.modifiers[id]),
-        staticSkillEffects(state.ownedSkills, modifierStatId),
+        skillEffectsFor(state, modifierStatId),
       )
   const productionEffects: StatEffect[] = [
     {
@@ -177,7 +202,7 @@ function facilityRate(
     })
   }
   productionEffects.push(
-    ...staticSkillEffects(state.ownedSkills, productionStatId),
+    ...skillEffectsFor(state, productionStatId),
   )
   return clampContinuous(
     calculateStat(legacyBaseProduction(id), productionEffects),
@@ -198,23 +223,46 @@ export function recalculateBasicDysonRates(
   const panels = clampContinuous(
     calculateStat(
       multiplyContinuous(state.workers / 100, state.panelRateMultiplier),
-      staticSkillEffects(state.ownedSkills, 'Global.PanelsPerSecond'),
+      skillEffectsFor(state, 'Global.PanelsPerSecond'),
     ),
   )
   return {
     panels,
-    money: multiplyContinuous(
-      multiplyContinuous(panels, state.panelLifetime),
-      state.moneyMultiplier,
+    money: clampContinuous(
+      calculateStat(
+        multiplyContinuous(
+          multiplyContinuous(panels, state.panelLifetime),
+          state.moneyMultiplier,
+        ),
+        skillEffectsFor(state, 'Global.MoneyPerSecond'),
+      ),
     ),
-    science: multiplyContinuous(state.researchers, state.scienceMultiplier),
+    science: clampContinuous(
+      calculateStat(
+        multiplyContinuous(
+          state.researchers,
+          state.scienceMultiplier,
+        ),
+        skillEffectsFor(state, 'Global.SciencePerSecond'),
+      ),
+    ),
     bots: facilityRate(state, 'assembly_lines'),
     assembly_lines: facilityRate(state, 'ai_managers'),
     ai_managers: facilityRate(state, 'servers'),
     servers: facilityRate(state, 'data_centers'),
     data_centers: facilityRate(state, 'planets'),
-    planets: 0,
+    planets: clampContinuous(state.planetGenerationPerSecond ?? 0),
   }
+}
+
+function skillEffectsFor(
+  state: BasicDysonState,
+  targetStatId: string,
+): readonly StatEffect[] {
+  if (state.skillEffectsByStat !== undefined) {
+    return state.skillEffectsByStat[targetStatId] ?? []
+  }
+  return staticSkillEffects(state.ownedSkills, targetStatId)
 }
 
 export function createBasicDysonState(
@@ -257,9 +305,13 @@ export class BasicDysonSimulationModel
       this.state.scienceMultiplier,
       this.state.panelRateMultiplier,
       this.state.panelLifetime,
+      this.state.planetGenerationPerSecond ?? 0,
       this.state.ownedSkills.length,
       ...Object.values(this.state.facilities).flat(),
       ...Object.values(this.state.modifiers),
+      ...Object.values(this.state.skillEffectsByStat ?? {})
+        .flat()
+        .flatMap((effect) => [effect.value, effect.order]),
       ...Object.values(this.state.rates),
       ...Object.values(this.pending),
     ]

@@ -1,4 +1,5 @@
 import type { DysonCompatibilityTuning } from '../game-state/compatibilityTuning'
+import type { DysonSkillEffectEvaluationSnapshot } from '../game-state/skillEffectEvaluationSnapshot'
 import type {
   CanonicalFacilityId,
   CanonicalGameStateV1,
@@ -32,8 +33,14 @@ import {
   type MaterializedDysonResearchEffect,
 } from './dysonResearchEffects'
 import { deriveSecretBuffs } from './secretBuffs'
-import { isSupportedStaticSkill, staticSkillEffects } from './skillEffects'
 import { calculateStat, type StatEffect } from './stat'
+import {
+  resolveDynamicSkillEffect,
+  type DynamicSkillEffectIssue,
+} from './dynamicSkillEffectResolver'
+import { evaluateSkillEffectCondition } from './skillEffectConditions'
+import { materializeSkillEffects } from './skillEffectMaterializer'
+import { publishDysonSkillEffectEvaluationSnapshot } from './dysonSnapshotPublication'
 
 export interface DysonEntitlements {
   readonly permanentDoubleIp: boolean
@@ -42,8 +49,10 @@ export interface DysonEntitlements {
 export type DysonDerivationIssueCode =
   | 'DYSON_OWNED_SKILL_UNSUPPORTED'
   | 'DYSON_QUANTUM_LEVEL_UNSUPPORTED'
+  | 'DYSON_SKILL_EFFECT_MATERIALIZATION_INVALID'
   | DysonResearchEffectIssueCode
   | MegaStructureRateIssueCode
+  | DynamicSkillEffectIssue['code']
 
 export interface DysonDerivationIssue {
   readonly code: DysonDerivationIssueCode
@@ -62,12 +71,19 @@ export interface DerivedBasicDysonState {
     readonly panelsPerSecond: number
     readonly panelLifetimeSeconds: number
   }
+  readonly auxiliary: {
+    readonly planetGenerationPerSecond: number
+    readonly scienceBoostPerSecond: number
+    readonly moneyUpgradePerSecond: number
+    readonly tinkerAssemblyYield: number
+  }
   readonly facilityModifiers: Readonly<
     Record<CanonicalFacilityId, number>
   >
   readonly rates: Readonly<BasicDysonRates>
   readonly megaRates: Readonly<MegaStructureRates>
   readonly productionArrivalRates: Readonly<DysonProductionArrivalRates>
+  readonly nextEvaluationSnapshot: Readonly<DysonSkillEffectEvaluationSnapshot>
   readonly entitlements: DysonEntitlements
 }
 
@@ -105,6 +121,7 @@ export function deriveBasicDysonState(
   state: CanonicalGameStateV1,
   tuning: Readonly<DysonCompatibilityTuning>,
   entitlements: DysonEntitlements,
+  evaluationSnapshot: Readonly<DysonSkillEffectEvaluationSnapshot>,
 ): DysonDerivationResult {
   const issues = findUnsupportedDependencies(state)
   if (issues.length > 0) {
@@ -114,7 +131,15 @@ export function deriveBasicDysonState(
   const ownedSkills = Object.entries(state.skills.byId)
     .filter(([, skill]) => skill.owned)
     .map(([id]) => id)
-    .sort()
+  const skillEffects = materializeCanonicalSkillEffects(
+    state,
+    tuning,
+    evaluationSnapshot,
+    ownedSkills,
+  )
+  if (!skillEffects.ok) {
+    return { ok: false, issues: Object.freeze([skillEffects.issue]) }
+  }
   const secrets = deriveSecretBuffs(
     state.infinity.secretsOfTheUniverse,
   )
@@ -134,7 +159,7 @@ export function deriveBasicDysonState(
   const avocadoMultiplier = avocadoDysonMultiplier(state.avocado)
   const moneyMultiplier = calculateStat(1, [
     ...effectsFor(research.effects, 'Global.MoneyMultiplier'),
-    ...staticSkillEffects(ownedSkills, 'Global.MoneyMultiplier'),
+    ...effectsAt(skillEffects.byStat, 'Global.MoneyMultiplier'),
     multiplierEffect(
       'prestige.cash_multiplier',
       quantumCashMultiplier(state.quantum),
@@ -153,7 +178,7 @@ export function deriveBasicDysonState(
   ].filter(isEffect))
   const scienceMultiplier = calculateStat(1, [
     ...effectsFor(research.effects, 'Global.ScienceMultiplier'),
-    ...staticSkillEffects(ownedSkills, 'Global.ScienceMultiplier'),
+    ...effectsAt(skillEffects.byStat, 'Global.ScienceMultiplier'),
     multiplierEffect(
       'prestige.science_multiplier',
       quantumScienceMultiplier(state.quantum),
@@ -172,12 +197,39 @@ export function deriveBasicDysonState(
   ].filter(isEffect))
   const panelLifetime = calculateStat(10, [
     ...effectsFor(research.effects, 'Global.PanelLifetime'),
-    ...staticSkillEffects(ownedSkills, 'Global.PanelLifetime'),
+    ...effectsAt(skillEffects.byStat, 'Global.PanelLifetime'),
   ])
+  const planetGenerationPerSecond = calculateStat(
+    0,
+    effectsAt(skillEffects.byStat, 'Global.PlanetsPerSecond'),
+  )
+  const scientificPlanetsProduction = calculateStat(
+    0,
+    effectsAt(skillEffects.byStat, 'Global.PlanetsPerSecond').filter(
+      (effect) =>
+        effect.id ===
+        'effect.scientificPlanets.planets_per_second',
+    ),
+  )
+  const scienceBoostPerSecond = calculateStat(
+    0,
+    effectsAt(skillEffects.byStat, 'Global.ScienceBoostPerSecond'),
+  )
+  const moneyUpgradePerSecond = calculateStat(
+    0,
+    effectsAt(
+      skillEffects.byStat,
+      'Global.MoneyMultiUpgradePerSecond',
+    ),
+  )
+  const tinkerAssemblyYield = calculateStat(
+    0,
+    effectsAt(skillEffects.byStat, 'Global.Tinker.AssemblyYield'),
+  )
   const facilityModifiers = deriveFacilityModifiers(
     state,
     research.effects,
-    ownedSkills,
+    skillEffects.byStat,
     secrets.multipliers,
     avocadoMultiplier,
   )
@@ -205,7 +257,9 @@ export function deriveBasicDysonState(
     scienceMultiplier,
     panelRateMultiplier: tuning.panelsPerSecMulti,
     panelLifetime,
+    planetGenerationPerSecond,
     ownedSkills,
+    skillEffectsByStat: skillEffects.byStat,
     facilities: Object.fromEntries(
       BASIC_DYSON_FACILITY_IDS.map((id) => [
         id,
@@ -224,6 +278,14 @@ export function deriveBasicDysonState(
       roundedBulkBuy: state.dyson.automation.roundedBulkBuy,
     },
   })
+  const nextEvaluationSnapshot =
+    publishDysonSkillEffectEvaluationSnapshot(state, {
+      panelsPerSecond: model.rates.panels,
+      panelLifetimeSeconds: panelLifetime,
+      scienceMultiplier,
+      managerAssemblyLineProduction: model.rates.assembly_lines,
+      scientificPlanetsProduction,
+    })
 
   return {
     ok: true,
@@ -238,6 +300,12 @@ export function deriveBasicDysonState(
         panelsPerSecond: model.rates.panels,
         panelLifetimeSeconds: panelLifetime,
       }),
+      auxiliary: Object.freeze({
+        planetGenerationPerSecond,
+        scienceBoostPerSecond,
+        moneyUpgradePerSecond,
+        tinkerAssemblyYield,
+      }),
       facilityModifiers: Object.freeze(facilityModifiers),
       rates: Object.freeze({ ...model.rates }),
       megaRates: mega.rates,
@@ -245,6 +313,7 @@ export function deriveBasicDysonState(
         model.rates,
         mega.rates,
       ),
+      nextEvaluationSnapshot,
       entitlements: Object.freeze({ ...entitlements }),
     }),
   }
@@ -254,15 +323,6 @@ function findUnsupportedDependencies(
   state: CanonicalGameStateV1,
 ): DysonDerivationIssue[] {
   const issues: DysonDerivationIssue[] = []
-  for (const [id, skill] of Object.entries(state.skills.byId)) {
-    if (skill.owned && !isSupportedStaticSkill(id)) {
-      issues.push({
-        code: 'DYSON_OWNED_SKILL_UNSUPPORTED',
-        path: `skills.byId.${id}`,
-        detail: `Owned skill '${id}' is not characterized by the Basic Dyson stat pipeline.`,
-      })
-    }
-  }
   for (const [id, levels] of [
     ['cashBonusLevels', state.quantum.cashBonusLevels],
     ['scienceBonusLevels', state.quantum.scienceBonusLevels],
@@ -302,7 +362,9 @@ function isEffect(effect: StatEffect | undefined): effect is StatEffect {
 function deriveFacilityModifiers(
   state: CanonicalGameStateV1,
   researchEffects: readonly MaterializedDysonResearchEffect[],
-  ownedSkills: readonly string[],
+  skillEffectsByStat: Readonly<
+    Record<string, readonly StatEffect[]>
+  >,
   secrets: Readonly<{
     assemblyLines: number
     aiManagers: number
@@ -340,7 +402,7 @@ function deriveFacilityModifiers(
       const target = FACILITY_MODIFIER_STATS[id]
       const effects: StatEffect[] = [
         ...effectsFor(researchEffects, target),
-        ...staticSkillEffects(ownedSkills, target),
+        ...effectsAt(skillEffectsByStat, target),
       ]
       const infinity = infinityFacilityMultiplier(
         state.infinity.points,
@@ -354,4 +416,132 @@ function deriveFacilityModifiers(
       return [id, calculateStat(1, [...effects, ...later])]
     }),
   ) as Record<CanonicalFacilityId, number>
+}
+
+const MATERIALIZED_SKILL_STATS = [
+  'Global.MoneyMultiplier',
+  'Global.ScienceMultiplier',
+  'Global.PanelLifetime',
+  'Global.PanelsPerSecond',
+  'Global.PlanetsPerSecond',
+  'Global.MoneyPerSecond',
+  'Global.SciencePerSecond',
+  'Global.ScienceBoostPerSecond',
+  'Global.MoneyMultiUpgradePerSecond',
+  'Global.Tinker.AssemblyYield',
+  ...Object.values(FACILITY_MODIFIER_STATS),
+  'Facility.AssemblyLine.Production',
+  'Facility.Manager.Production',
+  'Facility.Server.Production',
+  'Facility.DataCenter.Production',
+  'Facility.Planet.Production',
+] as const
+
+function materializeCanonicalSkillEffects(
+  state: CanonicalGameStateV1,
+  tuning: Readonly<DysonCompatibilityTuning>,
+  snapshot: Readonly<DysonSkillEffectEvaluationSnapshot>,
+  ownedSkillIds: readonly string[],
+):
+  | {
+      readonly ok: true
+      readonly byStat: Readonly<
+        Record<string, readonly StatEffect[]>
+      >
+    }
+  | { readonly ok: false; readonly issue: DysonDerivationIssue } {
+  const owned = new Set(ownedSkillIds)
+  let dynamicIssue: DynamicSkillEffectIssue | undefined
+  try {
+    const entries = MATERIALIZED_SKILL_STATS.map((statId) => {
+      const facilityId = facilityForStat(statId)
+      const effects = materializeSkillEffects({
+        ownedSkillIds: owned,
+        targetStatId: statId,
+        facility:
+          facilityId === undefined
+            ? undefined
+            : { id: facilityId, tags: [] },
+        isConditionMet: (_effectId, condition) =>
+          evaluateSkillEffectCondition(condition, {
+            facilities: state.dyson.facilities,
+            currentFacility:
+              facilityId === undefined
+                ? undefined
+                : { owned: state.dyson.facilities[facilityId] },
+          }),
+        resolveDynamicValue: (effectId) => {
+          const result = resolveDynamicSkillEffect(
+            effectId,
+            state,
+            tuning,
+            snapshot,
+          )
+          if (!result.handled) return undefined
+          if (!result.ok) {
+            dynamicIssue = result.issue
+            throw new Error(result.issue.detail)
+          }
+          return result.value
+        },
+      })
+      return [statId, effects] as const
+    })
+    return {
+      ok: true,
+      byStat: Object.freeze(Object.fromEntries(entries)),
+    }
+  } catch (error) {
+    if (dynamicIssue !== undefined) {
+      return { ok: false, issue: dynamicIssue }
+    }
+    return {
+      ok: false,
+      issue: {
+        code: 'DYSON_SKILL_EFFECT_MATERIALIZATION_INVALID',
+        path: 'skills',
+        detail:
+          error instanceof Error
+            ? error.message
+            : 'Skill-effect materialization failed.',
+      },
+    }
+  }
+}
+
+function effectsAt(
+  byStat: Readonly<Record<string, readonly StatEffect[]>>,
+  statId: string,
+): readonly StatEffect[] {
+  return byStat[statId] ?? []
+}
+
+function facilityForStat(
+  statId: string,
+): CanonicalFacilityId | undefined {
+  switch (statId) {
+    case 'Facility.AssemblyLine.Modifier':
+    case 'Facility.AssemblyLine.Production':
+      return 'assembly_lines'
+    case 'Facility.Manager.Modifier':
+    case 'Facility.Manager.Production':
+      return 'ai_managers'
+    case 'Facility.Server.Modifier':
+    case 'Facility.Server.Production':
+      return 'servers'
+    case 'Facility.DataCenter.Modifier':
+    case 'Facility.DataCenter.Production':
+      return 'data_centers'
+    case 'Facility.Planet.Modifier':
+    case 'Facility.Planet.Production':
+      return 'planets'
+    case 'Facility.Matrioshka.Modifier':
+      return 'matrioshka_brains'
+    case 'Facility.Birch.Modifier':
+      return 'birch_planets'
+    case 'Facility.Galactic.Modifier':
+      return 'galactic_brains'
+    default:
+      return undefined
+  }
 }

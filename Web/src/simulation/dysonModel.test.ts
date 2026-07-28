@@ -192,6 +192,35 @@ describe('static Dyson skill effects', () => {
       }),
     ).toThrow(/not yet been characterized/)
   })
+
+  test('uses pre-materialized canonical effects instead of the temporary skill helper', () => {
+    const baseline = createBasicDysonState(fixture.initialState)
+    const state = createBasicDysonState({
+      ...fixture.initialState,
+      ownedSkills: ['androids'],
+      skillEffectsByStat: {
+        'Global.PanelsPerSecond': [
+          {
+            id: 'test.dynamic-panels',
+            operation: 'multiply',
+            value: 3,
+            order: 30,
+          },
+        ],
+        'Facility.AssemblyLine.Production': [
+          {
+            id: 'test.dynamic-assembly',
+            operation: 'multiply',
+            value: 4,
+            order: 30,
+          },
+        ],
+      },
+    })
+
+    expect(state.rates.panels).toBe(baseline.rates.panels * 3)
+    expect(state.rates.bots).toBe(baseline.rates.bots * 4)
+  })
 })
 
 function infinityReadyState(

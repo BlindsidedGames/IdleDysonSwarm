@@ -242,20 +242,27 @@ Original prompt: Create a separate `Idle Dyson Swarm Web` project beside the Uni
   spending, per-target audit results and persistent start-index advancement.
 - Current headless validation: 320 tests, TypeScript checks, lint, production
   build and deterministic verification of 559 Unity assets across 34 types.
+- Replaced canonical derivation's temporary three-skill helper with the strict
+  exported-database materializer and central dynamic resolver.
+- Added pre-materialized effect maps to the Basic rate model, including planet
+  generation and Money/Science per-second power effects.
+- Rebuild and atomically publish Rudimentary Singularity, Pocket Dimensions,
+  panel, lifetime, science, scientific-planet and manager-production snapshot
+  values after each canonical recalculation.
+- Added canonical research automation with ordinal rotation, shared science,
+  all buy modes, prerequisites and repeatable-research discounts.
+- Current committed-slice validation: 343 tests plus TypeScript checks, lint,
+  production build and deterministic verification of 559 Unity assets across
+  34 types.
 
 ## TODO
 
 - Map the remaining Unity gameplay systems and build a clean,
   dependency-ordered headless port plan.
-- Replace the temporary Basic Dyson rate helper with one immutable
-  prior-derived effect snapshot and publish the next complete derived snapshot
-  atomically.
 - Complete the remaining early-game tinker behavior in the headless model.
 - Expand Unity golden masters into research behavior.
-- Integrate the characterized dynamic/conditional skill resolvers through an
-  immutable prior-derived evaluation snapshot, then replace the temporary
-  Basic Dyson skill helper.
-- Expand research automation through the same canonical event scheduler.
+- Route canonical research and eight-facility automation commands through the
+  transactional application scheduler.
 - Port Infinity skill auto-assignment and the remaining dynamic derived-state
   rebuilding.
 - Port Dream and Reality models after Dyson exact parity is established.

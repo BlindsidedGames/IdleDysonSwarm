@@ -35,6 +35,16 @@ const noEntitlements = Object.freeze({
   permanentDoubleIp: false,
 })
 
+const neutralEvaluationSnapshot = Object.freeze({
+  panelsPerSecond: 1,
+  panelLifetimeSeconds: 10,
+  scienceMultiplier: 1,
+  rudimentarySingularityProduction: 0,
+  pocketDimensionsProduction: 0,
+  scientificPlanetsProduction: 0,
+  managerAssemblyLineProduction: 0,
+})
+
 interface GoldenRates {
   readonly money: number
   readonly science: number
@@ -170,6 +180,7 @@ function requireDerived(
     state,
     tuning,
     noEntitlements,
+    neutralEvaluationSnapshot,
   )
   expect(result.ok).toBe(true)
   if (!result.ok) {
@@ -396,11 +407,13 @@ describe('canonical Basic Dyson derivation', () => {
       state,
       neutralTuning,
       noEntitlements,
+      neutralEvaluationSnapshot,
     )
     const second = deriveBasicDysonState(
       state,
       neutralTuning,
       noEntitlements,
+      neutralEvaluationSnapshot,
     )
 
     expect(first).toEqual(second)
@@ -409,21 +422,84 @@ describe('canonical Basic Dyson derivation', () => {
     expect(noEntitlements).toEqual(entitlementsBefore)
   })
 
-  test('fails closed for an unsupported owned skill', () => {
+  test('materializes characterized dynamic skills through the old snapshot', () => {
     const state = characterizedState(['androids'])
 
-    expect(
-      deriveBasicDysonState(state, neutralTuning, noEntitlements),
-    ).toEqual({
-      ok: false,
-      issues: [
-        {
-          code: 'DYSON_OWNED_SKILL_UNSUPPORTED',
-          path: 'skills.byId.androids',
-          detail:
-            "Owned skill 'androids' is not characterized by the Basic Dyson stat pipeline.",
-        },
-      ],
+    const result = deriveBasicDysonState(
+      state,
+      neutralTuning,
+      noEntitlements,
+      {
+        ...neutralEvaluationSnapshot,
+        panelLifetimeSeconds: 20,
+      },
+    )
+    expect(result.ok).toBe(true)
+    if (!result.ok) throw new Error(JSON.stringify(result.issues))
+    expect(result.value.globals.panelLifetimeSeconds).toBe(10)
+    expect(result.value.nextEvaluationSnapshot).toMatchObject({
+      panelsPerSecond: result.value.rates.panels,
+      panelLifetimeSeconds: 10,
+      scienceMultiplier: result.value.globals.scienceMultiplier,
+      managerAssemblyLineProduction:
+        result.value.rates.assembly_lines,
     })
+  })
+
+  test('applies dynamic panel, planet and per-second effects in one recalculation', () => {
+    const source = characterizedState([
+      'panelMaintenance',
+      'planetAssembly',
+      'powerOverwhelming',
+    ])
+    const state: CanonicalGameStateV1 = {
+      ...source,
+      dyson: {
+        ...source.dyson,
+        botDistribution: 0.25,
+        facilities: {
+          ...source.dyson.facilities,
+          assembly_lines: [5, 5],
+        },
+      },
+    }
+    const result = deriveBasicDysonState(
+      state,
+      neutralTuning,
+      noEntitlements,
+      neutralEvaluationSnapshot,
+    )
+    expect(result.ok).toBe(true)
+    if (!result.ok) throw new Error(JSON.stringify(result.issues))
+
+    expect(result.value.globals.panelLifetimeSeconds).toBe(85)
+    expect(result.value.auxiliary.planetGenerationPerSecond).toBe(1)
+    const unpoweredMoney =
+      result.value.rates.panels *
+      result.value.globals.panelLifetimeSeconds *
+      result.value.globals.moneyMultiplier
+    expect(result.value.rates.money).toBeCloseTo(
+      Math.pow(unpoweredMoney, 1.03),
+      14,
+    )
+  })
+
+  test('enforces linked Avocado manual-count conditions from canonical facilities', () => {
+    const below = characterizedState(['avocados'])
+    const atThreshold: CanonicalGameStateV1 = {
+      ...below,
+      dyson: {
+        ...below.dyson,
+        facilities: {
+          ...below.dyson.facilities,
+          assembly_lines: [0, 69],
+        },
+      },
+    }
+    const belowResult = requireDerived(below)
+    const thresholdResult = requireDerived(atThreshold)
+    expect(thresholdResult.rates.bots).toBe(
+      belowResult.rates.bots * (69 / 5) * 2,
+    )
   })
 })

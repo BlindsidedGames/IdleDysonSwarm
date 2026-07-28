@@ -114,6 +114,19 @@ must materialize every active effect from one immutable old snapshot and then
 publish the new derived rates atomically. Recursively calculating those inputs
 while resolving an effect would not be parity-correct.
 
+That integration is now active. Canonical derivation consumes the imported
+snapshot once, materializes all exported skill effects, rebuilds Rudimentary
+Singularity and the complete Pocket Dimensions intermediate chain, then
+publishes the next frozen snapshot with panel, lifetime, science, scientific
+planet and manager-production values together. The Basic model accepts the
+resulting stat-effect map and no longer limits canonical derivation to three
+hand-picked skills.
+
+Research automation also consumes canonical state and exported definitions in
+ordinal Unity presenter order. It preserves the rotating durable start index,
+global/per-research gates, prerequisites, shared science spending, buy modes,
+rounded buying, repeatable-research discounts and immutable publication.
+
 ## Mega-structure checkpoint
 
 All three mega tiers now have a canonical headless domain path:
