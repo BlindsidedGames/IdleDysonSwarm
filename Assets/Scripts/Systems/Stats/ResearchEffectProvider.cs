@@ -8,6 +8,41 @@ namespace Systems.Stats
 {
     public static class ResearchEffectProvider
     {
+        private readonly struct IndexedResearchEffect
+        {
+            public IndexedResearchEffect(
+                ResearchDefinition research,
+                EffectDefinition effect)
+            {
+                Research = research;
+                Effect = effect;
+            }
+
+            public ResearchDefinition Research { get; }
+            public EffectDefinition Effect { get; }
+        }
+
+        private static readonly object IndexGate = new();
+        private static ResearchDatabase _indexedDatabase;
+        private static int _indexedResearchCount = -1;
+        private static Dictionary<string, List<IndexedResearchEffect>>
+            _effectsByStat =
+                new(StringComparer.Ordinal);
+
+        public static void InvalidateIndex()
+        {
+            lock (IndexGate)
+            {
+                _indexedDatabase = null;
+                _indexedResearchCount = -1;
+                _effectsByStat =
+                    new Dictionary<
+                        string,
+                        List<IndexedResearchEffect>>(
+                        StringComparer.Ordinal);
+            }
+        }
+
         public static bool TryBuildGlobalEffects(string targetStatId, EffectContext context,
             out List<StatEffect> effects)
         {
@@ -34,44 +69,111 @@ namespace Systems.Stats
             }
 
             DysonVerseInfinityData infinityData = context.InfinityData;
-            foreach (ResearchDefinition research in registry.researchDatabase.research)
+            IReadOnlyList<IndexedResearchEffect> indexedEffects =
+                GetEffects(
+                    registry.researchDatabase,
+                    targetStatId);
+            for (int index = 0;
+                 index < indexedEffects.Count;
+                 index++)
             {
-                if (research == null || string.IsNullOrEmpty(research.id)) continue;
-                if (research.effects == null || research.effects.Count == 0) continue;
-
+                ResearchDefinition research =
+                    indexedEffects[index].Research;
+                EffectDefinition effect =
+                    indexedEffects[index].Effect;
                 double level = GetResearchLevel(infinityData, research);
                 if (level <= 0) continue;
+                if (!MatchesFacility(effect, facility)) continue;
+                if (!EffectConditionEvaluator.IsConditionMet(effect, facility, state, context)) continue;
 
-                foreach (EffectDefinition effect in research.effects)
+                double value = ResolveEffectValue(research, effect, level, context, facility, state);
+                if (ShouldSkipEffect(effect.operation, value)) continue;
+
+                string sourceName = !string.IsNullOrEmpty(effect.displayName)
+                    ? effect.displayName
+                    : !string.IsNullOrEmpty(research.displayName)
+                        ? research.displayName
+                        : research.id;
+
+                effects.Add(new StatEffect
                 {
-                    if (effect == null) continue;
-                    if (!MatchesStat(effect, targetStatId)) continue;
-                    if (!MatchesFacility(effect, facility)) continue;
-                    if (!EffectConditionEvaluator.IsConditionMet(effect, facility, state, context)) continue;
-
-                    double value = ResolveEffectValue(research, effect, level, context, facility, state);
-                    if (ShouldSkipEffect(effect.operation, value)) continue;
-
-                    string sourceName = !string.IsNullOrEmpty(effect.displayName)
-                        ? effect.displayName
-                        : !string.IsNullOrEmpty(research.displayName)
-                            ? research.displayName
-                            : research.id;
-
-                    effects.Add(new StatEffect
-                    {
-                        Id = string.IsNullOrEmpty(effect.id) ? research.id : effect.id,
-                        SourceName = sourceName,
-                        TargetStatId = effect.targetStatId,
-                        Operation = effect.operation,
-                        Value = value,
-                        Order = effect.order,
-                        ConditionId = effect.conditionId
-                    });
-                }
+                    Id = string.IsNullOrEmpty(effect.id) ? research.id : effect.id,
+                    SourceName = sourceName,
+                    TargetStatId = effect.targetStatId,
+                    Operation = effect.operation,
+                    Value = value,
+                    Order = effect.order,
+                    ConditionId = effect.conditionId
+                });
             }
 
             return true;
+        }
+
+        private static IReadOnlyList<IndexedResearchEffect> GetEffects(
+            ResearchDatabase database,
+            string targetStatId)
+        {
+            int count = database?.research?.Count ?? 0;
+            if (!ReferenceEquals(database, _indexedDatabase) ||
+                count != _indexedResearchCount)
+            {
+                lock (IndexGate)
+                {
+                    if (!ReferenceEquals(database, _indexedDatabase) ||
+                        count != _indexedResearchCount)
+                    {
+                        var rebuilt =
+                            new Dictionary<
+                                string,
+                                List<IndexedResearchEffect>>(
+                                StringComparer.Ordinal);
+                        if (database?.research != null)
+                        {
+                            foreach (ResearchDefinition research
+                                     in database.research)
+                            {
+                                if (research?.effects == null)
+                                    continue;
+                                foreach (EffectDefinition effect
+                                         in research.effects)
+                                {
+                                    if (effect == null ||
+                                        string.IsNullOrEmpty(
+                                            effect.targetStatId))
+                                    {
+                                        continue;
+                                    }
+                                    if (!rebuilt.TryGetValue(
+                                            effect.targetStatId,
+                                            out List<IndexedResearchEffect>
+                                                entries))
+                                    {
+                                        entries =
+                                            new List<
+                                                IndexedResearchEffect>();
+                                        rebuilt.Add(
+                                            effect.targetStatId,
+                                            entries);
+                                    }
+                                    entries.Add(
+                                        new IndexedResearchEffect(
+                                            research,
+                                            effect));
+                                }
+                            }
+                        }
+                        _effectsByStat = rebuilt;
+                        _indexedDatabase = database;
+                        _indexedResearchCount = count;
+                    }
+                }
+            }
+            return _effectsByStat.TryGetValue(
+                targetStatId,
+                out List<IndexedResearchEffect> result)
+                ? result
+                : Array.Empty<IndexedResearchEffect>();
         }
 
         private static double GetResearchLevel(DysonVerseInfinityData infinityData, ResearchDefinition research)
@@ -229,4 +331,3 @@ namespace Systems.Stats
         }
     }
 }
-

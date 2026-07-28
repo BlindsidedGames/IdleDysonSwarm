@@ -73,8 +73,9 @@ awarded.
 
 Ordinary and Break aggregation models changing IP power; it must not assume
 identical cycles. Coarse and deterministically subdivided projections refine
-until reset count, IP, and affected continuous state agree within 0.1%.
-Discrete flags, unlocks, purchases, caps, and special rewards remain exact.
+until aggregate reset count (rounded up to a whole cycle), IP, and affected
+continuous state agree within the user-approved 1%. Discrete reset kinds,
+flags, unlocks, caps, purchases, settings, and one-time rewards remain exact.
 The integer number of cycles fitting the interval is located, the aggregate is
 applied once, and the remainder is advanced normally.
 
@@ -152,14 +153,17 @@ cycle, and seconds per IP.
   Quantum; bot cap; and interrupted checkpoints.
 - Results are deterministic across rendered-frame chunking, yield points, and
   stored-time partitioning.
-- Aggregated reset count, IP, and affected continuous state remain within 0.1%;
+- Aggregated reset count (rounded up to a whole cycle), IP, and affected
+  continuous state remain within the user-approved 1%; discrete reset kinds,
+  flags, unlocks, caps, purchases, settings, and one-time rewards remain exact;
   discrete state and cap equality are exact.
 - No zero-time reward loop, non-finite state, negative bank, or lost time.
   Save failure publishes nothing and cancellation preserves all uncommitted
   time.
 - Active processing targets 2 ms with a hard 4 ms yield slice.
 - Performance acceptance is based on simulated work, not one selected away
-  duration. Fixtures span one minute through 100 days and report:
+  duration. Fixtures span one minute, one hour, 100 days, and the full
+  42,000,000-second stored-time cap, and report:
   scheduler passes, exact material events, analytical blocks, rejected blocks,
   reset cycles represented, and simulated seconds per block.
 - A stable interval must require work proportional to logarithmic transition
@@ -182,69 +186,89 @@ for design review rather than relaxing either requirement.
 ## Local implementation checkpoint
 
 The active and stored-time callers now use the shared event-time scheduler.
-The local implementation includes deterministic event ordering, queued player
-inputs, an independent 0.1-second automation clock, concurrent
-Reality/Dyson/Dream advancement, exact durable bot-cap handling, isolated
-stored-time candidates, cancellation, post-persistence publication, truthful
-statistics, rolling history, and aggregate stored-time presentation. Legacy
-passive offline IP has been removed.
+The implementation includes queued input boundaries, an independent
+0.1-second automation clock, concurrent Reality/Dyson/Dream advancement,
+durable bot-cap handling, isolated stored-time candidates, cancellation,
+post-persistence publication, truthful statistics, rolling history, and
+aggregate stored-time presentation. Legacy passive offline IP has been
+removed.
 
-Validated accelerators cover stable analytical production, retained-state
-ordinary Infinity, proven stable Dream intervals, and a now-authoritative
-stable-signature Break recurrence. The Break recurrence evaluates reward and
-1/60-grid duration as functions of current IP, finds the next IP at which
-either value changes, and applies each constant run arithmetically. It does
-not assume every cycle is identical.
+An independent review on 2026-07-28 found that the first automated Break
+projector was still linear for variable-duration cycles: it grouped resets
+into 256-cycle containers but evaluated every reset inside those containers.
+That structure is consistent with a multi-second or tens-of-seconds wait over
+a large reset count and is not accepted as completed batching.
 
-The exact stable Break path is shared by active and stored time. Active blocks
-stop at the independent 0.1-second automation boundary and advance Dream in
-canonical 1/60-second event slices, so a rendered-frame backlog cannot change
-Dream state. Stored time may use the validated long-Dream projector. Dyson
-automation may be skipped across a Break block only once sampled cycles are
-pinned to the 1/60 minimum, where same-boundary purchases are wiped by the
-reset and cannot affect the reward. Before that stable minimum regime,
-automation-sensitive cycles remain on the exact event path.
+The current unvalidated working changes replace that fixed container with a
+hierarchical projection:
 
-Infinity reset completion now immediately rebuilds bot distribution and
-derived production. This fixes the historical dead interval in which retained
-facilities existed after a reset but produced nothing until a later unrelated
-recalculation. With that canonical defect repaired, the earlier 1.064% result
-is obsolete: a corrected 600-second comparison now produces exactly 950 IP in
-both canonical and accelerated paths.
+- a stable candidate block may represent the entire remaining reachable
+  interval; failed validation halves the candidate instead of growing upward
+  through many smaller blocks;
+- coarse and refined midpoint integrations begin with 4 and 8 segments;
+- resolution may grow to 128 refined segments before the block is split;
+- elapsed time, IP, last reward, affected continuous state, discrete retained
+  state, automation phase, and the next exact reset signature are checked;
+- any retained purchase, unlock, first-run transition, or other signature
+  change forces a split and exact processing around that boundary;
+- active play and stored time both use resumable projection work;
+- active minimum-duration blocks stop before the independent automation
+  boundary, allowing the shared scheduler to execute
+  production -> automation -> reset in the authored order;
+- threshold scheduling no longer promotes a merely-nearby bot balance to the
+  Break target. The event horizon advances beyond representational rounding
+  without changing a below-threshold starting state.
+- stable cycles longer than five seconds cross the former probe horizon by
+  advancing analytically to each real automation purchase, applying that event
+  exactly, then resuming the analytical interval;
+- the one-cycle probe, coarse/refined samples, and exact endpoint checks retain
+  their isolated in-progress state and process no more than 16 material
+  boundaries in one projection step, preventing an event-dense cycle from
+  hiding an unbounded synchronous loop inside the outer frame budget;
+- every one-cycle probe is also bounded by the simulated time it can usefully
+  consume. Reaching the requested endpoint without a reset records a bounded
+  no-reset result instead of continuing toward the million-boundary safety
+  ceiling; endpoint validation compares the two candidates at the common
+  requested time when neither projection can fit another reset;
+- active Dream research, community/factory boosts, and Double Time advance in
+  the same isolated candidate up to their independent completion, expiry, or
+  depletion boundary;
+- Dream coarse/fine refinement is resumable too: warmup, midpoint projection,
+  exact tail, and validation advance in bounded 32-segment steps, retain the
+  isolated candidate across yields, and publish only after convergence;
+- post-disaster Dream states use validated adaptive projection, including
+  partial charge and bulk railgun volleys with exact discrete shot/panel
+  agreement; disaster stages 0-3 batch only whole ticks proven by the quiet
+  horizon to contain no Dream material event, leaving the exact reset boundary
+  to the canonical Dream-before-Infinity scheduler;
+- failed concurrent Dream validation applies a retry delay instead of
+  rebuilding the same accepted Infinity projection on every 0.1-second
+  event.
 
-Focused local validation on 2026-07-27:
+The old background task has been removed. Projection work mutates only an
+isolated candidate, can be abandoned without publishing, and is applied only
+after validation. Stored-time publication remains guarded by successful
+persistence.
 
-- Full Unity EditMode suite after the final source changes: 391/391 passed.
-- Fresh macOS Universal IL2CPP development build succeeded; the player binary
-  contains both `x86_64` and `arm64` architectures. The temporary build harness
-  was removed after validation and the artifact remains outside the repository.
-- Pure stable-cycle projection: 8/8 tests passed, including changing
-  duration/reward boundaries, refusal of an unproven signature, and refusal of
-  an unrepresentable `long` aggregate.
-- Integrated runtime/offline fixture: 24/24 tests passed.
-- Active Break: a single 10-second backlog matches both the exact canonical
-  scheduler and 100 separate 0.1-second advances for IP, reset counts, bots,
-  and Dream state.
-- Stored Break: the 600-second canonical comparison is 950/950 IP; stable
-  duration fixtures represent 60 seconds, one hour, and 100 days with 32, 44,
-  and 51 exact material events respectively.
-- The representative 18-hour enabled-automation Break fixture completed in
-  about 1.05 seconds, with 25 Break aggregate blocks and 681 exact material
-  events. This is secondary measurement evidence, not a duration-specific
-  acceptance contract.
-- The representative non-reset automation matrix represented 60 seconds, one
-  hour, and 18 hours with 6, 195, and 1,916 material events. A bounded 100-day
-  diagnostic showed that this separate path remains proportional to genuine
-  repeated Buy-Max purchase boundaries: after ten seconds of processing it
-  had represented about 8.6 simulated days, 1,249 analytical blocks, and 8,303
-  scheduler events. It is not per-tick replay, but it still needs a future
-  validated purchase-transition compressor to make very long, purchase-dense
-  intervals near-instant.
+Both the runtime and Editor/test assemblies compile successfully against the
+current Unity-generated reference sets. Fresh Unity execution is still
+required before this checkpoint can be called complete.
+The previous 391/391 EditMode result and macOS IL2CPP build predate the latest
+hierarchical-projector, active-automation, and threshold changes and therefore
+must not be represented as final evidence. Required reruns are:
 
-The remaining Infinity expansion is the plan's full pure one-cycle transition
-for signatures that are not yet covered by the exact stable evaluator:
-persistent skill side effects, changing pre-minimum automation purchases,
-retained upstream production chains, and other discrete reset-side changes.
-These continue through the exact resumable fallback rather than an unproven
-projection. Superseded canonical paths remain as characterization and safety
-fallbacks until those signatures and developer shadow comparison are covered.
+- focused one-cycle, threshold, active automation-tie, cancellation, and
+  hierarchical-block tests;
+- exact-reference comparisons for the one-minute, one-hour, 100-day, and
+  42,000,000-second duration matrix;
+- full EditMode and relevant PlayMode suites;
+- a fresh supported IL2CPP build after the final source changes;
+- cold and warm work-count plus wall-clock measurements from the complete
+  stored-time runner, not only the projection helper.
+
+The exact fallback remains necessary for persistent skill side effects and
+other discrete reset-side changes that cannot yet be proven stable. Those
+cases remain responsive through cooperative yielding. Both Infinity-cycle
+evaluation and concurrent Dream refinement now retain isolated in-progress
+state across those yields instead of hiding long validation work inside one
+outer scheduler call.

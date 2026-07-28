@@ -10,6 +10,21 @@ namespace Buildings
     /// </summary>
     public class BotsAutoBuy : MonoBehaviour
     {
+#if UNITY_EDITOR
+        public static long DiagnosticAutomationTicks {
+            get;
+            private set;
+        }
+
+        public static void ResetAutomationDiagnostics()
+        {
+            DiagnosticAutomationTicks = 0L;
+        }
+#endif
+        public static string LastRuleCaptureDiagnostic {
+            get;
+            private set;
+        }
         [SerializeField] private FacilityBuildingPresenter assemblyLineManager;
         [SerializeField] private FacilityBuildingPresenter aiManager;
         [SerializeField] private FacilityBuildingPresenter serverManager;
@@ -42,6 +57,9 @@ namespace Buildings
         public void RunAutomationTick(bool forceBuyMax = false)
         {
             if (!isActiveAndEnabled) return;
+#if UNITY_EDITOR
+            DiagnosticAutomationTicks++;
+#endif
             SimulationAutomationPolicy policy = forceBuyMax
                 ? SimulationAutomationPolicy.ForceBuyMax
                 : SimulationAutomationPolicy.PreserveConfiguredMode;
@@ -92,7 +110,79 @@ namespace Buildings
                 AutomationRotation.Advance(
                     oracle.saveSettings.dysonAutomationTargetIndex,
                     AutomationTargetCount,
-                    ticks);
+                ticks);
+        }
+
+        public bool TryCaptureAutomationRules(
+            out DysonFacilityAutomationRule[] rules)
+        {
+            LastRuleCaptureDiagnostic = null;
+            rules = new DysonFacilityAutomationRule[
+                AutomationTargetCount];
+            if (!TryCaptureRule(
+                assemblyLineManager,
+                0,
+                rules) ||
+                !TryCaptureRule(aiManager, 1, rules) ||
+                !TryCaptureRule(serverManager, 2, rules) ||
+                !TryCaptureRule(dataCenterManager, 3, rules) ||
+                !TryCaptureRule(planetManager, 4, rules) ||
+                !TryCaptureRule(
+                matrioshkaPresenter,
+                oracle.saveSettings.infinityAutoMatrioshkaBrains,
+                5,
+                rules) ||
+                !TryCaptureRule(
+                birchPresenter,
+                oracle.saveSettings.infinityAutoBirchPlanets,
+                6,
+                rules) ||
+                !TryCaptureRule(
+                galacticPresenter,
+                oracle.saveSettings.infinityAutoGalacticBrains,
+                7,
+                rules))
+            {
+                return false;
+            }
+            LastRuleCaptureDiagnostic = "captured";
+            return true;
+        }
+
+        private static bool TryCaptureRule(
+            FacilityBuildingPresenter presenter,
+            int index,
+            DysonFacilityAutomationRule[] rules)
+        {
+            if (presenter == null) return true;
+            if (!presenter.TryCreateAutomationRule(out var rule))
+            {
+                LastRuleCaptureDiagnostic =
+                    $"facility_{index}";
+                return false;
+            }
+            rules[index] = rule;
+            return true;
+        }
+
+        private static bool TryCaptureRule(
+            MegaStructurePresenter presenter,
+            bool toggleEnabled,
+            int index,
+            DysonFacilityAutomationRule[] rules)
+        {
+            if (!toggleEnabled) return true;
+            if (presenter == null) return true;
+            if (!presenter.TryCreateAutomationRule(
+                    toggleEnabled,
+                    out var rule))
+            {
+                LastRuleCaptureDiagnostic =
+                    $"mega_{index}";
+                return false;
+            }
+            rules[index] = rule;
+            return true;
         }
 
         private static bool WouldPurchase(

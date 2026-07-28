@@ -87,6 +87,48 @@ namespace Systems.Simulation
     {
         private const double ExponentEpsilon = 1e-9d;
 
+        public static bool WouldPurchaseAtState(
+            SaveDataSettings settings,
+            DysonFacilityAutomationRule[] facilityRules,
+            ResearchAutomationRule[] researchRules,
+            DysonAnalyticalState state)
+        {
+            if (settings == null)
+                return false;
+
+            int facilityCount =
+                facilityRules?.Length ?? 0;
+            for (int index = 0;
+                 index < facilityCount;
+                 index++)
+            {
+                if (WouldPurchaseFacilityAtState(
+                        settings,
+                        facilityRules[index],
+                        state))
+                {
+                    return true;
+                }
+            }
+
+            int researchCount =
+                researchRules?.Length ?? 0;
+            for (int index = 0;
+                 index < researchCount;
+                 index++)
+            {
+                if (WouldPurchaseResearchAtState(
+                        settings,
+                        researchRules[index],
+                        state))
+                {
+                    return true;
+                }
+            }
+
+            return false;
+        }
+
         public static bool TryPurchaseFacility(
             SaveDataSettings settings,
             DysonFacilityAutomationRule rule,
@@ -113,7 +155,7 @@ namespace Systems.Simulation
             if (infinity == null ||
                 !NumericSafety.IsFinite(infinity.money) ||
                 infinity.money < 0d ||
-                !FacilityCountAccessor.TryGetCount(
+                !TryGetFacilityCounts(
                     infinity,
                     rule.FacilityId,
                     out double[] counts) ||
@@ -129,7 +171,7 @@ namespace Systems.Simulation
             if (rule.UseAssemblyMegaDiscount &&
                 skills != null &&
                 skills.assemblyMegaLines &&
-                FacilityCountAccessor.TryGetCount(
+                TryGetFacilityCounts(
                     infinity,
                     "planets",
                     out double[] planets) &&
@@ -157,6 +199,17 @@ namespace Systems.Simulation
             double costLevel = rule.SubtractRetainedTen
                 ? Math.Max(0d, counts[1] - 10d)
                 : counts[1];
+            double nextCost = CalcUtils.BuyXCost(
+                1d,
+                modifiedBaseCost,
+                rule.CostExponent,
+                costLevel);
+            if (!NumericSafety.IsFinite(nextCost) ||
+                nextCost <= 0d ||
+                infinity.money < nextCost)
+            {
+                return false;
+            }
             long affordable = CalcUtils.MaxAffordableLong(
                 infinity.money,
                 modifiedBaseCost,
@@ -274,6 +327,19 @@ namespace Systems.Simulation
             bool linear =
                 Math.Abs(rule.Exponent - 1d) <=
                 ExponentEpsilon;
+            double nextCost = linear
+                ? costBase
+                : CalcUtils.BuyXCost(
+                    1d,
+                    costBase,
+                    rule.Exponent,
+                    currentLevel);
+            if (!NumericSafety.IsFinite(nextCost) ||
+                nextCost <= 0d ||
+                infinity.science < nextCost)
+            {
+                return false;
+            }
             long affordable = linear
                 ? NumericSafety.ToLongFloor(
                     NumericSafety.Divide(
@@ -376,7 +442,7 @@ namespace Systems.Simulation
             {
                 return true;
             }
-            if (!FacilityCountAccessor.TryGetCount(
+            if (!TryGetFacilityCounts(
                     infinity,
                     rule.PrerequisiteFacilityId,
                     out double[] counts) ||
@@ -393,6 +459,265 @@ namespace Systems.Simulation
                 NumericSafety.ClampContinuous(counts[0]),
                 NumericSafety.ClampContinuous(counts[1])).Value >=
                    required;
+        }
+
+        private static bool WouldPurchaseFacilityAtState(
+            SaveDataSettings settings,
+            DysonFacilityAutomationRule rule,
+            DysonAnalyticalState state)
+        {
+            if (!rule.Enabled ||
+                !rule.Unlocked ||
+                rule.MaximumQuantity <= 0L ||
+                string.IsNullOrEmpty(rule.FacilityId) ||
+                !NumericSafety.IsFinite(rule.BaseCost) ||
+                rule.BaseCost <= 0d ||
+                !NumericSafety.IsFinite(rule.CostExponent) ||
+                rule.CostExponent <= 0d ||
+                !NumericSafety.IsFinite(state.Money) ||
+                state.Money < 0d)
+            {
+                return false;
+            }
+
+            DysonVerseInfinityData infinity =
+                settings.dysonVerseSaveData
+                    ?.dysonVerseInfinityData;
+            if (infinity == null ||
+                !TryGetFacilityCounts(
+                    infinity,
+                    rule.FacilityId,
+                    out double[] counts) ||
+                counts == null ||
+                counts.Length < 2 ||
+                !NumericSafety.IsFinite(counts[1]) ||
+                counts[1] < 0d)
+            {
+                return false;
+            }
+            double automatedOwned = counts[1];
+
+            double baseCost = rule.BaseCost;
+            DysonVerseSkillTreeData skills =
+                settings.dysonVerseSaveData
+                    ?.dysonVerseSkillTreeData;
+            if (rule.UseAssemblyMegaDiscount &&
+                skills != null &&
+                skills.assemblyMegaLines &&
+                TryGetFacilityCounts(
+                    infinity,
+                    "planets",
+                    out double[] planetCounts) &&
+                planetCounts != null &&
+                planetCounts.Length >= 2)
+            {
+                double totalPlanets =
+                    NumericSafety.Add(
+                        state.Planets,
+                        NumericSafety.ClampContinuous(
+                            planetCounts[1])).Value;
+                if (totalPlanets <= 0d)
+                    return false;
+                NumericResult<double> discounted =
+                    NumericSafety.Divide(
+                        baseCost,
+                        totalPlanets);
+                if (!discounted.IsSuccess ||
+                    discounted.Value <= 0d)
+                {
+                    return false;
+                }
+                baseCost = discounted.Value;
+            }
+
+            double costLevel =
+                rule.SubtractRetainedTen
+                    ? Math.Max(
+                        0d,
+                        automatedOwned - 10d)
+                    : automatedOwned;
+            double nextCost = CalcUtils.BuyXCost(
+                1d,
+                baseCost,
+                rule.CostExponent,
+                costLevel);
+            return NumericSafety.IsFinite(nextCost) &&
+                   nextCost > 0d &&
+                   state.Money >= nextCost;
+        }
+
+        private static bool WouldPurchaseResearchAtState(
+            SaveDataSettings settings,
+            ResearchAutomationRule rule,
+            DysonAnalyticalState state)
+        {
+            if (string.IsNullOrEmpty(rule.ResearchId) ||
+                !IsResearchAutomationEnabled(
+                    settings,
+                    rule.AutoBuyGroup) ||
+                !HasResearchPrerequisitesAtState(
+                    settings,
+                    rule,
+                    state) ||
+                !NumericSafety.IsFinite(rule.BaseCost) ||
+                rule.BaseCost <= 0d ||
+                !NumericSafety.IsFinite(rule.Exponent) ||
+                rule.Exponent <= 0d ||
+                !NumericSafety.IsFinite(state.Science) ||
+                state.Science < 0d)
+            {
+                return false;
+            }
+
+            DysonVerseInfinityData infinity =
+                settings.dysonVerseSaveData
+                    ?.dysonVerseInfinityData;
+            if (infinity == null)
+                return false;
+            infinity.researchLevelsById ??=
+                new Dictionary<string, double>();
+            infinity.researchLevelsById.TryGetValue(
+                rule.ResearchId,
+                out double level);
+            if (!NumericSafety.IsFinite(level) ||
+                level < 0d ||
+                (rule.MaxLevel >= 0 &&
+                 level >= rule.MaxLevel))
+            {
+                return false;
+            }
+
+            double baseCost = rule.BaseCost;
+            DysonVerseSkillTreeData skills =
+                settings.dysonVerseSaveData
+                    ?.dysonVerseSkillTreeData;
+            if (skills != null &&
+                skills.repeatableResearch &&
+                rule.PercentPerLevel > 0d)
+            {
+                NumericResult<double> divisor =
+                    NumericSafety.Add(
+                        1d,
+                        NumericSafety.Multiply(
+                            level,
+                            rule.PercentPerLevel).Value);
+                NumericResult<double> adjusted =
+                    NumericSafety.Divide(
+                        baseCost,
+                        divisor.Value);
+                if (!adjusted.IsSuccess ||
+                    adjusted.Value <= 0d)
+                {
+                    return false;
+                }
+                baseCost = adjusted.Value;
+            }
+
+            double nextCost =
+                Math.Abs(rule.Exponent - 1d) <=
+                ExponentEpsilon
+                    ? baseCost
+                    : CalcUtils.BuyXCost(
+                        1d,
+                        baseCost,
+                        rule.Exponent,
+                        level);
+            return NumericSafety.IsFinite(nextCost) &&
+                   nextCost > 0d &&
+                   state.Science >= nextCost;
+        }
+
+        private static bool HasResearchPrerequisitesAtState(
+            SaveDataSettings settings,
+            ResearchAutomationRule rule,
+            DysonAnalyticalState state)
+        {
+            DysonVerseInfinityData infinity =
+                settings.dysonVerseSaveData
+                    ?.dysonVerseInfinityData;
+            if (infinity == null)
+                return false;
+            if (rule.PrerequisiteResearchIds != null)
+            {
+                for (int index = 0;
+                     index <
+                     rule.PrerequisiteResearchIds.Length;
+                     index++)
+                {
+                    string id =
+                        rule.PrerequisiteResearchIds[index];
+                    if (string.IsNullOrEmpty(id))
+                        continue;
+                    if (infinity.researchLevelsById == null ||
+                        !infinity.researchLevelsById.TryGetValue(
+                            id,
+                            out double level) ||
+                        level <= 0d)
+                    {
+                        return false;
+                    }
+                }
+            }
+
+            if (string.IsNullOrEmpty(
+                    rule.PrerequisiteFacilityId))
+            {
+                return true;
+            }
+            if (!state.TryGetFacilityCount(
+                    rule.PrerequisiteFacilityId,
+                    out double generatedOwned) ||
+                !TryGetFacilityCounts(
+                    infinity,
+                    rule.PrerequisiteFacilityId,
+                    out double[] counts) ||
+                counts == null ||
+                counts.Length < 2)
+            {
+                return false;
+            }
+            double owned = NumericSafety.Add(
+                generatedOwned,
+                NumericSafety.ClampContinuous(
+                    counts[1])).Value;
+            double required =
+                rule.PrerequisiteFacilityOwned > 0d
+                    ? rule.PrerequisiteFacilityOwned
+                    : 1d;
+            return owned >= required;
+        }
+
+        private static bool TryGetFacilityCounts(
+            DysonVerseInfinityData infinity,
+            string facilityId,
+            out double[] counts)
+        {
+            counts = facilityId switch
+            {
+                "assembly_lines" =>
+                    infinity?.assemblyLines,
+                "ai_managers" =>
+                    infinity?.managers,
+                "servers" =>
+                    infinity?.servers,
+                "data_centers" =>
+                    infinity?.dataCenters,
+                "planets" =>
+                    infinity?.planets,
+                "matrioshka_brains" =>
+                    infinity?.matrioshkaBrains,
+                "birch_planets" =>
+                    infinity?.birchPlanets,
+                "galactic_brains" =>
+                    infinity?.galacticBrains,
+                _ => null
+            };
+            if (counts != null)
+                return true;
+            return FacilityCountAccessor.TryGetCount(
+                infinity,
+                facilityId,
+                out counts);
         }
 
         private static bool IsResearchAutomationEnabled(

@@ -890,8 +890,10 @@ questions that originally ended this investigation:
 - production is continuous between material events;
 - automation has its own configurable 0.1-second clock;
 - Infinity has a 1/60-second minimum cycle and Dream keeps its natural cycle;
-- adaptive aggregation accepts at most 0.1% error in reset count, IP and
-  affected continuous state while preserving discrete events exactly;
+- adaptive aggregation accepts at most the user-approved 1% error in aggregate
+  reset count (rounded up to a whole cycle), IP, and affected continuous state
+  while preserving reset kinds, flags, unlocks, caps, purchases, settings, and
+  one-time rewards exactly;
 - Dream resolves before Infinity on a tie;
 - Quantum actions and the black-hole reset remain queued player actions; and
 - repeated stored-time results are summarized without changing rewards.

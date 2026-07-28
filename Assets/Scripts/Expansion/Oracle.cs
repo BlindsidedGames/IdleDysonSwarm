@@ -2377,28 +2377,10 @@ private void PackSettingsFlags()
 
         public bool IsSkillOwned(string skillId)
         {
-            if (string.IsNullOrEmpty(skillId)) return false;
-            if (TryGetOwnedFromBitset(skillId, out bool ownedFromBits)) return ownedFromBits;
-            if (infinityData != null && infinityData.skillStateById != null &&
-                infinityData.skillStateById.TryGetValue(skillId, out SkillState state))
-            {
-                return state != null && state.owned;
-            }
-
-            if (infinityData != null && infinityData.skillOwnedById != null &&
-                infinityData.skillOwnedById.TryGetValue(skillId, out bool owned))
-            {
-                EnsureSkillStateEntry(skillId, owned);
-                return owned;
-            }
-
-            if (SkillFlagAccessor.TryGetFlag(skillTreeData, skillId, out bool legacyOwned) && legacyOwned)
-            {
-                EnsureSkillStateEntry(skillId, legacyOwned);
-                return true;
-            }
-
-            return false;
+            return SkillOwnershipState.IsOwned(
+                infinityData,
+                skillTreeData,
+                skillId);
         }
 
         private bool TryGetOwnedFromBitset(string skillId, out bool owned)
@@ -2433,15 +2415,14 @@ private void PackSettingsFlags()
             if (string.IsNullOrEmpty(skillId)) return;
             if (infinityData == null) return;
 
-            SetSkillStateOwned(skillId, owned);
-            infinityData.skillOwnedById ??=
-                new Dictionary<string, bool>();
-            infinityData.skillOwnedById[skillId] = owned;
+            SkillOwnershipState.SetOwned(
+                infinityData,
+                skillTreeData,
+                skillId,
+                owned);
 
             if (SkillIdMap.TryGetLegacyKey(skillId, out int key))
             {
-                infinityData.SkillTreeSaveData ??= new Dictionary<int, bool>();
-                infinityData.SkillTreeSaveData[key] = owned;
                 if (updatePresentation &&
                     SkillTree != null &&
                     SkillTree.TryGetValue(
@@ -2451,17 +2432,6 @@ private void PackSettingsFlags()
                     item.Owned = owned;
                 }
             }
-
-            if (infinityData.skillOwnedBits == null || infinityData.skillOwnedBits.Length == 0)
-            {
-                infinityData.skillOwnedBits = SkillBitsetUtility.CreateEmptyBitset();
-            }
-            if (SkillBitsetUtility.TryGetIndex(skillId, out int index))
-            {
-                SkillBitsetUtility.SetBit(infinityData.skillOwnedBits, index, owned);
-            }
-
-            SkillFlagAccessor.TrySetFlag(skillTreeData, skillId, owned);
         }
 
         private void SetSkillStateOwned(string skillId, bool owned)
@@ -2954,10 +2924,6 @@ private void PackSettingsFlags()
         public void DysonInfinity(bool updatePresentation = true)
         {
             bool completingBotCapTransition = saveSettings.botCapRewardsGranted;
-            int bankedSkills = 0;
-            if (IsSkillOwned("banking")) bankedSkills++;
-            if (IsSkillOwned("investmentPortfolio")) bankedSkills++;
-            ResetInfinityRunState(updatePresentation);
 
             long ipToGain =
                 saveSettings.prestigePlus.doubleIP ? 2L : 1L;
@@ -2965,17 +2931,11 @@ private void PackSettingsFlags()
                 ipToGain = NumericSafety.Add(
                     ipToGain,
                     ipToGain).Value;
-            if (!InfinityResetTransitions.TryApply(
-                    saveSettings,
-                    new InfinityResetRequest(
-                        breakInfinity: false,
-                        requestedReward: ipToGain,
-                        bankedSkillPoints: bankedSkills,
-                        artifactSkillPoints:
-                            ArtifactSkillPoints(),
-                        botCapTransition:
-                            completingBotCapTransition),
-                    out _))
+            if (!TryApplyInfinityReset(
+                    breakInfinity: false,
+                    ipToGain,
+                    completingBotCapTransition,
+                    updatePresentation))
             {
                 saveSettings.infinityInProgress = false;
                 return;
@@ -2989,17 +2949,6 @@ private void PackSettingsFlags()
 
             if (updatePresentation && prestigeData.infinityPoints == 42)
                 SidePanelManager.PrestigeToggle.GetComponentInChildren<MenuToggleController>().Toggle(false);
-            _gameManager?.AutoAssignSkillsInvoke(
-                updatePresentation);
-            ProductionSystem.SetBotDistribution(
-                infinityData,
-                prestigeData,
-                prestigePlus);
-            ProductionSystem.RecalculateDerivedState(
-                infinityData,
-                skillTreeData,
-                prestigeData,
-                prestigePlus);
             if (updatePresentation)
                 Rotator.ResetPanelsStatic();
             if (completingBotCapTransition && !TrySaveState(out string transitionError))
@@ -3013,9 +2962,6 @@ private void PackSettingsFlags()
             bool updatePresentation = true)
         {
             bool completingBotCapTransition = saveSettings.botCapRewardsGranted;
-            int bankedSkills = 0;
-            if (IsSkillOwned("banking")) bankedSkills++;
-            if (IsSkillOwned("investmentPortfolio")) bankedSkills++;
 
             double amount = prestigePlus.divisionsPurchased > 0 ? 4.2e19 / Math.Pow(10, prestigePlus.divisionsPurchased) : 4.2e19;
             long ipToGain = StaticMethods.InfinityPointsToGain(amount, infinityData.bots);
@@ -3024,21 +2970,78 @@ private void PackSettingsFlags()
                 ? NumericSafety.Add(ipToGain, ipToGain).Value
                 : ipToGain;
 
+            if (!TryApplyInfinityReset(
+                    breakInfinity: true,
+                    finalGain,
+                    completingBotCapTransition,
+                    updatePresentation))
+            {
+                saveSettings.infinityInProgress = false;
+                return;
+            }
+
+            if (updatePresentation)
+                Rotator.ResetPanelsStatic();
+            if (completingBotCapTransition && !TrySaveState(out string transitionError))
+            {
+                Debug.LogError(
+                    $"[NumericSafety:NS-BOT-RESET-SAVE] Bot-cap reset completed in memory but did not persist: {transitionError}");
+            }
+        }
+
+        private bool TryApplyInfinityReset(
+            bool breakInfinity,
+            long requestedReward,
+            bool botCapTransition,
+            bool updatePresentation)
+        {
+            int artifactSkillPoints = ArtifactSkillPoints();
+            SkillDatabase skillDatabase =
+                GameDataRegistry.Instance?.skillDatabase;
+            if (InfinityResetPolicy.TryCapture(
+                    saveSettings,
+                    artifactSkillPoints,
+                    skillDatabase,
+                    out InfinityResetPolicy policy))
+            {
+                ResetInfinityRunState(updatePresentation);
+                if (!InfinityResetModel.TryApply(
+                        saveSettings,
+                        breakInfinity,
+                        requestedReward,
+                        botCapTransition,
+                        policy,
+                        out _))
+                {
+                    return false;
+                }
+
+                if (updatePresentation)
+                    _gameManager?.UpdateSkillsInvoke();
+                return true;
+            }
+
+            // A missing data registry historically skipped auto-assignment
+            // rather than blocking a legitimate reset. Preserve that failure
+            // behavior for the live reset, while analytical acceleration
+            // rejects the same state because it cannot prove parity.
+            int bankedSkills = 0;
+            if (IsSkillOwned("banking"))
+                bankedSkills++;
+            if (IsSkillOwned("investmentPortfolio"))
+                bankedSkills++;
             ResetInfinityRunState(updatePresentation);
             if (!InfinityResetTransitions.TryApply(
                     saveSettings,
                     new InfinityResetRequest(
-                        breakInfinity: true,
-                        requestedReward: finalGain,
-                        bankedSkillPoints: bankedSkills,
-                        artifactSkillPoints:
-                            ArtifactSkillPoints(),
-                        botCapTransition:
-                            completingBotCapTransition),
+                        breakInfinity,
+                        requestedReward,
+                        bankedSkills,
+                        artifactSkillPoints,
+                        botCapTransition),
                     out _))
             {
-                saveSettings.infinityInProgress = false;
-                return;
+                return false;
             }
 
             _gameManager?.AutoAssignSkillsInvoke(
@@ -3052,13 +3055,7 @@ private void PackSettingsFlags()
                 skillTreeData,
                 prestigeData,
                 prestigePlus);
-            if (updatePresentation)
-                Rotator.ResetPanelsStatic();
-            if (completingBotCapTransition && !TrySaveState(out string transitionError))
-            {
-                Debug.LogError(
-                    $"[NumericSafety:NS-BOT-RESET-SAVE] Bot-cap reset completed in memory but did not persist: {transitionError}");
-            }
+            return true;
         }
 
         [Obsolete(

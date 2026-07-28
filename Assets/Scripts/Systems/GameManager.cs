@@ -61,12 +61,18 @@ public class GameManager : MonoBehaviour
     private const int MaximumCanonicalOfflineBurstTicks = 4096;
     private const int MaximumExactDreamBurstTicks = 65536;
     private const double CanonicalOfflineBurstBudgetMilliseconds = 3d;
+    private const double AutomatedBreakRetryDelaySeconds = 4d;
     private double _simulationAccumulator;
     private double _activeAutomationTimeUntilNextEvent =
         SimulationTickSeconds;
     private double _activeUnprocessedSeconds;
     private double _activeInfinityCycleSeconds;
     private double _activeSimulationBoundaryRemaining = 1d / 60d;
+    private double _activeAutomatedBreakRetryDelaySeconds;
+    private AutomatedBreakInfinityCycleSimulation.ProjectionWork
+        _activeAutomatedBreakProjectionWork;
+    private DreamAdaptiveLongIntervalSimulation.ProjectionWork
+        _activeAutomatedBreakDreamProjectionWork;
     private bool _activeAtPostResetStart;
     private OfflineInfinityCycleState _activeInfinityCycleState;
     private DreamDoubleTimeTick _pendingDreamDoubleTimeTick;
@@ -87,6 +93,10 @@ public class GameManager : MonoBehaviour
         new();
     private static GameManager _activeSimulationInstance;
     public static event Action<long> BreakTargetChangeRequested;
+    public static string LastAutomatedBreakBlockDiagnostic {
+        get;
+        private set;
+    }
     [SerializeField] private BotsAutoBuy botsAutoBuy;
     [SerializeField] private ResearchAutoBuy researchAutoBuy;
     [SerializeField] private FoundationalEraManager foundationalEraManager;
@@ -157,33 +167,52 @@ public class GameManager : MonoBehaviour
             out double completedDurationSeconds,
             out long completedReward)
         {
+            return ObserveReset(
+                currentInfinityPoints,
+                currentInfinityPoints > CycleStartingInfinityPoints,
+                out completedDurationSeconds,
+                out completedReward);
+        }
+
+        public bool ObserveReset(
+            long currentInfinityPoints,
+            bool resetCompleted,
+            out double completedDurationSeconds,
+            out long completedReward)
+        {
             completedDurationSeconds = 0d;
             completedReward = 0L;
             currentInfinityPoints = Math.Max(0L, currentInfinityPoints);
-            if (currentInfinityPoints <= CycleStartingInfinityPoints)
+            if (!resetCompleted)
                 return false;
 
             bool completedFullCycle =
                 HasPostResetStart && SecondsInCurrentCycle > 0d;
             if (completedFullCycle)
             {
-                long reward =
-                    currentInfinityPoints - CycleStartingInfinityPoints;
+                long reward = Math.Max(
+                    0L,
+                    currentInfinityPoints - CycleStartingInfinityPoints);
                 completedDurationSeconds = SecondsInCurrentCycle;
-                long completedDurationTicks = Math.Max(
-                    1L,
-                    NumericSafety.ToLongFloor(
-                        Math.Ceiling(
-                            SecondsInCurrentCycle /
-                            SimulationTickSeconds)).Value);
                 completedReward = reward;
-                _samples.Add(new InfinityCycleSample(
-                    CycleStartingInfinityPoints,
-                    reward,
-                    completedDurationTicks,
-                    SecondsInCurrentCycle));
-                if (_samples.Count > 3)
-                    _samples.RemoveAt(0);
+                // Saturated IP still completes reset cycles, but a zero-grant
+                // sample cannot establish the pre-cap varying-IP recurrence.
+                if (reward > 0L)
+                {
+                    long completedDurationTicks = Math.Max(
+                        1L,
+                        NumericSafety.ToLongFloor(
+                            Math.Ceiling(
+                                SecondsInCurrentCycle /
+                                SimulationTickSeconds)).Value);
+                    _samples.Add(new InfinityCycleSample(
+                        CycleStartingInfinityPoints,
+                        reward,
+                        completedDurationTicks,
+                        SecondsInCurrentCycle));
+                    if (_samples.Count > 3)
+                        _samples.RemoveAt(0);
+                }
             }
 
             HasPostResetStart = true;
@@ -523,6 +552,11 @@ public class GameManager : MonoBehaviour
         double processingBudgetMilliseconds,
         bool refreshPresentation)
     {
+        if (!prestigePlus.breakTheLoop)
+        {
+            _activeAutomatedBreakProjectionWork = null;
+            _activeAutomatedBreakDreamProjectionWork = null;
+        }
         _activeUnprocessedSeconds = NumericSafety.Add(
             _activeUnprocessedSeconds,
             elapsed).Value;
@@ -570,6 +604,16 @@ public class GameManager : MonoBehaviour
             refreshPresentation: false);
     }
 
+    public SimulationAdvanceResult AdvanceActiveSimulationForTests(
+        double elapsed,
+        double processingBudgetMilliseconds)
+    {
+        return AdvanceActiveSimulation(
+            elapsed,
+            processingBudgetMilliseconds,
+            refreshPresentation: false);
+    }
+
     public void ResetActiveSimulationForTests()
     {
         _activeAutomationTimeUntilNextEvent =
@@ -577,6 +621,9 @@ public class GameManager : MonoBehaviour
         _activeUnprocessedSeconds = 0d;
         _activeInfinityCycleSeconds = 0d;
         _activeSimulationBoundaryRemaining = 1d / 60d;
+        _activeAutomatedBreakRetryDelaySeconds = 0d;
+        _activeAutomatedBreakProjectionWork = null;
+        _activeAutomatedBreakDreamProjectionWork = null;
         _activeAtPostResetStart = false;
         _activeInfinityCycleState = null;
         _queuedSimulationInputs.Clear();
@@ -595,6 +642,8 @@ public class GameManager : MonoBehaviour
     {
         if (_activeSimulationInstance == this)
             _activeSimulationInstance = null;
+        _activeAutomatedBreakProjectionWork = null;
+        _activeAutomatedBreakDreamProjectionWork = null;
         _queuedPlayerActions.Clear();
         _queuedSimulationInputs.Clear();
         AwayFor -= ApplyReturnValues;
@@ -714,37 +763,37 @@ public class GameManager : MonoBehaviour
             (left, right) => left.Time.CompareTo(right.Time));
     }
 
-    private void RunSimulationTick()
+    private bool RunSimulationTick()
     {
-        RunSimulationTick(forceOfflineBuyMax: false);
+        return RunSimulationTick(forceOfflineBuyMax: false);
     }
 
-    private void RunSimulationTick(bool forceOfflineBuyMax)
+    private bool RunSimulationTick(bool forceOfflineBuyMax)
     {
-        RunSimulationStep(
+        return RunSimulationStep(
             SimulationTickSeconds,
             runAutomation: true,
             forceOfflineBuyMax: forceOfflineBuyMax,
             updatePresentation: !forceOfflineBuyMax);
     }
 
-    private void RunSimulationRemainder(double deltaSeconds)
+    private bool RunSimulationRemainder(double deltaSeconds)
     {
         if (!NumericSafety.IsFinite(deltaSeconds) ||
             deltaSeconds <= 0d ||
             deltaSeconds >= SimulationTickSeconds)
         {
-            return;
+            return false;
         }
 
-        RunSimulationStep(
+        return RunSimulationStep(
             deltaSeconds,
             runAutomation: false,
             forceOfflineBuyMax: true,
             updatePresentation: false);
     }
 
-    private void RunSimulationStep(
+    private bool RunSimulationStep(
         double deltaSeconds,
         bool runAutomation,
         bool forceOfflineBuyMax,
@@ -761,7 +810,7 @@ public class GameManager : MonoBehaviour
         CompleteSimulationInterval(updatePresentation);
         EvaluateDreamTransition(updatePresentation);
         EvaluateBotCapTransition();
-        EvaluateInfinityTransition();
+        return EvaluateInfinityTransition();
     }
 
     private void BeginSimulationInterval(double deltaSeconds)
@@ -901,18 +950,18 @@ public class GameManager : MonoBehaviour
                 out _botCapSpecialRewardGrantedAtBoundary);
     }
 
-    private void EvaluateInfinityTransition(
+    private bool EvaluateInfinityTransition(
         double simulatedCycleSeconds = -1d,
         bool updatePresentation = false)
     {
-        if (_botCapHandledAtBoundary) return;
+        if (_botCapHandledAtBoundary) return false;
         ManageGoal();
         double amount = prestigePlus.divisionsPurchased > 0
             ? 4.2e19 / Math.Pow(10, prestigePlus.divisionsPurchased)
             : 4.2e19;
         if (prestigePlus.breakTheLoop)
         {
-            if (oracle.saveSettings.infinityInProgress) return;
+            if (oracle.saveSettings.infinityInProgress) return false;
 
             long projectedGain = StaticMethods.InfinityPointsToGain(amount, infinityData.bots);
             if (oracle.saveSettings.doubleIp)
@@ -920,20 +969,21 @@ public class GameManager : MonoBehaviour
             if (prestigePlus.doubleIP)
                 projectedGain = NumericSafety.Add(projectedGain, projectedGain).Value;
             long threshold = CurrentBreakInfinityTarget();
-            if (projectedGain < threshold) return;
+            if (projectedGain < threshold) return false;
 
             oracle.saveSettings.infinityInProgress = true;
             Prestige(
                 simulatedCycleSeconds,
                 updatePresentation);
-            return;
+            return true;
         }
 
-        if (infinityData.bots < amount) return;
+        if (infinityData.bots < amount) return false;
         oracle.saveSettings.infinityInProgress = true;
         Prestige(
             simulatedCycleSeconds,
             updatePresentation);
+        return true;
     }
 
     // Compatibility seam for save-recovery characterization and older scene
@@ -1041,6 +1091,9 @@ public class GameManager : MonoBehaviour
             _owner._activeSimulationBoundaryRemaining = Math.Max(
                 0d,
                 _owner._activeSimulationBoundaryRemaining - seconds);
+            _owner._activeAutomatedBreakRetryDelaySeconds = Math.Max(
+                0d,
+                _owner._activeAutomatedBreakRetryDelaySeconds - seconds);
         }
 
         public void ApplyProductionArrivals(
@@ -1147,17 +1200,16 @@ public class GameManager : MonoBehaviour
             double elapsed = _infinityState.BreakTheLoop
                 ? _infinityState.SecondsInCurrentCycle
                 : _owner._activeInfinityCycleSeconds;
-            if (elapsed + 1e-9d <
-                minimumCycleSeconds)
+            if (elapsed < minimumCycleSeconds)
             {
                 return;
             }
 
             long before = _owner.prestigeData.infinityPoints;
-            _owner.EvaluateInfinityTransition(
+            bool reset = _owner.EvaluateInfinityTransition(
                 elapsed,
                 updatePresentation: false);
-            if (_owner.prestigeData.infinityPoints != before)
+            if (reset)
             {
                 long reward = Math.Max(
                     0L,
@@ -1182,8 +1234,9 @@ public class GameManager : MonoBehaviour
                 }
                 if (_infinityState.BreakTheLoop)
                 {
-                    _infinityState.ObservePotentialReset(
+                    _infinityState.ObserveReset(
                         _owner.prestigeData.infinityPoints,
+                        resetCompleted: true,
                         out _,
                         out _);
                     _owner._activeInfinityCycleSeconds =
@@ -1203,6 +1256,8 @@ public class GameManager : MonoBehaviour
             SimulationQueuedInput input,
             SimulationPresentationSummary summary)
         {
+            _owner._activeAutomatedBreakProjectionWork = null;
+            _owner._activeAutomatedBreakDreamProjectionWork = null;
             if (input.Kind == SimulationInputKind.BreakTarget)
             {
                 Oracle.oracle.saveSettings.infinityPointsToBreakFor =
@@ -1363,15 +1418,22 @@ public class GameManager : MonoBehaviour
                 _owner.prestigeData.infinityAutoBots ||
                 _owner.prestigeData.infinityAutoResearch;
             bool samplesAtMinimum =
-                first.DurationSeconds <=
-                    request.InfinityMinimumCycleSeconds + 1e-9d &&
-                second.DurationSeconds <=
-                    request.InfinityMinimumCycleSeconds + 1e-9d &&
-                third.DurationSeconds <=
-                    request.InfinityMinimumCycleSeconds + 1e-9d;
-            if (dysonAutomationEnabled && !samplesAtMinimum)
+                IsMinimumInfinityCycle(
+                    first.DurationSeconds,
+                    request.InfinityMinimumCycleSeconds) &&
+                IsMinimumInfinityCycle(
+                    second.DurationSeconds,
+                    request.InfinityMinimumCycleSeconds) &&
+                IsMinimumInfinityCycle(
+                    third.DurationSeconds,
+                    request.InfinityMinimumCycleSeconds);
+            if (dysonAutomationEnabled &&
+                !samplesAtMinimum)
             {
-                return false;
+                return TryAccelerateAutomatedBreakInfinity(
+                    maximumSeconds,
+                    request,
+                    out acceleration);
             }
             bool dreamIdle =
                 DreamAnalyticalOfflineSimulation.IsClockIdle(
@@ -1395,7 +1457,8 @@ public class GameManager : MonoBehaviour
                     : SimulationTickSeconds;
             double projectionHorizon = Math.Min(
                 maximumSeconds,
-                automationHorizon);
+                NumericSafety.BitDecrement(
+                    automationHorizon));
             if (!_owner.TryCreateStableBreakCycleEvaluator(
                     request.InfinityMinimumCycleSeconds,
                     _infinityState,
@@ -1412,6 +1475,19 @@ public class GameManager : MonoBehaviour
                         minimumProjectedCycles: 1L,
                         out InfinityCycleProjection projection))
             {
+                return false;
+            }
+
+            AdvanceHandledAutomationClock(
+                request.AutomationTimeUntilNextEvent,
+                projection.ConsumedSeconds,
+                out long handledAutomationEvents,
+                out double nextAutomationRemaining);
+            if (handledAutomationEvents != 0L)
+            {
+                // A projected active Break block must end strictly before
+                // an enabled automation boundary. The shared scheduler owns
+                // the coincident production -> automation -> reset event.
                 return false;
             }
 
@@ -1459,8 +1535,326 @@ public class GameManager : MonoBehaviour
                     RealityCapacityStallSeconds =
                         reality.StalledSeconds
                 },
-                0d);
+                0d,
+                allAutomationEventsHandled: false,
+                automationTimeUntilNextEvent:
+                    nextAutomationRemaining);
             return true;
+        }
+
+        private static void AdvanceHandledAutomationClock(
+            double startingRemaining,
+            double consumedSeconds,
+            out long events,
+            out double remaining)
+        {
+            double normalized =
+                NumericSafety.IsFinite(startingRemaining) &&
+                startingRemaining > 1e-12d &&
+                startingRemaining <=
+                    SimulationTickSeconds + 1e-12d
+                    ? startingRemaining
+                    : SimulationTickSeconds;
+            if (consumedSeconds + 1e-12d < normalized)
+            {
+                events = 0L;
+                remaining = normalized - consumedSeconds;
+                return;
+            }
+            events = NumericSafety.Add(
+                1L,
+                NumericSafety.ToLongFloor(
+                    Math.Floor(
+                        (consumedSeconds - normalized + 1e-12d) /
+                        SimulationTickSeconds)).Value).Value;
+            remaining = normalized - consumedSeconds +
+                        events * SimulationTickSeconds;
+            if (remaining <= 1e-12d)
+                remaining = SimulationTickSeconds;
+        }
+
+        private bool TryAccelerateAutomatedBreakInfinity(
+            double maximumSeconds,
+            SimulationAdvanceRequest request,
+            out SimulationAccelerationResult acceleration)
+        {
+            acceleration = default;
+            if (_owner._activeAutomatedBreakProjectionWork != null)
+            {
+                return ContinueActiveAutomatedBreakProjection(
+                    request,
+                    out acceleration);
+            }
+            if (_owner._activeAutomatedBreakRetryDelaySeconds > 1e-12d)
+                return false;
+            if (!_owner.CanProjectStableBreakCycles(
+                    allowCoincidentAutomation: true) ||
+                _owner.botsAutoBuy == null ||
+                !_owner.botsAutoBuy.TryCaptureAutomationRules(
+                    out DysonFacilityAutomationRule[] facilityRules))
+            {
+                return false;
+            }
+
+            ResearchAutomationRule[] researchRules =
+                Array.Empty<ResearchAutomationRule>();
+            if (_owner.prestigeData.infinityAutoResearch &&
+                (_owner.researchAutoBuy == null ||
+                 !_owner.researchAutoBuy.TryCaptureAutomationRules(
+                     out researchRules)))
+            {
+                return false;
+            }
+            if (!InfinityResetPolicy.TryCapture(
+                    Oracle.oracle.saveSettings,
+                    Oracle.oracle.ArtifactSkillPoints(),
+                    GameData.GameDataRegistry.Instance
+                        ?.skillDatabase,
+                    out InfinityResetPolicy resetPolicy))
+            {
+                return false;
+            }
+            if (!_owner.TryLimitBreakProjectionToDreamHorizon(
+                    ref maximumSeconds))
+            {
+                return false;
+            }
+
+            long cycleLimit =
+                NumericSafety.ToLongFloor(
+                    Math.Floor(
+                        maximumSeconds /
+                        request.InfinityMinimumCycleSeconds))
+                    .Value;
+            if (cycleLimit < 8L)
+                return false;
+
+            _owner._activeAutomatedBreakProjectionWork =
+                AutomatedBreakInfinityCycleSimulation
+                    .CreateProjectionWork(
+                    Oracle.oracle.saveSettings,
+                    facilityRules,
+                    researchRules,
+                    resetPolicy,
+                    _owner.CalculateBreakRewardForBots,
+                    _infinityState.CapturedBreakTarget,
+                    _owner.GetOfflineResetBotThreshold(
+                        _infinityState),
+                    request.InfinityMinimumCycleSeconds,
+                    SimulationTickSeconds,
+                    request.AutomationTimeUntilNextEvent,
+                    maximumSeconds,
+                    cycleLimit,
+                    request.AutomationPolicy);
+            _owner._activeAutomatedBreakDreamProjectionWork =
+                null;
+            return ContinueActiveAutomatedBreakProjection(
+                request,
+                out acceleration);
+        }
+
+        private bool ContinueActiveAutomatedBreakProjection(
+            SimulationAdvanceRequest request,
+            out SimulationAccelerationResult acceleration)
+        {
+            acceleration = default;
+            AutomatedBreakInfinityCycleSimulation.ProjectionWork work =
+                _owner._activeAutomatedBreakProjectionWork;
+            if (work == null)
+                return false;
+
+            var timer = System.Diagnostics.Stopwatch.StartNew();
+            double stepBudget =
+                request.ProcessingBudgetMilliseconds > 0d
+                    ? Math.Max(
+                        0.5d,
+                        request.ProcessingBudgetMilliseconds -
+                        0.5d)
+                    : double.MaxValue;
+            do
+            {
+                AutomatedBreakInfinityCycleSimulation
+                    .StepProjectionWork(work);
+            } while (!work.IsCompleted &&
+                     timer.Elapsed.TotalMilliseconds < stepBudget);
+
+            if (!work.IsCompleted)
+            {
+                acceleration = new SimulationAccelerationResult(
+                    accepted: false,
+                    consumedSeconds: 0d,
+                    summary: null,
+                    yieldRequested: true);
+                return true;
+            }
+
+            if (!work.Accepted)
+            {
+                _owner._activeAutomatedBreakProjectionWork = null;
+                _owner._activeAutomatedBreakDreamProjectionWork =
+                    null;
+                _owner._activeAutomatedBreakRetryDelaySeconds =
+                    AutomatedBreakRetryDelaySeconds;
+                return false;
+            }
+            _owner._activeAutomatedBreakRetryDelaySeconds = 0d;
+
+            AutomatedBreakInfinityProjection projection =
+                work.Projection;
+            bool dreamIdle =
+                DreamAnalyticalOfflineSimulation.IsClockIdle(
+                    projection.Candidate.sdSimulation,
+                    _owner.spaceAgeManager != null &&
+                    _owner.spaceAgeManager.IsRailgunFiring);
+            double dreamError = 0d;
+            if (dreamIdle)
+            {
+                ConsumeProjectedIdleDreamDoubleTime(
+                    projection.Candidate.sdPrestige,
+                    projection.ConsumedSeconds);
+            }
+            else
+            {
+                if (_owner
+                        ._activeAutomatedBreakDreamProjectionWork ==
+                    null)
+                {
+                    if (!_owner.TryGetDreamOfflineTiming(
+                            out DreamOfflineTiming dreamTiming))
+                    {
+                        _owner._activeAutomatedBreakProjectionWork =
+                            null;
+                        _owner
+                            ._activeAutomatedBreakDreamProjectionWork =
+                            null;
+                        _owner
+                            ._activeAutomatedBreakRetryDelaySeconds =
+                            AutomatedBreakRetryDelaySeconds;
+                        return false;
+                    }
+                    _owner
+                        ._activeAutomatedBreakDreamProjectionWork =
+                        DreamAdaptiveLongIntervalSimulation
+                            .CreateProjectionWork(
+                                projection.Candidate.sdSimulation,
+                                projection.Candidate.sdPrestige,
+                                dreamTiming,
+                                projection.ConsumedSeconds);
+                }
+
+                DreamAdaptiveLongIntervalSimulation.ProjectionWork
+                    dreamWork = _owner
+                        ._activeAutomatedBreakDreamProjectionWork;
+                do
+                {
+                    DreamAdaptiveLongIntervalSimulation
+                        .StepProjectionWork(dreamWork);
+                } while (!dreamWork.IsCompleted &&
+                         timer.Elapsed.TotalMilliseconds <
+                         stepBudget);
+                if (!dreamWork.IsCompleted)
+                {
+                    acceleration =
+                        new SimulationAccelerationResult(
+                            accepted: false,
+                            consumedSeconds: 0d,
+                            summary: null,
+                            yieldRequested: true);
+                    return true;
+                }
+                dreamError = dreamWork.ValidationError;
+                if (!dreamWork.Accepted)
+                {
+                    _owner._activeAutomatedBreakProjectionWork =
+                        null;
+                    _owner
+                        ._activeAutomatedBreakDreamProjectionWork =
+                        null;
+                    _owner
+                        ._activeAutomatedBreakRetryDelaySeconds =
+                        AutomatedBreakRetryDelaySeconds;
+                    return false;
+                }
+            }
+
+            _owner._activeAutomatedBreakProjectionWork = null;
+            _owner._activeAutomatedBreakDreamProjectionWork = null;
+            Oracle.oracle.saveSettings.sdSimulation =
+                projection.Candidate.sdSimulation;
+            Oracle.oracle.saveSettings.sdPrestige =
+                projection.Candidate.sdPrestige;
+            SimulationPrestigeManager.InvokeResetSimulationRuntime();
+            _owner.ApplyAutomatedBreakProjection(
+                projection,
+                _infinityState,
+                publishOfflineTimeUsage: true);
+            if (_owner._workerService == null)
+                ServiceLocator.TryGet(
+                    out _owner._workerService);
+            RealityAdvanceResult reality =
+                _owner._workerService != null
+                    ? _owner._workerService.AdvanceSimulation(
+                        projection.ConsumedSeconds)
+                    : default;
+            _owner.RecordRealitySegment(
+                projection.ConsumedSeconds,
+                reality);
+            _owner._activeInfinityCycleSeconds =
+                _infinityState.SecondsInCurrentCycle;
+            _owner._activeAtPostResetStart =
+                _infinityState.IsAtPostResetStart;
+            _owner._activeSimulationBoundaryRemaining =
+                request.InfinityMinimumCycleSeconds;
+
+            acceleration = new SimulationAccelerationResult(
+                true,
+                projection.ConsumedSeconds,
+                new SimulationPresentationSummary
+                {
+                    BreakInfinityCount =
+                        projection.CycleCount,
+                    BreakInfinityPoints =
+                        projection.TotalReward,
+                    RealityWorkers =
+                        reality.WorkersGenerated,
+                    AutomaticInfluence =
+                        reality.AutomaticInfluence,
+                    RealityCapacityStallSeconds =
+                        reality.StalledSeconds
+                },
+                Math.Max(
+                    projection.ValidationError,
+                    dreamError),
+                allAutomationEventsHandled: true,
+                automationTimeUntilNextEvent:
+                    projection.AutomationTimeUntilNextEvent);
+            return true;
+        }
+
+        private static void ConsumeProjectedIdleDreamDoubleTime(
+            SaveDataPrestige prestige,
+            double seconds)
+        {
+            if (prestige == null ||
+                !NumericSafety.IsFinite(seconds) ||
+                seconds <= 0d)
+            {
+                return;
+            }
+            int rate = Math.Max(
+                0,
+                Math.Min(10, prestige.doubleTimeRate));
+            prestige.doubleTime = Math.Max(
+                0d,
+                prestige.doubleTime -
+                Math.Min(
+                    Math.Max(0d, prestige.doubleTime),
+                    NumericSafety.Multiply(
+                        seconds,
+                        rate).Value));
+            prestige.doDoubleTime =
+                prestige.doubleTimeOwned &&
+                prestige.doubleTime > 0d;
         }
 
         private static long SaturatingMultiply(long left, long right)
@@ -1480,7 +1874,15 @@ public class GameManager : MonoBehaviour
         private readonly DreamCycleTracker _dreamCycleState = new();
         private double _automationPhaseSeconds;
         private double _infinityBoundaryRemaining = 1d / 60d;
+        private const long AutomatedBreakExactWarmupCycles = 8L;
+        private long _automatedBreakExactWarmupCyclesRemaining =
+            AutomatedBreakExactWarmupCycles;
+        private double _automatedBreakRetryDelaySeconds;
         private bool _invalidZeroTimeDreamLoop;
+        private AutomatedBreakInfinityCycleSimulation.ProjectionWork
+            _automatedBreakProjectionWork;
+        private DreamAdaptiveLongIntervalSimulation.ProjectionWork
+            _automatedBreakDreamProjectionWork;
 
         public StoredRuntimeEventTimeModel(
             GameManager owner,
@@ -1566,6 +1968,9 @@ public class GameManager : MonoBehaviour
             _infinityBoundaryRemaining = Math.Max(
                 0d,
                 _infinityBoundaryRemaining - seconds);
+            _automatedBreakRetryDelaySeconds = Math.Max(
+                0d,
+                _automatedBreakRetryDelaySeconds - seconds);
             _owner.BeginSimulationInterval(seconds);
         }
 
@@ -1676,7 +2081,7 @@ public class GameManager : MonoBehaviour
             double minimumCycleSeconds,
             SimulationPresentationSummary summary)
         {
-            if (_infinityState.SecondsInCurrentCycle + 1e-9d <
+            if (_infinityState.SecondsInCurrentCycle <
                 minimumCycleSeconds)
             {
                 return;
@@ -1690,9 +2095,10 @@ public class GameManager : MonoBehaviour
                 _infinityState.BreakTheLoop;
             _owner._offlineBreakTargetOverride =
                 _infinityState.CapturedBreakTarget;
+            bool reset;
             try
             {
-                _owner.EvaluateInfinityTransition(
+                reset = _owner.EvaluateInfinityTransition(
                     _infinityState.SecondsInCurrentCycle,
                     updatePresentation: false);
             }
@@ -1704,8 +2110,9 @@ public class GameManager : MonoBehaviour
                     previousOverride;
             }
 
-            if (_infinityState.ObservePotentialReset(
+            if (_infinityState.ObserveReset(
                     _owner.prestigeData.infinityPoints,
+                    reset,
                     out double durationSeconds,
                     out _))
             {
@@ -1718,6 +2125,10 @@ public class GameManager : MonoBehaviour
                     _owner.prestigeData.infinityPoints - beforeIp);
                 if (_infinityState.BreakTheLoop)
                 {
+                    if (_automatedBreakExactWarmupCyclesRemaining > 0L)
+                    {
+                        _automatedBreakExactWarmupCyclesRemaining--;
+                    }
                     summary.BreakInfinityCount = NumericSafety.Add(
                         summary.BreakInfinityCount,
                         1L).Value;
@@ -1743,6 +2154,8 @@ public class GameManager : MonoBehaviour
         {
             if (input.Kind != SimulationInputKind.BreakTarget)
                 return;
+            _automatedBreakProjectionWork = null;
+            _automatedBreakDreamProjectionWork = null;
             _owner._offlineBreakTargetOverrideActive = true;
             _owner._offlineBreakTargetOverride =
                 Math.Max(1L, input.DiscreteValue);
@@ -1754,15 +2167,6 @@ public class GameManager : MonoBehaviour
             out SimulationAccelerationResult acceleration)
         {
             acceleration = default;
-            bool dysonAutomationEnabled =
-                _owner.prestigeData.infinityAutoBots ||
-                _owner.prestigeData.infinityAutoResearch;
-            if (dysonAutomationEnabled)
-            {
-                maximumSeconds = Math.Min(
-                    maximumSeconds,
-                    request.AutomationTimeUntilNextEvent);
-            }
             if (maximumSeconds <= 1e-12d)
             {
                 return false;
@@ -1775,7 +2179,6 @@ public class GameManager : MonoBehaviour
             {
                 return true;
             }
-
             if (_automationPhaseSeconds > 1e-9d ||
                 maximumSeconds < SimulationTickSeconds * 2d)
             {
@@ -1821,7 +2224,8 @@ public class GameManager : MonoBehaviour
                 accepted: true,
                 consumedSeconds: consumed,
                 summary: difference,
-                validationError: 0d);
+                validationError: 0d,
+                allAutomationEventsHandled: true);
             return true;
         }
 
@@ -1835,60 +2239,95 @@ public class GameManager : MonoBehaviour
                 !_infinityState.IsAtPostResetStart ||
                 _owner.prestigeData.infinityPoints < 42L ||
                 AnalyticalOfflineSimulation.HasPersistentSideEffects(
-                    _owner.skillTreeData) ||
-                !_infinityState.TryGetSamples(
-                    out InfinityCycleSample first,
-                    out InfinityCycleSample second,
-                    out InfinityCycleSample third))
+                    _owner.skillTreeData))
             {
                 return false;
             }
-            double candidateSeconds = maximumSeconds;
+            if (!_owner.TryCreateStableBreakCycleEvaluator(
+                    request.InfinityMinimumCycleSeconds,
+                    _infinityState,
+                    out StableBreakInfinityCycleEvaluator evaluator))
+            {
+                return false;
+            }
+            if (!_owner.TryLimitBreakProjectionToDreamHorizon(
+                    ref maximumSeconds))
+            {
+                return false;
+            }
+
+            bool dysonAutomationEnabled =
+                _owner.prestigeData.infinityAutoBots ||
+                _owner.prestigeData.infinityAutoResearch;
+            if (dysonAutomationEnabled &&
+                TryAggregateAutomatedBreakCycles(
+                    maximumSeconds,
+                    request,
+                    out acceleration))
+            {
+                return true;
+            }
+
+            InfinityCycleEvaluation currentEvaluation =
+                evaluator.Evaluate(
+                    _owner.prestigeData.infinityPoints);
+            if (currentEvaluation.Reward <= 0L ||
+                !NumericSafety.IsFinite(
+                    currentEvaluation.DurationSeconds) ||
+                (dysonAutomationEnabled &&
+                 !IsMinimumInfinityCycle(
+                     currentEvaluation.DurationSeconds,
+                     request.InfinityMinimumCycleSeconds)))
+            {
+                return false;
+            }
+            if (dysonAutomationEnabled &&
+                Math.Abs(
+                    request.AutomationTimeUntilNextEvent -
+                    SimulationTickSeconds) > 1e-9d)
+            {
+                // Only cross automation events when the independent 10 Hz
+                // clock is aligned with the 1/60-second reset clock. Every
+                // sixth reset then coincides with automation: production and
+                // purchases occur first, and that same boundary immediately
+                // wipes the transient purchase. Non-aligned clocks retain the
+                // exact event path.
+                return false;
+            }
+
+            double candidateSeconds = dysonAutomationEnabled
+                ? Math.Floor(
+                    (maximumSeconds + 1e-12d) /
+                    SimulationTickSeconds) *
+                  SimulationTickSeconds
+                : maximumSeconds;
             while (candidateSeconds >= 0.1d)
             {
-                InfinityCycleProjection projection = default;
-                bool dysonAutomationEnabled =
-                    _owner.prestigeData.infinityAutoBots ||
-                    _owner.prestigeData.infinityAutoResearch;
-                bool samplesAtMinimum =
-                    first.DurationSeconds <=
-                        request.InfinityMinimumCycleSeconds + 1e-9d &&
-                    second.DurationSeconds <=
-                        request.InfinityMinimumCycleSeconds + 1e-9d &&
-                    third.DurationSeconds <=
-                        request.InfinityMinimumCycleSeconds + 1e-9d;
                 bool projectedStableCycles =
-                    (!dysonAutomationEnabled ||
-                     samplesAtMinimum) &&
-                    _owner.TryCreateStableBreakCycleEvaluator(
-                        request.InfinityMinimumCycleSeconds,
-                        _infinityState,
-                        out StableBreakInfinityCycleEvaluator evaluator) &&
-                    (samplesAtMinimum
-                        ? AdaptiveInfinityCycleSimulation
-                            .TryProjectStableCycles(
-                                first,
-                                second,
-                                third,
-                                _owner.prestigeData.infinityPoints,
-                                candidateSeconds,
-                                request.InfinityMinimumCycleSeconds,
-                                evaluator.Evaluate,
-                                minimumProjectedCycles: 8L,
-                                out projection)
-                        : AdaptiveInfinityCycleSimulation
-                            .TryProjectValidatedCycles(
-                                first,
-                                second,
-                                third,
-                                _owner.prestigeData.infinityPoints,
-                                candidateSeconds,
-                                request.InfinityMinimumCycleSeconds,
-                                evaluator.Evaluate,
-                                out projection));
+                    AdaptiveInfinityCycleSimulation
+                        .TryProjectValidatedState(
+                            _owner.prestigeData.infinityPoints,
+                            candidateSeconds,
+                            request.InfinityMinimumCycleSeconds,
+                            evaluator.Evaluate,
+                            out InfinityCycleProjection projection);
                 if (!projectedStableCycles)
                 {
                     candidateSeconds *= 0.5d;
+                    continue;
+                }
+                if (dysonAutomationEnabled &&
+                    Math.Abs(
+                        projection.ConsumedSeconds /
+                        SimulationTickSeconds -
+                        Math.Round(
+                            projection.ConsumedSeconds /
+                            SimulationTickSeconds)) > 1e-8d)
+                {
+                    candidateSeconds = Math.Floor(
+                        (candidateSeconds * 0.5d + 1e-12d) /
+                        SimulationTickSeconds) *
+                        SimulationTickSeconds;
                     continue;
                 }
 
@@ -1935,17 +2374,11 @@ public class GameManager : MonoBehaviour
                     _owner.prestigeData.infinityPoints -
                     startingIp);
 
-                double phase = NumericSafety.Add(
-                                   _automationPhaseSeconds,
-                                   projection.ConsumedSeconds).Value %
-                               SimulationTickSeconds;
-                _automationPhaseSeconds =
-                    phase <= 1e-9d ||
-                    SimulationTickSeconds - phase <= 1e-9d
-                        ? 0d
-                        : phase;
                 _infinityBoundaryRemaining =
                     request.InfinityMinimumCycleSeconds;
+                SkipHandledDysonAutomationEvents(
+                    request.AutomationTimeUntilNextEvent,
+                    projection.ConsumedSeconds);
                 RealityAdvanceResult reality =
                     _owner.AdvanceRealityStoredTime(
                         projection.ConsumedSeconds);
@@ -1972,18 +2405,391 @@ public class GameManager : MonoBehaviour
                     Math.Max(
                         projection.ValidationError,
                         dreamError),
-                    allAutomationEventsHandled:
-                        !dysonAutomationEnabled);
+                    allAutomationEventsHandled: true);
                 return true;
             }
             return false;
         }
 
+        private bool TryAggregateAutomatedBreakCycles(
+            double maximumSeconds,
+            SimulationAdvanceRequest request,
+            out SimulationAccelerationResult acceleration)
+        {
+            acceleration = default;
+            LastAutomatedBreakBlockDiagnostic = null;
+            if (_automatedBreakProjectionWork != null)
+            {
+                return ContinueAutomatedBreakProjection(
+                    request,
+                    out acceleration);
+            }
+            if (_automatedBreakRetryDelaySeconds > 1e-12d)
+            {
+                LastAutomatedBreakBlockDiagnostic =
+                    "retry_delay";
+                return false;
+            }
+            if (_automatedBreakExactWarmupCyclesRemaining > 0L)
+            {
+                LastAutomatedBreakBlockDiagnostic =
+                    "exact_warmup";
+                return false;
+            }
+            if (!_owner.CanProjectStableBreakCycles(
+                    allowCoincidentAutomation: true))
+            {
+                LastAutomatedBreakBlockDiagnostic =
+                    "unsupported_break_graph";
+                return false;
+            }
+            if (_owner.botsAutoBuy == null ||
+                !_owner.botsAutoBuy.TryCaptureAutomationRules(
+                    out DysonFacilityAutomationRule[] facilityRules))
+            {
+                LastAutomatedBreakBlockDiagnostic =
+                    "facility_rule_capture";
+                return false;
+            }
+
+            ResearchAutomationRule[] researchRules =
+                Array.Empty<ResearchAutomationRule>();
+            if (_owner.prestigeData.infinityAutoResearch &&
+                (_owner.researchAutoBuy == null ||
+                 !_owner.researchAutoBuy.TryCaptureAutomationRules(
+                     out researchRules)))
+            {
+                LastAutomatedBreakBlockDiagnostic =
+                    "research_rule_capture";
+                return false;
+            }
+
+            if (!InfinityResetPolicy.TryCapture(
+                    Oracle.oracle.saveSettings,
+                    Oracle.oracle.ArtifactSkillPoints(),
+                    GameData.GameDataRegistry.Instance
+                        ?.skillDatabase,
+                    out InfinityResetPolicy resetPolicy))
+            {
+                LastAutomatedBreakBlockDiagnostic =
+                    "reset_policy_capture";
+                return false;
+            }
+            if (!_owner.TryLimitBreakProjectionToDreamHorizon(
+                    ref maximumSeconds))
+            {
+                LastAutomatedBreakBlockDiagnostic =
+                    "dream_projection_horizon";
+                return false;
+            }
+
+            long durationCycleLimit =
+                NumericSafety.ToLongFloor(
+                    Math.Floor(
+                        maximumSeconds /
+                        request.InfinityMinimumCycleSeconds))
+                    .Value;
+            long requestedCycleLimit =
+                durationCycleLimit;
+            double resetThreshold =
+                _owner.GetOfflineResetBotThreshold(
+                    _infinityState);
+            long rewardMultiplier = 1L;
+            if (Oracle.oracle.saveSettings.doubleIp)
+                rewardMultiplier = NumericSafety.Add(
+                    rewardMultiplier,
+                    rewardMultiplier).Value;
+            if (_owner.prestigePlus.doubleIP)
+                rewardMultiplier = NumericSafety.Add(
+                    rewardMultiplier,
+                    rewardMultiplier).Value;
+            double ordinaryThreshold =
+                _owner.prestigePlus.divisionsPurchased > 0L
+                    ? 4.2e19 / Math.Pow(
+                        10d,
+                        _owner.prestigePlus.divisionsPurchased)
+                    : 4.2e19;
+            Func<double, long> rewardCalculator = bots =>
+                NumericSafety.Multiply(
+                    StaticMethods.InfinityPointsToGain(
+                        ordinaryThreshold,
+                        bots),
+                    rewardMultiplier).Value;
+            _automatedBreakProjectionWork =
+                AutomatedBreakInfinityCycleSimulation
+                    .CreateProjectionWork(
+                    Oracle.oracle.saveSettings,
+                    facilityRules,
+                    researchRules,
+                    resetPolicy,
+                    rewardCalculator,
+                    _infinityState.CapturedBreakTarget,
+                    resetThreshold,
+                    request.InfinityMinimumCycleSeconds,
+                    SimulationTickSeconds,
+                    request.AutomationTimeUntilNextEvent,
+                    maximumSeconds,
+                    maximumCycles: requestedCycleLimit,
+                    automationPolicy:
+                        SimulationAutomationPolicy.ForceBuyMax);
+            _automatedBreakDreamProjectionWork = null;
+            return ContinueAutomatedBreakProjection(
+                request,
+                out acceleration);
+        }
+
+        private bool ContinueAutomatedBreakProjection(
+            SimulationAdvanceRequest request,
+            out SimulationAccelerationResult acceleration)
+        {
+            acceleration = default;
+            AutomatedBreakInfinityCycleSimulation.ProjectionWork work =
+                _automatedBreakProjectionWork;
+            if (work == null)
+                return false;
+
+            var timer = System.Diagnostics.Stopwatch.StartNew();
+            double stepBudget =
+                request.ProcessingBudgetMilliseconds > 0d
+                    ? Math.Max(
+                        0.5d,
+                        request.ProcessingBudgetMilliseconds -
+                        1d)
+                    : double.MaxValue;
+            do
+            {
+                AutomatedBreakInfinityCycleSimulation
+                    .StepProjectionWork(work);
+            } while (!work.IsCompleted &&
+                     timer.Elapsed.TotalMilliseconds < stepBudget);
+
+            if (!work.IsCompleted)
+            {
+                LastAutomatedBreakBlockDiagnostic =
+                    "adaptive_in_progress";
+                acceleration = new SimulationAccelerationResult(
+                    accepted: false,
+                    consumedSeconds: 0d,
+                    summary: null,
+                    yieldRequested: true);
+                return true;
+            }
+
+            AutomatedBreakInfinityProjection projection =
+                work.Projection;
+            bool dreamProjected = work.Accepted;
+            double dreamError = 0d;
+            if (work.Accepted)
+            {
+                bool dreamIdle =
+                    DreamAnalyticalOfflineSimulation.IsClockIdle(
+                        Oracle.oracle.saveSettings.sdSimulation,
+                        _owner.spaceAgeManager != null &&
+                        _owner.spaceAgeManager.IsRailgunFiring);
+                if (dreamIdle)
+                {
+                    ConsumeIdleDreamDoubleTime(
+                        projection.Candidate.sdPrestige,
+                        projection.ConsumedSeconds);
+                }
+                else if (!_owner.TryGetDreamOfflineTiming(
+                             out DreamOfflineTiming dreamTiming))
+                {
+                    dreamProjected = false;
+                }
+                else
+                {
+                    _automatedBreakDreamProjectionWork ??=
+                        DreamAdaptiveLongIntervalSimulation
+                            .CreateProjectionWork(
+                                projection.Candidate.sdSimulation,
+                                projection.Candidate.sdPrestige,
+                                dreamTiming,
+                                projection.ConsumedSeconds);
+                    do
+                    {
+                        DreamAdaptiveLongIntervalSimulation
+                            .StepProjectionWork(
+                                _automatedBreakDreamProjectionWork);
+                    } while (
+                        !_automatedBreakDreamProjectionWork
+                            .IsCompleted &&
+                        timer.Elapsed.TotalMilliseconds <
+                        stepBudget);
+                    if (!_automatedBreakDreamProjectionWork
+                            .IsCompleted)
+                    {
+                        LastAutomatedBreakBlockDiagnostic =
+                            "dream_adaptive_in_progress";
+                        acceleration =
+                            new SimulationAccelerationResult(
+                                accepted: false,
+                                consumedSeconds: 0d,
+                                summary: null,
+                                yieldRequested: true);
+                        return true;
+                    }
+                    dreamProjected =
+                        _automatedBreakDreamProjectionWork.Accepted;
+                    dreamError =
+                        _automatedBreakDreamProjectionWork
+                            .ValidationError;
+                }
+            }
+            _automatedBreakProjectionWork = null;
+            _automatedBreakDreamProjectionWork = null;
+            return ApplyAutomatedBreakWork(
+                work.Accepted,
+                projection,
+                work.Diagnostic,
+                dreamProjected,
+                dreamError,
+                request,
+                out acceleration);
+        }
+
+        private bool ApplyAutomatedBreakWork(
+            bool projected,
+            AutomatedBreakInfinityProjection projection,
+            string diagnostic,
+            bool dreamProjected,
+            double dreamError,
+            SimulationAdvanceRequest request,
+            out SimulationAccelerationResult acceleration)
+        {
+            acceleration = default;
+            AutomatedBreakInfinityCycleSimulation
+                .RecordBlockDiagnostic(
+                    projected,
+                    projected
+                        ? projection.CycleCount
+                        : 0L);
+            if (!projected)
+            {
+                _automatedBreakRetryDelaySeconds =
+                    AutomatedBreakRetryDelaySeconds;
+                LastAutomatedBreakBlockDiagnostic =
+                    diagnostic ??
+                    "cycle_projection";
+                return false;
+            }
+            _automatedBreakRetryDelaySeconds = 0d;
+
+            if (!dreamProjected)
+            {
+                _automatedBreakRetryDelaySeconds =
+                    AutomatedBreakRetryDelaySeconds;
+                LastAutomatedBreakBlockDiagnostic =
+                    "dream_projection";
+                return false;
+            }
+
+            Oracle.oracle.saveSettings.sdSimulation =
+                projection.Candidate.sdSimulation;
+            Oracle.oracle.saveSettings.sdPrestige =
+                projection.Candidate.sdPrestige;
+            SimulationPrestigeManager.InvokeResetSimulationRuntime();
+            _owner.ApplyAutomatedBreakProjection(
+                projection,
+                _infinityState,
+                publishOfflineTimeUsage: false);
+            ApplyAggregatedOfflineTimeRollover(
+                projection.CycleCount,
+                projection.ConsumedSeconds,
+                projection.LastDurationSeconds);
+            _automationPhaseSeconds = Math.Max(
+                0d,
+                SimulationTickSeconds -
+                projection.AutomationTimeUntilNextEvent);
+            _infinityBoundaryRemaining =
+                request.InfinityMinimumCycleSeconds;
+            RealityAdvanceResult reality =
+                _owner.AdvanceRealityStoredTime(
+                    projection.ConsumedSeconds);
+            _owner.RecordRealitySegment(
+                projection.ConsumedSeconds,
+                reality);
+            acceleration = new SimulationAccelerationResult(
+                true,
+                projection.ConsumedSeconds,
+                new SimulationPresentationSummary
+                {
+                    BreakInfinityCount =
+                        projection.CycleCount,
+                    BreakInfinityPoints =
+                        projection.TotalReward,
+                    RealityWorkers =
+                        reality.WorkersGenerated,
+                    AutomaticInfluence =
+                        reality.AutomaticInfluence,
+                    RealityCapacityStallSeconds =
+                        reality.StalledSeconds
+                },
+                Math.Max(
+                    dreamError,
+                    projection.ValidationError),
+                allAutomationEventsHandled: true,
+                automationTimeUntilNextEvent:
+                    projection.AutomationTimeUntilNextEvent);
+            LastAutomatedBreakBlockDiagnostic =
+                "accepted";
+            return true;
+        }
+
+        private void SkipHandledDysonAutomationEvents(
+            double timeUntilNextAutomation,
+            double consumedSeconds)
+        {
+            if (!NumericSafety.IsFinite(consumedSeconds) ||
+                consumedSeconds <= 0d)
+            {
+                return;
+            }
+
+            double remaining =
+                NumericSafety.IsFinite(timeUntilNextAutomation) &&
+                timeUntilNextAutomation > 1e-12d &&
+                timeUntilNextAutomation <=
+                    SimulationTickSeconds + 1e-12d
+                    ? timeUntilNextAutomation
+                    : SimulationTickSeconds;
+            long events = consumedSeconds + 1e-12d < remaining
+                ? 0L
+                : NumericSafety.Add(
+                    1L,
+                    NumericSafety.ToLongFloor(
+                        Math.Floor(
+                            (consumedSeconds - remaining + 1e-12d) /
+                            SimulationTickSeconds)).Value).Value;
+            if (events > 0L)
+            {
+                _owner.botsAutoBuy?.SkipAutomationTicks(events);
+                _owner.researchAutoBuy?.SkipAutomationTicks(events);
+            }
+
+            double phase = remaining - consumedSeconds +
+                           events * SimulationTickSeconds;
+            double normalizedRemaining =
+                phase <= 1e-9d
+                    ? SimulationTickSeconds
+                    : Math.Min(SimulationTickSeconds, phase);
+            _automationPhaseSeconds = Math.Max(
+                0d,
+                SimulationTickSeconds - normalizedRemaining);
+        }
+
         private static void ConsumeIdleDreamDoubleTime(
             double seconds)
         {
-            SaveDataPrestige dreamPrestige =
-                Oracle.oracle.saveSettings.sdPrestige;
+            ConsumeIdleDreamDoubleTime(
+                Oracle.oracle.saveSettings.sdPrestige,
+                seconds);
+        }
+
+        private static void ConsumeIdleDreamDoubleTime(
+            SaveDataPrestige dreamPrestige,
+            double seconds)
+        {
             if (dreamPrestige == null) return;
             int rate = Math.Max(
                 0,
@@ -2585,6 +3391,8 @@ public class GameManager : MonoBehaviour
 
     private OfflineProgressContext CreateOfflineProgressContext()
     {
+        _activeAutomatedBreakProjectionWork = null;
+        _activeAutomatedBreakDreamProjectionWork = null;
         if (!oracle.saveSettings.eventTimeClockInitialized)
         {
             oracle.saveSettings.eventTimeClockInitialized = true;
@@ -2840,64 +3648,63 @@ public class GameManager : MonoBehaviour
             return Math.Max(1e-12d, maximumSeconds);
         }
 
-        double safeBoundary = NumericSafety.IsFinite(boundaryRemaining) &&
-                              boundaryRemaining > 1e-12d
-            ? Math.Min(boundaryRemaining, minimumCycleSeconds)
-            : minimumCycleSeconds;
-        if (elapsedCycleSeconds + 1e-12d <
-            minimumCycleSeconds ||
-            safeBoundary < minimumCycleSeconds - 1e-12d)
-        {
-            return Math.Min(maximumSeconds, safeBoundary);
-        }
-
+        _ = boundaryRemaining;
         double resetThreshold =
             GetOfflineResetBotThreshold(infinityCycleState);
-        if (infinityData.bots + 1e-9d >= resetThreshold)
-            return 1e-12d;
-
-        // Automation is independently scheduled at 10 Hz. We only need to
-        // prove whether Infinity can occur before the next automation event;
-        // automation will then change state and this horizon is recomputed.
-        double searchSeconds = Math.Min(
-            maximumSeconds,
-            SimulationTickSeconds);
-        long searchBoundaries = NumericSafety.ToLongFloor(
-            Math.Floor(
-                searchSeconds /
-                minimumCycleSeconds +
-                1e-9d)).Value;
-        if (searchBoundaries < 1L)
-            return maximumSeconds;
-
-        if (!AnalyticalOfflineSimulation.TryFindResetBoundary(
-                infinityData,
-                skillTreeData,
-                prestigeData,
-                prestigePlus,
-                minimumCycleSeconds,
-                searchBoundaries,
-                resetThreshold,
-                out bool forecastSupported,
-                out long boundaries))
-        {
-            // A supported forecast that does not reach the reset threshold
-            // proves there is no Infinity event before automation. Unsupported
-            // states retain exact canonical boundary polling.
-            if (forecastSupported)
-            {
-                return maximumSeconds;
-            }
+        if (infinityData.bots >= resetThreshold)
             return Math.Min(
                 maximumSeconds,
-                safeBoundary);
+                Math.Max(
+                    1e-12d,
+                    minimumCycleSeconds -
+                    elapsedCycleSeconds));
+
+        double minimumRemaining = Math.Max(
+            0d,
+            minimumCycleSeconds - elapsedCycleSeconds);
+        double production = infinityData.botProduction;
+        if (!NumericSafety.IsFinite(production) ||
+            production <= 0d)
+        {
+            return maximumSeconds;
         }
 
-        return Math.Min(
-            maximumSeconds,
-            NumericSafety.Multiply(
-                boundaries,
-                minimumCycleSeconds).Value);
+        // Rates remain fixed until the next material event. The shared
+        // scheduler already stops at an earlier automation event and
+        // recomputes after purchases. Infinity's 1/60-second rule is a
+        // minimum duration, not a permanent polling grid.
+        double productionRemaining =
+            Math.Max(0d, resetThreshold - infinityData.bots) /
+            production;
+        if (productionRemaining > 0d)
+        {
+            // Land just beyond the representable threshold crossing so the
+            // reward formula cannot observe a one-ULP shortfall and defer the
+            // reset to an unrelated later event.
+            productionRemaining =
+                NumericSafety.BitIncrement(productionRemaining);
+        }
+        double eventSeconds = Math.Max(
+            minimumRemaining,
+            productionRemaining);
+        return NumericSafety.IsFinite(eventSeconds)
+            ? Math.Min(
+                maximumSeconds,
+                Math.Max(1e-12d, eventSeconds))
+            : maximumSeconds;
+    }
+
+    private static bool IsMinimumInfinityCycle(
+        double duration,
+        double minimum)
+    {
+        if (!NumericSafety.IsFinite(duration) ||
+            !NumericSafety.IsFinite(minimum) ||
+            minimum <= 0d)
+        {
+            return false;
+        }
+        return duration <= NumericSafety.BitIncrement(minimum);
     }
 
     private bool CanProjectStableBreakCycles(
@@ -3008,6 +3815,67 @@ public class GameManager : MonoBehaviour
                 projection.LastReward,
                 projection.ConsumedSeconds);
         infinityCycleState.AcceptProjection(projection);
+    }
+
+    private void ApplyAutomatedBreakProjection(
+        AutomatedBreakInfinityProjection projection,
+        OfflineInfinityCycleState infinityCycleState,
+        bool publishOfflineTimeUsage)
+    {
+        SaveDataSettings settings = oracle.saveSettings;
+        SaveDataSettings candidate = projection.Candidate;
+        if (candidate?.dysonVerseSaveData == null)
+            return;
+
+        settings.dysonVerseSaveData.dysonVerseInfinityData =
+            candidate.dysonVerseSaveData.dysonVerseInfinityData;
+        settings.dysonVerseSaveData.dysonVerseSkillTreeData =
+            candidate.dysonVerseSaveData.dysonVerseSkillTreeData;
+        settings.dysonVerseSaveData.dysonVersePrestigeData =
+            candidate.dysonVerseSaveData.dysonVersePrestigeData;
+        settings.dysonAutomationTargetIndex =
+            candidate.dysonAutomationTargetIndex;
+        settings.researchAutomationTargetIndex =
+            candidate.researchAutomationTargetIndex;
+        settings.lastInfinityPointsGained =
+            candidate.lastInfinityPointsGained;
+        settings.timeLastInfinity =
+            candidate.timeLastInfinity;
+        settings.tutorial = candidate.tutorial;
+        settings.dysonVerseSaveData.lastCollapseDate =
+            DateTime.UtcNow.ToString(
+                CultureInfo.InvariantCulture);
+        settings.firstInfinityDone =
+            candidate.firstInfinityDone;
+        settings.infinityInProgress =
+            candidate.infinityInProgress;
+        settings.botCapTransitionPending =
+            candidate.botCapTransitionPending;
+        settings.botCapRewardsGranted =
+            candidate.botCapRewardsGranted;
+        if (publishOfflineTimeUsage)
+        {
+            settings.offlineTimeUsedThisInfinity =
+                candidate.offlineTimeUsedThisInfinity;
+            settings.offlineTimeUsedPreviousInfinity =
+                candidate.offlineTimeUsedPreviousInfinity;
+        }
+        settings.simulationStatistics?.RecordInfinityAggregate(
+            breakInfinity: true,
+            projection.CycleCount,
+            projection.TotalReward,
+            projection.LastDurationSeconds,
+            projection.LastReward,
+            projection.ConsumedSeconds);
+        infinityCycleState.AcceptProjection(
+            new InfinityCycleProjection(
+                projection.CycleCount,
+                projection.ConsumedSeconds,
+                settings.dysonVerseSaveData
+                    .dysonVersePrestigeData.infinityPoints,
+                projection.LastReward,
+                projection.LastDurationSeconds,
+                validationError: 0d));
     }
 
     private void AdvanceDreamForActiveBreakBlock(
@@ -3324,7 +4192,17 @@ public class GameManager : MonoBehaviour
             infinityCycleState.CapturedBreakTarget;
         try
         {
-            RunSimulationTick(forceOfflineBuyMax: true);
+            bool resetCompleted =
+                RunSimulationTick(forceOfflineBuyMax: true);
+            if (infinityCycleState.ObserveReset(
+                    prestigeData.infinityPoints,
+                    resetCompleted,
+                    out double completedDurationSeconds,
+                    out _))
+            {
+                oracle.saveSettings.timeLastInfinity =
+                    completedDurationSeconds;
+            }
         }
         finally
         {
@@ -3333,20 +4211,15 @@ public class GameManager : MonoBehaviour
             _offlineBreakTargetOverride = previousOverride;
         }
 
-        if (infinityCycleState.ObservePotentialReset(
-                prestigeData.infinityPoints,
-                out double completedDurationSeconds,
-                out _))
-        {
-            oracle.saveSettings.timeLastInfinity =
-                completedDurationSeconds;
-        }
     }
 
     private void RunOfflineCanonicalRemainder(
         double seconds,
         OfflineInfinityCycleState infinityCycleState)
     {
+        infinityCycleState.SynchronizeBeforeFirstTick(
+            prestigeData.infinityPoints);
+        infinityCycleState.AddElapsed(seconds);
         RecordStoredTimeWithoutInfinityReset(
             seconds);
         bool previousOverrideActive =
@@ -3358,7 +4231,17 @@ public class GameManager : MonoBehaviour
             infinityCycleState.CapturedBreakTarget;
         try
         {
-            RunSimulationRemainder(seconds);
+            bool resetCompleted =
+                RunSimulationRemainder(seconds);
+            if (infinityCycleState.ObserveReset(
+                    prestigeData.infinityPoints,
+                    resetCompleted,
+                    out double completedDurationSeconds,
+                    out _))
+            {
+                oracle.saveSettings.timeLastInfinity =
+                    completedDurationSeconds;
+            }
         }
         finally
         {
@@ -3366,6 +4249,7 @@ public class GameManager : MonoBehaviour
                 previousOverrideActive;
             _offlineBreakTargetOverride = previousOverride;
         }
+
     }
 
     private long RunCoupledDreamEventBurst(
@@ -3552,6 +4436,39 @@ public class GameManager : MonoBehaviour
             informationEraManager.BotsDurationSeconds,
             spaceAgeManager.SpaceFactoriesDurationSeconds,
             spaceAgeManager.IsRailgunFiring);
+        return true;
+    }
+
+    private bool TryLimitBreakProjectionToDreamHorizon(
+        ref double maximumSeconds)
+    {
+        bool dreamIdle =
+            DreamAnalyticalOfflineSimulation.IsClockIdle(
+                oracle.saveSettings.sdSimulation,
+                spaceAgeManager != null &&
+                spaceAgeManager.IsRailgunFiring);
+        if (dreamIdle)
+            return true;
+        if (!TryGetDreamOfflineTiming(
+                out DreamOfflineTiming timing))
+        {
+            return false;
+        }
+        double horizon =
+            DreamAdaptiveLongIntervalSimulation
+                .GetProjectionHorizonSeconds(
+                    oracle.saveSettings.sdSimulation,
+                    oracle.saveSettings.sdPrestige,
+                    timing,
+                    maximumSeconds);
+        if (!NumericSafety.IsFinite(horizon) ||
+            horizon <= 0d)
+        {
+            return false;
+        }
+        maximumSeconds = Math.Min(
+            maximumSeconds,
+            horizon);
         return true;
     }
 
@@ -4088,15 +5005,16 @@ public class GameManager : MonoBehaviour
             $"${CalcUtils.FormatNumber(MoneyToAdd(), useMspace: true)} /s";
         //workerPanels
         //solarStats
-        if (infinityData.panelsPerSec * infinityData.panelLifetime < 20000)
+        double activePanelCount = ActivePanelCount();
+        if (activePanelCount < 20000d)
             activePanels.text =
-                $"Active panels: {color}{CalcUtils.FormatNumber(infinityData.panelsPerSec * infinityData.panelLifetime)}";
-        else if (infinityData.panelsPerSec * infinityData.panelLifetime / 20000 < 100000000000)
+                $"Active panels: {color}{CalcUtils.FormatNumber(activePanelCount)}";
+        else if (activePanelCount / 20000d < 100000000000d)
             activePanels.text =
-                $"Stars Surrounded: {color}{CalcUtils.FormatNumber(infinityData.panelsPerSec * infinityData.panelLifetime / 20000)}";
+                $"Stars Surrounded: {color}{CalcUtils.FormatNumber(activePanelCount / 20000d)}";
         else
             activePanels.text =
-                $"Galaxies Engulfed: {color}{CalcUtils.FormatNumber(infinityData.panelsPerSec * infinityData.panelLifetime / 20000 / 100000000000)}";
+                $"Galaxies Engulfed: {color}{CalcUtils.FormatNumber(activePanelCount / 20000d / 100000000000d)}";
         panelLifetime.text = $"Panel lifetime: {color}{CalcUtils.FormatNumber(infinityData.panelLifetime)}</color> seconds";
         lifetimePanels.text =
             $"Total panels decayed: {color}{CalcUtils.FormatNumber(infinityData.totalPanelsDecayed)}";
@@ -4253,15 +5171,19 @@ public class GameManager : MonoBehaviour
             $"<br>Panel Lifetime: {CalcUtils.FormatTime(infinityData.panelLifetime, shortForm: true, mspace: false, colourOverride: scienceColor)}";
 
         skillTimersDisplayText +=
-            $"{halfHeightBreak}Active Panels: {scienceColor}{CalcUtils.FormatNumber(infinityData.panelsPerSec * infinityData.panelLifetime)}</color>";
+            $"{halfHeightBreak}Active Panels: {scienceColor}{CalcUtils.FormatNumber(ActivePanelCount())}</color>";
         skillTimersDisplayText +=
             $"<br>Stars Surrounded: {scienceColor}{CalcUtils.FormatNumber(StarsSurrounded(false, false))}</color>";
         skillTimersDisplayText +=
             $"<br>Galaxies Engulfed: {scienceColor}{CalcUtils.FormatNumber(GalaxiesEngulfed(false, false))}</color>{smallTextEnd}";
 
-        double secondsPerIp = oracle.saveSettings.lastInfinityPointsGained > 0
-            ? oracle.saveSettings.timeLastInfinity / oracle.saveSettings.lastInfinityPointsGained
-            : 0;
+        double secondsPerIp =
+            oracle.saveSettings.lastInfinityPointsGained > 0
+                ? NumericSafety.Divide(
+                    NumericSafety.ClampContinuous(
+                        oracle.saveSettings.timeLastInfinity),
+                    oracle.saveSettings.lastInfinityPointsGained).Value
+                : 0d;
 
         skillTimersDisplayText += "<br><br><b>Infinity</b>";
         skillTimersDisplayText +=

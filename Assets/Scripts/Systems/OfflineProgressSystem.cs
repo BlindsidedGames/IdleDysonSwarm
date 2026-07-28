@@ -67,6 +67,11 @@ namespace Systems
         /// unconsumed simulated time and is safe to resume.
         /// </summary>
         public Func<double, SimulationAdvanceResult> RunUnifiedSimulation;
+        /// <summary>
+        /// Reconciles partition-independent clocks after the full requested
+        /// interval has completed. It is not called for cancellation or an
+        /// invalid/no-progress exit.
+        /// </summary>
     }
 
     public sealed class OfflineProgressUI
@@ -141,6 +146,11 @@ namespace Systems
             get;
             private set;
         } = new();
+        public static double LastMaximumSimulationSliceMilliseconds
+        {
+            get;
+            private set;
+        }
 
         private const double SimulationTickSeconds = 0.1d;
         private const double DefaultStoredTimeCapacitySeconds = 86400d;
@@ -396,6 +406,7 @@ namespace Systems
         {
             LastSimulationWorkMetrics =
                 new SimulationWorkMetrics();
+            LastMaximumSimulationSliceMilliseconds = 0d;
             if (!ValidateContext(context)) yield break;
             SanitizeInfinityData(context.infinityData);
             if (!NumericSafety.IsFinite(awayTime) || awayTime <= 0d)
@@ -444,6 +455,9 @@ namespace Systems
                         context.infinityData);
                     SimulationAdvanceResult result =
                         context.RunUnifiedSimulation(remainingSeconds);
+                    LastMaximumSimulationSliceMilliseconds = Math.Max(
+                        LastMaximumSimulationSliceMilliseconds,
+                        result?.Work?.ProcessingMilliseconds ?? 0d);
                     simulationSummary.Merge(result?.Summary);
                     LastSimulationWorkMetrics.Merge(result?.Work);
                     double consumed = Math.Max(
@@ -453,6 +467,12 @@ namespace Systems
                             result?.ConsumedSeconds ?? 0d));
                     if (consumed <= 0d)
                     {
+                        if (result?.ValidationStatus ==
+                            SimulationValidationStatus.Yielded)
+                        {
+                            yield return 0;
+                            continue;
+                        }
                         NumericDiagnostics.Report(
                             "NS-OFFLINE-EVENT-NO-PROGRESS",
                             $"status={result?.ValidationStatus}");

@@ -26,7 +26,9 @@ namespace Tests.Systems
                 result.FinalInfinityPoints);
             Assert.GreaterOrEqual(result.LastDurationTicks, 1L);
             Assert.LessOrEqual(result.LastDurationTicks, 12L);
-            Assert.LessOrEqual(result.ValidationError, 0.001d);
+            Assert.LessOrEqual(
+                result.ValidationError,
+                SimulationAccuracyContract.MaximumAggregateRelativeError);
         }
 
         [Test]
@@ -46,7 +48,9 @@ namespace Tests.Systems
             Assert.AreEqual(
                 103L + result.CycleCount,
                 result.FinalInfinityPoints);
-            Assert.LessOrEqual(result.ValidationError, 0.001d);
+            Assert.LessOrEqual(
+                result.ValidationError,
+                SimulationAccuracyContract.MaximumAggregateRelativeError);
         }
 
         [Test]
@@ -265,7 +269,63 @@ namespace Tests.Systems
                 1e-9d);
             Assert.LessOrEqual(
                 result.ValidationError,
-                0.001d);
+                SimulationAccuracyContract.MaximumAggregateRelativeError);
+        }
+
+        [Test]
+        public void ValidatedState_AtLongMaximumCountsZeroGrantCycles()
+        {
+            const double minimum = 1d / 60d;
+
+            bool projected =
+                AdaptiveInfinityCycleSimulation.TryProjectValidatedState(
+                    long.MaxValue,
+                    availableSeconds: 10d,
+                    minimumCycleSeconds: minimum,
+                    _ => new InfinityCycleEvaluation(
+                        long.MaxValue,
+                        minimum),
+                    out InfinityCycleProjection result);
+
+            Assert.IsTrue(
+                projected,
+                AdaptiveInfinityCycleSimulation
+                    .LastStableProjectionDiagnostic);
+            Assert.AreEqual(600L, result.CycleCount);
+            Assert.AreEqual(10d, result.ConsumedSeconds, 1e-9d);
+            Assert.AreEqual(long.MaxValue, result.FinalInfinityPoints);
+            Assert.AreEqual(
+                0L,
+                result.LastReward,
+                "A saturated balance grants no additional IP.");
+            Assert.AreEqual(0d, result.ValidationError);
+        }
+
+        [Test]
+        public void ValidatedState_MinimumCadenceProvesEarlySaturation()
+        {
+            const double minimum = 1d / 60d;
+            long startingPoints = long.MaxValue - 100L;
+
+            bool projected =
+                AdaptiveInfinityCycleSimulation.TryProjectValidatedState(
+                    startingPoints,
+                    availableSeconds: 1d,
+                    minimumCycleSeconds: minimum,
+                    _ => new InfinityCycleEvaluation(
+                        10L,
+                        minimum),
+                    out InfinityCycleProjection result);
+
+            Assert.IsTrue(
+                projected,
+                AdaptiveInfinityCycleSimulation
+                    .LastStableProjectionDiagnostic);
+            Assert.AreEqual(60L, result.CycleCount);
+            Assert.AreEqual(1d, result.ConsumedSeconds, 1e-9d);
+            Assert.AreEqual(long.MaxValue, result.FinalInfinityPoints);
+            Assert.AreEqual(0L, result.LastReward);
+            Assert.AreEqual(0d, result.ValidationError);
         }
 
         [Test]

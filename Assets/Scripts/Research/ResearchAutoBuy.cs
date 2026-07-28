@@ -131,7 +131,27 @@ namespace Research
                 AutomationRotation.Advance(
                     oracle.saveSettings.researchAutomationTargetIndex,
                     presenters.Length,
-                    ticks);
+                ticks);
+        }
+
+        public bool TryCaptureAutomationRules(
+            out ResearchAutomationRule[] rules)
+        {
+            if (presenters == null || presenters.Length == 0)
+                RefreshPresenters();
+            rules = new ResearchAutomationRule[
+                presenters?.Length ?? 0];
+            for (int index = 0; index < rules.Length; index++)
+            {
+                ResearchPresenter presenter = presenters[index];
+                if (presenter != null &&
+                    !presenter.TryCreateAutomationRule(
+                        out rules[index]))
+                {
+                    return false;
+                }
+            }
+            return true;
         }
 
         private void RefreshPresenters()

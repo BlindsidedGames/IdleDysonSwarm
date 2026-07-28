@@ -192,7 +192,9 @@ namespace Tests.Systems
             {
                 EventHorizon = 10d,
                 OfferAcceleration = true,
-                AccelerationError = 0.002d
+                AccelerationError =
+                    SimulationAccuracyContract
+                        .MaximumAggregateRelativeError * 2d
             };
             SimulationAdvanceResult result =
                 UnifiedEventTimeSimulation.Advance(
@@ -363,7 +365,9 @@ namespace Tests.Systems
             Assert.IsTrue(
                 advanced,
                 $"segments={DreamAdaptiveLongIntervalSimulation.LastSegments};error={error:R};field={DreamAdaptiveLongIntervalSimulation.LastErrorField};values={DreamAdaptiveLongIntervalSimulation.LastErrorCoarseValue:R}/{DreamAdaptiveLongIntervalSimulation.LastErrorFineValue:R}");
-            Assert.LessOrEqual(error, 0.001d);
+            Assert.LessOrEqual(
+                error,
+                SimulationAccuracyContract.MaximumAggregateRelativeError);
         }
 
         [Test]
@@ -388,7 +392,7 @@ namespace Tests.Systems
                 12d,
                 4d,
                 3d,
-                0.001d,
+                SimulationAccuracyContract.MaximumAggregateRelativeError,
                 20d,
                 2d,
                 false);

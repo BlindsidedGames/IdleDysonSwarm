@@ -11,6 +11,16 @@ using Systems.Numeric;
 
 namespace Systems.Simulation
 {
+    public static class SimulationAccuracyContract
+    {
+        // User-approved bound for deliberately approximated aggregate IP and
+        // continuous production outcomes. Aggregate reset counts use the same
+        // bound rounded up to a whole cycle. Discrete event kinds, flags,
+        // unlocks, caps, purchases, settings, and one-time rewards remain
+        // exact and are validated separately.
+        public const double MaximumAggregateRelativeError = 0.01d;
+    }
+
     public static class AutomationRotation
     {
         public static int Normalize(int index, int targetCount)
@@ -373,13 +383,18 @@ namespace Systems.Simulation
             double consumedSeconds,
             SimulationPresentationSummary summary,
             double validationError = 0d,
-            bool allAutomationEventsHandled = false)
+            bool allAutomationEventsHandled = false,
+            double automationTimeUntilNextEvent = double.NaN,
+            bool yieldRequested = false)
         {
             Accepted = accepted;
             ConsumedSeconds = consumedSeconds;
             Summary = summary;
             ValidationError = validationError;
             AllAutomationEventsHandled = allAutomationEventsHandled;
+            AutomationTimeUntilNextEvent =
+                automationTimeUntilNextEvent;
+            YieldRequested = yieldRequested;
         }
 
         public bool Accepted { get; }
@@ -392,6 +407,8 @@ namespace Systems.Simulation
         /// forbidden.
         /// </summary>
         public bool AllAutomationEventsHandled { get; }
+        public double AutomationTimeUntilNextEvent { get; }
+        public bool YieldRequested { get; }
     }
 
     /// <summary>
@@ -510,19 +527,28 @@ namespace Systems.Simulation
                             accelerationHorizon,
                             request,
                             out SimulationAccelerationResult block);
+                    if (offered && block.YieldRequested)
+                    {
+                        result.ValidationStatus =
+                            SimulationValidationStatus.Yielded;
+                        break;
+                    }
                     if (offered &&
                         block.Accepted &&
                         block.ConsumedSeconds > TimeEpsilon &&
                         block.ConsumedSeconds <=
                         accelerationHorizon + TimeEpsilon &&
-                        block.ValidationError <= 0.001d)
+                        block.ValidationError <=
+                        SimulationAccuracyContract
+                            .MaximumAggregateRelativeError)
                     {
                         AdvanceClockAcrossAutomation(
                             result,
                             block.ConsumedSeconds,
                             request.AutomationIntervalSeconds,
                             ref automationRemaining,
-                            block.AllAutomationEventsHandled);
+                            block.AllAutomationEventsHandled,
+                            block.AutomationTimeUntilNextEvent);
                         result.Summary.Merge(block.Summary);
                         result.Work.AccelerationBlocksAccepted =
                             NumericSafety.Add(
@@ -797,7 +823,8 @@ namespace Systems.Simulation
             double seconds,
             double automationInterval,
             ref double automationRemaining,
-            bool allAutomationEventsHandled)
+            bool allAutomationEventsHandled,
+            double exactAutomationRemaining)
         {
             result.ConsumedSeconds =
                 NumericSafety.Add(result.ConsumedSeconds, seconds).Value;
@@ -807,6 +834,17 @@ namespace Systems.Simulation
             if (!allAutomationEventsHandled)
             {
                 automationRemaining = Math.Max(0d, phase);
+                return;
+            }
+            if (NumericSafety.IsFinite(
+                    exactAutomationRemaining) &&
+                exactAutomationRemaining > TimeEpsilon &&
+                exactAutomationRemaining <=
+                    automationInterval + TimeEpsilon)
+            {
+                automationRemaining = Math.Min(
+                    automationInterval,
+                    exactAutomationRemaining);
                 return;
             }
             if (phase > TimeEpsilon)

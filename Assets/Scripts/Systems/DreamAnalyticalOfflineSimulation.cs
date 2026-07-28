@@ -6,6 +6,7 @@
 using System;
 using Systems.Numeric;
 using static Expansion.Oracle;
+using static IdleDysonSwarm.Systems.Constants.Dream1Constants;
 
 namespace Systems.Simulation
 {
@@ -673,9 +674,13 @@ namespace Systems.Simulation
                 prestige.doubleTime,
                 prestige.doubleTimeRate,
                 TickSeconds);
-            int panelsRequired = doubleTime.Active && prestige.doubleTimeRate >= 1
-                ? Math.Min(10, prestige.doubleTimeRate)
-                : 1;
+            int activeRate =
+                doubleTime.Active && prestige.doubleTimeRate >= 1
+                    ? Math.Min(10, prestige.doubleTimeRate)
+                    : 1;
+            long panelsRequired = NumericSafety.Multiply(
+                (long)RailgunBasePanelsRequired,
+                activeRate).Value;
             if (dream.railgunCharge >= dream.railgunMaxCharge &&
                 dream.dysonPanels >= panelsRequired)
                 return true;
@@ -709,9 +714,13 @@ namespace Systems.Simulation
                 prestige.doubleTime,
                 prestige.doubleTimeRate,
                 TickSeconds);
-            int panelsRequired = doubleTime.Active && prestige.doubleTimeRate >= 1
-                ? Math.Min(10, prestige.doubleTimeRate)
-                : 1;
+            int activeRate =
+                doubleTime.Active && prestige.doubleTimeRate >= 1
+                    ? Math.Min(10, prestige.doubleTimeRate)
+                    : 1;
+            long panelsRequired = NumericSafety.Multiply(
+                (long)RailgunBasePanelsRequired,
+                activeRate).Value;
             if (dream.dysonPanels >= panelsRequired)
             {
                 long eventTick = Math.Max(1L, ticksToFull);

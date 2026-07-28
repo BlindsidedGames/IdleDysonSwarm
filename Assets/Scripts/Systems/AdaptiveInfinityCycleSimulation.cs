@@ -108,7 +108,8 @@ namespace Systems.Simulation
         private const int EvaluatedRefinedIntegrationSegments = 256;
         private const int MaximumEvaluatedSearchIterations = 16;
         private const long MinimumProjectedCycles = 8L;
-        private const double MaximumValidationError = 0.001d;
+        private const double MaximumValidationError =
+            SimulationAccuracyContract.MaximumAggregateRelativeError;
 
         public static bool TryProject(
             InfinityCycleSample first,
@@ -326,7 +327,8 @@ namespace Systems.Simulation
         /// Uses the adaptive varying-IP projection only when the observed
         /// samples and the projected endpoint agree with an isolated
         /// candidate-state cycle evaluator. The projection remains bounded by
-        /// the same 0.1% coarse/refined contract as <see cref="TryProjectSeconds"/>.
+        /// the approved aggregate coarse/refined contract as
+        /// <see cref="TryProjectSeconds"/>.
         /// </summary>
         public static bool TryProjectValidatedCycles(
             InfinityCycleSample first,
@@ -404,6 +406,8 @@ namespace Systems.Simulation
                     availableSeconds,
                     minimumCycleSeconds,
                     evaluateCycle,
+                    reserveEndpointCorrection: true,
+                    minimumProjectedCycles: MinimumProjectedCycles,
                     out InfinityCycleProjection candidate))
             {
                 if (string.IsNullOrEmpty(
@@ -429,6 +433,159 @@ namespace Systems.Simulation
         }
 
         /// <summary>
+        /// Projects directly from an isolated evaluator whose structural
+        /// signature has already been proven by its creator. This is used for
+        /// durable post-reset bot-only states so a resumed stored-time job does
+        /// not need to rediscover three empirical cycles before it can batch.
+        /// Unsupported or changing graphs never create this evaluator.
+        /// </summary>
+        public static bool TryProjectValidatedState(
+            long currentInfinityPoints,
+            double availableSeconds,
+            double minimumCycleSeconds,
+            Func<long, InfinityCycleEvaluation> evaluateCycle,
+            out InfinityCycleProjection projection)
+        {
+            projection = default;
+            LastStableProjectionDiagnostic = null;
+            if (evaluateCycle == null ||
+                currentInfinityPoints < 0L)
+            {
+                LastStableProjectionDiagnostic =
+                    "invalid_state_evaluator";
+                return false;
+            }
+
+            InfinityCycleEvaluation current =
+                evaluateCycle(currentInfinityPoints);
+            if (!IsValidEvaluation(
+                    current,
+                    minimumCycleSeconds))
+            {
+                LastStableProjectionDiagnostic =
+                    "invalid_state_evaluation";
+                return false;
+            }
+
+            // Once the discrete IP balance is saturated, the multiplier and
+            // therefore this structurally proven cycle are constant. Resets
+            // still occur and must be counted, but their granted IP is zero.
+            if (currentInfinityPoints == long.MaxValue)
+            {
+                long cappedCycles = ToLongSaturating(
+                    Math.Floor(
+                        (availableSeconds + 1e-12d) /
+                        current.DurationSeconds));
+                if (cappedCycles < 1L)
+                {
+                    LastStableProjectionDiagnostic =
+                        "capped_state_too_short";
+                    return false;
+                }
+                double cappedSeconds = NumericSafety.Multiply(
+                    current.DurationSeconds,
+                    cappedCycles).Value;
+                if (!NumericSafety.IsFinite(cappedSeconds) ||
+                    cappedSeconds <= 0d ||
+                    cappedSeconds > availableSeconds + 1e-12d)
+                {
+                    LastStableProjectionDiagnostic =
+                        "capped_state_invalid_duration";
+                    return false;
+                }
+
+                projection = new InfinityCycleProjection(
+                    cappedCycles,
+                    cappedSeconds,
+                    long.MaxValue,
+                    0L,
+                    current.DurationSeconds,
+                    0d);
+                LastStableProjectionDiagnostic =
+                    "accepted_capped_state";
+                return true;
+            }
+
+            // At the minimum cadence, increasing IP cannot shorten a cycle
+            // further. The current monotone reward is therefore a lower bound
+            // for every following grant. If even that lower bound reaches the
+            // long cap before the final projected cycle, the observable result
+            // is exact: all requested cycles occur, IP is capped, and the last
+            // cycle grants zero.
+            if (current.DurationSeconds <=
+                    minimumCycleSeconds + 1e-12d &&
+                current.Reward > 0L)
+            {
+                long availableCycles = ToLongSaturating(
+                    Math.Floor(
+                        (availableSeconds + 1e-12d) /
+                        minimumCycleSeconds));
+                long remainingPoints =
+                    long.MaxValue - currentInfinityPoints;
+                long cyclesToCapUpperBound =
+                    remainingPoints / current.Reward +
+                    (remainingPoints % current.Reward == 0L
+                        ? 0L
+                        : 1L);
+                if (availableCycles > cyclesToCapUpperBound)
+                {
+                    double saturatedSeconds = NumericSafety.Multiply(
+                        minimumCycleSeconds,
+                        availableCycles).Value;
+                    if (NumericSafety.IsFinite(saturatedSeconds) &&
+                        saturatedSeconds > 0d &&
+                        saturatedSeconds <=
+                            availableSeconds + 1e-12d)
+                    {
+                        projection = new InfinityCycleProjection(
+                            availableCycles,
+                            saturatedSeconds,
+                            long.MaxValue,
+                            0L,
+                            minimumCycleSeconds,
+                            0d);
+                        LastStableProjectionDiagnostic =
+                            "accepted_proven_saturation";
+                        return true;
+                    }
+                }
+            }
+
+            var anchor = new InfinityCycleSample(
+                currentInfinityPoints,
+                current.Reward,
+                Math.Max(
+                    1L,
+                    ToLongSaturating(
+                        Math.Ceiling(
+                            current.DurationSeconds / 0.1d -
+                            1e-9d))),
+                current.DurationSeconds);
+            if (!TryProjectEvaluatedCycles(
+                    anchor,
+                    currentInfinityPoints,
+                    availableSeconds,
+                    minimumCycleSeconds,
+                    evaluateCycle,
+                    reserveEndpointCorrection: false,
+                    minimumProjectedCycles: 1L,
+                    out projection))
+            {
+                if (string.IsNullOrEmpty(
+                        LastStableProjectionDiagnostic))
+                {
+                    LastStableProjectionDiagnostic =
+                        "state_model_rejected";
+                }
+                return false;
+            }
+
+            LastStableProjectionDiagnostic =
+                "accepted_state";
+            return true;
+        }
+
+        /// <summary>
         /// Projects a varying-IP recurrence by sampling the real isolated
         /// candidate evaluator rather than assuming that duration and reward
         /// follow one global power curve. Short projections are evaluated
@@ -442,18 +599,23 @@ namespace Systems.Simulation
             double availableSeconds,
             double minimumCycleSeconds,
             Func<long, InfinityCycleEvaluation> evaluateCycle,
+            bool reserveEndpointCorrection,
+            long minimumProjectedCycles,
             out InfinityCycleProjection projection)
         {
             projection = default;
-            double correctionReserve = Math.Max(
-                1d,
-                NumericSafety.Multiply(
-                    anchor.DurationSeconds,
-                    2d).Value);
+            double correctionReserve =
+                reserveEndpointCorrection
+                    ? Math.Max(
+                        1d,
+                        NumericSafety.Multiply(
+                            anchor.DurationSeconds,
+                            2d).Value)
+                    : 0d;
             double projectionBudget =
                 availableSeconds - correctionReserve;
             if (projectionBudget <
-                MinimumProjectedCycles * minimumCycleSeconds)
+                minimumProjectedCycles * minimumCycleSeconds)
             {
                 LastStableProjectionDiagnostic =
                     $"evaluated_budget:{projectionBudget:R}";
@@ -474,7 +636,7 @@ namespace Systems.Simulation
             long low = 0L;
             long high = 0L;
             long candidate = Math.Max(
-                MinimumProjectedCycles,
+                minimumProjectedCycles,
                 ToLongSaturating(
                     Math.Floor(
                         projectionBudget /
@@ -566,7 +728,7 @@ namespace Systems.Simulation
                 }
             }
 
-            if (low < MinimumProjectedCycles)
+            if (low < minimumProjectedCycles)
             {
                 LastStableProjectionDiagnostic =
                     $"evaluated_too_few:{low}";
