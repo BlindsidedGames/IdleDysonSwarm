@@ -50,10 +50,15 @@ export type CheckpointState =
       readonly targetStateRevision: number
     }
 
+export type CommitFirstPurpose =
+  | 'stored-time'
+  | 'away-time'
+  | 'bot-cap'
+
 export type ExclusiveOperation =
   | 'none'
   | 'import'
-  | 'stored-time'
+  | CommitFirstPurpose
   | 'reload-after-commit'
 
 export type ApplicationSnapshot<TState> =
@@ -163,7 +168,7 @@ export interface GameApplication<TState, TCommand> {
   checkpoint(): Promise<CheckpointResult>
   dispatchCommitFirst(
     envelope: ApplicationCommandEnvelope<TCommand>,
-    purpose: 'stored-time',
+    purpose: CommitFirstPurpose,
   ): Promise<CommitFirstResult>
   importSave(request: ImportSaveRequest): Promise<ImportSaveResult>
   subscribe(listener: ApplicationListener<TState>): Unsubscribe

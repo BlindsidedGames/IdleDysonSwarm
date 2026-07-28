@@ -95,13 +95,18 @@ The first golden-master set will cover:
 Projection benchmarks and long-duration tuning are deliberately later. They must
 not alter this exact semantic layer.
 
-The current TypeScript reference now covers basic Dyson production, configured
-and stored-time facility automation, ordinary/Break Infinity threshold and
-reward evaluation, the 1/60-second minimum Infinity cycle, queued Break target
-changes, the durable core reset transition, and all three finite bot-cap
-checkpoint entry states. The pure model applies the cap reward/reset to one
-isolated candidate; the persistence contract requires publishing that complete
-candidate atomically. Imported Unity saves resume before pending, after pending,
-or after the reward checkpoint without duplicate rewards. Skill auto-assignment,
-dynamic effects, research, Dream, and Reality remain explicit follow-on parity
-work.
+The current TypeScript reference composes Dyson, research, skills, Tinker,
+Infinity, Dream, Reality, Quantum, Avocado and time resources in one event-time
+model. Active automation preserves configured buy modes; stored-time
+automation forces Buy Max for both facilities and research without mutating
+those settings. The model covers ordinary/Break thresholds and rewards, the
+1/60-second minimum Infinity cycle, queued Quantum action, Dream reset order,
+Reality generation, Double Time, transient Tinker exclusion from away/stored
+time, and every finite bot-cap checkpoint entry state.
+
+The lifecycle coordinator publishes stored-time, returned-time and bot-cap
+candidates only through the commit-first persistence lane. Imported Unity saves
+resume before pending, after pending, or after the reward checkpoint without
+duplicate rewards. The headless integration regression checkpoints and
+reconstructs a fresh runtime session, then proves the next continuation remains
+equivalent.

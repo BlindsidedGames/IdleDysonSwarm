@@ -24,6 +24,7 @@ import {
   type RealityUpgradeDefinition,
   type RealityUpgradeId,
 } from './realityUpgrades'
+import { createCanonicalTinkerRuntimeState } from './canonicalTinker'
 import { createSimulationSummary } from './types'
 
 const fixture = readFileSync(
@@ -277,6 +278,7 @@ function carrier(
     entitlements: {
       permanentDoubleIp: false,
     },
+    tinker: createCanonicalTinkerRuntimeState(),
   }
 }
 
@@ -351,6 +353,34 @@ const artifactDefinitions = new Map<
 ])
 
 describe('canonical whole-game event-time model', () => {
+  test('finalizes elapsed statistics before a bot-cap persistence pause', () => {
+    const source = baseState()
+    const capped: CanonicalGameStateV1 = {
+      ...source,
+      dyson: {
+        ...source.dyson,
+        bots: Number.MAX_VALUE,
+      },
+    }
+    const model = new CanonicalEventTimeModel(
+      carrier(capped),
+      context(),
+    )
+    const summary = createSimulationSummary()
+    model.advanceContinuous(0.5)
+    model.applyProductionArrivals(summary)
+    model.applyDerivedTimersAndDoubleTime(0.5, summary)
+    model.applyDreamReset(summary)
+    model.applyBotCapTransition(summary)
+
+    expect(model.validate())
+      .toBe('CANONICAL_EVENT_BOT_CAP_PERSISTENCE_REQUIRED')
+    expect(
+      model.state.gameState.statistics
+        .trackedSimulatedSeconds,
+    ).toBeCloseTo(0.5, 12)
+  })
+
   test('uses total Infinity points for the 42 gate and selects only the unlocked branch', () => {
     const below = new CanonicalEventTimeModel(
       carrier({
@@ -508,6 +538,7 @@ describe('canonical whole-game event-time model', () => {
       ],
     })
 
+    expect(result.diagnosticCode).toBeUndefined()
     expect(result.completed).toBe(true)
     expect(result.diagnosticCode).toBeUndefined()
     expect(result.events.map((event) => event.kind)).toEqual([
@@ -672,5 +703,48 @@ describe('canonical whole-game event-time model', () => {
       path: 'gameData.realityUpgrades.translation1',
     })
     expect(model.state.gameState.infinity.points).toBe(42n)
+  })
+
+  test('keeps Tinker timing backend-owned and lands its reward at the exact material horizon', () => {
+    const source = baseState()
+    const model = new CanonicalEventTimeModel(
+      carrier({
+        ...source,
+        dyson: {
+          ...source.dyson,
+          manualCreationIntervalSeconds: 2,
+        },
+        timeline: {
+          ...source.timeline,
+          automationTimeUntilNextEvent: 10,
+        },
+      }),
+      context(REALITY_UPGRADE_DEFINITIONS, 10),
+    )
+
+    expect(model.startTinker(false)).toBe(true)
+    expect(model.timeToNextMaterialEvent(10, 10)).toBe(1.9)
+
+    const result = advanceEventTime({
+      startingState: model,
+      durationSeconds: 1.9,
+      automationIntervalSeconds: 10,
+      automationTimeUntilNextEvent: 10,
+      infinityMinimumCycleSeconds: 10,
+      processingBudgetMilliseconds: 0,
+    })
+
+    expect(result.diagnosticCode).toBeUndefined()
+    expect(result.completed).toBe(true)
+    expect(result.candidateState.state.gameState.dyson.bots).toBe(1)
+    expect(
+      result.candidateState.state.gameState.dyson
+        .manualCreationIntervalSeconds,
+    ).toBe(1)
+    expect(result.candidateState.state.tinker).toMatchObject({
+      running: false,
+      repeat: false,
+      elapsedSeconds: 0,
+    })
   })
 })

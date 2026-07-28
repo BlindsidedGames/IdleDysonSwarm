@@ -6,6 +6,7 @@ import { hydrateGameState } from '../game-state/mapping'
 import type { CanonicalGameStateV1 } from '../game-state/types'
 import { prepareIdb1Save } from '../save/prepare'
 import {
+  previewCanonicalResearchPurchase,
   purchaseCanonicalResearch,
   runResearchAutomationTick,
 } from './researchAutomation'
@@ -139,6 +140,81 @@ function indexOf(id: string): number {
 }
 
 describe('research automation', () => {
+  test('previews the exact manual purchase consumed by execution', () => {
+    const state = stateWith(5_000)
+    const before = structuredClone(state)
+    const preview = previewCanonicalResearchPurchase(
+      state,
+      neutralTuning,
+      'research.money_multiplier',
+    )
+    const result = purchaseCanonicalResearch(
+      state,
+      neutralTuning,
+      'research.money_multiplier',
+    )
+
+    expect(preview).toEqual({
+      researchId: 'research.money_multiplier',
+      eligible: true,
+      code: 'purchasable',
+      currentLevel: 0,
+      maximumLevel: null,
+      selectedQuantity: 1n,
+      affordableQuantity: 1n,
+      cost: 5_000,
+      issue: null,
+    })
+    expect(result).toMatchObject({
+      accepted: true,
+      changed: true,
+      purchase: {
+        researchId: preview.researchId,
+        quantity: preview.selectedQuantity,
+        cost: preview.cost,
+      },
+    })
+    expect(Object.isFrozen(preview)).toBe(true)
+    expect(state).toEqual(before)
+  })
+
+  test('previews unaffordable, prerequisite, and unknown research without optimistic eligibility', () => {
+    const poor = stateWith(1)
+    expect(
+      previewCanonicalResearchPurchase(
+        poor,
+        neutralTuning,
+        'research.money_multiplier',
+      ),
+    ).toMatchObject({
+      eligible: false,
+      code: 'insufficient-science',
+      selectedQuantity: 1n,
+      affordableQuantity: 0n,
+      cost: 5_000,
+    })
+    expect(
+      previewCanonicalResearchPurchase(
+        stateWith(1_000_000_000),
+        neutralTuning,
+        'research.panel_lifetime_2',
+      ),
+    ).toMatchObject({
+      eligible: false,
+      code: 'prerequisites-not-met',
+    })
+    expect(
+      previewCanonicalResearchPurchase(
+        poor,
+        neutralTuning,
+        'research.missing',
+      ),
+    ).toMatchObject({
+      eligible: false,
+      code: 'unknown-research',
+    })
+  })
+
   test('manual purchases use authored buy-mode math without requiring automation', () => {
     const state = stateWith(5_000)
     const result = purchaseCanonicalResearch(
@@ -339,6 +415,30 @@ describe('research automation', () => {
     expect(max.purchases[0]?.quantity).toBe(affordable)
     expect(max.state.research.levelsById['research.money_multiplier'])
       .toBe(Number(affordable))
+  })
+
+  test('forces Buy Max for stored-time policy without changing the configured research mode', () => {
+    const science = 50_000
+    const affordable = maxAffordable(science, 5_000, 1.77, 0)
+    const state = enable(
+      stateWith(science, indexOf('research.money_multiplier')),
+      'research.money_multiplier',
+    )
+
+    const configured = runResearchAutomationTick(
+      state,
+      neutralTuning,
+    )
+    const forced = runResearchAutomationTick(
+      state,
+      neutralTuning,
+      'force-buy-max',
+    )
+
+    expect(configured.purchases[0]?.quantity).toBe(1n)
+    expect(forced.purchases[0]?.quantity).toBe(affordable)
+    expect(forced.state.research.automation.buyMode).toBe('buy-1')
+    expect(state.research.automation.buyMode).toBe('buy-1')
   })
 
   test('uses updated levels for prerequisite research later in the same pass', () => {

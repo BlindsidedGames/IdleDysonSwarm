@@ -7,6 +7,17 @@ performance baseline and must not be used as one.
 No replacement product frontend should begin until the following contracts are
 written, reviewed and approved.
 
+The backend dependency is complete: UI code may consume
+`CanonicalGameApplicationFacade.frontendSnapshot()` and dispatch the typed commands
+in `canonicalPlayerCommands.ts` through
+`CanonicalLifecycleCoordinator.dispatchPlayer()`. Player code must not bypass
+the coordinator for either commands or active wall-time advancement:
+`CanonicalLifecycleCoordinator.advanceActive()` owns serialized bot-cap and
+stored-time continuations that the lower-level facade deliberately exposes
+only as staged transitions. The items below are the remaining product and
+presentation decisions; they must not be implemented by duplicating gameplay
+logic outside that boundary.
+
 ## Product contract
 
 - Target platforms and input methods.

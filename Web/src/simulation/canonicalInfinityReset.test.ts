@@ -38,6 +38,15 @@ function ownedSkill(): SkillRuntimeState {
   }
 }
 
+function clearedSkillState(): SkillRuntimeState {
+  return {
+    owned: false,
+    level: 0,
+    timerSeconds: 0,
+    secondaryTimerSeconds: 0,
+  }
+}
+
 function requireSuccess(
   result: ReturnType<typeof applyCanonicalInfinityReset>,
 ): Extract<typeof result, { ok: true }> {
@@ -163,7 +172,11 @@ describe('canonical Infinity reset', () => {
 
     expect(result.state.skills.points).toBe(9n)
     expect(result.state.skills.fragments).toBe(0n)
-    expect(result.state.skills.byId).toEqual({})
+    expect(result.state.skills.byId).toEqual({
+      banking: clearedSkillState(),
+      investmentPortfolio: clearedSkillState(),
+      startHereTree: clearedSkillState(),
+    })
     expect(result.state.skills.activeAutoAssignment)
       .toBe(state.skills.activeAutoAssignment)
     expect(result.state.skills.presets).toBe(state.skills.presets)
@@ -341,11 +354,15 @@ describe('canonical Infinity reset', () => {
     expect(result.state.skills.points).toBe(0n)
     expect(result.state.skills.fragments).toBe(1n)
     expect(Object.keys(result.state.skills.byId)).toEqual([
+      'discardedOldSkill',
       'startHereTree',
       'workerEfficiencyTree',
       'monetaryPolicy',
     ])
-    for (const skill of Object.values(result.state.skills.byId)) {
+    expect(result.state.skills.byId.discardedOldSkill)
+      .toEqual(clearedSkillState())
+    for (const skillId of result.autoAssignedSkillIds) {
+      const skill = result.state.skills.byId[skillId]
       expect(skill).toEqual({
         owned: true,
         level: 1,

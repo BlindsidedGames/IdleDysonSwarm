@@ -6,6 +6,7 @@ import type {
   CanonicalGameStateV1,
 } from '../game-state/types'
 import { floorToDiscrete } from './numeric'
+import type { SimulationAutomationPolicy } from './types'
 import {
   buyModeAmount,
   buyXCost,
@@ -80,6 +81,78 @@ export type CanonicalResearchPurchaseResult =
       readonly state: CanonicalGameStateV1
     }
 
+export type CanonicalResearchPurchasePreviewCode =
+  | 'purchasable'
+  | 'unknown-research'
+  | 'definition-gap'
+  | 'already-maxed'
+  | 'prerequisites-not-met'
+  | 'automation-disabled'
+  | 'invalid-state'
+  | 'invalid-tuning'
+  | 'invalid-cost'
+  | 'invalid-quantity'
+  | 'insufficient-science'
+  | 'output-maxed'
+
+export interface CanonicalResearchPurchasePreview {
+  readonly researchId: string
+  readonly eligible: boolean
+  readonly code: CanonicalResearchPurchasePreviewCode
+  readonly currentLevel: number
+  readonly maximumLevel: number | null
+  readonly selectedQuantity: bigint
+  readonly affordableQuantity: bigint
+  readonly cost: number
+  readonly issue: string | null
+}
+
+interface InternalResearchPurchasePreview
+  extends CanonicalResearchPurchasePreview {
+  readonly nextScience: number
+  readonly nextLevel: number
+}
+
+/**
+ * Quotes one manual research purchase without changing state. Definition
+ * parsing, repeatable-skill tuning, buy mode, caps, prerequisites, and debit
+ * validation are shared with both manual and automation execution.
+ */
+export function previewCanonicalResearchPurchase(
+  state: Readonly<CanonicalGameStateV1>,
+  tuning: Readonly<DysonCompatibilityTuning>,
+  researchId: string,
+): CanonicalResearchPurchasePreview {
+  let definitions: readonly ResearchDefinition[]
+  try {
+    definitions = loadDefinitions()
+  } catch (error) {
+    return publicPreview(
+      emptyPreview(
+        researchId,
+        'definition-gap',
+        error instanceof Error ? error.message : String(error),
+      ),
+    )
+  }
+  const definition = definitions.find(
+    (candidate) => candidate.id === researchId,
+  )
+  if (definition === undefined) {
+    return publicPreview(emptyPreview(researchId, 'unknown-research'))
+  }
+  return publicPreview(
+    previewPurchase(
+      definition,
+      state,
+      tuning,
+      state.dyson.science,
+      state.research.levelsById,
+      false,
+    ),
+  )
+}
+
 /**
  * Purchases one authored research definition through the same cost,
  * prerequisite, cap, buy-mode, and numeric transaction path used by
@@ -90,9 +163,20 @@ export function purchaseCanonicalResearch(
   tuning: Readonly<DysonCompatibilityTuning>,
   researchId: string,
 ): CanonicalResearchPurchaseResult {
-  const definition = loadDefinitions().find(
-    (candidate) => candidate.id === researchId,
-  )
+  let definition: ResearchDefinition | undefined
+  try {
+    definition = loadDefinitions().find(
+      (candidate) => candidate.id === researchId,
+    )
+  } catch (error) {
+    return {
+      accepted: false,
+      code: 'RESEARCH-DEFINITION-GAP',
+      reason:
+        error instanceof Error ? error.message : String(error),
+      state,
+    }
+  }
   if (definition === undefined) {
     return {
       accepted: false,
@@ -101,32 +185,7 @@ export function purchaseCanonicalResearch(
       state,
     }
   }
-  const currentLevel = state.research.levelsById[researchId] ?? 0
-  if (
-    definition.maxLevel >= 0 &&
-    currentLevel >= definition.maxLevel
-  ) {
-    return {
-      accepted: true,
-      changed: false,
-      state,
-    }
-  }
-  if (
-    !prerequisitesMet(
-      definition,
-      state,
-      state.research.levelsById,
-    )
-  ) {
-    return {
-      accepted: false,
-      code: 'RESEARCH-PREREQUISITE',
-      reason: `Research '${researchId}' has an unmet prerequisite.`,
-      state,
-    }
-  }
-  const purchase = tryPurchase(
+  const preview = previewPurchase(
     definition,
     state,
     tuning,
@@ -134,18 +193,27 @@ export function purchaseCanonicalResearch(
     state.research.levelsById,
     false,
   )
-  if (purchase === undefined) {
+  if (preview.code === 'already-maxed') {
+    return {
+      accepted: true,
+      changed: false,
+      state,
+    }
+  }
+  if (!preview.eligible) {
     return {
       accepted: false,
-      code: 'RESEARCH-UNAFFORDABLE',
-      reason: `Research '${researchId}' cannot be purchased with the current science balance and buy mode.`,
+      code: researchFailureCode(preview.code),
+      reason:
+        preview.issue ??
+        `Research '${researchId}' is not purchasable (${preview.code}).`,
       state,
     }
   }
   const detail = Object.freeze({
     researchId,
-    quantity: purchase.quantity,
-    cost: purchase.cost,
+    quantity: preview.selectedQuantity,
+    cost: preview.cost,
   })
   return {
     accepted: true,
@@ -154,13 +222,13 @@ export function purchaseCanonicalResearch(
       ...state,
       dyson: {
         ...state.dyson,
-        science: purchase.science,
+        science: preview.nextScience,
       },
       research: {
         ...state.research,
         levelsById: {
           ...state.research.levelsById,
-          [researchId]: purchase.level,
+          [researchId]: preview.nextLevel,
         },
       },
     },
@@ -178,6 +246,7 @@ export function purchaseCanonicalResearch(
 export function runResearchAutomationTick(
   state: Readonly<CanonicalGameStateV1>,
   tuning: Readonly<DysonCompatibilityTuning>,
+  policy: SimulationAutomationPolicy = 'preserve-configured-mode',
 ): ResearchAutomationTickResult {
   if (!state.infinity.automationUnlocked.research) {
     return {
@@ -220,6 +289,7 @@ export function runResearchAutomationTick(
       science,
       levelsById,
       true,
+      policy,
     )
     if (purchase === undefined) continue
 
@@ -263,6 +333,8 @@ function tryPurchase(
   science: number,
   levelsById: Readonly<Record<string, number>>,
   requireAutomationEnabled: boolean,
+  policy: SimulationAutomationPolicy =
+    'preserve-configured-mode',
 ):
   | {
       readonly science: number
@@ -271,22 +343,76 @@ function tryPurchase(
       readonly cost: number
     }
   | undefined {
+  const preview = previewPurchase(
+    definition,
+    state,
+    tuning,
+    science,
+    levelsById,
+    requireAutomationEnabled,
+    policy,
+  )
+  if (!preview.eligible) return undefined
+  return {
+    science: preview.nextScience,
+    level: preview.nextLevel,
+    quantity: preview.selectedQuantity,
+    cost: preview.cost,
+  }
+}
+
+function previewPurchase(
+  definition: ResearchDefinition,
+  state: Readonly<CanonicalGameStateV1>,
+  tuning: Readonly<DysonCompatibilityTuning>,
+  science: number,
+  levelsById: Readonly<Record<string, number>>,
+  requireAutomationEnabled: boolean,
+  policy: SimulationAutomationPolicy =
+    'preserve-configured-mode',
+): InternalResearchPurchasePreview {
+  const currentLevel = levelsById[definition.id] ?? 0
+  const maximumLevel =
+    definition.maxLevel >= 0 ? definition.maxLevel : null
+  const base = {
+    researchId: definition.id,
+    currentLevel,
+    maximumLevel,
+  }
   if (
     requireAutomationEnabled &&
     !isAutomationEnabled(definition, state)
   ) {
-    return undefined
+    return emptyPreview(
+      definition.id,
+      'automation-disabled',
+      null,
+      base,
+    )
   }
-  if (!prerequisitesMet(definition, state, levelsById)) return undefined
-  if (!Number.isFinite(science) || science < 0) return undefined
-
-  const currentLevel = levelsById[definition.id] ?? 0
   if (
+    !Number.isFinite(science) ||
+    science < 0 ||
     !Number.isFinite(currentLevel) ||
-    currentLevel < 0 ||
-    (definition.maxLevel >= 0 && currentLevel >= definition.maxLevel)
+    currentLevel < 0
   ) {
-    return undefined
+    return emptyPreview(
+      definition.id,
+      'invalid-state',
+      null,
+      base,
+    )
+  }
+  if (
+    definition.maxLevel >= 0 &&
+    currentLevel >= definition.maxLevel
+  ) {
+    return emptyPreview(
+      definition.id,
+      'already-maxed',
+      null,
+      base,
+    )
   }
 
   let costBase = definition.baseCost
@@ -296,13 +422,25 @@ function tryPurchase(
   if (repeatableOwned && coefficientField !== undefined) {
     const percentPerLevel = tuning[coefficientField]
     if (!Number.isFinite(percentPerLevel) || percentPerLevel < 0) {
-      return undefined
+      return emptyPreview(
+        definition.id,
+        'invalid-tuning',
+        `Compatibility tuning '${coefficientField}' is invalid.`,
+        base,
+      )
     }
     if (percentPerLevel > 0) {
       costBase /= 1 + currentLevel * percentPerLevel
     }
   }
-  if (!Number.isFinite(costBase) || costBase <= 0) return undefined
+  if (!Number.isFinite(costBase) || costBase <= 0) {
+    return emptyPreview(
+      definition.id,
+      'invalid-cost',
+      null,
+      base,
+    )
+  }
 
   let affordable = maxAffordable(
     science,
@@ -310,28 +448,30 @@ function tryPurchase(
     definition.exponent,
     currentLevel,
   )
+  let remaining: bigint | null = null
   if (definition.maxLevel >= 0) {
-    const remaining = floorToDiscrete(
-      definition.maxLevel - currentLevel,
-    )
+    remaining = floorToDiscrete(definition.maxLevel - currentLevel)
     if (affordable > remaining) affordable = remaining
   }
-  if (affordable <= 0n) return undefined
-
   let selected = buyModeAmount(
-    state.research.automation.buyMode,
+    policy === 'force-buy-max'
+      ? 'buy-max'
+      : state.research.automation.buyMode,
     state.research.automation.roundedBulkBuy,
     floorToDiscrete(currentLevel),
     affordable,
   )
-  if (definition.maxLevel >= 0) {
-    const remaining = floorToDiscrete(
-      definition.maxLevel - currentLevel,
-    )
-    if (selected > remaining) selected = remaining
-  }
+  if (remaining !== null && selected > remaining) selected = remaining
   if (selected <= 0n || selected > BigInt(Number.MAX_SAFE_INTEGER)) {
-    return undefined
+    return {
+      ...emptyPreview(
+        definition.id,
+        'invalid-quantity',
+        null,
+        base,
+      ),
+      affordableQuantity: affordable,
+    }
   }
 
   const cost = buyXCost(
@@ -340,18 +480,153 @@ function tryPurchase(
     definition.exponent,
     currentLevel,
   )
+  const facts = {
+    researchId: definition.id,
+    currentLevel,
+    maximumLevel,
+    selectedQuantity: selected,
+    affordableQuantity: affordable,
+    cost,
+  }
+  if (!prerequisitesMet(definition, state, levelsById)) {
+    return ineligiblePreview(
+      facts,
+      'prerequisites-not-met',
+      science,
+      currentLevel,
+    )
+  }
+  if (affordable <= 0n) {
+    return ineligiblePreview(
+      facts,
+      'insufficient-science',
+      science,
+      currentLevel,
+    )
+  }
   const debit = tryDebitContinuous(science, cost, selected)
-  if (debit.status !== 'success') return undefined
-
+  if (debit.status !== 'success') {
+    const code: CanonicalResearchPurchasePreviewCode =
+      debit.status === 'insufficient-funds'
+        ? 'insufficient-science'
+        : debit.status === 'output-maxed' ||
+            debit.status === 'maxed'
+          ? 'output-maxed'
+          : debit.status === 'invalid-quantity'
+            ? 'invalid-quantity'
+            : debit.status === 'invalid-balance'
+              ? 'invalid-state'
+              : 'invalid-cost'
+    return ineligiblePreview(
+      facts,
+      code,
+      science,
+      currentLevel,
+    )
+  }
   const nextLevel = currentLevel + Number(selected)
   if (!Number.isFinite(nextLevel) || nextLevel <= currentLevel) {
-    return undefined
+    return ineligiblePreview(
+      facts,
+      'output-maxed',
+      science,
+      currentLevel,
+    )
   }
   return {
-    science: debit.balance,
-    level: nextLevel,
-    quantity: selected,
-    cost: debit.charged,
+    ...facts,
+    eligible: true,
+    code: 'purchasable',
+    issue: null,
+    nextScience: debit.balance,
+    nextLevel,
+  }
+}
+
+function emptyPreview(
+  researchId: string,
+  code: Exclude<
+    CanonicalResearchPurchasePreviewCode,
+    'purchasable'
+  >,
+  issue: string | null = null,
+  level: {
+    readonly currentLevel: number
+    readonly maximumLevel: number | null
+  } = { currentLevel: 0, maximumLevel: null },
+): InternalResearchPurchasePreview {
+  return {
+    researchId,
+    eligible: false,
+    code,
+    currentLevel: level.currentLevel,
+    maximumLevel: level.maximumLevel,
+    selectedQuantity: 0n,
+    affordableQuantity: 0n,
+    cost: 0,
+    issue,
+    nextScience: 0,
+    nextLevel: level.currentLevel,
+  }
+}
+
+function ineligiblePreview(
+  facts: Pick<
+    InternalResearchPurchasePreview,
+    | 'researchId'
+    | 'currentLevel'
+    | 'maximumLevel'
+    | 'selectedQuantity'
+    | 'affordableQuantity'
+    | 'cost'
+  >,
+  code: Exclude<
+    CanonicalResearchPurchasePreviewCode,
+    'purchasable'
+  >,
+  nextScience: number,
+  nextLevel: number,
+): InternalResearchPurchasePreview {
+  return {
+    ...facts,
+    eligible: false,
+    code,
+    issue: null,
+    nextScience,
+    nextLevel,
+  }
+}
+
+function publicPreview(
+  preview: InternalResearchPurchasePreview,
+): CanonicalResearchPurchasePreview {
+  return Object.freeze({
+    researchId: preview.researchId,
+    eligible: preview.eligible,
+    code: preview.code,
+    currentLevel: preview.currentLevel,
+    maximumLevel: preview.maximumLevel,
+    selectedQuantity: preview.selectedQuantity,
+    affordableQuantity: preview.affordableQuantity,
+    cost: preview.cost,
+    issue: preview.issue,
+  })
+}
+
+function researchFailureCode(
+  code: CanonicalResearchPurchasePreviewCode,
+): string {
+  switch (code) {
+    case 'unknown-research':
+      return 'RESEARCH-UNKNOWN'
+    case 'definition-gap':
+      return 'RESEARCH-DEFINITION-GAP'
+    case 'prerequisites-not-met':
+      return 'RESEARCH-PREREQUISITE'
+    case 'invalid-tuning':
+      return 'RESEARCH-TUNING'
+    default:
+      return 'RESEARCH-UNAFFORDABLE'
   }
 }
 

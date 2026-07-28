@@ -142,6 +142,10 @@ export function applyCanonicalInfinityReset(
     state.skills.autoAssignNonRefundable,
     rulesResult.rules,
   )
+  const resetSkillStates = materializeResetSkillStates(
+    state.skills.byId,
+    assignment.byId,
+  )
   const facilities = retainedFacilities(state)
   const statistics = recordInfinityCycle(
     state.statistics,
@@ -192,7 +196,7 @@ export function applyCanonicalInfinityReset(
         ...state.skills,
         points: assignment.points,
         fragments: assignment.fragments,
-        byId: assignment.byId,
+        byId: resetSkillStates,
       },
       research: {
         ...state.research,
@@ -205,6 +209,27 @@ export function applyCanonicalInfinityReset(
     bankedSkillPoints,
     autoAssignedSkillIds: assignment.assignedIds,
   }
+}
+
+function materializeResetSkillStates(
+  previous: Readonly<Record<string, SkillRuntimeState>>,
+  assigned: Readonly<Record<string, SkillRuntimeState>>,
+): Record<string, SkillRuntimeState> {
+  const ids = new Set([
+    ...Object.keys(previous),
+    ...Object.keys(assigned),
+  ])
+  return Object.fromEntries(
+    [...ids].map((id) => [
+      id,
+      assigned[id] ?? {
+        owned: false,
+        level: 0,
+        timerSeconds: 0,
+        secondaryTimerSeconds: 0,
+      },
+    ]),
+  )
 }
 
 function validateResetInputs(

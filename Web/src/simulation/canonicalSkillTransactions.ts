@@ -41,6 +41,128 @@ export type CanonicalSkillTransactionResult =
       readonly state: CanonicalGameStateV1
     }
 
+export interface CanonicalSkillActionPreview {
+  readonly eligible: boolean
+  readonly code: string
+  readonly affectedSkillIds: readonly string[]
+}
+
+export interface CanonicalSkillAvailabilityPreview {
+  readonly skillId: string
+  readonly cost: bigint
+  readonly owned: boolean
+  readonly fragment: boolean
+  readonly intrinsicallyRefundable: boolean
+  readonly requiredSkillIds: readonly string[]
+  readonly shadowRequiredSkillIds: readonly string[]
+  readonly exclusiveWithSkillIds: readonly string[]
+  readonly purchase: CanonicalSkillActionPreview
+  readonly refund: CanonicalSkillActionPreview & {
+    readonly pointsReturned: bigint
+    readonly fragmentsRemoved: bigint
+  }
+}
+
+export interface CanonicalSkillCatalogPreview {
+  readonly complete: boolean
+  readonly definitionGap: string | null
+  readonly skills: readonly CanonicalSkillAvailabilityPreview[]
+}
+
+/**
+ * Projects the exact authored skill catalog and current-state purchase/refund
+ * eligibility without changing the source. Both actions execute through the
+ * same internal transactions used by command routing.
+ */
+export function previewCanonicalSkillCatalog(
+  state: CanonicalGameStateV1,
+): CanonicalSkillCatalogPreview {
+  let definitions: ReadonlyMap<string, SkillDefinition>
+  try {
+    definitions = loadDefinitions()
+  } catch (error) {
+    return Object.freeze({
+      complete: false,
+      definitionGap:
+        error instanceof Error ? error.message : String(error),
+      skills: Object.freeze([]),
+    })
+  }
+
+  const skills = [...definitions.values()].map((definition) => {
+    const purchase = purchaseWithDefinitions(
+      state,
+      definition.id,
+      definitions,
+    )
+    const refund = refundWithDefinitions(
+      state,
+      definition.id,
+      definitions,
+    )
+    const purchaseAffected =
+      purchase.accepted && purchase.changed
+        ? purchase.affectedSkillIds
+        : []
+    const refundAffected =
+      refund.accepted && refund.changed
+        ? refund.affectedSkillIds
+        : []
+    const purchaseCode =
+      purchase.accepted
+        ? purchase.changed
+          ? 'purchasable'
+          : 'already-owned'
+        : purchase.code
+    const refundCode =
+      refund.accepted
+        ? refund.changed
+          ? 'refundable'
+          : 'not-owned'
+        : refund.code
+    const pointsReturned =
+      refund.accepted && refund.changed
+        ? refund.state.skills.points - state.skills.points
+        : 0n
+    const fragmentsRemoved =
+      refund.accepted && refund.changed
+        ? state.skills.fragments - refund.state.skills.fragments
+        : 0n
+
+    return Object.freeze({
+      skillId: definition.id,
+      cost: definition.cost,
+      owned: state.skills.byId[definition.id]?.owned === true,
+      fragment: definition.fragment,
+      intrinsicallyRefundable: definition.refundable,
+      requiredSkillIds: Object.freeze([...definition.required]),
+      shadowRequiredSkillIds: Object.freeze([
+        ...definition.shadowRequired,
+      ]),
+      exclusiveWithSkillIds: Object.freeze([
+        ...definition.exclusiveWith,
+      ]),
+      purchase: Object.freeze({
+        eligible: purchase.accepted && purchase.changed,
+        code: purchaseCode,
+        affectedSkillIds: Object.freeze([...purchaseAffected]),
+      }),
+      refund: Object.freeze({
+        eligible: refund.accepted && refund.changed,
+        code: refundCode,
+        affectedSkillIds: Object.freeze([...refundAffected]),
+        pointsReturned,
+        fragmentsRemoved,
+      }),
+    })
+  })
+  return Object.freeze({
+    complete: true,
+    definitionGap: null,
+    skills: Object.freeze(skills),
+  })
+}
+
 /**
  * Purchases one authored skill after applying the same visibility,
  * prerequisite, exclusivity, point, and fragment rules as the Unity tree.
@@ -49,7 +171,24 @@ export function purchaseCanonicalSkill(
   state: CanonicalGameStateV1,
   skillId: string,
 ): CanonicalSkillTransactionResult {
-  const definitions = loadDefinitions()
+  let definitions: ReadonlyMap<string, SkillDefinition>
+  try {
+    definitions = loadDefinitions()
+  } catch (error) {
+    return rejected(
+      state,
+      'SKILL-DEFINITION-GAP',
+      error instanceof Error ? error.message : String(error),
+    )
+  }
+  return purchaseWithDefinitions(state, skillId, definitions)
+}
+
+function purchaseWithDefinitions(
+  state: CanonicalGameStateV1,
+  skillId: string,
+  definitions: ReadonlyMap<string, SkillDefinition>,
+): CanonicalSkillTransactionResult {
   const definition = definitions.get(skillId)
   if (definition === undefined) {
     return rejected(state, 'SKILL-UNKNOWN', `Unknown skill '${skillId}'.`)
@@ -123,7 +262,24 @@ export function refundCanonicalSkill(
   state: CanonicalGameStateV1,
   skillId: string,
 ): CanonicalSkillTransactionResult {
-  const definitions = loadDefinitions()
+  let definitions: ReadonlyMap<string, SkillDefinition>
+  try {
+    definitions = loadDefinitions()
+  } catch (error) {
+    return rejected(
+      state,
+      'SKILL-DEFINITION-GAP',
+      error instanceof Error ? error.message : String(error),
+    )
+  }
+  return refundWithDefinitions(state, skillId, definitions)
+}
+
+function refundWithDefinitions(
+  state: CanonicalGameStateV1,
+  skillId: string,
+  definitions: ReadonlyMap<string, SkillDefinition>,
+): CanonicalSkillTransactionResult {
   const definition = definitions.get(skillId)
   if (definition === undefined) {
     return rejected(state, 'SKILL-UNKNOWN', `Unknown skill '${skillId}'.`)

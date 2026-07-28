@@ -5,11 +5,14 @@ import type {
 } from '../game-state/types'
 import {
   DYSON_AUTOMATION_TARGETS,
+  previewDysonFacilityPurchase,
   runDysonAutomationTick,
   tryPurchaseDysonFacility,
   type DysonAutomationAttempt,
   type DysonAutomationState,
+  type DysonFacilityPurchasePreview,
 } from './dysonAutomation'
+import type { BasicDysonFacilityId } from './dysonFacilities'
 import {
   tryPurchaseMegaStructure,
   type MegaStructureId,
@@ -32,15 +35,33 @@ export interface CanonicalBasicFacilityPurchaseResult {
   readonly attempt: DysonAutomationAttempt
 }
 
+export type CanonicalBasicFacilityPurchasePreview =
+  DysonFacilityPurchasePreview<BasicDysonFacilityId>
+
+/**
+ * Returns the exact immutable quote used by the canonical purchase path.
+ */
+export function previewCanonicalBasicFacilityPurchase(
+  state: CanonicalGameStateV1,
+  facilityId: BasicDysonFacilityId,
+): CanonicalBasicFacilityPurchasePreview {
+  const automationState = toDysonAutomationState(state)
+  automationState.globalEnabled = true
+  automationState.enabledFacilities[facilityId] = true
+  return previewDysonFacilityPurchase(
+    automationState,
+    facilityId,
+    'preserve-configured-mode',
+    (id, candidate) => isFacilityUnlocked(state, candidate, id),
+  )
+}
+
 /**
  * Applies an unlock-aware manual basic-facility purchase to canonical state.
  */
 export function tryPurchaseCanonicalBasicFacility(
   state: CanonicalGameStateV1,
-  facilityId: Exclude<
-    CanonicalFacilityId,
-    'matrioshka_brains' | 'birch_planets' | 'galactic_brains'
-  >,
+  facilityId: BasicDysonFacilityId,
 ): CanonicalBasicFacilityPurchaseResult {
   const automationState = toDysonAutomationState(state)
   automationState.globalEnabled = true
@@ -143,6 +164,11 @@ function toDysonAutomationState(
     ) as Record<CanonicalFacilityId, boolean>,
     buyMode: state.dyson.automation.buyMode,
     roundedBulkBuy: state.dyson.automation.roundedBulkBuy,
+    retainedFacilities: {
+      ...state.infinity.retainedFacilities,
+    },
+    assemblyMegaLinesOwned:
+      state.skills.byId.assemblyMegaLines?.owned === true,
   }
 }
 

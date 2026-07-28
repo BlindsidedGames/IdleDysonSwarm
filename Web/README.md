@@ -33,7 +33,13 @@ not copied into this repository.
 
 - Typed, revision-checked transactional engine boundary with detached read-only
   snapshots and no React dependency.
-- Exact event-time Dyson and Infinity simulation foundation.
+- Concrete runtime session, whole-game application facade and serialized
+  lifecycle coordinator for active, returned and stored time.
+- Exhaustive typed player-command inventory, exact per-target previews and a
+  frozen presentation-neutral snapshot of resources, progression, derived
+  gameplay facts and transient Tinker progress.
+- Exact event-time simulation across Dyson, Infinity, Dream, Reality, Quantum,
+  Avocado and time-resource systems.
 - Deterministic exporter for 559 Unity data assets, including stable IDs,
   resolved GUID references and source hashes.
 - Compact legacy skill/research ID and dependency catalogs.
@@ -76,12 +82,13 @@ scripts/
   prepare-save.ts      Decode + migrate + repair + validate command
   export-unity-data.ts Deterministic ScriptableObject exporter
 src/
+  application/         Runtime session, commands, lifecycle and UI read boundary
   core/                Framework-independent simulation contracts
   game-data/           Runtime types and generated Unity catalogs
   parity/              Golden-master fixture and graph comparison tools
   platform/            Replaceable platform capability contracts
   save/                Decode, migration, repair, validation and repository
-  simulation/          Event-time Dyson and Infinity foundation
+  simulation/          Whole-game event-time domains and parity authorities
 public/fixtures/       Browser diagnostic fixtures
 test/fixtures/         Immutable save fixtures
 test/parity/           Executable save and simulation parity cases

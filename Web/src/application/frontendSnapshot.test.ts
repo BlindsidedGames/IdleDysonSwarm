@@ -1,0 +1,551 @@
+import { readFileSync } from 'node:fs'
+import { describe, expect, test } from 'vitest'
+import type { DysonCompatibilityTuning } from '../game-state/compatibilityTuning'
+import { hydrateGameState } from '../game-state/mapping'
+import type { CanonicalGameStateV1 } from '../game-state/types'
+import { prepareIdb1Save } from '../save/prepare'
+import { deriveAvocadoMultiplier } from '../simulation/avocadoDomain'
+import { deriveCanonicalDreamDerivedFacts } from '../simulation/canonicalDreamDerivedFacts'
+import { deriveBasicDysonState } from '../simulation/canonicalDysonDerivation'
+import { createCanonicalTinkerRuntimeState } from '../simulation/canonicalTinker'
+import {
+  advanceRealityWorkers,
+} from '../simulation/realityWorkers'
+import {
+  CANONICAL_PLAYER_COMMAND_KINDS,
+  type CanonicalPlayerCommand,
+} from './canonicalPlayerCommands'
+import {
+  createFrontendCommandEnvelope,
+  FRONTEND_COMMAND_FAMILIES,
+  inspectFrontendDefinitionCoverage,
+  selectFrontendApplicationSnapshot,
+  selectFrontendCommandAvailability,
+  selectFrontendGameplaySnapshot,
+  type FrontendCommandRequirementReadiness,
+  type FrontendDefinitionCoverage,
+  type FrontendSnapshotContext,
+} from './frontendSnapshot'
+
+const fixtureUrl = new URL(
+  '../../test/fixtures/schema-08-canonical-idb1-main-save.txt',
+  import.meta.url,
+)
+
+describe('frontend gameplay snapshot', () => {
+  test('projects lifecycle and all application revisions with the gameplay read model', () => {
+    const projected = selectFrontendApplicationSnapshot(
+      {
+        version: 1,
+        phase: 'ready',
+        source: 'primary',
+        revision: {
+          session: 3,
+          state: 8,
+          durable: 7,
+        },
+        checkpoint: {
+          kind: 'dirty',
+          durableRevision: 7,
+          reason: 'state-changed',
+        },
+        operation: 'none',
+        state: fixtureRuntimeState(),
+      },
+      frontendContext(),
+    )
+
+    expect(projected).toMatchObject({
+      phase: 'ready',
+      source: 'primary',
+      revision: {
+        session: 3,
+        state: 8,
+        durable: 7,
+      },
+      checkpoint: {
+        kind: 'dirty',
+        durableRevision: 7,
+      },
+      operation: 'none',
+    })
+    if (projected.phase !== 'ready') return
+    expect(projected.gameplay.resources.dyson.money).toBeTypeOf(
+      'number',
+    )
+    expect(Object.isFrozen(projected.revision)).toBe(true)
+    expect(Object.isFrozen(projected.gameplay)).toBe(true)
+  })
+
+  test('projects exact canonical resources and progression without formatting', () => {
+    const source = fixtureState()
+    const state: CanonicalGameStateV1 = {
+      ...source,
+      infinity: {
+        ...source.infinity,
+        points: 100n,
+        spentPoints: 7n,
+      },
+      quantum: {
+        ...source.quantum,
+        pointsEarned: 55n,
+        pointsSpent: 13n,
+      },
+      timeline: {
+        ...source.timeline,
+        storedTimeAvailableSeconds: 91.25,
+        storedTimeCapacitySeconds: 120,
+        doubleTime: {
+          ...source.timeline.doubleTime,
+          bankSeconds: 17.5,
+        },
+      },
+    }
+
+    const snapshot = selectFrontendGameplaySnapshot(
+      state,
+      frontendContext(),
+    )
+
+    expect(snapshot.resources.dyson.money).toBe(state.dyson.money)
+    expect(snapshot.resources.infinity).toMatchObject({
+      points: 100n,
+      spentPoints: 7n,
+      availablePoints: 93n,
+    })
+    expect(snapshot.resources.quantum).toMatchObject({
+      pointsEarned: 55n,
+      pointsSpent: 13n,
+      availablePoints: 42n,
+    })
+    expect(snapshot.resources.time).toEqual({
+      storedTimeAvailableSeconds: 91.25,
+      storedTimeCapacitySeconds: 120,
+      doubleTimeBankSeconds: 17.5,
+    })
+    expect(snapshot.progression.dyson.facilities).toEqual(
+      state.dyson.facilities,
+    )
+    expect(snapshot.progression.dream.upgrades).toEqual(
+      state.dream.upgrades,
+    )
+    expect(snapshot.progression.statistics).toEqual(state.statistics)
+  })
+
+  test('returns a detached recursively frozen read model', () => {
+    const source = fixtureState()
+    const context = frontendContext()
+    const snapshot = selectFrontendGameplaySnapshot(
+      source,
+      context,
+    )
+    const projectedAssembly =
+      snapshot.progression.dyson.facilities.assembly_lines[0]
+
+    const mutableAssembly = source.dyson.facilities
+      .assembly_lines as [number, number]
+    mutableAssembly[0] += 100
+    ;(
+      context.quantumLeap as {
+        code: string
+      }
+    ).code = 'changed-after-projection'
+    ;(
+      context.tinker as {
+        elapsedSeconds: number
+      }
+    ).elapsedSeconds = 99
+
+    expect(
+      snapshot.progression.dyson.facilities.assembly_lines[0],
+    ).toBe(projectedAssembly)
+    expect(Object.isFrozen(snapshot)).toBe(true)
+    expect(Object.isFrozen(snapshot.resources)).toBe(true)
+    expect(Object.isFrozen(snapshot.runtime.tinker)).toBe(true)
+    expect(snapshot.previews.quantum.leap.code).not.toBe(
+      'changed-after-projection',
+    )
+    expect(Object.isFrozen(context.quantumLeap)).toBe(false)
+    expect(snapshot.runtime.tinker.status).toBe('ready')
+    if (snapshot.runtime.tinker.status === 'ready') {
+      expect(
+        snapshot.runtime.tinker.value.runtime.elapsedSeconds,
+      ).not.toBe(99)
+      expect(Object.isFrozen(snapshot.runtime.tinker.value.runtime)).toBe(
+        true,
+      )
+    }
+    expect(
+      Object.isFrozen(
+        snapshot.progression.dyson.facilities.assembly_lines,
+      ),
+    ).toBe(true)
+    expect(() => {
+      ;(
+        snapshot.resources.dyson as {
+          money: number
+        }
+      ).money = 0
+    }).toThrow(TypeError)
+  })
+
+  test('indexes every command kind and family and fails closed on missing runtime requirements', () => {
+    const snapshot = selectFrontendGameplaySnapshot(
+      fixtureState(),
+      frontendContext(),
+    )
+
+    expect(Object.keys(snapshot.commands.byKind)).toEqual(
+      CANONICAL_PLAYER_COMMAND_KINDS,
+    )
+    expect(Object.keys(snapshot.commands.byFamily)).toEqual(
+      FRONTEND_COMMAND_FAMILIES,
+    )
+    expect(
+      Object.values(snapshot.commands.byFamily).reduce(
+        (sum, family) => sum + family.commandKinds.length,
+        0,
+      ),
+    ).toBe(CANONICAL_PLAYER_COMMAND_KINDS.length)
+
+    expect(
+      snapshot.commands.byKind['dyson.set-buy-mode'],
+    ).toMatchObject({
+      supported: true,
+      routeAvailable: true,
+      status: 'available',
+      missingRequirements: [],
+    })
+    expect(
+      snapshot.commands.byKind['dyson.purchase-basic-facility'],
+    ).toMatchObject({
+      supported: true,
+      routeAvailable: false,
+      status: 'missing-runtime-requirement',
+      missingRequirements: ['runtime-evaluation-port'],
+    })
+    expect(snapshot.commands.byKind['tinker.start']).toMatchObject({
+      supported: true,
+      routeAvailable: true,
+      status: 'available',
+    })
+  })
+
+  test('publishes all composition-ready routes with exact per-target previews', () => {
+    const snapshot = selectFrontendGameplaySnapshot(
+      fixtureState(),
+      frontendContext(allRuntimeRequirements()),
+    )
+
+    expect(snapshot.definitionCoverage.complete).toBe(true)
+    expect(
+      Object.values(snapshot.commands.byKind).every(
+        (command) => command.routeAvailable,
+      ),
+    ).toBe(true)
+    expect(snapshot.previews.dyson.basicFacilities).toHaveLength(5)
+    expect(snapshot.previews.dyson.megaStructures).toHaveLength(3)
+    expect(snapshot.previews.research.complete).toBe(true)
+    expect(snapshot.previews.research.purchases.length).toBeGreaterThan(0)
+    expect(snapshot.previews.skills.complete).toBe(true)
+    expect(snapshot.previews.skills.skills.length).toBeGreaterThan(100)
+    expect(snapshot.previews.infinity.shop).toHaveLength(9)
+    expect(snapshot.previews.reality.upgrades).toHaveLength(18)
+    expect(snapshot.previews.quantum.upgrades).toHaveLength(20)
+    expect(
+      'selectorGaps' in snapshot,
+    ).toBe(false)
+    expect(snapshot.persistence).toEqual({
+      mappingCoverageComplete: false,
+      canonicalWriteAllowed: false,
+      unmatchedWritePolicy: 'preserve-source',
+    })
+  })
+
+  test('marks definition-dependent routes unavailable when coverage has a typed gap', () => {
+    const coverage: FrontendDefinitionCoverage = {
+      complete: false,
+      domains: {
+        'dream-upgrades': {
+          complete: false,
+          gaps: ['missing_definition:engineering1'],
+        },
+        'reality-upgrades': {
+          complete: true,
+          gaps: [],
+        },
+        'quantum-upgrades': {
+          complete: true,
+          gaps: [],
+        },
+      },
+    }
+
+    const commands = selectFrontendCommandAvailability(
+      allRuntimeRequirements(),
+      coverage,
+    )
+
+    expect(commands.byKind['dream.purchase-upgrade']).toMatchObject({
+      routeAvailable: false,
+      status: 'definition-gap',
+      definitionGaps: ['missing_definition:engineering1'],
+    })
+    expect(commands.byKind['dream.request-reset'].routeAvailable).toBe(
+      false,
+    )
+    expect(
+      commands.byKind['dream.purchase-foundational'].routeAvailable,
+    ).toBe(true)
+    expect(
+      commands.byKind['reality.purchase-upgrade'].routeAvailable,
+    ).toBe(true)
+  })
+
+  test('inspects the checked-in canonical definition catalogs', () => {
+    expect(inspectFrontendDefinitionCoverage()).toEqual({
+      complete: true,
+      domains: {
+        'dream-upgrades': { complete: true, gaps: [] },
+        'quantum-upgrades': { complete: true, gaps: [] },
+        'reality-upgrades': { complete: true, gaps: [] },
+      },
+    })
+  })
+
+  test('projects exact no-time Dyson and Reality derived facts', () => {
+    const state = fixtureState()
+    const context = frontendContext()
+    const snapshot = selectFrontendGameplaySnapshot(state, context)
+    const expectedDyson = deriveBasicDysonState(
+      state,
+      context.compatibilityTuning,
+      context.entitlements,
+      context.evaluationSnapshot,
+    )
+    const expectedReality = advanceRealityWorkers(
+      state,
+      0,
+      context.realityWorkerTuning,
+    )
+    const expectedDream = deriveCanonicalDreamDerivedFacts(state, {
+      effectiveDoubleTimeMultiplier: 1,
+      doubleTimeActive: state.timeline.doubleTime.enabled,
+      doubleTimeRate: state.timeline.doubleTime.rate,
+    })
+
+    expect(expectedDyson.ok).toBe(true)
+    expect(snapshot.derived.dyson.status).toBe('ready')
+    if (
+      !expectedDyson.ok ||
+      snapshot.derived.dyson.status !== 'ready'
+    ) {
+      return
+    }
+    expect(snapshot.derived.dyson.value.globals).toEqual(
+      expectedDyson.value.globals,
+    )
+    expect(
+      snapshot.derived.dyson.value.productionArrivalRates,
+    ).toEqual(expectedDyson.value.productionArrivalRates)
+    expect(
+      'nextEvaluationSnapshot' in snapshot.derived.dyson.value,
+    ).toBe(false)
+    expect(snapshot.derived.reality).toEqual({
+      status: expectedReality.status,
+      generationPerSecond: expectedReality.generationPerSecond,
+      workerBatchSize: context.realityWorkerTuning.workerBatchSize,
+      autoGatherEnabled: state.reality.autoGather,
+    })
+    expect(snapshot.derived.dream).toEqual({
+      productionBasis: 'base-rate',
+      effectiveDoubleTimeMultiplier: 1,
+      result: expectedDream,
+    })
+    expect(snapshot.derived.dream.result.ok).toBe(true)
+    expect(snapshot.derived.avocado).toEqual(
+      deriveAvocadoMultiplier(state),
+    )
+    expect(snapshot.runtime.tinker.status).toBe('ready')
+    if (snapshot.runtime.tinker.status === 'ready') {
+      expect(snapshot.runtime.tinker.value.stats.assemblyYield).toBe(
+        expectedDyson.value.auxiliary.tinkerAssemblyYield,
+      )
+      expect(snapshot.runtime.tinker.value.canStart).toBe(true)
+      expect(
+        snapshot.runtime.tinker.value.timeToCompletionSeconds,
+      ).toBeNull()
+    }
+  })
+
+  test('fails derived Dyson and dependent Tinker facts closed together', () => {
+    const source = fixtureState()
+    const state: CanonicalGameStateV1 = {
+      ...source,
+      quantum: {
+        ...source.quantum,
+        cashBonusLevels: BigInt(Number.MAX_SAFE_INTEGER) + 1n,
+      },
+    }
+
+    const snapshot = selectFrontendGameplaySnapshot(
+      state,
+      frontendContext(),
+    )
+
+    expect(snapshot.derived.dyson).toMatchObject({
+      status: 'unavailable',
+      issues: [
+        {
+          code: 'DYSON_QUANTUM_LEVEL_UNSUPPORTED',
+          path: 'quantum.cashBonusLevels',
+        },
+      ],
+    })
+    expect(snapshot.runtime.tinker).toEqual({
+      status: 'unavailable',
+      issues:
+        snapshot.derived.dyson.status === 'unavailable'
+          ? snapshot.derived.dyson.issues
+          : [],
+    })
+  })
+})
+
+describe('frontend command envelopes', () => {
+  test('captures a detached frozen command with application revisions', () => {
+    const command: CanonicalPlayerCommand = {
+      kind: 'infinity.set-break-target',
+      target: 99n,
+    }
+    const envelope = createFrontendCommandEnvelope(
+      { session: 4, state: 12, durable: 9 },
+      command,
+    )
+
+    ;(
+      command as {
+        kind: 'infinity.set-break-target'
+        target: bigint
+      }
+    ).target = 1n
+
+    expect(envelope).toEqual({
+      sessionRevision: 4,
+      expectedStateRevision: 12,
+      command: {
+        kind: 'infinity.set-break-target',
+        target: 99n,
+      },
+    })
+    expect(Object.isFrozen(envelope)).toBe(true)
+    expect(Object.isFrozen(envelope.command)).toBe(true)
+  })
+
+  test('accepts transient Tinker player commands', () => {
+    expect(
+      createFrontendCommandEnvelope(
+        { session: 2, state: 5, durable: 5 },
+        { kind: 'tinker.start', repeat: true },
+      ),
+    ).toEqual({
+      sessionRevision: 2,
+      expectedStateRevision: 5,
+      command: {
+        kind: 'tinker.start',
+        repeat: true,
+      },
+    })
+  })
+
+  test.each([
+    { session: -1, state: 0, durable: null },
+    { session: 0.5, state: 0, durable: null },
+    { session: 0, state: Number.MAX_SAFE_INTEGER + 1, durable: null },
+  ])('rejects invalid optimistic revisions %#', (revision) => {
+    expect(() =>
+      createFrontendCommandEnvelope(revision, {
+        kind: 'time.set-double-time-rate',
+        rate: 2,
+      }),
+    ).toThrow(/revision must be a non-negative safe integer/)
+  })
+})
+
+function fixtureState(): CanonicalGameStateV1 {
+  const prepared = prepareIdb1Save(
+    readFileSync(fixtureUrl, 'utf8'),
+  ).prepared
+  return hydrateGameState(prepared).state
+}
+
+function fixtureRuntimeState() {
+  const prepared = prepareIdb1Save(
+    readFileSync(fixtureUrl, 'utf8'),
+  ).prepared
+  const hydrated = hydrateGameState(prepared)
+  return {
+    gameState: hydrated.state,
+    compatibilityTuning: hydrated.compatibilityTuning,
+    evaluationSnapshot:
+      hydrated.skillEffectEvaluationSnapshot,
+    entitlements: {
+      permanentDoubleIp: false,
+    },
+    tinker: createCanonicalTinkerRuntimeState(),
+    storedTimeCheater: false,
+    selectedSkillPresetSlot: 1 as const,
+  }
+}
+
+function allRuntimeRequirements():
+  FrontendCommandRequirementReadiness {
+  return {
+    'compatibility-tuning': true,
+    'quantum-leap-port': true,
+    'runtime-evaluation-port': true,
+    'selected-skill-preset-carrier': true,
+    'stored-time-cheater-carrier': true,
+    'stored-time-commit-first-runner': true,
+  }
+}
+
+const neutralTuning: Readonly<DysonCompatibilityTuning> =
+  Object.freeze({
+    panelsPerSecMulti: 1,
+    scienceBoostPercent: 0,
+    moneyMultiUpgradePercent: 0,
+    assemblyLineUpgradePercent: 0,
+    aiManagerUpgradePercent: 0,
+    serverUpgradePercent: 0,
+    dataCenterUpgradePercent: 0,
+    planetUpgradePercent: 0,
+    matrioshkaUpgradePercent: 0,
+    birchUpgradePercent: 0,
+    galacticUpgradePercent: 0,
+  })
+
+function frontendContext(
+  runtimeRequirements: FrontendCommandRequirementReadiness = {},
+): FrontendSnapshotContext {
+  const runtime = fixtureRuntimeState()
+  return {
+    runtimeRequirements,
+    compatibilityTuning: neutralTuning,
+    evaluationSnapshot: runtime.evaluationSnapshot,
+    entitlements: runtime.entitlements,
+    tinker: { ...runtime.tinker },
+    realityWorkerTuning: {
+      workerBatchSize: 100n,
+      baseWorkerGenerationSpeed: 1,
+    },
+    quantumLeap: {
+      eligible: false,
+      code: 'QUANTUM_LEAP_REQUIRES_42_TOTAL_INFINITY_POINTS',
+      branch: null,
+      artifactSkillPoints: null,
+      definitionGap: null,
+    },
+    storedTimeCheater: false,
+  }
+}

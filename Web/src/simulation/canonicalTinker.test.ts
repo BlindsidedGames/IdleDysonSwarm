@@ -7,6 +7,7 @@ import {
   advanceCanonicalTinker,
   createCanonicalTinkerRuntimeState,
   deriveCanonicalTinkerStats,
+  selectCanonicalTinkerUiFacts,
   startCanonicalTinker,
   timeToCanonicalTinkerCompletion,
 } from './canonicalTinker'
@@ -57,6 +58,73 @@ function state(
 }
 
 describe('canonical Tinker runtime', () => {
+  test('selects idle UI facts without advancing or mutating inputs', () => {
+    const canonical = state(2)
+    const runtime = createCanonicalTinkerRuntimeState()
+    const canonicalBefore = structuredClone(canonical)
+    const runtimeBefore = structuredClone(runtime)
+
+    const facts = selectCanonicalTinkerUiFacts(
+      canonical,
+      runtime,
+      12,
+    )
+
+    expect(facts).toEqual({
+      runtime: {
+        running: false,
+        repeat: false,
+        elapsedSeconds: 0,
+        effectiveManualLabour: false,
+        cooldownSeconds: 2,
+      },
+      stats: {
+        botYield: 1,
+        assemblyYield: 12,
+        cooldownSeconds: 2,
+      },
+      canStart: true,
+      eligibility: 'available',
+      timeToCompletionSeconds: null,
+    })
+    expect(canonical).toEqual(canonicalBefore)
+    expect(runtime).toEqual(runtimeBefore)
+  })
+
+  test('reports exact synchronized running horizon and Manual Labour facts', () => {
+    const canonical = state(10, true, 1)
+    const staleRuntime = {
+      running: true,
+      repeat: true,
+      elapsedSeconds: 7,
+      effectiveManualLabour: false,
+      cooldownSeconds: 10,
+    }
+    const facts = selectCanonicalTinkerUiFacts(
+      canonical,
+      staleRuntime,
+      42,
+    )
+
+    expect(facts.runtime).toEqual({
+      running: true,
+      repeat: true,
+      elapsedSeconds: 0,
+      effectiveManualLabour: true,
+      cooldownSeconds: 0.2,
+    })
+    expect(facts.stats).toEqual({
+      botYield: 1,
+      assemblyYield: 42,
+      cooldownSeconds: 0.2,
+    })
+    expect(facts.canStart).toBe(false)
+    expect(facts.eligibility).toBe('already-running')
+    expect(facts.timeToCompletionSeconds).toBe(0.2)
+    expect(canonical.dyson.manualCreationIntervalSeconds).toBe(10)
+    expect(staleRuntime.elapsedSeconds).toBe(7)
+  })
+
   test('starts with Unity initial progress and awards one bot after the horizon', () => {
     const canonical = state(10)
     const stats = deriveCanonicalTinkerStats(canonical, 0)

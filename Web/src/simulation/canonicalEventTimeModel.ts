@@ -63,6 +63,14 @@ import {
   prepareDreamDoubleTimeTick,
   type DreamDoubleTimeTick,
 } from './timeResources'
+import {
+  advanceCanonicalTinker,
+  deriveCanonicalTinkerStats,
+  startCanonicalTinker,
+  setCanonicalTinkerRepeat,
+  timeToCanonicalTinkerCompletion,
+  type CanonicalTinkerRuntimeState,
+} from './canonicalTinker'
 import type {
   EventTimeSimulationModel,
   SimulationAutomationPolicy,
@@ -84,6 +92,7 @@ export interface CanonicalEventTimeState {
   readonly compatibilityTuning: Readonly<DysonCompatibilityTuning>
   readonly evaluationSnapshot: Readonly<DysonSkillEffectEvaluationSnapshot>
   readonly entitlements: Readonly<DysonEntitlements>
+  readonly tinker: Readonly<CanonicalTinkerRuntimeState>
 }
 
 export type CanonicalInfinityBoundaryEvaluation =
@@ -96,6 +105,11 @@ export type CanonicalInfinityBoundaryEvaluation =
 
 export interface CanonicalEventTimeContext {
   readonly automationIntervalSeconds: number
+  /**
+   * Tinker uses Unity wall Time.deltaTime. Stored/away simulations set this
+   * false so their simulated seconds cannot complete the transient action.
+   */
+  readonly advanceTinker?: boolean
   readonly realityWorkerTuning: Readonly<RealityWorkerTuning>
   readonly dreamResetDefinitions: CanonicalDreamResetDefinitions
   readonly realityUpgradeDefinitions: ReadonlyMap<
@@ -136,6 +150,7 @@ interface ArtifactSkillPointResult {
 
 interface CapturedContext {
   readonly automationIntervalSeconds: number
+  readonly advanceTinker: boolean
   readonly realityWorkerTuning: Readonly<RealityWorkerTuning>
   readonly dreamResetDefinitions: CanonicalDreamResetDefinitions
   readonly realityUpgradeDefinitions: ReadonlyMap<
@@ -272,6 +287,23 @@ export class CanonicalEventTimeModel
       'eventTime.infinityHorizon',
     )
     if (derived === undefined) return 0
+    if (this.context.advanceTinker) {
+      const tinkerStats = deriveCanonicalTinkerStats(
+        this.carrier.gameState,
+        derived.auxiliary.tinkerAssemblyYield,
+      )
+      const synchronizedTinker = advanceCanonicalTinker(
+        this.carrier.gameState,
+        this.carrier.tinker,
+        tinkerStats,
+        0,
+      )
+      this.carrier = {
+        ...this.carrier,
+        gameState: synchronizedTinker.state,
+        tinker: synchronizedTinker.runtime,
+      }
+    }
     const infinityHorizon = timeToNextInfinityEvent(
       this.carrier.gameState.dyson.bots,
       derived.productionArrivalRates.bots,
@@ -285,7 +317,17 @@ export class CanonicalEventTimeModel
         infinityHorizon,
       ),
     )
-    return Math.min(maximumSeconds, infinityHorizon)
+    const tinkerHorizon = this.context.advanceTinker
+      ? timeToCanonicalTinkerCompletion(
+          this.carrier.tinker,
+          maximumSeconds,
+        )
+      : maximumSeconds
+    return Math.min(
+      maximumSeconds,
+      infinityHorizon,
+      tinkerHorizon,
+    )
   }
 
   advanceContinuous(seconds: number): void {
@@ -332,6 +374,21 @@ export class CanonicalEventTimeModel
         derived.value.productionArrivalRates,
         seconds,
       )
+      const tinker = this.context.advanceTinker
+        ? advanceCanonicalTinker(
+            candidate,
+            this.carrier.tinker,
+            deriveCanonicalTinkerStats(
+              startingState,
+              derived.value.auxiliary.tinkerAssemblyYield,
+            ),
+            seconds,
+          )
+        : {
+            state: candidate,
+            runtime: this.carrier.tinker,
+          }
+      candidate = tinker.state
       const space = runDreamSpaceAgeProduction(candidate, {
         tickSeconds: seconds,
         doubleTimeMultiplier:
@@ -379,6 +436,7 @@ export class CanonicalEventTimeModel
       this.carrier = {
         ...this.carrier,
         gameState: candidate,
+        tinker: tinker.runtime,
       }
       this.pendingInterval = {
         seconds,
@@ -417,6 +475,7 @@ export class CanonicalEventTimeModel
       candidate = runResearchAutomationTick(
         candidate,
         this.carrier.compatibilityTuning,
+        policy,
       ).state
       candidate =
         runDreamFoundationalInformationConversions(candidate).state
@@ -556,6 +615,10 @@ export class CanonicalEventTimeModel
       this.carrier.gameState,
     )
     if (result.action.kind === 'persist') {
+      // The elapsed interval is already part of the resumable candidate.
+      // Publish its statistics exactly once before persistence pauses the
+      // scheduler; the checkpoint/reward itself remains unapplied.
+      this.finalizePendingInterval()
       this.fail(
         'CANONICAL_EVENT_BOT_CAP_PERSISTENCE_REQUIRED',
         'infinity.botCap',
@@ -677,6 +740,61 @@ export class CanonicalEventTimeModel
       return
     }
     this.applyQuantumLeap()
+  }
+
+  startTinker(repeat: boolean): boolean {
+    if (this.currentIssue !== undefined) return false
+    const derived = this.deriveForNextState(
+      this.carrier.gameState,
+      'tinker',
+    )
+    if (derived === undefined) return false
+    try {
+      const result = startCanonicalTinker(
+        this.carrier.gameState,
+        this.carrier.tinker,
+        deriveCanonicalTinkerStats(
+          this.carrier.gameState,
+          derived.auxiliary.tinkerAssemblyYield,
+        ),
+        repeat,
+      )
+      const changed =
+        result.state !== this.carrier.gameState ||
+        !sameTinkerRuntime(result.runtime, this.carrier.tinker)
+      this.carrier = {
+        ...this.carrier,
+        gameState: result.state,
+        tinker: result.runtime,
+      }
+      return changed
+    } catch (error) {
+      this.fail(
+        'CANONICAL_EVENT_TINKER_START_REJECTED',
+        'tinker',
+        error instanceof Error ? error.message : String(error),
+      )
+      return false
+    }
+  }
+
+  setTinkerRepeat(enabled: boolean): boolean {
+    if (this.currentIssue !== undefined) return false
+    const result = setCanonicalTinkerRepeat(
+      this.carrier.gameState,
+      this.carrier.tinker,
+      enabled,
+    )
+    const changed = !sameTinkerRuntime(
+      result.runtime,
+      this.carrier.tinker,
+    )
+    this.carrier = {
+      ...this.carrier,
+      gameState: result.state,
+      tinker: result.runtime,
+    }
+    return changed
   }
 
   private applyQuantumLeap(): void {
@@ -899,6 +1017,7 @@ function captureContext(
 ): CapturedContext {
   return Object.freeze({
     automationIntervalSeconds: context.automationIntervalSeconds,
+    advanceTinker: context.advanceTinker ?? true,
     realityWorkerTuning: Object.freeze({
       ...context.realityWorkerTuning,
     }),
@@ -960,6 +1079,24 @@ function validateCarrier(
       code: 'CANONICAL_EVENT_ENTITLEMENTS_INVALID',
       path: 'entitlements.permanentDoubleIp',
       detail: 'Platform entitlements must be an explicit boolean snapshot.',
+    })
+  }
+  if (
+    typeof state.tinker.running !== 'boolean' ||
+    typeof state.tinker.repeat !== 'boolean' ||
+    typeof state.tinker.effectiveManualLabour !== 'boolean' ||
+    !Number.isFinite(state.tinker.elapsedSeconds) ||
+    state.tinker.elapsedSeconds < 0 ||
+    !Number.isFinite(state.tinker.cooldownSeconds) ||
+    state.tinker.cooldownSeconds <= 0 ||
+    state.tinker.elapsedSeconds >
+      state.tinker.cooldownSeconds + TIME_EPSILON
+  ) {
+    return Object.freeze({
+      code: 'CANONICAL_EVENT_TINKER_INVALID',
+      path: 'tinker',
+      detail:
+        'Transient Tinker state must have finite bounded progress and a positive cooldown.',
     })
   }
   if (
@@ -1289,6 +1426,19 @@ function roundedNonNegativeDiscrete(value: number): bigint | null {
   }
   const result = BigInt(rounded)
   return result <= DISCRETE_MAXIMUM ? result : null
+}
+
+function sameTinkerRuntime(
+  left: Readonly<CanonicalTinkerRuntimeState>,
+  right: Readonly<CanonicalTinkerRuntimeState>,
+): boolean {
+  return (
+    left.running === right.running &&
+    left.repeat === right.repeat &&
+    left.elapsedSeconds === right.elapsedSeconds &&
+    left.effectiveManualLabour === right.effectiveManualLabour &&
+    left.cooldownSeconds === right.cooldownSeconds
+  )
 }
 
 export function createCapturedInfinityAssetLookup(

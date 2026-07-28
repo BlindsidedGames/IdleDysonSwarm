@@ -7,6 +7,7 @@ import type {
 } from '../game-state/types'
 import { prepareIdb1Save } from '../save/prepare'
 import {
+  previewCanonicalSkillCatalog,
   purchaseCanonicalSkill,
   refundCanonicalSkill,
   resetCanonicalSkills,
@@ -72,6 +73,70 @@ function stateWithSkills(
 }
 
 describe('canonical skill transactions', () => {
+  test('previews the complete authored catalog through exact purchase and refund authorities', () => {
+    const state = stateWithSkills(
+      ['startHereTree', 'assemblyLineTree'],
+      0n,
+    )
+    const before = structuredClone(state)
+    const preview = previewCanonicalSkillCatalog(state)
+    const start = preview.skills.find(
+      (skill) => skill.skillId === 'startHereTree',
+    )
+
+    expect(preview.complete).toBe(true)
+    expect(preview.definitionGap).toBeNull()
+    expect(preview.skills).toHaveLength(
+      Object.keys(state.skills.byId).length,
+    )
+    expect(start).toMatchObject({
+      skillId: 'startHereTree',
+      cost: 1n,
+      owned: true,
+      purchase: {
+        eligible: false,
+        code: 'already-owned',
+      },
+      refund: {
+        eligible: true,
+        code: 'refundable',
+        affectedSkillIds: ['assemblyLineTree', 'startHereTree'],
+        pointsReturned: 2n,
+        fragmentsRemoved: 0n,
+      },
+    })
+    expect(Object.isFrozen(preview)).toBe(true)
+    expect(Object.isFrozen(preview.skills)).toBe(true)
+    expect(Object.isFrozen(start?.refund)).toBe(true)
+    expect(state).toEqual(before)
+  })
+
+  test('previews blocked purchase and refund reasons without optimistic eligibility', () => {
+    const blocked = previewCanonicalSkillCatalog(
+      stateWithSkills([], 10n),
+    )
+    expect(
+      blocked.skills.find(
+        (skill) => skill.skillId === 'assemblyLineTree',
+      )?.purchase,
+    ).toMatchObject({
+      eligible: false,
+      code: 'SKILL-REQUIREMENT',
+    })
+
+    const lockedRefund = previewCanonicalSkillCatalog(
+      stateWithSkills(['banking', 'investmentPortfolio'], 0n),
+    )
+    expect(
+      lockedRefund.skills.find(
+        (skill) => skill.skillId === 'banking',
+      )?.refund,
+    ).toMatchObject({
+      eligible: false,
+      code: 'SKILL-NOT-REFUNDABLE',
+    })
+  })
+
   test('enforces authored requirements and atomically purchases an eligible skill', () => {
     const blocked = stateWithSkills([], 2n)
     const rejected = purchaseCanonicalSkill(blocked, 'assemblyLineTree')

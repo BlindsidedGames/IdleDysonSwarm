@@ -10,6 +10,7 @@ import type {
   ApplicationListener,
   ApplicationSnapshot,
   CheckpointResult,
+  CommitFirstPurpose,
   CommitFirstResult,
   GameApplication,
   GameApplicationOptions,
@@ -176,7 +177,7 @@ export class TransactionalGameApplication<TState, TCommand>
 
   dispatchCommitFirst(
     envelope: ApplicationCommandEnvelope<TCommand>,
-    purpose: 'stored-time',
+    purpose: CommitFirstPurpose,
   ): Promise<CommitFirstResult> {
     return this.inPersistenceLane(async () => {
       const unavailable = this.validateActiveEnvelope(envelope)

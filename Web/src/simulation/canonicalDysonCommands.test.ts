@@ -4,6 +4,7 @@ import { hydrateGameState } from '../game-state/mapping'
 import type { CanonicalGameStateV1 } from '../game-state/types'
 import { prepareIdb1Save } from '../save/prepare'
 import {
+  previewCanonicalBasicFacilityPurchase,
   runCanonicalDysonAutomation,
   tryPurchaseCanonicalBasicFacility,
   tryPurchaseCanonicalMegaStructure,
@@ -53,6 +54,65 @@ describe('canonical Dyson commands', () => {
       candidate.timeline.dysonAutomationTargetIndex,
     )
     expect(candidate.dyson.facilities.assembly_lines[1]).toBe(0)
+  })
+
+  test('publishes the same retained-ten and Assembly Megalines quote used by purchase execution', () => {
+    const before = state()
+    const candidate: CanonicalGameStateV1 = {
+      ...before,
+      dyson: {
+        ...before.dyson,
+        money: 20,
+        facilities: {
+          ...before.dyson.facilities,
+          assembly_lines: [0, 10],
+          planets: [2, 3],
+        },
+        automation: {
+          ...before.dyson.automation,
+          buyMode: 'buy-1',
+        },
+      },
+      infinity: {
+        ...before.infinity,
+        retainedFacilities: {
+          ...before.infinity.retainedFacilities,
+          assembly_lines: true,
+        },
+      },
+      skills: {
+        ...before.skills,
+        byId: {
+          ...before.skills.byId,
+          assemblyMegaLines: {
+            owned: true,
+            level: 0,
+            timerSeconds: 0,
+            secondaryTimerSeconds: 0,
+          },
+        },
+      },
+    }
+
+    const preview = previewCanonicalBasicFacilityPurchase(
+      candidate,
+      'assembly_lines',
+    )
+    const result = tryPurchaseCanonicalBasicFacility(
+      candidate,
+      'assembly_lines',
+    )
+
+    expect(preview).toMatchObject({
+      eligible: true,
+      selectedQuantity: 1n,
+      cost: 20,
+      status: 'success',
+    })
+    expect(result.attempt.cost).toBe(preview.cost)
+    expect(result.attempt.quantity).toBe(preview.selectedQuantity)
+    expect(result.state.dyson.facilities.assembly_lines[1]).toBe(11)
+    expect(candidate.dyson.facilities.assembly_lines[1]).toBe(10)
   })
 
   test('applies a manual mega purchase without mutating canonical input', () => {

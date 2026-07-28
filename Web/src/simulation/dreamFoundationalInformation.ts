@@ -22,7 +22,7 @@ export const DREAM_FOUNDATIONAL_INFORMATION_DURATIONS = Object.freeze({
 export const DREAM_HOUSING_TO_VILLAGE_COST = 10
 export const DREAM_VILLAGE_TO_CITY_COST = 25
 
-type DreamTimerId =
+export type DreamTimerId =
   keyof typeof DREAM_FOUNDATIONAL_INFORMATION_DURATIONS
 
 export interface DreamProductionTickInput {
@@ -39,6 +39,32 @@ export interface DreamProductionAmounts {
   readonly bots: number
   readonly rockets: number
 }
+
+export interface DreamTimerProductionFact {
+  readonly timerId: DreamTimerId
+  readonly currentProgress: number
+  readonly durationSeconds: number
+  readonly progressPerSecond: number
+  readonly cyclesPerSecond: number
+  readonly secondsUntilNextCycle: number | null
+  readonly advanceEnabled: boolean
+  readonly outputPerCycle: DreamProductionAmounts
+}
+
+export interface DreamFoundationalInformationProductionFacts {
+  readonly timers: Readonly<
+    Record<DreamTimerId, DreamTimerProductionFact>
+  >
+  /** Long-run average output at the current tick-start producer counts. */
+  readonly productionPerSecond: DreamProductionAmounts
+}
+
+export type DreamFoundationalInformationProductionFactsResult =
+  | {
+      readonly status: 'success'
+      readonly facts: DreamFoundationalInformationProductionFacts
+    }
+  | { readonly status: 'invalid-input' }
 
 export interface DreamProductionTickResult {
   readonly status: 'success' | 'invalid-input'
@@ -87,6 +113,172 @@ const EMPTY_PRODUCTION: DreamProductionAmounts = Object.freeze({
 })
 
 /**
+ * Derives the no-time production facts used by the Foundational and
+ * Information Era transition. The multiplier must already be prepared for
+ * the exact scheduler boundary that will consume these facts.
+ */
+export function deriveDreamFoundationalInformationProductionFacts(
+  state: Readonly<CanonicalGameStateV1>,
+  doubleTimeMultiplier: number,
+): DreamFoundationalInformationProductionFactsResult {
+  if (
+    !Number.isFinite(doubleTimeMultiplier) ||
+    doubleTimeMultiplier < 0
+  ) {
+    return Object.freeze({ status: 'invalid-input' })
+  }
+
+  const resources = state.dream.resources
+  const timers = state.dream.timers
+  const multiplier = doubleTimeMultiplier
+  const communityMultiplier =
+    state.dream.parameters.communityBoostClock > 0
+      ? multiplyContinuous(multiplier, 2)
+      : multiplier
+  const workerMultiplier =
+    state.dream.upgrades.workerBoostAcivator && resources.workers > 0
+      ? multiplyContinuous(
+          multiplier,
+          1 + Math.log10(resources.workers),
+        )
+      : multiplier
+
+  let factoryMultiplier = multiplier
+  if (state.dream.parameters.factoriesBoostClock > 0) {
+    factoryMultiplier = multiplyContinuous(factoryMultiplier, 2)
+  }
+  if (state.dream.education.shipping.complete) {
+    factoryMultiplier = multiplyContinuous(factoryMultiplier, 2)
+  }
+  if (state.dream.education.worldTrade.complete) {
+    factoryMultiplier = multiplyContinuous(factoryMultiplier, 2)
+  }
+
+  let botBaseMultiplier = 0
+  if (resources.bots >= 1) {
+    botBaseMultiplier = 1 + Math.log10(resources.bots)
+    if (resources.bots < 100) {
+      botBaseMultiplier = multiplyContinuous(
+        botBaseMultiplier,
+        resources.bots / 100,
+      )
+    }
+  }
+  let botGlobalMultiplier = multiplier
+  if (state.dream.education.worldPeace.complete) {
+    botGlobalMultiplier = multiplyContinuous(botGlobalMultiplier, 2)
+  }
+  if (state.dream.upgrades.botsBoost1Activator) {
+    botGlobalMultiplier = multiplyContinuous(botGlobalMultiplier, 2)
+  }
+
+  const cityFactoryYield = state.dream.education.engineering.complete
+    ? state.dream.upgrades.citiesBoostActivator
+      ? 10
+      : 1
+    : 0
+  const botsPerFactoryCycle = state.dream.upgrades
+    .factoriesBoostActivator
+    ? multiplyContinuous(resources.factories, 9)
+    : resources.factories
+  const rocketsPerBotCycle = state.dream.upgrades
+    .botsBoost2Activator
+    ? 2
+    : 1
+
+  const productionTimers = Object.freeze({
+    hunterTimerProgress: createTimerProductionFact(
+      'hunterTimerProgress',
+      timers.hunterTimerProgress ?? 0,
+      standardTimerRate(Number(resources.hunters), multiplier),
+      productionAmounts({ community: 1 }),
+    ),
+    gathererTimerProgress: createTimerProductionFact(
+      'gathererTimerProgress',
+      timers.gathererTimerProgress ?? 0,
+      standardTimerRate(Number(resources.gatherers), multiplier),
+      productionAmounts({ community: 1 }),
+    ),
+    communityTimerProgress: createTimerProductionFact(
+      'communityTimerProgress',
+      timers.communityTimerProgress ?? 0,
+      standardTimerRate(resources.community, communityMultiplier),
+      productionAmounts({ housing: 1 }),
+    ),
+    housingTimerProgress: createTimerProductionFact(
+      'housingTimerProgress',
+      timers.housingTimerProgress ?? 0,
+      standardTimerRate(resources.housing, multiplier),
+      productionAmounts({ workers: 1 }),
+    ),
+    villagesTimerProgress: createTimerProductionFact(
+      'villagesTimerProgress',
+      timers.villagesTimerProgress ?? 0,
+      standardTimerRate(resources.villages, multiplier),
+      productionAmounts({ workers: 2 }),
+    ),
+    workersTimerProgress: createTimerProductionFact(
+      'workersTimerProgress',
+      timers.workersTimerProgress ?? 0,
+      standardTimerRate(resources.workers, workerMultiplier),
+      productionAmounts({ housing: 1 }),
+    ),
+    citiesTimerProgress: createTimerProductionFact(
+      'citiesTimerProgress',
+      timers.citiesTimerProgress ?? 0,
+      standardTimerRate(resources.cities, multiplier),
+      productionAmounts({
+        workers: 5,
+        factories: cityFactoryYield,
+      }),
+    ),
+    factoriesTimerProgress: createTimerProductionFact(
+      'factoriesTimerProgress',
+      timers.factoriesTimerProgress ?? 0,
+      standardTimerRate(resources.factories, factoryMultiplier),
+      productionAmounts({ bots: botsPerFactoryCycle }),
+    ),
+    botsTimerProgress: createTimerProductionFact(
+      'botsTimerProgress',
+      timers.botsTimerProgress ?? 0,
+      customTimerRate(botBaseMultiplier, botGlobalMultiplier),
+      productionAmounts({ rockets: rocketsPerBotCycle }),
+    ),
+  })
+  const cycleRates = Object.freeze({
+    hunterTimerProgress:
+      productionTimers.hunterTimerProgress.cyclesPerSecond,
+    gathererTimerProgress:
+      productionTimers.gathererTimerProgress.cyclesPerSecond,
+    communityTimerProgress:
+      productionTimers.communityTimerProgress.cyclesPerSecond,
+    housingTimerProgress:
+      productionTimers.housingTimerProgress.cyclesPerSecond,
+    villagesTimerProgress:
+      productionTimers.villagesTimerProgress.cyclesPerSecond,
+    workersTimerProgress:
+      productionTimers.workersTimerProgress.cyclesPerSecond,
+    citiesTimerProgress:
+      productionTimers.citiesTimerProgress.cyclesPerSecond,
+    factoriesTimerProgress:
+      productionTimers.factoriesTimerProgress.cyclesPerSecond,
+    botsTimerProgress:
+      productionTimers.botsTimerProgress.cyclesPerSecond,
+  })
+
+  return Object.freeze({
+    status: 'success',
+    facts: Object.freeze({
+      timers: productionTimers,
+      productionPerSecond: aggregateProduction(
+        productionTimers,
+        cycleRates,
+      ),
+    }),
+  })
+}
+
+/**
  * Runs one Unity-parity Foundational and Information Era production tick.
  *
  * Every producer count and gate is captured from the tick-start snapshot, so
@@ -112,110 +304,55 @@ export function runDreamFoundationalInformationProduction(
 
   const resources = state.dream.resources
   const timers = { ...state.dream.timers }
-  const multiplier = input.doubleTimeMultiplier
   const tickSeconds = input.tickSeconds
-
-  const hunter = advanceStandardTimer(
-    timers.hunterTimerProgress ?? 0,
-    DREAM_FOUNDATIONAL_INFORMATION_DURATIONS.hunterTimerProgress,
-    Number(resources.hunters),
-    multiplier,
-    tickSeconds,
+  const derived = deriveDreamFoundationalInformationProductionFacts(
+    state,
+    input.doubleTimeMultiplier,
   )
-  const gatherer = advanceStandardTimer(
-    timers.gathererTimerProgress ?? 0,
-    DREAM_FOUNDATIONAL_INFORMATION_DURATIONS.gathererTimerProgress,
-    Number(resources.gatherers),
-    multiplier,
-    tickSeconds,
-  )
-  const communityMultiplier =
-    state.dream.parameters.communityBoostClock > 0
-      ? multiplyContinuous(multiplier, 2)
-      : multiplier
-  const community = advanceStandardTimer(
-    timers.communityTimerProgress ?? 0,
-    DREAM_FOUNDATIONAL_INFORMATION_DURATIONS.communityTimerProgress,
-    resources.community,
-    communityMultiplier,
-    tickSeconds,
-  )
-  const housing = advanceStandardTimer(
-    timers.housingTimerProgress ?? 0,
-    DREAM_FOUNDATIONAL_INFORMATION_DURATIONS.housingTimerProgress,
-    resources.housing,
-    multiplier,
-    tickSeconds,
-  )
-  const villages = advanceStandardTimer(
-    timers.villagesTimerProgress ?? 0,
-    DREAM_FOUNDATIONAL_INFORMATION_DURATIONS.villagesTimerProgress,
-    resources.villages,
-    multiplier,
-    tickSeconds,
-  )
-  const workerMultiplier =
-    state.dream.upgrades.workerBoostAcivator && resources.workers > 0
-      ? multiplyContinuous(
-          multiplier,
-          1 + Math.log10(resources.workers),
-        )
-      : multiplier
-  const workers = advanceStandardTimer(
-    timers.workersTimerProgress ?? 0,
-    DREAM_FOUNDATIONAL_INFORMATION_DURATIONS.workersTimerProgress,
-    resources.workers,
-    workerMultiplier,
-    tickSeconds,
-  )
-  const cities = advanceStandardTimer(
-    timers.citiesTimerProgress ?? 0,
-    DREAM_FOUNDATIONAL_INFORMATION_DURATIONS.citiesTimerProgress,
-    resources.cities,
-    multiplier,
-    tickSeconds,
-  )
-
-  let factoryMultiplier = multiplier
-  if (state.dream.parameters.factoriesBoostClock > 0) {
-    factoryMultiplier = multiplyContinuous(factoryMultiplier, 2)
-  }
-  if (state.dream.education.shipping.complete) {
-    factoryMultiplier = multiplyContinuous(factoryMultiplier, 2)
-  }
-  if (state.dream.education.worldTrade.complete) {
-    factoryMultiplier = multiplyContinuous(factoryMultiplier, 2)
-  }
-  const factories = advanceStandardTimer(
-    timers.factoriesTimerProgress ?? 0,
-    DREAM_FOUNDATIONAL_INFORMATION_DURATIONS.factoriesTimerProgress,
-    resources.factories,
-    factoryMultiplier,
-    tickSeconds,
-  )
-
-  let botBaseMultiplier = 0
-  if (resources.bots >= 1) {
-    botBaseMultiplier = 1 + Math.log10(resources.bots)
-    if (resources.bots < 100) {
-      botBaseMultiplier = multiplyContinuous(
-        botBaseMultiplier,
-        resources.bots / 100,
-      )
+  if (derived.status === 'invalid-input') {
+    return {
+      status: 'invalid-input',
+      state,
+      completedCycles: zeroCycles(),
+      produced: EMPTY_PRODUCTION,
     }
   }
-  let botGlobalMultiplier = multiplier
-  if (state.dream.education.worldPeace.complete) {
-    botGlobalMultiplier = multiplyContinuous(botGlobalMultiplier, 2)
-  }
-  if (state.dream.upgrades.botsBoost1Activator) {
-    botGlobalMultiplier = multiplyContinuous(botGlobalMultiplier, 2)
-  }
-  const bots = advanceCustomTimer(
-    timers.botsTimerProgress ?? 0,
-    DREAM_FOUNDATIONAL_INFORMATION_DURATIONS.botsTimerProgress,
-    botBaseMultiplier,
-    botGlobalMultiplier,
+
+  const productionTimers = derived.facts.timers
+  const hunter = advanceProductionTimer(
+    productionTimers.hunterTimerProgress,
+    tickSeconds,
+  )
+  const gatherer = advanceProductionTimer(
+    productionTimers.gathererTimerProgress,
+    tickSeconds,
+  )
+  const community = advanceProductionTimer(
+    productionTimers.communityTimerProgress,
+    tickSeconds,
+  )
+  const housing = advanceProductionTimer(
+    productionTimers.housingTimerProgress,
+    tickSeconds,
+  )
+  const villages = advanceProductionTimer(
+    productionTimers.villagesTimerProgress,
+    tickSeconds,
+  )
+  const workers = advanceProductionTimer(
+    productionTimers.workersTimerProgress,
+    tickSeconds,
+  )
+  const cities = advanceProductionTimer(
+    productionTimers.citiesTimerProgress,
+    tickSeconds,
+  )
+  const factories = advanceProductionTimer(
+    productionTimers.factoriesTimerProgress,
+    tickSeconds,
+  )
+  const bots = advanceProductionTimer(
+    productionTimers.botsTimerProgress,
     tickSeconds,
   )
 
@@ -229,44 +366,6 @@ export function runDreamFoundationalInformationProduction(
   timers.factoriesTimerProgress = factories.progress
   timers.botsTimerProgress = bots.progress
 
-  const communityProduced = addContinuous(
-    hunter.cycles,
-    gatherer.cycles,
-  )
-  const housingProduced = addContinuous(
-    community.cycles,
-    workers.cycles,
-  )
-  const workersProduced = addContinuous(
-    addContinuous(housing.cycles, multiplyContinuous(villages.cycles, 2)),
-    multiplyContinuous(cities.cycles, 5),
-  )
-  const factoriesProduced = state.dream.education.engineering.complete
-    ? multiplyContinuous(
-        cities.cycles,
-        state.dream.upgrades.citiesBoostActivator ? 10 : 1,
-      )
-    : 0
-  const botsPerFactoryCycle = state.dream.upgrades.factoriesBoostActivator
-    ? multiplyContinuous(resources.factories, 9)
-    : resources.factories
-  const botsProduced = multiplyContinuous(
-    factories.cycles,
-    botsPerFactoryCycle,
-  )
-  const rocketsProduced = multiplyContinuous(
-    bots.cycles,
-    state.dream.upgrades.botsBoost2Activator ? 2 : 1,
-  )
-
-  const produced = Object.freeze({
-    community: communityProduced,
-    housing: housingProduced,
-    workers: workersProduced,
-    factories: factoriesProduced,
-    bots: botsProduced,
-    rockets: rocketsProduced,
-  })
   let nextCommunity = addContinuous(
     resources.community,
     hunter.cycles,
@@ -300,6 +399,10 @@ export function runDreamFoundationalInformationProduction(
     factoriesTimerProgress: factories.cycles,
     botsTimerProgress: bots.cycles,
   })
+  const produced = aggregateProduction(
+    productionTimers,
+    completedCycles,
+  )
 
   return {
     status: 'success',
@@ -314,10 +417,10 @@ export function runDreamFoundationalInformationProduction(
           workers: nextWorkers,
           factories: addContinuous(
             resources.factories,
-            factoriesProduced,
+            produced.factories,
           ),
-          bots: addContinuous(resources.bots, botsProduced),
-          rockets: addContinuous(resources.rockets, rocketsProduced),
+          bots: addContinuous(resources.bots, produced.bots),
+          rockets: addContinuous(resources.rockets, produced.rockets),
         },
         parameters: {
           ...state.dream.parameters,
@@ -501,83 +604,203 @@ interface TimerAdvance {
   readonly progress: number
 }
 
-function advanceStandardTimer(
-  progress: number,
-  duration: number,
+interface TimerRate {
+  readonly advanceEnabled: boolean
+  readonly progressPerSecond: number
+}
+
+function standardTimerRate(
   sourceCount: number,
   globalMultiplier: number,
-  tickSeconds: number,
-): TimerAdvance {
+): TimerRate {
   if (
     sourceCount < 1 ||
     !Number.isFinite(sourceCount) ||
     !Number.isFinite(globalMultiplier) ||
     globalMultiplier < 0
   ) {
-    return { cycles: 0, progress }
+    return { advanceEnabled: false, progressPerSecond: 0 }
   }
-  return advanceTimer(
-    progress,
-    duration,
-    1 + Math.log10(sourceCount),
-    globalMultiplier,
-    tickSeconds,
-  )
+  return {
+    advanceEnabled: true,
+    progressPerSecond: multiplyContinuous(
+      1 + Math.log10(sourceCount),
+      globalMultiplier,
+    ),
+  }
 }
 
-function advanceCustomTimer(
-  progress: number,
-  duration: number,
+function customTimerRate(
   baseMultiplier: number,
   globalMultiplier: number,
-  tickSeconds: number,
-): TimerAdvance {
+): TimerRate {
   if (
     !Number.isFinite(baseMultiplier) ||
     baseMultiplier < 0 ||
     !Number.isFinite(globalMultiplier) ||
     globalMultiplier < 0
   ) {
-    return { cycles: 0, progress }
+    return { advanceEnabled: false, progressPerSecond: 0 }
   }
-  return advanceTimer(
-    progress,
-    duration,
-    baseMultiplier,
-    globalMultiplier,
-    tickSeconds,
+  return {
+    advanceEnabled: true,
+    progressPerSecond: multiplyContinuous(
+      baseMultiplier,
+      globalMultiplier,
+    ),
+  }
+}
+
+function createTimerProductionFact(
+  timerId: DreamTimerId,
+  currentProgress: number,
+  rate: Readonly<TimerRate>,
+  outputPerCycle: DreamProductionAmounts,
+): DreamTimerProductionFact {
+  const durationSeconds =
+    DREAM_FOUNDATIONAL_INFORMATION_DURATIONS[timerId]
+  const cyclesPerSecond = rate.advanceEnabled
+    ? rate.progressPerSecond / durationSeconds
+    : 0
+  return Object.freeze({
+    timerId,
+    currentProgress,
+    durationSeconds,
+    progressPerSecond: rate.progressPerSecond,
+    cyclesPerSecond,
+    secondsUntilNextCycle: secondsUntilNextCycle(
+      currentProgress,
+      durationSeconds,
+      rate,
+    ),
+    advanceEnabled: rate.advanceEnabled,
+    outputPerCycle,
+  })
+}
+
+function secondsUntilNextCycle(
+  progress: number,
+  durationSeconds: number,
+  rate: Readonly<TimerRate>,
+): number | null {
+  if (!rate.advanceEnabled || rate.progressPerSecond <= 0) {
+    return null
+  }
+  const safeProgress =
+    Number.isFinite(progress) && progress >= 0 ? progress : 0
+  if (safeProgress >= durationSeconds) return 0
+  return (
+    (durationSeconds - safeProgress) /
+    rate.progressPerSecond
   )
 }
 
-function advanceTimer(
-  progress: number,
-  duration: number,
-  baseMultiplier: number,
-  globalMultiplier: number,
+function advanceProductionTimer(
+  fact: Readonly<DreamTimerProductionFact>,
   tickSeconds: number,
 ): TimerAdvance {
+  if (!fact.advanceEnabled) {
+    return { cycles: 0, progress: fact.currentProgress }
+  }
   const safeProgress =
-    Number.isFinite(progress) && progress >= 0 ? progress : 0
-  const effective = multiplyContinuous(
-    baseMultiplier,
-    globalMultiplier,
+    Number.isFinite(fact.currentProgress) && fact.currentProgress >= 0
+      ? fact.currentProgress
+      : 0
+  const added = multiplyContinuous(
+    tickSeconds,
+    fact.progressPerSecond,
   )
-  const added = multiplyContinuous(tickSeconds, effective)
   const accumulated = addContinuous(safeProgress, added)
-  const completed = Math.floor(accumulated / duration)
+  const completed = Math.floor(
+    accumulated / fact.durationSeconds,
+  )
   if (!Number.isFinite(completed) || completed <= 0) {
     return { cycles: 0, progress: accumulated }
   }
-  const remainder = accumulated % duration
+  const remainder = accumulated % fact.durationSeconds
   return {
     cycles: Math.min(CONTINUOUS_MAXIMUM, completed),
     progress:
       Number.isFinite(remainder) &&
       remainder >= 0 &&
-      remainder < duration
+      remainder < fact.durationSeconds
         ? remainder
         : 0,
   }
+}
+
+function aggregateProduction(
+  timers: Readonly<
+    Record<DreamTimerId, DreamTimerProductionFact>
+  >,
+  cycles: Readonly<Record<DreamTimerId, number>>,
+): DreamProductionAmounts {
+  const communityProduced = addContinuous(
+    multiplyContinuous(
+      cycles.hunterTimerProgress,
+      timers.hunterTimerProgress.outputPerCycle.community,
+    ),
+    multiplyContinuous(
+      cycles.gathererTimerProgress,
+      timers.gathererTimerProgress.outputPerCycle.community,
+    ),
+  )
+  const housingProduced = addContinuous(
+    multiplyContinuous(
+      cycles.communityTimerProgress,
+      timers.communityTimerProgress.outputPerCycle.housing,
+    ),
+    multiplyContinuous(
+      cycles.workersTimerProgress,
+      timers.workersTimerProgress.outputPerCycle.housing,
+    ),
+  )
+  const workersProduced = addContinuous(
+    addContinuous(
+      multiplyContinuous(
+        cycles.housingTimerProgress,
+        timers.housingTimerProgress.outputPerCycle.workers,
+      ),
+      multiplyContinuous(
+        cycles.villagesTimerProgress,
+        timers.villagesTimerProgress.outputPerCycle.workers,
+      ),
+    ),
+    multiplyContinuous(
+      cycles.citiesTimerProgress,
+      timers.citiesTimerProgress.outputPerCycle.workers,
+    ),
+  )
+  const factoriesProduced = multiplyContinuous(
+    cycles.citiesTimerProgress,
+    timers.citiesTimerProgress.outputPerCycle.factories,
+  )
+  const botsProduced = multiplyContinuous(
+    cycles.factoriesTimerProgress,
+    timers.factoriesTimerProgress.outputPerCycle.bots,
+  )
+  const rocketsProduced = multiplyContinuous(
+    cycles.botsTimerProgress,
+    timers.botsTimerProgress.outputPerCycle.rockets,
+  )
+
+  return Object.freeze({
+    community: communityProduced,
+    housing: housingProduced,
+    workers: workersProduced,
+    factories: factoriesProduced,
+    bots: botsProduced,
+    rockets: rocketsProduced,
+  })
+}
+
+function productionAmounts(
+  overrides: Partial<DreamProductionAmounts>,
+): DreamProductionAmounts {
+  return Object.freeze({
+    ...EMPTY_PRODUCTION,
+    ...overrides,
+  })
 }
 
 function purchaseDiscreteProducer(

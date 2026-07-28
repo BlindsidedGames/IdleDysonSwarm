@@ -1,5 +1,6 @@
 import { getGameAsset } from '../game-data/catalog'
 import type { CanonicalFacilityId } from '../game-state/types'
+import type { BasicDysonFacilityId } from './dysonFacilities'
 import {
   buyModeAmount,
   buyXCost,
@@ -10,6 +11,7 @@ import {
 } from './transactions'
 import {
   addContinuous,
+  divideContinuous,
   floorToDiscrete,
 } from './numeric'
 import type { SimulationAutomationPolicy } from './types'
@@ -40,6 +42,8 @@ export interface DysonAutomationState {
   unlockedFacilities: Record<CanonicalFacilityId, boolean>
   buyMode: BuyMode
   roundedBulkBuy: boolean
+  retainedFacilities: Record<BasicDysonFacilityId, boolean>
+  assemblyMegaLinesOwned: boolean
 }
 
 export type DysonAutomationSkipStatus =
@@ -47,12 +51,34 @@ export type DysonAutomationSkipStatus =
   | 'facility-disabled'
   | 'locked'
 
+export type DysonFacilityPurchasePreviewStatus =
+  | TransactionStatus
+  | DysonAutomationSkipStatus
+  | 'definition-gap'
+  | 'invalid-state'
+
 export interface DysonAutomationAttempt {
   readonly facilityId: CanonicalFacilityId
   readonly purchased: boolean
   readonly quantity: bigint
   readonly cost: number
-  readonly status: TransactionStatus | DysonAutomationSkipStatus
+  readonly status: DysonFacilityPurchasePreviewStatus
+}
+
+/**
+ * The exact, non-mutating quote used by both player and automation purchases.
+ * `selectedQuantity` is the amount shown for the configured buy mode even
+ * when the current balance cannot afford it.
+ */
+export interface DysonFacilityPurchasePreview<
+  TFacilityId extends CanonicalFacilityId = CanonicalFacilityId,
+> {
+  readonly facilityId: TFacilityId
+  readonly eligible: boolean
+  readonly selectedQuantity: bigint
+  readonly affordableQuantity: bigint
+  readonly cost: number
+  readonly status: DysonFacilityPurchasePreviewStatus
 }
 
 export interface DysonAutomationResult {
@@ -71,6 +97,15 @@ export type DysonFacilityUnlockResolver = (
   facilityId: CanonicalFacilityId,
   currentState: Readonly<DysonAutomationState>,
 ) => boolean
+
+export type DysonFacilityDefinitionLookup = (
+  facilityId: CanonicalFacilityId,
+) =>
+  | {
+      readonly baseCost: unknown
+      readonly costExponent: unknown
+    }
+  | undefined
 
 export function planDysonAutomationTargets(
   targetIndex: number,
@@ -127,94 +162,197 @@ export function tryPurchaseDysonFacility(
   return { state, attempt }
 }
 
+/**
+ * Quotes one facility purchase without changing the supplied state.
+ *
+ * Basic facilities preserve Unity's two pricing exceptions: the retained
+ * starter ten do not count toward the geometric price level, and the
+ * Assembly Megalines skill divides Assembly Line base cost by total Planets.
+ * Missing or malformed authored definitions and malformed pricing state fail
+ * closed.
+ */
+export function previewDysonFacilityPurchase<
+  TFacilityId extends CanonicalFacilityId,
+>(
+  state: Readonly<DysonAutomationState>,
+  facilityId: TFacilityId,
+  policy: SimulationAutomationPolicy = 'preserve-configured-mode',
+  resolveUnlock: DysonFacilityUnlockResolver = configuredUnlock,
+  lookupDefinition: DysonFacilityDefinitionLookup =
+    lookupFacilityDefinition,
+): DysonFacilityPurchasePreview<TFacilityId> {
+  if (
+    typeof state.globalEnabled !== 'boolean' ||
+    !hasValidFacilityBooleanFlags(state.enabledFacilities) ||
+    !hasValidFacilityBooleanFlags(state.unlockedFacilities) ||
+    typeof state.roundedBulkBuy !== 'boolean' ||
+    !isBuyMode(state.buyMode) ||
+    typeof state.assemblyMegaLinesOwned !== 'boolean' ||
+    !hasValidFacilityPairs(state.facilities) ||
+    !hasValidRetainedFacilityFlags(state.retainedFacilities)
+  ) {
+    return purchasePreview(facilityId, 'invalid-state')
+  }
+  if (!state.globalEnabled) {
+    return purchasePreview(facilityId, 'global-disabled')
+  }
+  if (!state.enabledFacilities[facilityId]) {
+    return purchasePreview(facilityId, 'facility-disabled')
+  }
+  if (!resolveUnlock(facilityId, state)) {
+    return purchasePreview(facilityId, 'locked')
+  }
+  if (
+    !Number.isFinite(state.money) ||
+    state.money < 0
+  ) {
+    return purchasePreview(facilityId, 'invalid-balance')
+  }
+
+  const ownedPair = state.facilities[facilityId]
+
+  const definition = lookupDefinition(facilityId)
+  const authoredBaseCost = definition?.baseCost
+  const exponent = definition?.costExponent
+  if (
+    typeof authoredBaseCost !== 'number' ||
+    !Number.isFinite(authoredBaseCost) ||
+    authoredBaseCost <= 0 ||
+    typeof exponent !== 'number' ||
+    !Number.isFinite(exponent) ||
+    exponent < 1
+  ) {
+    return purchasePreview(facilityId, 'definition-gap')
+  }
+
+  const effectiveBaseCost = effectiveFacilityBaseCost(
+    state,
+    facilityId,
+    authoredBaseCost,
+  )
+  if (effectiveBaseCost === null) {
+    return purchasePreview(facilityId, 'invalid-state')
+  }
+  if (effectiveBaseCost <= 0) {
+    return purchasePreview(facilityId, 'invalid-cost')
+  }
+
+  const manualOwned = ownedPair[1]
+  const costLevel = facilityCostLevel(
+    state,
+    facilityId,
+    manualOwned,
+  )
+  const maximumQuantity = isMegaFacility(facilityId)
+    ? MAX_MEGA_PURCHASE_QUANTITY
+    : MAX_SAFE_PURCHASE_QUANTITY
+  const affordableQuantity = minBigInt(
+    maxAffordable(
+      state.money,
+      effectiveBaseCost,
+      exponent,
+      costLevel,
+    ),
+    maximumQuantity,
+  )
+  const mode =
+    policy === 'force-buy-max' ? 'buy-max' : state.buyMode
+  const selectedQuantity = minBigInt(
+    buyModeAmount(
+      mode,
+      state.roundedBulkBuy,
+      floorToDiscrete(manualOwned),
+      affordableQuantity,
+    ),
+    maximumQuantity,
+  )
+  if (selectedQuantity <= 0n) {
+    return purchasePreview(
+      facilityId,
+      'invalid-quantity',
+      selectedQuantity,
+      affordableQuantity,
+    )
+  }
+
+  const cost = buyXCost(
+    selectedQuantity,
+    effectiveBaseCost,
+    exponent,
+    costLevel,
+  )
+  const nextOwned = addContinuous(
+    manualOwned,
+    Number(selectedQuantity),
+  )
+  if (nextOwned <= manualOwned) {
+    return purchasePreview(
+      facilityId,
+      'output-maxed',
+      selectedQuantity,
+      affordableQuantity,
+      cost,
+    )
+  }
+
+  const debit = tryDebitContinuous(
+    state.money,
+    cost,
+    selectedQuantity,
+  )
+  return purchasePreview(
+    facilityId,
+    debit.status,
+    selectedQuantity,
+    affordableQuantity,
+    cost,
+  )
+}
+
 function attemptFacilityPurchase(
   state: DysonAutomationState,
   facilityId: CanonicalFacilityId,
   policy: SimulationAutomationPolicy,
   resolveUnlock: DysonFacilityUnlockResolver,
 ): DysonAutomationAttempt {
-  if (!state.globalEnabled) {
-    return skippedAttempt(facilityId, 'global-disabled')
-  }
-  if (!state.enabledFacilities[facilityId]) {
-    return skippedAttempt(facilityId, 'facility-disabled')
-  }
-  if (!resolveUnlock(facilityId, state)) {
-    return skippedAttempt(facilityId, 'locked')
-  }
-
-  const definition = getGameAsset(
-    'GameData.FacilityDefinition',
+  const preview = previewDysonFacilityPurchase(
+    state,
     facilityId,
+    policy,
+    resolveUnlock,
   )
-  const baseCost = definition?.data.baseCost
-  const exponent = definition?.data.costExponent
-  if (
-    typeof baseCost !== 'number' ||
-    typeof exponent !== 'number' ||
-    baseCost <= 0 ||
-    exponent <= 0
-  ) {
-    return failedAttempt(facilityId, 'invalid-cost')
+  if (!preview.eligible) {
+    return {
+      facilityId,
+      purchased: false,
+      quantity: 0n,
+      cost: preview.cost,
+      status: preview.status,
+    }
   }
 
   const owned = state.facilities[facilityId][1]
-  const nextCost = buyXCost(1n, baseCost, exponent, owned)
-  if (nextCost <= 0 || nextCost > state.money) {
-    return {
-      ...failedAttempt(
-        facilityId,
-        nextCost <= 0 ? 'invalid-cost' : 'insufficient-funds',
-      ),
-      cost: nextCost,
-    }
-  }
-
-  const maximumQuantity = isMegaFacility(facilityId)
-    ? MAX_MEGA_PURCHASE_QUANTITY
-    : MAX_SAFE_PURCHASE_QUANTITY
-  const affordable = minBigInt(
-    maxAffordable(state.money, baseCost, exponent, owned),
-    maximumQuantity,
+  const debit = tryDebitContinuous(
+    state.money,
+    preview.cost,
+    preview.selectedQuantity,
   )
-  const mode =
-    policy === 'force-buy-max' ? 'buy-max' : state.buyMode
-  const selected = minBigInt(
-    buyModeAmount(
-      mode,
-      state.roundedBulkBuy,
-      floorToDiscrete(owned),
-      affordable,
-    ),
-    maximumQuantity,
-  )
-  if (selected <= 0n) {
-    return failedAttempt(facilityId, 'invalid-quantity')
-  }
-
-  const cost = buyXCost(selected, baseCost, exponent, owned)
-  const nextOwned = addContinuous(owned, Number(selected))
-  if (nextOwned <= owned) {
-    return {
-      ...failedAttempt(facilityId, 'output-maxed'),
-      cost,
-    }
-  }
-
-  const debit = tryDebitContinuous(state.money, cost, selected)
   if (debit.status !== 'success') {
     return {
       ...failedAttempt(facilityId, debit.status),
-      cost,
+      cost: preview.cost,
     }
   }
 
   state.money = debit.balance
-  state.facilities[facilityId][1] = nextOwned
+  state.facilities[facilityId][1] = addContinuous(
+    owned,
+    Number(preview.selectedQuantity),
+  )
   return {
     facilityId,
     purchased: true,
-    quantity: selected,
+    quantity: preview.selectedQuantity,
     cost: debit.charged,
     status: 'success',
   }
@@ -244,26 +382,153 @@ function isMegaFacility(facilityId: CanonicalFacilityId): boolean {
   )
 }
 
+function isBasicFacility(
+  facilityId: CanonicalFacilityId,
+): facilityId is BasicDysonFacilityId {
+  return !isMegaFacility(facilityId)
+}
+
+function facilityCostLevel(
+  state: Readonly<DysonAutomationState>,
+  facilityId: CanonicalFacilityId,
+  manualOwned: number,
+): number {
+  return (
+    isBasicFacility(facilityId) &&
+    state.retainedFacilities[facilityId]
+  )
+    ? Math.max(0, manualOwned - 10)
+    : manualOwned
+}
+
+function effectiveFacilityBaseCost(
+  state: Readonly<DysonAutomationState>,
+  facilityId: CanonicalFacilityId,
+  authoredBaseCost: number,
+): number | null {
+  if (
+    facilityId !== 'assembly_lines' ||
+    !state.assemblyMegaLinesOwned
+  ) {
+    return authoredBaseCost
+  }
+
+  const planets = state.facilities.planets
+  if (!isValidOwnedPair(planets)) return null
+  const totalPlanets = addContinuous(planets[0], planets[1])
+  if (totalPlanets <= 0) return authoredBaseCost
+  const discounted = divideContinuous(authoredBaseCost, totalPlanets)
+  return discounted > 0 ? discounted : null
+}
+
+function hasValidRetainedFacilityFlags(
+  retained: Readonly<Record<BasicDysonFacilityId, boolean>>,
+): boolean {
+  return (
+    retained !== null &&
+    typeof retained === 'object' &&
+    [
+      'assembly_lines',
+      'ai_managers',
+      'servers',
+      'data_centers',
+      'planets',
+    ].every(
+      (facilityId) =>
+        typeof retained[facilityId as BasicDysonFacilityId] ===
+        'boolean',
+    )
+  )
+}
+
+function hasValidFacilityBooleanFlags(
+  flags: Readonly<Record<CanonicalFacilityId, boolean>>,
+): boolean {
+  return (
+    flags !== null &&
+    typeof flags === 'object' &&
+    DYSON_AUTOMATION_TARGETS.every(
+      (facilityId) => typeof flags[facilityId] === 'boolean',
+    )
+  )
+}
+
+function hasValidFacilityPairs(
+  facilities: Readonly<
+    Record<CanonicalFacilityId, readonly number[]>
+  >,
+): boolean {
+  return (
+    facilities !== null &&
+    typeof facilities === 'object' &&
+    DYSON_AUTOMATION_TARGETS.every((facilityId) =>
+      isValidOwnedPair(facilities[facilityId]),
+    )
+  )
+}
+
+function isValidOwnedPair(
+  pair: readonly number[] | undefined,
+): pair is readonly [number, number] {
+  return (
+    Array.isArray(pair) &&
+    pair.length === 2 &&
+    pair.every(
+      (value) => Number.isFinite(value) && value >= 0,
+    )
+  )
+}
+
+function isBuyMode(value: string): value is BuyMode {
+  return (
+    value === 'buy-1' ||
+    value === 'buy-10' ||
+    value === 'buy-50' ||
+    value === 'buy-100' ||
+    value === 'buy-max'
+  )
+}
+
+function lookupFacilityDefinition(
+  facilityId: CanonicalFacilityId,
+): ReturnType<DysonFacilityDefinitionLookup> {
+  const definition = getGameAsset(
+    'GameData.FacilityDefinition',
+    facilityId,
+  )
+  if (definition === undefined) return undefined
+  return {
+    baseCost: definition.data.baseCost,
+    costExponent: definition.data.costExponent,
+  }
+}
+
+function purchasePreview<
+  TFacilityId extends CanonicalFacilityId,
+>(
+  facilityId: TFacilityId,
+  status: DysonFacilityPurchasePreviewStatus,
+  selectedQuantity = 0n,
+  affordableQuantity = 0n,
+  cost = 0,
+): DysonFacilityPurchasePreview<TFacilityId> {
+  return Object.freeze({
+    facilityId,
+    eligible: status === 'success',
+    selectedQuantity,
+    affordableQuantity,
+    cost,
+    status,
+  })
+}
+
 function minBigInt(left: bigint, right: bigint): bigint {
   return left < right ? left : right
 }
 
-function skippedAttempt(
-  facilityId: CanonicalFacilityId,
-  status: DysonAutomationSkipStatus,
-): DysonAutomationAttempt {
-  return {
-    facilityId,
-    purchased: false,
-    quantity: 0n,
-    cost: 0,
-    status,
-  }
-}
-
 function failedAttempt(
   facilityId: CanonicalFacilityId,
-  status: TransactionStatus,
+  status: DysonFacilityPurchasePreviewStatus,
 ): DysonAutomationAttempt {
   return {
     facilityId,
@@ -291,5 +556,7 @@ function cloneState(
     unlockedFacilities: { ...state.unlockedFacilities },
     buyMode: state.buyMode,
     roundedBulkBuy: state.roundedBulkBuy,
+    retainedFacilities: { ...state.retainedFacilities },
+    assemblyMegaLinesOwned: state.assemblyMegaLinesOwned,
   }
 }

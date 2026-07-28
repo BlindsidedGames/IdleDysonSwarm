@@ -32,6 +32,22 @@ export interface CanonicalTinkerAdvanceResult {
   readonly completions: number
 }
 
+export type CanonicalTinkerStartEligibility =
+  | 'available'
+  | 'already-running'
+
+/**
+ * Presentation-neutral Tinker facts derived from the same synchronization,
+ * stat, and horizon authorities used by runtime commands.
+ */
+export interface CanonicalTinkerUiFacts {
+  readonly runtime: Readonly<CanonicalTinkerRuntimeState>
+  readonly stats: Readonly<CanonicalTinkerStats>
+  readonly canStart: boolean
+  readonly eligibility: CanonicalTinkerStartEligibility
+  readonly timeToCompletionSeconds: number | null
+}
+
 export function createCanonicalTinkerRuntimeState():
   CanonicalTinkerRuntimeState {
   return Object.freeze({
@@ -40,6 +56,48 @@ export function createCanonicalTinkerRuntimeState():
     elapsedSeconds: 0,
     effectiveManualLabour: false,
     cooldownSeconds: BOT_MINIMUM_COOLDOWN_SECONDS,
+  })
+}
+
+/**
+ * Selects synchronized transient Tinker facts without advancing time or
+ * mutating the supplied canonical/runtime state.
+ */
+export function selectCanonicalTinkerUiFacts(
+  state: Readonly<CanonicalGameStateV1>,
+  runtime: Readonly<CanonicalTinkerRuntimeState>,
+  assemblyYield: number,
+): CanonicalTinkerUiFacts {
+  const initialStats = deriveCanonicalTinkerStats(
+    state,
+    assemblyYield,
+  )
+  const initial = synchronizeRuntime(
+    state,
+    runtime,
+    initialStats,
+  )
+  const stats = deriveCanonicalTinkerStats(
+    initial.state,
+    assemblyYield,
+  )
+  const synchronized = synchronizeRuntime(
+    initial.state,
+    initial.runtime,
+    stats,
+  )
+  const canStart = !synchronized.runtime.running
+  return Object.freeze({
+    runtime: Object.freeze({ ...synchronized.runtime }),
+    stats: Object.freeze({ ...stats }),
+    canStart,
+    eligibility: canStart ? 'available' : 'already-running',
+    timeToCompletionSeconds: synchronized.runtime.running
+      ? timeToCanonicalTinkerCompletion(
+          synchronized.runtime,
+          Number.MAX_VALUE,
+        )
+      : null,
   })
 }
 

@@ -3,6 +3,7 @@ import type { CanonicalFacilityId } from '../game-state/types'
 import {
   DYSON_AUTOMATION_TARGETS,
   planDysonAutomationTargets,
+  previewDysonFacilityPurchase,
   runDysonAutomationTick,
   type DysonAutomationState,
   type MutableOwnedPair,
@@ -37,6 +38,14 @@ function createState(
     unlockedFacilities: booleanRecord(true),
     buyMode: 'buy-1',
     roundedBulkBuy: false,
+    retainedFacilities: {
+      assembly_lines: false,
+      ai_managers: false,
+      servers: false,
+      data_centers: false,
+      planets: false,
+    },
+    assemblyMegaLinesOwned: false,
     ...overrides,
   }
 }
@@ -167,5 +176,112 @@ describe('eight-slot Dyson automation', () => {
 
     expect(result.state.facilities.planets[1]).toBe(1)
     expect(result.state.facilities.matrioshka_brains[1]).toBe(1)
+  })
+
+  test('quotes and purchases retained facilities from the price level after the starter ten', () => {
+    const enabled = booleanRecord(false)
+    enabled.ai_managers = true
+    const facilities = facilityRecord()
+    facilities.ai_managers[1] = 10
+    const input = createState({
+      money: 5_000,
+      facilities,
+      enabledFacilities: enabled,
+      retainedFacilities: {
+        assembly_lines: false,
+        ai_managers: true,
+        servers: false,
+        data_centers: false,
+        planets: false,
+      },
+    })
+
+    const preview = previewDysonFacilityPurchase(
+      input,
+      'ai_managers',
+    )
+    expect(preview).toMatchObject({
+      eligible: true,
+      selectedQuantity: 1n,
+      affordableQuantity: 1n,
+      cost: 5_000,
+      status: 'success',
+    })
+
+    const result = runDysonAutomationTick(input)
+    expect(result.attempts[1]).toMatchObject({
+      purchased: true,
+      quantity: 1n,
+      cost: 5_000,
+      status: 'success',
+    })
+    expect(result.state.facilities.ai_managers[1]).toBe(11)
+    expect(input.facilities.ai_managers[1]).toBe(10)
+  })
+
+  test('applies the Assembly Megalines planet divisor in the shared quote and purchase path', () => {
+    const enabled = booleanRecord(false)
+    enabled.assembly_lines = true
+    const facilities = facilityRecord()
+    facilities.assembly_lines[1] = 10
+    facilities.planets = [2, 3]
+    const input = createState({
+      money: 20,
+      facilities,
+      enabledFacilities: enabled,
+      retainedFacilities: {
+        assembly_lines: true,
+        ai_managers: false,
+        servers: false,
+        data_centers: false,
+        planets: false,
+      },
+      assemblyMegaLinesOwned: true,
+    })
+
+    const preview = previewDysonFacilityPurchase(
+      input,
+      'assembly_lines',
+    )
+    expect(preview).toMatchObject({
+      eligible: true,
+      selectedQuantity: 1n,
+      cost: 20,
+      status: 'success',
+    })
+
+    const result = runDysonAutomationTick(input)
+    expect(result.attempts[0]).toMatchObject({
+      purchased: true,
+      quantity: 1n,
+      cost: 20,
+      status: 'success',
+    })
+    expect(result.state.facilities.assembly_lines[1]).toBe(11)
+    expect(result.state.money).toBe(0)
+  })
+
+  test('fails a quote closed when the authored facility definition is unavailable', () => {
+    const enabled = booleanRecord(false)
+    enabled.assembly_lines = true
+    const preview = previewDysonFacilityPurchase(
+      createState({
+        money: 100,
+        enabledFacilities: enabled,
+      }),
+      'assembly_lines',
+      'preserve-configured-mode',
+      () => true,
+      () => undefined,
+    )
+
+    expect(preview).toEqual({
+      facilityId: 'assembly_lines',
+      eligible: false,
+      selectedQuantity: 0n,
+      affordableQuantity: 0n,
+      cost: 0,
+      status: 'definition-gap',
+    })
   })
 })

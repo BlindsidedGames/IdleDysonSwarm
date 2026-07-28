@@ -39,8 +39,10 @@ The backend is ready for product frontend work only when:
 6. the frontend can consume a read-only snapshot without recomputing costs,
    unlocks or command eligibility.
 
-The current project has a strong save and domain foundation, but it does not
-yet satisfy those six conditions.
+The backend checkpoint now satisfies those six conditions. Product frontend
+work may read the canonical application snapshot and dispatch typed player
+commands through the lifecycle coordinator without reimplementing gameplay
+rules. The separate product-design and release/host gates remain open.
 
 ## Required runtime composition
 
@@ -50,19 +52,23 @@ The simulation engine must not run on `CanonicalGameStateV1` alone. It needs a
 versioned carrier equivalent to:
 
 ```ts
-interface CanonicalRuntimeStateV1 {
+interface CanonicalRuntimeState {
   readonly gameState: CanonicalGameStateV1
-  readonly dysonEvaluationSnapshot: DysonSkillEffectEvaluationSnapshot
-  readonly dysonCompatibilityTuning: DysonCompatibilityTuning
+  readonly compatibilityTuning: DysonCompatibilityTuning
+  readonly evaluationSnapshot: DysonSkillEffectEvaluationSnapshot
+  readonly entitlements: DysonEntitlements
+  readonly tinker: CanonicalTinkerRuntimeState
+  readonly storedTimeCheater: boolean
+  readonly selectedSkillPresetSlot: CanonicalSkillPresetSlot
 }
 ```
 
-`dysonEvaluationSnapshot` is an evolving compatibility input. Each successful
+`evaluationSnapshot` is an evolving compatibility input. Each successful
 Dyson recalculation reads the old snapshot and replaces it on the isolated
 candidate with `nextEvaluationSnapshot`. A rejected transition must leave both
 game state and the snapshot unchanged.
 
-`dysonCompatibilityTuning` is immutable for one loaded save, but it is still
+`compatibilityTuning` is immutable for one loaded save, but it is still
 save-specific. `TransactionalGameApplication` currently receives one static
 engine definition and may later install a different save through import or
 post-commit reload. Capturing tuning only in the original construction closure
@@ -83,7 +89,7 @@ The session's `prepare` path must:
 Compatibility tuning remains preserved source data. It is re-extracted and
 frozen whenever a session is opened.
 
-Required proof:
+Implemented proof:
 
 - one long advance and equivalent split advances produce the same game state
   and next evaluation snapshot;
@@ -95,8 +101,9 @@ Required proof:
 - import replaces both the game state and save-specific tuning/snapshot; and
 - a commit-first failure publishes neither half of the candidate.
 
-Without these tests, a model-private cache or mutable closure can appear
-correct in one engine instance and fail after checkpoint, import or reload.
+These regressions prevent a model-private cache or mutable closure from
+appearing correct in one engine instance and then failing after checkpoint,
+import or reload.
 
 ## Gameplay and application inventory
 
@@ -110,39 +117,21 @@ Status meanings:
 | Surface | Current authority | Status | Remaining work | Gate |
 | --- | --- | --- | --- | --- |
 | IDB1 decode, migration, numeric repair and validation | `src/save` | Ready for development use | Complete field-by-field Unity schema-12 comparison before enabling release writes | Release/host |
-| Transactional repository, startup, import and checkpoint lane | `src/save/repository.ts`, `src/save/startupResolver.ts`, `src/application/gameApplication.ts` | Ready generic boundary | Supply a concrete canonical runtime session and application factory | UI-start |
+| Transactional repository, startup, import and checkpoint lane | `src/save/repository.ts`, `src/save/startupResolver.ts`, `src/application/canonicalRuntimeSession.ts`, `src/application/canonicalGameApplication.ts` | Ready | None for frontend start | Complete |
 | Canonical Unity graph mapping | `src/game-state/mapping.ts` | Partial | Close the executable coverage manifest and certify an authentic schema-12 round trip | Release/host |
-| Dyson compatibility tuning | `src/game-state/compatibilityTuning.ts` | Ready extraction | Put it in the per-session runtime context; do not capture the first save forever | UI-start |
-| Dyson evaluation snapshot | `src/game-state/skillEffectEvaluationSnapshot.ts` | Ready extraction and atomic save composition | Carry and replace it in every accepted runtime transition | UI-start |
-| Numeric transactions and buy-mode math | `src/simulation/numeric.ts`, `src/simulation/transactions.ts` | Ready primitives | Add immutable canonical adapters for basic facility purchases | UI-start |
-| Dyson production and derived rates | Dyson derivation, effect, mega-rate and arrival modules under `src/simulation` | Ready domain primitives | Wire all rates and arrivals into the whole-game event model | UI-start |
-| Manual mega-structure purchase | `src/simulation/canonicalDysonCommands.ts` | Ready domain command | Route through the canonical command union | UI-start |
-| Eight-facility automation | `src/simulation/canonicalDysonCommands.ts` | Ready domain command | Run at the exact scheduler automation boundary | UI-start |
-| Research automation | `src/simulation/researchAutomation.ts` | Ready domain command | Run in the same ordered automation boundary as facility automation | UI-start |
-| Manual basic facility purchase | Mutable basic slice exists in `src/simulation/transactions.ts` | Partial | Add a `CanonicalGameStateV1` adapter with unlock checks and immutable replacement | UI-start |
-| Manual research purchase | Purchase logic is internal to research automation | Partial | Export one canonical transaction using the same definitions, prerequisites, costs and buy mode | UI-start |
-| Early-game Tinker | Dynamic yield/cooldown effects exist; Unity authority is `Assets/Scripts/Buildings/ManualBotCreation.cs` | Missing | Port the durable cooldown plus transient action progress, bot/assembly yield switch, repeat behavior and event scheduling | UI-start |
-| Infinity reward and trigger | Basic Infinity math and canonical reset are tested | Partial | Add the exact canonical reward/event-horizon adapter used by the whole-game model | UI-start |
-| Ordinary and Break Infinity reset | `src/simulation/canonicalInfinityReset.ts` | Ready domain transition | Route automatic and explicit boundary behavior through the runtime model | UI-start |
-| Finite bot-cap transition | `src/simulation/canonicalBotCapCheckpoint.ts` | Partial | Coordinate pending, reward and reset candidates with the application persistence lane | UI-start and release |
-| Infinity shop | `src/simulation/canonicalInfinityShop.ts` | Ready domain transaction | Route secrets, permanent skill points, retained facility chain and automation purchases | UI-start |
-| Skill purchase/refund/reset/auto-assignment | `src/simulation/canonicalSkillTransactions.ts` | Domain transition added in the current checkpoint | Route commands and finish preset/queue editing commands | UI-start |
-| Skill presets and active auto-assignment queue | Canonical durable state is mapped | Partial | Add select, rename, replace queue, add/remove queue item, bot-distribution sync and auto-assign policy commands | UI-start |
-| Dream foundational/information/space production and purchases | Dream modules under `src/simulation` | Ready domain primitives | Wire all production, conversions, education, upgrades, railgun and purchase commands into the runtime | UI-start |
-| Dream resets | `src/simulation/canonicalDreamReset.ts` | Ready domain transitions | Trigger at the exact event boundary and route any explicit action | UI-start |
-| Reality worker generation and gather | `src/simulation/realityWorkers.ts` | Ready domain primitives | Wire time advance, manual gather and auto-gather into the runtime | UI-start |
-| Reality upgrades | `src/simulation/realityUpgrades.ts` | Ready domain transaction | Route purchases and expose authoritative eligibility | UI-start |
-| Quantum upgrades | `src/simulation/quantumUpgrades.ts` | Ready domain transaction | Route purchases and expose authoritative eligibility | UI-start |
-| Quantum Entanglement | `src/simulation/quantumTransitions.ts` | Ready domain transition | Route it with the same Quantum action gate as Unity | UI-start |
-| Quantum Leap reset | `src/simulation/quantumTransitions.ts` | Partial | Enforce Unity's total-42 Infinity Point gate and supply exact artifact skill points before reset | UI-start |
-| Artifact skill points | Unity authority is `Oracle.ArtifactSkillPoints()` | Missing canonical derivation | Sum owned Reality `AddSkillPoints` effects using Unity rounding, then add four for completed Avotation | UI-start |
-| Avocado feeding and multiplier | `src/simulation/avocadoDomain.ts` | Ready domain transaction | Route all feed sources and expose derived multiplier | UI-start |
-| Avocado meditation | `src/simulation/avocadoMeditation.ts` | Ready domain transaction | Route the ordered step command; keep help countdown presentation-only | UI-start |
-| Returned/stored-time math | `src/simulation/timeResources.ts` | Ready primitives | Add a concrete spend command that advances the full model and debits the bank commit-first | UI-start |
-| Stored-time capacity upgrade | `src/simulation/timeResources.ts` | Ready primitive | Route the purchase/reset transaction | UI-start |
-| Dream Double Time | `src/simulation/timeResources.ts` | Ready tick math | Route rate changes and integrate preparation/debit into whole-game advancement | UI-start |
-| Lifecycle/away replay policy | `src/simulation/lifecycleAwayTime.ts` | Ready pure policy | Build the application coordinator for clock samples, replay, save intents and cancellation/yield continuation | UI-start |
-| Statistics | `src/simulation/canonicalStatistics.ts` | Ready recorder | Record exactly one combined segment for each accepted interval after all domain effects are known | UI-start |
+| Save-specific Dyson tuning and evaluation | `src/application/canonicalRuntimeSession.ts` | Ready | None for frontend start | Complete |
+| Numeric transactions and buy-mode math | `src/simulation/numeric.ts`, `src/simulation/transactions.ts`, canonical Dyson/research adapters | Ready | None for frontend start | Complete |
+| Dyson production, purchases, automation and derived facts | `src/simulation/canonicalEventTimeModel.ts`, `src/simulation/canonicalDysonCommands.ts`, `src/application/frontendSnapshot.ts` | Ready | None for frontend start | Complete |
+| Early-game Tinker | `src/simulation/canonicalTinker.ts` and runtime-session transient state | Ready | None for frontend start | Complete |
+| Infinity reward, bot-cap checkpoint, reset and shop | Canonical Infinity modules plus `src/application/canonicalLifecycleCoordinator.ts` | Ready | Host save adapter still required for release | UI-start complete; release/host open |
+| Skills, presets and auto-assignment | `src/simulation/canonicalSkillTransactions.ts`, canonical command router | Ready | None for frontend start | Complete |
+| Dream production, purchases, education, upgrades and resets | Canonical Dream modules and whole-game event model | Ready | None for frontend start | Complete |
+| Reality generation, gather and upgrades | Canonical Reality modules and whole-game event model | Ready | None for frontend start | Complete |
+| Quantum upgrades, Entanglement and Leap | `src/simulation/quantumTransitions.ts`, artifact-point derivation and canonical command router | Ready | None for frontend start | Complete |
+| Avocado feeding, multiplier and meditation | Canonical Avocado modules and command router | Ready | None for frontend start | Complete |
+| Returned time, stored time, capacity and Double Time | Whole-game event model, `src/simulation/storedTimeAccounting.ts`, lifecycle coordinator | Ready | None for frontend start | Complete |
+| Lifecycle, commit-first continuation and statistics | `src/application/canonicalLifecycleCoordinator.ts`, `src/simulation/canonicalStatistics.ts` | Ready | Connect selected host lifecycle/save adapters for release | UI-start complete; release/host open |
+| Typed command inventory and authoritative frontend snapshot | `src/application/canonicalPlayerCommands.ts`, `src/application/frontendSnapshot.ts` | Ready | Read snapshots from the application; route player commands and active wall time through the lifecycle coordinator | Complete |
 | Achievement evaluation and publication | Platform contract only | Missing adapter/evaluator | Define canonical achievement facts, then implement Steam synchronization | Release/host |
 | Rich presence and Steam statistics | Platform contract only | Missing adapters | Implement in the Electron/main-process host | Release/host |
 | Audio, clipboard, links and local UI preferences | Platform contracts only | Missing adapters | Implement for selected hosts; unavailable stubs are sufficient for initial frontend development | Release/host |
@@ -187,7 +176,8 @@ transactions.
 
 - all foundational, information and space-age purchases;
 - start education and purchase Simulation upgrades;
-- gather Reality influence and set auto-gather;
+- gather Reality influence and purchase the authored permanent auto-gather
+  upgrade;
 - purchase Reality and Quantum upgrades;
 - feed each supported resource to Avocado;
 - complete the next valid Avocado meditation step; and
@@ -227,11 +217,11 @@ Additional correctness rules:
   one record per subsystem; and
 - unsupported dependencies fail closed with stable typed codes.
 
-## Recommended composition files
+## Implemented composition files
 
 ### `src/application/canonicalRuntimeSession.ts`
 
-- Define and clone `CanonicalRuntimeStateV1`.
+- Define and clone `CanonicalRuntimeState`.
 - Open a prepared save by hydrating canonical state, compatibility tuning and
   the previous evaluation snapshot.
 - Validate all three parts.
@@ -268,20 +258,20 @@ Keep `browserSaveStorage.ts`, Electron filesystem/Steam adapters and Capacitor
 filesystem/lifecycle adapters outside the gameplay composition. Their absence
 must not cause the frontend to invent alternate game rules.
 
-## Dependency-ordered completion plan
+## Completed dependency order
 
-1. Land the runtime carrier, event model and command router with split-call,
+1. Landed the runtime carrier, event model and command router with split-call,
    rejection and fresh-session tests.
-2. Add the remaining canonical adapters for Tinker and artifact skill points,
+2. Added the remaining canonical adapters for Tinker and artifact skill points,
    then route the completed basic-facility, manual-research, Infinity
    reward/horizon, Infinity-shop and Avocado-meditation domains.
-3. Route every remaining settings, preset, Dream, Reality, Quantum, Avocado and
+3. Routed every remaining settings, preset, Dream, Reality, Quantum, Avocado and
    stored-time command.
-4. Build the lifecycle coordinator, bot-cap persistence orchestration and
+4. Built the lifecycle coordinator, bot-cap persistence orchestration and
    single-segment statistics integration.
-5. Build and contract-test the read-only frontend snapshot.
-6. Run the full tests, type check, lint, production build and deterministic
-   data check, then make a local checkpoint.
+5. Built and contract-tested the read-only frontend snapshot.
+6. Ran the full tests, type check, lint, production build and deterministic
+   data check, then created the local checkpoint.
 7. Separately satisfy the product-design gate before creating the replacement
    frontend.
 8. Complete storage, Steam and device adapters plus canonical-write
@@ -301,3 +291,7 @@ The backend-port milestone is complete when a headless integration test can:
 
 That milestone does not require final visual design, optional performance
 tuning, Steam/mobile packaging or a production deployment.
+
+The representative headless integration regression now exercises this complete
+sequence. Full-suite validation is green and the local Git checkpoint is
+complete.
