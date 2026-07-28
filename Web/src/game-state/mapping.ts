@@ -699,6 +699,9 @@ export function dehydrateGameState(
   quantum.influence = state.quantum.influenceSpeedBonus
   quantum.cash = state.quantum.cashBonusLevels
   quantum.science = state.quantum.scienceBonusLevels
+  // QuantumUpgradeCondition and older Unity builds still read this legacy
+  // mirror even though AvocadoData is the canonical owner.
+  quantum.avocatoPurchased = state.avocado.unlocked
   quantum.botMultitasking = state.quantum.unlocks.botMultitasking
   quantum.doubleIP = state.quantum.unlocks.doubleInfinityPoints
   quantum.breakTheLoop = state.quantum.unlocks.breakTheLoop

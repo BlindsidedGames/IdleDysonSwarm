@@ -147,6 +147,33 @@ describe('canonical game-state mapping', () => {
     })
   })
 
+  test('synchronizes the legacy Avocado unlock mirror on dehydration', () => {
+    const prepared = prepareIdb1Save(
+      loadFixture('schema-08-canonical-idb1-main-save.txt'),
+    ).prepared
+    const session = hydrateGameState(prepared)
+    const candidate = {
+      ...session.state,
+      avocado: {
+        ...session.state.avocado,
+        unlocked: true,
+      },
+    }
+
+    const dehydrated = session.prepare(candidate)
+    const source = dehydrated.copyValidatedState()
+
+    expect(
+      (source.avocadoData as Record<string, unknown>).unlocked,
+    ).toBe(true)
+    expect(
+      (source.prestigePlus as Record<string, unknown>)
+        .avocatoPurchased,
+    ).toBe(true)
+    expect(hydrateGameState(dehydrated).state.avocado.unlocked)
+      .toBe(true)
+  })
+
   test('preserves future fields inside owned nested containers', () => {
     const original = prepareIdb1Save(
       loadFixture('schema-08-canonical-idb1-main-save.txt'),
