@@ -12,6 +12,15 @@ import {
   type BasicDysonRates,
 } from './dysonModel'
 import {
+  combineDysonProductionArrivalRates,
+  type DysonProductionArrivalRates,
+} from './dysonProductionArrivals'
+import {
+  deriveMegaStructureRates,
+  type MegaStructureRateIssueCode,
+  type MegaStructureRates,
+} from './megaStructureRates'
+import {
   avocadoDysonMultiplier,
   infinityFacilityMultiplier,
   quantumCashMultiplier,
@@ -32,9 +41,9 @@ export interface DysonEntitlements {
 
 export type DysonDerivationIssueCode =
   | 'DYSON_OWNED_SKILL_UNSUPPORTED'
-  | 'DYSON_MEGA_STRUCTURE_UNSUPPORTED'
   | 'DYSON_QUANTUM_LEVEL_UNSUPPORTED'
   | DysonResearchEffectIssueCode
+  | MegaStructureRateIssueCode
 
 export interface DysonDerivationIssue {
   readonly code: DysonDerivationIssueCode
@@ -57,6 +66,8 @@ export interface DerivedBasicDysonState {
     Record<CanonicalFacilityId, number>
   >
   readonly rates: Readonly<BasicDysonRates>
+  readonly megaRates: Readonly<MegaStructureRates>
+  readonly productionArrivalRates: Readonly<DysonProductionArrivalRates>
   readonly entitlements: DysonEntitlements
 }
 
@@ -170,6 +181,19 @@ export function deriveBasicDysonState(
     secrets.multipliers,
     avocadoMultiplier,
   )
+  const mega = deriveMegaStructureRates(state, {
+    matrioshka_brains: facilityModifiers.matrioshka_brains,
+    birch_planets: facilityModifiers.birch_planets,
+    galactic_brains: facilityModifiers.galactic_brains,
+  })
+  if (!mega.ok) {
+    return {
+      ok: false,
+      issues: Object.freeze(
+        mega.issues.map((issue) => Object.freeze({ ...issue })),
+      ),
+    }
+  }
   const model = createBasicDysonState({
     money: state.dyson.money,
     science: state.dyson.science,
@@ -216,6 +240,11 @@ export function deriveBasicDysonState(
       }),
       facilityModifiers: Object.freeze(facilityModifiers),
       rates: Object.freeze({ ...model.rates }),
+      megaRates: mega.rates,
+      productionArrivalRates: combineDysonProductionArrivalRates(
+        model.rates,
+        mega.rates,
+      ),
       entitlements: Object.freeze({ ...entitlements }),
     }),
   }
@@ -231,24 +260,6 @@ function findUnsupportedDependencies(
         code: 'DYSON_OWNED_SKILL_UNSUPPORTED',
         path: `skills.byId.${id}`,
         detail: `Owned skill '${id}' is not characterized by the Basic Dyson stat pipeline.`,
-      })
-    }
-  }
-  for (const id of [
-    'matrioshka_brains',
-    'birch_planets',
-    'galactic_brains',
-  ] as const) {
-    const owned = state.dyson.facilities[id]
-    if (
-      owned[0] > 0 ||
-      owned[1] > 0 ||
-      state.dyson.automation.enabledFacilities[id]
-    ) {
-      issues.push({
-        code: 'DYSON_MEGA_STRUCTURE_UNSUPPORTED',
-        path: `dyson.facilities.${id}`,
-        detail: `Mega-structure '${id}' is outside the characterized Basic Dyson slice.`,
       })
     }
   }

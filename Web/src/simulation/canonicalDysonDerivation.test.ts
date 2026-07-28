@@ -311,6 +311,49 @@ describe('canonical Basic Dyson derivation', () => {
     expect(modifiers.galactic_brains).toBeCloseTo(1.12 * 21, 14)
   })
 
+  test('derives unlocked mega rates and maps them to tick-start arrivals', () => {
+    const source = characterizedState()
+    const state: CanonicalGameStateV1 = {
+      ...source,
+      dyson: {
+        ...source.dyson,
+        facilities: {
+          ...source.dyson.facilities,
+          matrioshka_brains: [2, 3],
+          birch_planets: [4, 1],
+          galactic_brains: [1, 1],
+        },
+      },
+      quantum: {
+        ...source.quantum,
+        unlocks: {
+          ...source.quantum.unlocks,
+          matrioshkaBrains: true,
+          birchPlanets: true,
+          galacticBrains: true,
+        },
+      },
+    }
+
+    const derived = requireDerived(state)
+    expect(derived.megaRates.matrioshka_brains).toBe(5)
+    expect(derived.megaRates.birch_planets).toBe(
+      Math.fround(0.01) * 5,
+    )
+    expect(derived.megaRates.galactic_brains).toBe(
+      Math.fround(0.1) * 2,
+    )
+    expect(derived.productionArrivalRates.planets).toBe(
+      derived.rates.planets + derived.megaRates.matrioshka_brains,
+    )
+    expect(derived.productionArrivalRates.matrioshka_brains).toBe(
+      derived.megaRates.birch_planets,
+    )
+    expect(derived.productionArrivalRates.birch_planets).toBe(
+      derived.megaRates.galactic_brains,
+    )
+  })
+
   test('derives skill effects only from skills.byId ownership', () => {
     const state = characterizedState()
     const withNonOwnershipReferences = {

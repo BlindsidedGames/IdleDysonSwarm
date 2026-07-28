@@ -24,6 +24,10 @@ import {
   extractDysonCompatibilityTuning,
   type DysonCompatibilityTuning,
 } from './compatibilityTuning'
+import {
+  extractDysonSkillEffectEvaluationSnapshot,
+  type DysonSkillEffectEvaluationSnapshot,
+} from './skillEffectEvaluationSnapshot'
 
 const DREAM_EDUCATION_IDS = [
   'engineering',
@@ -109,6 +113,7 @@ const RESEARCH_AUTOMATION_PATHS = {
 export class HydratedGameStateV1 {
   readonly state: CanonicalGameStateV1
   readonly compatibilityTuning: Readonly<DysonCompatibilityTuning>
+  readonly skillEffectEvaluationSnapshot: Readonly<DysonSkillEffectEvaluationSnapshot>
   private readonly preparedSource: PreparedSave
 
   constructor(state: CanonicalGameStateV1, preparedSource: PreparedSave) {
@@ -116,6 +121,8 @@ export class HydratedGameStateV1 {
     this.preparedSource = preparedSource
     this.compatibilityTuning =
       extractDysonCompatibilityTuning(preparedSource)
+    this.skillEffectEvaluationSnapshot =
+      extractDysonSkillEffectEvaluationSnapshot(preparedSource)
   }
 
   get initialState(): CanonicalGameStateV1 {

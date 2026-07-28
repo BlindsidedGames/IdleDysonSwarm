@@ -82,7 +82,7 @@ Research content is fail-closed against its exact exported Unity contract:
 unknown active IDs, fractional levels, changed targets/operations/orders,
 conditions, facility filters, missing assets and unexpected definition shapes
 all reject. Mega-structure modifiers are available, but their production chain
-remains blocked until its exact facility effects and event ordering are ported.
+is activated only through the characterized mega-structure boundary below.
 
 ## Dynamic skill characterization checkpoint
 
@@ -113,6 +113,30 @@ scientific/pocket production and manager assembly production). Integration
 must materialize every active effect from one immutable old snapshot and then
 publish the new derived rates atomically. Recursively calculating those inputs
 while resolving an effect would not be parity-correct.
+
+## Mega-structure checkpoint
+
+All three mega tiers now have a canonical headless domain path:
+
+- exact exported definitions and production stat IDs are validated before use;
+- Unity's legacy float cast is preserved for authored production values `1`,
+  `0.01` and `0.1`;
+- automatic plus manual ownership, Quantum gates and already-derived modifiers
+  produce fail-closed Matrioshka, Birch and Galactic rates;
+- tick-start rates commit atomically, with Matrioshkas adding planets, Birches
+  adding Matrioshkas and Galactics adding Birches only on the next production
+  arrival rather than cascading inside one tick;
+- manual purchases enforce Quantum and preceding-tier prerequisites at the
+  command boundary, debit only cash and use the exported geometric cost;
+- bot automation rotates through all eight facilities, spends shared cash
+  sequentially, re-evaluates unlocks after each attempt and persists the next
+  start slot.
+
+The public canonical command adapters are immutable and are ready to be routed
+through `TransactionalGameApplication`. Until that command routing and a
+complete derived-rate snapshot replace the parity-only `BasicDysonState`, this
+checkpoint remains a domain-complete mega slice rather than a whole-game
+runtime claim.
 
 ## Required acceptance path
 

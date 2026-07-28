@@ -231,14 +231,25 @@ Original prompt: Create a separate `Idle Dyson Swarm Web` project beside the Uni
   publish the new derived snapshot.
 - Current headless validation: 271 tests, TypeScript checks, lint, production
   build and deterministic verification of 559 Unity assets across 34 types.
+- Isolated the Unity dynamic-skill recalculation caches into a frozen
+  compatibility snapshot. They seed one recalculation but do not become
+  durable canonical state.
+- Ported all three mega-structure rates from exact exported definitions,
+  including Unity float precision, Quantum gates and canonical modifiers.
+- Added atomic full-chain production arrivals with no same-tick cascade,
+  immutable unlock-aware mega purchases and canonical command adapters.
+- Added the rotating eight-facility automation pass with sequential shared
+  spending, per-target audit results and persistent start-index advancement.
+- Current headless validation: 320 tests, TypeScript checks, lint, production
+  build and deterministic verification of 559 Unity assets across 34 types.
 
 ## TODO
 
 - Map the remaining Unity gameplay systems and build a clean,
   dependency-ordered headless port plan.
-- Inventory and own the remaining canonical Dyson inputs before connecting the
-  parity slice to real saves: current panels, production multipliers, panel
-  lifetime, facility modifiers and remaining Infinity reward inputs.
+- Replace the temporary Basic Dyson rate helper with one immutable
+  prior-derived effect snapshot and publish the next complete derived snapshot
+  atomically.
 - Complete the remaining early-game tinker behavior in the headless model.
 - Expand Unity golden masters into research behavior.
 - Integrate the characterized dynamic/conditional skill resolvers through an
