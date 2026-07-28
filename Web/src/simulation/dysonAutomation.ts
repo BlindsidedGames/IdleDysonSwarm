@@ -62,6 +62,11 @@ export interface DysonAutomationResult {
   readonly attempts: readonly DysonAutomationAttempt[]
 }
 
+export interface DysonFacilityPurchaseResult {
+  readonly state: DysonAutomationState
+  readonly attempt: DysonAutomationAttempt
+}
+
 export type DysonFacilityUnlockResolver = (
   facilityId: CanonicalFacilityId,
   currentState: Readonly<DysonAutomationState>,
@@ -101,6 +106,25 @@ export function runDysonAutomationTick(
     nextTargetIndex,
     attempts,
   }
+}
+
+/**
+ * Executes one manual facility purchase through the same authored cost and
+ * buy-mode transaction used by automation without advancing its rotation.
+ */
+export function tryPurchaseDysonFacility(
+  input: Readonly<DysonAutomationState>,
+  facilityId: CanonicalFacilityId,
+  resolveUnlock: DysonFacilityUnlockResolver = configuredUnlock,
+): DysonFacilityPurchaseResult {
+  const state = cloneState(input)
+  const attempt = attemptFacilityPurchase(
+    state,
+    facilityId,
+    'preserve-configured-mode',
+    resolveUnlock,
+  )
+  return { state, attempt }
 }
 
 function attemptFacilityPurchase(

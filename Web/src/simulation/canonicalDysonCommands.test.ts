@@ -5,6 +5,7 @@ import type { CanonicalGameStateV1 } from '../game-state/types'
 import { prepareIdb1Save } from '../save/prepare'
 import {
   runCanonicalDysonAutomation,
+  tryPurchaseCanonicalBasicFacility,
   tryPurchaseCanonicalMegaStructure,
 } from './canonicalDysonCommands'
 
@@ -21,6 +22,39 @@ function state(): CanonicalGameStateV1 {
 }
 
 describe('canonical Dyson commands', () => {
+  test('applies a manual basic-facility purchase through authored buy-mode math', () => {
+    const before = state()
+    const candidate: CanonicalGameStateV1 = {
+      ...before,
+      dyson: {
+        ...before.dyson,
+        money: 100,
+        facilities: {
+          ...before.dyson.facilities,
+          assembly_lines: [0, 0],
+        },
+        automation: {
+          ...before.dyson.automation,
+          buyMode: 'buy-1',
+        },
+      },
+    }
+    const result = tryPurchaseCanonicalBasicFacility(
+      candidate,
+      'assembly_lines',
+    )
+    expect(result.attempt).toMatchObject({
+      purchased: true,
+      quantity: 1n,
+      status: 'success',
+    })
+    expect(result.state.dyson.facilities.assembly_lines[1]).toBe(1)
+    expect(result.state.timeline.dysonAutomationTargetIndex).toBe(
+      candidate.timeline.dysonAutomationTargetIndex,
+    )
+    expect(candidate.dyson.facilities.assembly_lines[1]).toBe(0)
+  })
+
   test('applies a manual mega purchase without mutating canonical input', () => {
     const before = state()
     const candidate: CanonicalGameStateV1 = {

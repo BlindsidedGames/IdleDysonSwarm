@@ -5,6 +5,7 @@ import type {
 } from '../game-state/types'
 import {
   applyCanonicalInfinityReset,
+  type CanonicalInfinityResetAssetLookup,
   type CanonicalInfinityResetIssue,
 } from './canonicalInfinityReset'
 import { addDiscrete } from './numeric'
@@ -99,6 +100,7 @@ export function applyQuantumEntanglementConversion(
 export function applyCanonicalQuantumReset(
   state: Readonly<CanonicalGameStateV1>,
   artifactSkillPoints: bigint,
+  lookup?: CanonicalInfinityResetAssetLookup,
 ): CanonicalQuantumResetResult {
   const assignmentSeed: CanonicalGameStateV1 = {
     ...state,
@@ -113,11 +115,15 @@ export function applyCanonicalQuantumReset(
       fragments: 0n,
     },
   }
-  const assignment = applyCanonicalInfinityReset(assignmentSeed, {
-    breakInfinity: false,
-    requestedReward: 0n,
-    artifactSkillPoints,
-  })
+  const assignment = applyCanonicalInfinityReset(
+    assignmentSeed,
+    {
+      breakInfinity: false,
+      requestedReward: 0n,
+      artifactSkillPoints,
+    },
+    lookup,
+  )
   if (!assignment.ok) {
     return {
       ok: false,

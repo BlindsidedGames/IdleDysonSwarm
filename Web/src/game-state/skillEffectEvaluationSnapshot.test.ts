@@ -6,7 +6,10 @@ import {
   type PreparedSave,
 } from '../save/prepare'
 import { hydrateGameState } from './mapping'
-import { extractDysonSkillEffectEvaluationSnapshot } from './skillEffectEvaluationSnapshot'
+import {
+  extractDysonSkillEffectEvaluationSnapshot,
+  withDysonSkillEffectEvaluationSnapshot,
+} from './skillEffectEvaluationSnapshot'
 
 const fixture = new URL(
   '../../test/fixtures/schema-08-canonical-idb1-main-save.txt',
@@ -69,5 +72,55 @@ describe('Dyson skill-effect evaluation snapshot', () => {
     ).toThrow(
       "Dyson skill-effect snapshot 'scienceMulti' must be a finite non-negative number.",
     )
+  })
+
+  test('composes game state and the next snapshot into one reloadable candidate', () => {
+    const session = hydrateGameState(preparedFixture())
+    const nextState = {
+      ...session.state,
+      dyson: {
+        ...session.state.dyson,
+        money: session.state.dyson.money + 42,
+      },
+    }
+    const nextSnapshot = {
+      panelsPerSecond: 11,
+      panelLifetimeSeconds: 12,
+      scienceMultiplier: 13,
+      rudimentarySingularityProduction: 14,
+      pocketDimensionsProduction: 15,
+      scientificPlanetsProduction: 16,
+      managerAssemblyLineProduction: 17,
+    }
+
+    const mapped = session.prepare(nextState)
+    const reloadable = withDysonSkillEffectEvaluationSnapshot(
+      mapped,
+      nextSnapshot,
+    )
+    const reloaded = hydrateGameState(reloadable)
+
+    expect(reloaded.state.dyson.money).toBe(nextState.dyson.money)
+    expect(reloaded.skillEffectEvaluationSnapshot).toEqual(
+      nextSnapshot,
+    )
+    expect(
+      extractDysonSkillEffectEvaluationSnapshot(mapped),
+    ).toEqual(session.skillEffectEvaluationSnapshot)
+  })
+
+  test('rejects an invalid next snapshot without changing the prepared candidate', () => {
+    const prepared = preparedFixture()
+    const before = prepared.copyValidatedState()
+
+    expect(() =>
+      withDysonSkillEffectEvaluationSnapshot(prepared, {
+        ...extractDysonSkillEffectEvaluationSnapshot(prepared),
+        panelsPerSecond: Number.NaN,
+      }),
+    ).toThrow(
+      "Dyson skill-effect snapshot 'panelsPerSec' must be a finite non-negative number.",
+    )
+    expect(prepared.copyValidatedState()).toEqual(before)
   })
 })

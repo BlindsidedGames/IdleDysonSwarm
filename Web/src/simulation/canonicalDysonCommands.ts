@@ -6,6 +6,7 @@ import type {
 import {
   DYSON_AUTOMATION_TARGETS,
   runDysonAutomationTick,
+  tryPurchaseDysonFacility,
   type DysonAutomationAttempt,
   type DysonAutomationState,
 } from './dysonAutomation'
@@ -24,6 +25,42 @@ export interface CanonicalDysonAutomationResult {
 export interface CanonicalMegaStructurePurchaseResult
   extends Omit<MegaStructurePurchaseResult, 'state'> {
   readonly state: CanonicalGameStateV1
+}
+
+export interface CanonicalBasicFacilityPurchaseResult {
+  readonly state: CanonicalGameStateV1
+  readonly attempt: DysonAutomationAttempt
+}
+
+/**
+ * Applies an unlock-aware manual basic-facility purchase to canonical state.
+ */
+export function tryPurchaseCanonicalBasicFacility(
+  state: CanonicalGameStateV1,
+  facilityId: Exclude<
+    CanonicalFacilityId,
+    'matrioshka_brains' | 'birch_planets' | 'galactic_brains'
+  >,
+): CanonicalBasicFacilityPurchaseResult {
+  const automationState = toDysonAutomationState(state)
+  automationState.globalEnabled = true
+  automationState.enabledFacilities[facilityId] = true
+  const result = tryPurchaseDysonFacility(
+    automationState,
+    facilityId,
+    (id, candidate) => isFacilityUnlocked(state, candidate, id),
+  )
+  return {
+    state: result.attempt.purchased
+      ? replaceDysonState(
+          state,
+          result.state.money,
+          result.state.facilities,
+          state.timeline.dysonAutomationTargetIndex,
+        )
+      : state,
+    attempt: result.attempt,
+  }
 }
 
 /**
@@ -64,7 +101,28 @@ export function runCanonicalDysonAutomation(
   state: CanonicalGameStateV1,
   policy: SimulationAutomationPolicy = 'preserve-configured-mode',
 ): CanonicalDysonAutomationResult {
-  const automationState: DysonAutomationState = {
+  const automationState = toDysonAutomationState(state)
+  const result = runDysonAutomationTick(
+    automationState,
+    policy,
+    (facilityId, candidate) =>
+      isFacilityUnlocked(state, candidate, facilityId),
+  )
+  return {
+    state: replaceDysonState(
+      state,
+      result.state.money,
+      result.state.facilities,
+      result.nextTargetIndex,
+    ),
+    attempts: result.attempts,
+  }
+}
+
+function toDysonAutomationState(
+  state: CanonicalGameStateV1,
+): DysonAutomationState {
+  return {
     money: state.dyson.money,
     facilities: Object.fromEntries(
       DYSON_AUTOMATION_TARGETS.map((id) => [
@@ -85,21 +143,6 @@ export function runCanonicalDysonAutomation(
     ) as Record<CanonicalFacilityId, boolean>,
     buyMode: state.dyson.automation.buyMode,
     roundedBulkBuy: state.dyson.automation.roundedBulkBuy,
-  }
-  const result = runDysonAutomationTick(
-    automationState,
-    policy,
-    (facilityId, candidate) =>
-      isFacilityUnlocked(state, candidate, facilityId),
-  )
-  return {
-    state: replaceDysonState(
-      state,
-      result.state.money,
-      result.state.facilities,
-      result.nextTargetIndex,
-    ),
-    attempts: result.attempts,
   }
 }
 

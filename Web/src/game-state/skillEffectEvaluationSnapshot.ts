@@ -55,6 +55,43 @@ export function extractDysonSkillEffectEvaluationSnapshot(
   )
 }
 
+/**
+ * Writes the transactionally published evaluation snapshot back to the
+ * derived Unity fields that seed the next recalculation after reload.
+ *
+ * Call this on the PreparedSave returned by the canonical game-state mapper,
+ * before committing that prepared candidate to the repository. Keeping the
+ * game-state and snapshot writes inside one PreparedSave prevents a rejected
+ * or failed save from publishing only half of the runtime transition.
+ */
+export function withDysonSkillEffectEvaluationSnapshot(
+  prepared: PreparedSave,
+  snapshot: Readonly<DysonSkillEffectEvaluationSnapshot>,
+): PreparedSave {
+  const entries = Object.entries(SNAPSHOT_FIELDS).map(
+    ([target, sourceField]) => [
+      sourceField,
+      requireFiniteNonNegative(
+        snapshot[target as keyof DysonSkillEffectEvaluationSnapshot],
+        sourceField,
+      ),
+    ],
+  )
+  const source = prepared.copyValidatedState()
+  const dyson = requireRecord(
+    source.dysonVerseSaveData,
+    'Dyson save',
+  )
+  const infinity = requireRecord(
+    dyson.dysonVerseInfinityData,
+    'Dyson infinity data',
+  )
+  for (const [field, value] of entries) {
+    infinity[field] = value
+  }
+  return prepared.withValidatedState(source)
+}
+
 function requireFiniteNonNegative(
   value: unknown,
   field: string,

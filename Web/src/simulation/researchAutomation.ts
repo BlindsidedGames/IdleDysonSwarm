@@ -66,6 +66,108 @@ export interface ResearchAutomationTickResult {
   readonly purchases: readonly ResearchAutomationPurchase[]
 }
 
+export type CanonicalResearchPurchaseResult =
+  | {
+      readonly accepted: true
+      readonly changed: boolean
+      readonly state: CanonicalGameStateV1
+      readonly purchase?: ResearchAutomationPurchase
+    }
+  | {
+      readonly accepted: false
+      readonly code: string
+      readonly reason: string
+      readonly state: CanonicalGameStateV1
+    }
+
+/**
+ * Purchases one authored research definition through the same cost,
+ * prerequisite, cap, buy-mode, and numeric transaction path used by
+ * automation, without requiring the automation unlock or per-item toggle.
+ */
+export function purchaseCanonicalResearch(
+  state: CanonicalGameStateV1,
+  tuning: Readonly<DysonCompatibilityTuning>,
+  researchId: string,
+): CanonicalResearchPurchaseResult {
+  const definition = loadDefinitions().find(
+    (candidate) => candidate.id === researchId,
+  )
+  if (definition === undefined) {
+    return {
+      accepted: false,
+      code: 'RESEARCH-UNKNOWN',
+      reason: `Unknown research '${researchId}'.`,
+      state,
+    }
+  }
+  const currentLevel = state.research.levelsById[researchId] ?? 0
+  if (
+    definition.maxLevel >= 0 &&
+    currentLevel >= definition.maxLevel
+  ) {
+    return {
+      accepted: true,
+      changed: false,
+      state,
+    }
+  }
+  if (
+    !prerequisitesMet(
+      definition,
+      state,
+      state.research.levelsById,
+    )
+  ) {
+    return {
+      accepted: false,
+      code: 'RESEARCH-PREREQUISITE',
+      reason: `Research '${researchId}' has an unmet prerequisite.`,
+      state,
+    }
+  }
+  const purchase = tryPurchase(
+    definition,
+    state,
+    tuning,
+    state.dyson.science,
+    state.research.levelsById,
+    false,
+  )
+  if (purchase === undefined) {
+    return {
+      accepted: false,
+      code: 'RESEARCH-UNAFFORDABLE',
+      reason: `Research '${researchId}' cannot be purchased with the current science balance and buy mode.`,
+      state,
+    }
+  }
+  const detail = Object.freeze({
+    researchId,
+    quantity: purchase.quantity,
+    cost: purchase.cost,
+  })
+  return {
+    accepted: true,
+    changed: true,
+    state: {
+      ...state,
+      dyson: {
+        ...state.dyson,
+        science: purchase.science,
+      },
+      research: {
+        ...state.research,
+        levelsById: {
+          ...state.research.levelsById,
+          [researchId]: purchase.level,
+        },
+      },
+    },
+    purchase: detail,
+  }
+}
+
 /**
  * Runs one Unity-parity research automation pass without mutating its inputs.
  *
@@ -117,6 +219,7 @@ export function runResearchAutomationTick(
       tuning,
       science,
       levelsById,
+      true,
     )
     if (purchase === undefined) continue
 
@@ -159,6 +262,7 @@ function tryPurchase(
   tuning: Readonly<DysonCompatibilityTuning>,
   science: number,
   levelsById: Readonly<Record<string, number>>,
+  requireAutomationEnabled: boolean,
 ):
   | {
       readonly science: number
@@ -167,7 +271,12 @@ function tryPurchase(
       readonly cost: number
     }
   | undefined {
-  if (!isAutomationEnabled(definition, state)) return undefined
+  if (
+    requireAutomationEnabled &&
+    !isAutomationEnabled(definition, state)
+  ) {
+    return undefined
+  }
   if (!prerequisitesMet(definition, state, levelsById)) return undefined
   if (!Number.isFinite(science) || science < 0) return undefined
 

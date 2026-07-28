@@ -5,7 +5,10 @@ import type { DysonCompatibilityTuning } from '../game-state/compatibilityTuning
 import { hydrateGameState } from '../game-state/mapping'
 import type { CanonicalGameStateV1 } from '../game-state/types'
 import { prepareIdb1Save } from '../save/prepare'
-import { runResearchAutomationTick } from './researchAutomation'
+import {
+  purchaseCanonicalResearch,
+  runResearchAutomationTick,
+} from './researchAutomation'
 import { buyXCost, maxAffordable } from './transactions'
 
 const fixtureText = readFileSync(
@@ -136,6 +139,52 @@ function indexOf(id: string): number {
 }
 
 describe('research automation', () => {
+  test('manual purchases use authored buy-mode math without requiring automation', () => {
+    const state = stateWith(5_000)
+    const result = purchaseCanonicalResearch(
+      state,
+      neutralTuning,
+      'research.money_multiplier',
+    )
+
+    expect(result.accepted).toBe(true)
+    if (!result.accepted) return
+    expect(result.purchase).toEqual({
+      researchId: 'research.money_multiplier',
+      quantity: 1n,
+      cost: 5_000,
+    })
+    expect(result.state.dyson.science).toBe(0)
+    expect(
+      result.state.research.levelsById['research.money_multiplier'],
+    ).toBe(1)
+    expect(state.research.automation.enabledById[
+      'research.money_multiplier'
+    ]).toBe(false)
+  })
+
+  test('manual purchases fail closed for unknown and unmet-prerequisite research', () => {
+    const state = stateWith(1_000_000_000)
+    expect(
+      purchaseCanonicalResearch(state, neutralTuning, 'research.missing'),
+    ).toMatchObject({
+      accepted: false,
+      code: 'RESEARCH-UNKNOWN',
+      state,
+    })
+    expect(
+      purchaseCanonicalResearch(
+        state,
+        neutralTuning,
+        'research.panel_lifetime_2',
+      ),
+    ).toMatchObject({
+      accepted: false,
+      code: 'RESEARCH-PREREQUISITE',
+      state,
+    })
+  })
+
   test('does nothing while the global research automation gate is locked', () => {
     const enabled = stateWith(10_000, 4)
     const state = {
