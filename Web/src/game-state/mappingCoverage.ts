@@ -238,6 +238,39 @@ export const mappingCoverageManifest = {
       '$.research.automation.roundedBulkBuy',
     ),
     ...[
+      ['infinityAutoResearchToggleAi', 'research.ai_manager_upgrade'],
+      [
+        'infinityAutoResearchToggleAssembly',
+        'research.assembly_line_upgrade',
+      ],
+      ['infinityAutoResearchToggleMoney', 'research.money_multiplier'],
+      ['infinityAutoResearchTogglePlanet', 'research.planet_upgrade'],
+      ['infinityAutoResearchToggleServer', 'research.server_upgrade'],
+      [
+        'infinityAutoResearchToggleDataCenter',
+        'research.data_center_upgrade',
+      ],
+      ['infinityAutoResearchToggleScience', 'research.science_boost'],
+      [
+        'infinityAutoResearchToggleMatrioshkaBrains',
+        'research.matrioshka_brains_upgrade',
+      ],
+      [
+        'infinityAutoResearchToggleBirchPlanets',
+        'research.birch_planets_upgrade',
+      ],
+      [
+        'infinityAutoResearchToggleGalacticBrains',
+        'research.galactic_brains_upgrade',
+      ],
+    ].map(([source, canonical]) =>
+      owned(
+        `$.${source}`,
+        'research',
+        `$.research.automation.enabledById.${canonical}`,
+      ),
+    ),
+    ...[
       ['universesConsumed', 'universeDesignationCount'],
       ['workersReadyToGo', 'workersReady'],
       ['workerGenerationProgress', 'workerGenerationProgress'],

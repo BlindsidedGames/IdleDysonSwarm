@@ -200,6 +200,12 @@ Original prompt: Create a separate `Idle Dyson Swarm Web` project beside the Uni
   engine.
 - Current headless validation: 127 tests, TypeScript checks, lint, production
   build and deterministic verification of 559 Unity assets across 34 types.
+- Classified the remaining canonical Dyson integration inputs in
+  `docs/canonical-dyson-parity-plan.md`: durable causes remain canonical,
+  production/stat caches are reconstructed, legacy mirrors remain
+  compatibility-only and platform entitlements stay outside player state.
+- Added executable ownership coverage and round-trip proof for all ten durable
+  research-automation selections.
 
 ## TODO
 

@@ -113,6 +113,40 @@ describe('canonical game-state mapping', () => {
     )
   })
 
+  test('round-trips durable research automation selections', () => {
+    const prepared = prepareIdb1Save(
+      loadFixture('schema-08-canonical-idb1-main-save.txt'),
+    ).prepared
+    const session = hydrateGameState(prepared)
+    const candidate = {
+      ...session.state,
+      research: {
+        ...session.state.research,
+        automation: {
+          ...session.state.research.automation,
+          enabledById: {
+            ...session.state.research.automation.enabledById,
+            'research.ai_manager_upgrade': false,
+            'research.galactic_brains_upgrade': true,
+          },
+        },
+      },
+    }
+
+    const dehydrated = session.prepare(candidate)
+    const source = dehydrated.copyValidatedState()
+    const rehydrated = hydrateGameState(dehydrated)
+
+    expect(source.infinityAutoResearchToggleAi).toBe(false)
+    expect(source.infinityAutoResearchToggleGalacticBrains).toBe(true)
+    expect(
+      rehydrated.state.research.automation.enabledById,
+    ).toMatchObject({
+      'research.ai_manager_upgrade': false,
+      'research.galactic_brains_upgrade': true,
+    })
+  })
+
   test('preserves future fields inside owned nested containers', () => {
     const original = prepareIdb1Save(
       loadFixture('schema-08-canonical-idb1-main-save.txt'),
