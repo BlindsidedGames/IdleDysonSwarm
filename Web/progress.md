@@ -219,6 +219,18 @@ Original prompt: Create a separate `Idle Dyson Swarm Web` project beside the Uni
   facilities while mega production remains explicitly gated.
 - Current headless validation: 191 tests, TypeScript checks, lint, production
   build and deterministic verification of 559 Unity assets across 34 types.
+- Added a strict Unity-database-ordered skill-effect materializer with exact
+  ownership, facility-filter, condition, dynamic-replacement, per-level and
+  identity-skip semantics.
+- Ported the remaining dynamic skill formula families into pure resolvers:
+  money/science, panels and panel lifetime, facility production/modifiers,
+  planet generation, shoulders accrual and tinker yield.
+- Characterized the prior-derived snapshot dependency cycles that must be
+  preserved when these resolvers replace the temporary Basic Dyson skill
+  helper; recalculation will read one immutable old snapshot and atomically
+  publish the new derived snapshot.
+- Current headless validation: 271 tests, TypeScript checks, lint, production
+  build and deterministic verification of 559 Unity assets across 34 types.
 
 ## TODO
 
@@ -229,8 +241,10 @@ Original prompt: Create a separate `Idle Dyson Swarm Web` project beside the Uni
   lifetime, facility modifiers and remaining Infinity reward inputs.
 - Complete the remaining early-game tinker behavior in the headless model.
 - Expand Unity golden masters into research behavior.
-- Expand the typed Dyson model from the no-skill chain into the exported
-  dynamic/conditional effect pipelines and research automation.
+- Integrate the characterized dynamic/conditional skill resolvers through an
+  immutable prior-derived evaluation snapshot, then replace the temporary
+  Basic Dyson skill helper.
+- Expand research automation through the same canonical event scheduler.
 - Port Infinity skill auto-assignment and the remaining dynamic derived-state
   rebuilding.
 - Port Dream and Reality models after Dyson exact parity is established.

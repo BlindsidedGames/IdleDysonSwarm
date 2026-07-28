@@ -84,6 +84,36 @@ conditions, facility filters, missing assets and unexpected definition shapes
 all reject. Mega-structure modifiers are available, but their production chain
 remains blocked until its exact facility effects and event ordering are ported.
 
+## Dynamic skill characterization checkpoint
+
+The exported Unity skill database is now consumed through a strict generic
+materializer rather than treating a hand-picked skill list as the eventual
+architecture:
+
+- skills and effects retain `SkillDatabase` and authored-reference order;
+- ownership, target stat, facility filters, conditions, dynamic replacement and
+  identity skipping occur in the same order as `SkillEffectProvider`;
+- linked scriptable conditions take precedence over legacy string mirrors, with
+  all five currently linked Avocado conditions evaluated from canonical manual
+  facility counts;
+- authored `perLevel` is added exactly once for an owned skill, matching the
+  current Unity provider rather than multiplying by saved skill level;
+- malformed references, unsupported conditions and non-finite resolved values
+  fail closed.
+
+Pure dynamic resolvers now characterize the complete money/science,
+panel-lifetime, panels-per-second, basic facility production/modifier,
+planet-generation, shoulders-accrual and tinker branches of
+`SkillEffectCatalog`. They deliberately separate durable canonical inputs from
+prior-derived recalculation inputs.
+
+Unity has dependency cycles where dynamic effects read the previous
+recalculation snapshot (`panelsPerSec`, `panelLifetime`, `scienceMulti`,
+scientific/pocket production and manager assembly production). Integration
+must materialize every active effect from one immutable old snapshot and then
+publish the new derived rates atomically. Recursively calculating those inputs
+while resolving an effect would not be parity-correct.
+
 ## Required acceptance path
 
 Every whole-slice acceptance fixture must use the real boundary:
