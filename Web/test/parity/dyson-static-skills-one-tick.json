@@ -1,0 +1,24 @@
+{
+  "name": "dyson-static-skills-one-tick",
+  "source": "unity-golden-master",
+  "unityCommit": "717e4bf",
+  "tickSeconds": 0.1,
+  "ownedSkills": [
+    "assemblyLineTree",
+    "workerEfficiencyTree",
+    "superchargedPower"
+  ],
+  "initialRates": {
+    "money": 8,
+    "science": 50,
+    "panels": 0.8,
+    "bots": 1.5000000223517419,
+    "assembly_lines": 0.12500000651925803,
+    "ai_managers": 0.005000000121071935,
+    "servers": 0.0016666667070239783,
+    "data_centers": 0.00041666667675599456,
+    "planets": 0
+  },
+  "botsAfterOneTick": 0.15000000223517419,
+  "assemblyLinesAfterOneTick": 2.012500000651926
+}

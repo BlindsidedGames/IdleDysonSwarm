@@ -1,0 +1,55 @@
+{
+  "name": "assembly-line-automation-modes",
+  "source": "unity-golden-master",
+  "unityCommit": "717e4bf",
+  "cases": [
+    {
+      "name": "buy-1",
+      "configuredMode": "buy-1",
+      "rounded": false,
+      "forceBuyMax": false,
+      "startingMoney": 1000,
+      "startingOwned": 0,
+      "purchased": true,
+      "quantity": "1",
+      "finalMoney": 900,
+      "finalOwned": 1
+    },
+    {
+      "name": "buy-10",
+      "configuredMode": "buy-10",
+      "rounded": false,
+      "forceBuyMax": false,
+      "startingMoney": 10000,
+      "startingOwned": 0,
+      "purchased": true,
+      "quantity": "10",
+      "finalMoney": 7134.258447532765,
+      "finalOwned": 10
+    },
+    {
+      "name": "rounded-buy-10",
+      "configuredMode": "buy-10",
+      "rounded": true,
+      "forceBuyMax": false,
+      "startingMoney": 10000,
+      "startingOwned": 7,
+      "purchased": true,
+      "quantity": "3",
+      "finalMoney": 8508.217915763165,
+      "finalOwned": 10
+    },
+    {
+      "name": "stored-force-max",
+      "configuredMode": "buy-1",
+      "rounded": false,
+      "forceBuyMax": true,
+      "startingMoney": 1000,
+      "startingOwned": 0,
+      "purchased": true,
+      "quantity": "5",
+      "finalMoney": 226.041744,
+      "finalOwned": 5
+    }
+  ]
+}

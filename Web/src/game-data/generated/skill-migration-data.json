@@ -1,0 +1,766 @@
+{
+  "addictionToPower": {
+    "requiredSkillIds": [
+      "indulgingInPower"
+    ],
+    "shadowRequirementIds": [],
+    "exclusiveWithIds": []
+  },
+  "agressiveAlgorithms": {
+    "requiredSkillIds": [
+      "unsuspiciousAlgorithms"
+    ],
+    "shadowRequirementIds": [],
+    "exclusiveWithIds": []
+  },
+  "aiManagerTree": {
+    "requiredSkillIds": [
+      "startHereTree"
+    ],
+    "shadowRequirementIds": [],
+    "exclusiveWithIds": []
+  },
+  "androids": {
+    "requiredSkillIds": [
+      "workerEfficiencyTree",
+      "panelLifetime20Tree"
+    ],
+    "shadowRequirementIds": [],
+    "exclusiveWithIds": []
+  },
+  "artificiallyEnhancedPanels": {
+    "requiredSkillIds": [
+      "panelLifetime20Tree"
+    ],
+    "shadowRequirementIds": [],
+    "exclusiveWithIds": []
+  },
+  "assemblyLineTree": {
+    "requiredSkillIds": [
+      "startHereTree"
+    ],
+    "shadowRequirementIds": [],
+    "exclusiveWithIds": []
+  },
+  "assemblyMegaLines": {
+    "requiredSkillIds": [
+      "assemblyLineTree"
+    ],
+    "shadowRequirementIds": [],
+    "exclusiveWithIds": []
+  },
+  "avocados": {
+    "requiredSkillIds": [],
+    "shadowRequirementIds": [],
+    "exclusiveWithIds": []
+  },
+  "banking": {
+    "requiredSkillIds": [],
+    "shadowRequirementIds": [],
+    "exclusiveWithIds": []
+  },
+  "burnOut": {
+    "requiredSkillIds": [
+      "manualLabour"
+    ],
+    "shadowRequirementIds": [],
+    "exclusiveWithIds": []
+  },
+  "citadelCouncil": {
+    "requiredSkillIds": [
+      "shepherd"
+    ],
+    "shadowRequirementIds": [],
+    "exclusiveWithIds": [
+      "renegade"
+    ]
+  },
+  "clusterNetworking": {
+    "requiredSkillIds": [
+      "rudimentarySingularity"
+    ],
+    "shadowRequirementIds": [],
+    "exclusiveWithIds": []
+  },
+  "coldFusion": {
+    "requiredSkillIds": [
+      "fusionReactors"
+    ],
+    "shadowRequirementIds": [],
+    "exclusiveWithIds": []
+  },
+  "dataCenterTree": {
+    "requiredSkillIds": [
+      "startHereTree"
+    ],
+    "shadowRequirementIds": [],
+    "exclusiveWithIds": []
+  },
+  "dimensionalCatCables": {
+    "requiredSkillIds": [
+      "pocketDimensions"
+    ],
+    "shadowRequirementIds": [],
+    "exclusiveWithIds": []
+  },
+  "doubleScienceTree": {
+    "requiredSkillIds": [
+      "startHereTree"
+    ],
+    "shadowRequirementIds": [],
+    "exclusiveWithIds": []
+  },
+  "dysonSubsidies": {
+    "requiredSkillIds": [
+      "manualLabour"
+    ],
+    "shadowRequirementIds": [],
+    "exclusiveWithIds": []
+  },
+  "economicDominance": {
+    "requiredSkillIds": [
+      "economicRevolution"
+    ],
+    "shadowRequirementIds": [],
+    "exclusiveWithIds": [
+      "scientificDominance"
+    ]
+  },
+  "economicRevolution": {
+    "requiredSkillIds": [
+      "workerEfficiencyTree"
+    ],
+    "shadowRequirementIds": [],
+    "exclusiveWithIds": []
+  },
+  "endOfTheLine": {
+    "requiredSkillIds": [
+      "worthySacrifice"
+    ],
+    "shadowRequirementIds": [],
+    "exclusiveWithIds": []
+  },
+  "fragmentAssembly": {
+    "requiredSkillIds": [],
+    "shadowRequirementIds": [],
+    "exclusiveWithIds": []
+  },
+  "fusionReactors": {
+    "requiredSkillIds": [
+      "burnOut"
+    ],
+    "shadowRequirementIds": [],
+    "exclusiveWithIds": []
+  },
+  "galacticPradigmShift": {
+    "requiredSkillIds": [
+      "dysonSubsidies"
+    ],
+    "shadowRequirementIds": [],
+    "exclusiveWithIds": []
+  },
+  "higgsBoson": {
+    "requiredSkillIds": [
+      "startHereTree"
+    ],
+    "shadowRequirementIds": [],
+    "exclusiveWithIds": []
+  },
+  "hubbleTelescope": {
+    "requiredSkillIds": [
+      "scientificPlanets"
+    ],
+    "shadowRequirementIds": [],
+    "exclusiveWithIds": []
+  },
+  "hypercubeNetworks": {
+    "requiredSkillIds": [
+      "whatWillComeToPass"
+    ],
+    "shadowRequirementIds": [],
+    "exclusiveWithIds": [
+      "whatCouldHaveBeen"
+    ]
+  },
+  "idleElectricSheep": {
+    "requiredSkillIds": [],
+    "shadowRequirementIds": [],
+    "exclusiveWithIds": []
+  },
+  "idleSpaceFlight": {
+    "requiredSkillIds": [
+      "producedAsScienceTree"
+    ],
+    "shadowRequirementIds": [],
+    "exclusiveWithIds": []
+  },
+  "indulgingInPower": {
+    "requiredSkillIds": [
+      "tasteOfPower"
+    ],
+    "shadowRequirementIds": [],
+    "exclusiveWithIds": []
+  },
+  "investmentPortfolio": {
+    "requiredSkillIds": [
+      "banking"
+    ],
+    "shadowRequirementIds": [],
+    "exclusiveWithIds": []
+  },
+  "jamesWebbTelescope": {
+    "requiredSkillIds": [
+      "hubbleTelescope"
+    ],
+    "shadowRequirementIds": [],
+    "exclusiveWithIds": []
+  },
+  "manualLabour": {
+    "requiredSkillIds": [],
+    "shadowRequirementIds": [],
+    "exclusiveWithIds": []
+  },
+  "megaSwarm": {
+    "requiredSkillIds": [
+      "superSwarm"
+    ],
+    "shadowRequirementIds": [],
+    "exclusiveWithIds": []
+  },
+  "monetaryPolicy": {
+    "requiredSkillIds": [
+      "workerEfficiencyTree"
+    ],
+    "shadowRequirementIds": [],
+    "exclusiveWithIds": []
+  },
+  "oneMinutePlan": {
+    "requiredSkillIds": [
+      "worthySacrifice",
+      "dysonSubsidies"
+    ],
+    "shadowRequirementIds": [],
+    "exclusiveWithIds": []
+  },
+  "panelLifetime20Tree": {
+    "requiredSkillIds": [
+      "startHereTree"
+    ],
+    "shadowRequirementIds": [],
+    "exclusiveWithIds": []
+  },
+  "panelMaintenance": {
+    "requiredSkillIds": [
+      "manualLabour"
+    ],
+    "shadowRequirementIds": [],
+    "exclusiveWithIds": []
+  },
+  "panelWarranty": {
+    "requiredSkillIds": [
+      "panelLifetime20Tree"
+    ],
+    "shadowRequirementIds": [],
+    "exclusiveWithIds": []
+  },
+  "paragon": {
+    "requiredSkillIds": [
+      "panelMaintenance"
+    ],
+    "shadowRequirementIds": [],
+    "exclusiveWithIds": [
+      "renegade"
+    ]
+  },
+  "parallelComputation": {
+    "requiredSkillIds": [
+      "hypercubeNetworks",
+      "clusterNetworking"
+    ],
+    "shadowRequirementIds": [],
+    "exclusiveWithIds": [
+      "whatCouldHaveBeen"
+    ]
+  },
+  "parallelProcessing": {
+    "requiredSkillIds": [
+      "serverTree",
+      "aiManagerTree",
+      "assemblyLineTree"
+    ],
+    "shadowRequirementIds": [],
+    "exclusiveWithIds": []
+  },
+  "planetAssembly": {
+    "requiredSkillIds": [
+      "galacticPradigmShift",
+      "versatileProductionTactics"
+    ],
+    "shadowRequirementIds": [],
+    "exclusiveWithIds": []
+  },
+  "planetsTree": {
+    "requiredSkillIds": [
+      "startHereTree"
+    ],
+    "shadowRequirementIds": [],
+    "exclusiveWithIds": []
+  },
+  "pocketAndroids": {
+    "requiredSkillIds": [
+      "solarBubbles"
+    ],
+    "shadowRequirementIds": [],
+    "exclusiveWithIds": [
+      "whatCouldHaveBeen"
+    ]
+  },
+  "pocketDimensions": {
+    "requiredSkillIds": [
+      "parallelProcessing",
+      "dataCenterTree"
+    ],
+    "shadowRequirementIds": [],
+    "exclusiveWithIds": []
+  },
+  "pocketMultiverse": {
+    "requiredSkillIds": [
+      "pocketProtectors"
+    ],
+    "shadowRequirementIds": [],
+    "exclusiveWithIds": []
+  },
+  "pocketProtectors": {
+    "requiredSkillIds": [
+      "dimensionalCatCables"
+    ],
+    "shadowRequirementIds": [],
+    "exclusiveWithIds": []
+  },
+  "powerOverwhelming": {
+    "requiredSkillIds": [
+      "powerUnderwhelming"
+    ],
+    "shadowRequirementIds": [],
+    "exclusiveWithIds": []
+  },
+  "powerUnderwhelming": {
+    "requiredSkillIds": [
+      "coldFusion"
+    ],
+    "shadowRequirementIds": [],
+    "exclusiveWithIds": []
+  },
+  "producedAsScienceTree": {
+    "requiredSkillIds": [
+      "doubleScienceTree"
+    ],
+    "shadowRequirementIds": [],
+    "exclusiveWithIds": []
+  },
+  "productionScaling": {
+    "requiredSkillIds": [
+      "superSwarm"
+    ],
+    "shadowRequirementIds": [],
+    "exclusiveWithIds": []
+  },
+  "progressiveAssembly": {
+    "requiredSkillIds": [
+      "assemblyLineTree"
+    ],
+    "shadowRequirementIds": [],
+    "exclusiveWithIds": []
+  },
+  "purityOfBody": {
+    "requiredSkillIds": [
+      "purityOfMind"
+    ],
+    "shadowRequirementIds": [],
+    "exclusiveWithIds": []
+  },
+  "purityOfMind": {
+    "requiredSkillIds": [
+      "manualLabour"
+    ],
+    "shadowRequirementIds": [],
+    "exclusiveWithIds": []
+  },
+  "purityOfSEssence": {
+    "requiredSkillIds": [
+      "purityOfBody"
+    ],
+    "shadowRequirementIds": [],
+    "exclusiveWithIds": []
+  },
+  "quantumComputing": {
+    "requiredSkillIds": [
+      "parallelComputation"
+    ],
+    "shadowRequirementIds": [],
+    "exclusiveWithIds": [
+      "whatCouldHaveBeen"
+    ]
+  },
+  "reapers": {
+    "requiredSkillIds": [
+      "saren"
+    ],
+    "shadowRequirementIds": [],
+    "exclusiveWithIds": [
+      "paragon"
+    ]
+  },
+  "regulatedAcademia": {
+    "requiredSkillIds": [
+      "coldFusion"
+    ],
+    "shadowRequirementIds": [],
+    "exclusiveWithIds": []
+  },
+  "renegade": {
+    "requiredSkillIds": [
+      "panelMaintenance"
+    ],
+    "shadowRequirementIds": [],
+    "exclusiveWithIds": [
+      "paragon"
+    ]
+  },
+  "renewableEnergy": {
+    "requiredSkillIds": [
+      "artificiallyEnhancedPanels"
+    ],
+    "shadowRequirementIds": [],
+    "exclusiveWithIds": []
+  },
+  "repeatableResearch": {
+    "requiredSkillIds": [
+      "doubleScienceTree"
+    ],
+    "shadowRequirementIds": [],
+    "exclusiveWithIds": []
+  },
+  "rocketMania": {
+    "requiredSkillIds": [
+      "endOfTheLine"
+    ],
+    "shadowRequirementIds": [],
+    "exclusiveWithIds": []
+  },
+  "rudimentarySingularity": {
+    "requiredSkillIds": [
+      "parallelProcessing"
+    ],
+    "shadowRequirementIds": [],
+    "exclusiveWithIds": []
+  },
+  "saren": {
+    "requiredSkillIds": [
+      "renegade"
+    ],
+    "shadowRequirementIds": [],
+    "exclusiveWithIds": [
+      "paragon"
+    ]
+  },
+  "scientificDominance": {
+    "requiredSkillIds": [
+      "scientificRevolution"
+    ],
+    "shadowRequirementIds": [],
+    "exclusiveWithIds": [
+      "economicDominance"
+    ]
+  },
+  "scientificPlanets": {
+    "requiredSkillIds": [
+      "planetsTree",
+      "pocketDimensions"
+    ],
+    "shadowRequirementIds": [],
+    "exclusiveWithIds": []
+  },
+  "scientificRevolution": {
+    "requiredSkillIds": [
+      "doubleScienceTree"
+    ],
+    "shadowRequirementIds": [],
+    "exclusiveWithIds": []
+  },
+  "serverTree": {
+    "requiredSkillIds": [
+      "startHereTree"
+    ],
+    "shadowRequirementIds": [],
+    "exclusiveWithIds": []
+  },
+  "shellWorlds": {
+    "requiredSkillIds": [
+      "planetAssembly"
+    ],
+    "shadowRequirementIds": [],
+    "exclusiveWithIds": []
+  },
+  "shepherd": {
+    "requiredSkillIds": [
+      "paragon"
+    ],
+    "shadowRequirementIds": [],
+    "exclusiveWithIds": [
+      "renegade"
+    ]
+  },
+  "shoulderSurgery": {
+    "requiredSkillIds": [
+      "whatCouldHaveBeen"
+    ],
+    "shadowRequirementIds": [],
+    "exclusiveWithIds": [
+      "whatWillComeToPass"
+    ]
+  },
+  "shouldersOfGiants": {
+    "requiredSkillIds": [
+      "scientificPlanets"
+    ],
+    "shadowRequirementIds": [],
+    "exclusiveWithIds": []
+  },
+  "shouldersOfPrecursors": {
+    "requiredSkillIds": [
+      "shouldersOfGiants"
+    ],
+    "shadowRequirementIds": [],
+    "exclusiveWithIds": [
+      "shouldersOfTheEnlightened"
+    ]
+  },
+  "shouldersOfTheEnlightened": {
+    "requiredSkillIds": [
+      "shouldersOfGiants"
+    ],
+    "shadowRequirementIds": [],
+    "exclusiveWithIds": [
+      "shouldersOfPrecursors"
+    ]
+  },
+  "shouldersOfTheFallen": {
+    "requiredSkillIds": [
+      "shouldersOfPrecursors"
+    ],
+    "shadowRequirementIds": [],
+    "exclusiveWithIds": [
+      "shouldersOfTheEnlightened"
+    ]
+  },
+  "shouldersOfTheRevolution": {
+    "requiredSkillIds": [
+      "shouldersOfTheEnlightened"
+    ],
+    "shadowRequirementIds": [],
+    "exclusiveWithIds": [
+      "shouldersOfPrecursors"
+    ]
+  },
+  "solarBubbles": {
+    "requiredSkillIds": [
+      "whatWillComeToPass"
+    ],
+    "shadowRequirementIds": [],
+    "exclusiveWithIds": [
+      "whatCouldHaveBeen"
+    ]
+  },
+  "startHereTree": {
+    "requiredSkillIds": [],
+    "shadowRequirementIds": [],
+    "exclusiveWithIds": []
+  },
+  "stayingPower": {
+    "requiredSkillIds": [
+      "artificiallyEnhancedPanels"
+    ],
+    "shadowRequirementIds": [],
+    "exclusiveWithIds": []
+  },
+  "stellarDominance": {
+    "requiredSkillIds": [
+      "stellarSacrifices"
+    ],
+    "shadowRequirementIds": [],
+    "exclusiveWithIds": []
+  },
+  "stellarImprovements": {
+    "requiredSkillIds": [
+      "stellarSacrifices"
+    ],
+    "shadowRequirementIds": [],
+    "exclusiveWithIds": []
+  },
+  "stellarObliteration": {
+    "requiredSkillIds": [
+      "stellarSacrifices"
+    ],
+    "shadowRequirementIds": [],
+    "exclusiveWithIds": []
+  },
+  "stellarSacrifices": {
+    "requiredSkillIds": [],
+    "shadowRequirementIds": [],
+    "exclusiveWithIds": []
+  },
+  "superRadiantScattering": {
+    "requiredSkillIds": [
+      "scientificPlanets"
+    ],
+    "shadowRequirementIds": [],
+    "exclusiveWithIds": []
+  },
+  "superSwarm": {
+    "requiredSkillIds": [
+      "manualLabour"
+    ],
+    "shadowRequirementIds": [],
+    "exclusiveWithIds": []
+  },
+  "superchargedPower": {
+    "requiredSkillIds": [
+      "workerEfficiencyTree"
+    ],
+    "shadowRequirementIds": [],
+    "exclusiveWithIds": []
+  },
+  "supernova": {
+    "requiredSkillIds": [
+      "stellarObliteration"
+    ],
+    "shadowRequirementIds": [],
+    "exclusiveWithIds": []
+  },
+  "tasteOfPower": {
+    "requiredSkillIds": [
+      "superchargedPower"
+    ],
+    "shadowRequirementIds": [],
+    "exclusiveWithIds": []
+  },
+  "terraEculeo": {
+    "requiredSkillIds": [
+      "terraFirma"
+    ],
+    "shadowRequirementIds": [],
+    "exclusiveWithIds": []
+  },
+  "terraFirma": {
+    "requiredSkillIds": [
+      "galacticPradigmShift"
+    ],
+    "shadowRequirementIds": [],
+    "exclusiveWithIds": []
+  },
+  "terraGloriae": {
+    "requiredSkillIds": [
+      "terraNova"
+    ],
+    "shadowRequirementIds": [],
+    "exclusiveWithIds": []
+  },
+  "terraInfirma": {
+    "requiredSkillIds": [
+      "terraEculeo"
+    ],
+    "shadowRequirementIds": [],
+    "exclusiveWithIds": []
+  },
+  "terraIrradiant": {
+    "requiredSkillIds": [
+      "terraNullius",
+      "terraGloriae"
+    ],
+    "shadowRequirementIds": [],
+    "exclusiveWithIds": []
+  },
+  "terraNova": {
+    "requiredSkillIds": [
+      "terraFirma"
+    ],
+    "shadowRequirementIds": [],
+    "exclusiveWithIds": []
+  },
+  "terraNullius": {
+    "requiredSkillIds": [
+      "terraInfirma"
+    ],
+    "shadowRequirementIds": [],
+    "exclusiveWithIds": []
+  },
+  "terraformingProtocols": {
+    "requiredSkillIds": [
+      "scientificPlanets"
+    ],
+    "shadowRequirementIds": [],
+    "exclusiveWithIds": []
+  },
+  "ultimateSwarm": {
+    "requiredSkillIds": [
+      "megaSwarm"
+    ],
+    "shadowRequirementIds": [],
+    "exclusiveWithIds": []
+  },
+  "unsuspiciousAlgorithms": {
+    "requiredSkillIds": [
+      "rudimentarySingularity"
+    ],
+    "shadowRequirementIds": [],
+    "exclusiveWithIds": []
+  },
+  "versatileProductionTactics": {
+    "requiredSkillIds": [
+      "oneMinutePlan"
+    ],
+    "shadowRequirementIds": [],
+    "exclusiveWithIds": []
+  },
+  "whatCouldHaveBeen": {
+    "requiredSkillIds": [
+      "dimensionalCatCables",
+      "shouldersOfGiants"
+    ],
+    "shadowRequirementIds": [],
+    "exclusiveWithIds": [
+      "whatWillComeToPass"
+    ]
+  },
+  "whatWillComeToPass": {
+    "requiredSkillIds": [
+      "dimensionalCatCables"
+    ],
+    "shadowRequirementIds": [],
+    "exclusiveWithIds": [
+      "whatCouldHaveBeen"
+    ]
+  },
+  "workerBoost": {
+    "requiredSkillIds": [
+      "workerEfficiencyTree"
+    ],
+    "shadowRequirementIds": [],
+    "exclusiveWithIds": []
+  },
+  "workerEfficiencyTree": {
+    "requiredSkillIds": [
+      "startHereTree"
+    ],
+    "shadowRequirementIds": [],
+    "exclusiveWithIds": []
+  },
+  "worthySacrifice": {
+    "requiredSkillIds": [
+      "burnOut"
+    ],
+    "shadowRequirementIds": [],
+    "exclusiveWithIds": []
+  }
+}

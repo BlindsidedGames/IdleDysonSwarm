@@ -1,0 +1,35 @@
+[
+  {
+    "name": "canonical schema 8",
+    "fixture": "schema-08-canonical-idb1-main-save.txt",
+    "sourceSchema": 8,
+    "expected": {
+      "saveVersion": 12,
+      "dateStarted": "02/01/2026 01:56:16"
+    }
+  },
+  {
+    "name": "support schema 11",
+    "fixture": "support-case-01-attached-idb1.txt",
+    "sourceSchema": 11,
+    "expected": {
+      "saveVersion": 12
+    }
+  },
+  {
+    "name": "historical schema 0",
+    "fixture": "support-case-02-inline-idb1.txt",
+    "sourceSchema": 0,
+    "expected": {
+      "saveVersion": 12
+    }
+  },
+  {
+    "name": "support schema 10",
+    "fixture": "support-case-03-inline-idb1.txt",
+    "sourceSchema": 10,
+    "expected": {
+      "saveVersion": 12
+    }
+  }
+]

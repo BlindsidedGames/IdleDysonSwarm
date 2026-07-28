@@ -1,0 +1,15 @@
+{
+  "name": "infinity-trigger-boundaries",
+  "source": "unity-golden-master",
+  "unityCommit": "717e4bf",
+  "ordinaryRequirement": 42000000000000000000,
+  "division19Requirement": 4.2,
+  "exponent": 3.9,
+  "breakCase": {
+    "target": "100",
+    "rewardMultiplier": "4",
+    "requiredBaseReward": "25",
+    "botRequirement": 8.658974649122703e+33,
+    "expectedReward": "100"
+  }
+}

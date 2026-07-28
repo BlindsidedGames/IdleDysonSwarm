@@ -1,0 +1,97 @@
+{
+  "name": "dyson-no-skills-two-ticks",
+  "source": "unity-golden-master",
+  "unityCommit": "717e4bf",
+  "tickSeconds": 0.1,
+  "initialState": {
+    "money": 10,
+    "science": 20,
+    "bots": 30,
+    "panels": 0,
+    "workers": 40,
+    "researchers": 50,
+    "moneyMultiplier": 1,
+    "scienceMultiplier": 1,
+    "panelRateMultiplier": 1,
+    "panelLifetime": 10,
+    "ownedSkills": [],
+    "automation": {
+      "enabledFacilities": [],
+      "buyMode": "buy-1",
+      "roundedBulkBuy": false
+    },
+    "facilities": {
+      "assembly_lines": [2, 3],
+      "ai_managers": [4, 1],
+      "servers": [2, 0],
+      "data_centers": [1, 0],
+      "planets": [1, 0]
+    },
+    "modifiers": {
+      "assembly_lines": 1,
+      "ai_managers": 1,
+      "servers": 1,
+      "data_centers": 1,
+      "planets": 1
+    },
+    "rates": {
+      "money": 4,
+      "science": 50,
+      "panels": 0.4,
+      "bots": 0.5000000074505806,
+      "assembly_lines": 0.08333333767950535,
+      "ai_managers": 0.0033333334140479566,
+      "servers": 0.0011111111380159855,
+      "data_centers": 0.00027777778450399637,
+      "planets": 0
+    }
+  },
+  "afterOneTick": {
+    "money": 10.4,
+    "science": 25,
+    "bots": 30.05000000074506,
+    "panels": 0.04000000000000001,
+    "facilities": {
+      "assembly_lines": [2.0083333337679507, 3],
+      "ai_managers": [4.000333333341405, 1],
+      "servers": [2.000111111113802, 0],
+      "data_centers": [1.0000277777784503, 0],
+      "planets": [1, 0]
+    },
+    "rates": {
+      "money": 4,
+      "science": 50,
+      "panels": 0.4,
+      "bots": 0.5008333408397933,
+      "assembly_lines": 0.08333889323548517,
+      "ai_managers": 0.00333351859924211,
+      "servers": 0.001111142002215011,
+      "data_centers": 0.00027777778450399637,
+      "planets": 0
+    }
+  },
+  "afterTwoTicks": {
+    "money": 10.8,
+    "science": 30,
+    "bots": 30.100083334829038,
+    "panels": 0.08000000000000002,
+    "facilities": {
+      "assembly_lines": [2.016667223091499, 3],
+      "ai_managers": [4.000666685201328, 1],
+      "servers": [2.0002222253140236, 0],
+      "data_centers": [1.0000555555569006, 0],
+      "planets": [1, 0]
+    },
+    "rates": {
+      "money": 4,
+      "science": 50,
+      "panels": 0.4,
+      "bots": 0.5016667297845666,
+      "assembly_lines": 0.083344449100107,
+      "ai_managers": 0.0033337037895802975,
+      "servers": 0.0011111728664140366,
+      "data_centers": 0.00027777778450399637,
+      "planets": 0
+    }
+  }
+}

@@ -1,0 +1,44 @@
+{
+  "name": "bot-cap-transition",
+  "source": "unity-golden-master",
+  "unityCommit": "717e4bf",
+  "ordinaryCases": [
+    {
+      "name": "before-pending-checkpoint",
+      "startingPoints": "17",
+      "startingOverflow": 9,
+      "startingLegacyOverflow": 4,
+      "pending": false,
+      "rewardsGranted": false,
+      "expectedPoints": "1018",
+      "expectedSpecialPoints": "1000"
+    },
+    {
+      "name": "after-pending-checkpoint",
+      "startingPoints": "17",
+      "startingOverflow": 9,
+      "startingLegacyOverflow": 4,
+      "pending": true,
+      "rewardsGranted": false,
+      "expectedPoints": "1018",
+      "expectedSpecialPoints": "1000"
+    },
+    {
+      "name": "after-reward-checkpoint",
+      "startingPoints": "1017",
+      "startingOverflow": 10,
+      "startingLegacyOverflow": 5,
+      "pending": false,
+      "rewardsGranted": true,
+      "expectedPoints": "1018",
+      "expectedSpecialPoints": "0"
+    }
+  ],
+  "breakCase": {
+    "startingPoints": "17",
+    "baseRewardAtCap": "489",
+    "rewardMultiplier": "4",
+    "expectedBreakReward": "1956",
+    "expectedPoints": "2973"
+  }
+}
