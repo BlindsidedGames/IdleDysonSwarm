@@ -254,6 +254,28 @@ Original prompt: Create a separate `Idle Dyson Swarm Web` project beside the Uni
 - Current committed-slice validation: 343 tests plus TypeScript checks, lint,
   production build and deterministic verification of 559 Unity assets across
   34 types.
+- Added pure returned-time and stored-time contracts with explicit UTC source
+  outcomes, finite repair, capacity upgrades and exact Dream Double Time
+  preparation/debit behavior.
+- Added platform-neutral lifecycle policy and cold-start replay coordination.
+  Mobile background events and universal quit produce save candidates,
+  desktop background events remain no-ops, and the pre-replay gate cannot
+  overwrite the historical quit timestamp.
+- Added a durable canonical finite bot-cap checkpoint state machine. Pending,
+  reward and Prestige phases are now separately recoverable, failed reward
+  persistence rolls back to pending, and invalid bot values produce an
+  explicit repair candidate.
+- Added a whole-canonical Infinity reset that preserves non-Dyson domains and
+  scheduler phases while resetting the run, research, skills, fragments and
+  cycle metadata. It includes retained facility starts, stored-time rollover,
+  explicit artifact skill points and deterministic multi-pass auto-assignment
+  from the exported SkillDatabase.
+- Bot-cap reward statistics now commit with the durable reward candidate, so a
+  restart cannot duplicate or lose the actual admitted points at saturation.
+- Current lifecycle/Infinity checkpoint validation: 394 tests plus TypeScript
+  checks, lint, production build and deterministic verification of 559 Unity
+  assets across 34 types. The shared worktree also contains the next validated
+  Dream domain slice, bringing the active full suite to 414 tests.
 
 ## TODO
 

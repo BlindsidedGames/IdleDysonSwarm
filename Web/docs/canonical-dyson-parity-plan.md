@@ -151,6 +151,19 @@ complete derived-rate snapshot replace the parity-only `BasicDysonState`, this
 checkpoint remains a domain-complete mega slice rather than a whole-game
 runtime claim.
 
+## Lifecycle and Infinity checkpoint
+
+Returned time, stored time, Dream Double Time and platform lifecycle policy now
+have pure canonical contracts. Cold-start save gating preserves the last quit
+timestamp until one replay attempt finishes. The finite bot cap is represented
+as pending, reward and Prestige phases so a crash cannot lose or duplicate its
+special reward.
+
+The detailed contract and reset ownership boundary are recorded in
+`docs/lifecycle-infinity-contract.md`. Application command routing and
+save/reload acceptance remain required before this becomes a whole-game
+runtime claim.
+
 ## Required acceptance path
 
 Every whole-slice acceptance fixture must use the real boundary:
