@@ -211,6 +211,14 @@ Original prompt: Create a separate `Idle Dyson Swarm Web` project beside the Uni
 - Added the first fail-closed canonical Dyson derivation. It matches Unity's
   neutral and characterized static-skill rate vectors, derives ownership only
   from stable skill state and reports typed issues for unported dependencies.
+- Materialized all 14 Dyson research effects from canonical levels, preserved
+  imported coefficients and exact secret overrides, with strict exported-asset
+  contract validation.
+- Ported the full 27-level secret buff table plus ordered Quantum, Infinity and
+  Avocado effects. Canonical derivation now produces modifiers for all eight
+  facilities while mega production remains explicitly gated.
+- Current headless validation: 191 tests, TypeScript checks, lint, production
+  build and deterministic verification of 559 Unity assets across 34 types.
 
 ## TODO
 

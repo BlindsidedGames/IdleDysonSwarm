@@ -59,7 +59,7 @@ const expectedNeutralRates = (
   ) as { readonly initialState: { readonly rates: GoldenRates } }
 ).initialState.rates
 
-const expectedStaticSkillRates = (
+const characterizedStaticSkillRates = (
   JSON.parse(
     readFileSync(
       new URL(
@@ -164,10 +164,11 @@ function characterizedState(
 
 function requireDerived(
   state: CanonicalGameStateV1,
+  tuning: Readonly<DysonCompatibilityTuning> = neutralTuning,
 ) {
   const result = deriveBasicDysonState(
     state,
-    neutralTuning,
+    tuning,
     noEntitlements,
   )
   expect(result.ok).toBe(true)
@@ -185,17 +186,22 @@ describe('canonical Basic Dyson derivation', () => {
     )
   })
 
-  test('reconstructs the exact three-static-skill Unity-derived rates', () => {
+  test('combines characterized facility rates with Unity global skill effects', () => {
     const state = characterizedState([
       'assemblyLineTree',
       'workerEfficiencyTree',
       'superchargedPower',
     ])
 
-    expectRates(
-      requireDerived(state).rates,
-      expectedStaticSkillRates,
-    )
+    const expected = {
+      ...characterizedStaticSkillRates,
+      // The narrow production probe supplied cached global multipliers as 1.
+      // Canonical reconstruction also runs GlobalStatPipeline, where
+      // Supercharged Power multiplies both Cash and Science by 1.5.
+      money: characterizedStaticSkillRates.money * 1.5,
+      science: characterizedStaticSkillRates.science * 1.5,
+    }
+    expectRates(requireDerived(state).rates, expected)
   })
 
   test('folds automatic and manual facility counts into the same rate', () => {
@@ -214,6 +220,95 @@ describe('canonical Basic Dyson derivation', () => {
     expect(requireDerived(automaticOnly).rates).toEqual(
       requireDerived(split).rates,
     )
+  })
+
+  test('orders research, Quantum, secrets, Infinity and Avocado effects like Unity', () => {
+    const base = characterizedState()
+    const state: CanonicalGameStateV1 = {
+      ...base,
+      research: {
+        ...base.research,
+        levelsById: {
+          ...base.research.levelsById,
+          'research.money_multiplier': 2,
+          'research.science_boost': 1,
+          'research.assembly_line_upgrade': 2,
+          'research.panel_lifetime_1': 1,
+        },
+      },
+      infinity: {
+        ...base.infinity,
+        points: 2n,
+        secretsOfTheUniverse: 2n,
+      },
+      quantum: {
+        ...base.quantum,
+        cashBonusLevels: 2n,
+        scienceBonusLevels: 3n,
+      },
+      avocado: {
+        unlocked: true,
+        infinityPoints: 100,
+        influence: 0,
+        strangeMatter: 0,
+        overflowMultiplier: 0,
+      },
+    }
+    const tuning = {
+      ...neutralTuning,
+      moneyMultiUpgradePercent: 0.05,
+      scienceBoostPercent: 0.05,
+      assemblyLineUpgradePercent: 0.03,
+    }
+
+    const derived = requireDerived(state, tuning)
+
+    // Money: (1 + 2*0.05) * 1.10 Quantum * 2 Secrets * log10(100).
+    expect(derived.globals.moneyMultiplier).toBeCloseTo(4.84, 14)
+    // Science: (1 + 0.05) * 1.15 Quantum * log10(100).
+    expect(derived.globals.scienceMultiplier).toBeCloseTo(2.415, 14)
+    expect(derived.globals.panelLifetimeSeconds).toBe(11)
+    // Assembly: (1 + 2*Math.fround(0.06)) * (1 + 2 IP) * 2 Avocado.
+    expect(derived.facilityModifiers.assembly_lines).toBeCloseTo(
+      (1 + 2 * Math.fround(0.06)) * 3 * 2,
+      14,
+    )
+    // Managers unlock their Infinity multiplier at 2 IP.
+    expect(derived.facilityModifiers.ai_managers).toBeCloseTo(3 * 2, 14)
+    // Servers require 3 IP, but still receive Avocado.
+    expect(derived.facilityModifiers.servers).toBeCloseTo(2, 14)
+  })
+
+  test('derives all eight facility modifiers before mega production is enabled', () => {
+    const base = characterizedState()
+    const state: CanonicalGameStateV1 = {
+      ...base,
+      research: {
+        ...base.research,
+        levelsById: {
+          ...base.research.levelsById,
+          'research.matrioshka_brains_upgrade': 2,
+          'research.birch_planets_upgrade': 3,
+          'research.galactic_brains_upgrade': 4,
+        },
+      },
+      infinity: {
+        ...base.infinity,
+        points: 20n,
+      },
+    }
+    const tuning = {
+      ...neutralTuning,
+      matrioshkaUpgradePercent: 0.03,
+      birchUpgradePercent: 0.03,
+      galacticUpgradePercent: 0.03,
+    }
+
+    const modifiers = requireDerived(state, tuning).facilityModifiers
+
+    expect(modifiers.matrioshka_brains).toBeCloseTo(1.06 * 21, 14)
+    expect(modifiers.birch_planets).toBeCloseTo(1.09 * 21, 14)
+    expect(modifiers.galactic_brains).toBeCloseTo(1.12 * 21, 14)
   })
 
   test('derives skill effects only from skills.byId ownership', () => {

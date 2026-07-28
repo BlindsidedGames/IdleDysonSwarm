@@ -66,6 +66,24 @@ The first pure canonical projection is intentionally bounded:
 This projection is derived-state evidence only. It does not yet make the
 parity-only Basic Dyson model the canonical whole-game engine.
 
+## Ordered effect checkpoint
+
+The canonical projection now materializes and orders:
+
+- all 14 stable research definitions, including imported coefficients and
+  secret-derived coefficient overrides;
+- the complete 27-level Secrets of the Universe buff table;
+- Quantum cash/science bonuses;
+- Infinity facility multipliers and unlock thresholds;
+- Avocado logarithmic and Overflow multipliers from exported tuning;
+- derived modifiers for all eight facility tiers.
+
+Research content is fail-closed against its exact exported Unity contract:
+unknown active IDs, fractional levels, changed targets/operations/orders,
+conditions, facility filters, missing assets and unexpected definition shapes
+all reject. Mega-structure modifiers are available, but their production chain
+remains blocked until its exact facility effects and event ordering are ported.
+
 ## Required acceptance path
 
 Every whole-slice acceptance fixture must use the real boundary:

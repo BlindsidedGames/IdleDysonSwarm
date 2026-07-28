@@ -71,6 +71,7 @@ export interface BasicDysonState {
   ownedSkills: string[]
   facilities: Record<BasicDysonFacilityId, OwnedPair>
   modifiers: Record<BasicDysonFacilityId, number>
+  modifierEffectsApplied?: boolean
   rates: BasicDysonRates
   automation: {
     enabledFacilities: BasicDysonFacilityId[]
@@ -115,6 +116,7 @@ function cloneState(state: BasicDysonState): BasicDysonState {
       planets: [...state.facilities.planets],
     },
     modifiers: { ...state.modifiers },
+    modifierEffectsApplied: state.modifierEffectsApplied ?? false,
     ownedSkills: [...state.ownedSkills],
     rates: cloneRates(state.rates),
     automation: {
@@ -152,10 +154,12 @@ function facilityRate(
     throw new Error(`Facility '${id}' has no productionStatId`)
   }
   const modifierStatId = FACILITY_MODIFIER_STATS[id]
-  const modifier = calculateStat(
-    clampContinuous(state.modifiers[id]),
-    staticSkillEffects(state.ownedSkills, modifierStatId),
-  )
+  const modifier = state.modifierEffectsApplied
+    ? clampContinuous(state.modifiers[id])
+    : calculateStat(
+        clampContinuous(state.modifiers[id]),
+        staticSkillEffects(state.ownedSkills, modifierStatId),
+      )
   const productionEffects: StatEffect[] = [
     {
       id: `${id}.count`,

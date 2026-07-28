@@ -1,5 +1,8 @@
 import type { DysonCompatibilityTuning } from '../game-state/compatibilityTuning'
-import type { CanonicalGameStateV1 } from '../game-state/types'
+import type {
+  CanonicalFacilityId,
+  CanonicalGameStateV1,
+} from '../game-state/types'
 import {
   BASIC_DYSON_FACILITY_IDS,
   type BasicDysonFacilityId,
@@ -8,8 +11,20 @@ import {
   createBasicDysonState,
   type BasicDysonRates,
 } from './dysonModel'
+import {
+  avocadoDysonMultiplier,
+  infinityFacilityMultiplier,
+  quantumCashMultiplier,
+  quantumScienceMultiplier,
+} from './dysonPrestigeEffects'
+import {
+  materializeDysonResearchEffects,
+  type DysonResearchEffectIssueCode,
+  type MaterializedDysonResearchEffect,
+} from './dysonResearchEffects'
+import { deriveSecretBuffs } from './secretBuffs'
 import { isSupportedStaticSkill, staticSkillEffects } from './skillEffects'
-import { calculateStat } from './stat'
+import { calculateStat, type StatEffect } from './stat'
 
 export interface DysonEntitlements {
   readonly permanentDoubleIp: boolean
@@ -17,12 +32,9 @@ export interface DysonEntitlements {
 
 export type DysonDerivationIssueCode =
   | 'DYSON_OWNED_SKILL_UNSUPPORTED'
-  | 'DYSON_RESEARCH_EFFECT_UNSUPPORTED'
-  | 'DYSON_SECRET_BUFF_UNSUPPORTED'
-  | 'DYSON_INFINITY_MODIFIER_UNSUPPORTED'
-  | 'DYSON_AVOCADO_MODIFIER_UNSUPPORTED'
   | 'DYSON_MEGA_STRUCTURE_UNSUPPORTED'
   | 'DYSON_QUANTUM_LEVEL_UNSUPPORTED'
+  | DysonResearchEffectIssueCode
 
 export interface DysonDerivationIssue {
   readonly code: DysonDerivationIssueCode
@@ -42,7 +54,7 @@ export interface DerivedBasicDysonState {
     readonly panelLifetimeSeconds: number
   }
   readonly facilityModifiers: Readonly<
-    Record<BasicDysonFacilityId, number>
+    Record<CanonicalFacilityId, number>
   >
   readonly rates: Readonly<BasicDysonRates>
   readonly entitlements: DysonEntitlements
@@ -53,14 +65,24 @@ export type DysonDerivationResult =
   | { readonly ok: false; readonly issues: readonly DysonDerivationIssue[] }
 
 const FACILITY_MODIFIER_STATS: Readonly<
-  Record<BasicDysonFacilityId, string>
+  Record<CanonicalFacilityId, string>
 > = {
   assembly_lines: 'Facility.AssemblyLine.Modifier',
   ai_managers: 'Facility.Manager.Modifier',
   servers: 'Facility.Server.Modifier',
   data_centers: 'Facility.DataCenter.Modifier',
   planets: 'Facility.Planet.Modifier',
+  matrioshka_brains: 'Facility.Matrioshka.Modifier',
+  birch_planets: 'Facility.Birch.Modifier',
+  galactic_brains: 'Facility.Galactic.Modifier',
 }
+
+const CANONICAL_DYSON_FACILITY_IDS = [
+  ...BASIC_DYSON_FACILITY_IDS,
+  'matrioshka_brains',
+  'birch_planets',
+  'galactic_brains',
+] as const satisfies readonly CanonicalFacilityId[]
 
 /**
  * Reconstructs the exact characterized Basic Dyson derived state from
@@ -82,20 +104,72 @@ export function deriveBasicDysonState(
     .filter(([, skill]) => skill.owned)
     .map(([id]) => id)
     .sort()
-  const moneyMultiplier = quantumMultiplier(state.quantum.cashBonusLevels)
-  const scienceMultiplier = quantumMultiplier(
-    state.quantum.scienceBonusLevels,
+  const secrets = deriveSecretBuffs(
+    state.infinity.secretsOfTheUniverse,
   )
-  const panelLifetime = 10
-  const facilityModifiers = Object.fromEntries(
-    BASIC_DYSON_FACILITY_IDS.map((id) => [
-      id,
-      calculateStat(
-        1,
-        staticSkillEffects(ownedSkills, FACILITY_MODIFIER_STATS[id]),
+  const research = materializeDysonResearchEffects(
+    state.research.levelsById,
+    tuning,
+    secrets.researchCoefficientOverrides,
+  )
+  if (!research.ok) {
+    return {
+      ok: false,
+      issues: Object.freeze(
+        research.issues.map((issue) => Object.freeze({ ...issue })),
       ),
-    ]),
-  ) as Record<BasicDysonFacilityId, number>
+    }
+  }
+  const avocadoMultiplier = avocadoDysonMultiplier(state.avocado)
+  const moneyMultiplier = calculateStat(1, [
+    ...effectsFor(research.effects, 'Global.MoneyMultiplier'),
+    ...staticSkillEffects(ownedSkills, 'Global.MoneyMultiplier'),
+    multiplierEffect(
+      'prestige.cash_multiplier',
+      quantumCashMultiplier(state.quantum),
+      85,
+    ),
+    multiplierEffect(
+      'secrets.cash_multiplier',
+      secrets.multipliers.cash,
+      90,
+    ),
+    multiplierEffect(
+      'prestige.avocato_multiplier',
+      avocadoMultiplier,
+      95,
+    ),
+  ].filter(isEffect))
+  const scienceMultiplier = calculateStat(1, [
+    ...effectsFor(research.effects, 'Global.ScienceMultiplier'),
+    ...staticSkillEffects(ownedSkills, 'Global.ScienceMultiplier'),
+    multiplierEffect(
+      'prestige.science_multiplier',
+      quantumScienceMultiplier(state.quantum),
+      85,
+    ),
+    multiplierEffect(
+      'secrets.science_multiplier',
+      secrets.multipliers.science,
+      90,
+    ),
+    multiplierEffect(
+      'prestige.avocato_multiplier',
+      avocadoMultiplier,
+      95,
+    ),
+  ].filter(isEffect))
+  const panelLifetime = calculateStat(10, [
+    ...effectsFor(research.effects, 'Global.PanelLifetime'),
+    ...staticSkillEffects(ownedSkills, 'Global.PanelLifetime'),
+  ])
+  const facilityModifiers = deriveFacilityModifiers(
+    state,
+    research.effects,
+    ownedSkills,
+    secrets.multipliers,
+    avocadoMultiplier,
+  )
   const model = createBasicDysonState({
     money: state.dyson.money,
     science: state.dyson.science,
@@ -114,13 +188,10 @@ export function deriveBasicDysonState(
         [...state.dyson.facilities[id]],
       ]),
     ) as Record<BasicDysonFacilityId, [number, number]>,
-    modifiers: {
-      assembly_lines: 1,
-      ai_managers: 1,
-      servers: 1,
-      data_centers: 1,
-      planets: 1,
-    },
+    modifiers: Object.fromEntries(
+      BASIC_DYSON_FACILITY_IDS.map((id) => [id, facilityModifiers[id]]),
+    ) as Record<BasicDysonFacilityId, number>,
+    modifierEffectsApplied: true,
     automation: {
       enabledFacilities: BASIC_DYSON_FACILITY_IDS.filter(
         (id) => state.dyson.automation.enabledFacilities[id],
@@ -163,42 +234,6 @@ function findUnsupportedDependencies(
       })
     }
   }
-  for (const [id, level] of Object.entries(state.research.levelsById)) {
-    if (level > 0) {
-      issues.push({
-        code: 'DYSON_RESEARCH_EFFECT_UNSUPPORTED',
-        path: `research.levelsById.${id}`,
-        detail: `Research '${id}' requires runtime effect materialization.`,
-      })
-    }
-  }
-  if (state.infinity.secretsOfTheUniverse > 0n) {
-    issues.push({
-      code: 'DYSON_SECRET_BUFF_UNSUPPORTED',
-      path: 'infinity.secretsOfTheUniverse',
-      detail: 'Secret-buff reconstruction is not yet ported.',
-    })
-  }
-  if (state.infinity.points > 0n) {
-    issues.push({
-      code: 'DYSON_INFINITY_MODIFIER_UNSUPPORTED',
-      path: 'infinity.points',
-      detail: 'Infinity facility modifier reconstruction is not yet ported.',
-    })
-  }
-  if (
-    state.avocado.unlocked ||
-    state.avocado.infinityPoints > 0 ||
-    state.avocado.influence > 0 ||
-    state.avocado.strangeMatter > 0 ||
-    state.avocado.overflowMultiplier > 0
-  ) {
-    issues.push({
-      code: 'DYSON_AVOCADO_MODIFIER_UNSUPPORTED',
-      path: 'avocado',
-      detail: 'Avocado multiplier reconstruction is not yet ported.',
-    })
-  }
   for (const id of [
     'matrioshka_brains',
     'birch_planets',
@@ -232,6 +267,80 @@ function findUnsupportedDependencies(
   return issues
 }
 
-function quantumMultiplier(levels: bigint): number {
-  return 1 + Number(levels) * 0.05
+function effectsFor(
+  effects: readonly MaterializedDysonResearchEffect[],
+  targetStatId: string,
+): StatEffect[] {
+  return effects.filter((effect) => effect.targetStatId === targetStatId)
+}
+
+function multiplierEffect(
+  id: string,
+  value: number,
+  order: number,
+): StatEffect | undefined {
+  return Math.abs(value - 1) <= 1e-12
+    ? undefined
+    : { id, operation: 'multiply', value, order }
+}
+
+function isEffect(effect: StatEffect | undefined): effect is StatEffect {
+  return effect !== undefined
+}
+
+function deriveFacilityModifiers(
+  state: CanonicalGameStateV1,
+  researchEffects: readonly MaterializedDysonResearchEffect[],
+  ownedSkills: readonly string[],
+  secrets: Readonly<{
+    assemblyLines: number
+    aiManagers: number
+    servers: number
+    planets: number
+  }>,
+  avocadoMultiplier: number,
+): Record<CanonicalFacilityId, number> {
+  const infinityThresholds: Readonly<
+    Record<CanonicalFacilityId, bigint>
+  > = {
+    assembly_lines: 0n,
+    ai_managers: 2n,
+    servers: 3n,
+    data_centers: 4n,
+    planets: 5n,
+    matrioshka_brains: 5n,
+    birch_planets: 10n,
+    galactic_brains: 20n,
+  }
+  const secretMultipliers: Readonly<
+    Record<CanonicalFacilityId, number>
+  > = {
+    assembly_lines: secrets.assemblyLines,
+    ai_managers: secrets.aiManagers,
+    servers: secrets.servers,
+    data_centers: 1,
+    planets: secrets.planets,
+    matrioshka_brains: 1,
+    birch_planets: 1,
+    galactic_brains: 1,
+  }
+  return Object.fromEntries(
+    CANONICAL_DYSON_FACILITY_IDS.map((id) => {
+      const target = FACILITY_MODIFIER_STATS[id]
+      const effects: StatEffect[] = [
+        ...effectsFor(researchEffects, target),
+        ...staticSkillEffects(ownedSkills, target),
+      ]
+      const infinity = infinityFacilityMultiplier(
+        state.infinity.points,
+        infinityThresholds[id],
+      )
+      const later = [
+        multiplierEffect('prestige.infinity', infinity, 88),
+        multiplierEffect('secrets.facility', secretMultipliers[id], 90),
+        multiplierEffect('prestige.avocato_modifier', avocadoMultiplier, 95),
+      ].filter(isEffect)
+      return [id, calculateStat(1, [...effects, ...later])]
+    }),
+  ) as Record<CanonicalFacilityId, number>
 }
