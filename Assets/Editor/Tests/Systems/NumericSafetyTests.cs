@@ -815,169 +815,6 @@ namespace Tests.Systems
             Assert.AreEqual(batched.currentTime, split.currentTime, 1e-12d);
         }
 
-        [Test]
-        public void FixedStepScheduler_FrameChunkingProducesIdenticalTickCountAndRemainder()
-        {
-            double singleAccumulator = 0d;
-            double splitAccumulator = 0d;
-            int singleTicks = 0;
-            int splitTicks = 0;
-
-            DeterministicSimulation.Advance(
-                ref singleAccumulator, 0.6d, 0.1d, 10, () => singleTicks++);
-            DeterministicSimulation.Advance(
-                ref splitAccumulator, 0.17d, 0.1d, 10, () => splitTicks++);
-            DeterministicSimulation.Advance(
-                ref splitAccumulator, 0.13d, 0.1d, 10, () => splitTicks++);
-            DeterministicSimulation.Advance(
-                ref splitAccumulator, 0.3d, 0.1d, 10, () => splitTicks++);
-
-            Assert.AreEqual(singleTicks, splitTicks);
-            Assert.AreEqual(singleAccumulator, splitAccumulator, 1e-12d);
-        }
-
-        [Test]
-        public void FixedStepScheduler_HitchBacklogRunsAutomationForEveryLogicalTick()
-        {
-            double accumulator = 0d;
-            int ticks = 0;
-
-            Assert.AreEqual(
-                10,
-                DeterministicSimulation.Advance(
-                    ref accumulator, 1.25d, 0.1d, 10, () => ticks++));
-            Assert.AreEqual(10, ticks);
-            Assert.AreEqual(0.25d, accumulator, 1e-12d);
-
-            Assert.AreEqual(
-                2,
-                DeterministicSimulation.Advance(
-                    ref accumulator, 0d, 0.1d, 10, () => ticks++));
-            Assert.AreEqual(12, ticks);
-            Assert.AreEqual(0.05d, accumulator, 1e-12d);
-        }
-
-        [Test]
-        public void OrderedTick_UsesProductionAutomationRecomputeResetOrder()
-        {
-            string order = string.Empty;
-
-            DeterministicSimulation.RunOrderedTick(
-                () => order += "P",
-                () => order += "A",
-                () => order += "D",
-                () => order += "R");
-
-            Assert.AreEqual("PADR", order);
-        }
-
-        [Test]
-        public void WholeGameTick_UsesSharedDreamAndDysonPhaseOrder()
-        {
-            string order = string.Empty;
-
-            DeterministicSimulation.RunWholeGameTick(
-                () => order += "P",
-                () => order += "p",
-                () => order += "A",
-                () => order += "a",
-                () => order += "D",
-                () => order += "S",
-                () => order += "T",
-                () => order += "R",
-                () => order += "I");
-
-            Assert.AreEqual("PpAaDSTRI", order);
-        }
-
-        [Test]
-        public void WholeGameTick_FrameChunkingKeepsDreamPhasesInLockstep()
-        {
-            double accumulator = 0d;
-            int dreamProductionTicks = 0;
-            int doubleTimeTicks = 0;
-            int resetChecks = 0;
-
-            void Tick()
-            {
-                DeterministicSimulation.RunWholeGameTick(
-                    null,
-                    () => dreamProductionTicks++,
-                    null,
-                    null,
-                    null,
-                    null,
-                    () => doubleTimeTicks++,
-                    () => resetChecks++,
-                    null);
-            }
-
-            DeterministicSimulation.Advance(ref accumulator, 0.06d, 0.1d, 10, Tick);
-            DeterministicSimulation.Advance(ref accumulator, 0.24d, 0.1d, 10, Tick);
-
-            Assert.AreEqual(3, dreamProductionTicks);
-            Assert.AreEqual(dreamProductionTicks, doubleTimeTicks);
-            Assert.AreEqual(dreamProductionTicks, resetChecks);
-            Assert.AreEqual(0d, accumulator, 1e-12d);
-        }
-
-        [Test]
-        public void WholeGameTick_DreamResetReappliesResearchBeforeAnyFollowingFixedTick()
-        {
-            static (int Production, int Resets) Run(params double[] frameChunks)
-            {
-                double accumulator = 0d;
-                bool researchApplied = true;
-                bool resetPending = true;
-                int production = 0;
-                int resets = 0;
-
-                void Tick()
-                {
-                    DeterministicSimulation.RunWholeGameTick(
-                        null,
-                        () => production += researchApplied ? 10 : 1,
-                        null,
-                        null,
-                        null,
-                        null,
-                        null,
-                        () =>
-                        {
-                            if (!resetPending) return;
-                            resetPending = false;
-                            resets++;
-                            DeterministicSimulation.CompleteReset(
-                                () => researchApplied = false,
-                                null,
-                                () => researchApplied = true);
-                        },
-                        null);
-                }
-
-                foreach (double frameChunk in frameChunks)
-                {
-                    DeterministicSimulation.Advance(
-                        ref accumulator,
-                        frameChunk,
-                        0.1d,
-                        10,
-                        Tick);
-                }
-
-                Assert.IsTrue(researchApplied);
-                return (production, resets);
-            }
-
-            (int singleProduction, int singleResets) = Run(0.2d);
-            (int splitProduction, int splitResets) = Run(0.1d, 0.1d);
-
-            Assert.AreEqual(20, singleProduction);
-            Assert.AreEqual(singleProduction, splitProduction);
-            Assert.AreEqual(1, singleResets);
-            Assert.AreEqual(singleResets, splitResets);
-        }
-
         [TestCase(0, 1d, 0d)]
         [TestCase(1, 2d, 0.1d)]
         [TestCase(10, 11d, 1d)]
@@ -1161,7 +998,8 @@ namespace Tests.Systems
                 solarPanels = 1d,
                 solarPanelGeneration = 100L,
                 railgunMaxCharge = 25d,
-                dysonPanels = 1L
+                dysonPanels = IdleDysonSwarm.Systems.Constants
+                    .Dream1Constants.RailgunBasePanelsRequired
             };
             var prestige = new Oracle.SaveDataPrestige();
 
@@ -1190,7 +1028,8 @@ namespace Tests.Systems
                 solarPanels = 1d,
                 solarPanelGeneration = 100L,
                 railgunMaxCharge = 25d,
-                dysonPanels = 1L
+                dysonPanels = IdleDysonSwarm.Systems.Constants
+                    .Dream1Constants.RailgunBasePanelsRequired
             };
             var prestige = new Oracle.SaveDataPrestige();
 

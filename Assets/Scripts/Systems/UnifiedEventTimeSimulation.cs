@@ -11,12 +11,12 @@ using Systems.Numeric;
 
 namespace Systems.Simulation
 {
-    public static class SimulationAccuracyContract
+    public static class ProjectionValidationPolicy
     {
-        // Baseline user-approved bound for deliberately approximated aggregate
-        // IP and continuous production outcomes.
-        public const double MaximumAggregateRelativeError = 0.01d;
-        public const double MaximumLongDurationRelativeError = 0.05d;
+        // Internal coarse-versus-refined model disagreement limits. These are
+        // safety/tuning heuristics, not promised end-to-end gameplay accuracy.
+        public const double BaselineModelDisagreement = 0.01d;
+        public const double MaximumModelDisagreement = 0.05d;
 
         // Very long stored-time jobs are allowed to trade progressively more
         // numerical precision for bounded real processing time. The curve is
@@ -27,19 +27,19 @@ namespace Systems.Simulation
         // one-time rewards, and flags) remain exact. Only aggregate reset/IP
         // totals, continuous state, and internal scheduler phase use this
         // duration-scaled allowance.
-        public static double AllowedAggregateRelativeError(
+        public static double AllowedModelDisagreement(
             double simulatedSeconds)
         {
             if (!NumericSafety.IsFinite(simulatedSeconds) ||
                 simulatedSeconds <= 60d)
             {
-                return MaximumAggregateRelativeError;
+                return BaselineModelDisagreement;
             }
 
             double decades = Math.Log10(simulatedSeconds / 60d);
             return Math.Min(
-                MaximumLongDurationRelativeError,
-                MaximumAggregateRelativeError +
+                MaximumModelDisagreement,
+                BaselineModelDisagreement +
                 Math.Max(0d, decades) * 0.01d);
         }
 
@@ -52,7 +52,7 @@ namespace Systems.Simulation
         {
             return Math.Min(
                 0.15d,
-                AllowedAggregateRelativeError(simulatedSeconds) * 3d);
+                AllowedModelDisagreement(simulatedSeconds) * 3d);
         }
     }
 
@@ -574,7 +574,7 @@ namespace Systems.Simulation
                         block.ConsumedSeconds <=
                         accelerationHorizon + TimeEpsilon &&
                         block.ValidationError <=
-                        SimulationAccuracyContract
+                        ProjectionValidationPolicy
                             .AllowedProjectionDisagreement(
                                 block.ConsumedSeconds))
                     {

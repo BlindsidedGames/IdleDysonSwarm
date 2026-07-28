@@ -8,14 +8,14 @@ namespace Systems.Simulation
     /// <summary>
     /// Validated long-interval Dream projection for stable stages. It compares
     /// a projection with a deterministic subdivision, refining until every
-    /// continuous field agrees within the approved aggregate tolerance and
+    /// continuous field agrees within the internal model-disagreement limit and
     /// discrete output agrees exactly.
     /// Structurally changing states are rejected for the canonical event path.
     /// </summary>
     public static class DreamAdaptiveLongIntervalSimulation
     {
         private const double RelativeTolerance =
-            SimulationAccuracyContract.MaximumAggregateRelativeError;
+            ProjectionValidationPolicy.BaselineModelDisagreement;
         private const double HousingConversionCost = 10d;
         private const double VillageConversionCost = 25d;
         private const int InitialSegments = 32;

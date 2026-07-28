@@ -104,6 +104,14 @@ namespace Systems.Simulation
         public double LastError { get; private set; }
         public double ErrorTrend => _errorTrend;
 
+        public void Reset()
+        {
+            _errorTrend = 0d;
+            _observationCount = 0;
+            GrowthAdjustment = 1d;
+            LastError = 0d;
+        }
+
         public void Observe(
             double expectedDurationSeconds,
             long expectedReward,
@@ -182,49 +190,7 @@ namespace Systems.Simulation
         private const int MaximumEvaluatedSearchIterations = 16;
         private const long MinimumProjectedCycles = 8L;
         private const double MaximumValidationError =
-            SimulationAccuracyContract.MaximumAggregateRelativeError;
-
-        public static bool TryProject(
-            InfinityCycleSample first,
-            InfinityCycleSample second,
-            InfinityCycleSample third,
-            long currentInfinityPoints,
-            long availableTicks,
-            out InfinityCycleProjection projection)
-        {
-            return TryProjectSeconds(
-                first,
-                second,
-                third,
-                currentInfinityPoints,
-                NumericSafety.Multiply(
-                    Math.Max(0L, availableTicks),
-                    0.1d).Value,
-                1d / 60d,
-                out projection);
-        }
-
-        public static bool TryProjectSeconds(
-            InfinityCycleSample first,
-            InfinityCycleSample second,
-            InfinityCycleSample third,
-            long currentInfinityPoints,
-            double availableSeconds,
-            double minimumCycleSeconds,
-            out InfinityCycleProjection projection)
-        {
-            return TryProjectSecondsWithGrowthLimit(
-                first,
-                second,
-                third,
-                currentInfinityPoints,
-                availableSeconds,
-                minimumCycleSeconds,
-                maximumRelativeIpGrowth: 0.25d,
-                maximumValidationError: MaximumValidationError,
-                enforceMonotoneIpPower: false,
-                out projection);
-        }
+            ProjectionValidationPolicy.BaselineModelDisagreement;
 
         public static bool TryProjectSampledSeconds(
             InfinityCycleSample first,
@@ -296,8 +262,8 @@ namespace Systems.Simulation
                 maximumRelativeIpGrowth <= 0d ||
                 maximumValidationError <= 0d ||
                 maximumValidationError >
-                    SimulationAccuracyContract
-                        .MaximumLongDurationRelativeError)
+                    ProjectionValidationPolicy
+                        .MaximumModelDisagreement)
                 return false;
             if (!SamplesAreOrdered(first, second, third))
                 return false;
@@ -480,115 +446,6 @@ namespace Systems.Simulation
                 best.LastReward,
                 best.LastDurationSeconds,
                 validationError);
-            return true;
-        }
-
-        /// <summary>
-        /// Uses the adaptive varying-IP projection only when the observed
-        /// samples and the projected endpoint agree with an isolated
-        /// candidate-state cycle evaluator. The projection remains bounded by
-        /// the approved aggregate coarse/refined contract as
-        /// <see cref="TryProjectSeconds"/>.
-        /// </summary>
-        public static bool TryProjectValidatedCycles(
-            InfinityCycleSample first,
-            InfinityCycleSample second,
-            InfinityCycleSample third,
-            long currentInfinityPoints,
-            double availableSeconds,
-            double minimumCycleSeconds,
-            Func<long, InfinityCycleEvaluation> evaluateCycle,
-            out InfinityCycleProjection projection)
-        {
-            projection = default;
-            LastStableProjectionDiagnostic = null;
-            if (evaluateCycle == null)
-            {
-                LastStableProjectionDiagnostic =
-                    "missing_evaluator";
-                return false;
-            }
-
-            InfinityCycleEvaluation firstEvaluation =
-                evaluateCycle(first.StartingInfinityPoints);
-            InfinityCycleEvaluation secondEvaluation =
-                evaluateCycle(second.StartingInfinityPoints);
-            InfinityCycleEvaluation thirdEvaluation =
-                evaluateCycle(third.StartingInfinityPoints);
-            if (!EvaluationApproximatelyMatchesObservedSample(
-                    firstEvaluation,
-                    first,
-                    minimumCycleSeconds) ||
-                !EvaluationApproximatelyMatchesObservedSample(
-                    secondEvaluation,
-                    second,
-                    minimumCycleSeconds) ||
-                !EvaluationApproximatelyMatchesObservedSample(
-                    thirdEvaluation,
-                    third,
-                    minimumCycleSeconds))
-            {
-                LastStableProjectionDiagnostic =
-                    "adaptive_sample_mismatch:" +
-                    $"first={first.Reward}/" +
-                    $"{first.DurationSeconds:R}->" +
-                    $"{firstEvaluation.Reward}/" +
-                    $"{firstEvaluation.DurationSeconds:R};" +
-                    $"second={second.Reward}/" +
-                    $"{second.DurationSeconds:R}->" +
-                    $"{secondEvaluation.Reward}/" +
-                    $"{secondEvaluation.DurationSeconds:R};" +
-                    $"third={third.Reward}/" +
-                    $"{third.DurationSeconds:R}->" +
-                    $"{thirdEvaluation.Reward}/" +
-                    $"{thirdEvaluation.DurationSeconds:R}";
-                return false;
-            }
-
-            var normalizedFirst = new InfinityCycleSample(
-                first.StartingInfinityPoints,
-                firstEvaluation.Reward,
-                first.DurationTicks,
-                firstEvaluation.DurationSeconds);
-            var normalizedSecond = new InfinityCycleSample(
-                second.StartingInfinityPoints,
-                secondEvaluation.Reward,
-                second.DurationTicks,
-                secondEvaluation.DurationSeconds);
-            var normalizedThird = new InfinityCycleSample(
-                third.StartingInfinityPoints,
-                thirdEvaluation.Reward,
-                third.DurationTicks,
-                thirdEvaluation.DurationSeconds);
-            if (!TryProjectEvaluatedCycles(
-                    normalizedThird,
-                    currentInfinityPoints,
-                    availableSeconds,
-                    minimumCycleSeconds,
-                    evaluateCycle,
-                    reserveEndpointCorrection: true,
-                    minimumProjectedCycles: MinimumProjectedCycles,
-                    out InfinityCycleProjection candidate))
-            {
-                if (string.IsNullOrEmpty(
-                        LastStableProjectionDiagnostic))
-                {
-                    LastStableProjectionDiagnostic =
-                        "evaluated_model_rejected";
-                }
-                return false;
-            }
-
-            // The direct integrator has already evaluated the actual candidate
-            // graph at every exact cycle (for short blocks) or at every
-            // deterministic midpoint (for compressed blocks), and compared
-            // coarse/refined outcomes. Evaluating FinalInfinityPoints here
-            // would describe the *next* cycle rather than the last projected
-            // cycle and would incorrectly reject any genuinely changing
-            // recurrence.
-            projection = candidate;
-            LastStableProjectionDiagnostic =
-                "accepted_evaluated";
             return true;
         }
 
@@ -1149,21 +1006,6 @@ namespace Systems.Simulation
                    Math.Abs(
                        evaluation.DurationSeconds -
                        sample.DurationSeconds) <= 1e-9d;
-        }
-
-        private static bool EvaluationApproximatelyMatchesObservedSample(
-            InfinityCycleEvaluation evaluation,
-            InfinityCycleSample sample,
-            double minimumCycleSeconds)
-        {
-            return IsValidEvaluation(
-                       evaluation,
-                       minimumCycleSeconds) &&
-                   evaluation.Reward == sample.Reward &&
-                   Math.Abs(
-                       evaluation.DurationSeconds -
-                       sample.DurationSeconds) <=
-                   minimumCycleSeconds + 1e-9d;
         }
 
         private static bool IsValidEvaluation(

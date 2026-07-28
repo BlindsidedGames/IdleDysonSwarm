@@ -193,7 +193,7 @@ namespace Tests.Systems
                 EventHorizon = 10d,
                 OfferAcceleration = true,
                 AccelerationError =
-                    SimulationAccuracyContract
+                    ProjectionValidationPolicy
                         .AllowedProjectionDisagreement(0.5d) * 2d
             };
             SimulationAdvanceResult result =
@@ -367,7 +367,7 @@ namespace Tests.Systems
                 $"segments={DreamAdaptiveLongIntervalSimulation.LastSegments};error={error:R};field={DreamAdaptiveLongIntervalSimulation.LastErrorField};values={DreamAdaptiveLongIntervalSimulation.LastErrorCoarseValue:R}/{DreamAdaptiveLongIntervalSimulation.LastErrorFineValue:R}");
             Assert.LessOrEqual(
                 error,
-                SimulationAccuracyContract.MaximumAggregateRelativeError);
+                ProjectionValidationPolicy.BaselineModelDisagreement);
         }
 
         [Test]
@@ -392,7 +392,7 @@ namespace Tests.Systems
                 12d,
                 4d,
                 3d,
-                SimulationAccuracyContract.MaximumAggregateRelativeError,
+                ProjectionValidationPolicy.BaselineModelDisagreement,
                 20d,
                 2d,
                 false);

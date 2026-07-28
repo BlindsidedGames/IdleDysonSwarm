@@ -1,4 +1,5 @@
 {
+  "status": "Archived pre-cleanup characterization; not a current acceptance target",
   "profileId": "break-infinity-1m-ip-slider-100-all-finite-quantum-dream-idle",
   "sourceCommit": "3d581b0eece1d47147b56ded136ea247c4c39dbd",
   "simulatedSeconds": 60.0,

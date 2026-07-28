@@ -1,7 +1,6 @@
 # Infinity and Reset Performance Investigation
 
-Status: Historical evidence brief; superseded for implementation decisions by
-the approved Unified Event-Time Reset and Simulation Plan
+Status: Archived on 2026-07-28; retained as historical evidence only
 Last updated: 2026-07-27
 Primary historical baseline: `83c4685` (immediately before Numeric Safety commit `cdab99d`)
 Current reviewed baseline: `d8a4788` (analytical offline fast-forward checkpoint)

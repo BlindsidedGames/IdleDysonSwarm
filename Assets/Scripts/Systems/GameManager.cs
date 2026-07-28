@@ -61,18 +61,12 @@ public class GameManager : MonoBehaviour
     private const int MaximumCanonicalOfflineBurstTicks = 4096;
     private const int MaximumExactDreamBurstTicks = 65536;
     private const double CanonicalOfflineBurstBudgetMilliseconds = 3d;
-    private const double AutomatedBreakRetryDelaySeconds = 4d;
     private double _simulationAccumulator;
     private double _activeAutomationTimeUntilNextEvent =
         SimulationTickSeconds;
     private double _activeUnprocessedSeconds;
     private double _activeInfinityCycleSeconds;
     private double _activeSimulationBoundaryRemaining = 1d / 60d;
-    private double _activeAutomatedBreakRetryDelaySeconds;
-    private AutomatedBreakInfinityCycleSimulation.ProjectionWork
-        _activeAutomatedBreakProjectionWork;
-    private DreamAdaptiveLongIntervalSimulation.ProjectionWork
-        _activeAutomatedBreakDreamProjectionWork;
     private bool _activeAtPostResetStart;
     private OfflineInfinityCycleState _activeInfinityCycleState;
     private DreamDoubleTimeTick _pendingDreamDoubleTimeTick;
@@ -94,10 +88,6 @@ public class GameManager : MonoBehaviour
         new();
     private static GameManager _activeSimulationInstance;
     public static event Action<long> BreakTargetChangeRequested;
-    public static string LastAutomatedBreakBlockDiagnostic {
-        get;
-        private set;
-    }
 #if UNITY_EDITOR
     public static string CanonicalSampledBlockTrace {
         get;
@@ -171,7 +161,24 @@ public class GameManager : MonoBehaviour
 
         public void SetCapturedBreakTarget(long target)
         {
-            CapturedBreakTarget = Math.Max(1L, target);
+            long normalized = Math.Max(1L, target);
+            if (CapturedBreakTarget == normalized)
+                return;
+            CapturedBreakTarget = normalized;
+            InvalidateProjectionEvidence();
+        }
+
+        public void InvalidateProjectionEvidence()
+        {
+            _samples.Clear();
+            _latestCanonicalSample = default;
+            _hasLatestCanonicalSample = false;
+            _hasProjectionCheckpoint = false;
+            _expectedCheckpointDurationSeconds = 0d;
+            _expectedCheckpointReward = 0L;
+            _checkpointTolerance = 0d;
+            _useShortSlowRefreshWindow = false;
+            _checkpointFeedback.Reset();
         }
 
         public void SynchronizeBeforeFirstTick(
@@ -753,11 +760,6 @@ public class GameManager : MonoBehaviour
         double processingBudgetMilliseconds,
         bool refreshPresentation)
     {
-        if (!prestigePlus.breakTheLoop)
-        {
-            _activeAutomatedBreakProjectionWork = null;
-            _activeAutomatedBreakDreamProjectionWork = null;
-        }
         _activeUnprocessedSeconds = NumericSafety.Add(
             _activeUnprocessedSeconds,
             elapsed).Value;
@@ -822,9 +824,6 @@ public class GameManager : MonoBehaviour
         _activeUnprocessedSeconds = 0d;
         _activeInfinityCycleSeconds = 0d;
         _activeSimulationBoundaryRemaining = 1d / 60d;
-        _activeAutomatedBreakRetryDelaySeconds = 0d;
-        _activeAutomatedBreakProjectionWork = null;
-        _activeAutomatedBreakDreamProjectionWork = null;
         _activeAtPostResetStart = false;
         _activeInfinityCycleState = null;
         _queuedSimulationInputs.Clear();
@@ -843,8 +842,6 @@ public class GameManager : MonoBehaviour
     {
         if (_activeSimulationInstance == this)
             _activeSimulationInstance = null;
-        _activeAutomatedBreakProjectionWork = null;
-        _activeAutomatedBreakDreamProjectionWork = null;
         _queuedPlayerActions.Clear();
         _queuedSimulationInputs.Clear();
         AwayFor -= ApplyReturnValues;
@@ -1294,9 +1291,6 @@ public class GameManager : MonoBehaviour
             _owner._activeSimulationBoundaryRemaining = Math.Max(
                 0d,
                 _owner._activeSimulationBoundaryRemaining - seconds);
-            _owner._activeAutomatedBreakRetryDelaySeconds = Math.Max(
-                0d,
-                _owner._activeAutomatedBreakRetryDelaySeconds - seconds);
         }
 
         public void ApplyProductionArrivals(
@@ -1459,8 +1453,6 @@ public class GameManager : MonoBehaviour
             SimulationQueuedInput input,
             SimulationPresentationSummary summary)
         {
-            _owner._activeAutomatedBreakProjectionWork = null;
-            _owner._activeAutomatedBreakDreamProjectionWork = null;
             if (input.Kind == SimulationInputKind.BreakTarget)
             {
                 Oracle.oracle.saveSettings.infinityPointsToBreakFor =
@@ -1473,6 +1465,7 @@ public class GameManager : MonoBehaviour
             }
 
             _owner.ApplyQueuedPlayerAction(input);
+            _infinityState.InvalidateProjectionEvidence();
         }
 
         public bool TryAccelerate(
@@ -1767,67 +1760,16 @@ public class GameManager : MonoBehaviour
             out SimulationAccelerationResult acceleration)
         {
             acceleration = default;
-            if (!HasUsefulSampleProjectionHorizon(
+            if (!_owner.TryCreateCanonicalSampledBreakProjection(
+                    _infinityState,
+                    first,
+                    second,
                     third,
-                    maximumSeconds))
+                    maximumSeconds,
+                    request.InfinityMinimumCycleSeconds,
+                    out InfinityCycleProjection projection))
             {
                 return false;
-            }
-            if (!AdaptiveInfinityCycleSimulation
-                    .TryProjectSampledSeconds(
-                        first,
-                        second,
-                        third,
-                        _owner.prestigeData.infinityPoints,
-                        maximumSeconds,
-                        request.InfinityMinimumCycleSeconds,
-                        SampledProjectionIpGrowthLimit(
-                            maximumSeconds,
-                            _infinityState
-                                .ProjectionGrowthAdjustment),
-                        SimulationAccuracyContract
-                            .AllowedAggregateRelativeError(
-                                maximumSeconds),
-                        out InfinityCycleProjection projection))
-            {
-                return false;
-            }
-
-            SaveDataDream1 projectedDream = null;
-            SaveDataPrestige projectedDreamPrestige = null;
-            double dreamError = 0d;
-            bool dreamIdle =
-                DreamAnalyticalOfflineSimulation.IsClockIdle(
-                    Oracle.oracle.saveSettings.sdSimulation,
-                    _owner.spaceAgeManager != null &&
-                    _owner.spaceAgeManager.IsRailgunFiring);
-            if (!dreamIdle)
-            {
-                if (!_owner.TryGetDreamOfflineTiming(
-                        out DreamOfflineTiming timing))
-                {
-                    return false;
-                }
-                projectedDream =
-                    (SaveDataDream1)Sirenix.Serialization
-                        .SerializationUtility.CreateCopy(
-                            Oracle.oracle.saveSettings.sdSimulation);
-                projectedDreamPrestige =
-                    (SaveDataPrestige)Sirenix.Serialization
-                        .SerializationUtility.CreateCopy(
-                            Oracle.oracle.saveSettings.sdPrestige);
-                if (!DreamAdaptiveLongIntervalSimulation.TryAdvance(
-                        projectedDream,
-                        projectedDreamPrestige,
-                        timing,
-                        projection.ConsumedSeconds,
-                        out dreamError) ||
-                    IsAutomaticDreamResetReady(
-                        projectedDream,
-                        projectedDreamPrestige))
-                {
-                    return false;
-                }
             }
 
             AdvanceHandledAutomationClock(
@@ -1843,48 +1785,10 @@ public class GameManager : MonoBehaviour
                     handledAutomationEvents);
             }
 
-            if (dreamIdle)
-            {
-                SaveDataPrestige dreamPrestige =
-                    Oracle.oracle.saveSettings.sdPrestige;
-                int rate = Math.Max(
-                    0,
-                    Math.Min(10, dreamPrestige.doubleTimeRate));
-                dreamPrestige.doubleTime = Math.Max(
-                    0d,
-                    NumericSafety.Subtract(
-                        dreamPrestige.doubleTime,
-                        NumericSafety.Multiply(
-                            rate,
-                            projection.ConsumedSeconds).Value).Value);
-                dreamPrestige.doDoubleTime =
-                    dreamPrestige.doubleTimeOwned &&
-                    dreamPrestige.doubleTime > 0d;
-            }
-            else
-            {
-                Oracle.oracle.saveSettings.sdSimulation =
-                    projectedDream;
-                Oracle.oracle.saveSettings.sdPrestige =
-                    projectedDreamPrestige;
-                SimulationPrestigeManager
-                    .InvokeResetSimulationRuntime();
-            }
-
-            long startingIp =
-                _owner.prestigeData.infinityPoints;
-            _owner.ApplyAdaptiveInfinityProjection(
-                projection,
-                _infinityState);
-            _infinityState.RequireCanonicalResampling(
-                projection,
-                SimulationAccuracyContract
-                    .AllowedAggregateRelativeError(
-                        projection.ConsumedSeconds));
-            long aggregateReward = Math.Max(
-                0L,
-                _owner.prestigeData.infinityPoints -
-                startingIp);
+            long aggregateReward =
+                _owner.ApplyCanonicalSampledBreakProjection(
+                    projection,
+                    _infinityState);
             if (_owner._workerService == null)
                 ServiceLocator.TryGet(out _owner._workerService);
             RealityAdvanceResult reality =
@@ -1905,20 +1809,13 @@ public class GameManager : MonoBehaviour
                 projection.ConsumedSeconds,
                 new SimulationPresentationSummary
                 {
-                    BreakInfinityCount =
-                        projection.CycleCount,
-                    BreakInfinityPoints =
-                        aggregateReward,
-                    RealityWorkers =
-                        reality.WorkersGenerated,
-                    AutomaticInfluence =
-                        reality.AutomaticInfluence,
-                    RealityCapacityStallSeconds =
-                        reality.StalledSeconds
+                    BreakInfinityCount = projection.CycleCount,
+                    BreakInfinityPoints = aggregateReward,
+                    RealityWorkers = reality.WorkersGenerated,
+                    AutomaticInfluence = reality.AutomaticInfluence,
+                    RealityCapacityStallSeconds = reality.StalledSeconds
                 },
-                Math.Max(
-                    projection.ValidationError,
-                    dreamError),
+                projection.ValidationError,
                 allAutomationEventsHandled: true,
                 automationTimeUntilNextEvent:
                     nextAutomationRemaining);
@@ -1971,294 +1868,6 @@ public class GameManager : MonoBehaviour
                 remaining = SimulationTickSeconds;
         }
 
-        private bool TryAccelerateAutomatedBreakInfinity(
-            double maximumSeconds,
-            SimulationAdvanceRequest request,
-            out SimulationAccelerationResult acceleration)
-        {
-            acceleration = default;
-            if (_owner._activeAutomatedBreakProjectionWork != null)
-            {
-                return ContinueActiveAutomatedBreakProjection(
-                    request,
-                    out acceleration);
-            }
-            if (_owner._activeAutomatedBreakRetryDelaySeconds > 1e-12d)
-                return false;
-            if (!_owner.CanProjectStableBreakCycles(
-                    allowCoincidentAutomation: true) ||
-                _owner.botsAutoBuy == null ||
-                !_owner.botsAutoBuy.TryCaptureAutomationRules(
-                    out DysonFacilityAutomationRule[] facilityRules))
-            {
-                return false;
-            }
-
-            ResearchAutomationRule[] researchRules =
-                Array.Empty<ResearchAutomationRule>();
-            if (_owner.prestigeData.infinityAutoResearch &&
-                (_owner.researchAutoBuy == null ||
-                 !_owner.researchAutoBuy.TryCaptureAutomationRules(
-                     out researchRules)))
-            {
-                return false;
-            }
-            if (!InfinityResetPolicy.TryCapture(
-                    Oracle.oracle.saveSettings,
-                    Oracle.oracle.ArtifactSkillPoints(),
-                    GameData.GameDataRegistry.Instance
-                        ?.skillDatabase,
-                    out InfinityResetPolicy resetPolicy))
-            {
-                return false;
-            }
-            if (!_owner.TryLimitBreakProjectionToDreamHorizon(
-                    ref maximumSeconds))
-            {
-                return false;
-            }
-
-            long cycleLimit =
-                NumericSafety.ToLongFloor(
-                    Math.Floor(
-                        maximumSeconds /
-                        request.InfinityMinimumCycleSeconds))
-                    .Value;
-            if (cycleLimit < 8L)
-                return false;
-
-            _owner._activeAutomatedBreakProjectionWork =
-                AutomatedBreakInfinityCycleSimulation
-                    .CreateProjectionWork(
-                    Oracle.oracle.saveSettings,
-                    facilityRules,
-                    researchRules,
-                    resetPolicy,
-                    _owner.CalculateBreakRewardForBots,
-                    _infinityState.CapturedBreakTarget,
-                    _owner.GetOfflineResetBotThreshold(
-                        _infinityState),
-                    request.InfinityMinimumCycleSeconds,
-                    SimulationTickSeconds,
-                    request.AutomationTimeUntilNextEvent,
-                    maximumSeconds,
-                    cycleLimit,
-                    request.AutomationPolicy,
-                    _infinityState.TryGetLatestCanonicalSample(
-                        out InfinityCycleSample activeAnchor)
-                        ? activeAnchor
-                        : (InfinityCycleSample?)null);
-            _owner._activeAutomatedBreakDreamProjectionWork =
-                null;
-            return ContinueActiveAutomatedBreakProjection(
-                request,
-                out acceleration);
-        }
-
-        private bool ContinueActiveAutomatedBreakProjection(
-            SimulationAdvanceRequest request,
-            out SimulationAccelerationResult acceleration)
-        {
-            acceleration = default;
-            AutomatedBreakInfinityCycleSimulation.ProjectionWork work =
-                _owner._activeAutomatedBreakProjectionWork;
-            if (work == null)
-                return false;
-
-            var timer = System.Diagnostics.Stopwatch.StartNew();
-            double stepBudget =
-                request.ProcessingBudgetMilliseconds > 0d
-                    ? Math.Max(
-                        0.5d,
-                        request.ProcessingBudgetMilliseconds -
-                        0.5d)
-                    : double.MaxValue;
-            do
-            {
-                AutomatedBreakInfinityCycleSimulation
-                    .StepProjectionWork(work);
-            } while (!work.IsCompleted &&
-                     timer.Elapsed.TotalMilliseconds < stepBudget);
-
-            if (!work.IsCompleted)
-            {
-                acceleration = new SimulationAccelerationResult(
-                    accepted: false,
-                    consumedSeconds: 0d,
-                    summary: null,
-                    yieldRequested: true);
-                return true;
-            }
-
-            if (!work.Accepted)
-            {
-                _owner._activeAutomatedBreakProjectionWork = null;
-                _owner._activeAutomatedBreakDreamProjectionWork =
-                    null;
-                _owner._activeAutomatedBreakRetryDelaySeconds =
-                    AutomatedBreakRetryDelaySeconds;
-                return false;
-            }
-            _owner._activeAutomatedBreakRetryDelaySeconds = 0d;
-
-            AutomatedBreakInfinityProjection projection =
-                work.Projection;
-            bool dreamIdle =
-                DreamAnalyticalOfflineSimulation.IsClockIdle(
-                    projection.Candidate.sdSimulation,
-                    _owner.spaceAgeManager != null &&
-                    _owner.spaceAgeManager.IsRailgunFiring);
-            double dreamError = 0d;
-            if (dreamIdle)
-            {
-                ConsumeProjectedIdleDreamDoubleTime(
-                    projection.Candidate.sdPrestige,
-                    projection.ConsumedSeconds);
-            }
-            else
-            {
-                if (_owner
-                        ._activeAutomatedBreakDreamProjectionWork ==
-                    null)
-                {
-                    if (!_owner.TryGetDreamOfflineTiming(
-                            out DreamOfflineTiming dreamTiming))
-                    {
-                        _owner._activeAutomatedBreakProjectionWork =
-                            null;
-                        _owner
-                            ._activeAutomatedBreakDreamProjectionWork =
-                            null;
-                        _owner
-                            ._activeAutomatedBreakRetryDelaySeconds =
-                            AutomatedBreakRetryDelaySeconds;
-                        return false;
-                    }
-                    _owner
-                        ._activeAutomatedBreakDreamProjectionWork =
-                        DreamAdaptiveLongIntervalSimulation
-                            .CreateProjectionWork(
-                                projection.Candidate.sdSimulation,
-                                projection.Candidate.sdPrestige,
-                                dreamTiming,
-                                projection.ConsumedSeconds);
-                }
-
-                DreamAdaptiveLongIntervalSimulation.ProjectionWork
-                    dreamWork = _owner
-                        ._activeAutomatedBreakDreamProjectionWork;
-                do
-                {
-                    DreamAdaptiveLongIntervalSimulation
-                        .StepProjectionWork(dreamWork);
-                } while (!dreamWork.IsCompleted &&
-                         timer.Elapsed.TotalMilliseconds <
-                         stepBudget);
-                if (!dreamWork.IsCompleted)
-                {
-                    acceleration =
-                        new SimulationAccelerationResult(
-                            accepted: false,
-                            consumedSeconds: 0d,
-                            summary: null,
-                            yieldRequested: true);
-                    return true;
-                }
-                dreamError = dreamWork.ValidationError;
-                if (!dreamWork.Accepted)
-                {
-                    _owner._activeAutomatedBreakProjectionWork =
-                        null;
-                    _owner
-                        ._activeAutomatedBreakDreamProjectionWork =
-                        null;
-                    _owner
-                        ._activeAutomatedBreakRetryDelaySeconds =
-                        AutomatedBreakRetryDelaySeconds;
-                    return false;
-                }
-            }
-
-            _owner._activeAutomatedBreakProjectionWork = null;
-            _owner._activeAutomatedBreakDreamProjectionWork = null;
-            Oracle.oracle.saveSettings.sdSimulation =
-                projection.Candidate.sdSimulation;
-            Oracle.oracle.saveSettings.sdPrestige =
-                projection.Candidate.sdPrestige;
-            SimulationPrestigeManager.InvokeResetSimulationRuntime();
-            _owner.ApplyAutomatedBreakProjection(
-                projection,
-                _infinityState,
-                publishOfflineTimeUsage: true);
-            if (_owner._workerService == null)
-                ServiceLocator.TryGet(
-                    out _owner._workerService);
-            RealityAdvanceResult reality =
-                _owner._workerService != null
-                    ? _owner._workerService.AdvanceSimulation(
-                        projection.ConsumedSeconds)
-                    : default;
-            _owner.RecordRealitySegment(
-                projection.ConsumedSeconds,
-                reality);
-            _owner._activeInfinityCycleSeconds =
-                _infinityState.SecondsInCurrentCycle;
-            _owner._activeAtPostResetStart =
-                _infinityState.IsAtPostResetStart;
-            _owner._activeSimulationBoundaryRemaining =
-                request.InfinityMinimumCycleSeconds;
-
-            acceleration = new SimulationAccelerationResult(
-                true,
-                projection.ConsumedSeconds,
-                new SimulationPresentationSummary
-                {
-                    BreakInfinityCount =
-                        projection.CycleCount,
-                    BreakInfinityPoints =
-                        projection.TotalReward,
-                    RealityWorkers =
-                        reality.WorkersGenerated,
-                    AutomaticInfluence =
-                        reality.AutomaticInfluence,
-                    RealityCapacityStallSeconds =
-                        reality.StalledSeconds
-                },
-                Math.Max(
-                    projection.ValidationError,
-                    dreamError),
-                allAutomationEventsHandled: true,
-                automationTimeUntilNextEvent:
-                    projection.AutomationTimeUntilNextEvent);
-            return true;
-        }
-
-        private static void ConsumeProjectedIdleDreamDoubleTime(
-            SaveDataPrestige prestige,
-            double seconds)
-        {
-            if (prestige == null ||
-                !NumericSafety.IsFinite(seconds) ||
-                seconds <= 0d)
-            {
-                return;
-            }
-            int rate = Math.Max(
-                0,
-                Math.Min(10, prestige.doubleTimeRate));
-            prestige.doubleTime = Math.Max(
-                0d,
-                prestige.doubleTime -
-                Math.Min(
-                    Math.Max(0d, prestige.doubleTime),
-                    NumericSafety.Multiply(
-                        seconds,
-                        rate).Value));
-            prestige.doDoubleTime =
-                prestige.doubleTimeOwned &&
-                prestige.doubleTime > 0d;
-        }
-
         private static long SaturatingMultiply(long left, long right)
         {
             if (left <= 0L || right <= 0L) return 0L;
@@ -2276,15 +1885,7 @@ public class GameManager : MonoBehaviour
         private readonly DreamCycleTracker _dreamCycleState = new();
         private double _automationPhaseSeconds;
         private double _infinityBoundaryRemaining = 1d / 60d;
-        private const long AutomatedBreakExactWarmupCycles = 8L;
-        private long _automatedBreakExactWarmupCyclesRemaining =
-            AutomatedBreakExactWarmupCycles;
-        private double _automatedBreakRetryDelaySeconds;
         private bool _invalidZeroTimeDreamLoop;
-        private AutomatedBreakInfinityCycleSimulation.ProjectionWork
-            _automatedBreakProjectionWork;
-        private DreamAdaptiveLongIntervalSimulation.ProjectionWork
-            _automatedBreakDreamProjectionWork;
 
         public StoredRuntimeEventTimeModel(
             GameManager owner,
@@ -2370,9 +1971,6 @@ public class GameManager : MonoBehaviour
             _infinityBoundaryRemaining = Math.Max(
                 0d,
                 _infinityBoundaryRemaining - seconds);
-            _automatedBreakRetryDelaySeconds = Math.Max(
-                0d,
-                _automatedBreakRetryDelaySeconds - seconds);
             _owner.BeginSimulationInterval(seconds);
         }
 
@@ -2527,10 +2125,6 @@ public class GameManager : MonoBehaviour
                     _owner.prestigeData.infinityPoints - beforeIp);
                 if (_infinityState.BreakTheLoop)
                 {
-                    if (_automatedBreakExactWarmupCyclesRemaining > 0L)
-                    {
-                        _automatedBreakExactWarmupCyclesRemaining--;
-                    }
                     summary.BreakInfinityCount = NumericSafety.Add(
                         summary.BreakInfinityCount,
                         1L).Value;
@@ -2556,8 +2150,8 @@ public class GameManager : MonoBehaviour
         {
             if (input.Kind != SimulationInputKind.BreakTarget)
                 return;
-            _automatedBreakProjectionWork = null;
-            _automatedBreakDreamProjectionWork = null;
+            _infinityState.SetCapturedBreakTarget(
+                input.DiscreteValue);
             _owner._offlineBreakTargetOverrideActive = true;
             _owner._offlineBreakTargetOverride =
                 Math.Max(1L, input.DiscreteValue);
@@ -2845,174 +2439,74 @@ public class GameManager : MonoBehaviour
             out SimulationAccelerationResult acceleration)
         {
             acceleration = default;
-            if (!HasUsefulSampleProjectionHorizon(
+            if (!_owner.TryCreateCanonicalSampledBreakProjection(
+                    _infinityState,
+                    first,
+                    second,
                     third,
-                    maximumSeconds))
+                    maximumSeconds,
+                    request.InfinityMinimumCycleSeconds,
+                    out InfinityCycleProjection projection))
             {
                 return false;
             }
-            double candidateSeconds = maximumSeconds;
-            for (int attempt = 0;
-                 attempt < 8 &&
-                 candidateSeconds >=
-                     request.InfinityMinimumCycleSeconds * 8d;
-                 attempt++)
-            {
-                if (!AdaptiveInfinityCycleSimulation
-                    .TryProjectSampledSeconds(
-                        first,
-                        second,
-                        third,
-                        _owner.prestigeData.infinityPoints,
-                        candidateSeconds,
-                        request.InfinityMinimumCycleSeconds,
-                        maximumRelativeIpGrowth:
-                            SampledProjectionIpGrowthLimit(
-                                maximumSeconds,
-                                _infinityState
-                                    .ProjectionGrowthAdjustment),
-                        maximumValidationError:
-                            SimulationAccuracyContract
-                                .AllowedAggregateRelativeError(
-                                    candidateSeconds),
-                        out InfinityCycleProjection projection))
-                {
-                    return false;
-                }
 
-                SaveDataDream1 projectedDream = null;
-                SaveDataPrestige projectedDreamPrestige = null;
-                double dreamError = 0d;
-                bool dreamIdle =
-                    DreamAnalyticalOfflineSimulation.IsClockIdle(
-                        Oracle.oracle.saveSettings.sdSimulation,
-                        _owner.spaceAgeManager != null &&
-                        _owner.spaceAgeManager.IsRailgunFiring);
-                if (!dreamIdle)
-                {
-                    if (!_owner.TryGetDreamOfflineTiming(
-                            out DreamOfflineTiming timing))
-                    {
-                        return false;
-                    }
-                    projectedDream =
-                        (SaveDataDream1)Sirenix.Serialization
-                            .SerializationUtility.CreateCopy(
-                                Oracle.oracle.saveSettings.sdSimulation);
-                    projectedDreamPrestige =
-                        (SaveDataPrestige)Sirenix.Serialization
-                            .SerializationUtility.CreateCopy(
-                                Oracle.oracle.saveSettings.sdPrestige);
-                    if (!DreamAdaptiveLongIntervalSimulation.TryAdvance(
-                            projectedDream,
-                            projectedDreamPrestige,
-                            timing,
-                            projection.ConsumedSeconds,
-                            out dreamError) ||
-                        IsAutomaticDreamResetReady(
-                            projectedDream,
-                            projectedDreamPrestige))
-                    {
-                        candidateSeconds *= 0.5d;
-                        continue;
-                    }
-                }
-
-                if (dreamIdle)
-                {
-                    ConsumeIdleDreamDoubleTime(
-                        projection.ConsumedSeconds);
-                }
-                else
-                {
-                    Oracle.oracle.saveSettings.sdSimulation =
-                        projectedDream;
-                    Oracle.oracle.saveSettings.sdPrestige =
-                        projectedDreamPrestige;
-                    SimulationPrestigeManager
-                        .InvokeResetSimulationRuntime();
-                }
-
-                long startingIp =
-                    _owner.prestigeData.infinityPoints;
-                _owner.ApplyAdaptiveInfinityProjection(
+            long aggregateReward =
+                _owner.ApplyCanonicalSampledBreakProjection(
                     projection,
                     _infinityState);
-                _infinityState.RequireCanonicalResampling(
-                    projection,
-                    SimulationAccuracyContract
-                        .AllowedAggregateRelativeError(
-                            projection.ConsumedSeconds));
-                ApplyAggregatedOfflineTimeRollover(
-                    projection.CycleCount,
-                    projection.ConsumedSeconds,
-                    projection.LastDurationSeconds);
-                long aggregateReward = Math.Max(
-                    0L,
-                    _owner.prestigeData.infinityPoints -
-                    startingIp);
-
-                _infinityBoundaryRemaining =
-                    request.InfinityMinimumCycleSeconds;
-                SkipHandledDysonAutomationEvents(
-                    request.AutomationTimeUntilNextEvent,
+            ApplyAggregatedOfflineTimeRollover(
+                projection.CycleCount,
+                projection.ConsumedSeconds,
+                projection.LastDurationSeconds);
+            _infinityBoundaryRemaining =
+                request.InfinityMinimumCycleSeconds;
+            SkipHandledDysonAutomationEvents(
+                request.AutomationTimeUntilNextEvent,
+                projection.ConsumedSeconds);
+            RealityAdvanceResult reality =
+                _owner.AdvanceRealityStoredTime(
                     projection.ConsumedSeconds);
-                RealityAdvanceResult reality =
-                    _owner.AdvanceRealityStoredTime(
-                        projection.ConsumedSeconds);
-                _owner.RecordRealitySegment(
-                    projection.ConsumedSeconds,
-                    reality);
+            _owner.RecordRealitySegment(
+                projection.ConsumedSeconds,
+                reality);
 
-                acceleration = new SimulationAccelerationResult(
-                    true,
-                    projection.ConsumedSeconds,
-                    new SimulationPresentationSummary
-                    {
-                        BreakInfinityCount =
-                            projection.CycleCount,
-                        BreakInfinityPoints =
-                            aggregateReward,
-                        RealityWorkers =
-                            reality.WorkersGenerated,
-                        AutomaticInfluence =
-                            reality.AutomaticInfluence,
-                        RealityCapacityStallSeconds =
-                            reality.StalledSeconds
-                    },
-                    Math.Max(
-                        projection.ValidationError,
-                        dreamError),
-                    allAutomationEventsHandled: true);
-                LastAutomatedBreakBlockDiagnostic =
-                    "accepted_canonical_sampled";
+            acceleration = new SimulationAccelerationResult(
+                true,
+                projection.ConsumedSeconds,
+                new SimulationPresentationSummary
+                {
+                    BreakInfinityCount = projection.CycleCount,
+                    BreakInfinityPoints = aggregateReward,
+                    RealityWorkers = reality.WorkersGenerated,
+                    AutomaticInfluence = reality.AutomaticInfluence,
+                    RealityCapacityStallSeconds = reality.StalledSeconds
+                },
+                projection.ValidationError,
+                allAutomationEventsHandled: true);
 #if UNITY_EDITOR
-                string sampleTrace =
-                    $"{first.StartingInfinityPoints}:" +
-                    $"{first.Reward}:{first.DurationSeconds:R}," +
-                    $"{second.StartingInfinityPoints}:" +
-                    $"{second.Reward}:{second.DurationSeconds:R}," +
-                    $"{third.StartingInfinityPoints}:" +
-                    $"{third.Reward}:{third.DurationSeconds:R}" +
-                    $"=>{projection.CycleCount}:" +
-                    $"{projection.ConsumedSeconds:R}:" +
-                    $"{projection.FinalInfinityPoints}:" +
-                    $"{projection.ValidationError:R}:" +
-                    $"checkpoint={_infinityState.LastCheckpointError:R}:" +
-                    $"growth={_infinityState.ProjectionGrowthAdjustment:R}";
-                CanonicalSampledBlockTrace =
-                    string.IsNullOrEmpty(CanonicalSampledBlockTrace)
-                        ? sampleTrace
-                        : CanonicalSampledBlockTrace + "|" + sampleTrace;
-                CanonicalSampledBlockCount =
-                    NumericSafety.Add(
-                        CanonicalSampledBlockCount,
-                        1L).Value;
+            string sampleTrace =
+                $"{first.StartingInfinityPoints}:" +
+                $"{first.Reward}:{first.DurationSeconds:R}," +
+                $"{second.StartingInfinityPoints}:" +
+                $"{second.Reward}:{second.DurationSeconds:R}," +
+                $"{third.StartingInfinityPoints}:" +
+                $"{third.Reward}:{third.DurationSeconds:R}" +
+                $"=>{projection.CycleCount}:" +
+                $"{projection.ConsumedSeconds:R}:" +
+                $"{projection.FinalInfinityPoints}:" +
+                $"{projection.ValidationError:R}:" +
+                $"checkpoint={_infinityState.LastCheckpointError:R}:" +
+                $"growth={_infinityState.ProjectionGrowthAdjustment:R}";
+            CanonicalSampledBlockTrace =
+                string.IsNullOrEmpty(CanonicalSampledBlockTrace)
+                    ? sampleTrace
+                    : CanonicalSampledBlockTrace + "|" + sampleTrace;
+            CanonicalSampledBlockCount = NumericSafety.Add(
+                CanonicalSampledBlockCount,
+                1L).Value;
 #endif
-                return true;
-            }
-
-            return false;
+            return true;
         }
 
         private static bool IsAutomaticDreamResetReady(
@@ -3028,336 +2522,6 @@ public class GameManager : MonoBehaviour
                 3 => dream.spaceFactories >= 5d,
                 _ => false
             };
-        }
-
-        private bool TryAggregateAutomatedBreakCycles(
-            double maximumSeconds,
-            SimulationAdvanceRequest request,
-            out SimulationAccelerationResult acceleration)
-        {
-            acceleration = default;
-            LastAutomatedBreakBlockDiagnostic = null;
-            if (_automatedBreakProjectionWork != null)
-            {
-                return ContinueAutomatedBreakProjection(
-                    request,
-                    out acceleration);
-            }
-            if (_automatedBreakRetryDelaySeconds > 1e-12d)
-            {
-                LastAutomatedBreakBlockDiagnostic =
-                    "retry_delay";
-                return false;
-            }
-            if (_automatedBreakExactWarmupCyclesRemaining > 0L)
-            {
-                LastAutomatedBreakBlockDiagnostic =
-                    "exact_warmup";
-                return false;
-            }
-            if (!_owner.CanProjectStableBreakCycles(
-                    allowCoincidentAutomation: true))
-            {
-                LastAutomatedBreakBlockDiagnostic =
-                    "unsupported_break_graph";
-                return false;
-            }
-            if (_owner.botsAutoBuy == null ||
-                !_owner.botsAutoBuy.TryCaptureAutomationRules(
-                    out DysonFacilityAutomationRule[] facilityRules))
-            {
-                LastAutomatedBreakBlockDiagnostic =
-                    "facility_rule_capture";
-                return false;
-            }
-
-            ResearchAutomationRule[] researchRules =
-                Array.Empty<ResearchAutomationRule>();
-            if (_owner.prestigeData.infinityAutoResearch &&
-                (_owner.researchAutoBuy == null ||
-                 !_owner.researchAutoBuy.TryCaptureAutomationRules(
-                     out researchRules)))
-            {
-                LastAutomatedBreakBlockDiagnostic =
-                    "research_rule_capture";
-                return false;
-            }
-
-            if (!InfinityResetPolicy.TryCapture(
-                    Oracle.oracle.saveSettings,
-                    Oracle.oracle.ArtifactSkillPoints(),
-                    GameData.GameDataRegistry.Instance
-                        ?.skillDatabase,
-                    out InfinityResetPolicy resetPolicy))
-            {
-                LastAutomatedBreakBlockDiagnostic =
-                    "reset_policy_capture";
-                return false;
-            }
-            if (!_owner.TryLimitBreakProjectionToDreamHorizon(
-                    ref maximumSeconds))
-            {
-                LastAutomatedBreakBlockDiagnostic =
-                    "dream_projection_horizon";
-                return false;
-            }
-
-            long durationCycleLimit =
-                NumericSafety.ToLongFloor(
-                    Math.Floor(
-                        maximumSeconds /
-                        request.InfinityMinimumCycleSeconds))
-                    .Value;
-            long requestedCycleLimit =
-                durationCycleLimit;
-            double resetThreshold =
-                _owner.GetOfflineResetBotThreshold(
-                    _infinityState);
-            long rewardMultiplier = 1L;
-            if (Oracle.oracle.saveSettings.doubleIp)
-                rewardMultiplier = NumericSafety.Add(
-                    rewardMultiplier,
-                    rewardMultiplier).Value;
-            if (_owner.prestigePlus.doubleIP)
-                rewardMultiplier = NumericSafety.Add(
-                    rewardMultiplier,
-                    rewardMultiplier).Value;
-            double ordinaryThreshold =
-                _owner.prestigePlus.divisionsPurchased > 0L
-                    ? 4.2e19 / Math.Pow(
-                        10d,
-                        _owner.prestigePlus.divisionsPurchased)
-                    : 4.2e19;
-            Func<double, long> rewardCalculator = bots =>
-                NumericSafety.Multiply(
-                    StaticMethods.InfinityPointsToGain(
-                        ordinaryThreshold,
-                        bots),
-                    rewardMultiplier).Value;
-            _automatedBreakProjectionWork =
-                AutomatedBreakInfinityCycleSimulation
-                    .CreateProjectionWork(
-                    Oracle.oracle.saveSettings,
-                    facilityRules,
-                    researchRules,
-                    resetPolicy,
-                    rewardCalculator,
-                    _infinityState.CapturedBreakTarget,
-                    resetThreshold,
-                    request.InfinityMinimumCycleSeconds,
-                    SimulationTickSeconds,
-                    request.AutomationTimeUntilNextEvent,
-                    maximumSeconds,
-                    maximumCycles: requestedCycleLimit,
-                    automationPolicy:
-                        SimulationAutomationPolicy.ForceBuyMax,
-                    canonicalCycleAnchor:
-                        _infinityState.TryGetLatestCanonicalSample(
-                            out InfinityCycleSample storedAnchor)
-                            ? storedAnchor
-                            : (InfinityCycleSample?)null);
-            _automatedBreakDreamProjectionWork = null;
-            return ContinueAutomatedBreakProjection(
-                request,
-                out acceleration);
-        }
-
-        private bool ContinueAutomatedBreakProjection(
-            SimulationAdvanceRequest request,
-            out SimulationAccelerationResult acceleration)
-        {
-            acceleration = default;
-            AutomatedBreakInfinityCycleSimulation.ProjectionWork work =
-                _automatedBreakProjectionWork;
-            if (work == null)
-                return false;
-
-            var timer = System.Diagnostics.Stopwatch.StartNew();
-            double stepBudget =
-                request.ProcessingBudgetMilliseconds > 0d
-                    ? Math.Max(
-                        0.5d,
-                        request.ProcessingBudgetMilliseconds -
-                        1d)
-                    : double.MaxValue;
-            do
-            {
-                AutomatedBreakInfinityCycleSimulation
-                    .StepProjectionWork(work);
-            } while (!work.IsCompleted &&
-                     timer.Elapsed.TotalMilliseconds < stepBudget);
-
-            if (!work.IsCompleted)
-            {
-                LastAutomatedBreakBlockDiagnostic =
-                    "adaptive_in_progress";
-                acceleration = new SimulationAccelerationResult(
-                    accepted: false,
-                    consumedSeconds: 0d,
-                    summary: null,
-                    yieldRequested: true);
-                return true;
-            }
-
-            AutomatedBreakInfinityProjection projection =
-                work.Projection;
-            bool dreamProjected = work.Accepted;
-            double dreamError = 0d;
-            if (work.Accepted)
-            {
-                bool dreamIdle =
-                    DreamAnalyticalOfflineSimulation.IsClockIdle(
-                        Oracle.oracle.saveSettings.sdSimulation,
-                        _owner.spaceAgeManager != null &&
-                        _owner.spaceAgeManager.IsRailgunFiring);
-                if (dreamIdle)
-                {
-                    ConsumeIdleDreamDoubleTime(
-                        projection.Candidate.sdPrestige,
-                        projection.ConsumedSeconds);
-                }
-                else if (!_owner.TryGetDreamOfflineTiming(
-                             out DreamOfflineTiming dreamTiming))
-                {
-                    dreamProjected = false;
-                }
-                else
-                {
-                    _automatedBreakDreamProjectionWork ??=
-                        DreamAdaptiveLongIntervalSimulation
-                            .CreateProjectionWork(
-                                projection.Candidate.sdSimulation,
-                                projection.Candidate.sdPrestige,
-                                dreamTiming,
-                                projection.ConsumedSeconds);
-                    do
-                    {
-                        DreamAdaptiveLongIntervalSimulation
-                            .StepProjectionWork(
-                                _automatedBreakDreamProjectionWork);
-                    } while (
-                        !_automatedBreakDreamProjectionWork
-                            .IsCompleted &&
-                        timer.Elapsed.TotalMilliseconds <
-                        stepBudget);
-                    if (!_automatedBreakDreamProjectionWork
-                            .IsCompleted)
-                    {
-                        LastAutomatedBreakBlockDiagnostic =
-                            "dream_adaptive_in_progress";
-                        acceleration =
-                            new SimulationAccelerationResult(
-                                accepted: false,
-                                consumedSeconds: 0d,
-                                summary: null,
-                                yieldRequested: true);
-                        return true;
-                    }
-                    dreamProjected =
-                        _automatedBreakDreamProjectionWork.Accepted;
-                    dreamError =
-                        _automatedBreakDreamProjectionWork
-                            .ValidationError;
-                }
-            }
-            _automatedBreakProjectionWork = null;
-            _automatedBreakDreamProjectionWork = null;
-            return ApplyAutomatedBreakWork(
-                work.Accepted,
-                projection,
-                work.Diagnostic,
-                dreamProjected,
-                dreamError,
-                request,
-                out acceleration);
-        }
-
-        private bool ApplyAutomatedBreakWork(
-            bool projected,
-            AutomatedBreakInfinityProjection projection,
-            string diagnostic,
-            bool dreamProjected,
-            double dreamError,
-            SimulationAdvanceRequest request,
-            out SimulationAccelerationResult acceleration)
-        {
-            acceleration = default;
-            AutomatedBreakInfinityCycleSimulation
-                .RecordBlockDiagnostic(
-                    projected,
-                    projected
-                        ? projection.CycleCount
-                        : 0L);
-            if (!projected)
-            {
-                _automatedBreakRetryDelaySeconds =
-                    AutomatedBreakRetryDelaySeconds;
-                LastAutomatedBreakBlockDiagnostic =
-                    diagnostic ??
-                    "cycle_projection";
-                return false;
-            }
-            _automatedBreakRetryDelaySeconds = 0d;
-
-            if (!dreamProjected)
-            {
-                _automatedBreakRetryDelaySeconds =
-                    AutomatedBreakRetryDelaySeconds;
-                LastAutomatedBreakBlockDiagnostic =
-                    "dream_projection";
-                return false;
-            }
-
-            Oracle.oracle.saveSettings.sdSimulation =
-                projection.Candidate.sdSimulation;
-            Oracle.oracle.saveSettings.sdPrestige =
-                projection.Candidate.sdPrestige;
-            SimulationPrestigeManager.InvokeResetSimulationRuntime();
-            _owner.ApplyAutomatedBreakProjection(
-                projection,
-                _infinityState,
-                publishOfflineTimeUsage: false);
-            ApplyAggregatedOfflineTimeRollover(
-                projection.CycleCount,
-                projection.ConsumedSeconds,
-                projection.LastDurationSeconds);
-            _automationPhaseSeconds = Math.Max(
-                0d,
-                SimulationTickSeconds -
-                projection.AutomationTimeUntilNextEvent);
-            _infinityBoundaryRemaining =
-                request.InfinityMinimumCycleSeconds;
-            RealityAdvanceResult reality =
-                _owner.AdvanceRealityStoredTime(
-                    projection.ConsumedSeconds);
-            _owner.RecordRealitySegment(
-                projection.ConsumedSeconds,
-                reality);
-            acceleration = new SimulationAccelerationResult(
-                true,
-                projection.ConsumedSeconds,
-                new SimulationPresentationSummary
-                {
-                    BreakInfinityCount =
-                        projection.CycleCount,
-                    BreakInfinityPoints =
-                        projection.TotalReward,
-                    RealityWorkers =
-                        reality.WorkersGenerated,
-                    AutomaticInfluence =
-                        reality.AutomaticInfluence,
-                    RealityCapacityStallSeconds =
-                        reality.StalledSeconds
-                },
-                Math.Max(
-                    dreamError,
-                    projection.ValidationError),
-                allAutomationEventsHandled: true,
-                automationTimeUntilNextEvent:
-                    projection.AutomationTimeUntilNextEvent);
-            LastAutomatedBreakBlockDiagnostic =
-                "accepted";
-            return true;
         }
 
         private void SkipHandledDysonAutomationEvents(
@@ -4019,8 +3183,6 @@ public class GameManager : MonoBehaviour
         CanonicalSampledBlockTrace = null;
         CanonicalSampledBlockCount = 0L;
 #endif
-        _activeAutomatedBreakProjectionWork = null;
-        _activeAutomatedBreakDreamProjectionWork = null;
         if (!oracle.saveSettings.eventTimeClockInitialized)
         {
             oracle.saveSettings.eventTimeClockInitialized = true;
@@ -4351,8 +3513,8 @@ public class GameManager : MonoBehaviour
         double adaptiveAdjustment)
     {
         double allowed =
-            SimulationAccuracyContract
-                .AllowedAggregateRelativeError(simulatedSeconds);
+            ProjectionValidationPolicy
+                .AllowedModelDisagreement(simulatedSeconds);
         double scale = 0.50d;
         if (NumericSafety.IsFinite(simulatedSeconds) &&
             simulatedSeconds > 60d)
@@ -4410,6 +3572,113 @@ public class GameManager : MonoBehaviour
                 slowCalibrationWindowCycles).Value;
         return maximumSeconds + 1e-12d >=
                calibrationWindowSeconds;
+    }
+
+    private bool TryCreateCanonicalSampledBreakProjection(
+        OfflineInfinityCycleState infinityCycleState,
+        InfinityCycleSample first,
+        InfinityCycleSample second,
+        InfinityCycleSample third,
+        double maximumSeconds,
+        double minimumCycleSeconds,
+        out InfinityCycleProjection projection)
+    {
+        projection = default;
+        if (!HasUsefulSampleProjectionHorizon(
+                third,
+                maximumSeconds))
+        {
+            return false;
+        }
+
+        if (AnalyticalOfflineSimulation.HasPersistentSideEffects(
+                skillTreeData))
+        {
+            return false;
+        }
+
+        // The current cleanup scope accelerates Dyson/Infinity only. An
+        // active Dream clock retains canonical event processing until its
+        // independent projection design is revisited; Dream state is never
+        // frozen, discarded, or approximated by this path.
+        if (!DreamAnalyticalOfflineSimulation.IsClockIdle(
+                oracle.saveSettings.sdSimulation,
+                spaceAgeManager != null &&
+                spaceAgeManager.IsRailgunFiring))
+        {
+            return false;
+        }
+
+        if (!AdaptiveInfinityCycleSimulation
+                .TryProjectSampledSeconds(
+                first,
+                second,
+                third,
+                prestigeData.infinityPoints,
+                maximumSeconds,
+                minimumCycleSeconds,
+                SampledProjectionIpGrowthLimit(
+                    maximumSeconds,
+                    infinityCycleState.ProjectionGrowthAdjustment),
+                ProjectionValidationPolicy.AllowedModelDisagreement(
+                    maximumSeconds),
+                out projection))
+        {
+            return false;
+        }
+
+        // Saturation is an exact gameplay boundary. Leave the final approach
+        // to the canonical scheduler so aggregate statistics cannot claim
+        // rewards that the capped long balance did not actually receive.
+        return projection.FinalInfinityPoints < long.MaxValue;
+    }
+
+    private long ApplyCanonicalSampledBreakProjection(
+        InfinityCycleProjection projection,
+        OfflineInfinityCycleState infinityCycleState)
+    {
+        ConsumeIdleDreamDoubleTimeForProjection(
+            projection.ConsumedSeconds);
+        long startingIp = prestigeData.infinityPoints;
+        ApplyAdaptiveInfinityProjection(
+            projection,
+            infinityCycleState);
+        infinityCycleState.RequireCanonicalResampling(
+            projection,
+            ProjectionValidationPolicy.AllowedModelDisagreement(
+                projection.ConsumedSeconds));
+        return Math.Max(
+            0L,
+            prestigeData.infinityPoints - startingIp);
+    }
+
+    private static void ConsumeIdleDreamDoubleTimeForProjection(
+        double seconds)
+    {
+        SaveDataPrestige dreamPrestige =
+            Oracle.oracle.saveSettings.sdPrestige;
+        if (dreamPrestige == null ||
+            !NumericSafety.IsFinite(seconds) ||
+            seconds <= 0d)
+        {
+            return;
+        }
+
+        int rate = Math.Max(
+            0,
+            Math.Min(10, dreamPrestige.doubleTimeRate));
+        double requested = NumericSafety.Multiply(
+            seconds,
+            rate).Value;
+        dreamPrestige.doubleTime = Math.Max(
+            0d,
+            dreamPrestige.doubleTime -
+            Math.Min(
+                Math.Max(0d, dreamPrestige.doubleTime),
+                requested));
+        dreamPrestige.doDoubleTime =
+            dreamPrestige.doubleTimeOwned &&
+            dreamPrestige.doubleTime > 0d;
     }
 
     private bool CanProjectStableBreakCycles(
@@ -4525,67 +3794,6 @@ public class GameManager : MonoBehaviour
                 projection.LastReward,
                 projection.ConsumedSeconds);
         infinityCycleState.AcceptProjection(projection);
-    }
-
-    private void ApplyAutomatedBreakProjection(
-        AutomatedBreakInfinityProjection projection,
-        OfflineInfinityCycleState infinityCycleState,
-        bool publishOfflineTimeUsage)
-    {
-        SaveDataSettings settings = oracle.saveSettings;
-        SaveDataSettings candidate = projection.Candidate;
-        if (candidate?.dysonVerseSaveData == null)
-            return;
-
-        settings.dysonVerseSaveData.dysonVerseInfinityData =
-            candidate.dysonVerseSaveData.dysonVerseInfinityData;
-        settings.dysonVerseSaveData.dysonVerseSkillTreeData =
-            candidate.dysonVerseSaveData.dysonVerseSkillTreeData;
-        settings.dysonVerseSaveData.dysonVersePrestigeData =
-            candidate.dysonVerseSaveData.dysonVersePrestigeData;
-        settings.dysonAutomationTargetIndex =
-            candidate.dysonAutomationTargetIndex;
-        settings.researchAutomationTargetIndex =
-            candidate.researchAutomationTargetIndex;
-        settings.lastInfinityPointsGained =
-            candidate.lastInfinityPointsGained;
-        settings.timeLastInfinity =
-            candidate.timeLastInfinity;
-        settings.tutorial = candidate.tutorial;
-        settings.dysonVerseSaveData.lastCollapseDate =
-            DateTime.UtcNow.ToString(
-                CultureInfo.InvariantCulture);
-        settings.firstInfinityDone =
-            candidate.firstInfinityDone;
-        settings.infinityInProgress =
-            candidate.infinityInProgress;
-        settings.botCapTransitionPending =
-            candidate.botCapTransitionPending;
-        settings.botCapRewardsGranted =
-            candidate.botCapRewardsGranted;
-        if (publishOfflineTimeUsage)
-        {
-            settings.offlineTimeUsedThisInfinity =
-                candidate.offlineTimeUsedThisInfinity;
-            settings.offlineTimeUsedPreviousInfinity =
-                candidate.offlineTimeUsedPreviousInfinity;
-        }
-        settings.simulationStatistics?.RecordInfinityAggregate(
-            breakInfinity: true,
-            projection.CycleCount,
-            projection.TotalReward,
-            projection.LastDurationSeconds,
-            projection.LastReward,
-            projection.ConsumedSeconds);
-        infinityCycleState.AcceptProjection(
-            new InfinityCycleProjection(
-                projection.CycleCount,
-                projection.ConsumedSeconds,
-                settings.dysonVerseSaveData
-                    .dysonVersePrestigeData.infinityPoints,
-                projection.LastReward,
-                projection.LastDurationSeconds,
-                validationError: 0d));
     }
 
     private void AdvanceDreamForActiveBreakBlock(

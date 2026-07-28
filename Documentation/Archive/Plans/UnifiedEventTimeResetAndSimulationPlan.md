@@ -1,6 +1,6 @@
 # Unified Event-Time Reset and Simulation Plan
 
-Status: In progress; shared-engine foundation checkpointed locally
+Status: Archived on 2026-07-28; a replacement completion plan is intentionally pending
 Approved: 2026-07-27
 
 ## Scope and fixed decisions

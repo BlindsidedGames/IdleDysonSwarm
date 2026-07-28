@@ -1,6 +1,6 @@
 # Numeric Safety and Deterministic Simulation Plan
 
-Status: Core numeric plan implemented locally; unified event-time follow-on in final validation
+Status: Archived on 2026-07-28; superseded by current repository evidence
 Last updated: 2026-07-27
 
 ## Purpose

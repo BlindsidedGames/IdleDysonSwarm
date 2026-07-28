@@ -1,6 +1,6 @@
 # Phase One Save-Integrity Implementation Plan
 
-Status: Stage 4 implemented and validated locally on macOS; awaiting final Phase One review
+Status: Archived on 2026-07-28; retained as historical implementation context
 Last updated: 2026-07-25
 Primary validation target: Windows Editor and Windows player
 Deferred validation targets: macOS, iOS, and other device-specific coverage
