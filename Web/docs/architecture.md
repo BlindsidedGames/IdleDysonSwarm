@@ -1,16 +1,17 @@
 # Port architecture
 
-The rebuild is organised so the unfinished Unity tick overhaul has exactly one
-future destination: an implementation of `SimulationEngine`.
+The rebuild keeps gameplay, persistence and platform work independent from any
+future product frontend. The React/Vite entrypoint is a developer-only save
+diagnostic and is not part of the product architecture.
 
 ```text
-React UI
+future product frontend (not selected)
   |
   v
 application commands and read-only snapshots
   |
   v
-SimulationEngine (pure TypeScript; implementation intentionally deferred)
+SimulationEngine (pure TypeScript)
   |                \
   v                 v
 game-data catalog   save preparation pipeline
@@ -31,12 +32,21 @@ platform contracts              SaveRepository
 - `src/parity` owns engine-independent golden-master fixture and comparison tools.
 - `src/platform` defines capabilities; Electron and Capacitor implementations
   remain replaceable.
-- `src/App.tsx` is presentation and diagnostics only.
+- `src/App.tsx` is a developer save diagnostic only. It must not acquire product
+  gameplay or become a visual baseline.
 - The exact event-time scheduler follows `simulation-contract.md`. Gameplay
   models and projection remain behind the same pure boundary.
+- No product frontend implementation begins until
+  `frontend-readiness-gate.md` is satisfied.
 
 ## Planned runtime ownership
 
-The simulation should run in a Web Worker. React sends typed commands and receives
-coalesced immutable snapshots. The same engine is called directly for unit tests,
-offline advancement and golden-master parity runs.
+The final simulation should run outside the presentation layer. The selected
+frontend will send typed commands and receive coalesced immutable snapshots.
+The same engine remains directly callable for unit tests, offline advancement
+and golden-master parity runs.
+
+The existing simulation performance work is accepted for the current stage.
+Further discretionary tuning is deferred until the full gameplay port is
+complete unless a correctness defect or measured regression requires earlier
+work.

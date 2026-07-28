@@ -2,11 +2,12 @@ Original prompt: Create a separate `Idle Dyson Swarm Web` project beside the Uni
 
 ## Current goal
 
-- Deliver the first playable web slice: a responsive Bot tab driven by the
-  exact TypeScript Dyson scheduler.
 - Preserve automatic compatibility with existing `IDB1:` saves.
-- Use the finished slice to plan the remaining clean port rather than
-  extending stale Unity-era plans.
+- Complete the gameplay port behind framework-independent boundaries.
+- Define and approve product, design, interaction and performance contracts
+  before creating another product frontend.
+- Treat the existing simulation and performance work as complete for the
+  current stage. Revisit discretionary tuning after the full port is complete.
 
 ## Progress
 
@@ -168,26 +169,43 @@ Original prompt: Create a separate `Idle Dyson Swarm Web` project beside the Uni
 - Current validation: `npm test` 79/79, `npm run lint`, `npm run build`, and the
   earlier unchanged `npm run data:check` all pass. The existing non-blocking
   Vite chunk-size warning remains.
+- Removed the playable Bot-tab experiment, its presentation adapter, smoothing
+  layer and copied presentation assets. The slice proved integration viability
+  but was not suitable as a product baseline because design, interaction,
+  accessibility and performance contracts had not been established.
+- Restored the browser entrypoint to a developer-only save compatibility
+  diagnostic. It is not a product frontend.
+- Added `docs/frontend-readiness-gate.md` to prevent another prototype from
+  silently defining the product architecture or visual standard.
+- Accepted the existing event-time simulation and performance work as complete
+  for the current port stage. Further discretionary tuning is deferred until
+  the full gameplay port is complete unless correctness or measured regression
+  evidence requires earlier work.
+- Normalized Unity asset source hashes and generated-output comparisons across
+  LF and CRLF line endings so deterministic data validation produces the same
+  result on every supported checkout.
 
 ## TODO
 
-- Map the remaining Unity screens and build a clean, dependency-ordered port
-  plan from this Bot-tab vertical slice.
-- Connect prepared legacy/current saves to the playable model and persistence
-  boundary; the Bot tab currently starts a new in-memory game on refresh.
-- Port the remaining early-game tinker skill modifiers and hold-to-repeat
-  behavior before declaring complete Unity interaction parity.
+- Map the remaining Unity gameplay systems and build a clean,
+  dependency-ordered headless port plan.
+- Connect prepared legacy/current saves to the simulation and persistence
+  boundary.
+- Complete the remaining early-game tinker behavior in the headless model.
 - Expand Unity golden masters into research behavior.
 - Expand the typed Dyson model from the no-skill chain into the exported
   dynamic/conditional effect pipelines and research automation.
 - Port Infinity skill auto-assignment and the remaining dynamic derived-state
   rebuilding.
 - Port Dream and Reality models after Dyson exact parity is established.
-- Add the optional projection accelerator only after the exact reference passes.
+- Defer optional projection and performance work until the full gameplay port
+  is complete.
 - Compare normalized migration output field-by-field against a Unity-generated
   schema-12 snapshot before enabling writes in a release build.
 - Implement and device-test Electron and Capacitor filesystem/lifecycle adapters,
   including automatic legacy file discovery under the retained app identity.
 - Implement Steam main-process adapters and physical iOS/Android migration
   certification.
+- Satisfy `docs/frontend-readiness-gate.md` before implementing a replacement
+  product frontend.
 - Remove bundled support fixtures from production packaging after diagnostics.

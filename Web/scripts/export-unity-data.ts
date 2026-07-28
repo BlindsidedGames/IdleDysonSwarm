@@ -1,3 +1,29 @@
+/**
+ * Purpose:
+ * - Export deterministic, framework-independent runtime catalogs from authored
+ *   Unity data assets.
+ *
+ * Runs:
+ * - Node.js tooling through `npm run data:export` and `npm run data:check`.
+ *
+ * Primary entry points and ownership:
+ * - Executes from the module entrypoint, discovers the embedded Unity project
+ *   or `IDLE_DYSON_UNITY_ROOT`, parses selected assets, and owns stable output
+ *   ordering plus source hashes.
+ * - Delegates YAML parsing to `yaml` and file/cryptographic primitives to Node.
+ *
+ * Interacts with:
+ * - Reads Unity assets, metadata, `SkillIdMap.cs`, and `ResearchIdMap.cs`.
+ * - Writes or verifies `src/game-data/generated/*.json`.
+ * - Called by package scripts and release/checkpoint validation.
+ *
+ * Change notes:
+ * - Asset roots, stable-ID rules, reference resolution, source-hash
+ *   normalization, output names, or sorting changes affect generated catalogs,
+ *   parity fixtures, migrations, and every runtime consumer of exported data.
+ * - Coordinate those changes with generated outputs, catalog tests, migration
+ *   data, and `docs/parity-fixtures.md`.
+ */
 import { createHash } from 'node:crypto'
 import {
   existsSync,
@@ -133,7 +159,9 @@ const assets = allAssetPaths
       kind,
       path: source.path,
       guid: source.guid,
-      sourceHash: createHash('sha256').update(source.raw).digest('hex'),
+      sourceHash: createHash('sha256')
+        .update(source.raw.replace(/\r\n?/g, '\n'))
+        .digest('hex'),
       data: transformValue(source.body),
     }
   })
@@ -189,7 +217,10 @@ function emit(name: string, value: unknown): void {
   const destination = resolve(outputDirectory, name)
   const content = `${JSON.stringify(value, null, 2)}\n`
   if (checkOnly) {
-    if (!existsSync(destination) || readFileSync(destination, 'utf8') !== content) {
+    const existingContent = existsSync(destination)
+      ? readFileSync(destination, 'utf8').replace(/\r\n?/g, '\n')
+      : null
+    if (existingContent !== content) {
       throw new Error(
         `${name} is stale. Run npm run data:export after Unity data changes.`,
       )

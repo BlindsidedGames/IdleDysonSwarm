@@ -1,27 +1,52 @@
 # Idle Dyson Swarm Web
 
-TypeScript/React rebuild workspace for Idle Dyson Swarm.
+Headless TypeScript port foundation for Idle Dyson Swarm, with a small
+developer-only browser harness for save compatibility diagnostics.
 
-The compatibility foundation can decode and prepare existing Unity/Odin
-`IDB1:` saves without starting Unity. It performs base64 and gzip envelope
-decoding, reconstructs the old C# object graph, applies schema-12 migrations and
-normalization, repairs numeric state, and validates the publishable graph.
+There is intentionally no playable product frontend at this checkpoint. The
+earlier Bot-tab slice was removed because the project does not yet have an
+approved product, design, interaction, accessibility or performance baseline.
+The diagnostic harness must not be treated as a product UI reference.
 
-## Proven compatibility
+## Compatibility foundation
 
-- Canonical schema 8 fixture with exact money, date, and 64-bit prestige sentinels.
-- Historical support fixtures at schemas 0, 10, and 11.
+The port can decode and prepare existing Unity/Odin `IDB1:` saves without
+starting Unity. It performs base64 and gzip envelope decoding, reconstructs the
+old C# object graph, applies schema-12 migrations and normalization, repairs
+numeric state, and validates the publishable graph.
+
+Proven compatibility currently covers:
+
+- Canonical schema 8 fixture with exact money, date and 64-bit prestige
+  sentinels.
+- Historical support fixtures at schemas 0, 10 and 11.
 - The current local production save at schema 12.
-- Complete stream consumption for every tested valid save.
-- Objects, lists, dictionaries, arrays, primitive arrays, type tables, and
+- Objects, lists, dictionaries, arrays, primitive arrays, type tables and
   internal references.
-- Schema migration, numeric repair and validation pass for every immutable
-  fixture.
-- The current local schema-12 production save passes the complete preparation
-  pipeline with zero repairs.
+- Complete stream consumption for every tested valid save.
+- Schema migration, numeric repair and validation for every immutable fixture.
 
-The local schema 12 save was read in place during validation and was not copied
-into this repository.
+The local schema-12 production save was read in place during validation and was
+not copied into this repository.
+
+## Port foundation
+
+- Pure TypeScript core and simulation boundary with no React dependency.
+- Exact event-time Dyson and Infinity simulation foundation.
+- Deterministic exporter for 559 Unity data assets, including stable IDs,
+  resolved GUID references and source hashes.
+- Compact legacy skill/research ID and dependency catalogs.
+- Unity-compatible save normalization, migration, numeric repair and
+  validation.
+- Precision-preserving `IDSWEB1` serialization for 64-bit integers and bytes.
+- Platform-neutral transactional save repository.
+- Golden-master fixture and comparison tooling.
+- Platform capability contracts for future Electron and Capacitor adapters.
+
+The existing simulation and performance work is accepted as complete for the
+current port stage. Further discretionary performance tuning is deferred until
+the full gameplay port is complete. Correctness defects and measured
+regressions remain valid reasons to revisit it earlier.
 
 ## Commands
 
@@ -36,35 +61,8 @@ npm run decode-save -- /path/to/idle_dyson_swarm_save.txt
 npm run prepare-save -- /path/to/idle_dyson_swarm_save.txt
 ```
 
-## Prepared port foundation
-
-- Pure TypeScript core/simulation boundary with no React dependency.
-- Deterministic exporter for 559 Unity data assets, including stable IDs,
-  resolved GUID references and source hashes.
-- Compact legacy skill/research ID and dependency catalogs for migrations.
-- Unity-compatible save normalization, migration, numeric repair and validation.
-- Precision-preserving canonical web save serialization for `bigint` and bytes.
-- Platform-neutral transactional repository and seamless first-launch migration
-  orchestration.
-- Golden-master fixture schema and exact/subset graph comparison tooling.
-- Audited platform capability contracts for Electron and Capacitor shells.
-
-See [architecture.md](docs/architecture.md),
-[parity-fixtures.md](docs/parity-fixtures.md), and
-[platform-port-inventory.md](docs/platform-port-inventory.md).
-
-## Current playable boundary
-
-The first playable vertical slice is the Bot tab. It uses the pure TypeScript
-event-time scheduler for active 10 Hz Dyson production, early Tinker
-progression, bot distribution, facility purchases and the basic five-facility
-chain. Continuous counters are smoothed by a presentation-only animation layer
-that never mutates canonical simulation state.
-
-The existing-save decoder and transactional repository are not yet connected to
-the playable UI, so refreshing still starts a new in-memory game. Research,
-Skills, the complete Infinity experience, Dream, Reality, Quantum, platform
-shells and release persistence remain later porting work.
+`npm run dev` opens the developer save-compatibility harness. It is not the
+game frontend.
 
 ## Project layout
 
@@ -74,24 +72,23 @@ scripts/
   prepare-save.ts      Decode + migrate + repair + validate command
   export-unity-data.ts Deterministic ScriptableObject exporter
 src/
-  core/                React-independent simulation contracts
+  core/                Framework-independent simulation contracts
   game-data/           Runtime types and generated Unity catalogs
-  game/                Playable Bot-tab state adapter
   parity/              Golden-master fixture and graph comparison tools
-  platform/            Electron/Capacitor capability contracts
-  save/
-    decodeIdb1.ts      IDB1 envelope API
-    odinBinary.ts      Odin binary protocol compatibility reader
-    migrate.ts         Unity schema normalization/migration
-    numericRepair.ts   Finite/range repair contract
-    validate.ts        Publishable-save validation
-    repository.ts      Platform-neutral transactional repository
-  simulation/          Pure event-time Dyson and Infinity foundations
-  ui/                  Number formatting and smooth presentation helpers
+  platform/            Replaceable platform capability contracts
+  save/                Decode, migration, repair, validation and repository
+  simulation/          Event-time Dyson and Infinity foundation
 public/fixtures/       Browser diagnostic fixtures
-test/fixtures/         Immutable test copies
-test/parity/           Executable save cases and simulation fixture schema
+test/fixtures/         Immutable save fixtures
+test/parity/           Executable save and simulation parity cases
 ```
 
-See [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md) for the Odin binary protocol
-source attribution.
+Before creating another product frontend, satisfy
+[frontend-readiness-gate.md](docs/frontend-readiness-gate.md). See also
+[architecture.md](docs/architecture.md),
+[simulation-contract.md](docs/simulation-contract.md),
+[parity-fixtures.md](docs/parity-fixtures.md), and
+[platform-port-inventory.md](docs/platform-port-inventory.md).
+
+See [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md) for the Odin binary
+protocol source attribution.
