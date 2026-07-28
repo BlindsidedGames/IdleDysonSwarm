@@ -11,7 +11,7 @@ future product frontend (not selected)
 application commands and read-only snapshots
   |
   v
-SimulationEngine (pure TypeScript)
+TransactionalSimulationEngine (pure TypeScript)
   |                \
   v                 v
 game-data catalog   save preparation pipeline
@@ -29,6 +29,9 @@ platform contracts              SaveRepository
 - `src/game-data` is generated deterministically from Unity assets and contains no
   gameplay code.
 - `src/save` owns compatibility, migration, validation and persistence envelopes.
+- Raw `SaveRecord` values are compatibility DTOs only. Repository load and
+  commit operations accept the opaque `PreparedSave` proof produced by the
+  migration, repair and validation pipeline.
 - `src/parity` owns engine-independent golden-master fixture and comparison tools.
 - `src/platform` defines capabilities; Electron and Capacitor implementations
   remain replaceable.
@@ -41,10 +44,24 @@ platform contracts              SaveRepository
 
 ## Planned runtime ownership
 
-The final simulation should run outside the presentation layer. The selected
-frontend will send typed commands and receive coalesced immutable snapshots.
-The same engine remains directly callable for unit tests, offline advancement
-and golden-master parity runs.
+The final simulation runs outside the presentation layer. The selected frontend
+will send typed, revision-checked command envelopes and receive detached,
+read-only snapshots. Ordinary object and array graphs are recursively frozen;
+byte views are detached and expose a non-mutating type. Accepted state changes
+publish one monotonically increasing revision; rejected, stale and no-op
+commands publish nothing.
+
+`TransactionalSimulationEngine` now enforces those publication rules for any
+typed state and command union. The version-1 mapper now separates the prepared
+Unity compatibility graph from canonical domain state while privately
+preserving unmapped fields. It is not yet the whole-game engine: domain
+transition functions and the application coordinator remain follow-on work.
+
+Active-play mutations may publish to memory before a later checkpoint.
+Recovery, import and stored-time work are commit-first flows: their isolated
+candidate cannot become visible until its matching save has been durably
+verified. The engine exposes single-use staged transitions for that coordinator;
+the startup/lifecycle coordinator itself remains follow-on work.
 
 The existing simulation performance work is accepted for the current stage.
 Further discretionary tuning is deferred until the full gameplay port is

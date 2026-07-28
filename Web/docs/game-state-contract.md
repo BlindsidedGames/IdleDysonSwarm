@@ -1,0 +1,132 @@
+# Canonical game-state contract
+
+This decision record freezes the boundary used by parallel gameplay domain
+ports. The first typed mapper now covers the durable gameplay roots; the
+coverage manifest remains deliberately incomplete for legacy duplicates,
+derived caches, preferences, entitlements and remaining metadata.
+
+## Three different versions
+
+These concepts must never share one ambiguous `schema` name:
+
+- Unity import schema: currently version 12, used only by the compatibility
+  decoder, migration, repair and validation pipeline.
+- Canonical game model version: begins at 1 when the typed whole-game mapper is
+  implemented.
+- Application snapshot contract version: begins at 1 when the startup and
+  persistence coordinator is implemented.
+
+## Publication boundary
+
+`TransactionalSimulationEngine<TState, TCommand>` is the framework-independent
+publication mechanism.
+
+- Commands are a closed TypeScript union supplied by the game domain.
+- Every immediate command envelope carries an expected revision. Durable
+  command IDs and simulation timestamps belong to the future queue/coordinator;
+  the in-memory engine does not advertise semantics it cannot yet enforce.
+- A stale revision rejects without executing domain code.
+- Domain code mutates only an isolated candidate.
+- Rejected, throwing, invalid and no-op candidates do not change state or
+  revision and do not notify subscribers.
+- Every accepted changed candidate advances the revision exactly once and
+  notifies each current subscriber exactly once.
+- Commit-first work uses `stageDispatch`/`stageAdvance`, persists the detached
+  candidate, and calls `publish` only after verification. A stage is
+  single-use and rejects if another publication made its base revision stale.
+- Snapshots are detached from engine state and recursively frozen for normal
+  object and array graphs.
+- Listener failures are isolated from later listeners and authoritative state.
+
+Expected validation failures return typed rejection results. They are not
+control-flow exceptions.
+
+## Save preparation boundary
+
+`SaveRecord` is an opaque Unity compatibility DTO, not runtime gameplay state.
+It contains legacy names, duplicate representations, cached derived values,
+preferences and durable gameplay fields.
+
+Only `PreparedSave` may cross into repository load/commit workflows.
+`PreparedSave` can be created only by:
+
+1. decoding the source envelope;
+2. migrating to the supported Unity import schema;
+3. applying numeric repair;
+4. validating required structure, durable IDs and finite numeric state.
+
+The repository normalizes and revalidates immediately before serialization,
+verifies the temporary file byte-for-byte through decode and re-encode, and
+only then invokes the platform's atomic replacement primitive. Canonical player
+save writes are disabled by default; current partial-port work is restricted to
+development storage.
+
+## Canonical ownership
+
+The typed canonical root will own these gameplay domains:
+
+```text
+GameState
+  timeline
+  meta
+  dyson
+  research
+  skills
+  infinity
+  dream
+  reality
+  quantum
+  avocado
+  statistics
+```
+
+Player presentation preferences and platform entitlements are separate stores.
+Achievement ownership remains platform-owned and is not persisted in
+`GameState`.
+Automation switches and scheduler phases that change autonomous gameplay remain
+inside game state.
+
+Each domain owns writes to its slice and may read the whole state through a
+read-only view. Cross-domain purchases and resets are explicit transactions.
+There is no generic event bus: the central whole-game stepper keeps the approved
+boundary order visible and testable.
+
+## Incremental mapping rule
+
+The Unity-to-canonical mapper keeps the complete prepared source privately
+while the port is incomplete. Dehydration clones that source and overwrites only
+paths whose domain ownership is covered by executable parity tests. This
+preserves not-yet-ported fields without treating the legacy graph as runtime
+authority.
+
+A mapping-coverage manifest must classify every durable Unity field as:
+
+- canonically owned;
+- derived and intentionally recomputed;
+- legacy duplicate intentionally omitted;
+- presentation preference;
+- platform entitlement; or
+- still unowned.
+
+Partial-port builds must use a separate development save and must not overwrite
+the player's canonical Unity save. Enabling canonical writes is a later release
+decision gated on complete mapping coverage and round-trip parity.
+
+## Implemented mapper checkpoint
+
+- The version-1 root currently types Meta, Timeline, Dyson, Research, Skills,
+  Infinity, Dream, Reality, Quantum, Avocado, secret progress and simulation
+  statistics.
+- Hydration accepts only `PreparedSave`.
+- Dehydration clones the privately preserved source and writes only declared
+  canonical paths.
+- Authentic schemas 0, 8, 10 and 11 round-trip through preparation, hydration
+  and dehydration. A generated schema-12 entry verifies current-schema
+  idempotence; an authentic schema-12 fixture is still required before making
+  that real-save claim.
+- The executable coverage manifest keeps release canonical writes disabled
+  while unmatched paths remain source-preserved.
+
+The next wave builds the startup/application coordinator with separate state
+and durable revisions, then routes existing Dyson/Infinity parity fixtures
+through the public engine.

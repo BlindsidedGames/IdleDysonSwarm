@@ -68,12 +68,16 @@ Dream therefore resolves before Infinity when both become ready simultaneously.
 
 ## Persistence boundary
 
+- Raw decoded save graphs cannot construct an engine. Startup requires an
+  opaque prepared-save proof produced by decode, migrate, repair and validate.
 - Stored-time work operates on an isolated candidate state.
 - A candidate is published only after its matching save and stored-time
   deduction are durably committed.
 - Cancellation or persistence failure preserves all uncommitted stored time.
 - Reset rewards, bot-cap rewards and one-time flags must be idempotent across
   save/reload boundaries.
+- Active state revision and durable save revision are separate application
+  concepts. Rejected, stale and no-op commands advance neither.
 
 ## Initial parity fixtures
 

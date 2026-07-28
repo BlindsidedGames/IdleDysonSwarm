@@ -21,4 +21,12 @@ describe('canonical web save serialization', () => {
     save.self = save
     expect(() => serializeWebSave(save)).toThrow('reference cycles')
   })
+
+  test('rejects mismatched envelope and state schemas', () => {
+    const encoded = serializeWebSave({ saveVersion: 12 })
+    const mismatched = encoded.replace('"schema": 12', '"schema": 11')
+    expect(() => deserializeWebSave(mismatched)).toThrow(
+      'does not match state schema',
+    )
+  })
 })

@@ -31,15 +31,19 @@ not copied into this repository.
 
 ## Port foundation
 
-- Pure TypeScript core and simulation boundary with no React dependency.
+- Typed, revision-checked transactional engine boundary with detached read-only
+  snapshots and no React dependency.
 - Exact event-time Dyson and Infinity simulation foundation.
 - Deterministic exporter for 559 Unity data assets, including stable IDs,
   resolved GUID references and source hashes.
 - Compact legacy skill/research ID and dependency catalogs.
 - Unity-compatible save normalization, migration, numeric repair and
   validation.
+- Typed version-1 game-state hydration/dehydration across the major durable
+  domains, with source preservation and an executable partial-coverage gate.
 - Precision-preserving `IDSWEB1` serialization for 64-bit integers and bytes.
-- Platform-neutral transactional save repository.
+- Platform-neutral transactional save repository with an opaque prepared-save
+  gate on load and commit.
 - Golden-master fixture and comparison tooling.
 - Platform capability contracts for future Electron and Capacitor adapters.
 
@@ -86,6 +90,7 @@ test/parity/           Executable save and simulation parity cases
 Before creating another product frontend, satisfy
 [frontend-readiness-gate.md](docs/frontend-readiness-gate.md). See also
 [architecture.md](docs/architecture.md),
+[game-state-contract.md](docs/game-state-contract.md),
 [simulation-contract.md](docs/simulation-contract.md),
 [parity-fixtures.md](docs/parity-fixtures.md), and
 [platform-port-inventory.md](docs/platform-port-inventory.md).

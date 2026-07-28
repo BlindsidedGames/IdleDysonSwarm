@@ -9,9 +9,13 @@ interface EncodedWebSave {
 }
 
 export function serializeWebSave(save: SaveRecord): string {
+  const schema = Number(save.saveVersion)
+  if (!Number.isInteger(schema) || schema < 0) {
+    throw new Error('Canonical web saves require a non-negative integer schema.')
+  }
   const envelope: EncodedWebSave = {
     format: WEB_SAVE_FORMAT,
-    schema: Number(save.saveVersion),
+    schema,
     state: encodeValue(save, new Set()),
   }
   return `${JSON.stringify(sortObject({ ...envelope }), null, 2)}\n`
@@ -23,7 +27,20 @@ export function deserializeWebSave(text: string): SaveRecord {
   if (envelope.format !== WEB_SAVE_FORMAT) {
     throw new Error(`Unsupported web save envelope ${String(envelope.format)}.`)
   }
-  return requireRecord(decodeValue(envelope.state), 'web save state')
+  if (
+    typeof envelope.schema !== 'number' ||
+    !Number.isInteger(envelope.schema) ||
+    envelope.schema < 0
+  ) {
+    throw new Error('Canonical web save envelope has an invalid schema.')
+  }
+  const state = requireRecord(decodeValue(envelope.state), 'web save state')
+  if (state.saveVersion !== envelope.schema) {
+    throw new Error(
+      `Web save envelope schema ${envelope.schema} does not match state schema ${String(state.saveVersion)}.`,
+    )
+  }
+  return state
 }
 
 function encodeValue(value: unknown, seen: Set<object>): unknown {
