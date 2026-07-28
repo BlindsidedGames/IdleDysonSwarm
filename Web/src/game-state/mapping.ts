@@ -20,6 +20,10 @@ import {
   type SkillRuntimeState,
 } from './types'
 import { validateCanonicalGameState } from './validate'
+import {
+  extractDysonCompatibilityTuning,
+  type DysonCompatibilityTuning,
+} from './compatibilityTuning'
 
 const DREAM_EDUCATION_IDS = [
   'engineering',
@@ -104,11 +108,14 @@ const RESEARCH_AUTOMATION_PATHS = {
 
 export class HydratedGameStateV1 {
   readonly state: CanonicalGameStateV1
+  readonly compatibilityTuning: Readonly<DysonCompatibilityTuning>
   private readonly preparedSource: PreparedSave
 
   constructor(state: CanonicalGameStateV1, preparedSource: PreparedSave) {
     this.state = state
     this.preparedSource = preparedSource
+    this.compatibilityTuning =
+      extractDysonCompatibilityTuning(preparedSource)
   }
 
   get initialState(): CanonicalGameStateV1 {

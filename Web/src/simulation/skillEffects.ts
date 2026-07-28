@@ -7,6 +7,10 @@ const SUPPORTED_STATIC_SKILLS = new Set([
   'superchargedPower',
 ])
 
+export function isSupportedStaticSkill(skillId: string): boolean {
+  return SUPPORTED_STATIC_SKILLS.has(skillId)
+}
+
 interface EffectReference {
   readonly id?: unknown
 }

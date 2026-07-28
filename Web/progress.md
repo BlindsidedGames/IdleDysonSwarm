@@ -206,6 +206,11 @@ Original prompt: Create a separate `Idle Dyson Swarm Web` project beside the Uni
   compatibility-only and platform entitlements stay outside player state.
 - Added executable ownership coverage and round-trip proof for all ten durable
   research-automation selections.
+- Extracted legacy-serialized Dyson tuning into a frozen compatibility input
+  without adding balance coefficients to canonical player state.
+- Added the first fail-closed canonical Dyson derivation. It matches Unity's
+  neutral and characterized static-skill rate vectors, derives ownership only
+  from stable skill state and reports typed issues for unported dependencies.
 
 ## TODO
 

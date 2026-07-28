@@ -49,6 +49,23 @@ allowed:
 - permanent double-IP: supply the platform entitlement independently from the
   canonical Quantum double-IP upgrade.
 
+## First derivation checkpoint
+
+The first pure canonical projection is intentionally bounded:
+
+- Compatibility tuning is extracted from the prepared save session without
+  becoming canonical player state.
+- The exact neutral and three-characterized-static-skill rate vectors match
+  their Unity golden masters.
+- Skill ownership comes only from `skills.byId`; presets and auto-assignment do
+  not implicitly activate effects.
+- Automatic/manual facility slots fold identically for rate calculation.
+- Unsupported active skills, research, secrets, Infinity modifiers, Avocado
+  modifiers and mega-structures return typed issues instead of approximations.
+
+This projection is derived-state evidence only. It does not yet make the
+parity-only Basic Dyson model the canonical whole-game engine.
+
 ## Required acceptance path
 
 Every whole-slice acceptance fixture must use the real boundary:
