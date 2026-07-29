@@ -4,6 +4,9 @@ Status: proposed for product approval. This document does not authorize product
 UI implementation. The frontend readiness gate remains closed until the
 approval checklist at the end is accepted or amended.
 
+Implementation coordination, review gates and recoverable checkpoints are
+defined separately in [`web-ui-delivery-waves.md`](web-ui-delivery-waves.md).
+
 ## Decision basis
 
 This contract is based on:
