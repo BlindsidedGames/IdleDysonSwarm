@@ -72,6 +72,8 @@ describe('ReadyDysonSlice', () => {
     expect(screen.queryByText(/repeat/i)).not.toBeInTheDocument()
     expect(screen.queryByText(/auto tinker/i)).not.toBeInTheDocument()
     expect(screen.queryByText(/owned/i)).not.toBeInTheDocument()
+    expect(screen.queryByRole('navigation')).not.toBeInTheDocument()
+    expect(screen.queryByText('Bot Distribution')).not.toBeInTheDocument()
   })
 
   test('uses published visibility even when ownership contradicts it', async () => {
@@ -388,9 +390,7 @@ describe('ReadyDysonSlice', () => {
       await user.tab()
       expect(target).toHaveFocus()
     }
-    expect(
-      container.querySelector('[aria-current="page"]'),
-    ).not.toHaveAttribute('tabindex')
+    expect(container.querySelector('[aria-current="page"]')).toBeNull()
   })
 
   test.each([
@@ -430,9 +430,6 @@ describe('ReadyDysonSlice', () => {
         // jsdom has no rendered color values. Contrast remains covered by
         // semantic-token tests and real-browser Wave 4 evidence.
         'color-contrast': { enabled: false },
-        // Both source-ordered navigation variants exist in the static DOM;
-        // responsive CSS displays exactly one at every approved band.
-        'landmark-unique': { enabled: false },
       },
     })
     expect(results.violations).toEqual([])

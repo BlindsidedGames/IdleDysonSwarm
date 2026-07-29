@@ -1,6 +1,7 @@
 # Wave 3 parity layout reference
 
-Status: committed design reference. Approved by the user on 2026-07-29.
+Status: committed design reference. Approved by the user on 2026-07-29 and
+corrected against the canonical Bots baseline on 2026-07-30.
 
 This is the first-slice composition reference required by
 [`product-ui-foundation.md`](product-ui-foundation.md). It does not approve the
@@ -61,18 +62,24 @@ Diagram key:
 
 - `T`: Tinker only when `showTinker` is true.
 - `????`: generic teaser only when backend-authorized.
-- `Production summary` and `Bot Distribution`: lower Unity regions backed by
-  snapshot facts. Bot Distribution controls remain outside this slice. Unity's
-  separate `Info` card is deferred until its active-panel, lifetime and
-  total-decayed facts are projected by the canonical snapshot.
+- `Production summary`: the lower Unity production lines backed by snapshot
+  facts. It fills the available lower region in this slice.
+- The entire Bot Distribution region is deferred until its canonical controls
+  and player commands are in scope. Read-only percentages are not presented as
+  a premature substitute. Unity's separate `Info` card is deferred until its
+  active-panel, lifetime and total-decayed facts are projected by the canonical
+  snapshot.
 
 ## Shared layout and focus
 
-Visual, keyboard and screen-reader order is: navigation when persistent,
-resources, Tinker when present, facilities in supplied order, optional teaser,
-then Production summary and Bot Distribution. The teaser is not a control and
-has no focus
-target.
+Visual, keyboard and screen-reader order is: navigation only when at least two
+destinations are available, the `Bots` route heading, resources, Tinker when
+present, facilities in supplied order, optional teaser, then Production
+summary. The route heading is visible when Bots is the sole destination and
+visually hidden but accessible when multi-destination navigation identifies
+the current route. The teaser is not a control and has no focus target. With
+only the Bots destination, both the rail and bottom navigation are absent
+rather than repeating the current page as a no-op control.
 
 The resource header preserves Unity's hierarchy: `Cash`, `Total Bots`,
 `Science`. Facility cards retain count, output, exact previewed cost and
@@ -82,11 +89,14 @@ remaining time and progress—never a separate repeat control.
 
 ## Compact portrait — 320–599 CSS px
 
-One content column, bottom navigation and safe-area padding. The bottom bar
-does not cover the final focused action or software keyboard.
+One content column and safe-area padding. Bottom navigation appears only after
+a second real destination is available; when present, it does not cover the
+final focused action or software keyboard.
 
 ```text
 Fresh                                  Assembly revealed
++------------------------------+       +------------------------------+
+| Bots                         |       | Bots                         |
 +------------------------------+       +------------------------------+
 | Cash | Total Bots | Science  |       | Cash | Total Bots | Science  |
 +------------------------------+       +------------------------------+
@@ -95,66 +105,69 @@ Fresh                                  Assembly revealed
 | ????                         |       | Assembly Lines               |
 +------------------------------+       +------------------------------+
 | Production summary           |       | ????                         |
-| Bot Distribution             |       +------------------------------+
 +------------------------------+       | Production summary           |
-| Bottom navigation            |       | Bot Distribution             |
-+------------------------------+       +------------------------------+
-                                       | Bottom navigation            |
                                        +------------------------------+
 ```
 
 ## Medium/tablet — 600–1023 CSS px
 
-Keep the same reading order. Use bottom navigation or compact rail according to
-the foundation's available-destination rule. The approved Fresh and
-Assembly-revealed states remain one facility column because neither has two
+Keep the same reading order. Use bottom navigation or compact rail only after a
+second real destination is available. The approved Fresh and Assembly-revealed
+states have no rail and remain one facility column because neither has two
 visible facilities.
 
 ```text
 Fresh                                  Assembly revealed
-+-------+----------------------------+ +-------+----------------------------+
-| Rail  | Cash | Total Bots | Science| | Rail  | Cash | Total Bots | Science|
-|       +----------------------------+ |       +----------------------------+
-|       | T                          | |       | T                          |
-|       +----------------------------+ |       +----------------------------+
-|       | ????                       | |       | Assembly Lines             |
-|       +----------------------------+ |       +----------------------------+
-|       | Summary / Bot Distribution | |       | ????                       |
-+-------+----------------------------+ |       +----------------------------+
-                                       |       | Summary / Bot Distribution |
-                                       +-------+----------------------------+
++------------------------------------+ +------------------------------------+
+| Bots                               | | Bots                               |
++------------------------------------+ +------------------------------------+
+| Cash | Total Bots | Science        | | Cash | Total Bots | Science        |
++------------------------------------+ +------------------------------------+
+| T                                  | | T                                  |
++------------------------------------+ +------------------------------------+
+| ????                               | | Assembly Lines                     |
++------------------------------------+ +------------------------------------+
+| Production summary                 | | ????                               |
++------------------------------------+ +------------------------------------+
+                                       | Production summary                 |
+                                       +------------------------------------+
 ```
 
 ## Wide desktop — 1024 CSS px and above
 
-Directly mirror Unity's broad hierarchy: persistent left rail; top `Cash`,
-`Total Bots`, `Science`; the Tinker surface; a two-column row-major
-facility grid when backend visibility supplies sufficient cards; one generic
-teaser after the last revealed card; and the lower Production summary plus
-Bot Distribution.
+Directly mirror Unity's broad hierarchy: a visible `Bots` heading while it is
+the only destination; top `Cash`, `Total Bots`, `Science`; the Tinker surface;
+a two-column row-major facility grid only when backend visibility supplies at
+least two cards; one generic teaser after the last revealed card; and the
+full-width lower Production summary. A persistent left rail replaces the
+visible route-heading treatment only after at least two destinations exist.
 Bound content width instead of stretching facility rows into long lines.
 
 ```text
 Fresh
-+----------+---------------------------------------------------------------+
-| Left     | Cash                 Total Bots                    Science     |
-| rail     +-------------------------------+-------------------------------+
-|          | Tinker surface                                               |
-|          | ????                                                          |
-|          +-------------------------------+-------------------------------+
-|          | Production summary                Bot Distribution            |
-+----------+---------------------------------------------------------------+
++--------------------------------------------------------------------------+
+| Bots                                                                     |
++--------------------------------------------------------------------------+
+| Cash                     Total Bots                         Science       |
++--------------------------------------------------------------------------+
+| Tinker surface                                                           |
+| ????                                                                     |
++--------------------------------------------------------------------------+
+| Production summary                                                       |
++--------------------------------------------------------------------------+
 
 Assembly revealed: bots >= 10, manual Assembly 0, no owned managers
-+----------+---------------------------------------------------------------+
-| Left     | Cash                 Total Bots                    Science     |
-| rail     +-------------------------------+-------------------------------+
-|          | Tinker surface                 | Assembly Lines                |
-|          |                               +-------------------------------+
-|          |                               | ????                          |
-|          +-------------------------------+-------------------------------+
-|          | Production summary                Bot Distribution            |
-+----------+---------------------------------------------------------------+
++--------------------------------------------------------------------------+
+| Bots                                                                     |
++--------------------------------------------------------------------------+
+| Cash                     Total Bots                         Science       |
++--------------------------------------------------------------------------+
+| Tinker surface                    | Assembly Lines                        |
+|                                   +---------------------------------------+
+|                                   | ????                                  |
++--------------------------------------------------------------------------+
+| Production summary                                                       |
++--------------------------------------------------------------------------+
 ```
 
 ### Later-progression wide grid schematic
@@ -163,15 +176,17 @@ This is not Fresh or Assembly-revealed. It applies only when the backend's
 ordered visible collection contains `Assembly Lines` followed by `AI Managers`.
 
 ```text
-+----------+---------------------------------------------------------------+
-| Left     | Cash                 Total Bots                    Science     |
-| rail     +-------------------------------+---------------+---------------+
-|          | Tinker surface                 |Assembly Lines | AI Managers   |
-|          |                               +---------------+---------------+
-|          |                               | ????                          |
-|          +-------------------------------+-------------------------------+
-|          | Production summary                Bot Distribution            |
-+----------+---------------------------------------------------------------+
++--------------------------------------------------------------------------+
+| Bots                                                                     |
++--------------------------------------------------------------------------+
+| Cash                     Total Bots                         Science       |
++--------------------------------------------------------------------------+
+| Tinker surface                    | Assembly Lines | AI Managers          |
+|                                   +----------------+----------------------+
+|                                   | ????                                  |
++--------------------------------------------------------------------------+
+| Production summary                                                       |
++--------------------------------------------------------------------------+
 ```
 
 The grid fills row-major from supplied order. Its final row does not fabricate a
@@ -180,13 +195,15 @@ never before it and never once per column.
 
 ## Compact landscape — 320–599 CSS px wide
 
-Retain bottom navigation. Use the short height to place Tinker beside the
-first content area only when that preserves the one-column facility reading
-order and 44-by-44 CSS-pixel targets; otherwise use the compact-portrait stack.
-Never horizontally scroll.
+Retain bottom navigation only when at least two destinations exist. Use the
+short height to place Tinker beside the first content area only when that
+preserves the one-column facility reading order and 44-by-44 CSS-pixel targets;
+otherwise use the compact-portrait stack. Never horizontally scroll.
 
 ```text
 Fresh                                  Assembly revealed
++-----------------------------------+  +-----------------------------------+
+| Bots                              |  | Bots                              |
 +-----------------------------------+  +-----------------------------------+
 | Cash | Total Bots | Science        |  | Cash | Total Bots | Science        |
 +-------------------+---------------+  +-------------------+---------------+
@@ -194,9 +211,7 @@ Fresh                                  Assembly revealed
 +-----------------------------------+  +-------------------+---------------+
 | ????                              |  | ????                              |
 +-----------------------------------+  +-----------------------------------+
-| Summary / Bot Distribution         |  | Summary / Bot Distribution         |
-+-----------------------------------+  +-----------------------------------+
-| Bottom navigation                  |  | Bottom navigation                  |
+| Production summary                |  | Production summary                |
 +-----------------------------------+  +-----------------------------------+
 ```
 

@@ -72,5 +72,4 @@ export interface DysonGameplayShellProps {
    */
   readonly facilities: ReactNode
   readonly productionSummary?: DysonShellRegion
-  readonly botDistribution?: DysonShellRegion
 }

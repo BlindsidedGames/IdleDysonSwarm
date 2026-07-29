@@ -288,7 +288,7 @@ describe('TinkerSurface transient interaction', () => {
       'button',
       {
         name:
-          'Manually put together a new bot from parts in your shed.',
+          'Tinker Manually put together a new bot from parts in your shed.',
       },
     )
     installPointerCapture(first)
@@ -460,6 +460,12 @@ describe('TinkerSurface presentation and accessibility', () => {
       }),
     )
 
+    expect(screen.getByText('Tinker')).toBeInTheDocument()
+    expect(
+      screen.getByText(
+        'Manually put together a new bot from parts in your shed.',
+      ),
+    ).toBeInTheDocument()
     expect(
       screen.getByText(
         /Masterfully made you will produce 3\./,
@@ -535,7 +541,7 @@ function tinkerElement(
 function tinkerButton(): HTMLButtonElement {
   return screen.getByRole('button', {
     name:
-      'Manually put together a new bot from parts in your shed.',
+      'Tinker Manually put together a new bot from parts in your shed.',
   })
 }
 

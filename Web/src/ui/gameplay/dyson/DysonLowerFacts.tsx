@@ -44,34 +44,6 @@ export function DysonProductionSummary({
   )
 }
 
-export function DysonBotDistributionFacts({
-  gameplay,
-  locale,
-}: DysonLowerFactsProps) {
-  const intl = useIntl()
-  const distribution = gameplay.derived.dysonBotDistribution
-  const percent = (value: number) =>
-    formatNumber(locale, value, {
-      style: 'percent',
-      maximumFractionDigits: 0,
-    })
-  return (
-    <div className="dyson-bot-distribution">
-      <h2>{intl.formatMessage(messages.botDistribution)}</h2>
-      <dl>
-        <div>
-          <dt>{intl.formatMessage(messages.workers)}</dt>
-          <dd>{percent(distribution.workersFraction)}</dd>
-        </div>
-        <div>
-          <dt>{intl.formatMessage(messages.scientists)}</dt>
-          <dd>{percent(distribution.scientistsFraction)}</dd>
-        </div>
-      </dl>
-    </div>
-  )
-}
-
 function formatFact(
   locale: EnabledLocale,
   value: number,

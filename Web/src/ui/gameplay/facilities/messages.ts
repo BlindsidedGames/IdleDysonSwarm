@@ -7,6 +7,42 @@ export const basicFacilityMessages = defineMessages({
     description:
       'Screen-reader heading for the early Dyson basic-facility region.',
   },
+  assemblyLinesName: {
+    id: 'dyson.facilities.assembly-lines.name',
+    defaultMessage: 'Assembly Lines',
+    description:
+      'Visible localized name for the Assembly Lines facility.',
+  },
+  aiManagersName: {
+    id: 'dyson.facilities.ai-managers.name',
+    defaultMessage: 'AI Managers',
+    description:
+      'Visible localized name for the AI Managers facility.',
+  },
+  serversName: {
+    id: 'dyson.facilities.servers.name',
+    defaultMessage: 'Servers',
+    description:
+      'Visible localized name for the Servers facility.',
+  },
+  dataCentersName: {
+    id: 'dyson.facilities.data-centers.name',
+    defaultMessage: 'Data Centers',
+    description:
+      'Visible localized name for the Data Centers facility.',
+  },
+  planetsName: {
+    id: 'dyson.facilities.planets.name',
+    defaultMessage: 'Planets',
+    description:
+      'Visible localized name for the Planets facility.',
+  },
+  manualCount: {
+    id: 'dyson.facilities.manual-count',
+    defaultMessage: '({manual})',
+    description:
+      'Visible parenthesized manual-owned count beside a facility total.',
+  },
   assemblyLinesIdentity: {
     id: 'dyson.facilities.assembly-lines.identity',
     defaultMessage: 'Assembly Lines {total}({manual})',

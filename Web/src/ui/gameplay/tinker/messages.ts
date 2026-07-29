@@ -1,6 +1,12 @@
 import { defineMessages } from 'react-intl'
 
 export const tinkerMessages = defineMessages({
+  title: {
+    id: 'dyson.tinker.title',
+    defaultMessage: 'Tinker',
+    description:
+      'Visible primary title for the Unity manual-creation action.',
+  },
   action: {
     id: 'dyson.tinker.action',
     defaultMessage:

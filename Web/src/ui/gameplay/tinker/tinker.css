@@ -55,15 +55,25 @@
   opacity: 0.65;
 }
 
+.tinker-surface__title,
 .tinker-surface__label,
 .tinker-surface__output,
 .tinker-surface__time {
   min-inline-size: 0;
 }
 
-.tinker-surface__label {
+.tinker-surface__title {
   font-size: var(--font-size-lg);
   font-weight: var(--font-weight-bold);
+}
+
+.tinker-surface__label,
+.tinker-surface__output {
+  grid-column: 1 / -1;
+}
+
+.tinker-surface__label {
+  overflow-wrap: anywhere;
 }
 
 .tinker-surface__output,

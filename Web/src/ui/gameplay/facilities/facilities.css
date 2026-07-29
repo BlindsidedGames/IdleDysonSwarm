@@ -55,8 +55,26 @@
 }
 
 .basic-facility-card__identity {
-  color: var(--color-accent-value);
   font-weight: var(--font-weight-bold);
+}
+
+.basic-facility-card__visible-identity {
+  unicode-bidi: isolate;
+}
+
+.basic-facility-card__name {
+  margin-inline-end: 0.25em;
+}
+
+.basic-facility-card__total {
+  color: var(--color-accent-value);
+  font-family: var(--font-family-numeric);
+  font-variant-numeric: tabular-nums;
+}
+
+.basic-facility-card__manual {
+  color: var(--color-positive);
+  font-family: var(--font-family-numeric);
   font-variant-numeric: tabular-nums;
 }
 
@@ -106,7 +124,11 @@
 }
 
 @media (min-width: 1024px) {
-  .basic-facility-region__grid {
+  .basic-facility-region[data-visible-facility-count]:not(
+    [data-visible-facility-count="0"]
+  ):not(
+    [data-visible-facility-count="1"]
+  ) .basic-facility-region__grid {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 

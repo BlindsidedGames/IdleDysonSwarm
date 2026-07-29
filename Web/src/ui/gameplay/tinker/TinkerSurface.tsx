@@ -37,6 +37,7 @@ export function TinkerSurface({
   className,
 }: TinkerSurfaceProps) {
   const intl = useIntl()
+  const titleId = useId()
   const actionId = useId()
   const outputId = useId()
   const remainingId = useId()
@@ -96,7 +97,7 @@ export function TinkerSurface({
         type="button"
         className="tinker-surface__control"
         data-gesture-active={gesture.active}
-        aria-labelledby={actionId}
+        aria-labelledby={`${titleId} ${actionId}`}
         aria-describedby={`${outputId} ${remainingId}`}
         disabled={disabled}
         onPointerDown={gesture.onPointerDown}
@@ -108,9 +109,12 @@ export function TinkerSurface({
         onBlur={gesture.onBlur}
         onClick={gesture.onClick}
       >
-        <strong id={actionId} className="tinker-surface__label">
-          {intl.formatMessage(tinkerMessages.action)}
+        <strong id={titleId} className="tinker-surface__title">
+          {intl.formatMessage(tinkerMessages.title)}
         </strong>
+        <span id={actionId} className="tinker-surface__label">
+          {intl.formatMessage(tinkerMessages.action)}
+        </span>
         <span id={outputId} className="tinker-surface__output">
           {description}
         </span>

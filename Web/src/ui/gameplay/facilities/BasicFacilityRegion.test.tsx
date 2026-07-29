@@ -1,6 +1,9 @@
 // @vitest-environment jsdom
+/// <reference types="node" />
 
 import '@testing-library/jest-dom/vitest'
+import { readFileSync } from 'node:fs'
+import { resolve } from 'node:path'
 import axe from 'axe-core'
 import {
   act,
@@ -24,6 +27,18 @@ import {
   type BasicFacilityRegionProps,
   type EarlyBasicFacilityId,
 } from './BasicFacilityRegion'
+
+const facilitiesCss = readFileSync(
+  resolve(process.cwd(), 'src/ui/gameplay/facilities/facilities.css'),
+  'utf8',
+)
+const facilitySource = readFileSync(
+  resolve(
+    process.cwd(),
+    'src/ui/gameplay/facilities/BasicFacilityRegion.tsx',
+  ),
+  'utf8',
+)
 
 afterEach(cleanup)
 
@@ -116,7 +131,7 @@ describe('BasicFacilityRegion', () => {
   })
 
   it('renders the 10-bot projection as Assembly Lines only followed by the teaser', () => {
-    renderRegion({
+    const { container } = renderRegion({
       visibleBasicFacilityIds: ['assembly_lines'],
       showNextTierTeaser: true,
     })
@@ -134,6 +149,8 @@ describe('BasicFacilityRegion', () => {
     expect(items).toHaveLength(2)
     expect(items[0]).toContainElement(articles[0])
     expect(items[1]).toContainElement(screen.getByText('????'))
+    expect(container.querySelector('.basic-facility-region'))
+      .toHaveAttribute('data-visible-facility-count', '1')
   })
 
   it('preserves checkpoint order and exact canonical card values', () => {
@@ -168,8 +185,18 @@ describe('BasicFacilityRegion', () => {
       'AI Managers 5(3)',
     )
     const assembly = within(articles[0])
-    expect(assembly.getByText('Assembly Lines 12(5)'))
-      .toHaveAttribute('title', 'Assembly Lines 12(5)')
+    const identity = assembly.getByTitle('Assembly Lines 12(5)')
+    expect(identity).toHaveTextContent('Assembly Lines 12(5)')
+    expect(identity.querySelector('.basic-facility-card__name'))
+      .toHaveTextContent('Assembly Lines')
+    expect(identity.querySelector('.basic-facility-card__total'))
+      .toHaveTextContent('12')
+    expect(identity.querySelector('.basic-facility-card__total'))
+      .toHaveAttribute('value', '12')
+    expect(identity.querySelector('.basic-facility-card__manual'))
+      .toHaveTextContent('(5)')
+    expect(identity.querySelector('.basic-facility-card__manual'))
+      .toHaveAttribute('value', '5')
     expect(assembly.getByText('Producing 4.25 Bots /s'))
       .toBeInTheDocument()
     expect(
@@ -502,11 +529,79 @@ describe('BasicFacilityRegion', () => {
     })
     expect(results.violations).toEqual([])
   })
+
+  it('keeps the wide facility grid count-aware in source and CSS', () => {
+    const { container, rerender } = renderRegion({
+      visibleBasicFacilityIds: ['assembly_lines'],
+    })
+    const region = container.querySelector('.basic-facility-region')
+    expect(region).toHaveAttribute('data-visible-facility-count', '1')
+
+    rerenderRegion(rerender, {
+      visibleBasicFacilityIds: [
+        'assembly_lines',
+        'ai_managers',
+      ],
+    })
+    expect(region).toHaveAttribute('data-visible-facility-count', '2')
+    expect(facilitySource).toContain(
+      'data-visible-facility-count={visibleBasicFacilityIds.length}',
+    )
+    expect(facilitiesCss).toMatch(
+      /@media \(min-width: 1024px\)[\s\S]*\.basic-facility-region\[data-visible-facility-count\]:not\(\s*\[data-visible-facility-count="0"\]\s*\):not\(\s*\[data-visible-facility-count="1"\]\s*\) \.basic-facility-region__grid\s*\{\s*grid-template-columns:\s*repeat\(2,\s*minmax\(0,\s*1fr\)\);/,
+    )
+    expect(facilitiesCss).not.toMatch(
+      /@media \(min-width: 1024px\)\s*\{\s*\.basic-facility-region__grid\s*\{\s*grid-template-columns:\s*repeat\(2,/,
+    )
+  })
+
+  it('keeps localized visual pieces separate from the full accessible identity', () => {
+    const { container } = renderRegion({
+      visibleBasicFacilityIds: ['assembly_lines'],
+      facilityFacts: {
+        ...facilityFacts,
+        assembly_lines: {
+          owned: [7, 5],
+          productionPerSecond: 4.25,
+        },
+      },
+      messages: {
+        'dyson.facilities.assembly-lines.name':
+          '[Expanded Assembly Name]',
+        'dyson.facilities.assembly-lines.identity':
+          '[Assembly identity: manual {manual}; total {total}]',
+      },
+      direction: 'rtl',
+    })
+
+    const article = screen.getByRole('article')
+    expect(article).toHaveAccessibleName(
+      '[Assembly identity: manual 5; total 12]',
+    )
+    expect(within(article).getByText('[Expanded Assembly Name]'))
+      .toHaveClass('basic-facility-card__name')
+    expect(
+      container.querySelector('.basic-facility-card__total'),
+    ).toHaveTextContent('12')
+    expect(
+      container.querySelector('.basic-facility-card__manual'),
+    ).toHaveTextContent('(5)')
+    expect(article).not.toHaveAccessibleName(
+      '[Expanded Assembly Name] 12(5)',
+    )
+    expect(facilitiesCss).toMatch(
+      /\.basic-facility-card__total\s*\{[\s\S]*?color:\s*var\(--color-accent-value\);/,
+    )
+    expect(facilitiesCss).toMatch(
+      /\.basic-facility-card__manual\s*\{[\s\S]*?color:\s*var\(--color-positive\);/,
+    )
+  })
 })
 
 interface RenderOptions
   extends Partial<Omit<BasicFacilityRegionProps, 'dispatchPlayer'>> {
   readonly direction?: 'ltr' | 'rtl'
+  readonly messages?: Readonly<Record<string, string>>
   readonly dispatchPlayer?: BasicFacilityRegionProps['dispatchPlayer']
 }
 
@@ -514,7 +609,11 @@ function renderRegion(options: RenderOptions = {}) {
   const props = regionProps(options)
   return render(
     <div dir={options.direction ?? 'ltr'}>
-      <IntlProvider locale="en" onError={() => undefined}>
+      <IntlProvider
+        locale="en"
+        messages={options.messages}
+        onError={() => undefined}
+      >
         <BasicFacilityRegion {...props} />
       </IntlProvider>
     </div>,
@@ -528,7 +627,11 @@ function rerenderRegion(
   const props = regionProps(options)
   rerender(
     <div dir={options.direction ?? 'ltr'}>
-      <IntlProvider locale="en" onError={() => undefined}>
+      <IntlProvider
+        locale="en"
+        messages={options.messages}
+        onError={() => undefined}
+      >
         <BasicFacilityRegion {...props} />
       </IntlProvider>
     </div>,

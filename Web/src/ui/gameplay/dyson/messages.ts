@@ -96,19 +96,4 @@ export const readyDysonMessages = defineMessages({
     description:
       'Unity lower-panel science production line with the science icon represented by its surrounding context.',
   },
-  botDistribution: {
-    id: 'dyson.bot-distribution.heading',
-    defaultMessage: 'Bot Distribution',
-    description: 'Exact Unity Bot Distribution heading.',
-  },
-  workers: {
-    id: 'dyson.bot-distribution.workers',
-    defaultMessage: 'Workers',
-    description: 'Exact Unity worker allocation label.',
-  },
-  scientists: {
-    id: 'dyson.bot-distribution.scientists',
-    defaultMessage: 'Scientists',
-    description: 'Exact Unity scientist allocation label.',
-  },
 })

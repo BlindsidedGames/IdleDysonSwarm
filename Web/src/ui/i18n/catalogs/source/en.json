@@ -1,19 +1,11 @@
 {
-  "dyson.bot-distribution.heading": {
-    "defaultMessage": "Bot Distribution",
-    "description": "Exact Unity Bot Distribution heading."
-  },
-  "dyson.bot-distribution.scientists": {
-    "defaultMessage": "Scientists",
-    "description": "Exact Unity scientist allocation label."
-  },
-  "dyson.bot-distribution.workers": {
-    "defaultMessage": "Workers",
-    "description": "Exact Unity worker allocation label."
-  },
   "dyson.facilities.ai-managers.identity": {
     "defaultMessage": "AI Managers {total}({manual})",
     "description": "Compact Unity identity with canonical total and manual AI Manager counts."
+  },
+  "dyson.facilities.ai-managers.name": {
+    "defaultMessage": "AI Managers",
+    "description": "Visible localized name for the AI Managers facility."
   },
   "dyson.facilities.ai-managers.production-minutes": {
     "defaultMessage": "Generating 1 Assembly Line /{interval} Min",
@@ -39,6 +31,10 @@
     "defaultMessage": "Assembly Lines {total}({manual})",
     "description": "Compact Unity identity with canonical total and manual Assembly Line counts."
   },
+  "dyson.facilities.assembly-lines.name": {
+    "defaultMessage": "Assembly Lines",
+    "description": "Visible localized name for the Assembly Lines facility."
+  },
   "dyson.facilities.assembly-lines.production-minutes": {
     "defaultMessage": "Producing 1 Bot /{interval} Min",
     "description": "Unity-authored production phrase when Assembly Lines take at least one minute to produce a Bot."
@@ -62,6 +58,10 @@
   "dyson.facilities.data-centers.identity": {
     "defaultMessage": "Data Centers {total}({manual})",
     "description": "Compact Unity identity with canonical total and manual Data Center counts."
+  },
+  "dyson.facilities.data-centers.name": {
+    "defaultMessage": "Data Centers",
+    "description": "Visible localized name for the Data Centers facility."
   },
   "dyson.facilities.data-centers.production-minutes": {
     "defaultMessage": "Deploying 1 Server /{interval} Min",
@@ -87,6 +87,10 @@
     "defaultMessage": "Facilities",
     "description": "Screen-reader heading for the early Dyson basic-facility region."
   },
+  "dyson.facilities.manual-count": {
+    "defaultMessage": "({manual})",
+    "description": "Visible parenthesized manual-owned count beside a facility total."
+  },
   "dyson.facilities.next-tier-teaser": {
     "defaultMessage": "????",
     "description": "Generic non-interactive teaser shown after the final visible facility."
@@ -94,6 +98,10 @@
   "dyson.facilities.planets.identity": {
     "defaultMessage": "Planets {total}({manual})",
     "description": "Compact Unity identity with canonical total and manual Planet counts."
+  },
+  "dyson.facilities.planets.name": {
+    "defaultMessage": "Planets",
+    "description": "Visible localized name for the Planets facility."
   },
   "dyson.facilities.planets.production-minutes": {
     "defaultMessage": "Creating 1 Data Center /{interval} Min",
@@ -166,6 +174,10 @@
   "dyson.facilities.servers.identity": {
     "defaultMessage": "Servers {total}({manual})",
     "description": "Compact Unity identity with canonical total and manual Server counts."
+  },
+  "dyson.facilities.servers.name": {
+    "defaultMessage": "Servers",
+    "description": "Visible localized name for the Servers facility."
   },
   "dyson.facilities.servers.production-minutes": {
     "defaultMessage": "Training 1 AI Manager /{interval} Min",
@@ -286,6 +298,10 @@
   "dyson.tinker.region": {
     "defaultMessage": "Tinker",
     "description": "Accessible name for the Unity Tinker region."
+  },
+  "dyson.tinker.title": {
+    "defaultMessage": "Tinker",
+    "description": "Visible primary title for the Unity manual-creation action."
   },
   "shared.action.dismiss": {
     "defaultMessage": "Dismiss",

@@ -1,46 +1,4 @@
 {
-  "dyson.bot-distribution.heading": [
-    {
-      "type": 0,
-      "value": "["
-    },
-    {
-      "type": 0,
-      "value": "Ɓǿǿŧ Ḓīşŧřīƀŭŭŧīǿǿƞ"
-    },
-    {
-      "type": 0,
-      "value": "]"
-    }
-  ],
-  "dyson.bot-distribution.scientists": [
-    {
-      "type": 0,
-      "value": "["
-    },
-    {
-      "type": 0,
-      "value": "Şƈīḗḗƞŧīşŧş"
-    },
-    {
-      "type": 0,
-      "value": "]"
-    }
-  ],
-  "dyson.bot-distribution.workers": [
-    {
-      "type": 0,
-      "value": "["
-    },
-    {
-      "type": 0,
-      "value": "Ẇǿǿřķḗḗřş"
-    },
-    {
-      "type": 0,
-      "value": "]"
-    }
-  ],
   "dyson.facilities.ai-managers.identity": [
     {
       "type": 0,
@@ -65,6 +23,20 @@
     {
       "type": 0,
       "value": ")"
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "dyson.facilities.ai-managers.name": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "ȦĪ Ḿȧȧƞȧȧɠḗḗřş"
     },
     {
       "type": 0,
@@ -207,6 +179,20 @@
       "value": "]"
     }
   ],
+  "dyson.facilities.assembly-lines.name": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Ȧşşḗḗḿƀŀẏ Ŀīƞḗḗş"
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
   "dyson.facilities.assembly-lines.production-minutes": [
     {
       "type": 0,
@@ -343,6 +329,20 @@
       "value": "]"
     }
   ],
+  "dyson.facilities.data-centers.name": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Ḓȧȧŧȧȧ Ƈḗḗƞŧḗḗřş"
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
   "dyson.facilities.data-centers.production-minutes": [
     {
       "type": 0,
@@ -463,6 +463,28 @@
       "value": "]"
     }
   ],
+  "dyson.facilities.manual-count": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "("
+    },
+    {
+      "type": 1,
+      "value": "manual"
+    },
+    {
+      "type": 0,
+      "value": ")"
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
   "dyson.facilities.next-tier-teaser": [
     {
       "type": 0,
@@ -501,6 +523,20 @@
     {
       "type": 0,
       "value": ")"
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "dyson.facilities.planets.name": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Ƥŀȧȧƞḗḗŧş"
     },
     {
       "type": 0,
@@ -821,6 +857,20 @@
     {
       "type": 0,
       "value": ")"
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "dyson.facilities.servers.name": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Şḗḗřṽḗḗřş"
     },
     {
       "type": 0,
@@ -1330,6 +1380,20 @@
     }
   ],
   "dyson.tinker.region": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Ŧīƞķḗḗř"
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "dyson.tinker.title": [
     {
       "type": 0,
       "value": "["

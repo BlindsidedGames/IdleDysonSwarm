@@ -36,7 +36,6 @@ import {
 } from '../../performance/firstSliceCommitProbe'
 import { readyDysonMessages as messages } from './messages'
 import {
-  DysonBotDistributionFacts,
   DysonProductionSummary,
 } from './DysonLowerFacts'
 
@@ -307,15 +306,6 @@ export function ReadyDysonSlice({
         ariaLabel: intl.formatMessage(messages.productionSummary),
         content: (
           <DysonProductionSummary
-            gameplay={gameplay}
-            locale={locale}
-          />
-        ),
-      }}
-      botDistribution={{
-        ariaLabel: intl.formatMessage(messages.botDistribution),
-        content: (
-          <DysonBotDistributionFacts
             gameplay={gameplay}
             locale={locale}
           />

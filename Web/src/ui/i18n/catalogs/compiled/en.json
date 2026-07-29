@@ -1,22 +1,4 @@
 {
-  "dyson.bot-distribution.heading": [
-    {
-      "type": 0,
-      "value": "Bot Distribution"
-    }
-  ],
-  "dyson.bot-distribution.scientists": [
-    {
-      "type": 0,
-      "value": "Scientists"
-    }
-  ],
-  "dyson.bot-distribution.workers": [
-    {
-      "type": 0,
-      "value": "Workers"
-    }
-  ],
   "dyson.facilities.ai-managers.identity": [
     {
       "type": 0,
@@ -37,6 +19,12 @@
     {
       "type": 0,
       "value": ")"
+    }
+  ],
+  "dyson.facilities.ai-managers.name": [
+    {
+      "type": 0,
+      "value": "AI Managers"
     }
   ],
   "dyson.facilities.ai-managers.production-minutes": [
@@ -127,6 +115,12 @@
       "value": ")"
     }
   ],
+  "dyson.facilities.assembly-lines.name": [
+    {
+      "type": 0,
+      "value": "Assembly Lines"
+    }
+  ],
   "dyson.facilities.assembly-lines.production-minutes": [
     {
       "type": 0,
@@ -215,6 +209,12 @@
       "value": ")"
     }
   ],
+  "dyson.facilities.data-centers.name": [
+    {
+      "type": 0,
+      "value": "Data Centers"
+    }
+  ],
   "dyson.facilities.data-centers.production-minutes": [
     {
       "type": 0,
@@ -287,6 +287,20 @@
       "value": "Facilities"
     }
   ],
+  "dyson.facilities.manual-count": [
+    {
+      "type": 0,
+      "value": "("
+    },
+    {
+      "type": 1,
+      "value": "manual"
+    },
+    {
+      "type": 0,
+      "value": ")"
+    }
+  ],
   "dyson.facilities.next-tier-teaser": [
     {
       "type": 0,
@@ -313,6 +327,12 @@
     {
       "type": 0,
       "value": ")"
+    }
+  ],
+  "dyson.facilities.planets.name": [
+    {
+      "type": 0,
+      "value": "Planets"
     }
   ],
   "dyson.facilities.planets.production-minutes": [
@@ -489,6 +509,12 @@
     {
       "type": 0,
       "value": ")"
+    }
+  ],
+  "dyson.facilities.servers.name": [
+    {
+      "type": 0,
+      "value": "Servers"
     }
   ],
   "dyson.facilities.servers.production-minutes": [
@@ -762,6 +788,12 @@
     }
   ],
   "dyson.tinker.region": [
+    {
+      "type": 0,
+      "value": "Tinker"
+    }
+  ],
+  "dyson.tinker.title": [
     {
       "type": 0,
       "value": "Tinker"

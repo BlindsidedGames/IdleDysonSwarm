@@ -78,6 +78,7 @@ type PurchaseFeedback = {
 }
 
 interface FacilityPresentationMessages {
+  readonly name: MessageDescriptor
   readonly identity: MessageDescriptor
   readonly purchasePrompt: MessageDescriptor
   readonly purchaseAccessible: MessageDescriptor
@@ -90,6 +91,7 @@ const facilityMessages: Readonly<
   Record<EarlyBasicFacilityId, FacilityPresentationMessages>
 > = {
   assembly_lines: {
+    name: messages.assemblyLinesName,
     identity: messages.assemblyLinesIdentity,
     purchasePrompt: messages.purchaseAssemblyLine,
     purchaseAccessible: messages.purchaseAssemblyLineAccessible,
@@ -99,6 +101,7 @@ const facilityMessages: Readonly<
     productionMinutes: messages.assemblyLinesProductionMinutes,
   },
   ai_managers: {
+    name: messages.aiManagersName,
     identity: messages.aiManagersIdentity,
     purchasePrompt: messages.purchaseAiManager,
     purchaseAccessible: messages.purchaseAiManagerAccessible,
@@ -107,6 +110,7 @@ const facilityMessages: Readonly<
     productionMinutes: messages.aiManagersProductionMinutes,
   },
   servers: {
+    name: messages.serversName,
     identity: messages.serversIdentity,
     purchasePrompt: messages.purchaseServer,
     purchaseAccessible: messages.purchaseServerAccessible,
@@ -115,6 +119,7 @@ const facilityMessages: Readonly<
     productionMinutes: messages.serversProductionMinutes,
   },
   data_centers: {
+    name: messages.dataCentersName,
     identity: messages.dataCentersIdentity,
     purchasePrompt: messages.purchaseDataCenter,
     purchaseAccessible: messages.purchaseDataCenterAccessible,
@@ -124,6 +129,7 @@ const facilityMessages: Readonly<
     productionMinutes: messages.dataCentersProductionMinutes,
   },
   planets: {
+    name: messages.planetsName,
     identity: messages.planetsIdentity,
     purchasePrompt: messages.purchasePlanet,
     purchaseAccessible: messages.purchasePlanetAccessible,
@@ -337,6 +343,7 @@ function BasicFacilityPresentationCard({
       title={
         <FacilityIdentity
           locale={locale}
+          name={presentation.name}
           identity={presentation.identity}
           fact={fact}
         />
@@ -426,12 +433,14 @@ function BasicFacilityPresentationCard({
 
 interface FacilityIdentityProps {
   readonly locale: EnabledLocale
+  readonly name: MessageDescriptor
   readonly identity: MessageDescriptor
   readonly fact: BasicFacilityCanonicalFact
 }
 
 function FacilityIdentity({
   locale,
+  name,
   identity,
   fact,
 }: FacilityIdentityProps) {
@@ -444,12 +453,36 @@ function FacilityIdentity({
     total,
     manual,
   })
+  const facilityName = intl.formatMessage(name)
+  const manualCount = intl.formatMessage(messages.manualCount, {
+    manual,
+  })
   return (
     <span
       className="basic-facility-card__identity"
       title={identityText}
     >
-      {identityText}
+      <span className="ui-visually-hidden">{identityText}</span>
+      <span
+        className="basic-facility-card__visible-identity"
+        aria-hidden="true"
+      >
+        <bdi className="basic-facility-card__name">
+          {facilityName}
+        </bdi>
+        <data
+          className="basic-facility-card__total"
+          value={String(totalOwned)}
+        >
+          <bdi>{total}</bdi>
+        </data>
+        <data
+          className="basic-facility-card__manual"
+          value={String(manualOwned)}
+        >
+          <bdi>{manualCount}</bdi>
+        </data>
+      </span>
     </span>
   )
 }

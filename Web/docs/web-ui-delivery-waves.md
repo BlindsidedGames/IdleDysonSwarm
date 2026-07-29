@@ -255,9 +255,11 @@ After acceptance, create and record the Wave 3 checkpoint.
 Accepted on 2026-07-29:
 
 - The ready route renders only backend-authored visibility, Tinker presentation,
-  resource/rate, production-summary, bot-distribution and facility-preview
-  facts. Hidden facilities are absent, and the single teaser still follows its
-  independent canonical fact.
+  resource/rate, production-summary and facility-preview facts. Hidden
+  facilities are absent, and the single teaser still follows its independent
+  canonical fact. The complete Bot Distribution region, including its
+  read-only facts, remains deferred until its canonical controls and player
+  commands are in scope.
 - Tap, rapid tap, independent pointer, Space hold, Enter activation, blur,
   cancellation and unmount paths route serialized player commands through the
   runtime dispatcher. The 500 ms hold threshold is interaction-only; the UI

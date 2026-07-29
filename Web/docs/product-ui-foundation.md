@@ -185,7 +185,9 @@ into a pass.
 The Unity hierarchy remains the baseline, introduced by progression rather than
 showing empty destinations:
 
-1. Dyson: resources, Tinker, facilities, bot distribution and panel facts.
+1. Dyson: resources, Tinker, facilities and panel-production facts. Bot
+   Distribution arrives as one complete region when its canonical controls
+   and player commands are ready.
 2. Research.
 3. Skills.
 4. Infinity and stored/returned time.
@@ -226,10 +228,12 @@ loop:
 6. Reflow the same journey across the compact, medium and wide layouts without a
    second interaction model.
 
-Research, skills, bot distribution controls, prestige systems, settings and
-content/reference screens are outside this slice except for disabled or locked
-navigation required to explain the current state. They are later product
-destinations and do not block checkpointing the Bots/Dyson design baseline.
+Research, skills, the complete Bot Distribution region, prestige systems,
+settings and content/reference screens are outside this slice except for
+disabled or locked navigation required to explain the current state. Bot
+Distribution's read-only facts are not shown ahead of its canonical controls
+and player commands. These are later product destinations and do not block
+checkpointing the Bots/Dyson design baseline.
 
 ### First-slice acceptance fixture
 

@@ -41,7 +41,7 @@ const tokensCss = readFileSync(
 afterEach(cleanup)
 
 describe('DysonGameplayShell', () => {
-  it('renders one main landmark, a working skip link, and both responsive navigation sources', () => {
+  it('renders both responsive navigation sources only when multiple destinations exist', () => {
     const { container } = render(<DysonGameplayShell {...laterProps()} />)
 
     const main = screen.getByRole('main')
@@ -80,9 +80,37 @@ describe('DysonGameplayShell', () => {
         within(navigation).queryByRole('link', { name: 'Bots' }),
       ).not.toBeInTheDocument()
       expect(
-        within(navigation).queryByText('Research'),
-      ).not.toBeInTheDocument()
+        within(navigation).getByRole('link', { name: 'Research' }),
+      ).toBeInTheDocument()
     }
+  })
+
+  it('omits redundant navigation for one destination and exposes the route heading', () => {
+    const { container } = render(<DysonGameplayShell {...freshProps()} />)
+    const shell = container.querySelector('.dyson-shell')
+    const heading = screen.getByRole('heading', {
+      level: 1,
+      name: 'Bots',
+    })
+
+    expect(shell).toHaveAttribute('data-has-navigation', 'false')
+    expect(screen.queryByRole('navigation')).not.toBeInTheDocument()
+    expect(heading).toHaveClass('dyson-shell__route-heading')
+    expect(shellCss).toMatch(
+      /\.dyson-shell__route-heading\s*\{\s*margin:\s*0;[\s\S]*font-size:/,
+    )
+    expect(shellCss).toMatch(
+      /\.dyson-shell\[data-has-navigation="true"\] \.dyson-shell__route-heading\s*\{\s*position:\s*absolute;[\s\S]*inline-size:\s*1px;/,
+    )
+    expect(shellCss).not.toMatch(
+      /(?<!data-has-navigation="true"\] )\.dyson-shell__route-heading\s*\{\s*position:\s*absolute;/,
+    )
+    expect(
+      container.querySelector('.dyson-shell__lower-regions'),
+    ).toHaveTextContent('Production summary')
+    expect(shellCss).not.toContain(
+      '.dyson-shell__lower-regions[data-region-count="2"]',
+    )
   })
 
   it('preserves Cash, Total Bots, Science order and keeps formatted facts isolated', () => {
@@ -353,16 +381,29 @@ function freshProps(): DysonGameplayShellProps {
       ariaLabel: 'Production summary',
       content: <p>Production summary</p>,
     },
-    botDistribution: {
-      ariaLabel: 'Bot Distribution',
-      content: <p>Bot Distribution</p>,
-    },
   }
 }
 
 function laterProps(): DysonGameplayShellProps {
   return {
     ...freshProps(),
+    navigation: {
+      ariaLabel: 'Primary',
+      items: [
+        {
+          id: 'bots',
+          label: 'Bots',
+          icon: 'B',
+          current: true,
+        },
+        {
+          id: 'research',
+          label: 'Research',
+          icon: 'R',
+          href: '#research',
+        },
+      ],
+    },
     hasVisibleFacilities: true,
     facilities: (
       <section aria-label="Facilities">

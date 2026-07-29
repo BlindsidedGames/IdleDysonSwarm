@@ -23,22 +23,25 @@ export function DysonGameplayShell({
   hasVisibleFacilities,
   facilities,
   productionSummary,
-  botDistribution,
 }: DysonGameplayShellProps) {
   const mainId = `dyson-gameplay-main-${useId().replaceAll(':', '')}`
-  const hasLowerRegions =
-    productionSummary !== undefined ||
-    botDistribution !== undefined
+  const hasNavigation = navigation.items.length >= 2
 
   return (
-    <div className="dyson-shell" dir={direction}>
+    <div
+      className="dyson-shell"
+      dir={direction}
+      data-has-navigation={hasNavigation}
+    >
       <a className="dyson-shell__skip-link" href={`#${mainId}`}>
         {skipLinkLabel}
       </a>
 
-      <div className="dyson-shell__rail">
-        <DysonNavigation {...navigation} placement="rail" />
-      </div>
+      {hasNavigation && (
+        <div className="dyson-shell__rail">
+          <DysonNavigation {...navigation} placement="rail" />
+        </div>
+      )}
 
       <main id={mainId} className="dyson-shell__main">
         <div className="dyson-shell__content">
@@ -66,28 +69,22 @@ export function DysonGameplayShell({
             </div>
           </div>
 
-          {hasLowerRegions && (
+          {productionSummary !== undefined && (
             <div className="dyson-shell__lower-regions">
-              {productionSummary !== undefined && (
-                <ShellRegion
-                  className="dyson-shell__production-summary"
-                  region={productionSummary}
-                />
-              )}
-              {botDistribution !== undefined && (
-                <ShellRegion
-                  className="dyson-shell__bot-distribution"
-                  region={botDistribution}
-                />
-              )}
+              <ShellRegion
+                className="dyson-shell__production-summary"
+                region={productionSummary}
+              />
             </div>
           )}
         </div>
       </main>
 
-      <div className="dyson-shell__bottom-navigation">
-        <DysonNavigation {...navigation} placement="bottom" />
-      </div>
+      {hasNavigation && (
+        <div className="dyson-shell__bottom-navigation">
+          <DysonNavigation {...navigation} placement="bottom" />
+        </div>
+      )}
     </div>
   )
 }
