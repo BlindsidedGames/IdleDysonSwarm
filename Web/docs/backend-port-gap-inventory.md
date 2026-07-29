@@ -136,7 +136,7 @@ Status meanings:
 | Rich presence and Steam statistics | Platform contract only | Missing adapters | Implement in the Electron/main-process host | Release/host |
 | Audio, clipboard, links and local UI preferences | Platform contracts only | Missing adapters | Implement for selected hosts; unavailable stubs are sufficient for initial frontend development | Release/host |
 | Desktop/mobile save discovery and atomic filesystem storage | Storage contract only | Missing adapters | Implement Electron and Capacitor adapters with retained identity and original-save recovery | Release/host |
-| Browser save storage | Portable repository contract and in-memory test repository are available | Missing host adapter | Implement and test IndexedDB transactional storage, retained recovery blob/export and reconstructed-application reload before first-slice UI acceptance | Browser-host dependency |
+| Browser save storage | Portable repository contract and in-memory test repository are available | Missing host adapter | Implement and test IndexedDB transactional storage, atomic single-writer ownership, persistent-storage/quota handling, bounded import, periodic checkpointing, retained recovery blob/export and reconstructed-application reload before first-slice UI acceptance | Browser-host dependency |
 | Safe area, orientation and touch navigation | Platform inventory only | Missing host/UI implementation | Specify and certify per target | Product-design and release |
 
 ## Typed command coverage required

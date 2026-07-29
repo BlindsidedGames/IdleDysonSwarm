@@ -73,10 +73,42 @@ the slice is accepted. The browser host also supplies the monotonic clock,
 visibility/focus lifecycle, file/paste import, recovery-blob export, clipboard
 and external-link ports required by that journey.
 
+Exactly one browser tab or installed PWA window may own a writable game session
+for an origin/profile:
+
+- Acquire an atomic IndexedDB lease with a unique owner token and monotonically
+  increasing fencing generation before opening the writable repository or
+  starting `CanonicalLifecycleCoordinator`. Renew it with a bounded heartbeat
+  and release it on orderly shutdown. Every save mutation validates the current
+  token/generation in the same transaction, so a stale owner cannot write after
+  takeover.
+- `BroadcastChannel` may accelerate ownership notices, but it is advisory; the
+  transactional lease remains authoritative. A supported Web Locks
+  implementation may reinforce the lease but is not the compatibility baseline.
+- A second context remains blocked/read-only and cannot advance time, dispatch a
+  player command or write a save. It may request takeover only after explicit
+  release or lease expiry; it never steals a live lease.
+- Revalidate ownership before resuming from background. Losing ownership stops
+  the active-time driver and rejects further player dispatch before the context
+  can publish or persist another transition.
+- Acceptance tests cover simultaneous open, explicit handoff, crashed-owner
+  expiry and recovery without duplicate active or away time.
+
 Browser lifecycle events and active elapsed time still enter only through
 `CanonicalLifecycleCoordinator`. A service-worker or asset update must not
 reload an active session automatically. It may activate after a verified
 checkpoint and an explicit safe-reload prompt.
+
+The host requests persistent browser storage where supported, records whether
+the request succeeded and never treats success as guaranteed durability. Denial,
+quota pressure and commit failure preserve the last verified save, surface a
+clear warning and keep export/recovery available.
+
+While the application snapshot is dirty, the UI runtime port requests a
+checkpoint through the facade persistence lane at least every 30 seconds and
+before a safe update reload. Background/focus lifecycle saves still route
+through the coordinator. `pagehide`/termination persistence is best effort and
+is never the only protection against progress loss.
 
 Electron and Capacitor remain product hosts, but their filesystem, retained
 container, signing, Steam and native lifecycle certification are later host
@@ -207,9 +239,11 @@ Internationalization is foundation work, not a later string-replacement pass:
 - Support left-to-right and right-to-left layout from the start with logical CSS
   properties and direction-aware icons. Mirroring is semantic; numbers,
   scientific notation and universal media controls are not blindly mirrored.
-- English is the source locale. A pseudo-locale with expansion and bidirectional
-  markers is required before the first vertical slice is accepted.
-- English and the pseudo-locale are the only enabled first-slice locales.
+- English is the source locale. Two pseudo-locales are required before the first
+  vertical slice is accepted: expanded/accented LTR `en-XA` and mirrored RTL
+  `ar-XB`. They test different failure modes and are not selectable production
+  translations.
+- English plus `en-XA` and `ar-XB` are the only enabled first-slice locales.
   Japanese and Chinese font routing is foundation-ready, but Noto Sans JP/SC/TC
   assets and destination catalogs are neither shipped nor requested until a
   corresponding translation is enabled in the typed locale registry.
@@ -331,10 +365,15 @@ The application shell owns one active-time driver:
 - A top-level product error boundary protects the shell and available
   recovery/export actions. A render failure never resets, mutates, retries or
   replaces canonical state.
-- Treat pasted, dropped and selected saves as untrusted input. Before
-  implementation, measure representative legacy saves and set tested compressed,
-  decoded and decompressed size ceilings in the host adapter. Reject oversized
-  or malformed input before promotion and preserve the existing save.
+- Treat pasted, dropped and selected saves as untrusted input. The checked-in
+  IDB1 fixtures measured 6.7–7.6 KiB of UTF-8 envelope text, 5.0–5.7 KiB of
+  decoded/compressed payload and 24.0–25.3 KiB of inflated Odin binary on
+  2026-07-29. Initial host ceilings are 2 MiB supplied UTF-8 text, 1 MiB decoded
+  payload and 8 MiB inflated binary. Enforce each ceiling before the next
+  allocation stage; bounded decompression aborts at the binary ceiling rather
+  than inflating an unbounded payload and checking afterward. Reject oversized
+  or malformed input before promotion and preserve the existing save. Any later
+  increase requires a representative valid save, a memory trace and review.
 - Render player-authored and imported text as text, never executable markup.
   Product UI does not use unsanitized HTML injection.
 - Browser/PWA builds ship a restrictive Content Security Policy. Electron keeps
@@ -618,9 +657,11 @@ release.
 
 - Use Vitest, Testing Library and `user-event` for semantic interaction tests.
 - Use `axe-core` checks for each stable component state.
-- Drive components with frozen frontend snapshots and a fake lifecycle
-  coordinator port. Tests assert commands, revisions and coordinator results,
-  not reimplemented economy outcomes.
+- Drive components through a fake unified UI runtime port. It publishes frozen
+  frontend snapshots and records coordinator-backed command and active-time
+  requests without exposing the facade or coordinator directly. Tests assert
+  commands, revisions and coordinator results, not reimplemented economy
+  outcomes.
 - Cover idle, starting, blocked, ready, exclusive-operation, unavailable
   derivation, route gap, locked, unaffordable, pending, stale, rejected and
   successful states.
@@ -641,8 +682,11 @@ Use Playwright against a production build for:
 - basic facility preview, purchase, rejection and stale-revision handling;
 - background/focus/active routing without duplicate active time;
 - checkpoint/reload continuity for the first slice; and
-- keyboard-only completion of the same journey.
-- pseudo-localized expanded text and one right-to-left locale pass; and
+- keyboard-only completion of the same journey;
+- expanded LTR `en-XA` and mirrored RTL `ar-XB` pseudo-locales;
+- simultaneous-tab blocking, handoff and expired-owner recovery;
+- storage-persistence denial, quota/commit failure and periodic-checkpoint
+  recovery; and
 - rapid-tap and simultaneous-touch interaction on a physical touch device.
 
 Run the supported browser projects against the frozen first-slice fixture.
@@ -662,10 +706,12 @@ component, accessibility, end-to-end, responsive visual and performance checks.
 
 After approval, implement in this order:
 
-1. Freeze the canonical first-slice acceptance fixture and approve the annotated
-   compact, medium, wide and compact-landscape layout reference.
-2. Implement the browser IndexedDB, lifecycle/clock, import/export, clipboard
-   and external-link ports, then compose them with the lifecycle coordinator.
+1. Freeze the canonical first-slice acceptance fixture, its import ceilings and
+   the annotated compact, medium, wide and compact-landscape layout reference.
+2. Implement the browser IndexedDB repository, single-writer ownership lease,
+   persistent-storage/quota handling, periodic checkpointing, lifecycle/clock,
+   import/export, clipboard and external-link ports, then compose them behind
+   the unified UI runtime port and lifecycle coordinator.
 3. Add startup phases, the top-level error boundary, safe update handling,
    redacted diagnostics and the production Content Security Policy.
 4. Implement the active-time driver and frozen-snapshot external store.
@@ -700,6 +746,9 @@ Approval should explicitly confirm or amend:
 - [ ] Browser/PWA is the first-slice reference host, backed by production
   IndexedDB persistence and browser lifecycle ports; native-host certification
   remains a later release gate.
+- [ ] Browser/PWA enforces one writable owner, persistent-storage/quota
+  handling, a maximum 30-second dirty checkpoint window and recovery/export
+  behavior above.
 - [ ] The current/previous browser-engine policy and physical iOS/Android
   acceptance above.
 - [ ] Pointer, rapid touch, multi-touch and keyboard required now; controller
@@ -709,14 +758,15 @@ Approval should explicitly confirm or amend:
 - [ ] A frozen canonical first-slice fixture and annotated compact, medium, wide
   and compact-landscape layout reference precede component implementation.
 - [ ] Extracted ICU MessageFormat catalogs, pseudo-localization and LTR/RTL
-  architecture are foundation requirements; English and pseudo are the only
-  enabled first-slice locales.
+  architecture are foundation requirements; English, expanded LTR `en-XA` and
+  mirrored RTL `ar-XB` are the only enabled first-slice locales.
 - [x] Lexend for supported Latin locales, Noto Sans JP/SC/TC for Japanese and
   Chinese locales, and lazy script-specific Noto Sans families for other
   locales, with the Unity-derived dark-plum visual direction and reference
   tokens above. Approved 2026-07-29.
 - [ ] WCAG 2.2 AA, responsive, performance and testing budgets above.
-- [ ] Error containment, import limits, CSP/native-shell isolation, diagnostic
-  redaction and the no-remote-telemetry default above.
+- [ ] Error containment, the measured 2 MiB/1 MiB/8 MiB import ceilings,
+  CSP/native-shell isolation, diagnostic redaction and the no-remote-telemetry
+  default above.
 - [ ] All player commands, active time and platform phases route through
   `CanonicalLifecycleCoordinator`; no gameplay-rule duplication in UI.

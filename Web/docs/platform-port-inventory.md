@@ -41,12 +41,19 @@ The browser/PWA production build is the reference host for the first playable
 slice. Before product UI acceptance it requires:
 
 - IndexedDB-backed transactional storage through the portable save repository;
+- one authoritative writable context enforced by an atomic IndexedDB owner
+  lease, with blocked secondary contexts and explicit/expired takeover;
+- a persistent-storage request where supported, plus visible denial, quota and
+  commit-failure recovery/export behavior;
+- a maximum 30-second dirty checkpoint window so termination events are not the
+  only protection against progress loss;
 - retained recovery-blob download/export for a supplied Unity save;
 - visibility, focus, page-hide and page-show lifecycle events routed through the
   lifecycle coordinator;
 - a monotonic active-time clock with no hidden-page accrual;
 - file picker, drag/drop and paste import through the canonical preparation
-  pipeline; and
+  pipeline with 2 MiB supplied-text, 1 MiB decoded-payload and 8 MiB bounded
+  inflated-binary ceilings; and
 - safe service-worker updates that wait for a verified checkpoint and explicit
   reload.
 
