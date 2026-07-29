@@ -879,6 +879,12 @@
       "value": "Import a save"
     }
   ],
+  "startup-shell.action.reload": [
+    {
+      "type": 0,
+      "value": "Reload safely"
+    }
+  ],
   "startup-shell.action.retry": [
     {
       "type": 0,

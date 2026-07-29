@@ -335,6 +335,10 @@
     "defaultMessage": "Import a save",
     "description": "Button label that requests the existing safe save-import flow."
   },
+  "startup-shell.action.reload": {
+    "defaultMessage": "Reload safely",
+    "description": "Button label that requests a verified checkpoint and orderly browser reload after a render failure."
+  },
   "startup-shell.action.retry": {
     "defaultMessage": "Try startup again",
     "description": "Button label that explicitly requests another controlled startup attempt."

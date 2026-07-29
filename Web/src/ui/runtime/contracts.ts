@@ -175,6 +175,7 @@ export interface UiRuntimeFoundation<
   ): Promise<UiRuntimeStorageStatus>
   requestCheckpoint(): Promise<boolean>
   checkpointBeforeSafeReload(): Promise<boolean>
+  recoveryExportAvailable(): boolean
   exportLastRecovery(): Promise<boolean>
   readClipboardText(): Promise<string>
   writeClipboardText(value: string): Promise<void>

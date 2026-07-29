@@ -666,6 +666,7 @@ describe('browser runtime foundation composition', () => {
       },
     })
     await runtime.start()
+    expect(runtime.recoveryExportAvailable()).toBe(false)
     const snapshotPublications: number[] = []
     runtime.subscribeSnapshot((snapshot) => {
       if (snapshot.phase === 'ready') {
@@ -699,6 +700,7 @@ describe('browser runtime foundation composition', () => {
       revision: { state: 1 },
     })
     expect(snapshotPublications).toEqual([1])
+    expect(runtime.recoveryExportAvailable()).toBe(true)
 
     await expect(runtime.exportLastRecovery()).resolves.toBe(true)
     expect(downloads.last?.text).toBe(original)
@@ -1096,6 +1098,7 @@ describe('browser runtime foundation composition', () => {
       recoveryAvailable: false,
     })
     expect(database.mutations).toEqual([])
+    expect(runtime.recoveryExportAvailable()).toBe(false)
     await runtime.shutdown()
   })
 
@@ -2944,6 +2947,7 @@ describe('browser runtime foundation composition', () => {
       'inspectStorage',
       'openExternalUrl',
       'readClipboardText',
+      'recoveryExportAvailable',
       'requestCheckpoint',
       'shutdown',
       'snapshot',

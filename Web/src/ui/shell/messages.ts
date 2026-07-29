@@ -170,6 +170,12 @@ export const startupShellMessages = defineMessages({
     description:
       'Button label that explicitly requests another controlled startup attempt.',
   },
+  reloadAction: {
+    id: 'startup-shell.action.reload',
+    defaultMessage: 'Reload safely',
+    description:
+      'Button label that requests a verified checkpoint and orderly browser reload after a render failure.',
+  },
   importAction: {
     id: 'startup-shell.action.import',
     defaultMessage: 'Import a save',

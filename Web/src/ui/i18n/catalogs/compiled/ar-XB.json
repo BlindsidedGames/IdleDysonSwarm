@@ -1551,6 +1551,20 @@
       "value": "‬"
     }
   ],
+  "startup-shell.action.reload": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "ᴚǝʅoɐp sɐɟǝʅʎ"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
   "startup-shell.action.retry": [
     {
       "type": 0,

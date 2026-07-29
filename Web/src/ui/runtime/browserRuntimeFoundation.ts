@@ -218,6 +218,8 @@ export function createBrowserRuntimeFoundation(
       implementation.requestCheckpoint(),
     checkpointBeforeSafeReload: () =>
       implementation.checkpointBeforeSafeReload(),
+    recoveryExportAvailable: () =>
+      implementation.recoveryExportAvailable(),
     exportLastRecovery: () =>
       implementation.exportLastRecovery(),
     readClipboardText: () =>
@@ -447,6 +449,10 @@ class BrowserRuntimeFoundation implements BrowserUiRuntimeFoundation {
     if (recoveryPath === undefined) return false
     await this.exporter.export(recoveryPath)
     return true
+  }
+
+  recoveryExportAvailable(): boolean {
+    return this.lastRecoveryPath !== undefined
   }
 
   async inspectStorage(

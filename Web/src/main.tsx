@@ -54,6 +54,36 @@ async function bootstrap(): Promise<void> {
       diagnosticsLabel: boundaryIntl.formatMessage(
         startupShellMessages.diagnosticsLabel,
       ),
+      reloadAction: boundaryIntl.formatMessage(
+        startupShellMessages.reloadAction,
+      ),
+      exportRecoveryAction: boundaryIntl.formatMessage(
+        startupShellMessages.exportRecoveryAction,
+      ),
+      reloadPending: boundaryIntl.formatMessage(
+        startupShellMessages.reloadPending,
+      ),
+      reloadCompleted: boundaryIntl.formatMessage(
+        startupShellMessages.reloadCompleted,
+      ),
+      reloadFailed: boundaryIntl.formatMessage(
+        startupShellMessages.reloadFailed,
+      ),
+      exportPending: boundaryIntl.formatMessage(
+        startupShellMessages.exportPending,
+      ),
+      exportSucceeded: boundaryIntl.formatMessage(
+        startupShellMessages.exportSucceeded,
+      ),
+      exportFailed: boundaryIntl.formatMessage(
+        startupShellMessages.exportFailed,
+      ),
+    })
+    const boundaryActions = Object.freeze({
+      reloadSafely: composition.reloadSafely,
+      recoveryExportAvailable:
+        composition.runtime.recoveryExportAvailable,
+      exportRecovery: composition.runtime.exportLastRecovery,
     })
     // Startup is owned once by the composition root, never by a React effect.
     // StrictMode may replay presentation effects without acquiring a second
@@ -63,6 +93,7 @@ async function bootstrap(): Promise<void> {
       <StrictMode>
         <StartupErrorBoundary
           copy={boundaryCopy}
+          actions={boundaryActions}
           diagnosticContext={{
             hostKind: 'browser-pwa',
             locale,

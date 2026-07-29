@@ -29,6 +29,13 @@ describe('production browser entry', () => {
     expect(mainSource).toContain(
       'reloadSafely={composition.reloadSafely}',
     )
+    expect(mainSource).toContain('actions={boundaryActions}')
+    expect(mainSource).toMatch(
+      /recoveryExportAvailable:\s*composition\.runtime\.recoveryExportAvailable/,
+    )
+    expect(mainSource).toMatch(
+      /exportRecovery:\s*composition\.runtime\.exportLastRecovery/,
+    )
     expect(mainSource).not.toMatch(
       /runtime\.shutdown\(\)|window\.location\.reload\(\)/,
     )
