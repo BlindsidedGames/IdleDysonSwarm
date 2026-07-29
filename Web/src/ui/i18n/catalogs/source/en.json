@@ -34,5 +34,157 @@
   "shared.status.success": {
     "defaultMessage": "Completed",
     "description": "Short status confirming that a player-requested operation completed."
+  },
+  "startup-shell.action.check-again": {
+    "defaultMessage": "Check again",
+    "description": "Button label that requests another ownership or capability check."
+  },
+  "startup-shell.action.export-recovery": {
+    "defaultMessage": "Export recovery data",
+    "description": "Button label that requests a local recovery-data export."
+  },
+  "startup-shell.action.import": {
+    "defaultMessage": "Import a save",
+    "description": "Button label that requests the existing safe save-import flow."
+  },
+  "startup-shell.action.retry": {
+    "defaultMessage": "Try startup again",
+    "description": "Button label that explicitly requests another controlled startup attempt."
+  },
+  "startup-shell.action.start": {
+    "defaultMessage": "Start game",
+    "description": "Button label that requests browser game startup."
+  },
+  "startup-shell.app-name": {
+    "defaultMessage": "Idle Dyson Swarm",
+    "description": "Game name shown as the top-level heading in the browser startup shell."
+  },
+  "startup-shell.boundary.body": {
+    "defaultMessage": "The game display stopped. No automatic retry or progress change was attempted. Reload this page when you are ready.",
+    "description": "Safety explanation shown by the top-level local render-error boundary."
+  },
+  "startup-shell.boundary.title": {
+    "defaultMessage": "The display stopped unexpectedly",
+    "description": "Heading shown by the top-level local render-error boundary."
+  },
+  "startup-shell.diagnostics.label": {
+    "defaultMessage": "Redacted local diagnostic report",
+    "description": "Accessible label for a locally redacted technical diagnostic report."
+  },
+  "startup-shell.diagnostics.summary": {
+    "defaultMessage": "Local diagnostic details",
+    "description": "Expandable summary label for locally redacted technical diagnostics."
+  },
+  "startup-shell.import.overwrite-confirmation": {
+    "defaultMessage": "Import this save and replace the current browser profile? A recovery copy is retained before replacement.",
+    "description": "Confirmation shown before the player explicitly approves replacing the isolated browser profile with an imported save."
+  },
+  "startup-shell.operation.export-failed": {
+    "defaultMessage": "Recovery data could not be exported from this tab.",
+    "description": "Assertive, privacy-safe failure status after recovery export fails."
+  },
+  "startup-shell.operation.export-pending": {
+    "defaultMessage": "Preparing recovery data…",
+    "description": "Polite status while retained recovery data is being exported."
+  },
+  "startup-shell.operation.export-succeeded": {
+    "defaultMessage": "Recovery data exported.",
+    "description": "Polite confirmation after retained recovery data is exported."
+  },
+  "startup-shell.operation.import-failed": {
+    "defaultMessage": "The save could not be imported. Your existing progress was not replaced.",
+    "description": "Assertive, privacy-safe failure status after a save import fails."
+  },
+  "startup-shell.operation.import-pending": {
+    "defaultMessage": "Importing the selected save…",
+    "description": "Polite status announced while a player-approved save import is pending."
+  },
+  "startup-shell.operation.import-succeeded": {
+    "defaultMessage": "Save imported successfully.",
+    "description": "Polite confirmation after a player-approved save import succeeds."
+  },
+  "startup-shell.operation.reload-completed": {
+    "defaultMessage": "Reload requested.",
+    "description": "Polite confirmation when a requested reload has been handed to the browser."
+  },
+  "startup-shell.operation.reload-failed": {
+    "defaultMessage": "This tab could not reload safely. Your progress was not reset.",
+    "description": "Assertive, privacy-safe failure status after safe reload preparation fails."
+  },
+  "startup-shell.operation.reload-pending": {
+    "defaultMessage": "Releasing this tab before reloading…",
+    "description": "Polite status while the runtime releases ownership before a requested reload."
+  },
+  "startup-shell.state.application-blocked.body": {
+    "defaultMessage": "A required browser feature is unavailable. Your existing progress has not been changed.",
+    "description": "Explanation shown when required browser capabilities are unavailable."
+  },
+  "startup-shell.state.application-blocked.title": {
+    "defaultMessage": "This browser cannot start the game",
+    "description": "Heading shown when required browser capabilities are unavailable."
+  },
+  "startup-shell.state.error.body": {
+    "defaultMessage": "Startup stopped without replacing your existing progress.",
+    "description": "Safety explanation shown when the controlled startup process reports an error."
+  },
+  "startup-shell.state.error.title": {
+    "defaultMessage": "The game could not start",
+    "description": "Heading shown when the controlled startup process reports an error."
+  },
+  "startup-shell.state.idle.body": {
+    "defaultMessage": "Start when you are ready. Your saved progress is not changed by this screen.",
+    "description": "Explanation shown before the browser game startup process begins."
+  },
+  "startup-shell.state.idle.title": {
+    "defaultMessage": "Ready to start",
+    "description": "Heading shown before the browser game startup process begins."
+  },
+  "startup-shell.state.ownership-lost.body": {
+    "defaultMessage": "Game activity stopped to protect your progress because another tab or window became active.",
+    "description": "Safety explanation shown after this browser tab loses canonical writer ownership."
+  },
+  "startup-shell.state.ownership-lost.title": {
+    "defaultMessage": "This tab stopped writing progress",
+    "description": "Heading shown after this browser tab loses canonical writer ownership."
+  },
+  "startup-shell.state.ready-placeholder.body": {
+    "defaultMessage": "Startup completed. The gameplay surface will appear here.",
+    "description": "Temporary explanation shown after startup succeeds but before gameplay UI is connected."
+  },
+  "startup-shell.state.ready-placeholder.title": {
+    "defaultMessage": "Game ready",
+    "description": "Temporary heading shown after startup succeeds but before the gameplay UI is connected."
+  },
+  "startup-shell.state.recovery.body": {
+    "defaultMessage": "The game did not replace the saved progress it could not safely open. Import another save to continue. If that import cannot be used, its retained recovery data can then be exported for support.",
+    "description": "Recovery explanation that promises export only after an attempted import has been retained."
+  },
+  "startup-shell.state.recovery.title": {
+    "defaultMessage": "Saved progress needs attention",
+    "description": "Heading shown when startup requires a player-directed recovery choice."
+  },
+  "startup-shell.state.starting.body": {
+    "defaultMessage": "Checking this browser and preparing your saved progress.",
+    "description": "Explanation shown while the browser game startup process is in progress."
+  },
+  "startup-shell.state.starting.title": {
+    "defaultMessage": "Starting the game",
+    "description": "Heading shown while browser game ownership and saved progress are being prepared."
+  },
+  "startup-shell.state.stopping.body": {
+    "defaultMessage": "Finishing the current operation and releasing this tab.",
+    "description": "Explanation shown while the browser game is completing its stop sequence."
+  },
+  "startup-shell.state.stopping.title": {
+    "defaultMessage": "Stopping safely",
+    "description": "Heading shown while the browser game is completing its stop sequence."
+  },
+  "startup-shell.state.writer-blocked.body": {
+    "defaultMessage": "This tab cannot write progress while another tab or window is active. Return to the active game or close it before checking again.",
+    "description": "Recovery guidance shown when another browser context owns write access."
+  },
+  "startup-shell.state.writer-blocked.title": {
+    "defaultMessage": "Another tab is using this game",
+    "description": "Heading shown when another browser tab or window owns write access."
   }
 }

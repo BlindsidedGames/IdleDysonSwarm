@@ -1,225 +1,182 @@
-import { useCallback, useMemo, useState } from 'react'
-import './App.css'
-import { decodeIdb1Save, getSavePath } from './save/decodeIdb1'
+import { useMemo, useRef, useState } from 'react'
+import { useIntl } from 'react-intl'
+import type {
+  BrowserUiRuntimeFoundation,
+  UiRuntimeImportResult,
+} from './ui/runtime'
+import {
+  useBrowserRuntimeStatus,
+} from './ui/runtime'
+import {
+  selectStartupShellViewModel,
+  StartupShell,
+  startupShellMessages,
+  type StartupShellActions,
+  type StartupShellOperationStatus,
+} from './ui/shell'
 
-interface DecoderSummary {
-  status: 'idle' | 'loading' | 'compatible' | 'failed'
-  source: string
-  schema: number | null
-  rootType: string | null
-  dateStarted: string | null
-  dateQuit: string | null
-  money: string | null
-  infinityPoints: string | null
-  compressedBytes: number | null
-  binaryBytes: number | null
-  error: string | null
+export interface AppProps {
+  readonly runtime: BrowserUiRuntimeFoundation
+  readonly locale: string
+  readonly saveSchemaVersion: number
+  readonly sampleUtc: () => string
+  readonly reloadSafely: () => Promise<void>
+  readonly confirmOverwrite?: (message: string) => boolean
+  readonly buildId?: string
 }
 
-const FIXTURES = [
-  {
-    label: 'Canonical schema 8',
-    file: 'schema-08-canonical-idb1-main-save.txt',
-  },
-  {
-    label: 'Support schema 11',
-    file: 'support-case-01-attached-idb1.txt',
-  },
-  {
-    label: 'Historical schema 0',
-    file: 'support-case-02-inline-idb1.txt',
-  },
-  {
-    label: 'Support schema 10',
-    file: 'support-case-03-inline-idb1.txt',
-  },
-] as const
-
-const INITIAL_DECODER: DecoderSummary = {
-  status: 'idle',
-  source: 'No save selected',
-  schema: null,
-  rootType: null,
-  dateStarted: null,
-  dateQuit: null,
-  money: null,
-  infinityPoints: null,
-  compressedBytes: null,
-  binaryBytes: null,
-  error: null,
-}
-
-function displayValue(value: unknown): string | null {
-  if (value === undefined || value === null) return null
-  if (typeof value === 'bigint') return value.toString()
-  if (typeof value === 'number') {
-    return value.toLocaleString('en-AU', { maximumSignificantDigits: 16 })
-  }
-  return String(value)
-}
-
-function App() {
-  const [summary, setSummary] =
-    useState<DecoderSummary>(INITIAL_DECODER)
-
-  const decodeText = useCallback((text: string, source: string) => {
-    try {
-      const decoded = decodeIdb1Save(text)
-      const root = decoded.root
-      setSummary({
-        status: 'compatible',
-        source,
-        schema: Number(getSavePath(root, 'saveVersion') ?? 0),
-        rootType: decoded.rootType,
-        dateStarted: displayValue(getSavePath(root, 'dateStarted')),
-        dateQuit: displayValue(getSavePath(root, 'dateQuitString')),
-        money: displayValue(
-          getSavePath(
-            root,
-            'dysonVerseSaveData.dysonVerseInfinityData.money',
-          ),
-        ),
-        infinityPoints: displayValue(
-          getSavePath(
-            root,
-            'dysonVerseSaveData.dysonVersePrestigeData.infinityPoints',
-          ),
-        ),
-        compressedBytes: decoded.compressedBytes,
-        binaryBytes: decoded.binaryBytes,
-        error: null,
-      })
-    } catch (error) {
-      setSummary({
-        ...INITIAL_DECODER,
-        status: 'failed',
-        source,
-        error: error instanceof Error ? error.message : String(error),
-      })
-    }
-  }, [])
-
-  const loadFixture = async (file: string, label: string) => {
-    setSummary({
-      ...INITIAL_DECODER,
-      status: 'loading',
-      source: label,
-    })
-    try {
-      const response = await fetch(`/fixtures/${file}`)
-      if (!response.ok) {
-        throw new Error(`Fixture request failed: ${response.status}`)
-      }
-      decodeText(await response.text(), label)
-    } catch (error) {
-      setSummary({
-        ...INITIAL_DECODER,
-        status: 'failed',
-        source: label,
-        error: error instanceof Error ? error.message : String(error),
-      })
-    }
-  }
-
-  const results = useMemo(
-    () => [
-      ['Schema', summary.schema],
-      ['Money', summary.money],
-      ['Infinity points', summary.infinityPoints],
-      ['Started', summary.dateStarted],
-      ['Last quit', summary.dateQuit],
-      [
-        'Payload',
-        summary.compressedBytes === null || summary.binaryBytes === null
-          ? null
-          : `${summary.compressedBytes.toLocaleString()} B → ${summary.binaryBytes.toLocaleString()} B`,
-      ],
-    ],
-    [summary],
+function App({
+  runtime,
+  locale,
+  saveSchemaVersion,
+  sampleUtc,
+  reloadSafely,
+  confirmOverwrite = (message) => window.confirm(message),
+  buildId,
+}: AppProps) {
+  const intl = useIntl()
+  const status = useBrowserRuntimeStatus(runtime)
+  const fileInput = useRef<HTMLInputElement>(null)
+  const operationPendingRef = useRef(false)
+  const [lastImport, setLastImport] =
+    useState<UiRuntimeImportResult | null>(null)
+  const [operationStatus, setOperationStatus] =
+    useState<StartupShellOperationStatus>()
+  const viewModel = useMemo(
+    () =>
+      selectStartupShellViewModel(status, {
+        locale,
+        saveSchemaVersion,
+        buildId,
+      }),
+    [buildId, locale, saveSchemaVersion, status],
   )
+  const shellViewModel = useMemo(
+    () =>
+      Object.freeze({
+        ...viewModel,
+        ...(operationStatus === undefined
+          ? {}
+          : { operationStatus }),
+      }),
+    [operationStatus, viewModel],
+  )
+  const operationPending =
+    operationStatus?.endsWith('-pending') ?? false
+
+  const beginOperation = (
+    pendingStatus: StartupShellOperationStatus,
+  ): boolean => {
+    if (operationPendingRef.current) return false
+    operationPendingRef.current = true
+    setOperationStatus(pendingStatus)
+    return true
+  }
+
+  const completeOperation = (
+    completedStatus: StartupShellOperationStatus,
+  ): void => {
+    operationPendingRef.current = false
+    setOperationStatus(completedStatus)
+  }
+
+  const reloadRequested = async (): Promise<void> => {
+    if (!beginOperation('reload-pending')) return
+    try {
+      await reloadSafely()
+      completeOperation('reload-completed')
+    } catch {
+      completeOperation('reload-failed')
+    }
+  }
+
+  const exportRecoveryRequested = async (): Promise<void> => {
+    if (!beginOperation('export-pending')) return
+    try {
+      const exported = await runtime.exportLastRecovery()
+      completeOperation(
+        exported ? 'export-succeeded' : 'export-failed',
+      )
+    } catch {
+      completeOperation('export-failed')
+    }
+  }
+
+  const importSelectedFile = async (
+    file: File | undefined,
+  ): Promise<void> => {
+    if (file === undefined || operationPendingRef.current) return
+    const approved = confirmOverwrite(
+      intl.formatMessage(
+        startupShellMessages.importOverwriteConfirmation,
+      ),
+    )
+    if (!approved || !beginOperation('import-pending')) return
+    try {
+      const result = await runtime.importSave({
+        source: 'file',
+        file,
+        importedAtUtc: sampleUtc(),
+        overwriteApproved: true,
+      })
+      setLastImport(result)
+      completeOperation(
+        result.imported
+          ? 'import-succeeded'
+          : 'import-failed',
+      )
+    } catch {
+      completeOperation('import-failed')
+    }
+  }
+
+  const actions: StartupShellActions = {
+    disabled: operationPending,
+    ...(viewModel.phase === 'idle'
+      ? { start: () => void runtime.start() }
+      : {}),
+    ...(viewModel.phase === 'writer-blocked' ||
+    viewModel.phase === 'ownership-lost'
+      ? { checkAgain: () => void reloadRequested() }
+      : {}),
+    ...(viewModel.phase === 'application-blocked' ||
+    viewModel.phase === 'error'
+      ? { retry: () => void reloadRequested() }
+      : {}),
+    ...(viewModel.phase === 'recovery'
+      ? {
+          importSave: () => fileInput.current?.click(),
+          ...(lastImport?.recoveryAvailable
+            ? {
+                exportRecovery: () =>
+                  void exportRecoveryRequested(),
+              }
+            : {}),
+        }
+      : {}),
+  }
 
   return (
-    <main className="diagnostic-shell">
-      <header className="page-heading">
-        <h1>Idle Dyson Swarm web foundation</h1>
-        <p>
-          Developer diagnostics for the headless TypeScript port. This page is
-          not a product frontend or a design baseline.
-        </p>
-      </header>
-
-      <section className="compatibility-lab">
-        <header>
-          <h2>Save compatibility lab</h2>
-          <p>
-            Verify existing Unity <code>IDB1:</code> saves directly in the
-            browser.
-          </p>
-        </header>
-
-        <div
-          className={`compatibility-status ${summary.status}`}
-          role="status"
-        >
-          <strong>
-            {summary.status === 'compatible'
-              ? 'Save decoded successfully'
-              : summary.status === 'failed'
-                ? 'Save could not be decoded'
-                : summary.status === 'loading'
-                  ? 'Reading save…'
-                  : 'Decoder ready'}
-          </strong>
-          <span>{summary.source}</span>
-        </div>
-
-        <div className="results-grid">
-          {results.map(([label, value]) => (
-            <div className="result" key={String(label)}>
-              <span>{label}</span>
-              <strong>{value ?? '—'}</strong>
-            </div>
-          ))}
-        </div>
-
-        {summary.error && <p className="error-message">{summary.error}</p>}
-
-        <section className="fixture-panel">
-          <header>
-            <h3>Compatibility fixtures</h3>
-            <p>Decode saves preserved by the Unity test suite.</p>
-          </header>
-          <div className="fixture-buttons">
-            {FIXTURES.map((fixture) => (
-              <button
-                type="button"
-                key={fixture.file}
-                onClick={() =>
-                  void loadFixture(fixture.file, fixture.label)
-                }
-              >
-                {fixture.label}
-              </button>
-            ))}
-          </div>
-        </section>
-
-        <label className="file-input">
-          <span>Test another existing save</span>
-          <small>The file stays inside this local diagnostic app.</small>
-          <input
-            type="file"
-            accept=".txt,text/plain"
-            onChange={(event) => {
-              const file = event.target.files?.[0]
-              if (file) {
-                void file.text().then((text) => decodeText(text, file.name))
-              }
-            }}
-          />
-        </label>
-      </section>
-    </main>
+    <>
+      <StartupShell
+        viewModel={shellViewModel}
+        actions={actions}
+      />
+      <input
+        ref={fileInput}
+        data-testid="startup-save-file"
+        type="file"
+        accept=".txt,text/plain"
+        hidden
+        tabIndex={-1}
+        onChange={(event) => {
+          const input = event.currentTarget
+          void importSelectedFile(input.files?.[0]).finally(() => {
+            input.value = ''
+          })
+        }}
+      />
+    </>
   )
 }
 

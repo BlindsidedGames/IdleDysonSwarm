@@ -92,5 +92,233 @@
       "type": 0,
       "value": "Completed"
     }
+  ],
+  "startup-shell.action.check-again": [
+    {
+      "type": 0,
+      "value": "Check again"
+    }
+  ],
+  "startup-shell.action.export-recovery": [
+    {
+      "type": 0,
+      "value": "Export recovery data"
+    }
+  ],
+  "startup-shell.action.import": [
+    {
+      "type": 0,
+      "value": "Import a save"
+    }
+  ],
+  "startup-shell.action.retry": [
+    {
+      "type": 0,
+      "value": "Try startup again"
+    }
+  ],
+  "startup-shell.action.start": [
+    {
+      "type": 0,
+      "value": "Start game"
+    }
+  ],
+  "startup-shell.app-name": [
+    {
+      "type": 0,
+      "value": "Idle Dyson Swarm"
+    }
+  ],
+  "startup-shell.boundary.body": [
+    {
+      "type": 0,
+      "value": "The game display stopped. No automatic retry or progress change was attempted. Reload this page when you are ready."
+    }
+  ],
+  "startup-shell.boundary.title": [
+    {
+      "type": 0,
+      "value": "The display stopped unexpectedly"
+    }
+  ],
+  "startup-shell.diagnostics.label": [
+    {
+      "type": 0,
+      "value": "Redacted local diagnostic report"
+    }
+  ],
+  "startup-shell.diagnostics.summary": [
+    {
+      "type": 0,
+      "value": "Local diagnostic details"
+    }
+  ],
+  "startup-shell.import.overwrite-confirmation": [
+    {
+      "type": 0,
+      "value": "Import this save and replace the current browser profile? A recovery copy is retained before replacement."
+    }
+  ],
+  "startup-shell.operation.export-failed": [
+    {
+      "type": 0,
+      "value": "Recovery data could not be exported from this tab."
+    }
+  ],
+  "startup-shell.operation.export-pending": [
+    {
+      "type": 0,
+      "value": "Preparing recovery data…"
+    }
+  ],
+  "startup-shell.operation.export-succeeded": [
+    {
+      "type": 0,
+      "value": "Recovery data exported."
+    }
+  ],
+  "startup-shell.operation.import-failed": [
+    {
+      "type": 0,
+      "value": "The save could not be imported. Your existing progress was not replaced."
+    }
+  ],
+  "startup-shell.operation.import-pending": [
+    {
+      "type": 0,
+      "value": "Importing the selected save…"
+    }
+  ],
+  "startup-shell.operation.import-succeeded": [
+    {
+      "type": 0,
+      "value": "Save imported successfully."
+    }
+  ],
+  "startup-shell.operation.reload-completed": [
+    {
+      "type": 0,
+      "value": "Reload requested."
+    }
+  ],
+  "startup-shell.operation.reload-failed": [
+    {
+      "type": 0,
+      "value": "This tab could not reload safely. Your progress was not reset."
+    }
+  ],
+  "startup-shell.operation.reload-pending": [
+    {
+      "type": 0,
+      "value": "Releasing this tab before reloading…"
+    }
+  ],
+  "startup-shell.state.application-blocked.body": [
+    {
+      "type": 0,
+      "value": "A required browser feature is unavailable. Your existing progress has not been changed."
+    }
+  ],
+  "startup-shell.state.application-blocked.title": [
+    {
+      "type": 0,
+      "value": "This browser cannot start the game"
+    }
+  ],
+  "startup-shell.state.error.body": [
+    {
+      "type": 0,
+      "value": "Startup stopped without replacing your existing progress."
+    }
+  ],
+  "startup-shell.state.error.title": [
+    {
+      "type": 0,
+      "value": "The game could not start"
+    }
+  ],
+  "startup-shell.state.idle.body": [
+    {
+      "type": 0,
+      "value": "Start when you are ready. Your saved progress is not changed by this screen."
+    }
+  ],
+  "startup-shell.state.idle.title": [
+    {
+      "type": 0,
+      "value": "Ready to start"
+    }
+  ],
+  "startup-shell.state.ownership-lost.body": [
+    {
+      "type": 0,
+      "value": "Game activity stopped to protect your progress because another tab or window became active."
+    }
+  ],
+  "startup-shell.state.ownership-lost.title": [
+    {
+      "type": 0,
+      "value": "This tab stopped writing progress"
+    }
+  ],
+  "startup-shell.state.ready-placeholder.body": [
+    {
+      "type": 0,
+      "value": "Startup completed. The gameplay surface will appear here."
+    }
+  ],
+  "startup-shell.state.ready-placeholder.title": [
+    {
+      "type": 0,
+      "value": "Game ready"
+    }
+  ],
+  "startup-shell.state.recovery.body": [
+    {
+      "type": 0,
+      "value": "The game did not replace the saved progress it could not safely open. Import another save to continue. If that import cannot be used, its retained recovery data can then be exported for support."
+    }
+  ],
+  "startup-shell.state.recovery.title": [
+    {
+      "type": 0,
+      "value": "Saved progress needs attention"
+    }
+  ],
+  "startup-shell.state.starting.body": [
+    {
+      "type": 0,
+      "value": "Checking this browser and preparing your saved progress."
+    }
+  ],
+  "startup-shell.state.starting.title": [
+    {
+      "type": 0,
+      "value": "Starting the game"
+    }
+  ],
+  "startup-shell.state.stopping.body": [
+    {
+      "type": 0,
+      "value": "Finishing the current operation and releasing this tab."
+    }
+  ],
+  "startup-shell.state.stopping.title": [
+    {
+      "type": 0,
+      "value": "Stopping safely"
+    }
+  ],
+  "startup-shell.state.writer-blocked.body": [
+    {
+      "type": 0,
+      "value": "This tab cannot write progress while another tab or window is active. Return to the active game or close it before checking again."
+    }
+  ],
+  "startup-shell.state.writer-blocked.title": [
+    {
+      "type": 0,
+      "value": "Another tab is using this game"
+    }
   ]
 }

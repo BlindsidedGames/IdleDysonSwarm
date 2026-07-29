@@ -35,6 +35,12 @@ export interface LifecycleCoordinatorState {
   readonly saveReady: boolean
   readonly coldStartReplayPending: boolean
   readonly coldStartGateSaveUsed: boolean
+  /**
+   * True only after the first non-active departure timestamp in the current
+   * away episode was committed. Later lifecycle saves preserve that baseline
+   * until active replay consumes it.
+   */
+  readonly departureTimestampRecorded: boolean
 }
 
 export type LifecycleEvent =
@@ -134,7 +140,9 @@ export function evaluateLifecycleEvent(
     }
   }
 
-  const stampQuitTimestamp = !allowColdStartGateSave
+  const stampQuitTimestamp =
+    !allowColdStartGateSave &&
+    !state.departureTimestampRecorded
   const candidate = stampQuitTimestamp
     ? withQuitTimestamp(state.canonical, clock.serializedUtcText)
     : state.canonical
@@ -143,6 +151,8 @@ export function evaluateLifecycleEvent(
     canonical: candidate,
     coldStartGateSaveUsed:
       state.coldStartGateSaveUsed || allowColdStartGateSave,
+    departureTimestampRecorded:
+      state.departureTimestampRecorded || stampQuitTimestamp,
   }
   return {
     state: nextState,
@@ -213,6 +223,7 @@ export function applyAwayTimeReplay(
         : request.state.saveReady,
       coldStartReplayPending: false,
       coldStartGateSaveUsed: false,
+      departureTimestampRecorded: false,
     },
     resolution,
     timestampConsumed,

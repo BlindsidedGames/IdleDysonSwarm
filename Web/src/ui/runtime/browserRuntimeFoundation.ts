@@ -2,14 +2,22 @@ import type {
   ApplicationSnapshot,
   CheckpointResult,
 } from '../../application/contracts'
+import type { DeepReadonly } from '../../core/contracts'
+import type {
+  FrontendApplicationSnapshot,
+} from '../../application/frontendSnapshot'
 import type {
   CanonicalLifecycleApplicationPort,
   CanonicalLifecycleClock,
+  CanonicalLifecycleSaveResult,
+  CanonicalCoordinatedActiveResult,
   CanonicalCoordinatedImportResult,
+  CanonicalAwayReplayResult,
 } from '../../application/canonicalLifecycleCoordinator'
 import {
   CanonicalLifecycleCoordinator,
 } from '../../application/canonicalLifecycleCoordinator'
+import type { CanonicalPlayerCommand } from '../../application/canonicalPlayerCommands'
 import type { CanonicalRuntimeState } from '../../application/canonicalRuntimeSession'
 import {
   type BrowserSaveDatabase,
@@ -48,6 +56,7 @@ import type {
   ClipboardAdapter,
   ExternalNavigationAdapter,
   LifecycleAdapter,
+  LifecyclePhase,
 } from '../../platform/contracts'
 import { IndexedDbSaveStorageAdapter } from '../../platform/indexedDbSaveStorage'
 import {
@@ -58,9 +67,17 @@ import {
   PortableSaveRepository,
   type SaveRepository,
 } from '../../save/repository'
+import type {
+  LifecycleClockSample,
+} from '../../simulation/lifecycleAwayTime'
 import {
   AuthoritativeLifecycleRouter,
 } from './authoritativeLifecycleRouter'
+import {
+  CoordinatorActiveTimeDriver,
+  type ActiveTimeFrameScheduler,
+  type ActiveTimeMonotonicClock,
+} from './activeTimeDriver'
 import type {
   UiRuntimeFoundation,
   UiRuntimeFoundationStatus,
@@ -68,9 +85,17 @@ import type {
   UiRuntimeImportResult,
   UiRuntimeStartResult,
   UiRuntimeStorageStatus,
+  UiRuntimeSnapshotListener,
   UiRuntimeStatusListener,
+  UiRuntimePlayerCommandResult,
   UiRuntimeWarning,
 } from './contracts'
+import {
+  FrontendSnapshotStore,
+} from './frontendSnapshotStore'
+import {
+  RevisionedPlayerCommandDispatcher,
+} from './playerCommandDispatcher'
 
 export const DEVELOPMENT_ONLY_BROWSER_DATABASE_NAME =
   'idle-dyson-swarm-web-development-v1'
@@ -80,6 +105,19 @@ export const DEVELOPMENT_ONLY_BROWSER_PROFILE_ID =
 interface BrowserRuntimeApplicationPort
   extends CanonicalLifecycleApplicationPort {
   checkpoint(): Promise<CheckpointResult>
+  frontendSnapshot(): DeepReadonly<FrontendApplicationSnapshot>
+}
+
+interface BrowserLifecycleReceipt {
+  readonly intentEpoch: number
+  readonly clockSample: LifecycleClockSample
+}
+
+class LifecycleReceiptClockError extends Error {
+  constructor() {
+    super('Lifecycle receipt clock capture failed.')
+    this.name = 'LifecycleReceiptClockError'
+  }
 }
 
 export type BrowserRuntimeApplicationFactory = (
@@ -108,6 +146,9 @@ export interface BrowserRuntimeFoundationOptions {
   /** Deterministic lifecycle orchestration test seam. */
   readonly lifecycle?: LifecycleAdapter
   readonly lifecycleClock?: CanonicalLifecycleClock
+  readonly activeTimeClock?: ActiveTimeMonotonicClock
+  readonly activeTimeScheduler?: ActiveTimeFrameScheduler
+  readonly activeTimeDeliveryIntervalMilliseconds?: number
   readonly storageManager?: BrowserStorageManagerPort
   readonly clipboard?: ClipboardPort
   readonly navigationOpener?: ExternalWindowOpener
@@ -127,10 +168,22 @@ export interface BrowserRuntimeFoundationOptions {
 interface BrowserRuntimeGraph {
   readonly application: BrowserRuntimeApplicationPort
   readonly coordinator: CanonicalLifecycleCoordinator
+  readonly initialLifecycle: {
+    readonly phase: LifecyclePhase
+    readonly intentEpoch: number
+    readonly clockSample: LifecycleClockSample
+  }
   readonly router: AuthoritativeLifecycleRouter
+  readonly activeTime: CoordinatorActiveTimeDriver<CanonicalCoordinatedActiveResult>
+  readonly playerCommands: RevisionedPlayerCommandDispatcher
   readonly checkpoint: PeriodicCheckpointScheduler
   readonly retainer: BrowserRecoveryBlobRetainer
 }
+
+export type BrowserUiRuntimeFoundation = UiRuntimeFoundation<
+  DeepReadonly<FrontendApplicationSnapshot>,
+  CanonicalPlayerCommand
+>
 
 /**
  * Browser Wave 1 composition root.
@@ -142,13 +195,21 @@ interface BrowserRuntimeGraph {
  */
 export function createBrowserRuntimeFoundation(
   options: Readonly<BrowserRuntimeFoundationOptions>,
-): UiRuntimeFoundation {
+): BrowserUiRuntimeFoundation {
   const implementation = new BrowserRuntimeFoundation(options)
-  const facade: UiRuntimeFoundation = {
+  const facade: BrowserUiRuntimeFoundation = {
     status: () => implementation.status(),
     subscribeStatus: (listener: UiRuntimeStatusListener) =>
       implementation.subscribeStatus(listener),
+    snapshot: () => implementation.snapshot(),
+    subscribeSnapshot: (
+      listener: UiRuntimeSnapshotListener<
+        DeepReadonly<FrontendApplicationSnapshot>
+      >,
+    ) => implementation.subscribeSnapshot(listener),
     start: () => implementation.start(),
+    dispatchPlayer: (command: CanonicalPlayerCommand) =>
+      implementation.dispatchPlayer(command),
     importSave: (request: UiRuntimeImportRequest) =>
       implementation.importSave(request),
     inspectStorage: (requestPersistence = false) =>
@@ -170,7 +231,7 @@ export function createBrowserRuntimeFoundation(
   return Object.freeze(facade)
 }
 
-class BrowserRuntimeFoundation implements UiRuntimeFoundation {
+class BrowserRuntimeFoundation implements BrowserUiRuntimeFoundation {
   private readonly options: Readonly<BrowserRuntimeFoundationOptions>
   private readonly database: BrowserSaveDatabase
   private readonly lease: BrowserWriterLease
@@ -181,6 +242,7 @@ class BrowserRuntimeFoundation implements UiRuntimeFoundation {
   private readonly storageStatus: BrowserStorageStatusAdapter
   private readonly importReader: BrowserSaveImportReader
   private readonly exporter: BrowserRecoveryBlobExporter
+  private readonly frontendSnapshots = new FrontendSnapshotStore()
   private readonly listeners = new Set<UiRuntimeStatusListener>()
   private currentStatus: UiRuntimeFoundationStatus = Object.freeze({
     phase: 'idle',
@@ -191,6 +253,14 @@ class BrowserRuntimeFoundation implements UiRuntimeFoundation {
   private startPromise: Promise<UiRuntimeStartResult> | undefined
   private teardownPromise: Promise<void> | undefined
   private shutdownRequested = false
+  private foregroundIntended = false
+  private lifecycleIntentEpoch = 0
+  // Foreground sampling may resume only when the latest active intent has
+  // completed a safe canonical replay inside the authority fence.
+  private lifecycleReconciledIntentEpoch = 0
+  // Every admitted import participates, including queued calls and failures.
+  // Only the final completion may reopen foreground sampling.
+  private pendingImportCount = 0
   private unsubscribeOwnership: (() => void) | undefined
 
   constructor(options: Readonly<BrowserRuntimeFoundationOptions>) {
@@ -240,12 +310,25 @@ class BrowserRuntimeFoundation implements UiRuntimeFoundation {
     return this.currentStatus
   }
 
+  snapshot(): DeepReadonly<FrontendApplicationSnapshot> {
+    return this.frontendSnapshots.snapshot()
+  }
+
   subscribeStatus(listener: UiRuntimeStatusListener): () => void {
     if (this.shutdownRequested) return () => undefined
     this.listeners.add(listener)
     return () => {
       this.listeners.delete(listener)
     }
+  }
+
+  subscribeSnapshot(
+    listener: UiRuntimeSnapshotListener<
+      DeepReadonly<FrontendApplicationSnapshot>
+    >,
+  ): () => void {
+    if (this.shutdownRequested) return () => undefined
+    return this.frontendSnapshots.subscribe(listener)
   }
 
   start(): Promise<UiRuntimeStartResult> {
@@ -256,13 +339,40 @@ class BrowserRuntimeFoundation implements UiRuntimeFoundation {
     return this.startPromise
   }
 
+  dispatchPlayer(
+    command: CanonicalPlayerCommand,
+  ): Promise<UiRuntimePlayerCommandResult> {
+    const graph = this.graph
+    if (graph === undefined || this.shutdownRequested) {
+      return Promise.resolve(
+        runtimePlayerFailure(
+          'RUNTIME-PLAYER-NOT-READY',
+          'The browser runtime does not own a writable ready application.',
+        ),
+      )
+    }
+    return graph.playerCommands.dispatch(command)
+  }
+
   async importSave(
     request: UiRuntimeImportRequest,
   ): Promise<UiRuntimeImportResult> {
     const graph = this.requireGraph()
+    const admittedLifecycleIntentEpoch =
+      this.lifecycleIntentEpoch
+    this.pendingImportCount += 1
+    const pendingActiveMilliseconds =
+      this.suspendActiveTime(graph)
     let retainedPath: string | undefined
+    let activeResult: CanonicalCoordinatedActiveResult | undefined
     try {
       const routed = await graph.router.run(async () => {
+        activeResult =
+          pendingActiveMilliseconds > 0
+            ? await graph.coordinator.advanceActive(
+                pendingActiveMilliseconds,
+              )
+            : undefined
         const supplied = await this.readSuppliedSave(request)
 
         // The supplied-text ceiling is proven before the first write. The exact
@@ -277,14 +387,27 @@ class BrowserRuntimeFoundation implements UiRuntimeFoundation {
           overwriteApproved: request.overwriteApproved,
           target: 'development',
         })
-        return { imported, recoveryPath: recovery.sourcePath }
+        return {
+          imported,
+          recoveryPath: recovery.sourcePath,
+        }
       })
       this.assertCurrentGraph(graph)
+      if (activeResult !== undefined) {
+        this.recordActiveResult(activeResult)
+        this.publishFrontendSnapshot(graph)
+      }
       this.lastRecoveryPath = routed.recoveryPath
       if (routed.imported.imported) {
+        if (routed.imported.lifecycleReset) {
+          this.reconcileActiveLifecycleIntent(
+            admittedLifecycleIntentEpoch,
+          )
+        }
         graph.checkpoint.start()
         const snapshot = graph.application.snapshot()
         if (snapshot.phase === 'ready') {
+          this.publishFrontendSnapshot(graph)
           this.publish(this.readyStatus())
         }
       }
@@ -292,6 +415,10 @@ class BrowserRuntimeFoundation implements UiRuntimeFoundation {
     } catch (error) {
       await this.lease.assertWritable()
       this.assertCurrentGraph(graph)
+      if (activeResult !== undefined) {
+        this.recordActiveResult(activeResult)
+        this.publishFrontendSnapshot(graph)
+      }
       if (retainedPath !== undefined) {
         this.lastRecoveryPath = retainedPath
       }
@@ -301,6 +428,11 @@ class BrowserRuntimeFoundation implements UiRuntimeFoundation {
         code: importFailureCode(error),
         reason: errorMessage(error),
         recoveryAvailable: retainedPath !== undefined,
+      }
+    } finally {
+      this.pendingImportCount -= 1
+      if (this.pendingImportCount === 0) {
+        this.startActiveTimeIfForegroundIntended(graph)
       }
     }
   }
@@ -351,9 +483,23 @@ class BrowserRuntimeFoundation implements UiRuntimeFoundation {
       return this.teardownPromise ?? Promise.resolve()
     }
     this.shutdownRequested = true
+    this.foregroundIntended = false
     const graph = this.graph
+    if (graph !== undefined) {
+      const pendingActiveMilliseconds =
+        this.suspendActiveTime(graph)
+      if (pendingActiveMilliseconds > 0) {
+        void graph.router.run(() =>
+          graph.coordinator.advanceActive(
+            pendingActiveMilliseconds,
+          ),
+        ).catch(() => undefined)
+      }
+      graph.activeTime.shutdown()
+    }
     graph?.router.stop()
     graph?.checkpoint.stop()
+    this.frontendSnapshots.clear()
     this.publish({ phase: 'stopping' })
     const existingLossTeardown = this.teardownPromise
     this.teardownPromise = (
@@ -364,11 +510,13 @@ class BrowserRuntimeFoundation implements UiRuntimeFoundation {
       this.unsubscribeOwnership?.()
       this.unsubscribeOwnership = undefined
       this.publish({ phase: 'stopped' }, true)
+      this.frontendSnapshots.dispose()
     })
     return this.teardownPromise
   }
 
   private async startOnce(): Promise<UiRuntimeStartResult> {
+    this.frontendSnapshots.publishStarting()
     this.publish({ phase: 'starting' })
     try {
       const acquisition = await this.lease.acquire()
@@ -386,6 +534,7 @@ class BrowserRuntimeFoundation implements UiRuntimeFoundation {
           expiresAtUtcMilliseconds:
             acquisition.expiresAtUtcMilliseconds,
         } satisfies UiRuntimeFoundationStatus)
+        this.frontendSnapshots.clear()
         this.publish(blocked)
         return blocked
       }
@@ -404,7 +553,29 @@ class BrowserRuntimeFoundation implements UiRuntimeFoundation {
       }
       const graph = this.createGraph()
       this.graph = graph
-      await graph.router.start(() => graph.coordinator.start())
+      const startupReplay = await graph.router.start(async () => {
+        const replay = await graph.coordinator.start(
+          graph.initialLifecycle.clockSample,
+        )
+        if (
+          graph.initialLifecycle.phase !== 'active' &&
+          graph.application.snapshot().phase === 'ready'
+        ) {
+          await graph.coordinator.handlePlatformPhase(
+            graph.initialLifecycle.phase,
+            graph.initialLifecycle.clockSample,
+          )
+          if (
+            this.isLatestLifecycleIntent(
+              graph.initialLifecycle.intentEpoch,
+              false,
+            )
+          ) {
+            this.suspendActiveTime(graph)
+          }
+        }
+        return replay
+      })
       this.assertCurrentGraph(graph)
 
       const applicationSnapshot = graph.application.snapshot()
@@ -412,6 +583,7 @@ class BrowserRuntimeFoundation implements UiRuntimeFoundation {
         const blocked = applicationBlockedStatus(
           applicationSnapshot,
         )
+        this.publishFrontendSnapshot(graph)
         this.publish(blocked)
         return blocked
       }
@@ -421,6 +593,25 @@ class BrowserRuntimeFoundation implements UiRuntimeFoundation {
         )
       }
       graph.checkpoint.start()
+      this.publishFrontendSnapshot(graph)
+      const unsafeStartupReplay =
+        unsafeForegroundReplayReason(startupReplay)
+      if (unsafeStartupReplay === undefined) {
+        if (graph.initialLifecycle.phase === 'active') {
+          this.reconcileActiveLifecycleIntent(
+            graph.initialLifecycle.intentEpoch,
+          )
+        }
+        this.startActiveTimeIfForegroundIntended(graph)
+      } else {
+        this.suspendActiveTime(graph)
+        this.addWarning({
+          code: 'persistence-failed',
+          reason:
+            'Startup away-time replay did not establish a safe foreground baseline: ' +
+            unsafeStartupReplay,
+        }, false)
+      }
       const ready = this.readyStatus()
       this.publish(ready)
       return ready
@@ -437,6 +628,7 @@ class BrowserRuntimeFoundation implements UiRuntimeFoundation {
         code: 'startup-failed',
         reason: errorMessage(error),
       } satisfies UiRuntimeFoundationStatus)
+      this.frontendSnapshots.clear()
       this.publish(blocked)
       const graph = this.detachGraph()
       this.teardownPromise ??= this.teardown(graph, true)
@@ -460,6 +652,9 @@ class BrowserRuntimeFoundation implements UiRuntimeFoundation {
       decodeIdb1Save,
       { allowCanonicalPlayerWrites: false },
     )
+    const initialLifecyclePhase = this.lifecycle.currentPhase()
+    const initialLifecycleReceipt =
+      this.observeLifecyclePhase(initialLifecyclePhase)
     const application = this.options.createApplication(repository)
     const coordinator = new CanonicalLifecycleCoordinator({
       application,
@@ -468,10 +663,80 @@ class BrowserRuntimeFoundation implements UiRuntimeFoundation {
       policy: this.options.lifecyclePolicy,
       subscribeToLifecycle: false,
     })
+    let graph!: BrowserRuntimeGraph
+    let activeTime!: CoordinatorActiveTimeDriver<CanonicalCoordinatedActiveResult>
     const router = new AuthoritativeLifecycleRouter({
       lifecycle: this.lifecycle,
       lease: this.lease,
       coordinator,
+      observePhase: (phase) =>
+        this.observeLifecyclePhase(phase),
+      handlePhase: (phase, observation) => {
+        const receipt = requireLifecycleReceipt(observation)
+        return coordinator.handlePlatformPhase(
+          phase,
+          receipt.clockSample,
+        )
+      },
+      beforePhase: (phase, observationError) => {
+        if (
+          phase === 'active' &&
+          observationError === undefined
+        ) {
+          return undefined
+        }
+        const milliseconds = this.suspendActiveTime(graph)
+        return milliseconds > 0
+          ? () => coordinator.advanceActive(milliseconds)
+          : undefined
+      },
+      afterPhase: (
+        phase,
+        result,
+        beforeResult,
+        phaseObservation,
+      ) => {
+        if (!this.isCurrentGraph(graph)) return
+        const receipt = requireLifecycleReceipt(
+          phaseObservation,
+        )
+        if (isCanonicalActiveResult(beforeResult)) {
+          this.recordActiveResult(beforeResult)
+        }
+        this.publishFrontendSnapshot(graph)
+        if (phase === 'active') {
+          const unsafeReplayReason =
+            unsafeForegroundReplayReason(result)
+          if (unsafeReplayReason !== undefined) {
+            this.suspendActiveTime(graph)
+            this.addWarning({
+              code: 'persistence-failed',
+              reason:
+                'Away-time replay did not establish a safe foreground baseline: ' +
+                unsafeReplayReason,
+            })
+            return
+          }
+          this.reconcileActiveLifecycleIntent(
+            receipt.intentEpoch,
+          )
+          this.startActiveTimeIfForegroundIntended(
+            graph,
+            receipt.intentEpoch,
+          )
+        } else if (
+          this.isLatestLifecycleIntent(
+            receipt.intentEpoch,
+            false,
+          )
+        ) {
+          // A delayed startup or import may have completed after the raw
+          // non-active phase was observed. Reassert the stopped state after
+          // its queued lifecycle operation so background time cannot enter
+          // the foreground delivery lane.
+          this.suspendActiveTime(graph)
+        }
+      },
       onFailure: (_phase, error) => {
         if (
           !(error instanceof WriterLeaseLostError) &&
@@ -479,10 +744,49 @@ class BrowserRuntimeFoundation implements UiRuntimeFoundation {
         ) {
           this.addWarning({
             code: 'persistence-failed',
+            reason:
+              error instanceof LifecycleReceiptClockError
+                ? 'Lifecycle clock capture failed; the phase was not applied and foreground sampling remains paused.'
+                : errorMessage(error),
+          })
+        }
+      },
+    })
+    activeTime = new CoordinatorActiveTimeDriver({
+      clock: this.options.activeTimeClock,
+      scheduler: this.options.activeTimeScheduler,
+      minimumDeliveryMilliseconds:
+        this.options.activeTimeDeliveryIntervalMilliseconds,
+      deliver: (milliseconds) =>
+        router.run(() => coordinator.advanceActive(milliseconds)),
+      onDelivered: (result) => {
+        if (!this.isCurrentGraph(graph)) return
+        this.recordActiveResult(result)
+        this.publishFrontendSnapshot(graph)
+      },
+      onFailure: (error) => {
+        if (
+          !(error instanceof WriterLeaseLostError) &&
+          this.isCurrentGraph(graph)
+        ) {
+          this.addWarning({
+            code: 'active-time-failed',
             reason: errorMessage(error),
           })
         }
       },
+    })
+    const playerCommands = new RevisionedPlayerCommandDispatcher({
+      latestSnapshot: () => this.frontendSnapshots.snapshot(),
+      dispatch: (envelope, cancelRequested) =>
+        router.run(() =>
+          coordinator.dispatchPlayer(envelope, cancelRequested),
+        ),
+      publishSnapshot: () => {
+        this.publishFrontendSnapshot(graph)
+      },
+      isCurrent: () => this.isCurrentGraph(graph),
+      cancelRequested: () => this.lease.cancellationRequested(),
     })
     const checkpoint = new PeriodicCheckpointScheduler({
       scheduler: this.options.checkpointScheduler,
@@ -500,13 +804,20 @@ class BrowserRuntimeFoundation implements UiRuntimeFoundation {
         }
       },
     })
-    return {
+    graph = {
       application,
       coordinator,
+      initialLifecycle: Object.freeze({
+        phase: initialLifecyclePhase,
+        ...initialLifecycleReceipt,
+      }),
       router,
+      activeTime,
+      playerCommands,
       checkpoint,
       retainer: new BrowserRecoveryBlobRetainer(storage),
     }
+    return graph
   }
 
   private handleOwnershipState(
@@ -518,6 +829,7 @@ class BrowserRuntimeFoundation implements UiRuntimeFoundation {
     ) {
       return
     }
+    this.foregroundIntended = false
     const graph = this.detachGraph()
     this.publish({
       phase: 'ownership-lost',
@@ -529,8 +841,10 @@ class BrowserRuntimeFoundation implements UiRuntimeFoundation {
   private detachGraph(): BrowserRuntimeGraph | undefined {
     const graph = this.graph
     this.graph = undefined
+    graph?.activeTime.shutdown()
     graph?.router.stop()
     graph?.checkpoint.stop()
+    this.frontendSnapshots.clear()
     return graph
   }
 
@@ -539,12 +853,39 @@ class BrowserRuntimeFoundation implements UiRuntimeFoundation {
     orderly: boolean,
   ): Promise<void> {
     if (graph !== undefined) {
+      graph.activeTime.shutdown()
       await graph.router.shutdown()
       await graph.checkpoint.shutdown()
+      if (orderly) await this.checkpointOrderlyShutdown(graph)
       await graph.coordinator.shutdown()
     }
     if (orderly) await this.lease.release()
     await this.lease.shutdown()
+  }
+
+  private async checkpointOrderlyShutdown(
+    graph: BrowserRuntimeGraph,
+  ): Promise<void> {
+    if (!isDirtySnapshot(graph.application.snapshot())) return
+    try {
+      const result = await this.lease.runAuthoritativeOperation(
+        () => graph.application.checkpoint(),
+      )
+      await this.lease.assertWritable()
+      if (!result.committed) {
+        this.addWarning({
+          code: 'checkpoint-failed',
+          reason: result.reason,
+        }, false)
+      }
+    } catch (error) {
+      if (!(error instanceof WriterLeaseLostError)) {
+        this.addWarning({
+          code: 'checkpoint-failed',
+          reason: errorMessage(error),
+        }, false)
+      }
+    }
   }
 
   private requireGraph(): BrowserRuntimeGraph {
@@ -563,6 +904,139 @@ class BrowserRuntimeFoundation implements UiRuntimeFoundation {
         'The browser runtime discarded the application graph.',
       )
     }
+  }
+
+  private isCurrentGraph(graph: BrowserRuntimeGraph): boolean {
+    return (
+      this.graph === graph &&
+      !this.shutdownRequested &&
+      this.lease.isAuthoritative()
+    )
+  }
+
+  private publishFrontendSnapshot(
+    graph: BrowserRuntimeGraph,
+  ): void {
+    this.assertCurrentGraph(graph)
+    if (!this.lease.isAuthoritative()) {
+      throw new WriterLeaseLostError()
+    }
+    this.frontendSnapshots.publish(
+      graph.application.frontendSnapshot(),
+    )
+  }
+
+  private recordActiveResult(
+    result: Readonly<CanonicalCoordinatedActiveResult>,
+  ): void {
+    if (
+      result.transition.accepted &&
+      result.remainingMilliseconds <= 0
+    ) {
+      return
+    }
+    this.addWarning({
+      code: 'active-time-failed',
+      reason: result.transition.accepted
+        ? `${result.remainingMilliseconds} ms of foreground time was not consumed.`
+        : `${result.transition.code}: ${result.transition.reason}`,
+    })
+  }
+
+  private suspendActiveTime(
+    graph: BrowserRuntimeGraph,
+  ): number {
+    try {
+      return graph.activeTime.suspendForLifecycle()
+    } catch (error) {
+      this.addWarning({
+        code: 'active-time-failed',
+        reason: errorMessage(error),
+      })
+      return 0
+    }
+  }
+
+  private startActiveTimeIfForegroundIntended(
+    graph: BrowserRuntimeGraph,
+    expectedIntentEpoch?: unknown,
+  ): void {
+    if (
+      !this.foregroundIntended ||
+      this.lifecycleReconciledIntentEpoch !==
+        this.lifecycleIntentEpoch ||
+      (
+        expectedIntentEpoch !== undefined &&
+        expectedIntentEpoch !== this.lifecycleIntentEpoch
+      ) ||
+      !this.isCurrentGraph(graph) ||
+      graph.application.snapshot().phase !== 'ready'
+    ) {
+      return
+    }
+    graph.activeTime.startForeground()
+  }
+
+  private reconcileActiveLifecycleIntent(
+    expectedIntentEpoch: unknown,
+  ): void {
+    if (
+      this.isLatestLifecycleIntent(
+        expectedIntentEpoch,
+        true,
+      )
+    ) {
+      this.lifecycleReconciledIntentEpoch =
+        this.lifecycleIntentEpoch
+    }
+  }
+
+  private captureLifecycleIntent(
+    phase: LifecyclePhase,
+  ): number {
+    this.foregroundIntended = phase === 'active'
+    this.lifecycleIntentEpoch += 1
+    return this.lifecycleIntentEpoch
+  }
+
+  private observeLifecyclePhase(
+    phase: LifecyclePhase,
+  ): BrowserLifecycleReceipt {
+    const intentEpoch = this.captureLifecycleIntent(phase)
+    try {
+      const sampled = this.clock.sample()
+      const serializedUtcText = sampled.serializedUtcText
+      const parsedUtcMilliseconds =
+        Date.parse(serializedUtcText)
+      if (
+        !Number.isFinite(sampled.utcMilliseconds) ||
+        serializedUtcText.trim().length === 0 ||
+        !Number.isFinite(parsedUtcMilliseconds) ||
+        parsedUtcMilliseconds !== sampled.utcMilliseconds
+      ) {
+        throw new LifecycleReceiptClockError()
+      }
+      return Object.freeze({
+        intentEpoch,
+        clockSample: Object.freeze({
+          utcMilliseconds: sampled.utcMilliseconds,
+          serializedUtcText,
+        }),
+      })
+    } catch {
+      this.foregroundIntended = false
+      throw new LifecycleReceiptClockError()
+    }
+  }
+
+  private isLatestLifecycleIntent(
+    expectedIntentEpoch: unknown,
+    foregroundIntended: boolean,
+  ): boolean {
+    return (
+      expectedIntentEpoch === this.lifecycleIntentEpoch &&
+      this.foregroundIntended === foregroundIntended
+    )
   }
 
   private collectStorageWarnings(
@@ -667,7 +1141,7 @@ class BrowserRuntimeFoundation implements UiRuntimeFoundation {
     // A clean scheduler fast-path still receives a final authority fence.
     // Re-check dirtiness inside that serialized lane in case another accepted
     // lifecycle operation changed the application while this call was waiting.
-    return graph.router.run(async () => {
+    const committed = await graph.router.run(async () => {
       if (!isDirtySnapshot(graph.application.snapshot())) {
         return true
       }
@@ -679,6 +1153,8 @@ class BrowserRuntimeFoundation implements UiRuntimeFoundation {
       })
       return false
     })
+    this.publishFrontendSnapshot(graph)
+    return committed
   }
 
   private readSuppliedSave(request: UiRuntimeImportRequest) {
@@ -726,7 +1202,75 @@ function applicationBlockedStatus(
   return Object.freeze({
     phase: 'blocked',
     code: 'application-blocked',
+    applicationOutcome: snapshot.outcome,
     reason: `${snapshot.outcome}: ${snapshot.error}`,
+  })
+}
+
+function isCanonicalActiveResult(
+  value: unknown,
+): value is CanonicalCoordinatedActiveResult {
+  return (
+    value !== null &&
+    typeof value === 'object' &&
+    'requestedMilliseconds' in value &&
+    'consumedMilliseconds' in value &&
+    'remainingMilliseconds' in value &&
+    'transition' in value
+  )
+}
+
+function requireLifecycleReceipt(
+  value: unknown,
+): BrowserLifecycleReceipt {
+  if (
+    value === null ||
+    typeof value !== 'object' ||
+    !('intentEpoch' in value) ||
+    typeof value.intentEpoch !== 'number' ||
+    !('clockSample' in value) ||
+    value.clockSample === null ||
+    typeof value.clockSample !== 'object' ||
+    !('utcMilliseconds' in value.clockSample) ||
+    typeof value.clockSample.utcMilliseconds !== 'number' ||
+    !('serializedUtcText' in value.clockSample) ||
+    typeof value.clockSample.serializedUtcText !== 'string'
+  ) {
+    throw new Error(
+      'The lifecycle router lost its receipt-time phase observation.',
+    )
+  }
+  return value as unknown as BrowserLifecycleReceipt
+}
+
+function unsafeForegroundReplayReason(
+  result:
+    | CanonicalAwayReplayResult
+    | CanonicalLifecycleSaveResult,
+): string | undefined {
+  if (!('replayed' in result)) {
+    return 'the active phase returned a non-replay result.'
+  }
+  if (
+    result.replayed ||
+    result.code === 'no-quit-timestamp' ||
+    result.code === 'import-baseline-suppressed'
+  ) {
+    return undefined
+  }
+  return `${result.code}; foreground sampling remains paused until canonical replay succeeds.`
+}
+
+function runtimePlayerFailure(
+  code: string,
+  reason: string,
+): UiRuntimePlayerCommandResult {
+  return Object.freeze({
+    status: 'failed',
+    kind: 'runtime',
+    code,
+    reason,
+    retryable: false,
   })
 }
 

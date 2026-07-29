@@ -18,6 +18,7 @@ export type LifecyclePhase =
   | 'terminating'
 
 export interface LifecycleAdapter {
+  currentPhase(): LifecyclePhase
   subscribe(listener: (phase: LifecyclePhase) => void): () => void
 }
 

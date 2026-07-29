@@ -164,5 +164,537 @@
       "type": 0,
       "value": "]"
     }
+  ],
+  "startup-shell.action.check-again": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Ƈħḗḗƈķ ȧȧɠȧȧīƞ"
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "startup-shell.action.export-recovery": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Ḗẋƥǿǿřŧ řḗḗƈǿǿṽḗḗřẏ ḓȧȧŧȧȧ"
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "startup-shell.action.import": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Īḿƥǿǿřŧ ȧȧ şȧȧṽḗḗ"
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "startup-shell.action.retry": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Ŧřẏ şŧȧȧřŧŭŭƥ ȧȧɠȧȧīƞ"
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "startup-shell.action.start": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Şŧȧȧřŧ ɠȧȧḿḗḗ"
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "startup-shell.app-name": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Īḓŀḗḗ Ḓẏşǿǿƞ Şẇȧȧřḿ"
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "startup-shell.boundary.body": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Ŧħḗḗ ɠȧȧḿḗḗ ḓīşƥŀȧȧẏ şŧǿǿƥƥḗḗḓ. Ƞǿǿ ȧȧŭŭŧǿǿḿȧȧŧīƈ řḗḗŧřẏ ǿǿř ƥřǿǿɠřḗḗşş ƈħȧȧƞɠḗḗ ẇȧȧş ȧȧŧŧḗḗḿƥŧḗḗḓ. Řḗḗŀǿǿȧȧḓ ŧħīş ƥȧȧɠḗḗ ẇħḗḗƞ ẏǿǿŭŭ ȧȧřḗḗ řḗḗȧȧḓẏ."
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "startup-shell.boundary.title": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Ŧħḗḗ ḓīşƥŀȧȧẏ şŧǿǿƥƥḗḗḓ ŭŭƞḗḗẋƥḗḗƈŧḗḗḓŀẏ"
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "startup-shell.diagnostics.label": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Řḗḗḓȧȧƈŧḗḗḓ ŀǿǿƈȧȧŀ ḓīȧȧɠƞǿǿşŧīƈ řḗḗƥǿǿřŧ"
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "startup-shell.diagnostics.summary": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Ŀǿǿƈȧȧŀ ḓīȧȧɠƞǿǿşŧīƈ ḓḗḗŧȧȧīŀş"
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "startup-shell.import.overwrite-confirmation": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Īḿƥǿǿřŧ ŧħīş şȧȧṽḗḗ ȧȧƞḓ řḗḗƥŀȧȧƈḗḗ ŧħḗḗ ƈŭŭřřḗḗƞŧ ƀřǿǿẇşḗḗř ƥřǿǿƒīŀḗḗ? Ȧ řḗḗƈǿǿṽḗḗřẏ ƈǿǿƥẏ īş řḗḗŧȧȧīƞḗḗḓ ƀḗḗƒǿǿřḗḗ řḗḗƥŀȧȧƈḗḗḿḗḗƞŧ."
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "startup-shell.operation.export-failed": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Řḗḗƈǿǿṽḗḗřẏ ḓȧȧŧȧȧ ƈǿǿŭŭŀḓ ƞǿǿŧ ƀḗḗ ḗḗẋƥǿǿřŧḗḗḓ ƒřǿǿḿ ŧħīş ŧȧȧƀ."
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "startup-shell.operation.export-pending": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Ƥřḗḗƥȧȧřīƞɠ řḗḗƈǿǿṽḗḗřẏ ḓȧȧŧȧȧ…"
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "startup-shell.operation.export-succeeded": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Řḗḗƈǿǿṽḗḗřẏ ḓȧȧŧȧȧ ḗḗẋƥǿǿřŧḗḗḓ."
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "startup-shell.operation.import-failed": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Ŧħḗḗ şȧȧṽḗḗ ƈǿǿŭŭŀḓ ƞǿǿŧ ƀḗḗ īḿƥǿǿřŧḗḗḓ. Ẏǿǿŭŭř ḗḗẋīşŧīƞɠ ƥřǿǿɠřḗḗşş ẇȧȧş ƞǿǿŧ řḗḗƥŀȧȧƈḗḗḓ."
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "startup-shell.operation.import-pending": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Īḿƥǿǿřŧīƞɠ ŧħḗḗ şḗḗŀḗḗƈŧḗḗḓ şȧȧṽḗḗ…"
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "startup-shell.operation.import-succeeded": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Şȧȧṽḗḗ īḿƥǿǿřŧḗḗḓ şŭŭƈƈḗḗşşƒŭŭŀŀẏ."
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "startup-shell.operation.reload-completed": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Řḗḗŀǿǿȧȧḓ řḗḗɋŭŭḗḗşŧḗḗḓ."
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "startup-shell.operation.reload-failed": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Ŧħīş ŧȧȧƀ ƈǿǿŭŭŀḓ ƞǿǿŧ řḗḗŀǿǿȧȧḓ şȧȧƒḗḗŀẏ. Ẏǿǿŭŭř ƥřǿǿɠřḗḗşş ẇȧȧş ƞǿǿŧ řḗḗşḗḗŧ."
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "startup-shell.operation.reload-pending": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Řḗḗŀḗḗȧȧşīƞɠ ŧħīş ŧȧȧƀ ƀḗḗƒǿǿřḗḗ řḗḗŀǿǿȧȧḓīƞɠ…"
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "startup-shell.state.application-blocked.body": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Ȧ řḗḗɋŭŭīřḗḗḓ ƀřǿǿẇşḗḗř ƒḗḗȧȧŧŭŭřḗḗ īş ŭŭƞȧȧṽȧȧīŀȧȧƀŀḗḗ. Ẏǿǿŭŭř ḗḗẋīşŧīƞɠ ƥřǿǿɠřḗḗşş ħȧȧş ƞǿǿŧ ƀḗḗḗḗƞ ƈħȧȧƞɠḗḗḓ."
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "startup-shell.state.application-blocked.title": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Ŧħīş ƀřǿǿẇşḗḗř ƈȧȧƞƞǿǿŧ şŧȧȧřŧ ŧħḗḗ ɠȧȧḿḗḗ"
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "startup-shell.state.error.body": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Şŧȧȧřŧŭŭƥ şŧǿǿƥƥḗḗḓ ẇīŧħǿǿŭŭŧ řḗḗƥŀȧȧƈīƞɠ ẏǿǿŭŭř ḗḗẋīşŧīƞɠ ƥřǿǿɠřḗḗşş."
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "startup-shell.state.error.title": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Ŧħḗḗ ɠȧȧḿḗḗ ƈǿǿŭŭŀḓ ƞǿǿŧ şŧȧȧřŧ"
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "startup-shell.state.idle.body": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Şŧȧȧřŧ ẇħḗḗƞ ẏǿǿŭŭ ȧȧřḗḗ řḗḗȧȧḓẏ. Ẏǿǿŭŭř şȧȧṽḗḗḓ ƥřǿǿɠřḗḗşş īş ƞǿǿŧ ƈħȧȧƞɠḗḗḓ ƀẏ ŧħīş şƈřḗḗḗḗƞ."
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "startup-shell.state.idle.title": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Řḗḗȧȧḓẏ ŧǿǿ şŧȧȧřŧ"
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "startup-shell.state.ownership-lost.body": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Ɠȧȧḿḗḗ ȧȧƈŧīṽīŧẏ şŧǿǿƥƥḗḗḓ ŧǿǿ ƥřǿǿŧḗḗƈŧ ẏǿǿŭŭř ƥřǿǿɠřḗḗşş ƀḗḗƈȧȧŭŭşḗḗ ȧȧƞǿǿŧħḗḗř ŧȧȧƀ ǿǿř ẇīƞḓǿǿẇ ƀḗḗƈȧȧḿḗḗ ȧȧƈŧīṽḗḗ."
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "startup-shell.state.ownership-lost.title": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Ŧħīş ŧȧȧƀ şŧǿǿƥƥḗḗḓ ẇřīŧīƞɠ ƥřǿǿɠřḗḗşş"
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "startup-shell.state.ready-placeholder.body": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Şŧȧȧřŧŭŭƥ ƈǿǿḿƥŀḗḗŧḗḗḓ. Ŧħḗḗ ɠȧȧḿḗḗƥŀȧȧẏ şŭŭřƒȧȧƈḗḗ ẇīŀŀ ȧȧƥƥḗḗȧȧř ħḗḗřḗḗ."
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "startup-shell.state.ready-placeholder.title": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Ɠȧȧḿḗḗ řḗḗȧȧḓẏ"
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "startup-shell.state.recovery.body": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Ŧħḗḗ ɠȧȧḿḗḗ ḓīḓ ƞǿǿŧ řḗḗƥŀȧȧƈḗḗ ŧħḗḗ şȧȧṽḗḗḓ ƥřǿǿɠřḗḗşş īŧ ƈǿǿŭŭŀḓ ƞǿǿŧ şȧȧƒḗḗŀẏ ǿǿƥḗḗƞ. Īḿƥǿǿřŧ ȧȧƞǿǿŧħḗḗř şȧȧṽḗḗ ŧǿǿ ƈǿǿƞŧīƞŭŭḗḗ. Īƒ ŧħȧȧŧ īḿƥǿǿřŧ ƈȧȧƞƞǿǿŧ ƀḗḗ ŭŭşḗḗḓ, īŧş řḗḗŧȧȧīƞḗḗḓ řḗḗƈǿǿṽḗḗřẏ ḓȧȧŧȧȧ ƈȧȧƞ ŧħḗḗƞ ƀḗḗ ḗḗẋƥǿǿřŧḗḗḓ ƒǿǿř şŭŭƥƥǿǿřŧ."
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "startup-shell.state.recovery.title": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Şȧȧṽḗḗḓ ƥřǿǿɠřḗḗşş ƞḗḗḗḗḓş ȧȧŧŧḗḗƞŧīǿǿƞ"
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "startup-shell.state.starting.body": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Ƈħḗḗƈķīƞɠ ŧħīş ƀřǿǿẇşḗḗř ȧȧƞḓ ƥřḗḗƥȧȧřīƞɠ ẏǿǿŭŭř şȧȧṽḗḗḓ ƥřǿǿɠřḗḗşş."
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "startup-shell.state.starting.title": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Şŧȧȧřŧīƞɠ ŧħḗḗ ɠȧȧḿḗḗ"
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "startup-shell.state.stopping.body": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Ƒīƞīşħīƞɠ ŧħḗḗ ƈŭŭřřḗḗƞŧ ǿǿƥḗḗřȧȧŧīǿǿƞ ȧȧƞḓ řḗḗŀḗḗȧȧşīƞɠ ŧħīş ŧȧȧƀ."
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "startup-shell.state.stopping.title": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Şŧǿǿƥƥīƞɠ şȧȧƒḗḗŀẏ"
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "startup-shell.state.writer-blocked.body": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Ŧħīş ŧȧȧƀ ƈȧȧƞƞǿǿŧ ẇřīŧḗḗ ƥřǿǿɠřḗḗşş ẇħīŀḗḗ ȧȧƞǿǿŧħḗḗř ŧȧȧƀ ǿǿř ẇīƞḓǿǿẇ īş ȧȧƈŧīṽḗḗ. Řḗḗŧŭŭřƞ ŧǿǿ ŧħḗḗ ȧȧƈŧīṽḗḗ ɠȧȧḿḗḗ ǿǿř ƈŀǿǿşḗḗ īŧ ƀḗḗƒǿǿřḗḗ ƈħḗḗƈķīƞɠ ȧȧɠȧȧīƞ."
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "startup-shell.state.writer-blocked.title": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Ȧƞǿǿŧħḗḗř ŧȧȧƀ īş ŭŭşīƞɠ ŧħīş ɠȧȧḿḗḗ"
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
   ]
 }

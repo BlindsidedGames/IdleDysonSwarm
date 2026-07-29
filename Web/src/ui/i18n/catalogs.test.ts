@@ -10,10 +10,14 @@ import {
   loadDestinationCatalog,
 } from './localeRegistry'
 import { sharedMessages } from './messages'
+import { startupShellMessages } from '../shell/messages'
 
 describe('compiled locale catalogs', () => {
   it('keeps every enabled catalog complete and free of orphaned keys', () => {
-    const expected = Object.values(sharedMessages)
+    const expected = [
+      ...Object.values(sharedMessages),
+      ...Object.values(startupShellMessages),
+    ]
       .map((descriptor) => descriptor.id)
       .sort()
     expect(Object.keys(sourceCatalog).sort()).toEqual(expected)

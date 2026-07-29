@@ -235,7 +235,9 @@ export class CanonicalLifecycleCoordinator {
       options.subscribeToLifecycle ?? true
   }
 
-  async start(): Promise<CanonicalAwayReplayResult> {
+  async start(
+    clockSample?: LifecycleClockSample,
+  ): Promise<CanonicalAwayReplayResult> {
     if (this.disposed) {
       return {
         replayed: false,
@@ -244,6 +246,10 @@ export class CanonicalLifecycleCoordinator {
         reason: 'The lifecycle coordinator is disposed.',
       }
     }
+    const admittedClockSample =
+      snapshotLifecycleClockSample(
+        clockSample ?? this.clock.sample(),
+      )
     if (this.subscribeToRawLifecycle) {
       this.subscribeToLifecycle()
     }
@@ -260,7 +266,7 @@ export class CanonicalLifecycleCoordinator {
         createLifecycleState(snapshot, false),
         true,
       )
-      return this.replayAwayTime()
+      return this.replayAwayTime(admittedClockSample)
     })
   }
 
@@ -293,10 +299,25 @@ export class CanonicalLifecycleCoordinator {
    */
   handlePlatformPhase(
     phase: LifecyclePhase,
+    clockSample?: LifecycleClockSample,
   ): Promise<CanonicalLifecycleSaveResult | CanonicalAwayReplayResult> {
+    let admittedClockSample: LifecycleClockSample
+    try {
+      admittedClockSample =
+        snapshotLifecycleClockSample(
+          clockSample ?? this.clock.sample(),
+        )
+    } catch (error) {
+      return Promise.reject(error)
+    }
     return this.enqueue(async () => {
-      if (phase === 'active') return this.replayAwayTime()
-      return this.handleLifecycleEvent(lifecycleEventForPhase(phase))
+      if (phase === 'active') {
+        return this.replayAwayTime(admittedClockSample)
+      }
+      return this.handleLifecycleEvent(
+        lifecycleEventForPhase(phase),
+        admittedClockSample,
+      )
     })
   }
 
@@ -510,7 +531,9 @@ export class CanonicalLifecycleCoordinator {
     }
   }
 
-  private async replayAwayTime(): Promise<CanonicalAwayReplayResult> {
+  private async replayAwayTime(
+    clockSample: LifecycleClockSample,
+  ): Promise<CanonicalAwayReplayResult> {
     const snapshot = this.application.snapshot()
     if (snapshot.phase !== 'ready') {
       return {
@@ -527,13 +550,14 @@ export class CanonicalLifecycleCoordinator {
         this.lifecycleState === undefined
           ? createLifecycleState(snapshot, true)
           : {
-              ...this.lifecycleState,
-              canonical: runtime.gameState,
-              loaded: true,
-              saveReady: true,
-              coldStartReplayPending: false,
-              coldStartGateSaveUsed: false,
-            }
+            ...this.lifecycleState,
+            canonical: runtime.gameState,
+            loaded: true,
+            saveReady: true,
+            coldStartReplayPending: false,
+            coldStartGateSaveUsed: false,
+            departureTimestampRecorded: false,
+          }
       return {
         replayed: false,
         committed: false,
@@ -550,7 +574,7 @@ export class CanonicalLifecycleCoordinator {
           }
     const replay = applyAwayTimeReplay({
       state: current,
-      clock: this.clock.sample(),
+      clock: clockSample,
       parsedQuitTimestamp: parseUnityInvariantUtcTimestamp(
         runtime.gameState.timeline.lastSuspendedAtLegacyText,
       ),
@@ -585,6 +609,9 @@ export class CanonicalLifecycleCoordinator {
         saveReady: true,
         coldStartReplayPending: false,
         coldStartGateSaveUsed: false,
+        departureTimestampRecorded:
+          runtime.gameState.timeline
+            .lastSuspendedAtLegacyText !== null,
       }
       return {
         replayed: false,
@@ -607,6 +634,7 @@ export class CanonicalLifecycleCoordinator {
 
   private async handleLifecycleEvent(
     event: LifecycleEvent,
+    clockSample: LifecycleClockSample,
   ): Promise<CanonicalLifecycleSaveResult> {
     const snapshot = this.application.snapshot()
     if (snapshot.phase !== 'ready') {
@@ -627,7 +655,7 @@ export class CanonicalLifecycleCoordinator {
       current,
       event,
       this.policy,
-      this.clock.sample(),
+      clockSample,
     )
     if (evaluated.saveIntent === null) {
       this.lifecycleState = evaluated.state
@@ -773,7 +801,17 @@ function createLifecycleState(
     saveReady,
     coldStartReplayPending: false,
     coldStartGateSaveUsed: false,
+    departureTimestampRecorded: false,
   }
+}
+
+function snapshotLifecycleClockSample(
+  sample: LifecycleClockSample,
+): LifecycleClockSample {
+  return Object.freeze({
+    utcMilliseconds: sample.utcMilliseconds,
+    serializedUtcText: sample.serializedUtcText,
+  })
 }
 
 function lifecycleEventForPhase(

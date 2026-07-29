@@ -5,11 +5,15 @@ export type {
   UiRuntimeImportResult,
   UiRuntimeStartResult,
   UiRuntimeStorageStatus,
+  UiRuntimeSnapshotListener,
   UiRuntimeStatusListener,
+  UiRuntimePlayerCommandResult,
+  UiRuntimeCommandActivationRevision,
   UiRuntimeSuppliedFile,
   UiRuntimeDropData,
   UiRuntimeWarning,
   UiRuntimeWarningCode,
+  UiRuntimeApplicationOutcome,
 } from './contracts'
 export {
   createBrowserRuntimeFoundation,
@@ -18,4 +22,17 @@ export {
   type BrowserRuntimeApplicationFactory,
   type BrowserRuntimeFoundationOptions,
   type BrowserRuntimeLifecyclePolicy,
+  type BrowserUiRuntimeFoundation,
 } from './browserRuntimeFoundation'
+export type {
+  FrontendApplicationSnapshot,
+  FrontendGameplaySnapshot,
+} from '../../application/frontendSnapshot'
+export type {
+  CanonicalPlayerCommand,
+  CanonicalPlayerCommandKind,
+} from '../../application/canonicalPlayerCommands'
+export {
+  useBrowserRuntimeSnapshot,
+  useBrowserRuntimeStatus,
+} from './useBrowserRuntime'

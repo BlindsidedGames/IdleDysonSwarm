@@ -16,6 +16,7 @@ describe('browser lifecycle and monotonic clock', () => {
       windowPort,
     )
     const phases: string[] = []
+    expect(adapter.currentPhase()).toBe('active')
     const unsubscribe = adapter.subscribe((phase) => {
       phases.push(phase)
     })
@@ -26,11 +27,13 @@ describe('browser lifecycle and monotonic clock', () => {
     documentPort.focused = true
     windowPort.dispatchEvent(new Event('focus'))
     documentPort.visibilityState = 'hidden'
+    expect(adapter.currentPhase()).toBe('background')
     documentPort.dispatchEvent(new Event('visibilitychange'))
     windowPort.dispatchEvent(new Event('blur'))
     windowPort.dispatchEvent(new Event('pagehide'))
     documentPort.visibilityState = 'visible'
     windowPort.dispatchEvent(new Event('pageshow'))
+    expect(adapter.currentPhase()).toBe('active')
 
     expect(phases).toEqual([
       'focus-lost',

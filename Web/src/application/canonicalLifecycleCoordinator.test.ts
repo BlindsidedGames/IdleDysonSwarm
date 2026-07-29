@@ -137,6 +137,88 @@ describe('canonical lifecycle coordinator', () => {
     expect(desktopApplication.awayCommits).toBe(0)
   })
 
+  test('latches a departure baseline only after commit so a later non-active phase can retry safely', async () => {
+    const application = new FakeCanonicalApplication(
+      fixtureRuntimeWithoutQuitTimestamp(),
+    )
+    const clock = mutableClock('2026-07-29T00:00:00Z')
+    const coordinator = new CanonicalLifecycleCoordinator({
+      application,
+      lifecycle: new FakeLifecycleAdapter(),
+      clock,
+      policy: MOBILE_LIFECYCLE_POLICY,
+    })
+    await coordinator.start()
+
+    application.failAwayCommit = true
+    await expect(
+      coordinator.handlePlatformPhase('focus-lost'),
+    ).resolves.toMatchObject({
+      requested: true,
+      committed: false,
+      code: 'commit-failed',
+    })
+
+    application.failAwayCommit = false
+    clock.set('2026-07-29T00:00:05Z')
+    await expect(
+      coordinator.handlePlatformPhase('background'),
+    ).resolves.toMatchObject({
+      requested: true,
+      committed: true,
+    })
+    expect(
+      readyState(application.snapshot()).gameState.timeline
+        .lastSuspendedAtLegacyText,
+    ).toBe('2026-07-29T00:00:05Z')
+
+    clock.set('2026-07-29T00:00:10Z')
+    await expect(
+      coordinator.handlePlatformPhase('active'),
+    ).resolves.toMatchObject({
+      replayed: true,
+      committed: true,
+      grantedSeconds: 5,
+      timestampConsumed: true,
+    })
+    expect(application.awayCommitAttempts).toBe(3)
+    expect(application.awayCommits).toBe(2)
+  })
+
+  test('captures direct lifecycle clock samples at admission before queued persistence drains', async () => {
+    const application = new FakeCanonicalApplication(
+      fixtureRuntimeWithoutQuitTimestamp(),
+    )
+    const commitGate = deferred<void>()
+    application.awayCommitGate = commitGate.promise
+    const clock = mutableClock('2026-07-29T00:00:00Z')
+    const coordinator = new CanonicalLifecycleCoordinator({
+      application,
+      lifecycle: new FakeLifecycleAdapter(),
+      clock,
+      policy: MOBILE_LIFECYCLE_POLICY,
+    })
+    await coordinator.start()
+
+    const departing =
+      coordinator.handlePlatformPhase('background')
+    await waitUntil(() => application.awayCommitAttempts === 1)
+    clock.set('2026-07-29T00:00:05Z')
+    const resuming = coordinator.handlePlatformPhase('active')
+    clock.set('2026-07-29T00:00:10Z')
+    commitGate.resolve()
+
+    await expect(departing).resolves.toMatchObject({
+      requested: true,
+      committed: true,
+    })
+    await expect(resuming).resolves.toMatchObject({
+      replayed: true,
+      committed: true,
+      grantedSeconds: 5,
+    })
+  })
+
   test('settles pending and reward bot-cap commits before resuming one stored-time intent', async () => {
     const runtime = cappedRuntime()
     const application = new FakeCanonicalApplication(runtime)
@@ -438,7 +520,9 @@ describe('canonical lifecycle coordinator', () => {
     expect(secondActive).toEqual(firstActive)
     expect(application.importRequests).toHaveLength(2)
     expect(application.awayCommits).toBe(0)
-    expect(clock.samples).toBe(1)
+    // Startup and both admitted active phases capture their clock samples
+    // even though import suppression avoids replay mutation.
+    expect(clock.samples).toBe(3)
     expect(
       readyState(application.snapshot()).gameState.timeline
         .lastSuspendedAtLegacyText,
@@ -454,7 +538,7 @@ describe('canonical lifecycle coordinator', () => {
     await expect(
       coordinator.handlePlatformPhase('active'),
     ).resolves.toEqual(firstActive)
-    expect(clock.samples).toBe(2)
+    expect(clock.samples).toBe(5)
 
     application.failAwayCommit = true
     clock.set('2026-07-29T00:00:20Z')
@@ -469,7 +553,7 @@ describe('canonical lifecycle coordinator', () => {
     await expect(
       coordinator.handlePlatformPhase('active'),
     ).resolves.toEqual(firstActive)
-    expect(clock.samples).toBe(3)
+    expect(clock.samples).toBe(7)
 
     application.failAwayCommit = false
     clock.set('2026-07-29T00:00:30Z')
@@ -495,6 +579,7 @@ describe('canonical lifecycle coordinator', () => {
     })
     expect(application.awayCommitAttempts).toBe(3)
     expect(application.awayCommits).toBe(2)
+    expect(clock.samples).toBe(9)
     expect(
       readyState(application.snapshot()).gameState.timeline
         .lastSuspendedAtLegacyText,
@@ -728,13 +813,19 @@ class FakeCanonicalApplication
 
 class FakeLifecycleAdapter implements LifecycleAdapter {
   private readonly listeners = new Set<(phase: LifecyclePhase) => void>()
+  private phase: LifecyclePhase = 'active'
 
   get listenerCount(): number {
     return this.listeners.size
   }
 
   emit(phase: LifecyclePhase): void {
+    this.phase = phase
     for (const listener of [...this.listeners]) listener(phase)
+  }
+
+  currentPhase(): LifecyclePhase {
+    return this.phase
   }
 
   subscribe(listener: (phase: LifecyclePhase) => void): () => void {

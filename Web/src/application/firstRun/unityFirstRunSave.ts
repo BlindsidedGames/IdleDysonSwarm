@@ -1,0 +1,74 @@
+import { prepareIdb1Save, type PreparedSave } from '../../save/prepare'
+import firstRunSaveText from './generated/first-run-schema-12.idb1.txt?raw'
+import provenance from './generated/first-run-schema-12.provenance.json'
+
+export interface UnityFirstRunCatalogHash {
+  readonly path: string
+  readonly sha256: string
+}
+
+export interface UnityFirstRunProvenance {
+  readonly formatVersion: number
+  readonly artifactPath: string
+  readonly artifactSha256: string
+  readonly decodedBinarySha256: string
+  readonly unityVersion: string
+  readonly unityRevision: string
+  readonly saveSchema: number
+  readonly fixedFirstRunUtc: string
+  readonly exportMethod: string
+  readonly exportCommand: string
+  readonly sourceContract: string
+  readonly catalogHashes: readonly UnityFirstRunCatalogHash[]
+  readonly lifecycleMetadataNormalizationPaths: readonly string[]
+}
+
+export interface UnityFirstRunSaveOptions {
+  readonly startedAtUtc: string
+}
+
+export const unityFirstRunProvenance: UnityFirstRunProvenance = provenance
+
+/**
+ * Creates a production first-run save from Unity defaults with a host-supplied
+ * UTC lifecycle origin. No gameplay value is authored in TypeScript.
+ */
+export function createUnityFirstRunPreparedSave(
+  options: Readonly<UnityFirstRunSaveOptions>,
+): PreparedSave {
+  const startedAtUtc = normalizeUtc(options.startedAtUtc)
+  const deterministic = createDeterministicUnityFirstRunPreparedSave()
+  const candidate = deterministic.copyValidatedState()
+  candidate.dateStarted = startedAtUtc
+  return deterministic.withValidatedState(candidate)
+}
+
+/**
+ * Decodes a defensive copy of the deterministic Unity-generated artifact.
+ * Production startup should use createUnityFirstRunPreparedSave with host UTC.
+ */
+export function createDeterministicUnityFirstRunPreparedSave(): PreparedSave {
+  const imported = prepareIdb1Save(firstRunSaveText)
+  if (imported.prepared.targetSchema !== provenance.saveSchema) {
+    throw new Error(
+      `Unity first-run artifact schema ${imported.prepared.targetSchema} does not match provenance schema ${provenance.saveSchema}.`,
+    )
+  }
+  if (imported.prepared.sourceSchema !== provenance.saveSchema) {
+    throw new Error(
+      `Unity first-run artifact unexpectedly requires migration from schema ${imported.prepared.sourceSchema}.`,
+    )
+  }
+  return imported.prepared
+}
+
+function normalizeUtc(value: string): string {
+  if (value.trim().length === 0) {
+    throw new Error('First-run start timestamp must not be empty.')
+  }
+  const timestamp = new Date(value)
+  if (Number.isNaN(timestamp.getTime())) {
+    throw new Error(`First-run start timestamp is invalid: ${value}`)
+  }
+  return timestamp.toISOString()
+}

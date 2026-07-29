@@ -1,9 +1,9 @@
 # Web UI delivery waves
 
 Status: implementation in progress. The user opened implementation on
-2026-07-29, and Wave 1 passed its acceptance gate on the same date. Wave 2 is
-the current delivery boundary. Later-wave acceptance remains governed by the
-gates and recovery checkpoints below.
+2026-07-29, and Waves 1 and 2 passed their acceptance gates on the same date.
+Wave 3 is the current delivery boundary. Later-wave acceptance remains governed
+by the gates and recovery checkpoints below.
 
 This plan controls how the product foundation in
 [`product-ui-foundation.md`](product-ui-foundation.md) is delivered. The product
@@ -155,10 +155,51 @@ Gate:
 
 After acceptance, create and record the Wave 2 checkpoint.
 
+Accepted on 2026-07-29:
+
+- The authenticated first-run input is a Unity-generated schema-12 `IDB1`
+  artifact with checked provenance, decoded-binary and catalog hashes. An empty
+  development profile reconstructs the same canonical gameplay snapshot and
+  stored save without requiring player import.
+- Production composition reads host entitlements explicitly, uses the mobile
+  lifecycle policy for browser background and focus loss, derives diagnostic
+  schema metadata from Unity provenance and constructs/starts one runtime
+  outside React lifecycle effects.
+- Coordinator and adversarial review rejected unsafe intermediate candidates.
+  Corrections cover delayed lifecycle receipts, redundant departure stamps,
+  failed replay baselines, blocked-start recovery, overlapping imports, newer
+  background/focus intents, ownership loss, pending action guards, redacted
+  localized failures and accurate recovery/export copy.
+- The accepted integration passed 798 tests across 103 files, strict lint,
+  TypeScript, localization extraction and pseudo-catalog compilation, the
+  559-asset/34-type data drift check, production CSP packaging, developer
+  fixture exclusion, production build and diff validation.
+- The accepted commit is identified by the local `web-ui-wave-2` recovery tag.
+
+Performance carry-forward, not Wave 2 acceptance:
+
+- The accepted production shell loads 273,419 gzip bytes (267.01 KiB) of
+  JavaScript including the selected English catalog, exceeding the 200 KiB
+  first-slice budget by 67.01 KiB or 33.5 percent. CSS is 2.37 KiB gzip and the
+  English catalog is 1.30 KiB gzip, both within their individual budgets.
+- This does not waive or pass first-slice performance. The current excess is
+  mainly the eager full canonical runtime, generated Unity catalog and
+  later-destination command/preview breadth, not the authentic first-run
+  artifact or startup presentation.
+- Wave 3 must add a repeatable initial-request bundle report and reduce the
+  authoritative runtime dependency breadth before presentation expansion.
+  Moving the same eagerly required modules into manual chunks is not a fix.
+  Runtime-data projection or loading-boundary work must retain arbitrary save
+  import, lifecycle replay, parity and coordinator authority.
+
 ## Wave 3: earliest playable slice
 
 Run presentation work in parallel only after the application seam is accepted:
 
+- First close the recorded JavaScript-budget architecture gap with an
+  authoritative generated runtime-data projection and/or narrow first-slice
+  snapshot and command-loading boundary. Preserve Unity-data drift checks,
+  arbitrary supported save import and all coordinator routes.
 - Responsive LTR/RTL shell, parity navigation skeleton and resource header.
 - Pointer, rapid-touch, multi-touch and keyboard Tinker interaction.
 - Basic facility list using canonical previews and purchase commands.

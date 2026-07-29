@@ -164,5 +164,537 @@
       "type": 0,
       "value": "‬"
     }
+  ],
+  "startup-shell.action.check-again": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "Ↄɥǝɔʞ ɐƃɐıu"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "startup-shell.action.export-recovery": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "Ǝxdoɹʇ ɹǝɔoʌǝɹʎ pɐʇɐ"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "startup-shell.action.import": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "Iɯdoɹʇ ɐ sɐʌǝ"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "startup-shell.action.retry": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "⊥ɹʎ sʇɐɹʇnd ɐƃɐıu"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "startup-shell.action.start": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "Sʇɐɹʇ ƃɐɯǝ"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "startup-shell.app-name": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "Ipʅǝ ᗡʎsou Sʍɐɹɯ"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "startup-shell.boundary.body": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "⊥ɥǝ ƃɐɯǝ pısdʅɐʎ sʇoddǝp. No ɐnʇoɯɐʇıɔ ɹǝʇɹʎ oɹ dɹoƃɹǝss ɔɥɐuƃǝ ʍɐs ɐʇʇǝɯdʇǝp. ᴚǝʅoɐp ʇɥıs dɐƃǝ ʍɥǝu ʎon ɐɹǝ ɹǝɐpʎ."
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "startup-shell.boundary.title": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "⊥ɥǝ pısdʅɐʎ sʇoddǝp nuǝxdǝɔʇǝpʅʎ"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "startup-shell.diagnostics.label": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "ᴚǝpɐɔʇǝp ʅoɔɐʅ pıɐƃuosʇıɔ ɹǝdoɹʇ"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "startup-shell.diagnostics.summary": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "⅂oɔɐʅ pıɐƃuosʇıɔ pǝʇɐıʅs"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "startup-shell.import.overwrite-confirmation": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "Iɯdoɹʇ ʇɥıs sɐʌǝ ɐup ɹǝdʅɐɔǝ ʇɥǝ ɔnɹɹǝuʇ qɹoʍsǝɹ dɹoɟıʅǝ? ∀ ɹǝɔoʌǝɹʎ ɔodʎ ıs ɹǝʇɐıuǝp qǝɟoɹǝ ɹǝdʅɐɔǝɯǝuʇ."
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "startup-shell.operation.export-failed": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "ᴚǝɔoʌǝɹʎ pɐʇɐ ɔonʅp uoʇ qǝ ǝxdoɹʇǝp ɟɹoɯ ʇɥıs ʇɐq."
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "startup-shell.operation.export-pending": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "Ԁɹǝdɐɹıuƃ ɹǝɔoʌǝɹʎ pɐʇɐ…"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "startup-shell.operation.export-succeeded": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "ᴚǝɔoʌǝɹʎ pɐʇɐ ǝxdoɹʇǝp."
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "startup-shell.operation.import-failed": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "⊥ɥǝ sɐʌǝ ɔonʅp uoʇ qǝ ıɯdoɹʇǝp. ⅄onɹ ǝxısʇıuƃ dɹoƃɹǝss ʍɐs uoʇ ɹǝdʅɐɔǝp."
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "startup-shell.operation.import-pending": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "Iɯdoɹʇıuƃ ʇɥǝ sǝʅǝɔʇǝp sɐʌǝ…"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "startup-shell.operation.import-succeeded": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "Sɐʌǝ ıɯdoɹʇǝp snɔɔǝssɟnʅʅʎ."
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "startup-shell.operation.reload-completed": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "ᴚǝʅoɐp ɹǝbnǝsʇǝp."
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "startup-shell.operation.reload-failed": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "⊥ɥıs ʇɐq ɔonʅp uoʇ ɹǝʅoɐp sɐɟǝʅʎ. ⅄onɹ dɹoƃɹǝss ʍɐs uoʇ ɹǝsǝʇ."
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "startup-shell.operation.reload-pending": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "ᴚǝʅǝɐsıuƃ ʇɥıs ʇɐq qǝɟoɹǝ ɹǝʅoɐpıuƃ…"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "startup-shell.state.application-blocked.body": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "∀ ɹǝbnıɹǝp qɹoʍsǝɹ ɟǝɐʇnɹǝ ıs nuɐʌɐıʅɐqʅǝ. ⅄onɹ ǝxısʇıuƃ dɹoƃɹǝss ɥɐs uoʇ qǝǝu ɔɥɐuƃǝp."
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "startup-shell.state.application-blocked.title": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "⊥ɥıs qɹoʍsǝɹ ɔɐuuoʇ sʇɐɹʇ ʇɥǝ ƃɐɯǝ"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "startup-shell.state.error.body": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "Sʇɐɹʇnd sʇoddǝp ʍıʇɥonʇ ɹǝdʅɐɔıuƃ ʎonɹ ǝxısʇıuƃ dɹoƃɹǝss."
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "startup-shell.state.error.title": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "⊥ɥǝ ƃɐɯǝ ɔonʅp uoʇ sʇɐɹʇ"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "startup-shell.state.idle.body": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "Sʇɐɹʇ ʍɥǝu ʎon ɐɹǝ ɹǝɐpʎ. ⅄onɹ sɐʌǝp dɹoƃɹǝss ıs uoʇ ɔɥɐuƃǝp qʎ ʇɥıs sɔɹǝǝu."
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "startup-shell.state.idle.title": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "ᴚǝɐpʎ ʇo sʇɐɹʇ"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "startup-shell.state.ownership-lost.body": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "⅁ɐɯǝ ɐɔʇıʌıʇʎ sʇoddǝp ʇo dɹoʇǝɔʇ ʎonɹ dɹoƃɹǝss qǝɔɐnsǝ ɐuoʇɥǝɹ ʇɐq oɹ ʍıupoʍ qǝɔɐɯǝ ɐɔʇıʌǝ."
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "startup-shell.state.ownership-lost.title": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "⊥ɥıs ʇɐq sʇoddǝp ʍɹıʇıuƃ dɹoƃɹǝss"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "startup-shell.state.ready-placeholder.body": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "Sʇɐɹʇnd ɔoɯdʅǝʇǝp. ⊥ɥǝ ƃɐɯǝdʅɐʎ snɹɟɐɔǝ ʍıʅʅ ɐddǝɐɹ ɥǝɹǝ."
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "startup-shell.state.ready-placeholder.title": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "⅁ɐɯǝ ɹǝɐpʎ"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "startup-shell.state.recovery.body": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "⊥ɥǝ ƃɐɯǝ pıp uoʇ ɹǝdʅɐɔǝ ʇɥǝ sɐʌǝp dɹoƃɹǝss ıʇ ɔonʅp uoʇ sɐɟǝʅʎ odǝu. Iɯdoɹʇ ɐuoʇɥǝɹ sɐʌǝ ʇo ɔouʇıunǝ. Iɟ ʇɥɐʇ ıɯdoɹʇ ɔɐuuoʇ qǝ nsǝp, ıʇs ɹǝʇɐıuǝp ɹǝɔoʌǝɹʎ pɐʇɐ ɔɐu ʇɥǝu qǝ ǝxdoɹʇǝp ɟoɹ snddoɹʇ."
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "startup-shell.state.recovery.title": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "Sɐʌǝp dɹoƃɹǝss uǝǝps ɐʇʇǝuʇıou"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "startup-shell.state.starting.body": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "Ↄɥǝɔʞıuƃ ʇɥıs qɹoʍsǝɹ ɐup dɹǝdɐɹıuƃ ʎonɹ sɐʌǝp dɹoƃɹǝss."
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "startup-shell.state.starting.title": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "Sʇɐɹʇıuƃ ʇɥǝ ƃɐɯǝ"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "startup-shell.state.stopping.body": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "Ⅎıuısɥıuƃ ʇɥǝ ɔnɹɹǝuʇ odǝɹɐʇıou ɐup ɹǝʅǝɐsıuƃ ʇɥıs ʇɐq."
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "startup-shell.state.stopping.title": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "Sʇoddıuƃ sɐɟǝʅʎ"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "startup-shell.state.writer-blocked.body": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "⊥ɥıs ʇɐq ɔɐuuoʇ ʍɹıʇǝ dɹoƃɹǝss ʍɥıʅǝ ɐuoʇɥǝɹ ʇɐq oɹ ʍıupoʍ ıs ɐɔʇıʌǝ. ᴚǝʇnɹu ʇo ʇɥǝ ɐɔʇıʌǝ ƃɐɯǝ oɹ ɔʅosǝ ıʇ qǝɟoɹǝ ɔɥǝɔʞıuƃ ɐƃɐıu."
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "startup-shell.state.writer-blocked.title": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "∀uoʇɥǝɹ ʇɐq ıs nsıuƃ ʇɥıs ƃɐɯǝ"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
   ]
 }

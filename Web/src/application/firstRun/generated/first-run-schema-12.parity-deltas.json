@@ -1,0 +1,58 @@
+{
+  "formatVersion": 1,
+  "source": "Lifecycle-normalized Unity prepared graph",
+  "target": "Web dehydrate(hydrate(Unity prepared graph))",
+  "expectedDifferenceCount": 1071,
+  "allowedDeltas": [
+    {
+      "id": "legacy-skill-flag-compaction",
+      "reason": "The Web mapper preserves authoritative skill ownership and removes the redundant legacy integer-key false map.",
+      "expectedDifferenceCount": 104,
+      "expectedShape": "false",
+      "actualShape": "missing",
+      "normalizedPaths": [
+        "$.dysonVerseSaveData.dysonVerseInfinityData.SkillTreeSaveData.*"
+      ]
+    },
+    {
+      "id": "statistics-window-default-materialization",
+      "reason": "The Web canonical statistics model materializes zero-valued fields omitted by Odin for empty fixed windows.",
+      "expectedDifferenceCount": 966,
+      "expectedShape": "missing",
+      "actualShape": "zero-number-or-bigint",
+      "normalizedPaths": [
+        "$.simulationStatistics.dailyWindows[*].dreamResetCount",
+        "$.simulationStatistics.dailyWindows[*].infinityCount",
+        "$.simulationStatistics.dailyWindows[*].infinityPoints",
+        "$.simulationStatistics.dailyWindows[*].realityWorkers",
+        "$.simulationStatistics.dailyWindows[*].sequence",
+        "$.simulationStatistics.dailyWindows[*].simulatedSeconds",
+        "$.simulationStatistics.dailyWindows[*].strangeMatter",
+        "$.simulationStatistics.halfHourWindows[*].dreamResetCount",
+        "$.simulationStatistics.halfHourWindows[*].infinityCount",
+        "$.simulationStatistics.halfHourWindows[*].infinityPoints",
+        "$.simulationStatistics.halfHourWindows[*].realityWorkers",
+        "$.simulationStatistics.halfHourWindows[*].sequence",
+        "$.simulationStatistics.halfHourWindows[*].simulatedSeconds",
+        "$.simulationStatistics.halfHourWindows[*].strangeMatter",
+        "$.simulationStatistics.minuteWindows[*].dreamResetCount",
+        "$.simulationStatistics.minuteWindows[*].infinityCount",
+        "$.simulationStatistics.minuteWindows[*].infinityPoints",
+        "$.simulationStatistics.minuteWindows[*].realityWorkers",
+        "$.simulationStatistics.minuteWindows[*].sequence",
+        "$.simulationStatistics.minuteWindows[*].simulatedSeconds",
+        "$.simulationStatistics.minuteWindows[*].strangeMatter"
+      ]
+    },
+    {
+      "id": "statistics-null-string-canonicalization",
+      "reason": "The Web canonical statistics model represents an unset completed-cycle cause as an empty string.",
+      "expectedDifferenceCount": 1,
+      "expectedShape": "null",
+      "actualShape": "empty-string",
+      "normalizedPaths": [
+        "$.simulationStatistics.lastCompletedCycle.dreamCause"
+      ]
+    }
+  ]
+}

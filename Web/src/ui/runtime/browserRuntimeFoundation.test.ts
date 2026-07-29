@@ -14,7 +14,17 @@ import type {
   CanonicalPlayerDispatchResult,
   CanonicalStoredTimeCommitResult,
 } from '../../application/canonicalGameApplication'
-import type { CanonicalLifecycleApplicationPort } from '../../application/canonicalLifecycleCoordinator'
+import type {
+  CanonicalLifecycleApplicationPort,
+  CanonicalLifecycleClock,
+} from '../../application/canonicalLifecycleCoordinator'
+import {
+  createUnityFirstRunPreparedSave,
+} from '../../application/firstRun/unityFirstRunSave'
+import {
+  createProductionCanonicalApplicationFactory,
+} from '../../application/productionApplicationFactory'
+import type { FrontendApplicationSnapshot } from '../../application/frontendSnapshot'
 import {
   CanonicalRuntimeSession,
   cloneCanonicalRuntimeState,
@@ -39,6 +49,7 @@ import type {
   LifecycleAdapter,
   LifecyclePhase,
 } from '../../platform/contracts'
+import type { DeepReadonly } from '../../core/contracts'
 import type { TextDownloadPort } from '../../platform/browserSaveTransfer'
 import { prepareIdb1Save, PreparedSave } from '../../save/prepare'
 import type { SaveRepository } from '../../save/repository'
@@ -49,6 +60,10 @@ import {
   DEVELOPMENT_ONLY_BROWSER_PROFILE_ID,
   type BrowserRuntimeFoundationOptions,
 } from './browserRuntimeFoundation'
+import type {
+  ActiveTimeFrameScheduler,
+  ActiveTimeMonotonicClock,
+} from './activeTimeDriver'
 
 const fixtureUrl = new URL(
   '../../../test/fixtures/schema-08-canonical-idb1-main-save.txt',
@@ -56,6 +71,78 @@ const fixtureUrl = new URL(
 )
 
 describe('browser runtime foundation composition', () => {
+  test('creates an authentic empty development profile and reconstructs identical gameplay without import', async () => {
+    const database = new MemoryBrowserSaveDatabase()
+    const lifecycleClock = new ManualLifecycleClock(
+      '2026-07-29T00:00:00.000Z',
+    )
+    const currentPath =
+      `/development-only/${DEVELOPMENT_ONLY_BROWSER_PROFILE_ID}/current.idsw`
+    const createApplication =
+      createProductionCanonicalApplicationFactory({
+        createFirstRunSave: () =>
+          createUnityFirstRunPreparedSave({
+            startedAtUtc:
+              lifecycleClock.sample().serializedUtcText,
+          }),
+        readHostEntitlements: () =>
+          Object.freeze({ permanentDoubleIp: false }),
+      })
+    const createProductionRuntime = (ownerToken: string) =>
+      createBrowserRuntimeFoundation({
+        createApplication,
+        lifecyclePolicy: MOBILE_LIFECYCLE_POLICY,
+        allowedExternalOrigins: [],
+        database,
+        lifecycle: new TestLifecycleAdapter('background'),
+        lifecycleClock,
+        activeTimeClock: new ManualActiveTimeClock(),
+        activeTimeScheduler:
+          new ManualAnimationFrameScheduler(),
+        storageManager: {
+          persisted: async () => true,
+          persist: async () => true,
+          estimate: async () => ({
+            usage: 1,
+            quota: 1_000,
+          }),
+        },
+        nowUtcMilliseconds: () => 1_000,
+        ownerToken,
+        autoHeartbeat: false,
+      })
+
+    const firstRuntime = createProductionRuntime('first-owner')
+    await expect(firstRuntime.start()).resolves.toMatchObject({
+      phase: 'ready',
+    })
+    const firstSnapshot = firstRuntime.snapshot()
+    expect(firstSnapshot).toMatchObject({
+      phase: 'ready',
+      source: 'first-run',
+    })
+    if (firstSnapshot.phase !== 'ready') return
+    const firstGameplay = structuredClone(firstSnapshot.gameplay)
+    const firstStoredSave = await database.readFile(currentPath)
+    await firstRuntime.shutdown()
+
+    const secondRuntime = createProductionRuntime('second-owner')
+    await expect(secondRuntime.start()).resolves.toMatchObject({
+      phase: 'ready',
+    })
+    const secondSnapshot = secondRuntime.snapshot()
+    expect(secondSnapshot).toMatchObject({
+      phase: 'ready',
+      source: 'primary',
+    })
+    if (secondSnapshot.phase !== 'ready') return
+    expect(secondSnapshot.gameplay).toEqual(firstGameplay)
+    expect(await database.readFile(currentPath)).toBe(
+      firstStoredSave,
+    )
+    await secondRuntime.shutdown()
+  })
+
   test('acquires the writer fence before application construction and blocks a second owner without constructing it', async () => {
     const database = new MemoryBrowserSaveDatabase()
     database.forceLease({
@@ -343,10 +430,12 @@ describe('browser runtime foundation composition', () => {
   test('retains an exact bounded invalid import before canonical validation and never replaces the current save', async () => {
     const database = new MemoryBrowserSaveDatabase()
     const downloads = new RecordingDownloads()
+    const activeClock = new ManualActiveTimeClock()
     let application: FakeRuntimeApplication | undefined
     const runtime = createRuntime({
       database,
       downloads,
+      activeTimeClock: activeClock,
       createApplication: (repository) => {
         application = new FakeRuntimeApplication(
           repository,
@@ -357,6 +446,13 @@ describe('browser runtime foundation composition', () => {
       },
     })
     await runtime.start()
+    const snapshotPublications: number[] = []
+    runtime.subscribeSnapshot((snapshot) => {
+      if (snapshot.phase === 'ready') {
+        snapshotPublications.push(snapshot.revision.state)
+      }
+    })
+    activeClock.set(7)
     const original = 'bounded but deliberately invalid canonical input'
 
     await expect(
@@ -375,6 +471,14 @@ describe('browser runtime foundation composition', () => {
       'retain-legacy',
     ])
     expect(application?.importCalls).toBe(1)
+    expect(application?.activeRequests).toEqual([
+      { milliseconds: 7, sessionRevision: 1 },
+    ])
+    expect(runtime.snapshot()).toMatchObject({
+      phase: 'ready',
+      revision: { state: 1 },
+    })
+    expect(snapshotPublications).toEqual([1])
 
     await expect(runtime.exportLastRecovery()).resolves.toBe(true)
     expect(downloads.last?.text).toBe(original)
@@ -456,10 +560,14 @@ describe('browser runtime foundation composition', () => {
 
   test('recovers an application-blocked startup through coordinated import before publishing ready', async () => {
     const database = new MemoryBrowserSaveDatabase()
+    const activeClock = new ManualActiveTimeClock()
+    const frames = new ManualAnimationFrameScheduler()
     let application: FakeRuntimeApplication | undefined
     const phases: string[] = []
     const runtime = createRuntime({
       database,
+      activeTimeClock: activeClock,
+      activeTimeScheduler: frames,
       createApplication: (repository) => {
         application = new FakeRuntimeApplication(
           repository,
@@ -467,6 +575,7 @@ describe('browser runtime foundation composition', () => {
         )
         application.blocked = true
         application.importedState = runtimeStateWithoutQuitTimestamp()
+        application.rejectImportAttempts.add(1)
         return application
       },
     })
@@ -487,11 +596,266 @@ describe('browser runtime foundation composition', () => {
         overwriteApproved: true,
       }),
     ).resolves.toMatchObject({
+      imported: false,
+      code: 'APP-IMPORT-INVALID',
+    })
+    expect(runtime.status().phase).toBe('blocked')
+    expect(frames.pending).toBe(0)
+
+    await expect(
+      runtime.importSave({
+        text: supplied,
+        importedAtUtc: '2026-07-29T00:00:00Z',
+        overwriteApproved: true,
+      }),
+    ).resolves.toMatchObject({
       imported: true,
       recoveryAvailable: true,
     })
     expect(runtime.status().phase).toBe('ready')
     expect(phases.slice(-2)).toEqual(['blocked', 'ready'])
+    expect(frames.pending).toBe(1)
+
+    activeClock.set(9)
+    frames.fire()
+    await waitUntil(() => application?.activeRequests.length === 1)
+    expect(application?.activeRequests).toEqual([
+      { milliseconds: 9, sessionRevision: 2 },
+    ])
+    await runtime.shutdown()
+  })
+
+  test('keeps foreground stopped between overlapping imports and resumes only after the final failed import settles', async () => {
+    const database = new MemoryBrowserSaveDatabase()
+    const activeClock = new ManualActiveTimeClock()
+    const frames = new ManualAnimationFrameScheduler()
+    const firstGate = deferred<void>()
+    const secondGate = deferred<void>()
+    let application: FakeRuntimeApplication | undefined
+    const runtime = createRuntime({
+      database,
+      activeTimeClock: activeClock,
+      activeTimeScheduler: frames,
+      createApplication: (repository) => {
+        application = new FakeRuntimeApplication(
+          repository,
+          database.events,
+        )
+        application.importedState =
+          runtimeStateWithoutQuitTimestamp()
+        application.importGates.set(1, firstGate.promise)
+        application.importGates.set(2, secondGate.promise)
+        application.rejectImportAttempts.add(2)
+        return application
+      },
+    })
+    await runtime.start()
+
+    activeClock.set(10)
+    const first = runtime.importSave({
+      text: serializeWebSave({
+        saveVersion: 12,
+        marker: 'first',
+      }),
+      importedAtUtc: '2026-07-29T00:00:00Z',
+      overwriteApproved: true,
+    })
+    await waitUntil(() => application?.importCalls === 1)
+    const second = runtime.importSave({
+      text: serializeWebSave({
+        saveVersion: 12,
+        marker: 'second',
+      }),
+      importedAtUtc: '2026-07-29T00:00:01Z',
+      overwriteApproved: true,
+    })
+    expect(frames.pending).toBe(0)
+
+    firstGate.resolve()
+    await expect(first).resolves.toMatchObject({
+      imported: true,
+      sessionRevision: 2,
+      lifecycleReset: true,
+    })
+    await waitUntil(() => application?.importCalls === 2)
+    expect(frames.pending).toBe(0)
+
+    activeClock.set(100)
+    secondGate.resolve()
+    await expect(second).resolves.toMatchObject({
+      imported: false,
+      code: 'APP-IMPORT-INVALID',
+    })
+    expect(frames.pending).toBe(1)
+
+    activeClock.set(111)
+    frames.fire()
+    await waitUntil(() => application?.activeRequests.length === 2)
+    expect(application?.activeRequests).toEqual([
+      { milliseconds: 10, sessionRevision: 1 },
+      { milliseconds: 11, sessionRevision: 2 },
+    ])
+    await runtime.shutdown()
+  })
+
+  test.each(['background', 'focus-lost'] as const)(
+    'does not let overlapping import completion override a newer %s intent',
+    async (nonActivePhase) => {
+      const database = new MemoryBrowserSaveDatabase()
+      const lifecycle = new TestLifecycleAdapter()
+      const lifecycleClock = new ManualLifecycleClock(
+        '2026-07-29T00:00:00Z',
+      )
+      const activeClock = new ManualActiveTimeClock()
+      const frames = new ManualAnimationFrameScheduler()
+      const firstGate = deferred<void>()
+      const secondGate = deferred<void>()
+      let application: FakeRuntimeApplication | undefined
+      const runtime = createRuntime({
+        database,
+        lifecycle,
+        lifecycleClock,
+        activeTimeClock: activeClock,
+        activeTimeScheduler: frames,
+        createApplication: (repository) => {
+          application = new FakeRuntimeApplication(
+            repository,
+            database.events,
+          )
+          const imported = runtimeStateWithoutQuitTimestamp()
+          imported.gameState.timeline.storedTimeAvailableSeconds = 0
+          imported.gameState.timeline.storedTimeCapacitySeconds = 100
+          imported.gameState.timeline.doubleTime.bankSeconds = 0
+          application.importedState = imported
+          application.importGates.set(1, firstGate.promise)
+          application.importGates.set(2, secondGate.promise)
+          return application
+        },
+      })
+      await runtime.start()
+
+      activeClock.set(10)
+      const first = runtime.importSave({
+        text: serializeWebSave({
+          saveVersion: 12,
+          marker: 'first',
+        }),
+        importedAtUtc: '2026-07-29T00:00:00Z',
+        overwriteApproved: true,
+      })
+      await waitUntil(() => application?.importCalls === 1)
+      const second = runtime.importSave({
+        text: serializeWebSave({
+          saveVersion: 12,
+          marker: 'second',
+        }),
+        importedAtUtc: '2026-07-29T00:00:01Z',
+        overwriteApproved: true,
+      })
+
+      firstGate.resolve()
+      await expect(first).resolves.toMatchObject({
+        imported: true,
+        sessionRevision: 2,
+      })
+      await waitUntil(() => application?.importCalls === 2)
+      expect(frames.pending).toBe(0)
+
+      lifecycle.emit(nonActivePhase)
+      secondGate.resolve()
+      await expect(second).resolves.toMatchObject({
+        imported: true,
+        sessionRevision: 3,
+      })
+      await waitUntil(() => application?.awayCommits === 1)
+      expect(frames.pending).toBe(0)
+      expect(application?.activeRequests).toEqual([
+        { milliseconds: 10, sessionRevision: 1 },
+      ])
+
+      lifecycleClock.set('2026-07-29T00:00:05Z')
+      activeClock.set(1_000)
+      lifecycle.emit('active')
+      await waitUntil(() => application?.awayCommits === 2)
+      await waitUntil(() => frames.pending === 1)
+      activeClock.set(1_007)
+      frames.fire()
+      await waitUntil(() => application?.activeRequests.length === 2)
+      expect(application?.activeRequests).toEqual([
+        { milliseconds: 10, sessionRevision: 1 },
+        { milliseconds: 7, sessionRevision: 3 },
+      ])
+      await runtime.shutdown()
+    },
+  )
+
+  test('never restarts foreground when ownership is lost during the final overlapping import', async () => {
+    const database = new MemoryBrowserSaveDatabase()
+    const activeClock = new ManualActiveTimeClock()
+    const frames = new ManualAnimationFrameScheduler()
+    const firstGate = deferred<void>()
+    const secondGate = deferred<void>()
+    let application: FakeRuntimeApplication | undefined
+    const runtime = createRuntime({
+      database,
+      activeTimeClock: activeClock,
+      activeTimeScheduler: frames,
+      createApplication: (repository) => {
+        application = new FakeRuntimeApplication(
+          repository,
+          database.events,
+        )
+        application.importedState =
+          runtimeStateWithoutQuitTimestamp()
+        application.importGates.set(1, firstGate.promise)
+        application.importGates.set(2, secondGate.promise)
+        return application
+      },
+    })
+    await runtime.start()
+
+    activeClock.set(10)
+    const first = runtime.importSave({
+      text: serializeWebSave({
+        saveVersion: 12,
+        marker: 'first',
+      }),
+      importedAtUtc: '2026-07-29T00:00:00Z',
+      overwriteApproved: true,
+    })
+    await waitUntil(() => application?.importCalls === 1)
+    const second = runtime.importSave({
+      text: serializeWebSave({
+        saveVersion: 12,
+        marker: 'second',
+      }),
+      importedAtUtc: '2026-07-29T00:00:01Z',
+      overwriteApproved: true,
+    })
+
+    firstGate.resolve()
+    await expect(first).resolves.toMatchObject({
+      imported: true,
+      sessionRevision: 2,
+    })
+    await waitUntil(() => application?.importCalls === 2)
+    expect(frames.pending).toBe(0)
+
+    database.forceLease({
+      ownerToken: 'replacement',
+      generation: 2,
+      expiresAtUtcMilliseconds: 10_000,
+    })
+    secondGate.resolve()
+    const settled = await Promise.allSettled([second])
+    expect(settled[0]?.status).toBe('rejected')
+    await waitUntil(() =>
+      runtime.status().phase === 'ownership-lost',
+    )
+    expect(frames.pending).toBe(0)
+    expect(application?.activeRequests).toEqual([
+      { milliseconds: 10, sessionRevision: 1 },
+    ])
     await runtime.shutdown()
   })
 
@@ -638,6 +1002,1640 @@ describe('browser runtime foundation composition', () => {
     await runtime.shutdown()
   })
 
+  test('keeps delayed startup background time out of active delivery until the latest raw phase resumes', async () => {
+    const database = new MemoryBrowserSaveDatabase()
+    const lifecycle = new TestLifecycleAdapter()
+    const lifecycleClock = new ManualLifecycleClock(
+      '2026-07-29T00:00:00Z',
+    )
+    const activeClock = new ManualActiveTimeClock()
+    const frames = new ManualAnimationFrameScheduler()
+    const startGate = deferred<void>()
+    let application: FakeRuntimeApplication | undefined
+    const runtime = createRuntime({
+      database,
+      lifecycle,
+      lifecycleClock,
+      activeTimeClock: activeClock,
+      activeTimeScheduler: frames,
+      createApplication: (repository) => {
+        application = new FakeRuntimeApplication(
+          repository,
+          database.events,
+        )
+        application.startGate = startGate.promise
+        return application
+      },
+    })
+
+    const starting = runtime.start()
+    await waitUntil(() =>
+      database.events.includes('application.start'),
+    )
+    lifecycle.emit('background')
+    activeClock.set(1_000)
+    startGate.resolve()
+
+    await expect(starting).resolves.toMatchObject({
+      phase: 'ready',
+    })
+    await waitUntil(() => application?.awayCommits === 1)
+    expect(frames.pending).toBe(0)
+    expect(application?.activeRequests).toEqual([])
+
+    activeClock.set(3_000)
+    lifecycleClock.set('2026-07-29T00:00:10Z')
+    lifecycle.emit('active')
+    await waitUntil(() => application?.awayCommits === 2)
+    await waitUntil(() => frames.pending === 1)
+    expect(frames.pending).toBe(1)
+
+    activeClock.set(3_017)
+    frames.fire()
+    await waitUntil(() => application?.activeRequests.length === 1)
+    expect(application?.activeRequests).toEqual([
+      { milliseconds: 17, sessionRevision: 1 },
+    ])
+    await runtime.shutdown()
+  })
+
+  test.each(['background', 'focus-lost'] as const)(
+    'seeds initial %s through the startup fence and replays exact away credit before foreground time',
+    async (initialPhase) => {
+      const database = new MemoryBrowserSaveDatabase()
+      const lifecycle = new TestLifecycleAdapter(initialPhase)
+      const lifecycleClock = new ManualLifecycleClock(
+        '2026-07-29T00:00:00Z',
+      )
+      const activeClock = new ManualActiveTimeClock()
+      const frames = new ManualAnimationFrameScheduler()
+      const startGate = deferred<void>()
+      let application: FakeRuntimeApplication | undefined
+      const runtime = createRuntime({
+        database,
+        lifecycle,
+        lifecycleClock,
+        activeTimeClock: activeClock,
+        activeTimeScheduler: frames,
+        createApplication: (repository) => {
+          application = new FakeRuntimeApplication(
+            repository,
+            database.events,
+          )
+          application.setTimeResources(0, 100, 0)
+          application.startGate = startGate.promise
+          return application
+        },
+      })
+
+      const starting = runtime.start()
+      await waitUntil(() =>
+        database.events.includes('application.start'),
+      )
+      lifecycleClock.set('2026-07-29T00:00:10Z')
+      startGate.resolve()
+      await expect(starting).resolves.toMatchObject({
+        phase: 'ready',
+      })
+      expect(application?.awayCommits).toBe(1)
+      expect(frames.pending).toBe(0)
+      expect(application?.activeRequests).toEqual([])
+      expect(
+        application?.snapshot().phase === 'ready'
+          ? application.snapshot().state.gameState.timeline
+              .lastSuspendedAtLegacyText
+          : undefined,
+      ).toBe('2026-07-29T00:00:00Z')
+
+      activeClock.set(5_000)
+      lifecycle.emit('active')
+      await waitUntil(() => application?.awayCommits === 2)
+      await waitUntil(() => frames.pending === 1)
+
+      const replayed = application?.snapshot()
+      expect(replayed?.phase).toBe('ready')
+      if (replayed?.phase === 'ready') {
+        expect(replayed.state.gameState.timeline).toMatchObject({
+          storedTimeAvailableSeconds: 10,
+          storedTimeCapacitySeconds: 100,
+          lastSuspendedAtLegacyText: null,
+          doubleTime: { bankSeconds: 20 },
+        })
+      }
+
+      activeClock.set(5_013)
+      frames.fire()
+      await waitUntil(() => application?.activeRequests.length === 1)
+      expect(application?.activeRequests).toEqual([
+        { milliseconds: 13, sessionRevision: 1 },
+      ])
+      expect(application?.awayCommits).toBe(2)
+      await runtime.shutdown()
+    },
+  )
+
+  test('orders an initial background seed before active received during delayed startup without stale suspension', async () => {
+    const database = new MemoryBrowserSaveDatabase()
+    const lifecycle = new TestLifecycleAdapter('background')
+    const lifecycleClock = new ManualLifecycleClock(
+      '2026-07-29T00:00:00Z',
+    )
+    const activeClock = new ManualActiveTimeClock()
+    const frames = new ManualAnimationFrameScheduler()
+    const startGate = deferred<void>()
+    const awayGate = deferred<void>()
+    let application: FakeRuntimeApplication | undefined
+    const runtime = createRuntime({
+      database,
+      lifecycle,
+      lifecycleClock,
+      activeTimeClock: activeClock,
+      activeTimeScheduler: frames,
+      createApplication: (repository) => {
+        application = new FakeRuntimeApplication(
+          repository,
+          database.events,
+        )
+        application.startGate = startGate.promise
+        application.awayGate = awayGate.promise
+        application.setTimeResources(0, 100, 0)
+        return application
+      },
+    })
+
+    const starting = runtime.start()
+    await waitUntil(() =>
+      database.events.includes('application.start'),
+    )
+    lifecycleClock.set('2026-07-29T00:00:01Z')
+    lifecycle.emit('active')
+    activeClock.set(1_000)
+    startGate.resolve()
+
+    await waitUntil(() => application?.awayCommitsStarted === 1)
+    expect(database.events.indexOf('application.away')).toBeGreaterThan(
+      database.events.indexOf('application.start.done'),
+    )
+    lifecycleClock.set('2026-07-29T00:00:10Z')
+    awayGate.resolve()
+
+    await expect(starting).resolves.toMatchObject({
+      phase: 'ready',
+    })
+    await waitUntil(() => application?.awayCommits === 2)
+    await waitUntil(() => frames.pending === 1)
+
+    const replayed = application?.snapshot()
+    expect(replayed?.phase).toBe('ready')
+    if (replayed?.phase === 'ready') {
+      expect(replayed.state.gameState.timeline).toMatchObject({
+        storedTimeAvailableSeconds: 1,
+        storedTimeCapacitySeconds: 100,
+        lastSuspendedAtLegacyText: null,
+        doubleTime: { bankSeconds: 2 },
+      })
+    }
+
+    activeClock.set(1_021)
+    frames.fire()
+    await waitUntil(() => application?.activeRequests.length === 1)
+    expect(application?.activeRequests).toEqual([
+      { milliseconds: 21, sessionRevision: 1 },
+    ])
+    expect(application?.awayCommits).toBe(2)
+    await runtime.shutdown()
+  })
+
+  test('pairs cold replay and initial background seeding to one observation-time sample before queued active replay', async () => {
+    const database = new MemoryBrowserSaveDatabase()
+    const lifecycle = new TestLifecycleAdapter('background')
+    const lifecycleClock = new ManualLifecycleClock(
+      '2026-07-29T00:00:00Z',
+    )
+    const activeClock = new ManualActiveTimeClock()
+    const frames = new ManualAnimationFrameScheduler()
+    const startGate = deferred<void>()
+    let application: FakeRuntimeApplication | undefined
+    const runtime = createRuntime({
+      database,
+      lifecycle,
+      lifecycleClock,
+      activeTimeClock: activeClock,
+      activeTimeScheduler: frames,
+      createApplication: (repository) => {
+        application = new FakeRuntimeApplication(
+          repository,
+          database.events,
+        )
+        application.startGate = startGate.promise
+        application.setTimeResources(0, 100, 0)
+        application.setDepartureTimestamp(
+          '2026-07-28T23:59:50Z',
+        )
+        return application
+      },
+    })
+
+    const starting = runtime.start()
+    await waitUntil(() =>
+      database.events.includes('application.start'),
+    )
+    lifecycleClock.set('2026-07-29T00:00:05Z')
+    lifecycle.emit('active')
+    lifecycleClock.set('2026-07-29T00:00:10Z')
+    activeClock.set(1_000)
+    startGate.resolve()
+
+    await expect(starting).resolves.toMatchObject({
+      phase: 'ready',
+    })
+    await waitUntil(() => application?.awayCommits === 3)
+    await waitUntil(() => frames.pending === 1)
+
+    const replayed = application?.snapshot()
+    expect(replayed?.phase).toBe('ready')
+    if (replayed?.phase === 'ready') {
+      expect(replayed.state.gameState.timeline).toMatchObject({
+        storedTimeAvailableSeconds: 15,
+        storedTimeCapacitySeconds: 100,
+        lastSuspendedAtLegacyText: null,
+        doubleTime: { bankSeconds: 30 },
+      })
+    }
+
+    activeClock.set(1_012)
+    frames.fire()
+    await waitUntil(() => application?.activeRequests.length === 1)
+    expect(application?.activeRequests).toEqual([
+      { milliseconds: 12, sessionRevision: 1 },
+    ])
+    expect(application?.awayCommits).toBe(3)
+    await runtime.shutdown()
+  })
+
+  test('preserves an unconsumed cold baseline when replay fails once before initial background persistence', async () => {
+    const database = new MemoryBrowserSaveDatabase()
+    const lifecycle = new TestLifecycleAdapter('background')
+    const lifecycleClock = new ManualLifecycleClock(
+      '2026-07-29T00:00:00Z',
+    )
+    const activeClock = new ManualActiveTimeClock()
+    const frames = new ManualAnimationFrameScheduler()
+    let application: FakeRuntimeApplication | undefined
+    const runtime = createRuntime({
+      database,
+      lifecycle,
+      lifecycleClock,
+      activeTimeClock: activeClock,
+      activeTimeScheduler: frames,
+      createApplication: (repository) => {
+        application = new FakeRuntimeApplication(
+          repository,
+          database.events,
+        )
+        application.setTimeResources(0, 100, 0)
+        application.setDepartureTimestamp(
+          '2026-07-28T23:59:50Z',
+        )
+        application.failAwayCommitAttempts.add(1)
+        return application
+      },
+    })
+
+    await expect(runtime.start()).resolves.toMatchObject({
+      phase: 'ready',
+      warnings: [
+        {
+          code: 'persistence-failed',
+          reason:
+            'Startup away-time replay did not establish a safe foreground baseline: commit-failed; foreground sampling remains paused until canonical replay succeeds.',
+        },
+      ],
+    })
+    expect(application?.awayCommitsStarted).toBe(2)
+    expect(application?.awayCommits).toBe(1)
+    expect(frames.pending).toBe(0)
+    const persistedBackground = application?.snapshot()
+    expect(persistedBackground?.phase).toBe('ready')
+    if (persistedBackground?.phase === 'ready') {
+      expect(
+        persistedBackground.state.gameState.timeline,
+      ).toMatchObject({
+        storedTimeAvailableSeconds: 0,
+        lastSuspendedAtLegacyText:
+          '2026-07-28T23:59:50Z',
+        doubleTime: { bankSeconds: 0 },
+      })
+    }
+
+    lifecycleClock.set('2026-07-29T00:00:05Z')
+    activeClock.set(1_000)
+    lifecycle.emit('active')
+    await waitUntil(() => application?.awayCommits === 2)
+    await waitUntil(() => frames.pending === 1)
+
+    const replayed = application?.snapshot()
+    expect(replayed?.phase).toBe('ready')
+    if (replayed?.phase === 'ready') {
+      expect(replayed.state.gameState.timeline).toMatchObject({
+        storedTimeAvailableSeconds: 15,
+        storedTimeCapacitySeconds: 100,
+        lastSuspendedAtLegacyText: null,
+        doubleTime: { bankSeconds: 30 },
+      })
+    }
+
+    activeClock.set(1_011)
+    frames.fire()
+    await waitUntil(() => application?.activeRequests.length === 1)
+    expect(application?.activeRequests).toEqual([
+      { milliseconds: 11, sessionRevision: 1 },
+    ])
+    await runtime.shutdown()
+  })
+
+  test.each([
+    {
+      sequence: 'focus-lost then background',
+      departures: [
+        ['focus-lost', '2026-07-29T00:00:00Z'],
+        ['background', '2026-07-29T00:00:05Z'],
+      ],
+    },
+    {
+      sequence: 'background then focus-lost',
+      departures: [
+        ['background', '2026-07-29T00:00:00Z'],
+        ['focus-lost', '2026-07-29T00:00:05Z'],
+      ],
+    },
+    {
+      sequence: 'background then terminating',
+      departures: [
+        ['background', '2026-07-29T00:00:00Z'],
+        ['terminating', '2026-07-29T00:00:05Z'],
+      ],
+    },
+    {
+      sequence: 'repeated mixed non-active phases',
+      departures: [
+        ['background', '2026-07-29T00:00:00Z'],
+        ['background', '2026-07-29T00:00:02Z'],
+        ['focus-lost', '2026-07-29T00:00:04Z'],
+        ['focus-lost', '2026-07-29T00:00:06Z'],
+        ['terminating', '2026-07-29T00:00:08Z'],
+      ],
+    },
+  ] as const)(
+    'preserves one departure baseline through $sequence and replays away time exactly once',
+    async ({ departures }) => {
+      const database = new MemoryBrowserSaveDatabase()
+      const lifecycle = new TestLifecycleAdapter()
+      const lifecycleClock = new ManualLifecycleClock(
+        '2026-07-29T00:00:00Z',
+      )
+      const activeClock = new ManualActiveTimeClock()
+      const frames = new ManualAnimationFrameScheduler()
+      let application: FakeRuntimeApplication | undefined
+      const runtime = createRuntime({
+        database,
+        lifecycle,
+        lifecycleClock,
+        activeTimeClock: activeClock,
+        activeTimeScheduler: frames,
+        createApplication: (repository) => {
+          application = new FakeRuntimeApplication(
+            repository,
+            database.events,
+          )
+          application.setTimeResources(0, 100, 0)
+          return application
+        },
+      })
+      await runtime.start()
+
+      for (
+        let index = 0;
+        index < departures.length;
+        index += 1
+      ) {
+        const [phase, utc] = departures[index]
+        lifecycleClock.set(utc)
+        lifecycle.emit(phase)
+        await waitUntil(
+          () => application?.awayCommits === index + 1,
+        )
+        const departed = application?.snapshot()
+        expect(departed?.phase).toBe('ready')
+        if (departed?.phase === 'ready') {
+          expect(
+            departed.state.gameState.timeline
+              .lastSuspendedAtLegacyText,
+          ).toBe('2026-07-29T00:00:00Z')
+        }
+      }
+      expect(frames.pending).toBe(0)
+      expect(application?.activeRequests).toEqual([])
+
+      activeClock.set(1_000)
+      lifecycleClock.set('2026-07-29T00:00:10Z')
+      lifecycle.emit('active')
+      await waitUntil(
+        () =>
+          application?.awayCommits === departures.length + 1,
+      )
+      await waitUntil(() => frames.pending === 1)
+
+      const replayed = application?.snapshot()
+      expect(replayed?.phase).toBe('ready')
+      if (replayed?.phase === 'ready') {
+        expect(replayed.state.gameState.timeline).toMatchObject({
+          storedTimeAvailableSeconds: 10,
+          storedTimeCapacitySeconds: 100,
+          lastSuspendedAtLegacyText: null,
+          doubleTime: { bankSeconds: 20 },
+        })
+      }
+
+      lifecycle.emit('active')
+      await runtime.requestCheckpoint()
+      expect(application?.awayCommits).toBe(
+        departures.length + 1,
+      )
+
+      activeClock.set(1_017)
+      frames.fire()
+      await waitUntil(() => application?.activeRequests.length === 1)
+      expect(application?.activeRequests).toEqual([
+        { milliseconds: 17, sessionRevision: 1 },
+      ])
+      expect(application?.awayCommits).toBe(
+        departures.length + 1,
+      )
+      await runtime.shutdown()
+    },
+  )
+
+  test('keeps foreground stopped after replay commit failure and retries the original departure without duplication', async () => {
+    const database = new MemoryBrowserSaveDatabase()
+    const lifecycle = new TestLifecycleAdapter()
+    const lifecycleClock = new ManualLifecycleClock(
+      '2026-07-29T00:00:00Z',
+    )
+    const activeClock = new ManualActiveTimeClock()
+    const frames = new ManualAnimationFrameScheduler()
+    let application: FakeRuntimeApplication | undefined
+    const runtime = createRuntime({
+      database,
+      lifecycle,
+      lifecycleClock,
+      activeTimeClock: activeClock,
+      activeTimeScheduler: frames,
+      createApplication: (repository) => {
+        application = new FakeRuntimeApplication(
+          repository,
+          database.events,
+        )
+        application.setTimeResources(0, 100, 0)
+        return application
+      },
+    })
+    await runtime.start()
+
+    lifecycle.emit('background')
+    await waitUntil(() => application?.awayCommits === 1)
+    expect(frames.pending).toBe(0)
+
+    application!.failAwayCommit = true
+    lifecycleClock.set('2026-07-29T00:00:05Z')
+    lifecycle.emit('active')
+    await waitUntil(() =>
+      runtime.status().phase === 'ready' &&
+      runtime.status().warnings.some(
+        (warning) =>
+          warning.code === 'persistence-failed' &&
+          warning.reason.includes('commit-failed'),
+      ),
+    )
+    expect(application?.awayCommitsStarted).toBe(2)
+    expect(application?.awayCommits).toBe(1)
+    expect(application?.activeRequests).toEqual([])
+    expect(frames.pending).toBe(0)
+
+    application!.failAwayCommit = false
+    lifecycleClock.set('2026-07-29T00:00:07Z')
+    lifecycle.emit('focus-lost')
+    await waitUntil(() => application?.awayCommits === 2)
+    const retriedDeparture = application?.snapshot()
+    expect(retriedDeparture?.phase).toBe('ready')
+    if (retriedDeparture?.phase === 'ready') {
+      expect(
+        retriedDeparture.state.gameState.timeline
+          .lastSuspendedAtLegacyText,
+      ).toBe('2026-07-29T00:00:00Z')
+    }
+
+    activeClock.set(1_000)
+    lifecycleClock.set('2026-07-29T00:00:10Z')
+    lifecycle.emit('active')
+    await waitUntil(() => application?.awayCommits === 3)
+    await waitUntil(() => frames.pending === 1)
+
+    const replayed = application?.snapshot()
+    expect(replayed?.phase).toBe('ready')
+    if (replayed?.phase === 'ready') {
+      expect(replayed.state.gameState.timeline).toMatchObject({
+        storedTimeAvailableSeconds: 10,
+        storedTimeCapacitySeconds: 100,
+        lastSuspendedAtLegacyText: null,
+        doubleTime: { bankSeconds: 20 },
+      })
+    }
+
+    activeClock.set(1_011)
+    frames.fire()
+    await waitUntil(() => application?.activeRequests.length === 1)
+    expect(application?.activeRequests).toEqual([
+      { milliseconds: 11, sessionRevision: 1 },
+    ])
+    expect(application?.awayCommits).toBe(3)
+    await runtime.shutdown()
+  })
+
+  test('uses the raw active receipt clock when replay persistence is delayed', async () => {
+    const database = new MemoryBrowserSaveDatabase()
+    const lifecycle = new TestLifecycleAdapter()
+    const lifecycleClock = new ManualLifecycleClock(
+      '2026-07-29T00:00:00Z',
+    )
+    const activeClock = new ManualActiveTimeClock()
+    const frames = new ManualAnimationFrameScheduler()
+    const replayGate = deferred<void>()
+    let application: FakeRuntimeApplication | undefined
+    const runtime = createRuntime({
+      database,
+      lifecycle,
+      lifecycleClock,
+      activeTimeClock: activeClock,
+      activeTimeScheduler: frames,
+      createApplication: (repository) => {
+        application = new FakeRuntimeApplication(
+          repository,
+          database.events,
+        )
+        application.setTimeResources(0, 100, 0)
+        return application
+      },
+    })
+    await runtime.start()
+
+    lifecycle.emit('background')
+    await waitUntil(() => application?.awayCommits === 1)
+    application!.awayGate = replayGate.promise
+    activeClock.set(1_000)
+    lifecycleClock.set('2026-07-29T00:00:01Z')
+    lifecycle.emit('active')
+    await waitUntil(() => application?.awayCommitsStarted === 2)
+
+    lifecycleClock.set('2026-07-29T00:00:10Z')
+    replayGate.resolve()
+    await waitUntil(() => application?.awayCommits === 2)
+    await waitUntil(() => frames.pending === 1)
+
+    const replayed = application?.snapshot()
+    expect(replayed?.phase).toBe('ready')
+    if (replayed?.phase === 'ready') {
+      expect(replayed.state.gameState.timeline).toMatchObject({
+        storedTimeAvailableSeconds: 1,
+        storedTimeCapacitySeconds: 100,
+        lastSuspendedAtLegacyText: null,
+        doubleTime: { bankSeconds: 2 },
+      })
+    }
+
+    activeClock.set(1_007)
+    frames.fire()
+    await waitUntil(() => application?.activeRequests.length === 1)
+    expect(application?.activeRequests).toEqual([
+      { milliseconds: 7, sessionRevision: 1 },
+    ])
+    await runtime.shutdown()
+  })
+
+  test('keeps startup foreground stopped when cold replay commit fails and resumes only after a safe retry', async () => {
+    const database = new MemoryBrowserSaveDatabase()
+    const lifecycle = new TestLifecycleAdapter()
+    const lifecycleClock = new ManualLifecycleClock(
+      '2026-07-29T00:00:05Z',
+    )
+    const activeClock = new ManualActiveTimeClock()
+    const frames = new ManualAnimationFrameScheduler()
+    let application: FakeRuntimeApplication | undefined
+    const runtime = createRuntime({
+      database,
+      lifecycle,
+      lifecycleClock,
+      activeTimeClock: activeClock,
+      activeTimeScheduler: frames,
+      createApplication: (repository) => {
+        application = new FakeRuntimeApplication(
+          repository,
+          database.events,
+        )
+        application.setTimeResources(0, 100, 0)
+        application.setDepartureTimestamp(
+          '2026-07-29T00:00:00Z',
+        )
+        application.failAwayCommit = true
+        return application
+      },
+    })
+
+    await expect(runtime.start()).resolves.toMatchObject({
+      phase: 'ready',
+      warnings: [
+        {
+          code: 'persistence-failed',
+          reason:
+            'Startup away-time replay did not establish a safe foreground baseline: commit-failed; foreground sampling remains paused until canonical replay succeeds.',
+        },
+      ],
+    })
+    expect(application?.awayCommitsStarted).toBe(1)
+    expect(application?.awayCommits).toBe(0)
+    expect(frames.pending).toBe(0)
+
+    application!.failAwayCommit = false
+    activeClock.set(1_000)
+    lifecycleClock.set('2026-07-29T00:00:10Z')
+    lifecycle.emit('active')
+    await waitUntil(() => application?.awayCommits === 1)
+    await waitUntil(() => frames.pending === 1)
+
+    const replayed = application?.snapshot()
+    expect(replayed?.phase).toBe('ready')
+    if (replayed?.phase === 'ready') {
+      expect(replayed.state.gameState.timeline).toMatchObject({
+        storedTimeAvailableSeconds: 10,
+        storedTimeCapacitySeconds: 100,
+        lastSuspendedAtLegacyText: null,
+        doubleTime: { bankSeconds: 20 },
+      })
+    }
+
+    activeClock.set(1_009)
+    frames.fire()
+    await waitUntil(() => application?.activeRequests.length === 1)
+    expect(application?.activeRequests).toEqual([
+      { milliseconds: 9, sessionRevision: 1 },
+    ])
+    await runtime.shutdown()
+  })
+
+  test('starts post-resume time only after background and active reconcile behind delayed startup', async () => {
+    const database = new MemoryBrowserSaveDatabase()
+    const lifecycle = new TestLifecycleAdapter()
+    const lifecycleClock = new ManualLifecycleClock(
+      '2026-07-29T00:00:00Z',
+    )
+    const activeClock = new ManualActiveTimeClock()
+    const frames = new ManualAnimationFrameScheduler()
+    const startGate = deferred<void>()
+    const awayGate = deferred<void>()
+    let application: FakeRuntimeApplication | undefined
+    const runtime = createRuntime({
+      database,
+      lifecycle,
+      lifecycleClock,
+      activeTimeClock: activeClock,
+      activeTimeScheduler: frames,
+      createApplication: (repository) => {
+        application = new FakeRuntimeApplication(
+          repository,
+          database.events,
+        )
+        application.startGate = startGate.promise
+        application.awayGate = awayGate.promise
+        application.setTimeResources(0, 100, 0)
+        return application
+      },
+    })
+
+    const starting = runtime.start()
+    await waitUntil(() =>
+      database.events.includes('application.start'),
+    )
+    lifecycle.emit('background')
+    lifecycleClock.set('2026-07-29T00:00:01Z')
+    lifecycle.emit('active')
+    lifecycleClock.set('2026-07-29T00:00:10Z')
+    activeClock.set(1_000)
+    startGate.resolve()
+
+    await expect(starting).resolves.toMatchObject({
+      phase: 'ready',
+    })
+    await waitUntil(() => application?.awayCommitsStarted === 1)
+    expect(frames.pending).toBe(0)
+
+    activeClock.set(1_100)
+    awayGate.resolve()
+    await waitUntil(() => application?.awayCommits === 2)
+    await waitUntil(() => frames.pending === 1)
+
+    const replayed = application?.snapshot()
+    expect(replayed?.phase).toBe('ready')
+    if (replayed?.phase === 'ready') {
+      expect(replayed.state.gameState.timeline).toMatchObject({
+        storedTimeAvailableSeconds: 1,
+        storedTimeCapacitySeconds: 100,
+        lastSuspendedAtLegacyText: null,
+        doubleTime: { bankSeconds: 2 },
+      })
+    }
+
+    activeClock.set(1_200)
+    frames.fire()
+    await waitUntil(() => application?.activeRequests.length === 1)
+    expect(application?.activeRequests).toEqual([
+      { milliseconds: 100, sessionRevision: 1 },
+    ])
+    await runtime.shutdown()
+  })
+
+  test('keeps delayed-startup foreground stopped when queued active replay fails and recovers the original baseline on a later focus cycle', async () => {
+    const database = new MemoryBrowserSaveDatabase()
+    const lifecycle = new TestLifecycleAdapter()
+    const lifecycleClock = new ManualLifecycleClock(
+      '2026-07-29T00:00:00Z',
+    )
+    const activeClock = new ManualActiveTimeClock()
+    const frames = new ManualAnimationFrameScheduler()
+    const startGate = deferred<void>()
+    const replayGate = deferred<void>()
+    let application: FakeRuntimeApplication | undefined
+    const runtime = createRuntime({
+      database,
+      lifecycle,
+      lifecycleClock,
+      activeTimeClock: activeClock,
+      activeTimeScheduler: frames,
+      createApplication: (repository) => {
+        application = new FakeRuntimeApplication(
+          repository,
+          database.events,
+        )
+        application.startGate = startGate.promise
+        application.awayCommitGates.set(
+          2,
+          replayGate.promise,
+        )
+        application.failAwayCommitAttempts.add(2)
+        application.setTimeResources(0, 100, 0)
+        return application
+      },
+    })
+
+    const starting = runtime.start()
+    await waitUntil(() =>
+      database.events.includes('application.start'),
+    )
+    lifecycle.emit('background')
+    lifecycleClock.set('2026-07-29T00:00:01Z')
+    lifecycle.emit('active')
+    activeClock.set(1_000)
+    startGate.resolve()
+
+    await expect(starting).resolves.toMatchObject({
+      phase: 'ready',
+    })
+    await waitUntil(
+      () => application?.awayCommitsStarted === 2,
+    )
+    expect(application?.awayCommits).toBe(1)
+    expect(frames.pending).toBe(0)
+    expect(application?.activeRequests).toEqual([])
+
+    activeClock.set(1_100)
+    replayGate.resolve()
+    await waitUntil(() =>
+      runtime.status().phase === 'ready' &&
+      runtime.status().warnings.some(
+        (warning) =>
+          warning.code === 'persistence-failed' &&
+          warning.reason ===
+            'Away-time replay did not establish a safe foreground baseline: commit-failed; foreground sampling remains paused until canonical replay succeeds.',
+      ),
+    )
+    expect(application?.awayCommits).toBe(1)
+    expect(frames.pending).toBe(0)
+    expect(application?.activeRequests).toEqual([])
+
+    lifecycleClock.set('2026-07-29T00:00:04Z')
+    lifecycle.emit('focus-lost')
+    lifecycleClock.set('2026-07-29T00:00:05Z')
+    activeClock.set(2_000)
+    lifecycle.emit('active')
+    await waitUntil(() => application?.awayCommits === 3)
+    await waitUntil(() => frames.pending === 1)
+
+    const replayed = application?.snapshot()
+    expect(replayed?.phase).toBe('ready')
+    if (replayed?.phase === 'ready') {
+      expect(replayed.state.gameState.timeline).toMatchObject({
+        storedTimeAvailableSeconds: 5,
+        storedTimeCapacitySeconds: 100,
+        lastSuspendedAtLegacyText: null,
+        doubleTime: { bankSeconds: 10 },
+      })
+    }
+
+    activeClock.set(2_017)
+    frames.fire()
+    await waitUntil(() => application?.activeRequests.length === 1)
+    expect(application?.activeRequests).toEqual([
+      { milliseconds: 17, sessionRevision: 1 },
+    ])
+    await runtime.shutdown()
+  })
+
+  test('delivers exact foreground time once and publishes only frozen fenced snapshots', async () => {
+    const database = new MemoryBrowserSaveDatabase()
+    const activeClock = new ManualActiveTimeClock()
+    const frames = new ManualAnimationFrameScheduler()
+    let application: FakeRuntimeApplication | undefined
+    const runtime = createRuntime({
+      database,
+      activeTimeClock: activeClock,
+      activeTimeScheduler: frames,
+      createApplication: (repository) => {
+        application = new FakeRuntimeApplication(
+          repository,
+          database.events,
+        )
+        return application
+      },
+    })
+    await runtime.start()
+    const initial = runtime.snapshot()
+    expect(initial.phase).toBe('ready')
+    expect(Object.isFrozen(initial)).toBe(true)
+    expect(runtime.snapshot()).toBe(initial)
+
+    activeClock.set(10)
+    frames.fire()
+    await waitUntil(() => application?.activeRequests.length === 1)
+    await waitUntil(() =>
+      runtime.snapshot().phase === 'ready' &&
+      runtime.snapshot().revision.state === 1,
+    )
+    activeClock.set(10)
+    frames.fire()
+    await flushMicrotasks()
+    expect(application?.activeRequests).toHaveLength(1)
+
+    activeClock.set(25)
+    frames.fire()
+    await waitUntil(() => application?.activeRequests.length === 2)
+    await waitUntil(() =>
+      runtime.snapshot().phase === 'ready' &&
+      runtime.snapshot().revision.state === 2,
+    )
+
+    expect(application?.activeRequests).toEqual([
+      { milliseconds: 10, sessionRevision: 1 },
+      { milliseconds: 15, sessionRevision: 1 },
+    ])
+    expect(
+      application?.activeRequests.reduce(
+        (sum, request) => sum + request.milliseconds,
+        0,
+      ),
+    ).toBe(25)
+    expect(Object.isFrozen(runtime.snapshot())).toBe(true)
+    await runtime.shutdown()
+  })
+
+  test('serializes overlapping commands from one activation revision and publishes no stale result', async () => {
+    const database = new MemoryBrowserSaveDatabase()
+    const gate = deferred<void>()
+    let application: FakeRuntimeApplication | undefined
+    const runtime = createRuntime({
+      database,
+      createApplication: (repository) => {
+        application = new FakeRuntimeApplication(
+          repository,
+          database.events,
+        )
+        application.playerGate = gate.promise
+        return application
+      },
+    })
+    await runtime.start()
+    const publications: FrontendApplicationSnapshot[] = []
+    runtime.subscribeSnapshot((snapshot) =>
+      publications.push(snapshot as FrontendApplicationSnapshot),
+    )
+
+    const first = runtime.dispatchPlayer({
+      kind: 'tinker.start',
+      repeat: false,
+    })
+    await waitUntil(() => application?.playerEnvelopes.length === 1)
+    const second = runtime.dispatchPlayer({
+      kind: 'tinker.start',
+      repeat: false,
+    })
+    await flushMicrotasks()
+    expect(application?.playerEnvelopes).toHaveLength(1)
+    gate.resolve()
+
+    await expect(first).resolves.toMatchObject({
+      status: 'accepted',
+      stateRevision: 1,
+      activationRevision: { session: 1, state: 0 },
+    })
+    await expect(second).resolves.toMatchObject({
+      status: 'rejected',
+      code: 'SIM-STALE-REVISION',
+      stale: true,
+      stateRevision: 1,
+      activationRevision: { session: 1, state: 0 },
+    })
+    expect(application?.playerEnvelopes).toHaveLength(2)
+    expect(publications).toHaveLength(1)
+    expect(publications[0]?.phase).toBe('ready')
+    if (publications[0]?.phase === 'ready') {
+      expect(publications[0].revision.state).toBe(1)
+    }
+    await runtime.shutdown()
+  })
+
+  test('routes lifecycle save even when captured active-time delivery fails', async () => {
+    const database = new MemoryBrowserSaveDatabase()
+    const lifecycle = new TestLifecycleAdapter()
+    const activeClock = new ManualActiveTimeClock()
+    let application: FakeRuntimeApplication | undefined
+    const runtime = createRuntime({
+      database,
+      lifecycle,
+      activeTimeClock: activeClock,
+      createApplication: (repository) => {
+        application = new FakeRuntimeApplication(
+          repository,
+          database.events,
+        )
+        application.throwActive = true
+        return application
+      },
+    })
+    await runtime.start()
+
+    activeClock.set(12)
+    lifecycle.emit('background')
+    await waitUntil(() => application?.awayCommits === 1)
+    await waitUntil(() =>
+      runtime.status().phase === 'ready' &&
+      runtime.status().warnings.some(
+        (warning) => warning.code === 'persistence-failed',
+      ),
+    )
+
+    expect(application?.activeRequests).toEqual([
+      { milliseconds: 12, sessionRevision: 1 },
+    ])
+    expect(database.events.indexOf('application.active')).toBeLessThan(
+      database.events.indexOf('application.away'),
+    )
+    expect(runtime.status()).toMatchObject({
+      phase: 'ready',
+      warnings: [{ code: 'persistence-failed' }],
+    })
+    await runtime.shutdown()
+  })
+
+  test('applies pre-import elapsed time only to the replaced session and resumes from a fresh baseline', async () => {
+    const database = new MemoryBrowserSaveDatabase()
+    const activeClock = new ManualActiveTimeClock()
+    const frames = new ManualAnimationFrameScheduler()
+    const importGate = deferred<void>()
+    let application: FakeRuntimeApplication | undefined
+    const runtime = createRuntime({
+      database,
+      activeTimeClock: activeClock,
+      activeTimeScheduler: frames,
+      createApplication: (repository) => {
+        application = new FakeRuntimeApplication(
+          repository,
+          database.events,
+        )
+        application.importGate = importGate.promise
+        application.importedState = runtimeStateWithoutQuitTimestamp()
+        return application
+      },
+    })
+    await runtime.start()
+    activeClock.set(10)
+    const importing = runtime.importSave({
+      text: serializeWebSave({
+        saveVersion: 12,
+        marker: 'replacement',
+      }),
+      importedAtUtc: '2026-07-29T00:00:00Z',
+      overwriteApproved: true,
+    })
+    await waitUntil(() => application?.importCalls === 1)
+    expect(application?.activeRequests).toEqual([
+      { milliseconds: 10, sessionRevision: 1 },
+    ])
+    expect(database.events.indexOf('application.active')).toBeLessThan(
+      database.events.indexOf('application.import'),
+    )
+
+    activeClock.set(100)
+    importGate.resolve()
+    await expect(importing).resolves.toMatchObject({
+      imported: true,
+      sessionRevision: 2,
+    })
+    activeClock.set(110)
+    frames.fire()
+    await waitUntil(() => application?.activeRequests.length === 2)
+
+    expect(application?.activeRequests).toEqual([
+      { milliseconds: 10, sessionRevision: 1 },
+      { milliseconds: 10, sessionRevision: 2 },
+    ])
+    await runtime.shutdown()
+  })
+
+  test('keeps delayed import background time out of active delivery and away replay', async () => {
+    const database = new MemoryBrowserSaveDatabase()
+    const lifecycle = new TestLifecycleAdapter()
+    const lifecycleClock = new ManualLifecycleClock(
+      '2026-07-29T00:00:00Z',
+    )
+    const activeClock = new ManualActiveTimeClock()
+    const frames = new ManualAnimationFrameScheduler()
+    const importGate = deferred<void>()
+    let application: FakeRuntimeApplication | undefined
+    const runtime = createRuntime({
+      database,
+      lifecycle,
+      lifecycleClock,
+      activeTimeClock: activeClock,
+      activeTimeScheduler: frames,
+      createApplication: (repository) => {
+        application = new FakeRuntimeApplication(
+          repository,
+          database.events,
+        )
+        application.importGate = importGate.promise
+        application.importedState =
+          runtimeStateWithoutQuitTimestamp()
+        return application
+      },
+    })
+    await runtime.start()
+
+    activeClock.set(10)
+    const importing = runtime.importSave({
+      text: serializeWebSave({
+        saveVersion: 12,
+        marker: 'replacement',
+      }),
+      importedAtUtc: '2026-07-29T00:00:00Z',
+      overwriteApproved: true,
+    })
+    await waitUntil(() => application?.importCalls === 1)
+    lifecycle.emit('background')
+    activeClock.set(1_000)
+    importGate.resolve()
+
+    await expect(importing).resolves.toMatchObject({
+      imported: true,
+      sessionRevision: 2,
+    })
+    await waitUntil(() => application?.awayCommits === 1)
+    expect(frames.pending).toBe(0)
+    expect(application?.activeRequests).toEqual([
+      { milliseconds: 10, sessionRevision: 1 },
+    ])
+
+    activeClock.set(3_000)
+    lifecycleClock.set('2026-07-29T00:00:10Z')
+    lifecycle.emit('active')
+    await waitUntil(() => application?.awayCommits === 2)
+    await waitUntil(() => frames.pending === 1)
+    expect(frames.pending).toBe(1)
+
+    activeClock.set(3_019)
+    frames.fire()
+    await waitUntil(() => application?.activeRequests.length === 2)
+    expect(application?.activeRequests).toEqual([
+      { milliseconds: 10, sessionRevision: 1 },
+      { milliseconds: 19, sessionRevision: 2 },
+    ])
+    await runtime.shutdown()
+  })
+
+  test('starts post-resume time only after background and active reconcile behind delayed import', async () => {
+    const database = new MemoryBrowserSaveDatabase()
+    const lifecycle = new TestLifecycleAdapter()
+    const lifecycleClock = new ManualLifecycleClock(
+      '2026-07-29T00:00:00Z',
+    )
+    const activeClock = new ManualActiveTimeClock()
+    const frames = new ManualAnimationFrameScheduler()
+    const importGate = deferred<void>()
+    const awayGate = deferred<void>()
+    let application: FakeRuntimeApplication | undefined
+    const runtime = createRuntime({
+      database,
+      lifecycle,
+      lifecycleClock,
+      activeTimeClock: activeClock,
+      activeTimeScheduler: frames,
+      createApplication: (repository) => {
+        application = new FakeRuntimeApplication(
+          repository,
+          database.events,
+        )
+        application.importGate = importGate.promise
+        application.awayGate = awayGate.promise
+        const imported = runtimeStateWithoutQuitTimestamp()
+        imported.gameState.timeline.storedTimeAvailableSeconds = 0
+        imported.gameState.timeline.storedTimeCapacitySeconds = 100
+        imported.gameState.timeline.doubleTime.bankSeconds = 0
+        application.importedState = imported
+        return application
+      },
+    })
+    await runtime.start()
+
+    activeClock.set(10)
+    const importing = runtime.importSave({
+      text: serializeWebSave({
+        saveVersion: 12,
+        marker: 'replacement',
+      }),
+      importedAtUtc: '2026-07-29T00:00:00Z',
+      overwriteApproved: true,
+    })
+    await waitUntil(() => application?.importCalls === 1)
+    lifecycle.emit('background')
+    lifecycleClock.set('2026-07-29T00:00:01Z')
+    lifecycle.emit('active')
+    lifecycleClock.set('2026-07-29T00:00:10Z')
+    activeClock.set(1_000)
+    importGate.resolve()
+
+    await expect(importing).resolves.toMatchObject({
+      imported: true,
+      sessionRevision: 2,
+    })
+    await waitUntil(() => application?.awayCommitsStarted === 1)
+    expect(frames.pending).toBe(0)
+
+    activeClock.set(1_100)
+    awayGate.resolve()
+    await waitUntil(() => application?.awayCommits === 2)
+    await waitUntil(() => frames.pending === 1)
+
+    const replayed = application?.snapshot()
+    expect(replayed?.phase).toBe('ready')
+    if (replayed?.phase === 'ready') {
+      expect(replayed.state.gameState.timeline).toMatchObject({
+        storedTimeAvailableSeconds: 1,
+        storedTimeCapacitySeconds: 100,
+        lastSuspendedAtLegacyText: null,
+        doubleTime: { bankSeconds: 2 },
+      })
+    }
+
+    activeClock.set(1_200)
+    frames.fire()
+    await waitUntil(() => application?.activeRequests.length === 2)
+    expect(application?.activeRequests).toEqual([
+      { milliseconds: 10, sessionRevision: 1 },
+      { milliseconds: 100, sessionRevision: 2 },
+    ])
+    await runtime.shutdown()
+  })
+
+  test('keeps delayed-import foreground stopped when queued active replay fails and recovers the original baseline on a later focus cycle', async () => {
+    const database = new MemoryBrowserSaveDatabase()
+    const lifecycle = new TestLifecycleAdapter()
+    const lifecycleClock = new ManualLifecycleClock(
+      '2026-07-29T00:00:00Z',
+    )
+    const activeClock = new ManualActiveTimeClock()
+    const frames = new ManualAnimationFrameScheduler()
+    const importGate = deferred<void>()
+    const replayGate = deferred<void>()
+    let application: FakeRuntimeApplication | undefined
+    const runtime = createRuntime({
+      database,
+      lifecycle,
+      lifecycleClock,
+      activeTimeClock: activeClock,
+      activeTimeScheduler: frames,
+      createApplication: (repository) => {
+        application = new FakeRuntimeApplication(
+          repository,
+          database.events,
+        )
+        application.importGate = importGate.promise
+        application.awayCommitGates.set(
+          2,
+          replayGate.promise,
+        )
+        application.failAwayCommitAttempts.add(2)
+        const imported = runtimeStateWithoutQuitTimestamp()
+        imported.gameState.timeline.storedTimeAvailableSeconds = 0
+        imported.gameState.timeline.storedTimeCapacitySeconds = 100
+        imported.gameState.timeline.doubleTime.bankSeconds = 0
+        application.importedState = imported
+        return application
+      },
+    })
+    await runtime.start()
+
+    activeClock.set(10)
+    const importing = runtime.importSave({
+      text: serializeWebSave({
+        saveVersion: 12,
+        marker: 'replacement',
+      }),
+      importedAtUtc: '2026-07-29T00:00:00Z',
+      overwriteApproved: true,
+    })
+    await waitUntil(() => application?.importCalls === 1)
+    lifecycle.emit('background')
+    lifecycleClock.set('2026-07-29T00:00:01Z')
+    lifecycle.emit('active')
+    activeClock.set(1_000)
+    importGate.resolve()
+
+    await expect(importing).resolves.toMatchObject({
+      imported: true,
+      sessionRevision: 2,
+    })
+    await waitUntil(
+      () => application?.awayCommitsStarted === 2,
+    )
+    expect(application?.awayCommits).toBe(1)
+    expect(frames.pending).toBe(0)
+    expect(application?.activeRequests).toEqual([
+      { milliseconds: 10, sessionRevision: 1 },
+    ])
+
+    activeClock.set(1_100)
+    replayGate.resolve()
+    await waitUntil(() =>
+      runtime.status().phase === 'ready' &&
+      runtime.status().warnings.some(
+        (warning) =>
+          warning.code === 'persistence-failed' &&
+          warning.reason ===
+            'Away-time replay did not establish a safe foreground baseline: commit-failed; foreground sampling remains paused until canonical replay succeeds.',
+      ),
+    )
+    expect(application?.awayCommits).toBe(1)
+    expect(frames.pending).toBe(0)
+    expect(application?.activeRequests).toEqual([
+      { milliseconds: 10, sessionRevision: 1 },
+    ])
+
+    lifecycleClock.set('2026-07-29T00:00:04Z')
+    lifecycle.emit('focus-lost')
+    lifecycleClock.set('2026-07-29T00:00:05Z')
+    activeClock.set(2_000)
+    lifecycle.emit('active')
+    await waitUntil(() => application?.awayCommits === 3)
+    await waitUntil(() => frames.pending === 1)
+
+    const replayed = application?.snapshot()
+    expect(replayed?.phase).toBe('ready')
+    if (replayed?.phase === 'ready') {
+      expect(replayed.state.gameState.timeline).toMatchObject({
+        storedTimeAvailableSeconds: 5,
+        storedTimeCapacitySeconds: 100,
+        lastSuspendedAtLegacyText: null,
+        doubleTime: { bankSeconds: 10 },
+      })
+    }
+
+    activeClock.set(2_013)
+    frames.fire()
+    await waitUntil(() => application?.activeRequests.length === 2)
+    expect(application?.activeRequests).toEqual([
+      { milliseconds: 10, sessionRevision: 1 },
+      { milliseconds: 13, sessionRevision: 2 },
+    ])
+    await runtime.shutdown()
+  })
+
+  test('fails an invalid active receipt clock closed during delayed import and recovers on a later valid active phase', async () => {
+    const database = new MemoryBrowserSaveDatabase()
+    const lifecycle = new TestLifecycleAdapter()
+    const lifecycleClock = new ManualLifecycleClock(
+      '2026-07-29T00:00:00Z',
+    )
+    const activeClock = new ManualActiveTimeClock()
+    const frames = new ManualAnimationFrameScheduler()
+    const importGate = deferred<void>()
+    let application: FakeRuntimeApplication | undefined
+    const runtime = createRuntime({
+      database,
+      lifecycle,
+      lifecycleClock,
+      activeTimeClock: activeClock,
+      activeTimeScheduler: frames,
+      createApplication: (repository) => {
+        application = new FakeRuntimeApplication(
+          repository,
+          database.events,
+        )
+        application.importGate = importGate.promise
+        application.importedState =
+          runtimeStateWithoutQuitTimestamp()
+        return application
+      },
+    })
+    await runtime.start()
+
+    activeClock.set(10)
+    const importing = runtime.importSave({
+      text: serializeWebSave({
+        saveVersion: 12,
+        marker: 'replacement',
+      }),
+      importedAtUtc: '2026-07-29T00:00:00Z',
+      overwriteApproved: true,
+    })
+    await waitUntil(() => application?.importCalls === 1)
+
+    lifecycleClock.set('invalid-clock-sample')
+    lifecycle.emit('active')
+    activeClock.set(1_000)
+    importGate.resolve()
+    await expect(importing).resolves.toMatchObject({
+      imported: true,
+      sessionRevision: 2,
+    })
+    await waitUntil(() =>
+      runtime.status().phase === 'ready' &&
+      runtime.status().warnings.some(
+        (warning) =>
+          warning.code === 'persistence-failed' &&
+          warning.reason ===
+            'Lifecycle clock capture failed; the phase was not applied and foreground sampling remains paused.',
+      ),
+    )
+
+    expect(frames.pending).toBe(0)
+    expect(application?.activeRequests).toEqual([
+      { milliseconds: 10, sessionRevision: 1 },
+    ])
+    expect(application?.awayCommits).toBe(0)
+
+    lifecycleClock.set('2026-07-29T00:00:01Z')
+    lifecycle.emit('active')
+    await waitUntil(() => frames.pending === 1)
+    activeClock.set(1_013)
+    frames.fire()
+    await waitUntil(() => application?.activeRequests.length === 2)
+    expect(application?.activeRequests).toEqual([
+      { milliseconds: 10, sessionRevision: 1 },
+      { milliseconds: 13, sessionRevision: 2 },
+    ])
+    await runtime.shutdown()
+  })
+
+  test('flushes active time synchronously but rejects a non-active phase with an invalid receipt clock', async () => {
+    const database = new MemoryBrowserSaveDatabase()
+    const lifecycle = new TestLifecycleAdapter()
+    const lifecycleClock = new ManualLifecycleClock(
+      '2026-07-29T00:00:00Z',
+    )
+    const activeClock = new ManualActiveTimeClock()
+    const frames = new ManualAnimationFrameScheduler()
+    let application: FakeRuntimeApplication | undefined
+    const runtime = createRuntime({
+      database,
+      lifecycle,
+      lifecycleClock,
+      activeTimeClock: activeClock,
+      activeTimeScheduler: frames,
+      createApplication: (repository) => {
+        application = new FakeRuntimeApplication(
+          repository,
+          database.events,
+        )
+        return application
+      },
+    })
+    await runtime.start()
+
+    activeClock.set(12)
+    lifecycleClock.set('invalid-clock-sample')
+    lifecycle.emit('background')
+    await waitUntil(() =>
+      runtime.status().phase === 'ready' &&
+      runtime.status().warnings.some(
+        (warning) =>
+          warning.reason ===
+          'Lifecycle clock capture failed; the phase was not applied and foreground sampling remains paused.',
+      ),
+    )
+
+    expect(application?.activeRequests).toEqual([
+      { milliseconds: 12, sessionRevision: 1 },
+    ])
+    expect(application?.awayCommits).toBe(0)
+    expect(frames.pending).toBe(0)
+
+    lifecycleClock.set('2026-07-29T00:00:01Z')
+    lifecycle.emit('active')
+    await waitUntil(() => frames.pending === 1)
+    activeClock.set(20)
+    frames.fire()
+    await waitUntil(() => application?.activeRequests.length === 2)
+    expect(application?.activeRequests).toEqual([
+      { milliseconds: 12, sessionRevision: 1 },
+      { milliseconds: 8, sessionRevision: 1 },
+    ])
+    await runtime.shutdown()
+  })
+
+  test('contains invalid monotonic samples across lifecycle, import, and shutdown', async () => {
+    const lifecycleDatabase = new MemoryBrowserSaveDatabase()
+    const lifecycle = new TestLifecycleAdapter()
+    const lifecycleClock = new ManualActiveTimeClock()
+    let lifecycleApplication: FakeRuntimeApplication | undefined
+    const lifecycleRuntime = createRuntime({
+      database: lifecycleDatabase,
+      lifecycle,
+      activeTimeClock: lifecycleClock,
+      createApplication: (repository) => {
+        lifecycleApplication = new FakeRuntimeApplication(
+          repository,
+          lifecycleDatabase.events,
+        )
+        return lifecycleApplication
+      },
+    })
+    await lifecycleRuntime.start()
+    lifecycleClock.set(Number.NaN)
+    lifecycle.emit('background')
+    await waitUntil(() => lifecycleApplication?.awayCommits === 1)
+    expect(lifecycleRuntime.status()).toMatchObject({
+      phase: 'ready',
+      warnings: [{ code: 'active-time-failed' }],
+    })
+    await lifecycleRuntime.shutdown()
+
+    const importDatabase = new MemoryBrowserSaveDatabase()
+    const importClock = new ManualActiveTimeClock()
+    let importApplication: FakeRuntimeApplication | undefined
+    const importRuntime = createRuntime({
+      database: importDatabase,
+      activeTimeClock: importClock,
+      createApplication: (repository) => {
+        importApplication = new FakeRuntimeApplication(
+          repository,
+          importDatabase.events,
+        )
+        importApplication.importedState =
+          runtimeStateWithoutQuitTimestamp()
+        return importApplication
+      },
+    })
+    await importRuntime.start()
+    importClock.set(Number.NaN)
+    await expect(
+      importRuntime.importSave({
+        text: serializeWebSave({
+          saveVersion: 12,
+          marker: 'invalid-clock-import',
+        }),
+        importedAtUtc: '2026-07-29T00:00:00Z',
+        overwriteApproved: true,
+      }),
+    ).resolves.toMatchObject({
+      imported: true,
+      sessionRevision: 2,
+    })
+    expect(importRuntime.status()).toMatchObject({
+      phase: 'ready',
+      warnings: [{ code: 'active-time-failed' }],
+    })
+    await importRuntime.shutdown()
+
+    const shutdownDatabase = new MemoryBrowserSaveDatabase()
+    const shutdownClock = new ManualActiveTimeClock()
+    const shutdownFrames = new ManualAnimationFrameScheduler()
+    const shutdownRuntime = createRuntime({
+      database: shutdownDatabase,
+      activeTimeClock: shutdownClock,
+      activeTimeScheduler: shutdownFrames,
+    })
+    await shutdownRuntime.start()
+    shutdownClock.set(Number.NaN)
+    await expect(shutdownRuntime.shutdown()).resolves.toBeUndefined()
+    expect(shutdownRuntime.status().phase).toBe('stopped')
+    expect(shutdownDatabase.releaseCalls).toBe(1)
+    expect(shutdownFrames.pending).toBe(0)
+  })
+
+  test('publishes no mutated result when writer ownership changes during a player command', async () => {
+    const database = new MemoryBrowserSaveDatabase()
+    const playerGate = deferred<void>()
+    let application: FakeRuntimeApplication | undefined
+    const runtime = createRuntime({
+      database,
+      createApplication: (repository) => {
+        application = new FakeRuntimeApplication(
+          repository,
+          database.events,
+        )
+        application.playerGate = playerGate.promise
+        return application
+      },
+    })
+    await runtime.start()
+    const publications: string[] = []
+    runtime.subscribeSnapshot((snapshot) =>
+      publications.push(snapshot.phase),
+    )
+
+    const command = runtime.dispatchPlayer({
+      kind: 'tinker.start',
+      repeat: false,
+    })
+    await waitUntil(() => application?.playerEnvelopes.length === 1)
+    database.forceLease({
+      ownerToken: 'replacement',
+      generation: 2,
+      expiresAtUtcMilliseconds: 10_000,
+    })
+    playerGate.resolve()
+
+    await expect(command).resolves.toMatchObject({
+      status: 'failed',
+      code: 'RUNTIME-PLAYER-AUTHORITY-LOST',
+      retryable: false,
+    })
+    await waitUntil(() => runtime.status().phase === 'ownership-lost')
+    expect(application?.snapshot()).toMatchObject({
+      phase: 'ready',
+      revision: { state: 1 },
+    })
+    expect(runtime.snapshot()).toEqual({
+      version: 1,
+      phase: 'idle',
+    })
+    expect(publications).toEqual(['idle'])
+    await runtime.shutdown()
+  })
+
+  test('drains residual active time and checkpoints dirty state before orderly lease release', async () => {
+    const database = new MemoryBrowserSaveDatabase()
+    const activeClock = new ManualActiveTimeClock()
+    const frames = new ManualAnimationFrameScheduler()
+    let application: FakeRuntimeApplication | undefined
+    const runtime = createRuntime({
+      database,
+      activeTimeClock: activeClock,
+      activeTimeScheduler: frames,
+      createApplication: (repository) => {
+        application = new FakeRuntimeApplication(
+          repository,
+          database.events,
+        )
+        return application
+      },
+    })
+    await runtime.start()
+    activeClock.set(15)
+
+    await runtime.shutdown()
+
+    expect(application?.activeRequests).toEqual([
+      { milliseconds: 15, sessionRevision: 1 },
+    ])
+    expect(application?.checkpointCalls).toBe(1)
+    expect(database.events.indexOf('application.active')).toBeLessThan(
+      database.events.indexOf('application.checkpoint'),
+    )
+    expect(database.events.indexOf('application.checkpoint')).toBeLessThan(
+      database.events.indexOf('lease.release'),
+    )
+    expect(frames.pending).toBe(0)
+    expect(runtime.status().phase).toBe('stopped')
+  })
+
   test('lazily delegates clipboard and allowlisted navigation without exposing platform objects', async () => {
     const database = new MemoryBrowserSaveDatabase()
     const clipboard = new RecordingClipboard()
@@ -663,6 +2661,7 @@ describe('browser runtime foundation composition', () => {
 
     expect(Object.keys(runtime).sort()).toEqual([
       'checkpointBeforeSafeReload',
+      'dispatchPlayer',
       'exportLastRecovery',
       'importSave',
       'inspectStorage',
@@ -670,8 +2669,10 @@ describe('browser runtime foundation composition', () => {
       'readClipboardText',
       'requestCheckpoint',
       'shutdown',
+      'snapshot',
       'start',
       'status',
+      'subscribeSnapshot',
       'subscribeStatus',
       'writeClipboardText',
     ])
@@ -717,6 +2718,13 @@ function createRuntime(
     lifecycleClock:
       overrides.lifecycleClock ??
       fixedClock('2026-07-29T00:00:00Z'),
+    activeTimeClock:
+      overrides.activeTimeClock ?? new ManualActiveTimeClock(),
+    activeTimeScheduler:
+      overrides.activeTimeScheduler ??
+      new ManualAnimationFrameScheduler(),
+    activeTimeDeliveryIntervalMilliseconds:
+      overrides.activeTimeDeliveryIntervalMilliseconds ?? 1,
     storageManager:
       overrides.storageManager ?? {
         persisted: async () => true,
@@ -758,15 +2766,32 @@ class FakeRuntimeApplication
   readonly events: string[]
   startGate: Promise<void> | undefined
   awayGate: Promise<void> | undefined
+  readonly awayCommitGates =
+    new Map<number, Promise<void>>()
+  playerGate: Promise<void> | undefined
+  importGate: Promise<void> | undefined
+  readonly importGates =
+    new Map<number, Promise<void>>()
   checkpointGate: Promise<void> | undefined
   importedState: CanonicalRuntimeState | undefined
   rejectImports = false
+  readonly rejectImportAttempts = new Set<number>()
   checkpointSkipsPersistence = false
   blocked = false
+  throwActive = false
+  throwPlayer = false
+  failAwayCommit = false
+  readonly failAwayCommitAttempts = new Set<number>()
   awayCommitsStarted = 0
   awayCommits = 0
   importCalls = 0
   checkpointCalls = 0
+  readonly activeRequests: Array<{
+    readonly milliseconds: number
+    readonly sessionRevision: number
+  }> = []
+  readonly playerEnvelopes:
+    ApplicationCommandEnvelope<CanonicalPlayerCommand>[] = []
 
   constructor(repository: SaveRepository, events: string[]) {
     this.repository = repository
@@ -806,6 +2831,35 @@ class FakeRuntimeApplication
     }
   }
 
+  frontendSnapshot(): DeepReadonly<FrontendApplicationSnapshot> {
+    const snapshot = this.snapshot()
+    if (snapshot.phase === 'blocked') {
+      return deepFreezeTestSnapshot({
+        version: 1,
+        phase: 'blocked',
+        outcome: snapshot.outcome,
+        error: snapshot.error,
+      })
+    }
+    if (snapshot.phase !== 'ready') {
+      return deepFreezeTestSnapshot({
+        version: 1,
+        phase: snapshot.phase,
+      })
+    }
+    return deepFreezeTestSnapshot({
+      version: 1,
+      phase: 'ready',
+      source: snapshot.source,
+      revision: structuredClone(snapshot.revision),
+      checkpoint: structuredClone(snapshot.checkpoint),
+      operation: snapshot.operation,
+      gameplay: {
+        marker: this.stateRevision,
+      },
+    } as unknown as FrontendApplicationSnapshot)
+  }
+
   async start(): Promise<ApplicationSnapshot<CanonicalRuntimeState>> {
     this.events.push('application.start')
     await this.startGate
@@ -816,6 +2870,19 @@ class FakeRuntimeApplication
   advanceActiveWithContinuation(
     milliseconds: number,
   ): CanonicalActiveAdvanceResult {
+    this.events.push('application.active')
+    this.activeRequests.push({
+      milliseconds,
+      sessionRevision: this.sessionRevision,
+    })
+    if (this.throwActive) {
+      this.throwActive = false
+      throw new Error('Scripted active-time failure.')
+    }
+    if (milliseconds > 0) {
+      this.stateRevision += 1
+      this.dirty = true
+    }
     return {
       transition: {
         accepted: true,
@@ -829,13 +2896,56 @@ class FakeRuntimeApplication
   }
 
   async dispatchPlayer(
-    _envelope: ApplicationCommandEnvelope<CanonicalPlayerCommand>,
+    envelope: ApplicationCommandEnvelope<CanonicalPlayerCommand>,
+    cancelRequested?: () => boolean,
   ): Promise<CanonicalPlayerDispatchResult> {
+    this.events.push('application.player')
+    this.playerEnvelopes.push(envelope)
+    await this.playerGate
+    if (this.throwPlayer) {
+      this.throwPlayer = false
+      throw new Error('Scripted player-command failure.')
+    }
+    if (cancelRequested?.()) {
+      return {
+        kind: 'transition',
+        transition: {
+          accepted: false,
+          code: 'APP-CANCELLED',
+          reason: 'Writer authority was cancelled.',
+          revision: this.stateRevision,
+        },
+      }
+    }
+    if (envelope.sessionRevision !== this.sessionRevision) {
+      return {
+        kind: 'transition',
+        transition: {
+          accepted: false,
+          code: 'APP-STALE-SESSION',
+          reason: 'The player command targeted an old session.',
+          revision: this.stateRevision,
+        },
+      }
+    }
+    if (envelope.expectedStateRevision !== this.stateRevision) {
+      return {
+        kind: 'transition',
+        transition: {
+          accepted: false,
+          code: 'SIM-STALE-REVISION',
+          reason: 'The player command targeted an old state revision.',
+          revision: this.stateRevision,
+        },
+      }
+    }
+    this.stateRevision += 1
+    this.dirty = true
     return {
       kind: 'transition',
       transition: {
         accepted: true,
-        changed: false,
+        changed: true,
         revision: this.stateRevision,
       },
     }
@@ -867,6 +2977,21 @@ class FakeRuntimeApplication
     this.awayCommitsStarted += 1
     this.events.push('application.away')
     await this.awayGate
+    await this.awayCommitGates.get(
+      this.awayCommitsStarted,
+    )
+    if (
+      this.failAwayCommit ||
+      this.failAwayCommitAttempts.delete(
+        this.awayCommitsStarted,
+      )
+    ) {
+      return {
+        committed: false,
+        code: 'TEST-AWAY-COMMIT-FAILED',
+        reason: 'Scripted away-time commit failure.',
+      }
+    }
     this.state = cloneCanonicalRuntimeState(state)
     this.awayCommits += 1
     this.stateRevision += 1
@@ -883,7 +3008,12 @@ class FakeRuntimeApplication
   ): Promise<ImportSaveResult> {
     this.importCalls += 1
     this.events.push('application.import')
-    if (this.rejectImports) {
+    await this.importGate
+    await this.importGates.get(this.importCalls)
+    if (
+      this.rejectImports ||
+      this.rejectImportAttempts.delete(this.importCalls)
+    ) {
       return {
         imported: false,
         committed: false,
@@ -947,11 +3077,33 @@ class FakeRuntimeApplication
     this.stateRevision += 1
     this.dirty = true
   }
+
+  setTimeResources(
+    bankSeconds: number,
+    capacitySeconds: number,
+    doubleTimeBankSeconds: number,
+  ): void {
+    this.state.gameState.timeline.storedTimeAvailableSeconds =
+      bankSeconds
+    this.state.gameState.timeline.storedTimeCapacitySeconds =
+      capacitySeconds
+    this.state.gameState.timeline.doubleTime.bankSeconds =
+      doubleTimeBankSeconds
+  }
+
+  setDepartureTimestamp(value: string | null): void {
+    this.state.gameState.timeline.lastSuspendedAtLegacyText = value
+  }
 }
 
 class TestLifecycleAdapter implements LifecycleAdapter {
   private readonly listeners =
     new Set<(phase: LifecyclePhase) => void>()
+  private phase: LifecyclePhase
+
+  constructor(initialPhase: LifecyclePhase = 'active') {
+    this.phase = initialPhase
+  }
 
   get listenerCount(): number {
     return this.listeners.size
@@ -964,7 +3116,12 @@ class TestLifecycleAdapter implements LifecycleAdapter {
     }
   }
 
+  currentPhase(): LifecyclePhase {
+    return this.phase
+  }
+
   emit(phase: LifecyclePhase): void {
+    this.phase = phase
     for (const listener of [...this.listeners]) listener(phase)
   }
 }
@@ -1213,6 +3370,86 @@ class RecordingDownloads implements TextDownloadPort {
   ): void {
     this.last = { fileName, text, mediaType }
   }
+}
+
+class ManualActiveTimeClock implements ActiveTimeMonotonicClock {
+  private current = 0
+
+  nowMilliseconds(): number {
+    return this.current
+  }
+
+  set(value: number): void {
+    this.current = value
+  }
+}
+
+class ManualLifecycleClock implements CanonicalLifecycleClock {
+  private currentIso: string
+
+  constructor(initialIso: string) {
+    this.currentIso = initialIso
+  }
+
+  sample() {
+    return {
+      utcMilliseconds: Date.parse(this.currentIso),
+      serializedUtcText: this.currentIso,
+    }
+  }
+
+  set(value: string): void {
+    this.currentIso = value
+  }
+}
+
+class ManualAnimationFrameScheduler
+  implements ActiveTimeFrameScheduler
+{
+  private callbacks = new Map<number, () => void>()
+  private nextHandle = 1
+
+  get pending(): number {
+    return this.callbacks.size
+  }
+
+  requestFrame(callback: () => void): unknown {
+    const handle = this.nextHandle
+    this.nextHandle += 1
+    this.callbacks.set(handle, callback)
+    return handle
+  }
+
+  cancelFrame(handle: unknown): void {
+    if (typeof handle === 'number') this.callbacks.delete(handle)
+  }
+
+  fire(): void {
+    const entry = this.callbacks.entries().next().value as
+      | [number, () => void]
+      | undefined
+    if (entry === undefined) {
+      throw new Error('No active-time animation frame is pending.')
+    }
+    this.callbacks.delete(entry[0])
+    entry[1]()
+  }
+}
+
+function deepFreezeTestSnapshot<T>(
+  value: T,
+): DeepReadonly<T> {
+  if (
+    value === null ||
+    typeof value !== 'object' ||
+    Object.isFrozen(value)
+  ) {
+    return value as DeepReadonly<T>
+  }
+  for (const child of Object.values(value)) {
+    deepFreezeTestSnapshot(child)
+  }
+  return Object.freeze(value) as DeepReadonly<T>
 }
 
 function runtimeStateWithoutQuitTimestamp(): CanonicalRuntimeState {

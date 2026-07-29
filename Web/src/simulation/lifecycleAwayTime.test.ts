@@ -54,6 +54,7 @@ function coordinator(
     saveReady: true,
     coldStartReplayPending: false,
     coldStartGateSaveUsed: false,
+    departureTimestampRecorded: false,
     ...overrides,
   }
 }
@@ -88,6 +89,41 @@ describe('pure lifecycle policy and cold-start gate', () => {
     expect(
       result.saveIntent?.candidate.timeline.lastSuspendedAtLegacyText,
     ).toBe(clock.serializedUtcText)
+  })
+
+  test('preserves the first committed departure timestamp across later non-active save intents', () => {
+    const first = evaluateLifecycleEvent(
+      coordinator(),
+      { kind: 'focus_changed', focused: false },
+      MOBILE_LIFECYCLE_POLICY,
+      {
+        utcMilliseconds: 0,
+        serializedUtcText: '2026-07-29T00:00:00Z',
+      },
+    )
+    expect(first.saveIntent).toMatchObject({
+      trigger: 'focus_lost',
+      stampQuitTimestamp: true,
+    })
+    expect(first.state.departureTimestampRecorded).toBe(true)
+
+    const later = evaluateLifecycleEvent(
+      first.state,
+      { kind: 'pause_changed', paused: true },
+      MOBILE_LIFECYCLE_POLICY,
+      {
+        utcMilliseconds: 5_000,
+        serializedUtcText: '2026-07-29T00:00:05Z',
+      },
+    )
+    expect(later.saveIntent).toMatchObject({
+      trigger: 'pause',
+      stampQuitTimestamp: false,
+    })
+    expect(
+      later.saveIntent?.candidate.timeline
+        .lastSuspendedAtLegacyText,
+    ).toBe('2026-07-29T00:00:00Z')
   })
 
   test.each([

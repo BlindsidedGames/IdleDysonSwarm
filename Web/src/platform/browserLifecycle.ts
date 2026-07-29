@@ -50,6 +50,14 @@ export class BrowserLifecycleAdapter implements LifecycleAdapter {
     }
   }
 
+  currentPhase(): LifecyclePhase {
+    return this.documentPort.visibilityState === 'hidden'
+      ? 'background'
+      : this.documentPort.hasFocus()
+        ? 'active'
+        : 'focus-lost'
+  }
+
   private startListening(): void {
     if (this.listening) return
     this.listening = true
@@ -90,13 +98,7 @@ export class BrowserLifecycleAdapter implements LifecycleAdapter {
   }
 
   private readonly handleVisibilityChange = (): void => {
-    this.emit(
-      this.documentPort.visibilityState === 'hidden'
-        ? 'background'
-        : this.documentPort.hasFocus()
-          ? 'active'
-          : 'focus-lost',
-    )
+    this.emit(this.currentPhase())
   }
 
   private readonly handleFocus = (): void => {

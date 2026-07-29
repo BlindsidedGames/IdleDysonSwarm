@@ -256,6 +256,10 @@ class TestLifecycleAdapter {
     (phase: 'active' | 'background' | 'focus-lost' | 'terminating') => void
   >()
 
+  currentPhase() {
+    return 'active' as const
+  }
+
   subscribe(
     listener: (
       phase: 'active' | 'background' | 'focus-lost' | 'terminating'
