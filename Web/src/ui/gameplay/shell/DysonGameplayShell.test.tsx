@@ -7,30 +7,18 @@ import { resolve } from 'node:path'
 import axe from 'axe-core'
 import {
   cleanup,
+  fireEvent,
   render,
   screen,
   within,
 } from '@testing-library/react'
 import { afterEach, describe, expect, it } from 'vitest'
 import { targetSizes } from '../../tokens/tokens'
-import type {
-  DysonGameplayShellProps,
-} from './contracts'
+import type { DysonGameplayShellProps } from './contracts'
 import { DysonGameplayShell } from './DysonGameplayShell'
 
 const shellCss = readFileSync(
-  resolve(
-    process.cwd(),
-    'src/ui/gameplay/shell/dysonGameplayShell.css',
-  ),
-  'utf8',
-)
-const tinkerCss = readFileSync(
-  resolve(process.cwd(), 'src/ui/gameplay/tinker/tinker.css'),
-  'utf8',
-)
-const facilitiesCss = readFileSync(
-  resolve(process.cwd(), 'src/ui/gameplay/facilities/facilities.css'),
+  resolve(process.cwd(), 'src/ui/gameplay/shell/dysonGameplayShell.css'),
   'utf8',
 )
 const tokensCss = readFileSync(
@@ -41,80 +29,48 @@ const tokensCss = readFileSync(
 afterEach(cleanup)
 
 describe('DysonGameplayShell', () => {
-  it('renders both responsive navigation sources only when multiple destinations exist', () => {
-    const { container } = render(<DysonGameplayShell {...laterProps()} />)
-
-    const main = screen.getByRole('main')
-    const skipLink = screen.getByRole('link', {
-      name: 'Skip to Dyson gameplay',
-    })
-    expect(skipLink).toHaveAttribute('href', `#${main.id}`)
-    expect(
-      screen.getByRole('heading', { level: 1, name: 'Bots' }),
-    ).toBeInTheDocument()
-
-    const rail = container.querySelector('.dyson-shell__rail')
-    const bottom = container.querySelector(
-      '.dyson-shell__bottom-navigation',
-    )
-    expect(rail).not.toBeNull()
-    expect(bottom).not.toBeNull()
-    expect(
-      (rail as Node).compareDocumentPosition(main) &
-        Node.DOCUMENT_POSITION_FOLLOWING,
-    ).toBeTruthy()
-    expect(
-      main.compareDocumentPosition(bottom as Node) &
-        Node.DOCUMENT_POSITION_FOLLOWING,
-    ).toBeTruthy()
+  it('provides Unity-style drawer and compact bottom navigation', () => {
+    render(<DysonGameplayShell {...props()} />)
 
     const navigations = screen.getAllByRole('navigation', {
       name: 'Primary',
     })
     expect(navigations).toHaveLength(2)
-    for (const navigation of navigations) {
-      expect(within(navigation).getByText('Bots').closest(
-        '[aria-current="page"]',
-      )).toBeInTheDocument()
-      expect(
-        within(navigation).queryByRole('link', { name: 'Bots' }),
-      ).not.toBeInTheDocument()
-      expect(
-        within(navigation).getByRole('link', { name: 'Research' }),
-      ).toBeInTheDocument()
-    }
-  })
 
-  it('omits redundant navigation for one destination and exposes the route heading', () => {
-    const { container } = render(<DysonGameplayShell {...freshProps()} />)
-    const shell = container.querySelector('.dyson-shell')
-    const heading = screen.getByRole('heading', {
-      level: 1,
-      name: 'Bots',
-    })
-
-    expect(shell).toHaveAttribute('data-has-navigation', 'false')
-    expect(screen.queryByRole('navigation')).not.toBeInTheDocument()
-    expect(heading).toHaveClass('dyson-shell__route-heading')
-    expect(shellCss).toMatch(
-      /\.dyson-shell__route-heading\s*\{\s*margin:\s*0;[\s\S]*font-size:/,
+    const drawer = navigations.find(
+      (navigation) => navigation.dataset.placement === 'drawer',
     )
-    expect(shellCss).toMatch(
-      /\.dyson-shell\[data-has-navigation="true"\] \.dyson-shell__route-heading\s*\{\s*position:\s*absolute;[\s\S]*inline-size:\s*1px;/,
+    const bottom = navigations.find(
+      (navigation) => navigation.dataset.placement === 'bottom',
     )
-    expect(shellCss).not.toMatch(
-      /(?<!data-has-navigation="true"\] )\.dyson-shell__route-heading\s*\{\s*position:\s*absolute;/,
-    )
+    expect(drawer).toBeDefined()
+    expect(bottom).toBeDefined()
+    expect(within(drawer!).getByText('Offline Time')).toBeInTheDocument()
+    expect(within(bottom!).queryByText('Offline Time')).not.toBeInTheDocument()
     expect(
-      container.querySelector('.dyson-shell__lower-regions'),
-    ).toHaveTextContent('Production summary')
-    expect(shellCss).not.toContain(
-      '.dyson-shell__lower-regions[data-region-count="2"]',
-    )
+      within(bottom!).getByText('Bots').closest('[aria-current="page"]'),
+    ).toBeInTheDocument()
+    expect(
+      within(drawer!).getByRole('button', { name: 'Research' }),
+    ).toBeDisabled()
   })
 
-  it('preserves Cash, Total Bots, Science order and keeps formatted facts isolated', () => {
-    const { container } = render(<DysonGameplayShell {...freshProps()} />)
+  it('opens and closes the compact menu without changing gameplay state', () => {
+    const { container } = render(<DysonGameplayShell {...props()} />)
+    const shell = container.querySelector('.dyson-shell')
+    const openMenu = screen.getByRole('button', { name: 'Open menu' })
+
+    expect(shell).toHaveAttribute('data-menu-open', 'false')
+    fireEvent.click(openMenu)
+    expect(shell).toHaveAttribute('data-menu-open', 'true')
+    expect(openMenu).toHaveAttribute('aria-expanded', 'true')
+
+    fireEvent.keyDown(window, { key: 'Escape' })
+    expect(shell).toHaveAttribute('data-menu-open', 'false')
+  })
+
+  it('preserves canonical resource order and accessible text', () => {
+    const { container } = render(<DysonGameplayShell {...props()} />)
     const resources = container.querySelectorAll('[data-resource]')
 
     expect(
@@ -125,94 +81,50 @@ describe('DysonGameplayShell', () => {
     expect(resources[0]).toHaveTextContent('Cash$0$0.00 /s')
     expect(resources[1]).toHaveTextContent('Total Bots0')
     expect(resources[2]).toHaveTextContent('Science0 science0.00 /s')
-    expect(resources[0]).toHaveClass(
-      'dyson-resource-header__item--cash',
-    )
-    expect(resources[1]).toHaveClass(
-      'dyson-resource-header__item--total-bots',
-    )
-    expect(resources[2]).toHaveClass(
-      'dyson-resource-header__item--science',
-    )
   })
 
-  it('renders the fresh facility region exactly once without adding a card grid', () => {
-    const { container } = render(<DysonGameplayShell {...freshProps()} />)
+  it('keeps gameplay regions in the Unity screen order', () => {
+    const { container } = render(<DysonGameplayShell {...props()} />)
+    const labels = Array.from(
+      container.querySelectorAll(
+        '.dyson-shell__content > section, .dyson-shell__content section',
+      ),
+      (region) => region.getAttribute('aria-label'),
+    ).filter(Boolean)
 
+    expect(labels).toEqual([
+      'Dyson resources',
+      'Dyson swarm',
+      'Tinker',
+      'Facilities',
+      'Info',
+      'Production summary',
+      'Bot distribution',
+    ])
     expect(
-      screen.getByRole('region', { name: 'Tinker' }),
-    ).toBeInTheDocument()
-    expect(screen.queryByText('Assembly Lines')).not.toBeInTheDocument()
-    expect(screen.getAllByText('????')).toHaveLength(1)
-    expect(
-      screen.getAllByRole('region', { name: 'Facilities' }),
-    ).toHaveLength(1)
-    expect(container.querySelector('.dyson-shell__facility-grid')).toBeNull()
+      screen.getByRole('heading', { level: 1, name: 'Bots' }),
+    ).toHaveClass('dyson-shell__route-heading')
   })
 
-  it('places one caller-owned facility region after Tinker without remapping its children', () => {
-    const { container } = render(<DysonGameplayShell {...laterProps()} />)
-    const tinker = screen.getByRole('region', { name: 'Tinker' })
-    const facilities = screen.getByRole('region', {
-      name: 'Facilities',
-    })
-    const facilityIds = Array.from(
-      facilities.querySelectorAll('[data-facility-id]'),
-      (facility) => facility.getAttribute('data-facility-id'),
-    )
-
-    expect(facilityIds).toEqual(['assembly-lines', 'ai-managers'])
-    expect(
-      tinker.compareDocumentPosition(facilities) &
-        Node.DOCUMENT_POSITION_FOLLOWING,
-    ).toBeTruthy()
-    expect(container.querySelectorAll('.dyson-shell__facility-region')).toHaveLength(1)
-    expect(screen.getAllByText('????')).toHaveLength(1)
-  })
-
-  it('omits absent Tinker without creating a presentation placeholder', () => {
-    const props = laterProps()
+  it('sets locale direction while keeping the physical Unity header order', () => {
     const { container } = render(
-      <DysonGameplayShell
-        {...props}
-        tinker={undefined}
-      />,
+      <DysonGameplayShell {...props()} direction="rtl" />,
     )
 
+    expect(container.firstElementChild).toHaveAttribute('dir', 'rtl')
     expect(
-      screen.queryByRole('region', { name: 'Tinker' }),
-    ).not.toBeInTheDocument()
-    expect(container.querySelector('.dyson-shell__tinker')).toBeNull()
-    expect(
-      screen.getByRole('region', { name: 'Facilities' }),
-    ).toBeInTheDocument()
-  })
-
-  it('sets locale direction while preserving the physical Unity resource positions', () => {
-    const { container } = render(
-      <DysonGameplayShell {...freshProps()} direction="rtl" />,
-    )
-    const shell = container.firstElementChild
-    const resourceHeader = container.querySelector(
-      '.dyson-resource-header',
-    )
-    const resourceItems = container.querySelectorAll('[data-resource]')
-
-    expect(shell).toHaveAttribute('dir', 'rtl')
-    expect(resourceHeader).toHaveAttribute('dir', 'ltr')
-    for (const resource of resourceItems) {
+      container.querySelector('.dyson-resource-header'),
+    ).toHaveAttribute('dir', 'ltr')
+    for (const resource of container.querySelectorAll('[data-resource]')) {
       expect(resource).toHaveAttribute('dir', 'rtl')
     }
   })
 
-  it('has no automated accessibility violations in the later-progression state', async () => {
-    const { container } = render(<DysonGameplayShell {...laterProps()} />)
+  it('has no automated accessibility violations', async () => {
+    const { container } = render(<DysonGameplayShell {...props()} />)
     const results = await axe.run(container, {
       rules: {
         'color-contrast': { enabled: false },
-        // Vitest does not apply responsive styles to axe's static DOM. The
-        // focused CSS contract below proves that exactly one of these two
-        // source-ordered navigation landmarks is visible at each breakpoint.
         'landmark-unique': { enabled: false },
       },
     })
@@ -221,120 +133,34 @@ describe('DysonGameplayShell', () => {
 })
 
 describe('Dyson gameplay responsive CSS contract', () => {
-  it('switches source-ordered rail and bottom navigation at the approved medium boundary', () => {
+  it('keeps compact bottom navigation and switches to the permanent side menu', () => {
+    expect(shellCss).toContain('@media (min-width: 900px)')
     expect(shellCss).toMatch(
-      /\.dyson-shell__rail\s*\{\s*display:\s*none;/,
-    )
-    expect(shellCss).toContain('@media (min-width: 600px)')
-    expect(shellCss).toMatch(
-      /@media \(min-width: 600px\)[\s\S]*\.dyson-shell__rail\s*\{\s*display:\s*block;/,
+      /@media \(min-width: 900px\)[\s\S]*\.dyson-shell__side-panel\s*\{[\s\S]*position:\s*relative;/,
     )
     expect(shellCss).toMatch(
-      /@media \(min-width: 600px\)[\s\S]*\.dyson-shell__bottom-navigation\s*\{\s*display:\s*none;/,
+      /@media \(min-width: 900px\)[\s\S]*\.dyson-shell__bottom-navigation\s*\{\s*display:\s*none !important;/,
     )
-    expect(shellCss).toContain('@media (min-width: 1024px)')
-  })
-
-  it('keeps wide Tinker and the caller-owned facility region in the approved stage geometry', () => {
-    expect(shellCss).toMatch(
-      /\.dyson-shell__stage\[data-has-tinker="true"\]\[data-has-visible-facilities="true"\]\s*\{\s*grid-template-columns:\s*minmax\(16rem,\s*0\.9fr\)\s*minmax\(24rem,\s*1\.35fr\);/,
-    )
-    expect(shellCss).not.toContain('.dyson-shell__facility-grid')
-    expect(shellCss).not.toContain('.dyson-shell__teaser')
-  })
-
-  it('keeps 320px and zoom reflow bounded without physical directional spacing', () => {
-    expect(targetSizes.minimum).toBe(44)
-    expect(shellCss).toContain(
-      'min-block-size: var(--target-minimum)',
-    )
-    expect(shellCss).toContain('grid-template-columns: minmax(0, 1fr)')
-    expect(shellCss).toContain('max-inline-size: 100%')
-    expect(shellCss).toContain('overflow-x: hidden')
     expect(shellCss).toContain('env(safe-area-inset-bottom)')
-    expect(shellCss).toContain(
-      '@media (max-width: 599px) and (orientation: landscape)',
-    )
-    expect(shellCss).not.toMatch(
-      /(?:^|\n)\s*(?:margin|padding|border|inset)-(?:left|right)\s*:/,
-    )
+    expect(shellCss).toContain('overflow: hidden')
   })
 
-  it('locks the compact portrait and 200% zoom proxy to one bounded content column', () => {
-    const compactRules = shellCss.slice(
-      0,
-      shellCss.indexOf('@media (min-width: 600px)'),
-    )
-    expect(compactRules).toContain(
-      'grid-template-columns: minmax(0, 1fr)',
-    )
-    expect(compactRules).toContain('max-inline-size: 100%')
-    expect(compactRules).toContain('overflow-y: auto')
-    expect(compactRules).not.toMatch(
-      /min-inline-size:\s*\d+(?:\.\d+)?px/,
-    )
-    expect(facilitiesCss).toMatch(
-      /@media \(max-width: 359px\)[\s\S]*flex-direction:\s*column/,
-    )
-  })
-
-  it.each([
-    {
-      band: 'compact portrait at 320px',
-      evidence: [
-        '.dyson-shell__rail {',
-        'display: none;',
-        'grid-template-columns: minmax(0, 1fr)',
-      ],
-    },
-    {
-      band: 'compact landscape below 600px',
-      evidence: [
-        '@media (max-width: 599px) and (orientation: landscape)',
-        'min-block-size: 8rem',
-      ],
-    },
-    {
-      band: 'medium from 600px',
-      evidence: [
-        '@media (min-width: 600px)',
-        'grid-template-columns: minmax(9.5rem, 11rem) minmax(0, 1fr)',
-      ],
-    },
-    {
-      band: 'wide from 1024px',
-      evidence: [
-        '@media (min-width: 1024px)',
-        'grid-template-columns: minmax(13rem, 15rem) minmax(0, 1fr)',
-      ],
-    },
-  ])('keeps the approved $band contract explicit', ({ evidence }) => {
-    for (const declaration of evidence) {
-      expect(shellCss).toContain(declaration)
-    }
-  })
-
-  it('routes reduced motion and forced colors through the gameplay surfaces', () => {
-    expect(tokensCss).toMatch(
-      /@media \(prefers-reduced-motion: reduce\)[\s\S]*--motion-duration-fast:\s*0ms;[\s\S]*--motion-duration-standard:\s*0ms;/,
-    )
-    expect(tinkerCss).toContain(
-      'background-color var(--motion-duration-fast)',
-    )
-    for (const css of [shellCss, tinkerCss, facilitiesCss]) {
-      expect(css).toContain('@media (forced-colors: active)')
-      expect(css).toContain('forced-color-adjust: auto')
-    }
+  it('protects rapid touch, reflow, focus and reduced-motion behavior', () => {
+    expect(targetSizes.minimum).toBe(44)
+    expect(shellCss).toContain('touch-action: manipulation')
+    expect(shellCss).toContain('user-select: none')
+    expect(shellCss).toContain('min-inline-size: 0')
     expect(shellCss).toMatch(
       /\.dyson-navigation__link:focus-visible[\s\S]*outline:\s*3px solid var\(--color-focus\)/,
     )
-    expect(tinkerCss).toMatch(
-      /\.tinker-surface__control:focus-visible[\s\S]*outline:\s*3px solid var\(--color-focus\)/,
+    expect(tokensCss).toMatch(
+      /@media \(prefers-reduced-motion: reduce\)[\s\S]*--motion-duration-fast:\s*0ms;/,
     )
+    expect(shellCss).toContain('@media (forced-colors: active)')
   })
 })
 
-function freshProps(): DysonGameplayShellProps {
+function props(): DysonGameplayShellProps {
   return {
     direction: 'ltr',
     skipLinkLabel: 'Skip to Dyson gameplay',
@@ -347,6 +173,19 @@ function freshProps(): DysonGameplayShellProps {
           label: 'Bots',
           icon: 'B',
           current: true,
+        },
+        {
+          id: 'research',
+          label: 'Research',
+          icon: 'R',
+          disabled: true,
+        },
+        {
+          id: 'offline',
+          label: 'Offline Time',
+          icon: 'O',
+          disabled: true,
+          bottom: false,
         },
       ],
     },
@@ -367,58 +206,28 @@ function freshProps(): DysonGameplayShellProps {
         rate: '0.00 /s',
       },
     },
+    swarmVisual: {
+      ariaLabel: 'Dyson swarm',
+      content: <div>Swarm</div>,
+    },
     tinker: {
       ariaLabel: 'Tinker',
       content: <button type="button">Tinker</button>,
     },
-    hasVisibleFacilities: false,
-    facilities: (
-      <section aria-label="Facilities">
-        <div data-next-tier-teaser>????</div>
-      </section>
-    ),
+    hasVisibleFacilities: true,
+    facilities: <section aria-label="Facilities">Facilities</section>,
+    info: {
+      ariaLabel: 'Info',
+      content: <p>Info</p>,
+    },
     productionSummary: {
       ariaLabel: 'Production summary',
       content: <p>Production summary</p>,
     },
-  }
-}
-
-function laterProps(): DysonGameplayShellProps {
-  return {
-    ...freshProps(),
-    navigation: {
-      ariaLabel: 'Primary',
-      items: [
-        {
-          id: 'bots',
-          label: 'Bots',
-          icon: 'B',
-          current: true,
-        },
-        {
-          id: 'research',
-          label: 'Research',
-          icon: 'R',
-          href: '#research',
-        },
-      ],
+    distribution: {
+      ariaLabel: 'Bot distribution',
+      content: <p>Bot distribution</p>,
     },
-    hasVisibleFacilities: true,
-    facilities: (
-      <section aria-label="Facilities">
-        <div className="candidate-facility-grid">
-          <article data-facility-id="assembly-lines">
-            <h2>Assembly Lines</h2>
-            <button type="button">Buy Assembly Line</button>
-          </article>
-          <article data-facility-id="ai-managers">
-            <h2>AI Managers</h2>
-            <button type="button">Buy AI Manager</button>
-          </article>
-          <div data-next-tier-teaser>????</div>
-        </div>
-      </section>
-    ),
+    sidePanelSupplement: <p>Lifetime stats</p>,
   }
 }

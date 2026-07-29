@@ -40,6 +40,7 @@ export function DysonResourceHeader({
         placement="science"
         direction={direction}
         presentation={science}
+        showScienceIcon
       />
     </section>
   )
@@ -49,12 +50,14 @@ interface ResourceProps {
   readonly placement: 'cash' | 'total-bots' | 'science'
   readonly direction: DysonShellDirection
   readonly presentation: DysonResourcePresentation
+  readonly showScienceIcon?: boolean
 }
 
 function Resource({
   placement,
   direction,
   presentation,
+  showScienceIcon = false,
 }: ResourceProps) {
   return (
     <div
@@ -68,6 +71,16 @@ function Resource({
         fullPrecisionValue={presentation.fullPrecisionValue}
         machineValue={presentation.machineValue}
       />
+      {showScienceIcon && (
+        <span
+          className="dyson-resource-header__science-icon"
+          aria-hidden="true"
+        >
+          <svg viewBox="0 0 24 24" focusable="false">
+            <path d="M9 2h6v2h-1v5.2l4.7 7.7A2 2 0 0 1 17 20H7a2 2 0 0 1-1.7-3.1L10 9.2V4H9V2Zm2.7 8.3-2.2 3.6h5l-2.2-3.6-.3-.5-.3.5Zm-3.4 5.6L7 18h10l-1.3-2.1H8.3Z" />
+          </svg>
+        </span>
+      )}
       {presentation.rate !== undefined && (
         <span
           className="dyson-resource-header__rate"

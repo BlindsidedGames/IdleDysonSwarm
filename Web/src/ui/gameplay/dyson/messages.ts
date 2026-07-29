@@ -11,6 +11,56 @@ export const readyDysonMessages = defineMessages({
     defaultMessage: 'Primary',
     description: 'Accessible name for the primary game navigation.',
   },
+  researchRoute: {
+    id: 'navigation.research',
+    defaultMessage: 'Research',
+    description: 'Unity Research destination.',
+  },
+  skillsRoute: {
+    id: 'navigation.skills',
+    defaultMessage: 'Skills',
+    description: 'Unity Skills destination.',
+  },
+  infinityRoute: {
+    id: 'navigation.infinity',
+    defaultMessage: 'Infinity',
+    description: 'Unity Infinity destination.',
+  },
+  storyRoute: {
+    id: 'navigation.story',
+    defaultMessage: 'Story',
+    description: 'Unity Story destination.',
+  },
+  wikiRoute: {
+    id: 'navigation.wiki',
+    defaultMessage: 'Wiki',
+    description: 'Unity Wiki destination.',
+  },
+  offlineTimeRoute: {
+    id: 'navigation.offline-time',
+    defaultMessage: 'Offline Time',
+    description: 'Unity Offline Time destination.',
+  },
+  settingsRoute: {
+    id: 'navigation.settings',
+    defaultMessage: 'Settings',
+    description: 'Unity Settings destination.',
+  },
+  cashMultiplier: {
+    id: 'dyson.menu.cash-multiplier',
+    defaultMessage: 'Cash Multiplier: {value}',
+    description: 'Current canonical Cash multiplier in the Unity menu.',
+  },
+  researchMultiplier: {
+    id: 'dyson.menu.research-multiplier',
+    defaultMessage: 'Research Multiplier: {value}',
+    description: 'Current canonical research multiplier in the Unity menu.',
+  },
+  panelLifetime: {
+    id: 'dyson.menu.panel-lifetime',
+    defaultMessage: 'Panel Lifetime: {value} s',
+    description: 'Current canonical panel lifetime in the Unity menu.',
+  },
   resources: {
     id: 'dyson.resources.summary',
     defaultMessage: 'Resources',

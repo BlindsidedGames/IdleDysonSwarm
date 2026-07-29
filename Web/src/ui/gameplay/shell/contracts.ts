@@ -34,14 +34,20 @@ export type DysonNavigationItem =
       readonly id: string
       readonly label: ReactNode
       readonly icon?: ReactNode
+      readonly iconSrc?: string
       readonly current: true
+      readonly bottom?: boolean
       readonly href?: never
+      readonly disabled?: never
     }
   | {
       readonly id: string
-      readonly href: string
       readonly label: ReactNode
       readonly icon?: ReactNode
+      readonly iconSrc?: string
+      readonly href?: string
+      readonly disabled?: boolean
+      readonly bottom?: boolean
       readonly current?: false
     }
 
@@ -71,5 +77,9 @@ export interface DysonGameplayShellProps {
    * and optional next-tier teaser; the shell owns placement only.
    */
   readonly facilities: ReactNode
+  readonly swarmVisual?: DysonShellRegion
+  readonly info?: DysonShellRegion
   readonly productionSummary?: DysonShellRegion
+  readonly distribution?: DysonShellRegion
+  readonly sidePanelSupplement?: ReactNode
 }

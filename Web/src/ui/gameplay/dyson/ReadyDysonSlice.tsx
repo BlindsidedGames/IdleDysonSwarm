@@ -14,7 +14,10 @@ import type {
 } from '../../../application/canonicalPlayerCommands'
 import type { DeepReadonly } from '../../../core/contracts'
 import '../facilities/facilities.css'
-import { DysonGameplayShell } from '../shell'
+import {
+  DysonGameplayShell,
+  navigationAssets,
+} from '../shell'
 import { TinkerSurface } from '../tinker'
 import {
   formatNumber,
@@ -193,10 +196,78 @@ export function ReadyDysonSlice({
           {
             id: 'bots',
             label: intl.formatMessage(messages.route),
+            iconSrc: navigationAssets.bots,
             current: true,
+          },
+          {
+            id: 'research',
+            label: intl.formatMessage(messages.researchRoute),
+            iconSrc: navigationAssets.research,
+            disabled: true,
+          },
+          {
+            id: 'skills',
+            label: intl.formatMessage(messages.skillsRoute),
+            iconSrc: navigationAssets.skills,
+            disabled: true,
+          },
+          {
+            id: 'infinity',
+            label: intl.formatMessage(messages.infinityRoute),
+            iconSrc: navigationAssets.infinity,
+            disabled: true,
+            bottom: false,
+          },
+          {
+            id: 'story',
+            label: intl.formatMessage(messages.storyRoute),
+            iconSrc: navigationAssets.story,
+            disabled: true,
+          },
+          {
+            id: 'wiki',
+            label: intl.formatMessage(messages.wikiRoute),
+            iconSrc: navigationAssets.wiki,
+            disabled: true,
+          },
+          {
+            id: 'offline-time',
+            label: intl.formatMessage(messages.offlineTimeRoute),
+            iconSrc: navigationAssets.offlineTime,
+            disabled: true,
+            bottom: false,
+          },
+          {
+            id: 'settings',
+            label: intl.formatMessage(messages.settingsRoute),
+            iconSrc: navigationAssets.settings,
+            disabled: true,
           },
         ],
       }}
+      sidePanelSupplement={
+        dyson.status === 'ready' ? (
+          <>
+            <div>
+              {intl.formatMessage(messages.cashMultiplier, {
+                value: display(dyson.value.globals.moneyMultiplier),
+              })}
+            </div>
+            <div>
+              {intl.formatMessage(messages.researchMultiplier, {
+                value: display(dyson.value.globals.scienceMultiplier),
+              })}
+            </div>
+            <div>
+              {intl.formatMessage(messages.panelLifetime, {
+                value: display(
+                  dyson.value.globals.panelLifetimeSeconds,
+                ),
+              })}
+            </div>
+          </>
+        ) : undefined
+      }
       hasVisibleFacilities={
         hasVisibleFacilities
       }

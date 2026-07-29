@@ -1,13 +1,37 @@
+@font-face {
+  font-family: "Lexend";
+  src: url("../assets/Lexend-Regular.ttf") format("truetype");
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Lexend";
+  src: url("../assets/Lexend-SemiBold.ttf") format("truetype");
+  font-style: normal;
+  font-weight: 600;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Lexend";
+  src: url("../assets/Lexend-Bold.ttf") format("truetype");
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+}
+
 :root {
   color-scheme: dark;
 
   --color-app-background: #1d151f;
-  --color-surface: #1a1a26;
-  --color-surface-raised: #262633;
-  --color-border: #62627a;
-  --color-control: #33334d;
-  --color-control-hover: #4d4d66;
-  --color-control-pressed: #262633;
+  --color-surface: #3f2f43;
+  --color-surface-raised: #4b3850;
+  --color-border: #0b080c;
+  --color-control: #c9a1d8;
+  --color-control-hover: #d7b2e4;
+  --color-control-pressed: #a97bbb;
   --color-accent-value: #ffa45e;
   --color-highlight: #00e1ff;
   --color-positive: #91dd8f;
@@ -18,7 +42,7 @@
   --color-focus: #00e1ff;
 
   --font-family-latin:
-    "Lexend Variable", "Lexend", ui-sans-serif, system-ui, sans-serif;
+    "Lexend", ui-sans-serif, system-ui, sans-serif;
   --font-family-japanese:
     "Noto Sans JP", "Yu Gothic UI", "Hiragino Sans", sans-serif;
   --font-family-simplified-chinese:
@@ -42,6 +66,7 @@
   --line-height-body: 1.5;
   --font-weight-regular: 400;
   --font-weight-medium: 600;
+  --font-weight-semibold: 600;
   --font-weight-bold: 700;
 
   --space-1: 0.25rem;
