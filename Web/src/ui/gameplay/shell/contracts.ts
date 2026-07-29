@@ -53,6 +53,8 @@ export type DysonNavigationItem =
 
 export interface DysonNavigationPresentation {
   readonly ariaLabel: string
+  readonly drawerAriaLabel?: string
+  readonly bottomAriaLabel?: string
   readonly items: readonly DysonNavigationItem[]
 }
 

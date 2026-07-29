@@ -112,6 +112,23 @@
   overflow-wrap: anywhere;
 }
 
+.ui-resource-value__content {
+  display: inline-flex;
+  align-items: baseline;
+  gap: 0.16em;
+}
+
+.ui-inline-image-symbol {
+  display: inline-block;
+  flex: none;
+  inline-size: auto;
+  block-size: 0.92em;
+  object-fit: contain;
+  pointer-events: none;
+  user-select: none;
+  vertical-align: -0.08em;
+}
+
 .ui-progress {
   display: grid;
   gap: var(--space-2);

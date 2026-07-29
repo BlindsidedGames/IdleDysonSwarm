@@ -3,16 +3,16 @@
 .dyson-lower-facts {
   min-inline-size: 0;
   block-size: 100%;
-  padding: var(--space-4);
-  border: var(--border-width) solid var(--color-border);
-  border-radius: var(--radius-md);
-  background: var(--color-surface);
+  padding: 0;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
 }
 
 .dyson-lower-facts {
   display: grid;
   align-content: center;
-  gap: var(--space-3);
+  grid-template-columns: minmax(0, 1fr);
 }
 
 .dyson-lower-facts p {
@@ -20,5 +20,19 @@
 }
 
 .dyson-lower-facts p {
+  padding: 0.42rem 0.65rem;
+  border: 1px solid #5a405f;
+  border-radius: 0.2rem;
+  background: #3f3044;
+  color: #f4edf5;
   line-height: var(--line-height-body);
+  text-align: center;
+}
+
+.dyson-lower-facts p {
+  border-color: #8b542f;
+}
+
+.dyson-lower-facts__value {
+  color: #ffb16f;
 }

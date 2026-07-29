@@ -81,6 +81,25 @@ describe('DysonGameplayShell', () => {
     expect(resources[0]).toHaveTextContent('Cash$0$0.00 /s')
     expect(resources[1]).toHaveTextContent('Total Bots0')
     expect(resources[2]).toHaveTextContent('Science0 science0.00 /s')
+
+    const scienceSymbols = resources[2].querySelectorAll(
+      'img[data-symbol="science"]',
+    )
+    expect(scienceSymbols).toHaveLength(2)
+    for (const symbol of scienceSymbols) {
+      expect(symbol).toHaveAttribute('alt', '')
+      expect(symbol).toHaveClass('ui-inline-image-symbol')
+    }
+    expect(
+      resources[2].querySelector(
+        '.ui-resource-value__content > img[data-symbol="science"]',
+      ),
+    ).toBeInTheDocument()
+    expect(
+      resources[2].querySelector(
+        '.dyson-resource-header__rate > img[data-symbol="science"]',
+      ),
+    ).toBeInTheDocument()
   })
 
   it('keeps gameplay regions in the Unity screen order', () => {
@@ -143,6 +162,9 @@ describe('Dyson gameplay responsive CSS contract', () => {
     )
     expect(shellCss).toContain('env(safe-area-inset-bottom)')
     expect(shellCss).toContain('overflow: hidden')
+    expect(shellCss).toMatch(
+      /@media \(max-width: 899px\)[\s\S]*\.dyson-shell__stage\[data-has-visible-facilities="false"\][\s\S]*align-content:\s*end;/,
+    )
   })
 
   it('protects rapid touch, reflow, focus and reduced-motion behavior', () => {
@@ -150,6 +172,7 @@ describe('Dyson gameplay responsive CSS contract', () => {
     expect(shellCss).toContain('touch-action: manipulation')
     expect(shellCss).toContain('user-select: none')
     expect(shellCss).toContain('min-inline-size: 0')
+    expect(shellCss).toContain('align-items: baseline')
     expect(shellCss).toMatch(
       /\.dyson-navigation__link:focus-visible[\s\S]*outline:\s*3px solid var\(--color-focus\)/,
     )

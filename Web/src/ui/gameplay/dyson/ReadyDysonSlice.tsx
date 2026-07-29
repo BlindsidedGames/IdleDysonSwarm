@@ -39,8 +39,13 @@ import {
 } from '../../performance/firstSliceCommitProbe'
 import { readyDysonMessages as messages } from './messages'
 import {
+  BotDistribution,
+  DysonInfo,
+} from './DysonControls'
+import {
   DysonProductionSummary,
 } from './DysonLowerFacts'
+import { DysonSwarmVisual } from './DysonSwarmVisual'
 
 const BasicFacilityRegion = lazy(async () => {
   const module = await import('../facilities')
@@ -192,6 +197,8 @@ export function ReadyDysonSlice({
       heading={intl.formatMessage(messages.route)}
       navigation={{
         ariaLabel: intl.formatMessage(messages.primaryNavigation),
+        drawerAriaLabel: intl.formatMessage(messages.sideNavigation),
+        bottomAriaLabel: intl.formatMessage(messages.bottomNavigation),
         items: [
           {
             id: 'bots',
@@ -296,6 +303,10 @@ export function ReadyDysonSlice({
           fullPrecisionRate: scienceRate(precise(rates.science)),
         },
       }}
+      swarmVisual={{
+        ariaLabel: intl.formatMessage(messages.dysonSwarm),
+        content: <DysonSwarmVisual />,
+      }}
       tinker={
         visibility.showTinker && tinker.status === 'ready'
           ? {
@@ -324,7 +335,7 @@ export function ReadyDysonSlice({
           visibleBasicFacilityIds={
             visibility.visibleBasicFacilityIds
           }
-          showNextTierTeaser={visibility.showNextTierTeaser}
+          showNextTierTeaser={false}
           facilityFacts={{
             assembly_lines: {
               owned:
@@ -365,20 +376,73 @@ export function ReadyDysonSlice({
             className="basic-facility-region"
             aria-label={intl.formatMessage(messages.facilities)}
           >
-            {visibility.showNextTierTeaser && (
-            <div className="basic-facility-region__teaser-surface">
-              <bdi>{intl.formatMessage(messages.teaser)}</bdi>
-            </div>
-            )}
           </section>
         )
       }
+      info={{
+        ariaLabel: intl.formatMessage(messages.info),
+        content: (
+          <DysonInfo
+            locale={locale}
+            metric={dyson.value.presentation.activePanelMetric}
+            panelLifetimeSeconds={
+              dyson.value.globals.panelLifetimeSeconds
+            }
+            totalPanelsDecayed={
+              gameplay.progression.dyson.totalPanelsDecayed
+            }
+            buyMode={
+              gameplay.progression.dyson.automation.buyMode
+            }
+            roundedBulkBuy={
+              gameplay.progression.dyson.automation.roundedBulkBuy
+            }
+            buyModeRouteAvailable={
+              gameplay.commands.byKind[
+                'dyson.set-buy-mode'
+              ].routeAvailable
+            }
+            roundedBulkRouteAvailable={
+              gameplay.commands.byKind[
+                'dyson.set-rounded-bulk-buy'
+              ].routeAvailable
+            }
+            dispatchPlayer={dispatchPlayer}
+          />
+        ),
+      }}
       productionSummary={{
         ariaLabel: intl.formatMessage(messages.productionSummary),
         content: (
           <DysonProductionSummary
             gameplay={gameplay}
             locale={locale}
+          />
+        ),
+      }}
+      distribution={{
+        ariaLabel: intl.formatMessage(messages.botDistribution),
+        content: (
+          <BotDistribution
+            locale={locale}
+            distribution={
+              gameplay.progression.dyson.botDistribution
+            }
+            workersFraction={
+              gameplay.derived.dysonBotDistribution.workersFraction
+            }
+            scientistsFraction={
+              gameplay.derived.dysonBotDistribution.scientistsFraction
+            }
+            multitasking={
+              gameplay.progression.quantum.unlocks.botMultitasking
+            }
+            routeAvailable={
+              gameplay.commands.byKind[
+                'dyson.set-bot-distribution'
+              ].routeAvailable
+            }
+            dispatchPlayer={dispatchPlayer}
           />
         ),
       }}

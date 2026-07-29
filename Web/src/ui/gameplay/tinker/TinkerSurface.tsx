@@ -40,6 +40,7 @@ export function TinkerSurface({
   const titleId = useId()
   const actionId = useId()
   const outputId = useId()
+  const tipId = useId()
   const remainingId = useId()
   const [failure, setFailure] = useState<TinkerFailureCategory | null>(
     null,
@@ -64,6 +65,7 @@ export function TinkerSurface({
   const seconds =
     facts.timeToCompletionSeconds ?? facts.stats.cooldownSeconds
   const formattedSeconds = intl.formatNumber(seconds, {
+    minimumFractionDigits: Number.isInteger(seconds) ? 1 : 0,
     maximumFractionDigits: 3,
   })
   const description =
@@ -77,6 +79,7 @@ export function TinkerSurface({
             { count: facts.stats.botYield },
           )
         : intl.formatMessage(tinkerMessages.defaultDescription)
+  const showFreshSaveTip = facts.presentationMode === 'default'
   const disabled = !facts.canStart && !gesture.active
   const failureMessage =
     failure === 'stale'
@@ -98,7 +101,11 @@ export function TinkerSurface({
         className="tinker-surface__control"
         data-gesture-active={gesture.active}
         aria-labelledby={`${titleId} ${actionId}`}
-        aria-describedby={`${outputId} ${remainingId}`}
+        aria-describedby={[
+          outputId,
+          showFreshSaveTip ? tipId : '',
+          remainingId,
+        ].filter(Boolean).join(' ')}
         disabled={disabled}
         onPointerDown={gesture.onPointerDown}
         onPointerUp={gesture.onPointerUp}
@@ -118,20 +125,36 @@ export function TinkerSurface({
         <span id={outputId} className="tinker-surface__output">
           {description}
         </span>
-        <span id={remainingId} className="tinker-surface__time">
-          {intl.formatMessage(tinkerMessages.duration, {
-            seconds: formattedSeconds,
-          })}
+        {showFreshSaveTip && (
+          <span id={tipId} className="tinker-surface__tip">
+            {intl.formatMessage(tinkerMessages.freshSaveTip)}
+          </span>
+        )}
+        <span className="tinker-surface__progress-row">
+          <span className="tinker-surface__progress-track">
+            <progress
+              className="tinker-surface__progress"
+              aria-label={intl.formatMessage(tinkerMessages.progress)}
+              aria-valuetext={intl.formatMessage(
+                tinkerMessages.duration,
+                { seconds: formattedSeconds },
+              )}
+              max={facts.runtime.cooldownSeconds}
+              value={facts.runtime.elapsedSeconds}
+            />
+            <span
+              className="tinker-surface__hold-label"
+              aria-hidden="true"
+            >
+              {intl.formatMessage(tinkerMessages.holdToRepeat)}
+            </span>
+          </span>
+          <span id={remainingId} className="tinker-surface__time">
+            {intl.formatMessage(tinkerMessages.duration, {
+              seconds: formattedSeconds,
+            })}
+          </span>
         </span>
-        <progress
-          className="tinker-surface__progress"
-          aria-label={intl.formatMessage(tinkerMessages.progress)}
-          aria-valuetext={intl.formatMessage(tinkerMessages.duration, {
-            seconds: formattedSeconds,
-          })}
-          max={facts.runtime.cooldownSeconds}
-          value={facts.runtime.elapsedSeconds}
-        />
       </button>
       {failure && (
         <div

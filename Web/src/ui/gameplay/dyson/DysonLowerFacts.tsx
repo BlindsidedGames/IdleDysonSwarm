@@ -1,4 +1,4 @@
-import { useIntl } from 'react-intl'
+import { FormattedMessage } from 'react-intl'
 import type {
   FrontendGameplaySnapshot,
 } from '../../../application/frontendSnapshot'
@@ -21,7 +21,6 @@ export function DysonProductionSummary({
   gameplay,
   locale,
 }: DysonLowerFactsProps) {
-  const intl = useIntl()
   const dyson = gameplay.derived.dyson
   if (dyson.status !== 'ready') return null
   const resources = gameplay.resources.dyson
@@ -29,16 +28,18 @@ export function DysonProductionSummary({
   return (
     <div className="dyson-lower-facts">
       <p>
-        {intl.formatMessage(messages.workerProduction, {
-          workers: formatFact(locale, resources.workers),
-          panels: formatFact(locale, rates.panels),
-        })}
-      </p>
-      <p>
-        {intl.formatMessage(messages.scienceProduction, {
-          scientists: formatFact(locale, resources.researchers),
-          science: formatFact(locale, rates.science),
-        })}
+        <FormattedMessage
+          {...messages.workerProduction}
+          values={{
+            workers: formatFact(locale, resources.workers),
+            panels: formatFact(locale, rates.panels),
+            emphasis: (chunks) => (
+              <span className="dyson-lower-facts__value">
+                {chunks}
+              </span>
+            ),
+          }}
+        />
       </p>
     </div>
   )

@@ -10,6 +10,7 @@ import {
   fireEvent,
   render,
   screen,
+  waitFor,
   within,
 } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
@@ -68,12 +69,20 @@ describe('ReadyDysonSlice', () => {
       }),
     ).not.toBeInTheDocument()
     expect(screen.queryByText('AI Managers')).not.toBeInTheDocument()
-    expect(screen.getAllByText('????')).toHaveLength(1)
-    expect(screen.queryByText(/repeat/i)).not.toBeInTheDocument()
+    expect(screen.queryByText('????')).not.toBeInTheDocument()
+    expect(
+      screen.getByText('Hold anywhere to repeat...'),
+    ).toBeInTheDocument()
+    expect(
+      screen.queryByRole('button', { name: /repeat/i }),
+    ).not.toBeInTheDocument()
+    expect(screen.getByText(/^Tip: The tinker panel/)).toBeInTheDocument()
     expect(screen.queryByText(/auto tinker/i)).not.toBeInTheDocument()
     expect(screen.queryByText(/owned/i)).not.toBeInTheDocument()
-    expect(screen.queryByRole('navigation')).not.toBeInTheDocument()
-    expect(screen.queryByText('Bot Distribution')).not.toBeInTheDocument()
+    expect(screen.getAllByRole('navigation')).toHaveLength(2)
+    expect(
+      screen.getByRole('slider', { name: 'Bot Distribution' }),
+    ).toBeInTheDocument()
   })
 
   test('uses published visibility even when ownership contradicts it', async () => {
@@ -145,6 +154,12 @@ describe('ReadyDysonSlice', () => {
     expect(resourceSummary).toHaveTextContent('Cash$123$11 /s')
     expect(resourceSummary).toHaveTextContent('Total Bots456')
     expect(resourceSummary).toHaveTextContent('Science78922 /s')
+    expect(
+      screen.getByRole('region', { name: 'Production summary' }),
+    ).toHaveTextContent('1,000 Worker Bots producing 0 Panels /s')
+    expect(
+      screen.queryByText(/Science Bots producing/),
+    ).not.toBeInTheDocument()
 
     const expected = [
       ['Assembly Lines 5(3)', 'Producing 33 Bots /s'],
@@ -162,7 +177,7 @@ describe('ReadyDysonSlice', () => {
     }
   })
 
-  test('routes Tinker and facility activation through the injected runtime dispatcher', async () => {
+  test('routes Tinker, facilities, and distribution through the injected runtime dispatcher', async () => {
     const dispatchPlayer = vi.fn(acceptedDispatch)
     renderSlice(
       snapshot({
@@ -193,6 +208,68 @@ describe('ReadyDysonSlice', () => {
       kind: 'dyson.purchase-basic-facility',
       facilityId: 'assembly_lines',
     })
+
+    const distribution = screen.getByRole('slider', {
+      name: 'Bot Distribution',
+    })
+    fireEvent.change(distribution, { target: { value: '75' } })
+    fireEvent.pointerUp(distribution, { pointerId: 11 })
+    fireEvent.blur(distribution)
+
+    await waitFor(() => {
+      expect(dispatchPlayer).toHaveBeenCalledWith({
+        kind: 'dyson.set-bot-distribution',
+        distribution: 0.75,
+      })
+    })
+    expect(dispatchPlayer).toHaveBeenCalledTimes(3)
+  })
+
+  test('keeps Info facts together and routes buy settings through canonical commands', async () => {
+    const dispatchPlayer = vi.fn(acceptedDispatch)
+    const user = userEvent.setup()
+    renderSlice(snapshot(), dispatchPlayer)
+
+    const infoRegion = screen.getByRole('region', { name: 'Info' })
+    expect(infoRegion).toHaveTextContent('Active panels: 0')
+    expect(infoRegion).not.toHaveTextContent('Panel lifetime: 10 seconds')
+    expect(infoRegion).not.toHaveTextContent('Total panels decayed: 0')
+
+    await user.click(
+      within(infoRegion).getByRole('button', { name: 'Info' }),
+    )
+    expect(infoRegion).toHaveTextContent('Panel lifetime: 10 seconds')
+    expect(infoRegion).toHaveTextContent('Total panels decayed: 0')
+
+    await user.click(
+      within(infoRegion).getByRole('button', {
+        name: 'Purchase settings',
+      }),
+    )
+    expect(
+      within(infoRegion).getByRole('button', { name: 'x1' }),
+    ).toHaveAttribute('aria-pressed', 'true')
+
+    await user.click(
+      within(infoRegion).getByRole('button', { name: 'x10' }),
+    )
+    await user.click(
+      within(infoRegion).getByRole('checkbox', {
+        name: 'Round bulk purchases to the next milestone',
+      }),
+    )
+
+    await waitFor(() => {
+      expect(dispatchPlayer).toHaveBeenCalledWith({
+        kind: 'dyson.set-buy-mode',
+        buyMode: 'buy-10',
+      })
+      expect(dispatchPlayer).toHaveBeenCalledWith({
+        kind: 'dyson.set-rounded-bulk-buy',
+        enabled: true,
+      })
+    })
+    expect(dispatchPlayer).toHaveBeenCalledTimes(2)
   })
 
   test('does not create commands or active-time work while merely rendered', () => {
@@ -298,8 +375,8 @@ describe('ReadyDysonSlice', () => {
     expect(shell).toHaveAttribute('dir', 'ltr')
     expect(route).not.toHaveTextContent(/^Bots$/)
     expect(route.textContent?.length).toBeGreaterThan('Bots'.length)
-    expect(screen.queryByText('Bot Distribution')).not.toBeInTheDocument()
-    expect(screen.getByText(/\?\?\?\?/).textContent).not.toBe('????')
+    expect(screen.getByRole('slider')).toBeInTheDocument()
+    expect(screen.queryByText(/\?\?\?\?/)).not.toBeInTheDocument()
     expect(intlErrors).toEqual([])
   })
 
@@ -390,7 +467,9 @@ describe('ReadyDysonSlice', () => {
       await user.tab()
       expect(target).toHaveFocus()
     }
-    expect(container.querySelector('[aria-current="page"]')).toBeNull()
+    expect(
+      container.querySelectorAll('[aria-current="page"]'),
+    ).toHaveLength(2)
   })
 
   test.each([
@@ -497,11 +576,38 @@ function snapshot(options: SnapshotOptions = {}): ReadySnapshot {
           researchers: 2000,
         },
       },
-      progression: { dyson: { facilities } },
+      progression: {
+        dyson: {
+          facilities,
+          totalPanelsDecayed: 0,
+          botDistribution: 0,
+          automation: {
+            buyMode: 'buy-1',
+            roundedBulkBuy: false,
+          },
+        },
+        quantum: {
+          unlocks: {
+            botMultitasking: false,
+          },
+        },
+      },
       derived: {
         dyson: {
           status: 'ready',
           value: {
+            globals: {
+              moneyMultiplier: 1,
+              scienceMultiplier: 1,
+              panelsPerSecond: 0,
+              panelLifetimeSeconds: 10,
+            },
+            presentation: {
+              activePanelMetric: {
+                kind: 'active-panels',
+                value: 0,
+              },
+            },
             rates: {
               money: 11,
               science: 22,
@@ -555,6 +661,15 @@ function snapshot(options: SnapshotOptions = {}): ReadySnapshot {
       commands: {
         byKind: {
           'dyson.purchase-basic-facility': {
+            routeAvailable: true,
+          },
+          'dyson.set-bot-distribution': {
+            routeAvailable: true,
+          },
+          'dyson.set-buy-mode': {
+            routeAvailable: true,
+          },
+          'dyson.set-rounded-bulk-buy': {
             routeAvailable: true,
           },
         },

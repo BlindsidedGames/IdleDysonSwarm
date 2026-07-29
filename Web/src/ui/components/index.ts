@@ -1,5 +1,6 @@
 export * from './Button'
 export * from './FacilityCard'
+export * from './InlineImageSymbol'
 export * from './PlayerText'
 export * from './Progress'
 export * from './ResourceValue'

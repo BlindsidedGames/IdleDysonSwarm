@@ -70,6 +70,7 @@ export function DysonGameplayShell({
             type="button"
             className="dyson-shell__menu-close"
             aria-label="Close menu"
+            tabIndex={menuOpen ? 0 : -1}
             onClick={() => setMenuOpen(false)}
           >
             <span aria-hidden="true">&times;</span>

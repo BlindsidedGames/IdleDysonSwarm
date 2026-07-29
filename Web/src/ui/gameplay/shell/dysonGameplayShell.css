@@ -131,25 +131,16 @@
 }
 
 .dyson-resource-header__rate {
+  display: inline-flex;
+  align-items: baseline;
+  gap: 0.16em;
   color: white;
   font-size: clamp(0.85rem, 2.5vw, 1.25rem);
   line-height: 1.1;
 }
 
-.dyson-resource-header__science-icon {
-  position: absolute;
-  inset-block-start: -0.12rem;
-  inset-inline-end: calc(100% + 0.35rem);
-  color: white;
-  inline-size: 1.5rem;
-  block-size: 1.5rem;
-}
-
-.dyson-resource-header__science-icon svg {
-  display: block;
-  inline-size: 100%;
-  block-size: 100%;
-  fill: currentColor;
+.dyson-resource-header__item--science .ui-inline-image-symbol {
+  block-size: 0.95em;
 }
 
 .dyson-shell__playfield {
@@ -163,7 +154,7 @@
 .dyson-shell__swarm {
   position: relative;
   z-index: 0;
-  min-block-size: clamp(8rem, 23vh, 15rem);
+  min-block-size: clamp(5.5rem, 15vh, 9rem);
 }
 
 .dyson-shell__stage {
@@ -199,8 +190,8 @@
 .dyson-shell__lower-regions {
   z-index: 4;
   display: grid;
-  gap: 0.42rem;
-  padding: 0.42rem max(0.72rem, env(safe-area-inset-right)) 0.52rem
+  gap: 0.28rem;
+  padding: 0.3rem max(0.72rem, env(safe-area-inset-right)) 0.38rem
     max(0.72rem, env(safe-area-inset-left));
   border-block-start: 1px solid #4c3c50;
   background: #1c1420;
@@ -442,6 +433,13 @@
   line-height: 1.4;
 }
 
+@media (max-width: 899px) {
+  .dyson-shell__stage[data-has-visible-facilities="false"] {
+    display: grid;
+    align-content: end;
+  }
+}
+
 @media (min-width: 900px) {
   .dyson-shell {
     grid-template-columns: minmax(17rem, 22rem) minmax(0, 1fr);
@@ -478,7 +476,7 @@
   }
 
   .dyson-shell__swarm {
-    min-block-size: clamp(9rem, 24vh, 15rem);
+    min-block-size: clamp(6rem, 16vh, 10rem);
   }
 
   .dyson-shell__stage,

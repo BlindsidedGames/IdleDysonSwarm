@@ -3,7 +3,7 @@ import { defineMessages } from 'react-intl'
 export const tinkerMessages = defineMessages({
   title: {
     id: 'dyson.tinker.title',
-    defaultMessage: 'Tinker',
+    defaultMessage: 'Tinker in your garage',
     description:
       'Visible primary title for the Unity manual-creation action.',
   },
@@ -20,6 +20,18 @@ export const tinkerMessages = defineMessages({
       'There has to be a better way of going about this...',
     description:
       'Exact second sentence on the default Unity manual-creation panel.',
+  },
+  freshSaveTip: {
+    id: 'dyson.tinker.tip.fresh-save',
+    defaultMessage:
+      'Tip: The tinker panel goes away after you have 10 assembly lines and 1 manager (or any data center).',
+    description:
+      'Exact Unity fresh-save tip explaining when the Tinker panel disappears.',
+  },
+  holdToRepeat: {
+    id: 'dyson.tinker.hold-to-repeat',
+    defaultMessage: 'Hold anywhere to repeat...',
+    description: 'Exact Unity hold gesture hint inside the Tinker progress bar.',
   },
   manualLabourDescription: {
     id: 'dyson.tinker.description.manual-labour',

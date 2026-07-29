@@ -80,6 +80,7 @@ type PurchaseFeedback = {
 interface FacilityPresentationMessages {
   readonly name: MessageDescriptor
   readonly identity: MessageDescriptor
+  readonly description: MessageDescriptor
   readonly purchasePrompt: MessageDescriptor
   readonly purchaseAccessible: MessageDescriptor
   readonly productionPerSecond: MessageDescriptor
@@ -93,6 +94,7 @@ const facilityMessages: Readonly<
   assembly_lines: {
     name: messages.assemblyLinesName,
     identity: messages.assemblyLinesIdentity,
+    description: messages.assemblyLinesDescription,
     purchasePrompt: messages.purchaseAssemblyLine,
     purchaseAccessible: messages.purchaseAssemblyLineAccessible,
     productionPerSecond:
@@ -103,6 +105,7 @@ const facilityMessages: Readonly<
   ai_managers: {
     name: messages.aiManagersName,
     identity: messages.aiManagersIdentity,
+    description: messages.aiManagersDescription,
     purchasePrompt: messages.purchaseAiManager,
     purchaseAccessible: messages.purchaseAiManagerAccessible,
     productionPerSecond: messages.aiManagersProductionPerSecond,
@@ -112,6 +115,7 @@ const facilityMessages: Readonly<
   servers: {
     name: messages.serversName,
     identity: messages.serversIdentity,
+    description: messages.serversDescription,
     purchasePrompt: messages.purchaseServer,
     purchaseAccessible: messages.purchaseServerAccessible,
     productionPerSecond: messages.serversProductionPerSecond,
@@ -121,6 +125,7 @@ const facilityMessages: Readonly<
   data_centers: {
     name: messages.dataCentersName,
     identity: messages.dataCentersIdentity,
+    description: messages.dataCentersDescription,
     purchasePrompt: messages.purchaseDataCenter,
     purchaseAccessible: messages.purchaseDataCenterAccessible,
     productionPerSecond:
@@ -131,6 +136,7 @@ const facilityMessages: Readonly<
   planets: {
     name: messages.planetsName,
     identity: messages.planetsIdentity,
+    description: messages.planetsDescription,
     purchasePrompt: messages.purchasePlanet,
     purchaseAccessible: messages.purchasePlanetAccessible,
     productionPerSecond: messages.planetsProductionPerSecond,
@@ -313,6 +319,7 @@ function BasicFacilityPresentationCard({
   onPurchase,
 }: BasicFacilityPresentationCardProps) {
   const intl = useIntl()
+  const [detailsOpen, setDetailsOpen] = useState(false)
   const feedbackId = useId()
   const availabilityId = useId()
   const presentation = facilityMessages[facilityId]
@@ -349,17 +356,22 @@ function BasicFacilityPresentationCard({
         />
       }
       summary={
-        <p className="basic-facility-card__production">
-          {productionText(
-            locale,
-            fact.productionPerSecond,
-            presentation,
-            intl,
-          )}
-        </p>
+        <>
+          <p className="basic-facility-card__description">
+            {intl.formatMessage(presentation.description)}
+          </p>
+          <p className="basic-facility-card__production">
+            {productionText(
+              locale,
+              fact.productionPerSecond,
+              presentation,
+              intl,
+            )}
+          </p>
+        </>
       }
       details={
-        displayFeedback || availabilityMessage ? (
+        displayFeedback || availabilityMessage || detailsOpen ? (
           <>
           {displayFeedback && (
           <span
@@ -389,43 +401,76 @@ function BasicFacilityPresentationCard({
               })}
             </span>
           )}
+          {detailsOpen && (
+            <div
+              className="basic-facility-card__details-panel"
+              role="dialog"
+              aria-label={intl.formatMessage(messages.details)}
+            >
+              <p>{intl.formatMessage(presentation.description)}</p>
+              <p>
+                {productionText(
+                  locale,
+                  fact.productionPerSecond,
+                  presentation,
+                  intl,
+                )}
+              </p>
+              <button
+                type="button"
+                onClick={() => setDetailsOpen(false)}
+              >
+                {intl.formatMessage(messages.closeDetails)}
+              </button>
+            </div>
+          )}
           </>
         ) : undefined
       }
       action={
-        <Button
-          variant="primary"
-          fullWidth
-          state={buttonState(displayFeedback)}
-          disabled={disabled}
-          aria-describedby={describedBy}
-          aria-label={intl.formatMessage(
-            presentation.purchaseAccessible,
-            { quantity: selectedQuantity, cost },
-          )}
-          onClick={onPurchase}
-        >
-          <data
-            className="basic-facility-card__purchase-quantity"
-            value={String(preview.selectedQuantity)}
-            title={selectedQuantity}
+        <div className="basic-facility-card__actions">
+          <Button
+            variant="primary"
+            fullWidth
+            state={buttonState(displayFeedback)}
+            disabled={disabled}
+            aria-describedby={describedBy}
+            aria-label={intl.formatMessage(
+              presentation.purchaseAccessible,
+              { quantity: selectedQuantity, cost },
+            )}
+            onClick={onPurchase}
           >
-            <bdi>
-              {intl.formatMessage(messages.purchaseQuantity, {
-                quantity: selectedQuantity,
-              })}
-            </bdi>
-          </data>
-          <data
-            className="basic-facility-card__purchase-cost"
-            value={String(preview.cost)}
-            title={cost}
+            <data
+              className="basic-facility-card__purchase-quantity"
+              value={String(preview.selectedQuantity)}
+              title={selectedQuantity}
+            >
+              <bdi>
+                {intl.formatMessage(messages.purchaseQuantity, {
+                  quantity: selectedQuantity,
+                })}
+              </bdi>
+            </data>
+            <data
+              className="basic-facility-card__purchase-cost"
+              value={String(preview.cost)}
+              title={cost}
+            >
+              <bdi>
+                {intl.formatMessage(messages.purchaseCost, { cost })}
+              </bdi>
+            </data>
+          </Button>
+          <button
+            type="button"
+            className="basic-facility-card__details-button"
+            aria-expanded={detailsOpen}
+            onClick={() => setDetailsOpen((current) => !current)}
           >
-            <bdi>
-              {intl.formatMessage(messages.purchaseCost, { cost })}
-            </bdi>
-          </data>
-        </Button>
+            {intl.formatMessage(messages.details)}
+          </button>
+        </div>
       }
     />
   )

@@ -11,6 +11,16 @@ export const readyDysonMessages = defineMessages({
     defaultMessage: 'Primary',
     description: 'Accessible name for the primary game navigation.',
   },
+  sideNavigation: {
+    id: 'dyson.navigation.side',
+    defaultMessage: 'Game menu',
+    description: 'Accessible name for the Unity side navigation.',
+  },
+  bottomNavigation: {
+    id: 'dyson.navigation.bottom',
+    defaultMessage: 'Game tabs',
+    description: 'Accessible name for the compact bottom navigation.',
+  },
   researchRoute: {
     id: 'navigation.research',
     defaultMessage: 'Research',
@@ -133,17 +143,119 @@ export const readyDysonMessages = defineMessages({
     description:
       'Accessible name for the lower Unity production facts; not a visible heading.',
   },
+  dysonSwarm: {
+    id: 'dyson.swarm.region',
+    defaultMessage: 'Dyson swarm',
+    description:
+      'Accessible region name for the decorative Unity-style swarm visual.',
+  },
+  info: {
+    id: 'dyson.info.title',
+    defaultMessage: 'Info',
+    description: 'Unity Bots information control label.',
+  },
+  activePanels: {
+    id: 'dyson.info.active-panels',
+    defaultMessage: 'Active panels: <emphasis>{value}</emphasis>',
+    description: 'Unity active panel metric below the first scale threshold.',
+  },
+  starsSurrounded: {
+    id: 'dyson.info.stars-surrounded',
+    defaultMessage: 'Stars Surrounded: <emphasis>{value}</emphasis>',
+    description: 'Unity active panel metric at stellar scale.',
+  },
+  galaxiesEngulfed: {
+    id: 'dyson.info.galaxies-engulfed',
+    defaultMessage: 'Galaxies Engulfed: <emphasis>{value}</emphasis>',
+    description: 'Unity active panel metric at galactic scale.',
+  },
+  panelLifetimeDetail: {
+    id: 'dyson.info.panel-lifetime',
+    defaultMessage: 'Panel lifetime: <emphasis>{value}</emphasis> seconds',
+    description: 'Canonical panel lifetime shown in the expanded Info control.',
+  },
+  totalPanelsDecayed: {
+    id: 'dyson.info.total-panels-decayed',
+    defaultMessage: 'Total panels decayed: <emphasis>{value}</emphasis>',
+    description: 'Canonical lifetime panel total shown in expanded Info.',
+  },
+  purchaseSettings: {
+    id: 'dyson.info.purchase-settings',
+    defaultMessage: 'Purchase settings',
+    description:
+      'Accessible label for the Unity Info-panel gear that opens building buy settings.',
+  },
+  purchaseAmount: {
+    id: 'dyson.info.purchase-amount',
+    defaultMessage: 'Building purchase amount',
+    description: 'Heading for the canonical Dyson building buy mode.',
+  },
+  buyOne: {
+    id: 'dyson.info.buy-mode.one',
+    defaultMessage: 'x1',
+    description: 'Purchase one building.',
+  },
+  buyTen: {
+    id: 'dyson.info.buy-mode.ten',
+    defaultMessage: 'x10',
+    description: 'Purchase ten buildings.',
+  },
+  buyFifty: {
+    id: 'dyson.info.buy-mode.fifty',
+    defaultMessage: 'x50',
+    description: 'Purchase fifty buildings.',
+  },
+  buyOneHundred: {
+    id: 'dyson.info.buy-mode.one-hundred',
+    defaultMessage: 'x100',
+    description: 'Purchase one hundred buildings.',
+  },
+  buyMax: {
+    id: 'dyson.info.buy-mode.max',
+    defaultMessage: 'Max',
+    description: 'Purchase the maximum canonically affordable buildings.',
+  },
+  roundedBulkBuy: {
+    id: 'dyson.info.rounded-bulk-buy',
+    defaultMessage: 'Round bulk purchases to the next milestone',
+    description:
+      'Unity building rounded-bulk setting controlled by the canonical command.',
+  },
+  purchaseSettingsFailed: {
+    id: 'dyson.info.purchase-settings-failed',
+    defaultMessage: 'Purchase settings were not changed.',
+    description:
+      'Failure feedback when a canonical Dyson buy-setting command is rejected.',
+  },
+  botDistribution: {
+    id: 'dyson.bot-distribution.title',
+    defaultMessage: 'Bot Distribution',
+    description: 'Unity Bots allocation slider label.',
+  },
+  workerBots: {
+    id: 'dyson.bot-distribution.workers',
+    defaultMessage: 'Workers',
+    description: 'Worker side of the bot allocation slider.',
+  },
+  scienceBots: {
+    id: 'dyson.bot-distribution.scientists',
+    defaultMessage: 'Scientists',
+    description: 'Scientist side of the bot allocation slider.',
+  },
+  botDistributionAccessible: {
+    id: 'dyson.bot-distribution.accessible-value',
+    defaultMessage: '{workers} workers, {scientists} scientists',
+    description: 'Accessible bot allocation slider value.',
+  },
+  distributionFailed: {
+    id: 'dyson.bot-distribution.failed',
+    defaultMessage: 'Distribution was not changed.',
+    description: 'Failure feedback after a rejected allocation command.',
+  },
   workerProduction: {
     id: 'dyson.production-summary.worker-production',
     defaultMessage:
-      '{workers} Worker Bots producing {panels} Panels /s',
+      '<emphasis>{workers}</emphasis> Worker Bots producing <emphasis>{panels}</emphasis> Panels /s',
     description: 'Exact Unity lower-panel worker production line.',
-  },
-  scienceProduction: {
-    id: 'dyson.production-summary.science-production',
-    defaultMessage:
-      '{scientists} Science Bots producing {science} /s',
-    description:
-      'Unity lower-panel science production line with the science icon represented by its surrounding context.',
   },
 })

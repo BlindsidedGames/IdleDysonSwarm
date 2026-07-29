@@ -1,4 +1,100 @@
 {
+  "dyson.bot-distribution.accessible-value": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 1,
+      "value": "workers"
+    },
+    {
+      "type": 0,
+      "value": " ʍoɹʞǝɹs, "
+    },
+    {
+      "type": 1,
+      "value": "scientists"
+    },
+    {
+      "type": 0,
+      "value": " sɔıǝuʇısʇs"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "dyson.bot-distribution.failed": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "ᗡısʇɹıqnʇıou ʍɐs uoʇ ɔɥɐuƃǝp."
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "dyson.bot-distribution.scientists": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "Sɔıǝuʇısʇs"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "dyson.bot-distribution.title": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "Ԑoʇ ᗡısʇɹıqnʇıou"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "dyson.bot-distribution.workers": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "Moɹʞǝɹs"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "dyson.facilities.ai-managers.description": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "Ԁnɹɔɥɐsǝ ∀I Wɐuɐƃǝɹs ʍɥıɔɥ ɐnʇoɯɐʇıɔɐʅʅʎ ɥɐupʅǝ ∀ssǝɯqʅʎ ⅂ıuǝ Ↄɹǝɐʇıou!"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
   "dyson.facilities.ai-managers.identity": [
     {
       "type": 0,
@@ -143,6 +239,20 @@
     {
       "type": 1,
       "value": "cost"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "dyson.facilities.assembly-lines.description": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "Ԑnıʅp ɐssǝɯqʅʎ ʅıuǝs ʇɥɐʇ ɔɹǝɐʇǝ qoʇs ɟoɹ ʎon, ʇɥɐʇ ʍɐʎ ʎon pou'ʇ ɥɐʌǝ ʇo ʍoɹʞ so ɥɐɹp!"
     },
     {
       "type": 0,
@@ -299,6 +409,34 @@
       "value": "‬"
     }
   ],
+  "dyson.facilities.close-details": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "Ↄʅosǝ"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "dyson.facilities.data-centers.description": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "Woɹǝ ᗡɐʇɐ Ↄǝuʇǝɹs ɯǝɐu ɯoɹǝ Sǝɹʌǝɹs, ɯoɹǝ Sǝɹʌǝɹs ɯǝɐu ɯoɹǝ Ԑoʇs, Ԑoʇs ɐɹǝ ƃoop."
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
   "dyson.facilities.data-centers.identity": [
     {
       "type": 0,
@@ -449,6 +587,20 @@
       "value": "‬"
     }
   ],
+  "dyson.facilities.details": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "ᗡǝʇɐıʅs"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
   "dyson.facilities.heading": [
     {
       "type": 0,
@@ -493,6 +645,20 @@
     {
       "type": 0,
       "value": "????"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "dyson.facilities.planets.description": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "ᗡısɔoʌǝɹ ɐup sǝʇʇʅǝ ou uǝʍ Ԁʅɐuǝʇs ɐup Ↄoʌǝɹ ʇɥǝɯ ʍıʇɥ ᗡɐʇɐ Ↄǝuʇǝɹs!"
     },
     {
       "type": 0,
@@ -833,6 +999,20 @@
       "value": "‬"
     }
   ],
+  "dyson.facilities.servers.description": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "∀ɔbnıɹǝ ɯoɹǝ sǝɹʌǝɹ sdɐɔǝ so ʎon ɔɐu ɹnu ɯoɹǝ Wɐuɐƃǝɹs. ⊥oʇɐʅʅʎ ʍoɹʇɥ ıʇ!"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
   "dyson.facilities.servers.identity": [
     {
       "type": 0,
@@ -997,6 +1177,342 @@
       "value": "‬"
     }
   ],
+  "dyson.info.active-panels": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "∀ɔʇıʌǝ dɐuǝʅs: "
+    },
+    {
+      "type": 8,
+      "value": "emphasis",
+      "children": [
+        {
+          "type": 1,
+          "value": "value"
+        }
+      ]
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "dyson.info.buy-mode.fifty": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "x50"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "dyson.info.buy-mode.max": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "Wɐx"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "dyson.info.buy-mode.one": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "x1"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "dyson.info.buy-mode.one-hundred": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "x100"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "dyson.info.buy-mode.ten": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "x10"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "dyson.info.galaxies-engulfed": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "⅁ɐʅɐxıǝs Ǝuƃnʅɟǝp: "
+    },
+    {
+      "type": 8,
+      "value": "emphasis",
+      "children": [
+        {
+          "type": 1,
+          "value": "value"
+        }
+      ]
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "dyson.info.panel-lifetime": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "Ԁɐuǝʅ ʅıɟǝʇıɯǝ: "
+    },
+    {
+      "type": 8,
+      "value": "emphasis",
+      "children": [
+        {
+          "type": 1,
+          "value": "value"
+        }
+      ]
+    },
+    {
+      "type": 0,
+      "value": " sǝɔoups"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "dyson.info.purchase-amount": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "Ԑnıʅpıuƃ dnɹɔɥɐsǝ ɐɯonuʇ"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "dyson.info.purchase-settings": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "Ԁnɹɔɥɐsǝ sǝʇʇıuƃs"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "dyson.info.purchase-settings-failed": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "Ԁnɹɔɥɐsǝ sǝʇʇıuƃs ʍǝɹǝ uoʇ ɔɥɐuƃǝp."
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "dyson.info.rounded-bulk-buy": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "ᴚonup qnʅʞ dnɹɔɥɐsǝs ʇo ʇɥǝ uǝxʇ ɯıʅǝsʇouǝ"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "dyson.info.stars-surrounded": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "Sʇɐɹs Snɹɹonupǝp: "
+    },
+    {
+      "type": 8,
+      "value": "emphasis",
+      "children": [
+        {
+          "type": 1,
+          "value": "value"
+        }
+      ]
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "dyson.info.title": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "Iuɟo"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "dyson.info.total-panels-decayed": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "⊥oʇɐʅ dɐuǝʅs pǝɔɐʎǝp: "
+    },
+    {
+      "type": 8,
+      "value": "emphasis",
+      "children": [
+        {
+          "type": 1,
+          "value": "value"
+        }
+      ]
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "dyson.menu.cash-multiplier": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "Ↄɐsɥ Wnʅʇıdʅıǝɹ: "
+    },
+    {
+      "type": 1,
+      "value": "value"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "dyson.menu.panel-lifetime": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "Ԁɐuǝʅ ⅂ıɟǝʇıɯǝ: "
+    },
+    {
+      "type": 1,
+      "value": "value"
+    },
+    {
+      "type": 0,
+      "value": " s"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "dyson.menu.research-multiplier": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "ᴚǝsǝɐɹɔɥ Wnʅʇıdʅıǝɹ: "
+    },
+    {
+      "type": 1,
+      "value": "value"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "dyson.navigation.bottom": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "⅁ɐɯǝ ʇɐqs"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
   "dyson.navigation.primary": [
     {
       "type": 0,
@@ -1005,6 +1521,20 @@
     {
       "type": 0,
       "value": "Ԁɹıɯɐɹʎ"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "dyson.navigation.side": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "⅁ɐɯǝ ɯǝun"
     },
     {
       "type": 0,
@@ -1039,48 +1569,34 @@
       "value": "‬"
     }
   ],
-  "dyson.production-summary.science-production": [
-    {
-      "type": 0,
-      "value": "‮"
-    },
-    {
-      "type": 1,
-      "value": "scientists"
-    },
-    {
-      "type": 0,
-      "value": " Sɔıǝuɔǝ Ԑoʇs dɹopnɔıuƃ "
-    },
-    {
-      "type": 1,
-      "value": "science"
-    },
-    {
-      "type": 0,
-      "value": " /s"
-    },
-    {
-      "type": 0,
-      "value": "‬"
-    }
-  ],
   "dyson.production-summary.worker-production": [
     {
       "type": 0,
       "value": "‮"
     },
     {
-      "type": 1,
-      "value": "workers"
+      "type": 8,
+      "value": "emphasis",
+      "children": [
+        {
+          "type": 1,
+          "value": "workers"
+        }
+      ]
     },
     {
       "type": 0,
       "value": " Moɹʞǝɹ Ԑoʇs dɹopnɔıuƃ "
     },
     {
-      "type": 1,
-      "value": "panels"
+      "type": 8,
+      "value": "emphasis",
+      "children": [
+        {
+          "type": 1,
+          "value": "panels"
+        }
+      ]
     },
     {
       "type": 0,
@@ -1233,6 +1749,20 @@
       "value": "‬"
     }
   ],
+  "dyson.swarm.region": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "ᗡʎsou sʍɐɹɯ"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
   "dyson.tinker.action": [
     {
       "type": 0,
@@ -1365,6 +1895,20 @@
       "value": "‬"
     }
   ],
+  "dyson.tinker.hold-to-repeat": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "Hoʅp ɐuʎʍɥǝɹǝ ʇo ɹǝdǝɐʇ..."
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
   "dyson.tinker.progress": [
     {
       "type": 0,
@@ -1393,6 +1937,20 @@
       "value": "‬"
     }
   ],
+  "dyson.tinker.tip.fresh-save": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "⊥ıd: ⊥ɥǝ ʇıuʞǝɹ dɐuǝʅ ƃoǝs ɐʍɐʎ ɐɟʇǝɹ ʎon ɥɐʌǝ 10 ɐssǝɯqʅʎ ʅıuǝs ɐup 1 ɯɐuɐƃǝɹ (oɹ ɐuʎ pɐʇɐ ɔǝuʇǝɹ)."
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
   "dyson.tinker.title": [
     {
       "type": 0,
@@ -1400,7 +1958,105 @@
     },
     {
       "type": 0,
-      "value": "⊥ıuʞǝɹ"
+      "value": "⊥ıuʞǝɹ ıu ʎonɹ ƃɐɹɐƃǝ"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "navigation.infinity": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "Iuɟıuıʇʎ"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "navigation.offline-time": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "Oɟɟʅıuǝ ⊥ıɯǝ"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "navigation.research": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "ᴚǝsǝɐɹɔɥ"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "navigation.settings": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "Sǝʇʇıuƃs"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "navigation.skills": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "Sʞıʅʅs"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "navigation.story": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "Sʇoɹʎ"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "navigation.wiki": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "Mıʞı"
     },
     {
       "type": 0,

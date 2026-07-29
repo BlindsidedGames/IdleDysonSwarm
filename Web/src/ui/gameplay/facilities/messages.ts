@@ -37,6 +37,36 @@ export const basicFacilityMessages = defineMessages({
     description:
       'Visible localized name for the Planets facility.',
   },
+  assemblyLinesDescription: {
+    id: 'dyson.facilities.assembly-lines.description',
+    defaultMessage:
+      "Build assembly lines that create bots for you, that way you don't have to work so hard!",
+    description: 'Exact Unity Assembly Lines panel description.',
+  },
+  aiManagersDescription: {
+    id: 'dyson.facilities.ai-managers.description',
+    defaultMessage:
+      'Purchase AI Managers which automatically handle Assembly Line Creation!',
+    description: 'Exact Unity AI Managers panel description.',
+  },
+  serversDescription: {
+    id: 'dyson.facilities.servers.description',
+    defaultMessage:
+      'Acquire more server space so you can run more Managers. Totally worth it!',
+    description: 'Exact Unity Servers panel description.',
+  },
+  dataCentersDescription: {
+    id: 'dyson.facilities.data-centers.description',
+    defaultMessage:
+      'More Data Centers mean more Servers, more Servers mean more Bots, Bots are good.',
+    description: 'Exact Unity Data Centers panel description.',
+  },
+  planetsDescription: {
+    id: 'dyson.facilities.planets.description',
+    defaultMessage:
+      'Discover and settle on new Planets and Cover them with Data Centers!',
+    description: 'Exact Unity Planets panel description.',
+  },
   manualCount: {
     id: 'dyson.facilities.manual-count',
     defaultMessage: '({manual})',
@@ -230,6 +260,16 @@ export const basicFacilityMessages = defineMessages({
     defaultMessage: '${cost}',
     description:
       'Visible canonical cost on the compact facility purchase control.',
+  },
+  details: {
+    id: 'dyson.facilities.details',
+    defaultMessage: 'Details',
+    description: 'Unity facility production-breakdown button.',
+  },
+  closeDetails: {
+    id: 'dyson.facilities.close-details',
+    defaultMessage: 'Close',
+    description: 'Closes the facility details panel.',
   },
   pending: {
     id: 'dyson.facilities.purchase.pending',

@@ -1,0 +1,280 @@
+.dyson-info {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  overflow: hidden;
+  border: 1px solid #0d0a0e;
+  border-radius: 0.35rem;
+  background: #3f3044;
+  color: white;
+}
+
+.dyson-info__header {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 2.8rem;
+  min-inline-size: 0;
+  border-block-end: 1px solid #62466a;
+  background: #49364e;
+}
+
+.dyson-info__toggle,
+.dyson-info__settings-toggle {
+  min-block-size: 2.5rem;
+  border: 0;
+  background: transparent;
+  color: inherit;
+  font: inherit;
+  touch-action: manipulation;
+  user-select: none;
+}
+
+.dyson-info__toggle {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 0.45rem;
+  padding: 0.35rem 0.65rem;
+  font-weight: var(--font-weight-semibold);
+}
+
+.dyson-info__chevron {
+  color: #d5c4d8;
+  font-size: 1rem;
+}
+
+.dyson-info__settings-toggle {
+  display: grid;
+  place-items: center;
+  border-inline-start: 1px solid #62466a;
+  font-size: 1.25rem;
+}
+
+.dyson-info__toggle:focus-visible,
+.dyson-info__settings-toggle:focus-visible,
+.dyson-info__buy-modes button:focus-visible,
+.dyson-info__rounded-bulk input:focus-visible {
+  outline: 3px solid var(--color-focus);
+  outline-offset: -3px;
+}
+
+.dyson-info__summary {
+  display: grid;
+  min-inline-size: 0;
+  padding: 0.35rem 0.65rem;
+}
+
+.dyson-info__active {
+  min-inline-size: 0;
+  overflow-wrap: anywhere;
+}
+
+.dyson-info__value {
+  color: #ffac63;
+}
+
+.dyson-info__details {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.25rem 1rem;
+  padding: 0.38rem 0.65rem;
+  border-block-start: 1px solid #62466a;
+  color: #eadfeb;
+  font-size: 0.88rem;
+}
+
+.dyson-info__settings {
+  display: grid;
+  gap: 0.4rem;
+  padding: 0.5rem 0.65rem 0.6rem;
+  border-block-start: 1px solid #62466a;
+  background: #342839;
+}
+
+.dyson-info__settings-title {
+  font-size: 0.86rem;
+  font-weight: var(--font-weight-semibold);
+}
+
+.dyson-info__buy-modes {
+  display: grid;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  gap: 0.3rem;
+}
+
+.dyson-info__buy-modes button {
+  min-block-size: var(--target-minimum);
+  min-inline-size: 0;
+  padding: 0.25rem;
+  border: 1px solid #78617e;
+  border-radius: 0.22rem;
+  background: #4a3a4f;
+  color: white;
+  font: inherit;
+  font-size: 0.82rem;
+  touch-action: manipulation;
+  user-select: none;
+}
+
+.dyson-info__buy-modes button[aria-pressed="true"] {
+  border-color: #d777e8;
+  background: #724879;
+}
+
+.dyson-info__buy-modes button:disabled {
+  opacity: 0.68;
+}
+
+.dyson-info__rounded-bulk {
+  display: inline-flex;
+  min-block-size: var(--target-minimum);
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.85rem;
+  touch-action: manipulation;
+  user-select: none;
+}
+
+.dyson-info__rounded-bulk input {
+  inline-size: 1.2rem;
+  block-size: 1.2rem;
+  margin: 0;
+  accent-color: #c35bd9;
+}
+
+.dyson-info__settings-failure {
+  color: var(--color-negative);
+  font-size: 0.82rem;
+}
+
+.bot-distribution {
+  display: grid;
+  grid-template-columns:
+    minmax(4.6rem, 0.7fr)
+    minmax(7rem, 1.45fr)
+    minmax(4.6rem, 0.7fr);
+  grid-template-rows: auto auto;
+  gap: 0.15rem 0.45rem;
+  align-items: end;
+  color: white;
+}
+
+.bot-distribution__heading {
+  grid-column: 2;
+  grid-row: 1;
+  align-self: center;
+  font-size: clamp(0.95rem, 3.5vw, 1.35rem);
+  font-weight: var(--font-weight-semibold);
+  text-align: center;
+}
+
+.bot-distribution__allocation {
+  grid-row: 1 / span 2;
+  display: grid;
+  gap: 0.05rem;
+  align-self: stretch;
+}
+
+.bot-distribution__allocation--workers {
+  grid-column: 1;
+  color: #eb7df4;
+  text-align: start;
+}
+
+.bot-distribution__allocation--scientists {
+  grid-column: 3;
+  color: #72ece8;
+  text-align: end;
+}
+
+.bot-distribution__group-name {
+  align-self: end;
+  font-size: clamp(1.05rem, 4vw, 1.5rem);
+}
+
+.bot-distribution__percent {
+  color: white;
+  font-size: clamp(1.2rem, 4.5vw, 1.7rem);
+  line-height: 1.1;
+}
+
+.bot-distribution__slider {
+  appearance: none;
+  grid-column: 2;
+  grid-row: 2;
+  inline-size: 100%;
+  block-size: 2rem;
+  margin: 0;
+  background: transparent;
+  touch-action: pan-y;
+}
+
+.bot-distribution__slider::-webkit-slider-runnable-track {
+  block-size: 0.78rem;
+  border-radius: 0.18rem;
+  background: #3d3440;
+}
+
+.bot-distribution__slider::-webkit-slider-thumb {
+  appearance: none;
+  inline-size: 1.65rem;
+  block-size: 1.65rem;
+  margin-block-start: -0.435rem;
+  border: 0;
+  border-radius: 0.22rem;
+  background: #c45cda;
+  box-shadow: 0 1px 2px rgb(0 0 0 / 70%);
+}
+
+.bot-distribution__slider::-moz-range-track {
+  block-size: 0.78rem;
+  border-radius: 0.18rem;
+  background: #3d3440;
+}
+
+.bot-distribution__slider::-moz-range-progress {
+  block-size: 0.78rem;
+  border-radius: 0.18rem;
+  background: #c45cda;
+}
+
+.bot-distribution__slider::-moz-range-thumb {
+  inline-size: 1.65rem;
+  block-size: 1.65rem;
+  border: 0;
+  border-radius: 0.22rem;
+  background: #c45cda;
+  box-shadow: 0 1px 2px rgb(0 0 0 / 70%);
+}
+
+.bot-distribution__slider:focus-visible {
+  outline: 3px solid var(--color-focus);
+  outline-offset: 2px;
+}
+
+.bot-distribution__failure {
+  grid-column: 1 / -1;
+  grid-row: 3;
+  color: var(--color-negative);
+  font-size: 0.82rem;
+  text-align: center;
+}
+
+@media (max-width: 360px) {
+  .dyson-info__details {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .bot-distribution__group-name {
+    font-size: 0.95rem;
+  }
+}
+
+@media (forced-colors: active) {
+  .dyson-info,
+  .dyson-info__toggle,
+  .dyson-info__settings-toggle,
+  .dyson-info__buy-modes button,
+  .dyson-info__rounded-bulk input,
+  .bot-distribution__slider {
+    forced-color-adjust: auto;
+  }
+}

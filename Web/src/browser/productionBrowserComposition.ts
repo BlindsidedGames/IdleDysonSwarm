@@ -32,6 +32,13 @@ type BrowserRuntimeFactory = (
   options: Readonly<BrowserRuntimeFoundationOptions>,
 ) => BrowserUiRuntimeFoundation
 
+const DEVELOPMENT_PREVIEW_DATABASE_NAME =
+  import.meta.env.DEV
+    ? `idle-dyson-swarm-ui-preview-${Date.now()}-${Math.random()
+        .toString(36)
+        .slice(2)}`
+    : undefined
+
 export interface ProductionBrowserCompositionOptions {
   readonly entitlementDocument?: BrowserEntitlementDocument
   readonly lifecycleClock?: CanonicalLifecycleClock
@@ -83,6 +90,10 @@ export function createProductionBrowserComposition(
     activeTimeClock: monotonicClock,
     nowUtcMilliseconds: () =>
       lifecycleClock.sample().utcMilliseconds,
+    // UI review tabs use isolated ephemeral IndexedDB profiles. This removes
+    // the single-writer blocker during local iteration without weakening the
+    // release database's lease and fencing guarantees.
+    databaseName: DEVELOPMENT_PREVIEW_DATABASE_NAME,
   })
   const reloadPage =
     options.reloadPage ?? (() => window.location.reload())

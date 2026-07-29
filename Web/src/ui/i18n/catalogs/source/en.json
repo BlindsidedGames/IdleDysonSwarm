@@ -1,4 +1,28 @@
 {
+  "dyson.bot-distribution.accessible-value": {
+    "defaultMessage": "{workers} workers, {scientists} scientists",
+    "description": "Accessible bot allocation slider value."
+  },
+  "dyson.bot-distribution.failed": {
+    "defaultMessage": "Distribution was not changed.",
+    "description": "Failure feedback after a rejected allocation command."
+  },
+  "dyson.bot-distribution.scientists": {
+    "defaultMessage": "Scientists",
+    "description": "Scientist side of the bot allocation slider."
+  },
+  "dyson.bot-distribution.title": {
+    "defaultMessage": "Bot Distribution",
+    "description": "Unity Bots allocation slider label."
+  },
+  "dyson.bot-distribution.workers": {
+    "defaultMessage": "Workers",
+    "description": "Worker side of the bot allocation slider."
+  },
+  "dyson.facilities.ai-managers.description": {
+    "defaultMessage": "Purchase AI Managers which automatically handle Assembly Line Creation!",
+    "description": "Exact Unity AI Managers panel description."
+  },
   "dyson.facilities.ai-managers.identity": {
     "defaultMessage": "AI Managers {total}({manual})",
     "description": "Compact Unity identity with canonical total and manual AI Manager counts."
@@ -26,6 +50,10 @@
   "dyson.facilities.ai-managers.purchase-accessible": {
     "defaultMessage": "Purchase an AI Manager: +{quantity}, ${cost}",
     "description": "Accessible name for the compact AI Manager purchase control."
+  },
+  "dyson.facilities.assembly-lines.description": {
+    "defaultMessage": "Build assembly lines that create bots for you, that way you don't have to work so hard!",
+    "description": "Exact Unity Assembly Lines panel description."
   },
   "dyson.facilities.assembly-lines.identity": {
     "defaultMessage": "Assembly Lines {total}({manual})",
@@ -55,6 +83,14 @@
     "defaultMessage": "Purchase an Assembly Line: +{quantity}, ${cost}",
     "description": "Accessible name for the compact Assembly Line purchase control."
   },
+  "dyson.facilities.close-details": {
+    "defaultMessage": "Close",
+    "description": "Closes the facility details panel."
+  },
+  "dyson.facilities.data-centers.description": {
+    "defaultMessage": "More Data Centers mean more Servers, more Servers mean more Bots, Bots are good.",
+    "description": "Exact Unity Data Centers panel description."
+  },
   "dyson.facilities.data-centers.identity": {
     "defaultMessage": "Data Centers {total}({manual})",
     "description": "Compact Unity identity with canonical total and manual Data Center counts."
@@ -83,6 +119,10 @@
     "defaultMessage": "Purchase a Data Center: +{quantity}, ${cost}",
     "description": "Accessible name for the compact Data Center purchase control."
   },
+  "dyson.facilities.details": {
+    "defaultMessage": "Details",
+    "description": "Unity facility production-breakdown button."
+  },
   "dyson.facilities.heading": {
     "defaultMessage": "Facilities",
     "description": "Screen-reader heading for the early Dyson basic-facility region."
@@ -94,6 +134,10 @@
   "dyson.facilities.next-tier-teaser": {
     "defaultMessage": "????",
     "description": "Generic non-interactive teaser shown after the final visible facility."
+  },
+  "dyson.facilities.planets.description": {
+    "defaultMessage": "Discover and settle on new Planets and Cover them with Data Centers!",
+    "description": "Exact Unity Planets panel description."
   },
   "dyson.facilities.planets.identity": {
     "defaultMessage": "Planets {total}({manual})",
@@ -171,6 +215,10 @@
     "defaultMessage": "Facilities",
     "description": "Accessible name for the early Dyson facility region."
   },
+  "dyson.facilities.servers.description": {
+    "defaultMessage": "Acquire more server space so you can run more Managers. Totally worth it!",
+    "description": "Exact Unity Servers panel description."
+  },
   "dyson.facilities.servers.identity": {
     "defaultMessage": "Servers {total}({manual})",
     "description": "Compact Unity identity with canonical total and manual Server counts."
@@ -203,9 +251,89 @@
     "defaultMessage": "????",
     "description": "Generic non-interactive teaser before the next named facility is visible."
   },
+  "dyson.info.active-panels": {
+    "defaultMessage": "Active panels: <emphasis>{value}</emphasis>",
+    "description": "Unity active panel metric below the first scale threshold."
+  },
+  "dyson.info.buy-mode.fifty": {
+    "defaultMessage": "x50",
+    "description": "Purchase fifty buildings."
+  },
+  "dyson.info.buy-mode.max": {
+    "defaultMessage": "Max",
+    "description": "Purchase the maximum canonically affordable buildings."
+  },
+  "dyson.info.buy-mode.one": {
+    "defaultMessage": "x1",
+    "description": "Purchase one building."
+  },
+  "dyson.info.buy-mode.one-hundred": {
+    "defaultMessage": "x100",
+    "description": "Purchase one hundred buildings."
+  },
+  "dyson.info.buy-mode.ten": {
+    "defaultMessage": "x10",
+    "description": "Purchase ten buildings."
+  },
+  "dyson.info.galaxies-engulfed": {
+    "defaultMessage": "Galaxies Engulfed: <emphasis>{value}</emphasis>",
+    "description": "Unity active panel metric at galactic scale."
+  },
+  "dyson.info.panel-lifetime": {
+    "defaultMessage": "Panel lifetime: <emphasis>{value}</emphasis> seconds",
+    "description": "Canonical panel lifetime shown in the expanded Info control."
+  },
+  "dyson.info.purchase-amount": {
+    "defaultMessage": "Building purchase amount",
+    "description": "Heading for the canonical Dyson building buy mode."
+  },
+  "dyson.info.purchase-settings": {
+    "defaultMessage": "Purchase settings",
+    "description": "Accessible label for the Unity Info-panel gear that opens building buy settings."
+  },
+  "dyson.info.purchase-settings-failed": {
+    "defaultMessage": "Purchase settings were not changed.",
+    "description": "Failure feedback when a canonical Dyson buy-setting command is rejected."
+  },
+  "dyson.info.rounded-bulk-buy": {
+    "defaultMessage": "Round bulk purchases to the next milestone",
+    "description": "Unity building rounded-bulk setting controlled by the canonical command."
+  },
+  "dyson.info.stars-surrounded": {
+    "defaultMessage": "Stars Surrounded: <emphasis>{value}</emphasis>",
+    "description": "Unity active panel metric at stellar scale."
+  },
+  "dyson.info.title": {
+    "defaultMessage": "Info",
+    "description": "Unity Bots information control label."
+  },
+  "dyson.info.total-panels-decayed": {
+    "defaultMessage": "Total panels decayed: <emphasis>{value}</emphasis>",
+    "description": "Canonical lifetime panel total shown in expanded Info."
+  },
+  "dyson.menu.cash-multiplier": {
+    "defaultMessage": "Cash Multiplier: {value}",
+    "description": "Current canonical Cash multiplier in the Unity menu."
+  },
+  "dyson.menu.panel-lifetime": {
+    "defaultMessage": "Panel Lifetime: {value} s",
+    "description": "Current canonical panel lifetime in the Unity menu."
+  },
+  "dyson.menu.research-multiplier": {
+    "defaultMessage": "Research Multiplier: {value}",
+    "description": "Current canonical research multiplier in the Unity menu."
+  },
+  "dyson.navigation.bottom": {
+    "defaultMessage": "Game tabs",
+    "description": "Accessible name for the compact bottom navigation."
+  },
   "dyson.navigation.primary": {
     "defaultMessage": "Primary",
     "description": "Accessible name for the primary game navigation."
+  },
+  "dyson.navigation.side": {
+    "defaultMessage": "Game menu",
+    "description": "Accessible name for the Unity side navigation."
   },
   "dyson.navigation.skip-to-game": {
     "defaultMessage": "Skip to game",
@@ -215,12 +343,8 @@
     "defaultMessage": "Production summary",
     "description": "Accessible name for the lower Unity production facts; not a visible heading."
   },
-  "dyson.production-summary.science-production": {
-    "defaultMessage": "{scientists} Science Bots producing {science} /s",
-    "description": "Unity lower-panel science production line with the science icon represented by its surrounding context."
-  },
   "dyson.production-summary.worker-production": {
-    "defaultMessage": "{workers} Worker Bots producing {panels} Panels /s",
+    "defaultMessage": "<emphasis>{workers}</emphasis> Worker Bots producing <emphasis>{panels}</emphasis> Panels /s",
     "description": "Exact Unity lower-panel worker production line."
   },
   "dyson.ready.unavailable": {
@@ -259,6 +383,10 @@
     "defaultMessage": "Bots",
     "description": "Unity Dyson route name."
   },
+  "dyson.swarm.region": {
+    "defaultMessage": "Dyson swarm",
+    "description": "Accessible region name for the decorative Unity-style swarm visual."
+  },
   "dyson.tinker.action": {
     "defaultMessage": "Manually put together a new bot from parts in your shed.",
     "description": "Exact first sentence on the default Unity manual-creation panel."
@@ -291,6 +419,10 @@
     "defaultMessage": "Tinker changed before the action completed. Try again.",
     "description": "Safe feedback when a Tinker command used an outdated public game revision."
   },
+  "dyson.tinker.hold-to-repeat": {
+    "defaultMessage": "Hold anywhere to repeat...",
+    "description": "Exact Unity hold gesture hint inside the Tinker progress bar."
+  },
   "dyson.tinker.progress": {
     "defaultMessage": "Tinker progress",
     "description": "Accessible label for the canonical Tinker progress bar."
@@ -299,9 +431,41 @@
     "defaultMessage": "Tinker",
     "description": "Accessible name for the Unity Tinker region."
   },
+  "dyson.tinker.tip.fresh-save": {
+    "defaultMessage": "Tip: The tinker panel goes away after you have 10 assembly lines and 1 manager (or any data center).",
+    "description": "Exact Unity fresh-save tip explaining when the Tinker panel disappears."
+  },
   "dyson.tinker.title": {
-    "defaultMessage": "Tinker",
+    "defaultMessage": "Tinker in your garage",
     "description": "Visible primary title for the Unity manual-creation action."
+  },
+  "navigation.infinity": {
+    "defaultMessage": "Infinity",
+    "description": "Unity Infinity destination."
+  },
+  "navigation.offline-time": {
+    "defaultMessage": "Offline Time",
+    "description": "Unity Offline Time destination."
+  },
+  "navigation.research": {
+    "defaultMessage": "Research",
+    "description": "Unity Research destination."
+  },
+  "navigation.settings": {
+    "defaultMessage": "Settings",
+    "description": "Unity Settings destination."
+  },
+  "navigation.skills": {
+    "defaultMessage": "Skills",
+    "description": "Unity Skills destination."
+  },
+  "navigation.story": {
+    "defaultMessage": "Story",
+    "description": "Unity Story destination."
+  },
+  "navigation.wiki": {
+    "defaultMessage": "Wiki",
+    "description": "Unity Wiki destination."
   },
   "shared.action.dismiss": {
     "defaultMessage": "Dismiss",

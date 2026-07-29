@@ -288,7 +288,7 @@ describe('TinkerSurface transient interaction', () => {
       'button',
       {
         name:
-          'Tinker Manually put together a new bot from parts in your shed.',
+          'Tinker in your garage Manually put together a new bot from parts in your shed.',
       },
     )
     installPointerCapture(first)
@@ -446,7 +446,7 @@ describe('TinkerSurface transient interaction', () => {
 })
 
 describe('TinkerSurface presentation and accessibility', () => {
-  test('renders only canonical output, time and progress facts with no Repeat control', () => {
+  test('renders Unity copy, hold hint, time and progress with no Repeat control', () => {
     const dispatch = createDispatch()
     renderTinker(
       dispatch,
@@ -460,7 +460,9 @@ describe('TinkerSurface presentation and accessibility', () => {
       }),
     )
 
-    expect(screen.getByText('Tinker')).toBeInTheDocument()
+    expect(
+      screen.getByText('Tinker in your garage'),
+    ).toBeInTheDocument()
     expect(
       screen.getByText(
         'Manually put together a new bot from parts in your shed.',
@@ -479,8 +481,30 @@ describe('TinkerSurface presentation and accessibility', () => {
     expect(progress).toHaveAttribute('max', '0.5')
     expect(progress).toHaveAttribute('aria-valuetext', '0.375s')
     expect(
+      screen.getByText('Hold anywhere to repeat...'),
+    ).toBeInTheDocument()
+    expect(
       screen.queryByRole('button', { name: /repeat/i }),
     ).not.toBeInTheDocument()
+  })
+
+  test('shows the exact fresh-save tip only in default Tinker mode', () => {
+    const dispatch = createDispatch()
+    const view = renderTinker(dispatch)
+
+    expect(
+      screen.getByText(
+        'Tip: The tinker panel goes away after you have 10 assembly lines and 1 manager (or any data center).',
+      ),
+    ).toBeInTheDocument()
+
+    view.rerender(
+      tinkerElement(
+        runningFacts({ effectiveManualLabour: true }),
+        dispatch,
+      ),
+    )
+    expect(screen.queryByText(/^Tip:/)).not.toBeInTheDocument()
   })
 
   test('has no automated accessibility violations in ready and running states', async () => {
@@ -541,7 +565,7 @@ function tinkerElement(
 function tinkerButton(): HTMLButtonElement {
   return screen.getByRole('button', {
     name:
-      'Tinker Manually put together a new bot from parts in your shed.',
+      'Tinker in your garage Manually put together a new bot from parts in your shed.',
   })
 }
 

@@ -4,6 +4,7 @@ import './components.css'
 export interface ResourceValueProps {
   readonly label: ReactNode
   readonly value: string
+  readonly leadingSymbol?: ReactNode
   readonly fullPrecisionValue?: string
   readonly machineValue?: string
   readonly className?: string
@@ -12,6 +13,7 @@ export interface ResourceValueProps {
 export function ResourceValue({
   label,
   value,
+  leadingSymbol,
   fullPrecisionValue,
   machineValue,
   className,
@@ -30,7 +32,10 @@ export function ResourceValue({
         title={fullPrecisionValue}
         tabIndex={fullPrecisionValue ? 0 : undefined}
       >
-        <bdi dir="ltr">{value}</bdi>
+        <span className="ui-resource-value__content">
+          {leadingSymbol}
+          <bdi dir="ltr">{value}</bdi>
+        </span>
       </data>
     </span>
   )

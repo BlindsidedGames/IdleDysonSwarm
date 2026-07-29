@@ -530,7 +530,7 @@ describe('BasicFacilityRegion', () => {
     expect(results.violations).toEqual([])
   })
 
-  it('keeps the wide facility grid count-aware in source and CSS', () => {
+  it('keeps every Unity facility in one ordered vertical stack', () => {
     const { container, rerender } = renderRegion({
       visibleBasicFacilityIds: ['assembly_lines'],
     })
@@ -548,10 +548,10 @@ describe('BasicFacilityRegion', () => {
       'data-visible-facility-count={visibleBasicFacilityIds.length}',
     )
     expect(facilitiesCss).toMatch(
-      /@media \(min-width: 1024px\)[\s\S]*\.basic-facility-region\[data-visible-facility-count\]:not\(\s*\[data-visible-facility-count="0"\]\s*\):not\(\s*\[data-visible-facility-count="1"\]\s*\) \.basic-facility-region__grid\s*\{\s*grid-template-columns:\s*repeat\(2,\s*minmax\(0,\s*1fr\)\);/,
+      /\.basic-facility-region__grid\s*\{[\s\S]*grid-template-columns:\s*minmax\(0,\s*1fr\);/,
     )
-    expect(facilitiesCss).not.toMatch(
-      /@media \(min-width: 1024px\)\s*\{\s*\.basic-facility-region__grid\s*\{\s*grid-template-columns:\s*repeat\(2,/,
+    expect(facilitiesCss).not.toContain(
+      'grid-template-columns: repeat(2',
     )
   })
 

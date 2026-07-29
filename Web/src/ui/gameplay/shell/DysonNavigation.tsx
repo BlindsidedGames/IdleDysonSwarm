@@ -13,6 +13,8 @@ export interface DysonNavigationProps
  */
 export function DysonNavigation({
   ariaLabel,
+  drawerAriaLabel,
+  bottomAriaLabel,
   items,
   placement,
   onNavigate,
@@ -25,7 +27,11 @@ export function DysonNavigation({
   return (
     <nav
       className={`dyson-navigation dyson-navigation--${placement}`}
-      aria-label={ariaLabel}
+      aria-label={
+        placement === 'drawer'
+          ? drawerAriaLabel ?? ariaLabel
+          : bottomAriaLabel ?? ariaLabel
+      }
       data-placement={placement}
     >
       <ul className="dyson-navigation__list">

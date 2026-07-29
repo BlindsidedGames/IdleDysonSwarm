@@ -73,7 +73,10 @@ import {
   MEGA_STRUCTURE_IDS,
   type MegaStructureId,
 } from '../simulation/megaStructurePurchases'
-import { DISCRETE_MAXIMUM } from '../simulation/numeric'
+import {
+  DISCRETE_MAXIMUM,
+  multiplyContinuous,
+} from '../simulation/numeric'
 import {
   availableQuantumPoints,
   findQuantumUpgradeCanonicalGaps,
@@ -470,13 +473,25 @@ export interface FrontendStoredCapacityPreview {
   readonly consumesStoredSeconds: number
 }
 
+export interface FrontendDysonPresentationFacts {
+  readonly activePanelMetric: {
+    readonly kind:
+      | 'active-panels'
+      | 'stars-surrounded'
+      | 'galaxies-engulfed'
+    readonly value: number
+  }
+}
+
 export type FrontendDysonDerivedFacts =
   | {
       readonly status: 'ready'
       readonly value: Omit<
         DerivedBasicDysonState,
         'nextEvaluationSnapshot'
-      >
+      > & {
+        readonly presentation: FrontendDysonPresentationFacts
+      }
     }
   | {
       readonly status: 'unavailable'
@@ -1034,7 +1049,28 @@ function selectDerivedFacts(
 
 function projectDysonDerivedFacts(
   source: Readonly<DerivedBasicDysonState>,
-): Omit<DerivedBasicDysonState, 'nextEvaluationSnapshot'> {
+): Omit<DerivedBasicDysonState, 'nextEvaluationSnapshot'> & {
+  readonly presentation: FrontendDysonPresentationFacts
+} {
+  const activePanels = multiplyContinuous(
+    source.globals.panelsPerSecond,
+    source.globals.panelLifetimeSeconds,
+  )
+  const activePanelMetric =
+    activePanels < 20_000
+      ? {
+          kind: 'active-panels' as const,
+          value: activePanels,
+        }
+      : activePanels / 20_000 < 100_000_000_000
+        ? {
+            kind: 'stars-surrounded' as const,
+            value: activePanels / 20_000,
+          }
+        : {
+            kind: 'galaxies-engulfed' as const,
+            value: activePanels / 20_000 / 100_000_000_000,
+          }
   return {
     allocation: source.allocation,
     globals: source.globals,
@@ -1043,6 +1079,7 @@ function projectDysonDerivedFacts(
     rates: source.rates,
     megaRates: source.megaRates,
     productionArrivalRates: source.productionArrivalRates,
+    presentation: { activePanelMetric },
     entitlements: source.entitlements,
   }
 }

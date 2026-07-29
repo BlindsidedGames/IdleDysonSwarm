@@ -1,4 +1,8 @@
-import { ResourceValue } from '../../components'
+import scienceSymbolSrc from '../../assets/symbol-science.png'
+import {
+  InlineImageSymbol,
+  ResourceValue,
+} from '../../components'
 import type {
   DysonResourceHeaderPresentation,
   DysonResourcePresentation,
@@ -68,28 +72,31 @@ function Resource({
       <ResourceValue
         label={presentation.label}
         value={presentation.value}
+        leadingSymbol={
+          showScienceIcon ? <ScienceSymbol /> : undefined
+        }
         fullPrecisionValue={presentation.fullPrecisionValue}
         machineValue={presentation.machineValue}
       />
-      {showScienceIcon && (
-        <span
-          className="dyson-resource-header__science-icon"
-          aria-hidden="true"
-        >
-          <svg viewBox="0 0 24 24" focusable="false">
-            <path d="M9 2h6v2h-1v5.2l4.7 7.7A2 2 0 0 1 17 20H7a2 2 0 0 1-1.7-3.1L10 9.2V4H9V2Zm2.7 8.3-2.2 3.6h5l-2.2-3.6-.3-.5-.3.5Zm-3.4 5.6L7 18h10l-1.3-2.1H8.3Z" />
-          </svg>
-        </span>
-      )}
       {presentation.rate !== undefined && (
         <span
           className="dyson-resource-header__rate"
           aria-label={presentation.fullPrecisionRate}
           title={presentation.fullPrecisionRate}
         >
+          {showScienceIcon && <ScienceSymbol />}
           <bdi dir="ltr">{presentation.rate}</bdi>
         </span>
       )}
     </div>
+  )
+}
+
+function ScienceSymbol() {
+  return (
+    <InlineImageSymbol
+      src={scienceSymbolSrc}
+      symbol="science"
+    />
   )
 }

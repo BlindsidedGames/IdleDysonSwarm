@@ -1,0 +1,64 @@
+.dyson-swarm-visual {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+.dyson-swarm-visual__sun {
+  position: relative;
+  z-index: 2;
+  inline-size: clamp(3.8rem, 10vw, 5.75rem);
+  aspect-ratio: 1;
+  border-radius: 50%;
+  background:
+    radial-gradient(circle at 42% 40%, #fffbd1 0 8%, transparent 9%),
+    radial-gradient(circle, #fff18b 0 28%, #ffc82f 55%, #f18713 72%, transparent 73%);
+  box-shadow:
+    0 0 1.2rem #ffcc42,
+    0 0 3.5rem rgb(255 145 20 / 48%);
+}
+
+.dyson-swarm-visual__orbit {
+  position: absolute;
+  z-index: 1;
+  inline-size: clamp(7.5rem, 20vw, 12.5rem);
+  aspect-ratio: 1;
+  border: 1px solid rgb(247 200 255 / 24%);
+  border-radius: 50%;
+  animation: dyson-orbit 28s linear infinite;
+}
+
+.dyson-swarm-visual__orbit--inner {
+  inline-size: clamp(5.8rem, 15vw, 9.3rem);
+  animation-duration: 19s;
+  animation-direction: reverse;
+}
+
+.dyson-swarm-visual__orbit i {
+  position: absolute;
+  inline-size: clamp(0.38rem, 1vw, 0.62rem);
+  aspect-ratio: 1;
+  border-radius: 50%;
+  background: #de9ff0;
+  box-shadow: 0 0 0.55rem #d26ce9;
+}
+
+.dyson-swarm-visual__orbit i:nth-child(1) { inset: -0.2rem 50% auto auto; }
+.dyson-swarm-visual__orbit i:nth-child(2) { inset: 24% -0.2rem auto auto; }
+.dyson-swarm-visual__orbit i:nth-child(3) { inset: auto 12% 9% auto; }
+.dyson-swarm-visual__orbit i:nth-child(4) { inset: auto auto -0.2rem 39%; }
+.dyson-swarm-visual__orbit i:nth-child(5) { inset: 38% auto auto -0.2rem; }
+.dyson-swarm-visual__orbit i:nth-child(6) { inset: 9% auto auto 12%; }
+
+@keyframes dyson-orbit {
+  to { transform: rotate(1turn); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .dyson-swarm-visual__orbit {
+    animation: none;
+  }
+}

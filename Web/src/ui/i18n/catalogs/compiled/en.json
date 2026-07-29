@@ -1,4 +1,52 @@
 {
+  "dyson.bot-distribution.accessible-value": [
+    {
+      "type": 1,
+      "value": "workers"
+    },
+    {
+      "type": 0,
+      "value": " workers, "
+    },
+    {
+      "type": 1,
+      "value": "scientists"
+    },
+    {
+      "type": 0,
+      "value": " scientists"
+    }
+  ],
+  "dyson.bot-distribution.failed": [
+    {
+      "type": 0,
+      "value": "Distribution was not changed."
+    }
+  ],
+  "dyson.bot-distribution.scientists": [
+    {
+      "type": 0,
+      "value": "Scientists"
+    }
+  ],
+  "dyson.bot-distribution.title": [
+    {
+      "type": 0,
+      "value": "Bot Distribution"
+    }
+  ],
+  "dyson.bot-distribution.workers": [
+    {
+      "type": 0,
+      "value": "Workers"
+    }
+  ],
+  "dyson.facilities.ai-managers.description": [
+    {
+      "type": 0,
+      "value": "Purchase AI Managers which automatically handle Assembly Line Creation!"
+    }
+  ],
   "dyson.facilities.ai-managers.identity": [
     {
       "type": 0,
@@ -91,6 +139,12 @@
     {
       "type": 1,
       "value": "cost"
+    }
+  ],
+  "dyson.facilities.assembly-lines.description": [
+    {
+      "type": 0,
+      "value": "Build assembly lines that create bots for you, that way you don't have to work so hard!"
     }
   ],
   "dyson.facilities.assembly-lines.identity": [
@@ -187,6 +241,18 @@
       "value": "cost"
     }
   ],
+  "dyson.facilities.close-details": [
+    {
+      "type": 0,
+      "value": "Close"
+    }
+  ],
+  "dyson.facilities.data-centers.description": [
+    {
+      "type": 0,
+      "value": "More Data Centers mean more Servers, more Servers mean more Bots, Bots are good."
+    }
+  ],
   "dyson.facilities.data-centers.identity": [
     {
       "type": 0,
@@ -281,6 +347,12 @@
       "value": "cost"
     }
   ],
+  "dyson.facilities.details": [
+    {
+      "type": 0,
+      "value": "Details"
+    }
+  ],
   "dyson.facilities.heading": [
     {
       "type": 0,
@@ -305,6 +377,12 @@
     {
       "type": 0,
       "value": "????"
+    }
+  ],
+  "dyson.facilities.planets.description": [
+    {
+      "type": 0,
+      "value": "Discover and settle on new Planets and Cover them with Data Centers!"
     }
   ],
   "dyson.facilities.planets.identity": [
@@ -489,6 +567,12 @@
       "value": "Facilities"
     }
   ],
+  "dyson.facilities.servers.description": [
+    {
+      "type": 0,
+      "value": "Acquire more server space so you can run more Managers. Totally worth it!"
+    }
+  ],
   "dyson.facilities.servers.identity": [
     {
       "type": 0,
@@ -589,10 +673,200 @@
       "value": "????"
     }
   ],
+  "dyson.info.active-panels": [
+    {
+      "type": 0,
+      "value": "Active panels: "
+    },
+    {
+      "type": 8,
+      "value": "emphasis",
+      "children": [
+        {
+          "type": 1,
+          "value": "value"
+        }
+      ]
+    }
+  ],
+  "dyson.info.buy-mode.fifty": [
+    {
+      "type": 0,
+      "value": "x50"
+    }
+  ],
+  "dyson.info.buy-mode.max": [
+    {
+      "type": 0,
+      "value": "Max"
+    }
+  ],
+  "dyson.info.buy-mode.one": [
+    {
+      "type": 0,
+      "value": "x1"
+    }
+  ],
+  "dyson.info.buy-mode.one-hundred": [
+    {
+      "type": 0,
+      "value": "x100"
+    }
+  ],
+  "dyson.info.buy-mode.ten": [
+    {
+      "type": 0,
+      "value": "x10"
+    }
+  ],
+  "dyson.info.galaxies-engulfed": [
+    {
+      "type": 0,
+      "value": "Galaxies Engulfed: "
+    },
+    {
+      "type": 8,
+      "value": "emphasis",
+      "children": [
+        {
+          "type": 1,
+          "value": "value"
+        }
+      ]
+    }
+  ],
+  "dyson.info.panel-lifetime": [
+    {
+      "type": 0,
+      "value": "Panel lifetime: "
+    },
+    {
+      "type": 8,
+      "value": "emphasis",
+      "children": [
+        {
+          "type": 1,
+          "value": "value"
+        }
+      ]
+    },
+    {
+      "type": 0,
+      "value": " seconds"
+    }
+  ],
+  "dyson.info.purchase-amount": [
+    {
+      "type": 0,
+      "value": "Building purchase amount"
+    }
+  ],
+  "dyson.info.purchase-settings": [
+    {
+      "type": 0,
+      "value": "Purchase settings"
+    }
+  ],
+  "dyson.info.purchase-settings-failed": [
+    {
+      "type": 0,
+      "value": "Purchase settings were not changed."
+    }
+  ],
+  "dyson.info.rounded-bulk-buy": [
+    {
+      "type": 0,
+      "value": "Round bulk purchases to the next milestone"
+    }
+  ],
+  "dyson.info.stars-surrounded": [
+    {
+      "type": 0,
+      "value": "Stars Surrounded: "
+    },
+    {
+      "type": 8,
+      "value": "emphasis",
+      "children": [
+        {
+          "type": 1,
+          "value": "value"
+        }
+      ]
+    }
+  ],
+  "dyson.info.title": [
+    {
+      "type": 0,
+      "value": "Info"
+    }
+  ],
+  "dyson.info.total-panels-decayed": [
+    {
+      "type": 0,
+      "value": "Total panels decayed: "
+    },
+    {
+      "type": 8,
+      "value": "emphasis",
+      "children": [
+        {
+          "type": 1,
+          "value": "value"
+        }
+      ]
+    }
+  ],
+  "dyson.menu.cash-multiplier": [
+    {
+      "type": 0,
+      "value": "Cash Multiplier: "
+    },
+    {
+      "type": 1,
+      "value": "value"
+    }
+  ],
+  "dyson.menu.panel-lifetime": [
+    {
+      "type": 0,
+      "value": "Panel Lifetime: "
+    },
+    {
+      "type": 1,
+      "value": "value"
+    },
+    {
+      "type": 0,
+      "value": " s"
+    }
+  ],
+  "dyson.menu.research-multiplier": [
+    {
+      "type": 0,
+      "value": "Research Multiplier: "
+    },
+    {
+      "type": 1,
+      "value": "value"
+    }
+  ],
+  "dyson.navigation.bottom": [
+    {
+      "type": 0,
+      "value": "Game tabs"
+    }
+  ],
   "dyson.navigation.primary": [
     {
       "type": 0,
       "value": "Primary"
+    }
+  ],
+  "dyson.navigation.side": [
+    {
+      "type": 0,
+      "value": "Game menu"
     }
   ],
   "dyson.navigation.skip-to-game": [
@@ -607,36 +881,30 @@
       "value": "Production summary"
     }
   ],
-  "dyson.production-summary.science-production": [
-    {
-      "type": 1,
-      "value": "scientists"
-    },
-    {
-      "type": 0,
-      "value": " Science Bots producing "
-    },
-    {
-      "type": 1,
-      "value": "science"
-    },
-    {
-      "type": 0,
-      "value": " /s"
-    }
-  ],
   "dyson.production-summary.worker-production": [
     {
-      "type": 1,
-      "value": "workers"
+      "type": 8,
+      "value": "emphasis",
+      "children": [
+        {
+          "type": 1,
+          "value": "workers"
+        }
+      ]
     },
     {
       "type": 0,
       "value": " Worker Bots producing "
     },
     {
-      "type": 1,
-      "value": "panels"
+      "type": 8,
+      "value": "emphasis",
+      "children": [
+        {
+          "type": 1,
+          "value": "panels"
+        }
+      ]
     },
     {
       "type": 0,
@@ -713,6 +981,12 @@
       "value": "Bots"
     }
   ],
+  "dyson.swarm.region": [
+    {
+      "type": 0,
+      "value": "Dyson swarm"
+    }
+  ],
   "dyson.tinker.action": [
     {
       "type": 0,
@@ -781,6 +1055,12 @@
       "value": "Tinker changed before the action completed. Try again."
     }
   ],
+  "dyson.tinker.hold-to-repeat": [
+    {
+      "type": 0,
+      "value": "Hold anywhere to repeat..."
+    }
+  ],
   "dyson.tinker.progress": [
     {
       "type": 0,
@@ -793,10 +1073,58 @@
       "value": "Tinker"
     }
   ],
+  "dyson.tinker.tip.fresh-save": [
+    {
+      "type": 0,
+      "value": "Tip: The tinker panel goes away after you have 10 assembly lines and 1 manager (or any data center)."
+    }
+  ],
   "dyson.tinker.title": [
     {
       "type": 0,
-      "value": "Tinker"
+      "value": "Tinker in your garage"
+    }
+  ],
+  "navigation.infinity": [
+    {
+      "type": 0,
+      "value": "Infinity"
+    }
+  ],
+  "navigation.offline-time": [
+    {
+      "type": 0,
+      "value": "Offline Time"
+    }
+  ],
+  "navigation.research": [
+    {
+      "type": 0,
+      "value": "Research"
+    }
+  ],
+  "navigation.settings": [
+    {
+      "type": 0,
+      "value": "Settings"
+    }
+  ],
+  "navigation.skills": [
+    {
+      "type": 0,
+      "value": "Skills"
+    }
+  ],
+  "navigation.story": [
+    {
+      "type": 0,
+      "value": "Story"
+    }
+  ],
+  "navigation.wiki": [
+    {
+      "type": 0,
+      "value": "Wiki"
     }
   ],
   "shared.action.dismiss": [

@@ -10,13 +10,12 @@
   display: grid;
   min-block-size: var(--target-touch);
   min-inline-size: var(--target-minimum);
-  grid-template-columns: minmax(0, 1fr) auto;
-  gap: var(--space-2) var(--space-4);
-  align-items: center;
-  padding: var(--space-4);
-  border: var(--border-width) solid var(--color-highlight);
-  border-radius: var(--radius-md);
-  background: var(--color-surface);
+  grid-template-columns: minmax(0, 1fr);
+  gap: 0.12rem;
+  padding: 0.5rem 0.6rem;
+  border: 1px solid #0d0a0e;
+  border-radius: 0.35rem;
+  background: #403044;
   color: var(--color-text-primary);
   font: inherit;
   line-height: var(--line-height-compact);
@@ -37,12 +36,12 @@
 }
 
 .tinker-surface__control:not(:disabled):hover {
-  background: var(--color-control-hover);
+  background: #4a3750;
 }
 
 .tinker-surface__control:not(:disabled):active,
 .tinker-surface__control[data-gesture-active="true"] {
-  background: var(--color-control-pressed);
+  background: #533b58;
 }
 
 .tinker-surface__control:focus-visible {
@@ -63,16 +62,20 @@
 }
 
 .tinker-surface__title {
-  font-size: var(--font-size-lg);
+  color: white;
+  font-size: clamp(1rem, 2.2vw, 1.3rem);
   font-weight: var(--font-weight-bold);
 }
 
 .tinker-surface__label,
-.tinker-surface__output {
+.tinker-surface__output,
+.tinker-surface__tip,
+.tinker-surface__progress-row {
   grid-column: 1 / -1;
 }
 
 .tinker-surface__label {
+  color: white;
   overflow-wrap: anywhere;
 }
 
@@ -83,21 +86,72 @@
 }
 
 .tinker-surface__output {
-  color: var(--color-highlight);
+  color: #f2eaf3;
   overflow-wrap: anywhere;
 }
 
+.tinker-surface__tip {
+  color: #bdb3bf;
+  font-size: 0.86em;
+  line-height: 1.2;
+  overflow-wrap: anywhere;
+}
+
+.tinker-surface__progress-row {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 0.55rem;
+  align-items: center;
+  margin-block-start: 0.25rem;
+}
+
+.tinker-surface__progress-track {
+  position: relative;
+  display: grid;
+  min-inline-size: 0;
+  align-items: center;
+}
+
 .tinker-surface__time {
-  grid-column: 2;
-  grid-row: 1;
-  color: var(--color-text-secondary);
+  color: white;
+  font-size: 0.95rem;
 }
 
 .tinker-surface__progress {
-  grid-column: 1 / -1;
+  appearance: none;
   inline-size: 100%;
-  block-size: 0.75rem;
-  accent-color: var(--color-highlight);
+  block-size: 1.25rem;
+  overflow: hidden;
+  border: 1px solid #0d0a0e;
+  border-radius: 0.2rem;
+  background: #171418;
+}
+
+.tinker-surface__progress::-webkit-progress-bar {
+  background: #171418;
+}
+
+.tinker-surface__progress::-webkit-progress-value {
+  background: #5b5a5c;
+}
+
+.tinker-surface__progress::-moz-progress-bar {
+  background: #5b5a5c;
+}
+
+.tinker-surface__hold-label {
+  position: absolute;
+  z-index: 1;
+  inset-inline: 0.35rem;
+  color: white;
+  font-size: 0.72rem;
+  font-weight: var(--font-weight-semibold);
+  line-height: 1;
+  overflow: hidden;
+  pointer-events: none;
+  text-overflow: ellipsis;
+  text-shadow: 0 1px 1px black;
+  white-space: nowrap;
 }
 
 .tinker-surface__failure {
