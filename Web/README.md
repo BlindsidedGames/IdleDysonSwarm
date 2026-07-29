@@ -96,6 +96,7 @@ test/parity/           Executable save and simulation parity cases
 
 Before creating another product frontend, satisfy
 [frontend-readiness-gate.md](docs/frontend-readiness-gate.md). See also
+[product-ui-foundation.md](docs/product-ui-foundation.md),
 [architecture.md](docs/architecture.md),
 [game-state-contract.md](docs/game-state-contract.md),
 [simulation-contract.md](docs/simulation-contract.md),

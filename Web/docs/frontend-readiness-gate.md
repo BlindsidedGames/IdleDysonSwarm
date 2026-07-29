@@ -7,6 +7,11 @@ performance baseline and must not be used as one.
 No replacement product frontend should begin until the following contracts are
 written, reviewed and approved.
 
+The proposed product, interaction, visual, responsive, accessibility,
+performance and testing contract is recorded in
+[`product-ui-foundation.md`](product-ui-foundation.md). It is intentionally
+marked proposed; creating that review checkpoint does not open this gate.
+
 The backend dependency is complete: UI code may consume
 `CanonicalGameApplicationFacade.frontendSnapshot()` and dispatch the typed commands
 in `canonicalPlayerCommands.ts` through
