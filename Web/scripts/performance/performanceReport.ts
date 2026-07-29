@@ -3,6 +3,8 @@ export const PERFORMANCE_REPORT_VERSION = 1
 export const FIRST_SLICE_PERFORMANCE_BUDGETS = Object.freeze({
   longTaskMilliseconds: 50,
   commandFeedbackP95Milliseconds: 100,
+  snapshotSelectionThroughReactCommitP95DesktopMilliseconds: 8,
+  snapshotSelectionThroughReactCommitP95MobileMilliseconds: 16,
   interactionToNextPaintP75Milliseconds: 200,
   cumulativeLayoutShiftP75: 0.1,
   largestContentfulPaintP75Milliseconds: 2_500,
@@ -32,6 +34,13 @@ export interface InteractionTrialMeasurement {
   readonly trial: number
   readonly longTaskDurationsMilliseconds: readonly number[]
   readonly commandFeedbackLatenciesMilliseconds: readonly number[]
+  readonly snapshotSelectionThroughReactCommit: readonly {
+    readonly revision: {
+      readonly session: number
+      readonly state: number
+    }
+    readonly durationMilliseconds: number
+  }[]
   readonly interactionToNextPaintMilliseconds: number
   readonly cumulativeLayoutShift: number
   readonly largestContentfulPaintMilliseconds: number
@@ -49,6 +58,7 @@ export interface InteractionProfileMeasurement {
   readonly summaries: {
     readonly maximumLongTaskMilliseconds: number
     readonly commandFeedbackP95Milliseconds: number
+    readonly snapshotSelectionThroughReactCommitP95Milliseconds: number
     readonly interactionToNextPaintP75Milliseconds: number
     readonly cumulativeLayoutShiftP75: number
     readonly largestContentfulPaintP75Milliseconds: number
@@ -220,6 +230,28 @@ export function createInteractionReport(input: {
       ),
       0.95,
     )
+    const snapshotSelectionThroughReactCommit =
+      profile.trials.flatMap(
+        (trial) => trial.snapshotSelectionThroughReactCommit,
+      )
+    const trialsWithSnapshotSelectionThroughReactCommit =
+      profile.trials.filter(
+        (trial) =>
+          trial.snapshotSelectionThroughReactCommit.length > 0,
+      ).length
+    const snapshotSelectionThroughReactCommitP95Milliseconds =
+      percentile(
+        snapshotSelectionThroughReactCommit.map(
+          (sample) => sample.durationMilliseconds,
+        ),
+        0.95,
+      )
+    const snapshotSelectionThroughReactCommitLimit =
+      profile.viewport.width < 768
+        ? FIRST_SLICE_PERFORMANCE_BUDGETS
+            .snapshotSelectionThroughReactCommitP95MobileMilliseconds
+        : FIRST_SLICE_PERFORMANCE_BUDGETS
+            .snapshotSelectionThroughReactCommitP95DesktopMilliseconds
     const interactionToNextPaintP75Milliseconds = percentile(
       profile.trials.map(
         (trial) => trial.interactionToNextPaintMilliseconds,
@@ -263,6 +295,21 @@ export function createInteractionReport(input: {
           .commandFeedbackP95Milliseconds,
       ),
       budget(
+        'Trials with snapshot selection through React commit samples',
+        'count',
+        trialsWithSnapshotSelectionThroughReactCommit,
+        profile.trials.length,
+        'at-least',
+      ),
+      budget(
+        'P95 snapshot selection through React commit',
+        'milliseconds',
+        snapshotSelectionThroughReactCommitP95Milliseconds,
+        snapshotSelectionThroughReactCommitLimit,
+        'at-most',
+        snapshotSelectionThroughReactCommit.length > 0,
+      ),
+      budget(
         'Synthetic INP P75',
         'milliseconds',
         interactionToNextPaintP75Milliseconds,
@@ -299,6 +346,7 @@ export function createInteractionReport(input: {
       summaries: {
         maximumLongTaskMilliseconds,
         commandFeedbackP95Milliseconds,
+        snapshotSelectionThroughReactCommitP95Milliseconds,
         interactionToNextPaintP75Milliseconds,
         cumulativeLayoutShiftP75,
         largestContentfulPaintP75Milliseconds,
@@ -442,6 +490,15 @@ export function assertPerformanceReport(
   ) {
     throw new TypeError('Soak report measurements are missing.')
   }
+}
+
+export function performanceReportExitCode(
+  report: FirstSlicePerformanceReport,
+): 0 | 1 {
+  return report.passed &&
+    (report.mode === 'smoke' || report.acceptanceEligible)
+    ? 0
+    : 1
 }
 
 export function performanceReportText(

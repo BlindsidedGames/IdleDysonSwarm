@@ -5,6 +5,7 @@ import axe from 'axe-core'
 import { readFileSync } from 'node:fs'
 import { resolve } from 'node:path'
 import {
+  act,
   cleanup,
   fireEvent,
   render,
@@ -12,6 +13,7 @@ import {
   within,
 } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
+import { StrictMode } from 'react'
 import { createIntl, createIntlCache } from 'react-intl'
 import { afterEach, describe, expect, test, vi } from 'vitest'
 import type {
@@ -29,12 +31,23 @@ import type {
 import type { EnabledLocale } from '../../i18n/localeRegistry'
 import { PresentationIntlProvider } from '../../i18n/PresentationIntlProvider'
 import type {
+  BrowserUiRuntimeFoundation,
   UiRuntimePlayerCommandResult,
 } from '../../runtime'
+import {
+  FIRST_SLICE_COMMIT_PROBE_MARKER,
+  type FirstSliceCommitProbeSample,
+} from '../../performance/firstSliceCommitProbe'
 import { basicFacilityMessages } from '../facilities/messages'
-import { ReadyDysonSlice } from './ReadyDysonSlice'
+import {
+  ProbedReadyDysonRuntimeHost,
+  ReadyDysonSlice,
+} from './ReadyDysonSlice'
 
-afterEach(cleanup)
+afterEach(() => {
+  cleanup()
+  vi.unstubAllGlobals()
+})
 
 const compiledCatalogs = {
   en: enCatalog,
@@ -188,6 +201,63 @@ describe('ReadyDysonSlice', () => {
     vi.advanceTimersByTime(60_000)
     expect(dispatchPlayer).not.toHaveBeenCalled()
     vi.useRealTimers()
+  })
+
+  test('performance host records one exact sample for one committed revision under StrictMode', () => {
+    const samples: FirstSliceCommitProbeSample[] = []
+    vi.stubGlobal(FIRST_SLICE_COMMIT_PROBE_MARKER, {
+      record(sample: FirstSliceCommitProbeSample) {
+        samples.push(sample)
+      },
+    })
+    let current: ReadySnapshot = snapshot()
+    const listeners = new Set<() => void>()
+    const runtime = {
+      snapshot: () => current,
+      subscribeSnapshot(listener: () => void) {
+        listeners.add(listener)
+        return () => listeners.delete(listener)
+      },
+      dispatchPlayer: vi.fn(acceptedDispatch),
+    } as unknown as BrowserUiRuntimeFoundation
+    const view = render(
+      provider(
+        <StrictMode>
+          <ProbedReadyDysonRuntimeHost
+            runtime={runtime}
+            locale="en"
+          />
+        </StrictMode>,
+      ),
+    )
+
+    expect(samples).toEqual([])
+    act(() => {
+      current = {
+        ...current,
+        revision: {
+          ...current.revision,
+          state: current.revision.state + 1,
+        },
+      }
+      for (const listener of listeners) listener()
+    })
+    expect(samples).toHaveLength(1)
+    expect(samples[0]).toMatchObject({
+      revision: { session: 1, state: 2 },
+    })
+
+    view.rerender(
+      provider(
+        <StrictMode>
+          <ProbedReadyDysonRuntimeHost
+            runtime={runtime}
+            locale="en"
+          />
+        </StrictMode>,
+      ),
+    )
+    expect(samples).toHaveLength(1)
   })
 
   test('keeps active-time and gameplay-rule authorities out of the composition source', () => {

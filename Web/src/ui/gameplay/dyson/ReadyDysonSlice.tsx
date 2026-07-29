@@ -2,6 +2,8 @@ import {
   lazy,
   Suspense,
   useCallback,
+  useLayoutEffect,
+  useRef,
 } from 'react'
 import { useIntl } from 'react-intl'
 import type {
@@ -26,6 +28,12 @@ import {
   useBrowserRuntimeSnapshot,
   type BrowserUiRuntimeFoundation,
 } from '../../runtime'
+import {
+  beginFirstSliceSnapshotSelection,
+  isNewCommittedRevision,
+  recordFirstSliceReactCommit,
+  type FirstSliceCommitRevision,
+} from '../../performance/firstSliceCommitProbe'
 import { readyDysonMessages as messages } from './messages'
 import {
   DysonBotDistributionFacts,
@@ -53,7 +61,7 @@ export interface ReadyDysonRuntimeHostProps {
  * Owns the single ready-state runtime subscription. The active-time driver and
  * every command remain inside BrowserUiRuntimeFoundation.
  */
-export function ReadyDysonRuntimeHost({
+function UnprobedReadyDysonRuntimeHost({
   runtime,
   locale,
 }: ReadyDysonRuntimeHostProps) {
@@ -72,6 +80,64 @@ export function ReadyDysonRuntimeHost({
     />
   )
 }
+
+export function ProbedReadyDysonRuntimeHost({
+  runtime,
+  locale,
+}: ReadyDysonRuntimeHostProps) {
+  const selectionStartedAt = beginFirstSliceSnapshotSelection()
+  const snapshot = useBrowserRuntimeSnapshot(runtime)
+  const dispatchPlayer = useCallback(
+    (command: CanonicalPlayerCommand) =>
+      runtime.dispatchPlayer(command),
+    [runtime],
+  )
+  const previousRevision = useRef<FirstSliceCommitRevision | null>(
+    null,
+  )
+  const sessionRevision =
+    snapshot.phase === 'ready' ? snapshot.revision.session : null
+  const stateRevision =
+    snapshot.phase === 'ready' ? snapshot.revision.state : null
+  useLayoutEffect(() => {
+    const committedAt = performance.now()
+
+    if (sessionRevision === null || stateRevision === null) return
+    const current = {
+      session: sessionRevision,
+      state: stateRevision,
+    }
+    const shouldRecord = isNewCommittedRevision(
+      previousRevision.current,
+      current,
+    )
+    previousRevision.current = current
+    if (shouldRecord) {
+      recordFirstSliceReactCommit(
+        selectionStartedAt,
+        committedAt,
+        current,
+      )
+    }
+  }, [selectionStartedAt, sessionRevision, stateRevision])
+  if (snapshot.phase !== 'ready') return null
+  return (
+    <ReadyDysonSlice
+      snapshot={snapshot}
+      locale={locale}
+      dispatchPlayer={dispatchPlayer}
+    />
+  )
+}
+
+/**
+ * Selects the zero-probe production host statically. Performance-mode builds
+ * substitute the revision-paired measurement host before tree shaking.
+ */
+export const ReadyDysonRuntimeHost =
+  import.meta.env.MODE === 'performance'
+    ? ProbedReadyDysonRuntimeHost
+    : UnprobedReadyDysonRuntimeHost
 
 export interface ReadyDysonSliceProps {
   readonly snapshot: ReadySnapshot

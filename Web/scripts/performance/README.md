@@ -9,6 +9,13 @@ they add no browser-automation dependency.
 Set `IDS_CHROMIUM_PATH` when Chrome or Edge is not installed in a standard
 location.
 
+Verify that a normal minified production build both passes the exact initial
+request budget and contains no performance-probe marker or recorder:
+
+```powershell
+npm run verify:normal-performance-build
+```
+
 ## Interaction trace and synthetic Web Vitals
 
 Run the shortened one-profile smoke trial:
@@ -23,12 +30,25 @@ Run the acceptance command:
 npm run report:performance:interaction
 ```
 
+The interaction commands create a minified production build in Vite's
+`performance` mode. That mode statically selects a presentation-only probe
+which starts immediately before the external-store snapshot selection and ends
+in the layout effect for that exact committed snapshot revision. Initial mount,
+same-revision rerenders, StrictMode effect replay and aborted renders do not
+produce samples. Normal production builds statically select the unprobed host.
+Each trial performs excluded warm-up Tinker activations only until its first
+measured revision, then clears instrumentation and starts the timed trace. This
+handles startup timing without accepting a missing sample, and the warm-up is
+outside the timed trace.
+
 The acceptance command runs five 30-second trials at desktop 1440x900 and
 mobile 390x844 with 4x CPU throttling. It records presentation long tasks,
+snapshot-selection-through-React-commit P95 (8 ms desktop, 16 ms mobile),
 pointer activation to visible Tinker pressed-state feedback, Event Timing
 interactions for synthetic INP, layout-shift session windows for CLS and LCP.
-The report applies the fixed P75 trial aggregation and P95 feedback budgets from
-`product-ui-foundation.md`.
+The report applies the fixed P75 trial aggregation and P95 budgets from
+`product-ui-foundation.md`. The commit interval excludes browser paint,
+command/coordinator time and input scheduling.
 
 For harness debugging only, smoke duration and trial count are configurable:
 
@@ -38,6 +58,10 @@ npx tsx scripts/performance/runInteractionReport.ts --smoke --duration-ms=5000 -
 
 A smoke report is always marked `acceptanceEligible: false`, even when its
 observed budgets pass.
+
+An acceptance-mode command exits nonzero if CLI overrides make it ineligible,
+even when every observed metric is within budget. Only explicit `--smoke`
+permits a successful diagnostic report which is not acceptance evidence.
 
 ## Explicit-GC retained-heap soak
 

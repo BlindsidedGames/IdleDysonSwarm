@@ -6,6 +6,7 @@ import {
   cumulativeLayoutShift,
   interactionToNextPaint,
   percentile,
+  performanceReportExitCode,
   type PerformanceEnvironment,
 } from './performanceReport'
 
@@ -66,6 +67,12 @@ describe('performance report schema and gates', () => {
               trial: 1,
               longTaskDurationsMilliseconds: [20, 49],
               commandFeedbackLatenciesMilliseconds: [10, 20],
+              snapshotSelectionThroughReactCommit: [
+                {
+                  revision: { session: 1, state: 2 },
+                  durationMilliseconds: 4,
+                },
+              ],
               interactionToNextPaintMilliseconds: 40,
               cumulativeLayoutShift: 0.01,
               largestContentfulPaintMilliseconds: 800,
@@ -80,6 +87,143 @@ describe('performance report schema and gates', () => {
       report.profiles[0]?.summaries.maximumLongTaskMilliseconds,
     ).toBe(49)
     expect(() => assertPerformanceReport(report)).not.toThrow()
+    expect(performanceReportExitCode(report)).toBe(0)
+  })
+
+  test('requires commit samples and applies distinct desktop and mobile limits', () => {
+    const trial = {
+      trial: 1,
+      longTaskDurationsMilliseconds: [],
+      commandFeedbackLatenciesMilliseconds: [1],
+      interactionToNextPaintMilliseconds: 16,
+      cumulativeLayoutShift: 0,
+      largestContentfulPaintMilliseconds: 100,
+    }
+    const report = createInteractionReport({
+      mode: 'smoke',
+      createdAtUtc: '2026-01-01T00:00:00.000Z',
+      environment,
+      traceDurationMilliseconds: 3_000,
+      profiles: [
+        {
+          id: 'desktop',
+          viewport: {
+            width: 1_440,
+            height: 900,
+            deviceScaleFactor: 1,
+          },
+          cpuThrottleRate: 1,
+          trials: [
+            {
+              ...trial,
+              snapshotSelectionThroughReactCommit: [
+                {
+                  revision: { session: 1, state: 2 },
+                  durationMilliseconds: 12,
+                },
+              ],
+            },
+          ],
+        },
+        {
+          id: 'mobile',
+          viewport: {
+            width: 390,
+            height: 844,
+            deviceScaleFactor: 2,
+          },
+          cpuThrottleRate: 4,
+          trials: [
+            {
+              ...trial,
+              snapshotSelectionThroughReactCommit: [
+                {
+                  revision: { session: 1, state: 2 },
+                  durationMilliseconds: 12,
+                },
+              ],
+            },
+          ],
+        },
+        {
+          id: 'missing',
+          viewport: {
+            width: 1_440,
+            height: 900,
+            deviceScaleFactor: 1,
+          },
+          cpuThrottleRate: 1,
+          trials: [
+            {
+              ...trial,
+              snapshotSelectionThroughReactCommit: [],
+            },
+          ],
+        },
+      ],
+    })
+    const desktop = report.profiles[0]
+    const mobile = report.profiles[1]
+    const missing = report.profiles[2]
+    expect(
+      desktop?.budgets.find((budget) =>
+        budget.name.startsWith('P95 snapshot'),
+      ),
+    ).toMatchObject({ limit: 8, passed: false })
+    expect(
+      mobile?.budgets.find((budget) =>
+        budget.name.startsWith('P95 snapshot'),
+      ),
+    ).toMatchObject({ limit: 16, passed: true })
+    expect(
+      missing?.budgets.find((budget) =>
+        budget.name.endsWith('commit samples'),
+      ),
+    ).toMatchObject({ actual: 0, passed: false })
+    expect(report.passed).toBe(false)
+
+    const partiallyMissing = createInteractionReport({
+      mode: 'smoke',
+      createdAtUtc: '2026-01-01T00:00:00.000Z',
+      environment,
+      traceDurationMilliseconds: 3_000,
+      profiles: [
+        {
+          id: 'partial',
+          viewport: {
+            width: 1_440,
+            height: 900,
+            deviceScaleFactor: 1,
+          },
+          cpuThrottleRate: 1,
+          trials: [
+            {
+              ...trial,
+              snapshotSelectionThroughReactCommit: [
+                {
+                  revision: { session: 1, state: 2 },
+                  durationMilliseconds: 2,
+                },
+                {
+                  revision: { session: 1, state: 3 },
+                  durationMilliseconds: 2,
+                },
+              ],
+            },
+            {
+              ...trial,
+              trial: 2,
+              snapshotSelectionThroughReactCommit: [],
+            },
+          ],
+        },
+      ],
+    })
+    expect(
+      partiallyMissing.profiles[0]?.budgets.find((budget) =>
+        budget.name.endsWith('commit samples'),
+      ),
+    ).toMatchObject({ actual: 1, limit: 2, passed: false })
   })
 
   test('applies the larger of ten MiB and twenty percent to retained heap', () => {
@@ -105,6 +249,31 @@ describe('performance report schema and gates', () => {
     expect(report.acceptanceEligible).toBe(true)
     expect(report.passed).toBe(true)
     expect(() => assertPerformanceReport(report)).not.toThrow()
+    expect(performanceReportExitCode(report)).toBe(0)
+  })
+
+  test('fails ineligible acceptance commands but permits explicit smoke diagnostics', () => {
+    const acceptance = createSoakReport({
+      mode: 'acceptance',
+      createdAtUtc: '2026-01-01T00:00:00.000Z',
+      environment,
+      durationMilliseconds: 10_000,
+      warmupMilliseconds: 1_000,
+      explicitGarbageCollections: 4,
+      baseline: {
+        heapUsedBytes: 1,
+        resources: counts(1),
+      },
+      final: {
+        heapUsedBytes: 1,
+        resources: counts(1),
+      },
+    })
+    const smoke = { ...acceptance, mode: 'smoke' as const }
+    expect(acceptance.passed).toBe(true)
+    expect(acceptance.acceptanceEligible).toBe(false)
+    expect(performanceReportExitCode(acceptance)).toBe(1)
+    expect(performanceReportExitCode(smoke)).toBe(0)
   })
 
   test('rejects incomplete report envelopes', () => {

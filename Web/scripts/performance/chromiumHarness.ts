@@ -10,6 +10,10 @@ import {
   spawn,
   type ChildProcess,
 } from 'node:child_process'
+import {
+  FIRST_SLICE_COMMIT_PROBE_MARKER,
+  type FirstSliceCommitProbeSample,
+} from '../../src/ui/performance/firstSliceCommitProbe'
 
 export interface ViewportProfile {
   readonly id: string
@@ -32,6 +36,8 @@ export interface BrowserPerformanceEntries {
     readonly duration: number
   }[]
   readonly commandFeedbackLatenciesMilliseconds: readonly number[]
+  readonly snapshotSelectionThroughReactCommit:
+    readonly FirstSliceCommitProbeSample[]
   readonly events: readonly {
     readonly interactionId: number
     readonly duration: number
@@ -63,6 +69,9 @@ export interface ChromiumPage {
   evaluate<T>(expression: string): Promise<T>
   waitForSelector(selector: string, timeoutMilliseconds?: number): Promise<void>
   clickTinker(): Promise<boolean>
+  warmFirstSliceCommitProbe(
+    timeoutMilliseconds?: number,
+  ): Promise<number>
   resetInteractionMeasurements(): Promise<void>
   readPerformanceEntries(): Promise<BrowserPerformanceEntries>
   readInstrumentedResourceCounts(): Promise<InstrumentedResourceCounts>
@@ -170,6 +179,12 @@ export async function startProductionPreview(
   webRoot: string,
   port: number,
 ): Promise<ProductionPreview> {
+  const url = `http://127.0.0.1:${port}/`
+  if (await isReachable(url)) {
+    throw new Error(
+      `Production preview port ${port} is already serving another process.`,
+    )
+  }
   const viteBin = resolve(
     webRoot,
     'node_modules',
@@ -197,7 +212,6 @@ export async function startProductionPreview(
   const output: string[] = []
   child.stdout?.on('data', (chunk) => output.push(String(chunk)))
   child.stderr?.on('data', (chunk) => output.push(String(chunk)))
-  const url = `http://127.0.0.1:${port}/`
   try {
     await waitUntil(async () => {
       if (child.exitCode !== null) {
@@ -205,11 +219,7 @@ export async function startProductionPreview(
           `Production preview exited early.\n${output.join('')}`,
         )
       }
-      try {
-        return (await fetch(url)).ok
-      } catch {
-        return false
-      }
+      return isReachable(url)
     }, 15_000)
   } catch (error) {
     stopChild(child)
@@ -437,6 +447,25 @@ function createPage(options: {
       })
       return true
     },
+    async warmFirstSliceCommitProbe(
+      timeoutMilliseconds = 10_000,
+    ) {
+      const startedAt = Date.now()
+      let activations = 0
+      while (Date.now() - startedAt < timeoutMilliseconds) {
+        if (await this.clickTinker()) activations += 1
+        await delay(550)
+        const entries = await this.readPerformanceEntries()
+        if (
+          entries.snapshotSelectionThroughReactCommit.length > 0
+        ) {
+          return activations
+        }
+      }
+      throw new Error(
+        `Timed out after ${timeoutMilliseconds} ms warming the first-slice commit probe.`,
+      )
+    },
     async resetInteractionMeasurements() {
       await evaluate(
         'window.__idleDysonPerformance.resetInteraction()',
@@ -616,6 +645,17 @@ async function waitForExit(child: ChildProcess): Promise<void> {
   ])
 }
 
+async function isReachable(url: string): Promise<boolean> {
+  try {
+    await fetch(url, {
+      signal: AbortSignal.timeout(1_000),
+    })
+    return true
+  } catch {
+    return false
+  }
+}
+
 async function fetchJson<T>(url: string): Promise<T> {
   const response = await fetch(url)
   if (!response.ok) {
@@ -649,6 +689,7 @@ const PERFORMANCE_INSTRUMENTATION = String.raw`
 (() => {
   const longTasks = []
   const commandFeedback = []
+  const snapshotSelectionThroughReactCommit = []
   const events = []
   const layoutShifts = []
   let largestContentfulPaint = 0
@@ -796,10 +837,33 @@ const PERFORMANCE_INSTRUMENTATION = String.raw`
   }
   installMutationObserver()
 
+  window[${JSON.stringify(FIRST_SLICE_COMMIT_PROBE_MARKER)}] =
+    Object.freeze({
+      record(sample) {
+        if (
+          !sample ||
+          !Number.isFinite(sample.durationMilliseconds) ||
+          sample.durationMilliseconds < 0 ||
+          !Number.isInteger(sample.revision?.session) ||
+          !Number.isInteger(sample.revision?.state)
+        ) {
+          return
+        }
+        snapshotSelectionThroughReactCommit.push({
+          revision: {
+            session: sample.revision.session,
+            state: sample.revision.state,
+          },
+          durationMilliseconds: sample.durationMilliseconds,
+        })
+      },
+    })
+
   window.__idleDysonPerformance = Object.freeze({
     resetInteraction() {
       longTasks.length = 0
       commandFeedback.length = 0
+      snapshotSelectionThroughReactCommit.length = 0
       events.length = 0
       activeTinkerStart = null
     },
@@ -807,6 +871,11 @@ const PERFORMANCE_INSTRUMENTATION = String.raw`
       return {
         longTasks: [...longTasks],
         commandFeedbackLatenciesMilliseconds: [...commandFeedback],
+        snapshotSelectionThroughReactCommit:
+          snapshotSelectionThroughReactCommit.map((sample) => ({
+            revision: { ...sample.revision },
+            durationMilliseconds: sample.durationMilliseconds,
+          })),
         events: [...events],
         layoutShifts: [...layoutShifts],
         largestContentfulPaintMilliseconds: largestContentfulPaint,

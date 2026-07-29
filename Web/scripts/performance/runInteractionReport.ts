@@ -10,6 +10,7 @@ import {
   cumulativeLayoutShift,
   interactionToNextPaint,
   performanceReportText,
+  performanceReportExitCode,
   type InteractionTrialMeasurement,
   type PerformanceEnvironment,
   type PerformanceRunMode,
@@ -67,6 +68,13 @@ try {
       try {
         environment ??= page.environment
         await page.navigate(preview.url)
+        const warmupActivations =
+          await page.warmFirstSliceCommitProbe()
+        if (warmupActivations === 0) {
+          throw new Error(
+            `Profile ${profile.id} trial ${trial} could not warm the commit probe.`,
+          )
+        }
         await page.resetInteractionMeasurements()
         const activations = await interactFor(
           page,
@@ -85,6 +93,8 @@ try {
           ),
           commandFeedbackLatenciesMilliseconds:
             entries.commandFeedbackLatenciesMilliseconds,
+          snapshotSelectionThroughReactCommit:
+            entries.snapshotSelectionThroughReactCommit,
           interactionToNextPaintMilliseconds:
             interactionToNextPaint(entries.events),
           cumulativeLayoutShift: cumulativeLayoutShift(
@@ -126,7 +136,7 @@ try {
   console.log(performanceReportText(report))
   console.log(`JSON: ${paths.jsonPath}`)
   console.log(`Text: ${paths.textPath}`)
-  if (!report.passed) process.exitCode = 1
+  process.exitCode = performanceReportExitCode(report)
 } finally {
   await preview.stop()
 }

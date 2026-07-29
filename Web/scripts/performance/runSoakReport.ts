@@ -9,6 +9,7 @@ import {
 } from './chromiumHarness'
 import {
   createSoakReport,
+  performanceReportExitCode,
   performanceReportText,
   type ResourceCounts,
   type SoakSnapshot,
@@ -74,7 +75,7 @@ try {
   console.log(performanceReportText(report))
   console.log(`JSON: ${paths.jsonPath}`)
   console.log(`Text: ${paths.textPath}`)
-  if (!report.passed) process.exitCode = 1
+  process.exitCode = performanceReportExitCode(report)
 } finally {
   await page?.close()
   await preview.stop()
