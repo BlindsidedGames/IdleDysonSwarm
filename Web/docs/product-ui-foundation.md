@@ -363,12 +363,16 @@ only through semantic aliases:
 | Primary text | `#F7F4F8` |
 | Secondary text | `#B0B0B0` |
 
+Typography decision: approved 2026-07-29.
+
 Lexend is the Latin-script brand face, not a universal-font assumption. The
 Google Fonts Lexend family is OFL-licensed and covers Latin, Latin Extended and
-Vietnamese. Use its variable font for supported Latin locales. Select
-script-appropriate Noto Sans families for Cyrillic/Greek, Arabic, Hebrew, Indic,
-CJK and other locales. Noto's coordinated families preserve a related sans
-voice while providing correct script shaping.
+Vietnamese. Use its variable font for supported Latin locales. Use Noto Sans JP
+for Japanese (`ja`), Noto Sans SC for Simplified Chinese (`zh-Hans`) and Noto
+Sans TC for Traditional Chinese (`zh-Hant`). Select the appropriate Noto family
+when onboarding Cyrillic/Greek, Arabic, Hebrew, Indic and other scripts. Noto's
+coordinated families preserve a related sans voice while providing correct
+script shaping.
 
 Self-host production fonts for reliable offline Electron, Capacitor and PWA
 operation. Subset by script, lazy-load only the active locale's additional
@@ -588,9 +592,10 @@ Approval should explicitly confirm or amend:
   checkpoint/reload continuity.
 - [ ] Extracted ICU MessageFormat catalogs, pseudo-localization and LTR/RTL
   architecture are foundation requirements.
-- [ ] Lexend for supported Latin locales plus lazy script-specific Noto Sans
-  families, with the Unity-derived dark-plum visual direction and reference
-  tokens above.
+- [x] Lexend for supported Latin locales, Noto Sans JP/SC/TC for Japanese and
+  Chinese locales, and lazy script-specific Noto Sans families for other
+  locales, with the Unity-derived dark-plum visual direction and reference
+  tokens above. Approved 2026-07-29.
 - [ ] WCAG 2.2 AA, responsive, performance and testing budgets above.
 - [ ] All player commands, active time and platform phases route through
   `CanonicalLifecycleCoordinator`; no gameplay-rule duplication in UI.
