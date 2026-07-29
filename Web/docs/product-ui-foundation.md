@@ -383,9 +383,12 @@ The application shell owns one active-time driver:
 - Local support diagnostics may include build, host, locale, lifecycle phase,
   diagnostic code and revisions. They exclude save payloads, imported/player
   text, filesystem paths, clipboard contents and platform credentials.
-- Remote analytics, crash reporting or performance telemetry is not enabled
-  until retention, consent and privacy behavior receive a separate product
-  decision. Performance budgets still run in local and CI acceptance traces.
+- Production analytics, remote crash reporting and real-user performance
+  monitoring are outside this foundation's scope. The first slice does not add
+  a provider SDK, telemetry consent flow or release gate that depends on player
+  data. Revisit those capabilities through a separate product, privacy and
+  retention decision. Performance budgets still run in deterministic local and
+  CI acceptance traces plus the representative physical-device checks below.
 
 ## Interaction standard
 
@@ -611,8 +614,10 @@ release.
 - P95 snapshot selection plus React commit: 8 ms desktop, 16 ms mobile.
 - P95 visible command feedback: 100 ms after activation, even when canonical
   completion remains pending.
-- Web Vitals release target: INP at most 200 ms, CLS at most 0.1 and LCP at most
-  2.5 seconds at the 75th percentile for applicable browser telemetry.
+- Web Vitals acceptance target: INP at most 200 ms, CLS at most 0.1 and LCP at
+  most 2.5 seconds at the 75th percentile across the fixed local/CI trial set
+  for each representative viewport and device tier. This is a synthetic
+  regression gate, not a requirement to collect real-user measurements.
 - In a repeatable Chromium test build with explicit garbage collection, retained
   JavaScript heap after the 30-minute first-slice foreground soak is no more
   than 10 MiB or 20 percent above the post-warm-up baseline, whichever allowance
@@ -766,7 +771,7 @@ Approval should explicitly confirm or amend:
   tokens above. Approved 2026-07-29.
 - [ ] WCAG 2.2 AA, responsive, performance and testing budgets above.
 - [ ] Error containment, the measured 2 MiB/1 MiB/8 MiB import ceilings,
-  CSP/native-shell isolation, diagnostic redaction and the no-remote-telemetry
-  default above.
+  CSP/native-shell isolation, diagnostic redaction and no production analytics,
+  remote crash reporting or real-user monitoring in this foundation.
 - [ ] All player commands, active time and platform phases route through
   `CanonicalLifecycleCoordinator`; no gameplay-rule duplication in UI.
