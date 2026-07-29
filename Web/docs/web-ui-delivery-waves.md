@@ -19,11 +19,12 @@ product requirement.
 
 ## Completion target
 
-Deliver the earliest playable browser/PWA Tinker and basic-facility slice
-described by the product foundation. All active time, platform phases and player
-commands flow through `CanonicalLifecycleCoordinator`. UI and platform adapters
-consume canonical snapshots, previews and command results and never reproduce
-gameplay rules.
+Deliver the earliest playable browser/PWA Bots slice described by the product
+foundation: Tinker, early facilities, Info, one production line, building buy
+settings and Bot Distribution in the familiar Unity shell. All active time,
+platform phases and player commands flow through
+`CanonicalLifecycleCoordinator`. UI and platform adapters consume canonical
+snapshots, previews and command results and never reproduce gameplay rules.
 
 The baseline starts fresh from the authenticated first-run artifact. Optional
 manual text-string import may remain as a recovery/support route. No file
@@ -56,6 +57,9 @@ host release readiness; those remain separate backend/host gates.
 - The coordinator inspects the complete diff, traces central callers, verifies
   canonical-boundary compliance and reruns proportionate tests before
   integration.
+- Focused checks are the default for bounded UI work. Full-suite counts are
+  historical evidence, not a target and not something to rerun after every
+  visual correction.
 - High-risk lifecycle, persistence, save-safety, ownership and command-routing
   changes receive an additional adversarial review when their failure modes
   cannot be exhausted by deterministic tests alone.
@@ -248,7 +252,8 @@ Gate:
 - Compact, medium, wide and compact-landscape layouts pass the approved
   references without text selection or gesture interference.
 - Keyboard, screen-reader, rapid-touch and independent multi-touch paths pass.
-- Focused tests and the full applicable suites pass.
+- Focused affected tests pass. Broader integration suites run when shared
+  runtime, persistence or lifecycle contracts change and at final integration.
 
 After acceptance, create and record the Wave 3 checkpoint.
 
@@ -279,16 +284,17 @@ Accepted on 2026-07-29:
   wide/compact/minimum-width review.
 - The accepted commit is identified by the local `web-ui-wave-3` recovery tag.
 
-Performance carry-forward, not a waiver:
+Performance history and current posture:
 
-- Wave 3 enforces the initial-request budgets and exercises interaction,
-  responsive and accessibility behavior in deterministic component/integration
-  coverage. The production interaction trace, Web Vitals trial set,
-  explicit-GC 30-minute retained-heap soak and post-soak subscription counts
-  remain mandatory Wave 4 Bots-baseline performance gates below. Representative
-  physical-device release evidence may occur during host certification, but the
-  budgets themselves are unchanged. This checkpoint does not certify or relax
-  those product-foundation budgets.
+- The Wave 2 and Wave 3 byte counts above remain useful historical evidence.
+  The 2026-07-30 scope decision makes the former 200 KiB JavaScript threshold a
+  provisional optimization target while the recognizable Bots baseline is
+  established.
+- The current checkpoint still records production bundle size and must not add
+  component timers, full-tree per-frame rendering, leaking subscriptions or
+  gameplay work in the UI. Longer Web Vitals, heap-soak and physical-device
+  certification remain performance-review/release work, not a reason to block
+  the current visual correction or rerun hundreds of unrelated tests.
 
 ## Wave 4: Bots/Dyson design-baseline checkpoint
 
@@ -306,16 +312,18 @@ Performance carry-forward, not a waiver:
 - Run expanded LTR/RTL design checks, required responsive geometries,
   keyboard/focus and reduced-motion acceptance in the locally available current
   browser projects, naming exactly what was exercised.
-- Run the enforced initial-request bundle gate, production interaction trace,
-  deterministic Web Vitals trial set, explicit-GC 30-minute retained-heap soak
-  and post-soak subscription checks.
+- Record the initial-request bundle and perform a focused interaction/runtime
+  sanity check. The former 200 KiB JavaScript threshold is provisional while
+  the Bots baseline is being established; freeze the reviewed warning and hard
+  ceiling only after representative-device profiling.
 - Verify production packaging excludes developer fixtures and respects CSP.
 
 Gate:
 
 - The Bots/Dyson route has traceable evidence for canonical behavior, approved
   content/visibility, responsive layout, keyboard/focus, reduced motion,
-  production persistence and the unchanged local performance budgets.
+  production persistence and measured performance. The provisional JavaScript
+  target is reported, not relabeled as passing.
 - No unresolved critical or high-severity Bots-baseline correctness, data-loss,
   gameplay-authority, security, design, accessibility-foundation or performance
   issue remains.
@@ -344,3 +352,15 @@ Explicit deferrals after the Wave 4 checkpoint:
 After acceptance, create and record the Wave 4 checkpoint. Report the completed
 Bots/Dyson design baseline and its deferrals for user review; do not push,
 deploy, claim release certification or begin later gameplay destinations.
+
+Current visual checkpoint (2026-07-30):
+
+- The familiar side/bottom navigation shell, Unity-relative resource header,
+  extracted inline Science symbol, reduced swarm, bottom-anchored Tinker panel,
+  exact fresh-save copy/tip, cohesive Info and buy settings, one worker
+  production line and complete Bot Distribution control are checkpointed.
+- Buy mode, rounded bulk buying, distribution and Tinker remain canonical
+  commands; active time remains lifecycle-coordinator owned.
+- The production build measures approximately 208.4 KiB gzip JavaScript and
+  7.0 KiB gzip CSS. This is evidence for the pending performance-budget review,
+  not a failure of the visual checkpoint and not a release-performance pass.

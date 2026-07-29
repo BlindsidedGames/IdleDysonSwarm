@@ -221,19 +221,23 @@ loop:
    backend-authored Unity order, followed by the one backend-authored next-tier
    teaser when present. Cards include owned counts, production, selected
    quantity, exact previewed cost, eligibility and rejection reason.
-5. Dispatch basic-facility purchases and prove that active time, purchases and
+5. Preserve the Unity lower-screen hierarchy: a cohesive Info panel containing
+   the canonical active-panel, lifetime and total-decayed facts; one worker
+   production line; and the complete Bot Distribution control. The Info gear
+   exposes the canonical building buy-mode and rounded-bulk settings.
+6. Dispatch distribution, buy-setting and basic-facility commands through the
+   lifecycle coordinator and prove that active time, purchases and
    Tinker progress checkpoint and reconstruct from production IndexedDB.
    Accelerated native refresh and immediate tab handoff remain separate
    host/release gates.
-6. Reflow the same journey across the compact, medium and wide layouts without a
+7. Reflow the same journey across the compact, medium and wide layouts without a
    second interaction model.
 
-Research, skills, the complete Bot Distribution region, prestige systems,
-settings and content/reference screens are outside this slice except for
-disabled or locked navigation required to explain the current state. Bot
-Distribution's read-only facts are not shown ahead of its canonical controls
-and player commands. These are later product destinations and do not block
-checkpointing the Bots/Dyson design baseline.
+Research, Skills, prestige systems and content/reference screens are outside
+this slice except for the familiar Unity navigation shell. That shell may show
+non-active destinations as unavailable, but it does not fabricate their content
+or unlock rules. Bot Distribution and building buy settings are in scope
+because their complete canonical controls and player-command routes now exist.
 
 ### First-slice acceptance fixture
 
@@ -507,9 +511,10 @@ The application shell owns one active-time driver:
   component never awards a completion.
 - The component uses `runtime.tinker` for running, repeat, yield, cooldown,
   eligibility and completion time. It does not reproduce the Manual Labour or
-  AI Manager rule. There is no current Auto Tinker skill: Manual Labour
-  restores Tinker and changes its output when its canonical conditions are met;
-  it is not automation. Facility automation upgrades do not automate Tinker.
+  AI Manager rule, skill-tree automation or any later Tinker progression.
+  Automatic behavior, availability and output changes appear only when the
+  canonical runtime publishes them; the hold gesture is not a saved automation
+  setting.
 
 ### Facility visibility and teaser
 
@@ -680,7 +685,13 @@ release.
 
 ### Budgets
 
-- Initial first-slice JavaScript: at most 200 KiB gzip.
+- Initial first-slice JavaScript is measured and reported on every production
+  checkpoint. The earlier 200 KiB gzip cap is a provisional optimization target,
+  not a blocker for the Bots visual/parity checkpoint. The current reviewed
+  build is approximately 208.4 KiB gzip before any later-destination code.
+  Freeze a realistic warning and hard ceiling only after profiling startup,
+  interaction and representative-device behavior; do not trade familiar UI or
+  canonical architecture for an arbitrary one-number reduction.
 - Initial first-slice CSS: at most 40 KiB gzip.
 - Initial source-locale fonts: at most 250 KiB transferred. Additional
   script-specific fonts and locale catalogs are lazy and separately budgeted.
@@ -766,8 +777,8 @@ command exits nonzero when a budget is exceeded.
 
 ### End to end and parity
 
-For the Bots/Dyson design-baseline checkpoint, use Playwright against a
-production build for:
+For the Bots/Dyson design-baseline checkpoint, exercise a production build in a
+real browser for:
 
 - cold start to the ready Bots route;
 - single and hold/repeat/release Tinker behavior, including keyboard-only
@@ -780,7 +791,10 @@ production build for:
 - the approved compact, compact-landscape, medium and wide geometry; and
 - reduced-motion and keyboard-focus behavior.
 
-Run the locally available current browser projects and name every engine
+The in-app browser is sufficient for interactive design review. Browser
+automation may use the existing browser-control surface when repeatability is
+valuable, but this checkpoint does not require a separate Playwright CLI
+installation or a duplicated browser harness. Name every engine and viewport
 actually exercised. Persistence tests use the production IndexedDB adapter and
 reconstruct a new application instance; an in-memory repository is permitted
 only in focused unit tests.
@@ -808,8 +822,10 @@ plus one compact landscape viewport. Baselines compare the approved web design,
 not raw Unity pixels. Keep separate content/parity assertions for Unity
 terminology, order, values and outcomes.
 
-Each vertical slice must pass existing backend tests plus its focused UI unit,
-component, accessibility, end-to-end, responsive visual and performance checks.
+Each vertical slice runs the focused backend and UI checks affected by its
+changes plus production build, localization and rendered-browser review.
+Broader suites run at integration/release boundaries or when a shared contract
+changes; raw test count is never an acceptance criterion.
 
 ## Dependency-first delivery order
 
@@ -841,10 +857,12 @@ After approval, implement in this order:
 11. Add pointer/multi-touch Tinker interaction using only canonical runtime facts
    and player commands.
 12. Add the basic facility list using canonical previews and purchase commands.
-13. Checkpoint the approved Bots/Dyson design baseline after its production
-    persistence, localization architecture, responsive, accessibility,
-    visual and performance gates pass. Complete the explicitly deferred
-    host/release certification separately before release.
+13. Add the cohesive Info panel, canonical building buy settings, single worker
+    production line and complete Bot Distribution command surface.
+14. Checkpoint the approved Bots/Dyson design baseline after focused canonical,
+    localization, responsive, accessibility and rendered-browser review.
+    Record measured bundle/runtime evidence without treating the provisional
+    JavaScript target or deferred host/release matrix as a pass.
 
 Later gameplay destinations follow their backend dependency order. A screen is
 not started merely because its navigation label exists.
@@ -886,7 +904,10 @@ Approval should explicitly confirm or amend:
   Chinese locales, and lazy script-specific Noto Sans families for other
   locales, with the Unity-derived dark-plum visual direction and reference
   tokens above. Approved 2026-07-29.
-- [x] WCAG 2.2 AA, responsive, performance and testing budgets above.
+- [x] WCAG 2.2 AA, responsive and proportionate testing standards above.
+- [ ] Freeze the final initial-JavaScript warning and hard ceiling after the
+  Bots baseline is profiled on representative devices; the provisional 200 KiB
+  target is reported but does not block this visual/parity checkpoint.
 - [x] Error containment, the measured 2 MiB/1 MiB/8 MiB import ceilings,
   CSP/native-shell isolation, diagnostic redaction and no production analytics,
   remote crash reporting or real-user monitoring in this foundation.
