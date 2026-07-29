@@ -12,6 +12,9 @@ import userEvent from '@testing-library/user-event'
 import { IntlProvider } from 'react-intl'
 import { afterEach, describe, expect, test, vi } from 'vitest'
 import App from './App'
+import {
+  createProductionBrowserComposition,
+} from './browser/productionBrowserComposition'
 import enCatalog from './ui/i18n/catalogs/compiled/en.json'
 import type {
   BrowserUiRuntimeFoundation,
@@ -187,6 +190,59 @@ describe('application startup host', () => {
     )
   })
 
+  test.each([
+    {
+      name: 'writer-blocked Check again',
+      status: {
+        phase: 'blocked',
+        code: 'writer-owned',
+        reason: 'private',
+      },
+      buttonName: 'Check again',
+    },
+    {
+      name: 'application-blocked Retry',
+      status: {
+        phase: 'blocked',
+        code: 'application-blocked',
+        applicationOutcome: 'storage-failed',
+        reason: 'private',
+      },
+      buttonName: 'Try startup again',
+    },
+    {
+      name: 'ownership-lost Check again',
+      status: {
+        phase: 'ownership-lost',
+        reason: 'private',
+      },
+      buttonName: 'Check again',
+    },
+  ] as const)(
+    'keeps the production $name recovery action functional',
+    async ({ status, buttonName }) => {
+      const runtime = new TestRuntime(status)
+      const reloadPage = vi.fn()
+      const composition = createProductionBrowserComposition({
+        createRuntime: () => runtime.runtime,
+        reloadPage,
+      })
+      const user = userEvent.setup()
+      renderApp(runtime.runtime, {
+        confirmOverwrite: () => true,
+        sampleUtc: () => '2026-07-29T00:00:00.000Z',
+        reloadSafely: composition.reloadSafely,
+      })
+
+      await user.click(
+        screen.getByRole('button', { name: buttonName }),
+      )
+      await waitFor(() => expect(reloadPage).toHaveBeenCalledOnce())
+      expect(runtime.checkpointCalls).toBe(0)
+      expect(runtime.shutdownCalls).toBe(1)
+    },
+  )
+
   test('maps rejected import and reload promises to redacted localized feedback', async () => {
     const runtime = new TestRuntime({
       phase: 'blocked',
@@ -322,6 +378,8 @@ class TestRuntime {
   importGate: Promise<void> | undefined
   rejectImport = false
   rejectExport = false
+  checkpointCalls = 0
+  shutdownCalls = 0
   snapshotReads = 0
   snapshotSubscriptions = 0
   snapshotValue: FrontendApplicationSnapshot = {
@@ -363,6 +421,13 @@ class TestRuntime {
         throw new Error('private exception')
       }
       return true
+    },
+    checkpointBeforeSafeReload: async () => {
+      this.checkpointCalls += 1
+      return true
+    },
+    shutdown: async () => {
+      this.shutdownCalls += 1
     },
   } as unknown as BrowserUiRuntimeFoundation
 }

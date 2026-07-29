@@ -92,13 +92,26 @@ export function createProductionBrowserComposition(
     sampleUtc: () =>
       lifecycleClock.sample().serializedUtcText,
     reloadSafely: async () => {
-      const checkpointed =
-        await runtime.checkpointBeforeSafeReload()
-      if (!checkpointed) {
+      const status = runtime.status()
+      if (status.phase === 'ready') {
+        const checkpointed =
+          await runtime.checkpointBeforeSafeReload()
+        if (!checkpointed) {
+          throw new Error(
+            'Safe reload requires a verified checkpoint.',
+          )
+        }
+      } else if (
+        status.phase !== 'blocked' &&
+        status.phase !== 'ownership-lost'
+      ) {
         throw new Error(
-          'Safe reload requires a verified checkpoint.',
+          `Safe reload is unavailable while the runtime is ${status.phase}.`,
         )
       }
+      // There is intentionally no await between a non-ready status sample and
+      // shutdown. The production runtime closes new startup, lifecycle, and
+      // command admission synchronously when shutdown() is invoked.
       await runtime.shutdown()
       reloadPage()
     },

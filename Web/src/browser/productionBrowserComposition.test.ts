@@ -80,6 +80,7 @@ describe('production browser composition', () => {
   test('reloads only after a verified checkpoint and orderly shutdown', async () => {
     const events: string[] = []
     const runtime = reloadRuntime({
+      status: readyStatus(),
       checkpoint: async () => {
         events.push('checkpoint')
         return true
@@ -101,6 +102,7 @@ describe('production browser composition', () => {
   test('keeps the current session alive when the safe-reload checkpoint is not verified', async () => {
     const events: string[] = []
     const runtime = reloadRuntime({
+      status: readyStatus(),
       checkpoint: async () => {
         events.push('checkpoint')
         return false
@@ -124,6 +126,7 @@ describe('production browser composition', () => {
   test('propagates a handled checkpoint failure without shutdown or reload', async () => {
     const events: string[] = []
     const runtime = reloadRuntime({
+      status: readyStatus(),
       checkpoint: async () => {
         events.push('checkpoint')
         throw new Error('private checkpoint failure')
@@ -142,6 +145,92 @@ describe('production browser composition', () => {
       'private checkpoint failure',
     )
     expect(events).toEqual(['checkpoint'])
+  })
+
+  test.each([
+    {
+      name: 'writer-blocked',
+      status: {
+        phase: 'blocked',
+        code: 'writer-owned',
+        reason: 'another owner',
+      },
+    },
+    {
+      name: 'application-blocked',
+      status: {
+        phase: 'blocked',
+        code: 'application-blocked',
+        reason: 'startup unavailable',
+      },
+    },
+    {
+      name: 'ownership-lost',
+      status: {
+        phase: 'ownership-lost',
+        reason: 'lease replaced',
+      },
+    },
+  ] as const)(
+    'allows $name recovery reload without inventing a checkpoint',
+    async ({ status }) => {
+      const events: string[] = []
+      const runtime = reloadRuntime({
+        status,
+        checkpoint: async () => {
+          events.push('checkpoint')
+          return false
+        },
+        shutdown: async () => {
+          events.push('shutdown')
+        },
+      })
+      const composition = createProductionBrowserComposition({
+        entitlementDocument: entitlementDocument('false'),
+        createRuntime: () => runtime,
+        reloadPage: () => events.push('reload'),
+      })
+
+      await expect(composition.reloadSafely()).resolves.toBeUndefined()
+      expect(events).toEqual(['shutdown', 'reload'])
+    },
+  )
+
+  test('begins non-ready shutdown before a queued ready transition can race the bypass', async () => {
+    const events: string[] = []
+    let status: ReturnType<BrowserUiRuntimeFoundation['status']> = {
+      phase: 'blocked',
+      code: 'writer-owned',
+      reason: 'another owner',
+    }
+    const runtime = Object.freeze({
+      status: () => status,
+      checkpointBeforeSafeReload: async () => {
+        events.push('checkpoint')
+        return false
+      },
+      shutdown: async () => {
+        events.push(`shutdown:${status.phase}`)
+      },
+    }) as unknown as BrowserUiRuntimeFoundation
+    const composition = createProductionBrowserComposition({
+      entitlementDocument: entitlementDocument('false'),
+      createRuntime: () => runtime,
+      reloadPage: () => events.push('reload'),
+    })
+    const queuedReady = Promise.resolve().then(() => {
+      status = readyStatus()
+      events.push('ready-transition')
+    })
+
+    await composition.reloadSafely()
+    await queuedReady
+
+    expect(events).toEqual([
+      'shutdown:blocked',
+      'ready-transition',
+      'reload',
+    ])
   })
 })
 
@@ -199,11 +288,17 @@ function entitlementDocument(content: string) {
 }
 
 function reloadRuntime(operations: {
+  readonly status: ReturnType<BrowserUiRuntimeFoundation['status']>
   readonly checkpoint: () => Promise<boolean>
   readonly shutdown: () => Promise<void>
 }): BrowserUiRuntimeFoundation {
   return Object.freeze({
+    status: () => operations.status,
     checkpointBeforeSafeReload: operations.checkpoint,
     shutdown: operations.shutdown,
   }) as unknown as BrowserUiRuntimeFoundation
+}
+
+function readyStatus(): ReturnType<BrowserUiRuntimeFoundation['status']> {
+  return Object.freeze({ phase: 'ready', warnings: [] })
 }
