@@ -12,6 +12,7 @@ import {
   within,
 } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
+import { createIntl, createIntlCache } from 'react-intl'
 import { afterEach, describe, expect, test, vi } from 'vitest'
 import type {
   FrontendApplicationSnapshot,
@@ -30,6 +31,7 @@ import { PresentationIntlProvider } from '../../i18n/PresentationIntlProvider'
 import type {
   UiRuntimePlayerCommandResult,
 } from '../../runtime'
+import { basicFacilityMessages } from '../facilities/messages'
 import { ReadyDysonSlice } from './ReadyDysonSlice'
 
 afterEach(cleanup)
@@ -210,7 +212,7 @@ describe('ReadyDysonSlice', () => {
   })
 
   test('renders the expanded LTR pseudo-locale across the full playable slice', async () => {
-    const { container } = renderSlice(
+    const { container, intlErrors } = renderSlice(
       snapshot({
         visibleBasicFacilityIds: ['assembly_lines'],
       }),
@@ -226,10 +228,11 @@ describe('ReadyDysonSlice', () => {
     expect(route.textContent?.length).toBeGreaterThan('Bots'.length)
     expect(screen.queryByText('Bot Distribution')).not.toBeInTheDocument()
     expect(screen.getByText(/\?\?\?\?/).textContent).not.toBe('????')
+    expect(intlErrors).toEqual([])
   })
 
   test('mirrors the full slice in RTL without changing canonical source order', async () => {
-    const { container } = renderSlice(
+    const { container, intlErrors } = renderSlice(
       snapshot({
         visibleBasicFacilityIds: [
           'assembly_lines',
@@ -241,6 +244,23 @@ describe('ReadyDysonSlice', () => {
     )
 
     await screen.findAllByRole('article')
+    const expectedIdentityErrors: unknown[] = []
+    const intl = createIntl(
+      {
+        locale: 'ar-XB',
+        messages: arXbCatalog,
+        onError: (error) => expectedIdentityErrors.push(error),
+      },
+      createIntlCache(),
+    )
+    const expectedAssemblyIdentity = intl.formatMessage(
+      basicFacilityMessages.assemblyLinesIdentity,
+      { total: '5', manual: '3' },
+    )
+    const expectedManagerIdentity = intl.formatMessage(
+      basicFacilityMessages.aiManagersIdentity,
+      { total: '9', manual: '5' },
+    )
     const shell = container.querySelector('.dyson-shell')
     const resources = container.querySelector('.dyson-resource-header')
     const resourceItems = Array.from(
@@ -258,8 +278,14 @@ describe('ReadyDysonSlice', () => {
     ).toEqual(['rtl', 'rtl', 'rtl'])
     expect(resourceItems).toEqual(['cash', 'total-bots', 'science'])
     expect(facilities).toHaveLength(2)
-    expect(facilities[0]).toHaveTextContent('5(3)')
-    expect(facilities[1]).toHaveTextContent('9(5)')
+    expect(facilities[0]).toHaveAccessibleName(
+      expectedAssemblyIdentity,
+    )
+    expect(facilities[1]).toHaveAccessibleName(
+      expectedManagerIdentity,
+    )
+    expect(expectedIdentityErrors).toEqual([])
+    expect(intlErrors).toEqual([])
   })
 
   test('keeps keyboard focus in visual and source order through the full slice', async () => {
@@ -320,7 +346,7 @@ describe('ReadyDysonSlice', () => {
     locale,
     visibleBasicFacilityIds,
   }) => {
-    const { container } = renderSlice(
+    const { container, intlErrors } = renderSlice(
       snapshot({ visibleBasicFacilityIds }),
       acceptedDispatch,
       locale,
@@ -340,6 +366,7 @@ describe('ReadyDysonSlice', () => {
       },
     })
     expect(results.violations).toEqual([])
+    expect(intlErrors).toEqual([])
   })
 })
 
@@ -477,7 +504,8 @@ function renderSlice(
   dispatchPlayer = acceptedDispatch,
   locale: EnabledLocale = 'en',
 ) {
-  return render(
+  const intlErrors: unknown[] = []
+  const rendered = render(
     provider(
       <ReadyDysonSlice
         snapshot={value}
@@ -485,13 +513,18 @@ function renderSlice(
         dispatchPlayer={dispatchPlayer}
       />,
       locale,
+      (error) => intlErrors.push(error),
     ),
   )
+  return { ...rendered, intlErrors }
 }
 
 function provider(
   node: React.ReactNode,
   locale: EnabledLocale = 'en',
+  onError: (error: unknown) => void = (error) => {
+    throw error
+  },
 ) {
   return (
     <PresentationIntlProvider
@@ -499,7 +532,7 @@ function provider(
       messages={
         compiledCatalogs[locale] as unknown as SharedMessageCatalog
       }
-      onError={() => undefined}
+      onError={onError}
     >
       {node}
     </PresentationIntlProvider>
