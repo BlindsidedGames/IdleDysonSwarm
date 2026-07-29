@@ -1,5 +1,5 @@
 import { getGameAsset } from '../game-data/catalog'
-import type { ExportedGameAsset } from '../game-data/types'
+import type { RuntimeGameAsset } from '../game-data/types'
 import type { CanonicalGameStateV1 } from '../game-state/types'
 
 export const MEGA_STRUCTURE_FACILITY_IDS = [
@@ -67,7 +67,7 @@ export type MegaStructureRateResult =
 export type MegaStructureAssetLookup = (
   kind: string,
   id: string,
-) => ExportedGameAsset | undefined
+) => RuntimeGameAsset | undefined
 
 type MegaStructureUnlockId =
   keyof MegaStructureCanonicalInputs['quantum']['unlocks']

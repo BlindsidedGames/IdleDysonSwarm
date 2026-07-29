@@ -1,4 +1,8 @@
-import { readFileSync } from 'node:fs'
+import {
+  existsSync,
+  readFileSync,
+  readdirSync,
+} from 'node:fs'
 import { describe, expect, test } from 'vitest'
 
 const appSource = readFileSync(
@@ -33,5 +37,14 @@ describe('production browser entry', () => {
     )
     expect(appSource).not.toMatch(/saveSchemaVersion:\s*12/)
     expect(mainSource).not.toMatch(/saveSchemaVersion:\s*12/)
+    const publicFixtures = new URL(
+      '../public/fixtures',
+      import.meta.url,
+    )
+    expect(
+      existsSync(publicFixtures)
+        ? readdirSync(publicFixtures)
+        : [],
+    ).toEqual([])
   })
 })

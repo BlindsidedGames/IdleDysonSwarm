@@ -1,5 +1,8 @@
 import { getGameAsset } from '../game-data/catalog'
-import type { AssetReference, ExportedAssetValue } from '../game-data/types'
+import type {
+  RuntimeAssetReference,
+  RuntimeAssetValue,
+} from '../game-data/types'
 import { operationFromUnity, type StatEffect } from './stat'
 
 export interface SkillEffectFacilityContext {
@@ -176,7 +179,7 @@ function matchesFacility(
 }
 
 function requireEffectData(
-  data: Readonly<Record<string, ExportedAssetValue>>,
+  data: Readonly<Record<string, RuntimeAssetValue>>,
   expectedId: string,
 ): EffectData {
   const id = requireString(data.id, `${expectedId}.id`)
@@ -215,7 +218,7 @@ function requireEffectData(
 }
 
 function optionalReferenceId(
-  value: ExportedAssetValue | undefined,
+  value: RuntimeAssetValue | undefined,
   path: string,
 ): string | null {
   if (value === null || value === undefined) return null
@@ -236,26 +239,27 @@ function optionalReferenceId(
 }
 
 function requireReferences(
-  value: ExportedAssetValue | undefined,
+  value: RuntimeAssetValue | undefined,
   path: string,
-): readonly AssetReference[] {
+): readonly RuntimeAssetReference[] {
+  // Runtime transport deliberately retains only the stable ID. Provenance
+  // metadata remains in the complete generated catalog and is not gameplay.
   if (
     !Array.isArray(value) ||
     !value.every(
       (entry) =>
         typeof entry === 'object' &&
         entry !== null &&
-        'id' in entry &&
-        ('guid' in entry || 'path' in entry),
+        'id' in entry,
     )
   ) {
     throw new Error(`Exported game data '${path}' is not a reference list.`)
   }
-  return value as unknown as readonly AssetReference[]
+  return value as unknown as readonly RuntimeAssetReference[]
 }
 
 function requireString(
-  value: ExportedAssetValue | undefined,
+  value: RuntimeAssetValue | undefined,
   path: string,
 ): string {
   if (typeof value !== 'string') {
@@ -265,7 +269,7 @@ function requireString(
 }
 
 function requireNullableString(
-  value: ExportedAssetValue | undefined,
+  value: RuntimeAssetValue | undefined,
   path: string,
 ): string | null {
   if (value !== null && typeof value !== 'string') {
@@ -277,7 +281,7 @@ function requireNullableString(
 }
 
 function requireNumber(
-  value: ExportedAssetValue | undefined,
+  value: RuntimeAssetValue | undefined,
   path: string,
 ): number {
   if (typeof value !== 'number' || !Number.isFinite(value)) {
@@ -289,7 +293,7 @@ function requireNumber(
 }
 
 function requireStrings(
-  value: ExportedAssetValue | undefined,
+  value: RuntimeAssetValue | undefined,
   path: string,
 ): readonly string[] {
   if (

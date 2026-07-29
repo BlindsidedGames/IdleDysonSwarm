@@ -173,7 +173,7 @@ Accepted on 2026-07-29:
 - The accepted integration passed 798 tests across 103 files, strict lint,
   TypeScript, localization extraction and pseudo-catalog compilation, the
   559-asset/34-type data drift check, production CSP packaging, developer
-  fixture exclusion, production build and diff validation.
+  decoder entry exclusion, production build and diff validation.
 - The accepted commit is identified by the local `web-ui-wave-2` recovery tag.
 
 Performance carry-forward, not Wave 2 acceptance:
@@ -191,6 +191,30 @@ Performance carry-forward, not Wave 2 acceptance:
   Moving the same eagerly required modules into manual chunks is not a fix.
   Runtime-data projection or loading-boundary work must retain arbitrary save
   import, lifecycle replay, parity and coordinator authority.
+
+Wave 3 packaging correction:
+
+- Post-checkpoint inspection found that Vite still copied the retired decoder's
+  four public save-fixture duplicates even though no production entry requested
+  them. Wave 3 removes those public copies and adds a regression guard; the
+  authoritative equivalents remain under `Web/test/fixtures` for tests.
+
+Wave 3 performance-foundation evidence:
+
+- The enforced manifest-based report now measures every static initial request
+  plus the awaited English catalog using actual gzip bytes. There is no
+  report-only budget bypass.
+- The canonical runtime consumes a deterministic 371-asset transport projection
+  while the complete 559-asset provenance catalog and migration artifacts
+  remain byte-stable and continue to pass Unity-data drift validation.
+- The combined production entry and awaited English catalog measure 199,769
+  gzip bytes (195.09 KiB), 5,031 bytes below the 200 KiB gate. CSS measures
+  2.37 KiB and the English catalog 1.30 KiB.
+- Independent adversarial review audited every current production catalog
+  consumer and reference target. Before a later gameplay destination introduces
+  new catalog fields, strengthen the allowlist-completeness guard with an
+  independently typed per-kind consumer contract rather than relying only on
+  exporter-derived field equality.
 
 ## Wave 3: earliest playable slice
 

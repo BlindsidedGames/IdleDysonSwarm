@@ -1,7 +1,7 @@
 import type { DysonCompatibilityTuning } from '../game-state/compatibilityTuning'
 import type { CanonicalGameStateV1 } from '../game-state/types'
 import { getGameAsset } from '../game-data/catalog'
-import type { ExportedGameAsset } from '../game-data/types'
+import type { RuntimeGameAsset } from '../game-data/types'
 import type { SecretResearchCoefficientId } from './secretBuffs'
 import {
   operationFromUnity,
@@ -184,7 +184,7 @@ export type DysonResearchEffectMaterializationResult =
 export type DysonResearchAssetLookup = (
   kind: string,
   id: string,
-) => ExportedGameAsset | undefined
+) => RuntimeGameAsset | undefined
 
 /**
  * Materializes Unity's research effects from canonical research levels.
@@ -329,7 +329,7 @@ interface ParsedEffect {
 }
 
 function parseEffect(
-  asset: ExportedGameAsset,
+  asset: RuntimeGameAsset,
   spec: ResearchSpec,
   issues: DysonResearchEffectIssue[],
 ): ParsedEffect | undefined {

@@ -1,5 +1,5 @@
 import { getGameAssetsByKind } from '../game-data/catalog'
-import type { ExportedGameAsset } from '../game-data/types'
+import type { RuntimeGameAsset } from '../game-data/types'
 import type {
   CanonicalGameStateV1,
   SkillRuntimeState,
@@ -466,7 +466,7 @@ function loadDefinitions(): ReadonlyMap<string, SkillDefinition> {
   )
 }
 
-function parseDefinition(asset: ExportedGameAsset): SkillDefinition {
+function parseDefinition(asset: RuntimeGameAsset): SkillDefinition {
   const data = asset.data
   return {
     id: asset.id,
@@ -489,7 +489,7 @@ function parseDefinition(asset: ExportedGameAsset): SkillDefinition {
 
 function resolveUnlock(
   data: Readonly<Record<string, unknown>>,
-  asset: ExportedGameAsset,
+  asset: RuntimeGameAsset,
 ): SkillDefinition['unlock'] {
   const candidates: readonly [
     keyof typeof data,
@@ -609,7 +609,7 @@ function mapSelectedPresetQueues(
 
 function requireNonNegativeInteger(
   value: unknown,
-  asset: ExportedGameAsset,
+  asset: RuntimeGameAsset,
   field: string,
 ): number {
   if (typeof value === 'number' && Number.isSafeInteger(value) && value >= 0) {
@@ -620,7 +620,7 @@ function requireNonNegativeInteger(
 
 function requireBoolean(
   value: unknown,
-  asset: ExportedGameAsset,
+  asset: RuntimeGameAsset,
   field: string,
 ): boolean {
   if (value === true || value === 1) return true
@@ -630,7 +630,7 @@ function requireBoolean(
 
 function requireStringArray(
   value: unknown,
-  asset: ExportedGameAsset,
+  asset: RuntimeGameAsset,
 ): readonly string[] {
   if (
     Array.isArray(value) &&
@@ -642,7 +642,7 @@ function requireStringArray(
 }
 
 function invalidDefinition(
-  asset: ExportedGameAsset,
+  asset: RuntimeGameAsset,
   field: string,
 ): Error {
   return new Error(

@@ -35,6 +35,9 @@ export default defineConfig({
     },
   ],
   build: {
+    // The repeatable initial-request budget report consumes this graph instead
+    // of assuming Vite's hashed filenames or manual chunk layout.
+    manifest: true,
     sourcemap: false,
   },
   preview: {

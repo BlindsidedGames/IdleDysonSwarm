@@ -143,6 +143,140 @@ describe('browser runtime foundation composition', () => {
     await secondRuntime.shutdown()
   })
 
+  test('round-trips an advanced imported save through lifecycle replay and reconstruction', async () => {
+    const database = new MemoryBrowserSaveDatabase()
+    const lifecycleClock = new ManualLifecycleClock(
+      '2026-07-29T00:00:00.000Z',
+    )
+    const currentPath =
+      `/development-only/${DEVELOPMENT_ONLY_BROWSER_PROFILE_ID}/current.idsw`
+    const createApplication =
+      createProductionCanonicalApplicationFactory({
+        createFirstRunSave: () =>
+          createUnityFirstRunPreparedSave({
+            startedAtUtc:
+              lifecycleClock.sample().serializedUtcText,
+          }),
+        readHostEntitlements: () =>
+          Object.freeze({ permanentDoubleIp: false }),
+      })
+    const createProductionRuntime = (
+      ownerToken: string,
+      lifecycle: TestLifecycleAdapter,
+    ) =>
+      createBrowserRuntimeFoundation({
+        createApplication,
+        lifecyclePolicy: MOBILE_LIFECYCLE_POLICY,
+        allowedExternalOrigins: [],
+        database,
+        lifecycle,
+        lifecycleClock,
+        activeTimeClock: new ManualActiveTimeClock(),
+        activeTimeScheduler:
+          new ManualAnimationFrameScheduler(),
+        storageManager: {
+          persisted: async () => true,
+          persist: async () => true,
+          estimate: async () => ({
+            usage: 1,
+            quota: 1_000,
+          }),
+        },
+        nowUtcMilliseconds: () => 1_000,
+        ownerToken,
+        autoHeartbeat: false,
+      })
+    const importedState = prepareIdb1Save(
+      readFileSync(fixtureUrl, 'utf8'),
+    ).prepared.copyValidatedState()
+    importedState.dateQuitString = ''
+    importedState.lastSuccessfulLoadUtc =
+      '2026-07-29T00:00:00.000Z'
+    const advancedSave = serializeWebSave(importedState)
+    const firstLifecycle =
+      new TestLifecycleAdapter('background')
+    const firstRuntime = createProductionRuntime(
+      'advanced-first-owner',
+      firstLifecycle,
+    )
+
+    await expect(firstRuntime.start()).resolves.toMatchObject({
+      phase: 'ready',
+    })
+    await expect(
+      firstRuntime.importSave({
+        text: advancedSave,
+        importedAtUtc: '2026-07-29T00:00:00.000Z',
+        overwriteApproved: true,
+      }),
+    ).resolves.toMatchObject({
+      imported: true,
+      lifecycleReset: true,
+    })
+    const importedSnapshot = firstRuntime.snapshot()
+    expect(importedSnapshot.phase).toBe('ready')
+    if (importedSnapshot.phase !== 'ready') return
+
+    lifecycleClock.set('2026-07-29T00:00:10.000Z')
+    const mutationsBeforeBackground = database.mutations.length
+    firstLifecycle.emit('background')
+    await waitUntil(
+      () =>
+        database.mutations.length >
+        mutationsBeforeBackground,
+    )
+
+    const snapshotBeforeReplay = firstRuntime.snapshot()
+    const revisionBeforeReplay =
+      snapshotBeforeReplay.phase === 'ready'
+        ? snapshotBeforeReplay.revision.state
+        : -1
+    lifecycleClock.set('2026-07-29T00:00:20.000Z')
+    firstLifecycle.emit('active')
+    await waitUntil(() => {
+      const snapshot = firstRuntime.snapshot()
+      return (
+        snapshot.phase === 'ready' &&
+        snapshot.revision.state > revisionBeforeReplay
+      )
+    })
+    await expect(firstRuntime.requestCheckpoint()).resolves.toBe(true)
+    const replayedSnapshot = firstRuntime.snapshot()
+    expect(replayedSnapshot.phase).toBe('ready')
+    if (replayedSnapshot.phase !== 'ready') return
+    const replayedGameplay = structuredClone(
+      replayedSnapshot.gameplay,
+    )
+    await firstRuntime.shutdown()
+
+    const secondRuntime = createProductionRuntime(
+      'advanced-second-owner',
+      new TestLifecycleAdapter('background'),
+    )
+    await expect(secondRuntime.start()).resolves.toMatchObject({
+      phase: 'ready',
+    })
+    const reconstructed = secondRuntime.snapshot()
+    expect(reconstructed).toMatchObject({
+      phase: 'ready',
+      source: 'primary',
+    })
+    if (reconstructed.phase !== 'ready') return
+    expect(reconstructed.gameplay).toEqual({
+      ...replayedGameplay,
+      progression: {
+        ...replayedGameplay.progression,
+        timeline: {
+          ...replayedGameplay.progression.timeline,
+          lastSuspendedAtLegacyText:
+            '2026-07-29T00:00:20.000Z',
+        },
+      },
+    })
+    expect(await database.fileExists(currentPath)).toBe(true)
+    await secondRuntime.shutdown()
+  })
+
   test('acquires the writer fence before application construction and blocks a second owner without constructing it', async () => {
     const database = new MemoryBrowserSaveDatabase()
     database.forceLease({

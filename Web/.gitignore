@@ -12,6 +12,7 @@ dist
 dist-ssr
 *.local
 output/
+reports/initial-request-bundle/
 test/private-fixtures/
 
 # Editor directories and files

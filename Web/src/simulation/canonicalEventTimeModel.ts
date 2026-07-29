@@ -1,4 +1,4 @@
-import type { ExportedGameAsset } from '../game-data/types'
+import type { RuntimeGameAsset } from '../game-data/types'
 import type { DysonCompatibilityTuning } from '../game-state/compatibilityTuning'
 import type { DysonSkillEffectEvaluationSnapshot } from '../game-state/skillEffectEvaluationSnapshot'
 import type { CanonicalGameStateV1 } from '../game-state/types'
@@ -1442,7 +1442,7 @@ function sameTinkerRuntime(
 }
 
 export function createCapturedInfinityAssetLookup(
-  assets: readonly Readonly<ExportedGameAsset>[],
+  assets: readonly Readonly<RuntimeGameAsset>[],
 ): CanonicalInfinityResetAssetLookup {
   const captured = new Map(
     assets.map((asset) => [

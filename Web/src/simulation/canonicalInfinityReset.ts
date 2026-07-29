@@ -1,5 +1,5 @@
 import { getGameAsset } from '../game-data/catalog'
-import type { ExportedGameAsset } from '../game-data/types'
+import type { RuntimeGameAsset } from '../game-data/types'
 import type {
   CanonicalGameStateV1,
   CanonicalFacilityId,
@@ -59,7 +59,7 @@ export type CanonicalInfinityResetResult =
 export type CanonicalInfinityResetAssetLookup = (
   kind: string,
   id: string,
-) => ExportedGameAsset | undefined
+) => RuntimeGameAsset | undefined
 
 interface SkillAutoAssignmentRule {
   readonly id: string
@@ -385,7 +385,7 @@ function captureAutoAssignmentRules(
 }
 
 function readSkillDatabaseIds(
-  database: ExportedGameAsset,
+  database: RuntimeGameAsset,
 ):
   | {
       readonly ok: true
@@ -436,7 +436,7 @@ function invalidSkillDatabase(): {
 }
 
 function readSkillRule(
-  asset: ExportedGameAsset,
+  asset: RuntimeGameAsset,
   id: string,
 ):
   | { readonly ok: true; readonly rule: SkillAutoAssignmentRule }

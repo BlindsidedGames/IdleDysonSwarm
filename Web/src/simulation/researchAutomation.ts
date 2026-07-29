@@ -1,5 +1,5 @@
 import { getGameAssetsByKind } from '../game-data/catalog'
-import type { ExportedGameAsset } from '../game-data/types'
+import type { RuntimeGameAsset } from '../game-data/types'
 import type { DysonCompatibilityTuning } from '../game-state/compatibilityTuning'
 import type {
   CanonicalFacilityId,
@@ -668,7 +668,7 @@ function loadDefinitions(): readonly ResearchDefinition[] {
     )
 }
 
-function parseDefinition(asset: ExportedGameAsset): ResearchDefinition {
+function parseDefinition(asset: RuntimeGameAsset): ResearchDefinition {
   const data = asset.data
   const autoBuyGroup = requireInteger(data.autoBuyGroup, asset, 'autoBuyGroup')
   const baseCost = requirePositiveNumber(data.baseCost, asset, 'baseCost')
@@ -713,7 +713,7 @@ function parseDefinition(asset: ExportedGameAsset): ResearchDefinition {
 
 function requireInteger(
   value: unknown,
-  asset: ExportedGameAsset,
+  asset: RuntimeGameAsset,
   field: string,
 ): number {
   if (typeof value === 'number' && Number.isSafeInteger(value)) return value
@@ -722,7 +722,7 @@ function requireInteger(
 
 function requirePositiveNumber(
   value: unknown,
-  asset: ExportedGameAsset,
+  asset: RuntimeGameAsset,
   field: string,
 ): number {
   if (typeof value === 'number' && Number.isFinite(value) && value > 0) {
@@ -733,7 +733,7 @@ function requirePositiveNumber(
 
 function requireFacilityId(
   value: unknown,
-  asset: ExportedGameAsset,
+  asset: RuntimeGameAsset,
 ): CanonicalFacilityId {
   if (
     value === 'assembly_lines' ||
@@ -751,7 +751,7 @@ function requireFacilityId(
 }
 
 function invalidDefinition(
-  asset: ExportedGameAsset,
+  asset: RuntimeGameAsset,
   field?: string,
 ): Error {
   return new Error(

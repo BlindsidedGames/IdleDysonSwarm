@@ -668,6 +668,17 @@ release.
   reports as CI artifacts. The implementation defines one documented command
   for reproducing each report locally against a production build.
 
+### Initial-request bundle report
+
+Run `npm run report:initial-request-bundle` from `Web/`. It creates a fresh
+production build, follows its Vite manifest from the `index.html` application
+entry (which loads `src/main.tsx`), adds the
+selected English shared-locale request (which startup awaits before React first
+renders), and writes deterministic text and JSON reports under
+`reports/initial-request-bundle/`. It measures each actual requested JS/CSS
+asset with gzip, rather than adding guessed or manually named chunks. The
+command exits nonzero when a budget is exceeded.
+
 ## Testing standard
 
 ### Static and unit

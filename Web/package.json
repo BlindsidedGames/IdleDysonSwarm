@@ -6,6 +6,7 @@
   "scripts": {
     "dev": "vite",
     "build": "tsc -b && vite build",
+    "report:initial-request-bundle": "npm run build && tsx scripts/report-initial-request-bundle.ts",
     "data:export": "tsx scripts/export-unity-data.ts",
     "data:check": "tsx scripts/export-unity-data.ts --check",
     "decode-save": "tsx scripts/decode-save.ts",

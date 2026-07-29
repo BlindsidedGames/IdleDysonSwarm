@@ -1,11 +1,11 @@
-import catalogJson from './generated/catalog.json'
+import catalogJson from './generated/runtime-catalog.json'
 import type {
-  ExportedGameAsset,
-  ExportedGameDataCatalog,
+  RuntimeGameAsset,
+  RuntimeGameDataCatalog,
 } from './types'
 
 export const gameDataCatalog =
-  catalogJson as unknown as ExportedGameDataCatalog
+  catalogJson as unknown as RuntimeGameDataCatalog
 
 const byKindAndId = new Map(
   gameDataCatalog.assets.map((asset) => [
@@ -17,12 +17,12 @@ const byKindAndId = new Map(
 export function getGameAsset(
   kind: string,
   id: string,
-): ExportedGameAsset | undefined {
+): RuntimeGameAsset | undefined {
   return byKindAndId.get(`${kind}\0${id}`)
 }
 
 export function getGameAssetsByKind(
   kind: string,
-): readonly ExportedGameAsset[] {
+): readonly RuntimeGameAsset[] {
   return gameDataCatalog.assets.filter((asset) => asset.kind === kind)
 }

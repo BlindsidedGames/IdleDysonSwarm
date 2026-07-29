@@ -14,13 +14,18 @@
  *
  * Interacts with:
  * - Reads Unity assets, metadata, `SkillIdMap.cs`, and `ResearchIdMap.cs`.
- * - Writes or verifies `src/game-data/generated/*.json`.
+ * - Reads `src/game-data/runtimeCatalogContract.ts` for the transport-only
+ *   runtime field allowlist.
+ * - Writes or verifies the complete provenance catalog, the projected runtime
+ *   catalog and migration catalogs under `src/game-data/generated`.
  * - Called by package scripts and release/checkpoint validation.
  *
  * Change notes:
  * - Asset roots, stable-ID rules, reference resolution, source-hash
  *   normalization, output names, or sorting changes affect generated catalogs,
  *   parity fixtures, migrations, and every runtime consumer of exported data.
+ * - The runtime projection must select authored values only. It must never
+ *   derive costs, unlocks, effects, rates, previews or other gameplay rules.
  * - Coordinate those changes with generated outputs, catalog tests, migration
  *   data, and `docs/parity-fixtures.md`.
  */
@@ -36,6 +41,10 @@ import {
 import { dirname, relative, resolve, sep } from 'node:path'
 import { fileURLToPath } from 'node:url'
 import { parse } from 'yaml'
+import {
+  RUNTIME_CATALOG_FIELDS_BY_KIND,
+  type RuntimeCatalogAssetKind,
+} from '../src/game-data/runtimeCatalogContract'
 
 type UnknownRecord = Record<string, unknown>
 
@@ -177,6 +186,30 @@ const catalog = sortObject({
   countsByKind: sortObject(countsByKind),
   assets,
 })
+const runtimeAssets = assets.flatMap((asset) => {
+  if (!isRuntimeCatalogKind(asset.kind)) return []
+  const fields = RUNTIME_CATALOG_FIELDS_BY_KIND[asset.kind]
+  const data = sortObject(
+    Object.fromEntries(
+      fields.flatMap((field) =>
+        Object.hasOwn(asset.data, field)
+          ? [[field, projectRuntimeValue(asset.data[field])]]
+          : [],
+      ),
+    ),
+  )
+  return [{ id: asset.id, kind: asset.kind, data }]
+})
+const runtimeCountsByKind: Record<string, number> = {}
+for (const asset of runtimeAssets) {
+  runtimeCountsByKind[asset.kind] =
+    (runtimeCountsByKind[asset.kind] ?? 0) + 1
+}
+const runtimeCatalog = sortObject({
+  formatVersion: 1,
+  countsByKind: sortObject(runtimeCountsByKind),
+  assets: runtimeAssets,
+})
 
 const legacyIdMaps = sortObject({
   skillLegacyKeyToId: extractSkillMap(
@@ -188,6 +221,7 @@ const legacyIdMaps = sortObject({
 })
 
 emit('catalog.json', catalog)
+emit('runtime-catalog.json', runtimeCatalog)
 emit('legacy-id-maps.json', legacyIdMaps)
 emit(
   'skill-migration-data.json',
@@ -210,7 +244,7 @@ emit(
 )
 
 console.log(
-  `${checkOnly ? 'Verified' : 'Exported'} ${assets.length} Unity data assets across ${Object.keys(countsByKind).length} types.`,
+  `${checkOnly ? 'Verified' : 'Exported'} ${assets.length} Unity data assets across ${Object.keys(countsByKind).length} types and ${runtimeAssets.length} projected runtime assets.`,
 )
 
 function emit(name: string, value: unknown): void {
@@ -290,6 +324,40 @@ function isUnityReference(value: unknown): value is {
     isRecord(value) &&
     typeof value.fileID === 'number' &&
     typeof value.guid === 'string'
+  )
+}
+
+function isRuntimeCatalogKind(
+  value: string,
+): value is RuntimeCatalogAssetKind {
+  return Object.hasOwn(RUNTIME_CATALOG_FIELDS_BY_KIND, value)
+}
+
+function projectRuntimeValue(value: unknown): unknown {
+  if (Array.isArray(value)) return value.map(projectRuntimeValue)
+  if (!isRecord(value)) return value
+  if (isExportedAssetReference(value)) {
+    return sortObject({ id: value.id })
+  }
+  return sortObject(
+    Object.fromEntries(
+      Object.entries(value).map(([key, entry]) => [
+        key,
+        projectRuntimeValue(entry),
+      ]),
+    ),
+  )
+}
+
+function isExportedAssetReference(
+  value: UnknownRecord,
+): value is UnknownRecord & { id: string | null } {
+  return (
+    Object.hasOwn(value, 'id') &&
+    (typeof value.id === 'string' || value.id === null) &&
+    typeof value.guid === 'string' &&
+    typeof value.fileId === 'number' &&
+    (typeof value.path === 'string' || value.path === null)
   )
 }
 
