@@ -64,6 +64,42 @@ is a later release gate unless controller support is explicitly promoted into
 the first release scope. The DOM and focus model must not prevent a future
 controller adapter.
 
+### First-slice reference host
+
+The browser/PWA production build is the reference host for the first playable
+slice. It must use a real IndexedDB-backed transactional save adapter, not an
+in-memory or test repository, and must prove checkpoint/reload continuity before
+the slice is accepted. The browser host also supplies the monotonic clock,
+visibility/focus lifecycle, file/paste import, recovery-blob export, clipboard
+and external-link ports required by that journey.
+
+Browser lifecycle events and active elapsed time still enter only through
+`CanonicalLifecycleCoordinator`. A service-worker or asset update must not
+reload an active session automatically. It may activate after a verified
+checkpoint and an explicit safe-reload prompt.
+
+Electron and Capacitor remain product hosts, but their filesystem, retained
+container, signing, Steam and native lifecycle certification are later host
+release gates. The browser reference host does not weaken those requirements.
+
+### Browser and engine support policy
+
+The first slice is developed and tested against:
+
+- the current and previous stable major versions of desktop Chrome, Edge and
+  Firefox;
+- the current and previous major macOS/iOS Safari engine generations;
+- the current and previous stable Android Chrome and Android System WebView
+  generations; and
+- the exact Chromium/WKWebView versions pinned by the Electron and Capacitor
+  release hosts when those hosts enter certification.
+
+Automated browser projects cover the minimum and current supported engines where
+the test runner provides them. At least one supported physical iOS device and
+one supported physical Android device cover touch, lifecycle and persistence
+before release. Unsupported engines receive a clear non-destructive message;
+they must never reach a partially initialized save-writing state.
+
 ### Information architecture
 
 The Unity hierarchy remains the baseline, introduced by progression rather than
@@ -111,6 +147,23 @@ Research, skills, bot distribution controls, prestige systems, settings and
 content/reference screens are outside this slice except for disabled or locked
 navigation required to explain the current state.
 
+### First-slice acceptance fixture
+
+Before product component code begins, freeze one canonical early-Dyson
+acceptance fixture. Its contract records:
+
+- the prepared starting save and hashes of the save and generated gameplay
+  catalog;
+- the exact initial frontend snapshot facts shown by the slice;
+- the Tinker and basic-facility command envelopes and expected revision changes;
+- the authoritative accepted, stale and rejected coordinator results; and
+- the expected checkpointed state after a fresh application reconstructs from
+  IndexedDB.
+
+Expected gameplay values and outcomes are generated or asserted by canonical
+application tests. UI tests may consume the frozen snapshot/result artifacts but
+must not calculate those expectations independently.
+
 ## Architecture standard
 
 ### Selected frontend foundation
@@ -156,6 +209,13 @@ Internationalization is foundation work, not a later string-replacement pass:
   scientific notation and universal media controls are not blindly mirrored.
 - English is the source locale. A pseudo-locale with expansion and bidirectional
   markers is required before the first vertical slice is accepted.
+- English and the pseudo-locale are the only enabled first-slice locales.
+  Japanese and Chinese font routing is foundation-ready, but Noto Sans JP/SC/TC
+  assets and destination catalogs are neither shipped nor requested until a
+  corresponding translation is enabled in the typed locale registry.
+- Each enabled locale registry entry declares its language tag, direction, font
+  family, shared catalog and destination chunks. An unavailable browser locale
+  falls back to English without exposing a partially translated route.
 - Translation completeness, ICU syntax, missing/orphaned keys and unsupported
   rich-text markup fail CI for a release locale.
 
@@ -265,6 +325,28 @@ The application shell owns one active-time driver:
   purpose and completion.
 - Save import, overwrite, migration and recovery confirmations state the target,
   consequence and whether the source is preserved.
+
+### Failure containment, security and diagnostics
+
+- A top-level product error boundary protects the shell and available
+  recovery/export actions. A render failure never resets, mutates, retries or
+  replaces canonical state.
+- Treat pasted, dropped and selected saves as untrusted input. Before
+  implementation, measure representative legacy saves and set tested compressed,
+  decoded and decompressed size ceilings in the host adapter. Reject oversized
+  or malformed input before promotion and preserve the existing save.
+- Render player-authored and imported text as text, never executable markup.
+  Product UI does not use unsanitized HTML injection.
+- Browser/PWA builds ship a restrictive Content Security Policy. Electron keeps
+  context isolation enabled, disables renderer Node integration and exposes only
+  narrow typed preload capabilities. Capacitor navigation and external links
+  use an explicit allowlist.
+- Local support diagnostics may include build, host, locale, lifecycle phase,
+  diagnostic code and revisions. They exclude save payloads, imported/player
+  text, filesystem paths, clipboard contents and platform credentials.
+- Remote analytics, crash reporting or performance telemetry is not enabled
+  until retention, consent and privacy behavior receive a separate product
+  decision. Performance budgets still run in local and CI acceptance traces.
 
 ## Interaction standard
 
@@ -398,6 +480,15 @@ weight and density requirements vary by script.
 The Dyson background art can be used as a restrained scene/header treatment,
 not behind dense text without an opaque contrast surface.
 
+### Approved layout reference
+
+Before reusable product components are implemented, approve one annotated
+first-slice layout reference at compact, medium and wide widths, including one
+compact landscape state. It must settle hierarchy, navigation placement,
+resource prominence, Tinker interaction, facility-card density, focus order and
+safe-area behavior. It is a responsive composition contract, not a demand for
+pixel parity with Unity or a source of gameplay facts.
+
 ## Responsive standard
 
 Layouts are content-driven, with these test bands:
@@ -483,8 +574,13 @@ release.
   completion remains pending.
 - Web Vitals release target: INP at most 200 ms, CLS at most 0.1 and LCP at most
   2.5 seconds at the 75th percentile for applicable browser telemetry.
-- No unbounded growth in subscriptions, retained snapshots, command results or
-  animation handles over a 30-minute foreground soak.
+- In a repeatable Chromium test build with explicit garbage collection, retained
+  JavaScript heap after the 30-minute first-slice foreground soak is no more
+  than 10 MiB or 20 percent above the post-warm-up baseline, whichever allowance
+  is greater.
+- Subscriptions, retained snapshots, pending command results, event listeners,
+  timers, pointer records and animation handles return to their post-warm-up
+  counts after the soak; none may grow with completed interactions.
 
 ### Rendering rules
 
@@ -500,6 +596,9 @@ release.
   message parsing and formatter construction do not occur in hot render loops.
 - A budget exception requires a repeatable trace, identified device/build,
   cause, player impact and an approved follow-up.
+- UI-affecting changes publish bundle-size, interaction-trace and retained-heap
+  reports as CI artifacts. The implementation defines one documented command
+  for reproducing each report locally against a production build.
 
 ## Testing standard
 
@@ -546,6 +645,11 @@ Use Playwright against a production build for:
 - pseudo-localized expanded text and one right-to-left locale pass; and
 - rapid-tap and simultaneous-touch interaction on a physical touch device.
 
+Run the supported browser projects against the frozen first-slice fixture.
+Persistence tests use the production IndexedDB adapter and reconstruct a new
+application instance; an in-memory repository is permitted only in focused unit
+tests.
+
 Capture visual regression baselines at 320×568, 390×844, 768×1024 and 1440×900,
 plus one compact landscape viewport. Baselines compare the approved web design,
 not raw Unity pixels. Keep separate content/parity assertions for Unity
@@ -558,20 +662,27 @@ component, accessibility, end-to-end, responsive visual and performance checks.
 
 After approval, implement in this order:
 
-1. Host composition root, lifecycle coordinator port and startup phases.
-2. Active-time driver and frozen-snapshot external store.
-3. Command-envelope/dispatch adapter and standard result/error handling.
-4. Localization runtime, source/pseudo catalogs and locale-aware formatters.
-5. Script-aware fonts, semantic tokens, shared components and accessibility
+1. Freeze the canonical first-slice acceptance fixture and approve the annotated
+   compact, medium, wide and compact-landscape layout reference.
+2. Implement the browser IndexedDB, lifecycle/clock, import/export, clipboard
+   and external-link ports, then compose them with the lifecycle coordinator.
+3. Add startup phases, the top-level error boundary, safe update handling,
+   redacted diagnostics and the production Content Security Policy.
+4. Implement the active-time driver and frozen-snapshot external store.
+5. Implement the command-envelope/dispatch adapter and standard result/error
+   handling.
+6. Add the localization runtime, typed locale registry, English/source and
+   pseudo catalogs, and locale-aware formatters.
+7. Add script-aware font routing, semantic tokens, shared components and the
+   accessibility
    foundation.
-6. Responsive LTR/RTL shell and parity navigation skeleton.
-7. Resource header and derived-rate presentation.
-8. Pointer/multi-touch Tinker interaction using only canonical runtime facts
+8. Build the responsive LTR/RTL shell and parity navigation skeleton.
+9. Add the resource header and derived-rate presentation.
+10. Add pointer/multi-touch Tinker interaction using only canonical runtime facts
    and player commands.
-9. Basic facility list using canonical previews and purchase commands.
-10. Recovery/reload, localization, accessibility, visual and performance
-   acceptance for the
-   complete slice.
+11. Add the basic facility list using canonical previews and purchase commands.
+12. Complete recovery/reload, localization, accessibility, supported-browser,
+    visual and performance acceptance for the complete slice.
 
 Later gameplay destinations follow their backend dependency order. A screen is
 not started merely because its navigation label exists.
@@ -586,16 +697,26 @@ Approval should explicitly confirm or amend:
   slice.
 - [ ] Electron desktop, Capacitor mobile and browser/PWA as product-capable
   hosts; browser Unity migration is user-mediated file/paste import.
+- [ ] Browser/PWA is the first-slice reference host, backed by production
+  IndexedDB persistence and browser lifecycle ports; native-host certification
+  remains a later release gate.
+- [ ] The current/previous browser-engine policy and physical iOS/Android
+  acceptance above.
 - [ ] Pointer, rapid touch, multi-touch and keyboard required now; controller
   deferred.
 - [ ] First slice ends after Tinker plus early basic-facility purchase and
   checkpoint/reload continuity.
+- [ ] A frozen canonical first-slice fixture and annotated compact, medium, wide
+  and compact-landscape layout reference precede component implementation.
 - [ ] Extracted ICU MessageFormat catalogs, pseudo-localization and LTR/RTL
-  architecture are foundation requirements.
+  architecture are foundation requirements; English and pseudo are the only
+  enabled first-slice locales.
 - [x] Lexend for supported Latin locales, Noto Sans JP/SC/TC for Japanese and
   Chinese locales, and lazy script-specific Noto Sans families for other
   locales, with the Unity-derived dark-plum visual direction and reference
   tokens above. Approved 2026-07-29.
 - [ ] WCAG 2.2 AA, responsive, performance and testing budgets above.
+- [ ] Error containment, import limits, CSP/native-shell isolation, diagnostic
+  redaction and the no-remote-telemetry default above.
 - [ ] All player commands, active time and platform phases route through
   `CanonicalLifecycleCoordinator`; no gameplay-rule duplication in UI.

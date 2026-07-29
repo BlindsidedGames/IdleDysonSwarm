@@ -34,3 +34,22 @@ conclusions.
 No active runtime purchase, notification or cloud-save implementation was found
 in the current C# surface. Those remain explicit inventory entries so they cannot
 be accidentally assumed during release planning.
+
+## First-slice reference host
+
+The browser/PWA production build is the reference host for the first playable
+slice. Before product UI acceptance it requires:
+
+- IndexedDB-backed transactional storage through the portable save repository;
+- retained recovery-blob download/export for a supplied Unity save;
+- visibility, focus, page-hide and page-show lifecycle events routed through the
+  lifecycle coordinator;
+- a monotonic active-time clock with no hidden-page accrual;
+- file picker, drag/drop and paste import through the canonical preparation
+  pipeline; and
+- safe service-worker updates that wait for a verified checkpoint and explicit
+  reload.
+
+In-memory storage remains a test double only. Electron and Capacitor adapters
+remain separate native-host release gates and must not be simulated inside
+product components.
