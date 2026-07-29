@@ -1,0 +1,168 @@
+{
+  "shared.action.dismiss": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Ḓīşḿīşş"
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "shared.action.try-again": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Ŧřẏ ȧȧɠȧȧīƞ"
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "shared.facility.owned-count": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 6,
+      "value": "count",
+      "options": {
+        "one": {
+          "value": [
+            {
+              "type": 7
+            },
+            {
+              "type": 0,
+              "value": " ǿǿẇƞḗḗḓ"
+            }
+          ]
+        },
+        "other": {
+          "value": [
+            {
+              "type": 7
+            },
+            {
+              "type": 0,
+              "value": " ǿǿẇƞḗḗḓ"
+            }
+          ]
+        }
+      },
+      "offset": 0,
+      "pluralType": "cardinal"
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "shared.locale.changed": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Ŀȧȧƞɠŭŭȧȧɠḗḗ ƈħȧȧƞɠḗḗḓ ŧǿǿ "
+    },
+    {
+      "type": 1,
+      "value": "languageName"
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "shared.progress.value": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 2,
+      "value": "current",
+      "style": null
+    },
+    {
+      "type": 0,
+      "value": " ǿǿƒ "
+    },
+    {
+      "type": 2,
+      "value": "maximum",
+      "style": null
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "shared.status.error": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Şǿǿḿḗḗŧħīƞɠ ẇḗḗƞŧ ẇřǿǿƞɠ"
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "shared.status.loading": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Ŀǿǿȧȧḓīƞɠ…"
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "shared.status.ready": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Řḗḗȧȧḓẏ"
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "shared.status.success": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Ƈǿǿḿƥŀḗḗŧḗḗḓ"
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ]
+}

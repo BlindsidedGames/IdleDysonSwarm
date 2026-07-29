@@ -1,0 +1,168 @@
+{
+  "shared.action.dismiss": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "ᗡısɯıss"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "shared.action.try-again": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "⊥ɹʎ ɐƃɐıu"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "shared.facility.owned-count": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 6,
+      "value": "count",
+      "options": {
+        "one": {
+          "value": [
+            {
+              "type": 7
+            },
+            {
+              "type": 0,
+              "value": " oʍuǝp"
+            }
+          ]
+        },
+        "other": {
+          "value": [
+            {
+              "type": 7
+            },
+            {
+              "type": 0,
+              "value": " oʍuǝp"
+            }
+          ]
+        }
+      },
+      "offset": 0,
+      "pluralType": "cardinal"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "shared.locale.changed": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "⅂ɐuƃnɐƃǝ ɔɥɐuƃǝp ʇo "
+    },
+    {
+      "type": 1,
+      "value": "languageName"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "shared.progress.value": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 2,
+      "value": "current",
+      "style": null
+    },
+    {
+      "type": 0,
+      "value": " oɟ "
+    },
+    {
+      "type": 2,
+      "value": "maximum",
+      "style": null
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "shared.status.error": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "Soɯǝʇɥıuƃ ʍǝuʇ ʍɹouƃ"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "shared.status.loading": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "⅂oɐpıuƃ…"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "shared.status.ready": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "ᴚǝɐpʎ"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "shared.status.success": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "Ↄoɯdʅǝʇǝp"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ]
+}

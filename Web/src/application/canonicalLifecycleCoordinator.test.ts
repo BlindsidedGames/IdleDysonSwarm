@@ -15,6 +15,8 @@ import type {
   ApplicationCommandEnvelope,
   ApplicationSnapshot,
   CommitFirstResult,
+  ImportSaveRequest,
+  ImportSaveResult,
 } from './contracts'
 import type {
   CanonicalActiveAdvanceResult,
@@ -24,6 +26,7 @@ import type {
 } from './canonicalGameApplication'
 import {
   CanonicalLifecycleCoordinator,
+  CanonicalLifecycleCoordinatorClosedError,
   type CanonicalLifecycleApplicationPort,
   type CanonicalLifecycleClock,
 } from './canonicalLifecycleCoordinator'
@@ -318,6 +321,213 @@ describe('canonical lifecycle coordinator', () => {
       committed: true,
     })
   })
+
+  test('supports externally fenced lifecycle routing without subscribing to the raw source', async () => {
+    const lifecycle = new FakeLifecycleAdapter()
+    const application = new FakeCanonicalApplication(
+      fixtureRuntimeWithoutQuitTimestamp(),
+    )
+    const coordinator = new CanonicalLifecycleCoordinator({
+      application,
+      lifecycle,
+      clock: fixedClock('2026-07-29T00:00:00Z'),
+      policy: MOBILE_LIFECYCLE_POLICY,
+      subscribeToLifecycle: false,
+    })
+
+    await coordinator.start()
+    expect(lifecycle.listenerCount).toBe(0)
+    await expect(
+      coordinator.handlePlatformPhase('background'),
+    ).resolves.toMatchObject({
+      requested: true,
+      committed: true,
+    })
+  })
+
+  test('shutdown synchronously closes admission and drains an accepted lifecycle commit', async () => {
+    const lifecycle = new FakeLifecycleAdapter()
+    const application = new FakeCanonicalApplication(
+      fixtureRuntimeWithoutQuitTimestamp(),
+    )
+    const commit = deferred<void>()
+    application.awayCommitGate = commit.promise
+    const coordinator = new CanonicalLifecycleCoordinator({
+      application,
+      lifecycle,
+      clock: fixedClock('2026-07-29T00:00:00Z'),
+      policy: MOBILE_LIFECYCLE_POLICY,
+    })
+    await coordinator.start()
+
+    const accepted =
+      coordinator.handlePlatformPhase('background')
+    const shutdown = coordinator.shutdown()
+
+    expect(lifecycle.listenerCount).toBe(0)
+    await expect(
+      coordinator.handlePlatformPhase('active'),
+    ).rejects.toBeInstanceOf(
+      CanonicalLifecycleCoordinatorClosedError,
+    )
+    let shutdownSettled = false
+    void shutdown.then(() => {
+      shutdownSettled = true
+    })
+    await Promise.resolve()
+    expect(shutdownSettled).toBe(false)
+
+    commit.resolve()
+    await expect(accepted).resolves.toMatchObject({
+      requested: true,
+      committed: true,
+    })
+    await shutdown
+    expect(application.awayCommits).toBe(1)
+  })
+
+  test('suppresses imported baselines until a successful local timestamp commit', async () => {
+    const application = new FakeCanonicalApplication(
+      fixtureRuntimeWithoutQuitTimestamp(),
+    )
+    const imported = fixtureRuntimeWithoutQuitTimestamp()
+    imported.gameState.timeline.lastSuspendedAtLegacyText =
+      '2026-07-29T00:00:00Z'
+    application.importedState = imported
+    const clock = mutableClock('2026-07-29T00:00:10Z')
+    const coordinator = new CanonicalLifecycleCoordinator({
+      application,
+      lifecycle: new FakeLifecycleAdapter(),
+      clock,
+      policy: DESKTOP_LIFECYCLE_POLICY,
+    })
+    await coordinator.start()
+
+    const first = await coordinator.importSave({
+      text: 'validated-by-application-port',
+      importedAtUtc: '2026-07-29T00:00:10Z',
+      overwriteApproved: true,
+    })
+    const firstActive =
+      await coordinator.handlePlatformPhase('active')
+    const second = await coordinator.importSave({
+      text: 'same-validated-import',
+      importedAtUtc: '2026-07-29T00:00:10Z',
+      overwriteApproved: true,
+    })
+    const secondActive =
+      await coordinator.handlePlatformPhase('active')
+
+    expect(first).toEqual({
+      imported: true,
+      committed: true,
+      sessionRevision: 2,
+      lifecycleReset: true,
+    })
+    expect(second).toEqual({
+      imported: true,
+      committed: true,
+      sessionRevision: 3,
+      lifecycleReset: true,
+    })
+    expect(firstActive).toEqual({
+      replayed: false,
+      committed: false,
+      code: 'import-baseline-suppressed',
+    })
+    expect(secondActive).toEqual(firstActive)
+    expect(application.importRequests).toHaveLength(2)
+    expect(application.awayCommits).toBe(0)
+    expect(clock.samples).toBe(1)
+    expect(
+      readyState(application.snapshot()).gameState.timeline
+        .lastSuspendedAtLegacyText,
+    ).toBe('2026-07-29T00:00:00Z')
+
+    await expect(
+      coordinator.handlePlatformPhase('background'),
+    ).resolves.toEqual({
+      requested: false,
+      committed: false,
+      code: 'not-applicable',
+    })
+    await expect(
+      coordinator.handlePlatformPhase('active'),
+    ).resolves.toEqual(firstActive)
+    expect(clock.samples).toBe(2)
+
+    application.failAwayCommit = true
+    clock.set('2026-07-29T00:00:20Z')
+    await expect(
+      coordinator.handlePlatformPhase('terminating'),
+    ).resolves.toMatchObject({
+      requested: true,
+      committed: false,
+      code: 'commit-failed',
+    })
+    clock.set('2026-07-29T00:00:25Z')
+    await expect(
+      coordinator.handlePlatformPhase('active'),
+    ).resolves.toEqual(firstActive)
+    expect(clock.samples).toBe(3)
+
+    application.failAwayCommit = false
+    clock.set('2026-07-29T00:00:30Z')
+    await expect(
+      coordinator.handlePlatformPhase('terminating'),
+    ).resolves.toMatchObject({
+      requested: true,
+      committed: true,
+    })
+    expect(
+      readyState(application.snapshot()).gameState.timeline
+        .lastSuspendedAtLegacyText,
+    ).toBe('2026-07-29T00:00:30Z')
+
+    clock.set('2026-07-29T00:00:35Z')
+    await expect(
+      coordinator.handlePlatformPhase('active'),
+    ).resolves.toMatchObject({
+      replayed: true,
+      committed: true,
+      grantedSeconds: 5,
+      timestampConsumed: true,
+    })
+    expect(application.awayCommitAttempts).toBe(3)
+    expect(application.awayCommits).toBe(2)
+    expect(
+      readyState(application.snapshot()).gameState.timeline
+        .lastSuspendedAtLegacyText,
+    ).toBeNull()
+  })
+
+  test('returns an application import rejection without replaying or replacing lifecycle state', async () => {
+    const application = new FakeCanonicalApplication(
+      fixtureRuntimeWithoutQuitTimestamp(),
+    )
+    application.importResult = {
+      imported: false,
+      committed: false,
+      code: 'APP-IMPORT-INVALID',
+      reason: 'scripted invalid import',
+    }
+    const coordinator = new CanonicalLifecycleCoordinator({
+      application,
+      lifecycle: new FakeLifecycleAdapter(),
+      clock: fixedClock('2026-07-29T00:00:10Z'),
+      policy: MOBILE_LIFECYCLE_POLICY,
+    })
+    await coordinator.start()
+
+    await expect(
+      coordinator.importSave({
+        text: 'invalid',
+        importedAtUtc: '2026-07-29T00:00:10Z',
+        overwriteApproved: true,
+      }),
+    ).resolves.toEqual(application.importResult)
+    expect(application.awayCommits).toBe(0)
+  })
 })
 
 class FakeCanonicalApplication
@@ -326,11 +536,18 @@ class FakeCanonicalApplication
   private state: CanonicalRuntimeState
   revision = 0
   durableRevision: number | null = 0
+  sessionRevision = 1
   readonly activeResults: CanonicalActiveAdvanceResult[] = []
   readonly storedResults: CanonicalStoredTimeCommitResult[] = []
   readonly activeRequests: number[] = []
   readonly storedRequests: number[] = []
+  awayCommitAttempts = 0
   awayCommits = 0
+  awayCommitGate: Promise<void> | undefined
+  failAwayCommit = false
+  importedState: CanonicalRuntimeState | undefined
+  importResult: ImportSaveResult | undefined
+  readonly importRequests: ImportSaveRequest[] = []
   failCheckpoint: BotCapCheckpointName | undefined
   playerResult: CanonicalPlayerDispatchResult = {
     kind: 'transition',
@@ -351,7 +568,7 @@ class FakeCanonicalApplication
       phase: 'ready',
       source: 'primary',
       revision: {
-        session: 1,
+        session: this.sessionRevision,
         state: this.revision,
         durable: this.durableRevision,
       },
@@ -420,11 +637,49 @@ class FakeCanonicalApplication
     >,
     state: Readonly<CanonicalRuntimeState>,
   ): Promise<CommitFirstResult> {
+    this.awayCommitAttempts += 1
+    await this.awayCommitGate
+    if (this.failAwayCommit) {
+      return {
+        committed: false,
+        transition: {
+          accepted: false,
+          code: 'SCRIPTED-AWAY-COMMIT-FAILURE',
+          reason: 'Scripted away replacement failure.',
+          revision: this.revision,
+        },
+        code: 'SCRIPTED-AWAY-COMMIT-FAILURE',
+        reason: 'Scripted away replacement failure.',
+      }
+    }
     this.state = cloneCanonicalRuntimeState(state)
     this.awayCommits += 1
     this.revision += 1
     this.durableRevision = this.revision
     return committedTransition(this.revision)
+  }
+
+  async importSave(
+    request: ImportSaveRequest,
+  ): Promise<ImportSaveResult> {
+    this.importRequests.push(request)
+    if (this.importResult !== undefined) return this.importResult
+    if (this.importedState === undefined) {
+      return {
+        imported: false,
+        committed: false,
+        code: 'APP-IMPORT-INVALID',
+        reason: 'No scripted imported state.',
+      }
+    }
+    this.state = cloneCanonicalRuntimeState(this.importedState)
+    this.sessionRevision += 1
+    this.revision = 0
+    this.durableRevision = 0
+    return {
+      imported: true,
+      sessionRevision: this.sessionRevision,
+    }
   }
 
   async commitBotCapCheckpoint(
@@ -488,6 +743,17 @@ class FakeLifecycleAdapter implements LifecycleAdapter {
       this.listeners.delete(listener)
     }
   }
+}
+
+function deferred<T>(): {
+  readonly promise: Promise<T>
+  resolve(value: T | PromiseLike<T>): void
+} {
+  let resolve!: (value: T | PromiseLike<T>) => void
+  const promise = new Promise<T>((complete) => {
+    resolve = complete
+  })
+  return { promise, resolve }
 }
 
 async function waitUntil(predicate: () => boolean): Promise<void> {
@@ -559,14 +825,22 @@ function fixedClock(iso: string): CanonicalLifecycleClock {
 }
 
 function mutableClock(initialIso: string): CanonicalLifecycleClock & {
+  readonly samples: number
   set(iso: string): void
 } {
   let iso = initialIso
+  let samples = 0
   return {
-    sample: () => ({
-      utcMilliseconds: Date.parse(iso),
-      serializedUtcText: iso,
-    }),
+    get samples() {
+      return samples
+    },
+    sample: () => {
+      samples += 1
+      return {
+        utcMilliseconds: Date.parse(iso),
+        serializedUtcText: iso,
+      }
+    },
     set: (next) => {
       iso = next
     },

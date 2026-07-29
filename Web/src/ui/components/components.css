@@ -1,0 +1,215 @@
+@import "../tokens/tokens.css";
+
+.ui-button {
+  display: inline-flex;
+  min-block-size: var(--target-minimum);
+  min-inline-size: var(--target-minimum);
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-2);
+  padding-block: var(--space-2);
+  padding-inline: var(--space-4);
+  border: var(--border-width) solid var(--color-border);
+  border-radius: var(--radius-sm);
+  background: var(--color-control);
+  color: var(--color-text-primary);
+  font: inherit;
+  font-weight: var(--font-weight-medium);
+  line-height: var(--line-height-compact);
+  text-align: center;
+  touch-action: manipulation;
+  transition:
+    background-color var(--motion-duration-fast)
+      var(--motion-easing-standard),
+    border-color var(--motion-duration-fast)
+      var(--motion-easing-standard);
+}
+
+.ui-button:not(:disabled) {
+  cursor: pointer;
+}
+
+.ui-button:not(:disabled):hover {
+  background: var(--color-control-hover);
+}
+
+.ui-button:not(:disabled):active {
+  background: var(--color-control-pressed);
+}
+
+.ui-button:focus-visible {
+  outline: 3px solid var(--color-focus);
+  outline-offset: 3px;
+}
+
+.ui-button:disabled {
+  cursor: not-allowed;
+  opacity: 0.65;
+}
+
+.ui-button--primary {
+  border-color: var(--color-accent-value);
+}
+
+.ui-button--danger {
+  border-color: var(--color-negative);
+}
+
+.ui-button--full-width {
+  inline-size: 100%;
+}
+
+.ui-button[data-state="success"] {
+  border-color: var(--color-positive);
+}
+
+.ui-button[data-state="failure"] {
+  border-color: var(--color-negative);
+}
+
+.ui-status-feedback {
+  display: grid;
+  gap: var(--space-1);
+  padding-block: var(--space-3);
+  padding-inline: var(--space-4);
+  border: var(--border-width) solid var(--color-border);
+  border-inline-start-width: 0.25rem;
+  border-radius: var(--radius-sm);
+  background: var(--color-surface-raised);
+  color: var(--color-text-primary);
+  line-height: var(--line-height-body);
+}
+
+.ui-status-feedback[data-tone="success"] {
+  border-inline-start-color: var(--color-positive);
+}
+
+.ui-status-feedback[data-tone="warning"] {
+  border-inline-start-color: var(--color-warning);
+}
+
+.ui-status-feedback[data-tone="error"] {
+  border-inline-start-color: var(--color-negative);
+}
+
+.ui-status-feedback__title {
+  font-weight: var(--font-weight-bold);
+}
+
+.ui-resource-value {
+  display: inline-grid;
+  gap: var(--space-1);
+  color: var(--color-text-secondary);
+  line-height: var(--line-height-compact);
+}
+
+.ui-resource-value__value {
+  color: var(--color-accent-value);
+  font-family: var(--font-family-numeric);
+  font-size: var(--font-size-lg);
+  font-variant-numeric: tabular-nums;
+  font-weight: var(--font-weight-bold);
+  overflow-wrap: anywhere;
+}
+
+.ui-progress {
+  display: grid;
+  gap: var(--space-2);
+}
+
+.ui-progress__header {
+  display: flex;
+  justify-content: space-between;
+  gap: var(--space-3);
+  color: var(--color-text-primary);
+  line-height: var(--line-height-compact);
+}
+
+.ui-progress__value {
+  color: var(--color-text-secondary);
+  font-variant-numeric: tabular-nums;
+}
+
+.ui-progress progress {
+  inline-size: 100%;
+  block-size: 0.75rem;
+  accent-color: var(--color-accent-value);
+}
+
+.ui-facility-card {
+  display: grid;
+  gap: var(--space-4);
+  padding: var(--space-4);
+  border: var(--border-width) solid var(--color-border);
+  border-radius: var(--radius-md);
+  background: var(--color-surface);
+  color: var(--color-text-primary);
+}
+
+.ui-facility-card__header {
+  display: grid;
+  gap: var(--space-2);
+}
+
+.ui-facility-card__title {
+  margin: 0;
+  font-size: var(--font-size-lg);
+  line-height: var(--line-height-compact);
+}
+
+.ui-facility-card__summary,
+.ui-facility-card__details {
+  display: grid;
+  gap: var(--space-2);
+}
+
+.ui-facility-card__action {
+  min-inline-size: 0;
+}
+
+.ui-player-text {
+  unicode-bidi: isolate;
+  overflow-wrap: anywhere;
+}
+
+.ui-visually-hidden {
+  position: absolute;
+  inline-size: 1px;
+  block-size: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+@media (min-width: 600px) {
+  .ui-facility-card {
+    grid-template-columns: minmax(0, 1fr) minmax(10rem, auto);
+    align-items: start;
+  }
+
+  .ui-facility-card__header,
+  .ui-facility-card__summary,
+  .ui-facility-card__details {
+    grid-column: 1;
+  }
+
+  .ui-facility-card__action {
+    grid-column: 2;
+    grid-row: 1 / span 3;
+  }
+}
+
+@media (forced-colors: active) {
+  .ui-button,
+  .ui-status-feedback,
+  .ui-facility-card {
+    forced-color-adjust: auto;
+  }
+
+  .ui-button:focus-visible {
+    outline-color: Highlight;
+  }
+}

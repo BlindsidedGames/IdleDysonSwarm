@@ -1,7 +1,9 @@
 # Web UI delivery waves
 
-Status: coordination plan approved; implementation awaits the user's explicit
-go-ahead.
+Status: implementation in progress. The user opened implementation on
+2026-07-29, and Wave 1 passed its acceptance gate on the same date. Wave 2 is
+the current delivery boundary. Later-wave acceptance remains governed by the
+gates and recovery checkpoints below.
 
 This plan controls how the product foundation in
 [`product-ui-foundation.md`](product-ui-foundation.md) is delivered. The product
@@ -20,6 +22,12 @@ gameplay rules.
 
 Production analytics, remote crash reporting and real-user monitoring remain
 outside this goal.
+
+The current canonical mapping manifest deliberately keeps release writes
+disabled. These waves therefore use an explicitly isolated browser-development
+save profile and retain imported originals for recovery/export. Wave completion
+does not certify canonical Unity-save overwrite, release migration, or native
+host release readiness; those remain separate backend/host gates.
 
 ## Coordination rules
 
@@ -98,18 +106,35 @@ Run independent work in parallel where file ownership permits:
 Gate:
 
 - All candidates pass coordinator diff and architecture review.
-- Platform actions are composed behind the unified runtime port and lifecycle
-  coordinator.
+- Platform actions are composed behind a unified runtime-foundation port and
+  lifecycle coordinator. Wave 2 extends that private foundation with the
+  product snapshot, command and active-time surfaces.
 - Persistence, ownership, quota, recovery and localization contracts have
   deterministic tests.
 - No product gameplay screen or duplicate gameplay calculation is introduced.
 
-After acceptance, create and record the Wave 1 checkpoint.
+Accepted on 2026-07-29:
+
+- Coordinator review and a separate adversarial review accepted the bounded
+  import, persistence, lease, lifecycle and runtime-composition paths.
+- Two rejected runtime candidates were corrected before acceptance: imported
+  historical timestamps now remain suppressed until a successful locally
+  stamped lifecycle save establishes a new replay baseline.
+- The combined integration passed 692 tests across 87 files, strict lint,
+  localization generation, the 559-asset/34-type data drift check, the
+  canonical first-slice fixture check, production build and diff validation.
+- The accepted commit is identified by the local `web-ui-wave-1` recovery tag.
 
 ## Wave 2: application seam
 
 Keep the central path serialized:
 
+- Generate an authentic Unity schema-12 first-run save artifact and provenance
+  manifest through the production preparation/codec path; add normalized
+  Unity-to-Web parity and reconstruction tests.
+- Add the backend-owned first-run save and production application factories,
+  sourcing event context and per-save/host entitlements from existing
+  authorities rather than UI constants.
 - Implement the active-time driver.
 - Implement the frozen-snapshot external store.
 - Implement the command-envelope/dispatch adapter and standard result handling.
@@ -120,6 +145,9 @@ Gate:
 
 - Adversarial review covers duplicate active time, stale revision rendering,
   command overlap, failure-path mutation and multi-owner transitions.
+- A new empty browser profile starts from the authenticated Unity artifact,
+  checkpoints through the fenced development repository and reconstructs
+  identically without requiring a player import.
 - Every player command and active-time advance is demonstrably routed through
   `CanonicalLifecycleCoordinator`.
 - Render failures cannot mutate, replace, retry or reset canonical state.

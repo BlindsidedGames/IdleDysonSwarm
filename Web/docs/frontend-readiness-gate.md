@@ -7,10 +7,13 @@ performance baseline and must not be used as one.
 No replacement product frontend should begin until the following contracts are
 written, reviewed and approved.
 
-The proposed product, interaction, visual, responsive, accessibility,
+The approved product, interaction, visual, responsive, accessibility,
 performance and testing contract is recorded in
-[`product-ui-foundation.md`](product-ui-foundation.md). It is intentionally
-marked proposed; creating that review checkpoint does not open this gate.
+[`product-ui-foundation.md`](product-ui-foundation.md). The user opened this
+gate on 2026-07-29 for dependency-first implementation through the earliest
+playable Tinker/basic-facility slice under
+[`web-ui-delivery-waves.md`](web-ui-delivery-waves.md). Later gameplay
+destinations and native-host certification remain closed.
 
 The backend dependency is complete: UI code may consume
 `CanonicalGameApplicationFacade.frontendSnapshot()` and dispatch the typed commands

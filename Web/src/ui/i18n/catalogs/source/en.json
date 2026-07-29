@@ -1,0 +1,38 @@
+{
+  "shared.action.dismiss": {
+    "defaultMessage": "Dismiss",
+    "description": "Button label that closes non-destructive status feedback."
+  },
+  "shared.action.try-again": {
+    "defaultMessage": "Try again",
+    "description": "Button label that repeats a safe presentation or loading operation."
+  },
+  "shared.facility.owned-count": {
+    "defaultMessage": "{count, plural, one {# owned} other {# owned}}",
+    "description": "Owned quantity for a facility. count is the canonical owned quantity."
+  },
+  "shared.locale.changed": {
+    "defaultMessage": "Language changed to {languageName}",
+    "description": "Polite announcement after the presentation language changes. languageName is localized."
+  },
+  "shared.progress.value": {
+    "defaultMessage": "{current, number} of {maximum, number}",
+    "description": "Text equivalent for determinate progress using canonical current and maximum values."
+  },
+  "shared.status.error": {
+    "defaultMessage": "Something went wrong",
+    "description": "General player-facing error heading; specific recovery detail follows it."
+  },
+  "shared.status.loading": {
+    "defaultMessage": "Loading…",
+    "description": "Short status shown while a player-facing operation is in progress."
+  },
+  "shared.status.ready": {
+    "defaultMessage": "Ready",
+    "description": "Short status shown when the requested player-facing surface is ready."
+  },
+  "shared.status.success": {
+    "defaultMessage": "Completed",
+    "description": "Short status confirming that a player-requested operation completed."
+  }
+}

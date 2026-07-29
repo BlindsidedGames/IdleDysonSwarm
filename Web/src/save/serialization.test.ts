@@ -29,4 +29,48 @@ describe('canonical web save serialization', () => {
       'does not match state schema',
     )
   })
+
+  test('rejects a 1.1 MiB byte field before base64 byte allocation', () => {
+    const encoded = serializeWebSave({
+      saveVersion: 12,
+      bytes: new Uint8Array(1_100_000),
+    })
+
+    expect(Buffer.byteLength(encoded, 'utf8')).toBeLessThan(
+      2 * 1024 * 1024,
+    )
+    expect(() => deserializeWebSave(encoded)).toThrow(
+      'decoded-payload',
+    )
+  })
+
+  test('enforces the decoded-byte budget cumulatively across fields', () => {
+    const encoded = serializeWebSave({
+      saveVersion: 12,
+      first: new Uint8Array(600_000),
+      second: new Uint8Array(600_000),
+    })
+
+    expect(Buffer.byteLength(encoded, 'utf8')).toBeLessThan(
+      2 * 1024 * 1024,
+    )
+    expect(() => deserializeWebSave(encoded)).toThrow(
+      'decoded-payload',
+    )
+  })
+
+  test('bounds nested container reconstruction', () => {
+    let nested: unknown = 'leaf'
+    for (let depth = 0; depth < 130; depth += 1) {
+      nested = [nested]
+    }
+    const encoded = serializeWebSave({
+      saveVersion: 12,
+      nested,
+    })
+
+    expect(() => deserializeWebSave(encoded)).toThrow(
+      'maximum decode depth',
+    )
+  })
 })

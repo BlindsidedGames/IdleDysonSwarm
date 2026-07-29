@@ -1,4 +1,7 @@
-import { decodeIdb1Save } from './decodeIdb1'
+import {
+  decodeIdb1Save,
+  type SaveImportLimits,
+} from './decodeIdb1'
 import { deepCloneSave, type SaveRecord } from './graph'
 import {
   CURRENT_SAVE_SCHEMA,
@@ -108,8 +111,11 @@ export function prepareImportedSave(
   return source.withValidatedState(candidate)
 }
 
-export function prepareIdb1Save(text: string): PreparedLegacySave {
-  const decoded = decodeIdb1Save(text)
+export function prepareIdb1Save(
+  text: string,
+  limits?: Readonly<SaveImportLimits>,
+): PreparedLegacySave {
+  const decoded = decodeIdb1Save(text, limits)
   const { prepared, migration } = PreparedSave.prepareDecoded(decoded.root)
   return {
     envelope: decoded.envelope,

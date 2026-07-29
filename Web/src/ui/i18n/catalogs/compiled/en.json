@@ -1,0 +1,96 @@
+{
+  "shared.action.dismiss": [
+    {
+      "type": 0,
+      "value": "Dismiss"
+    }
+  ],
+  "shared.action.try-again": [
+    {
+      "type": 0,
+      "value": "Try again"
+    }
+  ],
+  "shared.facility.owned-count": [
+    {
+      "type": 6,
+      "value": "count",
+      "options": {
+        "one": {
+          "value": [
+            {
+              "type": 7
+            },
+            {
+              "type": 0,
+              "value": " owned"
+            }
+          ]
+        },
+        "other": {
+          "value": [
+            {
+              "type": 7
+            },
+            {
+              "type": 0,
+              "value": " owned"
+            }
+          ]
+        }
+      },
+      "offset": 0,
+      "pluralType": "cardinal"
+    }
+  ],
+  "shared.locale.changed": [
+    {
+      "type": 0,
+      "value": "Language changed to "
+    },
+    {
+      "type": 1,
+      "value": "languageName"
+    }
+  ],
+  "shared.progress.value": [
+    {
+      "type": 2,
+      "value": "current",
+      "style": null
+    },
+    {
+      "type": 0,
+      "value": " of "
+    },
+    {
+      "type": 2,
+      "value": "maximum",
+      "style": null
+    }
+  ],
+  "shared.status.error": [
+    {
+      "type": 0,
+      "value": "Something went wrong"
+    }
+  ],
+  "shared.status.loading": [
+    {
+      "type": 0,
+      "value": "Loading…"
+    }
+  ],
+  "shared.status.ready": [
+    {
+      "type": 0,
+      "value": "Ready"
+    }
+  ],
+  "shared.status.success": [
+    {
+      "type": 0,
+      "value": "Completed"
+    }
+  ]
+}

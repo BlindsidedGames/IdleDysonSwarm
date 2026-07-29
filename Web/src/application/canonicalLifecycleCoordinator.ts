@@ -18,6 +18,8 @@ import type {
   ApplicationCommandEnvelope,
   ApplicationSnapshot,
   CommitFirstResult,
+  ImportSaveRequest,
+  ImportSaveResult,
 } from './contracts'
 import type {
   CanonicalActiveAdvanceResult,
@@ -69,6 +71,7 @@ export interface CanonicalLifecycleApplicationPort {
     >,
     checkpoint: BotCapCheckpointName,
   ): Promise<CommitFirstResult>
+  importSave(request: ImportSaveRequest): Promise<ImportSaveResult>
 }
 
 export interface CanonicalLifecycleCoordinatorOptions {
@@ -77,6 +80,12 @@ export interface CanonicalLifecycleCoordinatorOptions {
   readonly clock: CanonicalLifecycleClock
   readonly policy: Readonly<LifecyclePolicy>
   readonly onLifecycleFailure?: CanonicalLifecycleFailureSink
+  /**
+   * Keeps the historical direct-subscription behavior by default. Browser
+   * composition sets this to false so its authority router can fence every
+   * phase before it enters the coordinator.
+   */
+  readonly subscribeToLifecycle?: boolean
 }
 
 export interface CanonicalLifecycleFailure {
@@ -103,6 +112,7 @@ export type CanonicalAwayReplayResult =
       readonly code:
         | 'not-ready'
         | 'no-quit-timestamp'
+        | 'import-baseline-suppressed'
         | 'commit-failed'
       readonly reason?: string
     }
@@ -169,6 +179,29 @@ export interface CanonicalCoordinatedStoredTimeResult {
   readonly reason?: string
 }
 
+export type CanonicalCoordinatedImportResult =
+  | {
+      readonly imported: true
+      readonly committed: true
+      readonly sessionRevision: number
+      readonly lifecycleReset: boolean
+      readonly code?: 'not-ready'
+      readonly reason?: string
+    }
+  | {
+      readonly imported: false
+      readonly committed: boolean
+      readonly code: string
+      readonly reason: string
+    }
+
+export class CanonicalLifecycleCoordinatorClosedError extends Error {
+  constructor() {
+    super('The lifecycle coordinator no longer accepts operations.')
+    this.name = 'CanonicalLifecycleCoordinatorClosedError'
+  }
+}
+
 /**
  * Owns host lifecycle routing and every persistence-sensitive continuation.
  *
@@ -184,9 +217,12 @@ export class CanonicalLifecycleCoordinator {
   private readonly onLifecycleFailure:
     | CanonicalLifecycleFailureSink
     | undefined
+  private readonly subscribeToRawLifecycle: boolean
   private lifecycleState: LifecycleCoordinatorState | undefined
   private unsubscribe: (() => void) | undefined
   private operationTail: Promise<void> = Promise.resolve()
+  private shutdownPromise: Promise<void> | undefined
+  private suppressImportedAwayReplay = false
   private disposed = false
 
   constructor(options: Readonly<CanonicalLifecycleCoordinatorOptions>) {
@@ -195,6 +231,8 @@ export class CanonicalLifecycleCoordinator {
     this.clock = options.clock
     this.policy = Object.freeze({ ...options.policy })
     this.onLifecycleFailure = options.onLifecycleFailure
+    this.subscribeToRawLifecycle =
+      options.subscribeToLifecycle ?? true
   }
 
   async start(): Promise<CanonicalAwayReplayResult> {
@@ -206,7 +244,9 @@ export class CanonicalLifecycleCoordinator {
         reason: 'The lifecycle coordinator is disposed.',
       }
     }
-    this.subscribeToLifecycle()
+    if (this.subscribeToRawLifecycle) {
+      this.subscribeToLifecycle()
+    }
     return this.enqueue(async () => {
       const snapshot = await this.application.start()
       if (snapshot.phase !== 'ready') {
@@ -224,11 +264,27 @@ export class CanonicalLifecycleCoordinator {
     })
   }
 
-  dispose(): void {
-    if (this.disposed) return
+  /**
+   * Closes admission synchronously, detaches the raw lifecycle source, and
+   * then drains every operation that was accepted before shutdown began.
+   */
+  shutdown(): Promise<void> {
+    if (this.shutdownPromise !== undefined) {
+      return this.shutdownPromise
+    }
     this.disposed = true
     this.unsubscribe?.()
     this.unsubscribe = undefined
+    const acceptedTail = this.operationTail
+    this.shutdownPromise = acceptedTail.then(
+      () => undefined,
+      () => undefined,
+    )
+    return this.shutdownPromise
+  }
+
+  dispose(): void {
+    void this.shutdown()
   }
 
   /**
@@ -325,6 +381,43 @@ export class CanonicalLifecycleCoordinator {
     return this.enqueue(() =>
       this.dispatchPlayerUnqueued(envelope, cancelRequested),
     )
+  }
+
+  /**
+   * Keeps session replacement in the coordinator's serialized lane. A
+   * successful import resets lifecycle caches to the already-consumed local
+   * import baseline. Import preparation owns remote timestamp consumption, so
+   * this path must never perform an additional away-time replay.
+   */
+  importSave(
+    request: ImportSaveRequest,
+  ): Promise<CanonicalCoordinatedImportResult> {
+    return this.enqueue(async () => {
+      const imported = await this.application.importSave(request)
+      if (!imported.imported) return imported
+
+      this.suppressImportedAwayReplay = true
+      const snapshot = this.application.snapshot()
+      if (snapshot.phase === 'ready') {
+        this.lifecycleState = createLifecycleState(snapshot, true)
+        return {
+          imported: true,
+          committed: true,
+          sessionRevision: imported.sessionRevision,
+          lifecycleReset: true,
+        }
+      }
+      this.lifecycleState = undefined
+      return {
+        imported: true,
+        committed: true,
+        sessionRevision: imported.sessionRevision,
+        lifecycleReset: false,
+        code: 'not-ready',
+        reason:
+          'The imported session was installed without a ready lifecycle baseline.',
+      }
+    })
   }
 
   private async dispatchPlayerUnqueued(
@@ -429,6 +522,24 @@ export class CanonicalLifecycleCoordinator {
     const runtime = cloneCanonicalRuntimeState(
       snapshot.state as CanonicalRuntimeState,
     )
+    if (this.suppressImportedAwayReplay) {
+      this.lifecycleState =
+        this.lifecycleState === undefined
+          ? createLifecycleState(snapshot, true)
+          : {
+              ...this.lifecycleState,
+              canonical: runtime.gameState,
+              loaded: true,
+              saveReady: true,
+              coldStartReplayPending: false,
+              coldStartGateSaveUsed: false,
+            }
+      return {
+        replayed: false,
+        committed: false,
+        code: 'import-baseline-suppressed',
+      }
+    }
     const current =
       this.lifecycleState === undefined
         ? createLifecycleState(snapshot, true)
@@ -547,6 +658,9 @@ export class CanonicalLifecycleCoordinator {
         reason: committed.reason,
       }
     }
+    if (evaluated.saveIntent.stampQuitTimestamp) {
+      this.suppressImportedAwayReplay = false
+    }
     this.lifecycleState = evaluated.state
     return {
       requested: true,
@@ -630,6 +744,11 @@ export class CanonicalLifecycleCoordinator {
   }
 
   private enqueue<T>(operation: () => Promise<T>): Promise<T> {
+    if (this.disposed) {
+      return Promise.reject(
+        new CanonicalLifecycleCoordinatorClosedError(),
+      )
+    }
     const result = this.operationTail.then(operation, operation)
     this.operationTail = result.then(
       () => undefined,

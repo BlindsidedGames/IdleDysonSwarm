@@ -41,6 +41,21 @@ describe('IDB1 Odin compatibility decoder', () => {
     expect(researchLevels['research.money_multiplier']).toBe(29)
   })
 
+  test('allocates only the advertised output for a normal compressed save', () => {
+    const allocations: number[] = []
+    const decoded = decodeIdb1Save(
+      loadFixture('schema-08-canonical-idb1-main-save.txt'),
+      undefined,
+      (bytes) => {
+        allocations.push(bytes)
+        return new Uint8Array(bytes)
+      },
+    )
+
+    expect(allocations).toEqual([decoded.binaryBytes])
+    expect(allocations[0]).toBeLessThan(8 * 1024 * 1024)
+  })
+
   test.each([
     ['support-case-01-attached-idb1.txt', 11],
     ['support-case-02-inline-idb1.txt', 0],
