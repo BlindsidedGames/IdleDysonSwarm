@@ -1,6 +1,7 @@
 // @vitest-environment jsdom
 
 import '@testing-library/jest-dom/vitest'
+import axe from 'axe-core'
 import { readFileSync } from 'node:fs'
 import { resolve } from 'node:path'
 import {
@@ -11,7 +12,6 @@ import {
   within,
 } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
-import { IntlProvider } from 'react-intl'
 import { afterEach, describe, expect, test, vi } from 'vitest'
 import type {
   FrontendApplicationSnapshot,
@@ -19,12 +19,26 @@ import type {
 import type {
   CanonicalPlayerCommand,
 } from '../../../application/canonicalPlayerCommands'
+import arXbCatalog from '../../i18n/catalogs/compiled/ar-XB.json'
+import enCatalog from '../../i18n/catalogs/compiled/en.json'
+import enXaCatalog from '../../i18n/catalogs/compiled/en-XA.json'
+import type {
+  SharedMessageCatalog,
+} from '../../i18n/catalogs/types'
+import type { EnabledLocale } from '../../i18n/localeRegistry'
+import { PresentationIntlProvider } from '../../i18n/PresentationIntlProvider'
 import type {
   UiRuntimePlayerCommandResult,
 } from '../../runtime'
 import { ReadyDysonSlice } from './ReadyDysonSlice'
 
 afterEach(cleanup)
+
+const compiledCatalogs = {
+  en: enCatalog,
+  'en-XA': enXaCatalog,
+  'ar-XB': arXbCatalog,
+} as const
 
 describe('ReadyDysonSlice', () => {
   test('renders fresh authoritative visibility without named hidden cards', () => {
@@ -194,6 +208,139 @@ describe('ReadyDysonSlice', () => {
       expect(source).not.toContain(forbidden)
     }
   })
+
+  test('renders the expanded LTR pseudo-locale across the full playable slice', async () => {
+    const { container } = renderSlice(
+      snapshot({
+        visibleBasicFacilityIds: ['assembly_lines'],
+      }),
+      acceptedDispatch,
+      'en-XA',
+    )
+
+    await screen.findByRole('article')
+    const shell = container.querySelector('.dyson-shell')
+    const route = screen.getByRole('heading', { level: 1 })
+    expect(shell).toHaveAttribute('dir', 'ltr')
+    expect(route).not.toHaveTextContent(/^Bots$/)
+    expect(route.textContent?.length).toBeGreaterThan('Bots'.length)
+    expect(screen.queryByText('Bot Distribution')).not.toBeInTheDocument()
+    expect(screen.getByText(/\?\?\?\?/).textContent).not.toBe('????')
+  })
+
+  test('mirrors the full slice in RTL without changing canonical source order', async () => {
+    const { container } = renderSlice(
+      snapshot({
+        visibleBasicFacilityIds: [
+          'assembly_lines',
+          'ai_managers',
+        ],
+      }),
+      acceptedDispatch,
+      'ar-XB',
+    )
+
+    await screen.findAllByRole('article')
+    const shell = container.querySelector('.dyson-shell')
+    const resources = container.querySelector('.dyson-resource-header')
+    const resourceItems = Array.from(
+      container.querySelectorAll('[data-resource]'),
+      (item) => item.getAttribute('data-resource'),
+    )
+    const facilities = screen.getAllByRole('article')
+    expect(shell).toHaveAttribute('dir', 'rtl')
+    expect(resources).toHaveAttribute('dir', 'ltr')
+    expect(
+      Array.from(
+        container.querySelectorAll('[data-resource]'),
+        (item) => item.getAttribute('dir'),
+      ),
+    ).toEqual(['rtl', 'rtl', 'rtl'])
+    expect(resourceItems).toEqual(['cash', 'total-bots', 'science'])
+    expect(facilities).toHaveLength(2)
+    expect(facilities[0]).toHaveTextContent('5(3)')
+    expect(facilities[1]).toHaveTextContent('9(5)')
+  })
+
+  test('keeps keyboard focus in visual and source order through the full slice', async () => {
+    const user = userEvent.setup()
+    const { container } = renderSlice(
+      snapshot({
+        visibleBasicFacilityIds: ['assembly_lines'],
+      }),
+    )
+
+    const purchase = await screen.findByRole('button', {
+      name: /^Purchase an Assembly Line:/,
+    })
+    const resources = Array.from(
+      container.querySelectorAll<HTMLElement>(
+        '.ui-resource-value__value[tabindex="0"]',
+      ),
+    )
+    const tinker = screen.getByRole('button', {
+      name:
+        /Manually put together a new bot from parts in your shed/,
+    })
+    const expected = [
+      screen.getByRole('link', { name: 'Skip to game' }),
+      ...resources,
+      tinker,
+      purchase,
+    ]
+    for (const target of expected) {
+      await user.tab()
+      expect(target).toHaveFocus()
+    }
+    expect(
+      container.querySelector('[aria-current="page"]'),
+    ).not.toHaveAttribute('tabindex')
+  })
+
+  test.each([
+    {
+      name: 'English Fresh',
+      locale: 'en' as const,
+      visibleBasicFacilityIds: [] as const,
+    },
+    {
+      name: 'expanded LTR Assembly',
+      locale: 'en-XA' as const,
+      visibleBasicFacilityIds: ['assembly_lines'] as const,
+    },
+    {
+      name: 'mirrored RTL later progression',
+      locale: 'ar-XB' as const,
+      visibleBasicFacilityIds: [
+        'assembly_lines',
+        'ai_managers',
+      ] as const,
+    },
+  ])('has no automated full-slice accessibility violations in $name', async ({
+    locale,
+    visibleBasicFacilityIds,
+  }) => {
+    const { container } = renderSlice(
+      snapshot({ visibleBasicFacilityIds }),
+      acceptedDispatch,
+      locale,
+    )
+    if (visibleBasicFacilityIds.length > 0) {
+      await screen.findAllByRole('article')
+    }
+
+    const results = await axe.run(container, {
+      rules: {
+        // jsdom has no rendered color values. Contrast remains covered by
+        // semantic-token tests and real-browser Wave 4 evidence.
+        'color-contrast': { enabled: false },
+        // Both source-ordered navigation variants exist in the static DOM;
+        // responsive CSS displays exactly one at every approved band.
+        'landmark-unique': { enabled: false },
+      },
+    })
+    expect(results.violations).toEqual([])
+  })
 })
 
 type ReadySnapshot = Extract<
@@ -328,23 +475,34 @@ function snapshot(options: SnapshotOptions = {}): ReadySnapshot {
 function renderSlice(
   value: ReadySnapshot,
   dispatchPlayer = acceptedDispatch,
+  locale: EnabledLocale = 'en',
 ) {
   return render(
     provider(
       <ReadyDysonSlice
         snapshot={value}
-        locale="en"
+        locale={locale}
         dispatchPlayer={dispatchPlayer}
       />,
+      locale,
     ),
   )
 }
 
-function provider(node: React.ReactNode) {
+function provider(
+  node: React.ReactNode,
+  locale: EnabledLocale = 'en',
+) {
   return (
-    <IntlProvider locale="en">
+    <PresentationIntlProvider
+      locale={locale}
+      messages={
+        compiledCatalogs[locale] as unknown as SharedMessageCatalog
+      }
+      onError={() => undefined}
+    >
       {node}
-    </IntlProvider>
+    </PresentationIntlProvider>
   )
 }
 

@@ -25,6 +25,18 @@ const shellCss = readFileSync(
   ),
   'utf8',
 )
+const tinkerCss = readFileSync(
+  resolve(process.cwd(), 'src/ui/gameplay/tinker/tinker.css'),
+  'utf8',
+)
+const facilitiesCss = readFileSync(
+  resolve(process.cwd(), 'src/ui/gameplay/facilities/facilities.css'),
+  'utf8',
+)
+const tokensCss = readFileSync(
+  resolve(process.cwd(), 'src/ui/tokens/tokens.css'),
+  'utf8',
+)
 
 afterEach(cleanup)
 
@@ -217,6 +229,79 @@ describe('Dyson gameplay responsive CSS contract', () => {
     )
     expect(shellCss).not.toMatch(
       /(?:^|\n)\s*(?:margin|padding|border|inset)-(?:left|right)\s*:/,
+    )
+  })
+
+  it('locks the compact portrait and 200% zoom proxy to one bounded content column', () => {
+    const compactRules = shellCss.slice(
+      0,
+      shellCss.indexOf('@media (min-width: 600px)'),
+    )
+    expect(compactRules).toContain(
+      'grid-template-columns: minmax(0, 1fr)',
+    )
+    expect(compactRules).toContain('max-inline-size: 100%')
+    expect(compactRules).toContain('overflow-y: auto')
+    expect(compactRules).not.toMatch(
+      /min-inline-size:\s*\d+(?:\.\d+)?px/,
+    )
+    expect(facilitiesCss).toMatch(
+      /@media \(max-width: 359px\)[\s\S]*flex-direction:\s*column/,
+    )
+  })
+
+  it.each([
+    {
+      band: 'compact portrait at 320px',
+      evidence: [
+        '.dyson-shell__rail {',
+        'display: none;',
+        'grid-template-columns: minmax(0, 1fr)',
+      ],
+    },
+    {
+      band: 'compact landscape below 600px',
+      evidence: [
+        '@media (max-width: 599px) and (orientation: landscape)',
+        'min-block-size: 8rem',
+      ],
+    },
+    {
+      band: 'medium from 600px',
+      evidence: [
+        '@media (min-width: 600px)',
+        'grid-template-columns: minmax(9.5rem, 11rem) minmax(0, 1fr)',
+      ],
+    },
+    {
+      band: 'wide from 1024px',
+      evidence: [
+        '@media (min-width: 1024px)',
+        'grid-template-columns: minmax(13rem, 15rem) minmax(0, 1fr)',
+      ],
+    },
+  ])('keeps the approved $band contract explicit', ({ evidence }) => {
+    for (const declaration of evidence) {
+      expect(shellCss).toContain(declaration)
+    }
+  })
+
+  it('routes reduced motion and forced colors through the gameplay surfaces', () => {
+    expect(tokensCss).toMatch(
+      /@media \(prefers-reduced-motion: reduce\)[\s\S]*--motion-duration-fast:\s*0ms;[\s\S]*--motion-duration-standard:\s*0ms;/,
+    )
+    expect(tinkerCss).toContain(
+      'background-color var(--motion-duration-fast)',
+    )
+    for (const css of [shellCss, tinkerCss, facilitiesCss]) {
+      expect(css).toContain('@media (forced-colors: active)')
+      expect(css).toContain('forced-color-adjust: auto')
+    }
+    expect(shellCss).toMatch(
+      /\.dyson-navigation__link:focus-visible[\s\S]*outline:\s*3px solid var\(--color-focus\)/,
+    )
+    expect(tinkerCss).toMatch(
+      /\.tinker-surface__control:focus-visible[\s\S]*outline:\s*3px solid var\(--color-focus\)/,
     )
   })
 })
