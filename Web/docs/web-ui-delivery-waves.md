@@ -5,6 +5,11 @@ Status: implementation in progress. The user opened implementation on
 date. Wave 4 is the current delivery boundary. Later-wave acceptance remains
 governed by the gates and recovery checkpoints below.
 
+Scope decision (2026-07-30): Wave 4 now checkpoints a high-quality Bots/Dyson
+design baseline. It does not attempt to complete Unity migration UI, every
+native/browser host gate or later gameplay destinations. The explicit
+deferrals below are sequencing decisions, not waivers or certification claims.
+
 This plan controls how the product foundation in
 [`product-ui-foundation.md`](product-ui-foundation.md) is delivered. The product
 foundation remains authoritative for behavior, interaction, visual,
@@ -19,6 +24,12 @@ described by the product foundation. All active time, platform phases and player
 commands flow through `CanonicalLifecycleCoordinator`. UI and platform adapters
 consume canonical snapshots, previews and command results and never reproduce
 gameplay rules.
+
+The baseline starts fresh from the authenticated first-run artifact. Optional
+manual text-string import may remain as a recovery/support route. No file
+picker, drag-and-drop target or first-run Unity migration UI is required for
+this checkpoint. Steam/native discovery of the known existing save directory is
+separate host integration.
 
 Production analytics, remote crash reporting and real-user monitoring remain
 outside this goal.
@@ -77,7 +88,7 @@ checkpoint remains stable without writing its own hash into the document.
 | Wave 1 | Accepted contracts, platform foundation and verification harness | `web-ui-wave-1` |
 | Wave 2 | Accepted application seam and lifecycle-driven shell states | `web-ui-wave-2` |
 | Wave 3 | Accepted playable Tinker/basic-facility slice | `web-ui-wave-3` |
-| Wave 4 | Accepted integrated hardening and complete slice acceptance | `web-ui-wave-4` |
+| Wave 4 | Accepted Bots/Dyson design baseline with explicit host/release deferrals | `web-ui-wave-4` |
 
 If a later wave has a catastrophic architectural or correctness failure:
 
@@ -233,7 +244,7 @@ Run presentation work in parallel only after the application seam is accepted:
 Gate:
 
 - Tinker and facility actions use canonical runtime facts and commands only.
-- Checkpoint/reload continuity preserves the accepted canonical state.
+- Checkpoint/reconstruction continuity preserves the accepted canonical state.
 - Compact, medium, wide and compact-landscape layouts pass the approved
   references without text selection or gesture interference.
 - Keyboard, screen-reader, rapid-touch and independent multi-touch paths pass.
@@ -272,26 +283,62 @@ Performance carry-forward, not a waiver:
   responsive and accessibility behavior in deterministic component/integration
   coverage. The production interaction trace, Web Vitals trial set,
   explicit-GC 30-minute retained-heap soak and post-soak subscription counts
-  remain mandatory Wave 4 hardening gates below. This checkpoint does not
-  certify or relax those final product-foundation budgets.
+  remain mandatory Wave 4 Bots-baseline performance gates below. Representative
+  physical-device release evidence may occur during host certification, but the
+  budgets themselves are unchanged. This checkpoint does not certify or relax
+  those product-foundation budgets.
 
-## Wave 4: integration hardening
+## Wave 4: Bots/Dyson design-baseline checkpoint
 
-- Exercise multi-tab ownership, crashed-owner recovery and lifecycle stress.
-- Complete reload, checkpoint, quota, import/export and failure containment.
-- Run pseudo-localization, LTR/RTL, zoom, keyboard and assistive-technology
-  acceptance.
-- Run supported-browser, physical mobile, bundle-size, responsiveness, memory
-  soak and deterministic Web Vitals acceptance.
+- Review the integrated Bots route against the approved Unity-relative product,
+  interaction and visual baseline, correcting unapproved content, visibility or
+  interaction changes without adding later destinations.
+- Prove production-IndexedDB checkpoint and reconstruction, safe simultaneous
+  writer blocking, bounded periodic checkpointing and lifecycle-coordinator
+  routing. A temporarily blocked refresh is acceptable at this checkpoint only
+  when the prior writer cannot continue writing and the last verified save
+  remains protected.
+- Keep any manual-text recovery route optional, bounded and non-destructive.
+  Do not add file-picker, drag/drop or first-run migration UI to satisfy this
+  wave.
+- Run expanded LTR/RTL design checks, required responsive geometries,
+  keyboard/focus and reduced-motion acceptance in the locally available current
+  browser projects, naming exactly what was exercised.
+- Run the enforced initial-request bundle gate, production interaction trace,
+  deterministic Web Vitals trial set, explicit-GC 30-minute retained-heap soak
+  and post-soak subscription checks.
 - Verify production packaging excludes developer fixtures and respects CSP.
 
 Gate:
 
-- Every product-foundation acceptance criterion for the first slice has
-  traceable evidence or an explicitly approved exception.
-- No unresolved critical or high-severity correctness, save-safety,
-  accessibility, security or performance issue remains.
-- The integration branch is clean and all applicable suites pass.
+- The Bots/Dyson route has traceable evidence for canonical behavior, approved
+  content/visibility, responsive layout, keyboard/focus, reduced motion,
+  production persistence and the unchanged local performance budgets.
+- No unresolved critical or high-severity Bots-baseline correctness, data-loss,
+  gameplay-authority, security, design, accessibility-foundation or performance
+  issue remains.
+- Deferred host/release gates are listed explicitly and are not skipped tests,
+  exceptions or implied passes.
+- The integration branch is clean and every suite applicable to this narrowed
+  baseline passes. A deferred real-host matrix is not relabeled as applicable.
+
+Explicit deferrals after the Wave 4 checkpoint:
+
+- File-picker, drag-and-drop and first-run Unity migration UI. Optional manual
+  text-string recovery may remain.
+- Steam/native discovery of the known existing save directory, retained mobile
+  containers, signing, packaging and native lifecycle certification.
+- Immediate native-refresh and explicit tab-handoff acceleration. Atomic lease
+  fencing, safe blocked contexts, orderly release, lease-expiry recovery and
+  no-double-writer protection are not deferred.
+- Complete current/previous-major supported-browser and embedded-engine
+  certification, physical iOS/Android certification and named
+  assistive-technology testing, including exact zoom/text-resize certification.
+  Evidence must name only environments actually exercised.
+- Full production-host quota, update, crashed-owner and recovery matrices.
+  Deterministic safety tests and last-verified-save protection remain required.
+- Research, Skills, Infinity and every later gameplay or support destination.
 
 After acceptance, create and record the Wave 4 checkpoint. Report the completed
-slice for user review; do not push, deploy or begin later gameplay destinations.
+Bots/Dyson design baseline and its deferrals for user review; do not push,
+deploy, claim release certification or begin later gameplay destinations.
