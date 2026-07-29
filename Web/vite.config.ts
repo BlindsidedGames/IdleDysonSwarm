@@ -5,10 +5,14 @@ import {
   renderStaticSecurityHeaders,
   SECURITY_HEADERS,
 } from './securityHeaders.js'
+import {
+  stripMessageAuthoringMetadataPlugin,
+} from './scripts/stripMessageAuthoringMetadata.js'
 
 // https://vite.dev/config/
 export default defineConfig({
   plugins: [
+    stripMessageAuthoringMetadataPlugin(),
     react(),
     {
       name: 'idle-dyson-swarm-security-headers',

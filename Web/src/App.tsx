@@ -7,6 +7,8 @@ import type {
 import {
   useBrowserRuntimeStatus,
 } from './ui/runtime'
+import { ReadyDysonRuntimeHost } from './ui/gameplay/dyson'
+import type { EnabledLocale } from './ui/i18n'
 import {
   selectStartupShellViewModel,
   StartupShell,
@@ -17,7 +19,7 @@ import {
 
 export interface AppProps {
   readonly runtime: BrowserUiRuntimeFoundation
-  readonly locale: string
+  readonly locale: EnabledLocale
   readonly saveSchemaVersion: number
   readonly sampleUtc: () => string
   readonly reloadSafely: () => Promise<void>
@@ -63,6 +65,15 @@ function App({
   )
   const operationPending =
     operationStatus?.endsWith('-pending') ?? false
+
+  if (status.phase === 'ready') {
+    return (
+      <ReadyDysonRuntimeHost
+        runtime={runtime}
+        locale={locale}
+      />
+    )
+  }
 
   const beginOperation = (
     pendingStatus: StartupShellOperationStatus,

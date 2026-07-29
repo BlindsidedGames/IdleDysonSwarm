@@ -1,9 +1,9 @@
 # Web UI delivery waves
 
 Status: implementation in progress. The user opened implementation on
-2026-07-29, and Waves 1 and 2 passed their acceptance gates on the same date.
-Wave 3 is the current delivery boundary. Later-wave acceptance remains governed
-by the gates and recovery checkpoints below.
+2026-07-29, and Waves 1 through 3 passed their acceptance gates on the same
+date. Wave 4 is the current delivery boundary. Later-wave acceptance remains
+governed by the gates and recovery checkpoints below.
 
 This plan controls how the product foundation in
 [`product-ui-foundation.md`](product-ui-foundation.md) is delivered. The product
@@ -240,6 +240,40 @@ Gate:
 - Focused tests and the full applicable suites pass.
 
 After acceptance, create and record the Wave 3 checkpoint.
+
+Accepted on 2026-07-29:
+
+- The ready route renders only backend-authored visibility, Tinker presentation,
+  resource/rate, production-summary, bot-distribution and facility-preview
+  facts. Hidden facilities are absent, and the single teaser still follows its
+  independent canonical fact.
+- Tap, rapid tap, independent pointer, Space hold, Enter activation, blur,
+  cancellation and unmount paths route serialized player commands through the
+  runtime dispatcher. The 500 ms hold threshold is interaction-only; the UI
+  neither advances time nor awards progress.
+- Named-facility presentation loads only after the canonical visibility list
+  authorizes a named facility. Fresh remains immediately playable while the
+  enforced initial JavaScript request is 199.22 KiB against the unchanged
+  200 KiB cap; CSS is 3.98 KiB and the awaited English catalog is 2.49 KiB.
+- Coordinator review plus independent parity, quality and visual reviews
+  rejected intermediate gameplay-rule duplication, a repeat-release revision
+  race, stale facility feedback, no-op navigation, inaccurate Info/sun
+  references, compressed wide cards and an unconditional Fresh teaser.
+- The accepted integration passed 866 tests across 110 files, strict lint,
+  TypeScript/production build, localization extraction and pseudo-catalog
+  compilation, the 559-asset/34-type data drift check, canonical fixture
+  reproducibility, the enforced bundle report, diff validation and real-browser
+  wide/compact/minimum-width review.
+- The accepted commit is identified by the local `web-ui-wave-3` recovery tag.
+
+Performance carry-forward, not a waiver:
+
+- Wave 3 enforces the initial-request budgets and exercises interaction,
+  responsive and accessibility behavior in deterministic component/integration
+  coverage. The production interaction trace, Web Vitals trial set,
+  explicit-GC 30-minute retained-heap soak and post-soak subscription counts
+  remain mandatory Wave 4 hardening gates below. This checkpoint does not
+  certify or relax those final product-foundation budgets.
 
 ## Wave 4: integration hardening
 

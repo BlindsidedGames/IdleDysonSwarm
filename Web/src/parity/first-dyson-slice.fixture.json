@@ -9,8 +9,15 @@
   "initial": {
     "phase": "ready",
     "source": "primary",
-    "revision": { "session": 1, "state": 0, "durable": 0 },
-    "checkpoint": { "kind": "clean", "durableRevision": 0 },
+    "revision": {
+      "session": 1,
+      "state": 0,
+      "durable": 0
+    },
+    "checkpoint": {
+      "kind": "clean",
+      "durableRevision": 0
+    },
     "resources": {
       "money": 1000000,
       "science": 0,
@@ -19,14 +26,38 @@
       "researchers": 0
     },
     "facilities": {
-      "assembly_lines": [0, 0],
-      "ai_managers": [0, 0],
-      "servers": [0, 0],
-      "data_centers": [0, 0],
-      "planets": [0, 0],
-      "matrioshka_brains": [0, 0],
-      "birch_planets": [0, 0],
-      "galactic_brains": [0, 0]
+      "assembly_lines": [
+        0,
+        0
+      ],
+      "ai_managers": [
+        0,
+        0
+      ],
+      "servers": [
+        0,
+        0
+      ],
+      "data_centers": [
+        0,
+        0
+      ],
+      "planets": [
+        0,
+        0
+      ],
+      "matrioshka_brains": [
+        0,
+        0
+      ],
+      "birch_planets": [
+        0,
+        0
+      ],
+      "galactic_brains": [
+        0,
+        0
+      ]
     },
     "visibility": {
       "showTinker": true,
@@ -48,6 +79,7 @@
           "assemblyYield": 0,
           "cooldownSeconds": 0.20000000298023224
         },
+        "presentationMode": "default",
         "canStart": true,
         "eligibility": "available",
         "timeToCompletionSeconds": null
@@ -74,7 +106,9 @@
         "status": "available",
         "authority": "tryPurchaseCanonicalBasicFacility",
         "blocker": null,
-        "requirements": ["runtime-evaluation-port"],
+        "requirements": [
+          "runtime-evaluation-port"
+        ],
         "missingRequirements": [],
         "definitionGaps": []
       }
@@ -88,17 +122,48 @@
         "cost": 869008.0130797025,
         "status": "success"
       },
-      { "facilityId": "ai_managers", "eligible": false, "selectedQuantity": "0", "affordableQuantity": "0", "cost": 0, "status": "locked" },
-      { "facilityId": "servers", "eligible": false, "selectedQuantity": "0", "affordableQuantity": "0", "cost": 0, "status": "locked" },
-      { "facilityId": "data_centers", "eligible": false, "selectedQuantity": "0", "affordableQuantity": "0", "cost": 0, "status": "locked" },
-      { "facilityId": "planets", "eligible": false, "selectedQuantity": "0", "affordableQuantity": "0", "cost": 0, "status": "locked" }
+      {
+        "facilityId": "ai_managers",
+        "eligible": false,
+        "selectedQuantity": "0",
+        "affordableQuantity": "0",
+        "cost": 0,
+        "status": "locked"
+      },
+      {
+        "facilityId": "servers",
+        "eligible": false,
+        "selectedQuantity": "0",
+        "affordableQuantity": "0",
+        "cost": 0,
+        "status": "locked"
+      },
+      {
+        "facilityId": "data_centers",
+        "eligible": false,
+        "selectedQuantity": "0",
+        "affordableQuantity": "0",
+        "cost": 0,
+        "status": "locked"
+      },
+      {
+        "facilityId": "planets",
+        "eligible": false,
+        "selectedQuantity": "0",
+        "affordableQuantity": "0",
+        "cost": 0,
+        "status": "locked"
+      }
     ]
   },
   "commands": {
     "tinker": {
       "sessionRevision": 1,
       "expectedStateRevision": 0,
-      "command": { "kind": "tinker.start", "repeat": false }
+      "command": {
+        "kind": "tinker.start",
+        "repeat": false
+      }
     },
     "basicFacility": {
       "sessionRevision": 1,
@@ -112,17 +177,29 @@
   "outcomes": {
     "tinkerAccepted": {
       "kind": "transition",
-      "transition": { "accepted": true, "changed": true, "revision": 1 }
+      "transition": {
+        "accepted": true,
+        "changed": true,
+        "revision": 1
+      }
     },
     "tinkerProgress": {
-      "transition": { "accepted": true, "changed": true, "revision": 2 },
+      "transition": {
+        "accepted": true,
+        "changed": true,
+        "revision": 2
+      },
       "requestedMilliseconds": 100,
       "consumedMilliseconds": 100,
       "remainingMilliseconds": 0,
       "checkpoints": []
     },
     "tinkerCompletion": {
-      "transition": { "accepted": true, "changed": true, "revision": 3 },
+      "transition": {
+        "accepted": true,
+        "changed": true,
+        "revision": 3
+      },
       "requestedMilliseconds": 200,
       "consumedMilliseconds": 200,
       "remainingMilliseconds": 0,
@@ -130,7 +207,11 @@
     },
     "basicFacilityAccepted": {
       "kind": "transition",
-      "transition": { "accepted": true, "changed": true, "revision": 4 }
+      "transition": {
+        "accepted": true,
+        "changed": true,
+        "revision": 4
+      }
     },
     "staleFacility": {
       "kind": "transition",
@@ -164,7 +245,12 @@
             "effectiveManualLabour": false,
             "cooldownSeconds": 0.20000000298023224
           },
-          "stats": { "botYield": 1, "assemblyYield": 0, "cooldownSeconds": 0.20000000298023224 },
+          "stats": {
+            "botYield": 1,
+            "assemblyYield": 0,
+            "cooldownSeconds": 0.20000000298023224
+          },
+          "presentationMode": "default",
           "canStart": false,
           "eligibility": "already-running",
           "timeToCompletionSeconds": 2.980232227667301e-9
@@ -183,7 +269,12 @@
             "effectiveManualLabour": false,
             "cooldownSeconds": 0.5
           },
-          "stats": { "botYield": 1, "assemblyYield": 0, "cooldownSeconds": 0.5 },
+          "stats": {
+            "botYield": 1,
+            "assemblyYield": 0,
+            "cooldownSeconds": 0.5
+          },
+          "presentationMode": "default",
           "canStart": true,
           "eligibility": "available",
           "timeToCompletionSeconds": null
@@ -194,8 +285,15 @@
   "checkpointedReconstruction": {
     "phase": "ready",
     "source": "primary",
-    "revision": { "session": 1, "state": 0, "durable": 0 },
-    "checkpoint": { "kind": "clean", "durableRevision": 0 },
+    "revision": {
+      "session": 1,
+      "state": 0,
+      "durable": 0
+    },
+    "checkpoint": {
+      "kind": "clean",
+      "durableRevision": 0
+    },
     "resources": {
       "money": 370012031.93673515,
       "science": 0,
@@ -204,14 +302,38 @@
       "researchers": 0
     },
     "facilities": {
-      "assembly_lines": [0, 87],
-      "ai_managers": [0, 0],
-      "servers": [0, 0],
-      "data_centers": [0, 0],
-      "planets": [0, 0],
-      "matrioshka_brains": [0, 0],
-      "birch_planets": [0, 0],
-      "galactic_brains": [0, 0]
+      "assembly_lines": [
+        0,
+        87
+      ],
+      "ai_managers": [
+        0,
+        0
+      ],
+      "servers": [
+        0,
+        0
+      ],
+      "data_centers": [
+        0,
+        0
+      ],
+      "planets": [
+        0,
+        0
+      ],
+      "matrioshka_brains": [
+        0,
+        0
+      ],
+      "birch_planets": [
+        0,
+        0
+      ],
+      "galactic_brains": [
+        0,
+        0
+      ]
     },
     "visibility": {
       "showTinker": true,
@@ -236,6 +358,7 @@
           "assemblyYield": 0,
           "cooldownSeconds": 0.5
         },
+        "presentationMode": "default",
         "canStart": true,
         "eligibility": "available",
         "timeToCompletionSeconds": null
@@ -262,7 +385,9 @@
         "status": "available",
         "authority": "tryPurchaseCanonicalBasicFacility",
         "blocker": null,
-        "requirements": ["runtime-evaluation-port"],
+        "requirements": [
+          "runtime-evaluation-port"
+        ],
         "missingRequirements": [],
         "definitionGaps": []
       }
@@ -284,9 +409,30 @@
         "cost": 365389924.8540463,
         "status": "success"
       },
-      { "facilityId": "servers", "eligible": false, "selectedQuantity": "0", "affordableQuantity": "0", "cost": 0, "status": "locked" },
-      { "facilityId": "data_centers", "eligible": false, "selectedQuantity": "0", "affordableQuantity": "0", "cost": 0, "status": "locked" },
-      { "facilityId": "planets", "eligible": false, "selectedQuantity": "0", "affordableQuantity": "0", "cost": 0, "status": "locked" }
+      {
+        "facilityId": "servers",
+        "eligible": false,
+        "selectedQuantity": "0",
+        "affordableQuantity": "0",
+        "cost": 0,
+        "status": "locked"
+      },
+      {
+        "facilityId": "data_centers",
+        "eligible": false,
+        "selectedQuantity": "0",
+        "affordableQuantity": "0",
+        "cost": 0,
+        "status": "locked"
+      },
+      {
+        "facilityId": "planets",
+        "eligible": false,
+        "selectedQuantity": "0",
+        "affordableQuantity": "0",
+        "cost": 0,
+        "status": "locked"
+      }
     ]
   }
 }

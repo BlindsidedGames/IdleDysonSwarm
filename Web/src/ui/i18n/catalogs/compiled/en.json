@@ -1,4 +1,772 @@
 {
+  "dyson.bot-distribution.heading": [
+    {
+      "type": 0,
+      "value": "Bot Distribution"
+    }
+  ],
+  "dyson.bot-distribution.scientists": [
+    {
+      "type": 0,
+      "value": "Scientists"
+    }
+  ],
+  "dyson.bot-distribution.workers": [
+    {
+      "type": 0,
+      "value": "Workers"
+    }
+  ],
+  "dyson.facilities.ai-managers.identity": [
+    {
+      "type": 0,
+      "value": "AI Managers "
+    },
+    {
+      "type": 1,
+      "value": "total"
+    },
+    {
+      "type": 0,
+      "value": "("
+    },
+    {
+      "type": 1,
+      "value": "manual"
+    },
+    {
+      "type": 0,
+      "value": ")"
+    }
+  ],
+  "dyson.facilities.ai-managers.production-minutes": [
+    {
+      "type": 0,
+      "value": "Generating 1 Assembly Line /"
+    },
+    {
+      "type": 1,
+      "value": "interval"
+    },
+    {
+      "type": 0,
+      "value": " Min"
+    }
+  ],
+  "dyson.facilities.ai-managers.production-per-second": [
+    {
+      "type": 0,
+      "value": "Generating "
+    },
+    {
+      "type": 1,
+      "value": "rate"
+    },
+    {
+      "type": 0,
+      "value": " Assembly Lines /s"
+    }
+  ],
+  "dyson.facilities.ai-managers.production-seconds": [
+    {
+      "type": 0,
+      "value": "Generating 1 Assembly Line /"
+    },
+    {
+      "type": 1,
+      "value": "interval"
+    },
+    {
+      "type": 0,
+      "value": "s"
+    }
+  ],
+  "dyson.facilities.ai-managers.purchase": [
+    {
+      "type": 0,
+      "value": "Purchase an AI Manager"
+    }
+  ],
+  "dyson.facilities.ai-managers.purchase-accessible": [
+    {
+      "type": 0,
+      "value": "Purchase an AI Manager: +"
+    },
+    {
+      "type": 1,
+      "value": "quantity"
+    },
+    {
+      "type": 0,
+      "value": ", $"
+    },
+    {
+      "type": 1,
+      "value": "cost"
+    }
+  ],
+  "dyson.facilities.assembly-lines.identity": [
+    {
+      "type": 0,
+      "value": "Assembly Lines "
+    },
+    {
+      "type": 1,
+      "value": "total"
+    },
+    {
+      "type": 0,
+      "value": "("
+    },
+    {
+      "type": 1,
+      "value": "manual"
+    },
+    {
+      "type": 0,
+      "value": ")"
+    }
+  ],
+  "dyson.facilities.assembly-lines.production-minutes": [
+    {
+      "type": 0,
+      "value": "Producing 1 Bot /"
+    },
+    {
+      "type": 1,
+      "value": "interval"
+    },
+    {
+      "type": 0,
+      "value": " Min"
+    }
+  ],
+  "dyson.facilities.assembly-lines.production-per-second": [
+    {
+      "type": 0,
+      "value": "Producing "
+    },
+    {
+      "type": 1,
+      "value": "rate"
+    },
+    {
+      "type": 0,
+      "value": " Bots /s"
+    }
+  ],
+  "dyson.facilities.assembly-lines.production-seconds": [
+    {
+      "type": 0,
+      "value": "Producing 1 Bot /"
+    },
+    {
+      "type": 1,
+      "value": "interval"
+    },
+    {
+      "type": 0,
+      "value": "s"
+    }
+  ],
+  "dyson.facilities.assembly-lines.purchase": [
+    {
+      "type": 0,
+      "value": "Purchase an Assembly Line"
+    }
+  ],
+  "dyson.facilities.assembly-lines.purchase-accessible": [
+    {
+      "type": 0,
+      "value": "Purchase an Assembly Line: +"
+    },
+    {
+      "type": 1,
+      "value": "quantity"
+    },
+    {
+      "type": 0,
+      "value": ", $"
+    },
+    {
+      "type": 1,
+      "value": "cost"
+    }
+  ],
+  "dyson.facilities.data-centers.identity": [
+    {
+      "type": 0,
+      "value": "Data Centers "
+    },
+    {
+      "type": 1,
+      "value": "total"
+    },
+    {
+      "type": 0,
+      "value": "("
+    },
+    {
+      "type": 1,
+      "value": "manual"
+    },
+    {
+      "type": 0,
+      "value": ")"
+    }
+  ],
+  "dyson.facilities.data-centers.production-minutes": [
+    {
+      "type": 0,
+      "value": "Deploying 1 Server /"
+    },
+    {
+      "type": 1,
+      "value": "interval"
+    },
+    {
+      "type": 0,
+      "value": " Min"
+    }
+  ],
+  "dyson.facilities.data-centers.production-per-second": [
+    {
+      "type": 0,
+      "value": "Deploying "
+    },
+    {
+      "type": 1,
+      "value": "rate"
+    },
+    {
+      "type": 0,
+      "value": " Servers /s"
+    }
+  ],
+  "dyson.facilities.data-centers.production-seconds": [
+    {
+      "type": 0,
+      "value": "Deploying 1 Server /"
+    },
+    {
+      "type": 1,
+      "value": "interval"
+    },
+    {
+      "type": 0,
+      "value": "s"
+    }
+  ],
+  "dyson.facilities.data-centers.purchase": [
+    {
+      "type": 0,
+      "value": "Purchase a Data Center"
+    }
+  ],
+  "dyson.facilities.data-centers.purchase-accessible": [
+    {
+      "type": 0,
+      "value": "Purchase a Data Center: +"
+    },
+    {
+      "type": 1,
+      "value": "quantity"
+    },
+    {
+      "type": 0,
+      "value": ", $"
+    },
+    {
+      "type": 1,
+      "value": "cost"
+    }
+  ],
+  "dyson.facilities.heading": [
+    {
+      "type": 0,
+      "value": "Facilities"
+    }
+  ],
+  "dyson.facilities.next-tier-teaser": [
+    {
+      "type": 0,
+      "value": "????"
+    }
+  ],
+  "dyson.facilities.planets.identity": [
+    {
+      "type": 0,
+      "value": "Planets "
+    },
+    {
+      "type": 1,
+      "value": "total"
+    },
+    {
+      "type": 0,
+      "value": "("
+    },
+    {
+      "type": 1,
+      "value": "manual"
+    },
+    {
+      "type": 0,
+      "value": ")"
+    }
+  ],
+  "dyson.facilities.planets.production-minutes": [
+    {
+      "type": 0,
+      "value": "Creating 1 Data Center /"
+    },
+    {
+      "type": 1,
+      "value": "interval"
+    },
+    {
+      "type": 0,
+      "value": " Min"
+    }
+  ],
+  "dyson.facilities.planets.production-per-second": [
+    {
+      "type": 0,
+      "value": "Creating "
+    },
+    {
+      "type": 1,
+      "value": "rate"
+    },
+    {
+      "type": 0,
+      "value": " Data Centers /s"
+    }
+  ],
+  "dyson.facilities.planets.production-seconds": [
+    {
+      "type": 0,
+      "value": "Creating 1 Data Center /"
+    },
+    {
+      "type": 1,
+      "value": "interval"
+    },
+    {
+      "type": 0,
+      "value": "s"
+    }
+  ],
+  "dyson.facilities.planets.purchase": [
+    {
+      "type": 0,
+      "value": "Purchase a Planet"
+    }
+  ],
+  "dyson.facilities.planets.purchase-accessible": [
+    {
+      "type": 0,
+      "value": "Purchase a Planet: +"
+    },
+    {
+      "type": 1,
+      "value": "quantity"
+    },
+    {
+      "type": 0,
+      "value": ", $"
+    },
+    {
+      "type": 1,
+      "value": "cost"
+    }
+  ],
+  "dyson.facilities.purchase.cost": [
+    {
+      "type": 0,
+      "value": "$"
+    },
+    {
+      "type": 1,
+      "value": "cost"
+    }
+  ],
+  "dyson.facilities.purchase.failed": [
+    {
+      "type": 0,
+      "value": "Purchase unavailable."
+    }
+  ],
+  "dyson.facilities.purchase.insufficient-funds": [
+    {
+      "type": 0,
+      "value": "Not enough Cash for this purchase. Affordable quantity: "
+    },
+    {
+      "type": 1,
+      "value": "quantity"
+    },
+    {
+      "type": 0,
+      "value": "."
+    }
+  ],
+  "dyson.facilities.purchase.locked": [
+    {
+      "type": 0,
+      "value": "This facility is locked."
+    }
+  ],
+  "dyson.facilities.purchase.maximum-reached": [
+    {
+      "type": 0,
+      "value": "The maximum has been reached."
+    }
+  ],
+  "dyson.facilities.purchase.pending": [
+    {
+      "type": 0,
+      "value": "Purchase pending…"
+    }
+  ],
+  "dyson.facilities.purchase.quantity": [
+    {
+      "type": 0,
+      "value": "+"
+    },
+    {
+      "type": 1,
+      "value": "quantity"
+    }
+  ],
+  "dyson.facilities.purchase.rejected": [
+    {
+      "type": 0,
+      "value": "Purchase not completed."
+    }
+  ],
+  "dyson.facilities.purchase.stale": [
+    {
+      "type": 0,
+      "value": "Values changed. Review and try again."
+    }
+  ],
+  "dyson.facilities.purchase.succeeded": [
+    {
+      "type": 0,
+      "value": "Purchase completed."
+    }
+  ],
+  "dyson.facilities.purchase.unavailable": [
+    {
+      "type": 0,
+      "value": "Purchase unavailable."
+    }
+  ],
+  "dyson.facilities.region": [
+    {
+      "type": 0,
+      "value": "Facilities"
+    }
+  ],
+  "dyson.facilities.servers.identity": [
+    {
+      "type": 0,
+      "value": "Servers "
+    },
+    {
+      "type": 1,
+      "value": "total"
+    },
+    {
+      "type": 0,
+      "value": "("
+    },
+    {
+      "type": 1,
+      "value": "manual"
+    },
+    {
+      "type": 0,
+      "value": ")"
+    }
+  ],
+  "dyson.facilities.servers.production-minutes": [
+    {
+      "type": 0,
+      "value": "Training 1 AI Manager /"
+    },
+    {
+      "type": 1,
+      "value": "interval"
+    },
+    {
+      "type": 0,
+      "value": " Min"
+    }
+  ],
+  "dyson.facilities.servers.production-per-second": [
+    {
+      "type": 0,
+      "value": "Training "
+    },
+    {
+      "type": 1,
+      "value": "rate"
+    },
+    {
+      "type": 0,
+      "value": " AI Managers /s"
+    }
+  ],
+  "dyson.facilities.servers.production-seconds": [
+    {
+      "type": 0,
+      "value": "Training 1 AI Manager /"
+    },
+    {
+      "type": 1,
+      "value": "interval"
+    },
+    {
+      "type": 0,
+      "value": "s"
+    }
+  ],
+  "dyson.facilities.servers.purchase": [
+    {
+      "type": 0,
+      "value": "Purchase a Server"
+    }
+  ],
+  "dyson.facilities.servers.purchase-accessible": [
+    {
+      "type": 0,
+      "value": "Purchase a Server: +"
+    },
+    {
+      "type": 1,
+      "value": "quantity"
+    },
+    {
+      "type": 0,
+      "value": ", $"
+    },
+    {
+      "type": 1,
+      "value": "cost"
+    }
+  ],
+  "dyson.facilities.teaser": [
+    {
+      "type": 0,
+      "value": "????"
+    }
+  ],
+  "dyson.navigation.primary": [
+    {
+      "type": 0,
+      "value": "Primary"
+    }
+  ],
+  "dyson.navigation.skip-to-game": [
+    {
+      "type": 0,
+      "value": "Skip to game"
+    }
+  ],
+  "dyson.production-summary.region": [
+    {
+      "type": 0,
+      "value": "Production summary"
+    }
+  ],
+  "dyson.production-summary.science-production": [
+    {
+      "type": 1,
+      "value": "scientists"
+    },
+    {
+      "type": 0,
+      "value": " Science Bots producing "
+    },
+    {
+      "type": 1,
+      "value": "science"
+    },
+    {
+      "type": 0,
+      "value": " /s"
+    }
+  ],
+  "dyson.production-summary.worker-production": [
+    {
+      "type": 1,
+      "value": "workers"
+    },
+    {
+      "type": 0,
+      "value": " Worker Bots producing "
+    },
+    {
+      "type": 1,
+      "value": "panels"
+    },
+    {
+      "type": 0,
+      "value": " Panels /s"
+    }
+  ],
+  "dyson.ready.unavailable": [
+    {
+      "type": 0,
+      "value": "Gameplay is temporarily unavailable."
+    }
+  ],
+  "dyson.resources.cash": [
+    {
+      "type": 0,
+      "value": "Cash"
+    }
+  ],
+  "dyson.resources.cash-rate": [
+    {
+      "type": 0,
+      "value": "$"
+    },
+    {
+      "type": 1,
+      "value": "value"
+    },
+    {
+      "type": 0,
+      "value": " /s"
+    }
+  ],
+  "dyson.resources.cash-value": [
+    {
+      "type": 0,
+      "value": "$"
+    },
+    {
+      "type": 1,
+      "value": "value"
+    }
+  ],
+  "dyson.resources.science": [
+    {
+      "type": 0,
+      "value": "Science"
+    }
+  ],
+  "dyson.resources.science-rate": [
+    {
+      "type": 1,
+      "value": "value"
+    },
+    {
+      "type": 0,
+      "value": " /s"
+    }
+  ],
+  "dyson.resources.summary": [
+    {
+      "type": 0,
+      "value": "Resources"
+    }
+  ],
+  "dyson.resources.total-bots": [
+    {
+      "type": 0,
+      "value": "Total Bots"
+    }
+  ],
+  "dyson.route.bots": [
+    {
+      "type": 0,
+      "value": "Bots"
+    }
+  ],
+  "dyson.tinker.action": [
+    {
+      "type": 0,
+      "value": "Manually put together a new bot from parts in your shed."
+    }
+  ],
+  "dyson.tinker.description.default": [
+    {
+      "type": 0,
+      "value": "There has to be a better way of going about this..."
+    }
+  ],
+  "dyson.tinker.description.manual-labour": [
+    {
+      "type": 0,
+      "value": "Having nothing better to do you decide to set up some more assembly lines. Masterfully made you will produce "
+    },
+    {
+      "type": 1,
+      "value": "count"
+    },
+    {
+      "type": 0,
+      "value": "."
+    }
+  ],
+  "dyson.tinker.description.manual-labour-blocked": [
+    {
+      "type": 0,
+      "value": "You have the knowledge to automate assembly lines, but without an AI Manager you still have to tinker together bots. You will produce "
+    },
+    {
+      "type": 1,
+      "value": "count"
+    },
+    {
+      "type": 0,
+      "value": ". (Get 1 AI Manager to unlock assembly line tinkering.)"
+    }
+  ],
+  "dyson.tinker.duration": [
+    {
+      "type": 1,
+      "value": "seconds"
+    },
+    {
+      "type": 0,
+      "value": "s"
+    }
+  ],
+  "dyson.tinker.failure.rejected": [
+    {
+      "type": 0,
+      "value": "Tinker could not be completed."
+    }
+  ],
+  "dyson.tinker.failure.runtime": [
+    {
+      "type": 0,
+      "value": "Tinker is temporarily unavailable."
+    }
+  ],
+  "dyson.tinker.failure.stale": [
+    {
+      "type": 0,
+      "value": "Tinker changed before the action completed. Try again."
+    }
+  ],
+  "dyson.tinker.progress": [
+    {
+      "type": 0,
+      "value": "Tinker progress"
+    }
+  ],
+  "dyson.tinker.region": [
+    {
+      "type": 0,
+      "value": "Tinker"
+    }
+  ],
   "shared.action.dismiss": [
     {
       "type": 0,

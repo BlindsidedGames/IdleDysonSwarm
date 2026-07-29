@@ -15,6 +15,7 @@ import App from './App'
 import enCatalog from './ui/i18n/catalogs/compiled/en.json'
 import type {
   BrowserUiRuntimeFoundation,
+  FrontendApplicationSnapshot,
   UiRuntimeFoundationStatus,
   UiRuntimeImportResult,
 } from './ui/runtime'
@@ -22,6 +23,40 @@ import type {
 afterEach(cleanup)
 
 describe('application startup host', () => {
+  test('mounts the snapshot-driven Dyson slice only after runtime readiness', () => {
+    const blocked = new TestRuntime({
+      phase: 'blocked',
+      code: 'writer-owned',
+      reason: 'private',
+    })
+    const blockedRender = renderApp(blocked.runtime, {
+      confirmOverwrite: () => true,
+      sampleUtc: () => '2026-07-29T00:00:00.000Z',
+    })
+    expect(blocked.snapshotReads).toBe(0)
+    expect(blocked.snapshotSubscriptions).toBe(0)
+    blockedRender.unmount()
+
+    const ready = new TestRuntime({
+      phase: 'ready',
+      warnings: [],
+    })
+    ready.snapshotValue = readySnapshot()
+    renderApp(ready.runtime, {
+      confirmOverwrite: () => true,
+      sampleUtc: () => '2026-07-29T00:00:00.000Z',
+    })
+
+    expect(
+      screen.getByRole('heading', { level: 1, name: 'Bots' }),
+    ).toBeInTheDocument()
+    expect(
+      screen.queryByTestId('startup-save-file'),
+    ).not.toBeInTheDocument()
+    expect(ready.snapshotReads).toBeGreaterThan(0)
+    expect(ready.snapshotSubscriptions).toBe(1)
+  })
+
   test('maps recovery safely and requires explicit overwrite approval before import', async () => {
     const runtime = new TestRuntime({
       phase: 'blocked',
@@ -287,6 +322,12 @@ class TestRuntime {
   importGate: Promise<void> | undefined
   rejectImport = false
   rejectExport = false
+  snapshotReads = 0
+  snapshotSubscriptions = 0
+  snapshotValue: FrontendApplicationSnapshot = {
+    version: 1,
+    phase: 'idle',
+  }
 
   constructor(status: UiRuntimeFoundationStatus) {
     this.#status = Object.freeze(status)
@@ -295,6 +336,19 @@ class TestRuntime {
   readonly runtime = {
     status: () => this.#status,
     subscribeStatus: () => () => undefined,
+    snapshot: () => {
+      this.snapshotReads += 1
+      return this.snapshotValue
+    },
+    subscribeSnapshot: () => {
+      this.snapshotSubscriptions += 1
+      return () => undefined
+    },
+    dispatchPlayer: async () => ({
+      status: 'failed',
+      code: 'test-not-configured',
+      reason: 'test-not-configured',
+    }),
     importSave: async (request: unknown) => {
       this.imports.push(request)
       await this.importGate
@@ -311,6 +365,116 @@ class TestRuntime {
       return true
     },
   } as unknown as BrowserUiRuntimeFoundation
+}
+
+function readySnapshot(): FrontendApplicationSnapshot {
+  const facilities = {
+    assembly_lines: [0, 0],
+    ai_managers: [0, 0],
+    servers: [0, 0],
+    data_centers: [0, 0],
+    planets: [0, 0],
+    matrioshka_brains: [0, 0],
+    birch_planets: [0, 0],
+    galactic_brains: [0, 0],
+  }
+  return {
+    version: 1,
+    phase: 'ready',
+    source: 'primary',
+    revision: { session: 1, state: 0, durable: 0 },
+    checkpoint: { kind: 'clean', durableRevision: 0 },
+    operation: { kind: 'none' },
+    gameplay: {
+      resources: {
+        dyson: {
+          money: 0,
+          science: 0,
+          bots: 0,
+          workers: 0,
+          researchers: 0,
+        },
+      },
+      progression: { dyson: { facilities } },
+      derived: {
+        dyson: {
+          status: 'ready',
+          value: {
+            rates: {
+              money: 0,
+              science: 0,
+              panels: 0,
+              bots: 0,
+              assembly_lines: 0,
+              ai_managers: 0,
+              servers: 0,
+              data_centers: 0,
+              planets: 0,
+            },
+          },
+        },
+        dysonBotDistribution: {
+          workersFraction: 1,
+          scientistsFraction: 0,
+        },
+      },
+      visibility: {
+        dyson: {
+          showTinker: true,
+          visibleBasicFacilityIds: [],
+          showNextTierTeaser: true,
+        },
+      },
+      runtime: {
+        tinker: {
+          status: 'ready',
+          value: {
+            runtime: {
+              running: false,
+              repeat: false,
+              elapsedSeconds: 0,
+              effectiveManualLabour: false,
+              cooldownSeconds: 0.5,
+            },
+            stats: {
+              botYield: 1,
+              assemblyYield: 0,
+              cooldownSeconds: 0.5,
+            },
+            presentationMode: 'default',
+            canStart: true,
+            eligibility: 'available',
+            timeToCompletionSeconds: null,
+          },
+        },
+      },
+      commands: {
+        byKind: {
+          'dyson.purchase-basic-facility': {
+            routeAvailable: true,
+          },
+        },
+      },
+      previews: {
+        dyson: {
+          basicFacilities: [
+            'assembly_lines',
+            'ai_managers',
+            'servers',
+            'data_centers',
+            'planets',
+          ].map((facilityId) => ({
+            facilityId,
+            eligible: false,
+            selectedQuantity: 1n,
+            affordableQuantity: 0n,
+            cost: 100,
+            status: 'insufficient-funds',
+          })),
+        },
+      },
+    },
+  } as unknown as FrontendApplicationSnapshot
 }
 
 function deferred<T>() {

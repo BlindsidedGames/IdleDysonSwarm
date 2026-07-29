@@ -12,6 +12,11 @@ import type {
   UiRuntimePlayerCommandResult,
 } from './contracts'
 
+type TinkerRepeatDisableCommand = Extract<
+  CanonicalPlayerCommand,
+  { readonly kind: 'tinker.set-repeat' }
+> & { readonly enabled: false }
+
 export interface RevisionedPlayerCommandDispatcherOptions {
   readonly latestSnapshot: () =>
     DeepReadonly<FrontendApplicationSnapshot>
@@ -19,16 +24,18 @@ export interface RevisionedPlayerCommandDispatcherOptions {
     envelope: ReturnType<typeof createFrontendCommandEnvelope>,
     cancelRequested: () => boolean,
   ) => Promise<CanonicalCoordinatedPlayerResult>
+  readonly serialize: <T>(
+    operation: () => Promise<T>,
+  ) => Promise<T>
   readonly publishSnapshot: () => void
   readonly isCurrent: () => boolean
   readonly cancelRequested: () => boolean
 }
 
 /**
- * Captures the latest published ready revision at player activation time,
- * creates one detached command envelope, and never retries a stale or failed
- * intent. The supplied dispatch function is the authority-fenced coordinator
- * route; this adapter contains no gameplay rule or optimistic mutation.
+ * Captures the latest published ready revision at player activation time for
+ * ordinary intents. Idempotent safety reconciliation can instead capture its
+ * revision inside the authority lane through `dispatchLatest`.
  */
 export class RevisionedPlayerCommandDispatcher {
   private readonly options:
@@ -43,6 +50,66 @@ export class RevisionedPlayerCommandDispatcher {
   async dispatch(
     command: Readonly<CanonicalPlayerCommand>,
   ): Promise<UiRuntimePlayerCommandResult> {
+    const prepared = this.prepare(command)
+    if ('status' in prepared) return prepared
+    try {
+      const result = await this.options.serialize(() =>
+        this.options.dispatch(
+          prepared.envelope,
+          this.options.cancelRequested,
+        ),
+      )
+      return this.finish(result, prepared.activationRevision)
+    } catch (error) {
+      return this.mapFailure(error)
+    }
+  }
+
+  /**
+   * Captures the latest revision only after previously admitted lifecycle work
+   * has settled. This is reserved for idempotent safety reconciliation such as
+   * disabling transient Tinker repeat; it is not an intent retry.
+   */
+  async dispatchLatest(
+    command: Readonly<TinkerRepeatDisableCommand>,
+  ): Promise<UiRuntimePlayerCommandResult> {
+    try {
+      const outcome = await this.options.serialize(async () => {
+        const prepared = this.prepare(command)
+        if ('status' in prepared) {
+          return { kind: 'failure', failure: prepared } as const
+        }
+        const result = await this.options.dispatch(
+          prepared.envelope,
+          this.options.cancelRequested,
+        )
+        return {
+          kind: 'result',
+          result,
+          activationRevision: prepared.activationRevision,
+        } as const
+      })
+      if (outcome.kind === 'failure') return outcome.failure
+      return this.finish(
+        outcome.result,
+        outcome.activationRevision,
+      )
+    } catch (error) {
+      return this.mapFailure(error)
+    }
+  }
+
+  private prepare(
+    command: Readonly<CanonicalPlayerCommand>,
+  ):
+    | {
+        readonly envelope: ReturnType<
+          typeof createFrontendCommandEnvelope
+        >
+        readonly activationRevision:
+          UiRuntimeCommandActivationRevision
+      }
+    | UiRuntimePlayerCommandResult {
     const snapshot = this.options.latestSnapshot()
     if (snapshot.phase !== 'ready') {
       return failed(
@@ -54,46 +121,49 @@ export class RevisionedPlayerCommandDispatcher {
       session: snapshot.revision.session,
       state: snapshot.revision.state,
     })
-    let envelope: ReturnType<typeof createFrontendCommandEnvelope>
     try {
-      envelope = createFrontendCommandEnvelope(
-        snapshot.revision,
-        command,
-      )
+      return {
+        envelope: createFrontendCommandEnvelope(
+          snapshot.revision,
+          command,
+        ),
+        activationRevision,
+      }
     } catch (error) {
       return failed(
         'RUNTIME-PLAYER-COMMAND-INVALID',
         errorMessage(error),
       )
     }
+  }
 
-    try {
-      const result = await this.options.dispatch(
-        envelope,
-        this.options.cancelRequested,
-      )
-      if (!this.options.isCurrent()) {
-        return failed(
-          'RUNTIME-PLAYER-AUTHORITY-LOST',
-          'The writable application changed before the command result could publish.',
-        )
-      }
-      const mapped = mapResult(result, activationRevision)
-      if (
-        mapped.status === 'accepted' ||
-        mapped.status === 'partial'
-      ) {
-        this.options.publishSnapshot()
-      }
-      return mapped
-    } catch (error) {
+  private finish(
+    result: Readonly<CanonicalCoordinatedPlayerResult>,
+    activationRevision: UiRuntimeCommandActivationRevision,
+  ): UiRuntimePlayerCommandResult {
+    if (!this.options.isCurrent()) {
       return failed(
-        this.options.cancelRequested()
-          ? 'RUNTIME-PLAYER-AUTHORITY-LOST'
-          : 'RUNTIME-PLAYER-DISPATCH-FAILED',
-        errorMessage(error),
+        'RUNTIME-PLAYER-AUTHORITY-LOST',
+        'The writable application changed before the command result could publish.',
       )
     }
+    const mapped = mapResult(result, activationRevision)
+    if (
+      mapped.status === 'accepted' ||
+      mapped.status === 'partial'
+    ) {
+      this.options.publishSnapshot()
+    }
+    return mapped
+  }
+
+  private mapFailure(error: unknown): UiRuntimePlayerCommandResult {
+    return failed(
+      this.options.cancelRequested()
+        ? 'RUNTIME-PLAYER-AUTHORITY-LOST'
+        : 'RUNTIME-PLAYER-DISPATCH-FAILED',
+      errorMessage(error),
+    )
   }
 }
 

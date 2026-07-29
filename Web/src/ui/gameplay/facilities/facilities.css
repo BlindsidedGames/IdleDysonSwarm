@@ -1,0 +1,133 @@
+@import "../../tokens/tokens.css";
+
+.basic-facility-region {
+  display: grid;
+  min-inline-size: 0;
+}
+
+.basic-facility-region__heading {
+  position: absolute;
+  inline-size: 1px;
+  block-size: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+.basic-facility-region__grid {
+  display: grid;
+  min-inline-size: 0;
+  grid-template-columns: minmax(0, 1fr);
+  gap: var(--space-4);
+  padding: 0;
+  margin: 0;
+  list-style: none;
+}
+
+.basic-facility-region__item {
+  min-inline-size: 0;
+}
+
+.basic-facility-region__teaser {
+  grid-column: 1 / -1;
+}
+
+.basic-facility-region__teaser-surface {
+  display: grid;
+  min-block-size: var(--target-minimum);
+  place-items: center;
+  padding-block: var(--space-5);
+  padding-inline: var(--space-4);
+  border: var(--border-width) solid var(--color-border);
+  border-radius: var(--radius-md);
+  background: var(--color-surface);
+  color: var(--color-text-secondary);
+  font-size: var(--font-size-lg);
+  font-weight: var(--font-weight-bold);
+  letter-spacing: 0.12em;
+}
+
+.basic-facility-card {
+  block-size: 100%;
+}
+
+.basic-facility-card__identity {
+  color: var(--color-accent-value);
+  font-weight: var(--font-weight-bold);
+  font-variant-numeric: tabular-nums;
+}
+
+.basic-facility-card__production {
+  margin: 0;
+  color: var(--color-text-secondary);
+  line-height: var(--line-height-body);
+}
+
+.basic-facility-card__feedback,
+.basic-facility-card__availability {
+  position: absolute;
+  inline-size: 1px;
+  block-size: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+.basic-facility-card .ui-button {
+  min-inline-size: 0;
+  flex-wrap: wrap;
+  justify-content: space-between;
+}
+
+.basic-facility-card__purchase-quantity,
+.basic-facility-card__purchase-cost {
+  color: inherit;
+  font-family: var(--font-family-numeric);
+  font-variant-numeric: tabular-nums;
+  font-weight: var(--font-weight-bold);
+}
+
+.basic-facility-card__purchase-cost {
+  color: var(--color-accent-value);
+  overflow-wrap: anywhere;
+}
+
+@media (max-width: 359px) {
+  .basic-facility-card .ui-button {
+    flex-direction: column;
+    align-items: stretch;
+  }
+}
+
+@media (min-width: 1024px) {
+  .basic-facility-region__grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .basic-facility-card {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .basic-facility-card .ui-facility-card__header,
+  .basic-facility-card .ui-facility-card__summary,
+  .basic-facility-card .ui-facility-card__details,
+  .basic-facility-card .ui-facility-card__action {
+    grid-column: 1;
+  }
+
+  .basic-facility-card .ui-facility-card__action {
+    grid-row: auto;
+  }
+}
+
+@media (forced-colors: active) {
+  .basic-facility-region__teaser-surface {
+    forced-color-adjust: auto;
+  }
+}

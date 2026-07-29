@@ -503,6 +503,10 @@ export interface FrontendDreamDerivedFacts {
 
 export interface FrontendGameplayDerivedFacts {
   readonly dyson: FrontendDysonDerivedFacts
+  readonly dysonBotDistribution: {
+    readonly workersFraction: number
+    readonly scientistsFraction: number
+  }
   readonly dream: FrontendDreamDerivedFacts
   readonly reality: FrontendRealityDerivedFacts
   readonly avocado: AvocadoMultiplierBreakdown
@@ -999,10 +1003,20 @@ function selectDerivedFacts(
           status: 'ready',
           value: projectDysonDerivedFacts(dyson.value),
         }
-      : {
+        : {
           status: 'unavailable',
           issues: dyson.issues,
         },
+    dysonBotDistribution:
+      state.quantum.unlocks.botMultitasking
+        ? {
+            workersFraction: 1,
+            scientistsFraction: 1,
+          }
+        : {
+            workersFraction: 1 - state.dyson.botDistribution,
+            scientistsFraction: state.dyson.botDistribution,
+          },
     dream: {
       productionBasis: 'base-rate',
       effectiveDoubleTimeMultiplier: 1,

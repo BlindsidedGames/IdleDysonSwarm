@@ -1,0 +1,55 @@
+@import "../../tokens/tokens.css";
+
+.dyson-lower-facts,
+.dyson-bot-distribution {
+  min-inline-size: 0;
+  block-size: 100%;
+  padding: var(--space-4);
+  border: var(--border-width) solid var(--color-border);
+  border-radius: var(--radius-md);
+  background: var(--color-surface);
+}
+
+.dyson-lower-facts {
+  display: grid;
+  align-content: center;
+  gap: var(--space-3);
+}
+
+.dyson-lower-facts p,
+.dyson-bot-distribution h2,
+.dyson-bot-distribution dl,
+.dyson-bot-distribution dd {
+  margin: 0;
+}
+
+.dyson-lower-facts p {
+  line-height: var(--line-height-body);
+}
+
+.dyson-bot-distribution {
+  display: grid;
+  gap: var(--space-3);
+}
+
+.dyson-bot-distribution h2 {
+  font-size: var(--font-size-lg);
+}
+
+.dyson-bot-distribution dl {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--space-4);
+}
+
+.dyson-bot-distribution dl > div {
+  display: grid;
+  gap: var(--space-1);
+}
+
+.dyson-bot-distribution dd {
+  color: var(--color-highlight);
+  font-size: var(--font-size-lg);
+  font-variant-numeric: tabular-nums;
+  font-weight: var(--font-weight-bold);
+}

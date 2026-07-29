@@ -351,7 +351,12 @@ class BrowserRuntimeFoundation implements BrowserUiRuntimeFoundation {
         ),
       )
     }
-    return graph.playerCommands.dispatch(command)
+    return command.kind === 'tinker.set-repeat' && !command.enabled
+      ? graph.playerCommands.dispatchLatest({
+          kind: 'tinker.set-repeat',
+          enabled: false,
+        })
+      : graph.playerCommands.dispatch(command)
   }
 
   async importSave(
@@ -779,9 +784,8 @@ class BrowserRuntimeFoundation implements BrowserUiRuntimeFoundation {
     const playerCommands = new RevisionedPlayerCommandDispatcher({
       latestSnapshot: () => this.frontendSnapshots.snapshot(),
       dispatch: (envelope, cancelRequested) =>
-        router.run(() =>
-          coordinator.dispatchPlayer(envelope, cancelRequested),
-        ),
+        coordinator.dispatchPlayer(envelope, cancelRequested),
+      serialize: (operation) => router.run(operation),
       publishSnapshot: () => {
         this.publishFrontendSnapshot(graph)
       },

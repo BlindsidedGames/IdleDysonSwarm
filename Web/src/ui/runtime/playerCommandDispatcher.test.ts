@@ -25,6 +25,7 @@ describe('revisioned player command dispatcher', () => {
         envelopes.push(envelope)
         return gates[index]!.promise
       },
+      serialize: (operation) => operation(),
       publishSnapshot: () => {
         publications += 1
       },
@@ -73,6 +74,55 @@ describe('revisioned player command dispatcher', () => {
     expect(publications).toBe(1)
   })
 
+  test('captures safety reconciliation after previously admitted lifecycle work', async () => {
+    let stateRevision = 9
+    let lane = Promise.resolve()
+    const blocker = deferred<void>()
+    const envelopes: Array<{
+      readonly expectedStateRevision: number
+    }> = []
+    const serialize = <T>(
+      operation: () => Promise<T>,
+    ): Promise<T> => {
+      const result = lane.then(operation)
+      lane = result.then(
+        () => undefined,
+        () => undefined,
+      )
+      return result
+    }
+    const admitted = serialize(async () => {
+      await blocker.promise
+      stateRevision = 10
+    })
+    const dispatcher = new RevisionedPlayerCommandDispatcher({
+      latestSnapshot: () => readySnapshot(4, stateRevision),
+      dispatch: async (envelope) => {
+        envelopes.push(envelope)
+        return acceptedTransition(11)
+      },
+      serialize,
+      publishSnapshot: () => undefined,
+      isCurrent: () => true,
+      cancelRequested: () => false,
+    })
+
+    const reconciliation = dispatcher.dispatchLatest({
+      kind: 'tinker.set-repeat',
+      enabled: false,
+    })
+    expect(envelopes).toHaveLength(0)
+
+    blocker.resolve()
+    await admitted
+    await expect(reconciliation).resolves.toMatchObject({
+      status: 'accepted',
+      activationRevision: { session: 4, state: 10 },
+      stateRevision: 11,
+    })
+    expect(envelopes[0]?.expectedStateRevision).toBe(10)
+  })
+
   test('contains invalid commands, thrown dispatches, and late-owner results without publication', async () => {
     let dispatches = 0
     let current = true
@@ -85,6 +135,7 @@ describe('revisioned player command dispatcher', () => {
         current = false
         return acceptedTransition(1)
       },
+      serialize: (operation) => operation(),
       publishSnapshot: () => {
         publications += 1
       },
@@ -135,6 +186,7 @@ describe('revisioned player command dispatcher', () => {
         dispatches += 1
         return acceptedTransition(1)
       },
+      serialize: (operation) => operation(),
       publishSnapshot: () => undefined,
       isCurrent: () => true,
       cancelRequested: () => false,

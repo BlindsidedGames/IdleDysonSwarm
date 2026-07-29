@@ -83,6 +83,7 @@ describe('canonical Tinker runtime', () => {
         assemblyYield: 12,
         cooldownSeconds: 2,
       },
+      presentationMode: 'default',
       canStart: true,
       eligibility: 'available',
       timeToCompletionSeconds: null,
@@ -118,11 +119,23 @@ describe('canonical Tinker runtime', () => {
       assemblyYield: 42,
       cooldownSeconds: 0.2,
     })
+    expect(facts.presentationMode).toBe('manual-labour')
     expect(facts.canStart).toBe(false)
     expect(facts.eligibility).toBe('already-running')
     expect(facts.timeToCompletionSeconds).toBe(0.2)
     expect(canonical.dyson.manualCreationIntervalSeconds).toBe(10)
     expect(staleRuntime.elapsedSeconds).toBe(7)
+  })
+
+  test('publishes the blocked Manual Labour presentation mode from canonical ownership', () => {
+    const facts = selectCanonicalTinkerUiFacts(
+      state(2, true, 0),
+      createCanonicalTinkerRuntimeState(),
+      12,
+    )
+
+    expect(facts.presentationMode).toBe('manual-labour-blocked')
+    expect(facts.runtime.effectiveManualLabour).toBe(false)
   })
 
   test('starts with Unity initial progress and awards one bot after the horizon', () => {

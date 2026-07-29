@@ -36,6 +36,11 @@ export type CanonicalTinkerStartEligibility =
   | 'available'
   | 'already-running'
 
+export type CanonicalTinkerPresentationMode =
+  | 'default'
+  | 'manual-labour-blocked'
+  | 'manual-labour'
+
 /**
  * Presentation-neutral Tinker facts derived from the same synchronization,
  * stat, and horizon authorities used by runtime commands.
@@ -43,6 +48,7 @@ export type CanonicalTinkerStartEligibility =
 export interface CanonicalTinkerUiFacts {
   readonly runtime: Readonly<CanonicalTinkerRuntimeState>
   readonly stats: Readonly<CanonicalTinkerStats>
+  readonly presentationMode: CanonicalTinkerPresentationMode
   readonly canStart: boolean
   readonly eligibility: CanonicalTinkerStartEligibility
   readonly timeToCompletionSeconds: number | null
@@ -90,6 +96,11 @@ export function selectCanonicalTinkerUiFacts(
   return Object.freeze({
     runtime: Object.freeze({ ...synchronized.runtime }),
     stats: Object.freeze({ ...stats }),
+    presentationMode: synchronized.runtime.effectiveManualLabour
+      ? 'manual-labour'
+      : synchronized.state.skills.byId.manualLabour?.owned === true
+        ? 'manual-labour-blocked'
+        : 'default',
     canStart,
     eligibility: canStart ? 'available' : 'already-running',
     timeToCompletionSeconds: synchronized.runtime.running

@@ -1,0 +1,114 @@
+@import "../../tokens/tokens.css";
+
+.tinker-surface {
+  display: grid;
+  gap: var(--space-3);
+  min-inline-size: 0;
+}
+
+.tinker-surface__control {
+  display: grid;
+  min-block-size: var(--target-touch);
+  min-inline-size: var(--target-minimum);
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: var(--space-2) var(--space-4);
+  align-items: center;
+  padding: var(--space-4);
+  border: var(--border-width) solid var(--color-highlight);
+  border-radius: var(--radius-md);
+  background: var(--color-surface);
+  color: var(--color-text-primary);
+  font: inherit;
+  line-height: var(--line-height-compact);
+  text-align: start;
+  touch-action: manipulation;
+  -webkit-touch-callout: none;
+  -webkit-user-select: none;
+  user-select: none;
+  transition:
+    background-color var(--motion-duration-fast)
+      var(--motion-easing-standard),
+    border-color var(--motion-duration-fast)
+      var(--motion-easing-standard);
+}
+
+.tinker-surface__control:not(:disabled) {
+  cursor: pointer;
+}
+
+.tinker-surface__control:not(:disabled):hover {
+  background: var(--color-control-hover);
+}
+
+.tinker-surface__control:not(:disabled):active,
+.tinker-surface__control[data-gesture-active="true"] {
+  background: var(--color-control-pressed);
+}
+
+.tinker-surface__control:focus-visible {
+  outline: 3px solid var(--color-focus);
+  outline-offset: 3px;
+}
+
+.tinker-surface__control:disabled {
+  cursor: not-allowed;
+  opacity: 0.65;
+}
+
+.tinker-surface__label,
+.tinker-surface__output,
+.tinker-surface__time {
+  min-inline-size: 0;
+}
+
+.tinker-surface__label {
+  font-size: var(--font-size-lg);
+  font-weight: var(--font-weight-bold);
+}
+
+.tinker-surface__output,
+.tinker-surface__time {
+  font-family: var(--font-family-numeric);
+  font-variant-numeric: tabular-nums;
+}
+
+.tinker-surface__output {
+  color: var(--color-highlight);
+  overflow-wrap: anywhere;
+}
+
+.tinker-surface__time {
+  grid-column: 2;
+  grid-row: 1;
+  color: var(--color-text-secondary);
+}
+
+.tinker-surface__progress {
+  grid-column: 1 / -1;
+  inline-size: 100%;
+  block-size: 0.75rem;
+  accent-color: var(--color-highlight);
+}
+
+.tinker-surface__failure {
+  display: grid;
+  gap: var(--space-1);
+  padding: var(--space-3);
+  border: var(--border-width) solid var(--color-negative);
+  border-radius: var(--radius-sm);
+  background: var(--color-surface-raised);
+  color: var(--color-text-primary);
+  line-height: var(--line-height-body);
+  overflow-wrap: anywhere;
+}
+
+@media (forced-colors: active) {
+  .tinker-surface__control,
+  .tinker-surface__failure {
+    forced-color-adjust: auto;
+  }
+
+  .tinker-surface__control:focus-visible {
+    outline-color: Highlight;
+  }
+}

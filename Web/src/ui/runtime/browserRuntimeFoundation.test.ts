@@ -2105,6 +2105,63 @@ describe('browser runtime foundation composition', () => {
     await runtime.shutdown()
   })
 
+  test('captures transient repeat-off after already admitted active time', async () => {
+    const database = new MemoryBrowserSaveDatabase()
+    const activeClock = new ManualActiveTimeClock()
+    const frames = new ManualAnimationFrameScheduler()
+    const playerGate = deferred<void>()
+    let application: FakeRuntimeApplication | undefined
+    const runtime = createRuntime({
+      database,
+      activeTimeClock: activeClock,
+      activeTimeScheduler: frames,
+      createApplication: (repository) => {
+        application = new FakeRuntimeApplication(
+          repository,
+          database.events,
+        )
+        application.playerGate = playerGate.promise
+        return application
+      },
+    })
+    await runtime.start()
+
+    const repeatOn = runtime.dispatchPlayer({
+      kind: 'tinker.set-repeat',
+      enabled: true,
+    })
+    await waitUntil(() => application?.playerEnvelopes.length === 1)
+    activeClock.set(10)
+    frames.fire()
+    const repeatOff = repeatOn.then(() =>
+      runtime.dispatchPlayer({
+        kind: 'tinker.set-repeat',
+        enabled: false,
+      }),
+    )
+    playerGate.resolve()
+
+    await expect(repeatOn).resolves.toMatchObject({
+      status: 'accepted',
+      activationRevision: { session: 1, state: 0 },
+      stateRevision: 1,
+    })
+    await expect(repeatOff).resolves.toMatchObject({
+      status: 'accepted',
+      activationRevision: { session: 1, state: 2 },
+      stateRevision: 3,
+    })
+    expect(application?.activeRequests).toEqual([
+      { milliseconds: 10, sessionRevision: 1 },
+    ])
+    expect(
+      application?.playerEnvelopes.map(
+        (envelope) => envelope.expectedStateRevision,
+      ),
+    ).toEqual([0, 2])
+    await runtime.shutdown()
+  })
+
   test('routes lifecycle save even when captured active-time delivery fails', async () => {
     const database = new MemoryBrowserSaveDatabase()
     const lifecycle = new TestLifecycleAdapter()

@@ -10,6 +10,15 @@ import {
   loadDestinationCatalog,
 } from './localeRegistry'
 import { sharedMessages } from './messages'
+import {
+  readyDysonMessages,
+} from '../gameplay/dyson/messages'
+import {
+  basicFacilityMessages,
+} from '../gameplay/facilities/messages'
+import {
+  tinkerMessages,
+} from '../gameplay/tinker/messages'
 import { startupShellMessages } from '../shell/messages'
 
 describe('compiled locale catalogs', () => {
@@ -17,6 +26,9 @@ describe('compiled locale catalogs', () => {
     const expected = [
       ...Object.values(sharedMessages),
       ...Object.values(startupShellMessages),
+      ...Object.values(readyDysonMessages),
+      ...Object.values(basicFacilityMessages),
+      ...Object.values(tinkerMessages),
     ]
       .map((descriptor) => descriptor.id)
       .sort()

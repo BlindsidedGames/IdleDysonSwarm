@@ -1,0 +1,361 @@
+// @vitest-environment jsdom
+
+import '@testing-library/jest-dom/vitest'
+import { readFileSync } from 'node:fs'
+import { resolve } from 'node:path'
+import {
+  cleanup,
+  fireEvent,
+  render,
+  screen,
+  within,
+} from '@testing-library/react'
+import userEvent from '@testing-library/user-event'
+import { IntlProvider } from 'react-intl'
+import { afterEach, describe, expect, test, vi } from 'vitest'
+import type {
+  FrontendApplicationSnapshot,
+} from '../../../application/frontendSnapshot'
+import type {
+  CanonicalPlayerCommand,
+} from '../../../application/canonicalPlayerCommands'
+import type {
+  UiRuntimePlayerCommandResult,
+} from '../../runtime'
+import { ReadyDysonSlice } from './ReadyDysonSlice'
+
+afterEach(cleanup)
+
+describe('ReadyDysonSlice', () => {
+  test('renders fresh authoritative visibility without named hidden cards', () => {
+    renderSlice(snapshot())
+
+    expect(
+      screen.getByRole('heading', { level: 1, name: 'Bots' }),
+    ).toBeInTheDocument()
+    expect(
+      screen.queryByRole('article', {
+        name: /Assembly Lines|AI Managers|Servers/,
+      }),
+    ).not.toBeInTheDocument()
+    expect(screen.queryByText('AI Managers')).not.toBeInTheDocument()
+    expect(screen.getAllByText('????')).toHaveLength(1)
+    expect(screen.queryByText(/repeat/i)).not.toBeInTheDocument()
+    expect(screen.queryByText(/auto tinker/i)).not.toBeInTheDocument()
+    expect(screen.queryByText(/owned/i)).not.toBeInTheDocument()
+  })
+
+  test('uses published visibility even when ownership contradicts it', async () => {
+    const hidden = snapshot({
+      facilities: {
+        assembly_lines: [100, 100],
+        ai_managers: [100, 100],
+      },
+      visibleBasicFacilityIds: [],
+    })
+    const { rerender } = renderSlice(hidden)
+    expect(screen.queryByRole('article')).not.toBeInTheDocument()
+
+    rerender(
+      provider(
+        <ReadyDysonSlice
+          snapshot={snapshot({
+            facilities: {
+              assembly_lines: [0, 0],
+              ai_managers: [0, 0],
+            },
+            visibleBasicFacilityIds: [
+              'assembly_lines',
+              'ai_managers',
+            ],
+          })}
+          locale="en"
+          dispatchPlayer={acceptedDispatch}
+        />,
+      ),
+    )
+    expect(
+      await screen.findByRole('article', {
+        name: 'Assembly Lines 0(0)',
+      }),
+    ).toBeInTheDocument()
+    expect(
+      await screen.findByRole('article', {
+        name: 'AI Managers 0(0)',
+      }),
+    ).toBeInTheDocument()
+  })
+
+  test('omits the teaser when the authoritative fact is false with no visible facilities', () => {
+    renderSlice(snapshot({ showNextTierTeaser: false }))
+
+    expect(screen.queryByText('????')).not.toBeInTheDocument()
+    expect(screen.getByRole('region', {
+      name: 'Facilities',
+    })).toBeEmptyDOMElement()
+  })
+
+  test('maps current resources and producer output rates exactly', async () => {
+    renderSlice(
+      snapshot({
+        visibleBasicFacilityIds: [
+          'assembly_lines',
+          'ai_managers',
+          'servers',
+          'data_centers',
+          'planets',
+        ],
+      }),
+    )
+
+    const resourceSummary = screen.getByRole('region', {
+      name: 'Resources',
+    })
+    expect(resourceSummary).toHaveTextContent('Cash$123$11 /s')
+    expect(resourceSummary).toHaveTextContent('Total Bots456')
+    expect(resourceSummary).toHaveTextContent('Science78922 /s')
+
+    const expected = [
+      ['Assembly Lines 5(3)', 'Producing 33 Bots /s'],
+      ['AI Managers 9(5)', 'Generating 44 Assembly Lines /s'],
+      ['Servers 13(7)', 'Training 55 AI Managers /s'],
+      ['Data Centers 17(9)', 'Deploying 66 Servers /s'],
+      ['Planets 21(11)', 'Creating 77 Data Centers /s'],
+    ] as const
+    for (const [name, production] of expected) {
+      expect(
+        within(
+          await screen.findByRole('article', { name }),
+        ).getByText(production),
+      ).toBeInTheDocument()
+    }
+  })
+
+  test('routes Tinker and facility activation through the injected runtime dispatcher', async () => {
+    const dispatchPlayer = vi.fn(acceptedDispatch)
+    renderSlice(
+      snapshot({
+        visibleBasicFacilityIds: ['assembly_lines'],
+      }),
+      dispatchPlayer,
+    )
+
+    fireEvent.pointerDown(
+      screen.getByRole('button', {
+        name:
+          /Manually put together a new bot from parts in your shed/,
+      }),
+      { button: 0, pointerId: 7 },
+    )
+    expect(dispatchPlayer).toHaveBeenCalledWith({
+      kind: 'tinker.start',
+      repeat: false,
+    })
+
+    const user = userEvent.setup()
+    await user.click(
+      await screen.findByRole('button', {
+        name: /^Purchase an Assembly Line:/,
+      }),
+    )
+    expect(dispatchPlayer).toHaveBeenCalledWith({
+      kind: 'dyson.purchase-basic-facility',
+      facilityId: 'assembly_lines',
+    })
+  })
+
+  test('does not create commands or active-time work while merely rendered', () => {
+    vi.useFakeTimers()
+    const dispatchPlayer = vi.fn(acceptedDispatch)
+    renderSlice(snapshot(), dispatchPlayer)
+
+    vi.advanceTimersByTime(60_000)
+    expect(dispatchPlayer).not.toHaveBeenCalled()
+    vi.useRealTimers()
+  })
+
+  test('keeps active-time and gameplay-rule authorities out of the composition source', () => {
+    const source = readFileSync(
+      resolve(
+        process.cwd(),
+        'src/ui/gameplay/dyson/ReadyDysonSlice.tsx',
+      ),
+      'utf8',
+    )
+    for (const forbidden of [
+      'advanceActive',
+      'advanceAway',
+      'requestAnimationFrame',
+      'setInterval',
+      'LifecycleCoordinator',
+      'canonicalGameCommands',
+      'canonicalDysonDerivation',
+    ]) {
+      expect(source).not.toContain(forbidden)
+    }
+  })
+})
+
+type ReadySnapshot = Extract<
+  FrontendApplicationSnapshot,
+  { readonly phase: 'ready' }
+>
+
+type FacilityId =
+  ReadySnapshot['gameplay']['visibility']['dyson']['visibleBasicFacilityIds'][number]
+
+interface SnapshotOptions {
+  readonly visibleBasicFacilityIds?: readonly FacilityId[]
+  readonly showNextTierTeaser?: boolean
+  readonly facilities?: Partial<
+    Record<FacilityId, readonly [number, number]>
+  >
+}
+
+function snapshot(options: SnapshotOptions = {}): ReadySnapshot {
+  const facilities = {
+    assembly_lines: [2, 3],
+    ai_managers: [4, 5],
+    servers: [6, 7],
+    data_centers: [8, 9],
+    planets: [10, 11],
+    matrioshka_brains: [0, 0],
+    birch_planets: [0, 0],
+    galactic_brains: [0, 0],
+    ...options.facilities,
+  }
+  const basicFacilities = [
+    'assembly_lines',
+    'ai_managers',
+    'servers',
+    'data_centers',
+    'planets',
+  ].map((facilityId) => ({
+    facilityId,
+    eligible: true,
+    selectedQuantity: 1n,
+    affordableQuantity: 1n,
+    cost: 10,
+    status: 'purchased',
+  }))
+
+  return {
+    version: 1,
+    phase: 'ready',
+    source: 'primary',
+    revision: { session: 1, state: 1, durable: 1 },
+    checkpoint: { kind: 'clean', durableRevision: 1 },
+    operation: { kind: 'none' },
+    gameplay: {
+      resources: {
+        dyson: {
+          money: 123,
+          science: 789,
+          bots: 456,
+          workers: 1000,
+          researchers: 2000,
+        },
+      },
+      progression: { dyson: { facilities } },
+      derived: {
+        dyson: {
+          status: 'ready',
+          value: {
+            rates: {
+              money: 11,
+              science: 22,
+              panels: 0,
+              bots: 33,
+              assembly_lines: 44,
+              ai_managers: 55,
+              servers: 66,
+              data_centers: 77,
+              planets: 88,
+            },
+          },
+        },
+        dysonBotDistribution: {
+          workersFraction: 1,
+          scientistsFraction: 0,
+        },
+      },
+      visibility: {
+        dyson: {
+          showTinker: true,
+          visibleBasicFacilityIds:
+            options.visibleBasicFacilityIds ?? [],
+          showNextTierTeaser:
+            options.showNextTierTeaser ?? true,
+        },
+      },
+      runtime: {
+        tinker: {
+          status: 'ready',
+          value: {
+            runtime: {
+              running: false,
+              repeat: false,
+              elapsedSeconds: 0,
+              effectiveManualLabour: false,
+              cooldownSeconds: 0.2,
+            },
+            stats: {
+              botYield: 1,
+              assemblyYield: 0,
+              cooldownSeconds: 0.2,
+            },
+            presentationMode: 'default',
+            canStart: true,
+            eligibility: 'available',
+            timeToCompletionSeconds: null,
+          },
+        },
+      },
+      commands: {
+        byKind: {
+          'dyson.purchase-basic-facility': {
+            routeAvailable: true,
+          },
+        },
+      },
+      previews: {
+        dyson: { basicFacilities },
+      },
+    },
+  } as unknown as ReadySnapshot
+}
+
+function renderSlice(
+  value: ReadySnapshot,
+  dispatchPlayer = acceptedDispatch,
+) {
+  return render(
+    provider(
+      <ReadyDysonSlice
+        snapshot={value}
+        locale="en"
+        dispatchPlayer={dispatchPlayer}
+      />,
+    ),
+  )
+}
+
+function provider(node: React.ReactNode) {
+  return (
+    <IntlProvider locale="en">
+      {node}
+    </IntlProvider>
+  )
+}
+
+async function acceptedDispatch(
+  command: CanonicalPlayerCommand,
+): Promise<UiRuntimePlayerCommandResult> {
+  return {
+    status: 'accepted',
+    kind: 'transition',
+    changed: command.kind.length > 0,
+    activationRevision: { session: 1, state: 1 },
+    stateRevision: 2,
+  }
+}

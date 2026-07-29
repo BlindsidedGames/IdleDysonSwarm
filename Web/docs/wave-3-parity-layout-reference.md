@@ -61,14 +61,17 @@ Diagram key:
 
 - `T`: Tinker only when `showTinker` is true.
 - `????`: generic teaser only when backend-authorized.
-- `Info` and `Bot Distribution`: lower Unity regions. Their contents are
-  snapshot facts; their controls remain outside this slice unless enabled.
+- `Production summary` and `Bot Distribution`: lower Unity regions backed by
+  snapshot facts. Bot Distribution controls remain outside this slice. Unity's
+  separate `Info` card is deferred until its active-panel, lifetime and
+  total-decayed facts are projected by the canonical snapshot.
 
 ## Shared layout and focus
 
 Visual, keyboard and screen-reader order is: navigation when persistent,
 resources, Tinker when present, facilities in supplied order, optional teaser,
-then Info and Bot Distribution. The teaser is not a control and has no focus
+then Production summary and Bot Distribution. The teaser is not a control and
+has no focus
 target.
 
 The resource header preserves Unity's hierarchy: `Cash`, `Total Bots`,
@@ -91,9 +94,9 @@ Fresh                                  Assembly revealed
 +------------------------------+       +------------------------------+
 | ????                         |       | Assembly Lines               |
 +------------------------------+       +------------------------------+
-| Info                         |       | ????                         |
+| Production summary           |       | ????                         |
 | Bot Distribution             |       +------------------------------+
-+------------------------------+       | Info                         |
++------------------------------+       | Production summary           |
 | Bottom navigation            |       | Bot Distribution             |
 +------------------------------+       +------------------------------+
                                        | Bottom navigation            |
@@ -116,18 +119,19 @@ Fresh                                  Assembly revealed
 |       +----------------------------+ |       +----------------------------+
 |       | ????                       | |       | Assembly Lines             |
 |       +----------------------------+ |       +----------------------------+
-|       | Info / Bot Distribution    | |       | ????                       |
+|       | Summary / Bot Distribution | |       | ????                       |
 +-------+----------------------------+ |       +----------------------------+
-                                       |       | Info / Bot Distribution    |
+                                       |       | Summary / Bot Distribution |
                                        +-------+----------------------------+
 ```
 
 ## Wide desktop — 1024 CSS px and above
 
 Directly mirror Unity's broad hierarchy: persistent left rail; top `Cash`,
-`Total Bots`, `Science`; large sun/Tinker area; a two-column row-major
+`Total Bots`, `Science`; the Tinker surface; a two-column row-major
 facility grid when backend visibility supplies sufficient cards; one generic
-teaser after the last revealed card; and lower Info plus Bot Distribution.
+teaser after the last revealed card; and the lower Production summary plus
+Bot Distribution.
 Bound content width instead of stretching facility rows into long lines.
 
 ```text
@@ -135,20 +139,21 @@ Fresh
 +----------+---------------------------------------------------------------+
 | Left     | Cash                 Total Bots                    Science     |
 | rail     +-------------------------------+-------------------------------+
-|          | Large sun / T                 | ????                          |
+|          | Tinker surface                                               |
+|          | ????                                                          |
 |          +-------------------------------+-------------------------------+
-|          | Info                              Bot Distribution            |
+|          | Production summary                Bot Distribution            |
 +----------+---------------------------------------------------------------+
 
 Assembly revealed: bots >= 10, manual Assembly 0, no owned managers
 +----------+---------------------------------------------------------------+
 | Left     | Cash                 Total Bots                    Science     |
 | rail     +-------------------------------+-------------------------------+
-|          | Large sun / T                 | Assembly Lines                |
+|          | Tinker surface                 | Assembly Lines                |
 |          |                               +-------------------------------+
 |          |                               | ????                          |
 |          +-------------------------------+-------------------------------+
-|          | Info                              Bot Distribution            |
+|          | Production summary                Bot Distribution            |
 +----------+---------------------------------------------------------------+
 ```
 
@@ -161,11 +166,11 @@ ordered visible collection contains `Assembly Lines` followed by `AI Managers`.
 +----------+---------------------------------------------------------------+
 | Left     | Cash                 Total Bots                    Science     |
 | rail     +-------------------------------+---------------+---------------+
-|          | Large sun / T                 |Assembly Lines | AI Managers   |
+|          | Tinker surface                 |Assembly Lines | AI Managers   |
 |          |                               +---------------+---------------+
 |          |                               | ????                          |
 |          +-------------------------------+-------------------------------+
-|          | Info                              Bot Distribution            |
+|          | Production summary                Bot Distribution            |
 +----------+---------------------------------------------------------------+
 ```
 
@@ -175,7 +180,7 @@ never before it and never once per column.
 
 ## Compact landscape — 320–599 CSS px wide
 
-Retain bottom navigation. Use the short height to place sun/Tinker beside the
+Retain bottom navigation. Use the short height to place Tinker beside the
 first content area only when that preserves the one-column facility reading
 order and 44-by-44 CSS-pixel targets; otherwise use the compact-portrait stack.
 Never horizontally scroll.
@@ -185,11 +190,11 @@ Fresh                                  Assembly revealed
 +-----------------------------------+  +-----------------------------------+
 | Cash | Total Bots | Science        |  | Cash | Total Bots | Science        |
 +-------------------+---------------+  +-------------------+---------------+
-| sun / T                           |  | sun / T           | Assembly Lines|
+| Tinker                            |  | Tinker            | Assembly Lines|
 +-----------------------------------+  +-------------------+---------------+
 | ????                              |  | ????                              |
 +-----------------------------------+  +-----------------------------------+
-| Info / Bot Distribution            |  | Info / Bot Distribution            |
+| Summary / Bot Distribution         |  | Summary / Bot Distribution         |
 +-----------------------------------+  +-----------------------------------+
 | Bottom navigation                  |  | Bottom navigation                  |
 +-----------------------------------+  +-----------------------------------+
