@@ -14,6 +14,7 @@ import {
 } from './dysonAutomation'
 import type { BasicDysonFacilityId } from './dysonFacilities'
 import {
+  isMegaStructureVisible,
   tryPurchaseMegaStructure,
   type MegaStructureId,
   type MegaStructurePurchaseResult,
@@ -112,6 +113,23 @@ export function tryPurchaseCanonicalMegaStructure(
       state.timeline.dysonAutomationTargetIndex,
     ),
   }
+}
+
+/**
+ * Projects Unity's authored mega-structure panel reveal rule from canonical
+ * state without coupling visibility to affordability or purchase selection.
+ */
+export function isCanonicalMegaStructureVisible(
+  state: CanonicalGameStateV1,
+  facilityId: MegaStructureId,
+): boolean {
+  return isMegaStructureVisible(
+    {
+      facilities: state.dyson.facilities,
+      quantumUnlocks: megaUnlocks(state),
+    },
+    facilityId,
+  )
 }
 
 /**

@@ -3,7 +3,9 @@
 Status: approved on 2026-07-29 for dependency-first implementation through the
 earliest playable Tinker/basic-facility slice. The frontend readiness gate is
 open only for the scope and delivery waves defined by this document and
-[`web-ui-delivery-waves.md`](web-ui-delivery-waves.md).
+[`web-ui-delivery-waves.md`](web-ui-delivery-waves.md). The Tinker, facility
+visibility and first-slice layout corrections below were approved by the user
+on 2026-07-29.
 
 Implementation coordination, review gates and recoverable checkpoints are
 defined separately in [`web-ui-delivery-waves.md`](web-ui-delivery-waves.md).
@@ -191,9 +193,10 @@ loop:
    frontend snapshot.
 3. Let the player start Tinker once, hold to repeat, release to stop repeating,
    and observe backend-authored progress and bot/assembly-line awards.
-4. Show the canonically available early basic-facility cards in Unity order,
-   including owned counts, production, selected quantity, exact previewed cost,
-   eligibility and rejection reason.
+4. Show only the backend-authored visible early basic-facility cards in the
+   backend-authored Unity order, followed by the one backend-authored next-tier
+   teaser when present. Cards include owned counts, production, selected
+   quantity, exact previewed cost, eligibility and rejection reason.
 5. Dispatch basic-facility purchases and prove that active time, purchases and
    Tinker progress survive the supported checkpoint/reload flow.
 6. Reflow the same journey across the compact, medium and wide layouts without a
@@ -458,18 +461,35 @@ The application shell owns one active-time driver:
 
 - The whole Tinker action surface is the primary button, with a visible label,
   current output, remaining time and progress.
-- A tap/click or keyboard activation dispatches `tinker.start` with repeat
-  disabled.
-- Pointer/touch hold may request repeat after 500 milliseconds. Releasing,
-  cancelling, losing capture or receiving an application blur dispatches repeat
-  disabled. The initiating pointer is captured; another finger cannot steal or
-  cancel it. These gestures only change the canonical repeat command; the
+- A tap, click or native button activation starts one cycle. Rapid taps are not
+  debounced; each activation follows the normal canonical pending/result path.
+- A pointer hold becomes repeat only after a transient 500-millisecond hold.
+  Capture the initiating pointer. Pointer-up, cancel, lost capture, application
+  blur and unmount end that hold and request repeat disabled. Another pointer
+  cannot steal or cancel the active pointer.
+- Space follows the same transient hold/release behavior: start one cycle on
+  initial key-down, request repeat after 500 milliseconds while Space remains
+  held, and request repeat disabled on key-up, blur or unmount. Ignore keyboard
+  auto-repeat key-down events so they do not create additional starts.
+- There is no visible or persistent Repeat Tinker toggle, switch, preference or
+  saved setting. Hold state only changes the canonical repeat command; the
   component never awards a completion.
-- Keyboard users can toggle a clearly labelled repeat control without holding a
-  key. Key auto-repeat must not generate repeated start commands.
 - The component uses `runtime.tinker` for running, repeat, yield, cooldown,
   eligibility and completion time. It does not reproduce the Manual Labour or
-  AI Manager rule.
+  AI Manager rule. There is no current Auto Tinker skill: Manual Labour
+  restores Tinker and changes its output when its canonical conditions are met;
+  it is not automation. Facility automation upgrades do not automate Tinker.
+
+### Facility visibility and teaser
+
+- The snapshot/runtime adapter owns and publishes the authoritative ordered
+  facility presentation facts: visible facilities, `showTinker`, and the
+  presence/order of the next-tier teaser. The UI consumes those facts as-is and
+  never duplicates visibility, Tinker-removal or progression thresholds.
+- A hidden facility is absent entirely: it has no disabled card, placeholder,
+  spacer, accessibility-tree entry or inferred unlock message. After the final
+  revealed facility, render at most one generic `????` teaser when the
+  backend-owned next-tier-teaser fact says to render it.
 
 ### Numbers, rates and time
 
@@ -548,12 +568,13 @@ not behind dense text without an opaque contrast surface.
 
 ### Approved layout reference
 
-Before reusable product components are implemented, approve one annotated
-first-slice layout reference at compact, medium and wide widths, including one
-compact landscape state. It must settle hierarchy, navigation placement,
-resource prominence, Tinker interaction, facility-card density, focus order and
-safe-area behavior. It is a responsive composition contract, not a demand for
-pixel parity with Unity or a source of gameplay facts.
+[`wave-3-parity-layout-reference.md`](wave-3-parity-layout-reference.md) is the
+approved 2026-07-29 composition reference for the first slice. It covers fresh
+and Assembly-revealed state at compact portrait, medium/tablet, wide desktop
+and compact landscape. It settles hierarchy, navigation placement, resource
+prominence, Tinker interaction, facility-card density, focus order and safe
+area behavior. It is a responsive composition contract, not a source of
+gameplay facts.
 
 ## Responsive standard
 
@@ -598,8 +619,9 @@ WCAG 2.2 AA is the release baseline.
   blocking state and major unlocks; do not announce every resource tick.
 - Dialog focus is trapped while open, begins on a safe element and returns to
   the invoking control.
-- Touch gestures have a tap alternative. Holding Tinker is optional because the
-  repeat toggle is keyboard and switch accessible.
+- Touch gestures have a tap alternative. Holding Tinker is optional because
+  tap/native activation starts one cycle and Space provides the matching
+  keyboard hold/release interaction.
 - Animations honor reduced motion; audio cues have independent volume/mute and
   are never the only feedback.
 - Number abbreviations, icons and progress visuals have understandable

@@ -28,6 +28,11 @@
       "birch_planets": [0, 0],
       "galactic_brains": [0, 0]
     },
+    "visibility": {
+      "showTinker": true,
+      "visibleBasicFacilityIds": [],
+      "showNextTierTeaser": true
+    },
     "tinker": {
       "status": "ready",
       "value": {
@@ -207,6 +212,14 @@
       "matrioshka_brains": [0, 0],
       "birch_planets": [0, 0],
       "galactic_brains": [0, 0]
+    },
+    "visibility": {
+      "showTinker": true,
+      "visibleBasicFacilityIds": [
+        "assembly_lines",
+        "ai_managers"
+      ],
+      "showNextTierTeaser": true
     },
     "tinker": {
       "status": "ready",

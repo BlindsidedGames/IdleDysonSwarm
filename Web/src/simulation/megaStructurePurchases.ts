@@ -39,6 +39,11 @@ export interface MegaStructurePurchaseState {
   readonly roundedBulkBuy: boolean
 }
 
+export type MegaStructureVisibilityState = Pick<
+  MegaStructurePurchaseState,
+  'facilities' | 'quantumUnlocks'
+>
+
 export type MegaStructurePurchaseStatus =
   | TransactionStatus
   | 'invalid-state'
@@ -86,6 +91,32 @@ export function megaStructureCashCost(
     return 0
   }
   return buyXCost(quantity, baseCost, costExponent, manualOwned)
+}
+
+/**
+ * Matches Unity's mega-structure panel reveal rule: existing ownership remains
+ * visible, otherwise the authored Quantum gate and prerequisite must be met.
+ */
+export function isMegaStructureVisible(
+  state: Readonly<MegaStructureVisibilityState>,
+  facilityId: MegaStructureId,
+): boolean {
+  const target = state.facilities[facilityId]
+  if (target[0] + target[1] > 0) return true
+
+  const rule = readMegaStructureRule(facilityId)
+  if (
+    rule === undefined ||
+    !state.quantumUnlocks[rule.quantumGate]
+  ) {
+    return false
+  }
+  const prerequisite =
+    state.facilities[rule.prerequisiteFacilityId]
+  return (
+    prerequisite[0] + prerequisite[1] >=
+    rule.prerequisiteOwned
+  )
 }
 
 /**

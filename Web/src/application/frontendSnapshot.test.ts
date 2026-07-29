@@ -31,6 +31,10 @@ const fixtureUrl = new URL(
   '../../test/fixtures/schema-08-canonical-idb1-main-save.txt',
   import.meta.url,
 )
+const firstRunFixtureUrl = new URL(
+  './firstRun/generated/first-run-schema-12.idb1.txt',
+  import.meta.url,
+)
 
 describe('frontend gameplay snapshot', () => {
   test('projects lifecycle and all application revisions with the gameplay read model', () => {
@@ -132,6 +136,266 @@ describe('frontend gameplay snapshot', () => {
     expect(snapshot.progression.statistics).toEqual(state.statistics)
   })
 
+  test('keeps fresh imported purchase previews separate from reveal visibility', () => {
+    const source = firstRunFixtureState()
+    const state: CanonicalGameStateV1 = {
+      ...source,
+      dyson: {
+        ...source.dyson,
+        money: 100,
+      },
+    }
+
+    const snapshot = selectFrontendGameplaySnapshot(
+      state,
+      frontendContext(),
+    )
+
+    expect(
+      snapshot.previews.dyson.basicFacilities.find(
+        (preview) => preview.facilityId === 'assembly_lines',
+      ),
+    ).toMatchObject({
+      eligible: true,
+      status: 'success',
+    })
+    expect(snapshot.visibility.dyson).toEqual({
+      showTinker: true,
+      visibleBasicFacilityIds: [],
+      showNextTierTeaser: true,
+    })
+  })
+
+  test('projects checkpointed manual Assembly ownership in canonical display order', () => {
+    const runtime = fixtureRuntimeState()
+    runtime.gameState = dysonProgressionState(
+      runtime.gameState,
+      {
+        assembly_lines: [0, 5],
+      },
+      0,
+    )
+    const projected = selectFrontendApplicationSnapshot(
+      {
+        version: 1,
+        phase: 'ready',
+        source: 'primary',
+        revision: {
+          session: 2,
+          state: 5,
+          durable: 5,
+        },
+        checkpoint: {
+          kind: 'clean',
+          durableRevision: 5,
+        },
+        operation: 'none',
+        state: runtime,
+      },
+      frontendContext(),
+    )
+
+    expect(projected.phase).toBe('ready')
+    if (projected.phase !== 'ready') return
+    expect(projected.gameplay.visibility.dyson).toEqual({
+      showTinker: true,
+      visibleBasicFacilityIds: [
+        'assembly_lines',
+        'ai_managers',
+      ],
+      showNextTierTeaser: true,
+    })
+  })
+
+  test('matches Unity manual-versus-total facility reveal gates', () => {
+    const source = firstRunFixtureState()
+    const cases = [
+      {
+        name: 'ten total bots reveal Assembly',
+        state: dysonProgressionState(source, {}, 10),
+        expected: ['assembly_lines'],
+      },
+      {
+        name: 'automatic Assembly does not reveal AI Managers',
+        state: dysonProgressionState(source, {
+          assembly_lines: [5, 0],
+        }),
+        expected: ['assembly_lines'],
+      },
+      {
+        name: 'owned AI Managers reveal themselves but automatic ownership does not reveal Servers',
+        state: dysonProgressionState(source, {
+          ai_managers: [1, 0],
+        }),
+        expected: ['ai_managers'],
+      },
+      {
+        name: 'one manual AI Manager reveals Servers',
+        state: dysonProgressionState(source, {
+          ai_managers: [0, 1],
+        }),
+        expected: ['ai_managers', 'servers'],
+      },
+      {
+        name: 'one total Server reveals Data Centers',
+        state: dysonProgressionState(source, {
+          servers: [1, 0],
+        }),
+        expected: ['servers', 'data_centers'],
+      },
+      {
+        name: 'one total Data Center reveals Planets',
+        state: dysonProgressionState(source, {
+          data_centers: [1, 0],
+        }),
+        expected: ['data_centers', 'planets'],
+      },
+      {
+        name: 'owned Planets remain visible',
+        state: dysonProgressionState(source, {
+          planets: [1, 0],
+        }),
+        expected: ['planets'],
+      },
+    ] as const
+
+    for (const scenario of cases) {
+      const snapshot = selectFrontendGameplaySnapshot(
+        scenario.state,
+        frontendContext(),
+      )
+      expect(
+        snapshot.visibility.dyson.visibleBasicFacilityIds,
+        scenario.name,
+      ).toEqual(scenario.expected)
+    }
+  })
+
+  test('matches Tinker restoration and pre/post-Quantum teaser semantics', () => {
+    const source = firstRunFixtureState()
+    const matureBeforeDataCenter = dysonProgressionState(source, {
+      assembly_lines: [9, 1],
+      ai_managers: [0, 1],
+    })
+    expect(
+      selectFrontendGameplaySnapshot(
+        matureBeforeDataCenter,
+        frontendContext(),
+      ).visibility.dyson.showTinker,
+    ).toBe(false)
+
+    const earlyWithDataCenter = dysonProgressionState(source, {
+      data_centers: [1, 0],
+    })
+    expect(
+      selectFrontendGameplaySnapshot(
+        earlyWithDataCenter,
+        frontendContext(),
+      ).visibility.dyson.showTinker,
+    ).toBe(false)
+
+    const progressed = dysonProgressionState(source, {
+      assembly_lines: [9, 1],
+      ai_managers: [0, 1],
+      servers: [1, 0],
+      data_centers: [1, 0],
+    })
+    const beforeQuantum = selectFrontendGameplaySnapshot(
+      progressed,
+      frontendContext(),
+    )
+    expect(beforeQuantum.visibility.dyson).toEqual({
+      showTinker: false,
+      visibleBasicFacilityIds: [
+        'assembly_lines',
+        'ai_managers',
+        'servers',
+        'data_centers',
+        'planets',
+      ],
+      showNextTierTeaser: false,
+    })
+
+    const postQuantum: CanonicalGameStateV1 = {
+      ...progressed,
+      quantum: {
+        ...progressed.quantum,
+        pointsEarned: 1n,
+      },
+    }
+    expect(
+      selectFrontendGameplaySnapshot(
+        postQuantum,
+        frontendContext(),
+      ).visibility.dyson.showNextTierTeaser,
+    ).toBe(true)
+
+    const galacticEligible: CanonicalGameStateV1 = {
+      ...postQuantum,
+      dyson: {
+        ...postQuantum.dyson,
+        facilities: {
+          ...postQuantum.dyson.facilities,
+          birch_planets: [1, 0],
+        },
+      },
+      quantum: {
+        ...postQuantum.quantum,
+        unlocks: {
+          ...postQuantum.quantum.unlocks,
+          galacticBrains: true,
+        },
+      },
+    }
+    expect(
+      selectFrontendGameplaySnapshot(
+        galacticEligible,
+        frontendContext(),
+      ).visibility.dyson.showNextTierTeaser,
+    ).toBe(false)
+
+    const galacticOwned: CanonicalGameStateV1 = {
+      ...postQuantum,
+      dyson: {
+        ...postQuantum.dyson,
+        facilities: {
+          ...postQuantum.dyson.facilities,
+          galactic_brains: [0, 1],
+        },
+      },
+    }
+    expect(
+      selectFrontendGameplaySnapshot(
+        galacticOwned,
+        frontendContext(),
+      ).visibility.dyson.showNextTierTeaser,
+    ).toBe(false)
+
+    const manualLabour: CanonicalGameStateV1 = {
+      ...progressed,
+      skills: {
+        ...progressed.skills,
+        byId: {
+          ...progressed.skills.byId,
+          manualLabour: {
+            ...(progressed.skills.byId.manualLabour ?? {
+              level: 0,
+              timerSeconds: 0,
+              secondaryTimerSeconds: 0,
+            }),
+            owned: true,
+          },
+        },
+      },
+    }
+    expect(
+      selectFrontendGameplaySnapshot(
+        manualLabour,
+        frontendContext(),
+      ).visibility.dyson.showTinker,
+    ).toBe(true)
+  })
+
   test('returns a detached recursively frozen read model', () => {
     const source = fixtureState()
     const context = frontendContext()
@@ -161,6 +425,13 @@ describe('frontend gameplay snapshot', () => {
     ).toBe(projectedAssembly)
     expect(Object.isFrozen(snapshot)).toBe(true)
     expect(Object.isFrozen(snapshot.resources)).toBe(true)
+    expect(Object.isFrozen(snapshot.visibility)).toBe(true)
+    expect(Object.isFrozen(snapshot.visibility.dyson)).toBe(true)
+    expect(
+      Object.isFrozen(
+        snapshot.visibility.dyson.visibleBasicFacilityIds,
+      ),
+    ).toBe(true)
     expect(Object.isFrozen(snapshot.runtime.tinker)).toBe(true)
     expect(snapshot.previews.quantum.leap.code).not.toBe(
       'changed-after-projection',
@@ -477,6 +748,40 @@ function fixtureState(): CanonicalGameStateV1 {
     readFileSync(fixtureUrl, 'utf8'),
   ).prepared
   return hydrateGameState(prepared).state
+}
+
+function firstRunFixtureState(): CanonicalGameStateV1 {
+  const prepared = prepareIdb1Save(
+    readFileSync(firstRunFixtureUrl, 'utf8'),
+  ).prepared
+  return hydrateGameState(prepared).state
+}
+
+function dysonProgressionState(
+  source: CanonicalGameStateV1,
+  facilities: Partial<
+    CanonicalGameStateV1['dyson']['facilities']
+  >,
+  bots = 0,
+): CanonicalGameStateV1 {
+  return {
+    ...source,
+    dyson: {
+      ...source.dyson,
+      bots,
+      facilities: {
+        assembly_lines: [0, 0],
+        ai_managers: [0, 0],
+        servers: [0, 0],
+        data_centers: [0, 0],
+        planets: [0, 0],
+        matrioshka_brains: [0, 0],
+        birch_planets: [0, 0],
+        galactic_brains: [0, 0],
+        ...facilities,
+      },
+    },
+  }
 }
 
 function fixtureRuntimeState() {

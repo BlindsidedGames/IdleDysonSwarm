@@ -4,6 +4,7 @@ import type { DysonCompatibilityTuning } from '../game-state/compatibilityTuning
 import { mappingCoverageManifest } from '../game-state/mappingCoverage'
 import type { DysonSkillEffectEvaluationSnapshot } from '../game-state/skillEffectEvaluationSnapshot'
 import type {
+  CanonicalFacilityId,
   CanonicalGameStateV1,
   DreamEducationId,
   DreamUpgradeFlag,
@@ -35,6 +36,7 @@ import {
   type CanonicalDreamDerivedFactsResult,
 } from '../simulation/canonicalDreamDerivedFacts'
 import {
+  isCanonicalMegaStructureVisible,
   previewCanonicalBasicFacilityPurchase,
   tryPurchaseCanonicalMegaStructure,
   type CanonicalBasicFacilityPurchasePreview,
@@ -65,6 +67,7 @@ import {
 } from '../simulation/dreamSpaceAge'
 import {
   BASIC_DYSON_FACILITY_IDS,
+  type BasicDysonFacilityId,
 } from '../simulation/dysonFacilities'
 import {
   MEGA_STRUCTURE_IDS,
@@ -505,6 +508,16 @@ export interface FrontendGameplayDerivedFacts {
   readonly avocado: AvocadoMultiplierBreakdown
 }
 
+export interface FrontendDysonVisibility {
+  readonly showTinker: boolean
+  readonly visibleBasicFacilityIds: readonly BasicDysonFacilityId[]
+  readonly showNextTierTeaser: boolean
+}
+
+export interface FrontendGameplayVisibility {
+  readonly dyson: FrontendDysonVisibility
+}
+
 export type FrontendTinkerRuntimeFacts =
   | {
       readonly status: 'ready'
@@ -586,6 +599,7 @@ export interface FrontendGameplaySnapshot {
   readonly resources: DeepReadonly<FrontendCanonicalResources>
   readonly progression: DeepReadonly<FrontendCanonicalProgression>
   readonly derived: DeepReadonly<FrontendGameplayDerivedFacts>
+  readonly visibility: DeepReadonly<FrontendGameplayVisibility>
   readonly runtime: DeepReadonly<FrontendRuntimeFacts>
   readonly commands: DeepReadonly<FrontendCommandAvailabilityIndex>
   readonly previews: DeepReadonly<FrontendGameplayPreviews>
@@ -681,6 +695,7 @@ export function selectFrontendGameplaySnapshot(
   const resources = selectResources(state)
   const progression = selectProgression(state)
   const derived = selectDerivedFacts(state, context)
+  const visibility = selectGameplayVisibility(state)
   const runtime = selectRuntimeFacts(state, context, derived)
   const requirements = {
     ...context.runtimeRequirements,
@@ -700,6 +715,7 @@ export function selectFrontendGameplaySnapshot(
     resources,
     progression,
     derived,
+    visibility,
     runtime,
     commands,
     previews,
@@ -713,6 +729,55 @@ export function selectFrontendGameplaySnapshot(
         mappingCoverageManifest.unmatchedWritePolicy,
     },
   })
+}
+
+function selectGameplayVisibility(
+  state: CanonicalGameStateV1,
+): FrontendGameplayVisibility {
+  const total = (facilityId: CanonicalFacilityId) => {
+    const owned = state.dyson.facilities[facilityId]
+    return owned[0] + owned[1]
+  }
+  const facilities = state.dyson.facilities
+  const basicVisible: Readonly<Record<BasicDysonFacilityId, boolean>> = {
+    assembly_lines:
+      state.dyson.bots >= 10 || total('assembly_lines') > 0,
+    ai_managers:
+      facilities.assembly_lines[1] >= 5 ||
+      total('ai_managers') > 0,
+    servers:
+      facilities.ai_managers[1] >= 1 || total('servers') > 0,
+    data_centers:
+      total('servers') >= 1 || total('data_centers') > 0,
+    planets:
+      total('data_centers') >= 1 || total('planets') > 0,
+  }
+  const hasDataCenters = total('data_centers') >= 1
+  const manualLabourOwned =
+    state.skills.byId.manualLabour?.owned === true
+  const earlyTinkerVisible =
+    total('assembly_lines') < 10 ||
+    facilities.ai_managers[1] < 1
+  const galacticBrainsVisible =
+    isCanonicalMegaStructureVisible(
+      state,
+      'galactic_brains',
+    )
+
+  return {
+    dyson: {
+      showTinker:
+        (earlyTinkerVisible && !hasDataCenters) ||
+        manualLabourOwned,
+      visibleBasicFacilityIds: BASIC_DYSON_FACILITY_IDS.filter(
+        (facilityId) => basicVisible[facilityId],
+      ),
+      showNextTierTeaser:
+        state.quantum.pointsEarned >= 1n
+          ? !galacticBrainsVisible
+          : !basicVisible.planets,
+    },
+  }
 }
 
 /**

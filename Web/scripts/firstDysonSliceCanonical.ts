@@ -1,3 +1,15 @@
+/**
+ * Purpose: Generates the frozen first-Dyson UI acceptance artifact through
+ * the canonical application facade and lifecycle coordinator.
+ * Runtime: Node tooling and Vitest; never shipped as browser gameplay code.
+ * Primary entry point: generateFirstDysonSliceFixture.
+ * Interacts with: CanonicalGameApplicationFacade,
+ * CanonicalLifecycleCoordinator, the frontend snapshot projection, and the
+ * checked-in schema-8 save/catalog sources.
+ * Change notes: Snapshot fields, command sequence, seeded state, or checkpoint
+ * flow changes require regenerating first-dyson-slice.fixture.json and updating
+ * its consumer assertions together.
+ */
 import { createHash } from 'node:crypto'
 import { readFileSync } from 'node:fs'
 import { gameDataCatalog } from '../src/game-data/catalog'
@@ -94,6 +106,7 @@ export interface FirstDysonSliceSnapshotFacts {
   readonly checkpoint: Record<string, unknown>
   readonly resources: Record<string, unknown>
   readonly facilities: Record<string, unknown>
+  readonly visibility: Record<string, unknown>
   readonly tinker: Record<string, unknown>
   readonly commands: Record<string, unknown>
   readonly basicFacilityPreviews: readonly Record<string, unknown>[]
@@ -272,6 +285,7 @@ function readFirstSliceFacts(
     checkpoint: snapshot.checkpoint,
     resources: snapshot.gameplay.resources.dyson,
     facilities: snapshot.gameplay.progression.dyson.facilities,
+    visibility: snapshot.gameplay.visibility.dyson,
     tinker: snapshot.gameplay.runtime.tinker,
     commands: {
       tinkerStart: snapshot.gameplay.commands.byKind['tinker.start'],

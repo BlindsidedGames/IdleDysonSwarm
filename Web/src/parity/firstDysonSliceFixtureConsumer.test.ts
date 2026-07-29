@@ -8,8 +8,13 @@ describe('first-slice fixture consumer boundary', () => {
 
     expect(fixture.initial.resources.money).toBe(1_000_000)
     expect(fixture.initial.tinker.value.canStart).toBe(true)
+    expect(fixture.initial.visibility.visibleBasicFacilityIds).toEqual([])
     expect(fixture.initial.basicFacilityPreviews[0]?.facilityId)
       .toBe('assembly_lines')
+    expect(
+      fixture.checkpointedReconstruction.visibility
+        .visibleBasicFacilityIds,
+    ).toEqual(['assembly_lines', 'ai_managers'])
     expect(fixture.outcomes.tinkerCompletion.transition.revision).toBe(3)
     expect(fixture.outcomes.staleFacility.transition.code)
       .toBe('SIM-STALE-REVISION')
