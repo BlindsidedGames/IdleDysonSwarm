@@ -48,11 +48,16 @@ The product frontend is one React application hosted by:
 
 - Electron for Windows, Linux and macOS;
 - Capacitor for iOS and Android; and
-- a browser build for development, review and manual save recovery only.
+- a browser/PWA build for product use, development and review.
 
-A browser-only release cannot promise seamless migration from the Unity save.
-Desktop and mobile release hosts must satisfy the discovery, signing, retained
-container and lifecycle requirements in `platform-port-inventory.md`.
+A browser release can fully migrate a Unity `IDB1` save supplied by file picker,
+drag-and-drop or paste through the same decode, migrate, repair and validation
+pipeline. What it cannot promise is automatic discovery of an arbitrary Unity
+save path: browser filesystem access is sandboxed and user-mediated. Electron
+and retained-container mobile upgrades may discover the save automatically;
+browser players must choose or paste it once. All hosts must satisfy the
+applicable persistence and lifecycle requirements in
+`platform-port-inventory.md`.
 
 Every product path supports pointer, touch and keyboard. Controller navigation
 is a later release gate unless controller support is explicitly promoted into
@@ -116,12 +121,47 @@ foundation should use:
 
 - semantic React components;
 - a small external-store adapter using `useSyncExternalStore`;
+- FormatJS/React Intl with extracted ICU MessageFormat catalogs;
 - CSS custom properties for tokens and locally scoped component styles; and
 - platform ports injected at the application composition root.
 
 Do not introduce a frontend state-management library, component suite or CSS
 framework in the foundation slice. This decision can be revisited with measured
 component or state complexity.
+
+### Localization architecture
+
+Internationalization is foundation work, not a later string-replacement pass:
+
+- Every player-facing string uses a stable message descriptor with an English
+  default and translator description. Raw UI strings fail lint outside tests,
+  diagnostics and explicitly non-player-facing developer tools.
+- Use FormatJS extraction and compiled ICU MessageFormat catalogs for plurals,
+  select rules, interpolation, number/date/time formatting and translator-safe
+  sentence structure. Do not concatenate translated fragments.
+- Organize catalogs by gameplay destination and shared UI. Load the active
+  locale's shared catalog at startup and lazy-load destination catalogs with
+  their route.
+- Keep gameplay IDs, save keys, command kinds, diagnostic codes and canonical
+  enum values language-neutral. Translate them only through presentation
+  metadata.
+- Use `Intl.NumberFormat`, `Intl.DateTimeFormat`, `Intl.RelativeTimeFormat` and
+  `Intl.PluralRules` behind shared cached helpers. Preserve canonical `bigint`
+  and numeric values until formatting.
+- Locale selection, fallback and persistence belong to a presentation
+  preference service. Locale changes replace catalogs and document
+  `lang`/`dir`; they do not restart or mutate the simulation.
+- Support left-to-right and right-to-left layout from the start with logical CSS
+  properties and direction-aware icons. Mirroring is semantic; numbers,
+  scientific notation and universal media controls are not blindly mirrored.
+- English is the source locale. A pseudo-locale with expansion and bidirectional
+  markers is required before the first vertical slice is accepted.
+- Translation completeness, ICU syntax, missing/orphaned keys and unsupported
+  rich-text markup fail CI for a release locale.
+
+Player-authored names and imported legacy text are data, not messages. They must
+be escaped and rendered in the surrounding locale without passing through the
+message parser.
 
 ### Runtime boundary
 
@@ -155,6 +195,29 @@ Formatting, sorting an already ordered presentation collection, responsive
 layout, local disclosure state, focus state, animation state and draft settings
 are presentation concerns. A presentation derivation must be pure, disposable
 and unable to affect a command payload except for an explicit player selection.
+
+### Reuse and shared helpers
+
+Reuse is explicit at stable presentation boundaries:
+
+- `ui/runtime` owns the one snapshot subscription, lifecycle/command adapter and
+  standard pending/result mapping.
+- `ui/i18n` owns message loading, locale selection and cached formatters.
+- `ui/tokens` owns semantic color, typography, spacing, motion and responsive
+  tokens.
+- `ui/components` owns accessible primitives such as buttons, dialogs, resource
+  values, progress, facility cards, navigation and status feedback.
+- Feature folders compose those primitives and own feature-specific
+  presentation state. They do not become generic merely because two screens
+  currently look similar.
+- Shared helpers are pure, focused and tested. They accept presentation data,
+  never reach into canonical state globally and never reproduce a gameplay
+  calculation.
+
+Prefer composition and narrow typed props over large configurable components.
+Extract a shared abstraction after its contract is understood; duplicated
+gameplay logic is forbidden immediately, while small temporary presentation
+duplication is safer than a premature universal component.
 
 ### Active-time host
 
@@ -219,6 +282,30 @@ The application shell owns one active-time driver:
 - Dangerous resets, imports and destructive settings require confirmation.
   Routine purchases and Tinker actions do not.
 
+### Touch and rapid activation
+
+- Use Pointer Events so mouse, pen, single-touch and multi-touch share one
+  interaction path. Track pointer IDs independently and use pointer capture for
+  press/hold controls.
+- Simultaneous touches on different enabled controls remain independently
+  responsive. A single-touch control ignores additional pointers on that same
+  control unless it explicitly defines a multi-touch gesture.
+- Apply `touch-action: manipulation` to ordinary controls and preserve native
+  vertical scrolling and pinch zoom. Use stricter values only on a bounded
+  gesture surface with an accessible non-gesture alternative.
+- Apply `user-select: none` only to interactive chrome while pressed or to
+  controls whose text is not useful to copy. Descriptions, values, errors,
+  recovery codes and other content remain selectable.
+- Suppress native drag/long-press selection only for the active control, and
+  always clean up on pointer-up, pointer-cancel, lost capture, blur and
+  unmount.
+- Rapid taps must not incur an artificial debounce. Distinct safe commands may
+  queue through the lifecycle coordinator; a command that cannot safely
+  duplicate uses its standard pending guard and visibly acknowledges the first
+  activation.
+- Touch handling must not create both pointer and compatibility-click
+  activations. Keyboard activation continues to use native button semantics.
+
 ### Tinker
 
 - The whole Tinker action surface is the primary button, with a visible label,
@@ -226,8 +313,10 @@ The application shell owns one active-time driver:
 - A tap/click or keyboard activation dispatches `tinker.start` with repeat
   disabled.
 - Pointer/touch hold may request repeat after 500 milliseconds. Releasing,
-  cancelling or losing capture dispatches repeat disabled. These gestures only
-  change the canonical repeat command; the component never awards a completion.
+  cancelling, losing capture or receiving an application blur dispatches repeat
+  disabled. The initiating pointer is captured; another finger cannot steal or
+  cancel it. These gestures only change the canonical repeat command; the
+  component never awards a completion.
 - Keyboard users can toggle a clearly labelled repeat control without holding a
   key. Key auto-repeat must not generate repeated start commands.
 - The component uses `runtime.tinker` for running, repeat, yield, cooldown,
@@ -274,9 +363,18 @@ only through semantic aliases:
 | Primary text | `#F7F4F8` |
 | Secondary text | `#B0B0B0` |
 
-Use Lexend Regular for body text and Lexend SemiBold/Bold for hierarchy and
-important values. Subset and self-host the repository font files for the
-characters required by the shipped locales.
+Lexend is the Latin-script brand face, not a universal-font assumption. The
+Google Fonts Lexend family is OFL-licensed and covers Latin, Latin Extended and
+Vietnamese. Use its variable font for supported Latin locales. Select
+script-appropriate Noto Sans families for Cyrillic/Greek, Arabic, Hebrew, Indic,
+CJK and other locales. Noto's coordinated families preserve a related sans
+voice while providing correct script shaping.
+
+Self-host production fonts for reliable offline Electron, Capacitor and PWA
+operation. Subset by script, lazy-load only the active locale's additional
+family, declare metric-compatible system fallbacks and prevent invisible text
+during loading. Typography tokens are locale-overridable because line height,
+weight and density requirements vary by script.
 
 ### Composition
 
@@ -321,6 +419,8 @@ Requirements:
   necessary.
 - Source order matches reading and focus order in every layout. CSS reflow must
   not create a misleading keyboard sequence.
+- The same layout must work in `dir="ltr"` and `dir="rtl"` using logical
+  margins, padding, borders, alignment and inset properties.
 
 ## Accessibility standard
 
@@ -343,6 +443,8 @@ WCAG 2.2 AA is the release baseline.
   are never the only feedback.
 - Number abbreviations, icons and progress visuals have understandable
   accessible names.
+- The document and localized regions expose the correct language and direction;
+  language changes are announced without moving focus.
 
 Automated checks supplement, but do not replace, keyboard-only, NVDA on Windows
 and VoiceOver on iOS verification.
@@ -366,7 +468,10 @@ release.
 
 - Initial first-slice JavaScript: at most 200 KiB gzip.
 - Initial first-slice CSS: at most 40 KiB gzip.
-- Initial fonts: at most 250 KiB transferred; later weights and art are lazy.
+- Initial source-locale fonts: at most 250 KiB transferred. Additional
+  script-specific fonts and locale catalogs are lazy and separately budgeted.
+- Initial shared locale catalog: at most 30 KiB gzip; a first-slice destination
+  catalog is at most 20 KiB gzip.
 - No presentation long task over 50 ms during the 30-second first-slice
   interaction trace.
 - P95 snapshot selection plus React commit: 8 ms desktop, 16 ms mobile.
@@ -387,6 +492,8 @@ release.
 - Avoid polling, JSON cloning, deep equality and whole-snapshot context
   propagation in render paths.
 - Lazy-load destinations after the first playable Dyson route.
+- Precompile ICU messages and cache formatter instances by locale/options;
+  message parsing and formatter construction do not occur in hot render loops.
 - A budget exception requires a repeatable trace, identified device/build,
   cause, player impact and an approved follow-up.
 
@@ -399,6 +506,8 @@ release.
   implementation modules or internal application facade modules.
 - Unit tests cover formatters, semantic token pairs, responsive selectors,
   command-envelope construction and presentation-only Tinker gesture state.
+- Catalog tests cover extraction, ICU validity, fallback, pseudo-localization,
+  expansion, plural categories and right-to-left direction.
 - Property/boundary tests cover `bigint`, non-finite display fallbacks, very long
   localized labels, zero/negative presentation edge cases and revision changes.
 
@@ -414,6 +523,9 @@ release.
   successful states.
 - Verify subscription cleanup, one active-time driver and no overlapping
   `advanceActive()` calls under delayed promises.
+- Verify two simultaneous pointer IDs, rapid taps, pointer cancellation, lost
+  capture, scroll preservation and absence of accidental text selection or
+  duplicate compatibility-click commands.
 
 ### End to end and parity
 
@@ -427,6 +539,8 @@ Use Playwright against a production build for:
 - background/focus/active routing without duplicate active time;
 - checkpoint/reload continuity for the first slice; and
 - keyboard-only completion of the same journey.
+- pseudo-localized expanded text and one right-to-left locale pass; and
+- rapid-tap and simultaneous-touch interaction on a physical touch device.
 
 Capture visual regression baselines at 320×568, 390×844, 768×1024 and 1440×900,
 plus one compact landscape viewport. Baselines compare the approved web design,
@@ -443,12 +557,16 @@ After approval, implement in this order:
 1. Host composition root, lifecycle coordinator port and startup phases.
 2. Active-time driver and frozen-snapshot external store.
 3. Command-envelope/dispatch adapter and standard result/error handling.
-4. Fonts, semantic tokens, layout primitives and accessibility foundation.
-5. Responsive shell and parity navigation skeleton.
-6. Resource header and derived-rate presentation.
-7. Tinker interaction using only canonical runtime facts and player commands.
-8. Basic facility list using canonical previews and purchase commands.
-9. Recovery/reload, accessibility, visual and performance acceptance for the
+4. Localization runtime, source/pseudo catalogs and locale-aware formatters.
+5. Script-aware fonts, semantic tokens, shared components and accessibility
+   foundation.
+6. Responsive LTR/RTL shell and parity navigation skeleton.
+7. Resource header and derived-rate presentation.
+8. Pointer/multi-touch Tinker interaction using only canonical runtime facts
+   and player commands.
+9. Basic facility list using canonical previews and purchase commands.
+10. Recovery/reload, localization, accessibility, visual and performance
+   acceptance for the
    complete slice.
 
 Later gameplay destinations follow their backend dependency order. A screen is
@@ -462,13 +580,17 @@ Approval should explicitly confirm or amend:
   corrections, rather than pixel-perfect Unity reproduction.
 - [ ] React 19 + TypeScript + Vite, with no UI/state/CSS framework in the first
   slice.
-- [ ] Electron desktop and Capacitor mobile as product hosts; browser as a
-  development/review/recovery surface.
-- [ ] Pointer, touch and keyboard required now; controller deferred.
+- [ ] Electron desktop, Capacitor mobile and browser/PWA as product-capable
+  hosts; browser Unity migration is user-mediated file/paste import.
+- [ ] Pointer, rapid touch, multi-touch and keyboard required now; controller
+  deferred.
 - [ ] First slice ends after Tinker plus early basic-facility purchase and
   checkpoint/reload continuity.
-- [ ] Unity-derived Lexend/dark-plum visual direction and the reference tokens
-  above.
+- [ ] Extracted ICU MessageFormat catalogs, pseudo-localization and LTR/RTL
+  architecture are foundation requirements.
+- [ ] Lexend for supported Latin locales plus lazy script-specific Noto Sans
+  families, with the Unity-derived dark-plum visual direction and reference
+  tokens above.
 - [ ] WCAG 2.2 AA, responsive, performance and testing budgets above.
 - [ ] All player commands, active time and platform phases route through
   `CanonicalLifecycleCoordinator`; no gameplay-rule duplication in UI.
