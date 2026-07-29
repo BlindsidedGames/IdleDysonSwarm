@@ -143,6 +143,92 @@ describe('browser runtime foundation composition', () => {
     await secondRuntime.shutdown()
   })
 
+  test('recovers an expired crashed owner without losing the durable checkpoint or allowing stale writes', async () => {
+    const database = new MemoryBrowserSaveDatabase()
+    const leaseClock = mutableClock(1_000)
+    const lifecycleClock = new ManualLifecycleClock(
+      '2026-07-29T00:00:00.000Z',
+    )
+    const currentPath =
+      `/development-only/${DEVELOPMENT_ONLY_BROWSER_PROFILE_ID}/current.idsw`
+    const createApplication =
+      createProductionCanonicalApplicationFactory({
+        createFirstRunSave: () =>
+          createUnityFirstRunPreparedSave({
+            startedAtUtc:
+              lifecycleClock.sample().serializedUtcText,
+          }),
+        readHostEntitlements: () =>
+          Object.freeze({ permanentDoubleIp: false }),
+      })
+    const createProductionRuntime = (ownerToken: string) =>
+      createBrowserRuntimeFoundation({
+        createApplication,
+        lifecyclePolicy: MOBILE_LIFECYCLE_POLICY,
+        allowedExternalOrigins: [],
+        database,
+        lifecycle: new TestLifecycleAdapter('background'),
+        lifecycleClock,
+        activeTimeClock: new ManualActiveTimeClock(),
+        activeTimeScheduler:
+          new ManualAnimationFrameScheduler(),
+        storageManager: {
+          persisted: async () => true,
+          persist: async () => true,
+          estimate: async () => ({
+            usage: 1,
+            quota: 1_000,
+          }),
+        },
+        nowUtcMilliseconds: leaseClock.now,
+        ownerToken,
+        leaseDurationMilliseconds: 1_000,
+        heartbeatMilliseconds: 500,
+        autoHeartbeat: false,
+      })
+
+    const crashedRuntime = createProductionRuntime('crashed-owner')
+    await expect(crashedRuntime.start()).resolves.toMatchObject({
+      phase: 'ready',
+    })
+    const crashedSnapshot = crashedRuntime.snapshot()
+    expect(crashedSnapshot.phase).toBe('ready')
+    if (crashedSnapshot.phase !== 'ready') return
+    const durableGameplay = structuredClone(crashedSnapshot.gameplay)
+    const durableSave = await database.readFile(currentPath)
+
+    const blockedRuntime = createProductionRuntime('blocked-owner')
+    await expect(blockedRuntime.start()).resolves.toMatchObject({
+      phase: 'blocked',
+      code: 'writer-owned',
+    })
+
+    leaseClock.set(2_001)
+    const recoveredRuntime = createProductionRuntime('recovered-owner')
+    await expect(recoveredRuntime.start()).resolves.toMatchObject({
+      phase: 'ready',
+    })
+    const recoveredSnapshot = recoveredRuntime.snapshot()
+    expect(recoveredSnapshot.phase).toBe('ready')
+    if (recoveredSnapshot.phase !== 'ready') return
+    expect(recoveredSnapshot.gameplay).toEqual(durableGameplay)
+    expect(await database.readFile(currentPath)).toBe(durableSave)
+
+    await expect(
+      crashedRuntime.requestCheckpoint(),
+    ).rejects.toBeInstanceOf(WriterLeaseLostError)
+    expect(crashedRuntime.status().phase).toBe('ownership-lost')
+    expect(await database.readFile(currentPath)).toBe(durableSave)
+
+    await crashedRuntime.shutdown()
+    await blockedRuntime.shutdown()
+    await expect(database.inspectWriterLease()).resolves.toMatchObject({
+      ownerToken: 'recovered-owner',
+      generation: 2,
+    })
+    await recoveredRuntime.shutdown()
+  })
+
   test('round-trips an advanced imported save through lifecycle replay and reconstruction', async () => {
     const database = new MemoryBrowserSaveDatabase()
     const lifecycleClock = new ManualLifecycleClock(
