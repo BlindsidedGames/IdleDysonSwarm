@@ -26,6 +26,12 @@ describe('production browser entry', () => {
     ).toHaveLength(1)
     expect(mainSource).not.toMatch(/useEffect|useLayoutEffect/)
     expect(mainSource).toContain('copy={boundaryCopy}')
+    expect(mainSource).toContain(
+      'reloadSafely={composition.reloadSafely}',
+    )
+    expect(mainSource).not.toMatch(
+      /runtime\.shutdown\(\)|window\.location\.reload\(\)/,
+    )
   })
 
   test('does not mount the former developer decoder or bundled save fixtures', () => {

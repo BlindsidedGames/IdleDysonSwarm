@@ -76,6 +76,73 @@ describe('production browser composition', () => {
     )
     expect(lifecycleClock.samples).toBe(3)
   })
+
+  test('reloads only after a verified checkpoint and orderly shutdown', async () => {
+    const events: string[] = []
+    const runtime = reloadRuntime({
+      checkpoint: async () => {
+        events.push('checkpoint')
+        return true
+      },
+      shutdown: async () => {
+        events.push('shutdown')
+      },
+    })
+    const composition = createProductionBrowserComposition({
+      entitlementDocument: entitlementDocument('false'),
+      createRuntime: () => runtime,
+      reloadPage: () => events.push('reload'),
+    })
+
+    await expect(composition.reloadSafely()).resolves.toBeUndefined()
+    expect(events).toEqual(['checkpoint', 'shutdown', 'reload'])
+  })
+
+  test('keeps the current session alive when the safe-reload checkpoint is not verified', async () => {
+    const events: string[] = []
+    const runtime = reloadRuntime({
+      checkpoint: async () => {
+        events.push('checkpoint')
+        return false
+      },
+      shutdown: async () => {
+        events.push('shutdown')
+      },
+    })
+    const composition = createProductionBrowserComposition({
+      entitlementDocument: entitlementDocument('false'),
+      createRuntime: () => runtime,
+      reloadPage: () => events.push('reload'),
+    })
+
+    await expect(composition.reloadSafely()).rejects.toThrow(
+      'verified checkpoint',
+    )
+    expect(events).toEqual(['checkpoint'])
+  })
+
+  test('propagates a handled checkpoint failure without shutdown or reload', async () => {
+    const events: string[] = []
+    const runtime = reloadRuntime({
+      checkpoint: async () => {
+        events.push('checkpoint')
+        throw new Error('private checkpoint failure')
+      },
+      shutdown: async () => {
+        events.push('shutdown')
+      },
+    })
+    const composition = createProductionBrowserComposition({
+      entitlementDocument: entitlementDocument('false'),
+      createRuntime: () => runtime,
+      reloadPage: () => events.push('reload'),
+    })
+
+    await expect(composition.reloadSafely()).rejects.toThrow(
+      'private checkpoint failure',
+    )
+    expect(events).toEqual(['checkpoint'])
+  })
 })
 
 class RecordingLifecycleClock {
@@ -129,4 +196,14 @@ function entitlementDocument(content: string) {
       },
     ],
   }
+}
+
+function reloadRuntime(operations: {
+  readonly checkpoint: () => Promise<boolean>
+  readonly shutdown: () => Promise<void>
+}): BrowserUiRuntimeFoundation {
+  return Object.freeze({
+    checkpointBeforeSafeReload: operations.checkpoint,
+    shutdown: operations.shutdown,
+  }) as unknown as BrowserUiRuntimeFoundation
 }

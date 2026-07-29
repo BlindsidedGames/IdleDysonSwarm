@@ -55,11 +55,6 @@ async function bootstrap(): Promise<void> {
         startupShellMessages.diagnosticsLabel,
       ),
     })
-    const reloadSafely = async () => {
-      await composition.runtime.shutdown()
-      window.location.reload()
-    }
-
     // Startup is owned once by the composition root, never by a React effect.
     // StrictMode may replay presentation effects without acquiring a second
     // writer lease or shutting down the active runtime.
@@ -86,7 +81,7 @@ async function bootstrap(): Promise<void> {
                 composition.saveSchemaVersion
               }
               sampleUtc={composition.sampleUtc}
-              reloadSafely={reloadSafely}
+              reloadSafely={composition.reloadSafely}
               buildId={import.meta.env.VITE_BUILD_ID}
             />
           </PresentationIntlProvider>

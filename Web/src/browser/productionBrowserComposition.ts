@@ -37,12 +37,14 @@ export interface ProductionBrowserCompositionOptions {
   readonly lifecycleClock?: CanonicalLifecycleClock
   readonly monotonicClock?: ActiveTimeMonotonicClock
   readonly createRuntime?: BrowserRuntimeFactory
+  readonly reloadPage?: () => void
 }
 
 export interface ProductionBrowserComposition {
   readonly runtime: BrowserUiRuntimeFoundation
   readonly saveSchemaVersion: number
   sampleUtc(): string
+  reloadSafely(): Promise<void>
 }
 
 /**
@@ -82,10 +84,23 @@ export function createProductionBrowserComposition(
     nowUtcMilliseconds: () =>
       lifecycleClock.sample().utcMilliseconds,
   })
+  const reloadPage =
+    options.reloadPage ?? (() => window.location.reload())
   return Object.freeze({
     runtime,
     saveSchemaVersion: unityFirstRunProvenance.saveSchema,
     sampleUtc: () =>
       lifecycleClock.sample().serializedUtcText,
+    reloadSafely: async () => {
+      const checkpointed =
+        await runtime.checkpointBeforeSafeReload()
+      if (!checkpointed) {
+        throw new Error(
+          'Safe reload requires a verified checkpoint.',
+        )
+      }
+      await runtime.shutdown()
+      reloadPage()
+    },
   })
 }
