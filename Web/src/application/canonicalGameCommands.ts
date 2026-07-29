@@ -48,6 +48,7 @@ import {
 import type { BasicDysonFacilityId } from '../simulation/dysonFacilities'
 import type { MegaStructureId } from '../simulation/megaStructurePurchases'
 import { purchaseQuantumUpgrade } from '../simulation/quantumUpgrades'
+import { withCanonicalBotAllocation } from '../simulation/canonicalBotAllocation'
 import type { QuantumUpgradeId } from '../simulation/quantumUpgrades'
 import { purchaseRealityUpgrade } from '../simulation/realityUpgrades'
 import type { RealityUpgradeId } from '../simulation/realityUpgrades'
@@ -824,8 +825,8 @@ export function routeCanonicalGameCommand(
         preset.botDistribution !== distribution
       return finalizeAccepted(
         state,
-        changed
-          ? {
+          changed
+          ? withCanonicalBotAllocation({
               ...state,
               dyson: {
                 ...state.dyson,
@@ -839,7 +840,7 @@ export function routeCanonicalGameCommand(
                   { ...preset, botDistribution: distribution },
                 ),
               },
-            }
+            })
           : state,
         changed,
         `dyson-bot-distribution:${
@@ -1266,7 +1267,7 @@ export function routeCanonicalGameCommand(
         assignment.state !== state || current !== command.slot
       return finalizeAccepted(
         state,
-        assignment.state,
+        withCanonicalBotAllocation(assignment.state),
         changed,
         `skill:${changed ? 'preset-selected' : 'unchanged'}`,
         nextCarriers,
@@ -1511,7 +1512,9 @@ export function routeCanonicalGameCommand(
       }
       return finalizeAccepted(
         state,
-        result.state,
+        result.changed
+          ? withCanonicalBotAllocation(result.state)
+          : result.state,
         result.changed,
         `quantum-upgrade:${result.code}`,
         carriers,

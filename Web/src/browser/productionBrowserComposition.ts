@@ -19,6 +19,9 @@ import {
 import {
   MOBILE_LIFECYCLE_POLICY,
 } from '../simulation/lifecycleAwayTime'
+import type {
+  DysonPresentationTuning,
+} from '../simulation/canonicalDysonDerivation'
 import {
   createBrowserRuntimeFoundation,
   type BrowserRuntimeFoundationOptions,
@@ -45,6 +48,7 @@ export interface ProductionBrowserCompositionOptions {
   readonly monotonicClock?: ActiveTimeMonotonicClock
   readonly createRuntime?: BrowserRuntimeFactory
   readonly reloadPage?: () => void
+  readonly dysonPresentationTuning?: Readonly<DysonPresentationTuning>
 }
 
 export interface ProductionBrowserComposition {
@@ -79,6 +83,10 @@ export function createProductionBrowserComposition(
         }),
       readHostEntitlements: () =>
         readBrowserHostEntitlements(entitlementDocument),
+      readHostDysonPresentationTuning:
+        options.dysonPresentationTuning === undefined
+          ? undefined
+          : () => options.dysonPresentationTuning!,
     })
   const runtimeFactory =
     options.createRuntime ?? createBrowserRuntimeFoundation

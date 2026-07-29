@@ -9,8 +9,11 @@ import {
   type BasicDysonFacilityId,
 } from './dysonFacilities'
 import {
+  calculateBasicDysonFacilityRate,
   createBasicDysonState,
+  type BasicDysonFacilityRateCalculation,
   type BasicDysonRates,
+  type BasicDysonState,
 } from './dysonModel'
 import {
   combineDysonProductionArrivalRates,
@@ -33,7 +36,12 @@ import {
   type MaterializedDysonResearchEffect,
 } from './dysonResearchEffects'
 import { deriveSecretBuffs } from './secretBuffs'
-import { calculateStat, type StatEffect } from './stat'
+import {
+  applyStatEffect,
+  calculateStat,
+  type StatEffect,
+  type StatOperation,
+} from './stat'
 import {
   resolveDynamicSkillEffect,
   type DynamicSkillEffectIssue,
@@ -45,6 +53,20 @@ import { publishDysonSkillEffectEvaluationSnapshot } from './dysonSnapshotPublic
 export interface DysonEntitlements {
   readonly permanentDoubleIp: boolean
 }
+
+export interface DysonPresentationTuning {
+  /**
+   * Matches ProgressBarFlickerManager: production bars at or above this many
+   * completions per second render solid instead of exposing a rapidly
+   * flickering fractional cycle.
+   */
+  readonly solidProgressThresholdPerSecond: number
+}
+
+export const CANONICAL_DYSON_PRESENTATION_TUNING: Readonly<DysonPresentationTuning> =
+  Object.freeze({
+    solidProgressThresholdPerSecond: 4,
+  })
 
 export type DysonDerivationIssueCode =
   | 'DYSON_OWNED_SKILL_UNSUPPORTED'
@@ -83,8 +105,66 @@ export interface DerivedBasicDysonState {
   readonly rates: Readonly<BasicDysonRates>
   readonly megaRates: Readonly<MegaStructureRates>
   readonly productionArrivalRates: Readonly<DysonProductionArrivalRates>
+  readonly facilityFacts: Readonly<
+    Record<BasicDysonFacilityId, CanonicalBasicFacilityFacts>
+  >
   readonly nextEvaluationSnapshot: Readonly<DysonSkillEffectEvaluationSnapshot>
   readonly entitlements: DysonEntitlements
+}
+
+export interface CanonicalBasicFacilityFacts {
+  readonly facilityId: BasicDysonFacilityId
+  readonly ownership: {
+    readonly automatic: number
+    readonly manual: number
+    readonly total: number
+  }
+  readonly production: {
+    readonly outputFacilityId: BasicDysonFacilityId | 'bots'
+    readonly perSecond: number
+    readonly secondsPerUnit: number | null
+  }
+  readonly productionProgress: {
+    readonly visible: boolean
+    readonly normalized: number
+  }
+  readonly details: {
+    readonly baseProductionPerSecond: number
+    readonly effectiveProducerCount: number
+    readonly modifier: number
+    readonly contributions?: readonly CanonicalFacilityContributionRow[]
+    /**
+     * Always populated by canonical derivation; empty when Unity would hide
+     * the only gated upstream source.
+     */
+    readonly upstreamSources?: readonly {
+      readonly sourceFacilityId: CanonicalFacilityId
+      readonly contributionPerSecond: number
+    }[]
+  }
+}
+
+export interface CanonicalFacilityContributionRow {
+  readonly sourceId: string
+  readonly displayRole:
+    | 'base'
+    | 'producer-count'
+    | 'modifier'
+    | 'output-adjustments'
+  readonly operation: StatOperation
+  readonly value: number
+  readonly delta: number
+  readonly runningTotal: number
+  readonly conditionIdentifier?: string
+  /**
+   * Legacy presentation-fixture field. Canonical derivation does not populate
+   * this because no localized condition display text exists at this boundary.
+   */
+  readonly condition?: string
+  readonly automaticManualTuple?: readonly [
+    automatic: number,
+    manual: number,
+  ]
 }
 
 export type DysonDerivationResult =
@@ -122,7 +202,19 @@ export function deriveBasicDysonState(
   tuning: Readonly<DysonCompatibilityTuning>,
   entitlements: DysonEntitlements,
   evaluationSnapshot: Readonly<DysonSkillEffectEvaluationSnapshot>,
+  presentationTuning: Readonly<DysonPresentationTuning> =
+    CANONICAL_DYSON_PRESENTATION_TUNING,
 ): DysonDerivationResult {
+  if (
+    !Number.isFinite(
+      presentationTuning.solidProgressThresholdPerSecond,
+    ) ||
+    presentationTuning.solidProgressThresholdPerSecond < 0
+  ) {
+    throw new Error(
+      'Dyson solid-progress threshold must be finite and non-negative.',
+    )
+  }
   const issues = findUnsupportedDependencies(state)
   if (issues.length > 0) {
     return { ok: false, issues: Object.freeze(issues) }
@@ -313,9 +405,226 @@ export function deriveBasicDysonState(
         model.rates,
         mega.rates,
       ),
+      facilityFacts: deriveBasicFacilityFacts(
+        state,
+        model,
+        mega.rates,
+        facilityModifiers,
+        presentationTuning,
+      ),
       nextEvaluationSnapshot,
       entitlements: Object.freeze({ ...entitlements }),
     }),
+  }
+}
+
+const BASIC_FACILITY_OUTPUTS: Readonly<
+  Record<BasicDysonFacilityId, BasicDysonFacilityId | 'bots'>
+> = {
+  assembly_lines: 'bots',
+  ai_managers: 'assembly_lines',
+  servers: 'ai_managers',
+  data_centers: 'servers',
+  planets: 'data_centers',
+}
+
+const BASIC_FACILITY_OUTPUT_RATES: Readonly<
+  Record<BasicDysonFacilityId, keyof BasicDysonRates>
+> = {
+  assembly_lines: 'bots',
+  ai_managers: 'assembly_lines',
+  servers: 'ai_managers',
+  data_centers: 'servers',
+  planets: 'data_centers',
+}
+
+function deriveBasicFacilityFacts(
+  state: CanonicalGameStateV1,
+  model: Readonly<BasicDysonState>,
+  megaRates: Readonly<MegaStructureRates>,
+  modifiers: Readonly<Record<CanonicalFacilityId, number>>,
+  presentationTuning: Readonly<DysonPresentationTuning>,
+): Readonly<Record<BasicDysonFacilityId, CanonicalBasicFacilityFacts>> {
+  const rates = model.rates
+  return Object.freeze(
+    Object.fromEntries(
+      BASIC_DYSON_FACILITY_IDS.map((facilityId) => {
+        const pair = state.dyson.facilities[facilityId]
+        const total = pair[0] + pair[1]
+        const perSecond =
+          rates[BASIC_FACILITY_OUTPUT_RATES[facilityId]]
+        const runningOutput =
+          facilityId === 'assembly_lines'
+            ? state.dyson.bots
+            : state.dyson.facilities[
+                BASIC_FACILITY_OUTPUTS[
+                  facilityId
+                ] as BasicDysonFacilityId
+              ][0]
+        const rateCalculation = calculateBasicDysonFacilityRate(
+          model,
+          facilityId,
+        )
+        const visible = perSecond > 0
+        const fractionalProgress =
+          runningOutput - Math.floor(runningOutput)
+        return [
+          facilityId,
+          Object.freeze({
+            facilityId,
+            ownership: Object.freeze({
+              automatic: pair[0],
+              manual: pair[1],
+              total,
+            }),
+            production: Object.freeze({
+              outputFacilityId: BASIC_FACILITY_OUTPUTS[facilityId],
+              perSecond,
+              secondsPerUnit:
+                perSecond > 0 ? 1 / perSecond : null,
+            }),
+            productionProgress: Object.freeze({
+              visible,
+              normalized: visible
+                ? perSecond >=
+                  presentationTuning.solidProgressThresholdPerSecond
+                  ? 1
+                  : Math.max(0, Math.min(1, fractionalProgress))
+                : 0,
+            }),
+            details: Object.freeze({
+              baseProductionPerSecond:
+                rateCalculation.baseProduction,
+              effectiveProducerCount: total,
+              modifier: modifiers[facilityId],
+              contributions: deriveFacilityContributionRows(
+                rateCalculation,
+                pair,
+              ),
+              upstreamSources: deriveBasicFacilityUpstreamSources(
+                state,
+                facilityId,
+                rates,
+                megaRates,
+              ),
+            }),
+          }),
+        ]
+      }),
+    ) as Record<BasicDysonFacilityId, CanonicalBasicFacilityFacts>,
+  )
+}
+
+function deriveFacilityContributionRows(
+  calculation: Readonly<BasicDysonFacilityRateCalculation>,
+  pair: readonly [automatic: number, manual: number],
+): readonly CanonicalFacilityContributionRow[] {
+  const rows: CanonicalFacilityContributionRow[] = [
+    Object.freeze({
+      sourceId: 'base',
+      displayRole: 'base',
+      operation: 'override',
+      value: calculation.baseProduction,
+      delta: calculation.baseProduction,
+      runningTotal: calculation.baseProduction,
+    }),
+  ]
+  let runningTotal = calculation.baseProduction
+  for (const effect of calculation.effects) {
+    const next = applyStatEffect(runningTotal, effect)
+    const isCount = effect.id.endsWith('.count')
+    const isModifier = effect.id.endsWith('.modifier')
+    rows.push(
+      Object.freeze({
+        sourceId: effect.id,
+        displayRole: isCount
+            ? 'producer-count'
+          : isModifier
+            ? 'modifier'
+            : 'output-adjustments',
+        operation: effect.operation,
+        value: effect.value,
+        delta: next - runningTotal,
+        runningTotal: next,
+        ...(effect.conditionIdentifier === undefined
+          ? {}
+          : {
+              conditionIdentifier: effect.conditionIdentifier,
+            }),
+        ...(isCount
+          ? {
+              automaticManualTuple: Object.freeze([
+                pair[0],
+                pair[1],
+              ]) as readonly [number, number],
+            }
+          : {}),
+      }),
+    )
+    runningTotal = next
+  }
+  if (calculation.rate !== runningTotal) {
+    // The shared facility pipeline clamps its final value into the canonical
+    // continuous range after StatCalculator. This row appears only when that
+    // numeric-safety boundary changes the actual result.
+    rows.push(
+      Object.freeze({
+        sourceId: 'canonical.numeric-clamp',
+        displayRole: 'output-adjustments',
+        operation: 'override',
+        value: calculation.rate,
+        delta: calculation.rate - runningTotal,
+        runningTotal: calculation.rate,
+      }),
+    )
+  }
+  return Object.freeze(rows)
+}
+
+function deriveBasicFacilityUpstreamSources(
+  state: CanonicalGameStateV1,
+  facilityId: BasicDysonFacilityId,
+  rates: Readonly<BasicDysonRates>,
+  megaRates: Readonly<MegaStructureRates>,
+): CanonicalBasicFacilityFacts['details']['upstreamSources'] {
+  switch (facilityId) {
+    case 'assembly_lines':
+      return Object.freeze([
+        Object.freeze({
+          sourceFacilityId: 'ai_managers' as const,
+          contributionPerSecond: rates.assembly_lines,
+        }),
+      ])
+    case 'ai_managers':
+      return Object.freeze([
+        Object.freeze({
+          sourceFacilityId: 'servers' as const,
+          contributionPerSecond: rates.ai_managers,
+        }),
+      ])
+    case 'servers':
+      return Object.freeze([
+        Object.freeze({
+          sourceFacilityId: 'data_centers' as const,
+          contributionPerSecond: rates.servers,
+        }),
+      ])
+    case 'data_centers':
+      return Object.freeze([
+        Object.freeze({
+          sourceFacilityId: 'planets' as const,
+          contributionPerSecond: rates.data_centers,
+        }),
+      ])
+    case 'planets':
+      return state.quantum.unlocks.matrioshkaBrains
+        ? Object.freeze([
+            Object.freeze({
+              sourceFacilityId: 'matrioshka_brains' as const,
+              contributionPerSecond: megaRates.matrioshka_brains,
+            }),
+          ])
+        : Object.freeze([])
   }
 }
 

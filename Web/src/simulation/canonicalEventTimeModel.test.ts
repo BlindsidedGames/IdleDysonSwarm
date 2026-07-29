@@ -353,6 +353,53 @@ const artifactDefinitions = new Map<
 ])
 
 describe('canonical whole-game event-time model', () => {
+  test('synchronizes bot allocation and advances the complete early Dyson production chain', () => {
+    const source = baseState()
+    const gameState: CanonicalGameStateV1 = {
+      ...source,
+      dyson: {
+        ...source.dyson,
+        bots: 10,
+        workers: 0,
+        researchers: 0,
+        botDistribution: 0.5,
+        facilities: {
+          ...source.dyson.facilities,
+          assembly_lines: [0, 1],
+          ai_managers: [0, 1],
+          servers: [0, 1],
+          data_centers: [0, 1],
+          planets: [0, 1],
+        },
+      },
+    }
+
+    const result = advanceEventTime({
+      startingState: new CanonicalEventTimeModel(
+        carrier(gameState),
+        context(),
+      ),
+      durationSeconds: 1,
+      automationIntervalSeconds: 1,
+      automationTimeUntilNextEvent: 1,
+      infinityMinimumCycleSeconds: 10,
+      processingBudgetMilliseconds: 0,
+    })
+
+    expect(result.completed).toBe(true)
+    const next = result.candidateState.state.gameState.dyson
+    expect(next.workers).toBe(5)
+    expect(next.researchers).toBe(5)
+    expect(next.money).toBeGreaterThan(0)
+    expect(next.science).toBeGreaterThan(0)
+    expect(next.totalPanelsDecayed).toBeGreaterThan(0)
+    expect(next.bots).toBeGreaterThan(10)
+    expect(next.facilities.assembly_lines[0]).toBeGreaterThan(0)
+    expect(next.facilities.ai_managers[0]).toBeGreaterThan(0)
+    expect(next.facilities.servers[0]).toBeGreaterThan(0)
+    expect(next.facilities.data_centers[0]).toBeGreaterThan(0)
+  })
+
   test('finalizes elapsed statistics before a bot-cap persistence pause', () => {
     const source = baseState()
     const capped: CanonicalGameStateV1 = {

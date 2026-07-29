@@ -35,6 +35,9 @@ describe('production canonical application factory', () => {
     expect(context.automationIntervalSeconds).toBe(
       DEFAULT_AUTOMATION_INTERVAL_SECONDS,
     )
+    expect(context.dysonPresentationTuning).toEqual({
+      solidProgressThresholdPerSecond: 4,
+    })
     expect(context.realityWorkerTuning).toEqual(
       readRealityWorkerTuning(),
     )
@@ -54,6 +57,17 @@ describe('production canonical application factory', () => {
     expect(captured).not.toBe(asset)
     expect(Object.isFrozen(context)).toBe(true)
     expect(Object.isFrozen(context.realityWorkerTuning)).toBe(true)
+  })
+
+  test('captures retained host progress tuning in the production event context', () => {
+    const context = createProductionEventContext({
+      solidProgressThresholdPerSecond: 9,
+    })
+
+    expect(context.dysonPresentationTuning).toEqual({
+      solidProgressThresholdPerSecond: 9,
+    })
+    expect(Object.isFrozen(context.dysonPresentationTuning)).toBe(true)
   })
 
   test('invokes the authentic first-run seam only after repository discovery and checkpoints it', async () => {

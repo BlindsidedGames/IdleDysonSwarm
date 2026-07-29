@@ -114,8 +114,9 @@ describe('accessible presentation primitives', () => {
     render(
       createElement(FacilityCard, {
         title: 'Generator',
-        summary: createElement('span', null, '3 owned'),
-        details: createElement('span', null, 'Produces 2 /s'),
+        production: createElement('span', null, 'Produces 2 /s'),
+        description: createElement('span', null, '3 owned'),
+        progress: createElement('span', null, 'Production progress'),
         action: createElement(Button, null, 'Purchase'),
       }),
     )
@@ -148,11 +149,12 @@ describe('accessible presentation primitives', () => {
         createElement(StatusFeedback, { tone: 'neutral' }, 'Ready'),
         createElement(FacilityCard, {
           title: 'Generator',
-          summary: createElement(ResourceValue, {
+          production: createElement(ResourceValue, {
             label: 'Owned',
             value: '3',
           }),
-          details: createElement(Progress, {
+          description: 'Produces energy',
+          progress: createElement(Progress, {
             label: 'Construction',
             valueText: '1 of 2',
             value: 1,

@@ -7,8 +7,10 @@ import {
   evaluateCanonicalBotCapCheckpoint,
 } from './canonicalBotCapCheckpoint'
 import {
+  CANONICAL_DYSON_PRESENTATION_TUNING,
   deriveBasicDysonState,
   type DysonEntitlements,
+  type DysonPresentationTuning,
 } from './canonicalDysonDerivation'
 import {
   runCanonicalDysonAutomation,
@@ -71,6 +73,7 @@ import {
   timeToCanonicalTinkerCompletion,
   type CanonicalTinkerRuntimeState,
 } from './canonicalTinker'
+import { withCanonicalBotAllocation } from './canonicalBotAllocation'
 import type {
   EventTimeSimulationModel,
   SimulationAutomationPolicy,
@@ -105,6 +108,7 @@ export type CanonicalInfinityBoundaryEvaluation =
 
 export interface CanonicalEventTimeContext {
   readonly automationIntervalSeconds: number
+  readonly dysonPresentationTuning?: Readonly<DysonPresentationTuning>
   /**
    * Tinker uses Unity wall Time.deltaTime. Stored/away simulations set this
    * false so their simulated seconds cannot complete the transient action.
@@ -150,6 +154,7 @@ interface ArtifactSkillPointResult {
 
 interface CapturedContext {
   readonly automationIntervalSeconds: number
+  readonly dysonPresentationTuning: Readonly<DysonPresentationTuning>
   readonly advanceTinker: boolean
   readonly realityWorkerTuning: Readonly<RealityWorkerTuning>
   readonly dreamResetDefinitions: CanonicalDreamResetDefinitions
@@ -345,13 +350,17 @@ export class CanonicalEventTimeModel
       return
     }
 
-    const startingState = this.carrier.gameState
+    const startingState = withCanonicalBotAllocation(
+      this.carrier.gameState,
+    )
+    this.replaceGameState(startingState)
     try {
       const derived = deriveBasicDysonState(
         startingState,
         this.carrier.compatibilityTuning,
         this.carrier.entitlements,
         this.carrier.evaluationSnapshot,
+        this.context.dysonPresentationTuning,
       )
       if (!derived.ok) {
         const issue = derived.issues[0]
@@ -388,7 +397,7 @@ export class CanonicalEventTimeModel
             state: candidate,
             runtime: this.carrier.tinker,
           }
-      candidate = tinker.state
+      candidate = withCanonicalBotAllocation(tinker.state)
       const space = runDreamSpaceAgeProduction(candidate, {
         tickSeconds: seconds,
         doubleTimeMultiplier:
@@ -883,6 +892,7 @@ export class CanonicalEventTimeModel
       this.carrier.compatibilityTuning,
       this.carrier.entitlements,
       this.carrier.evaluationSnapshot,
+      this.context.dysonPresentationTuning,
     )
     if (derived.ok) return derived.value
     const issue = derived.issues[0]
@@ -1017,6 +1027,10 @@ function captureContext(
 ): CapturedContext {
   return Object.freeze({
     automationIntervalSeconds: context.automationIntervalSeconds,
+    dysonPresentationTuning: Object.freeze({
+      ...(context.dysonPresentationTuning ??
+        CANONICAL_DYSON_PRESENTATION_TUNING),
+    }),
     advanceTinker: context.advanceTinker ?? true,
     realityWorkerTuning: Object.freeze({
       ...context.realityWorkerTuning,
@@ -1060,6 +1074,18 @@ function validateCarrier(
         code: 'CANONICAL_EVENT_TUNING_INVALID',
         path: `compatibilityTuning.${path}`,
         detail: 'Compatibility tuning must be finite and non-negative.',
+      })
+    }
+  }
+  for (const [path, value] of Object.entries(
+    context.dysonPresentationTuning,
+  )) {
+    if (!Number.isFinite(value) || value < 0) {
+      return Object.freeze({
+        code: 'CANONICAL_EVENT_PRESENTATION_TUNING_INVALID',
+        path: `dysonPresentationTuning.${path}`,
+        detail:
+          'Dyson presentation tuning must be finite and non-negative.',
       })
     }
   }

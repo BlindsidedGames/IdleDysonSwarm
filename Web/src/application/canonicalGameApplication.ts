@@ -204,6 +204,8 @@ export class CanonicalGameApplicationFacade {
       },
       quantumLeap: this.previewQuantumLeap(),
       realityWorkerTuning: this.eventContext.realityWorkerTuning,
+      dysonPresentationTuning:
+        this.eventContext.dysonPresentationTuning,
     })
   }
 
@@ -296,7 +298,10 @@ export class CanonicalGameApplicationFacade {
     const routed = routeCanonicalGameCommand(
       cloneCanonicalRuntimeState(ready.state as CanonicalRuntimeState).gameState,
       envelope.command,
-      commandOptions(ready.state as CanonicalRuntimeState),
+      commandOptions(
+        ready.state as CanonicalRuntimeState,
+        this.eventContext,
+      ),
     )
     const intent = routed.intents[0]
     if (!routed.accepted || intent?.kind !== 'advance-stored-time') {
@@ -447,7 +452,11 @@ export function createCanonicalGameEngineDefinition(
         return { accepted: true, changed: true }
       }
       if (command.kind === 'internal.bot-cap-checkpoint') {
-        return applyBotCapCheckpoint(candidate, command.checkpoint)
+        return applyBotCapCheckpoint(
+          candidate,
+          command.checkpoint,
+          eventContext,
+        )
       }
       if (command.kind === 'internal.advance-stored-time') {
         return advanceStoredTime(
@@ -479,7 +488,7 @@ function applyPlayerCommand(
     candidate.gameState,
     command,
     {
-      ...commandOptions(candidate),
+      ...commandOptions(candidate, context),
       quantumLeap: {
         requestLeap: (state) => {
           const model = new CanonicalEventTimeModel(
@@ -540,6 +549,7 @@ function applyPlayerCommand(
 
 function commandOptions(
   state: Readonly<CanonicalRuntimeState>,
+  context: Readonly<CanonicalEventTimeContext>,
 ): CanonicalGameCommandOptions {
   const carriers: CanonicalGameRuntimeCarriers = {
     compatibilityTuning: state.compatibilityTuning,
@@ -556,6 +566,7 @@ function commandOptions(
           state.compatibilityTuning,
           state.entitlements,
           previous ?? state.evaluationSnapshot,
+          context.dysonPresentationTuning,
         )
         return derived.ok
           ? {
@@ -693,6 +704,7 @@ function advanceStoredTime(
 function applyBotCapCheckpoint(
   candidate: CanonicalRuntimeState,
   checkpoint: BotCapCheckpointName,
+  context: Readonly<CanonicalEventTimeContext>,
 ): DomainTransition {
   const result = evaluateCanonicalBotCapCheckpoint(candidate.gameState)
   if (
@@ -710,6 +722,7 @@ function applyBotCapCheckpoint(
     candidate.compatibilityTuning,
     candidate.entitlements,
     candidate.evaluationSnapshot,
+    context.dysonPresentationTuning,
   )
   if (!derived.ok) {
     return reject(

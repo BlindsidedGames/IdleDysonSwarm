@@ -7,18 +7,22 @@ import './components.css'
 
 export interface FacilityCardProps {
   readonly title: ReactNode
-  readonly summary: ReactNode
+  readonly production: ReactNode
+  readonly description: ReactNode
+  readonly progress: ReactNode
   readonly action: ReactNode
-  readonly details?: ReactNode
+  readonly feedback?: ReactNode
   readonly headingLevel?: 'h2' | 'h3' | 'h4'
   readonly className?: string
 }
 
 export function FacilityCard({
   title,
-  summary,
+  production,
+  description,
+  progress,
   action,
-  details,
+  feedback,
   headingLevel = 'h3',
   className,
 }: FacilityCardProps) {
@@ -36,9 +40,11 @@ export function FacilityCard({
           {title}
         </Heading>
       </header>
-      <div className="ui-facility-card__summary">{summary}</div>
-      {details && (
-        <div className="ui-facility-card__details">{details}</div>
+      <div className="ui-facility-card__production">{production}</div>
+      <div className="ui-facility-card__description">{description}</div>
+      <div className="ui-facility-card__progress">{progress}</div>
+      {feedback && (
+        <div className="ui-facility-card__feedback">{feedback}</div>
       )}
       <div className="ui-facility-card__action">{action}</div>
     </article>

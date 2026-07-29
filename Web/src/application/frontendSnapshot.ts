@@ -28,6 +28,7 @@ import {
 import {
   deriveBasicDysonState,
   type DerivedBasicDysonState,
+  type DysonPresentationTuning,
   type DysonDerivationIssue,
   type DysonEntitlements,
 } from '../simulation/canonicalDysonDerivation'
@@ -103,6 +104,7 @@ import {
   type CanonicalTinkerUiFacts,
   type CanonicalTinkerRuntimeState,
 } from '../simulation/canonicalTinker'
+import { withCanonicalBotAllocation } from '../simulation/canonicalBotAllocation'
 import {
   previewCanonicalResearchPurchase,
   type CanonicalResearchPurchasePreview,
@@ -361,6 +363,7 @@ export interface FrontendPersistenceReadiness {
 
 export interface FrontendSnapshotContext {
   readonly runtimeRequirements?: FrontendCommandRequirementReadiness
+  readonly dysonPresentationTuning?: Readonly<DysonPresentationTuning>
   readonly compatibilityTuning: Readonly<DysonCompatibilityTuning>
   readonly evaluationSnapshot: Readonly<DysonSkillEffectEvaluationSnapshot>
   readonly entitlements: Readonly<DysonEntitlements>
@@ -376,7 +379,10 @@ export interface FrontendSnapshotContext {
 
 export type FrontendApplicationSnapshotContext = Pick<
   FrontendSnapshotContext,
-  'runtimeRequirements' | 'quantumLeap' | 'realityWorkerTuning'
+  | 'runtimeRequirements'
+  | 'dysonPresentationTuning'
+  | 'quantumLeap'
+  | 'realityWorkerTuning'
 >
 
 export interface FrontendQuantumLeapPreview {
@@ -494,6 +500,9 @@ export interface FrontendDysonPresentationFacts {
           | 'reach-bots'
         readonly target: number
       }
+  readonly facilities: Readonly<
+    DerivedBasicDysonState['facilityFacts']
+  >
 }
 
 export type FrontendDysonDerivedFacts =
@@ -704,6 +713,8 @@ export function selectFrontendApplicationSnapshot(
             entitlements: application.state.entitlements,
             tinker: application.state.tinker,
             realityWorkerTuning: context.realityWorkerTuning,
+            dysonPresentationTuning:
+              context.dysonPresentationTuning,
             quantumLeap: context.quantumLeap,
             storedTimeCheater:
               application.state.storedTimeCheater,
@@ -724,9 +735,9 @@ export function selectFrontendGameplaySnapshot(
 ): DeepReadonly<FrontendGameplaySnapshot> {
   const state = structuredClone(source)
   const definitionCoverage = inspectFrontendDefinitionCoverage()
-  const resources = selectResources(state)
-  const progression = selectProgression(state)
   const derived = selectDerivedFacts(state, context)
+  const resources = selectResources(state, derived)
+  const progression = selectProgression(state)
   const visibility = selectGameplayVisibility(state)
   const runtime = selectRuntimeFacts(state, context, derived)
   const requirements = {
@@ -860,14 +871,19 @@ export function inspectFrontendDefinitionCoverage():
 
 function selectResources(
   state: CanonicalGameStateV1,
+  derived: Readonly<FrontendGameplayDerivedFacts>,
 ): FrontendCanonicalResources {
+  const allocation =
+    derived.dyson.status === 'ready'
+      ? derived.dyson.value.allocation
+      : state.dyson
   return {
     dyson: {
       money: state.dyson.money,
       science: state.dyson.science,
       bots: state.dyson.bots,
-      workers: state.dyson.workers,
-      researchers: state.dyson.researchers,
+      workers: allocation.workers,
+      researchers: allocation.researchers,
     },
     infinity: {
       points: state.infinity.points,
@@ -1008,11 +1024,13 @@ function selectDerivedFacts(
   state: CanonicalGameStateV1,
   context: Readonly<FrontendSnapshotContext>,
 ): FrontendGameplayDerivedFacts {
+  const synchronizedState = withCanonicalBotAllocation(state)
   const dyson = deriveBasicDysonState(
-    state,
+    synchronizedState,
     context.compatibilityTuning,
     context.entitlements,
     context.evaluationSnapshot,
+    context.dysonPresentationTuning,
   )
   const reality = advanceRealityWorkers(
     state,
@@ -1093,12 +1111,14 @@ function projectDysonDerivedFacts(
     globals: source.globals,
     auxiliary: source.auxiliary,
     facilityModifiers: source.facilityModifiers,
+    facilityFacts: source.facilityFacts,
     rates: source.rates,
     megaRates: source.megaRates,
     productionArrivalRates: source.productionArrivalRates,
     presentation: {
       activePanelMetric,
       currentGoal: projectDysonGoal(goalStage),
+      facilities: source.facilityFacts,
     },
     entitlements: source.entitlements,
   }

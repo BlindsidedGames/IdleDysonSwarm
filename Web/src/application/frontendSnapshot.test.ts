@@ -7,6 +7,7 @@ import { prepareIdb1Save } from '../save/prepare'
 import { deriveAvocadoMultiplier } from '../simulation/avocadoDomain'
 import { deriveCanonicalDreamDerivedFacts } from '../simulation/canonicalDreamDerivedFacts'
 import { deriveBasicDysonState } from '../simulation/canonicalDysonDerivation'
+import { withCanonicalBotAllocation } from '../simulation/canonicalBotAllocation'
 import { createCanonicalTinkerRuntimeState } from '../simulation/canonicalTinker'
 import {
   advanceRealityWorkers,
@@ -589,7 +590,7 @@ describe('frontend gameplay snapshot', () => {
     const context = frontendContext()
     const snapshot = selectFrontendGameplaySnapshot(state, context)
     const expectedDyson = deriveBasicDysonState(
-      state,
+      withCanonicalBotAllocation(state),
       context.compatibilityTuning,
       context.entitlements,
       context.evaluationSnapshot,

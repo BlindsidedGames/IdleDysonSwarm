@@ -10,9 +10,9 @@ import {
   type MessageDescriptor,
 } from 'react-intl'
 import type {
-  FrontendCanonicalProgression,
   FrontendDysonVisibility,
   FrontendGameplayPreviews,
+  FrontendGameplaySnapshot,
 } from '../../../application/frontendSnapshot'
 import type { CanonicalPlayerCommand } from '../../../application/canonicalPlayerCommands'
 import {
@@ -27,6 +27,11 @@ import {
 import type { EnabledLocale } from '../../i18n/localeRegistry'
 import type { UiRuntimePlayerCommandResult } from '../../runtime'
 import { basicFacilityMessages as messages } from './messages'
+import { FacilityDetailsDialog } from './FacilityDetailsDialog'
+import {
+  clampProgress,
+  interpolatePublishedFacilityProgress,
+} from './progressInterpolation'
 import './facilities.css'
 
 export type EarlyBasicFacilityId =
@@ -40,13 +45,11 @@ export type BasicFacilityPurchaseCommand = Extract<
   { readonly kind: 'dyson.purchase-basic-facility' }
 >
 
-export type BasicFacilityOwnedPair =
-  FrontendCanonicalProgression['dyson']['facilities'][EarlyBasicFacilityId]
-
-export interface BasicFacilityCanonicalFact {
-  readonly owned: BasicFacilityOwnedPair
-  readonly productionPerSecond: number
-}
+export type BasicFacilityCanonicalFact =
+  Extract<
+    FrontendGameplaySnapshot['derived']['dyson'],
+    { readonly status: 'ready' }
+  >['value']['presentation']['facilities'][EarlyBasicFacilityId]
 
 export interface BasicFacilityPresentationRevision {
   readonly session: number
@@ -173,6 +176,8 @@ export function BasicFacilityRegion({
       Partial<Record<EarlyBasicFacilityId, PurchaseFeedback>>
     >
   >({})
+  const [detailsFacilityId, setDetailsFacilityId] =
+    useState<EarlyBasicFacilityId | null>(null)
   const pendingIdsRef = useRef(new Set<EarlyBasicFacilityId>())
   const currentRevisionRef =
     useRef<BasicFacilityPresentationRevision>(revision)
@@ -274,6 +279,9 @@ export function BasicFacilityRegion({
                 feedback={feedbackById[facilityId]}
                 revision={revision}
                 onPurchase={() => purchase(facilityId)}
+                onOpenDetails={() =>
+                  setDetailsFacilityId(facilityId)
+                }
               />
             </li>
           )
@@ -292,6 +300,21 @@ export function BasicFacilityRegion({
           </li>
         )}
       </ul>
+      {detailsFacilityId !== null && (
+        <FacilityDetailsDialog
+          title={intl.formatMessage(
+            facilityMessages[detailsFacilityId].name,
+          )}
+          closeLabel={intl.formatMessage(messages.closeDetails)}
+          onClose={() => setDetailsFacilityId(null)}
+        >
+          <FacilityDetailsContent
+            locale={locale}
+            facilityId={detailsFacilityId}
+            fact={facilityFacts[detailsFacilityId]}
+          />
+        </FacilityDetailsDialog>
+      )}
     </section>
   )
 }
@@ -306,6 +329,7 @@ interface BasicFacilityPresentationCardProps {
   readonly feedback?: PurchaseFeedback
   readonly revision: BasicFacilityPresentationRevision
   readonly onPurchase: () => void
+  readonly onOpenDetails: () => void
 }
 
 function BasicFacilityPresentationCard({
@@ -318,9 +342,9 @@ function BasicFacilityPresentationCard({
   feedback,
   revision,
   onPurchase,
+  onOpenDetails,
 }: BasicFacilityPresentationCardProps) {
   const intl = useIntl()
-  const [detailsOpen, setDetailsOpen] = useState(false)
   const feedbackId = useId()
   const availabilityId = useId()
   const presentation = facilityMessages[facilityId]
@@ -356,23 +380,37 @@ function BasicFacilityPresentationCard({
           fact={fact}
         />
       }
-      summary={
-        <>
-          <p className="basic-facility-card__description">
-            {intl.formatMessage(presentation.description)}
-          </p>
-          <p className="basic-facility-card__production">
-            {productionText(
-              locale,
-              fact.productionPerSecond,
-              presentation,
-              intl,
-            )}
-          </p>
-        </>
+      production={
+        <p className="basic-facility-card__production">
+          {productionText(
+            locale,
+            fact.production.perSecond,
+            presentation,
+            intl,
+          )}
+        </p>
       }
-      details={
-        displayFeedback || availabilityMessage || detailsOpen ? (
+      description={
+        <p className="basic-facility-card__description">
+          {intl.formatMessage(presentation.description)}
+        </p>
+      }
+      progress={
+        <FacilityProductionProgress
+          accessibleName={intl.formatMessage(
+            messages.productionProgressAccessible,
+            {
+              facility: intl.formatMessage(presentation.name),
+            },
+          )}
+          progress={fact.productionProgress}
+          productionPerSecond={fact.production.perSecond}
+          revisionSession={revision.session}
+          revisionState={revision.state}
+        />
+      }
+      feedback={
+        displayFeedback || availabilityMessage ? (
           <>
           {displayFeedback && (
           <span
@@ -401,29 +439,6 @@ function BasicFacilityPresentationCard({
                 quantity: availabilityMessage.quantity,
               })}
             </span>
-          )}
-          {detailsOpen && (
-            <div
-              className="basic-facility-card__details-panel"
-              role="dialog"
-              aria-label={intl.formatMessage(messages.details)}
-            >
-              <p>{intl.formatMessage(presentation.description)}</p>
-              <p>
-                {productionText(
-                  locale,
-                  fact.productionPerSecond,
-                  presentation,
-                  intl,
-                )}
-              </p>
-              <button
-                type="button"
-                onClick={() => setDetailsOpen(false)}
-              >
-                {intl.formatMessage(messages.closeDetails)}
-              </button>
-            </div>
           )}
           </>
         ) : undefined
@@ -466,8 +481,8 @@ function BasicFacilityPresentationCard({
           <button
             type="button"
             className="basic-facility-card__details-button"
-            aria-expanded={detailsOpen}
-            onClick={() => setDetailsOpen((current) => !current)}
+            aria-haspopup="dialog"
+            onClick={onOpenDetails}
           >
             {intl.formatMessage(messages.details)}
           </button>
@@ -475,6 +490,335 @@ function BasicFacilityPresentationCard({
       }
     />
   )
+}
+
+const upstreamFacilityNameMessages: Readonly<
+  Record<string, MessageDescriptor>
+> = {
+  assembly_lines: messages.assemblyLinesName,
+  ai_managers: messages.aiManagersName,
+  servers: messages.serversName,
+  data_centers: messages.dataCentersName,
+  planets: messages.planetsName,
+  matrioshka_brains: messages.matrioshkaBrainsName,
+  birch_planets: messages.birchPlanetsName,
+  galactic_brains: messages.galacticBrainsName,
+}
+
+function FacilityProductionProgress({
+  accessibleName,
+  progress,
+  productionPerSecond,
+  revisionSession,
+  revisionState,
+}: {
+  readonly accessibleName: string
+  readonly progress?: BasicFacilityCanonicalFact['productionProgress']
+  readonly productionPerSecond: number
+  readonly revisionSession: number
+  readonly revisionState: number
+}) {
+  const prefersReducedMotion = usePrefersReducedMotion()
+  const canonicalNormalized = clampProgress(
+    progress?.normalized ?? 0,
+  )
+  const solid =
+    progress?.visible === true && canonicalNormalized === 1
+  const [visualNormalized, setVisualNormalized] = useState(
+    canonicalNormalized,
+  )
+
+  useEffect(() => {
+    setVisualNormalized(canonicalNormalized)
+    if (
+      progress?.visible !== true ||
+      solid ||
+      prefersReducedMotion ||
+      productionPerSecond <= 0
+    ) {
+      return
+    }
+    const startedAt = performance.now()
+    let frame = 0
+    const paint = (now: number) => {
+      const elapsedMs = Math.max(0, now - startedAt)
+      setVisualNormalized(
+        interpolatePublishedFacilityProgress(
+          canonicalNormalized,
+          productionPerSecond,
+          elapsedMs,
+        ),
+      )
+      frame = requestAnimationFrame(paint)
+    }
+    frame = requestAnimationFrame(paint)
+    return () => cancelAnimationFrame(frame)
+  }, [
+    canonicalNormalized,
+    prefersReducedMotion,
+    productionPerSecond,
+    progress?.visible,
+    revisionSession,
+    revisionState,
+    solid,
+  ])
+
+  return (
+    <div
+      className="basic-facility-card__progress-track"
+      data-visible={progress?.visible === true ? 'true' : 'false'}
+    >
+      {progress?.visible === true && (
+        <div
+          className="basic-facility-card__progress-fill"
+          role="progressbar"
+          aria-label={accessibleName}
+          aria-valuemin={0}
+          aria-valuemax={100}
+          aria-valuenow={Math.round(visualNormalized * 100)}
+          style={{ inlineSize: `${visualNormalized * 100}%` }}
+        />
+      )}
+    </div>
+  )
+}
+
+function usePrefersReducedMotion(): boolean {
+  const [preferred, setPreferred] = useState(() =>
+    typeof window === 'undefined' ||
+    typeof window.matchMedia !== 'function'
+      ? false
+      : window.matchMedia('(prefers-reduced-motion: reduce)')
+          .matches,
+  )
+
+  useEffect(() => {
+    if (
+      typeof window === 'undefined' ||
+      typeof window.matchMedia !== 'function'
+    ) {
+      return
+    }
+    const query = window.matchMedia(
+      '(prefers-reduced-motion: reduce)',
+    )
+    const update = () => setPreferred(query.matches)
+    update()
+    query.addEventListener('change', update)
+    return () => query.removeEventListener('change', update)
+  }, [])
+
+  return preferred
+}
+
+function FacilityDetailsContent({
+  locale,
+  facilityId,
+  fact,
+}: {
+  readonly locale: EnabledLocale
+  readonly facilityId: EarlyBasicFacilityId
+  readonly fact: BasicFacilityCanonicalFact
+}) {
+  const intl = useIntl()
+  const presentation = facilityMessages[facilityId]
+  const details = fact.details
+  return (
+    <>
+      <p className="facility-details-dialog__value">
+        {formatGameNumber(locale, fact.production.perSecond)}
+      </p>
+      <p>{intl.formatMessage(presentation.description)}</p>
+      <p>
+        {productionText(
+          locale,
+          fact.production.perSecond,
+          presentation,
+          intl,
+        )}
+      </p>
+      {details && (
+        <>
+          {details.contributions && (
+            <div className="facility-details-dialog__contributions">
+              {details.contributions.map((contribution) => {
+                const tuple =
+                  contribution.automaticManualTuple?.length === 2
+                    ? contribution.automaticManualTuple
+                    : undefined
+                return (
+                  <div
+                    className="facility-details-dialog__contribution"
+                    key={contribution.sourceId}
+                  >
+                    <span>
+                      {contributionLabel(
+                        contribution.displayRole,
+                        presentation.name,
+                        intl,
+                      )}
+                      {(contribution.displayRole === 'modifier' ||
+                        contribution.displayRole ===
+                          'output-adjustments') && (
+                        <code className="facility-details-dialog__source-id">
+                          {contribution.sourceId}
+                        </code>
+                      )}
+                      {tuple && (
+                        <>
+                          {' '}
+                          <span
+                            className="facility-details-dialog__tuple"
+                            aria-label={intl.formatMessage(
+                              messages.automaticManualTupleAccessible,
+                              {
+                                automatic: formatGameNumber(
+                                  locale,
+                                  tuple[0],
+                                ),
+                                manual: formatGameNumber(
+                                  locale,
+                                  tuple[1],
+                                ),
+                              },
+                            )}
+                          >
+                            <span aria-hidden="true">
+                              ({formatGameNumber(locale, tuple[0])},{' '}
+                              {formatGameNumber(locale, tuple[1])})
+                            </span>
+                          </span>
+                        </>
+                      )}
+                    </span>
+                    <span className="facility-details-dialog__operation">
+                      {operationSymbol(contribution.operation)}
+                      {formatGameNumber(locale, contribution.value)}
+                    </span>
+                    <span
+                      className="facility-details-dialog__delta"
+                      data-sign={
+                        contribution.delta > 0
+                          ? 'positive'
+                          : contribution.delta < 0
+                            ? 'negative'
+                            : 'neutral'
+                      }
+                    >
+                      {contribution.delta > 0 ? '+' : ''}
+                      {formatGameNumber(locale, contribution.delta)}
+                    </span>
+                    <span className="facility-details-dialog__total">
+                      {formatGameNumber(
+                        locale,
+                        contribution.runningTotal,
+                      )}
+                    </span>
+                    {(contribution.conditionIdentifier ||
+                      contribution.condition) && (
+                      <span className="facility-details-dialog__condition">
+                        {contribution.conditionIdentifier
+                          ? intl.formatMessage(
+                              messages.conditionIdentifier,
+                              {
+                                identifier:
+                                  contribution.conditionIdentifier,
+                              },
+                            )
+                          : intl.formatMessage(messages.condition, {
+                              condition: contribution.condition,
+                            })}
+                      </span>
+                    )}
+                  </div>
+                )
+              })}
+            </div>
+          )}
+          <section
+            className="facility-details-dialog__upstream"
+            aria-labelledby={`facility-upstream-${facilityId}`}
+          >
+            <h3 id={`facility-upstream-${facilityId}`}>
+              {intl.formatMessage(messages.upstreamSources)}
+            </h3>
+            {details.upstreamSources?.map((source) => (
+              <p key={source.sourceFacilityId}>
+                {intl.formatMessage(messages.producedBy, {
+                  facility: intl.formatMessage(
+                    upstreamFacilityNameMessages[
+                      source.sourceFacilityId
+                    ] ?? messages.unknownFacility,
+                  ),
+                  rate: formatGameNumber(
+                    locale,
+                    source.contributionPerSecond,
+                  ),
+                })}
+              </p>
+            ))}
+          </section>
+          <p
+            className="facility-details-dialog__legend"
+            aria-label={intl.formatMessage(
+              messages.effectLegendAccessible,
+            )}
+          >
+            <span>{intl.formatMessage(messages.effect)}</span>
+            <span>{intl.formatMessage(messages.value)}</span>
+            <span className="facility-details-dialog__delta">
+              {intl.formatMessage(messages.delta)}
+            </span>
+            <span className="facility-details-dialog__total">
+              {intl.formatMessage(messages.total)}
+            </span>
+          </p>
+        </>
+      )}
+    </>
+  )
+}
+
+function contributionLabel(
+  role: NonNullable<
+    BasicFacilityCanonicalFact['details']['contributions']
+  >[number]['displayRole'],
+  facilityName: MessageDescriptor,
+  intl: IntlShape,
+): string {
+  switch (role) {
+    case 'base':
+      return intl.formatMessage(messages.baseProduction)
+    case 'producer-count':
+      return intl.formatMessage(messages.facilityCount, {
+        facility: intl.formatMessage(facilityName),
+      })
+    case 'modifier':
+      return intl.formatMessage(messages.facilityModifier)
+    case 'output-adjustments':
+      return intl.formatMessage(messages.outputAdjustments)
+  }
+}
+
+function operationSymbol(
+  operation: NonNullable<
+    BasicFacilityCanonicalFact['details']['contributions']
+  >[number]['operation'],
+): string {
+  switch (operation) {
+    case 'add':
+      return '+'
+    case 'multiply':
+      return '×'
+    case 'power':
+      return '^'
+    case 'override':
+      return '='
+    case 'clamp-min':
+      return '≥'
+    case 'clamp-max':
+      return '≤'
+  }
 }
 
 interface FacilityIdentityProps {
@@ -491,8 +835,8 @@ function FacilityIdentity({
   fact,
 }: FacilityIdentityProps) {
   const intl = useIntl()
-  const manualOwned = fact.owned[1]
-  const totalOwned = fact.owned[0] + manualOwned
+  const manualOwned = fact.ownership.manual
+  const totalOwned = fact.ownership.total
   const total = formatGameNumber(locale, totalOwned)
   const manual = formatGameNumber(locale, manualOwned)
   const identityText = intl.formatMessage(identity, {

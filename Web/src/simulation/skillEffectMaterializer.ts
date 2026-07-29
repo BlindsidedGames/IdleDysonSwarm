@@ -127,6 +127,12 @@ export function materializeSkillEffects(
           operation,
           value: resolvedValue,
           order: effect.order,
+          ...((effect.conditionAssetId ?? effect.conditionId) === null
+            ? {}
+            : {
+                conditionIdentifier:
+                  effect.conditionAssetId ?? effect.conditionId!,
+              }),
         }),
       )
     }

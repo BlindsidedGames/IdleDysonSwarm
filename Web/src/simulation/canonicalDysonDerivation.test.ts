@@ -484,6 +484,237 @@ describe('canonical Basic Dyson derivation', () => {
     )
   })
 
+  test('recomputes bot allocation and publishes canonical facility progress facts', () => {
+    const source = characterizedState([])
+    const state: CanonicalGameStateV1 = {
+      ...source,
+      dyson: {
+        ...source.dyson,
+        bots: 10,
+        workers: 5,
+        researchers: 5,
+        botDistribution: 0.5,
+        facilities: {
+          ...source.dyson.facilities,
+          assembly_lines: [0, 1],
+        },
+      },
+    }
+    const result = deriveBasicDysonState(
+      state,
+      neutralTuning,
+      noEntitlements,
+      neutralEvaluationSnapshot,
+    )
+    expect(result.ok).toBe(true)
+    if (!result.ok) throw new Error(JSON.stringify(result.issues))
+
+    expect(result.value.allocation).toEqual({
+      workers: 5,
+      researchers: 5,
+    })
+    expect(result.value.rates.panels).toBeGreaterThan(0)
+    expect(result.value.rates.science).toBeGreaterThan(0)
+    expect(result.value.facilityFacts.assembly_lines).toMatchObject({
+      ownership: {
+        automatic: 0,
+        manual: 1,
+        total: 1,
+      },
+      production: {
+        outputFacilityId: 'bots',
+        perSecond: result.value.rates.bots,
+      },
+      productionProgress: {
+        visible: true,
+        normalized: 0,
+      },
+      details: {
+        baseProductionPerSecond: Math.fround(0.1),
+        effectiveProducerCount: 1,
+        modifier: result.value.facilityModifiers.assembly_lines,
+        contributions: [
+          {
+            sourceId: 'base',
+            displayRole: 'base',
+            operation: 'override',
+            value: Math.fround(0.1),
+            delta: Math.fround(0.1),
+            runningTotal: Math.fround(0.1),
+          },
+          {
+            sourceId: 'assembly_lines.count',
+            displayRole: 'producer-count',
+            operation: 'multiply',
+            value: 1,
+            delta: 0,
+            runningTotal: Math.fround(0.1),
+            automaticManualTuple: [0, 1],
+          },
+        ],
+        upstreamSources: [
+          {
+            sourceFacilityId: 'ai_managers',
+            contributionPerSecond:
+              result.value.rates.assembly_lines,
+          },
+        ],
+      },
+    })
+  })
+
+  test('publishes the exact ordered modifier and production-effect rows', () => {
+    const source = characterizedState(['superchargedPower'])
+    const result = requireDerived({
+      ...source,
+      infinity: {
+        ...source.infinity,
+        points: 1n,
+      },
+    })
+    const rows =
+      result.facilityFacts.assembly_lines.details.contributions
+    expect(rows?.map((row) => row.displayRole)).toEqual([
+      'base',
+      'producer-count',
+      'modifier',
+      'output-adjustments',
+    ])
+    expect(rows?.at(-1)).toMatchObject({
+      sourceId: 'effect.supercharged_power.assembly_lines',
+      operation: 'multiply',
+      value: 1.5,
+      runningTotal: result.rates.bots,
+    })
+    expect(rows?.[1]?.automaticManualTuple).toEqual([2, 3])
+    for (let index = 1; index < (rows?.length ?? 0); index += 1) {
+      const previous = rows?.[index - 1]
+      const current = rows?.[index]
+      expect(current!.delta).toBe(
+        current!.runningTotal - previous!.runningTotal,
+      )
+    }
+  })
+
+  test('uses the produced downstream fraction and solid-fill threshold for facility bars', () => {
+    const source = characterizedState([])
+    const fractional: CanonicalGameStateV1 = {
+      ...source,
+      dyson: {
+        ...source.dyson,
+        facilities: {
+          ...source.dyson.facilities,
+          assembly_lines: [2.375, 0],
+          ai_managers: [1, 0],
+        },
+      },
+    }
+    const result = deriveBasicDysonState(
+      fractional,
+      neutralTuning,
+      noEntitlements,
+      neutralEvaluationSnapshot,
+    )
+    expect(result.ok).toBe(true)
+    if (!result.ok) throw new Error(JSON.stringify(result.issues))
+    expect(
+      result.value.facilityFacts.ai_managers.productionProgress,
+    ).toEqual({
+      visible: true,
+      normalized: 0.375,
+    })
+
+    const fast: CanonicalGameStateV1 = {
+      ...fractional,
+      dyson: {
+        ...fractional.dyson,
+        facilities: {
+          ...fractional.dyson.facilities,
+          assembly_lines: [0.25, 0],
+          ai_managers: [240, 0],
+        },
+      },
+    }
+    const fastResult = deriveBasicDysonState(
+      fast,
+      neutralTuning,
+      noEntitlements,
+      neutralEvaluationSnapshot,
+    )
+    expect(fastResult.ok).toBe(true)
+    if (!fastResult.ok) {
+      throw new Error(JSON.stringify(fastResult.issues))
+    }
+    expect(
+      fastResult.value.facilityFacts.ai_managers.productionProgress,
+    ).toEqual({
+      visible: true,
+      normalized: 1,
+    })
+
+    const customThreshold = deriveBasicDysonState(
+      fast,
+      neutralTuning,
+      noEntitlements,
+      neutralEvaluationSnapshot,
+      { solidProgressThresholdPerSecond: 10 },
+    )
+    expect(customThreshold.ok).toBe(true)
+    if (!customThreshold.ok) {
+      throw new Error(JSON.stringify(customThreshold.issues))
+    }
+    expect(
+      customThreshold.value.facilityFacts.ai_managers
+        .productionProgress,
+    ).toEqual({
+      visible: true,
+      normalized: 0.25,
+    })
+  })
+
+  test('publishes Unity-mapped upstream summaries and gates the Matrioshka source', () => {
+    const source = characterizedState([])
+    const locked = requireDerived(source)
+    expect(
+      locked.facilityFacts.data_centers.details.upstreamSources,
+    ).toEqual([
+      {
+        sourceFacilityId: 'planets',
+        contributionPerSecond: locked.rates.data_centers,
+      },
+    ])
+    expect(
+      locked.facilityFacts.planets.details.upstreamSources,
+    ).toEqual([])
+
+    const unlocked = requireDerived({
+      ...source,
+      dyson: {
+        ...source.dyson,
+        facilities: {
+          ...source.dyson.facilities,
+          matrioshka_brains: [2, 0],
+        },
+      },
+      quantum: {
+        ...source.quantum,
+        unlocks: {
+          ...source.quantum.unlocks,
+          matrioshkaBrains: true,
+        },
+      },
+    })
+    expect(
+      unlocked.facilityFacts.planets.details.upstreamSources,
+    ).toEqual([
+      {
+        sourceFacilityId: 'matrioshka_brains',
+        contributionPerSecond:
+          unlocked.megaRates.matrioshka_brains,
+      },
+    ])
+  })
+
   test('enforces linked Avocado manual-count conditions from canonical facilities', () => {
     const below = characterizedState(['avocados'])
     const atThreshold: CanonicalGameStateV1 = {

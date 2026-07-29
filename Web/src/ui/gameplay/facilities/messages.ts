@@ -37,6 +37,30 @@ export const basicFacilityMessages = defineMessages({
     description:
       'Visible localized name for the Planets facility.',
   },
+  matrioshkaBrainsName: {
+    id: 'dyson.facilities.matrioshka-brains.name',
+    defaultMessage: 'Matrioshka Brains',
+    description:
+      'Localized upstream-source name for Matrioshka Brains.',
+  },
+  birchPlanetsName: {
+    id: 'dyson.facilities.birch-planets.name',
+    defaultMessage: 'Birch Planets',
+    description:
+      'Localized upstream-source name for Birch Planets.',
+  },
+  galacticBrainsName: {
+    id: 'dyson.facilities.galactic-brains.name',
+    defaultMessage: 'Galactic Brains',
+    description:
+      'Localized upstream-source name for Galactic Brains.',
+  },
+  unknownFacility: {
+    id: 'dyson.facilities.unknown.name',
+    defaultMessage: 'Unknown facility',
+    description:
+      'Safe fallback when an unrecognized canonical upstream source is projected.',
+  },
   assemblyLinesDescription: {
     id: 'dyson.facilities.assembly-lines.description',
     defaultMessage:
@@ -265,6 +289,92 @@ export const basicFacilityMessages = defineMessages({
     id: 'dyson.facilities.details',
     defaultMessage: 'Details',
     description: 'Unity facility production-breakdown button.',
+  },
+  productionProgressAccessible: {
+    id: 'dyson.facilities.production-progress-accessible',
+    defaultMessage: '{facility} production',
+    description:
+      'Accessible name for a facility production-cycle progress bar.',
+  },
+  baseProduction: {
+    id: 'dyson.facilities.details.base-production',
+    defaultMessage: 'Base',
+    description:
+      'Label for base per-unit production in the facility details dialog.',
+  },
+  facilityCount: {
+    id: 'dyson.facilities.details.facility-count',
+    defaultMessage: '{facility} Count',
+    description:
+      'Label for the ordered facility-count contribution row.',
+  },
+  facilityModifier: {
+    id: 'dyson.facilities.details.facility-modifier',
+    defaultMessage: 'Facility modifier',
+    description:
+      'Label for the ordered facility-modifier contribution row.',
+  },
+  outputAdjustments: {
+    id: 'dyson.facilities.details.output-adjustments',
+    defaultMessage: 'Output adjustments',
+    description:
+      'Label for the ordered final output-adjustment contribution row.',
+  },
+  automaticManualTupleAccessible: {
+    id: 'dyson.facilities.details.automatic-manual-tuple',
+    defaultMessage:
+      'Automatic {automatic}, manually purchased {manual}',
+    description:
+      'Accessible expansion of the automatic/manual facility-count tuple.',
+  },
+  conditionIdentifier: {
+    id: 'dyson.facilities.details.condition-identifier',
+    defaultMessage: 'Condition identifier: {identifier}',
+    description:
+      'Technical fallback for a canonical condition without localized display text.',
+  },
+  condition: {
+    id: 'dyson.facilities.details.condition',
+    defaultMessage: 'Condition: {condition}',
+    description:
+      'Localized condition text supported by detached presentation fixtures.',
+  },
+  upstreamSources: {
+    id: 'dyson.facilities.details.upstream-sources',
+    defaultMessage: 'Upstream Sources',
+    description: 'Heading for canonical upstream facility sources.',
+  },
+  producedBy: {
+    id: 'dyson.facilities.details.produced-by',
+    defaultMessage: 'Produced by {facility} ({rate})',
+    description:
+      'Canonical upstream facility and its per-second contribution.',
+  },
+  effect: {
+    id: 'dyson.facilities.details.legend.effect',
+    defaultMessage: 'Effect',
+    description: 'Effect legend label in facility details.',
+  },
+  value: {
+    id: 'dyson.facilities.details.legend.value',
+    defaultMessage: 'Value',
+    description: 'Value legend label in facility details.',
+  },
+  delta: {
+    id: 'dyson.facilities.details.legend.delta',
+    defaultMessage: '+Delta/-Delta',
+    description: 'Delta legend label in facility details.',
+  },
+  total: {
+    id: 'dyson.facilities.details.legend.total',
+    defaultMessage: 'Total',
+    description: 'Total legend label in facility details.',
+  },
+  effectLegendAccessible: {
+    id: 'dyson.facilities.details.legend.accessible',
+    defaultMessage: 'Effect, Value, positive or negative Delta, Total',
+    description:
+      'Screen-reader text for the color-coded facility effect legend.',
   },
   closeDetails: {
     id: 'dyson.facilities.close-details',

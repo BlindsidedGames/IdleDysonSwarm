@@ -83,6 +83,10 @@
     "defaultMessage": "Purchase an Assembly Line: +{quantity}, ${cost}",
     "description": "Accessible name for the compact Assembly Line purchase control."
   },
+  "dyson.facilities.birch-planets.name": {
+    "defaultMessage": "Birch Planets",
+    "description": "Localized upstream-source name for Birch Planets."
+  },
   "dyson.facilities.close-details": {
     "defaultMessage": "Close",
     "description": "Closes the facility details panel."
@@ -123,6 +127,66 @@
     "defaultMessage": "Details",
     "description": "Unity facility production-breakdown button."
   },
+  "dyson.facilities.details.automatic-manual-tuple": {
+    "defaultMessage": "Automatic {automatic}, manually purchased {manual}",
+    "description": "Accessible expansion of the automatic/manual facility-count tuple."
+  },
+  "dyson.facilities.details.base-production": {
+    "defaultMessage": "Base",
+    "description": "Label for base per-unit production in the facility details dialog."
+  },
+  "dyson.facilities.details.condition": {
+    "defaultMessage": "Condition: {condition}",
+    "description": "Localized condition text supported by detached presentation fixtures."
+  },
+  "dyson.facilities.details.condition-identifier": {
+    "defaultMessage": "Condition identifier: {identifier}",
+    "description": "Technical fallback for a canonical condition without localized display text."
+  },
+  "dyson.facilities.details.facility-count": {
+    "defaultMessage": "{facility} Count",
+    "description": "Label for the ordered facility-count contribution row."
+  },
+  "dyson.facilities.details.facility-modifier": {
+    "defaultMessage": "Facility modifier",
+    "description": "Label for the ordered facility-modifier contribution row."
+  },
+  "dyson.facilities.details.legend.accessible": {
+    "defaultMessage": "Effect, Value, positive or negative Delta, Total",
+    "description": "Screen-reader text for the color-coded facility effect legend."
+  },
+  "dyson.facilities.details.legend.delta": {
+    "defaultMessage": "+Delta/-Delta",
+    "description": "Delta legend label in facility details."
+  },
+  "dyson.facilities.details.legend.effect": {
+    "defaultMessage": "Effect",
+    "description": "Effect legend label in facility details."
+  },
+  "dyson.facilities.details.legend.total": {
+    "defaultMessage": "Total",
+    "description": "Total legend label in facility details."
+  },
+  "dyson.facilities.details.legend.value": {
+    "defaultMessage": "Value",
+    "description": "Value legend label in facility details."
+  },
+  "dyson.facilities.details.output-adjustments": {
+    "defaultMessage": "Output adjustments",
+    "description": "Label for the ordered final output-adjustment contribution row."
+  },
+  "dyson.facilities.details.produced-by": {
+    "defaultMessage": "Produced by {facility} ({rate})",
+    "description": "Canonical upstream facility and its per-second contribution."
+  },
+  "dyson.facilities.details.upstream-sources": {
+    "defaultMessage": "Upstream Sources",
+    "description": "Heading for canonical upstream facility sources."
+  },
+  "dyson.facilities.galactic-brains.name": {
+    "defaultMessage": "Galactic Brains",
+    "description": "Localized upstream-source name for Galactic Brains."
+  },
   "dyson.facilities.heading": {
     "defaultMessage": "Facilities",
     "description": "Screen-reader heading for the early Dyson basic-facility region."
@@ -130,6 +194,10 @@
   "dyson.facilities.manual-count": {
     "defaultMessage": "({manual})",
     "description": "Visible parenthesized manual-owned count beside a facility total."
+  },
+  "dyson.facilities.matrioshka-brains.name": {
+    "defaultMessage": "Matrioshka Brains",
+    "description": "Localized upstream-source name for Matrioshka Brains."
   },
   "dyson.facilities.next-tier-teaser": {
     "defaultMessage": "????",
@@ -166,6 +234,10 @@
   "dyson.facilities.planets.purchase-accessible": {
     "defaultMessage": "Purchase a Planet: +{quantity}, ${cost}",
     "description": "Accessible name for the compact Planet purchase control."
+  },
+  "dyson.facilities.production-progress-accessible": {
+    "defaultMessage": "{facility} production",
+    "description": "Accessible name for a facility production-cycle progress bar."
   },
   "dyson.facilities.purchase.cost": {
     "defaultMessage": "${cost}",
@@ -250,6 +322,10 @@
   "dyson.facilities.teaser": {
     "defaultMessage": "????",
     "description": "Generic non-interactive teaser before the next named facility is visible."
+  },
+  "dyson.facilities.unknown.name": {
+    "defaultMessage": "Unknown facility",
+    "description": "Safe fallback when an unrecognized canonical upstream source is projected."
   },
   "dyson.info.active-panels": {
     "defaultMessage": "Active panels: <emphasis>{value}</emphasis>",

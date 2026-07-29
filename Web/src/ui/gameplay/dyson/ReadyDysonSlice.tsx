@@ -333,46 +333,24 @@ export function ReadyDysonSlice({
               />
             }
           >
-          <BasicFacilityRegion
-          locale={locale}
-          visibleBasicFacilityIds={
-            visibility.visibleBasicFacilityIds
-          }
-          showNextTierTeaser={visibility.showNextTierTeaser}
-          facilityFacts={{
-            assembly_lines: {
-              owned:
-                gameplay.progression.dyson.facilities.assembly_lines,
-              productionPerSecond: rates.bots,
-            },
-            ai_managers: {
-              owned:
-                gameplay.progression.dyson.facilities.ai_managers,
-              productionPerSecond: rates.assembly_lines,
-            },
-            servers: {
-              owned: gameplay.progression.dyson.facilities.servers,
-              productionPerSecond: rates.ai_managers,
-            },
-            data_centers: {
-              owned:
-                gameplay.progression.dyson.facilities.data_centers,
-              productionPerSecond: rates.servers,
-            },
-            planets: {
-              owned: gameplay.progression.dyson.facilities.planets,
-              productionPerSecond: rates.data_centers,
-            },
-          }}
-          purchasePreviews={gameplay.previews.dyson.basicFacilities}
-          purchaseRouteAvailable={
-            gameplay.commands.byKind[
-              'dyson.purchase-basic-facility'
-            ].routeAvailable
-          }
-          revision={snapshot.revision}
-          dispatchPlayer={dispatchPlayer}
-          />
+            <BasicFacilityRegion
+              locale={locale}
+              visibleBasicFacilityIds={
+                visibility.visibleBasicFacilityIds
+              }
+              showNextTierTeaser={visibility.showNextTierTeaser}
+              facilityFacts={dyson.value.presentation.facilities}
+              purchasePreviews={
+                gameplay.previews.dyson.basicFacilities
+              }
+              purchaseRouteAvailable={
+                gameplay.commands.byKind[
+                  'dyson.purchase-basic-facility'
+                ].routeAvailable
+              }
+              revision={snapshot.revision}
+              dispatchPlayer={dispatchPlayer}
+            />
           </Suspense>
         ) : (
           <section

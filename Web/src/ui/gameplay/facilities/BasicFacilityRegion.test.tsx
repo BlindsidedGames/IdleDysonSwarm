@@ -24,9 +24,11 @@ import {
 import type { UiRuntimePlayerCommandResult } from '../../runtime'
 import {
   BasicFacilityRegion,
+  type BasicFacilityCanonicalFact,
   type BasicFacilityRegionProps,
   type EarlyBasicFacilityId,
 } from './BasicFacilityRegion'
+import { interpolatePublishedFacilityProgress } from './progressInterpolation'
 
 const facilitiesCss = readFileSync(
   resolve(process.cwd(), 'src/ui/gameplay/facilities/facilities.css'),
@@ -40,29 +42,84 @@ const facilitySource = readFileSync(
   'utf8',
 )
 
-afterEach(cleanup)
+afterEach(() => {
+  cleanup()
+  vi.unstubAllGlobals()
+})
+
+const outputByFacility = {
+  assembly_lines: 'bots',
+  ai_managers: 'assembly_lines',
+  servers: 'ai_managers',
+  data_centers: 'servers',
+  planets: 'data_centers',
+} as const
+
+function facilityFact(
+  facilityId: EarlyBasicFacilityId,
+  automatic = 0,
+  manual = 0,
+  perSecond = 0,
+  progress = 0,
+): BasicFacilityCanonicalFact {
+  return {
+    facilityId,
+    ownership: {
+      automatic,
+      manual,
+      total: automatic + manual,
+    },
+    production: {
+      outputFacilityId: outputByFacility[facilityId],
+      perSecond,
+      secondsPerUnit: perSecond > 0 ? 1 / perSecond : null,
+    },
+    productionProgress: {
+      visible: perSecond > 0,
+      normalized: progress,
+    },
+    details: {
+      baseProductionPerSecond: 0.1,
+      effectiveProducerCount: automatic + manual,
+      modifier: 1,
+      contributions: [
+        {
+          sourceId: 'base',
+          displayRole: 'base',
+          operation: 'override',
+          value: 0.1,
+          delta: 0.1,
+          runningTotal: 0.1,
+        },
+        {
+          sourceId: 'facility-count',
+          displayRole: 'producer-count',
+          operation: 'multiply',
+          value: automatic + manual,
+          delta: automatic + manual - 0.1,
+          runningTotal: automatic + manual,
+          automaticManualTuple: [automatic, manual],
+        },
+      ],
+      upstreamSources:
+        facilityId === 'assembly_lines'
+          ? [
+              {
+                sourceFacilityId: 'ai_managers',
+                contributionPerSecond: 0.05,
+              },
+            ]
+          : [],
+    },
+  }
+}
 
 const facilityFacts: BasicFacilityRegionProps['facilityFacts'] = {
-  assembly_lines: {
-    owned: [0, 0],
-    productionPerSecond: 0,
-  },
-  ai_managers: {
-    owned: [0, 0],
-    productionPerSecond: 0,
-  },
-  servers: {
-    owned: [0, 0],
-    productionPerSecond: 0,
-  },
-  data_centers: {
-    owned: [0, 0],
-    productionPerSecond: 0,
-  },
-  planets: {
-    owned: [0, 0],
-    productionPerSecond: 0,
-  },
+  assembly_lines: facilityFact('assembly_lines'),
+  ai_managers: facilityFact('ai_managers'),
+  servers: facilityFact('servers'),
+  data_centers: facilityFact('data_centers'),
+  planets: facilityFact('planets'),
 }
 
 const purchasePreviews: BasicFacilityRegionProps['purchasePreviews'] = [
@@ -114,6 +171,21 @@ const defaultRevision = {
 }
 
 describe('BasicFacilityRegion', () => {
+  it('continuously extrapolates from the latest published progress', () => {
+    expect(
+      interpolatePublishedFacilityProgress(0.2, 1, 50),
+    ).toBeCloseTo(0.25)
+    expect(
+      interpolatePublishedFacilityProgress(0.98, 0.5, 100),
+    ).toBeCloseTo(0.03)
+    expect(
+      interpolatePublishedFacilityProgress(0.2, 1, 500),
+    ).toBeCloseTo(0.7)
+    expect(
+      interpolatePublishedFacilityProgress(1, 50, 100),
+    ).toBe(1)
+  })
+
   it('renders the canonical Fresh collection as no named cards plus one teaser', () => {
     renderRegion({
       visibleBasicFacilityIds: [],
@@ -162,14 +234,13 @@ describe('BasicFacilityRegion', () => {
       showNextTierTeaser: true,
       facilityFacts: {
         ...facilityFacts,
-        assembly_lines: {
-          owned: [7, 5],
-          productionPerSecond: 4.25,
-        },
-        ai_managers: {
-          owned: [2, 3],
-          productionPerSecond: 0.5,
-        },
+        assembly_lines: facilityFact(
+          'assembly_lines',
+          7,
+          5,
+          4.25,
+        ),
+        ai_managers: facilityFact('ai_managers', 2, 3, 0.5),
       },
     })
 
@@ -226,6 +297,197 @@ describe('BasicFacilityRegion', () => {
         within(articles[0]).queryByText(rejectedLabel),
       ).not.toBeInTheDocument()
     }
+  })
+
+  it('renders canonical production progress without deriving it in the card', () => {
+    renderRegion({
+      visibleBasicFacilityIds: [
+        'assembly_lines',
+        'ai_managers',
+      ],
+      facilityFacts: {
+        ...facilityFacts,
+        assembly_lines: facilityFact(
+          'assembly_lines',
+          1,
+          0,
+          0.1,
+          0.625,
+        ),
+        ai_managers: facilityFact('ai_managers'),
+      },
+    })
+
+    expect(screen.getByRole('progressbar', {
+      name: 'Assembly Lines production',
+    })).toHaveAttribute('aria-valuenow', '63')
+    expect(screen.getAllByRole('progressbar')).toHaveLength(1)
+    expect(
+      document.querySelectorAll(
+        '.basic-facility-card__progress-track',
+      ),
+    ).toHaveLength(2)
+  })
+
+  it('holds published progress when reduced motion is requested', () => {
+    vi.stubGlobal('matchMedia', vi.fn(() => ({
+      matches: true,
+      media: '(prefers-reduced-motion: reduce)',
+      onchange: null,
+      addEventListener: vi.fn(),
+      removeEventListener: vi.fn(),
+      addListener: vi.fn(),
+      removeListener: vi.fn(),
+      dispatchEvent: vi.fn(),
+    })))
+    renderRegion({
+      visibleBasicFacilityIds: ['assembly_lines'],
+      facilityFacts: {
+        ...facilityFacts,
+        assembly_lines: facilityFact(
+          'assembly_lines',
+          1,
+          0,
+          1,
+          0.2,
+        ),
+      },
+    })
+
+    expect(screen.getByRole('progressbar', {
+      name: 'Assembly Lines production',
+    })).toHaveAttribute('aria-valuenow', '20')
+  })
+
+  it('opens one shared modal dialog and restores focus on close', async () => {
+    const user = userEvent.setup()
+    const assemblyFact = facilityFact(
+      'assembly_lines',
+      1,
+      1,
+      0.1,
+    )
+    renderRegion({
+      visibleBasicFacilityIds: ['assembly_lines'],
+      facilityFacts: {
+        ...facilityFacts,
+        assembly_lines: {
+          ...assemblyFact,
+          details: {
+            ...assemblyFact.details,
+            contributions: [
+              ...(assemblyFact.details.contributions ?? []),
+              {
+                sourceId: 'facility-modifier',
+                displayRole: 'modifier',
+                operation: 'multiply',
+                value: 1.5,
+                delta: 1,
+                runningTotal: 3,
+                conditionIdentifier: 'skill.unlocked',
+              },
+              {
+                sourceId: 'effect.additive',
+                displayRole: 'output-adjustments',
+                operation: 'add',
+                value: 2,
+                delta: 2,
+                runningTotal: 5,
+                condition: 'Unlocked label',
+              },
+              {
+                sourceId: 'effect.power',
+                displayRole: 'output-adjustments',
+                operation: 'power',
+                value: 2,
+                delta: 20,
+                runningTotal: 25,
+              },
+              {
+                sourceId: 'effect.minimum',
+                displayRole: 'output-adjustments',
+                operation: 'clamp-min',
+                value: 0,
+                delta: 0,
+                runningTotal: 25,
+              },
+              {
+                sourceId: 'effect.maximum',
+                displayRole: 'output-adjustments',
+                operation: 'clamp-max',
+                value: 10,
+                delta: -15,
+                runningTotal: 10,
+              },
+            ],
+          },
+        },
+      },
+    })
+
+    const detailsButton = screen.getByRole('button', {
+      name: 'Details',
+    })
+    await user.click(detailsButton)
+
+    const dialog = screen.getByRole('dialog', {
+      name: 'Assembly Lines',
+    })
+    expect(dialog).toHaveAttribute('aria-modal', 'true')
+    expect(within(dialog).getByText('Base')).toBeInTheDocument()
+    expect(within(dialog).getByText('Assembly Lines Count'))
+      .toBeInTheDocument()
+    expect(within(dialog).getByLabelText(
+      'Automatic 1.00, manually purchased 1.00',
+    ))
+      .toBeInTheDocument()
+    expect(within(dialog).getByText('Facility modifier'))
+      .toBeInTheDocument()
+    expect(within(dialog).getByText('×1.50'))
+      .toBeInTheDocument()
+    expect(within(dialog).getByText('+1.00'))
+      .toBeInTheDocument()
+    expect(within(dialog).getByText('3.00'))
+      .toBeInTheDocument()
+    expect(within(dialog).getByText(
+      'Condition identifier: skill.unlocked',
+    ))
+      .toBeInTheDocument()
+    expect(within(dialog).getByText('Condition: Unlocked label'))
+      .toBeInTheDocument()
+    expect(
+      Array.from(
+        dialog.querySelectorAll(
+          '.facility-details-dialog__operation',
+        ),
+        (element) => element.textContent,
+      ),
+    ).toEqual([
+      '=0.10',
+      '×2.00',
+      '×1.50',
+      '+2.00',
+      '^2.00',
+      '≥0.00',
+      '≤10.0',
+    ])
+    expect(within(dialog).getByText('effect.additive'))
+      .toBeInTheDocument()
+    expect(within(dialog).getByText('Upstream Sources'))
+      .toBeInTheDocument()
+    expect(
+      within(dialog).getByText('Produced by AI Managers (0.05)'),
+    ).toBeInTheDocument()
+    expect(within(dialog).getByLabelText(
+      'Effect, Value, positive or negative Delta, Total',
+    )).toBeInTheDocument()
+    expect(screen.getAllByRole('dialog')).toHaveLength(1)
+    expect(screen.getByRole('button', { name: 'Close' }))
+      .toHaveFocus()
+
+    await user.keyboard('{Escape}')
+    expect(screen.queryByRole('dialog')).not.toBeInTheDocument()
+    expect(detailsButton).toHaveFocus()
   })
 
   it('keeps every backend-hidden facility absent from the accessibility tree', () => {
@@ -564,10 +826,12 @@ describe('BasicFacilityRegion', () => {
       visibleBasicFacilityIds: ['assembly_lines'],
       facilityFacts: {
         ...facilityFacts,
-        assembly_lines: {
-          owned: [7, 5],
-          productionPerSecond: 4.25,
-        },
+        assembly_lines: facilityFact(
+          'assembly_lines',
+          7,
+          5,
+          4.25,
+        ),
       },
       messages: {
         'dyson.facilities.assembly-lines.name':

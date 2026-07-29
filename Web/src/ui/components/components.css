@@ -174,8 +174,10 @@
   line-height: var(--line-height-compact);
 }
 
-.ui-facility-card__summary,
-.ui-facility-card__details {
+.ui-facility-card__production,
+.ui-facility-card__description,
+.ui-facility-card__progress,
+.ui-facility-card__feedback {
   display: grid;
   gap: var(--space-2);
 }
@@ -208,14 +210,16 @@
   }
 
   .ui-facility-card__header,
-  .ui-facility-card__summary,
-  .ui-facility-card__details {
+  .ui-facility-card__production,
+  .ui-facility-card__description,
+  .ui-facility-card__progress,
+  .ui-facility-card__feedback {
     grid-column: 1;
   }
 
   .ui-facility-card__action {
     grid-column: 2;
-    grid-row: 1 / span 3;
+    grid-row: 1 / span 5;
   }
 }
 

@@ -409,6 +409,20 @@
       "value": "]"
     }
   ],
+  "dyson.facilities.birch-planets.name": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Ɓīřƈħ Ƥŀȧȧƞḗḗŧş"
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
   "dyson.facilities.close-details": [
     {
       "type": 0,
@@ -601,6 +615,256 @@
       "value": "]"
     }
   ],
+  "dyson.facilities.details.automatic-manual-tuple": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Ȧŭŭŧǿǿḿȧȧŧīƈ "
+    },
+    {
+      "type": 1,
+      "value": "automatic"
+    },
+    {
+      "type": 0,
+      "value": ", ḿȧȧƞŭŭȧȧŀŀẏ ƥŭŭřƈħȧȧşḗḗḓ "
+    },
+    {
+      "type": 1,
+      "value": "manual"
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "dyson.facilities.details.base-production": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Ɓȧȧşḗḗ"
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "dyson.facilities.details.condition": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Ƈǿǿƞḓīŧīǿǿƞ: "
+    },
+    {
+      "type": 1,
+      "value": "condition"
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "dyson.facilities.details.condition-identifier": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Ƈǿǿƞḓīŧīǿǿƞ īḓḗḗƞŧīƒīḗḗř: "
+    },
+    {
+      "type": 1,
+      "value": "identifier"
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "dyson.facilities.details.facility-count": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 1,
+      "value": "facility"
+    },
+    {
+      "type": 0,
+      "value": " Ƈǿǿŭŭƞŧ"
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "dyson.facilities.details.facility-modifier": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Ƒȧȧƈīŀīŧẏ ḿǿǿḓīƒīḗḗř"
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "dyson.facilities.details.legend.accessible": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Ḗƒƒḗḗƈŧ, Ṽȧȧŀŭŭḗḗ, ƥǿǿşīŧīṽḗḗ ǿǿř ƞḗḗɠȧȧŧīṽḗḗ Ḓḗḗŀŧȧȧ, Ŧǿǿŧȧȧŀ"
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "dyson.facilities.details.legend.delta": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "+Ḓḗḗŀŧȧȧ/-Ḓḗḗŀŧȧȧ"
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "dyson.facilities.details.legend.effect": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Ḗƒƒḗḗƈŧ"
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "dyson.facilities.details.legend.total": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Ŧǿǿŧȧȧŀ"
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "dyson.facilities.details.legend.value": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Ṽȧȧŀŭŭḗḗ"
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "dyson.facilities.details.output-adjustments": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Ǿŭŭŧƥŭŭŧ ȧȧḓĵŭŭşŧḿḗḗƞŧş"
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "dyson.facilities.details.produced-by": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Ƥřǿǿḓŭŭƈḗḗḓ ƀẏ "
+    },
+    {
+      "type": 1,
+      "value": "facility"
+    },
+    {
+      "type": 0,
+      "value": " ("
+    },
+    {
+      "type": 1,
+      "value": "rate"
+    },
+    {
+      "type": 0,
+      "value": ")"
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "dyson.facilities.details.upstream-sources": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Ŭƥşŧřḗḗȧȧḿ Şǿǿŭŭřƈḗḗş"
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "dyson.facilities.galactic-brains.name": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Ɠȧȧŀȧȧƈŧīƈ Ɓřȧȧīƞş"
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
   "dyson.facilities.heading": [
     {
       "type": 0,
@@ -631,6 +895,20 @@
     {
       "type": 0,
       "value": ")"
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "dyson.facilities.matrioshka-brains.name": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Ḿȧȧŧřīǿǿşħķȧȧ Ɓřȧȧīƞş"
     },
     {
       "type": 0,
@@ -809,6 +1087,24 @@
     {
       "type": 1,
       "value": "cost"
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "dyson.facilities.production-progress-accessible": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 1,
+      "value": "facility"
+    },
+    {
+      "type": 0,
+      "value": " ƥřǿǿḓŭŭƈŧīǿǿƞ"
     },
     {
       "type": 0,
@@ -1171,6 +1467,20 @@
     {
       "type": 0,
       "value": "????"
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "dyson.facilities.unknown.name": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Ŭƞķƞǿǿẇƞ ƒȧȧƈīŀīŧẏ"
     },
     {
       "type": 0,

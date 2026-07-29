@@ -33,7 +33,7 @@ afterEach(() => {
 })
 
 describe('TinkerSurface transient interaction', () => {
-  test('starts immediately, captures one pointer, enables repeat at 500 ms, and disables it on release after runtime updates', async () => {
+  test('starts immediately, captures one pointer, enables repeat at 500 ms, and keeps the running panel visually intact on release', async () => {
     const dispatch = createDispatch()
     const view = renderTinker(dispatch)
     const button = tinkerButton()
@@ -65,6 +65,14 @@ describe('TinkerSurface transient interaction', () => {
 
     view.rerender(tinkerElement(runningFacts({ repeat: true }), dispatch))
     expect(button).not.toBeDisabled()
+    expect(button).toHaveAttribute('aria-disabled', 'true')
+    expect(button.closest('.tinker-surface')).toHaveAttribute(
+      'data-held-visual',
+      'true',
+    )
+    expect(
+      screen.getByRole('progressbar', { name: 'Tinker progress' }),
+    ).toHaveAttribute('value', '0.5')
 
     fireEvent.pointerUp(button, { button: 0, pointerId: 17 })
     await flushDispatchQueue()
@@ -73,8 +81,30 @@ describe('TinkerSurface transient interaction', () => {
       enabled: false,
     })
     expect(capture.release).toHaveBeenCalledWith(17)
-    expect(button).toBeDisabled()
+    expect(button).not.toBeDisabled()
+    expect(button).toHaveAttribute('aria-disabled', 'true')
     expect(button).toHaveAttribute('data-gesture-active', 'false')
+    expect(button.closest('.tinker-surface')).toHaveAttribute(
+      'data-held-visual',
+      'false',
+    )
+    expect(
+      screen.getByRole('progressbar', { name: 'Tinker progress' }),
+    ).toHaveAttribute('value', '0.1')
+  })
+
+  test('does not dispatch another start when the visually intact panel is already running', () => {
+    const dispatch = createDispatch()
+    renderTinker(dispatch, runningFacts())
+    const button = tinkerButton()
+    installPointerCapture(button)
+
+    expect(button).not.toBeDisabled()
+    fireEvent.pointerDown(button, { button: 0, pointerId: 18 })
+    fireEvent.pointerUp(button, { button: 0, pointerId: 18 })
+    fireEvent.click(button, { detail: 0 })
+
+    expect(dispatch).not.toHaveBeenCalled()
   })
 
   test('serializes repeat-on and release-off so revisioned dispatch cannot leave repeat enabled', async () => {
@@ -505,6 +535,17 @@ describe('TinkerSurface presentation and accessibility', () => {
       ),
     )
     expect(screen.queryByText(/^Tip:/)).not.toBeInTheDocument()
+  })
+
+  test('restores the full cooldown display after a non-repeating cycle completes', () => {
+    const dispatch = createDispatch()
+    renderTinker(dispatch, {
+      ...readyFacts(),
+      timeToCompletionSeconds: 0.01,
+    })
+
+    expect(screen.getByText('0.50s')).toBeInTheDocument()
+    expect(screen.queryByText('0.01s')).not.toBeInTheDocument()
   })
 
   test('has no automated accessibility violations in ready and running states', async () => {

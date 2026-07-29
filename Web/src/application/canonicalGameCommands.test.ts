@@ -436,6 +436,71 @@ describe('canonical game command router', () => {
     })
   })
 
+  test('synchronizes bot allocation immediately when selecting a preset', () => {
+    const source = state()
+    const presets = [...source.skills.presets] as [
+      typeof source.skills.presets[0],
+      typeof source.skills.presets[1],
+      typeof source.skills.presets[2],
+      typeof source.skills.presets[3],
+      typeof source.skills.presets[4],
+    ]
+    presets[1] = {
+      ...presets[1],
+      skillIds: [],
+      botDistribution: 0.8,
+    }
+    const input: CanonicalGameStateV1 = {
+      ...source,
+      dyson: {
+        ...source.dyson,
+        bots: 10,
+        workers: 5,
+        researchers: 5,
+        botDistribution: 0.5,
+      },
+      skills: {
+        ...source.skills,
+        presets,
+        activeAutoAssignment: [],
+      },
+      quantum: {
+        ...source.quantum,
+        unlocks: {
+          ...source.quantum.unlocks,
+          botMultitasking: false,
+        },
+      },
+    }
+
+    const result = routeCanonicalGameCommand(
+      input,
+      { kind: 'skill.select-preset', slot: 2 },
+      options({
+        runtimeCarriers: {
+          ...carriers(),
+          selectedSkillPresetSlot: 1,
+        },
+      }),
+    )
+
+    expect(result).toMatchObject({
+      accepted: true,
+      changed: true,
+      code: 'skill:preset-selected',
+      state: {
+        dyson: {
+          botDistribution: 0.8,
+          workers: 2,
+          researchers: 8,
+        },
+      },
+      runtimeCarriers: {
+        selectedSkillPresetSlot: 2,
+      },
+    })
+  })
+
   test('delegates Leap gate and branch choice without command-supplied rewards', () => {
     const original = deepFreeze(state())
     const requestLeap = vi.fn(

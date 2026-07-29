@@ -241,6 +241,12 @@
       "value": "cost"
     }
   ],
+  "dyson.facilities.birch-planets.name": [
+    {
+      "type": 0,
+      "value": "Birch Planets"
+    }
+  ],
   "dyson.facilities.close-details": [
     {
       "type": 0,
@@ -353,6 +359,136 @@
       "value": "Details"
     }
   ],
+  "dyson.facilities.details.automatic-manual-tuple": [
+    {
+      "type": 0,
+      "value": "Automatic "
+    },
+    {
+      "type": 1,
+      "value": "automatic"
+    },
+    {
+      "type": 0,
+      "value": ", manually purchased "
+    },
+    {
+      "type": 1,
+      "value": "manual"
+    }
+  ],
+  "dyson.facilities.details.base-production": [
+    {
+      "type": 0,
+      "value": "Base"
+    }
+  ],
+  "dyson.facilities.details.condition": [
+    {
+      "type": 0,
+      "value": "Condition: "
+    },
+    {
+      "type": 1,
+      "value": "condition"
+    }
+  ],
+  "dyson.facilities.details.condition-identifier": [
+    {
+      "type": 0,
+      "value": "Condition identifier: "
+    },
+    {
+      "type": 1,
+      "value": "identifier"
+    }
+  ],
+  "dyson.facilities.details.facility-count": [
+    {
+      "type": 1,
+      "value": "facility"
+    },
+    {
+      "type": 0,
+      "value": " Count"
+    }
+  ],
+  "dyson.facilities.details.facility-modifier": [
+    {
+      "type": 0,
+      "value": "Facility modifier"
+    }
+  ],
+  "dyson.facilities.details.legend.accessible": [
+    {
+      "type": 0,
+      "value": "Effect, Value, positive or negative Delta, Total"
+    }
+  ],
+  "dyson.facilities.details.legend.delta": [
+    {
+      "type": 0,
+      "value": "+Delta/-Delta"
+    }
+  ],
+  "dyson.facilities.details.legend.effect": [
+    {
+      "type": 0,
+      "value": "Effect"
+    }
+  ],
+  "dyson.facilities.details.legend.total": [
+    {
+      "type": 0,
+      "value": "Total"
+    }
+  ],
+  "dyson.facilities.details.legend.value": [
+    {
+      "type": 0,
+      "value": "Value"
+    }
+  ],
+  "dyson.facilities.details.output-adjustments": [
+    {
+      "type": 0,
+      "value": "Output adjustments"
+    }
+  ],
+  "dyson.facilities.details.produced-by": [
+    {
+      "type": 0,
+      "value": "Produced by "
+    },
+    {
+      "type": 1,
+      "value": "facility"
+    },
+    {
+      "type": 0,
+      "value": " ("
+    },
+    {
+      "type": 1,
+      "value": "rate"
+    },
+    {
+      "type": 0,
+      "value": ")"
+    }
+  ],
+  "dyson.facilities.details.upstream-sources": [
+    {
+      "type": 0,
+      "value": "Upstream Sources"
+    }
+  ],
+  "dyson.facilities.galactic-brains.name": [
+    {
+      "type": 0,
+      "value": "Galactic Brains"
+    }
+  ],
   "dyson.facilities.heading": [
     {
       "type": 0,
@@ -371,6 +507,12 @@
     {
       "type": 0,
       "value": ")"
+    }
+  ],
+  "dyson.facilities.matrioshka-brains.name": [
+    {
+      "type": 0,
+      "value": "Matrioshka Brains"
     }
   ],
   "dyson.facilities.next-tier-teaser": [
@@ -477,6 +619,16 @@
     {
       "type": 1,
       "value": "cost"
+    }
+  ],
+  "dyson.facilities.production-progress-accessible": [
+    {
+      "type": 1,
+      "value": "facility"
+    },
+    {
+      "type": 0,
+      "value": " production"
     }
   ],
   "dyson.facilities.purchase.cost": [
@@ -671,6 +823,12 @@
     {
       "type": 0,
       "value": "????"
+    }
+  ],
+  "dyson.facilities.unknown.name": [
+    {
+      "type": 0,
+      "value": "Unknown facility"
     }
   ],
   "dyson.info.active-panels": [

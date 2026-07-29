@@ -24,7 +24,11 @@ import {
   type BasicDysonInfinityState,
 } from './infinityCycle'
 import { staticSkillEffects } from './skillEffects'
-import { calculateStat, type StatEffect } from './stat'
+import {
+  calculateStat,
+  orderStatEffects,
+  type StatEffect,
+} from './stat'
 import { tryPurchaseBasicFacility, type BuyMode } from './transactions'
 import type {
   EventTimeSimulationModel,
@@ -169,10 +173,16 @@ function legacyBaseProduction(id: BasicDysonFacilityId): number {
   return Math.fround(value)
 }
 
-function facilityRate(
-  state: BasicDysonState,
+export interface BasicDysonFacilityRateCalculation {
+  readonly baseProduction: number
+  readonly effects: readonly StatEffect[]
+  readonly rate: number
+}
+
+export function calculateBasicDysonFacilityRate(
+  state: Readonly<BasicDysonState>,
   id: BasicDysonFacilityId,
-): number {
+): Readonly<BasicDysonFacilityRateCalculation> {
   const asset = getGameAsset('GameData.FacilityDefinition', id)
   const productionStatId = asset?.data.productionStatId
   if (typeof productionStatId !== 'string') {
@@ -204,9 +214,17 @@ function facilityRate(
   productionEffects.push(
     ...skillEffectsFor(state, productionStatId),
   )
-  return clampContinuous(
-    calculateStat(legacyBaseProduction(id), productionEffects),
+  const baseProduction = legacyBaseProduction(id)
+  const effects = Object.freeze(
+    orderStatEffects(productionEffects).map((effect) =>
+      Object.freeze({ ...effect }),
+    ),
   )
+  return Object.freeze({
+    baseProduction,
+    effects,
+    rate: clampContinuous(calculateStat(baseProduction, effects)),
+  })
 }
 
 const FACILITY_MODIFIER_STATS: Record<BasicDysonFacilityId, string> = {
@@ -246,17 +264,21 @@ export function recalculateBasicDysonRates(
         skillEffectsFor(state, 'Global.SciencePerSecond'),
       ),
     ),
-    bots: facilityRate(state, 'assembly_lines'),
-    assembly_lines: facilityRate(state, 'ai_managers'),
-    ai_managers: facilityRate(state, 'servers'),
-    servers: facilityRate(state, 'data_centers'),
-    data_centers: facilityRate(state, 'planets'),
+    bots: calculateBasicDysonFacilityRate(state, 'assembly_lines').rate,
+    assembly_lines:
+      calculateBasicDysonFacilityRate(state, 'ai_managers').rate,
+    ai_managers:
+      calculateBasicDysonFacilityRate(state, 'servers').rate,
+    servers:
+      calculateBasicDysonFacilityRate(state, 'data_centers').rate,
+    data_centers:
+      calculateBasicDysonFacilityRate(state, 'planets').rate,
     planets: clampContinuous(state.planetGenerationPerSecond ?? 0),
   }
 }
 
 function skillEffectsFor(
-  state: BasicDysonState,
+  state: Readonly<BasicDysonState>,
   targetStatId: string,
 ): readonly StatEffect[] {
   if (state.skillEffectsByStat !== undefined) {

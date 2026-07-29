@@ -70,7 +70,7 @@ export function TinkerSurface({
         0,
         facts.runtime.cooldownSeconds - visualElapsedSeconds,
       )
-    : facts.timeToCompletionSeconds ?? facts.stats.cooldownSeconds
+    : facts.stats.cooldownSeconds
   const formattedSeconds = formatGameNumber(
     intl.locale as EnabledLocale,
     seconds,
@@ -87,7 +87,18 @@ export function TinkerSurface({
           )
         : intl.formatMessage(tinkerMessages.defaultDescription)
   const showFreshSaveTip = facts.presentationMode === 'default'
-  const disabled = !facts.canStart && !gesture.active
+  const running = facts.runtime.running
+  const permanentlyHighlightsHeldProgress =
+    facts.runtime.effectiveManualLabour ||
+    facts.runtime.cooldownSeconds <= 0.5
+  const showHeldVisual =
+    gesture.active && permanentlyHighlightsHeldProgress
+  const showHeldRepeatFill =
+    showHeldVisual && facts.runtime.repeat
+  const displayedProgressSeconds = showHeldRepeatFill
+    ? facts.runtime.cooldownSeconds
+    : visualElapsedSeconds
+  const disabled = !facts.canStart && !running && !gesture.active
   const failureMessage =
     failure === 'stale'
       ? tinkerMessages.staleFailure
@@ -102,6 +113,7 @@ export function TinkerSurface({
         .join(' ')}
       data-running={facts.runtime.running}
       data-repeat={facts.runtime.repeat}
+      data-held-visual={showHeldVisual}
     >
       <button
         type="button"
@@ -113,6 +125,7 @@ export function TinkerSurface({
           showFreshSaveTip ? tipId : '',
           remainingId,
         ].filter(Boolean).join(' ')}
+        aria-disabled={!facts.canStart}
         disabled={disabled}
         onPointerDown={gesture.onPointerDown}
         onPointerUp={gesture.onPointerUp}
@@ -147,7 +160,7 @@ export function TinkerSurface({
                 { seconds: formattedSeconds },
               )}
               max={facts.runtime.cooldownSeconds}
-              value={visualElapsedSeconds}
+              value={displayedProgressSeconds}
             />
             <span
               className="tinker-surface__hold-label"

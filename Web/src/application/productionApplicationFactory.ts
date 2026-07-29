@@ -8,7 +8,11 @@ import {
   createCapturedInfinityAssetLookup,
   type CanonicalEventTimeContext,
 } from '../simulation/canonicalEventTimeModel'
-import type { DysonEntitlements } from '../simulation/canonicalDysonDerivation'
+import {
+  CANONICAL_DYSON_PRESENTATION_TUNING,
+  type DysonEntitlements,
+  type DysonPresentationTuning,
+} from '../simulation/canonicalDysonDerivation'
 import {
   SIMULATION_UPGRADE_DEFINITIONS,
 } from '../simulation/dreamEducationUpgrades'
@@ -39,6 +43,11 @@ export interface ProductionCanonicalApplicationFactoryOptions {
    * values to a player command or snapshot projection.
    */
   readonly readHostEntitlements: () => Readonly<DysonEntitlements>
+  /**
+   * Reads retained host presentation tuning. The default preserves Unity's
+   * four-completions-per-second solid progress-bar threshold.
+   */
+  readonly readHostDysonPresentationTuning?: () => Readonly<DysonPresentationTuning>
 }
 
 export type ProductionCanonicalApplicationFactory = (
@@ -53,7 +62,10 @@ export type ProductionCanonicalApplicationFactory = (
 export function createProductionCanonicalApplicationFactory(
   options: Readonly<ProductionCanonicalApplicationFactoryOptions>,
 ): ProductionCanonicalApplicationFactory {
-  const eventContext = createProductionEventContext()
+  const eventContext = createProductionEventContext(
+    options.readHostDysonPresentationTuning?.() ??
+      CANONICAL_DYSON_PRESENTATION_TUNING,
+  )
   return (repository) => {
     const entitlements = readEntitlements(
       options.readHostEntitlements,
@@ -73,7 +85,10 @@ export function createProductionCanonicalApplicationFactory(
   }
 }
 
-export function createProductionEventContext():
+export function createProductionEventContext(
+  dysonPresentationTuning: Readonly<DysonPresentationTuning> =
+    CANONICAL_DYSON_PRESENTATION_TUNING,
+):
   Readonly<CanonicalEventTimeContext> {
   const realityWorkerTuning = readRealityWorkerTuning()
   if (realityWorkerTuning === undefined) {
@@ -84,6 +99,9 @@ export function createProductionEventContext():
   return Object.freeze({
     automationIntervalSeconds:
       DEFAULT_AUTOMATION_INTERVAL_SECONDS,
+    dysonPresentationTuning: Object.freeze({
+      ...dysonPresentationTuning,
+    }),
     realityWorkerTuning: Object.freeze({
       ...realityWorkerTuning,
     }),

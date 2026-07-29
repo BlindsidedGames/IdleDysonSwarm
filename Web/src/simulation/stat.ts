@@ -11,6 +11,39 @@ export interface StatEffect {
   readonly operation: StatOperation
   readonly value: number
   readonly order: number
+  readonly conditionIdentifier?: string
+}
+
+export function orderStatEffects(
+  effects: readonly StatEffect[],
+): readonly StatEffect[] {
+  return effects
+    .map((effect, index) => ({ effect, index }))
+    .sort(
+      (left, right) =>
+        left.effect.order - right.effect.order || left.index - right.index,
+    )
+    .map(({ effect }) => effect)
+}
+
+export function applyStatEffect(
+  current: number,
+  effect: Readonly<StatEffect>,
+): number {
+  switch (effect.operation) {
+    case 'add':
+      return current + effect.value
+    case 'multiply':
+      return current * effect.value
+    case 'power':
+      return Math.pow(current, effect.value)
+    case 'override':
+      return effect.value
+    case 'clamp-min':
+      return Math.max(current, effect.value)
+    case 'clamp-max':
+      return Math.min(current, effect.value)
+  }
 }
 
 export function operationFromUnity(value: number): StatOperation {
@@ -37,34 +70,8 @@ export function calculateStat(
   effects: readonly StatEffect[],
 ): number {
   let result = baseValue
-  const ordered = effects
-    .map((effect, index) => ({ effect, index }))
-    .sort(
-      (left, right) =>
-        left.effect.order - right.effect.order || left.index - right.index,
-    )
-
-  for (const { effect } of ordered) {
-    switch (effect.operation) {
-      case 'add':
-        result += effect.value
-        break
-      case 'multiply':
-        result *= effect.value
-        break
-      case 'power':
-        result = Math.pow(result, effect.value)
-        break
-      case 'override':
-        result = effect.value
-        break
-      case 'clamp-min':
-        result = Math.max(result, effect.value)
-        break
-      case 'clamp-max':
-        result = Math.min(result, effect.value)
-        break
-    }
+  for (const effect of orderStatEffects(effects)) {
+    result = applyStatEffect(result, effect)
   }
   return result
 }
