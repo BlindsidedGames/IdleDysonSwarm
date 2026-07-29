@@ -1,9 +1,11 @@
-import { useId, useState } from 'react'
+import { useEffect, useId, useState } from 'react'
 import { useIntl } from 'react-intl'
 import type {
   FrontendApplicationSnapshot,
   UiRuntimePlayerCommandResult,
 } from '../../runtime'
+import { formatGameNumber } from '../../i18n/formatters'
+import type { EnabledLocale } from '../../i18n/localeRegistry'
 import { tinkerMessages } from './messages'
 import {
   useTransientTinkerHold,
@@ -62,12 +64,17 @@ export function TinkerSurface({
     onResult: handleResult,
     onDispatchFailure: () => setFailure('runtime'),
   })
-  const seconds =
-    facts.timeToCompletionSeconds ?? facts.stats.cooldownSeconds
-  const formattedSeconds = intl.formatNumber(seconds, {
-    minimumFractionDigits: Number.isInteger(seconds) ? 1 : 0,
-    maximumFractionDigits: 3,
-  })
+  const visualElapsedSeconds = useVisualTinkerElapsed(facts)
+  const seconds = facts.runtime.running
+    ? Math.max(
+        0,
+        facts.runtime.cooldownSeconds - visualElapsedSeconds,
+      )
+    : facts.timeToCompletionSeconds ?? facts.stats.cooldownSeconds
+  const formattedSeconds = formatGameNumber(
+    intl.locale as EnabledLocale,
+    seconds,
+  )
   const description =
     facts.presentationMode === 'manual-labour'
       ? intl.formatMessage(tinkerMessages.manualLabourDescription, {
@@ -140,7 +147,7 @@ export function TinkerSurface({
                 { seconds: formattedSeconds },
               )}
               max={facts.runtime.cooldownSeconds}
-              value={facts.runtime.elapsedSeconds}
+              value={visualElapsedSeconds}
             />
             <span
               className="tinker-surface__hold-label"
@@ -168,4 +175,39 @@ export function TinkerSurface({
       )}
     </section>
   )
+}
+
+/**
+ * Interpolates only the displayed fill between canonical runtime snapshots.
+ * Completion and rewards remain entirely owned by the lifecycle coordinator.
+ */
+function useVisualTinkerElapsed(facts: TinkerFacts): number {
+  const [elapsed, setElapsed] = useState(facts.runtime.elapsedSeconds)
+
+  useEffect(() => {
+    const authoritativeElapsed = facts.runtime.elapsedSeconds
+    setElapsed(authoritativeElapsed)
+    if (!facts.runtime.running) return undefined
+
+    const startedAt = performance.now()
+    let frame = 0
+    const update = (now: number) => {
+      const nextElapsed = Math.min(
+        facts.runtime.cooldownSeconds,
+        authoritativeElapsed + (now - startedAt) / 1000,
+      )
+      setElapsed(nextElapsed)
+      if (nextElapsed < facts.runtime.cooldownSeconds) {
+        frame = requestAnimationFrame(update)
+      }
+    }
+    frame = requestAnimationFrame(update)
+    return () => cancelAnimationFrame(frame)
+  }, [
+    facts.runtime.cooldownSeconds,
+    facts.runtime.elapsedSeconds,
+    facts.runtime.running,
+  ])
+
+  return elapsed
 }

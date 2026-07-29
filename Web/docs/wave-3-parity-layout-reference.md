@@ -38,8 +38,10 @@ The recognizable Unity hierarchy is:
 1. Wide side navigation or compact bottom navigation.
 2. Cash, Total Bots and inline Science resource/value/rate groups.
 3. A compact decorative swarm/sun region.
-4. Tinker at the bottom of the available playfield, followed by visible
-   facilities as progression supplies them.
+4. Canonically visible facilities or the unrevealed `????` tier at the top of
+   the playfield, with Tinker held at the bottom until its canonical
+   visibility ends. Manual Labour may make Tinker visible again in the same
+   building flow; the UI does not independently infer that transition.
 5. One cohesive Info panel.
 6. One worker-production line.
 7. Bot Distribution with Workers on the left, its heading centered above the
@@ -74,6 +76,8 @@ control.
 |              sun                 |
 |                                  |
 |                                  |
+| ????                             |
+|                                  |
 | Tinker in your garage            |
 | description                      |
 | explanation                      |
@@ -92,9 +96,11 @@ control.
 +----------------------------------+
 ```
 
-Tinker remains close to the lower controls on a fresh save instead of sitting
-directly under the resource header. As facility cards appear, the playfield
-becomes a normal scrollable content region and preserves canonical card order.
+The canonical teaser remains visible on a fresh save and follows named
+facilities until its canonical visibility fact turns false. Tinker remains
+close to the lower controls instead of sitting directly under the resource
+header. As facility cards appear, the playfield becomes a normal scrollable
+content region and preserves canonical card order.
 
 ## Compact landscape
 
@@ -116,6 +122,16 @@ bounded main content column. The resource groups stay at the top, the swarm is
 small, Tinker sits at the bottom of the playfield, and Info/production/
 distribution form the lower stack. Visible facility cards use a row-major grid
 in backend order.
+
+At ultra-wide widths, the facility grid may use two columns, matching the Unity
+layout: a named facility and the next-tier teaser can share a row. Facility
+actions remain a compact right-hand column at narrower widths rather than
+dropping into a full-width second card row.
+
+The current sun/orbit is presentation-only. A future Settings option may hide
+the entire region and reclaim its layout space. Orbiting panel count or density
+may later reflect a published canonical panel fact, but this slice must not
+derive that count or recreate swarm rules locally.
 
 Unavailable navigation destinations preserve the familiar shell but do not
 open invented screens, reveal hidden gameplay information or imply that a

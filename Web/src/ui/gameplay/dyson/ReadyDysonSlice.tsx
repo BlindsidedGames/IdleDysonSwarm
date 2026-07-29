@@ -20,6 +20,7 @@ import {
 } from '../shell'
 import { TinkerSurface } from '../tinker'
 import {
+  formatGameNumber,
   formatNumber,
   type NumericValue,
 } from '../../i18n/formatters'
@@ -178,7 +179,7 @@ export function ReadyDysonSlice({
   const rates = dyson.value.rates
   const visibility = gameplay.visibility.dyson
   const display = (value: NumericValue) =>
-    formatDisplayNumber(locale, value)
+    formatGameNumber(locale, value)
   const precise = (value: NumericValue) =>
     formatPreciseNumber(locale, value)
   const cashValue = (value: string) =>
@@ -189,6 +190,8 @@ export function ReadyDysonSlice({
     intl.formatMessage(messages.scienceRate, { value })
   const hasVisibleFacilities =
     visibility.visibleBasicFacilityIds.length > 0
+  const hasFacilityContent =
+    hasVisibleFacilities || visibility.showNextTierTeaser
 
   return (
     <DysonGameplayShell
@@ -276,7 +279,7 @@ export function ReadyDysonSlice({
         ) : undefined
       }
       hasVisibleFacilities={
-        hasVisibleFacilities
+        hasFacilityContent
       }
       resources={{
         ariaLabel: intl.formatMessage(messages.resources),
@@ -321,7 +324,7 @@ export function ReadyDysonSlice({
           : undefined
       }
       facilities={
-        hasVisibleFacilities ? (
+        hasFacilityContent ? (
           <Suspense
             fallback={
               <div
@@ -335,7 +338,7 @@ export function ReadyDysonSlice({
           visibleBasicFacilityIds={
             visibility.visibleBasicFacilityIds
           }
-          showNextTierTeaser={false}
+          showNextTierTeaser={visibility.showNextTierTeaser}
           facilityFacts={{
             assembly_lines: {
               owned:
@@ -448,31 +451,6 @@ export function ReadyDysonSlice({
         ),
       }}
     />
-  )
-}
-
-function formatDisplayNumber(
-  locale: EnabledLocale,
-  value: NumericValue,
-): string {
-  const magnitude =
-    typeof value === 'bigint'
-      ? value < 0n
-        ? -value
-        : value
-      : Math.abs(value)
-  return formatNumber(
-    locale,
-    value,
-    magnitude >= 1000
-      ? {
-          notation: 'compact',
-          maximumSignificantDigits: 4,
-        }
-      : {
-          maximumFractionDigits: 3,
-          useGrouping: true,
-        },
   )
 }
 

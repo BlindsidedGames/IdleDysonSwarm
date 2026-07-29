@@ -1305,9 +1305,8 @@
       "value": "⅁oɐʅ: Ԑnıʅp "
     },
     {
-      "type": 2,
-      "value": "target",
-      "style": null
+      "type": 1,
+      "value": "targetDisplay"
     },
     {
       "type": 0,
@@ -1328,9 +1327,8 @@
       "value": "⅁oɐʅ: Ↄɹǝɐʇǝ "
     },
     {
-      "type": 2,
-      "value": "target",
-      "style": null
+      "type": 1,
+      "value": "targetDisplay"
     },
     {
       "type": 0,
@@ -1351,9 +1349,8 @@
       "value": "⅁oɐʅ: "
     },
     {
-      "type": 2,
-      "value": "target",
-      "style": null
+      "type": 1,
+      "value": "targetDisplay"
     },
     {
       "type": 0,
@@ -1392,7 +1389,8 @@
               "value": "Ǝuƃnʅɟ "
             },
             {
-              "type": 7
+              "type": 1,
+              "value": "targetDisplay"
             },
             {
               "type": 0,
@@ -1419,9 +1417,8 @@
       "value": "⅁oɐʅ: Hɐʌǝ "
     },
     {
-      "type": 2,
-      "value": "target",
-      "style": null
+      "type": 1,
+      "value": "targetDisplay"
     },
     {
       "type": 0,
@@ -1442,9 +1439,8 @@
       "value": "⅁oɐʅ: Oʍu "
     },
     {
-      "type": 2,
-      "value": "target",
-      "style": null
+      "type": 1,
+      "value": "targetDisplay"
     },
     {
       "type": 0,
@@ -1465,9 +1461,8 @@
       "value": "⅁oɐʅ: ᴚǝɐɔɥ "
     },
     {
-      "type": 2,
-      "value": "target",
-      "style": null
+      "type": 1,
+      "value": "targetDisplay"
     },
     {
       "type": 0,
@@ -1488,9 +1483,8 @@
       "value": "⅁oɐʅ: Snɹɹonup "
     },
     {
-      "type": 2,
-      "value": "target",
-      "style": null
+      "type": 1,
+      "value": "targetDisplay"
     },
     {
       "type": 0,

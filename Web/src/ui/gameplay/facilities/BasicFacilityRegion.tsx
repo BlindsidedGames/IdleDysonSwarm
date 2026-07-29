@@ -20,6 +20,7 @@ import {
   FacilityCard,
 } from '../../components'
 import {
+  formatGameNumber,
   formatNumber,
   type NumericValue,
 } from '../../i18n/formatters'
@@ -492,8 +493,8 @@ function FacilityIdentity({
   const intl = useIntl()
   const manualOwned = fact.owned[1]
   const totalOwned = fact.owned[0] + manualOwned
-  const total = preciseNumber(locale, totalOwned)
-  const manual = preciseNumber(locale, manualOwned)
+  const total = formatGameNumber(locale, totalOwned)
+  const manual = formatGameNumber(locale, manualOwned)
   const identityText = intl.formatMessage(identity, {
     total,
     manual,
@@ -543,7 +544,7 @@ function productionText(
   }
   if (productionPerSecond >= 1) {
     return intl.formatMessage(presentation.productionPerSecond, {
-      rate: preciseNumber(locale, productionPerSecond),
+      rate: formatGameNumber(locale, productionPerSecond),
     })
   }
   const seconds = 1 / productionPerSecond
@@ -553,7 +554,7 @@ function productionText(
       ? presentation.productionMinutes
       : presentation.productionSeconds,
     {
-      interval: preciseNumber(
+      interval: formatGameNumber(
         locale,
         inMinutes ? seconds / 60 : seconds,
       ),

@@ -110,16 +110,16 @@ export function DysonGameplayShell({
               data-has-tinker={tinker !== undefined}
               data-has-visible-facilities={hasVisibleFacilities}
             >
+              <div className="dyson-shell__facility-region">
+                {facilities}
+              </div>
+
               {tinker !== undefined && (
                 <ShellRegion
                   className="dyson-shell__tinker"
                   region={tinker}
                 />
               )}
-
-              <div className="dyson-shell__facility-region">
-                {facilities}
-              </div>
             </div>
           </div>
 

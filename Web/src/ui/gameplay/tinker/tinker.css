@@ -132,11 +132,19 @@
 }
 
 .tinker-surface__progress::-webkit-progress-value {
-  background: #5b5a5c;
+  background: #ffd9fe;
 }
 
 .tinker-surface__progress::-moz-progress-bar {
-  background: #5b5a5c;
+  background: #ffd9fe;
+}
+
+.tinker-surface[data-repeat="true"] .tinker-surface__progress::-webkit-progress-value {
+  background: rgb(55 231 237 / 60%);
+}
+
+.tinker-surface[data-repeat="true"] .tinker-surface__progress::-moz-progress-bar {
+  background: rgb(55 231 237 / 60%);
 }
 
 .tinker-surface__hold-label {

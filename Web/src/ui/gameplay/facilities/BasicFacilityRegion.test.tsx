@@ -139,7 +139,7 @@ describe('BasicFacilityRegion', () => {
     const articles = screen.getAllByRole('article')
     expect(articles).toHaveLength(1)
     expect(articles[0]).toHaveAccessibleName(
-      'Assembly Lines 0(0)',
+      'Assembly Lines 0.00(0.00)',
     )
     expect(within(articles[0]).getByText(
       'Purchase an Assembly Line',
@@ -179,29 +179,33 @@ describe('BasicFacilityRegion', () => {
       article.getAttribute('aria-labelledby'),
     )).toHaveLength(2)
     expect(articles[0]).toHaveAccessibleName(
-      'Assembly Lines 12(5)',
+      'Assembly Lines 12.0(5.00)',
     )
     expect(articles[1]).toHaveAccessibleName(
-      'AI Managers 5(3)',
+      'AI Managers 5.00(3.00)',
     )
     const assembly = within(articles[0])
-    const identity = assembly.getByTitle('Assembly Lines 12(5)')
-    expect(identity).toHaveTextContent('Assembly Lines 12(5)')
+    const identity = assembly.getByTitle(
+      'Assembly Lines 12.0(5.00)',
+    )
+    expect(identity).toHaveTextContent(
+      'Assembly Lines 12.0(5.00)',
+    )
     expect(identity.querySelector('.basic-facility-card__name'))
       .toHaveTextContent('Assembly Lines')
     expect(identity.querySelector('.basic-facility-card__total'))
-      .toHaveTextContent('12')
+      .toHaveTextContent('12.0')
     expect(identity.querySelector('.basic-facility-card__total'))
       .toHaveAttribute('value', '12')
     expect(identity.querySelector('.basic-facility-card__manual'))
-      .toHaveTextContent('(5)')
+      .toHaveTextContent('(5.00)')
     expect(identity.querySelector('.basic-facility-card__manual'))
       .toHaveAttribute('value', '5')
     expect(assembly.getByText('Producing 4.25 Bots /s'))
       .toBeInTheDocument()
     expect(
       within(articles[1]).getByText(
-        'Generating 1 Assembly Line /2s',
+        'Generating 1 Assembly Line /2.00s',
       ),
     ).toBeInTheDocument()
     expect(assembly.getByText('+38').closest('data'))
@@ -505,10 +509,10 @@ describe('BasicFacilityRegion', () => {
 
     const articles = screen.getAllByRole('article')
     expect(articles[0]).toHaveAccessibleName(
-      'Assembly Lines 0(0)',
+      'Assembly Lines 0.00(0.00)',
     )
     expect(articles[1]).toHaveAccessibleName(
-      'AI Managers 0(0)',
+      'AI Managers 0.00(0.00)',
     )
 
     await user.tab()
@@ -530,7 +534,7 @@ describe('BasicFacilityRegion', () => {
     expect(results.violations).toEqual([])
   })
 
-  it('keeps every Unity facility in one ordered vertical stack', () => {
+  it('keeps canonical order while allowing the ultra-wide Unity grid', () => {
     const { container, rerender } = renderRegion({
       visibleBasicFacilityIds: ['assembly_lines'],
     })
@@ -550,8 +554,8 @@ describe('BasicFacilityRegion', () => {
     expect(facilitiesCss).toMatch(
       /\.basic-facility-region__grid\s*\{[\s\S]*grid-template-columns:\s*minmax\(0,\s*1fr\);/,
     )
-    expect(facilitiesCss).not.toContain(
-      'grid-template-columns: repeat(2',
+    expect(facilitiesCss).toMatch(
+      /@media \(min-width: 1600px\)[\s\S]*grid-template-columns:\s*repeat\(2,\s*minmax\(0,\s*1fr\)\);/,
     )
   })
 
@@ -576,16 +580,16 @@ describe('BasicFacilityRegion', () => {
 
     const article = screen.getByRole('article')
     expect(article).toHaveAccessibleName(
-      '[Assembly identity: manual 5; total 12]',
+      '[Assembly identity: manual 5.00; total 12.0]',
     )
     expect(within(article).getByText('[Expanded Assembly Name]'))
       .toHaveClass('basic-facility-card__name')
     expect(
       container.querySelector('.basic-facility-card__total'),
-    ).toHaveTextContent('12')
+    ).toHaveTextContent('12.0')
     expect(
       container.querySelector('.basic-facility-card__manual'),
-    ).toHaveTextContent('(5)')
+    ).toHaveTextContent('(5.00)')
     expect(article).not.toHaveAccessibleName(
       '[Expanded Assembly Name] 12(5)',
     )

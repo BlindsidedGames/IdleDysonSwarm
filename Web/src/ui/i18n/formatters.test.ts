@@ -2,6 +2,7 @@ import { beforeEach, describe, expect, it } from 'vitest'
 import {
   clearFormatterCachesForTests,
   formatDateTime,
+  formatGameNumber,
   formatNumber,
   formatRelativeTime,
   getDateTimeFormatter,
@@ -44,6 +45,17 @@ describe('cached locale formatters', () => {
     expect(formatNumber('en', Number.POSITIVE_INFINITY)).toBe('—')
     expect(formatRelativeTime('en', Number.NEGATIVE_INFINITY, 'second'))
       .toBe('—')
+  })
+
+  it('matches the Unity three-digit truncated display format', () => {
+    expect(formatGameNumber('en', 0)).toBe('0.00')
+    expect(formatGameNumber('en', 0.8)).toBe('0.80')
+    expect(formatGameNumber('en', 10)).toBe('10.0')
+    expect(formatGameNumber('en', 14)).toBe('14.0')
+    expect(formatGameNumber('en', 60.79)).toBe('60.7')
+    expect(formatGameNumber('en', 999.9)).toBe('999')
+    expect(formatGameNumber('en', 1234)).toBe('1.23K')
+    expect(formatGameNumber('en', -12.39)).toBe('-12.3')
   })
 
   it('caches date, relative-time, and plural formatters', () => {

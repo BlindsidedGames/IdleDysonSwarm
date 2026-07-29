@@ -160,6 +160,8 @@
 .dyson-shell__stage {
   position: relative;
   z-index: 1;
+  display: flex;
+  flex-direction: column;
   min-block-size: 0;
   overflow-y: auto;
   overscroll-behavior: contain;
@@ -179,7 +181,8 @@
 }
 
 .dyson-shell__tinker {
-  margin-block-end: 0.65rem;
+  margin-block-start: auto;
+  padding-block-start: 0.65rem;
 }
 
 .dyson-shell__facility-region,
@@ -431,13 +434,6 @@
   color: white;
   font-size: 0.9rem;
   line-height: 1.4;
-}
-
-@media (max-width: 899px) {
-  .dyson-shell__stage[data-has-visible-facilities="false"] {
-    display: grid;
-    align-content: end;
-  }
 }
 
 @media (min-width: 900px) {

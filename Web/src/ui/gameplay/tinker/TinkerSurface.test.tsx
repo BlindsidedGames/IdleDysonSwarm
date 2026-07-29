@@ -473,13 +473,13 @@ describe('TinkerSurface presentation and accessibility', () => {
         /Masterfully made you will produce 3\./,
       ),
     ).toBeInTheDocument()
-    expect(screen.getByText('0.375s')).toBeInTheDocument()
+    expect(screen.getByText('0.37s')).toBeInTheDocument()
     const progress = screen.getByRole('progressbar', {
       name: 'Tinker progress',
     })
     expect(progress).toHaveAttribute('value', '0.125')
     expect(progress).toHaveAttribute('max', '0.5')
-    expect(progress).toHaveAttribute('aria-valuetext', '0.375s')
+    expect(progress).toHaveAttribute('aria-valuetext', '0.37s')
     expect(
       screen.getByText('Hold anywhere to repeat...'),
     ).toBeInTheDocument()

@@ -364,3 +364,16 @@ Current visual checkpoint (2026-07-30):
 - The production build measures approximately 208.8 KiB gzip JavaScript and
   7.0 KiB gzip CSS. This is evidence for the pending performance-budget review,
   not a failure of the visual checkpoint and not a release-performance pass.
+
+Parity corrections queued after the checkpoint:
+
+- Keep the canonical `????` next-tier teaser visible from a fresh save and
+  after each named early facility until the snapshot explicitly hides it.
+- Keep facilities/teaser above Tinker while Tinker remains anchored near the
+  lower controls; Manual Labour visibility remains snapshot-owned.
+- Use the Unity three-digit truncated number presentation throughout the Bots
+  surface and interpolate Tinker progress visually between authoritative
+  snapshots without advancing gameplay.
+- A future Settings control may hide the decorative swarm and reclaim its
+  layout space. Dynamic orbit density remains deferred until it can consume a
+  published canonical fact.

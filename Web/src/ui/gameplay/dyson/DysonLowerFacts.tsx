@@ -4,7 +4,7 @@ import type {
 } from '../../../application/frontendSnapshot'
 import type { DeepReadonly } from '../../../core/contracts'
 import {
-  formatNumber,
+  formatGameNumber,
 } from '../../i18n/formatters'
 import type {
   EnabledLocale,
@@ -49,8 +49,5 @@ function formatFact(
   locale: EnabledLocale,
   value: number,
 ): string {
-  return formatNumber(locale, value, {
-    maximumFractionDigits: 3,
-    useGrouping: true,
-  })
+  return formatGameNumber(locale, value)
 }

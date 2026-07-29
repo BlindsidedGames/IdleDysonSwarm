@@ -7,7 +7,7 @@ import type {
   CanonicalPlayerCommand,
 } from '../../../application/canonicalPlayerCommands'
 import {
-  formatNumber,
+  formatGameNumber,
 } from '../../i18n/formatters'
 import type {
   EnabledLocale,
@@ -144,6 +144,10 @@ export function DysonInfo({
         <span className="dyson-info__goal">
           {intl.formatMessage(goalMessage, {
             target: currentGoal.target,
+            targetDisplay: formatGameNumber(
+              locale,
+              currentGoal.target,
+            ),
           })}
         </span>
       </div>
@@ -376,10 +380,7 @@ export function BotDistribution({
 }
 
 function formatFact(locale: EnabledLocale, value: number): string {
-  return formatNumber(locale, value, {
-    maximumFractionDigits: 3,
-    useGrouping: true,
-  })
+  return formatGameNumber(locale, value)
 }
 
 function formatPercent(locale: EnabledLocale, value: number): string {

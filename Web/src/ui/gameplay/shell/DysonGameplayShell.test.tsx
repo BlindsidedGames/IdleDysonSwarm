@@ -114,8 +114,8 @@ describe('DysonGameplayShell', () => {
     expect(labels).toEqual([
       'Dyson resources',
       'Dyson swarm',
-      'Tinker',
       'Facilities',
+      'Tinker',
       'Info',
       'Production summary',
       'Bot distribution',
@@ -163,7 +163,10 @@ describe('Dyson gameplay responsive CSS contract', () => {
     expect(shellCss).toContain('env(safe-area-inset-bottom)')
     expect(shellCss).toContain('overflow: hidden')
     expect(shellCss).toMatch(
-      /@media \(max-width: 899px\)[\s\S]*\.dyson-shell__stage\[data-has-visible-facilities="false"\][\s\S]*align-content:\s*end;/,
+      /\.dyson-shell__stage\s*\{[\s\S]*display:\s*flex;[\s\S]*flex-direction:\s*column;/,
+    )
+    expect(shellCss).toMatch(
+      /\.dyson-shell__tinker\s*\{[\s\S]*margin-block-start:\s*auto;/,
     )
   })
 

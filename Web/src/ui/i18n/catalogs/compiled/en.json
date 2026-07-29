@@ -741,9 +741,8 @@
       "value": "Goal: Build "
     },
     {
-      "type": 2,
-      "value": "target",
-      "style": null
+      "type": 1,
+      "value": "targetDisplay"
     },
     {
       "type": 0,
@@ -756,9 +755,8 @@
       "value": "Goal: Create "
     },
     {
-      "type": 2,
-      "value": "target",
-      "style": null
+      "type": 1,
+      "value": "targetDisplay"
     },
     {
       "type": 0,
@@ -771,9 +769,8 @@
       "value": "Goal: "
     },
     {
-      "type": 2,
-      "value": "target",
-      "style": null
+      "type": 1,
+      "value": "targetDisplay"
     },
     {
       "type": 0,
@@ -804,7 +801,8 @@
               "value": "Engulf "
             },
             {
-              "type": 7
+              "type": 1,
+              "value": "targetDisplay"
             },
             {
               "type": 0,
@@ -823,9 +821,8 @@
       "value": "Goal: Have "
     },
     {
-      "type": 2,
-      "value": "target",
-      "style": null
+      "type": 1,
+      "value": "targetDisplay"
     },
     {
       "type": 0,
@@ -838,9 +835,8 @@
       "value": "Goal: Own "
     },
     {
-      "type": 2,
-      "value": "target",
-      "style": null
+      "type": 1,
+      "value": "targetDisplay"
     },
     {
       "type": 0,
@@ -853,9 +849,8 @@
       "value": "Goal: Reach "
     },
     {
-      "type": 2,
-      "value": "target",
-      "style": null
+      "type": 1,
+      "value": "targetDisplay"
     },
     {
       "type": 0,
@@ -868,9 +863,8 @@
       "value": "Goal: Surround "
     },
     {
-      "type": 2,
-      "value": "target",
-      "style": null
+      "type": 1,
+      "value": "targetDisplay"
     },
     {
       "type": 0,

@@ -116,12 +116,12 @@ describe('ReadyDysonSlice', () => {
     )
     expect(
       await screen.findByRole('article', {
-        name: 'Assembly Lines 0(0)',
+        name: 'Assembly Lines 0.00(0.00)',
       }),
     ).toBeInTheDocument()
     expect(
       await screen.findByRole('article', {
-        name: 'AI Managers 0(0)',
+        name: 'AI Managers 0.00(0.00)',
       }),
     ).toBeInTheDocument()
   })
@@ -151,22 +151,22 @@ describe('ReadyDysonSlice', () => {
     const resourceSummary = screen.getByRole('region', {
       name: 'Resources',
     })
-    expect(resourceSummary).toHaveTextContent('Cash$123$11 /s')
+    expect(resourceSummary).toHaveTextContent('Cash$123$11.0 /s')
     expect(resourceSummary).toHaveTextContent('Total Bots456')
-    expect(resourceSummary).toHaveTextContent('Science78922 /s')
+    expect(resourceSummary).toHaveTextContent('Science78922.0 /s')
     expect(
       screen.getByRole('region', { name: 'Production summary' }),
-    ).toHaveTextContent('1,000 Worker Bots producing 0 Panels /s')
+    ).toHaveTextContent('1.00K Worker Bots producing 0.00 Panels /s')
     expect(
       screen.queryByText(/Science Bots producing/),
     ).not.toBeInTheDocument()
 
     const expected = [
-      ['Assembly Lines 5(3)', 'Producing 33 Bots /s'],
-      ['AI Managers 9(5)', 'Generating 44 Assembly Lines /s'],
-      ['Servers 13(7)', 'Training 55 AI Managers /s'],
-      ['Data Centers 17(9)', 'Deploying 66 Servers /s'],
-      ['Planets 21(11)', 'Creating 77 Data Centers /s'],
+      ['Assembly Lines 5.00(3.00)', 'Producing 33.0 Bots /s'],
+      ['AI Managers 9.00(5.00)', 'Generating 44.0 Assembly Lines /s'],
+      ['Servers 13.0(7.00)', 'Training 55.0 AI Managers /s'],
+      ['Data Centers 17.0(9.00)', 'Deploying 66.0 Servers /s'],
+      ['Planets 21.0(11.0)', 'Creating 77.0 Data Centers /s'],
     ] as const
     for (const [name, production] of expected) {
       expect(
@@ -231,17 +231,17 @@ describe('ReadyDysonSlice', () => {
     renderSlice(snapshot(), dispatchPlayer)
 
     const infoRegion = screen.getByRole('region', { name: 'Info' })
-    expect(infoRegion).toHaveTextContent('Goal: Create 10 Bots')
-    expect(infoRegion).not.toHaveTextContent('Active panels: 0')
-    expect(infoRegion).not.toHaveTextContent('Panel lifetime: 10 seconds')
-    expect(infoRegion).not.toHaveTextContent('Total panels decayed: 0')
+    expect(infoRegion).toHaveTextContent('Goal: Create 10.0 Bots')
+    expect(infoRegion).not.toHaveTextContent('Active panels: 0.00')
+    expect(infoRegion).not.toHaveTextContent('Panel lifetime: 10.0 seconds')
+    expect(infoRegion).not.toHaveTextContent('Total panels decayed: 0.00')
 
     await user.click(
       within(infoRegion).getByRole('button', { name: 'Info' }),
     )
-    expect(infoRegion).toHaveTextContent('Active panels: 0')
-    expect(infoRegion).toHaveTextContent('Panel lifetime: 10 seconds')
-    expect(infoRegion).toHaveTextContent('Total panels decayed: 0')
+    expect(infoRegion).toHaveTextContent('Active panels: 0.00')
+    expect(infoRegion).toHaveTextContent('Panel lifetime: 10.0 seconds')
+    expect(infoRegion).toHaveTextContent('Total panels decayed: 0.00')
 
     await user.click(
       within(infoRegion).getByRole('button', {
@@ -378,7 +378,7 @@ describe('ReadyDysonSlice', () => {
     expect(route).not.toHaveTextContent(/^Bots$/)
     expect(route.textContent?.length).toBeGreaterThan('Bots'.length)
     expect(screen.getByRole('slider')).toBeInTheDocument()
-    expect(screen.queryByText(/\?\?\?\?/)).not.toBeInTheDocument()
+    expect(screen.getByText(/\?\?\?\?/)).toBeInTheDocument()
     expect(intlErrors).toEqual([])
   })
 
@@ -406,11 +406,11 @@ describe('ReadyDysonSlice', () => {
     )
     const expectedAssemblyIdentity = intl.formatMessage(
       basicFacilityMessages.assemblyLinesIdentity,
-      { total: '5', manual: '3' },
+      { total: '5.00', manual: '3.00' },
     )
     const expectedManagerIdentity = intl.formatMessage(
       basicFacilityMessages.aiManagersIdentity,
-      { total: '9', manual: '5' },
+      { total: '9.00', manual: '5.00' },
     )
     const shell = container.querySelector('.dyson-shell')
     const resources = container.querySelector('.dyson-resource-header')
@@ -450,6 +450,7 @@ describe('ReadyDysonSlice', () => {
     const purchase = await screen.findByRole('button', {
       name: /^Purchase an Assembly Line:/,
     })
+    const details = screen.getByRole('button', { name: 'Details' })
     const resources = Array.from(
       container.querySelectorAll<HTMLElement>(
         '.ui-resource-value__value[tabindex="0"]',
@@ -462,8 +463,9 @@ describe('ReadyDysonSlice', () => {
     const expected = [
       screen.getByRole('link', { name: 'Skip to game' }),
       ...resources,
-      tinker,
       purchase,
+      details,
+      tinker,
     ]
     for (const target of expected) {
       await user.tab()
