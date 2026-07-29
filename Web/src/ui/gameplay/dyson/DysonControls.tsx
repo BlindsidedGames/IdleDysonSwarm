@@ -22,6 +22,8 @@ export interface DysonInfoProps {
   readonly locale: EnabledLocale
   readonly metric:
     FrontendDysonPresentationFacts['activePanelMetric']
+  readonly currentGoal:
+    FrontendDysonPresentationFacts['currentGoal']
   readonly panelLifetimeSeconds: number
   readonly totalPanelsDecayed: number
   readonly buyMode: DysonBuyMode
@@ -58,6 +60,7 @@ const BUY_MODE_OPTIONS = Object.freeze([
 export function DysonInfo({
   locale,
   metric,
+  currentGoal,
   panelLifetimeSeconds,
   totalPanelsDecayed,
   buyMode,
@@ -79,6 +82,22 @@ export function DysonInfo({
       : metric.kind === 'stars-surrounded'
         ? messages.starsSurrounded
         : messages.galaxiesEngulfed
+  const goalMessage =
+    currentGoal.kind === 'create-bots'
+      ? messages.goalCreateBots
+      : currentGoal.kind === 'build-assembly-lines'
+        ? messages.goalBuildAssemblyLines
+        : currentGoal.kind === 'have-active-panels'
+          ? messages.goalHaveActivePanels
+          : currentGoal.kind === 'own-planets'
+            ? messages.goalOwnPlanets
+            : currentGoal.kind === 'decay-panels'
+              ? messages.goalDecayPanels
+              : currentGoal.kind === 'surround-stars'
+                ? messages.goalSurroundStars
+                : currentGoal.kind === 'engulf-galaxies'
+                  ? messages.goalEngulfGalaxies
+                  : messages.goalReachBots
   const applySetting = async (
     command: DysonSettingsCommand,
   ): Promise<void> => {
@@ -122,20 +141,25 @@ export function DysonInfo({
         </button>
       </div>
       <div className="dyson-info__summary">
-        <span className="dyson-info__active">
-          <FormattedMessage
-            {...metricMessage}
-            values={{
-              value: formatFact(locale, metric.value),
-              emphasis: (chunks) => (
-                <span className="dyson-info__value">{chunks}</span>
-              ),
-            }}
-          />
+        <span className="dyson-info__goal">
+          {intl.formatMessage(goalMessage, {
+            target: currentGoal.target,
+          })}
         </span>
       </div>
       {expanded && (
         <div id={detailsId} className="dyson-info__details">
+          <span className="dyson-info__active">
+            <FormattedMessage
+              {...metricMessage}
+              values={{
+                value: formatFact(locale, metric.value),
+                emphasis: (chunks) => (
+                  <span className="dyson-info__value">{chunks}</span>
+                ),
+              }}
+            />
+          </span>
           <span>
             <FormattedMessage
               {...messages.panelLifetimeDetail}

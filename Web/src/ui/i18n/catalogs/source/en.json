@@ -279,6 +279,38 @@
     "defaultMessage": "Galaxies Engulfed: <emphasis>{value}</emphasis>",
     "description": "Unity active panel metric at galactic scale."
   },
+  "dyson.info.goal.build-assembly-lines": {
+    "defaultMessage": "Goal: Build {target, number} Assembly Lines",
+    "description": "Unity Dyson goal to build Assembly Lines."
+  },
+  "dyson.info.goal.create-bots": {
+    "defaultMessage": "Goal: Create {target, number} Bots",
+    "description": "Unity early Dyson goal to create Bots."
+  },
+  "dyson.info.goal.decay-panels": {
+    "defaultMessage": "Goal: {target, number} total panels decayed",
+    "description": "Unity Dyson goal for lifetime decayed Panels."
+  },
+  "dyson.info.goal.engulf-galaxies": {
+    "defaultMessage": "Goal: {target, plural, one {Engulf a Galaxy} other {Engulf # Galaxies}}",
+    "description": "Unity Dyson goal to engulf one or more Galaxies."
+  },
+  "dyson.info.goal.have-active-panels": {
+    "defaultMessage": "Goal: Have {target, number} active Panels",
+    "description": "Unity Dyson goal to maintain active Panels."
+  },
+  "dyson.info.goal.own-planets": {
+    "defaultMessage": "Goal: Own {target, number} Planets",
+    "description": "Unity Dyson goal to own Planets."
+  },
+  "dyson.info.goal.reach-bots": {
+    "defaultMessage": "Goal: Reach {target, number} Bots",
+    "description": "Unity final Dyson Bot-count goal."
+  },
+  "dyson.info.goal.surround-stars": {
+    "defaultMessage": "Goal: Surround {target, number} Stars",
+    "description": "Unity Dyson goal to surround Stars."
+  },
   "dyson.info.panel-lifetime": {
     "defaultMessage": "Panel lifetime: <emphasis>{value}</emphasis> seconds",
     "description": "Canonical panel lifetime shown in the expanded Info control."

@@ -735,6 +735,148 @@
       ]
     }
   ],
+  "dyson.info.goal.build-assembly-lines": [
+    {
+      "type": 0,
+      "value": "Goal: Build "
+    },
+    {
+      "type": 2,
+      "value": "target",
+      "style": null
+    },
+    {
+      "type": 0,
+      "value": " Assembly Lines"
+    }
+  ],
+  "dyson.info.goal.create-bots": [
+    {
+      "type": 0,
+      "value": "Goal: Create "
+    },
+    {
+      "type": 2,
+      "value": "target",
+      "style": null
+    },
+    {
+      "type": 0,
+      "value": " Bots"
+    }
+  ],
+  "dyson.info.goal.decay-panels": [
+    {
+      "type": 0,
+      "value": "Goal: "
+    },
+    {
+      "type": 2,
+      "value": "target",
+      "style": null
+    },
+    {
+      "type": 0,
+      "value": " total panels decayed"
+    }
+  ],
+  "dyson.info.goal.engulf-galaxies": [
+    {
+      "type": 0,
+      "value": "Goal: "
+    },
+    {
+      "type": 6,
+      "value": "target",
+      "options": {
+        "one": {
+          "value": [
+            {
+              "type": 0,
+              "value": "Engulf a Galaxy"
+            }
+          ]
+        },
+        "other": {
+          "value": [
+            {
+              "type": 0,
+              "value": "Engulf "
+            },
+            {
+              "type": 7
+            },
+            {
+              "type": 0,
+              "value": " Galaxies"
+            }
+          ]
+        }
+      },
+      "offset": 0,
+      "pluralType": "cardinal"
+    }
+  ],
+  "dyson.info.goal.have-active-panels": [
+    {
+      "type": 0,
+      "value": "Goal: Have "
+    },
+    {
+      "type": 2,
+      "value": "target",
+      "style": null
+    },
+    {
+      "type": 0,
+      "value": " active Panels"
+    }
+  ],
+  "dyson.info.goal.own-planets": [
+    {
+      "type": 0,
+      "value": "Goal: Own "
+    },
+    {
+      "type": 2,
+      "value": "target",
+      "style": null
+    },
+    {
+      "type": 0,
+      "value": " Planets"
+    }
+  ],
+  "dyson.info.goal.reach-bots": [
+    {
+      "type": 0,
+      "value": "Goal: Reach "
+    },
+    {
+      "type": 2,
+      "value": "target",
+      "style": null
+    },
+    {
+      "type": 0,
+      "value": " Bots"
+    }
+  ],
+  "dyson.info.goal.surround-stars": [
+    {
+      "type": 0,
+      "value": "Goal: Surround "
+    },
+    {
+      "type": 2,
+      "value": "target",
+      "style": null
+    },
+    {
+      "type": 0,
+      "value": " Stars"
+    }
+  ],
   "dyson.info.panel-lifetime": [
     {
       "type": 0,

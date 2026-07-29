@@ -221,8 +221,9 @@ loop:
    backend-authored Unity order, followed by the one backend-authored next-tier
    teaser when present. Cards include owned counts, production, selected
    quantity, exact previewed cost, eligibility and rejection reason.
-5. Preserve the Unity lower-screen hierarchy: a cohesive Info panel containing
-   the canonical active-panel, lifetime and total-decayed facts; one worker
+5. Preserve the Unity lower-screen hierarchy: a cohesive Info panel whose
+   collapsed line shows the canonical current goal and whose expanded state
+   contains the active-panel, lifetime and total-decayed facts; one worker
    production line; and the complete Bot Distribution control. The Info gear
    exposes the canonical building buy-mode and rounded-bulk settings.
 6. Dispatch distribution, buy-setting and basic-facility commands through the
@@ -688,7 +689,7 @@ release.
 - Initial first-slice JavaScript is measured and reported on every production
   checkpoint. The earlier 200 KiB gzip cap is a provisional optimization target,
   not a blocker for the Bots visual/parity checkpoint. The current reviewed
-  build is approximately 208.4 KiB gzip before any later-destination code.
+  build is approximately 208.8 KiB gzip before any later-destination code.
   Freeze a realistic warning and hard ceiling only after profiling startup,
   interaction and representative-device behavior; do not trade familiar UI or
   canonical architecture for an arbitrary one-number reduction.

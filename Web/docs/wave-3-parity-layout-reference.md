@@ -49,10 +49,11 @@ The Science symbol is an extracted image asset rendered inline with the
 Science values. Inline image-symbol support is reusable for other TextMesh Pro
 sprite symbols without replacing semantic accessible names.
 
-The Info summary always contains Active panels. Its disclosure adds canonical
-panel lifetime and total panels decayed. The separate gear opens building
-purchase settings: x1, x10, x50, x100, Max and rounded bulk buying. Those are
-settings commands, not local UI calculations.
+The collapsed Info summary contains only the current canonical goal. Expanding
+Info reveals the active-panel metric, panel lifetime and total panels decayed.
+The separate gear opens building purchase settings: x1, x10, x50, x100, Max
+and rounded bulk buying. Those are settings commands, not local UI
+calculations.
 
 The worker-production row appears once. It uses white explanatory text with
 orange values. A second Science-production card is not present because Science
@@ -80,7 +81,7 @@ control.
 | [hold hint / progress]      10.0s|
 +----------------------------------+
 | Info                          gear|
-| Active panels: value             |
+| Goal: Create 10 Bots             |
 +----------------------------------+
 | value Worker Bots producing ...  |
 +----------------------------------+

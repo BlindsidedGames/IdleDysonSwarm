@@ -649,6 +649,44 @@ describe('frontend gameplay snapshot', () => {
     }
   })
 
+  test.each([
+    [0n, { kind: 'create-bots', target: 10 }],
+    [1n, { kind: 'build-assembly-lines', target: 5 }],
+    [2n, { kind: 'have-active-panels', target: 20_000 }],
+    [3n, { kind: 'own-planets', target: 20 }],
+    [4n, { kind: 'decay-panels', target: 1_000_000_000_000 }],
+    [5n, { kind: 'surround-stars', target: 1_000_000_000 }],
+    [6n, { kind: 'surround-stars', target: 10_000_000_000 }],
+    [7n, { kind: 'engulf-galaxies', target: 1 }],
+    [8n, { kind: 'engulf-galaxies', target: 10 }],
+    [9n, { kind: 'engulf-galaxies', target: 100 }],
+    [
+      10n,
+      { kind: 'reach-bots', target: 42_000_000_000_000_000_000 },
+    ],
+  ] as const)(
+    'projects the canonical Unity goal for stage %s',
+    (goalStage, expectedGoal) => {
+      const source = fixtureState()
+      const snapshot = selectFrontendGameplaySnapshot(
+        {
+          ...source,
+          dyson: {
+            ...source.dyson,
+            goalStage,
+          },
+        },
+        frontendContext(),
+      )
+
+      expect(snapshot.derived.dyson.status).toBe('ready')
+      if (snapshot.derived.dyson.status !== 'ready') return
+      expect(
+        snapshot.derived.dyson.value.presentation.currentGoal,
+      ).toEqual(expectedGoal)
+    },
+  )
+
   test('fails derived Dyson and dependent Tinker facts closed together', () => {
     const source = fixtureState()
     const state: CanonicalGameStateV1 = {

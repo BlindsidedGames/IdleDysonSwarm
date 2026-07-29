@@ -67,6 +67,12 @@
   overflow-wrap: anywhere;
 }
 
+.dyson-info__goal {
+  min-inline-size: 0;
+  color: #91dd8f;
+  overflow-wrap: anywhere;
+}
+
 .dyson-info__value {
   color: #ffac63;
 }

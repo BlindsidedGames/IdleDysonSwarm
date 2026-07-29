@@ -154,6 +154,47 @@ export const readyDysonMessages = defineMessages({
     defaultMessage: 'Info',
     description: 'Unity Bots information control label.',
   },
+  goalCreateBots: {
+    id: 'dyson.info.goal.create-bots',
+    defaultMessage: 'Goal: Create {target, number} Bots',
+    description: 'Unity early Dyson goal to create Bots.',
+  },
+  goalBuildAssemblyLines: {
+    id: 'dyson.info.goal.build-assembly-lines',
+    defaultMessage: 'Goal: Build {target, number} Assembly Lines',
+    description: 'Unity Dyson goal to build Assembly Lines.',
+  },
+  goalHaveActivePanels: {
+    id: 'dyson.info.goal.have-active-panels',
+    defaultMessage: 'Goal: Have {target, number} active Panels',
+    description: 'Unity Dyson goal to maintain active Panels.',
+  },
+  goalOwnPlanets: {
+    id: 'dyson.info.goal.own-planets',
+    defaultMessage: 'Goal: Own {target, number} Planets',
+    description: 'Unity Dyson goal to own Planets.',
+  },
+  goalDecayPanels: {
+    id: 'dyson.info.goal.decay-panels',
+    defaultMessage: 'Goal: {target, number} total panels decayed',
+    description: 'Unity Dyson goal for lifetime decayed Panels.',
+  },
+  goalSurroundStars: {
+    id: 'dyson.info.goal.surround-stars',
+    defaultMessage: 'Goal: Surround {target, number} Stars',
+    description: 'Unity Dyson goal to surround Stars.',
+  },
+  goalEngulfGalaxies: {
+    id: 'dyson.info.goal.engulf-galaxies',
+    defaultMessage:
+      'Goal: {target, plural, one {Engulf a Galaxy} other {Engulf # Galaxies}}',
+    description: 'Unity Dyson goal to engulf one or more Galaxies.',
+  },
+  goalReachBots: {
+    id: 'dyson.info.goal.reach-bots',
+    defaultMessage: 'Goal: Reach {target, number} Bots',
+    description: 'Unity final Dyson Bot-count goal.',
+  },
   activePanels: {
     id: 'dyson.info.active-panels',
     defaultMessage: 'Active panels: <emphasis>{value}</emphasis>',

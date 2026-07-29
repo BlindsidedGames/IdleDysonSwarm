@@ -481,6 +481,19 @@ export interface FrontendDysonPresentationFacts {
       | 'galaxies-engulfed'
     readonly value: number
   }
+  readonly currentGoal:
+    | {
+        readonly kind:
+          | 'create-bots'
+          | 'build-assembly-lines'
+          | 'have-active-panels'
+          | 'own-planets'
+          | 'decay-panels'
+          | 'surround-stars'
+          | 'engulf-galaxies'
+          | 'reach-bots'
+        readonly target: number
+      }
 }
 
 export type FrontendDysonDerivedFacts =
@@ -1016,7 +1029,10 @@ function selectDerivedFacts(
     dyson: dyson.ok
       ? {
           status: 'ready',
-          value: projectDysonDerivedFacts(dyson.value),
+          value: projectDysonDerivedFacts(
+            dyson.value,
+            state.dyson.goalStage,
+          ),
         }
         : {
           status: 'unavailable',
@@ -1049,6 +1065,7 @@ function selectDerivedFacts(
 
 function projectDysonDerivedFacts(
   source: Readonly<DerivedBasicDysonState>,
+  goalStage: bigint,
 ): Omit<DerivedBasicDysonState, 'nextEvaluationSnapshot'> & {
   readonly presentation: FrontendDysonPresentationFacts
 } {
@@ -1079,8 +1096,40 @@ function projectDysonDerivedFacts(
     rates: source.rates,
     megaRates: source.megaRates,
     productionArrivalRates: source.productionArrivalRates,
-    presentation: { activePanelMetric },
+    presentation: {
+      activePanelMetric,
+      currentGoal: projectDysonGoal(goalStage),
+    },
     entitlements: source.entitlements,
+  }
+}
+
+function projectDysonGoal(
+  goalStage: bigint,
+): FrontendDysonPresentationFacts['currentGoal'] {
+  switch (goalStage) {
+    case 0n:
+      return { kind: 'create-bots', target: 10 }
+    case 1n:
+      return { kind: 'build-assembly-lines', target: 5 }
+    case 2n:
+      return { kind: 'have-active-panels', target: 20_000 }
+    case 3n:
+      return { kind: 'own-planets', target: 20 }
+    case 4n:
+      return { kind: 'decay-panels', target: 1_000_000_000_000 }
+    case 5n:
+      return { kind: 'surround-stars', target: 1_000_000_000 }
+    case 6n:
+      return { kind: 'surround-stars', target: 10_000_000_000 }
+    case 7n:
+      return { kind: 'engulf-galaxies', target: 1 }
+    case 8n:
+      return { kind: 'engulf-galaxies', target: 10 }
+    case 9n:
+      return { kind: 'engulf-galaxies', target: 100 }
+    default:
+      return { kind: 'reach-bots', target: 42_000_000_000_000_000_000 }
   }
 }
 

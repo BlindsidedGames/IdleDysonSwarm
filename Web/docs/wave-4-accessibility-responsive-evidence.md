@@ -35,7 +35,7 @@ unlock, or reproduce a gameplay rule.
 | --- | --- |
 | Expanded pseudo-locale | `ReadyDysonSlice.test.tsx` renders the complete Assembly-revealed slice with the compiled `en-XA` catalog and proves expanded localized output under `dir="ltr"`. |
 | Mirrored RTL | `ReadyDysonSlice.test.tsx` renders the later-progression slice with the compiled `ar-XB` catalog, proves `dir="rtl"`, and preserves the canonical Cash/Total Bots/Science and Assembly Lines/AI Managers DOM order. |
-| Keyboard and focus order | Full-slice tests preserve the skip link, native resource detail controls, Tinker and purchase actions. Info, purchase settings and Bot Distribution use native buttons, checkbox and range input with explicit accessible names and state. |
+| Keyboard and focus order | Full-slice tests preserve the skip link, native resource detail controls, Tinker and purchase actions. Collapsed Info exposes the canonical goal; its button reveals the remaining facts. Purchase settings and Bot Distribution use native buttons, checkbox and range input with explicit accessible names and state. |
 | Full-slice semantics | Axe scans English Fresh, expanded-LTR Assembly, and mirrored-RTL later progression. Color contrast remains in semantic-token and real-browser checks because jsdom has no computed paint; the duplicate responsive navigation landmarks are checked by their mutually exclusive CSS contract. |
 | Responsive bands | `DysonGameplayShell.test.tsx` locks the compact default, compact-landscape override, 600px rail transition, 1024px wide stage, bounded inline sizing, and the sub-360px stacked facility action. |
 | 200% zoom/reflow proxy | The compact CSS proxy requires one bounded content column, vertical scrolling, logical sizing, and no fixed pixel minimum inline width. A real browser is still required for rendered zoom acceptance. |
@@ -55,11 +55,13 @@ npm run build
 The committed evidence records the exact focused results below:
 
 - Focused tests: 57 passed across 4 files.
+- Goal-projection and Info-disclosure follow-up: 44 passed across the 2 affected
+  files.
 - Lint: passed with no diagnostics.
 - Localization extraction and English/expanded-LTR/mirrored-RTL catalog
   compilation: passed.
-- TypeScript and production build: passed. The build measured 208.39 KiB gzip
-  JavaScript and 6.96 KiB gzip CSS; the JavaScript measurement is reported
+- TypeScript and production build: passed. The build measured 208.76 KiB gzip
+  JavaScript and 6.97 KiB gzip CSS; the JavaScript measurement is reported
   against the provisional target, not relabeled as a performance pass.
 - Rendered in the open in-app browser at its 1280x720 default and a temporary
   390x844 compact viewport. The compact view preserved the bottom navigation,

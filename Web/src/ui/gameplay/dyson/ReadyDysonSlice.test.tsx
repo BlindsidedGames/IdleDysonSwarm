@@ -231,13 +231,15 @@ describe('ReadyDysonSlice', () => {
     renderSlice(snapshot(), dispatchPlayer)
 
     const infoRegion = screen.getByRole('region', { name: 'Info' })
-    expect(infoRegion).toHaveTextContent('Active panels: 0')
+    expect(infoRegion).toHaveTextContent('Goal: Create 10 Bots')
+    expect(infoRegion).not.toHaveTextContent('Active panels: 0')
     expect(infoRegion).not.toHaveTextContent('Panel lifetime: 10 seconds')
     expect(infoRegion).not.toHaveTextContent('Total panels decayed: 0')
 
     await user.click(
       within(infoRegion).getByRole('button', { name: 'Info' }),
     )
+    expect(infoRegion).toHaveTextContent('Active panels: 0')
     expect(infoRegion).toHaveTextContent('Panel lifetime: 10 seconds')
     expect(infoRegion).toHaveTextContent('Total panels decayed: 0')
 
@@ -606,6 +608,10 @@ function snapshot(options: SnapshotOptions = {}): ReadySnapshot {
               activePanelMetric: {
                 kind: 'active-panels',
                 value: 0,
+              },
+              currentGoal: {
+                kind: 'create-bots',
+                target: 10,
               },
             },
             rates: {

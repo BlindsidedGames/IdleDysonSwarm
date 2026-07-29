@@ -361,6 +361,6 @@ Current visual checkpoint (2026-07-30):
   production line and complete Bot Distribution control are checkpointed.
 - Buy mode, rounded bulk buying, distribution and Tinker remain canonical
   commands; active time remains lifecycle-coordinator owned.
-- The production build measures approximately 208.4 KiB gzip JavaScript and
+- The production build measures approximately 208.8 KiB gzip JavaScript and
   7.0 KiB gzip CSS. This is evidence for the pending performance-budget review,
   not a failure of the visual checkpoint and not a release-performance pass.

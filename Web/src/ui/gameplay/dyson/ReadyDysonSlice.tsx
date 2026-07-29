@@ -385,6 +385,7 @@ export function ReadyDysonSlice({
           <DysonInfo
             locale={locale}
             metric={dyson.value.presentation.activePanelMetric}
+            currentGoal={dyson.value.presentation.currentGoal}
             panelLifetimeSeconds={
               dyson.value.globals.panelLifetimeSeconds
             }
