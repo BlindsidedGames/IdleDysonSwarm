@@ -1,5 +1,4 @@
 import type { DeepReadonly } from '../core/contracts'
-import { getGameAssetsByKind } from '../game-data/catalog'
 import type { DysonCompatibilityTuning } from '../game-state/compatibilityTuning'
 import { mappingCoverageManifest } from '../game-state/mappingCoverage'
 import type { DysonSkillEffectEvaluationSnapshot } from '../game-state/skillEffectEvaluationSnapshot'
@@ -107,6 +106,8 @@ import {
 import { withCanonicalBotAllocation } from '../simulation/canonicalBotAllocation'
 import {
   previewCanonicalResearchPurchase,
+  selectCanonicalResearchPresentationFacts,
+  UNITY_RESEARCH_PRESENTATION_ORDER,
   type CanonicalResearchPurchasePreview,
 } from '../simulation/researchAutomation'
 import {
@@ -406,6 +407,20 @@ export interface FrontendResearchCatalogPreview {
   readonly complete: boolean
   readonly issue: string | null
   readonly purchases: readonly CanonicalResearchPurchasePreview[]
+  readonly cards: readonly FrontendResearchCardPreview[]
+}
+
+export interface FrontendResearchCardPreview
+  extends CanonicalResearchPurchasePreview {
+  readonly prerequisitesMet: boolean
+  readonly visible: boolean
+  readonly maxed: boolean
+  readonly automationActive: boolean
+  readonly effectKind: 'percentage' | 'panel-lifetime-seconds'
+  readonly perLevelEffect: number
+  readonly currentEffect: number
+  readonly projectedEffect: number
+  readonly passiveProgress: number
 }
 
 export interface FrontendInfinityShopPreview {
@@ -1488,19 +1503,36 @@ function previewResearchCatalog(
   state: CanonicalGameStateV1,
   tuning: Readonly<DysonCompatibilityTuning>,
 ): FrontendResearchCatalogPreview {
-  const purchases = getGameAssetsByKind('GameData.ResearchDefinition')
-    .map((asset) => asset.id)
-    .sort()
+  const purchases = UNITY_RESEARCH_PRESENTATION_ORDER
     .map((researchId) =>
       previewCanonicalResearchPurchase(state, tuning, researchId),
     )
+  const cards = purchases.flatMap((purchase) => {
+    const presentation =
+      selectCanonicalResearchPresentationFacts(
+        state,
+        tuning,
+        purchase.researchId,
+        purchase.selectedQuantity,
+      )
+    return presentation === undefined
+      ? []
+      : [{ ...purchase, ...presentation }]
+  })
   const gap = purchases.find(
-    (preview) => preview.code === 'definition-gap',
+    (preview) =>
+      preview.code === 'definition-gap' ||
+      preview.code === 'unknown-research',
   )
   return {
     complete: gap === undefined,
-    issue: gap?.issue ?? null,
+    issue:
+      gap?.issue ??
+      (gap === undefined
+        ? null
+        : `Research definition '${gap.researchId}' is unavailable.`),
     purchases,
+    cards,
   }
 }
 

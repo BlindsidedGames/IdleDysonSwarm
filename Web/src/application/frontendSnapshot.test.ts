@@ -604,6 +604,163 @@ describe('frontend gameplay snapshot', () => {
     })
   })
 
+  test('projects Research cards in Unity scene order with canonical presentation facts', () => {
+    const source = fixtureState()
+    const levelsById = Object.fromEntries(
+      Object.keys(source.research.levelsById).map((id) => [id, 0]),
+    )
+    const state: CanonicalGameStateV1 = {
+      ...dysonProgressionState(source, {}, source.dyson.bots),
+      dyson: {
+        ...dysonProgressionState(source, {}, source.dyson.bots).dyson,
+        science: 1e20,
+      },
+      infinity: {
+        ...source.infinity,
+        automationUnlocked: {
+          ...source.infinity.automationUnlocked,
+          research: true,
+        },
+      },
+      research: {
+        ...source.research,
+        levelsById: {
+          ...levelsById,
+          'research.assembly_line_upgrade': 2,
+          'research.panel_lifetime_1': 1,
+        },
+        progressById: {
+          ...source.research.progressById,
+          'research.assembly_line_upgrade': 0.375,
+        },
+        automation: {
+          buyMode: 'buy-1',
+          roundedBulkBuy: false,
+          enabledById: {
+            ...source.research.automation.enabledById,
+            'research.assembly_line_upgrade': true,
+            'research.ai_manager_upgrade': false,
+          },
+        },
+      },
+    }
+    const context: FrontendSnapshotContext = {
+      ...frontendContext(),
+      compatibilityTuning: {
+        ...neutralTuning,
+        assemblyLineUpgradePercent: 0.075,
+      },
+    }
+
+    const cards = selectFrontendGameplaySnapshot(
+      state,
+      context,
+    ).previews.research.cards
+
+    expect(cards.map((card) => card.researchId)).toEqual([
+      'research.assembly_line_upgrade',
+      'research.ai_manager_upgrade',
+      'research.server_upgrade',
+      'research.data_center_upgrade',
+      'research.planet_upgrade',
+      'research.matrioshka_brains_upgrade',
+      'research.birch_planets_upgrade',
+      'research.galactic_brains_upgrade',
+      'research.panel_lifetime_1',
+      'research.science_boost',
+      'research.money_multiplier',
+      'research.panel_lifetime_2',
+      'research.panel_lifetime_3',
+      'research.panel_lifetime_4',
+    ])
+    expect(cards[0]).toMatchObject({
+      researchId: 'research.assembly_line_upgrade',
+      visible: true,
+      maxed: false,
+      automationActive: true,
+      effectKind: 'percentage',
+      perLevelEffect: 7.5,
+      currentEffect: 15,
+      projectedEffect: 22.5,
+      passiveProgress: 0.375,
+      selectedQuantity: 1n,
+    })
+    expect(
+      cards.find(
+        (card) =>
+          card.researchId === 'research.ai_manager_upgrade',
+      ),
+    ).toMatchObject({
+      automationActive: false,
+    })
+    expect(
+      cards.find(
+        (card) =>
+          card.researchId === 'research.panel_lifetime_1',
+      ),
+    ).toMatchObject({
+      visible: false,
+      maxed: true,
+      effectKind: 'panel-lifetime-seconds',
+      perLevelEffect: 1,
+      currentEffect: 1,
+      projectedEffect: 1,
+    })
+    expect(
+      cards.find(
+        (card) =>
+          card.researchId === 'research.panel_lifetime_2',
+      ),
+    ).toMatchObject({
+      prerequisitesMet: true,
+      visible: true,
+      automationActive: true,
+      effectKind: 'panel-lifetime-seconds',
+      perLevelEffect: 2,
+      currentEffect: 0,
+      projectedEffect: 2,
+    })
+  })
+
+  test('hides unmet facility Research until canonical ownership satisfies its prerequisite', () => {
+    const source = fixtureState()
+    const levelsById = Object.fromEntries(
+      Object.keys(source.research.levelsById).map((id) => [id, 0]),
+    )
+    const lockedState: CanonicalGameStateV1 = {
+      ...dysonProgressionState(source, {}),
+      research: {
+        ...source.research,
+        levelsById,
+      },
+    }
+    const unlockedState = dysonProgressionState(
+      lockedState,
+      {
+        matrioshka_brains: [0, 1],
+      },
+      lockedState.dyson.bots,
+    )
+    const card = (state: CanonicalGameStateV1) =>
+      selectFrontendGameplaySnapshot(
+        state,
+        frontendContext(),
+      ).previews.research.cards.find(
+        (candidate) =>
+          candidate.researchId ===
+          'research.matrioshka_brains_upgrade',
+      )
+
+    expect(card(lockedState)).toMatchObject({
+      prerequisitesMet: false,
+      visible: false,
+    })
+    expect(card(unlockedState)).toMatchObject({
+      prerequisitesMet: true,
+      visible: true,
+    })
+  })
+
   test('marks definition-dependent routes unavailable when coverage has a typed gap', () => {
     const coverage: FrontendDefinitionCoverage = {
       complete: false,

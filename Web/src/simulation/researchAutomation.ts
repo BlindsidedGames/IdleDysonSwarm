@@ -16,6 +16,23 @@ import {
 
 const RESEARCH_KIND = 'GameData.ResearchDefinition'
 
+export const UNITY_RESEARCH_PRESENTATION_ORDER = Object.freeze([
+  'research.assembly_line_upgrade',
+  'research.ai_manager_upgrade',
+  'research.server_upgrade',
+  'research.data_center_upgrade',
+  'research.planet_upgrade',
+  'research.matrioshka_brains_upgrade',
+  'research.birch_planets_upgrade',
+  'research.galactic_brains_upgrade',
+  'research.panel_lifetime_1',
+  'research.science_boost',
+  'research.money_multiplier',
+  'research.panel_lifetime_2',
+  'research.panel_lifetime_3',
+  'research.panel_lifetime_4',
+] as const)
+
 const AUTOMATION_IDS_BY_GROUP: Readonly<Record<number, string | undefined>> = {
   2: 'research.science_boost',
   3: 'research.money_multiplier',
@@ -42,6 +59,15 @@ const COEFFICIENT_BY_RESEARCH_ID: Readonly<
   'research.matrioshka_brains_upgrade': 'matrioshkaUpgradePercent',
   'research.birch_planets_upgrade': 'birchUpgradePercent',
   'research.galactic_brains_upgrade': 'galacticUpgradePercent',
+}
+
+const PANEL_LIFETIME_SECONDS_BY_RESEARCH_ID: Readonly<
+  Record<string, number | undefined>
+> = {
+  'research.panel_lifetime_1': 1,
+  'research.panel_lifetime_2': 2,
+  'research.panel_lifetime_3': 3,
+  'research.panel_lifetime_4': 4,
 }
 
 interface ResearchDefinition {
@@ -107,6 +133,18 @@ export interface CanonicalResearchPurchasePreview {
   readonly issue: string | null
 }
 
+export interface CanonicalResearchPresentationFacts {
+  readonly prerequisitesMet: boolean
+  readonly visible: boolean
+  readonly maxed: boolean
+  readonly automationActive: boolean
+  readonly effectKind: 'percentage' | 'panel-lifetime-seconds'
+  readonly perLevelEffect: number
+  readonly currentEffect: number
+  readonly projectedEffect: number
+  readonly passiveProgress: number
+}
+
 interface InternalResearchPurchasePreview
   extends CanonicalResearchPurchasePreview {
   readonly nextScience: number
@@ -151,6 +189,69 @@ export function previewCanonicalResearchPurchase(
       false,
     ),
   )
+}
+
+/**
+ * Projects Unity-authored ResearchPresenter display facts without duplicating
+ * purchase eligibility or cost calculations in the frontend. The projected
+ * quantity must come from the canonical purchase preview for the same card.
+ */
+export function selectCanonicalResearchPresentationFacts(
+  state: Readonly<CanonicalGameStateV1>,
+  tuning: Readonly<DysonCompatibilityTuning>,
+  researchId: string,
+  projectedQuantity: bigint,
+): CanonicalResearchPresentationFacts | undefined {
+  let definition: ResearchDefinition | undefined
+  try {
+    definition = loadDefinitions().find(
+      (candidate) => candidate.id === researchId,
+    )
+  } catch {
+    return undefined
+  }
+  if (definition === undefined) return undefined
+
+  const currentLevel = state.research.levelsById[researchId] ?? 0
+  const meetsPrerequisites = prerequisitesMet(
+    definition,
+    state,
+    state.research.levelsById,
+  )
+  const maxed =
+    definition.maxLevel >= 0 &&
+    currentLevel >= definition.maxLevel
+  const coefficientField = COEFFICIENT_BY_RESEARCH_ID[researchId]
+  const lifetimeSeconds =
+    PANEL_LIFETIME_SECONDS_BY_RESEARCH_ID[researchId]
+  const effectKind =
+    lifetimeSeconds === undefined
+      ? 'percentage'
+      : 'panel-lifetime-seconds'
+  const perLevelEffect =
+    lifetimeSeconds ??
+    (coefficientField === undefined
+      ? 0
+      : tuning[coefficientField] * 100)
+  const projectedLevel =
+    currentLevel + Number(projectedQuantity)
+
+  return Object.freeze({
+    prerequisitesMet: meetsPrerequisites,
+    visible:
+      (meetsPrerequisites || currentLevel > 0) &&
+      !maxed,
+    maxed,
+    automationActive:
+      state.infinity.automationUnlocked.research &&
+      isAutomationEnabled(definition, state),
+    effectKind,
+    perLevelEffect,
+    currentEffect: currentLevel * perLevelEffect,
+    projectedEffect: projectedLevel * perLevelEffect,
+    passiveProgress:
+      state.research.progressById[researchId] ?? 0,
+  })
 }
 
 /**
