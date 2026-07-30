@@ -7,6 +7,7 @@ import {
 import {
   FormattedMessage,
   useIntl,
+  type IntlShape,
   type MessageDescriptor,
 } from 'react-intl'
 import type {
@@ -15,12 +16,17 @@ import type {
 import type {
   CanonicalPlayerCommand,
 } from '../../../application/canonicalPlayerCommands'
+import type {
+  CanonicalSkillPresetAutomationSlot,
+  SkillPresetState,
+} from '../../../game-state/types'
 import researchCostSymbolSrc from '../../assets/symbol-research-cost.png'
 import scienceSymbolSrc from '../../assets/symbol-science.png'
 import {
   Button,
   FacilityCard,
   InlineImageSymbol,
+  PresetAutomationSelect,
 } from '../../components'
 import {
   formatGameNumber,
@@ -42,6 +48,7 @@ type ResearchCommand = Extract<
       | 'research.purchase'
       | 'research.set-buy-mode'
       | 'research.set-rounded-bulk-buy'
+      | 'skill.set-tab-preset-automation'
   }
 >
 
@@ -65,9 +72,12 @@ export interface ResearchSurfaceProps {
   readonly sciencePerSecond: number
   readonly buyMode: ResearchBuyMode
   readonly roundedBulkBuy: boolean
+  readonly presets: readonly SkillPresetState[]
+  readonly presetAutomationSlot: CanonicalSkillPresetAutomationSlot
   readonly purchaseRouteAvailable: boolean
   readonly buyModeRouteAvailable: boolean
   readonly roundedBulkRouteAvailable: boolean
+  readonly presetAutomationRouteAvailable: boolean
   readonly dispatchPlayer: (
     command: ResearchCommand,
   ) => Promise<UiRuntimePlayerCommandResult>
@@ -84,9 +94,12 @@ export function ResearchSurface({
   sciencePerSecond,
   buyMode,
   roundedBulkBuy,
+  presets,
+  presetAutomationSlot,
   purchaseRouteAvailable,
   buyModeRouteAvailable,
   roundedBulkRouteAvailable,
+  presetAutomationRouteAvailable,
   dispatchPlayer,
 }: ResearchSurfaceProps) {
   const intl = useIntl()
@@ -103,6 +116,7 @@ export function ResearchSurface({
         readonly kind:
           | 'research.set-buy-mode'
           | 'research.set-rounded-bulk-buy'
+          | 'skill.set-tab-preset-automation'
       }
     >,
   ): Promise<void> => {
@@ -196,6 +210,22 @@ export function ResearchSurface({
                 {intl.formatMessage(messages.roundedBulkBuy)}
               </span>
             </label>
+            <PresetAutomationSelect
+              label={intl.formatMessage(messages.presetAutomation)}
+              offLabel={intl.formatMessage(messages.presetAutomationOff)}
+              value={presetAutomationSlot}
+              presets={presets}
+              disabled={
+                settingPending || !presetAutomationRouteAvailable
+              }
+              onChange={(slot) =>
+                void applySetting({
+                  kind: 'skill.set-tab-preset-automation',
+                  tab: 'research',
+                  slot,
+                })
+              }
+            />
             {settingFailed ? (
               <span
                 className="research-surface__settings-failure"
@@ -317,7 +347,7 @@ function ResearchCard({
       title={title}
       production={
         <span className="research-card__effect">
-          {effectText(card, locale)}
+          {effectText(card, locale, intl)}
         </span>
       }
       description={intl.formatMessage(
@@ -379,6 +409,7 @@ function ResearchCard({
 function effectText(
   card: FrontendResearchCardPreview,
   locale: EnabledLocale,
+  intl: IntlShape,
 ): ReactNode {
   if (card.effectKind === 'panel-lifetime-seconds') {
     return (
@@ -409,18 +440,35 @@ function effectText(
   }
   const current = formatPercentPoints(locale, card.currentEffect)
   if (card.projectedEffect !== card.currentEffect) {
+    const projected = formatPercentPoints(
+      locale,
+      card.projectedEffect,
+    )
     return (
-      <FormattedMessage
-        {...messages.boostingProjected}
-        values={{
-          current,
-          projected: formatPercentPoints(
-            locale,
-            card.projectedEffect,
-          ),
-          value: researchValue,
-        }}
-      />
+      <span
+        aria-label={intl.formatMessage(
+          messages.boostingProjectedAccessible,
+          { current, projected },
+        )}
+      >
+        <FormattedMessage
+          {...messages.boostingProjected}
+          values={{
+            current,
+            projected,
+            value: researchValue,
+            arrowMark: '\u25b8',
+            arrow: (chunks: ReactNode) => (
+              <span
+                className="research-card__effect-arrow"
+                aria-hidden="true"
+              >
+                {chunks}
+              </span>
+            ),
+          }}
+        />
+      </span>
     )
   }
   return (

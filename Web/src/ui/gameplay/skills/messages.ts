@@ -119,6 +119,110 @@ export const skillMessages = defineMessages({
     defaultMessage:
       '{count, plural, one {# queued skill} other {# queued skills}} · {workers}% Workers',
   },
+  managePreset: {
+    id: 'skills.manage-preset',
+    defaultMessage: 'Manage {name}',
+  },
+  managePresetTitle: {
+    id: 'skills.manage-preset-title',
+    defaultMessage: 'Manage {name}',
+  },
+  presetName: {
+    id: 'skills.preset-name',
+    defaultMessage: 'Preset name',
+  },
+  rename: {
+    id: 'skills.rename',
+    defaultMessage: 'Rename',
+  },
+  includedInPreset: {
+    id: 'skills.included-in-preset',
+    defaultMessage: 'Included in {name}',
+  },
+  confirmPresetChange: {
+    id: 'skills.confirm-preset-change',
+    defaultMessage: 'Confirm preset change',
+  },
+  includeDependencies: {
+    id: 'skills.include-dependencies',
+    defaultMessage: 'This will also include: {names}.',
+  },
+  removeDependants: {
+    id: 'skills.remove-dependants',
+    defaultMessage: 'This will also remove: {names}.',
+  },
+  confirm: {
+    id: 'skills.confirm',
+    defaultMessage: 'Confirm',
+  },
+  cancel: {
+    id: 'skills.cancel',
+    defaultMessage: 'Cancel',
+  },
+  presetChangeFailed: {
+    id: 'skills.preset-change-failed',
+    defaultMessage: 'The preset was not changed. Try again.',
+  },
+  exportPreset: {
+    id: 'skills.export-preset',
+    defaultMessage: 'Export',
+  },
+  exportPresetHelp: {
+    id: 'skills.export-preset-help',
+    defaultMessage: 'Create a string you can save or share.',
+  },
+  createExport: {
+    id: 'skills.create-export',
+    defaultMessage: 'Create export',
+  },
+  exportText: {
+    id: 'skills.export-text',
+    defaultMessage: 'Preset export string',
+  },
+  copy: {
+    id: 'skills.copy',
+    defaultMessage: 'Copy',
+  },
+  paste: {
+    id: 'skills.paste',
+    defaultMessage: 'Paste',
+  },
+  copied: {
+    id: 'skills.copied',
+    defaultMessage: 'Copied',
+  },
+  importPreset: {
+    id: 'skills.import-preset',
+    defaultMessage: 'Import',
+  },
+  importPresetHelp: {
+    id: 'skills.import-preset-help',
+    defaultMessage: 'Paste a preset string and review it before replacing this preset.',
+  },
+  importText: {
+    id: 'skills.import-text',
+    defaultMessage: 'Preset import string',
+  },
+  importPlaceholder: {
+    id: 'skills.import-placeholder',
+    defaultMessage: 'Paste preset string',
+  },
+  previewImport: {
+    id: 'skills.preview-import',
+    defaultMessage: 'Preview import',
+  },
+  replacePreset: {
+    id: 'skills.replace-preset',
+    defaultMessage: 'Replace {name}?',
+  },
+  confirmImport: {
+    id: 'skills.confirm-import',
+    defaultMessage: 'Replace preset',
+  },
+  presetTransferFailed: {
+    id: 'skills.preset-transfer-failed',
+    defaultMessage: 'The preset string could not be processed. Check it and try again.',
+  },
   nonRefundable: {
     id: 'skills.non-refundable',
     defaultMessage: 'Allow automatic assignment of non-refundable skills',

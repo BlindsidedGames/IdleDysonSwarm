@@ -95,6 +95,11 @@
   background: #342839;
 }
 
+.dyson-info__settings .ui-preset-automation select {
+  border-color: #78617e;
+  background: #271e2b;
+}
+
 .dyson-info__settings-title {
   font-size: 0.86rem;
   font-weight: var(--font-weight-semibold);

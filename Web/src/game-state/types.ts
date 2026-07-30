@@ -104,6 +104,12 @@ export interface SkillPresetState {
   readonly botDistribution: number
 }
 
+export type CanonicalSkillPresetSlot = 1 | 2 | 3 | 4 | 5
+
+export type CanonicalSkillPresetAutomationSlot =
+  | 0
+  | CanonicalSkillPresetSlot
+
 export interface SkillsState {
   readonly points: bigint
   readonly fragments: bigint
@@ -117,6 +123,10 @@ export interface SkillsState {
     SkillPresetState,
   ]
   readonly autoAssignNonRefundable: boolean
+  readonly tabPresetAutomation: {
+    readonly bots: CanonicalSkillPresetAutomationSlot
+    readonly research: CanonicalSkillPresetAutomationSlot
+  }
 }
 
 export interface ResearchState {

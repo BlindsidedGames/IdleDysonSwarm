@@ -86,8 +86,27 @@ export const researchMessages = defineMessages({
   boostingProjected: {
     id: 'research.card.boosting-projected',
     defaultMessage:
-      'Boosting by <value>{current}%</value> -> <value>{projected}%</value>',
+      'Boosting by <value>{current}%</value> <arrow>{arrowMark}</arrow> <value>{projected}%</value>',
     description: 'Research effect line when the quoted purchase changes the boost.',
+  },
+  boostingProjectedAccessible: {
+    id: 'research.card.boosting-projected-accessible',
+    defaultMessage:
+      'Boosting increases from {current}% to {projected}%',
+    description:
+      'Accessible text for a Research boost changing after purchase.',
+  },
+  presetAutomation: {
+    id: 'research.settings.preset-automation',
+    defaultMessage: 'Skill preset on opening Research',
+    description:
+      'Label for choosing the skill preset automatically loaded when Research opens.',
+  },
+  presetAutomationOff: {
+    id: 'research.settings.preset-automation-off',
+    defaultMessage: 'Off',
+    description:
+      'Disables automatic skill preset loading when Research opens.',
   },
   lifetimeEffect: {
     id: 'research.card.lifetime-effect',

@@ -76,6 +76,48 @@ export interface SkillCommandAvailability {
   readonly reset: boolean
 }
 
+export interface SkillPresetQueueChangeRequest {
+  readonly slot: CanonicalSkillPresetSlot
+  readonly skillId: string
+  readonly included: boolean
+}
+
+export interface SkillPresetQueueChangePreview {
+  readonly affectedSkillIds: readonly string[]
+  readonly confirmationRequired: boolean
+}
+
+export interface SkillPresetImportPreview {
+  readonly name: string
+  readonly queuedSkillCount: number
+  readonly workerPercent: number
+}
+
+/**
+ * Canonical preset operations consumed by the Skills UI. Implementations own
+ * dependency closure, cascading removals, transfer validation and atomic
+ * replacement; this surface only presents published previews and outcomes.
+ */
+export interface SkillPresetActions {
+  readonly previewQueueChange: (
+    request: SkillPresetQueueChangeRequest,
+  ) => Promise<SkillPresetQueueChangePreview>
+  readonly applyQueueChange: (
+    request: SkillPresetQueueChangeRequest,
+  ) => Promise<boolean>
+  readonly exportPreset: (
+    slot: CanonicalSkillPresetSlot,
+  ) => Promise<string>
+  readonly previewImportPreset: (
+    slot: CanonicalSkillPresetSlot,
+    text: string,
+  ) => Promise<SkillPresetImportPreview>
+  readonly importPreset: (
+    slot: CanonicalSkillPresetSlot,
+    text: string,
+  ) => Promise<boolean>
+}
+
 export interface SkillsSurfaceProps {
   readonly locale: EnabledLocale
   readonly points: bigint
@@ -86,6 +128,7 @@ export interface SkillsSurfaceProps {
   readonly botDistribution: number
   readonly autoAssignNonRefundable: boolean
   readonly commandAvailability: SkillCommandAvailability
+  readonly presetActions?: SkillPresetActions
   readonly dispatchPlayer: (
     command: SkillCommand,
   ) => Promise<UiRuntimePlayerCommandResult>
@@ -147,6 +190,7 @@ export function SkillsSurface({
   botDistribution,
   autoAssignNonRefundable,
   commandAvailability,
+  presetActions,
   dispatchPlayer,
 }: SkillsSurfaceProps) {
   const intl = useIntl()
@@ -397,6 +441,7 @@ export function SkillsSurface({
           selectedPresetSlot={selectedPresetSlot}
           autoAssignNonRefundable={autoAssignNonRefundable}
           commandAvailability={commandAvailability}
+          presetActions={presetActions}
           pendingKind={pendingKind}
           dispatch={dispatch}
         />
@@ -424,6 +469,12 @@ export function SkillsSurface({
           previews={previewById}
           nodeById={nodeById}
           commandAvailability={commandAvailability}
+          selectedPresetSlot={selectedPresetSlot}
+          selectedPresetName={
+            presets[selectedPresetSlot - 1]?.name ??
+            `Preset ${selectedPresetSlot}`
+          }
+          presetActions={presetActions}
           pendingKind={pendingKind}
           onClose={() => setSelectedSkillId(null)}
           dispatch={dispatch}
@@ -867,6 +918,9 @@ interface SkillDetailsProps {
   readonly previews: ReadonlyMap<string, CanonicalSkillAvailabilityPreview>
   readonly nodeById: ReadonlyMap<string, SkillPresentationNode>
   readonly commandAvailability: SkillCommandAvailability
+  readonly selectedPresetSlot: CanonicalSkillPresetSlot
+  readonly selectedPresetName: string
+  readonly presetActions?: SkillPresetActions
   readonly pendingKind: string | null
   readonly onClose: () => void
   readonly dispatch: (
@@ -883,11 +937,20 @@ function SkillDetails({
   previews,
   nodeById,
   commandAvailability,
+  selectedPresetSlot,
+  selectedPresetName,
+  presetActions,
   pendingKind,
   onClose,
   dispatch,
 }: SkillDetailsProps) {
   const intl = useIntl()
+  const [queuePreview, setQueuePreview] = useState<{
+    readonly request: SkillPresetQueueChangeRequest
+    readonly affectedSkillIds: readonly string[]
+  } | null>(null)
+  const [queuePending, setQueuePending] = useState(false)
+  const [queueFailed, setQueueFailed] = useState(false)
   const names = (ids: readonly string[]) =>
     ids
       .map((id) => nodeById.get(id)?.displayName ?? id)
@@ -908,6 +971,49 @@ function SkillDetails({
   const missingRequirementIds = preview.requiredSkillIds.filter(
     (skillId) => !previews.get(skillId)?.owned,
   )
+  const applyQueueChange = async (
+    request: SkillPresetQueueChangeRequest,
+  ) => {
+    if (presetActions === undefined || queuePending) return
+    setQueuePending(true)
+    setQueueFailed(false)
+    try {
+      const changed = await presetActions.applyQueueChange(request)
+      setQueueFailed(!changed)
+      if (changed) setQueuePreview(null)
+    } catch {
+      setQueueFailed(true)
+    } finally {
+      setQueuePending(false)
+    }
+  }
+  const requestQueueChange = async (included: boolean) => {
+    if (presetActions === undefined || queuePending) return
+    const request = {
+      slot: selectedPresetSlot,
+      skillId: node.skillId,
+      included,
+    } satisfies SkillPresetQueueChangeRequest
+    setQueuePending(true)
+    setQueueFailed(false)
+    try {
+      const result = await presetActions.previewQueueChange(request)
+      if (result.confirmationRequired) {
+        setQueuePreview({
+          request,
+          affectedSkillIds: result.affectedSkillIds,
+        })
+      } else {
+        setQueuePending(false)
+        await applyQueueChange(request)
+        return
+      }
+    } catch {
+      setQueueFailed(true)
+    } finally {
+      setQueuePending(false)
+    }
+  }
 
   return (
     <SkillDetailsDialog
@@ -978,6 +1084,67 @@ function SkillDetails({
             </p>
           )}
         </div>
+        <div className="skill-details__preset">
+          <label>
+            <input
+              type="checkbox"
+              checked={preview.queued}
+              disabled={presetActions === undefined || queuePending}
+              onChange={(event) =>
+                void requestQueueChange(event.currentTarget.checked)
+              }
+            />
+            <span>
+              {intl.formatMessage(messages.includedInPreset, {
+                name: selectedPresetName,
+              })}
+            </span>
+          </label>
+          {queuePreview && (
+            <div
+              className="skill-details__queue-confirmation"
+              role="group"
+              aria-label={intl.formatMessage(
+                messages.confirmPresetChange,
+              )}
+            >
+              <p>
+                {intl.formatMessage(
+                  queuePreview.request.included
+                    ? messages.includeDependencies
+                    : messages.removeDependants,
+                  {
+                    names: names(
+                      queuePreview.affectedSkillIds.filter(
+                        (skillId) => skillId !== node.skillId,
+                      ),
+                    ),
+                  },
+                )}
+              </p>
+              <Button
+                variant="primary"
+                state={queuePending ? 'pending' : 'idle'}
+                onClick={() =>
+                  void applyQueueChange(queuePreview.request)
+                }
+              >
+                {intl.formatMessage(messages.confirm)}
+              </Button>
+              <Button
+                disabled={queuePending}
+                onClick={() => setQueuePreview(null)}
+              >
+                {intl.formatMessage(messages.cancel)}
+              </Button>
+            </div>
+          )}
+          {queueFailed && (
+            <StatusFeedback tone="error">
+              {intl.formatMessage(messages.presetChangeFailed)}
+            </StatusFeedback>
+          )}
+        </div>
         <div className="skill-details__actions">
           {!preview.owned ? (
             <Button
@@ -1038,6 +1205,7 @@ interface SkillSettingsProps {
   readonly selectedPresetSlot: CanonicalSkillPresetSlot
   readonly autoAssignNonRefundable: boolean
   readonly commandAvailability: SkillCommandAvailability
+  readonly presetActions?: SkillPresetActions
   readonly pendingKind: string | null
   readonly dispatch: (
     command: SkillCommand,
@@ -1051,12 +1219,15 @@ function SkillSettings({
   selectedPresetSlot,
   autoAssignNonRefundable,
   commandAvailability,
+  presetActions,
   pendingKind,
   dispatch,
 }: SkillSettingsProps) {
   const intl = useIntl()
   const confirmId = useId()
   const [confirmReset, setConfirmReset] = useState(false)
+  const [managedSlot, setManagedSlot] =
+    useState<CanonicalSkillPresetSlot | null>(null)
 
   return (
     <div id={id} className="skill-settings">
@@ -1067,43 +1238,60 @@ function SkillSettings({
             const slot = (index + 1) as CanonicalSkillPresetSlot
             const workers = Math.round((1 - preset.botDistribution) * 100)
             return (
-              <button
+              <div
                 key={slot}
-                type="button"
-                disabled={
-                  !commandAvailability.selectPreset ||
-                  pendingKind === 'skill.select-preset'
-                }
-                aria-pressed={selectedPresetSlot === slot}
-                onClick={() =>
-                  void dispatch(
-                    {
-                      kind: 'skill.select-preset',
-                      slot,
-                    },
-                    selectedPresetSlot === slot
-                      ? {}
-                      : { expectedPresetSlot: slot },
-                  )
-                }
+                className="skill-settings__preset-row"
+                data-current={selectedPresetSlot === slot || undefined}
               >
-                <strong>
-                  {intl.formatMessage(messages.loadPreset, {
-                    name: preset.name,
-                  })}
-                </strong>
-                {selectedPresetSlot === slot && (
-                  <em className="skill-settings__current">
-                    {intl.formatMessage(messages.currentPreset)}
-                  </em>
-                )}
-                <span>
-                  {intl.formatMessage(messages.presetSummary, {
-                    count: preset.skillIds.length,
-                    workers,
-                  })}
-                </span>
-              </button>
+                <button
+                  type="button"
+                  className="skill-settings__preset-load"
+                  disabled={
+                    !commandAvailability.selectPreset ||
+                    pendingKind === 'skill.select-preset'
+                  }
+                  aria-pressed={selectedPresetSlot === slot}
+                  onClick={() =>
+                    void dispatch(
+                      {
+                        kind: 'skill.select-preset',
+                        slot,
+                      },
+                      selectedPresetSlot === slot
+                        ? {}
+                        : { expectedPresetSlot: slot },
+                    )
+                  }
+                >
+                  <strong>
+                    {intl.formatMessage(messages.loadPreset, {
+                      name: preset.name,
+                    })}
+                  </strong>
+                  {selectedPresetSlot === slot && (
+                    <em className="skill-settings__current">
+                      {intl.formatMessage(messages.currentPreset)}
+                    </em>
+                  )}
+                  <span>
+                    {intl.formatMessage(messages.presetSummary, {
+                      count: preset.skillIds.length,
+                      workers,
+                    })}
+                  </span>
+                </button>
+                <button
+                  type="button"
+                  className="skill-settings__preset-manage"
+                  aria-label={intl.formatMessage(
+                    messages.managePreset,
+                    { name: preset.name },
+                  )}
+                  onClick={() => setManagedSlot(slot)}
+                >
+                  <span aria-hidden="true">⋯</span>
+                </button>
+              </div>
             )
           })}
         </div>
@@ -1159,6 +1347,299 @@ function SkillSettings({
           </div>
         )}
       </section>
+      {managedSlot !== null && presets[managedSlot - 1] && (
+        <PresetManagementDialog
+          key={managedSlot}
+          slot={managedSlot}
+          preset={presets[managedSlot - 1]}
+          presetActions={presetActions}
+          pendingKind={pendingKind}
+          dispatch={dispatch}
+          onClose={() => setManagedSlot(null)}
+        />
+      )}
     </div>
+  )
+}
+
+interface PresetManagementDialogProps {
+  readonly slot: CanonicalSkillPresetSlot
+  readonly preset: SkillPresetState
+  readonly presetActions?: SkillPresetActions
+  readonly pendingKind: string | null
+  readonly dispatch: (
+    command: SkillCommand,
+    expectation?: Omit<PendingExpectation, 'beforeSignature'>,
+  ) => Promise<boolean>
+  readonly onClose: () => void
+}
+
+function PresetManagementDialog({
+  slot,
+  preset,
+  presetActions,
+  pendingKind,
+  dispatch,
+  onClose,
+}: PresetManagementDialogProps) {
+  const intl = useIntl()
+  const [name, setName] = useState(preset.name)
+  const [exportText, setExportText] = useState('')
+  const [copyComplete, setCopyComplete] = useState(false)
+  const [importText, setImportText] = useState('')
+  const [importPreview, setImportPreview] =
+    useState<SkillPresetImportPreview | null>(null)
+  const [transferPending, setTransferPending] = useState<
+    'export' | 'preview' | 'import' | null
+  >(null)
+  const [transferFailed, setTransferFailed] = useState(false)
+  const exportAreaRef = useRef<HTMLTextAreaElement>(null)
+  const trimmedName = name.trim()
+
+  const exportPreset = async () => {
+    if (presetActions === undefined || transferPending !== null) return
+    setTransferPending('export')
+    setTransferFailed(false)
+    setCopyComplete(false)
+    try {
+      setExportText(await presetActions.exportPreset(slot))
+    } catch {
+      setTransferFailed(true)
+    } finally {
+      setTransferPending(null)
+    }
+  }
+
+  const copyExport = async () => {
+    if (exportText.length === 0) return
+    setCopyComplete(false)
+    try {
+      if (navigator.clipboard?.writeText) {
+        await navigator.clipboard.writeText(exportText)
+      } else {
+        exportAreaRef.current?.select()
+        if (!document.execCommand('copy')) throw new Error('copy failed')
+      }
+      setCopyComplete(true)
+    } catch {
+      setTransferFailed(true)
+    }
+  }
+
+  const previewImport = async () => {
+    if (
+      presetActions === undefined ||
+      transferPending !== null ||
+      importText.trim().length === 0
+    ) {
+      return
+    }
+    setTransferPending('preview')
+    setTransferFailed(false)
+    setImportPreview(null)
+    try {
+      setImportPreview(
+        await presetActions.previewImportPreset(slot, importText),
+      )
+    } catch {
+      setTransferFailed(true)
+    } finally {
+      setTransferPending(null)
+    }
+  }
+
+  const pasteImport = async () => {
+    if (!navigator.clipboard?.readText || transferPending !== null) {
+      return
+    }
+    setTransferFailed(false)
+    try {
+      const text = await navigator.clipboard.readText()
+      setImportText(text)
+      setImportPreview(null)
+    } catch {
+      setTransferFailed(true)
+    }
+  }
+
+  const importPreset = async () => {
+    if (
+      presetActions === undefined ||
+      importPreview === null ||
+      transferPending !== null
+    ) {
+      return
+    }
+    setTransferPending('import')
+    setTransferFailed(false)
+    try {
+      if (await presetActions.importPreset(slot, importText)) onClose()
+      else setTransferFailed(true)
+    } catch {
+      setTransferFailed(true)
+    } finally {
+      setTransferPending(null)
+    }
+  }
+
+  return (
+    <SkillDetailsDialog
+      title={intl.formatMessage(messages.managePresetTitle, {
+        name: preset.name,
+      })}
+      closeLabel={intl.formatMessage(messages.close)}
+      palette="normal"
+      onClose={onClose}
+    >
+      <div className="skill-preset-management">
+        <form
+          className="skill-preset-management__rename"
+          onSubmit={(event) => {
+            event.preventDefault()
+            if (trimmedName.length === 0 || trimmedName === preset.name) {
+              return
+            }
+            void dispatch({
+              kind: 'skill.rename-preset',
+              slot,
+              name: trimmedName,
+            })
+          }}
+        >
+          <label>
+            <span>{intl.formatMessage(messages.presetName)}</span>
+            <input
+              value={name}
+              autoComplete="off"
+              onChange={(event) => setName(event.currentTarget.value)}
+            />
+          </label>
+          <Button
+            variant="primary"
+            state={
+              pendingKind === 'skill.rename-preset'
+                ? 'pending'
+                : 'idle'
+            }
+            disabled={
+              trimmedName.length === 0 || trimmedName === preset.name
+            }
+            type="submit"
+          >
+            {intl.formatMessage(messages.rename)}
+          </Button>
+        </form>
+
+        <section>
+          <h3>{intl.formatMessage(messages.exportPreset)}</h3>
+          <p>{intl.formatMessage(messages.exportPresetHelp)}</p>
+          <Button
+            disabled={presetActions === undefined}
+            state={transferPending === 'export' ? 'pending' : 'idle'}
+            onClick={() => void exportPreset()}
+          >
+            {intl.formatMessage(messages.createExport)}
+          </Button>
+          {exportText.length > 0 && (
+            <>
+              <label>
+                <span className="skills-surface__visually-hidden">
+                  {intl.formatMessage(messages.exportText)}
+                </span>
+                <textarea
+                  ref={exportAreaRef}
+                  readOnly
+                  rows={4}
+                  value={exportText}
+                  onFocus={(event) => event.currentTarget.select()}
+                />
+              </label>
+              <Button onClick={() => void copyExport()}>
+                {intl.formatMessage(messages.copy)}
+              </Button>
+              {copyComplete && (
+                <span role="status">
+                  {intl.formatMessage(messages.copied)}
+                </span>
+              )}
+            </>
+          )}
+        </section>
+
+        <section>
+          <h3>{intl.formatMessage(messages.importPreset)}</h3>
+          <p>{intl.formatMessage(messages.importPresetHelp)}</p>
+          <label>
+            <span className="skills-surface__visually-hidden">
+              {intl.formatMessage(messages.importText)}
+            </span>
+            <textarea
+              rows={4}
+              value={importText}
+              placeholder={intl.formatMessage(
+                messages.importPlaceholder,
+              )}
+              onChange={(event) => {
+                setImportText(event.currentTarget.value)
+                setImportPreview(null)
+                setTransferFailed(false)
+              }}
+            />
+          </label>
+          <Button
+            disabled={!navigator.clipboard?.readText}
+            onClick={() => void pasteImport()}
+          >
+            {intl.formatMessage(messages.paste)}
+          </Button>
+          <Button
+            disabled={
+              presetActions === undefined ||
+              importText.trim().length === 0
+            }
+            state={transferPending === 'preview' ? 'pending' : 'idle'}
+            onClick={() => void previewImport()}
+          >
+            {intl.formatMessage(messages.previewImport)}
+          </Button>
+          {importPreview && (
+            <div className="skill-preset-management__preview">
+              <strong>{importPreview.name}</strong>
+              <span>
+                {intl.formatMessage(messages.presetSummary, {
+                  count: importPreview.queuedSkillCount,
+                  workers: importPreview.workerPercent,
+                })}
+              </span>
+              <p>
+                {intl.formatMessage(messages.replacePreset, {
+                  name: preset.name,
+                })}
+              </p>
+              <Button
+                variant="primary"
+                state={
+                  transferPending === 'import' ? 'pending' : 'idle'
+                }
+                onClick={() => void importPreset()}
+              >
+                {intl.formatMessage(messages.confirmImport)}
+              </Button>
+              <Button
+                disabled={transferPending !== null}
+                onClick={() => setImportPreview(null)}
+              >
+                {intl.formatMessage(messages.cancel)}
+              </Button>
+            </div>
+          )}
+        </section>
+        {transferFailed && (
+          <StatusFeedback tone="error">
+            {intl.formatMessage(messages.presetTransferFailed)}
+          </StatusFeedback>
+        )}
+      </div>
+    </SkillDetailsDialog>
   )
 }

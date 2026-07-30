@@ -391,6 +391,14 @@
     "defaultMessage": "Panel lifetime: <emphasis>{value}</emphasis> seconds",
     "description": "Canonical panel lifetime shown in the expanded Info control."
   },
+  "dyson.info.preset-automation": {
+    "defaultMessage": "Skill preset on opening Bots",
+    "description": "Label for choosing the skill preset automatically loaded when Bots opens."
+  },
+  "dyson.info.preset-automation-off": {
+    "defaultMessage": "Off",
+    "description": "Disables automatic skill preset loading when Bots opens."
+  },
   "dyson.info.purchase-amount": {
     "defaultMessage": "Building purchase amount",
     "description": "Heading for the canonical Dyson building buy mode."
@@ -588,8 +596,12 @@
     "description": "Research effect line for an owned research."
   },
   "research.card.boosting-projected": {
-    "defaultMessage": "Boosting by <value>{current}%</value> -> <value>{projected}%</value>",
+    "defaultMessage": "Boosting by <value>{current}%</value> <arrow>{arrowMark}</arrow> <value>{projected}%</value>",
     "description": "Research effect line when the quoted purchase changes the boost."
+  },
+  "research.card.boosting-projected-accessible": {
+    "defaultMessage": "Boosting increases from {current}% to {projected}%",
+    "description": "Accessible text for a Research boost changing after purchase."
   },
   "research.card.lifetime-effect": {
     "defaultMessage": "Increases Panel Lifetime by <value>{seconds}s</value>",
@@ -750,6 +762,14 @@
   "research.settings.open": {
     "defaultMessage": "Research purchase settings",
     "description": "Accessible label for the Research footer settings gear."
+  },
+  "research.settings.preset-automation": {
+    "defaultMessage": "Skill preset on opening Research",
+    "description": "Label for choosing the skill preset automatically loaded when Research opens."
+  },
+  "research.settings.preset-automation-off": {
+    "defaultMessage": "Off",
+    "description": "Disables automatic skill preset loading when Research opens."
   },
   "research.settings.purchase-amount": {
     "defaultMessage": "Research purchase amount",
@@ -914,14 +934,35 @@
   "skills.action-failed": {
     "defaultMessage": "The skill was not changed. Try again."
   },
+  "skills.cancel": {
+    "defaultMessage": "Cancel"
+  },
   "skills.centre-tree": {
     "defaultMessage": "Centre on starting skill"
   },
   "skills.close": {
     "defaultMessage": "Close"
   },
+  "skills.confirm": {
+    "defaultMessage": "Confirm"
+  },
+  "skills.confirm-import": {
+    "defaultMessage": "Replace preset"
+  },
+  "skills.confirm-preset-change": {
+    "defaultMessage": "Confirm preset change"
+  },
+  "skills.copied": {
+    "defaultMessage": "Copied"
+  },
+  "skills.copy": {
+    "defaultMessage": "Copy"
+  },
   "skills.cost": {
     "defaultMessage": "Cost: {value} Skill Points"
+  },
+  "skills.create-export": {
+    "defaultMessage": "Create export"
   },
   "skills.current-preset": {
     "defaultMessage": "Current"
@@ -932,14 +973,47 @@
   "skills.exclusive": {
     "defaultMessage": "Exclusive with: {names}"
   },
+  "skills.export-preset": {
+    "defaultMessage": "Export"
+  },
+  "skills.export-preset-help": {
+    "defaultMessage": "Create a string you can save or share."
+  },
+  "skills.export-text": {
+    "defaultMessage": "Preset export string"
+  },
   "skills.fragments": {
     "defaultMessage": "Fragments: {value}"
   },
   "skills.fragments-context": {
     "defaultMessage": "Fragments owned: {value} ({delta})"
   },
+  "skills.import-placeholder": {
+    "defaultMessage": "Paste preset string"
+  },
+  "skills.import-preset": {
+    "defaultMessage": "Import"
+  },
+  "skills.import-preset-help": {
+    "defaultMessage": "Paste a preset string and review it before replacing this preset."
+  },
+  "skills.import-text": {
+    "defaultMessage": "Preset import string"
+  },
+  "skills.include-dependencies": {
+    "defaultMessage": "This will also include: {names}."
+  },
+  "skills.included-in-preset": {
+    "defaultMessage": "Included in {name}"
+  },
   "skills.load-preset": {
     "defaultMessage": "Load {name}"
+  },
+  "skills.manage-preset": {
+    "defaultMessage": "Manage {name}"
+  },
+  "skills.manage-preset-title": {
+    "defaultMessage": "Manage {name}"
   },
   "skills.matches": {
     "defaultMessage": "{count, plural, one {# match} other {# matches}}"
@@ -953,14 +1027,29 @@
   "skills.owned": {
     "defaultMessage": "Owned"
   },
+  "skills.paste": {
+    "defaultMessage": "Paste"
+  },
   "skills.points": {
     "defaultMessage": "Skill Points: {value}"
+  },
+  "skills.preset-change-failed": {
+    "defaultMessage": "The preset was not changed. Try again."
+  },
+  "skills.preset-name": {
+    "defaultMessage": "Preset name"
   },
   "skills.preset-summary": {
     "defaultMessage": "{count, plural, one {# queued skill} other {# queued skills}} · {workers}% Workers"
   },
+  "skills.preset-transfer-failed": {
+    "defaultMessage": "The preset string could not be processed. Check it and try again."
+  },
   "skills.presets": {
     "defaultMessage": "Presets"
+  },
+  "skills.preview-import": {
+    "defaultMessage": "Preview import"
   },
   "skills.purchase": {
     "defaultMessage": "Assign Skill"
@@ -973,6 +1062,15 @@
   },
   "skills.region": {
     "defaultMessage": "Skills"
+  },
+  "skills.remove-dependants": {
+    "defaultMessage": "This will also remove: {names}."
+  },
+  "skills.rename": {
+    "defaultMessage": "Rename"
+  },
+  "skills.replace-preset": {
+    "defaultMessage": "Replace {name}?"
   },
   "skills.requirements-progress": {
     "defaultMessage": "Requirements: {complete}/{total} complete"

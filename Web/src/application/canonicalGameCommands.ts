@@ -1,9 +1,10 @@
-import { getGameAssetsByKind } from '../game-data/catalog'
 import type { DysonCompatibilityTuning } from '../game-state/compatibilityTuning'
 import type { DysonSkillEffectEvaluationSnapshot } from '../game-state/skillEffectEvaluationSnapshot'
 import type {
   CanonicalFacilityId,
   CanonicalGameStateV1,
+  CanonicalSkillPresetAutomationSlot,
+  CanonicalSkillPresetSlot,
   DreamEducationId,
   DreamUpgradeFlag,
 } from '../game-state/types'
@@ -27,6 +28,13 @@ import {
   purchaseCanonicalInfinityShopItem,
   type CanonicalInfinityShopItemId,
 } from '../simulation/canonicalInfinityShop'
+import {
+  normalizeSkillAssignment,
+  parseCanonicalSkillPreset,
+  previewAddSkillToPreset,
+  previewRemoveSkillFromPreset,
+  replaceCanonicalSkillPreset,
+} from '../simulation/canonicalSkillPresetTransactions'
 import {
   purchaseCanonicalSkill,
   refundCanonicalSkill,
@@ -156,6 +164,28 @@ export type CanonicalGameCommand =
       readonly slot: CanonicalSkillPresetSlot
     }
   | {
+      readonly kind: 'skill.add-to-current-preset'
+      readonly skillId: string
+    }
+  | {
+      readonly kind: 'skill.remove-from-current-preset'
+      readonly skillId: string
+    }
+  | {
+      readonly kind: 'skill.import-preset'
+      readonly slot: CanonicalSkillPresetSlot
+      readonly serialized: string
+    }
+  | {
+      readonly kind: 'skill.set-tab-preset-automation'
+      readonly tab: 'bots' | 'research'
+      readonly slot: CanonicalSkillPresetAutomationSlot
+    }
+  | {
+      readonly kind: 'skill.apply-tab-preset-automation'
+      readonly tab: 'bots' | 'research'
+    }
+  | {
       readonly kind: 'skill.set-auto-assign-non-refundable'
       readonly enabled: boolean
     }
@@ -231,7 +261,10 @@ export type CanonicalGameCommand =
 
 export type CanonicalGameCommandKind = CanonicalGameCommand['kind']
 
-export type CanonicalSkillPresetSlot = 1 | 2 | 3 | 4 | 5
+export type {
+  CanonicalSkillPresetAutomationSlot,
+  CanonicalSkillPresetSlot,
+} from '../game-state/types'
 
 export type CanonicalGameCommandCode =
   | 'quantum-leap-boundary-unavailable'
@@ -482,6 +515,43 @@ export const CANONICAL_GAME_COMMAND_SUPPORT = Object.freeze({
     supported: true,
     authority:
       'resetCanonicalSkills plus runCanonicalSkillAutoAssignment',
+    requires: [
+      'selected-skill-preset-carrier',
+      'runtime-evaluation-port',
+    ],
+  },
+  'skill.add-to-current-preset': {
+    supported: true,
+    authority:
+      'canonical dependency-closure preset queue transaction',
+    requires: ['selected-skill-preset-carrier'],
+  },
+  'skill.remove-from-current-preset': {
+    supported: true,
+    authority:
+      'canonical queued-dependent cascade preset transaction',
+    requires: ['selected-skill-preset-carrier'],
+  },
+  'skill.import-preset': {
+    supported: true,
+    authority:
+      'canonical validated Unity v1 preset import transaction',
+    requires: [
+      'selected-skill-preset-carrier',
+      'runtime-evaluation-port',
+    ],
+  },
+  'skill.set-tab-preset-automation': {
+    supported: true,
+    authority: 'canonical persisted tab preset automation setting',
+    requires: [
+      'selected-skill-preset-carrier',
+      'runtime-evaluation-port',
+    ],
+  },
+  'skill.apply-tab-preset-automation': {
+    supported: true,
+    authority: 'canonical tab-open preset selection transaction',
     requires: [
       'selected-skill-preset-carrier',
       'runtime-evaluation-port',
@@ -1180,6 +1250,229 @@ export function routeCanonicalGameCommand(
         EMPTY_ISSUES,
         false,
       )
+    }
+
+    case 'skill.add-to-current-preset':
+    case 'skill.remove-from-current-preset': {
+      const selected = carriers.selectedSkillPresetSlot
+      if (selected === null) {
+        return selectedPresetCarrierUnavailable(state, carriers)
+      }
+      const preview =
+        command.kind === 'skill.add-to-current-preset'
+          ? previewAddSkillToPreset(
+              state,
+              selected,
+              command.skillId,
+            )
+          : previewRemoveSkillFromPreset(
+              state,
+              selected,
+              command.skillId,
+            )
+      if (!preview.accepted) {
+        return rejectDomain(
+          state,
+          carriers,
+          `skill:preset-queue-${preview.code}`,
+          command.kind,
+          preview.reason,
+        )
+      }
+      const preset = state.skills.presets[selected - 1]
+      const changed =
+        !sameStrings(
+          state.skills.activeAutoAssignment,
+          preview.nextSkillIds,
+        ) ||
+        !sameStrings(preset.skillIds, preview.nextSkillIds)
+      return finalizeAccepted(
+        state,
+        changed
+          ? {
+              ...state,
+              skills: {
+                ...state.skills,
+                activeAutoAssignment: [...preview.nextSkillIds],
+                presets: replacePreset(
+                  state.skills.presets,
+                  selected,
+                  {
+                    ...preset,
+                    skillIds: [...preview.nextSkillIds],
+                  },
+                ),
+              },
+            }
+          : state,
+        changed,
+        `skill:${
+          changed
+            ? command.kind === 'skill.add-to-current-preset'
+              ? 'preset-skill-added'
+              : 'preset-skill-removed'
+            : 'unchanged'
+        }`,
+        carriers,
+        options.runtimeEvaluation,
+        EMPTY_ISSUES,
+        false,
+      )
+    }
+
+    case 'skill.import-preset': {
+      const parsed = parseCanonicalSkillPreset(command.serialized)
+      if (!parsed.accepted) {
+        return rejectDomain(
+          state,
+          carriers,
+          `skill:preset-import-${parsed.code}`,
+          command.kind,
+          parsed.reason,
+        )
+      }
+      const imported = replaceCanonicalSkillPreset(
+        state,
+        command.slot,
+        {
+          name: parsed.payload.presetName,
+          botDistribution: parsed.payload.botDistribution,
+          skillIds: parsed.payload.skillIds,
+        },
+      )
+      if (carriers.selectedSkillPresetSlot !== command.slot) {
+        return finalizeAccepted(
+          state,
+          imported,
+          imported !== state,
+          'skill:preset-imported',
+          carriers,
+          options.runtimeEvaluation,
+          EMPTY_ISSUES,
+          false,
+        )
+      }
+
+      const reset = resetCanonicalSkills(imported)
+      if (!reset.accepted) {
+        return rejectDomain(
+          state,
+          carriers,
+          `skill:${reset.code}`,
+          command.kind,
+          reset.reason,
+        )
+      }
+      const loaded: CanonicalGameStateV1 = {
+        ...reset.state,
+        dyson: {
+          ...reset.state.dyson,
+          botDistribution: parsed.payload.botDistribution,
+        },
+        skills: {
+          ...reset.state.skills,
+          activeAutoAssignment: [...parsed.payload.skillIds],
+        },
+      }
+      const assignment = runCanonicalSkillAutoAssignment(loaded)
+      if (!assignment.accepted) {
+        return rejectDomain(
+          state,
+          carriers,
+          `skill:${assignment.code}`,
+          command.kind,
+          assignment.reason,
+        )
+      }
+      return finalizeAccepted(
+        state,
+        withCanonicalBotAllocation(assignment.state),
+        true,
+        'skill:preset-imported-and-loaded',
+        carriers,
+        options.runtimeEvaluation,
+      )
+    }
+
+    case 'skill.set-tab-preset-automation': {
+      const changed =
+        state.skills.tabPresetAutomation[command.tab] !== command.slot
+      const configured = changed
+        ? {
+            ...state,
+            skills: {
+              ...state.skills,
+              tabPresetAutomation: {
+                ...state.skills.tabPresetAutomation,
+                [command.tab]: command.slot,
+              },
+            },
+          }
+        : state
+      if (
+        command.slot === 0 ||
+        command.slot === carriers.selectedSkillPresetSlot
+      ) {
+        return finalizeAccepted(
+          state,
+          configured,
+          changed,
+          `skill:${
+            changed ? 'tab-preset-automation-set' : 'unchanged'
+          }`,
+          carriers,
+          options.runtimeEvaluation,
+          EMPTY_ISSUES,
+          false,
+        )
+      }
+      const selected = routeCanonicalGameCommand(
+        configured,
+        { kind: 'skill.select-preset', slot: command.slot },
+        options,
+      )
+      if (!selected.accepted) {
+        return Object.freeze({
+          ...selected,
+          state,
+          changed: false,
+        })
+      }
+      return Object.freeze({
+        ...selected,
+        changed: changed || selected.changed,
+        code: 'skill:tab-preset-automation-set-and-applied',
+      })
+    }
+
+    case 'skill.apply-tab-preset-automation': {
+      const slot = state.skills.tabPresetAutomation[command.tab]
+      if (
+        slot === 0 ||
+        slot === carriers.selectedSkillPresetSlot
+      ) {
+        return finalizeAccepted(
+          state,
+          state,
+          false,
+          'skill:unchanged',
+          carriers,
+          options.runtimeEvaluation,
+          EMPTY_ISSUES,
+          false,
+        )
+      }
+      const applied = routeCanonicalGameCommand(
+        state,
+        { kind: 'skill.select-preset', slot },
+        options,
+      )
+      return applied.accepted
+        ? Object.freeze({
+            ...applied,
+            code: 'skill:tab-preset-applied',
+          })
+        : applied
     }
 
     case 'skill.set-auto-assign-non-refundable': {
@@ -2103,104 +2396,6 @@ function replacePreset(
   const candidate = [...presets]
   candidate[slot - 1] = preset
   return candidate as unknown as CanonicalGameStateV1['skills']['presets']
-}
-
-interface SkillAssignmentDefinition {
-  readonly required: readonly string[]
-  readonly shadowRequired: readonly string[]
-  readonly exclusiveWith: readonly string[]
-}
-
-function normalizeSkillAssignment(
-  source: readonly string[],
-): readonly string[] {
-  // Unity returns zero/one-element queues before consulting the registry.
-  if (source.length <= 1) return [...source]
-
-  const orderedInput: string[] = []
-  const seen = new Set<string>()
-  for (const id of source) {
-    if (id.length === 0 || seen.has(id)) continue
-    seen.add(id)
-    orderedInput.push(id)
-  }
-  if (orderedInput.length <= 1) return orderedInput
-
-  const definitions = new Map<string, SkillAssignmentDefinition>()
-  for (const asset of getGameAssetsByKind('GameData.SkillDefinition')) {
-    definitions.set(asset.id, {
-      required: stringArray(asset.data.requiredSkillIds),
-      shadowRequired: stringArray(
-        asset.data.shadowRequirementIds,
-      ),
-      exclusiveWith: stringArray(asset.data.exclusiveWithIds),
-    })
-  }
-
-  const selected = new Set(orderedInput)
-  const indegree = new Map(
-    orderedInput.map((id) => [id, 0]),
-  )
-  const adjacency = new Map(
-    orderedInput.map((id) => [id, [] as string[]]),
-  )
-  for (const id of orderedInput) {
-    const definition = definitions.get(id)
-    if (definition === undefined) continue
-    for (const dependency of [
-      ...definition.required,
-      ...definition.shadowRequired,
-    ]) {
-      if (!selected.has(dependency)) continue
-      adjacency.get(dependency)!.push(id)
-      indegree.set(id, indegree.get(id)! + 1)
-    }
-  }
-
-  const remaining = new Set(orderedInput)
-  const topological: string[] = []
-  while (remaining.size > 0) {
-    let progressed = false
-    for (const id of orderedInput) {
-      if (!remaining.has(id) || indegree.get(id) !== 0) continue
-      remaining.delete(id)
-      topological.push(id)
-      for (const neighbor of adjacency.get(id)!) {
-        indegree.set(neighbor, indegree.get(neighbor)! - 1)
-      }
-      progressed = true
-    }
-    if (progressed) continue
-    for (const id of orderedInput) {
-      if (remaining.has(id)) topological.push(id)
-    }
-    break
-  }
-
-  const accepted: string[] = []
-  const acceptedSet = new Set<string>()
-  for (const id of topological) {
-    const definition = definitions.get(id)
-    if (
-      definition !== undefined &&
-      definition.exclusiveWith.some((exclusive) =>
-        acceptedSet.has(exclusive),
-      )
-    ) {
-      continue
-    }
-    accepted.push(id)
-    acceptedSet.add(id)
-  }
-  return accepted
-}
-
-function stringArray(value: unknown): readonly string[] {
-  return Array.isArray(value)
-    ? value.filter((entry): entry is string =>
-        typeof entry === 'string',
-      )
-    : []
 }
 
 function sameStrings(

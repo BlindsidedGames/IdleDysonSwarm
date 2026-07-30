@@ -274,6 +274,14 @@ export function hydrateGameState(
         source.autoAssignNonRefundableSkills,
         true,
       ),
+      tabPresetAutomation: {
+        bots: toSkillPresetAutomationSlot(
+          source.botsTabPresetOverride,
+        ),
+        research: toSkillPresetAutomationSlot(
+          source.researchTabPresetOverride,
+        ),
+      },
     },
     research: {
       levelsById: toNumberRecord(
@@ -669,6 +677,10 @@ export function dehydrateGameState(
   })
   source.autoAssignNonRefundableSkills =
     state.skills.autoAssignNonRefundable
+  source.botsTabPresetOverride =
+    state.skills.tabPresetAutomation.bots
+  source.researchTabPresetOverride =
+    state.skills.tabPresetAutomation.research
 
   infinityData.researchLevelsById = {
     ...state.research.levelsById,
@@ -986,6 +998,14 @@ function createSkillPresets(
       ),
     }
   }) as unknown as CanonicalGameStateV1['skills']['presets']
+}
+
+function toSkillPresetAutomationSlot(
+  value: unknown,
+): CanonicalGameStateV1['skills']['tabPresetAutomation']['bots'] {
+  if (typeof value !== 'number' || !Number.isFinite(value)) return 0
+  return Math.max(0, Math.min(5, Math.trunc(value))) as
+    CanonicalGameStateV1['skills']['tabPresetAutomation']['bots']
 }
 
 function toSkillStates(value: unknown): Record<string, SkillRuntimeState> {

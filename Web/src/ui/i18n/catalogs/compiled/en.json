@@ -1049,6 +1049,18 @@
       "value": " seconds"
     }
   ],
+  "dyson.info.preset-automation": [
+    {
+      "type": 0,
+      "value": "Skill preset on opening Bots"
+    }
+  ],
+  "dyson.info.preset-automation-off": [
+    {
+      "type": 0,
+      "value": "Off"
+    }
+  ],
   "dyson.info.purchase-amount": [
     {
       "type": 0,
@@ -1496,7 +1508,21 @@
     },
     {
       "type": 0,
-      "value": " -> "
+      "value": " "
+    },
+    {
+      "type": 8,
+      "value": "arrow",
+      "children": [
+        {
+          "type": 1,
+          "value": "arrowMark"
+        }
+      ]
+    },
+    {
+      "type": 0,
+      "value": " "
     },
     {
       "type": 8,
@@ -1511,6 +1537,28 @@
           "value": "%"
         }
       ]
+    }
+  ],
+  "research.card.boosting-projected-accessible": [
+    {
+      "type": 0,
+      "value": "Boosting increases from "
+    },
+    {
+      "type": 1,
+      "value": "current"
+    },
+    {
+      "type": 0,
+      "value": "% to "
+    },
+    {
+      "type": 1,
+      "value": "projected"
+    },
+    {
+      "type": 0,
+      "value": "%"
     }
   ],
   "research.card.lifetime-effect": [
@@ -1847,6 +1895,18 @@
     {
       "type": 0,
       "value": "Research purchase settings"
+    }
+  ],
+  "research.settings.preset-automation": [
+    {
+      "type": 0,
+      "value": "Skill preset on opening Research"
+    }
+  ],
+  "research.settings.preset-automation-off": [
+    {
+      "type": 0,
+      "value": "Off"
     }
   ],
   "research.settings.purchase-amount": [
@@ -2207,6 +2267,12 @@
       "value": "The skill was not changed. Try again."
     }
   ],
+  "skills.cancel": [
+    {
+      "type": 0,
+      "value": "Cancel"
+    }
+  ],
   "skills.centre-tree": [
     {
       "type": 0,
@@ -2217,6 +2283,36 @@
     {
       "type": 0,
       "value": "Close"
+    }
+  ],
+  "skills.confirm": [
+    {
+      "type": 0,
+      "value": "Confirm"
+    }
+  ],
+  "skills.confirm-import": [
+    {
+      "type": 0,
+      "value": "Replace preset"
+    }
+  ],
+  "skills.confirm-preset-change": [
+    {
+      "type": 0,
+      "value": "Confirm preset change"
+    }
+  ],
+  "skills.copied": [
+    {
+      "type": 0,
+      "value": "Copied"
+    }
+  ],
+  "skills.copy": [
+    {
+      "type": 0,
+      "value": "Copy"
     }
   ],
   "skills.cost": [
@@ -2231,6 +2327,12 @@
     {
       "type": 0,
       "value": " Skill Points"
+    }
+  ],
+  "skills.create-export": [
+    {
+      "type": 0,
+      "value": "Create export"
     }
   ],
   "skills.current-preset": [
@@ -2253,6 +2355,24 @@
     {
       "type": 1,
       "value": "names"
+    }
+  ],
+  "skills.export-preset": [
+    {
+      "type": 0,
+      "value": "Export"
+    }
+  ],
+  "skills.export-preset-help": [
+    {
+      "type": 0,
+      "value": "Create a string you can save or share."
+    }
+  ],
+  "skills.export-text": [
+    {
+      "type": 0,
+      "value": "Preset export string"
     }
   ],
   "skills.fragments": [
@@ -2287,10 +2407,78 @@
       "value": ")"
     }
   ],
+  "skills.import-placeholder": [
+    {
+      "type": 0,
+      "value": "Paste preset string"
+    }
+  ],
+  "skills.import-preset": [
+    {
+      "type": 0,
+      "value": "Import"
+    }
+  ],
+  "skills.import-preset-help": [
+    {
+      "type": 0,
+      "value": "Paste a preset string and review it before replacing this preset."
+    }
+  ],
+  "skills.import-text": [
+    {
+      "type": 0,
+      "value": "Preset import string"
+    }
+  ],
+  "skills.include-dependencies": [
+    {
+      "type": 0,
+      "value": "This will also include: "
+    },
+    {
+      "type": 1,
+      "value": "names"
+    },
+    {
+      "type": 0,
+      "value": "."
+    }
+  ],
+  "skills.included-in-preset": [
+    {
+      "type": 0,
+      "value": "Included in "
+    },
+    {
+      "type": 1,
+      "value": "name"
+    }
+  ],
   "skills.load-preset": [
     {
       "type": 0,
       "value": "Load "
+    },
+    {
+      "type": 1,
+      "value": "name"
+    }
+  ],
+  "skills.manage-preset": [
+    {
+      "type": 0,
+      "value": "Manage "
+    },
+    {
+      "type": 1,
+      "value": "name"
+    }
+  ],
+  "skills.manage-preset-title": [
+    {
+      "type": 0,
+      "value": "Manage "
     },
     {
       "type": 1,
@@ -2351,6 +2539,12 @@
       "value": "Owned"
     }
   ],
+  "skills.paste": [
+    {
+      "type": 0,
+      "value": "Paste"
+    }
+  ],
   "skills.points": [
     {
       "type": 0,
@@ -2359,6 +2553,18 @@
     {
       "type": 1,
       "value": "value"
+    }
+  ],
+  "skills.preset-change-failed": [
+    {
+      "type": 0,
+      "value": "The preset was not changed. Try again."
+    }
+  ],
+  "skills.preset-name": [
+    {
+      "type": 0,
+      "value": "Preset name"
     }
   ],
   "skills.preset-summary": [
@@ -2405,10 +2611,22 @@
       "value": "% Workers"
     }
   ],
+  "skills.preset-transfer-failed": [
+    {
+      "type": 0,
+      "value": "The preset string could not be processed. Check it and try again."
+    }
+  ],
   "skills.presets": [
     {
       "type": 0,
       "value": "Presets"
+    }
+  ],
+  "skills.preview-import": [
+    {
+      "type": 0,
+      "value": "Preview import"
     }
   ],
   "skills.purchase": [
@@ -2433,6 +2651,40 @@
     {
       "type": 0,
       "value": "Skills"
+    }
+  ],
+  "skills.remove-dependants": [
+    {
+      "type": 0,
+      "value": "This will also remove: "
+    },
+    {
+      "type": 1,
+      "value": "names"
+    },
+    {
+      "type": 0,
+      "value": "."
+    }
+  ],
+  "skills.rename": [
+    {
+      "type": 0,
+      "value": "Rename"
+    }
+  ],
+  "skills.replace-preset": [
+    {
+      "type": 0,
+      "value": "Replace "
+    },
+    {
+      "type": 1,
+      "value": "name"
+    },
+    {
+      "type": 0,
+      "value": "?"
     }
   ],
   "skills.requirements-progress": [

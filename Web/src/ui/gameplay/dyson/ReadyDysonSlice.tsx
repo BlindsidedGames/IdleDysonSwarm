@@ -2,7 +2,9 @@ import {
   lazy,
   Suspense,
   useCallback,
+  useEffect,
   useLayoutEffect,
+  useMemo,
   useRef,
   useState,
 } from 'react'
@@ -36,6 +38,7 @@ import {
   type UiRuntimeImportResult,
 } from '../../runtime'
 import { SettingsSurface } from '../settings'
+import type { SkillPresetActions } from '../skills'
 import {
   beginFirstSliceSnapshotSelection,
   isNewCommittedRevision,
@@ -99,12 +102,17 @@ function UnprobedReadyDysonRuntimeHost({
       runtime.dispatchPlayer(command),
     [runtime],
   )
+  const presetActions = useMemo(
+    () => createSkillPresetActions(runtime),
+    [runtime],
+  )
   if (snapshot.phase !== 'ready') return null
   return (
     <ReadyDysonSlice
       snapshot={snapshot}
       locale={locale}
       dispatchPlayer={dispatchPlayer}
+      presetActions={presetActions}
       route={route}
       onRouteChange={setRoute}
       resetSave={resetSave}
@@ -124,6 +132,10 @@ export function ProbedReadyDysonRuntimeHost({
   const dispatchPlayer = useCallback(
     (command: CanonicalPlayerCommand) =>
       runtime.dispatchPlayer(command),
+    [runtime],
+  )
+  const presetActions = useMemo(
+    () => createSkillPresetActions(runtime),
     [runtime],
   )
   const previousRevision = useRef<FirstSliceCommitRevision | null>(
@@ -160,6 +172,7 @@ export function ProbedReadyDysonRuntimeHost({
       snapshot={snapshot}
       locale={locale}
       dispatchPlayer={dispatchPlayer}
+      presetActions={presetActions}
       route={route}
       onRouteChange={setRoute}
       resetSave={resetSave}
@@ -181,6 +194,7 @@ export interface ReadyDysonSliceProps {
   readonly snapshot: ReadySnapshot
   readonly locale: EnabledLocale
   readonly dispatchPlayer: BrowserUiRuntimeFoundation['dispatchPlayer']
+  readonly presetActions?: SkillPresetActions
   readonly route?: ReadyGameRoute
   readonly onRouteChange?: (route: ReadyGameRoute) => void
   readonly resetSave?: () => Promise<UiRuntimeImportResult>
@@ -201,6 +215,7 @@ export function ReadyDysonSlice({
   snapshot,
   locale,
   dispatchPlayer,
+  presetActions,
   route = 'bots',
   onRouteChange = () => undefined,
   resetSave = unavailableReset,
@@ -212,6 +227,32 @@ export function ReadyDysonSlice({
   const gameplay = snapshot.gameplay
   const dyson = gameplay.derived.dyson
   const tinker = gameplay.runtime.tinker
+  const previousAutomatedRoute = useRef<'bots' | 'research' | null>(
+    null,
+  )
+  const automatedRoute =
+    route === 'bots' || route === 'research' ? route : null
+  useEffect(() => {
+    if (automatedRoute === null) {
+      previousAutomatedRoute.current = null
+      return
+    }
+    if (previousAutomatedRoute.current === automatedRoute) return
+    previousAutomatedRoute.current = automatedRoute
+    const slot =
+      gameplay.progression.skills.tabPresetAutomation[
+        automatedRoute
+      ]
+    if (slot === 0) return
+    void dispatchPlayer({
+      kind: 'skill.apply-tab-preset-automation',
+      tab: automatedRoute,
+    })
+  }, [
+    automatedRoute,
+    dispatchPlayer,
+    gameplay.progression.skills.tabPresetAutomation,
+  ])
 
   if (dyson.status !== 'ready') {
     return (
@@ -391,6 +432,11 @@ export function ReadyDysonSlice({
                         gameplay.progression.research.automation
                           .roundedBulkBuy
                       }
+                      presets={gameplay.progression.skills.presets}
+                      presetAutomationSlot={
+                        gameplay.progression.skills
+                          .tabPresetAutomation.research
+                      }
                       purchaseRouteAvailable={
                         gameplay.commands.byKind[
                           'research.purchase'
@@ -404,6 +450,11 @@ export function ReadyDysonSlice({
                       roundedBulkRouteAvailable={
                         gameplay.commands.byKind[
                           'research.set-rounded-bulk-buy'
+                        ].routeAvailable
+                      }
+                      presetAutomationRouteAvailable={
+                        gameplay.commands.byKind[
+                          'skill.set-tab-preset-automation'
                         ].routeAvailable
                       }
                       dispatchPlayer={dispatchPlayer}
@@ -463,6 +514,7 @@ export function ReadyDysonSlice({
                             gameplay.commands.byKind['skill.reset']
                               .routeAvailable,
                         }}
+                        presetActions={presetActions}
                         dispatchPlayer={dispatchPlayer}
                       />
                     </Suspense>
@@ -578,6 +630,10 @@ export function ReadyDysonSlice({
             roundedBulkBuy={
               gameplay.progression.dyson.automation.roundedBulkBuy
             }
+            presets={gameplay.progression.skills.presets}
+            presetAutomationSlot={
+              gameplay.progression.skills.tabPresetAutomation.bots
+            }
             buyModeRouteAvailable={
               gameplay.commands.byKind[
                 'dyson.set-buy-mode'
@@ -586,6 +642,11 @@ export function ReadyDysonSlice({
             roundedBulkRouteAvailable={
               gameplay.commands.byKind[
                 'dyson.set-rounded-bulk-buy'
+              ].routeAvailable
+            }
+            presetAutomationRouteAvailable={
+              gameplay.commands.byKind[
+                'skill.set-tab-preset-automation'
               ].routeAvailable
             }
             dispatchPlayer={dispatchPlayer}
@@ -673,6 +734,61 @@ function unavailableReset(): Promise<UiRuntimeImportResult> {
     reason: 'Reset is unavailable in this host.',
     recoveryAvailable: false,
   })
+}
+
+function createSkillPresetActions(
+  runtime: BrowserUiRuntimeFoundation,
+): SkillPresetActions {
+  const actions: SkillPresetActions = {
+    previewQueueChange: async (request) => {
+      const preview = runtime.previewSkillPresetQueueChange(request)
+      if (!preview.accepted) throw new Error(preview.reason)
+      return {
+        affectedSkillIds: preview.affectedSkillIds,
+        confirmationRequired: preview.affectedSkillIds.some(
+          (skillId) => skillId !== request.skillId,
+        ),
+      }
+    },
+    applyQueueChange: async (request) => {
+      const snapshot = runtime.snapshot()
+      if (
+        snapshot.phase !== 'ready' ||
+        snapshot.gameplay.runtime.selectedSkillPresetSlot !==
+          request.slot
+      ) {
+        return false
+      }
+      const result = await runtime.dispatchPlayer({
+        kind: request.included
+          ? 'skill.add-to-current-preset'
+          : 'skill.remove-from-current-preset',
+        skillId: request.skillId,
+      })
+      return result.status === 'accepted'
+    },
+    exportPreset: async (slot) => runtime.exportSkillPreset(slot),
+    previewImportPreset: async (_slot, text) => {
+      const preview = runtime.previewSkillPresetImport(text)
+      if (!preview.accepted) throw new Error(preview.reason)
+      return {
+        name: preview.payload.presetName,
+        queuedSkillCount: preview.payload.skillIds.length,
+        workerPercent: Math.round(
+          (1 - preview.payload.botDistribution) * 100,
+        ),
+      }
+    },
+    importPreset: async (slot, serialized) => {
+      const result = await runtime.dispatchPlayer({
+        kind: 'skill.import-preset',
+        slot,
+        serialized,
+      })
+      return result.status === 'accepted'
+    },
+  }
+  return Object.freeze(actions)
 }
 
 function formatPreciseNumber(

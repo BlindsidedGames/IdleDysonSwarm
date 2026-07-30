@@ -115,6 +115,14 @@
   color: #00e1ff;
 }
 
+.research-card__effect-arrow {
+  display: inline-block;
+  margin-inline: 0.08em;
+  color: color-mix(in srgb, #00e1ff 72%, white);
+  font-size: 0.8em;
+  transform: translateY(-0.04em);
+}
+
 .research-card .ui-facility-card__description {
   color: white;
   font-size: calc(1rem * var(--game-text-scale));
@@ -234,6 +242,11 @@
   padding: 0.55rem 0.7rem;
   border-block-end: 1px solid #41615e;
   background: #263a38;
+}
+
+.research-surface__settings .ui-preset-automation select {
+  border-color: #6f9e9b;
+  background: #1c2c2b;
 }
 
 .research-surface__settings-title {

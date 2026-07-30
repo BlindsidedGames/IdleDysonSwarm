@@ -1025,6 +1025,8 @@ function selectProgression(
       presets: state.skills.presets,
       autoAssignNonRefundable:
         state.skills.autoAssignNonRefundable,
+      tabPresetAutomation:
+        state.skills.tabPresetAutomation,
     },
     research: state.research,
     reality: {

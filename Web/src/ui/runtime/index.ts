@@ -25,6 +25,7 @@ export {
   type BrowserRuntimeFoundationOptions,
   type BrowserRuntimeLifecyclePolicy,
   type BrowserUiRuntimeFoundation,
+  type BrowserSkillPresetQueryPort,
 } from './browserRuntimeFoundation'
 export type {
   FrontendApplicationSnapshot,

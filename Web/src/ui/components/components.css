@@ -191,6 +191,37 @@
   overflow-wrap: anywhere;
 }
 
+.ui-preset-automation {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(8rem, 45%);
+  align-items: center;
+  gap: var(--space-3);
+  min-block-size: var(--target-minimum);
+  font-size: 0.85rem;
+  touch-action: manipulation;
+  user-select: none;
+}
+
+.ui-preset-automation select {
+  min-inline-size: 0;
+  min-block-size: var(--target-minimum);
+  padding: 0.35rem 1.8rem 0.35rem 0.5rem;
+  border: var(--border-width) solid currentColor;
+  border-radius: var(--radius-sm);
+  background: var(--color-surface);
+  color: inherit;
+  font: inherit;
+}
+
+.ui-preset-automation select:focus-visible {
+  outline: 3px solid var(--color-focus);
+  outline-offset: 2px;
+}
+
+.ui-preset-automation select:disabled {
+  opacity: 0.68;
+}
+
 .ui-visually-hidden {
   position: absolute;
   inline-size: 1px;
@@ -221,12 +252,21 @@
     grid-column: 2;
     grid-row: 1 / span 5;
   }
+
+  .ui-preset-automation {
+    grid-template-columns: minmax(0, 1fr);
+    gap: var(--space-2);
+  }
 }
 
 @media (forced-colors: active) {
   .ui-button,
   .ui-status-feedback,
   .ui-facility-card {
+    forced-color-adjust: auto;
+  }
+
+  .ui-preset-automation select {
     forced-color-adjust: auto;
   }
 

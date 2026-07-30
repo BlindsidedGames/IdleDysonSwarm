@@ -231,6 +231,18 @@ export const readyDysonMessages = defineMessages({
     defaultMessage: 'Building purchase amount',
     description: 'Heading for the canonical Dyson building buy mode.',
   },
+  presetAutomation: {
+    id: 'dyson.info.preset-automation',
+    defaultMessage: 'Skill preset on opening Bots',
+    description:
+      'Label for choosing the skill preset automatically loaded when Bots opens.',
+  },
+  presetAutomationOff: {
+    id: 'dyson.info.preset-automation-off',
+    defaultMessage: 'Off',
+    description:
+      'Disables automatic skill preset loading when Bots opens.',
+  },
   buyOne: {
     id: 'dyson.info.buy-mode.one',
     defaultMessage: 'x1',

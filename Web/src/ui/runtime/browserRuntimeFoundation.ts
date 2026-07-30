@@ -19,6 +19,11 @@ import {
 } from '../../application/canonicalLifecycleCoordinator'
 import type { CanonicalPlayerCommand } from '../../application/canonicalPlayerCommands'
 import type { CanonicalRuntimeState } from '../../application/canonicalRuntimeSession'
+import type {
+  CanonicalSkillPresetSlot,
+  CanonicalGameStateV1,
+  SkillPresetState,
+} from '../../game-state/types'
 import {
   type BrowserSaveDatabase,
   IndexedDbBrowserSaveDatabase,
@@ -70,6 +75,14 @@ import {
 import type {
   LifecycleClockSample,
 } from '../../simulation/lifecycleAwayTime'
+import {
+  parseCanonicalSkillPreset,
+  previewAddSkillToPreset,
+  previewRemoveSkillFromPreset,
+  serializeCanonicalSkillPreset,
+  type CanonicalSkillPresetImportResult,
+  type CanonicalSkillPresetQueuePreview,
+} from '../../simulation/canonicalSkillPresetTransactions'
 import {
   AuthoritativeLifecycleRouter,
 } from './authoritativeLifecycleRouter'
@@ -182,10 +195,23 @@ interface BrowserRuntimeGraph {
   readonly retainer: BrowserRecoveryBlobRetainer
 }
 
+export interface BrowserSkillPresetQueryPort {
+  previewSkillPresetQueueChange(request: {
+    readonly slot: CanonicalSkillPresetSlot
+    readonly skillId: string
+    readonly included: boolean
+  }): CanonicalSkillPresetQueuePreview
+  exportSkillPreset(slot: CanonicalSkillPresetSlot): string
+  previewSkillPresetImport(
+    serialized: string,
+  ): CanonicalSkillPresetImportResult
+}
+
 export type BrowserUiRuntimeFoundation = UiRuntimeFoundation<
   DeepReadonly<FrontendApplicationSnapshot>,
   CanonicalPlayerCommand
->
+> &
+  BrowserSkillPresetQueryPort
 
 /**
  * Browser Wave 1 composition root.
@@ -214,6 +240,12 @@ export function createBrowserRuntimeFoundation(
       implementation.takeOverWriterOwnership(),
     dispatchPlayer: (command: CanonicalPlayerCommand) =>
       implementation.dispatchPlayer(command),
+    previewSkillPresetQueueChange: (request) =>
+      implementation.previewSkillPresetQueueChange(request),
+    exportSkillPreset: (slot) =>
+      implementation.exportSkillPreset(slot),
+    previewSkillPresetImport: (serialized) =>
+      implementation.previewSkillPresetImport(serialized),
     ...(import.meta.env.DEV
       ? {
           development: Object.freeze({
@@ -418,6 +450,39 @@ class BrowserRuntimeFoundation implements BrowserUiRuntimeFoundation {
       return graph.playerCommands.dispatchLatest(command)
     }
     return graph.playerCommands.dispatch(command)
+  }
+
+  previewSkillPresetQueueChange(request: {
+    readonly slot: CanonicalSkillPresetSlot
+    readonly skillId: string
+    readonly included: boolean
+  }): CanonicalSkillPresetQueuePreview {
+    const state = this.readyCanonicalState()
+    return request.included
+      ? previewAddSkillToPreset(state, request.slot, request.skillId)
+      : previewRemoveSkillFromPreset(state, request.slot, request.skillId)
+  }
+
+  exportSkillPreset(slot: CanonicalSkillPresetSlot): string {
+    const preset: DeepReadonly<SkillPresetState> =
+      this.readyCanonicalState().skills.presets[slot - 1]
+    return serializeCanonicalSkillPreset(preset)
+  }
+
+  previewSkillPresetImport(
+    serialized: string,
+  ): CanonicalSkillPresetImportResult {
+    return parseCanonicalSkillPreset(serialized)
+  }
+
+  private readyCanonicalState(): DeepReadonly<CanonicalGameStateV1> {
+    const snapshot = this.graph?.application.snapshot()
+    if (snapshot === undefined || snapshot.phase !== 'ready') {
+      throw new Error(
+        'The browser runtime does not have a canonical ready state.',
+      )
+    }
+    return snapshot.state.gameState
   }
 
   async setDevelopmentDysonBots(

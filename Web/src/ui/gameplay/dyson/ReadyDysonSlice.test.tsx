@@ -305,6 +305,40 @@ describe('ReadyDysonSlice', () => {
     expect(onRouteChange).toHaveBeenCalledWith('bots')
   })
 
+  test('applies a configured preset once when its gameplay tab opens', async () => {
+    const dispatchPlayer = vi.fn(acceptedDispatch)
+    const rendered = render(
+      provider(
+        <ReadyDysonSlice
+          snapshot={snapshot({ researchPresetAutomation: 2 })}
+          locale="en"
+          dispatchPlayer={dispatchPlayer}
+          route="research"
+        />,
+      ),
+    )
+
+    await waitFor(() => {
+      expect(dispatchPlayer).toHaveBeenCalledWith({
+        kind: 'skill.apply-tab-preset-automation',
+        tab: 'research',
+      })
+    })
+    expect(dispatchPlayer).toHaveBeenCalledTimes(1)
+
+    rendered.rerender(
+      provider(
+        <ReadyDysonSlice
+          snapshot={snapshot({ researchPresetAutomation: 2 })}
+          locale="en"
+          dispatchPlayer={dispatchPlayer}
+          route="research"
+        />,
+      ),
+    )
+    expect(dispatchPlayer).toHaveBeenCalledTimes(1)
+  })
+
   test('switches to the authored Skills tree only when canonical visibility unlocks it', async () => {
     render(
       provider(
@@ -677,6 +711,8 @@ interface SnapshotOptions {
   readonly visibleBasicFacilityIds?: readonly FacilityId[]
   readonly showNextTierTeaser?: boolean
   readonly skillsRouteUnlocked?: boolean
+  readonly botsPresetAutomation?: 0 | 1 | 2 | 3 | 4 | 5
+  readonly researchPresetAutomation?: 0 | 1 | 2 | 3 | 4 | 5
   readonly facilities?: Partial<
     Record<FacilityId, readonly [number, number]>
   >
@@ -802,6 +838,10 @@ function snapshot(options: SnapshotOptions = {}): ReadySnapshot {
             { name: 'Preset 5', skillIds: [], botDistribution: 0 },
           ],
           autoAssignNonRefundable: false,
+          tabPresetAutomation: {
+            bots: options.botsPresetAutomation ?? 0,
+            research: options.researchPresetAutomation ?? 0,
+          },
         },
         quantum: {
           unlocks: {
@@ -921,6 +961,9 @@ function snapshot(options: SnapshotOptions = {}): ReadySnapshot {
             routeAvailable: true,
           },
           'skill.set-auto-assign-non-refundable': {
+            routeAvailable: true,
+          },
+          'skill.set-tab-preset-automation': {
             routeAvailable: true,
           },
           'skill.reset': {

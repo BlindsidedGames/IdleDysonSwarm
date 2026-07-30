@@ -51,7 +51,12 @@ describe('ResearchSurface', () => {
     const articles = screen.getAllByRole('article')
     expect(articles).toHaveLength(3)
     expect(articles[0]).toHaveTextContent('Science boosts 2.00')
-    expect(articles[0]).toHaveTextContent('Boosting by 10% -> 15%')
+    expect(articles[0]).toHaveTextContent('Boosting by 10% \u25b8 15%')
+    expect(
+      screen.getByLabelText(
+        'Boosting increases from 10% to 15%',
+      ),
+    ).toBeInTheDocument()
     expect(articles[1]).toHaveTextContent('Durability Upgrade')
     expect(articles[1]).toHaveTextContent(
       'Increases Panel Lifetime by 1s',
@@ -150,6 +155,18 @@ describe('ResearchSurface', () => {
       kind: 'research.set-rounded-bulk-buy',
       enabled: true,
     })
+
+    await user.selectOptions(
+      screen.getByRole('combobox', {
+        name: 'Skill preset on opening Research',
+      }),
+      '1',
+    )
+    expect(dispatchPlayer).toHaveBeenCalledWith({
+      kind: 'skill.set-tab-preset-automation',
+      tab: 'research',
+      slot: 1,
+    })
   })
 
   test('has no automated accessibility violations', async () => {
@@ -187,9 +204,18 @@ function renderSurface(
         sciencePerSecond={22}
         buyMode="buy-1"
         roundedBulkBuy={false}
+        presets={[
+          { name: 'Preset 1', skillIds: [], botDistribution: 0.5 },
+          { name: 'Preset 2', skillIds: [], botDistribution: 0.5 },
+          { name: 'Preset 3', skillIds: [], botDistribution: 0.5 },
+          { name: 'Preset 4', skillIds: [], botDistribution: 0.5 },
+          { name: 'Preset 5', skillIds: [], botDistribution: 0.5 },
+        ]}
+        presetAutomationSlot={0}
         purchaseRouteAvailable
         buyModeRouteAvailable
         roundedBulkRouteAvailable
+        presetAutomationRouteAvailable
         dispatchPlayer={dispatchPlayer}
       />
     </IntlProvider>,

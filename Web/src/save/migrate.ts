@@ -128,6 +128,8 @@ function ensureSaveShape(save: SaveRecord): void {
     infinityAutoBirchPlanets: true,
     infinityAutoGalacticBrains: true,
     autoAssignNonRefundableSkills: true,
+    botsTabPresetOverride: 0,
+    researchTabPresetOverride: 0,
   })
   const reality = ensureRecord(save, 'saveData')
   applyDefaults(reality, { huntersPerPurchase: 1n, gatherersPerPurchase: 1n })

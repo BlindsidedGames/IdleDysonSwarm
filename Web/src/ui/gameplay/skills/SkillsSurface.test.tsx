@@ -17,6 +17,7 @@ import type {
   CanonicalSkillCatalogPreview,
 } from '../../../simulation/canonicalSkillTransactions'
 import { SkillsSurface, type SkillsSurfaceProps } from './SkillsSurface'
+import type { SkillPresetActions } from './SkillsSurface'
 
 afterEach(cleanup)
 
@@ -86,6 +87,7 @@ function createSkillElement(
   botDistribution = 0.5,
   selectedPresetSlot: CanonicalSkillPresetSlot = 1,
   catalogOverride: CanonicalSkillCatalogPreview = catalog,
+  presetActions?: SkillPresetActions,
 ) {
   return (
     <IntlProvider locale="en" messages={{}}>
@@ -105,6 +107,7 @@ function createSkillElement(
           setAutoAssignNonRefundable: true,
           reset: true,
         }}
+        presetActions={presetActions}
         dispatchPlayer={dispatchPlayer}
       />
     </IntlProvider>
@@ -141,6 +144,26 @@ function createDispatchPlayer() {
       state: 2,
     },
   }))
+}
+
+function createPresetActions(
+  overrides: Partial<SkillPresetActions> = {},
+): SkillPresetActions {
+  return {
+    previewQueueChange: vi.fn(async () => ({
+      affectedSkillIds: [],
+      confirmationRequired: false,
+    })),
+    applyQueueChange: vi.fn(async () => true),
+    exportPreset: vi.fn(async () => 'IDS-PRESET-1'),
+    previewImportPreset: vi.fn(async () => ({
+      name: 'Science',
+      queuedSkillCount: 3,
+      workerPercent: 20,
+    })),
+    importPreset: vi.fn(async () => true),
+    ...overrides,
+  }
 }
 
 function renderSkills(
@@ -614,6 +637,55 @@ describe('SkillsSurface', () => {
     ).toBeInTheDocument()
   })
 
+  test('previews a canonical preset cascade before changing skill inclusion', async () => {
+    const user = userEvent.setup()
+    const actions = createPresetActions({
+      previewQueueChange: vi.fn(async () => ({
+        affectedSkillIds: ['assemblyLineTree', 'aiManagerTree'],
+        confirmationRequired: true,
+      })),
+    })
+    render(
+      createSkillElement(
+        createDispatchPlayer(),
+        0.5,
+        1,
+        catalog,
+        actions,
+      ),
+    )
+
+    await user.click(
+      screen.getByRole('button', {
+        name: /Cash & Science\. Cost: 1 Skill Points/,
+      }),
+    )
+    await user.click(
+      screen.getByRole('checkbox', {
+        name: 'Included in Preset 1',
+      }),
+    )
+
+    expect(actions.previewQueueChange).toHaveBeenCalledWith({
+      slot: 1,
+      skillId: 'startHereTree',
+      included: true,
+    })
+    expect(
+      screen.getByText(
+        'This will also include: Assembly Lines, AI Managers.',
+      ),
+    ).toBeInTheDocument()
+    expect(actions.applyQueueChange).not.toHaveBeenCalled()
+
+    await user.click(screen.getByRole('button', { name: 'Confirm' }))
+    expect(actions.applyQueueChange).toHaveBeenCalledWith({
+      slot: 1,
+      skillId: 'startHereTree',
+      included: true,
+    })
+  })
+
   test('dispatches the selected canonical preset from settings', async () => {
     const user = userEvent.setup()
     const dispatchPlayer = renderSkills()
@@ -638,6 +710,113 @@ describe('SkillsSurface', () => {
       kind: 'skill.select-preset',
       slot: 2,
     })
+  })
+
+  test('keeps load and management actions separate and supports rename and transfer preview', async () => {
+    const user = userEvent.setup()
+    const dispatchPlayer = createDispatchPlayer()
+    const actions = createPresetActions()
+    render(
+      createSkillElement(
+        dispatchPlayer,
+        0.5,
+        1,
+        catalog,
+        actions,
+      ),
+    )
+
+    await user.click(
+      screen.getByRole('button', {
+        name: 'Skill presets and reset',
+      }),
+    )
+    const load = screen.getByRole('button', { name: /Load Preset 1/ })
+    const manage = screen.getByRole('button', {
+      name: 'Manage Preset 1',
+    })
+    expect(load.contains(manage)).toBe(false)
+
+    await user.click(manage)
+    expect(
+      screen.getByRole('dialog', { name: 'Manage Preset 1' }),
+    ).toBeInTheDocument()
+
+    const name = screen.getByRole('textbox', { name: 'Preset name' })
+    await user.clear(name)
+    await user.type(name, 'Bots')
+    await user.click(screen.getByRole('button', { name: 'Rename' }))
+    expect(dispatchPlayer).toHaveBeenCalledWith({
+      kind: 'skill.rename-preset',
+      slot: 1,
+      name: 'Bots',
+    })
+
+    await user.click(
+      screen.getByRole('button', { name: 'Create export' }),
+    )
+    expect(
+      screen.getByRole('textbox', {
+        name: 'Preset export string',
+      }),
+    ).toHaveValue('IDS-PRESET-1')
+
+    const importText = screen.getByRole('textbox', {
+      name: 'Preset import string',
+    })
+    await user.type(importText, 'SHARED-PRESET')
+    await user.click(
+      screen.getByRole('button', { name: 'Preview import' }),
+    )
+    expect(actions.previewImportPreset).toHaveBeenCalledWith(
+      1,
+      'SHARED-PRESET',
+    )
+    expect(screen.getByText('Science')).toBeInTheDocument()
+    expect(
+      screen.getByText('3 queued skills · 20% Workers'),
+    ).toBeInTheDocument()
+    expect(screen.getByText('Replace Preset 1?')).toBeInTheDocument()
+
+    await user.click(
+      screen.getByRole('button', { name: 'Replace preset' }),
+    )
+    expect(actions.importPreset).toHaveBeenCalledWith(
+      1,
+      'SHARED-PRESET',
+    )
+    expect(
+      screen.queryByRole('dialog', { name: 'Manage Preset 1' }),
+    ).not.toBeInTheDocument()
+  })
+
+  test('closes preset management with Escape and restores its ellipsis trigger', async () => {
+    const user = userEvent.setup()
+    render(
+      createSkillElement(
+        createDispatchPlayer(),
+        0.5,
+        1,
+        catalog,
+        createPresetActions(),
+      ),
+    )
+    await user.click(
+      screen.getByRole('button', {
+        name: 'Skill presets and reset',
+      }),
+    )
+    const manage = screen.getByRole('button', {
+      name: 'Manage Preset 1',
+    })
+    await user.click(manage)
+    expect(screen.getByRole('button', { name: 'Close' })).toHaveFocus()
+
+    await user.keyboard('{Escape}')
+    expect(
+      screen.queryByRole('dialog', { name: 'Manage Preset 1' }),
+    ).not.toBeInTheDocument()
+    expect(manage).toHaveFocus()
   })
 
   test('shows the reset explanation once, only while confirming', async () => {

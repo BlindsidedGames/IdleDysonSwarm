@@ -218,6 +218,16 @@ export const mappingCoverageManifest = {
       '$.skills.autoAssignNonRefundable',
     ),
     owned(
+      '$.botsTabPresetOverride',
+      'skills',
+      '$.skills.tabPresetAutomation.bots',
+    ),
+    owned(
+      '$.researchTabPresetOverride',
+      'skills',
+      '$.skills.tabPresetAutomation.research',
+    ),
+    owned(
       `${dysonInfinity}.researchLevelsById.*`,
       'research',
       '$.research.levelsById.*',

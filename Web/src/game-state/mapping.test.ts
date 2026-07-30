@@ -147,6 +147,34 @@ describe('canonical game-state mapping', () => {
     })
   })
 
+  test('round-trips Bots and Research preset automation overrides', () => {
+    const prepared = prepareIdb1Save(
+      loadFixture('schema-08-canonical-idb1-main-save.txt'),
+    ).prepared
+    const session = hydrateGameState(prepared)
+    const candidate = {
+      ...session.state,
+      skills: {
+        ...session.state.skills,
+        tabPresetAutomation: {
+          bots: 2 as const,
+          research: 4 as const,
+        },
+      },
+    }
+
+    const dehydrated = session.prepare(candidate)
+    const source = dehydrated.copyValidatedState()
+    const rehydrated = hydrateGameState(dehydrated)
+
+    expect(source.botsTabPresetOverride).toBe(2)
+    expect(source.researchTabPresetOverride).toBe(4)
+    expect(rehydrated.state.skills.tabPresetAutomation).toEqual({
+      bots: 2,
+      research: 4,
+    })
+  })
+
   test('synchronizes the legacy Avocado unlock mirror on dehydration', () => {
     const prepared = prepareIdb1Save(
       loadFixture('schema-08-canonical-idb1-main-save.txt'),

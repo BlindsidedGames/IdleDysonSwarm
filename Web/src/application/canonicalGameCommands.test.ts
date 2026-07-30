@@ -137,6 +137,29 @@ const COMMAND_EXAMPLES = [
   { kind: 'skill.rename-preset', slot: 1, name: 'First' },
   { kind: 'skill.select-preset', slot: 1 },
   {
+    kind: 'skill.add-to-current-preset',
+    skillId: 'startHereTree',
+  },
+  {
+    kind: 'skill.remove-from-current-preset',
+    skillId: 'startHereTree',
+  },
+  {
+    kind: 'skill.import-preset',
+    slot: 1,
+    serialized:
+      '{"version":1,"presetName":"First","botDistribution":0.5,"skillIds":[]}',
+  },
+  {
+    kind: 'skill.set-tab-preset-automation',
+    tab: 'bots',
+    slot: 1,
+  },
+  {
+    kind: 'skill.apply-tab-preset-automation',
+    tab: 'bots',
+  },
+  {
     kind: 'skill.set-auto-assign-non-refundable',
     enabled: false,
   },
@@ -493,6 +516,191 @@ describe('canonical game command router', () => {
           botDistribution: 0.8,
           workers: 2,
           researchers: 8,
+        },
+      },
+      runtimeCarriers: {
+        selectedSkillPresetSlot: 2,
+      },
+    })
+  })
+
+  test('adds dependency closure to the active and selected preset queues', () => {
+    const source = state()
+    const presets = [...source.skills.presets]
+    presets[0] = { ...presets[0]!, skillIds: [] }
+    const input: CanonicalGameStateV1 = {
+      ...source,
+      skills: {
+        ...source.skills,
+        activeAutoAssignment: [],
+        presets:
+          presets as unknown as CanonicalGameStateV1['skills']['presets'],
+      },
+    }
+
+    const result = routeCanonicalGameCommand(
+      input,
+      {
+        kind: 'skill.add-to-current-preset',
+        skillId: 'androids',
+      },
+      options(),
+    )
+
+    const expected = [
+      'startHereTree',
+      'workerEfficiencyTree',
+      'panelLifetime20Tree',
+      'androids',
+    ]
+    expect(result).toMatchObject({
+      accepted: true,
+      changed: true,
+      code: 'skill:preset-skill-added',
+      state: {
+        skills: {
+          activeAutoAssignment: expected,
+        },
+      },
+    })
+    expect(result.state.skills.presets[0].skillIds).toEqual(expected)
+  })
+
+  test('removes queued dependants from the active and selected preset queues', () => {
+    const source = state()
+    const queue = [
+      'startHereTree',
+      'workerEfficiencyTree',
+      'panelLifetime20Tree',
+      'androids',
+      'banking',
+    ]
+    const presets = [...source.skills.presets]
+    presets[0] = { ...presets[0]!, skillIds: queue }
+    const input: CanonicalGameStateV1 = {
+      ...source,
+      skills: {
+        ...source.skills,
+        activeAutoAssignment: queue,
+        presets:
+          presets as unknown as CanonicalGameStateV1['skills']['presets'],
+      },
+    }
+
+    const result = routeCanonicalGameCommand(
+      input,
+      {
+        kind: 'skill.remove-from-current-preset',
+        skillId: 'workerEfficiencyTree',
+      },
+      options(),
+    )
+
+    const expected = [
+      'startHereTree',
+      'panelLifetime20Tree',
+      'banking',
+    ]
+    expect(result).toMatchObject({
+      accepted: true,
+      changed: true,
+      code: 'skill:preset-skill-removed',
+      state: {
+        skills: {
+          activeAutoAssignment: expected,
+        },
+      },
+    })
+    expect(result.state.skills.presets[0].skillIds).toEqual(expected)
+  })
+
+  test('imports a validated Unity v1 preset atomically and rejects malformed input', () => {
+    const source = state()
+    const serialized = JSON.stringify({
+      version: 1,
+      presetName: 'Imported Science',
+      botDistribution: 0.8,
+      skillIds: [],
+    })
+    const imported = routeCanonicalGameCommand(
+      source,
+      {
+        kind: 'skill.import-preset',
+        slot: 1,
+        serialized,
+      },
+      options(),
+    )
+
+    expect(imported).toMatchObject({
+      accepted: true,
+      changed: true,
+      code: 'skill:preset-imported-and-loaded',
+      state: {
+        dyson: { botDistribution: 0.8 },
+        skills: {
+          activeAutoAssignment: [],
+        },
+      },
+    })
+    expect(imported.state.skills.presets[0]).toEqual({
+      name: 'Imported Science',
+      botDistribution: 0.8,
+      skillIds: [],
+    })
+
+    const rejected = routeCanonicalGameCommand(
+      source,
+      {
+        kind: 'skill.import-preset',
+        slot: 1,
+        serialized: '{"version":99}',
+      },
+      options(),
+    )
+    expect(rejected).toMatchObject({
+      accepted: false,
+      changed: false,
+      code: 'skill:preset-import-unsupported-version',
+    })
+    expect(rejected.state).toBe(source)
+  })
+
+  test('persists and immediately applies a nonzero tab preset override', () => {
+    const source = state()
+    const presets = [...source.skills.presets]
+    presets[1] = {
+      ...presets[1]!,
+      skillIds: [],
+      botDistribution: 0.8,
+    }
+    const input: CanonicalGameStateV1 = {
+      ...source,
+      skills: {
+        ...source.skills,
+        presets:
+          presets as unknown as CanonicalGameStateV1['skills']['presets'],
+      },
+    }
+
+    const result = routeCanonicalGameCommand(
+      input,
+      {
+        kind: 'skill.set-tab-preset-automation',
+        tab: 'research',
+        slot: 2,
+      },
+      options(),
+    )
+
+    expect(result).toMatchObject({
+      accepted: true,
+      changed: true,
+      code: 'skill:tab-preset-automation-set-and-applied',
+      state: {
+        dyson: { botDistribution: 0.8 },
+        skills: {
+          tabPresetAutomation: { research: 2 },
         },
       },
       runtimeCarriers: {

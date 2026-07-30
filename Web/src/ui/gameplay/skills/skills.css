@@ -376,22 +376,30 @@
   gap: 0.55rem;
 }
 
-.skill-settings__presets button {
+.skill-settings__preset-row {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 2.85rem;
+  border: 1px solid #6c5b94;
+  border-radius: 0.35rem;
+  overflow: hidden;
+  background: #392e52;
+}
+
+.skill-settings__preset-load {
   display: grid;
   grid-template-columns: minmax(0, 1fr) auto;
   gap: 0.18rem 0.55rem;
   min-block-size: 4.2rem;
   padding: 0.65rem;
-  border: 1px solid #6c5b94;
-  border-radius: 0.35rem;
-  background: #392e52;
+  border: 0;
+  background: transparent;
   color: white;
   font: inherit;
   text-align: start;
   touch-action: manipulation;
 }
 
-.skill-settings__presets button[aria-pressed="true"] {
+.skill-settings__preset-row[data-current="true"] {
   border-color: #c59be2;
   background: #4c3867;
   box-shadow:
@@ -412,27 +420,47 @@
   line-height: 1.1;
 }
 
-.skill-settings__presets button:not(:disabled):hover {
+.skill-settings__preset-row:has(button:not(:disabled):hover) {
   border-color: #a783d1;
   background: #4a3b6a;
 }
 
-.skill-settings__presets button:focus-visible,
+.skill-settings__preset-row:has(button:focus-visible),
 .skill-settings__toggle:has(input:focus-visible) {
   outline: 3px solid #f7e766;
   outline-offset: 3px;
 }
 
-.skill-settings__presets button:disabled {
+.skill-settings__preset-load:disabled {
   color: #aca3bb;
   cursor: not-allowed;
   opacity: 0.64;
 }
 
-.skill-settings__presets button span {
+.skill-settings__preset-load > span {
   grid-column: 1 / -1;
   color: #c8bddc;
   font-size: 0.85rem;
+}
+
+.skill-settings__preset-manage {
+  display: grid;
+  min-inline-size: 2.75rem;
+  min-block-size: 2.75rem;
+  padding: 0;
+  border: 0;
+  border-inline-start: 1px solid rgb(196 163 225 / 28%);
+  background: rgb(21 14 34 / 28%);
+  color: #f5ebff;
+  font: inherit;
+  font-size: 1.45rem;
+  font-weight: 900;
+  place-items: center;
+  touch-action: manipulation;
+}
+
+.skill-settings__preset-manage:hover {
+  background: rgb(197 155 226 / 16%);
 }
 
 .skill-settings__toggle {
@@ -584,6 +612,115 @@
   flex-wrap: wrap;
   gap: 0.65rem;
   align-items: center;
+}
+
+.skill-details__preset {
+  display: grid;
+  gap: 0.55rem;
+  padding: 0.7rem;
+  border: 1px solid rgb(204 152 255 / 34%);
+  border-radius: 0.38rem;
+  background: rgb(13 8 20 / 22%);
+}
+
+.skill-details__preset > label {
+  display: flex;
+  gap: 0.65rem;
+  align-items: center;
+  min-block-size: 2.75rem;
+  font-weight: 750;
+  cursor: pointer;
+}
+
+.skill-details__preset input {
+  inline-size: 1.35rem;
+  block-size: 1.35rem;
+  accent-color: var(--skill-dialog-accent);
+}
+
+.skill-details__queue-confirmation {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.55rem;
+  align-items: center;
+}
+
+.skill-details__queue-confirmation p {
+  flex-basis: 100%;
+}
+
+.skill-preset-management {
+  display: grid;
+  gap: 1rem;
+}
+
+.skill-preset-management > section,
+.skill-preset-management__rename {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.6rem;
+  align-items: end;
+  padding: 0.75rem;
+  border: 1px solid rgb(204 152 255 / 32%);
+  border-radius: 0.4rem;
+  background: rgb(15 9 24 / 24%);
+}
+
+.skill-preset-management h3,
+.skill-preset-management p {
+  flex-basis: 100%;
+  margin: 0;
+}
+
+.skill-preset-management h3 {
+  font-size: 1.05rem;
+}
+
+.skill-preset-management label {
+  display: grid;
+  flex: 1 1 14rem;
+  gap: 0.3rem;
+}
+
+.skill-preset-management input,
+.skill-preset-management textarea {
+  inline-size: 100%;
+  box-sizing: border-box;
+  padding: 0.65rem;
+  border: 1px solid #816aa7;
+  border-radius: 0.3rem;
+  background: #171021;
+  color: white;
+  font: inherit;
+}
+
+.skill-preset-management textarea {
+  resize: vertical;
+  min-block-size: 5rem;
+  overflow-wrap: anywhere;
+}
+
+.skill-preset-management input:focus-visible,
+.skill-preset-management textarea:focus-visible {
+  outline: 3px solid #f7e766;
+  outline-offset: 2px;
+}
+
+.skill-preset-management__preview {
+  display: flex;
+  flex-basis: 100%;
+  flex-wrap: wrap;
+  gap: 0.55rem;
+  align-items: center;
+  padding: 0.7rem;
+  border-inline-start: 0.25rem solid var(--skill-dialog-accent);
+  background: rgb(15 9 24 / 36%);
+}
+
+.skill-preset-management__preview > strong,
+.skill-preset-management__preview > span,
+.skill-preset-management__preview > p {
+  flex-basis: 100%;
 }
 
 .skill-details-dialog__backdrop {

@@ -16,6 +16,15 @@ export function validateCanonicalGameState(
   if (state.skills.presets.length !== 5) {
     errors.push('Skills must contain exactly five presets.')
   }
+  for (const [tab, slot] of Object.entries(
+    state.skills.tabPresetAutomation,
+  )) {
+    if (!Number.isInteger(slot) || slot < 0 || slot > 5) {
+      errors.push(
+        `Skill preset automation for '${tab}' must be an integer from 0 to 5.`,
+      )
+    }
+  }
   if (
     !Number.isInteger(state.timeline.dysonAutomationTargetIndex) ||
     state.timeline.dysonAutomationTargetIndex > 7

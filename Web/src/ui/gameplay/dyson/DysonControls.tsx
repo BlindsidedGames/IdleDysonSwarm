@@ -6,6 +6,11 @@ import type {
 import type {
   CanonicalPlayerCommand,
 } from '../../../application/canonicalPlayerCommands'
+import type {
+  CanonicalSkillPresetAutomationSlot,
+  SkillPresetState,
+} from '../../../game-state/types'
+import { PresetAutomationSelect } from '../../components'
 import {
   formatGameNumber,
 } from '../../i18n/formatters'
@@ -28,8 +33,11 @@ export interface DysonInfoProps {
   readonly totalPanelsDecayed: number
   readonly buyMode: DysonBuyMode
   readonly roundedBulkBuy: boolean
+  readonly presets: readonly SkillPresetState[]
+  readonly presetAutomationSlot: CanonicalSkillPresetAutomationSlot
   readonly buyModeRouteAvailable: boolean
   readonly roundedBulkRouteAvailable: boolean
+  readonly presetAutomationRouteAvailable: boolean
   readonly dispatchPlayer: (
     command: DysonSettingsCommand,
   ) => Promise<UiRuntimePlayerCommandResult>
@@ -41,6 +49,7 @@ type DysonSettingsCommand = Extract<
     readonly kind:
       | 'dyson.set-buy-mode'
       | 'dyson.set-rounded-bulk-buy'
+      | 'skill.set-tab-preset-automation'
   }
 >
 
@@ -65,8 +74,11 @@ export function DysonInfo({
   totalPanelsDecayed,
   buyMode,
   roundedBulkBuy,
+  presets,
+  presetAutomationSlot,
   buyModeRouteAvailable,
   roundedBulkRouteAvailable,
+  presetAutomationRouteAvailable,
   dispatchPlayer,
 }: DysonInfoProps) {
   const intl = useIntl()
@@ -233,6 +245,22 @@ export function DysonInfo({
             />
             <span>{intl.formatMessage(messages.roundedBulkBuy)}</span>
           </label>
+          <PresetAutomationSelect
+            label={intl.formatMessage(messages.presetAutomation)}
+            offLabel={intl.formatMessage(messages.presetAutomationOff)}
+            value={presetAutomationSlot}
+            presets={presets}
+            disabled={
+              settingPending || !presetAutomationRouteAvailable
+            }
+            onChange={(slot) =>
+              void applySetting({
+                kind: 'skill.set-tab-preset-automation',
+                tab: 'bots',
+                slot,
+              })
+            }
+          />
           {settingFailed && (
             <span className="dyson-info__settings-failure" role="alert">
               {intl.formatMessage(messages.purchaseSettingsFailed)}
