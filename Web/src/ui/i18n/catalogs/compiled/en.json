@@ -2201,6 +2201,322 @@
       "value": "Completed"
     }
   ],
+  "skills.action-failed": [
+    {
+      "type": 0,
+      "value": "The skill was not changed. Try again."
+    }
+  ],
+  "skills.centre-tree": [
+    {
+      "type": 0,
+      "value": "Centre on starting skill"
+    }
+  ],
+  "skills.close": [
+    {
+      "type": 0,
+      "value": "Close"
+    }
+  ],
+  "skills.cost": [
+    {
+      "type": 0,
+      "value": "Cost: "
+    },
+    {
+      "type": 1,
+      "value": "value"
+    },
+    {
+      "type": 0,
+      "value": " Skill Points"
+    }
+  ],
+  "skills.current-preset": [
+    {
+      "type": 0,
+      "value": "Current"
+    }
+  ],
+  "skills.effect": [
+    {
+      "type": 0,
+      "value": "Effect:"
+    }
+  ],
+  "skills.exclusive": [
+    {
+      "type": 0,
+      "value": "Exclusive with: "
+    },
+    {
+      "type": 1,
+      "value": "names"
+    }
+  ],
+  "skills.fragments": [
+    {
+      "type": 0,
+      "value": "Fragments: "
+    },
+    {
+      "type": 1,
+      "value": "value"
+    }
+  ],
+  "skills.fragments-context": [
+    {
+      "type": 0,
+      "value": "Fragments owned: "
+    },
+    {
+      "type": 1,
+      "value": "value"
+    },
+    {
+      "type": 0,
+      "value": " ("
+    },
+    {
+      "type": 1,
+      "value": "delta"
+    },
+    {
+      "type": 0,
+      "value": ")"
+    }
+  ],
+  "skills.load-preset": [
+    {
+      "type": 0,
+      "value": "Load "
+    },
+    {
+      "type": 1,
+      "value": "name"
+    }
+  ],
+  "skills.matches": [
+    {
+      "type": 6,
+      "value": "count",
+      "options": {
+        "one": {
+          "value": [
+            {
+              "type": 7
+            },
+            {
+              "type": 0,
+              "value": " match"
+            }
+          ]
+        },
+        "other": {
+          "value": [
+            {
+              "type": 7
+            },
+            {
+              "type": 0,
+              "value": " matches"
+            }
+          ]
+        }
+      },
+      "offset": 0,
+      "pluralType": "cardinal"
+    }
+  ],
+  "skills.missing-requirements": [
+    {
+      "type": 0,
+      "value": "Missing: "
+    },
+    {
+      "type": 1,
+      "value": "names"
+    }
+  ],
+  "skills.non-refundable": [
+    {
+      "type": 0,
+      "value": "Allow automatic assignment of non-refundable skills"
+    }
+  ],
+  "skills.owned": [
+    {
+      "type": 0,
+      "value": "Owned"
+    }
+  ],
+  "skills.points": [
+    {
+      "type": 0,
+      "value": "Skill Points: "
+    },
+    {
+      "type": 1,
+      "value": "value"
+    }
+  ],
+  "skills.preset-summary": [
+    {
+      "type": 6,
+      "value": "count",
+      "options": {
+        "one": {
+          "value": [
+            {
+              "type": 7
+            },
+            {
+              "type": 0,
+              "value": " queued skill"
+            }
+          ]
+        },
+        "other": {
+          "value": [
+            {
+              "type": 7
+            },
+            {
+              "type": 0,
+              "value": " queued skills"
+            }
+          ]
+        }
+      },
+      "offset": 0,
+      "pluralType": "cardinal"
+    },
+    {
+      "type": 0,
+      "value": " · "
+    },
+    {
+      "type": 1,
+      "value": "workers"
+    },
+    {
+      "type": 0,
+      "value": "% Workers"
+    }
+  ],
+  "skills.presets": [
+    {
+      "type": 0,
+      "value": "Presets"
+    }
+  ],
+  "skills.purchase": [
+    {
+      "type": 0,
+      "value": "Assign Skill"
+    }
+  ],
+  "skills.queued": [
+    {
+      "type": 0,
+      "value": "Queued for automatic assignment"
+    }
+  ],
+  "skills.refund": [
+    {
+      "type": 0,
+      "value": "Unassign Skill"
+    }
+  ],
+  "skills.region": [
+    {
+      "type": 0,
+      "value": "Skills"
+    }
+  ],
+  "skills.requirements-progress": [
+    {
+      "type": 0,
+      "value": "Requirements: "
+    },
+    {
+      "type": 1,
+      "value": "complete"
+    },
+    {
+      "type": 0,
+      "value": "/"
+    },
+    {
+      "type": 1,
+      "value": "total"
+    },
+    {
+      "type": 0,
+      "value": " complete"
+    }
+  ],
+  "skills.reset": [
+    {
+      "type": 0,
+      "value": "Reset refundable skills"
+    }
+  ],
+  "skills.reset-warning": [
+    {
+      "type": 0,
+      "value": "Refunds all currently refundable skills and clears automatic assignment."
+    }
+  ],
+  "skills.search": [
+    {
+      "type": 0,
+      "value": "Search skills"
+    }
+  ],
+  "skills.search-placeholder": [
+    {
+      "type": 0,
+      "value": "Search the tree…"
+    }
+  ],
+  "skills.settings": [
+    {
+      "type": 0,
+      "value": "Skill presets and reset"
+    }
+  ],
+  "skills.tree": [
+    {
+      "type": 0,
+      "value": "Skill tree"
+    }
+  ],
+  "skills.tree-instructions": [
+    {
+      "type": 0,
+      "value": "Drag to pan. Pinch or use the zoom controls to zoom. Search and press Enter to open the first matching skill."
+    }
+  ],
+  "skills.unavailable": [
+    {
+      "type": 0,
+      "value": "This action is not currently available."
+    }
+  ],
+  "skills.zoom-in": [
+    {
+      "type": 0,
+      "value": "Zoom in"
+    }
+  ],
+  "skills.zoom-out": [
+    {
+      "type": 0,
+      "value": "Zoom out"
+    }
+  ],
   "startup-shell.action.check-again": [
     {
       "type": 0,

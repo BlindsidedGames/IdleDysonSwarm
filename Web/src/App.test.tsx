@@ -574,6 +574,9 @@ function readySnapshot(): FrontendApplicationSnapshot {
           visibleBasicFacilityIds: [],
           showNextTierTeaser: true,
         },
+        skills: {
+          routeUnlocked: false,
+        },
       },
       runtime: {
         tinker: {

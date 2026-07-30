@@ -62,6 +62,11 @@ const ResearchSurface = lazy(async () => {
   return { default: module.ResearchSurface }
 })
 
+const SkillsSurface = lazy(async () => {
+  const module = await import('../skills')
+  return { default: module.SkillsSurface }
+})
+
 export const SWARM_VISUALIZATION_STORAGE_KEY =
   'idle-dyson-swarm.show-visualization'
 
@@ -182,7 +187,11 @@ export interface ReadyDysonSliceProps {
   readonly development?: UiRuntimeDevelopmentControls
 }
 
-export type ReadyGameRoute = 'bots' | 'research' | 'settings'
+export type ReadyGameRoute =
+  | 'bots'
+  | 'research'
+  | 'skills'
+  | 'settings'
 
 /**
  * Maps published canonical facts into presentation components without
@@ -231,10 +240,13 @@ export function ReadyDysonSlice({
     hasVisibleFacilities || visibility.showNextTierTeaser
   const settingsActive = route === 'settings'
   const researchActive = route === 'research'
+  const skillsActive = route === 'skills'
   const routeHeading = settingsActive
     ? messages.settingsRoute
     : researchActive
       ? messages.researchRoute
+      : skillsActive
+        ? messages.skillsRoute
       : messages.route
 
   return (
@@ -268,7 +280,11 @@ export function ReadyDysonSlice({
             id: 'skills',
             label: intl.formatMessage(messages.skillsRoute),
             iconSrc: navigationAssets.skills,
-            disabled: true,
+            ...(gameplay.visibility.skills.routeUnlocked
+              ? skillsActive
+                ? { current: true as const }
+                : { onActivate: () => onRouteChange('skills') }
+              : { disabled: true }),
           },
           {
             id: 'infinity',
@@ -395,6 +411,63 @@ export function ReadyDysonSlice({
                   </Suspense>
                 ),
               }
+            : skillsActive
+              ? {
+                  ariaLabel: intl.formatMessage(messages.skillsRoute),
+                  content: (
+                    <Suspense
+                      fallback={
+                        <div
+                          aria-label={intl.formatMessage(
+                            messages.skillsRoute,
+                          )}
+                          aria-busy="true"
+                        />
+                      }
+                    >
+                      <SkillsSurface
+                        locale={locale}
+                        points={gameplay.resources.skills.points}
+                        fragments={
+                          gameplay.resources.skills.fragments
+                        }
+                        catalog={gameplay.previews.skills}
+                        presets={gameplay.progression.skills.presets}
+                        selectedPresetSlot={
+                          gameplay.runtime.selectedSkillPresetSlot
+                        }
+                        botDistribution={
+                          gameplay.progression.dyson.botDistribution
+                        }
+                        autoAssignNonRefundable={
+                          gameplay.progression.skills
+                            .autoAssignNonRefundable
+                        }
+                        commandAvailability={{
+                          purchase:
+                            gameplay.commands.byKind[
+                              'skill.purchase'
+                            ].routeAvailable,
+                          refund:
+                            gameplay.commands.byKind['skill.refund']
+                              .routeAvailable,
+                          selectPreset:
+                            gameplay.commands.byKind[
+                              'skill.select-preset'
+                            ].routeAvailable,
+                          setAutoAssignNonRefundable:
+                            gameplay.commands.byKind[
+                              'skill.set-auto-assign-non-refundable'
+                            ].routeAvailable,
+                          reset:
+                            gameplay.commands.byKind['skill.reset']
+                              .routeAvailable,
+                        }}
+                        dispatchPlayer={dispatchPlayer}
+                      />
+                    </Suspense>
+                  ),
+                }
             : undefined
       }
       resources={{
@@ -529,9 +602,8 @@ export function ReadyDysonSlice({
         ),
       }}
       distribution={
-        settingsActive
-          ? undefined
-          : {
+        route === 'bots' || researchActive
+          ? {
               ariaLabel: intl.formatMessage(
                 messages.botDistribution,
               ),
@@ -562,6 +634,7 @@ export function ReadyDysonSlice({
                 />
               ),
             }
+          : undefined
       }
     />
   )

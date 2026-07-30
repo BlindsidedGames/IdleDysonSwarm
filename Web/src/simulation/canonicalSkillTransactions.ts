@@ -47,10 +47,23 @@ export interface CanonicalSkillActionPreview {
   readonly affectedSkillIds: readonly string[]
 }
 
+export type CanonicalSkillVisualState =
+  | 'root'
+  | 'fragment'
+  | 'owned'
+  | 'non-refundable'
+  | 'non-refundable-owned'
+  | 'exclusive'
+  | 'normal'
+
 export interface CanonicalSkillAvailabilityPreview {
   readonly skillId: string
   readonly cost: bigint
   readonly owned: boolean
+  readonly visible: boolean
+  readonly unlocked: boolean
+  readonly queued: boolean
+  readonly visualState: CanonicalSkillVisualState
   readonly fragment: boolean
   readonly intrinsicallyRefundable: boolean
   readonly requiredSkillIds: readonly string[]
@@ -89,7 +102,11 @@ export function previewCanonicalSkillCatalog(
     })
   }
 
+  const effectivelyNotRefundableIds =
+    selectEffectivelyNotRefundableSkillIds(state, definitions)
   const skills = [...definitions.values()].map((definition) => {
+    const owned = state.skills.byId[definition.id]?.owned === true
+    const unlocked = isUnlocked(definition, state)
     const purchase = purchaseWithDefinitions(
       state,
       definition.id,
@@ -132,7 +149,18 @@ export function previewCanonicalSkillCatalog(
     return Object.freeze({
       skillId: definition.id,
       cost: definition.cost,
-      owned: state.skills.byId[definition.id]?.owned === true,
+      owned,
+      visible: unlocked,
+      unlocked,
+      queued: state.skills.activeAutoAssignment.includes(
+        definition.id,
+      ),
+      visualState: resolveVisualState(
+        definition,
+        state,
+        effectivelyNotRefundableIds,
+        owned,
+      ),
       fragment: definition.fragment,
       intrinsicallyRefundable: definition.refundable,
       requiredSkillIds: Object.freeze([...definition.required]),
@@ -541,6 +569,63 @@ function isRefundable(
     definition.refundable &&
     !hasOwned(definition.unrefundableWith, byId)
   )
+}
+
+function resolveVisualState(
+  definition: SkillDefinition,
+  state: CanonicalGameStateV1,
+  effectivelyNotRefundableIds: ReadonlySet<string>,
+  owned: boolean,
+): CanonicalSkillVisualState {
+  if (hasOwned(definition.exclusiveWith, state.skills.byId)) {
+    return 'exclusive'
+  }
+  if (effectivelyNotRefundableIds.has(definition.id)) {
+    return owned ? 'non-refundable-owned' : 'non-refundable'
+  }
+  if (owned) return 'owned'
+  if (definition.fragment) return 'fragment'
+  if (definition.required.length === 0) return 'root'
+  return 'normal'
+}
+
+function selectEffectivelyNotRefundableSkillIds(
+  state: CanonicalGameStateV1,
+  definitions: ReadonlyMap<string, SkillDefinition>,
+): ReadonlySet<string> {
+  const skillIds = new Set<string>()
+  for (const definition of definitions.values()) {
+    if (!definition.refundable) skillIds.add(definition.id)
+    if (
+      state.skills.byId[definition.id]?.owned === true &&
+      hasOwned(definition.unrefundableWith, state.skills.byId)
+    ) {
+      skillIds.add(definition.id)
+    }
+  }
+
+  for (const candidate of definitions.values()) {
+    if (
+      candidate.refundable ||
+      state.skills.byId[candidate.id]?.owned !== true
+    ) {
+      continue
+    }
+    const visited = new Set([candidate.id])
+    const queue = [candidate.id]
+    while (queue.length > 0) {
+      const current = queue.shift()!
+      const required = definitions.get(current)?.required ?? []
+      for (const requiredId of required) {
+        if (!visited.add(requiredId)) continue
+        if (state.skills.byId[requiredId]?.owned === true) {
+          skillIds.add(requiredId)
+        }
+        queue.push(requiredId)
+      }
+    }
+  }
+  return skillIds
 }
 
 function dependentIds(

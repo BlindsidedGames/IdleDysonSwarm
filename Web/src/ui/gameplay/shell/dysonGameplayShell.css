@@ -108,6 +108,54 @@
     brightness(1.25);
 }
 
+.dyson-shell[data-route-theme="skills"] {
+  --resource-clearance-color: #151225;
+  background: #151225;
+}
+
+.dyson-shell[data-route-theme="skills"]
+  .dyson-shell__bottom-navigation {
+  border-color: #4b3f70;
+  background: #302746;
+}
+
+.dyson-shell[data-route-theme="skills"]
+  .dyson-shell__side-panel {
+  border-color: #4b3f70;
+  background: #151225;
+}
+
+.dyson-shell[data-route-theme="skills"]
+  .dyson-navigation--drawer
+  .dyson-navigation__link {
+  border-color: #100d1a;
+  background: #302746;
+  color: #d8d0ed;
+}
+
+.dyson-shell[data-route-theme="skills"]
+  .dyson-navigation--drawer
+  .dyson-navigation__link[aria-current="page"] {
+  background: #41355f;
+  color: white;
+}
+
+.dyson-shell[data-route-theme="skills"]
+  .dyson-navigation__link[aria-current="page"] {
+  color: #83df63;
+}
+
+.dyson-shell[data-route-theme="skills"]
+  .dyson-navigation__link[aria-current="page"]
+  .dyson-navigation__icon
+  img {
+  filter:
+    sepia(0.55)
+    saturate(4)
+    hue-rotate(55deg)
+    brightness(1.35);
+}
+
 .dyson-shell__skip-link {
   position: fixed;
   z-index: 100;
@@ -658,6 +706,8 @@
 }
 
 .dyson-shell[data-route-theme="research"]
+  .dyson-shell__route-content,
+.dyson-shell[data-route-theme="skills"]
   .dyson-shell__route-content {
   padding: 0;
 }

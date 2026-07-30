@@ -93,6 +93,10 @@ describe('canonical skill transactions', () => {
       skillId: 'startHereTree',
       cost: 1n,
       owned: true,
+      visible: true,
+      unlocked: true,
+      queued: false,
+      visualState: 'owned',
       purchase: {
         eligible: false,
         code: 'already-owned',
@@ -109,6 +113,135 @@ describe('canonical skill transactions', () => {
     expect(Object.isFrozen(preview.skills)).toBe(true)
     expect(Object.isFrozen(start?.refund)).toBe(true)
     expect(state).toEqual(before)
+  })
+
+  test('publishes canonical Unity visibility for first-Infinity and quantum-gated branches', () => {
+    const unlockedState = stateWithSkills([], 10n)
+    const lockedState: CanonicalGameStateV1 = {
+      ...unlockedState,
+      meta: {
+        ...unlockedState.meta,
+        firstInfinityComplete: false,
+      },
+      quantum: {
+        ...unlockedState.quantum,
+        unlocks: {
+          ...unlockedState.quantum.unlocks,
+          fragments: false,
+          purity: false,
+          terra: false,
+          power: false,
+          paragade: false,
+          stellar: false,
+        },
+      },
+    }
+
+    const locked = previewCanonicalSkillCatalog(lockedState)
+    for (const skillId of [
+      'whatWillComeToPass',
+      'fragmentAssembly',
+      'purityOfMind',
+      'terraFirma',
+      'superchargedPower',
+      'paragon',
+      'stellarSacrifices',
+    ]) {
+      expect(
+        locked.skills.find((skill) => skill.skillId === skillId),
+        skillId,
+      ).toMatchObject({
+        visible: false,
+        unlocked: false,
+        purchase: {
+          eligible: false,
+          code: 'SKILL-LOCKED',
+        },
+      })
+    }
+
+    const unlocked = previewCanonicalSkillCatalog(unlockedState)
+    for (const skillId of [
+      'whatWillComeToPass',
+      'fragmentAssembly',
+      'purityOfMind',
+      'terraFirma',
+      'superchargedPower',
+      'paragon',
+      'stellarSacrifices',
+    ]) {
+      expect(
+        unlocked.skills.find((skill) => skill.skillId === skillId),
+        skillId,
+      ).toMatchObject({
+        visible: true,
+        unlocked: true,
+      })
+    }
+  })
+
+  test('publishes canonical Unity node visual precedence and queue membership', () => {
+    const state = stateWithSkills(
+      [
+        'startHereTree',
+        'manualLabour',
+        'renegade',
+        'scientificPlanets',
+        'shouldersOfGiants',
+      ],
+      10n,
+      ['manualLabour', 'fragmentAssembly'],
+    )
+    const preview = previewCanonicalSkillCatalog(state)
+    const skill = (skillId: string) =>
+      preview.skills.find((candidate) => candidate.skillId === skillId)
+
+    expect(skill('startHereTree')).toMatchObject({
+      visualState: 'non-refundable-owned',
+      queued: false,
+    })
+    expect(skill('fragmentAssembly')).toMatchObject({
+      visualState: 'fragment',
+      queued: true,
+    })
+    expect(skill('manualLabour')).toMatchObject({
+      visualState: 'owned',
+      queued: true,
+    })
+    expect(skill('banking')).toMatchObject({
+      visualState: 'non-refundable',
+      queued: false,
+    })
+    expect(skill('shouldersOfGiants')).toMatchObject({
+      visualState: 'non-refundable-owned',
+      queued: false,
+    })
+    expect(skill('scientificPlanets')).toMatchObject({
+      visualState: 'non-refundable-owned',
+      queued: false,
+    })
+    expect(skill('paragon')).toMatchObject({
+      visualState: 'exclusive',
+      queued: false,
+    })
+    expect(skill('workerEfficiencyTree')).toMatchObject({
+      visualState: 'normal',
+      queued: false,
+    })
+  })
+
+  test('publishes root styling when no dynamic non-refundable lock is owned', () => {
+    const preview = previewCanonicalSkillCatalog(
+      stateWithSkills([], 10n),
+    )
+    expect(
+      preview.skills.find(
+        (skill) => skill.skillId === 'startHereTree',
+      ),
+    ).toMatchObject({
+      visualState: 'root',
+      queued: false,
+    })
   })
 
   test('previews blocked purchase and refund reasons without optimistic eligibility', () => {

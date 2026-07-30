@@ -148,6 +148,7 @@ describe('frontend gameplay snapshot', () => {
     expect(projected.gameplay.resources.dyson.money).toBeTypeOf(
       'number',
     )
+    expect(projected.gameplay.runtime.selectedSkillPresetSlot).toBe(1)
     expect(Object.isFrozen(projected.revision)).toBe(true)
     expect(Object.isFrozen(projected.gameplay)).toBe(true)
   })
@@ -235,6 +236,51 @@ describe('frontend gameplay snapshot', () => {
       visibleBasicFacilityIds: [],
       showNextTierTeaser: true,
     })
+    expect(snapshot.visibility.skills.routeUnlocked).toBe(false)
+  })
+
+  test('publishes Skills route unlock from canonical progression', () => {
+    const source = firstRunFixtureState()
+    const tenBots: CanonicalGameStateV1 = {
+      ...source,
+      dyson: {
+        ...source.dyson,
+        bots: 10,
+      },
+    }
+    const advancedGoal: CanonicalGameStateV1 = {
+      ...source,
+      dyson: {
+        ...source.dyson,
+        goalStage: 1n,
+      },
+    }
+    const awardedPoint: CanonicalGameStateV1 = {
+      ...source,
+      skills: {
+        ...source.skills,
+        points: 1n,
+      },
+    }
+
+    expect(
+      selectFrontendGameplaySnapshot(
+        tenBots,
+        frontendContext(),
+      ).visibility.skills.routeUnlocked,
+    ).toBe(true)
+    expect(
+      selectFrontendGameplaySnapshot(
+        advancedGoal,
+        frontendContext(),
+      ).visibility.skills.routeUnlocked,
+    ).toBe(true)
+    expect(
+      selectFrontendGameplaySnapshot(
+        awardedPoint,
+        frontendContext(),
+      ).visibility.skills.routeUnlocked,
+    ).toBe(true)
   })
 
   test('projects checkpointed manual Assembly ownership in canonical display order', () => {
@@ -591,6 +637,20 @@ describe('frontend gameplay snapshot', () => {
     expect(snapshot.previews.research.purchases.length).toBeGreaterThan(0)
     expect(snapshot.previews.skills.complete).toBe(true)
     expect(snapshot.previews.skills.skills.length).toBeGreaterThan(100)
+    expect(
+      snapshot.previews.skills.skills.find(
+        (skill) => skill.skillId === 'startHereTree',
+      ),
+    ).toEqual(
+      expect.objectContaining({
+        visible: expect.any(Boolean),
+        unlocked: expect.any(Boolean),
+        queued: expect.any(Boolean),
+        visualState: expect.stringMatching(
+          /^(root|fragment|owned|non-refundable|non-refundable-owned|exclusive|normal)$/,
+        ),
+      }),
+    )
     expect(snapshot.previews.infinity.shop).toHaveLength(9)
     expect(snapshot.previews.reality.upgrades).toHaveLength(18)
     expect(snapshot.previews.quantum.upgrades).toHaveLength(20)
@@ -1118,5 +1178,6 @@ function frontendContext(
       definitionGap: null,
     },
     storedTimeCheater: false,
+    selectedSkillPresetSlot: runtime.selectedSkillPresetSlot,
   }
 }

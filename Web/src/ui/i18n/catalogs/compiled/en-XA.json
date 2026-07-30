@@ -4025,6 +4025,578 @@
       "value": "]"
     }
   ],
+  "skills.action-failed": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Ŧħḗḗ şķīŀŀ ẇȧȧş ƞǿǿŧ ƈħȧȧƞɠḗḗḓ. Ŧřẏ ȧȧɠȧȧīƞ."
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "skills.centre-tree": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Ƈḗḗƞŧřḗḗ ǿǿƞ şŧȧȧřŧīƞɠ şķīŀŀ"
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "skills.close": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Ƈŀǿǿşḗḗ"
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "skills.cost": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Ƈǿǿşŧ: "
+    },
+    {
+      "type": 1,
+      "value": "value"
+    },
+    {
+      "type": 0,
+      "value": " Şķīŀŀ Ƥǿǿīƞŧş"
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "skills.current-preset": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Ƈŭŭřřḗḗƞŧ"
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "skills.effect": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Ḗƒƒḗḗƈŧ:"
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "skills.exclusive": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Ḗẋƈŀŭŭşīṽḗḗ ẇīŧħ: "
+    },
+    {
+      "type": 1,
+      "value": "names"
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "skills.fragments": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Ƒřȧȧɠḿḗḗƞŧş: "
+    },
+    {
+      "type": 1,
+      "value": "value"
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "skills.fragments-context": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Ƒřȧȧɠḿḗḗƞŧş ǿǿẇƞḗḗḓ: "
+    },
+    {
+      "type": 1,
+      "value": "value"
+    },
+    {
+      "type": 0,
+      "value": " ("
+    },
+    {
+      "type": 1,
+      "value": "delta"
+    },
+    {
+      "type": 0,
+      "value": ")"
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "skills.load-preset": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Ŀǿǿȧȧḓ "
+    },
+    {
+      "type": 1,
+      "value": "name"
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "skills.matches": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 6,
+      "value": "count",
+      "options": {
+        "one": {
+          "value": [
+            {
+              "type": 7
+            },
+            {
+              "type": 0,
+              "value": " ḿȧȧŧƈħ"
+            }
+          ]
+        },
+        "other": {
+          "value": [
+            {
+              "type": 7
+            },
+            {
+              "type": 0,
+              "value": " ḿȧȧŧƈħḗḗş"
+            }
+          ]
+        }
+      },
+      "offset": 0,
+      "pluralType": "cardinal"
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "skills.missing-requirements": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Ḿīşşīƞɠ: "
+    },
+    {
+      "type": 1,
+      "value": "names"
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "skills.non-refundable": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Ȧŀŀǿǿẇ ȧȧŭŭŧǿǿḿȧȧŧīƈ ȧȧşşīɠƞḿḗḗƞŧ ǿǿƒ ƞǿǿƞ-řḗḗƒŭŭƞḓȧȧƀŀḗḗ şķīŀŀş"
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "skills.owned": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Ǿẇƞḗḗḓ"
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "skills.points": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Şķīŀŀ Ƥǿǿīƞŧş: "
+    },
+    {
+      "type": 1,
+      "value": "value"
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "skills.preset-summary": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 6,
+      "value": "count",
+      "options": {
+        "one": {
+          "value": [
+            {
+              "type": 7
+            },
+            {
+              "type": 0,
+              "value": " ɋŭŭḗḗŭŭḗḗḓ şķīŀŀ"
+            }
+          ]
+        },
+        "other": {
+          "value": [
+            {
+              "type": 7
+            },
+            {
+              "type": 0,
+              "value": " ɋŭŭḗḗŭŭḗḗḓ şķīŀŀş"
+            }
+          ]
+        }
+      },
+      "offset": 0,
+      "pluralType": "cardinal"
+    },
+    {
+      "type": 0,
+      "value": " · "
+    },
+    {
+      "type": 1,
+      "value": "workers"
+    },
+    {
+      "type": 0,
+      "value": "% Ẇǿǿřķḗḗřş"
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "skills.presets": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Ƥřḗḗşḗḗŧş"
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "skills.purchase": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Ȧşşīɠƞ Şķīŀŀ"
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "skills.queued": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Ɋŭŭḗḗŭŭḗḗḓ ƒǿǿř ȧȧŭŭŧǿǿḿȧȧŧīƈ ȧȧşşīɠƞḿḗḗƞŧ"
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "skills.refund": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Ŭƞȧȧşşīɠƞ Şķīŀŀ"
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "skills.region": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Şķīŀŀş"
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "skills.requirements-progress": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Řḗḗɋŭŭīřḗḗḿḗḗƞŧş: "
+    },
+    {
+      "type": 1,
+      "value": "complete"
+    },
+    {
+      "type": 0,
+      "value": "/"
+    },
+    {
+      "type": 1,
+      "value": "total"
+    },
+    {
+      "type": 0,
+      "value": " ƈǿǿḿƥŀḗḗŧḗḗ"
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "skills.reset": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Řḗḗşḗḗŧ řḗḗƒŭŭƞḓȧȧƀŀḗḗ şķīŀŀş"
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "skills.reset-warning": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Řḗḗƒŭŭƞḓş ȧȧŀŀ ƈŭŭřřḗḗƞŧŀẏ řḗḗƒŭŭƞḓȧȧƀŀḗḗ şķīŀŀş ȧȧƞḓ ƈŀḗḗȧȧřş ȧȧŭŭŧǿǿḿȧȧŧīƈ ȧȧşşīɠƞḿḗḗƞŧ."
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "skills.search": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Şḗḗȧȧřƈħ şķīŀŀş"
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "skills.search-placeholder": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Şḗḗȧȧřƈħ ŧħḗḗ ŧřḗḗḗḗ…"
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "skills.settings": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Şķīŀŀ ƥřḗḗşḗḗŧş ȧȧƞḓ řḗḗşḗḗŧ"
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "skills.tree": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Şķīŀŀ ŧřḗḗḗḗ"
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "skills.tree-instructions": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Ḓřȧȧɠ ŧǿǿ ƥȧȧƞ. Ƥīƞƈħ ǿǿř ŭŭşḗḗ ŧħḗḗ ẑǿǿǿǿḿ ƈǿǿƞŧřǿǿŀş ŧǿǿ ẑǿǿǿǿḿ. Şḗḗȧȧřƈħ ȧȧƞḓ ƥřḗḗşş Ḗƞŧḗḗř ŧǿǿ ǿǿƥḗḗƞ ŧħḗḗ ƒīřşŧ ḿȧȧŧƈħīƞɠ şķīŀŀ."
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "skills.unavailable": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Ŧħīş ȧȧƈŧīǿǿƞ īş ƞǿǿŧ ƈŭŭřřḗḗƞŧŀẏ ȧȧṽȧȧīŀȧȧƀŀḗḗ."
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "skills.zoom-in": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Ẑǿǿǿǿḿ īƞ"
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "skills.zoom-out": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Ẑǿǿǿǿḿ ǿǿŭŭŧ"
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
   "startup-shell.action.check-again": [
     {
       "type": 0,

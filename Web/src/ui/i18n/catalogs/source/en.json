@@ -911,6 +911,102 @@
     "defaultMessage": "Completed",
     "description": "Short status confirming that a player-requested operation completed."
   },
+  "skills.action-failed": {
+    "defaultMessage": "The skill was not changed. Try again."
+  },
+  "skills.centre-tree": {
+    "defaultMessage": "Centre on starting skill"
+  },
+  "skills.close": {
+    "defaultMessage": "Close"
+  },
+  "skills.cost": {
+    "defaultMessage": "Cost: {value} Skill Points"
+  },
+  "skills.current-preset": {
+    "defaultMessage": "Current"
+  },
+  "skills.effect": {
+    "defaultMessage": "Effect:"
+  },
+  "skills.exclusive": {
+    "defaultMessage": "Exclusive with: {names}"
+  },
+  "skills.fragments": {
+    "defaultMessage": "Fragments: {value}"
+  },
+  "skills.fragments-context": {
+    "defaultMessage": "Fragments owned: {value} ({delta})"
+  },
+  "skills.load-preset": {
+    "defaultMessage": "Load {name}"
+  },
+  "skills.matches": {
+    "defaultMessage": "{count, plural, one {# match} other {# matches}}"
+  },
+  "skills.missing-requirements": {
+    "defaultMessage": "Missing: {names}"
+  },
+  "skills.non-refundable": {
+    "defaultMessage": "Allow automatic assignment of non-refundable skills"
+  },
+  "skills.owned": {
+    "defaultMessage": "Owned"
+  },
+  "skills.points": {
+    "defaultMessage": "Skill Points: {value}"
+  },
+  "skills.preset-summary": {
+    "defaultMessage": "{count, plural, one {# queued skill} other {# queued skills}} · {workers}% Workers"
+  },
+  "skills.presets": {
+    "defaultMessage": "Presets"
+  },
+  "skills.purchase": {
+    "defaultMessage": "Assign Skill"
+  },
+  "skills.queued": {
+    "defaultMessage": "Queued for automatic assignment"
+  },
+  "skills.refund": {
+    "defaultMessage": "Unassign Skill"
+  },
+  "skills.region": {
+    "defaultMessage": "Skills"
+  },
+  "skills.requirements-progress": {
+    "defaultMessage": "Requirements: {complete}/{total} complete"
+  },
+  "skills.reset": {
+    "defaultMessage": "Reset refundable skills"
+  },
+  "skills.reset-warning": {
+    "defaultMessage": "Refunds all currently refundable skills and clears automatic assignment."
+  },
+  "skills.search": {
+    "defaultMessage": "Search skills"
+  },
+  "skills.search-placeholder": {
+    "defaultMessage": "Search the tree…"
+  },
+  "skills.settings": {
+    "defaultMessage": "Skill presets and reset"
+  },
+  "skills.tree": {
+    "defaultMessage": "Skill tree"
+  },
+  "skills.tree-instructions": {
+    "defaultMessage": "Drag to pan. Pinch or use the zoom controls to zoom. Search and press Enter to open the first matching skill."
+  },
+  "skills.unavailable": {
+    "defaultMessage": "This action is not currently available."
+  },
+  "skills.zoom-in": {
+    "defaultMessage": "Zoom in"
+  },
+  "skills.zoom-out": {
+    "defaultMessage": "Zoom out"
+  },
   "startup-shell.action.check-again": {
     "defaultMessage": "Check again",
     "description": "Button label that requests another ownership or capability check."

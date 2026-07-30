@@ -6,6 +6,7 @@ import { validateCanonicalGameState } from '../game-state/validate'
 import {
   evaluateCanonicalBotCapCheckpoint,
 } from './canonicalBotCapCheckpoint'
+import { advanceCanonicalGoalProgression } from './canonicalGoalProgression'
 import {
   CANONICAL_DYSON_PRESENTATION_TUNING,
   deriveBasicDysonState,
@@ -574,6 +575,7 @@ export class CanonicalEventTimeModel
         },
       },
     })
+    if (!this.applyGoalProgression()) return
     if (!this.publishEvaluationSnapshot('evaluationSnapshot')) return
     mergeSummary(summary, pending.summary)
   }
@@ -917,6 +919,41 @@ export class CanonicalEventTimeModel
         derived.nextEvaluationSnapshot,
       ),
     }
+    return true
+  }
+
+  private applyGoalProgression(): boolean {
+    const result = advanceCanonicalGoalProgression(
+      this.carrier.gameState,
+      (state) => {
+        const derived = this.deriveForNextState(
+          state,
+          'dyson.goalProgression',
+        )
+        if (derived === undefined) {
+          throw new Error(
+            this.currentIssue?.detail ??
+              'Dyson derivation rejected goal progression.',
+          )
+        }
+        return {
+          panelsPerSecond: derived.globals.panelsPerSecond,
+          panelLifetimeSeconds:
+            derived.globals.panelLifetimeSeconds,
+        }
+      },
+    )
+    if (!result.ok) {
+      if (this.currentIssue === undefined) {
+        this.fail(
+          result.code,
+          'dyson.goalStage',
+          result.detail,
+        )
+      }
+      return false
+    }
+    this.replaceGameState(result.state)
     return true
   }
 

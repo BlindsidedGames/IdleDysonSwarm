@@ -305,6 +305,31 @@ describe('ReadyDysonSlice', () => {
     expect(onRouteChange).toHaveBeenCalledWith('bots')
   })
 
+  test('switches to the authored Skills tree only when canonical visibility unlocks it', async () => {
+    render(
+      provider(
+        <ReadyDysonSlice
+          snapshot={snapshot({ skillsRouteUnlocked: true })}
+          locale="en"
+          dispatchPlayer={acceptedDispatch}
+          route="skills"
+        />,
+      ),
+    )
+
+    expect(
+      screen.getByRole('heading', { level: 1, name: 'Skills' }),
+    ).toBeInTheDocument()
+    expect(
+      await screen.findByRole('button', {
+        name: 'Cash & Science. Cost: 1 Skill Points',
+      }),
+    ).toBeInTheDocument()
+    expect(
+      screen.queryByRole('slider', { name: 'Bot Distribution' }),
+    ).not.toBeInTheDocument()
+  })
+
   test('persists the visualization toggle and reclaims its playfield row', async () => {
     const user = userEvent.setup()
     const rendered = render(
@@ -651,6 +676,7 @@ type FacilityId =
 interface SnapshotOptions {
   readonly visibleBasicFacilityIds?: readonly FacilityId[]
   readonly showNextTierTeaser?: boolean
+  readonly skillsRouteUnlocked?: boolean
   readonly facilities?: Partial<
     Record<FacilityId, readonly [number, number]>
   >
@@ -741,6 +767,10 @@ function snapshot(options: SnapshotOptions = {}): ReadySnapshot {
           workers: 1000,
           researchers: 2000,
         },
+        skills: {
+          points: 1n,
+          fragments: 0n,
+        },
       },
       progression: {
         dyson: {
@@ -760,6 +790,18 @@ function snapshot(options: SnapshotOptions = {}): ReadySnapshot {
             roundedBulkBuy: false,
             enabledById: {},
           },
+        },
+        skills: {
+          byId: {},
+          activeAutoAssignment: [],
+          presets: [
+            { name: 'Preset 1', skillIds: [], botDistribution: 0 },
+            { name: 'Preset 2', skillIds: [], botDistribution: 0 },
+            { name: 'Preset 3', skillIds: [], botDistribution: 0 },
+            { name: 'Preset 4', skillIds: [], botDistribution: 0 },
+            { name: 'Preset 5', skillIds: [], botDistribution: 0 },
+          ],
+          autoAssignNonRefundable: false,
         },
         quantum: {
           unlocks: {
@@ -819,6 +861,9 @@ function snapshot(options: SnapshotOptions = {}): ReadySnapshot {
           showNextTierTeaser:
             options.showNextTierTeaser ?? true,
         },
+        skills: {
+          routeUnlocked: options.skillsRouteUnlocked ?? false,
+        },
       },
       runtime: {
         tinker: {
@@ -866,6 +911,21 @@ function snapshot(options: SnapshotOptions = {}): ReadySnapshot {
           'research.set-rounded-bulk-buy': {
             routeAvailable: true,
           },
+          'skill.purchase': {
+            routeAvailable: true,
+          },
+          'skill.refund': {
+            routeAvailable: true,
+          },
+          'skill.select-preset': {
+            routeAvailable: true,
+          },
+          'skill.set-auto-assign-non-refundable': {
+            routeAvailable: true,
+          },
+          'skill.reset': {
+            routeAvailable: true,
+          },
         },
       },
       previews: {
@@ -894,6 +954,38 @@ function snapshot(options: SnapshotOptions = {}): ReadySnapshot {
               currentEffect: 0,
               projectedEffect: 5,
               passiveProgress: 0,
+            },
+          ],
+        },
+        skills: {
+          complete: true,
+          definitionGap: null,
+          skills: [
+            {
+              skillId: 'startHereTree',
+              cost: 1n,
+              owned: false,
+              visible: true,
+              unlocked: true,
+              queued: false,
+              visualState: 'root',
+              fragment: false,
+              intrinsicallyRefundable: true,
+              requiredSkillIds: [],
+              shadowRequiredSkillIds: [],
+              exclusiveWithSkillIds: [],
+              purchase: {
+                eligible: true,
+                code: 'purchasable',
+                affectedSkillIds: ['startHereTree'],
+              },
+              refund: {
+                eligible: false,
+                code: 'not-owned',
+                affectedSkillIds: [],
+                pointsReturned: 0n,
+                fragmentsRemoved: 0n,
+              },
             },
           ],
         },

@@ -794,4 +794,68 @@ describe('canonical whole-game event-time model', () => {
       elapsedSeconds: 0,
     })
   })
+
+  test('advances goals through the active-time event boundary', () => {
+    const source = baseState()
+    const result = advanceEventTime({
+      startingState: new CanonicalEventTimeModel(
+        carrier({
+          ...source,
+          dyson: {
+            ...source.dyson,
+            bots: 10,
+          },
+        }),
+        context(),
+      ),
+      durationSeconds: 0.1,
+      automationIntervalSeconds: 1,
+      automationTimeUntilNextEvent: 1,
+      infinityMinimumCycleSeconds: 10,
+      processingBudgetMilliseconds: 0,
+    })
+
+    expect(result.completed).toBe(true)
+    expect(result.diagnosticCode).toBeUndefined()
+    expect(
+      result.candidateState.state.gameState.dyson.goalStage,
+    ).toBe(1n)
+    expect(
+      result.candidateState.state.gameState.skills.points,
+    ).toBe(1n)
+  })
+
+  test('advances goals through the stored-time event path', () => {
+    const source = baseState()
+    const result = advanceEventTime({
+      startingState: new CanonicalEventTimeModel(
+        carrier({
+          ...source,
+          dyson: {
+            ...source.dyson,
+            goalStage: 1n,
+            facilities: {
+              ...source.dyson.facilities,
+              assembly_lines: [0, 5],
+            },
+          },
+        }),
+        { ...context(), advanceTinker: false },
+      ),
+      durationSeconds: 0.1,
+      automationIntervalSeconds: 1,
+      automationTimeUntilNextEvent: 1,
+      infinityMinimumCycleSeconds: 10,
+      processingBudgetMilliseconds: 0,
+    })
+
+    expect(result.completed).toBe(true)
+    expect(result.diagnosticCode).toBeUndefined()
+    expect(
+      result.candidateState.state.gameState.dyson.goalStage,
+    ).toBe(2n)
+    expect(
+      result.candidateState.state.gameState.skills.points,
+    ).toBe(1n)
+  })
 })

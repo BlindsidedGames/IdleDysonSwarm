@@ -4025,6 +4025,578 @@
       "value": "‬"
     }
   ],
+  "skills.action-failed": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "⊥ɥǝ sʞıʅʅ ʍɐs uoʇ ɔɥɐuƃǝp. ⊥ɹʎ ɐƃɐıu."
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "skills.centre-tree": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "Ↄǝuʇɹǝ ou sʇɐɹʇıuƃ sʞıʅʅ"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "skills.close": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "Ↄʅosǝ"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "skills.cost": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "Ↄosʇ: "
+    },
+    {
+      "type": 1,
+      "value": "value"
+    },
+    {
+      "type": 0,
+      "value": " Sʞıʅʅ Ԁoıuʇs"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "skills.current-preset": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "Ↄnɹɹǝuʇ"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "skills.effect": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "Ǝɟɟǝɔʇ:"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "skills.exclusive": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "Ǝxɔʅnsıʌǝ ʍıʇɥ: "
+    },
+    {
+      "type": 1,
+      "value": "names"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "skills.fragments": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "Ⅎɹɐƃɯǝuʇs: "
+    },
+    {
+      "type": 1,
+      "value": "value"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "skills.fragments-context": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "Ⅎɹɐƃɯǝuʇs oʍuǝp: "
+    },
+    {
+      "type": 1,
+      "value": "value"
+    },
+    {
+      "type": 0,
+      "value": " ("
+    },
+    {
+      "type": 1,
+      "value": "delta"
+    },
+    {
+      "type": 0,
+      "value": ")"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "skills.load-preset": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "⅂oɐp "
+    },
+    {
+      "type": 1,
+      "value": "name"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "skills.matches": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 6,
+      "value": "count",
+      "options": {
+        "one": {
+          "value": [
+            {
+              "type": 7
+            },
+            {
+              "type": 0,
+              "value": " ɯɐʇɔɥ"
+            }
+          ]
+        },
+        "other": {
+          "value": [
+            {
+              "type": 7
+            },
+            {
+              "type": 0,
+              "value": " ɯɐʇɔɥǝs"
+            }
+          ]
+        }
+      },
+      "offset": 0,
+      "pluralType": "cardinal"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "skills.missing-requirements": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "Wıssıuƃ: "
+    },
+    {
+      "type": 1,
+      "value": "names"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "skills.non-refundable": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "∀ʅʅoʍ ɐnʇoɯɐʇıɔ ɐssıƃuɯǝuʇ oɟ uou-ɹǝɟnupɐqʅǝ sʞıʅʅs"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "skills.owned": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "Oʍuǝp"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "skills.points": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "Sʞıʅʅ Ԁoıuʇs: "
+    },
+    {
+      "type": 1,
+      "value": "value"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "skills.preset-summary": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 6,
+      "value": "count",
+      "options": {
+        "one": {
+          "value": [
+            {
+              "type": 7
+            },
+            {
+              "type": 0,
+              "value": " bnǝnǝp sʞıʅʅ"
+            }
+          ]
+        },
+        "other": {
+          "value": [
+            {
+              "type": 7
+            },
+            {
+              "type": 0,
+              "value": " bnǝnǝp sʞıʅʅs"
+            }
+          ]
+        }
+      },
+      "offset": 0,
+      "pluralType": "cardinal"
+    },
+    {
+      "type": 0,
+      "value": " · "
+    },
+    {
+      "type": 1,
+      "value": "workers"
+    },
+    {
+      "type": 0,
+      "value": "% Moɹʞǝɹs"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "skills.presets": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "Ԁɹǝsǝʇs"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "skills.purchase": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "∀ssıƃu Sʞıʅʅ"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "skills.queued": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "Ònǝnǝp ɟoɹ ɐnʇoɯɐʇıɔ ɐssıƃuɯǝuʇ"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "skills.refund": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "∩uɐssıƃu Sʞıʅʅ"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "skills.region": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "Sʞıʅʅs"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "skills.requirements-progress": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "ᴚǝbnıɹǝɯǝuʇs: "
+    },
+    {
+      "type": 1,
+      "value": "complete"
+    },
+    {
+      "type": 0,
+      "value": "/"
+    },
+    {
+      "type": 1,
+      "value": "total"
+    },
+    {
+      "type": 0,
+      "value": " ɔoɯdʅǝʇǝ"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "skills.reset": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "ᴚǝsǝʇ ɹǝɟnupɐqʅǝ sʞıʅʅs"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "skills.reset-warning": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "ᴚǝɟnups ɐʅʅ ɔnɹɹǝuʇʅʎ ɹǝɟnupɐqʅǝ sʞıʅʅs ɐup ɔʅǝɐɹs ɐnʇoɯɐʇıɔ ɐssıƃuɯǝuʇ."
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "skills.search": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "Sǝɐɹɔɥ sʞıʅʅs"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "skills.search-placeholder": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "Sǝɐɹɔɥ ʇɥǝ ʇɹǝǝ…"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "skills.settings": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "Sʞıʅʅ dɹǝsǝʇs ɐup ɹǝsǝʇ"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "skills.tree": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "Sʞıʅʅ ʇɹǝǝ"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "skills.tree-instructions": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "ᗡɹɐƃ ʇo dɐu. Ԁıuɔɥ oɹ nsǝ ʇɥǝ zooɯ ɔouʇɹoʅs ʇo zooɯ. Sǝɐɹɔɥ ɐup dɹǝss Ǝuʇǝɹ ʇo odǝu ʇɥǝ ɟıɹsʇ ɯɐʇɔɥıuƃ sʞıʅʅ."
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "skills.unavailable": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "⊥ɥıs ɐɔʇıou ıs uoʇ ɔnɹɹǝuʇʅʎ ɐʌɐıʅɐqʅǝ."
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "skills.zoom-in": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "Zooɯ ıu"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "skills.zoom-out": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "Zooɯ onʇ"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
   "startup-shell.action.check-again": [
     {
       "type": 0,

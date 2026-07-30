@@ -376,6 +376,8 @@ export interface FrontendSnapshotContext {
    */
   readonly quantumLeap: FrontendQuantumLeapPreview
   readonly storedTimeCheater: boolean
+  readonly selectedSkillPresetSlot:
+    CanonicalRuntimeState['selectedSkillPresetSlot']
 }
 
 export type FrontendApplicationSnapshotContext = Pick<
@@ -591,6 +593,9 @@ export interface FrontendDysonVisibility {
 
 export interface FrontendGameplayVisibility {
   readonly dyson: FrontendDysonVisibility
+  readonly skills: {
+    readonly routeUnlocked: boolean
+  }
 }
 
 export type FrontendTinkerRuntimeFacts =
@@ -605,6 +610,8 @@ export type FrontendTinkerRuntimeFacts =
 
 export interface FrontendRuntimeFacts {
   readonly tinker: FrontendTinkerRuntimeFacts
+  readonly selectedSkillPresetSlot:
+    CanonicalRuntimeState['selectedSkillPresetSlot']
 }
 
 export interface FrontendGameplayPreviews {
@@ -752,6 +759,8 @@ export function selectFrontendApplicationSnapshot(
             quantumLeap: context.quantumLeap,
             storedTimeCheater:
               application.state.storedTimeCheater,
+            selectedSkillPresetSlot:
+              application.state.selectedSkillPresetSlot,
           },
         ),
       })
@@ -853,6 +862,19 @@ function selectGameplayVisibility(
         state.quantum.pointsEarned >= 1n
           ? !galacticBrainsVisible
           : !basicVisible.planets,
+    },
+    skills: {
+      routeUnlocked:
+        state.dyson.bots >= 10 ||
+        state.dyson.goalStage > 0n ||
+        state.meta.firstInfinityComplete ||
+        state.skills.points > 0n ||
+        state.infinity.permanentSkillPoints > 0n ||
+        state.infinity.points > 0n ||
+        state.infinity.spentPoints > 0n ||
+        Object.values(state.skills.byId).some(
+          (skill) => skill.owned,
+        ),
     },
   }
 }
@@ -1264,6 +1286,7 @@ function selectRuntimeFacts(
   derived: Readonly<FrontendGameplayDerivedFacts>,
 ): FrontendRuntimeFacts {
   return {
+    selectedSkillPresetSlot: context.selectedSkillPresetSlot,
     tinker:
       derived.dyson.status === 'ready'
         ? {
