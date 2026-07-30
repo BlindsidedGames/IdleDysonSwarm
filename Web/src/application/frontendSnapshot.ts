@@ -479,6 +479,23 @@ export interface FrontendStoredCapacityPreview {
   readonly consumesStoredSeconds: number
 }
 
+export type FrontendDysonSwarmVisualizationFacts =
+  | {
+      readonly phase: 'stellar-swarm'
+      readonly activePanels: number
+      readonly completion: number
+    }
+  | {
+      readonly phase: 'galaxy'
+      readonly starsSurrounded: number
+      readonly completion: number
+    }
+  | {
+      readonly phase: 'galaxy-group'
+      readonly galaxiesEngulfed: number
+      readonly completion: number
+    }
+
 export interface FrontendDysonPresentationFacts {
   readonly activePanelMetric: {
     readonly kind:
@@ -500,6 +517,8 @@ export interface FrontendDysonPresentationFacts {
           | 'reach-bots'
         readonly target: number
       }
+  readonly swarmVisualization:
+    FrontendDysonSwarmVisualizationFacts
   readonly facilities: Readonly<
     DerivedBasicDysonState['facilityFacts']
   >
@@ -1091,20 +1110,26 @@ function projectDysonDerivedFacts(
     source.globals.panelsPerSecond,
     source.globals.panelLifetimeSeconds,
   )
+  const swarmVisualization =
+    projectDysonSwarmVisualization(activePanels)
   const activePanelMetric =
-    activePanels < 20_000
+    activePanels < PANELS_PER_SURROUNDED_STAR
       ? {
           kind: 'active-panels' as const,
           value: activePanels,
         }
-      : activePanels / 20_000 < 100_000_000_000
+      : activePanels / PANELS_PER_SURROUNDED_STAR <
+          STARS_PER_ENGULFED_GALAXY
         ? {
             kind: 'stars-surrounded' as const,
-            value: activePanels / 20_000,
+            value: activePanels / PANELS_PER_SURROUNDED_STAR,
           }
         : {
             kind: 'galaxies-engulfed' as const,
-            value: activePanels / 20_000 / 100_000_000_000,
+            value:
+              activePanels /
+              PANELS_PER_SURROUNDED_STAR /
+              STARS_PER_ENGULFED_GALAXY,
           }
   return {
     allocation: source.allocation,
@@ -1117,11 +1142,76 @@ function projectDysonDerivedFacts(
     productionArrivalRates: source.productionArrivalRates,
     presentation: {
       activePanelMetric,
+      swarmVisualization,
       currentGoal: projectDysonGoal(goalStage),
       facilities: source.facilityFacts,
     },
     entitlements: source.entitlements,
   }
+}
+
+const PANELS_PER_SURROUNDED_STAR = 20_000
+const STARS_PER_ENGULFED_GALAXY = 100_000_000_000
+const MAX_VISUAL_GALAXIES_AT_E308_BOTS = 5e291
+const GALAXY_GROUP_FRONT_LOAD_POWER = 0.72
+
+/**
+ * Converts the canonical active-panel magnitude into bounded visual phases.
+ * The renderer receives progress facts only and never owns scale thresholds.
+ */
+export function projectDysonSwarmVisualization(
+  activePanels: number,
+): FrontendDysonSwarmVisualizationFacts {
+  const starsSurrounded =
+    activePanels / PANELS_PER_SURROUNDED_STAR
+  if (starsSurrounded < 1) {
+    return {
+      phase: 'stellar-swarm',
+      activePanels,
+      completion: clampUnitInterval(starsSurrounded),
+    }
+  }
+
+  const galaxiesEngulfed =
+    starsSurrounded / STARS_PER_ENGULFED_GALAXY
+  if (galaxiesEngulfed < 1) {
+    return {
+      phase: 'galaxy',
+      starsSurrounded,
+      completion: clampUnitInterval(galaxiesEngulfed),
+    }
+  }
+
+  return {
+    phase: 'galaxy-group',
+    galaxiesEngulfed,
+    completion:
+      projectGalaxyGroupVisualCompletion(galaxiesEngulfed),
+  }
+}
+
+function clampUnitInterval(value: number): number {
+  return Math.min(1, Math.max(0, value))
+}
+
+/**
+ * Compresses the post-galaxy display across the baseline range from one
+ * engulfed galaxy to the approximate count supported by 1e308 Worker Bots.
+ * The exponent gently front-loads visible change while retaining progression
+ * through extreme late-game magnitudes.
+ */
+function projectGalaxyGroupVisualCompletion(
+  galaxiesEngulfed: number,
+): number {
+  if (!Number.isFinite(galaxiesEngulfed)) return 1
+  if (galaxiesEngulfed <= 1) return 0
+  const logarithmicProgress =
+    Math.log10(galaxiesEngulfed) /
+    Math.log10(MAX_VISUAL_GALAXIES_AT_E308_BOTS)
+  return Math.pow(
+    clampUnitInterval(logarithmicProgress),
+    GALAXY_GROUP_FRONT_LOAD_POWER,
+  )
 }
 
 function projectDysonGoal(

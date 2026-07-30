@@ -71,6 +71,13 @@ export interface CanonicalLifecycleApplicationPort {
     >,
     checkpoint: BotCapCheckpointName,
   ): Promise<CommitFirstResult>
+  commitDevelopmentDysonBots?(
+    envelope: Pick<
+      ApplicationCommandEnvelope<unknown>,
+      'sessionRevision' | 'expectedStateRevision'
+    >,
+    bots: number,
+  ): Promise<CommitFirstResult>
   importSave(request: ImportSaveRequest): Promise<ImportSaveResult>
 }
 
@@ -402,6 +409,59 @@ export class CanonicalLifecycleCoordinator {
     return this.enqueue(() =>
       this.dispatchPlayerUnqueued(envelope, cancelRequested),
     )
+  }
+
+  async setDevelopmentDysonBots(
+    bots: number,
+  ): Promise<CommitFirstResult> {
+    return this.enqueue(async () => {
+      const snapshot = this.application.snapshot()
+      if (!Number.isFinite(bots) || bots < 0) {
+        return {
+          committed: false,
+          transition: rejectedTransition(
+            snapshot,
+            'CANONICAL-DEVELOPMENT-BOTS-INVALID',
+            'Development bot count must be finite and non-negative.',
+          ),
+          code: 'CANONICAL-DEVELOPMENT-BOTS-INVALID',
+          reason:
+            'Development bot count must be finite and non-negative.',
+        }
+      }
+      if (snapshot.phase !== 'ready') {
+        return {
+          committed: false,
+          transition: rejectedTransition(
+            snapshot,
+            'APP-NOT-READY',
+            'The canonical application is not ready.',
+          ),
+          code: 'APP-NOT-READY',
+          reason: 'The canonical application is not ready.',
+        }
+      }
+      if (
+        this.application.commitDevelopmentDysonBots ===
+        undefined
+      ) {
+        return {
+          committed: false,
+          transition: rejectedTransition(
+            snapshot,
+            'CANONICAL-DEVELOPMENT-CONTROL-UNAVAILABLE',
+            'Development progression controls are unavailable.',
+          ),
+          code: 'CANONICAL-DEVELOPMENT-CONTROL-UNAVAILABLE',
+          reason:
+            'Development progression controls are unavailable.',
+        }
+      }
+      return this.application.commitDevelopmentDysonBots(
+        revisionEnvelope(snapshot),
+        bots,
+      )
+    })
   }
 
   /**

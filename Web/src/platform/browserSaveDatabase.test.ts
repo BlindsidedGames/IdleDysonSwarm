@@ -360,6 +360,80 @@ describe('IndexedDbBrowserSaveDatabase', () => {
     expect(harness.lastBlockedConnection?.closed).toBe(true)
   })
 
+  test('allows an explicit same-owner reload takeover and fences the previous document', async () => {
+    const harness = new HarnessIndexedDbFactory()
+    const database = new IndexedDbBrowserSaveDatabase(
+      'same-owner-reload',
+      harness.asFactory(),
+    )
+    const first = await database.acquireWriterLease(
+      'same-tab',
+      1_000,
+      15_000,
+    )
+    if (!first.acquired) throw new Error('Expected writer ownership.')
+
+    const reloaded = await database.acquireWriterLease(
+      'same-tab',
+      1_100,
+      15_000,
+      true,
+    )
+
+    expect(reloaded).toMatchObject({
+      acquired: true,
+      fence: {
+        ownerToken: 'same-tab',
+        generation: 2,
+        expiresAtUtcMilliseconds: 16_100,
+      },
+    })
+    await expect(
+      database.mutateFiles(
+        { kind: 'write', path: '/current', contents: 'stale' },
+        first.fence,
+        1_100,
+      ),
+    ).rejects.toBeInstanceOf(WriterLeaseLostError)
+  })
+
+  test('allows a deliberate recovery takeover to fence a different live owner', async () => {
+    const harness = new HarnessIndexedDbFactory()
+    const database = new IndexedDbBrowserSaveDatabase(
+      'explicit-recovery-takeover',
+      harness.asFactory(),
+    )
+    const first = await database.acquireWriterLease(
+      'stranded-owner',
+      1_000,
+      15_000,
+    )
+    if (!first.acquired) throw new Error('Expected writer ownership.')
+
+    const replacement = await database.acquireWriterLease(
+      'recovery-owner',
+      1_100,
+      15_000,
+      false,
+      true,
+    )
+
+    expect(replacement).toMatchObject({
+      acquired: true,
+      fence: {
+        ownerToken: 'recovery-owner',
+        generation: 2,
+      },
+    })
+    await expect(
+      database.mutateFiles(
+        { kind: 'write', path: '/current', contents: 'stale' },
+        first.fence,
+        1_100,
+      ),
+    ).rejects.toBeInstanceOf(WriterLeaseLostError)
+  })
+
   test('production composition checkpoints through a fired interval, blocks a second writer, and reconstructs through fresh IndexedDB wrappers', async () => {
     const harness = new HarnessIndexedDbFactory()
     const databaseName = 'production-composition-reconstruction'

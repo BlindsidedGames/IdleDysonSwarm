@@ -346,6 +346,17 @@ function actionButtons(
           ]
         : []
     case 'writer-blocked':
+      return actions.takeOverWriter
+        ? [
+            {
+              key: 'take-over-writer',
+              message: startupShellMessages.useThisTabAction,
+              variant: 'primary',
+              onClick: actions.takeOverWriter,
+              disabled: actions.disabled ?? false,
+            },
+          ]
+        : []
     case 'ownership-lost':
       return actions.checkAgain
         ? [

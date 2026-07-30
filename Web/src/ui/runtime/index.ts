@@ -8,6 +8,8 @@ export type {
   UiRuntimeSnapshotListener,
   UiRuntimeStatusListener,
   UiRuntimePlayerCommandResult,
+  UiRuntimeDevelopmentControls,
+  UiRuntimeDevelopmentResult,
   UiRuntimeCommandActivationRevision,
   UiRuntimeSuppliedFile,
   UiRuntimeDropData,

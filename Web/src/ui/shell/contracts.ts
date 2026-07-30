@@ -40,6 +40,7 @@ export interface StartupShellViewModel {
 export interface StartupShellActions {
   readonly disabled?: boolean
   readonly start?: () => void
+  readonly takeOverWriter?: () => void
   readonly checkAgain?: () => void
   readonly retry?: () => void
   readonly importSaveText?: (text: string) => void

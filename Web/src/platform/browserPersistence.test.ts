@@ -218,6 +218,38 @@ describe('browser writer ownership and fenced persistence', () => {
     ])
   })
 
+  test('wakes a blocked lease when the owning context announces release', async () => {
+    const database = new MemoryBrowserSaveDatabase()
+    const clock = mutableClock(1_000)
+    const owner = createLease(database, clock, 'owner')
+    await owner.acquire()
+    const notices = new TestNoticeChannel()
+    const blocked = createLease(
+      database,
+      clock,
+      'blocked',
+      { noticeChannel: notices },
+    )
+    await expect(blocked.acquire()).resolves.toMatchObject({
+      acquired: false,
+      expiresAtUtcMilliseconds: 2_000,
+    })
+
+    notices.emit({
+      kind: 'released',
+      generation: 1,
+      expiresAtUtcMilliseconds: null,
+    })
+
+    expect(blocked.state()).toEqual({
+      kind: 'blocked',
+      generation: 1,
+      expiresAtUtcMilliseconds: 1_000,
+    })
+    await blocked.shutdown()
+    await owner.shutdown()
+  })
+
   test('dispose racing acquire is immediately terminal and publishes nothing afterward', async () => {
     const database = new MemoryBrowserSaveDatabase()
     const gate = deferred<void>()
@@ -429,13 +461,18 @@ class MemoryBrowserSaveDatabase implements BrowserSaveDatabase {
     ownerToken: string,
     nowUtcMilliseconds: number,
     leaseDurationMilliseconds: number,
+    allowUnexpiredSameOwnerTakeover = false,
   ): Promise<WriterLeaseAcquisition> {
     await this.acquireGate
     if (
       this.lease?.ownerToken !== null &&
       this.lease?.ownerToken !== undefined &&
       this.lease.expiresAtUtcMilliseconds !== null &&
-      this.lease.expiresAtUtcMilliseconds > nowUtcMilliseconds
+      this.lease.expiresAtUtcMilliseconds > nowUtcMilliseconds &&
+      !(
+        allowUnexpiredSameOwnerTakeover &&
+        this.lease.ownerToken === ownerToken
+      )
     ) {
       return {
         acquired: false,
@@ -607,13 +644,21 @@ class ManualIntervalScheduler implements IntervalScheduler {
 class TestNoticeChannel implements OwnershipNoticeChannel {
   readonly notices: OwnershipNotice[] = []
   closed = false
+  private listener: ((notice: OwnershipNotice) => void) | undefined
 
   post(notice: OwnershipNotice): void {
     this.notices.push(notice)
   }
 
-  subscribe(): () => void {
-    return () => undefined
+  subscribe(listener: (notice: OwnershipNotice) => void): () => void {
+    this.listener = listener
+    return () => {
+      this.listener = undefined
+    }
+  }
+
+  emit(notice: OwnershipNotice): void {
+    this.listener?.(notice)
   }
 
   close(): void {

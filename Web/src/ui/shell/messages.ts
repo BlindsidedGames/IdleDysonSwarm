@@ -46,7 +46,7 @@ export const startupShellMessages = defineMessages({
   writerBlockedBody: {
     id: 'startup-shell.state.writer-blocked.body',
     defaultMessage:
-      'This tab cannot write progress while another tab or window is active. Return to the active game or close it before checking again.',
+      'Another browser context is holding the writable game session. Use this tab to continue here and stop the other context from writing progress.',
     description:
       'Recovery guidance shown when another browser context owns write access.',
   },
@@ -163,6 +163,12 @@ export const startupShellMessages = defineMessages({
     defaultMessage: 'Check again',
     description:
       'Button label that requests another ownership or capability check.',
+  },
+  useThisTabAction: {
+    id: 'startup-shell.action.use-this-tab',
+    defaultMessage: 'Use this tab',
+    description:
+      'Button label that deliberately transfers writable game ownership to the current browser tab.',
   },
   retryAction: {
     id: 'startup-shell.action.retry',

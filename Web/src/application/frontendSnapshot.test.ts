@@ -20,6 +20,7 @@ import {
   createFrontendCommandEnvelope,
   FRONTEND_COMMAND_FAMILIES,
   inspectFrontendDefinitionCoverage,
+  projectDysonSwarmVisualization,
   selectFrontendApplicationSnapshot,
   selectFrontendCommandAvailability,
   selectFrontendGameplaySnapshot,
@@ -38,6 +39,75 @@ const firstRunFixtureUrl = new URL(
 )
 
 describe('frontend gameplay snapshot', () => {
+  test.each([
+    [
+      0,
+      {
+        phase: 'stellar-swarm',
+        activePanels: 0,
+        completion: 0,
+      },
+    ],
+    [
+      10_000,
+      {
+        phase: 'stellar-swarm',
+        activePanels: 10_000,
+        completion: 0.5,
+      },
+    ],
+    [
+      20_000,
+      {
+        phase: 'galaxy',
+        starsSurrounded: 1,
+        completion: 0.00000000001,
+      },
+    ],
+    [
+      1_000_000_000_000_000,
+      {
+        phase: 'galaxy',
+        starsSurrounded: 50_000_000_000,
+        completion: 0.5,
+      },
+    ],
+    [
+      2_000_000_000_000_000,
+      {
+        phase: 'galaxy-group',
+        galaxiesEngulfed: 1,
+        completion: 0,
+      },
+    ],
+    [
+      20_000 * 100_000_000_000 * 1e100,
+      {
+        phase: 'galaxy-group',
+        galaxiesEngulfed: 1e100,
+        completion: Math.pow(
+          100 / Math.log10(5e291),
+          0.72,
+        ),
+      },
+    ],
+    [
+      1e307,
+      {
+        phase: 'galaxy-group',
+        galaxiesEngulfed: 5e291,
+        completion: 1,
+      },
+    ],
+  ] as const)(
+    'projects %s active panels into bounded swarm facts',
+    (activePanels, expected) => {
+      expect(
+        projectDysonSwarmVisualization(activePanels),
+      ).toEqual(expected)
+    },
+  )
+
   test('projects lifecycle and all application revisions with the gameplay read model', () => {
     const projected = selectFrontendApplicationSnapshot(
       {

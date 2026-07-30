@@ -2573,6 +2573,302 @@
       "value": "‬"
     }
   ],
+  "settings.development.apply": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "∀ddʅʎ Ԁɹoƃɹǝssıou"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "settings.development.applying": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "∀ddʅʎıuƃ…"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "settings.development.description": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "Sǝʇs ʇɥǝ ɹǝɐʅ sɐʌǝp qoʇ ɔonuʇ. Ʌısnɐʅ sʇɐƃǝs ɐssnɯǝ Ԑoʇ ᗡısʇɹıqnʇıou ıs sǝʇ ʇo 100% Moɹʞǝɹs."
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "settings.development.failed": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "⊥ɥǝ pǝʌǝʅodɯǝuʇ dɹoƃɹǝssıou ɔonʅp uoʇ qǝ ɐddʅıǝp."
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "settings.development.preset": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "Ԁɹoƃɹǝssıou sʇɐʇǝ"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "settings.development.preset.early-swarm": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "Ǝɐɹʅʎ sʍɐɹɯ — "
+    },
+    {
+      "type": 1,
+      "value": "bots"
+    },
+    {
+      "type": 0,
+      "value": " Ԑoʇs"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "settings.development.preset.galaxy-group": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "⅁ɐʅɐxʎ ƃɹond — "
+    },
+    {
+      "type": 1,
+      "value": "bots"
+    },
+    {
+      "type": 0,
+      "value": " Ԑoʇs"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "settings.development.preset.half-galaxy": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "Hɐʅɟ-ɥɐɹʌǝsʇǝp ƃɐʅɐxʎ — "
+    },
+    {
+      "type": 1,
+      "value": "bots"
+    },
+    {
+      "type": 0,
+      "value": " Ԑoʇs"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "settings.development.preset.mid-swarm": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "Wıp sʍɐɹɯ — "
+    },
+    {
+      "type": 1,
+      "value": "bots"
+    },
+    {
+      "type": 0,
+      "value": " Ԑoʇs"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "settings.development.preset.near-galaxy": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "Nǝɐɹʅʎ ɥɐɹʌǝsʇǝp ƃɐʅɐxʎ — "
+    },
+    {
+      "type": 1,
+      "value": "bots"
+    },
+    {
+      "type": 0,
+      "value": " Ԑoʇs"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "settings.development.preset.near-star": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "Nǝɐɹʅʎ snɹɹonupǝp sʇɐɹ — "
+    },
+    {
+      "type": 1,
+      "value": "bots"
+    },
+    {
+      "type": 0,
+      "value": " Ԑoʇs"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "settings.development.preset.new-galaxy": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "Nǝʍ ƃɐʅɐxʎ ʌıǝʍ — "
+    },
+    {
+      "type": 1,
+      "value": "bots"
+    },
+    {
+      "type": 0,
+      "value": " Ԑoʇs"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "settings.development.preset.one-galaxy": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "Ⅎıɹsʇ ǝuƃnʅɟǝp ƃɐʅɐxʎ — "
+    },
+    {
+      "type": 1,
+      "value": "bots"
+    },
+    {
+      "type": 0,
+      "value": " Ԑoʇs"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "settings.development.preset.young-galaxy": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "⅄onuƃ ɥɐɹʌǝsʇǝp ƃɐʅɐxʎ — "
+    },
+    {
+      "type": 1,
+      "value": "bots"
+    },
+    {
+      "type": 0,
+      "value": " Ԑoʇs"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "settings.development.succeeded": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "Ԑoʇ ɔonuʇ sɐʌǝp. ᴚǝʇnɹu ʇo Ԑoʇs ʇo ıusdǝɔʇ ʇɥǝ ʅıʌǝ sıɯnʅɐʇıou."
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "settings.development.title": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "ᗡǝʌǝʅodɯǝuʇ Wǝun"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
   "settings.save-data.cancel": [
     {
       "type": 0,
@@ -2971,6 +3267,20 @@
     {
       "type": 0,
       "value": "Sʇɐɹʇ ƃɐɯǝ"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "startup-shell.action.use-this-tab": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "∩sǝ ʇɥıs ʇɐq"
     },
     {
       "type": 0,
@@ -3446,7 +3756,7 @@
     },
     {
       "type": 0,
-      "value": "⊥ɥıs ʇɐq ɔɐuuoʇ ʍɹıʇǝ dɹoƃɹǝss ʍɥıʅǝ ɐuoʇɥǝɹ ʇɐq oɹ ʍıupoʍ ıs ɐɔʇıʌǝ. ᴚǝʇnɹu ʇo ʇɥǝ ɐɔʇıʌǝ ƃɐɯǝ oɹ ɔʅosǝ ıʇ qǝɟoɹǝ ɔɥǝɔʞıuƃ ɐƃɐıu."
+      "value": "∀uoʇɥǝɹ qɹoʍsǝɹ ɔouʇǝxʇ ıs ɥoʅpıuƃ ʇɥǝ ʍɹıʇɐqʅǝ ƃɐɯǝ sǝssıou. ∩sǝ ʇɥıs ʇɐq ʇo ɔouʇıunǝ ɥǝɹǝ ɐup sʇod ʇɥǝ oʇɥǝɹ ɔouʇǝxʇ ɟɹoɯ ʍɹıʇıuƃ dɹoƃɹǝss."
     },
     {
       "type": 0,

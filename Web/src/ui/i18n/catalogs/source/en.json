@@ -575,6 +575,70 @@
     "defaultMessage": "Wiki",
     "description": "Unity Wiki destination."
   },
+  "settings.development.apply": {
+    "defaultMessage": "Apply Progression",
+    "description": "Applies a development progression preset."
+  },
+  "settings.development.applying": {
+    "defaultMessage": "Applying…",
+    "description": "Pending development progression button text."
+  },
+  "settings.development.description": {
+    "defaultMessage": "Sets the real saved bot count. Visual stages assume Bot Distribution is set to 100% Workers.",
+    "description": "Explains the real-state development progression presets."
+  },
+  "settings.development.failed": {
+    "defaultMessage": "The development progression could not be applied.",
+    "description": "Failed development progression feedback."
+  },
+  "settings.development.preset": {
+    "defaultMessage": "Progression state",
+    "description": "Label for the development progression preset selector."
+  },
+  "settings.development.preset.early-swarm": {
+    "defaultMessage": "Early swarm — {bots} Bots",
+    "description": "Early stellar swarm development preset."
+  },
+  "settings.development.preset.galaxy-group": {
+    "defaultMessage": "Galaxy group — {bots} Bots",
+    "description": "Multiple engulfed galaxies development preset."
+  },
+  "settings.development.preset.half-galaxy": {
+    "defaultMessage": "Half-harvested galaxy — {bots} Bots",
+    "description": "Half galaxy harvesting development preset."
+  },
+  "settings.development.preset.mid-swarm": {
+    "defaultMessage": "Mid swarm — {bots} Bots",
+    "description": "Mid stellar swarm development preset."
+  },
+  "settings.development.preset.near-galaxy": {
+    "defaultMessage": "Nearly harvested galaxy — {bots} Bots",
+    "description": "Nearly completed galaxy development preset."
+  },
+  "settings.development.preset.near-star": {
+    "defaultMessage": "Nearly surrounded star — {bots} Bots",
+    "description": "Nearly completed stellar swarm development preset."
+  },
+  "settings.development.preset.new-galaxy": {
+    "defaultMessage": "New galaxy view — {bots} Bots",
+    "description": "First galaxy view development preset."
+  },
+  "settings.development.preset.one-galaxy": {
+    "defaultMessage": "First engulfed galaxy — {bots} Bots",
+    "description": "First completed galaxy development preset."
+  },
+  "settings.development.preset.young-galaxy": {
+    "defaultMessage": "Young harvested galaxy — {bots} Bots",
+    "description": "Early galaxy harvesting development preset."
+  },
+  "settings.development.succeeded": {
+    "defaultMessage": "Bot count saved. Return to Bots to inspect the live simulation.",
+    "description": "Successful development progression feedback."
+  },
+  "settings.development.title": {
+    "defaultMessage": "Development Menu",
+    "description": "Heading for development-only gameplay controls."
+  },
   "settings.save-data.cancel": {
     "defaultMessage": "Cancel",
     "description": "Cancels a save reset."
@@ -678,6 +742,10 @@
   "startup-shell.action.start": {
     "defaultMessage": "Start game",
     "description": "Button label that requests browser game startup."
+  },
+  "startup-shell.action.use-this-tab": {
+    "defaultMessage": "Use this tab",
+    "description": "Button label that deliberately transfers writable game ownership to the current browser tab."
   },
   "startup-shell.app-name": {
     "defaultMessage": "Idle Dyson Swarm",
@@ -812,7 +880,7 @@
     "description": "Heading shown while the browser game is completing its stop sequence."
   },
   "startup-shell.state.writer-blocked.body": {
-    "defaultMessage": "This tab cannot write progress while another tab or window is active. Return to the active game or close it before checking again.",
+    "defaultMessage": "Another browser context is holding the writable game session. Use this tab to continue here and stop the other context from writing progress.",
     "description": "Recovery guidance shown when another browser context owns write access."
   },
   "startup-shell.state.writer-blocked.title": {

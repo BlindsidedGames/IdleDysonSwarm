@@ -1,4 +1,10 @@
-import { useMemo, useRef, useState } from 'react'
+import {
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from 'react'
 import { useIntl } from 'react-intl'
 import type {
   BrowserUiRuntimeFoundation,
@@ -66,6 +72,58 @@ function App({
   )
   const operationPending =
     operationStatus?.endsWith('-pending') ?? false
+  const beginOperation = useCallback((
+    pendingStatus: StartupShellOperationStatus,
+  ): boolean => {
+    if (operationPendingRef.current) return false
+    operationPendingRef.current = true
+    setOperationStatus(pendingStatus)
+    return true
+  }, [])
+
+  const completeOperation = useCallback((
+    completedStatus: StartupShellOperationStatus,
+  ): void => {
+    operationPendingRef.current = false
+    setOperationStatus(completedStatus)
+  }, [])
+
+  const reloadRequested = useCallback(async (): Promise<void> => {
+    if (!beginOperation('reload-pending')) return
+    try {
+      await reloadSafely()
+      completeOperation('reload-completed')
+    } catch {
+      completeOperation('reload-failed')
+    }
+  }, [beginOperation, completeOperation, reloadSafely])
+  const retryWriterOwnership = useCallback((): void => {
+    void runtime.takeOverWriterOwnership()
+  }, [runtime])
+  const passivelyRetryWriterOwnership =
+    useCallback((): void => {
+      void runtime.start()
+    }, [runtime])
+  const writerLeaseExpiry =
+    status.phase === 'blocked' &&
+    status.code === 'writer-owned'
+      ? status.expiresAtUtcMilliseconds
+      : undefined
+  useEffect(() => {
+    if (writerLeaseExpiry === undefined) return undefined
+    const delay = Math.max(
+      writerLeaseExpiry - Date.now(),
+      0,
+    ) + 50
+    const handle = globalThis.setTimeout(
+      passivelyRetryWriterOwnership,
+      delay,
+    )
+    return () => globalThis.clearTimeout(handle)
+  }, [
+    passivelyRetryWriterOwnership,
+    writerLeaseExpiry,
+  ])
 
   if (status.phase === 'ready') {
     return (
@@ -75,32 +133,6 @@ function App({
         resetSave={resetSave}
       />
     )
-  }
-
-  const beginOperation = (
-    pendingStatus: StartupShellOperationStatus,
-  ): boolean => {
-    if (operationPendingRef.current) return false
-    operationPendingRef.current = true
-    setOperationStatus(pendingStatus)
-    return true
-  }
-
-  const completeOperation = (
-    completedStatus: StartupShellOperationStatus,
-  ): void => {
-    operationPendingRef.current = false
-    setOperationStatus(completedStatus)
-  }
-
-  const reloadRequested = async (): Promise<void> => {
-    if (!beginOperation('reload-pending')) return
-    try {
-      await reloadSafely()
-      completeOperation('reload-completed')
-    } catch {
-      completeOperation('reload-failed')
-    }
   }
 
   const exportRecoveryRequested = async (): Promise<void> => {
@@ -146,8 +178,10 @@ function App({
     ...(viewModel.phase === 'idle'
       ? { start: () => void runtime.start() }
       : {}),
-    ...(viewModel.phase === 'writer-blocked' ||
-    viewModel.phase === 'ownership-lost'
+    ...(viewModel.phase === 'writer-blocked'
+      ? { takeOverWriter: retryWriterOwnership }
+      : {}),
+    ...(viewModel.phase === 'ownership-lost'
       ? { checkAgain: () => void reloadRequested() }
       : {}),
     ...(viewModel.phase === 'application-blocked' ||

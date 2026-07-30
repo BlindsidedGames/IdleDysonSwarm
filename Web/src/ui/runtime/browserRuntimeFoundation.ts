@@ -88,6 +88,7 @@ import type {
   UiRuntimeSnapshotListener,
   UiRuntimeStatusListener,
   UiRuntimePlayerCommandResult,
+  UiRuntimeDevelopmentResult,
   UiRuntimeWarning,
 } from './contracts'
 import {
@@ -156,6 +157,7 @@ export interface BrowserRuntimeFoundationOptions {
   readonly nowUtcMilliseconds?: () => number
   readonly ownerToken?: string
   readonly ownerTokenFactory?: () => string
+  readonly allowUnexpiredSameOwnerTakeover?: boolean
   readonly leaseDurationMilliseconds?: number
   readonly heartbeatMilliseconds?: number
   readonly leaseScheduler?: IntervalScheduler
@@ -208,8 +210,18 @@ export function createBrowserRuntimeFoundation(
       >,
     ) => implementation.subscribeSnapshot(listener),
     start: () => implementation.start(),
+    takeOverWriterOwnership: () =>
+      implementation.takeOverWriterOwnership(),
     dispatchPlayer: (command: CanonicalPlayerCommand) =>
       implementation.dispatchPlayer(command),
+    ...(import.meta.env.DEV
+      ? {
+          development: Object.freeze({
+            setDysonBots: (bots: number) =>
+              implementation.setDevelopmentDysonBots(bots),
+          }),
+        }
+      : {}),
     importSave: (request: UiRuntimeImportRequest) =>
       implementation.importSave(request),
     inspectStorage: (requestPersistence = false) =>
@@ -280,6 +292,8 @@ class BrowserRuntimeFoundation implements BrowserUiRuntimeFoundation {
       nowUtcMilliseconds: options.nowUtcMilliseconds,
       ownerToken: options.ownerToken,
       ownerTokenFactory: options.ownerTokenFactory,
+      allowUnexpiredSameOwnerTakeover:
+        options.allowUnexpiredSameOwnerTakeover,
       leaseDurationMilliseconds:
         options.leaseDurationMilliseconds,
       heartbeatMilliseconds: options.heartbeatMilliseconds,
@@ -337,8 +351,36 @@ class BrowserRuntimeFoundation implements BrowserUiRuntimeFoundation {
     if (this.shutdownRequested) {
       return Promise.resolve(this.currentStatus)
     }
-    this.startPromise ??= this.startOnce()
-    return this.startPromise
+    if (this.startPromise !== undefined) {
+      return this.startPromise
+    }
+    const starting = this.startOnce()
+    this.startPromise = starting
+    void starting.then((status) => {
+      if (
+        this.startPromise === starting &&
+        status.phase === 'blocked' &&
+        status.code === 'writer-owned'
+      ) {
+        this.startPromise = undefined
+      }
+    })
+    return starting
+  }
+
+  async takeOverWriterOwnership():
+    Promise<UiRuntimeStartResult> {
+    if (
+      this.shutdownRequested ||
+      this.currentStatus.phase !== 'blocked' ||
+      this.currentStatus.code !== 'writer-owned'
+    ) {
+      return this.currentStatus
+    }
+    const acquisition = await this.lease.takeOver()
+    if (!acquisition.acquired) return this.currentStatus
+    this.startPromise = undefined
+    return this.start()
   }
 
   dispatchPlayer(
@@ -366,6 +408,68 @@ class BrowserRuntimeFoundation implements BrowserUiRuntimeFoundation {
       })
     }
     return graph.playerCommands.dispatch(command)
+  }
+
+  async setDevelopmentDysonBots(
+    bots: number,
+  ): Promise<UiRuntimeDevelopmentResult> {
+    if (!import.meta.env.DEV) {
+      return {
+        applied: false,
+        code: 'RUNTIME-DEVELOPMENT-CONTROL-UNAVAILABLE',
+        reason:
+          'Development progression controls are unavailable in this build.',
+      }
+    }
+    const graph = this.graph
+    if (graph === undefined || this.shutdownRequested) {
+      return {
+        applied: false,
+        code: 'RUNTIME-DEVELOPMENT-NOT-READY',
+        reason:
+          'The browser runtime does not own a writable ready application.',
+      }
+    }
+    try {
+      const result = await graph.router.run(() =>
+        graph.coordinator.setDevelopmentDysonBots(bots),
+      )
+      this.assertCurrentGraph(graph)
+      this.publishFrontendSnapshot(graph)
+      if (!result.committed) {
+        const transitionCode =
+          result.transition.accepted
+            ? undefined
+            : result.transition.code
+        const transitionReason =
+          result.transition.accepted
+            ? undefined
+            : result.transition.reason
+        return {
+          applied: false,
+          code:
+            result.code ??
+            transitionCode ??
+            'RUNTIME-DEVELOPMENT-COMMIT-FAILED',
+          reason:
+            result.reason ??
+            transitionReason ??
+            'The development bot count was not committed.',
+        }
+      }
+      return {
+        applied: true,
+        bots,
+        stateRevision: result.transition.revision,
+        durableRevision: result.durableRevision,
+      }
+    } catch (error) {
+      return {
+        applied: false,
+        code: 'RUNTIME-DEVELOPMENT-FAILED',
+        reason: errorMessage(error),
+      }
+    }
   }
 
   async importSave(
@@ -840,12 +944,22 @@ class BrowserRuntimeFoundation implements BrowserUiRuntimeFoundation {
   private handleOwnershipState(
     state: BrowserWriterOwnershipState,
   ): void {
-    if (
-      this.shutdownRequested ||
-      state.kind !== 'lost'
-    ) {
+    if (this.shutdownRequested) return
+    if (state.kind === 'blocked') {
+      if (
+        this.currentStatus.phase === 'blocked' &&
+        this.currentStatus.code === 'writer-owned'
+      ) {
+        this.publish({
+          ...this.currentStatus,
+          generation: state.generation,
+          expiresAtUtcMilliseconds:
+            state.expiresAtUtcMilliseconds,
+        })
+      }
       return
     }
+    if (state.kind !== 'lost') return
     this.foregroundIntended = false
     const graph = this.detachGraph()
     this.publish({

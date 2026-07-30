@@ -67,6 +67,8 @@ export interface BrowserSaveDatabase {
     ownerToken: string,
     nowUtcMilliseconds: number,
     leaseDurationMilliseconds: number,
+    allowUnexpiredSameOwnerTakeover?: boolean,
+    allowUnexpiredAnyOwnerTakeover?: boolean,
   ): Promise<WriterLeaseAcquisition>
   renewWriterLease(
     fence: WriterLeaseFence,
@@ -123,6 +125,8 @@ export class IndexedDbBrowserSaveDatabase
     ownerToken: string,
     nowUtcMilliseconds: number,
     leaseDurationMilliseconds: number,
+    allowUnexpiredSameOwnerTakeover = false,
+    allowUnexpiredAnyOwnerTakeover = false,
   ): Promise<WriterLeaseAcquisition> {
     return this.inTransaction(
       [METADATA_STORE],
@@ -138,7 +142,12 @@ export class IndexedDbBrowserSaveDatabase
           current?.ownerToken !== null &&
           current?.ownerToken !== undefined &&
           current.expiresAtUtcMilliseconds !== null &&
-          current.expiresAtUtcMilliseconds > nowUtcMilliseconds
+          current.expiresAtUtcMilliseconds > nowUtcMilliseconds &&
+          !allowUnexpiredAnyOwnerTakeover &&
+          !(
+            allowUnexpiredSameOwnerTakeover &&
+            current.ownerToken === ownerToken
+          )
         ) {
           return {
             acquired: false,

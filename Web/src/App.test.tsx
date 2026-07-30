@@ -184,15 +184,6 @@ describe('application startup host', () => {
 
   test.each([
     {
-      name: 'writer-blocked Check again',
-      status: {
-        phase: 'blocked',
-        code: 'writer-owned',
-        reason: 'private',
-      },
-      buttonName: 'Check again',
-    },
-    {
       name: 'application-blocked Retry',
       status: {
         phase: 'blocked',
@@ -235,6 +226,52 @@ describe('application startup host', () => {
     },
   )
 
+  test('takes over writer ownership in place without reloading the page', async () => {
+    const runtime = new TestRuntime({
+      phase: 'blocked',
+      code: 'writer-owned',
+      reason: 'private',
+    })
+    const reloadSafely = vi.fn()
+    const user = userEvent.setup()
+    renderApp(runtime.runtime, {
+      confirmOverwrite: () => true,
+      sampleUtc: () => '2026-07-29T00:00:00.000Z',
+      reloadSafely,
+    })
+
+    await user.click(
+      screen.getByRole('button', { name: 'Use this tab' }),
+    )
+
+    expect(runtime.takeOverCalls).toBe(1)
+    expect(runtime.startCalls).toBe(0)
+    expect(reloadSafely).not.toHaveBeenCalled()
+    expect(runtime.shutdownCalls).toBe(0)
+  })
+
+  test('automatically retries expired writer ownership in place', async () => {
+    const runtime = new TestRuntime({
+      phase: 'blocked',
+      code: 'writer-owned',
+      reason: 'private',
+      expiresAtUtcMilliseconds: Date.now() + 10,
+    })
+    const reloadSafely = vi.fn()
+    renderApp(runtime.runtime, {
+      confirmOverwrite: () => true,
+      sampleUtc: () => '2026-07-29T00:00:00.000Z',
+      reloadSafely,
+    })
+
+    await waitFor(
+      () => expect(runtime.startCalls).toBe(1),
+      { timeout: 1_000 },
+    )
+    expect(reloadSafely).not.toHaveBeenCalled()
+    expect(runtime.shutdownCalls).toBe(0)
+  })
+
   test('maps rejected import and reload promises to redacted localized feedback', async () => {
     const runtime = new TestRuntime({
       phase: 'blocked',
@@ -269,8 +306,7 @@ describe('application startup host', () => {
 
     cleanup()
     const reloadRuntime = new TestRuntime({
-      phase: 'blocked',
-      code: 'writer-owned',
+      phase: 'ownership-lost',
       reason: 'private',
     })
     const user = userEvent.setup()
@@ -373,6 +409,8 @@ class TestRuntime {
   importGate: Promise<void> | undefined
   rejectImport = false
   rejectExport = false
+  startCalls = 0
+  takeOverCalls = 0
   checkpointCalls = 0
   shutdownCalls = 0
   snapshotReads = 0
@@ -389,6 +427,21 @@ class TestRuntime {
   readonly runtime = {
     status: () => this.#status,
     subscribeStatus: () => () => undefined,
+    takeOverWriterOwnership: async () => {
+      this.takeOverCalls += 1
+      return this.#status
+    },
+    development: {
+      setDysonBots: async () => ({
+        applied: false,
+        code: 'test-not-configured',
+        reason: 'test-not-configured',
+      }),
+    },
+    start: async () => {
+      this.startCalls += 1
+      return this.#status
+    },
     snapshot: () => {
       this.snapshotReads += 1
       return this.snapshotValue
@@ -486,6 +539,11 @@ function readySnapshot(): FrontendApplicationSnapshot {
               activePanelMetric: {
                 kind: 'active-panels',
                 value: 0,
+              },
+              swarmVisualization: {
+                phase: 'stellar-swarm',
+                activePanels: 0,
+                completion: 0,
               },
               currentGoal: {
                 kind: 'create-bots',

@@ -23,6 +23,9 @@ import {
   completeStoredTimeInfinityAggregate,
 } from '../simulation/storedTimeAccounting'
 import {
+  withCanonicalBotAllocation,
+} from '../simulation/canonicalBotAllocation'
+import {
   createSimulationSummary,
   type SimulationAutomationPolicy,
 } from '../simulation/types'
@@ -78,6 +81,10 @@ type CanonicalInternalCommand =
   | {
       readonly kind: 'internal.bot-cap-checkpoint'
       readonly checkpoint: BotCapCheckpointName
+    }
+  | {
+      readonly kind: 'internal.development-set-dyson-bots'
+      readonly bots: number
     }
 
 type CanonicalApplicationCommand =
@@ -416,6 +423,25 @@ export class CanonicalGameApplicationFacade {
       'bot-cap',
     )
   }
+
+  commitDevelopmentDysonBots(
+    envelope: Pick<
+      ApplicationCommandEnvelope<unknown>,
+      'sessionRevision' | 'expectedStateRevision'
+    >,
+    bots: number,
+  ): Promise<CommitFirstResult> {
+    return this.application.dispatchCommitFirst(
+      {
+        ...envelope,
+        command: {
+          kind: 'internal.development-set-dyson-bots',
+          bots,
+        },
+      },
+      'development',
+    )
+  }
 }
 
 export function createCanonicalGameApplication(
@@ -458,6 +484,15 @@ export function createCanonicalGameEngineDefinition(
           eventContext,
         )
       }
+      if (
+        command.kind ===
+        'internal.development-set-dyson-bots'
+      ) {
+        return applyDevelopmentDysonBots(
+          candidate,
+          command.bots,
+        )
+      }
       if (command.kind === 'internal.advance-stored-time') {
         return advanceStoredTime(
           candidate,
@@ -477,6 +512,38 @@ export function createCanonicalGameEngineDefinition(
         minimumCycleSeconds,
       ),
   }
+}
+
+function applyDevelopmentDysonBots(
+  candidate: CanonicalRuntimeState,
+  bots: number,
+): DomainTransition {
+  if (!Number.isFinite(bots) || bots < 0) {
+    return {
+      accepted: false,
+      code: 'CANONICAL-DEVELOPMENT-BOTS-INVALID',
+      reason:
+        'Development bot count must be finite and non-negative.',
+    }
+  }
+  const synchronized = withCanonicalBotAllocation({
+    ...candidate.gameState,
+    dyson: {
+      ...candidate.gameState.dyson,
+      bots,
+    },
+  })
+  const changed =
+    synchronized.dyson.bots !==
+      candidate.gameState.dyson.bots ||
+    synchronized.dyson.workers !==
+      candidate.gameState.dyson.workers ||
+    synchronized.dyson.researchers !==
+      candidate.gameState.dyson.researchers
+  if (changed) {
+    Object.assign(candidate, { gameState: synchronized })
+  }
+  return { accepted: true, changed }
 }
 
 function applyPlayerCommand(

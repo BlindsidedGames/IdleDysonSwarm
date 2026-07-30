@@ -32,6 +32,7 @@ import {
 import {
   useBrowserRuntimeSnapshot,
   type BrowserUiRuntimeFoundation,
+  type UiRuntimeDevelopmentControls,
   type UiRuntimeImportResult,
 } from '../../runtime'
 import { SettingsSurface } from '../settings'
@@ -94,6 +95,7 @@ function UnprobedReadyDysonRuntimeHost({
       route={route}
       onRouteChange={setRoute}
       resetSave={resetSave}
+      development={runtime.development}
     />
   )
 }
@@ -148,6 +150,7 @@ export function ProbedReadyDysonRuntimeHost({
       route={route}
       onRouteChange={setRoute}
       resetSave={resetSave}
+      development={runtime.development}
     />
   )
 }
@@ -168,6 +171,7 @@ export interface ReadyDysonSliceProps {
   readonly route?: ReadyGameRoute
   readonly onRouteChange?: (route: ReadyGameRoute) => void
   readonly resetSave?: () => Promise<UiRuntimeImportResult>
+  readonly development?: UiRuntimeDevelopmentControls
 }
 
 export type ReadyGameRoute = 'bots' | 'settings'
@@ -183,6 +187,7 @@ export function ReadyDysonSlice({
   route = 'bots',
   onRouteChange = () => undefined,
   resetSave = unavailableReset,
+  development,
 }: ReadyDysonSliceProps) {
   const intl = useIntl()
   const gameplay = snapshot.gameplay
@@ -317,6 +322,7 @@ export function ReadyDysonSlice({
               content: (
                 <SettingsSurface
                   resetSave={resetSave}
+                  development={development}
                 />
               ),
             }
@@ -349,7 +355,11 @@ export function ReadyDysonSlice({
       }}
       swarmVisual={{
         ariaLabel: intl.formatMessage(messages.dysonSwarm),
-        content: <DysonSwarmVisual />,
+        content: (
+          <DysonSwarmVisual
+            facts={dyson.value.presentation.swarmVisualization}
+          />
+        ),
       }}
       tinker={
         visibility.showTinker && tinker.status === 'ready'

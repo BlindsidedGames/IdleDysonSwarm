@@ -13,6 +13,14 @@ import {
   BrowserMonotonicClock,
 } from '../platform/browserLifecycle'
 import {
+  createBrowserReloadWriterIdentity,
+  type BrowserReloadWriterIdentity,
+} from '../platform/browserReloadWriterIdentity'
+import {
+  BrowserBroadcastOwnershipChannel,
+  type OwnershipNoticeChannel,
+} from '../platform/browserWriterLease'
+import {
   readBrowserHostEntitlements,
   type BrowserEntitlementDocument,
 } from '../platform/browserEntitlementAuthority'
@@ -44,6 +52,8 @@ export interface ProductionBrowserCompositionOptions {
   readonly createRuntime?: BrowserRuntimeFactory
   readonly reloadPage?: () => void
   readonly dysonPresentationTuning?: Readonly<DysonPresentationTuning>
+  readonly writerIdentity?: BrowserReloadWriterIdentity
+  readonly ownershipNoticeChannel?: OwnershipNoticeChannel
 }
 
 export interface ProductionBrowserComposition {
@@ -87,6 +97,14 @@ export function createProductionBrowserComposition(
     })
   const runtimeFactory =
     options.createRuntime ?? createBrowserRuntimeFoundation
+  const writerIdentity =
+    options.writerIdentity ??
+    createBrowserReloadWriterIdentity()
+  const ownershipNoticeChannel =
+    options.ownershipNoticeChannel ??
+    (options.createRuntime === undefined
+      ? createOwnershipNoticeChannel()
+      : undefined)
   const runtime = runtimeFactory({
     createApplication,
     lifecyclePolicy: MOBILE_LIFECYCLE_POLICY,
@@ -95,6 +113,10 @@ export function createProductionBrowserComposition(
     activeTimeClock: monotonicClock,
     nowUtcMilliseconds: () =>
       lifecycleClock.sample().utcMilliseconds,
+    ownerToken: writerIdentity.ownerToken,
+    allowUnexpiredSameOwnerTakeover:
+      writerIdentity.allowUnexpiredSameOwnerTakeover,
+    noticeChannel: ownershipNoticeChannel,
   })
   const reloadPage =
     options.reloadPage ?? (() => window.location.reload())
@@ -141,4 +163,16 @@ export function createProductionBrowserComposition(
       reloadPage()
     },
   })
+}
+
+function createOwnershipNoticeChannel():
+  | OwnershipNoticeChannel
+  | undefined {
+  try {
+    return new BrowserBroadcastOwnershipChannel(
+      'idle-dyson-swarm:writer-ownership',
+    )
+  } catch {
+    return undefined
+  }
 }

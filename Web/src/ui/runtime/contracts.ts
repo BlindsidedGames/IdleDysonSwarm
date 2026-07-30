@@ -147,6 +147,23 @@ export type UiRuntimePlayerCommandResult =
       readonly retryable: false
     }
 
+export type UiRuntimeDevelopmentResult =
+  | {
+      readonly applied: true
+      readonly bots: number
+      readonly stateRevision: number
+      readonly durableRevision: number
+    }
+  | {
+      readonly applied: false
+      readonly code: string
+      readonly reason: string
+    }
+
+export interface UiRuntimeDevelopmentControls {
+  setDysonBots(bots: number): Promise<UiRuntimeDevelopmentResult>
+}
+
 /**
  * Host-neutral browser product boundary.
  *
@@ -166,9 +183,11 @@ export interface UiRuntimeFoundation<
     listener: UiRuntimeSnapshotListener<TSnapshot>,
   ): () => void
   start(): Promise<UiRuntimeStartResult>
+  takeOverWriterOwnership(): Promise<UiRuntimeStartResult>
   dispatchPlayer(
     command: TPlayerCommand,
   ): Promise<UiRuntimePlayerCommandResult>
+  readonly development?: UiRuntimeDevelopmentControls
   importSave(request: UiRuntimeImportRequest): Promise<UiRuntimeImportResult>
   inspectStorage(
     requestPersistence?: boolean,

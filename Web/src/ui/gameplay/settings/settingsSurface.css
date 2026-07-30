@@ -78,6 +78,70 @@
   box-shadow: inset 0 1px rgb(255 255 255 / 8%);
 }
 
+.settings-surface__panel--development {
+  grid-template-columns: 1fr;
+}
+
+.settings-surface__development-controls {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: end;
+  gap: 0.4rem 0.7rem;
+}
+
+.settings-surface__development-controls label {
+  grid-column: 1 / -1;
+  font-weight: var(--font-weight-semibold);
+}
+
+.settings-surface__development-controls select,
+.settings-surface__development-controls button {
+  min-block-size: 3rem;
+  border: 2px solid #172918;
+  border-radius: 0.4rem;
+  font: inherit;
+}
+
+.settings-surface__development-controls select {
+  min-inline-size: 0;
+  padding: 0.5rem 2.2rem 0.5rem 0.7rem;
+  background: #1d351f;
+  color: white;
+}
+
+.settings-surface__development-controls button {
+  padding: 0.55rem 1rem;
+  background: #56815a;
+  color: white;
+  cursor: pointer;
+  font-weight: var(--font-weight-semibold);
+}
+
+.settings-surface__development-controls button:disabled,
+.settings-surface__development-controls select:disabled {
+  cursor: wait;
+  opacity: 0.7;
+}
+
+.settings-surface__development-controls select:focus-visible,
+.settings-surface__development-controls button:focus-visible {
+  outline: 3px solid var(--color-focus);
+  outline-offset: 2px;
+}
+
+.settings-surface__development-status {
+  margin: 0;
+  padding: 0.7rem 0.8rem;
+  border: 1px solid #47794a;
+  border-radius: 0.35rem;
+  background: #223f24;
+}
+
+.settings-surface__development-status[role="alert"] {
+  border-color: #a85a5a;
+  background: #4a2828;
+}
+
 .settings-surface__copy h3,
 .settings-surface__copy p {
   margin: 0;
@@ -138,5 +202,13 @@
 
   .settings-surface__reset {
     inline-size: 100%;
+  }
+
+  .settings-surface__development-controls {
+    grid-template-columns: 1fr;
+  }
+
+  .settings-surface__development-controls label {
+    grid-column: auto;
   }
 }

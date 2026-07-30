@@ -61,4 +61,88 @@ export const settingsSurfaceMessages = defineMessages({
     description:
       'Warns that reset committed but post-commit session reconstruction failed.',
   },
+  developmentTitle: {
+    id: 'settings.development.title',
+    defaultMessage: 'Development Menu',
+    description: 'Heading for development-only gameplay controls.',
+  },
+  developmentDescription: {
+    id: 'settings.development.description',
+    defaultMessage:
+      'Sets the real saved bot count. Visual stages assume Bot Distribution is set to 100% Workers.',
+    description:
+      'Explains the real-state development progression presets.',
+  },
+  developmentPreset: {
+    id: 'settings.development.preset',
+    defaultMessage: 'Progression state',
+    description: 'Label for the development progression preset selector.',
+  },
+  developmentApply: {
+    id: 'settings.development.apply',
+    defaultMessage: 'Apply Progression',
+    description: 'Applies a development progression preset.',
+  },
+  developmentApplying: {
+    id: 'settings.development.applying',
+    defaultMessage: 'Applying…',
+    description: 'Pending development progression button text.',
+  },
+  developmentSucceeded: {
+    id: 'settings.development.succeeded',
+    defaultMessage:
+      'Bot count saved. Return to Bots to inspect the live simulation.',
+    description: 'Successful development progression feedback.',
+  },
+  developmentFailed: {
+    id: 'settings.development.failed',
+    defaultMessage:
+      'The development progression could not be applied.',
+    description: 'Failed development progression feedback.',
+  },
+  developmentEarlySwarm: {
+    id: 'settings.development.preset.early-swarm',
+    defaultMessage: 'Early swarm — {bots} Bots',
+    description: 'Early stellar swarm development preset.',
+  },
+  developmentMidSwarm: {
+    id: 'settings.development.preset.mid-swarm',
+    defaultMessage: 'Mid swarm — {bots} Bots',
+    description: 'Mid stellar swarm development preset.',
+  },
+  developmentNearStar: {
+    id: 'settings.development.preset.near-star',
+    defaultMessage: 'Nearly surrounded star — {bots} Bots',
+    description: 'Nearly completed stellar swarm development preset.',
+  },
+  developmentNewGalaxy: {
+    id: 'settings.development.preset.new-galaxy',
+    defaultMessage: 'New galaxy view — {bots} Bots',
+    description: 'First galaxy view development preset.',
+  },
+  developmentYoungGalaxy: {
+    id: 'settings.development.preset.young-galaxy',
+    defaultMessage: 'Young harvested galaxy — {bots} Bots',
+    description: 'Early galaxy harvesting development preset.',
+  },
+  developmentHalfGalaxy: {
+    id: 'settings.development.preset.half-galaxy',
+    defaultMessage: 'Half-harvested galaxy — {bots} Bots',
+    description: 'Half galaxy harvesting development preset.',
+  },
+  developmentNearGalaxy: {
+    id: 'settings.development.preset.near-galaxy',
+    defaultMessage: 'Nearly harvested galaxy — {bots} Bots',
+    description: 'Nearly completed galaxy development preset.',
+  },
+  developmentOneGalaxy: {
+    id: 'settings.development.preset.one-galaxy',
+    defaultMessage: 'First engulfed galaxy — {bots} Bots',
+    description: 'First completed galaxy development preset.',
+  },
+  developmentGalaxyGroup: {
+    id: 'settings.development.preset.galaxy-group',
+    defaultMessage: 'Galaxy group — {bots} Bots',
+    description: 'Multiple engulfed galaxies development preset.',
+  },
 })

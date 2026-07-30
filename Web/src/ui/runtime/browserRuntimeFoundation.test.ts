@@ -122,7 +122,31 @@ describe('browser runtime foundation composition', () => {
       source: 'first-run',
     })
     if (firstSnapshot.phase !== 'ready') return
-    const firstGameplay = structuredClone(firstSnapshot.gameplay)
+    const development = firstRuntime.development
+    expect(development).toBeDefined()
+    await expect(
+      development?.setDysonBots(195_000),
+    ).resolves.toMatchObject({
+      applied: true,
+      bots: 195_000,
+    })
+    const progressedSnapshot = firstRuntime.snapshot()
+    expect(progressedSnapshot).toMatchObject({
+      phase: 'ready',
+      gameplay: {
+        resources: {
+          dyson: {
+            bots: 195_000,
+            workers: 97_500,
+            researchers: 97_500,
+          },
+        },
+      },
+    })
+    if (progressedSnapshot.phase !== 'ready') return
+    const firstGameplay = structuredClone(
+      progressedSnapshot.gameplay,
+    )
     const firstStoredSave = await database.readFile(currentPath)
     await firstRuntime.shutdown()
 
@@ -387,6 +411,118 @@ describe('browser runtime foundation composition', () => {
     })
     expect(constructions).toBe(0)
     expect(database.events).toEqual(['lease.acquire'])
+    await runtime.shutdown()
+  })
+
+  test('retries a blocked writer acquisition in place after the stale lease expires', async () => {
+    const database = new MemoryBrowserSaveDatabase()
+    database.forceLease({
+      ownerToken: 'stale-owner',
+      generation: 4,
+      expiresAtUtcMilliseconds: 5_000,
+    })
+    let nowUtcMilliseconds = 1_000
+    const runtime = createRuntime({
+      database,
+      ownerToken: 'replacement-owner',
+      nowUtcMilliseconds: () => nowUtcMilliseconds,
+    })
+
+    await expect(runtime.start()).resolves.toMatchObject({
+      phase: 'blocked',
+      code: 'writer-owned',
+      generation: 4,
+    })
+
+    nowUtcMilliseconds = 5_001
+    await expect(runtime.start()).resolves.toMatchObject({
+      phase: 'ready',
+    })
+    await expect(database.inspectWriterLease()).resolves.toMatchObject({
+      ownerToken: 'replacement-owner',
+      generation: 5,
+    })
+    expect(
+      database.events.filter((event) => event === 'lease.acquire'),
+    ).toHaveLength(2)
+    await runtime.shutdown()
+  })
+
+  test('explicitly takes over a live writer only through the development recovery control', async () => {
+    const database = new MemoryBrowserSaveDatabase()
+    database.forceLease({
+      ownerToken: 'stranded-owner',
+      generation: 4,
+      expiresAtUtcMilliseconds: 5_000,
+    })
+    const runtime = createRuntime({
+      database,
+      ownerToken: 'replacement-owner',
+    })
+
+    await expect(runtime.start()).resolves.toMatchObject({
+      phase: 'blocked',
+      code: 'writer-owned',
+    })
+    await expect(
+      runtime.takeOverWriterOwnership(),
+    ).resolves.toMatchObject({ phase: 'ready' })
+    await expect(database.inspectWriterLease()).resolves.toMatchObject({
+      ownerToken: 'replacement-owner',
+      generation: 5,
+    })
+    await runtime.shutdown()
+  })
+
+  test('reconstructs immediately when an explicit same-tab reload replaces its previous generation', async () => {
+    const database = new MemoryBrowserSaveDatabase()
+    database.forceLease({
+      ownerToken: 'same-tab',
+      generation: 4,
+      expiresAtUtcMilliseconds: 5_000,
+    })
+    const runtime = createRuntime({
+      database,
+      ownerToken: 'same-tab',
+      allowUnexpiredSameOwnerTakeover: true,
+    })
+
+    await expect(runtime.start()).resolves.toMatchObject({
+      phase: 'ready',
+    })
+    await expect(database.inspectWriterLease()).resolves.toMatchObject({
+      ownerToken: 'same-tab',
+      generation: 5,
+    })
+    await runtime.shutdown()
+  })
+
+  test('publishes an immediate retry deadline when the current owner announces release', async () => {
+    const database = new MemoryBrowserSaveDatabase()
+    database.forceLease({
+      ownerToken: 'existing-owner',
+      generation: 4,
+      expiresAtUtcMilliseconds: 5_000,
+    })
+    const notices = new RecordingNoticeChannel()
+    const runtime = createRuntime({
+      database,
+      ownerToken: 'blocked-owner',
+      noticeChannel: notices,
+    })
+    await runtime.start()
+
+    notices.emit({
+      kind: 'released',
+      generation: 4,
+      expiresAtUtcMilliseconds: null,
+    })
+
+    expect(runtime.status()).toMatchObject({
+      phase: 'blocked',
+      code: 'writer-owned',
+      expiresAtUtcMilliseconds: 1_000,
+    })
     await runtime.shutdown()
   })
 
@@ -2941,6 +3077,7 @@ describe('browser runtime foundation composition', () => {
 
     expect(Object.keys(runtime).sort()).toEqual([
       'checkpointBeforeSafeReload',
+      'development',
       'dispatchPlayer',
       'exportLastRecovery',
       'importSave',
@@ -2955,10 +3092,16 @@ describe('browser runtime foundation composition', () => {
       'status',
       'subscribeSnapshot',
       'subscribeStatus',
+      'takeOverWriterOwnership',
       'writeClipboardText',
     ])
-    expect(Object.values(runtime).every((value) => typeof value === 'function'))
-      .toBe(true)
+    const { development, ...hostMethods } = runtime
+    expect(
+      Object.values(hostMethods).every(
+        (value) => typeof value === 'function',
+      ),
+    ).toBe(true)
+    expect(typeof development?.setDysonBots).toBe('function')
     await runtime.shutdown()
   })
 
@@ -3427,6 +3570,8 @@ class MemoryBrowserSaveDatabase implements BrowserSaveDatabase {
     ownerToken: string,
     nowUtcMilliseconds: number,
     leaseDurationMilliseconds: number,
+    allowUnexpiredSameOwnerTakeover = false,
+    allowUnexpiredAnyOwnerTakeover = false,
   ): Promise<WriterLeaseAcquisition> {
     this.events.push('lease.acquire')
     await this.acquireGate
@@ -3434,7 +3579,12 @@ class MemoryBrowserSaveDatabase implements BrowserSaveDatabase {
       this.lease?.ownerToken !== null &&
       this.lease?.ownerToken !== undefined &&
       this.lease.expiresAtUtcMilliseconds !== null &&
-      this.lease.expiresAtUtcMilliseconds > nowUtcMilliseconds
+      this.lease.expiresAtUtcMilliseconds > nowUtcMilliseconds &&
+      !allowUnexpiredAnyOwnerTakeover &&
+      !(
+        allowUnexpiredSameOwnerTakeover &&
+        this.lease.ownerToken === ownerToken
+      )
     ) {
       return {
         acquired: false,
@@ -3609,13 +3759,21 @@ class ManualIntervalScheduler implements IntervalScheduler {
 class RecordingNoticeChannel implements OwnershipNoticeChannel {
   readonly notices: OwnershipNotice[] = []
   closed = false
+  private listener: ((notice: OwnershipNotice) => void) | undefined
 
   post(notice: OwnershipNotice): void {
     this.notices.push(notice)
   }
 
-  subscribe(): () => void {
-    return () => undefined
+  subscribe(listener: (notice: OwnershipNotice) => void): () => void {
+    this.listener = listener
+    return () => {
+      this.listener = undefined
+    }
+  }
+
+  emit(notice: OwnershipNotice): void {
+    this.listener?.(notice)
   }
 
   close(): void {

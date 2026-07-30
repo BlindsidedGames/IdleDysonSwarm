@@ -1421,6 +1421,174 @@
       "value": "Wiki"
     }
   ],
+  "settings.development.apply": [
+    {
+      "type": 0,
+      "value": "Apply Progression"
+    }
+  ],
+  "settings.development.applying": [
+    {
+      "type": 0,
+      "value": "Applying…"
+    }
+  ],
+  "settings.development.description": [
+    {
+      "type": 0,
+      "value": "Sets the real saved bot count. Visual stages assume Bot Distribution is set to 100% Workers."
+    }
+  ],
+  "settings.development.failed": [
+    {
+      "type": 0,
+      "value": "The development progression could not be applied."
+    }
+  ],
+  "settings.development.preset": [
+    {
+      "type": 0,
+      "value": "Progression state"
+    }
+  ],
+  "settings.development.preset.early-swarm": [
+    {
+      "type": 0,
+      "value": "Early swarm — "
+    },
+    {
+      "type": 1,
+      "value": "bots"
+    },
+    {
+      "type": 0,
+      "value": " Bots"
+    }
+  ],
+  "settings.development.preset.galaxy-group": [
+    {
+      "type": 0,
+      "value": "Galaxy group — "
+    },
+    {
+      "type": 1,
+      "value": "bots"
+    },
+    {
+      "type": 0,
+      "value": " Bots"
+    }
+  ],
+  "settings.development.preset.half-galaxy": [
+    {
+      "type": 0,
+      "value": "Half-harvested galaxy — "
+    },
+    {
+      "type": 1,
+      "value": "bots"
+    },
+    {
+      "type": 0,
+      "value": " Bots"
+    }
+  ],
+  "settings.development.preset.mid-swarm": [
+    {
+      "type": 0,
+      "value": "Mid swarm — "
+    },
+    {
+      "type": 1,
+      "value": "bots"
+    },
+    {
+      "type": 0,
+      "value": " Bots"
+    }
+  ],
+  "settings.development.preset.near-galaxy": [
+    {
+      "type": 0,
+      "value": "Nearly harvested galaxy — "
+    },
+    {
+      "type": 1,
+      "value": "bots"
+    },
+    {
+      "type": 0,
+      "value": " Bots"
+    }
+  ],
+  "settings.development.preset.near-star": [
+    {
+      "type": 0,
+      "value": "Nearly surrounded star — "
+    },
+    {
+      "type": 1,
+      "value": "bots"
+    },
+    {
+      "type": 0,
+      "value": " Bots"
+    }
+  ],
+  "settings.development.preset.new-galaxy": [
+    {
+      "type": 0,
+      "value": "New galaxy view — "
+    },
+    {
+      "type": 1,
+      "value": "bots"
+    },
+    {
+      "type": 0,
+      "value": " Bots"
+    }
+  ],
+  "settings.development.preset.one-galaxy": [
+    {
+      "type": 0,
+      "value": "First engulfed galaxy — "
+    },
+    {
+      "type": 1,
+      "value": "bots"
+    },
+    {
+      "type": 0,
+      "value": " Bots"
+    }
+  ],
+  "settings.development.preset.young-galaxy": [
+    {
+      "type": 0,
+      "value": "Young harvested galaxy — "
+    },
+    {
+      "type": 1,
+      "value": "bots"
+    },
+    {
+      "type": 0,
+      "value": " Bots"
+    }
+  ],
+  "settings.development.succeeded": [
+    {
+      "type": 0,
+      "value": "Bot count saved. Return to Bots to inspect the live simulation."
+    }
+  ],
+  "settings.development.title": [
+    {
+      "type": 0,
+      "value": "Development Menu"
+    }
+  ],
   "settings.save-data.cancel": [
     {
       "type": 0,
@@ -1615,6 +1783,12 @@
     {
       "type": 0,
       "value": "Start game"
+    }
+  ],
+  "startup-shell.action.use-this-tab": [
+    {
+      "type": 0,
+      "value": "Use this tab"
     }
   ],
   "startup-shell.app-name": [
@@ -1818,7 +1992,7 @@
   "startup-shell.state.writer-blocked.body": [
     {
       "type": 0,
-      "value": "This tab cannot write progress while another tab or window is active. Return to the active game or close it before checking again."
+      "value": "Another browser context is holding the writable game session. Use this tab to continue here and stop the other context from writing progress."
     }
   ],
   "startup-shell.state.writer-blocked.title": [

@@ -682,6 +682,11 @@ function snapshot(options: SnapshotOptions = {}): ReadySnapshot {
                 kind: 'active-panels',
                 value: 0,
               },
+              swarmVisualization: {
+                phase: 'stellar-swarm',
+                activePanels: 0,
+                completion: 0,
+              },
               currentGoal: {
                 kind: 'create-bots',
                 target: 10,

@@ -217,7 +217,7 @@
   display: grid;
   grid-template-rows: auto minmax(0, 1fr);
   min-block-size: 0;
-  overflow: hidden;
+  overflow: visible;
 }
 
 .dyson-shell__swarm {

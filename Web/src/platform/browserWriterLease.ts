@@ -62,6 +62,7 @@ export interface BrowserWriterLeaseOptions {
   readonly nowUtcMilliseconds?: () => number
   readonly ownerToken?: string
   readonly ownerTokenFactory?: () => string
+  readonly allowUnexpiredSameOwnerTakeover?: boolean
   readonly leaseDurationMilliseconds?: number
   readonly heartbeatMilliseconds?: number
   readonly scheduler?: IntervalScheduler
@@ -86,6 +87,7 @@ export class BrowserWriterLease {
   private readonly database: BrowserSaveDatabase
   private readonly nowUtcMilliseconds: () => number
   private readonly ownerToken: string
+  private readonly allowUnexpiredSameOwnerTakeover: boolean
   private readonly leaseDurationMilliseconds: number
   private readonly heartbeatMilliseconds: number
   private readonly scheduler: IntervalScheduler
@@ -113,6 +115,7 @@ export class BrowserWriterLease {
   private terminalRequested = false
   private disposed = false
   private epoch = 0
+  private unsubscribeNotices: (() => void) | undefined
 
   constructor(options: Readonly<BrowserWriterLeaseOptions>) {
     const leaseDurationMilliseconds =
@@ -131,11 +134,15 @@ export class BrowserWriterLease {
     this.ownerToken =
       options.ownerToken ??
       (options.ownerTokenFactory ?? defaultOwnerTokenFactory)()
+    this.allowUnexpiredSameOwnerTakeover =
+      options.allowUnexpiredSameOwnerTakeover ?? false
     this.leaseDurationMilliseconds = leaseDurationMilliseconds
     this.heartbeatMilliseconds = heartbeatMilliseconds
     this.scheduler = options.scheduler ?? browserIntervalScheduler
     this.noticeChannel = options.noticeChannel
     this.autoHeartbeat = options.autoHeartbeat ?? true
+    this.unsubscribeNotices =
+      this.noticeChannel?.subscribe(this.handleNotice)
   }
 
   state(): BrowserWriterOwnershipState {
@@ -164,6 +171,27 @@ export class BrowserWriterLease {
       )
     }
     this.acquisitionPromise ??= this.acquireOnce()
+    return this.acquisitionPromise
+  }
+
+  /**
+   * Explicitly fences the current owner and acquires a newer generation.
+   * Callers must place this behind a deliberate development/recovery action.
+   */
+  takeOver(): Promise<WriterLeaseAcquisition> {
+    this.assertOpen()
+    if (this.currentState.kind === 'writable') {
+      return Promise.resolve({
+        acquired: true,
+        fence: this.currentState.fence,
+      })
+    }
+    if (this.currentState.kind === 'lost') {
+      throw new WriterLeaseLostError(
+        'This browser writer lease instance cannot reacquire.',
+      )
+    }
+    this.acquisitionPromise ??= this.acquireOnce(true)
     return this.acquisitionPromise
   }
 
@@ -298,6 +326,8 @@ export class BrowserWriterLease {
     this.disposed = true
     this.cancelTerminalState({ kind: 'disposed' })
     this.listeners.clear()
+    this.unsubscribeNotices?.()
+    this.unsubscribeNotices = undefined
     try {
       this.noticeChannel?.close()
     } catch {
@@ -312,12 +342,16 @@ export class BrowserWriterLease {
     void this.shutdown().catch(() => undefined)
   }
 
-  private async acquireOnce(): Promise<WriterLeaseAcquisition> {
+  private async acquireOnce(
+    allowUnexpiredAnyOwnerTakeover = false,
+  ): Promise<WriterLeaseAcquisition> {
     const operationEpoch = this.epoch
     const promise = this.database.acquireWriterLease(
       this.ownerToken,
       this.nowUtcMilliseconds(),
       this.leaseDurationMilliseconds,
+      this.allowUnexpiredSameOwnerTakeover,
+      allowUnexpiredAnyOwnerTakeover,
     )
     try {
       const acquisition = await promise
@@ -591,6 +625,29 @@ export class BrowserWriterLease {
       generation: fence.generation,
       expiresAtUtcMilliseconds:
         fence.expiresAtUtcMilliseconds,
+    })
+  }
+
+  private readonly handleNotice = (
+    notice: OwnershipNotice,
+  ): void => {
+    if (
+      this.terminalRequested ||
+      this.disposed ||
+      this.currentState.kind !== 'blocked' ||
+      notice.generation < this.currentState.generation
+    ) {
+      return
+    }
+    const expiresAtUtcMilliseconds =
+      notice.kind === 'released'
+        ? this.nowUtcMilliseconds()
+        : notice.expiresAtUtcMilliseconds
+    if (expiresAtUtcMilliseconds === null) return
+    this.publish({
+      kind: 'blocked',
+      generation: notice.generation,
+      expiresAtUtcMilliseconds,
     })
   }
 

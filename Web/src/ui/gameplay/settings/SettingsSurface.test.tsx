@@ -127,9 +127,46 @@ describe('SettingsSurface', () => {
       'current progress was kept',
     )
   })
+
+  test('hides development progression controls when the runtime omits them', () => {
+    renderSettings(vi.fn())
+
+    expect(
+      screen.queryByRole('heading', { name: 'Development Menu' }),
+    ).not.toBeInTheDocument()
+  })
+
+  test('applies the selected real bot-count preset through the development runtime', async () => {
+    const user = userEvent.setup()
+    const setDysonBots = vi.fn().mockResolvedValue({
+      applied: true,
+      bots: 195_000,
+      stateRevision: 2,
+      durableRevision: 2,
+    })
+    renderSettings(vi.fn(), { setDysonBots })
+
+    await user.selectOptions(
+      screen.getByRole('combobox', { name: 'Progression state' }),
+      'near-star',
+    )
+    await user.click(
+      screen.getByRole('button', { name: 'Apply Progression' }),
+    )
+
+    await waitFor(() =>
+      expect(setDysonBots).toHaveBeenCalledWith(195_000),
+    )
+    expect(screen.getByRole('status')).toHaveTextContent(
+      'Bot count saved.',
+    )
+  })
 })
 
-function renderSettings(resetSave: SettingsSurfaceProps['resetSave']) {
+function renderSettings(
+  resetSave: SettingsSurfaceProps['resetSave'],
+  development?: SettingsSurfaceProps['development'],
+) {
   return render(
     <IntlProvider
       locale="en"
@@ -138,6 +175,7 @@ function renderSettings(resetSave: SettingsSurfaceProps['resetSave']) {
     >
       <SettingsSurface
         resetSave={resetSave}
+        development={development}
       />
     </IntlProvider>,
   )

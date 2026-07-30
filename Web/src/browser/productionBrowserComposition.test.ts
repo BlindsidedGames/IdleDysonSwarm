@@ -35,6 +35,10 @@ describe('production browser composition', () => {
       lifecycleClock,
       monotonicClock,
       entitlementDocument: entitlementDocument('false'),
+      writerIdentity: {
+        ownerToken: 'reload-tab',
+        allowUnexpiredSameOwnerTakeover: true,
+      },
       createRuntime: (options) => {
         captured = options
         return runtime
@@ -49,6 +53,8 @@ describe('production browser composition', () => {
     expect(captured.allowedExternalOrigins).toEqual([])
     expect(captured.lifecycleClock).toBe(lifecycleClock)
     expect(captured.activeTimeClock).toBe(monotonicClock)
+    expect(captured.ownerToken).toBe('reload-tab')
+    expect(captured.allowUnexpiredSameOwnerTakeover).toBe(true)
     expect(captured.databaseName).toBeUndefined()
     expect(captured.profileId).toBeUndefined()
     expect(lifecycleClock.samples).toBe(0)

@@ -49,6 +49,57 @@ function runtime() {
 }
 
 describe('canonical game application engine', () => {
+  test('sets the development bot count through the current canonical allocation', () => {
+    const state = runtime()
+    Object.assign(state, {
+      gameState: {
+        ...state.gameState,
+        dyson: {
+          ...state.gameState.dyson,
+          bots: 0,
+          workers: 0,
+          researchers: 0,
+          botDistribution: 0.25,
+        },
+      },
+    })
+    const definition = createCanonicalGameEngineDefinition({
+      eventContext: context(),
+    })
+
+    const result = definition.applyCommand(state, {
+      kind: 'internal.development-set-dyson-bots',
+      bots: 1_000,
+    })
+
+    expect(result).toEqual({ accepted: true, changed: true })
+    expect(state.gameState.dyson).toMatchObject({
+      bots: 1_000,
+      workers: 750,
+      researchers: 250,
+      botDistribution: 0.25,
+    })
+  })
+
+  test('rejects an invalid development bot count without changing state', () => {
+    const state = runtime()
+    const before = structuredClone(state)
+    const definition = createCanonicalGameEngineDefinition({
+      eventContext: context(),
+    })
+
+    const result = definition.applyCommand(state, {
+      kind: 'internal.development-set-dyson-bots',
+      bots: Number.NaN,
+    })
+
+    expect(result).toMatchObject({
+      accepted: false,
+      code: 'CANONICAL-DEVELOPMENT-BOTS-INVALID',
+    })
+    expect(state).toEqual(before)
+  })
+
   test('routes player settings with runtime carriers as one transaction', () => {
     const state = runtime()
     const definition = createCanonicalGameEngineDefinition({
