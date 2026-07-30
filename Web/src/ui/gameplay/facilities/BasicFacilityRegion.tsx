@@ -349,11 +349,16 @@ function BasicFacilityPresentationCard({
   const feedbackId = useId()
   const availabilityId = useId()
   const presentation = facilityMessages[facilityId]
-  const selectedQuantity = preciseNumber(
+  const selectedQuantity = formatGameNumber(
     locale,
     preview.selectedQuantity,
   )
-  const cost = preciseNumber(locale, preview.cost)
+  const selectedQuantityPrecise = preciseNumber(
+    locale,
+    preview.selectedQuantity,
+  )
+  const cost = formatGameNumber(locale, preview.cost)
+  const costPrecise = preciseNumber(locale, preview.cost)
   const displayFeedback = pending
     ? 'pending'
     : feedbackRevisionMatches(feedback, revision)
@@ -454,14 +459,17 @@ function BasicFacilityPresentationCard({
             aria-describedby={describedBy}
             aria-label={intl.formatMessage(
               presentation.purchaseAccessible,
-              { quantity: selectedQuantity, cost },
+              {
+                quantity: selectedQuantityPrecise,
+                cost: costPrecise,
+              },
             )}
             onClick={onPurchase}
           >
             <data
               className="basic-facility-card__purchase-quantity"
               value={String(preview.selectedQuantity)}
-              title={selectedQuantity}
+              title={selectedQuantityPrecise}
             >
               <bdi>
                 {intl.formatMessage(messages.purchaseQuantity, {
@@ -472,7 +480,7 @@ function BasicFacilityPresentationCard({
             <data
               className="basic-facility-card__purchase-cost"
               value={String(preview.cost)}
-              title={cost}
+              title={costPrecise}
             >
               <bdi>
                 {intl.formatMessage(messages.purchaseCost, { cost })}

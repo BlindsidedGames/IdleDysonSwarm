@@ -153,6 +153,65 @@
   block-size: 0.95em;
 }
 
+@media (max-width: 720px) {
+  .dyson-resource-header {
+    grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
+    column-gap: 0.3rem;
+    min-block-size: 4.25rem;
+    padding-block: max(0.48rem, env(safe-area-inset-top)) 0.28rem;
+    padding-inline: max(0.58rem, env(safe-area-inset-left))
+      max(0.58rem, env(safe-area-inset-right));
+  }
+
+  .dyson-resource-header__item--science {
+    padding-inline-start: 0.25rem;
+  }
+
+  .dyson-resource-header .ui-resource-value__content,
+  .dyson-resource-header .ui-resource-value__value,
+  .dyson-resource-header__rate {
+    white-space: nowrap;
+  }
+
+  .dyson-resource-header .ui-resource-value__value {
+    overflow-wrap: normal;
+    font-size: calc(1.22rem * var(--game-text-scale));
+  }
+
+  .dyson-resource-header__item--total-bots .ui-resource-value__value {
+    font-size: calc(1.15rem * var(--game-text-scale));
+  }
+
+  .dyson-resource-header__rate {
+    font-size: calc(0.72rem * var(--game-text-scale));
+  }
+
+  .dyson-shell__stage {
+    padding-inline: max(0.45rem, env(safe-area-inset-left))
+      max(0.45rem, env(safe-area-inset-right));
+  }
+}
+
+@media (max-width: 359px) {
+  .dyson-resource-header {
+    column-gap: 0.2rem;
+    padding-inline: max(0.42rem, env(safe-area-inset-left))
+      max(0.42rem, env(safe-area-inset-right));
+  }
+
+  .dyson-resource-header .ui-resource-value__value {
+    font-size: calc(1.12rem * var(--game-text-scale));
+  }
+
+  .dyson-resource-header__item--total-bots .ui-resource-value__value {
+    font-size: calc(1.02rem * var(--game-text-scale));
+  }
+
+  .dyson-resource-header__rate {
+    font-size: calc(0.66rem * var(--game-text-scale));
+  }
+}
+
 .dyson-shell__playfield {
   position: relative;
   display: grid;

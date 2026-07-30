@@ -46,7 +46,7 @@
   letter-spacing: 0.12em;
 }
 
-.basic-facility-card {
+.ui-facility-card.basic-facility-card {
   position: relative;
   block-size: 100%;
   grid-template-columns:
@@ -189,20 +189,49 @@
 
 .basic-facility-card .ui-button {
   min-inline-size: 0;
-  flex-wrap: wrap;
-  justify-content: space-between;
+  flex-direction: column;
+  flex-wrap: nowrap;
+  justify-content: center;
+  gap: 0.08rem;
+  border-color: #0b080c;
+  background: #d1b6d7;
+  color: #0b080c;
+  line-height: 1.08;
+}
+
+.basic-facility-card .ui-button:not(:disabled):hover {
+  background: #dbc7df;
+}
+
+.basic-facility-card .ui-button:not(:disabled):active {
+  background: #aa9cad;
+}
+
+.basic-facility-card .ui-button:disabled {
+  border-color: #0b080c;
+  background: #82618a;
+  color: #0b080c;
+  opacity: 1;
 }
 
 .basic-facility-card__details-button {
   min-block-size: var(--target-minimum);
-  border: 1px solid #7d5a85;
+  border: 1px solid #0b080c;
   border-radius: 0.2rem;
-  background: #503a55;
-  color: white;
+  background: #c695d7;
+  color: #0b080c;
   font: inherit;
-  font-weight: var(--font-weight-semibold);
+  font-weight: var(--font-weight-bold);
   touch-action: manipulation;
   user-select: none;
+}
+
+.basic-facility-card__details-button:hover {
+  background: #d5abe3;
+}
+
+.basic-facility-card__details-button:active {
+  background: #b681c8;
 }
 
 .basic-facility-card__details-button:focus-visible,
@@ -362,22 +391,76 @@
 
 .basic-facility-card__purchase-quantity,
 .basic-facility-card__purchase-cost {
-  color: inherit;
+  max-inline-size: 100%;
+  color: #0b080c;
   font-family: var(--font-family-numeric);
   font-variant-numeric: tabular-nums;
   font-weight: var(--font-weight-bold);
+  white-space: nowrap;
+}
+
+.basic-facility-card .ui-button:disabled
+  .basic-facility-card__purchase-quantity,
+.basic-facility-card .ui-button:disabled
+  .basic-facility-card__purchase-cost {
+  color: #0b080c;
 }
 
 .basic-facility-card__purchase-cost {
-  color: var(--color-accent-value);
-  overflow-wrap: anywhere;
+  overflow-wrap: normal;
 }
 
 @media (max-width: 720px) {
-  .basic-facility-card {
-    grid-template-columns: minmax(0, 1fr) minmax(7.5rem, 30%);
-    gap: 0.25rem 0.55rem;
-    padding: 0.55rem 0.6rem;
+  .basic-facility-region__grid {
+    gap: 0.42rem;
+  }
+
+  .basic-facility-region__teaser-surface {
+    min-block-size: 6.5rem;
+    padding-block: 0.8rem;
+    font-size: calc(0.95rem * var(--game-text-scale));
+  }
+
+  .ui-facility-card.basic-facility-card {
+    grid-template-columns:
+      minmax(0, 1fr)
+      clamp(6.25rem, 27%, 6.75rem);
+    grid-template-rows: auto auto auto minmax(0.3rem, auto);
+    gap: 0.05rem 0.32rem;
+    padding: 0.34rem 0.38rem;
+  }
+
+  .basic-facility-card .ui-facility-card__title {
+    font-size: calc(0.9rem * var(--game-text-scale));
+    line-height: 1.12;
+  }
+
+  .basic-facility-card__production {
+    font-size: calc(0.8rem * var(--game-text-scale));
+    line-height: 1.14;
+  }
+
+  .basic-facility-card__description {
+    font-size: calc(0.67rem * var(--game-text-scale));
+    line-height: 1.18;
+  }
+
+  .basic-facility-card__progress-track {
+    block-size: 0.3rem;
+    margin-block-start: 0.12rem;
+  }
+
+  .basic-facility-card__actions {
+    grid-template-rows: var(--target-minimum) var(--target-minimum);
+    align-content: start;
+    gap: 0.28rem;
+  }
+
+  .basic-facility-card .ui-button,
+  .basic-facility-card__details-button {
+    padding-block: 0.2rem;
+    padding-inline: 0.28rem;
+    font-size: calc(0.82rem * var(--game-text-scale));
   }
 
   .basic-facility-card .ui-facility-card__header {
@@ -429,20 +512,22 @@
 }
 
 @media (max-width: 359px) {
-  .basic-facility-card {
-    grid-template-columns: minmax(0, 1fr);
+  .ui-facility-card.basic-facility-card {
+    grid-template-columns: minmax(0, 1fr) 6.25rem;
+    gap-inline: 0.35rem;
+    padding-inline: 0.4rem;
   }
 
-  .basic-facility-card .ui-facility-card__header,
-  .basic-facility-card .ui-facility-card__production,
-  .basic-facility-card .ui-facility-card__description,
-  .basic-facility-card .ui-facility-card__progress,
-  .basic-facility-card .ui-facility-card__action {
-    grid-column: 1;
+  .basic-facility-card .ui-facility-card__title {
+    font-size: calc(0.84rem * var(--game-text-scale));
   }
 
-  .basic-facility-card .ui-facility-card__action {
-    grid-row: 5;
+  .basic-facility-card__production {
+    font-size: calc(0.76rem * var(--game-text-scale));
+  }
+
+  .basic-facility-card__description {
+    font-size: calc(0.64rem * var(--game-text-scale));
   }
 }
 

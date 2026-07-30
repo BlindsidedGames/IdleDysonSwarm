@@ -57,6 +57,7 @@
     "Noto Sans Devanagari", "Nirmala UI", sans-serif;
   --font-family-body: var(--font-family-latin);
   --font-family-numeric: var(--font-family-body);
+  --game-text-scale: 1;
   --font-size-xs: 0.75rem;
   --font-size-sm: 0.875rem;
   --font-size-md: 1rem;

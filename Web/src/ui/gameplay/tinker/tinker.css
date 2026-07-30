@@ -140,11 +140,11 @@
 }
 
 .tinker-surface[data-held-visual="true"] .tinker-surface__progress::-webkit-progress-value {
-  background: rgb(55 231 237 / 60%);
+  background: #367879;
 }
 
 .tinker-surface[data-held-visual="true"] .tinker-surface__progress::-moz-progress-bar {
-  background: rgb(55 231 237 / 60%);
+  background: #367879;
 }
 
 .tinker-surface__hold-label {

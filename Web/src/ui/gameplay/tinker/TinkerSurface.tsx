@@ -1,4 +1,4 @@
-import { useEffect, useId, useState } from 'react'
+import { useEffect, useId, useRef, useState } from 'react'
 import { useIntl } from 'react-intl'
 import type {
   FrontendApplicationSnapshot,
@@ -89,16 +89,7 @@ export function TinkerSurface({
         : intl.formatMessage(tinkerMessages.defaultDescription)
   const showFreshSaveTip = facts.presentationMode === 'default'
   const running = facts.runtime.running
-  const permanentlyHighlightsHeldProgress =
-    facts.runtime.effectiveManualLabour ||
-    facts.runtime.cooldownSeconds <= 0.5
-  const showHeldVisual =
-    gesture.active && permanentlyHighlightsHeldProgress
-  const showHeldRepeatFill =
-    showHeldVisual && facts.runtime.repeat
-  const displayedProgressSeconds = showHeldRepeatFill
-    ? facts.runtime.cooldownSeconds
-    : visualElapsedSeconds
+  const showHeldVisual = gesture.active
   const disabled = !facts.canStart && !running && !gesture.active
   const failureMessage =
     failure === 'stale'
@@ -161,7 +152,7 @@ export function TinkerSurface({
                 { seconds: formattedSeconds },
               )}
               max={facts.runtime.cooldownSeconds}
-              value={displayedProgressSeconds}
+              value={visualElapsedSeconds}
             />
             <span
               className="tinker-surface__hold-label"
@@ -198,19 +189,48 @@ export function TinkerSurface({
 function useVisualTinkerElapsed(facts: TinkerFacts): number {
   const prefersReducedMotion = usePrefersReducedMotion()
   const [elapsed, setElapsed] = useState(facts.runtime.elapsedSeconds)
+  const visualElapsedRef = useRef(facts.runtime.elapsedSeconds)
+  const previousCanonicalElapsedRef = useRef(
+    facts.runtime.elapsedSeconds,
+  )
+  const previousCooldownRef = useRef(
+    facts.runtime.cooldownSeconds,
+  )
 
   useEffect(() => {
     const authoritativeElapsed = facts.runtime.elapsedSeconds
-    setElapsed(authoritativeElapsed)
-    if (!facts.runtime.running || prefersReducedMotion) return undefined
+    const cycleRestarted =
+      authoritativeElapsed <
+      previousCanonicalElapsedRef.current
+    const cooldownChanged =
+      facts.runtime.cooldownSeconds !== previousCooldownRef.current
+    previousCanonicalElapsedRef.current = authoritativeElapsed
+    previousCooldownRef.current = facts.runtime.cooldownSeconds
+
+    if (!facts.runtime.running || prefersReducedMotion) {
+      visualElapsedRef.current = authoritativeElapsed
+      setElapsed(authoritativeElapsed)
+      return undefined
+    }
+
+    const animationStartElapsed =
+      cycleRestarted || cooldownChanged
+        ? authoritativeElapsed
+        : Math.max(
+            visualElapsedRef.current,
+            authoritativeElapsed,
+          )
+    visualElapsedRef.current = animationStartElapsed
+    setElapsed(animationStartElapsed)
 
     const startedAt = performance.now()
     let frame = 0
     const update = (now: number) => {
       const nextElapsed = Math.min(
         facts.runtime.cooldownSeconds,
-        authoritativeElapsed + (now - startedAt) / 1000,
+        animationStartElapsed + (now - startedAt) / 1000,
       )
+      visualElapsedRef.current = nextElapsed
       setElapsed(nextElapsed)
       if (nextElapsed < facts.runtime.cooldownSeconds) {
         frame = requestAnimationFrame(update)

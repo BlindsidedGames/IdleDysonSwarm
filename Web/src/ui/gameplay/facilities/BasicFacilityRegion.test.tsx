@@ -217,6 +217,24 @@ describe('BasicFacilityRegion', () => {
     expect(within(articles[0]).getByText(
       'Purchase an Assembly Line',
     )).toBeInTheDocument()
+    const purchase = within(articles[0]).getByRole('button', {
+      name: /^Purchase an Assembly Line:/,
+    })
+    expect(
+      purchase.querySelector(
+        '.basic-facility-card__purchase-quantity',
+      ),
+    ).toHaveTextContent('+38.0')
+    expect(
+      purchase.querySelector(
+        '.basic-facility-card__purchase-cost',
+      ),
+    ).toHaveTextContent('$869K')
+    expect(
+      purchase.querySelector(
+        '.basic-facility-card__purchase-cost',
+      ),
+    ).toHaveAttribute('title', '869,008.0130797025')
     expect(screen.queryByText('AI Managers')).not.toBeInTheDocument()
     const items = screen.getAllByRole('listitem')
     expect(items).toHaveLength(2)
@@ -280,10 +298,10 @@ describe('BasicFacilityRegion', () => {
         'Generating 1 Assembly Line /2.00s',
       ),
     ).toBeInTheDocument()
-    expect(assembly.getByText('+38').closest('data'))
+    expect(assembly.getByText('+38.0').closest('data'))
       .toHaveAttribute('value', '38')
     expect(
-      assembly.getByText('$869,008.0130797025').closest('data'),
+      assembly.getByText('$869K').closest('data'),
     ).toHaveAttribute('value', '869008.0130797025')
     for (const rejectedLabel of [
       'Facilities',
@@ -849,10 +867,19 @@ describe('BasicFacilityRegion', () => {
       /@media \(min-width: 1600px\)[\s\S]*grid-template-columns:\s*repeat\(2,\s*minmax\(0,\s*1fr\)\);/,
     )
     expect(facilitiesCss).toMatch(
-      /@media \(max-width: 359px\)[\s\S]*\.basic-facility-card\s*\{[\s\S]*grid-template-columns:\s*minmax\(0,\s*1fr\);/,
+      /@media \(max-width: 359px\)[\s\S]*\.basic-facility-card\s*\{[\s\S]*grid-template-columns:\s*minmax\(0,\s*1fr\)\s*6\.25rem;/,
+    )
+    expect(facilitiesCss).not.toMatch(
+      /@media \(max-width: 359px\)[\s\S]*\.ui-facility-card__action\s*\{[\s\S]*grid-row:\s*5;/,
     )
     expect(facilitiesCss).toMatch(
       /\.basic-facility-card__details-button:focus-visible,[\s\S]*\.facility-details-dialog__close:focus-visible\s*\{[\s\S]*outline:\s*3px solid var\(--color-focus\);/,
+    )
+    expect(facilitiesCss).toMatch(
+      /\.basic-facility-card \.ui-button\s*\{[\s\S]*background:\s*#d1b6d7;/,
+    )
+    expect(facilitiesCss).toMatch(
+      /\.basic-facility-card \.ui-button:disabled\s*\{[\s\S]*background:\s*#82618a;[\s\S]*color:\s*#0b080c;/,
     )
   })
 

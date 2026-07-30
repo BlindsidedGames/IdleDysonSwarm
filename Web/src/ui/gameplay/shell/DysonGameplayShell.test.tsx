@@ -226,6 +226,13 @@ describe('Dyson gameplay responsive CSS contract', () => {
     )
     expect(shellCss).toContain('@media (forced-colors: active)')
     expect(rootCss).not.toMatch(/\bmin-width:\s*320px/)
+    expect(tokensCss).toContain('--game-text-scale: 1')
+    expect(shellCss).toMatch(
+      /@media \(max-width: 720px\)[\s\S]*grid-template-columns:\s*minmax\(0,\s*1fr\)\s*auto\s*minmax\(0,\s*1fr\);/,
+    )
+    expect(shellCss).toMatch(
+      /@media \(max-width: 720px\)[\s\S]*\.ui-resource-value__value,[\s\S]*white-space:\s*nowrap;/,
+    )
   })
 })
 

@@ -2,6 +2,8 @@
 
 import '@testing-library/jest-dom/vitest'
 import axe from 'axe-core'
+import { readFileSync } from 'node:fs'
+import { resolve } from 'node:path'
 import { StrictMode } from 'react'
 import { act, cleanup, fireEvent, render, screen } from '@testing-library/react'
 import { IntlProvider } from 'react-intl'
@@ -22,6 +24,14 @@ import {
   TINKER_REPEAT_HOLD_MILLISECONDS,
   type TinkerCommandDispatch,
 } from './useTransientTinkerHold'
+
+const tinkerCss = readFileSync(
+  resolve(
+    process.cwd(),
+    'src/ui/gameplay/tinker/tinker.css',
+  ),
+  'utf8',
+)
 
 beforeEach(() => {
   vi.useFakeTimers()
@@ -49,6 +59,10 @@ describe('TinkerSurface transient interaction', () => {
     })
     expect(capture.set).toHaveBeenCalledWith(17)
     expect(button).toHaveAttribute('data-gesture-active', 'true')
+    expect(button.closest('.tinker-surface')).toHaveAttribute(
+      'data-held-visual',
+      'true',
+    )
 
     act(() => {
       vi.advanceTimersByTime(TINKER_REPEAT_HOLD_MILLISECONDS - 1)
@@ -73,7 +87,7 @@ describe('TinkerSurface transient interaction', () => {
     )
     expect(
       screen.getByRole('progressbar', { name: 'Tinker progress' }),
-    ).toHaveAttribute('value', '0.5')
+    ).toHaveAttribute('value', '0.1')
 
     fireEvent.pointerUp(button, { button: 0, pointerId: 17 })
     await flushDispatchQueue()
@@ -508,6 +522,51 @@ describe('TinkerSurface presentation and accessibility', () => {
     expect(requestFrame).not.toHaveBeenCalled()
   })
 
+  test('keeps visual progress monotonic within a cycle and resets only when canonical progress wraps', () => {
+    let now = 0
+    let nextFrame: FrameRequestCallback | undefined
+    vi.spyOn(performance, 'now').mockImplementation(() => now)
+    vi.stubGlobal(
+      'requestAnimationFrame',
+      vi.fn((callback: FrameRequestCallback) => {
+        nextFrame = callback
+        return 1
+      }),
+    )
+    vi.stubGlobal('cancelAnimationFrame', vi.fn())
+
+    const dispatch = createDispatch()
+    const view = renderTinker(
+      dispatch,
+      runningFacts({ elapsedSeconds: 0.1 }),
+    )
+    const progress = screen.getByRole('progressbar', {
+      name: 'Tinker progress',
+    }) as HTMLProgressElement
+
+    act(() => {
+      now = 200
+      nextFrame?.(now)
+    })
+    expect(progress.value).toBeCloseTo(0.3)
+
+    view.rerender(
+      tinkerElement(
+        runningFacts({ elapsedSeconds: 0.2 }),
+        dispatch,
+      ),
+    )
+    expect(progress.value).toBeCloseTo(0.3)
+
+    view.rerender(
+      tinkerElement(
+        runningFacts({ elapsedSeconds: 0.05 }),
+        dispatch,
+      ),
+    )
+    expect(progress.value).toBeCloseTo(0.05)
+  })
+
   test('renders Unity copy, hold hint, time and progress with no Repeat control', () => {
     const dispatch = createDispatch()
     renderTinker(
@@ -548,6 +607,16 @@ describe('TinkerSurface presentation and accessibility', () => {
     expect(
       screen.queryByRole('button', { name: /repeat/i }),
     ).not.toBeInTheDocument()
+    expect(
+      tinkerButton().querySelector(
+        '.tinker-surface__hold-progress',
+      ),
+    ).not.toBeInTheDocument()
+    expect(tinkerCss).toMatch(
+      /data-held-visual="true"[\s\S]*::-webkit-progress-value\s*\{[\s\S]*background:\s*#367879;/,
+    )
+    expect(tinkerCss).not.toContain('tinker-surface__hold-progress')
+    expect(tinkerCss).not.toContain('@keyframes tinker-hold-to-repeat')
   })
 
   test('shows the exact fresh-save tip only in default Tinker mode', () => {
