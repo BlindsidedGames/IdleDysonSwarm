@@ -19,6 +19,26 @@ import {
 afterEach(cleanup)
 
 describe('SettingsSurface', () => {
+  test('omits the redundant route title and changes the visualization preference', async () => {
+    const user = userEvent.setup()
+    const onVisualizationVisibleChange = vi.fn()
+    renderSettings(vi.fn(), undefined, {
+      visualizationVisible: true,
+      onVisualizationVisibleChange,
+    })
+
+    expect(
+      screen.queryByRole('heading', { name: 'Settings' }),
+    ).not.toBeInTheDocument()
+    const toggle = screen.getByRole('checkbox', {
+      name: 'Show visualization',
+    })
+    expect(toggle).toBeChecked()
+
+    await user.click(toggle)
+    expect(onVisualizationVisibleChange).toHaveBeenCalledWith(false)
+  })
+
   test('requires an accessible confirmation and cancels without resetting', async () => {
     const user = userEvent.setup()
     const resetSave = vi.fn()
@@ -132,7 +152,7 @@ describe('SettingsSurface', () => {
     renderSettings(vi.fn())
 
     expect(
-      screen.queryByRole('heading', { name: 'Development Menu' }),
+      screen.queryByRole('button', { name: 'Development Menu' }),
     ).not.toBeInTheDocument()
   })
 
@@ -146,6 +166,12 @@ describe('SettingsSurface', () => {
     })
     renderSettings(vi.fn(), { setDysonBots })
 
+    expect(
+      screen.queryByRole('combobox', { name: 'Progression state' }),
+    ).not.toBeInTheDocument()
+    await user.click(
+      screen.getByRole('button', { name: 'Development Menu' }),
+    )
     await user.selectOptions(
       screen.getByRole('combobox', { name: 'Progression state' }),
       'near-star',
@@ -166,6 +192,7 @@ describe('SettingsSurface', () => {
 function renderSettings(
   resetSave: SettingsSurfaceProps['resetSave'],
   development?: SettingsSurfaceProps['development'],
+  overrides: Partial<SettingsSurfaceProps> = {},
 ) {
   return render(
     <IntlProvider
@@ -176,6 +203,7 @@ function renderSettings(
       <SettingsSurface
         resetSave={resetSave}
         development={development}
+        {...overrides}
       />
     </IntlProvider>,
   )

@@ -83,6 +83,20 @@ interface GalaxyFieldDust {
   readonly tone: number
 }
 
+interface GalaxyFieldClearanceZone {
+  readonly minX: number
+  readonly maxX: number
+  readonly minY: number
+  readonly maxY: number
+}
+
+const GALAXY_FIELD_RESOURCE_CLEARANCE_ZONES:
+  ReadonlyArray<GalaxyFieldClearanceZone> = [
+    { minX: -120, maxX: -42, minY: -90, maxY: -38 },
+    { minX: -40, maxX: 40, minY: -90, maxY: -46 },
+    { minX: 42, maxX: 120, minY: -90, maxY: -38 },
+  ]
+
 /**
  * Renders a bounded visual interpretation of the canonical Dyson scale facts.
  * It owns no gameplay state, thresholds, time advancement or player commands.
@@ -611,12 +625,19 @@ function createGalaxyFieldMember(
   dimOrder: number,
 ): GalaxyFieldMember {
   if (index === 0) {
+    const scale = 1.12
+    const position = moveGalaxyBelowResourceClearance(
+      GALAXY_FIELD_ANCHOR_X,
+      GALAXY_FIELD_ANCHOR_Y,
+      scale,
+      index,
+    )
     return {
       index,
-      x: GALAXY_FIELD_ANCHOR_X,
-      y: GALAXY_FIELD_ANCHOR_Y,
+      x: position.x,
+      y: position.y,
       rotation: -12,
-      scale: 1.12,
+      scale,
       depth: 1,
       variant: 0,
       spinDirection: 'normal',
@@ -640,12 +661,13 @@ function createGalaxyFieldMember(
   const x =
     horizontal * 130 +
     (deterministicUnit(index + 8201) - 0.5) * 15
+  const scale = 0.38 + depth * 0.54
   const filamentOffsets = [-48, -18, 15, 45] as const
   const wave =
     Math.sin(horizontal * Math.PI * 1.35 + filament * 1.7) *
     (8 + depth * 7)
   const diagonal = horizontal * (filament % 2 === 0 ? 16 : -13)
-  const y = Math.min(
+  const proposedY = Math.min(
     84,
     Math.max(
       -84,
@@ -655,20 +677,54 @@ function createGalaxyFieldMember(
         (deterministicUnit(index + 8301) - 0.5) * 12,
     ),
   )
+  const position = moveGalaxyBelowResourceClearance(
+    x,
+    proposedY,
+    scale,
+    index,
+  )
 
   return {
     index,
-    x,
-    y,
+    x: position.x,
+    y: position.y,
     rotation:
       -32 + deterministicUnit(index + 8401) * 64,
-    scale: 0.38 + depth * 0.54,
+    scale,
     depth,
     variant: index % 3,
     spinDirection: index % 2 === 0 ? 'normal' : 'reverse',
     spinDurationSeconds:
       170 + Math.round(deterministicUnit(index + 8501) * 170),
     dimOrder,
+  }
+}
+
+function moveGalaxyBelowResourceClearance(
+  x: number,
+  y: number,
+  scale: number,
+  index: number,
+): { readonly x: number; readonly y: number } {
+  const clearanceRadius = 7 * scale
+  const overlap = GALAXY_FIELD_RESOURCE_CLEARANCE_ZONES.find(
+    (zone) =>
+      x + clearanceRadius >= zone.minX &&
+      x - clearanceRadius <= zone.maxX &&
+      y + clearanceRadius >= zone.minY &&
+      y - clearanceRadius <= zone.maxY,
+  )
+  if (overlap === undefined) {
+    return { x, y }
+  }
+
+  return {
+    x,
+    y:
+      overlap.maxY +
+      clearanceRadius +
+      2 +
+      deterministicUnit(index + 8701) * 7,
   }
 }
 

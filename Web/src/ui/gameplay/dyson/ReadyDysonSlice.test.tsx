@@ -43,10 +43,12 @@ import { basicFacilityMessages } from '../facilities/messages'
 import {
   ProbedReadyDysonRuntimeHost,
   ReadyDysonSlice,
+  SWARM_VISUALIZATION_STORAGE_KEY,
 } from './ReadyDysonSlice'
 
 afterEach(() => {
   cleanup()
+  localStorage.removeItem(SWARM_VISUALIZATION_STORAGE_KEY)
   vi.unstubAllGlobals()
 })
 
@@ -244,14 +246,54 @@ describe('ReadyDysonSlice', () => {
       screen.getByRole('heading', { level: 1, name: 'Settings' }),
     ).toBeInTheDocument()
     expect(
-      screen.getByRole('heading', { level: 2, name: 'Settings' }),
-    ).toBeInTheDocument()
+      screen.queryByRole('heading', { level: 2, name: 'Settings' }),
+    ).not.toBeInTheDocument()
     expect(
       screen.queryByText('Tinker in your garage'),
     ).not.toBeInTheDocument()
 
     await user.click(screen.getByRole('button', { name: 'Bots' }))
     expect(onRouteChange).toHaveBeenCalledWith('bots')
+  })
+
+  test('persists the visualization toggle and reclaims its playfield row', async () => {
+    const user = userEvent.setup()
+    const rendered = render(
+      provider(
+        <ReadyDysonSlice
+          snapshot={snapshot()}
+          locale="en"
+          dispatchPlayer={acceptedDispatch}
+          route="settings"
+        />,
+      ),
+    )
+
+    await user.click(
+      screen.getByRole('checkbox', {
+        name: 'Show visualization',
+      }),
+    )
+    expect(
+      localStorage.getItem(SWARM_VISUALIZATION_STORAGE_KEY),
+    ).toBe('hidden')
+
+    rendered.rerender(
+      provider(
+        <ReadyDysonSlice
+          snapshot={snapshot()}
+          locale="en"
+          dispatchPlayer={acceptedDispatch}
+          route="bots"
+        />,
+      ),
+    )
+    expect(
+      rendered.container.querySelector('.dyson-swarm-visual'),
+    ).not.toBeInTheDocument()
+    expect(
+      rendered.container.querySelector('.dyson-shell__playfield'),
+    ).toHaveAttribute('data-has-swarm', 'false')
   })
 
   test('keeps Info facts together and routes buy settings through canonical commands', async () => {

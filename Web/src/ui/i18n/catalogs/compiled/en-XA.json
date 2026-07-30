@@ -3009,14 +3009,42 @@
       "value": "]"
     }
   ],
-  "settings.title": [
+  "settings.visualization.description": [
     {
       "type": 0,
       "value": "["
     },
     {
       "type": 0,
-      "value": "Şḗḗŧŧīƞɠş"
+      "value": "Şħǿǿẇ ŧħḗḗ ḗḗṽǿǿŀṽīƞɠ şŧȧȧř, ɠȧȧŀȧȧẋẏ, ȧȧƞḓ ḓḗḗḗḗƥ-ƒīḗḗŀḓ ṽīşŭŭȧȧŀīẑȧȧŧīǿǿƞ ȧȧƀǿǿṽḗḗ ƒȧȧƈīŀīŧīḗḗş."
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "settings.visualization.title": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Ṽīşŭŭȧȧŀīẑȧȧŧīǿǿƞ"
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "settings.visualization.toggle": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Şħǿǿẇ ṽīşŭŭȧȧŀīẑȧȧŧīǿǿƞ"
     },
     {
       "type": 0,

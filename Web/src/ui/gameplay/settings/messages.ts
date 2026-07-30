@@ -1,10 +1,21 @@
 import { defineMessages } from 'react-intl'
 
 export const settingsSurfaceMessages = defineMessages({
-  title: {
-    id: 'settings.title',
-    defaultMessage: 'Settings',
-    description: 'Unity Settings route heading.',
+  visualizationTitle: {
+    id: 'settings.visualization.title',
+    defaultMessage: 'Visualization',
+    description: 'Heading for the cosmic visualization preference.',
+  },
+  visualizationDescription: {
+    id: 'settings.visualization.description',
+    defaultMessage:
+      'Show the evolving star, galaxy, and deep-field visualization above facilities.',
+    description: 'Explains the cosmic visualization preference.',
+  },
+  visualizationToggle: {
+    id: 'settings.visualization.toggle',
+    defaultMessage: 'Show visualization',
+    description: 'Toggles the cosmic progression visualization.',
   },
   saveData: {
     id: 'settings.save-data.title',

@@ -175,7 +175,10 @@ export function DysonGameplayShell({
             />
           ) : (
           <>
-          <div className="dyson-shell__playfield">
+          <div
+            className="dyson-shell__playfield"
+            data-has-swarm={swarmVisual !== undefined}
+          >
             {swarmVisual !== undefined && (
               <ShellRegion
                 className="dyson-shell__swarm"

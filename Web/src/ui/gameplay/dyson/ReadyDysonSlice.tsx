@@ -57,6 +57,9 @@ const BasicFacilityRegion = lazy(async () => {
   return { default: module.BasicFacilityRegion }
 })
 
+export const SWARM_VISUALIZATION_STORAGE_KEY =
+  'idle-dyson-swarm.show-visualization'
+
 type ReadySnapshot = DeepReadonly<
   Extract<
     FrontendApplicationSnapshot,
@@ -190,6 +193,8 @@ export function ReadyDysonSlice({
   development,
 }: ReadyDysonSliceProps) {
   const intl = useIntl()
+  const [visualizationVisible, setVisualizationVisible] =
+    useState(readVisualizationPreference)
   const gameplay = snapshot.gameplay
   const dyson = gameplay.derived.dyson
   const tinker = gameplay.runtime.tinker
@@ -323,6 +328,11 @@ export function ReadyDysonSlice({
                 <SettingsSurface
                   resetSave={resetSave}
                   development={development}
+                  visualizationVisible={visualizationVisible}
+                  onVisualizationVisibleChange={(visible) => {
+                    setVisualizationVisible(visible)
+                    writeVisualizationPreference(visible)
+                  }}
                 />
               ),
             }
@@ -353,14 +363,20 @@ export function ReadyDysonSlice({
           fullPrecisionRate: scienceRate(precise(rates.science)),
         },
       }}
-      swarmVisual={{
-        ariaLabel: intl.formatMessage(messages.dysonSwarm),
-        content: (
-          <DysonSwarmVisual
-            facts={dyson.value.presentation.swarmVisualization}
-          />
-        ),
-      }}
+      swarmVisual={
+        visualizationVisible
+          ? {
+              ariaLabel: intl.formatMessage(messages.dysonSwarm),
+              content: (
+                <DysonSwarmVisual
+                  facts={
+                    dyson.value.presentation.swarmVisualization
+                  }
+                />
+              ),
+            }
+          : undefined
+      }
       tinker={
         visibility.showTinker && tinker.status === 'ready'
           ? {
@@ -481,6 +497,31 @@ export function ReadyDysonSlice({
       }}
     />
   )
+}
+
+function readVisualizationPreference(): boolean {
+  try {
+    return (
+      typeof localStorage === 'undefined' ||
+      localStorage.getItem(SWARM_VISUALIZATION_STORAGE_KEY) !==
+        'hidden'
+    )
+  } catch {
+    return true
+  }
+}
+
+function writeVisualizationPreference(visible: boolean): void {
+  try {
+    if (typeof localStorage === 'undefined') return
+    localStorage.setItem(
+      SWARM_VISUALIZATION_STORAGE_KEY,
+      visible ? 'visible' : 'hidden',
+    )
+  } catch {
+    // Presentation preference persistence is best effort. Storage failure
+    // must not affect gameplay or prevent changing the current view.
+  }
 }
 
 function unavailableReset(): Promise<UiRuntimeImportResult> {

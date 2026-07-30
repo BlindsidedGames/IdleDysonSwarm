@@ -8,6 +8,7 @@
 }
 
 .dyson-shell {
+  --resource-clearance-color: var(--color-app-background);
   display: grid;
   grid-template-rows: minmax(0, 1fr) 4.9rem;
   inline-size: 100%;
@@ -39,6 +40,7 @@
 }
 
 .dyson-shell[data-route-content="true"] {
+  --resource-clearance-color: #121a12;
   background: #121a12;
 }
 
@@ -106,10 +108,40 @@
 
 .dyson-resource-header__item {
   position: relative;
+  z-index: 0;
   display: grid;
   min-inline-size: 0;
   gap: 0.12rem;
   font-variant-numeric: tabular-nums;
+  isolation: isolate;
+}
+
+.dyson-resource-header__item::before {
+  position: absolute;
+  z-index: -1;
+  inset-block: -0.55rem -0.45rem;
+  inline-size: max(100%, 8rem);
+  background:
+    radial-gradient(
+      ellipse at center,
+      var(--resource-clearance-color) 0 48%,
+      transparent 86%
+    );
+  content: "";
+  pointer-events: none;
+}
+
+.dyson-resource-header__item--cash::before {
+  inset-inline-start: -0.75rem;
+}
+
+.dyson-resource-header__item--total-bots::before {
+  inset-inline-start: 50%;
+  transform: translateX(-50%);
+}
+
+.dyson-resource-header__item--science::before {
+  inset-inline-end: -0.75rem;
 }
 
 .dyson-resource-header__item--cash {
@@ -231,17 +263,24 @@
 }
 
 .dyson-shell__playfield {
+  --dyson-swarm-space: clamp(5.5rem, 15vh, 9rem);
   position: relative;
   display: grid;
-  grid-template-rows: auto minmax(0, 1fr);
+  grid-template-rows: minmax(0, 1fr);
   min-block-size: 0;
   overflow: visible;
 }
 
+.dyson-shell__playfield[data-has-swarm="false"] {
+  --dyson-swarm-space: 0rem;
+}
+
 .dyson-shell__swarm {
-  position: relative;
+  position: absolute;
   z-index: 0;
-  min-block-size: clamp(5.5rem, 15vh, 9rem);
+  inset: 0 0 auto;
+  min-block-size: var(--dyson-swarm-space);
+  pointer-events: none;
 }
 
 .dyson-shell__stage {
@@ -252,19 +291,28 @@
   min-block-size: 0;
   overflow-y: auto;
   overscroll-behavior: contain;
-  scrollbar-color: #b985d1 #2f2732;
-  scrollbar-width: thin;
-  padding: 0.35rem max(0.72rem, env(safe-area-inset-right)) 0.8rem
+  scrollbar-width: none;
+  padding:
+    calc(var(--dyson-swarm-space) + 0.35rem)
+    max(0.72rem, env(safe-area-inset-right))
+    0.8rem
     max(0.72rem, env(safe-area-inset-left));
 }
 
 .dyson-shell__stage::-webkit-scrollbar {
-  inline-size: 0.55rem;
+  display: none;
+  inline-size: 0;
+  block-size: 0;
 }
 
-.dyson-shell__stage::-webkit-scrollbar-thumb {
-  border-radius: 999px;
-  background: #b985d1;
+.dyson-shell__playfield[data-has-swarm="true"]
+  .dyson-shell__stage::after {
+  position: absolute;
+  inset-block-start: calc(100% + var(--dyson-swarm-space));
+  inline-size: 1px;
+  block-size: 1px;
+  content: "";
+  pointer-events: none;
 }
 
 .dyson-shell__tinker {
@@ -586,8 +634,12 @@
     padding-inline: 1.5rem;
   }
 
-  .dyson-shell__swarm {
-    min-block-size: clamp(6rem, 16vh, 10rem);
+  .dyson-shell__playfield {
+    --dyson-swarm-space: clamp(6rem, 16vh, 10rem);
+  }
+
+  .dyson-shell__playfield[data-has-swarm="false"] {
+    --dyson-swarm-space: 0rem;
   }
 
   .dyson-shell__stage,
@@ -597,8 +649,12 @@
 }
 
 @media (max-height: 700px) and (orientation: landscape) {
-  .dyson-shell__swarm {
-    min-block-size: 6.25rem;
+  .dyson-shell__playfield {
+    --dyson-swarm-space: 6.25rem;
+  }
+
+  .dyson-shell__playfield[data-has-swarm="false"] {
+    --dyson-swarm-space: 0rem;
   }
 
   .dyson-resource-header {

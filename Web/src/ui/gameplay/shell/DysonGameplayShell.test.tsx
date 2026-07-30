@@ -208,6 +208,26 @@ describe('Dyson gameplay responsive CSS contract', () => {
       /\.dyson-shell__stage\s*\{[\s\S]*display:\s*flex;[\s\S]*flex-direction:\s*column;/,
     )
     expect(shellCss).toMatch(
+      /\.dyson-shell__playfield\s*\{[^}]*--dyson-swarm-space:\s*clamp\(5\.5rem,\s*15vh,\s*9rem\);[^}]*grid-template-rows:\s*minmax\(0,\s*1fr\);/,
+    )
+    expect(shellCss).toMatch(
+      /\.dyson-shell__playfield\[data-has-swarm="false"\]\s*\{[^}]*--dyson-swarm-space:\s*0rem;/,
+    )
+    expect(shellCss).toMatch(
+      /\.dyson-shell__swarm\s*\{[^}]*position:\s*absolute;[^}]*inset:\s*0 0 auto;[^}]*min-block-size:\s*var\(--dyson-swarm-space\);[^}]*pointer-events:\s*none;/,
+    )
+    expect(shellCss).toMatch(
+      /\.dyson-shell__stage\s*\{[^}]*overflow-y:\s*auto;[^}]*scrollbar-width:\s*none;[^}]*calc\(var\(--dyson-swarm-space\) \+ 0\.35rem\)/,
+    )
+    expect(shellCss).toMatch(
+      /\.dyson-shell__stage::\s*-webkit-scrollbar\s*\{[^}]*display:\s*none;[^}]*inline-size:\s*0;[^}]*block-size:\s*0;/,
+    )
+    expect(shellCss).toMatch(
+      /\.dyson-shell__playfield\[data-has-swarm="true"\][\s\S]*\.dyson-shell__stage::after\s*\{[^}]*position:\s*absolute;[^}]*inset-block-start:\s*calc\(100% \+ var\(--dyson-swarm-space\)\);[^}]*content:\s*"";[^}]*pointer-events:\s*none;/,
+    )
+    expect(shellCss).not.toContain('scrollbar-width: thin')
+    expect(shellCss).not.toContain('scrollbar-color:')
+    expect(shellCss).toMatch(
       /\.dyson-shell__tinker\s*\{[\s\S]*margin-block-start:\s*auto;/,
     )
     expect(shellCss).toMatch(
@@ -216,6 +236,16 @@ describe('Dyson gameplay responsive CSS contract', () => {
     expect(shellCss).not.toContain(
       'linear-gradient(180deg, #1c1420 70%',
     )
+    expect(shellCss).toMatch(
+      /\.dyson-shell\s*\{[^}]*--resource-clearance-color:\s*var\(--color-app-background\);/,
+    )
+    expect(shellCss).toMatch(
+      /\.dyson-shell\[data-route-content="true"\]\s*\{[^}]*--resource-clearance-color:\s*#121a12;/,
+    )
+    expect(shellCss).toMatch(
+      /\.dyson-resource-header__item::before\s*\{[^}]*z-index:\s*-1;[^}]*radial-gradient\([^}]*var\(--resource-clearance-color\)[^}]*transparent 86%[^}]*pointer-events:\s*none;/,
+    )
+    expect(shellCss).not.toContain('backdrop-filter')
   })
 
   it('protects rapid touch, reflow, focus and reduced-motion behavior', () => {

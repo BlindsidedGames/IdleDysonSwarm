@@ -263,12 +263,46 @@ describe('DysonSwarmVisual', () => {
       ).length,
     ).toBeGreaterThan(10)
 
+    const resourceClearanceZones = [
+      { minX: -120, maxX: -42, minY: -90, maxY: -38 },
+      { minX: -40, maxX: 40, minY: -90, maxY: -46 },
+      { minX: 42, maxX: 120, minY: -90, maxY: -38 },
+    ]
+    const members =
+      view.container.querySelectorAll<SVGGElement>(
+        '.dyson-swarm-visual__field-member',
+      )
+    for (const member of members) {
+      const transform = member.getAttribute('transform') ?? ''
+      const match = transform.match(
+        /^translate\(([-\d.]+) ([-\d.]+)\) rotate\([-\d.]+\) scale\(([\d.]+)\)$/,
+      )
+      expect(match).not.toBeNull()
+      if (match === null) {
+        continue
+      }
+
+      const x = Number(match[1])
+      const y = Number(match[2])
+      const clearanceRadius = 7 * Number(match[3])
+      for (const zone of resourceClearanceZones) {
+        const overlaps =
+          x + clearanceRadius >= zone.minX &&
+          x - clearanceRadius <= zone.maxX &&
+          y + clearanceRadius >= zone.minY &&
+          y - clearanceRadius <= zone.maxY
+        expect(overlaps).toBe(false)
+      }
+    }
+
     const origin = view.container.querySelector(
       '.dyson-swarm-visual__field-member[data-origin="true"]',
     )
     expect(origin).toHaveAttribute(
       'transform',
-      'translate(-8 -44) rotate(-12) scale(1.12)',
+      expect.stringMatching(
+        /^translate\(-8 [-\d.]+\) rotate\(-12\) scale\(1.12\)$/,
+      ),
     )
     expect(origin).toHaveAttribute('data-engulfed', 'true')
     expect(

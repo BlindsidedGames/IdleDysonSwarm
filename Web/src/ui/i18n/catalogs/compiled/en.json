@@ -1649,10 +1649,22 @@
       "value": "Save Data"
     }
   ],
-  "settings.title": [
+  "settings.visualization.description": [
     {
       "type": 0,
-      "value": "Settings"
+      "value": "Show the evolving star, galaxy, and deep-field visualization above facilities."
+    }
+  ],
+  "settings.visualization.title": [
+    {
+      "type": 0,
+      "value": "Visualization"
+    }
+  ],
+  "settings.visualization.toggle": [
+    {
+      "type": 0,
+      "value": "Show visualization"
     }
   ],
   "shared.action.dismiss": [

@@ -17,6 +17,8 @@ import './settingsSurface.css'
 export interface SettingsSurfaceProps {
   readonly resetSave: () => Promise<UiRuntimeImportResult>
   readonly development?: UiRuntimeDevelopmentControls
+  readonly visualizationVisible?: boolean
+  readonly onVisualizationVisibleChange?: (visible: boolean) => void
 }
 
 type ResetStatus =
@@ -32,9 +34,12 @@ type ResetStatus =
 export function SettingsSurface({
   resetSave,
   development,
+  visualizationVisible = true,
+  onVisualizationVisibleChange = () => undefined,
 }: SettingsSurfaceProps) {
   const intl = useIntl()
   const developmentPresetId = useId()
+  const developmentPanelId = useId()
   const [status, setStatus] = useState<ResetStatus>('idle')
   const [
     selectedDevelopmentPreset,
@@ -42,6 +47,8 @@ export function SettingsSurface({
   ] = useState<DevelopmentPresetId>('early-swarm')
   const [developmentStatus, setDevelopmentStatus] =
     useState<DevelopmentStatus>('idle')
+  const [developmentPanelOpen, setDevelopmentPanelOpen] =
+    useState(false)
   const [dialogOpen, setDialogOpen] = useState(false)
   const triggerRef = useRef<HTMLButtonElement>(null)
   const cancelRef = useRef<HTMLButtonElement>(null)
@@ -128,10 +135,35 @@ export function SettingsSurface({
         aria-hidden={dialogOpen || undefined}
         inert={dialogOpen || undefined}
       >
-        <h2>{intl.formatMessage(messages.title)}</h2>
+        <section className="settings-surface__panel settings-surface__panel--visualization">
+          <div className="settings-surface__copy">
+            <h2>
+              {intl.formatMessage(messages.visualizationTitle)}
+            </h2>
+            <p>
+              {intl.formatMessage(
+                messages.visualizationDescription,
+              )}
+            </p>
+          </div>
+          <label className="settings-surface__toggle">
+            <input
+              type="checkbox"
+              checked={visualizationVisible}
+              onChange={(event) =>
+                onVisualizationVisibleChange(
+                  event.currentTarget.checked,
+                )
+              }
+            />
+            <span>
+              {intl.formatMessage(messages.visualizationToggle)}
+            </span>
+          </label>
+        </section>
         <section className="settings-surface__panel">
           <div className="settings-surface__copy">
-            <h3>{intl.formatMessage(messages.saveData)}</h3>
+            <h2>{intl.formatMessage(messages.saveData)}</h2>
             <p>{intl.formatMessage(messages.saveDescription)}</p>
           </div>
           <button
@@ -148,78 +180,107 @@ export function SettingsSurface({
           </button>
         </section>
         {development !== undefined ? (
-          <section className="settings-surface__panel settings-surface__panel--development">
-            <div className="settings-surface__copy">
-              <h3>
+          <>
+            <button
+              type="button"
+              className="settings-surface__development-trigger"
+              aria-expanded={developmentPanelOpen}
+              aria-controls={developmentPanelId}
+              onClick={() =>
+                setDevelopmentPanelOpen((current) => !current)
+              }
+            >
+              <span>
                 {intl.formatMessage(messages.developmentTitle)}
-              </h3>
-              <p>
-                {intl.formatMessage(
-                  messages.developmentDescription,
-                )}
-              </p>
-            </div>
-            <div className="settings-surface__development-controls">
-              <label htmlFor={developmentPresetId}>
-                {intl.formatMessage(
-                  messages.developmentPreset,
-                )}
-              </label>
-              <select
-                id={developmentPresetId}
-                value={selectedDevelopmentPreset}
-                disabled={developmentStatus === 'pending'}
-                onChange={(event) => {
-                  setDevelopmentStatus('idle')
-                  setSelectedDevelopmentPreset(
-                    event.target.value as DevelopmentPresetId,
-                  )
-                }}
+              </span>
+              <span
+                className="settings-surface__development-chevron"
+                aria-hidden="true"
               >
-                {DEVELOPMENT_BOT_PRESETS.map((preset) => (
-                  <option value={preset.id} key={preset.id}>
+                ›
+              </span>
+            </button>
+            {developmentPanelOpen ? (
+              <section
+                id={developmentPanelId}
+                className="settings-surface__panel settings-surface__panel--development"
+                aria-label={intl.formatMessage(
+                  messages.developmentTitle,
+                )}
+              >
+                <div className="settings-surface__copy">
+                  <p>
                     {intl.formatMessage(
-                      developmentPresetMessage(preset.id),
-                      {
-                        bots: formatGameNumber(
-                          intl.locale as EnabledLocale,
-                          preset.bots,
-                        ),
-                      },
+                      messages.developmentDescription,
                     )}
-                  </option>
-                ))}
-              </select>
-              <button
-                type="button"
-                disabled={developmentStatus === 'pending'}
-                onClick={() => void applyDevelopmentPreset()}
-              >
-                {intl.formatMessage(
-                  developmentStatus === 'pending'
-                    ? messages.developmentApplying
-                    : messages.developmentApply,
-                )}
-              </button>
-            </div>
-            {developmentStatus === 'succeeded' ||
-            developmentStatus === 'failed' ? (
-              <p
-                className="settings-surface__development-status"
-                role={
-                  developmentStatus === 'succeeded'
-                    ? 'status'
-                    : 'alert'
-                }
-              >
-                {intl.formatMessage(
-                  developmentStatus === 'succeeded'
-                    ? messages.developmentSucceeded
-                    : messages.developmentFailed,
-                )}
-              </p>
+                  </p>
+                </div>
+                <div className="settings-surface__development-controls">
+                  <label htmlFor={developmentPresetId}>
+                    {intl.formatMessage(
+                      messages.developmentPreset,
+                    )}
+                  </label>
+                  <select
+                    id={developmentPresetId}
+                    value={selectedDevelopmentPreset}
+                    disabled={developmentStatus === 'pending'}
+                    onChange={(event) => {
+                      setDevelopmentStatus('idle')
+                      setSelectedDevelopmentPreset(
+                        event.target
+                          .value as DevelopmentPresetId,
+                      )
+                    }}
+                  >
+                    {DEVELOPMENT_BOT_PRESETS.map((preset) => (
+                      <option value={preset.id} key={preset.id}>
+                        {intl.formatMessage(
+                          developmentPresetMessage(preset.id),
+                          {
+                            bots: formatGameNumber(
+                              intl.locale as EnabledLocale,
+                              preset.bots,
+                            ),
+                          },
+                        )}
+                      </option>
+                    ))}
+                  </select>
+                  <button
+                    type="button"
+                    disabled={developmentStatus === 'pending'}
+                    onClick={() =>
+                      void applyDevelopmentPreset()
+                    }
+                  >
+                    {intl.formatMessage(
+                      developmentStatus === 'pending'
+                        ? messages.developmentApplying
+                        : messages.developmentApply,
+                    )}
+                  </button>
+                </div>
+                {developmentStatus === 'succeeded' ||
+                developmentStatus === 'failed' ? (
+                  <p
+                    className="settings-surface__development-status"
+                    role={
+                      developmentStatus === 'succeeded'
+                        ? 'status'
+                        : 'alert'
+                    }
+                  >
+                    {intl.formatMessage(
+                      developmentStatus === 'succeeded'
+                        ? messages.developmentSucceeded
+                        : messages.developmentFailed,
+                    )}
+                  </p>
+                ) : null}
+              </section>
             ) : null}
-          </section>
+          </>
         ) : null}
         {status === 'succeeded' ||
         ((status === 'failed' || status === 'committed-recovery') &&
