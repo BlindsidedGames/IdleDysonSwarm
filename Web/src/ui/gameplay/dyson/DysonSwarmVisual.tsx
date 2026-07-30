@@ -12,8 +12,12 @@ const EXACT_COLLECTOR_LIMIT = 64
 const DENSE_COLLECTOR_LAYER_COUNT = 11
 const COLLECTORS_PER_DENSE_LAYER = 32
 const GALAXY_LIGHT_COUNT = 420
+const GALAXY_CORE_LIGHT_COUNT = 36
 const ORIGIN_STAR_INDEX = 173
-const GALAXY_GROUP_LIMIT = 12
+const GALAXY_FIELD_MEMBER_COUNT = 84
+const GALAXY_FIELD_DUST_COUNT = 144
+const GALAXY_FIELD_ANCHOR_X = -8
+const GALAXY_FIELD_ANCHOR_Y = -44
 const ORBIT_COUNT = 4
 
 const ORBIT_SPECS = [
@@ -32,14 +36,12 @@ type VisualStyle = CSSProperties & {
   readonly '--galaxy-completion'?: number
 }
 
-type GalaxyMemberStyle = CSSProperties & {
-  readonly '--member-angle': string
-  readonly '--member-counter-angle': string
-  readonly '--member-orbit-radius': string
-  readonly '--member-orbit-duration': string
+type GalaxyFieldStyle = CSSProperties & {
   readonly '--galaxy-scale': number
   readonly '--galaxy-harvest': number
-  readonly '--galaxy-depth-delay': string
+  readonly '--galaxy-depth-opacity': number
+  readonly '--galaxy-entry-delay': string
+  readonly '--galaxy-spin-duration': string
 }
 
 interface GalaxyLight {
@@ -51,13 +53,34 @@ interface GalaxyLight {
   readonly dimOrder: number
 }
 
-interface GalaxyGroupMember {
-  readonly orbit: number
-  readonly angle: number
+interface GalaxyCoreLight {
+  readonly index: number
+  readonly x: number
+  readonly y: number
+  readonly radius: number
+  readonly tone: number
+}
+
+interface GalaxyFieldMember {
+  readonly index: number
+  readonly x: number
+  readonly y: number
+  readonly rotation: number
   readonly scale: number
-  readonly radiusScale: number
-  readonly durationScale: number
+  readonly depth: number
+  readonly variant: number
+  readonly spinDirection: 'normal' | 'reverse'
+  readonly spinDurationSeconds: number
   readonly dimOrder: number
+}
+
+interface GalaxyFieldDust {
+  readonly index: number
+  readonly x: number
+  readonly y: number
+  readonly radius: number
+  readonly opacity: number
+  readonly tone: number
 }
 
 /**
@@ -250,44 +273,66 @@ function GalaxyScene({ completion }: GalaxySceneProps) {
       className="dyson-swarm-visual__scene dyson-swarm-visual__scene--galaxy"
       style={style}
     >
-      <div className="dyson-swarm-visual__galaxy-haze" />
       <svg
         className="dyson-swarm-visual__galaxy"
         viewBox="-120 -80 240 160"
         preserveAspectRatio="xMidYMid meet"
       >
         <g
-          className="dyson-swarm-visual__galaxy-plane"
-          transform="rotate(10) scale(1 0.38)"
+          className="dyson-swarm-visual__galaxy-position"
+          transform="translate(-6 -8)"
         >
-          {GALAXY_LIGHTS.map((light) => (
-            <circle
-              className={
-                light.index === ORIGIN_STAR_INDEX
-                  ? 'dyson-swarm-visual__galaxy-light dyson-swarm-visual__galaxy-light--origin'
-                  : 'dyson-swarm-visual__galaxy-light'
-              }
-              cx={light.x}
-              cy={light.y}
-              r={light.radius}
-              data-origin={
-                light.index === ORIGIN_STAR_INDEX || undefined
-              }
-              data-tone={light.tone}
-              style={{
-                opacity: galaxyLightOpacity(
-                  light.dimOrder,
-                  extinction,
-                ),
-              }}
-              key={`light-${light.index}`}
-            />
-          ))}
+          <g
+            className="dyson-swarm-visual__galaxy-plane"
+            transform="rotate(10) scale(1 0.38)"
+          >
+            <g
+              className="dyson-swarm-visual__galaxy-composition"
+              transform="translate(-8 -94)"
+            >
+              <g
+                className="dyson-swarm-visual__galaxy-bulge"
+                style={{
+                  opacity: 1 - completion * 0.9,
+                }}
+              >
+                {GALAXY_CORE_LIGHTS.map((light) => (
+                  <circle
+                    className="dyson-swarm-visual__galaxy-core-light"
+                    cx={light.x}
+                    cy={light.y}
+                    r={light.radius}
+                    data-tone={light.tone}
+                    key={`core-light-${light.index}`}
+                  />
+                ))}
+              </g>
+              {GALAXY_LIGHTS.map((light) => (
+                <circle
+                  className={
+                    light.index === ORIGIN_STAR_INDEX
+                      ? 'dyson-swarm-visual__galaxy-light dyson-swarm-visual__galaxy-light--origin'
+                      : 'dyson-swarm-visual__galaxy-light'
+                  }
+                  cx={light.x}
+                  cy={light.y}
+                  r={light.radius}
+                  data-origin={
+                    light.index === ORIGIN_STAR_INDEX || undefined
+                  }
+                  data-tone={light.tone}
+                  style={{
+                    opacity: galaxyLightOpacity(
+                      light.dimOrder,
+                      extinction,
+                    ),
+                  }}
+                  key={`light-${light.index}`}
+                />
+              ))}
+            </g>
+          </g>
         </g>
-        <circle
-          className="dyson-swarm-visual__galaxy-core"
-          r="4.5"
-        />
       </svg>
     </div>
   )
@@ -300,63 +345,175 @@ interface GalaxyGroupSceneProps {
 function GalaxyGroupScene({
   completion,
 }: GalaxyGroupSceneProps) {
+  const fieldStyle: VisualStyle = {
+    '--galaxy-completion': completion,
+  }
+
   return (
-    <div className="dyson-swarm-visual__scene dyson-swarm-visual__scene--galaxy-group">
-      <div className="dyson-swarm-visual__group-haze" />
-      <div className="dyson-swarm-visual__galaxy-group">
-        {GALAXY_GROUP_ORBIT_SPECS.map((orbit, orbitIndex) => (
-          <div
-            className={`dyson-swarm-visual__group-orbit-plane dyson-swarm-visual__group-orbit-plane--${orbitIndex}`}
-            key={`group-orbit-${orbitIndex}`}
-          >
-            {GALAXY_GROUP_MEMBERS_BY_ORBIT[orbitIndex].map(
-              (member, index) => {
-                const durationSeconds =
-                  orbit.durationSeconds *
-                  member.durationScale
-                const orbitRadius =
-                  orbit.radiusRem * member.radiusScale
-                const harvest = galaxyMemberHarvest(
-                  member.dimOrder,
-                  completion,
-                )
-                const style: GalaxyMemberStyle = {
-                  '--member-angle': `${member.angle}deg`,
-                  '--member-counter-angle': `${-member.angle}deg`,
-                  '--member-orbit-radius': `${orbitRadius}rem`,
-                  '--member-orbit-duration':
-                    `${durationSeconds}s`,
-                  '--galaxy-scale': member.scale,
-                  '--galaxy-harvest': harvest,
-                  '--galaxy-depth-delay':
-                    `${-(member.angle / 360) * durationSeconds}s`,
+    <div
+      className="dyson-swarm-visual__scene dyson-swarm-visual__scene--galaxy-group"
+      style={fieldStyle}
+    >
+      <svg
+        className="dyson-swarm-visual__galaxy-field"
+        viewBox="-120 -80 240 160"
+        preserveAspectRatio="xMidYMid slice"
+      >
+        <defs>
+          <radialGradient id="dyson-field-haze">
+            <stop
+              offset="0"
+              stopColor="#9d6bac"
+              stopOpacity="0.12"
+            />
+            <stop
+              offset="0.48"
+              stopColor="#70456f"
+              stopOpacity="0.06"
+            />
+            <stop
+              offset="1"
+              stopColor="#241727"
+              stopOpacity="0"
+            />
+          </radialGradient>
+          <g id="dyson-field-galaxy-spiral">
+            <ellipse
+              className="dyson-swarm-visual__field-galaxy-halo"
+              rx="5.4"
+              ry="2.9"
+            />
+            <path
+              className="dyson-swarm-visual__field-galaxy-arm"
+              d="M-5.2 0.25 C-2.9-2.2 1.5-2.15 4.9-0.45 C2.55 1.6-0.4 2.05-3.2 1.1"
+            />
+            <path
+              className="dyson-swarm-visual__field-galaxy-arm dyson-swarm-visual__field-galaxy-arm--faint"
+              d="M4.8 0.2 C2.5 2.25-1.55 2.05-4.75 0.45 C-2.15-1.45 0.8-1.9 3.5-0.9"
+            />
+            <circle
+              className="dyson-swarm-visual__field-galaxy-core"
+              r="0.72"
+            />
+          </g>
+          <g id="dyson-field-galaxy-tilted">
+            <ellipse
+              className="dyson-swarm-visual__field-galaxy-halo"
+              rx="5.9"
+              ry="1.7"
+            />
+            <path
+              className="dyson-swarm-visual__field-galaxy-arm"
+              d="M-5.7 0 C-2.6-1.2 2.35-1.15 5.65 0 C2.15 1.25-2.1 1.2-4.7 0.2"
+            />
+            <circle
+              className="dyson-swarm-visual__field-galaxy-core"
+              r="0.62"
+            />
+          </g>
+          <g id="dyson-field-galaxy-elliptical">
+            <ellipse
+              className="dyson-swarm-visual__field-galaxy-halo"
+              rx="4.4"
+              ry="3"
+            />
+            <ellipse
+              className="dyson-swarm-visual__field-galaxy-arm"
+              rx="2.6"
+              ry="1.5"
+            />
+            <circle
+              className="dyson-swarm-visual__field-galaxy-core"
+              r="0.68"
+            />
+          </g>
+        </defs>
+        <g className="dyson-swarm-visual__field-depth">
+          <ellipse
+            className="dyson-swarm-visual__field-haze"
+            cx="-38"
+            cy="-19"
+            rx="118"
+            ry="61"
+            fill="url(#dyson-field-haze)"
+            transform="rotate(-11)"
+          />
+          {GALAXY_FIELD_DUST.map((dust) => (
+            <circle
+              className="dyson-swarm-visual__field-dust"
+              cx={dust.x}
+              cy={dust.y}
+              r={dust.radius}
+              data-tone={dust.tone}
+              style={{
+                opacity:
+                  dust.opacity * (1 - completion * 0.62),
+              }}
+              key={`field-dust-${dust.index}`}
+            />
+          ))}
+        </g>
+        <g className="dyson-swarm-visual__field-members">
+          {GALAXY_FIELD_MEMBERS.map((member) => {
+            const harvest = galaxyMemberHarvest(
+              member.dimOrder,
+              completion,
+            )
+            const style: GalaxyFieldStyle = {
+              '--galaxy-scale': member.scale,
+              '--galaxy-harvest': harvest,
+              '--galaxy-depth-opacity':
+                0.58 + member.depth * 0.42,
+              '--galaxy-entry-delay':
+                `${Math.round(member.depth * 220)}ms`,
+              '--galaxy-spin-duration':
+                `${member.spinDurationSeconds}s`,
+            }
+            return (
+              <g
+                className={
+                  member.index === 0
+                    ? 'dyson-swarm-visual__field-member dyson-swarm-visual__field-member--origin'
+                    : 'dyson-swarm-visual__field-member'
                 }
-                return (
-                  <div
-                    className="dyson-swarm-visual__group-orbit-track"
-                    style={style}
-                    key={`galaxy-track-${orbitIndex}-${index}`}
+                data-dim-order={member.dimOrder}
+                data-edge={
+                  Math.abs(member.x) > 108 ||
+                  Math.abs(member.y) > 70 ||
+                  undefined
+                }
+                data-engulfed={harvest >= 1 || undefined}
+                data-origin={member.index === 0 || undefined}
+                data-variant={member.variant}
+                style={style}
+                transform={
+                  `translate(${member.x} ${member.y}) ` +
+                  `rotate(${member.rotation}) ` +
+                  `scale(${member.scale})`
+                }
+                key={`field-galaxy-${member.index}`}
+              >
+                <g className="dyson-swarm-visual__field-member-entry">
+                  <g
+                    className="dyson-swarm-visual__field-member-spin"
+                    data-spin={member.spinDirection}
                   >
-                    <div
-                      className="dyson-swarm-visual__mini-galaxy-anchor"
-                      data-dim-order={member.dimOrder}
-                    >
-                      <div className="dyson-swarm-visual__mini-galaxy-counter">
-                        <i
-                          className="dyson-swarm-visual__mini-galaxy"
-                          data-engulfed={
-                            harvest >= 1 || undefined
-                          }
-                        />
-                      </div>
-                    </div>
-                  </div>
-                )
-              },
-            )}
-          </div>
-        ))}
-      </div>
+                    <use
+                      href={
+                        member.variant === 0
+                          ? '#dyson-field-galaxy-spiral'
+                          : member.variant === 1
+                            ? '#dyson-field-galaxy-tilted'
+                            : '#dyson-field-galaxy-elliptical'
+                      }
+                    />
+                  </g>
+                </g>
+              </g>
+            )
+          })}
+        </g>
+      </svg>
     </div>
   )
 }
@@ -429,6 +586,103 @@ function createGalaxyLight(
   }
 }
 
+function createGalaxyCoreLight(index: number): GalaxyCoreLight {
+  const pairIndex = Math.floor(index / 2)
+  const pairDirection = index % 2 === 0 ? 1 : -1
+  const normalizedRadius = Math.sqrt(
+    (pairIndex + 0.5) / (GALAXY_CORE_LIGHT_COUNT / 2),
+  )
+  const radius = 1.5 + normalizedRadius * 13
+  const angle =
+    pairIndex * 2.399963229728653 +
+    deterministicUnit(pairIndex + 4701) * 0.3
+
+  return {
+    index,
+    x: Math.cos(angle) * radius * pairDirection,
+    y: Math.sin(angle) * radius * pairDirection,
+    radius: 0.45 + deterministicUnit(pairIndex + 5701) * 0.75,
+    tone: pairIndex % 3,
+  }
+}
+
+function createGalaxyFieldMember(
+  index: number,
+  dimOrder: number,
+): GalaxyFieldMember {
+  if (index === 0) {
+    return {
+      index,
+      x: GALAXY_FIELD_ANCHOR_X,
+      y: GALAXY_FIELD_ANCHOR_Y,
+      rotation: -12,
+      scale: 1.12,
+      depth: 1,
+      variant: 0,
+      spinDirection: 'normal',
+      spinDurationSeconds: 214,
+      dimOrder,
+    }
+  }
+
+  const fieldIndex = index - 1
+  const filament = fieldIndex % 4
+  const filamentIndex = Math.floor(fieldIndex / 4)
+  const filamentLength = Math.ceil(
+    (GALAXY_FIELD_MEMBER_COUNT - 1) / 4,
+  )
+  const progress =
+    filamentLength <= 1
+      ? 0.5
+      : filamentIndex / (filamentLength - 1)
+  const horizontal = progress * 2 - 1
+  const depth = deterministicUnit(index + 8101)
+  const x =
+    horizontal * 130 +
+    (deterministicUnit(index + 8201) - 0.5) * 15
+  const filamentOffsets = [-48, -18, 15, 45] as const
+  const wave =
+    Math.sin(horizontal * Math.PI * 1.35 + filament * 1.7) *
+    (8 + depth * 7)
+  const diagonal = horizontal * (filament % 2 === 0 ? 16 : -13)
+  const y = Math.min(
+    84,
+    Math.max(
+      -84,
+      filamentOffsets[filament] +
+        wave +
+        diagonal +
+        (deterministicUnit(index + 8301) - 0.5) * 12,
+    ),
+  )
+
+  return {
+    index,
+    x,
+    y,
+    rotation:
+      -32 + deterministicUnit(index + 8401) * 64,
+    scale: 0.38 + depth * 0.54,
+    depth,
+    variant: index % 3,
+    spinDirection: index % 2 === 0 ? 'normal' : 'reverse',
+    spinDurationSeconds:
+      170 + Math.round(deterministicUnit(index + 8501) * 170),
+    dimOrder,
+  }
+}
+
+function createGalaxyFieldDust(index: number): GalaxyFieldDust {
+  return {
+    index,
+    x: -126 + deterministicUnit(index + 9101) * 252,
+    y: -86 + deterministicUnit(index + 9201) * 172,
+    radius: 0.12 + deterministicUnit(index + 9301) * 0.34,
+    opacity: 0.2 + deterministicUnit(index + 9401) * 0.42,
+    tone: index % 3,
+  }
+}
+
 function galaxyLightOpacity(
   dimOrder: number,
   extinction: number,
@@ -444,7 +698,9 @@ function galaxyMemberHarvest(
   completion: number,
 ): number {
   const representedGalaxies =
-    1 + clampUnitInterval(completion) * (GALAXY_GROUP_LIMIT - 1)
+    1 +
+    clampUnitInterval(completion) *
+      (GALAXY_FIELD_MEMBER_COUNT - 1)
   return clampUnitInterval(representedGalaxies - dimOrder)
 }
 
@@ -525,41 +781,42 @@ const GALAXY_LIGHTS = Array.from(
     ),
 )
 
-const GALAXY_GROUP_DIM_ORDER = [
-  2, 7, 0, 10, 4, 9, 1, 6, 11, 3, 8, 5,
-] as const
-
-const GALAXY_GROUP_ORBIT_SPECS = [
-  { durationSeconds: 116, radiusRem: 5.4 },
-  { durationSeconds: 157, radiusRem: 6.8 },
-  { durationSeconds: 97, radiusRem: 4.2 },
-] as const
-
-const GALAXY_GROUP_MEMBERS: ReadonlyArray<GalaxyGroupMember> =
-  Array.from({ length: GALAXY_GROUP_LIMIT }, (_, index) => {
-    const orbit = index % GALAXY_GROUP_ORBIT_SPECS.length
-    const slot = Math.floor(
-      index / GALAXY_GROUP_ORBIT_SPECS.length,
-    )
-    return {
-      orbit,
-      angle:
-        slot * 90 +
-        orbit * 23 +
-        deterministicUnit(index + 4101) * 18,
-      scale: 0.58 + deterministicUnit(index + 5101) * 0.34,
-      radiusScale:
-        0.76 + deterministicUnit(index + 6101) * 0.24,
-      durationScale:
-        0.82 + deterministicUnit(index + 7101) * 0.36,
-      dimOrder: GALAXY_GROUP_DIM_ORDER[index],
-    }
-  })
-
-const GALAXY_GROUP_MEMBERS_BY_ORBIT = Array.from(
-  { length: GALAXY_GROUP_ORBIT_SPECS.length },
-  (_, orbit) =>
-    GALAXY_GROUP_MEMBERS.filter(
-      (member) => member.orbit === orbit,
-    ),
+const GALAXY_CORE_LIGHTS = Array.from(
+  { length: GALAXY_CORE_LIGHT_COUNT },
+  (_, index) => createGalaxyCoreLight(index),
 )
+
+const GALAXY_FIELD_DIM_SEQUENCE = [
+  0,
+  ...Array.from(
+    { length: GALAXY_FIELD_MEMBER_COUNT - 1 },
+    (_, index) => index + 1,
+  ).sort(
+    (left, right) =>
+      deterministicUnit(left + 10101) -
+      deterministicUnit(right + 10101),
+  ),
+]
+
+const GALAXY_FIELD_DIM_RANK = new Map(
+  GALAXY_FIELD_DIM_SEQUENCE.map((index, rank) => [
+    index,
+    rank,
+  ]),
+)
+
+const GALAXY_FIELD_MEMBERS: ReadonlyArray<GalaxyFieldMember> =
+  Array.from(
+    { length: GALAXY_FIELD_MEMBER_COUNT },
+    (_, index) =>
+      createGalaxyFieldMember(
+        index,
+        GALAXY_FIELD_DIM_RANK.get(index) ?? index,
+      ),
+  )
+
+const GALAXY_FIELD_DUST: ReadonlyArray<GalaxyFieldDust> =
+  Array.from(
+    { length: GALAXY_FIELD_DUST_COUNT },
+    (_, index) => createGalaxyFieldDust(index),
+  )

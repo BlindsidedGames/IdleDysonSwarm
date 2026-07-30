@@ -210,12 +210,24 @@ describe('Dyson gameplay responsive CSS contract', () => {
     expect(shellCss).toMatch(
       /\.dyson-shell__tinker\s*\{[\s\S]*margin-block-start:\s*auto;/,
     )
+    expect(shellCss).toMatch(
+      /\.dyson-resource-header\s*\{[^}]*background:\s*transparent;/,
+    )
+    expect(shellCss).not.toContain(
+      'linear-gradient(180deg, #1c1420 70%',
+    )
   })
 
   it('protects rapid touch, reflow, focus and reduced-motion behavior', () => {
     expect(targetSizes.minimum).toBe(44)
     expect(shellCss).toContain('touch-action: manipulation')
     expect(shellCss).toContain('user-select: none')
+    expect(shellCss).toMatch(
+      /\.dyson-shell\s*\{[\s\S]*-webkit-touch-callout:\s*none;[\s\S]*-webkit-user-select:\s*none;[\s\S]*user-select:\s*none;/,
+    )
+    expect(shellCss).toMatch(
+      /\.dyson-shell textarea,[\s\S]*\.dyson-shell code\s*\{[\s\S]*user-select:\s*text;/,
+    )
     expect(shellCss).toContain('min-inline-size: 0')
     expect(shellCss).toContain('align-items: baseline')
     expect(shellCss).toMatch(

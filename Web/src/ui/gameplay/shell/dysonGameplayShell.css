@@ -18,6 +18,24 @@
   background: var(--color-app-background);
   color: var(--color-text-primary);
   font-family: var(--font-family-body);
+  -webkit-touch-callout: none;
+  -webkit-user-select: none;
+  user-select: none;
+}
+
+.dyson-shell input[type="text"],
+.dyson-shell input[type="search"],
+.dyson-shell input[type="url"],
+.dyson-shell input[type="email"],
+.dyson-shell input[type="password"],
+.dyson-shell input[type="number"],
+.dyson-shell textarea,
+.dyson-shell [contenteditable="true"],
+.dyson-shell pre,
+.dyson-shell code {
+  -webkit-touch-callout: default;
+  -webkit-user-select: text;
+  user-select: text;
 }
 
 .dyson-shell[data-route-content="true"] {
@@ -83,7 +101,7 @@
   padding-block: max(0.55rem, env(safe-area-inset-top)) 0.35rem;
   padding-inline: max(1rem, env(safe-area-inset-left))
     max(1rem, env(safe-area-inset-right));
-  background: linear-gradient(180deg, #1c1420 70%, rgb(28 20 32 / 0%));
+  background: transparent;
 }
 
 .dyson-resource-header__item {

@@ -163,32 +163,6 @@
     both;
 }
 
-.dyson-swarm-visual__galaxy-haze {
-  position: absolute;
-  z-index: 1;
-  inline-size: min(88%, 20rem);
-  block-size: clamp(4.5rem, 72%, 8.5rem);
-  border-radius: 50%;
-  background:
-    radial-gradient(
-      ellipse,
-      rgb(255 207 116 / 72%) 0 4%,
-      rgb(202 131 207 / 29%) 15%,
-      rgb(125 75 152 / 20%) 34%,
-      rgb(118 58 83 / 12%) 52%,
-      transparent 75%
-  );
-  filter: blur(calc(0.2rem + var(--galaxy-completion) * 0.28rem));
-  opacity: calc(0.72 - var(--galaxy-completion) * 0.54);
-  transform:
-    rotate(10deg)
-    scale(calc(0.88 + var(--galaxy-completion) * 0.12));
-  transition:
-    filter 1200ms ease,
-    opacity 1200ms ease,
-    transform 1200ms ease;
-}
-
 .dyson-swarm-visual__galaxy-light[data-tone="1"] {
   fill: #e8b8f0;
 }
@@ -197,191 +171,158 @@
   fill: #ffd68b;
 }
 
-.dyson-swarm-visual__galaxy-core {
-  fill: #ffe1a1;
+.dyson-swarm-visual__galaxy-bulge {
   filter:
-    drop-shadow(0 0 3px rgb(255 206 117 / 95%))
-    drop-shadow(0 0 9px rgb(194 102 184 / 70%));
-  opacity: calc(1 - var(--galaxy-completion) * 0.9);
+    drop-shadow(0 0 1.8px rgb(255 220 155 / 74%))
+    drop-shadow(0 0 5px rgb(194 102 184 / 35%));
   transition: opacity 1100ms ease;
+}
+
+.dyson-swarm-visual__galaxy-core-light {
+  fill: #f8e8ff;
+}
+
+.dyson-swarm-visual__galaxy-core-light[data-tone="1"] {
+  fill: #e8b8f0;
+}
+
+.dyson-swarm-visual__galaxy-core-light[data-tone="2"] {
+  fill: #ffd68b;
 }
 
 .dyson-swarm-visual__scene--galaxy-group {
+  inset: -12% -8%;
   isolation: isolate;
 }
 
-.dyson-swarm-visual__group-haze {
+.dyson-swarm-visual__galaxy-field {
   position: absolute;
-  z-index: 0;
-  inline-size: min(92%, 22rem);
-  block-size: 88%;
-  border-radius: 50%;
-  background: radial-gradient(
-    ellipse,
-    rgb(122 65 136 / 18%),
-    rgb(125 63 80 / 10%) 42%,
-    transparent 73%
-  );
-  filter: blur(0.35rem);
-}
-
-.dyson-swarm-visual__galaxy-group {
-  position: relative;
   z-index: 2;
-  inline-size: min(100%, 21rem);
-  block-size: 100%;
-}
-
-.dyson-swarm-visual__group-orbit-plane {
-  --orbit-projection: 0.38;
-  --orbit-inverse: 2.6316;
-  --orbit-plane-rotation: 16deg;
-  position: absolute;
-  inset-block-start: 50%;
-  inset-inline-start: 50%;
-  inline-size: 12rem;
-  aspect-ratio: 1;
-  transform:
-    translate(-50%, -50%)
-    rotate(var(--orbit-plane-rotation))
-    scaleY(var(--orbit-projection));
-}
-
-.dyson-swarm-visual__group-orbit-plane--1 {
-  --orbit-projection: 0.54;
-  --orbit-inverse: 1.8519;
-  --orbit-plane-rotation: -24deg;
-  inline-size: 14.8rem;
-}
-
-.dyson-swarm-visual__group-orbit-plane--2 {
-  --orbit-projection: 0.29;
-  --orbit-inverse: 3.4483;
-  --orbit-plane-rotation: 42deg;
-  inline-size: 9.8rem;
-}
-
-.dyson-swarm-visual__group-orbit-track {
-  --member-orbit-duration: 116s;
-  position: absolute;
   inset: 0;
+  inline-size: 100%;
+  block-size: 100%;
+  overflow: visible;
+}
+
+.dyson-swarm-visual__field-depth {
+  transition: opacity 1100ms ease;
+}
+
+.dyson-swarm-visual__field-haze {
+  opacity: calc(0.82 - var(--galaxy-completion) * 0.58);
+  transition: opacity 1300ms ease;
+}
+
+.dyson-swarm-visual__field-dust {
+  fill: #d9b8e2;
+  filter: drop-shadow(0 0 0.34px rgb(216 161 230 / 48%));
+  transition: opacity 1200ms ease;
+}
+
+.dyson-swarm-visual__field-dust[data-tone="1"] {
+  fill: #f1e7f4;
+}
+
+.dyson-swarm-visual__field-dust[data-tone="2"] {
+  fill: #d9b478;
+}
+
+.dyson-swarm-visual__field-member {
+  --galaxy-scale: 1;
+  --galaxy-harvest: 0;
+  --galaxy-depth-opacity: 1;
+  --galaxy-entry-delay: 0ms;
+  --galaxy-spin-duration: 240s;
+  opacity: var(--galaxy-depth-opacity);
+  transition:
+    filter 1200ms ease,
+    opacity 1200ms ease;
+}
+
+.dyson-swarm-visual__field-member-entry {
   animation:
-    dyson-galaxy-group-orbit
-    var(--member-orbit-duration)
-    linear
-    infinite;
+    dyson-field-galaxy-enter
+    850ms
+    cubic-bezier(0.2, 0.72, 0.2, 1)
+    var(--galaxy-entry-delay)
+    both;
+  transform-box: fill-box;
   transform-origin: center;
 }
 
-.dyson-swarm-visual__group-orbit-plane--1
-  .dyson-swarm-visual__group-orbit-track,
-.dyson-swarm-visual__group-orbit-plane--1
-  .dyson-swarm-visual__mini-galaxy-counter {
+.dyson-swarm-visual__field-member--origin
+  .dyson-swarm-visual__field-member-entry {
+  animation-name: dyson-origin-galaxy-zoom-out;
+  animation-delay: 0ms;
+  animation-duration: 1100ms;
+}
+
+.dyson-swarm-visual__field-member-spin {
+  animation:
+    dyson-field-galaxy-spin
+    var(--galaxy-spin-duration)
+    linear
+    infinite;
+  filter:
+    brightness(calc(1 - var(--galaxy-harvest) * 0.64))
+    saturate(calc(1 - var(--galaxy-harvest) * 0.72))
+    drop-shadow(
+      0 0
+      calc(1.4px - var(--galaxy-harvest) * 0.8px)
+      rgb(204 143 219 / 58%)
+    );
+  opacity: calc(0.95 - var(--galaxy-harvest) * 0.7);
+  transition:
+    filter 1200ms ease,
+    opacity 1200ms ease;
+  transform-box: fill-box;
+  transform-origin: center;
+}
+
+.dyson-swarm-visual__field-member-spin[data-spin="reverse"] {
   animation-direction: reverse;
 }
 
-.dyson-swarm-visual__mini-galaxy-anchor {
-  --member-angle: 0deg;
-  --member-counter-angle: 0deg;
-  --member-orbit-radius: 5.4rem;
-  --member-orbit-duration: 116s;
-  --galaxy-scale: 1;
-  --galaxy-harvest: 0;
-  --galaxy-depth-delay: 0s;
-  position: absolute;
-  inset-block-start: 50%;
-  inset-inline-start: 50%;
-  inline-size: 0;
-  block-size: 0;
-  animation:
-    dyson-galaxy-member-depth
-    var(--member-orbit-duration)
-    linear
-    var(--galaxy-depth-delay)
-    infinite;
-  transform:
-    rotate(var(--member-angle))
-    translateX(var(--member-orbit-radius));
-}
-
-.dyson-swarm-visual__mini-galaxy-counter {
-  position: absolute;
-  inset-block-start: -0.9rem;
-  inset-inline-start: -2.15rem;
-  inline-size: 4.3rem;
-  block-size: 1.8rem;
-  animation:
-    dyson-galaxy-member-counter-orbit
-    var(--member-orbit-duration)
-    linear
-    infinite;
-  transform-origin: center;
-  transform:
-    rotate(var(--member-counter-angle))
-    scaleY(var(--orbit-inverse))
-    scale(var(--galaxy-scale));
-}
-
-.dyson-swarm-visual__mini-galaxy {
-  position: absolute;
-  inset: 0;
-  display: block;
-  overflow: hidden;
-  border-radius: 50%;
-  background: radial-gradient(
-    ellipse,
-    rgb(255 218 147 / 78%) 0 5%,
-    rgb(193 139 205 / 34%) 18%,
-    rgb(146 91 158 / 18%) 44%,
-    transparent 74%
-  );
-  filter:
-    brightness(calc(1 - var(--galaxy-harvest) * 0.5))
-    saturate(calc(1 - var(--galaxy-harvest) * 0.62))
-    blur(0.04rem);
-  opacity: calc(0.9 - var(--galaxy-harvest) * 0.46);
-  transition:
-    filter 1100ms ease,
-    opacity 1100ms ease;
-}
-
-.dyson-swarm-visual__mini-galaxy::before {
-  position: absolute;
-  inset: 5%;
-  border-radius: inherit;
-  background:
-    repeating-conic-gradient(
-      from 18deg,
-      transparent 0 11deg,
-      rgb(235 200 242 / 34%) 13deg 16deg,
-      transparent 18deg 31deg
-    ),
-    radial-gradient(
-      ellipse,
-      transparent 0 18%,
-      rgb(209 151 221 / 22%) 20% 25%,
-      transparent 28% 42%,
-      rgb(185 126 200 / 18%) 44% 48%,
-      transparent 51%
+.dyson-swarm-visual__field-galaxy-halo {
+  fill:
+    rgb(
+      170 112 187 /
+      calc(0.24 - var(--galaxy-harvest) * 0.15)
     );
-  content: "";
-  opacity: calc(0.78 - var(--galaxy-harvest) * 0.48);
-  animation: dyson-mini-galaxy-internal-spin 190s linear infinite;
+  stroke:
+    rgb(
+      229 192 237 /
+      calc(0.24 - var(--galaxy-harvest) * 0.12)
+    );
+  stroke-width: 0.28;
+  transition:
+    fill 1200ms ease,
+    stroke 1200ms ease;
 }
 
-.dyson-swarm-visual__mini-galaxy::after {
-  position: absolute;
-  inset-block-start: 50%;
-  inset-inline-start: 50%;
-  inline-size: 0.34rem;
-  aspect-ratio: 1;
-  border-radius: 50%;
-  background: #ffe1a1;
-  box-shadow: 0 0 0.45rem rgb(255 206 117 / 86%);
-  content: "";
-  opacity: calc(0.92 - var(--galaxy-harvest) * 0.82);
-  transform: translate(-50%, -50%);
-  transition: opacity 1100ms ease;
+.dyson-swarm-visual__field-galaxy-arm {
+  fill: none;
+  stroke:
+    rgb(
+      232 205 239 /
+      calc(0.8 - var(--galaxy-harvest) * 0.62)
+    );
+  stroke-linecap: round;
+  stroke-width: 0.62;
+  transition: stroke 1200ms ease;
+}
+
+.dyson-swarm-visual__field-galaxy-arm--faint {
+  stroke-width: 0.38;
+}
+
+.dyson-swarm-visual__field-galaxy-core {
+  fill:
+    rgb(
+      255 222 158 /
+      calc(0.94 - var(--galaxy-harvest) * 0.84)
+    );
+  transition: fill 1200ms ease;
 }
 
 @keyframes dyson-orbit-track {
@@ -404,42 +345,33 @@
   }
 }
 
-@keyframes dyson-galaxy-group-orbit {
+@keyframes dyson-field-galaxy-spin {
   to {
     transform: rotate(1turn);
   }
 }
 
-@keyframes dyson-galaxy-member-counter-orbit {
+@keyframes dyson-field-galaxy-enter {
   from {
-    transform:
-      rotate(var(--member-counter-angle))
-      scaleY(var(--orbit-inverse))
-      scale(var(--galaxy-scale));
+    opacity: 0;
+    transform: scale(0.72);
   }
 
   to {
-    transform:
-      rotate(calc(var(--member-counter-angle) - 1turn))
-      scaleY(var(--orbit-inverse))
-      scale(var(--galaxy-scale));
-  }
-}
-
-@keyframes dyson-galaxy-member-depth {
-  0%,
-  100% {
-    opacity: 0.58;
-  }
-
-  50% {
     opacity: 1;
+    transform: scale(1);
   }
 }
 
-@keyframes dyson-mini-galaxy-internal-spin {
+@keyframes dyson-origin-galaxy-zoom-out {
+  from {
+    opacity: 1;
+    transform: scale(15);
+  }
+
   to {
-    transform: rotate(1turn);
+    opacity: 1;
+    transform: scale(1);
   }
 }
 
@@ -465,6 +397,10 @@
     inline-size: min(112%, 20rem);
   }
 
+  .dyson-swarm-visual__scene--galaxy-group {
+    inset: -9% -7%;
+  }
+
   .dyson-swarm-visual__sun {
     inline-size: clamp(3.6rem, 17vw, 4.65rem);
   }
@@ -474,18 +410,23 @@
   .dyson-swarm-visual__scene,
   .dyson-swarm-visual__collector-track,
   .dyson-swarm-visual__galaxy-light--origin,
-  .dyson-swarm-visual__group-orbit-track,
-  .dyson-swarm-visual__mini-galaxy-anchor,
-  .dyson-swarm-visual__mini-galaxy-counter,
-  .dyson-swarm-visual__mini-galaxy::before {
+  .dyson-swarm-visual__field-member-entry,
+  .dyson-swarm-visual__field-member-spin {
     animation: none;
   }
 
   .dyson-swarm-visual__collector,
   .dyson-swarm-visual__collector-plane,
   .dyson-swarm-visual__galaxy-light,
-  .dyson-swarm-visual__mini-galaxy,
-  .dyson-swarm-visual__mini-galaxy::after,
+  .dyson-swarm-visual__galaxy-bulge,
+  .dyson-swarm-visual__field-depth,
+  .dyson-swarm-visual__field-haze,
+  .dyson-swarm-visual__field-dust,
+  .dyson-swarm-visual__field-member,
+  .dyson-swarm-visual__field-member-spin,
+  .dyson-swarm-visual__field-galaxy-halo,
+  .dyson-swarm-visual__field-galaxy-arm,
+  .dyson-swarm-visual__field-galaxy-core,
   .dyson-swarm-visual__sun,
   .dyson-swarm-visual__thermal-glow {
     transition: none;
