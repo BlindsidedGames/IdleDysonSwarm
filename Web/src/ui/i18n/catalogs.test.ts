@@ -22,6 +22,9 @@ import {
 import {
   settingsSurfaceMessages,
 } from '../gameplay/settings/messages'
+import {
+  researchMessages,
+} from '../gameplay/research/messages'
 import { startupShellMessages } from '../shell/messages'
 
 describe('compiled locale catalogs', () => {
@@ -33,6 +36,7 @@ describe('compiled locale catalogs', () => {
       ...Object.values(basicFacilityMessages),
       ...Object.values(tinkerMessages),
       ...Object.values(settingsSurfaceMessages),
+      ...Object.values(researchMessages),
     ]
       .map((descriptor) => descriptor.id)
       .sort()

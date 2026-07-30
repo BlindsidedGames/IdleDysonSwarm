@@ -1421,6 +1421,446 @@
       "value": "Wiki"
     }
   ],
+  "research.card.boost-title": [
+    {
+      "type": 1,
+      "value": "name"
+    },
+    {
+      "type": 0,
+      "value": " boosts "
+    },
+    {
+      "type": 8,
+      "value": "value",
+      "children": [
+        {
+          "type": 1,
+          "value": "level"
+        }
+      ]
+    }
+  ],
+  "research.card.boost-title-accessible": [
+    {
+      "type": 1,
+      "value": "name"
+    },
+    {
+      "type": 0,
+      "value": " boosts "
+    },
+    {
+      "type": 1,
+      "value": "level"
+    }
+  ],
+  "research.card.boosting": [
+    {
+      "type": 0,
+      "value": "Boosting by "
+    },
+    {
+      "type": 8,
+      "value": "value",
+      "children": [
+        {
+          "type": 1,
+          "value": "current"
+        },
+        {
+          "type": 0,
+          "value": "%"
+        }
+      ]
+    }
+  ],
+  "research.card.boosting-projected": [
+    {
+      "type": 0,
+      "value": "Boosting by "
+    },
+    {
+      "type": 8,
+      "value": "value",
+      "children": [
+        {
+          "type": 1,
+          "value": "current"
+        },
+        {
+          "type": 0,
+          "value": "%"
+        }
+      ]
+    },
+    {
+      "type": 0,
+      "value": " -> "
+    },
+    {
+      "type": 8,
+      "value": "value",
+      "children": [
+        {
+          "type": 1,
+          "value": "projected"
+        },
+        {
+          "type": 0,
+          "value": "%"
+        }
+      ]
+    }
+  ],
+  "research.card.lifetime-effect": [
+    {
+      "type": 0,
+      "value": "Increases Panel Lifetime by "
+    },
+    {
+      "type": 8,
+      "value": "value",
+      "children": [
+        {
+          "type": 1,
+          "value": "seconds"
+        },
+        {
+          "type": 0,
+          "value": "s"
+        }
+      ]
+    }
+  ],
+  "research.card.purchase-boost": [
+    {
+      "type": 0,
+      "value": "Purchase for a boost! ("
+    },
+    {
+      "type": 8,
+      "value": "value",
+      "children": [
+        {
+          "type": 1,
+          "value": "perLevel"
+        },
+        {
+          "type": 0,
+          "value": "%"
+        }
+      ]
+    },
+    {
+      "type": 0,
+      "value": " per level)"
+    }
+  ],
+  "research.description.ai-manager": [
+    {
+      "type": 0,
+      "value": "Refactoring code makes your AI Managers more efficient, thus producing more Assembly Lines!"
+    }
+  ],
+  "research.description.assembly-line": [
+    {
+      "type": 0,
+      "value": "Training algorithms make your Assembly Lines more efficient, thus producing more bots!"
+    }
+  ],
+  "research.description.cash": [
+    {
+      "type": 0,
+      "value": "Refined marketing strategies allow you to increase the price of your energy yielding better income!"
+    }
+  ],
+  "research.description.data-center": [
+    {
+      "type": 0,
+      "value": "Efficiency protocols allow you to improve the efficiency of your Data Centers."
+    }
+  ],
+  "research.description.lifetime-later": [
+    {
+      "type": 0,
+      "value": "Through the sacrifice of many determined science bots this upgrade was made available."
+    }
+  ],
+  "research.description.lifetime-one": [
+    {
+      "type": 0,
+      "value": "Many researchers were sacrificed developing this upgrade. Their noggins were not up to the task!"
+    }
+  ],
+  "research.description.machine-world": [
+    {
+      "type": 0,
+      "value": "Terraform some of your planets. Machine worlds allow more room for Servers!"
+    }
+  ],
+  "research.description.science": [
+    {
+      "type": 0,
+      "value": "Upgrades to networking allow bots to work more efficently together boosting Science production!"
+    }
+  ],
+  "research.description.server": [
+    {
+      "type": 0,
+      "value": "Upgrade to the latest Server Technology, allows your servers to run more AI Managers!"
+    }
+  ],
+  "research.empty": [
+    {
+      "type": 0,
+      "value": "No research is currently available."
+    }
+  ],
+  "research.name.ai-manager": [
+    {
+      "type": 0,
+      "value": "AI Manager"
+    }
+  ],
+  "research.name.assembly-line": [
+    {
+      "type": 0,
+      "value": "Assembly Line"
+    }
+  ],
+  "research.name.birch-planets": [
+    {
+      "type": 0,
+      "value": "Birch Planets"
+    }
+  ],
+  "research.name.cash": [
+    {
+      "type": 0,
+      "value": "Cash"
+    }
+  ],
+  "research.name.data-center": [
+    {
+      "type": 0,
+      "value": "Data Center"
+    }
+  ],
+  "research.name.durability-upgrade": [
+    {
+      "type": 0,
+      "value": "Durability Upgrade"
+    }
+  ],
+  "research.name.galactic-brains": [
+    {
+      "type": 0,
+      "value": "Galactic Brains"
+    }
+  ],
+  "research.name.matrioshka-brains": [
+    {
+      "type": 0,
+      "value": "Matrioshka Brains"
+    }
+  ],
+  "research.name.planet": [
+    {
+      "type": 0,
+      "value": "Planet"
+    }
+  ],
+  "research.name.science": [
+    {
+      "type": 0,
+      "value": "Science"
+    }
+  ],
+  "research.name.server": [
+    {
+      "type": 0,
+      "value": "Server"
+    }
+  ],
+  "research.production-summary": [
+    {
+      "type": 8,
+      "value": "researcherValue",
+      "children": [
+        {
+          "type": 1,
+          "value": "researchers"
+        }
+      ]
+    },
+    {
+      "type": 0,
+      "value": " Researchers producing "
+    },
+    {
+      "type": 8,
+      "value": "scienceValue",
+      "children": [
+        {
+          "type": 1,
+          "value": "science"
+        }
+      ]
+    },
+    {
+      "type": 1,
+      "value": "scienceIcon"
+    },
+    {
+      "type": 0,
+      "value": "/s"
+    }
+  ],
+  "research.purchase.accessible": [
+    {
+      "type": 0,
+      "value": "Purchase "
+    },
+    {
+      "type": 1,
+      "value": "title"
+    },
+    {
+      "type": 0,
+      "value": ": "
+    },
+    {
+      "type": 1,
+      "value": "quantity"
+    },
+    {
+      "type": 0,
+      "value": " levels for "
+    },
+    {
+      "type": 1,
+      "value": "cost"
+    },
+    {
+      "type": 0,
+      "value": " Science"
+    }
+  ],
+  "research.purchase.automatic": [
+    {
+      "type": 0,
+      "value": "Auto"
+    }
+  ],
+  "research.purchase.automatic-accessible": [
+    {
+      "type": 1,
+      "value": "title"
+    },
+    {
+      "type": 0,
+      "value": " is purchased automatically"
+    }
+  ],
+  "research.purchase.failed": [
+    {
+      "type": 0,
+      "value": "Research was not purchased."
+    }
+  ],
+  "research.purchase.pending": [
+    {
+      "type": 0,
+      "value": "Purchasing research."
+    }
+  ],
+  "research.purchase.purchased": [
+    {
+      "type": 0,
+      "value": "Purchased"
+    }
+  ],
+  "research.purchase.purchased-accessible": [
+    {
+      "type": 1,
+      "value": "title"
+    },
+    {
+      "type": 0,
+      "value": " is purchased"
+    }
+  ],
+  "research.purchase.quantity": [
+    {
+      "type": 0,
+      "value": "+"
+    },
+    {
+      "type": 1,
+      "value": "quantity"
+    }
+  ],
+  "research.region": [
+    {
+      "type": 0,
+      "value": "Research"
+    }
+  ],
+  "research.settings.buy-mode.fifty": [
+    {
+      "type": 0,
+      "value": "x50"
+    }
+  ],
+  "research.settings.buy-mode.max": [
+    {
+      "type": 0,
+      "value": "Max"
+    }
+  ],
+  "research.settings.buy-mode.one": [
+    {
+      "type": 0,
+      "value": "x1"
+    }
+  ],
+  "research.settings.buy-mode.one-hundred": [
+    {
+      "type": 0,
+      "value": "x100"
+    }
+  ],
+  "research.settings.buy-mode.ten": [
+    {
+      "type": 0,
+      "value": "x10"
+    }
+  ],
+  "research.settings.failed": [
+    {
+      "type": 0,
+      "value": "Research purchase settings were not changed."
+    }
+  ],
+  "research.settings.open": [
+    {
+      "type": 0,
+      "value": "Research purchase settings"
+    }
+  ],
+  "research.settings.purchase-amount": [
+    {
+      "type": 0,
+      "value": "Research purchase amount"
+    }
+  ],
+  "research.settings.rounded-bulk-buy": [
+    {
+      "type": 0,
+      "value": "Round bulk purchases to the next milestone"
+    }
+  ],
   "settings.development.apply": [
     {
       "type": 0,

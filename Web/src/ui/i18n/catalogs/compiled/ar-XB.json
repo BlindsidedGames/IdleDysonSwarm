@@ -2573,6 +2573,814 @@
       "value": "‬"
     }
   ],
+  "research.card.boost-title": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 1,
+      "value": "name"
+    },
+    {
+      "type": 0,
+      "value": " qoosʇs "
+    },
+    {
+      "type": 8,
+      "value": "value",
+      "children": [
+        {
+          "type": 1,
+          "value": "level"
+        }
+      ]
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "research.card.boost-title-accessible": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 1,
+      "value": "name"
+    },
+    {
+      "type": 0,
+      "value": " qoosʇs "
+    },
+    {
+      "type": 1,
+      "value": "level"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "research.card.boosting": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "Ԑoosʇıuƃ qʎ "
+    },
+    {
+      "type": 8,
+      "value": "value",
+      "children": [
+        {
+          "type": 1,
+          "value": "current"
+        },
+        {
+          "type": 0,
+          "value": "%"
+        }
+      ]
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "research.card.boosting-projected": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "Ԑoosʇıuƃ qʎ "
+    },
+    {
+      "type": 8,
+      "value": "value",
+      "children": [
+        {
+          "type": 1,
+          "value": "current"
+        },
+        {
+          "type": 0,
+          "value": "%"
+        }
+      ]
+    },
+    {
+      "type": 0,
+      "value": " -> "
+    },
+    {
+      "type": 8,
+      "value": "value",
+      "children": [
+        {
+          "type": 1,
+          "value": "projected"
+        },
+        {
+          "type": 0,
+          "value": "%"
+        }
+      ]
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "research.card.lifetime-effect": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "Iuɔɹǝɐsǝs Ԁɐuǝʅ ⅂ıɟǝʇıɯǝ qʎ "
+    },
+    {
+      "type": 8,
+      "value": "value",
+      "children": [
+        {
+          "type": 1,
+          "value": "seconds"
+        },
+        {
+          "type": 0,
+          "value": "s"
+        }
+      ]
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "research.card.purchase-boost": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "Ԁnɹɔɥɐsǝ ɟoɹ ɐ qoosʇ! ("
+    },
+    {
+      "type": 8,
+      "value": "value",
+      "children": [
+        {
+          "type": 1,
+          "value": "perLevel"
+        },
+        {
+          "type": 0,
+          "value": "%"
+        }
+      ]
+    },
+    {
+      "type": 0,
+      "value": " dǝɹ ʅǝʌǝʅ)"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "research.description.ai-manager": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "ᴚǝɟɐɔʇoɹıuƃ ɔopǝ ɯɐʞǝs ʎonɹ ∀I Wɐuɐƃǝɹs ɯoɹǝ ǝɟɟıɔıǝuʇ, ʇɥns dɹopnɔıuƃ ɯoɹǝ ∀ssǝɯqʅʎ ⅂ıuǝs!"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "research.description.assembly-line": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "⊥ɹɐıuıuƃ ɐʅƃoɹıʇɥɯs ɯɐʞǝ ʎonɹ ∀ssǝɯqʅʎ ⅂ıuǝs ɯoɹǝ ǝɟɟıɔıǝuʇ, ʇɥns dɹopnɔıuƃ ɯoɹǝ qoʇs!"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "research.description.cash": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "ᴚǝɟıuǝp ɯɐɹʞǝʇıuƃ sʇɹɐʇǝƃıǝs ɐʅʅoʍ ʎon ʇo ıuɔɹǝɐsǝ ʇɥǝ dɹıɔǝ oɟ ʎonɹ ǝuǝɹƃʎ ʎıǝʅpıuƃ qǝʇʇǝɹ ıuɔoɯǝ!"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "research.description.data-center": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "Ǝɟɟıɔıǝuɔʎ dɹoʇoɔoʅs ɐʅʅoʍ ʎon ʇo ıɯdɹoʌǝ ʇɥǝ ǝɟɟıɔıǝuɔʎ oɟ ʎonɹ ᗡɐʇɐ Ↄǝuʇǝɹs."
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "research.description.lifetime-later": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "⊥ɥɹonƃɥ ʇɥǝ sɐɔɹıɟıɔǝ oɟ ɯɐuʎ pǝʇǝɹɯıuǝp sɔıǝuɔǝ qoʇs ʇɥıs ndƃɹɐpǝ ʍɐs ɯɐpǝ ɐʌɐıʅɐqʅǝ."
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "research.description.lifetime-one": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "Wɐuʎ ɹǝsǝɐɹɔɥǝɹs ʍǝɹǝ sɐɔɹıɟıɔǝp pǝʌǝʅodıuƃ ʇɥıs ndƃɹɐpǝ. ⊥ɥǝıɹ uoƃƃıus ʍǝɹǝ uoʇ nd ʇo ʇɥǝ ʇɐsʞ!"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "research.description.machine-world": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "⊥ǝɹɹɐɟoɹɯ soɯǝ oɟ ʎonɹ dʅɐuǝʇs. Wɐɔɥıuǝ ʍoɹʅps ɐʅʅoʍ ɯoɹǝ ɹooɯ ɟoɹ Sǝɹʌǝɹs!"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "research.description.science": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "∩dƃɹɐpǝs ʇo uǝʇʍoɹʞıuƃ ɐʅʅoʍ qoʇs ʇo ʍoɹʞ ɯoɹǝ ǝɟɟıɔǝuʇʅʎ ʇoƃǝʇɥǝɹ qoosʇıuƃ Sɔıǝuɔǝ dɹopnɔʇıou!"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "research.description.server": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "∩dƃɹɐpǝ ʇo ʇɥǝ ʅɐʇǝsʇ Sǝɹʌǝɹ ⊥ǝɔɥuoʅoƃʎ, ɐʅʅoʍs ʎonɹ sǝɹʌǝɹs ʇo ɹnu ɯoɹǝ ∀I Wɐuɐƃǝɹs!"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "research.empty": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "No ɹǝsǝɐɹɔɥ ıs ɔnɹɹǝuʇʅʎ ɐʌɐıʅɐqʅǝ."
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "research.name.ai-manager": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "∀I Wɐuɐƃǝɹ"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "research.name.assembly-line": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "∀ssǝɯqʅʎ ⅂ıuǝ"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "research.name.birch-planets": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "Ԑıɹɔɥ Ԁʅɐuǝʇs"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "research.name.cash": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "Ↄɐsɥ"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "research.name.data-center": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "ᗡɐʇɐ Ↄǝuʇǝɹ"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "research.name.durability-upgrade": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "ᗡnɹɐqıʅıʇʎ ∩dƃɹɐpǝ"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "research.name.galactic-brains": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "⅁ɐʅɐɔʇıɔ Ԑɹɐıus"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "research.name.matrioshka-brains": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "Wɐʇɹıosɥʞɐ Ԑɹɐıus"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "research.name.planet": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "Ԁʅɐuǝʇ"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "research.name.science": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "Sɔıǝuɔǝ"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "research.name.server": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "Sǝɹʌǝɹ"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "research.production-summary": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 8,
+      "value": "researcherValue",
+      "children": [
+        {
+          "type": 1,
+          "value": "researchers"
+        }
+      ]
+    },
+    {
+      "type": 0,
+      "value": " ᴚǝsǝɐɹɔɥǝɹs dɹopnɔıuƃ "
+    },
+    {
+      "type": 8,
+      "value": "scienceValue",
+      "children": [
+        {
+          "type": 1,
+          "value": "science"
+        }
+      ]
+    },
+    {
+      "type": 1,
+      "value": "scienceIcon"
+    },
+    {
+      "type": 0,
+      "value": "/s"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "research.purchase.accessible": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "Ԁnɹɔɥɐsǝ "
+    },
+    {
+      "type": 1,
+      "value": "title"
+    },
+    {
+      "type": 0,
+      "value": ": "
+    },
+    {
+      "type": 1,
+      "value": "quantity"
+    },
+    {
+      "type": 0,
+      "value": " ʅǝʌǝʅs ɟoɹ "
+    },
+    {
+      "type": 1,
+      "value": "cost"
+    },
+    {
+      "type": 0,
+      "value": " Sɔıǝuɔǝ"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "research.purchase.automatic": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "∀nʇo"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "research.purchase.automatic-accessible": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 1,
+      "value": "title"
+    },
+    {
+      "type": 0,
+      "value": " ıs dnɹɔɥɐsǝp ɐnʇoɯɐʇıɔɐʅʅʎ"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "research.purchase.failed": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "ᴚǝsǝɐɹɔɥ ʍɐs uoʇ dnɹɔɥɐsǝp."
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "research.purchase.pending": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "Ԁnɹɔɥɐsıuƃ ɹǝsǝɐɹɔɥ."
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "research.purchase.purchased": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "Ԁnɹɔɥɐsǝp"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "research.purchase.purchased-accessible": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 1,
+      "value": "title"
+    },
+    {
+      "type": 0,
+      "value": " ıs dnɹɔɥɐsǝp"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "research.purchase.quantity": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "+"
+    },
+    {
+      "type": 1,
+      "value": "quantity"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "research.region": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "ᴚǝsǝɐɹɔɥ"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "research.settings.buy-mode.fifty": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "x50"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "research.settings.buy-mode.max": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "Wɐx"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "research.settings.buy-mode.one": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "x1"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "research.settings.buy-mode.one-hundred": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "x100"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "research.settings.buy-mode.ten": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "x10"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "research.settings.failed": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "ᴚǝsǝɐɹɔɥ dnɹɔɥɐsǝ sǝʇʇıuƃs ʍǝɹǝ uoʇ ɔɥɐuƃǝp."
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "research.settings.open": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "ᴚǝsǝɐɹɔɥ dnɹɔɥɐsǝ sǝʇʇıuƃs"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "research.settings.purchase-amount": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "ᴚǝsǝɐɹɔɥ dnɹɔɥɐsǝ ɐɯonuʇ"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "research.settings.rounded-bulk-buy": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "ᴚonup qnʅʞ dnɹɔɥɐsǝs ʇo ʇɥǝ uǝxʇ ɯıʅǝsʇouǝ"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
   "settings.development.apply": [
     {
       "type": 0,

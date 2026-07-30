@@ -575,6 +575,190 @@
     "defaultMessage": "Wiki",
     "description": "Unity Wiki destination."
   },
+  "research.card.boost-title": {
+    "defaultMessage": "{name} boosts <value>{level}</value>",
+    "description": "Unity Research card title with its current level."
+  },
+  "research.card.boost-title-accessible": {
+    "defaultMessage": "{name} boosts {level}",
+    "description": "Plain accessible version of the Unity Research card title."
+  },
+  "research.card.boosting": {
+    "defaultMessage": "Boosting by <value>{current}%</value>",
+    "description": "Research effect line for an owned research."
+  },
+  "research.card.boosting-projected": {
+    "defaultMessage": "Boosting by <value>{current}%</value> -> <value>{projected}%</value>",
+    "description": "Research effect line when the quoted purchase changes the boost."
+  },
+  "research.card.lifetime-effect": {
+    "defaultMessage": "Increases Panel Lifetime by <value>{seconds}s</value>",
+    "description": "Effect line for a Unity Panel Lifetime upgrade."
+  },
+  "research.card.purchase-boost": {
+    "defaultMessage": "Purchase for a boost! (<value>{perLevel}%</value> per level)",
+    "description": "Research effect line before its first purchase."
+  },
+  "research.description.ai-manager": {
+    "defaultMessage": "Refactoring code makes your AI Managers more efficient, thus producing more Assembly Lines!",
+    "description": "Unity AI Manager research description."
+  },
+  "research.description.assembly-line": {
+    "defaultMessage": "Training algorithms make your Assembly Lines more efficient, thus producing more bots!",
+    "description": "Unity Assembly Line research description."
+  },
+  "research.description.cash": {
+    "defaultMessage": "Refined marketing strategies allow you to increase the price of your energy yielding better income!",
+    "description": "Unity Cash research description."
+  },
+  "research.description.data-center": {
+    "defaultMessage": "Efficiency protocols allow you to improve the efficiency of your Data Centers.",
+    "description": "Unity Data Center research description."
+  },
+  "research.description.lifetime-later": {
+    "defaultMessage": "Through the sacrifice of many determined science bots this upgrade was made available.",
+    "description": "Unity later Panel Lifetime research description."
+  },
+  "research.description.lifetime-one": {
+    "defaultMessage": "Many researchers were sacrificed developing this upgrade. Their noggins were not up to the task!",
+    "description": "Unity first Panel Lifetime research description."
+  },
+  "research.description.machine-world": {
+    "defaultMessage": "Terraform some of your planets. Machine worlds allow more room for Servers!",
+    "description": "Unity description shared by Planet and mega-facility research cards."
+  },
+  "research.description.science": {
+    "defaultMessage": "Upgrades to networking allow bots to work more efficently together boosting Science production!",
+    "description": "Unity Science research description."
+  },
+  "research.description.server": {
+    "defaultMessage": "Upgrade to the latest Server Technology, allows your servers to run more AI Managers!",
+    "description": "Unity Server research description."
+  },
+  "research.empty": {
+    "defaultMessage": "No research is currently available.",
+    "description": "Safe empty state when no canonical Research cards are visible."
+  },
+  "research.name.ai-manager": {
+    "defaultMessage": "AI Manager",
+    "description": "Unity Research card name."
+  },
+  "research.name.assembly-line": {
+    "defaultMessage": "Assembly Line",
+    "description": "Unity Research card name."
+  },
+  "research.name.birch-planets": {
+    "defaultMessage": "Birch Planets",
+    "description": "Unity Research card name."
+  },
+  "research.name.cash": {
+    "defaultMessage": "Cash",
+    "description": "Unity Research card name."
+  },
+  "research.name.data-center": {
+    "defaultMessage": "Data Center",
+    "description": "Unity Research card name."
+  },
+  "research.name.durability-upgrade": {
+    "defaultMessage": "Durability Upgrade",
+    "description": "Unity title for each Panel Lifetime research card."
+  },
+  "research.name.galactic-brains": {
+    "defaultMessage": "Galactic Brains",
+    "description": "Unity Research card name."
+  },
+  "research.name.matrioshka-brains": {
+    "defaultMessage": "Matrioshka Brains",
+    "description": "Unity Research card name."
+  },
+  "research.name.planet": {
+    "defaultMessage": "Planet",
+    "description": "Unity Research card name."
+  },
+  "research.name.science": {
+    "defaultMessage": "Science",
+    "description": "Unity Research card name."
+  },
+  "research.name.server": {
+    "defaultMessage": "Server",
+    "description": "Unity Research card name."
+  },
+  "research.production-summary": {
+    "defaultMessage": "<researcherValue>{researchers}</researcherValue> Researchers producing <scienceValue>{science}</scienceValue>{scienceIcon}/s",
+    "description": "Unity Research footer production summary."
+  },
+  "research.purchase.accessible": {
+    "defaultMessage": "Purchase {title}: {quantity} levels for {cost} Science",
+    "description": "Accessible name for a Research purchase button."
+  },
+  "research.purchase.automatic": {
+    "defaultMessage": "Auto",
+    "description": "Unity label for an automatically purchased research."
+  },
+  "research.purchase.automatic-accessible": {
+    "defaultMessage": "{title} is purchased automatically",
+    "description": "Accessible name for an automatic Research card button."
+  },
+  "research.purchase.failed": {
+    "defaultMessage": "Research was not purchased.",
+    "description": "Failure feedback after a rejected Research purchase."
+  },
+  "research.purchase.pending": {
+    "defaultMessage": "Purchasing research.",
+    "description": "Status feedback while a Research purchase is pending."
+  },
+  "research.purchase.purchased": {
+    "defaultMessage": "Purchased",
+    "description": "Unity label for a completed one-time Research card."
+  },
+  "research.purchase.purchased-accessible": {
+    "defaultMessage": "{title} is purchased",
+    "description": "Accessible name for a completed Research card button."
+  },
+  "research.purchase.quantity": {
+    "defaultMessage": "+{quantity}",
+    "description": "Quoted canonical Research purchase quantity."
+  },
+  "research.region": {
+    "defaultMessage": "Research",
+    "description": "Accessible name for the Unity Research route."
+  },
+  "research.settings.buy-mode.fifty": {
+    "defaultMessage": "x50",
+    "description": "Purchase fifty Research levels."
+  },
+  "research.settings.buy-mode.max": {
+    "defaultMessage": "Max",
+    "description": "Purchase the maximum canonically affordable Research levels."
+  },
+  "research.settings.buy-mode.one": {
+    "defaultMessage": "x1",
+    "description": "Purchase one Research level."
+  },
+  "research.settings.buy-mode.one-hundred": {
+    "defaultMessage": "x100",
+    "description": "Purchase one hundred Research levels."
+  },
+  "research.settings.buy-mode.ten": {
+    "defaultMessage": "x10",
+    "description": "Purchase ten Research levels."
+  },
+  "research.settings.failed": {
+    "defaultMessage": "Research purchase settings were not changed.",
+    "description": "Failure feedback after a rejected Research setting command."
+  },
+  "research.settings.open": {
+    "defaultMessage": "Research purchase settings",
+    "description": "Accessible label for the Research footer settings gear."
+  },
+  "research.settings.purchase-amount": {
+    "defaultMessage": "Research purchase amount",
+    "description": "Heading for canonical Research buy mode controls."
+  },
+  "research.settings.rounded-bulk-buy": {
+    "defaultMessage": "Round bulk purchases to the next milestone",
+    "description": "Unity Research rounded-bulk setting."
+  },
   "settings.development.apply": {
     "defaultMessage": "Apply Progression",
     "description": "Applies a development progression preset."

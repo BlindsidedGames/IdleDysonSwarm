@@ -25,6 +25,15 @@ type LatestIdempotentCommand =
       CanonicalPlayerCommand,
       { readonly kind: 'dyson.set-bot-distribution' }
     >
+  | Extract<
+      CanonicalPlayerCommand,
+      {
+        readonly kind:
+          | 'research.set-buy-mode'
+          | 'research.set-rounded-bulk-buy'
+          | 'research.set-automation'
+      }
+    >
 
 export interface RevisionedPlayerCommandDispatcherOptions {
   readonly latestSnapshot: () =>

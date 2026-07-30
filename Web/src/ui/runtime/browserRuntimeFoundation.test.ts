@@ -2418,15 +2418,35 @@ describe('browser runtime foundation composition', () => {
       activationRevision: { session: 1, state: 1 },
       stateRevision: 2,
     })
+    activeClock.set(20)
+    frames.fire()
+    const researchSetting = runtime.dispatchPlayer({
+      kind: 'research.set-buy-mode',
+      buyMode: 'buy-10',
+    })
+
+    await expect(researchSetting).resolves.toMatchObject({
+      status: 'accepted',
+      activationRevision: { session: 1, state: 3 },
+      stateRevision: 4,
+    })
     expect(application?.activeRequests).toEqual([
       { milliseconds: 10, sessionRevision: 1 },
+      { milliseconds: 10, sessionRevision: 1 },
     ])
-    expect(application?.playerEnvelopes).toHaveLength(1)
+    expect(application?.playerEnvelopes).toHaveLength(2)
     expect(application?.playerEnvelopes[0]).toMatchObject({
       expectedStateRevision: 1,
       command: {
         kind: 'dyson.set-bot-distribution',
         distribution: 0.75,
+      },
+    })
+    expect(application?.playerEnvelopes[1]).toMatchObject({
+      expectedStateRevision: 3,
+      command: {
+        kind: 'research.set-buy-mode',
+        buyMode: 'buy-10',
       },
     })
     await runtime.shutdown()

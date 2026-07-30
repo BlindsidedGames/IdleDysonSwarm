@@ -57,6 +57,11 @@ const BasicFacilityRegion = lazy(async () => {
   return { default: module.BasicFacilityRegion }
 })
 
+const ResearchSurface = lazy(async () => {
+  const module = await import('../research')
+  return { default: module.ResearchSurface }
+})
+
 export const SWARM_VISUALIZATION_STORAGE_KEY =
   'idle-dyson-swarm.show-visualization'
 
@@ -177,7 +182,7 @@ export interface ReadyDysonSliceProps {
   readonly development?: UiRuntimeDevelopmentControls
 }
 
-export type ReadyGameRoute = 'bots' | 'settings'
+export type ReadyGameRoute = 'bots' | 'research' | 'settings'
 
 /**
  * Maps published canonical facts into presentation components without
@@ -225,14 +230,19 @@ export function ReadyDysonSlice({
   const hasFacilityContent =
     hasVisibleFacilities || visibility.showNextTierTeaser
   const settingsActive = route === 'settings'
+  const researchActive = route === 'research'
+  const routeHeading = settingsActive
+    ? messages.settingsRoute
+    : researchActive
+      ? messages.researchRoute
+      : messages.route
 
   return (
     <DysonGameplayShell
       direction={LOCALE_REGISTRY[locale].direction}
       skipLinkLabel={intl.formatMessage(messages.skipToGame)}
-      heading={intl.formatMessage(
-        settingsActive ? messages.settingsRoute : messages.route,
-      )}
+      heading={intl.formatMessage(routeHeading)}
+      routeTheme={route}
       navigation={{
         ariaLabel: intl.formatMessage(messages.primaryNavigation),
         drawerAriaLabel: intl.formatMessage(messages.sideNavigation),
@@ -242,15 +252,17 @@ export function ReadyDysonSlice({
             id: 'bots',
             label: intl.formatMessage(messages.route),
             iconSrc: navigationAssets.bots,
-            ...(settingsActive
-              ? { onActivate: () => onRouteChange('bots') }
-              : { current: true as const }),
+            ...(route === 'bots'
+              ? { current: true as const }
+              : { onActivate: () => onRouteChange('bots') }),
           },
           {
             id: 'research',
             label: intl.formatMessage(messages.researchRoute),
             iconSrc: navigationAssets.research,
-            disabled: true,
+            ...(researchActive
+              ? { current: true as const }
+              : { onActivate: () => onRouteChange('research') }),
           },
           {
             id: 'skills',
@@ -336,7 +348,54 @@ export function ReadyDysonSlice({
                 />
               ),
             }
-          : undefined
+          : researchActive
+            ? {
+                ariaLabel: intl.formatMessage(messages.researchRoute),
+                content: (
+                  <Suspense
+                    fallback={
+                      <div
+                        aria-label={intl.formatMessage(
+                          messages.researchRoute,
+                        )}
+                        aria-busy="true"
+                      />
+                    }
+                  >
+                    <ResearchSurface
+                      locale={locale}
+                      cards={gameplay.previews.research.cards}
+                      researchers={resources.researchers}
+                      sciencePerSecond={rates.science}
+                      buyMode={
+                        gameplay.progression.research.automation
+                          .buyMode
+                      }
+                      roundedBulkBuy={
+                        gameplay.progression.research.automation
+                          .roundedBulkBuy
+                      }
+                      purchaseRouteAvailable={
+                        gameplay.commands.byKind[
+                          'research.purchase'
+                        ].routeAvailable
+                      }
+                      buyModeRouteAvailable={
+                        gameplay.commands.byKind[
+                          'research.set-buy-mode'
+                        ].routeAvailable
+                      }
+                      roundedBulkRouteAvailable={
+                        gameplay.commands.byKind[
+                          'research.set-rounded-bulk-buy'
+                        ].routeAvailable
+                      }
+                      dispatchPlayer={dispatchPlayer}
+                    />
+                  </Suspense>
+                ),
+              }
+            : undefined
       }
       resources={{
         ariaLabel: intl.formatMessage(messages.resources),

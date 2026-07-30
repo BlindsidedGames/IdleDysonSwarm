@@ -410,6 +410,13 @@ class BrowserRuntimeFoundation implements BrowserUiRuntimeFoundation {
     if (command.kind === 'dyson.set-bot-distribution') {
       return graph.playerCommands.dispatchLatest(command)
     }
+    if (
+      command.kind === 'research.set-buy-mode' ||
+      command.kind === 'research.set-rounded-bulk-buy' ||
+      command.kind === 'research.set-automation'
+    ) {
+      return graph.playerCommands.dispatchLatest(command)
+    }
     return graph.playerCommands.dispatch(command)
   }
 

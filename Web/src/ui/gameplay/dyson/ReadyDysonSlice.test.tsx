@@ -256,6 +256,37 @@ describe('ReadyDysonSlice', () => {
     expect(onRouteChange).toHaveBeenCalledWith('bots')
   })
 
+  test('switches to the teal Research route and renders canonical cards', async () => {
+    const user = userEvent.setup()
+    const onRouteChange = vi.fn()
+    render(
+      provider(
+        <ReadyDysonSlice
+          snapshot={snapshot()}
+          locale="en"
+          dispatchPlayer={acceptedDispatch}
+          route="research"
+          onRouteChange={onRouteChange}
+        />,
+      ),
+    )
+
+    expect(
+      screen.getByRole('heading', { level: 1, name: 'Research' }),
+    ).toBeInTheDocument()
+    expect(
+      await screen.findByRole('article', {
+        name: 'Assembly Line boosts 0.00',
+      }),
+    ).toBeInTheDocument()
+    expect(
+      screen.queryByText('Tinker in your garage'),
+    ).not.toBeInTheDocument()
+
+    await user.click(screen.getByRole('button', { name: 'Bots' }))
+    expect(onRouteChange).toHaveBeenCalledWith('bots')
+  })
+
   test('persists the visualization toggle and reclaims its playfield row', async () => {
     const user = userEvent.setup()
     const rendered = render(
@@ -703,6 +734,15 @@ function snapshot(options: SnapshotOptions = {}): ReadySnapshot {
             roundedBulkBuy: false,
           },
         },
+        research: {
+          levelsById: {},
+          progressById: {},
+          automation: {
+            buyMode: 'buy-1',
+            roundedBulkBuy: false,
+            enabledById: {},
+          },
+        },
         quantum: {
           unlocks: {
             botMultitasking: false,
@@ -799,10 +839,46 @@ function snapshot(options: SnapshotOptions = {}): ReadySnapshot {
           'dyson.set-rounded-bulk-buy': {
             routeAvailable: true,
           },
+          'research.purchase': {
+            routeAvailable: true,
+          },
+          'research.set-buy-mode': {
+            routeAvailable: true,
+          },
+          'research.set-rounded-bulk-buy': {
+            routeAvailable: true,
+          },
         },
       },
       previews: {
         dyson: { basicFacilities },
+        research: {
+          complete: true,
+          issue: null,
+          purchases: [],
+          cards: [
+            {
+              researchId: 'research.assembly_line_upgrade',
+              eligible: true,
+              code: 'purchasable',
+              currentLevel: 0,
+              maximumLevel: null,
+              selectedQuantity: 1n,
+              affordableQuantity: 1n,
+              cost: 50_000,
+              issue: null,
+              prerequisitesMet: true,
+              visible: true,
+              maxed: false,
+              automationActive: false,
+              effectKind: 'percentage',
+              perLevelEffect: 5,
+              currentEffect: 0,
+              projectedEffect: 5,
+              passiveProgress: 0,
+            },
+          ],
+        },
       },
     },
   } as unknown as ReadySnapshot

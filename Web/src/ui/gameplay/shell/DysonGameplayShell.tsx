@@ -23,6 +23,7 @@ export function DysonGameplayShell({
   direction,
   skipLinkLabel,
   heading,
+  routeTheme = 'bots',
   navigation,
   resources,
   tinker,
@@ -100,6 +101,7 @@ export function DysonGameplayShell({
       dir={direction}
       data-menu-open={menuOpen}
       data-route-content={routeContent !== undefined}
+      data-route-theme={routeTheme}
     >
       <a
         className="dyson-shell__skip-link"
