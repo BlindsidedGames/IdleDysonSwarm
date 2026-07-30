@@ -15,6 +15,7 @@ import type {
 import type {
   CanonicalPlayerCommand,
 } from '../../../application/canonicalPlayerCommands'
+import researchCostSymbolSrc from '../../assets/symbol-research-cost.png'
 import scienceSymbolSrc from '../../assets/symbol-science.png'
 import {
   Button,
@@ -326,6 +327,7 @@ function ResearchCard({
       action={
         <Button
           variant="primary"
+          fullWidth
           state={pending ? 'pending' : failed ? 'failure' : 'idle'}
           disabled={disabled}
           aria-label={intl.formatMessage(
@@ -353,7 +355,7 @@ function ResearchCard({
           </span>
           {card.maxed ? null : (
             <span className="research-card__purchase-cost">
-              <ScienceSymbol />
+              <ResearchCostSymbol />
               <bdi>{cost}</bdi>
             </span>
           )}
@@ -502,6 +504,15 @@ function ScienceSymbol() {
     <InlineImageSymbol
       src={scienceSymbolSrc}
       symbol="science"
+    />
+  )
+}
+
+function ResearchCostSymbol() {
+  return (
+    <InlineImageSymbol
+      src={researchCostSymbolSrc}
+      symbol="research-cost"
     />
   )
 }

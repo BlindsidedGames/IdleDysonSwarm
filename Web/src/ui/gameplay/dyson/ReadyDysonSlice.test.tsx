@@ -251,6 +251,9 @@ describe('ReadyDysonSlice', () => {
     expect(
       screen.queryByText('Tinker in your garage'),
     ).not.toBeInTheDocument()
+    expect(
+      screen.queryByRole('slider', { name: 'Bot Distribution' }),
+    ).not.toBeInTheDocument()
 
     await user.click(screen.getByRole('button', { name: 'Bots' }))
     expect(onRouteChange).toHaveBeenCalledWith('bots')
@@ -259,12 +262,13 @@ describe('ReadyDysonSlice', () => {
   test('switches to the teal Research route and renders canonical cards', async () => {
     const user = userEvent.setup()
     const onRouteChange = vi.fn()
+    const dispatchPlayer = vi.fn(acceptedDispatch)
     render(
       provider(
         <ReadyDysonSlice
           snapshot={snapshot()}
           locale="en"
-          dispatchPlayer={acceptedDispatch}
+          dispatchPlayer={dispatchPlayer}
           route="research"
           onRouteChange={onRouteChange}
         />,
@@ -282,6 +286,20 @@ describe('ReadyDysonSlice', () => {
     expect(
       screen.queryByText('Tinker in your garage'),
     ).not.toBeInTheDocument()
+
+    const distribution = screen.getByRole('slider', {
+      name: 'Bot Distribution',
+    })
+    expect(distribution).toBeInTheDocument()
+    fireEvent.change(distribution, { target: { value: '75' } })
+    fireEvent.pointerUp(distribution, { pointerId: 17 })
+    fireEvent.blur(distribution)
+    await waitFor(() => {
+      expect(dispatchPlayer).toHaveBeenCalledWith({
+        kind: 'dyson.set-bot-distribution',
+        distribution: 0.75,
+      })
+    })
 
     await user.click(screen.getByRole('button', { name: 'Bots' }))
     expect(onRouteChange).toHaveBeenCalledWith('bots')

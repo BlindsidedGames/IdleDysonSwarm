@@ -68,6 +68,17 @@ describe('ResearchSurface', () => {
         name: 'Durability Upgrade is purchased',
       }),
     ).toBeDisabled()
+    expect(
+      screen.getByRole('button', {
+        name: /Purchase Science boosts 2.00/,
+      }),
+    ).toHaveClass('ui-button--full-width')
+    expect(
+      articles[0].querySelector('[data-symbol="research-cost"]'),
+    ).toBeInTheDocument()
+    expect(
+      articles[0].querySelector('[data-symbol="science"]'),
+    ).not.toBeInTheDocument()
   })
 
   test('dispatches one ordinary canonical purchase while an activation is pending', async () => {

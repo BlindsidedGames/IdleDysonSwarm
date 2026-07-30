@@ -528,32 +528,41 @@ export function ReadyDysonSlice({
           />
         ),
       }}
-      distribution={{
-        ariaLabel: intl.formatMessage(messages.botDistribution),
-        content: (
-          <BotDistribution
-            locale={locale}
-            distribution={
-              gameplay.progression.dyson.botDistribution
+      distribution={
+        settingsActive
+          ? undefined
+          : {
+              ariaLabel: intl.formatMessage(
+                messages.botDistribution,
+              ),
+              content: (
+                <BotDistribution
+                  locale={locale}
+                  distribution={
+                    gameplay.progression.dyson.botDistribution
+                  }
+                  workersFraction={
+                    gameplay.derived.dysonBotDistribution
+                      .workersFraction
+                  }
+                  scientistsFraction={
+                    gameplay.derived.dysonBotDistribution
+                      .scientistsFraction
+                  }
+                  multitasking={
+                    gameplay.progression.quantum.unlocks
+                      .botMultitasking
+                  }
+                  routeAvailable={
+                    gameplay.commands.byKind[
+                      'dyson.set-bot-distribution'
+                    ].routeAvailable
+                  }
+                  dispatchPlayer={dispatchPlayer}
+                />
+              ),
             }
-            workersFraction={
-              gameplay.derived.dysonBotDistribution.workersFraction
-            }
-            scientistsFraction={
-              gameplay.derived.dysonBotDistribution.scientistsFraction
-            }
-            multitasking={
-              gameplay.progression.quantum.unlocks.botMultitasking
-            }
-            routeAvailable={
-              gameplay.commands.byKind[
-                'dyson.set-bot-distribution'
-              ].routeAvailable
-            }
-            dispatchPlayer={dispatchPlayer}
-          />
-        ),
-      }}
+      }
     />
   )
 }

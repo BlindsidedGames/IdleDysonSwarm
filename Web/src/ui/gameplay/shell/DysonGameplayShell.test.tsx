@@ -21,6 +21,10 @@ const shellCss = readFileSync(
   resolve(process.cwd(), 'src/ui/gameplay/shell/dysonGameplayShell.css'),
   'utf8',
 )
+const controlsCss = readFileSync(
+  resolve(process.cwd(), 'src/ui/gameplay/dyson/dysonControls.css'),
+  'utf8',
+)
 const tokensCss = readFileSync(
   resolve(process.cwd(), 'src/ui/tokens/tokens.css'),
   'utf8',
@@ -166,6 +170,27 @@ describe('DysonGameplayShell', () => {
     ).toHaveClass('dyson-shell__route-heading')
   })
 
+  it('keeps distribution below full route content without Bots-only regions', () => {
+    const { container } = render(
+      <DysonGameplayShell
+        {...props()}
+        routeContent={{
+          ariaLabel: 'Research',
+          content: <p>Research cards</p>,
+        }}
+      />,
+    )
+
+    expect(screen.getByText('Research cards')).toBeInTheDocument()
+    expect(screen.getByText('Bot distribution')).toBeInTheDocument()
+    expect(screen.queryByText('Production summary')).not.toBeInTheDocument()
+    expect(screen.queryByText('Info')).not.toBeInTheDocument()
+    expect(
+      container.querySelector('.dyson-shell__route-content')
+        ?.nextElementSibling,
+    ).toHaveClass('dyson-shell__lower-regions')
+  })
+
   it('sets locale direction while keeping the physical Unity header order', () => {
     const { container } = render(
       <DysonGameplayShell {...props()} direction="rtl" />,
@@ -244,6 +269,21 @@ describe('Dyson gameplay responsive CSS contract', () => {
     )
     expect(shellCss).toMatch(
       /\.dyson-shell\[data-route-theme="research"\]\s*\{[^}]*--resource-clearance-color:\s*#181f1e;[^}]*background:\s*#181f1e;/,
+    )
+    expect(shellCss).toMatch(
+      /\.dyson-shell\s*\{[^}]*--bot-distribution-track-color:\s*#3d3440;[^}]*--bot-distribution-handle-color:\s*#c45cda;/,
+    )
+    expect(shellCss).toMatch(
+      /\.dyson-shell\[data-route-theme="research"\]\s*\{[^}]*--bot-distribution-track-color:\s*#263a38;[^}]*--bot-distribution-handle-color:\s*#8bc7c4;/,
+    )
+    expect(controlsCss).toContain(
+      'background: var(--bot-distribution-track-color);',
+    )
+    expect(controlsCss).toContain(
+      'background: var(--bot-distribution-handle-color);',
+    )
+    expect(shellCss).toMatch(
+      /\.dyson-shell\[data-route-theme="research"\][\s\S]*\.dyson-shell__lower-regions\s*\{[^}]*border-color:\s*#41615e;[^}]*background:\s*#334c4a;/,
     )
     expect(shellCss).toMatch(
       /\.dyson-resource-header__item::before\s*\{[^}]*z-index:\s*-1;[^}]*radial-gradient\([^}]*var\(--resource-clearance-color\)[^}]*transparent 86%[^}]*pointer-events:\s*none;/,

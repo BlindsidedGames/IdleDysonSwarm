@@ -9,6 +9,8 @@
 
 .dyson-shell {
   --resource-clearance-color: var(--color-app-background);
+  --bot-distribution-track-color: #3d3440;
+  --bot-distribution-handle-color: #c45cda;
   display: grid;
   grid-template-rows: minmax(0, 1fr) 4.9rem;
   inline-size: 100%;
@@ -52,11 +54,19 @@
 
 .dyson-shell[data-route-theme="research"] {
   --resource-clearance-color: #181f1e;
+  --bot-distribution-track-color: #263a38;
+  --bot-distribution-handle-color: #8bc7c4;
   background: #181f1e;
 }
 
 .dyson-shell[data-route-theme="research"]
   .dyson-shell__bottom-navigation {
+  border-color: #41615e;
+  background: #334c4a;
+}
+
+.dyson-shell[data-route-theme="research"]
+  .dyson-shell__lower-regions {
   border-color: #41615e;
   background: #334c4a;
 }

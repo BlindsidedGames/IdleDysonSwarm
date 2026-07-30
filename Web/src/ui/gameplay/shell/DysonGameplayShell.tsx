@@ -176,57 +176,61 @@ export function DysonGameplayShell({
               region={routeContent}
             />
           ) : (
-          <>
-          <div
-            className="dyson-shell__playfield"
-            data-has-swarm={swarmVisual !== undefined}
-          >
-            {swarmVisual !== undefined && (
-              <ShellRegion
-                className="dyson-shell__swarm"
-                region={swarmVisual}
-              />
-            )}
-
             <div
-              className="dyson-shell__stage"
-              data-has-tinker={tinker !== undefined}
-              data-has-visible-facilities={hasVisibleFacilities}
+              className="dyson-shell__playfield"
+              data-has-swarm={swarmVisual !== undefined}
             >
-              <div className="dyson-shell__facility-region">
-                {facilities}
-              </div>
-
-              {tinker !== undefined && (
+              {swarmVisual !== undefined && (
                 <ShellRegion
-                  className="dyson-shell__tinker"
-                  region={tinker}
+                  className="dyson-shell__swarm"
+                  region={swarmVisual}
+                />
+              )}
+
+              <div
+                className="dyson-shell__stage"
+                data-has-tinker={tinker !== undefined}
+                data-has-visible-facilities={hasVisibleFacilities}
+              >
+                <div className="dyson-shell__facility-region">
+                  {facilities}
+                </div>
+
+                {tinker !== undefined && (
+                  <ShellRegion
+                    className="dyson-shell__tinker"
+                    region={tinker}
+                  />
+                )}
+              </div>
+            </div>
+          )}
+
+          {(distribution !== undefined ||
+            (routeContent === undefined &&
+              (info !== undefined ||
+                productionSummary !== undefined))) && (
+            <div className="dyson-shell__lower-regions">
+              {routeContent === undefined && info !== undefined && (
+                <ShellRegion
+                  className="dyson-shell__info"
+                  region={info}
+                />
+              )}
+              {routeContent === undefined &&
+                productionSummary !== undefined && (
+                  <ShellRegion
+                    className="dyson-shell__production-summary"
+                    region={productionSummary}
+                  />
+                )}
+              {distribution !== undefined && (
+                <ShellRegion
+                  className="dyson-shell__distribution"
+                  region={distribution}
                 />
               )}
             </div>
-          </div>
-
-          <div className="dyson-shell__lower-regions">
-            {info !== undefined && (
-              <ShellRegion
-                className="dyson-shell__info"
-                region={info}
-              />
-            )}
-            {productionSummary !== undefined && (
-              <ShellRegion
-                className="dyson-shell__production-summary"
-                region={productionSummary}
-              />
-            )}
-            {distribution !== undefined && (
-              <ShellRegion
-                className="dyson-shell__distribution"
-                region={distribution}
-              />
-            )}
-          </div>
-          </>
           )}
         </div>
       </main>

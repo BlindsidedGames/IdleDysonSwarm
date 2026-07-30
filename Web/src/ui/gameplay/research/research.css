@@ -10,10 +10,14 @@
 }
 
 .research-surface__scroll-region {
+  container-type: inline-size;
   min-block-size: 0;
   overflow-y: auto;
   overscroll-behavior: contain;
-  padding: 0.7rem;
+  padding-block: 0.625rem;
+  padding-inline:
+    max(0.625rem, env(safe-area-inset-left))
+    max(0.625rem, env(safe-area-inset-right));
   scrollbar-width: none;
 }
 
@@ -27,7 +31,8 @@
   display: grid;
   min-inline-size: 0;
   grid-template-columns: minmax(0, 1fr);
-  gap: 0.55rem;
+  gap: 0.625rem;
+  align-items: start;
   padding: 0;
   margin: 0;
   list-style: none;
@@ -45,16 +50,16 @@
 }
 
 .ui-facility-card.research-card {
-  block-size: 100%;
+  position: relative;
+  min-block-size: 7.1875rem;
   grid-template-columns: minmax(0, 1fr) clamp(7.25rem, 24%, 10rem);
   grid-template-rows: auto auto 1fr;
-  gap: 0.18rem 0.7rem;
+  gap: 0.15rem 0.625rem;
   align-items: start;
-  padding: 0.6rem;
-  border: 2px solid #41615e;
+  padding: 0.4375rem 0.625rem 0.3125rem;
+  border: 1px solid #08100f;
   border-radius: 0.25rem;
   background: #334c4a;
-  box-shadow: 0 2px 0 #0c1211;
 }
 
 .research-card .ui-facility-card__header {
@@ -95,12 +100,13 @@
 
 .research-card .ui-facility-card__title {
   color: white;
-  font-size: 1rem;
+  font-size: calc(1.125rem * var(--game-text-scale));
   line-height: 1.18;
 }
 
 .research-card .ui-facility-card__production {
   color: white;
+  font-size: calc(1.125rem * var(--game-text-scale));
   font-weight: var(--font-weight-semibold);
   line-height: 1.2;
 }
@@ -111,17 +117,19 @@
 
 .research-card .ui-facility-card__description {
   color: white;
-  font-size: 0.86rem;
+  font-size: calc(1rem * var(--game-text-scale));
   line-height: 1.28;
 }
 
 .research-card .ui-button {
   display: flex;
+  inline-size: 100%;
   min-block-size: 100%;
   min-inline-size: 0;
   flex-direction: column;
   justify-content: center;
   gap: 0.05rem;
+  padding: 0.4rem 0.5rem;
   border-color: #08100f;
   border-radius: 0.25rem;
   background: #8bc7c4;
@@ -161,7 +169,8 @@
 }
 
 .research-card__purchase-cost .ui-inline-image-symbol {
-  block-size: 0.9em;
+  block-size: 0.825em;
+  vertical-align: 0;
 }
 
 .research-surface__footer {
@@ -278,50 +287,27 @@
 }
 
 @media (max-width: 720px) {
-  .research-surface__scroll-region {
-    padding: 0.45rem;
-  }
-
-  .research-surface__grid {
-    gap: 0.42rem;
-  }
-
   .ui-facility-card.research-card {
     grid-template-columns: minmax(0, 1fr) clamp(6.1rem, 26%, 6.75rem);
-    gap: 0.08rem 0.35rem;
-    padding: 0.38rem;
-  }
-
-  .research-card .ui-facility-card__title {
-    font-size: calc(0.88rem * var(--game-text-scale));
-  }
-
-  .research-card .ui-facility-card__production {
-    font-size: calc(0.78rem * var(--game-text-scale));
-  }
-
-  .research-card .ui-facility-card__description {
-    font-size: calc(0.66rem * var(--game-text-scale));
-    line-height: 1.2;
+    gap: 0.12rem 0.5rem;
   }
 
   .research-card .ui-button {
-    padding: 0.25rem;
-    font-size: calc(0.8rem * var(--game-text-scale));
+    font-size: calc(0.9rem * var(--game-text-scale));
   }
 
   .research-surface__summary p {
-    font-size: calc(0.8rem * var(--game-text-scale));
+    font-size: calc(0.9rem * var(--game-text-scale));
   }
 }
 
-@media (min-width: 1280px) {
+@container (min-width: 62.5rem) {
   .research-surface__grid {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 }
 
-@media (min-width: 2000px) {
+@container (min-width: 125rem) {
   .research-surface__grid {
     grid-template-columns: repeat(3, minmax(0, 1fr));
   }
