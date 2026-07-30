@@ -6,6 +6,7 @@ export interface ViteManifestEntry {
   readonly isEntry?: boolean
   readonly imports?: readonly string[]
   readonly css?: readonly string[]
+  readonly assets?: readonly string[]
 }
 
 export type ViteManifest = Readonly<Record<string, ViteManifestEntry>>
@@ -13,9 +14,12 @@ export type ViteManifest = Readonly<Record<string, ViteManifestEntry>>
 export interface InitialRequestGraph {
   readonly entryKey: string
   readonly localeKey: string
-  readonly initialAssetFiles: readonly string[]
+  readonly freshBotsKey: string
+  readonly bootAssetFiles: readonly string[]
   readonly localeAssetFiles: readonly string[]
-  readonly requestedAssetFiles: readonly string[]
+  readonly freshBotsAssetFiles: readonly string[]
+  readonly sourceFontAssetFiles: readonly string[]
+  readonly measuredAssetFiles: readonly string[]
 }
 
 export interface GzipAsset {
@@ -28,12 +32,15 @@ export interface BundleBudget {
   readonly name: string
   readonly limitBytes: number
   readonly actualBytes: number
+  readonly transfer: 'gzip' | 'raw'
+  readonly enforcement: 'enforced' | 'provisional-warning'
 }
 
 export const INITIAL_REQUEST_BUDGETS = Object.freeze({
   initialJavaScript: 200 * 1024,
   initialCss: 40 * 1024,
   sharedLocale: 30 * 1024,
+  sourceLocaleFonts: 250 * 1024,
 })
 
 function sortedUnique(values: Iterable<string>): string[] {
@@ -71,33 +78,59 @@ export function collectStaticAssetFiles(
 }
 
 /**
- * Builds the concrete request set needed before first playable render. Vite
- * records static imports but not conditional dynamic imports, so startup's
- * selected shared catalog is deliberately supplied as a second root.
+ * Separates the boot graph from resources loaded to complete the approved
+ * fresh Bots surface. Vite records static imports but not conditional dynamic
+ * imports, so the startup locale and fresh-save facility presentation are
+ * deliberately supplied as additional roots.
  */
 export function collectInitialRequestGraph(
   manifest: ViteManifest,
   options: {
     readonly entryKey?: string
     readonly localeKey?: string
+    readonly freshBotsKey?: string
   } = {},
 ): InitialRequestGraph {
   // Vite's browser manifest roots the application at index.html; it owns the
   // module script that loads src/main.tsx.
   const entryKey = options.entryKey ?? 'index.html'
   const localeKey = options.localeKey ?? 'src/ui/i18n/catalogs/compiled/en.json'
-  const initialAssetFiles = collectStaticAssetFiles(manifest, entryKey)
+  const freshBotsKey =
+    options.freshBotsKey ?? 'src/ui/gameplay/facilities/index.ts'
+  const bootAssetFiles = collectStaticAssetFiles(manifest, entryKey)
   const localeTree = collectStaticAssetFiles(manifest, localeKey)
-  const initialFiles = new Set(initialAssetFiles)
+  const bootFiles = new Set(bootAssetFiles)
   const localeAssetFiles = sortedUnique(
-    localeTree.filter((file) => !initialFiles.has(file)),
+    localeTree.filter((file) => !bootFiles.has(file)),
+  )
+  const bootAndLocaleFiles = new Set([
+    ...bootAssetFiles,
+    ...localeAssetFiles,
+  ])
+  const freshBotsAssetFiles = sortedUnique(
+    collectStaticAssetFiles(manifest, freshBotsKey).filter(
+      (file) => !bootAndLocaleFiles.has(file),
+    ),
+  )
+  const sourceFontAssetFiles = sortedUnique(
+    (requireManifestEntry(manifest, entryKey).assets ?? []).filter(
+      (file) => /\.(?:otf|ttf|woff2?)$/i.test(file),
+    ),
   )
   return Object.freeze({
     entryKey,
     localeKey,
-    initialAssetFiles,
+    freshBotsKey,
+    bootAssetFiles,
     localeAssetFiles,
-    requestedAssetFiles: sortedUnique([...initialAssetFiles, ...localeAssetFiles]),
+    freshBotsAssetFiles,
+    sourceFontAssetFiles,
+    measuredAssetFiles: sortedUnique([
+      ...bootAssetFiles,
+      ...localeAssetFiles,
+      ...freshBotsAssetFiles,
+      ...sourceFontAssetFiles,
+    ]),
   })
 }
 
@@ -117,30 +150,48 @@ export function sumGzipBytes(assets: readonly GzipAsset[]): number {
   return assets.reduce((total, asset) => total + asset.gzipBytes, 0)
 }
 
-/** Applies the product budgets to the complete pre-render request sequence. */
+export function sumRawBytes(assets: readonly GzipAsset[]): number {
+  return assets.reduce((total, asset) => total + asset.bytes, 0)
+}
+
+/** Applies the current product policy to the measured boot resources. */
 export function createInitialRequestBudgets(
-  initialAssets: readonly GzipAsset[],
+  bootAssets: readonly GzipAsset[],
   localeAssets: readonly GzipAsset[],
+  sourceFontAssets: readonly GzipAsset[],
 ): readonly BundleBudget[] {
-  const initialTypes = classifyGzipAssets(initialAssets)
+  const bootTypes = classifyGzipAssets(bootAssets)
   const localeTypes = classifyGzipAssets(localeAssets)
   return Object.freeze([
     {
-      name: 'Initial first-slice JavaScript',
+      name: 'Boot-graph JavaScript',
       limitBytes: INITIAL_REQUEST_BUDGETS.initialJavaScript,
       // Startup awaits the selected catalog before React's first render, so it
-      // is part of the first-slice transfer as well as its own sub-budget.
-      actualBytes: sumGzipBytes([...initialTypes.js, ...localeTypes.js]),
+      // is part of the boot graph as well as its own sub-budget.
+      actualBytes: sumGzipBytes([...bootTypes.js, ...localeTypes.js]),
+      transfer: 'gzip',
+      enforcement: 'provisional-warning',
     },
     {
-      name: 'Initial first-slice CSS',
+      name: 'Boot-graph CSS',
       limitBytes: INITIAL_REQUEST_BUDGETS.initialCss,
-      actualBytes: sumGzipBytes([...initialTypes.css, ...localeTypes.css]),
+      actualBytes: sumGzipBytes([...bootTypes.css, ...localeTypes.css]),
+      transfer: 'gzip',
+      enforcement: 'enforced',
     },
     {
-      name: 'Initial shared English locale catalog',
+      name: 'Boot-graph shared English locale catalog',
       limitBytes: INITIAL_REQUEST_BUDGETS.sharedLocale,
       actualBytes: sumGzipBytes(localeTypes.js),
+      transfer: 'gzip',
+      enforcement: 'enforced',
+    },
+    {
+      name: 'Initial source-locale fonts',
+      limitBytes: INITIAL_REQUEST_BUDGETS.sourceLocaleFonts,
+      actualBytes: sumRawBytes(sourceFontAssets),
+      transfer: 'raw',
+      enforcement: 'enforced',
     },
   ])
 }
@@ -162,5 +213,19 @@ export function measureGzipAssets(
 export function budgetFailures(
   budgets: readonly BundleBudget[],
 ): readonly BundleBudget[] {
-  return budgets.filter((budget) => budget.actualBytes > budget.limitBytes)
+  return budgets.filter(
+    (budget) =>
+      budget.enforcement === 'enforced' &&
+      budget.actualBytes > budget.limitBytes,
+  )
+}
+
+export function budgetWarnings(
+  budgets: readonly BundleBudget[],
+): readonly BundleBudget[] {
+  return budgets.filter(
+    (budget) =>
+      budget.enforcement === 'provisional-warning' &&
+      budget.actualBytes > budget.limitBytes,
+  )
 }

@@ -9,12 +9,20 @@ they add no browser-automation dependency.
 Set `IDS_CHROMIUM_PATH` when Chrome or Edge is not installed in a standard
 location.
 
-Verify that a normal minified production build both passes the exact initial
-request budget and contains no performance-probe marker or recorder:
+Build the normal minified production application, record its boot graph and
+completed fresh-Bots transfer, enforce the CSS, English-catalog and aggregate
+source-font ceilings, report the provisional 200 KiB JavaScript target as a
+warning, and verify that no performance-probe marker or recorder remains:
 
 ```powershell
 npm run verify:normal-performance-build
 ```
+
+The boot graph is the application entry plus the English catalog awaited before
+React first renders. The report lists the lazy facility chunk separately because
+the fresh-save `????` teaser requests it to complete the approved Bots surface.
+The JavaScript target does not make this command fail during the current design
+baseline. An enforced CSS, catalog, or source-font overage does.
 
 ## Interaction trace and synthetic Web Vitals
 

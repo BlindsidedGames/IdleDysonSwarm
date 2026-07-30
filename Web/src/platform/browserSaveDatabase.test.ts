@@ -1,7 +1,13 @@
 import { describe, expect, test } from 'vitest'
+import {
+  createProductionBrowserComposition,
+} from '../browser/productionBrowserComposition'
 import { PreparedSave } from '../save/prepare'
 import { PortableSaveRepository } from '../save/repository'
 import { serializeWebSave } from '../save/serialization'
+import {
+  createBrowserRuntimeFoundation,
+} from '../ui/runtime'
 import {
   IndexedDbBrowserSaveDatabase,
   type WriterLeaseFence,
@@ -352,6 +358,110 @@ describe('IndexedDbBrowserSaveDatabase', () => {
 
     expect(harness.openAttempts(blockedName)).toBe(2)
     expect(harness.lastBlockedConnection?.closed).toBe(true)
+  })
+
+  test('production composition checkpoints through a fired interval, blocks a second writer, and reconstructs through fresh IndexedDB wrappers', async () => {
+    const harness = new HarnessIndexedDbFactory()
+    const databaseName = 'production-composition-reconstruction'
+    const checkpointGate = deferred<void>()
+    const firstCheckpointScheduler = new ManualIntervalScheduler()
+    let checkpointCalls = 0
+
+    const createComposition = (
+      ownerToken: string,
+      checkpointScheduler = new ManualIntervalScheduler(),
+      gateCheckpoint = false,
+    ) =>
+      createProductionBrowserComposition({
+        entitlementDocument: {
+          querySelectorAll: () => [
+            { getAttribute: () => 'false' },
+          ],
+        },
+        lifecycleClock: fixedLifecycleClock(),
+        monotonicClock: { nowMilliseconds: () => 0 },
+        createRuntime: (options) =>
+          createBrowserRuntimeFoundation({
+            ...options,
+            createApplication: (repository) => {
+              const application = options.createApplication(repository)
+              if (!gateCheckpoint) return application
+              return new Proxy(application, {
+                get(target, property, receiver) {
+                  if (property !== 'checkpoint') {
+                    const value = Reflect.get(target, property, receiver)
+                    return typeof value === 'function'
+                      ? value.bind(target)
+                      : value
+                  }
+                  return async () => {
+                    checkpointCalls += 1
+                    await checkpointGate.promise
+                    return application.checkpoint()
+                  }
+                },
+              })
+            },
+            databaseName,
+            indexedDbFactory: harness.asFactory(),
+            profileId: 'production-like-profile',
+            ownerToken,
+            autoHeartbeat: false,
+            nowUtcMilliseconds: () => 1_000,
+            lifecycle: backgroundLifecycle(),
+            activeTimeScheduler: idleFrameScheduler,
+            storageManager: durableStorageManager,
+            checkpointScheduler,
+          }),
+      })
+
+    const first = createComposition(
+      'first-production-owner',
+      firstCheckpointScheduler,
+      true,
+    )
+    await expect(first.runtime.start()).resolves.toMatchObject({
+      phase: 'ready',
+    })
+    await expect(
+      first.runtime.dispatchPlayer({
+        kind: 'dyson.set-bot-distribution',
+        distribution: 0.75,
+      }),
+    ).resolves.toMatchObject({
+      status: 'accepted',
+    })
+    const expected = structuredClone(first.runtime.snapshot())
+
+    firstCheckpointScheduler.fire()
+    firstCheckpointScheduler.fire()
+    await waitUntil(() => checkpointCalls === 1)
+
+    const blocked = createComposition('blocked-production-owner')
+    await expect(blocked.runtime.start()).resolves.toMatchObject({
+      phase: 'blocked',
+      code: 'writer-owned',
+    })
+
+    checkpointGate.resolve()
+    await expect(first.runtime.requestCheckpoint()).resolves.toBe(true)
+    expect(checkpointCalls).toBe(1)
+    await first.runtime.shutdown()
+    await blocked.runtime.shutdown()
+
+    const reconstructed = createComposition(
+      'reconstructed-production-owner',
+    )
+    await expect(reconstructed.runtime.start()).resolves.toMatchObject({
+      phase: 'ready',
+    })
+    expect(reconstructed.runtime.snapshot()).toMatchObject({
+      phase: 'ready',
+      source: 'primary',
+      gameplay:
+        expected.phase === 'ready' ? expected.gameplay : undefined,
+    })
+    await reconstructed.runtime.shutdown()
   })
 })
 
@@ -930,4 +1040,67 @@ function cloneValue<T>(value: T): T {
 
 function nextTask(): Promise<void> {
   return new Promise((resolve) => setTimeout(resolve, 0))
+}
+
+class ManualIntervalScheduler {
+  private callback: (() => void) | undefined
+
+  setInterval(callback: () => void): unknown {
+    this.callback = callback
+    return callback
+  }
+
+  clearInterval(handle: unknown): void {
+    if (this.callback === handle) this.callback = undefined
+  }
+
+  fire(): void {
+    this.callback?.()
+  }
+}
+
+const idleFrameScheduler = {
+  requestFrame: () => 1,
+  cancelFrame: () => undefined,
+}
+
+const durableStorageManager = {
+  persisted: async () => true,
+  persist: async () => true,
+  estimate: async () => ({ usage: 1, quota: 1_000 }),
+}
+
+function backgroundLifecycle() {
+  return {
+    currentPhase: () => 'background' as const,
+    subscribe: () => () => undefined,
+  }
+}
+
+function fixedLifecycleClock() {
+  return {
+    sample: () => ({
+      utcMilliseconds: 1_000,
+      serializedUtcText: '1970-01-01T00:00:01.000Z',
+    }),
+  }
+}
+
+function deferred<T>() {
+  let resolve!: (value: T | PromiseLike<T>) => void
+  const promise = new Promise<T>((resolvePromise) => {
+    resolve = resolvePromise
+  })
+  return { promise, resolve }
+}
+
+async function waitUntil(
+  predicate: () => boolean,
+  attempts = 100,
+): Promise<void> {
+  for (let attempt = 0; attempt < attempts; attempt += 1) {
+    if (predicate()) return
+    await nextTask()
+  }
+  throw new Error('Timed out waiting for the persistence test condition.')
 }

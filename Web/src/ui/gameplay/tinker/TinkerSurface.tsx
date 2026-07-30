@@ -4,6 +4,7 @@ import type {
   FrontendApplicationSnapshot,
   UiRuntimePlayerCommandResult,
 } from '../../runtime'
+import { usePrefersReducedMotion } from '../../accessibility/useMediaQuery'
 import { formatGameNumber } from '../../i18n/formatters'
 import type { EnabledLocale } from '../../i18n/localeRegistry'
 import { tinkerMessages } from './messages'
@@ -125,7 +126,7 @@ export function TinkerSurface({
           showFreshSaveTip ? tipId : '',
           remainingId,
         ].filter(Boolean).join(' ')}
-        aria-disabled={!facts.canStart}
+        aria-disabled={disabled || undefined}
         disabled={disabled}
         onPointerDown={gesture.onPointerDown}
         onPointerUp={gesture.onPointerUp}
@@ -195,12 +196,13 @@ export function TinkerSurface({
  * Completion and rewards remain entirely owned by the lifecycle coordinator.
  */
 function useVisualTinkerElapsed(facts: TinkerFacts): number {
+  const prefersReducedMotion = usePrefersReducedMotion()
   const [elapsed, setElapsed] = useState(facts.runtime.elapsedSeconds)
 
   useEffect(() => {
     const authoritativeElapsed = facts.runtime.elapsedSeconds
     setElapsed(authoritativeElapsed)
-    if (!facts.runtime.running) return undefined
+    if (!facts.runtime.running || prefersReducedMotion) return undefined
 
     const startedAt = performance.now()
     let frame = 0
@@ -220,6 +222,7 @@ function useVisualTinkerElapsed(facts: TinkerFacts): number {
     facts.runtime.cooldownSeconds,
     facts.runtime.elapsedSeconds,
     facts.runtime.running,
+    prefersReducedMotion,
   ])
 
   return elapsed

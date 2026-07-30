@@ -436,7 +436,7 @@
   line-height: 1.4;
 }
 
-@media (min-width: 900px) {
+@media (min-width: 1024px) {
   .dyson-shell {
     grid-template-columns: minmax(17rem, 22rem) minmax(0, 1fr);
     grid-template-rows: minmax(0, 1fr);

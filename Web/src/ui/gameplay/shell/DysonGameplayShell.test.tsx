@@ -7,12 +7,12 @@ import { resolve } from 'node:path'
 import axe from 'axe-core'
 import {
   cleanup,
-  fireEvent,
   render,
   screen,
   within,
 } from '@testing-library/react'
-import { afterEach, describe, expect, it } from 'vitest'
+import userEvent from '@testing-library/user-event'
+import { afterEach, describe, expect, it, vi } from 'vitest'
 import { targetSizes } from '../../tokens/tokens'
 import type { DysonGameplayShellProps } from './contracts'
 import { DysonGameplayShell } from './DysonGameplayShell'
@@ -25,8 +25,15 @@ const tokensCss = readFileSync(
   resolve(process.cwd(), 'src/ui/tokens/tokens.css'),
   'utf8',
 )
+const rootCss = readFileSync(
+  resolve(process.cwd(), 'src/index.css'),
+  'utf8',
+)
 
-afterEach(cleanup)
+afterEach(() => {
+  cleanup()
+  vi.unstubAllGlobals()
+})
 
 describe('DysonGameplayShell', () => {
   it('provides Unity-style drawer and compact bottom navigation', () => {
@@ -34,8 +41,12 @@ describe('DysonGameplayShell', () => {
 
     const navigations = screen.getAllByRole('navigation', {
       name: 'Primary',
+      hidden: true,
     })
     expect(navigations).toHaveLength(2)
+    expect(screen.getAllByRole('navigation', {
+      name: 'Primary',
+    })).toHaveLength(1)
 
     const drawer = navigations.find(
       (navigation) => navigation.dataset.placement === 'drawer',
@@ -51,22 +62,52 @@ describe('DysonGameplayShell', () => {
       within(bottom!).getByText('Bots').closest('[aria-current="page"]'),
     ).toBeInTheDocument()
     expect(
-      within(drawer!).getByRole('button', { name: 'Research' }),
+      within(drawer!).getByRole('button', {
+        name: 'Research',
+        hidden: true,
+      }),
     ).toBeDisabled()
   })
 
-  it('opens and closes the compact menu without changing gameplay state', () => {
+  it('contains compact-menu focus and restores the opener on close', async () => {
+    const user = userEvent.setup()
     const { container } = render(<DysonGameplayShell {...props()} />)
     const shell = container.querySelector('.dyson-shell')
     const openMenu = screen.getByRole('button', { name: 'Open menu' })
+    const sidePanel = container.querySelector('.dyson-shell__side-panel')
+    const main = container.querySelector('main')
+    const bottomNavigation = container.querySelector(
+      '.dyson-shell__bottom-navigation',
+    )
 
     expect(shell).toHaveAttribute('data-menu-open', 'false')
-    fireEvent.click(openMenu)
+    expect(sidePanel).toHaveAttribute('inert')
+    expect(sidePanel).toHaveAttribute('aria-hidden', 'true')
+    await user.click(openMenu)
     expect(shell).toHaveAttribute('data-menu-open', 'true')
     expect(openMenu).toHaveAttribute('aria-expanded', 'true')
+    expect(sidePanel).not.toHaveAttribute('inert')
+    expect(sidePanel).not.toHaveAttribute('aria-hidden')
+    expect(sidePanel).toHaveAttribute('role', 'dialog')
+    expect(sidePanel).toHaveAttribute('aria-modal', 'true')
+    expect(main).toHaveAttribute('inert')
+    expect(bottomNavigation).toHaveAttribute('inert')
+    expect(screen.getByRole('button', { name: 'Close menu' }))
+      .toHaveFocus()
 
-    fireEvent.keyDown(window, { key: 'Escape' })
+    await user.tab()
+    expect(screen.getByRole('link', { name: 'Story' })).toHaveFocus()
+    await user.tab()
+    expect(screen.getByRole('button', { name: 'Close menu' }))
+      .toHaveFocus()
+    await user.tab({ shift: true })
+    expect(screen.getByRole('link', { name: 'Story' })).toHaveFocus()
+
+    await user.keyboard('{Escape}')
     expect(shell).toHaveAttribute('data-menu-open', 'false')
+    expect(openMenu).toHaveFocus()
+    expect(main).not.toHaveAttribute('inert')
+    expect(bottomNavigation).not.toHaveAttribute('inert')
   })
 
   it('preserves canonical resource order and accessible text', () => {
@@ -153,12 +194,13 @@ describe('DysonGameplayShell', () => {
 
 describe('Dyson gameplay responsive CSS contract', () => {
   it('keeps compact bottom navigation and switches to the permanent side menu', () => {
-    expect(shellCss).toContain('@media (min-width: 900px)')
+    expect(shellCss).toContain('@media (min-width: 1024px)')
+    expect(shellCss).not.toContain('@media (min-width: 900px)')
     expect(shellCss).toMatch(
-      /@media \(min-width: 900px\)[\s\S]*\.dyson-shell__side-panel\s*\{[\s\S]*position:\s*relative;/,
+      /@media \(min-width: 1024px\)[\s\S]*\.dyson-shell__side-panel\s*\{[\s\S]*position:\s*relative;/,
     )
     expect(shellCss).toMatch(
-      /@media \(min-width: 900px\)[\s\S]*\.dyson-shell__bottom-navigation\s*\{\s*display:\s*none !important;/,
+      /@media \(min-width: 1024px\)[\s\S]*\.dyson-shell__bottom-navigation\s*\{\s*display:\s*none !important;/,
     )
     expect(shellCss).toContain('env(safe-area-inset-bottom)')
     expect(shellCss).toContain('overflow: hidden')
@@ -183,6 +225,7 @@ describe('Dyson gameplay responsive CSS contract', () => {
       /@media \(prefers-reduced-motion: reduce\)[\s\S]*--motion-duration-fast:\s*0ms;/,
     )
     expect(shellCss).toContain('@media (forced-colors: active)')
+    expect(rootCss).not.toMatch(/\bmin-width:\s*320px/)
   })
 })
 
@@ -205,6 +248,12 @@ function props(): DysonGameplayShellProps {
           label: 'Research',
           icon: 'R',
           disabled: true,
+        },
+        {
+          id: 'story',
+          label: 'Story',
+          icon: 'S',
+          href: '#story',
         },
         {
           id: 'offline',

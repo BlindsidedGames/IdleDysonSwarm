@@ -8,6 +8,7 @@ import axe from 'axe-core'
 import {
   act,
   cleanup,
+  fireEvent,
   render,
   screen,
   within,
@@ -320,7 +321,7 @@ describe('BasicFacilityRegion', () => {
 
     expect(screen.getByRole('progressbar', {
       name: 'Assembly Lines production',
-    })).toHaveAttribute('aria-valuenow', '63')
+    })).toHaveAttribute('value', '0.625')
     expect(screen.getAllByRole('progressbar')).toHaveLength(1)
     expect(
       document.querySelectorAll(
@@ -356,10 +357,10 @@ describe('BasicFacilityRegion', () => {
 
     expect(screen.getByRole('progressbar', {
       name: 'Assembly Lines production',
-    })).toHaveAttribute('aria-valuenow', '20')
+    })).toHaveAttribute('value', '0.2')
   })
 
-  it('opens one shared modal dialog and restores focus on close', async () => {
+  it('traps modal focus, isolates background, and restores focus on every close path', async () => {
     const user = userEvent.setup()
     const assemblyFact = facilityFact(
       'assembly_lines',
@@ -367,7 +368,7 @@ describe('BasicFacilityRegion', () => {
       1,
       0.1,
     )
-    renderRegion({
+    const { container } = renderRegion({
       visibleBasicFacilityIds: ['assembly_lines'],
       facilityFacts: {
         ...facilityFacts,
@@ -437,7 +438,7 @@ describe('BasicFacilityRegion', () => {
     expect(within(dialog).getByText('Base')).toBeInTheDocument()
     expect(within(dialog).getByText('Assembly Lines Count'))
       .toBeInTheDocument()
-    expect(within(dialog).getByLabelText(
+    expect(within(dialog).getByText(
       'Automatic 1.00, manually purchased 1.00',
     ))
       .toBeInTheDocument()
@@ -484,10 +485,38 @@ describe('BasicFacilityRegion', () => {
     expect(screen.getAllByRole('dialog')).toHaveLength(1)
     expect(screen.getByRole('button', { name: 'Close' }))
       .toHaveFocus()
+    expect(container).toHaveAttribute('inert')
+
+    await user.tab()
+    expect(screen.getByRole('button', { name: 'Close' }))
+      .toHaveFocus()
+    await user.tab({ shift: true })
+    expect(screen.getByRole('button', { name: 'Close' }))
+      .toHaveFocus()
+
+    expect((
+      await axe.run(dialog, {
+        rules: {
+          'color-contrast': { enabled: false },
+          region: { enabled: false },
+        },
+      })
+    ).violations).toEqual([])
 
     await user.keyboard('{Escape}')
     expect(screen.queryByRole('dialog')).not.toBeInTheDocument()
     expect(detailsButton).toHaveFocus()
+    expect(container).not.toHaveAttribute('inert')
+
+    await user.click(detailsButton)
+    const backdrop = document.querySelector(
+      '.facility-details-dialog__backdrop',
+    )
+    expect(backdrop).not.toBeNull()
+    fireEvent.pointerDown(backdrop!)
+    expect(screen.queryByRole('dialog')).not.toBeInTheDocument()
+    expect(detailsButton).toHaveFocus()
+    expect(container).not.toHaveAttribute('inert')
   })
 
   it('keeps every backend-hidden facility absent from the accessibility tree', () => {
@@ -818,6 +847,12 @@ describe('BasicFacilityRegion', () => {
     )
     expect(facilitiesCss).toMatch(
       /@media \(min-width: 1600px\)[\s\S]*grid-template-columns:\s*repeat\(2,\s*minmax\(0,\s*1fr\)\);/,
+    )
+    expect(facilitiesCss).toMatch(
+      /@media \(max-width: 359px\)[\s\S]*\.basic-facility-card\s*\{[\s\S]*grid-template-columns:\s*minmax\(0,\s*1fr\);/,
+    )
+    expect(facilitiesCss).toMatch(
+      /\.basic-facility-card__details-button:focus-visible,[\s\S]*\.facility-details-dialog__close:focus-visible\s*\{[\s\S]*outline:\s*3px solid var\(--color-focus\);/,
     )
   })
 

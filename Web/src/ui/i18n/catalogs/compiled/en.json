@@ -1587,6 +1587,18 @@
       "value": "Import this save and replace the current browser profile? A recovery copy is retained before replacement."
     }
   ],
+  "startup-shell.import.text-help": [
+    {
+      "type": 0,
+      "value": "Paste an exported Idle Dyson Swarm save string. It is checked before your current browser progress can be replaced."
+    }
+  ],
+  "startup-shell.import.text-label": [
+    {
+      "type": 0,
+      "value": "Save text"
+    }
+  ],
   "startup-shell.operation.export-failed": [
     {
       "type": 0,

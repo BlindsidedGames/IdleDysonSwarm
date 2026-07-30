@@ -57,7 +57,7 @@ const compiledCatalogs = {
 } as const
 
 describe('ReadyDysonSlice', () => {
-  test('renders fresh authoritative visibility without named hidden cards', () => {
+  test('renders fresh authoritative visibility without named hidden cards', async () => {
     renderSlice(snapshot())
 
     expect(
@@ -69,7 +69,7 @@ describe('ReadyDysonSlice', () => {
       }),
     ).not.toBeInTheDocument()
     expect(screen.queryByText('AI Managers')).not.toBeInTheDocument()
-    expect(screen.queryByText('????')).not.toBeInTheDocument()
+    expect(await screen.findByText('????')).toBeInTheDocument()
     expect(
       screen.getByText('Hold anywhere to repeat...'),
     ).toBeInTheDocument()
@@ -79,7 +79,7 @@ describe('ReadyDysonSlice', () => {
     expect(screen.getByText(/^Tip: The tinker panel/)).toBeInTheDocument()
     expect(screen.queryByText(/auto tinker/i)).not.toBeInTheDocument()
     expect(screen.queryByText(/owned/i)).not.toBeInTheDocument()
-    expect(screen.getAllByRole('navigation')).toHaveLength(2)
+    expect(screen.getAllByRole('navigation')).toHaveLength(1)
     expect(
       screen.getByRole('slider', { name: 'Bot Distribution' }),
     ).toBeInTheDocument()
@@ -562,6 +562,48 @@ function snapshot(options: SnapshotOptions = {}): ReadySnapshot {
     cost: 10,
     status: 'purchased',
   }))
+  const productionRates = {
+    assembly_lines: 33,
+    ai_managers: 44,
+    servers: 55,
+    data_centers: 66,
+    planets: 77,
+  } as const
+  const outputFacilities = {
+    assembly_lines: 'bots',
+    ai_managers: 'assembly_lines',
+    servers: 'ai_managers',
+    data_centers: 'servers',
+    planets: 'data_centers',
+  } as const
+  const facilityFacts = Object.fromEntries(
+    Object.keys(productionRates).map((facilityId) => {
+      const typedFacilityId =
+        facilityId as keyof typeof productionRates
+      const [automatic, manual] = facilities[typedFacilityId]
+      const perSecond = productionRates[typedFacilityId]
+      return [
+        typedFacilityId,
+        {
+          facilityId: typedFacilityId,
+          ownership: {
+            automatic,
+            manual,
+            total: automatic + manual,
+          },
+          production: {
+            outputFacilityId: outputFacilities[typedFacilityId],
+            perSecond,
+            secondsPerUnit: 1 / perSecond,
+          },
+          productionProgress: {
+            visible: true,
+            normalized: 0.25,
+          },
+        },
+      ]
+    }),
+  )
 
   return {
     version: 1,
@@ -615,6 +657,7 @@ function snapshot(options: SnapshotOptions = {}): ReadySnapshot {
                 kind: 'create-bots',
                 target: 10,
               },
+              facilities: facilityFacts,
             },
             rates: {
               money: 11,

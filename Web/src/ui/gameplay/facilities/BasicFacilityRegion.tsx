@@ -19,6 +19,7 @@ import {
   Button,
   FacilityCard,
 } from '../../components'
+import { usePrefersReducedMotion } from '../../accessibility/useMediaQuery'
 import {
   formatGameNumber,
   formatNumber,
@@ -569,46 +570,15 @@ function FacilityProductionProgress({
       data-visible={progress?.visible === true ? 'true' : 'false'}
     >
       {progress?.visible === true && (
-        <div
-          className="basic-facility-card__progress-fill"
-          role="progressbar"
+        <progress
+          className="basic-facility-card__progress"
           aria-label={accessibleName}
-          aria-valuemin={0}
-          aria-valuemax={100}
-          aria-valuenow={Math.round(visualNormalized * 100)}
-          style={{ inlineSize: `${visualNormalized * 100}%` }}
+          max={1}
+          value={visualNormalized}
         />
       )}
     </div>
   )
-}
-
-function usePrefersReducedMotion(): boolean {
-  const [preferred, setPreferred] = useState(() =>
-    typeof window === 'undefined' ||
-    typeof window.matchMedia !== 'function'
-      ? false
-      : window.matchMedia('(prefers-reduced-motion: reduce)')
-          .matches,
-  )
-
-  useEffect(() => {
-    if (
-      typeof window === 'undefined' ||
-      typeof window.matchMedia !== 'function'
-    ) {
-      return
-    }
-    const query = window.matchMedia(
-      '(prefers-reduced-motion: reduce)',
-    )
-    const update = () => setPreferred(query.matches)
-    update()
-    query.addEventListener('change', update)
-    return () => query.removeEventListener('change', update)
-  }, [])
-
-  return preferred
 }
 
 function FacilityDetailsContent({
@@ -669,20 +639,22 @@ function FacilityDetailsContent({
                           {' '}
                           <span
                             className="facility-details-dialog__tuple"
-                            aria-label={intl.formatMessage(
-                              messages.automaticManualTupleAccessible,
-                              {
-                                automatic: formatGameNumber(
-                                  locale,
-                                  tuple[0],
-                                ),
-                                manual: formatGameNumber(
-                                  locale,
-                                  tuple[1],
-                                ),
-                              },
-                            )}
                           >
+                            <span className="ui-visually-hidden">
+                              {intl.formatMessage(
+                                messages.automaticManualTupleAccessible,
+                                {
+                                  automatic: formatGameNumber(
+                                    locale,
+                                    tuple[0],
+                                  ),
+                                  manual: formatGameNumber(
+                                    locale,
+                                    tuple[1],
+                                  ),
+                                },
+                              )}
+                            </span>
                             <span aria-hidden="true">
                               ({formatGameNumber(locale, tuple[0])},{' '}
                               {formatGameNumber(locale, tuple[1])})

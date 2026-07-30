@@ -29,6 +29,7 @@ beforeEach(() => {
 
 afterEach(() => {
   cleanup()
+  vi.unstubAllGlobals()
   vi.useRealTimers()
 })
 
@@ -65,7 +66,7 @@ describe('TinkerSurface transient interaction', () => {
 
     view.rerender(tinkerElement(runningFacts({ repeat: true }), dispatch))
     expect(button).not.toBeDisabled()
-    expect(button).toHaveAttribute('aria-disabled', 'true')
+    expect(button).not.toHaveAttribute('aria-disabled')
     expect(button.closest('.tinker-surface')).toHaveAttribute(
       'data-held-visual',
       'true',
@@ -82,7 +83,7 @@ describe('TinkerSurface transient interaction', () => {
     })
     expect(capture.release).toHaveBeenCalledWith(17)
     expect(button).not.toBeDisabled()
-    expect(button).toHaveAttribute('aria-disabled', 'true')
+    expect(button).not.toHaveAttribute('aria-disabled')
     expect(button).toHaveAttribute('data-gesture-active', 'false')
     expect(button.closest('.tinker-surface')).toHaveAttribute(
       'data-held-visual',
@@ -476,6 +477,37 @@ describe('TinkerSurface transient interaction', () => {
 })
 
 describe('TinkerSurface presentation and accessibility', () => {
+  test('holds canonical progress without animation when reduced motion is requested', () => {
+    const requestFrame = vi.fn(() => 1)
+    vi.stubGlobal('requestAnimationFrame', requestFrame)
+    vi.stubGlobal('cancelAnimationFrame', vi.fn())
+    vi.stubGlobal('matchMedia', vi.fn(() => ({
+      matches: true,
+      media: '(prefers-reduced-motion: reduce)',
+      onchange: null,
+      addEventListener: vi.fn(),
+      removeEventListener: vi.fn(),
+      addListener: vi.fn(),
+      removeListener: vi.fn(),
+      dispatchEvent: vi.fn(),
+    })))
+
+    renderTinker(
+      createDispatch(),
+      runningFacts({
+        elapsedSeconds: 0.125,
+        cooldownSeconds: 0.5,
+        timeToCompletionSeconds: 0.375,
+      }),
+    )
+
+    expect(
+      screen.getByRole('progressbar', { name: 'Tinker progress' }),
+    ).toHaveAttribute('value', '0.125')
+    expect(screen.getByText('0.37s')).toBeInTheDocument()
+    expect(requestFrame).not.toHaveBeenCalled()
+  })
+
   test('renders Unity copy, hold hint, time and progress with no Repeat control', () => {
     const dispatch = createDispatch()
     renderTinker(

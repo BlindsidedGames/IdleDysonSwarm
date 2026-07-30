@@ -1,9 +1,9 @@
 # Web UI delivery waves
 
-Status: implementation in progress. The user opened implementation on
-2026-07-29, and Waves 1 through 3 passed their acceptance gates on the same
-date. Wave 4 is the current delivery boundary. Later-wave acceptance remains
-governed by the gates and recovery checkpoints below.
+Status: Bots/Dyson design baseline accepted. The user opened implementation on
+2026-07-29; Waves 1 through 3 passed their gates during the initial delivery,
+and Wave 4 passed its narrowed Bots-baseline gate on 2026-07-30. Later gameplay,
+host and release work remains governed by the explicit deferrals below.
 
 Scope decision (2026-07-30): Wave 4 now checkpoints a high-quality Bots/Dyson
 design baseline. It does not attempt to complete Unity migration UI, every
@@ -331,6 +331,35 @@ Gate:
   exceptions or implied passes.
 - The integration branch is clean and every suite applicable to this narrowed
   baseline passes. A deferred real-host matrix is not relabeled as applicable.
+
+Accepted checkpoint evidence (2026-07-30):
+
+- Canonical Tinker, distribution, buy-mode and facility purchase commands, plus
+  active-time progression, remain routed through the runtime/lifecycle
+  coordinator. The UI consumes published snapshots, previews and results.
+- Production-composition persistence evidence fires and coalesces the real
+  periodic checkpoint scheduler, blocks a second writer, releases ownership
+  and reconstructs the accepted gameplay state through a fresh IndexedDB
+  wrapper and application composition.
+- Recovery uses a labeled bounded manual save-text field with explicit
+  overwrite confirmation. File-picker and drag/drop UI are absent.
+- The coordinator integration set passed 116 focused tests across 11 files
+  after correcting stale full-slice fixtures found during integration review.
+  TypeScript, lint, localization, CSP, production packaging and diff checks
+  passed.
+- Chromium in-app-browser review covered 320x568, 390x844, 844x390, 768x1024,
+  1023x768, 1024x768 and 1440x900 CSS viewports with zero document-level
+  horizontal overflow. The compact drawer focus/inert/Escape restoration and
+  the 1024-pixel persistent-rail boundary were exercised.
+- The production report measured 208.41 KiB gzip boot JavaScript as a
+  provisional warning, 213.35 KiB after the fresh Bots facility chunk,
+  7.45 KiB gzip CSS, 3.86 KiB gzip English catalog and 230.21 KiB transferred
+  source-locale fonts. Enforced CSS, locale, font, fixture-exclusion and
+  commit-probe checks passed.
+- Detailed accessibility/responsive results and remaining certification limits
+  are recorded in
+  [`wave-4-accessibility-responsive-evidence.md`](wave-4-accessibility-responsive-evidence.md).
+- The accepted commit is identified by the local `web-ui-wave-4` recovery tag.
 
 Explicit deferrals after the Wave 4 checkpoint:
 

@@ -737,12 +737,17 @@ release.
 
 Run `npm run report:initial-request-bundle` from `Web/`. It creates a fresh
 production build, follows its Vite manifest from the `index.html` application
-entry (which loads `src/main.tsx`), adds the
-selected English shared-locale request (which startup awaits before React first
-renders), and writes deterministic text and JSON reports under
-`reports/initial-request-bundle/`. It measures each actual requested JS/CSS
-asset with gzip, rather than adding guessed or manually named chunks. The
-command exits nonzero when a budget is exceeded.
+entry (which loads `src/main.tsx`), and adds the selected English shared-locale
+request which startup awaits before React first renders. That boot graph is
+reported separately from the lazy facility chunk requested to complete the
+approved fresh-save Bots surface. The report also measures the aggregate raw
+transfer size of the source-locale fonts and writes deterministic text and JSON
+under `reports/initial-request-bundle/`.
+
+JavaScript and CSS assets are measured with gzip rather than guessed or manually
+named chunks. The provisional 200 KiB boot-JavaScript target produces a warning
+without failing the command during the Bots design-baseline checkpoint. Enforced
+CSS, shared-locale, or source-font overages exit nonzero.
 
 ## Testing standard
 

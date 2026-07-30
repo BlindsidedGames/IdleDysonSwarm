@@ -145,12 +145,26 @@
   visibility: hidden;
 }
 
-.basic-facility-card__progress-fill {
+.basic-facility-card__progress {
+  display: block;
+  appearance: none;
+  inline-size: 100%;
   block-size: 100%;
-  min-inline-size: 0;
+  border: 0;
   border-radius: inherit;
+  background: #171218;
+}
+
+.basic-facility-card__progress::-webkit-progress-bar {
+  background: #171218;
+}
+
+.basic-facility-card__progress::-webkit-progress-value {
   background: #d68ee8;
-  will-change: inline-size;
+}
+
+.basic-facility-card__progress::-moz-progress-bar {
+  background: #d68ee8;
 }
 
 .basic-facility-card__feedback,
@@ -189,6 +203,12 @@
   font-weight: var(--font-weight-semibold);
   touch-action: manipulation;
   user-select: none;
+}
+
+.basic-facility-card__details-button:focus-visible,
+.facility-details-dialog__close:focus-visible {
+  outline: 3px solid var(--color-focus);
+  outline-offset: 2px;
 }
 
 .facility-details-dialog__backdrop {
@@ -235,6 +255,8 @@
   font: inherit;
   font-size: 1.25rem;
   font-weight: var(--font-weight-bold);
+  touch-action: manipulation;
+  user-select: none;
 }
 
 .facility-details-dialog__content {
@@ -406,6 +428,24 @@
   }
 }
 
+@media (max-width: 359px) {
+  .basic-facility-card {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .basic-facility-card .ui-facility-card__header,
+  .basic-facility-card .ui-facility-card__production,
+  .basic-facility-card .ui-facility-card__description,
+  .basic-facility-card .ui-facility-card__progress,
+  .basic-facility-card .ui-facility-card__action {
+    grid-column: 1;
+  }
+
+  .basic-facility-card .ui-facility-card__action {
+    grid-row: 5;
+  }
+}
+
 @media (min-width: 1600px) {
   .basic-facility-region__grid {
     grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -415,15 +455,20 @@
 @media (forced-colors: active) {
   .basic-facility-region__teaser-surface,
   .basic-facility-card__progress-track,
-  .basic-facility-card__progress-fill,
+  .basic-facility-card__progress,
+  .basic-facility-card__details-button,
   .facility-details-dialog,
   .facility-details-dialog__close {
     forced-color-adjust: auto;
   }
-}
 
-@media (prefers-reduced-motion: reduce) {
-  .basic-facility-card__progress-fill {
-    will-change: auto;
+  .basic-facility-card__progress {
+    appearance: auto;
+    accent-color: Highlight;
+  }
+
+  .basic-facility-card__details-button:focus-visible,
+  .facility-details-dialog__close:focus-visible {
+    outline-color: Highlight;
   }
 }

@@ -2907,6 +2907,34 @@
       "value": "‬"
     }
   ],
+  "startup-shell.import.text-help": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "Ԁɐsʇǝ ɐu ǝxdoɹʇǝp Ipʅǝ ᗡʎsou Sʍɐɹɯ sɐʌǝ sʇɹıuƃ. Iʇ ıs ɔɥǝɔʞǝp qǝɟoɹǝ ʎonɹ ɔnɹɹǝuʇ qɹoʍsǝɹ dɹoƃɹǝss ɔɐu qǝ ɹǝdʅɐɔǝp."
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "startup-shell.import.text-label": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "Sɐʌǝ ʇǝxʇ"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
   "startup-shell.operation.export-failed": [
     {
       "type": 0,

@@ -1,4 +1,10 @@
-import { useEffect, useId, useState } from 'react'
+import {
+  useEffect,
+  useId,
+  useRef,
+  useState,
+} from 'react'
+import { useMediaQuery } from '../../accessibility/useMediaQuery'
 import type {
   DysonGameplayShellProps,
   DysonShellRegion,
@@ -31,15 +37,61 @@ export function DysonGameplayShell({
   const mainId = `dyson-gameplay-main-${useId().replaceAll(':', '')}`
   const menuId = `dyson-menu-${useId().replaceAll(':', '')}`
   const [menuOpen, setMenuOpen] = useState(false)
+  const openMenuRef = useRef<HTMLButtonElement>(null)
+  const closeMenuRef = useRef<HTMLButtonElement>(null)
+  const sidePanelRef = useRef<HTMLElement>(null)
+  const wideLayout = useMediaQuery('(min-width: 1024px)')
+  const compactMenuOpen = menuOpen && !wideLayout
+  const drawerUnavailable = !wideLayout && !menuOpen
 
   useEffect(() => {
-    if (!menuOpen) return undefined
-    const closeOnEscape = (event: KeyboardEvent) => {
-      if (event.key === 'Escape') setMenuOpen(false)
+    if (wideLayout && menuOpen) setMenuOpen(false)
+  }, [menuOpen, wideLayout])
+
+  useEffect(() => {
+    if (!compactMenuOpen) return undefined
+    const returnFocus = openMenuRef.current
+    closeMenuRef.current?.focus()
+    const handleMenuKeyDown = (event: KeyboardEvent) => {
+      if (event.key === 'Escape') {
+        event.preventDefault()
+        setMenuOpen(false)
+        return
+      }
+      if (event.key !== 'Tab') return
+      const focusable = sidePanelRef.current?.querySelectorAll<HTMLElement>(
+        'button:not(:disabled), [href], input:not(:disabled), select:not(:disabled), textarea:not(:disabled), [tabindex]:not([tabindex="-1"])',
+      )
+      if (!focusable || focusable.length === 0) return
+      const first = focusable[0]
+      const last = focusable[focusable.length - 1]
+      if (
+        event.shiftKey &&
+        (document.activeElement === first ||
+          !sidePanelRef.current?.contains(document.activeElement))
+      ) {
+        event.preventDefault()
+        last.focus()
+      } else if (
+        !event.shiftKey &&
+        (document.activeElement === last ||
+          !sidePanelRef.current?.contains(document.activeElement))
+      ) {
+        event.preventDefault()
+        first.focus()
+      }
     }
-    window.addEventListener('keydown', closeOnEscape)
-    return () => window.removeEventListener('keydown', closeOnEscape)
-  }, [menuOpen])
+    document.addEventListener('keydown', handleMenuKeyDown)
+    return () => {
+      document.removeEventListener('keydown', handleMenuKeyDown)
+      if (
+        returnFocus?.isConnected &&
+        returnFocus.closest('[inert]') === null
+      ) {
+        returnFocus.focus()
+      }
+    }
+  }, [compactMenuOpen])
 
   return (
     <div
@@ -47,30 +99,41 @@ export function DysonGameplayShell({
       dir={direction}
       data-menu-open={menuOpen}
     >
-      <a className="dyson-shell__skip-link" href={`#${mainId}`}>
+      <a
+        className="dyson-shell__skip-link"
+        href={`#${mainId}`}
+        aria-hidden={compactMenuOpen || undefined}
+        tabIndex={compactMenuOpen ? -1 : undefined}
+      >
         {skipLinkLabel}
       </a>
 
       <button
         type="button"
         className="dyson-shell__menu-backdrop"
-        aria-label="Close menu"
-        tabIndex={menuOpen ? 0 : -1}
+        aria-hidden="true"
+        tabIndex={-1}
         onClick={() => setMenuOpen(false)}
       />
 
       <aside
+        ref={sidePanelRef}
         id={menuId}
         className="dyson-shell__side-panel"
         aria-label="Game menu"
+        aria-hidden={drawerUnavailable || undefined}
+        aria-modal={compactMenuOpen || undefined}
+        inert={drawerUnavailable || undefined}
+        role={wideLayout ? undefined : 'dialog'}
       >
         <header className="dyson-shell__side-heading">
           <span>Menu</span>
           <button
+            ref={closeMenuRef}
             type="button"
             className="dyson-shell__menu-close"
             aria-label="Close menu"
-            tabIndex={menuOpen ? 0 : -1}
+            tabIndex={compactMenuOpen ? 0 : -1}
             onClick={() => setMenuOpen(false)}
           >
             <span aria-hidden="true">&times;</span>
@@ -88,7 +151,12 @@ export function DysonGameplayShell({
         )}
       </aside>
 
-      <main id={mainId} className="dyson-shell__main">
+      <main
+        id={mainId}
+        className="dyson-shell__main"
+        aria-hidden={compactMenuOpen || undefined}
+        inert={compactMenuOpen || undefined}
+      >
         <div className="dyson-shell__content">
           <h1 className="dyson-shell__route-heading">{heading}</h1>
 
@@ -146,8 +214,13 @@ export function DysonGameplayShell({
         </div>
       </main>
 
-      <div className="dyson-shell__bottom-navigation">
+      <div
+        className="dyson-shell__bottom-navigation"
+        aria-hidden={(compactMenuOpen || wideLayout) || undefined}
+        inert={(compactMenuOpen || wideLayout) || undefined}
+      >
         <button
+          ref={openMenuRef}
           type="button"
           className="dyson-shell__bottom-menu"
           aria-label="Open menu"

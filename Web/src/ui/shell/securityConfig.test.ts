@@ -93,6 +93,7 @@ describe('browser security policy', () => {
     )
     try {
       await build({
+        configLoader: 'runner',
         configFile: resolve(
           import.meta.dirname,
           '../../../vite.config.ts',

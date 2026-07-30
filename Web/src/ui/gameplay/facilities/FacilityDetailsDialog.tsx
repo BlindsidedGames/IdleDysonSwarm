@@ -22,6 +22,7 @@ export function FacilityDetailsDialog({
   const titleId = useId()
   const closeRef = useRef<HTMLButtonElement>(null)
   const dialogRef = useRef<HTMLElement>(null)
+  const backdropRef = useRef<HTMLDivElement>(null)
   const returnFocusRef = useRef<HTMLElement | null>(null)
   const onCloseRef = useRef(onClose)
   onCloseRef.current = onClose
@@ -31,6 +32,18 @@ export function FacilityDetailsDialog({
       document.activeElement instanceof HTMLElement
         ? document.activeElement
         : null
+    const backgroundSiblings = Array.from(document.body.children)
+      .filter((element): element is HTMLElement =>
+        element instanceof HTMLElement &&
+        element !== backdropRef.current,
+      )
+      .map((element) => ({
+        element,
+        hadInertAttribute: element.hasAttribute('inert'),
+      }))
+    for (const { element } of backgroundSiblings) {
+      element.setAttribute('inert', '')
+    }
     closeRef.current?.focus()
 
     const handleKeyDown = (event: KeyboardEvent) => {
@@ -60,14 +73,18 @@ export function FacilityDetailsDialog({
     document.addEventListener('keydown', handleKeyDown)
     return () => {
       document.removeEventListener('keydown', handleKeyDown)
+      for (const { element, hadInertAttribute } of backgroundSiblings) {
+        if (!hadInertAttribute) element.removeAttribute('inert')
+      }
       returnFocusRef.current?.focus()
     }
   }, [])
 
   return createPortal(
     <div
+      ref={backdropRef}
       className="facility-details-dialog__backdrop"
-      onMouseDown={(event) => {
+      onPointerDown={(event) => {
         if (event.target === event.currentTarget) onClose()
       }}
     >

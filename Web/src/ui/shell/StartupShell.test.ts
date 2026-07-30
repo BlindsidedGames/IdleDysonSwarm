@@ -65,12 +65,15 @@ describe('StartupShell', () => {
     rerender(startupElement(
       { phase: 'recovery' },
       {
-        importSave: vi.fn(),
+        importSaveText: vi.fn(),
         exportRecovery: vi.fn(),
       },
     ))
     expect(
       screen.getByRole('button', { name: 'Import a save' }),
+    ).toBeDisabled()
+    expect(
+      screen.getByRole('textbox', { name: 'Save text' }),
     ).toBeInTheDocument()
     expect(
       screen.getByRole('button', {
@@ -127,7 +130,7 @@ describe('StartupShell', () => {
       },
       {
         disabled: true,
-        importSave: vi.fn(),
+        importSaveText: vi.fn(),
       },
     ))
     expect(
@@ -176,7 +179,7 @@ describe('StartupShell', () => {
     const { container } = renderStartupShell(
       { phase: 'recovery' },
       {
-        importSave: vi.fn(),
+        importSaveText: vi.fn(),
         exportRecovery: vi.fn(),
       },
     )

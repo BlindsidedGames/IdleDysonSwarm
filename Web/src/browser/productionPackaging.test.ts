@@ -22,6 +22,7 @@ describe('production browser package', () => {
     )
     try {
       await build({
+        configLoader: 'runner',
         configFile: resolve(
           import.meta.dirname,
           '../../vite.config.ts',
@@ -37,9 +38,13 @@ describe('production browser package', () => {
       const outputRelativePaths = outputFiles.map((file) =>
         relative(outputDirectory, file).replaceAll('\\', '/'),
       )
-      const fixtureNames = readdirSync(
+      const developerFixtureRoots = [
         resolve(import.meta.dirname, '../../test/fixtures'),
-      )
+        resolve(import.meta.dirname, '../../test/parity'),
+        resolve(import.meta.dirname, '../parity'),
+      ]
+      const developerFixtureFiles =
+        developerFixtureRoots.flatMap(listFiles)
       const outputText = outputFiles
         .filter((file) =>
           /\.(?:css|html|js|json|txt|webmanifest)$/.test(file),
@@ -50,7 +55,7 @@ describe('production browser package', () => {
       expect(outputRelativePaths).not.toEqual([])
       expect(
         outputRelativePaths.some((file) =>
-          file.split('/').includes('fixtures'),
+          /(?:^|\/)(?:fixtures?|parity)(?:\/|$)/i.test(file),
         ),
       ).toBe(false)
       expect(
@@ -59,19 +64,24 @@ describe('production browser package', () => {
       expect(
         outputRelativePaths.some((file) => /\.test\.[cm]?[jt]sx?$/.test(file)),
       ).toBe(false)
-      for (const fixtureName of fixtureNames) {
+      for (const fixtureFile of developerFixtureFiles) {
         expect(
-          outputFiles.some((file) => basename(file) === fixtureName),
-        ).toBe(false)
-        const fixturePrefix = readFileSync(
-          resolve(
-            import.meta.dirname,
-            '../../test/fixtures',
-            fixtureName,
+          outputFiles.some(
+            (file) => basename(file) === basename(fixtureFile),
           ),
-          'utf8',
-        ).slice(0, 512)
+        ).toBe(false)
+        const fixturePrefix = readFileSync(fixtureFile, 'utf8').slice(
+          0,
+          512,
+        )
         expect(outputText).not.toContain(fixturePrefix)
+      }
+      for (const marker of [
+        '"sourcePath": "test/fixtures/',
+        "'unity-golden-master' | 'save-characterization'",
+        'The executor is intentionally injected',
+      ]) {
+        expect(outputText).not.toContain(marker)
       }
 
       expect(

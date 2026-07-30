@@ -182,6 +182,19 @@ export const startupShellMessages = defineMessages({
     description:
       'Button label that requests the existing safe save-import flow.',
   },
+  importTextLabel: {
+    id: 'startup-shell.import.text-label',
+    defaultMessage: 'Save text',
+    description:
+      'Visible label for the optional manual save-text recovery field.',
+  },
+  importTextHelp: {
+    id: 'startup-shell.import.text-help',
+    defaultMessage:
+      'Paste an exported Idle Dyson Swarm save string. It is checked before your current browser progress can be replaced.',
+    description:
+      'Safety guidance for the optional manual save-text recovery field.',
+  },
   exportRecoveryAction: {
     id: 'startup-shell.action.export-recovery',
     defaultMessage: 'Export recovery data',

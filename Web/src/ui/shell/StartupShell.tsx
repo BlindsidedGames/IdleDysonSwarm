@@ -1,4 +1,4 @@
-import { useEffect, useRef } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import {
   FormattedMessage,
   type MessageDescriptor,
@@ -212,6 +212,9 @@ function StartupActions({
   phase,
   actions,
 }: StartupActionsProps) {
+  if (phase === 'recovery') {
+    return <RecoveryActions actions={actions} />
+  }
   const buttons = actionButtons(phase, actions)
   if (buttons.length === 0) return null
   return (
@@ -236,6 +239,93 @@ interface ActionButton {
   readonly variant: 'primary' | 'secondary'
   readonly onClick: () => void
   readonly disabled: boolean
+}
+
+const MAXIMUM_MANUAL_SAVE_TEXT_CHARACTERS = 2 * 1024 * 1024
+
+function RecoveryActions({
+  actions,
+}: {
+  readonly actions: StartupShellActions
+}) {
+  const [saveText, setSaveText] = useState('')
+  const importDisabled =
+    (actions.disabled ?? false) || saveText.trim().length === 0
+  if (
+    actions.importSaveText === undefined &&
+    actions.exportRecovery === undefined
+  ) {
+    return null
+  }
+
+  return (
+    <form
+      className="startup-shell__recovery-form"
+      onSubmit={(event) => {
+        event.preventDefault()
+        if (importDisabled) return
+        actions.importSaveText?.(saveText)
+      }}
+    >
+      {actions.importSaveText && (
+        <>
+          <label
+            className="startup-shell__recovery-label"
+            htmlFor="startup-save-text"
+          >
+            <FormattedMessage
+              {...startupShellMessages.importTextLabel}
+            />
+          </label>
+          <textarea
+            id="startup-save-text"
+            className="startup-shell__recovery-input"
+            value={saveText}
+            maxLength={MAXIMUM_MANUAL_SAVE_TEXT_CHARACTERS}
+            rows={6}
+            spellCheck={false}
+            autoCapitalize="off"
+            autoCorrect="off"
+            disabled={actions.disabled}
+            aria-describedby="startup-save-text-help"
+            onChange={(event) => setSaveText(event.currentTarget.value)}
+          />
+          <p
+            id="startup-save-text-help"
+            className="startup-shell__recovery-help"
+          >
+            <FormattedMessage
+              {...startupShellMessages.importTextHelp}
+            />
+          </p>
+        </>
+      )}
+      <div className="startup-shell__actions">
+        {actions.importSaveText && (
+          <Button
+            type="submit"
+            variant="primary"
+            disabled={importDisabled}
+          >
+            <FormattedMessage
+              {...startupShellMessages.importAction}
+            />
+          </Button>
+        )}
+        {actions.exportRecovery && (
+          <Button
+            variant="secondary"
+            onClick={actions.exportRecovery}
+            disabled={actions.disabled}
+          >
+            <FormattedMessage
+              {...startupShellMessages.exportRecoveryAction}
+            />
+          </Button>
+        )}
+      </div>
+    </form>
+  )
 }
 
 function actionButtons(
@@ -282,31 +372,7 @@ function actionButtons(
           ]
         : []
     case 'recovery':
-      return [
-        ...(actions.importSave
-          ? [
-              {
-                key: 'import',
-                message: startupShellMessages.importAction,
-                variant: 'primary' as const,
-                onClick: actions.importSave,
-                disabled: actions.disabled ?? false,
-              },
-            ]
-          : []),
-        ...(actions.exportRecovery
-          ? [
-              {
-                key: 'export-recovery',
-                message:
-                  startupShellMessages.exportRecoveryAction,
-                variant: 'secondary' as const,
-                onClick: actions.exportRecovery,
-                disabled: actions.disabled ?? false,
-              },
-            ]
-          : []),
-      ]
+      return []
     case 'starting':
     case 'ready-placeholder':
     case 'stopping':

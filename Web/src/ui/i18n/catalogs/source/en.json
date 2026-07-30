@@ -659,6 +659,14 @@
     "defaultMessage": "Import this save and replace the current browser profile? A recovery copy is retained before replacement.",
     "description": "Confirmation shown before the player explicitly approves replacing the isolated browser profile with an imported save."
   },
+  "startup-shell.import.text-help": {
+    "defaultMessage": "Paste an exported Idle Dyson Swarm save string. It is checked before your current browser progress can be replaced.",
+    "description": "Safety guidance for the optional manual save-text recovery field."
+  },
+  "startup-shell.import.text-label": {
+    "defaultMessage": "Save text",
+    "description": "Visible label for the optional manual save-text recovery field."
+  },
   "startup-shell.operation.export-failed": {
     "defaultMessage": "Recovery data could not be exported from this tab.",
     "description": "Assertive, privacy-safe failure status after recovery export fails."

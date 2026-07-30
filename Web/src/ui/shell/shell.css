@@ -56,6 +56,46 @@
   gap: var(--space-3);
 }
 
+.startup-shell__recovery-form {
+  display: grid;
+  gap: var(--space-3);
+}
+
+.startup-shell__recovery-label {
+  color: var(--color-text-primary);
+  font-weight: var(--font-weight-medium);
+}
+
+.startup-shell__recovery-input {
+  inline-size: 100%;
+  min-block-size: 8rem;
+  resize: vertical;
+  padding: var(--space-3);
+  border: var(--border-width) solid var(--color-border);
+  border-radius: var(--radius-sm);
+  background: var(--color-surface-raised);
+  color: var(--color-text-primary);
+  font-family: var(--font-family-numeric);
+  font-size: var(--font-size-sm);
+  line-height: var(--line-height-body);
+  overflow-wrap: anywhere;
+}
+
+.startup-shell__recovery-input:focus-visible {
+  outline: 3px solid var(--color-focus);
+  outline-offset: var(--space-1);
+}
+
+.startup-shell__recovery-input:disabled {
+  opacity: 0.7;
+}
+
+.startup-shell__recovery-help {
+  margin: 0;
+  color: var(--color-text-secondary);
+  line-height: var(--line-height-body);
+}
+
 .startup-shell__diagnostics {
   color: var(--color-text-secondary);
   line-height: var(--line-height-body);
@@ -122,7 +162,8 @@
 
 @media (forced-colors: active) {
   .startup-shell__state,
-  .startup-shell__diagnostics pre {
+  .startup-shell__diagnostics pre,
+  .startup-shell__recovery-input {
     forced-color-adjust: auto;
   }
 }

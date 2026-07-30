@@ -1,7 +1,7 @@
 # Wave 4 accessibility and responsive evidence
 
-Status: focused executable and rendered-browser evidence for the current Bots
-design baseline.
+Status: accepted focused executable and rendered-browser evidence for the Bots
+design baseline. Deferred release certification is listed separately below.
 
 This document records deterministic checks added in the Wave 4
 accessibility/responsive stream. It does not change gameplay, copy, visibility,
@@ -19,8 +19,9 @@ The evidence covers:
   Info, purchase settings and Bot Distribution;
 - full-slice axe scans for Fresh, Assembly-revealed, and later-progression
   states;
-- the 320 CSS-pixel compact, compact-landscape, 600 CSS-pixel medium, and
-  1024 CSS-pixel wide layout contracts;
+- the 320 CSS-pixel compact, 844x390 compact-landscape, 768 CSS-pixel
+  medium, 1023 CSS-pixel compact-boundary, 1024 CSS-pixel rail-boundary and
+  1440 CSS-pixel wide layout contracts;
 - a deterministic 200% zoom/reflow proxy based on the compact single-column,
   bounded-inline-size, wrapping, and vertical-scroll contracts; and
 - reduced-motion and forced-colors routing through the gameplay surfaces.
@@ -37,10 +38,10 @@ unlock, or reproduce a gameplay rule.
 | Mirrored RTL | `ReadyDysonSlice.test.tsx` renders the later-progression slice with the compiled `ar-XB` catalog, proves `dir="rtl"`, and preserves the canonical Cash/Total Bots/Science and Assembly Lines/AI Managers DOM order. |
 | Keyboard and focus order | Full-slice tests preserve the skip link, native resource detail controls, Tinker and purchase actions. Collapsed Info exposes the canonical goal; its button reveals the remaining facts. Purchase settings and Bot Distribution use native buttons, checkbox and range input with explicit accessible names and state. |
 | Full-slice semantics | Axe scans English Fresh, expanded-LTR Assembly, and mirrored-RTL later progression. Color contrast remains in semantic-token and real-browser checks because jsdom has no computed paint; the duplicate responsive navigation landmarks are checked by their mutually exclusive CSS contract. |
-| Responsive bands | `DysonGameplayShell.test.tsx` locks the compact default, compact-landscape override, 600px rail transition, 1024px wide stage, bounded inline sizing, and the sub-360px stacked facility action. |
+| Responsive bands | `DysonGameplayShell.test.tsx` locks the compact default, compact-landscape override, 1024px persistent-rail transition, bounded inline sizing, and the sub-360px stacked facility action. |
 | 200% zoom/reflow proxy | The compact CSS proxy requires one bounded content column, vertical scrolling, logical sizing, and no fixed pixel minimum inline width. A real browser is still required for rendered zoom acceptance. |
-| Reduced motion | The token contract reduces both motion durations to zero while Tinker transitions consume those duration tokens. |
-| Forced colors and focus | Shell navigation, Tinker, and facility surfaces retain forced-color adjustments; navigation and Tinker retain explicit three-pixel focus outlines. |
+| Reduced motion | Tinker and facility progress consume a shared live media-query hook. Under `prefers-reduced-motion: reduce`, they paint the authoritative progress value and schedule no presentation animation frame. |
+| Forced colors and focus | Shell navigation, Tinker, and facility surfaces retain forced-color adjustments and explicit focus-visible outlines. The compact drawer and facility dialog enter focus, trap Tab/Shift+Tab, close on Escape and restore focus. |
 
 ## Reproduction
 
@@ -52,36 +53,46 @@ npm run lint
 npm run build
 ```
 
-The committed evidence records the exact focused results below:
+The accepted evidence records the exact focused results below:
 
-- Focused tests: 57 passed across 4 files.
-- Goal-projection and Info-disclosure follow-up: 44 passed across the 2 affected
-  files.
-- Lint: passed with no diagnostics.
+- Coordinator integration suite: 116 passed across 11 files. This includes the
+  full English/expanded-LTR/mirrored-RTL slice, Tinker, facilities and Details
+  dialog, responsive shell, startup/manual-text recovery, production
+  IndexedDB reconstruction and writer fencing, localization, CSP, packaging
+  and bundle-policy checks.
+- A stale full-slice facility fixture and a closed-drawer navigation assertion
+  failed during coordinator review. They were corrected and the complete
+  116-test integration set was rerun successfully.
+- Lint and diff validation: passed with no diagnostics.
 - Localization extraction and English/expanded-LTR/mirrored-RTL catalog
   compilation: passed.
-- TypeScript and production build: passed. The build measured 208.76 KiB gzip
-  JavaScript and 6.97 KiB gzip CSS; the JavaScript measurement is reported
-  against the provisional target, not relabeled as a performance pass.
-- Rendered in the open in-app browser at its 1280x720 default and a temporary
-  390x844 compact viewport. The compact view preserved the bottom navigation,
-  resource header, small swarm, bottom-anchored Tinker panel, Info, single
-  production line and complete distribution control without visible horizontal
-  overflow. The purchase-settings disclosure was also rendered at 390x844.
+- TypeScript and production build: passed. The deterministic report measured
+  208.41 KiB gzip boot JavaScript (reported as a provisional warning),
+  213.35 KiB gzip JavaScript after the fresh Bots facility chunk, 7.45 KiB
+  gzip CSS, 3.86 KiB gzip English catalog and 230.21 KiB transferred
+  source-locale fonts. Enforced CSS, locale, font, production-fixture and
+  commit-probe checks passed.
+- Rendered in the open Chromium in-app browser at 320x568, 390x844, 844x390,
+  768x1024, 1023x768, 1024x768 and 1440x900 CSS pixels. Every measured viewport
+  had zero document-level horizontal overflow. Bottom navigation remained
+  active through 1023 pixels; the persistent 352-pixel side rail began at
+  1024 pixels.
+- At 390x844, opening the menu moved focus to Close, made the game content
+  inert, and Escape restored focus to Open menu. The fresh route retained the
+  resource header, compact swarm, always-visible next-tier teaser,
+  bottom-anchored Tinker, collapsed goal-only Info, one production line and
+  complete Bot Distribution control.
 
 ## Limits and remaining release evidence
 
-These deterministic tests intentionally do not claim browser layout geometry
-from jsdom. Wave 4 still requires real-browser checks for:
+This checkpoint does not claim exact browser zoom/text-resize certification,
+Windows forced-colors visual certification, physical-device touch/lifecycle
+certification, or named assistive-technology results such as NVDA and
+VoiceOver. The production IndexedDB proof uses the deterministic IndexedDB API
+harness with the real production composition; physical browser-profile,
+quota/update and crashed-owner matrices remain host/release work.
 
-- horizontal overflow at 320 CSS pixels and at 200% zoom;
-- computed focus visibility, contrast, reduced motion, and Windows forced
-  colors;
-- compact-landscape, medium, and wide screenshots;
-- keyboard-only completion in a production build; and
-- NVDA on Windows plus VoiceOver on iOS.
-
-Those checks supplement this evidence rather than replacing it. The complete
-browser/device and named assistive-technology matrix remains a release gate; it
-is not claimed by this Bots visual checkpoint and is not replaced by unit
-tests.
+Those deferrals supplement this evidence rather than replacing it. They are not
+relabeled as passing and do not weaken the deterministic command, persistence,
+focus, reflow, reduced-motion, localization or packaging checks accepted for
+the Bots design baseline.

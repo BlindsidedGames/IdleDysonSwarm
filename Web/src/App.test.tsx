@@ -54,7 +54,7 @@ describe('application startup host', () => {
       screen.getByRole('heading', { level: 1, name: 'Bots' }),
     ).toBeInTheDocument()
     expect(
-      screen.queryByTestId('startup-save-file'),
+      screen.queryByRole('textbox', { name: 'Save text' }),
     ).not.toBeInTheDocument()
     expect(ready.snapshotReads).toBeGreaterThan(0)
     expect(ready.snapshotSubscriptions).toBe(1)
@@ -92,20 +92,13 @@ describe('application startup host', () => {
     ).toBeInTheDocument()
 
     fireEvent.change(
-      screen.getByTestId('startup-save-file'),
-      {
-        target: {
-          files: [
-            new File(['IDB1:test'], 'save.txt', {
-              type: 'text/plain',
-            }),
-          ],
-        },
-      },
+      screen.getByRole('textbox', { name: 'Save text' }),
+      { target: { value: 'IDB1:test' } },
     )
-    await waitFor(() =>
-      expect(confirmOverwrite).toHaveBeenCalledTimes(1),
+    fireEvent.click(
+      screen.getByRole('button', { name: 'Import a save' }),
     )
+    expect(confirmOverwrite).toHaveBeenCalledTimes(1)
     expect(runtime.imports).toHaveLength(0)
     expect(sampleUtc).not.toHaveBeenCalled()
   })
@@ -131,19 +124,19 @@ describe('application startup host', () => {
     })
 
     fireEvent.change(
-      screen.getByTestId('startup-save-file'),
-      {
-        target: {
-          files: [new File(['bad'], 'save.txt')],
-        },
-      },
+      screen.getByRole('textbox', { name: 'Save text' }),
+      { target: { value: 'bad' } },
+    )
+    fireEvent.click(
+      screen.getByRole('button', { name: 'Import a save' }),
     )
     await screen.findByRole('button', {
       name: 'Export recovery data',
     })
     expect(runtime.imports).toHaveLength(1)
     expect(runtime.imports[0]).toMatchObject({
-      source: 'file',
+      source: 'paste',
+      text: 'bad',
       importedAtUtc: '2026-07-29T00:00:00.000Z',
       overwriteApproved: true,
     })
@@ -169,19 +162,18 @@ describe('application startup host', () => {
       confirmOverwrite: () => true,
       sampleUtc: () => '2026-07-29T00:00:00.000Z',
     })
-    const input = screen.getByTestId('startup-save-file')
-
-    fireEvent.change(input, {
-      target: { files: [new File(['first'], 'first.txt')] },
+    fireEvent.change(
+      screen.getByRole('textbox', { name: 'Save text' }),
+      { target: { value: 'first' } },
+    )
+    const importButton = screen.getByRole('button', {
+      name: 'Import a save',
     })
+    fireEvent.click(importButton)
     await screen.findByText('Importing the selected save…')
-    expect(
-      screen.getByRole('button', { name: 'Import a save' }),
-    ).toBeDisabled()
+    expect(importButton).toBeDisabled()
 
-    fireEvent.change(input, {
-      target: { files: [new File(['second'], 'second.txt')] },
-    })
+    fireEvent.click(importButton)
     expect(runtime.imports).toHaveLength(1)
 
     importGate.resolve()
@@ -257,20 +249,22 @@ describe('application startup host', () => {
     })
 
     fireEvent.change(
-      screen.getByTestId('startup-save-file'),
-      {
-        target: {
-          files: [new File(['secret payload'], 'save.txt')],
-        },
-      },
+      screen.getByRole('textbox', { name: 'Save text' }),
+      { target: { value: 'secret payload' } },
+    )
+    fireEvent.click(
+      screen.getByRole('button', { name: 'Import a save' }),
     )
     expect(
       await screen.findByText(
         'The save could not be imported. Your existing progress was not replaced.',
       ),
     ).toBeInTheDocument()
+    expect(
+      screen.getByRole('textbox', { name: 'Save text' }),
+    ).toHaveValue('secret payload')
     expect(document.body.textContent).not.toMatch(
-      /secret payload|private exception/,
+      /private exception/,
     )
 
     cleanup()
@@ -322,10 +316,11 @@ describe('application startup host', () => {
     })
 
     fireEvent.change(
-      screen.getByTestId('startup-save-file'),
-      {
-        target: { files: [new File(['bad'], 'save.txt')] },
-      },
+      screen.getByRole('textbox', { name: 'Save text' }),
+      { target: { value: 'bad' } },
+    )
+    fireEvent.click(
+      screen.getByRole('button', { name: 'Import a save' }),
     )
     await user.click(
       await screen.findByRole('button', {
@@ -460,11 +455,43 @@ function readySnapshot(): FrontendApplicationSnapshot {
           researchers: 0,
         },
       },
-      progression: { dyson: { facilities } },
+      progression: {
+        dyson: {
+          facilities,
+          totalPanelsDecayed: 0,
+          botDistribution: 0,
+          automation: {
+            buyMode: 'buy-1',
+            roundedBulkBuy: false,
+          },
+        },
+        quantum: {
+          unlocks: {
+            botMultitasking: false,
+          },
+        },
+      },
       derived: {
         dyson: {
           status: 'ready',
           value: {
+            globals: {
+              moneyMultiplier: 1,
+              scienceMultiplier: 1,
+              panelsPerSecond: 0,
+              panelLifetimeSeconds: 10,
+            },
+            presentation: {
+              facilities: {},
+              activePanelMetric: {
+                kind: 'active-panels',
+                value: 0,
+              },
+              currentGoal: {
+                kind: 'create-bots',
+                target: 10,
+              },
+            },
             rates: {
               money: 0,
               science: 0,
@@ -516,6 +543,15 @@ function readySnapshot(): FrontendApplicationSnapshot {
       commands: {
         byKind: {
           'dyson.purchase-basic-facility': {
+            routeAvailable: true,
+          },
+          'dyson.set-bot-distribution': {
+            routeAvailable: true,
+          },
+          'dyson.set-buy-mode': {
+            routeAvailable: true,
+          },
+          'dyson.set-rounded-bulk-buy': {
             routeAvailable: true,
           },
         },

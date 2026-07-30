@@ -38,7 +38,6 @@ function App({
 }: AppProps) {
   const intl = useIntl()
   const status = useBrowserRuntimeStatus(runtime)
-  const fileInput = useRef<HTMLInputElement>(null)
   const operationPendingRef = useRef(false)
   const [lastImport, setLastImport] =
     useState<UiRuntimeImportResult | null>(null)
@@ -113,10 +112,8 @@ function App({
     }
   }
 
-  const importSelectedFile = async (
-    file: File | undefined,
-  ): Promise<void> => {
-    if (file === undefined || operationPendingRef.current) return
+  const importPastedText = async (text: string): Promise<void> => {
+    if (operationPendingRef.current) return
     const approved = confirmOverwrite(
       intl.formatMessage(
         startupShellMessages.importOverwriteConfirmation,
@@ -125,8 +122,8 @@ function App({
     if (!approved || !beginOperation('import-pending')) return
     try {
       const result = await runtime.importSave({
-        source: 'file',
-        file,
+        source: 'paste',
+        text,
         importedAtUtc: sampleUtc(),
         overwriteApproved: true,
       })
@@ -156,7 +153,8 @@ function App({
       : {}),
     ...(viewModel.phase === 'recovery'
       ? {
-          importSave: () => fileInput.current?.click(),
+          importSaveText: (text: string) =>
+            void importPastedText(text),
           ...(lastImport?.recoveryAvailable
             ? {
                 exportRecovery: () =>
@@ -168,26 +166,10 @@ function App({
   }
 
   return (
-    <>
-      <StartupShell
-        viewModel={shellViewModel}
-        actions={actions}
-      />
-      <input
-        ref={fileInput}
-        data-testid="startup-save-file"
-        type="file"
-        accept=".txt,text/plain"
-        hidden
-        tabIndex={-1}
-        onChange={(event) => {
-          const input = event.currentTarget
-          void importSelectedFile(input.files?.[0]).finally(() => {
-            input.value = ''
-          })
-        }}
-      />
-    </>
+    <StartupShell
+      viewModel={shellViewModel}
+      actions={actions}
+    />
   )
 }
 
