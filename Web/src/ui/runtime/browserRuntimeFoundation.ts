@@ -407,6 +407,9 @@ class BrowserRuntimeFoundation implements BrowserUiRuntimeFoundation {
         enabled: false,
       })
     }
+    if (command.kind === 'dyson.set-bot-distribution') {
+      return graph.playerCommands.dispatchLatest(command)
+    }
     return graph.playerCommands.dispatch(command)
   }
 

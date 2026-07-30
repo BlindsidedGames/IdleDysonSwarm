@@ -2387,6 +2387,51 @@ describe('browser runtime foundation composition', () => {
     await runtime.shutdown()
   })
 
+  test('captures bot distribution after already admitted active time', async () => {
+    const database = new MemoryBrowserSaveDatabase()
+    const activeClock = new ManualActiveTimeClock()
+    const frames = new ManualAnimationFrameScheduler()
+    let application: FakeRuntimeApplication | undefined
+    const runtime = createRuntime({
+      database,
+      activeTimeClock: activeClock,
+      activeTimeScheduler: frames,
+      createApplication: (repository) => {
+        application = new FakeRuntimeApplication(
+          repository,
+          database.events,
+        )
+        return application
+      },
+    })
+    await runtime.start()
+
+    activeClock.set(10)
+    frames.fire()
+    const distribution = runtime.dispatchPlayer({
+      kind: 'dyson.set-bot-distribution',
+      distribution: 0.75,
+    })
+
+    await expect(distribution).resolves.toMatchObject({
+      status: 'accepted',
+      activationRevision: { session: 1, state: 1 },
+      stateRevision: 2,
+    })
+    expect(application?.activeRequests).toEqual([
+      { milliseconds: 10, sessionRevision: 1 },
+    ])
+    expect(application?.playerEnvelopes).toHaveLength(1)
+    expect(application?.playerEnvelopes[0]).toMatchObject({
+      expectedStateRevision: 1,
+      command: {
+        kind: 'dyson.set-bot-distribution',
+        distribution: 0.75,
+      },
+    })
+    await runtime.shutdown()
+  })
+
   test('routes lifecycle save even when captured active-time delivery fails', async () => {
     const database = new MemoryBrowserSaveDatabase()
     const lifecycle = new TestLifecycleAdapter()

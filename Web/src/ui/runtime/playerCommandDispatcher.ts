@@ -12,7 +12,7 @@ import type {
   UiRuntimePlayerCommandResult,
 } from './contracts'
 
-type LatestTransientTinkerCommand =
+type LatestIdempotentCommand =
   | (Extract<
       CanonicalPlayerCommand,
       { readonly kind: 'tinker.start' }
@@ -21,6 +21,10 @@ type LatestTransientTinkerCommand =
       CanonicalPlayerCommand,
       { readonly kind: 'tinker.set-repeat' }
     > & { readonly enabled: false })
+  | Extract<
+      CanonicalPlayerCommand,
+      { readonly kind: 'dyson.set-bot-distribution' }
+    >
 
 export interface RevisionedPlayerCommandDispatcherOptions {
   readonly latestSnapshot: () =>
@@ -72,11 +76,12 @@ export class RevisionedPlayerCommandDispatcher {
 
   /**
    * Captures the latest revision only after previously admitted lifecycle work
-   * has settled. This is reserved for idempotent safety reconciliation such as
-   * reconciling an ongoing Tinker hold; it is not an ordinary intent retry.
+   * has settled. This is reserved for idempotent absolute settings and safety
+   * reconciliation, such as bot distribution and an ongoing Tinker hold; it
+   * is not an ordinary intent retry.
    */
   async dispatchLatest(
-    command: Readonly<LatestTransientTinkerCommand>,
+    command: Readonly<LatestIdempotentCommand>,
   ): Promise<UiRuntimePlayerCommandResult> {
     try {
       const outcome = await this.options.serialize(async () => {
