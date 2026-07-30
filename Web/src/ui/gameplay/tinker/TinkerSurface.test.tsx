@@ -60,8 +60,8 @@ describe('TinkerSurface transient interaction', () => {
     })
     await flushDispatchQueue()
     expect(dispatch).toHaveBeenNthCalledWith(2, {
-      kind: 'tinker.set-repeat',
-      enabled: true,
+      kind: 'tinker.start',
+      repeat: true,
     })
 
     view.rerender(tinkerElement(runningFacts({ repeat: true }), dispatch))
@@ -130,8 +130,8 @@ describe('TinkerSurface transient interaction', () => {
     start.resolve(acceptedResult())
     await flushDispatchQueue()
     expect(dispatch).toHaveBeenNthCalledWith(2, {
-      kind: 'tinker.set-repeat',
-      enabled: true,
+      kind: 'tinker.start',
+      repeat: true,
     })
     expect(dispatch).toHaveBeenCalledTimes(2)
 
@@ -204,8 +204,8 @@ describe('TinkerSurface transient interaction', () => {
     expect(capture.set).toHaveBeenCalledWith(11)
     expect(dispatch).toHaveBeenCalledTimes(2)
     expect(dispatch).toHaveBeenLastCalledWith({
-      kind: 'tinker.set-repeat',
-      enabled: true,
+      kind: 'tinker.start',
+      repeat: true,
     })
 
     fireEvent.pointerUp(button, { button: 0, pointerId: 11 })
@@ -280,8 +280,8 @@ describe('TinkerSurface transient interaction', () => {
     })
     await flushDispatchQueue()
     expect(dispatch).toHaveBeenNthCalledWith(2, {
-      kind: 'tinker.set-repeat',
-      enabled: true,
+      kind: 'tinker.start',
+      repeat: true,
     })
 
     fireEvent.keyUp(button, { key: ' ' })
@@ -333,12 +333,12 @@ describe('TinkerSurface transient interaction', () => {
     await flushDispatchQueue()
 
     expect(firstDispatch).toHaveBeenLastCalledWith({
-      kind: 'tinker.set-repeat',
-      enabled: true,
+      kind: 'tinker.start',
+      repeat: true,
     })
     expect(secondDispatch).toHaveBeenLastCalledWith({
-      kind: 'tinker.set-repeat',
-      enabled: true,
+      kind: 'tinker.start',
+      repeat: true,
     })
 
     fireEvent.pointerUp(first, { pointerId: 31 })
@@ -468,8 +468,8 @@ describe('TinkerSurface transient interaction', () => {
       repeat: false,
     })
     expect(dispatch).toHaveBeenCalledWith({
-      kind: 'tinker.set-repeat',
-      enabled: true,
+      kind: 'tinker.start',
+      repeat: true,
     })
     expect(stopCommands(dispatch)).toHaveLength(1)
     expect(vi.getTimerCount()).toBe(0)

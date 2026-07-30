@@ -49,6 +49,8 @@ describe('production browser composition', () => {
     expect(captured.allowedExternalOrigins).toEqual([])
     expect(captured.lifecycleClock).toBe(lifecycleClock)
     expect(captured.activeTimeClock).toBe(monotonicClock)
+    expect(captured.databaseName).toBeUndefined()
+    expect(captured.profileId).toBeUndefined()
     expect(lifecycleClock.samples).toBe(0)
 
     const repository = new FirstRunRepository()
@@ -75,6 +77,45 @@ describe('production browser composition', () => {
       Date.parse('2026-07-29T03:04:05.000Z'),
     )
     expect(lifecycleClock.samples).toBe(3)
+  })
+
+  test('replaces the current session with the canonical Unity first-run save through the runtime', async () => {
+    let resetRequest:
+      | Parameters<BrowserUiRuntimeFoundation['importSave']>[0]
+      | undefined
+    const runtime = Object.freeze({
+      importSave: async (
+        request: Parameters<
+          BrowserUiRuntimeFoundation['importSave']
+        >[0],
+      ) => {
+        resetRequest = request
+        return {
+          imported: true,
+          sessionRevision: 2,
+          recoveryAvailable: true,
+          lifecycleReset: true,
+        } as const
+      },
+    }) as unknown as BrowserUiRuntimeFoundation
+    const composition = createProductionBrowserComposition({
+      lifecycleClock: new RecordingLifecycleClock(
+        '2026-07-29T03:04:05.000Z',
+      ),
+      entitlementDocument: entitlementDocument('false'),
+      createRuntime: () => runtime,
+    })
+
+    await expect(composition.resetSave()).resolves.toMatchObject({
+      imported: true,
+      lifecycleReset: true,
+    })
+    expect(resetRequest).toMatchObject({
+      source: 'paste',
+      importedAtUtc: '2026-07-29T03:04:05.000Z',
+      overwriteApproved: true,
+    })
+    expect(resetRequest?.text).toContain('"format": "IDSWEB1"')
   })
 
   test('reloads only after a verified checkpoint and orderly shutdown', async () => {

@@ -19,6 +19,7 @@ import {
 import {
   MOBILE_LIFECYCLE_POLICY,
 } from '../simulation/lifecycleAwayTime'
+import { serializeWebSave } from '../save/serialization'
 import type {
   DysonPresentationTuning,
 } from '../simulation/canonicalDysonDerivation'
@@ -26,6 +27,7 @@ import {
   createBrowserRuntimeFoundation,
   type BrowserRuntimeFoundationOptions,
   type BrowserUiRuntimeFoundation,
+  type UiRuntimeImportResult,
 } from '../ui/runtime'
 import type {
   ActiveTimeMonotonicClock,
@@ -34,13 +36,6 @@ import type {
 type BrowserRuntimeFactory = (
   options: Readonly<BrowserRuntimeFoundationOptions>,
 ) => BrowserUiRuntimeFoundation
-
-const DEVELOPMENT_PREVIEW_DATABASE_NAME =
-  import.meta.env.DEV
-    ? `idle-dyson-swarm-ui-preview-${Date.now()}-${Math.random()
-        .toString(36)
-        .slice(2)}`
-    : undefined
 
 export interface ProductionBrowserCompositionOptions {
   readonly entitlementDocument?: BrowserEntitlementDocument
@@ -55,6 +50,7 @@ export interface ProductionBrowserComposition {
   readonly runtime: BrowserUiRuntimeFoundation
   readonly saveSchemaVersion: number
   sampleUtc(): string
+  resetSave(): Promise<UiRuntimeImportResult>
   reloadSafely(): Promise<void>
 }
 
@@ -74,13 +70,14 @@ export function createProductionBrowserComposition(
     options.monotonicClock ?? new BrowserMonotonicClock()
   const entitlementDocument =
     options.entitlementDocument ?? document
+  const createFirstRunSave = () =>
+    createUnityFirstRunPreparedSave({
+      startedAtUtc:
+        lifecycleClock.sample().serializedUtcText,
+    })
   const createApplication =
     createProductionCanonicalApplicationFactory({
-      createFirstRunSave: () =>
-        createUnityFirstRunPreparedSave({
-          startedAtUtc:
-            lifecycleClock.sample().serializedUtcText,
-        }),
+      createFirstRunSave,
       readHostEntitlements: () =>
         readBrowserHostEntitlements(entitlementDocument),
       readHostDysonPresentationTuning:
@@ -98,10 +95,6 @@ export function createProductionBrowserComposition(
     activeTimeClock: monotonicClock,
     nowUtcMilliseconds: () =>
       lifecycleClock.sample().utcMilliseconds,
-    // UI review tabs use isolated ephemeral IndexedDB profiles. This removes
-    // the single-writer blocker during local iteration without weakening the
-    // release database's lease and fencing guarantees.
-    databaseName: DEVELOPMENT_PREVIEW_DATABASE_NAME,
   })
   const reloadPage =
     options.reloadPage ?? (() => window.location.reload())
@@ -110,6 +103,19 @@ export function createProductionBrowserComposition(
     saveSchemaVersion: unityFirstRunProvenance.saveSchema,
     sampleUtc: () =>
       lifecycleClock.sample().serializedUtcText,
+    resetSave: () => {
+      const importedAtUtc =
+        lifecycleClock.sample().serializedUtcText
+      const firstRun = createFirstRunSave()
+      return runtime.importSave({
+        source: 'paste',
+        text: serializeWebSave(
+          firstRun.copyValidatedState(),
+        ),
+        importedAtUtc,
+        overwriteApproved: true,
+      })
+    },
     reloadSafely: async () => {
       const status = runtime.status()
       if (status.phase === 'ready') {

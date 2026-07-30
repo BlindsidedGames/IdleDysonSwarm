@@ -4,6 +4,7 @@ import {
   useCallback,
   useLayoutEffect,
   useRef,
+  useState,
 } from 'react'
 import { useIntl } from 'react-intl'
 import type {
@@ -31,7 +32,9 @@ import {
 import {
   useBrowserRuntimeSnapshot,
   type BrowserUiRuntimeFoundation,
+  type UiRuntimeImportResult,
 } from '../../runtime'
+import { SettingsSurface } from '../settings'
 import {
   beginFirstSliceSnapshotSelection,
   isNewCommittedRevision,
@@ -63,6 +66,7 @@ type ReadySnapshot = DeepReadonly<
 export interface ReadyDysonRuntimeHostProps {
   readonly runtime: BrowserUiRuntimeFoundation
   readonly locale: EnabledLocale
+  readonly resetSave?: () => Promise<UiRuntimeImportResult>
 }
 
 /**
@@ -72,7 +76,9 @@ export interface ReadyDysonRuntimeHostProps {
 function UnprobedReadyDysonRuntimeHost({
   runtime,
   locale,
+  resetSave = unavailableReset,
 }: ReadyDysonRuntimeHostProps) {
+  const [route, setRoute] = useState<ReadyGameRoute>('bots')
   const snapshot = useBrowserRuntimeSnapshot(runtime)
   const dispatchPlayer = useCallback(
     (command: CanonicalPlayerCommand) =>
@@ -85,6 +91,9 @@ function UnprobedReadyDysonRuntimeHost({
       snapshot={snapshot}
       locale={locale}
       dispatchPlayer={dispatchPlayer}
+      route={route}
+      onRouteChange={setRoute}
+      resetSave={resetSave}
     />
   )
 }
@@ -92,7 +101,9 @@ function UnprobedReadyDysonRuntimeHost({
 export function ProbedReadyDysonRuntimeHost({
   runtime,
   locale,
+  resetSave = unavailableReset,
 }: ReadyDysonRuntimeHostProps) {
+  const [route, setRoute] = useState<ReadyGameRoute>('bots')
   const selectionStartedAt = beginFirstSliceSnapshotSelection()
   const snapshot = useBrowserRuntimeSnapshot(runtime)
   const dispatchPlayer = useCallback(
@@ -134,6 +145,9 @@ export function ProbedReadyDysonRuntimeHost({
       snapshot={snapshot}
       locale={locale}
       dispatchPlayer={dispatchPlayer}
+      route={route}
+      onRouteChange={setRoute}
+      resetSave={resetSave}
     />
   )
 }
@@ -151,7 +165,12 @@ export interface ReadyDysonSliceProps {
   readonly snapshot: ReadySnapshot
   readonly locale: EnabledLocale
   readonly dispatchPlayer: BrowserUiRuntimeFoundation['dispatchPlayer']
+  readonly route?: ReadyGameRoute
+  readonly onRouteChange?: (route: ReadyGameRoute) => void
+  readonly resetSave?: () => Promise<UiRuntimeImportResult>
 }
+
+export type ReadyGameRoute = 'bots' | 'settings'
 
 /**
  * Maps published canonical facts into presentation components without
@@ -161,6 +180,9 @@ export function ReadyDysonSlice({
   snapshot,
   locale,
   dispatchPlayer,
+  route = 'bots',
+  onRouteChange = () => undefined,
+  resetSave = unavailableReset,
 }: ReadyDysonSliceProps) {
   const intl = useIntl()
   const gameplay = snapshot.gameplay
@@ -192,12 +214,15 @@ export function ReadyDysonSlice({
     visibility.visibleBasicFacilityIds.length > 0
   const hasFacilityContent =
     hasVisibleFacilities || visibility.showNextTierTeaser
+  const settingsActive = route === 'settings'
 
   return (
     <DysonGameplayShell
       direction={LOCALE_REGISTRY[locale].direction}
       skipLinkLabel={intl.formatMessage(messages.skipToGame)}
-      heading={intl.formatMessage(messages.route)}
+      heading={intl.formatMessage(
+        settingsActive ? messages.settingsRoute : messages.route,
+      )}
       navigation={{
         ariaLabel: intl.formatMessage(messages.primaryNavigation),
         drawerAriaLabel: intl.formatMessage(messages.sideNavigation),
@@ -207,7 +232,9 @@ export function ReadyDysonSlice({
             id: 'bots',
             label: intl.formatMessage(messages.route),
             iconSrc: navigationAssets.bots,
-            current: true,
+            ...(settingsActive
+              ? { onActivate: () => onRouteChange('bots') }
+              : { current: true as const }),
           },
           {
             id: 'research',
@@ -251,7 +278,9 @@ export function ReadyDysonSlice({
             id: 'settings',
             label: intl.formatMessage(messages.settingsRoute),
             iconSrc: navigationAssets.settings,
-            disabled: true,
+            ...(settingsActive
+              ? { current: true as const }
+              : { onActivate: () => onRouteChange('settings') }),
           },
         ],
       }}
@@ -280,6 +309,18 @@ export function ReadyDysonSlice({
       }
       hasVisibleFacilities={
         hasFacilityContent
+      }
+      routeContent={
+        settingsActive
+          ? {
+              ariaLabel: intl.formatMessage(messages.settingsRoute),
+              content: (
+                <SettingsSurface
+                  resetSave={resetSave}
+                />
+              ),
+            }
+          : undefined
       }
       resources={{
         ariaLabel: intl.formatMessage(messages.resources),
@@ -430,6 +471,16 @@ export function ReadyDysonSlice({
       }}
     />
   )
+}
+
+function unavailableReset(): Promise<UiRuntimeImportResult> {
+  return Promise.resolve({
+    imported: false,
+    committed: false,
+    code: 'RUNTIME-RESET-UNAVAILABLE',
+    reason: 'Reset is unavailable in this host.',
+    recoveryAvailable: false,
+  })
 }
 
 function formatPreciseNumber(

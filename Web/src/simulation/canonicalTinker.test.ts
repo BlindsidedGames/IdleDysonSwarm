@@ -165,6 +165,36 @@ describe('canonical Tinker runtime', () => {
     expect(completed.runtime.running).toBe(false)
   })
 
+  test('settles an action that starts exactly on the minimum cooldown boundary', () => {
+    const canonical = state(0.01)
+    const stats = deriveCanonicalTinkerStats(canonical, 0)
+    const started = startCanonicalTinker(
+      canonical,
+      createCanonicalTinkerRuntimeState(),
+      stats,
+      false,
+    )
+
+    expect(started.runtime.elapsedSeconds).toBe(0.01)
+    expect(
+      timeToCanonicalTinkerCompletion(started.runtime, 1),
+    ).toBe(0)
+
+    const completed = advanceCanonicalTinker(
+      started.state,
+      started.runtime,
+      stats,
+      0,
+    )
+    expect(completed.completions).toBe(1)
+    expect(completed.state.dyson.bots).toBe(1)
+    expect(completed.runtime).toMatchObject({
+      running: false,
+      repeat: false,
+      elapsedSeconds: 0,
+    })
+  })
+
   test('repeat mode owns multiple cooldowns and progressively shortens bot creation', () => {
     const canonical = state(2)
     const stats = deriveCanonicalTinkerStats(canonical, 0)

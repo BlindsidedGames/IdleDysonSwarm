@@ -113,6 +113,7 @@ async function bootstrap(): Promise<void> {
               }
               sampleUtc={composition.sampleUtc}
               reloadSafely={composition.reloadSafely}
+              resetSave={composition.resetSave}
               buildId={import.meta.env.VITE_BUILD_ID}
             />
           </PresentationIntlProvider>

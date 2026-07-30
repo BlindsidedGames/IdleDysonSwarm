@@ -45,6 +45,7 @@ export type DysonNavigationItem =
       readonly label: ReactNode
       readonly icon?: ReactNode
       readonly iconSrc?: string
+      readonly onActivate?: () => void
       readonly href?: string
       readonly disabled?: boolean
       readonly bottom?: boolean
@@ -84,4 +85,5 @@ export interface DysonGameplayShellProps {
   readonly productionSummary?: DysonShellRegion
   readonly distribution?: DysonShellRegion
   readonly sidePanelSupplement?: ReactNode
+  readonly routeContent?: DysonShellRegion
 }

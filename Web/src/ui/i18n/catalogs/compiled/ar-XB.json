@@ -2573,6 +2573,160 @@
       "value": "‬"
     }
   ],
+  "settings.save-data.cancel": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "Ↄɐuɔǝʅ"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "settings.save-data.description": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "⅄onɹ dɹoƃɹǝss ıs sɐʌǝp ɐnʇoɯɐʇıɔɐʅʅʎ ou ʇɥıs pǝʌıɔǝ."
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "settings.save-data.reset": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "ᴚǝsǝʇ Sɐʌǝ"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "settings.save-data.reset-committed-recovery": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "⊥ɥǝ ɟɹǝsɥ sɐʌǝ ʍɐs ʍɹıʇʇǝu, qnʇ ʇɥǝ ƃɐɯǝ ɔonʅp uoʇ ɹǝodǝu ıʇ. ᴚǝʅoɐp ʇo ɹǝɔoʌǝɹ."
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "settings.save-data.reset-confirmation": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "ᴚǝsǝʇ ɐʅʅ dɹoƃɹǝss ɐup sʇɐɹʇ ɐƃɐıu? ⊥ɥıs ɔɐuuoʇ qǝ nupouǝ."
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "settings.save-data.reset-dialog-title": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "ᴚǝsǝʇ Sɐʌǝ?"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "settings.save-data.reset-failed": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "⊥ɥǝ sɐʌǝ ɔonʅp uoʇ qǝ ɹǝsǝʇ. ⅄onɹ ɔnɹɹǝuʇ dɹoƃɹǝss ʍɐs ʞǝdʇ."
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "settings.save-data.reset-pending": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "ᴚǝsǝʇʇıuƃ…"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "settings.save-data.reset-succeeded": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "Sɐʌǝ ɹǝsǝʇ. ∀ ɟɹǝsɥ ƃɐɯǝ ɥɐs qǝǝu ɔɹǝɐʇǝp."
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "settings.save-data.title": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "Sɐʌǝ ᗡɐʇɐ"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "settings.title": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "Sǝʇʇıuƃs"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
   "shared.action.dismiss": [
     {
       "type": 0,

@@ -225,6 +225,35 @@ describe('ReadyDysonSlice', () => {
     expect(dispatchPlayer).toHaveBeenCalledTimes(3)
   })
 
+  test('switches to the green Settings route without unmounting the ready game host', async () => {
+    const user = userEvent.setup()
+    const onRouteChange = vi.fn()
+    render(
+      provider(
+        <ReadyDysonSlice
+          snapshot={snapshot()}
+          locale="en"
+          dispatchPlayer={acceptedDispatch}
+          route="settings"
+          onRouteChange={onRouteChange}
+        />,
+      ),
+    )
+
+    expect(
+      screen.getByRole('heading', { level: 1, name: 'Settings' }),
+    ).toBeInTheDocument()
+    expect(
+      screen.getByRole('heading', { level: 2, name: 'Settings' }),
+    ).toBeInTheDocument()
+    expect(
+      screen.queryByText('Tinker in your garage'),
+    ).not.toBeInTheDocument()
+
+    await user.click(screen.getByRole('button', { name: 'Bots' }))
+    expect(onRouteChange).toHaveBeenCalledWith('bots')
+  })
+
   test('keeps Info facts together and routes buy settings through canonical commands', async () => {
     const dispatchPlayer = vi.fn(acceptedDispatch)
     const user = userEvent.setup()

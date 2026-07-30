@@ -204,7 +204,7 @@ export function advanceCanonicalTinker(
     throw new RangeError('Tinker advance seconds must be finite and non-negative.')
   }
   let synchronized = synchronizeRuntime(state, runtime, stats)
-  if (!synchronized.runtime.running || seconds === 0) {
+  if (!synchronized.runtime.running) {
     return unchanged(synchronized.state, synchronized.runtime)
   }
 

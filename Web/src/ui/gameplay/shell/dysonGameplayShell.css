@@ -20,6 +20,16 @@
   font-family: var(--font-family-body);
 }
 
+.dyson-shell[data-route-content="true"] {
+  background: #121a12;
+}
+
+.dyson-shell[data-route-content="true"]
+  .dyson-shell__bottom-navigation {
+  border-color: #364d36;
+  background: #243324;
+}
+
 .dyson-shell__skip-link {
   position: fixed;
   z-index: 100;
@@ -306,6 +316,29 @@
   color: #c45adc;
 }
 
+.dyson-navigation--drawer
+  [data-navigation-id="settings"]
+  .dyson-navigation__link {
+  border-color: #152415;
+  background: #2d5530;
+  color: #b9dfbb;
+}
+
+.dyson-navigation--drawer
+  [data-navigation-id="settings"]
+  .dyson-navigation__link[aria-current="page"] {
+  background: #3f7042;
+  color: #ecffed;
+}
+
+.dyson-navigation
+  [data-navigation-id="settings"]
+  .dyson-navigation__link[aria-current="page"]
+  .dyson-navigation__icon
+  img {
+  filter: sepia(1) saturate(4) hue-rotate(65deg) brightness(1.25);
+}
+
 .dyson-navigation__link:disabled {
   cursor: default;
   opacity: 0.72;
@@ -434,6 +467,11 @@
   color: white;
   font-size: 0.9rem;
   line-height: 1.4;
+}
+
+.dyson-shell__route-content {
+  min-block-size: 0;
+  padding: clamp(0.75rem, 2vw, 1.5rem);
 }
 
 @media (min-width: 1024px) {

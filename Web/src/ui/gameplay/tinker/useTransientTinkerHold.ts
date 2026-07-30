@@ -156,7 +156,7 @@ export function useTransientTinkerHold({
       holdTimerRef.current = null
       if (activeSourceRef.current !== source) return
       repeatEnabledRequestedRef.current = true
-      send({ kind: 'tinker.set-repeat', enabled: true })
+      send({ kind: 'tinker.start', repeat: true })
     }, TINKER_REPEAT_HOLD_MILLISECONDS)
     return true
   }, [send])

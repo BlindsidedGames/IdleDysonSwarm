@@ -19,6 +19,9 @@ import {
 import {
   tinkerMessages,
 } from '../gameplay/tinker/messages'
+import {
+  settingsSurfaceMessages,
+} from '../gameplay/settings/messages'
 import { startupShellMessages } from '../shell/messages'
 
 describe('compiled locale catalogs', () => {
@@ -29,6 +32,7 @@ describe('compiled locale catalogs', () => {
       ...Object.values(readyDysonMessages),
       ...Object.values(basicFacilityMessages),
       ...Object.values(tinkerMessages),
+      ...Object.values(settingsSurfaceMessages),
     ]
       .map((descriptor) => descriptor.id)
       .sort()

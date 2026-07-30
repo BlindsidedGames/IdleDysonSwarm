@@ -33,6 +33,7 @@ export function DysonGameplayShell({
   productionSummary,
   distribution,
   sidePanelSupplement,
+  routeContent,
 }: DysonGameplayShellProps) {
   const mainId = `dyson-gameplay-main-${useId().replaceAll(':', '')}`
   const menuId = `dyson-menu-${useId().replaceAll(':', '')}`
@@ -98,6 +99,7 @@ export function DysonGameplayShell({
       className="dyson-shell"
       dir={direction}
       data-menu-open={menuOpen}
+      data-route-content={routeContent !== undefined}
     >
       <a
         className="dyson-shell__skip-link"
@@ -142,6 +144,7 @@ export function DysonGameplayShell({
         <DysonNavigation
           {...navigation}
           placement="drawer"
+          interactive={!drawerUnavailable}
           onNavigate={() => setMenuOpen(false)}
         />
         {sidePanelSupplement !== undefined && (
@@ -165,6 +168,13 @@ export function DysonGameplayShell({
             direction={direction}
           />
 
+          {routeContent !== undefined ? (
+            <ShellRegion
+              className="dyson-shell__route-content"
+              region={routeContent}
+            />
+          ) : (
+          <>
           <div className="dyson-shell__playfield">
             {swarmVisual !== undefined && (
               <ShellRegion
@@ -211,6 +221,8 @@ export function DysonGameplayShell({
               />
             )}
           </div>
+          </>
+          )}
         </div>
       </main>
 
@@ -234,7 +246,11 @@ export function DysonGameplayShell({
             <i />
           </span>
         </button>
-          <DysonNavigation {...navigation} placement="bottom" />
+          <DysonNavigation
+            {...navigation}
+            placement="bottom"
+            interactive={!compactMenuOpen && !wideLayout}
+          />
       </div>
     </div>
   )

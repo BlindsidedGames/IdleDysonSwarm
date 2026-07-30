@@ -2194,7 +2194,7 @@ describe('browser runtime foundation composition', () => {
     await runtime.shutdown()
   })
 
-  test('captures transient repeat-off after already admitted active time', async () => {
+  test('captures transient hold continuation and repeat-off after already admitted active time', async () => {
     const database = new MemoryBrowserSaveDatabase()
     const activeClock = new ManualActiveTimeClock()
     const frames = new ManualAnimationFrameScheduler()
@@ -2216,8 +2216,8 @@ describe('browser runtime foundation composition', () => {
     await runtime.start()
 
     const repeatOn = runtime.dispatchPlayer({
-      kind: 'tinker.set-repeat',
-      enabled: true,
+      kind: 'tinker.start',
+      repeat: true,
     })
     await waitUntil(() => application?.playerEnvelopes.length === 1)
     activeClock.set(10)

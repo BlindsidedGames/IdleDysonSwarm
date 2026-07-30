@@ -12,10 +12,15 @@ import type {
   UiRuntimePlayerCommandResult,
 } from './contracts'
 
-type TinkerRepeatDisableCommand = Extract<
-  CanonicalPlayerCommand,
-  { readonly kind: 'tinker.set-repeat' }
-> & { readonly enabled: false }
+type LatestTransientTinkerCommand =
+  | (Extract<
+      CanonicalPlayerCommand,
+      { readonly kind: 'tinker.start' }
+    > & { readonly repeat: true })
+  | (Extract<
+      CanonicalPlayerCommand,
+      { readonly kind: 'tinker.set-repeat' }
+    > & { readonly enabled: false })
 
 export interface RevisionedPlayerCommandDispatcherOptions {
   readonly latestSnapshot: () =>
@@ -68,10 +73,10 @@ export class RevisionedPlayerCommandDispatcher {
   /**
    * Captures the latest revision only after previously admitted lifecycle work
    * has settled. This is reserved for idempotent safety reconciliation such as
-   * disabling transient Tinker repeat; it is not an intent retry.
+   * reconciling an ongoing Tinker hold; it is not an ordinary intent retry.
    */
   async dispatchLatest(
-    command: Readonly<TinkerRepeatDisableCommand>,
+    command: Readonly<LatestTransientTinkerCommand>,
   ): Promise<UiRuntimePlayerCommandResult> {
     try {
       const outcome = await this.options.serialize(async () => {

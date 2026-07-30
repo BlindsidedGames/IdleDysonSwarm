@@ -23,6 +23,7 @@ export interface AppProps {
   readonly saveSchemaVersion: number
   readonly sampleUtc: () => string
   readonly reloadSafely: () => Promise<void>
+  readonly resetSave?: () => Promise<UiRuntimeImportResult>
   readonly confirmOverwrite?: (message: string) => boolean
   readonly buildId?: string
 }
@@ -33,6 +34,7 @@ function App({
   saveSchemaVersion,
   sampleUtc,
   reloadSafely,
+  resetSave = unavailableReset,
   confirmOverwrite = (message) => window.confirm(message),
   buildId,
 }: AppProps) {
@@ -70,6 +72,7 @@ function App({
       <ReadyDysonRuntimeHost
         runtime={runtime}
         locale={locale}
+        resetSave={resetSave}
       />
     )
   }
@@ -174,3 +177,13 @@ function App({
 }
 
 export default App
+
+function unavailableReset(): Promise<UiRuntimeImportResult> {
+  return Promise.resolve({
+    imported: false,
+    committed: false,
+    code: 'RUNTIME-RESET-UNAVAILABLE',
+    reason: 'Reset is unavailable in this host.',
+    recoveryAvailable: false,
+  })
+}

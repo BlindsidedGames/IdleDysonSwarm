@@ -2573,6 +2573,160 @@
       "value": "]"
     }
   ],
+  "settings.save-data.cancel": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Ƈȧȧƞƈḗḗŀ"
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "settings.save-data.description": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Ẏǿǿŭŭř ƥřǿǿɠřḗḗşş īş şȧȧṽḗḗḓ ȧȧŭŭŧǿǿḿȧȧŧīƈȧȧŀŀẏ ǿǿƞ ŧħīş ḓḗḗṽīƈḗḗ."
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "settings.save-data.reset": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Řḗḗşḗḗŧ Şȧȧṽḗḗ"
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "settings.save-data.reset-committed-recovery": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Ŧħḗḗ ƒřḗḗşħ şȧȧṽḗḗ ẇȧȧş ẇřīŧŧḗḗƞ, ƀŭŭŧ ŧħḗḗ ɠȧȧḿḗḗ ƈǿǿŭŭŀḓ ƞǿǿŧ řḗḗǿǿƥḗḗƞ īŧ. Řḗḗŀǿǿȧȧḓ ŧǿǿ řḗḗƈǿǿṽḗḗř."
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "settings.save-data.reset-confirmation": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Řḗḗşḗḗŧ ȧȧŀŀ ƥřǿǿɠřḗḗşş ȧȧƞḓ şŧȧȧřŧ ȧȧɠȧȧīƞ? Ŧħīş ƈȧȧƞƞǿǿŧ ƀḗḗ ŭŭƞḓǿǿƞḗḗ."
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "settings.save-data.reset-dialog-title": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Řḗḗşḗḗŧ Şȧȧṽḗḗ?"
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "settings.save-data.reset-failed": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Ŧħḗḗ şȧȧṽḗḗ ƈǿǿŭŭŀḓ ƞǿǿŧ ƀḗḗ řḗḗşḗḗŧ. Ẏǿǿŭŭř ƈŭŭřřḗḗƞŧ ƥřǿǿɠřḗḗşş ẇȧȧş ķḗḗƥŧ."
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "settings.save-data.reset-pending": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Řḗḗşḗḗŧŧīƞɠ…"
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "settings.save-data.reset-succeeded": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Şȧȧṽḗḗ řḗḗşḗḗŧ. Ȧ ƒřḗḗşħ ɠȧȧḿḗḗ ħȧȧş ƀḗḗḗḗƞ ƈřḗḗȧȧŧḗḗḓ."
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "settings.save-data.title": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Şȧȧṽḗḗ Ḓȧȧŧȧȧ"
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "settings.title": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Şḗḗŧŧīƞɠş"
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
   "shared.action.dismiss": [
     {
       "type": 0,

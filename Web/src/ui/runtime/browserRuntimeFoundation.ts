@@ -353,12 +353,19 @@ class BrowserRuntimeFoundation implements BrowserUiRuntimeFoundation {
         ),
       )
     }
-    return command.kind === 'tinker.set-repeat' && !command.enabled
-      ? graph.playerCommands.dispatchLatest({
-          kind: 'tinker.set-repeat',
-          enabled: false,
-        })
-      : graph.playerCommands.dispatch(command)
+    if (command.kind === 'tinker.start' && command.repeat) {
+      return graph.playerCommands.dispatchLatest({
+        kind: 'tinker.start',
+        repeat: true,
+      })
+    }
+    if (command.kind === 'tinker.set-repeat' && !command.enabled) {
+      return graph.playerCommands.dispatchLatest({
+        kind: 'tinker.set-repeat',
+        enabled: false,
+      })
+    }
+    return graph.playerCommands.dispatch(command)
   }
 
   async importSave(

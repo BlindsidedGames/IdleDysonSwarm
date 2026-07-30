@@ -1421,6 +1421,72 @@
       "value": "Wiki"
     }
   ],
+  "settings.save-data.cancel": [
+    {
+      "type": 0,
+      "value": "Cancel"
+    }
+  ],
+  "settings.save-data.description": [
+    {
+      "type": 0,
+      "value": "Your progress is saved automatically on this device."
+    }
+  ],
+  "settings.save-data.reset": [
+    {
+      "type": 0,
+      "value": "Reset Save"
+    }
+  ],
+  "settings.save-data.reset-committed-recovery": [
+    {
+      "type": 0,
+      "value": "The fresh save was written, but the game could not reopen it. Reload to recover."
+    }
+  ],
+  "settings.save-data.reset-confirmation": [
+    {
+      "type": 0,
+      "value": "Reset all progress and start again? This cannot be undone."
+    }
+  ],
+  "settings.save-data.reset-dialog-title": [
+    {
+      "type": 0,
+      "value": "Reset Save?"
+    }
+  ],
+  "settings.save-data.reset-failed": [
+    {
+      "type": 0,
+      "value": "The save could not be reset. Your current progress was kept."
+    }
+  ],
+  "settings.save-data.reset-pending": [
+    {
+      "type": 0,
+      "value": "Resetting…"
+    }
+  ],
+  "settings.save-data.reset-succeeded": [
+    {
+      "type": 0,
+      "value": "Save reset. A fresh game has been created."
+    }
+  ],
+  "settings.save-data.title": [
+    {
+      "type": 0,
+      "value": "Save Data"
+    }
+  ],
+  "settings.title": [
+    {
+      "type": 0,
+      "value": "Settings"
+    }
+  ],
   "shared.action.dismiss": [
     {
       "type": 0,
