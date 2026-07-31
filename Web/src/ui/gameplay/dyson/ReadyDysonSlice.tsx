@@ -70,6 +70,11 @@ const SkillsSurface = lazy(async () => {
   return { default: module.SkillsSurface }
 })
 
+const InfinitySurface = lazy(async () => {
+  const module = await import('../infinity')
+  return { default: module.InfinitySurface }
+})
+
 export const SWARM_VISUALIZATION_STORAGE_KEY =
   'idle-dyson-swarm.show-visualization'
 
@@ -205,6 +210,7 @@ export type ReadyGameRoute =
   | 'bots'
   | 'research'
   | 'skills'
+  | 'infinity'
   | 'settings'
 
 /**
@@ -282,13 +288,24 @@ export function ReadyDysonSlice({
   const settingsActive = route === 'settings'
   const researchActive = route === 'research'
   const skillsActive = route === 'skills'
+  const infinityActive = route === 'infinity'
   const routeHeading = settingsActive
     ? messages.settingsRoute
     : researchActive
       ? messages.researchRoute
       : skillsActive
         ? messages.skillsRoute
-      : messages.route
+        : infinityActive
+          ? messages.infinityRoute
+          : messages.route
+  const infinityRouteLabel =
+    gameplay.derived.infinity.navigationReward === null
+      ? intl.formatMessage(messages.infinityRoute)
+      : intl.formatMessage(messages.infinityRouteGain, {
+          value: display(
+            gameplay.derived.infinity.navigationReward,
+          ),
+        })
 
   return (
     <DysonGameplayShell
@@ -329,10 +346,13 @@ export function ReadyDysonSlice({
           },
           {
             id: 'infinity',
-            label: intl.formatMessage(messages.infinityRoute),
+            label: infinityRouteLabel,
             iconSrc: navigationAssets.infinity,
-            disabled: true,
-            bottom: false,
+            ...(gameplay.visibility.infinity.routeUnlocked
+              ? infinityActive
+                ? { current: true as const }
+                : { onActivate: () => onRouteChange('infinity') }
+              : { disabled: true }),
           },
           {
             id: 'story',
@@ -520,7 +540,47 @@ export function ReadyDysonSlice({
                     </Suspense>
                   ),
                 }
-            : undefined
+              : infinityActive
+                ? {
+                    ariaLabel: intl.formatMessage(
+                      messages.infinityRoute,
+                    ),
+                    content: (
+                      <Suspense
+                        fallback={
+                          <div
+                            aria-label={intl.formatMessage(
+                              messages.infinityRoute,
+                            )}
+                            aria-busy="true"
+                          />
+                        }
+                      >
+                        <InfinitySurface
+                          locale={locale}
+                          resources={gameplay.resources.infinity}
+                          progression={{
+                            infinity:
+                              gameplay.progression.infinity,
+                          }}
+                          derived={gameplay.derived.infinity}
+                          previews={gameplay.previews.infinity}
+                          commandAvailability={{
+                            purchaseShopItem:
+                              gameplay.commands.byKind[
+                                'infinity.purchase-shop-item'
+                              ].routeAvailable,
+                            setBreakTarget:
+                              gameplay.commands.byKind[
+                                'infinity.set-break-target'
+                              ].routeAvailable,
+                          }}
+                          dispatchPlayer={dispatchPlayer}
+                        />
+                      </Suspense>
+                    ),
+                  }
+                : undefined
       }
       resources={{
         ariaLabel: intl.formatMessage(messages.resources),

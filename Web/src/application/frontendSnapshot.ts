@@ -74,9 +74,14 @@ import {
   type MegaStructureId,
 } from '../simulation/megaStructurePurchases'
 import {
-  DISCRETE_MAXIMUM,
   multiplyContinuous,
 } from '../simulation/numeric'
+import {
+  projectBreakInfinityPresentationControl,
+  projectInfinityProgress,
+  type BreakInfinityPresentationControl,
+  type InfinityProgressFacts,
+} from '../simulation/infinityCycle'
 import {
   availableQuantumPoints,
   findQuantumUpgradeCanonicalGaps,
@@ -580,6 +585,7 @@ export interface FrontendGameplayDerivedFacts {
     readonly workersFraction: number
     readonly scientistsFraction: number
   }
+  readonly infinity: InfinityProgressFacts
   readonly dream: FrontendDreamDerivedFacts
   readonly reality: FrontendRealityDerivedFacts
   readonly avocado: AvocadoMultiplierBreakdown
@@ -594,6 +600,9 @@ export interface FrontendDysonVisibility {
 export interface FrontendGameplayVisibility {
   readonly dyson: FrontendDysonVisibility
   readonly skills: {
+    readonly routeUnlocked: boolean
+  }
+  readonly infinity: {
     readonly routeUnlocked: boolean
   }
 }
@@ -647,10 +656,7 @@ export interface FrontendGameplayPreviews {
   }
   readonly infinity: {
     readonly shop: readonly FrontendInfinityShopPreview[]
-    readonly breakTarget: {
-      readonly minimum: bigint
-      readonly maximum: bigint
-    }
+    readonly breakTarget: BreakInfinityPresentationControl
   }
   readonly avocado: {
     readonly feeds: readonly FrontendAvocadoFeedPreview[]
@@ -875,6 +881,12 @@ function selectGameplayVisibility(
         Object.values(state.skills.byId).some(
           (skill) => skill.owned,
         ),
+    },
+    infinity: {
+      routeUnlocked:
+        state.meta.firstInfinityComplete ||
+        state.infinity.points > 0n ||
+        state.quantum.pointsEarned > 0n,
     },
   }
 }
@@ -1124,6 +1136,16 @@ function selectDerivedFacts(
             workersFraction: 1 - state.dyson.botDistribution,
             scientistsFraction: state.dyson.botDistribution,
           },
+    infinity: projectInfinityProgress({
+      bots: state.dyson.bots,
+      totalInfinityPoints: state.infinity.points,
+      divisionsPurchased: state.quantum.divisionsPurchased,
+      breakTheLoop: state.quantum.unlocks.breakTheLoop,
+      breakTarget: state.infinity.breakTarget,
+      permanentDoubleIp: context.entitlements.permanentDoubleIp,
+      quantumDoubleIp:
+        state.quantum.unlocks.doubleInfinityPoints,
+    }),
     dream: {
       productionBasis: 'base-rate',
       effectiveDoubleTimeMultiplier: 1,
@@ -1461,10 +1483,9 @@ function selectGameplayPreviews(
     },
     infinity: {
       shop: infinityShop,
-      breakTarget: {
-        minimum: 1n,
-        maximum: DISCRETE_MAXIMUM,
-      },
+      breakTarget: projectBreakInfinityPresentationControl(
+        state.infinity.breakTarget,
+      ),
     },
     avocado: {
       feeds: avocadoFeeds,

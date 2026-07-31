@@ -187,6 +187,34 @@ describe('SettingsSurface', () => {
       'Bot count saved.',
     )
   })
+
+  test('offers the canonical first-Infinity threshold as a real-state preset', async () => {
+    const user = userEvent.setup()
+    const setDysonBots = vi.fn().mockResolvedValue({
+      applied: true,
+      bots: 42_000_000_000_000_000_000,
+      stateRevision: 2,
+      durableRevision: 2,
+    })
+    renderSettings(vi.fn(), { setDysonBots })
+
+    await user.click(
+      screen.getByRole('button', { name: 'Development Menu' }),
+    )
+    await user.selectOptions(
+      screen.getByRole('combobox', { name: 'Progression state' }),
+      'first-infinity',
+    )
+    await user.click(
+      screen.getByRole('button', { name: 'Apply Progression' }),
+    )
+
+    await waitFor(() =>
+      expect(setDysonBots).toHaveBeenCalledWith(
+        42_000_000_000_000_000_000,
+      ),
+    )
+  })
 })
 
 function renderSettings(

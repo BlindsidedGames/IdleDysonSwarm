@@ -555,9 +555,177 @@
     "defaultMessage": "Tinker in your garage",
     "description": "Visible primary title for the Unity manual-creation action."
   },
+  "infinity.break-target": {
+    "defaultMessage": "Infinity Points before reset",
+    "description": "Label for the Break Infinity reset target control."
+  },
+  "infinity.break-target.failed": {
+    "defaultMessage": "The Infinity target was not changed.",
+    "description": "Failure feedback for a rejected Break Infinity target."
+  },
+  "infinity.break-target.value": {
+    "defaultMessage": "Target: {value} IP",
+    "description": "Currently selected Break Infinity target."
+  },
+  "infinity.points.label": {
+    "defaultMessage": "Infinity Points:",
+    "description": "Unity label preceding the available and parenthesized spent Infinity Point values."
+  },
+  "infinity.points.spent-parenthetical": {
+    "defaultMessage": "({value})",
+    "description": "Unity parenthesized spent Infinity Point value shown after available points."
+  },
+  "infinity.progress.bots-until-next": {
+    "defaultMessage": "{value} Bots till next Infinity Point",
+    "description": "Canonical remaining bot count for the next Infinity Point."
+  },
+  "infinity.progress.break-accessible": {
+    "defaultMessage": "Progress to {target} Infinity Points",
+    "description": "Accessible label for automatic Break Infinity target progress."
+  },
+  "infinity.progress.ordinary": {
+    "defaultMessage": "Progress to Infinity",
+    "description": "Unity heading for ordinary Infinity progress."
+  },
+  "infinity.progress.percent": {
+    "defaultMessage": "{value}%",
+    "description": "Infinity progress as a percentage."
+  },
+  "infinity.progress.reality-warning": {
+    "defaultMessage": "Warning Reality Break imminent!",
+    "description": "Unity warning near the first ordinary Infinity boundary."
+  },
+  "infinity.region": {
+    "defaultMessage": "Infinity",
+    "description": "Accessible name for the Unity Infinity route."
+  },
+  "infinity.secret-phrase": {
+    "defaultMessage": "{phrase}",
+    "description": "Partially revealed Secret of the Universe phrase."
+  },
+  "infinity.secret-phrase.full": {
+    "defaultMessage": "The meaning of life is: Love, Family, and Incrementals",
+    "description": "Full Secret of the Universe phrase; unrevealed letters are masked by the Infinity surface."
+  },
+  "infinity.shop.ai-managers.description": {
+    "defaultMessage": "As with assembly lines, this won't increase the price of AI Managers. But it does require the previous Upgrade.",
+    "description": "Unity retained AI Managers upgrade description."
+  },
+  "infinity.shop.ai-managers.title": {
+    "defaultMessage": "Start with 10 AI Managers",
+    "description": "Unity retained AI Managers upgrade title."
+  },
+  "infinity.shop.assembly-lines.description": {
+    "defaultMessage": "Start with 10 extra manually purchased Assembly Lines. Also adds them now! This won't increase their price!",
+    "description": "Unity retained Assembly Lines upgrade description."
+  },
+  "infinity.shop.assembly-lines.title": {
+    "defaultMessage": "Start with 10 Assembly Lines",
+    "description": "Unity retained Assembly Lines upgrade title."
+  },
+  "infinity.shop.bot-automation.description": {
+    "defaultMessage": "You're a genius, you work out how this works. I may have created it but I hold no power here. Honestly though, good job.",
+    "description": "Unity bot automation upgrade description."
+  },
+  "infinity.shop.bot-automation.title": {
+    "defaultMessage": "Automate Bots",
+    "description": "Unity Infinity bot automation upgrade title."
+  },
+  "infinity.shop.cost": {
+    "defaultMessage": "{value} IP",
+    "description": "Infinity Point cost on an upgrade button."
+  },
+  "infinity.shop.data-centers.description": {
+    "defaultMessage": "As with assembly lines, this won't increase the price of Data Centers. But it does require the previous Upgrade.",
+    "description": "Unity retained Data Centers upgrade description."
+  },
+  "infinity.shop.data-centers.title": {
+    "defaultMessage": "Start with 10 Data Centers",
+    "description": "Unity retained Data Centers upgrade title."
+  },
+  "infinity.shop.empty": {
+    "defaultMessage": "No Infinity upgrades are currently available.",
+    "description": "Safe empty state for the Infinity shop."
+  },
+  "infinity.shop.maximum-reached": {
+    "defaultMessage": "Maxed",
+    "description": "Repeatable Infinity upgrade at its purchase limit."
+  },
+  "infinity.shop.permanent-skill-point.description": {
+    "defaultMessage": "Increase your skill points by 1 You can purchase up to 10 of these, just remember you also get skill points from goals.",
+    "description": "Infinity permanent Skill Point upgrade description."
+  },
+  "infinity.shop.permanent-skill-point.title": {
+    "defaultMessage": "Permanent Skill Point",
+    "description": "Unity Infinity permanent Skill Point upgrade title."
+  },
+  "infinity.shop.planets.description": {
+    "defaultMessage": "As with assembly lines, this won't increase the price of Planets. But it does require the previous Upgrade.",
+    "description": "Unity retained Planets upgrade description."
+  },
+  "infinity.shop.planets.title": {
+    "defaultMessage": "Start with 10 Planets",
+    "description": "Unity retained Planets upgrade title."
+  },
+  "infinity.shop.purchase": {
+    "defaultMessage": "Purchase",
+    "description": "Infinity upgrade purchase button label."
+  },
+  "infinity.shop.purchase-accessible": {
+    "defaultMessage": "Purchase {name} for {cost} Infinity Points",
+    "description": "Accessible Infinity upgrade purchase label."
+  },
+  "infinity.shop.purchase-failed": {
+    "defaultMessage": "{name} was not purchased.",
+    "description": "Failure feedback for a rejected Infinity upgrade purchase."
+  },
+  "infinity.shop.purchase-pending": {
+    "defaultMessage": "Purchasing {name}.",
+    "description": "Status while an Infinity upgrade purchase is pending."
+  },
+  "infinity.shop.purchased": {
+    "defaultMessage": "Purchased",
+    "description": "Completed Infinity upgrade button label."
+  },
+  "infinity.shop.purchased-count": {
+    "defaultMessage": "Purchased: {value}",
+    "description": "Unity count shown on repeatable Infinity upgrades after the first purchase."
+  },
+  "infinity.shop.requires": {
+    "defaultMessage": "Requires {name}",
+    "description": "Unmet Infinity retained-facility prerequisite."
+  },
+  "infinity.shop.research-automation.description": {
+    "defaultMessage": "If you could comprehend how this worked, you'd be the smartest person in this universe. It does however work. Brings the end of suffering.",
+    "description": "Unity Research automation upgrade description."
+  },
+  "infinity.shop.research-automation.title": {
+    "defaultMessage": "Automate Research",
+    "description": "Unity Infinity Research automation upgrade title."
+  },
+  "infinity.shop.secret.description": {
+    "defaultMessage": "Through extreme concentration you peer through the fabric of reality and notice some strange writing. You manage to reveal one of the letters..",
+    "description": "Unity description for Secret of the Universe."
+  },
+  "infinity.shop.secret.title": {
+    "defaultMessage": "Secret of the Universe",
+    "description": "Unity Infinity secret upgrade title."
+  },
+  "infinity.shop.servers.description": {
+    "defaultMessage": "As with assembly lines, this won't increase the price of Servers. But it does require the previous Upgrade.",
+    "description": "Unity retained Servers upgrade description."
+  },
+  "infinity.shop.servers.title": {
+    "defaultMessage": "Start with 10 Servers",
+    "description": "Unity retained Servers upgrade title."
+  },
   "navigation.infinity": {
     "defaultMessage": "Infinity",
     "description": "Unity Infinity destination."
+  },
+  "navigation.infinity-gain": {
+    "defaultMessage": "Infinity +{value}",
+    "description": "Unity Infinity destination with the canonical projected Break reward."
   },
   "navigation.offline-time": {
     "defaultMessage": "Offline Time",
@@ -803,6 +971,10 @@
     "defaultMessage": "Early swarm — {bots} Bots",
     "description": "Early stellar swarm development preset."
   },
+  "settings.development.preset.first-infinity": {
+    "defaultMessage": "First Infinity — {bots} Bots",
+    "description": "Development preset that reaches the first automatic Infinity reset."
+  },
   "settings.development.preset.galaxy-group": {
     "defaultMessage": "Galaxy group — {bots} Bots",
     "description": "Multiple engulfed galaxies development preset."
@@ -932,181 +1104,240 @@
     "description": "Short status confirming that a player-requested operation completed."
   },
   "skills.action-failed": {
-    "defaultMessage": "The skill was not changed. Try again."
+    "defaultMessage": "The skill was not changed. Try again.",
+    "description": "Error shown when assigning or unassigning a skill fails."
   },
   "skills.affected-skills": {
-    "defaultMessage": "Skills affected by this change"
+    "defaultMessage": "Skills affected by this change",
+    "description": "Accessible label for the skills changed by a preset edit."
   },
   "skills.cancel": {
-    "defaultMessage": "Cancel"
+    "defaultMessage": "Cancel",
+    "description": "Button label for cancelling a pending Skills action."
   },
   "skills.centre-tree": {
-    "defaultMessage": "Centre on starting skill"
+    "defaultMessage": "Centre on starting skill",
+    "description": "Accessible label for centring the view on the first skill."
   },
   "skills.close": {
-    "defaultMessage": "Close"
+    "defaultMessage": "Close",
+    "description": "Label for closing a Skills dialog."
   },
   "skills.confirm": {
-    "defaultMessage": "Confirm"
+    "defaultMessage": "Confirm",
+    "description": "Button label for confirming a pending skill preset change."
   },
   "skills.confirm-import": {
-    "defaultMessage": "Replace preset"
+    "defaultMessage": "Replace preset",
+    "description": "Button label for replacing a preset with the reviewed import."
   },
   "skills.confirm-preset-change": {
-    "defaultMessage": "Confirm preset change"
+    "defaultMessage": "Confirm preset change",
+    "description": "Accessible heading for reviewing a skill preset change."
   },
   "skills.copied": {
-    "defaultMessage": "Copied"
+    "defaultMessage": "Copied",
+    "description": "Status confirming that a preset export string was copied."
   },
   "skills.copy": {
-    "defaultMessage": "Copy"
+    "defaultMessage": "Copy",
+    "description": "Button label for copying a skill preset export string."
   },
   "skills.cost": {
-    "defaultMessage": "Cost: {value} Skill Points"
+    "defaultMessage": "Cost: {value} Skill Points",
+    "description": "Skill-point cost displayed in the selected skill details."
   },
   "skills.create-export": {
-    "defaultMessage": "Create export"
+    "defaultMessage": "Create export",
+    "description": "Button label for generating a skill preset export string."
   },
   "skills.current-preset": {
-    "defaultMessage": "Current"
+    "defaultMessage": "Current",
+    "description": "Status marking the currently active skill preset."
   },
   "skills.effect": {
-    "defaultMessage": "Effect:"
+    "defaultMessage": "Effect:",
+    "description": "Label introducing the mechanical effect of a skill."
   },
   "skills.exclusive": {
-    "defaultMessage": "Exclusive with: {names}"
+    "defaultMessage": "Exclusive with: {names}",
+    "description": "Names of skills that cannot be owned with the selected skill."
   },
   "skills.export-preset": {
-    "defaultMessage": "Export"
+    "defaultMessage": "Export",
+    "description": "Heading for exporting a skill preset."
   },
   "skills.export-preset-help": {
-    "defaultMessage": "Create a string you can save or share."
+    "defaultMessage": "Create a string you can save or share.",
+    "description": "Explanation of the skill preset export operation."
   },
   "skills.export-text": {
-    "defaultMessage": "Preset export string"
+    "defaultMessage": "Preset export string",
+    "description": "Label for the generated skill preset export string."
   },
   "skills.fragments": {
-    "defaultMessage": "Fragments: {value}"
+    "defaultMessage": "Fragments: {value}",
+    "description": "Current number of skill fragments owned by the player."
   },
   "skills.fragments-context": {
-    "defaultMessage": "Fragments owned: {value} ({delta})"
+    "defaultMessage": "Fragments owned: {value} ({delta})",
+    "description": "Skill fragment total and its recent change shown in skill details."
   },
   "skills.import-placeholder": {
-    "defaultMessage": "Paste preset string"
+    "defaultMessage": "Paste preset string",
+    "description": "Placeholder inviting the player to paste a skill preset string."
   },
   "skills.import-preset": {
-    "defaultMessage": "Import"
+    "defaultMessage": "Import",
+    "description": "Heading for importing a skill preset."
   },
   "skills.import-preset-help": {
-    "defaultMessage": "Paste a preset string and review it before replacing this preset."
+    "defaultMessage": "Paste a preset string and review it before replacing this preset.",
+    "description": "Explanation of how to import and review a skill preset."
   },
   "skills.import-text": {
-    "defaultMessage": "Preset import string"
+    "defaultMessage": "Preset import string",
+    "description": "Label for the skill preset import string field."
   },
   "skills.include-dependencies": {
-    "defaultMessage": "Also include these required skills:"
+    "defaultMessage": "Also include these required skills:",
+    "description": "Heading for prerequisite skills that will be added to a preset."
   },
   "skills.included-in-preset": {
-    "defaultMessage": "Included in {name}"
+    "defaultMessage": "Included in {name}",
+    "description": "Toggle label indicating whether a skill belongs to the named preset."
   },
   "skills.load-preset": {
-    "defaultMessage": "Load {name}"
+    "defaultMessage": "Load {name}",
+    "description": "Button label for activating a named skill preset."
   },
   "skills.manage-preset": {
-    "defaultMessage": "Manage {name}"
+    "defaultMessage": "Manage {name}",
+    "description": "Accessible label for opening management options for a named preset."
   },
   "skills.manage-preset-title": {
-    "defaultMessage": "Manage {name}"
+    "defaultMessage": "Manage {name}",
+    "description": "Dialog title for managing a named skill preset."
   },
   "skills.matches": {
-    "defaultMessage": "{count, plural, one {# match} other {# matches}}"
+    "defaultMessage": "{count, plural, one {# match} other {# matches}}",
+    "description": "Number of skill-tree search results."
   },
   "skills.missing-requirements": {
-    "defaultMessage": "Missing: {names}"
+    "defaultMessage": "Missing: {names}",
+    "description": "Names of prerequisite skills that have not yet been assigned."
   },
   "skills.non-refundable": {
-    "defaultMessage": "Allow automatic assignment of non-refundable skills"
+    "defaultMessage": "Allow automatic assignment of non-refundable skills",
+    "description": "Toggle allowing presets to assign skills that cannot be refunded."
   },
   "skills.owned": {
-    "defaultMessage": "Owned"
+    "defaultMessage": "Owned",
+    "description": "Status indicating that the player has assigned a skill."
   },
   "skills.paste": {
-    "defaultMessage": "Paste"
+    "defaultMessage": "Paste",
+    "description": "Button label for pasting a skill preset import string."
   },
   "skills.points": {
-    "defaultMessage": "Skill Points: {value}"
+    "defaultMessage": "Skill Points: {value}",
+    "description": "Current number of skill points available to spend."
   },
   "skills.preset-change-failed": {
-    "defaultMessage": "The preset was not changed. Try again."
+    "defaultMessage": "The preset was not changed. Try again.",
+    "description": "Error shown when a skill preset update fails."
   },
   "skills.preset-name": {
-    "defaultMessage": "Preset name"
+    "defaultMessage": "Preset name",
+    "description": "Label for the editable skill preset name."
   },
   "skills.preset-summary": {
-    "defaultMessage": "{count, plural, one {# queued skill} other {# queued skills}} · <workerValue>{workers}% Workers</workerValue> · <scientistValue>{scientists}% Scientists</scientistValue>"
+    "defaultMessage": "{count, plural, one {# queued skill} other {# queued skills}} · <workerValue>{workers}% Workers</workerValue> · <scientistValue>{scientists}% Scientists</scientistValue>",
+    "description": "Summary of a preset queue and its worker versus scientist distribution."
   },
   "skills.preset-transfer-failed": {
-    "defaultMessage": "The preset string could not be processed. Check it and try again."
+    "defaultMessage": "The preset string could not be processed. Check it and try again.",
+    "description": "Error shown when a skill preset import or export string is invalid."
   },
   "skills.presets": {
-    "defaultMessage": "Presets"
+    "defaultMessage": "Presets",
+    "description": "Heading for the saved skill-assignment presets."
   },
   "skills.preview-import": {
-    "defaultMessage": "Preview import"
+    "defaultMessage": "Preview import",
+    "description": "Button label for validating and previewing an imported preset."
   },
   "skills.purchase": {
-    "defaultMessage": "Assign Skill"
+    "defaultMessage": "Assign Skill",
+    "description": "Button label for spending skill points to assign a skill."
   },
   "skills.queued": {
-    "defaultMessage": "Queued for automatic assignment"
+    "defaultMessage": "Queued for automatic assignment",
+    "description": "Status indicating that a skill is in the active automatic-assignment queue."
   },
   "skills.refund": {
-    "defaultMessage": "Unassign Skill"
+    "defaultMessage": "Unassign Skill",
+    "description": "Button label for refunding and unassigning an owned skill."
   },
   "skills.region": {
-    "defaultMessage": "Skills"
+    "defaultMessage": "Skills",
+    "description": "Accessible name for the Skills tab content region."
   },
   "skills.remove-dependants": {
-    "defaultMessage": "Also remove these dependent skills:"
+    "defaultMessage": "Also remove these dependent skills:",
+    "description": "Heading for dependent skills that will be removed from a preset."
   },
   "skills.rename": {
-    "defaultMessage": "Rename"
+    "defaultMessage": "Rename",
+    "description": "Button label for saving a new skill preset name."
   },
   "skills.replace-preset": {
-    "defaultMessage": "Replace {name}?"
+    "defaultMessage": "Replace {name}?",
+    "description": "Confirmation heading before replacing a named skill preset."
   },
   "skills.requirements-progress": {
-    "defaultMessage": "Requirements: {complete}/{total} complete"
+    "defaultMessage": "Requirements: {complete}/{total} complete",
+    "description": "Number of prerequisite skills completed for the selected skill."
   },
   "skills.reset": {
-    "defaultMessage": "Reset refundable skills"
+    "defaultMessage": "Reset refundable skills",
+    "description": "Button label for refunding every currently refundable skill."
   },
   "skills.reset-warning": {
-    "defaultMessage": "Refunds all currently refundable skills and clears automatic assignment."
+    "defaultMessage": "Refunds all currently refundable skills and clears automatic assignment.",
+    "description": "Warning explaining the effects of resetting refundable skills."
   },
   "skills.search": {
-    "defaultMessage": "Search skills"
+    "defaultMessage": "Search skills",
+    "description": "Accessible label for the skill-tree search field."
   },
   "skills.search-placeholder": {
-    "defaultMessage": "Search the tree…"
+    "defaultMessage": "Search the tree…",
+    "description": "Placeholder inviting the player to search the skill tree."
   },
   "skills.settings": {
-    "defaultMessage": "Skill presets and reset"
+    "defaultMessage": "Skill presets and reset",
+    "description": "Accessible label for opening skill preset and reset settings."
   },
   "skills.tree": {
-    "defaultMessage": "Skill tree"
+    "defaultMessage": "Skill tree",
+    "description": "Accessible name for the interactive skill-tree viewport."
   },
   "skills.tree-instructions": {
-    "defaultMessage": "Drag to pan. Pinch or use the zoom controls to zoom. Search and press Enter to open the first matching skill."
+    "defaultMessage": "Drag to pan. Pinch or use the zoom controls to zoom. Search and press Enter to open the first matching skill.",
+    "description": "Screen-reader instructions for navigating the interactive skill tree."
   },
   "skills.unavailable": {
-    "defaultMessage": "This action is not currently available."
+    "defaultMessage": "This action is not currently available.",
+    "description": "Status shown when the selected skill cannot currently be changed."
   },
   "skills.zoom-in": {
-    "defaultMessage": "Zoom in"
+    "defaultMessage": "Zoom in",
+    "description": "Accessible label for increasing the skill-tree zoom level."
   },
   "skills.zoom-out": {
-    "defaultMessage": "Zoom out"
+    "defaultMessage": "Zoom out",
+    "description": "Accessible label for decreasing the skill-tree zoom level."
   },
   "startup-shell.action.check-again": {
     "defaultMessage": "Check again",

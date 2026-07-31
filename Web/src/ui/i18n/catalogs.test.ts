@@ -25,6 +25,12 @@ import {
 import {
   researchMessages,
 } from '../gameplay/research/messages'
+import {
+  infinityMessages,
+} from '../gameplay/infinity/messages'
+import {
+  skillMessages,
+} from '../gameplay/skills/messages'
 import { startupShellMessages } from '../shell/messages'
 
 describe('compiled locale catalogs', () => {
@@ -37,6 +43,8 @@ describe('compiled locale catalogs', () => {
       ...Object.values(tinkerMessages),
       ...Object.values(settingsSurfaceMessages),
       ...Object.values(researchMessages),
+      ...Object.values(infinityMessages),
+      ...Object.values(skillMessages),
     ]
       .map((descriptor) => descriptor.id)
       .sort()

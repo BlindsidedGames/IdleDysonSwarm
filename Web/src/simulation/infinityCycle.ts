@@ -22,6 +22,15 @@ const ORDINARY_INFINITY_BOT_REQUIREMENT = 4.2e19
 const DEFAULT_INFINITY_EXPONENT = 3.9
 const MINIMUM_EVENT_PROGRESS_SECONDS = bitIncrement(1e-12)
 const INT_MAXIMUM = 2_147_483_647n
+export const BREAK_INFINITY_PRESENTATION_TARGET_MINIMUM = 1n
+export const BREAK_INFINITY_PRESENTATION_TARGET_MAXIMUM = 1_100n
+
+const BREAK_INFINITY_PRESENTATION_POSITION_MINIMUM = Math.log10(
+  Number(BREAK_INFINITY_PRESENTATION_TARGET_MINIMUM) + 1,
+)
+const BREAK_INFINITY_PRESENTATION_POSITION_MAXIMUM = Math.log10(
+  Number(BREAK_INFINITY_PRESENTATION_TARGET_MAXIMUM) + 1,
+)
 
 export interface BasicDysonInfinityState {
   points: bigint
@@ -76,6 +85,56 @@ export interface AppliedInfinityReset {
 export interface AppliedBotCapReward {
   readonly specialRewardGranted: boolean
   readonly infinityPointsGranted: bigint
+}
+
+export interface InfinityProgressProjectionInput {
+  readonly bots: number
+  readonly totalInfinityPoints: bigint
+  readonly divisionsPurchased: bigint
+  readonly breakTheLoop: boolean
+  readonly breakTarget: bigint
+  readonly permanentDoubleIp: boolean
+  readonly quantumDoubleIp: boolean
+}
+
+export type InfinityProgressFacts =
+  | {
+      readonly mode: 'ordinary'
+      readonly currentReward: bigint
+      readonly navigationReward: null
+      readonly progressFraction: number
+      readonly resetThresholdBots: number
+      readonly botsRemainingToReset: number
+      readonly currentRewardThresholdBots: null
+      readonly nextRewardThresholdBots: null
+      readonly botsRemainingToNextReward: null
+      readonly breakTargetProgress: null
+      readonly showRealityWarning: boolean
+    }
+  | {
+      readonly mode: 'break'
+      readonly currentReward: bigint
+      readonly navigationReward: bigint
+      readonly progressFraction: number
+      readonly resetThresholdBots: number
+      readonly botsRemainingToReset: number
+      readonly currentRewardThresholdBots: number
+      readonly nextRewardThresholdBots: number
+      readonly botsRemainingToNextReward: number
+      readonly breakTargetProgress: {
+        readonly targetReward: bigint
+        readonly currentReward: bigint
+        readonly fraction: number
+      }
+      readonly showRealityWarning: false
+    }
+
+export interface BreakInfinityPresentationControl {
+  readonly minimum: bigint
+  readonly maximum: bigint
+  readonly minimumPosition: number
+  readonly maximumPosition: number
+  readonly currentPosition: number
 }
 
 function emptyInfinityStatistics(): InfinityStatistics {
@@ -162,19 +221,7 @@ function infinityRewardMultiplier(
 export function breakInfinityBotThreshold(
   state: BasicDysonInfinityState,
 ): number {
-  const multiplier = infinityRewardMultiplier(state)
-  const requiredBaseReward =
-    state.breakTarget / multiplier +
-    (state.breakTarget % multiplier === 0n ? 0n : 1n)
-  const threshold = buyXCost(
-    requiredBaseReward > 0n ? requiredBaseReward : 1n,
-    ordinaryInfinityBotThreshold(state.divisionsPurchased),
-    state.exponent,
-    0,
-  )
-  return threshold > 0 && Number.isFinite(threshold)
-    ? threshold
-    : Number.MAX_VALUE
+  return infinityBotThresholdForReward(state.breakTarget, state)
 }
 
 export function infinityPointsForBots(
@@ -275,6 +322,186 @@ export function timeToNextInfinityEvent(
 export function clampBreakTarget(target: bigint): bigint {
   if (target < 1n) return 1n
   return target > INT_MAXIMUM ? INT_MAXIMUM : target
+}
+
+/**
+ * Projects canonical Infinity state into presentation-neutral progress facts.
+ * Renderers consume these values directly rather than recreating reward,
+ * threshold, or logarithmic progress rules.
+ */
+export function projectInfinityProgress(
+  input: Readonly<InfinityProgressProjectionInput>,
+): InfinityProgressFacts {
+  const infinity = createBasicDysonInfinityState({
+    breakTheLoop: input.breakTheLoop,
+    divisionsPurchased: input.divisionsPurchased,
+    breakTarget: clampBreakTarget(input.breakTarget),
+    permanentDoubleIp: input.permanentDoubleIp,
+    quantumDoubleIp: input.quantumDoubleIp,
+  })
+  const bots =
+    Number.isFinite(input.bots) && input.bots > 0
+      ? input.bots
+      : 0
+  const currentReward = infinityPointsForBots(bots, infinity)
+
+  if (!input.breakTheLoop) {
+    const resetThresholdBots = ordinaryInfinityBotThreshold(
+      input.divisionsPurchased,
+    )
+    const logarithmicProgress =
+      bots < 1 || resetThresholdBots <= 1
+        ? bots >= resetThresholdBots
+          ? 1
+          : 0
+        : Math.log10(bots) / Math.log10(resetThresholdBots)
+    return {
+      mode: 'ordinary',
+      currentReward,
+      navigationReward: null,
+      progressFraction: clampUnitInterval(logarithmicProgress),
+      resetThresholdBots,
+      botsRemainingToReset: finiteRemaining(
+        resetThresholdBots,
+        bots,
+      ),
+      currentRewardThresholdBots: null,
+      nextRewardThresholdBots: null,
+      botsRemainingToNextReward: null,
+      breakTargetProgress: null,
+      showRealityWarning:
+        logarithmicProgress > 0.95 &&
+        input.totalInfinityPoints < 42n,
+    }
+  }
+
+  const resetThresholdBots = infinityBotThresholdForReward(
+    infinity.breakTarget,
+    infinity,
+  )
+  const currentRewardThresholdBots =
+    currentReward <= 0n
+      ? 0
+      : infinityBotThresholdForReward(currentReward, infinity)
+  const nextReward = currentReward + infinityRewardMultiplier(infinity)
+  const nextRewardThresholdBots = infinityBotThresholdForReward(
+    nextReward,
+    infinity,
+  )
+  const progressSpan =
+    nextRewardThresholdBots - currentRewardThresholdBots
+  const pointProgress =
+    progressSpan > 0 && Number.isFinite(progressSpan)
+      ? (bots - currentRewardThresholdBots) / progressSpan
+      : bots >= nextRewardThresholdBots
+        ? 1
+        : 0
+  const targetReward = infinity.breakTarget
+
+  return {
+    mode: 'break',
+    currentReward,
+    navigationReward: currentReward,
+    progressFraction: clampUnitInterval(pointProgress),
+    resetThresholdBots,
+    botsRemainingToReset: finiteRemaining(
+      resetThresholdBots,
+      bots,
+    ),
+    currentRewardThresholdBots,
+    nextRewardThresholdBots,
+    botsRemainingToNextReward: finiteRemaining(
+      nextRewardThresholdBots,
+      bots,
+    ),
+    breakTargetProgress: {
+      targetReward,
+      currentReward,
+      fraction: clampUnitInterval(
+        Number(currentReward) / Number(targetReward),
+      ),
+    },
+    showRealityWarning: false,
+  }
+}
+
+/**
+ * Returns the Unity-parity logarithmic control metadata for the practical
+ * Break Infinity target range.
+ */
+export function projectBreakInfinityPresentationControl(
+  target: bigint,
+): BreakInfinityPresentationControl {
+  const clamped = clampBreakInfinityPresentationTarget(target)
+  return {
+    minimum: BREAK_INFINITY_PRESENTATION_TARGET_MINIMUM,
+    maximum: BREAK_INFINITY_PRESENTATION_TARGET_MAXIMUM,
+    minimumPosition: BREAK_INFINITY_PRESENTATION_POSITION_MINIMUM,
+    maximumPosition: BREAK_INFINITY_PRESENTATION_POSITION_MAXIMUM,
+    currentPosition: Math.log10(Number(clamped) + 1),
+  }
+}
+
+/**
+ * Maps a logarithmic control position back to the practical Unity target.
+ */
+export function breakInfinityTargetFromPresentationPosition(
+  position: number,
+): bigint {
+  const finitePosition = Number.isFinite(position)
+    ? position
+    : BREAK_INFINITY_PRESENTATION_POSITION_MINIMUM
+  const clampedPosition = Math.min(
+    BREAK_INFINITY_PRESENTATION_POSITION_MAXIMUM,
+    Math.max(
+      BREAK_INFINITY_PRESENTATION_POSITION_MINIMUM,
+      finitePosition,
+    ),
+  )
+  return clampBreakInfinityPresentationTarget(
+    BigInt(Math.floor(Math.pow(10, clampedPosition)) - 1),
+  )
+}
+
+function infinityBotThresholdForReward(
+  reward: bigint,
+  state: Readonly<BasicDysonInfinityState>,
+): number {
+  if (reward <= 0n) return 0
+  const multiplier = infinityRewardMultiplier(state)
+  const requiredBaseReward =
+    reward / multiplier + (reward % multiplier === 0n ? 0n : 1n)
+  const threshold = buyXCost(
+    requiredBaseReward,
+    ordinaryInfinityBotThreshold(state.divisionsPurchased),
+    state.exponent,
+    0,
+  )
+  return threshold > 0 && Number.isFinite(threshold)
+    ? threshold
+    : Number.MAX_VALUE
+}
+
+function clampBreakInfinityPresentationTarget(
+  target: bigint,
+): bigint {
+  if (target < BREAK_INFINITY_PRESENTATION_TARGET_MINIMUM) {
+    return BREAK_INFINITY_PRESENTATION_TARGET_MINIMUM
+  }
+  return target > BREAK_INFINITY_PRESENTATION_TARGET_MAXIMUM
+    ? BREAK_INFINITY_PRESENTATION_TARGET_MAXIMUM
+    : target
+}
+
+function finiteRemaining(threshold: number, current: number): number {
+  if (threshold <= current) return 0
+  const remaining = threshold - current
+  return Number.isFinite(remaining) ? remaining : Number.MAX_VALUE
+}
+
+function clampUnitInterval(value: number): number {
+  if (!Number.isFinite(value)) return value > 0 ? 1 : 0
+  return Math.min(1, Math.max(0, value))
 }
 
 export function applyFiniteBotCapSpecialReward(

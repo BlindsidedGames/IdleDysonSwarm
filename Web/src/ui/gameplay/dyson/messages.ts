@@ -36,6 +36,12 @@ export const readyDysonMessages = defineMessages({
     defaultMessage: 'Infinity',
     description: 'Unity Infinity destination.',
   },
+  infinityRouteGain: {
+    id: 'navigation.infinity-gain',
+    defaultMessage: 'Infinity +{value}',
+    description:
+      'Unity Infinity destination with the canonical projected Break reward.',
+  },
   storyRoute: {
     id: 'navigation.story',
     defaultMessage: 'Story',

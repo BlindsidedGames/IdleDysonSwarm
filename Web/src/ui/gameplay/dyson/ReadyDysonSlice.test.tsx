@@ -364,6 +364,50 @@ describe('ReadyDysonSlice', () => {
     ).not.toBeInTheDocument()
   })
 
+  test('opens Infinity only when canonical visibility unlocks it', async () => {
+    const onRouteChange = vi.fn()
+    const user = userEvent.setup()
+    const rendered = render(
+      provider(
+        <ReadyDysonSlice
+          snapshot={snapshot()}
+          locale="en"
+          dispatchPlayer={acceptedDispatch}
+          onRouteChange={onRouteChange}
+        />,
+      ),
+    )
+
+    expect(
+      screen.getByRole('button', { name: 'Infinity' }),
+    ).toBeDisabled()
+
+    rendered.rerender(
+      provider(
+        <ReadyDysonSlice
+          snapshot={snapshot({ infinityRouteUnlocked: true })}
+          locale="en"
+          dispatchPlayer={acceptedDispatch}
+          route="infinity"
+          onRouteChange={onRouteChange}
+        />,
+      ),
+    )
+
+    expect(
+      screen.getByRole('heading', { level: 1, name: 'Infinity' }),
+    ).toBeInTheDocument()
+    expect(
+      await screen.findByText('Infinity Points:'),
+    ).toBeInTheDocument()
+    expect(
+      screen.queryByRole('slider', { name: 'Bot Distribution' }),
+    ).not.toBeInTheDocument()
+
+    await user.click(screen.getByRole('button', { name: 'Bots' }))
+    expect(onRouteChange).toHaveBeenCalledWith('bots')
+  })
+
   test('persists the visualization toggle and reclaims its playfield row', async () => {
     const user = userEvent.setup()
     const rendered = render(
@@ -711,6 +755,7 @@ interface SnapshotOptions {
   readonly visibleBasicFacilityIds?: readonly FacilityId[]
   readonly showNextTierTeaser?: boolean
   readonly skillsRouteUnlocked?: boolean
+  readonly infinityRouteUnlocked?: boolean
   readonly botsPresetAutomation?: 0 | 1 | 2 | 3 | 4 | 5
   readonly researchPresetAutomation?: 0 | 1 | 2 | 3 | 4 | 5
   readonly facilities?: Partial<
@@ -807,6 +852,13 @@ function snapshot(options: SnapshotOptions = {}): ReadySnapshot {
           points: 1n,
           fragments: 0n,
         },
+        infinity: {
+          points: 0n,
+          spentPoints: 0n,
+          availablePoints: 0n,
+          secretsOfTheUniverse: 0n,
+          permanentSkillPoints: 0n,
+        },
       },
       progression: {
         dyson: {
@@ -846,6 +898,28 @@ function snapshot(options: SnapshotOptions = {}): ReadySnapshot {
         quantum: {
           unlocks: {
             botMultitasking: false,
+            breakTheLoop: false,
+          },
+        },
+        infinity: {
+          breakTarget: 1n,
+          inProgress: false,
+          botCapTransitionPending: false,
+          botCapRewardsGranted: false,
+          lastCycleDurationSeconds: 0,
+          lastPointsGained: 0,
+          storedTimeUsedThisCycleSeconds: 0,
+          storedTimeUsedPreviousCycleSeconds: 0,
+          retainedFacilities: {
+            assembly_lines: false,
+            ai_managers: false,
+            servers: false,
+            data_centers: false,
+            planets: false,
+          },
+          automationUnlocked: {
+            research: false,
+            bots: false,
           },
         },
       },
@@ -892,6 +966,19 @@ function snapshot(options: SnapshotOptions = {}): ReadySnapshot {
           workersFraction: 1,
           scientistsFraction: 0,
         },
+        infinity: {
+          mode: 'ordinary',
+          currentReward: 0n,
+          navigationReward: null,
+          progressFraction: 0,
+          resetThresholdBots: 4.2e19,
+          botsRemainingToReset: 4.2e19,
+          currentRewardThresholdBots: null,
+          nextRewardThresholdBots: null,
+          botsRemainingToNextReward: null,
+          breakTargetProgress: null,
+          showRealityWarning: false,
+        },
       },
       visibility: {
         dyson: {
@@ -903,6 +990,10 @@ function snapshot(options: SnapshotOptions = {}): ReadySnapshot {
         },
         skills: {
           routeUnlocked: options.skillsRouteUnlocked ?? false,
+        },
+        infinity: {
+          routeUnlocked:
+            options.infinityRouteUnlocked ?? false,
         },
       },
       runtime: {
@@ -969,6 +1060,12 @@ function snapshot(options: SnapshotOptions = {}): ReadySnapshot {
           'skill.reset': {
             routeAvailable: true,
           },
+          'infinity.purchase-shop-item': {
+            routeAvailable: true,
+          },
+          'infinity.set-break-target': {
+            routeAvailable: true,
+          },
         },
       },
       previews: {
@@ -1031,6 +1128,16 @@ function snapshot(options: SnapshotOptions = {}): ReadySnapshot {
               },
             },
           ],
+        },
+        infinity: {
+          shop: [],
+          breakTarget: {
+            minimum: 1n,
+            maximum: 1100n,
+            minimumPosition: Math.log10(2),
+            maximumPosition: Math.log10(1101),
+            currentPosition: Math.log10(2),
+          },
         },
       },
     },

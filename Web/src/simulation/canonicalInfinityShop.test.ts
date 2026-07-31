@@ -5,6 +5,7 @@ import type { CanonicalGameStateV1 } from '../game-state/types'
 import { prepareIdb1Save } from '../save/prepare'
 import {
   availableCanonicalInfinityShopPoints,
+  CANONICAL_INFINITY_SHOP_ITEM_IDS,
   CANONICAL_INFINITY_SHOP_CONSTANTS,
   purchaseCanonicalInfinityShopItem,
 } from './canonicalInfinityShop'
@@ -46,6 +47,20 @@ function shopState(): CanonicalGameStateV1 {
 }
 
 describe('canonical Infinity shop', () => {
+  test('publishes the Unity card order', () => {
+    expect(CANONICAL_INFINITY_SHOP_ITEM_IDS).toEqual([
+      'secret',
+      'permanent-skill-point',
+      'unlock-research-automation',
+      'unlock-bot-automation',
+      'retain-assembly-lines',
+      'retain-ai-managers',
+      'retain-servers',
+      'retain-data-centers',
+      'retain-planets',
+    ])
+  })
+
   test('reports only valid unspent Infinity Points', () => {
     const state = shopState()
     expect(availableCanonicalInfinityShopPoints(state)).toBe(100n)

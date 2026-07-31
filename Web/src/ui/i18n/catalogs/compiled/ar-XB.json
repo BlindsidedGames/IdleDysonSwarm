@@ -2515,6 +2515,652 @@
       "value": "‬"
     }
   ],
+  "infinity.break-target": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "Iuɟıuıʇʎ Ԁoıuʇs qǝɟoɹǝ ɹǝsǝʇ"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "infinity.break-target.failed": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "⊥ɥǝ Iuɟıuıʇʎ ʇɐɹƃǝʇ ʍɐs uoʇ ɔɥɐuƃǝp."
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "infinity.break-target.value": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "⊥ɐɹƃǝʇ: "
+    },
+    {
+      "type": 1,
+      "value": "value"
+    },
+    {
+      "type": 0,
+      "value": " IԀ"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "infinity.points.label": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "Iuɟıuıʇʎ Ԁoıuʇs:"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "infinity.points.spent-parenthetical": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "("
+    },
+    {
+      "type": 1,
+      "value": "value"
+    },
+    {
+      "type": 0,
+      "value": ")"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "infinity.progress.bots-until-next": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 1,
+      "value": "value"
+    },
+    {
+      "type": 0,
+      "value": " Ԑoʇs ʇıʅʅ uǝxʇ Iuɟıuıʇʎ Ԁoıuʇ"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "infinity.progress.break-accessible": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "Ԁɹoƃɹǝss ʇo "
+    },
+    {
+      "type": 1,
+      "value": "target"
+    },
+    {
+      "type": 0,
+      "value": " Iuɟıuıʇʎ Ԁoıuʇs"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "infinity.progress.ordinary": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "Ԁɹoƃɹǝss ʇo Iuɟıuıʇʎ"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "infinity.progress.percent": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 1,
+      "value": "value"
+    },
+    {
+      "type": 0,
+      "value": "%"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "infinity.progress.reality-warning": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "Mɐɹuıuƃ ᴚǝɐʅıʇʎ Ԑɹǝɐʞ ıɯɯıuǝuʇ!"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "infinity.region": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "Iuɟıuıʇʎ"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "infinity.secret-phrase": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 1,
+      "value": "phrase"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "infinity.secret-phrase.full": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "⊥ɥǝ ɯǝɐuıuƃ oɟ ʅıɟǝ ıs: ⅂oʌǝ, Ⅎɐɯıʅʎ, ɐup Iuɔɹǝɯǝuʇɐʅs"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "infinity.shop.ai-managers.description": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "∀s ʍıʇɥ ɐssǝɯqʅʎ ʅıuǝs, ʇɥıs ʍou'ʇ ıuɔɹǝɐsǝ ʇɥǝ dɹıɔǝ oɟ ∀I Wɐuɐƃǝɹs. Ԑnʇ ıʇ poǝs ɹǝbnıɹǝ ʇɥǝ dɹǝʌıons ∩dƃɹɐpǝ."
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "infinity.shop.ai-managers.title": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "Sʇɐɹʇ ʍıʇɥ 10 ∀I Wɐuɐƃǝɹs"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "infinity.shop.assembly-lines.description": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "Sʇɐɹʇ ʍıʇɥ 10 ǝxʇɹɐ ɯɐunɐʅʅʎ dnɹɔɥɐsǝp ∀ssǝɯqʅʎ ⅂ıuǝs. ∀ʅso ɐpps ʇɥǝɯ uoʍ! ⊥ɥıs ʍou'ʇ ıuɔɹǝɐsǝ ʇɥǝıɹ dɹıɔǝ!"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "infinity.shop.assembly-lines.title": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "Sʇɐɹʇ ʍıʇɥ 10 ∀ssǝɯqʅʎ ⅂ıuǝs"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "infinity.shop.bot-automation.description": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "⅄on'ɹǝ ɐ ƃǝuıns, ʎon ʍoɹʞ onʇ ɥoʍ ʇɥıs ʍoɹʞs. I ɯɐʎ ɥɐʌǝ ɔɹǝɐʇǝp ıʇ qnʇ I ɥoʅp uo doʍǝɹ ɥǝɹǝ. Houǝsʇʅʎ ʇɥonƃɥ, ƃoop ɾoq."
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "infinity.shop.bot-automation.title": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "∀nʇoɯɐʇǝ Ԑoʇs"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "infinity.shop.cost": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 1,
+      "value": "value"
+    },
+    {
+      "type": 0,
+      "value": " IԀ"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "infinity.shop.data-centers.description": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "∀s ʍıʇɥ ɐssǝɯqʅʎ ʅıuǝs, ʇɥıs ʍou'ʇ ıuɔɹǝɐsǝ ʇɥǝ dɹıɔǝ oɟ ᗡɐʇɐ Ↄǝuʇǝɹs. Ԑnʇ ıʇ poǝs ɹǝbnıɹǝ ʇɥǝ dɹǝʌıons ∩dƃɹɐpǝ."
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "infinity.shop.data-centers.title": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "Sʇɐɹʇ ʍıʇɥ 10 ᗡɐʇɐ Ↄǝuʇǝɹs"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "infinity.shop.empty": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "No Iuɟıuıʇʎ ndƃɹɐpǝs ɐɹǝ ɔnɹɹǝuʇʅʎ ɐʌɐıʅɐqʅǝ."
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "infinity.shop.maximum-reached": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "Wɐxǝp"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "infinity.shop.permanent-skill-point.description": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "Iuɔɹǝɐsǝ ʎonɹ sʞıʅʅ doıuʇs qʎ 1 ⅄on ɔɐu dnɹɔɥɐsǝ nd ʇo 10 oɟ ʇɥǝsǝ, ɾnsʇ ɹǝɯǝɯqǝɹ ʎon ɐʅso ƃǝʇ sʞıʅʅ doıuʇs ɟɹoɯ ƃoɐʅs."
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "infinity.shop.permanent-skill-point.title": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "Ԁǝɹɯɐuǝuʇ Sʞıʅʅ Ԁoıuʇ"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "infinity.shop.planets.description": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "∀s ʍıʇɥ ɐssǝɯqʅʎ ʅıuǝs, ʇɥıs ʍou'ʇ ıuɔɹǝɐsǝ ʇɥǝ dɹıɔǝ oɟ Ԁʅɐuǝʇs. Ԑnʇ ıʇ poǝs ɹǝbnıɹǝ ʇɥǝ dɹǝʌıons ∩dƃɹɐpǝ."
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "infinity.shop.planets.title": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "Sʇɐɹʇ ʍıʇɥ 10 Ԁʅɐuǝʇs"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "infinity.shop.purchase": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "Ԁnɹɔɥɐsǝ"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "infinity.shop.purchase-accessible": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "Ԁnɹɔɥɐsǝ "
+    },
+    {
+      "type": 1,
+      "value": "name"
+    },
+    {
+      "type": 0,
+      "value": " ɟoɹ "
+    },
+    {
+      "type": 1,
+      "value": "cost"
+    },
+    {
+      "type": 0,
+      "value": " Iuɟıuıʇʎ Ԁoıuʇs"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "infinity.shop.purchase-failed": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 1,
+      "value": "name"
+    },
+    {
+      "type": 0,
+      "value": " ʍɐs uoʇ dnɹɔɥɐsǝp."
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "infinity.shop.purchase-pending": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "Ԁnɹɔɥɐsıuƃ "
+    },
+    {
+      "type": 1,
+      "value": "name"
+    },
+    {
+      "type": 0,
+      "value": "."
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "infinity.shop.purchased": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "Ԁnɹɔɥɐsǝp"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "infinity.shop.purchased-count": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "Ԁnɹɔɥɐsǝp: "
+    },
+    {
+      "type": 1,
+      "value": "value"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "infinity.shop.requires": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "ᴚǝbnıɹǝs "
+    },
+    {
+      "type": 1,
+      "value": "name"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "infinity.shop.research-automation.description": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "Iɟ ʎon ɔonʅp ɔoɯdɹǝɥǝup ɥoʍ ʇɥıs ʍoɹʞǝp, ʎon'p qǝ ʇɥǝ sɯɐɹʇǝsʇ dǝɹsou ıu ʇɥıs nuıʌǝɹsǝ. Iʇ poǝs ɥoʍǝʌǝɹ ʍoɹʞ. Ԑɹıuƃs ʇɥǝ ǝup oɟ snɟɟǝɹıuƃ."
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "infinity.shop.research-automation.title": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "∀nʇoɯɐʇǝ ᴚǝsǝɐɹɔɥ"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "infinity.shop.secret.description": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "⊥ɥɹonƃɥ ǝxʇɹǝɯǝ ɔouɔǝuʇɹɐʇıou ʎon dǝǝɹ ʇɥɹonƃɥ ʇɥǝ ɟɐqɹıɔ oɟ ɹǝɐʅıʇʎ ɐup uoʇıɔǝ soɯǝ sʇɹɐuƃǝ ʍɹıʇıuƃ. ⅄on ɯɐuɐƃǝ ʇo ɹǝʌǝɐʅ ouǝ oɟ ʇɥǝ ʅǝʇʇǝɹs.."
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "infinity.shop.secret.title": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "Sǝɔɹǝʇ oɟ ʇɥǝ ∩uıʌǝɹsǝ"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "infinity.shop.servers.description": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "∀s ʍıʇɥ ɐssǝɯqʅʎ ʅıuǝs, ʇɥıs ʍou'ʇ ıuɔɹǝɐsǝ ʇɥǝ dɹıɔǝ oɟ Sǝɹʌǝɹs. Ԑnʇ ıʇ poǝs ɹǝbnıɹǝ ʇɥǝ dɹǝʌıons ∩dƃɹɐpǝ."
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "infinity.shop.servers.title": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "Sʇɐɹʇ ʍıʇɥ 10 Sǝɹʌǝɹs"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
   "navigation.infinity": [
     {
       "type": 0,
@@ -2523,6 +3169,24 @@
     {
       "type": 0,
       "value": "Iuɟıuıʇʎ"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "navigation.infinity-gain": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "Iuɟıuıʇʎ +"
+    },
+    {
+      "type": 1,
+      "value": "value"
     },
     {
       "type": 0,
@@ -3571,6 +4235,28 @@
     {
       "type": 0,
       "value": "Ǝɐɹʅʎ sʍɐɹɯ — "
+    },
+    {
+      "type": 1,
+      "value": "bots"
+    },
+    {
+      "type": 0,
+      "value": " Ԑoʇs"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "settings.development.preset.first-infinity": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "Ⅎıɹsʇ Iuɟıuıʇʎ — "
     },
     {
       "type": 1,

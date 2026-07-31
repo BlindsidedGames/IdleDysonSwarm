@@ -271,6 +271,9 @@ describe('Dyson gameplay responsive CSS contract', () => {
       /\.dyson-shell\[data-route-theme="research"\]\s*\{[^}]*--resource-clearance-color:\s*#181f1e;[^}]*background:\s*#181f1e;/,
     )
     expect(shellCss).toMatch(
+      /\.dyson-shell\[data-route-theme="infinity"\]\s*\{[^}]*--resource-clearance-color:\s*#1c1427;[^}]*background:\s*#1c1427;/,
+    )
+    expect(shellCss).toMatch(
       /\.dyson-shell\s*\{[^}]*--bot-distribution-track-color:\s*#3d3440;[^}]*--bot-distribution-handle-color:\s*#c45cda;/,
     )
     expect(shellCss).toMatch(

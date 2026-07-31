@@ -507,6 +507,17 @@ function readySnapshot(): FrontendApplicationSnapshot {
           workers: 0,
           researchers: 0,
         },
+        infinity: {
+          points: 0n,
+          spentPoints: 0n,
+          availablePoints: 0n,
+          secretsOfTheUniverse: 0n,
+          permanentSkillPoints: 0n,
+        },
+        skills: {
+          points: 0n,
+          fragments: 0n,
+        },
       },
       progression: {
         dyson: {
@@ -521,6 +532,22 @@ function readySnapshot(): FrontendApplicationSnapshot {
         quantum: {
           unlocks: {
             botMultitasking: false,
+          },
+        },
+        skills: {
+          byId: {},
+          activeAutoAssignment: [],
+          presets: [
+            { name: 'Preset 1', skillIds: [], botDistribution: 0 },
+            { name: 'Preset 2', skillIds: [], botDistribution: 0 },
+            { name: 'Preset 3', skillIds: [], botDistribution: 0 },
+            { name: 'Preset 4', skillIds: [], botDistribution: 0 },
+            { name: 'Preset 5', skillIds: [], botDistribution: 0 },
+          ],
+          autoAssignNonRefundable: false,
+          tabPresetAutomation: {
+            bots: 0,
+            research: 0,
           },
         },
       },
@@ -567,6 +594,19 @@ function readySnapshot(): FrontendApplicationSnapshot {
           workersFraction: 1,
           scientistsFraction: 0,
         },
+        infinity: {
+          mode: 'ordinary',
+          currentReward: 0n,
+          navigationReward: null,
+          progressFraction: 0,
+          resetThresholdBots: 4.2e19,
+          botsRemainingToReset: 4.2e19,
+          currentRewardThresholdBots: null,
+          nextRewardThresholdBots: null,
+          botsRemainingToNextReward: null,
+          breakTargetProgress: null,
+          showRealityWarning: false,
+        },
       },
       visibility: {
         dyson: {
@@ -575,6 +615,9 @@ function readySnapshot(): FrontendApplicationSnapshot {
           showNextTierTeaser: true,
         },
         skills: {
+          routeUnlocked: false,
+        },
+        infinity: {
           routeUnlocked: false,
         },
       },
@@ -613,6 +656,9 @@ function readySnapshot(): FrontendApplicationSnapshot {
             routeAvailable: true,
           },
           'dyson.set-rounded-bulk-buy': {
+            routeAvailable: true,
+          },
+          'skill.set-tab-preset-automation': {
             routeAvailable: true,
           },
         },

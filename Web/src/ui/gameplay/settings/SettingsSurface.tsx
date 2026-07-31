@@ -365,6 +365,7 @@ type DevelopmentPresetId =
   | 'near-galaxy'
   | 'one-galaxy'
   | 'galaxy-group'
+  | 'first-infinity'
 
 const DEVELOPMENT_BOT_PRESETS: ReadonlyArray<{
   readonly id: DevelopmentPresetId
@@ -379,6 +380,7 @@ const DEVELOPMENT_BOT_PRESETS: ReadonlyArray<{
   { id: 'near-galaxy', bots: 18_000_000_000_000_000 },
   { id: 'one-galaxy', bots: 20_000_000_000_000_000 },
   { id: 'galaxy-group', bots: 200_000_000_000_000_000 },
+  { id: 'first-infinity', bots: 42_000_000_000_000_000_000 },
 ]
 
 function developmentPresetMessage(
@@ -403,6 +405,8 @@ function developmentPresetMessage(
       return messages.developmentOneGalaxy
     case 'galaxy-group':
       return messages.developmentGalaxyGroup
+    case 'first-infinity':
+      return messages.developmentFirstInfinity
   }
 }
 

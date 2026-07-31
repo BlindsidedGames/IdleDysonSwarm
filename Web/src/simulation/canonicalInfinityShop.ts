@@ -15,13 +15,13 @@ import { QUANTUM_CONSTANTS } from './quantumUpgrades'
 export const CANONICAL_INFINITY_SHOP_ITEM_IDS = [
   'secret',
   'permanent-skill-point',
+  'unlock-research-automation',
+  'unlock-bot-automation',
   'retain-assembly-lines',
   'retain-ai-managers',
   'retain-servers',
   'retain-data-centers',
   'retain-planets',
-  'unlock-research-automation',
-  'unlock-bot-automation',
 ] as const
 
 export type CanonicalInfinityShopItemId =

@@ -1403,10 +1403,338 @@
       "value": "Tinker in your garage"
     }
   ],
+  "infinity.break-target": [
+    {
+      "type": 0,
+      "value": "Infinity Points before reset"
+    }
+  ],
+  "infinity.break-target.failed": [
+    {
+      "type": 0,
+      "value": "The Infinity target was not changed."
+    }
+  ],
+  "infinity.break-target.value": [
+    {
+      "type": 0,
+      "value": "Target: "
+    },
+    {
+      "type": 1,
+      "value": "value"
+    },
+    {
+      "type": 0,
+      "value": " IP"
+    }
+  ],
+  "infinity.points.label": [
+    {
+      "type": 0,
+      "value": "Infinity Points:"
+    }
+  ],
+  "infinity.points.spent-parenthetical": [
+    {
+      "type": 0,
+      "value": "("
+    },
+    {
+      "type": 1,
+      "value": "value"
+    },
+    {
+      "type": 0,
+      "value": ")"
+    }
+  ],
+  "infinity.progress.bots-until-next": [
+    {
+      "type": 1,
+      "value": "value"
+    },
+    {
+      "type": 0,
+      "value": " Bots till next Infinity Point"
+    }
+  ],
+  "infinity.progress.break-accessible": [
+    {
+      "type": 0,
+      "value": "Progress to "
+    },
+    {
+      "type": 1,
+      "value": "target"
+    },
+    {
+      "type": 0,
+      "value": " Infinity Points"
+    }
+  ],
+  "infinity.progress.ordinary": [
+    {
+      "type": 0,
+      "value": "Progress to Infinity"
+    }
+  ],
+  "infinity.progress.percent": [
+    {
+      "type": 1,
+      "value": "value"
+    },
+    {
+      "type": 0,
+      "value": "%"
+    }
+  ],
+  "infinity.progress.reality-warning": [
+    {
+      "type": 0,
+      "value": "Warning Reality Break imminent!"
+    }
+  ],
+  "infinity.region": [
+    {
+      "type": 0,
+      "value": "Infinity"
+    }
+  ],
+  "infinity.secret-phrase": [
+    {
+      "type": 1,
+      "value": "phrase"
+    }
+  ],
+  "infinity.secret-phrase.full": [
+    {
+      "type": 0,
+      "value": "The meaning of life is: Love, Family, and Incrementals"
+    }
+  ],
+  "infinity.shop.ai-managers.description": [
+    {
+      "type": 0,
+      "value": "As with assembly lines, this won't increase the price of AI Managers. But it does require the previous Upgrade."
+    }
+  ],
+  "infinity.shop.ai-managers.title": [
+    {
+      "type": 0,
+      "value": "Start with 10 AI Managers"
+    }
+  ],
+  "infinity.shop.assembly-lines.description": [
+    {
+      "type": 0,
+      "value": "Start with 10 extra manually purchased Assembly Lines. Also adds them now! This won't increase their price!"
+    }
+  ],
+  "infinity.shop.assembly-lines.title": [
+    {
+      "type": 0,
+      "value": "Start with 10 Assembly Lines"
+    }
+  ],
+  "infinity.shop.bot-automation.description": [
+    {
+      "type": 0,
+      "value": "You're a genius, you work out how this works. I may have created it but I hold no power here. Honestly though, good job."
+    }
+  ],
+  "infinity.shop.bot-automation.title": [
+    {
+      "type": 0,
+      "value": "Automate Bots"
+    }
+  ],
+  "infinity.shop.cost": [
+    {
+      "type": 1,
+      "value": "value"
+    },
+    {
+      "type": 0,
+      "value": " IP"
+    }
+  ],
+  "infinity.shop.data-centers.description": [
+    {
+      "type": 0,
+      "value": "As with assembly lines, this won't increase the price of Data Centers. But it does require the previous Upgrade."
+    }
+  ],
+  "infinity.shop.data-centers.title": [
+    {
+      "type": 0,
+      "value": "Start with 10 Data Centers"
+    }
+  ],
+  "infinity.shop.empty": [
+    {
+      "type": 0,
+      "value": "No Infinity upgrades are currently available."
+    }
+  ],
+  "infinity.shop.maximum-reached": [
+    {
+      "type": 0,
+      "value": "Maxed"
+    }
+  ],
+  "infinity.shop.permanent-skill-point.description": [
+    {
+      "type": 0,
+      "value": "Increase your skill points by 1 You can purchase up to 10 of these, just remember you also get skill points from goals."
+    }
+  ],
+  "infinity.shop.permanent-skill-point.title": [
+    {
+      "type": 0,
+      "value": "Permanent Skill Point"
+    }
+  ],
+  "infinity.shop.planets.description": [
+    {
+      "type": 0,
+      "value": "As with assembly lines, this won't increase the price of Planets. But it does require the previous Upgrade."
+    }
+  ],
+  "infinity.shop.planets.title": [
+    {
+      "type": 0,
+      "value": "Start with 10 Planets"
+    }
+  ],
+  "infinity.shop.purchase": [
+    {
+      "type": 0,
+      "value": "Purchase"
+    }
+  ],
+  "infinity.shop.purchase-accessible": [
+    {
+      "type": 0,
+      "value": "Purchase "
+    },
+    {
+      "type": 1,
+      "value": "name"
+    },
+    {
+      "type": 0,
+      "value": " for "
+    },
+    {
+      "type": 1,
+      "value": "cost"
+    },
+    {
+      "type": 0,
+      "value": " Infinity Points"
+    }
+  ],
+  "infinity.shop.purchase-failed": [
+    {
+      "type": 1,
+      "value": "name"
+    },
+    {
+      "type": 0,
+      "value": " was not purchased."
+    }
+  ],
+  "infinity.shop.purchase-pending": [
+    {
+      "type": 0,
+      "value": "Purchasing "
+    },
+    {
+      "type": 1,
+      "value": "name"
+    },
+    {
+      "type": 0,
+      "value": "."
+    }
+  ],
+  "infinity.shop.purchased": [
+    {
+      "type": 0,
+      "value": "Purchased"
+    }
+  ],
+  "infinity.shop.purchased-count": [
+    {
+      "type": 0,
+      "value": "Purchased: "
+    },
+    {
+      "type": 1,
+      "value": "value"
+    }
+  ],
+  "infinity.shop.requires": [
+    {
+      "type": 0,
+      "value": "Requires "
+    },
+    {
+      "type": 1,
+      "value": "name"
+    }
+  ],
+  "infinity.shop.research-automation.description": [
+    {
+      "type": 0,
+      "value": "If you could comprehend how this worked, you'd be the smartest person in this universe. It does however work. Brings the end of suffering."
+    }
+  ],
+  "infinity.shop.research-automation.title": [
+    {
+      "type": 0,
+      "value": "Automate Research"
+    }
+  ],
+  "infinity.shop.secret.description": [
+    {
+      "type": 0,
+      "value": "Through extreme concentration you peer through the fabric of reality and notice some strange writing. You manage to reveal one of the letters.."
+    }
+  ],
+  "infinity.shop.secret.title": [
+    {
+      "type": 0,
+      "value": "Secret of the Universe"
+    }
+  ],
+  "infinity.shop.servers.description": [
+    {
+      "type": 0,
+      "value": "As with assembly lines, this won't increase the price of Servers. But it does require the previous Upgrade."
+    }
+  ],
+  "infinity.shop.servers.title": [
+    {
+      "type": 0,
+      "value": "Start with 10 Servers"
+    }
+  ],
   "navigation.infinity": [
     {
       "type": 0,
       "value": "Infinity"
+    }
+  ],
+  "navigation.infinity-gain": [
+    {
+      "type": 0,
+      "value": "Infinity +"
+    },
+    {
+      "type": 1,
+      "value": "value"
     }
   ],
   "navigation.offline-time": [
@@ -1967,6 +2295,20 @@
     {
       "type": 0,
       "value": "Early swarm — "
+    },
+    {
+      "type": 1,
+      "value": "bots"
+    },
+    {
+      "type": 0,
+      "value": " Bots"
+    }
+  ],
+  "settings.development.preset.first-infinity": [
+    {
+      "type": 0,
+      "value": "First Infinity — "
     },
     {
       "type": 1,

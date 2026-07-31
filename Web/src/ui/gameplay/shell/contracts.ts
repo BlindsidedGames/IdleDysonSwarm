@@ -71,7 +71,12 @@ export interface DysonGameplayShellProps {
   readonly direction: DysonShellDirection
   readonly skipLinkLabel: string
   readonly heading: ReactNode
-  readonly routeTheme?: 'bots' | 'research' | 'skills' | 'settings'
+  readonly routeTheme?:
+    | 'bots'
+    | 'research'
+    | 'skills'
+    | 'infinity'
+    | 'settings'
   readonly navigation: DysonNavigationPresentation
   readonly resources: DysonResourceHeaderPresentation
   readonly tinker?: DysonShellRegion

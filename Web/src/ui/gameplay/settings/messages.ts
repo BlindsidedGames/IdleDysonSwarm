@@ -156,4 +156,10 @@ export const settingsSurfaceMessages = defineMessages({
     defaultMessage: 'Galaxy group — {bots} Bots',
     description: 'Multiple engulfed galaxies development preset.',
   },
+  developmentFirstInfinity: {
+    id: 'settings.development.preset.first-infinity',
+    defaultMessage: 'First Infinity — {bots} Bots',
+    description:
+      'Development preset that reaches the first automatic Infinity reset.',
+  },
 })

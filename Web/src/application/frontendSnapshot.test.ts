@@ -283,6 +283,138 @@ describe('frontend gameplay snapshot', () => {
     ).toBe(true)
   })
 
+  test('publishes Infinity route unlock from canonical prestige progression', () => {
+    const source = firstRunFixtureState()
+    const firstInfinity: CanonicalGameStateV1 = {
+      ...source,
+      meta: {
+        ...source.meta,
+        firstInfinityComplete: true,
+      },
+    }
+    const infinityPoint: CanonicalGameStateV1 = {
+      ...source,
+      infinity: {
+        ...source.infinity,
+        points: 1n,
+      },
+    }
+    const quantumPoint: CanonicalGameStateV1 = {
+      ...source,
+      quantum: {
+        ...source.quantum,
+        pointsEarned: 1n,
+      },
+    }
+
+    expect(
+      selectFrontendGameplaySnapshot(
+        source,
+        frontendContext(),
+      ).visibility.infinity.routeUnlocked,
+    ).toBe(false)
+    expect(
+      selectFrontendGameplaySnapshot(
+        firstInfinity,
+        frontendContext(),
+      ).visibility.infinity.routeUnlocked,
+    ).toBe(true)
+    expect(
+      selectFrontendGameplaySnapshot(
+        infinityPoint,
+        frontendContext(),
+      ).visibility.infinity.routeUnlocked,
+    ).toBe(true)
+    expect(
+      selectFrontendGameplaySnapshot(
+        quantumPoint,
+        frontendContext(),
+      ).visibility.infinity.routeUnlocked,
+    ).toBe(true)
+  })
+
+  test('projects ordinary and Break Infinity facts from the canonical snapshot boundary', () => {
+    const source = firstRunFixtureState()
+    const ordinary = selectFrontendGameplaySnapshot(
+      {
+        ...source,
+        dyson: {
+          ...source.dyson,
+          bots: Math.sqrt(4.2e19),
+        },
+      },
+      frontendContext(),
+    )
+
+    expect(ordinary.derived.infinity).toMatchObject({
+      mode: 'ordinary',
+      currentReward: 0n,
+      navigationReward: null,
+      progressFraction: 0.5,
+      resetThresholdBots: 4.2e19,
+      breakTargetProgress: null,
+      showRealityWarning: false,
+    })
+
+    const breakInfinity = selectFrontendGameplaySnapshot(
+      {
+        ...source,
+        dyson: {
+          ...source.dyson,
+          bots: 4.2e19,
+        },
+        infinity: {
+          ...source.infinity,
+          breakTarget: 5n,
+        },
+        quantum: {
+          ...source.quantum,
+          unlocks: {
+            ...source.quantum.unlocks,
+            breakTheLoop: true,
+          },
+        },
+      },
+      frontendContext(),
+    )
+
+    expect(breakInfinity.derived.infinity).toMatchObject({
+      mode: 'break',
+      currentReward: 1n,
+      navigationReward: 1n,
+      currentRewardThresholdBots: 4.2e19,
+      breakTargetProgress: {
+        targetReward: 5n,
+        currentReward: 1n,
+        fraction: 0.2,
+      },
+      showRealityWarning: false,
+    })
+    expect(breakInfinity.previews.infinity.breakTarget).toEqual({
+      minimum: 1n,
+      maximum: 1_100n,
+      minimumPosition: Math.log10(2),
+      maximumPosition: Math.log10(1_101),
+      currentPosition: Math.log10(6),
+    })
+
+    const warning = selectFrontendGameplaySnapshot(
+      {
+        ...source,
+        dyson: {
+          ...source.dyson,
+          bots: Math.pow(4.2e19, 0.96),
+        },
+        infinity: {
+          ...source.infinity,
+          points: 41n,
+        },
+      },
+      frontendContext(),
+    )
+    expect(warning.derived.infinity.showRealityWarning).toBe(true)
+  })
+
   test('projects checkpointed manual Assembly ownership in canonical display order', () => {
     const runtime = fixtureRuntimeState()
     runtime.gameState = dysonProgressionState(
