@@ -160,8 +160,60 @@ export type UiRuntimeDevelopmentResult =
       readonly reason: string
     }
 
+export type UiRuntimeDevelopmentRealityResult =
+  | {
+      readonly applied: true
+      readonly secretsOfTheUniverse: bigint
+      readonly stateRevision: number
+      readonly durableRevision: number
+    }
+  | {
+      readonly applied: false
+      readonly code: string
+      readonly reason: string
+    }
+
+export type UiRuntimeDevelopmentAction =
+  | { readonly kind: 'add-bots'; readonly amount: number }
+  | { readonly kind: 'add-skill-points'; readonly amount: bigint }
+  | { readonly kind: 'add-infinity-points'; readonly amount: bigint }
+  | { readonly kind: 'add-quantum-shards'; readonly amount: bigint }
+  | { readonly kind: 'add-influence'; readonly amount: bigint }
+  | { readonly kind: 'add-strange-matter'; readonly amount: bigint }
+  | { readonly kind: 'set-tinker-interval'; readonly seconds: 0 | 1 }
+  | { readonly kind: 'recalculate-skill-points' }
+  | { readonly kind: 'purchase-debug-options' }
+  | { readonly kind: 'disable-debug-options' }
+
+export interface UiRuntimeDevelopmentStatus {
+  readonly enabled: boolean
+  readonly entitled: boolean
+  readonly quantumShards: bigint
+  readonly strangeMatter: bigint
+}
+
+export type UiRuntimeDevelopmentActionResult =
+  | {
+      readonly applied: true
+      readonly stateRevision: number
+      readonly durableRevision: number
+    }
+  | {
+      readonly applied: false
+      readonly code: string
+      readonly reason: string
+    }
+
 export interface UiRuntimeDevelopmentControls {
+  status(): UiRuntimeDevelopmentStatus
   setDysonBots(bots: number): Promise<UiRuntimeDevelopmentResult>
+  unlockReality(): Promise<UiRuntimeDevelopmentRealityResult>
+  apply(
+    action: UiRuntimeDevelopmentAction,
+  ): Promise<UiRuntimeDevelopmentActionResult>
+  simulateOfflineTime(
+    seconds: number,
+  ): Promise<UiRuntimeDevelopmentActionResult>
 }
 
 /**

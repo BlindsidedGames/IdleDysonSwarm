@@ -24,6 +24,8 @@ import type {
 export interface CanonicalRuntimeState extends CanonicalEventTimeState {
   readonly storedTimeCheater: boolean
   readonly selectedSkillPresetSlot: CanonicalSkillPresetSlot
+  readonly debugOptionsEnabled?: boolean
+  readonly debugEntitlementPurchased?: boolean
 }
 
 export interface CanonicalRuntimeSessionOptions {
@@ -59,6 +61,11 @@ export class CanonicalRuntimeSession
       storedTimeCheater: extractStoredTimeCheater(source),
       selectedSkillPresetSlot:
         extractSelectedSkillPresetSlot(source),
+      debugOptionsEnabled: extractBoolean(source, 'debugOptions'),
+      debugEntitlementPurchased: extractBoolean(
+        source,
+        'debugEverEnabled',
+      ),
     })
   }
 
@@ -77,6 +84,8 @@ export class CanonicalRuntimeSession
     )
     const source = prepared.copyValidatedState()
     source.cheater = candidate.storedTimeCheater
+    source.debugOptions = candidate.debugOptionsEnabled
+    source.debugEverEnabled = candidate.debugEntitlementPurchased
     const dyson = requireRecord(
       source.dysonVerseSaveData,
       'Dyson save',
@@ -84,6 +93,14 @@ export class CanonicalRuntimeSession
     dyson.selectedPreset = candidate.selectedSkillPresetSlot
     return prepared.withValidatedState(source)
   }
+}
+
+function extractBoolean(
+  source: Readonly<Record<string, unknown>>,
+  key: string,
+): boolean {
+  const value = source[key]
+  return typeof value === 'boolean' ? value : false
 }
 
 export function createCanonicalRuntimeSessionFactory(

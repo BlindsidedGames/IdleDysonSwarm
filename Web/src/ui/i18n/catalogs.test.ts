@@ -29,6 +29,14 @@ import {
   infinityMessages,
 } from '../gameplay/infinity/messages'
 import {
+  realityMessages,
+  realityUpgradeMessages,
+  simulationUpgradeMessages,
+} from '../gameplay/reality/messages'
+import {
+  simulationsMessages,
+} from '../gameplay/simulations/messages'
+import {
   skillMessages,
 } from '../gameplay/skills/messages'
 import { startupShellMessages } from '../shell/messages'
@@ -44,6 +52,10 @@ describe('compiled locale catalogs', () => {
       ...Object.values(settingsSurfaceMessages),
       ...Object.values(researchMessages),
       ...Object.values(infinityMessages),
+      ...Object.values(realityMessages),
+      ...Object.values(realityUpgradeMessages),
+      ...Object.values(simulationUpgradeMessages),
+      ...Object.values(simulationsMessages),
       ...Object.values(skillMessages),
     ]
       .map((descriptor) => descriptor.id)

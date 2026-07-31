@@ -1,0 +1,146 @@
+@import "../../tokens/tokens.css";
+
+.simulation-permanent-upgrades {
+  --ui-collapsible-section-collapsed-rotation: 90deg;
+  display: grid;
+  inline-size: min(100%, 86rem);
+  justify-self: center;
+}
+
+.simulation-permanent-upgrades > .ui-collapsible-section__heading {
+  overflow: hidden;
+  border: 1px solid #11151a;
+  border-radius: 0.3rem;
+  background: #38444e;
+}
+
+.simulation-permanent-upgrades > .ui-collapsible-section__heading
+  .ui-collapsible-section__trigger {
+  font-size: calc(1.03rem * var(--game-text-scale));
+}
+
+.simulation-permanent-upgrades__content,
+.simulation-permanent-upgrade-category__content {
+  display: grid;
+  gap: 0.52rem;
+  padding-block-start: 0.52rem;
+}
+
+.simulation-permanent-upgrade-category > .ui-collapsible-section__heading {
+  overflow: hidden;
+  border: 1px solid #11151a;
+  border-radius: 0.3rem;
+  background: var(--simulation-upgrade-header);
+}
+
+.simulation-permanent-upgrade-category > .ui-collapsible-section__heading
+  .ui-collapsible-section__trigger {
+  color: white;
+  font-size: calc(0.92rem * var(--game-text-scale));
+}
+
+.simulation-permanent-upgrade-category {
+  --simulation-upgrade-header: #38444e;
+  --simulation-upgrade-card: #38444e;
+  --simulation-upgrade-action: #8babc7;
+  display: grid;
+}
+
+.simulation-permanent-upgrade-category--education,
+.simulation-permanent-upgrade-category--information {
+  --simulation-upgrade-header: #674b74;
+  --simulation-upgrade-card: #674b74;
+  --simulation-upgrade-action: #cc94e6;
+}
+
+.simulation-permanent-upgrade-category--spaceAge {
+  --simulation-upgrade-header: #486748;
+  --simulation-upgrade-card: #486748;
+  --simulation-upgrade-action: #a0e6a0;
+}
+
+.simulation-permanent-upgrade-category h3,
+.simulation-permanent-upgrade-card h4,
+.simulation-permanent-upgrade-card p {
+  margin: 0;
+}
+
+.simulation-permanent-upgrade-category ol {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 18rem), 1fr));
+  gap: 0.52rem;
+  padding: 0;
+  margin: 0;
+  list-style: none;
+}
+
+.simulation-permanent-upgrade-card {
+  display: grid;
+  min-block-size: 7.25rem;
+  grid-template-columns: minmax(0, 1fr) minmax(6.8rem, 27%);
+  gap: 0.55rem;
+  padding: 0.58rem;
+  border: 1px solid #11151a;
+  border-radius: 0.3rem;
+  background: var(--simulation-upgrade-card);
+  box-shadow: 0 0.14rem 0.25rem rgb(0 0 0 / 30%);
+}
+
+.simulation-permanent-upgrade-card__copy {
+  display: grid;
+  align-content: start;
+  gap: 0.28rem;
+  min-inline-size: 0;
+}
+
+.simulation-permanent-upgrade-card h4 {
+  color: var(--simulation-upgrade-action);
+  font-size: calc(0.94rem * var(--game-text-scale));
+}
+
+.simulation-permanent-upgrade-card p {
+  color: #f4effb;
+  font-size: calc(0.76rem * var(--game-text-scale));
+  line-height: 1.25;
+}
+
+.simulation-permanent-upgrade-card .ui-button {
+  display: grid;
+  align-content: center;
+  gap: 0.15rem;
+  border-color: #11151a;
+  border-radius: 0.26rem;
+  background: var(--simulation-upgrade-action);
+  color: #111820;
+  font-size: calc(0.74rem * var(--game-text-scale));
+  font-weight: var(--font-weight-bold);
+}
+
+.simulation-permanent-upgrade-card .ui-button strong {
+  font-family: var(--font-family-numeric);
+  font-size: calc(0.84rem * var(--game-text-scale));
+  font-variant-numeric: tabular-nums;
+}
+
+.simulation-permanent-upgrade-card__cost {
+  display: inline-flex;
+  align-items: baseline;
+  justify-content: center;
+  gap: 0.18em;
+}
+
+.simulation-permanent-upgrade-card .ui-button:disabled {
+  background: var(--simulation-upgrade-action);
+  color: #111820;
+  opacity: 0.58;
+}
+
+.simulation-permanent-upgrade-card__feedback {
+  grid-column: 1 / -1;
+  color: #d9e4ec;
+  font-size: calc(0.72rem * var(--game-text-scale));
+}
+
+.simulation-permanent-upgrade-card__feedback[role="alert"] {
+  color: #ffb8b8;
+}

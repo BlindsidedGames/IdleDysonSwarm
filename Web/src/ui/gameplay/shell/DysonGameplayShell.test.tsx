@@ -191,6 +191,43 @@ describe('DysonGameplayShell', () => {
     ).toHaveClass('dyson-shell__lower-regions')
   })
 
+  it('publishes the active route theme variant for shared shell regions', () => {
+    const { container } = render(
+      <DysonGameplayShell
+        {...props()}
+        routeTheme="simulations"
+        routeThemeVariant="information"
+      />,
+    )
+
+    expect(container.firstElementChild).toHaveAttribute(
+      'data-route-theme-variant',
+      'information',
+    )
+  })
+
+  it('can omit the shared resource header for routes with their own summary', () => {
+    const { container } = render(
+      <DysonGameplayShell
+        {...props()}
+        showResourceHeader={false}
+      />,
+    )
+
+    expect(
+      container.querySelector('.dyson-resource-header'),
+    ).not.toBeInTheDocument()
+  })
+
+  it('pins route content and supplements to their shell rows when the header is omitted', () => {
+    expect(shellCss).toMatch(
+      /\.dyson-shell__route-content\s*\{[^}]*grid-row:\s*2;/,
+    )
+    expect(shellCss).toMatch(
+      /\.dyson-shell__lower-regions\s*\{[^}]*grid-row:\s*3;/,
+    )
+  })
+
   it('sets locale direction while keeping the physical Unity header order', () => {
     const { container } = render(
       <DysonGameplayShell {...props()} direction="rtl" />,
@@ -296,7 +333,19 @@ describe('Dyson gameplay responsive CSS contract', () => {
       /\.dyson-shell\[data-route-theme="infinity"\][\s\S]*\.dyson-resource-header\s*\{[^}]*background:\s*var\(--infinity-panel-color\);/,
     )
     expect(shellCss).toMatch(
-      /\.dyson-shell\s*\{[^}]*--bot-distribution-track-color:\s*#3d3440;[^}]*--bot-distribution-handle-color:\s*#c45cda;/,
+      /\.dyson-shell\[data-route-theme="simulations"\]\s*\{[^}]*--simulations-panel-color:\s*#29435f;[^}]*--resource-clearance-color:\s*var\(--simulations-panel-color\);[^}]*background:\s*#152337;/,
+    )
+    expect(shellCss).toMatch(
+      /data-route-theme-variant="information"[^}]*--simulations-panel-color:\s*#3a2947;/,
+    )
+    expect(shellCss).toMatch(
+      /data-route-theme-variant="space-age"[^}]*--simulations-panel-color:\s*#254233;/,
+    )
+    expect(shellCss).toMatch(
+      /\.dyson-shell\[data-route-theme="simulations"\][\s\S]*\.dyson-resource-header\s*\{[^}]*background:\s*var\(--simulations-panel-color\);/,
+    )
+    expect(shellCss).toMatch(
+      /\.dyson-shell\s*\{[^}]*--bot-distribution-track-color:\s*#120d14;[^}]*--bot-distribution-handle-color:\s*#c45cda;/,
     )
     expect(shellCss).toMatch(
       /\.dyson-shell\[data-route-theme="research"\]\s*\{[^}]*--bot-distribution-track-color:\s*#263a38;[^}]*--bot-distribution-handle-color:\s*#8bc7c4;/,

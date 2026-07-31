@@ -563,25 +563,27 @@ export function runDreamRailgunAutomation(
 export function purchaseDreamSpaceAge(
   state: Readonly<CanonicalGameStateV1>,
   command: DreamSpaceAgePurchase,
+  quantity = 1,
 ): DreamSpaceAgePurchaseResult {
   const cost =
     command === 'solar'
       ? state.dream.parameters.solarCost
       : state.dream.parameters.fusionCost
-  if (cost <= 0n) {
+  if (!Number.isSafeInteger(quantity) || quantity < 1 || cost <= 0n) {
     return purchaseFailure(state, command, cost, 'invalid-cost')
   }
-  if (state.reality.influence < cost) {
+  const totalCost = cost * BigInt(quantity)
+  if (state.reality.influence < totalCost) {
     return purchaseFailure(
       state,
       command,
-      cost,
+      totalCost,
       'insufficient-influence',
     )
   }
   const resource = command === 'solar' ? 'solarPanels' : 'fusion'
   const current = state.dream.resources[resource]
-  const next = current + 1
+  const next = current + quantity
   if (
     !Number.isFinite(current) ||
     current < 0 ||
@@ -591,7 +593,7 @@ export function purchaseDreamSpaceAge(
     return purchaseFailure(
       state,
       command,
-      cost,
+      totalCost,
       'output-maxed',
     )
   }
@@ -599,13 +601,13 @@ export function purchaseDreamSpaceAge(
   return {
     purchased: true,
     command,
-    cost,
+    cost: totalCost,
     status: 'success',
     state: {
       ...state,
       reality: {
         ...state.reality,
-        influence: state.reality.influence - cost,
+        influence: state.reality.influence - totalCost,
       },
       dream: {
         ...state.dream,

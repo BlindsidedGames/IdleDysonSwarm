@@ -1,6 +1,7 @@
 import type {
   ApplicationSnapshot,
   CheckpointResult,
+  CommitFirstResult,
 } from '../../application/contracts'
 import type { DeepReadonly } from '../../core/contracts'
 import type {
@@ -18,6 +19,7 @@ import {
   CanonicalLifecycleCoordinator,
 } from '../../application/canonicalLifecycleCoordinator'
 import type { CanonicalPlayerCommand } from '../../application/canonicalPlayerCommands'
+import type { CanonicalDevelopmentAction } from '../../application/canonicalGameApplication'
 import type { CanonicalRuntimeState } from '../../application/canonicalRuntimeSession'
 import type {
   CanonicalSkillPresetSlot,
@@ -83,6 +85,7 @@ import {
   type CanonicalSkillPresetImportResult,
   type CanonicalSkillPresetQueuePreview,
 } from '../../simulation/canonicalSkillPresetTransactions'
+import { QUANTUM_CONSTANTS } from '../../simulation/quantumUpgrades'
 import {
   AuthoritativeLifecycleRouter,
 } from './authoritativeLifecycleRouter'
@@ -101,7 +104,11 @@ import type {
   UiRuntimeSnapshotListener,
   UiRuntimeStatusListener,
   UiRuntimePlayerCommandResult,
+  UiRuntimeDevelopmentRealityResult,
   UiRuntimeDevelopmentResult,
+  UiRuntimeDevelopmentAction,
+  UiRuntimeDevelopmentActionResult,
+  UiRuntimeDevelopmentStatus,
   UiRuntimeWarning,
 } from './contracts'
 import {
@@ -249,8 +256,15 @@ export function createBrowserRuntimeFoundation(
     ...(import.meta.env.DEV
       ? {
           development: Object.freeze({
+            status: () => implementation.developmentStatus(),
             setDysonBots: (bots: number) =>
               implementation.setDevelopmentDysonBots(bots),
+            unlockReality: () =>
+              implementation.unlockDevelopmentReality(),
+            apply: (action: UiRuntimeDevelopmentAction) =>
+              implementation.applyDevelopmentAction(action),
+            simulateOfflineTime: (seconds: number) =>
+              implementation.simulateDevelopmentOfflineTime(seconds),
           }),
         }
       : {}),
@@ -485,6 +499,90 @@ class BrowserRuntimeFoundation implements BrowserUiRuntimeFoundation {
     return snapshot.state.gameState
   }
 
+  developmentStatus(): UiRuntimeDevelopmentStatus {
+    const snapshot = this.graph?.application.snapshot()
+    if (snapshot === undefined || snapshot.phase !== 'ready') {
+      return {
+        enabled: false,
+        entitled: false,
+        quantumShards: 0n,
+        strangeMatter: 0n,
+      }
+    }
+    return {
+      enabled: snapshot.state.debugOptionsEnabled === true,
+      entitled: snapshot.state.debugEntitlementPurchased === true,
+      quantumShards:
+        snapshot.state.gameState.quantum.pointsEarned >
+        snapshot.state.gameState.quantum.pointsSpent
+          ? snapshot.state.gameState.quantum.pointsEarned -
+            snapshot.state.gameState.quantum.pointsSpent
+          : 0n,
+      strangeMatter: snapshot.state.gameState.dream.strangeMatter,
+    }
+  }
+
+  async applyDevelopmentAction(
+    action: UiRuntimeDevelopmentAction,
+  ): Promise<UiRuntimeDevelopmentActionResult> {
+    if (!import.meta.env.DEV) return developmentUnavailable()
+    const graph = this.graph
+    if (graph === undefined || this.shutdownRequested) {
+      return developmentNotReady()
+    }
+    try {
+      const result = await graph.router.run(() =>
+        graph.coordinator.applyDevelopmentAction(
+          action as CanonicalDevelopmentAction,
+        ),
+      )
+      this.assertCurrentGraph(graph)
+      this.publishFrontendSnapshot(graph)
+      return developmentCommitResult(result)
+    } catch (error) {
+      return {
+        applied: false,
+        code: 'RUNTIME-DEVELOPMENT-FAILED',
+        reason: errorMessage(error),
+      }
+    }
+  }
+
+  async simulateDevelopmentOfflineTime(
+    seconds: number,
+  ): Promise<UiRuntimeDevelopmentActionResult> {
+    if (!import.meta.env.DEV) return developmentUnavailable()
+    if (!Number.isFinite(seconds) || seconds < 0) {
+      return {
+        applied: false,
+        code: 'RUNTIME-DEVELOPMENT-TIME-INVALID',
+        reason: 'Offline-time seconds must be finite and non-negative.',
+      }
+    }
+    const graph = this.graph
+    if (graph === undefined || this.shutdownRequested) {
+      return developmentNotReady()
+    }
+    try {
+      const result = await graph.router.run(async () => {
+        await graph.coordinator.advanceActive(seconds * 1_000)
+        return graph.coordinator.applyDevelopmentAction({
+          kind: 'add-double-time',
+          seconds,
+        })
+      })
+      this.assertCurrentGraph(graph)
+      this.publishFrontendSnapshot(graph)
+      return developmentCommitResult(result)
+    } catch (error) {
+      return {
+        applied: false,
+        code: 'RUNTIME-DEVELOPMENT-FAILED',
+        reason: errorMessage(error),
+      }
+    }
+  }
+
   async setDevelopmentDysonBots(
     bots: number,
   ): Promise<UiRuntimeDevelopmentResult> {
@@ -535,6 +633,68 @@ class BrowserRuntimeFoundation implements BrowserUiRuntimeFoundation {
       return {
         applied: true,
         bots,
+        stateRevision: result.transition.revision,
+        durableRevision: result.durableRevision,
+      }
+    } catch (error) {
+      return {
+        applied: false,
+        code: 'RUNTIME-DEVELOPMENT-FAILED',
+        reason: errorMessage(error),
+      }
+    }
+  }
+
+  async unlockDevelopmentReality(): Promise<
+    UiRuntimeDevelopmentRealityResult
+  > {
+    if (!import.meta.env.DEV) {
+      return {
+        applied: false,
+        code: 'RUNTIME-DEVELOPMENT-CONTROL-UNAVAILABLE',
+        reason:
+          'Development progression controls are unavailable in this build.',
+      }
+    }
+    const graph = this.graph
+    if (graph === undefined || this.shutdownRequested) {
+      return {
+        applied: false,
+        code: 'RUNTIME-DEVELOPMENT-NOT-READY',
+        reason:
+          'The browser runtime does not own a writable ready application.',
+      }
+    }
+    try {
+      const result = await graph.router.run(() =>
+        graph.coordinator.unlockDevelopmentReality(),
+      )
+      this.assertCurrentGraph(graph)
+      this.publishFrontendSnapshot(graph)
+      if (!result.committed) {
+        const transitionCode =
+          result.transition.accepted
+            ? undefined
+            : result.transition.code
+        const transitionReason =
+          result.transition.accepted
+            ? undefined
+            : result.transition.reason
+        return {
+          applied: false,
+          code:
+            result.code ??
+            transitionCode ??
+            'RUNTIME-DEVELOPMENT-COMMIT-FAILED',
+          reason:
+            result.reason ??
+            transitionReason ??
+            'The Reality development state was not committed.',
+        }
+      }
+      return {
+        applied: true,
+        secretsOfTheUniverse: QUANTUM_CONSTANTS.maximumSecrets,
         stateRevision: result.transition.revision,
         durableRevision: result.durableRevision,
       }
@@ -1478,6 +1638,47 @@ function runtimePlayerFailure(
     reason,
     retryable: false,
   })
+}
+
+function developmentUnavailable(): UiRuntimeDevelopmentActionResult {
+  return {
+    applied: false,
+    code: 'RUNTIME-DEVELOPMENT-CONTROL-UNAVAILABLE',
+    reason: 'Development progression controls are unavailable in this build.',
+  }
+}
+
+function developmentNotReady(): UiRuntimeDevelopmentActionResult {
+  return {
+    applied: false,
+    code: 'RUNTIME-DEVELOPMENT-NOT-READY',
+    reason: 'The browser runtime does not own a writable ready application.',
+  }
+}
+
+function developmentCommitResult(
+  result: CommitFirstResult,
+): UiRuntimeDevelopmentActionResult {
+  if (!result.committed) {
+    return {
+      applied: false,
+      code:
+        result.code ??
+        (result.transition.accepted
+          ? 'RUNTIME-DEVELOPMENT-COMMIT-FAILED'
+          : result.transition.code),
+      reason:
+        result.reason ??
+        (result.transition.accepted
+          ? 'The development action was not committed.'
+          : result.transition.reason),
+    }
+  }
+  return {
+    applied: true,
+    stateRevision: result.transition.revision,
+    durableRevision: result.durableRevision,
+  }
 }
 
 function mapImportResult(

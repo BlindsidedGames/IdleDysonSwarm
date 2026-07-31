@@ -212,53 +212,66 @@
   grid-column: 2;
   grid-row: 2;
   inline-size: 100%;
-  block-size: 2rem;
+  block-size: 1.4rem;
   margin: 0;
   background: transparent;
   touch-action: pan-y;
 }
 
 .bot-distribution__slider::-webkit-slider-runnable-track {
-  block-size: 0.78rem;
-  border-radius: 0.18rem;
+  block-size: 0.42rem;
+  border: 1px solid rgb(0 0 0 / 44%);
+  border-radius: 999px;
   background: var(--bot-distribution-track-color);
+  box-shadow: inset 0 0.08rem 0.15rem rgb(0 0 0 / 32%);
 }
 
 .bot-distribution__slider::-webkit-slider-thumb {
   appearance: none;
-  inline-size: 1.65rem;
-  block-size: 1.65rem;
-  margin-block-start: -0.435rem;
-  border: 0;
-  border-radius: 0.22rem;
+  inline-size: 1rem;
+  block-size: 1rem;
+  margin-block-start: -0.34rem;
+  border: 2px solid color-mix(
+    in srgb,
+    var(--bot-distribution-handle-color) 72%,
+    white
+  );
+  border-radius: 50%;
   background: var(--bot-distribution-handle-color);
-  box-shadow: 0 1px 2px rgb(0 0 0 / 70%);
+  box-shadow: 0 0.08rem 0.18rem rgb(0 0 0 / 45%);
 }
 
 .bot-distribution__slider::-moz-range-track {
-  block-size: 0.78rem;
-  border-radius: 0.18rem;
+  block-size: 0.42rem;
+  border: 1px solid rgb(0 0 0 / 44%);
+  border-radius: 999px;
   background: var(--bot-distribution-track-color);
+  box-shadow: inset 0 0.08rem 0.15rem rgb(0 0 0 / 32%);
 }
 
 .bot-distribution__slider::-moz-range-progress {
-  block-size: 0.78rem;
-  border-radius: 0.18rem;
+  block-size: 0.42rem;
+  border-radius: 999px;
   background: var(--bot-distribution-handle-color);
 }
 
 .bot-distribution__slider::-moz-range-thumb {
-  inline-size: 1.65rem;
-  block-size: 1.65rem;
-  border: 0;
-  border-radius: 0.22rem;
+  inline-size: 0.9rem;
+  block-size: 0.9rem;
+  border: 2px solid color-mix(
+    in srgb,
+    var(--bot-distribution-handle-color) 72%,
+    white
+  );
+  border-radius: 50%;
   background: var(--bot-distribution-handle-color);
-  box-shadow: 0 1px 2px rgb(0 0 0 / 70%);
+  box-shadow: 0 0.08rem 0.18rem rgb(0 0 0 / 45%);
 }
 
 .bot-distribution__slider:focus-visible {
   outline: 3px solid var(--color-focus);
-  outline-offset: 2px;
+  outline-offset: 0.18rem;
+  border-radius: 0.3rem;
 }
 
 .bot-distribution__failure {

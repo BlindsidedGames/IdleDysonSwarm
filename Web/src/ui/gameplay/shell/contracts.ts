@@ -35,6 +35,10 @@ export type DysonNavigationItem =
       readonly label: ReactNode
       readonly icon?: ReactNode
       readonly iconSrc?: string
+      readonly progress?: {
+        readonly fraction: number
+        readonly label: string
+      }
       readonly current: true
       readonly bottom?: boolean
       readonly href?: never
@@ -45,6 +49,10 @@ export type DysonNavigationItem =
       readonly label: ReactNode
       readonly icon?: ReactNode
       readonly iconSrc?: string
+      readonly progress?: {
+        readonly fraction: number
+        readonly label: string
+      }
       readonly onActivate?: () => void
       readonly href?: string
       readonly disabled?: boolean
@@ -76,9 +84,17 @@ export interface DysonGameplayShellProps {
     | 'research'
     | 'skills'
     | 'infinity'
+    | 'reality'
+    | 'simulations'
     | 'settings'
+  /** Optional progression variant used only to refine an active route theme. */
+  readonly routeThemeVariant?:
+    | 'foundational'
+    | 'information'
+    | 'space-age'
   readonly navigation: DysonNavigationPresentation
   readonly resources: DysonResourceHeaderPresentation
+  readonly showResourceHeader?: boolean
   readonly tinker?: DysonShellRegion
   readonly hasVisibleFacilities: boolean
   /**
@@ -91,5 +107,6 @@ export interface DysonGameplayShellProps {
   readonly productionSummary?: DysonShellRegion
   readonly distribution?: DysonShellRegion
   readonly sidePanelSupplement?: ReactNode
+  readonly routeSupplement?: DysonShellRegion
   readonly routeContent?: DysonShellRegion
 }

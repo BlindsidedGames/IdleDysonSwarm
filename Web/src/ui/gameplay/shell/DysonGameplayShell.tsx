@@ -24,8 +24,10 @@ export function DysonGameplayShell({
   skipLinkLabel,
   heading,
   routeTheme = 'bots',
+  routeThemeVariant,
   navigation,
   resources,
+  showResourceHeader = true,
   tinker,
   hasVisibleFacilities,
   facilities,
@@ -34,6 +36,7 @@ export function DysonGameplayShell({
   productionSummary,
   distribution,
   sidePanelSupplement,
+  routeSupplement,
   routeContent,
 }: DysonGameplayShellProps) {
   const mainId = `dyson-gameplay-main-${useId().replaceAll(':', '')}`
@@ -102,6 +105,7 @@ export function DysonGameplayShell({
       data-menu-open={menuOpen}
       data-route-content={routeContent !== undefined}
       data-route-theme={routeTheme}
+      data-route-theme-variant={routeThemeVariant}
     >
       <a
         className="dyson-shell__skip-link"
@@ -165,10 +169,12 @@ export function DysonGameplayShell({
         <div className="dyson-shell__content">
           <h1 className="dyson-shell__route-heading">{heading}</h1>
 
-          <DysonResourceHeader
-            {...resources}
-            direction={direction}
-          />
+          {showResourceHeader ? (
+            <DysonResourceHeader
+              {...resources}
+              direction={direction}
+            />
+          ) : null}
 
           {routeContent !== undefined ? (
             <ShellRegion
@@ -206,11 +212,17 @@ export function DysonGameplayShell({
             </div>
           )}
 
-          {(distribution !== undefined ||
+          {(routeSupplement !== undefined || distribution !== undefined ||
             (routeContent === undefined &&
               (info !== undefined ||
                 productionSummary !== undefined))) && (
             <div className="dyson-shell__lower-regions">
+              {routeSupplement !== undefined && (
+                <ShellRegion
+                  className="dyson-shell__route-supplement"
+                  region={routeSupplement}
+                />
+              )}
               {routeContent === undefined && info !== undefined && (
                 <ShellRegion
                   className="dyson-shell__info"

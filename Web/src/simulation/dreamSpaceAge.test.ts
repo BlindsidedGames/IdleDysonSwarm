@@ -325,6 +325,15 @@ describe('Dream Space Age', () => {
     expect(solar.state.reality.influence).toBe(999_950n)
     expect(solar.state.dream.resources.solarPanels).toBe(1)
 
+    const bulkSolar = purchaseDreamSpaceAge(source, 'solar', 10)
+    expect(bulkSolar).toMatchObject({
+      purchased: true,
+      cost: 500n,
+      status: 'success',
+    })
+    expect(bulkSolar.state.reality.influence).toBe(999_500n)
+    expect(bulkSolar.state.dream.resources.solarPanels).toBe(10)
+
     const fusion = purchaseDreamSpaceAge(solar.state, 'fusion')
     expect(fusion.purchased).toBe(true)
     expect(fusion.state.reality.influence).toBe(899_950n)

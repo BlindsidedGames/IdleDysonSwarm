@@ -105,6 +105,13 @@ export const settingsSurfaceMessages = defineMessages({
       'Bot count saved. Return to Bots to inspect the live simulation.',
     description: 'Successful development progression feedback.',
   },
+  developmentRealitySucceeded: {
+    id: 'settings.development.reality-succeeded',
+    defaultMessage:
+      'Reality unlocked. Open the Reality tab to inspect the live state.',
+    description:
+      'Successful Reality unlock development-state feedback.',
+  },
   developmentFailed: {
     id: 'settings.development.failed',
     defaultMessage:
@@ -161,5 +168,11 @@ export const settingsSurfaceMessages = defineMessages({
     defaultMessage: 'First Infinity — {bots} Bots',
     description:
       'Development preset that reaches the first automatic Infinity reset.',
+  },
+  developmentRealityUnlocked: {
+    id: 'settings.development.preset.reality-unlocked',
+    defaultMessage: 'Reality unlocked — 27 Secrets',
+    description:
+      'Development preset that applies the canonical Reality unlock state.',
   },
 })

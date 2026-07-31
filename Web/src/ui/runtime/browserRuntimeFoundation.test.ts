@@ -125,10 +125,44 @@ describe('browser runtime foundation composition', () => {
     const development = firstRuntime.development
     expect(development).toBeDefined()
     await expect(
+      development?.apply({
+        kind: 'add-quantum-shards',
+        amount: 100_000n,
+      }),
+    ).resolves.toMatchObject({ applied: true })
+    await expect(
+      development?.apply({
+        kind: 'add-strange-matter',
+        amount: 500_000n,
+      }),
+    ).resolves.toMatchObject({ applied: true })
+    await expect(
+      development?.apply({
+        kind: 'add-influence',
+        amount: 1_000n,
+      }),
+    ).resolves.toMatchObject({ applied: true })
+    await expect(
+      development?.apply({ kind: 'purchase-debug-options' }),
+    ).resolves.toMatchObject({ applied: true })
+    expect(development?.status()).toMatchObject({
+      enabled: true,
+      entitled: true,
+    })
+    await expect(
+      development?.simulateOfflineTime(1),
+    ).resolves.toMatchObject({ applied: true })
+    await expect(
       development?.setDysonBots(195_000),
     ).resolves.toMatchObject({
       applied: true,
       bots: 195_000,
+    })
+    await expect(
+      development?.unlockReality(),
+    ).resolves.toMatchObject({
+      applied: true,
+      secretsOfTheUniverse: 27n,
     })
     const progressedSnapshot = firstRuntime.snapshot()
     expect(progressedSnapshot).toMatchObject({
@@ -139,6 +173,17 @@ describe('browser runtime foundation composition', () => {
             bots: 195_000,
             workers: 97_500,
             researchers: 97_500,
+          },
+          infinity: {
+            points: 27n,
+            spentPoints: 27n,
+            secretsOfTheUniverse: 27n,
+          },
+        },
+        visibility: {
+          reality: {
+            routeVisible: true,
+            routeUnlocked: true,
           },
         },
       },
@@ -3170,6 +3215,10 @@ describe('browser runtime foundation composition', () => {
       ),
     ).toBe(true)
     expect(typeof development?.setDysonBots).toBe('function')
+    expect(typeof development?.unlockReality).toBe('function')
+    expect(typeof development?.status).toBe('function')
+    expect(typeof development?.apply).toBe('function')
+    expect(typeof development?.simulateOfflineTime).toBe('function')
     await runtime.shutdown()
   })
 

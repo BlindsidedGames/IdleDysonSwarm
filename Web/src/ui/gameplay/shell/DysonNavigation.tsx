@@ -48,19 +48,7 @@ export function DysonNavigation({
                 className="dyson-navigation__link"
                 aria-current="page"
               >
-              {(item.iconSrc !== undefined || item.icon !== undefined) && (
-                <span
-                  className="dyson-navigation__icon"
-                  aria-hidden="true"
-                >
-                  {item.iconSrc !== undefined
-                    ? <img src={item.iconSrc} alt="" />
-                    : item.icon}
-                </span>
-              )}
-              <span className="dyson-navigation__label">
-                {item.label}
-              </span>
+                <NavigationItemContent item={item} />
               </span>
             ) : item.onActivate !== undefined && !item.disabled ? (
               <button
@@ -72,19 +60,7 @@ export function DysonNavigation({
                   onNavigate?.()
                 }}
               >
-                {(item.iconSrc !== undefined || item.icon !== undefined) && (
-                  <span
-                    className="dyson-navigation__icon"
-                    aria-hidden="true"
-                  >
-                    {item.iconSrc !== undefined
-                      ? <img src={item.iconSrc} alt="" />
-                      : item.icon}
-                  </span>
-                )}
-                <span className="dyson-navigation__label">
-                  {item.label}
-                </span>
+                <NavigationItemContent item={item} />
               </button>
             ) : item.href && !item.disabled ? (
               <a
@@ -93,47 +69,65 @@ export function DysonNavigation({
                 tabIndex={interactive ? undefined : -1}
                 onClick={onNavigate}
               >
-                {(item.iconSrc !== undefined || item.icon !== undefined) && (
-                  <span
-                    className="dyson-navigation__icon"
-                    aria-hidden="true"
-                  >
-                    {item.iconSrc !== undefined
-                      ? <img src={item.iconSrc} alt="" />
-                      : item.icon}
-                  </span>
-                )}
-                <span className="dyson-navigation__label">
-                  {item.label}
-                </span>
+                <NavigationItemContent item={item} />
               </a>
             ) : (
               <button
                 type="button"
                 className="dyson-navigation__link"
                 disabled
-                aria-label={typeof item.label === 'string'
-                  ? item.label
-                  : undefined}
+                aria-label={
+                  item.progress?.label ??
+                  (typeof item.label === 'string'
+                    ? item.label
+                    : undefined)
+                }
               >
-                {(item.iconSrc !== undefined || item.icon !== undefined) && (
-                  <span
-                    className="dyson-navigation__icon"
-                    aria-hidden="true"
-                  >
-                    {item.iconSrc !== undefined
-                      ? <img src={item.iconSrc} alt="" />
-                      : item.icon}
-                  </span>
-                )}
-                <span className="dyson-navigation__label">
-                  {item.label}
-                </span>
+                <NavigationItemContent item={item} />
               </button>
             )}
           </li>
         ))}
       </ul>
     </nav>
+  )
+}
+
+function NavigationItemContent({
+  item,
+}: {
+  readonly item: DysonNavigationPresentation['items'][number]
+}) {
+  return (
+    <>
+      {(item.iconSrc !== undefined || item.icon !== undefined) && (
+        <span
+          className="dyson-navigation__icon"
+          aria-hidden="true"
+        >
+          {item.iconSrc !== undefined
+            ? <img src={item.iconSrc} alt="" />
+            : item.icon}
+        </span>
+      )}
+      <span className="dyson-navigation__label">
+        {item.label}
+      </span>
+      {item.progress !== undefined ? (
+        <span
+          className="dyson-navigation__progress"
+          aria-hidden="true"
+        >
+          <i
+            style={{
+              inlineSize: `${Math.max(
+                0,
+                Math.min(1, item.progress.fraction),
+              ) * 100}%`,
+            }}
+          />
+        </span>
+      ) : null}
+    </>
   )
 }

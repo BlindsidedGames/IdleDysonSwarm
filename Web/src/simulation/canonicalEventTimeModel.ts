@@ -38,6 +38,7 @@ import {
   runDreamFoundationalInformationConversions,
   runDreamFoundationalInformationProduction,
 } from './dreamFoundationalInformation'
+import { advanceDreamEducation } from './dreamEducationUpgrades'
 import {
   runDreamRailgunAutomation,
   runDreamSpaceAgeProduction,
@@ -428,6 +429,20 @@ export class CanonicalEventTimeModel
         return
       }
       candidate = earlyDream.state
+      const education = advanceDreamEducation(
+        candidate,
+        seconds,
+        doubleTimeTick.effectiveMultiplier,
+      )
+      if (!education.accepted) {
+        this.fail(
+          'CANONICAL_EVENT_DREAM_EDUCATION_REJECTED',
+          'dream.education',
+          'Dream Education research rejected the interval.',
+        )
+        return
+      }
+      candidate = education.candidate
       const reality = advanceRealityWorkers(
         candidate,
         seconds,

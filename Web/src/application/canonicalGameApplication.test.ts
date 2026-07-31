@@ -100,6 +100,139 @@ describe('canonical game application engine', () => {
     expect(state).toEqual(before)
   })
 
+  test('applies a coherent development Reality unlock state', () => {
+    const state = runtime()
+    Object.assign(state, {
+      gameState: {
+        ...state.gameState,
+        infinity: {
+          ...state.gameState.infinity,
+          points: 0n,
+          spentPoints: 0n,
+          secretsOfTheUniverse: 0n,
+        },
+      },
+    })
+    const definition = createCanonicalGameEngineDefinition({
+      eventContext: context(),
+    })
+
+    const result = definition.applyCommand(state, {
+      kind: 'internal.development-unlock-reality',
+    })
+
+    expect(result).toEqual({ accepted: true, changed: true })
+    expect(state.gameState.infinity).toMatchObject({
+      points: 27n,
+      spentPoints: 27n,
+      secretsOfTheUniverse: 27n,
+    })
+  })
+
+  test('applies Unity-parity development grants through one canonical action', () => {
+    const state = runtime()
+    const definition = createCanonicalGameEngineDefinition({
+      eventContext: context(),
+    })
+
+    for (const action of [
+      { kind: 'add-skill-points', amount: 3n },
+      { kind: 'add-infinity-points', amount: 4n },
+      { kind: 'add-quantum-shards', amount: 5n },
+      { kind: 'add-strange-matter', amount: 6n },
+      { kind: 'add-influence', amount: 7n },
+    ] as const) {
+      expect(
+        definition.applyCommand(state, {
+          kind: 'internal.development-apply-action',
+          action,
+        }),
+      ).toEqual({ accepted: true, changed: true })
+    }
+
+    expect(state.gameState.skills.points).toBeGreaterThanOrEqual(3n)
+    expect(state.gameState.infinity.points).toBeGreaterThanOrEqual(4n)
+    expect(state.gameState.quantum.pointsEarned).toBeGreaterThanOrEqual(5n)
+    expect(state.gameState.dream.strangeMatter).toBeGreaterThanOrEqual(6n)
+    expect(state.gameState.reality.influence).toBeGreaterThanOrEqual(7n)
+  })
+
+  test('runs Unity auto-assignment immediately after granting skill points', () => {
+    const state = runtime()
+    Object.assign(state, {
+      gameState: {
+        ...state.gameState,
+        skills: {
+          ...state.gameState.skills,
+          points: 0n,
+          activeAutoAssignment: ['assemblyLineTree'],
+        },
+      },
+    })
+    const definition = createCanonicalGameEngineDefinition({
+      eventContext: context(),
+    })
+
+    expect(
+      definition.applyCommand(state, {
+        kind: 'internal.development-apply-action',
+        action: { kind: 'add-skill-points', amount: 1n },
+      }),
+    ).toEqual({ accepted: true, changed: true })
+    expect(state.gameState.skills.byId.assemblyLineTree?.owned).toBe(true)
+    expect(state.gameState.skills.points).toBe(0n)
+  })
+
+  test('purchases, disables, and freely re-enables Developer Options', () => {
+    const state = runtime()
+    Object.assign(state, {
+      debugOptionsEnabled: false,
+      debugEntitlementPurchased: false,
+      gameState: {
+        ...state.gameState,
+        quantum: {
+          ...state.gameState.quantum,
+          pointsEarned: 100_000n,
+          pointsSpent: 0n,
+        },
+        dream: {
+          ...state.gameState.dream,
+          strangeMatter: 500_000n,
+        },
+      },
+    })
+    const definition = createCanonicalGameEngineDefinition({
+      eventContext: context(),
+    })
+    const dispatch = (kind: 'purchase-debug-options' | 'disable-debug-options') =>
+      definition.applyCommand(state, {
+        kind: 'internal.development-apply-action',
+        action: { kind },
+      })
+
+    expect(dispatch('purchase-debug-options')).toEqual({
+      accepted: true,
+      changed: true,
+    })
+    expect(state).toMatchObject({
+      debugOptionsEnabled: true,
+      debugEntitlementPurchased: true,
+    })
+    expect(state.gameState.quantum.pointsEarned).toBe(0n)
+    expect(state.gameState.dream.strangeMatter).toBe(0n)
+
+    expect(dispatch('disable-debug-options')).toEqual({
+      accepted: true,
+      changed: true,
+    })
+    expect(state.debugOptionsEnabled).toBe(false)
+    expect(dispatch('purchase-debug-options')).toEqual({
+      accepted: true,
+      changed: true,
+    })
+    expect(state.debugOptionsEnabled).toBe(true)
+  })
+
   test('routes player settings with runtime carriers as one transaction', () => {
     const state = runtime()
     const definition = createCanonicalGameEngineDefinition({

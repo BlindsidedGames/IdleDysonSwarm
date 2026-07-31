@@ -1,4 +1,5 @@
 export * from './Button'
+export * from './CollapsibleSection'
 export * from './FacilityCard'
 export * from './InlineImageSymbol'
 export * from './PlayerText'

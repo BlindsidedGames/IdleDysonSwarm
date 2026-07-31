@@ -400,6 +400,69 @@ describe('canonical whole-game event-time model', () => {
     expect(next.facilities.data_centers[0]).toBeGreaterThan(0)
   })
 
+  test('advances every active Education subject through active and stored event time', () => {
+    const educationIds = [
+      'engineering',
+      'shipping',
+      'worldTrade',
+      'worldPeace',
+      'mathematics',
+      'advancedPhysics',
+    ] as const
+    const source = baseState()
+    const activeEducation = Object.fromEntries(
+      educationIds.map((id) => [
+        id,
+        {
+          ...source.dream.education[id],
+          active: true,
+          complete: false,
+          progress: 0,
+          researchTime: 100,
+        },
+      ]),
+    ) as unknown as CanonicalGameStateV1['dream']['education']
+    const gameState: CanonicalGameStateV1 = {
+      ...source,
+      dream: {
+        ...source.dream,
+        education: activeEducation,
+      },
+      timeline: {
+        ...source.timeline,
+        doubleTime: {
+          unlocked: true,
+          enabled: true,
+          bankSeconds: 10,
+          rate: 2,
+        },
+      },
+    }
+
+    for (const advanceTinker of [true, false]) {
+      const result = advanceEventTime({
+        startingState: new CanonicalEventTimeModel(
+          carrier(gameState),
+          { ...context(), advanceTinker },
+        ),
+        durationSeconds: 1,
+        automationIntervalSeconds: 1,
+        automationTimeUntilNextEvent: 1,
+        infinityMinimumCycleSeconds: 10,
+        processingBudgetMilliseconds: 0,
+      })
+
+      expect(result.completed).toBe(true)
+      expect(result.diagnosticCode).toBeUndefined()
+      for (const id of educationIds) {
+        expect(
+          result.candidateState.state.gameState.dream.education[id]
+            .progress,
+        ).toBe(3)
+      }
+    }
+  })
+
   test('finalizes elapsed statistics before a bot-cap persistence pause', () => {
     const source = baseState()
     const capped: CanonicalGameStateV1 = {

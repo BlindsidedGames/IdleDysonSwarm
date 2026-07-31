@@ -432,7 +432,28 @@ class TestRuntime {
       return this.#status
     },
     development: {
+      status: () => ({
+        enabled: true,
+        entitled: true,
+        quantumShards: 0n,
+        strangeMatter: 0n,
+      }),
       setDysonBots: async () => ({
+        applied: false,
+        code: 'test-not-configured',
+        reason: 'test-not-configured',
+      }),
+      unlockReality: async () => ({
+        applied: false,
+        code: 'test-not-configured',
+        reason: 'test-not-configured',
+      }),
+      apply: async () => ({
+        applied: false,
+        code: 'test-not-configured',
+        reason: 'test-not-configured',
+      }),
+      simulateOfflineTime: async () => ({
         applied: false,
         code: 'test-not-configured',
         reason: 'test-not-configured',
@@ -618,6 +639,18 @@ function readySnapshot(): FrontendApplicationSnapshot {
           routeUnlocked: false,
         },
         infinity: {
+          routeUnlocked: false,
+        },
+        reality: {
+          routeVisible: false,
+          routeUnlocked: false,
+          unlockProgress: {
+            currentSecrets: 0n,
+            requiredSecrets: 27n,
+            fraction: 0,
+          },
+        },
+        simulations: {
           routeUnlocked: false,
         },
       },

@@ -17,6 +17,7 @@ import './settingsSurface.css'
 export interface SettingsSurfaceProps {
   readonly resetSave: () => Promise<UiRuntimeImportResult>
   readonly development?: UiRuntimeDevelopmentControls
+  readonly developmentOnly?: boolean
   readonly visualizationVisible?: boolean
   readonly onVisualizationVisibleChange?: (visible: boolean) => void
 }
@@ -34,6 +35,7 @@ type ResetStatus =
 export function SettingsSurface({
   resetSave,
   development,
+  developmentOnly = false,
   visualizationVisible = true,
   onVisualizationVisibleChange = () => undefined,
 }: SettingsSurfaceProps) {
@@ -47,8 +49,10 @@ export function SettingsSurface({
   ] = useState<DevelopmentPresetId>('early-swarm')
   const [developmentStatus, setDevelopmentStatus] =
     useState<DevelopmentStatus>('idle')
+  const [appliedDevelopmentPreset, setAppliedDevelopmentPreset] =
+    useState<DevelopmentPresetId | null>(null)
   const [developmentPanelOpen, setDevelopmentPanelOpen] =
-    useState(false)
+    useState(developmentOnly)
   const [dialogOpen, setDialogOpen] = useState(false)
   const triggerRef = useRef<HTMLButtonElement>(null)
   const cancelRef = useRef<HTMLButtonElement>(null)
@@ -111,7 +115,7 @@ export function SettingsSurface({
       return
     }
     setDevelopmentStatus('pending')
-    const preset = DEVELOPMENT_BOT_PRESETS.find(
+    const preset = DEVELOPMENT_PROGRESSION_PRESETS.find(
       ({ id }) => id === selectedDevelopmentPreset,
     )
     if (preset === undefined) {
@@ -119,7 +123,13 @@ export function SettingsSurface({
       return
     }
     try {
-      const result = await development.setDysonBots(preset.bots)
+      const result =
+        preset.kind === 'dyson-bots'
+          ? await development.setDysonBots(preset.bots)
+          : await development.unlockReality()
+      if (result.applied) {
+        setAppliedDevelopmentPreset(preset.id)
+      }
       setDevelopmentStatus(
         result.applied ? 'succeeded' : 'failed',
       )
@@ -135,7 +145,7 @@ export function SettingsSurface({
         aria-hidden={dialogOpen || undefined}
         inert={dialogOpen || undefined}
       >
-        <section className="settings-surface__panel settings-surface__panel--visualization">
+        {!developmentOnly ? <section className="settings-surface__panel settings-surface__panel--visualization">
           <div className="settings-surface__copy">
             <h2>
               {intl.formatMessage(messages.visualizationTitle)}
@@ -160,8 +170,8 @@ export function SettingsSurface({
               {intl.formatMessage(messages.visualizationToggle)}
             </span>
           </label>
-        </section>
-        <section className="settings-surface__panel">
+        </section> : null}
+        {!developmentOnly ? <section className="settings-surface__panel">
           <div className="settings-surface__copy">
             <h2>{intl.formatMessage(messages.saveData)}</h2>
             <p>{intl.formatMessage(messages.saveDescription)}</p>
@@ -178,10 +188,10 @@ export function SettingsSurface({
           >
             {intl.formatMessage(messages.reset)}
           </button>
-        </section>
+        </section> : null}
         {development !== undefined ? (
           <>
-            <button
+            {!developmentOnly ? <button
               type="button"
               className="settings-surface__development-trigger"
               aria-expanded={developmentPanelOpen}
@@ -199,7 +209,7 @@ export function SettingsSurface({
               >
                 ›
               </span>
-            </button>
+            </button> : null}
             {developmentPanelOpen ? (
               <section
                 id={developmentPanelId}
@@ -233,17 +243,21 @@ export function SettingsSurface({
                       )
                     }}
                   >
-                    {DEVELOPMENT_BOT_PRESETS.map((preset) => (
+                    {DEVELOPMENT_PROGRESSION_PRESETS.map((preset) => (
                       <option value={preset.id} key={preset.id}>
-                        {intl.formatMessage(
-                          developmentPresetMessage(preset.id),
-                          {
-                            bots: formatGameNumber(
-                              intl.locale as EnabledLocale,
-                              preset.bots,
-                            ),
-                          },
-                        )}
+                        {preset.kind === 'dyson-bots'
+                          ? intl.formatMessage(
+                              developmentPresetMessage(preset.id),
+                              {
+                                bots: formatGameNumber(
+                                  intl.locale as EnabledLocale,
+                                  preset.bots,
+                                ),
+                              },
+                            )
+                          : intl.formatMessage(
+                              developmentPresetMessage(preset.id),
+                            )}
                       </option>
                     ))}
                   </select>
@@ -273,7 +287,10 @@ export function SettingsSurface({
                   >
                     {intl.formatMessage(
                       developmentStatus === 'succeeded'
-                        ? messages.developmentSucceeded
+                        ? appliedDevelopmentPreset ===
+                          'reality-unlocked'
+                          ? messages.developmentRealitySucceeded
+                          : messages.developmentSucceeded
                         : messages.developmentFailed,
                     )}
                   </p>
@@ -282,7 +299,7 @@ export function SettingsSurface({
             ) : null}
           </>
         ) : null}
-        {status === 'succeeded' ||
+        {!developmentOnly && (status === 'succeeded' ||
         ((status === 'failed' || status === 'committed-recovery') &&
           !dialogOpen) ? (
           <p
@@ -293,9 +310,9 @@ export function SettingsSurface({
               resetStatusMessage(status),
             )}
           </p>
-        ) : null}
+        ) : null)}
       </div>
-      {dialogOpen ? (
+      {!developmentOnly && dialogOpen ? (
         <div className="settings-surface__dialog-backdrop">
           <section
             className="settings-surface__dialog"
@@ -366,21 +383,60 @@ type DevelopmentPresetId =
   | 'one-galaxy'
   | 'galaxy-group'
   | 'first-infinity'
+  | 'reality-unlocked'
 
-const DEVELOPMENT_BOT_PRESETS: ReadonlyArray<{
-  readonly id: DevelopmentPresetId
-  readonly bots: number
-}> = [
-  { id: 'early-swarm', bots: 1_000 },
-  { id: 'mid-swarm', bots: 100_000 },
-  { id: 'near-star', bots: 195_000 },
-  { id: 'new-galaxy', bots: 200_000 },
-  { id: 'young-galaxy', bots: 2_000_000_000_000_000 },
-  { id: 'half-galaxy', bots: 10_000_000_000_000_000 },
-  { id: 'near-galaxy', bots: 18_000_000_000_000_000 },
-  { id: 'one-galaxy', bots: 20_000_000_000_000_000 },
-  { id: 'galaxy-group', bots: 200_000_000_000_000_000 },
-  { id: 'first-infinity', bots: 42_000_000_000_000_000_000 },
+type DevelopmentProgressionPreset =
+  | {
+      readonly id: Exclude<
+        DevelopmentPresetId,
+        'reality-unlocked'
+      >
+      readonly kind: 'dyson-bots'
+      readonly bots: number
+    }
+  | {
+      readonly id: 'reality-unlocked'
+      readonly kind: 'reality-unlock'
+    }
+
+const DEVELOPMENT_PROGRESSION_PRESETS: ReadonlyArray<
+  DevelopmentProgressionPreset
+> = [
+  { id: 'early-swarm', kind: 'dyson-bots', bots: 1_000 },
+  { id: 'mid-swarm', kind: 'dyson-bots', bots: 100_000 },
+  { id: 'near-star', kind: 'dyson-bots', bots: 195_000 },
+  { id: 'new-galaxy', kind: 'dyson-bots', bots: 200_000 },
+  {
+    id: 'young-galaxy',
+    kind: 'dyson-bots',
+    bots: 2_000_000_000_000_000,
+  },
+  {
+    id: 'half-galaxy',
+    kind: 'dyson-bots',
+    bots: 10_000_000_000_000_000,
+  },
+  {
+    id: 'near-galaxy',
+    kind: 'dyson-bots',
+    bots: 18_000_000_000_000_000,
+  },
+  {
+    id: 'one-galaxy',
+    kind: 'dyson-bots',
+    bots: 20_000_000_000_000_000,
+  },
+  {
+    id: 'galaxy-group',
+    kind: 'dyson-bots',
+    bots: 200_000_000_000_000_000,
+  },
+  {
+    id: 'first-infinity',
+    kind: 'dyson-bots',
+    bots: 42_000_000_000_000_000_000,
+  },
+  { id: 'reality-unlocked', kind: 'reality-unlock' },
 ]
 
 function developmentPresetMessage(
@@ -407,6 +463,8 @@ function developmentPresetMessage(
       return messages.developmentGalaxyGroup
     case 'first-infinity':
       return messages.developmentFirstInfinity
+    case 'reality-unlocked':
+      return messages.developmentRealityUnlocked
   }
 }
 

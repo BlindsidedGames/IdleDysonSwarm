@@ -164,7 +164,13 @@ describe('SettingsSurface', () => {
       stateRevision: 2,
       durableRevision: 2,
     })
-    renderSettings(vi.fn(), { setDysonBots })
+    renderSettings(vi.fn(), {
+      status: () => ({ enabled: true, entitled: true, quantumShards: 0n, strangeMatter: 0n }),
+      setDysonBots,
+      unlockReality: vi.fn(),
+      apply: vi.fn(),
+      simulateOfflineTime: vi.fn(),
+    })
 
     expect(
       screen.queryByRole('combobox', { name: 'Progression state' }),
@@ -196,7 +202,13 @@ describe('SettingsSurface', () => {
       stateRevision: 2,
       durableRevision: 2,
     })
-    renderSettings(vi.fn(), { setDysonBots })
+    renderSettings(vi.fn(), {
+      status: () => ({ enabled: true, entitled: true, quantumShards: 0n, strangeMatter: 0n }),
+      setDysonBots,
+      unlockReality: vi.fn(),
+      apply: vi.fn(),
+      simulateOfflineTime: vi.fn(),
+    })
 
     await user.click(
       screen.getByRole('button', { name: 'Development Menu' }),
@@ -213,6 +225,39 @@ describe('SettingsSurface', () => {
       expect(setDysonBots).toHaveBeenCalledWith(
         42_000_000_000_000_000_000,
       ),
+    )
+  })
+
+  test('applies a canonical Reality-unlocked state through the development runtime', async () => {
+    const user = userEvent.setup()
+    const unlockReality = vi.fn().mockResolvedValue({
+      applied: true,
+      secretsOfTheUniverse: 27n,
+      stateRevision: 3,
+      durableRevision: 3,
+    })
+    renderSettings(vi.fn(), {
+      status: () => ({ enabled: true, entitled: true, quantumShards: 0n, strangeMatter: 0n }),
+      setDysonBots: vi.fn(),
+      unlockReality,
+      apply: vi.fn(),
+      simulateOfflineTime: vi.fn(),
+    })
+
+    await user.click(
+      screen.getByRole('button', { name: 'Development Menu' }),
+    )
+    await user.selectOptions(
+      screen.getByRole('combobox', { name: 'Progression state' }),
+      'reality-unlocked',
+    )
+    await user.click(
+      screen.getByRole('button', { name: 'Apply Progression' }),
+    )
+
+    await waitFor(() => expect(unlockReality).toHaveBeenCalledOnce())
+    expect(screen.getByRole('status')).toHaveTextContent(
+      'Reality unlocked.',
     )
   })
 })

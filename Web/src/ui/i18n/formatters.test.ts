@@ -2,6 +2,7 @@ import { beforeEach, describe, expect, it } from 'vitest'
 import {
   clearFormatterCachesForTests,
   formatDateTime,
+  formatGameDuration,
   formatGameNumber,
   formatNumber,
   formatRelativeTime,
@@ -9,6 +10,7 @@ import {
   getNumberFormatter,
   getPluralRules,
   getRelativeTimeFormatter,
+  NON_FINITE_NUMBER_FALLBACK,
   selectPlural,
 } from './formatters'
 
@@ -56,6 +58,17 @@ describe('cached locale formatters', () => {
     expect(formatGameNumber('en', 999.9)).toBe('999')
     expect(formatGameNumber('en', 1234)).toBe('1.23K')
     expect(formatGameNumber('en', -12.39)).toBe('-12.3')
+  })
+
+  it('matches the Unity short-form gameplay duration format', () => {
+    expect(formatGameDuration('en', 0)).toBe('0s')
+    expect(formatGameDuration('en', 24.9)).toBe('24s')
+    expect(formatGameDuration('en', 300)).toBe('5m 0s')
+    expect(formatGameDuration('en', 3_661)).toBe('1h 1m 1s')
+    expect(formatGameDuration('en', 90_061)).toBe('1d 1h 1m 1s')
+    expect(formatGameDuration('en', Number.POSITIVE_INFINITY)).toBe(
+      NON_FINITE_NUMBER_FALLBACK,
+    )
   })
 
   it('caches date, relative-time, and plural formatters', () => {

@@ -62,6 +62,7 @@ import {
   type DreamPurchaseCommand,
 } from '../simulation/dreamFoundationalInformation'
 import {
+  DREAM_SPACE_AGE_CONSTANTS,
   purchaseDreamSpaceAge,
   type DreamSpaceAgePurchase,
 } from '../simulation/dreamSpaceAge'
@@ -74,6 +75,8 @@ import {
   type MegaStructureId,
 } from '../simulation/megaStructurePurchases'
 import {
+  addDiscrete,
+  divideContinuous,
   multiplyContinuous,
 } from '../simulation/numeric'
 import {
@@ -86,6 +89,7 @@ import {
   availableQuantumPoints,
   findQuantumUpgradeCanonicalGaps,
   purchaseQuantumUpgrade,
+  QUANTUM_CONSTANTS,
   QUANTUM_UPGRADE_DEFINITIONS,
   QUANTUM_UPGRADE_IDS,
   type QuantumUpgradeId,
@@ -173,6 +177,117 @@ const DREAM_EDUCATION_IDS = Object.freeze([
   'mathematics',
   'advancedPhysics',
 ] as const satisfies readonly DreamEducationId[])
+
+export const FRONTEND_SIMULATION_FOUNDATIONAL_PANEL_IDS =
+  Object.freeze([
+    'hunters',
+    'gatherers',
+    'community',
+    'housing',
+    'villages',
+    'workers',
+    'cities',
+  ] as const)
+
+export type FrontendSimulationFoundationalPanelId =
+  (typeof FRONTEND_SIMULATION_FOUNDATIONAL_PANEL_IDS)[number]
+
+export const FRONTEND_SIMULATION_INFORMATION_PANEL_IDS =
+  Object.freeze([
+    'engineering',
+    'shipping',
+    'world-trade',
+    'world-peace',
+    'mathematics',
+    'advanced-physics',
+    'factories',
+    'bots',
+    'rockets',
+  ] as const)
+
+export type FrontendSimulationInformationPanelId =
+  (typeof FRONTEND_SIMULATION_INFORMATION_PANEL_IDS)[number]
+
+export const FRONTEND_SIMULATION_SPACE_AGE_PANEL_IDS =
+  Object.freeze([
+    'solar',
+    'fusion',
+    'space-factories',
+    'railguns',
+    'swarm-stats',
+  ] as const)
+
+export type FrontendSimulationSpaceAgePanelId =
+  (typeof FRONTEND_SIMULATION_SPACE_AGE_PANEL_IDS)[number]
+
+const SIMULATION_UPGRADE_SECTIONS = Object.freeze({
+  countermeasures: Object.freeze([
+    'counterMeteor',
+    'counterAi',
+    'counterGw',
+  ] as const satisfies readonly DreamUpgradeFlag[]),
+  education: Object.freeze([
+    'engineering1',
+    'engineering2',
+    'engineering3',
+    'shipping1',
+    'shipping2',
+    'worldTrade1',
+    'worldTrade2',
+    'worldTrade3',
+    'worldPeace1',
+    'worldPeace2',
+    'worldPeace3',
+    'worldPeace4',
+    'mathematics1',
+    'mathematics2',
+    'mathematics3',
+    'advancedPhysics1',
+    'advancedPhysics2',
+    'advancedPhysics3',
+    'advancedPhysics4',
+  ] as const satisfies readonly DreamUpgradeFlag[]),
+  foundational: Object.freeze([
+    'hunter1',
+    'hunter2',
+    'hunter3',
+    'hunter4',
+    'gatherer1',
+    'gatherer2',
+    'gatherer3',
+    'gatherer4',
+    'workerBoost',
+    'citiesBoost',
+  ] as const satisfies readonly DreamUpgradeFlag[]),
+  information: Object.freeze([
+    'factoriesBoost',
+    'bots1',
+    'bots2',
+    'rockets1',
+    'rockets2',
+    'rockets3',
+  ] as const satisfies readonly DreamUpgradeFlag[]),
+  spaceAge: Object.freeze([
+    'sfacs1',
+    'sfacs2',
+    'sfacs3',
+    'railguns1',
+    'railguns2',
+  ] as const satisfies readonly DreamUpgradeFlag[]),
+})
+
+const REALITY_UPGRADE_SECTIONS = Object.freeze({
+  translation: Object.freeze(
+    REALITY_UPGRADE_IDS.filter((id) => id.startsWith('translation')),
+  ),
+  speed: Object.freeze(
+    REALITY_UPGRADE_IDS.filter((id) => id.startsWith('speed')),
+  ),
+  qualityOfLife: Object.freeze([
+    'doubleTimeOwned',
+    'workerAutoConvert',
+  ] as const satisfies readonly RealityUpgradeId[]),
+})
 
 const AVOCADO_FEED_SOURCES = Object.freeze([
   'infinity-points',
@@ -564,8 +679,29 @@ export type FrontendDysonDerivedFacts =
 export interface FrontendRealityDerivedFacts {
   readonly status: RealityWorkerAdvanceStatus
   readonly generationPerSecond: number
+  /** Unity's full-bar fast-generation presentation is projected canonically. */
+  readonly workerGenerationFillFraction: number
   readonly workerBatchSize: bigint
+  /** Unity labels the active batch with the next consumed universe number. */
+  readonly nextUniverseDesignation: bigint
+  /** Bounded Unity WorkerFillPercent equivalent for presentation controls. */
+  readonly workerBatchFillFraction: number
+  /**
+   * Unity halts manual consumption at a full batch until Gather Influence is
+   * accepted. Automatic gathering remains running at the same boundary.
+   */
+  readonly consumptionStatus: 'running' | 'halted'
   readonly autoGatherEnabled: boolean
+  /** Display-only Artifact projection; the UI does not infer upgrade rules. */
+  readonly artifact: {
+    readonly replacements: readonly {
+      readonly source: string
+      readonly replacement: string
+    }[]
+    readonly progressLabel: 'undefined' | 'cpu-time'
+    /** Unity character-scramble interval; null once Speed VIII stops it. */
+    readonly scrambleIntervalSeconds: number | null
+  }
 }
 
 export interface FrontendDreamDerivedFacts {
@@ -579,6 +715,75 @@ export interface FrontendDreamDerivedFacts {
   readonly result: CanonicalDreamDerivedFactsResult
 }
 
+export type FrontendSimulationEra =
+  | 'foundational'
+  | 'information'
+  | 'space-age'
+
+export interface FrontendSimulationsDerivedFacts {
+  /** Highest live-production era reached in the current Simulation. */
+  readonly currentEra: FrontendSimulationEra
+  /**
+   * Unity-authored live panel visibility. The frontend may arrange these
+   * panels responsively, but must not infer unlocks from resource values.
+   */
+  readonly eras: {
+    readonly foundational: {
+      readonly visible: true
+      readonly visiblePanelIds:
+        readonly FrontendSimulationFoundationalPanelId[]
+    }
+    readonly information: {
+      readonly visible: boolean
+      readonly visiblePanelIds:
+        readonly FrontendSimulationInformationPanelId[]
+    }
+    readonly spaceAge: {
+      readonly visible: boolean
+      readonly visiblePanelIds:
+        readonly FrontendSimulationSpaceAgePanelId[]
+    }
+  }
+  /** Canonical live values needed by the era panels. */
+  readonly live: {
+    readonly resources: DeepReadonly<DreamState['resources']>
+    readonly education: DeepReadonly<DreamState['education']>
+    readonly timers: DeepReadonly<DreamState['timers']>
+    readonly railgun: DeepReadonly<DreamState['railgun']>
+    /** Canonical launched-panel storage boundary for Space Factories. */
+    readonly dysonPanelCapacity: bigint
+    readonly production: CanonicalDreamDerivedFactsResult
+  }
+  readonly resets: {
+    readonly count: bigint
+    readonly disasterStage: bigint
+    readonly automatic: FrontendDreamResetPreview
+    readonly blackHole: FrontendDreamResetPreview
+  }
+  /**
+   * Unity's permanent ResearchManager panels. Only unowned panels whose
+   * authored prerequisites are met are included; affordability remains in
+   * the corresponding command preview.
+   */
+  readonly permanentUpgrades: {
+    readonly simulationCategoryVisible: boolean
+    readonly simulation: {
+      readonly countermeasures: readonly DreamUpgradeFlag[]
+      readonly education: readonly DreamUpgradeFlag[]
+      readonly foundational: readonly DreamUpgradeFlag[]
+      readonly information: readonly DreamUpgradeFlag[]
+      readonly spaceAge: readonly DreamUpgradeFlag[]
+    }
+    readonly realityCategoryVisible: boolean
+    readonly anomalyCategoryVisible: boolean
+    readonly reality: {
+      readonly translation: readonly RealityUpgradeId[]
+      readonly speed: readonly RealityUpgradeId[]
+      readonly qualityOfLife: readonly RealityUpgradeId[]
+    }
+  }
+}
+
 export interface FrontendGameplayDerivedFacts {
   readonly dyson: FrontendDysonDerivedFacts
   readonly dysonBotDistribution: {
@@ -587,6 +792,7 @@ export interface FrontendGameplayDerivedFacts {
   }
   readonly infinity: InfinityProgressFacts
   readonly dream: FrontendDreamDerivedFacts
+  readonly simulations: FrontendSimulationsDerivedFacts
   readonly reality: FrontendRealityDerivedFacts
   readonly avocado: AvocadoMultiplierBreakdown
 }
@@ -603,6 +809,27 @@ export interface FrontendGameplayVisibility {
     readonly routeUnlocked: boolean
   }
   readonly infinity: {
+    readonly routeUnlocked: boolean
+  }
+  readonly reality: {
+    /**
+     * Unity reveals the disabled Reality navigation panel after the first
+     * Infinity Point, before the route itself is unlocked.
+     */
+    readonly routeVisible: boolean
+    /**
+     * WorkerService is the Unity authority: one Quantum Point or the complete
+     * Secrets collection unlocks Reality.
+     */
+    readonly routeUnlocked: boolean
+    readonly unlockProgress: {
+      readonly currentSecrets: bigint
+      readonly requiredSecrets: bigint
+      readonly fraction: number
+    }
+  }
+  readonly simulations: {
+    /** Simulations appears with Reality and uses the same Unity unlock. */
     readonly routeUnlocked: boolean
   }
 }
@@ -855,6 +1082,10 @@ function selectGameplayVisibility(
       state,
       'galactic_brains',
     )
+  const realityUnlocked =
+    state.quantum.pointsEarned > 0n ||
+    state.infinity.secretsOfTheUniverse >=
+      QUANTUM_CONSTANTS.maximumSecrets
 
   return {
     dyson: {
@@ -887,6 +1118,26 @@ function selectGameplayVisibility(
         state.meta.firstInfinityComplete ||
         state.infinity.points > 0n ||
         state.quantum.pointsEarned > 0n,
+    },
+    reality: {
+      routeVisible:
+        state.infinity.points > 0n ||
+        state.quantum.pointsEarned > 0n,
+      routeUnlocked: realityUnlocked,
+      unlockProgress: {
+        currentSecrets: state.infinity.secretsOfTheUniverse,
+        requiredSecrets: QUANTUM_CONSTANTS.maximumSecrets,
+        fraction: Math.min(
+          1,
+          divideContinuous(
+            Number(state.infinity.secretsOfTheUniverse),
+            Number(QUANTUM_CONSTANTS.maximumSecrets),
+          ),
+        ),
+      },
+    },
+    simulations: {
+      routeUnlocked: realityUnlocked,
     },
   }
 }
@@ -1112,6 +1363,10 @@ function selectDerivedFacts(
     doubleTimeActive: state.timeline.doubleTime.enabled,
     doubleTimeRate: state.timeline.doubleTime.rate,
   })
+  const simulations = selectFrontendSimulationsDerivedFacts(
+    state,
+    dream,
+  )
 
   return {
     dyson: dyson.ok
@@ -1151,11 +1406,46 @@ function selectDerivedFacts(
       effectiveDoubleTimeMultiplier: 1,
       result: dream,
     },
+    simulations,
     reality: {
       status: reality.status,
       generationPerSecond: reality.generationPerSecond,
+      workerGenerationFillFraction:
+        reality.status === 'success'
+          ? reality.generationPerSecond >= 10
+            ? 1
+            : Math.min(
+                1,
+                Math.max(
+                  0,
+                  reality.state.reality.workerGenerationProgress,
+                ),
+              )
+          : 0,
       workerBatchSize: context.realityWorkerTuning.workerBatchSize,
+      nextUniverseDesignation: addDiscrete(
+        state.reality.universeDesignationCount,
+        1n,
+      ),
+      workerBatchFillFraction:
+        reality.status === 'success'
+          ? Math.min(
+              1,
+              divideContinuous(
+                Number(reality.state.reality.workersReady),
+                Number(context.realityWorkerTuning.workerBatchSize),
+              ),
+            )
+          : 0,
+      consumptionStatus:
+        reality.status === 'success' &&
+        !state.reality.autoGather &&
+        reality.state.reality.workersReady >=
+          context.realityWorkerTuning.workerBatchSize
+          ? 'halted'
+          : 'running',
       autoGatherEnabled: state.reality.autoGather,
+      artifact: projectRealityArtifact(state.dream.upgrades),
     },
     avocado: deriveAvocadoMultiplier(state),
   }
@@ -1209,6 +1499,268 @@ function projectDysonDerivedFacts(
     },
     entitlements: source.entitlements,
   }
+}
+
+function projectRealityArtifact(
+  upgrades: Readonly<DreamState['upgrades']>,
+): FrontendRealityDerivedFacts['artifact'] {
+  const replacements: Array<{
+    readonly source: string
+    readonly replacement: string
+  }> = []
+  if (!upgrades.translation1) replacements.push({ source: 'i', replacement: '|' })
+  if (!upgrades.translation2) replacements.push({ source: 'r', replacement: '}' })
+  if (!upgrades.translation3) replacements.push({ source: 'e', replacement: '%' })
+  if (!upgrades.translation4) replacements.push({ source: 'f', replacement: '$' })
+  if (!upgrades.translation5) replacements.push({ source: 'c', replacement: '{' })
+  if (!upgrades.translation6) replacements.push({ source: 'h', replacement: '*' })
+  if (!upgrades.translation7) {
+    replacements.push(
+      { source: 'a', replacement: '@' },
+      { source: 'A', replacement: '#' },
+    )
+  }
+  if (!upgrades.translation8) {
+    replacements.push(
+      { source: 't', replacement: '^' },
+      { source: 'T', replacement: '&' },
+    )
+  }
+  const scrambleTicksPerSecond = upgrades.speed8
+    ? null
+    : upgrades.speed7
+      ? 6
+      : upgrades.speed6
+        ? 15
+        : upgrades.speed5
+          ? 30
+          : upgrades.speed4
+            ? 42
+            : upgrades.speed3
+              ? 48
+              : upgrades.speed2
+                ? 54
+                : upgrades.speed1
+                  ? 57
+                  : 60
+  return {
+    replacements,
+    progressLabel: upgrades.speed8 ? 'cpu-time' : 'undefined',
+    scrambleIntervalSeconds:
+      scrambleTicksPerSecond === null
+        ? null
+        : 1 / scrambleTicksPerSecond,
+  }
+}
+
+function selectFrontendSimulationsDerivedFacts(
+  state: CanonicalGameStateV1,
+  production: CanonicalDreamDerivedFactsResult,
+): FrontendSimulationsDerivedFacts {
+  const resources = state.dream.resources
+  const education = state.dream.education
+  const informationVisible = resources.cities >= 1
+  const spaceAgeVisible = resources.spaceFactories >= 1
+
+  const foundationalPanels =
+    FRONTEND_SIMULATION_FOUNDATIONAL_PANEL_IDS.filter((panelId) => {
+      switch (panelId) {
+        case 'hunters':
+        case 'gatherers':
+          return true
+        case 'community':
+          return resources.hunters >= 1n || resources.gatherers >= 1n
+        case 'housing':
+          return (
+            resources.housing >= 1 ||
+            resources.villages >= 1 ||
+            resources.cities >= 1
+          )
+        case 'villages':
+          return resources.villages >= 1 || resources.cities >= 1
+        case 'workers':
+          return resources.workers >= 1
+        case 'cities':
+          return resources.cities >= 1
+      }
+    })
+
+  const informationPanels = informationVisible
+    ? FRONTEND_SIMULATION_INFORMATION_PANEL_IDS.filter((panelId) => {
+        switch (panelId) {
+          case 'engineering':
+            return true
+          case 'shipping':
+            return education.engineering.complete
+          case 'world-trade':
+            return education.shipping.complete
+          case 'world-peace':
+            return education.worldTrade.complete
+          case 'mathematics':
+            return (
+              resources.rockets >= 1 ||
+              resources.spaceFactories >= 1
+            )
+          case 'advanced-physics':
+            return (
+              education.mathematics.complete &&
+              resources.spaceFactories >= 1
+            )
+          case 'factories':
+            return education.engineering.complete
+          case 'bots':
+            return resources.bots >= 1
+          case 'rockets':
+            return (
+              resources.rockets >= 1 ||
+              resources.spaceFactories >= 1
+            )
+        }
+      })
+    : []
+
+  const spaceAgePanels = spaceAgeVisible
+    ? FRONTEND_SIMULATION_SPACE_AGE_PANEL_IDS.filter((panelId) => {
+        switch (panelId) {
+          case 'solar':
+          case 'space-factories':
+            return true
+          case 'fusion':
+            return education.advancedPhysics.complete
+          case 'railguns':
+            return (
+              education.mathematics.complete ||
+              resources.dysonPanels >= 1n
+            )
+          case 'swarm-stats':
+            return resources.swarmPanels >= 1n
+        }
+      })
+    : []
+
+  const visibleSimulationUpgrades = (
+    upgradeIds: readonly DreamUpgradeFlag[],
+  ) =>
+    upgradeIds.filter((upgradeId) =>
+      isSimulationUpgradePanelVisible(state, upgradeId),
+    )
+  const simulationUpgradeSections = {
+    countermeasures: visibleSimulationUpgrades(
+      SIMULATION_UPGRADE_SECTIONS.countermeasures,
+    ),
+    education: visibleSimulationUpgrades(
+      SIMULATION_UPGRADE_SECTIONS.education,
+    ),
+    foundational: visibleSimulationUpgrades(
+      SIMULATION_UPGRADE_SECTIONS.foundational,
+    ),
+    information: visibleSimulationUpgrades(
+      SIMULATION_UPGRADE_SECTIONS.information,
+    ),
+    spaceAge: visibleSimulationUpgrades(
+      SIMULATION_UPGRADE_SECTIONS.spaceAge,
+    ),
+  }
+
+  const visibleRealityUpgrades = (
+    upgradeIds: readonly RealityUpgradeId[],
+  ) =>
+    upgradeIds.filter((upgradeId) =>
+      isRealityUpgradePanelVisible(state, upgradeId),
+    )
+  const realityUpgradeSections = {
+    translation: visibleRealityUpgrades(
+      REALITY_UPGRADE_SECTIONS.translation,
+    ),
+    speed: visibleRealityUpgrades(REALITY_UPGRADE_SECTIONS.speed),
+    qualityOfLife: visibleRealityUpgrades(
+      REALITY_UPGRADE_SECTIONS.qualityOfLife,
+    ),
+  }
+
+  const simulationCategoryVisible = Object.values(
+    simulationUpgradeSections,
+  ).some((upgradeIds) => upgradeIds.length > 0)
+  const translationVisible =
+    realityUpgradeSections.translation.length > 0
+  const speedVisible = realityUpgradeSections.speed.length > 0
+  const qualityOfLifeVisible =
+    realityUpgradeSections.qualityOfLife.length > 0
+
+  return {
+    currentEra: spaceAgeVisible
+      ? 'space-age'
+      : informationVisible
+        ? 'information'
+        : 'foundational',
+    eras: {
+      foundational: {
+        visible: true,
+        visiblePanelIds: foundationalPanels,
+      },
+      information: {
+        visible: informationVisible,
+        visiblePanelIds: informationPanels,
+      },
+      spaceAge: {
+        visible: spaceAgeVisible,
+        visiblePanelIds: spaceAgePanels,
+      },
+    },
+    live: {
+      resources,
+      education,
+      timers: state.dream.timers,
+      railgun: state.dream.railgun,
+      dysonPanelCapacity: DREAM_SPACE_AGE_CONSTANTS.dysonPanelCap,
+      production,
+    },
+    resets: {
+      count: state.dream.resetCount,
+      disasterStage: state.dream.disasterStage,
+      automatic: previewDreamReset(
+        applyCanonicalDreamReset(state, { kind: 'automatic' }),
+      ),
+      blackHole: previewDreamReset(
+        applyCanonicalBlackHoleReset(state),
+      ),
+    },
+    permanentUpgrades: {
+      simulationCategoryVisible,
+      simulation: simulationUpgradeSections,
+      realityCategoryVisible:
+        translationVisible || speedVisible || qualityOfLifeVisible,
+      anomalyCategoryVisible: translationVisible || speedVisible,
+      reality: realityUpgradeSections,
+    },
+  }
+}
+
+function isSimulationUpgradePanelVisible(
+  state: CanonicalGameStateV1,
+  upgradeId: DreamUpgradeFlag,
+): boolean {
+  const code = purchaseSimulationUpgrade(state, upgradeId).code
+  return (
+    code !== 'unknown_upgrade' &&
+    code !== 'already_owned' &&
+    code !== 'prerequisites_not_met'
+  )
+}
+
+function isRealityUpgradePanelVisible(
+  state: CanonicalGameStateV1,
+  upgradeId: RealityUpgradeId,
+): boolean {
+  const code = purchaseRealityUpgrade(state, upgradeId).code
+  return (
+    code !== 'unknown_upgrade' &&
+    code !== 'missing_definition' &&
+    code !== 'invalid_definition' &&
+    code !== 'invalid_state' &&
+    code !== 'already_owned' &&
+    code !== 'prerequisites_not_met'
+  )
 }
 
 const PANELS_PER_SURROUNDED_STAR = 20_000

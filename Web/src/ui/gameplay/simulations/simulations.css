@@ -1,0 +1,702 @@
+@import "../../tokens/tokens.css";
+
+.simulations-surface {
+  --simulation-foundational: #8baac7;
+  --simulation-foundational-header: #42535e;
+  --simulation-foundational-header-highlight: #5d7382;
+  --simulation-foundational-progress: #8baac7;
+  --simulation-information: #c28bd8;
+  --simulation-space: #91dd8f;
+  --simulation-value: #00e1ff;
+  --simulation-panel: #38444e;
+  --simulation-track: #1d1d1d;
+  --simulation-action: #8baac7;
+  --simulation-era-background: #152337;
+  --simulation-era-summary: #29435f;
+  --simulation-era-divider: #7b9fbe;
+  --simulation-era-glow: rgb(139 170 199 / 14%);
+  display: grid;
+  block-size: 100%;
+  min-block-size: 0;
+  grid-template-rows: auto minmax(0, 1fr);
+  overflow: hidden;
+  background:
+    radial-gradient(circle at 50% 5%, var(--simulation-era-glow), transparent 32rem),
+    var(--simulation-era-background);
+  color: white;
+  user-select: none;
+}
+
+.simulations-surface[data-era="information"] {
+  --simulation-era-background: #211829;
+  --simulation-era-summary: #3a2947;
+  --simulation-era-divider: #a36fba;
+  --simulation-era-glow: rgb(194 139 216 / 14%);
+}
+
+.simulations-surface[data-era="space-age"] {
+  --simulation-era-background: #14241c;
+  --simulation-era-summary: #254233;
+  --simulation-era-divider: #6fa68c;
+  --simulation-era-glow: rgb(145 221 143 / 12%);
+}
+
+.simulations-surface--unavailable {
+  place-items: center;
+  padding: 1rem;
+  color: #e4d9eb;
+}
+
+.simulations-surface__summary {
+  z-index: 1;
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 0.75rem;
+  min-block-size: 2.85rem;
+  padding-block: 0.6rem;
+  padding-inline:
+    max(0.75rem, env(safe-area-inset-left))
+    max(0.75rem, env(safe-area-inset-right));
+  border-block-end: 2px solid var(--simulation-era-divider);
+  background: var(--simulation-era-summary);
+  font-family: var(--font-family-numeric);
+  font-size: calc(0.95rem * var(--game-text-scale));
+  font-variant-numeric: tabular-nums;
+}
+
+.simulations-surface__influence {
+  display: inline-flex;
+  align-items: baseline;
+  gap: 0.12em;
+  color: var(--simulation-value);
+}
+
+.simulations-surface__scroll-region {
+  container-type: inline-size;
+  min-block-size: 0;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  padding-block: 0.65rem max(0.8rem, env(safe-area-inset-bottom));
+  padding-inline:
+    max(0.6rem, env(safe-area-inset-left))
+    max(0.6rem, env(safe-area-inset-right));
+  scrollbar-width: none;
+  touch-action: pan-y;
+  -webkit-overflow-scrolling: touch;
+}
+
+.simulations-surface__scroll-region::-webkit-scrollbar {
+  display: none;
+  inline-size: 0;
+  block-size: 0;
+}
+
+.simulation-category {
+  display: grid;
+  inline-size: min(100%, 86rem);
+  justify-self: center;
+  margin-block-end: 0.75rem;
+}
+
+.simulation-category > .ui-collapsible-section__heading {
+  overflow: hidden;
+  margin: 0;
+  border: 1px solid #11151a;
+  border-radius: 0.3rem;
+  background: linear-gradient(
+    135deg,
+    var(--simulation-foundational-header),
+    var(--simulation-foundational-header-highlight)
+  );
+}
+
+.simulation-category > .ui-collapsible-section__heading
+  .ui-collapsible-section__trigger {
+  color: white;
+  font-size: calc(1.05rem * var(--game-text-scale));
+  line-height: 1.25;
+}
+
+.simulation-category--information > .ui-collapsible-section__heading
+  .ui-collapsible-section__trigger {
+  color: var(--simulation-information);
+}
+
+.simulation-category--information > .ui-collapsible-section__heading {
+  background: linear-gradient(135deg, #4a3357, #634570);
+}
+
+.simulation-category--space-age > .ui-collapsible-section__heading
+  .ui-collapsible-section__trigger {
+  color: var(--simulation-space);
+}
+
+.simulation-category--space-age > .ui-collapsible-section__heading {
+  background: linear-gradient(135deg, #294638, #3c624d);
+}
+
+.simulation-category__content {
+  display: grid;
+  gap: 0.52rem;
+  padding-block-start: 0.52rem;
+}
+
+.simulation-category__subsection {
+  display: grid;
+  gap: 0.38rem;
+}
+
+.simulation-category__subsection h3 {
+  margin: 0;
+  padding-inline: 0.15rem;
+  color: var(--simulation-information);
+  font-size: calc(0.9rem * var(--game-text-scale));
+}
+
+.simulation-category__subsection[data-category="energy"] h3 {
+  color: var(--simulation-space);
+}
+
+.simulation-category ol {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 0.52rem;
+  align-items: stretch;
+  padding: 0;
+  margin: 0;
+  list-style: none;
+}
+
+.simulation-category li {
+  min-inline-size: 0;
+}
+
+.ui-facility-card.simulation-panel-card {
+  --simulation-card-panel: var(--simulation-panel);
+  --simulation-card-glow: rgb(139 92 170 / 9%);
+  --simulation-card-action: var(--simulation-action);
+  --simulation-card-action-hover: #a4bfd8;
+  --simulation-card-action-active: #7897b4;
+  --simulation-card-action-disabled: #596a79;
+  --simulation-card-details: #b9c9d7;
+  --simulation-card-details-hover: #cfdae3;
+  --simulation-card-details-active: #9baebb;
+  --simulation-card-progress: var(--simulation-foundational-progress);
+  position: relative;
+  block-size: 100%;
+  min-block-size: 7.25rem;
+  grid-template-columns: minmax(0, 1fr) clamp(7.2rem, 25%, 9.5rem);
+  grid-template-rows: auto auto 1fr auto;
+  gap: 0.14rem 0.58rem;
+  align-items: start;
+  padding: 0.48rem 0.58rem;
+  border: 1px solid #11151a;
+  border-radius: 0.3rem;
+  background:
+    linear-gradient(110deg, var(--simulation-card-glow), transparent 48%),
+    var(--simulation-card-panel);
+  box-shadow: 0 0.14rem 0.25rem rgb(0 0 0 / 32%);
+}
+
+.ui-facility-card.simulation-panel-card--information {
+  --simulation-card-panel: #4a3654;
+  --simulation-card-glow: rgb(216 164 234 / 13%);
+  --simulation-card-action: #c28bd8;
+  --simulation-card-action-hover: #d4a7e5;
+  --simulation-card-action-active: #aa72c1;
+  --simulation-card-action-disabled: #745b7e;
+  --simulation-card-details: #d8b9e4;
+  --simulation-card-details-hover: #e5cfed;
+  --simulation-card-details-active: #c39fd2;
+  --simulation-card-progress: var(--simulation-information);
+}
+
+.ui-facility-card.simulation-panel-card--space-age {
+  --simulation-card-panel: #334b3d;
+  --simulation-card-glow: rgb(145 221 143 / 10%);
+  --simulation-card-action: #91c99a;
+  --simulation-card-action-hover: #a9d8b0;
+  --simulation-card-action-active: #76ae80;
+  --simulation-card-action-disabled: #58705d;
+  --simulation-card-details: #b8d8be;
+  --simulation-card-details-hover: #cde5d1;
+  --simulation-card-details-active: #9fc5a6;
+  --simulation-card-progress: var(--simulation-space);
+}
+
+.simulation-panel-card .ui-facility-card__header {
+  grid-column: 1;
+  grid-row: 1;
+}
+
+.simulation-panel-card__value {
+  margin-inline-start: 0.25em;
+}
+
+.simulation-panel-card--inline-status .ui-facility-card__title {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+}
+
+.simulation-panel-card__inline-separator {
+  margin-inline: 0.32em;
+  color: #f2b463;
+}
+
+.simulation-panel-card__inline-status {
+  color: #f2b463;
+  font-size: calc(0.9rem * var(--game-text-scale));
+  font-weight: var(--font-weight-semibold);
+}
+
+.simulation-panel-card--inline-status .ui-facility-card__production {
+  display: none;
+}
+
+.simulation-panel-card--inline-status .ui-facility-card__description {
+  grid-row: 2;
+}
+
+.simulation-panel-card--inline-status .ui-facility-card__progress {
+  grid-row: 3;
+}
+
+.simulation-panel-card--inline-status .ui-facility-card__feedback {
+  grid-row: 4;
+}
+
+.simulation-panel-card .ui-facility-card__production {
+  grid-column: 1;
+  grid-row: 2;
+}
+
+.simulation-panel-card .ui-facility-card__description {
+  grid-column: 1;
+  grid-row: 3;
+}
+
+.simulation-panel-card .ui-facility-card__progress {
+  grid-column: 1;
+  grid-row: 4;
+  align-self: end;
+}
+
+.simulation-panel-card .ui-facility-card__action {
+  grid-column: 2;
+  grid-row: 1 / -1;
+  align-self: stretch;
+}
+
+.simulation-panel-card .ui-facility-card__feedback {
+  grid-column: 1 / -1;
+  grid-row: 5;
+  padding-block-start: 0.2rem;
+  color: #ffb8b8;
+  font-size: calc(0.72rem * var(--game-text-scale));
+}
+
+.simulation-panel-card .ui-facility-card__title {
+  margin: 0;
+  color: white;
+  font-size: calc(1.03rem * var(--game-text-scale));
+  line-height: 1.16;
+}
+
+.simulation-panel-card__value,
+.simulation-progress__value {
+  color: var(--simulation-value);
+  font-family: var(--font-family-numeric);
+  font-variant-numeric: tabular-nums;
+}
+
+.simulation-panel-card .ui-facility-card__production {
+  color: #f2b463;
+  font-size: calc(0.9rem * var(--game-text-scale));
+  font-weight: var(--font-weight-semibold);
+  line-height: 1.2;
+}
+
+.simulation-panel-card .ui-facility-card__description {
+  color: #f6f6f6;
+  font-size: calc(0.82rem * var(--game-text-scale));
+  line-height: 1.25;
+}
+
+.simulation-panel-card__actions {
+  display: grid;
+  block-size: 100%;
+  grid-template-rows: minmax(var(--target-minimum), 1fr) auto;
+  gap: 0.32rem;
+}
+
+.simulation-panel-card__actions > .ui-button {
+  flex-direction: column;
+  min-inline-size: 0;
+  min-block-size: var(--target-minimum);
+  gap: 0;
+  padding: 0.35rem;
+  border-color: #11151a;
+  border-radius: 0.24rem;
+  background: var(--simulation-card-action);
+  color: #101720;
+  font-size: calc(0.83rem * var(--game-text-scale));
+  line-height: 1.1;
+  white-space: pre-line;
+}
+
+.simulation-panel-card__action-primary,
+.simulation-panel-card__action-secondary,
+.simulation-panel-card__action-cost,
+.simulation-panel-card__action-reward {
+  display: block;
+  max-inline-size: 100%;
+  font-family: var(--font-family-numeric);
+  font-variant-numeric: tabular-nums;
+  font-weight: var(--font-weight-bold);
+  white-space: nowrap;
+}
+
+.simulation-panel-card__action-cost {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.14em;
+  margin-block-start: 0.12rem;
+  font-family: var(--font-family-numeric);
+  font-variant-numeric: tabular-nums;
+}
+
+.simulation-panel-card__action-reward {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.22em;
+  margin-block-start: 0.12rem;
+}
+
+.simulation-panel-card__influence-symbol {
+  block-size: 0.88em;
+}
+
+.simulations-surface [data-symbol="influence"] {
+  transform: translateY(10%);
+}
+
+.simulation-panel-card__actions > .ui-button:not(:disabled):hover {
+  background: var(--simulation-card-action-hover);
+}
+
+.simulation-panel-card__actions > .ui-button:not(:disabled):active {
+  background: var(--simulation-card-action-active);
+}
+
+.simulation-panel-card__actions > .ui-button:disabled {
+  background: var(--simulation-card-action-disabled);
+  color: #161c22;
+  opacity: 1;
+}
+
+.simulation-panel-card__actions > .ui-button--danger {
+  background: #bb7f96;
+}
+
+.simulation-panel-card__details {
+  grid-row: 2;
+  align-self: end;
+  block-size: var(--target-minimum);
+  min-block-size: var(--target-minimum);
+  border: 1px solid #11151a;
+  border-radius: 0.24rem;
+  background: var(--simulation-card-details);
+  color: #101720;
+  cursor: pointer;
+  font: inherit;
+  font-size: calc(0.84rem * var(--game-text-scale));
+  font-weight: var(--font-weight-bold);
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
+  user-select: none;
+}
+
+.simulation-panel-card__details:hover {
+  background: var(--simulation-card-details-hover);
+}
+
+.simulation-panel-card__details:active {
+  background: var(--simulation-card-details-active);
+}
+
+.simulation-panel-card__details:focus-visible,
+.simulation-panel-card .ui-button:focus-visible,
+.simulation-details button:focus-visible {
+  outline: 3px solid var(--color-focus);
+  outline-offset: 2px;
+}
+
+.simulation-panel-card__progress-list,
+.simulation-details__progress {
+  display: grid;
+  gap: 0.22rem;
+}
+
+.simulation-time-control { display: grid; gap: .4rem; padding: .38rem .15rem 0; }
+.simulation-time-control > div { display: flex; justify-content: space-between; gap: .6rem; }
+.simulation-time-control__header { align-items: center; }
+.simulation-time-control__header > span { margin-inline-start: auto; }
+.simulation-time-control input { appearance: none; inline-size: 100%; block-size: 1.4rem; margin: 0; background: transparent; cursor: pointer; }
+.simulation-time-control input::-webkit-slider-runnable-track { block-size: .42rem; border: 1px solid rgb(0 0 0 / 44%); border-radius: 999px; background: var(--simulation-slider-track, #152337); box-shadow: inset 0 .08rem .15rem rgb(0 0 0 / 32%); }
+.simulation-time-control input::-webkit-slider-thumb { appearance: none; inline-size: 1rem; block-size: 1rem; margin-block-start: -.34rem; border: 2px solid color-mix(in srgb, var(--simulation-slider-accent, #91b7d6) 72%, white); border-radius: 50%; background: var(--simulation-slider-accent, #91b7d6); box-shadow: 0 .08rem .18rem rgb(0 0 0 / 45%); }
+.simulation-time-control input::-moz-range-track { block-size: .42rem; border: 1px solid rgb(0 0 0 / 44%); border-radius: 999px; background: var(--simulation-slider-track, #152337); box-shadow: inset 0 .08rem .15rem rgb(0 0 0 / 32%); }
+.simulation-time-control input::-moz-range-progress { block-size: .42rem; border-radius: 999px; background: var(--simulation-slider-accent, #91b7d6); }
+.simulation-time-control input::-moz-range-thumb { inline-size: .9rem; block-size: .9rem; border: 2px solid color-mix(in srgb, var(--simulation-slider-accent, #91b7d6) 72%, white); border-radius: 50%; background: var(--simulation-slider-accent, #91b7d6); box-shadow: 0 .08rem .18rem rgb(0 0 0 / 45%); }
+.simulation-time-control input:focus-visible { outline: 3px solid var(--color-focus); outline-offset: .18rem; border-radius: .3rem; }
+.simulation-time-control input:disabled { cursor: not-allowed; opacity: .48; }
+
+.simulation-time-control__settings-toggle { display: grid; place-items: center; min-inline-size: 2.15rem; min-block-size: 2.05rem; border: 1px solid color-mix(in srgb, var(--simulation-slider-accent, #91b7d6) 70%, white); border-radius: .25rem; background: color-mix(in srgb, var(--simulation-slider-accent, #91b7d6) 32%, var(--simulations-time-background, #29435f)); color: white; box-shadow: 0 .12rem .24rem rgb(0 0 0 / 42%); font-size: 1.1rem; }
+.simulation-time-control__settings-toggle[aria-expanded="true"] { border-color: rgb(0 0 0 / 44%); background: var(--simulation-slider-track, #152337); color: var(--simulation-slider-accent, #91b7d6); box-shadow: inset 0 .08rem .15rem rgb(0 0 0 / 32%); }
+.simulation-time-control__purchase-settings { display: grid !important; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: .25rem; padding-block-start: .2rem; }
+.simulation-time-control__purchase-settings button { min-block-size: var(--target-minimum); border: 1px solid rgb(0 0 0 / 44%); border-radius: .2rem; background: var(--simulation-slider-track, #152337); color: white; font: inherit; font-size: .78rem; }
+.simulation-time-control__purchase-settings button[aria-pressed="true"] { border-color: var(--simulation-slider-accent, #91b7d6); background: color-mix(in srgb, var(--simulation-slider-accent, #91b7d6) 34%, var(--simulation-slider-track, #152337)); }
+.simulation-time-control__settings-toggle:focus-visible, .simulation-time-control__purchase-settings button:focus-visible { outline: 3px solid var(--color-focus); outline-offset: .18rem; }
+
+.simulation-progress {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 0.1rem 0.4rem;
+  align-items: baseline;
+  color: #d9e2e8;
+  font-size: calc(0.68rem * var(--game-text-scale));
+}
+
+.simulation-progress progress {
+  appearance: none;
+  inline-size: 100%;
+  block-size: 0.36rem;
+  grid-column: 1 / -1;
+  overflow: hidden;
+  border: 0;
+  border-radius: 999px;
+  background: var(--simulation-track);
+}
+
+.simulation-progress progress::-webkit-progress-bar {
+  background: var(--simulation-track);
+}
+
+.simulation-progress progress::-webkit-progress-value {
+  background: var(--simulation-card-progress, var(--simulation-foundational-progress));
+  transition: inline-size 140ms linear;
+}
+
+.simulation-progress progress::-moz-progress-bar {
+  background: var(--simulation-card-progress, var(--simulation-foundational-progress));
+}
+
+.simulation-category__subsection[data-category="information"]
+  .simulation-progress progress::-webkit-progress-value,
+.simulation-category__subsection[data-category="education"]
+  .simulation-progress progress::-webkit-progress-value {
+  background: var(--simulation-information);
+}
+
+.simulation-category__subsection[data-category="information"]
+  .simulation-progress progress::-moz-progress-bar,
+.simulation-category__subsection[data-category="education"]
+  .simulation-progress progress::-moz-progress-bar {
+  background: var(--simulation-information);
+}
+
+.simulation-category__subsection[data-category="energy"]
+  .simulation-progress progress::-webkit-progress-value,
+.simulation-category__subsection[data-category="space-age"]
+  .simulation-progress progress::-webkit-progress-value {
+  background: var(--simulation-space);
+}
+
+.simulation-category__subsection[data-category="energy"]
+  .simulation-progress progress::-moz-progress-bar,
+.simulation-category__subsection[data-category="space-age"]
+  .simulation-progress progress::-moz-progress-bar {
+  background: var(--simulation-space);
+}
+
+.simulation-details__backdrop {
+  position: fixed;
+  z-index: 100;
+  display: grid;
+  padding: 0.75rem;
+  background: rgb(8 7 12 / 78%);
+  inset: 0;
+  place-items: center;
+}
+
+.simulation-details {
+  --simulation-dialog-border: #8baac7;
+  --simulation-dialog-background: #2f475f;
+  --simulation-dialog-accent: #9bbbd6;
+  --simulation-dialog-accent-text: #101720;
+  display: grid;
+  inline-size: min(38rem, 100%);
+  max-block-size: calc(100dvh - 1.5rem);
+  gap: 0.8rem;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  padding: 1rem;
+  border: 2px solid var(--simulation-dialog-border);
+  border-radius: 0.45rem;
+  background: var(--simulation-dialog-background);
+  box-shadow: 0 1rem 3rem rgb(0 0 0 / 55%);
+  color: white;
+  scrollbar-width: none;
+  -webkit-overflow-scrolling: touch;
+}
+
+.simulation-details--information {
+  --simulation-dialog-border: #c28bd8;
+  --simulation-dialog-background: #3a2947;
+  --simulation-dialog-accent: #c993df;
+  --simulation-dialog-accent-text: #221329;
+}
+
+.simulation-details--space-age {
+  --simulation-dialog-border: #70a88f;
+  --simulation-dialog-background: #294638;
+  --simulation-dialog-accent: #91caaa;
+  --simulation-dialog-accent-text: #102019;
+}
+
+.simulation-details::-webkit-scrollbar {
+  display: none;
+  inline-size: 0;
+  block-size: 0;
+}
+
+.simulation-details header {
+  display: flex;
+  align-items: start;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.simulation-details h2 {
+  margin: 0;
+}
+
+.simulation-details h2 {
+  font-size: calc(1.3rem * var(--game-text-scale));
+}
+
+.simulation-details__facts {
+  display: grid;
+  gap: 0.48rem;
+  margin: 0;
+}
+
+.simulation-details__facts > div {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) max-content;
+  gap: 0.6rem;
+  align-items: baseline;
+  padding-block: 0.5rem;
+  padding-inline: 0.65rem;
+  border: 1px solid rgb(255 255 255 / 14%);
+  border-radius: 0.3rem;
+  background: rgb(12 14 20 / 24%);
+}
+
+.simulation-details__facts dt,
+.simulation-details__facts dd {
+  margin: 0;
+}
+
+.simulation-details__facts dt {
+  font-weight: var(--font-weight-bold);
+  white-space: nowrap;
+}
+
+.simulation-details__facts dd {
+  color: var(--simulation-value);
+  font-family: var(--font-family-numeric);
+  font-variant-numeric: tabular-nums;
+  text-align: end;
+  white-space: nowrap;
+}
+
+.simulation-details header button {
+  display: grid;
+  min-inline-size: var(--target-minimum);
+  min-block-size: var(--target-minimum);
+  place-items: center;
+  border: 1px solid #11151a;
+  border-radius: 0.25rem;
+  background: var(--simulation-dialog-accent);
+  color: var(--simulation-dialog-accent-text);
+  cursor: pointer;
+  font: inherit;
+  font-size: 1.2rem;
+  font-weight: var(--font-weight-bold);
+  touch-action: manipulation;
+}
+
+@media (max-width: 32rem) {
+  .simulation-details__facts > div {
+    grid-template-columns: 1fr;
+    gap: 0.18rem;
+  }
+}
+
+.simulation-details__close-icon::before {
+  content: "\00D7";
+}
+
+@container (min-width: 46rem) {
+  .simulation-category ol {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@container (min-width: 76rem) {
+  .simulation-category ol {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 26rem) {
+  .ui-facility-card.simulation-panel-card {
+    grid-template-columns: minmax(0, 1fr) clamp(6.6rem, 31%, 7.5rem);
+    padding: 0.42rem;
+  }
+
+  .simulation-panel-card .ui-facility-card__description {
+    font-size: calc(0.76rem * var(--game-text-scale));
+  }
+}
+
+@media (forced-colors: active) {
+  .simulations-surface,
+  .simulation-panel-card,
+  .simulation-details {
+    background: Canvas;
+    color: CanvasText;
+  }
+
+  .simulation-panel-card__value,
+  .simulation-progress__value,
+  .simulations-surface__influence {
+    color: LinkText;
+  }
+
+  .simulation-panel-card__details,
+  .simulation-panel-card .ui-button,
+  .simulation-details header button {
+    border: 1px solid ButtonText;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .simulation-progress progress::-webkit-progress-value {
+    transition: none;
+  }
+}

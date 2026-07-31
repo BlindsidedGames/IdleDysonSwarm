@@ -45,10 +45,20 @@ export interface DreamTimerProductionFact {
   readonly currentProgress: number
   readonly durationSeconds: number
   readonly progressPerSecond: number
+  /** Producer count supplied to the canonical speed formula. */
+  readonly sourceCount: number
+  /** Formula term before global and era-specific multipliers are applied. */
+  readonly baseMultiplier: number
+  /** Prepared multiplier containing all canonical global and era bonuses. */
+  readonly globalMultiplier: number
+  /** Identifies how the canonical base multiplier was prepared. */
+  readonly multiplierFormula: 'logarithmic-source' | 'prepared-base'
   readonly cyclesPerSecond: number
   readonly secondsUntilNextCycle: number | null
   readonly advanceEnabled: boolean
   readonly outputPerCycle: DreamProductionAmounts
+  /** Long-run output from this timer at its current canonical cycle rate. */
+  readonly outputPerSecond: DreamProductionAmounts
 }
 
 export interface DreamFoundationalInformationProductionFacts {
@@ -607,6 +617,10 @@ interface TimerAdvance {
 interface TimerRate {
   readonly advanceEnabled: boolean
   readonly progressPerSecond: number
+  readonly sourceCount: number
+  readonly baseMultiplier: number
+  readonly globalMultiplier: number
+  readonly multiplierFormula: 'logarithmic-source' | 'prepared-base'
 }
 
 function standardTimerRate(
@@ -619,14 +633,23 @@ function standardTimerRate(
     !Number.isFinite(globalMultiplier) ||
     globalMultiplier < 0
   ) {
-    return { advanceEnabled: false, progressPerSecond: 0 }
+    return {
+      advanceEnabled: false,
+      progressPerSecond: 0,
+      sourceCount,
+      baseMultiplier: 0,
+      globalMultiplier,
+      multiplierFormula: 'logarithmic-source',
+    }
   }
+  const baseMultiplier = 1 + Math.log10(sourceCount)
   return {
     advanceEnabled: true,
-    progressPerSecond: multiplyContinuous(
-      1 + Math.log10(sourceCount),
-      globalMultiplier,
-    ),
+    progressPerSecond: multiplyContinuous(baseMultiplier, globalMultiplier),
+    sourceCount,
+    baseMultiplier,
+    globalMultiplier,
+    multiplierFormula: 'logarithmic-source',
   }
 }
 
@@ -640,7 +663,14 @@ function customTimerRate(
     !Number.isFinite(globalMultiplier) ||
     globalMultiplier < 0
   ) {
-    return { advanceEnabled: false, progressPerSecond: 0 }
+    return {
+      advanceEnabled: false,
+      progressPerSecond: 0,
+      sourceCount: 0,
+      baseMultiplier,
+      globalMultiplier,
+      multiplierFormula: 'prepared-base',
+    }
   }
   return {
     advanceEnabled: true,
@@ -648,6 +678,10 @@ function customTimerRate(
       baseMultiplier,
       globalMultiplier,
     ),
+    sourceCount: 0,
+    baseMultiplier,
+    globalMultiplier,
+    multiplierFormula: 'prepared-base',
   }
 }
 
@@ -667,6 +701,10 @@ function createTimerProductionFact(
     currentProgress,
     durationSeconds,
     progressPerSecond: rate.progressPerSecond,
+    sourceCount: rate.sourceCount,
+    baseMultiplier: rate.baseMultiplier,
+    globalMultiplier: rate.globalMultiplier,
+    multiplierFormula: rate.multiplierFormula,
     cyclesPerSecond,
     secondsUntilNextCycle: secondsUntilNextCycle(
       currentProgress,
@@ -675,6 +713,7 @@ function createTimerProductionFact(
     ),
     advanceEnabled: rate.advanceEnabled,
     outputPerCycle,
+    outputPerSecond: scaleProductionAmounts(outputPerCycle, cyclesPerSecond),
   })
 }
 
@@ -800,6 +839,20 @@ function productionAmounts(
   return Object.freeze({
     ...EMPTY_PRODUCTION,
     ...overrides,
+  })
+}
+
+function scaleProductionAmounts(
+  amounts: DreamProductionAmounts,
+  multiplier: number,
+): DreamProductionAmounts {
+  return Object.freeze({
+    community: multiplyContinuous(amounts.community, multiplier),
+    housing: multiplyContinuous(amounts.housing, multiplier),
+    workers: multiplyContinuous(amounts.workers, multiplier),
+    factories: multiplyContinuous(amounts.factories, multiplier),
+    bots: multiplyContinuous(amounts.bots, multiplier),
+    rockets: multiplyContinuous(amounts.rockets, multiplier),
   })
 }
 

@@ -48,7 +48,7 @@ import {
 
 afterEach(() => {
   cleanup()
-  localStorage.removeItem(SWARM_VISUALIZATION_STORAGE_KEY)
+  localStorage.clear()
   vi.unstubAllGlobals()
 })
 
@@ -259,6 +259,36 @@ describe('ReadyDysonSlice', () => {
     expect(onRouteChange).toHaveBeenCalledWith('bots')
   })
 
+  test('enables the dedicated Debug Options page for development runtimes', () => {
+    render(
+      provider(
+        <ReadyDysonSlice
+          snapshot={snapshot()}
+          locale="en"
+          dispatchPlayer={acceptedDispatch}
+          route="debug"
+          development={{
+            status: () => ({ enabled: true, entitled: true, quantumShards: 0n, strangeMatter: 0n }),
+            setDysonBots: vi.fn(),
+            unlockReality: vi.fn(),
+            apply: vi.fn(),
+            simulateOfflineTime: vi.fn(),
+          }}
+        />,
+      ),
+    )
+
+    expect(
+      screen.getByRole('heading', { level: 1, name: 'Debug Options' }),
+    ).toBeInTheDocument()
+    expect(
+      screen.getByRole('combobox', { name: 'Bot count' }),
+    ).toBeInTheDocument()
+    expect(
+      screen.queryByText('Save data'),
+    ).not.toBeInTheDocument()
+  })
+
   test('switches to the teal Research route and renders canonical cards', async () => {
     const user = userEvent.setup()
     const onRouteChange = vi.fn()
@@ -406,6 +436,92 @@ describe('ReadyDysonSlice', () => {
 
     await user.click(screen.getByRole('button', { name: 'Bots' }))
     expect(onRouteChange).toHaveBeenCalledWith('bots')
+  })
+
+  test('shows Reality unlock progress, guards stale routes, and renders when unlocked', async () => {
+    const onRouteChange = vi.fn()
+    const rendered = render(
+      provider(
+        <ReadyDysonSlice
+          snapshot={snapshot({
+            realityRouteVisible: true,
+            realitySecrets: 13n,
+          })}
+          locale="en"
+          dispatchPlayer={acceptedDispatch}
+          route="reality"
+          onRouteChange={onRouteChange}
+        />,
+      ),
+    )
+
+    expect(
+      screen.getAllByRole('button', {
+        name: 'Reality, 13.0 of 27.0 Secrets of the Universe',
+      })[0],
+    ).toBeDisabled()
+    await waitFor(() => {
+      expect(onRouteChange).toHaveBeenCalledWith('bots')
+    })
+
+    rendered.rerender(
+      provider(
+        <ReadyDysonSlice
+          snapshot={snapshot({
+            realityRouteVisible: true,
+            realityRouteUnlocked: true,
+            realitySecrets: 27n,
+          })}
+          locale="en"
+          dispatchPlayer={acceptedDispatch}
+          route="reality"
+          onRouteChange={onRouteChange}
+        />,
+      ),
+    )
+
+    expect(
+      await screen.findByText('Universe Designation: 4'),
+    ).toBeInTheDocument()
+    expect(
+      rendered.container.querySelector('.dyson-resource-header'),
+    ).not.toBeInTheDocument()
+    const user = userEvent.setup()
+    await user.click(
+      screen.getByRole('button', { name: 'Reality Upgrades' }),
+    )
+    await user.click(
+      screen.getByRole('button', { name: 'Anomaly' }),
+    )
+    await user.click(
+      screen.getByRole('button', { name: 'Translation' }),
+    )
+    expect(screen.getByText('Translation I')).toBeInTheDocument()
+  })
+
+  test('hides the shared resource header on Simulations', async () => {
+    const rendered = render(
+      provider(
+        <ReadyDysonSlice
+          snapshot={snapshot({
+            realityRouteVisible: true,
+            realityRouteUnlocked: true,
+          })}
+          locale="en"
+          dispatchPlayer={acceptedDispatch}
+          route="simulations"
+        />,
+      ),
+    )
+
+    await waitFor(() => {
+      expect(
+        rendered.container.querySelector('.simulations-surface'),
+      ).toBeInTheDocument()
+    })
+    expect(
+      rendered.container.querySelector('.dyson-resource-header'),
+    ).not.toBeInTheDocument()
   })
 
   test('persists the visualization toggle and reclaims its playfield row', async () => {
@@ -756,6 +872,9 @@ interface SnapshotOptions {
   readonly showNextTierTeaser?: boolean
   readonly skillsRouteUnlocked?: boolean
   readonly infinityRouteUnlocked?: boolean
+  readonly realityRouteVisible?: boolean
+  readonly realityRouteUnlocked?: boolean
+  readonly realitySecrets?: bigint
   readonly botsPresetAutomation?: 0 | 1 | 2 | 3 | 4 | 5
   readonly researchPresetAutomation?: 0 | 1 | 2 | 3 | 4 | 5
   readonly facilities?: Partial<
@@ -859,6 +978,15 @@ function snapshot(options: SnapshotOptions = {}): ReadySnapshot {
           secretsOfTheUniverse: 0n,
           permanentSkillPoints: 0n,
         },
+        reality: {
+          universeDesignationCount: 3n,
+          workersReady: 128n,
+          workerGenerationProgress: 0.25,
+          influence: 42n,
+        },
+        dream: {
+          strangeMatter: 4096n,
+        },
       },
       progression: {
         dyson: {
@@ -922,6 +1050,35 @@ function snapshot(options: SnapshotOptions = {}): ReadySnapshot {
             bots: false,
           },
         },
+        dream: {
+          upgrades: {
+            translation1: false,
+            translation2: false,
+            translation3: false,
+            translation4: false,
+            translation5: false,
+            translation6: false,
+            translation7: false,
+            translation8: false,
+            speed1: false,
+            speed2: false,
+            speed3: false,
+            speed4: false,
+            speed5: false,
+            speed6: false,
+            speed7: false,
+            speed8: false,
+            doubleTimeOwned: false,
+            workerAutoConvert: false,
+          },
+        },
+        timeline: {
+          doubleTime: {
+            unlocked: false,
+            enabled: false,
+            rate: 0,
+          },
+        },
       },
       derived: {
         dyson: {
@@ -979,6 +1136,63 @@ function snapshot(options: SnapshotOptions = {}): ReadySnapshot {
           breakTargetProgress: null,
           showRealityWarning: false,
         },
+        reality: {
+          status: 'success',
+          generationPerSecond: 1,
+          workerGenerationFillFraction: 0.25,
+          workerBatchSize: 128n,
+          nextUniverseDesignation: 4n,
+          workerBatchFillFraction: 1,
+          consumptionStatus: 'halted',
+          autoGatherEnabled: false,
+          artifact: {
+            replacements: [],
+            progressLabel: 'undefined',
+            scrambleIntervalSeconds: 1 / 60,
+          },
+        },
+        simulations: {
+          currentEra: 'foundational',
+          eras: {
+            foundational: {
+              visible: true,
+              visiblePanelIds: [],
+            },
+            information: {
+              visible: false,
+              visiblePanelIds: [],
+            },
+            spaceAge: {
+              visible: false,
+              visiblePanelIds: [],
+            },
+          },
+          live: {
+            production: {
+              ok: false,
+            },
+          },
+          resets: {
+            count: 0n,
+          },
+          permanentUpgrades: {
+            simulationCategoryVisible: false,
+            simulation: {
+              countermeasures: [],
+              education: [],
+              foundational: [],
+              information: [],
+              spaceAge: [],
+            },
+            realityCategoryVisible: true,
+            anomalyCategoryVisible: true,
+            reality: {
+              translation: ['translation1'],
+              speed: ['speed1'],
+              qualityOfLife: [],
+            },
+          },
+        },
       },
       visibility: {
         dyson: {
@@ -994,6 +1208,18 @@ function snapshot(options: SnapshotOptions = {}): ReadySnapshot {
         infinity: {
           routeUnlocked:
             options.infinityRouteUnlocked ?? false,
+        },
+        reality: {
+          routeVisible: options.realityRouteVisible ?? false,
+          routeUnlocked: options.realityRouteUnlocked ?? false,
+          unlockProgress: {
+            currentSecrets: options.realitySecrets ?? 0n,
+            requiredSecrets: 27n,
+            fraction: Number(options.realitySecrets ?? 0n) / 27,
+          },
+        },
+        simulations: {
+          routeUnlocked: options.realityRouteUnlocked ?? false,
         },
       },
       runtime: {
@@ -1069,6 +1295,30 @@ function snapshot(options: SnapshotOptions = {}): ReadySnapshot {
           'infinity.set-break-target': {
             routeAvailable: true,
           },
+          'reality.gather-influence': {
+            routeAvailable: true,
+          },
+          'reality.purchase-upgrade': {
+            routeAvailable: true,
+          },
+          'dream.purchase-upgrade': {
+            routeAvailable: true,
+          },
+          'dream.purchase-foundational': {
+            routeAvailable: true,
+          },
+          'dream.purchase-space-age': {
+            routeAvailable: true,
+          },
+          'dream.start-education': {
+            routeAvailable: true,
+          },
+          'dream.request-black-hole-reset': {
+            routeAvailable: true,
+          },
+          'time.set-double-time-rate': {
+            routeAvailable: true,
+          },
         },
       },
       previews: {
@@ -1142,6 +1392,28 @@ function snapshot(options: SnapshotOptions = {}): ReadySnapshot {
             maximumPosition: Math.log10(1101),
             currentPosition: Math.log10(2),
           },
+        },
+        reality: {
+          gatherInfluence: {
+            eligible: true,
+            amount: 128n,
+            code: 'success',
+          },
+          upgrades: [
+            {
+              upgradeId: 'translation1',
+              eligible: true,
+              cost: 8n,
+              code: 'purchasable',
+              definitionGap: null,
+            },
+          ],
+        },
+        dream: {
+          upgrades: [],
+          foundational: [],
+          education: [],
+          spaceAge: [],
         },
       },
     },

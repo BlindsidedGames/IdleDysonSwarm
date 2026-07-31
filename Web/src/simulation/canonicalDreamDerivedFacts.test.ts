@@ -148,6 +148,15 @@ describe('canonical Dream derived facts', () => {
     ).toBe(2)
     expect(
       facts.foundationalInformation.production.timers
+        .hunterTimerProgress,
+    ).toMatchObject({
+      sourceCount: 1,
+      baseMultiplier: 1,
+      globalMultiplier: 2,
+      multiplierFormula: 'logarithmic-source',
+    })
+    expect(
+      facts.foundationalInformation.production.timers
         .communityTimerProgress.progressPerSecond,
     ).toBe(8)
     expect(
@@ -161,6 +170,7 @@ describe('canonical Dream derived facts', () => {
       progressPerSecond: 32,
       cyclesPerSecond: 32 / 30,
       outputPerCycle: { bots: 90 },
+      outputPerSecond: { bots: 96 },
     })
     expect(
       facts.foundationalInformation.production.timers
@@ -169,6 +179,7 @@ describe('canonical Dream derived facts', () => {
       progressPerSecond: 1.6,
       cyclesPerSecond: 0.08,
       outputPerCycle: { rockets: 2 },
+      outputPerSecond: { rockets: 0.16 },
     })
     expect(facts.foundationalInformation.conversions).toEqual({
       housingToVillages: {

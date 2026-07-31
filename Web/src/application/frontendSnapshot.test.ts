@@ -12,6 +12,7 @@ import { createCanonicalTinkerRuntimeState } from '../simulation/canonicalTinker
 import {
   advanceRealityWorkers,
 } from '../simulation/realityWorkers'
+import { DISCRETE_MAXIMUM } from '../simulation/numeric'
 import {
   CANONICAL_PLAYER_COMMAND_KINDS,
   type CanonicalPlayerCommand,
@@ -330,6 +331,326 @@ describe('frontend gameplay snapshot', () => {
         quantumPoint,
         frontendContext(),
       ).visibility.infinity.routeUnlocked,
+    ).toBe(true)
+  })
+
+  test('publishes Unity Reality reveal and unlock states separately', () => {
+    const source = firstRunFixtureState()
+    const firstInfinityPoint: CanonicalGameStateV1 = {
+      ...source,
+      infinity: {
+        ...source.infinity,
+        points: 1n,
+      },
+    }
+    const almostAllSecrets: CanonicalGameStateV1 = {
+      ...firstInfinityPoint,
+      infinity: {
+        ...firstInfinityPoint.infinity,
+        secretsOfTheUniverse: 26n,
+      },
+    }
+    const allSecrets: CanonicalGameStateV1 = {
+      ...firstInfinityPoint,
+      infinity: {
+        ...firstInfinityPoint.infinity,
+        secretsOfTheUniverse: 27n,
+      },
+    }
+    const excessImportedSecrets: CanonicalGameStateV1 = {
+      ...firstInfinityPoint,
+      infinity: {
+        ...firstInfinityPoint.infinity,
+        secretsOfTheUniverse: 28n,
+      },
+    }
+    const quantumPoint: CanonicalGameStateV1 = {
+      ...source,
+      quantum: {
+        ...source.quantum,
+        pointsEarned: 1n,
+      },
+    }
+
+    expect(
+      selectFrontendGameplaySnapshot(
+        source,
+        frontendContext(),
+      ).visibility.reality,
+    ).toEqual({
+      routeVisible: false,
+      routeUnlocked: false,
+      unlockProgress: {
+        currentSecrets: 0n,
+        requiredSecrets: 27n,
+        fraction: 0,
+      },
+    })
+    expect(
+      selectFrontendGameplaySnapshot(
+        firstInfinityPoint,
+        frontendContext(),
+      ).visibility.reality,
+    ).toEqual({
+      routeVisible: true,
+      routeUnlocked: false,
+      unlockProgress: {
+        currentSecrets: 0n,
+        requiredSecrets: 27n,
+        fraction: 0,
+      },
+    })
+    expect(
+      selectFrontendGameplaySnapshot(
+        almostAllSecrets,
+        frontendContext(),
+      ).visibility.reality,
+    ).toEqual({
+      routeVisible: true,
+      routeUnlocked: false,
+      unlockProgress: {
+        currentSecrets: 26n,
+        requiredSecrets: 27n,
+        fraction: 26 / 27,
+      },
+    })
+    expect(
+      selectFrontendGameplaySnapshot(
+        allSecrets,
+        frontendContext(),
+      ).visibility.reality,
+    ).toEqual({
+      routeVisible: true,
+      routeUnlocked: true,
+      unlockProgress: {
+        currentSecrets: 27n,
+        requiredSecrets: 27n,
+        fraction: 1,
+      },
+    })
+    expect(
+      selectFrontendGameplaySnapshot(
+        excessImportedSecrets,
+        frontendContext(),
+      ).visibility.reality.unlockProgress,
+    ).toEqual({
+      currentSecrets: 28n,
+      requiredSecrets: 27n,
+      fraction: 1,
+    })
+    expect(
+      selectFrontendGameplaySnapshot(
+        quantumPoint,
+        frontendContext(),
+      ).visibility.reality,
+    ).toEqual({
+      routeVisible: true,
+      routeUnlocked: true,
+      unlockProgress: {
+        currentSecrets: 0n,
+        requiredSecrets: 27n,
+        fraction: 0,
+      },
+    })
+    expect(
+      Object.isFrozen(
+        selectFrontendGameplaySnapshot(
+          almostAllSecrets,
+          frontendContext(),
+        ).visibility.reality.unlockProgress,
+      ),
+    ).toBe(true)
+  })
+
+  test('unlocks Simulations at the same Unity boundary as Reality', () => {
+    const source = firstRunFixtureState()
+    const allSecrets: CanonicalGameStateV1 = {
+      ...source,
+      infinity: {
+        ...source.infinity,
+        secretsOfTheUniverse: 27n,
+      },
+    }
+    const quantumPoint: CanonicalGameStateV1 = {
+      ...source,
+      quantum: {
+        ...source.quantum,
+        pointsEarned: 1n,
+      },
+    }
+
+    expect(
+      selectFrontendGameplaySnapshot(
+        source,
+        frontendContext(),
+      ).visibility.simulations.routeUnlocked,
+    ).toBe(false)
+    expect(
+      selectFrontendGameplaySnapshot(
+        allSecrets,
+        frontendContext(),
+      ).visibility.simulations.routeUnlocked,
+    ).toBe(true)
+    expect(
+      selectFrontendGameplaySnapshot(
+        quantumPoint,
+        frontendContext(),
+      ).visibility.simulations.routeUnlocked,
+    ).toBe(true)
+  })
+
+  test('publishes Unity live Simulation era and panel visibility', () => {
+    const source = firstRunFixtureState()
+    const foundational = selectFrontendGameplaySnapshot(
+      source,
+      frontendContext(),
+    ).derived.simulations
+    const progressed: CanonicalGameStateV1 = {
+      ...source,
+      dream: {
+        ...source.dream,
+        resources: {
+          ...source.dream.resources,
+          hunters: 1n,
+          housing: 1,
+          villages: 1,
+          workers: 1,
+          cities: 1,
+          bots: 1,
+          rockets: 1,
+          spaceFactories: 1,
+          dysonPanels: 1n,
+          swarmPanels: 1n,
+        },
+        education: {
+          ...source.dream.education,
+          engineering: {
+            ...source.dream.education.engineering,
+            complete: true,
+          },
+          shipping: {
+            ...source.dream.education.shipping,
+            complete: true,
+          },
+          worldTrade: {
+            ...source.dream.education.worldTrade,
+            complete: true,
+          },
+          mathematics: {
+            ...source.dream.education.mathematics,
+            complete: true,
+          },
+          advancedPhysics: {
+            ...source.dream.education.advancedPhysics,
+            complete: true,
+          },
+        },
+      },
+    }
+    const spaceAge = selectFrontendGameplaySnapshot(
+      progressed,
+      frontendContext(),
+    ).derived.simulations
+
+    expect(foundational.currentEra).toBe('foundational')
+    expect(foundational.eras).toEqual({
+      foundational: {
+        visible: true,
+        visiblePanelIds: ['hunters', 'gatherers'],
+      },
+      information: {
+        visible: false,
+        visiblePanelIds: [],
+      },
+      spaceAge: {
+        visible: false,
+        visiblePanelIds: [],
+      },
+    })
+    expect(spaceAge.currentEra).toBe('space-age')
+    expect(spaceAge.eras.foundational.visiblePanelIds).toEqual([
+      'hunters',
+      'gatherers',
+      'community',
+      'housing',
+      'villages',
+      'workers',
+      'cities',
+    ])
+    expect(spaceAge.eras.information).toEqual({
+      visible: true,
+      visiblePanelIds: [
+        'engineering',
+        'shipping',
+        'world-trade',
+        'world-peace',
+        'mathematics',
+        'advanced-physics',
+        'factories',
+        'bots',
+        'rockets',
+      ],
+    })
+    expect(spaceAge.eras.spaceAge).toEqual({
+      visible: true,
+      visiblePanelIds: [
+        'solar',
+        'fusion',
+        'space-factories',
+        'railguns',
+        'swarm-stats',
+      ],
+    })
+  })
+
+  test('publishes immutable live production, reset, and upgrade panel facts', () => {
+    const state = firstRunFixtureState()
+    const snapshot = selectFrontendGameplaySnapshot(
+      state,
+      frontendContext(),
+    )
+    const simulations = snapshot.derived.simulations
+    const expectedProduction = deriveCanonicalDreamDerivedFacts(state, {
+      effectiveDoubleTimeMultiplier: 1,
+      doubleTimeActive: state.timeline.doubleTime.enabled,
+      doubleTimeRate: state.timeline.doubleTime.rate,
+    })
+
+    expect(simulations.live).toMatchObject({
+      resources: state.dream.resources,
+      education: state.dream.education,
+      timers: state.dream.timers,
+      railgun: state.dream.railgun,
+      dysonPanelCapacity: 1_000n,
+      production: expectedProduction,
+    })
+    expect(simulations.resets).toMatchObject({
+      count: state.dream.resetCount,
+      disasterStage: state.dream.disasterStage,
+    })
+    expect(simulations.permanentUpgrades.simulation).toEqual({
+      countermeasures: ['counterMeteor'],
+      education: [],
+      foundational: ['hunter1', 'gatherer1', 'workerBoost'],
+      information: [],
+      spaceAge: [],
+    })
+    expect(simulations.permanentUpgrades.reality).toEqual({
+      translation: ['translation1'],
+      speed: ['speed1'],
+      qualityOfLife: ['doubleTimeOwned', 'workerAutoConvert'],
+    })
+    expect(simulations.permanentUpgrades).toMatchObject({
+      simulationCategoryVisible: true,
+      realityCategoryVisible: true,
+      anomalyCategoryVisible: true,
+    })
+    expect(Object.isFrozen(simulations)).toBe(true)
+    expect(Object.isFrozen(simulations.live.resources)).toBe(true)
+    expect(
+      Object.isFrozen(
+        simulations.eras.foundational.visiblePanelIds,
+      ),
     ).toBe(true)
   })
 
@@ -1045,8 +1366,40 @@ describe('frontend gameplay snapshot', () => {
     expect(snapshot.derived.reality).toEqual({
       status: expectedReality.status,
       generationPerSecond: expectedReality.generationPerSecond,
+      workerGenerationFillFraction:
+        expectedReality.generationPerSecond >= 10
+          ? 1
+          : expectedReality.state.reality.workerGenerationProgress,
       workerBatchSize: context.realityWorkerTuning.workerBatchSize,
+      nextUniverseDesignation:
+        state.reality.universeDesignationCount + 1n,
+      workerBatchFillFraction: Math.min(
+        1,
+        Number(state.reality.workersReady) /
+          Number(context.realityWorkerTuning.workerBatchSize),
+      ),
+      consumptionStatus:
+        state.reality.workersReady >=
+        context.realityWorkerTuning.workerBatchSize
+          ? 'halted'
+          : 'running',
       autoGatherEnabled: state.reality.autoGather,
+      artifact: {
+        replacements: [
+          { source: 'i', replacement: '|' },
+          { source: 'r', replacement: '}' },
+          { source: 'e', replacement: '%' },
+          { source: 'f', replacement: '$' },
+          { source: 'c', replacement: '{' },
+          { source: 'h', replacement: '*' },
+          { source: 'a', replacement: '@' },
+          { source: 'A', replacement: '#' },
+          { source: 't', replacement: '^' },
+          { source: 'T', replacement: '&' },
+        ],
+        progressLabel: 'undefined',
+        scrambleIntervalSeconds: 1 / 60,
+      },
     })
     expect(snapshot.derived.dream).toEqual({
       productionBasis: 'base-rate',
@@ -1067,6 +1420,81 @@ describe('frontend gameplay snapshot', () => {
         snapshot.runtime.tinker.value.timeToCompletionSeconds,
       ).toBeNull()
     }
+  })
+
+  test('publishes bounded Unity Reality consumption presentation facts', () => {
+    const source = firstRunFixtureState()
+    const context = frontendContext()
+    const partialBatch: CanonicalGameStateV1 = {
+      ...source,
+      reality: {
+        ...source.reality,
+        universeDesignationCount: 41n,
+        workersReady: 50n,
+      },
+    }
+    const fullManualBatch: CanonicalGameStateV1 = {
+      ...partialBatch,
+      reality: {
+        ...partialBatch.reality,
+        workersReady: context.realityWorkerTuning.workerBatchSize,
+      },
+    }
+    const fullAutomaticBatch: CanonicalGameStateV1 = {
+      ...fullManualBatch,
+      reality: {
+        ...fullManualBatch.reality,
+        autoGather: true,
+      },
+    }
+    const saturatedDesignation: CanonicalGameStateV1 = {
+      ...partialBatch,
+      reality: {
+        ...partialBatch.reality,
+        universeDesignationCount: DISCRETE_MAXIMUM,
+        workersReady:
+          context.realityWorkerTuning.workerBatchSize + 1n,
+      },
+    }
+
+    expect(
+      selectFrontendGameplaySnapshot(
+        partialBatch,
+        context,
+      ).derived.reality,
+    ).toMatchObject({
+      nextUniverseDesignation: 42n,
+      workerBatchFillFraction: 0.5,
+      consumptionStatus: 'running',
+    })
+    expect(
+      selectFrontendGameplaySnapshot(
+        fullManualBatch,
+        context,
+      ).derived.reality,
+    ).toMatchObject({
+      workerBatchFillFraction: 1,
+      consumptionStatus: 'halted',
+    })
+    expect(
+      selectFrontendGameplaySnapshot(
+        fullAutomaticBatch,
+        context,
+      ).derived.reality,
+    ).toMatchObject({
+      workerBatchFillFraction: 1,
+      consumptionStatus: 'running',
+    })
+    expect(
+      selectFrontendGameplaySnapshot(
+        saturatedDesignation,
+        context,
+      ).derived.reality,
+    ).toMatchObject({
+      nextUniverseDesignation: DISCRETE_MAXIMUM,
+      workerBatchFillFraction: 1,
+      consumptionStatus: 'halted',
+    })
   })
 
   test.each([

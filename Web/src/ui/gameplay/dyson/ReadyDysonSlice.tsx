@@ -39,6 +39,7 @@ import {
   type UiRuntimeImportResult,
 } from '../../runtime'
 import { SettingsSurface } from '../settings'
+import { DebugSurface } from '../debug'
 import type { SkillPresetActions } from '../skills'
 import {
   beginFirstSliceSnapshotSelection,
@@ -55,6 +56,10 @@ import {
   DysonProductionSummary,
 } from './DysonLowerFacts'
 import { DysonSwarmVisual } from './DysonSwarmVisual'
+import {
+  SimulationTimeControl,
+  type SpaceAgePurchaseQuantity,
+} from '../simulations/SimulationsSurface'
 
 const BasicFacilityRegion = lazy(async () => {
   const module = await import('../facilities')
@@ -74,6 +79,16 @@ const SkillsSurface = lazy(async () => {
 const InfinitySurface = lazy(async () => {
   const module = await import('../infinity')
   return { default: module.InfinitySurface }
+})
+
+const RealitySurface = lazy(async () => {
+  const module = await import('../reality')
+  return { default: module.RealitySurface }
+})
+
+const SimulationsSurface = lazy(async () => {
+  const module = await import('../simulations')
+  return { default: module.SimulationsSurface }
 })
 
 export const SWARM_VISUALIZATION_STORAGE_KEY =
@@ -212,6 +227,9 @@ export type ReadyGameRoute =
   | 'research'
   | 'skills'
   | 'infinity'
+  | 'reality'
+  | 'simulations'
+  | 'debug'
   | 'settings'
 
 /**
@@ -223,7 +241,7 @@ export function ReadyDysonSlice({
   locale,
   dispatchPlayer,
   presetActions,
-  route = 'bots',
+  route: requestedRoute = 'bots',
   onRouteChange = () => undefined,
   resetSave = unavailableReset,
   development,
@@ -231,7 +249,19 @@ export function ReadyDysonSlice({
   const intl = useIntl()
   const [visualizationVisible, setVisualizationVisible] =
     useState(readVisualizationPreference)
+  const [purchaseSettingsOpen, setPurchaseSettingsOpen] = useState(false)
+  const [spaceAgePurchaseQuantity, setSpaceAgePurchaseQuantity] =
+    useState<SpaceAgePurchaseQuantity>(1)
   const gameplay = snapshot.gameplay
+  const route =
+    (requestedRoute === 'reality' ||
+      requestedRoute === 'simulations') &&
+    (!gameplay.visibility.reality.routeVisible ||
+      !gameplay.visibility.reality.routeUnlocked ||
+      (requestedRoute === 'simulations' &&
+        !gameplay.visibility.simulations.routeUnlocked))
+      ? 'bots'
+      : requestedRoute
   const dyson = gameplay.derived.dyson
   const tinker = gameplay.runtime.tinker
   const previousAutomatedRoute = useRef<'bots' | 'research' | null>(
@@ -239,6 +269,15 @@ export function ReadyDysonSlice({
   )
   const automatedRoute =
     route === 'bots' || route === 'research' ? route : null
+  useEffect(() => {
+    if (
+      (requestedRoute === 'reality' ||
+        requestedRoute === 'simulations') &&
+      route !== requestedRoute
+    ) {
+      onRouteChange('bots')
+    }
+  }, [onRouteChange, requestedRoute, route])
   useEffect(() => {
     if (automatedRoute === null) {
       previousAutomatedRoute.current = null
@@ -290,7 +329,12 @@ export function ReadyDysonSlice({
   const researchActive = route === 'research'
   const skillsActive = route === 'skills'
   const infinityActive = route === 'infinity'
-  const routeHeading = settingsActive
+  const realityActive = route === 'reality'
+  const simulationsActive = route === 'simulations'
+  const debugActive = route === 'debug'
+  const routeHeading = debugActive
+    ? messages.debugRoute
+    : settingsActive
     ? messages.settingsRoute
     : researchActive
       ? messages.researchRoute
@@ -298,7 +342,11 @@ export function ReadyDysonSlice({
         ? messages.skillsRoute
         : infinityActive
           ? messages.infinityRoute
-          : messages.route
+          : realityActive
+            ? messages.realityRoute
+            : simulationsActive
+              ? messages.simulationsRoute
+            : messages.route
   const infinityRouteLabel =
     gameplay.derived.infinity.navigationReward === null
       ? intl.formatMessage(messages.infinityRoute)
@@ -313,7 +361,12 @@ export function ReadyDysonSlice({
       direction={LOCALE_REGISTRY[locale].direction}
       skipLinkLabel={intl.formatMessage(messages.skipToGame)}
       heading={intl.formatMessage(routeHeading)}
-      routeTheme={route}
+      routeTheme={debugActive ? 'settings' : route}
+      routeThemeVariant={
+        simulationsActive
+          ? gameplay.derived.simulations.currentEra
+          : undefined
+      }
       navigation={{
         ariaLabel: intl.formatMessage(messages.primaryNavigation),
         drawerAriaLabel: intl.formatMessage(messages.sideNavigation),
@@ -355,6 +408,60 @@ export function ReadyDysonSlice({
                 : { onActivate: () => onRouteChange('infinity') }
               : { disabled: true }),
           },
+          ...(gameplay.visibility.reality.routeVisible
+            ? [
+                {
+                  id: 'reality',
+                  label: intl.formatMessage(messages.realityRoute),
+                  iconSrc: navigationAssets.reality,
+                  ...(gameplay.visibility.reality.routeUnlocked
+                    ? realityActive
+                      ? { current: true as const }
+                      : {
+                          onActivate: () =>
+                            onRouteChange('reality'),
+                        }
+                    : {
+                        disabled: true,
+                        progress: {
+                          fraction:
+                            gameplay.visibility.reality
+                              .unlockProgress.fraction,
+                          label: intl.formatMessage(
+                            messages.realitySecretsProgress,
+                            {
+                              current: display(
+                                gameplay.visibility.reality
+                                  .unlockProgress.currentSecrets,
+                              ),
+                              required: display(
+                                gameplay.visibility.reality
+                                  .unlockProgress.requiredSecrets,
+                              ),
+                            },
+                          ),
+                        },
+                      }),
+                },
+              ]
+            : []),
+          ...(gameplay.visibility.simulations.routeUnlocked
+            ? [
+                {
+                  id: 'simulations',
+                  label: intl.formatMessage(
+                    messages.simulationsRoute,
+                  ),
+                  iconSrc: navigationAssets.simulations,
+                  ...(simulationsActive
+                    ? { current: true as const }
+                    : {
+                        onActivate: () =>
+                          onRouteChange('simulations'),
+                      }),
+                },
+              ]
+            : []),
           {
             id: 'story',
             label: intl.formatMessage(messages.storyRoute),
@@ -374,6 +481,19 @@ export function ReadyDysonSlice({
             disabled: true,
             bottom: false,
           },
+          ...(development !== undefined
+            ? [
+                {
+                  id: 'debug',
+                  label: intl.formatMessage(messages.debugRoute),
+                  icon: <span className="dyson-navigation__debug-icon">{'{/}'}</span>,
+                  bottom: false,
+                  ...(debugActive
+                    ? { current: true as const }
+                    : { onActivate: () => onRouteChange('debug') }),
+                },
+              ]
+            : []),
           {
             id: 'settings',
             label: intl.formatMessage(messages.settingsRoute),
@@ -411,13 +531,22 @@ export function ReadyDysonSlice({
         hasFacilityContent
       }
       routeContent={
-        settingsActive
+        debugActive && development !== undefined
+          ? {
+              ariaLabel: intl.formatMessage(messages.debugRoute),
+              content: (
+                <DebugSurface
+                  development={development}
+                  locale={locale}
+                />
+              ),
+            }
+          : settingsActive
           ? {
               ariaLabel: intl.formatMessage(messages.settingsRoute),
               content: (
                 <SettingsSurface
                   resetSave={resetSave}
-                  development={development}
                   visualizationVisible={visualizationVisible}
                   onVisualizationVisibleChange={(visible) => {
                     setVisualizationVisible(visible)
@@ -585,7 +714,142 @@ export function ReadyDysonSlice({
                       </Suspense>
                     ),
                   }
-                : undefined
+                : realityActive
+                  ? {
+                      ariaLabel: intl.formatMessage(
+                        messages.realityRoute,
+                      ),
+                      content: (
+                        <Suspense
+                          fallback={
+                            <div
+                              aria-label={intl.formatMessage(
+                                messages.realityRoute,
+                              )}
+                              aria-busy="true"
+                            />
+                          }
+                        >
+                          <RealitySurface
+                            locale={locale}
+                            resources={gameplay.resources.reality}
+                            derived={gameplay.derived.reality}
+                            gatherPreview={
+                              gameplay.previews.reality
+                                .gatherInfluence
+                            }
+                            upgrades={
+                              gameplay.previews.reality.upgrades
+                            }
+                            upgradeSections={
+                              gameplay.derived.simulations
+                                .permanentUpgrades.reality
+                            }
+                            simulationUpgrades={
+                              gameplay.previews.dream.upgrades
+                            }
+                            simulationUpgradeSections={
+                              gameplay.derived.simulations
+                                .permanentUpgrades.simulation
+                            }
+                            strangeMatter={
+                              gameplay.resources.dream.strangeMatter
+                            }
+                            gatherRouteAvailable={
+                              gameplay.commands.byKind[
+                                'reality.gather-influence'
+                              ].routeAvailable
+                            }
+                            purchaseRouteAvailable={
+                              gameplay.commands.byKind[
+                                'reality.purchase-upgrade'
+                              ].routeAvailable
+                            }
+                            simulationPurchaseRouteAvailable={
+                              gameplay.commands.byKind[
+                                'dream.purchase-upgrade'
+                              ].routeAvailable
+                            }
+                            dispatchPlayer={dispatchPlayer}
+                          />
+                        </Suspense>
+                      ),
+                    }
+                  : simulationsActive
+                    ? {
+                        ariaLabel: intl.formatMessage(
+                          messages.simulationsRoute,
+                        ),
+                        content: (
+                          <Suspense
+                            fallback={
+                              <div
+                                aria-label={intl.formatMessage(
+                                  messages.simulationsRoute,
+                                )}
+                                aria-busy="true"
+                              />
+                            }
+                          >
+                            <SimulationsSurface
+                              locale={locale}
+                              facts={gameplay.derived.simulations}
+                              progression={gameplay.progression.dream}
+                              previews={gameplay.previews.dream}
+                              influence={
+                                gameplay.resources.reality.influence
+                              }
+                              spaceAgePurchaseQuantity={spaceAgePurchaseQuantity}
+                              commandAvailability={{
+                                purchaseFoundational:
+                                  gameplay.commands.byKind[
+                                    'dream.purchase-foundational'
+                                  ].routeAvailable,
+                                purchaseSpaceAge:
+                                  gameplay.commands.byKind[
+                                    'dream.purchase-space-age'
+                                  ].routeAvailable,
+                                startEducation:
+                                  gameplay.commands.byKind[
+                                    'dream.start-education'
+                                  ].routeAvailable,
+                                blackHoleReset:
+                                  gameplay.commands.byKind[
+                                    'dream.request-black-hole-reset'
+                                  ].routeAvailable,
+                                setDoubleTimeRate:
+                                  gameplay.commands.byKind[
+                                    'time.set-double-time-rate'
+                                  ].routeAvailable,
+                              }}
+                              dispatchPlayer={dispatchPlayer}
+                            />
+                          </Suspense>
+                        ),
+                      }
+                  : undefined
+      }
+      routeSupplement={
+        simulationsActive && gameplay.progression.timeline.doubleTime.unlocked
+          ? {
+              ariaLabel: 'Time multiplier',
+              content: (
+                <SimulationTimeControl
+                  locale={locale}
+                  bankSeconds={gameplay.resources.time.doubleTimeBankSeconds}
+                  rate={gameplay.progression.timeline.doubleTime.rate}
+                  enabled={gameplay.progression.timeline.doubleTime.enabled}
+                  available={gameplay.commands.byKind['time.set-double-time-rate'].routeAvailable}
+                  spaceAgeAvailable={gameplay.derived.simulations.eras.spaceAge.visible}
+                  purchaseSettingsOpen={purchaseSettingsOpen}
+                  spaceAgePurchaseQuantity={spaceAgePurchaseQuantity}
+                  onPurchaseSettingsOpenChange={setPurchaseSettingsOpen}
+                  onSpaceAgePurchaseQuantityChange={setSpaceAgePurchaseQuantity}
+                  dispatchPlayer={dispatchPlayer}
+                />
+              ),
+            }
+          : undefined
       }
       resources={{
         ariaLabel: intl.formatMessage(messages.resources),
@@ -612,6 +876,7 @@ export function ReadyDysonSlice({
           fullPrecisionRate: scienceRate(precise(rates.science)),
         },
       }}
+      showResourceHeader={!realityActive && !simulationsActive}
       swarmVisual={
         visualizationVisible
           ? {

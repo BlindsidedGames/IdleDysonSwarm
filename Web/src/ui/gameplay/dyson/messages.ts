@@ -36,6 +36,23 @@ export const readyDysonMessages = defineMessages({
     defaultMessage: 'Infinity',
     description: 'Unity Infinity destination.',
   },
+  realityRoute: {
+    id: 'navigation.reality',
+    defaultMessage: 'Reality',
+    description: 'Unity Reality destination.',
+  },
+  simulationsRoute: {
+    id: 'navigation.simulations',
+    defaultMessage: 'Simulations',
+    description: 'Unity live Simulations destination.',
+  },
+  realitySecretsProgress: {
+    id: 'navigation.reality-secrets-progress',
+    defaultMessage:
+      'Reality, {current} of {required} Secrets of the Universe',
+    description:
+      'Accessible unlock progress for the visible but locked Reality destination.',
+  },
   infinityRouteGain: {
     id: 'navigation.infinity-gain',
     defaultMessage: 'Infinity +{value}',
@@ -61,6 +78,11 @@ export const readyDysonMessages = defineMessages({
     id: 'navigation.settings',
     defaultMessage: 'Settings',
     description: 'Unity Settings destination.',
+  },
+  debugRoute: {
+    id: 'navigation.debug-options',
+    defaultMessage: 'Debug Options',
+    description: 'Development-only Unity Debug Options destination.',
   },
   cashMultiplier: {
     id: 'dyson.menu.cash-multiplier',

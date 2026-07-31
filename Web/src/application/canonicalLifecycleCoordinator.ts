@@ -23,6 +23,7 @@ import type {
 } from './contracts'
 import type {
   CanonicalActiveAdvanceResult,
+  CanonicalDevelopmentAction,
   CanonicalPlayerCommand,
   CanonicalPlayerDispatchResult,
   CanonicalStoredTimeCommitResult,
@@ -77,6 +78,19 @@ export interface CanonicalLifecycleApplicationPort {
       'sessionRevision' | 'expectedStateRevision'
     >,
     bots: number,
+  ): Promise<CommitFirstResult>
+  commitDevelopmentRealityUnlock?(
+    envelope: Pick<
+      ApplicationCommandEnvelope<unknown>,
+      'sessionRevision' | 'expectedStateRevision'
+    >,
+  ): Promise<CommitFirstResult>
+  commitDevelopmentAction?(
+    envelope: Pick<
+      ApplicationCommandEnvelope<unknown>,
+      'sessionRevision' | 'expectedStateRevision'
+    >,
+    action: CanonicalDevelopmentAction,
   ): Promise<CommitFirstResult>
   importSave(request: ImportSaveRequest): Promise<ImportSaveResult>
 }
@@ -460,6 +474,79 @@ export class CanonicalLifecycleCoordinator {
       return this.application.commitDevelopmentDysonBots(
         revisionEnvelope(snapshot),
         bots,
+      )
+    })
+  }
+
+  async unlockDevelopmentReality(): Promise<CommitFirstResult> {
+    return this.enqueue(async () => {
+      const snapshot = this.application.snapshot()
+      if (snapshot.phase !== 'ready') {
+        return {
+          committed: false,
+          transition: rejectedTransition(
+            snapshot,
+            'APP-NOT-READY',
+            'The canonical application is not ready.',
+          ),
+          code: 'APP-NOT-READY',
+          reason: 'The canonical application is not ready.',
+        }
+      }
+      if (
+        this.application.commitDevelopmentRealityUnlock ===
+        undefined
+      ) {
+        return {
+          committed: false,
+          transition: rejectedTransition(
+            snapshot,
+            'CANONICAL-DEVELOPMENT-CONTROL-UNAVAILABLE',
+            'Development progression controls are unavailable.',
+          ),
+          code: 'CANONICAL-DEVELOPMENT-CONTROL-UNAVAILABLE',
+          reason:
+            'Development progression controls are unavailable.',
+        }
+      }
+      return this.application.commitDevelopmentRealityUnlock(
+        revisionEnvelope(snapshot),
+      )
+    })
+  }
+
+  async applyDevelopmentAction(
+    action: CanonicalDevelopmentAction,
+  ): Promise<CommitFirstResult> {
+    return this.enqueue(async () => {
+      const snapshot = this.application.snapshot()
+      if (snapshot.phase !== 'ready') {
+        return {
+          committed: false,
+          transition: rejectedTransition(
+            snapshot,
+            'APP-NOT-READY',
+            'The canonical application is not ready.',
+          ),
+          code: 'APP-NOT-READY',
+          reason: 'The canonical application is not ready.',
+        }
+      }
+      if (this.application.commitDevelopmentAction === undefined) {
+        return {
+          committed: false,
+          transition: rejectedTransition(
+            snapshot,
+            'CANONICAL-DEVELOPMENT-CONTROL-UNAVAILABLE',
+            'Development progression controls are unavailable.',
+          ),
+          code: 'CANONICAL-DEVELOPMENT-CONTROL-UNAVAILABLE',
+          reason: 'Development progression controls are unavailable.',
+        }
+      }
+      return this.application.commitDevelopmentAction(
+        revisionEnvelope(snapshot),
+        action,
       )
     })
   }

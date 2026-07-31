@@ -1,4 +1,438 @@
 {
+  "debug.access-description": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Ŭƞŀǿǿƈķ ŧħḗḗ ḓḗḗṽḗḗŀǿǿƥḗḗř ŧǿǿǿǿŀş ẇīŧħ ŀȧȧŧḗḗ-ɠȧȧḿḗḗ ƈŭŭřřḗḗƞƈīḗḗş. Ǿƞƈḗḗ ƥŭŭřƈħȧȧşḗḗḓ, ŧħḗḗẏ ƈȧȧƞ ƀḗḗ řḗḗ-ḗḗƞȧȧƀŀḗḗḓ ƒǿǿř ƒřḗḗḗḗ."
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "debug.action-success": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Ḓḗḗṽḗḗŀǿǿƥḿḗḗƞŧ ƈħȧȧƞɠḗḗ şȧȧṽḗḗḓ."
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "debug.add-bots": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Ȧḓḓ Ɓǿǿŧş"
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "debug.add-infinity-points": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Ȧḓḓ Īƞƒīƞīŧẏ Ƥǿǿīƞŧş"
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "debug.add-influence": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Ȧḓḓ Īƞƒŀŭŭḗḗƞƈḗḗ"
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "debug.add-offline-time": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Ȧḓḓ Ǿƒƒŀīƞḗḗ Ŧīḿḗḗ"
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "debug.add-quantum-shards": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Ȧḓḓ Ɋŭŭȧȧƞŧŭŭḿ Şħȧȧřḓş"
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "debug.add-skill-points": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Ȧḓḓ Şķīŀŀ Ƥǿǿīƞŧş"
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "debug.add-strange-matter": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Ȧḓḓ Şŧřȧȧƞɠḗḗ Ḿȧȧŧŧḗḗř"
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "debug.amount": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Ȧḿǿǿŭŭƞŧ"
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "debug.apply-preset": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Ȧƥƥŀẏ"
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "debug.bot-state": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Ɓǿǿŧ ƈǿǿŭŭƞŧ"
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "debug.bots": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Ɓǿǿŧş"
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "debug.cats": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Ḓḗḗƀŭŭɠ Ƈȧȧŧş"
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "debug.disable": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Ḓīşȧȧƀŀḗḗ Ḓḗḗṽḗḗŀǿǿƥḗḗř Ǿƥŧīǿǿƞş"
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "debug.disabled-success": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Ḓḗḗṽḗḗŀǿǿƥḗḗř Ǿƥŧīǿǿƞş ḓīşȧȧƀŀḗḗḓ. Ẏǿǿŭŭř ḗḗƞŧīŧŀḗḗḿḗḗƞŧ ẇȧȧş řḗḗŧȧȧīƞḗḗḓ."
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "debug.enable-free": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Ḗƞȧȧƀŀḗḗ ƒǿǿř ƒřḗḗḗḗ"
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "debug.enabled": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Ḓḗḗṽḗḗŀǿǿƥḗḗř ŧǿǿǿǿŀş ḗḗƞȧȧƀŀḗḗḓ"
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "debug.maintenance": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Ḿȧȧīƞŧḗḗƞȧȧƞƈḗḗ"
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "debug.progression": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Ƥřǿǿɠřḗḗşşīǿǿƞ ŧǿǿǿǿŀş"
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "debug.progression-presets": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Ƥřǿǿɠřḗḗşşīǿǿƞ şŧȧȧŧḗḗş"
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "debug.purchase": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Ƥŭŭřƈħȧȧşḗḗ Ḓḗḗṽḗḗŀǿǿƥḗḗř Ǿƥŧīǿǿƞş"
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "debug.purchase-success": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Ḓḗḗṽḗḗŀǿǿƥḗḗř Ǿƥŧīǿǿƞş ŭŭƞŀǿǿƈķḗḗḓ."
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "debug.quantum-shards": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Ɋŭŭȧȧƞŧŭŭḿ Şħȧȧřḓş"
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "debug.recalculate-skill-points": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Řḗḗƈȧȧŀƈŭŭŀȧȧŧḗḗ Şķīŀŀ Ƥǿǿīƞŧş"
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "debug.strange-matter": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Şŧřȧȧƞɠḗḗ Ḿȧȧŧŧḗḗř"
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "debug.timing": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Ŧīƞķḗḗř ŧīḿīƞɠ"
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "debug.tinker-instant": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Şḗḗŧ Ŧīƞķḗḗř ŧǿǿ īƞşŧȧȧƞŧ"
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "debug.tinker-one-second": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Şḗḗŧ Ŧīƞķḗḗř ŧǿǿ 1 şḗḗƈǿǿƞḓ"
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "debug.title": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Ḓḗḗṽḗḗŀǿǿƥḗḗř Ǿƥŧīǿǿƞş"
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "debug.unlock-tabs": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Ŭƞŀǿǿƈķ ȧȧŀŀ ŧȧȧƀş"
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
   "dyson.bot-distribution.accessible-value": [
     {
       "type": 0,
@@ -3161,6 +3595,20 @@
       "value": "]"
     }
   ],
+  "navigation.debug-options": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Ḓḗḗƀŭŭɠ Ǿƥŧīǿǿƞş"
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
   "navigation.infinity": [
     {
       "type": 0,
@@ -3207,6 +3655,50 @@
       "value": "]"
     }
   ],
+  "navigation.reality": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Řḗḗȧȧŀīŧẏ"
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "navigation.reality-secrets-progress": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Řḗḗȧȧŀīŧẏ, "
+    },
+    {
+      "type": 1,
+      "value": "current"
+    },
+    {
+      "type": 0,
+      "value": " ǿǿƒ "
+    },
+    {
+      "type": 1,
+      "value": "required"
+    },
+    {
+      "type": 0,
+      "value": " Şḗḗƈřḗḗŧş ǿǿƒ ŧħḗḗ Ŭƞīṽḗḗřşḗḗ"
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
   "navigation.research": [
     {
       "type": 0,
@@ -3229,6 +3721,20 @@
     {
       "type": 0,
       "value": "Şḗḗŧŧīƞɠş"
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "navigation.simulations": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Şīḿŭŭŀȧȧŧīǿǿƞş"
     },
     {
       "type": 0,
@@ -3271,6 +3777,2010 @@
     {
       "type": 0,
       "value": "Ẇīķī"
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "reality.artifact": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Ŧħḗḗ Ȧřŧīƒȧȧƈŧ"
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "reality.artifact.cpu-time": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "ƇƤŬ Ŧīḿḗḗ"
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "reality.artifact.undefined": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Ŭƞḓḗḗƒīƞḗḗḓ"
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "reality.consuming": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Ƈǿǿƞşŭŭḿīƞɠ"
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "reality.consumption-halted": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Ƈǿǿƞşŭŭḿƥŧīǿǿƞ Ħȧȧŀŧḗḗḓ"
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "reality.gather-influence": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Ɠȧȧŧħḗḗř Īƞƒŀŭŭḗḗƞƈḗḗ"
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "reality.gather-influence.accessible": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Ɠȧȧŧħḗḗř "
+    },
+    {
+      "type": 1,
+      "value": "value"
+    },
+    {
+      "type": 0,
+      "value": " Īƞƒŀŭŭḗḗƞƈḗḗ"
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "reality.gather-influence.failed": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Īƞƒŀŭŭḗḗƞƈḗḗ ẇȧȧş ƞǿǿŧ ɠȧȧŧħḗḗřḗḗḓ. Ŧřẏ ȧȧɠȧȧīƞ."
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "reality.gather-influence.pending": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Ɠȧȧŧħḗḗřīƞɠ Īƞƒŀŭŭḗḗƞƈḗḗ…"
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "reality.influence": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Īƞƒŀŭŭḗḗƞƈḗḗ: "
+    },
+    {
+      "type": 1,
+      "value": "value"
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "reality.region": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Řḗḗȧȧŀīŧẏ"
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "reality.simulation-upgrades.advanced-physics1.description": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Ĵḗḗƞɠȧȧ Ŧřȧȧīƞīƞɠ. 2ħ ▸ 1ħ"
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "reality.simulation-upgrades.advanced-physics1.title": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Ȧḓṽȧȧƞƈḗḗḓ Ƥħẏşīƈş Ī"
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "reality.simulation-upgrades.advanced-physics2.description": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Ƥȧȧřķǿǿŭŭř. 1ħ ▸ 30ḿ"
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "reality.simulation-upgrades.advanced-physics2.title": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Ȧḓṽȧȧƞƈḗḗḓ Ƥħẏşīƈş ĪĪ"
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "reality.simulation-upgrades.advanced-physics3.description": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Ŧħřŭŭşŧ Ṽḗḗƈŧǿǿřş. 30ḿ ▸ 10ḿ"
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "reality.simulation-upgrades.advanced-physics3.title": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Ȧḓṽȧȧƞƈḗḗḓ Ƥħẏşīƈş ĪĪĪ"
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "reality.simulation-upgrades.advanced-physics4.description": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Ƒŭŭşīǿǿƞ īş ƒǿǿř ƒŭŭşīƞɠ, ƒīşşīǿǿƞ ƞǿǿ ḿǿǿřḗḗ."
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "reality.simulation-upgrades.advanced-physics4.title": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Ȧḓṽȧȧƞƈḗḗḓ Ƥħẏşīƈş ĪṼ"
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "reality.simulation-upgrades.bots1.title": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Ɓǿǿŧş Ī"
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "reality.simulation-upgrades.bots2.title": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Ɓǿǿŧş ĪĪ"
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "reality.simulation-upgrades.cities-boost.title": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Ƈīŧẏ Ɓǿǿǿǿşŧḗḗř"
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "reality.simulation-upgrades.counter-ai.description": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Şɋŭŭīşħ şǿǿḿḗḗ ƀŭŭɠş, ƞǿǿ ḿǿǿřḗḗ Ǿṽḗḗřŀǿǿřḓş."
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "reality.simulation-upgrades.counter-ai.title": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Ƈǿǿŭŭƞŧḗḗřȧȧƈŧ ȦĪ Ǿṽḗḗřŀǿǿřḓş"
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "reality.simulation-upgrades.counter-gw.description": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Şẇīŧƈħīƞɠ ŧǿǿ ƒřīḗḗƞḓŀīḗḗř řǿǿƈķḗḗŧ ƒŭŭḗḗŀ şħǿǿŭŭŀḓ ħḗḗŀƥ."
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "reality.simulation-upgrades.counter-gw.title": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Ƈǿǿŭŭƞŧḗḗřȧȧƈŧ Ɠŀǿǿƀȧȧŀ Ẇȧȧřḿīƞɠ"
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "reality.simulation-upgrades.counter-meteor.description": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Ǿṽḗḗřřīḓḗḗ ŧħḗḗ şīḿŭŭŀȧȧŧīǿǿƞ ḓḗḗŀḗḗŧīƞɠ ȧȧŀŀ şƥȧȧƈḗḗ řǿǿƈķş."
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "reality.simulation-upgrades.counter-meteor.title": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Ƈǿǿŭŭƞŧḗḗřȧȧƈŧ Ḿḗḗŧḗḗǿǿř Şŧǿǿřḿ"
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "reality.simulation-upgrades.countermeasures": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Ƈǿǿŭŭƞŧḗḗřḿḗḗȧȧşŭŭřḗḗş"
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "reality.simulation-upgrades.education": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Ḗḓŭŭƈȧȧŧīǿǿƞ"
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "reality.simulation-upgrades.engineering1.description": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Ɓḗḗŧŧḗḗř ȧȧŀɠǿǿřīŧħḿş. 10ḿ ▸ 5ḿ"
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "reality.simulation-upgrades.engineering1.title": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Ḗƞɠīƞḗḗḗḗřīƞɠ Ī"
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "reality.simulation-upgrades.engineering2.description": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Ḗṽḗḗƞ ƀḗḗŧŧḗḗř ȧȧŀɠǿǿřīŧħḿş. 5ḿ ▸ 1ḿ"
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "reality.simulation-upgrades.engineering2.title": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Ḗƞɠīƞḗḗḗḗřīƞɠ ĪĪ"
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "reality.simulation-upgrades.engineering3.description": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Ī'ḿ ǿǿṽḗḗř ŧħīş, ȧȧřḗḗƞ'ŧ ẏǿǿŭŭ?"
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "reality.simulation-upgrades.engineering3.title": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Ḗƞɠīƞḗḗḗḗřīƞɠ ĪĪĪ"
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "reality.simulation-upgrades.factories-boost.title": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Ƒȧȧƈŧǿǿřīḗḗş"
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "reality.simulation-upgrades.foundational": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Ƒǿǿŭŭƞḓȧȧŧīǿǿƞȧȧŀ Ḗřȧȧ"
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "reality.simulation-upgrades.foundational.description": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Ƈȧȧřřẏ ȧȧ şŧřǿǿƞɠḗḗř Ƒǿǿŭŭƞḓȧȧŧīǿǿƞȧȧŀ Ḗřȧȧ īƞŧǿǿ ḗḗṽḗḗřẏ Şīḿŭŭŀȧȧŧīǿǿƞ."
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "reality.simulation-upgrades.gatherer1.title": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Şŧȧȧřŧ ẇīŧħ 1 Ɠȧȧŧħḗḗřḗḗř"
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "reality.simulation-upgrades.gatherer2.title": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Şŧȧȧřŧ ẇīŧħ 10 Ɠȧȧŧħḗḗřḗḗřş"
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "reality.simulation-upgrades.gatherer3.title": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Şŧȧȧřŧ ẇīŧħ 1,000 Ɠȧȧŧħḗḗřḗḗřş"
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "reality.simulation-upgrades.gatherer4.title": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Ƥŭŭřƈħȧȧşḗḗ ƀŭŭẏş 1,000 Ɠȧȧŧħḗḗřḗḗřş"
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "reality.simulation-upgrades.heading": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Şīḿŭŭŀȧȧŧīǿǿƞ Ŭƥɠřȧȧḓḗḗş"
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "reality.simulation-upgrades.hunter1.title": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Şŧȧȧřŧ ẇīŧħ 1 Ħŭŭƞŧḗḗř"
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "reality.simulation-upgrades.hunter2.title": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Şŧȧȧřŧ ẇīŧħ 10 Ħŭŭƞŧḗḗřş"
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "reality.simulation-upgrades.hunter3.title": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Şŧȧȧřŧ ẇīŧħ 1,000 Ħŭŭƞŧḗḗřş"
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "reality.simulation-upgrades.hunter4.title": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Ƥŭŭřƈħȧȧşḗḗ ƀŭŭẏş 1,000 Ħŭŭƞŧḗḗřş"
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "reality.simulation-upgrades.information": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Īƞƒǿǿřḿȧȧŧīǿǿƞ Ḗřȧȧ"
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "reality.simulation-upgrades.information.description": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Īḿƥřǿǿṽḗḗ Īƞƒǿǿřḿȧȧŧīǿǿƞ Ḗřȧȧ ƥřǿǿḓŭŭƈŧīǿǿƞ īƞ ḗḗṽḗḗřẏ Şīḿŭŭŀȧȧŧīǿǿƞ."
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "reality.simulation-upgrades.mathematics1.description": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "1+1=ȧȧ, ȧȧ = ẇīƞḓǿǿẇ. 1ħ ▸ 30ḿ"
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "reality.simulation-upgrades.mathematics1.title": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Ḿȧȧŧħḗḗḿȧȧŧīƈş Ī"
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "reality.simulation-upgrades.mathematics2.description": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "3.14159265358979323 = Ẏŭŭḿ. 30ḿ ▸ 10ḿ"
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "reality.simulation-upgrades.mathematics2.title": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Ḿȧȧŧħḗḗḿȧȧŧīƈş ĪĪ"
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "reality.simulation-upgrades.mathematics3.description": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Ḓīṽīşīǿǿƞ ƀẏ 0, ǿǿħ īŧ'ş ƒřḗḗḗḗ?"
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "reality.simulation-upgrades.mathematics3.title": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Ḿȧȧŧħḗḗḿȧȧŧīƈş ĪĪĪ"
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "reality.simulation-upgrades.railguns1.title": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Řȧȧīŀɠŭŭƞş Ī"
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "reality.simulation-upgrades.railguns2.title": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Řȧȧīŀɠŭŭƞş ĪĪ"
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "reality.simulation-upgrades.rockets1.title": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Řǿǿƈķḗḗŧş Ī"
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "reality.simulation-upgrades.rockets2.title": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Řǿǿƈķḗḗŧş ĪĪ"
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "reality.simulation-upgrades.rockets3.title": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Řǿǿƈķḗḗŧş ĪĪĪ"
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "reality.simulation-upgrades.sfacs1.title": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Şƥȧȧƈḗḗ Ƒȧȧƈŧǿǿřīḗḗş Ī"
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "reality.simulation-upgrades.sfacs2.title": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Şƥȧȧƈḗḗ Ƒȧȧƈŧǿǿřīḗḗş ĪĪ"
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "reality.simulation-upgrades.sfacs3.title": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Şƥȧȧƈḗḗ Ƒȧȧƈŧǿǿřīḗḗş ĪĪĪ"
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "reality.simulation-upgrades.shipping1.description": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Şħīƥ ẇīŧħ şħīƥş ǿǿř… Ŧřŭŭƈķş. 30ḿ ▸ 10ḿ"
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "reality.simulation-upgrades.shipping1.title": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Şħīƥƥīƞɠ Ī"
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "reality.simulation-upgrades.shipping2.description": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Ĵŭŭşŧ ŧḗḗŀḗḗƥǿǿřŧ ŧħḗḗ şŧŭŭƒƒ ȧȧŀřḗḗȧȧḓẏ."
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "reality.simulation-upgrades.shipping2.title": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Şħīƥƥīƞɠ ĪĪ"
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "reality.simulation-upgrades.space-age": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Şƥȧȧƈḗḗ Ȧɠḗḗ"
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "reality.simulation-upgrades.space-age.description": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Īḿƥřǿǿṽḗḗ şīḿŭŭŀȧȧŧḗḗḓ şƥȧȧƈḗḗ ƥřǿǿḓŭŭƈŧīǿǿƞ ȧȧƞḓ ŀȧȧŭŭƞƈħ şƥḗḗḗḗḓ."
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "reality.simulation-upgrades.worker-boost.title": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Ŀǿǿɠ10 Ẇǿǿřķḗḗřş"
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "reality.simulation-upgrades.world-peace1.description": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Ƥŭŭŧ ŧħǿǿşḗḗ ẇḗḗȧȧƥǿǿƞş ȧȧẇȧȧẏ. 2ħ ▸ 1ħ"
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "reality.simulation-upgrades.world-peace1.title": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Ẇǿǿřŀḓ Ƥḗḗȧȧƈḗḗ Ī"
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "reality.simulation-upgrades.world-peace2.description": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Ɠŀǿǿƀȧȧŀ ƈǿǿƞŧřȧȧƈŧīƞɠ. 1ħ ▸ 30ḿ"
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "reality.simulation-upgrades.world-peace2.title": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Ẇǿǿřŀḓ Ƥḗḗȧȧƈḗḗ ĪĪ"
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "reality.simulation-upgrades.world-peace3.description": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Ƞǿǿ ḿǿǿřḗḗ ħȧȧƈķḗḗřş. 30ḿ ▸ 10ḿ"
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "reality.simulation-upgrades.world-peace3.title": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Ẇǿǿřŀḓ Ƥḗḗȧȧƈḗḗ ĪĪĪ"
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "reality.simulation-upgrades.world-peace4.description": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Ŧǿǿɠɠŀḗḗ ƀǿǿǿǿŀḗḗȧȧƞş, ẇħẏ ẇȧȧşŧḗḗ ƇƤŬ ǿǿƞ ẇȧȧř."
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "reality.simulation-upgrades.world-peace4.title": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Ẇǿǿřŀḓ Ƥḗḗȧȧƈḗḗ ĪṼ"
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "reality.simulation-upgrades.world-trade1.description": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Ɠŀǿǿƀȧȧŀ ŧřȧȧḓīƞɠ īƞ īŧş řȧȧẇ ƒǿǿřḿ. 1ħ ▸ 30ḿ"
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "reality.simulation-upgrades.world-trade1.title": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Ẇǿǿřŀḓ Ŧřȧȧḓḗḗ Ī"
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "reality.simulation-upgrades.world-trade2.description": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Ẑīƥ ħḗḗřḗḗ, ẑīƥ ŧħḗḗřḗḗ, ẑīƥ ḗḗṽḗḗřẏẇħḗḗřḗḗ. 30ḿ ▸ 10ḿ"
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "reality.simulation-upgrades.world-trade2.title": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Ẇǿǿřŀḓ Ŧřȧȧḓḗḗ ĪĪ"
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "reality.simulation-upgrades.world-trade3.description": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Ƞǿǿ ƥŭŭşħ ƀŭŭŧŧǿǿƞ ȧȧƞẏḿǿǿřḗḗ."
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "reality.simulation-upgrades.world-trade3.title": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Ẇǿǿřŀḓ Ŧřȧȧḓḗḗ ĪĪĪ"
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "reality.strange-matter": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Şŧřȧȧƞɠḗḗ Ḿȧȧŧŧḗḗř: "
+    },
+    {
+      "type": 1,
+      "value": "value"
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "reality.unavailable": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Řḗḗȧȧŀīŧẏ īş ŧḗḗḿƥǿǿřȧȧřīŀẏ ŭŭƞȧȧṽȧȧīŀȧȧƀŀḗḗ."
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "reality.universe-designation": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Ŭƞīṽḗḗřşḗḗ Ḓḗḗşīɠƞȧȧŧīǿǿƞ: "
+    },
+    {
+      "type": 1,
+      "value": "value"
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "reality.upgrades": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Řḗḗȧȧŀīŧẏ Ŭƥɠřȧȧḓḗḗş"
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "reality.upgrades.anomaly": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Ȧƞǿǿḿȧȧŀẏ"
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "reality.upgrades.auto-gather.description": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Ƞǿǿ ŀǿǿƞɠḗḗř ƒḗḗḗḗŀ ŧħḗḗ ƞḗḗḗḗḓ ŧǿǿ ƈŀīƈķ ɠȧȧŧħḗḗř īƞƒŀŭŭḗḗƞƈḗḗ"
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "reality.upgrades.auto-gather.title": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Ȧŭŭŧǿǿḿȧȧŧḗḗ Ɠȧȧŧħḗḗř Īƞƒŀŭŭḗḗƞƈḗḗ"
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "reality.upgrades.cost": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 1,
+      "value": "value"
+    },
+    {
+      "type": 0,
+      "value": " ŞḾ"
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "reality.upgrades.double-time.description": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Ɠȧȧŧħḗḗř ŧīḿḗḗ ẇħīŀḗḗ ǿǿƒƒŀīƞḗḗ, şƥḗḗƞḓ īŧ ẇħīŀḗḗ ǿǿƞŀīƞḗḗ."
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "reality.upgrades.double-time.title": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Ḗƞȧȧƀŀḗḗ Ŧīḿḗḗ Ḿŭŭŀŧīƥŀīḗḗř"
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "reality.upgrades.purchase": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Ƥŭŭřƈħȧȧşḗḗ"
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "reality.upgrades.purchase-accessible": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Ƥŭŭřƈħȧȧşḗḗ "
+    },
+    {
+      "type": 1,
+      "value": "name"
+    },
+    {
+      "type": 0,
+      "value": " ƒǿǿř "
+    },
+    {
+      "type": 1,
+      "value": "value"
+    },
+    {
+      "type": 0,
+      "value": " Şŧřȧȧƞɠḗḗ Ḿȧȧŧŧḗḗř"
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "reality.upgrades.purchase-failed": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 1,
+      "value": "name"
+    },
+    {
+      "type": 0,
+      "value": " ẇȧȧş ƞǿǿŧ ƥŭŭřƈħȧȧşḗḗḓ. Ŧřẏ ȧȧɠȧȧīƞ."
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "reality.upgrades.purchase-pending": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Ƥŭŭřƈħȧȧşīƞɠ "
+    },
+    {
+      "type": 1,
+      "value": "name"
+    },
+    {
+      "type": 0,
+      "value": "…"
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "reality.upgrades.quality": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Ɋŭŭȧȧŀīŧẏ ǿǿƒ Ŀīƒḗḗ"
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "reality.upgrades.speed": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Şƥḗḗḗḗḓ Řḗḗḓŭŭƈŧīǿǿƞ"
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "reality.upgrades.speed1.description": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "100% ▸ 95% - Ḿȧȧɠƞḗḗŧīƈ ƒīḗḗŀḓş? Ɠȧȧīƞ 1 şķīŀŀ ƥǿǿīƞŧ."
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "reality.upgrades.speed1.title": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Şƥḗḗḗḗḓ Řḗḗḓŭŭƈŧīǿǿƞ Ī"
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "reality.upgrades.speed2.description": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "95% ▸ 90% - Ŧħřǿǿẇ īŧ ȧȧŧ ȧȧ ẇȧȧŀŀ? Ɠȧȧīƞ 1 şķīŀŀ ƥǿǿīƞŧ."
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "reality.upgrades.speed2.title": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Şƥḗḗḗḗḓ Řḗḗḓŭŭƈŧīǿǿƞ ĪĪ"
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "reality.upgrades.speed3.description": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "90% ▸ 80% - Şḿȧȧƈķ īŧ ẇīŧħ ȧȧ ƀȧȧŧ? Ɠȧȧīƞ 1 şķīŀŀ ƥǿǿīƞŧ."
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "reality.upgrades.speed3.title": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Şƥḗḗḗḗḓ Řḗḗḓŭŭƈŧīǿǿƞ ĪĪĪ"
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "reality.upgrades.speed4.description": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "80% ▸ 70% - Ƥŭŭŧ īŧ ŭŭƞḓḗḗř ȧȧ ḿḗḗŧȧȧŀ ƥřḗḗşş? Ɠȧȧīƞ 1 şķīŀŀ ƥǿǿīƞŧ."
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "reality.upgrades.speed4.title": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Şƥḗḗḗḗḓ Řḗḗḓŭŭƈŧīǿǿƞ ĪṼ"
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "reality.upgrades.speed5.description": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "70% ▸ 50% - Ɓǿǿḿƀȧȧřḓ īŧ ẇīŧħ řȧȧḓīȧȧŧīǿǿƞ? Ɠȧȧīƞ 1 şķīŀŀ ƥǿǿīƞŧ."
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "reality.upgrades.speed5.title": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Şƥḗḗḗḗḓ Řḗḗḓŭŭƈŧīǿǿƞ Ṽ"
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "reality.upgrades.speed6.description": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "50% ▸ 25% - Ḓḗḗşīɠƞ ȧȧƞ īƞƈḗḗƥŧīǿǿƞ ḿȧȧƈħīƞḗḗ. Ɠȧȧīƞ 1 şķīŀŀ ƥǿǿīƞŧ."
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "reality.upgrades.speed6.title": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Şƥḗḗḗḗḓ Řḗḗḓŭŭƈŧīǿǿƞ ṼĪ"
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "reality.upgrades.speed7.description": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "25% ▸ 10% - Ɠǿǿ ḓǿǿẇƞ ȧȧ ƒḗḗẇ ŀȧȧẏḗḗřş. Ɠȧȧīƞ 1 şķīŀŀ ƥǿǿīƞŧ."
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "reality.upgrades.speed7.title": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Şƥḗḗḗḗḓ Řḗḗḓŭŭƈŧīǿǿƞ ṼĪĪ"
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "reality.upgrades.speed8.description": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "10% ▸ 0% - Ƈǿǿḿƥřḗḗħḗḗƞŧīǿǿƞ. Ɠȧȧīƞ 1 şķīŀŀ ƥǿǿīƞŧ."
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "reality.upgrades.speed8.title": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Şƥḗḗḗḗḓ Řḗḗḓŭŭƈŧīǿǿƞ ṼĪĪĪ"
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "reality.upgrades.translation": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Ŧřȧȧƞşŀȧȧŧīǿǿƞ"
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "reality.upgrades.translation1.description": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Ɓḗḗɠīƞ ḓḗḗƈīƥħḗḗřīƞɠ ŧħḗḗ ȧȧƞǿǿḿȧȧŀẏ'ş ƈǿǿḓḗḗ. Ɠȧȧīƞ 1 şķīŀŀ ƥǿǿīƞŧ."
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "reality.upgrades.translation1.title": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Ŧřȧȧƞşŀȧȧŧīǿǿƞ Ī"
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "reality.upgrades.translation2.description": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Ŧħḗḗ ƥȧȧŧŧḗḗřƞş ȧȧřḗḗ şŧȧȧřŧīƞɠ ŧǿǿ ḿȧȧķḗḗ şḗḗƞşḗḗ. Ɠȧȧīƞ 1 şķīŀŀ ƥǿǿīƞŧ."
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "reality.upgrades.translation2.title": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Ŧřȧȧƞşŀȧȧŧīǿǿƞ ĪĪ"
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "reality.upgrades.translation3.description": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Ƥřǿǿɠřḗḗşş! Ḿǿǿřḗḗ şẏḿƀǿǿŀş ḓḗḗƈǿǿḓḗḗḓ. Ɠȧȧīƞ 1 şķīŀŀ ƥǿǿīƞŧ."
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "reality.upgrades.translation3.title": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Ŧřȧȧƞşŀȧȧŧīǿǿƞ ĪĪĪ"
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "reality.upgrades.translation4.description": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Ħȧȧŀƒẇȧȧẏ ŧħřǿǿŭŭɠħ ŧħḗḗ ŧřȧȧƞşŀȧȧŧīǿǿƞ. Ɠȧȧīƞ 1 şķīŀŀ ƥǿǿīƞŧ."
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "reality.upgrades.translation4.title": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Ŧřȧȧƞşŀȧȧŧīǿǿƞ ĪṼ"
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "reality.upgrades.translation5.description": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Ŧħḗḗ ȧȧƞǿǿḿȧȧŀẏ'ş şḗḗƈřḗḗŧş ŭŭƞƒǿǿŀḓ. Ɠȧȧīƞ 1 şķīŀŀ ƥǿǿīƞŧ."
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "reality.upgrades.translation5.title": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Ŧřȧȧƞşŀȧȧŧīǿǿƞ Ṽ"
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "reality.upgrades.translation6.description": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Ȧŀḿǿǿşŧ ŧħḗḗřḗḗ, ķḗḗḗḗƥ ŧřȧȧƞşŀȧȧŧīƞɠ. Ɠȧȧīƞ 1 şķīŀŀ ƥǿǿīƞŧ."
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "reality.upgrades.translation6.title": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Ŧřȧȧƞşŀȧȧŧīǿǿƞ ṼĪ"
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "reality.upgrades.translation7.description": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Ŧħḗḗ ƒīƞȧȧŀ ƥīḗḗƈḗḗş ƒȧȧŀŀ īƞŧǿǿ ƥŀȧȧƈḗḗ. Ɠȧȧīƞ 1 şķīŀŀ ƥǿǿīƞŧ."
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "reality.upgrades.translation7.title": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Ŧřȧȧƞşŀȧȧŧīǿǿƞ ṼĪĪ"
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "reality.upgrades.translation8.description": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Ƒīƞȧȧŀŀẏ ƒīƞīşħ ŧřȧȧƞşŀȧȧŧīƞɠ ŧħḗḗ ȧȧƞǿǿḿȧȧŀẏ! Ɠȧȧīƞ 1 şķīŀŀ ƥǿǿīƞŧ."
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "reality.upgrades.translation8.title": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Ŧřȧȧƞşŀȧȧŧīǿǿƞ ṼĪĪĪ"
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "reality.worker-generation": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Ẇǿǿřķḗḗř ɠḗḗƞḗḗřȧȧŧīǿǿƞ"
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "reality.workers-ready": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Ẇǿǿřķḗḗřş řḗḗȧȧḓẏ"
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "reality.workers-ready.compact": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 1,
+      "value": "current"
+    },
+    {
+      "type": 0,
+      "value": "/"
+    },
+    {
+      "type": 1,
+      "value": "total"
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "reality.workers-ready.value": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 1,
+      "value": "current"
+    },
+    {
+      "type": 0,
+      "value": " ǿǿƒ "
+    },
+    {
+      "type": 1,
+      "value": "total"
+    },
+    {
+      "type": 0,
+      "value": " ẇǿǿřķḗḗřş řḗḗȧȧḓẏ"
     },
     {
       "type": 0,
@@ -4425,6 +6935,20 @@
       "value": "]"
     }
   ],
+  "settings.development.preset.reality-unlocked": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Řḗḗȧȧŀīŧẏ ŭŭƞŀǿǿƈķḗḗḓ — 27 Şḗḗƈřḗḗŧş"
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
   "settings.development.preset.young-galaxy": [
     {
       "type": 0,
@@ -4441,6 +6965,20 @@
     {
       "type": 0,
       "value": " Ɓǿǿŧş"
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "settings.development.reality-succeeded": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Řḗḗȧȧŀīŧẏ ŭŭƞŀǿǿƈķḗḗḓ. Ǿƥḗḗƞ ŧħḗḗ Řḗḗȧȧŀīŧẏ ŧȧȧƀ ŧǿǿ īƞşƥḗḗƈŧ ŧħḗḗ ŀīṽḗḗ şŧȧȧŧḗḗ."
     },
     {
       "type": 0,
@@ -4817,6 +7355,1646 @@
     {
       "type": 0,
       "value": "Ƈǿǿḿƥŀḗḗŧḗḗḓ"
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "simulations.action.black-hole": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Ɓŀȧȧƈķ Ħǿǿŀḗḗ +"
+    },
+    {
+      "type": 1,
+      "value": "reward"
+    },
+    {
+      "type": 0,
+      "value": " Şŧřȧȧƞɠḗḗ Ḿȧȧŧŧḗḗř"
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "simulations.action.black-hole-label": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Ɓŀȧȧƈķ Ħǿǿŀḗḗ"
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "simulations.action.boost": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Ɓǿǿǿǿşŧ "
+    },
+    {
+      "type": 1,
+      "value": "cost"
+    },
+    {
+      "type": 0,
+      "value": " Īƞƒŀŭŭḗḗƞƈḗḗ"
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "simulations.action.boost-label": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Ɓǿǿǿǿşŧ"
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "simulations.action.close": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Ƈŀǿǿşḗḗ"
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "simulations.action.details": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Ḓḗḗŧȧȧīŀş"
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "simulations.action.failed": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Ŧħȧȧŧ ȧȧƈŧīǿǿƞ ẇȧȧş ƞǿǿŧ ƈǿǿḿƥŀḗḗŧḗḗḓ. Ŧřẏ ȧȧɠȧȧīƞ."
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "simulations.action.free-boost": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Ɓǿǿǿǿşŧ Ƒřḗḗḗḗ"
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "simulations.action.free-label": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Ƒřḗḗḗḗ"
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "simulations.action.purchase": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "+"
+    },
+    {
+      "type": 1,
+      "value": "quantity"
+    },
+    {
+      "type": 0,
+      "value": " "
+    },
+    {
+      "type": 1,
+      "value": "cost"
+    },
+    {
+      "type": 0,
+      "value": " Īƞƒŀŭŭḗḗƞƈḗḗ"
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "simulations.action.purchase-quantity": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "+"
+    },
+    {
+      "type": 1,
+      "value": "quantity"
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "simulations.action.start": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Şŧȧȧřŧ "
+    },
+    {
+      "type": 1,
+      "value": "cost"
+    },
+    {
+      "type": 0,
+      "value": " Īƞƒŀŭŭḗḗƞƈḗḗ"
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "simulations.action.start-label": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Şŧȧȧřŧ"
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "simulations.action.strange-matter-reward": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "+"
+    },
+    {
+      "type": 1,
+      "value": "reward"
+    },
+    {
+      "type": 0,
+      "value": " Şŧřȧȧƞɠḗḗ Ḿȧȧŧŧḗḗř"
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "simulations.buy-max": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Ɓŭŭẏ Ḿȧȧẋ"
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "simulations.buy-quantity": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Ɓŭŭẏ "
+    },
+    {
+      "type": 1,
+      "value": "quantity"
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "simulations.category.education": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Ḗḓŭŭƈȧȧŧīǿǿƞ"
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "simulations.category.energy": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Ḗƞḗḗřɠẏ"
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "simulations.category.foundational": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Ƒǿǿŭŭƞḓȧȧŧīǿǿƞȧȧŀ Ḗřȧȧ"
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "simulations.category.information": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Īƞƒǿǿřḿȧȧŧīǿǿƞ Ḗřȧȧ"
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "simulations.category.space-age": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Şƥȧȧƈḗḗ Ȧɠḗḗ"
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "simulations.details.available-conversions": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Ȧṽȧȧīŀȧȧƀŀḗḗ ƈǿǿƞṽḗḗřşīǿǿƞş"
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "simulations.details.base-duration": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Ɓȧȧşḗḗ ḓŭŭřȧȧŧīǿǿƞ"
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "simulations.details.conversion-requirement": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Ƈǿǿƞṽḗḗřşīǿǿƞ řḗḗɋŭŭīřḗḗḿḗḗƞŧ"
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "simulations.details.current-output": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Ƈŭŭřřḗḗƞŧ ǿǿŭŭŧƥŭŭŧ"
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "simulations.details.current-progress": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Ƈŭŭřřḗḗƞŧ ƥřǿǿɠřḗḗşş"
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "simulations.details.current-rate": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Ƈŭŭřřḗḗƞŧ řȧȧŧḗḗ"
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "simulations.details.inactive-multiplier": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Īƞȧȧƈŧīṽḗḗ — ƞǿǿ ƥřǿǿḓŭŭƈḗḗřş"
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "simulations.details.logarithmic-multiplier": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "(1 + Ŀǿǿɠ₁₀("
+    },
+    {
+      "type": 1,
+      "value": "count"
+    },
+    {
+      "type": 0,
+      "value": ")) × "
+    },
+    {
+      "type": 1,
+      "value": "global"
+    },
+    {
+      "type": 0,
+      "value": " = "
+    },
+    {
+      "type": 1,
+      "value": "effective"
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "simulations.details.output": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Ǿŭŭŧƥŭŭŧ"
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "simulations.details.output-per-cycle": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 1,
+      "value": "value"
+    },
+    {
+      "type": 0,
+      "value": " "
+    },
+    {
+      "type": 1,
+      "value": "resource"
+    },
+    {
+      "type": 0,
+      "value": " / ƈẏƈŀḗḗ"
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "simulations.details.prepared-multiplier": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 1,
+      "value": "base"
+    },
+    {
+      "type": 0,
+      "value": " × "
+    },
+    {
+      "type": 1,
+      "value": "global"
+    },
+    {
+      "type": 0,
+      "value": " = "
+    },
+    {
+      "type": 1,
+      "value": "effective"
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "simulations.details.rate-per-second": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 1,
+      "value": "value"
+    },
+    {
+      "type": 0,
+      "value": " "
+    },
+    {
+      "type": 1,
+      "value": "resource"
+    },
+    {
+      "type": 0,
+      "value": " / ş"
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "simulations.details.remaining-duration": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Řḗḗḿȧȧīƞīƞɠ ḓŭŭřȧȧŧīǿǿƞ"
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "simulations.details.rocket-conversion-requirement": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 1,
+      "value": "rockets"
+    },
+    {
+      "type": 0,
+      "value": " Řǿǿƈķḗḗŧş + 1 Ƒȧȧƈŧǿǿřẏ = 1 Şƥȧȧƈḗḗ Ƒȧȧƈŧǿǿřẏ"
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "simulations.details.seconds": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 1,
+      "value": "value"
+    },
+    {
+      "type": 0,
+      "value": " şḗḗƈǿǿƞḓş"
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "simulations.details.speed-multiplier": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Şƥḗḗḗḗḓ ḿŭŭŀŧīƥŀīḗḗř"
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "simulations.empty": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Ƞǿǿ ƥȧȧƞḗḗŀş ȧȧřḗḗ ȧȧṽȧȧīŀȧȧƀŀḗḗ īƞ ŧħīş ḗḗřȧȧ ẏḗḗŧ."
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "simulations.offline-time": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Ǿƒƒŀīƞḗḗ ŧīḿḗḗ"
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "simulations.panel.advanced-physics": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Ȧḓṽȧȧƞƈḗḗḓ Ƥħẏşīƈş"
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "simulations.panel.boost-active": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Ɓǿǿǿǿşŧ ȧȧƈŧīṽḗḗ: "
+    },
+    {
+      "type": 1,
+      "value": "time"
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "simulations.panel.bots": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Ɓǿǿŧş"
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "simulations.panel.bots.description": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Ɓǿǿŧş ƈǿǿƞşŧřŭŭƈŧ Řǿǿƈķḗḗŧş ƒǿǿř ŧħḗḗ ĵǿǿŭŭřƞḗḗẏ ŧǿǿ şƥȧȧƈḗḗ."
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "simulations.panel.cities": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Ƈīŧīḗḗş"
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "simulations.panel.cities.description": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Ƈīŧīḗḗş ƥřǿǿḓŭŭƈḗḗ Ẇǿǿřķḗḗřş ȧȧƞḓ, ȧȧƒŧḗḗř Ḗƞɠīƞḗḗḗḗřīƞɠ, ƀḗḗɠīƞ ƥřǿǿḓŭŭƈīƞɠ Ƒȧȧƈŧǿǿřīḗḗş."
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "simulations.panel.community": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Ƈǿǿḿḿŭŭƞīŧẏ"
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "simulations.panel.community.description": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Ħŭŭƞŧḗḗřş ȧȧƞḓ Ɠȧȧŧħḗḗřḗḗřş şŭŭşŧȧȧīƞ Ƈǿǿḿḿŭŭƞīŧīḗḗş, ẇħīƈħ ƀŭŭīŀḓ Ħǿǿŭŭşīƞɠ."
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "simulations.panel.complete": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Ƈǿǿḿƥŀḗḗŧḗḗ"
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "simulations.panel.education.description": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Īƞṽḗḗşŧ Īƞƒŀŭŭḗḗƞƈḗḗ ŧǿǿ ƈǿǿḿƥŀḗḗŧḗḗ ŧħīş řḗḗşḗḗȧȧřƈħ."
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "simulations.panel.energy-output": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 1,
+      "value": "value"
+    },
+    {
+      "type": 0,
+      "value": " Ẇ"
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "simulations.panel.energy-stored": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 1,
+      "value": "value"
+    },
+    {
+      "type": 0,
+      "value": " Ĵ şŧǿǿřḗḗḓ"
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "simulations.panel.engineering": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Ḗƞɠīƞḗḗḗḗřīƞɠ"
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "simulations.panel.factories": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Ƒȧȧƈŧǿǿřīḗḗş"
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "simulations.panel.factories.description": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Ƒȧȧƈŧǿǿřīḗḗş ƥřǿǿḓŭŭƈḗḗ Ɓǿǿŧş ȧȧƞḓ ƈȧȧƞ řḗḗƈḗḗīṽḗḗ ȧȧ ŧīḿḗḗḓ ƀǿǿǿǿşŧ."
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "simulations.panel.fusion": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Ƒŭŭşīǿǿƞ Ɠḗḗƞḗḗřȧȧŧǿǿřş"
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "simulations.panel.fusion.description": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Ƒŭŭşīǿǿƞ Ɠḗḗƞḗḗřȧȧŧǿǿřş ƥřǿǿṽīḓḗḗ ȧȧ şŧřǿǿƞɠḗḗř şǿǿŭŭřƈḗḗ ǿǿƒ ḗḗƞḗḗřɠẏ."
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "simulations.panel.gatherers": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Ɠȧȧŧħḗḗřḗḗřş"
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "simulations.panel.gatherers.description": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Īƞƒŀŭŭḗḗƞƈḗḗ ṽīŀŀȧȧɠḗḗřş ŧǿǿ ɠȧȧŧħḗḗř ɠřḗḗḗḗƞş ƒǿǿř ẏǿǿŭŭř ƈǿǿḿḿŭŭƞīŧīḗḗş."
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "simulations.panel.housing": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Ħǿǿŭŭşīƞɠ"
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "simulations.panel.housing.description": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Ħǿǿŭŭşīƞɠ ɠřǿǿẇş ƒřǿǿḿ Ƈǿǿḿḿŭŭƞīŧīḗḗş ȧȧƞḓ ƈǿǿƞṽḗḗřŧş īƞŧǿǿ Ṽīŀŀȧȧɠḗḗş."
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "simulations.panel.hunters": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Ħŭŭƞŧḗḗřş"
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "simulations.panel.hunters.description": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Īƞƒŀŭŭḗḗƞƈḗḗ ħḗḗřǿǿīƈ ħŭŭƞŧḗḗřş ŧǿǿ ɠȧȧŧħḗḗř ḿḗḗȧȧŧ ƒǿǿř ẏǿǿŭŭř ƈǿǿḿḿŭŭƞīŧīḗḗş."
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "simulations.panel.mathematics": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Ḿȧȧŧħḗḗḿȧȧŧīƈş"
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "simulations.panel.not-started": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Řḗḗȧȧḓẏ ŧǿǿ şŧȧȧřŧ"
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "simulations.panel.owned": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 1,
+      "value": "value"
+    },
+    {
+      "type": 0,
+      "value": " ǿǿẇƞḗḗḓ"
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "simulations.panel.pending-matter": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 1,
+      "value": "value"
+    },
+    {
+      "type": 0,
+      "value": " Şŧřȧȧƞɠḗḗ Ḿȧȧŧŧḗḗř ƥḗḗƞḓīƞɠ"
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "simulations.panel.producing": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Ƥřǿǿḓŭŭƈīƞɠ "
+    },
+    {
+      "type": 1,
+      "value": "value"
+    },
+    {
+      "type": 0,
+      "value": " /ş"
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "simulations.panel.railguns": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Řȧȧīŀɠŭŭƞş"
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "simulations.panel.railguns.description": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Řȧȧīŀɠŭŭƞş ƈǿǿƞşŭŭḿḗḗ ḗḗƞḗḗřɠẏ ŧǿǿ ŀȧȧŭŭƞƈħ şŧǿǿřḗḗḓ ƥȧȧƞḗḗŀş īƞŧǿǿ ŧħḗḗ Şẇȧȧřḿ."
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "simulations.panel.researching": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Řḗḗşḗḗȧȧřƈħīƞɠ"
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "simulations.panel.rockets": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Řǿǿƈķḗḗŧş"
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "simulations.panel.rockets.description": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Řǿǿƈķḗḗŧş ȧȧƞḓ Ƒȧȧƈŧǿǿřīḗḗş ȧȧřḗḗ ƈǿǿƞṽḗḗřŧḗḗḓ īƞŧǿǿ Şƥȧȧƈḗḗ Ƒȧȧƈŧǿǿřīḗḗş."
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "simulations.panel.shipping": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Şħīƥƥīƞɠ"
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "simulations.panel.shots-remaining": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 1,
+      "value": "value"
+    },
+    {
+      "type": 0,
+      "value": " şħǿǿŧş řḗḗḿȧȧīƞīƞɠ"
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "simulations.panel.solar": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Şǿǿŀȧȧř Ƥȧȧƞḗḗŀş"
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "simulations.panel.solar.description": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Şǿǿŀȧȧř Ƥȧȧƞḗḗŀş ŧŭŭřƞ Īƞƒŀŭŭḗḗƞƈḗḗ īƞŧǿǿ ȧȧ şŧḗḗȧȧḓẏ şŭŭƥƥŀẏ ǿǿƒ ḗḗƞḗḗřɠẏ."
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "simulations.panel.space-factories": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Şƥȧȧƈḗḗ Ƒȧȧƈŧǿǿřīḗḗş"
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "simulations.panel.space-factories.description": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Şƥȧȧƈḗḗ Ƒȧȧƈŧǿǿřīḗḗş ƈǿǿƞşŧřŭŭƈŧ ƥȧȧƞḗḗŀş ƒǿǿř ŧħḗḗ şīḿŭŭŀȧȧŧḗḗḓ Ḓẏşǿǿƞ Şẇȧȧřḿ."
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "simulations.panel.swarm-stats": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Şẇȧȧřḿ Şŧȧȧŧş"
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "simulations.panel.swarm-stats.description": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Ŧħḗḗ ŀȧȧŭŭƞƈħḗḗḓ Şẇȧȧřḿ ƥřǿǿḓŭŭƈḗḗş ḗḗƞḗḗřɠẏ ȧȧƞḓ ƀḗḗƈǿǿḿḗḗş Şŧřȧȧƞɠḗḗ Ḿȧȧŧŧḗḗř ȧȧŧ ȧȧ Ɓŀȧȧƈķ Ħǿǿŀḗḗ řḗḗşḗḗŧ."
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "simulations.panel.villages": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Ṽīŀŀȧȧɠḗḗş"
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "simulations.panel.villages.description": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Ṽīŀŀȧȧɠḗḗş ƥřǿǿḓŭŭƈḗḗ Ẇǿǿřķḗḗřş ȧȧƞḓ ƈǿǿḿƀīƞḗḗ īƞŧǿǿ Ƈīŧīḗḗş."
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "simulations.panel.workers": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Ẇǿǿřķḗḗřş"
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "simulations.panel.workers.description": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Ẇǿǿřķḗḗřş ƈǿǿƞşŧřŭŭƈŧ Ħǿǿŭŭşīƞɠ ƒǿǿř ɠřǿǿẇīƞɠ Ƈǿǿḿḿŭŭƞīŧīḗḗş."
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "simulations.panel.world-peace": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Ẇǿǿřŀḓ Ƥḗḗȧȧƈḗḗ"
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "simulations.panel.world-trade": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Ẇǿǿřŀḓ Ŧřȧȧḓḗḗ"
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "simulations.progress.boost-remaining": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Ɓǿǿǿǿşŧ řḗḗḿȧȧīƞīƞɠ"
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "simulations.progress.charge": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Řȧȧīŀɠŭŭƞ ƈħȧȧřɠḗḗ"
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "simulations.progress.conversion": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Ƈǿǿƞṽḗḗřşīǿǿƞ ƥřǿǿɠřḗḗşş"
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "simulations.progress.count-of-total": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 1,
+      "value": "current"
+    },
+    {
+      "type": 0,
+      "value": " / "
+    },
+    {
+      "type": 1,
+      "value": "total"
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "simulations.progress.firing": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Řȧȧīŀɠŭŭƞ ƒīřīƞɠ ƥřǿǿɠřḗḗşş"
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "simulations.progress.percent": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 1,
+      "value": "value"
+    },
+    {
+      "type": 0,
+      "value": "%"
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "simulations.progress.production": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Ƥřǿǿḓŭŭƈŧīǿǿƞ ƥřǿǿɠřḗḗşş"
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "simulations.progress.research": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Řḗḗşḗḗȧȧřƈħ ƥřǿǿɠřḗḗşş"
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "simulations.progress.stored-panels": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Şŧǿǿřḗḗḓ Ḓẏşǿǿƞ ƥȧȧƞḗḗŀş"
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "simulations.progress.time-remaining": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Ŧīḿḗḗ řḗḗḿȧȧīƞīƞɠ"
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "simulations.purchase-amount": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Ƥŭŭřƈħȧȧşḗḗ ȧȧḿǿǿŭŭƞŧ"
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "simulations.purchase-settings": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Ƥŭŭřƈħȧȧşḗḗ şḗḗŧŧīƞɠş"
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "simulations.region": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Şīḿŭŭŀȧȧŧīǿǿƞş"
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "simulations.summary.influence": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Īƞƒŀŭŭḗḗƞƈḗḗ: "
+    },
+    {
+      "type": 1,
+      "value": "value"
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "simulations.summary.simulation": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Şīḿŭŭŀȧȧŧīǿǿƞ: "
+    },
+    {
+      "type": 1,
+      "value": "value"
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "simulations.time-multiplier": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Ŧīḿḗḗ ḿŭŭŀŧīƥŀīḗḗř"
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "simulations.time-multiplier.speed-increase": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Şīḿŭŭŀȧȧŧīǿǿƞ şƥḗḗḗḗḓ īƞƈřḗḗȧȧşḗḗḓ ƀẏ "
+    },
+    {
+      "type": 1,
+      "value": "value"
+    },
+    {
+      "type": 0,
+      "value": "%"
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "simulations.unavailable": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Şīḿŭŭŀȧȧŧīǿǿƞ ḓȧȧŧȧȧ īş ŧḗḗḿƥǿǿřȧȧřīŀẏ ŭŭƞȧȧṽȧȧīŀȧȧƀŀḗḗ."
     },
     {
       "type": 0,

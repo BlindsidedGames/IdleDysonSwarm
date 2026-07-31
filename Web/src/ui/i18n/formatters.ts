@@ -102,6 +102,35 @@ export function formatGameNumber(
   return `${formatted}${GAME_NUMBER_PREFIXES[exponentGroup]}`
 }
 
+/**
+ * Matches CalcUtils.FormatTime(..., shortForm: true) for elapsed gameplay
+ * durations while retaining locale-appropriate digits.
+ */
+export function formatGameDuration(
+  locale: EnabledLocale,
+  seconds: number,
+): string {
+  if (!Number.isFinite(seconds)) return NON_FINITE_NUMBER_FALLBACK
+
+  const totalSeconds = Math.floor(Math.abs(seconds))
+  const days = Math.floor(totalSeconds / 86_400)
+  const hours = Math.floor(totalSeconds / 3_600) % 24
+  const minutes = Math.floor(totalSeconds / 60) % 60
+  const remainingSeconds = totalSeconds % 60
+  const components: string[] = []
+  const unit = (value: number, suffix: string) =>
+    `${formatNumber(locale, value, {
+      maximumFractionDigits: 0,
+      useGrouping: false,
+    })}${suffix}`
+
+  if (days > 0) components.push(unit(days, 'd'))
+  if (hours > 0) components.push(unit(hours, 'h'))
+  if (minutes > 0) components.push(unit(minutes, 'm'))
+  components.push(unit(remainingSeconds, 's'))
+  return components.join(' ')
+}
+
 export function getDateTimeFormatter(
   locale: EnabledLocale,
   options: Intl.DateTimeFormatOptions = {},

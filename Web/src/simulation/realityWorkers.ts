@@ -113,12 +113,38 @@ export function advanceRealityWorkers(
 
     if (state.reality.autoGather) {
       const influenceCapacity = DISCRETE_MAXIMUM - influence
+      const completeBatches =
+        (workersReady + completed) / tuning.workerBatchSize
+      const affordableBatches =
+        influenceCapacity / tuning.workerBatchSize
+      const gatheredBatches =
+        completeBatches < affordableBatches
+          ? completeBatches
+          : affordableBatches
       automaticInfluence =
-        completed < influenceCapacity ? completed : influenceCapacity
+        gatheredBatches * tuning.workerBatchSize
       influence += automaticInfluence
-      workersReady = 0n
-      workersGenerated = completed
-      progress = remainder
+      const workersAfterGather =
+        workersReady + completed - automaticInfluence
+      const overflow =
+        workersAfterGather > tuning.workerBatchSize
+          ? workersAfterGather - tuning.workerBatchSize
+          : 0n
+      workersReady =
+        workersAfterGather > tuning.workerBatchSize
+          ? tuning.workerBatchSize
+          : workersAfterGather
+      workersGenerated = completed - overflow
+      progress =
+        workersReady >= tuning.workerBatchSize ? 0 : remainder
+      if (overflow > 0n) {
+        stalledSeconds = Math.max(
+          0,
+          seconds -
+            Number(workersGenerated) /
+              Math.max(Number.MIN_VALUE, generationPerSecond),
+        )
+      }
     } else {
       const space = tuning.workerBatchSize - workersReady
       const accepted = completed < space ? completed : space

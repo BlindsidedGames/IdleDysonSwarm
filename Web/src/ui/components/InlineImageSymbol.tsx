@@ -3,6 +3,7 @@ export interface InlineImageSymbolProps {
   readonly label?: string
   readonly className?: string
   readonly symbol?: string
+  readonly tint?: boolean
 }
 
 /**
@@ -10,19 +11,43 @@ export interface InlineImageSymbolProps {
  *
  * Symbols are decorative by default because their surrounding text carries
  * the meaning. Pass a localized label only when the image conveys information
- * that is not otherwise present.
+ * that is not otherwise present. Tintable monochrome symbols use their image
+ * as a mask so they inherit the surrounding text color.
  */
 export function InlineImageSymbol({
   src,
   label,
   className,
   symbol,
+  tint = false,
 }: InlineImageSymbolProps) {
+  const classes = [
+    'ui-inline-image-symbol',
+    tint ? 'ui-inline-image-symbol--tinted' : '',
+    className ?? '',
+  ]
+    .filter(Boolean)
+    .join(' ')
+
+  if (tint) {
+    return (
+      <span
+        className={classes}
+        role={label === undefined ? undefined : 'img'}
+        aria-label={label}
+        aria-hidden={label === undefined ? 'true' : undefined}
+        data-symbol={symbol}
+        style={{
+          maskImage: `url("${src}")`,
+          WebkitMaskImage: `url("${src}")`,
+        }}
+      />
+    )
+  }
+
   return (
     <img
-      className={['ui-inline-image-symbol', className ?? '']
-        .filter(Boolean)
-        .join(' ')}
+      className={classes}
       src={src}
       alt={label ?? ''}
       aria-hidden={label === undefined ? 'true' : undefined}

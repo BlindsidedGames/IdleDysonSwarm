@@ -86,8 +86,9 @@ describe('Reality worker generation', () => {
     expect(result.status).toBe('success')
     expect(result.generationPerSecond).toBe(7)
     expect(result.workersGenerated).toBe(2n)
-    expect(result.automaticInfluence).toBe(2n)
-    expect(result.state.reality.influence).toBe(2n)
+    expect(result.automaticInfluence).toBe(0n)
+    expect(result.state.reality.influence).toBe(0n)
+    expect(result.state.reality.workersReady).toBe(2n)
     expect(result.state.reality.workerGenerationProgress).toBe(0)
     expect(result.state.reality.universeDesignationCount).toBe(2n)
   })
@@ -150,7 +151,8 @@ describe('Reality worker generation', () => {
       whole.state.reality.workerGenerationProgress,
       12,
     )
-    expect(second.state.reality.influence).toBe(8n)
+    expect(second.state.reality.influence).toBe(0n)
+    expect(second.state.reality.workersReady).toBe(8n)
     expect(second.state.reality.workerGenerationProgress).toBeCloseTo(
       0.65,
       12,
@@ -182,7 +184,28 @@ describe('Reality worker generation', () => {
     expect(result.state.statistics).toBe(state.statistics)
   })
 
-  test('counts generated workers but only credits remaining Influence capacity', () => {
+  test('gathers complete automatic batches and keeps the next batch visible', () => {
+    const state = neutralState()
+    const result = advanceRealityWorkers(
+      {
+        ...state,
+        reality: {
+          ...state.reality,
+          autoGather: true,
+          workersReady: 127n,
+        },
+      },
+      0.5,
+    )
+
+    expect(result.workersGenerated).toBe(2n)
+    expect(result.automaticInfluence).toBe(128n)
+    expect(result.state.reality.influence).toBe(128n)
+    expect(result.state.reality.workersReady).toBe(1n)
+    expect(result.state.reality.universeDesignationCount).toBe(2n)
+  })
+
+  test('retains automatic workers when remaining Influence capacity cannot hold a batch', () => {
     const state = neutralState()
     const result = advanceRealityWorkers(
       {
@@ -201,8 +224,11 @@ describe('Reality worker generation', () => {
     )
 
     expect(result.workersGenerated).toBe(10n)
-    expect(result.automaticInfluence).toBe(2n)
-    expect(result.state.reality.influence).toBe(DISCRETE_MAXIMUM)
+    expect(result.automaticInfluence).toBe(0n)
+    expect(result.state.reality.influence).toBe(
+      DISCRETE_MAXIMUM - 2n,
+    )
+    expect(result.state.reality.workersReady).toBe(10n)
     expect(result.state.reality.universeDesignationCount).toBe(10n)
     expect(result.state.statistics).toBe(state.statistics)
   })

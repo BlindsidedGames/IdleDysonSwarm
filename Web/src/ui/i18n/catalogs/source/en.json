@@ -1,4 +1,97 @@
 {
+  "debug.access-description": {
+    "defaultMessage": "Unlock the developer tools with late-game currencies. Once purchased, they can be re-enabled for free."
+  },
+  "debug.action-success": {
+    "defaultMessage": "Development change saved."
+  },
+  "debug.add-bots": {
+    "defaultMessage": "Add Bots"
+  },
+  "debug.add-infinity-points": {
+    "defaultMessage": "Add Infinity Points"
+  },
+  "debug.add-influence": {
+    "defaultMessage": "Add Influence"
+  },
+  "debug.add-offline-time": {
+    "defaultMessage": "Add Offline Time"
+  },
+  "debug.add-quantum-shards": {
+    "defaultMessage": "Add Quantum Shards"
+  },
+  "debug.add-skill-points": {
+    "defaultMessage": "Add Skill Points"
+  },
+  "debug.add-strange-matter": {
+    "defaultMessage": "Add Strange Matter"
+  },
+  "debug.amount": {
+    "defaultMessage": "Amount"
+  },
+  "debug.apply-preset": {
+    "defaultMessage": "Apply"
+  },
+  "debug.bot-state": {
+    "defaultMessage": "Bot count"
+  },
+  "debug.bots": {
+    "defaultMessage": "Bots"
+  },
+  "debug.cats": {
+    "defaultMessage": "Debug Cats"
+  },
+  "debug.disable": {
+    "defaultMessage": "Disable Developer Options"
+  },
+  "debug.disabled-success": {
+    "defaultMessage": "Developer Options disabled. Your entitlement was retained."
+  },
+  "debug.enable-free": {
+    "defaultMessage": "Enable for free"
+  },
+  "debug.enabled": {
+    "defaultMessage": "Developer tools enabled"
+  },
+  "debug.maintenance": {
+    "defaultMessage": "Maintenance"
+  },
+  "debug.progression": {
+    "defaultMessage": "Progression tools"
+  },
+  "debug.progression-presets": {
+    "defaultMessage": "Progression states"
+  },
+  "debug.purchase": {
+    "defaultMessage": "Purchase Developer Options"
+  },
+  "debug.purchase-success": {
+    "defaultMessage": "Developer Options unlocked."
+  },
+  "debug.quantum-shards": {
+    "defaultMessage": "Quantum Shards"
+  },
+  "debug.recalculate-skill-points": {
+    "defaultMessage": "Recalculate Skill Points"
+  },
+  "debug.strange-matter": {
+    "defaultMessage": "Strange Matter"
+  },
+  "debug.timing": {
+    "defaultMessage": "Tinker timing"
+  },
+  "debug.tinker-instant": {
+    "defaultMessage": "Set Tinker to instant"
+  },
+  "debug.tinker-one-second": {
+    "defaultMessage": "Set Tinker to 1 second"
+  },
+  "debug.title": {
+    "defaultMessage": "Developer Options"
+  },
+  "debug.unlock-tabs": {
+    "defaultMessage": "Unlock all tabs"
+  },
   "dyson.bot-distribution.accessible-value": {
     "defaultMessage": "{workers} workers, {scientists} scientists",
     "description": "Accessible bot allocation slider value."
@@ -719,6 +812,10 @@
     "defaultMessage": "Start with 10 Servers",
     "description": "Unity retained Servers upgrade title."
   },
+  "navigation.debug-options": {
+    "defaultMessage": "Debug Options",
+    "description": "Development-only Unity Debug Options destination."
+  },
   "navigation.infinity": {
     "defaultMessage": "Infinity",
     "description": "Unity Infinity destination."
@@ -731,6 +828,14 @@
     "defaultMessage": "Offline Time",
     "description": "Unity Offline Time destination."
   },
+  "navigation.reality": {
+    "defaultMessage": "Reality",
+    "description": "Unity Reality destination."
+  },
+  "navigation.reality-secrets-progress": {
+    "defaultMessage": "Reality, {current} of {required} Secrets of the Universe",
+    "description": "Accessible unlock progress for the visible but locked Reality destination."
+  },
   "navigation.research": {
     "defaultMessage": "Research",
     "description": "Unity Research destination."
@@ -738,6 +843,10 @@
   "navigation.settings": {
     "defaultMessage": "Settings",
     "description": "Unity Settings destination."
+  },
+  "navigation.simulations": {
+    "defaultMessage": "Simulations",
+    "description": "Unity live Simulations destination."
   },
   "navigation.skills": {
     "defaultMessage": "Skills",
@@ -750,6 +859,558 @@
   "navigation.wiki": {
     "defaultMessage": "Wiki",
     "description": "Unity Wiki destination."
+  },
+  "reality.artifact": {
+    "defaultMessage": "The Artifact",
+    "description": "Unity title displayed in the Reality worker visual."
+  },
+  "reality.artifact.cpu-time": {
+    "defaultMessage": "CPU Time",
+    "description": "Unity artifact progress label after Speed Reduction VIII is owned."
+  },
+  "reality.artifact.undefined": {
+    "defaultMessage": "Undefined",
+    "description": "Unity artifact progress label before Speed Reduction VIII is owned."
+  },
+  "reality.consuming": {
+    "defaultMessage": "Consuming",
+    "description": "Unity status while Reality workers are being generated."
+  },
+  "reality.consumption-halted": {
+    "defaultMessage": "Consumption Halted",
+    "description": "Unity status when a complete worker batch is waiting to be gathered."
+  },
+  "reality.gather-influence": {
+    "defaultMessage": "Gather Influence",
+    "description": "Unity action for converting a completed worker batch into Influence."
+  },
+  "reality.gather-influence.accessible": {
+    "defaultMessage": "Gather {value} Influence",
+    "description": "Accessible label for gathering the canonical Influence amount."
+  },
+  "reality.gather-influence.failed": {
+    "defaultMessage": "Influence was not gathered. Try again.",
+    "description": "Failure shown after the canonical Gather Influence command is rejected."
+  },
+  "reality.gather-influence.pending": {
+    "defaultMessage": "Gathering Influence…",
+    "description": "Status announced while a Gather Influence command is pending."
+  },
+  "reality.influence": {
+    "defaultMessage": "Influence: {value}",
+    "description": "Current Reality Influence balance."
+  },
+  "reality.region": {
+    "defaultMessage": "Reality",
+    "description": "Accessible name for the Unity Reality route."
+  },
+  "reality.simulation-upgrades.advanced-physics1.description": {
+    "defaultMessage": "Jenga Training. 2h ▸ 1h",
+    "description": "Unity Simulation upgrade description."
+  },
+  "reality.simulation-upgrades.advanced-physics1.title": {
+    "defaultMessage": "Advanced Physics I",
+    "description": "Unity Simulation upgrade title."
+  },
+  "reality.simulation-upgrades.advanced-physics2.description": {
+    "defaultMessage": "Parkour. 1h ▸ 30m",
+    "description": "Unity Simulation upgrade description."
+  },
+  "reality.simulation-upgrades.advanced-physics2.title": {
+    "defaultMessage": "Advanced Physics II",
+    "description": "Unity Simulation upgrade title."
+  },
+  "reality.simulation-upgrades.advanced-physics3.description": {
+    "defaultMessage": "Thrust Vectors. 30m ▸ 10m",
+    "description": "Unity Simulation upgrade description."
+  },
+  "reality.simulation-upgrades.advanced-physics3.title": {
+    "defaultMessage": "Advanced Physics III",
+    "description": "Unity Simulation upgrade title."
+  },
+  "reality.simulation-upgrades.advanced-physics4.description": {
+    "defaultMessage": "Fusion is for fusing, fission no more.",
+    "description": "Unity Simulation upgrade description."
+  },
+  "reality.simulation-upgrades.advanced-physics4.title": {
+    "defaultMessage": "Advanced Physics IV",
+    "description": "Unity Simulation upgrade title."
+  },
+  "reality.simulation-upgrades.bots1.title": {
+    "defaultMessage": "Bots I",
+    "description": "Unity Simulation upgrade title."
+  },
+  "reality.simulation-upgrades.bots2.title": {
+    "defaultMessage": "Bots II",
+    "description": "Unity Simulation upgrade title."
+  },
+  "reality.simulation-upgrades.cities-boost.title": {
+    "defaultMessage": "City Booster",
+    "description": "Unity Simulation upgrade title."
+  },
+  "reality.simulation-upgrades.counter-ai.description": {
+    "defaultMessage": "Squish some bugs, no more Overlords.",
+    "description": "Unity Simulation upgrade description."
+  },
+  "reality.simulation-upgrades.counter-ai.title": {
+    "defaultMessage": "Counteract AI Overlords",
+    "description": "Unity Simulation upgrade title."
+  },
+  "reality.simulation-upgrades.counter-gw.description": {
+    "defaultMessage": "Switching to friendlier rocket fuel should help.",
+    "description": "Unity Simulation upgrade description."
+  },
+  "reality.simulation-upgrades.counter-gw.title": {
+    "defaultMessage": "Counteract Global Warming",
+    "description": "Unity Simulation upgrade title."
+  },
+  "reality.simulation-upgrades.counter-meteor.description": {
+    "defaultMessage": "Override the simulation deleting all space rocks.",
+    "description": "Unity Simulation upgrade description."
+  },
+  "reality.simulation-upgrades.counter-meteor.title": {
+    "defaultMessage": "Counteract Meteor Storm",
+    "description": "Unity Simulation upgrade title."
+  },
+  "reality.simulation-upgrades.countermeasures": {
+    "defaultMessage": "Countermeasures",
+    "description": "Simulation disaster countermeasures category."
+  },
+  "reality.simulation-upgrades.education": {
+    "defaultMessage": "Education",
+    "description": "Permanent Simulation Education category."
+  },
+  "reality.simulation-upgrades.engineering1.description": {
+    "defaultMessage": "Better algorithms. 10m ▸ 5m",
+    "description": "Unity Simulation upgrade description."
+  },
+  "reality.simulation-upgrades.engineering1.title": {
+    "defaultMessage": "Engineering I",
+    "description": "Unity Simulation upgrade title."
+  },
+  "reality.simulation-upgrades.engineering2.description": {
+    "defaultMessage": "Even better algorithms. 5m ▸ 1m",
+    "description": "Unity Simulation upgrade description."
+  },
+  "reality.simulation-upgrades.engineering2.title": {
+    "defaultMessage": "Engineering II",
+    "description": "Unity Simulation upgrade title."
+  },
+  "reality.simulation-upgrades.engineering3.description": {
+    "defaultMessage": "I'm over this, aren't you?",
+    "description": "Unity Simulation upgrade description."
+  },
+  "reality.simulation-upgrades.engineering3.title": {
+    "defaultMessage": "Engineering III",
+    "description": "Unity Simulation upgrade title."
+  },
+  "reality.simulation-upgrades.factories-boost.title": {
+    "defaultMessage": "Factories",
+    "description": "Unity Simulation upgrade title."
+  },
+  "reality.simulation-upgrades.foundational": {
+    "defaultMessage": "Foundational Era",
+    "description": "Permanent Foundational Era upgrade category."
+  },
+  "reality.simulation-upgrades.foundational.description": {
+    "defaultMessage": "Carry a stronger Foundational Era into every Simulation.",
+    "description": "Compact permanent Foundational upgrade description."
+  },
+  "reality.simulation-upgrades.gatherer1.title": {
+    "defaultMessage": "Start with 1 Gatherer",
+    "description": "Unity Simulation upgrade title."
+  },
+  "reality.simulation-upgrades.gatherer2.title": {
+    "defaultMessage": "Start with 10 Gatherers",
+    "description": "Unity Simulation upgrade title."
+  },
+  "reality.simulation-upgrades.gatherer3.title": {
+    "defaultMessage": "Start with 1,000 Gatherers",
+    "description": "Unity Simulation upgrade title."
+  },
+  "reality.simulation-upgrades.gatherer4.title": {
+    "defaultMessage": "Purchase buys 1,000 Gatherers",
+    "description": "Unity Simulation upgrade title."
+  },
+  "reality.simulation-upgrades.heading": {
+    "defaultMessage": "Simulation Upgrades",
+    "description": "Unity permanent Simulation upgrades heading on Reality."
+  },
+  "reality.simulation-upgrades.hunter1.title": {
+    "defaultMessage": "Start with 1 Hunter",
+    "description": "Unity Simulation upgrade title."
+  },
+  "reality.simulation-upgrades.hunter2.title": {
+    "defaultMessage": "Start with 10 Hunters",
+    "description": "Unity Simulation upgrade title."
+  },
+  "reality.simulation-upgrades.hunter3.title": {
+    "defaultMessage": "Start with 1,000 Hunters",
+    "description": "Unity Simulation upgrade title."
+  },
+  "reality.simulation-upgrades.hunter4.title": {
+    "defaultMessage": "Purchase buys 1,000 Hunters",
+    "description": "Unity Simulation upgrade title."
+  },
+  "reality.simulation-upgrades.information": {
+    "defaultMessage": "Information Era",
+    "description": "Permanent Information Era upgrade category."
+  },
+  "reality.simulation-upgrades.information.description": {
+    "defaultMessage": "Improve Information Era production in every Simulation.",
+    "description": "Compact permanent Information upgrade description."
+  },
+  "reality.simulation-upgrades.mathematics1.description": {
+    "defaultMessage": "1+1=a, a = window. 1h ▸ 30m",
+    "description": "Unity Simulation upgrade description."
+  },
+  "reality.simulation-upgrades.mathematics1.title": {
+    "defaultMessage": "Mathematics I",
+    "description": "Unity Simulation upgrade title."
+  },
+  "reality.simulation-upgrades.mathematics2.description": {
+    "defaultMessage": "3.14159265358979323 = Yum. 30m ▸ 10m",
+    "description": "Unity Simulation upgrade description."
+  },
+  "reality.simulation-upgrades.mathematics2.title": {
+    "defaultMessage": "Mathematics II",
+    "description": "Unity Simulation upgrade title."
+  },
+  "reality.simulation-upgrades.mathematics3.description": {
+    "defaultMessage": "Division by 0, oh it's free?",
+    "description": "Unity Simulation upgrade description."
+  },
+  "reality.simulation-upgrades.mathematics3.title": {
+    "defaultMessage": "Mathematics III",
+    "description": "Unity Simulation upgrade title."
+  },
+  "reality.simulation-upgrades.railguns1.title": {
+    "defaultMessage": "Railguns I",
+    "description": "Unity Simulation upgrade title."
+  },
+  "reality.simulation-upgrades.railguns2.title": {
+    "defaultMessage": "Railguns II",
+    "description": "Unity Simulation upgrade title."
+  },
+  "reality.simulation-upgrades.rockets1.title": {
+    "defaultMessage": "Rockets I",
+    "description": "Unity Simulation upgrade title."
+  },
+  "reality.simulation-upgrades.rockets2.title": {
+    "defaultMessage": "Rockets II",
+    "description": "Unity Simulation upgrade title."
+  },
+  "reality.simulation-upgrades.rockets3.title": {
+    "defaultMessage": "Rockets III",
+    "description": "Unity Simulation upgrade title."
+  },
+  "reality.simulation-upgrades.sfacs1.title": {
+    "defaultMessage": "Space Factories I",
+    "description": "Unity Simulation upgrade title."
+  },
+  "reality.simulation-upgrades.sfacs2.title": {
+    "defaultMessage": "Space Factories II",
+    "description": "Unity Simulation upgrade title."
+  },
+  "reality.simulation-upgrades.sfacs3.title": {
+    "defaultMessage": "Space Factories III",
+    "description": "Unity Simulation upgrade title."
+  },
+  "reality.simulation-upgrades.shipping1.description": {
+    "defaultMessage": "Ship with ships or… Trucks. 30m ▸ 10m",
+    "description": "Unity Simulation upgrade description."
+  },
+  "reality.simulation-upgrades.shipping1.title": {
+    "defaultMessage": "Shipping I",
+    "description": "Unity Simulation upgrade title."
+  },
+  "reality.simulation-upgrades.shipping2.description": {
+    "defaultMessage": "Just teleport the stuff already.",
+    "description": "Unity Simulation upgrade description."
+  },
+  "reality.simulation-upgrades.shipping2.title": {
+    "defaultMessage": "Shipping II",
+    "description": "Unity Simulation upgrade title."
+  },
+  "reality.simulation-upgrades.space-age": {
+    "defaultMessage": "Space Age",
+    "description": "Permanent Space Age upgrade category."
+  },
+  "reality.simulation-upgrades.space-age.description": {
+    "defaultMessage": "Improve simulated space production and launch speed.",
+    "description": "Compact permanent Space Age upgrade description."
+  },
+  "reality.simulation-upgrades.worker-boost.title": {
+    "defaultMessage": "Log10 Workers",
+    "description": "Unity Simulation upgrade title."
+  },
+  "reality.simulation-upgrades.world-peace1.description": {
+    "defaultMessage": "Put those weapons away. 2h ▸ 1h",
+    "description": "Unity Simulation upgrade description."
+  },
+  "reality.simulation-upgrades.world-peace1.title": {
+    "defaultMessage": "World Peace I",
+    "description": "Unity Simulation upgrade title."
+  },
+  "reality.simulation-upgrades.world-peace2.description": {
+    "defaultMessage": "Global contracting. 1h ▸ 30m",
+    "description": "Unity Simulation upgrade description."
+  },
+  "reality.simulation-upgrades.world-peace2.title": {
+    "defaultMessage": "World Peace II",
+    "description": "Unity Simulation upgrade title."
+  },
+  "reality.simulation-upgrades.world-peace3.description": {
+    "defaultMessage": "No more hackers. 30m ▸ 10m",
+    "description": "Unity Simulation upgrade description."
+  },
+  "reality.simulation-upgrades.world-peace3.title": {
+    "defaultMessage": "World Peace III",
+    "description": "Unity Simulation upgrade title."
+  },
+  "reality.simulation-upgrades.world-peace4.description": {
+    "defaultMessage": "Toggle booleans, why waste CPU on war.",
+    "description": "Unity Simulation upgrade description."
+  },
+  "reality.simulation-upgrades.world-peace4.title": {
+    "defaultMessage": "World Peace IV",
+    "description": "Unity Simulation upgrade title."
+  },
+  "reality.simulation-upgrades.world-trade1.description": {
+    "defaultMessage": "Global trading in its raw form. 1h ▸ 30m",
+    "description": "Unity Simulation upgrade description."
+  },
+  "reality.simulation-upgrades.world-trade1.title": {
+    "defaultMessage": "World Trade I",
+    "description": "Unity Simulation upgrade title."
+  },
+  "reality.simulation-upgrades.world-trade2.description": {
+    "defaultMessage": "Zip here, zip there, zip everywhere. 30m ▸ 10m",
+    "description": "Unity Simulation upgrade description."
+  },
+  "reality.simulation-upgrades.world-trade2.title": {
+    "defaultMessage": "World Trade II",
+    "description": "Unity Simulation upgrade title."
+  },
+  "reality.simulation-upgrades.world-trade3.description": {
+    "defaultMessage": "No push button anymore.",
+    "description": "Unity Simulation upgrade description."
+  },
+  "reality.simulation-upgrades.world-trade3.title": {
+    "defaultMessage": "World Trade III",
+    "description": "Unity Simulation upgrade title."
+  },
+  "reality.strange-matter": {
+    "defaultMessage": "Strange Matter: {value}",
+    "description": "Current Strange Matter balance shown with Reality upgrades."
+  },
+  "reality.unavailable": {
+    "defaultMessage": "Reality is temporarily unavailable.",
+    "description": "Failure shown when canonical Reality worker facts cannot be presented."
+  },
+  "reality.universe-designation": {
+    "defaultMessage": "Universe Designation: {value}",
+    "description": "Number of the universe currently being consumed by Reality workers."
+  },
+  "reality.upgrades": {
+    "defaultMessage": "Reality Upgrades",
+    "description": "Heading for Reality-layer permanent upgrades."
+  },
+  "reality.upgrades.anomaly": {
+    "defaultMessage": "Anomaly",
+    "description": "Unity heading containing Translation and Speed Reduction upgrades."
+  },
+  "reality.upgrades.auto-gather.description": {
+    "defaultMessage": "No longer feel the need to click gather influence",
+    "description": "Unity Reality upgrade description."
+  },
+  "reality.upgrades.auto-gather.title": {
+    "defaultMessage": "Automate Gather Influence",
+    "description": "Unity Reality upgrade title."
+  },
+  "reality.upgrades.cost": {
+    "defaultMessage": "{value} SM",
+    "description": "Strange Matter cost for a Reality upgrade."
+  },
+  "reality.upgrades.double-time.description": {
+    "defaultMessage": "Gather time while offline, spend it while online.",
+    "description": "Unity Reality upgrade description."
+  },
+  "reality.upgrades.double-time.title": {
+    "defaultMessage": "Enable Time Multiplier",
+    "description": "Unity Reality upgrade title."
+  },
+  "reality.upgrades.purchase": {
+    "defaultMessage": "Purchase",
+    "description": "Button label for purchasing a Reality upgrade."
+  },
+  "reality.upgrades.purchase-accessible": {
+    "defaultMessage": "Purchase {name} for {value} Strange Matter",
+    "description": "Accessible Reality-upgrade purchase action."
+  },
+  "reality.upgrades.purchase-failed": {
+    "defaultMessage": "{name} was not purchased. Try again.",
+    "description": "Failure shown after a canonical Reality upgrade purchase is rejected."
+  },
+  "reality.upgrades.purchase-pending": {
+    "defaultMessage": "Purchasing {name}…",
+    "description": "Status while a Reality upgrade purchase is pending."
+  },
+  "reality.upgrades.quality": {
+    "defaultMessage": "Quality of Life",
+    "description": "Heading for Reality quality-of-life upgrades."
+  },
+  "reality.upgrades.speed": {
+    "defaultMessage": "Speed Reduction",
+    "description": "Heading for Reality artifact-speed upgrades."
+  },
+  "reality.upgrades.speed1.description": {
+    "defaultMessage": "100% ▸ 95% - Magnetic fields? Gain 1 skill point.",
+    "description": "Unity Reality upgrade description."
+  },
+  "reality.upgrades.speed1.title": {
+    "defaultMessage": "Speed Reduction I",
+    "description": "Unity Reality upgrade title."
+  },
+  "reality.upgrades.speed2.description": {
+    "defaultMessage": "95% ▸ 90% - Throw it at a wall? Gain 1 skill point.",
+    "description": "Unity Reality upgrade description."
+  },
+  "reality.upgrades.speed2.title": {
+    "defaultMessage": "Speed Reduction II",
+    "description": "Unity Reality upgrade title."
+  },
+  "reality.upgrades.speed3.description": {
+    "defaultMessage": "90% ▸ 80% - Smack it with a bat? Gain 1 skill point.",
+    "description": "Unity Reality upgrade description."
+  },
+  "reality.upgrades.speed3.title": {
+    "defaultMessage": "Speed Reduction III",
+    "description": "Unity Reality upgrade title."
+  },
+  "reality.upgrades.speed4.description": {
+    "defaultMessage": "80% ▸ 70% - Put it under a metal press? Gain 1 skill point.",
+    "description": "Unity Reality upgrade description."
+  },
+  "reality.upgrades.speed4.title": {
+    "defaultMessage": "Speed Reduction IV",
+    "description": "Unity Reality upgrade title."
+  },
+  "reality.upgrades.speed5.description": {
+    "defaultMessage": "70% ▸ 50% - Bombard it with radiation? Gain 1 skill point.",
+    "description": "Unity Reality upgrade description."
+  },
+  "reality.upgrades.speed5.title": {
+    "defaultMessage": "Speed Reduction V",
+    "description": "Unity Reality upgrade title."
+  },
+  "reality.upgrades.speed6.description": {
+    "defaultMessage": "50% ▸ 25% - Design an inception machine. Gain 1 skill point.",
+    "description": "Unity Reality upgrade description."
+  },
+  "reality.upgrades.speed6.title": {
+    "defaultMessage": "Speed Reduction VI",
+    "description": "Unity Reality upgrade title."
+  },
+  "reality.upgrades.speed7.description": {
+    "defaultMessage": "25% ▸ 10% - Go down a few layers. Gain 1 skill point.",
+    "description": "Unity Reality upgrade description."
+  },
+  "reality.upgrades.speed7.title": {
+    "defaultMessage": "Speed Reduction VII",
+    "description": "Unity Reality upgrade title."
+  },
+  "reality.upgrades.speed8.description": {
+    "defaultMessage": "10% ▸ 0% - Comprehention. Gain 1 skill point.",
+    "description": "Unity Reality upgrade description."
+  },
+  "reality.upgrades.speed8.title": {
+    "defaultMessage": "Speed Reduction VIII",
+    "description": "Unity Reality upgrade title."
+  },
+  "reality.upgrades.translation": {
+    "defaultMessage": "Translation",
+    "description": "Heading for Reality translation upgrades."
+  },
+  "reality.upgrades.translation1.description": {
+    "defaultMessage": "Begin deciphering the anomaly's code. Gain 1 skill point.",
+    "description": "Unity Reality upgrade description."
+  },
+  "reality.upgrades.translation1.title": {
+    "defaultMessage": "Translation I",
+    "description": "Unity Reality upgrade title."
+  },
+  "reality.upgrades.translation2.description": {
+    "defaultMessage": "The patterns are starting to make sense. Gain 1 skill point.",
+    "description": "Unity Reality upgrade description."
+  },
+  "reality.upgrades.translation2.title": {
+    "defaultMessage": "Translation II",
+    "description": "Unity Reality upgrade title."
+  },
+  "reality.upgrades.translation3.description": {
+    "defaultMessage": "Progress! More symbols decoded. Gain 1 skill point.",
+    "description": "Unity Reality upgrade description."
+  },
+  "reality.upgrades.translation3.title": {
+    "defaultMessage": "Translation III",
+    "description": "Unity Reality upgrade title."
+  },
+  "reality.upgrades.translation4.description": {
+    "defaultMessage": "Halfway through the translation. Gain 1 skill point.",
+    "description": "Unity Reality upgrade description."
+  },
+  "reality.upgrades.translation4.title": {
+    "defaultMessage": "Translation IV",
+    "description": "Unity Reality upgrade title."
+  },
+  "reality.upgrades.translation5.description": {
+    "defaultMessage": "The anomaly's secrets unfold. Gain 1 skill point.",
+    "description": "Unity Reality upgrade description."
+  },
+  "reality.upgrades.translation5.title": {
+    "defaultMessage": "Translation V",
+    "description": "Unity Reality upgrade title."
+  },
+  "reality.upgrades.translation6.description": {
+    "defaultMessage": "Almost there, keep translating. Gain 1 skill point.",
+    "description": "Unity Reality upgrade description."
+  },
+  "reality.upgrades.translation6.title": {
+    "defaultMessage": "Translation VI",
+    "description": "Unity Reality upgrade title."
+  },
+  "reality.upgrades.translation7.description": {
+    "defaultMessage": "The final pieces fall into place. Gain 1 skill point.",
+    "description": "Unity Reality upgrade description."
+  },
+  "reality.upgrades.translation7.title": {
+    "defaultMessage": "Translation VII",
+    "description": "Unity Reality upgrade title."
+  },
+  "reality.upgrades.translation8.description": {
+    "defaultMessage": "Finally finish translating the anomaly! Gain 1 skill point.",
+    "description": "Unity Reality upgrade description."
+  },
+  "reality.upgrades.translation8.title": {
+    "defaultMessage": "Translation VIII",
+    "description": "Unity Reality upgrade title."
+  },
+  "reality.worker-generation": {
+    "defaultMessage": "Worker generation",
+    "description": "Accessible name for the Reality worker generation progress bar."
+  },
+  "reality.workers-ready": {
+    "defaultMessage": "Workers ready",
+    "description": "Accessible name for the completed Reality worker batch progress bar."
+  },
+  "reality.workers-ready.compact": {
+    "defaultMessage": "{current}/{total}",
+    "description": "Compact visible count for the current canonical Reality worker batch."
+  },
+  "reality.workers-ready.value": {
+    "defaultMessage": "{current} of {total} workers ready",
+    "description": "Accessible value for the current canonical Reality worker batch."
   },
   "research.card.boost-title": {
     "defaultMessage": "{name} boosts <value>{level}</value>",
@@ -1003,9 +1664,17 @@
     "defaultMessage": "First engulfed galaxy — {bots} Bots",
     "description": "First completed galaxy development preset."
   },
+  "settings.development.preset.reality-unlocked": {
+    "defaultMessage": "Reality unlocked — 27 Secrets",
+    "description": "Development preset that applies the canonical Reality unlock state."
+  },
   "settings.development.preset.young-galaxy": {
     "defaultMessage": "Young harvested galaxy — {bots} Bots",
     "description": "Early galaxy harvesting development preset."
+  },
+  "settings.development.reality-succeeded": {
+    "defaultMessage": "Reality unlocked. Open the Reality tab to inspect the live state.",
+    "description": "Successful Reality unlock development-state feedback."
   },
   "settings.development.succeeded": {
     "defaultMessage": "Bot count saved. Return to Bots to inspect the live simulation.",
@@ -1102,6 +1771,422 @@
   "shared.status.success": {
     "defaultMessage": "Completed",
     "description": "Short status confirming that a player-requested operation completed."
+  },
+  "simulations.action.black-hole": {
+    "defaultMessage": "Black Hole +{reward} Strange Matter",
+    "description": "Black Hole reset action and canonical reward."
+  },
+  "simulations.action.black-hole-label": {
+    "defaultMessage": "Black Hole",
+    "description": "Visible label on the Simulation Black Hole reset button."
+  },
+  "simulations.action.boost": {
+    "defaultMessage": "Boost {cost} Influence",
+    "description": "Timed production boost action and cost."
+  },
+  "simulations.action.boost-label": {
+    "defaultMessage": "Boost",
+    "description": "Visible label on a Simulation boost button."
+  },
+  "simulations.action.close": {
+    "defaultMessage": "Close",
+    "description": "Closes Simulation panel details."
+  },
+  "simulations.action.details": {
+    "defaultMessage": "Details",
+    "description": "Opens Simulation panel details."
+  },
+  "simulations.action.failed": {
+    "defaultMessage": "That action was not completed. Try again.",
+    "description": "Failure after a canonical Simulation command is rejected."
+  },
+  "simulations.action.free-boost": {
+    "defaultMessage": "Boost Free",
+    "description": "Free timed production boost action."
+  },
+  "simulations.action.free-label": {
+    "defaultMessage": "Free",
+    "description": "Visible cost label for a free Simulation action."
+  },
+  "simulations.action.purchase": {
+    "defaultMessage": "+{quantity} {cost} Influence",
+    "description": "Purchase action with canonical quantity and Influence cost."
+  },
+  "simulations.action.purchase-quantity": {
+    "defaultMessage": "+{quantity}",
+    "description": "Visible quantity on a Simulation purchase button."
+  },
+  "simulations.action.start": {
+    "defaultMessage": "Start {cost} Influence",
+    "description": "Start Education action and cost."
+  },
+  "simulations.action.start-label": {
+    "defaultMessage": "Start",
+    "description": "Visible label on a Simulation research start button."
+  },
+  "simulations.action.strange-matter-reward": {
+    "defaultMessage": "+{reward} Strange Matter",
+    "description": "Visible Strange Matter reward on the Simulation Black Hole reset button."
+  },
+  "simulations.buy-max": {
+    "defaultMessage": "Buy Max",
+    "description": "Selects the largest affordable Space Age purchase quantity."
+  },
+  "simulations.buy-quantity": {
+    "defaultMessage": "Buy {quantity}",
+    "description": "Selects a fixed Space Age purchase quantity."
+  },
+  "simulations.category.education": {
+    "defaultMessage": "Education",
+    "description": "Unity Education category heading."
+  },
+  "simulations.category.energy": {
+    "defaultMessage": "Energy",
+    "description": "Unity Energy category heading."
+  },
+  "simulations.category.foundational": {
+    "defaultMessage": "Foundational Era",
+    "description": "Unity Foundational Era category heading."
+  },
+  "simulations.category.information": {
+    "defaultMessage": "Information Era",
+    "description": "Unity Information Era category heading."
+  },
+  "simulations.category.space-age": {
+    "defaultMessage": "Space Age",
+    "description": "Unity Space Age category heading."
+  },
+  "simulations.details.available-conversions": {
+    "defaultMessage": "Available conversions",
+    "description": "Label for the canonical number of Rockets to Space Factory conversions currently available."
+  },
+  "simulations.details.base-duration": {
+    "defaultMessage": "Base duration",
+    "description": "Label for the authored duration of one Simulation production cycle."
+  },
+  "simulations.details.conversion-requirement": {
+    "defaultMessage": "Conversion requirement",
+    "description": "Label for the canonical Rockets to Space Factory conversion requirement."
+  },
+  "simulations.details.current-output": {
+    "defaultMessage": "Current output",
+    "description": "Label for a canonical current Simulation output fact."
+  },
+  "simulations.details.current-progress": {
+    "defaultMessage": "Current progress",
+    "description": "Label for canonical Education research progress."
+  },
+  "simulations.details.current-rate": {
+    "defaultMessage": "Current rate",
+    "description": "Label for the canonical effective Simulation production rate."
+  },
+  "simulations.details.inactive-multiplier": {
+    "defaultMessage": "Inactive — no producers",
+    "description": "Simulation production multiplier while its source count is zero."
+  },
+  "simulations.details.logarithmic-multiplier": {
+    "defaultMessage": "(1 + Log₁₀({count})) × {global} = {effective}",
+    "description": "Unity logarithmic Simulation speed formula with canonical operands and result."
+  },
+  "simulations.details.output": {
+    "defaultMessage": "Output",
+    "description": "Label for canonical output created by each completed Simulation production cycle."
+  },
+  "simulations.details.output-per-cycle": {
+    "defaultMessage": "{value} {resource} / cycle",
+    "description": "Canonical resource output created per Simulation production cycle."
+  },
+  "simulations.details.prepared-multiplier": {
+    "defaultMessage": "{base} × {global} = {effective}",
+    "description": "Simulation speed formula whose canonical base includes special progression rules."
+  },
+  "simulations.details.rate-per-second": {
+    "defaultMessage": "{value} {resource} / s",
+    "description": "Canonical current Simulation resource production per second."
+  },
+  "simulations.details.remaining-duration": {
+    "defaultMessage": "Remaining duration",
+    "description": "Label for the remaining duration of canonical Education research."
+  },
+  "simulations.details.rocket-conversion-requirement": {
+    "defaultMessage": "{rockets} Rockets + 1 Factory = 1 Space Factory",
+    "description": "Canonical resources consumed by one Rockets to Space Factory conversion."
+  },
+  "simulations.details.seconds": {
+    "defaultMessage": "{value} seconds",
+    "description": "Duration value in seconds in Simulation details."
+  },
+  "simulations.details.speed-multiplier": {
+    "defaultMessage": "Speed multiplier",
+    "description": "Label for the canonical Simulation production speed formula."
+  },
+  "simulations.empty": {
+    "defaultMessage": "No panels are available in this era yet.",
+    "description": "Fallback when an unlocked Simulation category has no panels."
+  },
+  "simulations.offline-time": {
+    "defaultMessage": "Offline time",
+    "description": "Stored offline time available to Simulation Double Time."
+  },
+  "simulations.panel.advanced-physics": {
+    "defaultMessage": "Advanced Physics",
+    "description": "Unity Advanced Physics panel title."
+  },
+  "simulations.panel.boost-active": {
+    "defaultMessage": "Boost active: {time}",
+    "description": "Remaining production boost time."
+  },
+  "simulations.panel.bots": {
+    "defaultMessage": "Bots",
+    "description": "Unity Simulation Bots panel title."
+  },
+  "simulations.panel.bots.description": {
+    "defaultMessage": "Bots construct Rockets for the journey to space.",
+    "description": "Compact Simulation Bots production explanation."
+  },
+  "simulations.panel.cities": {
+    "defaultMessage": "Cities",
+    "description": "Unity Cities panel title."
+  },
+  "simulations.panel.cities.description": {
+    "defaultMessage": "Cities produce Workers and, after Engineering, begin producing Factories.",
+    "description": "Compact Cities production explanation."
+  },
+  "simulations.panel.community": {
+    "defaultMessage": "Community",
+    "description": "Unity Community panel title."
+  },
+  "simulations.panel.community.description": {
+    "defaultMessage": "Hunters and Gatherers sustain Communities, which build Housing.",
+    "description": "Compact Community production explanation."
+  },
+  "simulations.panel.complete": {
+    "defaultMessage": "Complete",
+    "description": "Completed Education status."
+  },
+  "simulations.panel.education.description": {
+    "defaultMessage": "Invest Influence to complete this research.",
+    "description": "Compact Education panel explanation."
+  },
+  "simulations.panel.energy-output": {
+    "defaultMessage": "{value} W",
+    "description": "Energy produced each second."
+  },
+  "simulations.panel.energy-stored": {
+    "defaultMessage": "{value} J stored",
+    "description": "Stored Simulation energy."
+  },
+  "simulations.panel.engineering": {
+    "defaultMessage": "Engineering",
+    "description": "Unity Engineering panel title."
+  },
+  "simulations.panel.factories": {
+    "defaultMessage": "Factories",
+    "description": "Unity Factories panel title."
+  },
+  "simulations.panel.factories.description": {
+    "defaultMessage": "Factories produce Bots and can receive a timed boost.",
+    "description": "Compact Factories production explanation."
+  },
+  "simulations.panel.fusion": {
+    "defaultMessage": "Fusion Generators",
+    "description": "Unity Fusion Generators panel title."
+  },
+  "simulations.panel.fusion.description": {
+    "defaultMessage": "Fusion Generators provide a stronger source of energy.",
+    "description": "Compact Fusion explanation."
+  },
+  "simulations.panel.gatherers": {
+    "defaultMessage": "Gatherers",
+    "description": "Unity Gatherers panel title."
+  },
+  "simulations.panel.gatherers.description": {
+    "defaultMessage": "Influence villagers to gather greens for your communities.",
+    "description": "Unity Gatherers description."
+  },
+  "simulations.panel.housing": {
+    "defaultMessage": "Housing",
+    "description": "Unity Housing panel title."
+  },
+  "simulations.panel.housing.description": {
+    "defaultMessage": "Housing grows from Communities and converts into Villages.",
+    "description": "Compact Housing production explanation."
+  },
+  "simulations.panel.hunters": {
+    "defaultMessage": "Hunters",
+    "description": "Unity Hunters panel title."
+  },
+  "simulations.panel.hunters.description": {
+    "defaultMessage": "Influence heroic hunters to gather meat for your communities.",
+    "description": "Unity Hunters description."
+  },
+  "simulations.panel.mathematics": {
+    "defaultMessage": "Mathematics",
+    "description": "Unity Mathematics panel title."
+  },
+  "simulations.panel.not-started": {
+    "defaultMessage": "Ready to start",
+    "description": "Education status before research starts."
+  },
+  "simulations.panel.owned": {
+    "defaultMessage": "{value} owned",
+    "description": "Owned count shown on a Simulation panel."
+  },
+  "simulations.panel.pending-matter": {
+    "defaultMessage": "{value} Strange Matter pending",
+    "description": "Black Hole reward pending from the Swarm."
+  },
+  "simulations.panel.producing": {
+    "defaultMessage": "Producing {value} /s",
+    "description": "Canonical average production shown on a Simulation panel."
+  },
+  "simulations.panel.railguns": {
+    "defaultMessage": "Railguns",
+    "description": "Unity Railguns panel title."
+  },
+  "simulations.panel.railguns.description": {
+    "defaultMessage": "Railguns consume energy to launch stored panels into the Swarm.",
+    "description": "Compact Railguns explanation."
+  },
+  "simulations.panel.researching": {
+    "defaultMessage": "Researching",
+    "description": "Active Education status."
+  },
+  "simulations.panel.rockets": {
+    "defaultMessage": "Rockets",
+    "description": "Unity Rockets panel title."
+  },
+  "simulations.panel.rockets.description": {
+    "defaultMessage": "Rockets and Factories are converted into Space Factories.",
+    "description": "Compact Rockets conversion explanation."
+  },
+  "simulations.panel.shipping": {
+    "defaultMessage": "Shipping",
+    "description": "Unity Shipping panel title."
+  },
+  "simulations.panel.shots-remaining": {
+    "defaultMessage": "{value} shots remaining",
+    "description": "Railgun volley shots remaining."
+  },
+  "simulations.panel.solar": {
+    "defaultMessage": "Solar Panels",
+    "description": "Unity Solar Panels panel title."
+  },
+  "simulations.panel.solar.description": {
+    "defaultMessage": "Solar Panels turn Influence into a steady supply of energy.",
+    "description": "Compact Solar Panels explanation."
+  },
+  "simulations.panel.space-factories": {
+    "defaultMessage": "Space Factories",
+    "description": "Unity Space Factories panel title."
+  },
+  "simulations.panel.space-factories.description": {
+    "defaultMessage": "Space Factories construct panels for the simulated Dyson Swarm.",
+    "description": "Compact Space Factories explanation."
+  },
+  "simulations.panel.swarm-stats": {
+    "defaultMessage": "Swarm Stats",
+    "description": "Unity Swarm Stats panel title."
+  },
+  "simulations.panel.swarm-stats.description": {
+    "defaultMessage": "The launched Swarm produces energy and becomes Strange Matter at a Black Hole reset.",
+    "description": "Compact Swarm Stats explanation."
+  },
+  "simulations.panel.villages": {
+    "defaultMessage": "Villages",
+    "description": "Unity Villages panel title."
+  },
+  "simulations.panel.villages.description": {
+    "defaultMessage": "Villages produce Workers and combine into Cities.",
+    "description": "Compact Villages production explanation."
+  },
+  "simulations.panel.workers": {
+    "defaultMessage": "Workers",
+    "description": "Unity Workers panel title."
+  },
+  "simulations.panel.workers.description": {
+    "defaultMessage": "Workers construct Housing for growing Communities.",
+    "description": "Compact Workers production explanation."
+  },
+  "simulations.panel.world-peace": {
+    "defaultMessage": "World Peace",
+    "description": "Unity World Peace panel title."
+  },
+  "simulations.panel.world-trade": {
+    "defaultMessage": "World Trade",
+    "description": "Unity World Trade panel title."
+  },
+  "simulations.progress.boost-remaining": {
+    "defaultMessage": "Boost remaining",
+    "description": "Accessible remaining duration label for a timed Simulation boost."
+  },
+  "simulations.progress.charge": {
+    "defaultMessage": "Railgun charge",
+    "description": "Accessible Railgun charge label."
+  },
+  "simulations.progress.conversion": {
+    "defaultMessage": "Conversion progress",
+    "description": "Accessible conversion progress label."
+  },
+  "simulations.progress.count-of-total": {
+    "defaultMessage": "{current} / {total}",
+    "description": "Progress count shown against a total."
+  },
+  "simulations.progress.firing": {
+    "defaultMessage": "Railgun firing progress",
+    "description": "Accessible Railgun firing progress label."
+  },
+  "simulations.progress.percent": {
+    "defaultMessage": "{value}%",
+    "description": "Visible progress percentage."
+  },
+  "simulations.progress.production": {
+    "defaultMessage": "Production progress",
+    "description": "Accessible production progress label."
+  },
+  "simulations.progress.research": {
+    "defaultMessage": "Research progress",
+    "description": "Accessible Education progress label."
+  },
+  "simulations.progress.stored-panels": {
+    "defaultMessage": "Stored Dyson panels",
+    "description": "Accessible Space Factory storage progress label."
+  },
+  "simulations.progress.time-remaining": {
+    "defaultMessage": "Time remaining",
+    "description": "Live time remaining above active Education research progress."
+  },
+  "simulations.purchase-amount": {
+    "defaultMessage": "Purchase amount",
+    "description": "Accessible label for the Space Age purchase amount options."
+  },
+  "simulations.purchase-settings": {
+    "defaultMessage": "Purchase settings",
+    "description": "Opens the Space Age solar and fusion purchase amount options."
+  },
+  "simulations.region": {
+    "defaultMessage": "Simulations",
+    "description": "Accessible name for the live Unity Simulations route."
+  },
+  "simulations.summary.influence": {
+    "defaultMessage": "Influence: {value}",
+    "description": "Current Influence balance used by Simulation actions."
+  },
+  "simulations.summary.simulation": {
+    "defaultMessage": "Simulation: {value}",
+    "description": "Current Simulation run number."
+  },
+  "simulations.time-multiplier": {
+    "defaultMessage": "Time multiplier",
+    "description": "Simulation offline-time multiplier control."
+  },
+  "simulations.time-multiplier.speed-increase": {
+    "defaultMessage": "Simulation speed increased by {value}%",
+    "description": "Describes the additional Simulation speed applied by the Double Time rate slider."
+  },
+  "simulations.unavailable": {
+    "defaultMessage": "Simulation data is temporarily unavailable.",
+    "description": "Fallback when canonical Simulation facts cannot be presented."
   },
   "skills.action-failed": {
     "defaultMessage": "The skill was not changed. Try again.",
