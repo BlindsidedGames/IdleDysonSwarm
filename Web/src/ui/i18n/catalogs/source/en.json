@@ -512,11 +512,11 @@
     "description": "Exact second sentence on the default Unity manual-creation panel."
   },
   "dyson.tinker.description.manual-labour": {
-    "defaultMessage": "Having nothing better to do you decide to set up some more assembly lines. Masterfully made you will produce {count}.",
+    "defaultMessage": "Having nothing better to do you decide to set up some more assembly lines. Masterfully made you will produce <value>{count}</value>.",
     "description": "Unity manual-creation copy when Manual Labour can create assembly lines."
   },
   "dyson.tinker.description.manual-labour-blocked": {
-    "defaultMessage": "You have the knowledge to automate assembly lines, but without an AI Manager you still have to tinker together bots. You will produce {count}. (Get 1 AI Manager to unlock assembly line tinkering.)",
+    "defaultMessage": "You have the knowledge to automate assembly lines, but without an AI Manager you still have to tinker together bots. You will produce <value>{count}</value>. (Get 1 AI Manager to unlock assembly line tinkering.)",
     "description": "Unity manual-creation copy when Manual Labour is owned but lacks an AI Manager."
   },
   "dyson.tinker.duration": {
@@ -934,6 +934,9 @@
   "skills.action-failed": {
     "defaultMessage": "The skill was not changed. Try again."
   },
+  "skills.affected-skills": {
+    "defaultMessage": "Skills affected by this change"
+  },
   "skills.cancel": {
     "defaultMessage": "Cancel"
   },
@@ -1001,7 +1004,7 @@
     "defaultMessage": "Preset import string"
   },
   "skills.include-dependencies": {
-    "defaultMessage": "This will also include: {names}."
+    "defaultMessage": "Also include these required skills:"
   },
   "skills.included-in-preset": {
     "defaultMessage": "Included in {name}"
@@ -1040,7 +1043,7 @@
     "defaultMessage": "Preset name"
   },
   "skills.preset-summary": {
-    "defaultMessage": "{count, plural, one {# queued skill} other {# queued skills}} · {workers}% Workers"
+    "defaultMessage": "{count, plural, one {# queued skill} other {# queued skills}} · <workerValue>{workers}% Workers</workerValue> · <scientistValue>{scientists}% Scientists</scientistValue>"
   },
   "skills.preset-transfer-failed": {
     "defaultMessage": "The preset string could not be processed. Check it and try again."
@@ -1064,7 +1067,7 @@
     "defaultMessage": "Skills"
   },
   "skills.remove-dependants": {
-    "defaultMessage": "This will also remove: {names}."
+    "defaultMessage": "Also remove these dependent skills:"
   },
   "skills.rename": {
     "defaultMessage": "Rename"

@@ -15,6 +15,7 @@ export interface SkillDetailsDialogProps {
   readonly title: ReactNode
   readonly closeLabel: string
   readonly palette: SkillDetailsPalette
+  readonly className?: string
   readonly children: ReactNode
   readonly onClose: () => void
 }
@@ -28,6 +29,7 @@ export function SkillDetailsDialog({
   title,
   closeLabel,
   palette,
+  className,
   children,
   onClose,
 }: SkillDetailsDialogProps) {
@@ -111,7 +113,12 @@ export function SkillDetailsDialog({
     >
       <section
         ref={dialogRef}
-        className="skill-details-dialog"
+        className={[
+          'skill-details-dialog',
+          className ?? '',
+        ]
+          .filter(Boolean)
+          .join(' ')}
         data-palette={palette}
         role="dialog"
         aria-modal="true"

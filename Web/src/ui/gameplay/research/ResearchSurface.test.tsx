@@ -1,6 +1,8 @@
 // @vitest-environment jsdom
 
 import '@testing-library/jest-dom/vitest'
+import { readFileSync } from 'node:fs'
+import { join } from 'node:path'
 import { cleanup, fireEvent, render, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import axe from 'axe-core'
@@ -13,6 +15,18 @@ import type {
   UiRuntimePlayerCommandResult,
 } from '../../runtime'
 import { ResearchSurface } from './ResearchSurface'
+
+const researchStyles = readFileSync(
+  join(
+    process.cwd(),
+    'src',
+    'ui',
+    'gameplay',
+    'research',
+    'research.css',
+  ),
+  'utf8',
+)
 
 afterEach(cleanup)
 
@@ -51,7 +65,26 @@ describe('ResearchSurface', () => {
     const articles = screen.getAllByRole('article')
     expect(articles).toHaveLength(3)
     expect(articles[0]).toHaveTextContent('Science boosts 2.00')
-    expect(articles[0]).toHaveTextContent('Boosting by 10% \u25b8 15%')
+    expect(articles[0]).toHaveTextContent('Boosting by 10% \u25b6 15%')
+    const effectArrow = articles[0].querySelector(
+      '.research-card__effect-arrow',
+    )
+    const effectValues = articles[0].querySelectorAll(
+      '.research-card__value',
+    )
+    expect(effectArrow).toHaveTextContent('\u25b6')
+    expect(researchStyles).toMatch(
+      /\.research-card__effect-arrow\s*\{[^}]*color:\s*white;/s,
+    )
+    expect(effectValues.length).toBeGreaterThanOrEqual(2)
+    expect(
+      Array.from(effectValues).some((value) =>
+        value.textContent?.includes('\u25b6'),
+      ),
+    ).toBe(false)
+    expect(researchStyles).toMatch(
+      /\.research-card__value\s*\{[^}]*color:\s*#00e1ff;/s,
+    )
     expect(
       screen.getByLabelText(
         'Boosting increases from 10% to 15%',

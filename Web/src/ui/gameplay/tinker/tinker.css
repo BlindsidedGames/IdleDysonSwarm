@@ -90,6 +90,10 @@
   overflow-wrap: anywhere;
 }
 
+.tinker-surface__yield {
+  color: #00e1ff;
+}
+
 .tinker-surface__tip {
   color: #bdb3bf;
   font-size: 0.86em;

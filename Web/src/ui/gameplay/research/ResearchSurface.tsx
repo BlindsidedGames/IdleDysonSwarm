@@ -457,7 +457,7 @@ function effectText(
             current,
             projected,
             value: researchValue,
-            arrowMark: '\u25b8',
+            arrowMark: '\u25b6',
             arrow: (chunks: ReactNode) => (
               <span
                 className="research-card__effect-arrow"

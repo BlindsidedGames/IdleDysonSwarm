@@ -443,6 +443,14 @@
   font-size: 0.85rem;
 }
 
+.skill-preset-summary__workers {
+  color: #ef78f4;
+}
+
+.skill-preset-summary__scientists {
+  color: #66f0e8;
+}
+
 .skill-settings__preset-manage {
   display: grid;
   min-inline-size: 2.75rem;
@@ -610,60 +618,142 @@
 .skill-details__actions {
   display: flex;
   flex-wrap: wrap;
-  gap: 0.65rem;
-  align-items: center;
+  gap: 0.5rem;
+  align-items: stretch;
 }
 
-.skill-details__preset {
-  display: grid;
-  gap: 0.55rem;
-  padding: 0.7rem;
-  border: 1px solid rgb(204 152 255 / 34%);
-  border-radius: 0.38rem;
-  background: rgb(13 8 20 / 22%);
+.skill-details__actions > .ui-button {
+  flex: 0 0 auto;
+  min-block-size: 2.75rem;
 }
 
-.skill-details__preset > label {
+.skill-details__preset-toggle {
   display: flex;
-  gap: 0.65rem;
+  flex: 1 1 13rem;
+  gap: 0.55rem;
   align-items: center;
   min-block-size: 2.75rem;
+  padding: 0.45rem 0.65rem;
+  border: 1px solid rgb(204 152 255 / 34%);
+  border-radius: 0.3rem;
+  background: rgb(13 8 20 / 22%);
   font-weight: 750;
   cursor: pointer;
 }
 
-.skill-details__preset input {
+.skill-details__preset-toggle input {
+  flex: 0 0 auto;
   inline-size: 1.35rem;
   block-size: 1.35rem;
   accent-color: var(--skill-dialog-accent);
 }
 
 .skill-details__queue-confirmation {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0.55rem;
-  align-items: center;
+  flex-basis: 100%;
 }
 
-.skill-details__queue-confirmation p {
+.skill-details__actions > .ui-status-feedback {
   flex-basis: 100%;
+}
+
+.skill-details__affected-skills {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(8.5rem, 1fr));
+  gap: 0.35rem;
+  inline-size: 100%;
+  padding: 0;
+  margin: 0;
+  list-style: none;
+}
+
+.skill-details__affected-skills li {
+  display: flex;
+  gap: 0.4rem;
+  align-items: center;
+  min-inline-size: 0;
+  padding: 0.3rem 0.4rem;
+  border: 1px solid rgb(204 152 255 / 22%);
+  border-radius: 0.28rem;
+  background: rgb(15 9 24 / 32%);
+  font-size: 0.86rem;
+  font-weight: 700;
+}
+
+.skill-details__affected-skills img {
+  inline-size: 1.7rem;
+  block-size: 1.7rem;
+  padding: 0.12rem;
+  border-radius: 0.25rem;
+  background: #8054ab;
+  object-fit: contain;
+}
+
+.skill-details__affected-skills span {
+  min-inline-size: 0;
+  overflow-wrap: anywhere;
+}
+
+.skill-confirmation {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.45rem;
+  align-items: center;
+  padding: 0.55rem;
+  border: 1px solid rgb(204 152 255 / 32%);
+  border-radius: 0.32rem;
+  background: rgb(18 10 27 / 42%);
+}
+
+.skill-confirmation > p,
+.skill-confirmation > span:first-child {
+  flex-basis: 100%;
+  margin: 0;
+}
+
+.skill-confirmation .ui-button {
+  min-block-size: 2.5rem;
+  border-color: #8e73b3;
+  background: #49365f;
+  color: white;
+}
+
+.skill-confirmation .ui-button--primary,
+.skill-confirmation .ui-button--danger {
+  border-color: #d59bea;
+  background: #b77bca;
+  color: #1c1022;
+  font-weight: 800;
+}
+
+.skill-preset-management-dialog {
+  inline-size: min(31rem, 100%);
+  max-block-size: min(42rem, calc(100dvh - 1rem));
+  padding: 0.75rem;
+  background: #2d203d;
+}
+
+.skill-preset-management-dialog .skill-details-dialog__content {
+  margin-block-start: 0.4rem;
 }
 
 .skill-preset-management {
   display: grid;
-  gap: 1rem;
+  gap: 0;
 }
 
 .skill-preset-management > section,
 .skill-preset-management__rename {
   display: flex;
   flex-wrap: wrap;
-  gap: 0.6rem;
+  gap: 0.45rem;
   align-items: end;
-  padding: 0.75rem;
-  border: 1px solid rgb(204 152 255 / 32%);
-  border-radius: 0.4rem;
-  background: rgb(15 9 24 / 24%);
+  padding-block: 0.6rem;
+  border-block-end: 1px solid rgb(204 152 255 / 24%);
+}
+
+.skill-preset-management > section:last-of-type {
+  border-block-end: 0;
+  padding-block-end: 0;
 }
 
 .skill-preset-management h3,
@@ -673,20 +763,29 @@
 }
 
 .skill-preset-management h3 {
-  font-size: 1.05rem;
+  color: #f0d8ff;
+  font-size: 0.98rem;
+  line-height: 1.15;
+}
+
+.skill-preset-management p {
+  color: #cfc3db;
+  font-size: 0.84rem;
+  line-height: 1.25;
 }
 
 .skill-preset-management label {
   display: grid;
-  flex: 1 1 14rem;
-  gap: 0.3rem;
+  flex: 1 1 13rem;
+  gap: 0.22rem;
+  font-size: 0.84rem;
 }
 
 .skill-preset-management input,
 .skill-preset-management textarea {
   inline-size: 100%;
   box-sizing: border-box;
-  padding: 0.65rem;
+  padding: 0.5rem 0.6rem;
   border: 1px solid #816aa7;
   border-radius: 0.3rem;
   background: #171021;
@@ -696,7 +795,8 @@
 
 .skill-preset-management textarea {
   resize: vertical;
-  min-block-size: 5rem;
+  min-block-size: 3.75rem;
+  max-block-size: 8rem;
   overflow-wrap: anywhere;
 }
 
@@ -707,20 +807,36 @@
 }
 
 .skill-preset-management__preview {
-  display: flex;
   flex-basis: 100%;
-  flex-wrap: wrap;
-  gap: 0.55rem;
-  align-items: center;
-  padding: 0.7rem;
-  border-inline-start: 0.25rem solid var(--skill-dialog-accent);
-  background: rgb(15 9 24 / 36%);
 }
 
 .skill-preset-management__preview > strong,
 .skill-preset-management__preview > span,
 .skill-preset-management__preview > p {
   flex-basis: 100%;
+}
+
+.skill-preset-management-dialog .ui-button {
+  min-block-size: 2.5rem;
+  padding: 0.45rem 0.7rem;
+  border-color: #8e73b3;
+  background: #49365f;
+  color: white;
+}
+
+.skill-preset-management-dialog .ui-button:not(:disabled):hover {
+  background: #5c4477;
+}
+
+.skill-preset-management-dialog .ui-button--primary {
+  border-color: #d59bea;
+  background: #b77bca;
+  color: #1c1022;
+}
+
+.skill-preset-management-dialog
+  .ui-button--primary:not(:disabled):hover {
+  background: #ce9bde;
 }
 
 .skill-details-dialog__backdrop {
@@ -737,7 +853,7 @@
   --skill-dialog-accent: #cc98ff;
   --skill-dialog-background: #2e1e3d;
   inline-size: min(34rem, 100%);
-  max-block-size: min(34rem, calc(100dvh - 2rem));
+  max-block-size: calc(100dvh - 2rem);
   overflow: auto;
   padding: 0.9rem;
   border: 2px solid var(--skill-dialog-accent);
@@ -747,6 +863,12 @@
     0 1rem 3rem rgb(0 0 0 / 58%),
     inset 0 1px 0 rgb(255 255 255 / 8%);
   color: #f7f1ff;
+}
+
+@media (min-width: 48rem) {
+  .skill-details-dialog:not(.skill-preset-management-dialog) {
+    inline-size: min(44rem, 100%);
+  }
 }
 
 .skill-details-dialog[data-palette="fragment"] {

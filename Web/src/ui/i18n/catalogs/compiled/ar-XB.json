@@ -2339,8 +2339,14 @@
       "value": "Hɐʌıuƃ uoʇɥıuƃ qǝʇʇǝɹ ʇo po ʎon pǝɔıpǝ ʇo sǝʇ nd soɯǝ ɯoɹǝ ɐssǝɯqʅʎ ʅıuǝs. Wɐsʇǝɹɟnʅʅʎ ɯɐpǝ ʎon ʍıʅʅ dɹopnɔǝ "
     },
     {
-      "type": 1,
-      "value": "count"
+      "type": 8,
+      "value": "value",
+      "children": [
+        {
+          "type": 1,
+          "value": "count"
+        }
+      ]
     },
     {
       "type": 0,
@@ -2361,8 +2367,14 @@
       "value": "⅄on ɥɐʌǝ ʇɥǝ ʞuoʍʅǝpƃǝ ʇo ɐnʇoɯɐʇǝ ɐssǝɯqʅʎ ʅıuǝs, qnʇ ʍıʇɥonʇ ɐu ∀I Wɐuɐƃǝɹ ʎon sʇıʅʅ ɥɐʌǝ ʇo ʇıuʞǝɹ ʇoƃǝʇɥǝɹ qoʇs. ⅄on ʍıʅʅ dɹopnɔǝ "
     },
     {
-      "type": 1,
-      "value": "count"
+      "type": 8,
+      "value": "value",
+      "children": [
+        {
+          "type": 1,
+          "value": "count"
+        }
+      ]
     },
     {
       "type": 0,
@@ -4139,6 +4151,20 @@
       "value": "‬"
     }
   ],
+  "skills.affected-skills": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "Sʞıʅʅs ɐɟɟǝɔʇǝp qʎ ʇɥıs ɔɥɐuƃǝ"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
   "skills.cancel": [
     {
       "type": 0,
@@ -4486,15 +4512,7 @@
     },
     {
       "type": 0,
-      "value": "⊥ɥıs ʍıʅʅ ɐʅso ıuɔʅnpǝ: "
-    },
-    {
-      "type": 1,
-      "value": "names"
-    },
-    {
-      "type": 0,
-      "value": "."
+      "value": "∀ʅso ıuɔʅnpǝ ʇɥǝsǝ ɹǝbnıɹǝp sʞıʅʅs:"
     },
     {
       "type": 0,
@@ -4759,12 +4777,36 @@
       "value": " · "
     },
     {
-      "type": 1,
-      "value": "workers"
+      "type": 8,
+      "value": "workerValue",
+      "children": [
+        {
+          "type": 1,
+          "value": "workers"
+        },
+        {
+          "type": 0,
+          "value": "% Moɹʞǝɹs"
+        }
+      ]
     },
     {
       "type": 0,
-      "value": "% Moɹʞǝɹs"
+      "value": " · "
+    },
+    {
+      "type": 8,
+      "value": "scientistValue",
+      "children": [
+        {
+          "type": 1,
+          "value": "scientists"
+        },
+        {
+          "type": 0,
+          "value": "% Sɔıǝuʇısʇs"
+        }
+      ]
     },
     {
       "type": 0,
@@ -4876,15 +4918,7 @@
     },
     {
       "type": 0,
-      "value": "⊥ɥıs ʍıʅʅ ɐʅso ɹǝɯoʌǝ: "
-    },
-    {
-      "type": 1,
-      "value": "names"
-    },
-    {
-      "type": 0,
-      "value": "."
+      "value": "∀ʅso ɹǝɯoʌǝ ʇɥǝsǝ pǝdǝupǝuʇ sʞıʅʅs:"
     },
     {
       "type": 0,

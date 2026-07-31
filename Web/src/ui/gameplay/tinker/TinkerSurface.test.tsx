@@ -577,7 +577,7 @@ describe('TinkerSurface presentation and accessibility', () => {
         elapsedSeconds: 0.125,
         cooldownSeconds: 0.5,
         timeToCompletionSeconds: 0.375,
-        assemblyYield: 3,
+        assemblyYield: 37_151.521_096_6,
       }),
     )
 
@@ -590,10 +590,13 @@ describe('TinkerSurface presentation and accessibility', () => {
       ),
     ).toBeInTheDocument()
     expect(
-      screen.getByText(
-        /Masterfully made you will produce 3\./,
-      ),
-    ).toBeInTheDocument()
+      document.querySelector('.tinker-surface__output'),
+    ).toHaveTextContent(
+      'Masterfully made you will produce 37.1K.',
+    )
+    expect(screen.getByText('37.1K')).toHaveClass(
+      'tinker-surface__yield',
+    )
     expect(screen.getByText('0.37s')).toBeInTheDocument()
     const progress = screen.getByRole('progressbar', {
       name: 'Tinker progress',
@@ -617,6 +620,23 @@ describe('TinkerSurface presentation and accessibility', () => {
     )
     expect(tinkerCss).not.toContain('tinker-surface__hold-progress')
     expect(tinkerCss).not.toContain('@keyframes tinker-hold-to-repeat')
+  })
+
+  test('formats and highlights the blocked Manual Labour bot yield', () => {
+    renderTinker(
+      createDispatch(),
+      runningFacts({
+        presentationMode: 'manual-labour-blocked',
+        botYield: 1_234,
+      }),
+    )
+
+    expect(
+      document.querySelector('.tinker-surface__output'),
+    ).toHaveTextContent('You will produce 1.23K.')
+    expect(screen.getByText('1.23K')).toHaveClass(
+      'tinker-surface__yield',
+    )
   })
 
   test('shows the exact fresh-save tip only in default Tinker mode', () => {
@@ -739,6 +759,7 @@ function runningFacts(
     readonly elapsedSeconds?: number
     readonly cooldownSeconds?: number
     readonly timeToCompletionSeconds?: number
+    readonly botYield?: number
     readonly assemblyYield?: number
     readonly presentationMode?: TinkerFacts['presentationMode']
   } = {},
@@ -754,7 +775,7 @@ function runningFacts(
       cooldownSeconds,
     },
     stats: {
-      botYield: 1,
+      botYield: overrides.botYield ?? 1,
       assemblyYield: overrides.assemblyYield ?? 0,
       cooldownSeconds,
     },

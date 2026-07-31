@@ -660,11 +660,14 @@ describe('SkillsSurface', () => {
         name: /Cash & Science\. Cost: 1 Skill Points/,
       }),
     )
-    await user.click(
-      screen.getByRole('checkbox', {
-        name: 'Included in Preset 1',
-      }),
+    const inclusion = screen.getByRole('checkbox', {
+      name: 'Included in Preset 1',
+    })
+    const actionGroup = inclusion.closest('.skill-details__actions')
+    expect(actionGroup).toContainElement(
+      screen.getByRole('button', { name: 'Assign Skill' }),
     )
+    await user.click(inclusion)
 
     expect(actions.previewQueueChange).toHaveBeenCalledWith({
       slot: 1,
@@ -672,10 +675,15 @@ describe('SkillsSurface', () => {
       included: true,
     })
     expect(
-      screen.getByText(
-        'This will also include: Assembly Lines, AI Managers.',
-      ),
+      screen.getByText('Also include these required skills:'),
     ).toBeInTheDocument()
+    const affected = screen.getByRole('list', {
+      name: 'Skills affected by this change',
+    })
+    expect(within(affected).getAllByRole('listitem')).toHaveLength(2)
+    expect(within(affected).getByText('Assembly Lines')).toBeInTheDocument()
+    expect(within(affected).getByText('AI Managers')).toBeInTheDocument()
+    expect(affected.querySelectorAll('img')).toHaveLength(2)
     expect(actions.applyQueueChange).not.toHaveBeenCalled()
 
     await user.click(screen.getByRole('button', { name: 'Confirm' }))
@@ -774,8 +782,18 @@ describe('SkillsSurface', () => {
     )
     expect(screen.getByText('Science')).toBeInTheDocument()
     expect(
-      screen.getByText('3 queued skills · 20% Workers'),
-    ).toBeInTheDocument()
+      document.querySelector(
+        '.skill-preset-management__preview .skill-preset-summary',
+      ),
+    ).toHaveTextContent(
+      '3 queued skills · 20% Workers · 80% Scientists',
+    )
+    expect(screen.getByText('20% Workers')).toHaveClass(
+      'skill-preset-summary__workers',
+    )
+    expect(screen.getByText('80% Scientists')).toHaveClass(
+      'skill-preset-summary__scientists',
+    )
     expect(screen.getByText('Replace Preset 1?')).toBeInTheDocument()
 
     await user.click(

@@ -6,6 +6,7 @@ import {
   useMemo,
   useRef,
   useState,
+  type ReactNode,
   type PointerEvent as ReactPointerEvent,
   type WheelEvent as ReactWheelEvent,
 } from 'react'
@@ -28,6 +29,7 @@ import {
   type SkillDetailsPalette,
 } from './SkillDetailsDialog'
 import { skillMessages as messages } from './messages'
+import { rankSkillSearchResults } from './skillSearch'
 import './skills.css'
 
 type SkillCommand = Extract<
@@ -231,25 +233,16 @@ export function SkillsSurface({
     [localizedNodes, previewById],
   )
   const normalizedQuery = query.trim().toLocaleLowerCase(locale)
+  const rankedMatchingIds = useMemo(
+    () =>
+      rankSkillSearchResults(visibleNodes, query, locale).map(
+        (node) => node.skillId,
+      ),
+    [locale, query, visibleNodes],
+  )
   const matchingIds = useMemo(() => {
-    if (normalizedQuery.length === 0) return new Set<string>()
-    return new Set(
-      visibleNodes
-        .filter((node) =>
-          [
-            node.displayName,
-            node.description,
-            node.technicalDescription,
-            node.skillId,
-            String(node.legacySkillKey),
-          ]
-            .join(' ')
-            .toLocaleLowerCase(locale)
-            .includes(normalizedQuery),
-        )
-        .map((node) => node.skillId),
-    )
-  }, [locale, normalizedQuery, visibleNodes])
+    return new Set(rankedMatchingIds)
+  }, [rankedMatchingIds])
   const selectedNode =
     selectedSkillId === null ? undefined : nodeById.get(selectedSkillId)
   const selectedPreview =
@@ -398,7 +391,7 @@ export function SkillsSurface({
             onChange={(event) => setQuery(event.currentTarget.value)}
             onKeyDown={(event) => {
               if (event.key !== 'Enter') return
-              const first = matchingIds.values().next().value
+              const first = rankedMatchingIds[0]
               if (typeof first === 'string') {
                 focusNodeRef.current(first)
                 setSelectedSkillId(first)
@@ -1084,8 +1077,8 @@ function SkillDetails({
             </p>
           )}
         </div>
-        <div className="skill-details__preset">
-          <label>
+        <div className="skill-details__actions">
+          <label className="skill-details__preset-toggle">
             <input
               type="checkbox"
               checked={preview.queued}
@@ -1100,52 +1093,6 @@ function SkillDetails({
               })}
             </span>
           </label>
-          {queuePreview && (
-            <div
-              className="skill-details__queue-confirmation"
-              role="group"
-              aria-label={intl.formatMessage(
-                messages.confirmPresetChange,
-              )}
-            >
-              <p>
-                {intl.formatMessage(
-                  queuePreview.request.included
-                    ? messages.includeDependencies
-                    : messages.removeDependants,
-                  {
-                    names: names(
-                      queuePreview.affectedSkillIds.filter(
-                        (skillId) => skillId !== node.skillId,
-                      ),
-                    ),
-                  },
-                )}
-              </p>
-              <Button
-                variant="primary"
-                state={queuePending ? 'pending' : 'idle'}
-                onClick={() =>
-                  void applyQueueChange(queuePreview.request)
-                }
-              >
-                {intl.formatMessage(messages.confirm)}
-              </Button>
-              <Button
-                disabled={queuePending}
-                onClick={() => setQueuePreview(null)}
-              >
-                {intl.formatMessage(messages.cancel)}
-              </Button>
-            </div>
-          )}
-          {queueFailed && (
-            <StatusFeedback tone="error">
-              {intl.formatMessage(messages.presetChangeFailed)}
-            </StatusFeedback>
-          )}
-        </div>
-        <div className="skill-details__actions">
           {!preview.owned ? (
             <Button
               variant="primary"
@@ -1192,6 +1139,70 @@ function SkillDetails({
             >
               {intl.formatMessage(messages.refund)}
             </Button>
+          )}
+          {queuePreview && (
+            <div
+              className="skill-confirmation skill-details__queue-confirmation"
+              role="group"
+              aria-label={intl.formatMessage(
+                messages.confirmPresetChange,
+              )}
+            >
+              <p>
+                {intl.formatMessage(
+                  queuePreview.request.included
+                    ? messages.includeDependencies
+                    : messages.removeDependants,
+                )}
+              </p>
+              <ul
+                className="skill-details__affected-skills"
+                aria-label={intl.formatMessage(
+                  messages.affectedSkills,
+                )}
+              >
+                {queuePreview.affectedSkillIds
+                  .filter((skillId) => skillId !== node.skillId)
+                  .map((skillId) => {
+                    const affectedNode = nodeById.get(skillId)
+                    return (
+                      <li key={skillId}>
+                        {affectedNode && (
+                          <img
+                            src={iconByFileName.get(
+                              affectedNode.icon.fileName,
+                            )}
+                            alt=""
+                          />
+                        )}
+                        <span>
+                          {affectedNode?.displayName ?? skillId}
+                        </span>
+                      </li>
+                    )
+                  })}
+              </ul>
+              <Button
+                variant="primary"
+                state={queuePending ? 'pending' : 'idle'}
+                onClick={() =>
+                  void applyQueueChange(queuePreview.request)
+                }
+              >
+                {intl.formatMessage(messages.confirm)}
+              </Button>
+              <Button
+                disabled={queuePending}
+                onClick={() => setQueuePreview(null)}
+              >
+                {intl.formatMessage(messages.cancel)}
+              </Button>
+            </div>
+          )}
+          {queueFailed && (
+            <StatusFeedback tone="error">
+              {intl.formatMessage(messages.presetChangeFailed)}
+            </StatusFeedback>
           )}
         </div>
       </div>
@@ -1273,12 +1284,10 @@ function SkillSettings({
                       {intl.formatMessage(messages.currentPreset)}
                     </em>
                   )}
-                  <span>
-                    {intl.formatMessage(messages.presetSummary, {
-                      count: preset.skillIds.length,
-                      workers,
-                    })}
-                  </span>
+                  <PresetSummary
+                    count={preset.skillIds.length}
+                    workers={workers}
+                  />
                 </button>
                 <button
                   type="button"
@@ -1324,7 +1333,11 @@ function SkillSettings({
             {intl.formatMessage(messages.reset)}
           </Button>
         ) : (
-          <div role="group" aria-labelledby={confirmId}>
+          <div
+            className="skill-confirmation"
+            role="group"
+            aria-labelledby={confirmId}
+          >
             <span id={confirmId}>
               {intl.formatMessage(messages.resetWarning)}
             </span>
@@ -1489,6 +1502,7 @@ function PresetManagementDialog({
       })}
       closeLabel={intl.formatMessage(messages.close)}
       palette="normal"
+      className="skill-preset-management-dialog"
       onClose={onClose}
     >
       <div className="skill-preset-management">
@@ -1530,7 +1544,7 @@ function PresetManagementDialog({
           </Button>
         </form>
 
-        <section>
+        <section className="skill-preset-management__export">
           <h3>{intl.formatMessage(messages.exportPreset)}</h3>
           <p>{intl.formatMessage(messages.exportPresetHelp)}</p>
           <Button
@@ -1566,7 +1580,7 @@ function PresetManagementDialog({
           )}
         </section>
 
-        <section>
+        <section className="skill-preset-management__import">
           <h3>{intl.formatMessage(messages.importPreset)}</h3>
           <p>{intl.formatMessage(messages.importPresetHelp)}</p>
           <label>
@@ -1603,14 +1617,12 @@ function PresetManagementDialog({
             {intl.formatMessage(messages.previewImport)}
           </Button>
           {importPreview && (
-            <div className="skill-preset-management__preview">
+            <div className="skill-confirmation skill-preset-management__preview">
               <strong>{importPreview.name}</strong>
-              <span>
-                {intl.formatMessage(messages.presetSummary, {
-                  count: importPreview.queuedSkillCount,
-                  workers: importPreview.workerPercent,
-                })}
-              </span>
+              <PresetSummary
+                count={importPreview.queuedSkillCount}
+                workers={importPreview.workerPercent}
+              />
               <p>
                 {intl.formatMessage(messages.replacePreset, {
                   name: preset.name,
@@ -1641,5 +1653,37 @@ function PresetManagementDialog({
         )}
       </div>
     </SkillDetailsDialog>
+  )
+}
+
+function PresetSummary({
+  count,
+  workers,
+}: {
+  readonly count: number
+  readonly workers: number
+}) {
+  const intl = useIntl()
+  const workerPercent = Math.max(0, Math.min(100, Math.round(workers)))
+  const scientistPercent = 100 - workerPercent
+
+  return (
+    <span className="skill-preset-summary">
+      {intl.formatMessage(messages.presetSummary, {
+        count,
+        workers: workerPercent,
+        scientists: scientistPercent,
+        workerValue: (chunks: ReactNode) => (
+          <span className="skill-preset-summary__workers">
+            {chunks}
+          </span>
+        ),
+        scientistValue: (chunks: ReactNode) => (
+          <span className="skill-preset-summary__scientists">
+            {chunks}
+          </span>
+        ),
+      })}
+    </span>
   )
 }

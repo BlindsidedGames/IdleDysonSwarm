@@ -1,4 +1,10 @@
-import { useEffect, useId, useRef, useState } from 'react'
+import {
+  useEffect,
+  useId,
+  useRef,
+  useState,
+  type ReactNode,
+} from 'react'
 import { useIntl } from 'react-intl'
 import type {
   FrontendApplicationSnapshot,
@@ -72,19 +78,27 @@ export function TinkerSurface({
         facts.runtime.cooldownSeconds - visualElapsedSeconds,
       )
     : facts.stats.cooldownSeconds
-  const formattedSeconds = formatGameNumber(
-    intl.locale as EnabledLocale,
-    seconds,
+  const locale = intl.locale as EnabledLocale
+  const formattedSeconds = formatGameNumber(locale, seconds)
+  const highlightedValue = (chunks: ReactNode) => (
+    <span className="tinker-surface__yield">{chunks}</span>
   )
   const description =
     facts.presentationMode === 'manual-labour'
       ? intl.formatMessage(tinkerMessages.manualLabourDescription, {
-          count: facts.stats.assemblyYield,
+          count: formatGameNumber(
+            locale,
+            facts.stats.assemblyYield,
+          ),
+          value: highlightedValue,
         })
       : facts.presentationMode === 'manual-labour-blocked'
         ? intl.formatMessage(
             tinkerMessages.blockedManualLabourDescription,
-            { count: facts.stats.botYield },
+            {
+              count: formatGameNumber(locale, facts.stats.botYield),
+              value: highlightedValue,
+            },
           )
         : intl.formatMessage(tinkerMessages.defaultDescription)
   const showFreshSaveTip = facts.presentationMode === 'default'

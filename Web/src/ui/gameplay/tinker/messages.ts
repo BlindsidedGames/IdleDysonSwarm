@@ -36,14 +36,14 @@ export const tinkerMessages = defineMessages({
   manualLabourDescription: {
     id: 'dyson.tinker.description.manual-labour',
     defaultMessage:
-      'Having nothing better to do you decide to set up some more assembly lines. Masterfully made you will produce {count}.',
+      'Having nothing better to do you decide to set up some more assembly lines. Masterfully made you will produce <value>{count}</value>.',
     description:
       'Unity manual-creation copy when Manual Labour can create assembly lines.',
   },
   blockedManualLabourDescription: {
     id: 'dyson.tinker.description.manual-labour-blocked',
     defaultMessage:
-      'You have the knowledge to automate assembly lines, but without an AI Manager you still have to tinker together bots. You will produce {count}. (Get 1 AI Manager to unlock assembly line tinkering.)',
+      'You have the knowledge to automate assembly lines, but without an AI Manager you still have to tinker together bots. You will produce <value>{count}</value>. (Get 1 AI Manager to unlock assembly line tinkering.)',
     description:
       'Unity manual-creation copy when Manual Labour is owned but lacks an AI Manager.',
   },

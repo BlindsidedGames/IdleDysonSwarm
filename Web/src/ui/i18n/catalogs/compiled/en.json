@@ -1311,8 +1311,14 @@
       "value": "Having nothing better to do you decide to set up some more assembly lines. Masterfully made you will produce "
     },
     {
-      "type": 1,
-      "value": "count"
+      "type": 8,
+      "value": "value",
+      "children": [
+        {
+          "type": 1,
+          "value": "count"
+        }
+      ]
     },
     {
       "type": 0,
@@ -1325,8 +1331,14 @@
       "value": "You have the knowledge to automate assembly lines, but without an AI Manager you still have to tinker together bots. You will produce "
     },
     {
-      "type": 1,
-      "value": "count"
+      "type": 8,
+      "value": "value",
+      "children": [
+        {
+          "type": 1,
+          "value": "count"
+        }
+      ]
     },
     {
       "type": 0,
@@ -2267,6 +2279,12 @@
       "value": "The skill was not changed. Try again."
     }
   ],
+  "skills.affected-skills": [
+    {
+      "type": 0,
+      "value": "Skills affected by this change"
+    }
+  ],
   "skills.cancel": [
     {
       "type": 0,
@@ -2434,15 +2452,7 @@
   "skills.include-dependencies": [
     {
       "type": 0,
-      "value": "This will also include: "
-    },
-    {
-      "type": 1,
-      "value": "names"
-    },
-    {
-      "type": 0,
-      "value": "."
+      "value": "Also include these required skills:"
     }
   ],
   "skills.included-in-preset": [
@@ -2603,12 +2613,36 @@
       "value": " · "
     },
     {
-      "type": 1,
-      "value": "workers"
+      "type": 8,
+      "value": "workerValue",
+      "children": [
+        {
+          "type": 1,
+          "value": "workers"
+        },
+        {
+          "type": 0,
+          "value": "% Workers"
+        }
+      ]
     },
     {
       "type": 0,
-      "value": "% Workers"
+      "value": " · "
+    },
+    {
+      "type": 8,
+      "value": "scientistValue",
+      "children": [
+        {
+          "type": 1,
+          "value": "scientists"
+        },
+        {
+          "type": 0,
+          "value": "% Scientists"
+        }
+      ]
     }
   ],
   "skills.preset-transfer-failed": [
@@ -2656,15 +2690,7 @@
   "skills.remove-dependants": [
     {
       "type": 0,
-      "value": "This will also remove: "
-    },
-    {
-      "type": 1,
-      "value": "names"
-    },
-    {
-      "type": 0,
-      "value": "."
+      "value": "Also remove these dependent skills:"
     }
   ],
   "skills.rename": [

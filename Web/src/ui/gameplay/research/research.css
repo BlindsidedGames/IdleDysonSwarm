@@ -118,7 +118,7 @@
 .research-card__effect-arrow {
   display: inline-block;
   margin-inline: 0.08em;
-  color: color-mix(in srgb, #00e1ff 72%, white);
+  color: white;
   font-size: 0.8em;
   transform: translateY(-0.04em);
 }

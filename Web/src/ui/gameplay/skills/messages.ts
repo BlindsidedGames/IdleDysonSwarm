@@ -117,7 +117,7 @@ export const skillMessages = defineMessages({
   presetSummary: {
     id: 'skills.preset-summary',
     defaultMessage:
-      '{count, plural, one {# queued skill} other {# queued skills}} · {workers}% Workers',
+      '{count, plural, one {# queued skill} other {# queued skills}} · <workerValue>{workers}% Workers</workerValue> · <scientistValue>{scientists}% Scientists</scientistValue>',
   },
   managePreset: {
     id: 'skills.manage-preset',
@@ -145,11 +145,15 @@ export const skillMessages = defineMessages({
   },
   includeDependencies: {
     id: 'skills.include-dependencies',
-    defaultMessage: 'This will also include: {names}.',
+    defaultMessage: 'Also include these required skills:',
   },
   removeDependants: {
     id: 'skills.remove-dependants',
-    defaultMessage: 'This will also remove: {names}.',
+    defaultMessage: 'Also remove these dependent skills:',
+  },
+  affectedSkills: {
+    id: 'skills.affected-skills',
+    defaultMessage: 'Skills affected by this change',
   },
   confirm: {
     id: 'skills.confirm',
