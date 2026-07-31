@@ -144,12 +144,17 @@
 }
 
 .skill-tree-connection--met {
+  fill: currentcolor;
   stroke: currentcolor;
-  stroke-width: 6;
-  stroke-linecap: round;
+  stroke-width: 2;
+  stroke-linejoin: round;
 }
 
 .skill-tree-connection--unmet {
+  fill: currentcolor;
+}
+
+.skill-tree-connection-arrow {
   fill: currentcolor;
 }
 
@@ -188,10 +193,6 @@
   opacity: 0.38;
 }
 
-.skill-tree-connection--met[data-selected-path="true"] {
-  stroke-width: 7;
-}
-
 .skill-tree-connection[data-selected-path="true"] {
   opacity: 1;
   filter: drop-shadow(0 0 4px currentcolor);
@@ -218,6 +219,7 @@
   color: white;
   cursor: pointer;
   touch-action: none;
+  transform: translate(-50%, -50%);
 }
 
 .skill-tree-node img {

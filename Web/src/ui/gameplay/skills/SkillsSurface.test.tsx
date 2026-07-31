@@ -279,17 +279,22 @@ describe('SkillsSurface', () => {
     ).toHaveAttribute('data-selection-dimmed', 'true')
     expect(
       container.querySelectorAll(
-        '.skill-tree-viewport__connections [data-selected-path="true"]',
+        '.skill-tree-viewport__connections .skill-tree-connection:not(.skill-tree-connection-arrow)[data-selected-path="true"]',
       ),
     ).toHaveLength(3)
     expect(
       container.querySelector(
-        '.skill-tree-viewport__connections line.skill-tree-connection--met[data-source-owned="true"]',
+        '.skill-tree-viewport__connections path.skill-tree-connection--met[data-source-owned="true"]',
       ),
     ).toBeInTheDocument()
     expect(
       container.querySelector(
         '.skill-tree-viewport__connections path.skill-tree-connection--unmet:not([marker-end])',
+      ),
+    ).toBeInTheDocument()
+    expect(
+      container.querySelector(
+        '.skill-tree-viewport__connections path.skill-tree-connection-arrow',
       ),
     ).toBeInTheDocument()
     expect(

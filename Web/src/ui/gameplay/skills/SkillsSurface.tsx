@@ -37,7 +37,11 @@ import { skillMessages as messages } from './messages'
 import {
   skillPresetColorStyle,
 } from './presetColors'
-import { buildTaperedSkillConnectorPath } from './skillConnectorGeometry'
+import {
+  buildSolidSkillConnectorPath,
+  buildTaperedSkillConnectorPath,
+  layoutSkillConnector,
+} from './skillConnectorGeometry'
 import { rankSkillSearchResults } from './skillSearch'
 import './skills.css'
 
@@ -753,19 +757,16 @@ function SkillTreeViewport({
           {connectors.map(({ from, to }) => {
             const start = graphPosition(from)
             const end = graphPosition(to)
-            const deltaX = end.x - start.x
-            const deltaY = end.y - start.y
-            const distance = Math.hypot(deltaX, deltaY) || 1
-            const nodeEdge = NODE_SIZE / 2 + 3
-            const startX = start.x + (deltaX / distance) * nodeEdge
-            const startY = start.y + (deltaY / distance) * nodeEdge
-            const endX = end.x - (deltaX / distance) * nodeEdge
-            const endY = end.y - (deltaY / distance) * nodeEdge
             const sourcePreview = previews.get(from.skillId)
             const targetPreview = previews.get(to.skillId)
-            const selectedPath = to.skillId === selectedSkillId
             const sourceOwned = sourcePreview?.owned === true
             const targetOwned = targetPreview?.owned === true
+            const layout = layoutSkillConnector(start, end, {
+              nodeSize: NODE_SIZE,
+              startClearance: sourceOwned ? 10 : 7,
+            })
+            if (layout === null) return null
+            const selectedPath = to.skillId === selectedSkillId
             const sharedAttributes = {
               'data-owned': sourceOwned && targetOwned,
               'data-source-owned': sourceOwned || undefined,
@@ -778,14 +779,14 @@ function SkillTreeViewport({
               'data-selection-dimmed':
                 hasSelection && !selectedPath ? true : undefined,
             } as const
-            if (!sourceOwned) {
+            if (sourceOwned) {
               return (
                 <path
                   key={`${from.skillId}-${to.skillId}`}
-                  className="skill-tree-connection skill-tree-connection--unmet"
-                  d={buildTaperedSkillConnectorPath(
-                    { x: startX, y: startY },
-                    { x: endX, y: endY },
+                  className="skill-tree-connection skill-tree-connection--met"
+                  d={buildSolidSkillConnectorPath(
+                    layout.start,
+                    layout.arrowTip,
                     { width: selectedPath ? 7 : 6 },
                   )}
                   {...sharedAttributes}
@@ -793,15 +794,22 @@ function SkillTreeViewport({
               )
             }
             return (
-              <line
-                key={`${from.skillId}-${to.skillId}`}
-                className="skill-tree-connection skill-tree-connection--met"
-                x1={startX}
-                y1={startY}
-                x2={endX}
-                y2={endY}
-                {...sharedAttributes}
-              />
+              <g key={`${from.skillId}-${to.skillId}`}>
+                <path
+                  className="skill-tree-connection skill-tree-connection--unmet"
+                  d={buildTaperedSkillConnectorPath(
+                    layout.start,
+                    layout.bodyEnd,
+                    { width: selectedPath ? 7 : 6 },
+                  )}
+                  {...sharedAttributes}
+                />
+                <path
+                  className="skill-tree-connection skill-tree-connection-arrow"
+                  d={layout.arrowPath}
+                  {...sharedAttributes}
+                />
+              </g>
             )
           })}
         </svg>
@@ -855,8 +863,8 @@ function SkillTreeViewport({
                 .filter(Boolean)
                 .join('. ')}
               style={{
-                left: position.x - NODE_SIZE / 2,
-                top: position.y - NODE_SIZE / 2,
+                left: position.x,
+                top: position.y,
               }}
               onClick={() => onSelect(node.skillId)}
             >
