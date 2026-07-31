@@ -38,6 +38,7 @@ const startSkill = {
     eligible: true,
     code: 'purchasable',
     affectedSkillIds: ['startHereTree'],
+    pointsRequired: 1n,
   },
   refund: {
     eligible: false,
@@ -575,9 +576,14 @@ describe('SkillsSurface', () => {
         name: /Cash & Science\. Cost: 1 Skill Points/,
       }),
     )
-    const assign = screen.getByRole('button', { name: 'Assign Skill' })
+    const assign = screen.getByRole('button', {
+      name: 'Assign Skill. Will cost 1.00 Skill Points',
+    })
 
     expect(assign).toBeDisabled()
+    expect(
+      screen.getByText('Will cost 1.00 Skill Points'),
+    ).toBeInTheDocument()
     expect(
       screen.queryByText('This action is not currently available.'),
     ).not.toBeInTheDocument()
@@ -640,7 +646,9 @@ describe('SkillsSurface', () => {
       screen.getByRole('dialog', { name: 'Cash & Science' }),
     ).toBeInTheDocument()
     await user.click(
-      screen.getByRole('button', { name: 'Assign Skill' }),
+      screen.getByRole('button', {
+        name: 'Assign Skill. Will cost 1.00 Skill Points',
+      }),
     )
 
     expect(dispatchPlayer).toHaveBeenCalledWith({
@@ -650,6 +658,187 @@ describe('SkillsSurface', () => {
     expect(
       screen.getByRole('dialog', { name: 'Cash & Science' }),
     ).toBeInTheDocument()
+  })
+
+  test('confirms a canonical prerequisite cascade before assigning it', async () => {
+    const user = userEvent.setup()
+    const dispatchPlayer = createDispatchPlayer()
+    const cascadeCatalog: CanonicalSkillCatalogPreview = {
+      ...catalog,
+      skills: [
+        startSkill,
+        createSkillPreview('assemblyLineTree', {
+          cost: 1n,
+          requiredSkillIds: ['startHereTree'],
+          purchase: {
+            eligible: true,
+            code: 'purchasable',
+            affectedSkillIds: [
+              'startHereTree',
+              'assemblyLineTree',
+            ],
+            pointsRequired: 2n,
+          },
+        }),
+      ],
+    }
+    render(
+      createSkillElement(
+        dispatchPlayer,
+        0.5,
+        1,
+        cascadeCatalog,
+      ),
+    )
+
+    await user.click(
+      screen.getByRole('button', {
+        name: 'Assembly Lines. Cost: 1 Skill Points',
+      }),
+    )
+    await user.click(
+      screen.getByRole('button', {
+        name: 'Assign Skill. Will cost 2.00 Skill Points',
+      }),
+    )
+
+    expect(dispatchPlayer).not.toHaveBeenCalled()
+    expect(
+      screen.getByText('Also assign these required skills:'),
+    ).toBeInTheDocument()
+    const affected = screen.getByRole('list', {
+      name: 'Skills affected by this change',
+    })
+    expect(within(affected).getByText('Cash & Science')).toBeInTheDocument()
+    expect(affected.querySelectorAll('img')).toHaveLength(1)
+
+    await user.click(screen.getByRole('button', { name: 'Confirm' }))
+    expect(dispatchPlayer).toHaveBeenCalledWith({
+      kind: 'skill.purchase',
+      skillId: 'assemblyLineTree',
+    })
+  })
+
+  test('shows and confirms the canonical total refund cascade', async () => {
+    const user = userEvent.setup()
+    const dispatchPlayer = createDispatchPlayer()
+    const ownedCatalog: CanonicalSkillCatalogPreview = {
+      ...catalog,
+      skills: [
+        {
+          ...startSkill,
+          owned: true,
+          visualState: 'owned',
+          purchase: {
+            eligible: false,
+            code: 'already-owned',
+            affectedSkillIds: [],
+            pointsRequired: 0n,
+          },
+          refund: {
+            eligible: true,
+            code: 'refundable',
+            affectedSkillIds: [
+              'assemblyLineTree',
+              'startHereTree',
+            ],
+            pointsReturned: 4n,
+            fragmentsRemoved: 0n,
+          },
+        },
+      ],
+    }
+    render(
+      createSkillElement(
+        dispatchPlayer,
+        0.5,
+        1,
+        ownedCatalog,
+      ),
+    )
+
+    await user.click(
+      screen.getByRole('button', {
+        name: 'Cash & Science. Owned',
+      }),
+    )
+    const unassign = screen.getByRole('button', {
+      name: 'Unassign Skill. Will refund 4.00 Skill Points',
+    })
+
+    expect(
+      screen.getByText('Will refund 4.00 Skill Points'),
+    ).toBeInTheDocument()
+    await user.click(unassign)
+    expect(dispatchPlayer).not.toHaveBeenCalled()
+    expect(
+      screen.getByText('Also unassign these dependent skills:'),
+    ).toBeInTheDocument()
+    const affected = screen.getByRole('list', {
+      name: 'Skills affected by this change',
+    })
+    expect(within(affected).getByText('Assembly Lines')).toBeInTheDocument()
+
+    await user.click(screen.getByRole('button', { name: 'Confirm' }))
+    expect(dispatchPlayer).toHaveBeenCalledWith({
+      kind: 'skill.refund',
+      skillId: 'startHereTree',
+    })
+  })
+
+  test('unassigns immediately when no dependent skill is affected', async () => {
+    const user = userEvent.setup()
+    const dispatchPlayer = createDispatchPlayer()
+    const ownedCatalog: CanonicalSkillCatalogPreview = {
+      ...catalog,
+      skills: [
+        {
+          ...startSkill,
+          owned: true,
+          visualState: 'owned',
+          purchase: {
+            eligible: false,
+            code: 'already-owned',
+            affectedSkillIds: [],
+            pointsRequired: 0n,
+          },
+          refund: {
+            eligible: true,
+            code: 'refundable',
+            affectedSkillIds: ['startHereTree'],
+            pointsReturned: 1n,
+            fragmentsRemoved: 0n,
+          },
+        },
+      ],
+    }
+    render(
+      createSkillElement(
+        dispatchPlayer,
+        0.5,
+        1,
+        ownedCatalog,
+      ),
+    )
+
+    await user.click(
+      screen.getByRole('button', {
+        name: 'Cash & Science. Owned',
+      }),
+    )
+    await user.click(
+      screen.getByRole('button', {
+        name: 'Unassign Skill. Will refund 1.00 Skill Points',
+      }),
+    )
+
+    expect(
+      screen.queryByRole('group', { name: 'Confirm skill change' }),
+    ).not.toBeInTheDocument()
+    expect(dispatchPlayer).toHaveBeenCalledWith({
+      kind: 'skill.refund',
+      skillId: 'startHereTree',
+    })
   })
 
   test('previews a canonical preset cascade before changing skill inclusion', async () => {
@@ -680,7 +869,9 @@ describe('SkillsSurface', () => {
     })
     const actionGroup = inclusion.closest('.skill-details__actions')
     expect(actionGroup).toContainElement(
-      screen.getByRole('button', { name: 'Assign Skill' }),
+      screen.getByRole('button', {
+        name: 'Assign Skill. Will cost 1.00 Skill Points',
+      }),
     )
     await user.click(inclusion)
 

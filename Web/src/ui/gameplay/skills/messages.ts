@@ -112,10 +112,34 @@ export const skillMessages = defineMessages({
     defaultMessage: 'Assign Skill',
     description: 'Button label for spending skill points to assign a skill.',
   },
+  purchasePointImpact: {
+    id: 'skills.purchase-point-impact',
+    defaultMessage: 'Will cost {value} Skill Points',
+    description:
+      'Exact skill-point total that assigning the selected skill will spend.',
+  },
+  purchasePointAction: {
+    id: 'skills.purchase-point-action',
+    defaultMessage: 'Assign Skill. Will cost {value} Skill Points',
+    description:
+      'Accessible label for assigning a skill with its exact skill-point cost.',
+  },
   refund: {
     id: 'skills.refund',
     defaultMessage: 'Unassign Skill',
     description: 'Button label for refunding and unassigning an owned skill.',
+  },
+  refundPointImpact: {
+    id: 'skills.refund-point-impact',
+    defaultMessage: 'Will refund {value} Skill Points',
+    description:
+      'Canonical total skill points returned when unassigning the selected skill and any affected dependants.',
+  },
+  refundPointAction: {
+    id: 'skills.refund-point-action',
+    defaultMessage: 'Unassign Skill. Will refund {value} Skill Points',
+    description:
+      'Accessible label for unassigning a skill with its canonical total skill-point refund.',
   },
   unavailable: {
     id: 'skills.unavailable',
@@ -208,6 +232,12 @@ export const skillMessages = defineMessages({
     defaultMessage: 'Confirm preset change',
     description: 'Accessible heading for reviewing a skill preset change.',
   },
+  confirmSkillChange: {
+    id: 'skills.confirm-skill-change',
+    defaultMessage: 'Confirm skill change',
+    description:
+      'Accessible heading for reviewing a cascading skill assignment or refund.',
+  },
   includeDependencies: {
     id: 'skills.include-dependencies',
     defaultMessage: 'Also include these required skills:',
@@ -218,10 +248,23 @@ export const skillMessages = defineMessages({
     defaultMessage: 'Also remove these dependent skills:',
     description: 'Heading for dependent skills that will be removed from a preset.',
   },
+  assignDependencies: {
+    id: 'skills.assign-dependencies',
+    defaultMessage: 'Also assign these required skills:',
+    description:
+      'Heading for prerequisite skills that will be assigned with the selected skill.',
+  },
+  unassignDependants: {
+    id: 'skills.unassign-dependants',
+    defaultMessage: 'Also unassign these dependent skills:',
+    description:
+      'Heading for dependent skills that will be unassigned with the selected skill.',
+  },
   affectedSkills: {
     id: 'skills.affected-skills',
     defaultMessage: 'Skills affected by this change',
-    description: 'Accessible label for the skills changed by a preset edit.',
+    description:
+      'Accessible label for skills changed by a cascading Skills action.',
   },
   confirm: {
     id: 'skills.confirm',

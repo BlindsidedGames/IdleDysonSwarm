@@ -47,6 +47,12 @@ export interface CanonicalSkillActionPreview {
   readonly affectedSkillIds: readonly string[]
 }
 
+interface CanonicalSkillPurchasePlan
+  extends CanonicalSkillActionPreview {
+  readonly pointsRequired: bigint
+  readonly reason: string
+}
+
 export type CanonicalSkillVisualState =
   | 'root'
   | 'fragment'
@@ -69,7 +75,9 @@ export interface CanonicalSkillAvailabilityPreview {
   readonly requiredSkillIds: readonly string[]
   readonly shadowRequiredSkillIds: readonly string[]
   readonly exclusiveWithSkillIds: readonly string[]
-  readonly purchase: CanonicalSkillActionPreview
+  readonly purchase: CanonicalSkillActionPreview & {
+    readonly pointsRequired: bigint
+  }
   readonly refund: CanonicalSkillActionPreview & {
     readonly pointsReturned: bigint
     readonly fragmentsRemoved: bigint
@@ -107,7 +115,7 @@ export function previewCanonicalSkillCatalog(
   const skills = [...definitions.values()].map((definition) => {
     const owned = state.skills.byId[definition.id]?.owned === true
     const unlocked = isUnlocked(definition, state)
-    const purchase = purchaseWithDefinitions(
+    const purchase = planPurchaseWithDefinitions(
       state,
       definition.id,
       definitions,
@@ -117,20 +125,10 @@ export function previewCanonicalSkillCatalog(
       definition.id,
       definitions,
     )
-    const purchaseAffected =
-      purchase.accepted && purchase.changed
-        ? purchase.affectedSkillIds
-        : []
     const refundAffected =
       refund.accepted && refund.changed
         ? refund.affectedSkillIds
         : []
-    const purchaseCode =
-      purchase.accepted
-        ? purchase.changed
-          ? 'purchasable'
-          : 'already-owned'
-        : purchase.code
     const refundCode =
       refund.accepted
         ? refund.changed
@@ -171,9 +169,13 @@ export function previewCanonicalSkillCatalog(
         ...definition.exclusiveWith,
       ]),
       purchase: Object.freeze({
-        eligible: purchase.accepted && purchase.changed,
-        code: purchaseCode,
-        affectedSkillIds: Object.freeze([...purchaseAffected]),
+        eligible:
+          purchase.eligible && purchase.affectedSkillIds.length > 0,
+        code: purchase.code,
+        affectedSkillIds: Object.freeze([
+          ...purchase.affectedSkillIds,
+        ]),
+        pointsRequired: purchase.pointsRequired,
       }),
       refund: Object.freeze({
         eligible: refund.accepted && refund.changed,
@@ -192,8 +194,9 @@ export function previewCanonicalSkillCatalog(
 }
 
 /**
- * Purchases one authored skill after applying the same visibility,
- * prerequisite, exclusivity, point, and fragment rules as the Unity tree.
+ * Purchases an authored skill and any missing prerequisites as one atomic
+ * transaction after applying the canonical visibility, dependency,
+ * exclusivity, point, and fragment rules.
  */
 export function purchaseCanonicalSkill(
   state: CanonicalGameStateV1,
@@ -217,68 +220,167 @@ function purchaseWithDefinitions(
   skillId: string,
   definitions: ReadonlyMap<string, SkillDefinition>,
 ): CanonicalSkillTransactionResult {
-  const definition = definitions.get(skillId)
-  if (definition === undefined) {
-    return rejected(state, 'SKILL-UNKNOWN', `Unknown skill '${skillId}'.`)
-  }
-  if (state.skills.byId[skillId]?.owned === true) {
+  const plan = planPurchaseWithDefinitions(
+    state,
+    skillId,
+    definitions,
+  )
+  if (plan.eligible && plan.affectedSkillIds.length === 0) {
     return accepted(state, false, [])
   }
-  if (!isUnlocked(definition, state)) {
-    return rejected(state, 'SKILL-LOCKED', `Skill '${skillId}' is locked.`)
+  if (!plan.eligible) {
+    return rejected(state, plan.code, plan.reason)
   }
-  if (!requirementsMet(definition.required, state.skills.byId)) {
-    return rejected(
-      state,
-      'SKILL-REQUIREMENT',
-      `Skill '${skillId}' has an unmet required skill.`,
-    )
-  }
-  if (!requirementsMet(definition.shadowRequired, state.skills.byId)) {
-    return rejected(
-      state,
-      'SKILL-SHADOW-REQUIREMENT',
-      `Skill '${skillId}' has an unmet shadow requirement.`,
-    )
-  }
-  if (hasOwned(definition.exclusiveWith, state.skills.byId)) {
-    return rejected(
-      state,
-      'SKILL-EXCLUSIVE',
-      `Skill '${skillId}' conflicts with an owned skill.`,
-    )
-  }
-  if (state.skills.points < definition.cost) {
-    return rejected(
-      state,
-      'SKILL-INSUFFICIENT-POINTS',
-      `Skill '${skillId}' costs ${definition.cost} skill points.`,
+
+  let fragments = state.skills.fragments
+  let activeAutoAssignment = state.skills.activeAutoAssignment
+  const byId = { ...state.skills.byId }
+  for (const affectedSkillId of plan.affectedSkillIds) {
+    const definition = definitions.get(affectedSkillId)!
+    const runtime = byId[affectedSkillId] ?? emptyRuntime()
+    byId[affectedSkillId] = { ...runtime, owned: true }
+    fragments += definition.fragment ? 1n : 0n
+    activeAutoAssignment = appendUnique(
+      activeAutoAssignment,
+      affectedSkillId,
     )
   }
 
-  const runtime = state.skills.byId[skillId] ?? emptyRuntime()
-  const byId = {
-    ...state.skills.byId,
-    [skillId]: { ...runtime, owned: true },
-  }
   return accepted(
     {
       ...state,
       skills: {
         ...state.skills,
-        points: state.skills.points - definition.cost,
-        fragments:
-          state.skills.fragments + (definition.fragment ? 1n : 0n),
+        points: state.skills.points - plan.pointsRequired,
+        fragments,
         byId,
-        activeAutoAssignment: appendUnique(
-          state.skills.activeAutoAssignment,
-          skillId,
-        ),
+        activeAutoAssignment,
       },
     },
     true,
-    [skillId],
+    plan.affectedSkillIds,
   )
+}
+
+function planPurchaseWithDefinitions(
+  state: CanonicalGameStateV1,
+  skillId: string,
+  definitions: ReadonlyMap<string, SkillDefinition>,
+): CanonicalSkillPurchasePlan {
+  if (!definitions.has(skillId)) {
+    return purchasePlanRejected(
+      'SKILL-UNKNOWN',
+      `Unknown skill '${skillId}'.`,
+    )
+  }
+  if (state.skills.byId[skillId]?.owned === true) {
+    return {
+      eligible: true,
+      code: 'already-owned',
+      affectedSkillIds: [],
+      pointsRequired: 0n,
+      reason: '',
+    }
+  }
+
+  const byId = { ...state.skills.byId }
+  const visiting = new Set<string>()
+  const planned = new Set<string>()
+  const affectedSkillIds: string[] = []
+  let pointsRequired = 0n
+  let failure: CanonicalSkillPurchasePlan | null = null
+
+  const visit = (candidateId: string): boolean => {
+    if (byId[candidateId]?.owned === true || planned.has(candidateId)) {
+      return true
+    }
+    const definition = definitions.get(candidateId)
+    if (definition === undefined) {
+      failure = purchasePlanRejected(
+        'SKILL-DEFINITION-GAP',
+        `Skill '${candidateId}' is required but has no definition.`,
+      )
+      return false
+    }
+    if (visiting.has(candidateId)) {
+      failure = purchasePlanRejected(
+        'SKILL-REQUIREMENT-CYCLE',
+        `Skill '${candidateId}' belongs to a circular requirement chain.`,
+      )
+      return false
+    }
+    if (!isUnlocked(definition, state)) {
+      failure = purchasePlanRejected(
+        'SKILL-LOCKED',
+        `Skill '${candidateId}' is locked.`,
+      )
+      return false
+    }
+
+    visiting.add(candidateId)
+    for (const requiredId of [
+      ...definition.required,
+      ...definition.shadowRequired,
+    ]) {
+      if (!visit(requiredId)) {
+        visiting.delete(candidateId)
+        return false
+      }
+    }
+    visiting.delete(candidateId)
+
+    if (hasOwned(definition.exclusiveWith, byId)) {
+      failure = purchasePlanRejected(
+        'SKILL-EXCLUSIVE',
+        `Skill '${candidateId}' conflicts with an owned or required skill.`,
+      )
+      return false
+    }
+
+    planned.add(candidateId)
+    affectedSkillIds.push(candidateId)
+    pointsRequired += definition.cost
+    byId[candidateId] = {
+      ...(byId[candidateId] ?? emptyRuntime()),
+      owned: true,
+    }
+    return true
+  }
+
+  if (!visit(skillId)) {
+    return failure!
+  }
+  if (state.skills.points < pointsRequired) {
+    return {
+      eligible: false,
+      code: 'SKILL-INSUFFICIENT-POINTS',
+      affectedSkillIds,
+      pointsRequired,
+      reason:
+        `Assigning '${skillId}' and its missing prerequisites costs ` +
+        `${pointsRequired} skill points.`,
+    }
+  }
+  return {
+    eligible: true,
+    code: 'purchasable',
+    affectedSkillIds,
+    pointsRequired,
+    reason: '',
+  }
+}
+
+function purchasePlanRejected(
+  code: string,
+  reason: string,
+): CanonicalSkillPurchasePlan {
+  return {
+    eligible: false,
+    code,
+    affectedSkillIds: [],
+    pointsRequired: 0n,
+    reason,
+  }
 }
 
 /**

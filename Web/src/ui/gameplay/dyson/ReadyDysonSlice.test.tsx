@@ -1051,6 +1051,9 @@ function snapshot(options: SnapshotOptions = {}): ReadySnapshot {
           'skill.select-preset': {
             routeAvailable: true,
           },
+          'skill.set-preset-color': {
+            routeAvailable: true,
+          },
           'skill.set-auto-assign-non-refundable': {
             routeAvailable: true,
           },
@@ -1118,6 +1121,7 @@ function snapshot(options: SnapshotOptions = {}): ReadySnapshot {
                 eligible: true,
                 code: 'purchasable',
                 affectedSkillIds: ['startHereTree'],
+                pointsRequired: 1n,
               },
               refund: {
                 eligible: false,

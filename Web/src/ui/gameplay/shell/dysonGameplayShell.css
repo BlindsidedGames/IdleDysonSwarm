@@ -52,6 +52,34 @@
   background: #243324;
 }
 
+.dyson-shell[data-route-theme="settings"]
+  .dyson-shell__side-panel {
+  border-color: #364d36;
+  background: #121a12;
+}
+
+.dyson-shell[data-route-theme="settings"]
+  .dyson-navigation--drawer
+  .dyson-navigation__link {
+  border-color: #101710;
+  background: #243324;
+  color: #c9dec9;
+}
+
+.dyson-shell[data-route-theme="settings"]
+  .dyson-navigation--drawer
+  .dyson-navigation__link[aria-current="page"] {
+  background: #3f7042;
+  color: white;
+}
+
+.dyson-shell[data-route-theme="settings"]
+  .dyson-navigation__link[aria-current="page"]
+  .dyson-navigation__icon
+  img {
+  filter: sepia(1) saturate(4) hue-rotate(65deg) brightness(1.25);
+}
+
 .dyson-shell[data-route-theme="research"] {
   --resource-clearance-color: #181f1e;
   --bot-distribution-track-color: #263a38;
@@ -157,14 +185,20 @@
 }
 
 .dyson-shell[data-route-theme="infinity"] {
-  --resource-clearance-color: #1c1427;
+  --infinity-panel-color: #30244f;
+  --resource-clearance-color: var(--infinity-panel-color);
   background: #1c1427;
+}
+
+.dyson-shell[data-route-theme="infinity"]
+  .dyson-resource-header {
+  background: var(--infinity-panel-color);
 }
 
 .dyson-shell[data-route-theme="infinity"]
   .dyson-shell__bottom-navigation {
   border-color: #5b4674;
-  background: #30244f;
+  background: var(--infinity-panel-color);
 }
 
 .dyson-shell[data-route-theme="infinity"]
@@ -253,8 +287,8 @@
   display: grid;
   grid-template-columns: 1fr 1.4fr 1fr;
   align-items: start;
-  min-block-size: 5.2rem;
-  padding-block: max(0.55rem, env(safe-area-inset-top)) 0.35rem;
+  min-block-size: 4.7rem;
+  padding-block: max(0.55rem, env(safe-area-inset-top)) 0.18rem;
   padding-inline: max(1rem, env(safe-area-inset-left))
     max(1rem, env(safe-area-inset-right));
   background: transparent;
@@ -361,8 +395,8 @@
   .dyson-resource-header {
     grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
     column-gap: 0.3rem;
-    min-block-size: 4.25rem;
-    padding-block: max(0.48rem, env(safe-area-inset-top)) 0.28rem;
+    min-block-size: 3.2rem;
+    padding-block: max(0.42rem, env(safe-area-inset-top)) 0.12rem;
     padding-inline: max(0.58rem, env(safe-area-inset-left))
       max(0.58rem, env(safe-area-inset-right));
   }
@@ -595,29 +629,6 @@
   color: #c45adc;
 }
 
-.dyson-navigation--drawer
-  [data-navigation-id="settings"]
-  .dyson-navigation__link {
-  border-color: #152415;
-  background: #2d5530;
-  color: #b9dfbb;
-}
-
-.dyson-navigation--drawer
-  [data-navigation-id="settings"]
-  .dyson-navigation__link[aria-current="page"] {
-  background: #3f7042;
-  color: #ecffed;
-}
-
-.dyson-navigation
-  [data-navigation-id="settings"]
-  .dyson-navigation__link[aria-current="page"]
-  .dyson-navigation__icon
-  img {
-  filter: sepia(1) saturate(4) hue-rotate(65deg) brightness(1.25);
-}
-
 .dyson-navigation__link:disabled {
   cursor: default;
   opacity: 0.72;
@@ -793,7 +804,7 @@
   }
 
   .dyson-resource-header {
-    min-block-size: 6.2rem;
+    min-block-size: 4.7rem;
     padding-inline: 1.5rem;
   }
 

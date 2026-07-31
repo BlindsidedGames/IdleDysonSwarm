@@ -1,7 +1,7 @@
 @import "../../tokens/tokens.css";
 
 .infinity-surface {
-  --infinity-panel: #30244f;
+  --infinity-panel: var(--infinity-panel-color, #30244f);
   --infinity-panel-raised: #3a2b5b;
   --infinity-accent: #9b74ff;
   --infinity-accent-lead: #d3c2ff;

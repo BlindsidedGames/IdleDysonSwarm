@@ -656,6 +656,18 @@
   min-block-size: 2.75rem;
 }
 
+.skill-details__point-action {
+  flex-direction: column;
+  gap: 0.05rem;
+  line-height: 1.05;
+}
+
+.skill-details__point-action small {
+  font-size: 0.72em;
+  font-weight: 700;
+  opacity: 0.82;
+}
+
 .skill-details__preset-toggle {
   display: flex;
   flex: 1 1 13rem;
@@ -677,7 +689,8 @@
   accent-color: var(--skill-dialog-accent);
 }
 
-.skill-details__queue-confirmation {
+.skill-details__queue-confirmation,
+.skill-details__action-confirmation {
   flex-basis: 100%;
 }
 

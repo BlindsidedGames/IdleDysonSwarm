@@ -4851,6 +4851,20 @@
       "value": "‬"
     }
   ],
+  "skills.assign-dependencies": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "∀ʅso ɐssıƃu ʇɥǝsǝ ɹǝbnıɹǝp sʞıʅʅs:"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
   "skills.cancel": [
     {
       "type": 0,
@@ -4929,6 +4943,20 @@
     {
       "type": 0,
       "value": "Ↄouɟıɹɯ dɹǝsǝʇ ɔɥɐuƃǝ"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "skills.confirm-skill-change": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "Ↄouɟıɹɯ sʞıʅʅ ɔɥɐuƃǝ"
     },
     {
       "type": 0,
@@ -5639,6 +5667,50 @@
       "value": "‬"
     }
   ],
+  "skills.purchase-point-action": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "∀ssıƃu Sʞıʅʅ. Mıʅʅ ɔosʇ "
+    },
+    {
+      "type": 1,
+      "value": "value"
+    },
+    {
+      "type": 0,
+      "value": " Sʞıʅʅ Ԁoıuʇs"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "skills.purchase-point-impact": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "Mıʅʅ ɔosʇ "
+    },
+    {
+      "type": 1,
+      "value": "value"
+    },
+    {
+      "type": 0,
+      "value": " Sʞıʅʅ Ԁoıuʇs"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
   "skills.queued": [
     {
       "type": 0,
@@ -5661,6 +5733,50 @@
     {
       "type": 0,
       "value": "∩uɐssıƃu Sʞıʅʅ"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "skills.refund-point-action": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "∩uɐssıƃu Sʞıʅʅ. Mıʅʅ ɹǝɟnup "
+    },
+    {
+      "type": 1,
+      "value": "value"
+    },
+    {
+      "type": 0,
+      "value": " Sʞıʅʅ Ԁoıuʇs"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "skills.refund-point-impact": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "Mıʅʅ ɹǝɟnup "
+    },
+    {
+      "type": 1,
+      "value": "value"
+    },
+    {
+      "type": 0,
+      "value": " Sʞıʅʅ Ԁoıuʇs"
     },
     {
       "type": 0,
@@ -5853,6 +5969,20 @@
     {
       "type": 0,
       "value": "ᗡɹɐƃ ʇo dɐu. Ԁıuɔɥ oɹ nsǝ ʇɥǝ zooɯ ɔouʇɹoʅs ʇo zooɯ. Sǝɐɹɔɥ ɐup dɹǝss Ǝuʇǝɹ ʇo odǝu ʇɥǝ ɟıɹsʇ ɯɐʇɔɥıuƃ sʞıʅʅ."
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "skills.unassign-dependants": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "∀ʅso nuɐssıƃu ʇɥǝsǝ pǝdǝupǝuʇ sʞıʅʅs:"
     },
     {
       "type": 0,

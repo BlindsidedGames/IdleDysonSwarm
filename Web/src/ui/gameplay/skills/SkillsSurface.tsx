@@ -954,6 +954,37 @@ interface SkillDetailsProps {
   ) => Promise<boolean>
 }
 
+function AffectedSkillList({
+  skillIds,
+  nodeById,
+  label,
+}: {
+  readonly skillIds: readonly string[]
+  readonly nodeById: ReadonlyMap<string, SkillPresentationNode>
+  readonly label: string
+}) {
+  return (
+    <ul className="skill-details__affected-skills" aria-label={label}>
+      {skillIds.map((skillId) => {
+        const affectedNode = nodeById.get(skillId)
+        return (
+          <li key={skillId}>
+            {affectedNode && (
+              <img
+                src={iconByFileName.get(
+                  affectedNode.icon.fileName,
+                )}
+                alt=""
+              />
+            )}
+            <span>{affectedNode?.displayName ?? skillId}</span>
+          </li>
+        )
+      })}
+    </ul>
+  )
+}
+
 function SkillDetails({
   locale,
   fragments,
@@ -972,6 +1003,10 @@ function SkillDetails({
   const intl = useIntl()
   const [queuePreview, setQueuePreview] = useState<{
     readonly request: SkillPresetQueueChangeRequest
+    readonly affectedSkillIds: readonly string[]
+  } | null>(null)
+  const [actionPreview, setActionPreview] = useState<{
+    readonly kind: 'purchase' | 'refund'
     readonly affectedSkillIds: readonly string[]
   } | null>(null)
   const [queuePending, setQueuePending] = useState(false)
@@ -1014,6 +1049,7 @@ function SkillDetails({
   }
   const requestQueueChange = async (included: boolean) => {
     if (presetActions === undefined || queuePending) return
+    setActionPreview(null)
     const request = {
       slot: selectedPresetSlot,
       skillId: node.skillId,
@@ -1038,6 +1074,35 @@ function SkillDetails({
     } finally {
       setQueuePending(false)
     }
+  }
+  const applySkillAction = async (kind: 'purchase' | 'refund') => {
+    const changed = await dispatch(
+      {
+        kind: kind === 'purchase' ? 'skill.purchase' : 'skill.refund',
+        skillId: node.skillId,
+      },
+      {
+        skillId: node.skillId,
+        expectedOwned: kind === 'purchase',
+        closeDetails: true,
+      },
+    )
+    if (changed) setActionPreview(null)
+  }
+  const requestSkillAction = (kind: 'purchase' | 'refund') => {
+    const affectedSkillIds =
+      kind === 'purchase'
+        ? preview.purchase.affectedSkillIds
+        : preview.refund.affectedSkillIds
+    const additionalSkillIds = affectedSkillIds.filter(
+      (skillId) => skillId !== node.skillId,
+    )
+    setQueuePreview(null)
+    if (additionalSkillIds.length > 0) {
+      setActionPreview({ kind, affectedSkillIds })
+      return
+    }
+    void applySkillAction(kind)
   }
 
   return (
@@ -1128,48 +1193,60 @@ function SkillDetails({
           {!preview.owned ? (
             <Button
               variant="primary"
+              className="skill-details__point-action"
+              aria-label={intl.formatMessage(
+                messages.purchasePointAction,
+                {
+                  value: formatGameNumber(
+                    locale,
+                    preview.purchase.pointsRequired,
+                  ),
+                },
+              )}
               state={
                 pendingKind === 'skill.purchase' ? 'pending' : 'idle'
               }
               disabled={!canPurchase}
-              onClick={() => {
-                void dispatch(
-                  {
-                    kind: 'skill.purchase',
-                    skillId: node.skillId,
-                  },
-                  {
-                    skillId: node.skillId,
-                    expectedOwned: true,
-                    closeDetails: true,
-                  },
-                )
-              }}
+              onClick={() => requestSkillAction('purchase')}
             >
-              {intl.formatMessage(messages.purchase)}
+              <span>{intl.formatMessage(messages.purchase)}</span>
+              <small>
+                {intl.formatMessage(messages.purchasePointImpact, {
+                  value: formatGameNumber(
+                    locale,
+                    preview.purchase.pointsRequired,
+                  ),
+                })}
+              </small>
             </Button>
           ) : (
             <Button
               variant="danger"
+              className="skill-details__point-action"
+              aria-label={intl.formatMessage(
+                messages.refundPointAction,
+                {
+                  value: formatGameNumber(
+                    locale,
+                    preview.refund.pointsReturned,
+                  ),
+                },
+              )}
               state={
                 pendingKind === 'skill.refund' ? 'pending' : 'idle'
               }
               disabled={!canRefund}
-              onClick={() => {
-                void dispatch(
-                  {
-                    kind: 'skill.refund',
-                    skillId: node.skillId,
-                  },
-                  {
-                    skillId: node.skillId,
-                    expectedOwned: false,
-                    closeDetails: true,
-                  },
-                )
-              }}
+              onClick={() => requestSkillAction('refund')}
             >
-              {intl.formatMessage(messages.refund)}
+              <span>{intl.formatMessage(messages.refund)}</span>
+              <small>
+                {intl.formatMessage(messages.refundPointImpact, {
+                  value: formatGameNumber(
+                    locale,
+                    preview.refund.pointsReturned,
+                  ),
+                })}
+              </small>
             </Button>
           )}
           {queuePreview && (
@@ -1187,33 +1264,13 @@ function SkillDetails({
                     : messages.removeDependants,
                 )}
               </p>
-              <ul
-                className="skill-details__affected-skills"
-                aria-label={intl.formatMessage(
-                  messages.affectedSkills,
+              <AffectedSkillList
+                skillIds={queuePreview.affectedSkillIds.filter(
+                  (skillId) => skillId !== node.skillId,
                 )}
-              >
-                {queuePreview.affectedSkillIds
-                  .filter((skillId) => skillId !== node.skillId)
-                  .map((skillId) => {
-                    const affectedNode = nodeById.get(skillId)
-                    return (
-                      <li key={skillId}>
-                        {affectedNode && (
-                          <img
-                            src={iconByFileName.get(
-                              affectedNode.icon.fileName,
-                            )}
-                            alt=""
-                          />
-                        )}
-                        <span>
-                          {affectedNode?.displayName ?? skillId}
-                        </span>
-                      </li>
-                    )
-                  })}
-              </ul>
+                nodeById={nodeById}
+                label={intl.formatMessage(messages.affectedSkills)}
+              />
               <Button
                 variant="primary"
                 state={queuePending ? 'pending' : 'idle'}
@@ -1226,6 +1283,54 @@ function SkillDetails({
               <Button
                 disabled={queuePending}
                 onClick={() => setQueuePreview(null)}
+              >
+                {intl.formatMessage(messages.cancel)}
+              </Button>
+            </div>
+          )}
+          {actionPreview && (
+            <div
+              className="skill-confirmation skill-details__action-confirmation"
+              role="group"
+              aria-label={intl.formatMessage(
+                messages.confirmSkillChange,
+              )}
+            >
+              <p>
+                {intl.formatMessage(
+                  actionPreview.kind === 'purchase'
+                    ? messages.assignDependencies
+                    : messages.unassignDependants,
+                )}
+              </p>
+              <AffectedSkillList
+                skillIds={actionPreview.affectedSkillIds.filter(
+                  (skillId) => skillId !== node.skillId,
+                )}
+                nodeById={nodeById}
+                label={intl.formatMessage(messages.affectedSkills)}
+              />
+              <Button
+                variant={
+                  actionPreview.kind === 'purchase'
+                    ? 'primary'
+                    : 'danger'
+                }
+                state={
+                  pendingKind ===
+                  `skill.${actionPreview.kind === 'purchase' ? 'purchase' : 'refund'}`
+                    ? 'pending'
+                    : 'idle'
+                }
+                onClick={() =>
+                  void applySkillAction(actionPreview.kind)
+                }
+              >
+                {intl.formatMessage(messages.confirm)}
+              </Button>
+              <Button
+                disabled={pendingKind !== null}
+                onClick={() => setActionPreview(null)}
               >
                 {intl.formatMessage(messages.cancel)}
               </Button>

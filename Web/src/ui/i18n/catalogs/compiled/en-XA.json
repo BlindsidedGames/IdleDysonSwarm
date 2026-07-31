@@ -4851,6 +4851,20 @@
       "value": "]"
     }
   ],
+  "skills.assign-dependencies": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Ȧŀşǿǿ ȧȧşşīɠƞ ŧħḗḗşḗḗ řḗḗɋŭŭīřḗḗḓ şķīŀŀş:"
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
   "skills.cancel": [
     {
       "type": 0,
@@ -4929,6 +4943,20 @@
     {
       "type": 0,
       "value": "Ƈǿǿƞƒīřḿ ƥřḗḗşḗḗŧ ƈħȧȧƞɠḗḗ"
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "skills.confirm-skill-change": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Ƈǿǿƞƒīřḿ şķīŀŀ ƈħȧȧƞɠḗḗ"
     },
     {
       "type": 0,
@@ -5639,6 +5667,50 @@
       "value": "]"
     }
   ],
+  "skills.purchase-point-action": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Ȧşşīɠƞ Şķīŀŀ. Ẇīŀŀ ƈǿǿşŧ "
+    },
+    {
+      "type": 1,
+      "value": "value"
+    },
+    {
+      "type": 0,
+      "value": " Şķīŀŀ Ƥǿǿīƞŧş"
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "skills.purchase-point-impact": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Ẇīŀŀ ƈǿǿşŧ "
+    },
+    {
+      "type": 1,
+      "value": "value"
+    },
+    {
+      "type": 0,
+      "value": " Şķīŀŀ Ƥǿǿīƞŧş"
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
   "skills.queued": [
     {
       "type": 0,
@@ -5661,6 +5733,50 @@
     {
       "type": 0,
       "value": "Ŭƞȧȧşşīɠƞ Şķīŀŀ"
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "skills.refund-point-action": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Ŭƞȧȧşşīɠƞ Şķīŀŀ. Ẇīŀŀ řḗḗƒŭŭƞḓ "
+    },
+    {
+      "type": 1,
+      "value": "value"
+    },
+    {
+      "type": 0,
+      "value": " Şķīŀŀ Ƥǿǿīƞŧş"
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "skills.refund-point-impact": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Ẇīŀŀ řḗḗƒŭŭƞḓ "
+    },
+    {
+      "type": 1,
+      "value": "value"
+    },
+    {
+      "type": 0,
+      "value": " Şķīŀŀ Ƥǿǿīƞŧş"
     },
     {
       "type": 0,
@@ -5853,6 +5969,20 @@
     {
       "type": 0,
       "value": "Ḓřȧȧɠ ŧǿǿ ƥȧȧƞ. Ƥīƞƈħ ǿǿř ŭŭşḗḗ ŧħḗḗ ẑǿǿǿǿḿ ƈǿǿƞŧřǿǿŀş ŧǿǿ ẑǿǿǿǿḿ. Şḗḗȧȧřƈħ ȧȧƞḓ ƥřḗḗşş Ḗƞŧḗḗř ŧǿǿ ǿǿƥḗḗƞ ŧħḗḗ ƒīřşŧ ḿȧȧŧƈħīƞɠ şķīŀŀ."
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "skills.unassign-dependants": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Ȧŀşǿǿ ŭŭƞȧȧşşīɠƞ ŧħḗḗşḗḗ ḓḗḗƥḗḗƞḓḗḗƞŧ şķīŀŀş:"
     },
     {
       "type": 0,

@@ -100,6 +100,7 @@ describe('canonical skill transactions', () => {
       purchase: {
         eligible: false,
         code: 'already-owned',
+        pointsRequired: 0n,
       },
       refund: {
         eligible: true,
@@ -244,9 +245,23 @@ describe('canonical skill transactions', () => {
     })
   })
 
-  test('previews blocked purchase and refund reasons without optimistic eligibility', () => {
+  test('previews canonical prerequisite cascades and blocked actions without optimistic eligibility', () => {
+    const affordable = previewCanonicalSkillCatalog(
+      stateWithSkills([], 2n),
+    )
+    expect(
+      affordable.skills.find(
+        (skill) => skill.skillId === 'assemblyLineTree',
+      )?.purchase,
+    ).toMatchObject({
+      eligible: true,
+      code: 'purchasable',
+      affectedSkillIds: ['startHereTree', 'assemblyLineTree'],
+      pointsRequired: 2n,
+    })
+
     const blocked = previewCanonicalSkillCatalog(
-      stateWithSkills([], 10n),
+      stateWithSkills([], 1n),
     )
     expect(
       blocked.skills.find(
@@ -254,7 +269,9 @@ describe('canonical skill transactions', () => {
       )?.purchase,
     ).toMatchObject({
       eligible: false,
-      code: 'SKILL-REQUIREMENT',
+      code: 'SKILL-INSUFFICIENT-POINTS',
+      affectedSkillIds: ['startHereTree', 'assemblyLineTree'],
+      pointsRequired: 2n,
     })
 
     const lockedRefund = previewCanonicalSkillCatalog(
@@ -270,25 +287,67 @@ describe('canonical skill transactions', () => {
     })
   })
 
-  test('enforces authored requirements and atomically purchases an eligible skill', () => {
-    const blocked = stateWithSkills([], 2n)
-    const rejected = purchaseCanonicalSkill(blocked, 'assemblyLineTree')
+  test('atomically purchases missing prerequisites in dependency order', () => {
+    const blocked = stateWithSkills([], 1n)
+    const rejected = purchaseCanonicalSkill(
+      blocked,
+      'assemblyLineTree',
+    )
     expect(rejected).toMatchObject({
       accepted: false,
-      code: 'SKILL-REQUIREMENT',
+      code: 'SKILL-INSUFFICIENT-POINTS',
       state: blocked,
     })
 
-    const eligible = stateWithSkills(['startHereTree'], 2n)
+    const eligible = stateWithSkills([], 2n)
     const purchased = purchaseCanonicalSkill(eligible, 'assemblyLineTree')
     expect(purchased.accepted).toBe(true)
     if (!purchased.accepted) return
-    expect(purchased.state.skills.points).toBe(1n)
-    expect(purchased.state.skills.byId.assemblyLineTree?.owned).toBe(true)
-    expect(purchased.state.skills.activeAutoAssignment).toContain(
+    expect(purchased.affectedSkillIds).toEqual([
+      'startHereTree',
       'assemblyLineTree',
-    )
+    ])
+    expect(purchased.state.skills.points).toBe(0n)
+    expect(purchased.state.skills.byId.startHereTree?.owned).toBe(true)
+    expect(purchased.state.skills.byId.assemblyLineTree?.owned).toBe(true)
+    expect(purchased.state.skills.activeAutoAssignment).toEqual([
+      'startHereTree',
+      'assemblyLineTree',
+    ])
+    expect(eligible.skills.byId.startHereTree?.owned).toBe(false)
     expect(eligible.skills.byId.assemblyLineTree?.owned).toBe(false)
+  })
+
+  test('purchases a multi-branch prerequisite closure with one exact total', () => {
+    const state = stateWithSkills([], 5n)
+    const preview = previewCanonicalSkillCatalog(state).skills.find(
+      (skill) => skill.skillId === 'parallelProcessing',
+    )
+    expect(preview?.purchase).toMatchObject({
+      eligible: true,
+      pointsRequired: 5n,
+      affectedSkillIds: [
+        'startHereTree',
+        'serverTree',
+        'aiManagerTree',
+        'assemblyLineTree',
+        'parallelProcessing',
+      ],
+    })
+
+    const purchased = purchaseCanonicalSkill(
+      state,
+      'parallelProcessing',
+    )
+    expect(purchased.accepted).toBe(true)
+    if (!purchased.accepted) return
+    expect(purchased.affectedSkillIds).toEqual(
+      preview?.purchase.affectedSkillIds,
+    )
+    expect(purchased.state.skills.points).toBe(0n)
+    for (const skillId of purchased.affectedSkillIds) {
+      expect(purchased.state.skills.byId[skillId]?.owned).toBe(true)
+    }
   })
 
   test('tracks fragment ownership with fragment skill purchases', () => {

@@ -2627,6 +2627,12 @@
       "value": "Skills affected by this change"
     }
   ],
+  "skills.assign-dependencies": [
+    {
+      "type": 0,
+      "value": "Also assign these required skills:"
+    }
+  ],
   "skills.cancel": [
     {
       "type": 0,
@@ -2661,6 +2667,12 @@
     {
       "type": 0,
       "value": "Confirm preset change"
+    }
+  ],
+  "skills.confirm-skill-change": [
+    {
+      "type": 0,
+      "value": "Confirm skill change"
     }
   ],
   "skills.copied": [
@@ -3047,6 +3059,34 @@
       "value": "Assign Skill"
     }
   ],
+  "skills.purchase-point-action": [
+    {
+      "type": 0,
+      "value": "Assign Skill. Will cost "
+    },
+    {
+      "type": 1,
+      "value": "value"
+    },
+    {
+      "type": 0,
+      "value": " Skill Points"
+    }
+  ],
+  "skills.purchase-point-impact": [
+    {
+      "type": 0,
+      "value": "Will cost "
+    },
+    {
+      "type": 1,
+      "value": "value"
+    },
+    {
+      "type": 0,
+      "value": " Skill Points"
+    }
+  ],
   "skills.queued": [
     {
       "type": 0,
@@ -3057,6 +3097,34 @@
     {
       "type": 0,
       "value": "Unassign Skill"
+    }
+  ],
+  "skills.refund-point-action": [
+    {
+      "type": 0,
+      "value": "Unassign Skill. Will refund "
+    },
+    {
+      "type": 1,
+      "value": "value"
+    },
+    {
+      "type": 0,
+      "value": " Skill Points"
+    }
+  ],
+  "skills.refund-point-impact": [
+    {
+      "type": 0,
+      "value": "Will refund "
+    },
+    {
+      "type": 1,
+      "value": "value"
+    },
+    {
+      "type": 0,
+      "value": " Skill Points"
     }
   ],
   "skills.region": [
@@ -3153,6 +3221,12 @@
     {
       "type": 0,
       "value": "Drag to pan. Pinch or use the zoom controls to zoom. Search and press Enter to open the first matching skill."
+    }
+  ],
+  "skills.unassign-dependants": [
+    {
+      "type": 0,
+      "value": "Also unassign these dependent skills:"
     }
   ],
   "skills.unavailable": [

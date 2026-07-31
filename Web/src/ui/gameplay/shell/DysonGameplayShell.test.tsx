@@ -258,6 +258,12 @@ describe('Dyson gameplay responsive CSS contract', () => {
     expect(shellCss).toMatch(
       /\.dyson-resource-header\s*\{[^}]*background:\s*transparent;/,
     )
+    expect(shellCss).toMatch(
+      /\.dyson-resource-header\s*\{[^}]*min-block-size:\s*4\.7rem;[^}]*padding-block:\s*max\(0\.55rem,\s*env\(safe-area-inset-top\)\)\s*0\.18rem;/,
+    )
+    expect(shellCss).toMatch(
+      /@media \(max-width:\s*720px\)[\s\S]*\.dyson-resource-header\s*\{[^}]*min-block-size:\s*3\.2rem;[^}]*padding-block:\s*max\(0\.42rem,\s*env\(safe-area-inset-top\)\)\s*0\.12rem;/,
+    )
     expect(shellCss).not.toContain(
       'linear-gradient(180deg, #1c1420 70%',
     )
@@ -271,7 +277,23 @@ describe('Dyson gameplay responsive CSS contract', () => {
       /\.dyson-shell\[data-route-theme="research"\]\s*\{[^}]*--resource-clearance-color:\s*#181f1e;[^}]*background:\s*#181f1e;/,
     )
     expect(shellCss).toMatch(
-      /\.dyson-shell\[data-route-theme="infinity"\]\s*\{[^}]*--resource-clearance-color:\s*#1c1427;[^}]*background:\s*#1c1427;/,
+      /\.dyson-shell\[data-route-theme="settings"\][\s\S]*\.dyson-shell__side-panel\s*\{[^}]*border-color:\s*#364d36;[^}]*background:\s*#121a12;/,
+    )
+    expect(shellCss).toMatch(
+      /\.dyson-shell\[data-route-theme="settings"\][\s\S]*\.dyson-navigation--drawer[\s\S]*\.dyson-navigation__link\s*\{[^}]*border-color:\s*#101710;[^}]*background:\s*#243324;[^}]*color:\s*#c9dec9;/,
+    )
+    expect(shellCss).toMatch(
+      /\.dyson-shell\[data-route-theme="settings"\][\s\S]*\.dyson-navigation--drawer[\s\S]*\.dyson-navigation__link\[aria-current="page"\]\s*\{[^}]*background:\s*#3f7042;[^}]*color:\s*white;/,
+    )
+    expect(shellCss).toMatch(
+      /\.dyson-shell\[data-route-theme="settings"\][\s\S]*\.dyson-navigation__link\[aria-current="page"\][\s\S]*\.dyson-navigation__icon[\s\S]*img\s*\{[^}]*hue-rotate\(65deg\)/,
+    )
+    expect(shellCss).not.toContain('[data-navigation-id="settings"]')
+    expect(shellCss).toMatch(
+      /\.dyson-shell\[data-route-theme="infinity"\]\s*\{[^}]*--infinity-panel-color:\s*#30244f;[^}]*--resource-clearance-color:\s*var\(--infinity-panel-color\);[^}]*background:\s*#1c1427;/,
+    )
+    expect(shellCss).toMatch(
+      /\.dyson-shell\[data-route-theme="infinity"\][\s\S]*\.dyson-resource-header\s*\{[^}]*background:\s*var\(--infinity-panel-color\);/,
     )
     expect(shellCss).toMatch(
       /\.dyson-shell\s*\{[^}]*--bot-distribution-track-color:\s*#3d3440;[^}]*--bot-distribution-handle-color:\s*#c45cda;/,
