@@ -9,6 +9,11 @@ import type {
   DreamUpgradeFlag,
 } from '../game-state/types'
 import {
+  defaultSkillPresetColorId,
+  isSkillPresetColorId,
+  type SkillPresetColorId,
+} from '../game-state/skillPresetColors'
+import {
   feedAllToAvocado,
   type AvocadoFeedSource,
 } from '../simulation/avocadoDomain'
@@ -158,6 +163,11 @@ export type CanonicalGameCommand =
       readonly kind: 'skill.rename-preset'
       readonly slot: CanonicalSkillPresetSlot
       readonly name: string
+    }
+  | {
+      readonly kind: 'skill.set-preset-color'
+      readonly slot: CanonicalSkillPresetSlot
+      readonly colorId: SkillPresetColorId
     }
   | {
       readonly kind: 'skill.select-preset'
@@ -510,6 +520,10 @@ export const CANONICAL_GAME_COMMAND_SUPPORT = Object.freeze({
   'skill.rename-preset': {
     supported: true,
     authority: 'canonical preset-name setting',
+  },
+  'skill.set-preset-color': {
+    supported: true,
+    authority: 'canonical preset-color setting',
   },
   'skill.select-preset': {
     supported: true,
@@ -1252,6 +1266,42 @@ export function routeCanonicalGameCommand(
       )
     }
 
+    case 'skill.set-preset-color': {
+      if (!isSkillPresetColorId(command.colorId)) {
+        return rejectDomain(
+          state,
+          carriers,
+          'skill:invalid-preset-color',
+          command.kind,
+          `Unsupported preset color '${String(command.colorId)}'.`,
+        )
+      }
+      const preset = state.skills.presets[command.slot - 1]
+      const changed = preset.colorId !== command.colorId
+      return finalizeAccepted(
+        state,
+        changed
+          ? {
+              ...state,
+              skills: {
+                ...state.skills,
+                presets: replacePreset(
+                  state.skills.presets,
+                  command.slot,
+                  { ...preset, colorId: command.colorId },
+                ),
+              },
+            }
+          : state,
+        changed,
+        `skill:${changed ? 'preset-color-set' : 'unchanged'}`,
+        carriers,
+        options.runtimeEvaluation,
+        EMPTY_ISSUES,
+        false,
+      )
+    }
+
     case 'skill.add-to-current-preset':
     case 'skill.remove-from-current-preset': {
       const selected = carriers.selectedSkillPresetSlot
@@ -1338,6 +1388,9 @@ export function routeCanonicalGameCommand(
           name: parsed.payload.presetName,
           botDistribution: parsed.payload.botDistribution,
           skillIds: parsed.payload.skillIds,
+          colorId:
+            parsed.payload.colorId ??
+            defaultSkillPresetColorId(command.slot),
         },
       )
       if (carriers.selectedSkillPresetSlot !== command.slot) {

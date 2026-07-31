@@ -1,4 +1,5 @@
 import type { CanonicalGameStateV1 } from './types'
+import { isSkillPresetColorId } from './skillPresetColors'
 
 export interface CanonicalValidationResult {
   readonly valid: boolean
@@ -16,6 +17,13 @@ export function validateCanonicalGameState(
   if (state.skills.presets.length !== 5) {
     errors.push('Skills must contain exactly five presets.')
   }
+  state.skills.presets.forEach((preset, index) => {
+    if (!isSkillPresetColorId(preset.colorId)) {
+      errors.push(
+        `Skill preset ${index + 1} has an unsupported color '${String(preset.colorId)}'.`,
+      )
+    }
+  })
   for (const [tab, slot] of Object.entries(
     state.skills.tabPresetAutomation,
   )) {

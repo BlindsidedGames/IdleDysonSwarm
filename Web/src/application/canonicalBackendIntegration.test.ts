@@ -85,6 +85,11 @@ describe('frontend-ready canonical backend integration', () => {
       name: 'Frontend contract',
     })
     await expectChanged(firstCoordinator, firstApplication, {
+      kind: 'skill.set-preset-color',
+      slot: 1,
+      colorId: 'pink',
+    })
+    await expectChanged(firstCoordinator, firstApplication, {
       kind: 'dream.request-reset',
     })
     await expectChanged(firstCoordinator, firstApplication, {

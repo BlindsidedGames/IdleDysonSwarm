@@ -163,6 +163,36 @@ export const skillMessages = defineMessages({
     defaultMessage: 'Preset name',
     description: 'Label for the editable skill preset name.',
   },
+  presetColor: {
+    id: 'skills.preset-color',
+    defaultMessage: 'Preset color',
+    description: 'Label for the selectable skill preset color.',
+  },
+  presetColorCyan: {
+    id: 'skills.preset-color-cyan',
+    defaultMessage: 'Cyan',
+    description: 'Name of the cyan skill preset color.',
+  },
+  presetColorOrange: {
+    id: 'skills.preset-color-orange',
+    defaultMessage: 'Orange',
+    description: 'Name of the orange skill preset color.',
+  },
+  presetColorGold: {
+    id: 'skills.preset-color-gold',
+    defaultMessage: 'Gold',
+    description: 'Name of the gold skill preset color.',
+  },
+  presetColorRose: {
+    id: 'skills.preset-color-rose',
+    defaultMessage: 'Rose',
+    description: 'Name of the rose-red skill preset color.',
+  },
+  presetColorPink: {
+    id: 'skills.preset-color-pink',
+    defaultMessage: 'Pink',
+    description: 'Name of the pink skill preset color.',
+  },
   rename: {
     id: 'skills.rename',
     defaultMessage: 'Rename',

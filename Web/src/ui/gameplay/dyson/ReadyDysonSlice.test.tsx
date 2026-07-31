@@ -883,11 +883,11 @@ function snapshot(options: SnapshotOptions = {}): ReadySnapshot {
           byId: {},
           activeAutoAssignment: [],
           presets: [
-            { name: 'Preset 1', skillIds: [], botDistribution: 0 },
-            { name: 'Preset 2', skillIds: [], botDistribution: 0 },
-            { name: 'Preset 3', skillIds: [], botDistribution: 0 },
-            { name: 'Preset 4', skillIds: [], botDistribution: 0 },
-            { name: 'Preset 5', skillIds: [], botDistribution: 0 },
+            { name: 'Preset 1', skillIds: [], botDistribution: 0, colorId: 'cyan' },
+            { name: 'Preset 2', skillIds: [], botDistribution: 0, colorId: 'orange' },
+            { name: 'Preset 3', skillIds: [], botDistribution: 0, colorId: 'gold' },
+            { name: 'Preset 4', skillIds: [], botDistribution: 0, colorId: 'rose' },
+            { name: 'Preset 5', skillIds: [], botDistribution: 0, colorId: 'pink' },
           ],
           autoAssignNonRefundable: false,
           tabPresetAutomation: {

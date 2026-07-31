@@ -28,6 +28,10 @@ import {
   extractDysonSkillEffectEvaluationSnapshot,
   type DysonSkillEffectEvaluationSnapshot,
 } from './skillEffectEvaluationSnapshot'
+import {
+  defaultSkillPresetColorId,
+  isSkillPresetColorId,
+} from './skillPresetColors'
 
 const DREAM_EDUCATION_IDS = [
   'engineering',
@@ -670,6 +674,14 @@ export function dehydrateGameState(
   state.skills.presets.forEach((preset, index) => {
     const presetNumber = index + 1
     dysonRoot[`preset${presetNumber}Name`] = preset.name
+    const colorKey = `preset${presetNumber}ColorId`
+    if (
+      preset.colorId === defaultSkillPresetColorId(presetNumber)
+    ) {
+      delete dysonRoot[colorKey]
+    } else {
+      dysonRoot[colorKey] = preset.colorId
+    }
     dysonRoot[`botDistPreset${presetNumber}`] = preset.botDistribution
     dysonRoot[`skillAutoAssignmentIds${presetNumber}`] = [
       ...preset.skillIds,
@@ -982,6 +994,7 @@ function createSkillPresets(
   return Array.from({ length: 5 }, (_, index) => {
     const presetNumber = index + 1
     const name = source[`preset${presetNumber}Name`]
+    const colorId = source[`preset${presetNumber}ColorId`]
     return {
       name:
         typeof name === 'string' && name.length > 0
@@ -996,6 +1009,9 @@ function createSkillPresets(
           0.5,
         ),
       ),
+      colorId: isSkillPresetColorId(colorId)
+        ? colorId
+        : defaultSkillPresetColorId(presetNumber),
     }
   }) as unknown as CanonicalGameStateV1['skills']['presets']
 }

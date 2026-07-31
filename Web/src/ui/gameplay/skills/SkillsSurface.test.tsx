@@ -59,26 +59,31 @@ const presets = [
     name: 'Preset 1',
     skillIds: [],
     botDistribution: 0,
+    colorId: 'cyan',
   },
   {
     name: 'Preset 2',
     skillIds: ['startHereTree'],
     botDistribution: 0.5,
+    colorId: 'orange',
   },
   {
     name: 'Preset 3',
     skillIds: [],
     botDistribution: 1,
+    colorId: 'gold',
   },
   {
     name: 'Preset 4',
     skillIds: [],
     botDistribution: 0,
+    colorId: 'rose',
   },
   {
     name: 'Preset 5',
     skillIds: [],
     botDistribution: 0,
+    colorId: 'pink',
   },
 ] as const
 
@@ -104,6 +109,7 @@ function createSkillElement(
           purchase: true,
           refund: true,
           selectPreset: true,
+          setPresetColor: true,
           setAutoAssignNonRefundable: true,
           reset: true,
         }}
@@ -160,6 +166,7 @@ function createPresetActions(
       name: 'Science',
       queuedSkillCount: 3,
       workerPercent: 20,
+      colorId: 'pink' as const,
     })),
     importPreset: vi.fn(async () => true),
     ...overrides,
@@ -272,17 +279,17 @@ describe('SkillsSurface', () => {
     ).toHaveAttribute('data-selection-dimmed', 'true')
     expect(
       container.querySelectorAll(
-        '.skill-tree-viewport__connections line[data-selected-path="true"]',
+        '.skill-tree-viewport__connections [data-selected-path="true"]',
       ),
     ).toHaveLength(3)
     expect(
       container.querySelector(
-        '.skill-tree-viewport__connections line[data-source-owned="true"]',
+        '.skill-tree-viewport__connections line.skill-tree-connection--met[data-source-owned="true"]',
       ),
     ).toBeInTheDocument()
     expect(
       container.querySelector(
-        '.skill-tree-viewport__connections line[marker-end]',
+        '.skill-tree-viewport__connections path.skill-tree-connection--unmet:not([marker-end])',
       ),
     ).toBeInTheDocument()
     expect(
@@ -444,6 +451,7 @@ describe('SkillsSurface', () => {
             purchase: true,
             refund: true,
             selectPreset: true,
+            setPresetColor: true,
             setAutoAssignNonRefundable: true,
             reset: true,
           }}
@@ -496,6 +504,7 @@ describe('SkillsSurface', () => {
             purchase: true,
             refund: true,
             selectPreset: true,
+            setPresetColor: true,
             setAutoAssignNonRefundable: true,
             reset: true,
           }}
@@ -547,6 +556,7 @@ describe('SkillsSurface', () => {
             purchase: true,
             refund: true,
             selectPreset: true,
+            setPresetColor: true,
             setAutoAssignNonRefundable: true,
             reset: true,
           }}
@@ -794,6 +804,11 @@ describe('SkillsSurface', () => {
     expect(screen.getByText('80% Scientists')).toHaveClass(
       'skill-preset-summary__scientists',
     )
+    expect(
+      document.querySelector(
+        '.skill-preset-management__preview .skill-preset-color-swatch',
+      ),
+    ).toHaveStyle({ '--skill-preset-color': '#e38ace' })
     expect(screen.getByText('Replace Preset 1?')).toBeInTheDocument()
 
     await user.click(
@@ -806,6 +821,47 @@ describe('SkillsSurface', () => {
     expect(
       screen.queryByRole('dialog', { name: 'Manage Preset 1' }),
     ).not.toBeInTheDocument()
+  })
+
+  test('dispatches a preset color choice from the management dropdown', async () => {
+    const user = userEvent.setup()
+    const dispatchPlayer = createDispatchPlayer()
+    render(
+      createSkillElement(
+        dispatchPlayer,
+        0.5,
+        1,
+        catalog,
+        createPresetActions(),
+      ),
+    )
+
+    await user.click(
+      screen.getByRole('button', {
+        name: 'Skill presets and reset',
+      }),
+    )
+    await user.click(
+      screen.getByRole('button', {
+        name: 'Manage Preset 1',
+      }),
+    )
+    await user.click(
+      screen.getByText('Cyan', {
+        selector: '.skill-preset-color-picker summary span:last-child',
+      }),
+    )
+    await user.click(
+      screen.getByRole('button', {
+        name: 'Pink',
+      }),
+    )
+
+    expect(dispatchPlayer).toHaveBeenCalledWith({
+      kind: 'skill.set-preset-color',
+      slot: 1,
+      colorId: 'pink',
+    })
   })
 
   test('closes preset management with Escape and restores its ellipsis trigger', async () => {

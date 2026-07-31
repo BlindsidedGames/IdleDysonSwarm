@@ -110,6 +110,7 @@ describe('canonical skill preset transactions', () => {
       name: 'Science',
       botDistribution: 0.8,
       skillIds: ['startHereTree', 'doubleScienceTree'],
+      colorId: 'pink',
     }
     const serialized = serializeCanonicalSkillPreset(preset)
 
@@ -118,6 +119,7 @@ describe('canonical skill preset transactions', () => {
       presetName: 'Science',
       botDistribution: 0.8,
       skillIds: ['startHereTree', 'doubleScienceTree'],
+      colorId: 'pink',
     })
     expect(parseCanonicalSkillPreset(serialized)).toEqual({
       accepted: true,
@@ -126,6 +128,7 @@ describe('canonical skill preset transactions', () => {
         presetName: 'Science',
         botDistribution: 0.8,
         skillIds: ['startHereTree', 'doubleScienceTree'],
+        colorId: 'pink',
       },
     })
   })
@@ -152,6 +155,27 @@ describe('canonical skill preset transactions', () => {
         botDistribution: 1,
         skillIds: ['startHereTree', 'workerEfficiencyTree'],
       },
+    })
+    expect(
+      parseCanonicalSkillPreset(
+        '{"version":1,"presetName":"Legacy","botDistribution":0.5,"skillIds":[]}',
+      ),
+    ).toEqual({
+      accepted: true,
+      payload: {
+        version: 1,
+        presetName: 'Legacy',
+        botDistribution: 0.5,
+        skillIds: [],
+      },
+    })
+    expect(
+      parseCanonicalSkillPreset(
+        '{"version":1,"presetName":"Broken","botDistribution":0.5,"skillIds":[],"colorId":"green"}',
+      ),
+    ).toMatchObject({
+      accepted: false,
+      code: 'invalid-payload',
     })
     expect(
       parseCanonicalSkillPreset(

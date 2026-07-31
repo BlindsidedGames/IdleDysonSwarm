@@ -4,6 +4,10 @@ import type {
   CanonicalSkillPresetSlot,
   SkillPresetState,
 } from '../game-state/types'
+import {
+  isSkillPresetColorId,
+  type SkillPresetColorId,
+} from '../game-state/skillPresetColors'
 
 const SKILL_KIND = 'GameData.SkillDefinition'
 const PRESET_FORMAT_VERSION = 1
@@ -25,6 +29,7 @@ export interface CanonicalSkillPresetPayloadV1 {
   readonly presetName: string
   readonly botDistribution: number
   readonly skillIds: readonly string[]
+  readonly colorId?: SkillPresetColorId
 }
 
 export type CanonicalSkillPresetQueuePreview =
@@ -200,6 +205,7 @@ export function serializeCanonicalSkillPreset(
     presetName: preset.name,
     botDistribution: preset.botDistribution,
     skillIds: [...preset.skillIds],
+    colorId: preset.colorId,
   } satisfies CanonicalSkillPresetPayloadV1)
 }
 
@@ -235,7 +241,9 @@ export function parseCanonicalSkillPreset(
     typeof source.botDistribution !== 'number' ||
     !Number.isFinite(source.botDistribution) ||
     !Array.isArray(source.skillIds) ||
-    !source.skillIds.every((id) => typeof id === 'string')
+    !source.skillIds.every((id) => typeof id === 'string') ||
+    (source.colorId !== undefined &&
+      !isSkillPresetColorId(source.colorId))
   ) {
     return rejectedImport(
       'invalid-payload',
@@ -268,6 +276,9 @@ export function parseCanonicalSkillPreset(
         source.botDistribution,
       ),
       skillIds: Object.freeze(skillIds),
+      ...(isSkillPresetColorId(source.colorId)
+        ? { colorId: source.colorId }
+        : {}),
     }),
   })
 }
@@ -284,6 +295,7 @@ export function replaceCanonicalSkillPreset(
   if (
     current.name === preset.name &&
     current.botDistribution === preset.botDistribution &&
+    current.colorId === preset.colorId &&
     current.skillIds.length === preset.skillIds.length &&
     current.skillIds.every(
       (id, index) => id === preset.skillIds[index],
@@ -296,6 +308,7 @@ export function replaceCanonicalSkillPreset(
     name: preset.name,
     botDistribution: preset.botDistribution,
     skillIds: [...preset.skillIds],
+    colorId: preset.colorId,
   }
   return {
     ...state,

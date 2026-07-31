@@ -238,11 +238,11 @@ function renderSurface(
         buyMode="buy-1"
         roundedBulkBuy={false}
         presets={[
-          { name: 'Preset 1', skillIds: [], botDistribution: 0.5 },
-          { name: 'Preset 2', skillIds: [], botDistribution: 0.5 },
-          { name: 'Preset 3', skillIds: [], botDistribution: 0.5 },
-          { name: 'Preset 4', skillIds: [], botDistribution: 0.5 },
-          { name: 'Preset 5', skillIds: [], botDistribution: 0.5 },
+          { name: 'Preset 1', skillIds: [], botDistribution: 0.5, colorId: 'cyan' },
+          { name: 'Preset 2', skillIds: [], botDistribution: 0.5, colorId: 'orange' },
+          { name: 'Preset 3', skillIds: [], botDistribution: 0.5, colorId: 'gold' },
+          { name: 'Preset 4', skillIds: [], botDistribution: 0.5, colorId: 'rose' },
+          { name: 'Preset 5', skillIds: [], botDistribution: 0.5, colorId: 'pink' },
         ]}
         presetAutomationSlot={0}
         purchaseRouteAvailable

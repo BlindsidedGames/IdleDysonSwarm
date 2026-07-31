@@ -16,6 +16,7 @@ import type {
   CanonicalPlayerCommand,
 } from '../../../application/canonicalPlayerCommands'
 import type { DeepReadonly } from '../../../core/contracts'
+import { defaultSkillPresetColorId } from '../../../game-state/skillPresetColors'
 import '../facilities/facilities.css'
 import {
   DysonGameplayShell,
@@ -526,6 +527,10 @@ export function ReadyDysonSlice({
                             gameplay.commands.byKind[
                               'skill.select-preset'
                             ].routeAvailable,
+                          setPresetColor:
+                            gameplay.commands.byKind[
+                              'skill.set-preset-color'
+                            ].routeAvailable,
                           setAutoAssignNonRefundable:
                             gameplay.commands.byKind[
                               'skill.set-auto-assign-non-refundable'
@@ -828,7 +833,7 @@ function createSkillPresetActions(
       return result.status === 'accepted'
     },
     exportPreset: async (slot) => runtime.exportSkillPreset(slot),
-    previewImportPreset: async (_slot, text) => {
+    previewImportPreset: async (slot, text) => {
       const preview = runtime.previewSkillPresetImport(text)
       if (!preview.accepted) throw new Error(preview.reason)
       return {
@@ -837,6 +842,9 @@ function createSkillPresetActions(
         workerPercent: Math.round(
           (1 - preview.payload.botDistribution) * 100,
         ),
+        colorId:
+          preview.payload.colorId ??
+          defaultSkillPresetColorId(slot),
       }
     },
     importPreset: async (slot, serialized) => {

@@ -201,6 +201,11 @@ export const mappingCoverageManifest = {
           `$.skills.presets.${preset - 1}.name`,
         ),
         owned(
+          `${dysonRoot}.preset${preset}ColorId`,
+          'skills',
+          `$.skills.presets.${preset - 1}.colorId`,
+        ),
+        owned(
           `${dysonRoot}.botDistPreset${preset}`,
           'skills',
           `$.skills.presets.${preset - 1}.botDistribution`,

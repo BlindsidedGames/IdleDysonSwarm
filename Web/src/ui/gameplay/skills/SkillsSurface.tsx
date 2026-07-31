@@ -14,6 +14,11 @@ import { useIntl } from 'react-intl'
 import type { CanonicalSkillPresetSlot } from '../../../application/canonicalGameCommands'
 import type { CanonicalPlayerCommand } from '../../../application/canonicalPlayerCommands'
 import type { SkillPresetState } from '../../../game-state/types'
+import {
+  defaultSkillPresetColorId,
+  SKILL_PRESET_COLOR_IDS,
+  type SkillPresetColorId,
+} from '../../../game-state/skillPresetColors'
 import skillTreePresentationJson from '../../../game-data/generated/skill-tree-presentation.json'
 import { localizeSkillPresentation } from '../../../game-data/skillPresentationLocalization'
 import type {
@@ -29,6 +34,10 @@ import {
   type SkillDetailsPalette,
 } from './SkillDetailsDialog'
 import { skillMessages as messages } from './messages'
+import {
+  skillPresetColorStyle,
+} from './presetColors'
+import { buildTaperedSkillConnectorPath } from './skillConnectorGeometry'
 import { rankSkillSearchResults } from './skillSearch'
 import './skills.css'
 
@@ -74,6 +83,7 @@ export interface SkillCommandAvailability {
   readonly purchase: boolean
   readonly refund: boolean
   readonly selectPreset: boolean
+  readonly setPresetColor: boolean
   readonly setAutoAssignNonRefundable: boolean
   readonly reset: boolean
 }
@@ -93,6 +103,7 @@ export interface SkillPresetImportPreview {
   readonly name: string
   readonly queuedSkillCount: number
   readonly workerPercent: number
+  readonly colorId: SkillPresetColorId
 }
 
 /**
@@ -149,6 +160,14 @@ const iconByFileName = new Map(
     url,
   ]),
 )
+
+const PRESET_COLOR_MESSAGES = {
+  cyan: messages.presetColorCyan,
+  orange: messages.presetColorOrange,
+  gold: messages.presetColorGold,
+  rose: messages.presetColorRose,
+  pink: messages.presetColorPink,
+} as const
 const NODE_SIZE = 76
 const GRAPH_PADDING = 180
 const MIN_SCALE = 0.4
@@ -262,7 +281,7 @@ export function SkillsSurface({
     presets
       .map(
         (preset) =>
-          `${preset.name}:${preset.botDistribution}:${preset.skillIds.join(',')}`,
+          `${preset.name}:${preset.colorId}:${preset.botDistribution}:${preset.skillIds.join(',')}`,
       )
       .join('|'),
   ].join('::')
@@ -446,6 +465,10 @@ export function SkillsSurface({
           selectedSkillId={selectedSkillId}
           matchingIds={matchingIds}
           searchActive={normalizedQuery.length > 0}
+          presetColorId={
+            presets[selectedPresetSlot - 1]?.colorId ??
+            defaultSkillPresetColorId(selectedPresetSlot)
+          }
           onSelect={setSelectedSkillId}
           registerFocus={(focus) => {
             focusNodeRef.current = focus
@@ -484,6 +507,7 @@ interface SkillTreeViewportProps {
   readonly selectedSkillId: string | null
   readonly matchingIds: ReadonlySet<string>
   readonly searchActive: boolean
+  readonly presetColorId: SkillPresetColorId
   readonly onSelect: (skillId: string) => void
   readonly registerFocus: (focus: (skillId: string) => void) => void
 }
@@ -495,12 +519,12 @@ function SkillTreeViewport({
   selectedSkillId,
   matchingIds,
   searchActive,
+  presetColorId,
   onSelect,
   registerFocus,
 }: SkillTreeViewportProps) {
   const intl = useIntl()
   const instructionsId = useId()
-  const arrowMarkerId = `skill-connection-arrow-${useId().replaceAll(':', '')}`
   const viewportRef = useRef<HTMLDivElement>(null)
   const nodeRefs = useRef(new Map<string, HTMLButtonElement>())
   const pointers = useRef(
@@ -717,6 +741,7 @@ function SkillTreeViewport({
           width: graphWidth,
           height: graphHeight,
           transform: `translate3d(${transform.x}px, ${transform.y}px, 0) scale(${transform.scale})`,
+          ...skillPresetColorStyle(presetColorId),
         }}
       >
         <svg
@@ -725,19 +750,6 @@ function SkillTreeViewport({
           height={graphHeight}
           aria-hidden="true"
         >
-          <defs>
-            <marker
-              id={arrowMarkerId}
-              markerWidth="7"
-              markerHeight="7"
-              refX="6"
-              refY="3.5"
-              orient="auto"
-              markerUnits="userSpaceOnUse"
-            >
-              <path d="M0 0L7 3.5L0 7Z" fill="context-stroke" />
-            </marker>
-          </defs>
           {connectors.map(({ from, to }) => {
             const start = graphPosition(from)
             const end = graphPosition(to)
@@ -752,31 +764,43 @@ function SkillTreeViewport({
             const sourcePreview = previews.get(from.skillId)
             const targetPreview = previews.get(to.skillId)
             const selectedPath = to.skillId === selectedSkillId
+            const sourceOwned = sourcePreview?.owned === true
+            const targetOwned = targetPreview?.owned === true
+            const sharedAttributes = {
+              'data-owned': sourceOwned && targetOwned,
+              'data-source-owned': sourceOwned || undefined,
+              'data-state': targetPreview?.visualState,
+              'data-queued':
+                (targetPreview?.queued && !targetOwned) || undefined,
+              'data-available':
+                targetPreview?.purchase.eligible || undefined,
+              'data-selected-path': selectedPath || undefined,
+              'data-selection-dimmed':
+                hasSelection && !selectedPath ? true : undefined,
+            } as const
+            if (!sourceOwned) {
+              return (
+                <path
+                  key={`${from.skillId}-${to.skillId}`}
+                  className="skill-tree-connection skill-tree-connection--unmet"
+                  d={buildTaperedSkillConnectorPath(
+                    { x: startX, y: startY },
+                    { x: endX, y: endY },
+                    { width: selectedPath ? 7 : 6 },
+                  )}
+                  {...sharedAttributes}
+                />
+              )
+            }
             return (
               <line
                 key={`${from.skillId}-${to.skillId}`}
+                className="skill-tree-connection skill-tree-connection--met"
                 x1={startX}
                 y1={startY}
                 x2={endX}
                 y2={endY}
-                markerEnd={`url(#${arrowMarkerId})`}
-                data-owned={
-                  sourcePreview?.owned &&
-                  targetPreview?.owned
-                }
-                data-source-owned={sourcePreview?.owned || undefined}
-                data-state={targetPreview?.visualState}
-                data-queued={
-                  (targetPreview?.queued && !targetPreview.owned) ||
-                  undefined
-                }
-                data-available={
-                  targetPreview?.purchase.eligible || undefined
-                }
-                data-selected-path={selectedPath || undefined}
-                data-selection-dimmed={
-                  hasSelection && !selectedPath ? true : undefined
-                }
+                {...sharedAttributes}
               />
             )
           })}
@@ -1253,6 +1277,7 @@ function SkillSettings({
                 key={slot}
                 className="skill-settings__preset-row"
                 data-current={selectedPresetSlot === slot || undefined}
+                style={skillPresetColorStyle(preset.colorId)}
               >
                 <button
                   type="button"
@@ -1275,6 +1300,10 @@ function SkillSettings({
                   }
                 >
                   <strong>
+                    <span
+                      className="skill-preset-color-swatch"
+                      aria-hidden="true"
+                    />
                     {intl.formatMessage(messages.loadPreset, {
                       name: preset.name,
                     })}
@@ -1365,6 +1394,7 @@ function SkillSettings({
           key={managedSlot}
           slot={managedSlot}
           preset={presets[managedSlot - 1]}
+          canSetColor={commandAvailability.setPresetColor}
           presetActions={presetActions}
           pendingKind={pendingKind}
           dispatch={dispatch}
@@ -1378,6 +1408,7 @@ function SkillSettings({
 interface PresetManagementDialogProps {
   readonly slot: CanonicalSkillPresetSlot
   readonly preset: SkillPresetState
+  readonly canSetColor: boolean
   readonly presetActions?: SkillPresetActions
   readonly pendingKind: string | null
   readonly dispatch: (
@@ -1390,6 +1421,7 @@ interface PresetManagementDialogProps {
 function PresetManagementDialog({
   slot,
   preset,
+  canSetColor,
   presetActions,
   pendingKind,
   dispatch,
@@ -1407,7 +1439,10 @@ function PresetManagementDialog({
   >(null)
   const [transferFailed, setTransferFailed] = useState(false)
   const exportAreaRef = useRef<HTMLTextAreaElement>(null)
+  const colorPickerRef = useRef<HTMLDetailsElement>(null)
   const trimmedName = name.trim()
+  const colorName = (colorId: SkillPresetColorId) =>
+    intl.formatMessage(PRESET_COLOR_MESSAGES[colorId])
 
   const exportPreset = async () => {
     if (presetActions === undefined || transferPending !== null) return
@@ -1544,6 +1579,55 @@ function PresetManagementDialog({
           </Button>
         </form>
 
+        <section
+          className="skill-preset-management__color"
+          style={skillPresetColorStyle(preset.colorId)}
+        >
+          <h3>{intl.formatMessage(messages.presetColor)}</h3>
+          <details
+            ref={colorPickerRef}
+            className="skill-preset-color-picker"
+          >
+            <summary>
+              <span
+                className="skill-preset-color-swatch"
+                aria-hidden="true"
+              />
+              <span>{colorName(preset.colorId)}</span>
+            </summary>
+            <div className="skill-preset-color-picker__options">
+              {SKILL_PRESET_COLOR_IDS.map((colorId) => (
+                <button
+                  key={colorId}
+                  type="button"
+                  aria-pressed={preset.colorId === colorId}
+                  style={skillPresetColorStyle(colorId)}
+                  disabled={
+                    !canSetColor ||
+                    pendingKind === 'skill.set-preset-color'
+                  }
+                  onClick={async () => {
+                    const accepted = await dispatch({
+                      kind: 'skill.set-preset-color',
+                      slot,
+                      colorId,
+                    })
+                    if (accepted) {
+                      colorPickerRef.current?.removeAttribute('open')
+                    }
+                  }}
+                >
+                  <span
+                    className="skill-preset-color-swatch"
+                    aria-hidden="true"
+                  />
+                  <span>{colorName(colorId)}</span>
+                </button>
+              ))}
+            </div>
+          </details>
+        </section>
+
         <section className="skill-preset-management__export">
           <h3>{intl.formatMessage(messages.exportPreset)}</h3>
           <p>{intl.formatMessage(messages.exportPresetHelp)}</p>
@@ -1623,6 +1707,16 @@ function PresetManagementDialog({
                 count={importPreview.queuedSkillCount}
                 workers={importPreview.workerPercent}
               />
+              <span
+                className="skill-preset-management__import-color"
+                style={skillPresetColorStyle(importPreview.colorId)}
+              >
+                <span
+                  className="skill-preset-color-swatch"
+                  aria-hidden="true"
+                />
+                {colorName(importPreview.colorId)}
+              </span>
               <p>
                 {intl.formatMessage(messages.replacePreset, {
                   name: preset.name,

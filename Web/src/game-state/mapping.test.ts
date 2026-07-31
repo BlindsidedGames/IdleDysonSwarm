@@ -175,6 +175,41 @@ describe('canonical game-state mapping', () => {
     })
   })
 
+  test('defaults and round-trips the five authored preset colors', () => {
+    const prepared = prepareIdb1Save(
+      loadFixture('schema-08-canonical-idb1-main-save.txt'),
+    ).prepared
+    const session = hydrateGameState(prepared)
+
+    expect(session.state.skills.presets.map((preset) => preset.colorId)).toEqual(
+      ['cyan', 'orange', 'gold', 'rose', 'pink'],
+    )
+    const defaultSource = session.prepare(session.state).copyValidatedState()
+    expect(
+      (defaultSource.dysonVerseSaveData as Record<string, unknown>)
+        .preset1ColorId,
+    ).toBeUndefined()
+
+    const presets = [...session.state.skills.presets]
+    presets[0] = { ...presets[0]!, colorId: 'pink' }
+    const dehydrated = session.prepare({
+      ...session.state,
+      skills: {
+        ...session.state.skills,
+        presets:
+          presets as unknown as CanonicalGameStateV1['skills']['presets'],
+      },
+    })
+    const source = dehydrated.copyValidatedState()
+    const rehydrated = hydrateGameState(dehydrated)
+
+    expect(
+      (source.dysonVerseSaveData as Record<string, unknown>)
+        .preset1ColorId,
+    ).toBe('pink')
+    expect(rehydrated.state.skills.presets[0].colorId).toBe('pink')
+  })
+
   test('synchronizes the legacy Avocado unlock mirror on dehydration', () => {
     const prepared = prepareIdb1Save(
       loadFixture('schema-08-canonical-idb1-main-save.txt'),

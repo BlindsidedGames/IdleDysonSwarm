@@ -1,4 +1,5 @@
 import type { BuyMode } from '../simulation/transactions'
+import type { SkillPresetColorId } from './skillPresetColors'
 
 export const CANONICAL_GAME_MODEL_VERSION = 1 as const
 
@@ -102,6 +103,7 @@ export interface SkillPresetState {
   readonly name: string
   readonly skillIds: readonly string[]
   readonly botDistribution: number
+  readonly colorId: SkillPresetColorId
 }
 
 export type CanonicalSkillPresetSlot = 1 | 2 | 3 | 4 | 5

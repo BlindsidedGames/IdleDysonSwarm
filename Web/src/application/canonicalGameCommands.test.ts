@@ -135,6 +135,7 @@ const COMMAND_EXAMPLES = [
     distribution: 0.42,
   },
   { kind: 'skill.rename-preset', slot: 1, name: 'First' },
+  { kind: 'skill.set-preset-color', slot: 1, colorId: 'cyan' },
   { kind: 'skill.select-preset', slot: 1 },
   {
     kind: 'skill.add-to-current-preset',
@@ -621,6 +622,7 @@ describe('canonical game command router', () => {
       presetName: 'Imported Science',
       botDistribution: 0.8,
       skillIds: [],
+      colorId: 'rose',
     })
     const imported = routeCanonicalGameCommand(
       source,
@@ -647,6 +649,7 @@ describe('canonical game command router', () => {
       name: 'Imported Science',
       botDistribution: 0.8,
       skillIds: [],
+      colorId: 'rose',
     })
 
     const rejected = routeCanonicalGameCommand(
@@ -664,6 +667,33 @@ describe('canonical game command router', () => {
       code: 'skill:preset-import-unsupported-version',
     })
     expect(rejected.state).toBe(source)
+  })
+
+  test('sets a validated preset color without changing its queue', () => {
+    const source = state()
+    const originalQueue = source.skills.presets[1].skillIds
+    const result = routeCanonicalGameCommand(
+      source,
+      {
+        kind: 'skill.set-preset-color',
+        slot: 2,
+        colorId: 'pink',
+      },
+      options(),
+    )
+
+    expect(result).toMatchObject({
+      accepted: true,
+      changed: true,
+      code: 'skill:preset-color-set',
+    })
+    expect(result.state.skills.presets[1]).toMatchObject({
+      colorId: 'pink',
+      skillIds: originalQueue,
+    })
+    expect(result.state.skills.activeAutoAssignment).toEqual(
+      source.skills.activeAutoAssignment,
+    )
   })
 
   test('persists and immediately applies a nonzero tab preset override', () => {
