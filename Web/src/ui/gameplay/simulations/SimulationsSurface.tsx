@@ -876,6 +876,7 @@ function createPanelModels(input: {
       })
     } else if (id === 'space-factories' && production) {
       const factory = production.spaceAge.production.spaceFactory
+      const activeThroughput = production.spaceAge.railgun
       const fraction = factory.durationSeconds > 0
         ? factory.currentProgress / factory.durationSeconds
         : 0
@@ -892,6 +893,24 @@ function createPanelModels(input: {
         fraction:
           Number(resources.dysonPanels) /
           Number(facts.live.dysonPanelCapacity),
+      }, {
+        label: intl.formatMessage(messages.factoryOverdrive),
+        valueText: activeThroughput.factoryOverdriveActive
+          ? intl.formatMessage(messages.factoryOverdriveActive, {
+              multiplier: formatNumber(
+                locale,
+                activeThroughput.factoryOverdriveMultiplier,
+                { maximumFractionDigits: 0 },
+              ),
+              energy: display(
+                activeThroughput.factoryOverdriveEnergyPerSecond,
+              ),
+            })
+          : intl.formatMessage(messages.factoryOverdriveIdle),
+        fraction:
+          activeThroughput.factoryOverdriveMultiplier /
+          Math.max(1, activeThroughput.factoryOverdriveMultiplier),
+        showBar: false,
       })
     } else if (id === 'railguns' && production) {
       const railgun = production.spaceAge.railgun
@@ -902,6 +921,17 @@ function createPanelModels(input: {
           total: display(railgun.maximumCharge),
         }),
         fraction: resources.railgunCharge / railgun.maximumCharge,
+      })
+      progress.push({
+        label: intl.formatMessage(messages.railgunPayload),
+        valueText: intl.formatMessage(messages.railgunPayloadValue, {
+          perShot: display(railgun.panelsPerShot),
+          perVolley: display(railgun.panelsPerVolley),
+        }),
+        fraction:
+          railgun.mechanicalPayload /
+          Math.max(1, railgun.payloadCapacity),
+        showBar: false,
       })
       const firingFraction = railgun.shotIntervalSeconds > 0
         ? facts.live.railgun.fireProgress / railgun.shotIntervalSeconds

@@ -2132,6 +2132,18 @@
     "defaultMessage": "{current} / {total}",
     "description": "Progress count shown against a total."
   },
+  "simulations.progress.factory-overdrive": {
+    "defaultMessage": "Factory overdrive",
+    "description": "Space Factory surplus-energy overdrive status."
+  },
+  "simulations.progress.factory-overdrive-active": {
+    "defaultMessage": "{multiplier}x · {energy} W consumed",
+    "description": "Active Space Factory overdrive multiplier and energy consumption rate."
+  },
+  "simulations.progress.factory-overdrive-idle": {
+    "defaultMessage": "1x · waiting for surplus energy",
+    "description": "Space Factory overdrive status when no surplus-energy acceleration is active."
+  },
   "simulations.progress.firing": {
     "defaultMessage": "Railgun firing progress",
     "description": "Accessible Railgun firing progress label."
@@ -2143,6 +2155,14 @@
   "simulations.progress.production": {
     "defaultMessage": "Production progress",
     "description": "Accessible production progress label."
+  },
+  "simulations.progress.railgun-payload": {
+    "defaultMessage": "Railgun payload",
+    "description": "Adaptive number of Dyson panels launched by each Railgun shot."
+  },
+  "simulations.progress.railgun-payload-value": {
+    "defaultMessage": "{perShot} / shot · {perVolley} / volley",
+    "description": "Adaptive Railgun panels launched per shot and per ten-shot volley."
   },
   "simulations.progress.research": {
     "defaultMessage": "Research progress",

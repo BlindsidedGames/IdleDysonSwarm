@@ -226,10 +226,10 @@ describe('canonical Dream derived facts', () => {
       selectedRate: 4,
       activeRate: 4,
       panelsPerShot: 4n,
-      panelsRequiredToStart: 40n,
+      panelsRequiredToStart: 4n,
       canStartVolley: true,
       canFireNextShot: true,
-      secondsUntilNextShotAttempt: 0.25,
+      secondsUntilNextShotAttempt: 0.1,
     })
     expect(Object.isFrozen(result)).toBe(true)
     expect(Object.isFrozen(facts)).toBe(true)
@@ -293,11 +293,16 @@ describe('canonical Dream derived facts', () => {
       doubleTimeRate: DOUBLE_TIME.doubleTimeRate,
     })
     expect(railgun.volleyStarted).toBe(true)
-    expect(railgun.shotFired).toBe(true)
-    expect(railgun.panelsLaunched).toBe(4n)
+    expect(railgun.shotFired).toBe(false)
+    expect(railgun.panelsLaunched).toBe(0n)
     expect(railgun.state.dream.resources.energy).toBe(5_000_000)
     expect(railgun.state.dream.resources.railgunCharge)
-      .toBe(22_500_000)
+      .toBe(25_000_000)
+    expect(railgun.state.dream.railgun).toEqual({
+      firing: true,
+      fireProgress: 0,
+      shotsRemaining: 10,
+    })
 
     const conversions =
       runDreamFoundationalInformationConversions(state)

@@ -8785,6 +8785,60 @@
       "value": "]"
     }
   ],
+  "simulations.progress.factory-overdrive": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Ƒȧȧƈŧǿǿřẏ ǿǿṽḗḗřḓřīṽḗḗ"
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "simulations.progress.factory-overdrive-active": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 1,
+      "value": "multiplier"
+    },
+    {
+      "type": 0,
+      "value": "ẋ · "
+    },
+    {
+      "type": 1,
+      "value": "energy"
+    },
+    {
+      "type": 0,
+      "value": " Ẇ ƈǿǿƞşŭŭḿḗḗḓ"
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "simulations.progress.factory-overdrive-idle": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "1ẋ · ẇȧȧīŧīƞɠ ƒǿǿř şŭŭřƥŀŭŭş ḗḗƞḗḗřɠẏ"
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
   "simulations.progress.firing": [
     {
       "type": 0,
@@ -8825,6 +8879,46 @@
     {
       "type": 0,
       "value": "Ƥřǿǿḓŭŭƈŧīǿǿƞ ƥřǿǿɠřḗḗşş"
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "simulations.progress.railgun-payload": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Řȧȧīŀɠŭŭƞ ƥȧȧẏŀǿǿȧȧḓ"
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "simulations.progress.railgun-payload-value": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 1,
+      "value": "perShot"
+    },
+    {
+      "type": 0,
+      "value": " / şħǿǿŧ · "
+    },
+    {
+      "type": 1,
+      "value": "perVolley"
+    },
+    {
+      "type": 0,
+      "value": " / ṽǿǿŀŀḗḗẏ"
     },
     {
       "type": 0,

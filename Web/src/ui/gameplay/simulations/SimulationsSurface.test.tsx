@@ -208,6 +208,25 @@ describe('SimulationsSurface', () => {
     )
     expect(progressbars[1]).toHaveAttribute('value', '0')
     expect(progressbars[1]).toHaveTextContent('0.00 shots remaining')
+    expect(within(railgunCard!).getByText('Railgun payload'))
+      .toBeInTheDocument()
+    expect(within(railgunCard!).getByText(/\/ shot · .*\/ volley/))
+      .toBeInTheDocument()
+  })
+
+  test('shows active Double Time overdrive without adding another bar', async () => {
+    renderSurface(accepted, overdriveFacts)
+
+    await userEvent.setup().click(
+      screen.getByRole('button', { name: 'Space Age' }),
+    )
+    const factoryCard = screen.getByText('Space Factories').closest('article')
+    expect(factoryCard).not.toBeNull()
+    expect(within(factoryCard!).getByText('Factory overdrive'))
+      .toBeInTheDocument()
+    expect(within(factoryCard!).getByText('2x · 25.0M W consumed'))
+      .toBeInTheDocument()
+    expect(within(factoryCard!).getAllByRole('progressbar')).toHaveLength(2)
   })
 
   test('has no automated accessibility violations', async () => {
@@ -580,8 +599,53 @@ const inactiveRailgunFacts = {
             energy: { swarmPerSecond: 5 },
           },
           railgun: {
+            baseMaximumCharge: 25,
             maximumCharge: 25,
             shotIntervalSeconds: 2,
+            mechanicalPayload: 1,
+            payloadCapacity: 100,
+            panelsPerShot: 1n,
+            panelsPerVolley: 10n,
+          },
+        },
+      },
+    },
+  },
+} as unknown as FrontendSimulationsDerivedFacts
+
+const overdriveFacts = {
+  ...spaceAgeFacts,
+  eras: {
+    ...spaceAgeFacts.eras,
+    spaceAge: { visible: true, visiblePanelIds: ['space-factories'] },
+  },
+  live: {
+    ...spaceAgeFacts.live,
+    resources: {
+      ...spaceAgeFacts.live.resources,
+      spaceFactories: 10,
+      dysonPanels: 5n,
+    },
+    dysonPanelCapacity: 1_000n,
+    production: {
+      ok: true,
+      value: {
+        ...foundationalProduction,
+        spaceAge: {
+          production: {
+            energy: { swarmPerSecond: 5 },
+            spaceFactory: {
+              currentProgress: 1,
+              durationSeconds: 2,
+              overdriveActive: true,
+              overdriveMultiplier: 4,
+              overdriveEnergyPerSecond: 75_000_000,
+            },
+          },
+          railgun: {
+            factoryOverdriveActive: true,
+            factoryOverdriveMultiplier: 2,
+            factoryOverdriveEnergyPerSecond: 25_000_000,
           },
         },
       },

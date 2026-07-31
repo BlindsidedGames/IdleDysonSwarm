@@ -463,6 +463,65 @@ describe('canonical whole-game event-time model', () => {
     }
   })
 
+  test('keeps adaptive railgun volleys exact across Double Time event boundaries', () => {
+    const source = baseState()
+    const gameState: CanonicalGameStateV1 = {
+      ...source,
+      timeline: {
+        ...source.timeline,
+        automationTimeUntilNextEvent: 0.1,
+        doubleTime: {
+          unlocked: true,
+          enabled: true,
+          bankSeconds: 100,
+          rate: 2,
+        },
+      },
+      dream: {
+        ...source.dream,
+        resources: {
+          ...source.dream.resources,
+          energy: 1_000_000_000,
+          railgunCharge: 175_000_000,
+          spaceFactories: 10,
+          dysonPanels: 14n,
+        },
+        upgrades: {
+          ...source.dream.upgrades,
+          sfActivator1: true,
+          sfActivator2: true,
+          sfActivator3: true,
+          railgunActivator1: true,
+          railgunActivator2: true,
+        },
+      },
+    }
+
+    const result = advanceEventTime({
+      startingState: new CanonicalEventTimeModel(
+        carrier(gameState),
+        context(REALITY_UPGRADE_DEFINITIONS, 0.1),
+      ),
+      durationSeconds: 1.1,
+      automationIntervalSeconds: 0.1,
+      automationTimeUntilNextEvent: 0.1,
+      infinityMinimumCycleSeconds: 10,
+      processingBudgetMilliseconds: 0,
+    })
+
+    expect(result.completed).toBe(true)
+    expect(result.diagnosticCode).toBeUndefined()
+    const next = result.candidateState.state.gameState
+    expect(next.dream.resources.swarmPanels).toBe(140n)
+    expect(next.dream.resources.railgunCharge).toBe(0)
+    expect(next.dream.railgun).toEqual({
+      firing: false,
+      fireProgress: 0,
+      shotsRemaining: 0,
+    })
+    expect(next.timeline.doubleTime.bankSeconds).toBeCloseTo(97.8)
+  })
+
   test('finalizes elapsed statistics before a bot-cap persistence pause', () => {
     const source = baseState()
     const capped: CanonicalGameStateV1 = {

@@ -4457,6 +4457,36 @@
       "value": "total"
     }
   ],
+  "simulations.progress.factory-overdrive": [
+    {
+      "type": 0,
+      "value": "Factory overdrive"
+    }
+  ],
+  "simulations.progress.factory-overdrive-active": [
+    {
+      "type": 1,
+      "value": "multiplier"
+    },
+    {
+      "type": 0,
+      "value": "x · "
+    },
+    {
+      "type": 1,
+      "value": "energy"
+    },
+    {
+      "type": 0,
+      "value": " W consumed"
+    }
+  ],
+  "simulations.progress.factory-overdrive-idle": [
+    {
+      "type": 0,
+      "value": "1x · waiting for surplus energy"
+    }
+  ],
   "simulations.progress.firing": [
     {
       "type": 0,
@@ -4477,6 +4507,30 @@
     {
       "type": 0,
       "value": "Production progress"
+    }
+  ],
+  "simulations.progress.railgun-payload": [
+    {
+      "type": 0,
+      "value": "Railgun payload"
+    }
+  ],
+  "simulations.progress.railgun-payload-value": [
+    {
+      "type": 1,
+      "value": "perShot"
+    },
+    {
+      "type": 0,
+      "value": " / shot · "
+    },
+    {
+      "type": 1,
+      "value": "perVolley"
+    },
+    {
+      "type": 0,
+      "value": " / volley"
     }
   ],
   "simulations.progress.research": [

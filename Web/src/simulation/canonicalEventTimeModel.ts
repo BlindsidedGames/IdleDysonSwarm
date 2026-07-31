@@ -404,6 +404,10 @@ export class CanonicalEventTimeModel
         tickSeconds: seconds,
         doubleTimeMultiplier:
           doubleTimeTick.effectiveMultiplier,
+        railgunPayloadFloor:
+          doubleTimeTick.active && doubleTimeTick.rate >= 1
+            ? doubleTimeTick.rate
+            : 1,
       })
       if (space.status !== 'success') {
         this.fail(
