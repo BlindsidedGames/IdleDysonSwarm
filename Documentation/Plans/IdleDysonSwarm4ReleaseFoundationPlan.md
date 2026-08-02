@@ -100,7 +100,7 @@ Use focused commits for:
 
 Each major implementation surface receives focused tests and independent review before acceptance. Baseline failures are reported separately from regressions.
 
-The phase completes only when all fixtures pass, every schema-11 field is classified, signed packages and Steam depots are reproducible, existing Unity installations migrate safely, real private-store purchases/restores pass, the PWA passes preview/offline/update testing, and all original/recovery saves remain intact.
+The phase completes only when all fixtures pass, every schema-11 field is classified, signed packages and Steam depots are traceable and checksum-verifiable, existing Unity installations migrate safely, real private-store purchases/restores pass, the PWA passes preview/offline/update testing, and all original/recovery saves remain intact. Reproducibility is claimed only for unsigned outputs that pass a documented comparison of two independent builds; signed or notarized outputs are not called reproducible without equivalent two-build proof.
 
 Explicitly excluded are cloud sync, remote telemetry, Web-to-Unity export, production store rollout, and paid CI dependencies.
 
@@ -127,7 +127,7 @@ Still required before the phase can be certified:
 
 - Implement the Steam Inventory adapter through a supported Steamworks native binding; the current Electron dependency does not expose the required inventory purchase surface.
 - Verify the tracked Android keystore's exact upload-key identity and rotation path before removing it from the current tree; release signing already fails closed without protected inputs.
-- Add the protected manual release-candidate workflow for signing, checksums, and private TestFlight, Play internal-track, and Steam beta uploads.
+- Exercise the protected manual release-candidate workflow with configured signing environments. Package-only, checksums, signed Android/iOS/macOS paths, and TestFlight upload are automated; Play internal and Steam beta remain explicit fail-closed gates until their reviewed upload adapters exist.
 - Compile and archive the iOS host on the available Mac/Xcode environment.
 - Complete physical-device existing-install migration and real purchase/restore certification.
 - Exercise the Cloudflare preview acceptance flow; public promotion remains separately authorized.

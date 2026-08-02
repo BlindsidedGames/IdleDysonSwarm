@@ -31,7 +31,9 @@ describe('native host scaffold', () => {
     expect(variables).toContain('minSdkVersion = 26')
     expect(gradle).toContain("contains('release')")
     expect(gradle).toContain('IDS_ANDROID_KEYSTORE_PASSWORD')
-    expect(gradle).toContain('if (releaseBuildRequested && !releaseSigningConfigured)')
+    expect(gradle).toMatch(
+      /if\s*\(\s*releaseBuildRequested\s*&&\s*!releaseSigningConfigured\s*&&\s*!unsignedReleaseExplicitlyAllowed\s*\)/,
+    )
 
     const project = read(
       'hosts/capacitor/ios/App/App.xcodeproj/project.pbxproj',

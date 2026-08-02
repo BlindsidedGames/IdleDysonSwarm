@@ -11,6 +11,8 @@ def releaseSigningValues = [
 def releaseSigningConfigured = releaseSigningValues.values().every {
     it != null && !it.trim().isEmpty()
 }
+def unsignedReleaseExplicitlyAllowed =
+    providers.gradleProperty('IDS_ALLOW_UNSIGNED_RELEASE').orNull == 'true'
 def releaseBuildRequested = gradle.startParameter.taskNames.any {
     it.toLowerCase(java.util.Locale.ROOT).contains('release')
 }
@@ -52,14 +54,20 @@ android {
     }
 }
 
-if (releaseBuildRequested && !releaseSigningConfigured) {
+if (
+    releaseBuildRequested &&
+    !releaseSigningConfigured &&
+    !unsignedReleaseExplicitlyAllowed
+) {
     def missingProperties = releaseSigningValues.findAll {
         it.value == null || it.value.trim().isEmpty()
     }.keySet().join(', ')
     throw new GradleException(
         "Release signing was requested but protected signing inputs are missing: " +
         missingProperties +
-        ". Supply the IDS_ANDROID_* Gradle properties through CI secrets."
+        ". Supply the IDS_ANDROID_* Gradle properties through CI secrets, or " +
+        "set IDS_ALLOW_UNSIGNED_RELEASE=true only for a non-publishable " +
+        "release-candidate package."
     )
 }
 
