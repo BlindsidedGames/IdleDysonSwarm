@@ -1,4 +1,5 @@
 using System;
+using Systems.Simulation;
 
 namespace IdleDysonSwarm.Services
 {
@@ -81,6 +82,12 @@ namespace IdleDysonSwarm.Services
         void ApplyOfflineProgress(double seconds);
 
         /// <summary>
+        /// Advances Reality on the shared simulated timeline while preserving
+        /// fractional worker progress.
+        /// </summary>
+        RealityAdvanceResult AdvanceSimulation(double seconds);
+
+        /// <summary>
         /// Spends influence currency.
         /// </summary>
         /// <param name="amount">Amount to spend.</param>
@@ -98,6 +105,12 @@ namespace IdleDysonSwarm.Services
         /// Used during real-time worker generation.
         /// </summary>
         void IncrementWorker();
+
+        /// <summary>
+        /// Applies a completed batch of generated workers without per-worker loops.
+        /// </summary>
+        /// <param name="amount">Finite positive whole workers generated.</param>
+        void AddGeneratedWorkers(long amount);
 
         /// <summary>
         /// Ensures worker count is non-negative (clamps to 0 if negative).

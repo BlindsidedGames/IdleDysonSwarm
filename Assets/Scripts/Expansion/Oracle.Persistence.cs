@@ -6,7 +6,9 @@ using System.IO;
 using System.Text;
 using Classes;
 using GameData;
+using Systems.Debugging;
 using Systems.Save;
+using Systems.Numeric;
 using Systems.Skills;
 using UnityEngine;
 using UnityEngine.SceneManagement;
@@ -369,7 +371,8 @@ namespace Expansion
         }
 
         /// <summary>
-        /// Publishes settings only after the caller's source-specific preparation or legacy migration contract succeeds.
+        /// Publishes settings only after the caller's source-specific preparation and any required repaired-primary
+        /// commit have succeeded.
         /// </summary>
         /// <param name="loaded">The settings selected for publication.</param>
         /// <param name="sourceLog">The diagnostic source label.</param>
@@ -378,11 +381,47 @@ namespace Expansion
             EnsureRuntimeSeamsInitialized();
             saveSettings = loaded;
             LoadDictionaries();
-            if (!oracle.saveSettings.cheater && oracle.saveSettings.maxOfflineTime < 86400)
-                oracle.saveSettings.maxOfflineTime = 86400;
             saveSettings.lastSuccessfulLoadUtc = _clock.UtcNow.ToString(CultureInfo.InvariantCulture);
             Loaded = true;
             Debug.Log($"Loaded with {sourceLog}");
+
+            if (saveSettings.numericRepairNoticePending)
+            {
+                if (string.IsNullOrWhiteSpace(saveSettings.lastNumericRepairUtc))
+                {
+                    saveSettings.lastNumericRepairUtc =
+                        _clock.UtcNow.ToString("O", CultureInfo.InvariantCulture);
+                    string details = saveSettings.lastNumericRepairLog == null
+                        ? "No field details were retained."
+                        : string.Join(Environment.NewLine, saveSettings.lastNumericRepairLog);
+                    DebugReportRecorder.Record(
+                        "Numeric Save Repair",
+                        $"Numeric save repair at {saveSettings.lastNumericRepairUtc}{Environment.NewLine}{details}");
+                }
+
+                if (recoveryText != null)
+                {
+                    recoveryText.text =
+                        "A numeric save problem was repaired safely. Details can be exported from Debug Options.";
+                }
+                Debug.LogWarning(
+                    "[NumericSafety:NS-SAVE-REPAIR-NOTICE] Invalid numeric save values were repaired. " +
+                    "Details are available through Export Last Debug Report.");
+
+                // Stage 3 commits the repaired primary with this notice still set before publication.
+                // Clearing it here is a second, non-safety-critical acknowledgement write; if this write
+                // fails, the next launch shows the notice again but never runs uncommitted repaired state.
+                saveSettings.numericRepairNoticePending = false;
+                if (!TrySaveState(out string repairCommitError))
+                {
+                    saveSettings.numericRepairNoticePending = true;
+                    NumericDiagnostics.Report(
+                        "NS-SAVE-REPAIR-COMMIT",
+                        $"schema={saveSettings.saveVersion};committed=false");
+                    Debug.LogError(
+                        $"[NumericSafety:NS-SAVE-REPAIR-COMMIT] Repaired save could not be committed: {repairCommitError}");
+                }
+            }
         }
 
         public void Load()
@@ -669,7 +708,16 @@ namespace Expansion
                 $"offlineTime={saveSettings.offlineTime.ToString(CultureInfo.InvariantCulture)}, " +
                 $"maxOfflineTime={saveSettings.maxOfflineTime.ToString(CultureInfo.InvariantCulture)}, " +
                 $"doubleTimeBefore={saveSettings.sdPrestige.doubleTime.ToString(CultureInfo.InvariantCulture)}");
-            saveSettings.sdPrestige.doubleTime += computation.ClampedSeconds;
+            if (computation.RawSeconds < 0d)
+            {
+                saveSettings.cheater = true;
+                Debug.LogError(
+                    "[NumericSafety:NS-CLOCK-BACKWARD] Backward clock movement granted zero time and marked comparison integrity.");
+            }
+
+            saveSettings.sdPrestige.doubleTime = Math.Min(
+                NumericSafety.StoredTimeMaximumSeconds,
+                NumericSafety.Add(saveSettings.sdPrestige.doubleTime, computation.ClampedSeconds).Value);
             AwayFor?.Invoke(computation.ClampedSeconds);
             ConsumeQuitTimestampAfterReplay(computation);
         }

@@ -1,4 +1,6 @@
+using System;
 using GameData;
+using Systems.Simulation;
 using UnityEngine;
 using static Expansion.Oracle;
 
@@ -30,7 +32,6 @@ namespace Research
     /// </summary>
     public class ResearchAutoBuy : MonoBehaviour
     {
-        private const int MaxIterationsPerUpdate = 100;
         private static readonly string[] RequiredSceneMegaResearchIds =
         {
             ResearchIdMap.MatrioshkaBrainsUpgrade,
@@ -53,8 +54,9 @@ namespace Research
             WarnIfMissingRequiredMegaPresenters();
         }
 
-        private void Update()
+        public void RunAutomationTick(bool forceBuyMax = false)
         {
+            if (!isActiveAndEnabled) return;
             if (StaticPrestigeData == null || !StaticPrestigeData.infinityAutoResearch) return;
 
             if (presenters == null || presenters.Length == 0)
@@ -62,29 +64,105 @@ namespace Research
                 RefreshPresenters();
             }
 
-            bool purchased;
-            int iterations = 0;
-            do
+            if (presenters.Length == 0)
             {
-                purchased = false;
-                for (int i = 0; i < presenters.Length; i++)
-                {
-                    ResearchPresenter presenter = presenters[i];
-                    if (presenter == null) continue;
-                    if (presenter.TryAutoPurchase())
-                    {
-                        purchased = true;
-                    }
-                }
+                return;
+            }
 
-                iterations++;
-            } while (purchased && iterations < MaxIterationsPerUpdate);
+            SimulationAutomationPolicy policy = forceBuyMax
+                ? SimulationAutomationPolicy.ForceBuyMax
+                : SimulationAutomationPolicy.PreserveConfiguredMode;
+            int first = AutomationRotation.Normalize(
+                oracle.saveSettings.researchAutomationTargetIndex,
+                presenters.Length);
+            for (int offset = 0; offset < presenters.Length; offset++)
+            {
+                ResearchPresenter presenter =
+                    presenters[(first + offset) % presenters.Length];
+                if (presenter != null)
+                    presenter.TryAutoPurchase(
+                        policy,
+                        updatePresentation: !forceBuyMax);
+            }
+
+            oracle.saveSettings.researchAutomationTargetIndex =
+                AutomationRotation.Advance(
+                    first,
+                    presenters.Length,
+                    1L);
+        }
+
+        public bool WouldOfflinePurchase(DysonAnalyticalState state)
+        {
+            if (!isActiveAndEnabled ||
+                StaticPrestigeData == null ||
+                !StaticPrestigeData.infinityAutoResearch)
+            {
+                return false;
+            }
+
+            if (presenters == null || presenters.Length == 0)
+                RefreshPresenters();
+            for (int i = 0; i < presenters.Length; i++)
+            {
+                if (presenters[i] != null &&
+                    presenters[i].WouldOfflineAutoPurchase(state))
+                {
+                    return true;
+                }
+            }
+            return false;
+        }
+
+        public void SkipAutomationTicks(long ticks)
+        {
+            if (!isActiveAndEnabled ||
+                StaticPrestigeData == null ||
+                !StaticPrestigeData.infinityAutoResearch ||
+                ticks <= 0L)
+            {
+                return;
+            }
+
+            if (presenters == null || presenters.Length == 0)
+                RefreshPresenters();
+            if (presenters.Length == 0) return;
+            oracle.saveSettings.researchAutomationTargetIndex =
+                AutomationRotation.Advance(
+                    oracle.saveSettings.researchAutomationTargetIndex,
+                    presenters.Length,
+                ticks);
+        }
+
+        public bool TryCaptureAutomationRules(
+            out ResearchAutomationRule[] rules)
+        {
+            if (presenters == null || presenters.Length == 0)
+                RefreshPresenters();
+            rules = new ResearchAutomationRule[
+                presenters?.Length ?? 0];
+            for (int index = 0; index < rules.Length; index++)
+            {
+                ResearchPresenter presenter = presenters[index];
+                if (presenter != null &&
+                    !presenter.TryCreateAutomationRule(
+                        out rules[index]))
+                {
+                    return false;
+                }
+            }
+            return true;
         }
 
         private void RefreshPresenters()
         {
             presenters = FindObjectsByType<ResearchPresenter>(FindObjectsInactive.Include,
                 FindObjectsSortMode.None);
+            Array.Sort(
+                presenters,
+                static (left, right) => string.CompareOrdinal(
+                    left != null ? left.ResearchIdValue : string.Empty,
+                    right != null ? right.ResearchIdValue : string.Empty));
         }
 
         private void WarnIfMissingRequiredMegaPresenters()

@@ -1,0 +1,380 @@
+@import "../../tokens/tokens.css";
+
+.infinity-surface {
+  --infinity-panel: var(--infinity-panel-color, #30244f);
+  --infinity-panel-raised: #3a2b5b;
+  --infinity-accent: #9b74ff;
+  --infinity-accent-lead: #d3c2ff;
+  --infinity-control-pressed: #674ea9;
+  --infinity-control-disabled: #3e2f66;
+  --infinity-available: #ffa45e;
+  --infinity-spent: #91dd8f;
+  display: grid;
+  block-size: 100%;
+  min-block-size: 0;
+  grid-template-rows: auto minmax(0, 1fr);
+  background: #130f22;
+  color: white;
+  user-select: none;
+}
+
+.infinity-surface__summary {
+  z-index: 2;
+  display: grid;
+  gap: 0.45rem;
+  padding-block: 0.625rem;
+  padding-inline:
+    max(0.75rem, env(safe-area-inset-left))
+    max(0.75rem, env(safe-area-inset-right));
+  border-block-end: 2px solid #5a477e;
+  background: var(--infinity-panel);
+}
+
+.infinity-surface__progress-heading {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 0.75rem;
+}
+
+.infinity-surface__summary p {
+  margin: 0;
+}
+
+.infinity-surface__points {
+  font-family: var(--font-family-numeric);
+  font-size: calc(1.05rem * var(--game-text-scale));
+  font-weight: var(--font-weight-bold);
+  font-variant-numeric: tabular-nums;
+}
+
+.infinity-surface__available {
+  margin-inline-start: 0.3em;
+  color: var(--infinity-available);
+}
+
+.infinity-surface__spent {
+  margin-inline-start: 0.15em;
+  color: var(--infinity-spent);
+  font-size: 0.78em;
+}
+
+.infinity-surface__secret {
+  color: #e8dffa;
+  font-size: calc(0.92rem * var(--game-text-scale));
+  line-height: 1.25;
+  overflow-wrap: anywhere;
+  white-space: pre-wrap;
+}
+
+.infinity-surface__progress {
+  display: grid;
+  gap: 0.28rem;
+}
+
+.infinity-surface__progress-heading {
+  font-size: calc(0.9rem * var(--game-text-scale));
+}
+
+.infinity-surface__progress-heading span {
+  color: #ded4ef;
+  font-family: var(--font-family-numeric);
+  font-variant-numeric: tabular-nums;
+}
+
+.infinity-surface__progress-track {
+  position: relative;
+  block-size: 0.7rem;
+  overflow: hidden;
+  border: 1px solid #0b0810;
+  border-radius: 0.2rem;
+  background: #15111e;
+}
+
+.infinity-surface__progress-track > span {
+  display: block;
+  block-size: 100%;
+  min-inline-size: 0;
+  border-inline-end: 0.16rem solid var(--infinity-accent-lead);
+  background: var(--infinity-accent);
+  transition: inline-size 160ms linear;
+}
+
+.infinity-surface__warning {
+  padding: 0.3rem 0.45rem;
+  border: 1px solid #a9853d;
+  border-radius: 0.2rem;
+  background: #4e3c20;
+  color: #fff0c5;
+  font-size: calc(0.8rem * var(--game-text-scale));
+}
+
+.infinity-surface__shop {
+  container-type: inline-size;
+  min-block-size: 0;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  padding-block: 0.625rem;
+  padding-inline:
+    max(0.625rem, env(safe-area-inset-left))
+    max(0.625rem, env(safe-area-inset-right));
+  scrollbar-width: none;
+}
+
+.infinity-surface__shop::-webkit-scrollbar {
+  display: none;
+  inline-size: 0;
+  block-size: 0;
+}
+
+.infinity-surface__grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  align-items: stretch;
+  gap: 0.625rem;
+  padding: 0;
+  margin: 0;
+  list-style: none;
+}
+
+.infinity-surface__grid > li {
+  display: grid;
+  min-inline-size: 0;
+}
+
+.infinity-shop-card {
+  display: grid;
+  min-block-size: 8rem;
+  grid-template-columns: minmax(0, 1fr) clamp(6.8rem, 28%, 9rem);
+  grid-template-rows: minmax(0, 1fr) auto;
+  gap: 0.45rem 0.625rem;
+  padding: 0.625rem;
+  border: 1px solid #08060d;
+  border-radius: 0.3rem;
+  background: var(--infinity-panel);
+}
+
+.infinity-shop-card__copy {
+  min-inline-size: 0;
+  white-space: pre-line;
+}
+
+.infinity-shop-card h2,
+.infinity-shop-card p {
+  margin: 0;
+}
+
+.infinity-shop-card h2 {
+  color: white;
+  font-size: calc(1.05rem * var(--game-text-scale));
+  line-height: 1.18;
+}
+
+.infinity-shop-card p {
+  margin-block-start: 0.35rem;
+  color: #f2edf9;
+  font-size: calc(0.84rem * var(--game-text-scale));
+  line-height: 1.28;
+}
+
+.infinity-shop-card .infinity-shop-card__requirement {
+  color: #d3c2ff;
+  font-weight: var(--font-weight-semibold);
+}
+
+.infinity-shop-card .infinity-shop-card__purchased-count {
+  color: var(--infinity-spent);
+  font-family: var(--font-family-numeric);
+  font-size: calc(0.78rem * var(--game-text-scale));
+  font-variant-numeric: tabular-nums;
+  font-weight: var(--font-weight-semibold);
+}
+
+.infinity-shop-card .ui-button {
+  display: flex;
+  min-inline-size: 0;
+  min-block-size: 100%;
+  flex-direction: column;
+  gap: 0.05rem;
+  align-self: stretch;
+  padding: 0.4rem;
+  border-color: #08060d;
+  border-radius: 0.25rem;
+  background: var(--infinity-accent);
+  color: #100a18;
+  font-family: var(--font-family-numeric);
+  font-size: calc(0.87rem * var(--game-text-scale));
+  font-variant-numeric: tabular-nums;
+  font-weight: var(--font-weight-bold);
+}
+
+.infinity-shop-card .ui-button:not(:disabled):hover {
+  background: #ad8cff;
+}
+
+.infinity-shop-card .ui-button:not(:disabled):active {
+  background: var(--infinity-control-pressed);
+}
+
+.infinity-shop-card .ui-button:disabled {
+  border-color: #171020;
+  background: var(--infinity-control-disabled);
+  color: #b5a7c8;
+  opacity: 1;
+}
+
+.infinity-shop-card__cost {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.22rem;
+}
+
+.infinity-shop-card__cost .ui-inline-image-symbol {
+  inline-size: 1em;
+  block-size: 1em;
+}
+
+.infinity-shop-card__feedback {
+  grid-column: 1 / -1;
+  color: #ded4ef;
+  font-size: calc(0.78rem * var(--game-text-scale));
+}
+
+.infinity-break-target {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 0.4rem;
+  padding-block-start: 0.2rem;
+  border-block-start: 1px solid #5a477e;
+}
+
+.infinity-break-target label {
+  font-size: calc(0.84rem * var(--game-text-scale));
+  font-weight: var(--font-weight-semibold);
+}
+
+.infinity-break-target input {
+  appearance: none;
+  grid-column: 1 / -1;
+  inline-size: 100%;
+  min-inline-size: 0;
+  min-block-size: var(--target-minimum);
+  margin: 0;
+  background: transparent;
+  accent-color: var(--infinity-accent);
+  cursor: pointer;
+  touch-action: pan-y;
+}
+
+.infinity-break-target input::-webkit-slider-runnable-track {
+  block-size: 0.7rem;
+  border: 1px solid #0b0810;
+  border-radius: 0.2rem;
+  background: #15111e;
+}
+
+.infinity-break-target input::-webkit-slider-thumb {
+  appearance: none;
+  inline-size: 1.5rem;
+  block-size: 1.5rem;
+  margin-block-start: -0.45rem;
+  border: 1px solid #0b0810;
+  border-radius: 0.22rem;
+  background: var(--infinity-accent);
+  box-shadow: 0 1px 2px rgb(0 0 0 / 70%);
+}
+
+.infinity-break-target input::-moz-range-track {
+  block-size: 0.7rem;
+  border: 1px solid #0b0810;
+  border-radius: 0.2rem;
+  background: #15111e;
+}
+
+.infinity-break-target input::-moz-range-progress {
+  block-size: 0.7rem;
+  border-radius: 0.2rem;
+  background: var(--infinity-accent);
+}
+
+.infinity-break-target input::-moz-range-thumb {
+  inline-size: 1.5rem;
+  block-size: 1.5rem;
+  border: 1px solid #0b0810;
+  border-radius: 0.22rem;
+  background: var(--infinity-accent);
+  box-shadow: 0 1px 2px rgb(0 0 0 / 70%);
+}
+
+.infinity-break-target input:focus-visible {
+  outline: 3px solid var(--color-focus);
+  outline-offset: 2px;
+}
+
+.infinity-break-target__range,
+.infinity-break-target__feedback {
+  color: #cfc3df;
+  font-size: calc(0.72rem * var(--game-text-scale));
+  font-variant-numeric: tabular-nums;
+}
+
+.infinity-break-target__range {
+  text-align: end;
+}
+
+.infinity-break-target__feedback {
+  grid-column: 1 / -1;
+}
+
+.infinity-break-target__feedback[role="alert"] {
+  color: #ffb8b8;
+}
+
+.infinity-surface__empty {
+  max-inline-size: 32rem;
+  margin: 1rem auto;
+  color: #cfc3df;
+  text-align: center;
+}
+
+@container (min-width: 44rem) {
+  .infinity-surface__grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@container (min-width: 76rem) {
+  .infinity-surface__grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 30rem) {
+  .infinity-surface__summary {
+    gap: 0.35rem;
+    padding-block: 0.45rem;
+  }
+
+  .infinity-shop-card {
+    min-block-size: 7.5rem;
+    grid-template-columns: minmax(0, 1fr) 6.5rem;
+    padding: 0.5rem;
+  }
+
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .infinity-surface__progress-track > span {
+    transition: none;
+  }
+}
+
+@media (forced-colors: active) {
+  .infinity-surface__summary,
+  .infinity-shop-card,
+  .infinity-break-target input {
+    forced-color-adjust: auto;
+  }
+}

@@ -1,4 +1,5 @@
 using IdleDysonSwarm.Data;
+using Systems.Stats;
 using UnityEngine;
 
 namespace GameData
@@ -21,6 +22,18 @@ namespace GameData
             }
 
             Instance = this;
+            InvalidateEffectIndexes();
+        }
+
+        private void OnValidate()
+        {
+            InvalidateEffectIndexes();
+        }
+
+        private static void InvalidateEffectIndexes()
+        {
+            SkillEffectProvider.InvalidateIndex();
+            ResearchEffectProvider.InvalidateIndex();
         }
 
         /// <summary>

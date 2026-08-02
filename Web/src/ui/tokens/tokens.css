@@ -1,0 +1,148 @@
+@font-face {
+  font-family: "Lexend";
+  src: url("../assets/Lexend-Regular.ttf") format("truetype");
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Lexend";
+  src: url("../assets/Lexend-SemiBold.ttf") format("truetype");
+  font-style: normal;
+  font-weight: 600;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Lexend";
+  src: url("../assets/Lexend-Bold.ttf") format("truetype");
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+}
+
+:root {
+  color-scheme: dark;
+
+  --color-app-background: #1d151f;
+  --color-surface: #3f2f43;
+  --color-surface-raised: #4b3850;
+  --color-border: #0b080c;
+  --color-control: #c9a1d8;
+  --color-control-hover: #d7b2e4;
+  --color-control-pressed: #a97bbb;
+  --color-accent-value: #ffa45e;
+  --color-highlight: #00e1ff;
+  --color-positive: #91dd8f;
+  --color-warning: #ffeb3b;
+  --color-negative: #ff6b6b;
+  --color-text-primary: #f7f4f8;
+  --color-text-secondary: #c4bfc8;
+  --color-focus: #00e1ff;
+
+  --font-family-latin:
+    "Lexend", ui-sans-serif, system-ui, sans-serif;
+  --font-family-japanese:
+    "Noto Sans JP", "Yu Gothic UI", "Hiragino Sans", sans-serif;
+  --font-family-simplified-chinese:
+    "Noto Sans SC", "Microsoft YaHei UI", "PingFang SC", sans-serif;
+  --font-family-traditional-chinese:
+    "Noto Sans TC", "Microsoft JhengHei UI", "PingFang TC", sans-serif;
+  --font-family-arabic:
+    "Noto Sans Arabic", "Segoe UI", Tahoma, sans-serif;
+  --font-family-hebrew:
+    "Noto Sans Hebrew", "Segoe UI", Arial, sans-serif;
+  --font-family-devanagari:
+    "Noto Sans Devanagari", "Nirmala UI", sans-serif;
+  --font-family-body: var(--font-family-latin);
+  --font-family-numeric: var(--font-family-body);
+  --game-text-scale: 1;
+  --font-size-xs: 0.75rem;
+  --font-size-sm: 0.875rem;
+  --font-size-md: 1rem;
+  --font-size-lg: 1.25rem;
+  --font-size-xl: clamp(1.5rem, 4vw, 2rem);
+  --line-height-compact: 1.25;
+  --line-height-body: 1.5;
+  --font-weight-regular: 400;
+  --font-weight-medium: 600;
+  --font-weight-semibold: 600;
+  --font-weight-bold: 700;
+
+  --space-1: 0.25rem;
+  --space-2: 0.5rem;
+  --space-3: 0.75rem;
+  --space-4: 1rem;
+  --space-5: 1.5rem;
+  --space-6: 2rem;
+  --radius-sm: 0.25rem;
+  --radius-md: 0.5rem;
+  --border-width: 1px;
+  --target-minimum: 2.75rem;
+  --target-touch: 3rem;
+
+  --motion-duration-fast: 120ms;
+  --motion-duration-standard: 180ms;
+  --motion-easing-standard: cubic-bezier(0.2, 0, 0, 1);
+
+  --breakpoint-compact-max: 599px;
+  --breakpoint-medium-min: 600px;
+  --breakpoint-wide-min: 1024px;
+}
+
+:root:lang(ja) {
+  --font-family-body: var(--font-family-japanese);
+  --line-height-body: 1.65;
+}
+
+:root:lang(zh-Hans) {
+  --font-family-body: var(--font-family-simplified-chinese);
+  --line-height-body: 1.6;
+}
+
+:root:lang(zh-Hant) {
+  --font-family-body: var(--font-family-traditional-chinese);
+  --line-height-body: 1.6;
+}
+
+:root:lang(ar) {
+  --font-family-body: var(--font-family-arabic);
+  --line-height-body: 1.65;
+}
+
+:root:lang(he) {
+  --font-family-body: var(--font-family-hebrew);
+}
+
+:root:lang(hi) {
+  --font-family-body: var(--font-family-devanagari);
+  --line-height-body: 1.65;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  :root {
+    --motion-duration-fast: 0ms;
+    --motion-duration-standard: 0ms;
+  }
+}
+
+@media (forced-colors: active) {
+  :root {
+    --color-app-background: Canvas;
+    --color-surface: Canvas;
+    --color-surface-raised: Canvas;
+    --color-border: CanvasText;
+    --color-control: ButtonFace;
+    --color-control-hover: Highlight;
+    --color-control-pressed: ButtonFace;
+    --color-accent-value: CanvasText;
+    --color-highlight: LinkText;
+    --color-positive: CanvasText;
+    --color-warning: CanvasText;
+    --color-negative: CanvasText;
+    --color-text-primary: CanvasText;
+    --color-text-secondary: CanvasText;
+    --color-focus: Highlight;
+  }
+}

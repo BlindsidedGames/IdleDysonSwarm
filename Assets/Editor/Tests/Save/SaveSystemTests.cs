@@ -20,7 +20,7 @@ namespace Tests.Save
             var system = new SaveSystem(storage);
 
             var settings = new Oracle.SaveDataSettings();
-            settings.saveVersion = 11;
+            settings.saveVersion = 12;
             settings.dysonVerseSaveData.dysonVerseInfinityData.money = 123.456;
             settings.dysonVerseSaveData.dysonVerseInfinityData.science = 42;
 
@@ -35,7 +35,7 @@ namespace Tests.Save
 
             Assert.IsTrue(system.TryLoad(out Oracle.SaveDataSettings loaded, out string loadErr), loadErr);
             Assert.IsNotNull(loaded);
-            Assert.AreEqual(11, loaded.saveVersion);
+            Assert.AreEqual(12, loaded.saveVersion);
             Assert.AreEqual(123.456, loaded.dysonVerseSaveData.dysonVerseInfinityData.money);
             Assert.AreEqual(42, loaded.dysonVerseSaveData.dysonVerseInfinityData.science);
         }

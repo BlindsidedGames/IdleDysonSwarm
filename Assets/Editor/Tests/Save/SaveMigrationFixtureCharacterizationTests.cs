@@ -32,7 +32,7 @@ namespace Tests.Save
     [TestFixture]
     public sealed class SaveMigrationFixtureCharacterizationTests
     {
-        private const int CurrentSchema = 11;
+        private const int CurrentSchema = 12;
         private const string Schema7RawJsonId = "schema-07-raw-json-20260202-045325";
         private const string Schema8DebugDtoId = "schema-08-debug-dto-20260202-060115";
         private const string Schema8CanonicalIdb1Id = "schema-08-canonical-idb1-main-save";

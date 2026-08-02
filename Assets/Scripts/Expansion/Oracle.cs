@@ -13,9 +13,11 @@ using Systems;
 using Systems.Debugging;
 using Systems.Facilities;
 using Systems.Migrations;
+using Systems.Numeric;
 using Systems.Skills;
 using Systems.Stats;
 using Systems.Save;
+using Systems.Simulation;
 using IdleDysonSwarm.Data.Balance;
 using IdleDysonSwarm.Systems.Balance;
 using TMPro;
@@ -60,9 +62,7 @@ using UnityEditor;
  * - Changes here do not migrate saves directly but can change interpretation of existing save-state numbers.
  * - Lifecycle callbacks are routed through RuntimeSeams; callback policy changes must stay aligned with
  *   OfflineLifecycleCoordinator tests.
- * - Bot overflow recovery recognizes both the historical Infinity/NaN marker and the finite sentinel produced by
- *   Oracle.Migrations before save validation. DysonInfinity clears infinityInProgress after consuming the marker;
- *   keep those paths aligned so prepared and repeated overflows cannot leave runtime progression blocked.
+ * - The finite bot cap is a durable exactly-once transition. Non-finite bots are corruption and never grant rewards.
  */
 
 namespace Expansion
@@ -99,7 +99,7 @@ namespace Expansion
         [SerializeField] public LineManager linePrefab;
         [SerializeField] public Transform lineHolder;
         [SerializeField] private GameManager _gameManager;
-        public float infinityExponent = 3.9f;
+        public double infinityExponent = 3.9d;
 
         [Header("Offline Progress Debug")]
         [SerializeField] private double offlineParityAwaySeconds = 3600;
@@ -108,7 +108,6 @@ namespace Expansion
         [SerializeField] private double offlineParityRecalcDeltaSeconds = 0;
         [SerializeField] private double offlineParityAbsoluteTolerance = 0.01;
         [SerializeField] private double offlineParityRelativeTolerance = 0.001;
-        [SerializeField] private bool offlineParityApplyInfinityPointsBonus = true;
 
         public static event Action UpdateSkills;
         public static event Action DebugOptionsChanged;
@@ -135,7 +134,7 @@ namespace Expansion
 		        // IMPORTANT: When adding a migration step in BuildMigrationRegistry(),
 		        // you MUST also update this constant to match the new LatestVersion.
 		        // IMPORTANT: Save v7 introduces skill bitsets (see SkillIdMap/SkillBitsetUtility).
-		        private const int CurrentSaveVersion = 11;
+		        private const int CurrentSaveVersion = 12;
 
 private void PackSettingsFlags()
         {
@@ -383,29 +382,116 @@ private void PackSettingsFlags()
         private void Update()
         {
             prestigeButton.interactable = prestigeData.infinityPoints >= 42;
-            if (IsBotOverflowSignal(infinityData.bots))
-                if (!oracle.saveSettings.infinityInProgress)
+        }
+
+        internal bool ProcessBotCapTransition()
+        {
+            return ProcessBotCapTransitionWithOutcome(
+                out _);
+        }
+
+        internal bool ProcessBotCapTransitionWithOutcome(
+            out bool specialRewardGranted)
+        {
+            specialRewardGranted = false;
+            BotCapTransitionAction action = BotCapTransitionContract.Classify(
+                infinityData.bots,
+                saveSettings.botCapTransitionPending,
+                saveSettings.botCapRewardsGranted);
+
+            if (action == BotCapTransitionAction.RepairInvalidBots)
+            {
+                double invalidBots = infinityData.bots;
+                infinityData.bots = 0d;
+                saveSettings.botCapTransitionPending = false;
+                saveSettings.botCapRewardsGranted = false;
+                saveSettings.infinityInProgress = false;
+                if (saveSettings.hasPackedSettingsFlags)
+                    saveSettings.packedSettingsFlags &= ~(1UL << 6);
+                NumericDiagnostics.Report(
+                    "NS-BOT-NONFINITE",
+                    $"kind={(double.IsNaN(invalidBots) ? "nan" : invalidBots > 0d ? "positive_infinity" : "negative_infinity")}");
+                if (!TrySaveState(out string repairError))
                 {
-                    oracle.saveSettings.infinityInProgress = true;
-                    oracle.saveSettings.avocadoData.overflowMultiplier++;
-                    prestigePlus.avocatoOverflow++; // Keep legacy field in sync
-                    prestigeData.infinityPoints += 1000;
-                    _gameManager.Prestige();
+                    NumericDiagnostics.Report("NS-BOT-NONFINITE-COMMIT", "committed=false");
+                    Debug.LogError(
+                        $"[NumericSafety:NS-BOT-NONFINITE-COMMIT] Runtime bot repair did not persist: {repairError}");
                 }
+                return true;
+            }
 
-            double amount = prestigePlus.divisionsPurchased > 0 ? 4.2e19 / Math.Pow(10, prestigePlus.divisionsPurchased) : 4.2e19;
-            int ipToGain = StaticMethods.InfinityPointsToGain(amount, infinityData.bots);
-            ipToGain = saveSettings.doubleIp ? ipToGain * 2 : ipToGain;
-
-
-            if (prestigePlus.breakTheLoop && !saveSettings.infinityInProgress)
-                if ((prestigePlus.doubleIP ? ipToGain * 2 : ipToGain) >= (saveSettings.infinityPointsToBreakFor >= 1
-                        ? saveSettings.infinityPointsToBreakFor
-                        : 1))
+            if (action == BotCapTransitionAction.PersistPendingCheckpoint)
+            {
+                saveSettings.botCapTransitionPending = true;
+                if (!TrySaveState(out string pendingError))
                 {
-                    oracle.saveSettings.infinityInProgress = true;
-                    _gameManager.Prestige();
+                    Debug.LogError(
+                        $"[NumericSafety:NS-BOT-PENDING-SAVE] Could not persist bot-cap transition: {pendingError}");
+                    return true;
                 }
+            }
+
+            action = BotCapTransitionContract.Classify(
+                infinityData.bots,
+                saveSettings.botCapTransitionPending,
+                saveSettings.botCapRewardsGranted);
+            if (action == BotCapTransitionAction.None)
+            {
+                return false;
+            }
+
+            if (action == BotCapTransitionAction.GrantRewardsAndPersistCheckpoint)
+            {
+                // A pending checkpoint has not committed rewards yet. A stale
+                // in-progress bit must never prevent retrying this state.
+                saveSettings.infinityInProgress = true;
+                double previousOverflow = saveSettings.avocadoData.overflowMultiplier;
+                double previousLegacyOverflow = prestigePlus.avocatoOverflow;
+                long previousInfinityPoints = prestigeData.infinityPoints;
+
+                NumericResult<double> overflowReward =
+                    NumericSafety.AddUnit(previousOverflow);
+                NumericResult<double> legacyOverflowReward =
+                    NumericSafety.AddUnit(previousLegacyOverflow);
+                saveSettings.avocadoData.overflowMultiplier =
+                    overflowReward.Value;
+                prestigePlus.avocatoOverflow =
+                    legacyOverflowReward.Value;
+                prestigeData.infinityPoints =
+                    NumericSafety.Add(previousInfinityPoints, 1000L).Value;
+                saveSettings.botCapTransitionPending = false;
+                saveSettings.botCapRewardsGranted = true;
+
+                if (!TrySaveState(out string rewardError))
+                {
+                    saveSettings.avocadoData.overflowMultiplier = previousOverflow;
+                    prestigePlus.avocatoOverflow = previousLegacyOverflow;
+                    prestigeData.infinityPoints = previousInfinityPoints;
+                    saveSettings.botCapTransitionPending = true;
+                    saveSettings.botCapRewardsGranted = false;
+                    saveSettings.infinityInProgress = false;
+                    Debug.LogError(
+                        $"[NumericSafety:NS-BOT-REWARD-SAVE] Bot-cap rewards were not committed; transition paused: {rewardError}");
+                    return true;
+                }
+                specialRewardGranted = true;
+                if (overflowReward.IsSaturated ||
+                    legacyOverflowReward.IsSaturated)
+                {
+                    NumericDiagnostics.Report(
+                        "NS-BOT-OVERFLOW-REWARD-QUANTIZED",
+                        "logical_units=1");
+                }
+            }
+            else
+            {
+                // Rewards were already committed. This is the crash/reload recovery
+                // checkpoint: resume the reset without granting them again.
+                saveSettings.infinityInProgress = true;
+            }
+
+            _gameManager.Prestige();
+            return true;
         }
 
 
@@ -1237,16 +1323,10 @@ private void PackSettingsFlags()
             try
             {
                 saveSettings = offlineSettings;
-                ApplyOfflineInfinityPointsBonus(offlineSettings, awaySeconds);
                 offlineSnapshot = SimulateOfflineProgress(offlineSettings, effectiveAwaySeconds, offlineStepSeconds,
                     recalcDeltaSeconds);
 
                 saveSettings = onlineSettings;
-                if (offlineParityApplyInfinityPointsBonus)
-                {
-                    ApplyOfflineInfinityPointsBonus(onlineSettings, awaySeconds);
-                }
-
                 onlineSnapshot = SimulateOnlineProgress(onlineSettings, effectiveAwaySeconds, onlineStepSeconds);
             }
             finally
@@ -1365,34 +1445,21 @@ private void PackSettingsFlags()
             ProductionSystem.CalculateProduction(infinityData, skillTreeData, prestigeData, prestigePlus, recalcDeltaSeconds);
 
             double bots = infinityData.botProduction * stepSeconds;
-            infinityData.bots += bots;
+            infinityData.bots = NumericSafety.Add(infinityData.bots, bots).Value;
             ProductionSystem.CalculateProduction(infinityData, skillTreeData, prestigeData, prestigePlus, recalcDeltaSeconds);
 
             ProductionSystem.SetBotDistribution(infinityData, prestigeData, prestigePlus);
 
             double money = ProductionSystem.MoneyToAdd(infinityData, skillTreeData) * stepSeconds;
-            infinityData.money += money;
+            infinityData.money = NumericSafety.Add(infinityData.money, money).Value;
 
             double science = ProductionSystem.ScienceToAdd(infinityData, skillTreeData) * stepSeconds;
-            infinityData.science += science;
+            infinityData.science = NumericSafety.Add(infinityData.science, science).Value;
 
             double decayed = infinityData.panelsPerSec * stepSeconds;
-            infinityData.totalPanelsDecayed += decayed;
+            infinityData.totalPanelsDecayed =
+                NumericSafety.Add(infinityData.totalPanelsDecayed, decayed).Value;
             ProductionSystem.CalculateProduction(infinityData, skillTreeData, prestigeData, prestigePlus, recalcDeltaSeconds);
-        }
-
-        private static void ApplyOfflineInfinityPointsBonus(SaveDataSettings settings, double awaySeconds)
-        {
-            if (settings == null) return;
-
-            DysonVersePrestigeData prestigeData = settings.dysonVerseSaveData?.dysonVersePrestigeData;
-            if (prestigeData == null) return;
-
-            if (settings.lastInfinityPointsGained < 1) return;
-            if (settings.timeLastInfinity <= 0) return;
-
-            prestigeData.infinityPoints += (long)Math.Floor(awaySeconds * settings.lastInfinityPointsGained /
-                                                    settings.timeLastInfinity / 10);
         }
 
         private static OfflineParitySnapshot CaptureOfflineParitySnapshot(DysonVerseInfinityData infinityData)
@@ -1432,7 +1499,7 @@ private void PackSettingsFlags()
                 $"Steps: offline {offlineStepSeconds.ToString(CultureInfo.InvariantCulture)}s, online {onlineStepSeconds.ToString(CultureInfo.InvariantCulture)}s");
             builder.AppendLine(
                 $"Tolerance: abs {absTolerance.ToString(CultureInfo.InvariantCulture)}, rel {relTolerance.ToString(CultureInfo.InvariantCulture)}");
-            builder.AppendLine($"Online applies IP bonus: {offlineParityApplyInfinityPointsBonus}");
+            builder.AppendLine("Passive offline IP bonus: removed; resets are simulated");
 
             AppendOfflineParityLine(builder, "Bots", offlineSnapshot.Bots, onlineSnapshot.Bots, absTolerance,
                 relTolerance);
@@ -2310,28 +2377,10 @@ private void PackSettingsFlags()
 
         public bool IsSkillOwned(string skillId)
         {
-            if (string.IsNullOrEmpty(skillId)) return false;
-            if (TryGetOwnedFromBitset(skillId, out bool ownedFromBits)) return ownedFromBits;
-            if (infinityData != null && infinityData.skillStateById != null &&
-                infinityData.skillStateById.TryGetValue(skillId, out SkillState state))
-            {
-                return state != null && state.owned;
-            }
-
-            if (infinityData != null && infinityData.skillOwnedById != null &&
-                infinityData.skillOwnedById.TryGetValue(skillId, out bool owned))
-            {
-                EnsureSkillStateEntry(skillId, owned);
-                return owned;
-            }
-
-            if (SkillFlagAccessor.TryGetFlag(skillTreeData, skillId, out bool legacyOwned) && legacyOwned)
-            {
-                EnsureSkillStateEntry(skillId, legacyOwned);
-                return true;
-            }
-
-            return false;
+            return SkillOwnershipState.IsOwned(
+                infinityData,
+                skillTreeData,
+                skillId);
         }
 
         private bool TryGetOwnedFromBitset(string skillId, out bool owned)
@@ -2352,32 +2401,37 @@ private void PackSettingsFlags()
 
         public void SetSkillOwned(string skillId, bool owned)
         {
+            SetSkillOwned(
+                skillId,
+                owned,
+                updatePresentation: true);
+        }
+
+        internal void SetSkillOwned(
+            string skillId,
+            bool owned,
+            bool updatePresentation)
+        {
             if (string.IsNullOrEmpty(skillId)) return;
             if (infinityData == null) return;
 
-            SetSkillStateOwned(skillId, owned);
-            SyncSkillOwnedByIdFromState();
+            SkillOwnershipState.SetOwned(
+                infinityData,
+                skillTreeData,
+                skillId,
+                owned);
 
             if (SkillIdMap.TryGetLegacyKey(skillId, out int key))
             {
-                infinityData.SkillTreeSaveData ??= new Dictionary<int, bool>();
-                infinityData.SkillTreeSaveData[key] = owned;
-                if (SkillTree != null && SkillTree.TryGetValue(key, out SkillTreeItem item))
+                if (updatePresentation &&
+                    SkillTree != null &&
+                    SkillTree.TryGetValue(
+                        key,
+                        out SkillTreeItem item))
                 {
                     item.Owned = owned;
                 }
             }
-
-            if (infinityData.skillOwnedBits == null || infinityData.skillOwnedBits.Length == 0)
-            {
-                infinityData.skillOwnedBits = SkillBitsetUtility.CreateEmptyBitset();
-            }
-            if (SkillBitsetUtility.TryGetIndex(skillId, out int index))
-            {
-                SkillBitsetUtility.SetBit(infinityData.skillOwnedBits, index, owned);
-            }
-
-            SkillFlagAccessor.TrySetFlag(skillTreeData, skillId, owned);
         }
 
         private void SetSkillStateOwned(string skillId, bool owned)
@@ -2499,8 +2553,7 @@ private void PackSettingsFlags()
         public static void AddResearchLevel(string researchId, double delta)
         {
             if (oracle == null || string.IsNullOrEmpty(researchId)) return;
-            double level = oracle.GetResearchLevelInternal(researchId);
-            oracle.SetResearchLevelInternal(researchId, level + delta);
+            oracle.AddResearchProgressInternal(researchId, delta);
         }
 
         private double GetResearchLevelInternal(string researchId)
@@ -2527,14 +2580,57 @@ private void PackSettingsFlags()
             if (infinityData == null || string.IsNullOrEmpty(researchId)) return;
 
             infinityData.researchLevelsById ??= new Dictionary<string, double>();
-            if (ResearchIdMap.TrySetLegacyLevel(infinityData, researchId, level) &&
+            infinityData.researchProgressById ??= new Dictionary<string, double>();
+            if (!NumericSafety.IsFinite(level) || level < 0d) return;
+            double discreteLevel = Math.Floor(level);
+            infinityData.researchProgressById[researchId] = 0d;
+            if (ResearchIdMap.TrySetLegacyLevel(infinityData, researchId, discreteLevel) &&
                 ResearchIdMap.TryGetLegacyLevel(infinityData, researchId, out double normalized))
             {
                 infinityData.researchLevelsById[researchId] = normalized;
                 return;
             }
 
-            infinityData.researchLevelsById[researchId] = level;
+            infinityData.researchLevelsById[researchId] = discreteLevel;
+        }
+
+        private void AddResearchProgressInternal(string researchId, double delta)
+        {
+            if (infinityData == null || string.IsNullOrEmpty(researchId) ||
+                !NumericSafety.IsFinite(delta) || delta <= 0d)
+            {
+                return;
+            }
+
+            infinityData.researchProgressById ??= new Dictionary<string, double>();
+            infinityData.researchProgressById.TryGetValue(researchId, out double remainder);
+            if (!NumericSafety.IsFinite(remainder) || remainder < 0d)
+                remainder = 0d;
+            NumericResult<double> total = NumericSafety.Add(remainder, delta);
+            if (!total.IsSuccess) return;
+
+            double whole = Math.Floor(total.Value);
+            if (whole <= 0d)
+            {
+                infinityData.researchProgressById[researchId] = total.Value;
+                return;
+            }
+
+            double current = GetResearchLevelInternal(researchId);
+            NumericResult<double> next = NumericSafety.Add(current, whole);
+            if (!next.IsSuccess || next.Value <= current)
+            {
+                // Above the exact-integer boundary, a whole level can be smaller
+                // than the current double's ULP. Retain all unrepresented accrual
+                // until it is large enough to advance the stored whole level.
+                infinityData.researchProgressById[researchId] = total.Value;
+                return;
+            }
+
+            double represented = next.Value - current;
+            double nextRemainder = Math.Max(0d, total.Value - represented);
+            SetResearchLevelInternal(researchId, next.Value);
+            infinityData.researchProgressById[researchId] = nextRemainder;
         }
 
         public List<string> GetAutoAssignmentSkillIds()
@@ -2707,95 +2803,302 @@ private void PackSettingsFlags()
             }
         }
 
+        private void ResetInfinityRunState(
+            bool updatePresentation)
+        {
+            if (updatePresentation && SkillTree != null)
+            {
+                foreach (KeyValuePair<int, SkillTreeItem> entry in
+                         SkillTree)
+                {
+                    if (entry.Value != null)
+                        entry.Value.Owned = false;
+                }
+            }
+        }
+
+        internal void AutoAssignSkillsWithoutPresentation()
+        {
+            List<string> autoAssignIds =
+                GetAutoAssignmentSkillIds();
+            if (autoAssignIds.Count < 1) return;
+            GameDataRegistry registry =
+                GameDataRegistry.Instance;
+            if (registry == null ||
+                registry.skillDatabase == null)
+            {
+                return;
+            }
+
+            bool assignedAny;
+            int passesRemaining = autoAssignIds.Count;
+            do
+            {
+                assignedAny = false;
+                foreach (string skillId in autoAssignIds)
+                {
+                    if (string.IsNullOrEmpty(skillId) ||
+                        IsSkillOwned(skillId) ||
+                        !registry.skillDatabase.TryGet(
+                            skillId,
+                            out SkillDefinition definition) ||
+                        definition == null)
+                    {
+                        continue;
+                    }
+
+                    if (skillTreeData.skillPointsTree <
+                            definition.cost ||
+                        !RequirementsMet(
+                            definition.requiredSkillIds) ||
+                        !RequirementsMet(
+                            definition.shadowRequirementIds) ||
+                        AnyExclusiveOwned(
+                            definition.exclusiveWithIds) ||
+                        (!saveSettings
+                              .autoAssignNonRefundableSkills &&
+                         !definition.refundable))
+                    {
+                        continue;
+                    }
+
+                    DiscreteDebitResult debit =
+                        EconomyTransaction.TryDebit(
+                            skillTreeData.skillPointsTree,
+                            definition.cost);
+                    if (!debit.Succeeded) continue;
+                    skillTreeData.skillPointsTree =
+                        debit.Balance;
+                    SetSkillOwned(
+                        skillId,
+                        true,
+                        updatePresentation: false);
+                    if (definition.isFragment)
+                    {
+                        skillTreeData.fragments =
+                            NumericSafety.Add(
+                                skillTreeData.fragments,
+                                1L).Value;
+                    }
+                    assignedAny = true;
+                    if (skillTreeData.skillPointsTree <= 0L)
+                        break;
+                }
+                passesRemaining--;
+            } while (assignedAny &&
+                     skillTreeData.skillPointsTree > 0L &&
+                     passesRemaining > 0);
+        }
+
+        private bool RequirementsMet(string[] ids)
+        {
+            if (ids == null || ids.Length == 0)
+                return true;
+            for (int index = 0;
+                 index < ids.Length;
+                 index++)
+            {
+                if (!IsSkillOwned(ids[index]))
+                    return false;
+            }
+            return true;
+        }
+
+        private bool AnyExclusiveOwned(string[] ids)
+        {
+            if (ids == null || ids.Length == 0)
+                return false;
+            for (int index = 0;
+                 index < ids.Length;
+                 index++)
+            {
+                if (IsSkillOwned(ids[index]))
+                    return true;
+            }
+            return false;
+        }
+
         #region DysonVerseInfinity
 
         [ContextMenu("DysonInfinity")]
-        public void DysonInfinity()
+        public void DysonInfinity(bool updatePresentation = true)
         {
-            saveSettings.offlineTimeUsedPreviousInfinity = saveSettings.offlineTimeUsedThisInfinity;
-            saveSettings.offlineTimeUsedThisInfinity = 0;
-            saveSettings.firstInfinityDone = true;
-            int bankedSkills = 0;
-            if (IsSkillOwned("banking")) bankedSkills++;
-            if (IsSkillOwned("investmentPortfolio")) bankedSkills++;
-            ResetSkillOwnership();
+            bool completingBotCapTransition = saveSettings.botCapRewardsGranted;
 
-            saveSettings.dysonVerseSaveData.dysonVerseInfinityData = new DysonVerseInfinityData();
+            long ipToGain =
+                saveSettings.prestigePlus.doubleIP ? 2L : 1L;
+            if (saveSettings.doubleIp)
+                ipToGain = NumericSafety.Add(
+                    ipToGain,
+                    ipToGain).Value;
+            if (!TryApplyInfinityReset(
+                    breakInfinity: false,
+                    ipToGain,
+                    completingBotCapTransition,
+                    updatePresentation))
+            {
+                saveSettings.infinityInProgress = false;
+                return;
+            }
 
-            int ipToGain = saveSettings.prestigePlus.doubleIP ? 2 : 1;
-            ipToGain *= saveSettings.doubleIp ? 2 : 1;
-
-            oracle.saveSettings.lastInfinityPointsGained = ipToGain;
-            prestigeData.infinityPoints += ipToGain;
-            infinityData.bots = prestigeData.infinityAssemblyLines ? 10 : 1;
-            infinityData.assemblyLines[1] = prestigeData.infinityAssemblyLines ? 10 : 0;
-            infinityData.managers[1] = prestigeData.infinityAiManagers ? 10 : 0;
-            infinityData.servers[1] = prestigeData.infinityServers ? 10 : 0;
-            infinityData.dataCenters[1] = prestigeData.infinityDataCenter ? 10 : 0;
-            infinityData.planets[1] = prestigeData.infinityPlanets ? 10 : 0;
-
-            skillTreeData.skillPointsTree = prestigeData.permanentSkillPoint + bankedSkills + ArtifactSkillPoints();
-
-            if (saveSettings.firstReality)
+            if (updatePresentation && saveSettings.firstReality)
             {
                 SidePanelManager.InfinityToggle.GetComponentInChildren<MenuToggleController>().Toggle(false);
                 saveSettings.firstReality = false;
             }
 
-            if (prestigeData.infinityPoints == 42)
+            if (updatePresentation && prestigeData.infinityPoints == 42)
                 SidePanelManager.PrestigeToggle.GetComponentInChildren<MenuToggleController>().Toggle(false);
-            skillTreeData.fragments = 0;
-            _gameManager.AutoAssignSkillsInvoke();
-            WipeSaveButtonUpdate();
-            SetSkillTimerSeconds(infinityData, "superRadiantScattering", 0);
-            saveSettings.infinityInProgress = false;
-            Rotator.ResetPanelsStatic();
+            if (updatePresentation)
+                Rotator.ResetPanelsStatic();
+            if (completingBotCapTransition && !TrySaveState(out string transitionError))
+            {
+                Debug.LogError(
+                    $"[NumericSafety:NS-BOT-RESET-SAVE] Bot-cap reset completed in memory but did not persist: {transitionError}");
+            }
         }
 
-        public void ManualDysonInfinity()
+        public void AutomaticBreakInfinityReset(
+            bool updatePresentation = true)
         {
-            saveSettings.offlineTimeUsedPreviousInfinity = saveSettings.offlineTimeUsedThisInfinity;
-            saveSettings.offlineTimeUsedThisInfinity = 0;
-            saveSettings.firstInfinityDone = true;
-            int bankedSkills = 0;
-            if (IsSkillOwned("banking")) bankedSkills++;
-            if (IsSkillOwned("investmentPortfolio")) bankedSkills++;
-            ResetSkillOwnership();
+            bool completingBotCapTransition = saveSettings.botCapRewardsGranted;
 
             double amount = prestigePlus.divisionsPurchased > 0 ? 4.2e19 / Math.Pow(10, prestigePlus.divisionsPurchased) : 4.2e19;
-            int ipToGain = StaticMethods.InfinityPointsToGain(amount, infinityData.bots);
-            ipToGain *= saveSettings.doubleIp ? 2 : 1;
-            oracle.saveSettings.lastInfinityPointsGained = saveSettings.prestigePlus.doubleIP ? ipToGain * 2 : ipToGain;
-            prestigeData.infinityPoints += saveSettings.prestigePlus.doubleIP ? ipToGain * 2 : ipToGain;
+            long ipToGain = StaticMethods.InfinityPointsToGain(amount, infinityData.bots);
+            ipToGain = saveSettings.doubleIp ? NumericSafety.Add(ipToGain, ipToGain).Value : ipToGain;
+            long finalGain = saveSettings.prestigePlus.doubleIP
+                ? NumericSafety.Add(ipToGain, ipToGain).Value
+                : ipToGain;
 
-            saveSettings.dysonVerseSaveData.dysonVerseInfinityData = new DysonVerseInfinityData();
-            infinityData.bots = prestigeData.infinityAssemblyLines ? 10 : 1;
-            infinityData.assemblyLines[1] = prestigeData.infinityAssemblyLines ? 10 : 0;
-            infinityData.managers[1] = prestigeData.infinityAiManagers ? 10 : 0;
-            infinityData.servers[1] = prestigeData.infinityServers ? 10 : 0;
-            infinityData.dataCenters[1] = prestigeData.infinityDataCenter ? 10 : 0;
-            infinityData.planets[1] = prestigeData.infinityPlanets ? 10 : 0;
+            if (!TryApplyInfinityReset(
+                    breakInfinity: true,
+                    finalGain,
+                    completingBotCapTransition,
+                    updatePresentation))
+            {
+                saveSettings.infinityInProgress = false;
+                return;
+            }
 
-            skillTreeData.skillPointsTree = prestigeData.permanentSkillPoint + bankedSkills + ArtifactSkillPoints();
+            if (updatePresentation)
+                Rotator.ResetPanelsStatic();
+            if (completingBotCapTransition && !TrySaveState(out string transitionError))
+            {
+                Debug.LogError(
+                    $"[NumericSafety:NS-BOT-RESET-SAVE] Bot-cap reset completed in memory but did not persist: {transitionError}");
+            }
+        }
 
-            skillTreeData.fragments = 0;
-            _gameManager.AutoAssignSkillsInvoke();
-            WipeSaveButtonUpdate();
-            SetSkillTimerSeconds(infinityData, "superRadiantScattering", 0);
-            saveSettings.infinityInProgress = false;
-            Rotator.ResetPanelsStatic();
+        private bool TryApplyInfinityReset(
+            bool breakInfinity,
+            long requestedReward,
+            bool botCapTransition,
+            bool updatePresentation)
+        {
+            int artifactSkillPoints = ArtifactSkillPoints();
+            SkillDatabase skillDatabase =
+                GameDataRegistry.Instance?.skillDatabase;
+            if (InfinityResetPolicy.TryCapture(
+                    saveSettings,
+                    artifactSkillPoints,
+                    skillDatabase,
+                    out InfinityResetPolicy policy))
+            {
+                ResetInfinityRunState(updatePresentation);
+                if (!InfinityResetModel.TryApply(
+                        saveSettings,
+                        breakInfinity,
+                        requestedReward,
+                        botCapTransition,
+                        policy,
+                        out _))
+                {
+                    return false;
+                }
+
+                if (updatePresentation)
+                    _gameManager?.UpdateSkillsInvoke();
+                return true;
+            }
+
+            // A missing data registry historically skipped auto-assignment
+            // rather than blocking a legitimate reset. Preserve that failure
+            // behavior for the live reset, while analytical acceleration
+            // rejects the same state because it cannot prove parity.
+            int bankedSkills = 0;
+            if (IsSkillOwned("banking"))
+                bankedSkills++;
+            if (IsSkillOwned("investmentPortfolio"))
+                bankedSkills++;
+            ResetInfinityRunState(updatePresentation);
+            if (!InfinityResetTransitions.TryApply(
+                    saveSettings,
+                    new InfinityResetRequest(
+                        breakInfinity,
+                        requestedReward,
+                        bankedSkills,
+                        artifactSkillPoints,
+                        botCapTransition),
+                    out _))
+            {
+                return false;
+            }
+
+            _gameManager?.AutoAssignSkillsInvoke(
+                updatePresentation);
+            ProductionSystem.SetBotDistribution(
+                infinityData,
+                prestigeData,
+                prestigePlus);
+            ProductionSystem.RecalculateDerivedState(
+                infinityData,
+                skillTreeData,
+                prestigeData,
+                prestigePlus);
+            return true;
+        }
+
+        [Obsolete(
+            "Break Infinity is automatic; use AutomaticBreakInfinityReset.")]
+        public void ManualDysonInfinity()
+        {
+            AutomaticBreakInfinityReset(
+                updatePresentation: true);
         }
 
         public void EnactPrestigePlus()
+        {
+            if (GameManager.RequestQueuedPlayerAction(
+                    SimulationInputKind.QuantumAction,
+                    EnactPrestigePlusAtSimulationBoundary,
+                    "quantum_action"))
+            {
+                return;
+            }
+
+            EnactPrestigePlusAtSimulationBoundary();
+        }
+
+        private void EnactPrestigePlusAtSimulationBoundary()
         {
             saveSettings.firstInfinityDone = true;
             switch (prestigePlus.quantumEntanglement)
             {
                 case true:
                 {
-                    saveSettings.prestigePlus.points +=
-                        (long)Math.Floor((prestigeData.infinityPoints - prestigeData.spentInfinityPoints) / (float)IPToQuantumConversion);
-                    prestigeData.infinityPoints -= (long)Math.Floor((prestigeData.infinityPoints - prestigeData.spentInfinityPoints) / (float)IPToQuantumConversion) * IPToQuantumConversion;
+                    long available = prestigeData.infinityPoints >= prestigeData.spentInfinityPoints
+                        ? prestigeData.infinityPoints - prestigeData.spentInfinityPoints
+                        : 0L;
+                    long converted = available / IPToQuantumConversion;
+                    long cost = converted * IPToQuantumConversion;
+                    if (converted > 0L)
+                    {
+                        EconomyTransaction.TryPurchase(
+                            ref prestigeData.infinityPoints,
+                            cost,
+                            ref saveSettings.prestigePlus.points,
+                            converted);
+                    }
                 }
                     break;
                 case false:
@@ -2821,7 +3124,8 @@ private void PackSettingsFlags()
             _gameManager.CalculateProduction();
             saveSettings.dysonVerseSaveData.dysonVersePrestigeData = new DysonVersePrestigeData();
             saveSettings.dysonVerseSaveData.dysonVerseInfinityData = new DysonVerseInfinityData();
-            saveSettings.prestigePlus.points++;
+            saveSettings.prestigePlus.points =
+                NumericSafety.Add(saveSettings.prestigePlus.points, 1L).Value;
             prestigeData.secretsOfTheUniverse =
                 saveSettings.prestigePlus.secrets > 1 ? saveSettings.prestigePlus.secrets : 0;
             prestigeData.infinityAutoBots = saveSettings.prestigePlus.automation;
@@ -2840,6 +3144,7 @@ private void PackSettingsFlags()
             _skillTreeConfirmationManager.CloseConfirm();
             _gameManager.AutoAssignSkillsInvoke();
             Rotator.ResetPanelsStatic();
+            saveSettings.simulationStatistics?.StartNewQuantumRun();
         }
 
         public void WipeSaveButtonUpdate()
@@ -2922,6 +3227,11 @@ private void PackSettingsFlags()
             public int avotationProgressStep;
             public int infinityPointsToBreakFor;
             public bool infinityInProgress;
+            public bool botCapTransitionPending;
+            public bool botCapRewardsGranted;
+            public bool numericRepairNoticePending;
+            public string lastNumericRepairUtc;
+            public List<string> lastNumericRepairLog = new List<string>();
 
             public string dateStarted;
             public string dateQuitString;
@@ -2942,6 +3252,19 @@ private void PackSettingsFlags()
             public double offlineTimeUsedThisInfinity;
             public double offlineTimeUsedPreviousInfinity;
             public double maxOfflineTime = 86400;
+            // Durable event-time clock state. These fields make stored-time
+            // processing independent of how the same duration is partitioned
+            // across jobs or save/reload boundaries.
+            public bool eventTimeClockInitialized;
+            public double simulationAutomationTimeUntilNextEvent = 0.1d;
+            public double simulationInfinityBoundaryRemaining = 1d / 60d;
+            public double simulationInfinityCycleSeconds;
+            public long simulationInfinityCycleStartingPoints;
+            public bool simulationInfinityHasPostResetStart;
+            // Persist the deterministic rotation phases so automation order is
+            // unchanged by frame partitioning, stored-time yielding, or reload.
+            public int dysonAutomationTargetIndex;
+            public int researchAutomationTargetIndex;
             [Space(10)] public int frameRate;
             [Space(10)] public bool botsButtonToggle;
             public bool researchbuttonToggle;
@@ -2991,6 +3314,8 @@ private void PackSettingsFlags()
             public bool firstInfinityDone;
 
             public SaveData saveData = new SaveData();
+            public SimulationStatistics simulationStatistics =
+                new SimulationStatistics();
             public DysonVerseSaveData dysonVerseSaveData = new DysonVerseSaveData();
             public SaveDataPrestige sdPrestige = new SaveDataPrestige();
             public SaveDataDream1 sdSimulation = new SaveDataDream1();
@@ -3005,7 +3330,7 @@ private void PackSettingsFlags()
             public DysonVersePrestigeData dysonVersePrestigeData = new DysonVersePrestigeData();
             public DysonVerseSkillTreeData dysonVerseSkillTreeData = new DysonVerseSkillTreeData();
             public string lastCollapseDate;
-            public float manualCreationTime = 10;
+            public double manualCreationTime = 10d;
             public List<int> skillAutoAssignmentList = new List<int>();
             public List<int> skillAutoAssignmentList1 = new List<int>();
             public double botDistPreset1;
@@ -3151,6 +3476,7 @@ private void PackSettingsFlags()
             [ES3NonSerializable] public byte[] skillOwnedBits;
             public string skillOwnedBitsBase64;
             public Dictionary<string, double> researchLevelsById = new Dictionary<string, double>();
+            public Dictionary<string, double> researchProgressById = new Dictionary<string, double>();
             [Header("Money")] public double money;
 
             public double moneyMulti = 1f;
@@ -3482,6 +3808,7 @@ private void PackSettingsFlags()
             public long universesConsumed;
             public long workersReadyToGo;
             public bool workerAutoConvert;
+            public double workerGenerationProgress;
 
             public long influence;
 
@@ -3498,7 +3825,7 @@ private void PackSettingsFlags()
             public bool doDoubleTime;
             public bool doubleTimeOwned;
             public double doubleTime;
-            public long doubleTimeRate;
+            public int doubleTimeRate;
 
             public long simulationCount;
             public long strangeMatter;
@@ -3609,6 +3936,7 @@ private void PackSettingsFlags()
 
             [Space(10)] public double community;
             public double communityBoostCost;
+            public bool communityBoostIsFree = true;
             public double communityBoostTime;
             public double communityBoostDuration = 1200;
 
@@ -3700,17 +4028,19 @@ private void PackSettingsFlags()
             // Timer progress state (persists across save/load)
             // These track partial progress towards the next production tick
             [Space(10), Header("Timer Progress")]
-            public float hunterTimerProgress;
-            public float gathererTimerProgress;
-            public float communityTimerProgress;
-            public float housingTimerProgress;
-            public float villagesTimerProgress;
-            public float workersTimerProgress;
-            public float citiesTimerProgress;
-            public float factoriesTimerProgress;
-            public float botsTimerProgress;
-            public float spaceFactoriesTimerProgress;
-            public float railgunFireProgress;
+            public double hunterTimerProgress;
+            public double gathererTimerProgress;
+            public double communityTimerProgress;
+            public double housingTimerProgress;
+            public double villagesTimerProgress;
+            public double workersTimerProgress;
+            public double citiesTimerProgress;
+            public double factoriesTimerProgress;
+            public double botsTimerProgress;
+            public double spaceFactoriesTimerProgress;
+            public double railgunFireProgress;
+            public bool railgunFiring;
+            public int railgunShotsRemaining;
         }
 
 

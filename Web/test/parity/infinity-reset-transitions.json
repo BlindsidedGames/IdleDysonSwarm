@@ -1,0 +1,61 @@
+{
+  "name": "infinity-reset-transitions",
+  "source": "unity-golden-master",
+  "unityCommit": "717e4bf",
+  "cases": [
+    {
+      "name": "ordinary-retained-start",
+      "startingPoints": "41",
+      "requestedReward": "2",
+      "breakInfinity": false,
+      "bankedSkillPoints": "2",
+      "artifactSkillPoints": "3",
+      "permanentSkillPoints": "2",
+      "offlineTimeUsedThisInfinity": 12.5,
+      "retainedFacilities": [
+        "assembly_lines",
+        "ai_managers",
+        "servers",
+        "data_centers",
+        "planets"
+      ],
+      "expectedPoints": "43",
+      "expectedReward": "2",
+      "expectedBots": 10,
+      "expectedRetainedOwned": 10,
+      "expectedSkillPoints": "7"
+    },
+    {
+      "name": "break-fractional-run-wipe",
+      "startingPoints": "100",
+      "requestedReward": "37",
+      "breakInfinity": true,
+      "bankedSkillPoints": "0",
+      "artifactSkillPoints": "0",
+      "permanentSkillPoints": "0",
+      "offlineTimeUsedThisInfinity": 0,
+      "retainedFacilities": [],
+      "expectedPoints": "137",
+      "expectedReward": "37",
+      "expectedBots": 1,
+      "expectedRetainedOwned": 0,
+      "expectedSkillPoints": "0"
+    },
+    {
+      "name": "saturated-ip",
+      "startingPoints": "9223372036854775807",
+      "requestedReward": "42",
+      "breakInfinity": true,
+      "bankedSkillPoints": "0",
+      "artifactSkillPoints": "0",
+      "permanentSkillPoints": "0",
+      "offlineTimeUsedThisInfinity": 0,
+      "retainedFacilities": [],
+      "expectedPoints": "9223372036854775807",
+      "expectedReward": "0",
+      "expectedBots": 1,
+      "expectedRetainedOwned": 0,
+      "expectedSkillPoints": "0"
+    }
+  ]
+}

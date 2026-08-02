@@ -1,0 +1,190 @@
+@import "../../tokens/tokens.css";
+
+.tinker-surface {
+  display: grid;
+  gap: var(--space-3);
+  min-inline-size: 0;
+}
+
+.tinker-surface__control {
+  display: grid;
+  min-block-size: var(--target-touch);
+  min-inline-size: var(--target-minimum);
+  grid-template-columns: minmax(0, 1fr);
+  gap: 0.12rem;
+  padding: 0.5rem 0.6rem;
+  border: 1px solid #0d0a0e;
+  border-radius: 0.35rem;
+  background: #403044;
+  color: var(--color-text-primary);
+  font: inherit;
+  line-height: var(--line-height-compact);
+  text-align: start;
+  touch-action: manipulation;
+  -webkit-touch-callout: none;
+  -webkit-user-select: none;
+  user-select: none;
+  transition:
+    background-color var(--motion-duration-fast)
+      var(--motion-easing-standard),
+    border-color var(--motion-duration-fast)
+      var(--motion-easing-standard);
+}
+
+.tinker-surface__control[aria-disabled="false"] {
+  cursor: pointer;
+}
+
+.tinker-surface__control[aria-disabled="false"]:hover {
+  background: #4a3750;
+}
+
+.tinker-surface__control[aria-disabled="false"]:active,
+.tinker-surface__control[data-gesture-active="true"] {
+  background: #533b58;
+}
+
+.tinker-surface__control:focus-visible {
+  outline: 3px solid var(--color-focus);
+  outline-offset: 3px;
+}
+
+.tinker-surface__control:disabled {
+  cursor: not-allowed;
+  opacity: 0.65;
+}
+
+.tinker-surface__title,
+.tinker-surface__label,
+.tinker-surface__output,
+.tinker-surface__time {
+  min-inline-size: 0;
+}
+
+.tinker-surface__title {
+  color: white;
+  font-size: clamp(1rem, 2.2vw, 1.3rem);
+  font-weight: var(--font-weight-bold);
+}
+
+.tinker-surface__label,
+.tinker-surface__output,
+.tinker-surface__tip,
+.tinker-surface__progress-row {
+  grid-column: 1 / -1;
+}
+
+.tinker-surface__label {
+  color: white;
+  overflow-wrap: anywhere;
+}
+
+.tinker-surface__output,
+.tinker-surface__time {
+  font-family: var(--font-family-numeric);
+  font-variant-numeric: tabular-nums;
+}
+
+.tinker-surface__output {
+  color: #f2eaf3;
+  overflow-wrap: anywhere;
+}
+
+.tinker-surface__yield {
+  color: #00e1ff;
+}
+
+.tinker-surface__tip {
+  color: #bdb3bf;
+  font-size: 0.86em;
+  line-height: 1.2;
+  overflow-wrap: anywhere;
+}
+
+.tinker-surface__progress-row {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 0.55rem;
+  align-items: center;
+  margin-block-start: 0.25rem;
+}
+
+.tinker-surface__progress-track {
+  position: relative;
+  display: grid;
+  min-inline-size: 0;
+  align-items: center;
+}
+
+.tinker-surface__time {
+  color: white;
+  font-size: 0.95rem;
+}
+
+.tinker-surface__progress {
+  appearance: none;
+  inline-size: 100%;
+  block-size: 1.25rem;
+  overflow: hidden;
+  border: 1px solid #0d0a0e;
+  border-radius: 0.2rem;
+  background: #171418;
+}
+
+.tinker-surface__progress::-webkit-progress-bar {
+  background: #171418;
+}
+
+.tinker-surface__progress::-webkit-progress-value {
+  background: #ffd9fe;
+}
+
+.tinker-surface__progress::-moz-progress-bar {
+  background: #ffd9fe;
+}
+
+.tinker-surface[data-held-visual="true"] .tinker-surface__progress::-webkit-progress-value {
+  background: #367879;
+}
+
+.tinker-surface[data-held-visual="true"] .tinker-surface__progress::-moz-progress-bar {
+  background: #367879;
+}
+
+.tinker-surface__hold-label {
+  position: absolute;
+  z-index: 1;
+  inset-inline: 0.35rem;
+  color: white;
+  font-size: 0.72rem;
+  font-weight: var(--font-weight-semibold);
+  line-height: 1;
+  overflow: hidden;
+  pointer-events: none;
+  text-overflow: ellipsis;
+  text-shadow: 0 1px 1px black;
+  white-space: nowrap;
+}
+
+.tinker-surface__failure {
+  display: grid;
+  gap: var(--space-1);
+  padding: var(--space-3);
+  border: var(--border-width) solid var(--color-negative);
+  border-radius: var(--radius-sm);
+  background: var(--color-surface-raised);
+  color: var(--color-text-primary);
+  line-height: var(--line-height-body);
+  overflow-wrap: anywhere;
+}
+
+@media (forced-colors: active) {
+  .tinker-surface__control,
+  .tinker-surface__failure {
+    forced-color-adjust: auto;
+  }
+
+  .tinker-surface__control:focus-visible {
+    outline-color: Highlight;
+  }
+}

@@ -1,7 +1,9 @@
+using System;
 using UnityEngine;
 using Expansion;
 using GameData;
 using IdleDysonSwarm.Services;
+using Systems.Simulation;
 using static Blindsided.Utilities.CalcUtils;
 
 namespace Buildings
@@ -32,6 +34,61 @@ namespace Buildings
         }
 
         public string FacilityId => GetFacilityId();
+
+        public bool TryCreateAutomationRule(
+            out DysonFacilityAutomationRule rule)
+        {
+            string id = GetFacilityId();
+            FacilityDefinition definition = Definition;
+            if (string.IsNullOrEmpty(id) || definition == null)
+            {
+                rule = default;
+                return false;
+            }
+
+            bool retainedTen = facilityType switch
+            {
+                FacilityType.AssemblyLines =>
+                    _gameState.PrestigeData.infinityAssemblyLines,
+                FacilityType.AiManagers =>
+                    _gameState.PrestigeData.infinityAiManagers,
+                FacilityType.Servers =>
+                    _gameState.PrestigeData.infinityServers,
+                FacilityType.DataCenters =>
+                    _gameState.PrestigeData.infinityDataCenter,
+                FacilityType.Planets =>
+                    _gameState.PrestigeData.infinityPlanets,
+                _ => false
+            };
+            rule = new DysonFacilityAutomationRule(
+                id,
+                BaseCost,
+                CostExponent,
+                AutoBuy,
+                unlocked: true,
+                subtractRetainedTen: retainedTen,
+                useAssemblyMegaDiscount:
+                    facilityType == FacilityType.AssemblyLines);
+            return true;
+        }
+
+        public bool TryAutomationPurchase(
+            SimulationAutomationPolicy policy,
+            bool updatePresentation)
+        {
+            if (!TryCreateAutomationRule(out var rule) ||
+                !DysonAutomationTransactions.TryPurchaseFacility(
+                    _gameState.SaveSettings,
+                    rule,
+                    policy,
+                    out _))
+            {
+                return false;
+            }
+
+            if (updatePresentation) UpdateCostText();
+            return true;
+        }
 
         protected override double BaseCost
         {
@@ -131,6 +188,31 @@ namespace Buildings
             }
         }
 
+        public bool WouldOfflineAutoPurchase(
+            double availableMoney,
+            double predictedAutoPlanets)
+        {
+            if (!AutoBuy || !Systems.Numeric.NumericSafety.IsFinite(availableMoney))
+                return false;
+
+            double predictedBaseCost = BaseCost;
+            if (facilityType == FacilityType.AssemblyLines &&
+                _gameState.SkillTreeData.assemblyMegaLines)
+            {
+                double[] planetCounts = _facilityService.GetFacilityCount("planets");
+                double totalPlanets = predictedAutoPlanets + planetCounts[1];
+                if (totalPlanets > 0d)
+                    predictedBaseCost = BaseCost / totalPlanets;
+            }
+
+            long affordable = MaxAffordableLong(
+                availableMoney,
+                predictedBaseCost,
+                CostExponent,
+                CurrentLevel);
+            return affordable > 0L;
+        }
+
         public override double Production
         {
             get
@@ -163,7 +245,9 @@ namespace Buildings
                     _ => false
                 };
 
-                return infinityUnlocked ? (int)ManuallyPurchasedBuildings - 10 : (int)ManuallyPurchasedBuildings;
+                return infinityUnlocked
+                    ? Math.Max(0d, ManuallyPurchasedBuildings - 10d)
+                    : Math.Max(0d, ManuallyPurchasedBuildings);
             }
         }
 

@@ -11,6 +11,8 @@ using IdleDysonSwarm.Data.Conditions;
 using IdleDysonSwarm.Data.Steam;
 using IdleDysonSwarm.Systems.Balance;
 using Systems.Stats;
+using Systems.Debugging;
+using Systems.Numeric;
 using UnityEngine;
 using static Expansion.Oracle;
 #if STEAMWORKS_ENABLED
@@ -221,6 +223,14 @@ namespace IdleDysonSwarm.Services.Steam
         /// </summary>
         private string FormatNumberSimple(double value)
         {
+            if (value == double.MaxValue)
+                return "MAX";
+            if (!NumericSafety.IsFinite(value) || value < 0d)
+            {
+                NumericDiagnostics.Report("NS-PLATFORM-NONFINITE", "adapter=steam_rich_presence");
+                return "ERR";
+            }
+
             if (value < 1000)
                 return value.ToString("F0");
 
@@ -361,6 +371,11 @@ namespace IdleDysonSwarm.Services.Steam
         {
             if (!IsAvailable || string.IsNullOrEmpty(statName))
                 return;
+            if (float.IsNaN(value) || float.IsInfinity(value))
+            {
+                NumericDiagnostics.Report("NS-PLATFORM-NONFINITE", "adapter=steam_float_stat");
+                return;
+            }
 
             #if STEAMWORKS_ENABLED
             SteamUserStats.SetStat(statName, value);
@@ -532,7 +547,10 @@ namespace IdleDysonSwarm.Services.Steam
             if (!IsAvailable)
                 return;
 
-            int secrets = (int)(PrestigeData?.secretsOfTheUniverse ?? 0);
+            long storedSecrets = PrestigeData?.secretsOfTheUniverse ?? 0L;
+            int secrets = storedSecrets >= int.MaxValue
+                ? int.MaxValue
+                : storedSecrets <= 0L ? 0 : (int)storedSecrets;
             int currentStat = GetIntStat("SECRETE_OF_THE_UNIVERSE");
 
             if (secrets != currentStat)

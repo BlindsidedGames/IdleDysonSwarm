@@ -1,0 +1,469 @@
+@import "../../tokens/tokens.css";
+
+.reality-surface {
+  --reality-panel: #302744;
+  --reality-panel-raised: #46365e;
+  --reality-accent: #c8b3ff;
+  --reality-anomaly: #9966cc;
+  --reality-track: #171221;
+  display: grid;
+  block-size: 100%;
+  min-block-size: 0;
+  grid-template-rows: auto minmax(0, 1fr);
+  overflow: hidden;
+  background:
+    radial-gradient(
+      circle at 50% 34%,
+      rgb(153 102 204 / 14%),
+      transparent 34%
+    ),
+    #151020;
+  color: white;
+  user-select: none;
+}
+
+.reality-surface--unavailable {
+  place-items: center;
+  padding: 1rem;
+  color: #e9def8;
+}
+
+.reality-surface__summary {
+  z-index: 1;
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 0.75rem;
+  padding-block: 0.72rem;
+  padding-inline:
+    max(0.8rem, env(safe-area-inset-left))
+    max(0.8rem, env(safe-area-inset-right));
+  border-block-end: 2px solid #675282;
+  background: var(--reality-panel);
+  font-family: var(--font-family-numeric);
+  font-size: calc(0.96rem * var(--game-text-scale));
+  font-variant-numeric: tabular-nums;
+}
+
+.reality-surface__balances {
+  display: inline-flex;
+  align-items: baseline;
+  justify-content: flex-end;
+  gap: 0.58rem;
+}
+
+.reality-surface__balance {
+  display: inline-flex;
+  align-items: baseline;
+  gap: 0.12em;
+  color: var(--reality-accent);
+}
+
+.reality-surface__content {
+  display: grid;
+  min-block-size: 0;
+  align-content: start;
+  gap: 0.85rem;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  padding-block: 0.85rem;
+  padding-inline:
+    max(0.75rem, env(safe-area-inset-left))
+    max(0.75rem, env(safe-area-inset-right));
+  scrollbar-width: none;
+  touch-action: pan-y;
+  -webkit-overflow-scrolling: touch;
+}
+
+.reality-surface__content::-webkit-scrollbar {
+  display: none;
+  inline-size: 0;
+  block-size: 0;
+}
+
+.reality-surface__worker-stage {
+  display: grid;
+  inline-size: min(100%, 70rem);
+  justify-self: center;
+  align-items: stretch;
+  gap: 0.65rem;
+}
+
+.reality-artifact {
+  position: relative;
+  display: grid;
+  min-block-size: 6.4rem;
+  overflow: hidden;
+  align-content: center;
+  gap: 0.55rem;
+  padding: 0.8rem;
+  border: 1px solid #0a0710;
+  border-radius: 0.35rem;
+  background: #050609;
+  isolation: isolate;
+  box-shadow: 0 0.18rem 0.35rem rgb(0 0 0 / 28%);
+  text-align: center;
+}
+
+.reality-artifact__title {
+  color: white;
+  font-size: calc(1.2rem * var(--game-text-scale));
+  font-weight: var(--font-weight-bold);
+  letter-spacing: 0.025em;
+  text-shadow: 0 0 0.35rem rgb(255 255 255 / 38%);
+}
+
+.reality-artifact__progress-label {
+  color: #e9def8;
+  font-size: calc(0.88rem * var(--game-text-scale));
+}
+
+.reality-artifact__track {
+  display: block;
+  block-size: 0.72rem;
+  overflow: hidden;
+  border: 1px solid #09060e;
+  border-radius: 0.22rem;
+  background: var(--reality-track);
+}
+
+.reality-artifact__track::before {
+  display: block;
+  inline-size: 100%;
+  block-size: 100%;
+  background: white;
+  content: "";
+  transform: scaleX(var(--reality-artifact-progress, 0));
+  transform-origin: left center;
+}
+
+.reality-worker-panel {
+  display: grid;
+  inline-size: min(100%, 54rem);
+  justify-self: center;
+  gap: 0.48rem;
+  padding: 0.75rem;
+  border: 1px solid #0a0710;
+  border-radius: 0.35rem;
+  background: var(--reality-panel);
+  box-shadow: 0 0.18rem 0.35rem rgb(0 0 0 / 28%);
+}
+
+.reality-worker-panel__status {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 0.75rem;
+  color: #f4effb;
+  font-size: calc(0.95rem * var(--game-text-scale));
+}
+
+.reality-surface[data-auto-gather="false"]
+  .reality-worker-panel__status {
+  color: var(--reality-accent);
+}
+
+.reality-progress {
+  block-size: 0.72rem;
+  overflow: hidden;
+  border: 1px solid #09060e;
+  border-radius: 0.22rem;
+  background: var(--reality-track);
+}
+
+.reality-progress > span {
+  display: block;
+  block-size: 100%;
+  border-inline-end: 0.15rem solid #e5dcff;
+  background: linear-gradient(
+    90deg,
+    var(--reality-anomaly),
+    var(--reality-accent)
+  );
+  transition: inline-size 160ms linear;
+}
+
+.reality-worker-panel__batch {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 0.65rem;
+}
+
+.reality-worker-panel__batch strong {
+  display: inline-flex;
+  align-items: baseline;
+  justify-content: flex-end;
+  gap: 0.12em;
+  min-inline-size: 4.6rem;
+  color: #f4effb;
+  font-family: var(--font-family-numeric);
+  font-size: calc(0.9rem * var(--game-text-scale));
+  font-variant-numeric: tabular-nums;
+  text-align: end;
+  white-space: nowrap;
+}
+
+.reality-surface [data-symbol="influence"] {
+  transform: translateY(10%);
+}
+
+.reality-worker-panel .ui-button {
+  min-block-size: var(--target-minimum);
+  border-color: #0a0710;
+  border-radius: 0.28rem;
+  background: var(--reality-accent);
+  color: #171020;
+  font-size: calc(0.94rem * var(--game-text-scale));
+  font-weight: var(--font-weight-bold);
+}
+
+.reality-worker-panel .ui-button:not(:disabled):hover {
+  background: #d7c7ff;
+}
+
+.reality-worker-panel .ui-button:not(:disabled):active {
+  background: #9d7bd3;
+}
+
+.reality-worker-panel .ui-button:disabled {
+  border-color: #191222;
+  background: #4c3a64;
+  color: #b7a8c8;
+  opacity: 1;
+}
+
+.reality-worker-panel__feedback {
+  color: #d9ceed;
+  font-size: calc(0.78rem * var(--game-text-scale));
+}
+
+.reality-worker-panel__feedback[role="alert"] {
+  color: #ffb8b8;
+}
+
+.reality-upgrades {
+  --ui-collapsible-section-collapsed-rotation: 90deg;
+  display: grid;
+  inline-size: min(100%, 70rem);
+  justify-self: center;
+}
+
+.reality-avocato-entry {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) clamp(7rem, 24%, 9rem);
+  gap: 0.65rem;
+  align-items: stretch;
+  padding: 0.7rem;
+  border: 1px solid #171021;
+  border-radius: 0.3rem;
+  background: #3d3158;
+}
+
+.reality-avocato-entry h2,
+.reality-avocato-entry p {
+  margin: 0;
+}
+
+.reality-avocato-entry p {
+  margin-block-start: 0.25rem;
+  color: #e8def6;
+}
+
+.reality-avocato-entry .ui-button {
+  min-block-size: 100%;
+}
+
+.reality-upgrades > .ui-collapsible-section__heading {
+  overflow: hidden;
+  border: 1px solid #0a0710;
+  border-radius: 0.35rem;
+  background: #744b4d;
+}
+
+.reality-upgrades > .ui-collapsible-section__heading
+  .ui-collapsible-section__trigger {
+  font-size: calc(1.03rem * var(--game-text-scale));
+}
+
+.reality-upgrades__content,
+.reality-upgrade-category__content {
+  display: grid;
+  gap: 0.55rem;
+  padding-block-start: 0.55rem;
+}
+
+.reality-upgrade-category > .ui-collapsible-section__heading,
+.reality-upgrade-subcategory > .ui-collapsible-section__heading {
+  overflow: hidden;
+  border: 1px solid #0a0710;
+  border-radius: 0.3rem;
+  background: var(--reality-upgrade-header);
+}
+
+.reality-upgrade-category--anomaly {
+  --reality-upgrade-header: #744b4d;
+  --reality-upgrade-card: #593a3b;
+  --reality-upgrade-action: #b27476;
+}
+
+.reality-upgrade-category--quality {
+  --reality-upgrade-header: #554b74;
+  --reality-upgrade-card: #413a59;
+  --reality-upgrade-action: #8274b2;
+}
+
+.reality-upgrade-category > .ui-collapsible-section__heading
+  .ui-collapsible-section__trigger {
+  color: white;
+  font-size: calc(0.92rem * var(--game-text-scale));
+}
+
+.reality-upgrade-subcategory > .ui-collapsible-section__heading
+  .ui-collapsible-section__trigger {
+  min-block-size: 2.35rem;
+  color: white;
+  font-size: calc(0.86rem * var(--game-text-scale));
+}
+
+.reality-upgrade-subcategory__content {
+  padding-block-start: 0.42rem;
+}
+
+.reality-upgrade-subcategory + .reality-upgrade-subcategory {
+  margin-block-start: 0.45rem;
+}
+
+.reality-upgrade-category,
+.reality-upgrade-subcategory {
+  display: grid;
+}
+
+.reality-upgrade-category h3,
+.reality-upgrade-subcategory h4,
+.reality-upgrade-card h4,
+.reality-upgrade-card p {
+  margin: 0;
+}
+
+.reality-upgrade-category ol,
+.reality-upgrade-subcategory ol {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 18rem), 1fr));
+  gap: 0.55rem;
+  padding: 0;
+  margin: 0;
+  list-style: none;
+}
+
+.reality-upgrade-card {
+  display: grid;
+  min-block-size: 8.4rem;
+  grid-template-columns: minmax(0, 1fr) minmax(6.8rem, 27%);
+  gap: 0.6rem;
+  padding: 0.68rem;
+  border: 1px solid #0a0710;
+  border-radius: 0.35rem;
+  background: var(--reality-upgrade-card);
+  box-shadow: 0 0.15rem 0.3rem rgb(0 0 0 / 24%);
+}
+
+.reality-upgrade-card__copy {
+  display: grid;
+  align-content: start;
+  gap: 0.32rem;
+  min-inline-size: 0;
+}
+
+.reality-upgrade-card h4 {
+  color: var(--reality-upgrade-action);
+  font-size: calc(0.96rem * var(--game-text-scale));
+}
+
+.reality-upgrade-card p {
+  color: #f4effb;
+  font-size: calc(0.78rem * var(--game-text-scale));
+  line-height: 1.28;
+  white-space: pre-line;
+}
+
+.reality-upgrade-card .ui-button {
+  display: grid;
+  align-content: center;
+  gap: 0.15rem;
+  border-color: #0a0710;
+  border-radius: 0.28rem;
+  background: var(--reality-upgrade-action);
+  color: #171020;
+  font-size: calc(0.76rem * var(--game-text-scale));
+  font-weight: var(--font-weight-bold);
+}
+
+.reality-upgrade-card .ui-button strong {
+  font-family: var(--font-family-numeric);
+  font-size: calc(0.86rem * var(--game-text-scale));
+  font-variant-numeric: tabular-nums;
+}
+
+.reality-upgrade-card__cost {
+  display: inline-flex;
+  align-items: baseline;
+  justify-content: center;
+  gap: 0.18em;
+}
+
+.reality-upgrade-card .ui-button:disabled {
+  border-color: #191222;
+  background: var(--reality-upgrade-action);
+  color: #171020;
+  opacity: 0.58;
+}
+
+.reality-upgrade-card__feedback {
+  grid-column: 1 / -1;
+  color: #d9ceed;
+  font-size: calc(0.72rem * var(--game-text-scale));
+}
+
+.reality-upgrade-card__feedback[role="alert"] {
+  color: #ffb8b8;
+}
+
+@media (min-width: 48rem) {
+  .reality-surface__worker-stage {
+    grid-template-columns: minmax(13rem, 0.8fr) minmax(25rem, 1.35fr);
+    gap: 0.75rem;
+  }
+
+  .reality-worker-panel {
+    inline-size: 100%;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .reality-progress > span {
+    transition: none;
+  }
+}
+
+@media (forced-colors: active) {
+  .reality-artifact,
+  .reality-worker-panel,
+  .reality-upgrades > .ui-collapsible-section__heading,
+  .reality-upgrade-category > .ui-collapsible-section__heading,
+  .reality-upgrade-subcategory > .ui-collapsible-section__heading,
+  .reality-upgrade-card {
+    border-color: CanvasText;
+  }
+
+  .reality-progress,
+  .reality-artifact__track {
+    border-color: CanvasText;
+    background: Canvas;
+  }
+
+  .reality-progress > span {
+    border-inline-end-color: HighlightText;
+    background: Highlight;
+  }
+}

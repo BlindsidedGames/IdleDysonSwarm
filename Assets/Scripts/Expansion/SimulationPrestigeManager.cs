@@ -1,7 +1,8 @@
 ﻿using System;
-using System.Collections;
 using TMPro;
 using UnityEngine;
+using Systems.Numeric;
+using Systems.Simulation;
 using UnityEngine.UI;
 using static Expansion.Oracle;
 
@@ -20,8 +21,10 @@ public class SimulationPrestigeManager : MonoBehaviour
 
 
     public static event Action ApplyResearch;
+    public static event Action ResetSimulationRuntime;
 
     public static void InvokeApplyResearch() => ApplyResearch?.Invoke();
+    public static void InvokeResetSimulationRuntime() => ResetSimulationRuntime?.Invoke();
 
     private void Start()
     {
@@ -30,60 +33,81 @@ public class SimulationPrestigeManager : MonoBehaviour
 
     private void BlackHole()
     {
+        if (GameManager.RequestQueuedPlayerAction(
+                SimulationInputKind.BlackHoleAction,
+                ApplyBlackHole,
+                "dream_black_hole"))
+        {
+            return;
+        }
+
+        ApplyBlackHole();
+    }
+
+    private void ApplyBlackHole()
+    {
         sp.disasterStage = 0;
-        blackHoleAlertEarningsText.text = $"Earned: {(int)sd1.swarmPanels} Strange Matter";
-        Prestige((int)sd1.swarmPanels);
+        blackHoleAlertEarningsText.text = $"Earned: {sd1.swarmPanels} Strange Matter";
+        Prestige(
+            sd1.swarmPanels,
+            DreamResetCause.BlackHole);
         blackHoleAlert.SetActive(true);
     }
 
     private void Update()
     {
         blackHoleGo.SetActive(sp.counterGw);
-        switch (sp.disasterStage)
+    }
+
+    public bool IsAutomaticResetReady()
+    {
+        return DreamResetTransitions.IsAutomaticReady(
+            oracle.saveSettings);
+    }
+
+    public bool EvaluateSimulationTransitions(
+        bool updatePresentation = true)
+    {
+        if (!DreamResetTransitions.TryApplyAutomatic(
+                oracle.saveSettings,
+                out DreamResetOutcome outcome))
         {
-            case 0 or 1:
-                if (sd1.cities >= 1)
-                {
-                    sp.disasterStage = 0;
-                    Prestige(1);
-                    meteorStormAlert.SetActive(true);
-                }
-
-                break;
-
-            case 2:
-                if (sd1.bots >= 100)
-                {
-                    sp.disasterStage = 0;
-                    Prestige(10);
-                    aiAlert.SetActive(true);
-                }
-
-                break;
-
-            case 3:
-                if (sd1.spaceFactories >= 5)
-                {
-                    sp.disasterStage = 0;
-                    Prestige(20);
-                    globalWarmingAlert.SetActive(true);
-                }
-
-                break;
+            return false;
         }
+
+        ResetSimulationRuntime?.Invoke();
+        ApplyResearch?.Invoke();
+        if (updatePresentation)
+        {
+            switch (outcome.Cause)
+            {
+                case DreamResetCause.Meteor:
+                    meteorStormAlert?.SetActive(true);
+                    break;
+                case DreamResetCause.ArtificialIntelligence:
+                    aiAlert?.SetActive(true);
+                    break;
+                case DreamResetCause.GlobalWarming:
+                    globalWarmingAlert?.SetActive(true);
+                    break;
+            }
+        }
+        return true;
     }
 
-    private void Prestige(int strangeMatter)
+    private void Prestige(
+        long strangeMatter,
+        DreamResetCause cause)
     {
-        sp.simulationCount++;
-        sp.strangeMatter += strangeMatter;
-        StartCoroutine(WipeForPrestige());
-    }
-
-    private IEnumerator WipeForPrestige()
-    {
-        oracle.WipeDream1Save();
-        yield return null;
+        if (!DreamResetTransitions.TryApplyExplicit(
+                oracle.saveSettings,
+                cause,
+                strangeMatter,
+                out _))
+        {
+            return;
+        }
+        ResetSimulationRuntime?.Invoke();
         ApplyResearch?.Invoke();
     }
 }

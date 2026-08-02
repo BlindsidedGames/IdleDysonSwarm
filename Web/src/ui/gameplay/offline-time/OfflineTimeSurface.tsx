@@ -1,0 +1,378 @@
+import { useEffect, useRef, useState } from 'react'
+import { useIntl } from 'react-intl'
+import type {
+  FrontendCanonicalProgression,
+  FrontendCanonicalResources,
+  FrontendGameplayPreviews,
+} from '../../../application/frontendSnapshot'
+import type { CanonicalPlayerCommand } from '../../../application/canonicalPlayerCommands'
+import { Button } from '../../components'
+import { formatGameDuration } from '../../i18n/formatters'
+import type { EnabledLocale } from '../../i18n/localeRegistry'
+import type { UiRuntimePlayerCommandResult } from '../../runtime'
+import { offlineTimeMessages as messages } from './messages'
+import './offlineTime.css'
+
+type OfflineTimeCommand = Extract<
+  CanonicalPlayerCommand,
+  {
+    readonly kind:
+      | 'time.upgrade-stored-capacity'
+      | 'time.request-stored-time-spend'
+  }
+>
+
+export interface OfflineTimeCommandAvailability {
+  readonly upgradeStoredCapacity: boolean
+  readonly requestStoredTimeSpend: boolean
+}
+
+export interface OfflineTimeSurfaceProps {
+  readonly locale: EnabledLocale
+  readonly resources: FrontendCanonicalResources['time']
+  readonly infinityUsage: Pick<
+    FrontendCanonicalProgression['infinity'],
+    | 'storedTimeUsedThisCycleSeconds'
+    | 'storedTimeUsedPreviousCycleSeconds'
+  >
+  readonly previews: FrontendGameplayPreviews['time']
+  readonly storedTimeCheater: boolean
+  readonly commandAvailability: OfflineTimeCommandAvailability
+  readonly dispatchPlayer: (
+    command: OfflineTimeCommand,
+  ) => Promise<UiRuntimePlayerCommandResult>
+}
+
+const QUICK_AMOUNTS = Object.freeze([
+  { seconds: 60, message: messages.oneMinute },
+  { seconds: 600, message: messages.tenMinutes },
+  { seconds: 3_600, message: messages.oneHour },
+] as const)
+
+/**
+ * Presents Unity's consumable Offline Time bank. The canonical runtime owns
+ * commit-first persistence and away-time simulation; this surface only selects
+ * an amount, confirms intent, and reports the published result.
+ */
+export function OfflineTimeSurface({
+  locale,
+  resources,
+  infinityUsage,
+  previews,
+  storedTimeCheater,
+  commandAvailability,
+  dispatchPlayer,
+}: OfflineTimeSurfaceProps) {
+  const intl = useIntl()
+  const bankSeconds = Math.max(
+    0,
+    Math.min(
+      resources.storedTimeAvailableSeconds,
+      previews.storedSpend.maximumSeconds,
+    ),
+  )
+  const capacitySeconds = Math.max(
+    0,
+    resources.storedTimeCapacitySeconds,
+  )
+  const fill = capacitySeconds > 0
+    ? Math.max(0, Math.min(1, bankSeconds / capacitySeconds))
+    : 0
+  const [selectedSeconds, setSelectedSeconds] = useState(() =>
+    defaultSelection(bankSeconds),
+  )
+  const [armed, setArmed] = useState(false)
+  const [repeatSeconds, setRepeatSeconds] = useState<number | null>(null)
+  const [pendingAction, setPendingAction] = useState<
+    'spend' | 'upgrade' | null
+  >(null)
+  const [feedback, setFeedback] = useState<
+    { readonly kind: 'success' | 'failure'; readonly seconds?: number } | null
+  >(null)
+  const pendingRef = useRef(false)
+
+  useEffect(() => {
+    setSelectedSeconds((current) =>
+      bankSeconds <= 0
+        ? 0
+        : Math.max(
+            Math.min(1, bankSeconds),
+            Math.min(current || defaultSelection(bankSeconds), bankSeconds),
+          ),
+    )
+    setArmed(false)
+  }, [bankSeconds])
+
+  const select = (seconds: number): void => {
+    setSelectedSeconds(Math.max(0, Math.min(seconds, bankSeconds)))
+    setArmed(false)
+    setRepeatSeconds(null)
+    setFeedback(null)
+  }
+
+  const repeatAvailable =
+    repeatSeconds !== null &&
+    repeatSeconds > 0 &&
+    repeatSeconds <= bankSeconds
+
+  const spend = async (): Promise<void> => {
+    const requestedSeconds =
+      repeatAvailable && repeatSeconds !== null
+        ? repeatSeconds
+        : selectedSeconds
+    if (
+      pendingRef.current ||
+      storedTimeCheater ||
+      !commandAvailability.requestStoredTimeSpend ||
+      requestedSeconds <= 0
+    ) {
+      return
+    }
+    if (!armed && !repeatAvailable) {
+      setArmed(true)
+      setFeedback(null)
+      return
+    }
+
+    pendingRef.current = true
+    setPendingAction('spend')
+    setArmed(false)
+    setFeedback(null)
+    try {
+      const result = await dispatchPlayer({
+        kind: 'time.request-stored-time-spend',
+        requestedSeconds,
+      })
+      if (
+        (result.status === 'accepted' || result.status === 'partial') &&
+        result.kind === 'stored-time'
+      ) {
+        setFeedback({ kind: 'success', seconds: result.consumedSeconds })
+        setRepeatSeconds(requestedSeconds)
+      } else {
+        setFeedback({ kind: 'failure' })
+      }
+    } catch {
+      setFeedback({ kind: 'failure' })
+    } finally {
+      pendingRef.current = false
+      setPendingAction(null)
+    }
+  }
+
+  const upgradeCapacity = async (): Promise<void> => {
+    if (
+      pendingRef.current ||
+      storedTimeCheater ||
+      !commandAvailability.upgradeStoredCapacity ||
+      !previews.storedCapacity.eligible
+    ) {
+      return
+    }
+    pendingRef.current = true
+    setPendingAction('upgrade')
+    setFeedback(null)
+    try {
+      const result = await dispatchPlayer({
+        kind: 'time.upgrade-stored-capacity',
+      })
+      if (result.status !== 'accepted') {
+        setFeedback({ kind: 'failure' })
+      }
+    } catch {
+      setFeedback({ kind: 'failure' })
+    } finally {
+      pendingRef.current = false
+      setPendingAction(null)
+    }
+  }
+
+  const spendDisabled =
+    pendingAction !== null ||
+    storedTimeCheater ||
+    !commandAvailability.requestStoredTimeSpend ||
+    selectedSeconds <= 0
+
+  return (
+    <div className="offline-time-surface">
+      <header className="offline-time-surface__header">
+        <div className="offline-time-surface__title" aria-hidden="true">
+          {intl.formatMessage(messages.region)}
+        </div>
+        <p>{intl.formatMessage(messages.explanation)}</p>
+      </header>
+
+      <div className="offline-time-surface__scroll-region">
+        {storedTimeCheater ? (
+          <p className="offline-time-surface__warning" role="alert">
+            {intl.formatMessage(messages.disabled)}
+          </p>
+        ) : null}
+
+        <article className="offline-time-card offline-time-card--storage">
+          <div className="offline-time-card__heading">
+            <h2>{intl.formatMessage(messages.stored)}</h2>
+            <strong>{formatGameDuration(locale, bankSeconds)}</strong>
+          </div>
+          <div
+            className="offline-time-storage-progress"
+            role="progressbar"
+            aria-label={intl.formatMessage(messages.storageProgress)}
+            aria-valuemin={0}
+            aria-valuemax={100}
+            aria-valuenow={Math.round(fill * 100)}
+          >
+            <span style={{ inlineSize: `${fill * 100}%` }} />
+          </div>
+          <p className="offline-time-card__capacity">
+            {intl.formatMessage(messages.capacity, {
+              stored: formatGameDuration(locale, bankSeconds),
+              capacity: formatGameDuration(locale, capacitySeconds),
+            })}
+          </p>
+          {bankSeconds <= 0 ? (
+            <p className="offline-time-card__note">
+              {intl.formatMessage(messages.noStoredTime)}
+            </p>
+          ) : null}
+
+          {previews.storedCapacity.eligible ? (
+            <div className="offline-time-capacity-upgrade">
+              <p>
+                {intl.formatMessage(messages.doubleStorageDescription, {
+                  capacity: formatGameDuration(
+                    locale,
+                    previews.storedCapacity.nextCapacitySeconds,
+                  ),
+                })}
+              </p>
+              <Button
+                variant="primary"
+                state={pendingAction === 'upgrade' ? 'pending' : 'idle'}
+                disabled={
+                  pendingAction !== null ||
+                  storedTimeCheater ||
+                  !commandAvailability.upgradeStoredCapacity
+                }
+                onClick={() => void upgradeCapacity()}
+              >
+                {intl.formatMessage(messages.doubleStorage)}
+              </Button>
+            </div>
+          ) : previews.storedCapacity.code === 'maximum-reached' ? (
+            <p className="offline-time-card__maximum">
+              {intl.formatMessage(messages.maximumStorage)}
+            </p>
+          ) : null}
+        </article>
+
+        <article className="offline-time-card offline-time-card--spend">
+          <h2>{intl.formatMessage(messages.spendHeading)}</h2>
+          <p>{intl.formatMessage(messages.spendDescription)}</p>
+          <output htmlFor="offline-time-amount">
+            {intl.formatMessage(messages.selectedAmount, {
+              duration: formatGameDuration(locale, selectedSeconds),
+            })}
+          </output>
+          <input
+            id="offline-time-amount"
+            type="range"
+            min={bankSeconds > 0 ? Math.min(1, bankSeconds) : 0}
+            max={bankSeconds}
+            step={bankSeconds < 1 ? 'any' : 1}
+            value={Math.min(selectedSeconds, bankSeconds)}
+            disabled={bankSeconds <= 0 || pendingAction !== null || storedTimeCheater}
+            aria-label={intl.formatMessage(messages.spendHeading)}
+            aria-valuetext={formatGameDuration(locale, selectedSeconds)}
+            onChange={(event) => select(event.currentTarget.valueAsNumber)}
+          />
+          <div
+            className="offline-time-quick-select"
+            role="group"
+            aria-label={intl.formatMessage(messages.spendHeading)}
+          >
+            {QUICK_AMOUNTS.map(({ seconds, message }) => (
+              <button
+                key={seconds}
+                type="button"
+                disabled={bankSeconds < seconds || pendingAction !== null || storedTimeCheater}
+                aria-pressed={selectedSeconds === seconds}
+                onClick={() => select(seconds)}
+              >
+                {intl.formatMessage(message)}
+              </button>
+            ))}
+            <button
+              type="button"
+              disabled={bankSeconds <= 0 || pendingAction !== null || storedTimeCheater}
+              aria-pressed={bankSeconds > 0 && selectedSeconds === bankSeconds}
+              onClick={() => select(bankSeconds)}
+            >
+              {intl.formatMessage(messages.all)}
+            </button>
+          </div>
+          <Button
+            className="offline-time-spend-button"
+            variant="primary"
+            state={pendingAction === 'spend' ? 'pending' : 'idle'}
+            disabled={spendDisabled}
+            onClick={() => void spend()}
+          >
+            {pendingAction === 'spend'
+              ? intl.formatMessage(messages.processing)
+              : repeatAvailable
+                ? intl.formatMessage(messages.spendAgain, {
+                    duration: formatGameDuration(locale, repeatSeconds),
+                  })
+                : armed
+                ? intl.formatMessage(messages.confirmSpend)
+                : intl.formatMessage(messages.spend, {
+                    duration: formatGameDuration(locale, selectedSeconds),
+                  })}
+          </Button>
+
+          {feedback ? (
+            <p
+              className={`offline-time-feedback offline-time-feedback--${feedback.kind}`}
+              role={feedback.kind === 'failure' ? 'alert' : 'status'}
+            >
+              {feedback.kind === 'success'
+                ? intl.formatMessage(messages.spendSuccess, {
+                    duration: formatGameDuration(locale, feedback.seconds ?? 0),
+                  })
+                : intl.formatMessage(messages.actionFailed)}
+            </p>
+          ) : null}
+        </article>
+
+        <article className="offline-time-card offline-time-card--usage">
+          <h2>{intl.formatMessage(messages.usageHeading)}</h2>
+          <dl>
+            <div>
+              <dt>{intl.formatMessage(messages.currentInfinity)}</dt>
+              <dd>
+                {formatGameDuration(
+                  locale,
+                  infinityUsage.storedTimeUsedThisCycleSeconds,
+                )}
+              </dd>
+            </div>
+            <div>
+              <dt>{intl.formatMessage(messages.previousInfinity)}</dt>
+              <dd>
+                {formatGameDuration(
+                  locale,
+                  infinityUsage.storedTimeUsedPreviousCycleSeconds,
+                )}
+              </dd>
+            </div>
+          </dl>
+        </article>
+      </div>
+    </div>
+  )
+}
+
+function defaultSelection(bankSeconds: number): number {
+  return Math.max(0, Math.min(60, bankSeconds))
+}

@@ -3,6 +3,7 @@
 ## Contract and behavior expectations
 - Script path: `Assets/Editor/MultiPlatformBuildMenu.cs`.
 - Runs only in the Unity Editor via `MenuItem` commands under `Tools/Build/Idle Dyson Swarm/`.
+- Android support policy: minimum API 26 (Android 8.0), target API 36 (Android 16).
 - Exposes commands to:
 1. Build iOS + Android + Windows + macOS + Linux.
 2. Increment build numbers, then build iOS + Android + Windows + macOS + Linux.

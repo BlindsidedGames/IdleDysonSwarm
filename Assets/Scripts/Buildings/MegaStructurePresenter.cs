@@ -1,7 +1,11 @@
 using Blindsided.Utilities;
 using GameData;
+using IdleDysonSwarm.Data.Balance;
 using IdleDysonSwarm.Services;
+using IdleDysonSwarm.Systems.Balance;
 using Systems.Facilities;
+using Systems.Numeric;
+using Systems.Simulation;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
@@ -55,7 +59,8 @@ namespace Buildings
         {
             if (_purchaseButton != null)
             {
-                _purchaseButton.onClick.AddListener(PurchaseMegaStructure);
+                _purchaseButton.onClick.AddListener(
+                    RequestMegaStructurePurchase);
             }
 
             if (breakdownButton != null)
@@ -151,6 +156,17 @@ namespace Buildings
             else
             {
                 Debug.Log($"[MegaStructurePresenter] Purchase failed");
+            }
+        }
+
+        private void RequestMegaStructurePurchase()
+        {
+            if (!GameManager.RequestQueuedPlayerAction(
+                    SimulationInputKind.Purchase,
+                    PurchaseMegaStructure,
+                    $"mega:{FacilityId}"))
+            {
+                PurchaseMegaStructure();
             }
         }
 
@@ -250,7 +266,8 @@ namespace Buildings
                     return _cachedDefinition;
 
                 string id = FacilityId;
-                if (string.IsNullOrEmpty(id))
+                if (string.IsNullOrEmpty(id) ||
+                    _dataService == null)
                     return null;
 
                 if (_dataService.TryGetFacility(id, out FacilityDefinition definition))
@@ -310,6 +327,60 @@ namespace Buildings
             _megaStructureService.TryPurchase(facilityId, numberToBuy);
         }
 
+        public bool TryCreateAutomationRule(
+            bool toggleEnabled,
+            out DysonFacilityAutomationRule rule)
+        {
+            string facilityId = FacilityId;
+            FacilityDefinition definition = Definition;
+            if (string.IsNullOrEmpty(facilityId) ||
+                definition == null)
+            {
+                rule = default;
+                return false;
+            }
+
+            bool enabled = isActiveAndEnabled &&
+                           _gameState != null &&
+                           _gameState.PrestigeData != null &&
+                           _gameState.PrestigeData.infinityAutoBots &&
+                           toggleEnabled;
+            ResolveUnlockRule(
+                facilityId,
+                out QuantumMegaUnlockGate gate,
+                out string prerequisiteId,
+                out double prerequisiteOwned);
+            rule = new DysonFacilityAutomationRule(
+                facilityId,
+                definition.baseCost,
+                definition.costExponent,
+                enabled,
+                _megaStructureService != null &&
+                _megaStructureService.IsUnlocked(facilityId),
+                subtractRetainedTen: false,
+                useAssemblyMegaDiscount: false,
+                maximumQuantity: int.MaxValue,
+                evaluateUnlockFromState: true,
+                quantumGate: gate,
+                prerequisiteFacilityId: prerequisiteId,
+                prerequisiteFacilityOwned: prerequisiteOwned);
+            return true;
+        }
+
+        public bool TryAutomationPurchase(
+            bool toggleEnabled,
+            SimulationAutomationPolicy policy)
+        {
+            return TryCreateAutomationRule(
+                       toggleEnabled,
+                       out var rule) &&
+                   DysonAutomationTransactions.TryPurchaseFacility(
+                       _gameState.SaveSettings,
+                       rule,
+                       policy,
+                       out _);
+        }
+
         /// <summary>
         /// Gets the quantity this presenter would purchase for the current buy mode.
         /// </summary>
@@ -319,6 +390,37 @@ namespace Buildings
             return NumberToBuy();
         }
 
+        public bool WouldOfflineAutoPurchase(
+            DysonAnalyticalState state,
+            bool toggleEnabled)
+        {
+            if (!toggleEnabled ||
+                !isActiveAndEnabled ||
+                _gameState == null ||
+                _gameState.PrestigeData == null ||
+                !_gameState.PrestigeData.infinityAutoBots ||
+                Definition == null ||
+                !IsPredictedUnlocked(state))
+            {
+                return false;
+            }
+
+            double manualOwned = ManuallyPurchased;
+            NumericResult<double> next =
+                NumericSafety.Add(manualOwned, 1d);
+            if (!next.IsSuccess || next.Value <= manualOwned)
+                return false;
+
+            double nextCost = CalcUtils.BuyXCost(
+                1,
+                Definition.baseCost,
+                Definition.costExponent,
+                manualOwned);
+            return NumericSafety.IsFinite(nextCost) &&
+                   nextCost > 0d &&
+                   state.Money >= nextCost;
+        }
+
         #endregion
 
         #region Purchase Calculation
@@ -326,9 +428,10 @@ namespace Buildings
         private int NumberToBuy()
         {
             int maxAffordable = _megaStructureService.MaxAffordable(FacilityId);
+            long owned = NumericSafety.ToLongFloor(ManuallyPurchased).Value;
             return (int)BuyModeHelper.GetAmountToBuy(
                 StaticBuyMode, StaticRoundedBulkBuy,
-                (long)ManuallyPurchased, maxAffordable);
+                owned, maxAffordable);
         }
 
         private bool IsMegaAutoEnabled()
@@ -345,6 +448,85 @@ namespace Buildings
                 "galactic_brains" => StaticSaveSettings.infinityAutoGalacticBrains,
                 _ => false
             };
+        }
+
+        private bool IsPredictedUnlocked(DysonAnalyticalState state)
+        {
+            string facilityId = FacilityId;
+            ResolveUnlockRule(
+                facilityId,
+                out QuantumMegaUnlockGate gate,
+                out string prerequisiteId,
+                out double prerequisiteOwned);
+
+            if (!BalanceRuntime.IsQuantumGateUnlocked(
+                    gate,
+                    _gameState.PrestigeData))
+            {
+                return false;
+            }
+
+            if (string.IsNullOrEmpty(prerequisiteId))
+                return true;
+            return PredictedTotal(prerequisiteId, state) >= prerequisiteOwned;
+        }
+
+        private static void ResolveUnlockRule(
+            string facilityId,
+            out QuantumMegaUnlockGate gate,
+            out string prerequisiteId,
+            out double prerequisiteOwned)
+        {
+            if (BalanceRuntime.TryGetFacilityEntry(
+                    facilityId,
+                    out var entry))
+            {
+                gate = entry.quantumGate;
+                prerequisiteId =
+                    entry.prerequisiteFacilityId;
+                prerequisiteOwned =
+                    entry.prerequisiteOwned;
+                return;
+            }
+
+            gate = facilityId switch
+            {
+                "matrioshka_brains" =>
+                    QuantumMegaUnlockGate.MatrioshkaBrains,
+                "birch_planets" =>
+                    QuantumMegaUnlockGate.BirchPlanets,
+                "galactic_brains" =>
+                    QuantumMegaUnlockGate.GalacticBrains,
+                _ => QuantumMegaUnlockGate.None
+            };
+            prerequisiteId = facilityId switch
+            {
+                "matrioshka_brains" => "planets",
+                "birch_planets" => "matrioshka_brains",
+                "galactic_brains" => "birch_planets",
+                _ => null
+            };
+            prerequisiteOwned =
+                string.IsNullOrEmpty(prerequisiteId)
+                    ? 0d
+                    : 1d;
+        }
+
+        private double PredictedTotal(
+            string facilityId,
+            DysonAnalyticalState state)
+        {
+            double predictedAuto = facilityId switch
+            {
+                "planets" => state.Planets,
+                "matrioshka_brains" => state.MatrioshkaBrains,
+                "birch_planets" => state.BirchPlanets,
+                "galactic_brains" => state.GalacticBrains,
+                _ => 0d
+            };
+            double[] current = _facilityService.GetFacilityCount(facilityId);
+            double manual = current is { Length: >= 2 } ? current[1] : 0d;
+            return NumericSafety.Add(predictedAuto, manual).Value;
         }
 
         #endregion

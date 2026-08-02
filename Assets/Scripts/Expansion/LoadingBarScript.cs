@@ -16,6 +16,6 @@ public class LoadingBarScript : MonoBehaviour
     private void Update()
     {
         time += Time.deltaTime;
-        fill.fillAmount = time / maxTime;
+        fill.fillAmount = maxTime > 0f ? Mathf.Clamp01(time / maxTime) : 1f;
     }
 }

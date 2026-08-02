@@ -1,5 +1,7 @@
-using System.Collections;
+using System;
 using Systems;
+using Systems.Numeric;
+using Systems.Simulation;
 using UnityEngine;
 using Blindsided.Utilities;
 using IdleDysonSwarm.Systems.Dream1;
@@ -15,7 +17,7 @@ and Space Age panel updates.
 Primary entry points:
 - Unity: Start (panel setup/listeners), Update (production loops + UI refresh).
 - Space Age loops: AddEnergy, SpaceFactoryManagement, RailgunManagement, FireRailGun.
-- Prestige flow: OnBlackHoleClick -> Prestige -> WipeForPrestige.
+- Prestige flow: OnBlackHoleClick -> Prestige -> canonical synchronous reset completion.
 
 Owns vs delegates:
 - Owns Space Age state mutation in SaveDataDream1 for solar/fusion/swarm systems.
@@ -29,12 +31,13 @@ Interacts with:
 Change notes:
 - Solar info text now reads sdSimulation.solarPanelGeneration directly; changing Mathematics parity in
   ResearchManager/InformationEraManager/Oracle.Migrations must keep this display path accurate.
-- Black hole prestige wipe invokes ApplyResearch on next frame; changes to that ordering affect post-wipe
-  unlock restoration and visible panel states.
+- Black hole prestige completes the wipe, runtime reset, and persistent research reapplication in one
+  transition phase before another fixed tick may run.
 - Serialized panel references are scene-coupled and must stay aligned with Assets/Scenes/Game.unity.
 */
 public class SpaceAgeManager : MonoBehaviour
 {
+    private const double TickSeconds = 0.1d;
     [Header("Energy Panel References")]
     [SerializeField] private SimulationGenericPanelReferences solarPanel;
     [SerializeField] private SimulationGenericPanelReferences fusionPanel;
@@ -63,19 +66,49 @@ public class SpaceAgeManager : MonoBehaviour
 
     // Production timer for space factories
     private ProductionTimer _spaceFactoriesTimer;
+    private bool _timersInitialized;
     private bool _firing;
-    private float _fireTime;
+    private double _fireTime;
     private int _fireTimes;
 
     // Info description update debounce
     private const float InfoUpdateInterval = 0.1f; // 10hz
-    private float _infoUpdateTimer;
+    private double _infoUpdateTimer;
+    private double _tickGlobalMultiplier = 1d;
+    private double _tickSeconds = TickSeconds;
+    private bool _updatePresentation = true;
+
+    public bool SupportsAnalyticalOffline =>
+        solarPanel != null &&
+        fusionPanel != null &&
+        spaceFactoriesPanel != null &&
+        railgunsPanel != null &&
+        swarmStatsPanel != null;
+    public double SpaceFactoriesDurationSeconds => _factoriesDuration;
+    public bool IsRailgunFiring =>
+        oracle?.saveSettings?.sdSimulation?.railgunFiring ??
+        _firing;
+
+    private void OnEnable()
+    {
+        SimulationPrestigeManager.ResetSimulationRuntime += ResetSimulationRuntime;
+        if (_timersInitialized)
+            ResetSimulationRuntime();
+    }
+
+    private void OnDisable()
+    {
+        SimulationPrestigeManager.ResetSimulationRuntime -= ResetSimulationRuntime;
+    }
 
     private void Start()
     {
         // Initialize timer with saved progress (must be in Start, after Oracle is initialized)
         _spaceFactoriesTimer = new ProductionTimer(_factoriesDuration, sd1.spaceFactoriesTimerProgress);
         _fireTime = sd1.railgunFireProgress;
+        _firing = sd1.railgunFiring;
+        _fireTimes = sd1.railgunShotsRemaining;
+        _timersInitialized = true;
 
         // Set panel types and configure UI elements
         if (solarPanel != null)
@@ -106,11 +139,23 @@ public class SpaceAgeManager : MonoBehaviour
 
         // Setup button listeners
         if (solarPanel?.actionButton != null)
-            solarPanel.actionButton.onClick.AddListener(BuySolar);
+            solarPanel.actionButton.onClick.AddListener(
+                () => QueuePlayerAction(
+                    BuySolar,
+                    SimulationInputKind.Purchase,
+                    "dream_solar"));
         if (fusionPanel?.actionButton != null)
-            fusionPanel.actionButton.onClick.AddListener(BuyFusion);
+            fusionPanel.actionButton.onClick.AddListener(
+                () => QueuePlayerAction(
+                    BuyFusion,
+                    SimulationInputKind.Purchase,
+                    "dream_fusion"));
         if (swarmStatsPanel?.actionButton != null)
-            swarmStatsPanel.actionButton.onClick.AddListener(OnBlackHoleClick);
+            swarmStatsPanel.actionButton.onClick.AddListener(
+                () => QueuePlayerAction(
+                    OnBlackHoleClick,
+                    SimulationInputKind.BlackHoleAction,
+                    "dream_swarm_black_hole"));
 
         // Set info title texts
         if (solarPanel?.infoTitleText != null) solarPanel.infoTitleText.text = "Solar Panels Info";
@@ -120,24 +165,65 @@ public class SpaceAgeManager : MonoBehaviour
         if (swarmStatsPanel?.infoTitleText != null) swarmStatsPanel.infoTitleText.text = "Swarm Stats Info";
     }
 
+    private void ResetSimulationRuntime()
+    {
+        _firing = sd1.railgunFiring;
+        _fireTime = sd1.railgunFireProgress;
+        _fireTimes = sd1.railgunShotsRemaining;
+        _spaceFactoriesTimer =
+            new ProductionTimer(_factoriesDuration, sd1.spaceFactoriesTimerProgress);
+        _infoUpdateTimer = 0d;
+        _tickGlobalMultiplier = 1d;
+        _tickSeconds = TickSeconds;
+    }
+
     private void Update()
     {
         UpdateVisibility();
         UpdateButtonsInteractable();
+    }
 
+    public void RunProductionTick(
+        double globalMultiplier,
+        double deltaSeconds = TickSeconds,
+        bool updatePresentation = true)
+    {
+        _tickGlobalMultiplier = globalMultiplier;
+        _tickSeconds = deltaSeconds;
+        _updatePresentation = updatePresentation;
         AddEnergy();
-        SolarManagement();
-        FusionManagement();
-
+        if (updatePresentation)
+        {
+            SolarManagement();
+            FusionManagement();
+        }
         SpaceFactoryManagement();
-        RailgunManagement();
-        FireRailGun();
-        SwarmStatsManagement();
+        if (updatePresentation) SwarmStatsManagement();
+    }
+
+    public void RunAutomationTick()
+    {
+        if (sdp.railgunActivator1) _totalFireTime = 2.5f;
+        if (sdp.railgunActivator2) _totalFireTime = 1f;
+        DreamAutomationTransactions.ApplyRailgun(
+            sd1,
+            sdp,
+            _tickSeconds,
+            _totalFireTime,
+            _timesToFire,
+            RailgunBasePanelsRequired);
+        _firing = sd1.railgunFiring;
+        _fireTime = sd1.railgunFireProgress;
+        _fireTimes = sd1.railgunShotsRemaining;
+        UpdateRailgunPresentation();
+    }
+
+    public void CompleteSimulationTick(bool updatePresentation = true)
+    {
         SyncTimerProgress();
 
-        // Update info descriptions at 10hz
-        _infoUpdateTimer += Time.deltaTime;
-        if (_infoUpdateTimer >= InfoUpdateInterval)
+        _infoUpdateTimer += _tickSeconds;
+        if (updatePresentation && _infoUpdateTimer >= InfoUpdateInterval)
         {
             _infoUpdateTimer = 0;
             UpdateInfoDescriptions();
@@ -175,27 +261,74 @@ public class SpaceAgeManager : MonoBehaviour
 
     private double GetGlobalMultiplier()
     {
-        return sdp.doDoubleTime ? sdp.doubleTimeRate + 1 : 1;
+        return _tickGlobalMultiplier;
     }
 
     private void SyncTimerProgress()
     {
         sd1.spaceFactoriesTimerProgress = _spaceFactoriesTimer.currentTime;
         sd1.railgunFireProgress = _fireTime;
+        sd1.railgunFiring = _firing;
+        sd1.railgunShotsRemaining = _fireTimes;
+    }
+
+    private void UpdateRailgunPresentation()
+    {
+        if (!_updatePresentation || railgunsPanel == null)
+            return;
+
+        railgunsPanel.titleText.text =
+            $"Railguns<size=70%> - {CalcUtils.FormatEnergy(sd1.railgunCharge, true, colourOverride: UIThemeProvider.TextColourBlue)} / {UIThemeProvider.TextColourBlue}25</color> MJ";
+        railgunsPanel.fill2.fillAmount =
+            (float)(sd1.railgunCharge /
+                    sd1.railgunMaxCharge);
+        railgunsPanel.fillBar2Text.text =
+            $"{CalcUtils.FormatEnergy(sd1.railgunCharge, true, colourOverride: UIThemeProvider.TextColourBlue)} / {UIThemeProvider.TextColourBlue}25</color> MJ";
+        double timeToFill = _totalFireTime /
+                            Math.Max(1, _timesToFire);
+        railgunsPanel.fill1.fillAmount = _firing
+            ? (float)(_fireTime / timeToFill)
+            : 0f;
+        railgunsPanel.fillBar1Text.text =
+            $"{UIThemeProvider.TextColourBlue}{Math.Max(0, _fireTimes)}</color> / {UIThemeProvider.TextColourBlue}{_timesToFire}</color>";
     }
 
     #region Energy
 
     private void AddEnergy()
     {
-        double solarPanelEnergy = sd1.solarPanels * sd1.solarPanelGeneration;
-        if (sd1.mathematicsComplete) solarPanelEnergy *= 2;
-        double fusionEnergy = sd1.fusion * sd1.fusionGeneration;
-        long dysonPanelEnergy = sd1.swarmPanels * sd1.swarmPanelGeneration;
-        long doubleTimeMulti = sdp.doDoubleTime ? sdp.doubleTimeRate + 1 : 1;
+        double energyDelta = CalculateEnergyDelta(
+            sd1,
+            GetGlobalMultiplier(),
+            _tickSeconds);
+        sd1.energy = NumericSafety.Add(sd1.energy, energyDelta).Value;
+    }
 
-        sd1.energy += (solarPanelEnergy + fusionEnergy + dysonPanelEnergy) *
-                      doubleTimeMulti * Time.deltaTime;
+    public static double CalculateEnergyDelta(
+        SaveDataDream1 simulation,
+        double globalMultiplier,
+        double deltaSeconds = TickSeconds)
+    {
+        if (simulation == null) return 0d;
+
+        double solarPanelEnergy =
+            NumericSafety.Multiply(
+                simulation.solarPanels,
+                simulation.solarPanelGeneration).Value;
+        if (simulation.mathematicsComplete)
+            solarPanelEnergy = NumericSafety.Multiply(solarPanelEnergy, 2d).Value;
+        double fusionEnergy =
+            NumericSafety.Multiply(simulation.fusion, simulation.fusionGeneration).Value;
+        double dysonPanelEnergy =
+            NumericSafety.Multiply(
+                simulation.swarmPanels,
+                simulation.swarmPanelGeneration).Value;
+        double combined = NumericSafety.Add(
+            NumericSafety.Add(solarPanelEnergy, fusionEnergy).Value,
+            dysonPanelEnergy).Value;
+        return NumericSafety.Multiply(
+            NumericSafety.Multiply(combined, globalMultiplier).Value,
+            deltaSeconds).Value;
     }
 
     private void SolarManagement()
@@ -205,7 +338,7 @@ public class SpaceAgeManager : MonoBehaviour
         solarPanel.titleText.text = $"Solar Panels <size=70%>{UIThemeProvider.TextColourBlue}{sd1.solarPanels:N0}</color>";
         if (solarPanel.additionalText != null)
             solarPanel.additionalText.text =
-                CalcUtils.FormatEnergy(sd1.solarPanels * sd1.solarPanelGeneration * (sd1.mathematicsComplete ? 2 : 1) * (sdp.doDoubleTime ? sdp.doubleTimeRate + 1 : 1), false, colourOverride: UIThemeProvider.TextColourBlue);
+                CalcUtils.FormatEnergy(sd1.solarPanels * sd1.solarPanelGeneration * (sd1.mathematicsComplete ? 2 : 1) * _tickGlobalMultiplier, false, colourOverride: UIThemeProvider.TextColourBlue);
     }
 
     private void FusionManagement()
@@ -215,7 +348,7 @@ public class SpaceAgeManager : MonoBehaviour
         fusionPanel.titleText.text = $"Fusion Generators <size=70%>{UIThemeProvider.TextColourBlue}{sd1.fusion:N0}</color>";
         if (fusionPanel.additionalText != null)
             fusionPanel.additionalText.text =
-                CalcUtils.FormatEnergy(sd1.fusion * sd1.fusionGeneration * (sd1.mathematicsComplete ? 2 : 1) * (sdp.doDoubleTime ? sdp.doubleTimeRate + 1 : 1), false, colourOverride: UIThemeProvider.TextColourBlue);
+                CalcUtils.FormatEnergy(sd1.fusion * sd1.fusionGeneration * (sd1.mathematicsComplete ? 2 : 1) * _tickGlobalMultiplier, false, colourOverride: UIThemeProvider.TextColourBlue);
     }
 
     #endregion
@@ -228,12 +361,11 @@ public class SpaceAgeManager : MonoBehaviour
 
         if (sd1.spaceFactories == 0)
         {
+            if (!_updatePresentation) return;
             spaceFactoriesPanel.fill1.fillAmount = 0;
             spaceFactoriesPanel.fillBar1Text.text = "";
             return;
         }
-
-        spaceFactoriesPanel.titleText.text = $"Space Factories <size=70%>{UIThemeProvider.TextColourBlue}{sd1.spaceFactories:N0}</color>";
 
         // Build global multiplier with space factory boosts
         double globalMulti = GetGlobalMultiplier();
@@ -245,9 +377,17 @@ public class SpaceAgeManager : MonoBehaviour
 
         if (sd1.dysonPanels < DysonPanelCap)
         {
-            int produced = _spaceFactoriesTimer.Update(sd1.spaceFactories, globalMulti, Time.deltaTime);
-            sd1.dysonPanels += produced;
+            long produced = NumericSafety.ToLongFloor(
+                _spaceFactoriesTimer.Update(
+                    sd1.spaceFactories,
+                    globalMulti,
+                    _tickSeconds)).Value;
+            sd1.dysonPanels = Math.Min(
+                DysonPanelCap,
+                NumericSafety.Add(sd1.dysonPanels, produced).Value);
+            if (!_updatePresentation) return;
 
+            spaceFactoriesPanel.titleText.text = $"Space Factories <size=70%>{UIThemeProvider.TextColourBlue}{sd1.spaceFactories:N0}</color>";
             spaceFactoriesPanel.fill1.fillAmount =
                 (float)StaticMethods.FillBar(sd1.spaceFactories, _factoriesDuration, effectiveMulti, _spaceFactoriesTimer.currentTime);
             spaceFactoriesPanel.fillBar1Text.text = StaticMethods.TimerText(sd1.spaceFactories, _factoriesDuration, effectiveMulti, _spaceFactoriesTimer.currentTime, mspace: true, colourOverride: UIThemeProvider.TextColourBlue);
@@ -257,6 +397,8 @@ public class SpaceAgeManager : MonoBehaviour
         }
         else
         {
+            if (!_updatePresentation) return;
+            spaceFactoriesPanel.titleText.text = $"Space Factories <size=70%>{UIThemeProvider.TextColourBlue}{sd1.spaceFactories:N0}</color>";
             spaceFactoriesPanel.fill2.fillAmount = 1;
             spaceFactoriesPanel.fillBar2Text.text = $"{UIThemeProvider.TextColourBlue}{sd1.dysonPanels}</color> / {UIThemeProvider.TextColourBlue}{DysonPanelCap}</color>";
             spaceFactoriesPanel.fill1.fillAmount = 1;
@@ -279,13 +421,17 @@ public class SpaceAgeManager : MonoBehaviour
             double energyTillFill = sd1.railgunMaxCharge - sd1.railgunCharge;
             if (energyTillFill < sd1.energy)
             {
-                sd1.energy -= energyTillFill;
-                sd1.railgunCharge += energyTillFill;
+                DebitResult debit = EconomyTransaction.TryDebit(sd1.energy, energyTillFill);
+                if (!debit.Succeeded) return;
+                sd1.energy = debit.Balance;
+                sd1.railgunCharge =
+                    NumericSafety.Add(sd1.railgunCharge, debit.Charged).Value;
             }
             else
             {
-                sd1.railgunCharge += sd1.energy;
-                sd1.energy -= sd1.energy;
+                double transferred = sd1.energy;
+                sd1.railgunCharge = NumericSafety.Add(sd1.railgunCharge, transferred).Value;
+                sd1.energy = 0d;
             }
         }
 
@@ -298,6 +444,7 @@ public class SpaceAgeManager : MonoBehaviour
             _fireTime = 0;
             _fireTimes = _timesToFire;
         }
+        if (!_updatePresentation) return;
 
         railgunsPanel.titleText.text = $"Railguns<size=70%> - {CalcUtils.FormatEnergy(sd1.railgunCharge, true, colourOverride: UIThemeProvider.TextColourBlue)} / {UIThemeProvider.TextColourBlue}25</color> MJ";
         railgunsPanel.fill2.fillAmount = (float)sd1.railgunCharge / (float)sd1.railgunMaxCharge;
@@ -310,15 +457,16 @@ public class SpaceAgeManager : MonoBehaviour
 
         if (!_firing)
         {
+            if (!_updatePresentation) return;
             railgunsPanel.fill1.fillAmount = 0;
             railgunsPanel.fillBar1Text.text = $"{UIThemeProvider.TextColourBlue}0</color> / {UIThemeProvider.TextColourBlue}{_timesToFire}</color>";
             return;
         }
 
-        float deltaCalc = _timesToFire / _totalFireTime;
-        float timeToFill = _totalFireTime / _timesToFire;
-        _fireTime += deltaCalc * Time.deltaTime;
-        float fill = _fireTime / timeToFill;
+        double deltaCalc = _timesToFire / (double)_totalFireTime;
+        double timeToFill = _totalFireTime / _timesToFire;
+        _fireTime += deltaCalc * _tickSeconds;
+        float fill = (float)(_fireTime / timeToFill);
 
         double chargePerShot = sd1.railgunMaxCharge / 10.0;
         long panelsPerShot = sdp.doubleTimeRate >= 1 && sdp.doDoubleTime
@@ -335,13 +483,23 @@ public class SpaceAgeManager : MonoBehaviour
             }
 
             _fireTime = 0;
-            sd1.railgunCharge -= chargePerShot;
-            sd1.dysonPanels -= panelsPerShot;
-            sd1.swarmPanels += panelsPerShot;
+            TransactionStatus fireStatus = EconomyTransaction.TryExchange(
+                ref sd1.railgunCharge,
+                chargePerShot,
+                ref sd1.dysonPanels,
+                panelsPerShot,
+                ref sd1.swarmPanels,
+                panelsPerShot);
+            if (fireStatus != TransactionStatus.Success)
+            {
+                _firing = false;
+                return;
+            }
             _fireTimes--;
         }
 
         if (sd1.railgunCharge < chargePerShot || _fireTimes <= 0) _firing = false;
+        if (!_updatePresentation) return;
 
         railgunsPanel.fill1.fillAmount = fill;
         railgunsPanel.fillBar1Text.text = $"{UIThemeProvider.TextColourBlue}{_fireTimes}</color> / {UIThemeProvider.TextColourBlue}{_timesToFire}</color>";
@@ -364,16 +522,22 @@ public class SpaceAgeManager : MonoBehaviour
 
         swarmStatsPanel.titleText.text = $"Swarm Stats<size=70%> - {UIThemeProvider.TextColourBlue}{sd1.swarmPanels:N0}</color> Pending SM";
 
-        long doubleTimeMulti = sdp.doDoubleTime ? sdp.doubleTimeRate + 1 : 1;
         if (swarmStatsPanel.additionalText != null)
+        {
+            double panelGeneration = NumericSafety.Multiply(
+                NumericSafety.Multiply(
+                    (double)sd1.swarmPanels,
+                    sd1.swarmPanelGeneration).Value,
+                _tickGlobalMultiplier).Value;
             swarmStatsPanel.additionalText.text =
-                $"You've launched {UIThemeProvider.TextColourBlue}{sd1.swarmPanels:N0}</color> panels\nThey produce {CalcUtils.FormatEnergy(sd1.swarmPanels * sd1.swarmPanelGeneration * doubleTimeMulti, false, colourOverride: UIThemeProvider.TextColourBlue)}";
+                $"You've launched {UIThemeProvider.TextColourBlue}{sd1.swarmPanels:N0}</color> panels\nThey produce {CalcUtils.FormatEnergy(panelGeneration, false, colourOverride: UIThemeProvider.TextColourBlue)}";
+        }
     }
 
     private void OnBlackHoleClick()
     {
         // Capture swarm panels before wipe for display
-        int earnedSM = (int)sd1.swarmPanels;
+        long earnedSM = sd1.swarmPanels;
 
         sdp.disasterStage = 0;
         if (blackHoleAlertEarningsText != null)
@@ -385,30 +549,20 @@ public class SpaceAgeManager : MonoBehaviour
             blackHoleAlert.SetActive(true);
     }
 
-    private void Prestige(int strangeMatter)
+    private void Prestige(long strangeMatter)
     {
-        sdp.simulationCount++;
-        sdp.strangeMatter += strangeMatter;
-        StartCoroutine(WipeForPrestige());
-    }
-
-    private IEnumerator WipeForPrestige()
-    {
-        oracle.WipeDream1Save();
-
-        // Reset local firing state to prevent negative railgunCharge
-        _firing = false;
-        _fireTime = 0;
-        _fireTimes = 0;
-
-        // Reset production timer to match wiped save data
-        _spaceFactoriesTimer = new ProductionTimer(_factoriesDuration, 0);
-
-        // Explicitly hide the swarm stats panel after wipe
+        if (!DreamResetTransitions.TryApplyExplicit(
+                oracle.saveSettings,
+                DreamResetCause.BlackHole,
+                strangeMatter,
+                out _))
+        {
+            return;
+        }
+        SimulationPrestigeManager
+            .InvokeResetSimulationRuntime();
         if (swarmStatsPanel != null)
             swarmStatsPanel.gameObject.SetActive(false);
-
-        yield return null;
         SimulationPrestigeManager.InvokeApplyResearch();
     }
 
@@ -418,14 +572,34 @@ public class SpaceAgeManager : MonoBehaviour
 
     private void BuySolar()
     {
-        sd1.solarPanels++;
-        sd.influence -= sd1.solarCost;
+        EconomyTransaction.TryPurchase(
+            ref sd.influence,
+            sd1.solarCost,
+            ref sd1.solarPanels,
+            1d);
     }
 
     private void BuyFusion()
     {
-        sd1.fusion++;
-        sd.influence -= sd1.fusionCost;
+        EconomyTransaction.TryPurchase(
+            ref sd.influence,
+            sd1.fusionCost,
+            ref sd1.fusion,
+            1d);
+    }
+
+    private static void QueuePlayerAction(
+        Action action,
+        SimulationInputKind kind,
+        string stableId)
+    {
+        if (!GameManager.RequestQueuedPlayerAction(
+                kind,
+                action,
+                stableId))
+        {
+            action();
+        }
     }
 
     #endregion
@@ -575,4 +749,3 @@ public class SpaceAgeManager : MonoBehaviour
 
     #endregion
 }
-

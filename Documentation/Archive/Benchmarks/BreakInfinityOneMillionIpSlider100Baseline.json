@@ -1,0 +1,136 @@
+{
+  "status": "Archived pre-cleanup characterization; not a current acceptance target",
+  "profileId": "break-infinity-1m-ip-slider-100-all-finite-quantum-dream-idle",
+  "sourceCommit": "3d581b0eece1d47147b56ded136ea247c4c39dbd",
+  "simulatedSeconds": 60.0,
+  "startingInfinityPoints": 1000000,
+  "storedTimeOneShot": {
+    "breakInfinityResets": 21,
+    "earnedInfinityPoints": 2100,
+    "finalInfinityPoints": 1002100,
+    "lastCycleSeconds": 2.7603289661668371,
+    "warmRealMilliseconds": [
+      184.464,
+      188.766
+    ]
+  },
+  "fixedSchedulerPointOneSecondChunks": {
+    "breakInfinityResets": 26,
+    "earnedInfinityPoints": 2600,
+    "finalInfinityPoints": 1002600,
+    "cycleDurationsSeconds": [
+      4.2599241618115435,
+      2.2400105495166751,
+      2.2410602662464223,
+      2.0706447456403065,
+      2.1700258075484817,
+      2.2702339514198648,
+      1.968103684873852,
+      2.1952203414086822,
+      2.2943369415602337,
+      2.2700110166269503,
+      2.0522297721471761,
+      2.1666016069610472,
+      2.2698816732937628,
+      2.1980932383481071,
+      2.1027326201417256,
+      2.2368325284795629,
+      2.2800572542947637,
+      2.3332952945756751,
+      1.99452002799127,
+      2.1699623818937908,
+      2.2273632491314781,
+      2.0086689054024265,
+      2.2145985483737527,
+      2.3098462485898148,
+      2.2996271325283049,
+      1.9802125717867951
+    ]
+  },
+  "currentSharedSchedulerExact": {
+    "measuredAt": "2026-07-28",
+    "oneMinute": {
+      "breakInfinityResets": 37,
+      "earnedInfinityPoints": 3700
+    },
+    "oneHour": {
+      "breakInfinityResets": 2250,
+      "earnedInfinityPoints": 225000,
+      "realMilliseconds": 80439.531
+    }
+  },
+  "currentCanonicalSampledProjection": {
+    "measuredAt": "2026-07-28",
+    "accuracyPolicy": "characterization-only; no fixed end-to-end percentage target during architecture phase",
+    "sampling": {
+      "fastCycles": "12 cycles, 3 groups of 4",
+      "automationCrossingCycles": "24 cycles, 3 groups of 8",
+      "automationCrossingRefresh": "4 cycles"
+    },
+    "storedTimeMatrix": [
+      {
+        "simulatedSeconds": 60,
+        "breakInfinityResets": 37,
+        "earnedInfinityPoints": 3700,
+        "realMilliseconds": 1227.162
+      },
+      {
+        "simulatedSeconds": 3600,
+        "breakInfinityResets": 2275,
+        "earnedInfinityPoints": 227500,
+        "realMilliseconds": 2075.791
+      },
+      {
+        "simulatedSeconds": 64800,
+        "breakInfinityResets": 52424,
+        "earnedInfinityPoints": 5242400,
+        "realMilliseconds": 4714.159
+      },
+      {
+        "simulatedSeconds": 86400,
+        "breakInfinityResets": 71704,
+        "earnedInfinityPoints": 7170400,
+        "realMilliseconds": 6602.447
+      },
+      {
+        "simulatedSeconds": 604800,
+        "breakInfinityResets": 617112,
+        "earnedInfinityPoints": 61711200,
+        "realMilliseconds": 7729.408
+      },
+      {
+        "simulatedSeconds": 2592000,
+        "breakInfinityResets": 2941799,
+        "earnedInfinityPoints": 294179900,
+        "realMilliseconds": 8602.895
+      },
+      {
+        "simulatedSeconds": 8640000,
+        "breakInfinityResets": 10749326,
+        "earnedInfinityPoints": 1074932600,
+        "realMilliseconds": 8391.903
+      },
+      {
+        "simulatedSeconds": 42000000,
+        "breakInfinityResets": 53788648,
+        "earnedInfinityPoints": 5378864800,
+        "realMilliseconds": 9605.895
+      }
+    ],
+    "oneHourPartitionCharacterization": {
+      "wholeFinalInfinityPoints": 1227500,
+      "twoHalfFinalInfinityPoints": 1229100,
+      "wholeBreakInfinityResets": 2275,
+      "twoHalfBreakInfinityResets": 2291,
+      "finalInfinityPointDifference": 0.0013017655194858025,
+      "resetCountDifference": 0.0069838498472282844
+    }
+  },
+  "notes": [
+    "The historical 3d581b0 fixture was measured in an isolated worktree with no uncommitted solver changes.",
+    "The one-shot stored-time result and 0.1-second partitioned result differ in the clean checkpoint; both are preserved as characterization evidence.",
+    "The current adaptive measurements were taken from the uncommitted numeric-safety-and-tick-system branch and are intended for architecture characterization and later tuning.",
+    "The 100-day matrix run contained one 276.192 ms development-editor slice while the other reported maximum slices were approximately 18-23 ms; this requires follow-up profiling rather than being hidden.",
+    "Wall-clock timings are observations from one development machine and are not correctness assertions."
+  ]
+}

@@ -12,7 +12,8 @@ namespace Systems.Facilities
     public static class FacilityEffectPipeline
     {
         private const int ModifierEffectOrderStart = 10;
-        private const double DefaultMaxInfinityBuff = 1e44;
+        private const double DefaultMaxInfinityBuff =
+            FacilityModifierPipeline.DefaultInfinityMultiplierCap;
 
         public static FacilityRuntime BuildRuntimeFromDefinitions(FacilityDefinition definition, FacilityState state,
             EffectContext context)
@@ -266,4 +267,3 @@ namespace Systems.Facilities
         }
     }
 }
-

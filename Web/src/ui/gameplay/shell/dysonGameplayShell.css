@@ -1,0 +1,1208 @@
+@import "../../tokens/tokens.css";
+
+.dyson-shell,
+.dyson-shell *,
+.dyson-shell *::before,
+.dyson-shell *::after {
+  box-sizing: border-box;
+}
+
+.dyson-shell {
+  --resource-clearance-color: var(--color-app-background);
+  --bot-distribution-track-color: #120d14;
+  --bot-distribution-handle-color: #c45cda;
+  display: grid;
+  grid-template-rows: minmax(0, 1fr) 4.9rem;
+  inline-size: 100%;
+  block-size: 100vh;
+  block-size: 100dvb;
+  min-block-size: 0;
+  overflow: hidden;
+  background: var(--color-app-background);
+  color: var(--color-text-primary);
+  font-family: var(--font-family-body);
+  -webkit-touch-callout: none;
+  -webkit-user-select: none;
+  user-select: none;
+}
+
+.dyson-shell input[type="text"],
+.dyson-shell input[type="search"],
+.dyson-shell input[type="url"],
+.dyson-shell input[type="email"],
+.dyson-shell input[type="password"],
+.dyson-shell input[type="number"],
+.dyson-shell textarea,
+.dyson-shell [contenteditable="true"],
+.dyson-shell pre,
+.dyson-shell code {
+  -webkit-touch-callout: default;
+  -webkit-user-select: text;
+  user-select: text;
+}
+
+.dyson-shell[data-route-theme="settings"] {
+  --resource-clearance-color: #121a12;
+  background: #121a12;
+}
+
+.dyson-shell[data-route-theme="settings"]
+  .dyson-shell__bottom-navigation {
+  border-color: #364d36;
+  background: #243324;
+}
+
+.dyson-shell[data-route-theme="settings"]
+  .dyson-shell__side-panel {
+  border-color: #364d36;
+  background: #121a12;
+}
+
+.dyson-shell[data-route-theme="settings"]
+  .dyson-navigation--drawer
+  .dyson-navigation__link {
+  border-color: #101710;
+  background: #243324;
+  color: #c9dec9;
+}
+
+.dyson-shell[data-route-theme="settings"]
+  .dyson-navigation--drawer
+  .dyson-navigation__link[aria-current="page"] {
+  background: #3f7042;
+  color: white;
+}
+
+.dyson-shell[data-route-theme="settings"]
+  .dyson-navigation__link[aria-current="page"]
+  .dyson-navigation__icon
+  img {
+  filter: sepia(1) saturate(4) hue-rotate(65deg) brightness(1.25);
+}
+
+.dyson-shell[data-route-theme="research"] {
+  --resource-clearance-color: #181f1e;
+  --bot-distribution-track-color: #263a38;
+  --bot-distribution-handle-color: #8bc7c4;
+  background: #181f1e;
+}
+
+.dyson-shell[data-route-theme="research"]
+  .dyson-shell__bottom-navigation {
+  border-color: #41615e;
+  background: #334c4a;
+}
+
+.dyson-shell[data-route-theme="research"]
+  .dyson-shell__lower-regions {
+  border-color: #41615e;
+  background: #334c4a;
+}
+
+.dyson-shell[data-route-theme="research"]
+  .dyson-shell__side-panel {
+  border-color: #41615e;
+  background: #181f1e;
+}
+
+.dyson-shell[data-route-theme="research"]
+  .dyson-navigation--drawer
+  .dyson-navigation__link {
+  border-color: #101716;
+  background: #334c4a;
+  color: #c5dcda;
+}
+
+.dyson-shell[data-route-theme="research"]
+  .dyson-navigation--drawer
+  .dyson-navigation__link[aria-current="page"] {
+  background: #41615e;
+  color: white;
+}
+
+.dyson-shell[data-route-theme="research"]
+  .dyson-navigation__link[aria-current="page"] {
+  color: #8bc7c4;
+}
+
+.dyson-shell[data-route-theme="research"]
+  .dyson-navigation__link[aria-current="page"]
+  .dyson-navigation__icon
+  img {
+  filter:
+    sepia(0.45)
+    saturate(2.2)
+    hue-rotate(125deg)
+    brightness(1.25);
+}
+
+.dyson-shell[data-route-theme="skills"] {
+  --resource-clearance-color: #151225;
+  background: #151225;
+}
+
+.dyson-shell[data-route-theme="skills"]
+  .dyson-shell__bottom-navigation {
+  border-color: #4b3f70;
+  background: #302746;
+}
+
+.dyson-shell[data-route-theme="skills"]
+  .dyson-shell__side-panel {
+  border-color: #4b3f70;
+  background: #151225;
+}
+
+.dyson-shell[data-route-theme="skills"]
+  .dyson-navigation--drawer
+  .dyson-navigation__link {
+  border-color: #100d1a;
+  background: #302746;
+  color: #d8d0ed;
+}
+
+.dyson-shell[data-route-theme="skills"]
+  .dyson-navigation--drawer
+  .dyson-navigation__link[aria-current="page"] {
+  background: #41355f;
+  color: white;
+}
+
+.dyson-shell[data-route-theme="skills"]
+  .dyson-navigation__link[aria-current="page"] {
+  color: #83df63;
+}
+
+.dyson-shell[data-route-theme="skills"]
+  .dyson-navigation__link[aria-current="page"]
+  .dyson-navigation__icon
+  img {
+  filter:
+    sepia(0.55)
+    saturate(4)
+    hue-rotate(55deg)
+    brightness(1.35);
+}
+
+.dyson-shell[data-route-theme="infinity"] {
+  --infinity-panel-color: #30244f;
+  --resource-clearance-color: var(--infinity-panel-color);
+  background: #1c1427;
+}
+
+.dyson-shell[data-route-theme="infinity"]
+  .dyson-resource-header {
+  background: var(--infinity-panel-color);
+}
+
+.dyson-shell[data-route-theme="infinity"]
+  .dyson-shell__bottom-navigation {
+  border-color: #5b4674;
+  background: var(--infinity-panel-color);
+}
+
+.dyson-shell[data-route-theme="infinity"]
+  .dyson-shell__side-panel {
+  border-color: #5b4674;
+  background: #1c1427;
+}
+
+.dyson-shell[data-route-theme="infinity"]
+  .dyson-navigation--drawer
+  .dyson-navigation__link {
+  border-color: #100b17;
+  background: #30244f;
+  color: #d9ceed;
+}
+
+.dyson-shell[data-route-theme="infinity"]
+  .dyson-navigation--drawer
+  .dyson-navigation__link[aria-current="page"] {
+  background: #483563;
+  color: white;
+}
+
+.dyson-shell[data-route-theme="infinity"]
+  .dyson-navigation__link[aria-current="page"] {
+  color: #c8b3ff;
+}
+
+.dyson-shell[data-route-theme="infinity"]
+  .dyson-navigation__link[aria-current="page"]
+  .dyson-navigation__icon
+  img {
+  filter:
+    sepia(0.45)
+    saturate(2.8)
+    hue-rotate(215deg)
+    brightness(1.25);
+}
+
+.dyson-shell[data-route-theme="reality"] {
+  --resource-clearance-color: #302744;
+  background: #151020;
+}
+
+.dyson-shell[data-route-theme="quantum"],
+.dyson-shell[data-route-theme="avocato"],
+.dyson-shell[data-route-theme="offline-time"],
+.dyson-shell[data-route-theme="story"],
+.dyson-shell[data-route-theme="wiki"] {
+  --resource-clearance-color: #352a52;
+  background: #130f22;
+}
+
+.dyson-shell[data-route-theme="quantum"] .dyson-resource-header,
+.dyson-shell[data-route-theme="avocato"] .dyson-resource-header,
+.dyson-shell[data-route-theme="offline-time"] .dyson-resource-header,
+.dyson-shell[data-route-theme="story"] .dyson-resource-header,
+.dyson-shell[data-route-theme="wiki"] .dyson-resource-header,
+.dyson-shell[data-route-theme="quantum"] .dyson-shell__bottom-navigation,
+.dyson-shell[data-route-theme="avocato"] .dyson-shell__bottom-navigation,
+.dyson-shell[data-route-theme="offline-time"] .dyson-shell__bottom-navigation,
+.dyson-shell[data-route-theme="story"] .dyson-shell__bottom-navigation,
+.dyson-shell[data-route-theme="wiki"] .dyson-shell__bottom-navigation {
+  border-color: #69558a;
+  background: #352a52;
+}
+
+.dyson-shell[data-route-theme="quantum"] .dyson-shell__side-panel,
+.dyson-shell[data-route-theme="avocato"] .dyson-shell__side-panel,
+.dyson-shell[data-route-theme="offline-time"] .dyson-shell__side-panel {
+  border-color: #69558a;
+  background: #130f22;
+}
+
+.dyson-shell[data-route-theme="story"] .dyson-shell__side-panel,
+.dyson-shell[data-route-theme="wiki"] .dyson-shell__side-panel {
+  border-color: #69558a;
+  background: #130f22;
+}
+
+.dyson-shell[data-route-theme="quantum"] .dyson-navigation--drawer .dyson-navigation__link,
+.dyson-shell[data-route-theme="avocato"] .dyson-navigation--drawer .dyson-navigation__link,
+.dyson-shell[data-route-theme="offline-time"] .dyson-navigation--drawer .dyson-navigation__link {
+  border-color: #0b0813;
+  background: #352a52;
+  color: #e9e1f6;
+}
+
+.dyson-shell[data-route-theme="story"] .dyson-navigation--drawer .dyson-navigation__link,
+.dyson-shell[data-route-theme="wiki"] .dyson-navigation--drawer .dyson-navigation__link {
+  border-color: #0b0813;
+  background: #352a52;
+  color: #e9e1f6;
+}
+
+.dyson-shell[data-route-theme="quantum"] .dyson-navigation--drawer .dyson-navigation__link[aria-current="page"],
+.dyson-shell[data-route-theme="avocato"] .dyson-navigation--drawer .dyson-navigation__link[aria-current="page"],
+.dyson-shell[data-route-theme="offline-time"] .dyson-navigation--drawer .dyson-navigation__link[aria-current="page"] {
+  background: #594275;
+  color: white;
+}
+
+.dyson-shell[data-route-theme="story"] .dyson-navigation--drawer .dyson-navigation__link[aria-current="page"],
+.dyson-shell[data-route-theme="wiki"] .dyson-navigation--drawer .dyson-navigation__link[aria-current="page"] {
+  background: #594275;
+  color: white;
+}
+
+.dyson-shell[data-route-theme="quantum"] .dyson-navigation__link[aria-current="page"],
+.dyson-shell[data-route-theme="avocato"] .dyson-navigation__link[aria-current="page"],
+.dyson-shell[data-route-theme="offline-time"] .dyson-navigation__link[aria-current="page"] {
+  color: #c8b3ff;
+}
+
+.dyson-shell[data-route-theme="story"] .dyson-navigation__link[aria-current="page"],
+.dyson-shell[data-route-theme="wiki"] .dyson-navigation__link[aria-current="page"] {
+  color: #d08de1;
+}
+
+.dyson-shell[data-route-theme="statistics"] {
+  --resource-clearance-color: #354d38;
+  background: #102317;
+}
+
+.dyson-shell[data-route-theme="statistics"] .dyson-resource-header,
+.dyson-shell[data-route-theme="statistics"] .dyson-shell__bottom-navigation {
+  border-color: #628568;
+  background: #354d38;
+}
+
+.dyson-shell[data-route-theme="statistics"] .dyson-shell__side-panel {
+  border-color: #628568;
+  background: #102317;
+}
+
+.dyson-shell[data-route-theme="statistics"] .dyson-navigation--drawer .dyson-navigation__link {
+  border-color: #0b150d;
+  background: #354d38;
+  color: #e2eee3;
+}
+
+.dyson-shell[data-route-theme="statistics"] .dyson-navigation--drawer .dyson-navigation__link[aria-current="page"] {
+  background: #4d6c52;
+  color: white;
+}
+
+.dyson-shell[data-route-theme="statistics"] .dyson-navigation__link[aria-current="page"] {
+  color: #91dd8f;
+}
+
+.dyson-navigation__text-icon {
+  display: inline-grid;
+  min-inline-size: 1em;
+  place-items: center;
+  font-family: var(--font-family-body);
+  font-size: 0.82em;
+  font-weight: var(--font-weight-bold);
+  line-height: 1;
+}
+
+.dyson-shell[data-route-theme="reality"]
+  .dyson-resource-header {
+  background: #302744;
+}
+
+.dyson-shell[data-route-theme="reality"]
+  .dyson-shell__bottom-navigation {
+  border-color: #675282;
+  background: #302744;
+}
+
+.dyson-shell[data-route-theme="reality"]
+  .dyson-shell__side-panel {
+  border-color: #675282;
+  background: #151020;
+}
+
+.dyson-shell[data-route-theme="reality"]
+  .dyson-navigation--drawer
+  .dyson-navigation__link {
+  border-color: #0c0812;
+  background: #302744;
+  color: #e4d9f2;
+}
+
+.dyson-shell[data-route-theme="reality"]
+  .dyson-navigation--drawer
+  .dyson-navigation__link[aria-current="page"] {
+  background: #4c3a64;
+  color: white;
+}
+
+.dyson-shell[data-route-theme="reality"]
+  .dyson-navigation__link[aria-current="page"] {
+  color: #c8b3ff;
+}
+
+.dyson-shell[data-route-theme="reality"]
+  .dyson-navigation__link[aria-current="page"]
+  .dyson-navigation__icon
+  img {
+  filter:
+    sepia(0.35)
+    saturate(2.3)
+    hue-rotate(205deg)
+    brightness(1.25);
+}
+
+.dyson-shell[data-route-theme="simulations"] {
+  --simulations-panel-color: #29435f;
+  --simulations-navigation-border: #7b9fbe;
+  --simulations-navigation-background: #29435f;
+  --simulations-menu-background: #101b29;
+  --simulations-menu-card-background: #263b50;
+  --simulations-menu-active-background: #3a6384;
+  --simulations-menu-text: #dceaf5;
+  --simulations-menu-accent: #b9ddf7;
+  --simulations-time-border: #7b9fbe;
+  --simulations-time-background: #29435f;
+  --simulations-slider-accent: #91b7d6;
+  --simulations-slider-track: #152337;
+  --resource-clearance-color: var(--simulations-panel-color);
+  background: #152337;
+}
+
+.dyson-shell[data-route-theme="simulations"][data-route-theme-variant="information"] {
+  --simulations-panel-color: #3a2947;
+  --simulations-navigation-border: #a36fba;
+  --simulations-navigation-background: #3a2947;
+  --simulations-menu-background: #17101d;
+  --simulations-menu-card-background: #35273e;
+  --simulations-menu-active-background: #644376;
+  --simulations-menu-text: #eadff0;
+  --simulations-menu-accent: #e0b7f0;
+  --simulations-time-border: #a36fba;
+  --simulations-time-background: #3a2947;
+  --simulations-slider-accent: #d29ae8;
+  --simulations-slider-track: #211829;
+  background: #211829;
+}
+
+.dyson-shell[data-route-theme="simulations"][data-route-theme-variant="space-age"] {
+  --simulations-panel-color: #254233;
+  --simulations-navigation-border: #6fa68c;
+  --simulations-navigation-background: #254233;
+  --simulations-menu-background: #0f1d16;
+  --simulations-menu-card-background: #203b2c;
+  --simulations-menu-active-background: #39654a;
+  --simulations-menu-text: #dbede2;
+  --simulations-menu-accent: #a8e6aa;
+  --simulations-time-border: #6fa68c;
+  --simulations-time-background: #254233;
+  --simulations-slider-accent: #91dd8f;
+  --simulations-slider-track: #14241c;
+  background: #14241c;
+}
+
+.dyson-shell[data-route-theme="simulations"]
+  .dyson-resource-header {
+  background: var(--simulations-panel-color);
+}
+
+.dyson-shell[data-route-theme="simulations"]
+  .dyson-shell__bottom-navigation {
+  border-color: var(--simulations-navigation-border);
+  background: var(--simulations-navigation-background);
+}
+
+.dyson-shell[data-route-theme="simulations"]
+  .dyson-shell__side-panel {
+  border-color: var(--simulations-navigation-border);
+  background: var(--simulations-menu-background);
+}
+
+.dyson-shell[data-route-theme="simulations"]
+  .dyson-navigation--drawer
+  .dyson-navigation__link {
+  border-color: var(--simulations-slider-track);
+  background: var(--simulations-menu-card-background);
+  color: var(--simulations-menu-text);
+}
+
+.dyson-shell[data-route-theme="simulations"]
+  .dyson-navigation--drawer
+  .dyson-navigation__link[aria-current="page"] {
+  background: var(--simulations-menu-active-background);
+  color: white;
+}
+
+.dyson-shell[data-route-theme="simulations"]
+  .dyson-navigation__link[aria-current="page"] {
+  color: var(--simulations-menu-accent);
+}
+
+.dyson-shell[data-route-theme="simulations"]
+  .dyson-navigation__link[aria-current="page"]
+  .dyson-navigation__icon
+  img {
+  filter:
+    sepia(0.45)
+    saturate(2.4)
+    hue-rotate(65deg)
+    brightness(1.25);
+}
+
+.dyson-shell__skip-link {
+  position: fixed;
+  z-index: 100;
+  inset-block-start: max(0.5rem, env(safe-area-inset-top));
+  inset-inline-start: max(0.5rem, env(safe-area-inset-left));
+  padding: 0.7rem 1rem;
+  border: 2px solid var(--color-focus);
+  border-radius: 0.4rem;
+  background: #201722;
+  color: white;
+  transform: translateY(-180%);
+}
+
+.dyson-shell__skip-link:focus {
+  transform: translateY(0);
+}
+
+.dyson-shell__main {
+  grid-row: 1;
+  min-inline-size: 0;
+  min-block-size: 0;
+  overflow: hidden;
+}
+
+.dyson-shell__content {
+  display: grid;
+  grid-template-rows: auto minmax(0, 1fr) auto;
+  block-size: 100%;
+  min-block-size: 0;
+  overflow: hidden;
+}
+
+.dyson-shell__route-heading {
+  position: absolute;
+  inline-size: 1px;
+  block-size: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+.dyson-resource-header {
+  direction: ltr;
+  z-index: 3;
+  display: grid;
+  grid-template-columns: 1fr 1.4fr 1fr;
+  align-items: start;
+  min-block-size: 4.7rem;
+  padding-block: max(0.55rem, env(safe-area-inset-top)) 0.18rem;
+  padding-inline: max(1rem, env(safe-area-inset-left))
+    max(1rem, env(safe-area-inset-right));
+  background: transparent;
+}
+
+.dyson-resource-header__item {
+  position: relative;
+  z-index: 0;
+  display: grid;
+  min-inline-size: 0;
+  gap: 0.12rem;
+  font-variant-numeric: tabular-nums;
+  isolation: isolate;
+}
+
+.dyson-resource-header__item::before {
+  position: absolute;
+  z-index: -1;
+  inset-block: -0.55rem -0.45rem;
+  inline-size: max(100%, 8rem);
+  background:
+    radial-gradient(
+      ellipse at center,
+      var(--resource-clearance-color) 0 48%,
+      transparent 86%
+    );
+  content: "";
+  pointer-events: none;
+}
+
+.dyson-resource-header__item--cash::before {
+  inset-inline-start: -0.75rem;
+}
+
+.dyson-resource-header__item--total-bots::before {
+  inset-inline-start: 50%;
+  transform: translateX(-50%);
+}
+
+.dyson-resource-header__item--science::before {
+  inset-inline-end: -0.75rem;
+}
+
+.dyson-resource-header__item--cash {
+  justify-items: start;
+  text-align: start;
+}
+
+.dyson-resource-header__item--total-bots {
+  justify-items: center;
+  padding-block-start: 0.15rem;
+  text-align: center;
+}
+
+.dyson-resource-header__item--science {
+  justify-items: end;
+  padding-inline-start: 1.8rem;
+  text-align: end;
+}
+
+.dyson-resource-header .ui-resource-value {
+  display: block;
+  color: white;
+}
+
+.dyson-resource-header .ui-resource-value > span:first-child {
+  position: absolute;
+  inline-size: 1px;
+  block-size: 1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+}
+
+.dyson-resource-header .ui-resource-value__value {
+  color: white;
+  font-size: clamp(1.65rem, 4.8vw, 2.35rem);
+  font-weight: var(--font-weight-semibold);
+  line-height: 1;
+  text-shadow: 0 2px 2px rgb(0 0 0 / 70%);
+}
+
+.dyson-resource-header__item--total-bots .ui-resource-value__value::before {
+  content: "Total Bots: ";
+}
+
+.dyson-resource-header__item--total-bots .ui-resource-value__value {
+  font-size: clamp(1.45rem, 4.6vw, 2.15rem);
+}
+
+.dyson-resource-header__rate {
+  display: inline-flex;
+  align-items: baseline;
+  gap: 0.16em;
+  color: white;
+  font-size: clamp(0.85rem, 2.5vw, 1.25rem);
+  line-height: 1.1;
+}
+
+.dyson-resource-header__item--science .ui-inline-image-symbol {
+  block-size: 0.95em;
+}
+
+@media (max-width: 720px) {
+  .dyson-resource-header {
+    grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
+    column-gap: 0.3rem;
+    min-block-size: 3.2rem;
+    padding-block: max(0.42rem, env(safe-area-inset-top)) 0.12rem;
+    padding-inline: max(0.58rem, env(safe-area-inset-left))
+      max(0.58rem, env(safe-area-inset-right));
+  }
+
+  .dyson-resource-header__item--science {
+    padding-inline-start: 0.25rem;
+  }
+
+  .dyson-resource-header .ui-resource-value__content,
+  .dyson-resource-header .ui-resource-value__value,
+  .dyson-resource-header__rate {
+    white-space: nowrap;
+  }
+
+  .dyson-resource-header .ui-resource-value__value {
+    overflow-wrap: normal;
+    font-size: calc(1.22rem * var(--game-text-scale));
+  }
+
+  .dyson-resource-header__item--total-bots .ui-resource-value__value {
+    font-size: calc(1.15rem * var(--game-text-scale));
+  }
+
+  .dyson-resource-header__rate {
+    font-size: calc(0.72rem * var(--game-text-scale));
+  }
+
+  .dyson-shell__stage {
+    padding-inline: max(0.45rem, env(safe-area-inset-left))
+      max(0.45rem, env(safe-area-inset-right));
+  }
+}
+
+@media (max-width: 359px) {
+  .dyson-resource-header {
+    column-gap: 0.2rem;
+    padding-inline: max(0.42rem, env(safe-area-inset-left))
+      max(0.42rem, env(safe-area-inset-right));
+  }
+
+  .dyson-resource-header .ui-resource-value__value {
+    font-size: calc(1.12rem * var(--game-text-scale));
+  }
+
+  .dyson-resource-header__item--total-bots .ui-resource-value__value {
+    font-size: calc(1.02rem * var(--game-text-scale));
+  }
+
+  .dyson-resource-header__rate {
+    font-size: calc(0.66rem * var(--game-text-scale));
+  }
+}
+
+.dyson-shell__playfield {
+  --dyson-swarm-space: clamp(5.5rem, 15vh, 9rem);
+  position: relative;
+  display: grid;
+  grid-template-rows: minmax(0, 1fr);
+  min-block-size: 0;
+  overflow: visible;
+}
+
+.dyson-shell__playfield[data-has-swarm="false"] {
+  --dyson-swarm-space: 0rem;
+}
+
+.dyson-shell__swarm {
+  position: absolute;
+  z-index: 0;
+  inset: 0 0 auto;
+  min-block-size: var(--dyson-swarm-space);
+  pointer-events: none;
+}
+
+.dyson-shell__stage {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  flex-direction: column;
+  min-block-size: 0;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  scrollbar-width: none;
+  padding:
+    calc(var(--dyson-swarm-space) + 0.35rem)
+    max(0.72rem, env(safe-area-inset-right))
+    0.8rem
+    max(0.72rem, env(safe-area-inset-left));
+}
+
+.dyson-shell__stage::-webkit-scrollbar {
+  display: none;
+  inline-size: 0;
+  block-size: 0;
+}
+
+.dyson-shell__playfield[data-has-swarm="true"]
+  .dyson-shell__stage::after {
+  position: absolute;
+  inset-block-start: calc(100% + var(--dyson-swarm-space));
+  inline-size: 1px;
+  block-size: 1px;
+  content: "";
+  pointer-events: none;
+}
+
+.dyson-shell__tinker {
+  margin-block-start: auto;
+  padding-block-start: 0.65rem;
+}
+
+.dyson-shell__facility-region,
+.dyson-shell__facility-region > * {
+  min-inline-size: 0;
+}
+
+.dyson-shell__lower-regions {
+  z-index: 4;
+  display: grid;
+  grid-row: 3;
+  gap: 0.28rem;
+  padding: 0.3rem max(0.72rem, env(safe-area-inset-right)) 0.38rem
+    max(0.72rem, env(safe-area-inset-left));
+  border-block-start: 1px solid #4c3c50;
+  background: #1c1420;
+}
+
+.dyson-shell[data-route-theme="simulations"]
+  .dyson-shell__lower-regions {
+  border-color: var(--simulations-time-border);
+  background: var(--simulations-time-background);
+}
+
+.dyson-shell[data-route-theme="simulations"]
+  .simulation-time-control {
+  --simulation-slider-accent: var(--simulations-slider-accent);
+  --simulation-slider-track: var(--simulations-slider-track);
+}
+
+.dyson-shell[data-route-theme="quantum"]
+  .dyson-shell__lower-regions {
+  border-color: #69558a;
+  background: #352a52;
+}
+
+.dyson-shell__info:empty,
+.dyson-shell__production-summary:empty,
+.dyson-shell__distribution:empty {
+  display: none;
+}
+
+.dyson-shell__bottom-navigation {
+  z-index: 30;
+  grid-row: 2;
+  display: grid;
+  grid-template-columns: 3.7rem minmax(0, 1fr);
+  min-inline-size: 0;
+  padding-block: 0.32rem max(0.32rem, env(safe-area-inset-bottom));
+  padding-inline: max(0.25rem, env(safe-area-inset-left))
+    max(0.25rem, env(safe-area-inset-right));
+  border-block-start: 3px solid #48364d;
+  background: #3f3044;
+}
+
+.dyson-shell__bottom-menu,
+.dyson-navigation__link,
+.dyson-shell__menu-close {
+  border: 0;
+  font: inherit;
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
+  -webkit-touch-callout: none;
+  user-select: none;
+}
+
+.dyson-shell__bottom-menu {
+  display: grid;
+  min-inline-size: 3.2rem;
+  min-block-size: 3.2rem;
+  place-items: center;
+  border-radius: 0.35rem;
+  background: transparent;
+  color: white;
+  cursor: pointer;
+  font-size: 2.55rem;
+  line-height: 1;
+}
+
+.dyson-shell__menu-icon {
+  display: grid;
+  inline-size: 1.75rem;
+  gap: 0.3rem;
+}
+
+.dyson-shell__menu-icon i {
+  display: block;
+  block-size: 0.2rem;
+  border-radius: 999px;
+  background: currentColor;
+}
+
+.dyson-navigation {
+  min-inline-size: 0;
+}
+
+.dyson-navigation--bottom {
+  overflow-x: auto;
+  overscroll-behavior-inline: contain;
+  scrollbar-width: none;
+  touch-action: pan-x;
+}
+
+.dyson-navigation--bottom::-webkit-scrollbar {
+  display: none;
+  inline-size: 0;
+  block-size: 0;
+}
+
+.dyson-navigation__list {
+  display: grid;
+  padding: 0;
+  margin: 0;
+  list-style: none;
+}
+
+.dyson-navigation--bottom .dyson-navigation__list {
+  display: flex;
+  inline-size: max-content;
+  min-inline-size: 100%;
+}
+
+.dyson-navigation--bottom .dyson-navigation__item {
+  flex: 1 0 3.2rem;
+}
+
+.dyson-navigation__item {
+  min-inline-size: 0;
+}
+
+.dyson-navigation__link {
+  position: relative;
+  inline-size: 100%;
+  min-inline-size: 0;
+  min-block-size: 3.2rem;
+  align-items: center;
+  justify-content: center;
+  gap: 0.55rem;
+  border: 1px solid transparent;
+  border-radius: 0.35rem;
+  background: transparent;
+  color: #e7dde9;
+  text-decoration: none;
+}
+
+.dyson-navigation__progress {
+  position: absolute;
+  inset-inline: 0.32rem;
+  inset-block-end: 0.18rem;
+  display: block;
+  block-size: 0.2rem;
+  overflow: hidden;
+  border-radius: 999px;
+  background: #171221;
+}
+
+.dyson-navigation__progress i {
+  display: block;
+  block-size: 100%;
+  background: #c8b3ff;
+}
+
+.dyson-navigation--drawer .dyson-navigation__progress {
+  inset-inline-start: 4rem;
+  inset-inline-end: 0.75rem;
+  inset-block-end: 0.45rem;
+  block-size: 0.28rem;
+}
+
+.dyson-navigation--bottom .dyson-navigation__link {
+  display: grid;
+  place-items: center;
+  padding: 0.1rem;
+}
+
+.dyson-navigation__link:focus-visible,
+.dyson-shell__bottom-menu:focus-visible,
+.dyson-shell__menu-close:focus-visible {
+  outline: 3px solid var(--color-focus);
+  outline-offset: 1px;
+}
+
+.dyson-navigation__link[aria-current="page"] {
+  color: #c45adc;
+}
+
+.dyson-navigation__link:disabled {
+  cursor: default;
+  opacity: 0.72;
+}
+
+.dyson-navigation__icon {
+  display: grid;
+  inline-size: clamp(2.25rem, 7vw, 3rem);
+  block-size: clamp(2.25rem, 7vw, 3rem);
+  place-items: center;
+}
+
+.dyson-navigation__icon img {
+  display: block;
+  inline-size: 100%;
+  block-size: 100%;
+  object-fit: contain;
+  filter: grayscale(1) brightness(2.15);
+}
+
+.dyson-navigation__debug-icon {
+  color: currentColor;
+  font-family: var(--font-family-numeric);
+  font-size: 1.45rem;
+  font-weight: var(--font-weight-bold);
+  line-height: 1;
+}
+
+.dyson-navigation__link[aria-current="page"] .dyson-navigation__icon img {
+  filter: sepia(1) saturate(7) hue-rotate(244deg) brightness(1.05);
+}
+
+.dyson-navigation--bottom .dyson-navigation__label {
+  position: absolute;
+  inline-size: 1px;
+  block-size: 1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+}
+
+.dyson-shell__menu-backdrop {
+  position: fixed;
+  z-index: 39;
+  inset: 0;
+  display: none;
+  border: 0;
+  background: rgb(0 0 0 / 55%);
+}
+
+.dyson-shell[data-menu-open="true"] .dyson-shell__menu-backdrop {
+  display: block;
+}
+
+.dyson-shell__side-panel {
+  position: fixed;
+  z-index: 40;
+  inset-block: 0;
+  inset-inline-start: 0;
+  display: grid;
+  inline-size: min(82vw, 25rem);
+  grid-template-rows: auto auto minmax(0, 1fr);
+  overflow-y: auto;
+  padding: max(0.65rem, env(safe-area-inset-top)) 0.65rem
+    max(0.9rem, env(safe-area-inset-bottom));
+  border-inline-end: 4px solid #49384f;
+  background: #1c1420;
+  box-shadow: 8px 0 20px rgb(0 0 0 / 45%);
+  transform: translateX(-105%);
+  transition: transform 160ms ease-out;
+}
+
+[dir="rtl"] .dyson-shell__side-panel {
+  transform: translateX(105%);
+}
+
+.dyson-shell[data-menu-open="true"] .dyson-shell__side-panel {
+  transform: translateX(0);
+}
+
+.dyson-shell__side-heading {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-block-size: 4rem;
+  color: white;
+  font-size: 2rem;
+  text-align: center;
+}
+
+.dyson-shell__menu-close {
+  position: absolute;
+  inset-block-start: max(0.55rem, env(safe-area-inset-top));
+  inset-inline-end: 0.7rem;
+  inline-size: 2.8rem;
+  block-size: 2.8rem;
+  border-radius: 0.3rem;
+  background: transparent;
+  color: white;
+  cursor: pointer;
+  font-size: 2rem;
+}
+
+.dyson-navigation--drawer .dyson-navigation__list {
+  gap: 0.45rem;
+}
+
+.dyson-navigation--drawer .dyson-navigation__link {
+  display: flex;
+  justify-content: flex-start;
+  min-block-size: 4.25rem;
+  padding: 0.5rem 0.75rem;
+  border-color: #0b080c;
+  background: #443448;
+  color: #d8bddf;
+  font-size: 1.35rem;
+  font-weight: var(--font-weight-semibold);
+  text-align: start;
+  text-shadow: 0 2px 1px rgb(0 0 0 / 65%);
+}
+
+.dyson-navigation--drawer .dyson-navigation__link[aria-current="page"] {
+  background: #513b56;
+  color: #e9c8ef;
+}
+
+.dyson-navigation--drawer .dyson-navigation__icon {
+  inline-size: 2.8rem;
+  block-size: 2.8rem;
+}
+
+.dyson-shell__side-supplement {
+  align-self: end;
+  padding: 1rem 0.25rem 0;
+  color: white;
+  font-size: 0.9rem;
+  line-height: 1.4;
+}
+
+.dyson-shell__route-content {
+  grid-row: 2;
+  block-size: 100%;
+  min-block-size: 0;
+  overflow: hidden;
+  padding: clamp(0.75rem, 2vw, 1.5rem);
+}
+
+.dyson-shell[data-route-theme="research"]
+  .dyson-shell__route-content,
+.dyson-shell[data-route-theme="skills"]
+  .dyson-shell__route-content,
+.dyson-shell[data-route-theme="infinity"]
+  .dyson-shell__route-content,
+.dyson-shell[data-route-theme="reality"]
+  .dyson-shell__route-content,
+.dyson-shell[data-route-theme="simulations"]
+  .dyson-shell__route-content,
+.dyson-shell[data-route-theme="quantum"]
+  .dyson-shell__route-content,
+.dyson-shell[data-route-theme="avocato"]
+  .dyson-shell__route-content,
+.dyson-shell[data-route-theme="offline-time"]
+  .dyson-shell__route-content,
+.dyson-shell[data-route-theme="statistics"]
+  .dyson-shell__route-content,
+.dyson-shell[data-route-theme="story"]
+  .dyson-shell__route-content,
+.dyson-shell[data-route-theme="wiki"]
+  .dyson-shell__route-content {
+  padding: 0;
+}
+
+@media (min-width: 1024px) {
+  .dyson-shell {
+    grid-template-columns: minmax(17rem, 22rem) minmax(0, 1fr);
+    grid-template-rows: minmax(0, 1fr);
+  }
+
+  .dyson-shell__side-panel {
+    position: relative;
+    z-index: 1;
+    grid-column: 1;
+    grid-row: 1;
+    inline-size: auto;
+    transform: none;
+    box-shadow: none;
+  }
+
+  [dir="rtl"] .dyson-shell__side-panel {
+    transform: none;
+  }
+
+  .dyson-shell__menu-close,
+  .dyson-shell__menu-backdrop,
+  .dyson-shell__bottom-navigation {
+    display: none !important;
+  }
+
+  .dyson-shell__main {
+    grid-column: 2;
+  }
+
+  .dyson-resource-header {
+    min-block-size: 4.7rem;
+    padding-inline: 1.5rem;
+  }
+
+  .dyson-shell__playfield {
+    --dyson-swarm-space: clamp(6rem, 16vh, 10rem);
+  }
+
+  .dyson-shell__playfield[data-has-swarm="false"] {
+    --dyson-swarm-space: 0rem;
+  }
+
+  .dyson-shell__stage,
+  .dyson-shell__lower-regions {
+    padding-inline: 1rem;
+  }
+}
+
+@media (max-height: 700px) and (orientation: landscape) {
+  .dyson-shell__playfield {
+    --dyson-swarm-space: 6.25rem;
+  }
+
+  .dyson-shell__playfield[data-has-swarm="false"] {
+    --dyson-swarm-space: 0rem;
+  }
+
+  .dyson-resource-header {
+    min-block-size: 4.6rem;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .dyson-shell__side-panel {
+    transition: none;
+  }
+}
+
+@media (forced-colors: active) {
+  .dyson-navigation__link,
+  .dyson-shell__bottom-menu,
+  .dyson-shell__menu-close {
+    forced-color-adjust: auto;
+  }
+}

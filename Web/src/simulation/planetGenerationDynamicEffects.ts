@@ -1,0 +1,216 @@
+import { DISCRETE_MAXIMUM } from './numeric'
+
+const EFFECT_PREFIX = 'effect.'
+const PLANETS_PER_SECOND_SUFFIX = '.planets_per_second'
+
+export interface PlanetGenerationDynamicInputs {
+  readonly ownedSkills: ReadonlySet<string>
+  readonly researchers: number
+  readonly fragments: bigint
+  readonly assemblyLines: readonly [automatic: number, manual: number]
+  readonly planets: readonly [automatic: number, manual: number]
+  readonly panelsPerSecond: number
+  readonly panelLifetimeSeconds: number
+  readonly bots: number
+  readonly scienceBoostLevel: number
+}
+
+export const PLANET_GENERATION_DYNAMIC_EFFECT_ORDERS = Object.freeze({
+  scientificPlanets: 10,
+  planetAssembly: 20,
+  shellWorlds: 30,
+  stellarSacrifices: 40,
+  shouldersOfTheFallen: 45,
+})
+
+const SUPPORTED_SKILLS = new Set(
+  Object.keys(PLANET_GENERATION_DYNAMIC_EFFECT_ORDERS),
+)
+
+export function tryResolvePlanetGenerationDynamicEffect(
+  effectId: string,
+  inputs: PlanetGenerationDynamicInputs,
+): number | undefined {
+  const skillId = extractSkillId(effectId)
+  if (skillId === undefined || !SUPPORTED_SKILLS.has(skillId)) {
+    return undefined
+  }
+  validateInputs(inputs)
+
+  switch (skillId) {
+    case 'scientificPlanets':
+      return scientificPlanetsProduction(inputs)
+    case 'planetAssembly':
+      return planetAssemblyProduction(inputs)
+    case 'shellWorlds':
+      return shellWorldsProduction(inputs)
+    case 'stellarSacrifices':
+      return stellarSacrificesProduction(inputs)
+    case 'shouldersOfTheFallen':
+      if (
+        !inputs.ownedSkills.has('shouldersOfTheFallen') ||
+        inputs.scienceBoostLevel <= 0 ||
+        !inputs.ownedSkills.has('scientificPlanets')
+      ) {
+        return 0
+      }
+      return logarithm(inputs.scienceBoostLevel, 2)
+  }
+}
+
+function scientificPlanetsProduction(
+  inputs: PlanetGenerationDynamicInputs,
+): number {
+  let production =
+    inputs.researchers > 1 &&
+    inputs.ownedSkills.has('scientificPlanets')
+      ? Math.log10(inputs.researchers)
+      : 0
+  if (inputs.ownedSkills.has('hubbleTelescope')) production *= 2
+  if (inputs.ownedSkills.has('jamesWebbTelescope')) production *= 4
+  if (inputs.ownedSkills.has('terraformingProtocols')) {
+    production += Number(inputs.fragments)
+  }
+  return production
+}
+
+function planetAssemblyProduction(
+  inputs: PlanetGenerationDynamicInputs,
+): number {
+  const totalAssemblyLines =
+    inputs.assemblyLines[0] + inputs.assemblyLines[1]
+  return (
+    inputs.ownedSkills.has('planetAssembly') &&
+    totalAssemblyLines >= 10
+  )
+    ? Math.log10(totalAssemblyLines)
+    : 0
+}
+
+function shellWorldsProduction(
+  inputs: PlanetGenerationDynamicInputs,
+): number {
+  const totalPlanets = inputs.planets[0] + inputs.planets[1]
+  // Unity's legacy helper deliberately gates this on planetAssembly.
+  return (
+    inputs.ownedSkills.has('planetAssembly') &&
+    totalPlanets >= 2
+  )
+    ? logarithm(totalPlanets, 2)
+    : 0
+}
+
+function stellarSacrificesProduction(
+  inputs: PlanetGenerationDynamicInputs,
+): number {
+  const panelArea =
+    inputs.panelsPerSecond * inputs.panelLifetimeSeconds
+  const starsSurrounded = panelArea / 20_000
+  const galaxiesEngulfed =
+    panelArea / 20_000 / 100_000_000_000
+  const stellarGalaxies = resolveStellarGalaxies(
+    inputs,
+    galaxiesEngulfed,
+  )
+  const botsRequired = stellarSacrificesRequiredBots(
+    inputs,
+    starsSurrounded,
+  )
+  return (
+    inputs.ownedSkills.has('stellarSacrifices') &&
+    inputs.bots >= botsRequired &&
+    stellarGalaxies > 0
+  )
+    ? stellarGalaxies
+    : 0
+}
+
+function resolveStellarGalaxies(
+  inputs: PlanetGenerationDynamicInputs,
+  galaxiesEngulfed: number,
+): number {
+  let galaxies = galaxiesEngulfed
+  if (inputs.ownedSkills.has('stellarObliteration')) galaxies *= 1_000
+  if (inputs.ownedSkills.has('supernova')) galaxies *= 1_000
+  if (galaxies > 10) return Math.pow(Math.log10(galaxies), 2)
+  if (galaxies > 1) return Math.log10(galaxies)
+  return 0
+}
+
+function stellarSacrificesRequiredBots(
+  inputs: PlanetGenerationDynamicInputs,
+  starsSurrounded: number,
+): number {
+  let botsNeeded = inputs.ownedSkills.has('supernova')
+    ? starsSurrounded * 1_000_000
+    : inputs.ownedSkills.has('stellarObliteration')
+      ? starsSurrounded * 1_000
+      : starsSurrounded
+  if (botsNeeded < 1) botsNeeded = 1
+  if (inputs.ownedSkills.has('stellarDominance')) botsNeeded *= 100
+  if (inputs.ownedSkills.has('stellarImprovements')) botsNeeded /= 1_000
+  return botsNeeded
+}
+
+function extractSkillId(effectId: string): string | undefined {
+  if (
+    !effectId.startsWith(EFFECT_PREFIX) ||
+    !effectId.endsWith(PLANETS_PER_SECOND_SUFFIX)
+  ) {
+    return undefined
+  }
+  const value = effectId.slice(
+    EFFECT_PREFIX.length,
+    -PLANETS_PER_SECOND_SUFFIX.length,
+  )
+  return value.length > 0 ? value : undefined
+}
+
+function logarithm(value: number, base: number): number {
+  return Math.log(value) / Math.log(base)
+}
+
+function validateInputs(inputs: PlanetGenerationDynamicInputs): void {
+  if (!(inputs.ownedSkills instanceof Set)) {
+    throw new Error(
+      'Planet generation effects require an owned-skill set.',
+    )
+  }
+  if (
+    typeof inputs.fragments !== 'bigint' ||
+    inputs.fragments < 0n ||
+    inputs.fragments > DISCRETE_MAXIMUM
+  ) {
+    throw new Error(
+      'Planet generation effects require long-range non-negative fragments.',
+    )
+  }
+  requirePair(inputs.assemblyLines, 'assembly-line')
+  requirePair(inputs.planets, 'planet')
+  requireNonNegative(inputs.researchers, 'researchers')
+  requireNonNegative(inputs.panelsPerSecond, 'panels per second')
+  requireNonNegative(inputs.panelLifetimeSeconds, 'panel lifetime')
+  requireNonNegative(inputs.bots, 'bots')
+  requireNonNegative(inputs.scienceBoostLevel, 'science boost level')
+}
+
+function requirePair(
+  value: readonly number[],
+  label: string,
+): void {
+  if (!Array.isArray(value) || value.length !== 2) {
+    throw new Error(
+      `Planet generation effects require two ${label} counts.`,
+    )
+  }
+  requireNonNegative(value[0]!, `automatic ${label} count`)
+  requireNonNegative(value[1]!, `manual ${label} count`)
+}
+
+function requireNonNegative(value: number, label: string): void {
+  if (!Number.isFinite(value) || value < 0) {
+    throw new Error(
+      `Planet generation effects require finite non-negative ${label}.`,
+    )
+  }
+}

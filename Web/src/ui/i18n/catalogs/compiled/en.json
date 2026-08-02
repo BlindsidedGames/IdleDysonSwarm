@@ -1,0 +1,7600 @@
+{
+  "avocato.available": [
+    {
+      "type": 1,
+      "value": "value"
+    },
+    {
+      "type": 0,
+      "value": " available"
+    }
+  ],
+  "avocato.developer-note": [
+    {
+      "type": 0,
+      "value": "Thank you for playing Idle Dyson Swarm. This is the final feature you will unlock; you can go on to earn Developer Options if you like. These buffs multiply with each other to form the total boost, and do not affect the currencies you spend to increase them."
+    }
+  ],
+  "avocato.developer-note.title": [
+    {
+      "type": 0,
+      "value": "A note from the developer"
+    }
+  ],
+  "avocato.failed": [
+    {
+      "type": 0,
+      "value": "Avocato could not eat that snack. Try again."
+    }
+  ],
+  "avocato.feed": [
+    {
+      "type": 0,
+      "value": "Feed "
+    },
+    {
+      "type": 1,
+      "value": "value"
+    }
+  ],
+  "avocato.feed-accessible": [
+    {
+      "type": 0,
+      "value": "Feed all "
+    },
+    {
+      "type": 1,
+      "value": "resource"
+    },
+    {
+      "type": 0,
+      "value": " to Avocato"
+    }
+  ],
+  "avocato.greeting": [
+    {
+      "type": 0,
+      "value": "Hello, I am Avocato, your friendly interdimensional avocado cat. I have been watching you for quite some time now. If you can find me some of my favourite snacks, I would be happy to teach you more about your realities!"
+    }
+  ],
+  "avocato.icon-alt": [
+    {
+      "type": 0,
+      "value": "Avocato"
+    }
+  ],
+  "avocato.invested": [
+    {
+      "type": 1,
+      "value": "value"
+    },
+    {
+      "type": 0,
+      "value": " invested"
+    }
+  ],
+  "avocato.meditation": [
+    {
+      "type": 0,
+      "value": "Secrets"
+    }
+  ],
+  "avocato.meditation.complete": [
+    {
+      "type": 0,
+      "value": "Skill Points granted: 4. Well done!"
+    }
+  ],
+  "avocato.meditation.countdown": [
+    {
+      "type": 1,
+      "value": "seconds"
+    },
+    {
+      "type": 0,
+      "value": "s"
+    }
+  ],
+  "avocato.meditation.dismiss": [
+    {
+      "type": 0,
+      "value": "Continue"
+    }
+  ],
+  "avocato.meditation.help": [
+    {
+      "type": 0,
+      "value": "Help"
+    }
+  ],
+  "avocato.meditation.image-alt": [
+    {
+      "type": 0,
+      "value": "Avocato meditating"
+    }
+  ],
+  "avocato.meditation.names": [
+    {
+      "type": 0,
+      "value": "Avotation names"
+    }
+  ],
+  "avocato.meditation.progress": [
+    {
+      "type": 1,
+      "value": "current"
+    },
+    {
+      "type": 0,
+      "value": " of "
+    },
+    {
+      "type": 1,
+      "value": "total"
+    },
+    {
+      "type": 0,
+      "value": " secrets found"
+    }
+  ],
+  "avocato.meditation.secret-trigger": [
+    {
+      "type": 0,
+      "value": "A strange hidden detail"
+    }
+  ],
+  "avocato.meditation.skip": [
+    {
+      "type": 0,
+      "value": "Skip"
+    }
+  ],
+  "avocato.multiplier": [
+    {
+      "type": 0,
+      "value": "×"
+    },
+    {
+      "type": 1,
+      "value": "value"
+    }
+  ],
+  "avocato.multiplier.infinity": [
+    {
+      "type": 0,
+      "value": "Infinity Multiplier"
+    }
+  ],
+  "avocato.multiplier.influence": [
+    {
+      "type": 0,
+      "value": "Influence Multiplier"
+    }
+  ],
+  "avocato.multiplier.overflow": [
+    {
+      "type": 0,
+      "value": "Overflow"
+    }
+  ],
+  "avocato.multiplier.strange-matter": [
+    {
+      "type": 0,
+      "value": "Strange Matter Multiplier"
+    }
+  ],
+  "avocato.region": [
+    {
+      "type": 0,
+      "value": "Avocato"
+    }
+  ],
+  "avocato.total-boost": [
+    {
+      "type": 0,
+      "value": "Total boost to Cash, Science, and Buildings"
+    }
+  ],
+  "debug.access-description": [
+    {
+      "type": 0,
+      "value": "Unlock the developer tools with late-game currencies. Once purchased, they can be re-enabled for free."
+    }
+  ],
+  "debug.action-success": [
+    {
+      "type": 0,
+      "value": "Development change saved."
+    }
+  ],
+  "debug.add-bots": [
+    {
+      "type": 0,
+      "value": "Add Bots"
+    }
+  ],
+  "debug.add-infinity-points": [
+    {
+      "type": 0,
+      "value": "Add Infinity Points"
+    }
+  ],
+  "debug.add-influence": [
+    {
+      "type": 0,
+      "value": "Add Influence"
+    }
+  ],
+  "debug.add-offline-time": [
+    {
+      "type": 0,
+      "value": "Add Offline Time"
+    }
+  ],
+  "debug.add-quantum-shards": [
+    {
+      "type": 0,
+      "value": "Add Quantum Shards"
+    }
+  ],
+  "debug.add-skill-points": [
+    {
+      "type": 0,
+      "value": "Add Skill Points"
+    }
+  ],
+  "debug.add-strange-matter": [
+    {
+      "type": 0,
+      "value": "Add Strange Matter"
+    }
+  ],
+  "debug.amount": [
+    {
+      "type": 0,
+      "value": "Amount"
+    }
+  ],
+  "debug.apply-preset": [
+    {
+      "type": 0,
+      "value": "Apply"
+    }
+  ],
+  "debug.bot-state": [
+    {
+      "type": 0,
+      "value": "Bot count"
+    }
+  ],
+  "debug.bots": [
+    {
+      "type": 0,
+      "value": "Bots"
+    }
+  ],
+  "debug.cats": [
+    {
+      "type": 0,
+      "value": "Debug Cats"
+    }
+  ],
+  "debug.disable": [
+    {
+      "type": 0,
+      "value": "Disable Developer Options"
+    }
+  ],
+  "debug.disabled-success": [
+    {
+      "type": 0,
+      "value": "Developer Options disabled. Your entitlement was retained."
+    }
+  ],
+  "debug.enable-free": [
+    {
+      "type": 0,
+      "value": "Enable for free"
+    }
+  ],
+  "debug.enabled": [
+    {
+      "type": 0,
+      "value": "Developer tools enabled"
+    }
+  ],
+  "debug.maintenance": [
+    {
+      "type": 0,
+      "value": "Maintenance"
+    }
+  ],
+  "debug.progression": [
+    {
+      "type": 0,
+      "value": "Progression tools"
+    }
+  ],
+  "debug.progression-presets": [
+    {
+      "type": 0,
+      "value": "Progression states"
+    }
+  ],
+  "debug.purchase": [
+    {
+      "type": 0,
+      "value": "Purchase Developer Options"
+    }
+  ],
+  "debug.purchase-success": [
+    {
+      "type": 0,
+      "value": "Developer Options unlocked."
+    }
+  ],
+  "debug.quantum-shards": [
+    {
+      "type": 0,
+      "value": "Quantum Shards"
+    }
+  ],
+  "debug.recalculate-skill-points": [
+    {
+      "type": 0,
+      "value": "Recalculate Skill Points"
+    }
+  ],
+  "debug.reset-secret-progress": [
+    {
+      "type": 0,
+      "value": "Reset Secret Progress"
+    }
+  ],
+  "debug.reset-secret-progress-success": [
+    {
+      "type": 0,
+      "value": "Secret progress reset."
+    }
+  ],
+  "debug.strange-matter": [
+    {
+      "type": 0,
+      "value": "Strange Matter"
+    }
+  ],
+  "debug.timing": [
+    {
+      "type": 0,
+      "value": "Tinker timing"
+    }
+  ],
+  "debug.tinker-instant": [
+    {
+      "type": 0,
+      "value": "Set Tinker to instant"
+    }
+  ],
+  "debug.tinker-one-second": [
+    {
+      "type": 0,
+      "value": "Set Tinker to 1 second"
+    }
+  ],
+  "debug.title": [
+    {
+      "type": 0,
+      "value": "Developer Options"
+    }
+  ],
+  "debug.unlock-tabs": [
+    {
+      "type": 0,
+      "value": "Unlock all tabs"
+    }
+  ],
+  "dyson.bot-distribution.accessible-value": [
+    {
+      "type": 1,
+      "value": "workers"
+    },
+    {
+      "type": 0,
+      "value": " workers, "
+    },
+    {
+      "type": 1,
+      "value": "scientists"
+    },
+    {
+      "type": 0,
+      "value": " scientists"
+    }
+  ],
+  "dyson.bot-distribution.failed": [
+    {
+      "type": 0,
+      "value": "Distribution was not changed."
+    }
+  ],
+  "dyson.bot-distribution.scientists": [
+    {
+      "type": 0,
+      "value": "Scientists"
+    }
+  ],
+  "dyson.bot-distribution.title": [
+    {
+      "type": 0,
+      "value": "Bot Distribution"
+    }
+  ],
+  "dyson.bot-distribution.workers": [
+    {
+      "type": 0,
+      "value": "Workers"
+    }
+  ],
+  "dyson.facilities.ai-managers.description": [
+    {
+      "type": 0,
+      "value": "Purchase AI Managers which automatically handle Assembly Line Creation!"
+    }
+  ],
+  "dyson.facilities.ai-managers.identity": [
+    {
+      "type": 0,
+      "value": "AI Managers "
+    },
+    {
+      "type": 1,
+      "value": "total"
+    },
+    {
+      "type": 0,
+      "value": "("
+    },
+    {
+      "type": 1,
+      "value": "manual"
+    },
+    {
+      "type": 0,
+      "value": ")"
+    }
+  ],
+  "dyson.facilities.ai-managers.name": [
+    {
+      "type": 0,
+      "value": "AI Managers"
+    }
+  ],
+  "dyson.facilities.ai-managers.production-minutes": [
+    {
+      "type": 0,
+      "value": "Generating 1 Assembly Line /"
+    },
+    {
+      "type": 1,
+      "value": "interval"
+    },
+    {
+      "type": 0,
+      "value": " Min"
+    }
+  ],
+  "dyson.facilities.ai-managers.production-per-second": [
+    {
+      "type": 0,
+      "value": "Generating "
+    },
+    {
+      "type": 1,
+      "value": "rate"
+    },
+    {
+      "type": 0,
+      "value": " Assembly Lines /s"
+    }
+  ],
+  "dyson.facilities.ai-managers.production-seconds": [
+    {
+      "type": 0,
+      "value": "Generating 1 Assembly Line /"
+    },
+    {
+      "type": 1,
+      "value": "interval"
+    },
+    {
+      "type": 0,
+      "value": "s"
+    }
+  ],
+  "dyson.facilities.ai-managers.purchase": [
+    {
+      "type": 0,
+      "value": "Purchase an AI Manager"
+    }
+  ],
+  "dyson.facilities.ai-managers.purchase-accessible": [
+    {
+      "type": 0,
+      "value": "Purchase an AI Manager: +"
+    },
+    {
+      "type": 1,
+      "value": "quantity"
+    },
+    {
+      "type": 0,
+      "value": ", $"
+    },
+    {
+      "type": 1,
+      "value": "cost"
+    }
+  ],
+  "dyson.facilities.assembly-lines.description": [
+    {
+      "type": 0,
+      "value": "Build assembly lines that create bots for you, that way you don't have to work so hard!"
+    }
+  ],
+  "dyson.facilities.assembly-lines.identity": [
+    {
+      "type": 0,
+      "value": "Assembly Lines "
+    },
+    {
+      "type": 1,
+      "value": "total"
+    },
+    {
+      "type": 0,
+      "value": "("
+    },
+    {
+      "type": 1,
+      "value": "manual"
+    },
+    {
+      "type": 0,
+      "value": ")"
+    }
+  ],
+  "dyson.facilities.assembly-lines.name": [
+    {
+      "type": 0,
+      "value": "Assembly Lines"
+    }
+  ],
+  "dyson.facilities.assembly-lines.production-minutes": [
+    {
+      "type": 0,
+      "value": "Producing 1 Bot /"
+    },
+    {
+      "type": 1,
+      "value": "interval"
+    },
+    {
+      "type": 0,
+      "value": " Min"
+    }
+  ],
+  "dyson.facilities.assembly-lines.production-per-second": [
+    {
+      "type": 0,
+      "value": "Producing "
+    },
+    {
+      "type": 1,
+      "value": "rate"
+    },
+    {
+      "type": 0,
+      "value": " Bots /s"
+    }
+  ],
+  "dyson.facilities.assembly-lines.production-seconds": [
+    {
+      "type": 0,
+      "value": "Producing 1 Bot /"
+    },
+    {
+      "type": 1,
+      "value": "interval"
+    },
+    {
+      "type": 0,
+      "value": "s"
+    }
+  ],
+  "dyson.facilities.assembly-lines.purchase": [
+    {
+      "type": 0,
+      "value": "Purchase an Assembly Line"
+    }
+  ],
+  "dyson.facilities.assembly-lines.purchase-accessible": [
+    {
+      "type": 0,
+      "value": "Purchase an Assembly Line: +"
+    },
+    {
+      "type": 1,
+      "value": "quantity"
+    },
+    {
+      "type": 0,
+      "value": ", $"
+    },
+    {
+      "type": 1,
+      "value": "cost"
+    }
+  ],
+  "dyson.facilities.birch-planets.name": [
+    {
+      "type": 0,
+      "value": "Birch Planets"
+    }
+  ],
+  "dyson.facilities.close-details": [
+    {
+      "type": 0,
+      "value": "Close"
+    }
+  ],
+  "dyson.facilities.data-centers.description": [
+    {
+      "type": 0,
+      "value": "More Data Centers mean more Servers, more Servers mean more Bots, Bots are good."
+    }
+  ],
+  "dyson.facilities.data-centers.identity": [
+    {
+      "type": 0,
+      "value": "Data Centers "
+    },
+    {
+      "type": 1,
+      "value": "total"
+    },
+    {
+      "type": 0,
+      "value": "("
+    },
+    {
+      "type": 1,
+      "value": "manual"
+    },
+    {
+      "type": 0,
+      "value": ")"
+    }
+  ],
+  "dyson.facilities.data-centers.name": [
+    {
+      "type": 0,
+      "value": "Data Centers"
+    }
+  ],
+  "dyson.facilities.data-centers.production-minutes": [
+    {
+      "type": 0,
+      "value": "Deploying 1 Server /"
+    },
+    {
+      "type": 1,
+      "value": "interval"
+    },
+    {
+      "type": 0,
+      "value": " Min"
+    }
+  ],
+  "dyson.facilities.data-centers.production-per-second": [
+    {
+      "type": 0,
+      "value": "Deploying "
+    },
+    {
+      "type": 1,
+      "value": "rate"
+    },
+    {
+      "type": 0,
+      "value": " Servers /s"
+    }
+  ],
+  "dyson.facilities.data-centers.production-seconds": [
+    {
+      "type": 0,
+      "value": "Deploying 1 Server /"
+    },
+    {
+      "type": 1,
+      "value": "interval"
+    },
+    {
+      "type": 0,
+      "value": "s"
+    }
+  ],
+  "dyson.facilities.data-centers.purchase": [
+    {
+      "type": 0,
+      "value": "Purchase a Data Center"
+    }
+  ],
+  "dyson.facilities.data-centers.purchase-accessible": [
+    {
+      "type": 0,
+      "value": "Purchase a Data Center: +"
+    },
+    {
+      "type": 1,
+      "value": "quantity"
+    },
+    {
+      "type": 0,
+      "value": ", $"
+    },
+    {
+      "type": 1,
+      "value": "cost"
+    }
+  ],
+  "dyson.facilities.details": [
+    {
+      "type": 0,
+      "value": "Details"
+    }
+  ],
+  "dyson.facilities.details.automatic-manual-tuple": [
+    {
+      "type": 0,
+      "value": "Automatic "
+    },
+    {
+      "type": 1,
+      "value": "automatic"
+    },
+    {
+      "type": 0,
+      "value": ", manually purchased "
+    },
+    {
+      "type": 1,
+      "value": "manual"
+    }
+  ],
+  "dyson.facilities.details.base-production": [
+    {
+      "type": 0,
+      "value": "Base"
+    }
+  ],
+  "dyson.facilities.details.condition": [
+    {
+      "type": 0,
+      "value": "Condition: "
+    },
+    {
+      "type": 1,
+      "value": "condition"
+    }
+  ],
+  "dyson.facilities.details.condition-identifier": [
+    {
+      "type": 0,
+      "value": "Condition identifier: "
+    },
+    {
+      "type": 1,
+      "value": "identifier"
+    }
+  ],
+  "dyson.facilities.details.facility-count": [
+    {
+      "type": 1,
+      "value": "facility"
+    },
+    {
+      "type": 0,
+      "value": " Count"
+    }
+  ],
+  "dyson.facilities.details.facility-modifier": [
+    {
+      "type": 0,
+      "value": "Facility modifier"
+    }
+  ],
+  "dyson.facilities.details.legend.accessible": [
+    {
+      "type": 0,
+      "value": "Effect, Value, positive or negative Delta, Total"
+    }
+  ],
+  "dyson.facilities.details.legend.delta": [
+    {
+      "type": 0,
+      "value": "+Delta/-Delta"
+    }
+  ],
+  "dyson.facilities.details.legend.effect": [
+    {
+      "type": 0,
+      "value": "Effect"
+    }
+  ],
+  "dyson.facilities.details.legend.total": [
+    {
+      "type": 0,
+      "value": "Total"
+    }
+  ],
+  "dyson.facilities.details.legend.value": [
+    {
+      "type": 0,
+      "value": "Value"
+    }
+  ],
+  "dyson.facilities.details.output-adjustments": [
+    {
+      "type": 0,
+      "value": "Output adjustments"
+    }
+  ],
+  "dyson.facilities.details.produced-by": [
+    {
+      "type": 0,
+      "value": "Produced by "
+    },
+    {
+      "type": 1,
+      "value": "facility"
+    },
+    {
+      "type": 0,
+      "value": " ("
+    },
+    {
+      "type": 1,
+      "value": "rate"
+    },
+    {
+      "type": 0,
+      "value": ")"
+    }
+  ],
+  "dyson.facilities.details.upstream-sources": [
+    {
+      "type": 0,
+      "value": "Upstream Sources"
+    }
+  ],
+  "dyson.facilities.galactic-brains.name": [
+    {
+      "type": 0,
+      "value": "Galactic Brains"
+    }
+  ],
+  "dyson.facilities.heading": [
+    {
+      "type": 0,
+      "value": "Facilities"
+    }
+  ],
+  "dyson.facilities.manual-count": [
+    {
+      "type": 0,
+      "value": "("
+    },
+    {
+      "type": 1,
+      "value": "manual"
+    },
+    {
+      "type": 0,
+      "value": ")"
+    }
+  ],
+  "dyson.facilities.matrioshka-brains.name": [
+    {
+      "type": 0,
+      "value": "Matrioshka Brains"
+    }
+  ],
+  "dyson.facilities.next-tier-teaser": [
+    {
+      "type": 0,
+      "value": "????"
+    }
+  ],
+  "dyson.facilities.planets.description": [
+    {
+      "type": 0,
+      "value": "Discover and settle on new Planets and Cover them with Data Centers!"
+    }
+  ],
+  "dyson.facilities.planets.identity": [
+    {
+      "type": 0,
+      "value": "Planets "
+    },
+    {
+      "type": 1,
+      "value": "total"
+    },
+    {
+      "type": 0,
+      "value": "("
+    },
+    {
+      "type": 1,
+      "value": "manual"
+    },
+    {
+      "type": 0,
+      "value": ")"
+    }
+  ],
+  "dyson.facilities.planets.name": [
+    {
+      "type": 0,
+      "value": "Planets"
+    }
+  ],
+  "dyson.facilities.planets.production-minutes": [
+    {
+      "type": 0,
+      "value": "Creating 1 Data Center /"
+    },
+    {
+      "type": 1,
+      "value": "interval"
+    },
+    {
+      "type": 0,
+      "value": " Min"
+    }
+  ],
+  "dyson.facilities.planets.production-per-second": [
+    {
+      "type": 0,
+      "value": "Creating "
+    },
+    {
+      "type": 1,
+      "value": "rate"
+    },
+    {
+      "type": 0,
+      "value": " Data Centers /s"
+    }
+  ],
+  "dyson.facilities.planets.production-seconds": [
+    {
+      "type": 0,
+      "value": "Creating 1 Data Center /"
+    },
+    {
+      "type": 1,
+      "value": "interval"
+    },
+    {
+      "type": 0,
+      "value": "s"
+    }
+  ],
+  "dyson.facilities.planets.purchase": [
+    {
+      "type": 0,
+      "value": "Purchase a Planet"
+    }
+  ],
+  "dyson.facilities.planets.purchase-accessible": [
+    {
+      "type": 0,
+      "value": "Purchase a Planet: +"
+    },
+    {
+      "type": 1,
+      "value": "quantity"
+    },
+    {
+      "type": 0,
+      "value": ", $"
+    },
+    {
+      "type": 1,
+      "value": "cost"
+    }
+  ],
+  "dyson.facilities.production-progress-accessible": [
+    {
+      "type": 1,
+      "value": "facility"
+    },
+    {
+      "type": 0,
+      "value": " production"
+    }
+  ],
+  "dyson.facilities.purchase.cost": [
+    {
+      "type": 0,
+      "value": "$"
+    },
+    {
+      "type": 1,
+      "value": "cost"
+    }
+  ],
+  "dyson.facilities.purchase.failed": [
+    {
+      "type": 0,
+      "value": "Purchase unavailable."
+    }
+  ],
+  "dyson.facilities.purchase.insufficient-funds": [
+    {
+      "type": 0,
+      "value": "Not enough Cash for this purchase. Affordable quantity: "
+    },
+    {
+      "type": 1,
+      "value": "quantity"
+    },
+    {
+      "type": 0,
+      "value": "."
+    }
+  ],
+  "dyson.facilities.purchase.locked": [
+    {
+      "type": 0,
+      "value": "This facility is locked."
+    }
+  ],
+  "dyson.facilities.purchase.maximum-reached": [
+    {
+      "type": 0,
+      "value": "The maximum has been reached."
+    }
+  ],
+  "dyson.facilities.purchase.pending": [
+    {
+      "type": 0,
+      "value": "Purchase pending…"
+    }
+  ],
+  "dyson.facilities.purchase.quantity": [
+    {
+      "type": 0,
+      "value": "+"
+    },
+    {
+      "type": 1,
+      "value": "quantity"
+    }
+  ],
+  "dyson.facilities.purchase.rejected": [
+    {
+      "type": 0,
+      "value": "Purchase not completed."
+    }
+  ],
+  "dyson.facilities.purchase.stale": [
+    {
+      "type": 0,
+      "value": "Values changed. Review and try again."
+    }
+  ],
+  "dyson.facilities.purchase.succeeded": [
+    {
+      "type": 0,
+      "value": "Purchase completed."
+    }
+  ],
+  "dyson.facilities.purchase.unavailable": [
+    {
+      "type": 0,
+      "value": "Purchase unavailable."
+    }
+  ],
+  "dyson.facilities.region": [
+    {
+      "type": 0,
+      "value": "Facilities"
+    }
+  ],
+  "dyson.facilities.servers.description": [
+    {
+      "type": 0,
+      "value": "Acquire more server space so you can run more Managers. Totally worth it!"
+    }
+  ],
+  "dyson.facilities.servers.identity": [
+    {
+      "type": 0,
+      "value": "Servers "
+    },
+    {
+      "type": 1,
+      "value": "total"
+    },
+    {
+      "type": 0,
+      "value": "("
+    },
+    {
+      "type": 1,
+      "value": "manual"
+    },
+    {
+      "type": 0,
+      "value": ")"
+    }
+  ],
+  "dyson.facilities.servers.name": [
+    {
+      "type": 0,
+      "value": "Servers"
+    }
+  ],
+  "dyson.facilities.servers.production-minutes": [
+    {
+      "type": 0,
+      "value": "Training 1 AI Manager /"
+    },
+    {
+      "type": 1,
+      "value": "interval"
+    },
+    {
+      "type": 0,
+      "value": " Min"
+    }
+  ],
+  "dyson.facilities.servers.production-per-second": [
+    {
+      "type": 0,
+      "value": "Training "
+    },
+    {
+      "type": 1,
+      "value": "rate"
+    },
+    {
+      "type": 0,
+      "value": " AI Managers /s"
+    }
+  ],
+  "dyson.facilities.servers.production-seconds": [
+    {
+      "type": 0,
+      "value": "Training 1 AI Manager /"
+    },
+    {
+      "type": 1,
+      "value": "interval"
+    },
+    {
+      "type": 0,
+      "value": "s"
+    }
+  ],
+  "dyson.facilities.servers.purchase": [
+    {
+      "type": 0,
+      "value": "Purchase a Server"
+    }
+  ],
+  "dyson.facilities.servers.purchase-accessible": [
+    {
+      "type": 0,
+      "value": "Purchase a Server: +"
+    },
+    {
+      "type": 1,
+      "value": "quantity"
+    },
+    {
+      "type": 0,
+      "value": ", $"
+    },
+    {
+      "type": 1,
+      "value": "cost"
+    }
+  ],
+  "dyson.facilities.teaser": [
+    {
+      "type": 0,
+      "value": "????"
+    }
+  ],
+  "dyson.facilities.unknown.name": [
+    {
+      "type": 0,
+      "value": "Unknown facility"
+    }
+  ],
+  "dyson.info.active-panels": [
+    {
+      "type": 0,
+      "value": "Active panels: "
+    },
+    {
+      "type": 8,
+      "value": "emphasis",
+      "children": [
+        {
+          "type": 1,
+          "value": "value"
+        }
+      ]
+    }
+  ],
+  "dyson.info.buy-mode.fifty": [
+    {
+      "type": 0,
+      "value": "x50"
+    }
+  ],
+  "dyson.info.buy-mode.max": [
+    {
+      "type": 0,
+      "value": "Max"
+    }
+  ],
+  "dyson.info.buy-mode.one": [
+    {
+      "type": 0,
+      "value": "x1"
+    }
+  ],
+  "dyson.info.buy-mode.one-hundred": [
+    {
+      "type": 0,
+      "value": "x100"
+    }
+  ],
+  "dyson.info.buy-mode.ten": [
+    {
+      "type": 0,
+      "value": "x10"
+    }
+  ],
+  "dyson.info.galaxies-engulfed": [
+    {
+      "type": 0,
+      "value": "Galaxies Engulfed: "
+    },
+    {
+      "type": 8,
+      "value": "emphasis",
+      "children": [
+        {
+          "type": 1,
+          "value": "value"
+        }
+      ]
+    }
+  ],
+  "dyson.info.goal.build-assembly-lines": [
+    {
+      "type": 0,
+      "value": "Goal: Build "
+    },
+    {
+      "type": 1,
+      "value": "targetDisplay"
+    },
+    {
+      "type": 0,
+      "value": " Assembly Lines"
+    }
+  ],
+  "dyson.info.goal.create-bots": [
+    {
+      "type": 0,
+      "value": "Goal: Create "
+    },
+    {
+      "type": 1,
+      "value": "targetDisplay"
+    },
+    {
+      "type": 0,
+      "value": " Bots"
+    }
+  ],
+  "dyson.info.goal.decay-panels": [
+    {
+      "type": 0,
+      "value": "Goal: "
+    },
+    {
+      "type": 1,
+      "value": "targetDisplay"
+    },
+    {
+      "type": 0,
+      "value": " total panels decayed"
+    }
+  ],
+  "dyson.info.goal.engulf-galaxies": [
+    {
+      "type": 0,
+      "value": "Goal: "
+    },
+    {
+      "type": 6,
+      "value": "target",
+      "options": {
+        "one": {
+          "value": [
+            {
+              "type": 0,
+              "value": "Engulf a Galaxy"
+            }
+          ]
+        },
+        "other": {
+          "value": [
+            {
+              "type": 0,
+              "value": "Engulf "
+            },
+            {
+              "type": 1,
+              "value": "targetDisplay"
+            },
+            {
+              "type": 0,
+              "value": " Galaxies"
+            }
+          ]
+        }
+      },
+      "offset": 0,
+      "pluralType": "cardinal"
+    }
+  ],
+  "dyson.info.goal.have-active-panels": [
+    {
+      "type": 0,
+      "value": "Goal: Have "
+    },
+    {
+      "type": 1,
+      "value": "targetDisplay"
+    },
+    {
+      "type": 0,
+      "value": " active Panels"
+    }
+  ],
+  "dyson.info.goal.own-planets": [
+    {
+      "type": 0,
+      "value": "Goal: Own "
+    },
+    {
+      "type": 1,
+      "value": "targetDisplay"
+    },
+    {
+      "type": 0,
+      "value": " Planets"
+    }
+  ],
+  "dyson.info.goal.reach-bots": [
+    {
+      "type": 0,
+      "value": "Goal: Reach "
+    },
+    {
+      "type": 1,
+      "value": "targetDisplay"
+    },
+    {
+      "type": 0,
+      "value": " Bots"
+    }
+  ],
+  "dyson.info.goal.surround-stars": [
+    {
+      "type": 0,
+      "value": "Goal: Surround "
+    },
+    {
+      "type": 1,
+      "value": "targetDisplay"
+    },
+    {
+      "type": 0,
+      "value": " Stars"
+    }
+  ],
+  "dyson.info.panel-lifetime": [
+    {
+      "type": 0,
+      "value": "Panel lifetime: "
+    },
+    {
+      "type": 8,
+      "value": "emphasis",
+      "children": [
+        {
+          "type": 1,
+          "value": "value"
+        }
+      ]
+    },
+    {
+      "type": 0,
+      "value": " seconds"
+    }
+  ],
+  "dyson.info.preset-automation": [
+    {
+      "type": 0,
+      "value": "Skill preset on opening Bots"
+    }
+  ],
+  "dyson.info.preset-automation-off": [
+    {
+      "type": 0,
+      "value": "Off"
+    }
+  ],
+  "dyson.info.purchase-amount": [
+    {
+      "type": 0,
+      "value": "Building purchase amount"
+    }
+  ],
+  "dyson.info.purchase-settings": [
+    {
+      "type": 0,
+      "value": "Purchase settings"
+    }
+  ],
+  "dyson.info.purchase-settings-failed": [
+    {
+      "type": 0,
+      "value": "Purchase settings were not changed."
+    }
+  ],
+  "dyson.info.rounded-bulk-buy": [
+    {
+      "type": 0,
+      "value": "Round bulk purchases to the next milestone"
+    }
+  ],
+  "dyson.info.stars-surrounded": [
+    {
+      "type": 0,
+      "value": "Stars Surrounded: "
+    },
+    {
+      "type": 8,
+      "value": "emphasis",
+      "children": [
+        {
+          "type": 1,
+          "value": "value"
+        }
+      ]
+    }
+  ],
+  "dyson.info.title": [
+    {
+      "type": 0,
+      "value": "Info"
+    }
+  ],
+  "dyson.info.total-panels-decayed": [
+    {
+      "type": 0,
+      "value": "Total panels decayed: "
+    },
+    {
+      "type": 8,
+      "value": "emphasis",
+      "children": [
+        {
+          "type": 1,
+          "value": "value"
+        }
+      ]
+    }
+  ],
+  "dyson.menu.cash-multiplier": [
+    {
+      "type": 0,
+      "value": "Cash Multiplier: "
+    },
+    {
+      "type": 1,
+      "value": "value"
+    }
+  ],
+  "dyson.menu.close": [
+    {
+      "type": 0,
+      "value": "Close menu"
+    }
+  ],
+  "dyson.menu.heading": [
+    {
+      "type": 0,
+      "value": "Menu"
+    }
+  ],
+  "dyson.menu.open": [
+    {
+      "type": 0,
+      "value": "Open menu"
+    }
+  ],
+  "dyson.menu.panel-lifetime": [
+    {
+      "type": 0,
+      "value": "Panel Lifetime: "
+    },
+    {
+      "type": 1,
+      "value": "value"
+    },
+    {
+      "type": 0,
+      "value": " s"
+    }
+  ],
+  "dyson.menu.research-multiplier": [
+    {
+      "type": 0,
+      "value": "Research Multiplier: "
+    },
+    {
+      "type": 1,
+      "value": "value"
+    }
+  ],
+  "dyson.navigation.bottom": [
+    {
+      "type": 0,
+      "value": "Game tabs"
+    }
+  ],
+  "dyson.navigation.primary": [
+    {
+      "type": 0,
+      "value": "Primary"
+    }
+  ],
+  "dyson.navigation.side": [
+    {
+      "type": 0,
+      "value": "Game menu"
+    }
+  ],
+  "dyson.navigation.skip-to-game": [
+    {
+      "type": 0,
+      "value": "Skip to game"
+    }
+  ],
+  "dyson.production-summary.region": [
+    {
+      "type": 0,
+      "value": "Production summary"
+    }
+  ],
+  "dyson.production-summary.worker-production": [
+    {
+      "type": 8,
+      "value": "emphasis",
+      "children": [
+        {
+          "type": 1,
+          "value": "workers"
+        }
+      ]
+    },
+    {
+      "type": 0,
+      "value": " Worker Bots producing "
+    },
+    {
+      "type": 8,
+      "value": "emphasis",
+      "children": [
+        {
+          "type": 1,
+          "value": "panels"
+        }
+      ]
+    },
+    {
+      "type": 0,
+      "value": " Panels /s"
+    }
+  ],
+  "dyson.ready.unavailable": [
+    {
+      "type": 0,
+      "value": "Gameplay is temporarily unavailable."
+    }
+  ],
+  "dyson.resources.cash": [
+    {
+      "type": 0,
+      "value": "Cash"
+    }
+  ],
+  "dyson.resources.cash-rate": [
+    {
+      "type": 0,
+      "value": "$"
+    },
+    {
+      "type": 1,
+      "value": "value"
+    },
+    {
+      "type": 0,
+      "value": " /s"
+    }
+  ],
+  "dyson.resources.cash-value": [
+    {
+      "type": 0,
+      "value": "$"
+    },
+    {
+      "type": 1,
+      "value": "value"
+    }
+  ],
+  "dyson.resources.science": [
+    {
+      "type": 0,
+      "value": "Science"
+    }
+  ],
+  "dyson.resources.science-rate": [
+    {
+      "type": 1,
+      "value": "value"
+    },
+    {
+      "type": 0,
+      "value": " /s"
+    }
+  ],
+  "dyson.resources.summary": [
+    {
+      "type": 0,
+      "value": "Resources"
+    }
+  ],
+  "dyson.resources.total-bots": [
+    {
+      "type": 0,
+      "value": "Total Bots"
+    }
+  ],
+  "dyson.route.bots": [
+    {
+      "type": 0,
+      "value": "Bots"
+    }
+  ],
+  "dyson.route.quantum.controls": [
+    {
+      "type": 0,
+      "value": "Quantum controls"
+    }
+  ],
+  "dyson.swarm.region": [
+    {
+      "type": 0,
+      "value": "Dyson swarm"
+    }
+  ],
+  "dyson.tinker.action": [
+    {
+      "type": 0,
+      "value": "Manually put together a new bot from parts in your shed."
+    }
+  ],
+  "dyson.tinker.description.default": [
+    {
+      "type": 0,
+      "value": "There has to be a better way of going about this..."
+    }
+  ],
+  "dyson.tinker.description.manual-labour": [
+    {
+      "type": 0,
+      "value": "Having nothing better to do you decide to set up some more assembly lines. Masterfully made you will produce "
+    },
+    {
+      "type": 8,
+      "value": "value",
+      "children": [
+        {
+          "type": 1,
+          "value": "count"
+        }
+      ]
+    },
+    {
+      "type": 0,
+      "value": "."
+    }
+  ],
+  "dyson.tinker.description.manual-labour-blocked": [
+    {
+      "type": 0,
+      "value": "You have the knowledge to automate assembly lines, but without an AI Manager you still have to tinker together bots. You will produce "
+    },
+    {
+      "type": 8,
+      "value": "value",
+      "children": [
+        {
+          "type": 1,
+          "value": "count"
+        }
+      ]
+    },
+    {
+      "type": 0,
+      "value": ". (Get 1 AI Manager to unlock assembly line tinkering.)"
+    }
+  ],
+  "dyson.tinker.duration": [
+    {
+      "type": 1,
+      "value": "seconds"
+    },
+    {
+      "type": 0,
+      "value": "s"
+    }
+  ],
+  "dyson.tinker.failure.rejected": [
+    {
+      "type": 0,
+      "value": "Tinker could not be completed."
+    }
+  ],
+  "dyson.tinker.failure.runtime": [
+    {
+      "type": 0,
+      "value": "Tinker is temporarily unavailable."
+    }
+  ],
+  "dyson.tinker.failure.stale": [
+    {
+      "type": 0,
+      "value": "Tinker changed before the action completed. Try again."
+    }
+  ],
+  "dyson.tinker.hold-to-repeat": [
+    {
+      "type": 0,
+      "value": "Hold anywhere to repeat..."
+    }
+  ],
+  "dyson.tinker.progress": [
+    {
+      "type": 0,
+      "value": "Tinker progress"
+    }
+  ],
+  "dyson.tinker.region": [
+    {
+      "type": 0,
+      "value": "Tinker"
+    }
+  ],
+  "dyson.tinker.tip.fresh-save": [
+    {
+      "type": 0,
+      "value": "Tip: The tinker panel goes away after you have 10 assembly lines and 1 manager (or any data center)."
+    }
+  ],
+  "dyson.tinker.title": [
+    {
+      "type": 0,
+      "value": "Tinker in your garage"
+    }
+  ],
+  "infinity.break-target": [
+    {
+      "type": 0,
+      "value": "Infinity Points before reset"
+    }
+  ],
+  "infinity.break-target.failed": [
+    {
+      "type": 0,
+      "value": "The Infinity target was not changed."
+    }
+  ],
+  "infinity.break-target.value": [
+    {
+      "type": 0,
+      "value": "Target: "
+    },
+    {
+      "type": 1,
+      "value": "value"
+    },
+    {
+      "type": 0,
+      "value": " IP"
+    }
+  ],
+  "infinity.points.label": [
+    {
+      "type": 0,
+      "value": "Infinity Points:"
+    }
+  ],
+  "infinity.points.spent-parenthetical": [
+    {
+      "type": 0,
+      "value": "("
+    },
+    {
+      "type": 1,
+      "value": "value"
+    },
+    {
+      "type": 0,
+      "value": ")"
+    }
+  ],
+  "infinity.progress.bots-until-next": [
+    {
+      "type": 1,
+      "value": "value"
+    },
+    {
+      "type": 0,
+      "value": " Bots till next Infinity Point"
+    }
+  ],
+  "infinity.progress.break-accessible": [
+    {
+      "type": 0,
+      "value": "Progress to "
+    },
+    {
+      "type": 1,
+      "value": "target"
+    },
+    {
+      "type": 0,
+      "value": " Infinity Points"
+    }
+  ],
+  "infinity.progress.ordinary": [
+    {
+      "type": 0,
+      "value": "Progress to Infinity"
+    }
+  ],
+  "infinity.progress.percent": [
+    {
+      "type": 1,
+      "value": "value"
+    },
+    {
+      "type": 0,
+      "value": "%"
+    }
+  ],
+  "infinity.progress.reality-warning": [
+    {
+      "type": 0,
+      "value": "Warning Reality Break imminent!"
+    }
+  ],
+  "infinity.region": [
+    {
+      "type": 0,
+      "value": "Infinity"
+    }
+  ],
+  "infinity.secret-phrase": [
+    {
+      "type": 1,
+      "value": "phrase"
+    }
+  ],
+  "infinity.secret-phrase.full": [
+    {
+      "type": 0,
+      "value": "The meaning of life is: Love, Family, and Incrementals"
+    }
+  ],
+  "infinity.shop.ai-managers.description": [
+    {
+      "type": 0,
+      "value": "As with assembly lines, this won't increase the price of AI Managers. But it does require the previous Upgrade."
+    }
+  ],
+  "infinity.shop.ai-managers.title": [
+    {
+      "type": 0,
+      "value": "Start with 10 AI Managers"
+    }
+  ],
+  "infinity.shop.assembly-lines.description": [
+    {
+      "type": 0,
+      "value": "Start with 10 extra manually purchased Assembly Lines. Also adds them now! This won't increase their price!"
+    }
+  ],
+  "infinity.shop.assembly-lines.title": [
+    {
+      "type": 0,
+      "value": "Start with 10 Assembly Lines"
+    }
+  ],
+  "infinity.shop.bot-automation.description": [
+    {
+      "type": 0,
+      "value": "You're a genius, you work out how this works. I may have created it but I hold no power here. Honestly though, good job."
+    }
+  ],
+  "infinity.shop.bot-automation.title": [
+    {
+      "type": 0,
+      "value": "Automate Bots"
+    }
+  ],
+  "infinity.shop.data-centers.description": [
+    {
+      "type": 0,
+      "value": "As with assembly lines, this won't increase the price of Data Centers. But it does require the previous Upgrade."
+    }
+  ],
+  "infinity.shop.data-centers.title": [
+    {
+      "type": 0,
+      "value": "Start with 10 Data Centers"
+    }
+  ],
+  "infinity.shop.empty": [
+    {
+      "type": 0,
+      "value": "No Infinity upgrades are currently available."
+    }
+  ],
+  "infinity.shop.maximum-reached": [
+    {
+      "type": 0,
+      "value": "Maxed"
+    }
+  ],
+  "infinity.shop.permanent-skill-point.description": [
+    {
+      "type": 0,
+      "value": "Increase your skill points by 1 You can purchase up to 10 of these, just remember you also get skill points from goals."
+    }
+  ],
+  "infinity.shop.permanent-skill-point.title": [
+    {
+      "type": 0,
+      "value": "Permanent Skill Point"
+    }
+  ],
+  "infinity.shop.planets.description": [
+    {
+      "type": 0,
+      "value": "As with assembly lines, this won't increase the price of Planets. But it does require the previous Upgrade."
+    }
+  ],
+  "infinity.shop.planets.title": [
+    {
+      "type": 0,
+      "value": "Start with 10 Planets"
+    }
+  ],
+  "infinity.shop.purchase": [
+    {
+      "type": 0,
+      "value": "Purchase"
+    }
+  ],
+  "infinity.shop.purchase-accessible": [
+    {
+      "type": 0,
+      "value": "Purchase "
+    },
+    {
+      "type": 1,
+      "value": "name"
+    },
+    {
+      "type": 0,
+      "value": " for "
+    },
+    {
+      "type": 1,
+      "value": "cost"
+    },
+    {
+      "type": 0,
+      "value": " Infinity Points"
+    }
+  ],
+  "infinity.shop.purchase-failed": [
+    {
+      "type": 1,
+      "value": "name"
+    },
+    {
+      "type": 0,
+      "value": " was not purchased."
+    }
+  ],
+  "infinity.shop.purchase-pending": [
+    {
+      "type": 0,
+      "value": "Purchasing "
+    },
+    {
+      "type": 1,
+      "value": "name"
+    },
+    {
+      "type": 0,
+      "value": "."
+    }
+  ],
+  "infinity.shop.purchased": [
+    {
+      "type": 0,
+      "value": "Purchased"
+    }
+  ],
+  "infinity.shop.purchased-count": [
+    {
+      "type": 0,
+      "value": "Purchased: "
+    },
+    {
+      "type": 1,
+      "value": "value"
+    }
+  ],
+  "infinity.shop.requires": [
+    {
+      "type": 0,
+      "value": "Requires "
+    },
+    {
+      "type": 1,
+      "value": "name"
+    }
+  ],
+  "infinity.shop.research-automation.description": [
+    {
+      "type": 0,
+      "value": "If you could comprehend how this worked, you'd be the smartest person in this universe. It does however work. Brings the end of suffering."
+    }
+  ],
+  "infinity.shop.research-automation.title": [
+    {
+      "type": 0,
+      "value": "Automate Research"
+    }
+  ],
+  "infinity.shop.secret.description": [
+    {
+      "type": 0,
+      "value": "Through extreme concentration you peer through the fabric of reality and notice some strange writing. You manage to reveal one of the letters.."
+    }
+  ],
+  "infinity.shop.secret.title": [
+    {
+      "type": 0,
+      "value": "Secret of the Universe"
+    }
+  ],
+  "infinity.shop.servers.description": [
+    {
+      "type": 0,
+      "value": "As with assembly lines, this won't increase the price of Servers. But it does require the previous Upgrade."
+    }
+  ],
+  "infinity.shop.servers.title": [
+    {
+      "type": 0,
+      "value": "Start with 10 Servers"
+    }
+  ],
+  "navigation.avocato": [
+    {
+      "type": 0,
+      "value": "Avocato"
+    }
+  ],
+  "navigation.debug-options": [
+    {
+      "type": 0,
+      "value": "Debug Options"
+    }
+  ],
+  "navigation.infinity": [
+    {
+      "type": 0,
+      "value": "Infinity"
+    }
+  ],
+  "navigation.infinity-gain": [
+    {
+      "type": 0,
+      "value": "Infinity +"
+    },
+    {
+      "type": 1,
+      "value": "value"
+    }
+  ],
+  "navigation.offline-time": [
+    {
+      "type": 0,
+      "value": "Offline Time"
+    }
+  ],
+  "navigation.quantum": [
+    {
+      "type": 0,
+      "value": "Quantum"
+    }
+  ],
+  "navigation.quantum-progress": [
+    {
+      "type": 0,
+      "value": "Quantum, "
+    },
+    {
+      "type": 1,
+      "value": "current"
+    },
+    {
+      "type": 0,
+      "value": " of "
+    },
+    {
+      "type": 1,
+      "value": "required"
+    },
+    {
+      "type": 0,
+      "value": " Infinity Points"
+    }
+  ],
+  "navigation.reality": [
+    {
+      "type": 0,
+      "value": "Reality"
+    }
+  ],
+  "navigation.reality-secrets-progress": [
+    {
+      "type": 0,
+      "value": "Reality, "
+    },
+    {
+      "type": 1,
+      "value": "current"
+    },
+    {
+      "type": 0,
+      "value": " of "
+    },
+    {
+      "type": 1,
+      "value": "required"
+    },
+    {
+      "type": 0,
+      "value": " Secrets of the Universe"
+    }
+  ],
+  "navigation.research": [
+    {
+      "type": 0,
+      "value": "Research"
+    }
+  ],
+  "navigation.settings": [
+    {
+      "type": 0,
+      "value": "Settings"
+    }
+  ],
+  "navigation.simulations": [
+    {
+      "type": 0,
+      "value": "Simulations"
+    }
+  ],
+  "navigation.skills": [
+    {
+      "type": 0,
+      "value": "Skills"
+    }
+  ],
+  "navigation.statistics": [
+    {
+      "type": 0,
+      "value": "Statistics"
+    }
+  ],
+  "navigation.story": [
+    {
+      "type": 0,
+      "value": "Story"
+    }
+  ],
+  "navigation.wiki": [
+    {
+      "type": 0,
+      "value": "Wiki"
+    }
+  ],
+  "offline-time.action-failed": [
+    {
+      "type": 0,
+      "value": "That action was not completed. Try again."
+    }
+  ],
+  "offline-time.all": [
+    {
+      "type": 0,
+      "value": "All"
+    }
+  ],
+  "offline-time.capacity": [
+    {
+      "type": 1,
+      "value": "stored"
+    },
+    {
+      "type": 0,
+      "value": " of "
+    },
+    {
+      "type": 1,
+      "value": "capacity"
+    }
+  ],
+  "offline-time.confirm-spend": [
+    {
+      "type": 0,
+      "value": "Tap again to confirm"
+    }
+  ],
+  "offline-time.current-infinity": [
+    {
+      "type": 0,
+      "value": "Current Infinity"
+    }
+  ],
+  "offline-time.disabled": [
+    {
+      "type": 0,
+      "value": "Offline Time is disabled for this save."
+    }
+  ],
+  "offline-time.double-storage": [
+    {
+      "type": 0,
+      "value": "Double Storage"
+    }
+  ],
+  "offline-time.double-storage-description": [
+    {
+      "type": 0,
+      "value": "Consume the full bank to increase capacity to "
+    },
+    {
+      "type": 1,
+      "value": "capacity"
+    },
+    {
+      "type": 0,
+      "value": "."
+    }
+  ],
+  "offline-time.explanation": [
+    {
+      "type": 0,
+      "value": "Offline Time is stored while you are away. Spend it to advance the whole game immediately. This storage is separate from Simulation Double Time."
+    }
+  ],
+  "offline-time.maximum-storage": [
+    {
+      "type": 0,
+      "value": "Maximum storage reached"
+    }
+  ],
+  "offline-time.no-stored-time": [
+    {
+      "type": 0,
+      "value": "Return after time away to build up this bank."
+    }
+  ],
+  "offline-time.one-hour": [
+    {
+      "type": 0,
+      "value": "1 hour"
+    }
+  ],
+  "offline-time.one-minute": [
+    {
+      "type": 0,
+      "value": "1 minute"
+    }
+  ],
+  "offline-time.previous-infinity": [
+    {
+      "type": 0,
+      "value": "Previous Infinity"
+    }
+  ],
+  "offline-time.processing": [
+    {
+      "type": 0,
+      "value": "Simulating…"
+    }
+  ],
+  "offline-time.region": [
+    {
+      "type": 0,
+      "value": "Offline Time"
+    }
+  ],
+  "offline-time.selected-amount": [
+    {
+      "type": 0,
+      "value": "Selected: "
+    },
+    {
+      "type": 1,
+      "value": "duration"
+    }
+  ],
+  "offline-time.spend": [
+    {
+      "type": 0,
+      "value": "Spend "
+    },
+    {
+      "type": 1,
+      "value": "duration"
+    }
+  ],
+  "offline-time.spend-again": [
+    {
+      "type": 0,
+      "value": "Spend Again: "
+    },
+    {
+      "type": 1,
+      "value": "duration"
+    }
+  ],
+  "offline-time.spend-description": [
+    {
+      "type": 0,
+      "value": "Choose how much time to simulate now."
+    }
+  ],
+  "offline-time.spend-heading": [
+    {
+      "type": 0,
+      "value": "Spend Offline Time"
+    }
+  ],
+  "offline-time.spend-success": [
+    {
+      "type": 0,
+      "value": "Advanced the game by "
+    },
+    {
+      "type": 1,
+      "value": "duration"
+    },
+    {
+      "type": 0,
+      "value": "."
+    }
+  ],
+  "offline-time.storage-progress": [
+    {
+      "type": 0,
+      "value": "Offline Time storage"
+    }
+  ],
+  "offline-time.stored": [
+    {
+      "type": 0,
+      "value": "Stored Offline Time"
+    }
+  ],
+  "offline-time.ten-minutes": [
+    {
+      "type": 0,
+      "value": "10 minutes"
+    }
+  ],
+  "offline-time.usage-heading": [
+    {
+      "type": 0,
+      "value": "Offline Time Used"
+    }
+  ],
+  "quantum.cost": [
+    {
+      "type": 1,
+      "value": "value"
+    },
+    {
+      "type": 0,
+      "value": " QS"
+    }
+  ],
+  "quantum.failed": [
+    {
+      "type": 0,
+      "value": "That Quantum action was not completed. Try again."
+    }
+  ],
+  "quantum.leap": [
+    {
+      "type": 0,
+      "value": "Quantum Leap"
+    }
+  ],
+  "quantum.leap.cancel": [
+    {
+      "type": 0,
+      "value": "Cancel"
+    }
+  ],
+  "quantum.leap.confirm": [
+    {
+      "type": 0,
+      "value": "Confirm Quantum Leap"
+    }
+  ],
+  "quantum.leap.engage": [
+    {
+      "type": 0,
+      "value": "Engage Quantum Leap"
+    }
+  ],
+  "quantum.leap.entanglement-description": [
+    {
+      "type": 0,
+      "value": "Convert every complete group of 42 unspent Infinity Points without resetting Infinity."
+    }
+  ],
+  "quantum.leap.for": [
+    {
+      "type": 0,
+      "value": "Leap for "
+    },
+    {
+      "type": 1,
+      "value": "value"
+    },
+    {
+      "type": 0,
+      "value": " QS"
+    }
+  ],
+  "quantum.leap.reset-description": [
+    {
+      "type": 0,
+      "value": "Reset this reality to earn 1 Quantum Shard. Your Quantum upgrades persist."
+    }
+  ],
+  "quantum.level": [
+    {
+      "type": 0,
+      "value": "Level "
+    },
+    {
+      "type": 1,
+      "value": "value"
+    }
+  ],
+  "quantum.mega.all": [
+    {
+      "type": 0,
+      "value": "Mega-Structures"
+    }
+  ],
+  "quantum.mega.all-description": [
+    {
+      "type": 0,
+      "value": "All cosmic mega-structures are unlocked."
+    }
+  ],
+  "quantum.open-avocato": [
+    {
+      "type": 0,
+      "value": "Visit Avocato"
+    }
+  ],
+  "quantum.prerequisite.both": [
+    {
+      "type": 0,
+      "value": "Requires Double Infinity Points and Bot Multitasking."
+    }
+  ],
+  "quantum.prerequisite.either": [
+    {
+      "type": 0,
+      "value": "Requires Double Infinity Points or Bot Multitasking."
+    }
+  ],
+  "quantum.progress": [
+    {
+      "type": 0,
+      "value": "Progress to Quantum Leap"
+    }
+  ],
+  "quantum.progress.available": [
+    {
+      "type": 0,
+      "value": "Quantum Leap Available"
+    }
+  ],
+  "quantum.progress.value": [
+    {
+      "type": 1,
+      "value": "current"
+    },
+    {
+      "type": 0,
+      "value": " / "
+    },
+    {
+      "type": 1,
+      "value": "required"
+    },
+    {
+      "type": 0,
+      "value": " Infinity Points"
+    }
+  ],
+  "quantum.purchase": [
+    {
+      "type": 0,
+      "value": "Purchase "
+    },
+    {
+      "type": 1,
+      "value": "name"
+    },
+    {
+      "type": 0,
+      "value": " for "
+    },
+    {
+      "type": 1,
+      "value": "cost"
+    },
+    {
+      "type": 0,
+      "value": " Quantum Shards"
+    }
+  ],
+  "quantum.purchase.amount": [
+    {
+      "type": 0,
+      "value": "Purchase amount"
+    }
+  ],
+  "quantum.purchase.bulk": [
+    {
+      "type": 0,
+      "value": "Purchase "
+    },
+    {
+      "type": 1,
+      "value": "quantity"
+    },
+    {
+      "type": 0,
+      "value": " "
+    },
+    {
+      "type": 1,
+      "value": "name"
+    },
+    {
+      "type": 0,
+      "value": " upgrades for "
+    },
+    {
+      "type": 1,
+      "value": "cost"
+    },
+    {
+      "type": 0,
+      "value": " Quantum Shards"
+    }
+  ],
+  "quantum.purchase.buy-max": [
+    {
+      "type": 0,
+      "value": "Buy Max"
+    }
+  ],
+  "quantum.purchase.buy-quantity": [
+    {
+      "type": 0,
+      "value": "Buy "
+    },
+    {
+      "type": 1,
+      "value": "quantity"
+    }
+  ],
+  "quantum.purchase.quantity": [
+    {
+      "type": 0,
+      "value": "Purchase +"
+    },
+    {
+      "type": 1,
+      "value": "quantity"
+    }
+  ],
+  "quantum.purchase.settings": [
+    {
+      "type": 0,
+      "value": "Purchase settings"
+    }
+  ],
+  "quantum.purchase.short": [
+    {
+      "type": 0,
+      "value": "Purchase"
+    }
+  ],
+  "quantum.purchased": [
+    {
+      "type": 0,
+      "value": "Purchased"
+    }
+  ],
+  "quantum.region": [
+    {
+      "type": 0,
+      "value": "Quantum"
+    }
+  ],
+  "quantum.shards": [
+    {
+      "type": 0,
+      "value": "Quantum Shards"
+    }
+  ],
+  "quantum.shards.spent": [
+    {
+      "type": 0,
+      "value": "("
+    },
+    {
+      "type": 1,
+      "value": "value"
+    },
+    {
+      "type": 0,
+      "value": " spent)"
+    }
+  ],
+  "quantum.unavailable": [
+    {
+      "type": 0,
+      "value": "Unavailable"
+    }
+  ],
+  "quantum.upgrade.automation.description": [
+    {
+      "type": 0,
+      "value": "Permanently unlock Auto Research and Auto Bots."
+    }
+  ],
+  "quantum.upgrade.automation.title": [
+    {
+      "type": 0,
+      "value": "Permanent Automation"
+    }
+  ],
+  "quantum.upgrade.avocato.description": [
+    {
+      "type": 0,
+      "value": "Unlock a new feature in the Reality tab."
+    }
+  ],
+  "quantum.upgrade.avocato.title": [
+    {
+      "type": 0,
+      "value": "Avocato"
+    }
+  ],
+  "quantum.upgrade.birch.description": [
+    {
+      "type": 0,
+      "value": "Unlock Birch Planets, which consume Matrioshka Brains."
+    }
+  ],
+  "quantum.upgrade.birch.title": [
+    {
+      "type": 0,
+      "value": "Birch Planets"
+    }
+  ],
+  "quantum.upgrade.bot-multitasking.description": [
+    {
+      "type": 0,
+      "value": "Bots now function as both workers and scientists."
+    }
+  ],
+  "quantum.upgrade.bot-multitasking.title": [
+    {
+      "type": 0,
+      "value": "Bot Multitasking"
+    }
+  ],
+  "quantum.upgrade.break-loop.description": [
+    {
+      "type": 0,
+      "value": "Disable automatic collapse and gain a target control on the Infinity tab to earn multiple Infinity Points."
+    }
+  ],
+  "quantum.upgrade.break-loop.title": [
+    {
+      "type": 0,
+      "value": "Break The Loop"
+    }
+  ],
+  "quantum.upgrade.cash.description": [
+    {
+      "type": 0,
+      "value": "Gain a stacking additive 5% boost to Cash."
+    }
+  ],
+  "quantum.upgrade.cash.title": [
+    {
+      "type": 0,
+      "value": "Cash Booster"
+    }
+  ],
+  "quantum.upgrade.division.description": [
+    {
+      "type": 0,
+      "value": "Divide the number of bots required to collapse by 10."
+    }
+  ],
+  "quantum.upgrade.division.title": [
+    {
+      "type": 0,
+      "value": "Division"
+    }
+  ],
+  "quantum.upgrade.double-ip.description": [
+    {
+      "type": 0,
+      "value": "Earn twice the Infinity Points with every collapse."
+    }
+  ],
+  "quantum.upgrade.double-ip.title": [
+    {
+      "type": 0,
+      "value": "Double Infinity Points"
+    }
+  ],
+  "quantum.upgrade.entanglement.description": [
+    {
+      "type": 0,
+      "value": "Quantum Leap no longer resets Infinity. It converts unspent Infinity Points to Quantum Shards at a rate of 42:1."
+    }
+  ],
+  "quantum.upgrade.entanglement.title": [
+    {
+      "type": 0,
+      "value": "Quantum Entanglement"
+    }
+  ],
+  "quantum.upgrade.fragments.description": [
+    {
+      "type": 0,
+      "value": "Unlock Fragment Skills, which gain power with each fragment purchased."
+    }
+  ],
+  "quantum.upgrade.fragments.title": [
+    {
+      "type": 0,
+      "value": "Fragments"
+    }
+  ],
+  "quantum.upgrade.galactic.description": [
+    {
+      "type": 0,
+      "value": "Unlock Galactic Brains, the ultimate cosmic mega-structure."
+    }
+  ],
+  "quantum.upgrade.galactic.title": [
+    {
+      "type": 0,
+      "value": "Galactic Brains"
+    }
+  ],
+  "quantum.upgrade.influence.description": [
+    {
+      "type": 0,
+      "value": "Add a stacking 4 Influence per second."
+    }
+  ],
+  "quantum.upgrade.influence.title": [
+    {
+      "type": 0,
+      "value": "Influence Booster"
+    }
+  ],
+  "quantum.upgrade.matrioshka.description": [
+    {
+      "type": 0,
+      "value": "Unlock Matrioshka Brains, the first cosmic mega-structure."
+    }
+  ],
+  "quantum.upgrade.matrioshka.title": [
+    {
+      "type": 0,
+      "value": "Matrioshka Brains"
+    }
+  ],
+  "quantum.upgrade.paragade.description": [
+    {
+      "type": 0,
+      "value": "Unlock Paragon and Renegade Skills, which offer a tough decision."
+    }
+  ],
+  "quantum.upgrade.paragade.title": [
+    {
+      "type": 0,
+      "value": "Paragade"
+    }
+  ],
+  "quantum.upgrade.power.description": [
+    {
+      "type": 0,
+      "value": "Unlock Power Skills, which boost all buildings, Cash, and Science."
+    }
+  ],
+  "quantum.upgrade.power.title": [
+    {
+      "type": 0,
+      "value": "Power"
+    }
+  ],
+  "quantum.upgrade.purity.description": [
+    {
+      "type": 0,
+      "value": "Unlock Purity Skills, which scale with unspent Skill Points."
+    }
+  ],
+  "quantum.upgrade.purity.title": [
+    {
+      "type": 0,
+      "value": "Purity"
+    }
+  ],
+  "quantum.upgrade.science.description": [
+    {
+      "type": 0,
+      "value": "Gain a stacking additive 5% boost to Science."
+    }
+  ],
+  "quantum.upgrade.science.title": [
+    {
+      "type": 0,
+      "value": "Science Booster"
+    }
+  ],
+  "quantum.upgrade.secrets.description": [
+    {
+      "type": 0,
+      "value": "Permanently reveal and unlock 3 Secrets of the Universe."
+    }
+  ],
+  "quantum.upgrade.secrets.title": [
+    {
+      "type": 0,
+      "value": "Secrets of the Universe"
+    }
+  ],
+  "quantum.upgrade.stellar.description": [
+    {
+      "type": 0,
+      "value": "Unlock Stellar Skills, which scale with stars and galaxies at a cost."
+    }
+  ],
+  "quantum.upgrade.stellar.title": [
+    {
+      "type": 0,
+      "value": "Stellar"
+    }
+  ],
+  "quantum.upgrade.terra.description": [
+    {
+      "type": 0,
+      "value": "Unlock Terra Skills, which apply bonuses from planets to other buildings."
+    }
+  ],
+  "quantum.upgrade.terra.title": [
+    {
+      "type": 0,
+      "value": "Terra"
+    }
+  ],
+  "quantum.upgrades": [
+    {
+      "type": 0,
+      "value": "Quantum Upgrades"
+    }
+  ],
+  "reality.artifact": [
+    {
+      "type": 0,
+      "value": "The Artifact"
+    }
+  ],
+  "reality.artifact.cpu-time": [
+    {
+      "type": 0,
+      "value": "CPU Time"
+    }
+  ],
+  "reality.artifact.undefined": [
+    {
+      "type": 0,
+      "value": "Undefined"
+    }
+  ],
+  "reality.avocato.description": [
+    {
+      "type": 0,
+      "value": "Feed Avocato resources to strengthen every reality."
+    }
+  ],
+  "reality.avocato.open": [
+    {
+      "type": 0,
+      "value": "Visit Avocato"
+    }
+  ],
+  "reality.avocato.title": [
+    {
+      "type": 0,
+      "value": "Avocato"
+    }
+  ],
+  "reality.consuming": [
+    {
+      "type": 0,
+      "value": "Consuming"
+    }
+  ],
+  "reality.consumption-halted": [
+    {
+      "type": 0,
+      "value": "Consumption Halted"
+    }
+  ],
+  "reality.gather-influence": [
+    {
+      "type": 0,
+      "value": "Gather Influence"
+    }
+  ],
+  "reality.gather-influence.accessible": [
+    {
+      "type": 0,
+      "value": "Gather "
+    },
+    {
+      "type": 1,
+      "value": "value"
+    },
+    {
+      "type": 0,
+      "value": " Influence"
+    }
+  ],
+  "reality.gather-influence.failed": [
+    {
+      "type": 0,
+      "value": "Influence was not gathered. Try again."
+    }
+  ],
+  "reality.gather-influence.pending": [
+    {
+      "type": 0,
+      "value": "Gathering Influence…"
+    }
+  ],
+  "reality.influence": [
+    {
+      "type": 0,
+      "value": "Influence: "
+    },
+    {
+      "type": 1,
+      "value": "value"
+    }
+  ],
+  "reality.region": [
+    {
+      "type": 0,
+      "value": "Reality"
+    }
+  ],
+  "reality.simulation-upgrades.advanced-physics1.description": [
+    {
+      "type": 0,
+      "value": "Jenga Training. 2h ▸ 1h"
+    }
+  ],
+  "reality.simulation-upgrades.advanced-physics1.title": [
+    {
+      "type": 0,
+      "value": "Advanced Physics I"
+    }
+  ],
+  "reality.simulation-upgrades.advanced-physics2.description": [
+    {
+      "type": 0,
+      "value": "Parkour. 1h ▸ 30m"
+    }
+  ],
+  "reality.simulation-upgrades.advanced-physics2.title": [
+    {
+      "type": 0,
+      "value": "Advanced Physics II"
+    }
+  ],
+  "reality.simulation-upgrades.advanced-physics3.description": [
+    {
+      "type": 0,
+      "value": "Thrust Vectors. 30m ▸ 10m"
+    }
+  ],
+  "reality.simulation-upgrades.advanced-physics3.title": [
+    {
+      "type": 0,
+      "value": "Advanced Physics III"
+    }
+  ],
+  "reality.simulation-upgrades.advanced-physics4.description": [
+    {
+      "type": 0,
+      "value": "Fusion is for fusing, fission no more."
+    }
+  ],
+  "reality.simulation-upgrades.advanced-physics4.title": [
+    {
+      "type": 0,
+      "value": "Advanced Physics IV"
+    }
+  ],
+  "reality.simulation-upgrades.bots1.title": [
+    {
+      "type": 0,
+      "value": "Bots I"
+    }
+  ],
+  "reality.simulation-upgrades.bots2.title": [
+    {
+      "type": 0,
+      "value": "Bots II"
+    }
+  ],
+  "reality.simulation-upgrades.cities-boost.title": [
+    {
+      "type": 0,
+      "value": "City Booster"
+    }
+  ],
+  "reality.simulation-upgrades.counter-ai.description": [
+    {
+      "type": 0,
+      "value": "Squish some bugs, no more Overlords."
+    }
+  ],
+  "reality.simulation-upgrades.counter-ai.title": [
+    {
+      "type": 0,
+      "value": "Counteract AI Overlords"
+    }
+  ],
+  "reality.simulation-upgrades.counter-gw.description": [
+    {
+      "type": 0,
+      "value": "Switching to friendlier rocket fuel should help."
+    }
+  ],
+  "reality.simulation-upgrades.counter-gw.title": [
+    {
+      "type": 0,
+      "value": "Counteract Global Warming"
+    }
+  ],
+  "reality.simulation-upgrades.counter-meteor.description": [
+    {
+      "type": 0,
+      "value": "Override the simulation deleting all space rocks."
+    }
+  ],
+  "reality.simulation-upgrades.counter-meteor.title": [
+    {
+      "type": 0,
+      "value": "Counteract Meteor Storm"
+    }
+  ],
+  "reality.simulation-upgrades.countermeasures": [
+    {
+      "type": 0,
+      "value": "Countermeasures"
+    }
+  ],
+  "reality.simulation-upgrades.education": [
+    {
+      "type": 0,
+      "value": "Education"
+    }
+  ],
+  "reality.simulation-upgrades.engineering1.description": [
+    {
+      "type": 0,
+      "value": "Better algorithms. 10m ▸ 5m"
+    }
+  ],
+  "reality.simulation-upgrades.engineering1.title": [
+    {
+      "type": 0,
+      "value": "Engineering I"
+    }
+  ],
+  "reality.simulation-upgrades.engineering2.description": [
+    {
+      "type": 0,
+      "value": "Even better algorithms. 5m ▸ 1m"
+    }
+  ],
+  "reality.simulation-upgrades.engineering2.title": [
+    {
+      "type": 0,
+      "value": "Engineering II"
+    }
+  ],
+  "reality.simulation-upgrades.engineering3.description": [
+    {
+      "type": 0,
+      "value": "I'm over this, aren't you?"
+    }
+  ],
+  "reality.simulation-upgrades.engineering3.title": [
+    {
+      "type": 0,
+      "value": "Engineering III"
+    }
+  ],
+  "reality.simulation-upgrades.factories-boost.title": [
+    {
+      "type": 0,
+      "value": "Factories"
+    }
+  ],
+  "reality.simulation-upgrades.foundational": [
+    {
+      "type": 0,
+      "value": "Foundational Era"
+    }
+  ],
+  "reality.simulation-upgrades.foundational.description": [
+    {
+      "type": 0,
+      "value": "Carry a stronger Foundational Era into every Simulation."
+    }
+  ],
+  "reality.simulation-upgrades.gatherer1.title": [
+    {
+      "type": 0,
+      "value": "Start with 1 Gatherer"
+    }
+  ],
+  "reality.simulation-upgrades.gatherer2.title": [
+    {
+      "type": 0,
+      "value": "Start with 10 Gatherers"
+    }
+  ],
+  "reality.simulation-upgrades.gatherer3.title": [
+    {
+      "type": 0,
+      "value": "Start with 1,000 Gatherers"
+    }
+  ],
+  "reality.simulation-upgrades.gatherer4.title": [
+    {
+      "type": 0,
+      "value": "Purchase buys 1,000 Gatherers"
+    }
+  ],
+  "reality.simulation-upgrades.heading": [
+    {
+      "type": 0,
+      "value": "Simulation Upgrades"
+    }
+  ],
+  "reality.simulation-upgrades.hunter1.title": [
+    {
+      "type": 0,
+      "value": "Start with 1 Hunter"
+    }
+  ],
+  "reality.simulation-upgrades.hunter2.title": [
+    {
+      "type": 0,
+      "value": "Start with 10 Hunters"
+    }
+  ],
+  "reality.simulation-upgrades.hunter3.title": [
+    {
+      "type": 0,
+      "value": "Start with 1,000 Hunters"
+    }
+  ],
+  "reality.simulation-upgrades.hunter4.title": [
+    {
+      "type": 0,
+      "value": "Purchase buys 1,000 Hunters"
+    }
+  ],
+  "reality.simulation-upgrades.information": [
+    {
+      "type": 0,
+      "value": "Information Era"
+    }
+  ],
+  "reality.simulation-upgrades.information.description": [
+    {
+      "type": 0,
+      "value": "Improve Information Era production in every Simulation."
+    }
+  ],
+  "reality.simulation-upgrades.mathematics1.description": [
+    {
+      "type": 0,
+      "value": "1+1=a, a = window. 1h ▸ 30m"
+    }
+  ],
+  "reality.simulation-upgrades.mathematics1.title": [
+    {
+      "type": 0,
+      "value": "Mathematics I"
+    }
+  ],
+  "reality.simulation-upgrades.mathematics2.description": [
+    {
+      "type": 0,
+      "value": "3.14159265358979323 = Yum. 30m ▸ 10m"
+    }
+  ],
+  "reality.simulation-upgrades.mathematics2.title": [
+    {
+      "type": 0,
+      "value": "Mathematics II"
+    }
+  ],
+  "reality.simulation-upgrades.mathematics3.description": [
+    {
+      "type": 0,
+      "value": "Division by 0, oh it's free?"
+    }
+  ],
+  "reality.simulation-upgrades.mathematics3.title": [
+    {
+      "type": 0,
+      "value": "Mathematics III"
+    }
+  ],
+  "reality.simulation-upgrades.railguns1.title": [
+    {
+      "type": 0,
+      "value": "Railguns I"
+    }
+  ],
+  "reality.simulation-upgrades.railguns2.title": [
+    {
+      "type": 0,
+      "value": "Railguns II"
+    }
+  ],
+  "reality.simulation-upgrades.rockets1.title": [
+    {
+      "type": 0,
+      "value": "Rockets I"
+    }
+  ],
+  "reality.simulation-upgrades.rockets2.title": [
+    {
+      "type": 0,
+      "value": "Rockets II"
+    }
+  ],
+  "reality.simulation-upgrades.rockets3.title": [
+    {
+      "type": 0,
+      "value": "Rockets III"
+    }
+  ],
+  "reality.simulation-upgrades.sfacs1.title": [
+    {
+      "type": 0,
+      "value": "Space Factories I"
+    }
+  ],
+  "reality.simulation-upgrades.sfacs2.title": [
+    {
+      "type": 0,
+      "value": "Space Factories II"
+    }
+  ],
+  "reality.simulation-upgrades.sfacs3.title": [
+    {
+      "type": 0,
+      "value": "Space Factories III"
+    }
+  ],
+  "reality.simulation-upgrades.shipping1.description": [
+    {
+      "type": 0,
+      "value": "Ship with ships or… Trucks. 30m ▸ 10m"
+    }
+  ],
+  "reality.simulation-upgrades.shipping1.title": [
+    {
+      "type": 0,
+      "value": "Shipping I"
+    }
+  ],
+  "reality.simulation-upgrades.shipping2.description": [
+    {
+      "type": 0,
+      "value": "Just teleport the stuff already."
+    }
+  ],
+  "reality.simulation-upgrades.shipping2.title": [
+    {
+      "type": 0,
+      "value": "Shipping II"
+    }
+  ],
+  "reality.simulation-upgrades.space-age": [
+    {
+      "type": 0,
+      "value": "Space Age"
+    }
+  ],
+  "reality.simulation-upgrades.space-age.description": [
+    {
+      "type": 0,
+      "value": "Improve simulated space production and launch speed."
+    }
+  ],
+  "reality.simulation-upgrades.worker-boost.title": [
+    {
+      "type": 0,
+      "value": "Log10 Workers"
+    }
+  ],
+  "reality.simulation-upgrades.world-peace1.description": [
+    {
+      "type": 0,
+      "value": "Put those weapons away. 2h ▸ 1h"
+    }
+  ],
+  "reality.simulation-upgrades.world-peace1.title": [
+    {
+      "type": 0,
+      "value": "World Peace I"
+    }
+  ],
+  "reality.simulation-upgrades.world-peace2.description": [
+    {
+      "type": 0,
+      "value": "Global contracting. 1h ▸ 30m"
+    }
+  ],
+  "reality.simulation-upgrades.world-peace2.title": [
+    {
+      "type": 0,
+      "value": "World Peace II"
+    }
+  ],
+  "reality.simulation-upgrades.world-peace3.description": [
+    {
+      "type": 0,
+      "value": "No more hackers. 30m ▸ 10m"
+    }
+  ],
+  "reality.simulation-upgrades.world-peace3.title": [
+    {
+      "type": 0,
+      "value": "World Peace III"
+    }
+  ],
+  "reality.simulation-upgrades.world-peace4.description": [
+    {
+      "type": 0,
+      "value": "Toggle booleans, why waste CPU on war."
+    }
+  ],
+  "reality.simulation-upgrades.world-peace4.title": [
+    {
+      "type": 0,
+      "value": "World Peace IV"
+    }
+  ],
+  "reality.simulation-upgrades.world-trade1.description": [
+    {
+      "type": 0,
+      "value": "Global trading in its raw form. 1h ▸ 30m"
+    }
+  ],
+  "reality.simulation-upgrades.world-trade1.title": [
+    {
+      "type": 0,
+      "value": "World Trade I"
+    }
+  ],
+  "reality.simulation-upgrades.world-trade2.description": [
+    {
+      "type": 0,
+      "value": "Zip here, zip there, zip everywhere. 30m ▸ 10m"
+    }
+  ],
+  "reality.simulation-upgrades.world-trade2.title": [
+    {
+      "type": 0,
+      "value": "World Trade II"
+    }
+  ],
+  "reality.simulation-upgrades.world-trade3.description": [
+    {
+      "type": 0,
+      "value": "No push button anymore."
+    }
+  ],
+  "reality.simulation-upgrades.world-trade3.title": [
+    {
+      "type": 0,
+      "value": "World Trade III"
+    }
+  ],
+  "reality.strange-matter": [
+    {
+      "type": 0,
+      "value": "Strange Matter: "
+    },
+    {
+      "type": 1,
+      "value": "value"
+    }
+  ],
+  "reality.unavailable": [
+    {
+      "type": 0,
+      "value": "Reality is temporarily unavailable."
+    }
+  ],
+  "reality.universe-designation": [
+    {
+      "type": 0,
+      "value": "Universe Designation: "
+    },
+    {
+      "type": 1,
+      "value": "value"
+    }
+  ],
+  "reality.upgrades": [
+    {
+      "type": 0,
+      "value": "Reality Upgrades"
+    }
+  ],
+  "reality.upgrades.anomaly": [
+    {
+      "type": 0,
+      "value": "Anomaly"
+    }
+  ],
+  "reality.upgrades.auto-gather.description": [
+    {
+      "type": 0,
+      "value": "No longer feel the need to click gather influence"
+    }
+  ],
+  "reality.upgrades.auto-gather.title": [
+    {
+      "type": 0,
+      "value": "Automate Gather Influence"
+    }
+  ],
+  "reality.upgrades.cost": [
+    {
+      "type": 1,
+      "value": "value"
+    },
+    {
+      "type": 0,
+      "value": " SM"
+    }
+  ],
+  "reality.upgrades.double-time.description": [
+    {
+      "type": 0,
+      "value": "Gather time while offline, spend it while online."
+    }
+  ],
+  "reality.upgrades.double-time.title": [
+    {
+      "type": 0,
+      "value": "Enable Time Multiplier"
+    }
+  ],
+  "reality.upgrades.purchase": [
+    {
+      "type": 0,
+      "value": "Purchase"
+    }
+  ],
+  "reality.upgrades.purchase-accessible": [
+    {
+      "type": 0,
+      "value": "Purchase "
+    },
+    {
+      "type": 1,
+      "value": "name"
+    },
+    {
+      "type": 0,
+      "value": " for "
+    },
+    {
+      "type": 1,
+      "value": "value"
+    },
+    {
+      "type": 0,
+      "value": " Strange Matter"
+    }
+  ],
+  "reality.upgrades.purchase-failed": [
+    {
+      "type": 1,
+      "value": "name"
+    },
+    {
+      "type": 0,
+      "value": " was not purchased. Try again."
+    }
+  ],
+  "reality.upgrades.purchase-pending": [
+    {
+      "type": 0,
+      "value": "Purchasing "
+    },
+    {
+      "type": 1,
+      "value": "name"
+    },
+    {
+      "type": 0,
+      "value": "…"
+    }
+  ],
+  "reality.upgrades.quality": [
+    {
+      "type": 0,
+      "value": "Quality of Life"
+    }
+  ],
+  "reality.upgrades.speed": [
+    {
+      "type": 0,
+      "value": "Speed Reduction"
+    }
+  ],
+  "reality.upgrades.speed1.description": [
+    {
+      "type": 0,
+      "value": "100% ▸ 95% - Magnetic fields? Gain 1 skill point."
+    }
+  ],
+  "reality.upgrades.speed1.title": [
+    {
+      "type": 0,
+      "value": "Speed Reduction I"
+    }
+  ],
+  "reality.upgrades.speed2.description": [
+    {
+      "type": 0,
+      "value": "95% ▸ 90% - Throw it at a wall? Gain 1 skill point."
+    }
+  ],
+  "reality.upgrades.speed2.title": [
+    {
+      "type": 0,
+      "value": "Speed Reduction II"
+    }
+  ],
+  "reality.upgrades.speed3.description": [
+    {
+      "type": 0,
+      "value": "90% ▸ 80% - Smack it with a bat? Gain 1 skill point."
+    }
+  ],
+  "reality.upgrades.speed3.title": [
+    {
+      "type": 0,
+      "value": "Speed Reduction III"
+    }
+  ],
+  "reality.upgrades.speed4.description": [
+    {
+      "type": 0,
+      "value": "80% ▸ 70% - Put it under a metal press? Gain 1 skill point."
+    }
+  ],
+  "reality.upgrades.speed4.title": [
+    {
+      "type": 0,
+      "value": "Speed Reduction IV"
+    }
+  ],
+  "reality.upgrades.speed5.description": [
+    {
+      "type": 0,
+      "value": "70% ▸ 50% - Bombard it with radiation? Gain 1 skill point."
+    }
+  ],
+  "reality.upgrades.speed5.title": [
+    {
+      "type": 0,
+      "value": "Speed Reduction V"
+    }
+  ],
+  "reality.upgrades.speed6.description": [
+    {
+      "type": 0,
+      "value": "50% ▸ 25% - Design an inception machine. Gain 1 skill point."
+    }
+  ],
+  "reality.upgrades.speed6.title": [
+    {
+      "type": 0,
+      "value": "Speed Reduction VI"
+    }
+  ],
+  "reality.upgrades.speed7.description": [
+    {
+      "type": 0,
+      "value": "25% ▸ 10% - Go down a few layers. Gain 1 skill point."
+    }
+  ],
+  "reality.upgrades.speed7.title": [
+    {
+      "type": 0,
+      "value": "Speed Reduction VII"
+    }
+  ],
+  "reality.upgrades.speed8.description": [
+    {
+      "type": 0,
+      "value": "10% ▸ 0% - Comprehention. Gain 1 skill point."
+    }
+  ],
+  "reality.upgrades.speed8.title": [
+    {
+      "type": 0,
+      "value": "Speed Reduction VIII"
+    }
+  ],
+  "reality.upgrades.translation": [
+    {
+      "type": 0,
+      "value": "Translation"
+    }
+  ],
+  "reality.upgrades.translation1.description": [
+    {
+      "type": 0,
+      "value": "Begin deciphering the anomaly's code. Gain 1 skill point."
+    }
+  ],
+  "reality.upgrades.translation1.title": [
+    {
+      "type": 0,
+      "value": "Translation I"
+    }
+  ],
+  "reality.upgrades.translation2.description": [
+    {
+      "type": 0,
+      "value": "The patterns are starting to make sense. Gain 1 skill point."
+    }
+  ],
+  "reality.upgrades.translation2.title": [
+    {
+      "type": 0,
+      "value": "Translation II"
+    }
+  ],
+  "reality.upgrades.translation3.description": [
+    {
+      "type": 0,
+      "value": "Progress! More symbols decoded. Gain 1 skill point."
+    }
+  ],
+  "reality.upgrades.translation3.title": [
+    {
+      "type": 0,
+      "value": "Translation III"
+    }
+  ],
+  "reality.upgrades.translation4.description": [
+    {
+      "type": 0,
+      "value": "Halfway through the translation. Gain 1 skill point."
+    }
+  ],
+  "reality.upgrades.translation4.title": [
+    {
+      "type": 0,
+      "value": "Translation IV"
+    }
+  ],
+  "reality.upgrades.translation5.description": [
+    {
+      "type": 0,
+      "value": "The anomaly's secrets unfold. Gain 1 skill point."
+    }
+  ],
+  "reality.upgrades.translation5.title": [
+    {
+      "type": 0,
+      "value": "Translation V"
+    }
+  ],
+  "reality.upgrades.translation6.description": [
+    {
+      "type": 0,
+      "value": "Almost there, keep translating. Gain 1 skill point."
+    }
+  ],
+  "reality.upgrades.translation6.title": [
+    {
+      "type": 0,
+      "value": "Translation VI"
+    }
+  ],
+  "reality.upgrades.translation7.description": [
+    {
+      "type": 0,
+      "value": "The final pieces fall into place. Gain 1 skill point."
+    }
+  ],
+  "reality.upgrades.translation7.title": [
+    {
+      "type": 0,
+      "value": "Translation VII"
+    }
+  ],
+  "reality.upgrades.translation8.description": [
+    {
+      "type": 0,
+      "value": "Finally finish translating the anomaly! Gain 1 skill point."
+    }
+  ],
+  "reality.upgrades.translation8.title": [
+    {
+      "type": 0,
+      "value": "Translation VIII"
+    }
+  ],
+  "reality.worker-generation": [
+    {
+      "type": 0,
+      "value": "Worker generation"
+    }
+  ],
+  "reality.workers-ready": [
+    {
+      "type": 0,
+      "value": "Workers ready"
+    }
+  ],
+  "reality.workers-ready.compact": [
+    {
+      "type": 1,
+      "value": "current"
+    },
+    {
+      "type": 0,
+      "value": "/"
+    },
+    {
+      "type": 1,
+      "value": "total"
+    }
+  ],
+  "reality.workers-ready.value": [
+    {
+      "type": 1,
+      "value": "current"
+    },
+    {
+      "type": 0,
+      "value": " of "
+    },
+    {
+      "type": 1,
+      "value": "total"
+    },
+    {
+      "type": 0,
+      "value": " workers ready"
+    }
+  ],
+  "research.card.boost-title": [
+    {
+      "type": 1,
+      "value": "name"
+    },
+    {
+      "type": 0,
+      "value": " boosts "
+    },
+    {
+      "type": 8,
+      "value": "value",
+      "children": [
+        {
+          "type": 1,
+          "value": "level"
+        }
+      ]
+    }
+  ],
+  "research.card.boost-title-accessible": [
+    {
+      "type": 1,
+      "value": "name"
+    },
+    {
+      "type": 0,
+      "value": " boosts "
+    },
+    {
+      "type": 1,
+      "value": "level"
+    }
+  ],
+  "research.card.boosting": [
+    {
+      "type": 0,
+      "value": "Boosting by "
+    },
+    {
+      "type": 8,
+      "value": "value",
+      "children": [
+        {
+          "type": 1,
+          "value": "current"
+        },
+        {
+          "type": 0,
+          "value": "%"
+        }
+      ]
+    }
+  ],
+  "research.card.boosting-projected": [
+    {
+      "type": 0,
+      "value": "Boosting by "
+    },
+    {
+      "type": 8,
+      "value": "value",
+      "children": [
+        {
+          "type": 1,
+          "value": "current"
+        },
+        {
+          "type": 0,
+          "value": "%"
+        }
+      ]
+    },
+    {
+      "type": 0,
+      "value": " "
+    },
+    {
+      "type": 8,
+      "value": "arrow",
+      "children": [
+        {
+          "type": 1,
+          "value": "arrowMark"
+        }
+      ]
+    },
+    {
+      "type": 0,
+      "value": " "
+    },
+    {
+      "type": 8,
+      "value": "value",
+      "children": [
+        {
+          "type": 1,
+          "value": "projected"
+        },
+        {
+          "type": 0,
+          "value": "%"
+        }
+      ]
+    }
+  ],
+  "research.card.boosting-projected-accessible": [
+    {
+      "type": 0,
+      "value": "Boosting increases from "
+    },
+    {
+      "type": 1,
+      "value": "current"
+    },
+    {
+      "type": 0,
+      "value": "% to "
+    },
+    {
+      "type": 1,
+      "value": "projected"
+    },
+    {
+      "type": 0,
+      "value": "%"
+    }
+  ],
+  "research.card.lifetime-effect": [
+    {
+      "type": 0,
+      "value": "Increases Panel Lifetime by "
+    },
+    {
+      "type": 8,
+      "value": "value",
+      "children": [
+        {
+          "type": 1,
+          "value": "seconds"
+        },
+        {
+          "type": 0,
+          "value": "s"
+        }
+      ]
+    }
+  ],
+  "research.card.purchase-boost": [
+    {
+      "type": 0,
+      "value": "Purchase for a boost! ("
+    },
+    {
+      "type": 8,
+      "value": "value",
+      "children": [
+        {
+          "type": 1,
+          "value": "perLevel"
+        },
+        {
+          "type": 0,
+          "value": "%"
+        }
+      ]
+    },
+    {
+      "type": 0,
+      "value": " per level)"
+    }
+  ],
+  "research.description.ai-manager": [
+    {
+      "type": 0,
+      "value": "Refactoring code makes your AI Managers more efficient, thus producing more Assembly Lines!"
+    }
+  ],
+  "research.description.assembly-line": [
+    {
+      "type": 0,
+      "value": "Training algorithms make your Assembly Lines more efficient, thus producing more bots!"
+    }
+  ],
+  "research.description.cash": [
+    {
+      "type": 0,
+      "value": "Refined marketing strategies allow you to increase the price of your energy yielding better income!"
+    }
+  ],
+  "research.description.data-center": [
+    {
+      "type": 0,
+      "value": "Efficiency protocols allow you to improve the efficiency of your Data Centers."
+    }
+  ],
+  "research.description.lifetime-later": [
+    {
+      "type": 0,
+      "value": "Through the sacrifice of many determined science bots this upgrade was made available."
+    }
+  ],
+  "research.description.lifetime-one": [
+    {
+      "type": 0,
+      "value": "Many researchers were sacrificed developing this upgrade. Their noggins were not up to the task!"
+    }
+  ],
+  "research.description.machine-world": [
+    {
+      "type": 0,
+      "value": "Terraform some of your planets. Machine worlds allow more room for Servers!"
+    }
+  ],
+  "research.description.science": [
+    {
+      "type": 0,
+      "value": "Upgrades to networking allow bots to work more efficently together boosting Science production!"
+    }
+  ],
+  "research.description.server": [
+    {
+      "type": 0,
+      "value": "Upgrade to the latest Server Technology, allows your servers to run more AI Managers!"
+    }
+  ],
+  "research.empty": [
+    {
+      "type": 0,
+      "value": "No research is currently available."
+    }
+  ],
+  "research.name.ai-manager": [
+    {
+      "type": 0,
+      "value": "AI Manager"
+    }
+  ],
+  "research.name.assembly-line": [
+    {
+      "type": 0,
+      "value": "Assembly Line"
+    }
+  ],
+  "research.name.birch-planets": [
+    {
+      "type": 0,
+      "value": "Birch Planets"
+    }
+  ],
+  "research.name.cash": [
+    {
+      "type": 0,
+      "value": "Cash"
+    }
+  ],
+  "research.name.data-center": [
+    {
+      "type": 0,
+      "value": "Data Center"
+    }
+  ],
+  "research.name.durability-upgrade": [
+    {
+      "type": 0,
+      "value": "Durability Upgrade"
+    }
+  ],
+  "research.name.galactic-brains": [
+    {
+      "type": 0,
+      "value": "Galactic Brains"
+    }
+  ],
+  "research.name.matrioshka-brains": [
+    {
+      "type": 0,
+      "value": "Matrioshka Brains"
+    }
+  ],
+  "research.name.planet": [
+    {
+      "type": 0,
+      "value": "Planet"
+    }
+  ],
+  "research.name.science": [
+    {
+      "type": 0,
+      "value": "Science"
+    }
+  ],
+  "research.name.server": [
+    {
+      "type": 0,
+      "value": "Server"
+    }
+  ],
+  "research.production-summary": [
+    {
+      "type": 8,
+      "value": "researcherValue",
+      "children": [
+        {
+          "type": 1,
+          "value": "researchers"
+        }
+      ]
+    },
+    {
+      "type": 0,
+      "value": " Researchers producing "
+    },
+    {
+      "type": 8,
+      "value": "scienceValue",
+      "children": [
+        {
+          "type": 1,
+          "value": "science"
+        }
+      ]
+    },
+    {
+      "type": 1,
+      "value": "scienceIcon"
+    },
+    {
+      "type": 0,
+      "value": "/s"
+    }
+  ],
+  "research.purchase.accessible": [
+    {
+      "type": 0,
+      "value": "Purchase "
+    },
+    {
+      "type": 1,
+      "value": "title"
+    },
+    {
+      "type": 0,
+      "value": ": "
+    },
+    {
+      "type": 1,
+      "value": "quantity"
+    },
+    {
+      "type": 0,
+      "value": " levels for "
+    },
+    {
+      "type": 1,
+      "value": "cost"
+    },
+    {
+      "type": 0,
+      "value": " Science"
+    }
+  ],
+  "research.purchase.automatic": [
+    {
+      "type": 0,
+      "value": "Auto"
+    }
+  ],
+  "research.purchase.automatic-accessible": [
+    {
+      "type": 1,
+      "value": "title"
+    },
+    {
+      "type": 0,
+      "value": " is purchased automatically"
+    }
+  ],
+  "research.purchase.failed": [
+    {
+      "type": 0,
+      "value": "Research was not purchased."
+    }
+  ],
+  "research.purchase.pending": [
+    {
+      "type": 0,
+      "value": "Purchasing research."
+    }
+  ],
+  "research.purchase.purchased": [
+    {
+      "type": 0,
+      "value": "Purchased"
+    }
+  ],
+  "research.purchase.purchased-accessible": [
+    {
+      "type": 1,
+      "value": "title"
+    },
+    {
+      "type": 0,
+      "value": " is purchased"
+    }
+  ],
+  "research.purchase.quantity": [
+    {
+      "type": 0,
+      "value": "+"
+    },
+    {
+      "type": 1,
+      "value": "quantity"
+    }
+  ],
+  "research.region": [
+    {
+      "type": 0,
+      "value": "Research"
+    }
+  ],
+  "research.settings.buy-mode.fifty": [
+    {
+      "type": 0,
+      "value": "x50"
+    }
+  ],
+  "research.settings.buy-mode.max": [
+    {
+      "type": 0,
+      "value": "Max"
+    }
+  ],
+  "research.settings.buy-mode.one": [
+    {
+      "type": 0,
+      "value": "x1"
+    }
+  ],
+  "research.settings.buy-mode.one-hundred": [
+    {
+      "type": 0,
+      "value": "x100"
+    }
+  ],
+  "research.settings.buy-mode.ten": [
+    {
+      "type": 0,
+      "value": "x10"
+    }
+  ],
+  "research.settings.failed": [
+    {
+      "type": 0,
+      "value": "Research purchase settings were not changed."
+    }
+  ],
+  "research.settings.open": [
+    {
+      "type": 0,
+      "value": "Research purchase settings"
+    }
+  ],
+  "research.settings.preset-automation": [
+    {
+      "type": 0,
+      "value": "Skill preset on opening Research"
+    }
+  ],
+  "research.settings.preset-automation-off": [
+    {
+      "type": 0,
+      "value": "Off"
+    }
+  ],
+  "research.settings.purchase-amount": [
+    {
+      "type": 0,
+      "value": "Research purchase amount"
+    }
+  ],
+  "research.settings.rounded-bulk-buy": [
+    {
+      "type": 0,
+      "value": "Round bulk purchases to the next milestone"
+    }
+  ],
+  "settings.development.apply": [
+    {
+      "type": 0,
+      "value": "Apply Progression"
+    }
+  ],
+  "settings.development.applying": [
+    {
+      "type": 0,
+      "value": "Applying…"
+    }
+  ],
+  "settings.development.description": [
+    {
+      "type": 0,
+      "value": "Sets the real saved bot count. Visual stages assume Bot Distribution is set to 100% Workers."
+    }
+  ],
+  "settings.development.failed": [
+    {
+      "type": 0,
+      "value": "The development progression could not be applied."
+    }
+  ],
+  "settings.development.preset": [
+    {
+      "type": 0,
+      "value": "Progression state"
+    }
+  ],
+  "settings.development.preset.early-swarm": [
+    {
+      "type": 0,
+      "value": "Early swarm — "
+    },
+    {
+      "type": 1,
+      "value": "bots"
+    },
+    {
+      "type": 0,
+      "value": " Bots"
+    }
+  ],
+  "settings.development.preset.first-infinity": [
+    {
+      "type": 0,
+      "value": "First Infinity — "
+    },
+    {
+      "type": 1,
+      "value": "bots"
+    },
+    {
+      "type": 0,
+      "value": " Bots"
+    }
+  ],
+  "settings.development.preset.galaxy-group": [
+    {
+      "type": 0,
+      "value": "Galaxy group — "
+    },
+    {
+      "type": 1,
+      "value": "bots"
+    },
+    {
+      "type": 0,
+      "value": " Bots"
+    }
+  ],
+  "settings.development.preset.half-galaxy": [
+    {
+      "type": 0,
+      "value": "Half-harvested galaxy — "
+    },
+    {
+      "type": 1,
+      "value": "bots"
+    },
+    {
+      "type": 0,
+      "value": " Bots"
+    }
+  ],
+  "settings.development.preset.mid-swarm": [
+    {
+      "type": 0,
+      "value": "Mid swarm — "
+    },
+    {
+      "type": 1,
+      "value": "bots"
+    },
+    {
+      "type": 0,
+      "value": " Bots"
+    }
+  ],
+  "settings.development.preset.near-galaxy": [
+    {
+      "type": 0,
+      "value": "Nearly harvested galaxy — "
+    },
+    {
+      "type": 1,
+      "value": "bots"
+    },
+    {
+      "type": 0,
+      "value": " Bots"
+    }
+  ],
+  "settings.development.preset.near-star": [
+    {
+      "type": 0,
+      "value": "Nearly surrounded star — "
+    },
+    {
+      "type": 1,
+      "value": "bots"
+    },
+    {
+      "type": 0,
+      "value": " Bots"
+    }
+  ],
+  "settings.development.preset.new-galaxy": [
+    {
+      "type": 0,
+      "value": "New galaxy view — "
+    },
+    {
+      "type": 1,
+      "value": "bots"
+    },
+    {
+      "type": 0,
+      "value": " Bots"
+    }
+  ],
+  "settings.development.preset.one-galaxy": [
+    {
+      "type": 0,
+      "value": "First engulfed galaxy — "
+    },
+    {
+      "type": 1,
+      "value": "bots"
+    },
+    {
+      "type": 0,
+      "value": " Bots"
+    }
+  ],
+  "settings.development.preset.reality-unlocked": [
+    {
+      "type": 0,
+      "value": "Reality unlocked — 27 Secrets"
+    }
+  ],
+  "settings.development.preset.young-galaxy": [
+    {
+      "type": 0,
+      "value": "Young harvested galaxy — "
+    },
+    {
+      "type": 1,
+      "value": "bots"
+    },
+    {
+      "type": 0,
+      "value": " Bots"
+    }
+  ],
+  "settings.development.reality-succeeded": [
+    {
+      "type": 0,
+      "value": "Reality unlocked. Open the Reality tab to inspect the live state."
+    }
+  ],
+  "settings.development.succeeded": [
+    {
+      "type": 0,
+      "value": "Bot count saved. Return to Bots to inspect the live simulation."
+    }
+  ],
+  "settings.development.title": [
+    {
+      "type": 0,
+      "value": "Development Menu"
+    }
+  ],
+  "settings.more-by.description": [
+    {
+      "type": 0,
+      "value": "Discover more games from the developer of Idle Dyson Swarm."
+    }
+  ],
+  "settings.more-by.title": [
+    {
+      "type": 0,
+      "value": "More by Blind Sided Games"
+    }
+  ],
+  "settings.navigation.description": [
+    {
+      "type": 0,
+      "value": "Choose which optional pages appear in the bottom navigation. They remain available from the menu."
+    }
+  ],
+  "settings.navigation.statistics": [
+    {
+      "type": 0,
+      "value": "Show Statistics shortcut"
+    }
+  ],
+  "settings.navigation.story": [
+    {
+      "type": 0,
+      "value": "Show Story shortcut"
+    }
+  ],
+  "settings.navigation.title": [
+    {
+      "type": 0,
+      "value": "Navigation Shortcuts"
+    }
+  ],
+  "settings.navigation.wiki": [
+    {
+      "type": 0,
+      "value": "Show Wiki shortcut"
+    }
+  ],
+  "settings.save-data.cancel": [
+    {
+      "type": 0,
+      "value": "Cancel"
+    }
+  ],
+  "settings.save-data.description": [
+    {
+      "type": 0,
+      "value": "Your progress is saved automatically on this device."
+    }
+  ],
+  "settings.save-data.reset": [
+    {
+      "type": 0,
+      "value": "Reset Save"
+    }
+  ],
+  "settings.save-data.reset-committed-recovery": [
+    {
+      "type": 0,
+      "value": "The fresh save was written, but the game could not reopen it. Reload to recover."
+    }
+  ],
+  "settings.save-data.reset-confirmation": [
+    {
+      "type": 0,
+      "value": "Reset all progress and start again? This cannot be undone."
+    }
+  ],
+  "settings.save-data.reset-dialog-title": [
+    {
+      "type": 0,
+      "value": "Reset Save?"
+    }
+  ],
+  "settings.save-data.reset-failed": [
+    {
+      "type": 0,
+      "value": "The save could not be reset. Your current progress was kept."
+    }
+  ],
+  "settings.save-data.reset-pending": [
+    {
+      "type": 0,
+      "value": "Resetting…"
+    }
+  ],
+  "settings.save-data.reset-succeeded": [
+    {
+      "type": 0,
+      "value": "Save reset. A fresh game has been created."
+    }
+  ],
+  "settings.save-data.title": [
+    {
+      "type": 0,
+      "value": "Save Data"
+    }
+  ],
+  "settings.visualization.description": [
+    {
+      "type": 0,
+      "value": "Show the evolving star, galaxy, and deep-field visualization above facilities."
+    }
+  ],
+  "settings.visualization.title": [
+    {
+      "type": 0,
+      "value": "Visualization"
+    }
+  ],
+  "settings.visualization.toggle": [
+    {
+      "type": 0,
+      "value": "Show visualization"
+    }
+  ],
+  "shared.action.dismiss": [
+    {
+      "type": 0,
+      "value": "Dismiss"
+    }
+  ],
+  "shared.action.try-again": [
+    {
+      "type": 0,
+      "value": "Try again"
+    }
+  ],
+  "shared.facility.owned-count": [
+    {
+      "type": 6,
+      "value": "count",
+      "options": {
+        "one": {
+          "value": [
+            {
+              "type": 7
+            },
+            {
+              "type": 0,
+              "value": " owned"
+            }
+          ]
+        },
+        "other": {
+          "value": [
+            {
+              "type": 7
+            },
+            {
+              "type": 0,
+              "value": " owned"
+            }
+          ]
+        }
+      },
+      "offset": 0,
+      "pluralType": "cardinal"
+    }
+  ],
+  "shared.locale.changed": [
+    {
+      "type": 0,
+      "value": "Language changed to "
+    },
+    {
+      "type": 1,
+      "value": "languageName"
+    }
+  ],
+  "shared.progress.value": [
+    {
+      "type": 2,
+      "value": "current",
+      "style": null
+    },
+    {
+      "type": 0,
+      "value": " of "
+    },
+    {
+      "type": 2,
+      "value": "maximum",
+      "style": null
+    }
+  ],
+  "shared.status.error": [
+    {
+      "type": 0,
+      "value": "Something went wrong"
+    }
+  ],
+  "shared.status.loading": [
+    {
+      "type": 0,
+      "value": "Loading…"
+    }
+  ],
+  "shared.status.ready": [
+    {
+      "type": 0,
+      "value": "Ready"
+    }
+  ],
+  "shared.status.success": [
+    {
+      "type": 0,
+      "value": "Completed"
+    }
+  ],
+  "simulations.action.black-hole": [
+    {
+      "type": 0,
+      "value": "Black Hole +"
+    },
+    {
+      "type": 1,
+      "value": "reward"
+    },
+    {
+      "type": 0,
+      "value": " Strange Matter"
+    }
+  ],
+  "simulations.action.black-hole-label": [
+    {
+      "type": 0,
+      "value": "Black Hole"
+    }
+  ],
+  "simulations.action.boost": [
+    {
+      "type": 0,
+      "value": "Boost "
+    },
+    {
+      "type": 1,
+      "value": "cost"
+    },
+    {
+      "type": 0,
+      "value": " Influence"
+    }
+  ],
+  "simulations.action.boost-label": [
+    {
+      "type": 0,
+      "value": "Boost"
+    }
+  ],
+  "simulations.action.close": [
+    {
+      "type": 0,
+      "value": "Close"
+    }
+  ],
+  "simulations.action.details": [
+    {
+      "type": 0,
+      "value": "Details"
+    }
+  ],
+  "simulations.action.failed": [
+    {
+      "type": 0,
+      "value": "That action was not completed. Try again."
+    }
+  ],
+  "simulations.action.free-boost": [
+    {
+      "type": 0,
+      "value": "Boost Free"
+    }
+  ],
+  "simulations.action.free-label": [
+    {
+      "type": 0,
+      "value": "Free"
+    }
+  ],
+  "simulations.action.purchase": [
+    {
+      "type": 0,
+      "value": "+"
+    },
+    {
+      "type": 1,
+      "value": "quantity"
+    },
+    {
+      "type": 0,
+      "value": " "
+    },
+    {
+      "type": 1,
+      "value": "cost"
+    },
+    {
+      "type": 0,
+      "value": " Influence"
+    }
+  ],
+  "simulations.action.purchase-quantity": [
+    {
+      "type": 0,
+      "value": "+"
+    },
+    {
+      "type": 1,
+      "value": "quantity"
+    }
+  ],
+  "simulations.action.start": [
+    {
+      "type": 0,
+      "value": "Start "
+    },
+    {
+      "type": 1,
+      "value": "cost"
+    },
+    {
+      "type": 0,
+      "value": " Influence"
+    }
+  ],
+  "simulations.action.start-label": [
+    {
+      "type": 0,
+      "value": "Start"
+    }
+  ],
+  "simulations.action.strange-matter-reward": [
+    {
+      "type": 0,
+      "value": "+"
+    },
+    {
+      "type": 1,
+      "value": "reward"
+    },
+    {
+      "type": 0,
+      "value": " Strange Matter"
+    }
+  ],
+  "simulations.buy-max": [
+    {
+      "type": 0,
+      "value": "Buy Max"
+    }
+  ],
+  "simulations.buy-quantity": [
+    {
+      "type": 0,
+      "value": "Buy "
+    },
+    {
+      "type": 1,
+      "value": "quantity"
+    }
+  ],
+  "simulations.category.education": [
+    {
+      "type": 0,
+      "value": "Education"
+    }
+  ],
+  "simulations.category.energy": [
+    {
+      "type": 0,
+      "value": "Energy"
+    }
+  ],
+  "simulations.category.foundational": [
+    {
+      "type": 0,
+      "value": "Foundational Era"
+    }
+  ],
+  "simulations.category.information": [
+    {
+      "type": 0,
+      "value": "Information Era"
+    }
+  ],
+  "simulations.category.space-age": [
+    {
+      "type": 0,
+      "value": "Space Age"
+    }
+  ],
+  "simulations.details.available-conversions": [
+    {
+      "type": 0,
+      "value": "Available conversions"
+    }
+  ],
+  "simulations.details.base-duration": [
+    {
+      "type": 0,
+      "value": "Base duration"
+    }
+  ],
+  "simulations.details.conversion-requirement": [
+    {
+      "type": 0,
+      "value": "Conversion requirement"
+    }
+  ],
+  "simulations.details.current-output": [
+    {
+      "type": 0,
+      "value": "Current output"
+    }
+  ],
+  "simulations.details.current-progress": [
+    {
+      "type": 0,
+      "value": "Current progress"
+    }
+  ],
+  "simulations.details.current-rate": [
+    {
+      "type": 0,
+      "value": "Current rate"
+    }
+  ],
+  "simulations.details.inactive-multiplier": [
+    {
+      "type": 0,
+      "value": "Inactive — no producers"
+    }
+  ],
+  "simulations.details.logarithmic-multiplier": [
+    {
+      "type": 0,
+      "value": "(1 + Log₁₀("
+    },
+    {
+      "type": 1,
+      "value": "count"
+    },
+    {
+      "type": 0,
+      "value": ")) × "
+    },
+    {
+      "type": 1,
+      "value": "global"
+    },
+    {
+      "type": 0,
+      "value": " = "
+    },
+    {
+      "type": 1,
+      "value": "effective"
+    }
+  ],
+  "simulations.details.output": [
+    {
+      "type": 0,
+      "value": "Output"
+    }
+  ],
+  "simulations.details.output-per-cycle": [
+    {
+      "type": 1,
+      "value": "value"
+    },
+    {
+      "type": 0,
+      "value": " "
+    },
+    {
+      "type": 1,
+      "value": "resource"
+    },
+    {
+      "type": 0,
+      "value": " / cycle"
+    }
+  ],
+  "simulations.details.prepared-multiplier": [
+    {
+      "type": 1,
+      "value": "base"
+    },
+    {
+      "type": 0,
+      "value": " × "
+    },
+    {
+      "type": 1,
+      "value": "global"
+    },
+    {
+      "type": 0,
+      "value": " = "
+    },
+    {
+      "type": 1,
+      "value": "effective"
+    }
+  ],
+  "simulations.details.rate-per-second": [
+    {
+      "type": 1,
+      "value": "value"
+    },
+    {
+      "type": 0,
+      "value": " "
+    },
+    {
+      "type": 1,
+      "value": "resource"
+    },
+    {
+      "type": 0,
+      "value": " / s"
+    }
+  ],
+  "simulations.details.remaining-duration": [
+    {
+      "type": 0,
+      "value": "Remaining duration"
+    }
+  ],
+  "simulations.details.rocket-conversion-requirement": [
+    {
+      "type": 1,
+      "value": "rockets"
+    },
+    {
+      "type": 0,
+      "value": " Rockets + 1 Factory = 1 Space Factory"
+    }
+  ],
+  "simulations.details.seconds": [
+    {
+      "type": 1,
+      "value": "value"
+    },
+    {
+      "type": 0,
+      "value": " seconds"
+    }
+  ],
+  "simulations.details.speed-multiplier": [
+    {
+      "type": 0,
+      "value": "Speed multiplier"
+    }
+  ],
+  "simulations.empty": [
+    {
+      "type": 0,
+      "value": "No panels are available in this era yet."
+    }
+  ],
+  "simulations.offline-time": [
+    {
+      "type": 0,
+      "value": "Offline time"
+    }
+  ],
+  "simulations.panel.advanced-physics": [
+    {
+      "type": 0,
+      "value": "Advanced Physics"
+    }
+  ],
+  "simulations.panel.boost-active": [
+    {
+      "type": 0,
+      "value": "Boost active: "
+    },
+    {
+      "type": 1,
+      "value": "time"
+    }
+  ],
+  "simulations.panel.bots": [
+    {
+      "type": 0,
+      "value": "Bots"
+    }
+  ],
+  "simulations.panel.bots.description": [
+    {
+      "type": 0,
+      "value": "Bots construct Rockets for the journey to space."
+    }
+  ],
+  "simulations.panel.cities": [
+    {
+      "type": 0,
+      "value": "Cities"
+    }
+  ],
+  "simulations.panel.cities.description": [
+    {
+      "type": 0,
+      "value": "Cities produce Workers and, after Engineering, begin producing Factories."
+    }
+  ],
+  "simulations.panel.community": [
+    {
+      "type": 0,
+      "value": "Community"
+    }
+  ],
+  "simulations.panel.community.description": [
+    {
+      "type": 0,
+      "value": "Hunters and Gatherers sustain Communities, which build Housing."
+    }
+  ],
+  "simulations.panel.complete": [
+    {
+      "type": 0,
+      "value": "Complete"
+    }
+  ],
+  "simulations.panel.education.description": [
+    {
+      "type": 0,
+      "value": "Invest Influence to complete this research."
+    }
+  ],
+  "simulations.panel.energy-output": [
+    {
+      "type": 1,
+      "value": "value"
+    }
+  ],
+  "simulations.panel.energy-stored": [
+    {
+      "type": 1,
+      "value": "value"
+    },
+    {
+      "type": 0,
+      "value": " stored"
+    }
+  ],
+  "simulations.panel.engineering": [
+    {
+      "type": 0,
+      "value": "Engineering"
+    }
+  ],
+  "simulations.panel.factories": [
+    {
+      "type": 0,
+      "value": "Factories"
+    }
+  ],
+  "simulations.panel.factories.description": [
+    {
+      "type": 0,
+      "value": "Factories produce Bots and can receive a timed boost."
+    }
+  ],
+  "simulations.panel.fusion": [
+    {
+      "type": 0,
+      "value": "Fusion Generators"
+    }
+  ],
+  "simulations.panel.fusion.description": [
+    {
+      "type": 0,
+      "value": "Fusion Generators provide a stronger source of energy."
+    }
+  ],
+  "simulations.panel.gatherers": [
+    {
+      "type": 0,
+      "value": "Gatherers"
+    }
+  ],
+  "simulations.panel.gatherers.description": [
+    {
+      "type": 0,
+      "value": "Influence villagers to gather greens for your communities."
+    }
+  ],
+  "simulations.panel.housing": [
+    {
+      "type": 0,
+      "value": "Housing"
+    }
+  ],
+  "simulations.panel.housing.description": [
+    {
+      "type": 0,
+      "value": "Housing grows from Communities and converts into Villages."
+    }
+  ],
+  "simulations.panel.hunters": [
+    {
+      "type": 0,
+      "value": "Hunters"
+    }
+  ],
+  "simulations.panel.hunters.description": [
+    {
+      "type": 0,
+      "value": "Influence heroic hunters to gather meat for your communities."
+    }
+  ],
+  "simulations.panel.mathematics": [
+    {
+      "type": 0,
+      "value": "Mathematics"
+    }
+  ],
+  "simulations.panel.not-started": [
+    {
+      "type": 0,
+      "value": "Ready to start"
+    }
+  ],
+  "simulations.panel.owned": [
+    {
+      "type": 1,
+      "value": "value"
+    },
+    {
+      "type": 0,
+      "value": " owned"
+    }
+  ],
+  "simulations.panel.pending-matter": [
+    {
+      "type": 1,
+      "value": "value"
+    },
+    {
+      "type": 0,
+      "value": " Strange Matter pending"
+    }
+  ],
+  "simulations.panel.producing": [
+    {
+      "type": 0,
+      "value": "Producing "
+    },
+    {
+      "type": 1,
+      "value": "value"
+    },
+    {
+      "type": 0,
+      "value": " /s"
+    }
+  ],
+  "simulations.panel.railguns": [
+    {
+      "type": 0,
+      "value": "Railguns"
+    }
+  ],
+  "simulations.panel.railguns.description": [
+    {
+      "type": 0,
+      "value": "Railguns consume energy to launch stored panels into the Swarm."
+    }
+  ],
+  "simulations.panel.researching": [
+    {
+      "type": 0,
+      "value": "Researching"
+    }
+  ],
+  "simulations.panel.rockets": [
+    {
+      "type": 0,
+      "value": "Rockets"
+    }
+  ],
+  "simulations.panel.rockets.description": [
+    {
+      "type": 0,
+      "value": "Rockets and Factories are converted into Space Factories."
+    }
+  ],
+  "simulations.panel.shipping": [
+    {
+      "type": 0,
+      "value": "Shipping"
+    }
+  ],
+  "simulations.panel.shots-remaining": [
+    {
+      "type": 1,
+      "value": "value"
+    },
+    {
+      "type": 0,
+      "value": " rounds remaining"
+    }
+  ],
+  "simulations.panel.solar": [
+    {
+      "type": 0,
+      "value": "Solar Panels"
+    }
+  ],
+  "simulations.panel.solar.description": [
+    {
+      "type": 0,
+      "value": "Solar Panels turn Influence into a steady supply of energy."
+    }
+  ],
+  "simulations.panel.space-factories": [
+    {
+      "type": 0,
+      "value": "Space Factories"
+    }
+  ],
+  "simulations.panel.space-factories.description": [
+    {
+      "type": 0,
+      "value": "Space Factories construct panels for the simulated Dyson Swarm."
+    }
+  ],
+  "simulations.panel.swarm-stats": [
+    {
+      "type": 0,
+      "value": "Swarm Stats"
+    }
+  ],
+  "simulations.panel.swarm-stats.description": [
+    {
+      "type": 0,
+      "value": "The launched Swarm produces energy and becomes Strange Matter at a Black Hole reset."
+    }
+  ],
+  "simulations.panel.villages": [
+    {
+      "type": 0,
+      "value": "Villages"
+    }
+  ],
+  "simulations.panel.villages.description": [
+    {
+      "type": 0,
+      "value": "Villages produce Workers and combine into Cities."
+    }
+  ],
+  "simulations.panel.workers": [
+    {
+      "type": 0,
+      "value": "Workers"
+    }
+  ],
+  "simulations.panel.workers.description": [
+    {
+      "type": 0,
+      "value": "Workers construct Housing for growing Communities."
+    }
+  ],
+  "simulations.panel.world-peace": [
+    {
+      "type": 0,
+      "value": "World Peace"
+    }
+  ],
+  "simulations.panel.world-trade": [
+    {
+      "type": 0,
+      "value": "World Trade"
+    }
+  ],
+  "simulations.progress.boost-remaining": [
+    {
+      "type": 0,
+      "value": "Boost remaining"
+    }
+  ],
+  "simulations.progress.charge": [
+    {
+      "type": 0,
+      "value": "Railgun charge"
+    }
+  ],
+  "simulations.progress.conversion": [
+    {
+      "type": 0,
+      "value": "Conversion progress"
+    }
+  ],
+  "simulations.progress.count-of-total": [
+    {
+      "type": 1,
+      "value": "current"
+    },
+    {
+      "type": 0,
+      "value": " / "
+    },
+    {
+      "type": 1,
+      "value": "total"
+    }
+  ],
+  "simulations.progress.factory-overdrive": [
+    {
+      "type": 0,
+      "value": "Factory overdrive"
+    }
+  ],
+  "simulations.progress.factory-overdrive-active": [
+    {
+      "type": 0,
+      "value": "×"
+    },
+    {
+      "type": 1,
+      "value": "multiplier"
+    },
+    {
+      "type": 0,
+      "value": " · "
+    },
+    {
+      "type": 1,
+      "value": "energy"
+    },
+    {
+      "type": 0,
+      "value": " consumed"
+    }
+  ],
+  "simulations.progress.factory-overdrive-idle": [
+    {
+      "type": 0,
+      "value": "1x · waiting for surplus energy"
+    }
+  ],
+  "simulations.progress.firing": [
+    {
+      "type": 0,
+      "value": "Volley remaining"
+    }
+  ],
+  "simulations.progress.firing-throughput": [
+    {
+      "type": 0,
+      "value": "Railgun throughput"
+    }
+  ],
+  "simulations.progress.percent": [
+    {
+      "type": 1,
+      "value": "value"
+    },
+    {
+      "type": 0,
+      "value": "%"
+    }
+  ],
+  "simulations.progress.production": [
+    {
+      "type": 0,
+      "value": "Production progress"
+    }
+  ],
+  "simulations.progress.production-rate": [
+    {
+      "type": 1,
+      "value": "value"
+    },
+    {
+      "type": 0,
+      "value": "/s"
+    }
+  ],
+  "simulations.progress.railgun-payload": [
+    {
+      "type": 0,
+      "value": "Railgun array"
+    }
+  ],
+  "simulations.progress.railgun-payload-value": [
+    {
+      "type": 1,
+      "value": "railguns"
+    },
+    {
+      "type": 0,
+      "value": " railguns · "
+    },
+    {
+      "type": 1,
+      "value": "perRound"
+    },
+    {
+      "type": 0,
+      "value": " panels / round · "
+    },
+    {
+      "type": 1,
+      "value": "rounds"
+    },
+    {
+      "type": 0,
+      "value": " rounds / volley"
+    }
+  ],
+  "simulations.progress.railgun-throughput-value": [
+    {
+      "type": 1,
+      "value": "volleys"
+    },
+    {
+      "type": 0,
+      "value": " volleys /s · "
+    },
+    {
+      "type": 1,
+      "value": "panels"
+    },
+    {
+      "type": 0,
+      "value": " panels /s"
+    }
+  ],
+  "simulations.progress.railgun-waiting": [
+    {
+      "type": 0,
+      "value": "Waiting for charge or panels"
+    }
+  ],
+  "simulations.progress.record-stored-panels": [
+    {
+      "type": 0,
+      "value": "Record stored"
+    }
+  ],
+  "simulations.progress.research": [
+    {
+      "type": 0,
+      "value": "Research progress"
+    }
+  ],
+  "simulations.progress.stored-panels": [
+    {
+      "type": 0,
+      "value": "Volley reserve"
+    }
+  ],
+  "simulations.progress.stored-panels-value": [
+    {
+      "type": 1,
+      "value": "current"
+    },
+    {
+      "type": 0,
+      "value": " / "
+    },
+    {
+      "type": 1,
+      "value": "target"
+    },
+    {
+      "type": 0,
+      "value": " for next volley"
+    }
+  ],
+  "simulations.progress.time-remaining": [
+    {
+      "type": 0,
+      "value": "Time remaining"
+    }
+  ],
+  "simulations.purchase-amount": [
+    {
+      "type": 0,
+      "value": "Purchase amount"
+    }
+  ],
+  "simulations.purchase-settings": [
+    {
+      "type": 0,
+      "value": "Purchase settings"
+    }
+  ],
+  "simulations.region": [
+    {
+      "type": 0,
+      "value": "Simulations"
+    }
+  ],
+  "simulations.summary.influence": [
+    {
+      "type": 0,
+      "value": "Influence: "
+    },
+    {
+      "type": 1,
+      "value": "value"
+    }
+  ],
+  "simulations.summary.simulation": [
+    {
+      "type": 0,
+      "value": "Simulation: "
+    },
+    {
+      "type": 1,
+      "value": "value"
+    }
+  ],
+  "simulations.time-multiplier": [
+    {
+      "type": 0,
+      "value": "Time multiplier"
+    }
+  ],
+  "simulations.time-multiplier.speed-increase": [
+    {
+      "type": 0,
+      "value": "Simulation speed increased by "
+    },
+    {
+      "type": 1,
+      "value": "value"
+    },
+    {
+      "type": 0,
+      "value": "%"
+    }
+  ],
+  "simulations.unavailable": [
+    {
+      "type": 0,
+      "value": "Simulation data is temporarily unavailable."
+    }
+  ],
+  "skills.action-failed": [
+    {
+      "type": 0,
+      "value": "The skill was not changed. Try again."
+    }
+  ],
+  "skills.affected-skills": [
+    {
+      "type": 0,
+      "value": "Skills affected by this change"
+    }
+  ],
+  "skills.assign-dependencies": [
+    {
+      "type": 0,
+      "value": "Also assign these required skills:"
+    }
+  ],
+  "skills.cancel": [
+    {
+      "type": 0,
+      "value": "Cancel"
+    }
+  ],
+  "skills.centre-tree": [
+    {
+      "type": 0,
+      "value": "Centre on starting skill"
+    }
+  ],
+  "skills.close": [
+    {
+      "type": 0,
+      "value": "Close"
+    }
+  ],
+  "skills.confirm": [
+    {
+      "type": 0,
+      "value": "Confirm"
+    }
+  ],
+  "skills.confirm-import": [
+    {
+      "type": 0,
+      "value": "Replace preset"
+    }
+  ],
+  "skills.confirm-preset-change": [
+    {
+      "type": 0,
+      "value": "Confirm preset change"
+    }
+  ],
+  "skills.confirm-skill-change": [
+    {
+      "type": 0,
+      "value": "Confirm skill change"
+    }
+  ],
+  "skills.copied": [
+    {
+      "type": 0,
+      "value": "Copied"
+    }
+  ],
+  "skills.copy": [
+    {
+      "type": 0,
+      "value": "Copy"
+    }
+  ],
+  "skills.cost": [
+    {
+      "type": 0,
+      "value": "Cost: "
+    },
+    {
+      "type": 1,
+      "value": "value"
+    },
+    {
+      "type": 0,
+      "value": " Skill Points"
+    }
+  ],
+  "skills.create-export": [
+    {
+      "type": 0,
+      "value": "Create export"
+    }
+  ],
+  "skills.current-preset": [
+    {
+      "type": 0,
+      "value": "Current"
+    }
+  ],
+  "skills.effect": [
+    {
+      "type": 0,
+      "value": "Effect:"
+    }
+  ],
+  "skills.exclusive": [
+    {
+      "type": 0,
+      "value": "Exclusive with: "
+    },
+    {
+      "type": 1,
+      "value": "names"
+    }
+  ],
+  "skills.export-preset": [
+    {
+      "type": 0,
+      "value": "Export"
+    }
+  ],
+  "skills.export-preset-help": [
+    {
+      "type": 0,
+      "value": "Create a string you can save or share."
+    }
+  ],
+  "skills.export-text": [
+    {
+      "type": 0,
+      "value": "Preset export string"
+    }
+  ],
+  "skills.fragments": [
+    {
+      "type": 0,
+      "value": "Fragments: "
+    },
+    {
+      "type": 1,
+      "value": "value"
+    }
+  ],
+  "skills.fragments-context": [
+    {
+      "type": 0,
+      "value": "Fragments owned: "
+    },
+    {
+      "type": 1,
+      "value": "value"
+    },
+    {
+      "type": 0,
+      "value": " ("
+    },
+    {
+      "type": 1,
+      "value": "delta"
+    },
+    {
+      "type": 0,
+      "value": ")"
+    }
+  ],
+  "skills.import-placeholder": [
+    {
+      "type": 0,
+      "value": "Paste preset string"
+    }
+  ],
+  "skills.import-preset": [
+    {
+      "type": 0,
+      "value": "Import"
+    }
+  ],
+  "skills.import-preset-help": [
+    {
+      "type": 0,
+      "value": "Paste a preset string and review it before replacing this preset."
+    }
+  ],
+  "skills.import-text": [
+    {
+      "type": 0,
+      "value": "Preset import string"
+    }
+  ],
+  "skills.include-dependencies": [
+    {
+      "type": 0,
+      "value": "Also include these required skills:"
+    }
+  ],
+  "skills.included-in-preset": [
+    {
+      "type": 0,
+      "value": "Included in "
+    },
+    {
+      "type": 1,
+      "value": "name"
+    }
+  ],
+  "skills.load-preset": [
+    {
+      "type": 0,
+      "value": "Load "
+    },
+    {
+      "type": 1,
+      "value": "name"
+    }
+  ],
+  "skills.manage-preset": [
+    {
+      "type": 0,
+      "value": "Manage "
+    },
+    {
+      "type": 1,
+      "value": "name"
+    }
+  ],
+  "skills.manage-preset-title": [
+    {
+      "type": 0,
+      "value": "Manage "
+    },
+    {
+      "type": 1,
+      "value": "name"
+    }
+  ],
+  "skills.matches": [
+    {
+      "type": 6,
+      "value": "count",
+      "options": {
+        "one": {
+          "value": [
+            {
+              "type": 7
+            },
+            {
+              "type": 0,
+              "value": " match"
+            }
+          ]
+        },
+        "other": {
+          "value": [
+            {
+              "type": 7
+            },
+            {
+              "type": 0,
+              "value": " matches"
+            }
+          ]
+        }
+      },
+      "offset": 0,
+      "pluralType": "cardinal"
+    }
+  ],
+  "skills.missing-requirements": [
+    {
+      "type": 0,
+      "value": "Missing: "
+    },
+    {
+      "type": 1,
+      "value": "names"
+    }
+  ],
+  "skills.non-refundable": [
+    {
+      "type": 0,
+      "value": "Allow automatic assignment of non-refundable skills"
+    }
+  ],
+  "skills.owned": [
+    {
+      "type": 0,
+      "value": "Owned"
+    }
+  ],
+  "skills.paste": [
+    {
+      "type": 0,
+      "value": "Paste"
+    }
+  ],
+  "skills.points": [
+    {
+      "type": 0,
+      "value": "Skill Points: "
+    },
+    {
+      "type": 1,
+      "value": "value"
+    }
+  ],
+  "skills.preset-change-failed": [
+    {
+      "type": 0,
+      "value": "The preset was not changed. Try again."
+    }
+  ],
+  "skills.preset-color": [
+    {
+      "type": 0,
+      "value": "Preset color"
+    }
+  ],
+  "skills.preset-color-cyan": [
+    {
+      "type": 0,
+      "value": "Cyan"
+    }
+  ],
+  "skills.preset-color-gold": [
+    {
+      "type": 0,
+      "value": "Gold"
+    }
+  ],
+  "skills.preset-color-orange": [
+    {
+      "type": 0,
+      "value": "Orange"
+    }
+  ],
+  "skills.preset-color-pink": [
+    {
+      "type": 0,
+      "value": "Pink"
+    }
+  ],
+  "skills.preset-color-rose": [
+    {
+      "type": 0,
+      "value": "Rose"
+    }
+  ],
+  "skills.preset-name": [
+    {
+      "type": 0,
+      "value": "Preset name"
+    }
+  ],
+  "skills.preset-summary": [
+    {
+      "type": 6,
+      "value": "count",
+      "options": {
+        "one": {
+          "value": [
+            {
+              "type": 7
+            },
+            {
+              "type": 0,
+              "value": " queued skill"
+            }
+          ]
+        },
+        "other": {
+          "value": [
+            {
+              "type": 7
+            },
+            {
+              "type": 0,
+              "value": " queued skills"
+            }
+          ]
+        }
+      },
+      "offset": 0,
+      "pluralType": "cardinal"
+    },
+    {
+      "type": 0,
+      "value": " · "
+    },
+    {
+      "type": 8,
+      "value": "workerValue",
+      "children": [
+        {
+          "type": 1,
+          "value": "workers"
+        },
+        {
+          "type": 0,
+          "value": "% Workers"
+        }
+      ]
+    },
+    {
+      "type": 0,
+      "value": " · "
+    },
+    {
+      "type": 8,
+      "value": "scientistValue",
+      "children": [
+        {
+          "type": 1,
+          "value": "scientists"
+        },
+        {
+          "type": 0,
+          "value": "% Scientists"
+        }
+      ]
+    }
+  ],
+  "skills.preset-transfer-failed": [
+    {
+      "type": 0,
+      "value": "The preset string could not be processed. Check it and try again."
+    }
+  ],
+  "skills.presets": [
+    {
+      "type": 0,
+      "value": "Presets"
+    }
+  ],
+  "skills.preview-import": [
+    {
+      "type": 0,
+      "value": "Preview import"
+    }
+  ],
+  "skills.purchase": [
+    {
+      "type": 0,
+      "value": "Assign Skill"
+    }
+  ],
+  "skills.purchase-point-action": [
+    {
+      "type": 0,
+      "value": "Assign Skill. Will cost "
+    },
+    {
+      "type": 1,
+      "value": "value"
+    },
+    {
+      "type": 0,
+      "value": " Skill Points"
+    }
+  ],
+  "skills.purchase-point-impact": [
+    {
+      "type": 0,
+      "value": "Will cost "
+    },
+    {
+      "type": 1,
+      "value": "value"
+    },
+    {
+      "type": 0,
+      "value": " Skill Points"
+    }
+  ],
+  "skills.queued": [
+    {
+      "type": 0,
+      "value": "Queued for automatic assignment"
+    }
+  ],
+  "skills.refund": [
+    {
+      "type": 0,
+      "value": "Unassign Skill"
+    }
+  ],
+  "skills.refund-point-action": [
+    {
+      "type": 0,
+      "value": "Unassign Skill. Will refund "
+    },
+    {
+      "type": 1,
+      "value": "value"
+    },
+    {
+      "type": 0,
+      "value": " Skill Points"
+    }
+  ],
+  "skills.refund-point-impact": [
+    {
+      "type": 0,
+      "value": "Will refund "
+    },
+    {
+      "type": 1,
+      "value": "value"
+    },
+    {
+      "type": 0,
+      "value": " Skill Points"
+    }
+  ],
+  "skills.region": [
+    {
+      "type": 0,
+      "value": "Skills"
+    }
+  ],
+  "skills.remove-dependants": [
+    {
+      "type": 0,
+      "value": "Also remove these dependent skills:"
+    }
+  ],
+  "skills.rename": [
+    {
+      "type": 0,
+      "value": "Rename"
+    }
+  ],
+  "skills.replace-preset": [
+    {
+      "type": 0,
+      "value": "Replace "
+    },
+    {
+      "type": 1,
+      "value": "name"
+    },
+    {
+      "type": 0,
+      "value": "?"
+    }
+  ],
+  "skills.requirements-progress": [
+    {
+      "type": 0,
+      "value": "Requirements: "
+    },
+    {
+      "type": 1,
+      "value": "complete"
+    },
+    {
+      "type": 0,
+      "value": "/"
+    },
+    {
+      "type": 1,
+      "value": "total"
+    },
+    {
+      "type": 0,
+      "value": " complete"
+    }
+  ],
+  "skills.reset": [
+    {
+      "type": 0,
+      "value": "Reset refundable skills"
+    }
+  ],
+  "skills.reset-warning": [
+    {
+      "type": 0,
+      "value": "Refunds all currently refundable skills and clears automatic assignment."
+    }
+  ],
+  "skills.search": [
+    {
+      "type": 0,
+      "value": "Search skills"
+    }
+  ],
+  "skills.search-placeholder": [
+    {
+      "type": 0,
+      "value": "Search the tree…"
+    }
+  ],
+  "skills.settings": [
+    {
+      "type": 0,
+      "value": "Skill presets and reset"
+    }
+  ],
+  "skills.tree": [
+    {
+      "type": 0,
+      "value": "Skill tree"
+    }
+  ],
+  "skills.tree-instructions": [
+    {
+      "type": 0,
+      "value": "Drag to pan. Pinch or use the zoom controls to zoom. Search and press Enter to open the first matching skill."
+    }
+  ],
+  "skills.unassign-dependants": [
+    {
+      "type": 0,
+      "value": "Also unassign these dependent skills:"
+    }
+  ],
+  "skills.unavailable": [
+    {
+      "type": 0,
+      "value": "This action is not currently available."
+    }
+  ],
+  "skills.zoom-in": [
+    {
+      "type": 0,
+      "value": "Zoom in"
+    }
+  ],
+  "skills.zoom-out": [
+    {
+      "type": 0,
+      "value": "Zoom out"
+    }
+  ],
+  "startup-shell.action.check-again": [
+    {
+      "type": 0,
+      "value": "Check again"
+    }
+  ],
+  "startup-shell.action.export-recovery": [
+    {
+      "type": 0,
+      "value": "Export recovery data"
+    }
+  ],
+  "startup-shell.action.import": [
+    {
+      "type": 0,
+      "value": "Import a save"
+    }
+  ],
+  "startup-shell.action.reload": [
+    {
+      "type": 0,
+      "value": "Reload safely"
+    }
+  ],
+  "startup-shell.action.retry": [
+    {
+      "type": 0,
+      "value": "Try startup again"
+    }
+  ],
+  "startup-shell.action.start": [
+    {
+      "type": 0,
+      "value": "Start game"
+    }
+  ],
+  "startup-shell.action.use-this-tab": [
+    {
+      "type": 0,
+      "value": "Use this tab"
+    }
+  ],
+  "startup-shell.app-name": [
+    {
+      "type": 0,
+      "value": "Idle Dyson Swarm"
+    }
+  ],
+  "startup-shell.boundary.body": [
+    {
+      "type": 0,
+      "value": "The game display stopped. No automatic retry or progress change was attempted. Reload this page when you are ready."
+    }
+  ],
+  "startup-shell.boundary.title": [
+    {
+      "type": 0,
+      "value": "The display stopped unexpectedly"
+    }
+  ],
+  "startup-shell.diagnostics.label": [
+    {
+      "type": 0,
+      "value": "Redacted local diagnostic report"
+    }
+  ],
+  "startup-shell.diagnostics.summary": [
+    {
+      "type": 0,
+      "value": "Local diagnostic details"
+    }
+  ],
+  "startup-shell.import.overwrite-confirmation": [
+    {
+      "type": 0,
+      "value": "Import this save and replace the current browser profile? A recovery copy is retained before replacement."
+    }
+  ],
+  "startup-shell.import.text-help": [
+    {
+      "type": 0,
+      "value": "Paste an exported Idle Dyson Swarm save string. It is checked before your current browser progress can be replaced."
+    }
+  ],
+  "startup-shell.import.text-label": [
+    {
+      "type": 0,
+      "value": "Save text"
+    }
+  ],
+  "startup-shell.operation.export-failed": [
+    {
+      "type": 0,
+      "value": "Recovery data could not be exported from this tab."
+    }
+  ],
+  "startup-shell.operation.export-pending": [
+    {
+      "type": 0,
+      "value": "Preparing recovery data…"
+    }
+  ],
+  "startup-shell.operation.export-succeeded": [
+    {
+      "type": 0,
+      "value": "Recovery data exported."
+    }
+  ],
+  "startup-shell.operation.import-failed": [
+    {
+      "type": 0,
+      "value": "The save could not be imported. Your existing progress was not replaced."
+    }
+  ],
+  "startup-shell.operation.import-pending": [
+    {
+      "type": 0,
+      "value": "Importing the selected save…"
+    }
+  ],
+  "startup-shell.operation.import-succeeded": [
+    {
+      "type": 0,
+      "value": "Save imported successfully."
+    }
+  ],
+  "startup-shell.operation.reload-completed": [
+    {
+      "type": 0,
+      "value": "Reload requested."
+    }
+  ],
+  "startup-shell.operation.reload-failed": [
+    {
+      "type": 0,
+      "value": "This tab could not reload safely. Your progress was not reset."
+    }
+  ],
+  "startup-shell.operation.reload-pending": [
+    {
+      "type": 0,
+      "value": "Releasing this tab before reloading…"
+    }
+  ],
+  "startup-shell.state.application-blocked.body": [
+    {
+      "type": 0,
+      "value": "A required browser feature is unavailable. Your existing progress has not been changed."
+    }
+  ],
+  "startup-shell.state.application-blocked.title": [
+    {
+      "type": 0,
+      "value": "This browser cannot start the game"
+    }
+  ],
+  "startup-shell.state.error.body": [
+    {
+      "type": 0,
+      "value": "Startup stopped without replacing your existing progress."
+    }
+  ],
+  "startup-shell.state.error.title": [
+    {
+      "type": 0,
+      "value": "The game could not start"
+    }
+  ],
+  "startup-shell.state.idle.body": [
+    {
+      "type": 0,
+      "value": "Start when you are ready. Your saved progress is not changed by this screen."
+    }
+  ],
+  "startup-shell.state.idle.title": [
+    {
+      "type": 0,
+      "value": "Ready to start"
+    }
+  ],
+  "startup-shell.state.ownership-lost.body": [
+    {
+      "type": 0,
+      "value": "Game activity stopped to protect your progress because another tab or window became active."
+    }
+  ],
+  "startup-shell.state.ownership-lost.title": [
+    {
+      "type": 0,
+      "value": "This tab stopped writing progress"
+    }
+  ],
+  "startup-shell.state.ready-placeholder.body": [
+    {
+      "type": 0,
+      "value": "Startup completed. The gameplay surface will appear here."
+    }
+  ],
+  "startup-shell.state.ready-placeholder.title": [
+    {
+      "type": 0,
+      "value": "Game ready"
+    }
+  ],
+  "startup-shell.state.recovery.body": [
+    {
+      "type": 0,
+      "value": "The game did not replace the saved progress it could not safely open. Import another save to continue. If that import cannot be used, its retained recovery data can then be exported for support."
+    }
+  ],
+  "startup-shell.state.recovery.title": [
+    {
+      "type": 0,
+      "value": "Saved progress needs attention"
+    }
+  ],
+  "startup-shell.state.starting.body": [
+    {
+      "type": 0,
+      "value": "Checking this browser and preparing your saved progress."
+    }
+  ],
+  "startup-shell.state.starting.title": [
+    {
+      "type": 0,
+      "value": "Starting the game"
+    }
+  ],
+  "startup-shell.state.stopping.body": [
+    {
+      "type": 0,
+      "value": "Finishing the current operation and releasing this tab."
+    }
+  ],
+  "startup-shell.state.stopping.title": [
+    {
+      "type": 0,
+      "value": "Stopping safely"
+    }
+  ],
+  "startup-shell.state.writer-blocked.body": [
+    {
+      "type": 0,
+      "value": "Another browser context is holding the writable game session. Use this tab to continue here and stop the other context from writing progress."
+    }
+  ],
+  "startup-shell.state.writer-blocked.title": [
+    {
+      "type": 0,
+      "value": "Another tab is using this game"
+    }
+  ],
+  "statistics.cause.artificial-intelligence": [
+    {
+      "type": 0,
+      "value": "Artificial Intelligence"
+    }
+  ],
+  "statistics.cause.black-hole": [
+    {
+      "type": 0,
+      "value": "Black Hole"
+    }
+  ],
+  "statistics.cause.global-warming": [
+    {
+      "type": 0,
+      "value": "Global Warming"
+    }
+  ],
+  "statistics.cause.meteor": [
+    {
+      "type": 0,
+      "value": "Meteor"
+    }
+  ],
+  "statistics.group.activity": [
+    {
+      "type": 0,
+      "value": "Activity"
+    }
+  ],
+  "statistics.group.infinity": [
+    {
+      "type": 0,
+      "value": "Infinity"
+    }
+  ],
+  "statistics.group.reality": [
+    {
+      "type": 0,
+      "value": "Reality"
+    }
+  ],
+  "statistics.group.simulations": [
+    {
+      "type": 0,
+      "value": "Simulations"
+    }
+  ],
+  "statistics.last-cycle": [
+    {
+      "type": 0,
+      "value": "Last completed cycle"
+    }
+  ],
+  "statistics.last-cycle.break-infinity": [
+    {
+      "type": 0,
+      "value": "Break Infinity"
+    }
+  ],
+  "statistics.last-cycle.duration": [
+    {
+      "type": 0,
+      "value": "Duration"
+    }
+  ],
+  "statistics.last-cycle.empty": [
+    {
+      "type": 0,
+      "value": "No completed cycle has been recorded yet."
+    }
+  ],
+  "statistics.last-cycle.ordinary-infinity": [
+    {
+      "type": 0,
+      "value": "Ordinary Infinity"
+    }
+  ],
+  "statistics.last-cycle.reset-cause": [
+    {
+      "type": 0,
+      "value": "Reset cause"
+    }
+  ],
+  "statistics.last-cycle.reward": [
+    {
+      "type": 0,
+      "value": "Reward"
+    }
+  ],
+  "statistics.last-cycle.simulation-reset": [
+    {
+      "type": 0,
+      "value": "Simulation reset"
+    }
+  ],
+  "statistics.last-cycle.type": [
+    {
+      "type": 0,
+      "value": "Cycle type"
+    }
+  ],
+  "statistics.metric.ai-resets": [
+    {
+      "type": 0,
+      "value": "Artificial Intelligence resets"
+    }
+  ],
+  "statistics.metric.automatic-influence": [
+    {
+      "type": 0,
+      "value": "Influence gathered automatically"
+    }
+  ],
+  "statistics.metric.black-hole-resets": [
+    {
+      "type": 0,
+      "value": "Black Hole resets"
+    }
+  ],
+  "statistics.metric.bot-cap-infinity-points": [
+    {
+      "type": 0,
+      "value": "Bot-cap Infinity Points"
+    }
+  ],
+  "statistics.metric.bot-cap-overflow-rewards": [
+    {
+      "type": 0,
+      "value": "Bot-cap overflow rewards"
+    }
+  ],
+  "statistics.metric.break-infinities": [
+    {
+      "type": 0,
+      "value": "Break Infinities"
+    }
+  ],
+  "statistics.metric.break-infinity-points": [
+    {
+      "type": 0,
+      "value": "Break Infinity Points"
+    }
+  ],
+  "statistics.metric.capacity-stall-time": [
+    {
+      "type": 0,
+      "value": "Reality capacity stalled"
+    }
+  ],
+  "statistics.metric.dream-resets": [
+    {
+      "type": 0,
+      "value": "Simulation resets"
+    }
+  ],
+  "statistics.metric.global-warming-resets": [
+    {
+      "type": 0,
+      "value": "Global Warming resets"
+    }
+  ],
+  "statistics.metric.infinity-points": [
+    {
+      "type": 0,
+      "value": "Infinity Points earned"
+    }
+  ],
+  "statistics.metric.infinity-resets": [
+    {
+      "type": 0,
+      "value": "Infinity resets"
+    }
+  ],
+  "statistics.metric.manual-influence": [
+    {
+      "type": 0,
+      "value": "Influence gathered manually"
+    }
+  ],
+  "statistics.metric.meteor-resets": [
+    {
+      "type": 0,
+      "value": "Meteor resets"
+    }
+  ],
+  "statistics.metric.ordinary-infinities": [
+    {
+      "type": 0,
+      "value": "Ordinary Infinities"
+    }
+  ],
+  "statistics.metric.ordinary-infinity-points": [
+    {
+      "type": 0,
+      "value": "Ordinary Infinity Points"
+    }
+  ],
+  "statistics.metric.reality-workers": [
+    {
+      "type": 0,
+      "value": "Reality workers created"
+    }
+  ],
+  "statistics.metric.simulated-time": [
+    {
+      "type": 0,
+      "value": "Simulated time"
+    }
+  ],
+  "statistics.metric.strange-matter": [
+    {
+      "type": 0,
+      "value": "Strange Matter earned"
+    }
+  ],
+  "statistics.recent-activity": [
+    {
+      "type": 0,
+      "value": "Recent activity"
+    }
+  ],
+  "statistics.region": [
+    {
+      "type": 0,
+      "value": "Statistics"
+    }
+  ],
+  "statistics.scope.latest-interval": [
+    {
+      "type": 0,
+      "value": "Latest interval"
+    }
+  ],
+  "statistics.scope.lifetime": [
+    {
+      "type": 0,
+      "value": "Lifetime"
+    }
+  ],
+  "statistics.scope.quantum-run": [
+    {
+      "type": 0,
+      "value": "Current Quantum run"
+    }
+  ],
+  "statistics.tracked-time": [
+    {
+      "type": 0,
+      "value": "Tracked simulation time"
+    }
+  ],
+  "statistics.tracking-notice": [
+    {
+      "type": 0,
+      "value": "Statistics have been tracked since this feature was added."
+    }
+  ],
+  "statistics.window.last-day": [
+    {
+      "type": 0,
+      "value": "Last 24 hours"
+    }
+  ],
+  "statistics.window.last-hour": [
+    {
+      "type": 0,
+      "value": "Last 60 minutes"
+    }
+  ],
+  "statistics.window.last-thirty-days": [
+    {
+      "type": 0,
+      "value": "Last 30 days"
+    }
+  ],
+  "story.avocato.description": [
+    {
+      "type": 0,
+      "value": "Visit your friendly interdimensional reset assistant."
+    }
+  ],
+  "story.avocato.open": [
+    {
+      "type": 0,
+      "value": "Visit Avocato"
+    }
+  ],
+  "story.avocato.title": [
+    {
+      "type": 0,
+      "value": "Avocato"
+    }
+  ],
+  "story.chapter-1": [
+    {
+      "type": 0,
+      "value": "Chapter 1"
+    }
+  ],
+  "story.chapter-1.intro": [
+    {
+      "type": 0,
+      "value": "As you stare down at your keyboard, the computer whirring in the background, an idea suddenly comes to you. You stand up and head over to your workbench... You begin working and quickly build a bot, it has two arms and hovers. Huh it works... You assign it to begin making solar panels and get to work on another."
+    }
+  ],
+  "story.chapter-1.part-2": [
+    {
+      "type": 0,
+      "value": "Before long you have 10 bots, but this is quickly getting tiring. You set up an assembly line and write some code that lets it produce bots for you."
+    }
+  ],
+  "story.chapter-1.part-3": [
+    {
+      "type": 0,
+      "value": "You're also going to need some power, so you launch some panels into space, and begin to sell off the excess power."
+    }
+  ],
+  "story.chapter-2": [
+    {
+      "type": 0,
+      "value": "Chapter 2"
+    }
+  ],
+  "story.chapter-2.intro": [
+    {
+      "type": 0,
+      "value": "You decide that manually building assembly lines is too much work, a few moments later you decide to design an AI that can manage the creation of assembly lines for you. Before long it's ready. You insert the module into a specialized bot and it whirrs to life quickly buzzing off to begin constructing more assembly lines."
+    }
+  ],
+  "story.chapter-2.part-2": [
+    {
+      "type": 0,
+      "value": "You're starting to run out of space. You've set up a research division and created better AI that can collect the resources you need for your discoveries. But you need to create some servers to store all the data. Costly but worth it."
+    }
+  ],
+  "story.chapter-2.part-3": [
+    {
+      "type": 0,
+      "value": "Before long your empire grows beyond anything you could ever have imagined. You've long since surrounded your first star with panels and it's time to begin thinking of expansion. You send out some probes and start looking for ideal systems to take over. In the meantime you expand your operation to other planets in the system."
+    }
+  ],
+  "story.chapter-3": [
+    {
+      "type": 0,
+      "value": "Chapter 3"
+    }
+  ],
+  "story.chapter-3.intro": [
+    {
+      "type": 0,
+      "value": "As you stare into a mirror one day, you are hit with the sudden realization of how long it's been. You design a method of extracting your consciousness and export it to an organic computer. With infinite life in your grasp you set out to explore the universe."
+    }
+  ],
+  "story.chapter-3.part-2": [
+    {
+      "type": 0,
+      "value": "One day you come across some kind of anomaly, your curiosity gets the better of you. You head towards it and avocado into the murky mists.. Some writing begins to take shape and you catch a glimpse of a few words: Buffer overflow imminent... 41.9Qi/42.0Qi. The number ticks over and everything goes black..."
+    }
+  ],
+  "story.chapter-3.part-2-stare": [
+    {
+      "type": 0,
+      "value": "One day you come across some kind of anomaly, your curiosity gets the better of you. You head towards it and stare into the murky mists.. Some writing begins to take shape and you catch a glimpse of a few words: Buffer overflow imminent... 41.9Qi/42.0Qi. The number ticks over and everything goes black..."
+    }
+  ],
+  "story.chapter-4": [
+    {
+      "type": 0,
+      "value": "Chapter 4"
+    }
+  ],
+  "story.chapter-4.intro": [
+    {
+      "type": 0,
+      "value": "You find yourself staring at your workbench, having just created your first bot..."
+    }
+  ],
+  "story.chapter-4.part-10": [
+    {
+      "type": 0,
+      "value": "10 times.. The machine seems to be reaching its limits. Perhaps its best to focus on something new. You have noticed with each reset the anomaly has changed slightly. Perhaps it's time to focus on the secrets of the Universe."
+    }
+  ],
+  "story.chapter-4.part-2": [
+    {
+      "type": 0,
+      "value": "You decide to take advantage of what you have learned. Infinity doesn't seem that long after all. Altering a couple of lines in the assembly line logic allows you to produce bots at twice the rate. However before long your previous experience with this reality slips from your mind as if it were a dream. \"There has to be a way to remember more\" you think to yourself as you set out to find the anomaly once more."
+    }
+  ],
+  "story.chapter-4.part-3": [
+    {
+      "type": 0,
+      "value": "Remembering more is no easy feat and the multitimeline stuff takes its toll. You manage to triple the effect of your Managers, this bonus trickles down to your Assembly Lines too. You wonder if you can do better next time."
+    }
+  ],
+  "story.chapter-4.part-4": [
+    {
+      "type": 0,
+      "value": "Remembering is getting easier. This time you Quadruple the power of your servers using information you intentionally acquired from the future. And set out to improve your Data Centers next."
+    }
+  ],
+  "story.chapter-4.part-5": [
+    {
+      "type": 0,
+      "value": "Advanced spacial reasoning along with smaller server profiles allow you to fit far more power in the same space. Five times more to be precise."
+    }
+  ],
+  "story.chapter-4.part-6": [
+    {
+      "type": 0,
+      "value": "You set up an algorithm that allows you to bring large quantities of data back with you Quantum tunneling was difficult to work out but now you can send planetary designs back through time and preplan your Data Centers. Six times as efficient as your first run your entire production line is becoming a much smoother machine. How long can this go on for?"
+    }
+  ],
+  "story.chapter-4.part-7": [
+    {
+      "type": 0,
+      "value": "7 times.."
+    }
+  ],
+  "story.chapter-4.part-8": [
+    {
+      "type": 0,
+      "value": "8 times.."
+    }
+  ],
+  "story.chapter-4.part-9": [
+    {
+      "type": 0,
+      "value": "9 times.."
+    }
+  ],
+  "story.chapter-5": [
+    {
+      "type": 0,
+      "value": "Chapter 5"
+    }
+  ],
+  "story.chapter-5.part-1": [
+    {
+      "type": 0,
+      "value": "As you gather the last secret a vague memory of another life begins to surface... A portal appears next to the anomaly, a new path forward. You decide it's worth the risk. There's nothing left for you here anyway."
+    }
+  ],
+  "story.chapter-5.part-2": [
+    {
+      "type": 0,
+      "value": "Somewhere in the distance a message seems to be looping on repeat... Temporal Anomaly located... please input instructions."
+    }
+  ],
+  "story.chapter-5.part-3": [
+    {
+      "type": 0,
+      "value": "You blink your eyes open and memories begin to flood back, how long were you stuck in there? You look down at your watch; what felt like many lifetimes has passed in mere minutes. You sit up and step from the makeshift platform you used for the simulator. It's difficult to stand as you become somewhat faint in your mortal form."
+    }
+  ],
+  "story.chapter-5.part-4": [
+    {
+      "type": 0,
+      "value": "You head over to your workstation and overlook the data. 'Simulation primed, ready to begin consumption.' You hit enter and the machine begins to consume realities much like the one you were just in. Gathering data to run even more simulations. Whatever this artifact is, you will work out what it does."
+    }
+  ],
+  "story.chapter-5.part-5": [
+    {
+      "type": 0,
+      "value": "While you wait you decide to start manually playing through simulations. Bit of \"game time\" couldn't hurt."
+    }
+  ],
+  "story.chapter-6": [
+    {
+      "type": 0,
+      "value": "Chapter 6"
+    }
+  ],
+  "story.chapter-6.complete": [
+    {
+      "type": 0,
+      "value": "A sudden realization forms in your mind. While you thought all this time you were the one running the simulation, you have in fact been the simulation. In the distance you hear a few words as time begins to slow... \"Shut it down... you know what happened last time the simulation became self aware. You're just going to have to start over.\""
+    }
+  ],
+  "story.chapter-6.speed": [
+    {
+      "type": 0,
+      "value": "The artifact slows to a crawl. You give it another tap; suddenly the words on the computer change from \"Undefined\" and are replaced with CPU time..."
+    }
+  ],
+  "story.chapter-6.translation": [
+    {
+      "type": 0,
+      "value": "As the computer translates the last letter, two words show... \"The Artifact\" Bah! What does that even mean?! Clearly there is something missing."
+    }
+  ],
+  "story.introduction": [
+    {
+      "type": 0,
+      "value": "The story unfolds as you reach milestones across Infinity, Reality and Simulations."
+    }
+  ],
+  "story.region": [
+    {
+      "type": 0,
+      "value": "Story"
+    }
+  ],
+  "wiki.bots.milestones": [
+    {
+      "type": 0,
+      "value": "Assembly Lines, AI Managers, Servers, Data Centers and Planets double their yield at 50 manually purchased and double again at 100. Each manual purchase beyond 100 adds another 1% boost."
+    }
+  ],
+  "wiki.bots.milestones-title": [
+    {
+      "type": 0,
+      "value": "Manual purchase milestones"
+    }
+  ],
+  "wiki.bots.overview": [
+    {
+      "type": 0,
+      "value": "Build bots, then distribute them between panel production and research with the allocation control. Production bots create Solar Panels which are launched into orbit automatically."
+    }
+  ],
+  "wiki.bots.overview-title": [
+    {
+      "type": 0,
+      "value": "Building the swarm"
+    }
+  ],
+  "wiki.bots.panels": [
+    {
+      "type": 0,
+      "value": "Each panel produces energy for its Panel Lifetime before its orbit decays into the star. That energy is sold automatically for cash, which funds stronger bot production."
+    }
+  ],
+  "wiki.bots.panels-title": [
+    {
+      "type": 0,
+      "value": "Panels and energy"
+    }
+  ],
+  "wiki.bots.scale": [
+    {
+      "type": 0,
+      "value": "20,000 active panels surround one star. 100 billion surrounded stars engulf one galaxy. The interface changes from panels, to stars, to galaxies as your swarm grows."
+    }
+  ],
+  "wiki.bots.scale-title": [
+    {
+      "type": 0,
+      "value": "Stars and galaxies"
+    }
+  ],
+  "wiki.category.bots": [
+    {
+      "type": 0,
+      "value": "Bots"
+    }
+  ],
+  "wiki.category.infinity": [
+    {
+      "type": 0,
+      "value": "Infinity"
+    }
+  ],
+  "wiki.category.lore": [
+    {
+      "type": 0,
+      "value": "Lore"
+    }
+  ],
+  "wiki.category.other": [
+    {
+      "type": 0,
+      "value": "Other"
+    }
+  ],
+  "wiki.category.patch-notes": [
+    {
+      "type": 0,
+      "value": "Patch Notes"
+    }
+  ],
+  "wiki.category.quantum": [
+    {
+      "type": 0,
+      "value": "Quantum Leap"
+    }
+  ],
+  "wiki.category.reality": [
+    {
+      "type": 0,
+      "value": "Reality"
+    }
+  ],
+  "wiki.category.research": [
+    {
+      "type": 0,
+      "value": "Research"
+    }
+  ],
+  "wiki.category.secrets": [
+    {
+      "type": 0,
+      "value": "Secrets of the Universe"
+    }
+  ],
+  "wiki.category.skills": [
+    {
+      "type": 0,
+      "value": "Skill Tree"
+    }
+  ],
+  "wiki.infinity.overview": [
+    {
+      "type": 0,
+      "value": "Reaching 42 quintillion bots lets you break reality and earn an Infinity Point. The first five breaks extend the Infinity Point production bonus across Assembly Lines, AI Managers, Servers, Data Centers and Planets."
+    }
+  ],
+  "wiki.infinity.overview-title": [
+    {
+      "type": 0,
+      "value": "Breaking reality"
+    }
+  ],
+  "wiki.infinity.scaling": [
+    {
+      "type": 0,
+      "value": "Every spent or unspent Infinity Point increases the production of the facilities affected by your completed breaks. Shop upgrades spend points without removing their contribution to that total."
+    }
+  ],
+  "wiki.infinity.scaling-title": [
+    {
+      "type": 0,
+      "value": "Infinity Point scaling"
+    }
+  ],
+  "wiki.infinity.secrets": [
+    {
+      "type": 0,
+      "value": "After a Quantum Leap, Secret upgrades reveal the meaning of life one letter at a time and apply a permanent hidden production benefit."
+    }
+  ],
+  "wiki.infinity.secrets-title": [
+    {
+      "type": 0,
+      "value": "Secrets"
+    }
+  ],
+  "wiki.introduction": [
+    {
+      "type": 0,
+      "value": "Reference notes revealed as your run reaches each layer."
+    }
+  ],
+  "wiki.lore.introduction": [
+    {
+      "type": 0,
+      "value": "The original Wiki chronicle. These chapters are separate from the interactive Story destination."
+    }
+  ],
+  "wiki.other.easter-egg": [
+    {
+      "type": 0,
+      "value": "A seven-step discovery begins in Quantum Management. Completing every step awards four Skill Points."
+    }
+  ],
+  "wiki.other.easter-egg-title": [
+    {
+      "type": 0,
+      "value": "Hidden discovery"
+    }
+  ],
+  "wiki.other.offline": [
+    {
+      "type": 0,
+      "value": "Time away from the game becomes Offline Time currency. Spend it from the Offline Time screen. A return summary appears after you have been away for at least 60 seconds."
+    }
+  ],
+  "wiki.other.offline-title": [
+    {
+      "type": 0,
+      "value": "Offline Time"
+    }
+  ],
+  "wiki.patch-notes.introduction": [
+    {
+      "type": 0,
+      "value": "The complete release history authored for the Unity Wiki."
+    }
+  ],
+  "wiki.quantum.advice": [
+    {
+      "type": 0,
+      "value": "Quantum upgrades open new systems and permanent efficiencies. Review each prerequisite and preview before committing to a reset."
+    }
+  ],
+  "wiki.quantum.advice-title": [
+    {
+      "type": 0,
+      "value": "Planning a Leap"
+    }
+  ],
+  "wiki.quantum.overview": [
+    {
+      "type": 0,
+      "value": "A Quantum Leap fully resets the current Reality at 42 Infinity Points and awards Quantum Shards. Spend them on permanent upgrades in Quantum Management."
+    }
+  ],
+  "wiki.quantum.overview-title": [
+    {
+      "type": 0,
+      "value": "Quantum Shards"
+    }
+  ],
+  "wiki.reality.anomaly": [
+    {
+      "type": 0,
+      "value": "Speed Reduction and Translation upgrades advance the story and each award one Skill Point."
+    }
+  ],
+  "wiki.reality.anomaly-title": [
+    {
+      "type": 0,
+      "value": "Anomaly"
+    }
+  ],
+  "wiki.reality.countermeasures": [
+    {
+      "type": 0,
+      "value": "Countermeasures in Research let simulations survive later disasters and increase the Strange Matter earned from a reset."
+    }
+  ],
+  "wiki.reality.countermeasures-title": [
+    {
+      "type": 0,
+      "value": "Countermeasures"
+    }
+  ],
+  "wiki.reality.disasters": [
+    {
+      "type": 0,
+      "value": "Disasters reset a simulated world and award Strange Matter. Spend Strange Matter on Reality research and Countermeasures."
+    }
+  ],
+  "wiki.reality.disasters-title": [
+    {
+      "type": 0,
+      "value": "Disasters"
+    }
+  ],
+  "wiki.reality.offline": [
+    {
+      "type": 0,
+      "value": "Simulation offline progress is stored as time rather than immediately awarded resources. The Time Multiplier upgrade lets you spend that reserve to accelerate Simulations."
+    }
+  ],
+  "wiki.reality.offline-title": [
+    {
+      "type": 0,
+      "value": "Simulation Offline Progress"
+    }
+  ],
+  "wiki.reality.overview": [
+    {
+      "type": 0,
+      "value": "Reality is the second major layer. Its upgrades change how you break reality and how later prestige systems work."
+    }
+  ],
+  "wiki.reality.overview-title": [
+    {
+      "type": 0,
+      "value": "The Reality layer"
+    }
+  ],
+  "wiki.region": [
+    {
+      "type": 0,
+      "value": "Wiki"
+    }
+  ],
+  "wiki.research.overview": [
+    {
+      "type": 0,
+      "value": "Assigning workers as scientists produces research points. Spend them on upgrades; some research only appears after you reach its required amount or progression era."
+    }
+  ],
+  "wiki.research.overview-title": [
+    {
+      "type": 0,
+      "value": "Scientists and upgrades"
+    }
+  ],
+  "wiki.secrets.effect.ai-manager-boost": [
+    {
+      "type": 0,
+      "value": "AI Manager research boost"
+    }
+  ],
+  "wiki.secrets.effect.ai-manager-multiplier": [
+    {
+      "type": 0,
+      "value": "AI Manager multiplier"
+    }
+  ],
+  "wiki.secrets.effect.assembly-line-boost": [
+    {
+      "type": 0,
+      "value": "Assembly Line research boost"
+    }
+  ],
+  "wiki.secrets.effect.assembly-line-multiplier": [
+    {
+      "type": 0,
+      "value": "Assembly Line multiplier"
+    }
+  ],
+  "wiki.secrets.effect.cash-multiplier": [
+    {
+      "type": 0,
+      "value": "Cash multiplier"
+    }
+  ],
+  "wiki.secrets.effect.planet-boost": [
+    {
+      "type": 0,
+      "value": "Planet research boost"
+    }
+  ],
+  "wiki.secrets.effect.planet-multiplier": [
+    {
+      "type": 0,
+      "value": "Planet multiplier"
+    }
+  ],
+  "wiki.secrets.effect.science-multiplier": [
+    {
+      "type": 0,
+      "value": "Science multiplier"
+    }
+  ],
+  "wiki.secrets.effect.server-boost": [
+    {
+      "type": 0,
+      "value": "Server research boost"
+    }
+  ],
+  "wiki.secrets.effect.server-multiplier": [
+    {
+      "type": 0,
+      "value": "Server multiplier"
+    }
+  ],
+  "wiki.secrets.level": [
+    {
+      "type": 0,
+      "value": "Secret "
+    },
+    {
+      "type": 1,
+      "value": "level"
+    }
+  ],
+  "wiki.secrets.meaning-so-far": [
+    {
+      "type": 0,
+      "value": "Meaning so far: "
+    },
+    {
+      "type": 1,
+      "value": "meaning"
+    }
+  ],
+  "wiki.secrets.overview": [
+    {
+      "type": 1,
+      "value": "revealed"
+    },
+    {
+      "type": 0,
+      "value": " of 27 Secrets revealed"
+    }
+  ],
+  "wiki.secrets.overview-title": [
+    {
+      "type": 0,
+      "value": "What has been revealed"
+    }
+  ],
+  "wiki.skills.auto-assign": [
+    {
+      "type": 0,
+      "value": "The tree remembers assignment order so it can rebuild your layout after Infinity or a Quantum reset. Presets save complete layouts. Skills such as Banking may be excluded from automatic assignment."
+    }
+  ],
+  "wiki.skills.auto-assign-title": [
+    {
+      "type": 0,
+      "value": "Auto-assign and presets"
+    }
+  ],
+  "wiki.skills.goal-1": [
+    {
+      "type": 0,
+      "value": "Create 10 Bots."
+    }
+  ],
+  "wiki.skills.goal-10": [
+    {
+      "type": 0,
+      "value": "Engulf 100 Galaxies."
+    }
+  ],
+  "wiki.skills.goal-2": [
+    {
+      "type": 0,
+      "value": "Build 5 manually purchased Assembly Lines."
+    }
+  ],
+  "wiki.skills.goal-3": [
+    {
+      "type": 0,
+      "value": "Maintain 20,000 active Panels."
+    }
+  ],
+  "wiki.skills.goal-4": [
+    {
+      "type": 0,
+      "value": "Own 20 Planets."
+    }
+  ],
+  "wiki.skills.goal-5": [
+    {
+      "type": 0,
+      "value": "Decay 1 trillion Panels in total."
+    }
+  ],
+  "wiki.skills.goal-6": [
+    {
+      "type": 0,
+      "value": "Surround 1 billion Stars."
+    }
+  ],
+  "wiki.skills.goal-7": [
+    {
+      "type": 0,
+      "value": "Surround 10 billion Stars."
+    }
+  ],
+  "wiki.skills.goal-8": [
+    {
+      "type": 0,
+      "value": "Engulf 1 Galaxy."
+    }
+  ],
+  "wiki.skills.goal-9": [
+    {
+      "type": 0,
+      "value": "Engulf 10 Galaxies."
+    }
+  ],
+  "wiki.skills.goals-title": [
+    {
+      "type": 0,
+      "value": "Goals"
+    }
+  ],
+  "wiki.skills.overview": [
+    {
+      "type": 0,
+      "value": "Skill Points are awarded by completing goals, with further sources unlocked later. Exclusive skills disable their alternatives, Fragment skills grow with assigned Fragments, and some mechanically dependent skills cannot be refunded."
+    }
+  ],
+  "wiki.skills.overview-title": [
+    {
+      "type": 0,
+      "value": "How skills work"
+    }
+  ],
+  "wiki.title": [
+    {
+      "type": 0,
+      "value": "Wiki"
+    }
+  ],
+  "wiki.topic-navigation": [
+    {
+      "type": 0,
+      "value": "Wiki topics"
+    }
+  ],
+  "wiki.topics": [
+    {
+      "type": 0,
+      "value": "Topics"
+    }
+  ]
+}

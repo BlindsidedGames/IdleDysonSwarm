@@ -15,6 +15,7 @@
 
 using UnityEngine;
 using UnityEngine.UI;
+using Systems.Simulation;
 using static Expansion.Oracle;
 
 /// <summary>
@@ -69,11 +70,11 @@ public class BuyXSettings : MonoBehaviour
 
     private void Start()
     {
-        if (one != null) one.onClick.AddListener(() => SetMode(BuyMode.Buy1, one));
-        if (ten != null) ten.onClick.AddListener(() => SetMode(BuyMode.Buy10, ten));
-        if (fifty != null) fifty.onClick.AddListener(() => SetMode(BuyMode.Buy50, fifty));
-        if (onehundred != null) onehundred.onClick.AddListener(() => SetMode(BuyMode.Buy100, onehundred));
-        if (max != null) max.onClick.AddListener(() => SetMode(BuyMode.BuyMax, max));
+        if (one != null) one.onClick.AddListener(() => RequestMode(BuyMode.Buy1, one));
+        if (ten != null) ten.onClick.AddListener(() => RequestMode(BuyMode.Buy10, ten));
+        if (fifty != null) fifty.onClick.AddListener(() => RequestMode(BuyMode.Buy50, fifty));
+        if (onehundred != null) onehundred.onClick.AddListener(() => RequestMode(BuyMode.Buy100, onehundred));
+        if (max != null) max.onClick.AddListener(() => RequestMode(BuyMode.BuyMax, max));
     }
 
     private void OnEnable()
@@ -108,6 +109,17 @@ public class BuyXSettings : MonoBehaviour
         if (onehundred != null) onehundred.interactable = true;
         if (max != null) max.interactable = true;
         if (b != null) b.interactable = false;
+    }
+
+    private void RequestMode(BuyMode mode, Button button)
+    {
+        if (!GameManager.RequestQueuedPlayerAction(
+                SimulationInputKind.AutomationSetting,
+                () => SetMode(mode, button),
+                $"buy_mode:{buyModeTarget}"))
+        {
+            SetMode(mode, button);
+        }
     }
 
     private static bool HasSaveSettings()

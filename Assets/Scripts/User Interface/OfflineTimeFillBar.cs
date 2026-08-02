@@ -1,6 +1,7 @@
 using UnityEngine;
 using Blindsided.ProceduralUIImage;
 using Blindsided.Utilities;
+using Systems.Numeric;
 using static Expansion.Oracle;
 
 /// <summary>
@@ -40,7 +41,11 @@ public class OfflineTimeFillBar : MonoBehaviour
     {
         if (_fillBarProcedural == null && _fillBarSliced == null) return;
 
-        float fill = (float)(oracle.saveSettings.offlineTime / oracle.saveSettings.maxOfflineTime);
+        double maximum = oracle.saveSettings.maxOfflineTime;
+        double ratio = maximum > 0d
+            ? oracle.saveSettings.offlineTime / maximum
+            : 0d;
+        float fill = NumericUiAdapter.ToUnitInterval(ratio, "offline_time_fill");
         if (_fillBarProcedural != null) _fillBarProcedural.fillAmount = fill;
         else if (_fillBarSliced != null) _fillBarSliced.fillAmount = fill;
     }

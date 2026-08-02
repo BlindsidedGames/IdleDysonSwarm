@@ -4,6 +4,7 @@ using Classes;
 using GameData;
 using SirenixSerializationUtility = Sirenix.Serialization.SerializationUtility;
 using Systems.Migrations;
+using Systems.Numeric;
 using Systems.Save;
 using Systems.Skills;
 using Systems.Stats;
@@ -45,15 +46,11 @@ namespace Expansion
     ///   InformationEraManager.
     /// - EnsureMegaResearchPercentDefaults() normalizes legacy mega research percent fields to non-zero defaults;
     ///   changing defaults affects displayed boost text and mega production modifier scaling on load.
-    /// - EnsureBotOverflowSignalIsFinite() converts the historically supported non-finite bot-overflow marker to
-    ///   the reserved finite runtime sentinel and clears stale transition state before graph validation. Keep it
-    ///   aligned with IsBotOverflowSignal() in Oracle.cs so the existing overflow reward/reset path still consumes
-    ///   the marker after publication.
+    /// - NumericSaveRepair applies the V12 finite/range contract on the isolated candidate before validation.
     /// </remarks>
     public partial class Oracle
     {
         private const double DefaultMegaResearchPercent = 0.03d;
-        private const double PreparedBotOverflowSentinel = double.MaxValue;
 
         /// <summary>
         /// Creates the production decode/version/migration/validation pipeline bound to this Oracle's migration code.
@@ -170,7 +167,7 @@ namespace Expansion
                     EnsureResearchLevelData();
                     EnsureMegaResearchPercentDefaults();
                     EnsurePackedSettingsFlags();
-                    EnsureBotOverflowSignalIsFinite();
+                    NumericSaveRepair.Repair(saveSettings);
                     EnsureInfinitySparseArrays();
                     EnsureSimulationMathematicsParity();
                 }
@@ -178,50 +175,31 @@ namespace Expansion
         }
 
         /// <summary>
-        /// Normalizes legacy and canonical bots overflow markers plus stale transition state for runtime handling.
-        /// </summary>
-        private void EnsureBotOverflowSignalIsFinite()
-        {
-            if (infinityData == null || !IsBotOverflowSignal(infinityData.bots)) return;
-
-            infinityData.bots = PreparedBotOverflowSentinel;
-            saveSettings.infinityInProgress = false;
-            if (saveSettings.hasPackedSettingsFlags)
-            {
-                saveSettings.packedSettingsFlags &= ~(1UL << 6);
-            }
-        }
-
-        /// <summary>
-        /// Determines whether the supplied bots value is the legacy non-finite overflow marker.
-        /// </summary>
-        /// <param name="bots">The persisted bots value.</param>
-        /// <returns><see langword="true"/> for positive/negative Infinity or NaN; otherwise <see langword="false"/>.</returns>
-        private static bool IsNonFiniteBotOverflowSignal(double bots)
-        {
-            return double.IsInfinity(bots) || double.IsNaN(bots);
-        }
-
-        /// <summary>
-        /// Determines whether runtime should consume the bots overflow marker through the existing reward/reset path.
+        /// Determines whether runtime has reached the deliberate finite bot cap.
         /// </summary>
         /// <param name="bots">The prepared or legacy bots value.</param>
-        /// <returns><see langword="true"/> for the legacy non-finite marker or its finite prepared representation.</returns>
-        internal static bool IsBotOverflowSignal(double bots)
+        /// <returns><see langword="true"/> only for the finite cap; non-finite values are corruption.</returns>
+        internal static bool IsBotCapSignal(double bots)
         {
-            return IsNonFiniteBotOverflowSignal(bots) || bots == PreparedBotOverflowSentinel;
+            return bots == double.MaxValue;
         }
 
         private MigrationRegistry BuildMigrationRegistry()
         {
             var registry = new MigrationRegistry();
             registry.AddStep(new MigrationStep(
-                targetVersion: 11,
-                name: "Consolidated migration (V11)",
-                summary: "Upgrade any legacy save to V11 in a single step (skipping intermediate chains).",
-                apply: _ => { MigrateToV11(); }));
+                targetVersion: 12,
+                name: "Numeric safety migration (V12)",
+                summary: "Upgrade legacy saves to the finite numeric contract in a single deterministic pass.",
+                apply: _ => { MigrateToV12(); }));
 
             return registry;
+        }
+
+        private void MigrateToV12()
+        {
+            MigrateToV11();
+            NumericSaveRepair.Repair(saveSettings);
         }
 
         private void MigrateToV11()
@@ -616,6 +594,7 @@ namespace Expansion
         {
             if (infinityData == null) return;
             infinityData.researchLevelsById ??= new Dictionary<string, double>();
+            infinityData.researchProgressById ??= new Dictionary<string, double>();
 
             if (infinityData.researchLevelsById.Count == 0)
             {
@@ -651,6 +630,7 @@ namespace Expansion
         {
             if (infinityData == null) return;
             infinityData.researchLevelsById ??= new Dictionary<string, double>();
+            infinityData.researchProgressById ??= new Dictionary<string, double>();
             if (infinityData.researchLevelsById.Count > 0) return;
 
             ResearchIdMap.PopulateLevelsFromLegacy(infinityData, infinityData.researchLevelsById);
@@ -660,6 +640,7 @@ namespace Expansion
         {
             if (infinityData == null) return;
             infinityData.researchLevelsById ??= new Dictionary<string, double>();
+            infinityData.researchProgressById ??= new Dictionary<string, double>();
             ResearchIdMap.PopulateLevelsFromLegacy(infinityData, infinityData.researchLevelsById);
         }
 
@@ -781,11 +762,15 @@ namespace Expansion
             if (saveSettings == null) return null;
 
             saveSettings.saveData ??= new SaveData();
+            saveSettings.simulationStatistics ??=
+                new Systems.Simulation.SimulationStatistics();
+            saveSettings.simulationStatistics.EnsureShape();
             saveSettings.dysonVerseSaveData ??= new DysonVerseSaveData();
             saveSettings.sdPrestige ??= new SaveDataPrestige();
             saveSettings.sdSimulation ??= new SaveDataDream1();
             saveSettings.prestigePlus ??= new PrestigePlus();
             saveSettings.avocadoData ??= new AvocadoData();
+            saveSettings.lastNumericRepairLog ??= new List<string>();
 
             return saveSettings;
         }
@@ -902,10 +887,14 @@ namespace Expansion
                 avocado.unlocked = pp.avocatoPurchased;
 
                 // Migrate accumulated values (add to any existing values in case of partial migration)
-                avocado.infinityPoints += pp.avocatoIP;
-                avocado.influence += pp.avocatoInfluence;
-                avocado.strangeMatter += pp.avocatoStrangeMatter;
-                avocado.overflowMultiplier += pp.avocatoOverflow;
+                avocado.infinityPoints =
+                    NumericSafety.Add(avocado.infinityPoints, pp.avocatoIP).Value;
+                avocado.influence =
+                    NumericSafety.Add(avocado.influence, pp.avocatoInfluence).Value;
+                avocado.strangeMatter =
+                    NumericSafety.Add(avocado.strangeMatter, pp.avocatoStrangeMatter).Value;
+                avocado.overflowMultiplier =
+                    NumericSafety.Add(avocado.overflowMultiplier, pp.avocatoOverflow).Value;
 
                 // Clear legacy fields to prevent double-counting on future loads
                 pp.avocatoIP = 0;

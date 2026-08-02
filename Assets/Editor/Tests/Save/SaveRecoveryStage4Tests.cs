@@ -40,7 +40,7 @@ namespace Tests.Save
         private const string Schema8Idb1FixtureId = "schema-08-canonical-idb1-main-save";
 
         /// <summary>
-        /// Verifies every supported clipboard family reaches the same schema 11 transactional import boundary.
+        /// Verifies every supported clipboard family reaches the same schema 12 transactional import boundary.
         /// </summary>
         /// <param name="caseId">The fixture identifier or synthetic current-schema case.</param>
         [TestCase(Schema7FixtureId)]
@@ -69,7 +69,7 @@ namespace Tests.Save
                     text = "idb1:" + text.Substring(SaveCodec.BinarySavePrefix.Length);
                 }
 
-                expectedSourceSchema = 11;
+                expectedSourceSchema = 12;
             }
 
             using var migrationScope = new SaveMigrationTestScope();
@@ -88,14 +88,14 @@ namespace Tests.Save
                         error);
 
                     Assert.AreEqual(expectedSourceSchema, sourcePreparation.SourceSchema);
-                    Assert.AreEqual(11, committed.saveVersion);
+                    Assert.AreEqual(12, committed.saveVersion);
                     StringAssert.StartsWith(
                         SaveCodec.BinarySavePrefix,
                         File.ReadAllText(filePath));
                     Assert.IsTrue(
                         store.TryLoad(out Oracle.SaveDataSettings reread, out string readError),
                         readError);
-                    Assert.AreEqual(11, reread.saveVersion);
+                    Assert.AreEqual(12, reread.saveVersion);
                 });
 
             if (fixture != null)
@@ -114,7 +114,7 @@ namespace Tests.Save
         public void InvalidClipboard_DoesNotReplaceCanonicalOrPublishState()
         {
             WithStore(
-                SavePreparationPipeline.CreateCurrentSchemaOnly(11),
+                SavePreparationPipeline.CreateCurrentSchemaOnly(12),
                 (store, coordinator, filePath, backupPath) =>
                 {
                     Assert.IsTrue(store.TrySave(CreateSettings(420d), out _, out string seedError), seedError);
@@ -157,7 +157,7 @@ namespace Tests.Save
                     .ToString(CultureInfo.InvariantCulture);
 
             WithStore(
-                SavePreparationPipeline.CreateCurrentSchemaOnly(11),
+                SavePreparationPipeline.CreateCurrentSchemaOnly(12),
                 (store, coordinator, filePath, unusedBackupPath) =>
                 {
                     Assert.IsTrue(
@@ -221,7 +221,7 @@ namespace Tests.Save
         public void ManualAndStartupRecovery_ProduceSameValidationClassification()
         {
             WithStore(
-                SavePreparationPipeline.CreateCurrentSchemaOnly(11),
+                SavePreparationPipeline.CreateCurrentSchemaOnly(12),
                 (store, coordinator, filePath, unusedBackupPath) =>
                 {
                     const string corrupt = "IDB1:AAAA";
@@ -255,7 +255,7 @@ namespace Tests.Save
         public void LegacyRecovery_RequiresExplicitOverwriteAndPreservesPreviousCanonical()
         {
             WithStore(
-                SavePreparationPipeline.CreateCurrentSchemaOnly(11),
+                SavePreparationPipeline.CreateCurrentSchemaOnly(12),
                 (store, coordinator, filePath, backupPath) =>
                 {
                     Assert.IsTrue(store.TrySave(CreateSettings(440d), out _, out string seedError), seedError);
@@ -418,7 +418,7 @@ namespace Tests.Save
         /// <returns>The settings.</returns>
         private static Oracle.SaveDataSettings CreateSettings(double money)
         {
-            var settings = new Oracle.SaveDataSettings { saveVersion = 11 };
+            var settings = new Oracle.SaveDataSettings { saveVersion = 12 };
             settings.dysonVerseSaveData.dysonVerseInfinityData.money = money;
             return settings;
         }

@@ -9,6 +9,41 @@ namespace Systems.Stats
 {
     public static class SkillEffectProvider
     {
+        private readonly struct IndexedSkillEffect
+        {
+            public IndexedSkillEffect(
+                SkillDefinition skill,
+                EffectDefinition effect)
+            {
+                Skill = skill;
+                Effect = effect;
+            }
+
+            public SkillDefinition Skill { get; }
+            public EffectDefinition Effect { get; }
+        }
+
+        private static readonly object IndexGate = new();
+        private static SkillDatabase _indexedDatabase;
+        private static int _indexedSkillCount = -1;
+        private static Dictionary<string, List<IndexedSkillEffect>>
+            _effectsByStat =
+                new(StringComparer.Ordinal);
+
+        public static void InvalidateIndex()
+        {
+            lock (IndexGate)
+            {
+                _indexedDatabase = null;
+                _indexedSkillCount = -1;
+                _effectsByStat =
+                    new Dictionary<
+                        string,
+                        List<IndexedSkillEffect>>(
+                        StringComparer.Ordinal);
+            }
+        }
+
         public static List<StatEffect> BuildFacilityEffects(FacilityDefinition facility, string targetStatId,
             EffectContext context, FacilityState state)
         {
@@ -31,42 +66,110 @@ namespace Systems.Stats
 
             DysonVerseSkillTreeData skillTreeData = context.SkillTreeData;
             DysonVerseInfinityData infinityData = context.InfinityData;
-            foreach (SkillDefinition skill in registry.skillDatabase.skills)
+            IReadOnlyList<IndexedSkillEffect> indexedEffects =
+                GetEffects(
+                    registry.skillDatabase,
+                    targetStatId);
+            for (int index = 0;
+                 index < indexedEffects.Count;
+                 index++)
             {
-                if (skill == null) continue;
+                SkillDefinition skill =
+                    indexedEffects[index].Skill;
+                EffectDefinition effect =
+                    indexedEffects[index].Effect;
                 if (!IsSkillOwned(skill, skillTreeData, infinityData)) continue;
-                if (skill.effects == null) continue;
+                if (!MatchesFacility(effect, facility)) continue;
+                if (!EffectConditionEvaluator.IsConditionMet(effect, facility, state, context)) continue;
 
-                foreach (EffectDefinition effect in skill.effects)
+                double value = ResolveEffectValue(effect, context, facility, state);
+                if (ShouldSkipEffect(effect.operation, value)) continue;
+
+                string sourceName = !string.IsNullOrEmpty(effect.displayName)
+                    ? effect.displayName
+                    : !string.IsNullOrEmpty(skill.displayName)
+                        ? skill.displayName
+                        : skill.id;
+
+                effects.Add(new StatEffect
                 {
-                    if (effect == null) continue;
-                    if (!MatchesStat(effect, targetStatId)) continue;
-                    if (!MatchesFacility(effect, facility)) continue;
-                    if (!EffectConditionEvaluator.IsConditionMet(effect, facility, state, context)) continue;
-
-                    double value = ResolveEffectValue(effect, context, facility, state);
-                    if (ShouldSkipEffect(effect.operation, value)) continue;
-
-                    string sourceName = !string.IsNullOrEmpty(effect.displayName)
-                        ? effect.displayName
-                        : !string.IsNullOrEmpty(skill.displayName)
-                            ? skill.displayName
-                            : skill.id;
-
-                    effects.Add(new StatEffect
-                    {
-                        Id = string.IsNullOrEmpty(effect.id) ? skill.id : effect.id,
-                        SourceName = sourceName,
-                        TargetStatId = effect.targetStatId,
-                        Operation = effect.operation,
-                        Value = value,
-                        Order = effect.order,
-                        ConditionId = effect.conditionId
-                    });
-                }
+                    Id = string.IsNullOrEmpty(effect.id) ? skill.id : effect.id,
+                    SourceName = sourceName,
+                    TargetStatId = effect.targetStatId,
+                    Operation = effect.operation,
+                    Value = value,
+                    Order = effect.order,
+                    ConditionId = effect.conditionId
+                });
             }
 
             return effects;
+        }
+
+        private static IReadOnlyList<IndexedSkillEffect> GetEffects(
+            SkillDatabase database,
+            string targetStatId)
+        {
+            int count = database?.skills?.Count ?? 0;
+            if (!ReferenceEquals(database, _indexedDatabase) ||
+                count != _indexedSkillCount)
+            {
+                lock (IndexGate)
+                {
+                    if (!ReferenceEquals(database, _indexedDatabase) ||
+                        count != _indexedSkillCount)
+                    {
+                        var rebuilt =
+                            new Dictionary<
+                                string,
+                                List<IndexedSkillEffect>>(
+                                StringComparer.Ordinal);
+                        if (database?.skills != null)
+                        {
+                            foreach (SkillDefinition skill
+                                     in database.skills)
+                            {
+                                if (skill?.effects == null)
+                                    continue;
+                                foreach (EffectDefinition effect
+                                         in skill.effects)
+                                {
+                                    if (effect == null ||
+                                        string.IsNullOrEmpty(
+                                            effect.targetStatId))
+                                    {
+                                        continue;
+                                    }
+                                    if (!rebuilt.TryGetValue(
+                                            effect.targetStatId,
+                                            out List<IndexedSkillEffect>
+                                                entries))
+                                    {
+                                        entries =
+                                            new List<
+                                                IndexedSkillEffect>();
+                                        rebuilt.Add(
+                                            effect.targetStatId,
+                                            entries);
+                                    }
+                                    entries.Add(
+                                        new IndexedSkillEffect(
+                                            skill,
+                                            effect));
+                                }
+                            }
+                        }
+                        _effectsByStat = rebuilt;
+                        _indexedDatabase = database;
+                        _indexedSkillCount = count;
+                    }
+                }
+            }
+            return _effectsByStat.TryGetValue(
+                targetStatId,
+                out List<IndexedSkillEffect> result)
+                ? result
+                : Array.Empty<IndexedSkillEffect>();
         }
 
         private static double ResolveEffectValue(EffectDefinition effect, EffectContext context,
@@ -177,4 +280,3 @@ namespace Systems.Stats
         }
     }
 }
-

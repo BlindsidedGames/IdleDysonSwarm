@@ -1,4 +1,5 @@
 using System;
+using Systems.Numeric;
 using UnityEngine;
 
 namespace IdleDysonSwarm.Systems.Dream1
@@ -23,18 +24,18 @@ namespace IdleDysonSwarm.Systems.Dream1
         /// Current accumulated time towards next production tick.
         /// This value should be synced to save data for persistence.
         /// </summary>
-        [SerializeField] public float currentTime;
+        [SerializeField] public double currentTime;
 
         /// <summary>
         /// Base duration in seconds for one production cycle.
         /// </summary>
-        [SerializeField] public float duration;
+        [SerializeField] public double duration;
 
         /// <summary>
         /// Creates a new ProductionTimer with specified duration.
         /// </summary>
         /// <param name="duration">Base duration in seconds for one production cycle.</param>
-        public ProductionTimer(float duration)
+        public ProductionTimer(double duration)
         {
             this.duration = duration;
             this.currentTime = 0;
@@ -46,7 +47,7 @@ namespace IdleDysonSwarm.Systems.Dream1
         /// </summary>
         /// <param name="duration">Base duration in seconds for one production cycle.</param>
         /// <param name="savedTime">Saved progress time to restore.</param>
-        public ProductionTimer(float duration, float savedTime)
+        public ProductionTimer(double duration, double savedTime)
         {
             this.duration = duration;
             this.currentTime = savedTime;
@@ -68,23 +69,23 @@ namespace IdleDysonSwarm.Systems.Dream1
         /// <param name="globalMultiplier">Combined multiplier (doubleTime, boosts, etc.)</param>
         /// <param name="deltaTime">Time.deltaTime</param>
         /// <returns>Number of production cycles completed this frame.</returns>
-        public int Update(double sourceCount, double globalMultiplier, float deltaTime)
+        public double Update(
+            double sourceCount,
+            double globalMultiplier,
+            double deltaTime)
         {
-            if (sourceCount < 1 || duration <= 0) return 0;
+            if (sourceCount < 1 || duration <= 0 ||
+                !NumericSafety.IsFinite(sourceCount) ||
+                !NumericSafety.IsFinite(globalMultiplier) ||
+                !NumericSafety.IsFinite(deltaTime) ||
+                globalMultiplier < 0 || deltaTime < 0)
+            {
+                return 0d;
+            }
 
             // Standard Dream1 multiplier formula: 1 + Log10(count)
             double baseMulti = 1 + Math.Log10(sourceCount);
-            double effectiveMulti = baseMulti * globalMultiplier;
-
-            currentTime += deltaTime * (float)effectiveMulti;
-
-            int produced = 0;
-            while (currentTime >= duration)
-            {
-                currentTime -= duration;
-                produced++;
-            }
-            return produced;
+            return Advance(baseMulti, globalMultiplier, deltaTime);
         }
 
         /// <summary>
@@ -95,20 +96,79 @@ namespace IdleDysonSwarm.Systems.Dream1
         /// <param name="globalMultiplier">Combined multiplier (doubleTime, boosts, etc.)</param>
         /// <param name="deltaTime">Time.deltaTime</param>
         /// <returns>Number of production cycles completed this frame.</returns>
-        public int UpdateWithCustomMultiplier(double customBaseMulti, double globalMultiplier, float deltaTime)
+        public double UpdateWithCustomMultiplier(
+            double customBaseMulti,
+            double globalMultiplier,
+            double deltaTime)
         {
-            if (duration <= 0) return 0;
-
-            double effectiveMulti = customBaseMulti * globalMultiplier;
-            currentTime += deltaTime * (float)effectiveMulti;
-
-            int produced = 0;
-            while (currentTime >= duration)
+            if (duration <= 0 ||
+                !NumericSafety.IsFinite(customBaseMulti) ||
+                !NumericSafety.IsFinite(globalMultiplier) ||
+                !NumericSafety.IsFinite(deltaTime) ||
+                customBaseMulti < 0d || globalMultiplier < 0d ||
+                deltaTime < 0d)
             {
-                currentTime -= duration;
-                produced++;
+                return 0d;
             }
-            return produced;
+
+            return Advance(
+                customBaseMulti,
+                globalMultiplier,
+                deltaTime);
+        }
+
+        private double Advance(
+            double baseMultiplier,
+            double globalMultiplier,
+            double deltaTime)
+        {
+            if (!NumericSafety.IsFinite(currentTime) ||
+                currentTime < 0d)
+            {
+                currentTime = 0d;
+            }
+
+            NumericResult<double> effective =
+                NumericSafety.Multiply(
+                    baseMultiplier,
+                    globalMultiplier);
+            NumericResult<double> added =
+                NumericSafety.Multiply(
+                    deltaTime,
+                    effective.Value);
+            NumericResult<double> accumulated =
+                NumericSafety.Add(
+                    currentTime,
+                    added.Value);
+            if (!effective.IsSuccess ||
+                !added.IsSuccess ||
+                !accumulated.IsSuccess)
+            {
+                return 0d;
+            }
+
+            currentTime = accumulated.Value;
+            NumericResult<double> quotient =
+                NumericSafety.Divide(
+                    currentTime,
+                    duration);
+            if (!quotient.IsSuccess)
+                return 0d;
+            double completed = Math.Floor(quotient.Value);
+            if (!NumericSafety.IsFinite(completed) ||
+                completed <= 0d)
+            {
+                return 0d;
+            }
+
+            double remainder = currentTime % duration;
+            currentTime =
+                NumericSafety.IsFinite(remainder) &&
+                remainder >= 0d &&
+                remainder < duration
+                    ? remainder
+                    : 0d;
+            return Math.Min(double.MaxValue, completed);
         }
 
         /// <summary>
@@ -133,7 +193,7 @@ namespace IdleDysonSwarm.Systems.Dream1
             get
             {
                 if (duration <= 0) return 0;
-                return Mathf.Clamp01(currentTime / duration);
+                return Mathf.Clamp01((float)(currentTime / duration));
             }
         }
 
@@ -165,7 +225,7 @@ namespace IdleDysonSwarm.Systems.Dream1
         public float GetTimeRemaining(double effectiveMultiplier)
         {
             if (effectiveMultiplier <= 0 || duration <= 0) return float.MaxValue;
-            return (duration - currentTime) / (float)effectiveMultiplier;
+            return NumericSafety.ToFloat((duration - currentTime) / effectiveMultiplier).Value;
         }
 
         /// <summary>

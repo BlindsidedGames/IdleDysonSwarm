@@ -26,6 +26,7 @@ using System.Linq;
 using System.Reflection;
 using Expansion;
 using NUnit.Framework;
+using Systems.Migrations;
 using Systems.Save;
 using UnityEngine;
 
@@ -195,7 +196,7 @@ namespace Tests.Save
         {
             WithRecoveryStorage((store, filePath, backupPath, unusedRoot) =>
             {
-                string future = Encode(CreateSettings(40d, schema: 12));
+                string future = Encode(CreateSettings(40d, schema: 13));
                 File.WriteAllText(filePath, future);
                 string validBackup = WriteBackup(
                     backupPath,
@@ -234,7 +235,7 @@ namespace Tests.Save
                     backupPath,
                     filePath,
                     "newer-future",
-                    Encode(CreateSettings(51d, schema: 12)));
+                    Encode(CreateSettings(51d, schema: 13)));
                 File.SetLastWriteTimeUtc(olderValid, Utc(2020));
                 File.SetLastWriteTimeUtc(newerFuture, Utc(2021));
 
@@ -267,6 +268,72 @@ namespace Tests.Save
                 Assert.AreEqual(1, publishCount);
                 Assert.AreEqual(1, replayCount);
             });
+        }
+
+        /// <summary>
+        /// Verifies a numerically repaired primary cannot publish when its required canonical rewrite fails.
+        /// </summary>
+        [Test]
+        public void RepairedPrimary_WriteFailure_BlocksBeforePublicationOrOfflineReplay()
+        {
+            string root = Path.Combine(
+                Path.GetTempPath(),
+                "ids-stage3-primary-repair-" + Guid.NewGuid().ToString("N"));
+            string filePath = Path.Combine(root, "save.txt");
+            string backupPath = Path.Combine(root, "backups");
+            Directory.CreateDirectory(root);
+            Directory.CreateDirectory(backupPath);
+            try
+            {
+                Oracle.SaveDataSettings source = CreateSettings(double.PositiveInfinity);
+                string original = Encode(source);
+                File.WriteAllText(filePath, original);
+                var storage = new OdinStringFileStorage(
+                    filePath,
+                    backupPath,
+                    maxBackups: 10,
+                    replaceExistingFile: (_, _) =>
+                        throw new IOException("Injected repaired-primary replace failure."));
+                var pipeline = new SavePreparationPipeline(
+                    12,
+                    settings =>
+                    {
+                        NumericSaveRepair.Repair(settings);
+                        return new MigrationRunResult
+                        {
+                            Succeeded = true,
+                            StartingVersion = settings.saveVersion,
+                            EndingVersion = settings.saveVersion
+                        };
+                    });
+                var store = new CanonicalSaveStore(new SaveSystem(storage, pipeline));
+
+                StartupSaveRecoveryResult result =
+                    new StartupSaveRecoveryCoordinator(store).Resolve();
+                var gate = new StartupRecoveryPublicationGate();
+                int publishCount = 0;
+                int replayCount = 0;
+
+                Assert.AreEqual(StartupSaveRecoveryStatus.RecoveryWriteFailed, result.Status);
+                Assert.IsTrue(result.IsBlocking);
+                Assert.IsFalse(result.HasPublishableSettings);
+                Assert.IsFalse(gate.TryPublish(result, _ => publishCount++, () => replayCount++));
+                Assert.Zero(publishCount);
+                Assert.Zero(replayCount);
+                Assert.AreEqual(original, File.ReadAllText(filePath));
+                StringAssert.Contains("Injected repaired-primary replace failure", result.Error);
+            }
+            finally
+            {
+                try
+                {
+                    Directory.Delete(root, true);
+                }
+                catch
+                {
+                    // Best-effort test cleanup.
+                }
+            }
         }
 
         /// <summary>
@@ -473,7 +540,7 @@ namespace Tests.Save
                 var storage = new OdinStringFileStorage(filePath, backupPath, maxBackups: 10);
                 var system = new SaveSystem(
                     storage,
-                    SavePreparationPipeline.CreateCurrentSchemaOnly(11));
+                    SavePreparationPipeline.CreateCurrentSchemaOnly(12));
                 assertion(new CanonicalSaveStore(system), filePath, backupPath, root);
             }
             finally
@@ -516,7 +583,7 @@ namespace Tests.Save
         /// <param name="money">The money sentinel.</param>
         /// <param name="schema">The source schema.</param>
         /// <returns>A new save object.</returns>
-        private static Oracle.SaveDataSettings CreateSettings(double money, int schema = 11)
+        private static Oracle.SaveDataSettings CreateSettings(double money, int schema = 12)
         {
             var settings = new Oracle.SaveDataSettings { saveVersion = schema };
             settings.dysonVerseSaveData.dysonVerseInfinityData.money = money;

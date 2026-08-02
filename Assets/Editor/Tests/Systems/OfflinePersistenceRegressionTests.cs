@@ -83,7 +83,7 @@ namespace Tests.Systems
         {
             return new Oracle.SaveDataSettings
             {
-                saveVersion = 11,
+                saveVersion = 12,
                 dateStarted = startedUtc.ToString(CultureInfo.InvariantCulture),
                 offlineTime = 0d,
                 maxOfflineTime = 100000d

@@ -1,0 +1,372 @@
+// @vitest-environment jsdom
+
+import '@testing-library/jest-dom/vitest'
+import { act, cleanup, fireEvent, render, screen } from '@testing-library/react'
+import axe from 'axe-core'
+import { IntlProvider } from 'react-intl'
+import { afterEach, describe, expect, test, vi } from 'vitest'
+import type {
+  FrontendQuantumUpgradePreview,
+} from '../../../application/frontendSnapshot'
+import {
+  QUANTUM_UPGRADE_IDS,
+  type QuantumUpgradeId,
+} from '../../../simulation/quantumUpgrades'
+import type { UiRuntimePlayerCommandResult } from '../../runtime'
+import {
+  QuantumControlPanel,
+  QuantumSurface,
+  type QuantumSurfaceProps,
+} from './QuantumSurface'
+
+afterEach(() => {
+  cleanup()
+  vi.useRealTimers()
+})
+
+describe('QuantumSurface', () => {
+  test('presents the authored Unity upgrade catalog and only the next mega-structure', () => {
+    renderSurface({
+      upgradeOverrides: {
+        MatrioshkaBrains: { code: 'already-maxed', eligible: false },
+        BirchPlanets: { code: 'purchased', eligible: true },
+        GalacticBrains: { code: 'prerequisites-not-met', eligible: false },
+      },
+    })
+
+    expect(screen.getByText('Quantum Shards')).toBeInTheDocument()
+    expect(screen.queryByRole('region', { name: 'Quantum' })).not.toBeInTheDocument()
+    expect(screen.queryByText(/Artifact reward:/)).not.toBeInTheDocument()
+    expect(screen.getByText('Bot Multitasking')).toBeInTheDocument()
+    expect(screen.getByText('Secrets of the Universe')).toBeInTheDocument()
+    expect(screen.getByText('Requires Double Infinity Points or Bot Multitasking.')).toBeInTheDocument()
+    expect(screen.getByText('Birch Planets')).toBeInTheDocument()
+    expect(screen.queryByText('Matrioshka Brains')).not.toBeInTheDocument()
+    expect(screen.queryByText('Galactic Brains')).not.toBeInTheDocument()
+    const secretsPanel = screen.getByRole('heading', { name: 'Secrets' }).closest('section')
+    const leapPanel = screen.getByRole('heading', { name: 'Quantum Leap' }).closest('article')
+    expect(
+      secretsPanel?.compareDocumentPosition(leapPanel as Node),
+    ).toBe(Node.DOCUMENT_POSITION_FOLLOWING)
+  })
+
+  test('dispatches one canonical purchase while the action is pending', async () => {
+    let settle: ((result: UiRuntimePlayerCommandResult) => void) | undefined
+    const dispatchPlayer = vi.fn(() => new Promise<UiRuntimePlayerCommandResult>((resolve) => { settle = resolve }))
+    renderSurface({ dispatchPlayer })
+
+    const purchase = screen.getByRole('button', { name: 'Purchase Bot Multitasking for 1.00 Quantum Shards' })
+    fireEvent.click(purchase)
+    fireEvent.click(purchase)
+    expect(dispatchPlayer).toHaveBeenCalledTimes(1)
+    expect(dispatchPlayer).toHaveBeenCalledWith({ kind: 'quantum.purchase-upgrade', upgradeId: 'BotMultitasking' })
+
+    settle?.(accepted())
+    await screen.findByRole('button', { name: 'Purchase Bot Multitasking for 1.00 Quantum Shards' })
+  })
+
+  test.each([
+    ['InfluenceSpeed', 'Influence Booster'],
+    ['CashBonus', 'Cash Booster'],
+    ['ScienceBonus', 'Science Booster'],
+  ] as const)('repeats the %s purchase while its button remains held', async (upgradeId, name) => {
+    vi.useFakeTimers()
+    const dispatchPlayer = vi.fn(async () => accepted())
+    renderSurface({ dispatchPlayer })
+    const purchase = screen.getByRole('button', {
+      name: `Purchase ${name} for 1.00 Quantum Shards`,
+    })
+
+    fireEvent.pointerDown(purchase)
+    await act(async () => vi.advanceTimersByTimeAsync(600))
+    expect(dispatchPlayer).toHaveBeenCalledTimes(3)
+    expect(dispatchPlayer).toHaveBeenLastCalledWith({
+      kind: 'quantum.purchase-upgrade',
+      upgradeId,
+    })
+
+    fireEvent.pointerUp(purchase)
+    fireEvent.click(purchase)
+    await act(async () => vi.advanceTimersByTimeAsync(500))
+    expect(dispatchPlayer).toHaveBeenCalledTimes(3)
+  })
+
+  test('supports keyboard hold repeat for the repeatable Quantum upgrades', async () => {
+    vi.useFakeTimers()
+    const dispatchPlayer = vi.fn(async () => accepted())
+    renderSurface({ dispatchPlayer })
+    const purchase = screen.getByRole('button', {
+      name: 'Purchase Cash Booster for 1.00 Quantum Shards',
+    })
+
+    fireEvent.keyDown(purchase, { key: 'Enter' })
+    await act(async () => vi.advanceTimersByTimeAsync(500))
+    fireEvent.keyUp(purchase, { key: 'Enter' })
+    fireEvent.click(purchase)
+
+    expect(dispatchPlayer).toHaveBeenCalledTimes(2)
+    expect(dispatchPlayer).toHaveBeenNthCalledWith(1, {
+      kind: 'quantum.purchase-upgrade',
+      upgradeId: 'CashBonus',
+    })
+  })
+
+  test('does not hold-repeat one-time upgrades or overlap pending repeat purchases', async () => {
+    vi.useFakeTimers()
+    let settle: ((result: UiRuntimePlayerCommandResult) => void) | undefined
+    const dispatchPlayer = vi.fn(() => new Promise<UiRuntimePlayerCommandResult>((resolve) => { settle = resolve }))
+    renderSurface({ dispatchPlayer })
+
+    const oneTime = screen.getByRole('button', {
+      name: 'Purchase Bot Multitasking for 1.00 Quantum Shards',
+    })
+    fireEvent.pointerDown(oneTime)
+    await act(async () => vi.advanceTimersByTimeAsync(1_000))
+    fireEvent.pointerUp(oneTime)
+    expect(dispatchPlayer).not.toHaveBeenCalled()
+
+    const repeatable = screen.getByRole('button', {
+      name: 'Purchase Science Booster for 1.00 Quantum Shards',
+    })
+    fireEvent.pointerDown(repeatable)
+    await act(async () => vi.advanceTimersByTimeAsync(1_000))
+    expect(dispatchPlayer).toHaveBeenCalledTimes(1)
+    fireEvent.pointerUp(repeatable)
+
+    settle?.(accepted())
+    await act(async () => Promise.resolve())
+  })
+
+  test('ends a held repeat when pointer release occurs while its purchase is pending', async () => {
+    vi.useFakeTimers()
+    let settle: ((result: UiRuntimePlayerCommandResult) => void) | undefined
+    const dispatchPlayer = vi.fn(() => new Promise<UiRuntimePlayerCommandResult>((resolve) => { settle = resolve }))
+    renderSurface({ dispatchPlayer })
+    const purchase = screen.getByRole('button', {
+      name: 'Purchase Influence Booster for 1.00 Quantum Shards',
+    })
+
+    fireEvent.pointerDown(purchase)
+    await act(async () => vi.advanceTimersByTimeAsync(400))
+    expect(dispatchPlayer).toHaveBeenCalledTimes(1)
+    expect(purchase).toBeDisabled()
+
+    fireEvent.pointerUp(window)
+    settle?.(accepted())
+    await act(async () => {
+      await Promise.resolve()
+      await vi.advanceTimersByTimeAsync(1_000)
+    })
+
+    expect(dispatchPlayer).toHaveBeenCalledTimes(1)
+  })
+
+  test('requires confirmation for a resetting leap and dispatches the canonical request', async () => {
+    const dispatchPlayer = vi.fn(async () => accepted())
+    renderSurface({ dispatchPlayer, leapEligible: true })
+
+    const engage = screen.getByRole('button', { name: 'Engage Quantum Leap' })
+    expect(engage).toHaveClass('ui-button--primary')
+    expect(engage).not.toHaveClass('ui-button--danger')
+    fireEvent.click(engage)
+    expect(dispatchPlayer).not.toHaveBeenCalled()
+    const confirm = screen.getByRole('button', { name: 'Confirm Quantum Leap' })
+    expect(confirm).toHaveClass('ui-button--primary')
+    expect(confirm).not.toHaveClass('ui-button--danger')
+    fireEvent.click(confirm)
+
+    expect(dispatchPlayer).toHaveBeenCalledWith({ kind: 'quantum.request-leap' })
+  })
+
+  test('applies the selected quantity only to repeatable boosters', async () => {
+    const dispatchPlayer = vi.fn(async () => accepted())
+    renderSurface({ dispatchPlayer, purchaseQuantity: 10 })
+
+    const bulk = screen.getByRole('button', {
+      name: 'Purchase 10.0 Cash Booster upgrades for 10.0 Quantum Shards',
+    })
+    expect(bulk).toHaveTextContent('Purchase +10.0')
+    fireEvent.click(bulk)
+    expect(dispatchPlayer).toHaveBeenCalledWith({
+      kind: 'quantum.purchase-upgrade',
+      upgradeId: 'CashBonus',
+      quantity: 10n,
+    })
+
+    fireEvent.click(screen.getByRole('button', {
+      name: 'Purchase Bot Multitasking for 1.00 Quantum Shards',
+    }))
+    expect(dispatchPlayer).toHaveBeenLastCalledWith({
+      kind: 'quantum.purchase-upgrade',
+      upgradeId: 'BotMultitasking',
+    })
+  })
+
+  test('converts complete 42-point groups directly after Quantum Entanglement', async () => {
+    const dispatchPlayer = vi.fn(async () => accepted())
+    renderSurface({
+      availableInfinityPoints: 100n,
+      entangled: true,
+      leapEligible: true,
+      dispatchPlayer,
+    })
+
+    const leap = screen.getByRole('button', { name: 'Leap for 2.00 QS' })
+    fireEvent.click(leap)
+    expect(dispatchPlayer).toHaveBeenCalledWith({ kind: 'quantum.request-leap' })
+    expect(screen.queryByRole('button', { name: 'Confirm Quantum Leap' })).not.toBeInTheDocument()
+  })
+
+  test('offers the Avocato destination after the one-time unlock', () => {
+    const onOpenAvocato = vi.fn()
+    renderSurface({
+      onOpenAvocato,
+      upgradeOverrides: { Avocado: { code: 'already-maxed', eligible: false } },
+    })
+    fireEvent.click(screen.getByRole('button', { name: 'Visit Avocato' }))
+    expect(onOpenAvocato).toHaveBeenCalledOnce()
+  })
+
+  test('has no serious or critical accessibility violations', async () => {
+    const { container } = renderSurface()
+    const result = await axe.run(container)
+    expect(result.violations.filter((violation) => violation.impact === 'serious' || violation.impact === 'critical')).toEqual([])
+  })
+})
+
+interface RenderOptions {
+  readonly availableInfinityPoints?: bigint
+  readonly entangled?: boolean
+  readonly leapEligible?: boolean
+  readonly dispatchPlayer?: QuantumSurfaceProps['dispatchPlayer']
+  readonly onOpenAvocato?: () => void
+  readonly upgradeOverrides?: Partial<Record<QuantumUpgradeId, Partial<FrontendQuantumUpgradePreview>>>
+  readonly purchaseQuantity?: QuantumSurfaceProps['purchaseQuantity']
+}
+
+function renderSurface(options: RenderOptions = {}) {
+  const entangled = options.entangled ?? false
+  const props: QuantumSurfaceProps = {
+    locale: 'en',
+    resources: {
+      pointsEarned: 50n,
+      pointsSpent: 2n,
+      availablePoints: 48n,
+      permanentSecrets: 6n,
+      influenceSpeedBonus: 8n,
+      cashBonusLevels: 3n,
+      scienceBonusLevels: 4n,
+    },
+    infinityPoints: options.availableInfinityPoints ?? 41n,
+    availableInfinityPoints: options.availableInfinityPoints ?? 41n,
+    progression: {
+      quantum: {
+        divisionsPurchased: 1n,
+        unlocks: {
+          botMultitasking: false,
+          doubleInfinityPoints: false,
+          breakTheLoop: false,
+          quantumEntanglement: entangled,
+          automation: false,
+          fragments: false,
+          purity: false,
+          terra: false,
+          power: false,
+          paragade: false,
+          stellar: false,
+          matrioshkaBrains: false,
+          birchPlanets: false,
+          galacticBrains: false,
+        },
+      },
+      avocado: { unlocked: false },
+      secretProgress: { step: 2, completed: false },
+    },
+    previews: {
+      upgrades: QUANTUM_UPGRADE_IDS.map((id) => preview(id, options.upgradeOverrides?.[id])),
+      leap: {
+        eligible: options.leapEligible ?? false,
+        code: options.leapEligible ? 'ready' : 'insufficient-infinity-points',
+        branch: entangled ? 'entanglement' : 'reset',
+        artifactSkillPoints: entangled ? null : 3n,
+        definitionGap: null,
+      },
+    },
+    meditationPreview: {
+      eligible: true,
+      requiredStepIndex: 2,
+      code: 'step-completed',
+      skillPointReward: 4n,
+    },
+    commandAvailability: {
+      purchaseUpgrade: true,
+      requestLeap: true,
+      completeMeditationStep: true,
+    },
+    dispatchPlayer: options.dispatchPlayer ?? vi.fn(async () => accepted()),
+    onOpenAvocato: options.onOpenAvocato,
+    purchaseQuantity: options.purchaseQuantity,
+  }
+
+  return render(<IntlProvider locale="en"><QuantumSurface {...props} /></IntlProvider>)
+}
+
+describe('QuantumControlPanel', () => {
+  test('shows capped leap progress and expands quantity settings', () => {
+    const onOpenChange = vi.fn()
+    const onQuantityChange = vi.fn()
+    const { rerender } = render(
+      <IntlProvider locale="en">
+        <QuantumControlPanel
+          locale="en"
+          infinityPoints={41n}
+          purchaseSettingsOpen={false}
+          purchaseQuantity={1}
+          onPurchaseSettingsOpenChange={onOpenChange}
+          onPurchaseQuantityChange={onQuantityChange}
+        />
+      </IntlProvider>,
+    )
+    expect(screen.getByText('41.0 / 42.0 Infinity Points')).toBeInTheDocument()
+    fireEvent.click(screen.getByRole('button', { name: 'Purchase settings' }))
+    expect(onOpenChange).toHaveBeenCalledWith(true)
+
+    rerender(
+      <IntlProvider locale="en">
+        <QuantumControlPanel
+          locale="en"
+          infinityPoints={100n}
+          purchaseSettingsOpen
+          purchaseQuantity={1}
+          onPurchaseSettingsOpenChange={onOpenChange}
+          onPurchaseQuantityChange={onQuantityChange}
+        />
+      </IntlProvider>,
+    )
+    expect(screen.getByText('Quantum Leap Available')).toBeInTheDocument()
+    expect(screen.getByRole('progressbar')).toHaveAttribute('aria-valuenow', '42')
+    fireEvent.click(screen.getByRole('button', { name: 'Buy 10' }))
+    expect(onQuantityChange).toHaveBeenCalledWith(10)
+  })
+})
+
+function preview(upgradeId: QuantumUpgradeId, overrides: Partial<FrontendQuantumUpgradePreview> = {}): FrontendQuantumUpgradePreview {
+  return {
+    upgradeId,
+    eligible: true,
+    cost: upgradeId === 'Avocado' ? 42n : 1n,
+    code: 'purchased',
+    definitionGap: null,
+    ...overrides,
+  }
+}
+
+function accepted(): UiRuntimePlayerCommandResult {
+  return {
+    status: 'accepted',
+    kind: 'transition',
+    changed: true,
+    stateRevision: 2,
+    activationRevision: { session: 1, state: 2 },
+  }
+}

@@ -4,6 +4,7 @@ using Expansion;
 using GameData;
 using IdleDysonSwarm.UI;
 using Systems.Skills;
+using Systems.Numeric;
 using TMPro;
 using UnityEngine;
 using UnityEngine.EventSystems;
@@ -902,8 +903,10 @@ public class SkillTreeManager : MonoBehaviour, IPointerClickHandler
             if (oracle.IsSkillOwned(skill.id) && refundable)
             {
                 oracle.SetSkillOwned(skill.id, false);
-                skillTreeData.skillPointsTree += skill.cost;
-                if (skill.isFragment && skillTreeData.fragments >= 1) skillTreeData.fragments -= 1;
+                skillTreeData.skillPointsTree =
+                    NumericSafety.Add(skillTreeData.skillPointsTree, skill.cost).Value;
+                if (skill.isFragment && skillTreeData.fragments >= 1)
+                    skillTreeData.fragments -= 1;
             }
         }
 
@@ -1047,7 +1050,8 @@ public class SkillTreeManager : MonoBehaviour, IPointerClickHandler
                     if (!database.TryGet(dependentId, out SkillDefinition dependentDef)) continue;
                     if (!oracle.IsSkillOwned(dependentId)) continue;
                     oracle.SetSkillOwned(dependentId, false);
-                    skillTreeData.skillPointsTree += dependentDef.cost;
+                    skillTreeData.skillPointsTree =
+                        NumericSafety.Add(skillTreeData.skillPointsTree, dependentDef.cost).Value;
                     if (dependentDef.isFragment && skillTreeData.fragments >= 1) skillTreeData.fragments -= 1;
                 }
             }
@@ -1057,7 +1061,8 @@ public class SkillTreeManager : MonoBehaviour, IPointerClickHandler
             }
 
             oracle.SetSkillOwned(id, false);
-            skillTreeData.skillPointsTree += cost;
+            skillTreeData.skillPointsTree =
+                NumericSafety.Add(skillTreeData.skillPointsTree, cost).Value;
             if (definition.isFragment && skillTreeData.fragments >= 1) skillTreeData.fragments -= 1;
             List<string> autoIdsRoot = oracle.GetAutoAssignmentSkillIds();
             if (autoIdsRoot.Contains(id)) autoIdsRoot.Remove(id);
@@ -1073,8 +1078,15 @@ public class SkillTreeManager : MonoBehaviour, IPointerClickHandler
             return;
         }
 
-        skillTreeData.skillPointsTree -= cost;
-        if (definition.isFragment) skillTreeData.fragments += 1;
+        DiscreteDebitResult debit = EconomyTransaction.TryDebit(skillTreeData.skillPointsTree, cost);
+        if (!debit.Succeeded)
+        {
+            UpdateSkills?.Invoke();
+            return;
+        }
+        skillTreeData.skillPointsTree = debit.Balance;
+        if (definition.isFragment)
+            skillTreeData.fragments = NumericSafety.Add(skillTreeData.fragments, 1L).Value;
 
         List<string> autoAssignIds = oracle.GetAutoAssignmentSkillIds();
         if (!autoAssignIds.Contains(id))

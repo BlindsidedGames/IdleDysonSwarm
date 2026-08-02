@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using GameData;
+using Systems.Numeric;
 using UnityEngine;
 using static Expansion.Oracle;
 
@@ -55,6 +56,7 @@ public class SkillsAutoAssignment : MonoBehaviour
         List<string> autoAssignIds = oracle.GetAutoAssignmentSkillIds();
         if (autoAssignIds.Count < 1) return;
         bool assignedAny;
+        int passesRemaining = autoAssignIds.Count;
         do
         {
             assignedAny = false;
@@ -78,9 +80,13 @@ public class SkillsAutoAssignment : MonoBehaviour
                     continue;
                 }
 
-                skillTreeData.skillPointsTree -= cost;
+                DiscreteDebitResult debit =
+                    EconomyTransaction.TryDebit(skillTreeData.skillPointsTree, cost);
+                if (!debit.Succeeded) continue;
+                skillTreeData.skillPointsTree = debit.Balance;
                 oracle.SetSkillOwned(skillId, true);
-                if (definition.isFragment) skillTreeData.fragments += 1;
+                if (definition.isFragment)
+                    skillTreeData.fragments = NumericSafety.Add(skillTreeData.fragments, 1L).Value;
                 assignedAny = true;
 
                 if (skillTreeData.skillPointsTree <= 0) break;
@@ -90,7 +96,8 @@ public class SkillsAutoAssignment : MonoBehaviour
             {
                 _gameManager.UpdateSkillsInvoke();
             }
-        } while (assignedAny && skillTreeData.skillPointsTree > 0);
+            passesRemaining--;
+        } while (assignedAny && skillTreeData.skillPointsTree > 0 && passesRemaining > 0);
     }
 
     /// <summary>

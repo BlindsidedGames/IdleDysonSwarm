@@ -1,6 +1,8 @@
 using System;
 using Expansion;
 using IdleDysonSwarm.Systems.Balance;
+using Systems.Numeric;
+using Systems.Simulation;
 using static Expansion.Oracle;
 using static IdleDysonSwarm.Systems.Constants.QuantumConstants;
 
@@ -33,7 +35,9 @@ namespace IdleDysonSwarm.Services
         #region Calculations
 
         public float WorkerGenerationSpeed =>
-            BalanceRuntime.BaseWorkerGenerationSpeed + PrestigePlus.influence;
+            (float)Math.Min(
+                float.MaxValue,
+                (double)BalanceRuntime.BaseWorkerGenerationSpeed + PrestigePlus.influence);
 
         public float WorkerFillPercent => (float)WorkersReady / BalanceRuntime.WorkerBatchSize;
 
@@ -53,8 +57,24 @@ namespace IdleDysonSwarm.Services
                 return false;
 
             int batchSize = BalanceRuntime.WorkerBatchSize;
-            SaveData.influence += batchSize;
-            SaveData.workersReadyToGo = 0;
+            long workers = SaveData.workersReadyToGo;
+            long influence = SaveData.influence;
+            TransactionStatus status = EconomyTransaction.TryPurchase(
+                ref workers,
+                workers,
+                ref influence,
+                batchSize);
+            if (status != TransactionStatus.Success)
+                return false;
+
+            SaveData.workersReadyToGo = workers;
+            SaveData.influence = influence;
+            StaticSaveSettings.simulationStatistics?.RecordSegment(
+                0d,
+                new SimulationPresentationSummary
+                {
+                    ManualInfluence = batchSize
+                });
 
             OnInfluenceGathered?.Invoke(batchSize);
 
@@ -63,43 +83,35 @@ namespace IdleDysonSwarm.Services
 
         public void ApplyOfflineProgress(double seconds)
         {
-            int amountWhileAway = (int)Math.Round(seconds * WorkerGenerationSpeed);
+            AdvanceSimulation(seconds);
+        }
 
-            if (AutoGatherEnabled)
-            {
-                // Auto-convert: add directly to influence
-                SaveData.influence += amountWhileAway;
-                SaveData.universesConsumed += amountWhileAway;
-            }
-            else
-            {
-                // Manual mode: accumulate workers up to batch size
-                int batchSize = BalanceRuntime.WorkerBatchSize;
-                long total = SaveData.workersReadyToGo + amountWhileAway;
-                if (total >= batchSize)
-                {
-                    // Calculate overflow before clamping (fixes minor bug in original)
-                    long overflow = SaveData.workersReadyToGo;
-                    SaveData.workersReadyToGo = batchSize;
-                    SaveData.universesConsumed += batchSize - overflow;
-                }
-                else
-                {
-                    SaveData.workersReadyToGo += amountWhileAway;
-                    SaveData.universesConsumed += amountWhileAway;
-                }
-            }
+        public RealityAdvanceResult AdvanceSimulation(double seconds)
+        {
+            RealityAdvanceResult result = RealitySimulation.Advance(
+                SaveData.workerGenerationProgress,
+                SaveData.workersReadyToGo,
+                SaveData.influence,
+                AutoGatherEnabled,
+                WorkerGenerationSpeed,
+                seconds,
+                BalanceRuntime.WorkerBatchSize);
+            SaveData.workerGenerationProgress = result.FractionalProgress;
+            SaveData.workersReadyToGo = result.WorkersReady;
+            SaveData.influence = result.Influence;
+            SaveData.universesConsumed = NumericSafety.Add(
+                SaveData.universesConsumed,
+                result.WorkersGenerated).Value;
+            if (result.AutomaticInfluence > 0L)
+                OnInfluenceGathered?.Invoke(result.AutomaticInfluence);
+            return result;
         }
 
         public bool TrySpendInfluence(long amount)
         {
-            if (amount <= 0)
-                return false;
-
-            if (SaveData.influence < amount)
-                return false;
-
-            SaveData.influence -= amount;
+            DiscreteDebitResult debit = EconomyTransaction.TryDebit(SaveData.influence, amount);
+            if (!debit.Succeeded) return false;
+            SaveData.influence = debit.Balance;
             OnInfluenceSpent?.Invoke(amount);
 
             return true;
@@ -109,14 +121,37 @@ namespace IdleDysonSwarm.Services
         {
             if (amount > 0)
             {
-                SaveData.influence += amount;
+                SaveData.influence = NumericSafety.Add(SaveData.influence, amount).Value;
             }
         }
 
         public void IncrementWorker()
         {
-            SaveData.workersReadyToGo++;
-            SaveData.universesConsumed++;
+            AddGeneratedWorkers(1L);
+        }
+
+        public void AddGeneratedWorkers(long amount)
+        {
+            if (amount <= 0L) return;
+
+            SaveData.universesConsumed = NumericSafety.Add(SaveData.universesConsumed, amount).Value;
+            if (AutoGatherEnabled)
+            {
+                long influenceBefore = SaveData.influence;
+                SaveData.influence = NumericSafety.Add(
+                    SaveData.influence,
+                    amount).Value;
+                SaveData.workersReadyToGo = 0L;
+                long credited = Math.Max(
+                    0L,
+                    SaveData.influence - influenceBefore);
+                if (credited > 0L)
+                    OnInfluenceGathered?.Invoke(credited);
+                return;
+            }
+
+            long total = NumericSafety.Add(SaveData.workersReadyToGo, amount).Value;
+            SaveData.workersReadyToGo = Math.Min(total, BalanceRuntime.WorkerBatchSize);
         }
 
         public void ClampWorkersNonNegative()

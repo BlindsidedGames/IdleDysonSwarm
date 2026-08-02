@@ -5,6 +5,7 @@ using UnityEngine.UI;
 using Blindsided.Utilities;
 using IdleDysonSwarm.Services;
 using IdleDysonSwarm.Systems.Balance;
+using Systems.Numeric;
 using static Expansion.Oracle;
 
 public class WorkerController : MonoBehaviour
@@ -39,32 +40,13 @@ public class WorkerController : MonoBehaviour
         influenceDisplay.text = $"Influence: {_workerService.InfluenceBalance:N0}";
     }
 
-    private void OnEnable()
-    {
-        AwayFor += ApplyReturnValues;
-    }
-
-    private void OnDisable()
-    {
-        AwayFor -= ApplyReturnValues;
-    }
-
-
     #region Reality
 
-    private float workerGenerationSpeed;
-    private float workerGenerationTime;
+    private double workerGenerationSpeed;
     [SerializeField] private ProceduralUIImage workerGenerationBar;
     [SerializeField] private ProceduralUIImage workersReadyToGofill;
     [SerializeField] private TMP_Text universeDesignation;
     [SerializeField] private TMP_Text preWorkerCounter;
-
-    private void ApplyReturnValues(double time)
-    {
-        _workerService.ApplyOfflineProgress(time);
-        UpdateWorkersReadyToGo();
-    }
-
 
     private void RunWorkers()
     {
@@ -79,16 +61,11 @@ public class WorkerController : MonoBehaviour
             SendWorkers();
         }
 
-        workerGenerationTime += workerGenerationSpeed * Time.deltaTime;
-
-        workerGenerationBar.fillAmount = workerGenerationSpeed >= 10 ? 1 : workerGenerationTime / 1;
-
-        if (!(workerGenerationTime >= 1)) return;
-        while (workerGenerationTime > 1)
-        {
-            _workerService.IncrementWorker();
-            workerGenerationTime -= 1;
-        }
+        workerGenerationBar.fillAmount = workerGenerationSpeed >= 10
+            ? 1f
+            : NumericUiAdapter.ToUnitInterval(
+                oracle.saveSettings.saveData.workerGenerationProgress,
+                "worker_generation");
 
         UpdateWorkersReadyToGo();
     }
@@ -96,7 +73,9 @@ public class WorkerController : MonoBehaviour
     private void UpdateWorkersReadyToGo()
     {
         _workerService.ClampWorkersNonNegative();
-        workersReadyToGofill.fillAmount = _workerService.WorkerFillPercent;
+        workersReadyToGofill.fillAmount = NumericUiAdapter.ToUnitInterval(
+            _workerService.WorkerFillPercent,
+            "worker_batch_progress");
         preWorkerCounter.text = $"{_workerService.WorkersReady}/{BalanceRuntime.WorkerBatchSize}";
         universeDesignation.text =
             $"Universe Designation: {_workerService.WorkerBatchesProcessed + 1:N0}";
@@ -110,4 +89,3 @@ public class WorkerController : MonoBehaviour
 
     #endregion
 }
-

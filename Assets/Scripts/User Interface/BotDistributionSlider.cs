@@ -2,6 +2,8 @@ using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 using static Expansion.Oracle;
+using Systems.Debugging;
+using Systems.Numeric;
 
 public class BotDistributionSlider : MonoBehaviour
 {
@@ -14,7 +16,9 @@ public class BotDistributionSlider : MonoBehaviour
     {
         if (!oracle.saveSettings.prestigePlus.botMultitasking)
         {
-            slider.value = (float)prestigeData.botDistribution;
+            slider.value = NumericUiAdapter.ToUnitInterval(
+                prestigeData.botDistribution,
+                "bot_distribution");
             workers.text = $"{(1f - prestigeData.botDistribution).ToString("P0")}";
             researchers.text = $"{prestigeData.botDistribution.ToString("P0")}";
         }
@@ -29,7 +33,9 @@ public class BotDistributionSlider : MonoBehaviour
 
     public void SetSlider()
     {
-        slider.value = (float)prestigeData.botDistribution;
+        slider.value = NumericUiAdapter.ToUnitInterval(
+            prestigeData.botDistribution,
+            "bot_distribution");
         Slide(slider.value);
     }
 
@@ -37,6 +43,11 @@ public class BotDistributionSlider : MonoBehaviour
     {
         if (!oracle.saveSettings.prestigePlus.botMultitasking)
         {
+            if (float.IsNaN(f) || float.IsInfinity(f))
+            {
+                NumericDiagnostics.Report("NS-UI-NONFINITE", "adapter=bot_distribution_input");
+                f = 0f;
+            }
             f = Mathf.Round(f * 100f) / 100f;
             prestigeData.botDistribution = f;
             // Debug.Log(SaveSystem.Instance.saveData.botDistribution);

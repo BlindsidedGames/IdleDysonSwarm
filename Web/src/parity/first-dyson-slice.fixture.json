@@ -1,0 +1,438 @@
+{
+  "schemaVersion": 1,
+  "preparedSave": {
+    "sourcePath": "test/fixtures/schema-08-canonical-idb1-main-save.txt",
+    "sourceSha256": "10e2e48cd989618918118e16d0900af7d80f0f5dfb1aad475423ac165ab00c78",
+    "preparedStateSha256": "795f33b2b95132b69c18b6eeec061ad06f19ccba9729df71a9e35dfc82cdb02d",
+    "catalogSha256": "a7cd177e845f8af443535e29bf3f0e61f67dcd0ec01068604422ddc31fb8e0a1"
+  },
+  "initial": {
+    "phase": "ready",
+    "source": "primary",
+    "revision": {
+      "session": 1,
+      "state": 0,
+      "durable": 0
+    },
+    "checkpoint": {
+      "kind": "clean",
+      "durableRevision": 0
+    },
+    "resources": {
+      "money": 1000000,
+      "science": 0,
+      "bots": 0,
+      "workers": 0,
+      "researchers": 0
+    },
+    "facilities": {
+      "assembly_lines": [
+        0,
+        0
+      ],
+      "ai_managers": [
+        0,
+        0
+      ],
+      "servers": [
+        0,
+        0
+      ],
+      "data_centers": [
+        0,
+        0
+      ],
+      "planets": [
+        0,
+        0
+      ],
+      "matrioshka_brains": [
+        0,
+        0
+      ],
+      "birch_planets": [
+        0,
+        0
+      ],
+      "galactic_brains": [
+        0,
+        0
+      ]
+    },
+    "visibility": {
+      "showTinker": true,
+      "visibleBasicFacilityIds": [],
+      "showNextTierTeaser": true
+    },
+    "tinker": {
+      "status": "ready",
+      "value": {
+        "runtime": {
+          "running": false,
+          "repeat": false,
+          "elapsedSeconds": 0,
+          "effectiveManualLabour": false,
+          "cooldownSeconds": 0.20000000298023224
+        },
+        "stats": {
+          "botYield": 1,
+          "assemblyYield": 0,
+          "cooldownSeconds": 0.20000000298023224
+        },
+        "presentationMode": "default",
+        "canStart": true,
+        "eligibility": "available",
+        "timeToCompletionSeconds": null
+      }
+    },
+    "commands": {
+      "tinkerStart": {
+        "kind": "tinker.start",
+        "family": "tinker",
+        "supported": true,
+        "routeAvailable": true,
+        "status": "available",
+        "authority": "CanonicalEventTimeModel.startTinker",
+        "blocker": null,
+        "requirements": [],
+        "missingRequirements": [],
+        "definitionGaps": []
+      },
+      "basicFacility": {
+        "kind": "dyson.purchase-basic-facility",
+        "family": "dyson",
+        "supported": true,
+        "routeAvailable": true,
+        "status": "available",
+        "authority": "tryPurchaseCanonicalBasicFacility",
+        "blocker": null,
+        "requirements": [
+          "runtime-evaluation-port"
+        ],
+        "missingRequirements": [],
+        "definitionGaps": []
+      }
+    },
+    "basicFacilityPreviews": [
+      {
+        "facilityId": "assembly_lines",
+        "eligible": true,
+        "selectedQuantity": "38",
+        "affordableQuantity": "38",
+        "cost": 869008.0130797025,
+        "status": "success"
+      },
+      {
+        "facilityId": "ai_managers",
+        "eligible": false,
+        "selectedQuantity": "0",
+        "affordableQuantity": "0",
+        "cost": 0,
+        "status": "locked"
+      },
+      {
+        "facilityId": "servers",
+        "eligible": false,
+        "selectedQuantity": "0",
+        "affordableQuantity": "0",
+        "cost": 0,
+        "status": "locked"
+      },
+      {
+        "facilityId": "data_centers",
+        "eligible": false,
+        "selectedQuantity": "0",
+        "affordableQuantity": "0",
+        "cost": 0,
+        "status": "locked"
+      },
+      {
+        "facilityId": "planets",
+        "eligible": false,
+        "selectedQuantity": "0",
+        "affordableQuantity": "0",
+        "cost": 0,
+        "status": "locked"
+      }
+    ]
+  },
+  "commands": {
+    "tinker": {
+      "sessionRevision": 1,
+      "expectedStateRevision": 0,
+      "command": {
+        "kind": "tinker.start",
+        "repeat": false
+      }
+    },
+    "basicFacility": {
+      "sessionRevision": 1,
+      "expectedStateRevision": 3,
+      "command": {
+        "kind": "dyson.purchase-basic-facility",
+        "facilityId": "assembly_lines"
+      }
+    }
+  },
+  "outcomes": {
+    "tinkerAccepted": {
+      "kind": "transition",
+      "transition": {
+        "accepted": true,
+        "changed": true,
+        "revision": 1
+      }
+    },
+    "tinkerProgress": {
+      "transition": {
+        "accepted": true,
+        "changed": true,
+        "revision": 2
+      },
+      "requestedMilliseconds": 100,
+      "consumedMilliseconds": 100,
+      "remainingMilliseconds": 0,
+      "checkpoints": []
+    },
+    "tinkerCompletion": {
+      "transition": {
+        "accepted": true,
+        "changed": true,
+        "revision": 3
+      },
+      "requestedMilliseconds": 200,
+      "consumedMilliseconds": 200,
+      "remainingMilliseconds": 0,
+      "checkpoints": []
+    },
+    "basicFacilityAccepted": {
+      "kind": "transition",
+      "transition": {
+        "accepted": true,
+        "changed": true,
+        "revision": 4
+      }
+    },
+    "staleFacility": {
+      "kind": "transition",
+      "transition": {
+        "accepted": false,
+        "code": "SIM-STALE-REVISION",
+        "reason": "Expected revision 3 does not match current revision 4.",
+        "revision": 4
+      }
+    },
+    "rejectedFacility": {
+      "kind": "transition",
+      "transition": {
+        "accepted": false,
+        "code": "dyson-basic:locked",
+        "reason": "locked",
+        "revision": 4
+      }
+    }
+  },
+  "tinker": {
+    "inProgress": {
+      "bots": 0,
+      "tinker": {
+        "status": "ready",
+        "value": {
+          "runtime": {
+            "running": true,
+            "repeat": false,
+            "elapsedSeconds": 0.2,
+            "effectiveManualLabour": false,
+            "cooldownSeconds": 0.20000000298023224
+          },
+          "stats": {
+            "botYield": 1,
+            "assemblyYield": 0,
+            "cooldownSeconds": 0.20000000298023224
+          },
+          "presentationMode": "default",
+          "canStart": false,
+          "eligibility": "already-running",
+          "timeToCompletionSeconds": 2.980232227667301e-9
+        }
+      }
+    },
+    "completed": {
+      "bots": 1,
+      "tinker": {
+        "status": "ready",
+        "value": {
+          "runtime": {
+            "running": false,
+            "repeat": false,
+            "elapsedSeconds": 0,
+            "effectiveManualLabour": false,
+            "cooldownSeconds": 0.5
+          },
+          "stats": {
+            "botYield": 1,
+            "assemblyYield": 0,
+            "cooldownSeconds": 0.5
+          },
+          "presentationMode": "default",
+          "canStart": true,
+          "eligibility": "available",
+          "timeToCompletionSeconds": null
+        }
+      }
+    }
+  },
+  "checkpointedReconstruction": {
+    "phase": "ready",
+    "source": "primary",
+    "revision": {
+      "session": 1,
+      "state": 0,
+      "durable": 0
+    },
+    "checkpoint": {
+      "kind": "clean",
+      "durableRevision": 0
+    },
+    "resources": {
+      "money": 131056.66691933374,
+      "science": 0,
+      "bots": 1,
+      "workers": 1,
+      "researchers": 0
+    },
+    "facilities": {
+      "assembly_lines": [
+        0,
+        38
+      ],
+      "ai_managers": [
+        0,
+        0
+      ],
+      "servers": [
+        0,
+        0
+      ],
+      "data_centers": [
+        0,
+        0
+      ],
+      "planets": [
+        0,
+        0
+      ],
+      "matrioshka_brains": [
+        0,
+        0
+      ],
+      "birch_planets": [
+        0,
+        0
+      ],
+      "galactic_brains": [
+        0,
+        0
+      ]
+    },
+    "visibility": {
+      "showTinker": true,
+      "visibleBasicFacilityIds": [
+        "assembly_lines",
+        "ai_managers"
+      ],
+      "showNextTierTeaser": true
+    },
+    "tinker": {
+      "status": "ready",
+      "value": {
+        "runtime": {
+          "running": false,
+          "repeat": false,
+          "elapsedSeconds": 0,
+          "effectiveManualLabour": false,
+          "cooldownSeconds": 0.5
+        },
+        "stats": {
+          "botYield": 1,
+          "assemblyYield": 0,
+          "cooldownSeconds": 0.5
+        },
+        "presentationMode": "default",
+        "canStart": true,
+        "eligibility": "available",
+        "timeToCompletionSeconds": null
+      }
+    },
+    "commands": {
+      "tinkerStart": {
+        "kind": "tinker.start",
+        "family": "tinker",
+        "supported": true,
+        "routeAvailable": true,
+        "status": "available",
+        "authority": "CanonicalEventTimeModel.startTinker",
+        "blocker": null,
+        "requirements": [],
+        "missingRequirements": [],
+        "definitionGaps": []
+      },
+      "basicFacility": {
+        "kind": "dyson.purchase-basic-facility",
+        "family": "dyson",
+        "supported": true,
+        "routeAvailable": true,
+        "status": "available",
+        "authority": "tryPurchaseCanonicalBasicFacility",
+        "blocker": null,
+        "requirements": [
+          "runtime-evaluation-port"
+        ],
+        "missingRequirements": [],
+        "definitionGaps": []
+      }
+    },
+    "basicFacilityPreviews": [
+      {
+        "facilityId": "assembly_lines",
+        "eligible": false,
+        "selectedQuantity": "1",
+        "affordableQuantity": "0",
+        "cost": 191281.76287753452,
+        "status": "insufficient-funds"
+      },
+      {
+        "facilityId": "ai_managers",
+        "eligible": true,
+        "selectedQuantity": "9",
+        "affordableQuantity": "9",
+        "cost": 118344.75249296379,
+        "status": "success"
+      },
+      {
+        "facilityId": "servers",
+        "eligible": false,
+        "selectedQuantity": "0",
+        "affordableQuantity": "0",
+        "cost": 0,
+        "status": "locked"
+      },
+      {
+        "facilityId": "data_centers",
+        "eligible": false,
+        "selectedQuantity": "0",
+        "affordableQuantity": "0",
+        "cost": 0,
+        "status": "locked"
+      },
+      {
+        "facilityId": "planets",
+        "eligible": false,
+        "selectedQuantity": "0",
+        "affordableQuantity": "0",
+        "cost": 0,
+        "status": "locked"
+      }
+    ]
+  }
+}

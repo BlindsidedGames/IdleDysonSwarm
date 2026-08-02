@@ -26,7 +26,7 @@ public class DisclaimerDisabler : MonoBehaviour
     private void Update()
     {
         time += Time.deltaTime;
-        buttonfill.fillAmount = time / 5;
+        buttonfill.fillAmount = Mathf.Clamp01(time / 5f);
         if (time >= 5 && close.interactable == false) close.interactable = true;
     }
 }

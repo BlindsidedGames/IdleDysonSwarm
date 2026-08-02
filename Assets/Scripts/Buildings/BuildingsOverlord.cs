@@ -42,10 +42,16 @@ public class BuildingsOverlord : MonoBehaviour
 
     public int MaxAffordable(double baseCost, double costMulti, long ownedMinusX)
     {
-        int maxAffordable = CalcUtils.MaxAffordable((float)infinityData.money, baseCost, costMulti,
+        long maxAffordable = CalcUtils.MaxAffordableLong(
+            infinityData.money,
+            baseCost,
+            costMulti,
             ownedMinusX);
-        if (maxAffordable < 1) maxAffordable = 1;
-        return maxAffordable;
+        return maxAffordable <= 0L
+            ? 0
+            : maxAffordable > int.MaxValue
+                ? int.MaxValue
+                : (int)maxAffordable;
     }
 
     public long AmountToBuy(long currentAmount, long maxAffordable)

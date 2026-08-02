@@ -40,8 +40,8 @@ namespace Systems.Save
                 AwayTimeSource source,
                 DateTime resolvedStartUtc,
                 DateTime nowUtc,
-                float rawSeconds,
-                float clampedSeconds)
+                double rawSeconds,
+                double clampedSeconds)
             {
                 Source = source;
                 ResolvedStartUtc = resolvedStartUtc;
@@ -53,8 +53,8 @@ namespace Systems.Save
             public AwayTimeSource Source { get; }
             public DateTime ResolvedStartUtc { get; }
             public DateTime NowUtc { get; }
-            public float RawSeconds { get; }
-            public float ClampedSeconds { get; }
+            public double RawSeconds { get; }
+            public double ClampedSeconds { get; }
 
             public bool HasQuitTimestampInput => Source != AwayTimeSource.MissingQuitString;
 
@@ -95,8 +95,8 @@ namespace Systems.Save
                     AwayTimeSource.MissingQuitString,
                     nowUtc,
                     nowUtc,
-                    0f,
-                    0f);
+                    0d,
+                    0d);
             }
 
             AwayTimeSource source = AwayTimeSource.QuitString;
@@ -110,8 +110,8 @@ namespace Systems.Save
                 }
             }
 
-            float rawSeconds = (float)(nowUtc - resolvedStartUtc).TotalSeconds;
-            float clampedSeconds = Math.Max(0f, rawSeconds);
+            double rawSeconds = (nowUtc - resolvedStartUtc).TotalSeconds;
+            double clampedSeconds = Math.Max(0d, rawSeconds);
             return new AwayTimeComputation(source, resolvedStartUtc, nowUtc, rawSeconds, clampedSeconds);
         }
 

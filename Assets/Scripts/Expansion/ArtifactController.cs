@@ -84,7 +84,7 @@ public class ArtifactController : MonoBehaviour
 
         int speed = ResolveTickSpeed();
         artifactTime += speed * Time.deltaTime;
-        artifactFill.fillAmount = artifactTime;
+        artifactFill.fillAmount = Mathf.Clamp01(artifactTime);
 
         if (artifactTime < 1f)
         {

@@ -1,5 +1,6 @@
 using System;
 using IdleDysonSwarm.Services;
+using Systems.Simulation;
 
 namespace Tests.Services
 {
@@ -81,6 +82,18 @@ namespace Tests.Services
             }
         }
 
+        public RealityAdvanceResult AdvanceSimulation(double seconds)
+        {
+            ApplyOfflineProgress(seconds);
+            return new RealityAdvanceResult(
+                0d,
+                _workersReady,
+                _influenceBalance,
+                0L,
+                0L,
+                0d);
+        }
+
         public bool TrySpendInfluence(long amount)
         {
             if (amount <= 0 || _influenceBalance < amount)
@@ -102,8 +115,21 @@ namespace Tests.Services
 
         public void IncrementWorker()
         {
-            _workersReady++;
-            _workerBatchesProcessed++;
+            AddGeneratedWorkers(1L);
+        }
+
+        public void AddGeneratedWorkers(long amount)
+        {
+            if (amount <= 0L) return;
+            _workerBatchesProcessed = SaturatingAdd(_workerBatchesProcessed, amount);
+            if (_autoGatherEnabled)
+            {
+                _influenceBalance = SaturatingAdd(_influenceBalance, amount);
+                _workersReady = 0L;
+                return;
+            }
+
+            _workersReady = Math.Min(MockWorkerBatchSize, SaturatingAdd(_workersReady, amount));
         }
 
         public void ClampWorkersNonNegative()
@@ -145,6 +171,11 @@ namespace Tests.Services
         /// Sets the worker batches processed for testing.
         /// </summary>
         public void SetWorkerBatchesProcessed(long count) => _workerBatchesProcessed = count;
+
+        private static long SaturatingAdd(long left, long right)
+        {
+            return right > 0L && left > long.MaxValue - right ? long.MaxValue : left + right;
+        }
 
         #endregion
     }

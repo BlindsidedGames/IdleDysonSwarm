@@ -5,6 +5,9 @@ using Expansion;
 using GameData;
 using IdleDysonSwarm.Services;
 using Systems.Facilities;
+using Systems.Debugging;
+using Systems.Numeric;
+using Systems.Simulation;
 using UnityEngine;
 #if UNITY_EDITOR
 using UnityEditor;
@@ -262,20 +265,77 @@ namespace Research
             return CostForAmount(affordable, BaseCostCalculated);
         }
 
-        public bool TryAutoPurchase()
+        public bool TryAutoPurchase(bool updatePresentation = true)
         {
-            if (!CanAutoBuy) return false;
-            if (BuyMaxCost() > _gameState.Science) return false;
+            return TryAutoPurchase(
+                SimulationAutomationPolicy.PreserveConfiguredMode,
+                updatePresentation);
+        }
 
-            long affordable = Affordable();
-            if (affordable <= 0) return false;
-
+        public bool TryAutoPurchase(
+            SimulationAutomationPolicy policy,
+            bool updatePresentation = true)
+        {
             double previousLevel = CurrentLevel;
-            _gameState.Science -= BuyMaxCost();
-            CurrentLevel = previousLevel + affordable;
+            if (!TryCreateAutomationRule(out var rule) ||
+                !DysonAutomationTransactions.TryPurchaseResearch(
+                    _gameState.SaveSettings,
+                    rule,
+                    policy,
+                    out _))
+            {
+                return false;
+            }
+
             HandlePostPurchase(previousLevel, CurrentLevel);
-            UpdateCostText();
+            if (updatePresentation) UpdateCostText();
             return true;
+        }
+
+        public bool TryCreateAutomationRule(
+            out ResearchAutomationRule rule)
+        {
+            ResearchDefinition resolved = ResolveDefinition();
+            string id = ResolvedResearchId;
+            if (string.IsNullOrEmpty(id))
+            {
+                rule = default;
+                return false;
+            }
+
+            rule = new ResearchAutomationRule(
+                id,
+                BaseCostValue,
+                ExponentValue,
+                MaxLevel,
+                ResolvedAutoBuyGroup,
+                resolved != null
+                    ? resolved.prerequisiteResearchIds
+                    : null,
+                resolved != null
+                    ? resolved.prerequisiteFacilityId
+                    : null,
+                resolved != null
+                    ? resolved.prerequisiteFacilityOwned
+                    : 0d,
+                Percent);
+            return true;
+        }
+
+        public bool WouldOfflineAutoPurchase(DysonAnalyticalState predictedState)
+        {
+            if (!IsAutoBuyEnabled ||
+                !HasMetPrerequisites(predictedState) ||
+                IsMaxed ||
+                !NumericSafety.IsFinite(predictedState.Science))
+            {
+                return false;
+            }
+
+            long affordable = MaxAffordableForCost(
+                predictedState.Science,
+                BaseCostCalculated);
+            return ClampToRemaining(affordable) > 0L;
         }
 
         private void PurchaseResearch()
@@ -283,13 +343,46 @@ namespace Research
             if (!PrerequisitesMet || IsMaxed) return;
 
             long numberToBuy = NumberToBuy();
-            if (numberToBuy <= 0 || Cost() > _gameState.Science) return;
+            if (numberToBuy <= 0) return;
 
             double previousLevel = CurrentLevel;
-            _gameState.Science -= Cost();
-            CurrentLevel = previousLevel + numberToBuy;
+            NumericResult<double> nextLevel = NumericSafety.Add(previousLevel, numberToBuy);
+            if (!nextLevel.IsSuccess || nextLevel.Value <= previousLevel) return;
+
+            DebitResult debit = EconomyTransaction.TryDebit(_gameState.Science, Cost(), numberToBuy);
+            if (!debit.Succeeded)
+            {
+                ReportUnexpectedTransactionFailure(debit.Status);
+                return;
+            }
+
+            _gameState.Science = debit.Balance;
+            CurrentLevel = nextLevel.Value;
             HandlePostPurchase(previousLevel, CurrentLevel);
             UpdateCostText();
+        }
+
+        private void RequestResearchPurchase()
+        {
+            if (!GameManager.RequestQueuedPlayerAction(
+                    SimulationInputKind.Purchase,
+                    PurchaseResearch,
+                    $"research:{ResolvedResearchId}"))
+            {
+                PurchaseResearch();
+            }
+        }
+
+        private static void ReportUnexpectedTransactionFailure(TransactionStatus status)
+        {
+            if (status == TransactionStatus.InsufficientFunds ||
+                status == TransactionStatus.InvalidQuantity ||
+                status == TransactionStatus.Maxed)
+            {
+                return;
+            }
+
+            NumericDiagnostics.Report("NS-TRANSACTION-RESEARCH", $"status={status}");
         }
 
         private void HandlePostPurchase(double previousLevel, double newLevel)
@@ -360,9 +453,10 @@ namespace Research
         {
             if (IsMaxed) return 0;
 
+            long owned = NumericSafety.ToLongFloor(CurrentLevel).Value;
             long amount = BuyModeHelper.GetAmountToBuy(
                 _gameState.ResearchBuyMode, _gameState.RoundedBulkBuy,
-                (long)CurrentLevel, Affordable());
+                owned, Affordable());
             return ClampToRemaining(amount);
         }
 
@@ -491,7 +585,8 @@ namespace Research
                 return;
             }
 
-            buildingReferences.purchaseButton.onClick.AddListener(PurchaseResearch);
+            buildingReferences.purchaseButton.onClick.AddListener(
+                RequestResearchPurchase);
             _isPurchaseListenerBound = true;
         }
 #if UNITY_EDITOR
@@ -520,10 +615,10 @@ namespace Research
             if (costBase <= 0) return 0;
             if (IsLinearExponent)
             {
-                return (long)Math.Floor(currencyOwned / costBase);
+                return NumericSafety.ToLongFloor(currencyOwned / costBase).Value;
             }
 
-            return MaxAffordable(currencyOwned, costBase, ExponentValue, CurrentLevel);
+            return MaxAffordableLong(currencyOwned, costBase, ExponentValue, CurrentLevel);
         }
 
         private double CostForAmount(double amount, double costBase)
@@ -531,7 +626,7 @@ namespace Research
             if (amount <= 0 || costBase <= 0) return 0;
             if (IsLinearExponent)
             {
-                return costBase * amount;
+                return NumericSafety.Multiply(costBase, amount).Value;
             }
 
             return BuyXCost(amount, costBase, ExponentValue, CurrentLevel);
@@ -579,6 +674,49 @@ namespace Research
             }
 
             return true;
+        }
+
+        private bool HasMetPrerequisites(DysonAnalyticalState predictedState)
+        {
+            if (!IsRuntimeStateReady())
+                return false;
+            if (_resolvedDefinition == null)
+                return true;
+
+            if (_resolvedDefinition.prerequisiteResearchIds != null)
+            {
+                foreach (string prerequisite in _resolvedDefinition.prerequisiteResearchIds)
+                {
+                    if (string.IsNullOrEmpty(prerequisite)) continue;
+                    if (_gameState.GetResearchLevel(prerequisite) <= 0d)
+                        return false;
+                }
+            }
+
+            if (string.IsNullOrEmpty(_resolvedDefinition.prerequisiteFacilityId))
+                return true;
+            if (!predictedState.TryGetFacilityCount(
+                    _resolvedDefinition.prerequisiteFacilityId,
+                    out double predictedAutoOwned))
+            {
+                return false;
+            }
+            if (!FacilityCountAccessor.TryGetCount(
+                    _gameState.InfinityData,
+                    _resolvedDefinition.prerequisiteFacilityId,
+                    out double[] currentCounts) ||
+                currentCounts == null ||
+                currentCounts.Length < 2)
+            {
+                return false;
+            }
+
+            double requiredOwned = _resolvedDefinition.prerequisiteFacilityOwned > 0d
+                ? _resolvedDefinition.prerequisiteFacilityOwned
+                : 1d;
+            return NumericSafety.Add(
+                predictedAutoOwned,
+                currentCounts[1]).Value >= requiredOwned;
         }
 
         private double GetPercentForResearch(string researchId)

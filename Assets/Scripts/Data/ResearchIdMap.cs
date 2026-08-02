@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using Expansion;
+using Systems.Numeric;
 
 namespace GameData
 {
@@ -97,39 +98,33 @@ namespace GameData
         public static bool TrySetLegacyLevel(Oracle.DysonVerseInfinityData infinityData, string id, double level)
         {
             if (infinityData == null || string.IsNullOrEmpty(id)) return false;
+            if (!NumericSafety.IsFinite(level) || level < 0d) return false;
+            double discreteLevel = System.Math.Floor(level);
 
             switch (id)
             {
                 case MoneyMultiplier:
-                    infinityData.moneyMultiUpgradeOwned = level;
+                    infinityData.moneyMultiUpgradeOwned = discreteLevel;
                     return true;
                 case ScienceBoost:
-                    infinityData.scienceBoostOwned = level;
+                    infinityData.scienceBoostOwned = discreteLevel;
                     return true;
                 case AssemblyLineUpgrade:
-                    infinityData.assemblyLineUpgradeOwned = (long)level;
-                    return true;
+                    return TrySetLongLevel(discreteLevel, ref infinityData.assemblyLineUpgradeOwned);
                 case AiManagerUpgrade:
-                    infinityData.aiManagerUpgradeOwned = (long)level;
-                    return true;
+                    return TrySetLongLevel(discreteLevel, ref infinityData.aiManagerUpgradeOwned);
                 case ServerUpgrade:
-                    infinityData.serverUpgradeOwned = (long)level;
-                    return true;
+                    return TrySetLongLevel(discreteLevel, ref infinityData.serverUpgradeOwned);
                 case DataCenterUpgrade:
-                    infinityData.dataCenterUpgradeOwned = (long)level;
-                    return true;
+                    return TrySetLongLevel(discreteLevel, ref infinityData.dataCenterUpgradeOwned);
                 case PlanetUpgrade:
-                    infinityData.planetUpgradeOwned = (long)level;
-                    return true;
+                    return TrySetLongLevel(discreteLevel, ref infinityData.planetUpgradeOwned);
                 case MatrioshkaBrainsUpgrade:
-                    infinityData.matrioshkaUpgradeOwned = (long)level;
-                    return true;
+                    return TrySetLongLevel(discreteLevel, ref infinityData.matrioshkaUpgradeOwned);
                 case BirchPlanetsUpgrade:
-                    infinityData.birchUpgradeOwned = (long)level;
-                    return true;
+                    return TrySetLongLevel(discreteLevel, ref infinityData.birchUpgradeOwned);
                 case GalacticBrainsUpgrade:
-                    infinityData.galacticUpgradeOwned = (long)level;
-                    return true;
+                    return TrySetLongLevel(discreteLevel, ref infinityData.galacticUpgradeOwned);
                 case PanelLifetime1:
                     infinityData.panelLifetime1 = level >= 1;
                     return true;
@@ -145,6 +140,14 @@ namespace GameData
                 default:
                     return false;
             }
+        }
+
+        private static bool TrySetLongLevel(double level, ref long target)
+        {
+            NumericResult<long> converted = NumericSafety.ToLongFloor(level);
+            if (!converted.IsSuccess) return false;
+            target = converted.Value;
+            return true;
         }
 
         public static void PopulateLevelsFromLegacy(Oracle.DysonVerseInfinityData infinityData,
@@ -178,4 +181,3 @@ namespace GameData
         }
     }
 }
-

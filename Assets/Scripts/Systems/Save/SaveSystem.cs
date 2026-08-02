@@ -28,7 +28,7 @@ namespace Systems.Save
     /// </summary>
     public sealed class SaveSystem
     {
-        private const int CurrentSchema = 11;
+        private const int CurrentSchema = 12;
         private readonly ITransactionalSaveStorage _transactionalStorage;
 
         /// <summary>

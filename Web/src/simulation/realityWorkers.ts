@@ -1,0 +1,537 @@
+import { getGameAsset } from '../game-data/catalog'
+import type {
+  CanonicalGameStateV1,
+  SimulationStatisticsState,
+  SimulationTotalsState,
+  StatisticsWindowState,
+} from '../game-state/types'
+import {
+  addContinuous,
+  addDiscrete,
+  DISCRETE_MAXIMUM,
+  floorToDiscrete,
+  multiplyContinuous,
+} from './numeric'
+
+const REALITY_TUNING_KIND =
+  'IdleDysonSwarm.Data.Balance.RealitySystemTuning'
+const REALITY_TUNING_ID = 'RealitySystemTuning'
+const FLOAT32_MAXIMUM = 3.4028234663852886e38
+
+export interface RealityWorkerTuning {
+  readonly workerBatchSize: bigint
+  readonly baseWorkerGenerationSpeed: number
+}
+
+export type RealityWorkerAdvanceStatus =
+  | 'success'
+  | 'invalid-input'
+  | 'invalid-state'
+  | 'invalid-tuning'
+
+export interface RealityWorkerAdvanceResult {
+  readonly status: RealityWorkerAdvanceStatus
+  readonly state: CanonicalGameStateV1
+  readonly generationPerSecond: number
+  readonly workersGenerated: bigint
+  readonly automaticInfluence: bigint
+  readonly stalledSeconds: number
+}
+
+export type RealityInfluenceGatherStatus =
+  | 'success'
+  | 'not-ready'
+  | 'output-maxed'
+  | 'invalid-state'
+  | 'invalid-tuning'
+
+export interface RealityInfluenceGatherResult {
+  readonly status: RealityInfluenceGatherStatus
+  readonly gathered: boolean
+  readonly amount: bigint
+  readonly state: CanonicalGameStateV1
+}
+
+interface RealitySegmentSummary {
+  readonly workersGenerated: bigint
+  readonly automaticInfluence: bigint
+  readonly manualInfluence: bigint
+  readonly stalledSeconds: number
+}
+
+/**
+ * Advances Unity's Reality worker clock. Double Time is intentionally absent:
+ * GameManager passes raw elapsed seconds to WorkerService.
+ */
+export function advanceRealityWorkers(
+  state: Readonly<CanonicalGameStateV1>,
+  seconds: number,
+  tuning: Readonly<RealityWorkerTuning> | null | undefined =
+    readRealityWorkerTuning(),
+): RealityWorkerAdvanceResult {
+  if (!Number.isFinite(seconds) || seconds < 0) {
+    return emptyAdvance('invalid-input', state)
+  }
+  if (!isValidTuning(tuning)) {
+    return emptyAdvance('invalid-tuning', state)
+  }
+  if (!isValidRealityState(state)) {
+    return emptyAdvance('invalid-state', state)
+  }
+
+  const generationPerSecond = workerGenerationPerSecond(
+    tuning.baseWorkerGenerationSpeed,
+    state.quantum.influenceSpeedBonus,
+  )
+  let progress = normalizeProgress(
+    state.reality.workerGenerationProgress,
+  )
+  let workersReady =
+    state.reality.workersReady > tuning.workerBatchSize
+      ? tuning.workerBatchSize
+      : state.reality.workersReady
+  let influence = state.reality.influence
+  let workersGenerated = 0n
+  let automaticInfluence = 0n
+  let stalledSeconds = 0
+
+  if (
+    generationPerSecond > 0 &&
+    seconds > 0 &&
+    (state.reality.autoGather ||
+      workersReady < tuning.workerBatchSize)
+  ) {
+    const generatedExact = addContinuous(
+      progress,
+      multiplyContinuous(generationPerSecond, seconds),
+    )
+    const completed = floorToDiscrete(Math.floor(generatedExact))
+    const remainder =
+      completed === DISCRETE_MAXIMUM
+        ? 0
+        : Math.max(0, generatedExact - Number(completed))
+
+    if (state.reality.autoGather) {
+      const influenceCapacity = DISCRETE_MAXIMUM - influence
+      const completeBatches =
+        (workersReady + completed) / tuning.workerBatchSize
+      const affordableBatches =
+        influenceCapacity / tuning.workerBatchSize
+      const gatheredBatches =
+        completeBatches < affordableBatches
+          ? completeBatches
+          : affordableBatches
+      automaticInfluence =
+        gatheredBatches * tuning.workerBatchSize
+      influence += automaticInfluence
+      const workersAfterGather =
+        workersReady + completed - automaticInfluence
+      const overflow =
+        workersAfterGather > tuning.workerBatchSize
+          ? workersAfterGather - tuning.workerBatchSize
+          : 0n
+      workersReady =
+        workersAfterGather > tuning.workerBatchSize
+          ? tuning.workerBatchSize
+          : workersAfterGather
+      workersGenerated = completed - overflow
+      progress =
+        workersReady >= tuning.workerBatchSize ? 0 : remainder
+      if (overflow > 0n) {
+        stalledSeconds = Math.max(
+          0,
+          seconds -
+            Number(workersGenerated) /
+              Math.max(Number.MIN_VALUE, generationPerSecond),
+        )
+      }
+    } else {
+      const space = tuning.workerBatchSize - workersReady
+      const accepted = completed < space ? completed : space
+      workersReady = addDiscrete(workersReady, accepted)
+      workersGenerated = accepted
+      progress =
+        workersReady >= tuning.workerBatchSize ? 0 : remainder
+      if (completed > accepted) {
+        stalledSeconds = Math.max(
+          0,
+          seconds -
+            Number(accepted) /
+              Math.max(Number.MIN_VALUE, generationPerSecond),
+        )
+      }
+    }
+  } else if (
+    !state.reality.autoGather &&
+    workersReady >= tuning.workerBatchSize &&
+    seconds > 0
+  ) {
+    stalledSeconds = seconds
+  }
+
+  const candidate: CanonicalGameStateV1 = {
+    ...state,
+    reality: {
+      ...state.reality,
+      universeDesignationCount: addDiscrete(
+        state.reality.universeDesignationCount,
+        workersGenerated,
+      ),
+      workersReady,
+      workerGenerationProgress: progress,
+      influence,
+    },
+  }
+
+  return {
+    status: 'success',
+    state: candidate,
+    generationPerSecond,
+    workersGenerated,
+    automaticInfluence,
+    stalledSeconds,
+  }
+}
+
+/**
+ * Converts one full manual worker batch into Influence. Unity consumes the
+ * entire ready-worker balance and credits exactly one configured batch.
+ */
+export function gatherRealityInfluence(
+  state: Readonly<CanonicalGameStateV1>,
+  tuning: Readonly<RealityWorkerTuning> | null | undefined =
+    readRealityWorkerTuning(),
+): RealityInfluenceGatherResult {
+  if (!isValidTuning(tuning)) {
+    return emptyGather('invalid-tuning', state)
+  }
+  if (!isValidRealityState(state)) {
+    return emptyGather('invalid-state', state)
+  }
+  if (state.reality.workersReady < tuning.workerBatchSize) {
+    return emptyGather('not-ready', state)
+  }
+  if (
+    state.reality.influence >
+    DISCRETE_MAXIMUM - tuning.workerBatchSize
+  ) {
+    return emptyGather('output-maxed', state)
+  }
+
+  const summary: RealitySegmentSummary = {
+    workersGenerated: 0n,
+    automaticInfluence: 0n,
+    manualInfluence: tuning.workerBatchSize,
+    stalledSeconds: 0,
+  }
+  return {
+    status: 'success',
+    gathered: true,
+    amount: tuning.workerBatchSize,
+    state: {
+      ...state,
+      reality: {
+        ...state.reality,
+        workersReady: 0n,
+        influence:
+          state.reality.influence + tuning.workerBatchSize,
+      },
+      statistics: recordRealitySegment(
+        state.statistics,
+        0,
+        summary,
+      ),
+    },
+  }
+}
+
+export function readRealityWorkerTuning():
+  | RealityWorkerTuning
+  | undefined {
+  const asset = getGameAsset(
+    REALITY_TUNING_KIND,
+    REALITY_TUNING_ID,
+  )
+  const workerBatchSize = asset?.data.workerBatchSize
+  const baseWorkerGenerationSpeed =
+    asset?.data.baseWorkerGenerationSpeed
+  if (
+    typeof workerBatchSize !== 'number' ||
+    !Number.isSafeInteger(workerBatchSize) ||
+    workerBatchSize <= 0 ||
+    typeof baseWorkerGenerationSpeed !== 'number' ||
+    !Number.isSafeInteger(baseWorkerGenerationSpeed) ||
+    baseWorkerGenerationSpeed < 0
+  ) {
+    return undefined
+  }
+  return {
+    workerBatchSize: BigInt(workerBatchSize),
+    baseWorkerGenerationSpeed,
+  }
+}
+
+function workerGenerationPerSecond(
+  base: number,
+  bonus: bigint,
+): number {
+  return Math.fround(
+    Math.min(FLOAT32_MAXIMUM, base + Number(bonus)),
+  )
+}
+
+function normalizeProgress(value: number): number {
+  return Number.isFinite(value) && value >= 0 ? value % 1 : 0
+}
+
+function isValidTuning(
+  tuning: Readonly<RealityWorkerTuning> | null | undefined,
+): tuning is RealityWorkerTuning {
+  return (
+    tuning != null &&
+    tuning.workerBatchSize > 0n &&
+    tuning.workerBatchSize <= DISCRETE_MAXIMUM &&
+    Number.isSafeInteger(tuning.baseWorkerGenerationSpeed) &&
+    tuning.baseWorkerGenerationSpeed >= 0
+  )
+}
+
+function isValidRealityState(
+  state: Readonly<CanonicalGameStateV1>,
+): boolean {
+  const reality = state.reality
+  return (
+    reality.universeDesignationCount >= 0n &&
+    reality.universeDesignationCount <= DISCRETE_MAXIMUM &&
+    reality.workersReady >= 0n &&
+    reality.workersReady <= DISCRETE_MAXIMUM &&
+    reality.influence >= 0n &&
+    reality.influence <= DISCRETE_MAXIMUM &&
+    state.quantum.influenceSpeedBonus >= 0n &&
+    state.quantum.influenceSpeedBonus <= DISCRETE_MAXIMUM
+  )
+}
+
+function emptyAdvance(
+  status: Exclude<RealityWorkerAdvanceStatus, 'success'>,
+  state: Readonly<CanonicalGameStateV1>,
+): RealityWorkerAdvanceResult {
+  return {
+    status,
+    state,
+    generationPerSecond: 0,
+    workersGenerated: 0n,
+    automaticInfluence: 0n,
+    stalledSeconds: 0,
+  }
+}
+
+function emptyGather(
+  status: Exclude<RealityInfluenceGatherStatus, 'success'>,
+  state: Readonly<CanonicalGameStateV1>,
+): RealityInfluenceGatherResult {
+  return {
+    status,
+    gathered: false,
+    amount: 0n,
+    state,
+  }
+}
+
+function recordRealitySegment(
+  statistics: Readonly<SimulationStatisticsState>,
+  seconds: number,
+  summary: Readonly<RealitySegmentSummary>,
+): SimulationStatisticsState {
+  const safeSeconds =
+    Number.isFinite(seconds) && seconds >= 0 ? seconds : 0
+  const start = statistics.trackedSimulatedSeconds
+  const end = addContinuous(start, safeSeconds)
+  const recentBase =
+    statistics.recentProcessedSegment.simulatedSeconds > 0
+      ? emptyTotals()
+      : statistics.recentProcessedSegment
+
+  return {
+    ...statistics,
+    trackedSinceUpdate: true,
+    trackingStartedMarker: statistics.trackedSinceUpdate
+      ? statistics.trackingStartedMarker
+      : 'tracked-since-update',
+    trackedSimulatedSeconds: end,
+    lifetime: addRealityTotals(
+      statistics.lifetime,
+      summary,
+      safeSeconds,
+    ),
+    currentQuantumRun: addRealityTotals(
+      statistics.currentQuantumRun,
+      summary,
+      safeSeconds,
+    ),
+    recentProcessedSegment: addRealityTotals(
+      recentBase,
+      summary,
+      safeSeconds,
+    ),
+    minuteWindows: recordRealityWindows(
+      statistics.minuteWindows,
+      60,
+      start,
+      end,
+      summary.workersGenerated,
+    ),
+    halfHourWindows: recordRealityWindows(
+      statistics.halfHourWindows,
+      1_800,
+      start,
+      end,
+      summary.workersGenerated,
+    ),
+    dailyWindows: recordRealityWindows(
+      statistics.dailyWindows,
+      86_400,
+      start,
+      end,
+      summary.workersGenerated,
+    ),
+  }
+}
+
+function addRealityTotals(
+  totals: Readonly<SimulationTotalsState>,
+  summary: Readonly<RealitySegmentSummary>,
+  seconds: number,
+): SimulationTotalsState {
+  return {
+    ...totals,
+    realityWorkers: addDiscrete(
+      totals.realityWorkers,
+      summary.workersGenerated,
+    ),
+    automaticInfluence: addDiscrete(
+      totals.automaticInfluence,
+      summary.automaticInfluence,
+    ),
+    manualInfluence: addDiscrete(
+      totals.manualInfluence,
+      summary.manualInfluence,
+    ),
+    realityCapacityStallSeconds: addContinuous(
+      totals.realityCapacityStallSeconds,
+      summary.stalledSeconds,
+    ),
+    simulatedSeconds: addContinuous(
+      totals.simulatedSeconds,
+      seconds,
+    ),
+  }
+}
+
+function emptyTotals(): SimulationTotalsState {
+  return {
+    ordinaryInfinityCount: 0n,
+    breakInfinityCount: 0n,
+    ordinaryInfinityPoints: 0n,
+    breakInfinityPoints: 0n,
+    botCapInfinityPoints: 0n,
+    botCapOverflowRewards: 0n,
+    meteorDreamResets: 0n,
+    aiDreamResets: 0n,
+    globalWarmingDreamResets: 0n,
+    blackHoleDreamResets: 0n,
+    strangeMatter: 0n,
+    realityWorkers: 0n,
+    automaticInfluence: 0n,
+    manualInfluence: 0n,
+    realityCapacityStallSeconds: 0,
+    simulatedSeconds: 0,
+  }
+}
+
+function recordRealityWindows(
+  source: readonly StatisticsWindowState[],
+  widthSeconds: number,
+  start: number,
+  end: number,
+  workersGenerated: bigint,
+): readonly StatisticsWindowState[] {
+  if (source.length === 0) return source
+  const windows = source.map((window) => ({ ...window }))
+  if (end > start) {
+    const lastPoint = Math.max(
+      start,
+      end - Math.max(1e-9, Math.abs(end) * 1e-15),
+    )
+    const firstSequence = windowSequence(start, widthSeconds)
+    const lastSequence = windowSequence(lastPoint, widthSeconds)
+    const retainedFirst =
+      firstSequence > lastSequence - BigInt(windows.length) + 1n
+        ? firstSequence
+        : lastSequence - BigInt(windows.length) + 1n
+    for (
+      let sequence = retainedFirst;
+      sequence <= lastSequence;
+      sequence += 1n
+    ) {
+      const index = Number(sequence % BigInt(windows.length))
+      let window = prepareWindow(windows[index], sequence)
+      const windowStart = Number(sequence) * widthSeconds
+      const overlap = Math.max(
+        0,
+        Math.min(end, windowStart + widthSeconds) -
+          Math.max(start, windowStart),
+      )
+      window = {
+        ...window,
+        simulatedSeconds: addContinuous(
+          window.simulatedSeconds,
+          overlap,
+        ),
+      }
+      windows[index] = window
+    }
+  }
+
+  const eventSequence = windowSequence(end, widthSeconds)
+  const eventIndex = Number(
+    eventSequence % BigInt(windows.length),
+  )
+  const eventWindow = prepareWindow(
+    windows[eventIndex],
+    eventSequence,
+  )
+  windows[eventIndex] = {
+    ...eventWindow,
+    realityWorkers: addDiscrete(
+      eventWindow.realityWorkers,
+      workersGenerated,
+    ),
+  }
+  return windows
+}
+
+function windowSequence(
+  seconds: number,
+  widthSeconds: number,
+): bigint {
+  return floorToDiscrete(
+    Math.floor(Math.max(0, seconds) / widthSeconds),
+  )
+}
+
+function prepareWindow(
+  window: Readonly<StatisticsWindowState>,
+  sequence: bigint,
+): StatisticsWindowState {
+  if (window.sequence === sequence) return window
+  return {
+    sequence,
+    simulatedSeconds: 0,
+    infinityCount: 0n,
+    infinityPoints: 0n,
+    dreamResetCount: 0n,
+    strangeMatter: 0n,
+    realityWorkers: 0n,
+  }
+}
