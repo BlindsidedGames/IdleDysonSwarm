@@ -49,7 +49,7 @@ describe('presentation tokens', () => {
     expect(targetSizes.preferredTouch).toBe(48)
   })
 
-  it('routes future script fonts by token without shipping font assets', () => {
+  it('routes future script fonts by token while bundling only the Latin UI faces', () => {
     expect(scriptFontFamilies.japanese).toContain('Noto Sans JP')
     expect(scriptFontFamilies.simplifiedChinese).toContain('Noto Sans SC')
     expect(scriptFontFamilies.traditionalChinese).toContain('Noto Sans TC')
@@ -57,7 +57,11 @@ describe('presentation tokens', () => {
     expect(tokensCss).toContain(':root:lang(zh-Hans)')
     expect(tokensCss).toContain('@media (prefers-reduced-motion: reduce)')
     expect(tokensCss).toContain('@media (forced-colors: active)')
-    expect(tokensCss).not.toMatch(/url\([^)]*\.(?:woff2?|ttf)/i)
+    expect(tokensCss.match(/@font-face/g)).toHaveLength(3)
+    expect(tokensCss).toContain('url("../assets/Lexend-Regular.ttf")')
+    expect(tokensCss).toContain('url("../assets/Lexend-SemiBold.ttf")')
+    expect(tokensCss).toContain('url("../assets/Lexend-Bold.ttf")')
+    expect(tokensCss).not.toMatch(/url\([^)]*Noto[^)]*\)/i)
   })
 
   it('uses logical component layout properties', () => {
