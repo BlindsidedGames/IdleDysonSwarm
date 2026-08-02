@@ -24,6 +24,9 @@ describe('Electron native host hardening', () => {
     const builder = read('hosts/electron/electron-builder.yml')
     expect(builder).toContain('hosts/native-release.json')
     expect(builder).toContain('hosts/electron/releaseMetadata.mjs')
+    expect(builder).toContain('hosts/electron/steamInventoryBinding.mjs')
+    expect(builder).toContain('hosts/electron/steamInventoryStore.mjs')
+    expect(builder).toContain('hosts/electron/steam-inventory.json')
   })
 
   it('enforces one writer process and refocuses the owned window', () => {
@@ -67,5 +70,23 @@ describe('Electron native host hardening', () => {
     const preload = read('hosts/electron/preload.cjs')
     expect(main).not.toContain('promoteAutomaticUnityPurchaseEvidence')
     expect(preload).not.toContain('promoteAutomaticUnityPurchaseEvidence')
+  })
+
+  it('keeps Steam Inventory authority in main and fails closed by default', () => {
+    const main = read('hosts/electron/main.mjs')
+    const preload = read('hosts/electron/preload.cjs')
+    const binding = read('hosts/electron/steamInventoryBinding.mjs')
+    const config = JSON.parse(read('hosts/electron/steam-inventory.json'))
+
+    expect(main).toContain('createElectronSteamInventoryStore()')
+    expect(main).toContain('steamInventoryStore.purchase(productId)')
+    expect(main).toContain('steamInventoryStore.readEntitlements')
+    expect(main).toContain('createSafeStorageProtector(safeStorage)')
+    expect(preload).not.toContain('itemDefId')
+    expect(binding).toContain('return null')
+    expect(binding).not.toContain("from 'steamworks.js'")
+    expect(config.enabled).toBe(false)
+    expect(Object.values(config.products).every((value) => value === null))
+      .toBe(true)
   })
 })

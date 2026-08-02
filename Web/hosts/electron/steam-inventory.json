@@ -1,0 +1,12 @@
+{
+  "schemaVersion": 1,
+  "enabled": false,
+  "steamAppId": 4348570,
+  "products": {
+    "ids.tiptier1": null,
+    "ids.tiptier2": null,
+    "ids.tiptier3": null,
+    "ids.devoptions": null,
+    "ids.doubleip": null
+  }
+}

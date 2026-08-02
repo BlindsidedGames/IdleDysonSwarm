@@ -2,6 +2,7 @@ import {
   app,
   BrowserWindow,
   ipcMain,
+  safeStorage,
   session,
   shell,
 } from 'electron'
@@ -31,10 +32,22 @@ import {
   readPackagedReleaseMetadata,
   runtimeMetadata,
 } from './releaseMetadata.mjs'
+import { loadSteamInventoryBinding } from './steamInventoryBinding.mjs'
+import {
+  AtomicSteamEntitlementCache,
+  createSafeStorageProtector,
+  disabledSteamInventoryConfig,
+  readSteamInventoryConfig,
+  SteamInventoryStore,
+} from './steamInventoryStore.mjs'
 
 const hostDirectory = dirname(fileURLToPath(import.meta.url))
 const rendererEntry = join(hostDirectory, '../../dist-native/index.html')
 const releaseMetadataPath = join(hostDirectory, '../native-release.json')
+const steamInventoryConfigPath = join(
+  hostDirectory,
+  'steam-inventory.json',
+)
 const smokeTest = process.argv.includes('--smoke-test')
 const smokeUserData = smokeTest
   ? await mkdtemp(join(tmpdir(), 'idle-dyson-swarm-smoke-'))
@@ -43,13 +56,7 @@ if (smokeUserData !== null) app.setPath('userData', smokeUserData)
 const webSaveRootName = 'web-runtime-v1'
 const maximumTextBytes = 32 * 1024 * 1024
 const maximumDiagnosticBytes = 64 * 1024
-const productIds = Object.freeze([
-  'ids.tiptier1',
-  'ids.tiptier2',
-  'ids.tiptier3',
-  'ids.devoptions',
-  'ids.doubleip',
-])
+const steamAppId = 4348570
 
 const channels = Object.freeze({
   exists: 'ids:native:files:exists',
@@ -75,6 +82,7 @@ let mainWindow = null
 let closeRequestSequence = 0
 let packagedRuntimeMetadata
 let smokeCleanupScheduled = false
+let steamInventoryStore
 
 if (smokeTest) scheduleOwnedSmokeCleanup()
 
@@ -283,22 +291,22 @@ function registerNativeHandlers() {
     await durableWriteText(destination, request.text)
     return Object.freeze({ exported: true })
   })
-  ipcMain.handle(channels.storeProducts, () => unavailableProducts())
-  ipcMain.handle(channels.storePurchase, (_event, productId) => {
-    requireProductId(productId)
-    return Object.freeze({
-      accepted: false,
-      productId,
-      code: 'store-unavailable',
-    })
-  })
-  ipcMain.handle(channels.storeRestore, () => Object.freeze({
-    restoredProductIds: Object.freeze([]),
-  }))
-  ipcMain.handle(channels.entitlements, () => Object.freeze({
-    doubleInfinityPoints: false,
-    developerOptions: false,
-  }))
+  ipcMain.handle(
+    channels.storeProducts,
+    () => steamInventoryStore.products(),
+  )
+  ipcMain.handle(
+    channels.storePurchase,
+    (_event, productId) => steamInventoryStore.purchase(productId),
+  )
+  ipcMain.handle(
+    channels.storeRestore,
+    () => steamInventoryStore.restorePurchases(),
+  )
+  ipcMain.handle(
+    channels.entitlements,
+    (_event, refresh) => steamInventoryStore.readEntitlements(refresh === true),
+  )
 }
 
 async function loadRuntimeMetadata() {
@@ -312,18 +320,42 @@ async function loadRuntimeMetadata() {
   return metadata
 }
 
-function unavailableProducts() {
-  return Object.freeze(productIds.map((productId) => Object.freeze({
-    productId,
-    localizedPrice: null,
-    available: false,
-  })))
-}
-
-function requireProductId(productId) {
-  if (!productIds.includes(productId)) {
-    throw new Error('Unknown native Store product.')
+async function createElectronSteamInventoryStore() {
+  const cache = new AtomicSteamEntitlementCache(
+    join(app.getPath('userData'), 'steam-entitlements-v2.json'),
+    steamAppId,
+    createSafeStorageProtector(safeStorage),
+  )
+  let config
+  try {
+    config = await readSteamInventoryConfig(
+      steamInventoryConfigPath,
+      steamAppId,
+    )
+  } catch (error) {
+    console.error(
+      'Steam Inventory configuration is unavailable; Store is disabled.',
+      error,
+    )
+    config = disabledSteamInventoryConfig(steamAppId)
   }
+  let binding = null
+  if (config.enabled) {
+    try {
+      binding = await loadSteamInventoryBinding({
+        steamAppId,
+        itemDefIds: config.products,
+      })
+    } catch (error) {
+      console.error(
+        'Steam Inventory binding is unavailable; Store is disabled.',
+        error,
+      )
+    }
+  }
+  const store = new SteamInventoryStore({ config, binding, cache })
+  await store.initialize()
+  return store
 }
 
 async function discoverUnitySaves() {
@@ -614,6 +646,7 @@ if (!singleInstanceAcquired) {
   })
   app.whenReady().then(async () => {
     await loadRuntimeMetadata()
+    steamInventoryStore = await createElectronSteamInventoryStore()
     registerNativeHandlers()
     denyRendererPermissions(session.defaultSession)
     createMainWindow()
