@@ -205,8 +205,11 @@ export function AvotationCompletionOverlay({
           {intl.formatMessage(messages.meditation)}
         </h2>
         <figure className="avotation-completion__meditation">
-          <img src={meditationAvocadoUrl} alt="Avocato meditating" />
-          <ul aria-label="Avotation names">
+          <img
+            src={meditationAvocadoUrl}
+            alt={intl.formatMessage(messages.meditationImageAlt)}
+          />
+          <ul aria-label={intl.formatMessage(messages.meditationNames)}>
             {AVOTATION_NAMES.map((name) => (
               <li key={name}>{name}</li>
             ))}

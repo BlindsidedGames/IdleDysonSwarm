@@ -419,6 +419,9 @@ function props(): DysonGameplayShellProps {
   return {
     direction: 'ltr',
     skipLinkLabel: 'Skip to Dyson gameplay',
+    menuHeading: 'Menu',
+    closeMenuLabel: 'Close menu',
+    openMenuLabel: 'Open menu',
     heading: 'Bots',
     navigation: {
       ariaLabel: 'Primary',

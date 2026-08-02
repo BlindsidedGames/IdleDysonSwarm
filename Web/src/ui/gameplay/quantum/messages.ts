@@ -99,6 +99,8 @@ export const avocatoMessages = defineMessages({
   meditationProgress: { id: 'avocato.meditation.progress', defaultMessage: '{current} of {total} secrets found', description: 'Avocato meditation sequence progress.' },
   meditationComplete: { id: 'avocato.meditation.complete', defaultMessage: 'Skill Points granted: 4. Well done!', description: 'Unity final meditation message.' },
   meditationDismiss: { id: 'avocato.meditation.dismiss', defaultMessage: 'Continue', description: 'Dismisses the completed Avotation meditation overlay.' },
+  meditationImageAlt: { id: 'avocato.meditation.image-alt', defaultMessage: 'Avocato meditating', description: 'Alternative text for the completed Avotation meditation image.' },
+  meditationNames: { id: 'avocato.meditation.names', defaultMessage: 'Avotation names', description: 'Accessible name for the names shown with completed Avotation meditation.' },
   help: { id: 'avocato.meditation.help', defaultMessage: 'Help', description: 'Reveal the current Avocato meditation hint.' },
   skip: { id: 'avocato.meditation.skip', defaultMessage: 'Skip', description: 'Skip one Avocato meditation secret after waiting.' },
   skipCountdown: { id: 'avocato.meditation.countdown', defaultMessage: '{seconds}s', description: 'Seconds until the current Avocato secret may be skipped.' },

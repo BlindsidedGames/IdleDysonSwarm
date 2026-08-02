@@ -219,6 +219,34 @@
       "value": "‬"
     }
   ],
+  "avocato.meditation.image-alt": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "∀ʌoɔɐʇo ɯǝpıʇɐʇıuƃ"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "avocato.meditation.names": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "∀ʌoʇɐʇıou uɐɯǝs"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
   "avocato.meditation.progress": [
     {
       "type": 0,
@@ -2829,6 +2857,48 @@
     {
       "type": 1,
       "value": "value"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "dyson.menu.close": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "Ↄʅosǝ ɯǝun"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "dyson.menu.heading": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "Wǝun"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "dyson.menu.open": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "Odǝu ɯǝun"
     },
     {
       "type": 0,

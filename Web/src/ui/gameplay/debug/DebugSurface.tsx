@@ -101,13 +101,15 @@ export function DebugSurface({
                 <div>
                   <dt>{intl.formatMessage(messages.quantumShards)}</dt>
                   <dd>
-                    {formatGameNumber(locale, status.quantumShards)} / 100K
+                    {formatGameNumber(locale, status.quantumShards)} /{' '}
+                    {formatGameNumber(locale, 100_000)}
                   </dd>
                 </div>
                 <div>
                   <dt>{intl.formatMessage(messages.strangeMatter)}</dt>
                   <dd>
-                    {formatGameNumber(locale, status.strangeMatter)} / 500K
+                    {formatGameNumber(locale, status.strangeMatter)} /{' '}
+                    {formatGameNumber(locale, 500_000)}
                   </dd>
                 </div>
               </dl>

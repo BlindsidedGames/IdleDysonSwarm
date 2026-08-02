@@ -16,6 +16,21 @@ export const readyDysonMessages = defineMessages({
     defaultMessage: 'Game menu',
     description: 'Accessible name for the Unity side navigation.',
   },
+  menuHeading: {
+    id: 'dyson.menu.heading',
+    defaultMessage: 'Menu',
+    description: 'Visible heading for the responsive game menu.',
+  },
+  closeMenu: {
+    id: 'dyson.menu.close',
+    defaultMessage: 'Close menu',
+    description: 'Closes the compact game menu.',
+  },
+  openMenu: {
+    id: 'dyson.menu.open',
+    defaultMessage: 'Open menu',
+    description: 'Opens the compact game menu.',
+  },
   bottomNavigation: {
     id: 'dyson.navigation.bottom',
     defaultMessage: 'Game tabs',

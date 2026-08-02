@@ -55,6 +55,14 @@
     "defaultMessage": "Help",
     "description": "Reveal the current Avocato meditation hint."
   },
+  "avocato.meditation.image-alt": {
+    "defaultMessage": "Avocato meditating",
+    "description": "Alternative text for the completed Avotation meditation image."
+  },
+  "avocato.meditation.names": {
+    "defaultMessage": "Avotation names",
+    "description": "Accessible name for the names shown with completed Avotation meditation."
+  },
   "avocato.meditation.progress": {
     "defaultMessage": "{current} of {total} secrets found",
     "description": "Avocato meditation sequence progress."
@@ -658,6 +666,18 @@
   "dyson.menu.cash-multiplier": {
     "defaultMessage": "Cash Multiplier: {value}",
     "description": "Current canonical Cash multiplier in the Unity menu."
+  },
+  "dyson.menu.close": {
+    "defaultMessage": "Close menu",
+    "description": "Closes the compact game menu."
+  },
+  "dyson.menu.heading": {
+    "defaultMessage": "Menu",
+    "description": "Visible heading for the responsive game menu."
+  },
+  "dyson.menu.open": {
+    "defaultMessage": "Open menu",
+    "description": "Opens the compact game menu."
   },
   "dyson.menu.panel-lifetime": {
     "defaultMessage": "Panel Lifetime: {value} s",

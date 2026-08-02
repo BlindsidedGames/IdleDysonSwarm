@@ -107,6 +107,18 @@
       "value": "Help"
     }
   ],
+  "avocato.meditation.image-alt": [
+    {
+      "type": 0,
+      "value": "Avocato meditating"
+    }
+  ],
+  "avocato.meditation.names": [
+    {
+      "type": 0,
+      "value": "Avotation names"
+    }
+  ],
   "avocato.meditation.progress": [
     {
       "type": 1,
@@ -1513,6 +1525,24 @@
     {
       "type": 1,
       "value": "value"
+    }
+  ],
+  "dyson.menu.close": [
+    {
+      "type": 0,
+      "value": "Close menu"
+    }
+  ],
+  "dyson.menu.heading": [
+    {
+      "type": 0,
+      "value": "Menu"
+    }
+  ],
+  "dyson.menu.open": [
+    {
+      "type": 0,
+      "value": "Open menu"
     }
   ],
   "dyson.menu.panel-lifetime": [

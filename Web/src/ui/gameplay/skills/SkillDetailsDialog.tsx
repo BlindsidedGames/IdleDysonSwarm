@@ -133,7 +133,7 @@ export function SkillDetailsDialog({
             aria-label={closeLabel}
             onClick={onClose}
           >
-            <span aria-hidden="true">&times;</span>
+            <span aria-hidden="true">{'×'}</span>
           </button>
         </header>
         <div className="skill-details-dialog__content">

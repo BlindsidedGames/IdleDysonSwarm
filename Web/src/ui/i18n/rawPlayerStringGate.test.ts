@@ -53,6 +53,17 @@ describe('player-facing source string gate', () => {
       'fixture.tsx:1:31 raw JSX text',
     ])
   })
+
+  it('allows decorative alternatives, spacing, and non-linguistic symbols', () => {
+    const source = ts.createSourceFile(
+      'fixture.tsx',
+      '<><img alt="" /><span aria-hidden="true">×</span>{\' \'}{\'⚙\'}</>',
+      ts.ScriptTarget.Latest,
+      true,
+      ts.ScriptKind.TSX,
+    )
+    expect(rawPlayerStrings(source)).toEqual([])
+  })
 })
 
 function rawPlayerStringsFromFile(path: string): string[] {
@@ -70,14 +81,21 @@ function rawPlayerStrings(source: ts.SourceFile): string[] {
   const violations: string[] = []
 
   const visit = (node: ts.Node): void => {
-    if (ts.isJsxText(node) && node.getText(source).trim()) {
+    if (
+      ts.isJsxText(node) &&
+      containsPlayerText(node.getText(source))
+    ) {
       violations.push(location(source, node, 'raw JSX text'))
     }
     if (
       ts.isJsxAttribute(node) &&
       HUMAN_FACING_ATTRIBUTES.has(node.name.getText(source)) &&
       node.initializer &&
-      ts.isStringLiteral(node.initializer)
+      ts.isStringLiteral(node.initializer) &&
+      !(
+        node.name.getText(source) === 'alt' &&
+        node.initializer.text.length === 0
+      )
     ) {
       violations.push(
         location(source, node, `raw ${node.name.getText(source)} text`),
@@ -87,7 +105,8 @@ function rawPlayerStrings(source: ts.SourceFile): string[] {
       ts.isJsxExpression(node) &&
       node.expression &&
       (ts.isStringLiteral(node.expression) ||
-        ts.isNoSubstitutionTemplateLiteral(node.expression))
+        ts.isNoSubstitutionTemplateLiteral(node.expression)) &&
+      containsPlayerText(node.expression.text)
     ) {
       violations.push(location(source, node, 'raw JSX expression text'))
     }
@@ -95,6 +114,10 @@ function rawPlayerStrings(source: ts.SourceFile): string[] {
   }
   visit(source)
   return violations
+}
+
+function containsPlayerText(value: string): boolean {
+  return /[\p{L}\p{N}]/u.test(value)
 }
 
 function location(

@@ -22,6 +22,9 @@ import './dysonGameplayShell.css'
 export function DysonGameplayShell({
   direction,
   skipLinkLabel,
+  menuHeading,
+  closeMenuLabel,
+  openMenuLabel,
   heading,
   routeTheme = 'bots',
   routeThemeVariant,
@@ -128,23 +131,23 @@ export function DysonGameplayShell({
         ref={sidePanelRef}
         id={menuId}
         className="dyson-shell__side-panel"
-        aria-label="Game menu"
+        aria-label={navigation.drawerAriaLabel ?? navigation.ariaLabel}
         aria-hidden={drawerUnavailable || undefined}
         aria-modal={compactMenuOpen || undefined}
         inert={drawerUnavailable || undefined}
         role={wideLayout ? undefined : 'dialog'}
       >
         <header className="dyson-shell__side-heading">
-          <span>Menu</span>
+          <span>{menuHeading}</span>
           <button
             ref={closeMenuRef}
             type="button"
             className="dyson-shell__menu-close"
-            aria-label="Close menu"
+            aria-label={closeMenuLabel}
             tabIndex={compactMenuOpen ? 0 : -1}
             onClick={() => setMenuOpen(false)}
           >
-            <span aria-hidden="true">&times;</span>
+            <span aria-hidden="true">{'×'}</span>
           </button>
         </header>
         <DysonNavigation
@@ -256,7 +259,7 @@ export function DysonGameplayShell({
           ref={openMenuRef}
           type="button"
           className="dyson-shell__bottom-menu"
-          aria-label="Open menu"
+          aria-label={openMenuLabel}
           aria-controls={menuId}
           aria-expanded={menuOpen}
           onClick={() => setMenuOpen(true)}

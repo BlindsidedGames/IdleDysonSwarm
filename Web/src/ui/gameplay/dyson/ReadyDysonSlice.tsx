@@ -456,6 +456,9 @@ export function ReadyDysonSlice({
       <DysonGameplayShell
       direction={LOCALE_REGISTRY[locale].direction}
       skipLinkLabel={intl.formatMessage(messages.skipToGame)}
+      menuHeading={intl.formatMessage(messages.menuHeading)}
+      closeMenuLabel={intl.formatMessage(messages.closeMenu)}
+      openMenuLabel={intl.formatMessage(messages.openMenu)}
       heading={intl.formatMessage(routeHeading)}
       routeTheme={debugActive ? 'settings' : route}
       routeThemeVariant={

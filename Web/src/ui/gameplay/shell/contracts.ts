@@ -78,6 +78,9 @@ export interface DysonShellRegion {
 export interface DysonGameplayShellProps {
   readonly direction: DysonShellDirection
   readonly skipLinkLabel: string
+  readonly menuHeading: ReactNode
+  readonly closeMenuLabel: string
+  readonly openMenuLabel: string
   readonly heading: ReactNode
   readonly routeTheme?:
     | 'bots'
