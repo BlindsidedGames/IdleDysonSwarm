@@ -11,6 +11,10 @@ export interface LegacySaveCandidate {
   readonly text: string
 }
 
+export type SaveRecoverySource =
+  | LegacySaveCandidate
+  | { readonly id: 'web-backup'; readonly sourcePath: string }
+
 export interface SaveStorageAdapter {
   exists(path: string): Promise<boolean>
   readText(path: string): Promise<string>
@@ -46,11 +50,16 @@ export interface SaveRepositoryPolicy {
 
 export type FirstLaunchMigrationResult =
   | { readonly status: 'already-migrated'; readonly save: PreparedSave }
+  | {
+      readonly status: 'recovered-backup'
+      readonly sourcePath: string
+      readonly save: PreparedSave
+    }
   | { readonly status: 'no-legacy-save' }
   | { readonly status: 'current-invalid'; readonly error: string }
   | {
       readonly status: 'unsupported-future-version'
-      readonly source: 'current' | 'legacy'
+      readonly source: 'current' | 'backup' | 'legacy'
       readonly candidate?: LegacySaveCandidate
       readonly error: string
     }
@@ -67,7 +76,7 @@ export type FirstLaunchMigrationResult =
     }
   | {
       readonly status: 'recovery-write-failed'
-      readonly source: LegacySaveCandidate
+      readonly source: SaveRecoverySource
       readonly error: string
     }
 
@@ -125,6 +134,16 @@ export class PortableSaveRepository implements SaveRepository {
       currentError = error instanceof Error ? error.message : String(error)
     }
     if (current) return { status: 'already-migrated', save: current }
+
+    const backupRecovery = await this.recoverNewestValidBackup()
+    if (
+      backupRecovery !== null &&
+      backupRecovery.status !== 'backup-invalid'
+    ) {
+      return backupRecovery
+    }
+    currentError ??= backupRecovery?.error
+
     const candidates = await this.storage.discoverLegacyCandidates()
     if (candidates.length === 0) {
       return currentError
@@ -197,6 +216,14 @@ export class PortableSaveRepository implements SaveRepository {
     save: PreparedSave,
     target: SaveCommitTarget = 'development',
   ): Promise<PreparedSave> {
+    return this.publish(save, target, true)
+  }
+
+  private async publish(
+    save: PreparedSave,
+    target: SaveCommitTarget,
+    rotateBackups: boolean,
+  ): Promise<PreparedSave> {
     if (
       target === 'canonical-player' &&
       !this.policy.allowCanonicalPlayerWrites
@@ -217,7 +244,7 @@ export class PortableSaveRepository implements SaveRepository {
       throw new Error('Temporary save verification failed before atomic replace.')
     }
     const committed = PreparedSave.fromDecoded(verified)
-    await this.rotateBackups()
+    if (rotateBackups) await this.rotateBackups()
     await this.storage.replaceAtomically(
       this.paths.temporary,
       this.paths.current,
@@ -225,15 +252,59 @@ export class PortableSaveRepository implements SaveRepository {
     return committed
   }
 
+  private async recoverNewestValidBackup(): Promise<
+    | FirstLaunchMigrationResult
+    | { readonly status: 'backup-invalid'; readonly error: string }
+    | null
+  > {
+    let lastInvalidError: string | undefined
+    for (const sourcePath of this.backupPaths()) {
+      if (!(await this.storage.exists(sourcePath))) continue
+      let prepared: PreparedSave
+      try {
+        prepared = PreparedSave.fromDecoded(
+          deserializeWebSave(await this.storage.readText(sourcePath)),
+        )
+      } catch (error) {
+        if (error instanceof UnsupportedFutureSaveSchemaError) {
+          return {
+            status: 'unsupported-future-version',
+            source: 'backup',
+            error: error.message,
+          }
+        }
+        lastInvalidError =
+          error instanceof Error ? error.message : String(error)
+        continue
+      }
+      let committed: PreparedSave
+      try {
+        committed = await this.publish(
+          prepared,
+          'development',
+          false,
+        )
+      } catch (error) {
+        return {
+          status: 'recovery-write-failed',
+          source: { id: 'web-backup', sourcePath },
+          error: error instanceof Error ? error.message : String(error),
+        }
+      }
+      return {
+        status: 'recovered-backup',
+        sourcePath,
+        save: committed,
+      }
+    }
+    return lastInvalidError === undefined
+      ? null
+      : { status: 'backup-invalid', error: lastInvalidError }
+  }
+
   private async rotateBackups(): Promise<void> {
     if (!(await this.storage.exists(this.paths.current))) return
-    const backups =
-      this.paths.backups ??
-      ([
-        `${this.paths.current}.backup.1`,
-        `${this.paths.current}.backup.2`,
-        `${this.paths.current}.backup.3`,
-      ] as const)
+    const backups = this.backupPaths()
     if (await this.storage.exists(backups[1])) {
       await this.storage.copy(backups[1], backups[2])
     }
@@ -241,5 +312,15 @@ export class PortableSaveRepository implements SaveRepository {
       await this.storage.copy(backups[0], backups[1])
     }
     await this.storage.copy(this.paths.current, backups[0])
+  }
+
+  private backupPaths(): readonly [string, string, string] {
+    return (
+      this.paths.backups ?? [
+        `${this.paths.current}.backup.1`,
+        `${this.paths.current}.backup.2`,
+        `${this.paths.current}.backup.3`,
+      ]
+    )
   }
 }

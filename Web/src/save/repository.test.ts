@@ -325,6 +325,113 @@ describe('portable transactional save repository', () => {
     expect(await repository.loadCurrent()).not.toBeNull()
   })
 
+  test('recovers the newest valid Web backup before considering Unity candidates', async () => {
+    const storage = new MemoryStorage()
+    storage.files.set('/current', '{')
+    storage.files.set('/current.backup.1', 'also invalid')
+    storage.files.set(
+      '/current.backup.2',
+      serializeWebSave({ saveVersion: 12, slot: 'recovered' }),
+    )
+    storage.files.set('/legacy', 'legacy')
+    storage.candidates = [
+      { id: 'legacy', sourcePath: '/legacy', text: 'legacy' },
+    ]
+    const repository = new PortableSaveRepository(
+      storage,
+      {
+        current: '/current',
+        temporary: '/current.tmp',
+        legacyRecovery: '/recovery/original-idb1.txt',
+      },
+      () => ({ saveVersion: 12, slot: 'legacy' }),
+    )
+
+    await expect(repository.migrateLegacyOnFirstLaunch()).resolves.toMatchObject({
+      status: 'recovered-backup',
+      sourcePath: '/current.backup.2',
+    })
+    expect(
+      (await repository.loadCurrent())?.copyValidatedState().slot,
+    ).toBe('recovered')
+    expect(storage.copies).toEqual([])
+    expect(storage.replacements).toEqual([['/current.tmp', '/current']])
+  })
+
+  test('blocks downgrade recovery when the newest readable backup has a future schema', async () => {
+    const storage = new MemoryStorage()
+    storage.files.set('/current', '{')
+    storage.files.set(
+      '/current.backup.1',
+      serializeWebSave({ saveVersion: 13 }),
+    )
+    storage.files.set(
+      '/current.backup.2',
+      serializeWebSave({ saveVersion: 12, slot: 'older' }),
+    )
+    const repository = new PortableSaveRepository(
+      storage,
+      {
+        current: '/current',
+        temporary: '/current.tmp',
+        legacyRecovery: '/recovery/original-idb1.txt',
+      },
+      () => ({ saveVersion: 12 }),
+    )
+
+    await expect(repository.migrateLegacyOnFirstLaunch()).resolves.toMatchObject({
+      status: 'unsupported-future-version',
+      source: 'backup',
+    })
+    expect(storage.replacements).toEqual([])
+  })
+
+  test('does not silently start fresh when every Web backup is invalid', async () => {
+    const storage = new MemoryStorage()
+    storage.files.set('/current.backup.1', 'invalid backup')
+    const repository = new PortableSaveRepository(
+      storage,
+      {
+        current: '/current',
+        temporary: '/current.tmp',
+        legacyRecovery: '/recovery/original-idb1.txt',
+      },
+      () => ({ saveVersion: 12 }),
+    )
+
+    await expect(repository.migrateLegacyOnFirstLaunch()).resolves.toMatchObject({
+      status: 'current-invalid',
+    })
+  })
+
+  test('treats publication failure during valid backup recovery as terminal', async () => {
+    const storage = new MemoryStorage()
+    storage.files.set(
+      '/current.backup.1',
+      serializeWebSave({ saveVersion: 12, slot: 'recovered' }),
+    )
+    storage.failAt = 'write'
+    const repository = new PortableSaveRepository(
+      storage,
+      {
+        current: '/current',
+        temporary: '/current.tmp',
+        legacyRecovery: '/recovery/original-idb1.txt',
+      },
+      () => ({ saveVersion: 12 }),
+    )
+
+    await expect(repository.migrateLegacyOnFirstLaunch()).resolves.toMatchObject({
+      status: 'recovery-write-failed',
+      source: {
+        id: 'web-backup',
+        sourcePath: '/current.backup.1',
+      },
+      error: 'temporary write failed',
+    })
+    expect(storage.replacements).toEqual([])
+  })
+
   test('stops fallback when the current save has a future schema', async () => {
     const storage = new MemoryStorage()
     storage.files.set('/current', serializeWebSave({ saveVersion: 13 }))

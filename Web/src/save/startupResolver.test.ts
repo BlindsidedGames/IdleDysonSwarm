@@ -92,6 +92,28 @@ describe('repository startup-save resolver', () => {
     expect(repository.commit).not.toHaveBeenCalled()
   })
 
+  test('identifies verified Web-backup recovery to the presentation layer', async () => {
+    const recovered = PreparedSave.fromDecoded({
+      saveVersion: 12,
+      checkpointMarker: 'backup',
+    })
+    const repository = repositoryFor({
+      status: 'recovered-backup',
+      sourcePath: '/current.backup.1',
+      save: recovered,
+    })
+    const resolver = new RepositoryStartupSaveResolver(
+      repository,
+      () => PreparedSave.fromDecoded({ saveVersion: 12 }),
+    )
+
+    await expect(resolver.resolve()).resolves.toEqual({
+      kind: 'ready',
+      source: 'recovered-canonical',
+      save: recovered,
+    })
+  })
+
   test('returns first-run only for the no-artifact repository outcome', async () => {
     const firstRun = PreparedSave.fromDecoded({
       saveVersion: 12,
@@ -130,6 +152,17 @@ describe('repository startup-save resolver', () => {
         status: 'recovery-write-failed',
         source: { id: 'legacy', sourcePath: '/legacy', text: 'legacy' },
         error: 'write failed',
+      } satisfies FirstLaunchMigrationResult,
+      reason: 'recovery-write-failed',
+    },
+    {
+      result: {
+        status: 'recovery-write-failed',
+        source: {
+          id: 'web-backup',
+          sourcePath: '/current.backup.1',
+        },
+        error: 'backup publication failed',
       } satisfies FirstLaunchMigrationResult,
       reason: 'recovery-write-failed',
     },
