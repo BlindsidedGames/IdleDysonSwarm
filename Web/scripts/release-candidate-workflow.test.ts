@@ -23,6 +23,10 @@ const workflowPath = resolve(
   repositoryRoot,
   '.github/workflows/prepare-native-release-candidate.yml',
 )
+const verificationWorkflowPath = resolve(
+  repositoryRoot,
+  '.github/workflows/verify-web-native.yml',
+)
 
 describe('protected native release-candidate workflow', () => {
   it('is manual-only and defaults to package-only behavior', async () => {
@@ -67,6 +71,18 @@ describe('protected native release-candidate workflow', () => {
       }
     }
     expect(source).not.toMatch(/(?:4core|8core|16core|larger-runner|self-hosted)/i)
+  })
+
+  it('keeps Android wrappers executable and macOS packaging compatible with Bash 3.2', async () => {
+    const [releaseSource, verificationSource] = await Promise.all([
+      readFile(workflowPath, 'utf8'),
+      readFile(verificationWorkflowPath, 'utf8'),
+    ])
+
+    expect(releaseSource.match(/chmod \+x hosts\/capacitor\/android\/gradlew/g)).toHaveLength(2)
+    expect(verificationSource).toContain('chmod +x gradlew')
+    expect(releaseSource).not.toContain('mapfile')
+    expect(releaseSource).toContain('while IFS= read -r artifact; do')
   })
 
   it('keeps package jobs credential-free and protects every authority job', async () => {

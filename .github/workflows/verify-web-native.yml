@@ -84,7 +84,9 @@ jobs:
 
       - name: Assemble the unsigned debug application
         working-directory: Web/hosts/capacitor/android
-        run: ./gradlew assembleDebug --no-daemon
+        run: |
+          chmod +x gradlew
+          ./gradlew assembleDebug --no-daemon
 
   ios:
     name: Compile unsigned iOS simulator host
