@@ -60,7 +60,10 @@ import {
 } from '../simulation/dreamSpaceAge'
 import type { BasicDysonFacilityId } from '../simulation/dysonFacilities'
 import type { MegaStructureId } from '../simulation/megaStructurePurchases'
-import { purchaseQuantumUpgrade } from '../simulation/quantumUpgrades'
+import {
+  purchaseQuantumUpgradeBulk,
+  type QuantumUpgradeBulkQuantity,
+} from '../simulation/quantumUpgrades'
 import { withCanonicalBotAllocation } from '../simulation/canonicalBotAllocation'
 import type { QuantumUpgradeId } from '../simulation/quantumUpgrades'
 import { purchaseRealityUpgrade } from '../simulation/realityUpgrades'
@@ -238,6 +241,7 @@ export type CanonicalGameCommand =
   | {
       readonly kind: 'quantum.purchase-upgrade'
       readonly upgradeId: QuantumUpgradeId
+      readonly quantity?: QuantumUpgradeBulkQuantity
     }
   | {
       readonly kind: 'quantum.request-leap'
@@ -268,6 +272,11 @@ export type CanonicalGameCommand =
   | {
       readonly kind: 'time.request-stored-time-spend'
       readonly requestedSeconds: number
+    }
+  | {
+      readonly kind: 'settings.set-navigation-item-visible'
+      readonly item: 'story' | 'wiki' | 'statistics'
+      readonly visible: boolean
     }
 
 export type CanonicalGameCommandKind = CanonicalGameCommand['kind']
@@ -305,6 +314,7 @@ export type CanonicalGameCommandCode =
   | `research-automation:${string}`
   | `research-purchase:${string}`
   | `research-setting:${string}`
+  | `settings:${string}`
   | `skill:${string}`
   | `time-double-rate:${string}`
   | `time-stored-capacity:${string}`
@@ -628,7 +638,7 @@ export const CANONICAL_GAME_COMMAND_SUPPORT = Object.freeze({
   },
   'quantum.purchase-upgrade': {
     supported: true,
-    authority: 'purchaseQuantumUpgrade',
+    authority: 'purchaseQuantumUpgradeBulk',
     requires: ['runtime-evaluation-port'],
   },
   'quantum.request-leap': {
@@ -668,6 +678,10 @@ export const CANONICAL_GAME_COMMAND_SUPPORT = Object.freeze({
     supported: true,
     authority: 'canonical commit-first stored-time spend intent',
     requires: ['stored-time-commit-first-runner'],
+  },
+  'settings.set-navigation-item-visible': {
+    supported: true,
+    authority: 'canonical persisted menu shortcut preference',
   },
 } as const satisfies Readonly<
   Record<CanonicalGameCommandKind, CanonicalGameCommandSupport>
@@ -714,6 +728,36 @@ export function routeCanonicalGameCommand(
     options.runtimeCarriers ?? EMPTY_RUNTIME_CARRIERS
 
   switch (command.kind) {
+    case 'settings.set-navigation-item-visible': {
+      const current = state.meta.navigationVisibility ?? {
+        story: false,
+        wiki: false,
+        statistics: true,
+      }
+      const changed = current[command.item] !== command.visible
+      return finalizeAccepted(
+        state,
+        changed
+          ? {
+              ...state,
+              meta: {
+                ...state.meta,
+                navigationVisibility: {
+                  ...current,
+                  [command.item]: command.visible,
+                },
+              },
+            }
+          : state,
+        changed,
+        `settings:${changed ? 'navigation-visibility-set' : 'unchanged'}`,
+        carriers,
+        options.runtimeEvaluation,
+        EMPTY_ISSUES,
+        false,
+      )
+    }
+
     case 'dyson.purchase-basic-facility': {
       const result = tryPurchaseCanonicalBasicFacility(
         state,
@@ -1845,9 +1889,10 @@ export function routeCanonicalGameCommand(
     }
 
     case 'quantum.purchase-upgrade': {
-      const result = purchaseQuantumUpgrade(
+      const result = purchaseQuantumUpgradeBulk(
         state,
         command.upgradeId,
+        command.quantity ?? 1n,
       )
       if (!result.accepted) {
         return rejectDomain(

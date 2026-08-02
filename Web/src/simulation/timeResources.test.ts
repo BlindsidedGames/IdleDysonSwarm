@@ -252,6 +252,24 @@ describe('Dream Double Time parity', () => {
     })
   })
 
+  test('keeps every full-bank multiplier within its selected rate boundary', () => {
+    const intervals = [0.1, 0.0997, 0.1003, 0.333_333_333_333_333_3]
+
+    for (let rate = 1; rate <= 10; rate += 1) {
+      for (const tickSeconds of intervals) {
+        const tick = prepareDreamDoubleTimeTick(
+          true,
+          10_000,
+          rate,
+          tickSeconds,
+        )
+
+        expect(tick.effectiveMultiplier).toBe(1 + rate)
+        expect(tick.effectiveMultiplier).toBeLessThanOrEqual(1 + rate)
+      }
+    }
+  })
+
   test('rate zero stays active at x1 without consuming bank', () => {
     const tick = prepareDreamDoubleTimeTick(true, 10, 0, 2)
 

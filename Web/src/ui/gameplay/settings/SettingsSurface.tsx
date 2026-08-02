@@ -20,7 +20,22 @@ export interface SettingsSurfaceProps {
   readonly developmentOnly?: boolean
   readonly visualizationVisible?: boolean
   readonly onVisualizationVisibleChange?: (visible: boolean) => void
+  readonly navigationVisibility?: Readonly<
+    Record<NavigationShortcutId, boolean>
+  >
+  readonly onNavigationVisibilityChange?: (
+    item: NavigationShortcutId,
+    visible: boolean,
+  ) => void
 }
+
+export type NavigationShortcutId = 'story' | 'wiki' | 'statistics'
+
+const NAVIGATION_SHORTCUTS = [
+  ['story', messages.storyShortcut] as const,
+  ['wiki', messages.wikiShortcut] as const,
+  ['statistics', messages.statisticsShortcut] as const,
+]
 
 type ResetStatus =
   | 'idle'
@@ -38,6 +53,12 @@ export function SettingsSurface({
   developmentOnly = false,
   visualizationVisible = true,
   onVisualizationVisibleChange = () => undefined,
+  navigationVisibility = {
+    story: false,
+    wiki: false,
+    statistics: true,
+  },
+  onNavigationVisibilityChange = () => undefined,
 }: SettingsSurfaceProps) {
   const intl = useIntl()
   const developmentPresetId = useId()
@@ -171,6 +192,39 @@ export function SettingsSurface({
             </span>
           </label>
         </section> : null}
+        {!developmentOnly ? (
+          <section className="settings-surface__panel settings-surface__panel--navigation">
+            <div className="settings-surface__copy">
+              <h2>{intl.formatMessage(messages.navigationTitle)}</h2>
+              <p>{intl.formatMessage(messages.navigationDescription)}</p>
+            </div>
+            <div className="settings-surface__navigation-toggles">
+              {NAVIGATION_SHORTCUTS.map(([item, message]) => (
+                <label className="settings-surface__toggle" key={item}>
+                  <input
+                    type="checkbox"
+                    checked={navigationVisibility[item]}
+                    onChange={(event) =>
+                      onNavigationVisibilityChange(
+                        item,
+                        event.currentTarget.checked,
+                      )
+                    }
+                  />
+                  <span>{intl.formatMessage(message)}</span>
+                </label>
+              ))}
+            </div>
+          </section>
+        ) : null}
+        {!developmentOnly ? (
+          <section className="settings-surface__panel settings-surface__panel--more">
+            <div className="settings-surface__copy">
+              <h2>{intl.formatMessage(messages.moreByTitle)}</h2>
+              <p>{intl.formatMessage(messages.moreByDescription)}</p>
+            </div>
+          </section>
+        ) : null}
         {!developmentOnly ? <section className="settings-surface__panel">
           <div className="settings-surface__copy">
             <h2>{intl.formatMessage(messages.saveData)}</h2>

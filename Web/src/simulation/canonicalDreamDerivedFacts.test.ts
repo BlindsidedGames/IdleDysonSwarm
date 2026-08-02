@@ -216,7 +216,6 @@ describe('canonical Dream derived facts', () => {
       active: true,
       progressPerSecond: 32,
       cyclesPerSecond: 16,
-      remainingPanelCapacity: 900n,
       nominalPanelsPerSecond: 16,
     })
     expect(facts.spaceAge.railgun).toMatchObject({
@@ -224,12 +223,12 @@ describe('canonical Dream derived facts', () => {
       energyAfterChargeTransfer: 5_000_000,
       chargeAfterChargeTransfer: 25_000_000,
       selectedRate: 4,
-      activeRate: 4,
-      panelsPerShot: 4n,
-      panelsRequiredToStart: 4n,
+      timeMultiplier: 2,
+      panelsPerShot: 1n,
+      panelsRequiredToStart: 10n,
       canStartVolley: true,
       canFireNextShot: true,
-      secondsUntilNextShotAttempt: 0.1,
+      secondsUntilNextShotAttempt: 0.05,
     })
     expect(Object.isFrozen(result)).toBe(true)
     expect(Object.isFrozen(facts)).toBe(true)
@@ -289,19 +288,25 @@ describe('canonical Dream derived facts', () => {
       tickSeconds:
         selected.value.spaceAge.railgun
           .secondsUntilNextShotAttempt ?? 0,
+      effectiveDoubleTimeMultiplier:
+        DOUBLE_TIME.effectiveDoubleTimeMultiplier,
       doubleTimeActive: DOUBLE_TIME.doubleTimeActive,
       doubleTimeRate: DOUBLE_TIME.doubleTimeRate,
     })
     expect(railgun.volleyStarted).toBe(true)
-    expect(railgun.shotFired).toBe(false)
-    expect(railgun.panelsLaunched).toBe(0n)
+    expect(railgun.shotFired).toBe(true)
+    expect(railgun.panelsLaunched).toBe(1n)
     expect(railgun.state.dream.resources.energy).toBe(5_000_000)
     expect(railgun.state.dream.resources.railgunCharge)
-      .toBe(25_000_000)
-    expect(railgun.state.dream.railgun).toEqual({
+      .toBe(22_500_000)
+    expect(railgun.state.dream.railgun).toMatchObject({
       firing: true,
       fireProgress: 0,
-      shotsRemaining: 10,
+      shotsRemaining: 9,
+      activeRailguns: 1,
+      reservedPanels: 9n,
+      lastRoundsFired: 1,
+      lastPanelsLaunched: 1n,
     })
 
     const conversions =
@@ -354,5 +359,18 @@ describe('canonical Dream derived facts', () => {
     })
     expect(Object.isFrozen(result)).toBe(true)
     if (!result.ok) expect(Object.isFrozen(result.issues)).toBe(true)
+  })
+
+  test('accepts and normalizes machine-scale drift at the selected Double Time limit', () => {
+    const result = deriveCanonicalDreamDerivedFacts(dreamState(), {
+      effectiveDoubleTimeMultiplier: 7.000000000000001,
+      doubleTimeActive: true,
+      doubleTimeRate: 6,
+    })
+
+    expect(result.ok).toBe(true)
+    if (result.ok) {
+      expect(result.value.spaceAge.railgun.timeMultiplier).toBe(7)
+    }
   })
 })

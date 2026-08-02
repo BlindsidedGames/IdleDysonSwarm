@@ -110,6 +110,7 @@ export type CanonicalDevelopmentAction =
   | { readonly kind: 'add-double-time'; readonly seconds: number }
   | { readonly kind: 'set-tinker-interval'; readonly seconds: 0 | 1 }
   | { readonly kind: 'recalculate-skill-points' }
+  | { readonly kind: 'reset-secret-progress' }
   | { readonly kind: 'purchase-debug-options' }
   | { readonly kind: 'disable-debug-options' }
 
@@ -832,6 +833,14 @@ function applyDevelopmentAction(
         skills: { ...state.skills, points },
       })
     }
+    case 'reset-secret-progress':
+      return replaceDevelopmentState(candidate, {
+        ...state,
+        secretProgress: {
+          completed: false,
+          step: 0,
+        },
+      })
     case 'purchase-debug-options': {
       if (candidate.debugEntitlementPurchased) {
         return replaceDevelopmentRuntime(candidate, {

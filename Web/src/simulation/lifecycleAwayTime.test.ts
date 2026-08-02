@@ -9,6 +9,7 @@ import {
   DESKTOP_LIFECYCLE_POLICY,
   evaluateLifecycleEvent,
   MOBILE_LIFECYCLE_POLICY,
+  WEB_LIFECYCLE_POLICY,
   type LifecycleCoordinatorState,
 } from './lifecycleAwayTime'
 
@@ -141,6 +142,44 @@ describe('pure lifecycle policy and cold-start gate', () => {
     expect(result.state).toBe(before)
     expect(result.saveIntent).toBeNull()
     expect(result.replayAwayTime).toBe(false)
+  })
+
+  test('web focus loss stays active while hidden time saves for replay', () => {
+    const before = coordinator()
+    const focusLost = evaluateLifecycleEvent(
+      before,
+      { kind: 'focus_changed', focused: false },
+      WEB_LIFECYCLE_POLICY,
+      clock,
+    )
+
+    expect(focusLost.state).toBe(before)
+    expect(focusLost.saveIntent).toBeNull()
+    expect(focusLost.replayAwayTime).toBe(false)
+
+    const hidden = evaluateLifecycleEvent(
+      before,
+      { kind: 'pause_changed', paused: true },
+      WEB_LIFECYCLE_POLICY,
+      clock,
+    )
+
+    expect(hidden.saveIntent).toMatchObject({
+      trigger: 'pause',
+      stampQuitTimestamp: true,
+    })
+    expect(
+      hidden.saveIntent?.candidate.timeline
+        .lastSuspendedAtLegacyText,
+    ).toBe(clock.serializedUtcText)
+
+    const visible = evaluateLifecycleEvent(
+      hidden.state,
+      { kind: 'focus_changed', focused: true },
+      WEB_LIFECYCLE_POLICY,
+      clock,
+    )
+    expect(visible.replayAwayTime).toBe(true)
   })
 
   test('quit stamps and requests a save on every platform', () => {

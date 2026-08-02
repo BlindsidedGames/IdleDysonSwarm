@@ -61,6 +61,7 @@ describe('DebugSurface', () => {
       'Set Tinker to 1 second',
       'Set Tinker to instant',
       'Recalculate Skill Points',
+      'Reset Secret Progress',
       'Debug Cats',
       'Disable Developer Options',
     ]) {
@@ -134,5 +135,26 @@ describe('DebugSurface', () => {
     )
     await user.click(screen.getByRole('button', { name: 'Add Offline Time' }))
     await waitFor(() => expect(simulateOfflineTime).toHaveBeenCalledWith(12))
+  })
+
+  test('routes secret progress reset through the development boundary', async () => {
+    const user = userEvent.setup()
+    const apply = vi.fn().mockResolvedValue({
+      applied: true,
+      stateRevision: 2,
+      durableRevision: 2,
+    })
+    renderDebug(controls({ apply }))
+
+    await user.click(
+      screen.getByRole('button', { name: 'Reset Secret Progress' }),
+    )
+
+    await waitFor(() =>
+      expect(apply).toHaveBeenCalledWith({ kind: 'reset-secret-progress' }),
+    )
+    expect(screen.getByRole('status')).toHaveTextContent(
+      'Secret progress reset.',
+    )
   })
 })

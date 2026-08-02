@@ -25,7 +25,7 @@ import {
   type BrowserEntitlementDocument,
 } from '../platform/browserEntitlementAuthority'
 import {
-  MOBILE_LIFECYCLE_POLICY,
+  WEB_LIFECYCLE_POLICY,
 } from '../simulation/lifecycleAwayTime'
 import { serializeWebSave } from '../save/serialization'
 import type {
@@ -107,7 +107,7 @@ export function createProductionBrowserComposition(
       : undefined)
   const runtime = runtimeFactory({
     createApplication,
-    lifecyclePolicy: MOBILE_LIFECYCLE_POLICY,
+    lifecyclePolicy: WEB_LIFECYCLE_POLICY,
     allowedExternalOrigins: [],
     lifecycleClock,
     activeTimeClock: monotonicClock,

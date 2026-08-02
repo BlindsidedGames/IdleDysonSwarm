@@ -315,8 +315,8 @@ class BrowserRuntimeFoundation implements BrowserUiRuntimeFoundation {
   private shutdownRequested = false
   private foregroundIntended = false
   private lifecycleIntentEpoch = 0
-  // Foreground sampling may resume only when the latest active intent has
-  // completed a safe canonical replay inside the authority fence.
+  // Foreground sampling may resume only when the latest visible intent has
+  // completed any required canonical replay inside the authority fence.
   private lifecycleReconciledIntentEpoch = 0
   // Every admitted import participates, including queued calls and failures.
   // Only the final completion may reopen foreground sampling.
@@ -1037,7 +1037,7 @@ class BrowserRuntimeFoundation implements BrowserUiRuntimeFoundation {
       },
       beforePhase: (phase, observationError) => {
         if (
-          phase === 'active' &&
+          this.phaseRunsActiveTime(phase) &&
           observationError === undefined
         ) {
           return undefined
@@ -1074,6 +1074,14 @@ class BrowserRuntimeFoundation implements BrowserUiRuntimeFoundation {
             })
             return
           }
+          this.reconcileActiveLifecycleIntent(
+            receipt.intentEpoch,
+          )
+          this.startActiveTimeIfForegroundIntended(
+            graph,
+            receipt.intentEpoch,
+          )
+        } else if (this.phaseRunsActiveTime(phase)) {
           this.reconcileActiveLifecycleIntent(
             receipt.intentEpoch,
           )
@@ -1360,9 +1368,16 @@ class BrowserRuntimeFoundation implements BrowserUiRuntimeFoundation {
   private captureLifecycleIntent(
     phase: LifecyclePhase,
   ): number {
-    this.foregroundIntended = phase === 'active'
+    this.foregroundIntended = this.phaseRunsActiveTime(phase)
     this.lifecycleIntentEpoch += 1
     return this.lifecycleIntentEpoch
+  }
+
+  private phaseRunsActiveTime(phase: LifecyclePhase): boolean {
+    return phase === 'active' || (
+      phase === 'focus-lost' &&
+      !this.options.lifecyclePolicy.saveOnFocusLoss
+    )
   }
 
   private observeLifecyclePhase(

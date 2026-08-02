@@ -54,7 +54,10 @@ import type { TextDownloadPort } from '../../platform/browserSaveTransfer'
 import { prepareIdb1Save, PreparedSave } from '../../save/prepare'
 import type { SaveRepository } from '../../save/repository'
 import { serializeWebSave } from '../../save/serialization'
-import { MOBILE_LIFECYCLE_POLICY } from '../../simulation/lifecycleAwayTime'
+import {
+  MOBILE_LIFECYCLE_POLICY,
+  WEB_LIFECYCLE_POLICY,
+} from '../../simulation/lifecycleAwayTime'
 import {
   createBrowserRuntimeFoundation,
   DEVELOPMENT_ONLY_BROWSER_PROFILE_ID,
@@ -1191,6 +1194,89 @@ describe('browser runtime foundation composition', () => {
       await runtime.shutdown()
     },
   )
+
+  test('keeps visible focus loss active and converts hidden time to offline credit without fast-forwarding gameplay', async () => {
+    const database = new MemoryBrowserSaveDatabase()
+    const lifecycle = new TestLifecycleAdapter()
+    const lifecycleClock = new ManualLifecycleClock(
+      '2026-07-29T00:00:00Z',
+    )
+    const activeClock = new ManualActiveTimeClock()
+    const frames = new ManualAnimationFrameScheduler()
+    let application: FakeRuntimeApplication | undefined
+    const runtime = createRuntime({
+      database,
+      lifecycle,
+      lifecycleClock,
+      lifecyclePolicy: WEB_LIFECYCLE_POLICY,
+      activeTimeClock: activeClock,
+      activeTimeScheduler: frames,
+      createApplication: (repository) => {
+        application = new FakeRuntimeApplication(
+          repository,
+          database.events,
+        )
+        application.setTimeResources(0, 100, 0)
+        return application
+      },
+    })
+    await runtime.start()
+    expect(frames.pending).toBe(1)
+
+    activeClock.set(100)
+    lifecycleClock.set('2026-07-29T00:00:01Z')
+    lifecycle.emit('focus-lost')
+    await flushMicrotasks()
+
+    expect(application?.awayCommits).toBe(0)
+    expect(frames.pending).toBe(1)
+
+    frames.fire()
+    await waitUntil(() => application?.activeRequests.length === 1)
+    expect(application?.activeRequests).toEqual([
+      { milliseconds: 100, sessionRevision: 1 },
+    ])
+
+    activeClock.set(200)
+    lifecycleClock.set('2026-07-29T00:00:02Z')
+    lifecycle.emit('background')
+    await waitUntil(() => application?.awayCommits === 1)
+    await waitUntil(() => application?.activeRequests.length === 2)
+
+    expect(frames.pending).toBe(0)
+    expect(application?.activeRequests).toEqual([
+      { milliseconds: 100, sessionRevision: 1 },
+      { milliseconds: 100, sessionRevision: 1 },
+    ])
+
+    lifecycleClock.set('2026-07-29T00:00:07Z')
+    lifecycle.emit('active')
+    await waitUntil(() => application?.awayCommits === 2)
+    await waitUntil(() => frames.pending === 1)
+
+    // The hidden five seconds become offline resources. They are never sent
+    // to the active-time simulation driver as a 5,000 ms catch-up request.
+    expect(application?.activeRequests).toHaveLength(2)
+    const replayed = application?.snapshot()
+    expect(replayed?.phase).toBe('ready')
+    if (replayed?.phase === 'ready') {
+      expect(replayed.state.gameState.timeline).toMatchObject({
+        storedTimeAvailableSeconds: 5,
+        storedTimeCapacitySeconds: 100,
+        lastSuspendedAtLegacyText: null,
+        doubleTime: { bankSeconds: 10 },
+      })
+    }
+
+    activeClock.set(213)
+    frames.fire()
+    await waitUntil(() => application?.activeRequests.length === 3)
+    expect(application?.activeRequests[2]).toEqual({
+      milliseconds: 13,
+      sessionRevision: 1,
+    })
+    await runtime.shutdown()
+  })
 
   test('never restarts foreground when ownership is lost during the final overlapping import', async () => {
     const database = new MemoryBrowserSaveDatabase()

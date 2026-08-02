@@ -1,4 +1,188 @@
 {
+  "avocato.available": [
+    {
+      "type": 1,
+      "value": "value"
+    },
+    {
+      "type": 0,
+      "value": " available"
+    }
+  ],
+  "avocato.developer-note": [
+    {
+      "type": 0,
+      "value": "Thank you for playing Idle Dyson Swarm. This is the final feature you will unlock; you can go on to earn Developer Options if you like. These buffs multiply with each other to form the total boost, and do not affect the currencies you spend to increase them."
+    }
+  ],
+  "avocato.developer-note.title": [
+    {
+      "type": 0,
+      "value": "A note from the developer"
+    }
+  ],
+  "avocato.failed": [
+    {
+      "type": 0,
+      "value": "Avocato could not eat that snack. Try again."
+    }
+  ],
+  "avocato.feed": [
+    {
+      "type": 0,
+      "value": "Feed "
+    },
+    {
+      "type": 1,
+      "value": "value"
+    }
+  ],
+  "avocato.feed-accessible": [
+    {
+      "type": 0,
+      "value": "Feed all "
+    },
+    {
+      "type": 1,
+      "value": "resource"
+    },
+    {
+      "type": 0,
+      "value": " to Avocato"
+    }
+  ],
+  "avocato.greeting": [
+    {
+      "type": 0,
+      "value": "Hello, I am Avocato, your friendly interdimensional avocado cat. I have been watching you for quite some time now. If you can find me some of my favourite snacks, I would be happy to teach you more about your realities!"
+    }
+  ],
+  "avocato.icon-alt": [
+    {
+      "type": 0,
+      "value": "Avocato"
+    }
+  ],
+  "avocato.invested": [
+    {
+      "type": 1,
+      "value": "value"
+    },
+    {
+      "type": 0,
+      "value": " invested"
+    }
+  ],
+  "avocato.meditation": [
+    {
+      "type": 0,
+      "value": "Secrets"
+    }
+  ],
+  "avocato.meditation.complete": [
+    {
+      "type": 0,
+      "value": "Skill Points granted: 4. Well done!"
+    }
+  ],
+  "avocato.meditation.countdown": [
+    {
+      "type": 1,
+      "value": "seconds"
+    },
+    {
+      "type": 0,
+      "value": "s"
+    }
+  ],
+  "avocato.meditation.dismiss": [
+    {
+      "type": 0,
+      "value": "Continue"
+    }
+  ],
+  "avocato.meditation.help": [
+    {
+      "type": 0,
+      "value": "Help"
+    }
+  ],
+  "avocato.meditation.progress": [
+    {
+      "type": 1,
+      "value": "current"
+    },
+    {
+      "type": 0,
+      "value": " of "
+    },
+    {
+      "type": 1,
+      "value": "total"
+    },
+    {
+      "type": 0,
+      "value": " secrets found"
+    }
+  ],
+  "avocato.meditation.secret-trigger": [
+    {
+      "type": 0,
+      "value": "A strange hidden detail"
+    }
+  ],
+  "avocato.meditation.skip": [
+    {
+      "type": 0,
+      "value": "Skip"
+    }
+  ],
+  "avocato.multiplier": [
+    {
+      "type": 0,
+      "value": "×"
+    },
+    {
+      "type": 1,
+      "value": "value"
+    }
+  ],
+  "avocato.multiplier.infinity": [
+    {
+      "type": 0,
+      "value": "Infinity Multiplier"
+    }
+  ],
+  "avocato.multiplier.influence": [
+    {
+      "type": 0,
+      "value": "Influence Multiplier"
+    }
+  ],
+  "avocato.multiplier.overflow": [
+    {
+      "type": 0,
+      "value": "Overflow"
+    }
+  ],
+  "avocato.multiplier.strange-matter": [
+    {
+      "type": 0,
+      "value": "Strange Matter Multiplier"
+    }
+  ],
+  "avocato.region": [
+    {
+      "type": 0,
+      "value": "Avocato"
+    }
+  ],
+  "avocato.total-boost": [
+    {
+      "type": 0,
+      "value": "Total boost to Cash, Science, and Buildings"
+    }
+  ],
   "debug.access-description": [
     {
       "type": 0,
@@ -147,6 +331,18 @@
     {
       "type": 0,
       "value": "Recalculate Skill Points"
+    }
+  ],
+  "debug.reset-secret-progress": [
+    {
+      "type": 0,
+      "value": "Reset Secret Progress"
+    }
+  ],
+  "debug.reset-secret-progress-success": [
+    {
+      "type": 0,
+      "value": "Secret progress reset."
     }
   ],
   "debug.strange-matter": [
@@ -1473,6 +1669,12 @@
       "value": "Bots"
     }
   ],
+  "dyson.route.quantum.controls": [
+    {
+      "type": 0,
+      "value": "Quantum controls"
+    }
+  ],
   "dyson.swarm.region": [
     {
       "type": 0,
@@ -1735,16 +1937,6 @@
       "value": "Automate Bots"
     }
   ],
-  "infinity.shop.cost": [
-    {
-      "type": 1,
-      "value": "value"
-    },
-    {
-      "type": 0,
-      "value": " IP"
-    }
-  ],
   "infinity.shop.data-centers.description": [
     {
       "type": 0,
@@ -1907,6 +2099,12 @@
       "value": "Start with 10 Servers"
     }
   ],
+  "navigation.avocato": [
+    {
+      "type": 0,
+      "value": "Avocato"
+    }
+  ],
   "navigation.debug-options": [
     {
       "type": 0,
@@ -1933,6 +2131,34 @@
     {
       "type": 0,
       "value": "Offline Time"
+    }
+  ],
+  "navigation.quantum": [
+    {
+      "type": 0,
+      "value": "Quantum"
+    }
+  ],
+  "navigation.quantum-progress": [
+    {
+      "type": 0,
+      "value": "Quantum, "
+    },
+    {
+      "type": 1,
+      "value": "current"
+    },
+    {
+      "type": 0,
+      "value": " of "
+    },
+    {
+      "type": 1,
+      "value": "required"
+    },
+    {
+      "type": 0,
+      "value": " Infinity Points"
     }
   ],
   "navigation.reality": [
@@ -1987,6 +2213,12 @@
       "value": "Skills"
     }
   ],
+  "navigation.statistics": [
+    {
+      "type": 0,
+      "value": "Statistics"
+    }
+  ],
   "navigation.story": [
     {
       "type": 0,
@@ -1997,6 +2229,714 @@
     {
       "type": 0,
       "value": "Wiki"
+    }
+  ],
+  "offline-time.action-failed": [
+    {
+      "type": 0,
+      "value": "That action was not completed. Try again."
+    }
+  ],
+  "offline-time.all": [
+    {
+      "type": 0,
+      "value": "All"
+    }
+  ],
+  "offline-time.capacity": [
+    {
+      "type": 1,
+      "value": "stored"
+    },
+    {
+      "type": 0,
+      "value": " of "
+    },
+    {
+      "type": 1,
+      "value": "capacity"
+    }
+  ],
+  "offline-time.confirm-spend": [
+    {
+      "type": 0,
+      "value": "Tap again to confirm"
+    }
+  ],
+  "offline-time.current-infinity": [
+    {
+      "type": 0,
+      "value": "Current Infinity"
+    }
+  ],
+  "offline-time.disabled": [
+    {
+      "type": 0,
+      "value": "Offline Time is disabled for this save."
+    }
+  ],
+  "offline-time.double-storage": [
+    {
+      "type": 0,
+      "value": "Double Storage"
+    }
+  ],
+  "offline-time.double-storage-description": [
+    {
+      "type": 0,
+      "value": "Consume the full bank to increase capacity to "
+    },
+    {
+      "type": 1,
+      "value": "capacity"
+    },
+    {
+      "type": 0,
+      "value": "."
+    }
+  ],
+  "offline-time.explanation": [
+    {
+      "type": 0,
+      "value": "Offline Time is stored while you are away. Spend it to advance the whole game immediately. This storage is separate from Simulation Double Time."
+    }
+  ],
+  "offline-time.maximum-storage": [
+    {
+      "type": 0,
+      "value": "Maximum storage reached"
+    }
+  ],
+  "offline-time.no-stored-time": [
+    {
+      "type": 0,
+      "value": "Return after time away to build up this bank."
+    }
+  ],
+  "offline-time.one-hour": [
+    {
+      "type": 0,
+      "value": "1 hour"
+    }
+  ],
+  "offline-time.one-minute": [
+    {
+      "type": 0,
+      "value": "1 minute"
+    }
+  ],
+  "offline-time.previous-infinity": [
+    {
+      "type": 0,
+      "value": "Previous Infinity"
+    }
+  ],
+  "offline-time.processing": [
+    {
+      "type": 0,
+      "value": "Simulating…"
+    }
+  ],
+  "offline-time.region": [
+    {
+      "type": 0,
+      "value": "Offline Time"
+    }
+  ],
+  "offline-time.selected-amount": [
+    {
+      "type": 0,
+      "value": "Selected: "
+    },
+    {
+      "type": 1,
+      "value": "duration"
+    }
+  ],
+  "offline-time.spend": [
+    {
+      "type": 0,
+      "value": "Spend "
+    },
+    {
+      "type": 1,
+      "value": "duration"
+    }
+  ],
+  "offline-time.spend-again": [
+    {
+      "type": 0,
+      "value": "Spend Again: "
+    },
+    {
+      "type": 1,
+      "value": "duration"
+    }
+  ],
+  "offline-time.spend-description": [
+    {
+      "type": 0,
+      "value": "Choose how much time to simulate now."
+    }
+  ],
+  "offline-time.spend-heading": [
+    {
+      "type": 0,
+      "value": "Spend Offline Time"
+    }
+  ],
+  "offline-time.spend-success": [
+    {
+      "type": 0,
+      "value": "Advanced the game by "
+    },
+    {
+      "type": 1,
+      "value": "duration"
+    },
+    {
+      "type": 0,
+      "value": "."
+    }
+  ],
+  "offline-time.storage-progress": [
+    {
+      "type": 0,
+      "value": "Offline Time storage"
+    }
+  ],
+  "offline-time.stored": [
+    {
+      "type": 0,
+      "value": "Stored Offline Time"
+    }
+  ],
+  "offline-time.ten-minutes": [
+    {
+      "type": 0,
+      "value": "10 minutes"
+    }
+  ],
+  "offline-time.usage-heading": [
+    {
+      "type": 0,
+      "value": "Offline Time Used"
+    }
+  ],
+  "quantum.cost": [
+    {
+      "type": 1,
+      "value": "value"
+    },
+    {
+      "type": 0,
+      "value": " QS"
+    }
+  ],
+  "quantum.failed": [
+    {
+      "type": 0,
+      "value": "That Quantum action was not completed. Try again."
+    }
+  ],
+  "quantum.leap": [
+    {
+      "type": 0,
+      "value": "Quantum Leap"
+    }
+  ],
+  "quantum.leap.cancel": [
+    {
+      "type": 0,
+      "value": "Cancel"
+    }
+  ],
+  "quantum.leap.confirm": [
+    {
+      "type": 0,
+      "value": "Confirm Quantum Leap"
+    }
+  ],
+  "quantum.leap.engage": [
+    {
+      "type": 0,
+      "value": "Engage Quantum Leap"
+    }
+  ],
+  "quantum.leap.entanglement-description": [
+    {
+      "type": 0,
+      "value": "Convert every complete group of 42 unspent Infinity Points without resetting Infinity."
+    }
+  ],
+  "quantum.leap.for": [
+    {
+      "type": 0,
+      "value": "Leap for "
+    },
+    {
+      "type": 1,
+      "value": "value"
+    },
+    {
+      "type": 0,
+      "value": " QS"
+    }
+  ],
+  "quantum.leap.reset-description": [
+    {
+      "type": 0,
+      "value": "Reset this reality to earn 1 Quantum Shard. Your Quantum upgrades persist."
+    }
+  ],
+  "quantum.level": [
+    {
+      "type": 0,
+      "value": "Level "
+    },
+    {
+      "type": 1,
+      "value": "value"
+    }
+  ],
+  "quantum.mega.all": [
+    {
+      "type": 0,
+      "value": "Mega-Structures"
+    }
+  ],
+  "quantum.mega.all-description": [
+    {
+      "type": 0,
+      "value": "All cosmic mega-structures are unlocked."
+    }
+  ],
+  "quantum.open-avocato": [
+    {
+      "type": 0,
+      "value": "Visit Avocato"
+    }
+  ],
+  "quantum.prerequisite.both": [
+    {
+      "type": 0,
+      "value": "Requires Double Infinity Points and Bot Multitasking."
+    }
+  ],
+  "quantum.prerequisite.either": [
+    {
+      "type": 0,
+      "value": "Requires Double Infinity Points or Bot Multitasking."
+    }
+  ],
+  "quantum.progress": [
+    {
+      "type": 0,
+      "value": "Progress to Quantum Leap"
+    }
+  ],
+  "quantum.progress.available": [
+    {
+      "type": 0,
+      "value": "Quantum Leap Available"
+    }
+  ],
+  "quantum.progress.value": [
+    {
+      "type": 1,
+      "value": "current"
+    },
+    {
+      "type": 0,
+      "value": " / "
+    },
+    {
+      "type": 1,
+      "value": "required"
+    },
+    {
+      "type": 0,
+      "value": " Infinity Points"
+    }
+  ],
+  "quantum.purchase": [
+    {
+      "type": 0,
+      "value": "Purchase "
+    },
+    {
+      "type": 1,
+      "value": "name"
+    },
+    {
+      "type": 0,
+      "value": " for "
+    },
+    {
+      "type": 1,
+      "value": "cost"
+    },
+    {
+      "type": 0,
+      "value": " Quantum Shards"
+    }
+  ],
+  "quantum.purchase.amount": [
+    {
+      "type": 0,
+      "value": "Purchase amount"
+    }
+  ],
+  "quantum.purchase.bulk": [
+    {
+      "type": 0,
+      "value": "Purchase "
+    },
+    {
+      "type": 1,
+      "value": "quantity"
+    },
+    {
+      "type": 0,
+      "value": " "
+    },
+    {
+      "type": 1,
+      "value": "name"
+    },
+    {
+      "type": 0,
+      "value": " upgrades for "
+    },
+    {
+      "type": 1,
+      "value": "cost"
+    },
+    {
+      "type": 0,
+      "value": " Quantum Shards"
+    }
+  ],
+  "quantum.purchase.buy-max": [
+    {
+      "type": 0,
+      "value": "Buy Max"
+    }
+  ],
+  "quantum.purchase.buy-quantity": [
+    {
+      "type": 0,
+      "value": "Buy "
+    },
+    {
+      "type": 1,
+      "value": "quantity"
+    }
+  ],
+  "quantum.purchase.quantity": [
+    {
+      "type": 0,
+      "value": "Purchase +"
+    },
+    {
+      "type": 1,
+      "value": "quantity"
+    }
+  ],
+  "quantum.purchase.settings": [
+    {
+      "type": 0,
+      "value": "Purchase settings"
+    }
+  ],
+  "quantum.purchase.short": [
+    {
+      "type": 0,
+      "value": "Purchase"
+    }
+  ],
+  "quantum.purchased": [
+    {
+      "type": 0,
+      "value": "Purchased"
+    }
+  ],
+  "quantum.region": [
+    {
+      "type": 0,
+      "value": "Quantum"
+    }
+  ],
+  "quantum.shards": [
+    {
+      "type": 0,
+      "value": "Quantum Shards"
+    }
+  ],
+  "quantum.shards.spent": [
+    {
+      "type": 0,
+      "value": "("
+    },
+    {
+      "type": 1,
+      "value": "value"
+    },
+    {
+      "type": 0,
+      "value": " spent)"
+    }
+  ],
+  "quantum.unavailable": [
+    {
+      "type": 0,
+      "value": "Unavailable"
+    }
+  ],
+  "quantum.upgrade.automation.description": [
+    {
+      "type": 0,
+      "value": "Permanently unlock Auto Research and Auto Bots."
+    }
+  ],
+  "quantum.upgrade.automation.title": [
+    {
+      "type": 0,
+      "value": "Permanent Automation"
+    }
+  ],
+  "quantum.upgrade.avocato.description": [
+    {
+      "type": 0,
+      "value": "Unlock a new feature in the Reality tab."
+    }
+  ],
+  "quantum.upgrade.avocato.title": [
+    {
+      "type": 0,
+      "value": "Avocato"
+    }
+  ],
+  "quantum.upgrade.birch.description": [
+    {
+      "type": 0,
+      "value": "Unlock Birch Planets, which consume Matrioshka Brains."
+    }
+  ],
+  "quantum.upgrade.birch.title": [
+    {
+      "type": 0,
+      "value": "Birch Planets"
+    }
+  ],
+  "quantum.upgrade.bot-multitasking.description": [
+    {
+      "type": 0,
+      "value": "Bots now function as both workers and scientists."
+    }
+  ],
+  "quantum.upgrade.bot-multitasking.title": [
+    {
+      "type": 0,
+      "value": "Bot Multitasking"
+    }
+  ],
+  "quantum.upgrade.break-loop.description": [
+    {
+      "type": 0,
+      "value": "Disable automatic collapse and gain a target control on the Infinity tab to earn multiple Infinity Points."
+    }
+  ],
+  "quantum.upgrade.break-loop.title": [
+    {
+      "type": 0,
+      "value": "Break The Loop"
+    }
+  ],
+  "quantum.upgrade.cash.description": [
+    {
+      "type": 0,
+      "value": "Gain a stacking additive 5% boost to Cash."
+    }
+  ],
+  "quantum.upgrade.cash.title": [
+    {
+      "type": 0,
+      "value": "Cash Booster"
+    }
+  ],
+  "quantum.upgrade.division.description": [
+    {
+      "type": 0,
+      "value": "Divide the number of bots required to collapse by 10."
+    }
+  ],
+  "quantum.upgrade.division.title": [
+    {
+      "type": 0,
+      "value": "Division"
+    }
+  ],
+  "quantum.upgrade.double-ip.description": [
+    {
+      "type": 0,
+      "value": "Earn twice the Infinity Points with every collapse."
+    }
+  ],
+  "quantum.upgrade.double-ip.title": [
+    {
+      "type": 0,
+      "value": "Double Infinity Points"
+    }
+  ],
+  "quantum.upgrade.entanglement.description": [
+    {
+      "type": 0,
+      "value": "Quantum Leap no longer resets Infinity. It converts unspent Infinity Points to Quantum Shards at a rate of 42:1."
+    }
+  ],
+  "quantum.upgrade.entanglement.title": [
+    {
+      "type": 0,
+      "value": "Quantum Entanglement"
+    }
+  ],
+  "quantum.upgrade.fragments.description": [
+    {
+      "type": 0,
+      "value": "Unlock Fragment Skills, which gain power with each fragment purchased."
+    }
+  ],
+  "quantum.upgrade.fragments.title": [
+    {
+      "type": 0,
+      "value": "Fragments"
+    }
+  ],
+  "quantum.upgrade.galactic.description": [
+    {
+      "type": 0,
+      "value": "Unlock Galactic Brains, the ultimate cosmic mega-structure."
+    }
+  ],
+  "quantum.upgrade.galactic.title": [
+    {
+      "type": 0,
+      "value": "Galactic Brains"
+    }
+  ],
+  "quantum.upgrade.influence.description": [
+    {
+      "type": 0,
+      "value": "Add a stacking 4 Influence per second."
+    }
+  ],
+  "quantum.upgrade.influence.title": [
+    {
+      "type": 0,
+      "value": "Influence Booster"
+    }
+  ],
+  "quantum.upgrade.matrioshka.description": [
+    {
+      "type": 0,
+      "value": "Unlock Matrioshka Brains, the first cosmic mega-structure."
+    }
+  ],
+  "quantum.upgrade.matrioshka.title": [
+    {
+      "type": 0,
+      "value": "Matrioshka Brains"
+    }
+  ],
+  "quantum.upgrade.paragade.description": [
+    {
+      "type": 0,
+      "value": "Unlock Paragon and Renegade Skills, which offer a tough decision."
+    }
+  ],
+  "quantum.upgrade.paragade.title": [
+    {
+      "type": 0,
+      "value": "Paragade"
+    }
+  ],
+  "quantum.upgrade.power.description": [
+    {
+      "type": 0,
+      "value": "Unlock Power Skills, which boost all buildings, Cash, and Science."
+    }
+  ],
+  "quantum.upgrade.power.title": [
+    {
+      "type": 0,
+      "value": "Power"
+    }
+  ],
+  "quantum.upgrade.purity.description": [
+    {
+      "type": 0,
+      "value": "Unlock Purity Skills, which scale with unspent Skill Points."
+    }
+  ],
+  "quantum.upgrade.purity.title": [
+    {
+      "type": 0,
+      "value": "Purity"
+    }
+  ],
+  "quantum.upgrade.science.description": [
+    {
+      "type": 0,
+      "value": "Gain a stacking additive 5% boost to Science."
+    }
+  ],
+  "quantum.upgrade.science.title": [
+    {
+      "type": 0,
+      "value": "Science Booster"
+    }
+  ],
+  "quantum.upgrade.secrets.description": [
+    {
+      "type": 0,
+      "value": "Permanently reveal and unlock 3 Secrets of the Universe."
+    }
+  ],
+  "quantum.upgrade.secrets.title": [
+    {
+      "type": 0,
+      "value": "Secrets of the Universe"
+    }
+  ],
+  "quantum.upgrade.stellar.description": [
+    {
+      "type": 0,
+      "value": "Unlock Stellar Skills, which scale with stars and galaxies at a cost."
+    }
+  ],
+  "quantum.upgrade.stellar.title": [
+    {
+      "type": 0,
+      "value": "Stellar"
+    }
+  ],
+  "quantum.upgrade.terra.description": [
+    {
+      "type": 0,
+      "value": "Unlock Terra Skills, which apply bonuses from planets to other buildings."
+    }
+  ],
+  "quantum.upgrade.terra.title": [
+    {
+      "type": 0,
+      "value": "Terra"
+    }
+  ],
+  "quantum.upgrades": [
+    {
+      "type": 0,
+      "value": "Quantum Upgrades"
     }
   ],
   "reality.artifact": [
@@ -2015,6 +2955,24 @@
     {
       "type": 0,
       "value": "Undefined"
+    }
+  ],
+  "reality.avocato.description": [
+    {
+      "type": 0,
+      "value": "Feed Avocato resources to strengthen every reality."
+    }
+  ],
+  "reality.avocato.open": [
+    {
+      "type": 0,
+      "value": "Visit Avocato"
+    }
+  ],
+  "reality.avocato.title": [
+    {
+      "type": 0,
+      "value": "Avocato"
     }
   ],
   "reality.consuming": [
@@ -3581,6 +4539,48 @@
       "value": "Development Menu"
     }
   ],
+  "settings.more-by.description": [
+    {
+      "type": 0,
+      "value": "Discover more games from the developer of Idle Dyson Swarm."
+    }
+  ],
+  "settings.more-by.title": [
+    {
+      "type": 0,
+      "value": "More by Blind Sided Games"
+    }
+  ],
+  "settings.navigation.description": [
+    {
+      "type": 0,
+      "value": "Choose which optional pages appear in the bottom navigation. They remain available from the menu."
+    }
+  ],
+  "settings.navigation.statistics": [
+    {
+      "type": 0,
+      "value": "Show Statistics shortcut"
+    }
+  ],
+  "settings.navigation.story": [
+    {
+      "type": 0,
+      "value": "Show Story shortcut"
+    }
+  ],
+  "settings.navigation.title": [
+    {
+      "type": 0,
+      "value": "Navigation Shortcuts"
+    }
+  ],
+  "settings.navigation.wiki": [
+    {
+      "type": 0,
+      "value": "Show Wiki shortcut"
+    }
+  ],
   "settings.save-data.cancel": [
     {
       "type": 0,
@@ -4179,10 +5179,6 @@
     {
       "type": 1,
       "value": "value"
-    },
-    {
-      "type": 0,
-      "value": " W"
     }
   ],
   "simulations.panel.energy-stored": [
@@ -4192,7 +5188,7 @@
     },
     {
       "type": 0,
-      "value": " J stored"
+      "value": " stored"
     }
   ],
   "simulations.panel.engineering": [
@@ -4350,7 +5346,7 @@
     },
     {
       "type": 0,
-      "value": " shots remaining"
+      "value": " rounds remaining"
     }
   ],
   "simulations.panel.solar": [
@@ -4465,12 +5461,16 @@
   ],
   "simulations.progress.factory-overdrive-active": [
     {
+      "type": 0,
+      "value": "×"
+    },
+    {
       "type": 1,
       "value": "multiplier"
     },
     {
       "type": 0,
-      "value": "x · "
+      "value": " · "
     },
     {
       "type": 1,
@@ -4478,7 +5478,7 @@
     },
     {
       "type": 0,
-      "value": " W consumed"
+      "value": " consumed"
     }
   ],
   "simulations.progress.factory-overdrive-idle": [
@@ -4490,7 +5490,13 @@
   "simulations.progress.firing": [
     {
       "type": 0,
-      "value": "Railgun firing progress"
+      "value": "Volley remaining"
+    }
+  ],
+  "simulations.progress.firing-throughput": [
+    {
+      "type": 0,
+      "value": "Railgun throughput"
     }
   ],
   "simulations.progress.percent": [
@@ -4509,28 +5515,76 @@
       "value": "Production progress"
     }
   ],
+  "simulations.progress.production-rate": [
+    {
+      "type": 1,
+      "value": "value"
+    },
+    {
+      "type": 0,
+      "value": "/s"
+    }
+  ],
   "simulations.progress.railgun-payload": [
     {
       "type": 0,
-      "value": "Railgun payload"
+      "value": "Railgun array"
     }
   ],
   "simulations.progress.railgun-payload-value": [
     {
       "type": 1,
-      "value": "perShot"
+      "value": "railguns"
     },
     {
       "type": 0,
-      "value": " / shot · "
+      "value": " railguns · "
     },
     {
       "type": 1,
-      "value": "perVolley"
+      "value": "perRound"
     },
     {
       "type": 0,
-      "value": " / volley"
+      "value": " panels / round · "
+    },
+    {
+      "type": 1,
+      "value": "rounds"
+    },
+    {
+      "type": 0,
+      "value": " rounds / volley"
+    }
+  ],
+  "simulations.progress.railgun-throughput-value": [
+    {
+      "type": 1,
+      "value": "volleys"
+    },
+    {
+      "type": 0,
+      "value": " volleys /s · "
+    },
+    {
+      "type": 1,
+      "value": "panels"
+    },
+    {
+      "type": 0,
+      "value": " panels /s"
+    }
+  ],
+  "simulations.progress.railgun-waiting": [
+    {
+      "type": 0,
+      "value": "Waiting for charge or panels"
+    }
+  ],
+  "simulations.progress.record-stored-panels": [
+    {
+      "type": 0,
+      "value": "Record stored"
     }
   ],
   "simulations.progress.research": [
@@ -4542,7 +5596,25 @@
   "simulations.progress.stored-panels": [
     {
       "type": 0,
-      "value": "Stored Dyson panels"
+      "value": "Volley reserve"
+    }
+  ],
+  "simulations.progress.stored-panels-value": [
+    {
+      "type": 1,
+      "value": "current"
+    },
+    {
+      "type": 0,
+      "value": " / "
+    },
+    {
+      "type": 1,
+      "value": "target"
+    },
+    {
+      "type": 0,
+      "value": " for next volley"
     }
   ],
   "simulations.progress.time-remaining": [
@@ -5497,6 +6569,1002 @@
     {
       "type": 0,
       "value": "Another tab is using this game"
+    }
+  ],
+  "statistics.cause.artificial-intelligence": [
+    {
+      "type": 0,
+      "value": "Artificial Intelligence"
+    }
+  ],
+  "statistics.cause.black-hole": [
+    {
+      "type": 0,
+      "value": "Black Hole"
+    }
+  ],
+  "statistics.cause.global-warming": [
+    {
+      "type": 0,
+      "value": "Global Warming"
+    }
+  ],
+  "statistics.cause.meteor": [
+    {
+      "type": 0,
+      "value": "Meteor"
+    }
+  ],
+  "statistics.group.activity": [
+    {
+      "type": 0,
+      "value": "Activity"
+    }
+  ],
+  "statistics.group.infinity": [
+    {
+      "type": 0,
+      "value": "Infinity"
+    }
+  ],
+  "statistics.group.reality": [
+    {
+      "type": 0,
+      "value": "Reality"
+    }
+  ],
+  "statistics.group.simulations": [
+    {
+      "type": 0,
+      "value": "Simulations"
+    }
+  ],
+  "statistics.last-cycle": [
+    {
+      "type": 0,
+      "value": "Last completed cycle"
+    }
+  ],
+  "statistics.last-cycle.break-infinity": [
+    {
+      "type": 0,
+      "value": "Break Infinity"
+    }
+  ],
+  "statistics.last-cycle.duration": [
+    {
+      "type": 0,
+      "value": "Duration"
+    }
+  ],
+  "statistics.last-cycle.empty": [
+    {
+      "type": 0,
+      "value": "No completed cycle has been recorded yet."
+    }
+  ],
+  "statistics.last-cycle.ordinary-infinity": [
+    {
+      "type": 0,
+      "value": "Ordinary Infinity"
+    }
+  ],
+  "statistics.last-cycle.reset-cause": [
+    {
+      "type": 0,
+      "value": "Reset cause"
+    }
+  ],
+  "statistics.last-cycle.reward": [
+    {
+      "type": 0,
+      "value": "Reward"
+    }
+  ],
+  "statistics.last-cycle.simulation-reset": [
+    {
+      "type": 0,
+      "value": "Simulation reset"
+    }
+  ],
+  "statistics.last-cycle.type": [
+    {
+      "type": 0,
+      "value": "Cycle type"
+    }
+  ],
+  "statistics.metric.ai-resets": [
+    {
+      "type": 0,
+      "value": "Artificial Intelligence resets"
+    }
+  ],
+  "statistics.metric.automatic-influence": [
+    {
+      "type": 0,
+      "value": "Influence gathered automatically"
+    }
+  ],
+  "statistics.metric.black-hole-resets": [
+    {
+      "type": 0,
+      "value": "Black Hole resets"
+    }
+  ],
+  "statistics.metric.bot-cap-infinity-points": [
+    {
+      "type": 0,
+      "value": "Bot-cap Infinity Points"
+    }
+  ],
+  "statistics.metric.bot-cap-overflow-rewards": [
+    {
+      "type": 0,
+      "value": "Bot-cap overflow rewards"
+    }
+  ],
+  "statistics.metric.break-infinities": [
+    {
+      "type": 0,
+      "value": "Break Infinities"
+    }
+  ],
+  "statistics.metric.break-infinity-points": [
+    {
+      "type": 0,
+      "value": "Break Infinity Points"
+    }
+  ],
+  "statistics.metric.capacity-stall-time": [
+    {
+      "type": 0,
+      "value": "Reality capacity stalled"
+    }
+  ],
+  "statistics.metric.dream-resets": [
+    {
+      "type": 0,
+      "value": "Simulation resets"
+    }
+  ],
+  "statistics.metric.global-warming-resets": [
+    {
+      "type": 0,
+      "value": "Global Warming resets"
+    }
+  ],
+  "statistics.metric.infinity-points": [
+    {
+      "type": 0,
+      "value": "Infinity Points earned"
+    }
+  ],
+  "statistics.metric.infinity-resets": [
+    {
+      "type": 0,
+      "value": "Infinity resets"
+    }
+  ],
+  "statistics.metric.manual-influence": [
+    {
+      "type": 0,
+      "value": "Influence gathered manually"
+    }
+  ],
+  "statistics.metric.meteor-resets": [
+    {
+      "type": 0,
+      "value": "Meteor resets"
+    }
+  ],
+  "statistics.metric.ordinary-infinities": [
+    {
+      "type": 0,
+      "value": "Ordinary Infinities"
+    }
+  ],
+  "statistics.metric.ordinary-infinity-points": [
+    {
+      "type": 0,
+      "value": "Ordinary Infinity Points"
+    }
+  ],
+  "statistics.metric.reality-workers": [
+    {
+      "type": 0,
+      "value": "Reality workers created"
+    }
+  ],
+  "statistics.metric.simulated-time": [
+    {
+      "type": 0,
+      "value": "Simulated time"
+    }
+  ],
+  "statistics.metric.strange-matter": [
+    {
+      "type": 0,
+      "value": "Strange Matter earned"
+    }
+  ],
+  "statistics.recent-activity": [
+    {
+      "type": 0,
+      "value": "Recent activity"
+    }
+  ],
+  "statistics.region": [
+    {
+      "type": 0,
+      "value": "Statistics"
+    }
+  ],
+  "statistics.scope.latest-interval": [
+    {
+      "type": 0,
+      "value": "Latest interval"
+    }
+  ],
+  "statistics.scope.lifetime": [
+    {
+      "type": 0,
+      "value": "Lifetime"
+    }
+  ],
+  "statistics.scope.quantum-run": [
+    {
+      "type": 0,
+      "value": "Current Quantum run"
+    }
+  ],
+  "statistics.tracked-time": [
+    {
+      "type": 0,
+      "value": "Tracked simulation time"
+    }
+  ],
+  "statistics.tracking-notice": [
+    {
+      "type": 0,
+      "value": "Statistics have been tracked since this feature was added."
+    }
+  ],
+  "statistics.window.last-day": [
+    {
+      "type": 0,
+      "value": "Last 24 hours"
+    }
+  ],
+  "statistics.window.last-hour": [
+    {
+      "type": 0,
+      "value": "Last 60 minutes"
+    }
+  ],
+  "statistics.window.last-thirty-days": [
+    {
+      "type": 0,
+      "value": "Last 30 days"
+    }
+  ],
+  "story.avocato.description": [
+    {
+      "type": 0,
+      "value": "Visit your friendly interdimensional reset assistant."
+    }
+  ],
+  "story.avocato.open": [
+    {
+      "type": 0,
+      "value": "Visit Avocato"
+    }
+  ],
+  "story.avocato.title": [
+    {
+      "type": 0,
+      "value": "Avocato"
+    }
+  ],
+  "story.chapter-1": [
+    {
+      "type": 0,
+      "value": "Chapter 1"
+    }
+  ],
+  "story.chapter-1.intro": [
+    {
+      "type": 0,
+      "value": "As you stare down at your keyboard, the computer whirring in the background, an idea suddenly comes to you. You stand up and head over to your workbench... You begin working and quickly build a bot, it has two arms and hovers. Huh it works... You assign it to begin making solar panels and get to work on another."
+    }
+  ],
+  "story.chapter-1.part-2": [
+    {
+      "type": 0,
+      "value": "Before long you have 10 bots, but this is quickly getting tiring. You set up an assembly line and write some code that lets it produce bots for you."
+    }
+  ],
+  "story.chapter-1.part-3": [
+    {
+      "type": 0,
+      "value": "You're also going to need some power, so you launch some panels into space, and begin to sell off the excess power."
+    }
+  ],
+  "story.chapter-2": [
+    {
+      "type": 0,
+      "value": "Chapter 2"
+    }
+  ],
+  "story.chapter-2.intro": [
+    {
+      "type": 0,
+      "value": "You decide that manually building assembly lines is too much work, a few moments later you decide to design an AI that can manage the creation of assembly lines for you. Before long it's ready. You insert the module into a specialized bot and it whirrs to life quickly buzzing off to begin constructing more assembly lines."
+    }
+  ],
+  "story.chapter-2.part-2": [
+    {
+      "type": 0,
+      "value": "You're starting to run out of space. You've set up a research division and created better AI that can collect the resources you need for your discoveries. But you need to create some servers to store all the data. Costly but worth it."
+    }
+  ],
+  "story.chapter-2.part-3": [
+    {
+      "type": 0,
+      "value": "Before long your empire grows beyond anything you could ever have imagined. You've long since surrounded your first star with panels and it's time to begin thinking of expansion. You send out some probes and start looking for ideal systems to take over. In the meantime you expand your operation to other planets in the system."
+    }
+  ],
+  "story.chapter-3": [
+    {
+      "type": 0,
+      "value": "Chapter 3"
+    }
+  ],
+  "story.chapter-3.intro": [
+    {
+      "type": 0,
+      "value": "As you stare into a mirror one day, you are hit with the sudden realization of how long it's been. You design a method of extracting your consciousness and export it to an organic computer. With infinite life in your grasp you set out to explore the universe."
+    }
+  ],
+  "story.chapter-3.part-2": [
+    {
+      "type": 0,
+      "value": "One day you come across some kind of anomaly, your curiosity gets the better of you. You head towards it and avocado into the murky mists.. Some writing begins to take shape and you catch a glimpse of a few words: Buffer overflow imminent... 41.9Qi/42.0Qi. The number ticks over and everything goes black..."
+    }
+  ],
+  "story.chapter-3.part-2-stare": [
+    {
+      "type": 0,
+      "value": "One day you come across some kind of anomaly, your curiosity gets the better of you. You head towards it and stare into the murky mists.. Some writing begins to take shape and you catch a glimpse of a few words: Buffer overflow imminent... 41.9Qi/42.0Qi. The number ticks over and everything goes black..."
+    }
+  ],
+  "story.chapter-4": [
+    {
+      "type": 0,
+      "value": "Chapter 4"
+    }
+  ],
+  "story.chapter-4.intro": [
+    {
+      "type": 0,
+      "value": "You find yourself staring at your workbench, having just created your first bot..."
+    }
+  ],
+  "story.chapter-4.part-10": [
+    {
+      "type": 0,
+      "value": "10 times.. The machine seems to be reaching its limits. Perhaps its best to focus on something new. You have noticed with each reset the anomaly has changed slightly. Perhaps it's time to focus on the secrets of the Universe."
+    }
+  ],
+  "story.chapter-4.part-2": [
+    {
+      "type": 0,
+      "value": "You decide to take advantage of what you have learned. Infinity doesn't seem that long after all. Altering a couple of lines in the assembly line logic allows you to produce bots at twice the rate. However before long your previous experience with this reality slips from your mind as if it were a dream. \"There has to be a way to remember more\" you think to yourself as you set out to find the anomaly once more."
+    }
+  ],
+  "story.chapter-4.part-3": [
+    {
+      "type": 0,
+      "value": "Remembering more is no easy feat and the multitimeline stuff takes its toll. You manage to triple the effect of your Managers, this bonus trickles down to your Assembly Lines too. You wonder if you can do better next time."
+    }
+  ],
+  "story.chapter-4.part-4": [
+    {
+      "type": 0,
+      "value": "Remembering is getting easier. This time you Quadruple the power of your servers using information you intentionally acquired from the future. And set out to improve your Data Centers next."
+    }
+  ],
+  "story.chapter-4.part-5": [
+    {
+      "type": 0,
+      "value": "Advanced spacial reasoning along with smaller server profiles allow you to fit far more power in the same space. Five times more to be precise."
+    }
+  ],
+  "story.chapter-4.part-6": [
+    {
+      "type": 0,
+      "value": "You set up an algorithm that allows you to bring large quantities of data back with you Quantum tunneling was difficult to work out but now you can send planetary designs back through time and preplan your Data Centers. Six times as efficient as your first run your entire production line is becoming a much smoother machine. How long can this go on for?"
+    }
+  ],
+  "story.chapter-4.part-7": [
+    {
+      "type": 0,
+      "value": "7 times.."
+    }
+  ],
+  "story.chapter-4.part-8": [
+    {
+      "type": 0,
+      "value": "8 times.."
+    }
+  ],
+  "story.chapter-4.part-9": [
+    {
+      "type": 0,
+      "value": "9 times.."
+    }
+  ],
+  "story.chapter-5": [
+    {
+      "type": 0,
+      "value": "Chapter 5"
+    }
+  ],
+  "story.chapter-5.part-1": [
+    {
+      "type": 0,
+      "value": "As you gather the last secret a vague memory of another life begins to surface... A portal appears next to the anomaly, a new path forward. You decide it's worth the risk. There's nothing left for you here anyway."
+    }
+  ],
+  "story.chapter-5.part-2": [
+    {
+      "type": 0,
+      "value": "Somewhere in the distance a message seems to be looping on repeat... Temporal Anomaly located... please input instructions."
+    }
+  ],
+  "story.chapter-5.part-3": [
+    {
+      "type": 0,
+      "value": "You blink your eyes open and memories begin to flood back, how long were you stuck in there? You look down at your watch; what felt like many lifetimes has passed in mere minutes. You sit up and step from the makeshift platform you used for the simulator. It's difficult to stand as you become somewhat faint in your mortal form."
+    }
+  ],
+  "story.chapter-5.part-4": [
+    {
+      "type": 0,
+      "value": "You head over to your workstation and overlook the data. 'Simulation primed, ready to begin consumption.' You hit enter and the machine begins to consume realities much like the one you were just in. Gathering data to run even more simulations. Whatever this artifact is, you will work out what it does."
+    }
+  ],
+  "story.chapter-5.part-5": [
+    {
+      "type": 0,
+      "value": "While you wait you decide to start manually playing through simulations. Bit of \"game time\" couldn't hurt."
+    }
+  ],
+  "story.chapter-6": [
+    {
+      "type": 0,
+      "value": "Chapter 6"
+    }
+  ],
+  "story.chapter-6.complete": [
+    {
+      "type": 0,
+      "value": "A sudden realization forms in your mind. While you thought all this time you were the one running the simulation, you have in fact been the simulation. In the distance you hear a few words as time begins to slow... \"Shut it down... you know what happened last time the simulation became self aware. You're just going to have to start over.\""
+    }
+  ],
+  "story.chapter-6.speed": [
+    {
+      "type": 0,
+      "value": "The artifact slows to a crawl. You give it another tap; suddenly the words on the computer change from \"Undefined\" and are replaced with CPU time..."
+    }
+  ],
+  "story.chapter-6.translation": [
+    {
+      "type": 0,
+      "value": "As the computer translates the last letter, two words show... \"The Artifact\" Bah! What does that even mean?! Clearly there is something missing."
+    }
+  ],
+  "story.introduction": [
+    {
+      "type": 0,
+      "value": "The story unfolds as you reach milestones across Infinity, Reality and Simulations."
+    }
+  ],
+  "story.region": [
+    {
+      "type": 0,
+      "value": "Story"
+    }
+  ],
+  "wiki.bots.milestones": [
+    {
+      "type": 0,
+      "value": "Assembly Lines, AI Managers, Servers, Data Centers and Planets double their yield at 50 manually purchased and double again at 100. Each manual purchase beyond 100 adds another 1% boost."
+    }
+  ],
+  "wiki.bots.milestones-title": [
+    {
+      "type": 0,
+      "value": "Manual purchase milestones"
+    }
+  ],
+  "wiki.bots.overview": [
+    {
+      "type": 0,
+      "value": "Build bots, then distribute them between panel production and research with the allocation control. Production bots create Solar Panels which are launched into orbit automatically."
+    }
+  ],
+  "wiki.bots.overview-title": [
+    {
+      "type": 0,
+      "value": "Building the swarm"
+    }
+  ],
+  "wiki.bots.panels": [
+    {
+      "type": 0,
+      "value": "Each panel produces energy for its Panel Lifetime before its orbit decays into the star. That energy is sold automatically for cash, which funds stronger bot production."
+    }
+  ],
+  "wiki.bots.panels-title": [
+    {
+      "type": 0,
+      "value": "Panels and energy"
+    }
+  ],
+  "wiki.bots.scale": [
+    {
+      "type": 0,
+      "value": "20,000 active panels surround one star. 100 billion surrounded stars engulf one galaxy. The interface changes from panels, to stars, to galaxies as your swarm grows."
+    }
+  ],
+  "wiki.bots.scale-title": [
+    {
+      "type": 0,
+      "value": "Stars and galaxies"
+    }
+  ],
+  "wiki.category.bots": [
+    {
+      "type": 0,
+      "value": "Bots"
+    }
+  ],
+  "wiki.category.infinity": [
+    {
+      "type": 0,
+      "value": "Infinity"
+    }
+  ],
+  "wiki.category.lore": [
+    {
+      "type": 0,
+      "value": "Lore"
+    }
+  ],
+  "wiki.category.other": [
+    {
+      "type": 0,
+      "value": "Other"
+    }
+  ],
+  "wiki.category.patch-notes": [
+    {
+      "type": 0,
+      "value": "Patch Notes"
+    }
+  ],
+  "wiki.category.quantum": [
+    {
+      "type": 0,
+      "value": "Quantum Leap"
+    }
+  ],
+  "wiki.category.reality": [
+    {
+      "type": 0,
+      "value": "Reality"
+    }
+  ],
+  "wiki.category.research": [
+    {
+      "type": 0,
+      "value": "Research"
+    }
+  ],
+  "wiki.category.secrets": [
+    {
+      "type": 0,
+      "value": "Secrets of the Universe"
+    }
+  ],
+  "wiki.category.skills": [
+    {
+      "type": 0,
+      "value": "Skill Tree"
+    }
+  ],
+  "wiki.infinity.overview": [
+    {
+      "type": 0,
+      "value": "Reaching 42 quintillion bots lets you break reality and earn an Infinity Point. The first five breaks extend the Infinity Point production bonus across Assembly Lines, AI Managers, Servers, Data Centers and Planets."
+    }
+  ],
+  "wiki.infinity.overview-title": [
+    {
+      "type": 0,
+      "value": "Breaking reality"
+    }
+  ],
+  "wiki.infinity.scaling": [
+    {
+      "type": 0,
+      "value": "Every spent or unspent Infinity Point increases the production of the facilities affected by your completed breaks. Shop upgrades spend points without removing their contribution to that total."
+    }
+  ],
+  "wiki.infinity.scaling-title": [
+    {
+      "type": 0,
+      "value": "Infinity Point scaling"
+    }
+  ],
+  "wiki.infinity.secrets": [
+    {
+      "type": 0,
+      "value": "After a Quantum Leap, Secret upgrades reveal the meaning of life one letter at a time and apply a permanent hidden production benefit."
+    }
+  ],
+  "wiki.infinity.secrets-title": [
+    {
+      "type": 0,
+      "value": "Secrets"
+    }
+  ],
+  "wiki.introduction": [
+    {
+      "type": 0,
+      "value": "Reference notes revealed as your run reaches each layer."
+    }
+  ],
+  "wiki.lore.introduction": [
+    {
+      "type": 0,
+      "value": "The original Wiki chronicle. These chapters are separate from the interactive Story destination."
+    }
+  ],
+  "wiki.other.easter-egg": [
+    {
+      "type": 0,
+      "value": "A seven-step discovery begins in Quantum Management. Completing every step awards four Skill Points."
+    }
+  ],
+  "wiki.other.easter-egg-title": [
+    {
+      "type": 0,
+      "value": "Hidden discovery"
+    }
+  ],
+  "wiki.other.offline": [
+    {
+      "type": 0,
+      "value": "Time away from the game becomes Offline Time currency. Spend it from the Offline Time screen. A return summary appears after you have been away for at least 60 seconds."
+    }
+  ],
+  "wiki.other.offline-title": [
+    {
+      "type": 0,
+      "value": "Offline Time"
+    }
+  ],
+  "wiki.patch-notes.introduction": [
+    {
+      "type": 0,
+      "value": "The complete release history authored for the Unity Wiki."
+    }
+  ],
+  "wiki.quantum.advice": [
+    {
+      "type": 0,
+      "value": "Quantum upgrades open new systems and permanent efficiencies. Review each prerequisite and preview before committing to a reset."
+    }
+  ],
+  "wiki.quantum.advice-title": [
+    {
+      "type": 0,
+      "value": "Planning a Leap"
+    }
+  ],
+  "wiki.quantum.overview": [
+    {
+      "type": 0,
+      "value": "A Quantum Leap fully resets the current Reality at 42 Infinity Points and awards Quantum Shards. Spend them on permanent upgrades in Quantum Management."
+    }
+  ],
+  "wiki.quantum.overview-title": [
+    {
+      "type": 0,
+      "value": "Quantum Shards"
+    }
+  ],
+  "wiki.reality.anomaly": [
+    {
+      "type": 0,
+      "value": "Speed Reduction and Translation upgrades advance the story and each award one Skill Point."
+    }
+  ],
+  "wiki.reality.anomaly-title": [
+    {
+      "type": 0,
+      "value": "Anomaly"
+    }
+  ],
+  "wiki.reality.countermeasures": [
+    {
+      "type": 0,
+      "value": "Countermeasures in Research let simulations survive later disasters and increase the Strange Matter earned from a reset."
+    }
+  ],
+  "wiki.reality.countermeasures-title": [
+    {
+      "type": 0,
+      "value": "Countermeasures"
+    }
+  ],
+  "wiki.reality.disasters": [
+    {
+      "type": 0,
+      "value": "Disasters reset a simulated world and award Strange Matter. Spend Strange Matter on Reality research and Countermeasures."
+    }
+  ],
+  "wiki.reality.disasters-title": [
+    {
+      "type": 0,
+      "value": "Disasters"
+    }
+  ],
+  "wiki.reality.offline": [
+    {
+      "type": 0,
+      "value": "Simulation offline progress is stored as time rather than immediately awarded resources. The Time Multiplier upgrade lets you spend that reserve to accelerate Simulations."
+    }
+  ],
+  "wiki.reality.offline-title": [
+    {
+      "type": 0,
+      "value": "Simulation Offline Progress"
+    }
+  ],
+  "wiki.reality.overview": [
+    {
+      "type": 0,
+      "value": "Reality is the second major layer. Its upgrades change how you break reality and how later prestige systems work."
+    }
+  ],
+  "wiki.reality.overview-title": [
+    {
+      "type": 0,
+      "value": "The Reality layer"
+    }
+  ],
+  "wiki.region": [
+    {
+      "type": 0,
+      "value": "Wiki"
+    }
+  ],
+  "wiki.research.overview": [
+    {
+      "type": 0,
+      "value": "Assigning workers as scientists produces research points. Spend them on upgrades; some research only appears after you reach its required amount or progression era."
+    }
+  ],
+  "wiki.research.overview-title": [
+    {
+      "type": 0,
+      "value": "Scientists and upgrades"
+    }
+  ],
+  "wiki.secrets.effect.ai-manager-boost": [
+    {
+      "type": 0,
+      "value": "AI Manager research boost"
+    }
+  ],
+  "wiki.secrets.effect.ai-manager-multiplier": [
+    {
+      "type": 0,
+      "value": "AI Manager multiplier"
+    }
+  ],
+  "wiki.secrets.effect.assembly-line-boost": [
+    {
+      "type": 0,
+      "value": "Assembly Line research boost"
+    }
+  ],
+  "wiki.secrets.effect.assembly-line-multiplier": [
+    {
+      "type": 0,
+      "value": "Assembly Line multiplier"
+    }
+  ],
+  "wiki.secrets.effect.cash-multiplier": [
+    {
+      "type": 0,
+      "value": "Cash multiplier"
+    }
+  ],
+  "wiki.secrets.effect.planet-boost": [
+    {
+      "type": 0,
+      "value": "Planet research boost"
+    }
+  ],
+  "wiki.secrets.effect.planet-multiplier": [
+    {
+      "type": 0,
+      "value": "Planet multiplier"
+    }
+  ],
+  "wiki.secrets.effect.science-multiplier": [
+    {
+      "type": 0,
+      "value": "Science multiplier"
+    }
+  ],
+  "wiki.secrets.effect.server-boost": [
+    {
+      "type": 0,
+      "value": "Server research boost"
+    }
+  ],
+  "wiki.secrets.effect.server-multiplier": [
+    {
+      "type": 0,
+      "value": "Server multiplier"
+    }
+  ],
+  "wiki.secrets.level": [
+    {
+      "type": 0,
+      "value": "Secret "
+    },
+    {
+      "type": 1,
+      "value": "level"
+    }
+  ],
+  "wiki.secrets.meaning-so-far": [
+    {
+      "type": 0,
+      "value": "Meaning so far: "
+    },
+    {
+      "type": 1,
+      "value": "meaning"
+    }
+  ],
+  "wiki.secrets.overview": [
+    {
+      "type": 1,
+      "value": "revealed"
+    },
+    {
+      "type": 0,
+      "value": " of 27 Secrets revealed"
+    }
+  ],
+  "wiki.secrets.overview-title": [
+    {
+      "type": 0,
+      "value": "What has been revealed"
+    }
+  ],
+  "wiki.skills.auto-assign": [
+    {
+      "type": 0,
+      "value": "The tree remembers assignment order so it can rebuild your layout after Infinity or a Quantum reset. Presets save complete layouts. Skills such as Banking may be excluded from automatic assignment."
+    }
+  ],
+  "wiki.skills.auto-assign-title": [
+    {
+      "type": 0,
+      "value": "Auto-assign and presets"
+    }
+  ],
+  "wiki.skills.goal-1": [
+    {
+      "type": 0,
+      "value": "Create 10 Bots."
+    }
+  ],
+  "wiki.skills.goal-10": [
+    {
+      "type": 0,
+      "value": "Engulf 100 Galaxies."
+    }
+  ],
+  "wiki.skills.goal-2": [
+    {
+      "type": 0,
+      "value": "Build 5 manually purchased Assembly Lines."
+    }
+  ],
+  "wiki.skills.goal-3": [
+    {
+      "type": 0,
+      "value": "Maintain 20,000 active Panels."
+    }
+  ],
+  "wiki.skills.goal-4": [
+    {
+      "type": 0,
+      "value": "Own 20 Planets."
+    }
+  ],
+  "wiki.skills.goal-5": [
+    {
+      "type": 0,
+      "value": "Decay 1 trillion Panels in total."
+    }
+  ],
+  "wiki.skills.goal-6": [
+    {
+      "type": 0,
+      "value": "Surround 1 billion Stars."
+    }
+  ],
+  "wiki.skills.goal-7": [
+    {
+      "type": 0,
+      "value": "Surround 10 billion Stars."
+    }
+  ],
+  "wiki.skills.goal-8": [
+    {
+      "type": 0,
+      "value": "Engulf 1 Galaxy."
+    }
+  ],
+  "wiki.skills.goal-9": [
+    {
+      "type": 0,
+      "value": "Engulf 10 Galaxies."
+    }
+  ],
+  "wiki.skills.goals-title": [
+    {
+      "type": 0,
+      "value": "Goals"
+    }
+  ],
+  "wiki.skills.overview": [
+    {
+      "type": 0,
+      "value": "Skill Points are awarded by completing goals, with further sources unlocked later. Exclusive skills disable their alternatives, Fragment skills grow with assigned Fragments, and some mechanically dependent skills cannot be refunded."
+    }
+  ],
+  "wiki.skills.overview-title": [
+    {
+      "type": 0,
+      "value": "How skills work"
+    }
+  ],
+  "wiki.title": [
+    {
+      "type": 0,
+      "value": "Wiki"
+    }
+  ],
+  "wiki.topic-navigation": [
+    {
+      "type": 0,
+      "value": "Wiki topics"
+    }
+  ],
+  "wiki.topics": [
+    {
+      "type": 0,
+      "value": "Topics"
     }
   ]
 }

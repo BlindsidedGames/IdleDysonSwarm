@@ -572,6 +572,8 @@ function renderSurface(options: RenderOptions = {}) {
           options.purchaseRouteAvailable ?? true
         }
         simulationPurchaseRouteAvailable={true}
+        avocatoUnlocked={false}
+        onOpenAvocato={vi.fn()}
         dispatchPlayer={options.dispatchPlayer ?? accepted}
       />
     </PresentationIntlProvider>,

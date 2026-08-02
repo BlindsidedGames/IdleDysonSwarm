@@ -8,6 +8,7 @@ import {
 export const CONTINUOUS_MAXIMUM = Number.MAX_VALUE
 export const DISCRETE_MAXIMUM = 9_223_372_036_854_775_807n
 export const STORED_TIME_MAXIMUM_SECONDS = 42_000_000
+export const UNITY_STORED_TIME_CAPACITY_RESET_SECONDS = 8_640_000
 
 export interface NumericRepairEntry {
   readonly path: string
@@ -132,14 +133,16 @@ export function repairNumericSave(settings: SaveRecord): NumericRepairResult {
       86_400,
       'invalid_structure_to_authored_default',
     )
-  } else if (maxOffline > STORED_TIME_MAXIMUM_SECONDS) {
-    settings.maxOfflineTime = STORED_TIME_MAXIMUM_SECONDS
-    settings.cheater = true
+  } else if (maxOffline >= UNITY_STORED_TIME_CAPACITY_RESET_SECONDS) {
+    // OfflineTimeManager.TryInitialize applies this authored rollover when a
+    // Unity save is opened. Keep it at the save-preparation boundary rather
+    // than the live preview helper, which is evaluated on every UI snapshot.
+    settings.maxOfflineTime = 86_400
     add(
       'saveSettings.maxOfflineTime',
       maxOffline,
-      STORED_TIME_MAXIMUM_SECONDS,
-      'stored_time_capacity_cap_and_comparison_flag',
+      86_400,
+      'unity_stored_time_capacity_rollover',
     )
   }
 

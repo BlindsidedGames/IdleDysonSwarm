@@ -120,6 +120,7 @@ import {
   type CanonicalResearchPurchasePreview,
 } from '../simulation/researchAutomation'
 import {
+  prepareDreamDoubleTimeTick,
   upgradeStoredTimeCapacity,
 } from '../simulation/timeResources'
 import {
@@ -151,6 +152,7 @@ export const FRONTEND_COMMAND_FAMILIES = Object.freeze([
   'infinity',
   'avocado',
   'time',
+  'settings',
   'tinker',
 ] as const)
 
@@ -706,12 +708,12 @@ export interface FrontendRealityDerivedFacts {
 
 export interface FrontendDreamDerivedFacts {
   /**
-   * Production facts use an exact neutral multiplier. Double Time is
-   * interval-dependent; a frontend must not infer a future scheduler interval
-   * and apply its own multiplier.
+   * Production facts describe the current canonical 100 ms Dream interval.
+   * The application prepares this multiplier from the saved Double Time state;
+   * frontends must not infer or apply an additional multiplier.
    */
-  readonly productionBasis: 'base-rate'
-  readonly effectiveDoubleTimeMultiplier: 1
+  readonly productionBasis: 'current-rate'
+  readonly effectiveDoubleTimeMultiplier: number
   readonly result: CanonicalDreamDerivedFactsResult
 }
 
@@ -750,8 +752,6 @@ export interface FrontendSimulationsDerivedFacts {
     readonly education: DeepReadonly<DreamState['education']>
     readonly timers: DeepReadonly<DreamState['timers']>
     readonly railgun: DeepReadonly<DreamState['railgun']>
-    /** Canonical launched-panel storage boundary for Space Factories. */
-    readonly dysonPanelCapacity: bigint
     readonly production: CanonicalDreamDerivedFactsResult
   }
   readonly resets: {
@@ -784,6 +784,49 @@ export interface FrontendSimulationsDerivedFacts {
   }
 }
 
+export type FrontendStoryChapterId =
+  | 'chapter-1'
+  | 'chapter-2'
+  | 'chapter-3'
+  | 'chapter-4'
+  | 'chapter-5'
+  | 'chapter-6'
+
+export type FrontendStoryPassageId =
+  | 'chapter-1-intro'
+  | 'chapter-1-part-2'
+  | 'chapter-1-part-3'
+  | 'chapter-2-intro'
+  | 'chapter-2-part-2'
+  | 'chapter-2-part-3'
+  | 'chapter-3-intro'
+  | 'chapter-3-part-2'
+  | 'chapter-4-intro'
+  | 'chapter-4-part-2'
+  | 'chapter-4-part-3'
+  | 'chapter-4-part-4'
+  | 'chapter-4-part-5'
+  | 'chapter-4-part-6'
+  | 'chapter-4-part-7'
+  | 'chapter-4-part-8'
+  | 'chapter-4-part-9'
+  | 'chapter-4-part-10'
+  | 'chapter-5-part-1'
+  | 'chapter-5-part-2'
+  | 'chapter-5-part-3'
+  | 'chapter-5-part-4'
+  | 'chapter-5-part-5'
+  | 'chapter-6-translation'
+  | 'chapter-6-speed'
+  | 'chapter-6-complete'
+
+/** Unity StoryManager visibility, projected without presentation copy. */
+export interface FrontendStoryDerivedFacts {
+  readonly visibleChapterIds: readonly FrontendStoryChapterId[]
+  readonly visiblePassageIds: readonly FrontendStoryPassageId[]
+  readonly avocatoEntryVisible: boolean
+}
+
 export interface FrontendGameplayDerivedFacts {
   readonly dyson: FrontendDysonDerivedFacts
   readonly dysonBotDistribution: {
@@ -794,6 +837,7 @@ export interface FrontendGameplayDerivedFacts {
   readonly dream: FrontendDreamDerivedFacts
   readonly simulations: FrontendSimulationsDerivedFacts
   readonly reality: FrontendRealityDerivedFacts
+  readonly story: FrontendStoryDerivedFacts
   readonly avocado: AvocadoMultiplierBreakdown
 }
 
@@ -846,6 +890,7 @@ export type FrontendTinkerRuntimeFacts =
 
 export interface FrontendRuntimeFacts {
   readonly tinker: FrontendTinkerRuntimeFacts
+  readonly storedTimeCheater: boolean
   readonly selectedSkillPresetSlot:
     CanonicalRuntimeState['selectedSkillPresetSlot']
 }
@@ -1358,10 +1403,16 @@ function selectDerivedFacts(
     0,
     context.realityWorkerTuning,
   )
+  const doubleTimeTick = prepareDreamDoubleTimeTick(
+    state.timeline.doubleTime.unlocked,
+    state.timeline.doubleTime.bankSeconds,
+    state.timeline.doubleTime.rate,
+    DREAM_SPACE_AGE_CONSTANTS.tickSeconds,
+  )
   const dream = deriveCanonicalDreamDerivedFacts(state, {
-    effectiveDoubleTimeMultiplier: 1,
-    doubleTimeActive: state.timeline.doubleTime.enabled,
-    doubleTimeRate: state.timeline.doubleTime.rate,
+    effectiveDoubleTimeMultiplier: doubleTimeTick.effectiveMultiplier,
+    doubleTimeActive: doubleTimeTick.active,
+    doubleTimeRate: doubleTimeTick.rate,
   })
   const simulations = selectFrontendSimulationsDerivedFacts(
     state,
@@ -1402,8 +1453,8 @@ function selectDerivedFacts(
         state.quantum.unlocks.doubleInfinityPoints,
     }),
     dream: {
-      productionBasis: 'base-rate',
-      effectiveDoubleTimeMultiplier: 1,
+      productionBasis: 'current-rate',
+      effectiveDoubleTimeMultiplier: doubleTimeTick.effectiveMultiplier,
       result: dream,
     },
     simulations,
@@ -1447,7 +1498,130 @@ function selectDerivedFacts(
       autoGatherEnabled: state.reality.autoGather,
       artifact: projectRealityArtifact(state.dream.upgrades),
     },
+    story: projectFrontendStoryDerivedFacts(
+      state,
+      dyson.ok
+        ? multiplyContinuous(
+            dyson.value.globals.panelsPerSecond,
+            dyson.value.globals.panelLifetimeSeconds,
+          )
+        : 0,
+    ),
     avocado: deriveAvocadoMultiplier(state),
+  }
+}
+
+/**
+ * Mirrors StoryManager.Update. Passage order stays Unity-authored while the
+ * Web Story surface owns only grouping, copy and disclosure preferences.
+ */
+export function projectFrontendStoryDerivedFacts(
+  state: Readonly<CanonicalGameStateV1>,
+  activePanels: number,
+): FrontendStoryDerivedFacts {
+  const infinityPoints = state.infinity.points
+  const quantumLeapComplete = state.quantum.pointsEarned >= 1n
+  const infinityComplete = infinityPoints >= 1n
+  const eitherResetComplete =
+    infinityComplete || quantumLeapComplete
+  const realityUnlocked =
+    quantumLeapComplete ||
+    state.infinity.secretsOfTheUniverse >=
+      QUANTUM_CONSTANTS.maximumSecrets
+  const starsSurrounded =
+    activePanels / PANELS_PER_SURROUNDED_STAR
+  const galaxiesEngulfed =
+    starsSurrounded / STARS_PER_ENGULFED_GALAXY
+  const hasManualManager =
+    state.dyson.facilities.ai_managers[1] >= 1
+  const hasManualServer =
+    state.dyson.facilities.servers[1] >= 1
+  const chapter2Visible =
+    hasManualManager || eitherResetComplete
+  const chapter3Visible =
+    galaxiesEngulfed >= 1 || eitherResetComplete
+  const chapter4Visible = eitherResetComplete
+  const translationComplete =
+    state.dream.upgrades.translation8
+  const speedComplete = state.dream.upgrades.speed8
+  const visibleChapterIds: FrontendStoryChapterId[] = [
+    'chapter-1',
+  ]
+  const visiblePassageIds: FrontendStoryPassageId[] = [
+    'chapter-1-intro',
+  ]
+
+  if (state.dyson.goalStage >= 1n || eitherResetComplete) {
+    visiblePassageIds.push(
+      'chapter-1-part-2',
+      'chapter-1-part-3',
+    )
+  }
+  if (chapter2Visible) {
+    visibleChapterIds.push('chapter-2')
+    visiblePassageIds.push('chapter-2-intro')
+  }
+  if (hasManualServer || eitherResetComplete) {
+    visiblePassageIds.push('chapter-2-part-2')
+  }
+  if (starsSurrounded >= 1 || eitherResetComplete) {
+    visiblePassageIds.push('chapter-2-part-3')
+  }
+  if (chapter3Visible) {
+    visibleChapterIds.push('chapter-3')
+    visiblePassageIds.push('chapter-3-intro')
+  }
+  if (eitherResetComplete) {
+    visiblePassageIds.push('chapter-3-part-2')
+  }
+  if (chapter4Visible) {
+    visibleChapterIds.push('chapter-4')
+    visiblePassageIds.push(
+      'chapter-4-intro',
+      'chapter-4-part-2',
+    )
+  }
+  const chapter4ThresholdPassages = [
+    'chapter-4-part-3',
+    'chapter-4-part-4',
+    'chapter-4-part-5',
+    'chapter-4-part-6',
+    'chapter-4-part-7',
+    'chapter-4-part-8',
+    'chapter-4-part-9',
+    'chapter-4-part-10',
+  ] as const
+  chapter4ThresholdPassages.forEach((passageId, index) => {
+    if (infinityPoints >= BigInt(index + 2) || quantumLeapComplete) {
+      visiblePassageIds.push(passageId)
+    }
+  })
+  if (realityUnlocked) {
+    visibleChapterIds.push('chapter-5')
+    visiblePassageIds.push(
+      'chapter-5-part-1',
+      'chapter-5-part-2',
+      'chapter-5-part-3',
+      'chapter-5-part-4',
+      'chapter-5-part-5',
+    )
+  }
+  if (translationComplete) {
+    visibleChapterIds.push('chapter-6')
+    visiblePassageIds.push('chapter-6-translation')
+  }
+  if (speedComplete) {
+    visiblePassageIds.push('chapter-6-speed')
+  }
+  if (translationComplete && speedComplete) {
+    visiblePassageIds.push('chapter-6-complete')
+  }
+
+  return {
+    visibleChapterIds,
+    visiblePassageIds,
+    avocatoEntryVisible:
+      infinityPoints >= 2n || quantumLeapComplete,
   }
 }
 
@@ -1712,7 +1886,6 @@ function selectFrontendSimulationsDerivedFacts(
       education,
       timers: state.dream.timers,
       railgun: state.dream.railgun,
-      dysonPanelCapacity: DREAM_SPACE_AGE_CONSTANTS.dysonPanelCap,
       production,
     },
     resets: {
@@ -1862,6 +2035,7 @@ function selectRuntimeFacts(
   derived: Readonly<FrontendGameplayDerivedFacts>,
 ): FrontendRuntimeFacts {
   return {
+    storedTimeCheater: context.storedTimeCheater,
     selectedSkillPresetSlot: context.selectedSkillPresetSlot,
     tinker:
       derived.dyson.status === 'ready'
@@ -2043,7 +2217,9 @@ function selectGameplayPreviews(
       feeds: avocadoFeeds,
       meditation: {
         eligible: meditation.accepted && meditation.changed,
-        requiredStepIndex: meditation.nextRequiredStepIndex,
+        requiredStepIndex: state.secretProgress.completed
+          ? null
+          : state.secretProgress.step,
         code: meditation.code,
         skillPointReward: AVOCADO_MEDITATION_SKILL_POINT_REWARD,
       },

@@ -113,9 +113,6 @@ export function deriveCanonicalDreamDerivedFacts(
   const spaceAge = deriveDreamSpaceAgeProductionFacts(
     state,
     input.effectiveDoubleTimeMultiplier,
-    input.doubleTimeActive && input.doubleTimeRate >= 1
-      ? input.doubleTimeRate
-      : 1,
   )
   const railgun = deriveDreamRailgunReadinessFacts(state, input)
   if (

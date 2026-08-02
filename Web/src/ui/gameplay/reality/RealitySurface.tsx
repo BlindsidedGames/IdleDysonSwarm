@@ -66,6 +66,8 @@ export interface RealitySurfaceProps {
   readonly gatherRouteAvailable: boolean
   readonly purchaseRouteAvailable: boolean
   readonly simulationPurchaseRouteAvailable: boolean
+  readonly avocatoUnlocked: boolean
+  readonly onOpenAvocato: () => void
   readonly dispatchPlayer: (
     command: RealityCommand,
   ) => Promise<UiRuntimePlayerCommandResult>
@@ -89,6 +91,8 @@ export function RealitySurface({
   gatherRouteAvailable,
   purchaseRouteAvailable,
   simulationPurchaseRouteAvailable,
+  avocatoUnlocked,
+  onOpenAvocato,
   dispatchPlayer,
 }: RealitySurfaceProps) {
   const intl = useIntl()
@@ -345,6 +349,18 @@ export function RealitySurface({
           routeAvailable={purchaseRouteAvailable}
           dispatchPlayer={dispatchPlayer}
         />
+
+        {avocatoUnlocked ? (
+          <section className="reality-avocato-entry">
+            <div>
+              <h2>{intl.formatMessage(messages.avocatoTitle)}</h2>
+              <p>{intl.formatMessage(messages.avocatoDescription)}</p>
+            </div>
+            <Button variant="primary" onClick={onOpenAvocato}>
+              {intl.formatMessage(messages.avocatoOpen)}
+            </Button>
+          </section>
+        ) : null}
       </div>
     </section>
   )

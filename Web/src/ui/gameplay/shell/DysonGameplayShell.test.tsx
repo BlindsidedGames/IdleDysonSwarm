@@ -333,17 +333,37 @@ describe('Dyson gameplay responsive CSS contract', () => {
       /\.dyson-shell\[data-route-theme="infinity"\][\s\S]*\.dyson-resource-header\s*\{[^}]*background:\s*var\(--infinity-panel-color\);/,
     )
     expect(shellCss).toMatch(
-      /\.dyson-shell\[data-route-theme="simulations"\]\s*\{[^}]*--simulations-panel-color:\s*#29435f;[^}]*--resource-clearance-color:\s*var\(--simulations-panel-color\);[^}]*background:\s*#152337;/,
+      /\.dyson-shell\[data-route-theme="simulations"\]\s*\{[^}]*--simulations-panel-color:\s*#29435f;[^}]*--simulations-menu-background:\s*#101b29;[^}]*--resource-clearance-color:\s*var\(--simulations-panel-color\);[^}]*background:\s*#152337;/,
     )
     expect(shellCss).toMatch(
-      /data-route-theme-variant="information"[^}]*--simulations-panel-color:\s*#3a2947;/,
+      /data-route-theme-variant="information"[^}]*--simulations-panel-color:\s*#3a2947;[^}]*--simulations-menu-background:\s*#17101d;/,
     )
     expect(shellCss).toMatch(
-      /data-route-theme-variant="space-age"[^}]*--simulations-panel-color:\s*#254233;/,
+      /data-route-theme-variant="space-age"[^}]*--simulations-panel-color:\s*#254233;[^}]*--simulations-menu-background:\s*#0f1d16;/,
     )
     expect(shellCss).toMatch(
       /\.dyson-shell\[data-route-theme="simulations"\][\s\S]*\.dyson-resource-header\s*\{[^}]*background:\s*var\(--simulations-panel-color\);/,
     )
+    expect(shellCss).toMatch(
+      /\.dyson-shell\[data-route-theme="simulations"\][\s\S]*\.dyson-shell__side-panel\s*\{[^}]*border-color:\s*var\(--simulations-navigation-border\);[^}]*background:\s*var\(--simulations-menu-background\);/,
+    )
+    expect(shellCss).toMatch(
+      /\.dyson-shell\[data-route-theme="simulations"\][\s\S]*\.dyson-navigation--drawer[\s\S]*\.dyson-navigation__link\s*\{[^}]*background:\s*var\(--simulations-menu-card-background\);[^}]*color:\s*var\(--simulations-menu-text\);/,
+    )
+    for (const routeTheme of [
+      'quantum',
+      'avocato',
+      'offline-time',
+      'statistics',
+      'story',
+      'wiki',
+    ]) {
+      expect(shellCss).toMatch(
+        new RegExp(
+          `\\.dyson-shell\\[data-route-theme="${routeTheme}"\\]\\s*\\.dyson-shell__route-content,?`,
+        ),
+      )
+    }
     expect(shellCss).toMatch(
       /\.dyson-shell\s*\{[^}]*--bot-distribution-track-color:\s*#120d14;[^}]*--bot-distribution-handle-color:\s*#c45cda;/,
     )

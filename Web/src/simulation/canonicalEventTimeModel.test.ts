@@ -463,7 +463,7 @@ describe('canonical whole-game event-time model', () => {
     }
   })
 
-  test('keeps adaptive railgun volleys exact across Double Time event boundaries', () => {
+  test('batches adaptive railgun rounds across Double Time event boundaries', () => {
     const source = baseState()
     const gameState: CanonicalGameStateV1 = {
       ...source,
@@ -512,14 +512,58 @@ describe('canonical whole-game event-time model', () => {
     expect(result.completed).toBe(true)
     expect(result.diagnosticCode).toBeUndefined()
     const next = result.candidateState.state.gameState
-    expect(next.dream.resources.swarmPanels).toBe(140n)
-    expect(next.dream.resources.railgunCharge).toBe(0)
-    expect(next.dream.railgun).toEqual({
-      firing: false,
-      fireProgress: 0,
-      shotsRemaining: 0,
-    })
+    expect(next.dream.resources.swarmPanels).toBeGreaterThan(20n)
+    expect(next.dream.resources.railgunCharge).toBeGreaterThanOrEqual(0)
+    expect(next.dream.railgun.lastRoundsFired).toBeGreaterThan(0)
+    expect(next.dream.railgun.lastRoundsFired).toBeLessThanOrEqual(10)
+    expect(next.dream.railgun.reservedPanels).toBeGreaterThanOrEqual(0n)
     expect(next.timeline.doubleTime.bankSeconds).toBeCloseTo(97.8)
+  })
+
+  test('uses the prepared fractional multiplier when Double Time expires mid-tick', () => {
+    const source = baseState()
+    const gameState: CanonicalGameStateV1 = {
+      ...source,
+      timeline: {
+        ...source.timeline,
+        automationTimeUntilNextEvent: 0.1,
+        doubleTime: {
+          unlocked: true,
+          enabled: true,
+          bankSeconds: 0.05,
+          rate: 10,
+        },
+      },
+      dream: {
+        ...source.dream,
+        resources: {
+          ...source.dream.resources,
+          railgunCharge: 25_000_000,
+          dysonPanels: 10n,
+        },
+      },
+    }
+
+    const result = advanceEventTime({
+      startingState: new CanonicalEventTimeModel(
+        carrier(gameState),
+        context(REALITY_UPGRADE_DEFINITIONS, 0.1),
+      ),
+      durationSeconds: 0.1,
+      automationIntervalSeconds: 0.1,
+      automationTimeUntilNextEvent: 0.1,
+      infinityMinimumCycleSeconds: 10,
+      processingBudgetMilliseconds: 0,
+    })
+
+    expect(result.completed).toBe(true)
+    expect(result.diagnosticCode).toBeUndefined()
+    const next = result.candidateState.state.gameState
+    expect(next.timeline.doubleTime.bankSeconds).toBe(0)
+    expect(next.dream.resources.swarmPanels).toBe(1n)
+    expect(next.dream.railgun.lastRoundsFired).toBe(1)
+    expect(next.dream.railgun.shotsRemaining).toBe(9)
+    expect(next.dream.railgun.fireProgress).toBeCloseTo(0.05)
   })
 
   test('finalizes elapsed statistics before a bot-cap persistence pause', () => {

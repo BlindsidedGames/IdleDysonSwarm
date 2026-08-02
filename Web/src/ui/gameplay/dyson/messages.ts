@@ -46,6 +46,32 @@ export const readyDysonMessages = defineMessages({
     defaultMessage: 'Simulations',
     description: 'Unity live Simulations destination.',
   },
+  quantumRoute: {
+    id: 'navigation.quantum',
+    defaultMessage: 'Quantum',
+    description: 'Unity Quantum destination.',
+  },
+  quantumControls: {
+    id: 'dyson.route.quantum.controls',
+    defaultMessage: 'Quantum controls',
+    description: 'Accessible name for the fixed Quantum progress and purchase controls.',
+  },
+  quantumProgress: {
+    id: 'navigation.quantum-progress',
+    defaultMessage: 'Quantum, {current} of {required} Infinity Points',
+    description:
+      'Accessible unlock progress for the visible but locked Quantum destination.',
+  },
+  avocatoRoute: {
+    id: 'navigation.avocato',
+    defaultMessage: 'Avocato',
+    description: 'Unity Avocato sub-destination.',
+  },
+  statisticsRoute: {
+    id: 'navigation.statistics',
+    defaultMessage: 'Statistics',
+    description: 'Statistics destination.',
+  },
   realitySecretsProgress: {
     id: 'navigation.reality-secrets-progress',
     defaultMessage:

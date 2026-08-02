@@ -202,6 +202,11 @@ export function hydrateGameState(
         nonBlankStringOrNull(source.dateStarted),
       tutorialComplete: toBoolean(source.tutorial),
       firstInfinityComplete: toBoolean(source.firstInfinityDone),
+      navigationVisibility: {
+        story: toBoolean(source.storyButtonToggle),
+        wiki: toBoolean(source.wikiButtonToggle),
+        statistics: toBoolean(source.statisticsButtonToggle),
+      },
     },
     dyson: {
       money: toFiniteNonNegativeNumber(infinityData.money),
@@ -490,6 +495,21 @@ export function hydrateGameState(
         shotsRemaining: toNonNegativeInteger(
           dreamRun.railgunShotsRemaining,
         ),
+        activeRailguns: toNonNegativeInteger(
+          dreamRun.railgunActiveRailguns,
+        ),
+        reservedPanels: toNonNegativeBigInt(
+          dreamRun.railgunReservedPanels,
+        ),
+        highestStoredPanels: (() => {
+          const stored = toNonNegativeBigInt(dreamRun.dysonPanels)
+          const persisted = toNonNegativeBigInt(
+            dreamRun.highestStoredDysonPanels,
+          )
+          return persisted > stored ? persisted : stored
+        })(),
+        lastRoundsFired: 0,
+        lastPanelsLaunched: 0n,
       },
       resetCount: toNonNegativeBigInt(dreamProgression.simulationCount),
       strangeMatter: toNonNegativeBigInt(
@@ -575,6 +595,12 @@ export function dehydrateGameState(
   source.dateStarted = state.meta.createdAtLegacyText
   source.tutorial = state.meta.tutorialComplete
   source.firstInfinityDone = state.meta.firstInfinityComplete
+  source.storyButtonToggle =
+    state.meta.navigationVisibility?.story ?? false
+  source.wikiButtonToggle =
+    state.meta.navigationVisibility?.wiki ?? false
+  source.statisticsButtonToggle =
+    state.meta.navigationVisibility?.statistics ?? true
   infinityData.money = state.dyson.money
   infinityData.science = state.dyson.science
   infinityData.bots = state.dyson.bots
@@ -825,6 +851,26 @@ export function dehydrateGameState(
   dreamRun.railgunFiring = state.dream.railgun.firing
   dreamRun.railgunFireProgress = state.dream.railgun.fireProgress
   dreamRun.railgunShotsRemaining = state.dream.railgun.shotsRemaining
+  const activeRailguns = state.dream.railgun.activeRailguns ?? 0
+  const reservedPanels = state.dream.railgun.reservedPanels ?? 0n
+  const highestStoredPanels =
+    state.dream.railgun.highestStoredPanels ??
+    state.dream.resources.dysonPanels
+  if (activeRailguns > 0) {
+    dreamRun.railgunActiveRailguns = activeRailguns
+  } else {
+    delete dreamRun.railgunActiveRailguns
+  }
+  if (reservedPanels > 0n) {
+    dreamRun.railgunReservedPanels = reservedPanels
+  } else {
+    delete dreamRun.railgunReservedPanels
+  }
+  if (highestStoredPanels > 0n) {
+    dreamRun.highestStoredDysonPanels = highestStoredPanels
+  } else {
+    delete dreamRun.highestStoredDysonPanels
+  }
   dreamProgression.simulationCount = state.dream.resetCount
   dreamProgression.strangeMatter = state.dream.strangeMatter
   dreamProgression.disasterStage = state.dream.disasterStage

@@ -535,12 +535,25 @@ function readySnapshot(): FrontendApplicationSnapshot {
           secretsOfTheUniverse: 0n,
           permanentSkillPoints: 0n,
         },
+        quantum: {
+          pointsEarned: 0n,
+          pointsSpent: 0n,
+          availablePoints: 0n,
+          permanentSecrets: 0n,
+          influenceSpeedBonus: 0n,
+          cashBonusLevels: 0n,
+          scienceBonusLevels: 0n,
+        },
         skills: {
           points: 0n,
           fragments: 0n,
         },
       },
       progression: {
+        secretProgress: {
+          step: 7,
+          completed: true,
+        },
         dyson: {
           facilities,
           totalPanelsDecayed: 0,
@@ -692,6 +705,9 @@ function readySnapshot(): FrontendApplicationSnapshot {
             routeAvailable: true,
           },
           'skill.set-tab-preset-automation': {
+            routeAvailable: true,
+          },
+          'avocado.complete-meditation-step': {
             routeAvailable: true,
           },
         },

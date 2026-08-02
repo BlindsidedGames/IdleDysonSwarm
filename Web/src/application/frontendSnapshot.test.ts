@@ -621,7 +621,6 @@ describe('frontend gameplay snapshot', () => {
       education: state.dream.education,
       timers: state.dream.timers,
       railgun: state.dream.railgun,
-      dysonPanelCapacity: 1_000n,
       production: expectedProduction,
     })
     expect(simulations.resets).toMatchObject({
@@ -1402,7 +1401,7 @@ describe('frontend gameplay snapshot', () => {
       },
     })
     expect(snapshot.derived.dream).toEqual({
-      productionBasis: 'base-rate',
+      productionBasis: 'current-rate',
       effectiveDoubleTimeMultiplier: 1,
       result: expectedDream,
     })
@@ -1420,6 +1419,40 @@ describe('frontend gameplay snapshot', () => {
         snapshot.runtime.tinker.value.timeToCompletionSeconds,
       ).toBeNull()
     }
+  })
+
+  test('publishes current wall-clock Dream rates at the selected Double Time multiplier', () => {
+    const source = fixtureState()
+    const boosted: CanonicalGameStateV1 = {
+      ...source,
+      timeline: {
+        ...source.timeline,
+        doubleTime: {
+          unlocked: true,
+          enabled: true,
+          bankSeconds: 60,
+          rate: 8,
+        },
+      },
+    }
+    const baseline = selectFrontendGameplaySnapshot(source, frontendContext())
+    const snapshot = selectFrontendGameplaySnapshot(boosted, frontendContext())
+
+    expect(snapshot.derived.dream.productionBasis).toBe('current-rate')
+    expect(snapshot.derived.dream.effectiveDoubleTimeMultiplier).toBe(9)
+    expect(snapshot.derived.dream.result.ok).toBe(true)
+    expect(baseline.derived.dream.result.ok).toBe(true)
+    if (
+      !snapshot.derived.dream.result.ok ||
+      !baseline.derived.dream.result.ok
+    ) return
+    expect(
+      snapshot.derived.dream.result.value.spaceAge.production.spaceFactory
+        .cyclesPerSecond,
+    ).toBeCloseTo(
+      baseline.derived.dream.result.value.spaceAge.production.spaceFactory
+        .cyclesPerSecond * 9,
+    )
   })
 
   test('publishes bounded Unity Reality consumption presentation facts', () => {

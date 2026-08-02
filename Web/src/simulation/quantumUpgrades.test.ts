@@ -8,6 +8,7 @@ import {
   availableQuantumPoints,
   findQuantumUpgradeCanonicalGaps,
   purchaseQuantumUpgrade,
+  purchaseQuantumUpgradeBulk,
   QUANTUM_CONSTANTS,
   QUANTUM_UPGRADE_DEFINITIONS,
   quantumUpgradeCost,
@@ -269,5 +270,38 @@ describe('canonical Quantum upgrades', () => {
         accepted: false,
         state: saturated,
       })
+  })
+
+  test('purchases repeatable Quantum boosters atomically in fixed and maximum quantities', () => {
+    const source = state(25n)
+    const cash = purchaseQuantumUpgradeBulk(source, 'CashBonus', 10n)
+    expect(cash).toMatchObject({ accepted: true, cost: 10n })
+    expect(cash.state.quantum.cashBonusLevels).toBe(10n)
+    expect(cash.state.quantum.pointsSpent).toBe(10n)
+
+    const influence = purchaseQuantumUpgradeBulk(
+      cash.state,
+      'InfluenceSpeed',
+      3n,
+    )
+    expect(influence.state.quantum.influenceSpeedBonus).toBe(12n)
+    expect(influence.state.quantum.pointsSpent).toBe(13n)
+
+    const science = purchaseQuantumUpgradeBulk(
+      influence.state,
+      'ScienceBonus',
+      'max',
+    )
+    expect(science).toMatchObject({ accepted: true, cost: 12n })
+    expect(science.state.quantum.scienceBonusLevels).toBe(12n)
+    expect(science.state.quantum.pointsSpent).toBe(25n)
+  })
+
+  test('keeps fixed bulk purchases all-or-nothing and rejects bulk on one-time upgrades', () => {
+    const source = state(5n)
+    expect(purchaseQuantumUpgradeBulk(source, 'CashBonus', 10n))
+      .toMatchObject({ accepted: false, code: 'insufficient-points', state: source })
+    expect(purchaseQuantumUpgradeBulk(source, 'BotMultitasking', 2n))
+      .toMatchObject({ accepted: false, code: 'unknown-upgrade', state: source })
   })
 })

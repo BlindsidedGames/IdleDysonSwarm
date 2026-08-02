@@ -223,6 +223,18 @@
   opacity: 1;
 }
 
+.infinity-shop-card__cost {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.22rem;
+}
+
+.infinity-shop-card__cost .ui-inline-image-symbol {
+  inline-size: 1em;
+  block-size: 1em;
+}
+
 .infinity-shop-card__feedback {
   grid-column: 1 / -1;
   color: #ded4ef;

@@ -1,0 +1,190 @@
+@import "../../tokens/tokens.css";
+
+.story-surface {
+  --story-background: #130f1d;
+  --story-panel: #3f3152;
+  --story-panel-raised: #4a3a5d;
+  --story-panel-heading: #513b62;
+  --story-accent: #d08de1;
+  --story-border: #1c1525;
+  display: grid;
+  block-size: 100%;
+  min-block-size: 0;
+  overflow: hidden;
+  background:
+    radial-gradient(
+      circle at 50% 12%,
+      rgb(208 141 225 / 8%),
+      transparent 30rem
+    ),
+    var(--story-background);
+  color: white;
+  user-select: none;
+}
+
+.story-surface__content {
+  min-block-size: 0;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  padding-block: 0.7rem 1rem;
+  padding-inline:
+    max(0.7rem, env(safe-area-inset-left))
+    max(0.7rem, env(safe-area-inset-right));
+  scrollbar-width: none;
+  touch-action: pan-y;
+  -webkit-overflow-scrolling: touch;
+}
+
+.story-surface__content::-webkit-scrollbar {
+  display: none;
+}
+
+.story-surface__summary,
+.story-surface__chapters {
+  inline-size: min(100%, 70rem);
+  margin-inline: auto;
+}
+
+.story-surface__summary {
+  padding: 0.75rem;
+  border: 1px solid var(--story-border);
+  border-radius: 0.35rem;
+  background: var(--story-panel);
+  box-shadow: 0 0.16rem 0.35rem rgb(0 0 0 / 28%);
+}
+
+.story-surface__title,
+.story-surface h2,
+.story-surface h3,
+.story-surface p,
+.story-surface ol {
+  margin: 0;
+}
+
+.story-surface__title {
+  font-size: calc(1.28rem * var(--game-text-scale));
+  font-weight: var(--font-weight-bold);
+  line-height: 1.15;
+}
+
+.story-surface__summary p {
+  margin-block-start: 0.28rem;
+  color: #eee7f2;
+  font-size: calc(0.82rem * var(--game-text-scale));
+  line-height: 1.35;
+}
+
+.story-surface__chapters {
+  display: grid;
+  gap: 0.62rem;
+  margin-block-start: 0.7rem;
+}
+
+.story-chapter {
+  overflow: hidden;
+  border: 1px solid var(--story-border);
+  border-radius: 0.35rem;
+  background: var(--story-panel);
+  box-shadow: 0 0.16rem 0.35rem rgb(0 0 0 / 28%);
+}
+
+.story-chapter > .ui-collapsible-section__heading {
+  background: var(--story-panel-heading);
+}
+
+.story-chapter > .ui-collapsible-section__heading
+  .ui-collapsible-section__trigger {
+  color: var(--story-accent);
+}
+
+.story-chapter > .ui-collapsible-section__content {
+  background: var(--story-panel);
+}
+
+.story-chapter__passages {
+  display: grid;
+  gap: 0.5rem;
+  padding: 0.6rem;
+  list-style: none;
+}
+
+.story-chapter__passages li {
+  padding: 0.65rem;
+  border: 1px solid rgb(15 10 20 / 55%);
+  border-radius: 0.28rem;
+  background: var(--story-panel-raised);
+}
+
+.story-chapter__passages p,
+.story-avocato-entry p {
+  color: #f7f2f9;
+  font-size: calc(0.86rem * var(--game-text-scale));
+  line-height: 1.46;
+  white-space: pre-line;
+}
+
+.story-avocato-entry {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.65rem;
+  border-block-start: 1px solid rgb(208 141 225 / 24%);
+  background: #493451;
+}
+
+.story-avocato-entry h3 {
+  color: var(--story-accent);
+  font-size: calc(1rem * var(--game-text-scale));
+}
+
+.story-avocato-entry p {
+  margin-block-start: 0.2rem;
+}
+
+.story-avocato-entry .ui-button {
+  min-block-size: var(--target-minimum);
+  border-color: #211027;
+  background: var(--story-accent);
+  color: #1b0e1e;
+  font-weight: var(--font-weight-bold);
+}
+
+.story-avocato-entry .ui-button:not(:disabled):hover {
+  background: #dfa5eb;
+}
+
+@media (max-width: 32rem) {
+  .story-surface__content {
+    padding-block-start: 0.5rem;
+  }
+
+  .story-surface__summary,
+  .story-chapter__passages li,
+  .story-avocato-entry {
+    padding: 0.55rem;
+  }
+
+  .story-avocato-entry {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .story-avocato-entry .ui-button {
+    inline-size: 100%;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .story-surface__content {
+    scroll-behavior: auto;
+  }
+}
+
+@media (forced-colors: active) {
+  .story-surface__summary,
+  .story-chapter,
+  .story-chapter__passages li,
+  .story-avocato-entry {
+    forced-color-adjust: auto;
+  }
+}

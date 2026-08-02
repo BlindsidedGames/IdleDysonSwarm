@@ -46,7 +46,7 @@ describe('InfinitySurface', () => {
       preview('retain-planets'),
     ]
 
-    renderSurface({ shop, secrets: 5n })
+    const { container } = renderSurface({ shop, secrets: 5n })
 
     expect(screen.getByText('Infinity Points:')).toBeInTheDocument()
     expect(screen.getByText('8.00')).toBeInTheDocument()
@@ -81,6 +81,10 @@ describe('InfinitySurface', () => {
         name: /Purchase Start with 10 AI Managers/,
       }),
     ).toBeDisabled()
+    expect(
+      container.querySelectorAll('[data-symbol="infinity-point"]'),
+    ).toHaveLength(shop.length)
+    expect(screen.queryByText(/\bIP\b/)).not.toBeInTheDocument()
   })
 
   test('dispatches one canonical shop purchase while pending', async () => {

@@ -60,6 +60,19 @@ export function validateCanonicalGameState(
   ) {
     errors.push('Railgun shots remaining must be an integer from 0 to 10.')
   }
+  if (
+    state.dream.railgun.activeRailguns !== undefined &&
+    !Number.isSafeInteger(state.dream.railgun.activeRailguns)
+  ) {
+    errors.push('Active railguns must be a safe integer.')
+  }
+  if (
+    state.dream.railgun.lastRoundsFired !== undefined &&
+    (!Number.isSafeInteger(state.dream.railgun.lastRoundsFired) ||
+      state.dream.railgun.lastRoundsFired < 0)
+  ) {
+    errors.push('Railgun rounds fired must be a non-negative safe integer.')
+  }
   if (state.infinity.breakTarget > 2_147_483_647n) {
     errors.push('Infinity Break target exceeds the Unity schema-12 integer range.')
   }

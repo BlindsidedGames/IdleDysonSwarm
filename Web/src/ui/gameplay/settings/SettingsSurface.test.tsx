@@ -39,6 +39,34 @@ describe('SettingsSurface', () => {
     expect(onVisualizationVisibleChange).toHaveBeenCalledWith(false)
   })
 
+  test('changes the persistent optional navigation shortcuts', async () => {
+    const user = userEvent.setup()
+    const onNavigationVisibilityChange = vi.fn()
+    renderSettings(vi.fn(), undefined, {
+      navigationVisibility: {
+        story: false,
+        wiki: true,
+        statistics: true,
+      },
+      onNavigationVisibilityChange,
+    })
+
+    expect(
+      screen.getByRole('checkbox', { name: 'Show Story shortcut' }),
+    ).not.toBeChecked()
+    expect(
+      screen.getByRole('checkbox', { name: 'Show Wiki shortcut' }),
+    ).toBeChecked()
+
+    await user.click(
+      screen.getByRole('checkbox', { name: 'Show Story shortcut' }),
+    )
+    expect(onNavigationVisibilityChange).toHaveBeenCalledWith(
+      'story',
+      true,
+    )
+  })
+
   test('requires an accessible confirmation and cancels without resetting', async () => {
     const user = userEvent.setup()
     const resetSave = vi.fn()

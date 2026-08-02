@@ -1,96 +1,231 @@
 {
+  "avocato.available": {
+    "defaultMessage": "{value} available",
+    "description": "Resource currently available to feed Avocato."
+  },
+  "avocato.developer-note": {
+    "defaultMessage": "Thank you for playing Idle Dyson Swarm. This is the final feature you will unlock; you can go on to earn Developer Options if you like. These buffs multiply with each other to form the total boost, and do not affect the currencies you spend to increase them.",
+    "description": "Condensed authored Unity Avocato developer note."
+  },
+  "avocato.developer-note.title": {
+    "defaultMessage": "A note from the developer",
+    "description": "Heading for the authored Unity final-feature note."
+  },
+  "avocato.failed": {
+    "defaultMessage": "Avocato could not eat that snack. Try again.",
+    "description": "Avocato command failure feedback."
+  },
+  "avocato.feed": {
+    "defaultMessage": "Feed {value}",
+    "description": "Feed all of one resource to Avocato."
+  },
+  "avocato.feed-accessible": {
+    "defaultMessage": "Feed all {resource} to Avocato",
+    "description": "Accessible Avocato feed action."
+  },
+  "avocato.greeting": {
+    "defaultMessage": "Hello, I am Avocato, your friendly interdimensional avocado cat. I have been watching you for quite some time now. If you can find me some of my favourite snacks, I would be happy to teach you more about your realities!",
+    "description": "Adapted from the authored Unity Avocato greeting."
+  },
+  "avocato.icon-alt": {
+    "defaultMessage": "Avocato",
+    "description": "Alternative text for the Avocato character portrait."
+  },
+  "avocato.invested": {
+    "defaultMessage": "{value} invested",
+    "description": "Resource already fed to Avocato."
+  },
+  "avocato.meditation": {
+    "defaultMessage": "Secrets",
+    "description": "Avocato secret-sequence heading."
+  },
+  "avocato.meditation.complete": {
+    "defaultMessage": "Skill Points granted: 4. Well done!",
+    "description": "Unity final meditation message."
+  },
+  "avocato.meditation.countdown": {
+    "defaultMessage": "{seconds}s",
+    "description": "Seconds until the current Avocato secret may be skipped."
+  },
+  "avocato.meditation.dismiss": {
+    "defaultMessage": "Continue",
+    "description": "Dismisses the completed Avotation meditation overlay."
+  },
+  "avocato.meditation.help": {
+    "defaultMessage": "Help",
+    "description": "Reveal the current Avocato meditation hint."
+  },
+  "avocato.meditation.progress": {
+    "defaultMessage": "{current} of {total} secrets found",
+    "description": "Avocato meditation sequence progress."
+  },
+  "avocato.meditation.secret-trigger": {
+    "defaultMessage": "A strange hidden detail",
+    "description": "Accessible name for the currently active hidden Avocato meditation target."
+  },
+  "avocato.meditation.skip": {
+    "defaultMessage": "Skip",
+    "description": "Skip one Avocato meditation secret after waiting."
+  },
+  "avocato.multiplier": {
+    "defaultMessage": "×{value}",
+    "description": "Formats one Avocato multiplicative boost."
+  },
+  "avocato.multiplier.infinity": {
+    "defaultMessage": "Infinity Multiplier",
+    "description": "Unity Avocato multiplier label."
+  },
+  "avocato.multiplier.influence": {
+    "defaultMessage": "Influence Multiplier",
+    "description": "Unity Avocato multiplier label."
+  },
+  "avocato.multiplier.overflow": {
+    "defaultMessage": "Overflow",
+    "description": "Unity Avocato overflow multiplier label."
+  },
+  "avocato.multiplier.strange-matter": {
+    "defaultMessage": "Strange Matter Multiplier",
+    "description": "Unity Avocato multiplier label."
+  },
+  "avocato.region": {
+    "defaultMessage": "Avocato",
+    "description": "Accessible name for the unlocked Avocato surface."
+  },
+  "avocato.total-boost": {
+    "defaultMessage": "Total boost to Cash, Science, and Buildings",
+    "description": "Unity Avocato total multiplier label."
+  },
   "debug.access-description": {
-    "defaultMessage": "Unlock the developer tools with late-game currencies. Once purchased, they can be re-enabled for free."
+    "defaultMessage": "Unlock the developer tools with late-game currencies. Once purchased, they can be re-enabled for free.",
+    "description": "Explains how developer tools are unlocked and retained."
   },
   "debug.action-success": {
-    "defaultMessage": "Development change saved."
+    "defaultMessage": "Development change saved.",
+    "description": "Generic confirmation after a developer action succeeds."
   },
   "debug.add-bots": {
-    "defaultMessage": "Add Bots"
+    "defaultMessage": "Add Bots",
+    "description": "Developer action that adds Bots."
   },
   "debug.add-infinity-points": {
-    "defaultMessage": "Add Infinity Points"
+    "defaultMessage": "Add Infinity Points",
+    "description": "Developer action that adds Infinity Points."
   },
   "debug.add-influence": {
-    "defaultMessage": "Add Influence"
+    "defaultMessage": "Add Influence",
+    "description": "Developer action that adds Influence."
   },
   "debug.add-offline-time": {
-    "defaultMessage": "Add Offline Time"
+    "defaultMessage": "Add Offline Time",
+    "description": "Developer action that adds stored offline time."
   },
   "debug.add-quantum-shards": {
-    "defaultMessage": "Add Quantum Shards"
+    "defaultMessage": "Add Quantum Shards",
+    "description": "Developer action that adds Quantum Shards."
   },
   "debug.add-skill-points": {
-    "defaultMessage": "Add Skill Points"
+    "defaultMessage": "Add Skill Points",
+    "description": "Developer action that adds Skill Points."
   },
   "debug.add-strange-matter": {
-    "defaultMessage": "Add Strange Matter"
+    "defaultMessage": "Add Strange Matter",
+    "description": "Developer action that adds Strange Matter."
   },
   "debug.amount": {
-    "defaultMessage": "Amount"
+    "defaultMessage": "Amount",
+    "description": "Label for the developer resource amount input."
   },
   "debug.apply-preset": {
-    "defaultMessage": "Apply"
+    "defaultMessage": "Apply",
+    "description": "Action that applies a developer progression preset."
   },
   "debug.bot-state": {
-    "defaultMessage": "Bot count"
+    "defaultMessage": "Bot count",
+    "description": "Label for the Bot count developer preset."
   },
   "debug.bots": {
-    "defaultMessage": "Bots"
+    "defaultMessage": "Bots",
+    "description": "Bots resource label in developer tools."
   },
   "debug.cats": {
-    "defaultMessage": "Debug Cats"
+    "defaultMessage": "Debug Cats",
+    "description": "Developer action that logs diagnostic cat data."
   },
   "debug.disable": {
-    "defaultMessage": "Disable Developer Options"
+    "defaultMessage": "Disable Developer Options",
+    "description": "Action that disables developer tools."
   },
   "debug.disabled-success": {
-    "defaultMessage": "Developer Options disabled. Your entitlement was retained."
+    "defaultMessage": "Developer Options disabled. Your entitlement was retained.",
+    "description": "Confirmation after disabling developer tools."
   },
   "debug.enable-free": {
-    "defaultMessage": "Enable for free"
+    "defaultMessage": "Enable for free",
+    "description": "Action that re-enables previously purchased developer tools."
   },
   "debug.enabled": {
-    "defaultMessage": "Developer tools enabled"
+    "defaultMessage": "Developer tools enabled",
+    "description": "Status shown when developer tools are active."
   },
   "debug.maintenance": {
-    "defaultMessage": "Maintenance"
+    "defaultMessage": "Maintenance",
+    "description": "Heading for developer maintenance controls."
   },
   "debug.progression": {
-    "defaultMessage": "Progression tools"
+    "defaultMessage": "Progression tools",
+    "description": "Heading for developer progression controls."
   },
   "debug.progression-presets": {
-    "defaultMessage": "Progression states"
+    "defaultMessage": "Progression states",
+    "description": "Heading for developer progression presets."
   },
   "debug.purchase": {
-    "defaultMessage": "Purchase Developer Options"
+    "defaultMessage": "Purchase Developer Options",
+    "description": "Action that purchases access to developer tools."
   },
   "debug.purchase-success": {
-    "defaultMessage": "Developer Options unlocked."
+    "defaultMessage": "Developer Options unlocked.",
+    "description": "Confirmation after purchasing developer tools."
   },
   "debug.quantum-shards": {
-    "defaultMessage": "Quantum Shards"
+    "defaultMessage": "Quantum Shards",
+    "description": "Quantum Shards resource label in developer tools."
   },
   "debug.recalculate-skill-points": {
-    "defaultMessage": "Recalculate Skill Points"
+    "defaultMessage": "Recalculate Skill Points",
+    "description": "Developer action that recalculates earned Skill Points."
+  },
+  "debug.reset-secret-progress": {
+    "defaultMessage": "Reset Secret Progress",
+    "description": "Developer action that resets Avotation secret progress."
+  },
+  "debug.reset-secret-progress-success": {
+    "defaultMessage": "Secret progress reset.",
+    "description": "Confirmation after resetting Avotation secret progress."
   },
   "debug.strange-matter": {
-    "defaultMessage": "Strange Matter"
+    "defaultMessage": "Strange Matter",
+    "description": "Strange Matter resource label in developer tools."
   },
   "debug.timing": {
-    "defaultMessage": "Tinker timing"
+    "defaultMessage": "Tinker timing",
+    "description": "Heading for developer Tinker timing controls."
   },
   "debug.tinker-instant": {
-    "defaultMessage": "Set Tinker to instant"
+    "defaultMessage": "Set Tinker to instant",
+    "description": "Developer action that makes Tinker complete instantly."
   },
   "debug.tinker-one-second": {
-    "defaultMessage": "Set Tinker to 1 second"
+    "defaultMessage": "Set Tinker to 1 second",
+    "description": "Developer action that sets Tinker duration to one second."
   },
   "debug.title": {
-    "defaultMessage": "Developer Options"
+    "defaultMessage": "Developer Options",
+    "description": "Heading for the developer tools screen."
   },
   "debug.unlock-tabs": {
-    "defaultMessage": "Unlock all tabs"
+    "defaultMessage": "Unlock all tabs",
+    "description": "Developer action that unlocks every navigation tab."
   },
   "dyson.bot-distribution.accessible-value": {
     "defaultMessage": "{workers} workers, {scientists} scientists",
@@ -592,6 +727,10 @@
     "defaultMessage": "Bots",
     "description": "Unity Dyson route name."
   },
+  "dyson.route.quantum.controls": {
+    "defaultMessage": "Quantum controls",
+    "description": "Accessible name for the fixed Quantum progress and purchase controls."
+  },
   "dyson.swarm.region": {
     "defaultMessage": "Dyson swarm",
     "description": "Accessible region name for the decorative Unity-style swarm visual."
@@ -724,10 +863,6 @@
     "defaultMessage": "Automate Bots",
     "description": "Unity Infinity bot automation upgrade title."
   },
-  "infinity.shop.cost": {
-    "defaultMessage": "{value} IP",
-    "description": "Infinity Point cost on an upgrade button."
-  },
   "infinity.shop.data-centers.description": {
     "defaultMessage": "As with assembly lines, this won't increase the price of Data Centers. But it does require the previous Upgrade.",
     "description": "Unity retained Data Centers upgrade description."
@@ -812,6 +947,10 @@
     "defaultMessage": "Start with 10 Servers",
     "description": "Unity retained Servers upgrade title."
   },
+  "navigation.avocato": {
+    "defaultMessage": "Avocato",
+    "description": "Unity Avocato sub-destination."
+  },
   "navigation.debug-options": {
     "defaultMessage": "Debug Options",
     "description": "Development-only Unity Debug Options destination."
@@ -827,6 +966,14 @@
   "navigation.offline-time": {
     "defaultMessage": "Offline Time",
     "description": "Unity Offline Time destination."
+  },
+  "navigation.quantum": {
+    "defaultMessage": "Quantum",
+    "description": "Unity Quantum destination."
+  },
+  "navigation.quantum-progress": {
+    "defaultMessage": "Quantum, {current} of {required} Infinity Points",
+    "description": "Accessible unlock progress for the visible but locked Quantum destination."
   },
   "navigation.reality": {
     "defaultMessage": "Reality",
@@ -852,6 +999,10 @@
     "defaultMessage": "Skills",
     "description": "Unity Skills destination."
   },
+  "navigation.statistics": {
+    "defaultMessage": "Statistics",
+    "description": "Statistics destination."
+  },
   "navigation.story": {
     "defaultMessage": "Story",
     "description": "Unity Story destination."
@@ -859,6 +1010,398 @@
   "navigation.wiki": {
     "defaultMessage": "Wiki",
     "description": "Unity Wiki destination."
+  },
+  "offline-time.action-failed": {
+    "defaultMessage": "That action was not completed. Try again.",
+    "description": "Failure feedback for Offline Time actions."
+  },
+  "offline-time.all": {
+    "defaultMessage": "All",
+    "description": "Quick selection for all stored time."
+  },
+  "offline-time.capacity": {
+    "defaultMessage": "{stored} of {capacity}",
+    "description": "Stored Offline Time compared with its storage capacity."
+  },
+  "offline-time.confirm-spend": {
+    "defaultMessage": "Tap again to confirm",
+    "description": "Unity-style confirmation text before spending stored Offline Time."
+  },
+  "offline-time.current-infinity": {
+    "defaultMessage": "Current Infinity",
+    "description": "Label for Offline Time spent during the current Infinity."
+  },
+  "offline-time.disabled": {
+    "defaultMessage": "Offline Time is disabled for this save.",
+    "description": "Warning shown when Unity-style clock-cheat protection disables Offline Time."
+  },
+  "offline-time.double-storage": {
+    "defaultMessage": "Double Storage",
+    "description": "Button that consumes a full Offline Time bank to double its capacity."
+  },
+  "offline-time.double-storage-description": {
+    "defaultMessage": "Consume the full bank to increase capacity to {capacity}.",
+    "description": "Explains the Unity Offline Time capacity upgrade."
+  },
+  "offline-time.explanation": {
+    "defaultMessage": "Offline Time is stored while you are away. Spend it to advance the whole game immediately. This storage is separate from Simulation Double Time.",
+    "description": "Explains what stored Offline Time does and distinguishes it from Simulation Double Time."
+  },
+  "offline-time.maximum-storage": {
+    "defaultMessage": "Maximum storage reached",
+    "description": "Status shown after the permanent Offline Time capacity ceiling is reached."
+  },
+  "offline-time.no-stored-time": {
+    "defaultMessage": "Return after time away to build up this bank.",
+    "description": "Empty-state guidance for the stored Offline Time bank."
+  },
+  "offline-time.one-hour": {
+    "defaultMessage": "1 hour",
+    "description": "Quick selection for one hour of stored time."
+  },
+  "offline-time.one-minute": {
+    "defaultMessage": "1 minute",
+    "description": "Quick selection for one minute of stored time."
+  },
+  "offline-time.previous-infinity": {
+    "defaultMessage": "Previous Infinity",
+    "description": "Label for Offline Time spent during the previous Infinity."
+  },
+  "offline-time.processing": {
+    "defaultMessage": "Simulating…",
+    "description": "Status while stored Offline Time is being processed."
+  },
+  "offline-time.region": {
+    "defaultMessage": "Offline Time",
+    "description": "Accessible name and heading for the stored Offline Time page."
+  },
+  "offline-time.selected-amount": {
+    "defaultMessage": "Selected: {duration}",
+    "description": "The selected stored-time spend duration."
+  },
+  "offline-time.spend": {
+    "defaultMessage": "Spend {duration}",
+    "description": "Button that starts a stored Offline Time simulation."
+  },
+  "offline-time.spend-again": {
+    "defaultMessage": "Spend Again: {duration}",
+    "description": "Repeats the most recently successful stored Offline Time spend."
+  },
+  "offline-time.spend-description": {
+    "defaultMessage": "Choose how much time to simulate now.",
+    "description": "Instruction for the stored-time amount selector."
+  },
+  "offline-time.spend-heading": {
+    "defaultMessage": "Spend Offline Time",
+    "description": "Heading for stored-time spending controls."
+  },
+  "offline-time.spend-success": {
+    "defaultMessage": "Advanced the game by {duration}.",
+    "description": "Confirmation after stored Offline Time is successfully spent."
+  },
+  "offline-time.storage-progress": {
+    "defaultMessage": "Offline Time storage",
+    "description": "Accessible label for the Offline Time storage progress bar."
+  },
+  "offline-time.stored": {
+    "defaultMessage": "Stored Offline Time",
+    "description": "Heading for the available stored-time balance."
+  },
+  "offline-time.ten-minutes": {
+    "defaultMessage": "10 minutes",
+    "description": "Quick selection for ten minutes of stored time."
+  },
+  "offline-time.usage-heading": {
+    "defaultMessage": "Offline Time Used",
+    "description": "Heading for per-Infinity stored-time usage statistics."
+  },
+  "quantum.cost": {
+    "defaultMessage": "{value} QS",
+    "description": "Quantum Shard price."
+  },
+  "quantum.failed": {
+    "defaultMessage": "That Quantum action was not completed. Try again.",
+    "description": "Quantum command failure feedback."
+  },
+  "quantum.leap": {
+    "defaultMessage": "Quantum Leap",
+    "description": "Quantum Leap card title."
+  },
+  "quantum.leap.cancel": {
+    "defaultMessage": "Cancel",
+    "description": "Cancel Quantum Leap confirmation."
+  },
+  "quantum.leap.confirm": {
+    "defaultMessage": "Confirm Quantum Leap",
+    "description": "Quantum Leap confirmation action."
+  },
+  "quantum.leap.engage": {
+    "defaultMessage": "Engage Quantum Leap",
+    "description": "Ordinary Quantum Leap button."
+  },
+  "quantum.leap.entanglement-description": {
+    "defaultMessage": "Convert every complete group of 42 unspent Infinity Points without resetting Infinity.",
+    "description": "Unity Quantum Entanglement consequence."
+  },
+  "quantum.leap.for": {
+    "defaultMessage": "Leap for {value} QS",
+    "description": "Quantum Entanglement conversion button."
+  },
+  "quantum.leap.reset-description": {
+    "defaultMessage": "Reset this reality to earn 1 Quantum Shard. Your Quantum upgrades persist.",
+    "description": "Ordinary Unity Quantum Leap consequence."
+  },
+  "quantum.level": {
+    "defaultMessage": "Level {value}",
+    "description": "Repeatable Quantum upgrade level."
+  },
+  "quantum.mega.all": {
+    "defaultMessage": "Mega-Structures",
+    "description": "Completed sequential mega-structure Quantum card title."
+  },
+  "quantum.mega.all-description": {
+    "defaultMessage": "All cosmic mega-structures are unlocked.",
+    "description": "Completed mega-structure sequence."
+  },
+  "quantum.open-avocato": {
+    "defaultMessage": "Visit Avocato",
+    "description": "Opens the unlocked Avocato surface."
+  },
+  "quantum.prerequisite.both": {
+    "defaultMessage": "Requires Double Infinity Points and Bot Multitasking.",
+    "description": "Division prerequisite copied from Unity."
+  },
+  "quantum.prerequisite.either": {
+    "defaultMessage": "Requires Double Infinity Points or Bot Multitasking.",
+    "description": "Secrets prerequisite copied from Unity."
+  },
+  "quantum.progress": {
+    "defaultMessage": "Progress to Quantum Leap",
+    "description": "Quantum Leap progress heading."
+  },
+  "quantum.progress.available": {
+    "defaultMessage": "Quantum Leap Available",
+    "description": "Unity threshold copy shown once a Quantum Leap is ready."
+  },
+  "quantum.progress.value": {
+    "defaultMessage": "{current} / {required} Infinity Points",
+    "description": "Progress toward the first Quantum Leap."
+  },
+  "quantum.purchase": {
+    "defaultMessage": "Purchase {name} for {cost} Quantum Shards",
+    "description": "Accessible Quantum purchase action."
+  },
+  "quantum.purchase.amount": {
+    "defaultMessage": "Purchase amount",
+    "description": "Accessible name for Quantum purchase quantity settings."
+  },
+  "quantum.purchase.bulk": {
+    "defaultMessage": "Purchase {quantity} {name} upgrades for {cost} Quantum Shards",
+    "description": "Accessible bulk Quantum purchase action."
+  },
+  "quantum.purchase.buy-max": {
+    "defaultMessage": "Buy Max",
+    "description": "Selects the maximum affordable repeatable Quantum purchase quantity."
+  },
+  "quantum.purchase.buy-quantity": {
+    "defaultMessage": "Buy {quantity}",
+    "description": "Selects a fixed repeatable Quantum purchase quantity."
+  },
+  "quantum.purchase.quantity": {
+    "defaultMessage": "Purchase +{quantity}",
+    "description": "Visible quantity for a repeatable Quantum upgrade purchase."
+  },
+  "quantum.purchase.settings": {
+    "defaultMessage": "Purchase settings",
+    "description": "Opens repeatable Quantum purchase quantity settings."
+  },
+  "quantum.purchase.short": {
+    "defaultMessage": "Purchase",
+    "description": "Visible Quantum purchase action."
+  },
+  "quantum.purchased": {
+    "defaultMessage": "Purchased",
+    "description": "Completed Quantum upgrade state."
+  },
+  "quantum.region": {
+    "defaultMessage": "Quantum",
+    "description": "Accessible name for the Unity Quantum route."
+  },
+  "quantum.shards": {
+    "defaultMessage": "Quantum Shards",
+    "description": "Unity name for the permanent Quantum currency."
+  },
+  "quantum.shards.spent": {
+    "defaultMessage": "({value} spent)",
+    "description": "Parenthetical spent Quantum Shard balance."
+  },
+  "quantum.unavailable": {
+    "defaultMessage": "Unavailable",
+    "description": "Quantum upgrade unavailable action."
+  },
+  "quantum.upgrade.automation.description": {
+    "defaultMessage": "Permanently unlock Auto Research and Auto Bots.",
+    "description": "Unity Quantum upgrade description."
+  },
+  "quantum.upgrade.automation.title": {
+    "defaultMessage": "Permanent Automation",
+    "description": "Unity Quantum upgrade title."
+  },
+  "quantum.upgrade.avocato.description": {
+    "defaultMessage": "Unlock a new feature in the Reality tab.",
+    "description": "Unity Quantum upgrade description."
+  },
+  "quantum.upgrade.avocato.title": {
+    "defaultMessage": "Avocato",
+    "description": "Unity spelling of the Avocato Quantum upgrade."
+  },
+  "quantum.upgrade.birch.description": {
+    "defaultMessage": "Unlock Birch Planets, which consume Matrioshka Brains.",
+    "description": "Sequential mega-structure unlock description."
+  },
+  "quantum.upgrade.birch.title": {
+    "defaultMessage": "Birch Planets",
+    "description": "Unity mega-structure unlock title."
+  },
+  "quantum.upgrade.bot-multitasking.description": {
+    "defaultMessage": "Bots now function as both workers and scientists.",
+    "description": "Unity Quantum upgrade description."
+  },
+  "quantum.upgrade.bot-multitasking.title": {
+    "defaultMessage": "Bot Multitasking",
+    "description": "Unity Quantum upgrade title."
+  },
+  "quantum.upgrade.break-loop.description": {
+    "defaultMessage": "Disable automatic collapse and gain a target control on the Infinity tab to earn multiple Infinity Points.",
+    "description": "Unity Quantum upgrade description."
+  },
+  "quantum.upgrade.break-loop.title": {
+    "defaultMessage": "Break The Loop",
+    "description": "Unity Quantum upgrade title."
+  },
+  "quantum.upgrade.cash.description": {
+    "defaultMessage": "Gain a stacking additive 5% boost to Cash.",
+    "description": "Unity Quantum upgrade description."
+  },
+  "quantum.upgrade.cash.title": {
+    "defaultMessage": "Cash Booster",
+    "description": "Quantum Cash upgrade title."
+  },
+  "quantum.upgrade.division.description": {
+    "defaultMessage": "Divide the number of bots required to collapse by 10.",
+    "description": "Unity Quantum upgrade description."
+  },
+  "quantum.upgrade.division.title": {
+    "defaultMessage": "Division",
+    "description": "Unity Quantum upgrade title."
+  },
+  "quantum.upgrade.double-ip.description": {
+    "defaultMessage": "Earn twice the Infinity Points with every collapse.",
+    "description": "Unity Quantum upgrade description."
+  },
+  "quantum.upgrade.double-ip.title": {
+    "defaultMessage": "Double Infinity Points",
+    "description": "Unity Quantum upgrade title."
+  },
+  "quantum.upgrade.entanglement.description": {
+    "defaultMessage": "Quantum Leap no longer resets Infinity. It converts unspent Infinity Points to Quantum Shards at a rate of 42:1.",
+    "description": "Unity Quantum upgrade description."
+  },
+  "quantum.upgrade.entanglement.title": {
+    "defaultMessage": "Quantum Entanglement",
+    "description": "Unity Quantum upgrade title."
+  },
+  "quantum.upgrade.fragments.description": {
+    "defaultMessage": "Unlock Fragment Skills, which gain power with each fragment purchased.",
+    "description": "Unity Quantum upgrade description."
+  },
+  "quantum.upgrade.fragments.title": {
+    "defaultMessage": "Fragments",
+    "description": "Unity Quantum upgrade title."
+  },
+  "quantum.upgrade.galactic.description": {
+    "defaultMessage": "Unlock Galactic Brains, the ultimate cosmic mega-structure.",
+    "description": "Sequential mega-structure unlock description."
+  },
+  "quantum.upgrade.galactic.title": {
+    "defaultMessage": "Galactic Brains",
+    "description": "Unity mega-structure unlock title."
+  },
+  "quantum.upgrade.influence.description": {
+    "defaultMessage": "Add a stacking 4 Influence per second.",
+    "description": "Unity Quantum upgrade description."
+  },
+  "quantum.upgrade.influence.title": {
+    "defaultMessage": "Influence Booster",
+    "description": "Unity Quantum upgrade title."
+  },
+  "quantum.upgrade.matrioshka.description": {
+    "defaultMessage": "Unlock Matrioshka Brains, the first cosmic mega-structure.",
+    "description": "Sequential mega-structure unlock description."
+  },
+  "quantum.upgrade.matrioshka.title": {
+    "defaultMessage": "Matrioshka Brains",
+    "description": "Unity mega-structure unlock title."
+  },
+  "quantum.upgrade.paragade.description": {
+    "defaultMessage": "Unlock Paragon and Renegade Skills, which offer a tough decision.",
+    "description": "Unity Quantum upgrade description."
+  },
+  "quantum.upgrade.paragade.title": {
+    "defaultMessage": "Paragade",
+    "description": "Unity Quantum upgrade title."
+  },
+  "quantum.upgrade.power.description": {
+    "defaultMessage": "Unlock Power Skills, which boost all buildings, Cash, and Science.",
+    "description": "Unity Quantum upgrade description."
+  },
+  "quantum.upgrade.power.title": {
+    "defaultMessage": "Power",
+    "description": "Unity Quantum upgrade title."
+  },
+  "quantum.upgrade.purity.description": {
+    "defaultMessage": "Unlock Purity Skills, which scale with unspent Skill Points.",
+    "description": "Unity Quantum upgrade description."
+  },
+  "quantum.upgrade.purity.title": {
+    "defaultMessage": "Purity",
+    "description": "Unity Quantum upgrade title."
+  },
+  "quantum.upgrade.science.description": {
+    "defaultMessage": "Gain a stacking additive 5% boost to Science.",
+    "description": "Unity Quantum upgrade description."
+  },
+  "quantum.upgrade.science.title": {
+    "defaultMessage": "Science Booster",
+    "description": "Quantum Science upgrade title."
+  },
+  "quantum.upgrade.secrets.description": {
+    "defaultMessage": "Permanently reveal and unlock 3 Secrets of the Universe.",
+    "description": "Unity Quantum upgrade description."
+  },
+  "quantum.upgrade.secrets.title": {
+    "defaultMessage": "Secrets of the Universe",
+    "description": "Unity Quantum upgrade title."
+  },
+  "quantum.upgrade.stellar.description": {
+    "defaultMessage": "Unlock Stellar Skills, which scale with stars and galaxies at a cost.",
+    "description": "Unity Quantum upgrade description."
+  },
+  "quantum.upgrade.stellar.title": {
+    "defaultMessage": "Stellar",
+    "description": "Unity Quantum upgrade title."
+  },
+  "quantum.upgrade.terra.description": {
+    "defaultMessage": "Unlock Terra Skills, which apply bonuses from planets to other buildings.",
+    "description": "Unity Quantum upgrade description."
+  },
+  "quantum.upgrade.terra.title": {
+    "defaultMessage": "Terra",
+    "description": "Unity Quantum upgrade title."
+  },
+  "quantum.upgrades": {
+    "defaultMessage": "Quantum Upgrades",
+    "description": "Heading for the Quantum upgrade catalog."
   },
   "reality.artifact": {
     "defaultMessage": "The Artifact",
@@ -871,6 +1414,18 @@
   "reality.artifact.undefined": {
     "defaultMessage": "Undefined",
     "description": "Unity artifact progress label before Speed Reduction VIII is owned."
+  },
+  "reality.avocato.description": {
+    "defaultMessage": "Feed Avocato resources to strengthen every reality.",
+    "description": "Description of the unlocked Avocato economy."
+  },
+  "reality.avocato.open": {
+    "defaultMessage": "Visit Avocato",
+    "description": "Opens the unlocked Avocato economy."
+  },
+  "reality.avocato.title": {
+    "defaultMessage": "Avocato",
+    "description": "Title of the Avocato feature unlocked in Reality."
   },
   "reality.consuming": {
     "defaultMessage": "Consuming",
@@ -1684,6 +2239,34 @@
     "defaultMessage": "Development Menu",
     "description": "Heading for development-only gameplay controls."
   },
+  "settings.more-by.description": {
+    "defaultMessage": "Discover more games from the developer of Idle Dyson Swarm.",
+    "description": "Description for the canonical developer area in Settings."
+  },
+  "settings.more-by.title": {
+    "defaultMessage": "More by Blind Sided Games",
+    "description": "Heading for the canonical developer area in Settings."
+  },
+  "settings.navigation.description": {
+    "defaultMessage": "Choose which optional pages appear in the bottom navigation. They remain available from the menu.",
+    "description": "Explains optional bottom navigation shortcuts."
+  },
+  "settings.navigation.statistics": {
+    "defaultMessage": "Show Statistics shortcut",
+    "description": "Controls the Statistics bottom navigation shortcut."
+  },
+  "settings.navigation.story": {
+    "defaultMessage": "Show Story shortcut",
+    "description": "Controls the Story bottom navigation shortcut."
+  },
+  "settings.navigation.title": {
+    "defaultMessage": "Navigation Shortcuts",
+    "description": "Heading for optional bottom navigation shortcuts."
+  },
+  "settings.navigation.wiki": {
+    "defaultMessage": "Show Wiki shortcut",
+    "description": "Controls the Wiki bottom navigation shortcut."
+  },
   "settings.save-data.cancel": {
     "defaultMessage": "Cancel",
     "description": "Cancels a save reset."
@@ -1969,11 +2552,11 @@
     "description": "Compact Education panel explanation."
   },
   "simulations.panel.energy-output": {
-    "defaultMessage": "{value} W",
+    "defaultMessage": "{value}",
     "description": "Energy produced each second."
   },
   "simulations.panel.energy-stored": {
-    "defaultMessage": "{value} J stored",
+    "defaultMessage": "{value} stored",
     "description": "Stored Simulation energy."
   },
   "simulations.panel.engineering": {
@@ -2065,8 +2648,8 @@
     "description": "Unity Shipping panel title."
   },
   "simulations.panel.shots-remaining": {
-    "defaultMessage": "{value} shots remaining",
-    "description": "Railgun volley shots remaining."
+    "defaultMessage": "{value} rounds remaining",
+    "description": "Railgun volley rounds remaining."
   },
   "simulations.panel.solar": {
     "defaultMessage": "Solar Panels",
@@ -2137,7 +2720,7 @@
     "description": "Space Factory surplus-energy overdrive status."
   },
   "simulations.progress.factory-overdrive-active": {
-    "defaultMessage": "{multiplier}x · {energy} W consumed",
+    "defaultMessage": "×{multiplier} · {energy} consumed",
     "description": "Active Space Factory overdrive multiplier and energy consumption rate."
   },
   "simulations.progress.factory-overdrive-idle": {
@@ -2145,8 +2728,12 @@
     "description": "Space Factory overdrive status when no surplus-energy acceleration is active."
   },
   "simulations.progress.firing": {
-    "defaultMessage": "Railgun firing progress",
-    "description": "Accessible Railgun firing progress label."
+    "defaultMessage": "Volley remaining",
+    "description": "Accessible remaining Railgun volley label."
+  },
+  "simulations.progress.firing-throughput": {
+    "defaultMessage": "Railgun throughput",
+    "description": "Accessible Railgun throughput label once volleys are too fast to animate."
   },
   "simulations.progress.percent": {
     "defaultMessage": "{value}%",
@@ -2156,21 +2743,41 @@
     "defaultMessage": "Production progress",
     "description": "Accessible production progress label."
   },
+  "simulations.progress.production-rate": {
+    "defaultMessage": "{value}/s",
+    "description": "Visible production cycle rate when a Simulation timer is too fast to animate legibly."
+  },
   "simulations.progress.railgun-payload": {
-    "defaultMessage": "Railgun payload",
-    "description": "Adaptive number of Dyson panels launched by each Railgun shot."
+    "defaultMessage": "Railgun array",
+    "description": "Adaptive number of Railguns committed to a volley."
   },
   "simulations.progress.railgun-payload-value": {
-    "defaultMessage": "{perShot} / shot · {perVolley} / volley",
-    "description": "Adaptive Railgun panels launched per shot and per ten-shot volley."
+    "defaultMessage": "{railguns} railguns · {perRound} panels / round · {rounds} rounds / volley",
+    "description": "Adaptive Railgun array size and ten-round volley payload."
+  },
+  "simulations.progress.railgun-throughput-value": {
+    "defaultMessage": "{volleys} volleys /s · {panels} panels /s",
+    "description": "Nominal Railgun volley and panel throughput during fast firing."
+  },
+  "simulations.progress.railgun-waiting": {
+    "defaultMessage": "Waiting for charge or panels",
+    "description": "Railgun throughput status when no round launched during the latest fixed tick."
+  },
+  "simulations.progress.record-stored-panels": {
+    "defaultMessage": "Record stored",
+    "description": "Highest unreserved Dyson panel inventory observed during this Simulation."
   },
   "simulations.progress.research": {
     "defaultMessage": "Research progress",
     "description": "Accessible Education progress label."
   },
   "simulations.progress.stored-panels": {
-    "defaultMessage": "Stored Dyson panels",
-    "description": "Accessible Space Factory storage progress label."
+    "defaultMessage": "Volley reserve",
+    "description": "Stored Space Factory panels measured against the next intended volley."
+  },
+  "simulations.progress.stored-panels-value": {
+    "defaultMessage": "{current} / {target} for next volley",
+    "description": "Stored panels compared with the next intended Railgun volley."
   },
   "simulations.progress.time-remaining": {
     "defaultMessage": "Time remaining",
@@ -2663,5 +3270,661 @@
   "startup-shell.state.writer-blocked.title": {
     "defaultMessage": "Another tab is using this game",
     "description": "Heading shown when another browser tab or window owns write access."
+  },
+  "statistics.cause.artificial-intelligence": {
+    "defaultMessage": "Artificial Intelligence",
+    "description": "Artificial Intelligence Simulation reset cause."
+  },
+  "statistics.cause.black-hole": {
+    "defaultMessage": "Black Hole",
+    "description": "Black Hole Simulation reset cause."
+  },
+  "statistics.cause.global-warming": {
+    "defaultMessage": "Global Warming",
+    "description": "Global Warming Simulation reset cause."
+  },
+  "statistics.cause.meteor": {
+    "defaultMessage": "Meteor",
+    "description": "Meteor Simulation reset cause."
+  },
+  "statistics.group.activity": {
+    "defaultMessage": "Activity",
+    "description": "Heading for time-based statistics."
+  },
+  "statistics.group.infinity": {
+    "defaultMessage": "Infinity",
+    "description": "Heading for Infinity statistics."
+  },
+  "statistics.group.reality": {
+    "defaultMessage": "Reality",
+    "description": "Heading for Reality statistics."
+  },
+  "statistics.group.simulations": {
+    "defaultMessage": "Simulations",
+    "description": "Heading for Simulation reset statistics."
+  },
+  "statistics.last-cycle": {
+    "defaultMessage": "Last completed cycle",
+    "description": "Heading for the most recent Infinity or Simulation cycle."
+  },
+  "statistics.last-cycle.break-infinity": {
+    "defaultMessage": "Break Infinity",
+    "description": "Break Infinity cycle type."
+  },
+  "statistics.last-cycle.duration": {
+    "defaultMessage": "Duration",
+    "description": "Duration of the last completed cycle."
+  },
+  "statistics.last-cycle.empty": {
+    "defaultMessage": "No completed cycle has been recorded yet.",
+    "description": "Empty state before the first tracked cycle."
+  },
+  "statistics.last-cycle.ordinary-infinity": {
+    "defaultMessage": "Ordinary Infinity",
+    "description": "Ordinary Infinity cycle type."
+  },
+  "statistics.last-cycle.reset-cause": {
+    "defaultMessage": "Reset cause",
+    "description": "Simulation reset cause attached to the last cycle."
+  },
+  "statistics.last-cycle.reward": {
+    "defaultMessage": "Reward",
+    "description": "Reward from the last completed cycle."
+  },
+  "statistics.last-cycle.simulation-reset": {
+    "defaultMessage": "Simulation reset",
+    "description": "Simulation reset cycle type."
+  },
+  "statistics.last-cycle.type": {
+    "defaultMessage": "Cycle type",
+    "description": "Label for the last completed cycle type."
+  },
+  "statistics.metric.ai-resets": {
+    "defaultMessage": "Artificial Intelligence resets",
+    "description": "Dream resets caused by the Artificial Intelligence simulation."
+  },
+  "statistics.metric.automatic-influence": {
+    "defaultMessage": "Influence gathered automatically",
+    "description": "Influence gathered by Reality automation."
+  },
+  "statistics.metric.black-hole-resets": {
+    "defaultMessage": "Black Hole resets",
+    "description": "Dream resets caused by the Black Hole simulation."
+  },
+  "statistics.metric.bot-cap-infinity-points": {
+    "defaultMessage": "Bot-cap Infinity Points",
+    "description": "Infinity Points earned at the canonical bot cap."
+  },
+  "statistics.metric.bot-cap-overflow-rewards": {
+    "defaultMessage": "Bot-cap overflow rewards",
+    "description": "Overflow rewards earned at the canonical bot cap."
+  },
+  "statistics.metric.break-infinities": {
+    "defaultMessage": "Break Infinities",
+    "description": "Count of Break Infinity resets."
+  },
+  "statistics.metric.break-infinity-points": {
+    "defaultMessage": "Break Infinity Points",
+    "description": "Infinity Points earned from Break Infinity."
+  },
+  "statistics.metric.capacity-stall-time": {
+    "defaultMessage": "Reality capacity stalled",
+    "description": "Time Reality workers spent blocked at capacity."
+  },
+  "statistics.metric.dream-resets": {
+    "defaultMessage": "Simulation resets",
+    "description": "Combined Simulation reset count."
+  },
+  "statistics.metric.global-warming-resets": {
+    "defaultMessage": "Global Warming resets",
+    "description": "Dream resets caused by the Global Warming simulation."
+  },
+  "statistics.metric.infinity-points": {
+    "defaultMessage": "Infinity Points earned",
+    "description": "Combined Infinity Point rewards."
+  },
+  "statistics.metric.infinity-resets": {
+    "defaultMessage": "Infinity resets",
+    "description": "Combined ordinary and Break Infinity reset count."
+  },
+  "statistics.metric.manual-influence": {
+    "defaultMessage": "Influence gathered manually",
+    "description": "Influence gathered by the player."
+  },
+  "statistics.metric.meteor-resets": {
+    "defaultMessage": "Meteor resets",
+    "description": "Dream resets caused by the Meteor simulation."
+  },
+  "statistics.metric.ordinary-infinities": {
+    "defaultMessage": "Ordinary Infinities",
+    "description": "Count of ordinary Infinity resets."
+  },
+  "statistics.metric.ordinary-infinity-points": {
+    "defaultMessage": "Ordinary Infinity Points",
+    "description": "Infinity Points earned from ordinary resets."
+  },
+  "statistics.metric.reality-workers": {
+    "defaultMessage": "Reality workers created",
+    "description": "Total Reality workers created."
+  },
+  "statistics.metric.simulated-time": {
+    "defaultMessage": "Simulated time",
+    "description": "Amount of game simulation time processed."
+  },
+  "statistics.metric.strange-matter": {
+    "defaultMessage": "Strange Matter earned",
+    "description": "Total Strange Matter earned from Simulation resets."
+  },
+  "statistics.recent-activity": {
+    "defaultMessage": "Recent activity",
+    "description": "Heading for rolling canonical statistics windows."
+  },
+  "statistics.region": {
+    "defaultMessage": "Statistics",
+    "description": "Accessible name for the Statistics route."
+  },
+  "statistics.scope.latest-interval": {
+    "defaultMessage": "Latest interval",
+    "description": "Statistics from the latest processed simulation interval."
+  },
+  "statistics.scope.lifetime": {
+    "defaultMessage": "Lifetime",
+    "description": "Statistics accumulated across the entire save."
+  },
+  "statistics.scope.quantum-run": {
+    "defaultMessage": "Current Quantum run",
+    "description": "Statistics accumulated since the latest Quantum Leap."
+  },
+  "statistics.tracked-time": {
+    "defaultMessage": "Tracked simulation time",
+    "description": "Label for total canonical simulated time tracked."
+  },
+  "statistics.tracking-notice": {
+    "defaultMessage": "Statistics have been tracked since this feature was added.",
+    "description": "Explains that historical saves only contain statistics recorded by the new tracker."
+  },
+  "statistics.window.last-day": {
+    "defaultMessage": "Last 24 hours",
+    "description": "Title for the half-hour-bucket statistics horizon."
+  },
+  "statistics.window.last-hour": {
+    "defaultMessage": "Last 60 minutes",
+    "description": "Title for the minute-bucket statistics horizon."
+  },
+  "statistics.window.last-thirty-days": {
+    "defaultMessage": "Last 30 days",
+    "description": "Title for the daily-bucket statistics horizon."
+  },
+  "story.avocato.description": {
+    "defaultMessage": "Visit your friendly interdimensional reset assistant.",
+    "description": "Description beside the Story entry point to Avocato."
+  },
+  "story.avocato.open": {
+    "defaultMessage": "Visit Avocato",
+    "description": "Button that opens the Avocato surface from Story."
+  },
+  "story.avocato.title": {
+    "defaultMessage": "Avocato",
+    "description": "Title of the Unity Story entry point to Avocato."
+  },
+  "story.chapter-1": {
+    "defaultMessage": "Chapter 1",
+    "description": "Unity Story chapter heading."
+  },
+  "story.chapter-1.intro": {
+    "defaultMessage": "As you stare down at your keyboard, the computer whirring in the background, an idea suddenly comes to you. You stand up and head over to your workbench... You begin working and quickly build a bot, it has two arms and hovers. Huh it works... You assign it to begin making solar panels and get to work on another.",
+    "description": "Unity Chapter 1 introduction."
+  },
+  "story.chapter-1.part-2": {
+    "defaultMessage": "Before long you have 10 bots, but this is quickly getting tiring. You set up an assembly line and write some code that lets it produce bots for you.",
+    "description": "Unity Chapter 1 second passage."
+  },
+  "story.chapter-1.part-3": {
+    "defaultMessage": "You're also going to need some power, so you launch some panels into space, and begin to sell off the excess power.",
+    "description": "Unity Chapter 1 third passage."
+  },
+  "story.chapter-2": {
+    "defaultMessage": "Chapter 2",
+    "description": "Unity Story chapter heading."
+  },
+  "story.chapter-2.intro": {
+    "defaultMessage": "You decide that manually building assembly lines is too much work, a few moments later you decide to design an AI that can manage the creation of assembly lines for you. Before long it's ready. You insert the module into a specialized bot and it whirrs to life quickly buzzing off to begin constructing more assembly lines.",
+    "description": "Unity Chapter 2 introduction."
+  },
+  "story.chapter-2.part-2": {
+    "defaultMessage": "You're starting to run out of space. You've set up a research division and created better AI that can collect the resources you need for your discoveries. But you need to create some servers to store all the data. Costly but worth it.",
+    "description": "Unity Chapter 2 second passage."
+  },
+  "story.chapter-2.part-3": {
+    "defaultMessage": "Before long your empire grows beyond anything you could ever have imagined. You've long since surrounded your first star with panels and it's time to begin thinking of expansion. You send out some probes and start looking for ideal systems to take over. In the meantime you expand your operation to other planets in the system.",
+    "description": "Unity Chapter 2 third passage."
+  },
+  "story.chapter-3": {
+    "defaultMessage": "Chapter 3",
+    "description": "Unity Story chapter heading."
+  },
+  "story.chapter-3.intro": {
+    "defaultMessage": "As you stare into a mirror one day, you are hit with the sudden realization of how long it's been. You design a method of extracting your consciousness and export it to an organic computer. With infinite life in your grasp you set out to explore the universe.",
+    "description": "Unity Chapter 3 introduction."
+  },
+  "story.chapter-3.part-2": {
+    "defaultMessage": "One day you come across some kind of anomaly, your curiosity gets the better of you. You head towards it and avocado into the murky mists.. Some writing begins to take shape and you catch a glimpse of a few words: Buffer overflow imminent... 41.9Qi/42.0Qi. The number ticks over and everything goes black...",
+    "description": "Unity Chapter 3 second passage."
+  },
+  "story.chapter-3.part-2-stare": {
+    "defaultMessage": "One day you come across some kind of anomaly, your curiosity gets the better of you. You head towards it and stare into the murky mists.. Some writing begins to take shape and you catch a glimpse of a few words: Buffer overflow imminent... 41.9Qi/42.0Qi. The number ticks over and everything goes black...",
+    "description": "Unity Chapter 3 alternating stare variant."
+  },
+  "story.chapter-4": {
+    "defaultMessage": "Chapter 4",
+    "description": "Unity Story chapter heading."
+  },
+  "story.chapter-4.intro": {
+    "defaultMessage": "You find yourself staring at your workbench, having just created your first bot...",
+    "description": "Unity Chapter 4 introduction."
+  },
+  "story.chapter-4.part-10": {
+    "defaultMessage": "10 times.. The machine seems to be reaching its limits. Perhaps its best to focus on something new. You have noticed with each reset the anomaly has changed slightly. Perhaps it's time to focus on the secrets of the Universe.",
+    "description": "Unity Chapter 4 tenth passage."
+  },
+  "story.chapter-4.part-2": {
+    "defaultMessage": "You decide to take advantage of what you have learned. Infinity doesn't seem that long after all. Altering a couple of lines in the assembly line logic allows you to produce bots at twice the rate. However before long your previous experience with this reality slips from your mind as if it were a dream. \"There has to be a way to remember more\" you think to yourself as you set out to find the anomaly once more.",
+    "description": "Unity Chapter 4 second passage."
+  },
+  "story.chapter-4.part-3": {
+    "defaultMessage": "Remembering more is no easy feat and the multitimeline stuff takes its toll. You manage to triple the effect of your Managers, this bonus trickles down to your Assembly Lines too. You wonder if you can do better next time.",
+    "description": "Unity Chapter 4 third passage."
+  },
+  "story.chapter-4.part-4": {
+    "defaultMessage": "Remembering is getting easier. This time you Quadruple the power of your servers using information you intentionally acquired from the future. And set out to improve your Data Centers next.",
+    "description": "Unity Chapter 4 fourth passage."
+  },
+  "story.chapter-4.part-5": {
+    "defaultMessage": "Advanced spacial reasoning along with smaller server profiles allow you to fit far more power in the same space. Five times more to be precise.",
+    "description": "Unity Chapter 4 fifth passage."
+  },
+  "story.chapter-4.part-6": {
+    "defaultMessage": "You set up an algorithm that allows you to bring large quantities of data back with you Quantum tunneling was difficult to work out but now you can send planetary designs back through time and preplan your Data Centers. Six times as efficient as your first run your entire production line is becoming a much smoother machine. How long can this go on for?",
+    "description": "Unity Chapter 4 sixth passage."
+  },
+  "story.chapter-4.part-7": {
+    "defaultMessage": "7 times..",
+    "description": "Unity Chapter 4 seventh passage."
+  },
+  "story.chapter-4.part-8": {
+    "defaultMessage": "8 times..",
+    "description": "Unity Chapter 4 eighth passage."
+  },
+  "story.chapter-4.part-9": {
+    "defaultMessage": "9 times..",
+    "description": "Unity Chapter 4 ninth passage."
+  },
+  "story.chapter-5": {
+    "defaultMessage": "Chapter 5",
+    "description": "Unity Story chapter heading."
+  },
+  "story.chapter-5.part-1": {
+    "defaultMessage": "As you gather the last secret a vague memory of another life begins to surface... A portal appears next to the anomaly, a new path forward. You decide it's worth the risk. There's nothing left for you here anyway.",
+    "description": "Unity Chapter 5 first passage."
+  },
+  "story.chapter-5.part-2": {
+    "defaultMessage": "Somewhere in the distance a message seems to be looping on repeat... Temporal Anomaly located... please input instructions.",
+    "description": "Unity Chapter 5 second passage."
+  },
+  "story.chapter-5.part-3": {
+    "defaultMessage": "You blink your eyes open and memories begin to flood back, how long were you stuck in there? You look down at your watch; what felt like many lifetimes has passed in mere minutes. You sit up and step from the makeshift platform you used for the simulator. It's difficult to stand as you become somewhat faint in your mortal form.",
+    "description": "Unity Chapter 5 third passage."
+  },
+  "story.chapter-5.part-4": {
+    "defaultMessage": "You head over to your workstation and overlook the data. 'Simulation primed, ready to begin consumption.' You hit enter and the machine begins to consume realities much like the one you were just in. Gathering data to run even more simulations. Whatever this artifact is, you will work out what it does.",
+    "description": "Unity Chapter 5 fourth passage."
+  },
+  "story.chapter-5.part-5": {
+    "defaultMessage": "While you wait you decide to start manually playing through simulations. Bit of \"game time\" couldn't hurt.",
+    "description": "Unity Chapter 5 fifth passage."
+  },
+  "story.chapter-6": {
+    "defaultMessage": "Chapter 6",
+    "description": "Unity Story chapter heading."
+  },
+  "story.chapter-6.complete": {
+    "defaultMessage": "A sudden realization forms in your mind. While you thought all this time you were the one running the simulation, you have in fact been the simulation. In the distance you hear a few words as time begins to slow... \"Shut it down... you know what happened last time the simulation became self aware. You're just going to have to start over.\"",
+    "description": "Unity Chapter 6 final passage."
+  },
+  "story.chapter-6.speed": {
+    "defaultMessage": "The artifact slows to a crawl. You give it another tap; suddenly the words on the computer change from \"Undefined\" and are replaced with CPU time...",
+    "description": "Unity Chapter 6 Speed completion passage."
+  },
+  "story.chapter-6.translation": {
+    "defaultMessage": "As the computer translates the last letter, two words show... \"The Artifact\" Bah! What does that even mean?! Clearly there is something missing.",
+    "description": "Unity Chapter 6 Translation completion passage."
+  },
+  "story.introduction": {
+    "defaultMessage": "The story unfolds as you reach milestones across Infinity, Reality and Simulations.",
+    "description": "Short explanation of staged Story progression."
+  },
+  "story.region": {
+    "defaultMessage": "Story",
+    "description": "Accessible name and heading for the Story route."
+  },
+  "wiki.bots.milestones": {
+    "defaultMessage": "Assembly Lines, AI Managers, Servers, Data Centers and Planets double their yield at 50 manually purchased and double again at 100. Each manual purchase beyond 100 adds another 1% boost.",
+    "description": "Facility milestone explanation from the Unity WikiContent prefab."
+  },
+  "wiki.bots.milestones-title": {
+    "defaultMessage": "Manual purchase milestones",
+    "description": "Heading for facility purchase milestone notes."
+  },
+  "wiki.bots.overview": {
+    "defaultMessage": "Build bots, then distribute them between panel production and research with the allocation control. Production bots create Solar Panels which are launched into orbit automatically.",
+    "description": "Bots Wiki overview adapted from the Unity WikiContent prefab."
+  },
+  "wiki.bots.overview-title": {
+    "defaultMessage": "Building the swarm",
+    "description": "Heading for the Bots Wiki overview."
+  },
+  "wiki.bots.panels": {
+    "defaultMessage": "Each panel produces energy for its Panel Lifetime before its orbit decays into the star. That energy is sold automatically for cash, which funds stronger bot production.",
+    "description": "Panel lifetime explanation adapted from the Unity WikiContent prefab."
+  },
+  "wiki.bots.panels-title": {
+    "defaultMessage": "Panels and energy",
+    "description": "Heading for the panel lifetime Wiki section."
+  },
+  "wiki.bots.scale": {
+    "defaultMessage": "20,000 active panels surround one star. 100 billion surrounded stars engulf one galaxy. The interface changes from panels, to stars, to galaxies as your swarm grows.",
+    "description": "Dyson scale conversions from the Unity WikiContent prefab."
+  },
+  "wiki.bots.scale-title": {
+    "defaultMessage": "Stars and galaxies",
+    "description": "Heading for Dyson scale conversion notes."
+  },
+  "wiki.category.bots": {
+    "defaultMessage": "Bots",
+    "description": "Wiki category about bots and Dyson panels."
+  },
+  "wiki.category.infinity": {
+    "defaultMessage": "Infinity",
+    "description": "Wiki category about breaking reality and Infinity."
+  },
+  "wiki.category.lore": {
+    "defaultMessage": "Lore",
+    "description": "Wiki category containing the authored lore chapters."
+  },
+  "wiki.category.other": {
+    "defaultMessage": "Other",
+    "description": "Wiki category for offline time and hidden discoveries."
+  },
+  "wiki.category.patch-notes": {
+    "defaultMessage": "Patch Notes",
+    "description": "Wiki category containing the authored release history."
+  },
+  "wiki.category.quantum": {
+    "defaultMessage": "Quantum Leap",
+    "description": "Wiki category about Quantum Leaps."
+  },
+  "wiki.category.reality": {
+    "defaultMessage": "Reality",
+    "description": "Wiki category about the Reality layer."
+  },
+  "wiki.category.research": {
+    "defaultMessage": "Research",
+    "description": "Wiki category about scientists and research."
+  },
+  "wiki.category.secrets": {
+    "defaultMessage": "Secrets of the Universe",
+    "description": "Wiki category about discovered Secrets of the Universe."
+  },
+  "wiki.category.skills": {
+    "defaultMessage": "Skill Tree",
+    "description": "Wiki category about skills and goals."
+  },
+  "wiki.infinity.overview": {
+    "defaultMessage": "Reaching 42 quintillion bots lets you break reality and earn an Infinity Point. The first five breaks extend the Infinity Point production bonus across Assembly Lines, AI Managers, Servers, Data Centers and Planets.",
+    "description": "Infinity explanation adapted from the Unity WikiContent prefab."
+  },
+  "wiki.infinity.overview-title": {
+    "defaultMessage": "Breaking reality",
+    "description": "Heading for the Infinity Wiki overview."
+  },
+  "wiki.infinity.scaling": {
+    "defaultMessage": "Every spent or unspent Infinity Point increases the production of the facilities affected by your completed breaks. Shop upgrades spend points without removing their contribution to that total.",
+    "description": "Infinity point effect explanation adapted to the canonical Web model."
+  },
+  "wiki.infinity.scaling-title": {
+    "defaultMessage": "Infinity Point scaling",
+    "description": "Heading for Infinity Point production scaling."
+  },
+  "wiki.infinity.secrets": {
+    "defaultMessage": "After a Quantum Leap, Secret upgrades reveal the meaning of life one letter at a time and apply a permanent hidden production benefit.",
+    "description": "Secret unlock explanation adapted from the Unity WikiContent prefab."
+  },
+  "wiki.infinity.secrets-title": {
+    "defaultMessage": "Secrets",
+    "description": "Heading for the Infinity Secrets note."
+  },
+  "wiki.introduction": {
+    "defaultMessage": "Reference notes revealed as your run reaches each layer.",
+    "description": "Introductory copy for the in-game reference surface."
+  },
+  "wiki.lore.introduction": {
+    "defaultMessage": "The original Wiki chronicle. These chapters are separate from the interactive Story destination.",
+    "description": "Introduction to the ported Wiki lore."
+  },
+  "wiki.other.easter-egg": {
+    "defaultMessage": "A seven-step discovery begins in Quantum Management. Completing every step awards four Skill Points.",
+    "description": "Easter egg explanation adapted from the Unity WikiContent prefab."
+  },
+  "wiki.other.easter-egg-title": {
+    "defaultMessage": "Hidden discovery",
+    "description": "Heading for the hidden discovery Wiki note."
+  },
+  "wiki.other.offline": {
+    "defaultMessage": "Time away from the game becomes Offline Time currency. Spend it from the Offline Time screen. A return summary appears after you have been away for at least 60 seconds.",
+    "description": "Offline Time explanation adapted from the Unity WikiContent prefab."
+  },
+  "wiki.other.offline-title": {
+    "defaultMessage": "Offline Time",
+    "description": "Heading for Offline Time reference notes."
+  },
+  "wiki.patch-notes.introduction": {
+    "defaultMessage": "The complete release history authored for the Unity Wiki.",
+    "description": "Introduction to the ported patch-note history."
+  },
+  "wiki.quantum.advice": {
+    "defaultMessage": "Quantum upgrades open new systems and permanent efficiencies. Review each prerequisite and preview before committing to a reset.",
+    "description": "Web-appropriate Quantum Leap planning guidance based on Unity Wiki intent."
+  },
+  "wiki.quantum.advice-title": {
+    "defaultMessage": "Planning a Leap",
+    "description": "Heading for Quantum Leap planning guidance."
+  },
+  "wiki.quantum.overview": {
+    "defaultMessage": "A Quantum Leap fully resets the current Reality at 42 Infinity Points and awards Quantum Shards. Spend them on permanent upgrades in Quantum Management.",
+    "description": "Quantum Leap explanation adapted from the Unity WikiContent prefab."
+  },
+  "wiki.quantum.overview-title": {
+    "defaultMessage": "Quantum Shards",
+    "description": "Heading for Quantum Shard reference notes."
+  },
+  "wiki.reality.anomaly": {
+    "defaultMessage": "Speed Reduction and Translation upgrades advance the story and each award one Skill Point.",
+    "description": "Anomaly explanation adapted from the Unity WikiContent prefab."
+  },
+  "wiki.reality.anomaly-title": {
+    "defaultMessage": "Anomaly",
+    "description": "Heading for Anomaly notes."
+  },
+  "wiki.reality.countermeasures": {
+    "defaultMessage": "Countermeasures in Research let simulations survive later disasters and increase the Strange Matter earned from a reset.",
+    "description": "Countermeasure explanation adapted from the Unity WikiContent prefab."
+  },
+  "wiki.reality.countermeasures-title": {
+    "defaultMessage": "Countermeasures",
+    "description": "Heading for Countermeasure notes."
+  },
+  "wiki.reality.disasters": {
+    "defaultMessage": "Disasters reset a simulated world and award Strange Matter. Spend Strange Matter on Reality research and Countermeasures.",
+    "description": "Disaster explanation adapted from the Unity WikiContent prefab."
+  },
+  "wiki.reality.disasters-title": {
+    "defaultMessage": "Disasters",
+    "description": "Heading for Disaster reset notes."
+  },
+  "wiki.reality.offline": {
+    "defaultMessage": "Simulation offline progress is stored as time rather than immediately awarded resources. The Time Multiplier upgrade lets you spend that reserve to accelerate Simulations.",
+    "description": "Simulation offline progress explanation adapted from the Unity WikiContent prefab."
+  },
+  "wiki.reality.offline-title": {
+    "defaultMessage": "Simulation Offline Progress",
+    "description": "Heading for simulation offline progress notes."
+  },
+  "wiki.reality.overview": {
+    "defaultMessage": "Reality is the second major layer. Its upgrades change how you break reality and how later prestige systems work.",
+    "description": "Reality overview adapted from the Unity WikiContent prefab."
+  },
+  "wiki.reality.overview-title": {
+    "defaultMessage": "The Reality layer",
+    "description": "Heading for the Reality Wiki overview."
+  },
+  "wiki.region": {
+    "defaultMessage": "Wiki",
+    "description": "Accessible name for the in-game reference surface."
+  },
+  "wiki.research.overview": {
+    "defaultMessage": "Assigning workers as scientists produces research points. Spend them on upgrades; some research only appears after you reach its required amount or progression era.",
+    "description": "Research explanation adapted from the Unity WikiContent prefab."
+  },
+  "wiki.research.overview-title": {
+    "defaultMessage": "Scientists and upgrades",
+    "description": "Heading for the Research Wiki overview."
+  },
+  "wiki.secrets.effect.ai-manager-boost": {
+    "defaultMessage": "AI Manager research boost",
+    "description": "Secret effect label."
+  },
+  "wiki.secrets.effect.ai-manager-multiplier": {
+    "defaultMessage": "AI Manager multiplier",
+    "description": "Secret effect label."
+  },
+  "wiki.secrets.effect.assembly-line-boost": {
+    "defaultMessage": "Assembly Line research boost",
+    "description": "Secret effect label."
+  },
+  "wiki.secrets.effect.assembly-line-multiplier": {
+    "defaultMessage": "Assembly Line multiplier",
+    "description": "Secret effect label."
+  },
+  "wiki.secrets.effect.cash-multiplier": {
+    "defaultMessage": "Cash multiplier",
+    "description": "Secret effect label."
+  },
+  "wiki.secrets.effect.planet-boost": {
+    "defaultMessage": "Planet research boost",
+    "description": "Secret effect label."
+  },
+  "wiki.secrets.effect.planet-multiplier": {
+    "defaultMessage": "Planet multiplier",
+    "description": "Secret effect label."
+  },
+  "wiki.secrets.effect.science-multiplier": {
+    "defaultMessage": "Science multiplier",
+    "description": "Secret effect label."
+  },
+  "wiki.secrets.effect.server-boost": {
+    "defaultMessage": "Server research boost",
+    "description": "Secret effect label."
+  },
+  "wiki.secrets.effect.server-multiplier": {
+    "defaultMessage": "Server multiplier",
+    "description": "Secret effect label."
+  },
+  "wiki.secrets.level": {
+    "defaultMessage": "Secret {level}",
+    "description": "Label for a numbered Secret of the Universe."
+  },
+  "wiki.secrets.meaning-so-far": {
+    "defaultMessage": "Meaning so far: {meaning}",
+    "description": "Progressively revealed meaning-of-life phrase."
+  },
+  "wiki.secrets.overview": {
+    "defaultMessage": "{revealed} of 27 Secrets revealed",
+    "description": "Summary of the number of Secrets of the Universe revealed."
+  },
+  "wiki.secrets.overview-title": {
+    "defaultMessage": "What has been revealed",
+    "description": "Heading for revealed Secrets of the Universe."
+  },
+  "wiki.skills.auto-assign": {
+    "defaultMessage": "The tree remembers assignment order so it can rebuild your layout after Infinity or a Quantum reset. Presets save complete layouts. Skills such as Banking may be excluded from automatic assignment.",
+    "description": "Skill assignment explanation adapted from the Unity WikiContent prefab."
+  },
+  "wiki.skills.auto-assign-title": {
+    "defaultMessage": "Auto-assign and presets",
+    "description": "Heading for skill auto-assignment notes."
+  },
+  "wiki.skills.goal-1": {
+    "defaultMessage": "Create 10 Bots.",
+    "description": "First canonical Dyson goal."
+  },
+  "wiki.skills.goal-10": {
+    "defaultMessage": "Engulf 100 Galaxies.",
+    "description": "Tenth canonical Dyson goal."
+  },
+  "wiki.skills.goal-2": {
+    "defaultMessage": "Build 5 manually purchased Assembly Lines.",
+    "description": "Second canonical Dyson goal."
+  },
+  "wiki.skills.goal-3": {
+    "defaultMessage": "Maintain 20,000 active Panels.",
+    "description": "Third canonical Dyson goal."
+  },
+  "wiki.skills.goal-4": {
+    "defaultMessage": "Own 20 Planets.",
+    "description": "Fourth canonical Dyson goal."
+  },
+  "wiki.skills.goal-5": {
+    "defaultMessage": "Decay 1 trillion Panels in total.",
+    "description": "Fifth canonical Dyson goal, based on the lifetime panel-decay counter."
+  },
+  "wiki.skills.goal-6": {
+    "defaultMessage": "Surround 1 billion Stars.",
+    "description": "Sixth canonical Dyson goal."
+  },
+  "wiki.skills.goal-7": {
+    "defaultMessage": "Surround 10 billion Stars.",
+    "description": "Seventh canonical Dyson goal."
+  },
+  "wiki.skills.goal-8": {
+    "defaultMessage": "Engulf 1 Galaxy.",
+    "description": "Eighth canonical Dyson goal."
+  },
+  "wiki.skills.goal-9": {
+    "defaultMessage": "Engulf 10 Galaxies.",
+    "description": "Ninth canonical Dyson goal."
+  },
+  "wiki.skills.goals-title": {
+    "defaultMessage": "Goals",
+    "description": "Heading for the canonical goal list."
+  },
+  "wiki.skills.overview": {
+    "defaultMessage": "Skill Points are awarded by completing goals, with further sources unlocked later. Exclusive skills disable their alternatives, Fragment skills grow with assigned Fragments, and some mechanically dependent skills cannot be refunded.",
+    "description": "Skill types explanation adapted from the Unity WikiContent prefab."
+  },
+  "wiki.skills.overview-title": {
+    "defaultMessage": "How skills work",
+    "description": "Heading for the Skill Tree Wiki overview."
+  },
+  "wiki.title": {
+    "defaultMessage": "Wiki",
+    "description": "Heading for the in-game reference surface."
+  },
+  "wiki.topic-navigation": {
+    "defaultMessage": "Wiki topics",
+    "description": "Accessible name for the Wiki topic navigation."
+  },
+  "wiki.topics": {
+    "defaultMessage": "Topics",
+    "description": "Accessible heading for the Wiki topic navigation."
   }
 }

@@ -1,6 +1,17 @@
 import { defineMessages } from 'react-intl'
 
 export const settingsSurfaceMessages = defineMessages({
+  moreByTitle: {
+    id: 'settings.more-by.title',
+    defaultMessage: 'More by Blind Sided Games',
+    description: 'Heading for the canonical developer area in Settings.',
+  },
+  moreByDescription: {
+    id: 'settings.more-by.description',
+    defaultMessage:
+      'Discover more games from the developer of Idle Dyson Swarm.',
+    description: 'Description for the canonical developer area in Settings.',
+  },
   visualizationTitle: {
     id: 'settings.visualization.title',
     defaultMessage: 'Visualization',
@@ -16,6 +27,32 @@ export const settingsSurfaceMessages = defineMessages({
     id: 'settings.visualization.toggle',
     defaultMessage: 'Show visualization',
     description: 'Toggles the cosmic progression visualization.',
+  },
+  navigationTitle: {
+    id: 'settings.navigation.title',
+    defaultMessage: 'Navigation Shortcuts',
+    description: 'Heading for optional bottom navigation shortcuts.',
+  },
+  navigationDescription: {
+    id: 'settings.navigation.description',
+    defaultMessage:
+      'Choose which optional pages appear in the bottom navigation. They remain available from the menu.',
+    description: 'Explains optional bottom navigation shortcuts.',
+  },
+  storyShortcut: {
+    id: 'settings.navigation.story',
+    defaultMessage: 'Show Story shortcut',
+    description: 'Controls the Story bottom navigation shortcut.',
+  },
+  wikiShortcut: {
+    id: 'settings.navigation.wiki',
+    defaultMessage: 'Show Wiki shortcut',
+    description: 'Controls the Wiki bottom navigation shortcut.',
+  },
+  statisticsShortcut: {
+    id: 'settings.navigation.statistics',
+    defaultMessage: 'Show Statistics shortcut',
+    description: 'Controls the Statistics bottom navigation shortcut.',
   },
   saveData: {
     id: 'settings.save-data.title',

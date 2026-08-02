@@ -86,6 +86,12 @@ export interface DysonGameplayShellProps {
     | 'infinity'
     | 'reality'
     | 'simulations'
+    | 'quantum'
+    | 'avocato'
+    | 'offline-time'
+    | 'statistics'
+    | 'story'
+    | 'wiki'
     | 'settings'
   /** Optional progression variant used only to refine an active route theme. */
   readonly routeThemeVariant?:

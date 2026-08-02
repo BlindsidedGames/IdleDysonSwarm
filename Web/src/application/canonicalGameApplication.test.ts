@@ -183,6 +183,30 @@ describe('canonical game application engine', () => {
     expect(state.gameState.skills.points).toBe(0n)
   })
 
+  test('resets Avotation secret progress through Developer Options', () => {
+    const state = runtime()
+    Object.assign(state, {
+      gameState: {
+        ...state.gameState,
+        secretProgress: { completed: true, step: 7 },
+      },
+    })
+    const definition = createCanonicalGameEngineDefinition({
+      eventContext: context(),
+    })
+
+    expect(
+      definition.applyCommand(state, {
+        kind: 'internal.development-apply-action',
+        action: { kind: 'reset-secret-progress' },
+      }),
+    ).toEqual({ accepted: true, changed: true })
+    expect(state.gameState.secretProgress).toEqual({
+      completed: false,
+      step: 0,
+    })
+  })
+
   test('purchases, disables, and freely re-enables Developer Options', () => {
     const state = runtime()
     Object.assign(state, {

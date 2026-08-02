@@ -249,6 +249,31 @@
   justify-self: center;
 }
 
+.reality-avocato-entry {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) clamp(7rem, 24%, 9rem);
+  gap: 0.65rem;
+  align-items: stretch;
+  padding: 0.7rem;
+  border: 1px solid #171021;
+  border-radius: 0.3rem;
+  background: #3d3158;
+}
+
+.reality-avocato-entry h2,
+.reality-avocato-entry p {
+  margin: 0;
+}
+
+.reality-avocato-entry p {
+  margin-block-start: 0.25rem;
+  color: #e8def6;
+}
+
+.reality-avocato-entry .ui-button {
+  min-block-size: 100%;
+}
+
 .reality-upgrades > .ui-collapsible-section__heading {
   overflow: hidden;
   border: 1px solid #0a0710;

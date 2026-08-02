@@ -23,7 +23,8 @@ import {
   breakInfinityTargetFromPresentationPosition,
   type InfinityProgressFacts,
 } from '../../../simulation/infinityCycle'
-import { Button } from '../../components'
+import infinitySymbol from '../../assets/nav-infinity.png'
+import { Button, InlineImageSymbol } from '../../components'
 import {
   formatGameNumber,
   formatNumber,
@@ -319,10 +320,13 @@ function InfinityShopCard({
             : intl.formatMessage(messages.purchase)}
         </span>
         {completed ? null : (
-          <strong>
-            {intl.formatMessage(messages.cost, {
-              value: formatGameNumber(locale, preview.cost),
-            })}
+          <strong className="infinity-shop-card__cost">
+            <InlineImageSymbol
+              src={infinitySymbol}
+              symbol="infinity-point"
+              tint
+            />
+            <span>{formatGameNumber(locale, preview.cost)}</span>
           </strong>
         )}
       </Button>

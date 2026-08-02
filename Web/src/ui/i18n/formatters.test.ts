@@ -3,7 +3,10 @@ import {
   clearFormatterCachesForTests,
   formatDateTime,
   formatGameDuration,
+  formatGameEnergy,
+  formatGameEnergyParts,
   formatGameNumber,
+  formatGameNumberParts,
   formatNumber,
   formatRelativeTime,
   getDateTimeFormatter,
@@ -58,6 +61,32 @@ describe('cached locale formatters', () => {
     expect(formatGameNumber('en', 999.9)).toBe('999')
     expect(formatGameNumber('en', 1234)).toBe('1.23K')
     expect(formatGameNumber('en', -12.39)).toBe('-12.3')
+    expect(formatGameNumber('en', 12_039_871_001_422_293n)).toBe('12.0Qa')
+    expect(formatGameNumber('en', -12_102_296_928_535_773n)).toBe('-12.1Qa')
+  })
+
+  it('matches the Unity watt and joule energy format', () => {
+    expect(formatGameEnergy('en', 0, 'watts')).toBe('0.00 W')
+    expect(formatGameEnergy('en', 0.8, 'watts')).toBe('0.80 W')
+    expect(formatGameEnergy('en', 109_000, 'watts')).toBe('109 KW')
+    expect(formatGameEnergy('en', 51_290_000, 'watts')).toBe('51.2 MW')
+    expect(formatGameEnergy('en', 124_000_000_000, 'joules'))
+      .toBe('124 GJ')
+    expect(formatGameEnergy('en', Number.MAX_VALUE, 'joules')).toBe('MAX')
+    expect(formatGameEnergy('en', -1, 'joules')).toBe('ERR')
+    expect(formatGameEnergy('en', Number.POSITIVE_INFINITY, 'watts'))
+      .toBe('ERR')
+  })
+
+  it('exposes Unity mantissas separately from suffixes and units', () => {
+    expect(formatGameNumberParts('en', 1_234)).toEqual({
+      value: '1.23',
+      suffix: 'K',
+    })
+    expect(formatGameEnergyParts('en', 109_000, 'watts')).toEqual({
+      value: '109',
+      unit: 'KW',
+    })
   })
 
   it('matches the Unity short-form gameplay duration format', () => {

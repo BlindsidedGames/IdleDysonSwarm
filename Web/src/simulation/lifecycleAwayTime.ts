@@ -24,6 +24,17 @@ export const DESKTOP_LIFECYCLE_POLICY: LifecyclePolicy = Object.freeze({
   replayOnFocusGain: true,
 })
 
+/**
+ * Browser gameplay remains active while the document is visible, even when
+ * its window loses focus. Hidden/minimized time still follows the canonical
+ * pause-save and offline-credit replay path.
+ */
+export const WEB_LIFECYCLE_POLICY: LifecyclePolicy = Object.freeze({
+  saveOnPause: true,
+  saveOnFocusLoss: false,
+  replayOnFocusGain: true,
+})
+
 export interface LifecycleClockSample {
   readonly utcMilliseconds: number
   readonly serializedUtcText: string

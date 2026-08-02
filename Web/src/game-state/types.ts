@@ -39,6 +39,12 @@ export interface GameMetaState {
   readonly createdAtLegacyText: string | null
   readonly tutorialComplete: boolean
   readonly firstInfinityComplete: boolean
+  /** Unity settings that control the persistent bottom-menu shortcuts. */
+  readonly navigationVisibility?: {
+    readonly story: boolean
+    readonly wiki: boolean
+    readonly statistics: boolean
+  }
 }
 
 export interface DysonState {
@@ -344,6 +350,15 @@ export interface DreamState {
     readonly firing: boolean
     readonly fireProgress: number
     readonly shotsRemaining: number
+    /** Railguns committed to the currently reserved ten-round volley. */
+    readonly activeRailguns?: number
+    /** Panels removed from factory storage but not yet launched. */
+    readonly reservedPanels?: bigint
+    /** Highest unreserved factory-panel inventory observed this run. */
+    readonly highestStoredPanels?: bigint
+    /** Presentation telemetry from the most recent 100 ms automation step. */
+    readonly lastRoundsFired?: number
+    readonly lastPanelsLaunched?: bigint
   }
   readonly resetCount: bigint
   readonly strangeMatter: bigint

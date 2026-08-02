@@ -32,6 +32,7 @@ describe('browser lifecycle and monotonic clock', () => {
     windowPort.dispatchEvent(new Event('blur'))
     windowPort.dispatchEvent(new Event('pagehide'))
     documentPort.visibilityState = 'visible'
+    documentPort.focused = false
     windowPort.dispatchEvent(new Event('pageshow'))
     expect(adapter.currentPhase()).toBe('active')
 

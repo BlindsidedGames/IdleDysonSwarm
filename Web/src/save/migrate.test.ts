@@ -122,6 +122,25 @@ describe('Unity save migration pipeline', () => {
     expect(migrated.validation.valid).toBe(true)
   })
 
+  test('applies Unity stored-time capacity rollover during save preparation', () => {
+    const migrated = migrateDecodedSave({
+      saveVersion: 12,
+      offlineTime: 123,
+      maxOfflineTime: 8_640_000,
+    })
+
+    expect(migrated.save.maxOfflineTime).toBe(86_400)
+    expect(migrated.save.offlineTime).toBe(123)
+    expect(migrated.save.cheater).not.toBe(true)
+    expect(migrated.numericRepair.entries).toContainEqual(
+      expect.objectContaining({
+        path: 'saveSettings.maxOfflineTime',
+        replacement: '86400',
+        rule: 'unity_stored_time_capacity_rollover',
+      }),
+    )
+  })
+
   test('validator rejects future schema and non-finite prepared state', () => {
     expect(() => migrateDecodedSave({ saveVersion: 13 })).toThrow(
       'newer than supported',

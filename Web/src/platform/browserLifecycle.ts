@@ -53,9 +53,7 @@ export class BrowserLifecycleAdapter implements LifecycleAdapter {
   currentPhase(): LifecyclePhase {
     return this.documentPort.visibilityState === 'hidden'
       ? 'background'
-      : this.documentPort.hasFocus()
-        ? 'active'
-        : 'focus-lost'
+      : 'active'
   }
 
   private startListening(): void {

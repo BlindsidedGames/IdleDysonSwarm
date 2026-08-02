@@ -207,6 +207,11 @@ const COMMAND_EXAMPLES = [
     kind: 'time.request-stored-time-spend',
     requestedSeconds: 120,
   },
+  {
+    kind: 'settings.set-navigation-item-visible',
+    item: 'story',
+    visible: true,
+  },
 ] as const satisfies readonly CanonicalGameCommand[]
 
 type MissingCommandKind = Exclude<
@@ -217,6 +222,29 @@ const ALL_COMMAND_KINDS_COVERED:
   [MissingCommandKind] extends [never] ? true : never = true
 
 describe('canonical game command router', () => {
+  test('updates a persisted navigation shortcut preference idempotently', () => {
+    const original = state()
+    const current =
+      original.meta.navigationVisibility?.story ?? false
+    const changed = routeCanonicalGameCommand(original, {
+      kind: 'settings.set-navigation-item-visible',
+      item: 'story',
+      visible: !current,
+    })
+
+    expect(changed.accepted).toBe(true)
+    expect(changed.changed).toBe(true)
+    expect(changed.state.meta.navigationVisibility?.story).toBe(!current)
+
+    const unchanged = routeCanonicalGameCommand(changed.state, {
+      kind: 'settings.set-navigation-item-visible',
+      item: 'story',
+      visible: !current,
+    })
+    expect(unchanged.accepted).toBe(true)
+    expect(unchanged.changed).toBe(false)
+  })
+
   test('keeps an exhaustive routable example for every union member', () => {
     expect(ALL_COMMAND_KINDS_COVERED).toBe(true)
     expect(
@@ -409,6 +437,27 @@ describe('canonical game command router', () => {
       accepted: true,
       changed: true,
       code: 'quantum-upgrade:purchased',
+    })
+
+    const quantumBulk = routeCanonicalGameCommand(
+      quantum.state,
+      {
+        kind: 'quantum.purchase-upgrade',
+        upgradeId: 'CashBonus',
+        quantity: 10n,
+      },
+      options(),
+    )
+    expect(quantumBulk).toMatchObject({
+      accepted: true,
+      changed: true,
+      code: 'quantum-upgrade:purchased',
+      state: {
+        quantum: {
+          cashBonusLevels: 10n,
+          pointsSpent: 11n,
+        },
+      },
     })
 
     const avocadoInput = {

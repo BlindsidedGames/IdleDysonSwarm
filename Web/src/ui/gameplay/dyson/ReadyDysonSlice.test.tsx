@@ -40,6 +40,7 @@ import {
   type FirstSliceCommitProbeSample,
 } from '../../performance/firstSliceCommitProbe'
 import { basicFacilityMessages } from '../facilities/messages'
+import { navigationAssets } from '../shell'
 import {
   ProbedReadyDysonRuntimeHost,
   ReadyDysonSlice,
@@ -524,6 +525,336 @@ describe('ReadyDysonSlice', () => {
     ).not.toBeInTheDocument()
   })
 
+  test('reveals locked Quantum progress at one IP and opens the route at 42 IP', async () => {
+    const onRouteChange = vi.fn()
+    const rendered = render(
+      provider(
+        <ReadyDysonSlice
+          snapshot={snapshot({ infinityPoints: 1n })}
+          locale="en"
+          dispatchPlayer={acceptedDispatch}
+          route="quantum"
+          onRouteChange={onRouteChange}
+        />,
+      ),
+    )
+
+    expect(
+      screen.getAllByRole('button', {
+        name: 'Quantum, 1.00 of 42.0 Infinity Points',
+      })[0],
+    ).toBeDisabled()
+    await waitFor(() => {
+      expect(onRouteChange).toHaveBeenCalledWith('bots')
+    })
+
+    rendered.rerender(
+      provider(
+        <ReadyDysonSlice
+          snapshot={snapshot({ infinityPoints: 42n })}
+          locale="en"
+          dispatchPlayer={acceptedDispatch}
+          route="quantum"
+          onRouteChange={onRouteChange}
+        />,
+      ),
+    )
+
+    expect(
+      screen.getByRole('heading', { level: 1, name: 'Quantum' }),
+    ).toBeInTheDocument()
+    expect(await screen.findByText('Quantum Shards')).toBeInTheDocument()
+    expect(
+      screen.getAllByRole('region', { name: 'Quantum' }),
+    ).toHaveLength(1)
+    expect(
+      screen.queryByRole('heading', { level: 2, name: 'Quantum' }),
+    ).not.toBeInTheDocument()
+    expect(rendered.container.querySelector('.dyson-shell')).toHaveAttribute(
+      'data-route-theme',
+      'quantum',
+    )
+  })
+
+  test('keeps Avocato subordinate to Quantum and exposes it through Reality', async () => {
+    const user = userEvent.setup()
+    const onRouteChange = vi.fn()
+    const rendered = render(
+      provider(
+        <ReadyDysonSlice
+          snapshot={snapshot({
+            quantumPoints: 1n,
+            avocatoUnlocked: true,
+            realityRouteVisible: true,
+            realityRouteUnlocked: true,
+          })}
+          locale="en"
+          dispatchPlayer={acceptedDispatch}
+          route="reality"
+          onRouteChange={onRouteChange}
+        />,
+      ),
+    )
+
+    expect(
+      screen.queryByRole('button', { name: 'Avocato' }),
+    ).not.toBeInTheDocument()
+    await user.click(
+      await screen.findByRole('button', { name: 'Visit Avocato' }),
+    )
+    expect(onRouteChange).toHaveBeenCalledWith('avocato')
+
+    rendered.rerender(
+      provider(
+        <ReadyDysonSlice
+          snapshot={snapshot({
+            quantumPoints: 1n,
+            avocatoUnlocked: true,
+          })}
+          locale="en"
+          dispatchPlayer={acceptedDispatch}
+          route="avocato"
+          onRouteChange={onRouteChange}
+        />,
+      ),
+    )
+    expect(
+      await screen.findByRole('region', { name: 'Avocato' }),
+    ).toBeInTheDocument()
+    expect(
+      rendered.container.querySelector('.avocato-meditation'),
+    ).not.toBeInTheDocument()
+    expect(
+      screen.getAllByRole('heading', { level: 1, name: 'Avocato' }),
+    ).toHaveLength(1)
+    expect(
+      screen.queryByRole('heading', { level: 2, name: 'Avocato' }),
+    ).not.toBeInTheDocument()
+    expect(
+      screen.getAllByRole('region', { name: 'Avocato' }),
+    ).toHaveLength(1)
+    expect(
+      screen.queryByText('Total boost to Cash, Science, and Buildings'),
+    ).not.toBeInTheDocument()
+  })
+
+  test.each([
+    ['quantum', 0, { quantumPoints: 1n }],
+    ['infinity', 1, { infinityRouteUnlocked: true }],
+    ['bots', 2, {}],
+    ['skills', 3, { skillsRouteUnlocked: true }],
+    ['settings', 4, {}],
+    ['research', 5, {}],
+  ] as const)(
+    'mounts the %s route target only for Avocato meditation secret %i',
+    async (route, secretStep, routeOptions) => {
+      const dispatchPlayer = vi.fn(acceptedDispatch)
+      const rendered = render(
+        provider(
+          <ReadyDysonSlice
+            snapshot={snapshot({ ...routeOptions, secretStep })}
+            locale="en"
+            dispatchPlayer={dispatchPlayer}
+            route={route}
+          />,
+        ),
+      )
+
+      if (route === 'skills') {
+        fireEvent.click(
+          await screen.findByRole('button', {
+            name: 'Skill presets and reset',
+          }),
+        )
+      }
+      if (route === 'research') {
+        fireEvent.click(
+          await screen.findByRole('button', {
+            name: 'Research purchase settings',
+          }),
+        )
+      }
+      const trigger = await waitFor(() => {
+        const target = rendered.container.querySelector(
+          `[data-avocato-secret-step="${secretStep}"]`,
+        )
+        expect(target).not.toBeNull()
+        return target as HTMLElement
+      })
+      expect(trigger).toHaveAttribute(
+        'data-avocato-secret-step',
+        String(secretStep),
+      )
+      expect(trigger).toHaveAttribute('data-avotation-target', route)
+      expect(
+        rendered.container.querySelectorAll(
+          '[data-avocato-secret-step]',
+        ),
+      ).toHaveLength(1)
+      fireEvent.click(trigger)
+      expect(dispatchPlayer).toHaveBeenCalledWith({
+        kind: 'avocado.complete-meditation-step',
+        requiredStepIndex: secretStep,
+      })
+    },
+  )
+
+  test('keeps optional pages in the menu while respecting shortcut preferences', () => {
+    const { container } = renderSlice(
+      snapshot({
+        navigationVisibility: {
+          story: false,
+          wiki: true,
+          statistics: false,
+        },
+      }),
+    )
+    const drawer = container.querySelector('[data-placement="drawer"]')
+    const bottom = container.querySelector('[data-placement="bottom"]')
+
+    expect(drawer?.querySelector('[data-navigation-id="story"]')).not.toBeNull()
+    expect(drawer?.querySelector('[data-navigation-id="wiki"]')).not.toBeNull()
+    expect(drawer?.querySelector('[data-navigation-id="statistics"]')).not.toBeNull()
+    expect(bottom?.querySelector('[data-navigation-id="story"]')).toBeNull()
+    expect(bottom?.querySelector('[data-navigation-id="wiki"]')).not.toBeNull()
+    expect(bottom?.querySelector('[data-navigation-id="statistics"]')).toBeNull()
+  })
+
+  test('mounts the seventh Avocato meditation secret in the persistent side area', async () => {
+    const rendered = render(
+      provider(
+        <ReadyDysonSlice
+          snapshot={snapshot({ secretStep: 6 })}
+          locale="en"
+          dispatchPlayer={acceptedDispatch}
+          route="bots"
+        />,
+      ),
+    )
+
+    const trigger = await waitFor(() => {
+      const target = rendered.container.querySelector(
+        '[data-avocato-secret-step="6"]',
+      )
+      expect(target).not.toBeNull()
+      return target as HTMLElement
+    })
+    expect(trigger).toHaveAttribute('data-avotation-target', 'side')
+    expect(trigger).toHaveAttribute('data-avocato-secret-step', '6')
+    expect(
+      rendered.container.querySelectorAll('[data-avocato-secret-step]'),
+    ).toHaveLength(1)
+  })
+
+  test('keeps out-of-order panels inert and marks completed discoveries', async () => {
+    const rendered = render(
+      provider(
+        <ReadyDysonSlice
+          snapshot={snapshot({ secretStep: 0 })}
+          locale="en"
+          dispatchPlayer={acceptedDispatch}
+          route="bots"
+        />,
+      ),
+    )
+    expect(
+      rendered.container.querySelector('[data-avocato-secret-step]'),
+    ).not.toBeInTheDocument()
+    expect(
+      rendered.container.querySelector('[data-avotation-found-marker]'),
+    ).not.toBeInTheDocument()
+
+    rendered.rerender(
+      provider(
+        <ReadyDysonSlice
+          snapshot={snapshot({ secretStep: 6, secretCompleted: true })}
+          locale="en"
+          dispatchPlayer={acceptedDispatch}
+          route="bots"
+        />,
+      ),
+    )
+    expect(
+      rendered.container.querySelector('[data-avocato-secret-step]'),
+    ).not.toBeInTheDocument()
+    await waitFor(() => {
+      expect(
+        rendered.container.querySelectorAll('[data-avotation-found-marker]'),
+      ).toHaveLength(2)
+    })
+  })
+
+  test.each([
+    ['offline-time', 'Offline Time', '.offline-time-surface'],
+    ['statistics', 'Statistics', '.statistics-surface'],
+    ['story', 'Story', '.story-surface'],
+    ['wiki', 'Wiki', '.wiki-surface'],
+  ] as const)(
+    'opens the globally available %s destination',
+    async (route, heading, selector) => {
+      const rendered = render(
+        provider(
+          <ReadyDysonSlice
+            snapshot={snapshot()}
+            locale="en"
+            dispatchPlayer={acceptedDispatch}
+            route={route}
+          />,
+        ),
+      )
+
+      await waitFor(() => {
+        expect(rendered.container.querySelector(selector)).toBeInTheDocument()
+      })
+      expect(
+        screen.getAllByRole('heading', { level: 1, name: heading }),
+      ).toHaveLength(1)
+      expect(
+        screen.queryByRole('heading', { level: 2, name: heading }),
+      ).not.toBeInTheDocument()
+      expect(
+        screen.getAllByRole('region', { name: heading }),
+      ).toHaveLength(1)
+      expect(rendered.container.querySelector('.dyson-shell')).toHaveAttribute(
+        'data-route-theme',
+        route,
+      )
+    },
+  )
+
+  test('uses dedicated full-size navigation artwork for new routes', () => {
+    const rendered = render(
+      provider(
+        <ReadyDysonSlice
+          snapshot={snapshot({ infinityPoints: 42n })}
+          locale="en"
+          dispatchPlayer={acceptedDispatch}
+          development={{
+            status: () => ({ enabled: true, entitled: true, quantumShards: 0n, strangeMatter: 0n }),
+            setDysonBots: vi.fn(),
+            unlockReality: vi.fn(),
+            apply: vi.fn(),
+            simulateOfflineTime: vi.fn(),
+          }}
+        />,
+      ),
+    )
+    const drawer = rendered.container.querySelector('[data-placement="drawer"]')
+    expect(drawer).not.toBeNull()
+    const expectedIcons = [
+      ['quantum', navigationAssets.quantum],
+      ['statistics', navigationAssets.statistics],
+      ['debug', navigationAssets.debug],
+    ] as const
+    for (const [route, source] of expectedIcons) {
+      expect(
+        drawer?.querySelector(
+          `[data-navigation-id="${route}"] img`,
+        ),
+      ).toHaveAttribute('src', source)
+    }
+  })
+
   test('persists the visualization toggle and reclaims its playfield row', async () => {
     const user = userEvent.setup()
     const rendered = render(
@@ -875,6 +1206,17 @@ interface SnapshotOptions {
   readonly realityRouteVisible?: boolean
   readonly realityRouteUnlocked?: boolean
   readonly realitySecrets?: bigint
+  readonly infinityPoints?: bigint
+  readonly quantumPoints?: bigint
+  readonly avocatoUnlocked?: boolean
+  readonly avocatoEntryVisible?: boolean
+  readonly navigationVisibility?: {
+    readonly story: boolean
+    readonly wiki: boolean
+    readonly statistics: boolean
+  }
+  readonly secretStep?: number
+  readonly secretCompleted?: boolean
   readonly botsPresetAutomation?: 0 | 1 | 2 | 3 | 4 | 5
   readonly researchPresetAutomation?: 0 | 1 | 2 | 3 | 4 | 5
   readonly facilities?: Partial<
@@ -972,11 +1314,20 @@ function snapshot(options: SnapshotOptions = {}): ReadySnapshot {
           fragments: 0n,
         },
         infinity: {
-          points: 0n,
+          points: options.infinityPoints ?? 0n,
           spentPoints: 0n,
           availablePoints: 0n,
           secretsOfTheUniverse: 0n,
           permanentSkillPoints: 0n,
+        },
+        quantum: {
+          pointsEarned: options.quantumPoints ?? 0n,
+          pointsSpent: 0n,
+          availablePoints: 0n,
+          permanentSecrets: 0n,
+          influenceSpeedBonus: 0n,
+          cashBonusLevels: 0n,
+          scienceBonusLevels: 0n,
         },
         reality: {
           universeDesignationCount: 3n,
@@ -984,11 +1335,33 @@ function snapshot(options: SnapshotOptions = {}): ReadySnapshot {
           workerGenerationProgress: 0.25,
           influence: 42n,
         },
+        avocado: {
+          infinityPoints: 0,
+          influence: 0,
+          strangeMatter: 0,
+          overflowMultiplier: 0,
+        },
         dream: {
           strangeMatter: 4096n,
         },
+        time: {
+          storedTimeAvailableSeconds: 600,
+          storedTimeCapacitySeconds: 3600,
+          doubleTimeBankSeconds: 0,
+        },
       },
       progression: {
+        meta: {
+          createdAtLegacyText: null,
+          tutorialComplete: false,
+          firstInfinityComplete: false,
+          navigationVisibility:
+            options.navigationVisibility ?? {
+              story: false,
+              wiki: false,
+              statistics: true,
+            },
+        },
         dyson: {
           facilities,
           totalPanelsDecayed: 0,
@@ -1024,10 +1397,19 @@ function snapshot(options: SnapshotOptions = {}): ReadySnapshot {
           },
         },
         quantum: {
+          divisionsPurchased: 0n,
           unlocks: {
             botMultitasking: false,
             breakTheLoop: false,
+            quantumEntanglement: false,
           },
+        },
+        avocado: {
+          unlocked: options.avocatoUnlocked ?? false,
+        },
+        secretProgress: {
+          completed: options.secretCompleted ?? false,
+          step: options.secretStep ?? 0,
         },
         infinity: {
           breakTarget: 1n,
@@ -1079,6 +1461,7 @@ function snapshot(options: SnapshotOptions = {}): ReadySnapshot {
             rate: 0,
           },
         },
+        statistics: emptyStatistics(),
       },
       derived: {
         dyson: {
@@ -1193,6 +1576,24 @@ function snapshot(options: SnapshotOptions = {}): ReadySnapshot {
             },
           },
         },
+        story: {
+          visibleChapterIds:
+            options.avocatoEntryVisible || options.avocatoUnlocked
+              ? ['chapter-1', 'chapter-3']
+              : ['chapter-1'],
+          visiblePassageIds: ['chapter-1-intro'],
+          avocatoEntryVisible:
+            options.avocatoEntryVisible ??
+            options.avocatoUnlocked ??
+            false,
+        },
+        avocado: {
+          infinityPoints: 1,
+          influence: 1,
+          strangeMatter: 1,
+          overflow: 1,
+          total: 1,
+        },
       },
       visibility: {
         dyson: {
@@ -1223,6 +1624,7 @@ function snapshot(options: SnapshotOptions = {}): ReadySnapshot {
         },
       },
       runtime: {
+        storedTimeCheater: false,
         tinker: {
           status: 'ready',
           value: {
@@ -1317,6 +1719,24 @@ function snapshot(options: SnapshotOptions = {}): ReadySnapshot {
             routeAvailable: true,
           },
           'time.set-double-time-rate': {
+            routeAvailable: true,
+          },
+          'quantum.purchase-upgrade': {
+            routeAvailable: true,
+          },
+          'quantum.request-leap': {
+            routeAvailable: true,
+          },
+          'avocado.feed': {
+            routeAvailable: true,
+          },
+          'avocado.complete-meditation-step': {
+            routeAvailable: true,
+          },
+          'time.upgrade-stored-capacity': {
+            routeAvailable: true,
+          },
+          'time.request-stored-time-spend': {
             routeAvailable: true,
           },
         },
@@ -1415,6 +1835,51 @@ function snapshot(options: SnapshotOptions = {}): ReadySnapshot {
           education: [],
           spaceAge: [],
         },
+        quantum: {
+          upgrades: [
+            {
+              upgradeId: 'Secrets',
+              eligible: true,
+              cost: 1n,
+              code: 'purchased',
+              definitionGap: null,
+            },
+          ],
+          leap: {
+            eligible: false,
+            code: 'threshold-not-met',
+            branch: null,
+            artifactSkillPoints: null,
+            definitionGap: null,
+          },
+        },
+        avocado: {
+          feeds: [],
+          meditation: {
+            eligible: false,
+            requiredStepIndex: 0,
+            code: 'not-ready',
+            skillPointReward: 1n,
+          },
+        },
+        time: {
+          doubleTimeRate: {
+            minimum: 0,
+            maximum: 10,
+            current: 0,
+          },
+          storedCapacity: {
+            eligible: true,
+            code: 'upgradable',
+            currentCapacitySeconds: 3600,
+            nextCapacitySeconds: 7200,
+            consumesStoredSeconds: 0,
+          },
+          storedSpend: {
+            maximumSeconds: 600,
+            commitFirstRequired: true,
+          },
+        },
       },
     },
   } as unknown as ReadySnapshot
@@ -1438,6 +1903,45 @@ function renderSlice(
     ),
   )
   return { ...rendered, intlErrors }
+}
+
+function emptyStatistics() {
+  const totals = {
+    ordinaryInfinityCount: 0n,
+    breakInfinityCount: 0n,
+    ordinaryInfinityPoints: 0n,
+    breakInfinityPoints: 0n,
+    botCapInfinityPoints: 0n,
+    botCapOverflowRewards: 0n,
+    meteorDreamResets: 0n,
+    aiDreamResets: 0n,
+    globalWarmingDreamResets: 0n,
+    blackHoleDreamResets: 0n,
+    strangeMatter: 0n,
+    realityWorkers: 0n,
+    automaticInfluence: 0n,
+    manualInfluence: 0n,
+    realityCapacityStallSeconds: 0,
+    simulatedSeconds: 0,
+  }
+  return {
+    trackedSinceUpdate: true,
+    trackingStartedMarker: '',
+    trackedSimulatedSeconds: 0,
+    lifetime: totals,
+    currentQuantumRun: totals,
+    recentProcessedSegment: totals,
+    lastCompletedCycle: {
+      valid: false,
+      breakInfinity: false,
+      durationSeconds: 0,
+      reward: 0n,
+      dreamCause: null,
+    },
+    minuteWindows: [],
+    halfHourWindows: [],
+    dailyWindows: [],
+  }
 }
 
 function provider(

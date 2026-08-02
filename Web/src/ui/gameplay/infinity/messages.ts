@@ -201,11 +201,6 @@ export const infinityMessages = defineMessages({
     defaultMessage: 'Requires {name}',
     description: 'Unmet Infinity retained-facility prerequisite.',
   },
-  cost: {
-    id: 'infinity.shop.cost',
-    defaultMessage: '{value} IP',
-    description: 'Infinity Point cost on an upgrade button.',
-  },
   purchasePending: {
     id: 'infinity.shop.purchase-pending',
     defaultMessage: 'Purchasing {name}.',

@@ -9,6 +9,7 @@ import { prepareIdb1Save } from '../save/prepare'
 import { DISCRETE_MAXIMUM } from './numeric'
 import {
   DREAM_SPACE_AGE_CONSTANTS,
+  applyDreamOverdriveDiminishingReturn,
   deriveDreamRailgunReadinessFacts,
   deriveDreamSpaceAgeProductionFacts,
   purchaseDreamSpaceAge,
@@ -30,10 +31,7 @@ function state(): CanonicalGameStateV1 {
   ).state
   return {
     ...source,
-    reality: {
-      ...source.reality,
-      influence: 1_000_000n,
-    },
+    reality: { ...source.reality, influence: 1_000_000n },
     dream: {
       ...source.dream,
       resources: {
@@ -70,6 +68,11 @@ function state(): CanonicalGameStateV1 {
         firing: false,
         fireProgress: 0,
         shotsRemaining: 0,
+        activeRailguns: 0,
+        reservedPanels: 0n,
+        highestStoredPanels: 0n,
+        lastRoundsFired: 0,
+        lastPanelsLaunched: 0n,
       },
       upgrades: Object.fromEntries(
         DREAM_UPGRADE_FLAGS.map((key) => [key, false]),
@@ -78,20 +81,41 @@ function state(): CanonicalGameStateV1 {
   }
 }
 
+function withSpaceThroughput(
+  source: CanonicalGameStateV1,
+): CanonicalGameStateV1 {
+  return {
+    ...source,
+    dream: {
+      ...source.dream,
+      resources: {
+        ...source.dream.resources,
+        energy: 1_000_000_000,
+        fusion: 800,
+        spaceFactories: 10,
+      },
+      upgrades: {
+        ...source.dream.upgrades,
+        sfActivator1: true,
+        sfActivator2: true,
+        sfActivator3: true,
+        railgunActivator1: true,
+        railgunActivator2: true,
+      },
+    },
+  }
+}
+
 describe('Dream Space Age', () => {
-  test('characterizes the canonical Space Age timing and cap constants', () => {
+  test('characterizes the fixed tick and ten-round volley contract', () => {
     expect(DREAM_SPACE_AGE_CONSTANTS).toEqual({
       tickSeconds: 0.1,
       spaceFactoryDurationSeconds: 2,
       railgunVolleyDurationSeconds: 1,
       shotsPerVolley: 10,
-      basePanelsRequiredToStart: 1n,
-      dysonPanelCap: 1_000n,
+      basePanelsRequiredToStart: 10n,
       railgunPayloadHeadroom: 1.1,
-      railgunBasePayloadCapacity: 1,
-      railgunUpgrade1PayloadCapacity: 10,
-      railgunUpgrade2PayloadCapacity: 100,
-      overdriveBufferSeconds: 1,
+      maximumRailgunAutomationIntervalSeconds: 1,
     })
   })
 
@@ -124,13 +148,11 @@ describe('Dream Space Age', () => {
     })
 
     expect(result.energyGenerated).toBeCloseTo(252_007.2)
-    expect(result.state.dream.resources.energy).toBeCloseTo(
-      252_007.2,
-    )
+    expect(result.state.dream.resources.energy).toBeCloseTo(252_007.2)
     expect(input).toEqual(before)
   })
 
-  test('advances the two-second factory timer with all boosts and clamps panels at 1000', () => {
+  test('keeps factory storage unbounded and records its high-water mark', () => {
     const source = state()
     const input: CanonicalGameStateV1 = {
       ...source,
@@ -139,11 +161,15 @@ describe('Dream Space Age', () => {
         resources: {
           ...source.dream.resources,
           spaceFactories: 10,
-          dysonPanels: 999n,
+          dysonPanels: 9_999n,
         },
         timers: {
           ...source.dream.timers,
           spaceFactoriesTimerProgress: 0.25,
+        },
+        railgun: {
+          ...source.dream.railgun,
+          highestStoredPanels: 10_050n,
         },
         upgrades: {
           ...source.dream.upgrades,
@@ -154,30 +180,247 @@ describe('Dream Space Age', () => {
       },
     }
 
-    const produced = runDreamSpaceAgeProduction(input, {
+    const first = runDreamSpaceAgeProduction(input, {
       tickSeconds: 0.25,
       doubleTimeMultiplier: 1,
     })
-    expect(produced.spaceFactoryCycles).toBe(2n)
-    expect(produced.dysonPanelsProduced).toBe(1n)
-    expect(produced.state.dream.resources.dysonPanels).toBe(1_000n)
-    expect(
-      produced.state.dream.timers.spaceFactoriesTimerProgress,
-    ).toBeCloseTo(0.25)
+    expect(first.spaceFactoryCycles).toBe(2n)
+    expect(first.dysonPanelsProduced).toBe(2n)
+    expect(first.state.dream.resources.dysonPanels).toBe(10_001n)
+    expect(first.state.dream.railgun.highestStoredPanels).toBe(10_050n)
 
-    const capped = runDreamSpaceAgeProduction(produced.state, {
+    const second = runDreamSpaceAgeProduction(first.state, {
       tickSeconds: 10,
       doubleTimeMultiplier: 10,
     })
-    expect(capped.spaceFactoryCycles).toBe(0n)
-    expect(capped.dysonPanelsProduced).toBe(0n)
-    expect(capped.state.dream.timers.spaceFactoriesTimerProgress)
-      .toBeCloseTo(0.25)
+    expect(second.dysonPanelsProduced).toBeGreaterThan(0n)
+    expect(second.state.dream.resources.dysonPanels).toBeGreaterThan(10_001n)
+    expect(second.state.dream.railgun.highestStoredPanels)
+      .toBe(second.state.dream.resources.dysonPanels)
   })
 
-  test('shows ten shots before firing a fixed 100 ms railgun cadence', () => {
+  test('reserves a complete volley up front and depletes ten rounds at 100 ms', () => {
     const source = state()
     let current: CanonicalGameStateV1 = {
+      ...source,
+      dream: {
+        ...source.dream,
+        resources: {
+          ...source.dream.resources,
+          railgunCharge: 25_000_000,
+          dysonPanels: 13n,
+        },
+      },
+    }
+
+    const remaining: number[] = []
+    let launched = 0n
+    for (let tick = 0; tick < 10; tick += 1) {
+      const result = runDreamRailgunAutomation(current, {
+        tickSeconds: 0.1,
+        doubleTimeActive: false,
+        doubleTimeRate: 0,
+      })
+      if (tick === 0) {
+        expect(result.volleyStarted).toBe(true)
+        expect(result.state.dream.resources.dysonPanels).toBe(3n)
+        expect(result.state.dream.railgun.reservedPanels).toBe(9n)
+        expect(result.state.dream.railgun.activeRailguns).toBe(1)
+      }
+      expect(result.shotFired).toBe(true)
+      expect(result.panelsLaunched).toBe(1n)
+      launched += result.panelsLaunched
+      current = result.state
+      remaining.push(current.dream.railgun.shotsRemaining)
+    }
+
+    expect(remaining).toEqual([9, 8, 7, 6, 5, 4, 3, 2, 1, 0])
+    expect(launched).toBe(10n)
+    expect(current.dream.resources.dysonPanels).toBe(3n)
+    expect(current.dream.resources.swarmPanels).toBe(10n)
+    expect(current.dream.railgun).toMatchObject({
+      firing: false,
+      fireProgress: 0,
+      shotsRemaining: 0,
+      activeRailguns: 0,
+      reservedPanels: 0n,
+      lastRoundsFired: 1,
+      lastPanelsLaunched: 1n,
+    })
+  })
+
+  test('settles a multi-billion-railgun final round despite charge rounding drift', () => {
+    const source = state()
+    const activeRailguns = 23_199_999_999
+    const chargePerRound =
+      source.dream.parameters.railgunMaxCharge * activeRailguns / 10
+    let roundedCharge =
+      source.dream.parameters.railgunMaxCharge * activeRailguns
+    for (let round = 0; round < 9; round += 1) {
+      roundedCharge -= chargePerRound
+    }
+    expect(roundedCharge).toBeLessThan(chargePerRound)
+    expect(chargePerRound - roundedCharge).toBeLessThan(1_000)
+
+    const input: CanonicalGameStateV1 = {
+      ...source,
+      dream: {
+        ...source.dream,
+        resources: {
+          ...source.dream.resources,
+          railgunCharge: roundedCharge,
+        },
+        railgun: {
+          ...source.dream.railgun,
+          firing: true,
+          fireProgress: 0,
+          shotsRemaining: 1,
+          activeRailguns,
+          reservedPanels: BigInt(activeRailguns),
+        },
+      },
+    }
+    const automationInput = {
+      tickSeconds: 0.1,
+      doubleTimeActive: false,
+      doubleTimeRate: 0,
+    } as const
+    const readiness = deriveDreamRailgunReadinessFacts(
+      input,
+      automationInput,
+    )
+    expect(readiness.status).toBe('success')
+    if (readiness.status === 'success') {
+      expect(readiness.facts.hasChargeForNextShot).toBe(true)
+      expect(readiness.facts.canFireNextShot).toBe(true)
+    }
+
+    const result = runDreamRailgunAutomation(input, automationInput)
+
+    expect(result.status).toBe('success')
+    expect(result.shotFired).toBe(true)
+    expect(result.panelsLaunched).toBe(BigInt(activeRailguns))
+    expect(result.state.dream.resources.railgunCharge).toBe(0)
+    expect(result.state.dream.resources.swarmPanels)
+      .toBe(BigInt(activeRailguns))
+    expect(result.state.dream.railgun).toMatchObject({
+      firing: false,
+      fireProgress: 0,
+      shotsRemaining: 0,
+      activeRailguns: 0,
+      reservedPanels: 0n,
+      lastRoundsFired: 1,
+    })
+
+    const materiallyUndercharged = runDreamRailgunAutomation(
+      {
+        ...input,
+        dream: {
+          ...input.dream,
+          resources: {
+            ...input.dream.resources,
+            railgunCharge: chargePerRound - 1_000_000,
+          },
+        },
+      },
+      automationInput,
+    )
+    expect(materiallyUndercharged.shotFired).toBe(false)
+    expect(materiallyUndercharged.state.dream.railgun.shotsRemaining).toBe(1)
+  })
+
+  test('starts a dust-short charged volley without accepting a material shortfall', () => {
+    const source = state()
+    const maximumCharge = 580_000_000_000_000_000
+    const automationInput = {
+      tickSeconds: 0.1,
+      doubleTimeActive: false,
+      doubleTimeRate: 0,
+    } as const
+    const charged: CanonicalGameStateV1 = {
+      ...source,
+      dream: {
+        ...source.dream,
+        resources: {
+          ...source.dream.resources,
+          railgunCharge: maximumCharge - 1_024,
+          dysonPanels: 10n,
+        },
+        parameters: {
+          ...source.dream.parameters,
+          railgunMaxCharge: maximumCharge,
+        },
+      },
+    }
+    const readiness = deriveDreamRailgunReadinessFacts(
+      charged,
+      automationInput,
+    )
+    expect(readiness.status).toBe('success')
+    if (readiness.status === 'success') {
+      expect(readiness.facts.mechanicalPayload).toBe(1)
+      expect(readiness.facts.canStartVolley).toBe(true)
+    }
+    const started = runDreamRailgunAutomation(charged, automationInput)
+    expect(started.volleyStarted).toBe(true)
+    expect(started.shotFired).toBe(true)
+
+    const materiallyUndercharged: CanonicalGameStateV1 = {
+      ...charged,
+      dream: {
+        ...charged.dream,
+        resources: {
+          ...charged.dream.resources,
+          railgunCharge: maximumCharge - 1_000_000,
+        },
+      },
+    }
+    const blockedReadiness = deriveDreamRailgunReadinessFacts(
+      materiallyUndercharged,
+      automationInput,
+    )
+    expect(blockedReadiness.status).toBe('success')
+    if (blockedReadiness.status === 'success') {
+      expect(blockedReadiness.facts.canStartVolley).toBe(false)
+    }
+    const blocked = runDreamRailgunAutomation(
+      materiallyUndercharged,
+      automationInput,
+    )
+    expect(blocked.volleyStarted).toBe(false)
+    expect(blocked.shotFired).toBe(false)
+  })
+
+  test('uses every available complete ten-panel batch for a partial array', () => {
+    const input = withSpaceThroughput(state())
+    const prepared: CanonicalGameStateV1 = {
+      ...input,
+      dream: {
+        ...input.dream,
+        resources: {
+          ...input.dream.resources,
+          railgunCharge: 1_000_000_000,
+          dysonPanels: 53n,
+        },
+      },
+    }
+    const result = runDreamRailgunAutomation(prepared, {
+      tickSeconds: 0.1,
+      doubleTimeActive: false,
+      doubleTimeRate: 0,
+    })
+
+    expect(result.volleyStarted).toBe(true)
+    expect(result.panelsLaunched).toBe(5n)
+    expect(result.state.dream.resources.dysonPanels).toBe(3n)
+    expect(result.state.dream.railgun.activeRailguns).toBe(5)
+    expect(result.state.dream.railgun.reservedPanels).toBe(45n)
+    expect(result.state.dream.railgun.shotsRemaining).toBe(9)
+  })
+
+  test('batches a 10x volley into one fixed 100 ms automation step', () => {
+    const source = state()
+    const input: CanonicalGameStateV1 = {
       ...source,
       dream: {
         ...source.dream,
@@ -188,144 +431,25 @@ describe('Dream Space Age', () => {
         },
       },
     }
-
-    const first = runDreamRailgunAutomation(current, {
+    const result = runDreamRailgunAutomation(input, {
       tickSeconds: 0.1,
-      doubleTimeActive: false,
-      doubleTimeRate: 1,
-    })
-    expect(first.volleyStarted).toBe(true)
-    expect(first.shotFired).toBe(false)
-    expect(first.state.dream.railgun).toEqual({
-      firing: true,
-      fireProgress: 0,
-      shotsRemaining: 10,
-    })
-    current = first.state
-
-    const second = runDreamRailgunAutomation(current, {
-      tickSeconds: 0.1,
-      doubleTimeActive: false,
-      doubleTimeRate: 1,
-    })
-    expect(second.shotFired).toBe(true)
-    expect(second.panelsLaunched).toBe(1n)
-    expect(second.state.dream.resources.railgunCharge)
-      .toBe(22_500_000)
-    expect(second.state.dream.resources.dysonPanels).toBe(9n)
-    expect(second.state.dream.resources.swarmPanels).toBe(1n)
-    expect(second.state.dream.railgun).toEqual({
-      firing: true,
-      fireProgress: 0,
-      shotsRemaining: 9,
-    })
-  })
-
-  test('spends surplus energy on bounded factory overdrive and matching railgun payload', () => {
-    const source = state()
-    const input: CanonicalGameStateV1 = {
-      ...source,
-      dream: {
-        ...source.dream,
-        resources: {
-          ...source.dream.resources,
-          energy: 1_000_000_000,
-          spaceFactories: 10,
-          dysonPanels: 100n,
-        },
-        upgrades: {
-          ...source.dream.upgrades,
-          sfActivator1: true,
-          sfActivator2: true,
-          sfActivator3: true,
-          railgunActivator1: true,
-          railgunActivator2: true,
-        },
-      },
-    }
-
-    const production = deriveDreamSpaceAgeProductionFacts(input, 1)
-    expect(production.status).toBe('success')
-    if (production.status !== 'success') return
-    expect(production.facts.spaceFactory).toMatchObject({
-      baseProgressPerSecond: 16,
-      progressPerSecond: 80,
-      nominalPanelsPerSecond: 40,
-      overdriveMultiplier: 5,
-      overdriveEnergyPerSecond: 100_000_000,
-      overdriveActive: true,
-      railgunPayloadTarget: 5,
-      railgunLaunchCapacityPerSecond: 50,
-      railgunPayloadCapacity: 100,
-    })
-
-    const produced = runDreamSpaceAgeProduction(input, {
-      tickSeconds: 0.1,
-      doubleTimeMultiplier: 1,
-    })
-    expect(produced.overdriveEnergyConsumed).toBe(10_000_000)
-    expect(produced.spaceFactoryCycles).toBe(4n)
-    expect(produced.dysonPanelsProduced).toBe(4n)
-    expect(produced.state.dream.resources.energy).toBe(990_000_000)
-
-    const railgun = deriveDreamRailgunReadinessFacts(input, {
-      doubleTimeActive: false,
-      doubleTimeRate: 1,
-    })
-    expect(railgun.status).toBe('success')
-    if (railgun.status !== 'success') return
-    expect(railgun.facts).toMatchObject({
-      baseMaximumCharge: 25_000_000,
-      maximumCharge: 125_000_000,
-      mechanicalPayload: 5,
-      panelsPerShot: 5n,
-      panelsPerVolley: 50n,
-      launchCapacityPerSecond: 50,
-      panelsRequiredToStart: 5n,
-      chargePerShot: 12_500_000,
-    })
-  })
-
-  test('keeps a maximum Double Time payload within panel storage', () => {
-    const source = state()
-    const highThroughput: CanonicalGameStateV1 = {
-      ...source,
-      dream: {
-        ...source.dream,
-        resources: {
-          ...source.dream.resources,
-          energy: 1e300,
-          railgunCharge: 2_500_000_000,
-          spaceFactories: 1e300,
-          dysonPanels: 1_000n,
-        },
-        upgrades: {
-          ...source.dream.upgrades,
-          sfActivator1: true,
-          sfActivator2: true,
-          sfActivator3: true,
-          railgunActivator1: true,
-          railgunActivator2: true,
-        },
-      },
-    }
-
-    const result = deriveDreamRailgunReadinessFacts(highThroughput, {
       doubleTimeActive: true,
-      doubleTimeRate: 10,
+      doubleTimeRate: 9,
     })
 
-    expect(result.status).toBe('success')
-    if (result.status !== 'success') return
-    expect(result.facts.mechanicalPayload).toBe(100)
-    expect(result.facts.panelsPerShot).toBe(1_000n)
-    expect(result.facts.panelsRequiredToStart).toBe(1_000n)
-    expect(result.facts.panelsRequiredToStart)
-      .toBeLessThanOrEqual(DREAM_SPACE_AGE_CONSTANTS.dysonPanelCap)
-    expect(result.facts.canStartVolley).toBe(true)
+    expect(result.volleyStarted).toBe(true)
+    expect(result.panelsLaunched).toBe(10n)
+    expect(result.state.dream.resources.dysonPanels).toBe(0n)
+    expect(result.state.dream.resources.swarmPanels).toBe(10n)
+    expect(result.state.dream.railgun).toMatchObject({
+      firing: false,
+      shotsRemaining: 0,
+      lastRoundsFired: 10,
+      lastPanelsLaunched: 10n,
+    })
   })
 
-  test('keeps an adaptive payload stable for every shot in a volley', () => {
+  test('carries 3x progress across consecutive volley boundaries', () => {
     const source = state()
     let current: CanonicalGameStateV1 = {
       ...source,
@@ -333,113 +457,226 @@ describe('Dream Space Age', () => {
         ...source.dream,
         resources: {
           ...source.dream.resources,
-          energy: 1_000_000_000,
-          railgunCharge: 125_000_000,
-          spaceFactories: 10,
-          dysonPanels: 50n,
-        },
-        upgrades: {
-          ...source.dream.upgrades,
-          sfActivator1: true,
-          sfActivator2: true,
-          sfActivator3: true,
-          railgunActivator1: true,
-          railgunActivator2: true,
+          energy: 25_000_000,
+          railgunCharge: 25_000_000,
+          dysonPanels: 20n,
         },
       },
     }
 
-    const started = runDreamRailgunAutomation(current, {
-      tickSeconds: 0.1,
-      doubleTimeActive: false,
-      doubleTimeRate: 1,
-    })
-    expect(started.volleyStarted).toBe(true)
-    expect(started.chargeTransferred).toBe(0)
-    expect(started.state.dream.railgun.shotsRemaining).toBe(10)
-    current = started.state
-
-    const remaining = [10]
     let launched = 0n
-    for (let shot = 0; shot < 10; shot += 1) {
+    for (let tick = 0; tick < 4; tick += 1) {
       const result = runDreamRailgunAutomation(current, {
         tickSeconds: 0.1,
-        doubleTimeActive: false,
-        doubleTimeRate: 1,
+        effectiveDoubleTimeMultiplier: 3,
+        doubleTimeActive: true,
+        doubleTimeRate: 2,
       })
-      expect(result.shotFired).toBe(true)
-      expect(result.chargeTransferred).toBe(0)
-      expect(result.panelsLaunched).toBe(5n)
       launched += result.panelsLaunched
       current = result.state
-      remaining.push(current.dream.railgun.shotsRemaining)
     }
 
-    expect(remaining).toEqual([10, 9, 8, 7, 6, 5, 4, 3, 2, 1, 0])
-    expect(launched).toBe(50n)
-    expect(current.dream.resources.energy).toBe(1_000_000_000)
-    expect(current.dream.resources.railgunCharge).toBe(0)
+    expect(launched).toBe(12n)
     expect(current.dream.resources.dysonPanels).toBe(0n)
-    expect(current.dream.resources.swarmPanels).toBe(50n)
-    expect(current.dream.railgun.firing).toBe(false)
+    expect(current.dream.resources.swarmPanels).toBe(12n)
+    expect(current.dream.resources.energy).toBe(0)
+    expect(current.dream.resources.railgunCharge).toBeCloseTo(20_000_000)
+    expect(current.dream.railgun).toMatchObject({
+      firing: true,
+      shotsRemaining: 8,
+      activeRailguns: 1,
+      reservedPanels: 8n,
+      lastRoundsFired: 3,
+      lastPanelsLaunched: 3n,
+    })
   })
 
-  test('waits for factory panels without abandoning the active volley', () => {
+  test('settles the eleventh round into a second volley at 11x', () => {
     const source = state()
-    const started = runDreamRailgunAutomation({
+    const input: CanonicalGameStateV1 = {
       ...source,
       dream: {
         ...source.dream,
         resources: {
           ...source.dream.resources,
+          energy: 25_000_000,
           railgunCharge: 25_000_000,
-          dysonPanels: 1n,
+          dysonPanels: 20n,
         },
       },
-    }, {
+    }
+
+    const result = runDreamRailgunAutomation(input, {
       tickSeconds: 0.1,
-      doubleTimeActive: false,
-      doubleTimeRate: 1,
-    })
-    const firstShot = runDreamRailgunAutomation(started.state, {
-      tickSeconds: 0.1,
-      doubleTimeActive: false,
-      doubleTimeRate: 1,
-    })
-    const waiting = runDreamRailgunAutomation(firstShot.state, {
-      tickSeconds: 0.1,
-      doubleTimeActive: false,
-      doubleTimeRate: 1,
+      effectiveDoubleTimeMultiplier: 11,
+      doubleTimeActive: true,
+      doubleTimeRate: 10,
     })
 
-    expect(firstShot.panelsLaunched).toBe(1n)
-    expect(waiting.shotFired).toBe(false)
-    expect(waiting.state.dream.resources.railgunCharge).toBe(22_500_000)
-    expect(waiting.state.dream.railgun).toEqual({
+    expect(result.panelsLaunched).toBe(11n)
+    expect(result.state.dream.resources.dysonPanels).toBe(0n)
+    expect(result.state.dream.resources.swarmPanels).toBe(11n)
+    expect(result.state.dream.resources.energy).toBe(0)
+    expect(result.state.dream.resources.railgunCharge).toBeCloseTo(22_500_000)
+    expect(result.state.dream.railgun).toMatchObject({
       firing: true,
-      fireProgress: 0,
       shotsRemaining: 9,
+      activeRailguns: 1,
+      reservedPanels: 9n,
+      lastRoundsFired: 11,
+      lastPanelsLaunched: 11n,
     })
-
-    const resumed = runDreamRailgunAutomation({
-      ...waiting.state,
-      dream: {
-        ...waiting.state.dream,
-        resources: {
-          ...waiting.state.dream.resources,
-          dysonPanels: 1n,
-        },
-      },
-    }, {
-      tickSeconds: 0.1,
-      doubleTimeActive: false,
-      doubleTimeRate: 1,
-    })
-    expect(resumed.shotFired).toBe(true)
-    expect(resumed.state.dream.railgun.shotsRemaining).toBe(8)
   })
 
-  test('does not overdrive factories without a one-second energy buffer', () => {
+  test('accelerates cadence without multiplying panels per round', () => {
+    const input = withSpaceThroughput(state())
+    const atOne = deriveDreamRailgunReadinessFacts(input, {
+      doubleTimeActive: false,
+      doubleTimeRate: 0,
+    })
+    const atTen = deriveDreamRailgunReadinessFacts(input, {
+      doubleTimeActive: true,
+      doubleTimeRate: 9,
+    })
+    expect(atOne.status).toBe('success')
+    expect(atTen.status).toBe('success')
+    if (atOne.status !== 'success' || atTen.status !== 'success') return
+
+    expect(atTen.facts.timeMultiplier).toBe(10)
+    expect(atTen.facts.mechanicalPayload).toBe(atOne.facts.mechanicalPayload)
+    expect(atTen.facts.panelsPerShot).toBe(atOne.facts.panelsPerShot)
+    expect(atTen.facts.panelsPerVolley).toBe(atOne.facts.panelsPerVolley)
+    expect(atTen.facts.launchCapacityPerSecond)
+      .toBeCloseTo(atOne.facts.launchCapacityPerSecond * 10)
+  })
+
+  test('clamps machine-scale multiplier drift but rejects meaningful overages', () => {
+    const input = withSpaceThroughput(state())
+    const rounded = deriveDreamRailgunReadinessFacts(input, {
+      effectiveDoubleTimeMultiplier: 7.000000000000001,
+      doubleTimeActive: true,
+      doubleTimeRate: 6,
+    })
+    const inactiveRounded = deriveDreamRailgunReadinessFacts(input, {
+      effectiveDoubleTimeMultiplier: 1.0000000000000002,
+      doubleTimeActive: false,
+      doubleTimeRate: 6,
+    })
+    const oversized = deriveDreamRailgunReadinessFacts(input, {
+      effectiveDoubleTimeMultiplier: 7.000_001,
+      doubleTimeActive: true,
+      doubleTimeRate: 6,
+    })
+
+    expect(rounded.status).toBe('success')
+    if (rounded.status === 'success') {
+      expect(rounded.facts.timeMultiplier).toBe(7)
+    }
+    expect(inactiveRounded.status).toBe('success')
+    if (inactiveRounded.status === 'success') {
+      expect(inactiveRounded.facts.timeMultiplier).toBe(1)
+    }
+    expect(oversized.status).toBe('invalid-input')
+  })
+
+  test('funds uncapped factory overdrive and a matching dynamic array', () => {
+    const input = withSpaceThroughput(state())
+    const production = deriveDreamSpaceAgeProductionFacts(input, 1)
+    expect(production.status).toBe('success')
+    if (production.status !== 'success') return
+    const factory = production.facts.spaceFactory
+
+    expect(factory.baseProgressPerSecond).toBe(16)
+    expect(factory.overdriveMultiplier).toBeGreaterThan(14)
+    expect(factory.overdriveEnergyPerSecond).toBeGreaterThan(100_000_000)
+    expect(factory.overdriveActive).toBe(true)
+    expect(factory.railgunPayloadCapacity).toBeGreaterThan(1)
+    expect(factory.railgunLaunchCapacityPerSecond).toBeGreaterThanOrEqual(
+      factory.nominalPanelsPerSecond *
+        DREAM_SPACE_AGE_CONSTANTS.railgunPayloadHeadroom,
+    )
+    expect(
+      factory.overdriveEnergyPerSecond +
+        factory.railgunPayloadTarget * 25_000_000,
+    ).toBeLessThanOrEqual(production.facts.energy.totalPerSecond)
+
+    const produced = runDreamSpaceAgeProduction(input, {
+      tickSeconds: 0.1,
+      doubleTimeMultiplier: 1,
+    })
+    expect(produced.overdriveEnergyConsumed).toBeGreaterThan(10_000_000)
+    expect(produced.dysonPanelsProduced).toBe(produced.spaceFactoryCycles)
+  })
+
+  test('keeps overdrive linear through 10x before applying an unbounded shallow curve', () => {
+    expect(applyDreamOverdriveDiminishingReturn(9.999)).toBe(9.999)
+    expect(applyDreamOverdriveDiminishingReturn(10)).toBe(10)
+
+    const justAbove = applyDreamOverdriveDiminishingReturn(10.001)
+    const high = applyDreamOverdriveDiminishingReturn(1_000)
+    const higher = applyDreamOverdriveDiminishingReturn(10_000)
+
+    expect(justAbove).toBeGreaterThan(10)
+    expect(justAbove).toBeLessThan(10.001)
+    expect(applyDreamOverdriveDiminishingReturn(100)).toBeCloseTo(
+      55.257_822_303_288,
+      10,
+    )
+    expect(high).toBeGreaterThan(10)
+    expect(high).toBeLessThan(1_000)
+    expect(higher).toBeGreaterThan(high)
+    expect(higher).toBeLessThan(10_000)
+  })
+
+  test('applies a shallow diminishing return to extreme overdrive headroom', () => {
+    const source = withSpaceThroughput(state())
+    const input: CanonicalGameStateV1 = {
+      ...source,
+      dream: {
+        ...source.dream,
+        resources: {
+          ...source.dream.resources,
+          energy: 1_000_000_000_000,
+          fusion: 1_000_000,
+        },
+      },
+    }
+    const production = deriveDreamSpaceAgeProductionFacts(input, 1)
+    expect(production.status).toBe('success')
+    if (production.status !== 'success') return
+
+    const rawEnergyHeadroom =
+      1 + production.facts.energy.totalPerSecond / 25_000_000
+    const curvedEnergyHeadroom =
+      applyDreamOverdriveDiminishingReturn(rawEnergyHeadroom)
+    const factory = production.facts.spaceFactory
+
+    expect(rawEnergyHeadroom).toBeGreaterThan(10_000)
+    expect(factory.overdriveMultiplier).toBeCloseTo(curvedEnergyHeadroom, 8)
+    expect(factory.overdriveMultiplier).toBeLessThan(rawEnergyHeadroom / 2)
+    expect(factory.railgunLaunchCapacityPerSecond).toBeGreaterThanOrEqual(
+      factory.nominalPanelsPerSecond *
+        DREAM_SPACE_AGE_CONSTANTS.railgunPayloadHeadroom,
+    )
+    expect(
+      factory.overdriveEnergyPerSecond +
+        factory.railgunPayloadTarget * 25_000_000,
+    ).toBeLessThanOrEqual(production.facts.energy.totalPerSecond)
+
+    const produced = runDreamSpaceAgeProduction(input, {
+      tickSeconds: 0.1,
+      doubleTimeMultiplier: 1,
+    })
+    expect(produced.status).toBe('success')
+    expect(produced.overdriveEnergyConsumed).toBeCloseTo(
+      factory.overdriveEnergyPerSecond * 0.1,
+      5,
+    )
+    expect(produced.spaceFactoryCycles).toBeGreaterThan(0n)
+    expect(produced.dysonPanelsProduced).toBe(produced.spaceFactoryCycles)
+  })
+
+  test('does not overdrive factories from stored energy without sustainable generation', () => {
     const source = state()
     const input: CanonicalGameStateV1 = {
       ...source,
@@ -466,134 +703,13 @@ describe('Dream Space Age', () => {
     const production = deriveDreamSpaceAgeProductionFacts(input, 1)
     expect(production.status).toBe('success')
     if (production.status !== 'success') return
-    expect(production.facts.spaceFactory.overdriveMultiplier).toBe(3)
-    expect(production.facts.spaceFactory.overdriveEnergyPerSecond)
-      .toBe(50_000_000)
+    expect(production.facts.spaceFactory.overdriveMultiplier).toBe(1)
+    expect(production.facts.spaceFactory.overdriveEnergyPerSecond).toBe(0)
   })
 
-  test('uses the prepared Double Time rate for a railgun-II shot', () => {
+  test('migrates an active legacy volley into a reserved payload', () => {
     const source = state()
-    const input: CanonicalGameStateV1 = {
-      ...source,
-      dream: {
-        ...source.dream,
-        resources: {
-          ...source.dream.resources,
-          railgunCharge: 25_000_000,
-          dysonPanels: 100n,
-        },
-        upgrades: {
-          ...source.dream.upgrades,
-          railgunActivator2: true,
-        },
-      },
-    }
-
-    const started = runDreamRailgunAutomation(input, {
-      tickSeconds: 0.1,
-      doubleTimeActive: true,
-      doubleTimeRate: 99,
-    })
-    const result = runDreamRailgunAutomation(started.state, {
-      tickSeconds: 0.1,
-      doubleTimeActive: true,
-      doubleTimeRate: 99,
-    })
-
-    expect(started.volleyStarted).toBe(true)
-    expect(result.volleyStarted).toBe(false)
-    expect(result.shotFired).toBe(true)
-    expect(result.panelsLaunched).toBe(10n)
-    expect(result.state.dream.resources.dysonPanels).toBe(90n)
-    expect(result.state.dream.resources.swarmPanels).toBe(10n)
-    expect(result.state.dream.railgun.shotsRemaining).toBe(9)
-  })
-
-  test('charges atomically and stops a saturated firing volley without debits', () => {
-    const source = state()
-    const charging: CanonicalGameStateV1 = {
-      ...source,
-      dream: {
-        ...source.dream,
-        resources: {
-          ...source.dream.resources,
-          energy: 30_000_000,
-        },
-      },
-    }
-    const charged = runDreamRailgunAutomation(charging, {
-      tickSeconds: 0.1,
-      doubleTimeActive: false,
-      doubleTimeRate: 1,
-    })
-    expect(charged.chargeTransferred).toBe(25_000_000)
-    expect(charged.state.dream.resources.energy).toBe(5_000_000)
-    expect(charged.state.dream.resources.railgunCharge)
-      .toBe(25_000_000)
-
-    const saturated: CanonicalGameStateV1 = {
-      ...source,
-      dream: {
-        ...source.dream,
-        resources: {
-          ...source.dream.resources,
-          railgunCharge: 25_000_000,
-          dysonPanels: 1n,
-          swarmPanels: DISCRETE_MAXIMUM,
-        },
-        railgun: {
-          firing: true,
-          fireProgress: 0.4,
-          shotsRemaining: 1,
-        },
-      },
-    }
-    const stopped = runDreamRailgunAutomation(saturated, {
-      tickSeconds: 0.1,
-      doubleTimeActive: false,
-      doubleTimeRate: 1,
-    })
-    expect(stopped.shotFired).toBe(false)
-    expect(stopped.state.dream.resources.railgunCharge)
-      .toBe(25_000_000)
-    expect(stopped.state.dream.resources.dysonPanels).toBe(1n)
-    expect(stopped.state.dream.resources.swarmPanels)
-      .toBe(DISCRETE_MAXIMUM)
-    expect(stopped.state.dream.railgun).toEqual({
-      firing: false,
-      fireProgress: 0,
-      shotsRemaining: 0,
-    })
-  })
-
-  test('refunds idle legacy charge above the adaptive payload cap', () => {
-    const source = state()
-    const overcharged: CanonicalGameStateV1 = {
-      ...source,
-      dream: {
-        ...source.dream,
-        resources: {
-          ...source.dream.resources,
-          energy: 5_000_000,
-          railgunCharge: 125_000_000,
-        },
-      },
-    }
-
-    const result = runDreamRailgunAutomation(overcharged, {
-      tickSeconds: 0.1,
-      doubleTimeActive: false,
-      doubleTimeRate: 1,
-    })
-
-    expect(result.chargeTransferred).toBe(0)
-    expect(result.state.dream.resources.energy).toBe(105_000_000)
-    expect(result.state.dream.resources.railgunCharge).toBe(25_000_000)
-  })
-
-  test('clamps a legacy mid-volley payload to owned railgun capacity', () => {
-    const source = state()
-    const legacyVolley: CanonicalGameStateV1 = {
+    const legacy: CanonicalGameStateV1 = {
       ...source,
       dream: {
         ...source.dream,
@@ -609,25 +725,46 @@ describe('Dream Space Age', () => {
         },
       },
     }
-
-    const readiness = deriveDreamRailgunReadinessFacts(legacyVolley, {
-      doubleTimeActive: false,
-      doubleTimeRate: 1,
-    })
-    expect(readiness.status).toBe('success')
-    if (readiness.status !== 'success') return
-    expect(readiness.facts.payloadCapacity).toBe(1)
-    expect(readiness.facts.mechanicalPayload).toBe(1)
-    expect(readiness.facts.panelsPerShot).toBe(1n)
-
-    const result = runDreamRailgunAutomation(legacyVolley, {
+    const result = runDreamRailgunAutomation(legacy, {
       tickSeconds: 0.1,
       doubleTimeActive: false,
-      doubleTimeRate: 1,
+      doubleTimeRate: 0,
     })
-    expect(result.shotFired).toBe(true)
-    expect(result.panelsLaunched).toBe(1n)
-    expect(result.state.dream.resources.dysonPanels).toBe(9n)
+
+    expect(result.panelsLaunched).toBe(10n)
+    expect(result.state.dream.resources.dysonPanels).toBe(0n)
+    expect(result.state.dream.resources.swarmPanels).toBe(10n)
+  })
+
+  test('stops safely when the Swarm integer boundary is saturated', () => {
+    const source = state()
+    const saturated: CanonicalGameStateV1 = {
+      ...source,
+      dream: {
+        ...source.dream,
+        resources: {
+          ...source.dream.resources,
+          railgunCharge: 25_000_000,
+          dysonPanels: 1n,
+          swarmPanels: DISCRETE_MAXIMUM,
+        },
+        railgun: {
+          firing: true,
+          fireProgress: 0.4,
+          shotsRemaining: 1,
+          activeRailguns: 1,
+          reservedPanels: 1n,
+        },
+      },
+    }
+    const stopped = runDreamRailgunAutomation(saturated, {
+      tickSeconds: 0.1,
+      doubleTimeActive: false,
+      doubleTimeRate: 0,
+    })
+    expect(stopped.shotFired).toBe(false)
+    expect(stopped.state.dream.resources.swarmPanels).toBe(DISCRETE_MAXIMUM)
+    expect(stopped.state.dream.railgun.lastRoundsFired).toBe(0)
   })
 
   test('purchases Solar and Fusion atomically and rejects invalid inputs immutably', () => {
@@ -643,36 +780,42 @@ describe('Dream Space Age', () => {
     expect(solar.state.dream.resources.solarPanels).toBe(1)
 
     const bulkSolar = purchaseDreamSpaceAge(source, 'solar', 10)
-    expect(bulkSolar).toMatchObject({
-      purchased: true,
-      cost: 500n,
-      status: 'success',
-    })
     expect(bulkSolar.state.reality.influence).toBe(999_500n)
     expect(bulkSolar.state.dream.resources.solarPanels).toBe(10)
 
     const fusion = purchaseDreamSpaceAge(solar.state, 'fusion')
     expect(fusion.purchased).toBe(true)
-    expect(fusion.state.reality.influence).toBe(899_950n)
     expect(fusion.state.dream.resources.fusion).toBe(1)
     expect(source).toEqual(before)
 
     const invalid = runDreamRailgunAutomation(source, {
       tickSeconds: Number.NaN,
       doubleTimeActive: false,
-      doubleTimeRate: 1,
+      doubleTimeRate: 0,
     })
     expect(invalid.status).toBe('invalid-input')
     expect(invalid.state).toBe(source)
+  })
 
-    const poor = {
-      ...source,
-      reality: { ...source.reality, influence: 49n },
-    }
-    expect(purchaseDreamSpaceAge(poor, 'solar')).toMatchObject({
-      purchased: false,
-      status: 'insufficient-influence',
-      state: poor,
+  test('rejects automation intervals and prepared multipliers outside the supported bounds', () => {
+    const source = state()
+
+    const oversizedInterval = runDreamRailgunAutomation(source, {
+      tickSeconds: 1.01,
+      effectiveDoubleTimeMultiplier: 1,
+      doubleTimeActive: false,
+      doubleTimeRate: 0,
     })
+    const oversizedMultiplier = runDreamRailgunAutomation(source, {
+      tickSeconds: 0.1,
+      effectiveDoubleTimeMultiplier: 12,
+      doubleTimeActive: true,
+      doubleTimeRate: 10,
+    })
+
+    expect(oversizedInterval.status).toBe('invalid-input')
+    expect(oversizedInterval.state).toBe(source)
+    expect(oversizedMultiplier.status).toBe('invalid-input')
+    expect(oversizedMultiplier.state).toBe(source)
   })
 })

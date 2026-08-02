@@ -404,10 +404,6 @@ export class CanonicalEventTimeModel
         tickSeconds: seconds,
         doubleTimeMultiplier:
           doubleTimeTick.effectiveMultiplier,
-        railgunPayloadFloor:
-          doubleTimeTick.active && doubleTimeTick.rate >= 1
-            ? doubleTimeTick.rate
-            : 1,
       })
       if (space.status !== 'success') {
         this.fail(
@@ -510,6 +506,8 @@ export class CanonicalEventTimeModel
         runDreamFoundationalInformationConversions(candidate).state
       const railgun = runDreamRailgunAutomation(candidate, {
         tickSeconds: this.context.automationIntervalSeconds,
+        effectiveDoubleTimeMultiplier:
+          this.pendingInterval?.doubleTimeTick.effectiveMultiplier ?? 1,
         doubleTimeActive:
           this.pendingInterval?.doubleTimeTick.active ??
           candidate.timeline.doubleTime.enabled,

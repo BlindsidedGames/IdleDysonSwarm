@@ -2,7 +2,7 @@
 
 import '@testing-library/jest-dom/vitest'
 import axe from 'axe-core'
-import { cleanup, render, screen, within } from '@testing-library/react'
+import { cleanup, render, screen, waitFor, within } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { afterEach, describe, expect, test, vi } from 'vitest'
 import type {
@@ -92,6 +92,94 @@ describe('SimulationsSurface', () => {
     expect(dispatchPlayer).not.toHaveBeenCalled()
   })
 
+  test('shows a completion pulse and cycles per second for medium-speed production', async () => {
+    renderSurface(accepted, fastFoundationalFacts, progression, 1)
+
+    await userEvent.setup().click(
+      screen.getByRole('button', { name: 'Foundational Era' }),
+    )
+    const progress = screen.getByRole('progressbar', {
+      name: 'Production progress',
+    })
+    expect(progress).toHaveAttribute('value', '1')
+    expect(progress).toHaveAttribute('aria-valuetext', '1.33/s')
+    expect(progress).toHaveTextContent('1.33/s')
+    expect(progress.closest('.simulation-progress'))
+      .toHaveAttribute('data-presentation', 'medium')
+  })
+
+  test('keeps percentage progress at the base simulation rate', async () => {
+    renderSurface(accepted, thresholdInformationFacts)
+
+    await userEvent.setup().click(
+      screen.getByRole('button', { name: 'Information Era' }),
+    )
+    const progress = screen.getByRole('progressbar', {
+      name: 'Production progress',
+    })
+    expect(progress).toHaveAttribute('value', '0.5')
+    expect(progress).toHaveTextContent('50%')
+    expect(progress.closest('.simulation-progress'))
+      .toHaveAttribute('data-presentation', 'slow')
+  })
+
+  test('uses normal, pulsing, and solid presentation at the slider boundaries', async () => {
+    const view = renderSurface(accepted, thresholdInformationFacts)
+
+    await userEvent.setup().click(
+      screen.getByRole('button', { name: 'Information Era' }),
+    )
+    const presentation = () => screen.getByRole('progressbar', {
+      name: 'Production progress',
+    }).closest('.simulation-progress')
+    expect(presentation()).toHaveAttribute('data-presentation', 'slow')
+
+    view.rerender(surfaceElement(
+      accepted,
+      thresholdInformationFacts,
+      progression,
+      1,
+    ))
+    await waitFor(() => expect(presentation())
+      .toHaveAttribute('data-presentation', 'medium'))
+
+    view.rerender(surfaceElement(
+      accepted,
+      thresholdInformationFacts,
+      progression,
+      7,
+    ))
+    await waitFor(() => expect(presentation())
+      .toHaveAttribute('data-presentation', 'medium'))
+
+    view.rerender(surfaceElement(
+      accepted,
+      thresholdInformationFacts,
+      progression,
+      8,
+    ))
+    await waitFor(() => expect(presentation())
+      .toHaveAttribute('data-presentation', 'fast'))
+
+    view.rerender(surfaceElement(
+      accepted,
+      thresholdInformationFacts,
+      progression,
+      10,
+    ))
+    await waitFor(() => expect(presentation())
+      .toHaveAttribute('data-presentation', 'fast'))
+
+    view.rerender(surfaceElement(
+      accepted,
+      thresholdInformationFacts,
+      progression,
+      0,
+    ))
+    await waitFor(() => expect(presentation())
+      .toHaveAttribute('data-presentation', 'slow'))
+  })
+
   test('themes Education panels from their canonical Information era', async () => {
     renderSurface(accepted, informationFacts)
 
@@ -131,7 +219,8 @@ describe('SimulationsSurface', () => {
     expect(within(dialog).getByText('Base duration')).toBeInTheDocument()
     expect(within(dialog).getByText('30s')).toBeInTheDocument()
     expect(within(dialog).getByText('Current progress')).toBeInTheDocument()
-    expect(within(dialog).getByText('20%')).toBeInTheDocument()
+    expect(within(dialog).getByText('Current progress').closest('div'))
+      .toHaveTextContent('Current progress20%')
     expect(within(dialog).getByText('Remaining duration')).toBeInTheDocument()
     expect(within(dialog).getByText('24s')).toBeInTheDocument()
   })
@@ -175,6 +264,34 @@ describe('SimulationsSurface', () => {
     })
   })
 
+  test('formats large Swarm and Black Hole values with game suffixes', async () => {
+    const largeReward = 12_102_296_928_535_773n
+    renderSurface(accepted, {
+      ...spaceAgeFacts,
+      live: {
+        ...spaceAgeFacts.live,
+        resources: {
+          ...spaceAgeFacts.live.resources,
+          swarmPanels: largeReward,
+        },
+      },
+      resets: {
+        ...spaceAgeFacts.resets,
+        blackHole: { eligible: true, requestedReward: largeReward },
+      },
+    } as FrontendSimulationsDerivedFacts)
+
+    await userEvent.setup().click(
+      screen.getByRole('button', { name: 'Space Age' }),
+    )
+
+    expect(screen.getByText('Swarm Stats').closest('article'))
+      .toHaveTextContent('Swarm Stats12.1Qa')
+    expect(screen.getByRole('button', {
+      name: 'Black Hole +12.1Qa Strange Matter',
+    })).toBeInTheDocument()
+  })
+
   test('keeps Space Age counts and output metadata on the title line', async () => {
     renderSurface(accepted, spaceAgeFacts)
 
@@ -192,7 +309,43 @@ describe('SimulationsSurface', () => {
     ).toBeEmptyDOMElement()
   })
 
-  test('keeps Railgun firing progress visible between volleys', async () => {
+  test('uses Unity energy prefixes for Space Age watts and joules', async () => {
+    renderSurface(accepted, energyFormattingFacts)
+
+    await userEvent.setup().click(
+      screen.getByRole('button', { name: 'Space Age' }),
+    )
+
+    const solarCard = screen.getByText('Solar Panels').closest('article')
+    const railgunCard = screen.getByText('Railguns').closest('article')
+    const swarmCard = screen.getByText('Swarm Stats').closest('article')
+    expect(solarCard).not.toBeNull()
+    expect(railgunCard).not.toBeNull()
+    expect(swarmCard).not.toBeNull()
+    expect(solarCard!.querySelector('.ui-facility-card__title'))
+      .toHaveTextContent('Solar Panels274·109 KW')
+    expect(
+      [...solarCard!.querySelectorAll('.simulation-numeric-highlight')]
+        .map((item) => item.textContent),
+    ).toEqual(expect.arrayContaining(['274', '109']))
+    expect(
+      [...solarCard!.querySelectorAll('.simulation-numeric-highlight')]
+        .some((item) => item.textContent?.includes('KW')),
+    ).toBe(false)
+    expect(screen.getByRole('button', { name: 'Space Age' }))
+      .toHaveTextContent('Space Age124 GJ stored')
+    expect(railgunCard!.querySelector('.ui-facility-card__title'))
+      .toHaveTextContent('Railguns')
+    expect(railgunCard!.querySelector('.ui-facility-card__title'))
+      .not.toHaveTextContent('stored')
+    expect(within(railgunCard!).getByRole('progressbar', {
+      name: 'Railgun charge',
+    })).toHaveTextContent('10.0 MJ / 25.0 MJ')
+    expect(swarmCard!.querySelector('.ui-facility-card__title'))
+      .toHaveTextContent('Swarm Stats20.0·51.2 MW')
+  })
+
+  test('shows rounds remaining as text without duplicating Railgun charge', async () => {
     renderSurface(accepted, inactiveRailgunFacts)
 
     await userEvent.setup().click(
@@ -201,17 +354,45 @@ describe('SimulationsSurface', () => {
     const railgunCard = screen.getByText('Railguns').closest('article')
     expect(railgunCard).not.toBeNull()
     const progressbars = within(railgunCard!).getAllByRole('progressbar')
-    expect(progressbars).toHaveLength(2)
+    expect(progressbars).toHaveLength(1)
     expect(progressbars[0]).toHaveAccessibleName('Railgun charge')
-    expect(progressbars[1]).toHaveAccessibleName(
-      'Railgun firing progress',
+    expect(within(railgunCard!).queryByRole('progressbar', {
+      name: 'Volley remaining',
+    })).not.toBeInTheDocument()
+    expect(railgunCard).toHaveTextContent('0.00 rounds remaining')
+    expect(within(railgunCard!).getByText('Railgun array'))
+      .toBeInTheDocument()
+    expect(within(railgunCard!).getByText(/panels \/ round · .*rounds \/ volley/))
+      .toBeInTheDocument()
+  })
+
+  test('updates the text-only rounds remaining during a volley', async () => {
+    renderSurface(accepted, activeRailgunFacts)
+
+    await userEvent.setup().click(
+      screen.getByRole('button', { name: 'Space Age' }),
     )
-    expect(progressbars[1]).toHaveAttribute('value', '0')
-    expect(progressbars[1]).toHaveTextContent('0.00 shots remaining')
-    expect(within(railgunCard!).getByText('Railgun payload'))
-      .toBeInTheDocument()
-    expect(within(railgunCard!).getByText(/\/ shot · .*\/ volley/))
-      .toBeInTheDocument()
+    const railgunCard = screen.getByText('Railguns').closest('article')
+    expect(railgunCard).not.toBeNull()
+    const progressbars = within(railgunCard!).getAllByRole('progressbar')
+    expect(progressbars).toHaveLength(1)
+    expect(progressbars[0]).toHaveAccessibleName('Railgun charge')
+    expect(railgunCard).toHaveTextContent('7.00 rounds remaining')
+  })
+
+  test('keeps the rounds readout text-only at fast simulation rates', async () => {
+    renderSurface(accepted, fastRailgunFacts)
+
+    await userEvent.setup().click(
+      screen.getByRole('button', { name: 'Space Age' }),
+    )
+    const railgunCard = screen.getByText('Railguns').closest('article')
+    expect(railgunCard).not.toBeNull()
+    expect(within(railgunCard!).getAllByRole('progressbar')).toHaveLength(1)
+    expect(within(railgunCard!).queryByRole('progressbar', {
+      name: 'Railgun throughput',
+    })).not.toBeInTheDocument()
+    expect(railgunCard).toHaveTextContent('10.0 rounds remaining')
   })
 
   test('shows active Double Time overdrive without adding another bar', async () => {
@@ -222,11 +403,59 @@ describe('SimulationsSurface', () => {
     )
     const factoryCard = screen.getByText('Space Factories').closest('article')
     expect(factoryCard).not.toBeNull()
+    expect(factoryCard!.querySelector('.ui-facility-card__title'))
+      .not.toHaveTextContent('owned')
     expect(within(factoryCard!).getByText('Factory overdrive'))
       .toBeInTheDocument()
-    expect(within(factoryCard!).getByText('2x · 25.0M W consumed'))
-      .toBeInTheDocument()
+    expect(within(factoryCard!).getByText('Factory overdrive').closest('div'))
+      .toHaveTextContent('Factory overdrive×16.8B · 25.0 MW consumed')
     expect(within(factoryCard!).getAllByRole('progressbar')).toHaveLength(2)
+    expect(within(factoryCard!).getByText('Volley reserve').closest('div'))
+      .toHaveAttribute('data-presentation', 'reservoir')
+    expect(factoryCard).not.toHaveTextContent('Record stored')
+    await userEvent.setup().click(
+      within(factoryCard!).getByRole('button', { name: 'Details' }),
+    )
+    expect(screen.getByRole('dialog', { name: 'Space Factories' }))
+      .toHaveTextContent('Record stored')
+  })
+
+  test('shows a solid bar and cycles per second for fast Space Factories', async () => {
+    renderSurface(accepted, fastSpaceFactoryFacts, progression, 8)
+
+    await userEvent.setup().click(
+      screen.getByRole('button', { name: 'Space Age' }),
+    )
+    const factoryCard = screen.getByText('Space Factories').closest('article')
+    expect(factoryCard).not.toBeNull()
+    const progress = within(factoryCard!).getByRole('progressbar', {
+      name: 'Production progress',
+    })
+    expect(progress).toHaveAttribute('value', '1')
+    expect(progress).toHaveAttribute('aria-valuetext', '10.0/s')
+    expect(progress).toHaveTextContent('10.0/s')
+    expect(progress.closest('.simulation-progress'))
+      .toHaveAttribute('data-presentation', 'fast')
+  })
+
+  test('settles a stopped reservoir flow readout back to zero', async () => {
+    const view = renderSurface(accepted, reservoirFacts(100n))
+
+    await userEvent.setup().click(
+      screen.getByRole('button', { name: 'Space Age' }),
+    )
+    await new Promise((resolve) => window.setTimeout(resolve, 1_600))
+    view.rerender(surfaceElement(accepted, reservoirFacts(110n)))
+
+    const reserve = screen.getByRole('progressbar', { name: 'Volley reserve' })
+    await waitFor(() => expect(reserve.getAttribute('aria-valuetext'))
+      .toMatch(/[+−].*\/s/))
+    await new Promise((resolve) => window.setTimeout(resolve, 600))
+    expect(reserve.getAttribute('aria-valuetext')).toMatch(/[+−].*\/s/)
+    await waitFor(() => expect(reserve)
+      .toHaveAttribute('aria-valuetext', expect.stringMatching(/ · 0(?:\.0+)?\/s$/)), {
+      timeout: 2_000,
+    })
   })
 
   test('has no automated accessibility violations', async () => {
@@ -295,8 +524,23 @@ function renderSurface(
   dispatchPlayer: SimulationsSurfaceProps['dispatchPlayer'] = accepted,
   renderedFacts: FrontendSimulationsDerivedFacts = facts,
   renderedProgression: FrontendCanonicalProgression['dream'] = progression,
+  activeDoubleTimeRate = 0,
 ) {
-  return render(
+  return render(surfaceElement(
+    dispatchPlayer,
+    renderedFacts,
+    renderedProgression,
+    activeDoubleTimeRate,
+  ))
+}
+
+function surfaceElement(
+  dispatchPlayer: SimulationsSurfaceProps['dispatchPlayer'] = accepted,
+  renderedFacts: FrontendSimulationsDerivedFacts = facts,
+  renderedProgression: FrontendCanonicalProgression['dream'] = progression,
+  activeDoubleTimeRate = 0,
+) {
+  return (
     <PresentationIntlProvider
       locale="en"
       messages={enCatalog as unknown as SharedMessageCatalog}
@@ -307,6 +551,7 @@ function renderSurface(
         progression={renderedProgression}
         previews={previews}
         influence={20n}
+        activeDoubleTimeRate={activeDoubleTimeRate}
         spaceAgePurchaseQuantity={1}
         commandAvailability={{
           purchaseFoundational: true,
@@ -316,7 +561,7 @@ function renderSurface(
         }}
         dispatchPlayer={dispatchPlayer}
       />
-    </PresentationIntlProvider>,
+    </PresentationIntlProvider>
   )
 }
 
@@ -506,6 +751,74 @@ if (!facts.live.production.ok) {
 }
 const foundationalProduction = facts.live.production.value
 
+const fastFoundationalFacts = {
+  ...facts,
+  eras: {
+    ...facts.eras,
+    foundational: { visible: true, visiblePanelIds: ['hunters'] },
+  },
+  live: {
+    ...facts.live,
+    production: {
+      ok: true,
+      value: {
+        ...foundationalProduction,
+        foundationalInformation: {
+          ...foundationalProduction.foundationalInformation,
+          production: {
+            ...foundationalProduction.foundationalInformation.production,
+            timers: {
+              hunterTimerProgress: {
+                ...foundationalProduction.foundationalInformation.production
+                  .timers.hunterTimerProgress,
+                progressPerSecond: 4,
+                cyclesPerSecond: 4 / 3,
+              },
+            },
+          },
+        },
+      },
+    },
+  },
+} as unknown as FrontendSimulationsDerivedFacts
+
+const thresholdInformationFacts = {
+  ...facts,
+  currentEra: 'information',
+  eras: {
+    foundational: { visible: true, visiblePanelIds: [] },
+    information: { visible: true, visiblePanelIds: ['factories'] },
+    spaceAge: { visible: false, visiblePanelIds: [] },
+  },
+  live: {
+    ...facts.live,
+    resources: { ...facts.live.resources, factories: 1 },
+    production: {
+      ok: true,
+      value: {
+        ...foundationalProduction,
+        foundationalInformation: {
+          ...foundationalProduction.foundationalInformation,
+          production: {
+            ...foundationalProduction.foundationalInformation.production,
+            timers: {
+              factoriesTimerProgress: {
+                ...foundationalProduction.foundationalInformation.production
+                  .timers.hunterTimerProgress,
+                timerId: 'factoriesTimerProgress',
+                currentProgress: 1.5,
+                durationSeconds: 3,
+                progressPerSecond: 3.75,
+                cyclesPerSecond: 1.25,
+              },
+            },
+          },
+        },
+      },
+    },
+  },
+} as unknown as FrontendSimulationsDerivedFacts
+
 const boostedCommunityFacts = {
   ...facts,
   eras: {
@@ -601,11 +914,131 @@ const inactiveRailgunFacts = {
           railgun: {
             baseMaximumCharge: 25,
             maximumCharge: 25,
+            totalFireTimeSeconds: 1,
+            timeMultiplier: 1,
             shotIntervalSeconds: 2,
+            shotsPerVolley: 10,
             mechanicalPayload: 1,
             payloadCapacity: 100,
             panelsPerShot: 1n,
             panelsPerVolley: 10n,
+          },
+        },
+      },
+    },
+  },
+} as unknown as FrontendSimulationsDerivedFacts
+
+const energyFormattingFacts = {
+  ...inactiveRailgunFacts,
+  eras: {
+    ...inactiveRailgunFacts.eras,
+    spaceAge: {
+      visible: true,
+      visiblePanelIds: ['solar', 'railguns', 'swarm-stats'],
+    },
+  },
+  live: {
+    ...inactiveRailgunFacts.live,
+    resources: {
+      ...inactiveRailgunFacts.live.resources,
+      energy: 124_000_000_000,
+      solarPanels: 274,
+      railgunCharge: 10_000_000,
+    },
+    production: {
+      ok: true,
+      value: {
+        ...foundationalProduction,
+        spaceAge: {
+          production: {
+            energy: {
+              solarPerSecond: 109_000,
+              swarmPerSecond: 51_290_000,
+            },
+          },
+          railgun: {
+            baseMaximumCharge: 25_000_000,
+            maximumCharge: 25_000_000,
+            totalFireTimeSeconds: 1,
+            timeMultiplier: 1,
+            shotIntervalSeconds: 2,
+            shotsPerVolley: 10,
+            mechanicalPayload: 1,
+            payloadCapacity: 100,
+            panelsPerShot: 1n,
+            panelsPerVolley: 10n,
+          },
+        },
+      },
+    },
+  },
+} as unknown as FrontendSimulationsDerivedFacts
+
+const activeRailgunFacts = {
+  ...inactiveRailgunFacts,
+  live: {
+    ...inactiveRailgunFacts.live,
+    railgun: {
+      firing: true,
+      fireProgress: 0.05,
+      shotsRemaining: 7,
+    },
+    production: {
+      ok: true,
+      value: {
+        ...foundationalProduction,
+        spaceAge: {
+          production: {
+            energy: { swarmPerSecond: 5 },
+          },
+          railgun: {
+            baseMaximumCharge: 25,
+            maximumCharge: 25,
+            totalFireTimeSeconds: 1,
+            timeMultiplier: 1,
+            shotIntervalSeconds: 0.1,
+            shotsPerVolley: 10,
+            mechanicalPayload: 1,
+            payloadCapacity: 100,
+            panelsPerShot: 1n,
+            panelsPerVolley: 10n,
+          },
+        },
+      },
+    },
+  },
+} as unknown as FrontendSimulationsDerivedFacts
+
+const fastRailgunFacts = {
+  ...activeRailgunFacts,
+  live: {
+    ...activeRailgunFacts.live,
+    railgun: {
+      ...activeRailgunFacts.live.railgun,
+      firing: true,
+      fireProgress: 0,
+      shotsRemaining: 10,
+      lastRoundsFired: 0,
+      lastPanelsLaunched: 0n,
+    },
+    production: {
+      ok: true,
+      value: {
+        ...foundationalProduction,
+        spaceAge: {
+          production: { energy: { swarmPerSecond: 5 } },
+          railgun: {
+            baseMaximumCharge: 25,
+            maximumCharge: 25,
+            totalFireTimeSeconds: 1,
+            timeMultiplier: 10,
+            shotIntervalSeconds: 0.1,
+            shotsPerVolley: 10,
+            mechanicalPayload: 100,
+            payloadCapacity: 100,
+            panelsPerShot: 100n,
+            panelsPerVolley: 1_000n,
           },
         },
       },
@@ -637,6 +1070,8 @@ const overdriveFacts = {
             spaceFactory: {
               currentProgress: 1,
               durationSeconds: 2,
+              progressPerSecond: 2,
+              cyclesPerSecond: 1,
               overdriveActive: true,
               overdriveMultiplier: 4,
               overdriveEnergyPerSecond: 75_000_000,
@@ -644,7 +1079,7 @@ const overdriveFacts = {
           },
           railgun: {
             factoryOverdriveActive: true,
-            factoryOverdriveMultiplier: 2,
+            factoryOverdriveMultiplier: 16_843_845_313.7,
             factoryOverdriveEnergyPerSecond: 25_000_000,
           },
         },
@@ -652,6 +1087,71 @@ const overdriveFacts = {
     },
   },
 } as unknown as FrontendSimulationsDerivedFacts
+
+if (!overdriveFacts.live.production.ok) {
+  throw new Error('Overdrive test facts require canonical production data.')
+}
+const overdriveProduction = overdriveFacts.live.production.value
+
+const fastSpaceFactoryFacts = {
+  ...overdriveFacts,
+  live: {
+    ...overdriveFacts.live,
+    production: {
+      ok: true,
+      value: {
+        ...overdriveProduction,
+        spaceAge: {
+          ...overdriveProduction.spaceAge,
+          production: {
+            ...overdriveProduction.spaceAge.production,
+            spaceFactory: {
+              ...overdriveProduction.spaceAge.production.spaceFactory,
+              progressPerSecond: 20,
+              cyclesPerSecond: 10,
+            },
+          },
+        },
+      },
+    },
+  },
+} as unknown as FrontendSimulationsDerivedFacts
+
+function reservoirFacts(
+  dysonPanels: bigint,
+): FrontendSimulationsDerivedFacts {
+  if (!overdriveFacts.live.production.ok) {
+    throw new Error('Reservoir facts require production.')
+  }
+  const production = overdriveFacts.live.production.value
+  return {
+    ...overdriveFacts,
+    live: {
+      ...overdriveFacts.live,
+      resources: {
+        ...overdriveFacts.live.resources,
+        dysonPanels,
+      },
+      production: {
+        ok: true,
+        value: {
+          ...production,
+          spaceAge: {
+            ...production.spaceAge,
+            production: {
+              ...production.spaceAge.production,
+              spaceFactory: {
+                ...production.spaceAge.production.spaceFactory,
+                progressPerSecond: 1.25,
+                cyclesPerSecond: 0.625,
+              },
+            },
+          },
+        },
+      },
+    },
+  } as FrontendSimulationsDerivedFacts
+}
 
 async function accepted(): Promise<UiRuntimePlayerCommandResult> {
   return {

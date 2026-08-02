@@ -279,13 +279,17 @@ export function prepareDreamDoubleTimeTick(
     }
   }
 
-  const bankConsumedSeconds = Math.min(
-    bankSeconds,
-    safeRate * tickSeconds,
-  )
+  const requestedBankSeconds = safeRate * tickSeconds
+  const bankConsumedSeconds = Math.min(bankSeconds, requestedBankSeconds)
   return {
     active: true,
-    effectiveMultiplier: 1 + bankConsumedSeconds / tickSeconds,
+    effectiveMultiplier:
+      bankConsumedSeconds >= requestedBankSeconds
+        ? 1 + safeRate
+        : Math.min(
+            1 + safeRate,
+            1 + bankConsumedSeconds / tickSeconds,
+          ),
     bankConsumedSeconds,
     rate: safeRate,
   }

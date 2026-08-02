@@ -69,6 +69,45 @@ describe('canonical game-state mapping', () => {
     expect(hydrated.state.statistics.minuteWindows).toHaveLength(60)
   })
 
+  test('round-trips reserved Railgun volleys and the panel high-water mark', () => {
+    const prepared = prepareIdb1Save(
+      loadFixture('schema-08-canonical-idb1-main-save.txt'),
+    ).prepared
+    const hydrated = hydrateGameState(prepared)
+    const state = {
+      ...hydrated.state,
+      dream: {
+        ...hydrated.state.dream,
+        railgun: {
+          ...hydrated.state.dream.railgun,
+          firing: true,
+          fireProgress: 0.05,
+          shotsRemaining: 7,
+          activeRailguns: 1_234,
+          reservedPanels: 8_638n,
+          highestStoredPanels: 98_765n,
+          lastRoundsFired: 3,
+          lastPanelsLaunched: 3_702n,
+        },
+      },
+    }
+
+    const roundTrip = hydrateGameState(
+      dehydrateGameState(hydrated, state),
+    ).state
+
+    expect(roundTrip.dream.railgun).toMatchObject({
+      firing: true,
+      fireProgress: 0.05,
+      shotsRemaining: 7,
+      activeRailguns: 1_234,
+      reservedPanels: 8_638n,
+      highestStoredPanels: 98_765n,
+    })
+    expect(roundTrip.dream.railgun.lastRoundsFired).toBe(0)
+    expect(roundTrip.dream.railgun.lastPanelsLaunched).toBe(0n)
+  })
+
   test('accepts a generated schema-12 entry without rerunning migration', () => {
     const historical = prepareIdb1Save(
       loadFixture('schema-08-canonical-idb1-main-save.txt'),
@@ -91,10 +130,23 @@ describe('canonical game-state mapping', () => {
     ).prepared
     const hydrated = hydrateGameState(prepared)
     const mutable = hydrated.state as unknown as {
-      meta: { tutorialComplete: boolean }
+      meta: {
+        tutorialComplete: boolean
+        navigationVisibility: {
+          story: boolean
+          wiki: boolean
+          statistics: boolean
+        }
+      }
       skills: { byId: Record<string, { owned: boolean }> }
     }
     mutable.meta.tutorialComplete = !mutable.meta.tutorialComplete
+    mutable.meta.navigationVisibility.story =
+      !mutable.meta.navigationVisibility.story
+    mutable.meta.navigationVisibility.wiki =
+      !mutable.meta.navigationVisibility.wiki
+    mutable.meta.navigationVisibility.statistics =
+      !mutable.meta.navigationVisibility.statistics
     const skillId = Object.keys(mutable.skills.byId)[0]!
     mutable.skills.byId[skillId]!.owned =
       !mutable.skills.byId[skillId]!.owned
@@ -107,6 +159,9 @@ describe('canonical game-state mapping', () => {
 
     expect(rehydrated.state.meta.tutorialComplete).toBe(
       mutable.meta.tutorialComplete,
+    )
+    expect(rehydrated.state.meta.navigationVisibility).toEqual(
+      mutable.meta.navigationVisibility,
     )
     expect(rehydrated.state.skills.byId[skillId]?.owned).toBe(
       mutable.skills.byId[skillId]?.owned,

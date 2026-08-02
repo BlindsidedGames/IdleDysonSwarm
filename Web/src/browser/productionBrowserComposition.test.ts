@@ -6,7 +6,7 @@ import type {
 } from '../save/repository'
 import type { PreparedSave } from '../save/prepare'
 import {
-  MOBILE_LIFECYCLE_POLICY,
+  WEB_LIFECYCLE_POLICY,
 } from '../simulation/lifecycleAwayTime'
 import type {
   BrowserRuntimeFoundationOptions,
@@ -49,7 +49,7 @@ describe('production browser composition', () => {
     expect(composition.saveSchemaVersion).toBe(12)
     expect(captured).toBeDefined()
     if (captured === undefined) return
-    expect(captured.lifecyclePolicy).toBe(MOBILE_LIFECYCLE_POLICY)
+    expect(captured.lifecyclePolicy).toBe(WEB_LIFECYCLE_POLICY)
     expect(captured.allowedExternalOrigins).toEqual([])
     expect(captured.lifecycleClock).toBe(lifecycleClock)
     expect(captured.activeTimeClock).toBe(monotonicClock)

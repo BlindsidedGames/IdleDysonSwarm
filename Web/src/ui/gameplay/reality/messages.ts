@@ -1,6 +1,21 @@
 import { defineMessages } from 'react-intl'
 
 export const realityMessages = defineMessages({
+  avocatoTitle: {
+    id: 'reality.avocato.title',
+    defaultMessage: 'Avocato',
+    description: 'Title of the Avocato feature unlocked in Reality.',
+  },
+  avocatoDescription: {
+    id: 'reality.avocato.description',
+    defaultMessage: 'Feed Avocato resources to strengthen every reality.',
+    description: 'Description of the unlocked Avocato economy.',
+  },
+  avocatoOpen: {
+    id: 'reality.avocato.open',
+    defaultMessage: 'Visit Avocato',
+    description: 'Opens the unlocked Avocato economy.',
+  },
   region: {
     id: 'reality.region',
     defaultMessage: 'Reality',

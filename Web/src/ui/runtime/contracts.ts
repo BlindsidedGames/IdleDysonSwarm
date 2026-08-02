@@ -182,6 +182,7 @@ export type UiRuntimeDevelopmentAction =
   | { readonly kind: 'add-strange-matter'; readonly amount: bigint }
   | { readonly kind: 'set-tinker-interval'; readonly seconds: 0 | 1 }
   | { readonly kind: 'recalculate-skill-points' }
+  | { readonly kind: 'reset-secret-progress' }
   | { readonly kind: 'purchase-debug-options' }
   | { readonly kind: 'disable-debug-options' }
 

@@ -72,6 +72,10 @@
   color: var(--simulation-value);
 }
 
+.simulations-surface__influence > span {
+  color: white;
+}
+
 .simulations-surface__scroll-region {
   container-type: inline-size;
   min-block-size: 0;
@@ -116,6 +120,21 @@
   color: white;
   font-size: calc(1.05rem * var(--game-text-scale));
   line-height: 1.25;
+}
+
+.simulation-category__title {
+  display: inline-flex;
+  min-inline-size: 0;
+  align-items: baseline;
+  gap: 0.45rem;
+}
+
+.simulation-category__status {
+  color: white;
+  font-family: var(--font-family-numeric);
+  font-size: 0.9em;
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
 }
 
 .simulation-category--information > .ui-collapsible-section__heading
@@ -306,9 +325,13 @@
 
 .simulation-panel-card__value,
 .simulation-progress__value {
-  color: var(--simulation-value);
+  color: white;
   font-family: var(--font-family-numeric);
   font-variant-numeric: tabular-nums;
+}
+
+.simulation-numeric-highlight {
+  color: var(--simulation-value);
 }
 
 .simulation-panel-card .ui-facility-card__production {
@@ -462,23 +485,69 @@
 .simulation-time-control__settings-toggle:focus-visible, .simulation-time-control__purchase-settings button:focus-visible { outline: 3px solid var(--color-focus); outline-offset: .18rem; }
 
 .simulation-progress {
+  position: relative;
   display: grid;
   grid-template-columns: minmax(0, 1fr) auto;
   gap: 0.1rem 0.4rem;
   align-items: baseline;
   color: #d9e2e8;
   font-size: calc(0.68rem * var(--game-text-scale));
+  --simulation-progress-color: var(
+    --simulation-card-progress,
+    var(--simulation-foundational-progress)
+  );
 }
 
-.simulation-progress progress {
-  appearance: none;
+.simulation-progress__track {
   inline-size: 100%;
   block-size: 0.36rem;
   grid-column: 1 / -1;
   overflow: hidden;
-  border: 0;
   border-radius: 999px;
   background: var(--simulation-track);
+}
+
+.simulation-progress__fill {
+  display: block;
+  inline-size: 100%;
+  block-size: 100%;
+  border-radius: inherit;
+  background: var(--simulation-progress-color);
+  transform: scaleX(var(--simulation-progress-fraction));
+  transform-origin: left center;
+  transition: transform 260ms ease-out;
+}
+
+.simulation-progress[data-presentation="slow"] .simulation-progress__fill {
+  transition-duration: 100ms;
+  transition-timing-function: linear;
+}
+
+.simulation-progress[data-presentation="medium"] .simulation-progress__fill {
+  animation: simulation-completion-pulse 1.2s ease-in-out infinite;
+  transform: scaleX(1);
+  transition: none;
+}
+
+.simulation-progress[data-presentation="fast"] .simulation-progress__fill {
+  animation: none;
+  background: var(--simulation-progress-color);
+  transform: scaleX(1);
+  transition: none;
+}
+
+.simulation-progress progress {
+  position: absolute;
+  inline-size: 1px;
+  block-size: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+
+@keyframes simulation-completion-pulse {
+  0%, 100% { opacity: 0.5; }
+  50% { opacity: 1; }
 }
 
 .simulation-progress progress::-webkit-progress-bar {
@@ -502,6 +571,13 @@
 }
 
 .simulation-category__subsection[data-category="information"]
+  .simulation-progress,
+.simulation-category__subsection[data-category="education"]
+  .simulation-progress {
+  --simulation-progress-color: var(--simulation-information);
+}
+
+.simulation-category__subsection[data-category="information"]
   .simulation-progress progress::-moz-progress-bar,
 .simulation-category__subsection[data-category="education"]
   .simulation-progress progress::-moz-progress-bar {
@@ -513,6 +589,13 @@
 .simulation-category__subsection[data-category="space-age"]
   .simulation-progress progress::-webkit-progress-value {
   background: var(--simulation-space);
+}
+
+.simulation-category__subsection[data-category="energy"]
+  .simulation-progress,
+.simulation-category__subsection[data-category="space-age"]
+  .simulation-progress {
+  --simulation-progress-color: var(--simulation-space);
 }
 
 .simulation-category__subsection[data-category="energy"]
@@ -693,9 +776,23 @@
   .simulation-details header button {
     border: 1px solid ButtonText;
   }
+
+  .simulation-progress__track {
+    border: 1px solid CanvasText;
+    background: Canvas;
+  }
+
+  .simulation-progress__fill {
+    background: CanvasText !important;
+  }
 }
 
 @media (prefers-reduced-motion: reduce) {
+  .simulation-progress__fill {
+    animation: none !important;
+    transition: none;
+  }
+
   .simulation-progress progress::-webkit-progress-value {
     transition: none;
   }

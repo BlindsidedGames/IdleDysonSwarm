@@ -14,6 +14,9 @@ import {
   readyDysonMessages,
 } from '../gameplay/dyson/messages'
 import {
+  debugSurfaceMessages,
+} from '../gameplay/debug/messages'
+import {
   basicFacilityMessages,
 } from '../gameplay/facilities/messages'
 import {
@@ -37,6 +40,23 @@ import {
   simulationsMessages,
 } from '../gameplay/simulations/messages'
 import {
+  avocatoMessages,
+  quantumMessages,
+  quantumUpgradeMessages,
+} from '../gameplay/quantum/messages'
+import {
+  offlineTimeMessages,
+} from '../gameplay/offline-time/messages'
+import {
+  statisticsMessages,
+} from '../gameplay/statistics/messages'
+import {
+  storyMessages,
+} from '../gameplay/story/messages'
+import {
+  wikiMessages,
+} from '../gameplay/wiki/messages'
+import {
   skillMessages,
 } from '../gameplay/skills/messages'
 import { startupShellMessages } from '../shell/messages'
@@ -47,6 +67,7 @@ describe('compiled locale catalogs', () => {
       ...Object.values(sharedMessages),
       ...Object.values(startupShellMessages),
       ...Object.values(readyDysonMessages),
+      ...Object.values(debugSurfaceMessages),
       ...Object.values(basicFacilityMessages),
       ...Object.values(tinkerMessages),
       ...Object.values(settingsSurfaceMessages),
@@ -56,6 +77,13 @@ describe('compiled locale catalogs', () => {
       ...Object.values(realityUpgradeMessages),
       ...Object.values(simulationUpgradeMessages),
       ...Object.values(simulationsMessages),
+      ...Object.values(quantumMessages),
+      ...Object.values(quantumUpgradeMessages),
+      ...Object.values(avocatoMessages),
+      ...Object.values(offlineTimeMessages),
+      ...Object.values(statisticsMessages),
+      ...Object.values(storyMessages),
+      ...Object.values(wikiMessages),
       ...Object.values(skillMessages),
     ]
       .map((descriptor) => descriptor.id)

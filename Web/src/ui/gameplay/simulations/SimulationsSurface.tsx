@@ -1,9 +1,12 @@
 import {
+  Fragment,
   useCallback,
   useEffect,
   useId,
   useRef,
   useState,
+  type CSSProperties,
+  type ReactNode,
 } from 'react'
 import {
   useIntl,
@@ -37,7 +40,9 @@ import influenceSymbol from '../../assets/symbol-influence.png'
 import strangeMatterSymbol from '../../assets/symbol-strange-matter.png'
 import {
   formatGameDuration,
+  formatGameEnergyParts,
   formatGameNumber,
+  formatGameNumberParts,
   formatNumber,
 } from '../../i18n/formatters'
 import type { EnabledLocale } from '../../i18n/localeRegistry'
@@ -79,6 +84,9 @@ const SPACE_AGE_PURCHASE_QUANTITIES = Object.freeze([
   'max',
 ] as const satisfies readonly SpaceAgePurchaseQuantity[])
 
+const RESERVOIR_RATE_SMOOTHING = 0.25
+const RESERVOIR_IDLE_TIMEOUT_MS = 500
+
 export interface SimulationsCommandAvailability {
   readonly purchaseFoundational: boolean
   readonly purchaseSpaceAge: boolean
@@ -93,6 +101,7 @@ export interface SimulationsSurfaceProps {
   readonly progression: FrontendCanonicalProgression['dream']
   readonly previews: FrontendGameplayPreviews['dream']
   readonly influence: bigint
+  readonly activeDoubleTimeRate: number
   readonly spaceAgePurchaseQuantity: SpaceAgePurchaseQuantity
   readonly commandAvailability: SimulationsCommandAvailability
   readonly dispatchPlayer: (
@@ -111,6 +120,7 @@ export function SimulationsSurface({
   progression,
   previews,
   influence,
+  activeDoubleTimeRate,
   spaceAgePurchaseQuantity,
   commandAvailability,
   dispatchPlayer,
@@ -137,10 +147,15 @@ export function SimulationsSurface({
     previews,
     commandAvailability,
     influence,
+    cyclePresentation: cyclePresentationForRate(activeDoubleTimeRate),
     spaceAgePurchaseQuantity,
   })
   const categories = createCategories(intl, facts, panels)
-  const categoryGroups = createCategoryGroups(intl, categories)
+  const categoryGroups = createCategoryGroups(
+    intl,
+    categories,
+    highlightedEnergy(locale, facts.live.resources.energy, 'joules'),
+  )
 
   return (
     <section
@@ -165,7 +180,7 @@ export function SimulationsSurface({
             symbol="influence"
             tint
           />
-          <span>{formatGameNumber(locale, influence)}</span>
+          <span>{renderSimulationText(highlightedNumber(locale, influence))}</span>
         </strong>
       </header>
 
@@ -221,6 +236,7 @@ interface SimulationCategoryModel {
 interface SimulationCategoryGroupModel {
   readonly id: 'foundational' | 'information' | 'space-age'
   readonly title: string
+  readonly status?: SimulationText
   readonly categories: readonly SimulationCategoryModel[]
 }
 
@@ -228,8 +244,8 @@ interface SimulationPanelModel {
   readonly id: PanelId
   readonly era: FrontendSimulationEra
   readonly title: string
-  readonly count?: string
-  readonly status: string
+  readonly count?: SimulationText
+  readonly status: SimulationText
   readonly description: string
   readonly progress: readonly SimulationProgressModel[]
   readonly details: readonly SimulationDetailRowModel[]
@@ -247,14 +263,163 @@ interface SimulationPanelModel {
 
 interface SimulationDetailRowModel {
   readonly label: string
-  readonly value: string
+  readonly value: SimulationText
 }
 
 interface SimulationProgressModel {
   readonly label: string
-  readonly valueText: string
+  readonly valueText: SimulationText
   readonly fraction: number
   readonly showBar?: boolean
+  readonly cycle?: {
+    readonly presentation: CyclePresentationMode
+    readonly throughputText: SimulationText
+  }
+  readonly reservoir?: {
+    readonly sample: number
+    readonly idleTimeoutMs?: number
+    readonly formatRate: (ratePerSecond: number) => SimulationText
+  }
+}
+
+interface SimulationTextPart {
+  readonly text: string
+  readonly highlight?: boolean
+}
+
+interface SimulationTextModel {
+  readonly parts: readonly SimulationTextPart[]
+}
+
+type SimulationText = string | SimulationTextModel
+
+function renderSimulationText(value: SimulationText): ReactNode {
+  if (typeof value === 'string') return value
+  return value.parts.map((part, index) => (
+    <Fragment key={`${index}:${part.text}`}>
+      {part.highlight ? (
+        <span className="simulation-numeric-highlight">{part.text}</span>
+      ) : part.text}
+    </Fragment>
+  ))
+}
+
+function simulationTextToString(value: SimulationText): string {
+  return typeof value === 'string'
+    ? value
+    : value.parts.map((part) => part.text).join('')
+}
+
+function highlightedNumber(
+  locale: EnabledLocale,
+  value: number | bigint,
+): SimulationTextModel {
+  const parts = formatGameNumberParts(locale, value)
+  return {
+    parts: [
+      { text: parts.value, highlight: true },
+      ...(parts.suffix ? [{ text: parts.suffix }] : []),
+    ],
+  }
+}
+
+function highlightedEnergy(
+  locale: EnabledLocale,
+  value: number,
+  unit: 'joules' | 'watts',
+): SimulationTextModel {
+  const parts = formatGameEnergyParts(locale, value, unit)
+  return {
+    parts: [
+      { text: parts.value, highlight: true },
+      ...(parts.unit ? [{ text: ` ${parts.unit}` }] : []),
+    ],
+  }
+}
+
+function signedHighlightedNumber(
+  locale: EnabledLocale,
+  value: number,
+): SimulationTextModel {
+  const magnitude = highlightedNumber(locale, Math.abs(value))
+  const sign = value > 0 ? '+' : value < 0 ? '−' : ''
+  return {
+    parts: [
+      ...(sign ? [{ text: sign, highlight: true }] : []),
+      ...magnitude.parts,
+    ],
+  }
+}
+
+function signedHighlightedEnergy(
+  locale: EnabledLocale,
+  value: number,
+): SimulationTextModel {
+  const magnitude = highlightedEnergy(locale, Math.abs(value), 'watts')
+  const sign = value > 0 ? '+' : value < 0 ? '−' : ''
+  return {
+    parts: [
+      ...(sign ? [{ text: sign, highlight: true }] : []),
+      ...magnitude.parts,
+    ],
+  }
+}
+
+function joinSimulationText(
+  first: SimulationText,
+  second: SimulationText,
+): SimulationTextModel {
+  const parts = (value: SimulationText): readonly SimulationTextPart[] =>
+    typeof value === 'string' ? [{ text: value }] : value.parts
+  return {
+    parts: [...parts(first), { text: ' · ' }, ...parts(second)],
+  }
+}
+
+function highlightedFormattedNumber(
+  value: string,
+  suffix = '',
+): SimulationTextModel {
+  return {
+    parts: [
+      { text: value, highlight: true },
+      ...(suffix ? [{ text: suffix }] : []),
+    ],
+  }
+}
+
+function formatSimulationMessage(
+  intl: IntlShape,
+  descriptor: MessageDescriptor,
+  values: Readonly<Record<string, string | number | SimulationText>>,
+): SimulationTextModel {
+  const richValues: SimulationText[] = []
+  const plainValues: Record<string, string | number> = {}
+  for (const [key, value] of Object.entries(values)) {
+    if (typeof value === 'string' || typeof value === 'number') {
+      plainValues[key] = value
+      continue
+    }
+    const index = richValues.push(value) - 1
+    plainValues[key] = `\uE000${index}\uE001`
+  }
+  const formatted = intl.formatMessage(descriptor, plainValues)
+  const parts: SimulationTextPart[] = []
+  const marker = /\uE000(\d+)\uE001/g
+  let cursor = 0
+  for (const match of formatted.matchAll(marker)) {
+    const start = match.index ?? 0
+    if (start > cursor) parts.push({ text: formatted.slice(cursor, start) })
+    const replacement = richValues[Number(match[1])]
+    if (typeof replacement === 'string') {
+      parts.push({ text: replacement })
+    } else if (replacement) {
+      parts.push(...replacement.parts)
+    }
+    cursor = start + match[0].length
+  }
+  if (cursor < formatted.length) parts.push({ text: formatted.slice(cursor) })
+  return { parts }
 }
 
 function SimulationCategoryGroup({
@@ -270,7 +435,17 @@ function SimulationCategoryGroup({
       contentClassName="simulation-category__content"
       defaultExpanded={false}
       storageKey={`simulations.live.${group.id}`}
-      title={group.title}
+      ariaLabel={group.title}
+      title={
+        <span className="simulation-category__title">
+          <span>{group.title}</span>
+          {group.status ? (
+            <span className="simulation-category__status">
+              {renderSimulationText(group.status)}
+            </span>
+          ) : null}
+        </span>
+      }
     >
       {group.categories.map((category) => (
         <section
@@ -441,10 +616,10 @@ function SimulationPanelCard({
             <span>{panel.title}</span>
             {panel.count ? (
               <span className="simulation-panel-card__value">
-                {panel.count}
+                {renderSimulationText(panel.count)}
               </span>
             ) : null}
-            {statusInline ? (
+            {statusInline && panel.status && panel.id !== 'space-factories' ? (
               <>
                 <span
                   className="simulation-panel-card__inline-separator"
@@ -453,13 +628,13 @@ function SimulationPanelCard({
                   ·
                 </span>
                 <span className="simulation-panel-card__inline-status">
-                  {panel.status}
+                  {renderSimulationText(panel.status)}
                 </span>
               </>
             ) : null}
           </>
         }
-        production={statusInline ? null : panel.status}
+        production={statusInline ? null : renderSimulationText(panel.status)}
         description={panel.description}
         progress={progress}
         action={actions}
@@ -505,7 +680,7 @@ function SimulationPanelCard({
               {panel.details.map((detail) => (
                 <div key={detail.label}>
                   <dt>{detail.label}</dt>
-                  <dd>{detail.value}</dd>
+                  <dd>{renderSimulationText(detail.value)}</dd>
                 </div>
               ))}
             </dl>
@@ -521,21 +696,117 @@ function SimulationProgress({
 }: {
   readonly progress: SimulationProgressModel
 }) {
+  const cycleMode = progress.cycle?.presentation ?? 'slow'
+  const reservoirRate = useSmoothedReservoirRate(
+    progress.reservoir?.sample,
+    progress.reservoir?.idleTimeoutMs,
+  )
+  const cycleUsesThroughput = progress.cycle !== undefined && cycleMode !== 'slow'
+  const baseValueText = cycleUsesThroughput
+    ? progress.cycle?.throughputText ?? progress.valueText
+    : progress.valueText
+  const valueText =
+    reservoirRate !== null && progress.reservoir
+      ? joinSimulationText(
+          baseValueText,
+          progress.reservoir.formatRate(reservoirRate),
+        )
+      : baseValueText
+  const fraction = cycleUsesThroughput ? 1 : clampUnit(progress.fraction)
+  const presentation = progress.cycle
+    ? cycleMode
+    : progress.reservoir
+      ? 'reservoir'
+      : 'static'
+  const style = {
+    '--simulation-progress-fraction': fraction,
+  } as CSSProperties
+
   return (
-    <div className="simulation-progress">
+    <div
+      className="simulation-progress"
+      data-presentation={presentation}
+      style={style}
+    >
       <span className="simulation-progress__label">{progress.label}</span>
-      <span className="simulation-progress__value">{progress.valueText}</span>
+      <span className="simulation-progress__value">
+        {renderSimulationText(valueText)}
+      </span>
       {progress.showBar === false ? null : (
-        <progress
-          max={1}
-          value={clampUnit(progress.fraction)}
-          aria-label={progress.label}
-        >
-          {progress.valueText}
-        </progress>
+        <>
+          <div className="simulation-progress__track" aria-hidden="true">
+            <span className="simulation-progress__fill" />
+          </div>
+          <progress
+            max={1}
+            value={fraction}
+            aria-label={progress.label}
+            aria-valuetext={simulationTextToString(valueText)}
+          >
+            {simulationTextToString(valueText)}
+          </progress>
+        </>
       )}
     </div>
   )
+}
+
+type CyclePresentationMode = 'slow' | 'medium' | 'fast'
+
+function cyclePresentationForRate(rate: number): CyclePresentationMode {
+  if (rate >= 8) return 'fast'
+  if (rate >= 1) return 'medium'
+  return 'slow'
+}
+
+function useSmoothedReservoirRate(
+  sample: number | undefined,
+  idleTimeoutMs = RESERVOIR_IDLE_TIMEOUT_MS,
+): number | null {
+  const previous = useRef<{
+    readonly sample: number
+    readonly time: number
+  } | undefined>(undefined)
+  const smoothed = useRef<number | null>(null)
+  const [rate, setRate] = useState<number | null>(null)
+
+  useEffect(() => {
+    if (sample === undefined || !Number.isFinite(sample)) {
+      previous.current = undefined
+      smoothed.current = null
+      setRate(null)
+      return
+    }
+
+    const now = Date.now()
+    const prior = previous.current
+    previous.current = { sample, time: now }
+    if (!prior || now <= prior.time) {
+      smoothed.current = null
+      setRate(null)
+      return
+    }
+
+    const rawRate = (sample - prior.sample) / ((now - prior.time) / 1_000)
+    if (!Number.isFinite(rawRate)) return
+    const next = smoothed.current === null
+      ? rawRate
+      : smoothed.current * (1 - RESERVOIR_RATE_SMOOTHING) +
+        rawRate * RESERVOIR_RATE_SMOOTHING
+    smoothed.current = Math.abs(next) < 1e-9 ? 0 : next
+    setRate(smoothed.current)
+  }, [sample])
+
+  useEffect(() => {
+    if (sample === undefined || !Number.isFinite(sample)) return
+    const idleTimeout = window.setTimeout(() => {
+      smoothed.current = 0
+      setRate(0)
+    }, idleTimeoutMs)
+    return () => window.clearTimeout(idleTimeout)
+  }, [idleTimeoutMs, sample])
+
+  return rate
 }
 
 function createCategories(
@@ -596,6 +867,7 @@ function createCategories(
 function createCategoryGroups(
   intl: IntlShape,
   categories: readonly SimulationCategoryModel[],
+  spaceAgeEnergy: SimulationText,
 ): SimulationCategoryGroupModel[] {
   const byId = new Map(categories.map((entry) => [entry.id, entry]))
   const groups: SimulationCategoryGroupModel[] = []
@@ -630,6 +902,9 @@ function createCategoryGroups(
     groups.push({
       id: 'space-age',
       title: intl.formatMessage(messages.spaceAge),
+      status: formatSimulationMessage(intl, messages.energyStored, {
+        value: spaceAgeEnergy,
+      }),
       categories: spaceAge,
     })
   }
@@ -662,18 +937,27 @@ function createPanelModels(input: {
   readonly previews: FrontendGameplayPreviews['dream']
   readonly commandAvailability: SimulationsCommandAvailability
   readonly influence: bigint
+  readonly cyclePresentation: CyclePresentationMode
   readonly spaceAgePurchaseQuantity: SpaceAgePurchaseQuantity
 }): ReadonlyMap<PanelId, SimulationPanelModel> {
-  const { intl, locale, facts, progression } = input
+  const { intl, locale, facts, progression, cyclePresentation } = input
   const output = new Map<PanelId, SimulationPanelModel>()
   const resources = facts.live.resources
   const production = facts.live.production.ok
     ? facts.live.production.value
     : null
   const display = (value: number | bigint) => formatGameNumber(locale, value)
-  const percent = (fraction: number) => intl.formatMessage(messages.percent, {
-    value: formatNumber(locale, clampUnit(fraction) * 100, { maximumFractionDigits: 0 }),
-  })
+  const displayRich = (value: number | bigint) => highlightedNumber(locale, value)
+  const displayEnergyRich = (
+    value: number,
+    unit: 'joules' | 'watts',
+  ) => highlightedEnergy(locale, value, unit)
+  const percentRich = (fraction: number) => highlightedFormattedNumber(
+    formatNumber(locale, clampUnit(fraction) * 100, {
+      maximumFractionDigits: 0,
+    }),
+    '%',
+  )
 
   const basicPanels = facts.eras.foundational.visiblePanelIds
   for (const id of basicPanels) {
@@ -689,14 +973,13 @@ function createPanelModels(input: {
     )
     const progress: SimulationProgressModel[] = []
     if (timer) {
-      const fraction = timer.durationSeconds > 0
-        ? timer.currentProgress / timer.durationSeconds
-        : 0
-      progress.push({
-        label: intl.formatMessage(messages.progress),
-        valueText: percent(fraction),
-        fraction,
-      })
+      progress.push(productionProgress(
+        timer,
+        cyclePresentation,
+        intl,
+        displayRich,
+        percentRich,
+      ))
     }
     const activeBoost = boostProgress(id, progression, intl, locale)
     if (activeBoost) progress.push(activeBoost)
@@ -722,7 +1005,7 @@ function createPanelModels(input: {
       era: 'foundational',
       title: intl.formatMessage(panelTitleMessage(id)),
       count: typeof count === 'number' || typeof count === 'bigint'
-        ? display(count)
+        ? displayRich(count)
         : undefined,
       status: combinePanelStatus(
         timer
@@ -778,7 +1061,7 @@ function createPanelModels(input: {
                 : []),
               {
                 label: intl.formatMessage(messages.researchProgress),
-                valueText: percent(fraction),
+                valueText: percentRich(fraction),
                 fraction,
               },
             ]
@@ -797,7 +1080,7 @@ function createPanelModels(input: {
           },
           {
             label: intl.formatMessage(messages.detailCurrentProgress),
-            value: percent(fraction),
+            value: percentRich(fraction),
           },
         ],
         action: education.complete || education.active
@@ -813,11 +1096,13 @@ function createPanelModels(input: {
       : null
     const count = resources[id as keyof typeof resources]
     const progress: SimulationProgressModel[] = timer
-      ? [{
-          label: intl.formatMessage(messages.progress),
-          valueText: percent(timer.currentProgress / timer.durationSeconds),
-          fraction: timer.currentProgress / timer.durationSeconds,
-        }]
+      ? [productionProgress(
+          timer,
+          cyclePresentation,
+          intl,
+          displayRich,
+          percentRich,
+        )]
       : []
     const activeBoost = boostProgress(id, progression, intl, locale)
     if (activeBoost) progress.push(activeBoost)
@@ -825,7 +1110,7 @@ function createPanelModels(input: {
       id,
       era: 'information',
       title: intl.formatMessage(panelTitleMessage(id)),
-      count: typeof count === 'number' || typeof count === 'bigint' ? display(count) : undefined,
+      count: typeof count === 'number' || typeof count === 'bigint' ? displayRich(count) : undefined,
       status: combinePanelStatus(
         timer
           ? timerProductionStatus(timer, intl, display)
@@ -862,50 +1147,82 @@ function createPanelModels(input: {
             : 'fusion'
     const count = countKey ? resources[countKey] : undefined
     const progress: SimulationProgressModel[] = []
-    let status = count !== undefined
+    let recordStoredPanels: bigint | undefined
+    let status: SimulationText = count !== undefined
       ? intl.formatMessage(messages.owned, { value: display(count) })
-      : intl.formatMessage(messages.energyStored, { value: display(resources.energy) })
+      : ''
 
     if (id === 'solar' && production) {
-      status = intl.formatMessage(messages.energyOutput, {
-        value: display(production.spaceAge.production.energy.solarPerSecond),
+      status = formatSimulationMessage(intl, messages.energyOutput, {
+        value: displayEnergyRich(
+          production.spaceAge.production.energy.solarPerSecond,
+          'watts',
+        ),
       })
     } else if (id === 'fusion' && production) {
-      status = intl.formatMessage(messages.energyOutput, {
-        value: display(production.spaceAge.production.energy.fusionPerSecond),
+      status = formatSimulationMessage(intl, messages.energyOutput, {
+        value: displayEnergyRich(
+          production.spaceAge.production.energy.fusionPerSecond,
+          'watts',
+        ),
       })
     } else if (id === 'space-factories' && production) {
       const factory = production.spaceAge.production.spaceFactory
       const activeThroughput = production.spaceAge.railgun
-      const fraction = factory.durationSeconds > 0
-        ? factory.currentProgress / factory.durationSeconds
+      const nextVolleyTarget =
+        activeThroughput.panelsPerVolley !== undefined &&
+        activeThroughput.panelsPerVolley > 0n
+          ? activeThroughput.panelsPerVolley
+          : BigInt(activeThroughput.shotsPerVolley ?? 10)
+      const storedRecord = facts.live.railgun.highestStoredPanels ??
+        resources.dysonPanels
+      const factoryCycleSeconds = factory.progressPerSecond > 0
+        ? factory.durationSeconds / factory.progressPerSecond
         : 0
-      progress.push({
-        label: intl.formatMessage(messages.progress),
-        valueText: percent(fraction),
-        fraction,
-      }, {
+      recordStoredPanels = storedRecord
+      progress.push(productionProgress(
+        factory,
+        cyclePresentation,
+        intl,
+        displayRich,
+        percentRich,
+      ), {
         label: intl.formatMessage(messages.storedPanels),
-        valueText: intl.formatMessage(messages.countOfTotal, {
-          current: display(resources.dysonPanels),
-          total: display(facts.live.dysonPanelCapacity),
+        valueText: formatSimulationMessage(intl, messages.storedPanelsValue, {
+          current: displayRich(resources.dysonPanels),
+          target: displayRich(nextVolleyTarget),
         }),
         fraction:
           Number(resources.dysonPanels) /
-          Number(facts.live.dysonPanelCapacity),
+          Math.max(1, Number(nextVolleyTarget)),
+        reservoir: {
+          sample: Number(resources.dysonPanels),
+          idleTimeoutMs: Math.max(
+            RESERVOIR_IDLE_TIMEOUT_MS,
+            Math.ceil(factoryCycleSeconds * 1_250),
+          ),
+          formatRate: (ratePerSecond) => formatSimulationMessage(
+            intl,
+            messages.productionRate,
+            { value: signedHighlightedNumber(locale, ratePerSecond) },
+          ),
+        },
       }, {
         label: intl.formatMessage(messages.factoryOverdrive),
         valueText: activeThroughput.factoryOverdriveActive
-          ? intl.formatMessage(messages.factoryOverdriveActive, {
-              multiplier: formatNumber(
-                locale,
-                activeThroughput.factoryOverdriveMultiplier,
-                { maximumFractionDigits: 0 },
-              ),
-              energy: display(
-                activeThroughput.factoryOverdriveEnergyPerSecond,
-              ),
-            })
+          ? formatSimulationMessage(
+              intl,
+              messages.factoryOverdriveActive,
+              {
+                multiplier: displayRich(
+                  activeThroughput.factoryOverdriveMultiplier,
+                ),
+                energy: displayEnergyRich(
+                  activeThroughput.factoryOverdriveEnergyPerSecond,
+                  'watts',
+                ),
+              },
+            )
           : intl.formatMessage(messages.factoryOverdriveIdle),
         fraction:
           activeThroughput.factoryOverdriveMultiplier /
@@ -916,52 +1233,100 @@ function createPanelModels(input: {
       const railgun = production.spaceAge.railgun
       progress.push({
         label: intl.formatMessage(messages.chargeProgress),
-        valueText: intl.formatMessage(messages.countOfTotal, {
-          current: display(resources.railgunCharge),
-          total: display(railgun.maximumCharge),
+        valueText: formatSimulationMessage(intl, messages.countOfTotal, {
+          current: displayEnergyRich(resources.railgunCharge, 'joules'),
+          total: displayEnergyRich(railgun.maximumCharge, 'joules'),
         }),
         fraction: resources.railgunCharge / railgun.maximumCharge,
+        reservoir: {
+          sample: resources.railgunCharge,
+          formatRate: (ratePerSecond) => formatSimulationMessage(
+            intl,
+            messages.energyOutput,
+            { value: signedHighlightedEnergy(locale, ratePerSecond) },
+          ),
+        },
       })
       progress.push({
         label: intl.formatMessage(messages.railgunPayload),
-        valueText: intl.formatMessage(messages.railgunPayloadValue, {
-          perShot: display(railgun.panelsPerShot),
-          perVolley: display(railgun.panelsPerVolley),
+        valueText: formatSimulationMessage(intl, messages.railgunPayloadValue, {
+          railguns: displayRich(railgun.mechanicalPayload),
+          perRound: displayRich(railgun.panelsPerShot),
+          rounds: displayRich(railgun.shotsPerVolley),
         }),
         fraction:
           railgun.mechanicalPayload /
           Math.max(1, railgun.payloadCapacity),
         showBar: false,
       })
-      const firingFraction = railgun.shotIntervalSeconds > 0
-        ? facts.live.railgun.fireProgress / railgun.shotIntervalSeconds
-        : 0
       progress.push({
         label: intl.formatMessage(messages.firingProgress),
-        valueText: intl.formatMessage(messages.shotsRemaining, {
-          value: display(facts.live.railgun.shotsRemaining),
+        valueText: formatSimulationMessage(intl, messages.shotsRemaining, {
+          value: displayRich(facts.live.railgun.shotsRemaining),
         }),
-        fraction: firingFraction,
+        fraction: 0,
+        showBar: false,
       })
     } else if (id === 'swarm-stats' && production) {
-      status = intl.formatMessage(messages.energyOutput, {
-        value: display(production.spaceAge.production.energy.swarmPerSecond),
+      status = formatSimulationMessage(intl, messages.energyOutput, {
+        value: displayEnergyRich(
+          production.spaceAge.production.energy.swarmPerSecond,
+          'watts',
+        ),
       })
     }
+    const details = spaceAgeDetailRows(id, status, progress, intl)
     output.set(id, {
       id,
       era: 'space-age',
       title: intl.formatMessage(panelTitleMessage(id)),
-      count: count !== undefined ? display(count) : undefined,
+      count: count !== undefined ? displayRich(count) : undefined,
       status,
       description: intl.formatMessage(panelDescriptionMessage(id)),
       progress,
-      details: spaceAgeDetailRows(id, status, progress, intl),
+      details: recordStoredPanels === undefined
+        ? details
+        : [
+            ...details,
+            {
+              label: intl.formatMessage(messages.recordStoredPanels),
+              value: displayRich(recordStoredPanels),
+            },
+          ],
       action: spaceAgeAction(id, input, display),
     })
   }
 
   return output
+}
+
+function productionProgress(
+  timer: Readonly<Pick<
+    DreamTimerProductionFact,
+    | 'currentProgress'
+    | 'durationSeconds'
+    | 'progressPerSecond'
+    | 'cyclesPerSecond'
+  >>,
+  presentation: CyclePresentationMode,
+  intl: IntlShape,
+  display: (value: number | bigint) => SimulationText,
+  percent: (fraction: number) => SimulationText,
+): SimulationProgressModel {
+  const fraction = timer.durationSeconds > 0
+    ? timer.currentProgress / timer.durationSeconds
+    : 0
+  return {
+    label: intl.formatMessage(messages.progress),
+    valueText: percent(fraction),
+    fraction,
+    cycle: {
+      presentation,
+      throughputText: formatSimulationMessage(intl, messages.productionRate, {
+        value: display(timer.cyclesPerSecond),
+      }),
+    },
+  }
 }
 
 function timerDetailRows(
@@ -1039,18 +1404,20 @@ function rocketConversionDetailRows(
 
 function spaceAgeDetailRows(
   id: PanelId,
-  status: string,
+  status: SimulationText,
   progress: readonly SimulationProgressModel[],
   intl: IntlShape,
 ): readonly SimulationDetailRowModel[] {
-  const rows: SimulationDetailRowModel[] = [{
-    label: intl.formatMessage(
-      id === 'swarm-stats'
-        ? messages.detailCurrentRate
-        : messages.detailCurrentOutput,
-    ),
-    value: status,
-  }]
+  const rows: SimulationDetailRowModel[] = status
+    ? [{
+        label: intl.formatMessage(
+          id === 'swarm-stats'
+            ? messages.detailCurrentRate
+            : messages.detailCurrentOutput,
+        ),
+        value: status,
+      }]
+    : []
   for (const item of progress) {
     rows.push({ label: item.label, value: item.valueText })
   }

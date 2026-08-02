@@ -251,6 +251,11 @@ describe('canonical Dream reset', () => {
       firing: false,
       fireProgress: 0,
       shotsRemaining: 0,
+      activeRailguns: 0,
+      reservedPanels: 0n,
+      highestStoredPanels: 0n,
+      lastRoundsFired: 0,
+      lastPanelsLaunched: 0n,
     })
     expect(dream.huntersPerPurchase).toBe(1_000n)
     expect(dream.gatherersPerPurchase).toBe(7n)

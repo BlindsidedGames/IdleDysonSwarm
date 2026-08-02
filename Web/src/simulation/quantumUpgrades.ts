@@ -50,6 +50,7 @@ export interface QuantumUpgradeDefinition {
 
 export type QuantumUpgradePurchaseCode =
   | 'purchased'
+  | 'invalid-quantity'
   | 'unknown-upgrade'
   | 'already-maxed'
   | 'prerequisites-not-met'
@@ -63,6 +64,18 @@ export interface QuantumUpgradePurchaseResult {
   readonly cost: bigint
   readonly state: CanonicalGameStateV1
 }
+
+export type QuantumUpgradeBulkQuantity = bigint | 'max'
+
+export const QUANTUM_BULK_UPGRADE_IDS = Object.freeze([
+  'InfluenceSpeed',
+  'CashBonus',
+  'ScienceBonus',
+] as const satisfies readonly QuantumUpgradeId[])
+
+const QUANTUM_BULK_UPGRADE_ID_SET = new Set<QuantumUpgradeId>(
+  QUANTUM_BULK_UPGRADE_IDS,
+)
 
 const QUANTUM_UPGRADE_ID_SET = new Set<string>(
   QUANTUM_UPGRADE_IDS,
@@ -200,6 +213,82 @@ export function purchaseQuantumUpgrade(
       quantum: {
         ...effected.quantum,
         pointsSpent: nextSpent,
+      },
+    },
+  }
+}
+
+/**
+ * Applies one atomic bulk purchase for the three authored repeatable boosters.
+ * Fixed quantities are all-or-nothing; `max` resolves against both the
+ * available shard balance and discrete-state headroom without replaying
+ * individual purchases.
+ */
+export function purchaseQuantumUpgradeBulk(
+  state: Readonly<CanonicalGameStateV1>,
+  id: string,
+  requestedQuantity: QuantumUpgradeBulkQuantity,
+  definitions = QUANTUM_UPGRADE_DEFINITIONS,
+): QuantumUpgradePurchaseResult {
+  if (requestedQuantity === 1n) {
+    return purchaseQuantumUpgrade(state, id, definitions)
+  }
+  if (
+    !isQuantumUpgradeId(id) ||
+    !isQuantumBulkUpgradeId(id) ||
+    !definitions.has(id)
+  ) {
+    return rejected(state, 'unknown-upgrade', 0n)
+  }
+  if (requestedQuantity !== 'max' && requestedQuantity <= 0n) {
+    return rejected(state, 'invalid-quantity', 0n)
+  }
+  if (!quantumUpgradePrerequisitesMet(state, id)) {
+    return rejected(state, 'prerequisites-not-met', 0n)
+  }
+
+  const definition = definitions.get(id)!
+  const unitCost = quantumUpgradeCost(state, id, definitions)
+  if (
+    definition.costScaling !== 'flat' ||
+    unitCost <= 0n ||
+    unitCost === DISCRETE_MAXIMUM
+  ) {
+    return rejected(state, 'insufficient-points', unitCost)
+  }
+
+  const affordableQuantity = availableQuantumPoints(state) / unitCost
+  const stateQuantity = quantumUpgradeStateHeadroom(state, id)
+  const spentQuantity =
+    (DISCRETE_MAXIMUM - state.quantum.pointsSpent) / unitCost
+  const maximumQuantity = minimum(
+    affordableQuantity,
+    minimum(stateQuantity, spentQuantity),
+  )
+  const quantity =
+    requestedQuantity === 'max' ? maximumQuantity : requestedQuantity
+  const totalCost = unitCost * quantity
+  if (quantity <= 0n || quantity > affordableQuantity) {
+    return rejected(state, 'insufficient-points', totalCost)
+  }
+  if (quantity > stateQuantity || quantity > spentQuantity) {
+    return rejected(state, 'state-saturated', totalCost)
+  }
+
+  const effected = applyQuantumUpgradeBulkEffect(state, id, quantity)
+  if (effected === null) {
+    return rejected(state, 'state-saturated', totalCost)
+  }
+  return {
+    accepted: true,
+    changed: true,
+    code: 'purchased',
+    cost: totalCost,
+    state: {
+      ...effected,
+      quantum: {
+        ...effected.quantum,
+        pointsSpent: state.quantum.pointsSpent + totalCost,
       },
     },
   }
@@ -374,6 +463,45 @@ function applyQuantumUpgradeEffect(
   }
 }
 
+function quantumUpgradeStateHeadroom(
+  state: Readonly<CanonicalGameStateV1>,
+  id: (typeof QUANTUM_BULK_UPGRADE_IDS)[number],
+): bigint {
+  if (id === 'InfluenceSpeed') {
+    return (
+      (DISCRETE_MAXIMUM - state.quantum.influenceSpeedBonus) /
+      QUANTUM_CONSTANTS.influenceSpeedPerPurchase
+    )
+  }
+  const current = id === 'CashBonus'
+    ? state.quantum.cashBonusLevels
+    : state.quantum.scienceBonusLevels
+  return DISCRETE_MAXIMUM - current
+}
+
+function applyQuantumUpgradeBulkEffect(
+  state: Readonly<CanonicalGameStateV1>,
+  id: (typeof QUANTUM_BULK_UPGRADE_IDS)[number],
+  quantity: bigint,
+): CanonicalGameStateV1 | null {
+  if (id === 'InfluenceSpeed') {
+    const increase = quantity * QUANTUM_CONSTANTS.influenceSpeedPerPurchase
+    const value = state.quantum.influenceSpeedBonus + increase
+    if (value > DISCRETE_MAXIMUM) return null
+    return {
+      ...state,
+      quantum: { ...state.quantum, influenceSpeedBonus: value },
+    }
+  }
+  const key = id === 'CashBonus' ? 'cashBonusLevels' : 'scienceBonusLevels'
+  const value = state.quantum[key] + quantity
+  if (value > DISCRETE_MAXIMUM) return null
+  return {
+    ...state,
+    quantum: { ...state.quantum, [key]: value },
+  }
+}
+
 function unlockKeyFor(
   id: QuantumUpgradeId,
 ): keyof CanonicalGameStateV1['quantum']['unlocks'] | null {
@@ -476,6 +604,12 @@ function loadQuantumUpgradeDefinitions(): ReadonlyMap<
 
 function isQuantumUpgradeId(value: string): value is QuantumUpgradeId {
   return QUANTUM_UPGRADE_ID_SET.has(value)
+}
+
+function isQuantumBulkUpgradeId(
+  value: QuantumUpgradeId,
+): value is (typeof QUANTUM_BULK_UPGRADE_IDS)[number] {
+  return QUANTUM_BULK_UPGRADE_ID_SET.has(value)
 }
 
 function minimum(left: bigint, right: bigint): bigint {

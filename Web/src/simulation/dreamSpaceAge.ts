@@ -14,21 +14,22 @@ export const DREAM_SPACE_AGE_CONSTANTS = Object.freeze({
   spaceFactoryDurationSeconds: 2,
   railgunVolleyDurationSeconds: 1,
   shotsPerVolley: 10,
-  basePanelsRequiredToStart: 1n,
-  dysonPanelCap: 1_000n,
+  basePanelsRequiredToStart: 10n,
   railgunPayloadHeadroom: 1.1,
-  railgunBasePayloadCapacity: 1,
-  railgunUpgrade1PayloadCapacity: 10,
-  railgunUpgrade2PayloadCapacity: 100,
-  overdriveBufferSeconds: 1,
+  maximumRailgunAutomationIntervalSeconds: 1,
 })
+
+const DOUBLE_TIME_MULTIPLIER_TOLERANCE_SCALE = 8
+// A ten-round volley can accumulate several ULPs of subtraction drift at
+// petajoule scales. Keep the allowance relative and far below gameplay units.
+const RAILGUN_CHARGE_TOLERANCE_SCALE = 32
+const OVERDRIVE_LINEAR_LIMIT = 10
+const OVERDRIVE_DIMINISHING_RETURN_EXPONENT = 0.85
 
 export interface DreamSpaceAgeProductionInput {
   readonly tickSeconds: number
   /** Effective multiplier already prepared by Unity's Double Time math. */
   readonly doubleTimeMultiplier: number
-  /** Panels launched per shot by prepared Double Time, before payload scaling. */
-  readonly railgunPayloadFloor?: number
 }
 
 export interface DreamSpaceAgeProductionResult {
@@ -56,7 +57,6 @@ export interface DreamSpaceFactoryProductionFacts {
   readonly baseProgressPerSecond: number
   readonly cyclesPerSecond: number
   readonly secondsUntilNextCycle: number | null
-  readonly remainingPanelCapacity: bigint
   readonly nominalPanelsPerSecond: number
   readonly overdriveMultiplier: number
   readonly overdriveEnergyPerSecond: number
@@ -80,6 +80,8 @@ export type DreamSpaceAgeProductionFactsResult =
 
 export interface DreamRailgunInput {
   readonly tickSeconds: number
+  /** Effective multiplier prepared for this exact automation interval. */
+  readonly effectiveDoubleTimeMultiplier?: number
   /** Prepared Double Time activity for this exact automation boundary. */
   readonly doubleTimeActive: boolean
   /** Persisted selected rate; Unity clamps it to the inclusive range 0..10. */
@@ -96,6 +98,8 @@ export interface DreamRailgunResult {
 }
 
 export interface DreamRailgunReadinessInput {
+  /** Effective multiplier prepared for this exact automation interval. */
+  readonly effectiveDoubleTimeMultiplier?: number
   /** Prepared Double Time activity for this exact automation boundary. */
   readonly doubleTimeActive: boolean
   /** Persisted selected rate; Unity clamps it to the inclusive range 0..10. */
@@ -109,11 +113,13 @@ export interface DreamRailgunReadinessFacts {
   readonly energyAfterChargeTransfer: number
   readonly chargeAfterChargeTransfer: number
   readonly selectedRate: number
-  readonly activeRate: number
+  /** Real-time speed applied to the fixed simulation-time volley cadence. */
+  readonly timeMultiplier: number
   readonly mechanicalPayload: number
   readonly payloadCapacity: number
   readonly panelsPerShot: bigint
   readonly panelsPerVolley: bigint
+  readonly shotsPerVolley: number
   readonly launchCapacityPerSecond: number
   readonly factoryOverdriveMultiplier: number
   readonly factoryOverdriveEnergyPerSecond: number
@@ -128,7 +134,7 @@ export interface DreamRailgunReadinessFacts {
   readonly shotsRemainingAfterStartBoundary: number
   readonly fireProgressAfterStartBoundary: number
   readonly hasChargeForNextShot: boolean
-  readonly hasPanelsForNextShot: boolean
+  readonly hasReservedPanelsForNextShot: boolean
   readonly hasSwarmCapacityForNextShot: boolean
   readonly canFireNextShot: boolean
   readonly secondsUntilNextShotAttempt: number | null
@@ -163,13 +169,10 @@ export interface DreamSpaceAgePurchaseResult {
 export function deriveDreamSpaceAgeProductionFacts(
   state: Readonly<CanonicalGameStateV1>,
   doubleTimeMultiplier: number,
-  railgunPayloadFloor = 1,
 ): DreamSpaceAgeProductionFactsResult {
   if (
     !Number.isFinite(doubleTimeMultiplier) ||
-    doubleTimeMultiplier < 0 ||
-    !Number.isFinite(railgunPayloadFloor) ||
-    railgunPayloadFloor < 1
+    doubleTimeMultiplier < 0
   ) {
     return Object.freeze({ status: 'invalid-input' })
   }
@@ -201,16 +204,11 @@ export function deriveDreamSpaceAgeProductionFacts(
 
   const currentProgress =
     state.dream.timers.spaceFactoriesTimerProgress ?? 0
-  const remainingPanelCapacity =
-    resources.dysonPanels <
-    DREAM_SPACE_AGE_CONSTANTS.dysonPanelCap
-      ? DREAM_SPACE_AGE_CONSTANTS.dysonPanelCap -
-        resources.dysonPanels
-      : 0n
   const hasSpaceFactories =
     Number.isFinite(resources.spaceFactories) &&
     resources.spaceFactories >= 1
-  const active = hasSpaceFactories && remainingPanelCapacity > 0n
+  const active =
+    hasSpaceFactories && resources.dysonPanels < DISCRETE_MAXIMUM
   let potentialBaseProgressPerSecond = 0
   if (hasSpaceFactories) {
     let globalMultiplier = doubleTimeMultiplier
@@ -234,7 +232,8 @@ export function deriveDreamSpaceAgeProductionFacts(
   const throughput = deriveSpaceAgeThroughputPlan(
     state,
     potentialBaseCyclesPerSecond,
-    railgunPayloadFloor,
+    doubleTimeMultiplier,
+    totalPerSecond,
   )
   const baseProgressPerSecond = active
     ? potentialBaseProgressPerSecond
@@ -274,7 +273,6 @@ export function deriveDreamSpaceAgeProductionFacts(
         baseProgressPerSecond,
         cyclesPerSecond,
         secondsUntilNextCycle,
-        remainingPanelCapacity,
         nominalPanelsPerSecond: cyclesPerSecond,
         overdriveMultiplier: throughput.overdriveMultiplier,
         overdriveEnergyPerSecond:
@@ -309,38 +307,64 @@ export function deriveDreamRailgunReadinessFacts(
   }
 
   const selectedRate = clampDoubleTimeRate(input.doubleTimeRate)
-  const activeRate =
-    input.doubleTimeActive && selectedRate >= 1
-      ? selectedRate
-      : 1
+  const preparedMultiplier = input.effectiveDoubleTimeMultiplier
+  const maximumMultiplier = 1 + selectedRate
+  const multiplierTolerance =
+    Number.EPSILON *
+    Math.max(1, Math.abs(maximumMultiplier)) *
+    DOUBLE_TIME_MULTIPLIER_TOLERANCE_SCALE
+  if (
+    preparedMultiplier !== undefined &&
+    (!Number.isFinite(preparedMultiplier) ||
+      preparedMultiplier < 1 - multiplierTolerance ||
+      preparedMultiplier > maximumMultiplier + multiplierTolerance ||
+      (!input.doubleTimeActive &&
+        Math.abs(preparedMultiplier - 1) > multiplierTolerance))
+  ) {
+    return Object.freeze({ status: 'invalid-input' })
+  }
+  const timeMultiplier =
+    preparedMultiplier === undefined
+      ? input.doubleTimeActive && selectedRate >= 1
+        ? maximumMultiplier
+        : 1
+      : input.doubleTimeActive
+        ? Math.min(maximumMultiplier, Math.max(1, preparedMultiplier))
+        : 1
   const production = deriveDreamSpaceAgeProductionFacts(
     state,
-    input.doubleTimeActive ? 1 + selectedRate : 1,
-    activeRate,
+    timeMultiplier,
   )
   if (production.status === 'invalid-input') {
     return Object.freeze({ status: 'invalid-input' })
   }
   const resources = state.dream.resources
-  const payloadCapacity = railgunPayloadCapacity(state)
-  const targetPayload = Math.min(
-    payloadCapacity,
-    production.facts.spaceFactory.railgunPayloadTarget,
+  const payloadCapacity =
+    production.facts.spaceFactory.railgunPayloadCapacity
+  const targetPayload = Math.max(
+    1,
+    Math.min(
+      payloadCapacity,
+      production.facts.spaceFactory.railgunPayloadTarget,
+    ),
   )
-  const mechanicalPayload = Math.min(
-    payloadCapacity,
-    state.dream.railgun.firing
-      ? inferActiveMechanicalPayload(
-          resources.railgunCharge,
-          state.dream.railgun.shotsRemaining,
-          baseMaximumCharge,
-          targetPayload,
-        )
-      : targetPayload,
-  )
+  const persistedActiveRailguns =
+    state.dream.railgun.activeRailguns ?? 0
+  const activeVolleyPayload = state.dream.railgun.firing
+    ? clampSafePayload(
+        persistedActiveRailguns > 0
+          ? persistedActiveRailguns
+          : inferActiveMechanicalPayload(
+              resources.railgunCharge,
+              state.dream.railgun.shotsRemaining,
+              baseMaximumCharge,
+              targetPayload,
+            ),
+      )
+    : 0
   const maximumCharge = multiplyContinuous(
     baseMaximumCharge,
-    mechanicalPayload,
+    state.dream.railgun.firing ? activeVolleyPayload : targetPayload,
   )
   const chargeTransfer = state.dream.railgun.firing
     ? {
@@ -353,23 +377,47 @@ export function deriveDreamRailgunReadinessFacts(
         resources.railgunCharge,
         maximumCharge,
       )
-  const panelsPerShot =
-    BigInt(mechanicalPayload) * BigInt(activeRate)
+  const maximumArrayFromPanels = safeBigIntToPayload(
+    resources.dysonPanels /
+      BigInt(DREAM_SPACE_AGE_CONSTANTS.shotsPerVolley),
+  )
+  const maximumArrayFromCharge = wholeRailgunChargeUnits(
+    chargeTransfer.charge,
+    baseMaximumCharge,
+  )
+  const startingPayload = Math.max(
+    0,
+    Math.min(
+      targetPayload,
+      maximumArrayFromPanels,
+      maximumArrayFromCharge,
+    ),
+  )
+  const mechanicalPayload = state.dream.railgun.firing
+    ? activeVolleyPayload
+    : startingPayload > 0
+      ? startingPayload
+      : targetPayload
+  const panelsPerShot = BigInt(mechanicalPayload)
   const panelsRequiredToStart =
-    DREAM_SPACE_AGE_CONSTANTS.basePanelsRequiredToStart *
-    panelsPerShot
+    DREAM_SPACE_AGE_CONSTANTS.basePanelsRequiredToStart
   const panelsPerVolley =
     panelsPerShot * BigInt(DREAM_SPACE_AGE_CONSTANTS.shotsPerVolley)
   const totalFireTimeSeconds =
     DREAM_SPACE_AGE_CONSTANTS.railgunVolleyDurationSeconds
-  const progressPerSecond = 1
+  const progressPerSecond = timeMultiplier
   const shotIntervalSeconds =
     totalFireTimeSeconds /
     DREAM_SPACE_AGE_CONSTANTS.shotsPerVolley
   const chargePerShot =
-    maximumCharge / DREAM_SPACE_AGE_CONSTANTS.shotsPerVolley
+    multiplyContinuous(baseMaximumCharge, mechanicalPayload) /
+    DREAM_SPACE_AGE_CONSTANTS.shotsPerVolley
   const canStartVolley =
-    chargeTransfer.charge >= maximumCharge &&
+    startingPayload >= 1 &&
+    hasSufficientRailgunCharge(
+      chargeTransfer.charge,
+      multiplyContinuous(baseMaximumCharge, startingPayload),
+    ) &&
     resources.dysonPanels >= panelsRequiredToStart &&
     !state.dream.railgun.firing
   const volleyActiveAfterStartBoundary =
@@ -380,17 +428,20 @@ export function deriveDreamRailgunReadinessFacts(
   const fireProgressAfterStartBoundary = canStartVolley
     ? 0
     : state.dream.railgun.fireProgress
-  const hasChargeForNextShot =
-    chargeTransfer.charge >= chargePerShot
-  const hasPanelsForNextShot =
-    resources.dysonPanels >= panelsPerShot
+  const hasChargeForNextShot = hasSufficientRailgunCharge(
+    chargeTransfer.charge,
+    chargePerShot,
+  )
+  const reservedPanels = state.dream.railgun.reservedPanels ?? 0n
+  const hasReservedPanelsForNextShot = canStartVolley ||
+    reservedPanels >= panelsPerShot
   const hasSwarmCapacityForNextShot =
     resources.swarmPanels <= DISCRETE_MAXIMUM - panelsPerShot
   const canFireNextShot =
     volleyActiveAfterStartBoundary &&
     shotsRemainingAfterStartBoundary > 0 &&
     hasChargeForNextShot &&
-    hasPanelsForNextShot &&
+    hasReservedPanelsForNextShot &&
     hasSwarmCapacityForNextShot
   const secondsUntilNextShotAttempt =
     volleyActiveAfterStartBoundary &&
@@ -412,15 +463,17 @@ export function deriveDreamRailgunReadinessFacts(
       energyAfterChargeTransfer: chargeTransfer.energy,
       chargeAfterChargeTransfer: chargeTransfer.charge,
       selectedRate,
-      activeRate,
+      timeMultiplier,
       mechanicalPayload,
       payloadCapacity,
       panelsPerShot,
       panelsPerVolley,
+      shotsPerVolley: DREAM_SPACE_AGE_CONSTANTS.shotsPerVolley,
       launchCapacityPerSecond:
         Number(panelsPerShot) *
         DREAM_SPACE_AGE_CONSTANTS.shotsPerVolley /
-        totalFireTimeSeconds,
+        totalFireTimeSeconds *
+        timeMultiplier,
       factoryOverdriveMultiplier:
         production.facts.spaceFactory.overdriveMultiplier,
       factoryOverdriveEnergyPerSecond:
@@ -437,7 +490,7 @@ export function deriveDreamRailgunReadinessFacts(
       shotsRemainingAfterStartBoundary,
       fireProgressAfterStartBoundary,
       hasChargeForNextShot,
-      hasPanelsForNextShot,
+      hasReservedPanelsForNextShot,
       hasSwarmCapacityForNextShot,
       canFireNextShot,
       secondsUntilNextShotAttempt,
@@ -475,7 +528,6 @@ export function runDreamSpaceAgeProduction(
   const derived = deriveDreamSpaceAgeProductionFacts(
     state,
     input.doubleTimeMultiplier,
-    input.railgunPayloadFloor ?? 1,
   )
   if (derived.status === 'invalid-input') {
     return {
@@ -536,12 +588,22 @@ export function runDreamSpaceAgeProduction(
         ? accumulated % production.spaceFactory.durationSeconds
         : accumulated
 
+    const remainingDiscreteCapacity =
+      DISCRETE_MAXIMUM - resources.dysonPanels
     dysonPanelsProduced =
-      spaceFactoryCycles >
-      production.spaceFactory.remainingPanelCapacity
-        ? production.spaceFactory.remainingPanelCapacity
+      spaceFactoryCycles > remainingDiscreteCapacity
+        ? remainingDiscreteCapacity
         : spaceFactoryCycles
   }
+
+  const nextDysonPanels = addDiscrete(
+    resources.dysonPanels,
+    dysonPanelsProduced,
+  )
+  const previousRecord =
+    state.dream.railgun.highestStoredPanels ?? resources.dysonPanels
+  const highestStoredPanels =
+    nextDysonPanels > previousRecord ? nextDysonPanels : previousRecord
 
   return {
     status: 'success',
@@ -557,14 +619,15 @@ export function runDreamSpaceAgeProduction(
               : resources.energy,
             energyGenerated,
           ),
-          dysonPanels: addDiscrete(
-            resources.dysonPanels,
-            dysonPanelsProduced,
-          ),
+          dysonPanels: nextDysonPanels,
         },
         timers: {
           ...state.dream.timers,
           spaceFactoriesTimerProgress: timerProgress,
+        },
+        railgun: {
+          ...state.dream.railgun,
+          highestStoredPanels,
         },
       },
     },
@@ -576,8 +639,9 @@ export function runDreamSpaceAgeProduction(
 }
 
 /**
- * Runs the persistent railgun automation phase, including charge transfer,
- * volley start, and at most one shot for the supplied interval.
+ * Runs the persistent railgun automation phase. The canonical scheduler stays
+ * at 100 ms; accelerated simulated time may cross several round boundaries in
+ * one call and is therefore settled as one exact batch.
  */
 export function runDreamRailgunAutomation(
   state: Readonly<CanonicalGameStateV1>,
@@ -585,7 +649,9 @@ export function runDreamRailgunAutomation(
 ): DreamRailgunResult {
   if (
     !Number.isFinite(input.tickSeconds) ||
-    input.tickSeconds <= 0
+    input.tickSeconds <= 0 ||
+    input.tickSeconds >
+      DREAM_SPACE_AGE_CONSTANTS.maximumRailgunAutomationIntervalSeconds
   ) {
     return invalidRailgun(state)
   }
@@ -598,65 +664,181 @@ export function runDreamRailgunAutomation(
   const originalResources = state.dream.resources
   let energy = readiness.energyAfterChargeTransfer
   let charge = readiness.chargeAfterChargeTransfer
-  const chargeTransferred = readiness.chargeTransferred
-  const panelsPerShot = readiness.panelsPerShot
+  let chargeTransferred = readiness.chargeTransferred
   let dysonPanels = originalResources.dysonPanels
   let swarmPanels = originalResources.swarmPanels
   let firing = readiness.volleyActiveAfterStartBoundary
   let fireProgress = readiness.fireProgressAfterStartBoundary
   let shotsRemaining = readiness.shotsRemainingAfterStartBoundary
-  const volleyStarted = readiness.canStartVolley
-  let shotFired = false
+  let activeRailguns = state.dream.railgun.activeRailguns ?? 0
+  let reservedPanels = state.dream.railgun.reservedPanels ?? 0n
+  let volleyStarted = readiness.canStartVolley
+  let roundsFired = 0
   let panelsLaunched = 0n
 
-  if (firing && !volleyStarted) {
-    const progressDelta = multiplyContinuous(
-      readiness.progressPerSecond,
-      input.tickSeconds,
-    )
-    fireProgress = addContinuous(
-      safeTimerProgress(fireProgress),
-      progressDelta,
-    )
-    const shotThreshold = readiness.shotIntervalSeconds
-    const chargePerShot = readiness.chargePerShot
+  if (volleyStarted) {
+    activeRailguns = readiness.mechanicalPayload
+    reservedPanels = readiness.panelsPerVolley
+    dysonPanels -= reservedPanels
+  } else if (firing && activeRailguns <= 0) {
+    activeRailguns = readiness.mechanicalPayload
+  }
 
-    if (fireProgress >= shotThreshold) {
-      if (
-        charge < chargePerShot ||
-        swarmPanels > DISCRETE_MAXIMUM - panelsPerShot
-      ) {
-        firing = false
-        fireProgress = 0
-        shotsRemaining = 0
-      } else if (dysonPanels < panelsPerShot) {
-        fireProgress = 0
-      } else {
-        const debit = tryDebitContinuous(charge, chargePerShot)
-        if (debit.status !== 'success') {
-          firing = false
-          fireProgress = 0
-          shotsRemaining = 0
-        } else {
-          charge = debit.balance
-          dysonPanels -= panelsPerShot
-          swarmPanels += panelsPerShot
-          fireProgress = 0
-          shotsRemaining = Math.max(0, shotsRemaining - 1)
-          shotFired = true
-          panelsLaunched = panelsPerShot
-        }
-      }
-    }
-
-    if (
-      firing &&
-      (charge < chargePerShot || shotsRemaining <= 0)
-    ) {
+  // Legacy saves held panels in factory storage throughout a volley. Reserve
+  // the remaining payload once so reloads transition without duplication.
+  if (firing && reservedPanels <= 0n && activeRailguns > 0) {
+    const legacyReservation =
+      BigInt(activeRailguns) * BigInt(shotsRemaining)
+    if (dysonPanels >= legacyReservation) {
+      dysonPanels -= legacyReservation
+      reservedPanels = legacyReservation
+    } else {
       firing = false
       fireProgress = 0
       shotsRemaining = 0
+      activeRailguns = 0
     }
+  }
+
+  let accumulatedProgress = firing
+    ? addContinuous(
+        safeTimerProgress(fireProgress),
+        multiplyContinuous(readiness.progressPerSecond, input.tickSeconds),
+      )
+    : 0
+  const shotThreshold = readiness.shotIntervalSeconds
+
+  while (accumulatedProgress > 0) {
+    if (!firing) {
+      const boundaryState: CanonicalGameStateV1 = {
+        ...state,
+        dream: {
+          ...state.dream,
+          resources: {
+            ...originalResources,
+            energy,
+            railgunCharge: charge,
+            dysonPanels,
+            swarmPanels,
+          },
+          railgun: {
+            ...state.dream.railgun,
+            firing: false,
+            fireProgress: 0,
+            shotsRemaining: 0,
+            activeRailguns: 0,
+            reservedPanels: 0n,
+          },
+        },
+      }
+      const nextBoundary = deriveDreamRailgunReadinessFacts(
+        boundaryState,
+        input,
+      )
+      if (nextBoundary.status === 'invalid-input') {
+        return invalidRailgun(state)
+      }
+      energy = nextBoundary.facts.energyAfterChargeTransfer
+      charge = nextBoundary.facts.chargeAfterChargeTransfer
+      chargeTransferred = addContinuous(
+        chargeTransferred,
+        nextBoundary.facts.chargeTransferred,
+      )
+      if (!nextBoundary.facts.canStartVolley) {
+        accumulatedProgress = 0
+        break
+      }
+      firing = true
+      shotsRemaining = DREAM_SPACE_AGE_CONSTANTS.shotsPerVolley
+      activeRailguns = nextBoundary.facts.mechanicalPayload
+      reservedPanels = nextBoundary.facts.panelsPerVolley
+      dysonPanels -= reservedPanels
+      volleyStarted = true
+    }
+
+    if (activeRailguns <= 0 || reservedPanels <= 0n) {
+      break
+    }
+
+    const dueRounds = Math.min(
+      shotsRemaining,
+      Math.max(
+        0,
+        Math.floor(
+          (accumulatedProgress + Number.EPSILON * 8) / shotThreshold,
+        ),
+      ),
+    )
+    if (dueRounds <= 0) {
+      fireProgress = accumulatedProgress
+      break
+    }
+    const panelsPerRound = BigInt(activeRailguns)
+    const chargePerRound =
+      multiplyContinuous(readiness.baseMaximumCharge, activeRailguns) /
+      DREAM_SPACE_AGE_CONSTANTS.shotsPerVolley
+    const roundsSupportedByPanels = Math.min(
+      shotsRemaining,
+      safeBigIntToPayload(reservedPanels / panelsPerRound),
+    )
+    const roundsSupportedByCharge = wholeRailgunChargeUnits(
+      charge,
+      chargePerRound,
+    )
+    const remainingSwarmCapacity = DISCRETE_MAXIMUM - swarmPanels
+    const roundsSupportedBySwarm = safeBigIntToPayload(
+      remainingSwarmCapacity / panelsPerRound,
+    )
+    const roundsFiredThisPass = Math.min(
+      dueRounds,
+      roundsSupportedByPanels,
+      roundsSupportedByCharge,
+      roundsSupportedBySwarm,
+    )
+
+    if (roundsFiredThisPass > 0) {
+      const requestedChargeDebit = multiplyContinuous(
+        chargePerRound,
+        roundsFiredThisPass,
+      )
+      const chargeDebit = tryDebitContinuous(
+        charge,
+        requestedChargeDebit > charge &&
+          hasSufficientRailgunCharge(charge, requestedChargeDebit)
+          ? charge
+          : requestedChargeDebit,
+      )
+      if (chargeDebit.status === 'success') {
+        charge = chargeDebit.balance
+        const launchedThisPass =
+          panelsPerRound * BigInt(roundsFiredThisPass)
+        roundsFired += roundsFiredThisPass
+        panelsLaunched += launchedThisPass
+        reservedPanels -= launchedThisPass
+        swarmPanels += launchedThisPass
+        shotsRemaining -= roundsFiredThisPass
+        accumulatedProgress -= roundsFiredThisPass * shotThreshold
+        fireProgress = accumulatedProgress
+      } else {
+        fireProgress = accumulatedProgress
+        break
+      }
+    } else {
+      fireProgress = accumulatedProgress
+      break
+    }
+
+    if (shotsRemaining <= 0 || reservedPanels <= 0n) {
+      firing = false
+      fireProgress = 0
+      shotsRemaining = 0
+      activeRailguns = 0
+      reservedPanels = 0n
+    }
+  }
+
+  if (!firing) {
+    fireProgress = 0
   }
 
   return {
@@ -676,12 +858,19 @@ export function runDreamRailgunAutomation(
           firing,
           fireProgress,
           shotsRemaining,
+          activeRailguns,
+          reservedPanels,
+          highestStoredPanels:
+            state.dream.railgun.highestStoredPanels ??
+            originalResources.dysonPanels,
+          lastRoundsFired: roundsFired,
+          lastPanelsLaunched: panelsLaunched,
         },
       },
     },
     chargeTransferred,
     volleyStarted,
-    shotFired,
+    shotFired: roundsFired > 0,
     panelsLaunched,
   }
 }
@@ -794,34 +983,42 @@ interface SpaceAgeThroughputPlan {
 function deriveSpaceAgeThroughputPlan(
   state: Readonly<CanonicalGameStateV1>,
   basePanelsPerSecond: number,
-  railgunPayloadFloor: number,
+  timeMultiplier: number,
+  sustainableEnergyPerSecond: number,
 ): SpaceAgeThroughputPlan {
-  const payloadCapacity = railgunPayloadCapacity(state)
-  const preparedPayloadFloor = Math.max(
+  const preparedTimeMultiplier = Math.max(
     1,
-    Math.min(10, Math.ceil(railgunPayloadFloor)),
+    timeMultiplier,
   )
-  const maximumOverdriveMultiplier =
-    2 + spaceFactoryOverdriveLevel(state)
   const baseMaximumCharge = state.dream.parameters.railgunMaxCharge
-  const resources = state.dream.resources
+  const sustainableChargeUnits = Math.max(
+    0,
+    sustainableEnergyPerSecond /
+      (baseMaximumCharge * preparedTimeMultiplier),
+  )
+  const payloadCapacity = clampSafePayload(
+    Math.max(1, Math.floor(sustainableChargeUnits)),
+  )
   if (basePanelsPerSecond <= 0) {
+    const mechanicalPayload = Math.max(
+      1,
+      Math.min(payloadCapacity, Math.floor(sustainableChargeUnits)),
+    )
     return {
       overdriveMultiplier: 1,
       overdriveEnergyPerSecond: 0,
-      mechanicalPayload: 1,
+      mechanicalPayload,
       payloadCapacity,
       launchCapacityPerSecond:
-        preparedPayloadFloor *
-        DREAM_SPACE_AGE_CONSTANTS.shotsPerVolley,
+        mechanicalPayload *
+        DREAM_SPACE_AGE_CONSTANTS.shotsPerVolley *
+        preparedTimeMultiplier,
     }
   }
 
-  for (
-    let overdriveMultiplier = maximumOverdriveMultiplier;
-    overdriveMultiplier >= 1;
-    overdriveMultiplier -= 1
-  ) {
+  const planForMultiplier = (
+    overdriveMultiplier: number,
+  ): SpaceAgeThroughputPlan & { readonly sustainable: boolean } => {
     const panelsPerSecond = multiplyContinuous(
       basePanelsPerSecond,
       overdriveMultiplier,
@@ -832,7 +1029,7 @@ function deriveSpaceAgeThroughputPlan(
         panelsPerSecond *
           DREAM_SPACE_AGE_CONSTANTS.railgunPayloadHeadroom /
           (DREAM_SPACE_AGE_CONSTANTS.shotsPerVolley *
-            preparedPayloadFloor),
+            preparedTimeMultiplier),
       ),
     )
     const mechanicalPayload = Math.min(
@@ -841,79 +1038,158 @@ function deriveSpaceAgeThroughputPlan(
     )
     const launchCapacityPerSecond =
       mechanicalPayload *
-      preparedPayloadFloor *
-      DREAM_SPACE_AGE_CONSTANTS.shotsPerVolley
+      DREAM_SPACE_AGE_CONSTANTS.shotsPerVolley *
+      preparedTimeMultiplier
     const keepsUp =
       panelsPerSecond <= 0 ||
       launchCapacityPerSecond >=
         panelsPerSecond *
           DREAM_SPACE_AGE_CONSTANTS.railgunPayloadHeadroom
-    if (!keepsUp && overdriveMultiplier > 1) continue
-
     const overdriveEnergyPerSecond = multiplyContinuous(
       overdriveMultiplier - 1,
-      baseMaximumCharge,
+      baseMaximumCharge * preparedTimeMultiplier,
     )
-    const requiredCharge = multiplyContinuous(
+    const railgunEnergyPerSecond = multiplyContinuous(
       baseMaximumCharge,
+      mechanicalPayload * preparedTimeMultiplier,
+    )
+    return {
+      overdriveMultiplier,
+      overdriveEnergyPerSecond,
       mechanicalPayload,
-    )
-    const chargeDeficit = Math.max(
-      0,
-      requiredCharge - resources.railgunCharge,
-    )
-    const requiredBuffer = addContinuous(
-      chargeDeficit,
-      multiplyContinuous(
-        overdriveEnergyPerSecond,
-        DREAM_SPACE_AGE_CONSTANTS.overdriveBufferSeconds,
-      ),
-    )
-    if (
-      overdriveMultiplier === 1 ||
-      resources.energy >= requiredBuffer
-    ) {
-      return {
-        overdriveMultiplier,
-        overdriveEnergyPerSecond,
-        mechanicalPayload,
-        payloadCapacity,
-        launchCapacityPerSecond,
-      }
+      payloadCapacity,
+      launchCapacityPerSecond,
+      sustainable:
+        keepsUp &&
+        addContinuous(
+          overdriveEnergyPerSecond,
+          railgunEnergyPerSecond,
+        ) <= sustainableEnergyPerSecond,
     }
   }
 
+  const basePlan = planForMultiplier(1)
+  if (!basePlan.sustainable) {
+    const mechanicalPayload = Math.max(
+      1,
+      Math.min(payloadCapacity, Math.floor(sustainableChargeUnits)),
+    )
+    return {
+      overdriveMultiplier: 1,
+      overdriveEnergyPerSecond: 0,
+      mechanicalPayload,
+      payloadCapacity,
+      launchCapacityPerSecond:
+        mechanicalPayload *
+        DREAM_SPACE_AGE_CONSTANTS.shotsPerVolley *
+        preparedTimeMultiplier,
+    }
+  }
+
+  const maximumLaunchCapacity =
+    payloadCapacity *
+    DREAM_SPACE_AGE_CONSTANTS.shotsPerVolley *
+    preparedTimeMultiplier
+  const energyUpperBound = applyDreamOverdriveDiminishingReturn(
+    1 + sustainableChargeUnits,
+  )
+  const throughputUpperBound =
+    maximumLaunchCapacity /
+    (basePanelsPerSecond *
+      DREAM_SPACE_AGE_CONSTANTS.railgunPayloadHeadroom)
+  let lower = 1
+  let upper = Math.max(
+    1,
+    Math.min(energyUpperBound, throughputUpperBound),
+  )
+  for (let iteration = 0; iteration < 80; iteration += 1) {
+    const candidate = lower + (upper - lower) / 2
+    if (planForMultiplier(candidate).sustainable) {
+      lower = candidate
+    } else {
+      upper = candidate
+    }
+  }
+  const plan = planForMultiplier(lower)
   return {
-    overdriveMultiplier: 1,
-    overdriveEnergyPerSecond: 0,
-    mechanicalPayload: 1,
-    payloadCapacity,
-    launchCapacityPerSecond:
-      preparedPayloadFloor *
-      DREAM_SPACE_AGE_CONSTANTS.shotsPerVolley,
+    overdriveMultiplier: plan.overdriveMultiplier,
+    overdriveEnergyPerSecond: plan.overdriveEnergyPerSecond,
+    mechanicalPayload: plan.mechanicalPayload,
+    payloadCapacity: plan.payloadCapacity,
+    launchCapacityPerSecond: plan.launchCapacityPerSecond,
   }
 }
 
-function railgunPayloadCapacity(
-  state: Readonly<CanonicalGameStateV1>,
+export function applyDreamOverdriveDiminishingReturn(
+  rawMultiplier: number,
 ): number {
-  if (state.dream.upgrades.railgunActivator2) {
-    return DREAM_SPACE_AGE_CONSTANTS.railgunUpgrade2PayloadCapacity
+  if (
+    !Number.isFinite(rawMultiplier) ||
+    rawMultiplier <= OVERDRIVE_LINEAR_LIMIT
+  ) {
+    return rawMultiplier
   }
-  if (state.dream.upgrades.railgunActivator1) {
-    return DREAM_SPACE_AGE_CONSTANTS.railgunUpgrade1PayloadCapacity
-  }
-  return DREAM_SPACE_AGE_CONSTANTS.railgunBasePayloadCapacity
+  const overdriveBeyondLinearRange =
+    rawMultiplier - OVERDRIVE_LINEAR_LIMIT
+  return (
+    OVERDRIVE_LINEAR_LIMIT - 1 +
+    Math.pow(
+      overdriveBeyondLinearRange + 1,
+      OVERDRIVE_DIMINISHING_RETURN_EXPONENT,
+    )
+  )
 }
 
-function spaceFactoryOverdriveLevel(
-  state: Readonly<CanonicalGameStateV1>,
+function hasSufficientRailgunCharge(
+  balance: number,
+  cost: number,
+): boolean {
+  if (
+    !Number.isFinite(balance) ||
+    !Number.isFinite(cost) ||
+    balance < 0 ||
+    cost <= 0
+  ) {
+    return false
+  }
+  return cost - balance <= railgunChargeTolerance(balance, cost)
+}
+
+function wholeRailgunChargeUnits(
+  balance: number,
+  unitCost: number,
 ): number {
-  return [
-    state.dream.upgrades.sfActivator1,
-    state.dream.upgrades.sfActivator2,
-    state.dream.upgrades.sfActivator3,
-  ].filter(Boolean).length
+  if (
+    !Number.isFinite(balance) ||
+    !Number.isFinite(unitCost) ||
+    balance < 0 ||
+    unitCost <= 0
+  ) {
+    return 0
+  }
+  const supported = Math.floor(
+    (balance + railgunChargeTolerance(balance, unitCost)) / unitCost,
+  )
+  return Math.max(0, Math.min(Number.MAX_SAFE_INTEGER, supported))
+}
+
+function railgunChargeTolerance(balance: number, cost: number): number {
+  return (
+    Math.max(1, Math.abs(balance), Math.abs(cost)) *
+    Number.EPSILON *
+    RAILGUN_CHARGE_TOLERANCE_SCALE
+  )
+}
+
+function clampSafePayload(value: number): number {
+  if (!Number.isFinite(value) || value < 1) return 1
+  return Math.max(1, Math.min(Number.MAX_SAFE_INTEGER, Math.floor(value)))
+}
+
+function safeBigIntToPayload(value: bigint): number {
+  if (value <= 0n) return 0
+  const maximum = BigInt(Number.MAX_SAFE_INTEGER)
+  return Number(value > maximum ? maximum : value)
 }
 
 function inferActiveMechanicalPayload(
