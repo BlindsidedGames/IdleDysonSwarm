@@ -1,5 +1,10 @@
+import { gzipSync } from 'fflate'
 import { describe, expect, test } from 'vitest'
-import { deserializeWebSave, serializeWebSave } from './serialization'
+import {
+  deserializeWebSave,
+  serializeSharedWebSave,
+  serializeWebSave,
+} from './serialization'
 
 describe('canonical web save serialization', () => {
   test('round-trips bigint and byte arrays without precision loss', () => {
@@ -9,6 +14,7 @@ describe('canonical web save serialization', () => {
       bits: Uint8Array.from([0, 127, 255]),
     }
     const encoded = serializeWebSave(save)
+    expect(encoded).toMatch(/^IDSWEB1:/)
     const decoded = deserializeWebSave(encoded)
 
     expect(decoded.infinityPoints).toBe(9_223_372_036_854_775_807n)
@@ -23,11 +29,77 @@ describe('canonical web save serialization', () => {
   })
 
   test('rejects mismatched envelope and state schemas', () => {
-    const encoded = serializeWebSave({ saveVersion: 12 })
-    const mismatched = encoded.replace('"schema": 12', '"schema": 11')
+    const mismatched = JSON.stringify({
+      format: 'IDSWEB1',
+      schema: 11,
+      state: { saveVersion: 12 },
+    })
     expect(() => deserializeWebSave(mismatched)).toThrow(
       'does not match state schema',
     )
+  })
+
+  test('rejects compressed payloads that are not valid UTF-8 JSON', () => {
+    const payload = Buffer.from(gzipSync(Uint8Array.from([0xff, 0xfe])))
+      .toString('base64')
+
+    expect(() => deserializeWebSave(`IDSWEB1:${payload}`)).toThrow(
+      'invalid UTF-8',
+    )
+  })
+
+  test('continues to read transitional uncompressed web envelopes', () => {
+    const transitional = JSON.stringify({
+      format: 'IDSWEB1',
+      schema: 12,
+      state: {
+        saveVersion: 12,
+        infinityPoints: { $bigint: '12345678901234567890' },
+      },
+    })
+
+    expect(deserializeWebSave(transitional)).toEqual({
+      saveVersion: 12,
+      infinityPoints: 12_345_678_901_234_567_890n,
+    })
+  })
+
+  test('keeps repetitive canonical exports compact', () => {
+    const encoded = serializeWebSave({
+      saveVersion: 12,
+      repeated: Array.from({ length: 2_000 }, () => ({
+        enabled: false,
+        level: 0,
+        progress: 0,
+      })),
+    })
+
+    expect(encoded.length).toBeLessThan(1_000)
+  })
+
+  test('shared exports exclude device-owned Double IP and Developer Options', () => {
+    const decoded = deserializeWebSave(
+      serializeSharedWebSave({
+        saveVersion: 12,
+        doubleIp: true,
+        debugOptions: true,
+        debugEverEnabled: true,
+        dysonVerseSaveData: {
+          dysonVersePrestigeData: { doubleIP: true },
+        },
+      }),
+    )
+
+    expect(decoded).toMatchObject({
+      doubleIp: false,
+      debugOptions: false,
+      debugEverEnabled: false,
+      hasPackedSettingsFlags: true,
+      dysonVerseSaveData: {
+        dysonVersePrestigeData: { doubleIP: true },
+      },
+    })
+    expect((decoded.packedSettingsFlags as bigint) & 0b1100n).toBe(0n)
   })
 
   test('rejects a 1.1 MiB byte field before base64 byte allocation', () => {

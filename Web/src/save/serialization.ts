@@ -1,12 +1,17 @@
-import { requireRecord, type SaveRecord } from './graph'
+import { Gunzip, gzipSync, strToU8 } from 'fflate'
+import { deepCloneSave, requireRecord, type SaveRecord } from './graph'
 import {
   assertSuppliedSaveTextLimit,
   DEFAULT_SAVE_IMPORT_LIMITS,
   SaveImportLimitError,
   type SaveImportLimits,
 } from './decodeIdb1'
+import { packSettingsFlags } from './settingsFlags'
 
 const WEB_SAVE_FORMAT = 'IDSWEB1'
+const WEB_SAVE_PREFIX = `${WEB_SAVE_FORMAT}:`
+const GZIP_INPUT_CHUNK_BYTES = 64
+const MAXIMUM_GZIP_CALLBACK_BYTES = 128 * 1024
 const MAXIMUM_DECODE_DEPTH = 128
 const MAXIMUM_DECODE_CONTAINERS = 100_000
 const MAXIMUM_DECODE_ENTRIES = 250_000
@@ -27,7 +32,28 @@ export function serializeWebSave(save: SaveRecord): string {
     schema,
     state: encodeValue(save, new Set()),
   }
-  return `${JSON.stringify(sortObject({ ...envelope }), null, 2)}\n`
+  const json = JSON.stringify(sortObject({ ...envelope }))
+  return `${WEB_SAVE_PREFIX}${encodeBase64(gzipSync(strToU8(json), { level: 9 }))}`
+}
+
+/**
+ * Produces a player-shareable save without copying device/store ownership.
+ * Gameplay's Quantum Double IP upgrade is a separate nested progression flag
+ * and is intentionally preserved.
+ */
+export function serializeSharedWebSave(save: SaveRecord): string {
+  return serializeWebSave(stripNonShareableEntitlementClaims(save))
+}
+
+export function stripNonShareableEntitlementClaims(
+  save: SaveRecord,
+): SaveRecord {
+  const shareable = deepCloneSave(save)
+  shareable.doubleIp = false
+  shareable.debugOptions = false
+  shareable.debugEverEnabled = false
+  packSettingsFlags(shareable)
+  return shareable
 }
 
 export function deserializeWebSave(text: string): SaveRecord {
@@ -42,7 +68,14 @@ export function deserializeWebSaveBounded(
   limits: Readonly<SaveImportLimits>,
 ): SaveRecord {
   assertSuppliedSaveTextLimit(text, limits)
-  const parsed = JSON.parse(text) as unknown
+  const trimmed = text.trim()
+  const json = trimmed.toUpperCase().startsWith(WEB_SAVE_PREFIX)
+    ? decodeCompressedEnvelope(
+        trimmed.slice(WEB_SAVE_PREFIX.length),
+        limits,
+      )
+    : trimmed
+  const parsed = JSON.parse(json) as unknown
   const envelope = requireRecord(parsed, 'web save envelope')
   if (envelope.format !== WEB_SAVE_FORMAT) {
     throw new Error(`Unsupported web save envelope ${String(envelope.format)}.`)
@@ -73,6 +106,99 @@ export function deserializeWebSaveBounded(
     )
   }
   return state
+}
+
+function decodeCompressedEnvelope(
+  payload: string,
+  limits: Readonly<SaveImportLimits>,
+): string {
+  if (payload.length === 0) {
+    throw new Error('Canonical web save payload is empty.')
+  }
+  const compressed = decodeBase64Payload(
+    payload,
+    limits.decodedPayloadBytes,
+  )
+  const inflated = gunzipBounded(
+    compressed,
+    limits.inflatedBinaryBytes,
+  )
+  try {
+    return new TextDecoder('utf-8', { fatal: true }).decode(inflated)
+  } catch {
+    throw new Error('Canonical web save contains invalid UTF-8 JSON.')
+  }
+}
+
+function decodeBase64Payload(value: string, limitBytes: number): Uint8Array {
+  const decodedLength = base64DecodedLength(value)
+  if (decodedLength > limitBytes) {
+    throw new SaveImportLimitError('decoded-payload', limitBytes)
+  }
+  let binary: string
+  try {
+    binary = atob(value)
+  } catch {
+    throw new Error('Canonical web save payload is not valid base64.')
+  }
+  const decoded = new Uint8Array(binary.length)
+  for (let index = 0; index < binary.length; index += 1) {
+    decoded[index] = binary.charCodeAt(index)
+  }
+  return decoded
+}
+
+function gunzipBounded(compressed: Uint8Array, limitBytes: number): Uint8Array {
+  if (compressed.byteLength < 18) {
+    throw new Error('Canonical web save contains invalid gzip data.')
+  }
+  const advertisedBytes = new DataView(
+    compressed.buffer,
+    compressed.byteOffset + compressed.byteLength - 4,
+    4,
+  ).getUint32(0, true)
+  if (advertisedBytes > limitBytes) {
+    throw new SaveImportLimitError('inflated-binary', limitBytes)
+  }
+
+  const output = new Uint8Array(advertisedBytes)
+  let emittedBytes = 0
+  const gunzip = new Gunzip((chunk) => {
+    const nextEmittedBytes = emittedBytes + chunk.byteLength
+    if (
+      chunk.byteLength > MAXIMUM_GZIP_CALLBACK_BYTES ||
+      nextEmittedBytes > limitBytes
+    ) {
+      throw new SaveImportLimitError('inflated-binary', limitBytes)
+    }
+    if (nextEmittedBytes > advertisedBytes) {
+      throw new Error(
+        'Canonical web save gzip output exceeds its advertised size.',
+      )
+    }
+    output.set(chunk, emittedBytes)
+    emittedBytes = nextEmittedBytes
+  })
+  for (
+    let offset = 0;
+    offset < compressed.byteLength;
+    offset += GZIP_INPUT_CHUNK_BYTES
+  ) {
+    const end = Math.min(
+      compressed.byteLength,
+      offset + GZIP_INPUT_CHUNK_BYTES,
+    )
+    gunzip.push(
+      compressed.subarray(offset, end),
+      end === compressed.byteLength,
+    )
+  }
+  if (emittedBytes !== advertisedBytes) {
+    throw new Error(
+      'Canonical web save gzip output does not match its advertised size.',
+    )
+  }
+  return output
 }
 
 function encodeValue(value: unknown, seen: Set<object>): unknown {

@@ -29,6 +29,27 @@ describe('save import text preparation', () => {
     })
   })
 
+  test('does not accept device entitlement claims from a shared Web save', () => {
+    const text = serializeWebSave(
+      PreparedSave.fromDecoded({
+        saveVersion: 12,
+        doubleIp: true,
+        debugOptions: true,
+        debugEverEnabled: true,
+      }).copyValidatedState(),
+    )
+
+    const imported = prepareImportedSaveText(
+      text,
+      '2026-07-29T05:00:00Z',
+    ).copyValidatedState()
+
+    expect(imported.doubleIp).toBe(false)
+    expect(imported.debugOptions).toBe(false)
+    expect(imported.debugEverEnabled).toBe(false)
+    expect((imported.packedSettingsFlags as bigint) & 0b1100n).toBe(0n)
+  })
+
   test('accepts shipped Unity IDB1 saves through the same migration pipeline', () => {
     const text = readFileSync(
       new URL('schema-08-canonical-idb1-main-save.txt', fixtureDirectory),

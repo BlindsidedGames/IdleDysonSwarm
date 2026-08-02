@@ -8,7 +8,7 @@ class MemoryStorage implements SaveStorageAdapter {
   candidates: readonly LegacySaveCandidate[] = []
   replacements: Array<[string, string]> = []
   copies: Array<[string, string]> = []
-  failAt: 'write' | 'read-temporary' | 'replace' | null = null
+  failAt: 'write' | 'read-temporary' | 'copy' | 'replace' | null = null
   corruptTemporaryRead = false
 
   async exists(path: string): Promise<boolean> {
@@ -38,6 +38,7 @@ class MemoryStorage implements SaveStorageAdapter {
   }
 
   async copy(sourcePath: string, destinationPath: string): Promise<void> {
+    if (this.failAt === 'copy') throw new Error('backup copy failed')
     this.copies.push([sourcePath, destinationPath])
     this.files.set(destinationPath, await this.readText(sourcePath))
   }
@@ -229,6 +230,76 @@ describe('portable transactional save repository', () => {
     ).rejects.toThrow()
     expect(storage.replacements).toEqual([])
     expect(storage.files.get('/current')).toBe(currentBytes)
+  })
+
+  test('rotates three verified backups before publishing a replacement', async () => {
+    const storage = new MemoryStorage()
+    storage.files.set(
+      '/current',
+      serializeWebSave({ saveVersion: 12, slot: 4 }),
+    )
+    storage.files.set(
+      '/current.backup.1',
+      serializeWebSave({ saveVersion: 12, slot: 3 }),
+    )
+    storage.files.set(
+      '/current.backup.2',
+      serializeWebSave({ saveVersion: 12, slot: 2 }),
+    )
+    storage.files.set(
+      '/current.backup.3',
+      serializeWebSave({ saveVersion: 12, slot: 1 }),
+    )
+    const repository = new PortableSaveRepository(
+      storage,
+      {
+        current: '/current',
+        temporary: '/current.tmp',
+        legacyRecovery: '/recovery/original-idb1.txt',
+      },
+      () => ({ saveVersion: 12 }),
+    )
+
+    await repository.commit(
+      PreparedSave.fromDecoded({ saveVersion: 12, slot: 5 }),
+    )
+
+    expect(storage.files.get('/current.backup.1')).toBe(
+      serializeWebSave({ saveVersion: 12, slot: 4 }),
+    )
+    expect(storage.files.get('/current.backup.2')).toBe(
+      serializeWebSave({ saveVersion: 12, slot: 3 }),
+    )
+    expect(storage.files.get('/current.backup.3')).toBe(
+      serializeWebSave({ saveVersion: 12, slot: 2 }),
+    )
+    expect(
+      (await repository.loadCurrent())?.copyValidatedState().slot,
+    ).toBe(5)
+  })
+
+  test('does not replace current when backup rotation fails', async () => {
+    const storage = new MemoryStorage()
+    const current = serializeWebSave({ saveVersion: 12, slot: 'current' })
+    storage.files.set('/current', current)
+    storage.failAt = 'copy'
+    const repository = new PortableSaveRepository(
+      storage,
+      {
+        current: '/current',
+        temporary: '/current.tmp',
+        legacyRecovery: '/recovery/original-idb1.txt',
+      },
+      () => ({ saveVersion: 12 }),
+    )
+
+    await expect(
+      repository.commit(
+        PreparedSave.fromDecoded({ saveVersion: 12, slot: 'candidate' }),
+      ),
+    ).rejects.toThrow('backup copy failed')
+    expect(storage.files.get('/current')).toBe(current)
+    expect(storage.replacements).toEqual([])
   })
 
   test('recovers from a corrupt current save using a valid legacy candidate', async () => {

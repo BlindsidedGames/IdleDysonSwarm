@@ -24,6 +24,8 @@ export interface SaveRepositoryPaths {
   readonly current: string
   readonly temporary: string
   readonly legacyRecovery: string
+  /** Latest-to-oldest publication history rotated before each replacement. */
+  readonly backups?: readonly [latest: string, previous: string, oldest: string]
 }
 
 export interface SaveRepository {
@@ -215,10 +217,29 @@ export class PortableSaveRepository implements SaveRepository {
       throw new Error('Temporary save verification failed before atomic replace.')
     }
     const committed = PreparedSave.fromDecoded(verified)
+    await this.rotateBackups()
     await this.storage.replaceAtomically(
       this.paths.temporary,
       this.paths.current,
     )
     return committed
+  }
+
+  private async rotateBackups(): Promise<void> {
+    if (!(await this.storage.exists(this.paths.current))) return
+    const backups =
+      this.paths.backups ??
+      ([
+        `${this.paths.current}.backup.1`,
+        `${this.paths.current}.backup.2`,
+        `${this.paths.current}.backup.3`,
+      ] as const)
+    if (await this.storage.exists(backups[1])) {
+      await this.storage.copy(backups[1], backups[2])
+    }
+    if (await this.storage.exists(backups[0])) {
+      await this.storage.copy(backups[0], backups[1])
+    }
+    await this.storage.copy(this.paths.current, backups[0])
   }
 }
