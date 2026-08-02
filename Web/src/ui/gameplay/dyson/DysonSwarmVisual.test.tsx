@@ -35,6 +35,12 @@ describe('DysonSwarmVisual', () => {
     expect(stylesheet).toContain(
       'dyson-origin-galaxy-zoom-out',
     )
+    expect(stylesheet).not.toContain(
+      'dyson-swarm-visual__field-galaxy-halo',
+    )
+    expect(stylesheet).toContain(
+      'dyson-swarm-visual__field-galaxy-image',
+    )
     expect(stylesheet).not.toMatch(
       /\.dyson-swarm-visual__galaxy-field\s*\{[^}]*animation:/,
     )
@@ -247,6 +253,46 @@ describe('DysonSwarmVisual', () => {
         '.dyson-swarm-visual__field-dust',
       ),
     ).toHaveLength(144)
+
+    const variantIds = [
+      'dyson-field-galaxy-face-on',
+      'dyson-field-galaxy-shallow-inclined',
+      'dyson-field-galaxy-edge-on',
+      'dyson-field-galaxy-oblique',
+    ]
+    const variantAssets = [
+      'galaxy-face-on.png',
+      'galaxy-shallow-inclined.png',
+      'galaxy-edge-on.png',
+      'galaxy-oblique.png',
+    ]
+    expect(
+      Array.from(
+        view.container.querySelectorAll<SVGGElement>(
+          'defs > g[id^="dyson-field-galaxy-"]',
+        ),
+        (definition) => definition.id,
+      ),
+    ).toEqual(variantIds)
+    for (const [variant, variantId] of variantIds.entries()) {
+      expect(
+        view.container
+          .querySelector(`#${variantId}`)
+          ?.querySelector('image'),
+      ).toHaveAttribute(
+        'href',
+        expect.stringContaining(variantAssets[variant]),
+      )
+      const membersForVariant =
+        view.container.querySelectorAll<SVGGElement>(
+          `.dyson-swarm-visual__field-member[data-variant="${variant}"]`,
+        )
+      expect(membersForVariant).toHaveLength(21)
+      expect(
+        membersForVariant[0]?.querySelector('use'),
+      ).toHaveAttribute('href', `#${variantId}`)
+    }
+
     expect(
       view.container.querySelectorAll(
         '.dyson-swarm-visual__group-orbit-plane',

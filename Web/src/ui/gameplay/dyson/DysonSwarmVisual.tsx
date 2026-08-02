@@ -6,6 +6,10 @@ import {
 import type {
   FrontendDysonSwarmVisualizationFacts,
 } from '../../../application/frontendSnapshot'
+import galaxyEdgeOn from '../../assets/galaxy-field/galaxy-edge-on.png'
+import galaxyFaceOn from '../../assets/galaxy-field/galaxy-face-on.png'
+import galaxyOblique from '../../assets/galaxy-field/galaxy-oblique.png'
+import galaxyShallowInclined from '../../assets/galaxy-field/galaxy-shallow-inclined.png'
 import './dysonSwarmVisual.css'
 
 const EXACT_COLLECTOR_LIMIT = 64
@@ -19,6 +23,15 @@ const GALAXY_FIELD_DUST_COUNT = 144
 const GALAXY_FIELD_ANCHOR_X = -8
 const GALAXY_FIELD_ANCHOR_Y = -44
 const ORBIT_COUNT = 4
+
+const GALAXY_FIELD_VARIANT_IDS = [
+  '#dyson-field-galaxy-face-on',
+  '#dyson-field-galaxy-shallow-inclined',
+  '#dyson-field-galaxy-edge-on',
+  '#dyson-field-galaxy-oblique',
+] as const
+
+type GalaxyFieldVariant = 0 | 1 | 2 | 3
 
 const ORBIT_SPECS = [
   { radius: 62, projectedRadius: 18, rotation: 12 },
@@ -68,7 +81,7 @@ interface GalaxyFieldMember {
   readonly rotation: number
   readonly scale: number
   readonly depth: number
-  readonly variant: number
+  readonly variant: GalaxyFieldVariant
   readonly spinDirection: 'normal' | 'reverse'
   readonly spinDurationSeconds: number
   readonly dimOrder: number
@@ -391,54 +404,48 @@ function GalaxyGroupScene({
               stopOpacity="0"
             />
           </radialGradient>
-          <g id="dyson-field-galaxy-spiral">
-            <ellipse
-              className="dyson-swarm-visual__field-galaxy-halo"
-              rx="5.4"
-              ry="2.9"
-            />
-            <path
-              className="dyson-swarm-visual__field-galaxy-arm"
-              d="M-5.2 0.25 C-2.9-2.2 1.5-2.15 4.9-0.45 C2.55 1.6-0.4 2.05-3.2 1.1"
-            />
-            <path
-              className="dyson-swarm-visual__field-galaxy-arm dyson-swarm-visual__field-galaxy-arm--faint"
-              d="M4.8 0.2 C2.5 2.25-1.55 2.05-4.75 0.45 C-2.15-1.45 0.8-1.9 3.5-0.9"
-            />
-            <circle
-              className="dyson-swarm-visual__field-galaxy-core"
-              r="0.72"
+          <g id="dyson-field-galaxy-face-on">
+            <image
+              className="dyson-swarm-visual__field-galaxy-image"
+              href={galaxyFaceOn}
+              x="-6"
+              y="-6"
+              width="12"
+              height="12"
+              preserveAspectRatio="xMidYMid meet"
             />
           </g>
-          <g id="dyson-field-galaxy-tilted">
-            <ellipse
-              className="dyson-swarm-visual__field-galaxy-halo"
-              rx="5.9"
-              ry="1.7"
-            />
-            <path
-              className="dyson-swarm-visual__field-galaxy-arm"
-              d="M-5.7 0 C-2.6-1.2 2.35-1.15 5.65 0 C2.15 1.25-2.1 1.2-4.7 0.2"
-            />
-            <circle
-              className="dyson-swarm-visual__field-galaxy-core"
-              r="0.62"
+          <g id="dyson-field-galaxy-shallow-inclined">
+            <image
+              className="dyson-swarm-visual__field-galaxy-image"
+              href={galaxyShallowInclined}
+              x="-6"
+              y="-6"
+              width="12"
+              height="12"
+              preserveAspectRatio="xMidYMid meet"
             />
           </g>
-          <g id="dyson-field-galaxy-elliptical">
-            <ellipse
-              className="dyson-swarm-visual__field-galaxy-halo"
-              rx="4.4"
-              ry="3"
+          <g id="dyson-field-galaxy-edge-on">
+            <image
+              className="dyson-swarm-visual__field-galaxy-image"
+              href={galaxyEdgeOn}
+              x="-6"
+              y="-6"
+              width="12"
+              height="12"
+              preserveAspectRatio="xMidYMid meet"
             />
-            <ellipse
-              className="dyson-swarm-visual__field-galaxy-arm"
-              rx="2.6"
-              ry="1.5"
-            />
-            <circle
-              className="dyson-swarm-visual__field-galaxy-core"
-              r="0.68"
+          </g>
+          <g id="dyson-field-galaxy-oblique">
+            <image
+              className="dyson-swarm-visual__field-galaxy-image"
+              href={galaxyOblique}
+              x="-6"
+              y="-6"
+              width="12"
+              height="12"
+              preserveAspectRatio="xMidYMid meet"
             />
           </g>
         </defs>
@@ -512,15 +519,7 @@ function GalaxyGroupScene({
                     className="dyson-swarm-visual__field-member-spin"
                     data-spin={member.spinDirection}
                   >
-                    <use
-                      href={
-                        member.variant === 0
-                          ? '#dyson-field-galaxy-spiral'
-                          : member.variant === 1
-                            ? '#dyson-field-galaxy-tilted'
-                            : '#dyson-field-galaxy-elliptical'
-                      }
-                    />
+                    <use href={GALAXY_FIELD_VARIANT_IDS[member.variant]} />
                   </g>
                 </g>
               </g>
@@ -692,7 +691,7 @@ function createGalaxyFieldMember(
       -32 + deterministicUnit(index + 8401) * 64,
     scale,
     depth,
-    variant: index % 3,
+    variant: (index % GALAXY_FIELD_VARIANT_IDS.length) as GalaxyFieldVariant,
     spinDirection: index % 2 === 0 ? 'normal' : 'reverse',
     spinDurationSeconds:
       170 + Math.round(deterministicUnit(index + 8501) * 170),
