@@ -1,0 +1,94 @@
+apply plugin: 'com.android.application'
+apply plugin: 'org.jetbrains.kotlin.android'
+apply from: '../release-version.gradle'
+
+def releaseSigningValues = [
+    keystorePath: providers.gradleProperty('IDS_ANDROID_KEYSTORE_PATH').orNull,
+    keystorePassword: providers.gradleProperty('IDS_ANDROID_KEYSTORE_PASSWORD').orNull,
+    keyAlias: providers.gradleProperty('IDS_ANDROID_KEY_ALIAS').orNull,
+    keyPassword: providers.gradleProperty('IDS_ANDROID_KEY_PASSWORD').orNull,
+]
+def releaseSigningConfigured = releaseSigningValues.values().every {
+    it != null && !it.trim().isEmpty()
+}
+def releaseBuildRequested = gradle.startParameter.taskNames.any {
+    it.toLowerCase(java.util.Locale.ROOT).contains('release')
+}
+
+android {
+    namespace = "com.blindsidedgames.idledysonswarm"
+    compileSdk = rootProject.ext.compileSdkVersion
+    defaultConfig {
+        applicationId "com.blindsidedgames.idledysonswarm"
+        minSdkVersion rootProject.ext.minSdkVersion
+        targetSdkVersion rootProject.ext.targetSdkVersion
+        versionCode idsReleaseCandidateId
+        versionName idsMarketingVersion
+        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+        aaptOptions {
+             // Files and dirs to omit from the packaged assets dir, modified to accommodate modern web apps.
+             // Default: https://android.googlesource.com/platform/frameworks/base/+/282e181b58cf72b6ca770dc7ca5f91f135444502/tools/aapt/AaptAssets.cpp#61
+            ignoreAssetsPattern = '!.svn:!.git:!.ds_store:!*.scc:.*:!CVS:!thumbs.db:!picasa.ini:!*~'
+        }
+    }
+    signingConfigs {
+        if (releaseSigningConfigured) {
+            release {
+                storeFile file(releaseSigningValues.keystorePath)
+                storePassword releaseSigningValues.keystorePassword
+                keyAlias releaseSigningValues.keyAlias
+                keyPassword releaseSigningValues.keyPassword
+            }
+        }
+    }
+    buildTypes {
+        release {
+            if (releaseSigningConfigured) {
+                signingConfig signingConfigs.release
+            }
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+        }
+    }
+}
+
+if (releaseBuildRequested && !releaseSigningConfigured) {
+    def missingProperties = releaseSigningValues.findAll {
+        it.value == null || it.value.trim().isEmpty()
+    }.keySet().join(', ')
+    throw new GradleException(
+        "Release signing was requested but protected signing inputs are missing: " +
+        missingProperties +
+        ". Supply the IDS_ANDROID_* Gradle properties through CI secrets."
+    )
+}
+
+repositories {
+    flatDir{
+        dirs '../capacitor-cordova-android-plugins/src/main/libs', 'libs'
+    }
+}
+
+dependencies {
+    implementation fileTree(include: ['*.jar'], dir: 'libs')
+    implementation "androidx.appcompat:appcompat:$androidxAppCompatVersion"
+    implementation "androidx.coordinatorlayout:coordinatorlayout:$androidxCoordinatorLayoutVersion"
+    implementation "androidx.core:core-splashscreen:$coreSplashScreenVersion"
+    implementation project(':capacitor-android')
+    implementation "com.android.billingclient:billing:9.1.0"
+    testImplementation "junit:junit:$junitVersion"
+    androidTestImplementation "androidx.test.ext:junit:$androidxJunitVersion"
+    androidTestImplementation "androidx.test.espresso:espresso-core:$androidxEspressoCoreVersion"
+    implementation project(':capacitor-cordova-android-plugins')
+}
+
+apply from: 'capacitor.build.gradle'
+
+try {
+    def servicesJSON = file('google-services.json')
+    if (servicesJSON.text) {
+        apply plugin: 'com.google.gms.google-services'
+    }
+} catch(Exception e) {
+    logger.info("google-services.json not found, google-services plugin not applied. Push Notifications won't work")
+}

@@ -19,8 +19,9 @@ calculate, convert, or provide a fallback currency price. Each purchasable
 button receives an opaque `localizedPrice` string from the native
 `StoreAdapter`; a missing native listing is shown as unavailable.
 
-`NoopStoreAdapter` remains intentionally inert. This foundation does not claim
-StoreKit, Google Play Billing, or Steam Inventory integration.
+`NoopStoreAdapter` remains intentionally inert for browser and unsupported
+native hosts. Capacitor release builds bind this contract to StoreKit 2 and
+Google Play Billing. Steam remains a separate desktop release gate.
 
 ## Entitlement trust
 
@@ -48,8 +49,9 @@ provenance fail closed even if they contain `doubleIp: true`.
 
 The host cache keeps only audit-safe metadata for the promotion: platform,
 Unity source class, an opaque source identifier, a non-secret path class, a
-SHA-256 content hash, migrated schema version, and promotion UTC timestamp. It
-never records the raw Unity save or an absolute filesystem path. If the provider
+native-computed SHA-256 content hash, and promotion UTC timestamp. It never
+records the raw Unity save or an absolute filesystem path. Renderer-provided
+ownership, provenance, schema and hash claims are not authority. If the provider
 later becomes unavailable,
 the most recent verified record is used and an offline failure cannot revoke
 it. With no verified cache or same-device evidence it fails closed. The cache
@@ -63,7 +65,9 @@ Restore Purchases is presented only alongside permanent upgrades. Returned tip
 IDs are ignored. A restored product is counted and exposed only when the host
 authority independently verifies the matching durable entitlement.
 
-The next native-host phase must bind these platform-neutral ports to real
-StoreKit 2, Google Play Billing, and Steam Inventory implementations, and then
-exercise purchases, restoration, offline ownership, and save-transfer isolation
-on private store tracks.
+Mobile release certification must exercise purchases, cancellation, pending
+transactions, restoration, repeatable tips, offline cached ownership and
+save-transfer isolation on private App Store and Play tracks. The StoreKit
+implementation must additionally pass Xcode StoreKit configuration tests on a
+Mac before real-device sandbox testing. Steam ownership remains a later desktop
+provider gate.

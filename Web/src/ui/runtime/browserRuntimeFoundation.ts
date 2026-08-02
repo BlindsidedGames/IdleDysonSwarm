@@ -38,6 +38,7 @@ import {
 import {
   BrowserRecoveryBlobExporter,
   BrowserRecoveryBlobRetainer,
+  type BrowserLegacyRecoveryStore,
   BrowserSaveImportReader,
   BrowserTextDownloadAdapter,
   type TextDownloadPort,
@@ -75,7 +76,9 @@ import type {
 } from '../../save/automaticPurchaseEvidence'
 import {
   PortableSaveRepository,
+  type SaveRepositoryPaths,
   type SaveRepository,
+  type SaveStorageAdapter,
 } from '../../save/repository'
 import type {
   LifecycleClockSample,
@@ -167,6 +170,14 @@ export interface BrowserRuntimeFoundationOptions {
   readonly profileId?: string
   /** Deterministic test seam; production composition constructs IndexedDB. */
   readonly database?: BrowserSaveDatabase
+  /**
+   * Native hosts inject their rooted filesystem adapter here. When supplied,
+   * IndexedDB remains available only as an explicitly injected writer-fence
+   * implementation and never stores player save contents.
+   */
+  readonly saveStorage?: SaveStorageAdapter & BrowserLegacyRecoveryStore
+  readonly saveRepositoryPaths?: SaveRepositoryPaths
+  readonly allowCanonicalPlayerWrites?: boolean
   readonly indexedDbFactory?: IDBFactory
   /** Deterministic lifecycle orchestration test seam. */
   readonly lifecycle?: LifecycleAdapter
@@ -315,6 +326,10 @@ class BrowserRuntimeFoundation implements BrowserUiRuntimeFoundation {
   private readonly developmentControlsAvailable: boolean
   private readonly developmentControlsRequireEntitlement: boolean
   private readonly database: BrowserSaveDatabase
+  private readonly saveStorage:
+    | (SaveStorageAdapter & BrowserLegacyRecoveryStore)
+    | undefined
+  private readonly saveRepositoryPaths: SaveRepositoryPaths
   private readonly lease: BrowserWriterLease
   private readonly lifecycle: LifecycleAdapter
   private readonly clock: CanonicalLifecycleClock
@@ -358,6 +373,13 @@ class BrowserRuntimeFoundation implements BrowserUiRuntimeFoundation {
         databaseName,
         options.indexedDbFactory,
       )
+    this.saveStorage = options.saveStorage
+    this.saveRepositoryPaths =
+      options.saveRepositoryPaths ??
+      developmentOnlyRepositoryPaths(
+        options.profileId ??
+          DEVELOPMENT_ONLY_BROWSER_PROFILE_ID,
+      )
     this.lease = new BrowserWriterLease({
       database: this.database,
       nowUtcMilliseconds: options.nowUtcMilliseconds,
@@ -385,7 +407,11 @@ class BrowserRuntimeFoundation implements BrowserUiRuntimeFoundation {
     )
     this.importReader = new BrowserSaveImportReader()
     this.exporter = new BrowserRecoveryBlobExporter(
-      { readText: (path) => this.database.readFile(path) },
+      {
+        readText: (path) =>
+          this.saveStorage?.readText(path) ??
+          this.database.readFile(path),
+      },
       options.downloads ?? new BrowserTextDownloadAdapter(),
     )
     this.unsubscribeOwnership = this.lease.subscribe((state) => {
@@ -1044,10 +1070,11 @@ class BrowserRuntimeFoundation implements BrowserUiRuntimeFoundation {
 
       const applicationSnapshot = graph.application.snapshot()
       if (applicationSnapshot.phase === 'blocked') {
-        const recoveryPath = developmentOnlyRepositoryPaths(
-          this.options.profileId ?? DEVELOPMENT_ONLY_BROWSER_PROFILE_ID,
-        ).legacyRecovery
-        if (await this.database.fileExists(recoveryPath)) {
+        const recoveryPath = this.saveRepositoryPaths.legacyRecovery
+        const recoveryExists = this.saveStorage === undefined
+          ? await this.database.fileExists(recoveryPath)
+          : await this.saveStorage.exists(recoveryPath)
+        if (recoveryExists) {
           this.lastRecoveryPath = recoveryPath
         }
         const blocked = applicationBlockedStatus(
@@ -1114,20 +1141,22 @@ class BrowserRuntimeFoundation implements BrowserUiRuntimeFoundation {
   }
 
   private createGraph(): BrowserRuntimeGraph {
-    const profileId =
-      this.options.profileId ??
-      DEVELOPMENT_ONLY_BROWSER_PROFILE_ID
-    const storage = new IndexedDbSaveStorageAdapter({
-      database: this.database,
-      lease: this.lease,
-      nowUtcMilliseconds: this.options.nowUtcMilliseconds,
-      legacyIdFactory: this.options.legacyIdFactory,
-    })
+    const storage =
+      this.saveStorage ??
+      new IndexedDbSaveStorageAdapter({
+        database: this.database,
+        lease: this.lease,
+        nowUtcMilliseconds: this.options.nowUtcMilliseconds,
+        legacyIdFactory: this.options.legacyIdFactory,
+      })
     const repository = new PortableSaveRepository(
       storage,
-      developmentOnlyRepositoryPaths(profileId),
+      this.saveRepositoryPaths,
       decodeIdb1Save,
-      { allowCanonicalPlayerWrites: false },
+      {
+        allowCanonicalPlayerWrites:
+          this.options.allowCanonicalPlayerWrites === true,
+      },
       this.options.automaticPurchaseEvidencePromoter,
     )
     const initialLifecyclePhase = this.lifecycle.currentPhase()

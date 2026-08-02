@@ -45,7 +45,7 @@ describe('website promotion workflow', () => {
       with: {
         path: '${{ steps.package.outputs.path }}',
         'if-no-files-found': 'error',
-        'retention-days': 30,
+        'retention-days': 1,
       },
     })
     expect(shellSource).not.toMatch(/\b(?:deploy|merge)\b/)

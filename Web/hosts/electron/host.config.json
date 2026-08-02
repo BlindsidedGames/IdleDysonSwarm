@@ -2,7 +2,7 @@
   "schemaVersion": 1,
   "appId": "com.blindsidedgames.idledysonswarm",
   "productName": "Idle Dyson Swarm",
-  "marketingVersion": "4.0.0",
+  "releaseMetadata": "../native-release.json",
   "steamAppId": 4348570,
   "webDirectory": "../../dist-native",
   "webSaveRoot": "web-runtime-v1",

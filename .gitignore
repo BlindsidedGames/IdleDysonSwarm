@@ -88,6 +88,14 @@ UserSettings/Search.settings
 
 # Local beta keys (do not commit)
 Documentation/Idle_Dyson_Swarm_Keys/
+*.keystore
+*.jks
+*.p12
+*.mobileprovision
+*.provisionprofile
+
+# The legacy Android upload key is still tracked pending verified Play upload
+# key rotation. New signing material must only enter protected release inputs.
 
 # Editor console snapshot (agent helper)
 Documentation/Console/editor-console.json

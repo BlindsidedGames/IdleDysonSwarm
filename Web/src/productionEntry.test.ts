@@ -14,11 +14,11 @@ const mainSource = readFileSync(
   'utf8',
 )
 
-describe('production browser entry', () => {
+describe('production host entry', () => {
   test('constructs and starts one runtime outside React lifecycle effects', () => {
     expect(
       mainSource.match(
-        /createProductionBrowserComposition\(\)/g,
+        /createProductionHostComposition\(\)/g,
       ),
     ).toHaveLength(1)
     expect(

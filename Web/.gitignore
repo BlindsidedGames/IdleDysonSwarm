@@ -9,10 +9,12 @@ lerna-debug.log*
 
 node_modules
 dist
+dist-native
 dist-ssr
 *.local
 output/
 reports/initial-request-bundle/
+release/electron/
 test/private-fixtures/
 
 # Editor directories and files

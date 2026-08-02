@@ -73,7 +73,7 @@ Introduce stable boundaries for:
 ## 4. CI, signing, packaging, and private store validation
 
 - Set marketing version `4.0.0`.
-- Generate release-candidate IDs as UTC `YYYYMMDDNN`: Android integer version code, Apple `YYYY.MMDD.NN`, and Electron/package metadata `YYYYMMDDNN`.
+- Generate release-candidate IDs as UTC `YYYYMMDDNN`: Android integer version code, Apple-valid `YYMM.DD.NN`, and Electron/package metadata `YYYYMMDDNN`.
 - Use standard public-repository GitHub-hosted Linux, Windows, and macOS runners only. Prohibit larger runners, configure a zero-overage budget, use conservative caches, and retain artifacts for one day.
 - Ordinary commits run unsigned tests and build checks. A protected manual release-candidate workflow performs signing, packaging, and private uploads.
 - Reuse the existing Android Play upload key through protected secrets. Remove the keystore from the current tracked tree without rewriting history.
@@ -106,7 +106,7 @@ Explicitly excluded are cloud sync, remote telemetry, Web-to-Unity export, produ
 
 ## Implementation status (2026-08-02)
 
-Completed and independently reviewed:
+Completed, committed, and independently reviewed:
 
 - Compact deterministic `IDSWEB1` persistence and shared-save entitlement stripping.
 - Public Unity schema-11 fixture coverage and field classification.
@@ -115,11 +115,19 @@ Completed and independently reviewed:
 - Browser, Capacitor, and Electron save-storage and read-only Unity-discovery boundaries.
 - Native-only Store surface, entitlement projection, purchase restoration, and audit-safe Unity evidence promotion.
 
+Implemented in the current native-host checkpoint and undergoing final independent review:
+
+- Pinned Capacitor Android/iOS and Electron Windows/macOS/Linux applications using the native-relative Web build.
+- Native application-owned save storage, single-writer Electron operation, lifecycle checkpoints, metadata, diagnostics, and read-only Unity discovery.
+- StoreKit 2 and Google Play Billing adapters with localized prices, repeatable tips, durable Double IP and Developer Options, restoration, and offline entitlement caches.
+- Standard-runner, zero-overage verification for Web, Electron, Android, and unsigned iOS simulator builds.
+- Reproducible native release metadata for marketing version `4.0.0`, release candidate `2026080200`, Android version code, Apple build number, and Electron package metadata.
+
 Still required before the phase can be certified:
 
-- Pin and generate the concrete Capacitor and Electron applications and native-relative Web build.
-- Implement and test real StoreKit 2, Google Play Billing, and Steam Inventory adapters.
-- Remove the tracked Android keystore from the current tree and configure protected signing inputs.
-- Add the zero-overage GitHub Actions release-candidate matrix, reproducible packaging, checksums, and private upload jobs.
+- Implement the Steam Inventory adapter through a supported Steamworks native binding; the current Electron dependency does not expose the required inventory purchase surface.
+- Verify the tracked Android keystore's exact upload-key identity and rotation path before removing it from the current tree; release signing already fails closed without protected inputs.
+- Add the protected manual release-candidate workflow for signing, checksums, and private TestFlight, Play internal-track, and Steam beta uploads.
+- Compile and archive the iOS host on the available Mac/Xcode environment.
 - Complete physical-device existing-install migration and real purchase/restore certification.
 - Exercise the Cloudflare preview acceptance flow; public promotion remains separately authorized.

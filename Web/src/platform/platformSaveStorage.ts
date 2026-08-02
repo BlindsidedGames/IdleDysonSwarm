@@ -133,6 +133,25 @@ abstract class RootedPlatformSaveStorageAdapter
     }
     return Object.freeze(retainedCandidates)
   }
+
+  async retainLegacyCandidate(
+    text: string,
+    id = nativeImportIdentifier(),
+  ): Promise<LegacySaveCandidate> {
+    if (!/^[a-zA-Z0-9][a-zA-Z0-9._-]{0,90}$/.test(id)) {
+      throw new Error('Native retained import identifier is invalid.')
+    }
+    const sourcePath = `recovery/imports/${id}.txt`
+    await this.files.writeText(sourcePath, text)
+    return Object.freeze({
+      id,
+      sourcePath,
+      text,
+      provenance: Object.freeze({
+        kind: 'browser-retained-import' as const,
+      }),
+    })
+  }
 }
 
 /** Capacitor host adapter backed by Filesystem.Directory.Data. */
@@ -182,4 +201,13 @@ function requireSafeRelativePath(path: string): string {
     )
   }
   return segments.join('/')
+}
+
+function nativeImportIdentifier(): string {
+  if (typeof globalThis.crypto?.randomUUID === 'function') {
+    return `native-import-${globalThis.crypto.randomUUID()}`
+  }
+  return `native-import-${Date.now()}-${Math.random()
+    .toString(16)
+    .slice(2)}`
 }
