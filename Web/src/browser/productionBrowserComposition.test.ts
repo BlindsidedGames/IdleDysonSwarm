@@ -121,7 +121,7 @@ describe('production browser composition', () => {
       importedAtUtc: '2026-07-29T03:04:05.000Z',
       overwriteApproved: true,
     })
-    expect(resetRequest?.text).toContain('"format": "IDSWEB1"')
+    expect(resetRequest?.text).toMatch(/^IDSWEB1:/)
   })
 
   test('reloads only after a verified checkpoint and orderly shutdown', async () => {
@@ -144,6 +144,57 @@ describe('production browser composition', () => {
 
     await expect(composition.reloadSafely()).resolves.toBeUndefined()
     expect(events).toEqual(['checkpoint', 'shutdown', 'reload'])
+  })
+
+  test('prepares an accepted package update without reloading before its worker activates', async () => {
+    const events: string[] = []
+    const runtime = reloadRuntime({
+      status: readyStatus(),
+      checkpoint: async () => {
+        events.push('checkpoint')
+        return true
+      },
+      shutdown: async () => {
+        events.push('shutdown')
+      },
+    })
+    const composition = createProductionBrowserComposition({
+      entitlementDocument: entitlementDocument('false'),
+      createRuntime: () => runtime,
+      reloadPage: () => events.push('reload'),
+    })
+
+    await expect(
+      composition.prepareForUpdateActivation(),
+    ).resolves.toBeUndefined()
+    expect(events).toEqual(['checkpoint', 'shutdown'])
+  })
+
+  test('does not activate a package update from a recovery state without a verified checkpoint', async () => {
+    const events: string[] = []
+    const runtime = reloadRuntime({
+      status: {
+        phase: 'blocked',
+        code: 'application-blocked',
+        reason: 'startup unavailable',
+      },
+      checkpoint: async () => {
+        events.push('checkpoint')
+        return false
+      },
+      shutdown: async () => {
+        events.push('shutdown')
+      },
+    })
+    const composition = createProductionBrowserComposition({
+      entitlementDocument: entitlementDocument('false'),
+      createRuntime: () => runtime,
+    })
+
+    await expect(
+      composition.prepareForUpdateActivation(),
+    ).rejects.toThrow('ready runtime and verified checkpoint')
+    expect(events).toEqual([])
   })
 
   test('keeps the current session alive when the safe-reload checkpoint is not verified', async () => {

@@ -16,6 +16,10 @@ import {
   PresentationIntlProvider,
 } from './ui/i18n'
 import {
+  createProductionPwaUpdateController,
+  PwaUpdatePrompt,
+} from './pwa'
+import {
   StartupErrorBoundary,
   startupShellMessages,
 } from './ui/shell'
@@ -33,6 +37,9 @@ async function bootstrap(): Promise<void> {
       await LOCALE_REGISTRY[locale].loadSharedCatalog()
     const composition =
       createProductionBrowserComposition()
+    const pwaUpdateController =
+      createProductionPwaUpdateController()
+    void pwaUpdateController?.start()
     const boundaryIntl = createIntl(
       {
         locale: LOCALE_REGISTRY[locale].languageTag,
@@ -116,6 +123,14 @@ async function bootstrap(): Promise<void> {
               resetSave={composition.resetSave}
               buildId={import.meta.env.VITE_BUILD_ID}
             />
+            {pwaUpdateController === undefined ? null : (
+              <PwaUpdatePrompt
+                controller={pwaUpdateController}
+                prepareForActivation={
+                  composition.prepareForUpdateActivation
+                }
+              />
+            )}
           </PresentationIntlProvider>
         </StartupErrorBoundary>
       </StrictMode>,

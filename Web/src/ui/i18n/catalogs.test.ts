@@ -60,12 +60,14 @@ import {
   skillMessages,
 } from '../gameplay/skills/messages'
 import { startupShellMessages } from '../shell/messages'
+import { pwaUpdateMessages } from '../../pwa/messages'
 
 describe('compiled locale catalogs', () => {
   it('keeps every enabled catalog complete and free of orphaned keys', () => {
     const expected = [
       ...Object.values(sharedMessages),
       ...Object.values(startupShellMessages),
+      ...Object.values(pwaUpdateMessages),
       ...Object.values(readyDysonMessages),
       ...Object.values(debugSurfaceMessages),
       ...Object.values(basicFacilityMessages),

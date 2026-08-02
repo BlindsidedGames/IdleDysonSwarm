@@ -2453,6 +2453,42 @@
       "value": "Offline Time Used"
     }
   ],
+  "pwa.update.accept": [
+    {
+      "type": 0,
+      "value": "Save and update"
+    }
+  ],
+  "pwa.update.applying": [
+    {
+      "type": 0,
+      "value": "Saving progress and applying the update…"
+    }
+  ],
+  "pwa.update.body": [
+    {
+      "type": 0,
+      "value": "A new version has downloaded. Save your progress before applying it."
+    }
+  ],
+  "pwa.update.failed": [
+    {
+      "type": 0,
+      "value": "The update was not applied. Your current game remains open."
+    }
+  ],
+  "pwa.update.retry": [
+    {
+      "type": 0,
+      "value": "Try again"
+    }
+  ],
+  "pwa.update.title": [
+    {
+      "type": 0,
+      "value": "Update ready"
+    }
+  ],
   "quantum.cost": [
     {
       "type": 1,

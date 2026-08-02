@@ -8,12 +8,18 @@ import {
 import {
   stripMessageAuthoringMetadataPlugin,
 } from './scripts/stripMessageAuthoringMetadata.js'
+import {
+  PWA_BASE_PATH,
+  pwaPackagePlugin,
+} from './scripts/pwaPackage.js'
 
 // https://vite.dev/config/
 export default defineConfig({
+  base: PWA_BASE_PATH,
   plugins: [
     stripMessageAuthoringMetadataPlugin(),
     react(),
+    pwaPackagePlugin(),
     {
       name: 'idle-dyson-swarm-security-headers',
       apply: 'build',
@@ -33,7 +39,7 @@ export default defineConfig({
         this.emitFile({
           type: 'asset',
           fileName: '_headers',
-          source: renderStaticSecurityHeaders(),
+          source: renderStaticSecurityHeaders('/play/*'),
         })
       },
     },

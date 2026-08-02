@@ -1135,6 +1135,30 @@
     "defaultMessage": "Offline Time Used",
     "description": "Heading for per-Infinity stored-time usage statistics."
   },
+  "pwa.update.accept": {
+    "defaultMessage": "Save and update",
+    "description": "Explicit action that checkpoints the game before activating a waiting PWA update."
+  },
+  "pwa.update.applying": {
+    "defaultMessage": "Saving progress and applying the update…",
+    "description": "Status shown while a waiting PWA update is being safely activated."
+  },
+  "pwa.update.body": {
+    "defaultMessage": "A new version has downloaded. Save your progress before applying it.",
+    "description": "Explanation shown when a background PWA update is waiting."
+  },
+  "pwa.update.failed": {
+    "defaultMessage": "The update was not applied. Your current game remains open.",
+    "description": "Failure message when a checkpoint prevents PWA update activation."
+  },
+  "pwa.update.retry": {
+    "defaultMessage": "Try again",
+    "description": "Action that retries safe activation of a waiting PWA update."
+  },
+  "pwa.update.title": {
+    "defaultMessage": "Update ready",
+    "description": "Heading for the non-blocking installed PWA update prompt."
+  },
   "quantum.cost": {
     "defaultMessage": "{value} QS",
     "description": "Quantum Shard price."

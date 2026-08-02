@@ -1,0 +1,12 @@
+{
+  "schemaVersion": 1,
+  "sourceRepository": "BlindsidedGames/IdleDysonSwarm",
+  "websiteRepository": "BlindsidedGames/BlindsidedGames",
+  "websiteBaseBranch": "main",
+  "websiteDestinationDirectory": "public/play",
+  "websiteHeadersFile": "public/_headers",
+  "websiteRecordDirectory": "promotions/idle-dyson-swarm",
+  "canonicalUrl": "https://ids.blindsidedgames.com/play/",
+  "managedHeadersStart": "# BEGIN IDLE DYSON SWARM WEB",
+  "managedHeadersEnd": "# END IDLE DYSON SWARM WEB"
+}

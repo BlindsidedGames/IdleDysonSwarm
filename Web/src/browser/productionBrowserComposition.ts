@@ -61,6 +61,8 @@ export interface ProductionBrowserComposition {
   readonly saveSchemaVersion: number
   sampleUtc(): string
   resetSave(): Promise<UiRuntimeImportResult>
+  prepareForUpdateActivation(): Promise<void>
+  prepareForSafeReload(): Promise<void>
   reloadSafely(): Promise<void>
 }
 
@@ -120,6 +122,44 @@ export function createProductionBrowserComposition(
   })
   const reloadPage =
     options.reloadPage ?? (() => window.location.reload())
+  const prepareForSafeReload = async (): Promise<void> => {
+    const status = runtime.status()
+    if (status.phase === 'ready') {
+      const checkpointed =
+        await runtime.checkpointBeforeSafeReload()
+      if (!checkpointed) {
+        throw new Error(
+          'Safe reload requires a verified checkpoint.',
+        )
+      }
+    } else if (
+      status.phase !== 'blocked' &&
+      status.phase !== 'ownership-lost'
+    ) {
+      throw new Error(
+        `Safe reload is unavailable while the runtime is ${status.phase}.`,
+      )
+    }
+    // There is intentionally no await between a non-ready status sample and
+    // shutdown. The production runtime closes new startup, lifecycle, and
+    // command admission synchronously when shutdown() is invoked.
+    await runtime.shutdown()
+  }
+  const prepareForUpdateActivation = async (): Promise<void> => {
+    const status = runtime.status()
+    if (status.phase !== 'ready') {
+      throw new Error(
+        'Package updates require a ready runtime and verified checkpoint.',
+      )
+    }
+    const checkpointed = await runtime.checkpointBeforeSafeReload()
+    if (!checkpointed) {
+      throw new Error(
+        'Package updates require a verified checkpoint.',
+      )
+    }
+    await runtime.shutdown()
+  }
   return Object.freeze({
     runtime,
     saveSchemaVersion: unityFirstRunProvenance.saveSchema,
@@ -138,28 +178,10 @@ export function createProductionBrowserComposition(
         overwriteApproved: true,
       })
     },
+    prepareForUpdateActivation,
+    prepareForSafeReload,
     reloadSafely: async () => {
-      const status = runtime.status()
-      if (status.phase === 'ready') {
-        const checkpointed =
-          await runtime.checkpointBeforeSafeReload()
-        if (!checkpointed) {
-          throw new Error(
-            'Safe reload requires a verified checkpoint.',
-          )
-        }
-      } else if (
-        status.phase !== 'blocked' &&
-        status.phase !== 'ownership-lost'
-      ) {
-        throw new Error(
-          `Safe reload is unavailable while the runtime is ${status.phase}.`,
-        )
-      }
-      // There is intentionally no await between a non-ready status sample and
-      // shutdown. The production runtime closes new startup, lifecycle, and
-      // command admission synchronously when shutdown() is invoked.
-      await runtime.shutdown()
+      await prepareForSafeReload()
       reloadPage()
     },
   })

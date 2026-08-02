@@ -4725,6 +4725,90 @@
       "value": "‬"
     }
   ],
+  "pwa.update.accept": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "Sɐʌǝ ɐup ndpɐʇǝ"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "pwa.update.applying": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "Sɐʌıuƃ dɹoƃɹǝss ɐup ɐddʅʎıuƃ ʇɥǝ ndpɐʇǝ…"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "pwa.update.body": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "∀ uǝʍ ʌǝɹsıou ɥɐs poʍuʅoɐpǝp. Sɐʌǝ ʎonɹ dɹoƃɹǝss qǝɟoɹǝ ɐddʅʎıuƃ ıʇ."
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "pwa.update.failed": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "⊥ɥǝ ndpɐʇǝ ʍɐs uoʇ ɐddʅıǝp. ⅄onɹ ɔnɹɹǝuʇ ƃɐɯǝ ɹǝɯɐıus odǝu."
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "pwa.update.retry": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "⊥ɹʎ ɐƃɐıu"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "pwa.update.title": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "∩dpɐʇǝ ɹǝɐpʎ"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
   "quantum.cost": [
     {
       "type": 0,
