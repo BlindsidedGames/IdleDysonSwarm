@@ -77,6 +77,7 @@ describe('skill effect materializer', () => {
         operation: 'multiply',
         value: 2,
         order: 20,
+        conditionIdentifier: 'condition.planets_69',
       },
     ])
   })
