@@ -8,6 +8,10 @@ surface.
 
 - `src/platform/releaseFoundation.ts` defines the selected host kind, platform
   metadata, candidate-only native save discovery and diagnostics export.
+- `src/platform/platformSaveStorage.ts`, `nativeMigration.ts`, and
+  `nativeSystemPorts.ts` define the dependency-free native host foundation.
+  The concrete path and bridge rules are recorded in
+  `docs/native-host-foundation.md`.
 - `src/store/contracts.ts` owns the canonical IAP product catalog, store
   purchase/restore port and entitlement authority. The five identifiers are
   copied exactly from Unity's `Assets/Resources/IAPProductCatalog.json`:
@@ -30,7 +34,7 @@ locally, but it must not map an imported/shared save claim into it.
 ## Integration hooks
 
 1. A desktop/mobile host implements `PlatformMetadataSource`,
-   `NativeFilesystemMigrationSource`, `DiagnosticsExporter`, `StoreAdapter`
+   `NativeMigrationSource`, `DiagnosticsExporter`, `StoreAdapter`
    and `EntitlementAuthority` with its approved provider SDKs.
 2. The startup composition requests host ownership from
    `EntitlementAuthority` and projects only the resolved effective access into

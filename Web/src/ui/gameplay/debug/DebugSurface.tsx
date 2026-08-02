@@ -147,6 +147,7 @@ export function DebugSurface({
                 />
               </div>
               <div className="debug-surface__button-grid">
+                <ActionButton label={intl.formatMessage(messages.addCash)} disabled={pending || !validAmount} onClick={() => apply({ kind: 'add-cash', amount: parsedAmount }, intl.formatMessage(messages.actionSuccess))} />
                 <ActionButton label={intl.formatMessage(messages.addBots)} disabled={pending || !validAmount} onClick={() => apply({ kind: 'add-bots', amount: parsedAmount }, intl.formatMessage(messages.actionSuccess))} />
                 <ActionButton label={intl.formatMessage(messages.addSkillPoints)} disabled={pending || !validAmount} onClick={() => apply({ kind: 'add-skill-points', amount: discreteAmount }, intl.formatMessage(messages.actionSuccess))} />
                 <ActionButton label={intl.formatMessage(messages.addInfinityPoints)} disabled={pending || !validAmount} onClick={() => apply({ kind: 'add-infinity-points', amount: discreteAmount }, intl.formatMessage(messages.actionSuccess))} />

@@ -15,8 +15,46 @@ import type {
 import {
   createProductionBrowserComposition,
 } from './productionBrowserComposition'
+import type { ReleasePlatformServices } from '../platform/releaseFoundation'
 
 describe('production browser composition', () => {
+  test('loads native verified ownership before constructing canonical gameplay', async () => {
+    let captured: Readonly<BrowserRuntimeFoundationOptions> | undefined
+    const runtime = Object.freeze({}) as BrowserUiRuntimeFoundation
+    createProductionBrowserComposition({
+      entitlementDocument: entitlementDocument('false'),
+      releasePlatformServices: {
+        hostKind: 'mobile-native',
+        entitlements: {
+          readOwnership: async () => ({
+            doubleInfinityPoints: true,
+            developerOptions: true,
+          }),
+          refreshOwnership: async () => ({
+            doubleInfinityPoints: true,
+            developerOptions: true,
+          }),
+        },
+      } as unknown as ReleasePlatformServices,
+      createRuntime: (options) => {
+        captured = options
+        return runtime
+      },
+    })
+    expect(captured?.developmentControlsAvailable).toBe(true)
+    expect(captured?.developmentControlsRequireEntitlement).toBe(true)
+    await captured?.hostEntitlements?.initialize()
+    const started = await captured?.createApplication(
+      new FirstRunRepository(),
+    ).start()
+    expect(started).toMatchObject({
+      phase: 'ready',
+      state: {
+        entitlements: { permanentDoubleIp: true },
+      },
+    })
+  })
+
   test('binds authentic first-run data, explicit host authority, and shared browser clocks outside React', async () => {
     const lifecycleClock = new RecordingLifecycleClock(
       '2026-07-29T03:04:05.000Z',

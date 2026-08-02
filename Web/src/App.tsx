@@ -5,11 +5,12 @@ import {
   useRef,
   useState,
 } from 'react'
-import { useIntl } from 'react-intl'
+import { FormattedMessage, useIntl } from 'react-intl'
 import type {
   BrowserUiRuntimeFoundation,
   UiRuntimeImportResult,
 } from './ui/runtime'
+import type { ReleasePlatformServices } from './platform/releaseFoundation'
 import {
   useBrowserRuntimeStatus,
 } from './ui/runtime'
@@ -22,6 +23,7 @@ import {
   type StartupShellActions,
   type StartupShellOperationStatus,
 } from './ui/shell'
+import { StatusFeedback } from './ui/components'
 
 export interface AppProps {
   readonly runtime: BrowserUiRuntimeFoundation
@@ -32,6 +34,8 @@ export interface AppProps {
   readonly resetSave?: () => Promise<UiRuntimeImportResult>
   readonly confirmOverwrite?: (message: string) => boolean
   readonly buildId?: string
+  readonly releasePlatformServices?: Readonly<ReleasePlatformServices>
+  readonly localDeveloperOptionsPurchased?: boolean
 }
 
 function App({
@@ -43,6 +47,8 @@ function App({
   resetSave = unavailableReset,
   confirmOverwrite = (message) => window.confirm(message),
   buildId,
+  releasePlatformServices,
+  localDeveloperOptionsPurchased,
 }: AppProps) {
   const intl = useIntl()
   const status = useBrowserRuntimeStatus(runtime)
@@ -126,12 +132,26 @@ function App({
   ])
 
   if (status.phase === 'ready') {
+    const backupRecovered = status.warnings.some(
+      (warning) => warning.code === 'backup-recovered',
+    )
     return (
-      <ReadyDysonRuntimeHost
-        runtime={runtime}
-        locale={locale}
-        resetSave={resetSave}
-      />
+      <>
+        {backupRecovered && (
+          <StatusFeedback tone="warning">
+            <FormattedMessage
+              {...startupShellMessages.backupRecoveredNotice}
+            />
+          </StatusFeedback>
+        )}
+        <ReadyDysonRuntimeHost
+          runtime={runtime}
+          locale={locale}
+          resetSave={resetSave}
+          releasePlatformServices={releasePlatformServices}
+          localDeveloperOptionsPurchased={localDeveloperOptionsPurchased}
+        />
+      </>
     )
   }
 
@@ -147,6 +167,36 @@ function App({
     }
   }
 
+  const copyOriginalRequested = async (): Promise<void> => {
+    if (!beginOperation('export-pending')) return
+    try {
+      const copied = await runtime.copyLastRecovery()
+      completeOperation(copied ? 'export-succeeded' : 'export-failed')
+    } catch {
+      completeOperation('export-failed')
+    }
+  }
+
+  const startFreshRequested = async (): Promise<void> => {
+    if (!beginOperation('import-pending')) return
+    try {
+      try {
+        window.localStorage.setItem(
+          'idle-dyson-swarm.recovery-choice',
+          JSON.stringify({ choice: 'start-fresh', recordedAtUtc: sampleUtc() }),
+        )
+      } catch {
+        // The reset remains available when optional browser preference storage
+        // is blocked; canonical save persistence still owns the state change.
+      }
+      const result = await resetSave()
+      setLastImport(result)
+      completeOperation(result.imported ? 'import-succeeded' : 'import-failed')
+    } catch {
+      completeOperation('import-failed')
+    }
+  }
+
   const importPastedText = async (text: string): Promise<void> => {
     if (operationPendingRef.current) return
     const approved = confirmOverwrite(
@@ -156,11 +206,16 @@ function App({
     )
     if (!approved || !beginOperation('import-pending')) return
     try {
+      const importedAtUtc = sampleUtc()
       const result = await runtime.importSave({
         source: 'paste',
         text,
-        importedAtUtc: sampleUtc(),
+        importedAtUtc,
         overwriteApproved: true,
+        context: {
+          kind: 'manual-shared-import',
+          importedAtUtc,
+        },
       })
       setLastImport(result)
       completeOperation(
@@ -190,12 +245,17 @@ function App({
       : {}),
     ...(viewModel.phase === 'recovery'
       ? {
+          retry: () => void reloadRequested(),
+          startFresh: () => void startFreshRequested(),
           importSaveText: (text: string) =>
             void importPastedText(text),
-          ...(lastImport?.recoveryAvailable
+          ...((lastImport?.recoveryAvailable ?? false) ||
+          runtime.recoveryExportAvailable()
             ? {
                 exportRecovery: () =>
                   void exportRecoveryRequested(),
+                copyOriginal: () =>
+                  void copyOriginalRequested(),
               }
             : {}),
         }

@@ -4,6 +4,7 @@ import {
   type EntitlementAuthority,
   type StoreAdapter,
 } from '../store/contracts'
+import type { NativeMigrationSource } from './platformSaveStorage'
 
 export type HostKind = 'browser' | 'desktop-native' | 'mobile-native'
 
@@ -11,6 +12,7 @@ export interface PlatformMetadata {
   readonly hostKind: HostKind
   readonly applicationId: 'com.blindsidedgames.idledysonswarm'
   readonly applicationVersion: string
+  readonly applicationBuild?: string
   readonly supportsNativeFilesystemMigration: boolean
 }
 
@@ -18,24 +20,60 @@ export interface PlatformMetadataSource {
   metadata(): Promise<Readonly<PlatformMetadata>>
 }
 
-export interface NativeSaveMigrationCandidate {
-  readonly source: 'native-filesystem'
-  readonly displayName: string
-  readonly locationHint: string
-}
+/** Compatibility name retained while native hosts adopt the shorter port. */
+export type NativeFilesystemMigrationSource = NativeMigrationSource
+
+export type DiagnosticExportPhase =
+  | 'idle'
+  | 'starting'
+  | 'writer-blocked'
+  | 'application-blocked'
+  | 'recovery'
+  | 'ready-placeholder'
+  | 'ownership-lost'
+  | 'stopping'
+  | 'error'
+  | 'render-failure'
+
+export type DiagnosticExportCode =
+  | 'none'
+  | 'writer-unavailable'
+  | 'capability-unavailable'
+  | 'recovery-required'
+  | 'writer-ownership-lost'
+  | 'startup-failed'
+  | 'render-failed'
+
+export type DiagnosticExportErrorKind =
+  | 'AggregateError'
+  | 'Error'
+  | 'EvalError'
+  | 'RangeError'
+  | 'ReferenceError'
+  | 'SyntaxError'
+  | 'TypeError'
+  | 'URIError'
+  | 'UnknownError'
 
 /**
- * Native hosts can later expose discovered legacy saves here. The source does
- * not read, decode, migrate, or commit a save; those remain in the save lane.
+ * The complete diagnostic vocabulary accepted by a platform exporter. There
+ * is deliberately no arbitrary text, path, URL, stack, save, or error field.
  */
-export interface NativeFilesystemMigrationSource {
-  discoverCandidates(): Promise<readonly NativeSaveMigrationCandidate[]>
+export interface DiagnosticExportPayload {
+  readonly phase: DiagnosticExportPhase
+  readonly code: DiagnosticExportCode
+  readonly buildId?: string
+  readonly hostKind?: HostKind
+  readonly locale?: string
+  readonly saveSchemaVersion?: number
+  readonly frontendRevision?: string
+  readonly canonicalRevision?: string
+  readonly errorKind?: DiagnosticExportErrorKind
 }
 
 export interface DiagnosticsExportRequest {
   readonly fileName: string
-  readonly mimeType: 'application/json'
-  readonly text: string
+  readonly payload: Readonly<DiagnosticExportPayload>
 }
 
 export type DiagnosticsExportResult =
@@ -49,7 +87,7 @@ export interface DiagnosticsExporter {
 export interface ReleasePlatformServices {
   readonly hostKind: HostKind
   readonly metadata: PlatformMetadataSource
-  readonly nativeFilesystemMigration: NativeFilesystemMigrationSource
+  readonly nativeFilesystemMigration: NativeMigrationSource
   readonly entitlements: EntitlementAuthority
   readonly store: StoreAdapter
   readonly diagnostics: DiagnosticsExporter
@@ -70,9 +108,9 @@ export class BrowserPlatformMetadataSource
 
 /** Browser hosts must not probe the user's filesystem for a Unity save. */
 export class NoopNativeFilesystemMigrationSource
-  implements NativeFilesystemMigrationSource
+  implements NativeMigrationSource
 {
-  async discoverCandidates(): Promise<readonly NativeSaveMigrationCandidate[]> {
+  async discoverCandidates(): Promise<readonly []> {
     return Object.freeze([])
   }
 }

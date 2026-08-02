@@ -155,6 +155,25 @@ describe('StartupShell', () => {
     ).toHaveAttribute('aria-live', 'assertive')
   })
 
+  it('offers retry, copy-original, and start-fresh recovery choices', async () => {
+    const retry = vi.fn()
+    const copyOriginal = vi.fn()
+    const startFresh = vi.fn()
+    const user = userEvent.setup()
+    renderStartupShell(
+      { phase: 'recovery' },
+      { retry, copyOriginal, startFresh },
+    )
+
+    await user.click(screen.getByRole('button', { name: 'Try startup again' }))
+    await user.click(screen.getByRole('button', { name: 'Copy Original' }))
+    await user.click(screen.getByRole('button', { name: 'Start Fresh' }))
+
+    expect(retry).toHaveBeenCalledOnce()
+    expect(copyOriginal).toHaveBeenCalledOnce()
+    expect(startFresh).toHaveBeenCalledOnce()
+  })
+
   it('renders only redacted diagnostics in a fixed left-to-right block', () => {
     const report = createLocalDiagnosticReport({
       phase: 'application-blocked',

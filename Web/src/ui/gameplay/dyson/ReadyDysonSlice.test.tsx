@@ -35,6 +35,11 @@ import type {
   BrowserUiRuntimeFoundation,
   UiRuntimePlayerCommandResult,
 } from '../../runtime'
+import type { ReleasePlatformServices } from '../../../platform/releaseFoundation'
+import {
+  CANONICAL_STORE_PRODUCTS,
+  type HostEntitlementOwnership,
+} from '../../../store/contracts'
 import {
   FIRST_SLICE_COMMIT_PROBE_MARKER,
   type FirstSliceCommitProbeSample,
@@ -698,6 +703,52 @@ describe('ReadyDysonSlice', () => {
       })
     },
   )
+
+  test('shows the Store route only when native host services are injected', async () => {
+    const browserRouteChange = vi.fn()
+    const browser = render(
+      provider(
+        <ReadyDysonSlice
+          snapshot={snapshot()}
+          locale="en"
+          dispatchPlayer={acceptedDispatch}
+          route="store"
+          onRouteChange={browserRouteChange}
+          releasePlatformServices={platformServices('browser')}
+        />,
+      ),
+    )
+    expect(
+      browser.container.querySelector('[data-navigation-id="store"]'),
+    ).not.toBeInTheDocument()
+    expect(
+      screen.getByRole('heading', { level: 1, name: 'Bots' }),
+    ).toBeInTheDocument()
+    expect(browserRouteChange).toHaveBeenCalledWith('bots')
+    cleanup()
+
+    const native = render(
+      provider(
+        <ReadyDysonSlice
+          snapshot={snapshot()}
+          locale="en"
+          dispatchPlayer={acceptedDispatch}
+          route="store"
+          releasePlatformServices={platformServices('desktop-native')}
+        />,
+      ),
+    )
+    await waitFor(() => {
+      expect(native.container.querySelector('.store-surface'))
+        .toBeInTheDocument()
+    })
+    expect(
+      native.container.querySelector('[data-navigation-id="store"]'),
+    ).toBeInTheDocument()
+    expect(
+      screen.getByRole('heading', { level: 1, name: 'Store' }),
+    ).toBeInTheDocument()
+  })
 
   test('keeps optional pages in the menu while respecting shortcut preferences', () => {
     const { container } = renderSlice(
@@ -1973,5 +2024,49 @@ async function acceptedDispatch(
     changed: command.kind.length > 0,
     activationRevision: { session: 1, state: 1 },
     stateRevision: 2,
+  }
+}
+
+function platformServices(
+  hostKind: ReleasePlatformServices['hostKind'],
+): ReleasePlatformServices {
+  const emptyOwnership: HostEntitlementOwnership = {
+    doubleInfinityPoints: false,
+    developerOptions: false,
+  }
+  return {
+    hostKind,
+    metadata: {
+      metadata: async () => ({
+        hostKind,
+        applicationId: 'com.blindsidedgames.idledysonswarm',
+        applicationVersion: 'test',
+        supportsNativeFilesystemMigration: hostKind !== 'browser',
+      }),
+    },
+    nativeFilesystemMigration: { discoverCandidates: async () => [] },
+    entitlements: {
+      readOwnership: async () => emptyOwnership,
+      refreshOwnership: async () => emptyOwnership,
+    },
+    store: {
+      products: async () => CANONICAL_STORE_PRODUCTS.map((product) => ({
+        productId: product.id,
+        localizedPrice: null,
+        available: false,
+      })),
+      purchase: async (productId) => ({
+        accepted: false,
+        productId,
+        code: 'store-unavailable',
+      }),
+      restorePurchases: async () => ({ restoredProductIds: [] }),
+    },
+    diagnostics: {
+      export: async () => ({
+        exported: false,
+        code: 'export-unavailable',
+      }),
+    },
   }
 }

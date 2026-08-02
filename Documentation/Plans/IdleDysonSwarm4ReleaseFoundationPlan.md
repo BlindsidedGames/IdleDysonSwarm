@@ -103,3 +103,23 @@ Each major implementation surface receives focused tests and independent review 
 The phase completes only when all fixtures pass, every schema-11 field is classified, signed packages and Steam depots are reproducible, existing Unity installations migrate safely, real private-store purchases/restores pass, the PWA passes preview/offline/update testing, and all original/recovery saves remain intact.
 
 Explicitly excluded are cloud sync, remote telemetry, Web-to-Unity export, production store rollout, and paid CI dependencies.
+
+## Implementation status (2026-08-02)
+
+Completed and independently reviewed:
+
+- Compact deterministic `IDSWEB1` persistence and shared-save entitlement stripping.
+- Public Unity schema-11 fixture coverage and field classification.
+- Installable `/play/` PWA and protected website-promotion package.
+- Context-aware import, capped automatic-migration away credit, rotating recovery, and recovery UI.
+- Browser, Capacitor, and Electron save-storage and read-only Unity-discovery boundaries.
+- Native-only Store surface, entitlement projection, purchase restoration, and audit-safe Unity evidence promotion.
+
+Still required before the phase can be certified:
+
+- Pin and generate the concrete Capacitor and Electron applications and native-relative Web build.
+- Implement and test real StoreKit 2, Google Play Billing, and Steam Inventory adapters.
+- Remove the tracked Android keystore from the current tree and configure protected signing inputs.
+- Add the zero-overage GitHub Actions release-candidate matrix, reproducible packaging, checksums, and private upload jobs.
+- Complete physical-device existing-install migration and real purchase/restore certification.
+- Exercise the Cloudflare preview acceptance flow; public promotion remains separately authorized.

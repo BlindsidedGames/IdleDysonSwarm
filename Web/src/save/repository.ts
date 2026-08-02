@@ -4,15 +4,22 @@ import {
 } from './migrate'
 import { deserializeWebSave, serializeWebSave } from './serialization'
 import { PreparedSave } from './prepare'
+import type {
+  AutomaticUnityPurchaseEvidencePromoter,
+  LegacyCandidateProvenance,
+} from './automaticPurchaseEvidence'
+import { sha256Utf8 } from './automaticPurchaseEvidence'
 
 export interface LegacySaveCandidate {
   readonly id: string
   readonly sourcePath: string
   readonly text: string
+  readonly provenance?: Readonly<LegacyCandidateProvenance>
 }
 
 export type SaveRecoverySource =
   | LegacySaveCandidate
+  | { readonly id: 'web-current'; readonly sourcePath: string }
   | { readonly id: 'web-backup'; readonly sourcePath: string }
 
 export interface SaveStorageAdapter {
@@ -91,6 +98,8 @@ export class PortableSaveRepository implements SaveRepository {
   private readonly paths: SaveRepositoryPaths
   private readonly decodeLegacy: LegacySaveDecoder
   private readonly policy: SaveRepositoryPolicy
+  private readonly automaticPurchaseEvidencePromoter?:
+    AutomaticUnityPurchaseEvidencePromoter
 
   constructor(
     storage: SaveStorageAdapter,
@@ -99,11 +108,15 @@ export class PortableSaveRepository implements SaveRepository {
     policy: SaveRepositoryPolicy = {
       allowCanonicalPlayerWrites: false,
     },
+    automaticPurchaseEvidencePromoter?:
+      AutomaticUnityPurchaseEvidencePromoter,
   ) {
     this.storage = storage
     this.paths = paths
     this.decodeLegacy = decodeLegacy
     this.policy = policy
+    this.automaticPurchaseEvidencePromoter =
+      automaticPurchaseEvidencePromoter
   }
 
   async hasCurrent(): Promise<boolean> {
@@ -134,6 +147,20 @@ export class PortableSaveRepository implements SaveRepository {
       currentError = error instanceof Error ? error.message : String(error)
     }
     if (current) return { status: 'already-migrated', save: current }
+    if (currentError !== undefined) {
+      try {
+        await this.storage.copy(this.paths.current, this.paths.legacyRecovery)
+      } catch (error) {
+        return {
+          status: 'recovery-write-failed',
+          source: {
+            id: 'web-current',
+            sourcePath: this.paths.current,
+          },
+          error: error instanceof Error ? error.message : String(error),
+        }
+      }
+    }
 
     const backupRecovery = await this.recoverNewestValidBackup()
     if (
@@ -194,6 +221,7 @@ export class PortableSaveRepository implements SaveRepository {
 
       try {
         await this.storage.copy(source.sourcePath, this.paths.legacyRecovery)
+        await this.promoteAutomaticPurchaseEvidence(source, prepared)
         const committed = await this.commit(prepared)
         return { status: 'migrated', source, migration, save: committed }
       } catch (error) {
@@ -204,12 +232,51 @@ export class PortableSaveRepository implements SaveRepository {
         }
       }
     }
-    return (
-      lastFailure ??
-      (currentError
-        ? { status: 'current-invalid', error: currentError }
-        : { status: 'no-legacy-save' })
-    )
+    if (lastFailure !== undefined) {
+      try {
+        await this.storage.copy(
+          lastFailure.source.sourcePath,
+          this.paths.legacyRecovery,
+        )
+      } catch (error) {
+        return {
+          status: 'recovery-write-failed',
+          source: lastFailure.source,
+          error: error instanceof Error ? error.message : String(error),
+        }
+      }
+      return lastFailure
+    }
+    return currentError
+      ? { status: 'current-invalid', error: currentError }
+      : { status: 'no-legacy-save' }
+  }
+
+  private async promoteAutomaticPurchaseEvidence(
+    candidate: Readonly<LegacySaveCandidate>,
+    prepared: PreparedSave,
+  ): Promise<void> {
+    const promoter = this.automaticPurchaseEvidencePromoter
+    if (promoter === undefined) return
+    const provenance = candidate.provenance
+    if (
+      provenance?.kind !== 'automatic-same-device-unity' ||
+      candidate.sourcePath !==
+        `unity-readonly:${provenance.opaqueSourceIdentifier}` ||
+      candidate.id !== provenance.opaqueSourceIdentifier
+    ) return
+    const source = prepared.copyValidatedState()
+    if (source.doubleIp !== true) return
+    if (
+      typeof source.saveVersion !== 'number' ||
+      !Number.isSafeInteger(source.saveVersion)
+    ) return
+    await promoter.promoteAutomaticUnityPurchaseEvidence({
+      ...provenance,
+      permanentDoubleInfinityPoints: true,
+      contentSha256: await sha256Utf8(candidate.text),
+      saveSchemaVersion: source.saveVersion,
+    })
   }
 
   async commit(

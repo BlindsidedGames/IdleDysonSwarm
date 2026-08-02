@@ -33,7 +33,10 @@ export function serializeWebSave(save: SaveRecord): string {
     state: encodeValue(save, new Set()),
   }
   const json = JSON.stringify(sortObject({ ...envelope }))
-  return `${WEB_SAVE_PREFIX}${encodeBase64(gzipSync(strToU8(json), { level: 9 }))}`
+  return `${WEB_SAVE_PREFIX}${encodeBase64(gzipSync(strToU8(json), {
+    level: 9,
+    mtime: 0,
+  }))}`
 }
 
 /**

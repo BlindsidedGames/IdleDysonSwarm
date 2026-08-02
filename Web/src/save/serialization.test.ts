@@ -1,5 +1,5 @@
 import { gzipSync } from 'fflate'
-import { describe, expect, test } from 'vitest'
+import { afterEach, describe, expect, test, vi } from 'vitest'
 import {
   deserializeWebSave,
   serializeSharedWebSave,
@@ -7,6 +7,10 @@ import {
 } from './serialization'
 
 describe('canonical web save serialization', () => {
+  afterEach(() => {
+    vi.useRealTimers()
+  })
+
   test('round-trips bigint and byte arrays without precision loss', () => {
     const save = {
       saveVersion: 12,
@@ -37,6 +41,16 @@ describe('canonical web save serialization', () => {
     expect(() => deserializeWebSave(mismatched)).toThrow(
       'does not match state schema',
     )
+  })
+
+  test('produces stable text regardless of the current wall clock', () => {
+    const save = { saveVersion: 12, cash: 42 }
+    vi.useFakeTimers()
+    vi.setSystemTime(new Date('2026-01-01T00:00:00Z'))
+    const first = serializeWebSave(save)
+    vi.setSystemTime(new Date('2026-08-02T00:00:00Z'))
+
+    expect(serializeWebSave(save)).toBe(first)
   })
 
   test('rejects compressed payloads that are not valid UTF-8 JSON', () => {

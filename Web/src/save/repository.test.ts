@@ -1,4 +1,4 @@
-import { describe, expect, test } from 'vitest'
+import { describe, expect, test, vi } from 'vitest'
 import { PreparedSave } from './prepare'
 import { PortableSaveRepository, type LegacySaveCandidate, type SaveStorageAdapter } from './repository'
 import { serializeWebSave } from './serialization'
@@ -232,6 +232,122 @@ describe('portable transactional save repository', () => {
     expect(storage.files.get('/current')).toBe(currentBytes)
   })
 
+  test('promotes same-device Unity Double IP evidence only during first migration', async () => {
+    const storage = new MemoryStorage()
+    storage.files.set('unity-readonly:canonical-unity', 'unity-paid')
+    storage.candidates = [
+      {
+        id: 'canonical-unity',
+        sourcePath: 'unity-readonly:canonical-unity',
+        text: 'unity-paid',
+        provenance: {
+          kind: 'automatic-same-device-unity',
+          platform: 'windows',
+          sourceClass: 'unity-persistent-data-save',
+          opaqueSourceIdentifier: 'canonical-unity',
+          pathClass: 'unity-local-low',
+        },
+      },
+    ]
+    const promoted: Array<Record<string, unknown>> = []
+    const repository = new PortableSaveRepository(
+      storage,
+      {
+        current: '/current',
+        temporary: '/current.tmp',
+        legacyRecovery: '/recovery/original-idb1.txt',
+      },
+      () => ({ saveVersion: 12, doubleIp: true }),
+      { allowCanonicalPlayerWrites: false },
+      {
+        promoteAutomaticUnityPurchaseEvidence: async (evidence) => {
+          promoted.push({ ...evidence })
+        },
+      },
+    )
+
+    await expect(repository.migrateLegacyOnFirstLaunch()).resolves.toMatchObject({
+      status: 'migrated',
+    })
+    await expect(repository.migrateLegacyOnFirstLaunch()).resolves.toMatchObject({
+      status: 'already-migrated',
+    })
+    expect(promoted).toEqual([expect.objectContaining({
+      permanentDoubleInfinityPoints: true,
+      platform: 'windows',
+      sourceClass: 'unity-persistent-data-save',
+      opaqueSourceIdentifier: 'canonical-unity',
+      pathClass: 'unity-local-low',
+      saveSchemaVersion: 12,
+      contentSha256: expect.stringMatching(/^[a-f0-9]{64}$/),
+    })])
+  })
+
+  test('does not invoke purchase promotion without affirmative Unity evidence', async () => {
+    const storage = new MemoryStorage()
+    storage.files.set('unity-readonly:canonical-unity', 'unity-unpaid')
+    storage.candidates = [
+      {
+        id: 'canonical-unity',
+        sourcePath: 'unity-readonly:canonical-unity',
+        text: 'unity-unpaid',
+        provenance: {
+          kind: 'automatic-same-device-unity',
+          platform: 'windows',
+          sourceClass: 'unity-persistent-data-save',
+          opaqueSourceIdentifier: 'canonical-unity',
+          pathClass: 'unity-local-low',
+        },
+      },
+    ]
+    const promote = vi.fn(async () => undefined)
+    const repository = new PortableSaveRepository(
+      storage,
+      {
+        current: '/current',
+        temporary: '/current.tmp',
+        legacyRecovery: '/recovery/original-idb1.txt',
+      },
+      () => ({ saveVersion: 12, doubleIp: false }),
+      { allowCanonicalPlayerWrites: false },
+      { promoteAutomaticUnityPurchaseEvidence: promote },
+    )
+
+    await expect(repository.migrateLegacyOnFirstLaunch()).resolves.toMatchObject({
+      status: 'migrated',
+    })
+    expect(promote).not.toHaveBeenCalled()
+  })
+
+  test('never promotes a rediscovered browser import carrying Double IP', async () => {
+    const storage = new MemoryStorage()
+    storage.files.set('browser-import/retained-import', 'shared-paid-claim')
+    storage.candidates = [{
+      id: 'retained-import',
+      sourcePath: 'browser-import/retained-import',
+      text: 'shared-paid-claim',
+      provenance: { kind: 'browser-retained-import' },
+    }]
+    const promote = vi.fn(async () => undefined)
+    const repository = new PortableSaveRepository(
+      storage,
+      {
+        current: '/current',
+        temporary: '/current.tmp',
+        legacyRecovery: '/recovery/original-idb1.txt',
+      },
+      () => ({ saveVersion: 12, doubleIp: true }),
+      { allowCanonicalPlayerWrites: false },
+      { promoteAutomaticUnityPurchaseEvidence: promote },
+    )
+
+    await expect(repository.migrateLegacyOnFirstLaunch()).resolves.toMatchObject({
+      status: 'migrated',
+      source: { id: 'retained-import' },
+    })
+    expect(promote).not.toHaveBeenCalled()
+  })
+
   test('rotates three verified backups before publishing a replacement', async () => {
     const storage = new MemoryStorage()
     storage.files.set(
@@ -354,7 +470,9 @@ describe('portable transactional save repository', () => {
     expect(
       (await repository.loadCurrent())?.copyValidatedState().slot,
     ).toBe('recovered')
-    expect(storage.copies).toEqual([])
+    expect(storage.copies).toEqual([
+      ['/current', '/recovery/original-idb1.txt'],
+    ])
     expect(storage.replacements).toEqual([['/current.tmp', '/current']])
   })
 

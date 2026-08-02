@@ -1,0 +1,13 @@
+{
+  "appId": "com.blindsidedgames.idledysonswarm",
+  "appName": "Idle Dyson Swarm",
+  "webDir": "../../dist-native",
+  "server": {
+    "androidScheme": "https",
+    "iosScheme": "capacitor",
+    "cleartext": false
+  },
+  "android": {
+    "allowMixedContent": false
+  }
+}

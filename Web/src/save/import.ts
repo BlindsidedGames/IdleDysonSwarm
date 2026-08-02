@@ -8,16 +8,29 @@ import {
   DEFAULT_SAVE_IMPORT_LIMITS,
   type SaveImportLimits,
 } from './decodeIdb1'
+import type { SaveRecord } from './graph'
+import {
+  retainReceivingDevicePreferences,
+  retainReceivingLocalDeveloperOptions,
+  type ImportContext,
+} from './importContext'
+import { packSettingsFlags } from './settingsFlags'
 
 /**
  * Decodes either shipped Unity (`IDB1`) or canonical web (`IDSWEB1`) text,
- * runs the shared preparation pipeline, and consumes its remote lifecycle
- * timestamp before the caller performs a verified commit.
+ * applies the transfer policy selected by its trusted import context. Manual
+ * sharing consumes remote lifecycle time; same-device migration and in-place
+ * upgrades preserve local lifecycle evidence for startup processing.
  */
 export function prepareImportedSaveText(
   text: string,
   importedAtUtc: string,
   limits: Readonly<SaveImportLimits> = DEFAULT_SAVE_IMPORT_LIMITS,
+  context: ImportContext = {
+    kind: 'manual-shared-import',
+    importedAtUtc,
+  },
+  receivingState?: SaveRecord,
 ): PreparedSave {
   assertSuppliedSaveTextLimit(text, limits)
   const trimmed = text.trim()
@@ -29,8 +42,47 @@ export function prepareImportedSaveText(
     : PreparedSave.fromDecoded(
         deserializeWebSaveBounded(trimmed, limits),
       )
-  const prepared = PreparedSave.fromDecoded(
-    stripNonShareableEntitlementClaims(decoded.copyValidatedState()),
-  )
-  return prepareImportedSave(prepared, importedAtUtc)
+  assertContextTimestamp(context)
+  switch (context.kind) {
+    case 'automatic-unity-migration':
+      // Same-device migration is trusted once. Preserve Unity's local evidence
+      // and quit timestamp for the capped startup offline-credit coordinator.
+      return decoded
+    case 'transitional-web-upgrade':
+      // This is an in-place codec/schema upgrade of the same local save. Its
+      // lifecycle timestamp and local claims remain eligible for normal startup.
+      return decoded
+    case 'manual-shared-import': {
+      const portableState = stripNonShareableEntitlementClaims(
+        decoded.copyValidatedState(),
+      )
+      const withPreferences = retainReceivingDevicePreferences(
+        portableState,
+        receivingState,
+      )
+      const transferred = retainReceivingLocalDeveloperOptions(
+        withPreferences,
+        receivingState,
+      )
+      // Repack after receiver-owned flags are restored. Sender ownership was
+      // already stripped and cannot be recovered from packed flags.
+      packSettingsFlags(transferred)
+      return prepareImportedSave(
+        PreparedSave.fromDecoded(transferred),
+        context.importedAtUtc,
+      )
+    }
+  }
+}
+
+function assertContextTimestamp(context: ImportContext): void {
+  const timestamp =
+    context.kind === 'automatic-unity-migration'
+      ? context.observedAtUtc
+      : context.kind === 'transitional-web-upgrade'
+        ? context.upgradedAtUtc
+        : context.importedAtUtc
+  if (timestamp.trim().length === 0) {
+    throw new Error('Import context timestamp must not be empty.')
+  }
 }

@@ -275,6 +275,7 @@ export class TransactionalGameApplication<TState, TCommand>
       }
 
       let prepared: PreparedSave
+      let displaced: PreparedSave | undefined
       try {
         const hasCurrent = await this.options.repository.hasCurrent()
         if (
@@ -289,9 +290,18 @@ export class TransactionalGameApplication<TState, TCommand>
             reason: 'Import requires explicit approval to replace the current save.',
           }
         }
+        const receiving =
+          previous.phase === 'ready'
+            ? (displaced = this.requireSession().prepare(
+                this.requireEngine().snapshot().state,
+              ))
+            : await this.options.repository.loadCurrent()
         prepared = prepareImportedSaveText(
           request.text,
           request.importedAtUtc,
+          undefined,
+          request.context,
+          receiving?.copyValidatedState(),
         )
       } catch (error) {
         this.setSnapshot(previous)
@@ -300,6 +310,29 @@ export class TransactionalGameApplication<TState, TCommand>
           committed: false,
           code: 'APP-IMPORT-INVALID',
           reason: errorMessage(error),
+        }
+      }
+
+      if (
+        previous.phase === 'ready' &&
+        previous.checkpoint.kind !== 'clean'
+      ) {
+        try {
+          await this.options.repository.commit(
+            displaced ??
+              this.requireSession().prepare(
+                this.requireEngine().snapshot().state,
+              ),
+            request.target,
+          )
+        } catch (error) {
+          this.setSnapshot(previous)
+          return {
+            imported: false,
+            committed: false,
+            code: 'APP-IMPORT-CHECKPOINT-FAILED',
+            reason: errorMessage(error),
+          }
         }
       }
 

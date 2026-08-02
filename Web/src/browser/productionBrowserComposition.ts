@@ -27,6 +27,11 @@ import {
 import {
   WEB_LIFECYCLE_POLICY,
 } from '../simulation/lifecycleAwayTime'
+import type { ReleasePlatformServices } from '../platform/releaseFoundation'
+import type {
+  AutomaticUnityPurchaseEvidencePromoter,
+} from '../save/automaticPurchaseEvidence'
+import { RuntimeEntitlementBridge } from '../store/runtimeEntitlements'
 import { serializeWebSave } from '../save/serialization'
 import type {
   DysonPresentationTuning,
@@ -54,6 +59,8 @@ export interface ProductionBrowserCompositionOptions {
   readonly dysonPresentationTuning?: Readonly<DysonPresentationTuning>
   readonly writerIdentity?: BrowserReloadWriterIdentity
   readonly ownershipNoticeChannel?: OwnershipNoticeChannel
+  /** Native hosts inject their real Store authority through this composition seam. */
+  readonly releasePlatformServices?: Readonly<ReleasePlatformServices>
 }
 
 export interface ProductionBrowserComposition {
@@ -82,6 +89,13 @@ export function createProductionBrowserComposition(
     options.monotonicClock ?? new BrowserMonotonicClock()
   const entitlementDocument =
     options.entitlementDocument ?? document
+  const nativeEntitlements =
+    options.releasePlatformServices !== undefined &&
+    options.releasePlatformServices.hostKind !== 'browser'
+      ? new RuntimeEntitlementBridge(
+          options.releasePlatformServices.entitlements,
+        )
+      : undefined
   const createFirstRunSave = () =>
     createUnityFirstRunPreparedSave({
       startedAtUtc:
@@ -91,6 +105,7 @@ export function createProductionBrowserComposition(
     createProductionCanonicalApplicationFactory({
       createFirstRunSave,
       readHostEntitlements: () =>
+        nativeEntitlements?.currentDysonEntitlements() ??
         readBrowserHostEntitlements(entitlementDocument),
       readHostDysonPresentationTuning:
         options.dysonPresentationTuning === undefined
@@ -119,6 +134,19 @@ export function createProductionBrowserComposition(
     allowUnexpiredSameOwnerTakeover:
       writerIdentity.allowUnexpiredSameOwnerTakeover,
     noticeChannel: ownershipNoticeChannel,
+    hostEntitlements: nativeEntitlements,
+    automaticPurchaseEvidencePromoter:
+      automaticPurchaseEvidencePromoter(
+        options.releasePlatformServices?.entitlements,
+      ),
+    developmentControlsAvailable:
+      options.releasePlatformServices !== undefined &&
+      options.releasePlatformServices.hostKind !== 'browser'
+        ? true
+        : undefined,
+    developmentControlsRequireEntitlement:
+      options.releasePlatformServices !== undefined &&
+      options.releasePlatformServices.hostKind !== 'browser',
   })
   const reloadPage =
     options.reloadPage ?? (() => window.location.reload())
@@ -185,6 +213,22 @@ export function createProductionBrowserComposition(
       reloadPage()
     },
   })
+}
+
+function automaticPurchaseEvidencePromoter(
+  authority:
+    | Readonly<ReleasePlatformServices>['entitlements']
+    | undefined,
+): AutomaticUnityPurchaseEvidencePromoter | undefined {
+  if (
+    authority === undefined ||
+    !('promoteAutomaticUnityPurchaseEvidence' in authority) ||
+    typeof authority.promoteAutomaticUnityPurchaseEvidence !== 'function'
+  ) {
+    return undefined
+  }
+  return authority as typeof authority &
+    AutomaticUnityPurchaseEvidencePromoter
 }
 
 function createOwnershipNoticeChannel():

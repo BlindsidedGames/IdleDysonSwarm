@@ -250,6 +250,71 @@ describe('application startup host', () => {
     expect(runtime.shutdownCalls).toBe(0)
   })
 
+  test('copies retained original text and records Start Fresh without deleting recovery', async () => {
+    window.localStorage.clear()
+    const runtime = new TestRuntime({
+      phase: 'blocked',
+      code: 'application-blocked',
+      applicationOutcome: 'all-candidates-invalid',
+      reason: 'private',
+    })
+    runtime.recoveryAvailable = true
+    const resetSave = vi.fn().mockResolvedValue({
+      imported: true,
+      sessionRevision: 2,
+      recoveryAvailable: true,
+    })
+    const user = userEvent.setup()
+    renderApp(runtime.runtime, {
+      confirmOverwrite: () => true,
+      sampleUtc: () => '2026-07-29T00:00:00.000Z',
+      resetSave,
+    })
+
+    await user.click(screen.getByRole('button', { name: 'Copy Original' }))
+    expect(runtime.copyCalls).toBe(1)
+    expect(runtime.recoveryAvailable).toBe(true)
+
+    await user.click(screen.getByRole('button', { name: 'Start Fresh' }))
+    await waitFor(() => expect(resetSave).toHaveBeenCalledOnce())
+    expect(JSON.parse(
+      window.localStorage.getItem('idle-dyson-swarm.recovery-choice') ?? '{}',
+    )).toEqual({
+      choice: 'start-fresh',
+      recordedAtUtc: '2026-07-29T00:00:00.000Z',
+    })
+    expect(runtime.recoveryAvailable).toBe(true)
+  })
+
+  test('notifies the player when startup restored a verified backup', () => {
+    const runtime = new TestRuntime({
+      phase: 'ready',
+      warnings: [
+        {
+          code: 'backup-recovered',
+          reason: 'private storage detail',
+        },
+      ],
+    })
+    const snapshot = readySnapshot()
+    if (snapshot.phase !== 'ready') throw new Error('Expected ready fixture.')
+    runtime.snapshotValue = {
+      ...snapshot,
+      source: 'recovered-canonical',
+    }
+    renderApp(runtime.runtime, {
+      confirmOverwrite: () => true,
+      sampleUtc: () => '2026-07-29T00:00:00.000Z',
+    })
+
+    expect(
+      screen.getByText(
+        'Your current save could not be opened. The newest verified backup was restored.',
+      ),
+    ).toBeInTheDocument()
+    expect(document.body.textContent).not.toContain('private storage detail')
+  })
+
   test('automatically retries expired writer ownership in place', async () => {
     const runtime = new TestRuntime({
       phase: 'blocked',
@@ -377,6 +442,7 @@ function renderApp(
     readonly confirmOverwrite: (message: string) => boolean
     readonly sampleUtc: () => string
     readonly reloadSafely?: () => Promise<void>
+    readonly resetSave?: () => Promise<UiRuntimeImportResult>
   },
 ) {
   return render(
@@ -390,6 +456,7 @@ function renderApp(
           options.reloadSafely ?? (async () => undefined)
         }
         confirmOverwrite={options.confirmOverwrite}
+        resetSave={options.resetSave}
       />
     </IntlProvider>,
   )
@@ -399,6 +466,8 @@ class TestRuntime {
   readonly #status: UiRuntimeFoundationStatus
   readonly imports: unknown[] = []
   exports = 0
+  copyCalls = 0
+  recoveryAvailable = false
   importResult: UiRuntimeImportResult = {
     imported: false,
     committed: false,
@@ -490,6 +559,11 @@ class TestRuntime {
         throw new Error('private exception')
       }
       return true
+    },
+    recoveryExportAvailable: () => this.recoveryAvailable,
+    copyLastRecovery: async () => {
+      this.copyCalls += 1
+      return this.recoveryAvailable
     },
     checkpointBeforeSafeReload: async () => {
       this.checkpointCalls += 1

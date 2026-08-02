@@ -1,4 +1,5 @@
 export type UiRuntimeWarningCode =
+  | 'backup-recovered'
   | 'persistent-storage-denied'
   | 'quota-pressure'
   | 'storage-status-failed'
@@ -54,6 +55,7 @@ export interface UiRuntimeDropData {
 interface UiRuntimeImportRequestBase {
   readonly importedAtUtc: string
   readonly overwriteApproved: boolean
+  readonly context?: import('../../save/importContext').ImportContext
 }
 
 export type UiRuntimeImportRequest =
@@ -174,6 +176,7 @@ export type UiRuntimeDevelopmentRealityResult =
     }
 
 export type UiRuntimeDevelopmentAction =
+  | { readonly kind: 'add-cash'; readonly amount: number }
   | { readonly kind: 'add-bots'; readonly amount: number }
   | { readonly kind: 'add-skill-points'; readonly amount: bigint }
   | { readonly kind: 'add-infinity-points'; readonly amount: bigint }
@@ -241,6 +244,8 @@ export interface UiRuntimeFoundation<
     command: TPlayerCommand,
   ): Promise<UiRuntimePlayerCommandResult>
   readonly development?: UiRuntimeDevelopmentControls
+  /** Re-reads backend-owned durable purchases; no ownership value is accepted. */
+  synchronizeHostEntitlements?(): Promise<boolean>
   importSave(request: UiRuntimeImportRequest): Promise<UiRuntimeImportResult>
   inspectStorage(
     requestPersistence?: boolean,
@@ -249,6 +254,7 @@ export interface UiRuntimeFoundation<
   checkpointBeforeSafeReload(): Promise<boolean>
   recoveryExportAvailable(): boolean
   exportLastRecovery(): Promise<boolean>
+  copyLastRecovery(): Promise<boolean>
   readClipboardText(): Promise<string>
   writeClipboardText(value: string): Promise<void>
   openExternalUrl(url: string): Promise<void>

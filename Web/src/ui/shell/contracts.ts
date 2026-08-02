@@ -45,4 +45,6 @@ export interface StartupShellActions {
   readonly retry?: () => void
   readonly importSaveText?: (text: string) => void
   readonly exportRecovery?: () => void
+  readonly copyOriginal?: () => void
+  readonly startFresh?: () => void
 }

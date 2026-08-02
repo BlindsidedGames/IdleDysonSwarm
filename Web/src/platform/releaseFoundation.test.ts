@@ -47,7 +47,13 @@ describe('release platform/store foundation', () => {
       doubleInfinityPoints: false,
       developerOptions: false,
     })
-    await expect(services.store.products()).resolves.toBe(CANONICAL_STORE_PRODUCTS)
+    await expect(services.store.products()).resolves.toEqual(
+      CANONICAL_STORE_PRODUCTS.map((product) => ({
+        productId: product.id,
+        localizedPrice: null,
+        available: false,
+      })),
+    )
     await expect(
       services.store.purchase(STORE_PRODUCT_IDS.doubleInfinityPoints),
     ).resolves.toEqual({
@@ -61,8 +67,7 @@ describe('release platform/store foundation', () => {
     await expect(
       services.diagnostics.export({
         fileName: 'diagnostics.json',
-        mimeType: 'application/json',
-        text: '{}',
+        payload: { phase: 'idle', code: 'none' },
       }),
     ).resolves.toEqual({ exported: false, code: 'export-unavailable' })
   })
@@ -138,8 +143,7 @@ describe('release platform/store foundation', () => {
     await expect(
       new NoopDiagnosticsExporter().export({
         fileName: 'diagnostics.json',
-        mimeType: 'application/json',
-        text: '{}',
+        payload: { phase: 'idle', code: 'none' },
       }),
     ).resolves.toEqual({ exported: false, code: 'export-unavailable' })
   })

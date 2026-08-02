@@ -420,15 +420,17 @@ describe('browser runtime foundation composition', () => {
       source: 'primary',
     })
     if (reconstructed.phase !== 'ready') return
-    expect(reconstructed.gameplay).toEqual({
+    const {
+      lastSuspendedAtLegacyText: _transportOnlyDepartureMarker,
+      ...replayedTimeline
+    } = replayedGameplay.progression.timeline
+    expect(reconstructed.gameplay).toMatchObject({
       ...replayedGameplay,
       progression: {
         ...replayedGameplay.progression,
-        timeline: {
-          ...replayedGameplay.progression.timeline,
-          lastSuspendedAtLegacyText:
-            '2026-07-29T00:00:20.000Z',
-        },
+        // Background startup may consume or refresh this transport-only
+        // marker; the durable gameplay and replay result must still match.
+        timeline: replayedTimeline,
       },
     })
     expect(await database.fileExists(currentPath)).toBe(true)
@@ -834,11 +836,13 @@ describe('browser runtime foundation composition', () => {
   test('retains an exact bounded invalid import before canonical validation and never replaces the current save', async () => {
     const database = new MemoryBrowserSaveDatabase()
     const downloads = new RecordingDownloads()
+    const clipboard = new RecordingClipboard()
     const activeClock = new ManualActiveTimeClock()
     let application: FakeRuntimeApplication | undefined
     const runtime = createRuntime({
       database,
       downloads,
+      clipboard,
       activeTimeClock: activeClock,
       createApplication: (repository) => {
         application = new FakeRuntimeApplication(
@@ -888,10 +892,12 @@ describe('browser runtime foundation composition', () => {
 
     await expect(runtime.exportLastRecovery()).resolves.toBe(true)
     expect(downloads.last?.text).toBe(original)
+    await expect(runtime.copyLastRecovery()).resolves.toBe(true)
+    expect(clipboard.value).toBe(original)
     await runtime.shutdown()
   })
 
-  test('retains a historical source exactly and repeated coordinated imports never replay away time', async () => {
+  test('retains a historical source exactly and repeated manual shared imports never replay away time', async () => {
     const database = new MemoryBrowserSaveDatabase()
     const lifecycle = new TestLifecycleAdapter()
     let application: FakeRuntimeApplication | undefined
@@ -922,6 +928,10 @@ describe('browser runtime foundation composition', () => {
       runtime.importSave({
         importedAtUtc: '2026-07-29T00:00:10Z',
         overwriteApproved: true,
+        context: {
+          kind: 'manual-shared-import',
+          importedAtUtc: '2026-07-29T00:00:10Z',
+        },
         source: 'file',
         file: {
           name: 'unity-save.txt',
@@ -943,6 +953,10 @@ describe('browser runtime foundation composition', () => {
         text: supplied,
         importedAtUtc: '2026-07-29T00:00:10Z',
         overwriteApproved: true,
+        context: {
+          kind: 'manual-shared-import',
+          importedAtUtc: '2026-07-29T00:00:10Z',
+        },
       }),
     ).resolves.toMatchObject({
       imported: true,
@@ -963,6 +977,83 @@ describe('browser runtime foundation composition', () => {
     )
     await runtime.shutdown()
   })
+
+  test.each([
+    {
+      label: 'automatic Unity migration',
+      context: {
+        kind: 'automatic-unity-migration' as const,
+        observedAtUtc: '2026-07-29T00:16:40Z',
+      },
+    },
+    {
+      label: 'transitional Web upgrade',
+      context: {
+        kind: 'transitional-web-upgrade' as const,
+        upgradedAtUtc: '2026-07-29T00:16:40Z',
+      },
+    },
+  ])(
+    'replays a preserved $label timestamp once through the browser runtime',
+    async ({ context }) => {
+      const database = new MemoryBrowserSaveDatabase()
+      const lifecycle = new TestLifecycleAdapter()
+      let application: FakeRuntimeApplication | undefined
+      const runtime = createRuntime({
+        database,
+        lifecycle,
+        createApplication: (repository) => {
+          application = new FakeRuntimeApplication(
+            repository,
+            database.events,
+          )
+          const imported = runtimeStateWithoutQuitTimestamp()
+          imported.gameState.timeline = {
+            ...imported.gameState.timeline,
+            lastSuspendedAtLegacyText: '2026-07-29T00:00:00Z',
+            storedTimeAvailableSeconds: 90,
+            storedTimeCapacitySeconds: 100,
+          }
+          application.importedState = imported
+          return application
+        },
+        lifecycleClock: fixedClock('2026-07-29T00:16:40Z'),
+      })
+      await runtime.start()
+
+      await expect(
+        runtime.importSave({
+          text: serializeWebSave({
+            saveVersion: 12,
+            marker: 'trusted-local-import',
+          }),
+          importedAtUtc: '2026-07-29T00:16:40Z',
+          overwriteApproved: true,
+          context,
+        }),
+      ).resolves.toMatchObject({
+        imported: true,
+        lifecycleReset: true,
+      })
+      lifecycle.emit('active')
+      await expect(runtime.requestCheckpoint()).resolves.toBe(true)
+      lifecycle.emit('active')
+      await expect(runtime.requestCheckpoint()).resolves.toBe(true)
+
+      expect(application?.awayCommits).toBe(1)
+      const snapshot = application?.snapshot()
+      expect(snapshot?.phase).toBe('ready')
+      if (snapshot?.phase === 'ready') {
+        expect(
+          snapshot.state.gameState.timeline.lastSuspendedAtLegacyText,
+        ).toBeNull()
+        expect(
+          snapshot.state.gameState.timeline.storedTimeAvailableSeconds,
+        ).toBe(100)
+      }
+      await runtime.shutdown()
+    },
+  )
 
   test('recovers an application-blocked startup through coordinated import before publishing ready', async () => {
     const database = new MemoryBrowserSaveDatabase()
@@ -3273,6 +3364,7 @@ describe('browser runtime foundation composition', () => {
 
     expect(Object.keys(runtime).sort()).toEqual([
       'checkpointBeforeSafeReload',
+      'copyLastRecovery',
       'development',
       'dispatchPlayer',
       'exportLastRecovery',
@@ -3291,6 +3383,7 @@ describe('browser runtime foundation composition', () => {
       'status',
       'subscribeSnapshot',
       'subscribeStatus',
+      'synchronizeHostEntitlements',
       'takeOverWriterOwnership',
       'writeClipboardText',
     ])

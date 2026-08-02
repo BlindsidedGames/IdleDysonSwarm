@@ -68,6 +68,8 @@ import {
   QuantumControlPanel,
 } from '../quantum/QuantumSurface'
 import type { QuantumPurchaseQuantity } from '../quantum/quantumPurchaseQuantities'
+import type { ReleasePlatformServices } from '../../../platform/releaseFoundation'
+import { StorefrontController } from '../../../store/storefront'
 
 const BasicFacilityRegion = lazy(async () => {
   const module = await import('../facilities')
@@ -119,6 +121,11 @@ const StatisticsSurface = lazy(async () => {
   return { default: module.StatisticsSurface }
 })
 
+const StoreSurface = lazy(async () => {
+  const module = await import('../store')
+  return { default: module.StoreSurface }
+})
+
 const StorySurface = lazy(async () => {
   const module = await import('../story')
   return { default: module.StorySurface }
@@ -143,6 +150,8 @@ export interface ReadyDysonRuntimeHostProps {
   readonly runtime: BrowserUiRuntimeFoundation
   readonly locale: EnabledLocale
   readonly resetSave?: () => Promise<UiRuntimeImportResult>
+  readonly releasePlatformServices?: Readonly<ReleasePlatformServices>
+  readonly localDeveloperOptionsPurchased?: boolean
 }
 
 /**
@@ -153,6 +162,8 @@ function UnprobedReadyDysonRuntimeHost({
   runtime,
   locale,
   resetSave = unavailableReset,
+  releasePlatformServices,
+  localDeveloperOptionsPurchased,
 }: ReadyDysonRuntimeHostProps) {
   const [route, setRoute] = useState<ReadyGameRoute>('bots')
   const snapshot = useBrowserRuntimeSnapshot(runtime)
@@ -176,6 +187,9 @@ function UnprobedReadyDysonRuntimeHost({
       onRouteChange={setRoute}
       resetSave={resetSave}
       development={runtime.development}
+      synchronizeHostEntitlements={runtime.synchronizeHostEntitlements}
+      releasePlatformServices={releasePlatformServices}
+      localDeveloperOptionsPurchased={localDeveloperOptionsPurchased}
     />
   )
 }
@@ -184,6 +198,8 @@ export function ProbedReadyDysonRuntimeHost({
   runtime,
   locale,
   resetSave = unavailableReset,
+  releasePlatformServices,
+  localDeveloperOptionsPurchased,
 }: ReadyDysonRuntimeHostProps) {
   const [route, setRoute] = useState<ReadyGameRoute>('bots')
   const selectionStartedAt = beginFirstSliceSnapshotSelection()
@@ -236,6 +252,9 @@ export function ProbedReadyDysonRuntimeHost({
       onRouteChange={setRoute}
       resetSave={resetSave}
       development={runtime.development}
+      synchronizeHostEntitlements={runtime.synchronizeHostEntitlements}
+      releasePlatformServices={releasePlatformServices}
+      localDeveloperOptionsPurchased={localDeveloperOptionsPurchased}
     />
   )
 }
@@ -258,6 +277,9 @@ export interface ReadyDysonSliceProps {
   readonly onRouteChange?: (route: ReadyGameRoute) => void
   readonly resetSave?: () => Promise<UiRuntimeImportResult>
   readonly development?: UiRuntimeDevelopmentControls
+  readonly synchronizeHostEntitlements?: () => Promise<boolean>
+  readonly releasePlatformServices?: Readonly<ReleasePlatformServices>
+  readonly localDeveloperOptionsPurchased?: boolean
 }
 
 export type ReadyGameRoute =
@@ -273,6 +295,7 @@ export type ReadyGameRoute =
   | 'wiki'
   | 'offline-time'
   | 'statistics'
+  | 'store'
   | 'debug'
   | 'settings'
 
@@ -300,6 +323,9 @@ export function ReadyDysonSlice({
   onRouteChange = () => undefined,
   resetSave = unavailableReset,
   development,
+  synchronizeHostEntitlements,
+  releasePlatformServices,
+  localDeveloperOptionsPurchased,
 }: ReadyDysonSliceProps) {
   const intl = useIntl()
   const [visualizationVisible, setVisualizationVisible] =
@@ -313,6 +339,24 @@ export function ReadyDysonSlice({
     useState<SpaceAgePurchaseQuantity>(1)
   const [quantumPurchaseQuantity, setQuantumPurchaseQuantity] =
     useState<QuantumPurchaseQuantity>(1)
+  const storeVisible =
+    releasePlatformServices !== undefined &&
+    releasePlatformServices.hostKind !== 'browser'
+  const storeController = useMemo(
+    () => storeVisible
+      ? new StorefrontController({
+          store: releasePlatformServices.store,
+          entitlements: releasePlatformServices.entitlements,
+          ...(synchronizeHostEntitlements === undefined
+            ? {}
+            : {
+                onVerifiedOwnershipChanged:
+                  synchronizeHostEntitlements,
+              }),
+        })
+      : null,
+    [releasePlatformServices, storeVisible, synchronizeHostEntitlements],
+  )
   const gameplay = snapshot.gameplay
   const quantumVisible =
     gameplay.resources.infinity.points >= 1n ||
@@ -328,6 +372,7 @@ export function ReadyDysonSlice({
         (requestedRoute === 'simulations' &&
           !gameplay.visibility.simulations.routeUnlocked))) ||
     (requestedRoute === 'quantum' && !quantumUnlocked) ||
+    (requestedRoute === 'store' && !storeVisible) ||
     (requestedRoute === 'avocato' &&
       !gameplay.progression.avocado.unlocked)
   const route =
@@ -408,6 +453,7 @@ export function ReadyDysonSlice({
   const wikiActive = route === 'wiki'
   const offlineTimeActive = route === 'offline-time'
   const statisticsActive = route === 'statistics'
+  const storeActive = route === 'store'
   const debugActive = route === 'debug'
   const navigationVisibility =
     gameplay.progression.meta?.navigationVisibility ?? {
@@ -423,6 +469,8 @@ export function ReadyDysonSlice({
       ? messages.quantumRoute
     : statisticsActive
       ? messages.statisticsRoute
+    : storeActive
+      ? messages.storeRoute
     : offlineTimeActive
       ? messages.offlineTimeRoute
     : storyActive
@@ -460,7 +508,7 @@ export function ReadyDysonSlice({
       closeMenuLabel={intl.formatMessage(messages.closeMenu)}
       openMenuLabel={intl.formatMessage(messages.openMenu)}
       heading={intl.formatMessage(routeHeading)}
-      routeTheme={debugActive ? 'settings' : route}
+      routeTheme={debugActive ? 'settings' : storeActive ? 'quantum' : route}
       routeThemeVariant={
         simulationsActive
           ? gameplay.derived.simulations.currentEra
@@ -593,6 +641,23 @@ export function ReadyDysonSlice({
                           ),
                         },
                       }),
+                },
+              ]
+            : []),
+          ...(storeVisible
+            ? [
+                {
+                  id: 'store',
+                  label: intl.formatMessage(messages.storeRoute),
+                  icon: (
+                    <span className="dyson-navigation__text-icon">
+                      {'$'}
+                    </span>
+                  ),
+                  bottom: false,
+                  ...(storeActive
+                    ? { current: true as const }
+                    : { onActivate: () => onRouteChange('store') }),
                 },
               ]
             : []),
@@ -1217,6 +1282,33 @@ export function ReadyDysonSlice({
                                       </Suspense>
                                     ),
                                   }
+                                : storeActive && storeController !== null
+                                  ? {
+                                      ariaLabel: intl.formatMessage(
+                                        messages.storeRoute,
+                                      ),
+                                      content: (
+                                        <Suspense
+                                          fallback={
+                                            <div
+                                              aria-label={intl.formatMessage(
+                                                messages.storeRoute,
+                                              )}
+                                              aria-busy="true"
+                                            />
+                                          }
+                                        >
+                                          <StoreSurface
+                                            controller={storeController}
+                                            localDeveloperOptionsPurchased={
+                                              localDeveloperOptionsPurchased ??
+                                              development?.status().entitled ??
+                                              false
+                                            }
+                                          />
+                                        </Suspense>
+                                      ),
+                                    }
                                 : undefined
       }
       routeSupplement={
@@ -1280,7 +1372,9 @@ export function ReadyDysonSlice({
           fullPrecisionRate: scienceRate(precise(rates.science)),
         },
       }}
-      showResourceHeader={!realityActive && !simulationsActive}
+      showResourceHeader={
+        !realityActive && !simulationsActive && !storeActive
+      }
       swarmVisual={
         visualizationVisible
           ? {

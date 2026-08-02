@@ -53,6 +53,7 @@ import {
 import {
   storyMessages,
 } from '../gameplay/story/messages'
+import { storeMessages } from '../gameplay/store/messages'
 import {
   wikiMessages,
 } from '../gameplay/wiki/messages'
@@ -84,6 +85,7 @@ describe('compiled locale catalogs', () => {
       ...Object.values(avocatoMessages),
       ...Object.values(offlineTimeMessages),
       ...Object.values(statisticsMessages),
+      ...Object.values(storeMessages),
       ...Object.values(storyMessages),
       ...Object.values(wikiMessages),
       ...Object.values(skillMessages),
