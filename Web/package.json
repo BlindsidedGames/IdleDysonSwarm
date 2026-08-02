@@ -15,6 +15,8 @@
     "report:performance:soak:smoke": "npm run build && tsx scripts/performance/runSoakReport.ts --smoke",
     "data:export": "tsx scripts/export-unity-data.ts",
     "data:check": "tsx scripts/export-unity-data.ts --check",
+    "parity:first-dyson:generate": "tsx scripts/generate-first-dyson-slice-fixture.ts",
+    "parity:first-dyson:check": "tsx scripts/generate-first-dyson-slice-fixture.ts --check",
     "decode-save": "tsx scripts/decode-save.ts",
     "prepare-save": "tsx scripts/prepare-save.ts",
     "i18n:extract": "formatjs extract \"src/ui/**/*.{ts,tsx}\" --out-file src/ui/i18n/catalogs/source/en.json --throws",
