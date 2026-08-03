@@ -17,11 +17,27 @@ describe('native host scaffold', () => {
     expect(Number(source.defaultReleaseCandidateId)).toBeGreaterThan(
       source.unityBuildFloor,
     )
-    expect(read('hosts/capacitor/android/release-version.gradle'))
-      .toContain('ext.idsReleaseCandidateId = 2026080200')
+    const android = read(
+      'hosts/capacitor/android/release-version.gradle',
+    )
+    const releaseCandidateId = android.match(
+      /ext\.idsReleaseCandidateId = (\d{10})/,
+    )?.[1]
+    expect(releaseCandidateId).toMatch(/^\d{10}$/)
+    expect(Number(releaseCandidateId)).toBeGreaterThan(
+      source.unityBuildFloor,
+    )
+    const appleBuildNumber =
+      `${releaseCandidateId?.slice(2, 6)}.` +
+      `${releaseCandidateId?.slice(6, 8)}.` +
+      releaseCandidateId?.slice(8, 10)
     expect(read('hosts/capacitor/ios/release-version.xcconfig'))
-      .toContain('CURRENT_PROJECT_VERSION = 2608.02.00')
-    expect(read('hosts/electron/release-version.yml'))
+      .toContain(`CURRENT_PROJECT_VERSION = ${appleBuildNumber}`)
+    const electron = read('hosts/electron/release-version.yml')
+    expect(electron).toContain(
+      `buildVersion: "${releaseCandidateId}"`,
+    )
+    expect(electron)
       .toContain('version: "4.0.0"')
   })
 
