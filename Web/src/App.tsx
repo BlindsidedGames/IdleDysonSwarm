@@ -9,6 +9,7 @@ import { useIntl } from 'react-intl'
 import type {
   BrowserUiRuntimeFoundation,
   UiRuntimeImportResult,
+  UiRuntimeSuppliedFile,
 } from './ui/runtime'
 import {
   useBrowserRuntimeStatus,
@@ -131,6 +132,38 @@ function App({
         runtime={runtime}
         locale={locale}
         resetSave={resetSave}
+        previewImportSaveFile={(file: UiRuntimeSuppliedFile) =>
+          runtime.previewImport({
+            source: 'file',
+            file,
+            importedAtUtc: sampleUtc(),
+            overwriteApproved: false,
+          })}
+        previewImportSaveText={(text: string) =>
+          runtime.previewImport({
+            source: 'paste',
+            text,
+            importedAtUtc: sampleUtc(),
+            overwriteApproved: false,
+          })}
+        importSaveFile={(file: UiRuntimeSuppliedFile) =>
+          runtime.importSave({
+            source: 'file',
+            file,
+            importedAtUtc: sampleUtc(),
+            overwriteApproved: true,
+          })}
+        importSaveText={(text: string) =>
+          runtime.importSave({
+            source: 'paste',
+            text,
+            importedAtUtc: sampleUtc(),
+            overwriteApproved: true,
+          })}
+        readSaveText={() => runtime.readCurrentSaveText()}
+        downloadSave={() => runtime.exportCurrentSave()}
+        copySaveText={(text: string) =>
+          runtime.writeClipboardText(text)}
       />
     )
   }

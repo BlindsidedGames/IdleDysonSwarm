@@ -1,6 +1,8 @@
 // @vitest-environment jsdom
 
 import '@testing-library/jest-dom/vitest'
+import { readFileSync } from 'node:fs'
+import { join } from 'node:path'
 import axe from 'axe-core'
 import { cleanup, render, screen, waitFor, within } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
@@ -20,12 +22,65 @@ import {
   type SimulationsSurfaceProps,
 } from './SimulationsSurface'
 
+const simulationStyles = readFileSync(
+  join(process.cwd(), 'src', 'ui', 'gameplay', 'simulations', 'simulations.css'),
+  'utf8',
+)
+const upgradeStyles = readFileSync(
+  join(
+    process.cwd(),
+    'src',
+    'ui',
+    'gameplay',
+    'simulations',
+    'simulationUpgradeRegion.css',
+  ),
+  'utf8',
+)
+const baseUpgradeStyles = upgradeStyles.split('@media (max-width: 30rem)')[0]
+
 afterEach(() => {
   cleanup()
   localStorage.clear()
 })
 
 describe('SimulationsSurface', () => {
+  test('uses the shared compact card rhythm at every viewport', () => {
+    expect(baseUpgradeStyles).toMatch(
+      /\.simulation-permanent-upgrades__content,[\s\S]*gap:\s*var\(--game-card-grid-gap\);/,
+    )
+    expect(baseUpgradeStyles).toMatch(
+      /\.simulation-permanent-upgrade-category ol\s*\{[^}]*gap:\s*var\(--game-card-grid-gap\);/,
+    )
+    expect(simulationStyles).toMatch(
+      /\.simulation-category ol\s*\{[^}]*gap:\s*var\(--game-card-grid-gap\);/,
+    )
+    expect(simulationStyles).toMatch(
+      /\.ui-facility-card\.simulation-panel-card\s*\{[^}]*min-block-size:\s*0;[^}]*grid-template-columns:\s*minmax\(0, 1fr\) clamp\(6\.25rem, 27%, 6\.75rem\);[^}]*gap:\s*0\.05rem 0\.32rem;[^}]*padding:\s*0\.34rem 0\.38rem;/,
+    )
+    expect(simulationStyles).toMatch(
+      /\.simulation-panel-card \.ui-facility-card__title\s*\{[^}]*padding:\s*0;[^}]*margin:\s*0;[^}]*font-size:\s*calc\(0\.9rem \* var\(--game-text-scale\)\);/,
+    )
+    expect(simulationStyles).toMatch(
+      /\.simulation-panel-card \.ui-facility-card__description\s*\{[^}]*font-size:\s*calc\(0\.67rem \* var\(--game-text-scale\)\);/,
+    )
+    expect(baseUpgradeStyles).toMatch(
+      /\.simulation-permanent-upgrade-card\s*\{[^}]*min-block-size:\s*0;[^}]*grid-template-columns:\s*minmax\(0, 1fr\) 6rem;[\s\S]*\.simulation-permanent-upgrade-card h4\s*\{[^}]*font-size:\s*calc\(0\.8rem \* var\(--game-text-scale\)\);/,
+    )
+    expect(upgradeStyles).toMatch(
+      /@media \(max-width: 30rem\)[\s\S]*\.simulation-permanent-upgrades[^}]*[\s\S]*\.ui-collapsible-section__trigger\s*\{[^}]*min-block-size:\s*var\(--target-minimum\);[^}]*font-size:\s*calc\(0\.82rem \* var\(--game-text-scale\)\);/,
+    )
+    expect(baseUpgradeStyles).toMatch(
+      /\.simulation-permanent-upgrade-category\s*> \.ui-collapsible-section__heading\s*\{[^}]*border-inline-start:\s*0\.22rem solid var\(--simulation-upgrade-header\);/,
+    )
+    expect(baseUpgradeStyles).toMatch(
+      /\.simulation-permanent-upgrade-category\s*\{[^}]*margin-inline:\s*0\.18rem;/,
+    )
+    expect(baseUpgradeStyles).toMatch(
+      /\.simulation-permanent-upgrades[^}]*[\s\S]*\.ui-collapsible-section__trigger\s*\{[^}]*font-size:\s*calc\(1\.03rem \* var\(--game-text-scale\)\);/,
+    )
+  })
+
   test('renders canonical Foundational panels and dispatches purchases', async () => {
     const dispatchPlayer = vi.fn(accepted)
     renderSurface(dispatchPlayer)

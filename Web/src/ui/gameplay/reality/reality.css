@@ -63,13 +63,13 @@
   display: grid;
   min-block-size: 0;
   align-content: start;
-  gap: 0.85rem;
+  gap: var(--game-card-grid-gap);
   overflow-y: auto;
   overscroll-behavior: contain;
-  padding-block: 0.85rem;
+  padding-block: var(--game-card-content-inset);
   padding-inline:
-    max(0.75rem, env(safe-area-inset-left))
-    max(0.75rem, env(safe-area-inset-right));
+    max(var(--game-card-content-inset), env(safe-area-inset-left))
+    max(var(--game-card-content-inset), env(safe-area-inset-right));
   scrollbar-width: none;
   touch-action: pan-y;
   -webkit-overflow-scrolling: touch;
@@ -277,28 +277,34 @@
 .reality-upgrades > .ui-collapsible-section__heading {
   overflow: hidden;
   border: 1px solid #0a0710;
-  border-radius: 0.35rem;
+  border-radius: 0.3rem;
   background: #744b4d;
 }
 
 .reality-upgrades > .ui-collapsible-section__heading
   .ui-collapsible-section__trigger {
   font-size: calc(1.03rem * var(--game-text-scale));
+  line-height: 1.15;
 }
 
 .reality-upgrades__content,
 .reality-upgrade-category__content {
   display: grid;
-  gap: 0.55rem;
-  padding-block-start: 0.55rem;
+  gap: var(--game-card-grid-gap);
+  padding-block-start: var(--game-card-grid-gap);
 }
 
 .reality-upgrade-category > .ui-collapsible-section__heading,
 .reality-upgrade-subcategory > .ui-collapsible-section__heading {
   overflow: hidden;
-  border: 1px solid #0a0710;
-  border-radius: 0.3rem;
-  background: var(--reality-upgrade-header);
+  border: 0;
+  border-inline-start: 0.22rem solid var(--reality-upgrade-header);
+  border-radius: 0.16rem;
+  background: color-mix(
+    in srgb,
+    var(--reality-upgrade-header) 62%,
+    #1c1725
+  );
 }
 
 .reality-upgrade-category--anomaly {
@@ -315,15 +321,18 @@
 
 .reality-upgrade-category > .ui-collapsible-section__heading
   .ui-collapsible-section__trigger {
+  min-block-size: var(--target-minimum);
   color: white;
-  font-size: calc(0.92rem * var(--game-text-scale));
+  font-size: calc(0.84rem * var(--game-text-scale));
+  line-height: 1.12;
 }
 
 .reality-upgrade-subcategory > .ui-collapsible-section__heading
   .ui-collapsible-section__trigger {
-  min-block-size: 2.35rem;
+  min-block-size: var(--target-minimum);
   color: white;
-  font-size: calc(0.86rem * var(--game-text-scale));
+  font-size: calc(0.78rem * var(--game-text-scale));
+  line-height: 1.12;
 }
 
 .reality-upgrade-subcategory__content {
@@ -337,6 +346,7 @@
 .reality-upgrade-category,
 .reality-upgrade-subcategory {
   display: grid;
+  margin-inline: 0.18rem;
 }
 
 .reality-upgrade-category h3,
@@ -350,7 +360,7 @@
 .reality-upgrade-subcategory ol {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(min(100%, 18rem), 1fr));
-  gap: 0.55rem;
+  gap: var(--game-card-grid-gap);
   padding: 0;
   margin: 0;
   list-style: none;
@@ -358,10 +368,10 @@
 
 .reality-upgrade-card {
   display: grid;
-  min-block-size: 8.4rem;
-  grid-template-columns: minmax(0, 1fr) minmax(6.8rem, 27%);
-  gap: 0.6rem;
-  padding: 0.68rem;
+  min-block-size: 0;
+  grid-template-columns: minmax(0, 1fr) 6rem;
+  gap: 0.35rem;
+  padding: 0.38rem;
   border: 1px solid #0a0710;
   border-radius: 0.35rem;
   background: var(--reality-upgrade-card);
@@ -371,37 +381,40 @@
 .reality-upgrade-card__copy {
   display: grid;
   align-content: start;
-  gap: 0.32rem;
+  gap: 0.18rem;
   min-inline-size: 0;
 }
 
 .reality-upgrade-card h4 {
   color: var(--reality-upgrade-action);
-  font-size: calc(0.96rem * var(--game-text-scale));
+  font-size: calc(0.8rem * var(--game-text-scale));
+  line-height: 1.1;
 }
 
 .reality-upgrade-card p {
   color: #f4effb;
-  font-size: calc(0.78rem * var(--game-text-scale));
-  line-height: 1.28;
+  font-size: calc(0.67rem * var(--game-text-scale));
+  line-height: 1.16;
   white-space: pre-line;
 }
 
 .reality-upgrade-card .ui-button {
   display: grid;
+  min-block-size: var(--target-minimum);
   align-content: center;
   gap: 0.15rem;
+  padding: 0.28rem;
   border-color: #0a0710;
   border-radius: 0.28rem;
   background: var(--reality-upgrade-action);
   color: #171020;
-  font-size: calc(0.76rem * var(--game-text-scale));
+  font-size: calc(0.7rem * var(--game-text-scale));
   font-weight: var(--font-weight-bold);
 }
 
 .reality-upgrade-card .ui-button strong {
   font-family: var(--font-family-numeric);
-  font-size: calc(0.86rem * var(--game-text-scale));
+  font-size: calc(0.74rem * var(--game-text-scale));
   font-variant-numeric: tabular-nums;
 }
 
@@ -427,6 +440,36 @@
 
 .reality-upgrade-card__feedback[role="alert"] {
   color: #ffb8b8;
+}
+
+@media (max-width: 30rem) {
+  .reality-upgrades > .ui-collapsible-section__heading {
+    border-radius: 0.3rem;
+  }
+
+  .reality-upgrades > .ui-collapsible-section__heading
+    .ui-collapsible-section__trigger {
+    min-block-size: var(--target-minimum);
+    padding: 0.38rem 0.5rem;
+    font-size: calc(0.82rem * var(--game-text-scale));
+    line-height: 1.15;
+  }
+
+  .reality-upgrade-category > .ui-collapsible-section__heading
+    .ui-collapsible-section__trigger {
+    min-block-size: var(--target-minimum);
+    padding: 0.28rem 0.45rem;
+    font-size: calc(0.7rem * var(--game-text-scale));
+    line-height: 1.12;
+  }
+
+  .reality-upgrade-subcategory > .ui-collapsible-section__heading
+    .ui-collapsible-section__trigger {
+    min-block-size: var(--target-minimum);
+    padding: 0.28rem 0.45rem;
+    font-size: calc(0.67rem * var(--game-text-scale));
+    line-height: 1.12;
+  }
 }
 
 @media (min-width: 48rem) {

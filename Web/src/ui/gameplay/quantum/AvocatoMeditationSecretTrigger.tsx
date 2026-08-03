@@ -37,7 +37,7 @@ const TARGET_SELECTORS: Readonly<
 })
 
 const COMPLETED_MEDITATION_REPLAY_SELECTOR =
-  '.dyson-shell__side-heading, .dyson-shell__bottom-menu'
+  '.dyson-shell__side-heading'
 
 /**
  * Connects Unity's seven ordered Avotation targets to their equivalent full

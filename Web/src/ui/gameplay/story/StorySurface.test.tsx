@@ -1,6 +1,8 @@
 // @vitest-environment jsdom
 
 import '@testing-library/jest-dom/vitest'
+import { readFileSync } from 'node:fs'
+import { join } from 'node:path'
 import axe from 'axe-core'
 import { act, cleanup, render, screen } from '@testing-library/react'
 import { afterEach, describe, expect, test, vi } from 'vitest'
@@ -12,6 +14,11 @@ import {
   StorySurface,
   type StorySurfaceProps,
 } from './StorySurface'
+
+const storyStyles = readFileSync(
+  join(process.cwd(), 'src', 'ui', 'gameplay', 'story', 'story.css'),
+  'utf8',
+)
 
 afterEach(() => {
   cleanup()
@@ -26,6 +33,12 @@ const firstRunStory = {
 } as const satisfies FrontendStoryDerivedFacts
 
 describe('StorySurface', () => {
+  test('uses compact text-scale-aware chapter headings on mobile', () => {
+    expect(storyStyles).toMatch(
+      /@media \(max-width: 32rem\)[\s\S]*\.story-chapter[^}]*\.ui-collapsible-section__trigger\s*\{[^}]*min-block-size:\s*var\(--target-minimum\);[^}]*font-size:\s*calc\(0\.92rem \* var\(--game-text-scale\)\);/,
+    )
+  })
+
   test('renders only canonically revealed passages', () => {
     renderSurface()
 

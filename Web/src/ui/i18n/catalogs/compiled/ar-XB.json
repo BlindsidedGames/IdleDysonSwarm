@@ -2447,6 +2447,326 @@
       "value": "‬"
     }
   ],
+  "dyson.info.compact.active-panels": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "∀ɔʇıʌǝ: "
+    },
+    {
+      "type": 8,
+      "value": "emphasis",
+      "children": [
+        {
+          "type": 1,
+          "value": "value"
+        }
+      ]
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "dyson.info.compact.galaxies-engulfed": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "⅁ɐʅɐxıǝs: "
+    },
+    {
+      "type": 8,
+      "value": "emphasis",
+      "children": [
+        {
+          "type": 1,
+          "value": "value"
+        }
+      ]
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "dyson.info.compact.goal-assembly-lines": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "⅁oɐʅ: "
+    },
+    {
+      "type": 8,
+      "value": "emphasis",
+      "children": [
+        {
+          "type": 1,
+          "value": "targetDisplay"
+        },
+        {
+          "type": 0,
+          "value": " ⅂ıuǝs"
+        }
+      ]
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "dyson.info.compact.goal-bots": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "⅁oɐʅ: "
+    },
+    {
+      "type": 8,
+      "value": "emphasis",
+      "children": [
+        {
+          "type": 1,
+          "value": "targetDisplay"
+        },
+        {
+          "type": 0,
+          "value": " Ԑoʇs"
+        }
+      ]
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "dyson.info.compact.goal-decayed": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "⅁oɐʅ: "
+    },
+    {
+      "type": 8,
+      "value": "emphasis",
+      "children": [
+        {
+          "type": 1,
+          "value": "targetDisplay"
+        },
+        {
+          "type": 0,
+          "value": " ᗡǝɔɐʎǝp"
+        }
+      ]
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "dyson.info.compact.goal-galaxies": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "⅁oɐʅ: "
+    },
+    {
+      "type": 8,
+      "value": "emphasis",
+      "children": [
+        {
+          "type": 1,
+          "value": "targetDisplay"
+        },
+        {
+          "type": 0,
+          "value": " ⅁ɐʅɐxıǝs"
+        }
+      ]
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "dyson.info.compact.goal-panels": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "⅁oɐʅ: "
+    },
+    {
+      "type": 8,
+      "value": "emphasis",
+      "children": [
+        {
+          "type": 1,
+          "value": "targetDisplay"
+        },
+        {
+          "type": 0,
+          "value": " Ԁɐuǝʅs"
+        }
+      ]
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "dyson.info.compact.goal-planets": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "⅁oɐʅ: "
+    },
+    {
+      "type": 8,
+      "value": "emphasis",
+      "children": [
+        {
+          "type": 1,
+          "value": "targetDisplay"
+        },
+        {
+          "type": 0,
+          "value": " Ԁʅɐuǝʇs"
+        }
+      ]
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "dyson.info.compact.goal-stars": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "⅁oɐʅ: "
+    },
+    {
+      "type": 8,
+      "value": "emphasis",
+      "children": [
+        {
+          "type": 1,
+          "value": "targetDisplay"
+        },
+        {
+          "type": 0,
+          "value": " Sʇɐɹs"
+        }
+      ]
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "dyson.info.compact.panel-lifetime": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "⅂ıɟǝʇıɯǝ: "
+    },
+    {
+      "type": 8,
+      "value": "emphasis",
+      "children": [
+        {
+          "type": 1,
+          "value": "value"
+        },
+        {
+          "type": 0,
+          "value": "s"
+        }
+      ]
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "dyson.info.compact.stars-surrounded": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "Sʇɐɹs: "
+    },
+    {
+      "type": 8,
+      "value": "emphasis",
+      "children": [
+        {
+          "type": 1,
+          "value": "value"
+        }
+      ]
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "dyson.info.compact.total-panels-decayed": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "ᗡǝɔɐʎǝp: "
+    },
+    {
+      "type": 8,
+      "value": "emphasis",
+      "children": [
+        {
+          "type": 1,
+          "value": "value"
+        }
+      ]
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
   "dyson.info.galaxies-engulfed": [
     {
       "type": 0,
@@ -3203,6 +3523,34 @@
     {
       "type": 0,
       "value": "Ònɐuʇnɯ ɔouʇɹoʅs"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "dyson.settings.auto-purchase": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "∀nʇo-dnɹɔɥɐsǝ"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "dyson.settings.auto-purchase-toggle-all": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "⊥oƃƃʅǝ ∀ʅʅ"
     },
     {
       "type": 0,
@@ -4725,6 +5073,38 @@
       "value": "‬"
     }
   ],
+  "quantum.claim": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "Ↄʅɐıɯ"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "quantum.claim-upgrade": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "Ↄʅɐıɯ "
+    },
+    {
+      "type": 1,
+      "value": "name"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
   "quantum.cost": [
     {
       "type": 0,
@@ -4917,34 +5297,6 @@
     {
       "type": 0,
       "value": "Ʌısıʇ ∀ʌoɔɐʇo"
-    },
-    {
-      "type": 0,
-      "value": "‬"
-    }
-  ],
-  "quantum.prerequisite.both": [
-    {
-      "type": 0,
-      "value": "‮"
-    },
-    {
-      "type": 0,
-      "value": "ᴚǝbnıɹǝs ᗡonqʅǝ Iuɟıuıʇʎ Ԁoıuʇs ɐup Ԑoʇ Wnʅʇıʇɐsʞıuƃ."
-    },
-    {
-      "type": 0,
-      "value": "‬"
-    }
-  ],
-  "quantum.prerequisite.either": [
-    {
-      "type": 0,
-      "value": "‮"
-    },
-    {
-      "type": 0,
-      "value": "ᴚǝbnıɹǝs ᗡonqʅǝ Iuɟıuıʇʎ Ԁoıuʇs oɹ Ԑoʇ Wnʅʇıʇɐsʞıuƃ."
     },
     {
       "type": 0,
@@ -5187,6 +5539,134 @@
     {
       "type": 0,
       "value": "Ònɐuʇnɯ"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "quantum.section.avocato": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "∀ʌoɔɐʇo"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "quantum.section.boosters": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "Ònɐuʇnɯ Ԑoosʇǝɹs"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "quantum.section.core": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "Ↄoɹǝ Ònɐuʇnɯ"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "quantum.section.cosmic-structures": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "Ↄosɯıɔ Sʇɹnɔʇnɹǝs"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "quantum.section.mystery": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "???"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "quantum.section.reveal-points": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "Ǝɐɹu ɐ ʇoʇɐʅ oɟ "
+    },
+    {
+      "type": 1,
+      "value": "value"
+    },
+    {
+      "type": 0,
+      "value": " Ònɐuʇnɯ Sɥɐɹps ʇo ɹǝʌǝɐʅ ʇɥıs qɹɐuɔɥ."
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "quantum.section.reveal-upgrade": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "∩uʅoɔʞ "
+    },
+    {
+      "type": 1,
+      "value": "name"
+    },
+    {
+      "type": 0,
+      "value": " ʇo ɹǝʌǝɐʅ ʇɥıs qɹɐuɔɥ."
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "quantum.section.skill-paths": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "Ònɐuʇnɯ Sʞıʅʅ Ԁɐʇɥs"
     },
     {
       "type": 0,
@@ -8589,6 +9069,34 @@
       "value": "‬"
     }
   ],
+  "research.settings.auto-purchase": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "∀nʇo-dnɹɔɥɐsǝ"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "research.settings.auto-purchase-toggle-all": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "⊥oƃƃʅǝ ∀ʅʅ"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
   "research.settings.buy-mode.fifty": [
     {
       "type": 0,
@@ -9110,7 +9618,7 @@
     },
     {
       "type": 0,
-      "value": "Woɹǝ qʎ Ԑʅıup Sıpǝp ⅁ɐɯǝs"
+      "value": "Woɹǝ qʎ Ԑʅıupsıpǝp ⅁ɐɯǝs"
     },
     {
       "type": 0,
@@ -9201,6 +9709,48 @@
       "value": "‬"
     }
   ],
+  "settings.save-data.choose-file": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "Ↄɥoosǝ Ⅎıʅǝ"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "settings.save-data.close": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "Ↄʅosǝ"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "settings.save-data.copy-string": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "Ↄodʎ Sʇɹıuƃ"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
   "settings.save-data.description": [
     {
       "type": 0,
@@ -9209,6 +9759,370 @@
     {
       "type": 0,
       "value": "⅄onɹ dɹoƃɹǝss ıs sɐʌǝp ɐnʇoɯɐʇıɔɐʅʅʎ ou ʇɥıs pǝʌıɔǝ."
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "settings.save-data.download-file": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "ᗡoʍuʅoɐp Ⅎıʅǝ"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "settings.save-data.export": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "Ǝxdoɹʇ"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "settings.save-data.export-copied": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "Sɐʌǝ sʇɹıuƃ ɔodıǝp."
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "settings.save-data.export-description": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "Ↄodʎ ʇɥıs sɐʌǝ sʇɹıuƃ soɯǝʍɥǝɹǝ sɐɟǝ, oɹ poʍuʅoɐp ıʇ ɐs ɐ ɟıʅǝ."
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "settings.save-data.export-dialog-title": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "Ǝxdoɹʇ Sɐʌǝ"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "settings.save-data.export-failed": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "⊥ɥǝ sɐʌǝ ɔonʅp uoʇ qǝ ǝxdoɹʇǝp. Ԁʅǝɐsǝ ʇɹʎ ɐƃɐıu."
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "settings.save-data.export-loading": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "Ԁɹǝdɐɹıuƃ sɐʌǝ sʇɹıuƃ…"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "settings.save-data.export-string-label": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "Sɐʌǝ sʇɹıuƃ"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "settings.save-data.export-succeeded": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "Sɐʌǝ ǝxdoɹʇǝp snɔɔǝssɟnʅʅʎ."
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "settings.save-data.import": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "Iɯdoɹʇ"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "settings.save-data.import-committed-recovery": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "⊥ɥǝ ıɯdoɹʇǝp sɐʌǝ ʍɐs ʍɹıʇʇǝu, qnʇ ʇɥǝ ƃɐɯǝ ɔonʅp uoʇ ɹǝodǝu ıʇ. ᴚǝʅoɐp ʇo ɹǝɔoʌǝɹ."
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "settings.save-data.import-description": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "Ԁɐsʇǝ ɐu ǝxdoɹʇǝp sɐʌǝ sʇɹıuƃ oɹ ɔɥoosǝ ɐ sɐʌǝ ɟıʅǝ. Iɯdoɹʇıuƃ ɹǝdʅɐɔǝs ʎonɹ ɔnɹɹǝuʇ dɹoƃɹǝss; ʇɥǝ oɹıƃıuɐʅ ıs ɹǝʇɐıuǝp ɟoɹ ɹǝɔoʌǝɹʎ."
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "settings.save-data.import-dialog-title": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "Iɯdoɹʇ Sɐʌǝ?"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "settings.save-data.import-failed": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "⊥ɥǝ sɐʌǝ ɔonʅp uoʇ qǝ ıɯdoɹʇǝp. ⅄onɹ ɔnɹɹǝuʇ dɹoƃɹǝss ʍɐs ʞǝdʇ."
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "settings.save-data.import-pending": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "Iɯdoɹʇıuƃ…"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "settings.save-data.import-preview-failed": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "⊥ɥıs sɐʌǝ ɔonʅp uoʇ qǝ ɹǝɐp. ⅄onɹ ɔnɹɹǝuʇ dɹoƃɹǝss ʍɐs ʞǝdʇ."
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "settings.save-data.import-preview-infinity-points": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "Iuɟıuıʇʎ Ԁoıuʇs"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "settings.save-data.import-preview-quantum-points": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "Ònɐuʇnɯ Ԁoıuʇs"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "settings.save-data.import-preview-skill-points": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "Sʞıʅʅ Ԁoıuʇs"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "settings.save-data.import-preview-title": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "Ԁɹoƃɹǝss ıu ʇɥıs sɐʌǝ"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "settings.save-data.import-preview-warning": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "Iɯdoɹʇıuƃ ʍıʅʅ ɹǝdʅɐɔǝ ʎonɹ ɔnɹɹǝuʇ dɹoƃɹǝss."
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "settings.save-data.import-review": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "ᴚǝʌıǝʍ Sɐʌǝ"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "settings.save-data.import-review-pending": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "ᴚǝʌıǝʍıuƃ…"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "settings.save-data.import-string-label": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "Sɐʌǝ sʇɹıuƃ"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "settings.save-data.import-string-placeholder": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "Ԁɐsʇǝ ʎonɹ ǝxdoɹʇǝp sɐʌǝ sʇɹıuƃ ɥǝɹǝ"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "settings.save-data.import-succeeded": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "Sɐʌǝ ıɯdoɹʇǝp snɔɔǝssɟnʅʅʎ."
     },
     {
       "type": 0,

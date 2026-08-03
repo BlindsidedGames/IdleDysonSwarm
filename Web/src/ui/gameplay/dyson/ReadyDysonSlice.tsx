@@ -17,6 +17,7 @@ import type {
 } from '../../../application/canonicalPlayerCommands'
 import type { DeepReadonly } from '../../../core/contracts'
 import { defaultSkillPresetColorId } from '../../../game-state/skillPresetColors'
+import type { CanonicalFacilityId } from '../../../game-state/types'
 import '../facilities/facilities.css'
 import {
   DysonGameplayShell,
@@ -36,9 +37,14 @@ import {
   useBrowserRuntimeSnapshot,
   type BrowserUiRuntimeFoundation,
   type UiRuntimeDevelopmentControls,
+  type UiRuntimeImportPreviewResult,
   type UiRuntimeImportResult,
+  type UiRuntimeSuppliedFile,
 } from '../../runtime'
-import { SettingsSurface } from '../settings'
+import {
+  SettingsSurface,
+  type SettingsSurfaceProps,
+} from '../settings'
 import { DebugSurface } from '../debug'
 import type { SkillPresetActions } from '../skills'
 import {
@@ -143,6 +149,17 @@ export interface ReadyDysonRuntimeHostProps {
   readonly runtime: BrowserUiRuntimeFoundation
   readonly locale: EnabledLocale
   readonly resetSave?: () => Promise<UiRuntimeImportResult>
+  readonly previewImportSaveFile?: SettingsSurfaceProps['previewImportSaveFile']
+  readonly previewImportSaveText?: SettingsSurfaceProps['previewImportSaveText']
+  readonly importSaveFile?: (
+    file: UiRuntimeSuppliedFile,
+  ) => Promise<UiRuntimeImportResult>
+  readonly importSaveText?: (
+    text: string,
+  ) => Promise<UiRuntimeImportResult>
+  readonly readSaveText?: () => Promise<string | null>
+  readonly downloadSave?: () => Promise<boolean>
+  readonly copySaveText?: (text: string) => Promise<void>
 }
 
 /**
@@ -153,6 +170,13 @@ function UnprobedReadyDysonRuntimeHost({
   runtime,
   locale,
   resetSave = unavailableReset,
+  previewImportSaveFile = unavailableImportPreview,
+  previewImportSaveText = unavailableImportPreview,
+  importSaveFile = unavailableImport,
+  importSaveText = unavailableImport,
+  readSaveText = unavailableReadSave,
+  downloadSave = unavailableExport,
+  copySaveText = unavailableCopy,
 }: ReadyDysonRuntimeHostProps) {
   const [route, setRoute] = useState<ReadyGameRoute>('bots')
   const snapshot = useBrowserRuntimeSnapshot(runtime)
@@ -175,6 +199,13 @@ function UnprobedReadyDysonRuntimeHost({
       route={route}
       onRouteChange={setRoute}
       resetSave={resetSave}
+      previewImportSaveFile={previewImportSaveFile}
+      previewImportSaveText={previewImportSaveText}
+      importSaveFile={importSaveFile}
+      importSaveText={importSaveText}
+      readSaveText={readSaveText}
+      downloadSave={downloadSave}
+      copySaveText={copySaveText}
       development={runtime.development}
     />
   )
@@ -184,6 +215,13 @@ export function ProbedReadyDysonRuntimeHost({
   runtime,
   locale,
   resetSave = unavailableReset,
+  previewImportSaveFile = unavailableImportPreview,
+  previewImportSaveText = unavailableImportPreview,
+  importSaveFile = unavailableImport,
+  importSaveText = unavailableImport,
+  readSaveText = unavailableReadSave,
+  downloadSave = unavailableExport,
+  copySaveText = unavailableCopy,
 }: ReadyDysonRuntimeHostProps) {
   const [route, setRoute] = useState<ReadyGameRoute>('bots')
   const selectionStartedAt = beginFirstSliceSnapshotSelection()
@@ -235,6 +273,13 @@ export function ProbedReadyDysonRuntimeHost({
       route={route}
       onRouteChange={setRoute}
       resetSave={resetSave}
+      previewImportSaveFile={previewImportSaveFile}
+      previewImportSaveText={previewImportSaveText}
+      importSaveFile={importSaveFile}
+      importSaveText={importSaveText}
+      readSaveText={readSaveText}
+      downloadSave={downloadSave}
+      copySaveText={copySaveText}
       development={runtime.development}
     />
   )
@@ -257,6 +302,17 @@ export interface ReadyDysonSliceProps {
   readonly route?: ReadyGameRoute
   readonly onRouteChange?: (route: ReadyGameRoute) => void
   readonly resetSave?: () => Promise<UiRuntimeImportResult>
+  readonly previewImportSaveFile?: SettingsSurfaceProps['previewImportSaveFile']
+  readonly previewImportSaveText?: SettingsSurfaceProps['previewImportSaveText']
+  readonly importSaveFile?: (
+    file: UiRuntimeSuppliedFile,
+  ) => Promise<UiRuntimeImportResult>
+  readonly importSaveText?: (
+    text: string,
+  ) => Promise<UiRuntimeImportResult>
+  readonly readSaveText?: () => Promise<string | null>
+  readonly downloadSave?: () => Promise<boolean>
+  readonly copySaveText?: (text: string) => Promise<void>
   readonly development?: UiRuntimeDevelopmentControls
 }
 
@@ -299,6 +355,13 @@ export function ReadyDysonSlice({
   route: requestedRoute = 'bots',
   onRouteChange = () => undefined,
   resetSave = unavailableReset,
+  previewImportSaveFile = unavailableImportPreview,
+  previewImportSaveText = unavailableImportPreview,
+  importSaveFile = unavailableImport,
+  importSaveText = unavailableImport,
+  readSaveText = unavailableReadSave,
+  downloadSave = unavailableExport,
+  copySaveText = unavailableCopy,
   development,
 }: ReadyDysonSliceProps) {
   const intl = useIntl()
@@ -381,6 +444,18 @@ export function ReadyDysonSlice({
   const resources = gameplay.resources.dyson
   const rates = dyson.value.rates
   const visibility = gameplay.visibility.dyson
+  const automationFacilityIds: CanonicalFacilityId[] = [
+    ...visibility.visibleBasicFacilityIds,
+  ]
+  if (gameplay.progression.quantum.unlocks.matrioshkaBrains) {
+    automationFacilityIds.push('matrioshka_brains')
+  }
+  if (gameplay.progression.quantum.unlocks.birchPlanets) {
+    automationFacilityIds.push('birch_planets')
+  }
+  if (gameplay.progression.quantum.unlocks.galacticBrains) {
+    automationFacilityIds.push('galactic_brains')
+  }
   const display = (value: NumericValue) =>
     formatGameNumber(locale, value)
   const precise = (value: NumericValue) =>
@@ -702,6 +777,13 @@ export function ReadyDysonSlice({
               content: (
                 <SettingsSurface
                   resetSave={resetSave}
+                  previewImportSaveFile={previewImportSaveFile}
+                  previewImportSaveText={previewImportSaveText}
+                  importSaveFile={importSaveFile}
+                  importSaveText={importSaveText}
+                  readSaveText={readSaveText}
+                  downloadSave={downloadSave}
+                  copySaveText={copySaveText}
                   visualizationVisible={visualizationVisible}
                   onVisualizationVisibleChange={(visible) => {
                     setVisualizationVisible(visible)
@@ -750,6 +832,14 @@ export function ReadyDysonSlice({
                         gameplay.progression.skills
                           .tabPresetAutomation.research
                       }
+                      automationUnlocked={
+                        gameplay.progression.infinity
+                          .automationUnlocked.research
+                      }
+                      automationEnabledById={
+                        gameplay.progression.research.automation
+                          .enabledById
+                      }
                       purchaseRouteAvailable={
                         gameplay.commands.byKind[
                           'research.purchase'
@@ -768,6 +858,11 @@ export function ReadyDysonSlice({
                       presetAutomationRouteAvailable={
                         gameplay.commands.byKind[
                           'skill.set-tab-preset-automation'
+                        ].routeAvailable
+                      }
+                      automationRouteAvailable={
+                        gameplay.commands.byKind[
+                          'research.set-automation'
                         ].routeAvailable
                       }
                       dispatchPlayer={dispatchPlayer}
@@ -1368,6 +1463,13 @@ export function ReadyDysonSlice({
             presetAutomationSlot={
               gameplay.progression.skills.tabPresetAutomation.bots
             }
+            automationUnlocked={
+              gameplay.progression.infinity.automationUnlocked.bots
+            }
+            automationFacilityIds={automationFacilityIds}
+            automationEnabledFacilities={
+              gameplay.progression.dyson.automation.enabledFacilities
+            }
             buyModeRouteAvailable={
               gameplay.commands.byKind[
                 'dyson.set-buy-mode'
@@ -1381,6 +1483,11 @@ export function ReadyDysonSlice({
             presetAutomationRouteAvailable={
               gameplay.commands.byKind[
                 'skill.set-tab-preset-automation'
+              ].routeAvailable
+            }
+            automationRouteAvailable={
+              gameplay.commands.byKind[
+                'dyson.set-facility-automation'
               ].routeAvailable
             }
             dispatchPlayer={dispatchPlayer}
@@ -1503,6 +1610,36 @@ function unavailableReset(): Promise<UiRuntimeImportResult> {
     reason: 'Reset is unavailable in this host.',
     recoveryAvailable: false,
   })
+}
+
+function unavailableImport(): Promise<UiRuntimeImportResult> {
+  return Promise.resolve({
+    imported: false,
+    committed: false,
+    code: 'RUNTIME-IMPORT-UNAVAILABLE',
+    reason: 'Import is unavailable in this host.',
+    recoveryAvailable: false,
+  })
+}
+
+function unavailableImportPreview(): Promise<UiRuntimeImportPreviewResult> {
+  return Promise.resolve({
+    accepted: false,
+    code: 'RUNTIME-IMPORT-PREVIEW-UNAVAILABLE',
+    reason: 'Import preview is unavailable in this host.',
+  })
+}
+
+function unavailableExport(): Promise<boolean> {
+  return Promise.resolve(false)
+}
+
+function unavailableReadSave(): Promise<null> {
+  return Promise.resolve(null)
+}
+
+function unavailableCopy(): Promise<void> {
+  return Promise.resolve()
 }
 
 function createSkillPresetActions(

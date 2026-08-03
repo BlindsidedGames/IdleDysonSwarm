@@ -7,6 +7,7 @@ import type {
   CanonicalPlayerCommand,
 } from '../../../application/canonicalPlayerCommands'
 import type {
+  CanonicalFacilityId,
   CanonicalSkillPresetAutomationSlot,
   SkillPresetState,
 } from '../../../game-state/types'
@@ -20,6 +21,7 @@ import type {
 import type {
   UiRuntimePlayerCommandResult,
 } from '../../runtime'
+import { basicFacilityMessages as facilityMessages } from '../facilities/messages'
 import { readyDysonMessages as messages } from './messages'
 import './dysonControls.css'
 
@@ -35,9 +37,13 @@ export interface DysonInfoProps {
   readonly roundedBulkBuy: boolean
   readonly presets: readonly SkillPresetState[]
   readonly presetAutomationSlot: CanonicalSkillPresetAutomationSlot
+  readonly automationUnlocked: boolean
+  readonly automationFacilityIds: readonly CanonicalFacilityId[]
+  readonly automationEnabledFacilities: Readonly<Record<CanonicalFacilityId, boolean>>
   readonly buyModeRouteAvailable: boolean
   readonly roundedBulkRouteAvailable: boolean
   readonly presetAutomationRouteAvailable: boolean
+  readonly automationRouteAvailable: boolean
   readonly dispatchPlayer: (
     command: DysonSettingsCommand,
   ) => Promise<UiRuntimePlayerCommandResult>
@@ -49,6 +55,7 @@ type DysonSettingsCommand = Extract<
     readonly kind:
       | 'dyson.set-buy-mode'
       | 'dyson.set-rounded-bulk-buy'
+      | 'dyson.set-facility-automation'
       | 'skill.set-tab-preset-automation'
   }
 >
@@ -76,24 +83,29 @@ export function DysonInfo({
   roundedBulkBuy,
   presets,
   presetAutomationSlot,
+  automationUnlocked,
+  automationFacilityIds,
+  automationEnabledFacilities,
   buyModeRouteAvailable,
   roundedBulkRouteAvailable,
   presetAutomationRouteAvailable,
+  automationRouteAvailable,
   dispatchPlayer,
 }: DysonInfoProps) {
   const intl = useIntl()
-  const [expanded, setExpanded] = useState(false)
   const [settingsOpen, setSettingsOpen] = useState(false)
   const [settingPending, setSettingPending] = useState(false)
   const [settingFailed, setSettingFailed] = useState(false)
-  const detailsId = useId()
+  const [automationOverrides, setAutomationOverrides] = useState<
+    Partial<Record<CanonicalFacilityId, boolean>>
+  >({})
+  const [automationFailures, setAutomationFailures] = useState<
+    ReadonlySet<CanonicalFacilityId>
+  >(new Set())
+  const automationVersions = useRef(
+    new Map<CanonicalFacilityId, number>(),
+  )
   const settingsId = useId()
-  const metricMessage =
-    metric.kind === 'active-panels'
-      ? messages.activePanels
-      : metric.kind === 'stars-surrounded'
-        ? messages.starsSurrounded
-        : messages.galaxiesEngulfed
   const goalMessage =
     currentGoal.kind === 'create-bots'
       ? messages.goalCreateBots
@@ -110,15 +122,44 @@ export function DysonInfo({
                 : currentGoal.kind === 'engulf-galaxies'
                   ? messages.goalEngulfGalaxies
                   : messages.goalReachBots
+  const compactGoalMessage =
+    currentGoal.kind === 'create-bots' ||
+    currentGoal.kind === 'reach-bots'
+      ? messages.compactGoalBots
+      : currentGoal.kind === 'build-assembly-lines'
+        ? messages.compactGoalAssemblyLines
+        : currentGoal.kind === 'have-active-panels'
+          ? messages.compactGoalPanels
+          : currentGoal.kind === 'own-planets'
+            ? messages.compactGoalPlanets
+            : currentGoal.kind === 'decay-panels'
+              ? messages.compactGoalDecayed
+              : currentGoal.kind === 'surround-stars'
+                ? messages.compactGoalStars
+                : messages.compactGoalGalaxies
+  const compactMetricMessage =
+    metric.kind === 'active-panels'
+      ? messages.compactActivePanels
+      : metric.kind === 'stars-surrounded'
+        ? messages.compactStarsSurrounded
+        : messages.compactGalaxiesEngulfed
   const applySetting = async (
     command: DysonSettingsCommand,
+  ): Promise<void> => applySettings([command])
+
+  const applySettings = async (
+    commands: readonly DysonSettingsCommand[],
   ): Promise<void> => {
     if (settingPending) return
     setSettingPending(true)
     setSettingFailed(false)
     try {
-      const result = await dispatchPlayer(command)
-      setSettingFailed(result.status !== 'accepted')
+      const results = await Promise.all(
+        commands.map((command) => dispatchPlayer(command)),
+      )
+      setSettingFailed(
+        results.some((result) => result.status !== 'accepted'),
+      )
     } catch {
       setSettingFailed(true)
     } finally {
@@ -126,21 +167,113 @@ export function DysonInfo({
     }
   }
 
+  const automationEnabled = (facilityId: CanonicalFacilityId) =>
+    automationOverrides[facilityId] ??
+    automationEnabledFacilities[facilityId]
+
+  const setFacilityAutomation = (
+    facilityId: CanonicalFacilityId,
+    enabled: boolean,
+  ): void => {
+    const version = (automationVersions.current.get(facilityId) ?? 0) + 1
+    automationVersions.current.set(facilityId, version)
+    setAutomationOverrides((current) => ({
+      ...current,
+      [facilityId]: enabled,
+    }))
+    setAutomationFailures((current) => {
+      if (!current.has(facilityId)) return current
+      const next = new Set(current)
+      next.delete(facilityId)
+      return next
+    })
+
+    void dispatchPlayer({
+      kind: 'dyson.set-facility-automation',
+      facilityId,
+      enabled,
+    })
+      .then((result) => {
+        if (automationVersions.current.get(facilityId) !== version) return
+        setAutomationOverrides((current) => {
+          const next = { ...current }
+          delete next[facilityId]
+          return next
+        })
+        if (result.status !== 'accepted') {
+          setAutomationFailures((current) =>
+            new Set(current).add(facilityId),
+          )
+        }
+      })
+      .catch(() => {
+        if (automationVersions.current.get(facilityId) !== version) return
+        setAutomationOverrides((current) => {
+          const next = { ...current }
+          delete next[facilityId]
+          return next
+        })
+        setAutomationFailures((current) =>
+          new Set(current).add(facilityId),
+        )
+      })
+  }
+
   return (
     <div className="dyson-info">
-      <div className="dyson-info__header">
-        <button
-          type="button"
-          className="dyson-info__toggle"
-          aria-expanded={expanded}
-          aria-controls={detailsId}
-          onClick={() => setExpanded((current) => !current)}
-        >
-          <span>{intl.formatMessage(messages.info)}</span>
-          <span className="dyson-info__chevron" aria-hidden="true">
-            {expanded ? '\u2212' : '\u002b'}
+      <div className="dyson-info__overview">
+        <div className="dyson-info__facts">
+          <span className="dyson-info__fact">
+            <FormattedMessage
+              {...compactMetricMessage}
+              values={{
+                value: formatFact(locale, metric.value),
+                emphasis: (chunks) => (
+                  <span className="dyson-info__value">{chunks}</span>
+                ),
+              }}
+            />
           </span>
-        </button>
+          <span className="dyson-info__fact">
+            <FormattedMessage
+              {...messages.compactPanelLifetime}
+              values={{
+                value: formatFact(locale, panelLifetimeSeconds),
+                emphasis: (chunks) => (
+                  <span className="dyson-info__value">{chunks}</span>
+                ),
+              }}
+            />
+          </span>
+          <span className="dyson-info__fact">
+            <FormattedMessage
+              {...messages.compactTotalPanelsDecayed}
+              values={{
+                value: formatFact(locale, totalPanelsDecayed),
+                emphasis: (chunks) => (
+                  <span className="dyson-info__value">{chunks}</span>
+                ),
+              }}
+            />
+          </span>
+          <span
+            className="dyson-info__fact dyson-info__goal"
+            title={intl.formatMessage(goalMessage, {
+              target: currentGoal.target,
+              targetDisplay: formatGameNumber(locale, currentGoal.target),
+            })}
+          >
+            <FormattedMessage
+              {...compactGoalMessage}
+              values={{
+                targetDisplay: formatGameNumber(locale, currentGoal.target),
+                emphasis: (chunks) => (
+                  <span className="dyson-info__goal-value">{chunks}</span>
+                ),
+              }}
+            />
+          </span>
+        </div>
         <button
           type="button"
           className="dyson-info__settings-toggle"
@@ -152,54 +285,6 @@ export function DysonInfo({
           <span aria-hidden="true">{'\u2699'}</span>
         </button>
       </div>
-      <div className="dyson-info__summary">
-        <span className="dyson-info__goal">
-          {intl.formatMessage(goalMessage, {
-            target: currentGoal.target,
-            targetDisplay: formatGameNumber(
-              locale,
-              currentGoal.target,
-            ),
-          })}
-        </span>
-      </div>
-      {expanded && (
-        <div id={detailsId} className="dyson-info__details">
-          <span className="dyson-info__active">
-            <FormattedMessage
-              {...metricMessage}
-              values={{
-                value: formatFact(locale, metric.value),
-                emphasis: (chunks) => (
-                  <span className="dyson-info__value">{chunks}</span>
-                ),
-              }}
-            />
-          </span>
-          <span>
-            <FormattedMessage
-              {...messages.panelLifetimeDetail}
-              values={{
-                value: formatFact(locale, panelLifetimeSeconds),
-                emphasis: (chunks) => (
-                  <span className="dyson-info__value">{chunks}</span>
-                ),
-              }}
-            />
-          </span>
-          <span>
-            <FormattedMessage
-              {...messages.totalPanelsDecayed}
-              values={{
-                value: formatFact(locale, totalPanelsDecayed),
-                emphasis: (chunks) => (
-                  <span className="dyson-info__value">{chunks}</span>
-                ),
-              }}
-            />
-          </span>
-        </div>
-      )}
       {settingsOpen && (
         <div id={settingsId} className="dyson-info__settings">
           <span className="dyson-info__settings-title">
@@ -261,6 +346,52 @@ export function DysonInfo({
               })
             }
           />
+          {automationUnlocked && automationFacilityIds.length > 0 ? (
+            <fieldset className="dyson-info__automation">
+              <legend>{intl.formatMessage(messages.autoPurchase)}</legend>
+              <button
+                type="button"
+                className="dyson-info__automation-toggle-all"
+                disabled={!automationRouteAvailable}
+                onClick={() => {
+                  const enabled = automationFacilityIds.some(
+                    (facilityId) => !automationEnabled(facilityId),
+                  )
+                  automationFacilityIds.forEach((facilityId) =>
+                    setFacilityAutomation(facilityId, enabled),
+                  )
+                }}
+              >
+                {intl.formatMessage(messages.toggleAll)}
+              </button>
+              <div className="dyson-info__automation-grid">
+                {automationFacilityIds.map((facilityId) => (
+                  <label
+                    key={facilityId}
+                    data-save-error={
+                      automationFailures.has(facilityId) || undefined
+                    }
+                  >
+                    <input
+                      type="checkbox"
+                      checked={automationEnabled(facilityId)}
+                      disabled={!automationRouteAvailable}
+                      aria-invalid={
+                        automationFailures.has(facilityId) || undefined
+                      }
+                      onChange={(event) =>
+                        setFacilityAutomation(
+                          facilityId,
+                          event.currentTarget.checked,
+                        )
+                      }
+                    />
+                    <span>{intl.formatMessage(facilityAutomationMessage(facilityId))}</span>
+                  </label>
+                ))}
+              </div>
+            </fieldset>
+          ) : null}
           {settingFailed && (
             <span className="dyson-info__settings-failure" role="alert">
               {intl.formatMessage(messages.purchaseSettingsFailed)}
@@ -270,6 +401,19 @@ export function DysonInfo({
       )}
     </div>
   )
+}
+
+function facilityAutomationMessage(facilityId: CanonicalFacilityId) {
+  switch (facilityId) {
+    case 'assembly_lines': return facilityMessages.assemblyLinesName
+    case 'ai_managers': return facilityMessages.aiManagersName
+    case 'servers': return facilityMessages.serversName
+    case 'data_centers': return facilityMessages.dataCentersName
+    case 'planets': return facilityMessages.planetsName
+    case 'matrioshka_brains': return facilityMessages.matrioshkaBrainsName
+    case 'birch_planets': return facilityMessages.birchPlanetsName
+    case 'galactic_brains': return facilityMessages.galacticBrainsName
+  }
 }
 
 type DistributionCommand = Extract<

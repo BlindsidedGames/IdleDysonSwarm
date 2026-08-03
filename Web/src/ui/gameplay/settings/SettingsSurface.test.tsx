@@ -1,6 +1,8 @@
 // @vitest-environment jsdom
 
 import '@testing-library/jest-dom/vitest'
+import { readFileSync } from 'node:fs'
+import { join } from 'node:path'
 import {
   cleanup,
   render,
@@ -16,9 +18,51 @@ import {
   type SettingsSurfaceProps,
 } from './SettingsSurface'
 
+const settingsStyles = readFileSync(
+  join(
+    process.cwd(),
+    'src',
+    'ui',
+    'gameplay',
+    'settings',
+    'settingsSurface.css',
+  ),
+  'utf8',
+)
+
 afterEach(cleanup)
 
 describe('SettingsSurface', () => {
+  test('owns vertical scrolling and keeps the default mobile layout compact', () => {
+    expect(settingsStyles).toMatch(
+      /\.settings-surface\s*\{[^}]*block-size:\s*100%;[^}]*min-block-size:\s*0;[^}]*overflow-y:\s*auto;[^}]*overscroll-behavior:\s*contain;/,
+    )
+    expect(settingsStyles).toMatch(
+      /@media \(max-width: 40rem\)[\s\S]*\.settings-surface__panel\s*\{[^}]*gap:\s*0\.45rem;[^}]*padding:\s*0\.55rem;/,
+    )
+    expect(settingsStyles).toMatch(
+      /@media \(max-width: 40rem\)[\s\S]*\.settings-surface__copy h2\s*\{[^}]*font-size:\s*calc\(0\.95rem \* var\(--game-text-scale\)\);/,
+    )
+    expect(settingsStyles).not.toMatch(
+      /\.settings-surface__(?:copy|toggle)[^{]*\{[^}]*white-space:\s*nowrap;/,
+    )
+  })
+
+  test('styles enabled dialog and file actions as interactive controls', () => {
+    expect(settingsStyles).toMatch(
+      /\.settings-surface__dialog-actions > button\s*\{[^}]*background:\s*#56815a;[^}]*cursor:\s*pointer;/,
+    )
+    expect(settingsStyles).toMatch(
+      /\.settings-surface__file-option > button:hover:not\(:disabled\),\s*\.settings-surface__dialog-actions > button:hover:not\(:disabled\)\s*\{[^}]*background:\s*#67976b;/,
+    )
+    expect(settingsStyles).toMatch(
+      /\.settings-surface__file-option > button:active:not\(:disabled\),\s*\.settings-surface__dialog-actions > button:active:not\(:disabled\)\s*\{[^}]*background:\s*#47704b;/,
+    )
+    expect(settingsStyles).toMatch(
+      /\.settings-surface__dialog-actions > button:disabled\s*\{[^}]*cursor:\s*wait;[^}]*opacity:\s*0\.7;/,
+    )
+  })
+
   test('omits the redundant route title and changes the visualization preference', async () => {
     const user = userEvent.setup()
     const onVisualizationVisibleChange = vi.fn()
@@ -37,6 +81,149 @@ describe('SettingsSurface', () => {
 
     await user.click(toggle)
     expect(onVisualizationVisibleChange).toHaveBeenCalledWith(false)
+    expect(
+      screen.getByRole('heading', {
+        name: 'More by Blindsided Games',
+      }),
+    ).toBeInTheDocument()
+  })
+
+  test('shows the export string with copy and optional download actions', async () => {
+    const user = userEvent.setup()
+    const readSaveText = vi.fn().mockResolvedValue('IDSWEB1:exported')
+    const copySaveText = vi.fn().mockResolvedValue(undefined)
+    const downloadSave = vi.fn().mockResolvedValue(true)
+    renderSettings(vi.fn(), undefined, {
+      readSaveText,
+      copySaveText,
+      downloadSave,
+    })
+
+    await user.click(screen.getByRole('button', { name: 'Export' }))
+
+    const dialog = await screen.findByRole('dialog', {
+      name: 'Export Save',
+    })
+    expect(readSaveText).toHaveBeenCalledOnce()
+    expect(within(dialog).getByRole('textbox', {
+      name: 'Save string',
+    })).toHaveValue('IDSWEB1:exported')
+    await user.click(
+      within(dialog).getByRole('button', { name: 'Copy String' }),
+    )
+    expect(copySaveText).toHaveBeenCalledWith('IDSWEB1:exported')
+    expect(within(dialog).getByRole('status')).toHaveTextContent(
+      'Save string copied.',
+    )
+    await user.click(
+      within(dialog).getByRole('button', { name: 'Download File' }),
+    )
+    expect(downloadSave).toHaveBeenCalledOnce()
+    expect(within(dialog).getByRole('status')).toHaveTextContent(
+      'Save exported successfully.',
+    )
+  })
+
+  test('previews point progress before importing a pasted save string', async () => {
+    const user = userEvent.setup()
+    const previewImportSaveText = vi.fn().mockResolvedValue({
+      accepted: true,
+      preview: {
+        infinityPoints: 42n,
+        quantumPoints: 3n,
+        skillPoints: 7n,
+      },
+    })
+    const importSaveText = vi.fn().mockResolvedValue({
+      imported: true,
+      sessionRevision: 2,
+      recoveryAvailable: true,
+      lifecycleReset: true,
+    })
+    renderSettings(vi.fn(), undefined, {
+      previewImportSaveText,
+      importSaveText,
+    })
+
+    await user.click(screen.getByRole('button', { name: 'Import' }))
+    const dialog = screen.getByRole('alertdialog', {
+      name: 'Import Save?',
+    })
+    const saveString = within(dialog).getByRole('textbox', {
+      name: 'Save string',
+    })
+    expect(saveString).toHaveFocus()
+    await user.type(saveString, 'IDSWEB1:test')
+    expect(importSaveText).not.toHaveBeenCalled()
+    await user.click(
+      within(dialog).getByRole('button', { name: 'Review Save' }),
+    )
+
+    await waitFor(() =>
+      expect(previewImportSaveText).toHaveBeenCalledWith('IDSWEB1:test'),
+    )
+    expect(importSaveText).not.toHaveBeenCalled()
+    expect(within(dialog).getByRole('status')).toHaveTextContent(
+      'Infinity Points42.0Quantum Points3.00Skill Points7.00',
+    )
+    await user.click(
+      within(dialog).getByRole('button', { name: 'Import' }),
+    )
+
+    await waitFor(() =>
+      expect(importSaveText).toHaveBeenCalledWith('IDSWEB1:test'),
+    )
+    expect(screen.queryByRole('alertdialog')).not.toBeInTheDocument()
+  })
+
+  test('also accepts a save file from the import dialog', async () => {
+    const user = userEvent.setup()
+    const previewImportSaveFile = vi.fn().mockResolvedValue({
+      accepted: true,
+      preview: {
+        infinityPoints: 1n,
+        quantumPoints: 2n,
+        skillPoints: 3n,
+      },
+    })
+    const importSaveFile = vi.fn().mockResolvedValue({
+      imported: true,
+      sessionRevision: 2,
+      recoveryAvailable: true,
+      lifecycleReset: true,
+    })
+    const { container } = renderSettings(vi.fn(), undefined, {
+      previewImportSaveFile,
+      importSaveFile,
+    })
+    const file = new File(['IDSWEB1:test'], 'backup.idsw', {
+      type: 'text/plain',
+    })
+
+    await user.click(screen.getByRole('button', { name: 'Import' }))
+    const dialog = screen.getByRole('alertdialog', {
+      name: 'Import Save?',
+    })
+    await user.upload(
+      container.querySelector('input[type="file"]') as HTMLInputElement,
+      file,
+    )
+    expect(dialog).toHaveTextContent('backup.idsw')
+    await user.click(
+      within(dialog).getByRole('button', { name: 'Review Save' }),
+    )
+
+    await waitFor(() =>
+      expect(previewImportSaveFile).toHaveBeenCalledWith(file),
+    )
+    expect(importSaveFile).not.toHaveBeenCalled()
+    await user.click(
+      within(dialog).getByRole('button', { name: 'Import' }),
+    )
+
+    await waitFor(() =>
+      expect(importSaveFile).toHaveBeenCalledWith(file),
+    )
   })
 
   test('changes the persistent optional navigation shortcuts', async () => {
@@ -303,6 +490,13 @@ function renderSettings(
     >
       <SettingsSurface
         resetSave={resetSave}
+        previewImportSaveFile={vi.fn()}
+        previewImportSaveText={vi.fn()}
+        importSaveFile={vi.fn()}
+        importSaveText={vi.fn()}
+        readSaveText={vi.fn().mockResolvedValue(null)}
+        downloadSave={vi.fn()}
+        copySaveText={vi.fn()}
         development={development}
         {...overrides}
       />

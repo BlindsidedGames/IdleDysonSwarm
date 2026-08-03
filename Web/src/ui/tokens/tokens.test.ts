@@ -47,6 +47,8 @@ describe('presentation tokens', () => {
     })
     expect(targetSizes.minimum).toBe(44)
     expect(targetSizes.preferredTouch).toBe(48)
+    expect(tokensCss).toContain('--game-card-grid-gap: 0.35rem')
+    expect(tokensCss).toContain('--game-card-content-inset: 0.45rem')
   })
 
   it('routes future script fonts by token while bundling only the Latin UI faces', () => {

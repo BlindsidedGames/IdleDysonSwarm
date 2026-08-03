@@ -1,7 +1,18 @@
 .settings-surface {
+  block-size: 100%;
+  min-block-size: 0;
   max-inline-size: 62rem;
   margin-inline: auto;
+  overflow-y: auto;
+  overscroll-behavior: contain;
   color: #eff8ef;
+  scrollbar-width: none;
+}
+
+.settings-surface::-webkit-scrollbar {
+  display: none;
+  inline-size: 0;
+  block-size: 0;
 }
 
 .settings-surface__content {
@@ -21,6 +32,7 @@
 
 .settings-surface__dialog {
   display: grid;
+  box-sizing: border-box;
   inline-size: min(100%, 34rem);
   gap: 0.8rem;
   padding: 1.25rem;
@@ -39,6 +51,124 @@
   color: #ffb7b7;
 }
 
+.settings-surface__dialog-feedback {
+  color: #b9dfb7;
+}
+
+.settings-surface__dialog-feedback[role="alert"] {
+  color: #ffb7b7;
+}
+
+.settings-surface__transfer {
+  display: grid;
+  gap: 0.45rem;
+  min-inline-size: 0;
+}
+
+.settings-surface__transfer > label {
+  font-weight: var(--font-weight-semibold);
+}
+
+.settings-surface__transfer textarea {
+  box-sizing: border-box;
+  inline-size: 100%;
+  min-block-size: 10rem;
+  resize: vertical;
+  padding: 0.65rem;
+  border: 2px solid #172918;
+  border-radius: 0.35rem;
+  background: #142516;
+  color: white;
+  font: 0.78rem/1.35 ui-monospace, SFMono-Regular, Consolas, monospace;
+}
+
+.settings-surface__transfer textarea:focus-visible {
+  outline: 3px solid var(--color-focus);
+  outline-offset: 2px;
+}
+
+.settings-surface__import-preview {
+  display: grid;
+  gap: 0.65rem;
+  padding: 0.8rem;
+  border: 2px solid #47794a;
+  border-radius: 0.4rem;
+  background: #1d351f;
+}
+
+.settings-surface__import-preview h4,
+.settings-surface__import-preview dl,
+.settings-surface__import-preview p {
+  margin: 0;
+}
+
+.settings-surface__import-preview dl {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 0.5rem;
+}
+
+.settings-surface__import-preview dl > div {
+  display: grid;
+  gap: 0.15rem;
+  min-inline-size: 0;
+}
+
+.settings-surface__import-preview dt {
+  color: #b9dfb7;
+  font-size: 0.82em;
+}
+
+.settings-surface__import-preview dd {
+  margin: 0;
+  color: #00e1ff;
+  font-size: 1.15em;
+  font-weight: var(--font-weight-semibold);
+  overflow-wrap: anywhere;
+}
+
+.settings-surface__file-option {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  min-inline-size: 0;
+}
+
+.settings-surface__file-option > button {
+  flex: none;
+  min-block-size: var(--target-minimum);
+  padding: 0.45rem 0.75rem;
+  border: 2px solid #172918;
+  border-radius: 0.4rem;
+  background: #56815a;
+  color: white;
+  cursor: pointer;
+  font: inherit;
+  font-weight: var(--font-weight-semibold);
+}
+
+.settings-surface__file-option > button:hover:not(:disabled),
+.settings-surface__dialog-actions > button:hover:not(:disabled) {
+  background: #67976b;
+}
+
+.settings-surface__file-option > button:active:not(:disabled),
+.settings-surface__dialog-actions > button:active:not(:disabled) {
+  background: #47704b;
+}
+
+.settings-surface__file-option > button:disabled,
+.settings-surface__dialog-actions > button:disabled {
+  cursor: wait;
+  opacity: 0.7;
+}
+
+.settings-surface__file-option > span {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
 .settings-surface__dialog-actions {
   display: flex;
   justify-content: flex-end;
@@ -50,8 +180,9 @@
   padding: 0.55rem 1rem;
   border: 2px solid #172918;
   border-radius: 0.4rem;
-  background: #364d36;
+  background: #56815a;
   color: white;
+  cursor: pointer;
   font: inherit;
   font-weight: var(--font-weight-semibold);
 }
@@ -227,6 +358,53 @@
   color: #91bf8f;
 }
 
+.settings-surface__save-actions {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  gap: 0.5rem;
+}
+
+.settings-surface__file-input {
+  display: none;
+}
+
+.settings-surface__save-actions > button {
+  min-block-size: 3.25rem;
+  padding: 0.65rem 1rem;
+  border: 2px solid #172918;
+  border-radius: 0.4rem;
+  background: #56815a;
+  color: white;
+  cursor: pointer;
+  font: inherit;
+  font-weight: var(--font-weight-semibold);
+}
+
+.settings-surface__save-actions > button:hover:not(:disabled) {
+  background: #67976b;
+}
+
+.settings-surface__save-actions > button:focus-visible {
+  outline: 3px solid var(--color-focus);
+  outline-offset: 2px;
+}
+
+.settings-surface__save-actions > button:disabled {
+  cursor: wait;
+  opacity: 0.7;
+}
+
+.settings-surface__save-actions > .settings-surface__reset {
+  border-color: #3b1111;
+  background: #8b3939;
+}
+
+.settings-surface__save-actions
+  > .settings-surface__reset:hover:not(:disabled) {
+  background: #a34444;
+}
+
 .settings-surface__reset {
   min-block-size: 3.25rem;
   padding: 0.65rem 1.2rem;
@@ -267,8 +445,14 @@
 }
 
 @media (max-width: 40rem) {
+  .settings-surface__content {
+    gap: 0.42rem;
+  }
+
   .settings-surface__panel {
     grid-template-columns: 1fr;
+    gap: 0.45rem;
+    padding: 0.55rem;
   }
 
   .settings-surface__panel--visualization {
@@ -281,17 +465,121 @@
 
   .settings-surface__toggle {
     inline-size: 100%;
+    min-block-size: var(--target-minimum);
+    gap: 0.45rem;
+    padding: 0.35rem 0.5rem;
+    font-size: calc(0.8rem * var(--game-text-scale));
+  }
+
+  .settings-surface__toggle input {
+    inline-size: 1.1rem;
+    block-size: 1.1rem;
+  }
+
+  .settings-surface__navigation-toggles {
+    gap: 0.3rem;
+  }
+
+  .settings-surface__copy h2 {
+    font-size: calc(0.95rem * var(--game-text-scale));
+    line-height: 1.12;
+  }
+
+  .settings-surface__copy p {
+    margin-block-start: 0.2rem;
+    font-size: calc(0.72rem * var(--game-text-scale));
+    line-height: 1.2;
   }
 
   .settings-surface__reset {
-    inline-size: 100%;
+    min-block-size: var(--target-minimum);
+    padding: 0.4rem 0.7rem;
+    font-size: calc(0.82rem * var(--game-text-scale));
+  }
+
+  .settings-surface__save-actions {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 0.35rem;
+  }
+
+  .settings-surface__save-actions > button {
+    min-block-size: var(--target-minimum);
+    min-inline-size: 0;
+    padding: 0.4rem 0.35rem;
+    font-size: calc(0.76rem * var(--game-text-scale));
+  }
+
+  .settings-surface__development-trigger {
+    min-block-size: var(--target-minimum);
+    padding: 0.4rem 0.65rem;
+    font-size: calc(0.95rem * var(--game-text-scale));
+  }
+
+  .settings-surface__development-chevron {
+    font-size: 1.4rem;
   }
 
   .settings-surface__development-controls {
     grid-template-columns: 1fr;
+    gap: 0.3rem;
   }
 
   .settings-surface__development-controls label {
     grid-column: auto;
+    font-size: calc(0.78rem * var(--game-text-scale));
+  }
+
+  .settings-surface__development-controls select,
+  .settings-surface__development-controls button {
+    min-block-size: var(--target-minimum);
+    font-size: calc(0.8rem * var(--game-text-scale));
+  }
+
+  .settings-surface__development-controls select {
+    padding-block: 0.35rem;
+  }
+
+  .settings-surface__development-controls button {
+    padding: 0.4rem 0.7rem;
+  }
+
+  .settings-surface__dialog-backdrop {
+    padding: 0.5rem;
+  }
+
+  .settings-surface__dialog {
+    max-block-size: calc(100dvb - 1rem);
+    gap: 0.5rem;
+    overflow-y: auto;
+    padding: 0.75rem;
+    font-size: calc(0.82rem * var(--game-text-scale));
+  }
+
+  .settings-surface__dialog-actions {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(6rem, 1fr));
+    gap: 0.4rem;
+  }
+
+  .settings-surface__dialog-actions > button {
+    min-inline-size: 0;
+    min-block-size: var(--target-minimum);
+    padding: 0.4rem 0.35rem;
+    font-size: calc(0.74rem * var(--game-text-scale));
+  }
+
+  .settings-surface__transfer textarea {
+    min-block-size: 8rem;
+    font-size: calc(0.68rem * var(--game-text-scale));
+  }
+
+  .settings-surface__import-preview {
+    gap: 0.45rem;
+    padding: 0.6rem;
+  }
+
+  .settings-surface__import-preview dl {
+    gap: 0.35rem;
   }
 }

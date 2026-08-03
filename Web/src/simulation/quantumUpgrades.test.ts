@@ -7,6 +7,7 @@ import { DISCRETE_MAXIMUM } from './numeric'
 import {
   availableQuantumPoints,
   findQuantumUpgradeCanonicalGaps,
+  previewQuantumUpgradeSections,
   purchaseQuantumUpgrade,
   purchaseQuantumUpgradeBulk,
   QUANTUM_CONSTANTS,
@@ -72,8 +73,9 @@ describe('canonical Quantum upgrades', () => {
     ])
   })
 
-  test('uses exact authored flat costs and Division exponential costs', () => {
+  test('uses the free Double IP claim, authored costs, and Division exponential costs', () => {
     const source = state()
+    expect(quantumUpgradeCost(source, 'DoubleIP')).toBe(0n)
     expect(quantumUpgradeCost(source, 'BotMultitasking')).toBe(1n)
     expect(quantumUpgradeCost(source, 'QuantumEntanglement')).toBe(12n)
     expect(quantumUpgradeCost(source, 'Avocado')).toBe(42n)
@@ -120,6 +122,16 @@ describe('canonical Quantum upgrades', () => {
     const mega = purchaseQuantumUpgrade(source, 'MatrioshkaBrains')
     expect(mega.cost).toBe(5n)
     expect(mega.state.quantum.unlocks.matrioshkaBrains).toBe(true)
+
+    const freeDoubleIp = purchaseQuantumUpgrade(state(0n), 'DoubleIP')
+    expect(freeDoubleIp).toMatchObject({
+      accepted: true,
+      changed: true,
+      code: 'purchased',
+      cost: 0n,
+    })
+    expect(freeDoubleIp.state.quantum.pointsSpent).toBe(0n)
+    expect(freeDoubleIp.state.quantum.unlocks.doubleInfinityPoints).toBe(true)
   })
 
   test('adds Secrets to permanent and current-session storage with the 27 cap', () => {
@@ -221,16 +233,46 @@ describe('canonical Quantum upgrades', () => {
     }
   })
 
-  test('enforces Secrets, Division, and sequential mega-structure UI gates', () => {
+  test('leaves Secrets and Division open while enforcing sequential mega-structure gates', () => {
     const source = state()
     expect(purchaseQuantumUpgrade(source, 'Secrets').code)
-      .toBe('prerequisites-not-met')
+      .toBe('purchased')
     expect(purchaseQuantumUpgrade(source, 'Division').code)
-      .toBe('prerequisites-not-met')
+      .toBe('purchased')
     expect(purchaseQuantumUpgrade(source, 'BirchPlanets').code)
       .toBe('prerequisites-not-met')
     expect(purchaseQuantumUpgrade(source, 'GalacticBrains').code)
       .toBe('prerequisites-not-met')
+  })
+
+  test('derives permanent catalog reveals from total earned points and Break The Loop ownership', () => {
+    const initial = previewQuantumUpgradeSections(state(1n))
+    expect(initial.map(({ sectionId, revealed }) => [sectionId, revealed]))
+      .toEqual([
+        ['core', true],
+        ['skill-paths', false],
+        ['boosters', false],
+        ['cosmic-structures', false],
+        ['avocato', false],
+      ])
+
+    const progressed = state(20n)
+    const withBreakTheLoop: CanonicalGameStateV1 = {
+      ...progressed,
+      quantum: {
+        ...progressed.quantum,
+        pointsSpent: 19n,
+        unlocks: {
+          ...progressed.quantum.unlocks,
+          breakTheLoop: true,
+        },
+      },
+    }
+    expect(availableQuantumPoints(withBreakTheLoop)).toBe(1n)
+    expect(
+      previewQuantumUpgradeSections(withBreakTheLoop)
+        .every((section) => section.revealed),
+    ).toBe(true)
   })
 
   test('rejects corrupt, unaffordable, and saturated transactions without mutation', () => {

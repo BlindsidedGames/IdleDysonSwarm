@@ -3,6 +3,8 @@ export type {
   UiRuntimeFoundationStatus,
   UiRuntimeImportRequest,
   UiRuntimeImportResult,
+  UiRuntimeImportPreview,
+  UiRuntimeImportPreviewResult,
   UiRuntimeStartResult,
   UiRuntimeStorageStatus,
   UiRuntimeSnapshotListener,

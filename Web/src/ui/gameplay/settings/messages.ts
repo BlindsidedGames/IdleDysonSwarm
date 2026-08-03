@@ -3,7 +3,7 @@ import { defineMessages } from 'react-intl'
 export const settingsSurfaceMessages = defineMessages({
   moreByTitle: {
     id: 'settings.more-by.title',
-    defaultMessage: 'More by Blind Sided Games',
+    defaultMessage: 'More by Blindsided Games',
     description: 'Heading for the canonical developer area in Settings.',
   },
   moreByDescription: {
@@ -70,6 +70,151 @@ export const settingsSurfaceMessages = defineMessages({
     defaultMessage: 'Reset Save',
     description: 'Button that replaces current progress with a fresh save.',
   },
+  importSave: {
+    id: 'settings.save-data.import',
+    defaultMessage: 'Import',
+    description: 'Opens the save import dialog.',
+  },
+  importDialogTitle: {
+    id: 'settings.save-data.import-dialog-title',
+    defaultMessage: 'Import Save?',
+    description: 'Save import confirmation dialog title.',
+  },
+  importDescription: {
+    id: 'settings.save-data.import-description',
+    defaultMessage:
+      'Paste an exported save string or choose a save file. Importing replaces your current progress; the original is retained for recovery.',
+    description: 'Explains save import sources and replacement behavior.',
+  },
+  importStringLabel: {
+    id: 'settings.save-data.import-string-label',
+    defaultMessage: 'Save string',
+    description: 'Label for the pasted save string field.',
+  },
+  importStringPlaceholder: {
+    id: 'settings.save-data.import-string-placeholder',
+    defaultMessage: 'Paste your exported save string here',
+    description: 'Placeholder for the pasted save string field.',
+  },
+  chooseFile: {
+    id: 'settings.save-data.choose-file',
+    defaultMessage: 'Choose File',
+    description: 'Selects a save file as an alternative import source.',
+  },
+  importReview: {
+    id: 'settings.save-data.import-review',
+    defaultMessage: 'Review Save',
+    description: 'Validates a supplied save and opens its progress preview.',
+  },
+  importReviewPending: {
+    id: 'settings.save-data.import-review-pending',
+    defaultMessage: 'Reviewing…',
+    description: 'Pending save-preview button text.',
+  },
+  importPreviewTitle: {
+    id: 'settings.save-data.import-preview-title',
+    defaultMessage: 'Progress in this save',
+    description: 'Heading for the validated save progress preview.',
+  },
+  infinityPoints: {
+    id: 'settings.save-data.import-preview-infinity-points',
+    defaultMessage: 'Infinity Points',
+    description: 'Infinity Point balance in an imported save preview.',
+  },
+  quantumPoints: {
+    id: 'settings.save-data.import-preview-quantum-points',
+    defaultMessage: 'Quantum Points',
+    description: 'Quantum Point balance in an imported save preview.',
+  },
+  skillPoints: {
+    id: 'settings.save-data.import-preview-skill-points',
+    defaultMessage: 'Skill Points',
+    description: 'Skill Point balance in an imported save preview.',
+  },
+  importPreviewWarning: {
+    id: 'settings.save-data.import-preview-warning',
+    defaultMessage: 'Importing will replace your current progress.',
+    description: 'Final warning below a validated save progress preview.',
+  },
+  importPreviewFailed: {
+    id: 'settings.save-data.import-preview-failed',
+    defaultMessage: 'This save could not be read. Your current progress was kept.',
+    description: 'Failure shown when a supplied save cannot be previewed.',
+  },
+  importPending: {
+    id: 'settings.save-data.import-pending',
+    defaultMessage: 'Importing…',
+    description: 'Pending save-import button text.',
+  },
+  importSucceeded: {
+    id: 'settings.save-data.import-succeeded',
+    defaultMessage: 'Save imported successfully.',
+    description: 'Successful save-import feedback.',
+  },
+  importFailed: {
+    id: 'settings.save-data.import-failed',
+    defaultMessage:
+      'The save could not be imported. Your current progress was kept.',
+    description: 'Failed save-import feedback.',
+  },
+  importCommittedRecovery: {
+    id: 'settings.save-data.import-committed-recovery',
+    defaultMessage:
+      'The imported save was written, but the game could not reopen it. Reload to recover.',
+    description:
+      'Warns that import committed but post-commit session reconstruction failed.',
+  },
+  exportSave: {
+    id: 'settings.save-data.export',
+    defaultMessage: 'Export',
+    description: 'Opens the save export dialog.',
+  },
+  exportDialogTitle: {
+    id: 'settings.save-data.export-dialog-title',
+    defaultMessage: 'Export Save',
+    description: 'Save export dialog title.',
+  },
+  exportDescription: {
+    id: 'settings.save-data.export-description',
+    defaultMessage:
+      'Copy this save string somewhere safe, or download it as a file.',
+    description: 'Explains the available save export formats.',
+  },
+  exportStringLabel: {
+    id: 'settings.save-data.export-string-label',
+    defaultMessage: 'Save string',
+    description: 'Label for the exported save string field.',
+  },
+  exportLoading: {
+    id: 'settings.save-data.export-loading',
+    defaultMessage: 'Preparing save string…',
+    description: 'Placeholder while the export string is prepared.',
+  },
+  copyString: {
+    id: 'settings.save-data.copy-string',
+    defaultMessage: 'Copy String',
+    description: 'Copies the exported save string to the clipboard.',
+  },
+  exportCopied: {
+    id: 'settings.save-data.export-copied',
+    defaultMessage: 'Save string copied.',
+    description: 'Successful save-string clipboard feedback.',
+  },
+  downloadFile: {
+    id: 'settings.save-data.download-file',
+    defaultMessage: 'Download File',
+    description: 'Downloads the exported save as a file.',
+  },
+  exportSucceeded: {
+    id: 'settings.save-data.export-succeeded',
+    defaultMessage: 'Save exported successfully.',
+    description: 'Successful save-export feedback.',
+  },
+  exportFailed: {
+    id: 'settings.save-data.export-failed',
+    defaultMessage: 'The save could not be exported. Please try again.',
+    description: 'Failed save-export feedback.',
+  },
   resetConfirmation: {
     id: 'settings.save-data.reset-confirmation',
     defaultMessage:
@@ -85,6 +230,11 @@ export const settingsSurfaceMessages = defineMessages({
     id: 'settings.save-data.cancel',
     defaultMessage: 'Cancel',
     description: 'Cancels a save reset.',
+  },
+  close: {
+    id: 'settings.save-data.close',
+    defaultMessage: 'Close',
+    description: 'Closes a save transfer dialog.',
   },
   resetPending: {
     id: 'settings.save-data.reset-pending',

@@ -4,7 +4,11 @@ import {
   useState,
   type KeyboardEvent as ReactKeyboardEvent,
 } from 'react'
-import { useIntl, type MessageDescriptor } from 'react-intl'
+import {
+  useIntl,
+  type IntlShape,
+  type MessageDescriptor,
+} from 'react-intl'
 import type {
   FrontendCanonicalProgression,
   FrontendCanonicalResources,
@@ -56,7 +60,6 @@ export interface QuantumSurfaceProps {
   readonly purchaseQuantity?: QuantumPurchaseQuantity
 }
 
-const MEGA_IDS = new Set<QuantumUpgradeId>(['MatrioshkaBrains', 'BirchPlanets', 'GalacticBrains'])
 const HOLD_TO_PURCHASE_IDS = new Set<QuantumUpgradeId>(
   QUANTUM_BULK_UPGRADE_IDS,
 )
@@ -77,8 +80,6 @@ export function QuantumSurface({
   purchaseQuantity = 1,
 }: QuantumSurfaceProps) {
   const intl = useIntl()
-  const ordinary = previews.upgrades.filter((preview) => !MEGA_IDS.has(preview.upgradeId))
-  const mega = nextMegaPreview(previews.upgrades)
 
   return (
     <div className="quantum-surface">
@@ -109,35 +110,119 @@ export function QuantumSurface({
 
         <section className="quantum-surface__catalog" aria-labelledby="quantum-upgrades-heading">
           <h2 id="quantum-upgrades-heading">{intl.formatMessage(messages.upgrades)}</h2>
-          <ul className="quantum-surface__grid">
-            {ordinary.map((preview) => (
-              <li key={preview.upgradeId}>
-                <QuantumUpgradeCard
-                  locale={locale}
-                  preview={preview}
-                  resources={resources}
-                  progression={progression}
-                  routeAvailable={commandAvailability.purchaseUpgrade}
-                  dispatchPlayer={dispatchPlayer}
-                  onOpenAvocato={onOpenAvocato}
-                  purchaseQuantity={purchaseQuantity}
-                />
-              </li>
+          <div className="quantum-surface__sections">
+            {previews.sections.map((section) => (
+              <QuantumUpgradeSection
+                key={section.sectionId}
+                locale={locale}
+                section={section}
+                previews={previews.upgrades}
+                resources={resources}
+                progression={progression}
+                routeAvailable={commandAvailability.purchaseUpgrade}
+                dispatchPlayer={dispatchPlayer}
+                onOpenAvocato={onOpenAvocato}
+                purchaseQuantity={purchaseQuantity}
+              />
             ))}
-            <li>
-              {mega === null ? (
-                <article className="quantum-upgrade-card quantum-upgrade-card--complete">
-                  <div><h3>{intl.formatMessage(messages.allMegaStructures)}</h3><p>{intl.formatMessage(messages.allMegaStructuresDescription)}</p></div>
-                  <Button disabled>{intl.formatMessage(messages.purchased)}</Button>
-                </article>
-              ) : (
-                <QuantumUpgradeCard locale={locale} preview={mega} resources={resources} progression={progression} routeAvailable={commandAvailability.purchaseUpgrade} dispatchPlayer={dispatchPlayer} purchaseQuantity={purchaseQuantity} />
-              )}
-            </li>
-          </ul>
+          </div>
         </section>
       </div>
     </div>
+  )
+}
+
+interface QuantumUpgradeSectionProps {
+  readonly locale: EnabledLocale
+  readonly section: FrontendGameplayPreviews['quantum']['sections'][number]
+  readonly previews: FrontendGameplayPreviews['quantum']['upgrades']
+  readonly resources: FrontendCanonicalResources['quantum']
+  readonly progression: Pick<FrontendCanonicalProgression, 'quantum' | 'avocado'>
+  readonly routeAvailable: boolean
+  readonly dispatchPlayer: QuantumSurfaceProps['dispatchPlayer']
+  readonly onOpenAvocato?: () => void
+  readonly purchaseQuantity: QuantumPurchaseQuantity
+}
+
+function QuantumUpgradeSection({
+  locale,
+  section,
+  previews,
+  resources,
+  progression,
+  routeAvailable,
+  dispatchPlayer,
+  onOpenAvocato,
+  purchaseQuantity,
+}: QuantumUpgradeSectionProps) {
+  const intl = useIntl()
+  const headingId = `quantum-section-${section.sectionId}`
+  const heading = section.revealed
+    ? intl.formatMessage(sectionMessage(section.sectionId))
+    : intl.formatMessage(messages.mystery)
+
+  if (!section.revealed) {
+    return (
+      <section className="quantum-upgrade-section" aria-labelledby={headingId}>
+        <h3 id={headingId}>{heading}</h3>
+        <ul className="quantum-surface__grid">
+          <li>
+            <article
+              className="quantum-upgrade-card quantum-upgrade-card--mystery"
+              aria-labelledby={headingId}
+            >
+              <div>
+                <p>{revealRequirementMessage(intl, locale, section.revealRequirement)}</p>
+              </div>
+            </article>
+          </li>
+        </ul>
+      </section>
+    )
+  }
+
+  const sectionPreviews = section.upgradeIds.flatMap((upgradeId) => {
+    const preview = previews.find((item) => item.upgradeId === upgradeId)
+    return preview === undefined ? [] : [preview]
+  })
+  const isCosmic = section.sectionId === 'cosmic-structures'
+  const nextMega = isCosmic ? nextMegaPreview(sectionPreviews) : null
+  const visiblePreviews = isCosmic
+    ? nextMega === null ? [] : [nextMega]
+    : sectionPreviews
+
+  return (
+    <section className="quantum-upgrade-section" aria-labelledby={headingId}>
+      <h3 id={headingId}>{heading}</h3>
+      <ul className="quantum-surface__grid">
+        {isCosmic && visiblePreviews.length === 0 ? (
+          <li>
+            <article className="quantum-upgrade-card quantum-upgrade-card--complete">
+              <div>
+                <h4>{intl.formatMessage(messages.allMegaStructures)}</h4>
+                <p>{intl.formatMessage(messages.allMegaStructuresDescription)}</p>
+              </div>
+              <Button disabled>{intl.formatMessage(messages.purchased)}</Button>
+            </article>
+          </li>
+        ) : (
+          visiblePreviews.map((preview) => (
+            <li key={preview.upgradeId}>
+              <QuantumUpgradeCard
+                locale={locale}
+                preview={preview}
+                resources={resources}
+                progression={progression}
+                routeAvailable={routeAvailable}
+                dispatchPlayer={dispatchPlayer}
+                onOpenAvocato={onOpenAvocato}
+                purchaseQuantity={purchaseQuantity}
+              />
+            </li>
+          ))
+        )}
+      </ul>
+    </section>
   )
 }
 
@@ -160,6 +245,7 @@ function QuantumUpgradeCard({ locale, preview, resources, progression, routeAvai
   const name = intl.formatMessage(upgradeMessage(preview.upgradeId, 'Title'))
   const completed = preview.code === 'already-maxed'
   const isAvocato = preview.upgradeId === 'Avocado'
+  const isFreeClaim = preview.upgradeId === 'DoubleIP' && preview.cost === 0n
   const repeatable = HOLD_TO_PURCHASE_IDS.has(preview.upgradeId)
   const resolvedQuantity = repeatable
     ? purchaseQuantity === 'max'
@@ -173,7 +259,6 @@ function QuantumUpgradeCard({ locale, preview, resources, progression, routeAvai
   const unavailable = completed || !preview.eligible || !routeAvailable || !bulkAffordable
   const disabled = pending || unavailable
   const level = upgradeLevel(locale, preview.upgradeId, resources, progression)
-  const requirement = requirementMessage(preview.upgradeId)
 
   const purchase = async () => {
     if (unavailable || pendingRef.current) return
@@ -209,10 +294,9 @@ function QuantumUpgradeCard({ locale, preview, resources, progression, routeAvai
       data-quantum-upgrade-id={preview.upgradeId}
     >
       <div>
-        <h3>{name}</h3>
+        <h4>{name}</h4>
         {level !== null && <p className="quantum-upgrade-card__level">{intl.formatMessage(messages.level, { value: level })}</p>}
         <p>{intl.formatMessage(upgradeMessage(preview.upgradeId, 'Description'))}</p>
-        {requirement && !completed && <p className="quantum-upgrade-card__requirement">{intl.formatMessage(requirement)}</p>}
       </div>
       {isAvocato && completed && onOpenAvocato ? (
         <Button variant="primary" onClick={onOpenAvocato}>{intl.formatMessage(messages.openAvocato)}</Button>
@@ -221,16 +305,18 @@ function QuantumUpgradeCard({ locale, preview, resources, progression, routeAvai
           variant="primary"
           state={pending ? 'pending' : failed ? 'failure' : 'idle'}
           disabled={disabled}
-          aria-label={intl.formatMessage(
-            repeatable && resolvedQuantity !== 1n
-              ? messages.purchaseBulk
-              : messages.purchase,
-            {
-              name,
-              quantity: formatGameNumber(locale, resolvedQuantity),
-              cost: formatGameNumber(locale, totalCost),
-            },
-          )}
+          aria-label={isFreeClaim
+            ? intl.formatMessage(messages.claimUpgrade, { name })
+            : intl.formatMessage(
+                repeatable && resolvedQuantity !== 1n
+                  ? messages.purchaseBulk
+                  : messages.purchase,
+                {
+                  name,
+                  quantity: formatGameNumber(locale, resolvedQuantity),
+                  cost: formatGameNumber(locale, totalCost),
+                },
+              )}
           onClick={holdHandlers.onClick}
           onPointerDown={holdHandlers.onPointerDown}
           onPointerUp={holdHandlers.onPointerUp}
@@ -241,12 +327,14 @@ function QuantumUpgradeCard({ locale, preview, resources, progression, routeAvai
         >
           <span>{completed
             ? intl.formatMessage(messages.purchased)
+            : isFreeClaim
+              ? intl.formatMessage(messages.claim)
             : repeatable
               ? intl.formatMessage(messages.purchaseQuantity, { quantity: formatGameNumber(locale, resolvedQuantity) })
-              : preview.eligible
+              : preview.eligible || preview.code === 'insufficient-points'
                 ? intl.formatMessage(messages.purchaseShort)
                 : intl.formatMessage(messages.unavailable)}</span>
-          {!completed && (
+          {!completed && !isFreeClaim && (
             <small>
               <QuantumShardAmount locale={locale} value={totalCost} />
             </small>
@@ -524,14 +612,41 @@ function nextMegaPreview(upgrades: FrontendGameplayPreviews['quantum']['upgrades
   return null
 }
 
-function upgradeMessage(id: QuantumUpgradeId, suffix: 'Title' | 'Description'): MessageDescriptor {
-  return upgradeMessages[`${id}${suffix}` as keyof typeof upgradeMessages]
+function sectionMessage(
+  sectionId: FrontendGameplayPreviews['quantum']['sections'][number]['sectionId'],
+): MessageDescriptor {
+  switch (sectionId) {
+    case 'core':
+      return messages.coreSection
+    case 'skill-paths':
+      return messages.skillPathsSection
+    case 'boosters':
+      return messages.boostersSection
+    case 'cosmic-structures':
+      return messages.cosmicStructuresSection
+    case 'avocato':
+      return messages.avocatoSection
+  }
 }
 
-function requirementMessage(id: QuantumUpgradeId): MessageDescriptor | null {
-  if (id === 'Secrets') return messages.prerequisiteEither
-  if (id === 'Division') return messages.prerequisiteBoth
-  return null
+function revealRequirementMessage(
+  intl: IntlShape,
+  locale: EnabledLocale,
+  requirement: FrontendGameplayPreviews['quantum']['sections'][number]['revealRequirement'],
+): string {
+  if (requirement === null) return ''
+  if (requirement.kind === 'points-earned') {
+    return intl.formatMessage(messages.revealPoints, {
+      value: formatGameNumber(locale, requirement.value),
+    })
+  }
+  return intl.formatMessage(messages.revealUpgrade, {
+    name: intl.formatMessage(upgradeMessage(requirement.upgradeId, 'Title')),
+  })
+}
+
+function upgradeMessage(id: QuantumUpgradeId, suffix: 'Title' | 'Description'): MessageDescriptor {
+  return upgradeMessages[`${id}${suffix}` as keyof typeof upgradeMessages]
 }
 
 function upgradeLevel(locale: EnabledLocale, id: QuantumUpgradeId, resources: FrontendCanonicalResources['quantum'], progression: Pick<FrontendCanonicalProgression, 'quantum' | 'avocado'>): string | null {

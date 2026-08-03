@@ -587,6 +587,54 @@
     "defaultMessage": "x10",
     "description": "Purchase ten buildings."
   },
+  "dyson.info.compact.active-panels": {
+    "defaultMessage": "Active: <emphasis>{value}</emphasis>",
+    "description": "Compact active panel fact in the Bots summary."
+  },
+  "dyson.info.compact.galaxies-engulfed": {
+    "defaultMessage": "Galaxies: <emphasis>{value}</emphasis>",
+    "description": "Compact galaxies-engulfed fact in the Bots summary."
+  },
+  "dyson.info.compact.goal-assembly-lines": {
+    "defaultMessage": "Goal: <emphasis>{targetDisplay} Lines</emphasis>",
+    "description": "Compact Assembly Line goal in the Bots summary."
+  },
+  "dyson.info.compact.goal-bots": {
+    "defaultMessage": "Goal: <emphasis>{targetDisplay} Bots</emphasis>",
+    "description": "Compact Bot goal in the Bots summary."
+  },
+  "dyson.info.compact.goal-decayed": {
+    "defaultMessage": "Goal: <emphasis>{targetDisplay} Decayed</emphasis>",
+    "description": "Compact decayed Panel goal in the Bots summary."
+  },
+  "dyson.info.compact.goal-galaxies": {
+    "defaultMessage": "Goal: <emphasis>{targetDisplay} Galaxies</emphasis>",
+    "description": "Compact Galaxy goal in the Bots summary."
+  },
+  "dyson.info.compact.goal-panels": {
+    "defaultMessage": "Goal: <emphasis>{targetDisplay} Panels</emphasis>",
+    "description": "Compact active Panel goal in the Bots summary."
+  },
+  "dyson.info.compact.goal-planets": {
+    "defaultMessage": "Goal: <emphasis>{targetDisplay} Planets</emphasis>",
+    "description": "Compact Planet goal in the Bots summary."
+  },
+  "dyson.info.compact.goal-stars": {
+    "defaultMessage": "Goal: <emphasis>{targetDisplay} Stars</emphasis>",
+    "description": "Compact Star goal in the Bots summary."
+  },
+  "dyson.info.compact.panel-lifetime": {
+    "defaultMessage": "Lifetime: <emphasis>{value}s</emphasis>",
+    "description": "Compact panel-lifetime fact in the Bots summary."
+  },
+  "dyson.info.compact.stars-surrounded": {
+    "defaultMessage": "Stars: <emphasis>{value}</emphasis>",
+    "description": "Compact stars-surrounded fact in the Bots summary."
+  },
+  "dyson.info.compact.total-panels-decayed": {
+    "defaultMessage": "Decayed: <emphasis>{value}</emphasis>",
+    "description": "Compact total-panels-decayed fact in the Bots summary."
+  },
   "dyson.info.galaxies-engulfed": {
     "defaultMessage": "Galaxies Engulfed: <emphasis>{value}</emphasis>",
     "description": "Unity active panel metric at galactic scale."
@@ -750,6 +798,14 @@
   "dyson.route.quantum.controls": {
     "defaultMessage": "Quantum controls",
     "description": "Accessible name for the fixed Quantum progress and purchase controls."
+  },
+  "dyson.settings.auto-purchase": {
+    "defaultMessage": "Auto-purchase",
+    "description": "Heading for per-facility Bots automation controls."
+  },
+  "dyson.settings.auto-purchase-toggle-all": {
+    "defaultMessage": "Toggle All",
+    "description": "Sets every visible Bots auto-purchase option together."
   },
   "dyson.swarm.region": {
     "defaultMessage": "Dyson swarm",
@@ -1135,6 +1191,14 @@
     "defaultMessage": "Offline Time Used",
     "description": "Heading for per-Infinity stored-time usage statistics."
   },
+  "quantum.claim": {
+    "defaultMessage": "Claim",
+    "description": "Visible action for a free Quantum upgrade."
+  },
+  "quantum.claim-upgrade": {
+    "defaultMessage": "Claim {name}",
+    "description": "Accessible action for a free Quantum upgrade."
+  },
   "quantum.cost": {
     "defaultMessage": "{value} QS",
     "description": "Quantum Shard price."
@@ -1187,14 +1251,6 @@
     "defaultMessage": "Visit Avocato",
     "description": "Opens the unlocked Avocato surface."
   },
-  "quantum.prerequisite.both": {
-    "defaultMessage": "Requires Double Infinity Points and Bot Multitasking.",
-    "description": "Division prerequisite copied from Unity."
-  },
-  "quantum.prerequisite.either": {
-    "defaultMessage": "Requires Double Infinity Points or Bot Multitasking.",
-    "description": "Secrets prerequisite copied from Unity."
-  },
   "quantum.progress": {
     "defaultMessage": "Progress to Quantum Leap",
     "description": "Quantum Leap progress heading."
@@ -1246,6 +1302,38 @@
   "quantum.region": {
     "defaultMessage": "Quantum",
     "description": "Accessible name for the Unity Quantum route."
+  },
+  "quantum.section.avocato": {
+    "defaultMessage": "Avocato",
+    "description": "Heading for the Avocato Quantum unlock."
+  },
+  "quantum.section.boosters": {
+    "defaultMessage": "Quantum Boosters",
+    "description": "Heading for repeatable Quantum resource upgrades."
+  },
+  "quantum.section.core": {
+    "defaultMessage": "Core Quantum",
+    "description": "Heading for the immediately available Quantum upgrades."
+  },
+  "quantum.section.cosmic-structures": {
+    "defaultMessage": "Cosmic Structures",
+    "description": "Heading for sequential mega-structure unlocks."
+  },
+  "quantum.section.mystery": {
+    "defaultMessage": "???",
+    "description": "Unknown Quantum upgrade section and card title."
+  },
+  "quantum.section.reveal-points": {
+    "defaultMessage": "Earn a total of {value} Quantum Shards to reveal this branch.",
+    "description": "Explains a total-earned Quantum section reveal threshold."
+  },
+  "quantum.section.reveal-upgrade": {
+    "defaultMessage": "Unlock {name} to reveal this branch.",
+    "description": "Explains an upgrade-owned Quantum section reveal requirement."
+  },
+  "quantum.section.skill-paths": {
+    "defaultMessage": "Quantum Skill Paths",
+    "description": "Heading for Quantum upgrades that unlock skill families."
   },
   "quantum.shards": {
     "defaultMessage": "Quantum Shards",
@@ -2139,6 +2227,14 @@
     "defaultMessage": "Research",
     "description": "Accessible name for the Unity Research route."
   },
+  "research.settings.auto-purchase": {
+    "defaultMessage": "Auto-purchase",
+    "description": "Heading for per-research automation controls."
+  },
+  "research.settings.auto-purchase-toggle-all": {
+    "defaultMessage": "Toggle All",
+    "description": "Sets every visible Research auto-purchase option together."
+  },
   "research.settings.buy-mode.fifty": {
     "defaultMessage": "x50",
     "description": "Purchase fifty Research levels."
@@ -2264,7 +2360,7 @@
     "description": "Description for the canonical developer area in Settings."
   },
   "settings.more-by.title": {
-    "defaultMessage": "More by Blind Sided Games",
+    "defaultMessage": "More by Blindsided Games",
     "description": "Heading for the canonical developer area in Settings."
   },
   "settings.navigation.description": {
@@ -2291,9 +2387,125 @@
     "defaultMessage": "Cancel",
     "description": "Cancels a save reset."
   },
+  "settings.save-data.choose-file": {
+    "defaultMessage": "Choose File",
+    "description": "Selects a save file as an alternative import source."
+  },
+  "settings.save-data.close": {
+    "defaultMessage": "Close",
+    "description": "Closes a save transfer dialog."
+  },
+  "settings.save-data.copy-string": {
+    "defaultMessage": "Copy String",
+    "description": "Copies the exported save string to the clipboard."
+  },
   "settings.save-data.description": {
     "defaultMessage": "Your progress is saved automatically on this device.",
     "description": "Explains automatic local browser persistence."
+  },
+  "settings.save-data.download-file": {
+    "defaultMessage": "Download File",
+    "description": "Downloads the exported save as a file."
+  },
+  "settings.save-data.export": {
+    "defaultMessage": "Export",
+    "description": "Opens the save export dialog."
+  },
+  "settings.save-data.export-copied": {
+    "defaultMessage": "Save string copied.",
+    "description": "Successful save-string clipboard feedback."
+  },
+  "settings.save-data.export-description": {
+    "defaultMessage": "Copy this save string somewhere safe, or download it as a file.",
+    "description": "Explains the available save export formats."
+  },
+  "settings.save-data.export-dialog-title": {
+    "defaultMessage": "Export Save",
+    "description": "Save export dialog title."
+  },
+  "settings.save-data.export-failed": {
+    "defaultMessage": "The save could not be exported. Please try again.",
+    "description": "Failed save-export feedback."
+  },
+  "settings.save-data.export-loading": {
+    "defaultMessage": "Preparing save string…",
+    "description": "Placeholder while the export string is prepared."
+  },
+  "settings.save-data.export-string-label": {
+    "defaultMessage": "Save string",
+    "description": "Label for the exported save string field."
+  },
+  "settings.save-data.export-succeeded": {
+    "defaultMessage": "Save exported successfully.",
+    "description": "Successful save-export feedback."
+  },
+  "settings.save-data.import": {
+    "defaultMessage": "Import",
+    "description": "Opens the save import dialog."
+  },
+  "settings.save-data.import-committed-recovery": {
+    "defaultMessage": "The imported save was written, but the game could not reopen it. Reload to recover.",
+    "description": "Warns that import committed but post-commit session reconstruction failed."
+  },
+  "settings.save-data.import-description": {
+    "defaultMessage": "Paste an exported save string or choose a save file. Importing replaces your current progress; the original is retained for recovery.",
+    "description": "Explains save import sources and replacement behavior."
+  },
+  "settings.save-data.import-dialog-title": {
+    "defaultMessage": "Import Save?",
+    "description": "Save import confirmation dialog title."
+  },
+  "settings.save-data.import-failed": {
+    "defaultMessage": "The save could not be imported. Your current progress was kept.",
+    "description": "Failed save-import feedback."
+  },
+  "settings.save-data.import-pending": {
+    "defaultMessage": "Importing…",
+    "description": "Pending save-import button text."
+  },
+  "settings.save-data.import-preview-failed": {
+    "defaultMessage": "This save could not be read. Your current progress was kept.",
+    "description": "Failure shown when a supplied save cannot be previewed."
+  },
+  "settings.save-data.import-preview-infinity-points": {
+    "defaultMessage": "Infinity Points",
+    "description": "Infinity Point balance in an imported save preview."
+  },
+  "settings.save-data.import-preview-quantum-points": {
+    "defaultMessage": "Quantum Points",
+    "description": "Quantum Point balance in an imported save preview."
+  },
+  "settings.save-data.import-preview-skill-points": {
+    "defaultMessage": "Skill Points",
+    "description": "Skill Point balance in an imported save preview."
+  },
+  "settings.save-data.import-preview-title": {
+    "defaultMessage": "Progress in this save",
+    "description": "Heading for the validated save progress preview."
+  },
+  "settings.save-data.import-preview-warning": {
+    "defaultMessage": "Importing will replace your current progress.",
+    "description": "Final warning below a validated save progress preview."
+  },
+  "settings.save-data.import-review": {
+    "defaultMessage": "Review Save",
+    "description": "Validates a supplied save and opens its progress preview."
+  },
+  "settings.save-data.import-review-pending": {
+    "defaultMessage": "Reviewing…",
+    "description": "Pending save-preview button text."
+  },
+  "settings.save-data.import-string-label": {
+    "defaultMessage": "Save string",
+    "description": "Label for the pasted save string field."
+  },
+  "settings.save-data.import-string-placeholder": {
+    "defaultMessage": "Paste your exported save string here",
+    "description": "Placeholder for the pasted save string field."
+  },
+  "settings.save-data.import-succeeded": {
+    "defaultMessage": "Save imported successfully.",
+    "description": "Successful save-import feedback."
   },
   "settings.save-data.reset": {
     "defaultMessage": "Reset Save",

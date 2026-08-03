@@ -1,6 +1,8 @@
 // @vitest-environment jsdom
 
 import '@testing-library/jest-dom/vitest'
+import { readFileSync } from 'node:fs'
+import { join } from 'node:path'
 import { act, cleanup, fireEvent, render, screen } from '@testing-library/react'
 import axe from 'axe-core'
 import { IntlProvider } from 'react-intl'
@@ -11,6 +13,7 @@ import type {
 import {
   QUANTUM_UPGRADE_IDS,
   type QuantumUpgradeId,
+  type QuantumUpgradeSectionPreview,
 } from '../../../simulation/quantumUpgrades'
 import type { UiRuntimePlayerCommandResult } from '../../runtime'
 import {
@@ -19,12 +22,62 @@ import {
   type QuantumSurfaceProps,
 } from './QuantumSurface'
 
+const quantumStyles = readFileSync(
+  join(process.cwd(), 'src', 'ui', 'gameplay', 'quantum', 'quantum.css'),
+  'utf8',
+)
+
 afterEach(() => {
   cleanup()
   vi.useRealTimers()
 })
 
 describe('QuantumSurface', () => {
+  test('uses compact upgrade cards at every width', () => {
+    expect(quantumStyles).toMatch(
+      /\.quantum-surface__content,[\s\S]*container-type:\s*inline-size;/,
+    )
+    expect(quantumStyles).toMatch(
+      /\.quantum-surface__grid\s*\{[^}]*gap:\s*var\(--game-card-grid-gap\);/,
+    )
+    expect(quantumStyles).toMatch(
+      /\.quantum-surface__grid > li\s*\{[^}]*display:\s*grid;[^}]*min-inline-size:\s*0;/,
+    )
+    expect(quantumStyles).toMatch(
+      /\.quantum-upgrade-card\s*\{[^}]*block-size:\s*100%;/,
+    )
+    expect(quantumStyles).toMatch(
+      /@container \(min-width: 42rem\)[\s\S]*\.quantum-surface__grid,[\s\S]*repeat\(2, minmax\(0, 1fr\)\);/,
+    )
+    expect(quantumStyles).toMatch(
+      /@container \(min-width: 76rem\)[\s\S]*\.quantum-surface__grid[^}]*repeat\(3, minmax\(0, 1fr\)\);/,
+    )
+    expect(quantumStyles).toMatch(
+      /--quantum-action-width:\s*6rem;/,
+    )
+    expect(quantumStyles).toMatch(
+      /--quantum-leap-action-width:\s*9\.5rem;/,
+    )
+    expect(quantumStyles).toMatch(
+      /\.quantum-upgrade-card\s*\{[^}]*gap:\s*0\.22rem 0\.38rem;[^}]*padding:\s*0\.38rem;/,
+    )
+    expect(quantumStyles).toMatch(
+      /\.quantum-upgrade-card h4\s*\{[^}]*font-size:\s*calc\(0\.8rem \* var\(--game-text-scale\)\);/,
+    )
+    expect(quantumStyles).toMatch(
+      /\.quantum-surface__content\s*\{[^}]*display:\s*grid;[^}]*gap:\s*var\(--game-card-grid-gap\);/,
+    )
+    expect(quantumStyles).toMatch(
+      /\.quantum-leap-card h2\s*\{[^}]*font-size:\s*calc\(0\.8rem \* var\(--game-text-scale\)\);/,
+    )
+    expect(quantumStyles).toMatch(
+      /\.avocato-meditation\s*\{[^}]*gap:\s*var\(--game-card-grid-gap\);[^}]*padding:\s*0\.38rem;/,
+    )
+    expect(quantumStyles).toMatch(
+      /\.avocato-meditation__complete\s*\{[^}]*font-size:\s*calc\(0\.67rem \* var\(--game-text-scale\)\);/,
+    )
+  })
+
   test('presents the authored Unity upgrade catalog and only the next mega-structure', () => {
     renderSurface({
       upgradeOverrides: {
@@ -39,7 +92,7 @@ describe('QuantumSurface', () => {
     expect(screen.queryByText(/Artifact reward:/)).not.toBeInTheDocument()
     expect(screen.getByText('Bot Multitasking')).toBeInTheDocument()
     expect(screen.getByText('Secrets of the Universe')).toBeInTheDocument()
-    expect(screen.getByText('Requires Double Infinity Points or Bot Multitasking.')).toBeInTheDocument()
+    expect(screen.queryByText(/Requires Double Infinity Points/)).not.toBeInTheDocument()
     expect(screen.getByText('Birch Planets')).toBeInTheDocument()
     expect(screen.queryByText('Matrioshka Brains')).not.toBeInTheDocument()
     expect(screen.queryByText('Galactic Brains')).not.toBeInTheDocument()
@@ -48,6 +101,46 @@ describe('QuantumSurface', () => {
     expect(
       secretsPanel?.compareDocumentPosition(leapPanel as Node),
     ).toBe(Node.DOCUMENT_POSITION_FOLLOWING)
+  })
+
+  test('collapses unrevealed branches to one mystery card and keeps Core Quantum visible', () => {
+    renderSurface({
+      sections: sectionPreviews({
+        'skill-paths': false,
+        boosters: false,
+        'cosmic-structures': false,
+        avocato: false,
+      }),
+    })
+
+    expect(screen.getByRole('heading', { name: 'Core Quantum' })).toBeVisible()
+    expect(screen.getByText('Bot Multitasking')).toBeVisible()
+    expect(screen.queryByText('Fragments')).not.toBeInTheDocument()
+    expect(screen.queryByText('Avocato')).not.toBeInTheDocument()
+    expect(screen.getAllByRole('heading', { name: '???' })).toHaveLength(4)
+    expect(screen.getByText('Earn a total of 3.00 Quantum Shards to reveal this branch.')).toBeVisible()
+    expect(screen.getByText('Unlock Break The Loop to reveal this branch.')).toBeVisible()
+    expect(screen.getByText('Earn a total of 20.0 Quantum Shards to reveal this branch.')).toBeVisible()
+  })
+
+  test('offers the free Double IP claim and labels insufficient points as a purchase', () => {
+    renderSurface({
+      upgradeOverrides: {
+        DoubleIP: { cost: 0n, code: 'purchased', eligible: true },
+        Secrets: { cost: 1n, code: 'insufficient-points', eligible: false },
+        Division: { cost: 2n, code: 'insufficient-points', eligible: false },
+      },
+    })
+
+    expect(screen.getByRole('button', { name: 'Claim Double Infinity Points' }))
+      .toHaveTextContent('Claim')
+    expect(screen.getByRole('button', {
+      name: 'Purchase Secrets of the Universe for 1.00 Quantum Shards',
+    })).toHaveTextContent('Purchase')
+    expect(screen.getByRole('button', {
+      name: 'Purchase Division for 2.00 Quantum Shards',
+    })).toHaveTextContent('2.00')
+    expect(screen.queryByText('Unavailable')).not.toBeInTheDocument()
   })
 
   test('dispatches one canonical purchase while the action is pending', async () => {
@@ -242,6 +335,7 @@ interface RenderOptions {
   readonly onOpenAvocato?: () => void
   readonly upgradeOverrides?: Partial<Record<QuantumUpgradeId, Partial<FrontendQuantumUpgradePreview>>>
   readonly purchaseQuantity?: QuantumSurfaceProps['purchaseQuantity']
+  readonly sections?: readonly QuantumUpgradeSectionPreview[]
 }
 
 function renderSurface(options: RenderOptions = {}) {
@@ -284,6 +378,7 @@ function renderSurface(options: RenderOptions = {}) {
     },
     previews: {
       upgrades: QUANTUM_UPGRADE_IDS.map((id) => preview(id, options.upgradeOverrides?.[id])),
+      sections: options.sections ?? sectionPreviews(),
       leap: {
         eligible: options.leapEligible ?? false,
         code: options.leapEligible ? 'ready' : 'insufficient-infinity-points',
@@ -354,11 +449,29 @@ function preview(upgradeId: QuantumUpgradeId, overrides: Partial<FrontendQuantum
   return {
     upgradeId,
     eligible: true,
-    cost: upgradeId === 'Avocado' ? 42n : 1n,
+    cost: upgradeId === 'DoubleIP'
+      ? 0n
+      : upgradeId === 'Division'
+        ? 2n
+        : upgradeId === 'Avocado'
+          ? 42n
+          : 1n,
     code: 'purchased',
     definitionGap: null,
     ...overrides,
   }
+}
+
+function sectionPreviews(
+  revealed: Partial<Record<QuantumUpgradeSectionPreview['sectionId'], boolean>> = {},
+): readonly QuantumUpgradeSectionPreview[] {
+  return [
+    { sectionId: 'core', upgradeIds: ['DoubleIP', 'BotMultitasking', 'Automation', 'BreakTheLoop', 'Secrets', 'Division', 'QuantumEntanglement'], revealed: revealed.core ?? true, revealRequirement: null },
+    { sectionId: 'skill-paths', upgradeIds: ['Fragments', 'Purity', 'Terra', 'Power', 'Paragade', 'Stellar'], revealed: revealed['skill-paths'] ?? true, revealRequirement: { kind: 'points-earned', value: 3n } },
+    { sectionId: 'boosters', upgradeIds: ['InfluenceSpeed', 'CashBonus', 'ScienceBonus'], revealed: revealed.boosters ?? true, revealRequirement: { kind: 'points-earned', value: 6n } },
+    { sectionId: 'cosmic-structures', upgradeIds: ['MatrioshkaBrains', 'BirchPlanets', 'GalacticBrains'], revealed: revealed['cosmic-structures'] ?? true, revealRequirement: { kind: 'upgrade-owned', upgradeId: 'BreakTheLoop' } },
+    { sectionId: 'avocato', upgradeIds: ['Avocado'], revealed: revealed.avocato ?? true, revealRequirement: { kind: 'points-earned', value: 20n } },
+  ]
 }
 
 function accepted(): UiRuntimePlayerCommandResult {

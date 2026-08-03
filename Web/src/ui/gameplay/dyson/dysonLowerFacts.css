@@ -36,3 +36,17 @@
 .dyson-lower-facts__value {
   color: #ffb16f;
 }
+
+@media (max-width: 720px) {
+  .dyson-lower-facts p {
+    padding: 0.28rem 0.35rem;
+    font-size: calc(0.76rem * var(--game-text-scale));
+    line-height: 1.1;
+  }
+}
+
+@media (max-width: 359px) {
+  .dyson-lower-facts p {
+    font-size: calc(0.7rem * var(--game-text-scale));
+  }
+}

@@ -586,17 +586,14 @@
   pointer-events: none;
 }
 
-.dyson-resource-header__item--cash::before {
-  inset-inline-start: -0.75rem;
-}
-
 .dyson-resource-header__item--total-bots::before {
   inset-inline-start: 50%;
   transform: translateX(-50%);
 }
 
+.dyson-resource-header__item--cash::before,
 .dyson-resource-header__item--science::before {
-  inset-inline-end: -0.75rem;
+  content: none;
 }
 
 .dyson-resource-header__item--cash {
@@ -749,9 +746,9 @@
   scrollbar-width: none;
   padding:
     calc(var(--dyson-swarm-space) + 0.35rem)
-    max(0.72rem, env(safe-area-inset-right))
-    0.8rem
-    max(0.72rem, env(safe-area-inset-left));
+    max(var(--game-card-content-inset), env(safe-area-inset-right))
+    var(--game-card-content-inset)
+    max(var(--game-card-content-inset), env(safe-area-inset-left));
 }
 
 .dyson-shell__stage::-webkit-scrollbar {
@@ -785,8 +782,11 @@
   display: grid;
   grid-row: 3;
   gap: 0.28rem;
-  padding: 0.3rem max(0.72rem, env(safe-area-inset-right)) 0.38rem
-    max(0.72rem, env(safe-area-inset-left));
+  padding:
+    0.3rem
+    max(var(--game-card-content-inset), env(safe-area-inset-right))
+    0.38rem
+    max(var(--game-card-content-inset), env(safe-area-inset-left));
   border-block-start: 1px solid #4c3c50;
   background: #1c1420;
 }
@@ -1097,6 +1097,48 @@
   line-height: 1.4;
 }
 
+@media (max-width: 720px) {
+  .dyson-shell__side-panel {
+    inline-size: min(82vw, 20rem);
+    padding: max(0.4rem, env(safe-area-inset-top)) 0.4rem
+      max(0.55rem, env(safe-area-inset-bottom));
+  }
+
+  .dyson-shell__side-heading {
+    min-block-size: 3rem;
+    font-size: calc(1.35rem * var(--game-text-scale));
+  }
+
+  .dyson-shell__menu-close {
+    inset-block-start: max(0.25rem, env(safe-area-inset-top));
+    inset-inline-end: 0.35rem;
+    inline-size: var(--target-minimum);
+    block-size: var(--target-minimum);
+    font-size: calc(1.35rem * var(--game-text-scale));
+  }
+
+  .dyson-navigation--drawer .dyson-navigation__list {
+    gap: 0.28rem;
+  }
+
+  .dyson-navigation--drawer .dyson-navigation__link {
+    min-block-size: var(--target-minimum);
+    gap: 0.4rem;
+    padding: 0.3rem 0.45rem;
+    font-size: calc(0.9rem * var(--game-text-scale));
+  }
+
+  .dyson-navigation--drawer .dyson-navigation__icon {
+    inline-size: 2rem;
+    block-size: 2rem;
+  }
+
+  .dyson-shell__side-supplement {
+    padding: 0.55rem 0.2rem 0;
+    font-size: calc(0.72rem * var(--game-text-scale));
+  }
+}
+
 .dyson-shell__route-content {
   grid-row: 2;
   block-size: 100%;
@@ -1173,10 +1215,6 @@
     --dyson-swarm-space: 0rem;
   }
 
-  .dyson-shell__stage,
-  .dyson-shell__lower-regions {
-    padding-inline: 1rem;
-  }
 }
 
 @media (max-height: 700px) and (orientation: landscape) {

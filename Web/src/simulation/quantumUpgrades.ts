@@ -39,6 +39,74 @@ export const QUANTUM_UPGRADE_IDS = [
 export type QuantumUpgradeId =
   (typeof QUANTUM_UPGRADE_IDS)[number]
 
+export type QuantumUpgradeSectionId =
+  | 'core'
+  | 'skill-paths'
+  | 'boosters'
+  | 'cosmic-structures'
+  | 'avocato'
+
+export type QuantumUpgradeRevealRequirement =
+  | { readonly kind: 'points-earned'; readonly value: bigint }
+  | { readonly kind: 'upgrade-owned'; readonly upgradeId: QuantumUpgradeId }
+
+export interface QuantumUpgradeSectionPreview {
+  readonly sectionId: QuantumUpgradeSectionId
+  readonly upgradeIds: readonly QuantumUpgradeId[]
+  readonly revealed: boolean
+  readonly revealRequirement: QuantumUpgradeRevealRequirement | null
+}
+
+const QUANTUM_UPGRADE_SECTION_DEFINITIONS = Object.freeze([
+  {
+    sectionId: 'core',
+    upgradeIds: [
+      'DoubleIP',
+      'BotMultitasking',
+      'Automation',
+      'BreakTheLoop',
+      'Secrets',
+      'Division',
+      'QuantumEntanglement',
+    ],
+    revealRequirement: null,
+  },
+  {
+    sectionId: 'skill-paths',
+    upgradeIds: [
+      'Fragments',
+      'Purity',
+      'Terra',
+      'Power',
+      'Paragade',
+      'Stellar',
+    ],
+    revealRequirement: { kind: 'points-earned', value: 3n },
+  },
+  {
+    sectionId: 'boosters',
+    upgradeIds: ['InfluenceSpeed', 'CashBonus', 'ScienceBonus'],
+    revealRequirement: { kind: 'points-earned', value: 6n },
+  },
+  {
+    sectionId: 'cosmic-structures',
+    upgradeIds: ['MatrioshkaBrains', 'BirchPlanets', 'GalacticBrains'],
+    revealRequirement: {
+      kind: 'upgrade-owned',
+      upgradeId: 'BreakTheLoop',
+    },
+  },
+  {
+    sectionId: 'avocato',
+    upgradeIds: ['Avocado'],
+    revealRequirement: { kind: 'points-earned', value: 20n },
+  },
+] as const satisfies readonly {
+  readonly sectionId: QuantumUpgradeSectionId
+  readonly upgradeIds: readonly QuantumUpgradeId[]
+  readonly revealRequirement: QuantumUpgradeRevealRequirement | null
+}[])
+
 export interface QuantumUpgradeDefinition {
   readonly id: QuantumUpgradeId
   readonly baseCost: bigint
@@ -150,6 +218,7 @@ export function quantumUpgradeCost(
   id: QuantumUpgradeId,
   definitions = QUANTUM_UPGRADE_DEFINITIONS,
 ): bigint {
+  if (id === 'DoubleIP') return 0n
   const definition = definitions.get(id)
   if (definition === undefined) return DISCRETE_MAXIMUM
   const purchases = quantumUpgradePurchaseCount(state, id)
@@ -188,14 +257,16 @@ export function purchaseQuantumUpgrade(
 
   const cost = quantumUpgradeCost(state, id, definitions)
   if (
-    cost <= 0n ||
+    cost < 0n ||
     cost === DISCRETE_MAXIMUM ||
     availableQuantumPoints(state) < cost
   ) {
     return rejected(state, 'insufficient-points', cost)
   }
-  const nextSpent = addDiscrete(state.quantum.pointsSpent, cost)
-  if (nextSpent <= state.quantum.pointsSpent) {
+  const nextSpent = cost === 0n
+    ? state.quantum.pointsSpent
+    : addDiscrete(state.quantum.pointsSpent, cost)
+  if (cost > 0n && nextSpent <= state.quantum.pointsSpent) {
     return rejected(state, 'state-saturated', cost)
   }
 
@@ -302,18 +373,6 @@ export function quantumUpgradePrerequisitesMet(
   state: Readonly<CanonicalGameStateV1>,
   id: QuantumUpgradeId,
 ): boolean {
-  if (id === 'Secrets') {
-    return (
-      state.quantum.unlocks.botMultitasking ||
-      state.quantum.unlocks.doubleInfinityPoints
-    )
-  }
-  if (id === 'Division') {
-    return (
-      state.quantum.unlocks.botMultitasking &&
-      state.quantum.unlocks.doubleInfinityPoints
-    )
-  }
   if (id === 'BirchPlanets') {
     return state.quantum.unlocks.matrioshkaBrains
   }
@@ -324,6 +383,25 @@ export function quantumUpgradePrerequisitesMet(
     )
   }
   return true
+}
+
+export function previewQuantumUpgradeSections(
+  state: Readonly<CanonicalGameStateV1>,
+): readonly QuantumUpgradeSectionPreview[] {
+  return QUANTUM_UPGRADE_SECTION_DEFINITIONS.map((definition) => {
+    const requirement = definition.revealRequirement
+    const revealed = requirement === null || (
+      requirement.kind === 'points-earned'
+        ? state.quantum.pointsEarned >= requirement.value
+        : isOneTimeOwned(state, requirement.upgradeId)
+    )
+    return {
+      sectionId: definition.sectionId,
+      upgradeIds: definition.upgradeIds,
+      revealed,
+      revealRequirement: requirement,
+    }
+  })
 }
 
 export function quantumUpgradePurchaseCount(

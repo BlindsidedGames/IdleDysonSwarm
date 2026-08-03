@@ -563,6 +563,12 @@ function readySnapshot(): FrontendApplicationSnapshot {
             roundedBulkBuy: false,
           },
         },
+        infinity: {
+          automationUnlocked: {
+            research: false,
+            bots: false,
+          },
+        },
         quantum: {
           unlocks: {
             botMultitasking: false,
@@ -702,6 +708,9 @@ function readySnapshot(): FrontendApplicationSnapshot {
             routeAvailable: true,
           },
           'dyson.set-rounded-bulk-buy': {
+            routeAvailable: true,
+          },
+          'dyson.set-facility-automation': {
             routeAvailable: true,
           },
           'skill.set-tab-preset-automation': {

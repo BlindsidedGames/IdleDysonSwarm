@@ -3,6 +3,8 @@
 import '@testing-library/jest-dom/vitest'
 import { cleanup, fireEvent, render, screen, waitFor } from '@testing-library/react'
 import type { ComponentProps } from 'react'
+import { readFileSync } from 'node:fs'
+import { resolve } from 'node:path'
 import { afterEach, describe, expect, test, vi } from 'vitest'
 import type { UiRuntimePlayerCommandResult } from '../../runtime'
 import {
@@ -12,6 +14,11 @@ import {
   AVOCATO_MEDITATION_ROUTE_STEPS,
   type AvocatoMeditationPlacement,
 } from './meditationTargets'
+
+const meditationSecretsCss = readFileSync(
+  resolve(process.cwd(), 'src/ui/gameplay/quantum/meditationSecrets.css'),
+  'utf8',
+)
 
 afterEach(() => {
   cleanup()
@@ -32,6 +39,15 @@ describe('AvocatoMeditationSecretTrigger', () => {
       research: 5,
       side: 6,
     })
+  })
+
+  test('never overrides the shell side panel positioning', () => {
+    expect(meditationSecretsCss).toMatch(
+      /\[data-avotation-marker-host\]:not\(\.dyson-shell__side-panel\)\s*\{[^}]*position:\s*relative;/,
+    )
+    expect(meditationSecretsCss).not.toMatch(
+      /\[data-avotation-marker-host\]\s*\{[^}]*position:\s*relative;/,
+    )
   })
 
   test.each(
@@ -175,8 +191,12 @@ describe('AvocatoMeditationSecretTrigger', () => {
           <header className="dyson-shell__side-heading">Menu</header>
           <button type="button">Bots</button>
         </aside>
+        <button type="button" className="dyson-shell__bottom-menu">Open menu</button>
       </>,
     )
+
+    fireEvent.click(screen.getByRole('button', { name: 'Open menu' }))
+    expect(onSequenceCompleted).not.toHaveBeenCalled()
 
     fireEvent.click(await waitFor(() => document.querySelector('.dyson-shell__side-heading')!))
     expect(onSequenceCompleted).toHaveBeenCalledOnce()

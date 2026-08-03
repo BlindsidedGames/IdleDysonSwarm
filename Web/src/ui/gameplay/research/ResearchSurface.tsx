@@ -48,6 +48,7 @@ type ResearchCommand = Extract<
       | 'research.purchase'
       | 'research.set-buy-mode'
       | 'research.set-rounded-bulk-buy'
+      | 'research.set-automation'
       | 'skill.set-tab-preset-automation'
   }
 >
@@ -56,6 +57,17 @@ type ResearchBuyMode = Extract<
   ResearchCommand,
   { readonly kind: 'research.set-buy-mode' }
 >['buyMode']
+
+type ResearchSettingCommand = Extract<
+  ResearchCommand,
+  {
+    readonly kind:
+      | 'research.set-buy-mode'
+      | 'research.set-rounded-bulk-buy'
+      | 'research.set-automation'
+      | 'skill.set-tab-preset-automation'
+  }
+>
 
 const BUY_MODE_OPTIONS = Object.freeze([
   ['buy-1', 'buyOne'],
@@ -74,10 +86,13 @@ export interface ResearchSurfaceProps {
   readonly roundedBulkBuy: boolean
   readonly presets: readonly SkillPresetState[]
   readonly presetAutomationSlot: CanonicalSkillPresetAutomationSlot
+  readonly automationUnlocked: boolean
+  readonly automationEnabledById: Readonly<Record<string, boolean>>
   readonly purchaseRouteAvailable: boolean
   readonly buyModeRouteAvailable: boolean
   readonly roundedBulkRouteAvailable: boolean
   readonly presetAutomationRouteAvailable: boolean
+  readonly automationRouteAvailable: boolean
   readonly dispatchPlayer: (
     command: ResearchCommand,
   ) => Promise<UiRuntimePlayerCommandResult>
@@ -96,10 +111,13 @@ export function ResearchSurface({
   roundedBulkBuy,
   presets,
   presetAutomationSlot,
+  automationUnlocked,
+  automationEnabledById,
   purchaseRouteAvailable,
   buyModeRouteAvailable,
   roundedBulkRouteAvailable,
   presetAutomationRouteAvailable,
+  automationRouteAvailable,
   dispatchPlayer,
 }: ResearchSurfaceProps) {
   const intl = useIntl()
@@ -107,30 +125,93 @@ export function ResearchSurface({
   const [settingsOpen, setSettingsOpen] = useState(false)
   const [settingPending, setSettingPending] = useState(false)
   const [settingFailed, setSettingFailed] = useState(false)
+  const [automationOverrides, setAutomationOverrides] = useState<
+    Readonly<Record<string, boolean>>
+  >({})
+  const [automationFailures, setAutomationFailures] = useState<
+    ReadonlySet<string>
+  >(new Set())
+  const automationVersions = useRef(new Map<string, number>())
   const visibleCards = cards.filter((card) => card.visible)
+  const automatableVisibleCards = visibleCards.filter((card) =>
+    AUTOMATABLE_RESEARCH_IDS.has(card.researchId),
+  )
 
   const applySetting = async (
-    command: Extract<
-      ResearchCommand,
-      {
-        readonly kind:
-          | 'research.set-buy-mode'
-          | 'research.set-rounded-bulk-buy'
-          | 'skill.set-tab-preset-automation'
-      }
-    >,
+    command: ResearchSettingCommand,
+  ): Promise<void> => applySettings([command])
+
+  const applySettings = async (
+    commands: readonly ResearchSettingCommand[],
   ): Promise<void> => {
     if (settingPending) return
     setSettingPending(true)
     setSettingFailed(false)
     try {
-      const result = await dispatchPlayer(command)
-      setSettingFailed(result.status !== 'accepted')
+      const results = await Promise.all(
+        commands.map((command) => dispatchPlayer(command)),
+      )
+      setSettingFailed(
+        results.some((result) => result.status !== 'accepted'),
+      )
     } catch {
       setSettingFailed(true)
     } finally {
       setSettingPending(false)
     }
+  }
+
+  const automationEnabled = (researchId: string) =>
+    automationOverrides[researchId] ??
+    automationEnabledById[researchId] ??
+    false
+
+  const setResearchAutomation = (
+    researchId: string,
+    enabled: boolean,
+  ): void => {
+    const version = (automationVersions.current.get(researchId) ?? 0) + 1
+    automationVersions.current.set(researchId, version)
+    setAutomationOverrides((current) => ({
+      ...current,
+      [researchId]: enabled,
+    }))
+    setAutomationFailures((current) => {
+      if (!current.has(researchId)) return current
+      const next = new Set(current)
+      next.delete(researchId)
+      return next
+    })
+
+    void dispatchPlayer({
+      kind: 'research.set-automation',
+      researchId,
+      enabled,
+    })
+      .then((result) => {
+        if (automationVersions.current.get(researchId) !== version) return
+        setAutomationOverrides((current) => {
+          const next = { ...current }
+          delete next[researchId]
+          return next
+        })
+        if (result.status !== 'accepted') {
+          setAutomationFailures((current) =>
+            new Set(current).add(researchId),
+          )
+        }
+      })
+      .catch(() => {
+        if (automationVersions.current.get(researchId) !== version) return
+        setAutomationOverrides((current) => {
+          const next = { ...current }
+          delete next[researchId]
+          return next
+        })
+        setAutomationFailures((current) =>
+          new Set(current).add(researchId),
+        )
+      })
   }
 
   return (
@@ -226,6 +307,55 @@ export function ResearchSurface({
                 })
               }
             />
+            {automationUnlocked && automatableVisibleCards.length > 0 ? (
+              <fieldset className="research-surface__automation">
+                <legend>{intl.formatMessage(messages.autoPurchase)}</legend>
+                <button
+                  type="button"
+                  className="research-surface__automation-toggle-all"
+                  disabled={!automationRouteAvailable}
+                  onClick={() => {
+                    const enabled = automatableVisibleCards.some(
+                      (card) => !automationEnabled(card.researchId),
+                    )
+                    automatableVisibleCards.forEach((card) =>
+                      setResearchAutomation(card.researchId, enabled),
+                    )
+                  }}
+                >
+                  {intl.formatMessage(messages.toggleAll)}
+                </button>
+                <div className="research-surface__automation-grid">
+                  {automatableVisibleCards.map((card) => {
+                      const name = intl.formatMessage(nameMessage(card.researchId))
+                      return (
+                        <label
+                          key={card.researchId}
+                          data-save-error={
+                            automationFailures.has(card.researchId) || undefined
+                          }
+                        >
+                          <input
+                            type="checkbox"
+                            checked={automationEnabled(card.researchId)}
+                            disabled={!automationRouteAvailable}
+                            aria-invalid={
+                              automationFailures.has(card.researchId) || undefined
+                            }
+                            onChange={(event) =>
+                              setResearchAutomation(
+                                card.researchId,
+                                event.currentTarget.checked,
+                              )
+                            }
+                          />
+                          <span>{name}</span>
+                        </label>
+                      )
+                    })}
+                </div>
+              </fieldset>
+            ) : null}
             {settingFailed ? (
               <span
                 className="research-surface__settings-failure"
@@ -273,6 +403,19 @@ export function ResearchSurface({
     </div>
   )
 }
+
+const AUTOMATABLE_RESEARCH_IDS = new Set([
+  'research.science_boost',
+  'research.money_multiplier',
+  'research.assembly_line_upgrade',
+  'research.ai_manager_upgrade',
+  'research.server_upgrade',
+  'research.data_center_upgrade',
+  'research.planet_upgrade',
+  'research.matrioshka_brains_upgrade',
+  'research.birch_planets_upgrade',
+  'research.galactic_brains_upgrade',
+])
 
 interface ResearchCardProps {
   readonly card: FrontendResearchCardPreview

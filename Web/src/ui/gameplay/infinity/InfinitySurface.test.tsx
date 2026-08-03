@@ -1,6 +1,8 @@
 // @vitest-environment jsdom
 
 import '@testing-library/jest-dom/vitest'
+import { readFileSync } from 'node:fs'
+import { join } from 'node:path'
 import { cleanup, fireEvent, render, screen } from '@testing-library/react'
 import axe from 'axe-core'
 import { IntlProvider } from 'react-intl'
@@ -27,9 +29,33 @@ import {
   type InfinitySurfaceProps,
 } from './InfinitySurface'
 
+const infinityStyles = readFileSync(
+  join(process.cwd(), 'src', 'ui', 'gameplay', 'infinity', 'infinity.css'),
+  'utf8',
+)
+const baseInfinityStyles = infinityStyles.split('@media (max-width: 30rem)')[0]
+
 afterEach(cleanup)
 
 describe('InfinitySurface', () => {
+  test('uses the compact Research-scale card hierarchy at every width', () => {
+    expect(baseInfinityStyles).toMatch(
+      /\.infinity-surface__shop\s*\{[^}]*padding-block:\s*var\(--game-card-content-inset\);/,
+    )
+    expect(baseInfinityStyles).toMatch(
+      /\.infinity-surface__grid\s*\{[^}]*gap:\s*var\(--game-card-grid-gap\);/,
+    )
+    expect(baseInfinityStyles).toMatch(
+      /\.infinity-shop-card\s*\{[^}]*min-block-size:\s*0;[^}]*grid-template-columns:\s*minmax\(0, 1fr\) 6rem;/,
+    )
+    expect(baseInfinityStyles).toMatch(
+      /\.infinity-shop-card h2\s*\{[^}]*font-size:\s*calc\(0\.8rem \* var\(--game-text-scale\)\);/,
+    )
+    expect(baseInfinityStyles).toMatch(
+      /\.infinity-shop-card p\s*\{[^}]*font-size:\s*calc\(0\.67rem \* var\(--game-text-scale\)\);/,
+    )
+  })
+
   test('renders canonical shop order, counters, phrase and prerequisite state', () => {
     const shop = [
       preview('secret'),

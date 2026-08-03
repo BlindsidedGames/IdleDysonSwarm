@@ -27,10 +27,17 @@ const researchStyles = readFileSync(
   ),
   'utf8',
 )
+const baseResearchStyles = researchStyles.split('@media (max-width: 720px)')[0]
 
 afterEach(cleanup)
 
 describe('ResearchSurface', () => {
+  test('gives the mobile production summary more usable width', () => {
+    expect(researchStyles).toMatch(
+      /@media \(max-width: 720px\)[\s\S]*\.research-surface__summary p\s*\{[^}]*padding:\s*0\.25rem 0\.1rem;[^}]*font-size:\s*calc\(0\.88rem \* var\(--game-text-scale\)\);/,
+    )
+  })
+
   test('renders visible cards in canonical array order without facility-only controls', () => {
     renderSurface([
       card({
@@ -200,6 +207,17 @@ describe('ResearchSurface', () => {
       tab: 'research',
       slot: 1,
     })
+
+    const automationToggle = screen.getByRole('checkbox', {
+      name: 'AI Manager',
+    })
+    expect(automationToggle).toBeChecked()
+    await user.click(automationToggle)
+    expect(dispatchPlayer).toHaveBeenCalledWith({
+      kind: 'research.set-automation',
+      researchId: 'research.ai_manager_upgrade',
+      enabled: false,
+    })
   })
 
   test('has no automated accessibility violations', async () => {
@@ -221,6 +239,125 @@ describe('ResearchSurface', () => {
     })
 
     expect(results.violations).toEqual([])
+  })
+
+  test('toggles every visible automation setting toward one intended state', async () => {
+    const user = userEvent.setup()
+    const dispatchPlayer = vi.fn(async () => accepted())
+    renderSurface(
+      [
+        card({
+          researchId: 'research.assembly_line_upgrade',
+          automationActive: true,
+        }),
+        card({
+          researchId: 'research.ai_manager_upgrade',
+          automationActive: false,
+        }),
+      ],
+      dispatchPlayer,
+    )
+
+    await user.click(
+      screen.getByRole('button', {
+        name: 'Research purchase settings',
+      }),
+    )
+    await user.click(screen.getByRole('button', { name: 'Toggle All' }))
+
+    expect(dispatchPlayer).toHaveBeenCalledWith({
+      kind: 'research.set-automation',
+      researchId: 'research.assembly_line_upgrade',
+      enabled: true,
+    })
+    expect(dispatchPlayer).toHaveBeenCalledWith({
+      kind: 'research.set-automation',
+      researchId: 'research.ai_manager_upgrade',
+      enabled: true,
+    })
+    expect(dispatchPlayer).toHaveBeenCalledTimes(2)
+  })
+
+  test('keeps automation interactive and honors the latest intent while saving', async () => {
+    const user = userEvent.setup()
+    const settle: Array<(result: UiRuntimePlayerCommandResult) => void> = []
+    const dispatchPlayer = vi.fn(
+      () =>
+        new Promise<UiRuntimePlayerCommandResult>((resolve) => {
+          settle.push(resolve)
+        }),
+    )
+    renderSurface(
+      [
+        card({ researchId: 'research.assembly_line_upgrade' }),
+        card({ researchId: 'research.ai_manager_upgrade' }),
+      ],
+      dispatchPlayer,
+    )
+
+    await user.click(
+      screen.getByRole('button', {
+        name: 'Research purchase settings',
+      }),
+    )
+    const assembly = screen.getByRole('checkbox', {
+      name: 'Assembly Line',
+    })
+    const aiManager = screen.getByRole('checkbox', {
+      name: 'AI Manager',
+    })
+
+    await user.click(assembly)
+    expect(assembly).toBeChecked()
+    expect(aiManager).not.toBeDisabled()
+    expect(screen.getByRole('button', { name: 'Toggle All' })).not.toBeDisabled()
+
+    await user.click(assembly)
+    expect(assembly).not.toBeChecked()
+    expect(dispatchPlayer).toHaveBeenNthCalledWith(1, {
+      kind: 'research.set-automation',
+      researchId: 'research.assembly_line_upgrade',
+      enabled: true,
+    })
+    expect(dispatchPlayer).toHaveBeenNthCalledWith(2, {
+      kind: 'research.set-automation',
+      researchId: 'research.assembly_line_upgrade',
+      enabled: false,
+    })
+
+    settle[0]?.(accepted())
+    expect(assembly).not.toBeChecked()
+    settle[1]?.(accepted())
+  })
+
+  test('keeps the Research cards compact at every width without preventing text scaling', () => {
+    expect(baseResearchStyles).toMatch(
+      /\.research-surface__grid\s*\{[^}]*gap:\s*var\(--game-card-grid-gap\);/,
+    )
+    expect(baseResearchStyles).toMatch(
+      /\.ui-facility-card\.research-card\s*\{[^}]*min-block-size:\s*0;[^}]*grid-template-columns:\s*minmax\(0, 1fr\)\s*clamp\(6\.25rem, 29%, 7rem\);/,
+    )
+    expect(baseResearchStyles).toMatch(
+      /\.research-card \.ui-facility-card__title\s*\{[^}]*font-size:\s*calc\(0\.8rem \* var\(--game-text-scale\)\);[^}]*line-height:\s*1\.08;/,
+    )
+    expect(baseResearchStyles).toMatch(
+      /\.research-card \.ui-facility-card__production\s*\{[^}]*font-size:\s*calc\(0\.72rem \* var\(--game-text-scale\)\);[^}]*line-height:\s*1\.1;/,
+    )
+    expect(baseResearchStyles).toMatch(
+      /\.research-card \.ui-facility-card__description\s*\{[^}]*font-size:\s*calc\(0\.67rem \* var\(--game-text-scale\)\);[^}]*line-height:\s*1\.12;/,
+    )
+    expect(researchStyles).not.toMatch(
+      /\.research-card \.ui-facility-card__(?:title|production|description)\s*\{[^}]*white-space:\s*nowrap;/,
+    )
+    expect(researchStyles).toMatch(
+      /@container \(min-width: 50rem\)[\s\S]*grid-template-columns:\s*repeat\(2, minmax\(0, 1fr\)\);[^}]*grid-auto-rows:\s*1fr;[^}]*align-items:\s*stretch;/,
+    )
+    expect(researchStyles).toMatch(
+      /@container \(min-width: 50rem\)[\s\S]*\.ui-facility-card\.research-card\s*\{[^}]*block-size:\s*100%;/,
+    )
+    expect(researchStyles).toMatch(
+      /@container \(min-width: 80rem\)[\s\S]*grid-template-columns:\s*repeat\(3, minmax\(0, 1fr\)\);/,
+    )
   })
 })
 
@@ -245,10 +382,15 @@ function renderSurface(
           { name: 'Preset 5', skillIds: [], botDistribution: 0.5, colorId: 'pink' },
         ]}
         presetAutomationSlot={0}
+        automationUnlocked
+        automationEnabledById={Object.fromEntries(
+          cards.map((entry) => [entry.researchId, entry.automationActive]),
+        )}
         purchaseRouteAvailable
         buyModeRouteAvailable
         roundedBulkRouteAvailable
         presetAutomationRouteAvailable
+        automationRouteAvailable
         dispatchPlayer={dispatchPlayer}
       />
     </IntlProvider>,

@@ -289,6 +289,66 @@ export const readyDysonMessages = defineMessages({
     defaultMessage: 'Total panels decayed: <emphasis>{value}</emphasis>',
     description: 'Canonical lifetime panel total shown in expanded Info.',
   },
+  compactActivePanels: {
+    id: 'dyson.info.compact.active-panels',
+    defaultMessage: 'Active: <emphasis>{value}</emphasis>',
+    description: 'Compact active panel fact in the Bots summary.',
+  },
+  compactStarsSurrounded: {
+    id: 'dyson.info.compact.stars-surrounded',
+    defaultMessage: 'Stars: <emphasis>{value}</emphasis>',
+    description: 'Compact stars-surrounded fact in the Bots summary.',
+  },
+  compactGalaxiesEngulfed: {
+    id: 'dyson.info.compact.galaxies-engulfed',
+    defaultMessage: 'Galaxies: <emphasis>{value}</emphasis>',
+    description: 'Compact galaxies-engulfed fact in the Bots summary.',
+  },
+  compactPanelLifetime: {
+    id: 'dyson.info.compact.panel-lifetime',
+    defaultMessage: 'Lifetime: <emphasis>{value}s</emphasis>',
+    description: 'Compact panel-lifetime fact in the Bots summary.',
+  },
+  compactTotalPanelsDecayed: {
+    id: 'dyson.info.compact.total-panels-decayed',
+    defaultMessage: 'Decayed: <emphasis>{value}</emphasis>',
+    description: 'Compact total-panels-decayed fact in the Bots summary.',
+  },
+  compactGoalBots: {
+    id: 'dyson.info.compact.goal-bots',
+    defaultMessage: 'Goal: <emphasis>{targetDisplay} Bots</emphasis>',
+    description: 'Compact Bot goal in the Bots summary.',
+  },
+  compactGoalAssemblyLines: {
+    id: 'dyson.info.compact.goal-assembly-lines',
+    defaultMessage: 'Goal: <emphasis>{targetDisplay} Lines</emphasis>',
+    description: 'Compact Assembly Line goal in the Bots summary.',
+  },
+  compactGoalPanels: {
+    id: 'dyson.info.compact.goal-panels',
+    defaultMessage: 'Goal: <emphasis>{targetDisplay} Panels</emphasis>',
+    description: 'Compact active Panel goal in the Bots summary.',
+  },
+  compactGoalPlanets: {
+    id: 'dyson.info.compact.goal-planets',
+    defaultMessage: 'Goal: <emphasis>{targetDisplay} Planets</emphasis>',
+    description: 'Compact Planet goal in the Bots summary.',
+  },
+  compactGoalDecayed: {
+    id: 'dyson.info.compact.goal-decayed',
+    defaultMessage: 'Goal: <emphasis>{targetDisplay} Decayed</emphasis>',
+    description: 'Compact decayed Panel goal in the Bots summary.',
+  },
+  compactGoalStars: {
+    id: 'dyson.info.compact.goal-stars',
+    defaultMessage: 'Goal: <emphasis>{targetDisplay} Stars</emphasis>',
+    description: 'Compact Star goal in the Bots summary.',
+  },
+  compactGoalGalaxies: {
+    id: 'dyson.info.compact.goal-galaxies',
+    defaultMessage: 'Goal: <emphasis>{targetDisplay} Galaxies</emphasis>',
+    description: 'Compact Galaxy goal in the Bots summary.',
+  },
   purchaseSettings: {
     id: 'dyson.info.purchase-settings',
     defaultMessage: 'Purchase settings',
@@ -299,6 +359,16 @@ export const readyDysonMessages = defineMessages({
     id: 'dyson.info.purchase-amount',
     defaultMessage: 'Building purchase amount',
     description: 'Heading for the canonical Dyson building buy mode.',
+  },
+  autoPurchase: {
+    id: 'dyson.settings.auto-purchase',
+    defaultMessage: 'Auto-purchase',
+    description: 'Heading for per-facility Bots automation controls.',
+  },
+  toggleAll: {
+    id: 'dyson.settings.auto-purchase-toggle-all',
+    defaultMessage: 'Toggle All',
+    description: 'Sets every visible Bots auto-purchase option together.',
   },
   presetAutomation: {
     id: 'dyson.info.preset-automation',
