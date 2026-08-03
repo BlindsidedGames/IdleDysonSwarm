@@ -1,43 +1,46 @@
 param()
 
 $ErrorActionPreference = 'Stop'
-Add-Type -AssemblyName System.Drawing
 
 $webRoot = Split-Path -Parent $PSScriptRoot
-$sourcePath = Join-Path $webRoot '..\Assets\Sprites\MenuIcons\icons-menu-12_Bots.png'
+$sourcePath = Join-Path $webRoot 'public\icons\pwa-icon.svg'
 $outputDirectory = Join-Path $webRoot 'public\icons'
+$magick = Get-Command magick -ErrorAction Stop
 
 function Write-PwaIcon {
   param(
     [Parameter(Mandatory = $true)][int]$Size,
-    [Parameter(Mandatory = $true)][double]$ContentScale,
-    [Parameter(Mandatory = $true)][string]$OutputName
+    [Parameter(Mandatory = $true)][string]$OutputName,
+    [switch]$OpaqueBackground
   )
 
-  $source = [System.Drawing.Image]::FromFile((Resolve-Path $sourcePath))
-  $bitmap = New-Object System.Drawing.Bitmap($Size, $Size)
-  $graphics = [System.Drawing.Graphics]::FromImage($bitmap)
-  try {
-    $graphics.Clear([System.Drawing.Color]::FromArgb(255, 47, 23, 56))
-    $graphics.CompositingQuality = [System.Drawing.Drawing2D.CompositingQuality]::HighQuality
-    $graphics.InterpolationMode = [System.Drawing.Drawing2D.InterpolationMode]::HighQualityBicubic
-    $graphics.SmoothingMode = [System.Drawing.Drawing2D.SmoothingMode]::HighQuality
-    $contentSize = [int][Math]::Round($Size * $ContentScale)
-    $offset = [int][Math]::Round(($Size - $contentSize) / 2)
-    $graphics.DrawImage($source, $offset, $offset, $contentSize, $contentSize)
-    $bitmap.Save(
-      (Join-Path $outputDirectory $OutputName),
-      [System.Drawing.Imaging.ImageFormat]::Png
-    )
+  $outputPath = Join-Path $outputDirectory $OutputName
+  $dimensions = "${Size}x${Size}"
+  $background = if ($OpaqueBackground) { '#130f22' } else { 'none' }
+  $arguments = @(
+    '-background', $background,
+    (Resolve-Path $sourcePath),
+    '-resize', $dimensions,
+    '-gravity', 'center',
+    '-extent', $dimensions
+  )
+
+  if ($OpaqueBackground) {
+    $arguments += '-flatten'
   }
-  finally {
-    $graphics.Dispose()
-    $bitmap.Dispose()
-    $source.Dispose()
+
+  $arguments += @(
+    '-strip',
+    '-define', 'png:exclude-chunks=date,time',
+    $outputPath
+  )
+  & $magick.Source @arguments
+  if ($LASTEXITCODE -ne 0) {
+    throw "ImageMagick failed to generate $OutputName."
   }
 }
 
 New-Item -ItemType Directory -Path $outputDirectory -Force | Out-Null
-Write-PwaIcon -Size 192 -ContentScale 0.82 -OutputName 'pwa-icon-192.png'
-Write-PwaIcon -Size 512 -ContentScale 0.82 -OutputName 'pwa-icon-512.png'
-Write-PwaIcon -Size 512 -ContentScale 0.64 -OutputName 'pwa-maskable-512.png'
+Write-PwaIcon -Size 192 -OutputName 'pwa-icon-192.png'
+Write-PwaIcon -Size 512 -OutputName 'pwa-icon-512.png'
+Write-PwaIcon -Size 512 -OutputName 'pwa-maskable-512.png' -OpaqueBackground
