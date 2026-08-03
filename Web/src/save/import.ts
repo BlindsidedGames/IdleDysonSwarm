@@ -4,10 +4,6 @@ import {
   stripNonShareableEntitlementClaims,
 } from './serialization'
 import {
-  COMPRESSED_WEB_SAVE_PREFIX,
-  deserializeCompressedWebSave,
-} from './compressedWebSave'
-import {
   assertSuppliedSaveTextLimit,
   DEFAULT_SAVE_IMPORT_LIMITS,
   type SaveImportLimits,
@@ -21,8 +17,7 @@ import {
 import { packSettingsFlags } from './settingsFlags'
 
 /**
- * Decodes shipped Unity (`IDB1`), compressed Web (`IDSWEB1:`), or canonical
- * raw Web (`IDSWEB1` JSON) text,
+ * Decodes shipped Unity (`IDB1`) or canonical Web (`IDSWEB1`) text,
  * then applies the transfer policy selected by its trusted import context. Manual
  * sharing consumes remote lifecycle time; same-device migration and in-place
  * upgrades preserve local lifecycle evidence for startup processing.
@@ -42,16 +37,11 @@ export function prepareImportedSaveText(
   if (trimmed.length === 0) {
     throw new Error('Imported save text must not be empty.')
   }
-  const upper = trimmed.toUpperCase()
-  const decoded = upper.startsWith('IDB1:')
+  const decoded = trimmed.toUpperCase().startsWith('IDB1:')
     ? prepareIdb1Save(trimmed, limits).prepared
-    : upper.startsWith(COMPRESSED_WEB_SAVE_PREFIX)
-      ? PreparedSave.fromDecoded(
-          deserializeCompressedWebSave(trimmed, limits),
-        )
-      : PreparedSave.fromDecoded(
-          deserializeWebSaveBounded(trimmed, limits),
-        )
+    : PreparedSave.fromDecoded(
+        deserializeWebSaveBounded(trimmed, limits),
+      )
   assertContextTimestamp(context)
   switch (context.kind) {
     case 'automatic-unity-migration':

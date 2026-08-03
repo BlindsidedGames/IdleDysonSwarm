@@ -65,6 +65,7 @@ export interface ProductionBrowserCompositionOptions {
 
 export interface ProductionBrowserComposition {
   readonly runtime: BrowserUiRuntimeFoundation
+  readonly releasePlatformServices?: Readonly<ReleasePlatformServices>
   readonly saveSchemaVersion: number
   sampleUtc(): string
   resetSave(): Promise<UiRuntimeImportResult>
@@ -89,13 +90,11 @@ export function createProductionBrowserComposition(
     options.monotonicClock ?? new BrowserMonotonicClock()
   const entitlementDocument =
     options.entitlementDocument ?? document
-  const nativeEntitlements =
-    options.releasePlatformServices !== undefined &&
-    options.releasePlatformServices.hostKind !== 'browser'
-      ? new RuntimeEntitlementBridge(
-          options.releasePlatformServices.entitlements,
-        )
-      : undefined
+  const hostEntitlements = options.releasePlatformServices === undefined
+    ? undefined
+    : new RuntimeEntitlementBridge(
+        options.releasePlatformServices.entitlements,
+      )
   const createFirstRunSave = () =>
     createUnityFirstRunPreparedSave({
       startedAtUtc:
@@ -105,7 +104,7 @@ export function createProductionBrowserComposition(
     createProductionCanonicalApplicationFactory({
       createFirstRunSave,
       readHostEntitlements: () =>
-        nativeEntitlements?.currentDysonEntitlements() ??
+        hostEntitlements?.currentDysonEntitlements() ??
         readBrowserHostEntitlements(entitlementDocument),
       readHostDysonPresentationTuning:
         options.dysonPresentationTuning === undefined
@@ -134,19 +133,15 @@ export function createProductionBrowserComposition(
     allowUnexpiredSameOwnerTakeover:
       writerIdentity.allowUnexpiredSameOwnerTakeover,
     noticeChannel: ownershipNoticeChannel,
-    hostEntitlements: nativeEntitlements,
+    hostEntitlements,
     automaticPurchaseEvidencePromoter:
       automaticPurchaseEvidencePromoter(
         options.releasePlatformServices?.entitlements,
       ),
     developmentControlsAvailable:
-      options.releasePlatformServices !== undefined &&
-      options.releasePlatformServices.hostKind !== 'browser'
-        ? true
-        : undefined,
+      options.releasePlatformServices === undefined ? undefined : true,
     developmentControlsRequireEntitlement:
-      options.releasePlatformServices !== undefined &&
-      options.releasePlatformServices.hostKind !== 'browser',
+      options.releasePlatformServices !== undefined,
   })
   const reloadPage =
     options.reloadPage ?? (() => window.location.reload())
@@ -190,6 +185,7 @@ export function createProductionBrowserComposition(
   }
   return Object.freeze({
     runtime,
+    releasePlatformServices: options.releasePlatformServices,
     saveSchemaVersion: unityFirstRunProvenance.saveSchema,
     sampleUtc: () =>
       lifecycleClock.sample().serializedUtcText,

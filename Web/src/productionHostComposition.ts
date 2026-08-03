@@ -12,6 +12,7 @@ import {
   type NativeHostBridgeApi,
 } from './platform/nativeHostBridge'
 import type { HostKind, ReleasePlatformServices } from './platform/releaseFoundation'
+import { createBrowserStripeReleasePlatformServices } from './platform/releaseFoundation'
 import type {
   BrowserUiRuntimeFoundation,
   UiRuntimeImportResult,
@@ -45,12 +46,18 @@ export function createProductionHostComposition(
   const bridge =
     (options.detectNativeBridge ?? detectNativeHostBridge)()
   if (bridge === null) {
-    const composition =
-      (options.createBrowserComposition ??
-        createProductionBrowserComposition)()
+    const composition = options.createBrowserComposition === undefined
+      ? (() => {
+          const services = createBrowserStripeReleasePlatformServices()
+          return createProductionBrowserComposition({
+            releasePlatformServices: services,
+          })
+        })()
+      : options.createBrowserComposition()
     return Object.freeze({
       hostKind: 'browser' as const,
       runtime: composition.runtime,
+      releasePlatformServices: composition.releasePlatformServices,
       saveSchemaVersion: composition.saveSchemaVersion,
       pwaUpdatesAvailable: true,
       sampleUtc: composition.sampleUtc,

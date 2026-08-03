@@ -53,10 +53,10 @@ import type { DeepReadonly } from '../../core/contracts'
 import type { TextDownloadPort } from '../../platform/browserSaveTransfer'
 import { prepareIdb1Save, PreparedSave } from '../../save/prepare'
 import type { SaveRepository } from '../../save/repository'
-import { serializeWebSave } from '../../save/serialization'
 import {
-  deserializeCompressedWebSave,
-} from '../../save/compressedWebSave'
+  deserializeWebSave,
+  serializeWebSave,
+} from '../../save/serialization'
 import {
   MOBILE_LIFECYCLE_POLICY,
   WEB_LIFECYCLE_POLICY,
@@ -3468,7 +3468,7 @@ describe('browser runtime foundation composition', () => {
     const exportedText = await runtime.readCurrentSaveText()
     expect(exportedText).toMatch(/^IDSWEB1:/)
     expect(
-      deserializeCompressedWebSave(exportedText ?? ''),
+      deserializeWebSave(exportedText ?? ''),
     ).toMatchObject({ marker: 'exported-checkpoint' })
 
     await expect(runtime.exportCurrentSave()).resolves.toBe(true)
@@ -3478,7 +3478,7 @@ describe('browser runtime foundation composition', () => {
     })
     expect(downloads.last?.text).toMatch(/^IDSWEB1:/)
     expect(
-      deserializeCompressedWebSave(downloads.last?.text ?? ''),
+      deserializeWebSave(downloads.last?.text ?? ''),
     ).toMatchObject({ marker: 'exported-checkpoint' })
 
     await runtime.shutdown()

@@ -5,6 +5,7 @@ import {
   type StoreAdapter,
 } from '../store/contracts'
 import type { NativeMigrationSource } from './platformSaveStorage'
+import { BrowserStripeCommerce } from '../store/browserStripe'
 
 export type HostKind = 'browser' | 'desktop-native' | 'mobile-native'
 
@@ -86,6 +87,7 @@ export interface DiagnosticsExporter {
 
 export interface ReleasePlatformServices {
   readonly hostKind: HostKind
+  readonly storeAvailable?: boolean
   readonly metadata: PlatformMetadataSource
   readonly nativeFilesystemMigration: NativeMigrationSource
   readonly entitlements: EntitlementAuthority
@@ -137,6 +139,19 @@ export function createBrowserReleasePlatformServices(): Readonly<ReleasePlatform
     nativeFilesystemMigration: new NoopNativeFilesystemMigrationSource(),
     entitlements: new NoopEntitlementAuthority(),
     store: new NoopStoreAdapter(),
+    diagnostics: new NoopDiagnosticsExporter(),
+  })
+}
+
+export function createBrowserStripeReleasePlatformServices(): Readonly<ReleasePlatformServices> {
+  const commerce = new BrowserStripeCommerce()
+  return Object.freeze({
+    hostKind: 'browser' as const,
+    storeAvailable: true,
+    metadata: new BrowserPlatformMetadataSource(),
+    nativeFilesystemMigration: new NoopNativeFilesystemMigrationSource(),
+    entitlements: commerce,
+    store: commerce,
     diagnostics: new NoopDiagnosticsExporter(),
   })
 }

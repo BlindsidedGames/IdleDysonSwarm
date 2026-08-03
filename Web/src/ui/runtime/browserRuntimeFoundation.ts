@@ -73,9 +73,7 @@ import {
 } from '../../platform/periodicCheckpoint'
 import { decodeIdb1Save } from '../../save/decodeIdb1'
 import { prepareImportedSaveText } from '../../save/import'
-import {
-  serializeCompressedWebSave,
-} from '../../save/compressedWebSave'
+import { serializeWebSave } from '../../save/serialization'
 import type {
   AutomaticUnityPurchaseEvidencePromoter,
 } from '../../save/automaticPurchaseEvidence'
@@ -989,7 +987,7 @@ class BrowserRuntimeFoundation implements BrowserUiRuntimeFoundation {
     const save = await graph.repository.loadCurrent()
     return save === null
       ? null
-      : serializeCompressedWebSave(save.copyValidatedState())
+      : serializeWebSave(save.copyValidatedState())
   }
 
   recoveryExportAvailable(): boolean {

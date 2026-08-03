@@ -14975,6 +14975,62 @@
       "value": "‬"
     }
   ],
+  "store.browser-introduction": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "Odʇıouɐʅ ʍɐʎs ʇo snddoɹʇ Ipʅǝ ᗡʎsou Sʍɐɹɯ ɐup dǝɹɯɐuǝuʇ ndƃɹɐpǝs ɟoɹ ʇɥıs qɹoʍsǝɹ ou ʇɥıs pǝʌıɔǝ."
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "store.browser-permanent.description": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "Ԁǝɹɯɐuǝuʇ ʍǝq dnɹɔɥɐsǝs ɐɹǝ ʌǝɹıɟıǝp ɐɟʇǝɹ Sʇɹıdǝ Ↄɥǝɔʞonʇ ɐup sɐʌǝp ouʅʎ ɟoɹ ʇɥıs qɹoʍsǝɹ ou ʇɥıs pǝʌıɔǝ."
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "store.device-only.description": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "⊥ɥǝ ʍǝq ʌǝɹsıou ɥɐs uo dʅɐʎǝɹ ɐɔɔonuʇ oɹ ɔɹoss-pǝʌıɔǝ ɹǝsʇoɹǝ. ᗡonqʅǝ Iuɟıuıʇʎ Ԁoıuʇs ɐup ᗡǝʌǝʅodǝɹ Odʇıous sʇɐʎ ouʅʎ ıu ʇɥıs qɹoʍsǝɹ ou ʇɥıs pǝʌıɔǝ. ⊥ɥǝʎ ɔɐuuoʇ qǝ ɹǝsʇoɹǝp ou ɐuoʇɥǝɹ pǝʌıɔǝ, ıu ɐuoʇɥǝɹ qɹoʍsǝɹ, oɹ ɐɟʇǝɹ ʇɥıs sıʇǝ's pɐʇɐ ıs ɔʅǝɐɹǝp. ∀u ǝɯɐıʅ ǝuʇǝɹǝp ıu Sʇɹıdǝ Ↄɥǝɔʞonʇ ıs dɐʎɯǝuʇ ɔouʇɐɔʇ ıuɟoɹɯɐʇıou ouʅʎ; ıʇ poǝs uoʇ ɔɹǝɐʇǝ ɐ ƃɐɯǝ ɐɔɔonuʇ oɹ ǝuɐqʅǝ ɹǝsʇoɹɐʇıou. ⊥ıds uǝʌǝɹ nuʅoɔʞ ƃɐɯǝdʅɐʎ."
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "store.device-only.heading": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "Ԁnɹɔɥɐsǝs sʇɐʎ ou ʇɥıs pǝʌıɔǝ"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
   "store.feedback.entitlement-verified": [
     {
       "type": 0,

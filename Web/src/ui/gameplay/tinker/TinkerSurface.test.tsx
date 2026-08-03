@@ -622,6 +622,19 @@ describe('TinkerSurface presentation and accessibility', () => {
     expect(tinkerCss).not.toContain('@keyframes tinker-hold-to-repeat')
   })
 
+  test('uses a compact stacked presentation on phone-sized screens', () => {
+    expect(tinkerCss).toMatch(/@media \(max-width: 720px\)/)
+    expect(tinkerCss).toMatch(
+      /@media \(max-width: 720px\)[\s\S]*\.tinker-surface__control\s*\{[\s\S]*padding:\s*0\.32rem 0\.45rem;/,
+    )
+    expect(tinkerCss).toMatch(
+      /@media \(max-width: 720px\)[\s\S]*\.tinker-surface__output\s*\{[\s\S]*grid-column:\s*1 \/ -1;/,
+    )
+    expect(tinkerCss).toMatch(
+      /@media \(max-width: 720px\)[\s\S]*\.tinker-surface__progress\s*\{[\s\S]*block-size:\s*1rem;/,
+    )
+  })
+
   test('formats and highlights the blocked Manual Labour bot yield', () => {
     renderTinker(
       createDispatch(),

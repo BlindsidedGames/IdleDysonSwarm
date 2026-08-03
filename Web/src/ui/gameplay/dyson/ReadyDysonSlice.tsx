@@ -404,7 +404,8 @@ export function ReadyDysonSlice({
     useState<QuantumPurchaseQuantity>(1)
   const storeVisible =
     releasePlatformServices !== undefined &&
-    releasePlatformServices.hostKind !== 'browser'
+    (releasePlatformServices.hostKind !== 'browser' ||
+      releasePlatformServices.storeAvailable === true)
   const storeController = useMemo(
     () => storeVisible
       ? new StorefrontController({
@@ -724,11 +725,7 @@ export function ReadyDysonSlice({
                 {
                   id: 'store',
                   label: intl.formatMessage(messages.storeRoute),
-                  icon: (
-                    <span className="dyson-navigation__text-icon">
-                      {'$'}
-                    </span>
-                  ),
+                  iconSrc: navigationAssets.store,
                   bottom: false,
                   ...(storeActive
                     ? { current: true as const }
@@ -1395,6 +1392,10 @@ export function ReadyDysonSlice({
                                         >
                                           <StoreSurface
                                             controller={storeController}
+                                            deviceOnlyPurchases={
+                                              releasePlatformServices?.hostKind ===
+                                              'browser'
+                                            }
                                             localDeveloperOptionsPurchased={
                                               localDeveloperOptionsPurchased ??
                                               development?.status().entitled ??

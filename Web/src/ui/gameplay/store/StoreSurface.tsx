@@ -17,6 +17,7 @@ import './store.css'
 export interface StoreSurfaceProps {
   readonly controller: StorefrontController
   readonly localDeveloperOptionsPurchased: boolean
+  readonly deviceOnlyPurchases?: boolean
 }
 
 const TIP_IDS = new Set<StoreProductId>([
@@ -28,6 +29,7 @@ const TIP_IDS = new Set<StoreProductId>([
 export function StoreSurface({
   controller,
   localDeveloperOptionsPurchased,
+  deviceOnlyPurchases = false,
 }: StoreSurfaceProps) {
   const intl = useIntl()
   const snapshot = useSyncExternalStore(
@@ -54,7 +56,13 @@ export function StoreSurface({
       <div className="store-surface__content">
         <header className="store-surface__summary">
           <h2>{intl.formatMessage(messages.region)}</h2>
-          <p>{intl.formatMessage(messages.introduction)}</p>
+          <p>
+            {intl.formatMessage(
+              deviceOnlyPurchases
+                ? messages.browserIntroduction
+                : messages.introduction,
+            )}
+          </p>
         </header>
 
         {!snapshot.initialized ? (
@@ -73,13 +81,27 @@ export function StoreSurface({
             />
             <StoreSection
               heading={intl.formatMessage(messages.permanentHeading)}
-              description={intl.formatMessage(messages.permanentDescription)}
+              description={intl.formatMessage(
+                deviceOnlyPurchases
+                  ? messages.browserPermanentDescription
+                  : messages.permanentDescription,
+              )}
               products={permanent}
               snapshot={snapshot}
               access={access}
               controller={controller}
             />
-            <section className="store-restore" aria-labelledby="store-restore-heading">
+            {deviceOnlyPurchases ? (
+              <section className="store-restore" aria-labelledby="store-device-heading">
+                <div>
+                  <h2 id="store-device-heading">
+                    {intl.formatMessage(messages.deviceOnlyHeading)}
+                  </h2>
+                  <p>{intl.formatMessage(messages.deviceOnlyDescription)}</p>
+                </div>
+              </section>
+            ) : (
+              <section className="store-restore" aria-labelledby="store-restore-heading">
               <div>
                 <h2 id="store-restore-heading">
                   {intl.formatMessage(messages.restoreAction)}
@@ -98,7 +120,8 @@ export function StoreSurface({
                     : messages.restoreAction,
                 )}
               </button>
-            </section>
+              </section>
+            )}
           </>
         )}
 

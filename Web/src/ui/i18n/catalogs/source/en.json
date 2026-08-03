@@ -3751,6 +3751,22 @@
     "defaultMessage": "Tip {price}",
     "description": "Purchases one repeatable support tip using a store-localized price."
   },
+  "store.browser-introduction": {
+    "defaultMessage": "Optional ways to support Idle Dyson Swarm and permanent upgrades for this browser on this device.",
+    "description": "Web Store introduction."
+  },
+  "store.browser-permanent.description": {
+    "defaultMessage": "Permanent web purchases are verified after Stripe Checkout and saved only for this browser on this device.",
+    "description": "Explains Web durable purchase ownership."
+  },
+  "store.device-only.description": {
+    "defaultMessage": "The web version has no player account or cross-device restore. Double Infinity Points and Developer Options stay only in this browser on this device. They cannot be restored on another device, in another browser, or after this site's data is cleared. An email entered in Stripe Checkout is payment contact information only; it does not create a game account or enable restoration. Tips never unlock gameplay.",
+    "description": "Explains that Web purchases cannot be restored elsewhere."
+  },
+  "store.device-only.heading": {
+    "defaultMessage": "Purchases stay on this device",
+    "description": "Heading for Web purchase portability disclosure."
+  },
   "store.feedback.entitlement-verified": {
     "defaultMessage": "Purchase verified on this device.",
     "description": "Successful durable verification feedback."

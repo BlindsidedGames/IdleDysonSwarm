@@ -7471,6 +7471,30 @@
       "value": "price"
     }
   ],
+  "store.browser-introduction": [
+    {
+      "type": 0,
+      "value": "Optional ways to support Idle Dyson Swarm and permanent upgrades for this browser on this device."
+    }
+  ],
+  "store.browser-permanent.description": [
+    {
+      "type": 0,
+      "value": "Permanent web purchases are verified after Stripe Checkout and saved only for this browser on this device."
+    }
+  ],
+  "store.device-only.description": [
+    {
+      "type": 0,
+      "value": "The web version has no player account or cross-device restore. Double Infinity Points and Developer Options stay only in this browser on this device. They cannot be restored on another device, in another browser, or after this site's data is cleared. An email entered in Stripe Checkout is payment contact information only; it does not create a game account or enable restoration. Tips never unlock gameplay."
+    }
+  ],
+  "store.device-only.heading": [
+    {
+      "type": 0,
+      "value": "Purchases stay on this device"
+    }
+  ],
   "store.feedback.entitlement-verified": [
     {
       "type": 0,

@@ -178,6 +178,57 @@
   overflow-wrap: anywhere;
 }
 
+@media (max-width: 720px) {
+  .tinker-surface__control {
+    gap: 0.08rem;
+    padding: 0.32rem 0.45rem;
+  }
+
+  .tinker-surface__title {
+    font-size: 0.92rem;
+    line-height: 1.05;
+  }
+
+  .tinker-surface__output {
+    grid-column: 1 / -1;
+    font-size: 0.72rem;
+    line-height: 1.05;
+  }
+
+  .tinker-surface__label,
+  .tinker-surface__tip,
+  .tinker-surface__progress-row {
+    grid-column: 1 / -1;
+  }
+
+  .tinker-surface__label {
+    font-size: 0.76rem;
+    line-height: 1.08;
+  }
+
+  .tinker-surface__tip {
+    font-size: 0.66rem;
+    line-height: 1.08;
+  }
+
+  .tinker-surface__progress-row {
+    gap: 0.35rem;
+    margin-block-start: 0.08rem;
+  }
+
+  .tinker-surface__progress {
+    block-size: 1rem;
+  }
+
+  .tinker-surface__hold-label {
+    font-size: 0.62rem;
+  }
+
+  .tinker-surface__time {
+    font-size: 0.78rem;
+  }
+}
+
 @media (forced-colors: active) {
   .tinker-surface__control,
   .tinker-surface__failure {

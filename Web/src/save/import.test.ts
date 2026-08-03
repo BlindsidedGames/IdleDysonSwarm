@@ -3,7 +3,6 @@ import { describe, expect, test } from 'vitest'
 import { serializeWebSave } from './serialization'
 import { PreparedSave } from './prepare'
 import { prepareImportedSaveText } from './import'
-import { serializeCompressedWebSave } from './compressedWebSave'
 import { RECEIVING_DEVICE_PREFERENCE_FIELDS } from './importContext'
 import { mappingCoverageManifest } from '../game-state/mappingCoverage'
 
@@ -277,7 +276,7 @@ describe('save import text preparation', () => {
   })
 
   test('accepts compressed Web saves through the same preparation pipeline', () => {
-    const text = serializeCompressedWebSave({
+    const text = serializeWebSave({
       saveVersion: 12,
       dateQuitString: 'remote quit',
       futureValue: { retained: true },
