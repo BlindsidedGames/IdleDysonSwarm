@@ -7,7 +7,9 @@ import {
   advanceCanonicalTinker,
   createCanonicalTinkerRuntimeState,
   deriveCanonicalTinkerStats,
+  normalizeCanonicalTinkerRuntimeState,
   selectCanonicalTinkerUiFacts,
+  setCanonicalTinkerRepeat,
   startCanonicalTinker,
   timeToCanonicalTinkerCompletion,
 } from './canonicalTinker'
@@ -58,6 +60,26 @@ function state(
 }
 
 describe('canonical Tinker runtime', () => {
+  test('repairs only a missing live visual cycle identity', () => {
+    const idle = createCanonicalTinkerRuntimeState()
+    const invalidIdle = { ...idle, cycleId: Number.NaN }
+    const invalidRunning = {
+      ...invalidIdle,
+      running: true,
+      elapsedSeconds: 0.1,
+    }
+
+    expect(normalizeCanonicalTinkerRuntimeState(invalidIdle)).toEqual({
+      ...invalidIdle,
+      cycleId: 0,
+    })
+    expect(normalizeCanonicalTinkerRuntimeState(invalidRunning)).toEqual({
+      ...invalidRunning,
+      cycleId: 1,
+    })
+    expect(invalidIdle.cycleId).toBeNaN()
+  })
+
   test('selects idle UI facts without advancing or mutating inputs', () => {
     const canonical = state(2)
     const runtime = createCanonicalTinkerRuntimeState()
@@ -74,6 +96,7 @@ describe('canonical Tinker runtime', () => {
       runtime: {
         running: false,
         repeat: false,
+        cycleId: 0,
         elapsedSeconds: 0,
         effectiveManualLabour: false,
         cooldownSeconds: 2,
@@ -97,6 +120,7 @@ describe('canonical Tinker runtime', () => {
     const staleRuntime = {
       running: true,
       repeat: true,
+      cycleId: 1,
       elapsedSeconds: 7,
       effectiveManualLabour: false,
       cooldownSeconds: 10,
@@ -110,6 +134,7 @@ describe('canonical Tinker runtime', () => {
     expect(facts.runtime).toEqual({
       running: true,
       repeat: true,
+      cycleId: 2,
       elapsedSeconds: 0,
       effectiveManualLabour: true,
       cooldownSeconds: 0.2,
@@ -192,6 +217,123 @@ describe('canonical Tinker runtime', () => {
       running: false,
       repeat: false,
       elapsedSeconds: 0,
+    })
+  })
+
+  test('settles captured floating-point dust at the completion boundary', () => {
+    const canonical = state(0.5)
+    const stats = deriveCanonicalTinkerStats(canonical, 0)
+    const runtime = {
+      ...createCanonicalTinkerRuntimeState(),
+      running: true,
+      repeat: true,
+      cycleId: 1,
+      elapsedSeconds: 0.49999999999999994,
+      cooldownSeconds: 0.5,
+    }
+
+    expect(timeToCanonicalTinkerCompletion(runtime, 1)).toBe(0)
+    const completed = advanceCanonicalTinker(
+      canonical,
+      runtime,
+      stats,
+      0,
+    )
+
+    expect(completed.completions).toBe(1)
+    expect(completed.state.dyson.bots).toBe(1)
+    expect(completed.runtime).toMatchObject({
+      running: true,
+      repeat: true,
+      cycleId: 2,
+      elapsedSeconds: 0,
+    })
+  })
+
+  test('gives every authoritative start and repeated cycle a distinct identity', () => {
+    const canonical = state(0.5)
+    const stats = deriveCanonicalTinkerStats(canonical, 0)
+    const started = startCanonicalTinker(
+      canonical,
+      createCanonicalTinkerRuntimeState(),
+      stats,
+      true,
+    )
+
+    expect(started.runtime.cycleId).toBe(1)
+    const completed = advanceCanonicalTinker(
+      started.state,
+      started.runtime,
+      stats,
+      0.4,
+    )
+
+    expect(completed.completions).toBe(1)
+    expect(completed.runtime).toMatchObject({
+      running: true,
+      repeat: true,
+      cycleId: 2,
+      elapsedSeconds: 0,
+    })
+  })
+
+  test('a redundant tap cannot disable a held repeat cycle', () => {
+    const canonical = state(2)
+    const stats = deriveCanonicalTinkerStats(canonical, 0)
+    const started = startCanonicalTinker(
+      canonical,
+      createCanonicalTinkerRuntimeState(),
+      stats,
+      false,
+    )
+    const repeating = setCanonicalTinkerRepeat(
+      started.state,
+      started.runtime,
+      true,
+    )
+    const tappedAgain = startCanonicalTinker(
+      repeating.state,
+      repeating.runtime,
+      stats,
+      false,
+    )
+
+    expect(tappedAgain.runtime).toEqual(repeating.runtime)
+    expect(tappedAgain.runtime.repeat).toBe(true)
+    expect(tappedAgain.runtime.cycleId).toBe(1)
+  })
+
+  test('a delayed hold threshold restarts in repeat mode after the tap cycle already completed', () => {
+    const canonical = state(0.2)
+    const stats = deriveCanonicalTinkerStats(canonical, 0)
+    const tapped = startCanonicalTinker(
+      canonical,
+      createCanonicalTinkerRuntimeState(),
+      stats,
+      false,
+    )
+    const completed = advanceCanonicalTinker(
+      tapped.state,
+      tapped.runtime,
+      stats,
+      0.1,
+    )
+    expect(completed.runtime).toMatchObject({
+      running: false,
+      repeat: false,
+      cycleId: 0,
+    })
+
+    const held = startCanonicalTinker(
+      completed.state,
+      completed.runtime,
+      deriveCanonicalTinkerStats(completed.state, 0),
+      true,
+    )
+    expect(held.runtime).toMatchObject({
+      running: true,
+      repeat: true,
+      cycleId: 1,
     })
   })
 

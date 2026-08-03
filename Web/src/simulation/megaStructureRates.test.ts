@@ -319,7 +319,7 @@ describe('mega-structure definition and numeric safety', () => {
     })
   })
 
-  test('rejects finite inputs whose unlocked rate multiplication overflows', () => {
+  test('saturates finite inputs whose unlocked rate multiplication overflows', () => {
     const result = deriveMegaStructureRates(
       makeState({
         facilities: {
@@ -337,15 +337,9 @@ describe('mega-structure definition and numeric safety', () => {
       },
     )
 
-    expect(result).toMatchObject({
-      ok: false,
-      issues: [
-        {
-          code: 'MEGA_STRUCTURE_RATE_NON_FINITE',
-          path: 'rates.matrioshka_brains',
-        },
-      ],
-    })
+    expect(requireRates(result).matrioshka_brains).toBe(
+      Number.MAX_VALUE,
+    )
   })
 
   test('asset lookup receives the exact FacilityDefinition kind and IDs', () => {

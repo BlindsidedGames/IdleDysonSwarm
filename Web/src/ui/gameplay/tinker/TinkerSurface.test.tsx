@@ -23,7 +23,7 @@ import {
 import {
   TINKER_REPEAT_HOLD_MILLISECONDS,
   type TinkerCommandDispatch,
-} from './useTransientTinkerHold'
+} from './useTinkerPressController'
 
 const tinkerCss = readFileSync(
   resolve(
@@ -108,7 +108,7 @@ describe('TinkerSurface transient interaction', () => {
     ).toHaveAttribute('value', '0.1')
   })
 
-  test('does not dispatch another start when the visually intact panel is already running', () => {
+  test('accepts a press while running without replacing the active cycle', () => {
     const dispatch = createDispatch()
     renderTinker(dispatch, runningFacts())
     const button = tinkerButton()
@@ -117,9 +117,12 @@ describe('TinkerSurface transient interaction', () => {
     expect(button).not.toBeDisabled()
     fireEvent.pointerDown(button, { button: 0, pointerId: 18 })
     fireEvent.pointerUp(button, { button: 0, pointerId: 18 })
-    fireEvent.click(button, { detail: 0 })
 
-    expect(dispatch).not.toHaveBeenCalled()
+    expect(dispatch).toHaveBeenCalledTimes(1)
+    expect(dispatch).toHaveBeenNthCalledWith(1, {
+      kind: 'tinker.start',
+      repeat: false,
+    })
   })
 
   test('serializes repeat-on and release-off so revisioned dispatch cannot leave repeat enabled', async () => {
@@ -198,6 +201,39 @@ describe('TinkerSurface transient interaction', () => {
       { kind: 'tinker.start', repeat: false },
       { kind: 'tinker.start', repeat: false },
     ])
+  })
+
+  test('handles tap, tap, then hold as one start per press and one repeat transition', async () => {
+    const dispatch = createDispatch()
+    renderTinker(dispatch)
+    const button = tinkerButton()
+    installPointerCapture(button)
+
+    for (const pointerId of [1, 2]) {
+      fireEvent.pointerDown(button, { button: 0, pointerId })
+      fireEvent.pointerUp(button, { button: 0, pointerId })
+      fireEvent.click(button, { detail: 1 })
+      await flushDispatchQueue()
+    }
+    fireEvent.pointerDown(button, { button: 0, pointerId: 3 })
+    act(() => {
+      vi.advanceTimersByTime(TINKER_REPEAT_HOLD_MILLISECONDS)
+    })
+    await flushDispatchQueue()
+
+    expect(dispatch.mock.calls.map(([command]) => command)).toEqual([
+      { kind: 'tinker.start', repeat: false },
+      { kind: 'tinker.start', repeat: false },
+      { kind: 'tinker.start', repeat: false },
+      { kind: 'tinker.start', repeat: true },
+    ])
+
+    fireEvent.pointerUp(button, { button: 0, pointerId: 3 })
+    await flushDispatchQueue()
+    expect(dispatch).toHaveBeenLastCalledWith({
+      kind: 'tinker.set-repeat',
+      enabled: false,
+    })
   })
 
   test('ignores extra pointers on the same control without allowing them to cancel the initiating pointer', async () => {
@@ -280,6 +316,78 @@ describe('TinkerSurface transient interaction', () => {
     expect(stopCommands(windowDispatch)).toHaveLength(1)
   })
 
+  test.each(['pagehide', 'visibilitychange'] as const)(
+    'clears held repeat when the page lifecycle emits %s',
+    async (eventName) => {
+      const dispatch = createDispatch()
+      renderTinker(dispatch)
+      const button = tinkerButton()
+      installPointerCapture(button)
+      fireEvent.pointerDown(button, { button: 0, pointerId: 24 })
+      act(() => {
+        vi.advanceTimersByTime(TINKER_REPEAT_HOLD_MILLISECONDS)
+      })
+
+      if (eventName === 'visibilitychange') {
+        vi.spyOn(document, 'visibilityState', 'get').mockReturnValue(
+          'hidden',
+        )
+        fireEvent(document, new Event('visibilitychange'))
+      } else {
+        fireEvent(window, new Event('pagehide'))
+      }
+      await flushDispatchQueue()
+
+      expect(stopCommands(dispatch)).toHaveLength(1)
+      expect(button).toHaveAttribute('data-gesture-active', 'false')
+    },
+  )
+
+  test('suppresses native selection gestures on the whole interactive surface', () => {
+    renderTinker(createDispatch())
+    const button = tinkerButton()
+
+    expect(fireEvent.contextMenu(button)).toBe(false)
+    expect(fireEvent.dragStart(button)).toBe(false)
+    expect(
+      fireEvent(
+        button,
+        new Event('selectstart', {
+          bubbles: true,
+          cancelable: true,
+        }),
+      ),
+    ).toBe(false)
+    expect(
+      fireEvent(
+        button,
+        new Event('touchstart', {
+          bubbles: true,
+          cancelable: true,
+        }),
+      ),
+    ).toBe(false)
+    expect(
+      fireEvent(
+        button,
+        new Event('touchmove', {
+          bubbles: true,
+          cancelable: true,
+        }),
+      ),
+    ).toBe(false)
+    expect(tinkerCss).toContain('touch-action: none')
+    expect(tinkerCss).toContain(
+      '-webkit-tap-highlight-color: transparent',
+    )
+    expect(tinkerCss).toMatch(
+      /\.tinker-surface__control,\s*\.tinker-surface__control \*\s*\{[\s\S]*-webkit-touch-callout:\s*none !important;[\s\S]*user-select:\s*none !important;/,
+    )
+    expect(tinkerCss).toMatch(
+      /\.tinker-surface__control::after\s*\{[\s\S]*position:\s*absolute;[\s\S]*inset:\s*0;/,
+    )
+  })
+
   test('supports Space hold, ignores key auto-repeat and its native click, then preserves Enter activation', async () => {
     const dispatch = createDispatch()
     renderTinker(dispatch)
@@ -327,12 +435,10 @@ describe('TinkerSurface transient interaction', () => {
       <IntlProvider locale="en">
         <TinkerSurface
           facts={readyFacts()}
-          stateRevision={0}
           dispatch={firstDispatch}
         />
         <TinkerSurface
           facts={readyFacts()}
-          stateRevision={0}
           dispatch={secondDispatch}
         />
       </IntlProvider>,
@@ -395,7 +501,7 @@ describe('TinkerSurface transient interaction', () => {
     expect(vi.getTimerCount()).toBe(0)
   })
 
-  test('redacts authoritative stale, rejected and runtime failures without retrying', async () => {
+  test('silently absorbs stale races and safely redacts other failures without retrying', async () => {
     const dispatch = vi
       .fn<TinkerCommandDispatch>()
       .mockResolvedValueOnce(rejectedResult())
@@ -406,15 +512,7 @@ describe('TinkerSurface transient interaction', () => {
 
     fireEvent.click(button, { detail: 0 })
     await act(async () => undefined)
-    expect(screen.getByRole('alert')).toHaveTextContent(
-      'Tinker changed before the action completed. Try again.',
-    )
-    expect(screen.getByRole('alert')).not.toHaveTextContent(
-      'Expected revision 4 does not match current revision 5.',
-    )
-    expect(screen.getByRole('alert')).not.toHaveTextContent(
-      'SIM-STALE-REVISION',
-    )
+    expect(screen.queryByRole('alert')).not.toBeInTheDocument()
     expect(dispatch).toHaveBeenCalledTimes(1)
 
     fireEvent.click(button, { detail: 0 })
@@ -473,9 +571,7 @@ describe('TinkerSurface transient interaction', () => {
 
     fireEvent.click(button, { detail: 0 })
     await act(async () => undefined)
-    expect(screen.getByRole('alert')).toHaveTextContent(
-      'Tinker changed before the action completed. Try again.',
-    )
+    expect(screen.queryByRole('alert')).not.toBeInTheDocument()
 
     fireEvent.pointerDown(button, { button: 0, pointerId: 71 })
     act(() => {
@@ -590,7 +686,7 @@ describe('TinkerSurface presentation and accessibility', () => {
 
     const dispatch = createDispatch()
     const facts = runningFacts({ elapsedSeconds: 0 })
-    const view = render(tinkerElement(facts, dispatch, 1))
+    const view = render(tinkerElement(facts, dispatch))
     const progress = screen.getByRole('progressbar', {
       name: 'Tinker progress',
     }) as HTMLProgressElement
@@ -602,7 +698,12 @@ describe('TinkerSurface presentation and accessibility', () => {
     expect(progress.value).toBeCloseTo(0.5)
     expect(screen.getByText('0.00s')).toBeInTheDocument()
 
-    view.rerender(tinkerElement(facts, dispatch, 2))
+    view.rerender(
+      tinkerElement(
+        runningFacts({ elapsedSeconds: 0, cycleId: 2 }),
+        dispatch,
+      ),
+    )
 
     expect(progress.value).toBe(0)
     expect(screen.getByText('0.50s')).toBeInTheDocument()
@@ -657,9 +758,8 @@ describe('TinkerSurface presentation and accessibility', () => {
         '.tinker-surface__hold-progress',
       ),
     ).not.toBeInTheDocument()
-    expect(tinkerCss).toMatch(
-      /data-held-visual="true"[\s\S]*::-webkit-progress-value\s*\{[\s\S]*background:\s*#367879;/,
-    )
+    expect(tinkerCss).not.toContain('#367879')
+    expect(tinkerCss).not.toContain('[data-gesture-active="true"]')
     expect(tinkerCss).not.toContain('tinker-surface__hold-progress')
     expect(tinkerCss).not.toContain('@keyframes tinker-hold-to-repeat')
   })
@@ -771,13 +871,11 @@ function renderTinker(
 function tinkerElement(
   facts: TinkerFacts,
   dispatch: TinkerCommandDispatch,
-  stateRevision = 0,
 ) {
   return (
     <IntlProvider locale="en">
       <TinkerSurface
         facts={facts}
-        stateRevision={stateRevision}
         dispatch={dispatch}
       />
     </IntlProvider>
@@ -796,6 +894,7 @@ function readyFacts(): TinkerFacts {
     runtime: {
       running: false,
       repeat: false,
+      cycleId: 0,
       elapsedSeconds: 0,
       effectiveManualLabour: false,
       cooldownSeconds: 0.5,
@@ -815,6 +914,7 @@ function readyFacts(): TinkerFacts {
 function runningFacts(
   overrides: {
     readonly repeat?: boolean
+    readonly cycleId?: number
     readonly effectiveManualLabour?: boolean
     readonly elapsedSeconds?: number
     readonly cooldownSeconds?: number
@@ -829,6 +929,7 @@ function runningFacts(
     runtime: {
       running: true,
       repeat: overrides.repeat ?? false,
+      cycleId: overrides.cycleId ?? 1,
       elapsedSeconds: overrides.elapsedSeconds ?? 0.1,
       effectiveManualLabour:
         overrides.effectiveManualLabour ?? false,

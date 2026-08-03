@@ -70,6 +70,7 @@
         "runtime": {
           "running": false,
           "repeat": false,
+          "cycleId": 0,
           "elapsedSeconds": 0,
           "effectiveManualLabour": false,
           "cooldownSeconds": 0.20000000298023224
@@ -241,6 +242,7 @@
           "runtime": {
             "running": true,
             "repeat": false,
+            "cycleId": 1,
             "elapsedSeconds": 0.2,
             "effectiveManualLabour": false,
             "cooldownSeconds": 0.20000000298023224
@@ -265,6 +267,7 @@
           "runtime": {
             "running": false,
             "repeat": false,
+            "cycleId": 0,
             "elapsedSeconds": 0,
             "effectiveManualLabour": false,
             "cooldownSeconds": 0.5
@@ -349,6 +352,7 @@
         "runtime": {
           "running": false,
           "repeat": false,
+          "cycleId": 0,
           "elapsedSeconds": 0,
           "effectiveManualLabour": false,
           "cooldownSeconds": 0.5

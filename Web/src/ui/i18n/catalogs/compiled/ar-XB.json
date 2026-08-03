@@ -3715,20 +3715,6 @@
       "value": "‬"
     }
   ],
-  "dyson.tinker.failure.stale": [
-    {
-      "type": 0,
-      "value": "‮"
-    },
-    {
-      "type": 0,
-      "value": "⊥ıuʞǝɹ ɔɥɐuƃǝp qǝɟoɹǝ ʇɥǝ ɐɔʇıou ɔoɯdʅǝʇǝp. ⊥ɹʎ ɐƃɐıu."
-    },
-    {
-      "type": 0,
-      "value": "‬"
-    }
-  ],
   "dyson.tinker.hold-to-repeat": [
     {
       "type": 0,
@@ -3765,6 +3751,20 @@
     {
       "type": 0,
       "value": "⊥ıuʞǝɹ"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "dyson.tinker.repeating-while-held": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "ᴚǝdǝɐʇıuƃ ʍɥıʅǝ ɥǝʅp"
     },
     {
       "type": 0,

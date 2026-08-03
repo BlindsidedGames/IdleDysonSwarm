@@ -843,10 +843,6 @@
     "defaultMessage": "Tinker is temporarily unavailable.",
     "description": "Safe feedback when the UI runtime cannot dispatch a Tinker command."
   },
-  "dyson.tinker.failure.stale": {
-    "defaultMessage": "Tinker changed before the action completed. Try again.",
-    "description": "Safe feedback when a Tinker command used an outdated public game revision."
-  },
   "dyson.tinker.hold-to-repeat": {
     "defaultMessage": "Hold anywhere to repeat...",
     "description": "Exact Unity hold gesture hint inside the Tinker progress bar."
@@ -858,6 +854,10 @@
   "dyson.tinker.region": {
     "defaultMessage": "Tinker",
     "description": "Accessible name for the Unity Tinker region."
+  },
+  "dyson.tinker.repeating-while-held": {
+    "defaultMessage": "Repeating while held",
+    "description": "Tinker progress-bar status while the hold gesture is repeating."
   },
   "dyson.tinker.tip.fresh-save": {
     "defaultMessage": "Tip: The tinker panel goes away after you have 10 assembly lines and 1 manager (or any data center).",

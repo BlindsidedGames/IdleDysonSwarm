@@ -42,6 +42,10 @@ import {
   type UiRuntimeSuppliedFile,
 } from '../../runtime'
 import {
+  reportDevelopmentTelemetry,
+  startDevelopmentTelemetry,
+} from '../../runtime/developmentTelemetry'
+import {
   SettingsSurface,
   type SettingsSurfaceProps,
 } from '../settings'
@@ -191,9 +195,38 @@ function UnprobedReadyDysonRuntimeHost({
 }: ReadyDysonRuntimeHostProps) {
   const [route, setRoute] = useState<ReadyGameRoute>('bots')
   const snapshot = useBrowserRuntimeSnapshot(runtime)
+  const telemetrySnapshotRef = useRef(snapshot)
+  telemetrySnapshotRef.current = snapshot
+  useEffect(
+    () => startDevelopmentTelemetry(() => {
+      const current = telemetrySnapshotRef.current
+      return {
+        visibility: document.visibilityState,
+        focused: document.hasFocus(),
+        runtimeStatus: runtime.status(),
+        snapshot:
+          current.phase === 'ready'
+            ? {
+                revision: current.revision,
+                bots: current.gameplay.resources.dyson.bots,
+                tinker: current.gameplay.runtime.tinker,
+              }
+            : { phase: current.phase },
+      }
+    }),
+    [runtime],
+  )
   const dispatchPlayer = useCallback(
-    (command: CanonicalPlayerCommand) =>
-      runtime.dispatchPlayer(command),
+    async (command: CanonicalPlayerCommand) => {
+      const result = await runtime.dispatchPlayer(command)
+      if (command.kind.startsWith('tinker.')) {
+        reportDevelopmentTelemetry('tinker-command', {
+          command,
+          result,
+        })
+      }
+      return result
+    },
     [runtime],
   )
   const presetActions = useMemo(
@@ -1492,7 +1525,6 @@ export function ReadyDysonSlice({
               content: (
                 <TinkerSurface
                   facts={tinker.value}
-                  stateRevision={snapshot.revision.state}
                   dispatch={dispatchPlayer}
                 />
               ),

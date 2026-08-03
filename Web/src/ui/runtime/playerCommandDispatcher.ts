@@ -13,14 +13,10 @@ import type {
 } from './contracts'
 
 type LatestIdempotentCommand =
-  | (Extract<
+  | Extract<
       CanonicalPlayerCommand,
-      { readonly kind: 'tinker.start' }
-    > & { readonly repeat: true })
-  | (Extract<
-      CanonicalPlayerCommand,
-      { readonly kind: 'tinker.set-repeat' }
-    > & { readonly enabled: false })
+      { readonly kind: 'tinker.start' | 'tinker.set-repeat' }
+    >
   | Extract<
       CanonicalPlayerCommand,
       {

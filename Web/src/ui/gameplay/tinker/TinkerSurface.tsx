@@ -15,10 +15,10 @@ import { formatGameNumber } from '../../i18n/formatters'
 import type { EnabledLocale } from '../../i18n/localeRegistry'
 import { tinkerMessages } from './messages'
 import {
-  useTransientTinkerHold,
+  useTinkerPressController,
   type TinkerCommandDispatch,
   type TinkerPlayerCommand,
-} from './useTransientTinkerHold'
+} from './useTinkerPressController'
 import './tinker.css'
 
 type ReadySnapshot = Extract<
@@ -34,17 +34,14 @@ export type TinkerFacts = ReadyTinker['value']
 
 export interface TinkerSurfaceProps {
   readonly facts: TinkerFacts
-  /** State revision of the authoritative snapshot supplying {@link facts}. */
-  readonly stateRevision: number
   readonly dispatch: TinkerCommandDispatch
   readonly className?: string
 }
 
-type TinkerFailureCategory = 'stale' | 'rejected' | 'runtime'
+type TinkerFailureCategory = 'rejected' | 'runtime'
 
 export function TinkerSurface({
   facts,
-  stateRevision,
   dispatch,
   className,
 }: TinkerSurfaceProps) {
@@ -62,22 +59,19 @@ export function TinkerSurface({
     result: UiRuntimePlayerCommandResult,
   ): void => {
     if (result.status === 'rejected') {
-      setFailure(result.stale ? 'stale' : 'rejected')
+      setFailure(result.stale ? null : 'rejected')
       return
     }
     setFailure(result.status === 'failed' ? 'runtime' : null)
   }
-  const gesture = useTransientTinkerHold({
-    canStart: facts.canStart,
+  const gesture = useTinkerPressController({
+    canInteract: facts.canStart || facts.runtime.running,
     runtimeRepeat: facts.runtime.repeat,
     dispatch,
     onResult: handleResult,
     onDispatchFailure: () => setFailure('runtime'),
   })
-  const visualElapsedSeconds = useVisualTinkerElapsed(
-    facts,
-    stateRevision,
-  )
+  const visualElapsedSeconds = useVisualTinkerElapsed(facts)
   const seconds = facts.runtime.running
     ? Math.max(
         0,
@@ -111,12 +105,9 @@ export function TinkerSurface({
   const running = facts.runtime.running
   const showHeldVisual = gesture.active
   const disabled = !facts.canStart && !running && !gesture.active
-  const failureMessage =
-    failure === 'stale'
-      ? tinkerMessages.staleFailure
-      : failure === 'rejected'
-        ? tinkerMessages.rejectedFailure
-        : tinkerMessages.runtimeFailure
+  const failureMessage = failure === 'rejected'
+    ? tinkerMessages.rejectedFailure
+    : tinkerMessages.runtimeFailure
 
   return (
     <section
@@ -126,9 +117,13 @@ export function TinkerSurface({
       data-running={facts.runtime.running}
       data-repeat={facts.runtime.repeat}
       data-held-visual={showHeldVisual}
+      data-press-phase={gesture.phase}
     >
       <button
+        ref={gesture.controlRef}
+        data-manages-native-touch="true"
         type="button"
+        draggable={false}
         className="tinker-surface__control"
         data-gesture-active={gesture.active}
         aria-labelledby={`${titleId} ${actionId}`}
@@ -147,6 +142,8 @@ export function TinkerSurface({
         onKeyUp={gesture.onKeyUp}
         onBlur={gesture.onBlur}
         onClick={gesture.onClick}
+        onContextMenu={gesture.onContextMenu}
+        onDragStart={gesture.onDragStart}
       >
         <strong id={titleId} className="tinker-surface__title">
           {intl.formatMessage(tinkerMessages.title)}
@@ -178,7 +175,11 @@ export function TinkerSurface({
               className="tinker-surface__hold-label"
               aria-hidden="true"
             >
-              {intl.formatMessage(tinkerMessages.holdToRepeat)}
+              {intl.formatMessage(
+                gesture.repeating
+                  ? tinkerMessages.repeatingWhileHeld
+                  : tinkerMessages.holdToRepeat,
+              )}
             </span>
           </span>
           <span id={remainingId} className="tinker-surface__time">
@@ -206,10 +207,7 @@ export function TinkerSurface({
  * Interpolates only the displayed fill between canonical runtime snapshots.
  * Completion and rewards remain entirely owned by the lifecycle coordinator.
  */
-function useVisualTinkerElapsed(
-  facts: TinkerFacts,
-  stateRevision: number,
-): number {
+function useVisualTinkerElapsed(facts: TinkerFacts): number {
   const prefersReducedMotion = usePrefersReducedMotion()
   const [elapsed, setElapsed] = useState(facts.runtime.elapsedSeconds)
   const visualElapsedRef = useRef(facts.runtime.elapsedSeconds)
@@ -219,7 +217,7 @@ function useVisualTinkerElapsed(
   const previousCooldownRef = useRef(
     facts.runtime.cooldownSeconds,
   )
-  const previousStateRevisionRef = useRef(stateRevision)
+  const previousCycleIdRef = useRef(facts.runtime.cycleId)
 
   useEffect(() => {
     const authoritativeElapsed = facts.runtime.elapsedSeconds
@@ -228,11 +226,11 @@ function useVisualTinkerElapsed(
       previousCanonicalElapsedRef.current
     const cooldownChanged =
       facts.runtime.cooldownSeconds !== previousCooldownRef.current
-    const stateRevisionChanged =
-      stateRevision !== previousStateRevisionRef.current
+    const cycleChanged =
+      facts.runtime.cycleId !== previousCycleIdRef.current
     previousCanonicalElapsedRef.current = authoritativeElapsed
     previousCooldownRef.current = facts.runtime.cooldownSeconds
-    previousStateRevisionRef.current = stateRevision
+    previousCycleIdRef.current = facts.runtime.cycleId
 
     if (!facts.runtime.running || prefersReducedMotion) {
       visualElapsedRef.current = authoritativeElapsed
@@ -241,7 +239,7 @@ function useVisualTinkerElapsed(
     }
 
     const animationStartElapsed =
-      cycleRestarted || cooldownChanged || stateRevisionChanged
+      cycleRestarted || cooldownChanged || cycleChanged
         ? authoritativeElapsed
         : Math.max(
             visualElapsedRef.current,
@@ -266,7 +264,7 @@ function useVisualTinkerElapsed(
     frame = requestAnimationFrame(update)
     return () => cancelAnimationFrame(frame)
   }, [
-    stateRevision,
+    facts.runtime.cycleId,
     facts.runtime.cooldownSeconds,
     facts.runtime.elapsedSeconds,
     facts.runtime.running,

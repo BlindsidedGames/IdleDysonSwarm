@@ -25,7 +25,11 @@ import type {
   CanonicalSkillAvailabilityPreview,
   CanonicalSkillCatalogPreview,
 } from '../../../simulation/canonicalSkillTransactions'
-import { Button, StatusFeedback } from '../../components'
+import {
+  Button,
+  SettingsIcon,
+  StatusFeedback,
+} from '../../components'
 import { formatGameNumber } from '../../i18n/formatters'
 import type { EnabledLocale } from '../../i18n/localeRegistry'
 import type { UiRuntimePlayerCommandResult } from '../../runtime'
@@ -437,7 +441,7 @@ export function SkillsSurface({
           aria-controls={settingsId}
           onClick={() => setSettingsOpen((open) => !open)}
         >
-          <span aria-hidden="true">⚙</span>
+          <SettingsIcon />
         </button>
       </header>
 

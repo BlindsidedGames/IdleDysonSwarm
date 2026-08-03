@@ -27,6 +27,7 @@ import {
   FacilityCard,
   InlineImageSymbol,
   PresetAutomationSelect,
+  SettingsIcon,
 } from '../../components'
 import {
   formatGameNumber,
@@ -396,7 +397,7 @@ export function ResearchSurface({
             aria-controls={settingsId}
             onClick={() => setSettingsOpen((current) => !current)}
           >
-            <span aria-hidden="true">{'\u2699'}</span>
+            <SettingsIcon />
           </button>
         </div>
       </footer>

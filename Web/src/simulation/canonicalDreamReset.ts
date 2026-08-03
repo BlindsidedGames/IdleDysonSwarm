@@ -80,6 +80,25 @@ export type CanonicalDreamResetDefinitions = ReadonlyMap<
   SimulationUpgradeDefinition
 >
 
+/**
+ * Reports whether an automatic reset can make an observable state change.
+ * Event-time scheduling uses this rather than readiness alone so a saturated
+ * counter cannot remain an always-due zero-time event.
+ */
+export function canApplyCanonicalAutomaticDreamReset(
+  state: Readonly<CanonicalGameStateV1>,
+): boolean {
+  const outcome = getOutcome(state, { kind: 'automatic' })
+  if (outcome === null || state.dream.resetCount >= DISCRETE_MAXIMUM) {
+    return false
+  }
+  if (outcome.requestedReward <= 0n) return true
+  return (
+    state.dream.strangeMatter <=
+    DISCRETE_MAXIMUM - outcome.requestedReward
+  )
+}
+
 interface DreamResetOutcome {
   readonly cause: CanonicalDreamResetCause
   readonly requestedReward: bigint

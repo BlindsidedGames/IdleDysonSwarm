@@ -35,6 +35,7 @@ import {
   CollapsibleSection,
   FacilityCard,
   InlineImageSymbol,
+  SettingsIcon,
 } from '../../components'
 import influenceSymbol from '../../assets/symbol-influence.png'
 import strangeMatterSymbol from '../../assets/symbol-strange-matter.png'
@@ -212,7 +213,7 @@ export function SimulationTimeControl({ locale, bankSeconds, rate, enabled, disp
 }) {
   const intl = useIntl()
   return <section className="simulation-time-control" aria-label={intl.formatMessage(messages.timeMultiplier)}>
-    <div className="simulation-time-control__header"><strong>{intl.formatMessage(messages.timeMultiplier)}</strong><span>{enabled ? intl.formatMessage(messages.boostRemaining) : intl.formatMessage(messages.offlineTime)}: {formatGameDuration(locale, bankSeconds)}</span>{spaceAgeAvailable && <button type="button" className="simulation-time-control__settings-toggle" aria-label={intl.formatMessage(messages.purchaseSettings)} aria-expanded={purchaseSettingsOpen} onClick={() => onPurchaseSettingsOpenChange(!purchaseSettingsOpen)}><span aria-hidden="true">{'\u2699'}</span></button>}</div>
+    <div className="simulation-time-control__header"><strong>{intl.formatMessage(messages.timeMultiplier)}</strong><span>{enabled ? intl.formatMessage(messages.boostRemaining) : intl.formatMessage(messages.offlineTime)}: {formatGameDuration(locale, bankSeconds)}</span>{spaceAgeAvailable && <button type="button" className="simulation-time-control__settings-toggle" aria-label={intl.formatMessage(messages.purchaseSettings)} aria-expanded={purchaseSettingsOpen} onClick={() => onPurchaseSettingsOpenChange(!purchaseSettingsOpen)}><SettingsIcon /></button>}</div>
     <input aria-label={intl.formatMessage(messages.timeMultiplier)} type="range" min="0" max="10" step="1" value={rate} disabled={!available} onChange={(event) => void dispatchPlayer({ kind: 'time.set-double-time-rate', rate: Number(event.currentTarget.value) })} />
     <div className="simulation-time-control__rate">
       <span>

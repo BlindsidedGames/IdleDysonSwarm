@@ -32,6 +32,7 @@ import {
 } from './dysonProductionArrivals'
 import {
   applyCanonicalDreamReset,
+  canApplyCanonicalAutomaticDreamReset,
   type CanonicalDreamResetDefinitions,
 } from './canonicalDreamReset'
 import {
@@ -186,8 +187,11 @@ export class CanonicalEventTimeModel
     state: Readonly<CanonicalEventTimeState>,
     context: Readonly<CanonicalEventTimeContext>,
   ) {
-    this.carrier = cloneCarrier(state)
     this.context = captureContext(context)
+    this.carrier = normalizeAutomationPhase(
+      cloneCarrier(state),
+      this.context.automationIntervalSeconds,
+    )
   }
 
   get state(): CanonicalEventTimeState {
@@ -279,7 +283,7 @@ export class CanonicalEventTimeModel
     }
     if (
       this.carrier.gameState.dyson.bots === Number.MAX_VALUE ||
-      isAutomaticDreamResetReady(this.carrier.gameState)
+      canApplyCanonicalAutomaticDreamReset(this.carrier.gameState)
     ) {
       this.replaceGameState(
         withNextInfinityBoundary(
@@ -1164,6 +1168,8 @@ function validateCarrier(
   if (
     typeof state.tinker.running !== 'boolean' ||
     typeof state.tinker.repeat !== 'boolean' ||
+    !Number.isSafeInteger(state.tinker.cycleId) ||
+    state.tinker.cycleId < 0 ||
     typeof state.tinker.effectiveManualLabour !== 'boolean' ||
     !Number.isFinite(state.tinker.elapsedSeconds) ||
     state.tinker.elapsedSeconds < 0 ||
@@ -1249,19 +1255,29 @@ function withNextInfinityBoundary(
   }
 }
 
-function isAutomaticDreamResetReady(
-  state: Readonly<CanonicalGameStateV1>,
-): boolean {
-  switch (state.dream.disasterStage) {
-    case 0n:
-    case 1n:
-      return state.dream.resources.cities >= 1
-    case 2n:
-      return state.dream.resources.bots >= 100
-    case 3n:
-      return state.dream.resources.spaceFactories >= 5
-    default:
-      return false
+function normalizeAutomationPhase(
+  state: CanonicalEventTimeState,
+  automationIntervalSeconds: number,
+): CanonicalEventTimeState {
+  const phase = state.gameState.timeline.automationTimeUntilNextEvent
+  if (
+    !Number.isFinite(automationIntervalSeconds) ||
+    automationIntervalSeconds <= 0 ||
+    !Number.isFinite(phase) ||
+    phase < 0 ||
+    phase > TIME_EPSILON
+  ) {
+    return state
+  }
+  return {
+    ...state,
+    gameState: {
+      ...state.gameState,
+      timeline: {
+        ...state.gameState.timeline,
+        automationTimeUntilNextEvent: automationIntervalSeconds,
+      },
+    },
   }
 }
 
@@ -1515,6 +1531,7 @@ function sameTinkerRuntime(
   return (
     left.running === right.running &&
     left.repeat === right.repeat &&
+    left.cycleId === right.cycleId &&
     left.elapsedSeconds === right.elapsedSeconds &&
     left.effectiveManualLabour === right.effectiveManualLabour &&
     left.cooldownSeconds === right.cooldownSeconds

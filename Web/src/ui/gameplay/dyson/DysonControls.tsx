@@ -11,7 +11,10 @@ import type {
   CanonicalSkillPresetAutomationSlot,
   SkillPresetState,
 } from '../../../game-state/types'
-import { PresetAutomationSelect } from '../../components'
+import {
+  PresetAutomationSelect,
+  SettingsIcon,
+} from '../../components'
 import {
   formatGameNumber,
 } from '../../i18n/formatters'
@@ -282,7 +285,7 @@ export function DysonInfo({
           aria-controls={settingsId}
           onClick={() => setSettingsOpen((current) => !current)}
         >
-          <span aria-hidden="true">{'\u2699'}</span>
+          <SettingsIcon />
         </button>
       </div>
       {settingsOpen && (

@@ -25,6 +25,7 @@ import {
   type RealityUpgradeId,
 } from './realityUpgrades'
 import { createCanonicalTinkerRuntimeState } from './canonicalTinker'
+import { DISCRETE_MAXIMUM } from './numeric'
 import { createSimulationSummary } from './types'
 
 const fixture = readFileSync(
@@ -1023,5 +1024,128 @@ describe('canonical whole-game event-time model', () => {
     expect(
       result.candidateState.state.gameState.skills.points,
     ).toBe(1n)
+  })
+
+  test.each([0, 5e-13])(
+    'recovers a persisted automation phase at the zero boundary (%s)',
+    (automationTimeUntilNextEvent) => {
+      const source = baseState()
+      const result = advanceEventTime({
+        startingState: new CanonicalEventTimeModel(
+          carrier({
+            ...source,
+            timeline: {
+              ...source.timeline,
+              automationTimeUntilNextEvent,
+            },
+          }),
+          context(),
+        ),
+        durationSeconds: 0.01,
+        automationIntervalSeconds: 1,
+        automationTimeUntilNextEvent,
+        infinityMinimumCycleSeconds: 10,
+        processingBudgetMilliseconds: 0,
+      })
+
+      expect(result.completed).toBe(true)
+      expect(result.diagnosticCode).toBeUndefined()
+      expect(
+        result.candidateState.state.gameState.timeline
+          .automationTimeUntilNextEvent,
+      ).toBeCloseTo(0.99, 12)
+    },
+  )
+
+  test.each([
+    {
+      name: 'reset count',
+      resetCount: DISCRETE_MAXIMUM,
+      strangeMatter: 0n,
+    },
+    {
+      name: 'Strange Matter',
+      resetCount: 0n,
+      strangeMatter: DISCRETE_MAXIMUM,
+    },
+  ])(
+    'does not schedule a zero-time Dream reset when the $name is saturated',
+    ({ resetCount, strangeMatter }) => {
+      const source = baseState()
+      const result = advanceEventTime({
+        startingState: new CanonicalEventTimeModel(
+          carrier({
+            ...source,
+            dream: {
+              ...source.dream,
+              disasterStage: 0n,
+              resetCount,
+              strangeMatter,
+              resources: {
+                ...source.dream.resources,
+                cities: 1,
+              },
+            },
+          }),
+          context(),
+        ),
+        durationSeconds: 0.1,
+        automationIntervalSeconds: 1,
+        automationTimeUntilNextEvent: 1,
+        infinityMinimumCycleSeconds: 10,
+        processingBudgetMilliseconds: 0,
+      })
+
+      expect(result.completed).toBe(true)
+      expect(result.diagnosticCode).toBeUndefined()
+      expect(result.work.schedulerPasses).toBe(1n)
+      expect(
+        result.candidateState.state.gameState.dream.resetCount,
+      ).toBe(resetCount)
+      expect(
+        result.candidateState.state.gameState.dream.strangeMatter,
+      ).toBe(strangeMatter)
+    },
+  )
+
+  test('keeps event-time production running when mega-structure rates saturate', () => {
+    const source = baseState()
+    const result = advanceEventTime({
+      startingState: new CanonicalEventTimeModel(
+        carrier({
+          ...source,
+          dyson: {
+            ...source.dyson,
+            facilities: {
+              ...source.dyson.facilities,
+              matrioshka_brains: [Number.MAX_VALUE, 0],
+            },
+          },
+          infinity: {
+            ...source.infinity,
+            points: 5n,
+          },
+          quantum: {
+            ...source.quantum,
+            unlocks: {
+              ...source.quantum.unlocks,
+              matrioshkaBrains: true,
+            },
+          },
+        }),
+        context(),
+      ),
+      durationSeconds: 0.01,
+      automationIntervalSeconds: 1,
+      automationTimeUntilNextEvent: 1,
+      infinityMinimumCycleSeconds: 10,
+      processingBudgetMilliseconds: 0,
+    })
+
+    expect(result.completed).toBe(true)
+    expect(result.diagnosticCode).toBeUndefined()
+    expect(
+      result.candidateState.state.gameState.dyson.facilities.planets[0],
+    ).toBe(Number.MAX_VALUE * 0.01)
   })
 })

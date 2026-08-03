@@ -1,6 +1,7 @@
 import { getGameAsset } from '../game-data/catalog'
 import type { RuntimeGameAsset } from '../game-data/types'
 import type { CanonicalGameStateV1 } from '../game-state/types'
+import { multiplyContinuous } from './numeric'
 
 export const MEGA_STRUCTURE_FACILITY_IDS = [
   'matrioshka_brains',
@@ -183,9 +184,9 @@ export function deriveMegaStructureRates(
       ])
     }
 
-    let rate = base * count
+    let rate = multiplyContinuous(base, count)
     if (Math.abs(modifier - 1) > UNITY_MULTIPLIER_EPSILON) {
-      rate *= modifier
+      rate = multiplyContinuous(rate, modifier)
     }
     if (!Number.isFinite(rate) || rate < 0) {
       issues.push({

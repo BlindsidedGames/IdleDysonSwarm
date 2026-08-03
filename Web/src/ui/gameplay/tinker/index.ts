@@ -7,4 +7,5 @@ export {
   TINKER_REPEAT_HOLD_MILLISECONDS,
   type TinkerCommandDispatch,
   type TinkerPlayerCommand,
-} from './useTransientTinkerHold'
+  type TinkerPressPhase,
+} from './useTinkerPressController'
