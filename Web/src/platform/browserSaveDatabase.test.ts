@@ -263,6 +263,7 @@ describe('IndexedDbBrowserSaveDatabase', () => {
         id: 'retained-id',
         sourcePath: 'browser-import/retained-id',
         text: 'IDB1:exact-retained-candidate',
+        provenance: { kind: 'browser-retained-import' },
       },
     ])
   })
@@ -506,6 +507,23 @@ describe('IndexedDbBrowserSaveDatabase', () => {
       status: 'accepted',
     })
     const expected = structuredClone(first.runtime.snapshot())
+    const expectedGameplay = (() => {
+      if (expected.phase !== 'ready') return undefined
+      const {
+        lastSuspendedAtLegacyText: _transportOnlySuspensionMarker,
+        ...expectedTimeline
+      } = expected.gameplay.progression.timeline
+      return {
+        ...structuredClone(expected.gameplay),
+        progression: {
+          ...structuredClone(expected.gameplay.progression),
+          // This marker is intentionally lifecycle-dependent: startup may
+          // consume it for one-time elapsed-time accounting or backgrounding
+          // may refresh it. The persistence assertion covers durable gameplay.
+          timeline: expectedTimeline,
+        },
+      }
+    })()
 
     firstCheckpointScheduler.fire()
     firstCheckpointScheduler.fire()
@@ -532,8 +550,7 @@ describe('IndexedDbBrowserSaveDatabase', () => {
     expect(reconstructed.runtime.snapshot()).toMatchObject({
       phase: 'ready',
       source: 'primary',
-      gameplay:
-        expected.phase === 'ready' ? expected.gameplay : undefined,
+      gameplay: expectedGameplay,
     })
     await reconstructed.runtime.shutdown()
   })

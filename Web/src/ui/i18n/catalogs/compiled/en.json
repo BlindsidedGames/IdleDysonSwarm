@@ -213,6 +213,12 @@
       "value": "Add Bots"
     }
   ],
+  "debug.add-cash": [
+    {
+      "type": 0,
+      "value": "Add Cash"
+    }
+  ],
   "debug.add-infinity-points": [
     {
       "type": 0,
@@ -2485,6 +2491,12 @@
       "value": "Statistics"
     }
   ],
+  "navigation.store": [
+    {
+      "type": 0,
+      "value": "Store"
+    }
+  ],
   "navigation.story": [
     {
       "type": 0,
@@ -2687,6 +2699,42 @@
     {
       "type": 0,
       "value": "Offline Time Used"
+    }
+  ],
+  "pwa.update.accept": [
+    {
+      "type": 0,
+      "value": "Save and update"
+    }
+  ],
+  "pwa.update.applying": [
+    {
+      "type": 0,
+      "value": "Saving progress and applying the update…"
+    }
+  ],
+  "pwa.update.body": [
+    {
+      "type": 0,
+      "value": "A new version has downloaded. Save your progress before applying it."
+    }
+  ],
+  "pwa.update.failed": [
+    {
+      "type": 0,
+      "value": "The update was not applied. Your current game remains open."
+    }
+  ],
+  "pwa.update.retry": [
+    {
+      "type": 0,
+      "value": "Try again"
+    }
+  ],
+  "pwa.update.title": [
+    {
+      "type": 0,
+      "value": "Update ready"
     }
   ],
   "quantum.claim": [
@@ -6845,6 +6893,12 @@
       "value": "Check again"
     }
   ],
+  "startup-shell.action.copy-original": [
+    {
+      "type": 0,
+      "value": "Copy Original"
+    }
+  ],
   "startup-shell.action.export-recovery": [
     {
       "type": 0,
@@ -6873,6 +6927,12 @@
     {
       "type": 0,
       "value": "Start game"
+    }
+  ],
+  "startup-shell.action.start-fresh": [
+    {
+      "type": 0,
+      "value": "Start Fresh"
     }
   ],
   "startup-shell.action.use-this-tab": [
@@ -6927,6 +6987,12 @@
     {
       "type": 0,
       "value": "Save text"
+    }
+  ],
+  "startup-shell.notice.backup-recovered": [
+    {
+      "type": 0,
+      "value": "Your current save could not be opened. The newest verified backup was restored."
     }
   ],
   "startup-shell.operation.export-failed": [
@@ -7365,6 +7431,237 @@
     {
       "type": 0,
       "value": "Last 30 days"
+    }
+  ],
+  "store.action.purchase": [
+    {
+      "type": 0,
+      "value": "Purchase "
+    },
+    {
+      "type": 1,
+      "value": "price"
+    }
+  ],
+  "store.action.purchasing": [
+    {
+      "type": 0,
+      "value": "Purchasing…"
+    }
+  ],
+  "store.action.restore": [
+    {
+      "type": 0,
+      "value": "Restore Purchases"
+    }
+  ],
+  "store.action.restoring": [
+    {
+      "type": 0,
+      "value": "Restoring…"
+    }
+  ],
+  "store.action.tip": [
+    {
+      "type": 0,
+      "value": "Tip "
+    },
+    {
+      "type": 1,
+      "value": "price"
+    }
+  ],
+  "store.feedback.entitlement-verified": [
+    {
+      "type": 0,
+      "value": "Purchase verified on this device."
+    }
+  ],
+  "store.feedback.operation-failed": [
+    {
+      "type": 0,
+      "value": "The Store could not complete that action. Try again when the platform store is available."
+    }
+  ],
+  "store.feedback.purchase-cancelled": [
+    {
+      "type": 0,
+      "value": "Purchase cancelled."
+    }
+  ],
+  "store.feedback.purchase-pending": [
+    {
+      "type": 0,
+      "value": "Purchase is pending approval from the platform store."
+    }
+  ],
+  "store.feedback.restore-completed": [
+    {
+      "type": 6,
+      "value": "count",
+      "options": {
+        "=0": {
+          "value": [
+            {
+              "type": 0,
+              "value": "No permanent purchases were restored."
+            }
+          ]
+        },
+        "one": {
+          "value": [
+            {
+              "type": 0,
+              "value": "One permanent purchase was restored."
+            }
+          ]
+        },
+        "other": {
+          "value": [
+            {
+              "type": 7
+            },
+            {
+              "type": 0,
+              "value": " permanent purchases were restored."
+            }
+          ]
+        }
+      },
+      "offset": 0,
+      "pluralType": "cardinal"
+    }
+  ],
+  "store.feedback.tip-completed": [
+    {
+      "type": 0,
+      "value": "Thank you for your support!"
+    }
+  ],
+  "store.introduction": [
+    {
+      "type": 0,
+      "value": "Optional ways to support Idle Dyson Swarm and permanent upgrades for this device account."
+    }
+  ],
+  "store.permanent.description": [
+    {
+      "type": 0,
+      "value": "Permanent purchases are verified by the platform account and remain available offline after verification."
+    }
+  ],
+  "store.permanent.heading": [
+    {
+      "type": 0,
+      "value": "Permanent upgrades"
+    }
+  ],
+  "store.product.developer-options.description": [
+    {
+      "type": 0,
+      "value": "Unlock Developer Options now. The existing in-game unlock remains available."
+    }
+  ],
+  "store.product.developer-options.title": [
+    {
+      "type": 0,
+      "value": "Developer Options"
+    }
+  ],
+  "store.product.double-ip.description": [
+    {
+      "type": 0,
+      "value": "Unlock a toggle that doubles earned Infinity Points."
+    }
+  ],
+  "store.product.double-ip.title": [
+    {
+      "type": 0,
+      "value": "Double Infinity Points"
+    }
+  ],
+  "store.product.tip-tier-1.description": [
+    {
+      "type": 0,
+      "value": "A small thank-you with no gameplay benefit."
+    }
+  ],
+  "store.product.tip-tier-1.title": [
+    {
+      "type": 0,
+      "value": "Treat the Cats!"
+    }
+  ],
+  "store.product.tip-tier-2.description": [
+    {
+      "type": 0,
+      "value": "A medium thank-you with no gameplay benefit."
+    }
+  ],
+  "store.product.tip-tier-2.title": [
+    {
+      "type": 0,
+      "value": "Buy us a coffee"
+    }
+  ],
+  "store.product.tip-tier-3.description": [
+    {
+      "type": 0,
+      "value": "A generous thank-you with no gameplay benefit."
+    }
+  ],
+  "store.product.tip-tier-3.title": [
+    {
+      "type": 0,
+      "value": "Support my kids"
+    }
+  ],
+  "store.region": [
+    {
+      "type": 0,
+      "value": "Store"
+    }
+  ],
+  "store.restore.description": [
+    {
+      "type": 0,
+      "value": "Restore checks only Double Infinity Points and Developer Options. Tips are consumable and are not restored."
+    }
+  ],
+  "store.status.loading": [
+    {
+      "type": 0,
+      "value": "Loading Store…"
+    }
+  ],
+  "store.status.owned": [
+    {
+      "type": 0,
+      "value": "Owned"
+    }
+  ],
+  "store.status.unavailable": [
+    {
+      "type": 0,
+      "value": "Unavailable"
+    }
+  ],
+  "store.status.unlocked-in-game": [
+    {
+      "type": 0,
+      "value": "Unlocked in game"
+    }
+  ],
+  "store.tips.description": [
+    {
+      "type": 0,
+      "value": "Tips are optional, repeatable, and provide no gameplay benefit."
+    }
+  ],
+  "store.tips.heading": [
+    {
+      "type": 0,
+      "value": "Support the developer"
     }
   ],
   "story.avocato.description": [

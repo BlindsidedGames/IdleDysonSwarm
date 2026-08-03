@@ -4,11 +4,27 @@ import { serializeWebSave } from './serialization'
 import { PreparedSave } from './prepare'
 import { prepareImportedSaveText } from './import'
 import { serializeCompressedWebSave } from './compressedWebSave'
+import { RECEIVING_DEVICE_PREFERENCE_FIELDS } from './importContext'
+import { mappingCoverageManifest } from '../game-state/mappingCoverage'
 
 const fixtureDirectory = new URL('../../test/fixtures/', import.meta.url)
 
 describe('save import text preparation', () => {
-  test('accepts canonical web saves and consumes the remote lifecycle timestamp', () => {
+  test('retains every top-level field classified as a presentation preference', () => {
+    const classified = mappingCoverageManifest.entries
+      .filter(
+        (entry) =>
+          entry.classification === 'presentation-preference' &&
+          /^\$\.[^.]+$/.test(entry.sourcePath),
+      )
+      .map((entry) => entry.sourcePath.slice(2))
+
+    expect(RECEIVING_DEVICE_PREFERENCE_FIELDS).toEqual(
+      expect.arrayContaining(classified),
+    )
+  })
+
+  test('manual shared import consumes remote lifecycle time but preserves its stored bank', () => {
     const source = PreparedSave.fromDecoded({
       saveVersion: 12,
       dateQuitString: 'remote quit',
@@ -27,6 +43,218 @@ describe('save import text preparation', () => {
       lastSuccessfulLoadUtc: '2026-07-29T05:00:00Z',
       offlineTime: 45,
       futureValue: { retained: true },
+    })
+  })
+
+  test('does not accept device entitlement claims from a shared Web save', () => {
+    const text = serializeWebSave(
+      PreparedSave.fromDecoded({
+        saveVersion: 12,
+        doubleIp: true,
+        debugOptions: true,
+        debugEverEnabled: true,
+      }).copyValidatedState(),
+    )
+
+    const imported = prepareImportedSaveText(
+      text,
+      '2026-07-29T05:00:00Z',
+    ).copyValidatedState()
+
+    expect(imported.doubleIp).toBe(false)
+    expect(imported.debugOptions).toBe(false)
+    expect(imported.debugEverEnabled).toBe(false)
+    expect((imported.packedSettingsFlags as bigint) & 0b1100n).toBe(0n)
+  })
+
+  test('retains receiving-device presentation preferences on manual imports', () => {
+    const text = serializeWebSave(
+      PreparedSave.fromDecoded({
+        saveVersion: 12,
+        globalMute: false,
+        screensaverEnabled: false,
+        hidePurchased: false,
+        numberFormatting: 0,
+        skillsBuyOnTap: false,
+        frameRate: 30,
+        botsButtonToggle: false,
+        storyButtonToggle: false,
+        bots: 42,
+      }).copyValidatedState(),
+    )
+    const receiving = PreparedSave.fromDecoded({
+      saveVersion: 12,
+      globalMute: true,
+      screensaverEnabled: true,
+      hidePurchased: true,
+      numberFormatting: 3,
+      skillsBuyOnTap: true,
+      frameRate: 120,
+      botsButtonToggle: true,
+      storyButtonToggle: true,
+      bots: 1,
+    }).copyValidatedState()
+
+    const imported = prepareImportedSaveText(
+      text,
+      '2026-07-29T05:00:00Z',
+      undefined,
+      {
+        kind: 'manual-shared-import',
+        importedAtUtc: '2026-07-29T05:00:00Z',
+      },
+      receiving,
+    ).copyValidatedState()
+
+    expect(imported).toMatchObject({
+      globalMute: true,
+      screensaverEnabled: true,
+      hidePurchased: true,
+      numberFormatting: 3,
+      skillsBuyOnTap: true,
+      frameRate: 120,
+      botsButtonToggle: true,
+      storyButtonToggle: true,
+      bots: 42,
+    })
+  })
+
+  test('manual shared import keeps only the receiving local Developer Options unlock', () => {
+    const sender = serializeWebSave(
+      PreparedSave.fromDecoded({
+        saveVersion: 12,
+        doubleIp: true,
+        debugOptions: true,
+        debugEverEnabled: true,
+      }).copyValidatedState(),
+    )
+    const receiver = PreparedSave.fromDecoded({
+      saveVersion: 12,
+      doubleIp: false,
+      debugOptions: true,
+      debugEverEnabled: true,
+    }).copyValidatedState()
+
+    const imported = prepareImportedSaveText(
+      sender,
+      '2026-07-29T05:00:00Z',
+      undefined,
+      {
+        kind: 'manual-shared-import',
+        importedAtUtc: '2026-07-29T05:00:00Z',
+      },
+      receiver,
+    ).copyValidatedState()
+
+    expect(imported.doubleIp).toBe(false)
+    expect(imported.debugEverEnabled).toBe(true)
+    expect(imported.debugOptions).toBe(true)
+  })
+
+  test('manual shared import cannot introduce a sender Developer Options claim', () => {
+    const sender = serializeWebSave(
+      PreparedSave.fromDecoded({
+        saveVersion: 12,
+        debugOptions: true,
+        debugEverEnabled: true,
+      }).copyValidatedState(),
+    )
+
+    const imported = prepareImportedSaveText(
+      sender,
+      '2026-07-29T05:00:00Z',
+      undefined,
+      {
+        kind: 'manual-shared-import',
+        importedAtUtc: '2026-07-29T05:00:00Z',
+      },
+      PreparedSave.fromDecoded({
+        saveVersion: 12,
+        debugOptions: false,
+        debugEverEnabled: false,
+      }).copyValidatedState(),
+    ).copyValidatedState()
+
+    expect(imported.debugEverEnabled).toBe(false)
+    expect(imported.debugOptions).toBe(false)
+  })
+
+  test('automatic same-device migration preserves Unity evidence and quit time for one startup grant', () => {
+    const text = serializeWebSave(
+      PreparedSave.fromDecoded({
+        saveVersion: 12,
+        dateQuitString: '2026-07-29T04:00:00Z',
+        offlineTime: 30,
+        doubleIp: true,
+        debugOptions: true,
+        debugEverEnabled: true,
+      }).copyValidatedState(),
+    )
+
+    const imported = prepareImportedSaveText(
+      text,
+      '2026-07-29T05:00:00Z',
+      undefined,
+      {
+        kind: 'automatic-unity-migration',
+        observedAtUtc: '2026-07-29T05:00:00Z',
+      },
+    ).copyValidatedState()
+
+    expect(imported).toMatchObject({
+      dateQuitString: '2026-07-29T04:00:00Z',
+      offlineTime: 30,
+      doubleIp: true,
+      debugOptions: true,
+      debugEverEnabled: true,
+    })
+  })
+
+  test('automatic context preserves the genuine Unity quit timestamp for startup consumption', () => {
+    const text = readFileSync(
+      new URL('schema-08-canonical-idb1-main-save.txt', fixtureDirectory),
+      'utf8',
+    )
+
+    const imported = prepareImportedSaveText(
+      text,
+      '2026-07-29T05:00:00Z',
+      undefined,
+      {
+        kind: 'automatic-unity-migration',
+        observedAtUtc: '2026-07-29T05:00:00Z',
+      },
+    ).copyValidatedState()
+
+    expect(imported.dateQuitString).toBe('02/02/2026 23:04:43')
+  })
+
+  test('transitional Web upgrade preserves local lifecycle and entitlement state', () => {
+    const text = JSON.stringify({
+      format: 'IDSWEB1',
+      schema: 12,
+      state: {
+        saveVersion: 12,
+        dateQuitString: '2026-07-29T04:00:00Z',
+        debugOptions: true,
+        debugEverEnabled: true,
+      },
+    })
+
+    const imported = prepareImportedSaveText(
+      text,
+      '2026-07-29T05:00:00Z',
+      undefined,
+      {
+        kind: 'transitional-web-upgrade',
+        upgradedAtUtc: '2026-07-29T05:00:00Z',
+      },
+    ).copyValidatedState()
+
+    expect(imported).toMatchObject({
+      dateQuitString: '2026-07-29T04:00:00Z',
+      debugOptions: true,
+      debugEverEnabled: true,
     })
   })
 

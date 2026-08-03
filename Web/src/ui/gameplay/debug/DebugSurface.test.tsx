@@ -49,6 +49,7 @@ describe('DebugSurface', () => {
     renderDebug(controls())
 
     for (const name of [
+      'Add Cash',
       'Add Bots',
       'Add Skill Points',
       'Add Infinity Points',
@@ -119,6 +120,13 @@ describe('DebugSurface', () => {
     const amount = screen.getByRole('textbox', { name: 'Amount' })
     await user.clear(amount)
     await user.type(amount, '12')
+    await user.click(screen.getByRole('button', { name: 'Add Cash' }))
+    await waitFor(() =>
+      expect(apply).toHaveBeenCalledWith({
+        kind: 'add-cash',
+        amount: 12,
+      }),
+    )
     await user.click(screen.getByRole('button', { name: 'Add Skill Points' }))
     await waitFor(() =>
       expect(apply).toHaveBeenCalledWith({

@@ -1,0 +1,2 @@
+#include "release-version.xcconfig"
+CAPACITOR_DEBUG = true

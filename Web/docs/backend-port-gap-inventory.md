@@ -116,9 +116,9 @@ Status meanings:
 
 | Surface | Current authority | Status | Remaining work | Gate |
 | --- | --- | --- | --- | --- |
-| IDB1 decode, migration, numeric repair and validation | `src/save` | Ready for development use | Complete field-by-field Unity schema-12 comparison before enabling release writes | Release/host |
+| IDB1 decode, migration, numeric repair and validation | `src/save` | Ready for development use | Close the pinned public Unity 3.0.328/schema-11 leaf classification before enabling release writes | Release/host |
 | Transactional repository, startup, import and checkpoint lane | `src/save/repository.ts`, `src/save/startupResolver.ts`, `src/application/canonicalRuntimeSession.ts`, `src/application/canonicalGameApplication.ts` | Ready | None for frontend start | Complete |
-| Canonical Unity graph mapping | `src/game-state/mapping.ts` | Partial | Close the executable coverage manifest and certify an authentic schema-12 round trip | Release/host |
+| Canonical Unity graph mapping | `src/game-state/mapping.ts` | Partial | Resolve the executable public schema-11 coverage manifest; schema-12 remains a development preparation target | Release/host |
 | Save-specific Dyson tuning and evaluation | `src/application/canonicalRuntimeSession.ts` | Ready | None for frontend start | Complete |
 | Numeric transactions and buy-mode math | `src/simulation/numeric.ts`, `src/simulation/transactions.ts`, canonical Dyson/research adapters | Ready | None for frontend start | Complete |
 | Dyson production, purchases, automation and derived facts | `src/simulation/canonicalEventTimeModel.ts`, `src/simulation/canonicalDysonCommands.ts`, `src/application/frontendSnapshot.ts` | Ready | None for frontend start | Complete |

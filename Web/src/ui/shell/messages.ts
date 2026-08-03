@@ -164,6 +164,13 @@ export const startupShellMessages = defineMessages({
     description:
       'Button label that requests another ownership or capability check.',
   },
+  backupRecoveredNotice: {
+    id: 'startup-shell.notice.backup-recovered',
+    defaultMessage:
+      'Your current save could not be opened. The newest verified backup was restored.',
+    description:
+      'Player-facing notice shown after startup restores a verified Web backup.',
+  },
   useThisTabAction: {
     id: 'startup-shell.action.use-this-tab',
     defaultMessage: 'Use this tab',
@@ -206,6 +213,18 @@ export const startupShellMessages = defineMessages({
     defaultMessage: 'Export recovery data',
     description:
       'Button label that requests a local recovery-data export.',
+  },
+  copyOriginalAction: {
+    id: 'startup-shell.action.copy-original',
+    defaultMessage: 'Copy Original',
+    description:
+      'Button label that copies the retained original save text without changing it.',
+  },
+  startFreshAction: {
+    id: 'startup-shell.action.start-fresh',
+    defaultMessage: 'Start Fresh',
+    description:
+      'Button label that starts a new Web save while retaining the original Unity source.',
   },
   importOverwriteConfirmation: {
     id: 'startup-shell.import.overwrite-confirmation',

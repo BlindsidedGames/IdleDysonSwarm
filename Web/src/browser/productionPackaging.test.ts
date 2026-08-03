@@ -86,7 +86,7 @@ describe('production browser package', () => {
 
       expect(
         readFileSync(resolve(outputDirectory, '_headers'), 'utf8'),
-      ).toBe(renderStaticSecurityHeaders())
+      ).toBe(renderStaticSecurityHeaders('/play/*'))
       const html = readFileSync(
         resolve(outputDirectory, 'index.html'),
         'utf8',
@@ -99,6 +99,54 @@ describe('production browser package', () => {
           )
           ?.getAttribute('content'),
       ).toBe(HTML_CONTENT_SECURITY_POLICY)
+      expect(
+        document.querySelector('link[rel="manifest"]')
+          ?.getAttribute('href'),
+      ).toBe('/play/manifest.webmanifest')
+      expect(
+        document.querySelector('script[type="module"]')
+          ?.getAttribute('src'),
+      ).toMatch(/^\/play\/assets\/.+\.js$/)
+
+      const pwaManifest = JSON.parse(readFileSync(
+        resolve(outputDirectory, 'manifest.webmanifest'),
+        'utf8',
+      )) as {
+        start_url: string
+        scope: string
+        display: string
+        icons: readonly { src: string; sizes: string; purpose: string }[]
+      }
+      expect(pwaManifest).toMatchObject({
+        start_url: '/play/',
+        scope: '/play/',
+        display: 'standalone',
+      })
+      expect(pwaManifest.icons).toEqual(expect.arrayContaining([
+        expect.objectContaining({ sizes: '192x192', purpose: 'any' }),
+        expect.objectContaining({ sizes: '512x512', purpose: 'any' }),
+        expect.objectContaining({ sizes: '512x512', purpose: 'maskable' }),
+      ]))
+      for (const icon of pwaManifest.icons) {
+        expect(icon.src.startsWith('/play/icons/')).toBe(true)
+        expect(
+          statSync(resolve(
+            outputDirectory,
+            icon.src.slice('/play/'.length),
+          )).size,
+        ).toBeGreaterThan(0)
+      }
+
+      const serviceWorker = readFileSync(
+        resolve(outputDirectory, 'service-worker.js'),
+        'utf8',
+      )
+      expect(serviceWorker).toContain('const SCOPE_PATH = "/play/"')
+      expect(serviceWorker).toContain('fetch(request).catch')
+      expect(serviceWorker).toContain('caches.match(APP_SHELL_URL)')
+      expect(serviceWorker).toContain("event.data?.type === 'ACTIVATE_UPDATE'")
+      expect(serviceWorker).not.toContain('caches.put')
+      expect(serviceWorker).not.toMatch(/indexedDB|IDSWEB1|localStorage/)
     } finally {
       rmSync(outputDirectory, { recursive: true, force: true })
     }

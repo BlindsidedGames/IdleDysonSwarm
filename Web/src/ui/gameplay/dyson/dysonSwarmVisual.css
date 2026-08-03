@@ -283,46 +283,8 @@
   animation-direction: reverse;
 }
 
-.dyson-swarm-visual__field-galaxy-halo {
-  fill:
-    rgb(
-      170 112 187 /
-      calc(0.24 - var(--galaxy-harvest) * 0.15)
-    );
-  stroke:
-    rgb(
-      229 192 237 /
-      calc(0.24 - var(--galaxy-harvest) * 0.12)
-    );
-  stroke-width: 0.28;
-  transition:
-    fill 1200ms ease,
-    stroke 1200ms ease;
-}
-
-.dyson-swarm-visual__field-galaxy-arm {
-  fill: none;
-  stroke:
-    rgb(
-      232 205 239 /
-      calc(0.8 - var(--galaxy-harvest) * 0.62)
-    );
-  stroke-linecap: round;
-  stroke-width: 0.62;
-  transition: stroke 1200ms ease;
-}
-
-.dyson-swarm-visual__field-galaxy-arm--faint {
-  stroke-width: 0.38;
-}
-
-.dyson-swarm-visual__field-galaxy-core {
-  fill:
-    rgb(
-      255 222 158 /
-      calc(0.94 - var(--galaxy-harvest) * 0.84)
-    );
-  transition: fill 1200ms ease;
+.dyson-swarm-visual__field-galaxy-image {
+  pointer-events: none;
 }
 
 @keyframes dyson-orbit-track {
@@ -424,9 +386,6 @@
   .dyson-swarm-visual__field-dust,
   .dyson-swarm-visual__field-member,
   .dyson-swarm-visual__field-member-spin,
-  .dyson-swarm-visual__field-galaxy-halo,
-  .dyson-swarm-visual__field-galaxy-arm,
-  .dyson-swarm-visual__field-galaxy-core,
   .dyson-swarm-visual__sun,
   .dyson-swarm-visual__thermal-glow {
     transition: none;

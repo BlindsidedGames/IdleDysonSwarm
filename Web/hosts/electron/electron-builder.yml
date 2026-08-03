@@ -1,0 +1,30 @@
+extends: hosts/electron/release-version.yml
+appId: com.blindsidedgames.idledysonswarm
+productName: Idle Dyson Swarm
+asar: true
+npmRebuild: false
+electronDist: node_modules/electron/dist
+directories:
+  output: release/electron
+icon: public/icons/pwa-icon-512.png
+files:
+  - dist-native/**/*
+  - hosts/electron/main.mjs
+  - hosts/electron/preload.cjs
+  - hosts/electron/releaseMetadata.mjs
+  - hosts/electron/steamInventoryBinding.mjs
+  - hosts/electron/steamInventoryStore.mjs
+  - hosts/electron/steam-inventory.json
+  - hosts/native-release.json
+  - package.json
+win:
+  target:
+    - portable
+mac:
+  category: public.app-category.games
+  target:
+    - zip
+linux:
+  category: Game
+  target:
+    - AppImage

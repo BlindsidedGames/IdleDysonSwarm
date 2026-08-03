@@ -253,7 +253,10 @@ function RecoveryActions({
     (actions.disabled ?? false) || saveText.trim().length === 0
   if (
     actions.importSaveText === undefined &&
-    actions.exportRecovery === undefined
+    actions.exportRecovery === undefined &&
+    actions.copyOriginal === undefined &&
+    actions.startFresh === undefined &&
+    actions.retry === undefined
   ) {
     return null
   }
@@ -301,6 +304,15 @@ function RecoveryActions({
         </>
       )}
       <div className="startup-shell__actions">
+        {actions.retry && (
+          <Button
+            variant="primary"
+            onClick={actions.retry}
+            disabled={actions.disabled}
+          >
+            <FormattedMessage {...startupShellMessages.retryAction} />
+          </Button>
+        )}
         {actions.importSaveText && (
           <Button
             type="submit"
@@ -321,6 +333,24 @@ function RecoveryActions({
             <FormattedMessage
               {...startupShellMessages.exportRecoveryAction}
             />
+          </Button>
+        )}
+        {actions.copyOriginal && (
+          <Button
+            variant="secondary"
+            onClick={actions.copyOriginal}
+            disabled={actions.disabled}
+          >
+            <FormattedMessage {...startupShellMessages.copyOriginalAction} />
+          </Button>
+        )}
+        {actions.startFresh && (
+          <Button
+            variant="secondary"
+            onClick={actions.startFresh}
+            disabled={actions.disabled}
+          >
+            <FormattedMessage {...startupShellMessages.startFreshAction} />
           </Button>
         )}
       </div>

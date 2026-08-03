@@ -468,7 +468,19 @@ describe('canonical lifecycle coordinator', () => {
     expect(application.awayCommits).toBe(1)
   })
 
-  test('suppresses imported baselines until a successful local timestamp commit', async () => {
+  test.each([
+    {
+      label: 'explicit manual-shared context',
+      context: {
+        kind: 'manual-shared-import' as const,
+        importedAtUtc: '2026-07-29T00:00:10Z',
+      },
+    },
+    {
+      label: 'legacy undefined context',
+      context: undefined,
+    },
+  ])('suppresses a $label import baseline until a successful local timestamp commit', async ({ context }) => {
     const application = new FakeCanonicalApplication(
       fixtureRuntimeWithoutQuitTimestamp(),
     )
@@ -489,6 +501,7 @@ describe('canonical lifecycle coordinator', () => {
       text: 'validated-by-application-port',
       importedAtUtc: '2026-07-29T00:00:10Z',
       overwriteApproved: true,
+      ...(context === undefined ? {} : { context }),
     })
     const firstActive =
       await coordinator.handlePlatformPhase('active')
@@ -496,6 +509,7 @@ describe('canonical lifecycle coordinator', () => {
       text: 'same-validated-import',
       importedAtUtc: '2026-07-29T00:00:10Z',
       overwriteApproved: true,
+      ...(context === undefined ? {} : { context }),
     })
     const secondActive =
       await coordinator.handlePlatformPhase('active')
@@ -585,6 +599,82 @@ describe('canonical lifecycle coordinator', () => {
         .lastSuspendedAtLegacyText,
     ).toBeNull()
   })
+
+  test.each([
+    {
+      label: 'automatic Unity migration',
+      context: {
+        kind: 'automatic-unity-migration' as const,
+        observedAtUtc: '2026-07-29T00:16:40Z',
+      },
+    },
+    {
+      label: 'transitional Web upgrade',
+      context: {
+        kind: 'transitional-web-upgrade' as const,
+        upgradedAtUtc: '2026-07-29T00:16:40Z',
+      },
+    },
+  ])(
+    'replays a preserved $label timestamp once and caps stored-time credit',
+    async ({ context }) => {
+      const application = new FakeCanonicalApplication(
+        fixtureRuntimeWithoutQuitTimestamp(),
+      )
+      const imported = fixtureRuntimeWithoutQuitTimestamp()
+      imported.gameState.timeline = {
+        ...imported.gameState.timeline,
+        lastSuspendedAtLegacyText: '2026-07-29T00:00:00Z',
+        storedTimeAvailableSeconds: 90,
+        storedTimeCapacitySeconds: 100,
+        doubleTime: {
+          ...imported.gameState.timeline.doubleTime,
+          bankSeconds: 0,
+        },
+      }
+      application.importedState = imported
+      const coordinator = new CanonicalLifecycleCoordinator({
+        application,
+        lifecycle: new FakeLifecycleAdapter(),
+        clock: fixedClock('2026-07-29T00:16:40Z'),
+        policy: DESKTOP_LIFECYCLE_POLICY,
+      })
+      await coordinator.start()
+
+      await expect(
+        coordinator.importSave({
+          text: 'trusted-local-import',
+          importedAtUtc: '2026-07-29T00:16:40Z',
+          overwriteApproved: true,
+          context,
+        }),
+      ).resolves.toMatchObject({
+        imported: true,
+        lifecycleReset: true,
+      })
+      await expect(
+        coordinator.handlePlatformPhase('active'),
+      ).resolves.toMatchObject({
+        replayed: true,
+        committed: true,
+        grantedSeconds: 1_000,
+        storedTimeCreditedSeconds: 10,
+        timestampConsumed: true,
+      })
+      await expect(
+        coordinator.handlePlatformPhase('active'),
+      ).resolves.toEqual({
+        replayed: false,
+        committed: false,
+        code: 'no-quit-timestamp',
+      })
+
+      const state = readyState(application.snapshot())
+      expect(state.gameState.timeline.lastSuspendedAtLegacyText).toBeNull()
+      expect(state.gameState.timeline.storedTimeAvailableSeconds).toBe(100)
+      expect(application.awayCommits).toBe(1)
+    },
+  )
 
   test('returns an application import rejection without replaying or replacing lifecycle state', async () => {
     const application = new FakeCanonicalApplication(

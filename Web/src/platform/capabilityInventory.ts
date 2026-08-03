@@ -20,7 +20,7 @@ export const platformCapabilityInventory: readonly PlatformCapability[] = [
       'Assets/Scripts/Systems/Save/SavePaths.cs',
       'Assets/Scripts/Expansion/Oracle.StartupRecovery.cs',
     ],
-    targetBoundary: 'SaveStorageAdapter.discoverLegacyCandidates',
+    targetBoundary: 'NativeMigrationSource',
     notes:
       'Electron and native Capacitor shells must discover idle_dyson_swarm_save.txt without prompting. Browser-only builds cannot.',
   },
@@ -32,7 +32,7 @@ export const platformCapabilityInventory: readonly PlatformCapability[] = [
       'Assets/Scripts/Systems/Save/SaveSystem.cs',
       'Assets/Scripts/Systems/Save/StartupSaveRecoveryCoordinator.cs',
     ],
-    targetBoundary: 'SaveStorageAdapter',
+    targetBoundary: 'PlatformSaveStorage',
     notes:
       'Write, verify, atomically replace, retain the original Odin file, and retain recovery candidates.',
   },

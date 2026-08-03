@@ -39,6 +39,7 @@ import {
 import {
   BrowserRecoveryBlobExporter,
   BrowserRecoveryBlobRetainer,
+  type BrowserLegacyRecoveryStore,
   BrowserSaveImportReader,
   BrowserTextDownloadAdapter,
   type TextDownloadPort,
@@ -75,9 +76,14 @@ import { prepareImportedSaveText } from '../../save/import'
 import {
   serializeCompressedWebSave,
 } from '../../save/compressedWebSave'
+import type {
+  AutomaticUnityPurchaseEvidencePromoter,
+} from '../../save/automaticPurchaseEvidence'
 import {
   PortableSaveRepository,
+  type SaveRepositoryPaths,
   type SaveRepository,
+  type SaveStorageAdapter,
 } from '../../save/repository'
 import type {
   LifecycleClockSample,
@@ -91,6 +97,7 @@ import {
   type CanonicalSkillPresetQueuePreview,
 } from '../../simulation/canonicalSkillPresetTransactions'
 import { QUANTUM_CONSTANTS } from '../../simulation/quantumUpgrades'
+import type { RuntimeEntitlementBridge } from '../../store/runtimeEntitlements'
 import {
   AuthoritativeLifecycleRouter,
 } from './authoritativeLifecycleRouter'
@@ -169,6 +176,14 @@ export interface BrowserRuntimeFoundationOptions {
   readonly profileId?: string
   /** Deterministic test seam; production composition constructs IndexedDB. */
   readonly database?: BrowserSaveDatabase
+  /**
+   * Native hosts inject their rooted filesystem adapter here. When supplied,
+   * IndexedDB remains available only as an explicitly injected writer-fence
+   * implementation and never stores player save contents.
+   */
+  readonly saveStorage?: SaveStorageAdapter & BrowserLegacyRecoveryStore
+  readonly saveRepositoryPaths?: SaveRepositoryPaths
+  readonly allowCanonicalPlayerWrites?: boolean
   readonly indexedDbFactory?: IDBFactory
   /** Deterministic lifecycle orchestration test seam. */
   readonly lifecycle?: LifecycleAdapter
@@ -191,6 +206,15 @@ export interface BrowserRuntimeFoundationOptions {
   readonly noticeChannel?: OwnershipNoticeChannel
   readonly autoHeartbeat?: boolean
   readonly legacyIdFactory?: () => string
+  /** Native Store authority projected before the canonical graph is opened. */
+  readonly hostEntitlements?: RuntimeEntitlementBridge
+  /** Same-device automatic migration capability; never used by manual import. */
+  readonly automaticPurchaseEvidencePromoter?:
+    AutomaticUnityPurchaseEvidencePromoter
+  /** Native release hosts expose the locally unlockable debug surface in production. */
+  readonly developmentControlsAvailable?: boolean
+  /** Native release controls remain gated until Store or gameplay unlock succeeds. */
+  readonly developmentControlsRequireEntitlement?: boolean
 }
 
 interface BrowserRuntimeGraph {
@@ -239,6 +263,8 @@ export function createBrowserRuntimeFoundation(
   options: Readonly<BrowserRuntimeFoundationOptions>,
 ): BrowserUiRuntimeFoundation {
   const implementation = new BrowserRuntimeFoundation(options)
+  const developmentControlsAvailable =
+    options.developmentControlsAvailable ?? import.meta.env.DEV
   const facade: BrowserUiRuntimeFoundation = {
     status: () => implementation.status(),
     subscribeStatus: (listener: UiRuntimeStatusListener) =>
@@ -260,7 +286,7 @@ export function createBrowserRuntimeFoundation(
       implementation.exportSkillPreset(slot),
     previewSkillPresetImport: (serialized) =>
       implementation.previewSkillPresetImport(serialized),
-    ...(import.meta.env.DEV
+    ...(developmentControlsAvailable
       ? {
           development: Object.freeze({
             status: () => implementation.developmentStatus(),
@@ -275,6 +301,8 @@ export function createBrowserRuntimeFoundation(
           }),
         }
       : {}),
+    synchronizeHostEntitlements: () =>
+      implementation.synchronizeHostEntitlements(),
     importSave: (request: UiRuntimeImportRequest) =>
       implementation.importSave(request),
     previewImport: (request: UiRuntimeImportRequest) =>
@@ -293,6 +321,8 @@ export function createBrowserRuntimeFoundation(
       implementation.exportCurrentSave(),
     exportLastRecovery: () =>
       implementation.exportLastRecovery(),
+    copyLastRecovery: () =>
+      implementation.copyLastRecovery(),
     readClipboardText: () =>
       implementation.readClipboardText(),
     writeClipboardText: (value: string) =>
@@ -306,7 +336,13 @@ export function createBrowserRuntimeFoundation(
 
 class BrowserRuntimeFoundation implements BrowserUiRuntimeFoundation {
   private readonly options: Readonly<BrowserRuntimeFoundationOptions>
+  private readonly developmentControlsAvailable: boolean
+  private readonly developmentControlsRequireEntitlement: boolean
   private readonly database: BrowserSaveDatabase
+  private readonly saveStorage:
+    | (SaveStorageAdapter & BrowserLegacyRecoveryStore)
+    | undefined
+  private readonly saveRepositoryPaths: SaveRepositoryPaths
   private readonly lease: BrowserWriterLease
   private readonly lifecycle: LifecycleAdapter
   private readonly clock: CanonicalLifecycleClock
@@ -339,6 +375,10 @@ class BrowserRuntimeFoundation implements BrowserUiRuntimeFoundation {
 
   constructor(options: Readonly<BrowserRuntimeFoundationOptions>) {
     this.options = options
+    this.developmentControlsAvailable =
+      options.developmentControlsAvailable ?? import.meta.env.DEV
+    this.developmentControlsRequireEntitlement =
+      options.developmentControlsRequireEntitlement === true
     const databaseName =
       options.databaseName ?? DEVELOPMENT_ONLY_BROWSER_DATABASE_NAME
     this.database =
@@ -346,6 +386,13 @@ class BrowserRuntimeFoundation implements BrowserUiRuntimeFoundation {
       new IndexedDbBrowserSaveDatabase(
         databaseName,
         options.indexedDbFactory,
+      )
+    this.saveStorage = options.saveStorage
+    this.saveRepositoryPaths =
+      options.saveRepositoryPaths ??
+      developmentOnlyRepositoryPaths(
+        options.profileId ??
+          DEVELOPMENT_ONLY_BROWSER_PROFILE_ID,
       )
     this.lease = new BrowserWriterLease({
       database: this.database,
@@ -376,7 +423,11 @@ class BrowserRuntimeFoundation implements BrowserUiRuntimeFoundation {
     this.downloads =
       options.downloads ?? new BrowserTextDownloadAdapter()
     this.exporter = new BrowserRecoveryBlobExporter(
-      { readText: (path) => this.database.readFile(path) },
+      {
+        readText: (path) =>
+          this.saveStorage?.readText(path) ??
+          this.database.readFile(path),
+      },
       this.downloads,
     )
     this.unsubscribeOwnership = this.lease.subscribe((state) => {
@@ -530,9 +581,14 @@ class BrowserRuntimeFoundation implements BrowserUiRuntimeFoundation {
         strangeMatter: 0n,
       }
     }
+    const entitled =
+      snapshot.state.debugEntitlementPurchased === true ||
+      this.options.hostEntitlements?.currentOwnership().developerOptions ===
+        true
     return {
-      enabled: snapshot.state.debugOptionsEnabled === true,
-      entitled: snapshot.state.debugEntitlementPurchased === true,
+      enabled:
+        snapshot.state.debugOptionsEnabled === true && entitled,
+      entitled,
       quantumShards:
         snapshot.state.gameState.quantum.pointsEarned >
         snapshot.state.gameState.quantum.pointsSpent
@@ -543,18 +599,57 @@ class BrowserRuntimeFoundation implements BrowserUiRuntimeFoundation {
     }
   }
 
+  async synchronizeHostEntitlements(): Promise<boolean> {
+    const bridge = this.options.hostEntitlements
+    const graph = this.graph
+    if (
+      bridge === undefined ||
+      graph === undefined ||
+      this.shutdownRequested
+    ) {
+      return false
+    }
+    try {
+      await bridge.synchronize()
+      const result = await graph.router.run(() =>
+        graph.coordinator.replaceHostEntitlements(
+          bridge.currentDysonEntitlements(),
+        ),
+      )
+      this.assertCurrentGraph(graph)
+      this.publishFrontendSnapshot(graph)
+      return result.committed
+    } catch {
+      return false
+    }
+  }
+
   async applyDevelopmentAction(
     action: UiRuntimeDevelopmentAction,
   ): Promise<UiRuntimeDevelopmentActionResult> {
-    if (!import.meta.env.DEV) return developmentUnavailable()
+    if (!this.developmentControlsAvailable) return developmentUnavailable()
     const graph = this.graph
     if (graph === undefined || this.shutdownRequested) {
       return developmentNotReady()
     }
+    const status = this.developmentStatus()
+    if (
+      this.developmentControlsRequireEntitlement &&
+      action.kind !== 'purchase-debug-options' &&
+      !status.enabled
+    ) {
+      return developmentNotEnabled()
+    }
+    const canonicalAction: CanonicalDevelopmentAction =
+      action.kind === 'purchase-debug-options' &&
+      this.options.hostEntitlements?.currentOwnership().developerOptions ===
+        true
+        ? { kind: 'enable-host-debug-options' }
+        : action as CanonicalDevelopmentAction
     try {
       const result = await graph.router.run(() =>
         graph.coordinator.applyDevelopmentAction(
-          action as CanonicalDevelopmentAction,
+          canonicalAction,
         ),
       )
       this.assertCurrentGraph(graph)
@@ -572,7 +667,11 @@ class BrowserRuntimeFoundation implements BrowserUiRuntimeFoundation {
   async simulateDevelopmentOfflineTime(
     seconds: number,
   ): Promise<UiRuntimeDevelopmentActionResult> {
-    if (!import.meta.env.DEV) return developmentUnavailable()
+    if (!this.developmentControlsAvailable) return developmentUnavailable()
+    if (
+      this.developmentControlsRequireEntitlement &&
+      !this.developmentStatus().enabled
+    ) return developmentNotEnabled()
     if (!Number.isFinite(seconds) || seconds < 0) {
       return {
         applied: false,
@@ -607,12 +706,22 @@ class BrowserRuntimeFoundation implements BrowserUiRuntimeFoundation {
   async setDevelopmentDysonBots(
     bots: number,
   ): Promise<UiRuntimeDevelopmentResult> {
-    if (!import.meta.env.DEV) {
+    if (!this.developmentControlsAvailable) {
       return {
         applied: false,
         code: 'RUNTIME-DEVELOPMENT-CONTROL-UNAVAILABLE',
         reason:
           'Development progression controls are unavailable in this build.',
+      }
+    }
+    if (
+      this.developmentControlsRequireEntitlement &&
+      !this.developmentStatus().enabled
+    ) {
+      return {
+        applied: false,
+        code: 'RUNTIME-DEVELOPMENT-NOT-ENABLED',
+        reason: 'Developer Options are not enabled.',
       }
     }
     const graph = this.graph
@@ -669,12 +778,22 @@ class BrowserRuntimeFoundation implements BrowserUiRuntimeFoundation {
   async unlockDevelopmentReality(): Promise<
     UiRuntimeDevelopmentRealityResult
   > {
-    if (!import.meta.env.DEV) {
+    if (!this.developmentControlsAvailable) {
       return {
         applied: false,
         code: 'RUNTIME-DEVELOPMENT-CONTROL-UNAVAILABLE',
         reason:
           'Development progression controls are unavailable in this build.',
+      }
+    }
+    if (
+      this.developmentControlsRequireEntitlement &&
+      !this.developmentStatus().enabled
+    ) {
+      return {
+        applied: false,
+        code: 'RUNTIME-DEVELOPMENT-NOT-ENABLED',
+        reason: 'Developer Options are not enabled.',
       }
     }
     const graph = this.graph
@@ -775,6 +894,11 @@ class BrowserRuntimeFoundation implements BrowserUiRuntimeFoundation {
               )
             : undefined
         const supplied = await this.readSuppliedSave(request)
+        const context =
+          request.context ?? {
+            kind: 'manual-shared-import' as const,
+            importedAtUtc: request.importedAtUtc,
+          }
 
         // The supplied-text ceiling is proven before the first write. The exact
         // bounded source is then retained before the coordinator invokes the
@@ -787,6 +911,7 @@ class BrowserRuntimeFoundation implements BrowserUiRuntimeFoundation {
           importedAtUtc: request.importedAtUtc,
           overwriteApproved: request.overwriteApproved,
           target: 'development',
+          context,
         })
         return {
           imported,
@@ -978,6 +1103,14 @@ class BrowserRuntimeFoundation implements BrowserUiRuntimeFoundation {
         await this.teardownPromise
         return this.currentStatus
       }
+      if (this.options.hostEntitlements !== undefined) {
+        await this.options.hostEntitlements.initialize()
+        await this.lease.assertWritable()
+        if (this.shutdownRequested) {
+          await this.teardownPromise
+          return this.currentStatus
+        }
+      }
       const graph = this.createGraph()
       this.graph = graph
       const startupReplay = await graph.router.start(async () => {
@@ -1007,6 +1140,13 @@ class BrowserRuntimeFoundation implements BrowserUiRuntimeFoundation {
 
       const applicationSnapshot = graph.application.snapshot()
       if (applicationSnapshot.phase === 'blocked') {
+        const recoveryPath = this.saveRepositoryPaths.legacyRecovery
+        const recoveryExists = this.saveStorage === undefined
+          ? await this.database.fileExists(recoveryPath)
+          : await this.saveStorage.exists(recoveryPath)
+        if (recoveryExists) {
+          this.lastRecoveryPath = recoveryPath
+        }
         const blocked = applicationBlockedStatus(
           applicationSnapshot,
         )
@@ -1018,6 +1158,13 @@ class BrowserRuntimeFoundation implements BrowserUiRuntimeFoundation {
         throw new Error(
           `Application startup ended in ${applicationSnapshot.phase}.`,
         )
+      }
+      if (applicationSnapshot.source === 'recovered-canonical') {
+        this.addWarning({
+          code: 'backup-recovered',
+          reason:
+            'The current save could not be opened, so the newest verified backup was restored.',
+        }, false)
       }
       graph.checkpoint.start()
       this.publishFrontendSnapshot(graph)
@@ -1064,20 +1211,23 @@ class BrowserRuntimeFoundation implements BrowserUiRuntimeFoundation {
   }
 
   private createGraph(): BrowserRuntimeGraph {
-    const profileId =
-      this.options.profileId ??
-      DEVELOPMENT_ONLY_BROWSER_PROFILE_ID
-    const storage = new IndexedDbSaveStorageAdapter({
-      database: this.database,
-      lease: this.lease,
-      nowUtcMilliseconds: this.options.nowUtcMilliseconds,
-      legacyIdFactory: this.options.legacyIdFactory,
-    })
+    const storage =
+      this.saveStorage ??
+      new IndexedDbSaveStorageAdapter({
+        database: this.database,
+        lease: this.lease,
+        nowUtcMilliseconds: this.options.nowUtcMilliseconds,
+        legacyIdFactory: this.options.legacyIdFactory,
+      })
     const repository = new PortableSaveRepository(
       storage,
-      developmentOnlyRepositoryPaths(profileId),
+      this.saveRepositoryPaths,
       decodeIdb1Save,
-      { allowCanonicalPlayerWrites: false },
+      {
+        allowCanonicalPlayerWrites:
+          this.options.allowCanonicalPlayerWrites === true,
+      },
+      this.options.automaticPurchaseEvidencePromoter,
     )
     const initialLifecyclePhase = this.lifecycle.currentPhase()
     const initialLifecycleReceipt =
@@ -1444,6 +1594,14 @@ class BrowserRuntimeFoundation implements BrowserUiRuntimeFoundation {
     return this.lifecycleIntentEpoch
   }
 
+  async copyLastRecovery(): Promise<boolean> {
+    const recoveryPath = this.lastRecoveryPath
+    if (recoveryPath === undefined) return false
+    const text = await this.database.readFile(recoveryPath)
+    await this.writeClipboardText(text)
+    return true
+  }
+
   private phaseRunsActiveTime(phase: LifecyclePhase): boolean {
     return phase === 'active' || (
       phase === 'focus-lost' &&
@@ -1739,6 +1897,14 @@ function developmentNotReady(): UiRuntimeDevelopmentActionResult {
     applied: false,
     code: 'RUNTIME-DEVELOPMENT-NOT-READY',
     reason: 'The browser runtime does not own a writable ready application.',
+  }
+}
+
+function developmentNotEnabled(): UiRuntimeDevelopmentActionResult {
+  return {
+    applied: false,
+    code: 'RUNTIME-DEVELOPMENT-NOT-ENABLED',
+    reason: 'Developer Options are not enabled.',
   }
 }
 

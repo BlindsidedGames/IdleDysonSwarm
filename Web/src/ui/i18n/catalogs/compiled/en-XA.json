@@ -445,6 +445,20 @@
       "value": "]"
     }
   ],
+  "debug.add-cash": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Ȧḓḓ Ƈȧȧşħ"
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
   "debug.add-infinity-points": [
     {
       "type": 0,
@@ -4645,6 +4659,20 @@
       "value": "]"
     }
   ],
+  "navigation.store": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Şŧǿǿřḗḗ"
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
   "navigation.story": [
     {
       "type": 0,
@@ -5067,6 +5095,90 @@
     {
       "type": 0,
       "value": "Ǿƒƒŀīƞḗḗ Ŧīḿḗḗ Ŭşḗḗḓ"
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "pwa.update.accept": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Şȧȧṽḗḗ ȧȧƞḓ ŭŭƥḓȧȧŧḗḗ"
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "pwa.update.applying": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Şȧȧṽīƞɠ ƥřǿǿɠřḗḗşş ȧȧƞḓ ȧȧƥƥŀẏīƞɠ ŧħḗḗ ŭŭƥḓȧȧŧḗḗ…"
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "pwa.update.body": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Ȧ ƞḗḗẇ ṽḗḗřşīǿǿƞ ħȧȧş ḓǿǿẇƞŀǿǿȧȧḓḗḗḓ. Şȧȧṽḗḗ ẏǿǿŭŭř ƥřǿǿɠřḗḗşş ƀḗḗƒǿǿřḗḗ ȧȧƥƥŀẏīƞɠ īŧ."
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "pwa.update.failed": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Ŧħḗḗ ŭŭƥḓȧȧŧḗḗ ẇȧȧş ƞǿǿŧ ȧȧƥƥŀīḗḗḓ. Ẏǿǿŭŭř ƈŭŭřřḗḗƞŧ ɠȧȧḿḗḗ řḗḗḿȧȧīƞş ǿǿƥḗḗƞ."
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "pwa.update.retry": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Ŧřẏ ȧȧɠȧȧīƞ"
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "pwa.update.title": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Ŭƥḓȧȧŧḗḗ řḗḗȧȧḓẏ"
     },
     {
       "type": 0,
@@ -13525,6 +13637,20 @@
       "value": "]"
     }
   ],
+  "startup-shell.action.copy-original": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Ƈǿǿƥẏ Ǿřīɠīƞȧȧŀ"
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
   "startup-shell.action.export-recovery": [
     {
       "type": 0,
@@ -13589,6 +13715,20 @@
     {
       "type": 0,
       "value": "Şŧȧȧřŧ ɠȧȧḿḗḗ"
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "startup-shell.action.start-fresh": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Şŧȧȧřŧ Ƒřḗḗşħ"
     },
     {
       "type": 0,
@@ -13715,6 +13855,20 @@
     {
       "type": 0,
       "value": "Şȧȧṽḗḗ ŧḗḗẋŧ"
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "startup-shell.notice.backup-recovered": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Ẏǿǿŭŭř ƈŭŭřřḗḗƞŧ şȧȧṽḗḗ ƈǿǿŭŭŀḓ ƞǿǿŧ ƀḗḗ ǿǿƥḗḗƞḗḗḓ. Ŧħḗḗ ƞḗḗẇḗḗşŧ ṽḗḗřīƒīḗḗḓ ƀȧȧƈķŭŭƥ ẇȧȧş řḗḗşŧǿǿřḗḗḓ."
     },
     {
       "type": 0,
@@ -14737,6 +14891,493 @@
     {
       "type": 0,
       "value": "Ŀȧȧşŧ 30 ḓȧȧẏş"
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "store.action.purchase": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Ƥŭŭřƈħȧȧşḗḗ "
+    },
+    {
+      "type": 1,
+      "value": "price"
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "store.action.purchasing": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Ƥŭŭřƈħȧȧşīƞɠ…"
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "store.action.restore": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Řḗḗşŧǿǿřḗḗ Ƥŭŭřƈħȧȧşḗḗş"
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "store.action.restoring": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Řḗḗşŧǿǿřīƞɠ…"
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "store.action.tip": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Ŧīƥ "
+    },
+    {
+      "type": 1,
+      "value": "price"
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "store.feedback.entitlement-verified": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Ƥŭŭřƈħȧȧşḗḗ ṽḗḗřīƒīḗḗḓ ǿǿƞ ŧħīş ḓḗḗṽīƈḗḗ."
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "store.feedback.operation-failed": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Ŧħḗḗ Şŧǿǿřḗḗ ƈǿǿŭŭŀḓ ƞǿǿŧ ƈǿǿḿƥŀḗḗŧḗḗ ŧħȧȧŧ ȧȧƈŧīǿǿƞ. Ŧřẏ ȧȧɠȧȧīƞ ẇħḗḗƞ ŧħḗḗ ƥŀȧȧŧƒǿǿřḿ şŧǿǿřḗḗ īş ȧȧṽȧȧīŀȧȧƀŀḗḗ."
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "store.feedback.purchase-cancelled": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Ƥŭŭřƈħȧȧşḗḗ ƈȧȧƞƈḗḗŀŀḗḗḓ."
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "store.feedback.purchase-pending": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Ƥŭŭřƈħȧȧşḗḗ īş ƥḗḗƞḓīƞɠ ȧȧƥƥřǿǿṽȧȧŀ ƒřǿǿḿ ŧħḗḗ ƥŀȧȧŧƒǿǿřḿ şŧǿǿřḗḗ."
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "store.feedback.restore-completed": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 6,
+      "value": "count",
+      "options": {
+        "=0": {
+          "value": [
+            {
+              "type": 0,
+              "value": "Ƞǿǿ ƥḗḗřḿȧȧƞḗḗƞŧ ƥŭŭřƈħȧȧşḗḗş ẇḗḗřḗḗ řḗḗşŧǿǿřḗḗḓ."
+            }
+          ]
+        },
+        "one": {
+          "value": [
+            {
+              "type": 0,
+              "value": "Ǿƞḗḗ ƥḗḗřḿȧȧƞḗḗƞŧ ƥŭŭřƈħȧȧşḗḗ ẇȧȧş řḗḗşŧǿǿřḗḗḓ."
+            }
+          ]
+        },
+        "other": {
+          "value": [
+            {
+              "type": 7
+            },
+            {
+              "type": 0,
+              "value": " ƥḗḗřḿȧȧƞḗḗƞŧ ƥŭŭřƈħȧȧşḗḗş ẇḗḗřḗḗ řḗḗşŧǿǿřḗḗḓ."
+            }
+          ]
+        }
+      },
+      "offset": 0,
+      "pluralType": "cardinal"
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "store.feedback.tip-completed": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Ŧħȧȧƞķ ẏǿǿŭŭ ƒǿǿř ẏǿǿŭŭř şŭŭƥƥǿǿřŧ!"
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "store.introduction": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Ǿƥŧīǿǿƞȧȧŀ ẇȧȧẏş ŧǿǿ şŭŭƥƥǿǿřŧ Īḓŀḗḗ Ḓẏşǿǿƞ Şẇȧȧřḿ ȧȧƞḓ ƥḗḗřḿȧȧƞḗḗƞŧ ŭŭƥɠřȧȧḓḗḗş ƒǿǿř ŧħīş ḓḗḗṽīƈḗḗ ȧȧƈƈǿǿŭŭƞŧ."
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "store.permanent.description": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Ƥḗḗřḿȧȧƞḗḗƞŧ ƥŭŭřƈħȧȧşḗḗş ȧȧřḗḗ ṽḗḗřīƒīḗḗḓ ƀẏ ŧħḗḗ ƥŀȧȧŧƒǿǿřḿ ȧȧƈƈǿǿŭŭƞŧ ȧȧƞḓ řḗḗḿȧȧīƞ ȧȧṽȧȧīŀȧȧƀŀḗḗ ǿǿƒƒŀīƞḗḗ ȧȧƒŧḗḗř ṽḗḗřīƒīƈȧȧŧīǿǿƞ."
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "store.permanent.heading": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Ƥḗḗřḿȧȧƞḗḗƞŧ ŭŭƥɠřȧȧḓḗḗş"
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "store.product.developer-options.description": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Ŭƞŀǿǿƈķ Ḓḗḗṽḗḗŀǿǿƥḗḗř Ǿƥŧīǿǿƞş ƞǿǿẇ. Ŧħḗḗ ḗḗẋīşŧīƞɠ īƞ-ɠȧȧḿḗḗ ŭŭƞŀǿǿƈķ řḗḗḿȧȧīƞş ȧȧṽȧȧīŀȧȧƀŀḗḗ."
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "store.product.developer-options.title": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Ḓḗḗṽḗḗŀǿǿƥḗḗř Ǿƥŧīǿǿƞş"
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "store.product.double-ip.description": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Ŭƞŀǿǿƈķ ȧȧ ŧǿǿɠɠŀḗḗ ŧħȧȧŧ ḓǿǿŭŭƀŀḗḗş ḗḗȧȧřƞḗḗḓ Īƞƒīƞīŧẏ Ƥǿǿīƞŧş."
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "store.product.double-ip.title": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Ḓǿǿŭŭƀŀḗḗ Īƞƒīƞīŧẏ Ƥǿǿīƞŧş"
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "store.product.tip-tier-1.description": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Ȧ şḿȧȧŀŀ ŧħȧȧƞķ-ẏǿǿŭŭ ẇīŧħ ƞǿǿ ɠȧȧḿḗḗƥŀȧȧẏ ƀḗḗƞḗḗƒīŧ."
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "store.product.tip-tier-1.title": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Ŧřḗḗȧȧŧ ŧħḗḗ Ƈȧȧŧş!"
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "store.product.tip-tier-2.description": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Ȧ ḿḗḗḓīŭŭḿ ŧħȧȧƞķ-ẏǿǿŭŭ ẇīŧħ ƞǿǿ ɠȧȧḿḗḗƥŀȧȧẏ ƀḗḗƞḗḗƒīŧ."
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "store.product.tip-tier-2.title": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Ɓŭŭẏ ŭŭş ȧȧ ƈǿǿƒƒḗḗḗḗ"
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "store.product.tip-tier-3.description": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Ȧ ɠḗḗƞḗḗřǿǿŭŭş ŧħȧȧƞķ-ẏǿǿŭŭ ẇīŧħ ƞǿǿ ɠȧȧḿḗḗƥŀȧȧẏ ƀḗḗƞḗḗƒīŧ."
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "store.product.tip-tier-3.title": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Şŭŭƥƥǿǿřŧ ḿẏ ķīḓş"
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "store.region": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Şŧǿǿřḗḗ"
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "store.restore.description": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Řḗḗşŧǿǿřḗḗ ƈħḗḗƈķş ǿǿƞŀẏ Ḓǿǿŭŭƀŀḗḗ Īƞƒīƞīŧẏ Ƥǿǿīƞŧş ȧȧƞḓ Ḓḗḗṽḗḗŀǿǿƥḗḗř Ǿƥŧīǿǿƞş. Ŧīƥş ȧȧřḗḗ ƈǿǿƞşŭŭḿȧȧƀŀḗḗ ȧȧƞḓ ȧȧřḗḗ ƞǿǿŧ řḗḗşŧǿǿřḗḗḓ."
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "store.status.loading": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Ŀǿǿȧȧḓīƞɠ Şŧǿǿřḗḗ…"
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "store.status.owned": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Ǿẇƞḗḗḓ"
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "store.status.unavailable": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Ŭƞȧȧṽȧȧīŀȧȧƀŀḗḗ"
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "store.status.unlocked-in-game": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Ŭƞŀǿǿƈķḗḗḓ īƞ ɠȧȧḿḗḗ"
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "store.tips.description": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Ŧīƥş ȧȧřḗḗ ǿǿƥŧīǿǿƞȧȧŀ, řḗḗƥḗḗȧȧŧȧȧƀŀḗḗ, ȧȧƞḓ ƥřǿǿṽīḓḗḗ ƞǿǿ ɠȧȧḿḗḗƥŀȧȧẏ ƀḗḗƞḗḗƒīŧ."
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "store.tips.heading": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Şŭŭƥƥǿǿřŧ ŧħḗḗ ḓḗḗṽḗḗŀǿǿƥḗḗř"
     },
     {
       "type": 0,

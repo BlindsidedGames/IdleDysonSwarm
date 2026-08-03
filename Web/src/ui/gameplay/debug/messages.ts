@@ -12,6 +12,7 @@ export const debugSurfaceMessages = defineMessages({
   progression: { id: 'debug.progression', defaultMessage: 'Progression tools', description: 'Heading for developer progression controls.' },
   amount: { id: 'debug.amount', defaultMessage: 'Amount', description: 'Label for the developer resource amount input.' },
   addBots: { id: 'debug.add-bots', defaultMessage: 'Add Bots', description: 'Developer action that adds Bots.' },
+  addCash: { id: 'debug.add-cash', defaultMessage: 'Add Cash', description: 'Developer action that adds Cash.' },
   addSkillPoints: { id: 'debug.add-skill-points', defaultMessage: 'Add Skill Points', description: 'Developer action that adds Skill Points.' },
   addInfinityPoints: { id: 'debug.add-infinity-points', defaultMessage: 'Add Infinity Points', description: 'Developer action that adds Infinity Points.' },
   addQuantumShards: { id: 'debug.add-quantum-shards', defaultMessage: 'Add Quantum Shards', description: 'Developer action that adds Quantum Shards.' },

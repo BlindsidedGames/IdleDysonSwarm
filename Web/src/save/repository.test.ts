@@ -1,4 +1,4 @@
-import { describe, expect, test } from 'vitest'
+import { describe, expect, test, vi } from 'vitest'
 import { PreparedSave } from './prepare'
 import { PortableSaveRepository, type LegacySaveCandidate, type SaveStorageAdapter } from './repository'
 import { serializeWebSave } from './serialization'
@@ -8,7 +8,7 @@ class MemoryStorage implements SaveStorageAdapter {
   candidates: readonly LegacySaveCandidate[] = []
   replacements: Array<[string, string]> = []
   copies: Array<[string, string]> = []
-  failAt: 'write' | 'read-temporary' | 'replace' | null = null
+  failAt: 'write' | 'read-temporary' | 'copy' | 'replace' | null = null
   corruptTemporaryRead = false
 
   async exists(path: string): Promise<boolean> {
@@ -38,6 +38,7 @@ class MemoryStorage implements SaveStorageAdapter {
   }
 
   async copy(sourcePath: string, destinationPath: string): Promise<void> {
+    if (this.failAt === 'copy') throw new Error('backup copy failed')
     this.copies.push([sourcePath, destinationPath])
     this.files.set(destinationPath, await this.readText(sourcePath))
   }
@@ -231,6 +232,192 @@ describe('portable transactional save repository', () => {
     expect(storage.files.get('/current')).toBe(currentBytes)
   })
 
+  test('promotes same-device Unity Double IP evidence only during first migration', async () => {
+    const storage = new MemoryStorage()
+    storage.files.set('unity-readonly:canonical-unity', 'unity-paid')
+    storage.candidates = [
+      {
+        id: 'canonical-unity',
+        sourcePath: 'unity-readonly:canonical-unity',
+        text: 'unity-paid',
+        provenance: {
+          kind: 'automatic-same-device-unity',
+          platform: 'windows',
+          sourceClass: 'unity-persistent-data-save',
+          opaqueSourceIdentifier: 'canonical-unity',
+          pathClass: 'unity-local-low',
+        },
+      },
+    ]
+    const promoted: Array<Record<string, unknown>> = []
+    const repository = new PortableSaveRepository(
+      storage,
+      {
+        current: '/current',
+        temporary: '/current.tmp',
+        legacyRecovery: '/recovery/original-idb1.txt',
+      },
+      () => ({ saveVersion: 12, doubleIp: true }),
+      { allowCanonicalPlayerWrites: false },
+      {
+        promoteAutomaticUnityPurchaseEvidence: async (evidence) => {
+          promoted.push({ ...evidence })
+        },
+      },
+    )
+
+    await expect(repository.migrateLegacyOnFirstLaunch()).resolves.toMatchObject({
+      status: 'migrated',
+    })
+    await expect(repository.migrateLegacyOnFirstLaunch()).resolves.toMatchObject({
+      status: 'already-migrated',
+    })
+    expect(promoted).toEqual([expect.objectContaining({
+      permanentDoubleInfinityPoints: true,
+      platform: 'windows',
+      sourceClass: 'unity-persistent-data-save',
+      opaqueSourceIdentifier: 'canonical-unity',
+      pathClass: 'unity-local-low',
+      saveSchemaVersion: 12,
+      contentSha256: expect.stringMatching(/^[a-f0-9]{64}$/),
+    })])
+  })
+
+  test('does not invoke purchase promotion without affirmative Unity evidence', async () => {
+    const storage = new MemoryStorage()
+    storage.files.set('unity-readonly:canonical-unity', 'unity-unpaid')
+    storage.candidates = [
+      {
+        id: 'canonical-unity',
+        sourcePath: 'unity-readonly:canonical-unity',
+        text: 'unity-unpaid',
+        provenance: {
+          kind: 'automatic-same-device-unity',
+          platform: 'windows',
+          sourceClass: 'unity-persistent-data-save',
+          opaqueSourceIdentifier: 'canonical-unity',
+          pathClass: 'unity-local-low',
+        },
+      },
+    ]
+    const promote = vi.fn(async () => undefined)
+    const repository = new PortableSaveRepository(
+      storage,
+      {
+        current: '/current',
+        temporary: '/current.tmp',
+        legacyRecovery: '/recovery/original-idb1.txt',
+      },
+      () => ({ saveVersion: 12, doubleIp: false }),
+      { allowCanonicalPlayerWrites: false },
+      { promoteAutomaticUnityPurchaseEvidence: promote },
+    )
+
+    await expect(repository.migrateLegacyOnFirstLaunch()).resolves.toMatchObject({
+      status: 'migrated',
+    })
+    expect(promote).not.toHaveBeenCalled()
+  })
+
+  test('never promotes a rediscovered browser import carrying Double IP', async () => {
+    const storage = new MemoryStorage()
+    storage.files.set('browser-import/retained-import', 'shared-paid-claim')
+    storage.candidates = [{
+      id: 'retained-import',
+      sourcePath: 'browser-import/retained-import',
+      text: 'shared-paid-claim',
+      provenance: { kind: 'browser-retained-import' },
+    }]
+    const promote = vi.fn(async () => undefined)
+    const repository = new PortableSaveRepository(
+      storage,
+      {
+        current: '/current',
+        temporary: '/current.tmp',
+        legacyRecovery: '/recovery/original-idb1.txt',
+      },
+      () => ({ saveVersion: 12, doubleIp: true }),
+      { allowCanonicalPlayerWrites: false },
+      { promoteAutomaticUnityPurchaseEvidence: promote },
+    )
+
+    await expect(repository.migrateLegacyOnFirstLaunch()).resolves.toMatchObject({
+      status: 'migrated',
+      source: { id: 'retained-import' },
+    })
+    expect(promote).not.toHaveBeenCalled()
+  })
+
+  test('rotates three verified backups before publishing a replacement', async () => {
+    const storage = new MemoryStorage()
+    storage.files.set(
+      '/current',
+      serializeWebSave({ saveVersion: 12, slot: 4 }),
+    )
+    storage.files.set(
+      '/current.backup.1',
+      serializeWebSave({ saveVersion: 12, slot: 3 }),
+    )
+    storage.files.set(
+      '/current.backup.2',
+      serializeWebSave({ saveVersion: 12, slot: 2 }),
+    )
+    storage.files.set(
+      '/current.backup.3',
+      serializeWebSave({ saveVersion: 12, slot: 1 }),
+    )
+    const repository = new PortableSaveRepository(
+      storage,
+      {
+        current: '/current',
+        temporary: '/current.tmp',
+        legacyRecovery: '/recovery/original-idb1.txt',
+      },
+      () => ({ saveVersion: 12 }),
+    )
+
+    await repository.commit(
+      PreparedSave.fromDecoded({ saveVersion: 12, slot: 5 }),
+    )
+
+    expect(storage.files.get('/current.backup.1')).toBe(
+      serializeWebSave({ saveVersion: 12, slot: 4 }),
+    )
+    expect(storage.files.get('/current.backup.2')).toBe(
+      serializeWebSave({ saveVersion: 12, slot: 3 }),
+    )
+    expect(storage.files.get('/current.backup.3')).toBe(
+      serializeWebSave({ saveVersion: 12, slot: 2 }),
+    )
+    expect(
+      (await repository.loadCurrent())?.copyValidatedState().slot,
+    ).toBe(5)
+  })
+
+  test('does not replace current when backup rotation fails', async () => {
+    const storage = new MemoryStorage()
+    const current = serializeWebSave({ saveVersion: 12, slot: 'current' })
+    storage.files.set('/current', current)
+    storage.failAt = 'copy'
+    const repository = new PortableSaveRepository(
+      storage,
+      {
+        current: '/current',
+        temporary: '/current.tmp',
+        legacyRecovery: '/recovery/original-idb1.txt',
+      },
+      () => ({ saveVersion: 12 }),
+    )
+
+    await expect(
+      repository.commit(
+        PreparedSave.fromDecoded({ saveVersion: 12, slot: 'candidate' }),
+      ),
+    ).rejects.toThrow('backup copy failed')
+    expect(storage.files.get('/current')).toBe(current)
+    expect(storage.replacements).toEqual([])
+  })
+
   test('recovers from a corrupt current save using a valid legacy candidate', async () => {
     const storage = new MemoryStorage()
     storage.files.set('/current', '{')
@@ -252,6 +439,115 @@ describe('portable transactional save repository', () => {
     expect(result.status).toBe('migrated')
     expect(storage.files.get('/recovery/original-idb1.txt')).toBe('good')
     expect(await repository.loadCurrent()).not.toBeNull()
+  })
+
+  test('recovers the newest valid Web backup before considering Unity candidates', async () => {
+    const storage = new MemoryStorage()
+    storage.files.set('/current', '{')
+    storage.files.set('/current.backup.1', 'also invalid')
+    storage.files.set(
+      '/current.backup.2',
+      serializeWebSave({ saveVersion: 12, slot: 'recovered' }),
+    )
+    storage.files.set('/legacy', 'legacy')
+    storage.candidates = [
+      { id: 'legacy', sourcePath: '/legacy', text: 'legacy' },
+    ]
+    const repository = new PortableSaveRepository(
+      storage,
+      {
+        current: '/current',
+        temporary: '/current.tmp',
+        legacyRecovery: '/recovery/original-idb1.txt',
+      },
+      () => ({ saveVersion: 12, slot: 'legacy' }),
+    )
+
+    await expect(repository.migrateLegacyOnFirstLaunch()).resolves.toMatchObject({
+      status: 'recovered-backup',
+      sourcePath: '/current.backup.2',
+    })
+    expect(
+      (await repository.loadCurrent())?.copyValidatedState().slot,
+    ).toBe('recovered')
+    expect(storage.copies).toEqual([
+      ['/current', '/recovery/original-idb1.txt'],
+    ])
+    expect(storage.replacements).toEqual([['/current.tmp', '/current']])
+  })
+
+  test('blocks downgrade recovery when the newest readable backup has a future schema', async () => {
+    const storage = new MemoryStorage()
+    storage.files.set('/current', '{')
+    storage.files.set(
+      '/current.backup.1',
+      serializeWebSave({ saveVersion: 13 }),
+    )
+    storage.files.set(
+      '/current.backup.2',
+      serializeWebSave({ saveVersion: 12, slot: 'older' }),
+    )
+    const repository = new PortableSaveRepository(
+      storage,
+      {
+        current: '/current',
+        temporary: '/current.tmp',
+        legacyRecovery: '/recovery/original-idb1.txt',
+      },
+      () => ({ saveVersion: 12 }),
+    )
+
+    await expect(repository.migrateLegacyOnFirstLaunch()).resolves.toMatchObject({
+      status: 'unsupported-future-version',
+      source: 'backup',
+    })
+    expect(storage.replacements).toEqual([])
+  })
+
+  test('does not silently start fresh when every Web backup is invalid', async () => {
+    const storage = new MemoryStorage()
+    storage.files.set('/current.backup.1', 'invalid backup')
+    const repository = new PortableSaveRepository(
+      storage,
+      {
+        current: '/current',
+        temporary: '/current.tmp',
+        legacyRecovery: '/recovery/original-idb1.txt',
+      },
+      () => ({ saveVersion: 12 }),
+    )
+
+    await expect(repository.migrateLegacyOnFirstLaunch()).resolves.toMatchObject({
+      status: 'current-invalid',
+    })
+  })
+
+  test('treats publication failure during valid backup recovery as terminal', async () => {
+    const storage = new MemoryStorage()
+    storage.files.set(
+      '/current.backup.1',
+      serializeWebSave({ saveVersion: 12, slot: 'recovered' }),
+    )
+    storage.failAt = 'write'
+    const repository = new PortableSaveRepository(
+      storage,
+      {
+        current: '/current',
+        temporary: '/current.tmp',
+        legacyRecovery: '/recovery/original-idb1.txt',
+      },
+      () => ({ saveVersion: 12 }),
+    )
+
+    await expect(repository.migrateLegacyOnFirstLaunch()).resolves.toMatchObject({
+      status: 'recovery-write-failed',
+      source: {
+        id: 'web-backup',
+        sourcePath: '/current.backup.1',
+      },
+      error: 'temporary write failed',
+    })
+    expect(storage.replacements).toEqual([])
   })
 
   test('stops fallback when the current save has a future schema', async () => {

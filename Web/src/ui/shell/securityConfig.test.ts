@@ -81,7 +81,7 @@ describe('browser security policy', () => {
       "name: 'idle-dyson-swarm-security-headers'",
     )
     expect(config).toContain('transformIndexHtml()')
-    expect(config).toContain('renderStaticSecurityHeaders()')
+    expect(config).toContain("renderStaticSecurityHeaders('/play/*')")
     expect(config).toContain('preview:')
     expect(config).toContain('headers: SECURITY_HEADERS')
     expect(config).toContain('sourcemap: false')
@@ -110,7 +110,7 @@ describe('browser security policy', () => {
           resolve(outputDirectory, '_headers'),
           'utf8',
         ),
-      ).toBe(renderStaticSecurityHeaders())
+      ).toBe(renderStaticSecurityHeaders('/play/*'))
 
       const html = readFileSync(
         resolve(outputDirectory, 'index.html'),

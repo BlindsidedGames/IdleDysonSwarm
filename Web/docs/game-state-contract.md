@@ -1,16 +1,20 @@
 # Canonical game-state contract
 
 This decision record freezes the boundary used by parallel gameplay domain
-ports. The first typed mapper now covers the durable gameplay roots; the
-coverage manifest remains deliberately incomplete for legacy duplicates,
-derived caches, preferences, entitlements and remaining metadata.
+ports. The first typed mapper now covers the durable gameplay roots. Its
+executable coverage manifest is pinned to the public Unity 3.0.328/schema-11
+save surface and remains deliberately incomplete for unresolved durable
+fields.
 
 ## Three different versions
 
 These concepts must never share one ambiguous `schema` name:
 
-- Unity import schema: currently version 12, used only by the compatibility
-  decoder, migration, repair and validation pipeline.
+- Public Unity mapping certification: version 11 from application 3.0.328,
+  used to prove field-level ownership against the save format players have.
+- Development preparation schema: currently version 12, used internally by
+  the compatibility decoder, migration, repair and validation pipeline. It is
+  not evidence that schema 12 shipped publicly.
 - Canonical game model version: begins at 1 when the typed whole-game mapper is
   implemented.
 - Application snapshot contract version: currently 1, owned by the startup and
@@ -99,7 +103,8 @@ paths whose domain ownership is covered by executable parity tests. This
 preserves not-yet-ported fields without treating the legacy graph as runtime
 authority.
 
-A mapping-coverage manifest must classify every durable Unity field as:
+A mapping-coverage manifest must classify every leaf in the pinned public
+Unity source schema as:
 
 - canonically owned;
 - derived and intentionally recomputed;
@@ -107,6 +112,10 @@ A mapping-coverage manifest must classify every durable Unity field as:
 - presentation preference;
 - platform entitlement; or
 - still unowned.
+
+Wildcards may represent collection elements or dictionary keys, but never an
+unknown field name. A leaf absent from the pinned catalog fails certification;
+it is not silently assigned to the nearest object or domain.
 
 Partial-port builds must use a separate development save and must not overwrite
 the player's canonical Unity save. Enabling canonical writes is a later release
@@ -121,9 +130,10 @@ decision gated on complete mapping coverage and round-trip parity.
 - Dehydration clones the privately preserved source and writes only declared
   canonical paths.
 - Authentic schemas 0, 8, 10 and 11 round-trip through preparation, hydration
-  and dehydration. A generated schema-12 entry verifies current-schema
-  idempotence; an authentic schema-12 fixture is still required before making
-  that real-save claim.
+  and dehydration. Public mapping coverage is certified against the authentic
+  schema-11 support save and the schema-11 source-field catalog. A generated
+  schema-12 entry verifies development-schema idempotence only; it is not the
+  public release target.
 - The executable coverage manifest keeps release canonical writes disabled
   while unmatched paths remain source-preserved.
 

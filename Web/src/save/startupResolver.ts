@@ -79,6 +79,12 @@ export class RepositoryStartupSaveResolver implements StartupSaveResolver {
           source: 'recovered-legacy',
           save: result.save,
         }
+      case 'recovered-backup':
+        return {
+          kind: 'ready',
+          source: 'recovered-canonical',
+          save: result.save,
+        }
       case 'no-legacy-save':
         try {
           return { kind: 'first-run', save: this.createFirstRunSave() }
@@ -93,7 +99,8 @@ export class RepositoryStartupSaveResolver implements StartupSaveResolver {
       case 'recovery-write-failed':
         return {
           ...blocked('recovery-write-failed', result.error),
-          candidate: result.source,
+          candidate:
+            'text' in result.source ? result.source : undefined,
         }
       case 'current-invalid':
       case 'legacy-invalid':

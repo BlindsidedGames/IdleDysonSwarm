@@ -93,10 +93,16 @@ export class IndexedDbSaveStorageAdapter
     })
   }
 
-  discoverLegacyCandidates(): Promise<
+  async discoverLegacyCandidates(): Promise<
     readonly LegacySaveCandidate[]
   > {
-    return this.database.listLegacyCandidates()
+    const candidates = await this.database.listLegacyCandidates()
+    return candidates.map((candidate) => Object.freeze({
+      ...candidate,
+      provenance: Object.freeze({
+        kind: 'browser-retained-import' as const,
+      }),
+    }))
   }
 
   async retainLegacyCandidate(
@@ -107,6 +113,9 @@ export class IndexedDbSaveStorageAdapter
       id,
       sourcePath: `browser-import/${id}`,
       text,
+      provenance: Object.freeze({
+        kind: 'browser-retained-import' as const,
+      }),
     }
     await this.mutate({
       kind: 'retain-legacy',

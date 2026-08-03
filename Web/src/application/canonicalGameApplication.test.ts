@@ -183,6 +183,22 @@ describe('canonical game application engine', () => {
     expect(state.gameState.skills.points).toBe(0n)
   })
 
+  test('restores the development cash action without changing player commands', () => {
+    const state = runtime()
+    const before = state.gameState.dyson.money
+    const definition = createCanonicalGameEngineDefinition({
+      eventContext: context(),
+    })
+
+    expect(
+      definition.applyCommand(state, {
+        kind: 'internal.development-apply-action',
+        action: { kind: 'add-cash', amount: 125 },
+      }),
+    ).toEqual({ accepted: true, changed: true })
+    expect(state.gameState.dyson.money).toBe(before + 125)
+  })
+
   test('resets Avotation secret progress through Developer Options', () => {
     const state = runtime()
     Object.assign(state, {
@@ -255,6 +271,29 @@ describe('canonical game application engine', () => {
       changed: true,
     })
     expect(state.debugOptionsEnabled).toBe(true)
+  })
+
+  test('applies trusted host entitlements without persisting a paid save claim', () => {
+    const state = runtime()
+    Object.assign(state, {
+      debugOptionsEnabled: false,
+      debugEntitlementPurchased: false,
+    })
+    const definition = createCanonicalGameEngineDefinition({
+      eventContext: context(),
+    })
+
+    expect(definition.applyCommand(state, {
+      kind: 'internal.replace-host-entitlements',
+      entitlements: { permanentDoubleIp: true },
+    })).toEqual({ accepted: true, changed: true })
+    expect(definition.applyCommand(state, {
+      kind: 'internal.development-apply-action',
+      action: { kind: 'enable-host-debug-options' },
+    })).toEqual({ accepted: true, changed: true })
+    expect(state.entitlements.permanentDoubleIp).toBe(true)
+    expect(state.debugOptionsEnabled).toBe(true)
+    expect(state.debugEntitlementPurchased).toBe(false)
   })
 
   test('routes player settings with runtime carriers as one transaction', () => {

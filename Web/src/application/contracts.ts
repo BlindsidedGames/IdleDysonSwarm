@@ -141,6 +141,7 @@ export interface ImportSaveRequest {
   readonly importedAtUtc: string
   readonly overwriteApproved: boolean
   readonly target?: import('../save/repository').SaveCommitTarget
+  readonly context?: import('../save/importContext').ImportContext
 }
 
 export type ImportSaveResult =

@@ -4,12 +4,23 @@ import {
 } from './migrate'
 import { deserializeWebSave, serializeWebSave } from './serialization'
 import { PreparedSave } from './prepare'
+import type {
+  AutomaticUnityPurchaseEvidencePromoter,
+  LegacyCandidateProvenance,
+} from './automaticPurchaseEvidence'
+import { sha256Utf8 } from './automaticPurchaseEvidence'
 
 export interface LegacySaveCandidate {
   readonly id: string
   readonly sourcePath: string
   readonly text: string
+  readonly provenance?: Readonly<LegacyCandidateProvenance>
 }
+
+export type SaveRecoverySource =
+  | LegacySaveCandidate
+  | { readonly id: 'web-current'; readonly sourcePath: string }
+  | { readonly id: 'web-backup'; readonly sourcePath: string }
 
 export interface SaveStorageAdapter {
   exists(path: string): Promise<boolean>
@@ -24,6 +35,8 @@ export interface SaveRepositoryPaths {
   readonly current: string
   readonly temporary: string
   readonly legacyRecovery: string
+  /** Latest-to-oldest publication history rotated before each replacement. */
+  readonly backups?: readonly [latest: string, previous: string, oldest: string]
 }
 
 export interface SaveRepository {
@@ -44,11 +57,16 @@ export interface SaveRepositoryPolicy {
 
 export type FirstLaunchMigrationResult =
   | { readonly status: 'already-migrated'; readonly save: PreparedSave }
+  | {
+      readonly status: 'recovered-backup'
+      readonly sourcePath: string
+      readonly save: PreparedSave
+    }
   | { readonly status: 'no-legacy-save' }
   | { readonly status: 'current-invalid'; readonly error: string }
   | {
       readonly status: 'unsupported-future-version'
-      readonly source: 'current' | 'legacy'
+      readonly source: 'current' | 'backup' | 'legacy'
       readonly candidate?: LegacySaveCandidate
       readonly error: string
     }
@@ -65,7 +83,7 @@ export type FirstLaunchMigrationResult =
     }
   | {
       readonly status: 'recovery-write-failed'
-      readonly source: LegacySaveCandidate
+      readonly source: SaveRecoverySource
       readonly error: string
     }
 
@@ -80,6 +98,8 @@ export class PortableSaveRepository implements SaveRepository {
   private readonly paths: SaveRepositoryPaths
   private readonly decodeLegacy: LegacySaveDecoder
   private readonly policy: SaveRepositoryPolicy
+  private readonly automaticPurchaseEvidencePromoter?:
+    AutomaticUnityPurchaseEvidencePromoter
 
   constructor(
     storage: SaveStorageAdapter,
@@ -88,11 +108,15 @@ export class PortableSaveRepository implements SaveRepository {
     policy: SaveRepositoryPolicy = {
       allowCanonicalPlayerWrites: false,
     },
+    automaticPurchaseEvidencePromoter?:
+      AutomaticUnityPurchaseEvidencePromoter,
   ) {
     this.storage = storage
     this.paths = paths
     this.decodeLegacy = decodeLegacy
     this.policy = policy
+    this.automaticPurchaseEvidencePromoter =
+      automaticPurchaseEvidencePromoter
   }
 
   async hasCurrent(): Promise<boolean> {
@@ -123,6 +147,30 @@ export class PortableSaveRepository implements SaveRepository {
       currentError = error instanceof Error ? error.message : String(error)
     }
     if (current) return { status: 'already-migrated', save: current }
+    if (currentError !== undefined) {
+      try {
+        await this.storage.copy(this.paths.current, this.paths.legacyRecovery)
+      } catch (error) {
+        return {
+          status: 'recovery-write-failed',
+          source: {
+            id: 'web-current',
+            sourcePath: this.paths.current,
+          },
+          error: error instanceof Error ? error.message : String(error),
+        }
+      }
+    }
+
+    const backupRecovery = await this.recoverNewestValidBackup()
+    if (
+      backupRecovery !== null &&
+      backupRecovery.status !== 'backup-invalid'
+    ) {
+      return backupRecovery
+    }
+    currentError ??= backupRecovery?.error
+
     const candidates = await this.storage.discoverLegacyCandidates()
     if (candidates.length === 0) {
       return currentError
@@ -173,6 +221,7 @@ export class PortableSaveRepository implements SaveRepository {
 
       try {
         await this.storage.copy(source.sourcePath, this.paths.legacyRecovery)
+        await this.promoteAutomaticPurchaseEvidence(source, prepared)
         const committed = await this.commit(prepared)
         return { status: 'migrated', source, migration, save: committed }
       } catch (error) {
@@ -183,17 +232,64 @@ export class PortableSaveRepository implements SaveRepository {
         }
       }
     }
-    return (
-      lastFailure ??
-      (currentError
-        ? { status: 'current-invalid', error: currentError }
-        : { status: 'no-legacy-save' })
-    )
+    if (lastFailure !== undefined) {
+      try {
+        await this.storage.copy(
+          lastFailure.source.sourcePath,
+          this.paths.legacyRecovery,
+        )
+      } catch (error) {
+        return {
+          status: 'recovery-write-failed',
+          source: lastFailure.source,
+          error: error instanceof Error ? error.message : String(error),
+        }
+      }
+      return lastFailure
+    }
+    return currentError
+      ? { status: 'current-invalid', error: currentError }
+      : { status: 'no-legacy-save' }
+  }
+
+  private async promoteAutomaticPurchaseEvidence(
+    candidate: Readonly<LegacySaveCandidate>,
+    prepared: PreparedSave,
+  ): Promise<void> {
+    const promoter = this.automaticPurchaseEvidencePromoter
+    if (promoter === undefined) return
+    const provenance = candidate.provenance
+    if (
+      provenance?.kind !== 'automatic-same-device-unity' ||
+      candidate.sourcePath !==
+        `unity-readonly:${provenance.opaqueSourceIdentifier}` ||
+      candidate.id !== provenance.opaqueSourceIdentifier
+    ) return
+    const source = prepared.copyValidatedState()
+    if (source.doubleIp !== true) return
+    if (
+      typeof source.saveVersion !== 'number' ||
+      !Number.isSafeInteger(source.saveVersion)
+    ) return
+    await promoter.promoteAutomaticUnityPurchaseEvidence({
+      ...provenance,
+      permanentDoubleInfinityPoints: true,
+      contentSha256: await sha256Utf8(candidate.text),
+      saveSchemaVersion: source.saveVersion,
+    })
   }
 
   async commit(
     save: PreparedSave,
     target: SaveCommitTarget = 'development',
+  ): Promise<PreparedSave> {
+    return this.publish(save, target, true)
+  }
+
+  private async publish(
+    save: PreparedSave,
+    target: SaveCommitTarget,
+    rotateBackups: boolean,
   ): Promise<PreparedSave> {
     if (
       target === 'canonical-player' &&
@@ -215,10 +311,83 @@ export class PortableSaveRepository implements SaveRepository {
       throw new Error('Temporary save verification failed before atomic replace.')
     }
     const committed = PreparedSave.fromDecoded(verified)
+    if (rotateBackups) await this.rotateBackups()
     await this.storage.replaceAtomically(
       this.paths.temporary,
       this.paths.current,
     )
     return committed
+  }
+
+  private async recoverNewestValidBackup(): Promise<
+    | FirstLaunchMigrationResult
+    | { readonly status: 'backup-invalid'; readonly error: string }
+    | null
+  > {
+    let lastInvalidError: string | undefined
+    for (const sourcePath of this.backupPaths()) {
+      if (!(await this.storage.exists(sourcePath))) continue
+      let prepared: PreparedSave
+      try {
+        prepared = PreparedSave.fromDecoded(
+          deserializeWebSave(await this.storage.readText(sourcePath)),
+        )
+      } catch (error) {
+        if (error instanceof UnsupportedFutureSaveSchemaError) {
+          return {
+            status: 'unsupported-future-version',
+            source: 'backup',
+            error: error.message,
+          }
+        }
+        lastInvalidError =
+          error instanceof Error ? error.message : String(error)
+        continue
+      }
+      let committed: PreparedSave
+      try {
+        committed = await this.publish(
+          prepared,
+          'development',
+          false,
+        )
+      } catch (error) {
+        return {
+          status: 'recovery-write-failed',
+          source: { id: 'web-backup', sourcePath },
+          error: error instanceof Error ? error.message : String(error),
+        }
+      }
+      return {
+        status: 'recovered-backup',
+        sourcePath,
+        save: committed,
+      }
+    }
+    return lastInvalidError === undefined
+      ? null
+      : { status: 'backup-invalid', error: lastInvalidError }
+  }
+
+  private async rotateBackups(): Promise<void> {
+    if (!(await this.storage.exists(this.paths.current))) return
+    const backups = this.backupPaths()
+    if (await this.storage.exists(backups[1])) {
+      await this.storage.copy(backups[1], backups[2])
+    }
+    if (await this.storage.exists(backups[0])) {
+      await this.storage.copy(backups[0], backups[1])
+    }
+    await this.storage.copy(this.paths.current, backups[0])
+  }
+
+  private backupPaths(): readonly [string, string, string] {
+    return (
+      this.paths.backups ?? [
+        `${this.paths.current}.backup.1`,
+        `${this.paths.current}.backup.2`,
+        `${this.paths.current}.backup.3`,
+      ]
+    )
   }
 }

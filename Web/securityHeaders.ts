@@ -34,9 +34,11 @@ export const SECURITY_HEADERS = Object.freeze({
  * Emits the conventional static-host header file copied into the production
  * Vite output. The hosting layer remains responsible for honoring this file.
  */
-export function renderStaticSecurityHeaders(): string {
+export function renderStaticSecurityHeaders(
+  routePattern = '/*',
+): string {
   const lines = Object.entries(SECURITY_HEADERS).map(
     ([name, value]) => `  ${name}: ${value}`,
   )
-  return ['/*', ...lines, ''].join('\n')
+  return [routePattern, ...lines, ''].join('\n')
 }

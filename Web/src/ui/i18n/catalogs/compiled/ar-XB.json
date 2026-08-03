@@ -445,6 +445,20 @@
       "value": "‬"
     }
   ],
+  "debug.add-cash": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "∀pp Ↄɐsɥ"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
   "debug.add-infinity-points": [
     {
       "type": 0,
@@ -4645,6 +4659,20 @@
       "value": "‬"
     }
   ],
+  "navigation.store": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "Sʇoɹǝ"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
   "navigation.story": [
     {
       "type": 0,
@@ -5067,6 +5095,90 @@
     {
       "type": 0,
       "value": "Oɟɟʅıuǝ ⊥ıɯǝ ∩sǝp"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "pwa.update.accept": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "Sɐʌǝ ɐup ndpɐʇǝ"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "pwa.update.applying": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "Sɐʌıuƃ dɹoƃɹǝss ɐup ɐddʅʎıuƃ ʇɥǝ ndpɐʇǝ…"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "pwa.update.body": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "∀ uǝʍ ʌǝɹsıou ɥɐs poʍuʅoɐpǝp. Sɐʌǝ ʎonɹ dɹoƃɹǝss qǝɟoɹǝ ɐddʅʎıuƃ ıʇ."
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "pwa.update.failed": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "⊥ɥǝ ndpɐʇǝ ʍɐs uoʇ ɐddʅıǝp. ⅄onɹ ɔnɹɹǝuʇ ƃɐɯǝ ɹǝɯɐıus odǝu."
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "pwa.update.retry": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "⊥ɹʎ ɐƃɐıu"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "pwa.update.title": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "∩dpɐʇǝ ɹǝɐpʎ"
     },
     {
       "type": 0,
@@ -13525,6 +13637,20 @@
       "value": "‬"
     }
   ],
+  "startup-shell.action.copy-original": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "Ↄodʎ Oɹıƃıuɐʅ"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
   "startup-shell.action.export-recovery": [
     {
       "type": 0,
@@ -13589,6 +13715,20 @@
     {
       "type": 0,
       "value": "Sʇɐɹʇ ƃɐɯǝ"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "startup-shell.action.start-fresh": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "Sʇɐɹʇ Ⅎɹǝsɥ"
     },
     {
       "type": 0,
@@ -13715,6 +13855,20 @@
     {
       "type": 0,
       "value": "Sɐʌǝ ʇǝxʇ"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "startup-shell.notice.backup-recovered": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "⅄onɹ ɔnɹɹǝuʇ sɐʌǝ ɔonʅp uoʇ qǝ odǝuǝp. ⊥ɥǝ uǝʍǝsʇ ʌǝɹıɟıǝp qɐɔʞnd ʍɐs ɹǝsʇoɹǝp."
     },
     {
       "type": 0,
@@ -14737,6 +14891,493 @@
     {
       "type": 0,
       "value": "⅂ɐsʇ 30 pɐʎs"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "store.action.purchase": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "Ԁnɹɔɥɐsǝ "
+    },
+    {
+      "type": 1,
+      "value": "price"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "store.action.purchasing": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "Ԁnɹɔɥɐsıuƃ…"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "store.action.restore": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "ᴚǝsʇoɹǝ Ԁnɹɔɥɐsǝs"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "store.action.restoring": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "ᴚǝsʇoɹıuƃ…"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "store.action.tip": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "⊥ıd "
+    },
+    {
+      "type": 1,
+      "value": "price"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "store.feedback.entitlement-verified": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "Ԁnɹɔɥɐsǝ ʌǝɹıɟıǝp ou ʇɥıs pǝʌıɔǝ."
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "store.feedback.operation-failed": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "⊥ɥǝ Sʇoɹǝ ɔonʅp uoʇ ɔoɯdʅǝʇǝ ʇɥɐʇ ɐɔʇıou. ⊥ɹʎ ɐƃɐıu ʍɥǝu ʇɥǝ dʅɐʇɟoɹɯ sʇoɹǝ ıs ɐʌɐıʅɐqʅǝ."
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "store.feedback.purchase-cancelled": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "Ԁnɹɔɥɐsǝ ɔɐuɔǝʅʅǝp."
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "store.feedback.purchase-pending": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "Ԁnɹɔɥɐsǝ ıs dǝupıuƃ ɐddɹoʌɐʅ ɟɹoɯ ʇɥǝ dʅɐʇɟoɹɯ sʇoɹǝ."
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "store.feedback.restore-completed": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 6,
+      "value": "count",
+      "options": {
+        "=0": {
+          "value": [
+            {
+              "type": 0,
+              "value": "No dǝɹɯɐuǝuʇ dnɹɔɥɐsǝs ʍǝɹǝ ɹǝsʇoɹǝp."
+            }
+          ]
+        },
+        "one": {
+          "value": [
+            {
+              "type": 0,
+              "value": "Ouǝ dǝɹɯɐuǝuʇ dnɹɔɥɐsǝ ʍɐs ɹǝsʇoɹǝp."
+            }
+          ]
+        },
+        "other": {
+          "value": [
+            {
+              "type": 7
+            },
+            {
+              "type": 0,
+              "value": " dǝɹɯɐuǝuʇ dnɹɔɥɐsǝs ʍǝɹǝ ɹǝsʇoɹǝp."
+            }
+          ]
+        }
+      },
+      "offset": 0,
+      "pluralType": "cardinal"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "store.feedback.tip-completed": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "⊥ɥɐuʞ ʎon ɟoɹ ʎonɹ snddoɹʇ!"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "store.introduction": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "Odʇıouɐʅ ʍɐʎs ʇo snddoɹʇ Ipʅǝ ᗡʎsou Sʍɐɹɯ ɐup dǝɹɯɐuǝuʇ ndƃɹɐpǝs ɟoɹ ʇɥıs pǝʌıɔǝ ɐɔɔonuʇ."
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "store.permanent.description": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "Ԁǝɹɯɐuǝuʇ dnɹɔɥɐsǝs ɐɹǝ ʌǝɹıɟıǝp qʎ ʇɥǝ dʅɐʇɟoɹɯ ɐɔɔonuʇ ɐup ɹǝɯɐıu ɐʌɐıʅɐqʅǝ oɟɟʅıuǝ ɐɟʇǝɹ ʌǝɹıɟıɔɐʇıou."
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "store.permanent.heading": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "Ԁǝɹɯɐuǝuʇ ndƃɹɐpǝs"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "store.product.developer-options.description": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "∩uʅoɔʞ ᗡǝʌǝʅodǝɹ Odʇıous uoʍ. ⊥ɥǝ ǝxısʇıuƃ ıu-ƃɐɯǝ nuʅoɔʞ ɹǝɯɐıus ɐʌɐıʅɐqʅǝ."
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "store.product.developer-options.title": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "ᗡǝʌǝʅodǝɹ Odʇıous"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "store.product.double-ip.description": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "∩uʅoɔʞ ɐ ʇoƃƃʅǝ ʇɥɐʇ ponqʅǝs ǝɐɹuǝp Iuɟıuıʇʎ Ԁoıuʇs."
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "store.product.double-ip.title": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "ᗡonqʅǝ Iuɟıuıʇʎ Ԁoıuʇs"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "store.product.tip-tier-1.description": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "∀ sɯɐʅʅ ʇɥɐuʞ-ʎon ʍıʇɥ uo ƃɐɯǝdʅɐʎ qǝuǝɟıʇ."
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "store.product.tip-tier-1.title": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "⊥ɹǝɐʇ ʇɥǝ Ↄɐʇs!"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "store.product.tip-tier-2.description": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "∀ ɯǝpınɯ ʇɥɐuʞ-ʎon ʍıʇɥ uo ƃɐɯǝdʅɐʎ qǝuǝɟıʇ."
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "store.product.tip-tier-2.title": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "Ԑnʎ ns ɐ ɔoɟɟǝǝ"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "store.product.tip-tier-3.description": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "∀ ƃǝuǝɹons ʇɥɐuʞ-ʎon ʍıʇɥ uo ƃɐɯǝdʅɐʎ qǝuǝɟıʇ."
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "store.product.tip-tier-3.title": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "Snddoɹʇ ɯʎ ʞıps"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "store.region": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "Sʇoɹǝ"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "store.restore.description": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "ᴚǝsʇoɹǝ ɔɥǝɔʞs ouʅʎ ᗡonqʅǝ Iuɟıuıʇʎ Ԁoıuʇs ɐup ᗡǝʌǝʅodǝɹ Odʇıous. ⊥ıds ɐɹǝ ɔousnɯɐqʅǝ ɐup ɐɹǝ uoʇ ɹǝsʇoɹǝp."
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "store.status.loading": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "⅂oɐpıuƃ Sʇoɹǝ…"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "store.status.owned": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "Oʍuǝp"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "store.status.unavailable": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "∩uɐʌɐıʅɐqʅǝ"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "store.status.unlocked-in-game": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "∩uʅoɔʞǝp ıu ƃɐɯǝ"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "store.tips.description": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "⊥ıds ɐɹǝ odʇıouɐʅ, ɹǝdǝɐʇɐqʅǝ, ɐup dɹoʌıpǝ uo ƃɐɯǝdʅɐʎ qǝuǝɟıʇ."
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "store.tips.heading": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "Snddoɹʇ ʇɥǝ pǝʌǝʅodǝɹ"
     },
     {
       "type": 0,

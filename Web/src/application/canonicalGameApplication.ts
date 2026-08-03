@@ -6,6 +6,7 @@ import type {
 } from '../core/contracts'
 import {
   deriveBasicDysonState,
+  type DysonEntitlements,
 } from '../simulation/canonicalDysonDerivation'
 import {
   evaluateCanonicalBotCapCheckpoint,
@@ -99,8 +100,13 @@ type CanonicalInternalCommand =
       readonly kind: 'internal.development-apply-action'
       readonly action: CanonicalDevelopmentAction
     }
+  | {
+      readonly kind: 'internal.replace-host-entitlements'
+      readonly entitlements: Readonly<DysonEntitlements>
+    }
 
 export type CanonicalDevelopmentAction =
+  | { readonly kind: 'add-cash'; readonly amount: number }
   | { readonly kind: 'add-bots'; readonly amount: number }
   | { readonly kind: 'add-skill-points'; readonly amount: bigint }
   | { readonly kind: 'add-infinity-points'; readonly amount: bigint }
@@ -112,6 +118,7 @@ export type CanonicalDevelopmentAction =
   | { readonly kind: 'recalculate-skill-points' }
   | { readonly kind: 'reset-secret-progress' }
   | { readonly kind: 'purchase-debug-options' }
+  | { readonly kind: 'enable-host-debug-options' }
   | { readonly kind: 'disable-debug-options' }
 
 type CanonicalApplicationCommand =
@@ -505,6 +512,25 @@ export class CanonicalGameApplicationFacade {
       'development',
     )
   }
+
+  commitHostEntitlements(
+    envelope: Pick<
+      ApplicationCommandEnvelope<unknown>,
+      'sessionRevision' | 'expectedStateRevision'
+    >,
+    entitlements: Readonly<DysonEntitlements>,
+  ): Promise<CommitFirstResult> {
+    return this.application.dispatchCommitFirst(
+      {
+        ...envelope,
+        command: {
+          kind: 'internal.replace-host-entitlements',
+          entitlements,
+        },
+      },
+      'development',
+    )
+  }
 }
 
 export function createCanonicalGameApplication(
@@ -571,6 +597,17 @@ export function createCanonicalGameEngineDefinition(
           command.action,
           eventContext,
         )
+      }
+      if (command.kind === 'internal.replace-host-entitlements') {
+        const entitlements = Object.freeze({
+          permanentDoubleIp:
+            command.entitlements.permanentDoubleIp === true,
+        })
+        const changed =
+          candidate.entitlements.permanentDoubleIp !==
+          entitlements.permanentDoubleIp
+        if (changed) Object.assign(candidate, { entitlements })
+        return { accepted: true, changed }
       }
       if (command.kind === 'internal.advance-stored-time') {
         return advanceStoredTime(
@@ -665,6 +702,21 @@ function applyDevelopmentAction(
 ): DomainTransition {
   const state = candidate.gameState
   switch (action.kind) {
+    case 'add-cash': {
+      if (!Number.isFinite(action.amount) || action.amount < 0) {
+        return invalidDevelopmentAction('Cash amount')
+      }
+      return replaceDevelopmentState(candidate, {
+        ...state,
+        dyson: {
+          ...state.dyson,
+          money: Math.min(
+            Number.MAX_VALUE,
+            state.dyson.money + action.amount,
+          ),
+        },
+      })
+    }
     case 'add-bots': {
       if (!Number.isFinite(action.amount) || action.amount < 0) {
         return invalidDevelopmentAction('Bot amount')
@@ -882,6 +934,10 @@ function applyDevelopmentAction(
       })
       return { accepted: true, changed: true }
     }
+    case 'enable-host-debug-options':
+      return replaceDevelopmentRuntime(candidate, {
+        debugOptionsEnabled: true,
+      })
     case 'disable-debug-options':
       return replaceDevelopmentRuntime(candidate, {
         debugOptionsEnabled: false,

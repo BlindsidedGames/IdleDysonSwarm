@@ -1,4 +1,5 @@
 import type { SimulationTransitionResult } from '../core/contracts'
+import type { DysonEntitlements } from '../simulation/canonicalDysonDerivation'
 import type { LifecycleAdapter, LifecyclePhase } from '../platform/contracts'
 import {
   applyAwayTimeReplay,
@@ -91,6 +92,13 @@ export interface CanonicalLifecycleApplicationPort {
       'sessionRevision' | 'expectedStateRevision'
     >,
     action: CanonicalDevelopmentAction,
+  ): Promise<CommitFirstResult>
+  commitHostEntitlements?(
+    envelope: Pick<
+      ApplicationCommandEnvelope<unknown>,
+      'sessionRevision' | 'expectedStateRevision'
+    >,
+    entitlements: Readonly<DysonEntitlements>,
   ): Promise<CommitFirstResult>
   importSave(request: ImportSaveRequest): Promise<ImportSaveResult>
 }
@@ -551,11 +559,47 @@ export class CanonicalLifecycleCoordinator {
     })
   }
 
+  replaceHostEntitlements(
+    entitlements: Readonly<DysonEntitlements>,
+  ): Promise<CommitFirstResult> {
+    return this.enqueue(async () => {
+      const snapshot = this.application.snapshot()
+      if (snapshot.phase !== 'ready') {
+        return {
+          committed: false,
+          transition: rejectedTransition(
+            snapshot,
+            'APP-NOT-READY',
+            'The canonical application is not ready.',
+          ),
+          code: 'APP-NOT-READY',
+          reason: 'The canonical application is not ready.',
+        }
+      }
+      if (this.application.commitHostEntitlements === undefined) {
+        return {
+          committed: false,
+          transition: rejectedTransition(
+            snapshot,
+            'CANONICAL-HOST-ENTITLEMENTS-UNAVAILABLE',
+            'Host entitlement replacement is unavailable.',
+          ),
+          code: 'CANONICAL-HOST-ENTITLEMENTS-UNAVAILABLE',
+          reason: 'Host entitlement replacement is unavailable.',
+        }
+      }
+      return this.application.commitHostEntitlements(
+        revisionEnvelope(snapshot),
+        entitlements,
+      )
+    })
+  }
+
   /**
-   * Keeps session replacement in the coordinator's serialized lane. A
-   * successful import resets lifecycle caches to the already-consumed local
-   * import baseline. Import preparation owns remote timestamp consumption, so
-   * this path must never perform an additional away-time replay.
+   * Keeps session replacement in the coordinator's serialized lane. Manual
+   * sharing installs an already-consumed lifecycle baseline, while trusted
+   * same-device migration and in-place Web upgrades preserve their local quit
+   * timestamp for one normal, capped cold-start replay.
    */
   importSave(
     request: ImportSaveRequest,
@@ -564,10 +608,19 @@ export class CanonicalLifecycleCoordinator {
       const imported = await this.application.importSave(request)
       if (!imported.imported) return imported
 
-      this.suppressImportedAwayReplay = true
+      const suppressAwayReplay =
+        request.context?.kind === undefined ||
+        request.context.kind === 'manual-shared-import'
+      this.suppressImportedAwayReplay = suppressAwayReplay
       const snapshot = this.application.snapshot()
       if (snapshot.phase === 'ready') {
-        this.lifecycleState = createLifecycleState(snapshot, true)
+        const importedBaseline = createLifecycleState(
+          snapshot,
+          suppressAwayReplay,
+        )
+        this.lifecycleState = suppressAwayReplay
+          ? importedBaseline
+          : beginColdStartReplay(importedBaseline, true)
         return {
           imported: true,
           committed: true,

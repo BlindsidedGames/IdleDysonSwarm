@@ -115,6 +115,10 @@
     "defaultMessage": "Add Bots",
     "description": "Developer action that adds Bots."
   },
+  "debug.add-cash": {
+    "defaultMessage": "Add Cash",
+    "description": "Developer action that adds Cash."
+  },
   "debug.add-infinity-points": {
     "defaultMessage": "Add Infinity Points",
     "description": "Developer action that adds Infinity Points."
@@ -1079,6 +1083,10 @@
     "defaultMessage": "Statistics",
     "description": "Statistics destination."
   },
+  "navigation.store": {
+    "defaultMessage": "Store",
+    "description": "Native-only Store destination."
+  },
   "navigation.story": {
     "defaultMessage": "Story",
     "description": "Unity Story destination."
@@ -1190,6 +1198,30 @@
   "offline-time.usage-heading": {
     "defaultMessage": "Offline Time Used",
     "description": "Heading for per-Infinity stored-time usage statistics."
+  },
+  "pwa.update.accept": {
+    "defaultMessage": "Save and update",
+    "description": "Explicit action that checkpoints the game before activating a waiting PWA update."
+  },
+  "pwa.update.applying": {
+    "defaultMessage": "Saving progress and applying the update…",
+    "description": "Status shown while a waiting PWA update is being safely activated."
+  },
+  "pwa.update.body": {
+    "defaultMessage": "A new version has downloaded. Save your progress before applying it.",
+    "description": "Explanation shown when a background PWA update is waiting."
+  },
+  "pwa.update.failed": {
+    "defaultMessage": "The update was not applied. Your current game remains open.",
+    "description": "Failure message when a checkpoint prevents PWA update activation."
+  },
+  "pwa.update.retry": {
+    "defaultMessage": "Try again",
+    "description": "Action that retries safe activation of a waiting PWA update."
+  },
+  "pwa.update.title": {
+    "defaultMessage": "Update ready",
+    "description": "Heading for the non-blocking installed PWA update prompt."
   },
   "quantum.claim": {
     "defaultMessage": "Claim",
@@ -3339,6 +3371,10 @@
     "defaultMessage": "Check again",
     "description": "Button label that requests another ownership or capability check."
   },
+  "startup-shell.action.copy-original": {
+    "defaultMessage": "Copy Original",
+    "description": "Button label that copies the retained original save text without changing it."
+  },
   "startup-shell.action.export-recovery": {
     "defaultMessage": "Export recovery data",
     "description": "Button label that requests a local recovery-data export."
@@ -3358,6 +3394,10 @@
   "startup-shell.action.start": {
     "defaultMessage": "Start game",
     "description": "Button label that requests browser game startup."
+  },
+  "startup-shell.action.start-fresh": {
+    "defaultMessage": "Start Fresh",
+    "description": "Button label that starts a new Web save while retaining the original Unity source."
   },
   "startup-shell.action.use-this-tab": {
     "defaultMessage": "Use this tab",
@@ -3394,6 +3434,10 @@
   "startup-shell.import.text-label": {
     "defaultMessage": "Save text",
     "description": "Visible label for the optional manual save-text recovery field."
+  },
+  "startup-shell.notice.backup-recovered": {
+    "defaultMessage": "Your current save could not be opened. The newest verified backup was restored.",
+    "description": "Player-facing notice shown after startup restores a verified Web backup."
   },
   "startup-shell.operation.export-failed": {
     "defaultMessage": "Recovery data could not be exported from this tab.",
@@ -3686,6 +3730,134 @@
   "statistics.window.last-thirty-days": {
     "defaultMessage": "Last 30 days",
     "description": "Title for the daily-bucket statistics horizon."
+  },
+  "store.action.purchase": {
+    "defaultMessage": "Purchase {price}",
+    "description": "Purchases one permanent product using a store-localized price."
+  },
+  "store.action.purchasing": {
+    "defaultMessage": "Purchasing…",
+    "description": "Purchase operation pending."
+  },
+  "store.action.restore": {
+    "defaultMessage": "Restore Purchases",
+    "description": "Restores permanent native purchases."
+  },
+  "store.action.restoring": {
+    "defaultMessage": "Restoring…",
+    "description": "Restore operation pending."
+  },
+  "store.action.tip": {
+    "defaultMessage": "Tip {price}",
+    "description": "Purchases one repeatable support tip using a store-localized price."
+  },
+  "store.feedback.entitlement-verified": {
+    "defaultMessage": "Purchase verified on this device.",
+    "description": "Successful durable verification feedback."
+  },
+  "store.feedback.operation-failed": {
+    "defaultMessage": "The Store could not complete that action. Try again when the platform store is available.",
+    "description": "Generic native Store failure feedback."
+  },
+  "store.feedback.purchase-cancelled": {
+    "defaultMessage": "Purchase cancelled.",
+    "description": "Cancelled purchase feedback."
+  },
+  "store.feedback.purchase-pending": {
+    "defaultMessage": "Purchase is pending approval from the platform store.",
+    "description": "Pending purchase feedback."
+  },
+  "store.feedback.restore-completed": {
+    "defaultMessage": "{count, plural, =0 {No permanent purchases were restored.} one {One permanent purchase was restored.} other {# permanent purchases were restored.}}",
+    "description": "Restore result summary."
+  },
+  "store.feedback.tip-completed": {
+    "defaultMessage": "Thank you for your support!",
+    "description": "Successful consumable tip feedback."
+  },
+  "store.introduction": {
+    "defaultMessage": "Optional ways to support Idle Dyson Swarm and permanent upgrades for this device account.",
+    "description": "Native Store introduction."
+  },
+  "store.permanent.description": {
+    "defaultMessage": "Permanent purchases are verified by the platform account and remain available offline after verification.",
+    "description": "Explains durable purchase ownership."
+  },
+  "store.permanent.heading": {
+    "defaultMessage": "Permanent upgrades",
+    "description": "Heading for durable native purchases."
+  },
+  "store.product.developer-options.description": {
+    "defaultMessage": "Unlock Developer Options now. The existing in-game unlock remains available.",
+    "description": "Developer Options product description."
+  },
+  "store.product.developer-options.title": {
+    "defaultMessage": "Developer Options",
+    "description": "Developer Options product title."
+  },
+  "store.product.double-ip.description": {
+    "defaultMessage": "Unlock a toggle that doubles earned Infinity Points.",
+    "description": "Double Infinity Points product description."
+  },
+  "store.product.double-ip.title": {
+    "defaultMessage": "Double Infinity Points",
+    "description": "Double Infinity Points product title."
+  },
+  "store.product.tip-tier-1.description": {
+    "defaultMessage": "A small thank-you with no gameplay benefit.",
+    "description": "First support tip description."
+  },
+  "store.product.tip-tier-1.title": {
+    "defaultMessage": "Treat the Cats!",
+    "description": "First support tip title."
+  },
+  "store.product.tip-tier-2.description": {
+    "defaultMessage": "A medium thank-you with no gameplay benefit.",
+    "description": "Second support tip description."
+  },
+  "store.product.tip-tier-2.title": {
+    "defaultMessage": "Buy us a coffee",
+    "description": "Second support tip title."
+  },
+  "store.product.tip-tier-3.description": {
+    "defaultMessage": "A generous thank-you with no gameplay benefit.",
+    "description": "Third support tip description."
+  },
+  "store.product.tip-tier-3.title": {
+    "defaultMessage": "Support my kids",
+    "description": "Third support tip title."
+  },
+  "store.region": {
+    "defaultMessage": "Store",
+    "description": "Accessible name for the native Store route."
+  },
+  "store.restore.description": {
+    "defaultMessage": "Restore checks only Double Infinity Points and Developer Options. Tips are consumable and are not restored.",
+    "description": "Explains restore scope."
+  },
+  "store.status.loading": {
+    "defaultMessage": "Loading Store…",
+    "description": "Store catalog loading state."
+  },
+  "store.status.owned": {
+    "defaultMessage": "Owned",
+    "description": "Verified permanent entitlement status."
+  },
+  "store.status.unavailable": {
+    "defaultMessage": "Unavailable",
+    "description": "Product does not have a host-provided purchasable listing."
+  },
+  "store.status.unlocked-in-game": {
+    "defaultMessage": "Unlocked in game",
+    "description": "Developer Options was unlocked through gameplay."
+  },
+  "store.tips.description": {
+    "defaultMessage": "Tips are optional, repeatable, and provide no gameplay benefit.",
+    "description": "Explains support-tip behavior."
+  },
+  "store.tips.heading": {
+    "defaultMessage": "Support the developer",
+    "description": "Heading for repeatable support tips."
   },
   "story.avocato.description": {
     "defaultMessage": "Visit your friendly interdimensional reset assistant.",

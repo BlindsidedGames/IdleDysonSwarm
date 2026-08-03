@@ -77,8 +77,9 @@ Steam/native save discovery is separate host integration. A desktop host can
 target the known Idle Dyson Swarm application-support directory rather than
 asking the browser UI to discover an arbitrary path. Retained-container mobile
 upgrades have their own identity, signing and container requirements. Complete
-migration promises still require canonical mapping, authentic schema-12
-round-trip, release-write and applicable host gates in
+migration promises still require canonical mapping, the pinned public Unity
+3.0.328/schema-11 leaf certification, development-schema idempotence,
+release-write and applicable host gates in
 `platform-port-inventory.md`.
 
 Every product path supports pointer, touch and keyboard. Controller navigation

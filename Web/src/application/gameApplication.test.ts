@@ -16,10 +16,16 @@ import { TransactionalGameApplication } from './gameApplication'
 
 interface ProbeState {
   value: number
+  preference?: boolean
+  debugUnlocked?: boolean
+  debugEnabled?: boolean
 }
 
 type ProbeCommand = SimulationCommand<'add'> & {
   readonly amount: number
+  readonly preference?: boolean
+  readonly debugUnlocked?: boolean
+  readonly debugEnabled?: boolean
 }
 
 function prepared(value: number): PreparedSave {
@@ -44,7 +50,23 @@ function engineDefinition(): SimulationEngineDefinition<
       Number.isFinite(state.value) ? undefined : 'PROBE-NON-FINITE',
     applyCommand: (candidate, command): DomainTransition => {
       candidate.value += command.amount
-      return { accepted: true, changed: command.amount !== 0 }
+      if (command.preference !== undefined) {
+        candidate.preference = command.preference
+      }
+      if (command.debugUnlocked !== undefined) {
+        candidate.debugUnlocked = command.debugUnlocked
+      }
+      if (command.debugEnabled !== undefined) {
+        candidate.debugEnabled = command.debugEnabled
+      }
+      return {
+        accepted: true,
+        changed:
+          command.amount !== 0 ||
+          command.preference !== undefined ||
+          command.debugUnlocked !== undefined ||
+          command.debugEnabled !== undefined,
+      }
     },
     advance: (candidate, milliseconds) => {
       candidate.value += milliseconds
@@ -89,10 +111,30 @@ class RecordingRepository implements SaveRepository {
 function sessionFactory(save: PreparedSave) {
   const source = save.copyValidatedState()
   return {
-    initialState: { value: Number(source.applicationProbeValue ?? 0) },
+    initialState: {
+      value: Number(source.applicationProbeValue ?? 0),
+      ...(typeof source.skillsBuyOnTap === 'boolean'
+        ? { preference: source.skillsBuyOnTap }
+        : {}),
+      ...(typeof source.debugEverEnabled === 'boolean'
+        ? { debugUnlocked: source.debugEverEnabled }
+        : {}),
+      ...(typeof source.debugOptions === 'boolean'
+        ? { debugEnabled: source.debugOptions }
+        : {}),
+    },
     prepare: (candidate: ProbeState) => {
       const replacement = save.copyValidatedState()
       replacement.applicationProbeValue = candidate.value
+      if (candidate.preference !== undefined) {
+        replacement.skillsBuyOnTap = candidate.preference
+      }
+      if (candidate.debugUnlocked !== undefined) {
+        replacement.debugEverEnabled = candidate.debugUnlocked
+      }
+      if (candidate.debugEnabled !== undefined) {
+        replacement.debugOptions = candidate.debugEnabled
+      }
       return save.withValidatedState(replacement)
     },
   }
@@ -435,8 +477,9 @@ describe('transactional game application', () => {
       command: { kind: 'add', amount: 3 },
     })
     const before = application.snapshot()
-    const commit = createDeferred<PreparedSave>()
-    repository.commitDeferreds.push(commit)
+    const checkpointCommit = createDeferred<PreparedSave>()
+    const importCommit = createDeferred<PreparedSave>()
+    repository.commitDeferreds.push(checkpointCommit, importCommit)
 
     const importing = application.importSave({
       text: importedText(9),
@@ -444,7 +487,9 @@ describe('transactional game application', () => {
       overwriteApproved: true,
     })
     await waitUntil(() => repository.commits.length === 1)
-    commit.reject(new Error('import disk full'))
+    checkpointCommit.resolve(repository.commits[0]!)
+    await waitUntil(() => repository.commits.length === 2)
+    importCommit.reject(new Error('import disk full'))
 
     await expect(importing).resolves.toEqual({
       imported: false,
@@ -453,6 +498,65 @@ describe('transactional game application', () => {
       reason: 'import disk full',
     })
     expect(application.snapshot()).toBe(before)
+  })
+
+  test('uses dirty live receiver preferences for both displacement and manual import', async () => {
+    const repository = new RecordingRepository()
+    repository.current = PreparedSave.fromDecoded({
+      saveVersion: 12,
+      applicationProbeValue: 2,
+      skillsBuyOnTap: false,
+      debugEverEnabled: false,
+      debugOptions: false,
+    })
+    const application = createApplication(
+      repository,
+      async () => repository.current!,
+    )
+    await application.start()
+    application.dispatch({
+      sessionRevision: 1,
+      expectedStateRevision: 0,
+      command: {
+        kind: 'add',
+        amount: 0,
+        preference: true,
+        debugUnlocked: true,
+        debugEnabled: true,
+      },
+    })
+    const sender = serializeWebSave(
+      PreparedSave.fromDecoded({
+        saveVersion: 12,
+        applicationProbeValue: 9,
+        skillsBuyOnTap: false,
+        debugEverEnabled: false,
+        debugOptions: false,
+      }).copyValidatedState(),
+    )
+
+    await expect(application.importSave({
+      text: sender,
+      importedAtUtc: '2026-07-29T03:00:00.000Z',
+      overwriteApproved: true,
+      context: {
+        kind: 'manual-shared-import',
+        importedAtUtc: '2026-07-29T03:00:00.000Z',
+      },
+    })).resolves.toMatchObject({ imported: true })
+
+    expect(repository.commits).toHaveLength(2)
+    expect(repository.commits[0]?.copyValidatedState()).toMatchObject({
+      skillsBuyOnTap: true,
+      debugEverEnabled: true,
+      debugOptions: true,
+    })
+    expect(repository.commits[1]?.copyValidatedState()).toMatchObject({
+      applicationProbeValue: 9,
+      skillsBuyOnTap: true,
+      debugEverEnabled: true,
+      debugOptions: true,
+    })
   })
 
   test('installs a successful import as a new clean session', async () => {

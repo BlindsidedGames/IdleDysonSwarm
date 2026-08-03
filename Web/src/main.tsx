@@ -7,14 +7,16 @@ import {
 } from 'react-intl'
 import App from './App.tsx'
 import { renderStaticBootstrapFailure } from './bootstrapFailure'
-import {
-  createProductionBrowserComposition,
-} from './browser/productionBrowserComposition'
+import { createProductionHostComposition } from './productionHostComposition'
 import {
   LOCALE_REGISTRY,
   LocalePreferenceService,
   PresentationIntlProvider,
 } from './ui/i18n'
+import {
+  createProductionPwaUpdateController,
+  PwaUpdatePrompt,
+} from './pwa'
 import {
   StartupErrorBoundary,
   startupShellMessages,
@@ -31,8 +33,12 @@ async function bootstrap(): Promise<void> {
     const locale = localePreference.getSnapshot()
     const messages =
       await LOCALE_REGISTRY[locale].loadSharedCatalog()
-    const composition =
-      createProductionBrowserComposition()
+    const composition = createProductionHostComposition()
+    const pwaUpdateController =
+      composition.pwaUpdatesAvailable
+        ? createProductionPwaUpdateController()
+        : undefined
+    void pwaUpdateController?.start()
     const boundaryIntl = createIntl(
       {
         locale: LOCALE_REGISTRY[locale].languageTag,
@@ -88,14 +94,21 @@ async function bootstrap(): Promise<void> {
     // Startup is owned once by the composition root, never by a React effect.
     // StrictMode may replay presentation effects without acquiring a second
     // writer lease or shutting down the active runtime.
-    void composition.runtime.start()
+    void composition.runtime.start().then((snapshot) => {
+      if (snapshot.phase !== 'ready') return
+      document.documentElement.dataset.idleDysonSwarmRuntime =
+        'ready'
+      window.dispatchEvent(
+        new Event('idle-dyson-swarm-runtime-ready'),
+      )
+    })
     createRoot(rootElement).render(
       <StrictMode>
         <StartupErrorBoundary
           copy={boundaryCopy}
           actions={boundaryActions}
           diagnosticContext={{
-            hostKind: 'browser-pwa',
+            hostKind: composition.hostKind,
             locale,
             saveSchemaVersion:
               composition.saveSchemaVersion,
@@ -115,7 +128,18 @@ async function bootstrap(): Promise<void> {
               reloadSafely={composition.reloadSafely}
               resetSave={composition.resetSave}
               buildId={import.meta.env.VITE_BUILD_ID}
+              releasePlatformServices={
+                composition.releasePlatformServices
+              }
             />
+            {pwaUpdateController === undefined ? null : (
+              <PwaUpdatePrompt
+                controller={pwaUpdateController}
+                prepareForActivation={
+                  composition.prepareForUpdateActivation
+                }
+              />
+            )}
           </PresentationIntlProvider>
         </StartupErrorBoundary>
       </StrictMode>,

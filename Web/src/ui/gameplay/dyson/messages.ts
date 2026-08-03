@@ -87,6 +87,11 @@ export const readyDysonMessages = defineMessages({
     defaultMessage: 'Statistics',
     description: 'Statistics destination.',
   },
+  storeRoute: {
+    id: 'navigation.store',
+    defaultMessage: 'Store',
+    description: 'Native-only Store destination.',
+  },
   realitySecretsProgress: {
     id: 'navigation.reality-secrets-progress',
     defaultMessage:
