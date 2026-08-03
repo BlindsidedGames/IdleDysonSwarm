@@ -6,6 +6,7 @@ import {
 } from '../save/startupResolver'
 import {
   createCapturedInfinityAssetLookup,
+  prepareCanonicalEventTimeContext,
   type CanonicalEventTimeContext,
 } from '../simulation/canonicalEventTimeModel'
 import {
@@ -96,7 +97,7 @@ export function createProductionEventContext(
       'Generated RealitySystemTuning is unavailable or invalid.',
     )
   }
-  return Object.freeze({
+  return prepareCanonicalEventTimeContext({
     automationIntervalSeconds:
       DEFAULT_AUTOMATION_INTERVAL_SECONDS,
     dysonPresentationTuning: Object.freeze({

@@ -16,6 +16,7 @@ import {
   CANONICAL_QUANTUM_LEAP_INPUT,
   CanonicalEventTimeModel,
   deriveCanonicalArtifactSkillPoints,
+  prepareCanonicalEventTimeContext,
   type CanonicalEventTimeContext,
   type CanonicalEventTimeState,
 } from '../simulation/canonicalEventTimeModel'
@@ -203,12 +204,17 @@ export class CanonicalGameApplicationFacade {
   private readonly eventContext: Readonly<CanonicalEventTimeContext>
 
   constructor(options: Readonly<CanonicalGameApplicationOptions>) {
-    this.eventContext = options.engine.eventContext
+    this.eventContext = prepareCanonicalEventTimeContext(
+      options.engine.eventContext,
+    )
     this.application = new TransactionalGameApplication({
       startupResolver: options.startupResolver,
       repository: options.repository,
       sessionFactory: options.sessionFactory,
-      engineDefinition: createCanonicalGameEngineDefinition(options.engine),
+      engineDefinition: createCanonicalGameEngineDefinition({
+        ...options.engine,
+        eventContext: this.eventContext,
+      }),
     })
   }
 
@@ -550,7 +556,9 @@ export function createCanonicalGameEngineDefinition(
 > {
   const minimumCycleSeconds =
     options.infinityMinimumCycleSeconds ?? 1 / 60
-  const eventContext = options.eventContext
+  const eventContext = prepareCanonicalEventTimeContext(
+    options.eventContext,
+  )
   return {
     schema: CANONICAL_GAME_APPLICATION_SCHEMA,
     cloneState: cloneCanonicalRuntimeState,

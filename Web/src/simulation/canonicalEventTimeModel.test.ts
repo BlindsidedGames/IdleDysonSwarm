@@ -13,6 +13,7 @@ import {
   createCapturedInfinityAssetLookup,
   deriveCanonicalArtifactSkillPoints,
   evaluateCanonicalInfinityBoundary,
+  prepareCanonicalEventTimeContext,
   type CanonicalEventTimeContext,
   type CanonicalEventTimeState,
 } from './canonicalEventTimeModel'
@@ -354,6 +355,103 @@ const artifactDefinitions = new Map<
 ])
 
 describe('canonical whole-game event-time model', () => {
+  test('prepares detached immutable definitions once for every model clone', () => {
+    const dreamDefinitions = new Map(
+      [...SIMULATION_UPGRADE_DEFINITIONS].map(([key, definition]) => [
+        key,
+        structuredClone(definition),
+      ]),
+    )
+    const realityDefinitions = new Map(
+      [...artifactDefinitions].map(([key, definition]) => [
+        key,
+        structuredClone(definition),
+      ]),
+    )
+    const sourceContext = {
+      ...context(realityDefinitions),
+      dreamResetDefinitions: dreamDefinitions,
+    }
+    const prepared = prepareCanonicalEventTimeContext(sourceContext)
+    const preparedAgain = prepareCanonicalEventTimeContext(prepared)
+    const preparedReality = prepared.realityUpgradeDefinitions.get(
+      'translation1',
+    )!
+    const preparedDream = prepared.dreamResetDefinitions.get(
+      'counterMeteor',
+    )!
+    const model = new CanonicalEventTimeModel(
+      carrier({
+        ...withRealityArtifacts(baseState()),
+        infinity: {
+          ...baseState().infinity,
+          points: 42n,
+        },
+      }),
+      prepared,
+    )
+
+    expect(preparedAgain).toBe(prepared)
+    expect(prepared.realityUpgradeDefinitions).not.toBe(
+      realityDefinitions,
+    )
+    expect(preparedReality).not.toBe(
+      realityDefinitions.get('translation1'),
+    )
+    expect(Object.isFrozen(prepared.realityUpgradeDefinitions)).toBe(
+      true,
+    )
+    expect(Object.isFrozen(preparedReality)).toBe(true)
+    expect(Object.isFrozen(preparedReality.purchaseEffects)).toBe(true)
+    expect(Object.isFrozen(preparedReality.purchaseEffects[0])).toBe(
+      true,
+    )
+    expect(Object.isFrozen(preparedDream.prerequisites)).toBe(true)
+
+    const sourceReality = realityDefinitions.get('translation1')!
+    const sourceDream = dreamDefinitions.get('counterMeteor')!
+    ;(
+      sourceReality.purchaseEffects[0] as {
+        numericValue: number
+      }
+    ).numericValue = 999
+    ;(
+      sourceDream.purchaseEffects[0] as {
+        numericValue: number
+      }
+    ).numericValue = 999
+    realityDefinitions.clear()
+    dreamDefinitions.clear()
+
+    expect(preparedReality.purchaseEffects[0]?.numericValue).toBe(2.5)
+    expect(preparedDream.purchaseEffects[0]?.numericValue).not.toBe(999)
+    expect(() =>
+      (
+        prepared.realityUpgradeDefinitions as Map<
+          RealityUpgradeId,
+          RealityUpgradeDefinition
+        >
+      ).clear(),
+    ).toThrow(TypeError)
+    expect(() =>
+      (
+        preparedReality.purchaseEffects as RealityUpgradeDefinition['purchaseEffects'] &
+          unknown[]
+      ).push(preparedReality.purchaseEffects[0]!),
+    ).toThrow(TypeError)
+
+    const clone = model.clone()
+    clone.applyQueuedInput(
+      { timeSeconds: 0, kind: CANONICAL_QUANTUM_LEAP_INPUT },
+      createSimulationSummary(),
+    )
+    expect(clone.issue).toBeUndefined()
+    expect(clone.lastQueuedInputOutcome?.code).toBe(
+      'QUANTUM_LEAP_APPLIED',
+    )
+    expect(clone.state.gameState.skills.points).toBe(10n)
+  })
+
   test('synchronizes bot allocation and advances the complete early Dyson production chain', () => {
     const source = baseState()
     const gameState: CanonicalGameStateV1 = {

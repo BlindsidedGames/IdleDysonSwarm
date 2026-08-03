@@ -41,10 +41,16 @@ describe('production canonical application factory', () => {
     expect(context.realityWorkerTuning).toEqual(
       readRealityWorkerTuning(),
     )
-    expect(context.dreamResetDefinitions).toBe(
+    expect([...context.dreamResetDefinitions]).toEqual([
+      ...SIMULATION_UPGRADE_DEFINITIONS,
+    ])
+    expect([...context.realityUpgradeDefinitions]).toEqual([
+      ...REALITY_UPGRADE_DEFINITIONS,
+    ])
+    expect(context.dreamResetDefinitions).not.toBe(
       SIMULATION_UPGRADE_DEFINITIONS,
     )
-    expect(context.realityUpgradeDefinitions).toBe(
+    expect(context.realityUpgradeDefinitions).not.toBe(
       REALITY_UPGRADE_DEFINITIONS,
     )
     expect(asset).toBeDefined()
@@ -57,6 +63,10 @@ describe('production canonical application factory', () => {
     expect(captured).not.toBe(asset)
     expect(Object.isFrozen(context)).toBe(true)
     expect(Object.isFrozen(context.realityWorkerTuning)).toBe(true)
+    expect(Object.isFrozen(context.dreamResetDefinitions)).toBe(true)
+    expect(Object.isFrozen(context.realityUpgradeDefinitions)).toBe(
+      true,
+    )
   })
 
   test('captures retained host progress tuning in the production event context', () => {
