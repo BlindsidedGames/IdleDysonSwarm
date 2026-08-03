@@ -1887,6 +1887,14 @@ function snapshot(options: SnapshotOptions = {}): ReadySnapshot {
               definitionGap: null,
             },
           ],
+          sections: [
+            {
+              sectionId: 'core',
+              upgradeIds: ['Secrets'],
+              revealed: true,
+              revealRequirement: null,
+            },
+          ],
           leap: {
             eligible: false,
             code: 'threshold-not-met',

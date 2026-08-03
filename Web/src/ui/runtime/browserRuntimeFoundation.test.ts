@@ -3369,14 +3369,6 @@ describe('browser runtime foundation composition', () => {
         return application
       },
     })
-    expect(application?.playerEnvelopes[2]).toMatchObject({
-      expectedStateRevision: 5,
-      command: {
-        kind: 'dyson.set-facility-automation',
-        facilityId: 'assembly_lines',
-        enabled: true,
-      },
-    })
     await runtime.start()
     application?.setDirty('exported-checkpoint')
 

@@ -4,6 +4,7 @@ import {
   statSync,
 } from 'node:fs'
 import { resolve } from 'node:path'
+import { fileURLToPath } from 'node:url'
 import { describe, expect, test } from 'vitest'
 import {
   createCapturedInfinityAssetLookup,
@@ -216,10 +217,7 @@ describe('generated browser runtime catalog', () => {
   })
 
   test('prevents production modules from importing the complete catalog', () => {
-    const sourceRoot = resolve(
-      new URL('.', import.meta.url).pathname.slice(1),
-      '..',
-    )
+    const sourceRoot = fileURLToPath(new URL('..', import.meta.url))
     const offenders = walkSource(sourceRoot)
       .filter(
         (path) =>
