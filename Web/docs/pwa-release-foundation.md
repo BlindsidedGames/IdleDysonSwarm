@@ -1,5 +1,9 @@
 # PWA release foundation
 
+Operational release sequencing, Stripe and Cloudflare invariants, preview
+rules, production checks, and rollback requirements live in
+`website-deployment-rules.md`.
+
 The Web release is packaged exclusively for `/play/`. Vite's base path, the
 manifest `start_url` and `scope`, icon URLs, generated service worker, and
 Cloudflare header fragment all use that same route. The canonical public URL
