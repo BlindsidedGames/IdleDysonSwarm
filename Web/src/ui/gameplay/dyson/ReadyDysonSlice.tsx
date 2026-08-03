@@ -1492,6 +1492,7 @@ export function ReadyDysonSlice({
               content: (
                 <TinkerSurface
                   facts={tinker.value}
+                  stateRevision={snapshot.revision.state}
                   dispatch={dispatchPlayer}
                 />
               ),

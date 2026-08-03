@@ -34,6 +34,8 @@ export type TinkerFacts = ReadyTinker['value']
 
 export interface TinkerSurfaceProps {
   readonly facts: TinkerFacts
+  /** State revision of the authoritative snapshot supplying {@link facts}. */
+  readonly stateRevision: number
   readonly dispatch: TinkerCommandDispatch
   readonly className?: string
 }
@@ -42,6 +44,7 @@ type TinkerFailureCategory = 'stale' | 'rejected' | 'runtime'
 
 export function TinkerSurface({
   facts,
+  stateRevision,
   dispatch,
   className,
 }: TinkerSurfaceProps) {
@@ -71,7 +74,10 @@ export function TinkerSurface({
     onResult: handleResult,
     onDispatchFailure: () => setFailure('runtime'),
   })
-  const visualElapsedSeconds = useVisualTinkerElapsed(facts)
+  const visualElapsedSeconds = useVisualTinkerElapsed(
+    facts,
+    stateRevision,
+  )
   const seconds = facts.runtime.running
     ? Math.max(
         0,
@@ -200,7 +206,10 @@ export function TinkerSurface({
  * Interpolates only the displayed fill between canonical runtime snapshots.
  * Completion and rewards remain entirely owned by the lifecycle coordinator.
  */
-function useVisualTinkerElapsed(facts: TinkerFacts): number {
+function useVisualTinkerElapsed(
+  facts: TinkerFacts,
+  stateRevision: number,
+): number {
   const prefersReducedMotion = usePrefersReducedMotion()
   const [elapsed, setElapsed] = useState(facts.runtime.elapsedSeconds)
   const visualElapsedRef = useRef(facts.runtime.elapsedSeconds)
@@ -210,6 +219,7 @@ function useVisualTinkerElapsed(facts: TinkerFacts): number {
   const previousCooldownRef = useRef(
     facts.runtime.cooldownSeconds,
   )
+  const previousStateRevisionRef = useRef(stateRevision)
 
   useEffect(() => {
     const authoritativeElapsed = facts.runtime.elapsedSeconds
@@ -218,8 +228,11 @@ function useVisualTinkerElapsed(facts: TinkerFacts): number {
       previousCanonicalElapsedRef.current
     const cooldownChanged =
       facts.runtime.cooldownSeconds !== previousCooldownRef.current
+    const stateRevisionChanged =
+      stateRevision !== previousStateRevisionRef.current
     previousCanonicalElapsedRef.current = authoritativeElapsed
     previousCooldownRef.current = facts.runtime.cooldownSeconds
+    previousStateRevisionRef.current = stateRevision
 
     if (!facts.runtime.running || prefersReducedMotion) {
       visualElapsedRef.current = authoritativeElapsed
@@ -228,7 +241,7 @@ function useVisualTinkerElapsed(facts: TinkerFacts): number {
     }
 
     const animationStartElapsed =
-      cycleRestarted || cooldownChanged
+      cycleRestarted || cooldownChanged || stateRevisionChanged
         ? authoritativeElapsed
         : Math.max(
             visualElapsedRef.current,
@@ -253,6 +266,7 @@ function useVisualTinkerElapsed(facts: TinkerFacts): number {
     frame = requestAnimationFrame(update)
     return () => cancelAnimationFrame(frame)
   }, [
+    stateRevision,
     facts.runtime.cooldownSeconds,
     facts.runtime.elapsedSeconds,
     facts.runtime.running,

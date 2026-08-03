@@ -325,8 +325,16 @@ describe('TinkerSurface transient interaction', () => {
     const secondDispatch = createDispatch()
     render(
       <IntlProvider locale="en">
-        <TinkerSurface facts={readyFacts()} dispatch={firstDispatch} />
-        <TinkerSurface facts={readyFacts()} dispatch={secondDispatch} />
+        <TinkerSurface
+          facts={readyFacts()}
+          stateRevision={0}
+          dispatch={firstDispatch}
+        />
+        <TinkerSurface
+          facts={readyFacts()}
+          stateRevision={0}
+          dispatch={secondDispatch}
+        />
       </IntlProvider>,
     )
     const [first, second] = screen.getAllByRole<HTMLButtonElement>(
@@ -567,6 +575,40 @@ describe('TinkerSurface presentation and accessibility', () => {
     expect(progress.value).toBeCloseTo(0.05)
   })
 
+  test('restarts visual progress when a new authoritative repeat wraps from zero to zero', () => {
+    let now = 0
+    let nextFrame: FrameRequestCallback | undefined
+    vi.spyOn(performance, 'now').mockImplementation(() => now)
+    vi.stubGlobal(
+      'requestAnimationFrame',
+      vi.fn((callback: FrameRequestCallback) => {
+        nextFrame = callback
+        return 1
+      }),
+    )
+    vi.stubGlobal('cancelAnimationFrame', vi.fn())
+
+    const dispatch = createDispatch()
+    const facts = runningFacts({ elapsedSeconds: 0 })
+    const view = render(tinkerElement(facts, dispatch, 1))
+    const progress = screen.getByRole('progressbar', {
+      name: 'Tinker progress',
+    }) as HTMLProgressElement
+
+    act(() => {
+      now = 500
+      nextFrame?.(now)
+    })
+    expect(progress.value).toBeCloseTo(0.5)
+    expect(screen.getByText('0.00s')).toBeInTheDocument()
+
+    view.rerender(tinkerElement(facts, dispatch, 2))
+
+    expect(progress.value).toBe(0)
+    expect(screen.getByText('0.50s')).toBeInTheDocument()
+    expect(requestAnimationFrame).toHaveBeenCalledTimes(2)
+  })
+
   test('renders Unity copy, hold hint, time and progress with no Repeat control', () => {
     const dispatch = createDispatch()
     renderTinker(
@@ -729,10 +771,15 @@ function renderTinker(
 function tinkerElement(
   facts: TinkerFacts,
   dispatch: TinkerCommandDispatch,
+  stateRevision = 0,
 ) {
   return (
     <IntlProvider locale="en">
-      <TinkerSurface facts={facts} dispatch={dispatch} />
+      <TinkerSurface
+        facts={facts}
+        stateRevision={stateRevision}
+        dispatch={dispatch}
+      />
     </IntlProvider>
   )
 }
