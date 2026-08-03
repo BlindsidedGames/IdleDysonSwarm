@@ -177,7 +177,9 @@ export async function generateFirstDysonSliceFixture(): Promise<FirstDysonSliceF
       sourcePath: 'test/fixtures/schema-08-canonical-idb1-main-save.txt',
       sourceSha256: sha256(readFileSync(SOURCE_SAVE_URL)),
       preparedStateSha256: sha256(stableJson(prepared.copyValidatedState())),
-      catalogSha256: sha256(readFileSync(CATALOG_URL)),
+      catalogSha256: sha256(
+        readFileSync(CATALOG_URL, 'utf8').replaceAll('\r\n', '\n'),
+      ),
     },
     initial,
     commands: {
