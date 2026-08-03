@@ -26,6 +26,7 @@ import type {
   CanonicalGameStateV1,
   SkillPresetState,
 } from '../../game-state/types'
+import { hydrateGameState } from '../../game-state/mapping'
 import {
   type BrowserSaveDatabase,
   IndexedDbBrowserSaveDatabase,
@@ -70,6 +71,10 @@ import {
   PeriodicCheckpointScheduler,
 } from '../../platform/periodicCheckpoint'
 import { decodeIdb1Save } from '../../save/decodeIdb1'
+import { prepareImportedSaveText } from '../../save/import'
+import {
+  serializeCompressedWebSave,
+} from '../../save/compressedWebSave'
 import {
   PortableSaveRepository,
   type SaveRepository,
@@ -98,6 +103,7 @@ import type {
   UiRuntimeFoundation,
   UiRuntimeFoundationStatus,
   UiRuntimeImportRequest,
+  UiRuntimeImportPreviewResult,
   UiRuntimeImportResult,
   UiRuntimeStartResult,
   UiRuntimeStorageStatus,
@@ -189,6 +195,7 @@ export interface BrowserRuntimeFoundationOptions {
 
 interface BrowserRuntimeGraph {
   readonly application: BrowserRuntimeApplicationPort
+  readonly repository: SaveRepository
   readonly coordinator: CanonicalLifecycleCoordinator
   readonly initialLifecycle: {
     readonly phase: LifecyclePhase
@@ -270,6 +277,8 @@ export function createBrowserRuntimeFoundation(
       : {}),
     importSave: (request: UiRuntimeImportRequest) =>
       implementation.importSave(request),
+    previewImport: (request: UiRuntimeImportRequest) =>
+      implementation.previewImport(request),
     inspectStorage: (requestPersistence = false) =>
       implementation.inspectStorage(requestPersistence),
     requestCheckpoint: () =>
@@ -278,6 +287,10 @@ export function createBrowserRuntimeFoundation(
       implementation.checkpointBeforeSafeReload(),
     recoveryExportAvailable: () =>
       implementation.recoveryExportAvailable(),
+    readCurrentSaveText: () =>
+      implementation.readCurrentSaveText(),
+    exportCurrentSave: () =>
+      implementation.exportCurrentSave(),
     exportLastRecovery: () =>
       implementation.exportLastRecovery(),
     readClipboardText: () =>
@@ -302,6 +315,7 @@ class BrowserRuntimeFoundation implements BrowserUiRuntimeFoundation {
   private readonly storageStatus: BrowserStorageStatusAdapter
   private readonly importReader: BrowserSaveImportReader
   private readonly exporter: BrowserRecoveryBlobExporter
+  private readonly downloads: TextDownloadPort
   private readonly frontendSnapshots = new FrontendSnapshotStore()
   private readonly listeners = new Set<UiRuntimeStatusListener>()
   private currentStatus: UiRuntimeFoundationStatus = Object.freeze({
@@ -359,9 +373,11 @@ class BrowserRuntimeFoundation implements BrowserUiRuntimeFoundation {
       options.storageManager,
     )
     this.importReader = new BrowserSaveImportReader()
+    this.downloads =
+      options.downloads ?? new BrowserTextDownloadAdapter()
     this.exporter = new BrowserRecoveryBlobExporter(
       { readText: (path) => this.database.readFile(path) },
-      options.downloads ?? new BrowserTextDownloadAdapter(),
+      this.downloads,
     )
     this.unsubscribeOwnership = this.lease.subscribe((state) => {
       this.handleOwnershipState(state)
@@ -453,7 +469,12 @@ class BrowserRuntimeFoundation implements BrowserUiRuntimeFoundation {
         enabled: false,
       })
     }
-    if (command.kind === 'dyson.set-bot-distribution') {
+    if (
+      command.kind === 'dyson.set-bot-distribution' ||
+      command.kind === 'dyson.set-buy-mode' ||
+      command.kind === 'dyson.set-rounded-bulk-buy' ||
+      command.kind === 'dyson.set-facility-automation'
+    ) {
       return graph.playerCommands.dispatchLatest(command)
     }
     if (
@@ -707,6 +728,33 @@ class BrowserRuntimeFoundation implements BrowserUiRuntimeFoundation {
     }
   }
 
+  async previewImport(
+    request: UiRuntimeImportRequest,
+  ): Promise<UiRuntimeImportPreviewResult> {
+    try {
+      const supplied = await this.readSuppliedSave(request)
+      const prepared = prepareImportedSaveText(
+        supplied.text,
+        request.importedAtUtc,
+      )
+      const state = hydrateGameState(prepared).state
+      return {
+        accepted: true,
+        preview: {
+          infinityPoints: state.infinity.points,
+          quantumPoints: state.quantum.pointsEarned,
+          skillPoints: state.skills.points,
+        },
+      }
+    } catch (error) {
+      return {
+        accepted: false,
+        code: importFailureCode(error),
+        reason: errorMessage(error),
+      }
+    }
+  }
+
   async importSave(
     request: UiRuntimeImportRequest,
   ): Promise<UiRuntimeImportResult> {
@@ -795,6 +843,28 @@ class BrowserRuntimeFoundation implements BrowserUiRuntimeFoundation {
     if (recoveryPath === undefined) return false
     await this.exporter.export(recoveryPath)
     return true
+  }
+
+  async exportCurrentSave(): Promise<boolean> {
+    const text = await this.readCurrentSaveText()
+    if (text === null) return false
+    this.downloads.downloadText(
+      'idle-dyson-swarm-save.idsw',
+      text,
+      'text/plain;charset=utf-8',
+    )
+    return true
+  }
+
+  async readCurrentSaveText(): Promise<string | null> {
+    const graph = this.requireGraph()
+    if (!(await this.requestFencedCheckpoint(graph, false))) {
+      return null
+    }
+    const save = await graph.repository.loadCurrent()
+    return save === null
+      ? null
+      : serializeCompressedWebSave(save.copyValidatedState())
   }
 
   recoveryExportAvailable(): boolean {
@@ -1170,6 +1240,7 @@ class BrowserRuntimeFoundation implements BrowserUiRuntimeFoundation {
     })
     graph = {
       application,
+      repository,
       coordinator,
       initialLifecycle: Object.freeze({
         phase: initialLifecyclePhase,

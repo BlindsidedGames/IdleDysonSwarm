@@ -220,6 +220,16 @@ export const researchMessages = defineMessages({
     defaultMessage: 'Research purchase amount',
     description: 'Heading for canonical Research buy mode controls.',
   },
+  autoPurchase: {
+    id: 'research.settings.auto-purchase',
+    defaultMessage: 'Auto-purchase',
+    description: 'Heading for per-research automation controls.',
+  },
+  toggleAll: {
+    id: 'research.settings.auto-purchase-toggle-all',
+    defaultMessage: 'Toggle All',
+    description: 'Sets every visible Research auto-purchase option together.',
+  },
   buyOne: {
     id: 'research.settings.buy-mode.one',
     defaultMessage: 'x1',

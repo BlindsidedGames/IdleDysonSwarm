@@ -1,13 +1,18 @@
 import { prepareIdb1Save, prepareImportedSave, PreparedSave } from './prepare'
 import { deserializeWebSaveBounded } from './serialization'
 import {
+  COMPRESSED_WEB_SAVE_PREFIX,
+  deserializeCompressedWebSave,
+} from './compressedWebSave'
+import {
   assertSuppliedSaveTextLimit,
   DEFAULT_SAVE_IMPORT_LIMITS,
   type SaveImportLimits,
 } from './decodeIdb1'
 
 /**
- * Decodes either shipped Unity (`IDB1`) or canonical web (`IDSWEB1`) text,
+ * Decodes shipped Unity (`IDB1`), compressed Web (`IDSWEB1:`), or canonical
+ * raw Web (`IDSWEB1` JSON) text,
  * runs the shared preparation pipeline, and consumes its remote lifecycle
  * timestamp before the caller performs a verified commit.
  */
@@ -21,10 +26,15 @@ export function prepareImportedSaveText(
   if (trimmed.length === 0) {
     throw new Error('Imported save text must not be empty.')
   }
-  const prepared = trimmed.toUpperCase().startsWith('IDB1:')
+  const upper = trimmed.toUpperCase()
+  const prepared = upper.startsWith('IDB1:')
     ? prepareIdb1Save(trimmed, limits).prepared
-    : PreparedSave.fromDecoded(
-        deserializeWebSaveBounded(trimmed, limits),
-      )
+    : upper.startsWith(COMPRESSED_WEB_SAVE_PREFIX)
+      ? PreparedSave.fromDecoded(
+          deserializeCompressedWebSave(trimmed, limits),
+        )
+      : PreparedSave.fromDecoded(
+          deserializeWebSaveBounded(trimmed, limits),
+        )
   return prepareImportedSave(prepared, importedAtUtc)
 }

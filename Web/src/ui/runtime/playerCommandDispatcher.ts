@@ -23,7 +23,13 @@ type LatestIdempotentCommand =
     > & { readonly enabled: false })
   | Extract<
       CanonicalPlayerCommand,
-      { readonly kind: 'dyson.set-bot-distribution' }
+      {
+        readonly kind:
+          | 'dyson.set-bot-distribution'
+          | 'dyson.set-buy-mode'
+          | 'dyson.set-rounded-bulk-buy'
+          | 'dyson.set-facility-automation'
+      }
     >
   | Extract<
       CanonicalPlayerCommand,

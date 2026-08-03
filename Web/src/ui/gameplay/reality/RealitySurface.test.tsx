@@ -1,6 +1,8 @@
 // @vitest-environment jsdom
 
 import '@testing-library/jest-dom/vitest'
+import { readFileSync } from 'node:fs'
+import { join } from 'node:path'
 import axe from 'axe-core'
 import {
   act,
@@ -27,6 +29,12 @@ import {
   RealitySurface,
   type RealitySurfaceProps,
 } from './RealitySurface'
+
+const realityStyles = readFileSync(
+  join(process.cwd(), 'src', 'ui', 'gameplay', 'reality', 'reality.css'),
+  'utf8',
+)
+const baseRealityStyles = realityStyles.split('@media (max-width: 30rem)')[0]
 
 afterEach(() => {
   cleanup()
@@ -85,6 +93,30 @@ const upgrades = [
     definitionGap: null,
   },
 ] as const satisfies FrontendGameplayPreviews['reality']['upgrades']
+
+test('uses the shared compact mobile upgrade hierarchy', () => {
+  expect(baseRealityStyles).toMatch(
+    /\.reality-surface__content\s*\{[^}]*gap:\s*var\(--game-card-grid-gap\);[^}]*padding-block:\s*var\(--game-card-content-inset\);/,
+  )
+  expect(baseRealityStyles).toMatch(
+    /\.reality-upgrade-category ol,[\s\S]*gap:\s*var\(--game-card-grid-gap\);/,
+  )
+  expect(realityStyles).toMatch(
+    /@media \(max-width: 30rem\)[\s\S]*\.reality-upgrades[^}]*[\s\S]*\.ui-collapsible-section__trigger\s*\{[^}]*min-block-size:\s*var\(--target-minimum\);[^}]*font-size:\s*calc\(0\.82rem \* var\(--game-text-scale\)\);/,
+  )
+  expect(baseRealityStyles).toMatch(
+    /\.reality-upgrade-category > \.ui-collapsible-section__heading,[\s\S]*border-inline-start:\s*0\.22rem solid var\(--reality-upgrade-header\);/,
+  )
+  expect(baseRealityStyles).toMatch(
+    /\.reality-upgrade-category,[\s\S]*\.reality-upgrade-subcategory\s*\{[^}]*margin-inline:\s*0\.18rem;/,
+  )
+  expect(baseRealityStyles).toMatch(
+    /\.reality-upgrades[^}]*[\s\S]*\.ui-collapsible-section__trigger\s*\{[^}]*font-size:\s*calc\(1\.03rem \* var\(--game-text-scale\)\);/,
+  )
+  expect(baseRealityStyles).toMatch(
+    /\.reality-upgrade-card\s*\{[^}]*min-block-size:\s*0;[^}]*grid-template-columns:\s*minmax\(0, 1fr\) 6rem;[\s\S]*\.reality-upgrade-card h4\s*\{[^}]*font-size:\s*calc\(0\.8rem \* var\(--game-text-scale\)\);/,
+  )
+})
 
 const realityUpgradeSections = {
   translation: ['translation1'],

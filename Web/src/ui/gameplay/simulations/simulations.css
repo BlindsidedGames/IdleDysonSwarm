@@ -746,14 +746,56 @@
   }
 }
 
-@media (max-width: 26rem) {
+@media (max-width: 720px) {
   .ui-facility-card.simulation-panel-card {
-    grid-template-columns: minmax(0, 1fr) clamp(6.6rem, 31%, 7.5rem);
-    padding: 0.42rem;
+    min-block-size: 0;
+    grid-template-columns: minmax(0, 1fr) 6.25rem;
+    gap: 0.08rem 0.35rem;
+    padding: 0.36rem 0.4rem;
+  }
+
+  .simulation-panel-card .ui-facility-card__title {
+    font-size: calc(0.8rem * var(--game-text-scale));
+    line-height: 1.1;
+  }
+
+  .simulation-panel-card--inline-status .ui-facility-card__title {
+    flex-wrap: nowrap;
+  }
+
+  .simulation-panel-card__inline-status,
+  .simulation-panel-card .ui-facility-card__production {
+    font-size: calc(0.72rem * var(--game-text-scale));
+    line-height: 1.12;
   }
 
   .simulation-panel-card .ui-facility-card__description {
+    font-size: calc(0.67rem * var(--game-text-scale));
+    line-height: 1.16;
+  }
+
+  .simulation-panel-card__actions {
+    gap: 0.25rem;
+  }
+
+  .simulation-panel-card__actions > .ui-button,
+  .simulation-panel-card__details {
     font-size: calc(0.76rem * var(--game-text-scale));
+  }
+
+  .simulation-panel-card__progress-list {
+    font-size: calc(0.66rem * var(--game-text-scale));
+  }
+}
+
+@media (max-width: 26rem) {
+  .ui-facility-card.simulation-panel-card {
+    grid-template-columns: minmax(0, 1fr) 6rem;
+    padding: 0.32rem 0.35rem;
+  }
+
+  .simulation-panel-card .ui-facility-card__description {
+    font-size: calc(0.64rem * var(--game-text-scale));
   }
 }
 

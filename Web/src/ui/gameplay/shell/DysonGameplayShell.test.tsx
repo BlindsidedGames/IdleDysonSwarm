@@ -25,6 +25,10 @@ const controlsCss = readFileSync(
   resolve(process.cwd(), 'src/ui/gameplay/dyson/dysonControls.css'),
   'utf8',
 )
+const lowerFactsCss = readFileSync(
+  resolve(process.cwd(), 'src/ui/gameplay/dyson/dysonLowerFacts.css'),
+  'utf8',
+)
 const tokensCss = readFileSync(
   resolve(process.cwd(), 'src/ui/tokens/tokens.css'),
   'utf8',
@@ -40,6 +44,24 @@ afterEach(() => {
 })
 
 describe('DysonGameplayShell', () => {
+  it('compacts the mobile drawer and Bots lower regions without shrinking touch targets', () => {
+    expect(shellCss).toMatch(
+      /@media \(max-width: 720px\)[\s\S]*\.dyson-navigation--drawer \.dyson-navigation__link\s*\{[^}]*min-block-size:\s*var\(--target-minimum\);[^}]*font-size:\s*calc\(0\.9rem \* var\(--game-text-scale\)\);/,
+    )
+    expect(controlsCss).toMatch(
+      /@media \(max-width: 720px\)[\s\S]*\.dyson-info__facts\s*\{[^}]*font-size:\s*calc\(0\.66rem \* var\(--game-text-scale\)\);/,
+    )
+    expect(controlsCss).toMatch(
+      /\.dyson-info__overview\s*\{[^}]*grid-template-columns:\s*minmax\(0, 1fr\) 2\.8rem;/,
+    )
+    expect(controlsCss).not.toMatch(
+      /\.dyson-info__fact\s*\{[^}]*border/,
+    )
+    expect(lowerFactsCss).toMatch(
+      /@media \(max-width: 720px\)[\s\S]*\.dyson-lower-facts p\s*\{[^}]*font-size:\s*calc\(0\.76rem \* var\(--game-text-scale\)\);/,
+    )
+  })
+
   it('provides Unity-style drawer and compact bottom navigation', () => {
     render(<DysonGameplayShell {...props()} />)
 
@@ -228,6 +250,18 @@ describe('DysonGameplayShell', () => {
     )
   })
 
+  it('uses the card gutter for both facilities and lower panels', () => {
+    expect(shellCss).toMatch(
+      /\.dyson-shell__stage\s*\{[^}]*max\(var\(--game-card-content-inset\), env\(safe-area-inset-right\)\)[^}]*max\(var\(--game-card-content-inset\), env\(safe-area-inset-left\)\);/s,
+    )
+    expect(shellCss).toMatch(
+      /\.dyson-shell__lower-regions\s*\{[^}]*max\(var\(--game-card-content-inset\), env\(safe-area-inset-right\)\)[^}]*max\(var\(--game-card-content-inset\), env\(safe-area-inset-left\)\);/s,
+    )
+    expect(shellCss).not.toMatch(
+      /@media \(min-width: 1024px\)[\s\S]*\.dyson-shell__lower-regions\s*\{[^}]*padding-inline:/,
+    )
+  })
+
   it('sets locale direction while keeping the physical Unity header order', () => {
     const { container } = render(
       <DysonGameplayShell {...props()} direction="rtl" />,
@@ -381,6 +415,9 @@ describe('Dyson gameplay responsive CSS contract', () => {
     )
     expect(shellCss).toMatch(
       /\.dyson-resource-header__item::before\s*\{[^}]*z-index:\s*-1;[^}]*radial-gradient\([^}]*var\(--resource-clearance-color\)[^}]*transparent 86%[^}]*pointer-events:\s*none;/,
+    )
+    expect(shellCss).toMatch(
+      /\.dyson-resource-header__item--cash::before,\s*\.dyson-resource-header__item--science::before\s*\{[^}]*content:\s*none;/,
     )
     expect(shellCss).not.toContain('backdrop-filter')
   })

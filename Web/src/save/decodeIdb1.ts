@@ -77,6 +77,7 @@ export function decodeIdb1Save(
   const compressed = decodeBase64Bounded(
     payload,
     limits.decodedPayloadBytes,
+    'IDB1',
   )
   const binary =
     compressed[0] === 0x1f && compressed[1] === 0x8b
@@ -85,6 +86,7 @@ export function decodeIdb1Save(
           limits.inflatedBinaryBytes,
           allocateInflatedBuffer,
           observeInflate,
+          'IDB1',
         )
       : compressed
   if (binary.byteLength > limits.inflatedBinaryBytes) {
@@ -119,11 +121,12 @@ export function assertSuppliedSaveTextLimit(
   return byteLength
 }
 
-function decodeBase64Bounded(
+export function decodeBase64Bounded(
   value: string,
   limitBytes: number,
+  envelopeName = 'save',
 ): Uint8Array {
-  const decodedLength = base64DecodedLength(value)
+  const decodedLength = base64DecodedLength(value, envelopeName)
   if (decodedLength > limitBytes) {
     throw new SaveImportLimitError('decoded-payload', limitBytes)
   }
@@ -132,7 +135,7 @@ function decodeBase64Bounded(
   try {
     binary = atob(value)
   } catch {
-    throw new Error('IDB1 payload is not valid base64')
+    throw new Error(`${envelopeName} payload is not valid base64`)
   }
   const decoded = new Uint8Array(binary.length)
   for (let index = 0; index < binary.length; index += 1) {
@@ -141,23 +144,27 @@ function decodeBase64Bounded(
   return decoded
 }
 
-function base64DecodedLength(value: string): number {
+function base64DecodedLength(
+  value: string,
+  envelopeName: string,
+): number {
   if (value.length % 4 === 1) {
-    throw new Error('IDB1 payload is not valid base64')
+    throw new Error(`${envelopeName} payload is not valid base64`)
   }
   const padding =
     value.endsWith('==') ? 2 : value.endsWith('=') ? 1 : 0
   return Math.floor((value.length * 3) / 4) - padding
 }
 
-function gunzipBounded(
+export function gunzipBounded(
   compressed: Uint8Array,
   limitBytes: number,
   allocateInflatedBuffer: InflatedBufferAllocator,
   observeInflate: BoundedInflateObserver | undefined,
+  envelopeName = 'save',
 ): Uint8Array {
   if (compressed.byteLength < 18) {
-    throw new Error('IDB1 payload contains invalid gzip data')
+    throw new Error(`${envelopeName} payload contains invalid gzip data`)
   }
   const advertisedBytes = new DataView(
     compressed.buffer,
@@ -187,7 +194,7 @@ function gunzipBounded(
   const output = allocateInflatedBuffer(advertisedBytes)
   if (output.byteLength !== advertisedBytes) {
     throw new Error(
-      'IDB1 bounded-inflation allocator returned an unexpected size.',
+      `${envelopeName} bounded-inflation allocator returned an unexpected size.`,
     )
   }
   let emittedBytes = 0
@@ -209,7 +216,7 @@ function gunzipBounded(
     }
     if (nextEmittedBytes > advertisedBytes) {
       throw new Error(
-        'IDB1 gzip output exceeds its advertised binary size.',
+        `${envelopeName} gzip output exceeds its advertised binary size.`,
       )
     }
     output.set(chunk, emittedBytes)
@@ -232,7 +239,7 @@ function gunzipBounded(
   }
   if (emittedBytes !== advertisedBytes) {
     throw new Error(
-      'IDB1 gzip output does not match its advertised binary size.',
+      `${envelopeName} gzip output does not match its advertised binary size.`,
     )
   }
   return output.subarray(0, emittedBytes)

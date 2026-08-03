@@ -3,6 +3,7 @@
 .basic-facility-region {
   display: grid;
   min-inline-size: 0;
+  container-type: inline-size;
 }
 
 .basic-facility-region__heading {
@@ -21,7 +22,7 @@
   display: grid;
   min-inline-size: 0;
   grid-template-columns: minmax(0, 1fr);
-  gap: 0.55rem;
+  gap: var(--game-card-grid-gap);
   padding: 0;
   margin: 0;
   list-style: none;
@@ -51,11 +52,11 @@
   block-size: 100%;
   grid-template-columns:
     minmax(0, 1fr)
-    clamp(8.5rem, 22%, 11rem);
-  grid-template-rows: auto auto auto minmax(0.35rem, auto);
-  gap: 0.18rem 0.75rem;
+    clamp(6.25rem, 27%, 6.75rem);
+  grid-template-rows: auto auto auto minmax(0.3rem, auto);
+  gap: 0.05rem 0.32rem;
   align-items: start;
-  padding: 0.55rem;
+  padding: 0.34rem 0.38rem;
   border: 2px solid #694b70;
   border-radius: 0.25rem;
   background:
@@ -106,6 +107,11 @@
   margin-inline-end: 0.25em;
 }
 
+.basic-facility-card .ui-facility-card__title {
+  font-size: calc(0.9rem * var(--game-text-scale));
+  line-height: 1.12;
+}
+
 .basic-facility-card__total {
   color: var(--color-accent-value);
   font-family: var(--font-family-numeric);
@@ -121,21 +127,22 @@
 .basic-facility-card__production {
   margin: 0;
   color: #ffad50;
+  font-size: calc(0.8rem * var(--game-text-scale));
   font-weight: var(--font-weight-semibold);
-  line-height: var(--line-height-body);
+  line-height: 1.14;
 }
 
 .basic-facility-card__description {
   margin: 0;
   color: white;
-  font-size: 0.88rem;
-  line-height: 1.3;
+  font-size: calc(0.67rem * var(--game-text-scale));
+  line-height: 1.18;
 }
 
 .basic-facility-card__progress-track {
   position: relative;
-  block-size: 0.35rem;
-  margin-block-start: 0.15rem;
+  block-size: 0.3rem;
+  margin-block-start: 0.12rem;
   overflow: hidden;
   border-radius: 999px;
   background: #171218;
@@ -183,8 +190,9 @@
 .basic-facility-card__actions {
   display: grid;
   block-size: 100%;
-  grid-template-rows: minmax(var(--target-minimum), 1fr) auto;
-  gap: 0.38rem;
+  grid-template-rows: var(--target-minimum) var(--target-minimum);
+  align-content: start;
+  gap: 0.28rem;
 }
 
 .basic-facility-card .ui-button {
@@ -197,6 +205,9 @@
   background: #d1b6d7;
   color: #0b080c;
   line-height: 1.08;
+  padding-block: 0.2rem;
+  padding-inline: 0.28rem;
+  font-size: calc(0.82rem * var(--game-text-scale));
 }
 
 .basic-facility-card .ui-button:not(:disabled):hover {
@@ -221,6 +232,9 @@
   background: #c695d7;
   color: #0b080c;
   font: inherit;
+  padding-block: 0.2rem;
+  padding-inline: 0.28rem;
+  font-size: calc(0.82rem * var(--game-text-scale));
   font-weight: var(--font-weight-bold);
   touch-action: manipulation;
   user-select: none;
@@ -411,56 +425,10 @@
 }
 
 @media (max-width: 720px) {
-  .basic-facility-region__grid {
-    gap: 0.42rem;
-  }
-
   .basic-facility-region__teaser-surface {
     min-block-size: 6.5rem;
     padding-block: 0.8rem;
     font-size: calc(0.95rem * var(--game-text-scale));
-  }
-
-  .ui-facility-card.basic-facility-card {
-    grid-template-columns:
-      minmax(0, 1fr)
-      clamp(6.25rem, 27%, 6.75rem);
-    grid-template-rows: auto auto auto minmax(0.3rem, auto);
-    gap: 0.05rem 0.32rem;
-    padding: 0.34rem 0.38rem;
-  }
-
-  .basic-facility-card .ui-facility-card__title {
-    font-size: calc(0.9rem * var(--game-text-scale));
-    line-height: 1.12;
-  }
-
-  .basic-facility-card__production {
-    font-size: calc(0.8rem * var(--game-text-scale));
-    line-height: 1.14;
-  }
-
-  .basic-facility-card__description {
-    font-size: calc(0.67rem * var(--game-text-scale));
-    line-height: 1.18;
-  }
-
-  .basic-facility-card__progress-track {
-    block-size: 0.3rem;
-    margin-block-start: 0.12rem;
-  }
-
-  .basic-facility-card__actions {
-    grid-template-rows: var(--target-minimum) var(--target-minimum);
-    align-content: start;
-    gap: 0.28rem;
-  }
-
-  .basic-facility-card .ui-button,
-  .basic-facility-card__details-button {
-    padding-block: 0.2rem;
-    padding-inline: 0.28rem;
-    font-size: calc(0.82rem * var(--game-text-scale));
   }
 
   .basic-facility-card .ui-facility-card__header {
@@ -531,9 +499,17 @@
   }
 }
 
-@media (min-width: 1600px) {
+@container (min-width: 50rem) {
   .basic-facility-region__grid {
     grid-template-columns: repeat(2, minmax(0, 1fr));
+    grid-auto-rows: 1fr;
+    align-items: stretch;
+  }
+}
+
+@container (min-width: 80rem) {
+  .basic-facility-region__grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
   }
 }
 

@@ -55,6 +55,9 @@ import { prepareIdb1Save, PreparedSave } from '../../save/prepare'
 import type { SaveRepository } from '../../save/repository'
 import { serializeWebSave } from '../../save/serialization'
 import {
+  deserializeCompressedWebSave,
+} from '../../save/compressedWebSave'
+import {
   MOBILE_LIFECYCLE_POLICY,
   WEB_LIFECYCLE_POLICY,
 } from '../../simulation/lifecycleAwayTime'
@@ -961,6 +964,37 @@ describe('browser runtime foundation composition', () => {
     expect((await database.listLegacyCandidates())[0]?.text).toBe(
       supplied,
     )
+    await runtime.shutdown()
+  })
+
+  test('previews imported point progress without retaining or replacing the save', async () => {
+    const database = new MemoryBrowserSaveDatabase()
+    const runtime = createRuntime({ database })
+    await runtime.start()
+    const mutationsBeforePreview = database.mutations.length
+    const supplied = serializeWebSave({
+      saveVersion: 12,
+      dysonVerseSaveData: {
+        dysonVerseInfinityData: {},
+        dysonVersePrestigeData: { infinityPoints: 42n },
+        dysonVerseSkillTreeData: { skillPointsTree: 7n },
+      },
+      prestigePlus: { points: 3n },
+    })
+
+    await expect(runtime.previewImport({
+      text: supplied,
+      importedAtUtc: '2026-07-29T00:00:10Z',
+      overwriteApproved: false,
+    })).resolves.toEqual({
+      accepted: true,
+      preview: {
+        infinityPoints: 42n,
+        quantumPoints: 3n,
+        skillPoints: 7n,
+      },
+    })
+    expect(database.mutations).toHaveLength(mutationsBeforePreview)
     await runtime.shutdown()
   })
 
@@ -2518,7 +2552,7 @@ describe('browser runtime foundation composition', () => {
     await runtime.shutdown()
   })
 
-  test('captures bot distribution after already admitted active time', async () => {
+  test('captures absolute settings after already admitted active time', async () => {
     const database = new MemoryBrowserSaveDatabase()
     const activeClock = new ManualActiveTimeClock()
     const frames = new ManualAnimationFrameScheduler()
@@ -2561,11 +2595,25 @@ describe('browser runtime foundation composition', () => {
       activationRevision: { session: 1, state: 3 },
       stateRevision: 4,
     })
+    activeClock.set(30)
+    frames.fire()
+    const facilityAutomation = runtime.dispatchPlayer({
+      kind: 'dyson.set-facility-automation',
+      facilityId: 'assembly_lines',
+      enabled: true,
+    })
+
+    await expect(facilityAutomation).resolves.toMatchObject({
+      status: 'accepted',
+      activationRevision: { session: 1, state: 5 },
+      stateRevision: 6,
+    })
     expect(application?.activeRequests).toEqual([
       { milliseconds: 10, sessionRevision: 1 },
       { milliseconds: 10, sessionRevision: 1 },
+      { milliseconds: 10, sessionRevision: 1 },
     ])
-    expect(application?.playerEnvelopes).toHaveLength(2)
+    expect(application?.playerEnvelopes).toHaveLength(3)
     expect(application?.playerEnvelopes[0]).toMatchObject({
       expectedStateRevision: 1,
       command: {
@@ -3275,14 +3323,17 @@ describe('browser runtime foundation composition', () => {
       'checkpointBeforeSafeReload',
       'development',
       'dispatchPlayer',
+      'exportCurrentSave',
       'exportLastRecovery',
       'exportSkillPreset',
       'importSave',
       'inspectStorage',
       'openExternalUrl',
+      'previewImport',
       'previewSkillPresetImport',
       'previewSkillPresetQueueChange',
       'readClipboardText',
+      'readCurrentSaveText',
       'recoveryExportAvailable',
       'requestCheckpoint',
       'shutdown',
@@ -3305,6 +3356,46 @@ describe('browser runtime foundation composition', () => {
     expect(typeof development?.status).toBe('function')
     expect(typeof development?.apply).toBe('function')
     expect(typeof development?.simulateOfflineTime).toBe('function')
+    await runtime.shutdown()
+  })
+
+  test('checkpoints and exports the current canonical save', async () => {
+    const downloads = new RecordingDownloads()
+    let application: FakeRuntimeApplication | undefined
+    const runtime = createRuntime({
+      downloads,
+      createApplication: (repository) => {
+        application = new FakeRuntimeApplication(repository, [])
+        return application
+      },
+    })
+    expect(application?.playerEnvelopes[2]).toMatchObject({
+      expectedStateRevision: 5,
+      command: {
+        kind: 'dyson.set-facility-automation',
+        facilityId: 'assembly_lines',
+        enabled: true,
+      },
+    })
+    await runtime.start()
+    application?.setDirty('exported-checkpoint')
+
+    const exportedText = await runtime.readCurrentSaveText()
+    expect(exportedText).toMatch(/^IDSWEB1:/)
+    expect(
+      deserializeCompressedWebSave(exportedText ?? ''),
+    ).toMatchObject({ marker: 'exported-checkpoint' })
+
+    await expect(runtime.exportCurrentSave()).resolves.toBe(true)
+    expect(downloads.last).toMatchObject({
+      fileName: 'idle-dyson-swarm-save.idsw',
+      mediaType: 'text/plain;charset=utf-8',
+    })
+    expect(downloads.last?.text).toMatch(/^IDSWEB1:/)
+    expect(
+      deserializeCompressedWebSave(downloads.last?.text ?? ''),
+    ).toMatchObject({ marker: 'exported-checkpoint' })
+
     await runtime.shutdown()
   })
 

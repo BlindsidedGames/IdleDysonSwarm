@@ -843,7 +843,7 @@ describe('BasicFacilityRegion', () => {
     expect(results.violations).toEqual([])
   })
 
-  it('keeps canonical order while allowing the ultra-wide Unity grid', () => {
+  it('keeps canonical order while using the shared responsive card grid', () => {
     const { container, rerender } = renderRegion({
       visibleBasicFacilityIds: ['assembly_lines'],
     })
@@ -864,7 +864,19 @@ describe('BasicFacilityRegion', () => {
       /\.basic-facility-region__grid\s*\{[\s\S]*grid-template-columns:\s*minmax\(0,\s*1fr\);/,
     )
     expect(facilitiesCss).toMatch(
-      /@media \(min-width: 1600px\)[\s\S]*grid-template-columns:\s*repeat\(2,\s*minmax\(0,\s*1fr\)\);/,
+      /\.basic-facility-region\s*\{[^}]*container-type:\s*inline-size;/,
+    )
+    expect(facilitiesCss).toMatch(
+      /@container \(min-width: 50rem\)[\s\S]*grid-template-columns:\s*repeat\(2,\s*minmax\(0,\s*1fr\)\);[^}]*grid-auto-rows:\s*1fr;/,
+    )
+    expect(facilitiesCss).toMatch(
+      /@container \(min-width: 80rem\)[\s\S]*grid-template-columns:\s*repeat\(3,\s*minmax\(0,\s*1fr\)\);/,
+    )
+    expect(facilitiesCss).toMatch(
+      /\.basic-facility-region__grid\s*\{[^}]*gap:\s*var\(--game-card-grid-gap\);/,
+    )
+    expect(facilitiesCss).toMatch(
+      /\.basic-facility-card \.ui-facility-card__title\s*\{[^}]*font-size:\s*calc\(0\.9rem \* var\(--game-text-scale\)\);/,
     )
     expect(facilitiesCss).toMatch(
       /@media \(max-width: 359px\)[\s\S]*\.basic-facility-card\s*\{[\s\S]*grid-template-columns:\s*minmax\(0,\s*1fr\)\s*6\.25rem;/,

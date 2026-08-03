@@ -895,23 +895,32 @@ describe('ReadyDysonSlice', () => {
     ).toHaveAttribute('data-has-swarm', 'false')
   })
 
-  test('keeps Info facts together and routes buy settings through canonical commands', async () => {
+  test('shows the compact Bots facts and expands canonical purchase settings', async () => {
     const dispatchPlayer = vi.fn(acceptedDispatch)
     const user = userEvent.setup()
-    renderSlice(snapshot(), dispatchPlayer)
+    renderSlice(
+      snapshot({
+        botsAutomationUnlocked: true,
+        visibleBasicFacilityIds: ['assembly_lines', 'ai_managers'],
+        enabledFacilities: {
+          assembly_lines: true,
+          ai_managers: false,
+        },
+      }),
+      dispatchPlayer,
+    )
 
     const infoRegion = screen.getByRole('region', { name: 'Info' })
-    expect(infoRegion).toHaveTextContent('Goal: Create 10.0 Bots')
-    expect(infoRegion).not.toHaveTextContent('Active panels: 0.00')
-    expect(infoRegion).not.toHaveTextContent('Panel lifetime: 10.0 seconds')
-    expect(infoRegion).not.toHaveTextContent('Total panels decayed: 0.00')
-
-    await user.click(
-      within(infoRegion).getByRole('button', { name: 'Info' }),
-    )
-    expect(infoRegion).toHaveTextContent('Active panels: 0.00')
-    expect(infoRegion).toHaveTextContent('Panel lifetime: 10.0 seconds')
-    expect(infoRegion).toHaveTextContent('Total panels decayed: 0.00')
+    expect(infoRegion).toHaveTextContent('Active: 0.00')
+    expect(infoRegion).toHaveTextContent('Lifetime: 10.0s')
+    expect(infoRegion).toHaveTextContent('Decayed: 0.00')
+    expect(infoRegion).toHaveTextContent('Goal: 10.0 Bots')
+    expect(
+      within(infoRegion).queryByRole('button', { name: 'Info' }),
+    ).not.toBeInTheDocument()
+    expect(
+      within(infoRegion).queryByRole('button', { name: 'x1' }),
+    ).not.toBeInTheDocument()
 
     await user.click(
       within(infoRegion).getByRole('button', {
@@ -930,6 +939,9 @@ describe('ReadyDysonSlice', () => {
         name: 'Round bulk purchases to the next milestone',
       }),
     )
+    await user.click(
+      within(infoRegion).getByRole('button', { name: 'Toggle All' }),
+    )
 
     await waitFor(() => {
       expect(dispatchPlayer).toHaveBeenCalledWith({
@@ -940,8 +952,18 @@ describe('ReadyDysonSlice', () => {
         kind: 'dyson.set-rounded-bulk-buy',
         enabled: true,
       })
+      expect(dispatchPlayer).toHaveBeenCalledWith({
+        kind: 'dyson.set-facility-automation',
+        facilityId: 'assembly_lines',
+        enabled: true,
+      })
+      expect(dispatchPlayer).toHaveBeenCalledWith({
+        kind: 'dyson.set-facility-automation',
+        facilityId: 'ai_managers',
+        enabled: true,
+      })
     })
-    expect(dispatchPlayer).toHaveBeenCalledTimes(2)
+    expect(dispatchPlayer).toHaveBeenCalledTimes(4)
   })
 
   test('does not create commands or active-time work while merely rendered', () => {
@@ -1219,6 +1241,9 @@ interface SnapshotOptions {
   readonly secretCompleted?: boolean
   readonly botsPresetAutomation?: 0 | 1 | 2 | 3 | 4 | 5
   readonly researchPresetAutomation?: 0 | 1 | 2 | 3 | 4 | 5
+  readonly botsAutomationUnlocked?: boolean
+  readonly researchAutomationUnlocked?: boolean
+  readonly enabledFacilities?: Partial<Record<FacilityId, boolean>>
   readonly facilities?: Partial<
     Record<FacilityId, readonly [number, number]>
   >
@@ -1369,6 +1394,17 @@ function snapshot(options: SnapshotOptions = {}): ReadySnapshot {
           automation: {
             buyMode: 'buy-1',
             roundedBulkBuy: false,
+            enabledFacilities: {
+              assembly_lines: false,
+              ai_managers: false,
+              servers: false,
+              data_centers: false,
+              planets: false,
+              matrioshka_brains: false,
+              birch_planets: false,
+              galactic_brains: false,
+              ...options.enabledFacilities,
+            },
           },
         },
         research: {
@@ -1428,8 +1464,8 @@ function snapshot(options: SnapshotOptions = {}): ReadySnapshot {
             planets: false,
           },
           automationUnlocked: {
-            research: false,
-            bots: false,
+            research: options.researchAutomationUnlocked ?? false,
+            bots: options.botsAutomationUnlocked ?? false,
           },
         },
         dream: {
@@ -1661,6 +1697,9 @@ function snapshot(options: SnapshotOptions = {}): ReadySnapshot {
           'dyson.set-rounded-bulk-buy': {
             routeAvailable: true,
           },
+          'dyson.set-facility-automation': {
+            routeAvailable: true,
+          },
           'research.purchase': {
             routeAvailable: true,
           },
@@ -1668,6 +1707,9 @@ function snapshot(options: SnapshotOptions = {}): ReadySnapshot {
             routeAvailable: true,
           },
           'research.set-rounded-bulk-buy': {
+            routeAvailable: true,
+          },
+          'research.set-automation': {
             routeAvailable: true,
           },
           'skill.purchase': {

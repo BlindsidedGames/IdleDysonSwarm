@@ -3,6 +3,7 @@ import { describe, expect, test } from 'vitest'
 import { serializeWebSave } from './serialization'
 import { PreparedSave } from './prepare'
 import { prepareImportedSaveText } from './import'
+import { serializeCompressedWebSave } from './compressedWebSave'
 
 const fixtureDirectory = new URL('../../test/fixtures/', import.meta.url)
 
@@ -44,6 +45,25 @@ describe('save import text preparation', () => {
     expect(imported.copyValidatedState()).toMatchObject({
       dateQuitString: '',
       lastSuccessfulLoadUtc: '2026-07-29T05:00:00Z',
+    })
+  })
+
+  test('accepts compressed Web saves through the same preparation pipeline', () => {
+    const text = serializeCompressedWebSave({
+      saveVersion: 12,
+      dateQuitString: 'remote quit',
+      futureValue: { retained: true },
+    })
+
+    const imported = prepareImportedSaveText(
+      text,
+      '2026-07-29T05:00:00Z',
+    ).copyValidatedState()
+
+    expect(imported).toMatchObject({
+      dateQuitString: '',
+      lastSuccessfulLoadUtc: '2026-07-29T05:00:00Z',
+      futureValue: { retained: true },
     })
   })
 

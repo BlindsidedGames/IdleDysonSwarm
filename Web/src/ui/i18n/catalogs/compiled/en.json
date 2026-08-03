@@ -1271,6 +1271,230 @@
       "value": "x10"
     }
   ],
+  "dyson.info.compact.active-panels": [
+    {
+      "type": 0,
+      "value": "Active: "
+    },
+    {
+      "type": 8,
+      "value": "emphasis",
+      "children": [
+        {
+          "type": 1,
+          "value": "value"
+        }
+      ]
+    }
+  ],
+  "dyson.info.compact.galaxies-engulfed": [
+    {
+      "type": 0,
+      "value": "Galaxies: "
+    },
+    {
+      "type": 8,
+      "value": "emphasis",
+      "children": [
+        {
+          "type": 1,
+          "value": "value"
+        }
+      ]
+    }
+  ],
+  "dyson.info.compact.goal-assembly-lines": [
+    {
+      "type": 0,
+      "value": "Goal: "
+    },
+    {
+      "type": 8,
+      "value": "emphasis",
+      "children": [
+        {
+          "type": 1,
+          "value": "targetDisplay"
+        },
+        {
+          "type": 0,
+          "value": " Lines"
+        }
+      ]
+    }
+  ],
+  "dyson.info.compact.goal-bots": [
+    {
+      "type": 0,
+      "value": "Goal: "
+    },
+    {
+      "type": 8,
+      "value": "emphasis",
+      "children": [
+        {
+          "type": 1,
+          "value": "targetDisplay"
+        },
+        {
+          "type": 0,
+          "value": " Bots"
+        }
+      ]
+    }
+  ],
+  "dyson.info.compact.goal-decayed": [
+    {
+      "type": 0,
+      "value": "Goal: "
+    },
+    {
+      "type": 8,
+      "value": "emphasis",
+      "children": [
+        {
+          "type": 1,
+          "value": "targetDisplay"
+        },
+        {
+          "type": 0,
+          "value": " Decayed"
+        }
+      ]
+    }
+  ],
+  "dyson.info.compact.goal-galaxies": [
+    {
+      "type": 0,
+      "value": "Goal: "
+    },
+    {
+      "type": 8,
+      "value": "emphasis",
+      "children": [
+        {
+          "type": 1,
+          "value": "targetDisplay"
+        },
+        {
+          "type": 0,
+          "value": " Galaxies"
+        }
+      ]
+    }
+  ],
+  "dyson.info.compact.goal-panels": [
+    {
+      "type": 0,
+      "value": "Goal: "
+    },
+    {
+      "type": 8,
+      "value": "emphasis",
+      "children": [
+        {
+          "type": 1,
+          "value": "targetDisplay"
+        },
+        {
+          "type": 0,
+          "value": " Panels"
+        }
+      ]
+    }
+  ],
+  "dyson.info.compact.goal-planets": [
+    {
+      "type": 0,
+      "value": "Goal: "
+    },
+    {
+      "type": 8,
+      "value": "emphasis",
+      "children": [
+        {
+          "type": 1,
+          "value": "targetDisplay"
+        },
+        {
+          "type": 0,
+          "value": " Planets"
+        }
+      ]
+    }
+  ],
+  "dyson.info.compact.goal-stars": [
+    {
+      "type": 0,
+      "value": "Goal: "
+    },
+    {
+      "type": 8,
+      "value": "emphasis",
+      "children": [
+        {
+          "type": 1,
+          "value": "targetDisplay"
+        },
+        {
+          "type": 0,
+          "value": " Stars"
+        }
+      ]
+    }
+  ],
+  "dyson.info.compact.panel-lifetime": [
+    {
+      "type": 0,
+      "value": "Lifetime: "
+    },
+    {
+      "type": 8,
+      "value": "emphasis",
+      "children": [
+        {
+          "type": 1,
+          "value": "value"
+        },
+        {
+          "type": 0,
+          "value": "s"
+        }
+      ]
+    }
+  ],
+  "dyson.info.compact.stars-surrounded": [
+    {
+      "type": 0,
+      "value": "Stars: "
+    },
+    {
+      "type": 8,
+      "value": "emphasis",
+      "children": [
+        {
+          "type": 1,
+          "value": "value"
+        }
+      ]
+    }
+  ],
+  "dyson.info.compact.total-panels-decayed": [
+    {
+      "type": 0,
+      "value": "Decayed: "
+    },
+    {
+      "type": 8,
+      "value": "emphasis",
+      "children": [
+        {
+          "type": 1,
+          "value": "value"
+        }
+      ]
+    }
+  ],
   "dyson.info.galaxies-engulfed": [
     {
       "type": 0,
@@ -1703,6 +1927,18 @@
     {
       "type": 0,
       "value": "Quantum controls"
+    }
+  ],
+  "dyson.settings.auto-purchase": [
+    {
+      "type": 0,
+      "value": "Auto-purchase"
+    }
+  ],
+  "dyson.settings.auto-purchase-toggle-all": [
+    {
+      "type": 0,
+      "value": "Toggle All"
     }
   ],
   "dyson.swarm.region": [
@@ -2453,6 +2689,22 @@
       "value": "Offline Time Used"
     }
   ],
+  "quantum.claim": [
+    {
+      "type": 0,
+      "value": "Claim"
+    }
+  ],
+  "quantum.claim-upgrade": [
+    {
+      "type": 0,
+      "value": "Claim "
+    },
+    {
+      "type": 1,
+      "value": "name"
+    }
+  ],
   "quantum.cost": [
     {
       "type": 1,
@@ -2545,18 +2797,6 @@
     {
       "type": 0,
       "value": "Visit Avocato"
-    }
-  ],
-  "quantum.prerequisite.both": [
-    {
-      "type": 0,
-      "value": "Requires Double Infinity Points and Bot Multitasking."
-    }
-  ],
-  "quantum.prerequisite.either": [
-    {
-      "type": 0,
-      "value": "Requires Double Infinity Points or Bot Multitasking."
     }
   ],
   "quantum.progress": [
@@ -2695,6 +2935,70 @@
     {
       "type": 0,
       "value": "Quantum"
+    }
+  ],
+  "quantum.section.avocato": [
+    {
+      "type": 0,
+      "value": "Avocato"
+    }
+  ],
+  "quantum.section.boosters": [
+    {
+      "type": 0,
+      "value": "Quantum Boosters"
+    }
+  ],
+  "quantum.section.core": [
+    {
+      "type": 0,
+      "value": "Core Quantum"
+    }
+  ],
+  "quantum.section.cosmic-structures": [
+    {
+      "type": 0,
+      "value": "Cosmic Structures"
+    }
+  ],
+  "quantum.section.mystery": [
+    {
+      "type": 0,
+      "value": "???"
+    }
+  ],
+  "quantum.section.reveal-points": [
+    {
+      "type": 0,
+      "value": "Earn a total of "
+    },
+    {
+      "type": 1,
+      "value": "value"
+    },
+    {
+      "type": 0,
+      "value": " Quantum Shards to reveal this branch."
+    }
+  ],
+  "quantum.section.reveal-upgrade": [
+    {
+      "type": 0,
+      "value": "Unlock "
+    },
+    {
+      "type": 1,
+      "value": "name"
+    },
+    {
+      "type": 0,
+      "value": " to reveal this branch."
+    }
+  ],
+  "quantum.section.skill-paths": [
+    {
+      "type": 0,
+      "value": "Quantum Skill Paths"
     }
   ],
   "quantum.shards": [
@@ -4309,6 +4613,18 @@
       "value": "Research"
     }
   ],
+  "research.settings.auto-purchase": [
+    {
+      "type": 0,
+      "value": "Auto-purchase"
+    }
+  ],
+  "research.settings.auto-purchase-toggle-all": [
+    {
+      "type": 0,
+      "value": "Toggle All"
+    }
+  ],
   "research.settings.buy-mode.fifty": [
     {
       "type": 0,
@@ -4578,7 +4894,7 @@
   "settings.more-by.title": [
     {
       "type": 0,
-      "value": "More by Blind Sided Games"
+      "value": "More by Blindsided Games"
     }
   ],
   "settings.navigation.description": [
@@ -4617,10 +4933,184 @@
       "value": "Cancel"
     }
   ],
+  "settings.save-data.choose-file": [
+    {
+      "type": 0,
+      "value": "Choose File"
+    }
+  ],
+  "settings.save-data.close": [
+    {
+      "type": 0,
+      "value": "Close"
+    }
+  ],
+  "settings.save-data.copy-string": [
+    {
+      "type": 0,
+      "value": "Copy String"
+    }
+  ],
   "settings.save-data.description": [
     {
       "type": 0,
       "value": "Your progress is saved automatically on this device."
+    }
+  ],
+  "settings.save-data.download-file": [
+    {
+      "type": 0,
+      "value": "Download File"
+    }
+  ],
+  "settings.save-data.export": [
+    {
+      "type": 0,
+      "value": "Export"
+    }
+  ],
+  "settings.save-data.export-copied": [
+    {
+      "type": 0,
+      "value": "Save string copied."
+    }
+  ],
+  "settings.save-data.export-description": [
+    {
+      "type": 0,
+      "value": "Copy this save string somewhere safe, or download it as a file."
+    }
+  ],
+  "settings.save-data.export-dialog-title": [
+    {
+      "type": 0,
+      "value": "Export Save"
+    }
+  ],
+  "settings.save-data.export-failed": [
+    {
+      "type": 0,
+      "value": "The save could not be exported. Please try again."
+    }
+  ],
+  "settings.save-data.export-loading": [
+    {
+      "type": 0,
+      "value": "Preparing save string…"
+    }
+  ],
+  "settings.save-data.export-string-label": [
+    {
+      "type": 0,
+      "value": "Save string"
+    }
+  ],
+  "settings.save-data.export-succeeded": [
+    {
+      "type": 0,
+      "value": "Save exported successfully."
+    }
+  ],
+  "settings.save-data.import": [
+    {
+      "type": 0,
+      "value": "Import"
+    }
+  ],
+  "settings.save-data.import-committed-recovery": [
+    {
+      "type": 0,
+      "value": "The imported save was written, but the game could not reopen it. Reload to recover."
+    }
+  ],
+  "settings.save-data.import-description": [
+    {
+      "type": 0,
+      "value": "Paste an exported save string or choose a save file. Importing replaces your current progress; the original is retained for recovery."
+    }
+  ],
+  "settings.save-data.import-dialog-title": [
+    {
+      "type": 0,
+      "value": "Import Save?"
+    }
+  ],
+  "settings.save-data.import-failed": [
+    {
+      "type": 0,
+      "value": "The save could not be imported. Your current progress was kept."
+    }
+  ],
+  "settings.save-data.import-pending": [
+    {
+      "type": 0,
+      "value": "Importing…"
+    }
+  ],
+  "settings.save-data.import-preview-failed": [
+    {
+      "type": 0,
+      "value": "This save could not be read. Your current progress was kept."
+    }
+  ],
+  "settings.save-data.import-preview-infinity-points": [
+    {
+      "type": 0,
+      "value": "Infinity Points"
+    }
+  ],
+  "settings.save-data.import-preview-quantum-points": [
+    {
+      "type": 0,
+      "value": "Quantum Points"
+    }
+  ],
+  "settings.save-data.import-preview-skill-points": [
+    {
+      "type": 0,
+      "value": "Skill Points"
+    }
+  ],
+  "settings.save-data.import-preview-title": [
+    {
+      "type": 0,
+      "value": "Progress in this save"
+    }
+  ],
+  "settings.save-data.import-preview-warning": [
+    {
+      "type": 0,
+      "value": "Importing will replace your current progress."
+    }
+  ],
+  "settings.save-data.import-review": [
+    {
+      "type": 0,
+      "value": "Review Save"
+    }
+  ],
+  "settings.save-data.import-review-pending": [
+    {
+      "type": 0,
+      "value": "Reviewing…"
+    }
+  ],
+  "settings.save-data.import-string-label": [
+    {
+      "type": 0,
+      "value": "Save string"
+    }
+  ],
+  "settings.save-data.import-string-placeholder": [
+    {
+      "type": 0,
+      "value": "Paste your exported save string here"
+    }
+  ],
+  "settings.save-data.import-succeeded": [
+    {
+      "type": 0,
+      "value": "Save imported successfully."
     }
   ],
   "settings.save-data.reset": [

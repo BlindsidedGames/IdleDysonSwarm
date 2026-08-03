@@ -86,6 +86,23 @@ export type UiRuntimeImportResult =
       readonly recoveryAvailable: boolean
     }
 
+export interface UiRuntimeImportPreview {
+  readonly infinityPoints: bigint
+  readonly quantumPoints: bigint
+  readonly skillPoints: bigint
+}
+
+export type UiRuntimeImportPreviewResult =
+  | {
+      readonly accepted: true
+      readonly preview: UiRuntimeImportPreview
+    }
+  | {
+      readonly accepted: false
+      readonly code: string
+      readonly reason: string
+    }
+
 export type UiRuntimeStartResult = UiRuntimeFoundationStatus
 
 export interface UiRuntimeStorageStatus {
@@ -241,6 +258,9 @@ export interface UiRuntimeFoundation<
     command: TPlayerCommand,
   ): Promise<UiRuntimePlayerCommandResult>
   readonly development?: UiRuntimeDevelopmentControls
+  previewImport(
+    request: UiRuntimeImportRequest,
+  ): Promise<UiRuntimeImportPreviewResult>
   importSave(request: UiRuntimeImportRequest): Promise<UiRuntimeImportResult>
   inspectStorage(
     requestPersistence?: boolean,
@@ -248,6 +268,8 @@ export interface UiRuntimeFoundation<
   requestCheckpoint(): Promise<boolean>
   checkpointBeforeSafeReload(): Promise<boolean>
   recoveryExportAvailable(): boolean
+  readCurrentSaveText(): Promise<string | null>
+  exportCurrentSave(): Promise<boolean>
   exportLastRecovery(): Promise<boolean>
   readClipboardText(): Promise<string>
   writeClipboardText(value: string): Promise<void>

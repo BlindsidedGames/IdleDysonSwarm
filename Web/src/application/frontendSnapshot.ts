@@ -88,11 +88,14 @@ import {
 import {
   availableQuantumPoints,
   findQuantumUpgradeCanonicalGaps,
+  previewQuantumUpgradeSections,
   purchaseQuantumUpgrade,
   QUANTUM_CONSTANTS,
   QUANTUM_UPGRADE_DEFINITIONS,
   QUANTUM_UPGRADE_IDS,
+  quantumUpgradeCost,
   type QuantumUpgradeId,
+  type QuantumUpgradeSectionPreview,
 } from '../simulation/quantumUpgrades'
 import {
   findRealityUpgradeCanonicalGaps,
@@ -924,6 +927,7 @@ export interface FrontendGameplayPreviews {
   }
   readonly quantum: {
     readonly upgrades: readonly FrontendQuantumUpgradePreview[]
+    readonly sections: readonly QuantumUpgradeSectionPreview[]
     readonly leap: FrontendQuantumLeapPreview
   }
   readonly infinity: {
@@ -2137,7 +2141,7 @@ function selectGameplayPreviews(
     return {
       upgradeId,
       eligible: result.accepted && result.changed,
-      cost: result.cost,
+      cost: quantumUpgradeCost(state, upgradeId),
       code: result.code,
       definitionGap: QUANTUM_UPGRADE_DEFINITIONS.has(upgradeId)
         ? null
@@ -2205,6 +2209,7 @@ function selectGameplayPreviews(
     },
     quantum: {
       upgrades: quantumUpgrades,
+      sections: previewQuantumUpgradeSections(state),
       leap: structuredClone(context.quantumLeap),
     },
     infinity: {

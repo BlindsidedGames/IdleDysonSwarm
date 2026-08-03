@@ -7,7 +7,10 @@ import {
 import { useIntl } from 'react-intl'
 import type {
   UiRuntimeDevelopmentControls,
+  UiRuntimeImportPreview,
+  UiRuntimeImportPreviewResult,
   UiRuntimeImportResult,
+  UiRuntimeSuppliedFile,
 } from '../../runtime'
 import { formatGameNumber } from '../../i18n/formatters'
 import type { EnabledLocale } from '../../i18n/localeRegistry'
@@ -16,6 +19,21 @@ import './settingsSurface.css'
 
 export interface SettingsSurfaceProps {
   readonly resetSave: () => Promise<UiRuntimeImportResult>
+  readonly importSaveFile: (
+    file: UiRuntimeSuppliedFile,
+  ) => Promise<UiRuntimeImportResult>
+  readonly importSaveText: (
+    text: string,
+  ) => Promise<UiRuntimeImportResult>
+  readonly previewImportSaveFile: (
+    file: UiRuntimeSuppliedFile,
+  ) => Promise<UiRuntimeImportPreviewResult>
+  readonly previewImportSaveText: (
+    text: string,
+  ) => Promise<UiRuntimeImportPreviewResult>
+  readonly readSaveText: () => Promise<string | null>
+  readonly downloadSave: () => Promise<boolean>
+  readonly copySaveText: (text: string) => Promise<void>
   readonly development?: UiRuntimeDevelopmentControls
   readonly developmentOnly?: boolean
   readonly visualizationVisible?: boolean
@@ -44,11 +62,34 @@ type ResetStatus =
   | 'failed'
   | 'committed-recovery'
 
+type TransferStatus =
+  | 'idle'
+  | 'pending'
+  | 'succeeded'
+  | 'failed'
+  | 'committed-recovery'
+type ExportStatus =
+  | 'idle'
+  | 'pending'
+  | 'ready'
+  | 'copied'
+  | 'downloaded'
+  | 'failed'
+type SaveDialog = 'reset' | 'import' | 'export'
+type ImportPreviewStatus = 'idle' | 'pending' | 'failed'
+
 /**
  * Presents host settings while delegating save replacement to the runtime.
  */
 export function SettingsSurface({
   resetSave,
+  importSaveFile,
+  importSaveText,
+  previewImportSaveFile,
+  previewImportSaveText,
+  readSaveText,
+  downloadSave,
+  copySaveText,
   development,
   developmentOnly = false,
   visualizationVisible = true,
@@ -64,6 +105,18 @@ export function SettingsSurface({
   const developmentPresetId = useId()
   const developmentPanelId = useId()
   const [status, setStatus] = useState<ResetStatus>('idle')
+  const [importStatus, setImportStatus] =
+    useState<TransferStatus>('idle')
+  const [exportStatus, setExportStatus] =
+    useState<ExportStatus>('idle')
+  const [importText, setImportText] = useState('')
+  const [importPreview, setImportPreview] =
+    useState<UiRuntimeImportPreview | null>(null)
+  const [importPreviewStatus, setImportPreviewStatus] =
+    useState<ImportPreviewStatus>('idle')
+  const [exportText, setExportText] = useState('')
+  const [selectedImport, setSelectedImport] =
+    useState<UiRuntimeSuppliedFile | null>(null)
   const [
     selectedDevelopmentPreset,
     setSelectedDevelopmentPreset,
@@ -74,27 +127,42 @@ export function SettingsSurface({
     useState<DevelopmentPresetId | null>(null)
   const [developmentPanelOpen, setDevelopmentPanelOpen] =
     useState(developmentOnly)
-  const [dialogOpen, setDialogOpen] = useState(false)
-  const triggerRef = useRef<HTMLButtonElement>(null)
+  const [dialog, setDialog] = useState<SaveDialog | null>(null)
+  const importInputRef = useRef<HTMLInputElement>(null)
+  const returnFocusRef = useRef<HTMLButtonElement | null>(null)
+  const dialogRef = useRef<HTMLElement>(null)
+  const transferTextRef = useRef<HTMLTextAreaElement>(null)
   const cancelRef = useRef<HTMLButtonElement>(null)
   const confirmRef = useRef<HTMLButtonElement>(null)
-  const statusRef = useRef(status)
-  statusRef.current = status
+
+  const operationPending =
+    status === 'pending' ||
+    importStatus === 'pending' ||
+    importPreviewStatus === 'pending' ||
+    exportStatus === 'pending'
+  const operationPendingRef = useRef(operationPending)
+  operationPendingRef.current = operationPending
 
   useEffect(() => {
-    if (!dialogOpen) return undefined
-    const returnFocus = triggerRef.current
-    cancelRef.current?.focus()
+    if (dialog === null) return undefined
+    const returnFocus = returnFocusRef.current
+    const initialFocus = dialog === 'reset'
+      ? cancelRef.current
+      : transferTextRef.current
+    initialFocus?.focus()
     const handleKeyDown = (event: KeyboardEvent): void => {
-      if (event.key === 'Escape' && statusRef.current !== 'pending') {
+      if (event.key === 'Escape' && !operationPendingRef.current) {
         event.preventDefault()
-        setDialogOpen(false)
+        setDialog(null)
         return
       }
       if (event.key !== 'Tab') return
-      const first = cancelRef.current
-      const last = confirmRef.current
-      if (first === null || last === null) return
+      const focusable = dialogRef.current?.querySelectorAll<HTMLElement>(
+        'button:not([disabled]), textarea:not([disabled])',
+      )
+      const first = focusable?.[0]
+      const last = focusable?.[focusable.length - 1]
+      if (first === undefined || last === undefined) return
       if (event.shiftKey && document.activeElement === first) {
         event.preventDefault()
         last.focus()
@@ -108,7 +176,7 @@ export function SettingsSurface({
       document.removeEventListener('keydown', handleKeyDown)
       returnFocus?.focus()
     }
-  }, [dialogOpen])
+  }, [dialog])
 
   const requestReset = async (): Promise<void> => {
     if (status === 'pending') return
@@ -117,7 +185,7 @@ export function SettingsSurface({
       const result = await resetSave()
       if (result.imported) {
         setStatus('succeeded')
-        setDialogOpen(false)
+        setDialog(null)
       } else {
         setStatus(
           result.committed ? 'committed-recovery' : 'failed',
@@ -125,6 +193,110 @@ export function SettingsSurface({
       }
     } catch {
       setStatus('failed')
+    }
+  }
+
+  const requestImport = async (): Promise<void> => {
+    const suppliedText = importText.trim()
+    if (
+      operationPending ||
+      importPreview === null ||
+      (selectedImport === null && suppliedText.length === 0)
+    ) {
+      return
+    }
+    setImportStatus('pending')
+    try {
+      const result =
+        selectedImport === null
+          ? await importSaveText(suppliedText)
+          : await importSaveFile(selectedImport)
+      if (result.imported) {
+        setImportStatus('succeeded')
+        setDialog(null)
+        setSelectedImport(null)
+        setImportText('')
+        if (importInputRef.current !== null) {
+          importInputRef.current.value = ''
+        }
+      } else {
+        setImportStatus(
+          result.committed ? 'committed-recovery' : 'failed',
+        )
+      }
+    } catch {
+      setImportStatus('failed')
+    }
+  }
+
+  const requestImportPreview = async (): Promise<void> => {
+    const suppliedText = importText.trim()
+    if (
+      operationPending ||
+      (selectedImport === null && suppliedText.length === 0)
+    ) {
+      return
+    }
+    setImportPreviewStatus('pending')
+    setImportPreview(null)
+    try {
+      const result = selectedImport === null
+        ? await previewImportSaveText(suppliedText)
+        : await previewImportSaveFile(selectedImport)
+      if (result.accepted) {
+        setImportPreview(result.preview)
+        setImportPreviewStatus('idle')
+      } else {
+        setImportPreviewStatus('failed')
+      }
+    } catch {
+      setImportPreviewStatus('failed')
+    }
+  }
+
+  const openExportDialog = async (
+    trigger: HTMLButtonElement,
+  ): Promise<void> => {
+    if (operationPending) return
+    returnFocusRef.current = trigger
+    setStatus('idle')
+    setImportStatus('idle')
+    setExportStatus('pending')
+    setExportText('')
+    setDialog('export')
+    try {
+      const text = await readSaveText()
+      if (text === null) {
+        setExportStatus('failed')
+        return
+      }
+      setExportText(text)
+      setExportStatus('ready')
+    } catch {
+      setExportStatus('failed')
+    }
+  }
+
+  const requestExportCopy = async (): Promise<void> => {
+    if (operationPending || exportText.length === 0) return
+    setExportStatus('pending')
+    try {
+      await copySaveText(exportText)
+      setExportStatus('copied')
+    } catch {
+      setExportStatus('failed')
+    }
+  }
+
+  const requestExportDownload = async (): Promise<void> => {
+    if (operationPending || exportText.length === 0) return
+    setExportStatus('pending')
+    try {
+      setExportStatus(
+        (await downloadSave()) ? 'downloaded' : 'failed',
+      )
+    } catch {
+      setExportStatus('failed')
     }
   }
 
@@ -163,8 +335,8 @@ export function SettingsSurface({
     <div className="settings-surface">
       <div
         className="settings-surface__content"
-        aria-hidden={dialogOpen || undefined}
-        inert={dialogOpen || undefined}
+        aria-hidden={dialog !== null || undefined}
+        inert={dialog !== null || undefined}
       >
         {!developmentOnly ? <section className="settings-surface__panel settings-surface__panel--visualization">
           <div className="settings-surface__copy">
@@ -230,18 +402,47 @@ export function SettingsSurface({
             <h2>{intl.formatMessage(messages.saveData)}</h2>
             <p>{intl.formatMessage(messages.saveDescription)}</p>
           </div>
-          <button
-            ref={triggerRef}
-            type="button"
-            className="settings-surface__reset"
-            disabled={status === 'pending'}
-            onClick={() => {
-              setStatus('idle')
-              setDialogOpen(true)
-            }}
-          >
-            {intl.formatMessage(messages.reset)}
-          </button>
+          <div className="settings-surface__save-actions">
+            <button
+              type="button"
+              disabled={operationPending}
+              onClick={(event) => {
+                returnFocusRef.current = event.currentTarget
+                setStatus('idle')
+                setImportStatus('idle')
+                setExportStatus('idle')
+                setSelectedImport(null)
+                setImportText('')
+                setImportPreview(null)
+                setImportPreviewStatus('idle')
+                setDialog('import')
+              }}
+            >
+              {intl.formatMessage(messages.importSave)}
+            </button>
+            <button
+              type="button"
+              disabled={operationPending}
+              onClick={(event) =>
+                void openExportDialog(event.currentTarget)}
+            >
+              {intl.formatMessage(messages.exportSave)}
+            </button>
+            <button
+              type="button"
+              className="settings-surface__reset"
+              disabled={operationPending}
+              onClick={(event) => {
+                returnFocusRef.current = event.currentTarget
+                setStatus('idle')
+                setImportStatus('idle')
+                setExportStatus('idle')
+                setDialog('reset')
+              }}
+            >
+              {intl.formatMessage(messages.reset)}
+            </button>
+          </div>
         </section> : null}
         {development !== undefined ? (
           <>
@@ -354,39 +555,191 @@ export function SettingsSurface({
           </>
         ) : null}
         {!developmentOnly && (status === 'succeeded' ||
+        importStatus === 'succeeded' ||
         ((status === 'failed' || status === 'committed-recovery') &&
-          !dialogOpen) ? (
+          dialog === null) ? (
           <p
             className="settings-surface__status"
-            role={status === 'succeeded' ? 'status' : 'alert'}
+            role={
+              status === 'failed' ||
+              status === 'committed-recovery'
+                ? 'alert'
+                : 'status'
+            }
           >
             {intl.formatMessage(
-              resetStatusMessage(status),
+              saveStatusMessage(status, importStatus),
             )}
           </p>
         ) : null)}
       </div>
-      {!developmentOnly && dialogOpen ? (
+      {!developmentOnly && dialog !== null ? (
         <div className="settings-surface__dialog-backdrop">
           <section
+            ref={dialogRef}
             className="settings-surface__dialog"
-            role="alertdialog"
+            role={dialog === 'export' ? 'dialog' : 'alertdialog'}
             aria-modal="true"
-            aria-labelledby="reset-save-dialog-title"
-            aria-describedby="reset-save-dialog-description"
-            aria-busy={status === 'pending'}
+            aria-labelledby="save-dialog-title"
+            aria-describedby="save-dialog-description"
+            aria-busy={operationPending}
           >
-            <h3 id="reset-save-dialog-title">
-              {intl.formatMessage(messages.resetDialogTitle)}
+            <h3 id="save-dialog-title">
+              {intl.formatMessage(
+                dialog === 'reset'
+                  ? messages.resetDialogTitle
+                  : dialog === 'import'
+                    ? messages.importDialogTitle
+                    : messages.exportDialogTitle,
+              )}
             </h3>
-            <p id="reset-save-dialog-description">
-              {intl.formatMessage(messages.resetConfirmation)}
+            <p id="save-dialog-description">
+              {intl.formatMessage(
+                dialog === 'reset'
+                  ? messages.resetConfirmation
+                  : dialog === 'import'
+                    ? messages.importDescription
+                    : messages.exportDescription,
+              )}
             </p>
-            {status === 'failed' ||
-            status === 'committed-recovery' ? (
+            {dialog === 'import' ? (
+              importPreview === null ? <div className="settings-surface__transfer">
+                <label htmlFor="settings-import-save-text">
+                  {intl.formatMessage(messages.importStringLabel)}
+                </label>
+                <textarea
+                  ref={transferTextRef}
+                  id="settings-import-save-text"
+                  value={importText}
+                  disabled={importStatus === 'pending'}
+                  placeholder={intl.formatMessage(
+                    messages.importStringPlaceholder,
+                  )}
+                  wrap="off"
+                  spellCheck={false}
+                  onChange={(event) => {
+                    setImportText(event.currentTarget.value)
+                    setSelectedImport(null)
+                    setImportStatus('idle')
+                    setImportPreviewStatus('idle')
+                  }}
+                />
+                <div className="settings-surface__file-option">
+                  <input
+                    ref={importInputRef}
+                    className="settings-surface__file-input"
+                    type="file"
+                    accept=".idsw,.txt,text/plain"
+                    tabIndex={-1}
+                    aria-hidden="true"
+                    onChange={(event) => {
+                      const file = event.currentTarget.files?.[0]
+                      if (file === undefined) return
+                      setSelectedImport(file)
+                      setImportText('')
+                      setImportStatus('idle')
+                      setImportPreviewStatus('idle')
+                    }}
+                  />
+                  <button
+                    type="button"
+                    disabled={importStatus === 'pending'}
+                    onClick={() => importInputRef.current?.click()}
+                  >
+                    {intl.formatMessage(messages.chooseFile)}
+                  </button>
+                  {selectedImport !== null ? (
+                    <span>{selectedImport.name}</span>
+                  ) : null}
+                </div>
+              </div> : (
+                <div
+                  className="settings-surface__import-preview"
+                  role="status"
+                >
+                  <h4>{intl.formatMessage(messages.importPreviewTitle)}</h4>
+                  <dl>
+                    <div>
+                      <dt>{intl.formatMessage(messages.infinityPoints)}</dt>
+                      <dd>{formatGameNumber(
+                        intl.locale as EnabledLocale,
+                        importPreview.infinityPoints,
+                      )}</dd>
+                    </div>
+                    <div>
+                      <dt>{intl.formatMessage(messages.quantumPoints)}</dt>
+                      <dd>{formatGameNumber(
+                        intl.locale as EnabledLocale,
+                        importPreview.quantumPoints,
+                      )}</dd>
+                    </div>
+                    <div>
+                      <dt>{intl.formatMessage(messages.skillPoints)}</dt>
+                      <dd>{formatGameNumber(
+                        intl.locale as EnabledLocale,
+                        importPreview.skillPoints,
+                      )}</dd>
+                    </div>
+                  </dl>
+                  <p>{intl.formatMessage(messages.importPreviewWarning)}</p>
+                </div>
+              )
+            ) : null}
+            {dialog === 'export' ? (
+              <div className="settings-surface__transfer">
+                <label htmlFor="settings-export-save-text">
+                  {intl.formatMessage(messages.exportStringLabel)}
+                </label>
+                <textarea
+                  ref={transferTextRef}
+                  id="settings-export-save-text"
+                  value={exportText}
+                  readOnly
+                  aria-busy={exportStatus === 'pending'}
+                  placeholder={
+                    exportStatus === 'pending'
+                      ? intl.formatMessage(messages.exportLoading)
+                      : exportStatus === 'failed'
+                        ? intl.formatMessage(messages.exportFailed)
+                        : undefined
+                  }
+                  wrap="off"
+                  spellCheck={false}
+                  onFocus={(event) => event.currentTarget.select()}
+                />
+              </div>
+            ) : null}
+            {(dialog === 'reset' &&
+              (status === 'failed' ||
+                status === 'committed-recovery')) ||
+            (dialog === 'import' &&
+              (importStatus === 'failed' ||
+                importStatus === 'committed-recovery' ||
+                importPreviewStatus === 'failed')) ? (
               <p className="settings-surface__dialog-error" role="alert">
                 {intl.formatMessage(
-                  resetStatusMessage(status),
+                  dialog === 'reset'
+                    ? resetStatusMessage(status)
+                    : importPreviewStatus === 'failed'
+                      ? messages.importPreviewFailed
+                    : importStatusMessage(importStatus),
+                )}
+              </p>
+            ) : null}
+            {dialog === 'export' &&
+            (exportStatus === 'copied' ||
+              exportStatus === 'downloaded' ||
+              exportStatus === 'failed') ? (
+              <p
+                className="settings-surface__dialog-feedback"
+                role={exportStatus === 'failed' ? 'alert' : 'status'}
+              >
+                {intl.formatMessage(
+                  exportStatus === 'copied'
+                    ? messages.exportCopied
+                    : exportStatus === 'downloaded'
+                      ? messages.exportSucceeded
+                      : messages.exportFailed,
                 )}
               </p>
             ) : null}
@@ -394,24 +747,70 @@ export function SettingsSurface({
               <button
                 ref={cancelRef}
                 type="button"
-                disabled={status === 'pending'}
-                onClick={() => setDialogOpen(false)}
-              >
-                {intl.formatMessage(messages.cancel)}
-              </button>
-              <button
-                ref={confirmRef}
-                type="button"
-                className="settings-surface__reset"
-                disabled={status === 'pending'}
-                onClick={() => void requestReset()}
+                disabled={operationPending}
+                onClick={() => setDialog(null)}
               >
                 {intl.formatMessage(
-                  status === 'pending'
-                    ? messages.resetPending
-                    : messages.reset,
+                  dialog === 'export' ? messages.close : messages.cancel,
                 )}
               </button>
+              {dialog === 'export' ? (
+                <>
+                  <button
+                    type="button"
+                    disabled={operationPending || exportText.length === 0}
+                    onClick={() => void requestExportCopy()}
+                  >
+                    {intl.formatMessage(messages.copyString)}
+                  </button>
+                  <button
+                    ref={confirmRef}
+                    type="button"
+                    disabled={operationPending || exportText.length === 0}
+                    onClick={() => void requestExportDownload()}
+                  >
+                    {intl.formatMessage(messages.downloadFile)}
+                  </button>
+                </>
+              ) : (
+                <button
+                  ref={confirmRef}
+                  type="button"
+                  className={
+                    dialog === 'reset'
+                      ? 'settings-surface__reset'
+                      : undefined
+                  }
+                  disabled={
+                    operationPending ||
+                    (dialog === 'import' &&
+                      importPreview === null &&
+                      selectedImport === null &&
+                      importText.trim().length === 0)
+                  }
+                  onClick={() =>
+                    void (dialog === 'reset'
+                      ? requestReset()
+                      : importPreview === null
+                        ? requestImportPreview()
+                        : requestImport())
+                  }
+                >
+                  {intl.formatMessage(
+                    dialog === 'reset'
+                      ? status === 'pending'
+                        ? messages.resetPending
+                        : messages.reset
+                      : importStatus === 'pending'
+                        ? messages.importPending
+                        : importPreviewStatus === 'pending'
+                          ? messages.importReviewPending
+                          : importPreview === null
+                            ? messages.importReview
+                            : messages.importSave,
+                  )}
+                </button>
+              )}
             </div>
           </section>
         </div>
@@ -523,11 +922,27 @@ function developmentPresetMessage(
 }
 
 function resetStatusMessage(
-  status: Exclude<ResetStatus, 'idle' | 'pending'>,
+  status: ResetStatus,
 ) {
   if (status === 'succeeded') return messages.resetSucceeded
   if (status === 'committed-recovery') {
     return messages.resetCommittedRecovery
   }
   return messages.resetFailed
+}
+
+function importStatusMessage(
+  status: TransferStatus,
+) {
+  return status === 'committed-recovery'
+    ? messages.importCommittedRecovery
+    : messages.importFailed
+}
+
+function saveStatusMessage(
+  reset: ResetStatus,
+  imported: TransferStatus,
+) {
+  if (imported === 'succeeded') return messages.importSucceeded
+  return resetStatusMessage(reset)
 }
