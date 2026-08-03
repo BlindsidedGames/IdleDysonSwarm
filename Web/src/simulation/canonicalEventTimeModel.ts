@@ -168,6 +168,8 @@ interface CapturedContext {
   readonly infinityResetAssetLookup: CanonicalInfinityResetAssetLookup
 }
 
+const preparedContexts = new WeakSet<object>()
+
 /**
  * Canonical whole-game composition for the shared event-time scheduler.
  *
@@ -187,7 +189,7 @@ export class CanonicalEventTimeModel
     state: Readonly<CanonicalEventTimeState>,
     context: Readonly<CanonicalEventTimeContext>,
   ) {
-    this.context = captureContext(context)
+    this.context = prepareCanonicalEventTimeContext(context)
     this.carrier = normalizeAutomationPhase(
       cloneCarrier(state),
       this.context.automationIntervalSeconds,
@@ -1080,10 +1082,22 @@ export function deriveCanonicalArtifactSkillPoints(
   return { ok: true, value: points }
 }
 
-function captureContext(
+/**
+ * Detaches and locks application-lifetime event authorities once. Prepared
+ * contexts are safe to share between models because neither their catalogs nor
+ * any nested definition value exposes a runtime mutation surface.
+ *
+ * Definition semantics continue to fail closed in their owning domain. This
+ * boundary validates the stronger ownership invariant: every exposed catalog
+ * entry is detached from its source and deeply frozen.
+ */
+export function prepareCanonicalEventTimeContext(
   context: Readonly<CanonicalEventTimeContext>,
 ): CapturedContext {
-  return Object.freeze({
+  if (preparedContexts.has(context)) {
+    return context as CapturedContext
+  }
+  const prepared = Object.freeze({
     automationIntervalSeconds: context.automationIntervalSeconds,
     dysonPresentationTuning: Object.freeze({
       ...(context.dysonPresentationTuning ??
@@ -1093,24 +1107,123 @@ function captureContext(
     realityWorkerTuning: Object.freeze({
       ...context.realityWorkerTuning,
     }),
-    dreamResetDefinitions: cloneDefinitionMap(
+    dreamResetDefinitions: createImmutableDefinitionMap(
       context.dreamResetDefinitions,
     ),
-    realityUpgradeDefinitions: cloneDefinitionMap(
+    realityUpgradeDefinitions: createImmutableDefinitionMap(
       context.realityUpgradeDefinitions,
     ),
     infinityResetAssetLookup: context.infinityResetAssetLookup,
   })
+  assertPreparedDefinitionMap(
+    context.dreamResetDefinitions,
+    prepared.dreamResetDefinitions,
+  )
+  assertPreparedDefinitionMap(
+    context.realityUpgradeDefinitions,
+    prepared.realityUpgradeDefinitions,
+  )
+  preparedContexts.add(prepared)
+  return prepared
 }
 
-function cloneDefinitionMap<K, V>(
+function createImmutableDefinitionMap<K, V>(
   source: ReadonlyMap<K, V>,
 ): ReadonlyMap<K, V> {
-  return new Map(
-    [...source].map(([key, value]) => [
-      key,
-      structuredClone(value),
-    ]),
+  if (source instanceof ImmutableDefinitionMap) return source
+  return Object.freeze(
+    new ImmutableDefinitionMap(
+      [...source].map(([key, value]) => [
+        key,
+        deepFreeze(structuredClone(value)),
+      ]),
+    ),
+  )
+}
+
+class ImmutableDefinitionMap<K, V> implements ReadonlyMap<K, V> {
+  readonly #entries: Map<K, V>
+
+  constructor(entries: readonly (readonly [K, V])[]) {
+    this.#entries = new Map(entries)
+  }
+
+  get size(): number {
+    return this.#entries.size
+  }
+
+  get(key: K): V | undefined {
+    return this.#entries.get(key)
+  }
+
+  has(key: K): boolean {
+    return this.#entries.has(key)
+  }
+
+  entries(): MapIterator<[K, V]> {
+    return this.#entries.entries()
+  }
+
+  keys(): MapIterator<K> {
+    return this.#entries.keys()
+  }
+
+  values(): MapIterator<V> {
+    return this.#entries.values()
+  }
+
+  forEach(
+    callbackfn: (value: V, key: K, map: ReadonlyMap<K, V>) => void,
+    thisArg?: unknown,
+  ): void {
+    this.#entries.forEach((value, key) => {
+      callbackfn.call(thisArg, value, key, this)
+    })
+  }
+
+  [Symbol.iterator](): MapIterator<[K, V]> {
+    return this.entries()
+  }
+
+  get [Symbol.toStringTag](): string {
+    return 'ImmutableDefinitionMap'
+  }
+}
+
+function deepFreeze<T>(value: T, seen = new WeakSet<object>()): T {
+  if (value === null || typeof value !== 'object') return value
+  if (seen.has(value)) return value
+  seen.add(value)
+  for (const key of Reflect.ownKeys(value)) {
+    deepFreeze(Reflect.get(value, key), seen)
+  }
+  return Object.freeze(value)
+}
+
+function assertPreparedDefinitionMap<K, V>(
+  source: ReadonlyMap<K, V>,
+  prepared: ReadonlyMap<K, V>,
+): void {
+  if (prepared.size !== source.size || !Object.isFrozen(prepared)) {
+    throw new Error('Canonical definition catalog preparation failed.')
+  }
+  for (const [key, value] of prepared) {
+    if (!source.has(key) || !isDeeplyFrozen(value)) {
+      throw new Error('Canonical definition catalog preparation failed.')
+    }
+  }
+}
+
+function isDeeplyFrozen(
+  value: unknown,
+  seen = new WeakSet<object>(),
+): boolean {
+  if (value === null || typeof value !== 'object') return true
+  if (seen.has(value)) return true
+  if (!Object.isFrozen(value)) return false
+  seen.add(value)
+  return Reflect.ownKeys(value).every((key) =>
+    isDeeplyFrozen(Reflect.get(value, key), seen),
   )
 }
 
