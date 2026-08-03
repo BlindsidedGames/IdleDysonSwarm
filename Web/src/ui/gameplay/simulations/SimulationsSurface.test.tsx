@@ -45,7 +45,7 @@ afterEach(() => {
 })
 
 describe('SimulationsSurface', () => {
-  test('uses compact mobile facility and permanent-upgrade typography', () => {
+  test('uses the shared compact card rhythm at every viewport', () => {
     expect(baseUpgradeStyles).toMatch(
       /\.simulation-permanent-upgrades__content,[\s\S]*gap:\s*var\(--game-card-grid-gap\);/,
     )
@@ -53,10 +53,16 @@ describe('SimulationsSurface', () => {
       /\.simulation-permanent-upgrade-category ol\s*\{[^}]*gap:\s*var\(--game-card-grid-gap\);/,
     )
     expect(simulationStyles).toMatch(
-      /@media \(max-width: 720px\)[\s\S]*\.simulation-panel-card \.ui-facility-card__title\s*\{[^}]*font-size:\s*calc\(0\.8rem \* var\(--game-text-scale\)\);/,
+      /\.simulation-category ol\s*\{[^}]*gap:\s*var\(--game-card-grid-gap\);/,
     )
     expect(simulationStyles).toMatch(
-      /@media \(max-width: 720px\)[\s\S]*\.simulation-panel-card \.ui-facility-card__description\s*\{[^}]*font-size:\s*calc\(0\.67rem \* var\(--game-text-scale\)\);/,
+      /\.ui-facility-card\.simulation-panel-card\s*\{[^}]*min-block-size:\s*0;[^}]*grid-template-columns:\s*minmax\(0, 1fr\) clamp\(6\.25rem, 27%, 6\.75rem\);[^}]*gap:\s*0\.05rem 0\.32rem;[^}]*padding:\s*0\.34rem 0\.38rem;/,
+    )
+    expect(simulationStyles).toMatch(
+      /\.simulation-panel-card \.ui-facility-card__title\s*\{[^}]*padding:\s*0;[^}]*margin:\s*0;[^}]*font-size:\s*calc\(0\.9rem \* var\(--game-text-scale\)\);/,
+    )
+    expect(simulationStyles).toMatch(
+      /\.simulation-panel-card \.ui-facility-card__description\s*\{[^}]*font-size:\s*calc\(0\.67rem \* var\(--game-text-scale\)\);/,
     )
     expect(baseUpgradeStyles).toMatch(
       /\.simulation-permanent-upgrade-card\s*\{[^}]*min-block-size:\s*0;[^}]*grid-template-columns:\s*minmax\(0, 1fr\) 6rem;[\s\S]*\.simulation-permanent-upgrade-card h4\s*\{[^}]*font-size:\s*calc\(0\.8rem \* var\(--game-text-scale\)\);/,
