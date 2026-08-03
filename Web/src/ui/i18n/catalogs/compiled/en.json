@@ -2027,12 +2027,6 @@
       "value": "Tinker is temporarily unavailable."
     }
   ],
-  "dyson.tinker.failure.stale": [
-    {
-      "type": 0,
-      "value": "Tinker changed before the action completed. Try again."
-    }
-  ],
   "dyson.tinker.hold-to-repeat": [
     {
       "type": 0,
@@ -2049,6 +2043,12 @@
     {
       "type": 0,
       "value": "Tinker"
+    }
+  ],
+  "dyson.tinker.repeating-while-held": [
+    {
+      "type": 0,
+      "value": "Repeating while held"
     }
   ],
   "dyson.tinker.tip.fresh-save": [

@@ -22,7 +22,11 @@ import {
   startupShellMessages,
 } from './ui/shell'
 import './index.css'
+import {
+  installTextSelectionPolicy,
+} from './ui/accessibility/textSelectionPolicy'
 
+installTextSelectionPolicy()
 void bootstrap()
 
 async function bootstrap(): Promise<void> {

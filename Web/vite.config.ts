@@ -22,12 +22,51 @@ function nativeRelativeHtmlPlugin(): Plugin {
   }
 }
 
+function developmentTelemetryPlugin(): Plugin {
+  const entries: string[] = []
+  return {
+    name: 'idle-dyson-swarm-development-telemetry',
+    apply: 'serve',
+    configureServer(server) {
+      server.middlewares.use(
+        '/__ids_dev_telemetry',
+        (request, response, next) => {
+          if (request.method === 'GET') {
+            response.statusCode = 200
+            response.setHeader('content-type', 'application/x-ndjson')
+            response.end(entries.join('\n'))
+            return
+          }
+          if (request.method !== 'POST') {
+            next()
+            return
+          }
+          let body = ''
+          request.setEncoding('utf8')
+          request.on('data', (chunk: string) => {
+            body += chunk
+          })
+          request.on('end', () => {
+            if (body.trim().length > 0) {
+              entries.push(body)
+              if (entries.length > 1_000) entries.shift()
+            }
+            response.statusCode = 204
+            response.end()
+          })
+        },
+      )
+    },
+  }
+}
+
 // https://vite.dev/config/
 export default defineConfig(({ mode }) => {
   const nativeBuild = mode === 'native'
   return {
     base: nativeBuild ? './' : PWA_BASE_PATH,
     plugins: [
+      developmentTelemetryPlugin(),
       stripMessageAuthoringMetadataPlugin(),
       react(),
       ...(nativeBuild

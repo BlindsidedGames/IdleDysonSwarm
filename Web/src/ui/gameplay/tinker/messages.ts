@@ -33,6 +33,12 @@ export const tinkerMessages = defineMessages({
     defaultMessage: 'Hold anywhere to repeat...',
     description: 'Exact Unity hold gesture hint inside the Tinker progress bar.',
   },
+  repeatingWhileHeld: {
+    id: 'dyson.tinker.repeating-while-held',
+    defaultMessage: 'Repeating while held',
+    description:
+      'Tinker progress-bar status while the hold gesture is repeating.',
+  },
   manualLabourDescription: {
     id: 'dyson.tinker.description.manual-labour',
     defaultMessage:
@@ -58,13 +64,6 @@ export const tinkerMessages = defineMessages({
     defaultMessage: 'Tinker progress',
     description:
       'Accessible label for the canonical Tinker progress bar.',
-  },
-  staleFailure: {
-    id: 'dyson.tinker.failure.stale',
-    defaultMessage:
-      'Tinker changed before the action completed. Try again.',
-    description:
-      'Safe feedback when a Tinker command used an outdated public game revision.',
   },
   rejectedFailure: {
     id: 'dyson.tinker.failure.rejected',

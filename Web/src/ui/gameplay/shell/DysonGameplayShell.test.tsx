@@ -430,8 +430,9 @@ describe('Dyson gameplay responsive CSS contract', () => {
       /\.dyson-shell\s*\{[\s\S]*-webkit-touch-callout:\s*none;[\s\S]*-webkit-user-select:\s*none;[\s\S]*user-select:\s*none;/,
     )
     expect(shellCss).toMatch(
-      /\.dyson-shell textarea,[\s\S]*\.dyson-shell code\s*\{[\s\S]*user-select:\s*text;/,
+      /\.dyson-shell textarea,[\s\S]*\.dyson-shell \[contenteditable="true"\]\s*\{[\s\S]*user-select:\s*text;/,
     )
+    expect(shellCss).not.toContain('.dyson-shell code')
     expect(shellCss).toContain('min-inline-size: 0')
     expect(shellCss).toContain('align-items: baseline')
     expect(shellCss).toMatch(

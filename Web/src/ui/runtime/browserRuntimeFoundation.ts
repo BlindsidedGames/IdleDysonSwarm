@@ -506,17 +506,11 @@ class BrowserRuntimeFoundation implements BrowserUiRuntimeFoundation {
         ),
       )
     }
-    if (command.kind === 'tinker.start' && command.repeat) {
-      return graph.playerCommands.dispatchLatest({
-        kind: 'tinker.start',
-        repeat: true,
-      })
-    }
-    if (command.kind === 'tinker.set-repeat' && !command.enabled) {
-      return graph.playerCommands.dispatchLatest({
-        kind: 'tinker.set-repeat',
-        enabled: false,
-      })
+    if (
+      command.kind === 'tinker.start' ||
+      command.kind === 'tinker.set-repeat'
+    ) {
+      return graph.playerCommands.dispatchLatest(command)
     }
     if (
       command.kind === 'dyson.set-bot-distribution' ||

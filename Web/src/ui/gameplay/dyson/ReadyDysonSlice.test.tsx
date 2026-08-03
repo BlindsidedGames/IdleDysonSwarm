@@ -973,11 +973,14 @@ describe('ReadyDysonSlice', () => {
       within(infoRegion).queryByRole('button', { name: 'x1' }),
     ).not.toBeInTheDocument()
 
-    await user.click(
-      within(infoRegion).getByRole('button', {
-        name: 'Purchase settings',
-      }),
-    )
+    const settingsToggle = within(infoRegion).getByRole('button', {
+      name: 'Purchase settings',
+    })
+    expect(
+      settingsToggle.querySelector('[data-symbol="settings"]'),
+    ).toBeInTheDocument()
+    expect(settingsToggle).not.toHaveTextContent('⚙')
+    await user.click(settingsToggle)
     expect(
       within(infoRegion).getByRole('button', { name: 'x1' }),
     ).toHaveAttribute('aria-pressed', 'true')

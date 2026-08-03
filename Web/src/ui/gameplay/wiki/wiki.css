@@ -130,7 +130,6 @@
   overscroll-behavior: contain;
   scrollbar-width: thin;
   scrollbar-color: #765d92 #251d31;
-  user-select: text;
 }
 
 .wiki-surface__article > h2 {

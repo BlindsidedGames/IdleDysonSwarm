@@ -20,10 +20,38 @@ body {
   min-height: 100vh;
   overflow: hidden;
   background: var(--color-app-background);
+  -webkit-touch-callout: none;
+  -webkit-user-select: none;
+  user-select: none;
 }
 
 #root {
   inline-size: 100%;
   block-size: 100%;
   overflow: hidden;
+  touch-action: manipulation;
+}
+
+#root,
+#root * {
+  -webkit-touch-callout: none !important;
+  -webkit-user-drag: none;
+  -webkit-user-select: none !important;
+  user-select: none !important;
+}
+
+#root textarea,
+#root [contenteditable="true"],
+#root [data-allow-text-selection="true"],
+#root input:not([type]),
+#root input[type="text"],
+#root input[type="search"],
+#root input[type="url"],
+#root input[type="email"],
+#root input[type="password"],
+#root input[type="number"],
+#root input[type="tel"] {
+  -webkit-touch-callout: default !important;
+  -webkit-user-select: text !important;
+  user-select: text !important;
 }

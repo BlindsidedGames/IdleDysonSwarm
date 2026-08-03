@@ -33,9 +33,7 @@
 .dyson-shell input[type="password"],
 .dyson-shell input[type="number"],
 .dyson-shell textarea,
-.dyson-shell [contenteditable="true"],
-.dyson-shell pre,
-.dyson-shell code {
+.dyson-shell [contenteditable="true"] {
   -webkit-touch-callout: default;
   -webkit-user-select: text;
   user-select: text;

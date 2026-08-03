@@ -540,6 +540,18 @@ describe('SimulationTimeControl', () => {
       screen.getByText('Simulation speed increased by 300%'),
     ).toBeInTheDocument()
   })
+
+  test('uses the game settings artwork for purchase settings', () => {
+    renderTimeControl(0, vi.fn(accepted))
+
+    const settingsToggle = screen.getByRole('button', {
+      name: 'Purchase settings',
+    })
+    expect(
+      settingsToggle.querySelector('[data-symbol="settings"]'),
+    ).toBeInTheDocument()
+    expect(settingsToggle).not.toHaveTextContent('⚙')
+  })
 })
 
 function renderTimeControl(

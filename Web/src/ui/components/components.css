@@ -140,6 +140,12 @@
   -webkit-mask-size: contain;
 }
 
+.ui-settings-icon {
+  inline-size: 1.3em;
+  block-size: 1.3em;
+  vertical-align: middle;
+}
+
 .ui-progress {
   display: grid;
   gap: var(--space-2);

@@ -423,7 +423,14 @@ describe('QuantumControlPanel', () => {
       </IntlProvider>,
     )
     expect(screen.getByText('41.0 / 42.0 Infinity Points')).toBeInTheDocument()
-    fireEvent.click(screen.getByRole('button', { name: 'Purchase settings' }))
+    const settingsToggle = screen.getByRole('button', {
+      name: 'Purchase settings',
+    })
+    expect(
+      settingsToggle.querySelector('[data-symbol="settings"]'),
+    ).toBeInTheDocument()
+    expect(settingsToggle).not.toHaveTextContent('⚙')
+    fireEvent.click(settingsToggle)
     expect(onOpenChange).toHaveBeenCalledWith(true)
 
     rerender(

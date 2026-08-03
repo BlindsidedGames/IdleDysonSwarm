@@ -2571,17 +2571,19 @@ describe('browser runtime foundation composition', () => {
       activationRevision: { session: 1, state: 0 },
     })
     await expect(second).resolves.toMatchObject({
-      status: 'rejected',
-      code: 'SIM-STALE-REVISION',
-      stale: true,
-      stateRevision: 1,
-      activationRevision: { session: 1, state: 0 },
+      status: 'accepted',
+      stateRevision: 2,
+      activationRevision: { session: 1, state: 1 },
     })
     expect(application?.playerEnvelopes).toHaveLength(2)
-    expect(publications).toHaveLength(1)
+    expect(publications).toHaveLength(2)
     expect(publications[0]?.phase).toBe('ready')
     if (publications[0]?.phase === 'ready') {
       expect(publications[0].revision.state).toBe(1)
+    }
+    expect(publications[1]?.phase).toBe('ready')
+    if (publications[1]?.phase === 'ready') {
+      expect(publications[1].revision.state).toBe(2)
     }
     await runtime.shutdown()
   })

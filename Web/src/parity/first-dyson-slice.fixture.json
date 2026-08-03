@@ -4,7 +4,7 @@
     "sourcePath": "test/fixtures/schema-08-canonical-idb1-main-save.txt",
     "sourceSha256": "10e2e48cd989618918118e16d0900af7d80f0f5dfb1aad475423ac165ab00c78",
     "preparedStateSha256": "795f33b2b95132b69c18b6eeec061ad06f19ccba9729df71a9e35dfc82cdb02d",
-    "catalogSha256": "682cb6c02d2a84594cd612f1fd77b1ae37251044accb3872af50c5d32d08aed8"
+    "catalogSha256": "a7cd177e845f8af443535e29bf3f0e61f67dcd0ec01068604422ddc31fb8e0a1"
   },
   "initial": {
     "phase": "ready",
@@ -70,6 +70,7 @@
         "runtime": {
           "running": false,
           "repeat": false,
+          "cycleId": 0,
           "elapsedSeconds": 0,
           "effectiveManualLabour": false,
           "cooldownSeconds": 0.20000000298023224
@@ -241,6 +242,7 @@
           "runtime": {
             "running": true,
             "repeat": false,
+            "cycleId": 1,
             "elapsedSeconds": 0.2,
             "effectiveManualLabour": false,
             "cooldownSeconds": 0.20000000298023224
@@ -265,6 +267,7 @@
           "runtime": {
             "running": false,
             "repeat": false,
+            "cycleId": 0,
             "elapsedSeconds": 0,
             "effectiveManualLabour": false,
             "cooldownSeconds": 0.5
@@ -349,6 +352,7 @@
         "runtime": {
           "running": false,
           "repeat": false,
+          "cycleId": 0,
           "elapsedSeconds": 0,
           "effectiveManualLabour": false,
           "cooldownSeconds": 0.5

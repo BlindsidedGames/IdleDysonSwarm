@@ -904,11 +904,14 @@ describe('SkillsSurface', () => {
     const user = userEvent.setup()
     const dispatchPlayer = renderSkills()
 
-    await user.click(
-      screen.getByRole('button', {
-        name: 'Skill presets and reset',
-      }),
-    )
+    const settingsToggle = screen.getByRole('button', {
+      name: 'Skill presets and reset',
+    })
+    expect(
+      settingsToggle.querySelector('[data-symbol="settings"]'),
+    ).toBeInTheDocument()
+    expect(settingsToggle).not.toHaveTextContent('⚙')
+    await user.click(settingsToggle)
     const currentPreset = screen.getByRole('button', {
       name: /Load Preset 1/,
     })

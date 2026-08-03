@@ -20,7 +20,7 @@ import {
   QUANTUM_CONSTANTS,
   type QuantumUpgradeId,
 } from '../../../simulation/quantumUpgrades'
-import { Button } from '../../components'
+import { Button, SettingsIcon } from '../../components'
 import quantumShardsIcon from '../../assets/quantum-shards.png'
 import { formatGameNumber, formatNumber } from '../../i18n/formatters'
 import type { EnabledLocale } from '../../i18n/localeRegistry'
@@ -385,7 +385,7 @@ export function QuantumControlPanel({
           aria-label={intl.formatMessage(messages.purchaseSettings)}
           aria-expanded={purchaseSettingsOpen}
           onClick={() => onPurchaseSettingsOpenChange(!purchaseSettingsOpen)}
-        ><span aria-hidden="true">{'\u2699'}</span></button>
+        ><SettingsIcon /></button>
       </div>
       <span className="quantum-surface__track" role="progressbar" aria-label={intl.formatMessage(messages.progress)} aria-valuemin={0} aria-valuemax={42} aria-valuenow={Number(current)}>
         <span style={{ inlineSize: `${Math.max(0, Math.min(1, progress)) * 100}%` }} />

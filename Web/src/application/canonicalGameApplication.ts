@@ -36,6 +36,9 @@ import {
   createSimulationSummary,
   type SimulationAutomationPolicy,
 } from '../simulation/types'
+import {
+  normalizeCanonicalTinkerRuntimeState,
+} from '../simulation/canonicalTinker'
 import type { SaveRepository } from '../save/repository'
 import type { StartupSaveResolver } from '../save/startupResolver'
 import {
@@ -1289,7 +1292,7 @@ function eventCarrier(state: Readonly<CanonicalRuntimeState>) {
     compatibilityTuning: state.compatibilityTuning,
     evaluationSnapshot: state.evaluationSnapshot,
     entitlements: state.entitlements,
-    tinker: state.tinker,
+    tinker: normalizeCanonicalTinkerRuntimeState(state.tinker),
   }
 }
 

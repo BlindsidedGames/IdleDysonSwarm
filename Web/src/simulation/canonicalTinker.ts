@@ -5,6 +5,7 @@ const MINIMUM_TINKER_COOLDOWN_SECONDS = 0.01
 const STARTING_PROGRESS_SECONDS = 0.1
 const MANUAL_LABOUR_COOLDOWN_SECONDS = 0.2
 const BOT_MINIMUM_COOLDOWN_SECONDS = 0.5
+const TINKER_TIME_EPSILON_SECONDS = 1e-12
 
 export interface CanonicalTinkerStats {
   readonly botYield: number
@@ -19,6 +20,8 @@ export interface CanonicalTinkerStats {
 export interface CanonicalTinkerRuntimeState {
   readonly running: boolean
   readonly repeat: boolean
+  /** Transient identity of the active visual cycle. */
+  readonly cycleId: number
   readonly elapsedSeconds: number
   readonly effectiveManualLabour: boolean
   readonly cooldownSeconds: number
@@ -59,9 +62,29 @@ export function createCanonicalTinkerRuntimeState():
   return Object.freeze({
     running: false,
     repeat: false,
+    cycleId: 0,
     elapsedSeconds: 0,
     effectiveManualLabour: false,
     cooldownSeconds: BOT_MINIMUM_COOLDOWN_SECONDS,
+  })
+}
+
+/**
+ * Repairs only transient visual identity from an older live module instance.
+ * The cycle id does not affect completion, rewards, or durable save state.
+ */
+export function normalizeCanonicalTinkerRuntimeState(
+  runtime: Readonly<CanonicalTinkerRuntimeState>,
+): CanonicalTinkerRuntimeState {
+  if (
+    Number.isSafeInteger(runtime.cycleId) &&
+    runtime.cycleId >= 0
+  ) {
+    return runtime
+  }
+  return Object.freeze({
+    ...runtime,
+    cycleId: runtime.running ? 1 : 0,
   })
 }
 
@@ -147,15 +170,18 @@ export function startCanonicalTinker(
 ): CanonicalTinkerAdvanceResult {
   const synchronized = synchronizeRuntime(state, runtime, stats)
   if (synchronized.runtime.running) {
-    return unchanged(synchronized.state, {
-      ...synchronized.runtime,
-      repeat,
-    })
+    return unchanged(
+      synchronized.state,
+      repeat && !synchronized.runtime.repeat
+        ? { ...synchronized.runtime, repeat: true }
+        : synchronized.runtime,
+    )
   }
   return unchanged(synchronized.state, {
     ...synchronized.runtime,
     running: true,
     repeat,
+    cycleId: nextCycleId(synchronized.runtime.cycleId),
     elapsedSeconds: Math.min(
       STARTING_PROGRESS_SECONDS,
       synchronized.runtime.cooldownSeconds,
@@ -168,6 +194,7 @@ export function setCanonicalTinkerRepeat(
   runtime: Readonly<CanonicalTinkerRuntimeState>,
   enabled: boolean,
 ): CanonicalTinkerAdvanceResult {
+  if (enabled && !runtime.running) return unchanged(state, runtime)
   if (runtime.repeat === enabled) return unchanged(state, runtime)
   return unchanged(state, { ...runtime, repeat: enabled })
 }
@@ -183,9 +210,15 @@ export function timeToCanonicalTinkerCompletion(
     throw new RangeError('maximumSeconds must be finite and non-negative.')
   }
   if (!runtime.running) return maximumSeconds
+  const remainingSeconds = Math.max(
+    0,
+    runtime.cooldownSeconds - runtime.elapsedSeconds,
+  )
   return Math.min(
     maximumSeconds,
-    Math.max(0, runtime.cooldownSeconds - runtime.elapsedSeconds),
+    remainingSeconds <= TINKER_TIME_EPSILON_SECONDS
+      ? 0
+      : remainingSeconds,
   )
 }
 
@@ -216,11 +249,18 @@ export function advanceCanonicalTinker(
   let completions = 0
 
   while (active.running && remaining >= 0) {
-    const untilCompletion = Math.max(
+    const rawUntilCompletion = Math.max(
       0,
       active.cooldownSeconds - active.elapsedSeconds,
     )
-    if (remaining < untilCompletion) {
+    const untilCompletion =
+      rawUntilCompletion <= TINKER_TIME_EPSILON_SECONDS
+        ? 0
+        : rawUntilCompletion
+    if (
+      remaining < untilCompletion &&
+      untilCompletion - remaining > TINKER_TIME_EPSILON_SECONDS
+    ) {
       active = {
         ...active,
         elapsedSeconds: addContinuous(active.elapsedSeconds, remaining),
@@ -276,6 +316,7 @@ export function advanceCanonicalTinker(
       active = {
         ...active,
         running: false,
+        cycleId: 0,
         elapsedSeconds: 0,
       }
       break
@@ -287,6 +328,7 @@ export function advanceCanonicalTinker(
     )
     active = {
       ...active,
+      cycleId: nextCycleId(active.cycleId),
       elapsedSeconds: 0,
       effectiveManualLabour: isManualLabourEffective(candidate),
       cooldownSeconds: nextStats.cooldownSeconds,
@@ -341,11 +383,20 @@ function synchronizeRuntime(
     state: candidate as CanonicalGameStateV1,
     runtime: Object.freeze({
       ...runtime,
+      cycleId:
+        changed && runtime.running
+          ? nextCycleId(runtime.cycleId)
+          : runtime.cycleId,
       elapsedSeconds: changed ? 0 : runtime.elapsedSeconds,
       effectiveManualLabour: manual,
       cooldownSeconds,
     }),
   }
+}
+
+function nextCycleId(current: number): number {
+  if (!Number.isSafeInteger(current) || current < 0) return 1
+  return current >= Number.MAX_SAFE_INTEGER ? 1 : current + 1
 }
 
 function isManualLabourEffective(

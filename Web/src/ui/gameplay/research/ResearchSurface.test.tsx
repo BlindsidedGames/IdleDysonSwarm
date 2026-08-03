@@ -175,11 +175,14 @@ describe('ResearchSurface', () => {
       document.querySelector('.research-surface__summary p'),
     ).toHaveTextContent('2.00K Researchers producing 22.0/s')
 
-    await user.click(
-      screen.getByRole('button', {
-        name: 'Research purchase settings',
-      }),
-    )
+    const settingsToggle = screen.getByRole('button', {
+      name: 'Research purchase settings',
+    })
+    expect(
+      settingsToggle.querySelector('[data-symbol="settings"]'),
+    ).toBeInTheDocument()
+    expect(settingsToggle).not.toHaveTextContent('⚙')
+    await user.click(settingsToggle)
     await user.click(screen.getByRole('button', { name: 'x10' }))
     expect(dispatchPlayer).toHaveBeenCalledWith({
       kind: 'research.set-buy-mode',

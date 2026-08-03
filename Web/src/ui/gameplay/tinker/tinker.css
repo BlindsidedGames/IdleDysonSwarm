@@ -4,9 +4,13 @@
   display: grid;
   gap: var(--space-3);
   min-inline-size: 0;
+  -webkit-touch-callout: none !important;
+  -webkit-user-select: none !important;
+  user-select: none !important;
 }
 
 .tinker-surface__control {
+  position: relative;
   display: grid;
   min-block-size: var(--target-touch);
   min-inline-size: var(--target-minimum);
@@ -20,28 +24,36 @@
   font: inherit;
   line-height: var(--line-height-compact);
   text-align: start;
-  touch-action: manipulation;
+  touch-action: none;
+  -webkit-tap-highlight-color: transparent;
   -webkit-touch-callout: none;
+  -webkit-user-drag: none;
   -webkit-user-select: none;
   user-select: none;
-  transition:
-    background-color var(--motion-duration-fast)
-      var(--motion-easing-standard),
-    border-color var(--motion-duration-fast)
-      var(--motion-easing-standard);
+}
+
+.tinker-surface__control,
+.tinker-surface__control * {
+  -webkit-touch-callout: none !important;
+  -webkit-user-select: none !important;
+  user-select: none !important;
+}
+
+.tinker-surface__control::after {
+  content: "";
+  position: absolute;
+  z-index: 2;
+  inset: 0;
 }
 
 .tinker-surface__control[aria-disabled="false"] {
   cursor: pointer;
 }
 
-.tinker-surface__control[aria-disabled="false"]:hover {
-  background: #4a3750;
-}
-
-.tinker-surface__control[aria-disabled="false"]:active,
-.tinker-surface__control[data-gesture-active="true"] {
-  background: #533b58;
+@media (hover: hover) and (pointer: fine) {
+  .tinker-surface__control[aria-disabled="false"]:hover {
+    background: #4a3750;
+  }
 }
 
 .tinker-surface__control:focus-visible {
@@ -141,14 +153,6 @@
 
 .tinker-surface__progress::-moz-progress-bar {
   background: #ffd9fe;
-}
-
-.tinker-surface[data-held-visual="true"] .tinker-surface__progress::-webkit-progress-value {
-  background: #367879;
-}
-
-.tinker-surface[data-held-visual="true"] .tinker-surface__progress::-moz-progress-bar {
-  background: #367879;
 }
 
 .tinker-surface__hold-label {

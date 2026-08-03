@@ -10,6 +10,7 @@ import { prepareIdb1Save } from '../save/prepare'
 import {
   applyCanonicalBlackHoleReset,
   applyCanonicalDreamReset,
+  canApplyCanonicalAutomaticDreamReset,
   type CanonicalDreamResetDefinitions,
 } from './canonicalDreamReset'
 import {
@@ -427,6 +428,34 @@ describe('canonical Dream reset', () => {
       reason: 'reward-saturated',
       state: rewardMaxed,
     })
+    const automaticCountMaxed = {
+      ...countMaxed,
+      dream: {
+        ...countMaxed.dream,
+        disasterStage: 0n,
+        resources: {
+          ...countMaxed.dream.resources,
+          cities: 1,
+        },
+      },
+    }
+    const automaticRewardMaxed = {
+      ...rewardMaxed,
+      dream: {
+        ...rewardMaxed.dream,
+        disasterStage: 0n,
+        resources: {
+          ...rewardMaxed.dream.resources,
+          cities: 1,
+        },
+      },
+    }
+    expect(
+      canApplyCanonicalAutomaticDreamReset(automaticCountMaxed),
+    ).toBe(false)
+    expect(
+      canApplyCanonicalAutomaticDreamReset(automaticRewardMaxed),
+    ).toBe(false)
   })
 
   test('fails closed on missing and unsupported Simulation definitions', () => {
