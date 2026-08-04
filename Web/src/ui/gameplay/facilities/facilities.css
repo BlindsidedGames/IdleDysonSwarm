@@ -153,25 +153,23 @@
 }
 
 .basic-facility-card__progress {
+  position: absolute;
+  inline-size: 1px;
+  block-size: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  border: 0;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+}
+
+.basic-facility-card__progress-fill {
   display: block;
-  appearance: none;
   inline-size: 100%;
   block-size: 100%;
-  border: 0;
-  border-radius: inherit;
-  background: #171218;
-}
-
-.basic-facility-card__progress::-webkit-progress-bar {
-  background: #171218;
-}
-
-.basic-facility-card__progress::-webkit-progress-value {
   background: #d68ee8;
-}
-
-.basic-facility-card__progress::-moz-progress-bar {
-  background: #d68ee8;
+  transform-origin: left center;
 }
 
 .basic-facility-card__feedback,

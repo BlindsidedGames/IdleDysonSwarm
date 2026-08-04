@@ -63,6 +63,7 @@ import { TransactionalGameApplication } from './gameApplication'
 import {
   selectFrontendApplicationSnapshot,
   type FrontendApplicationSnapshot,
+  type FrontendGameplayPreviewDemand,
   type FrontendQuantumLeapPreview,
 } from './frontendSnapshot'
 import type { CanonicalPlayerCommand } from './canonicalPlayerCommands'
@@ -206,6 +207,9 @@ export class CanonicalGameApplicationFacade {
   private cachedFrontendSnapshot:
     | DeepReadonly<FrontendApplicationSnapshot>
     | undefined
+  private cachedFrontendPreviewDemand:
+    | FrontendGameplayPreviewDemand
+    | undefined
 
   constructor(options: Readonly<CanonicalGameApplicationOptions>) {
     this.eventContext = prepareCanonicalEventTimeContext(
@@ -243,10 +247,13 @@ export class CanonicalGameApplicationFacade {
     )
   }
 
-  frontendSnapshot(): DeepReadonly<FrontendApplicationSnapshot> {
+  frontendSnapshot(
+    previewDemand: FrontendGameplayPreviewDemand = 'all',
+  ): DeepReadonly<FrontendApplicationSnapshot> {
     const application = this.snapshot()
     if (
       this.cachedFrontendSnapshot !== undefined &&
+      this.cachedFrontendPreviewDemand === previewDemand &&
       sameFrontendApplicationEnvelope(
         this.cachedFrontendSnapshot,
         application,
@@ -254,12 +261,20 @@ export class CanonicalGameApplicationFacade {
     ) {
       return this.cachedFrontendSnapshot
     }
+    const previousPreviews =
+      this.cachedFrontendSnapshot?.phase === 'ready'
+        ? this.cachedFrontendSnapshot.gameplay.previews
+        : undefined
     const quantumLeap =
       application.phase === 'ready'
-        ? previewCanonicalQuantumLeap(
-            application.state as CanonicalRuntimeState,
-            this.eventContext,
-          )
+        ? previousPreviews === undefined ||
+          previewDemand === 'all' ||
+          previewDemand === 'quantum'
+          ? previewCanonicalQuantumLeap(
+              application.state as CanonicalRuntimeState,
+              this.eventContext,
+            )
+          : previousPreviews.quantum.leap
         : {
             eligible: false,
             code: 'APP-NOT-READY',
@@ -282,9 +297,12 @@ export class CanonicalGameApplicationFacade {
         realityWorkerTuning: this.eventContext.realityWorkerTuning,
         dysonPresentationTuning:
           this.eventContext.dysonPresentationTuning,
+        previewDemand,
+        previousPreviews,
       },
       'detached-frozen',
     )
+    this.cachedFrontendPreviewDemand = previewDemand
     return this.cachedFrontendSnapshot
   }
 

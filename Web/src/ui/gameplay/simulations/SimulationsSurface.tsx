@@ -48,6 +48,8 @@ import {
 } from '../../i18n/formatters'
 import type { EnabledLocale } from '../../i18n/localeRegistry'
 import type { UiRuntimePlayerCommandResult } from '../../runtime'
+import { usePrefersReducedMotion } from '../../accessibility/useMediaQuery'
+import { useForwardProgressAnimation } from '../progress/useForwardProgressAnimation'
 import { simulationsMessages as messages } from './messages'
 import './simulations.css'
 
@@ -127,6 +129,7 @@ export function SimulationsSurface({
   dispatchPlayer,
 }: SimulationsSurfaceProps) {
   const intl = useIntl()
+  const reducedMotion = usePrefersReducedMotion()
 
   if (!facts.live.production.ok) {
     return (
@@ -190,6 +193,7 @@ export function SimulationsSurface({
           <SimulationCategoryGroup
             key={group.id}
             group={group}
+            reducedMotion={reducedMotion}
             dispatchPlayer={dispatchPlayer}
           />
         ))}
@@ -272,6 +276,12 @@ interface SimulationProgressModel {
   readonly valueText: SimulationText
   readonly fraction: number
   readonly showBar?: boolean
+  readonly animation?: {
+    readonly normalizedRatePerSecond?: number
+    readonly inferRate?: 'increasing' | 'decreasing' | 'either'
+    readonly active: boolean
+    readonly wraps: boolean
+  }
   readonly cycle?: {
     readonly presentation: CyclePresentationMode
     readonly throughputText: SimulationText
@@ -425,9 +435,11 @@ function formatSimulationMessage(
 
 function SimulationCategoryGroup({
   group,
+  reducedMotion,
   dispatchPlayer,
 }: {
   readonly group: SimulationCategoryGroupModel
+  readonly reducedMotion: boolean
   readonly dispatchPlayer: SimulationsSurfaceProps['dispatchPlayer']
 }) {
   return (
@@ -462,6 +474,7 @@ function SimulationCategoryGroup({
               <li key={panel.id}>
                 <SimulationPanelCard
                   panel={panel}
+                  reducedMotion={reducedMotion}
                   headingLevel={
                     category.id === 'education' || category.id === 'energy'
                       ? 'h4'
@@ -480,10 +493,12 @@ function SimulationCategoryGroup({
 
 function SimulationPanelCard({
   panel,
+  reducedMotion,
   headingLevel,
   dispatchPlayer,
 }: {
   readonly panel: SimulationPanelModel
+  readonly reducedMotion: boolean
   readonly headingLevel: 'h3' | 'h4'
   readonly dispatchPlayer: SimulationsSurfaceProps['dispatchPlayer']
 }) {
@@ -553,7 +568,11 @@ function SimulationPanelCard({
   const progress = (
     <div className="simulation-panel-card__progress-list">
       {panel.progress.map((item) => (
-        <SimulationProgress key={item.label} progress={item} />
+        <SimulationProgress
+          key={item.label}
+          progress={item}
+          reducedMotion={reducedMotion}
+        />
       ))}
     </div>
   )
@@ -694,9 +713,12 @@ function SimulationPanelCard({
 
 function SimulationProgress({
   progress,
+  reducedMotion,
 }: {
   readonly progress: SimulationProgressModel
+  readonly reducedMotion: boolean
 }) {
+  const fillRef = useRef<HTMLSpanElement>(null)
   const cycleMode = progress.cycle?.presentation ?? 'slow'
   const reservoirRate = useSmoothedReservoirRate(
     progress.reservoir?.sample,
@@ -719,6 +741,27 @@ function SimulationProgress({
     : progress.reservoir
       ? 'reservoir'
       : 'static'
+  const animation = progress.animation ??
+    (progress.reservoir
+      ? {
+          inferRate: 'increasing' as const,
+          active: true,
+          wraps: false,
+        }
+      : undefined)
+  useForwardProgressAnimation(fillRef, {
+    canonicalProgress: fraction,
+    normalizedRatePerSecond:
+      animation?.normalizedRatePerSecond,
+    inferRate: animation?.inferRate,
+    active:
+      progress.showBar !== false &&
+      presentation !== 'medium' &&
+      presentation !== 'fast' &&
+      animation?.active === true,
+    wraps: animation?.wraps ?? false,
+    reducedMotion,
+  })
   const style = {
     '--simulation-progress-fraction': fraction,
   } as CSSProperties
@@ -736,7 +779,11 @@ function SimulationProgress({
       {progress.showBar === false ? null : (
         <>
           <div className="simulation-progress__track" aria-hidden="true">
-            <span className="simulation-progress__fill" />
+            <span
+              ref={fillRef}
+              className="simulation-progress__fill"
+              style={{ transform: `scaleX(${fraction})` }}
+            />
           </div>
           <progress
             max={1}
@@ -1321,6 +1368,14 @@ function productionProgress(
     label: intl.formatMessage(messages.progress),
     valueText: percent(fraction),
     fraction,
+    animation: {
+      normalizedRatePerSecond:
+        timer.durationSeconds > 0
+          ? timer.progressPerSecond / timer.durationSeconds
+          : 0,
+      active: presentation === 'slow' && timer.progressPerSecond > 0,
+      wraps: true,
+    },
     cycle: {
       presentation,
       throughputText: formatSimulationMessage(intl, messages.productionRate, {
@@ -1574,6 +1629,11 @@ function conversionProgress(
       total: formatGameNumber(locale, required),
     }),
     fraction: remainder / required,
+    animation: {
+      inferRate: 'increasing',
+      active: true,
+      wraps: true,
+    },
   }
 }
 
@@ -1612,6 +1672,11 @@ function boostProgress(
     label: intl.formatMessage(messages.boostRemaining),
     valueText: formatGameDuration(locale, clock),
     fraction: clock / duration,
+    animation: {
+      inferRate: 'decreasing',
+      active: clock > 0,
+      wraps: false,
+    },
   }
 }
 

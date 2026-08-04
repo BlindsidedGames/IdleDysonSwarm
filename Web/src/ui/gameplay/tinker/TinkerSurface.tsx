@@ -1,5 +1,6 @@
 import {
   useId,
+  useRef,
   useState,
   type ReactNode,
 } from 'react'
@@ -10,6 +11,8 @@ import type {
 } from '../../runtime'
 import { formatGameNumber } from '../../i18n/formatters'
 import type { EnabledLocale } from '../../i18n/localeRegistry'
+import { usePrefersReducedMotion } from '../../accessibility/useMediaQuery'
+import { useForwardProgressAnimation } from '../progress/useForwardProgressAnimation'
 import { tinkerMessages } from './messages'
 import {
   useTinkerPressController,
@@ -68,6 +71,27 @@ export function TinkerSurface({
     onDispatchFailure: () => setFailure('runtime'),
   })
   const visualElapsedSeconds = facts.runtime.elapsedSeconds
+  const normalizedProgress = facts.runtime.cooldownSeconds > 0
+    ? Math.min(
+        1,
+        Math.max(
+          0,
+          visualElapsedSeconds / facts.runtime.cooldownSeconds,
+        ),
+      )
+    : 0
+  const progressFillRef = useRef<HTMLSpanElement>(null)
+  const reducedMotion = usePrefersReducedMotion()
+  useForwardProgressAnimation(progressFillRef, {
+    canonicalProgress: normalizedProgress,
+    normalizedRatePerSecond:
+      facts.runtime.cooldownSeconds > 0
+        ? 1 / facts.runtime.cooldownSeconds
+        : 0,
+    active: facts.runtime.running,
+    wraps: facts.runtime.repeat,
+    reducedMotion,
+  })
   const seconds = facts.runtime.running
     ? Math.max(
         0,
@@ -166,6 +190,12 @@ export function TinkerSurface({
               )}
               max={facts.runtime.cooldownSeconds}
               value={visualElapsedSeconds}
+            />
+            <span
+              ref={progressFillRef}
+              aria-hidden="true"
+              className="tinker-surface__progress-fill"
+              style={{ transform: `scaleX(${normalizedProgress})` }}
             />
             <span
               className="tinker-surface__hold-label"

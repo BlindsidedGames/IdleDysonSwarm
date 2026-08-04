@@ -40,6 +40,52 @@ const firstRunFixtureUrl = new URL(
 )
 
 describe('frontend gameplay snapshot', () => {
+  test('recomputes only the demanded preview families after the initial projection', () => {
+    const runtime = fixtureRuntimeState()
+    const context = frontendContext()
+    const initial = selectFrontendGameplaySnapshot(
+      runtime.gameState,
+      context,
+      'detached-frozen',
+    )
+
+    const bots = selectFrontendGameplaySnapshot(
+      runtime.gameState,
+      {
+        ...context,
+        previewDemand: 'bots',
+        previousPreviews: initial.previews,
+      },
+      'detached-frozen',
+    )
+
+    expect(bots.previews.dyson).not.toBe(initial.previews.dyson)
+    expect(bots.previews.research).toBe(initial.previews.research)
+    expect(bots.previews.skills).toBe(initial.previews.skills)
+    expect(bots.previews.dream).toBe(initial.previews.dream)
+    expect(bots.previews.reality).toBe(initial.previews.reality)
+    expect(bots.previews.quantum).toBe(initial.previews.quantum)
+    expect(bots.previews.infinity).toBe(initial.previews.infinity)
+    expect(bots.previews.avocado).toBe(initial.previews.avocado)
+    expect(bots.previews.time).toBe(initial.previews.time)
+
+    const reality = selectFrontendGameplaySnapshot(
+      runtime.gameState,
+      {
+        ...context,
+        previewDemand: 'reality',
+        previousPreviews: bots.previews,
+      },
+      'detached-frozen',
+    )
+
+    expect(reality.previews.dyson).toBe(bots.previews.dyson)
+    expect(reality.previews.reality).not.toBe(
+      bots.previews.reality,
+    )
+    expect(reality.previews.dream).not.toBe(bots.previews.dream)
+  })
+
   test.each([
     [
       0,

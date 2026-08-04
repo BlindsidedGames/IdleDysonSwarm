@@ -35,6 +35,8 @@ import type {
 import type {
   UiRuntimePlayerCommandResult,
 } from '../../runtime'
+import { usePrefersReducedMotion } from '../../accessibility/useMediaQuery'
+import { useForwardProgressAnimation } from '../progress/useForwardProgressAnimation'
 import { infinityMessages as messages } from './messages'
 import './infinity.css'
 
@@ -79,6 +81,8 @@ export function InfinitySurface({
   dispatchPlayer,
 }: InfinitySurfaceProps) {
   const intl = useIntl()
+  const reducedMotion = usePrefersReducedMotion()
+  const progressFillRef = useRef<HTMLSpanElement>(null)
   const progress = Math.max(
     0,
     Math.min(
@@ -88,6 +92,13 @@ export function InfinitySurface({
         : derived.progressFraction,
     ),
   )
+  useForwardProgressAnimation(progressFillRef, {
+    canonicalProgress: progress,
+    inferRate: 'increasing',
+    active: progress < 1,
+    wraps: true,
+    reducedMotion,
+  })
   const phrase = revealSecretPhrase(
     intl.formatMessage(messages.secretPhraseFull),
     resources.secretsOfTheUniverse,
@@ -165,7 +176,11 @@ export function InfinitySurface({
               },
             )}
           >
-            <span style={{ inlineSize: `${progress * 100}%` }} />
+            <span
+              ref={progressFillRef}
+              aria-hidden="true"
+              style={{ transform: `scaleX(${progress})` }}
+            />
           </div>
         </div>
 

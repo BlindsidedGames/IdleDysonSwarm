@@ -40,8 +40,12 @@ export class FrontendSnapshotStore {
 
   publish(
     snapshot: Readonly<FrontendApplicationSnapshot>,
+    force = false,
   ): FrozenFrontendApplicationSnapshot {
-    if (this.disposed || sameEnvelope(this.current, snapshot)) {
+    if (
+      this.disposed ||
+      (!force && sameEnvelope(this.current, snapshot))
+    ) {
       return this.current
     }
     this.current = freezeOwned(snapshot)

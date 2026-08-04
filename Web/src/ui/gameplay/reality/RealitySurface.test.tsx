@@ -376,6 +376,16 @@ describe('RealitySurface', () => {
         name: 'Workers ready',
       }),
     ).toHaveAttribute('aria-valuenow', '50')
+    const fill = screen.getByRole('progressbar', {
+      name: 'Workers ready',
+    }).querySelector<HTMLElement>('span')
+    expect(fill).toHaveStyle({ transform: 'scaleX(0.501953125)' })
+    expect(realityStyles).toMatch(
+      /\.reality-progress > span\s*\{[^}]*transform-origin:\s*left center;/,
+    )
+    expect(realityStyles).not.toMatch(
+      /\.reality-progress > span\s*\{[^}]*transition:/,
+    )
   })
 
   test('renders the initial artifact speed as a solid fixed-step bar', () => {

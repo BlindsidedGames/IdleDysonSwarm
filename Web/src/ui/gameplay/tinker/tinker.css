@@ -123,9 +123,13 @@
 
 .tinker-surface__progress-track {
   position: relative;
-  display: grid;
+  display: block;
+  block-size: 1.25rem;
   min-inline-size: 0;
-  align-items: center;
+  overflow: hidden;
+  border: 1px solid #0d0a0e;
+  border-radius: 0.2rem;
+  background: #171418;
 }
 
 .tinker-surface__time {
@@ -134,25 +138,22 @@
 }
 
 .tinker-surface__progress {
-  appearance: none;
-  inline-size: 100%;
-  block-size: 1.25rem;
+  position: absolute;
+  inline-size: 1px;
+  block-size: 1px;
+  padding: 0;
+  margin: -1px;
   overflow: hidden;
-  border: 1px solid #0d0a0e;
-  border-radius: 0.2rem;
-  background: #171418;
+  border: 0;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
 }
 
-.tinker-surface__progress::-webkit-progress-bar {
-  background: #171418;
-}
-
-.tinker-surface__progress::-webkit-progress-value {
+.tinker-surface__progress-fill {
+  position: absolute;
+  inset: 0;
   background: #ffd9fe;
-}
-
-.tinker-surface__progress::-moz-progress-bar {
-  background: #ffd9fe;
+  transform-origin: left center;
 }
 
 .tinker-surface__hold-label {
@@ -221,6 +222,10 @@
   }
 
   .tinker-surface__progress {
+    block-size: 1px;
+  }
+
+  .tinker-surface__progress-track {
     block-size: 1rem;
   }
 

@@ -28,11 +28,22 @@ describe('frontend snapshot external store', () => {
     expect(duplicate).toBe(first)
     expect(publications).toHaveLength(1)
 
+    const forced = store.publish(
+      readySnapshot(1, 0, 0, 'route-projection'),
+      true,
+    )
+    expect(forced).not.toBe(first)
+    expect(
+      (forced as typeof forced & { gameplay: { marker: string } })
+        .gameplay.marker,
+    ).toBe('route-projection')
+    expect(publications).toHaveLength(2)
+
     const durable = store.publish(
       readySnapshot(1, 0, 1, 'checkpointed'),
     )
-    expect(durable).not.toBe(first)
-    expect(publications).toHaveLength(2)
+    expect(durable).not.toBe(forced)
+    expect(publications).toHaveLength(3)
   })
 
   test('contains listener failures and clears gameplay identity on ownership loss', () => {

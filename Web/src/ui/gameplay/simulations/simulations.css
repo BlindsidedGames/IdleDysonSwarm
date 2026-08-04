@@ -524,25 +524,20 @@
   background: var(--simulation-progress-color);
   transform: scaleX(var(--simulation-progress-fraction));
   transform-origin: left center;
-  transition: transform 260ms ease-out;
 }
 
 .simulation-progress[data-presentation="slow"] .simulation-progress__fill {
-  transition-duration: 100ms;
-  transition-timing-function: linear;
+  transform-origin: left center;
 }
 
 .simulation-progress[data-presentation="medium"] .simulation-progress__fill {
-  animation: simulation-completion-pulse 1.2s ease-in-out infinite;
   transform: scaleX(1);
-  transition: none;
 }
 
 .simulation-progress[data-presentation="fast"] .simulation-progress__fill {
   animation: none;
   background: var(--simulation-progress-color);
   transform: scaleX(1);
-  transition: none;
 }
 
 .simulation-progress progress {
@@ -554,18 +549,12 @@
   white-space: nowrap;
 }
 
-@keyframes simulation-completion-pulse {
-  0%, 100% { opacity: 0.5; }
-  50% { opacity: 1; }
-}
-
 .simulation-progress progress::-webkit-progress-bar {
   background: var(--simulation-track);
 }
 
 .simulation-progress progress::-webkit-progress-value {
   background: var(--simulation-card-progress, var(--simulation-foundational-progress));
-  transition: inline-size 140ms linear;
 }
 
 .simulation-progress progress::-moz-progress-bar {

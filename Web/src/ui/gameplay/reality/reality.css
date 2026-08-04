@@ -173,6 +173,7 @@
 
 .reality-progress > span {
   display: block;
+  inline-size: 100%;
   block-size: 100%;
   border-inline-end: 0.15rem solid #e5dcff;
   background: linear-gradient(
@@ -180,7 +181,7 @@
     var(--reality-anomaly),
     var(--reality-accent)
   );
-  transition: inline-size 160ms linear;
+  transform-origin: left center;
 }
 
 .reality-worker-panel__batch {
@@ -480,12 +481,6 @@
 
   .reality-worker-panel {
     inline-size: 100%;
-  }
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .reality-progress > span {
-    transition: none;
   }
 }
 

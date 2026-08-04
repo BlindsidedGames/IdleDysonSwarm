@@ -3476,6 +3476,7 @@ describe('browser runtime foundation composition', () => {
       'readCurrentSaveText',
       'recoveryExportAvailable',
       'requestCheckpoint',
+      'setGameplayPreviewDemand',
       'shutdown',
       'snapshot',
       'start',
