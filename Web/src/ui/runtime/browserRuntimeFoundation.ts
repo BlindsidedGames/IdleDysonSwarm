@@ -6,6 +6,7 @@ import type {
 import type { DeepReadonly } from '../../core/contracts'
 import type {
   FrontendApplicationSnapshot,
+  FrontendGameplayPreviewDemand,
 } from '../../application/frontendSnapshot'
 import type {
   CanonicalLifecycleApplicationPort,
@@ -137,7 +138,9 @@ export const DEVELOPMENT_ONLY_BROWSER_PROFILE_ID =
 interface BrowserRuntimeApplicationPort
   extends CanonicalLifecycleApplicationPort {
   checkpoint(): Promise<CheckpointResult>
-  frontendSnapshot(): DeepReadonly<FrontendApplicationSnapshot>
+  frontendSnapshot(
+    previewDemand?: FrontendGameplayPreviewDemand,
+  ): DeepReadonly<FrontendApplicationSnapshot>
 }
 
 interface BrowserLifecycleReceipt {
@@ -243,11 +246,18 @@ export interface BrowserSkillPresetQueryPort {
   ): CanonicalSkillPresetImportResult
 }
 
+export interface BrowserFrontendDemandPort {
+  setGameplayPreviewDemand(
+    demand: FrontendGameplayPreviewDemand,
+  ): void
+}
+
 export type BrowserUiRuntimeFoundation = UiRuntimeFoundation<
   DeepReadonly<FrontendApplicationSnapshot>,
   CanonicalPlayerCommand
 > &
-  BrowserSkillPresetQueryPort
+  BrowserSkillPresetQueryPort &
+  BrowserFrontendDemandPort
 
 /**
  * Browser Wave 1 composition root.
@@ -273,6 +283,8 @@ export function createBrowserRuntimeFoundation(
         DeepReadonly<FrontendApplicationSnapshot>
       >,
     ) => implementation.subscribeSnapshot(listener),
+    setGameplayPreviewDemand: (demand) =>
+      implementation.setGameplayPreviewDemand(demand),
     start: () => implementation.start(),
     takeOverWriterOwnership: () =>
       implementation.takeOverWriterOwnership(),
@@ -369,6 +381,7 @@ class BrowserRuntimeFoundation implements BrowserUiRuntimeFoundation {
   // Every admitted import participates, including queued calls and failures.
   // Only the final completion may reopen foreground sampling.
   private pendingImportCount = 0
+  private gameplayPreviewDemand: FrontendGameplayPreviewDemand = 'all'
   private unsubscribeOwnership: (() => void) | undefined
 
   constructor(options: Readonly<BrowserRuntimeFoundationOptions>) {
@@ -456,6 +469,16 @@ class BrowserRuntimeFoundation implements BrowserUiRuntimeFoundation {
   ): () => void {
     if (this.shutdownRequested) return () => undefined
     return this.frontendSnapshots.subscribe(listener)
+  }
+
+  setGameplayPreviewDemand(
+    demand: FrontendGameplayPreviewDemand,
+  ): void {
+    if (this.gameplayPreviewDemand === demand) return
+    this.gameplayPreviewDemand = demand
+    const graph = this.graph
+    if (graph === undefined || !this.isCurrentGraph(graph)) return
+    this.publishFrontendSnapshot(graph, true)
   }
 
   start(): Promise<UiRuntimeStartResult> {
@@ -1503,13 +1526,15 @@ class BrowserRuntimeFoundation implements BrowserUiRuntimeFoundation {
 
   private publishFrontendSnapshot(
     graph: BrowserRuntimeGraph,
+    force = false,
   ): void {
     this.assertCurrentGraph(graph)
     if (!this.lease.isAuthoritative()) {
       throw new WriterLeaseLostError()
     }
     this.frontendSnapshots.publish(
-      graph.application.frontendSnapshot(),
+      graph.application.frontendSnapshot(this.gameplayPreviewDemand),
+      force,
     )
   }
 

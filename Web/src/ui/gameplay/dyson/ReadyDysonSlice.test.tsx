@@ -1045,6 +1045,7 @@ describe('ReadyDysonSlice', () => {
         listeners.add(listener)
         return () => listeners.delete(listener)
       },
+      setGameplayPreviewDemand: vi.fn(),
       dispatchPlayer: vi.fn(acceptedDispatch),
     } as unknown as BrowserUiRuntimeFoundation
     const view = render(
@@ -1059,6 +1060,9 @@ describe('ReadyDysonSlice', () => {
     )
 
     expect(samples).toEqual([])
+    expect(runtime.setGameplayPreviewDemand).toHaveBeenCalledWith(
+      'bots',
+    )
     act(() => {
       current = {
         ...current,

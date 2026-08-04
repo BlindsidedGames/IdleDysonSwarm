@@ -503,6 +503,8 @@ export interface FrontendSnapshotContext {
   readonly storedTimeCheater: boolean
   readonly selectedSkillPresetSlot:
     CanonicalRuntimeState['selectedSkillPresetSlot']
+  readonly previewDemand?: FrontendGameplayPreviewDemand
+  readonly previousPreviews?: DeepReadonly<FrontendGameplayPreviews>
 }
 
 export type FrontendApplicationSnapshotContext = Pick<
@@ -511,6 +513,8 @@ export type FrontendApplicationSnapshotContext = Pick<
   | 'dysonPresentationTuning'
   | 'quantumLeap'
   | 'realityWorkerTuning'
+  | 'previewDemand'
+  | 'previousPreviews'
 >
 
 export interface FrontendQuantumLeapPreview {
@@ -957,6 +961,24 @@ export interface FrontendGameplayPreviews {
   }
 }
 
+/**
+ * Identifies the preview family visible on the current gameplay route.
+ * `all` preserves the complete stateless selector contract for non-UI callers,
+ * while `none` lets routes without purchase controls reuse the last projection.
+ */
+export type FrontendGameplayPreviewDemand =
+  | 'all'
+  | 'none'
+  | 'bots'
+  | 'research'
+  | 'skills'
+  | 'infinity'
+  | 'reality'
+  | 'simulations'
+  | 'quantum'
+  | 'avocato'
+  | 'offline-time'
+
 export interface FrontendGameplaySnapshot {
   readonly version: typeof FRONTEND_GAMEPLAY_SNAPSHOT_VERSION
   readonly modelVersion: CanonicalGameStateV1['modelVersion']
@@ -1042,6 +1064,8 @@ export function selectFrontendApplicationSnapshot(
               application.state.storedTimeCheater,
             selectedSkillPresetSlot:
               application.state.selectedSkillPresetSlot,
+            previewDemand: context.previewDemand,
+            previousPreviews: context.previousPreviews,
           },
           sourceOwnership,
         ),
@@ -1079,7 +1103,12 @@ export function selectFrontendGameplaySnapshot(
     requirements,
     definitionCoverage,
   )
-  const previews = selectGameplayPreviews(state, context)
+  const previews = selectGameplayPreviews(
+    state,
+    context,
+    context.previousPreviews,
+    context.previewDemand ?? 'all',
+  )
 
   return freezeFrontendProjection({
     version: FRONTEND_GAMEPLAY_SNAPSHOT_VERSION,
@@ -2075,95 +2104,186 @@ function selectRuntimeFacts(
 function selectGameplayPreviews(
   state: CanonicalGameStateV1,
   context: Readonly<FrontendSnapshotContext>,
+  previous: DeepReadonly<FrontendGameplayPreviews> | undefined,
+  demand: FrontendGameplayPreviewDemand,
 ): FrontendGameplayPreviews {
-  const basicFacilities = BASIC_DYSON_FACILITY_IDS.map(
-    (facilityId) =>
+  return {
+    dyson:
+      previous === undefined || demand === 'all' || demand === 'bots'
+        ? selectDysonPreviews(state)
+        : previous.dyson,
+    research:
+      previous === undefined ||
+      demand === 'all' ||
+      demand === 'research'
+        ? previewResearchCatalog(state, context.compatibilityTuning)
+        : previous.research,
+    skills:
+      previous === undefined || demand === 'all' || demand === 'skills'
+        ? previewCanonicalSkillCatalog(state)
+        : previous.skills,
+    dream:
+      previous === undefined ||
+      demand === 'all' ||
+      demand === 'simulations' ||
+      demand === 'reality'
+        ? selectDreamPreviews(state)
+        : previous.dream,
+    reality:
+      previous === undefined ||
+      demand === 'all' ||
+      demand === 'reality'
+        ? selectRealityPreviews(state, context.realityWorkerTuning)
+        : previous.reality,
+    quantum:
+      previous === undefined ||
+      demand === 'all' ||
+      demand === 'quantum'
+        ? selectQuantumPreviews(state, context.quantumLeap)
+        : previous.quantum,
+    infinity:
+      previous === undefined ||
+      demand === 'all' ||
+      demand === 'infinity'
+        ? selectInfinityPreviews(state)
+        : previous.infinity,
+    avocado:
+      previous === undefined ||
+      demand === 'all' ||
+      demand === 'avocato' ||
+      demand === 'quantum'
+        ? selectAvocadoPreviews(state)
+        : previous.avocado,
+    time:
+      previous === undefined ||
+      demand === 'all' ||
+      demand === 'offline-time'
+        ? selectStoredTimePreviews(state, context.storedTimeCheater)
+        : previous.time,
+  }
+}
+
+function selectDysonPreviews(
+  state: CanonicalGameStateV1,
+): FrontendGameplayPreviews['dyson'] {
+  return {
+    basicFacilities: BASIC_DYSON_FACILITY_IDS.map((facilityId) =>
       previewCanonicalBasicFacilityPurchase(state, facilityId),
-  )
-  const megaStructures = MEGA_STRUCTURE_IDS.map((facilityId) =>
-    previewMegaStructure(state, facilityId),
-  )
-  const research = previewResearchCatalog(
-    state,
-    context.compatibilityTuning,
-  )
-  const foundational = DREAM_FOUNDATIONAL_PURCHASES.map(
-    (purchase) => {
-      const result = purchaseDreamFoundationalInformation(
-        state,
-        purchase,
-      )
+    ),
+    megaStructures: MEGA_STRUCTURE_IDS.map((facilityId) =>
+      previewMegaStructure(state, facilityId),
+    ),
+  }
+}
+
+function selectDreamPreviews(
+  state: CanonicalGameStateV1,
+): FrontendGameplayPreviews['dream'] {
+  return {
+    foundational: DREAM_FOUNDATIONAL_PURCHASES.map((purchase) => {
+      const result = purchaseDreamFoundationalInformation(state, purchase)
       return {
         purchase,
         eligible: result.purchased,
         cost: result.cost,
         code: result.status,
       }
-    },
-  )
-  const spaceAge = DREAM_SPACE_AGE_PURCHASES.map((purchase) => {
-    const result = purchaseDreamSpaceAge(state, purchase)
-    return {
-      purchase,
-      eligible: result.purchased,
-      cost: result.cost,
-      code: result.status,
-    }
-  })
-  const dreamUpgrades = [...SIMULATION_UPGRADE_DEFINITIONS].map(
-    ([upgradeId, definition]) => {
-      const result = purchaseSimulationUpgrade(state, upgradeId)
+    }),
+    spaceAge: DREAM_SPACE_AGE_PURCHASES.map((purchase) => {
+      const result = purchaseDreamSpaceAge(state, purchase)
+      return {
+        purchase,
+        eligible: result.purchased,
+        cost: result.cost,
+        code: result.status,
+      }
+    }),
+    upgrades: [...SIMULATION_UPGRADE_DEFINITIONS].map(
+      ([upgradeId, definition]) => {
+        const result = purchaseSimulationUpgrade(state, upgradeId)
+        return {
+          upgradeId,
+          eligible: result.accepted && result.changed,
+          cost: definition.cost,
+          code: result.code,
+          definitionGap: result.unsupportedEffect,
+        }
+      },
+    ),
+    education: DREAM_EDUCATION_IDS.map((educationId) => {
+      const result = startDreamEducation(state, educationId)
+      return {
+        educationId,
+        eligible: result.accepted && result.changed,
+        cost: state.dream.education[educationId].cost,
+        code: result.code,
+      }
+    }),
+    automaticReset: previewDreamReset(
+      applyCanonicalDreamReset(state, { kind: 'automatic' }),
+    ),
+    blackHoleReset: previewDreamReset(
+      applyCanonicalBlackHoleReset(state),
+    ),
+  }
+}
+
+function selectRealityPreviews(
+  state: CanonicalGameStateV1,
+  tuning: Readonly<RealityWorkerTuning>,
+): FrontendGameplayPreviews['reality'] {
+  const gather = gatherRealityInfluence(state, tuning)
+  return {
+    upgrades: REALITY_UPGRADE_IDS.map((upgradeId) => {
+      const result = purchaseRealityUpgrade(state, upgradeId)
+      const definition = REALITY_UPGRADE_DEFINITIONS.get(upgradeId)
       return {
         upgradeId,
         eligible: result.accepted && result.changed,
-        cost: definition.cost,
+        cost: definition?.cost ?? 0n,
         code: result.code,
-        definitionGap: result.unsupportedEffect,
+        definitionGap:
+          result.definitionGap ??
+          (definition === undefined
+            ? `missing_definition:${upgradeId}`
+            : null),
       }
+    }),
+    gatherInfluence: {
+      eligible: gather.gathered,
+      amount: gather.amount,
+      code: gather.status,
     },
-  )
-  const education = DREAM_EDUCATION_IDS.map((educationId) => {
-    const result = startDreamEducation(state, educationId)
-    return {
-      educationId,
-      eligible: result.accepted && result.changed,
-      cost: state.dream.education[educationId].cost,
-      code: result.code,
-    }
-  })
-  const realityUpgrades = REALITY_UPGRADE_IDS.map((upgradeId) => {
-    const result = purchaseRealityUpgrade(state, upgradeId)
-    const definition = REALITY_UPGRADE_DEFINITIONS.get(upgradeId)
-    return {
-      upgradeId,
-      eligible: result.accepted && result.changed,
-      cost: definition?.cost ?? 0n,
-      code: result.code,
-      definitionGap:
-        result.definitionGap ??
-        (definition === undefined
-          ? `missing_definition:${upgradeId}`
-          : null),
-    }
-  })
-  const gather = gatherRealityInfluence(
-    state,
-    context.realityWorkerTuning,
-  )
-  const quantumUpgrades = QUANTUM_UPGRADE_IDS.map((upgradeId) => {
-    const result = purchaseQuantumUpgrade(state, upgradeId)
-    return {
-      upgradeId,
-      eligible: result.accepted && result.changed,
-      cost: quantumUpgradeCost(state, upgradeId),
-      code: result.code,
-      definitionGap: QUANTUM_UPGRADE_DEFINITIONS.has(upgradeId)
-        ? null
-        : `missing_definition:${upgradeId}`,
-    }
-  })
-  const infinityShop = CANONICAL_INFINITY_SHOP_ITEM_IDS.map(
-    (itemId) => {
+  }
+}
+
+function selectQuantumPreviews(
+  state: CanonicalGameStateV1,
+  leap: Readonly<FrontendQuantumLeapPreview>,
+): FrontendGameplayPreviews['quantum'] {
+  return {
+    upgrades: QUANTUM_UPGRADE_IDS.map((upgradeId) => {
+      const result = purchaseQuantumUpgrade(state, upgradeId)
+      return {
+        upgradeId,
+        eligible: result.accepted && result.changed,
+        cost: quantumUpgradeCost(state, upgradeId),
+        code: result.code,
+        definitionGap: QUANTUM_UPGRADE_DEFINITIONS.has(upgradeId)
+          ? null
+          : `missing_definition:${upgradeId}`,
+      }
+    }),
+    sections: previewQuantumUpgradeSections(state),
+    leap: structuredClone(leap),
+  }
+}
+
+function selectInfinityPreviews(
+  state: CanonicalGameStateV1,
+): FrontendGameplayPreviews['infinity'] {
+  return {
+    shop: CANONICAL_INFINITY_SHOP_ITEM_IDS.map((itemId) => {
       const result = purchaseCanonicalInfinityShopItem(state, itemId)
       return {
         itemId,
@@ -2173,103 +2293,75 @@ function selectGameplayPreviews(
         definitionGap:
           result.code === 'definition-gap' ? result.issue : null,
       }
-    },
-  )
-  const avocadoFeeds = AVOCADO_FEED_SOURCES.map((source) => {
-    const result = feedAllToAvocado(state, source)
-    return {
-      source,
-      eligible: result.accepted && result.changed,
-      amount: result.amount,
-      code: result.code,
-    }
-  })
+    }),
+    breakTarget: projectBreakInfinityPresentationControl(
+      state.infinity.breakTarget,
+    ),
+  }
+}
+
+function selectAvocadoPreviews(
+  state: CanonicalGameStateV1,
+): FrontendGameplayPreviews['avocado'] {
   const meditation = completeCanonicalAvocadoMeditationStep(
     state,
     state.secretProgress.step,
   )
+  return {
+    feeds: AVOCADO_FEED_SOURCES.map((source) => {
+      const result = feedAllToAvocado(state, source)
+      return {
+        source,
+        eligible: result.accepted && result.changed,
+        amount: result.amount,
+        code: result.code,
+      }
+    }),
+    meditation: {
+      eligible: meditation.accepted && meditation.changed,
+      requiredStepIndex: state.secretProgress.completed
+        ? null
+        : state.secretProgress.step,
+      code: meditation.code,
+      skillPointReward: AVOCADO_MEDITATION_SKILL_POINT_REWARD,
+    },
+  }
+}
+
+function selectStoredTimePreviews(
+  state: CanonicalGameStateV1,
+  cheater: boolean,
+): FrontendGameplayPreviews['time'] {
   const storedCapacity = upgradeStoredTimeCapacity({
     bankSeconds: state.timeline.storedTimeAvailableSeconds,
     capacitySeconds: state.timeline.storedTimeCapacitySeconds,
-    cheater: context.storedTimeCheater,
+    cheater,
   })
-
   return {
-    dyson: {
-      basicFacilities,
-      megaStructures,
+    doubleTimeRate: {
+      minimum: 0,
+      maximum: 10,
+      current: state.timeline.doubleTime.rate,
     },
-    research,
-    skills: previewCanonicalSkillCatalog(state),
-    dream: {
-      foundational,
-      spaceAge,
-      upgrades: dreamUpgrades,
-      education,
-      automaticReset: previewDreamReset(
-        applyCanonicalDreamReset(state, { kind: 'automatic' }),
+    storedCapacity: {
+      eligible: storedCapacity.upgraded,
+      code: storedCapacity.upgraded
+        ? 'upgradable'
+        : storedCapacity.maximumReached
+          ? 'maximum-reached'
+          : 'stored-time-bank-not-full',
+      currentCapacitySeconds: state.timeline.storedTimeCapacitySeconds,
+      nextCapacitySeconds: storedCapacity.capacitySeconds,
+      consumesStoredSeconds: storedCapacity.upgraded
+        ? state.timeline.storedTimeAvailableSeconds
+        : 0,
+    },
+    storedSpend: {
+      maximumSeconds: Math.max(
+        0,
+        state.timeline.storedTimeAvailableSeconds,
       ),
-      blackHoleReset: previewDreamReset(
-        applyCanonicalBlackHoleReset(state),
-      ),
-    },
-    reality: {
-      upgrades: realityUpgrades,
-      gatherInfluence: {
-        eligible: gather.gathered,
-        amount: gather.amount,
-        code: gather.status,
-      },
-    },
-    quantum: {
-      upgrades: quantumUpgrades,
-      sections: previewQuantumUpgradeSections(state),
-      leap: structuredClone(context.quantumLeap),
-    },
-    infinity: {
-      shop: infinityShop,
-      breakTarget: projectBreakInfinityPresentationControl(
-        state.infinity.breakTarget,
-      ),
-    },
-    avocado: {
-      feeds: avocadoFeeds,
-      meditation: {
-        eligible: meditation.accepted && meditation.changed,
-        requiredStepIndex: state.secretProgress.completed
-          ? null
-          : state.secretProgress.step,
-        code: meditation.code,
-        skillPointReward: AVOCADO_MEDITATION_SKILL_POINT_REWARD,
-      },
-    },
-    time: {
-      doubleTimeRate: {
-        minimum: 0,
-        maximum: 10,
-        current: state.timeline.doubleTime.rate,
-      },
-      storedCapacity: {
-        eligible: storedCapacity.upgraded,
-        code: storedCapacity.upgraded
-          ? 'upgradable'
-          : storedCapacity.maximumReached
-            ? 'maximum-reached'
-            : 'stored-time-bank-not-full',
-        currentCapacitySeconds:
-          state.timeline.storedTimeCapacitySeconds,
-        nextCapacitySeconds: storedCapacity.capacitySeconds,
-        consumesStoredSeconds: storedCapacity.upgraded
-          ? state.timeline.storedTimeAvailableSeconds
-          : 0,
-      },
-      storedSpend: {
-        maximumSeconds: Math.max(
-          0,
-          state.timeline.storedTimeAvailableSeconds,
-        ),
-        commitFirstRequired: true,
-      },
+      commitFirstRequired: true,
     },
   }
 }

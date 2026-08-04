@@ -540,6 +540,7 @@ class TestRuntime {
       this.snapshotSubscriptions += 1
       return () => undefined
     },
+    setGameplayPreviewDemand: () => undefined,
     dispatchPlayer: async () => ({
       status: 'failed',
       code: 'test-not-configured',

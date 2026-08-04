@@ -11,6 +11,7 @@ import {
 import { useIntl } from 'react-intl'
 import type {
   FrontendApplicationSnapshot,
+  FrontendGameplayPreviewDemand,
 } from '../../../application/frontendSnapshot'
 import type {
   CanonicalPlayerCommand,
@@ -194,6 +195,18 @@ function UnprobedReadyDysonRuntimeHost({
   localDeveloperOptionsPurchased,
 }: ReadyDysonRuntimeHostProps) {
   const [route, setRoute] = useState<ReadyGameRoute>('bots')
+  useLayoutEffect(() => {
+    runtime.setGameplayPreviewDemand('bots')
+  }, [runtime])
+  const changeRoute = useCallback(
+    (nextRoute: ReadyGameRoute) => {
+      runtime.setGameplayPreviewDemand(
+        gameplayPreviewDemandForRoute(nextRoute),
+      )
+      setRoute(nextRoute)
+    },
+    [runtime],
+  )
   const snapshot = useBrowserRuntimeSnapshot(runtime)
   const telemetrySnapshotRef = useRef(snapshot)
   telemetrySnapshotRef.current = snapshot
@@ -241,7 +254,7 @@ function UnprobedReadyDysonRuntimeHost({
       dispatchPlayer={dispatchPlayer}
       presetActions={presetActions}
       route={route}
-      onRouteChange={setRoute}
+      onRouteChange={changeRoute}
       resetSave={resetSave}
       previewImportSaveFile={previewImportSaveFile}
       previewImportSaveText={previewImportSaveText}
@@ -273,6 +286,18 @@ export function ProbedReadyDysonRuntimeHost({
   localDeveloperOptionsPurchased,
 }: ReadyDysonRuntimeHostProps) {
   const [route, setRoute] = useState<ReadyGameRoute>('bots')
+  useLayoutEffect(() => {
+    runtime.setGameplayPreviewDemand('bots')
+  }, [runtime])
+  const changeRoute = useCallback(
+    (nextRoute: ReadyGameRoute) => {
+      runtime.setGameplayPreviewDemand(
+        gameplayPreviewDemandForRoute(nextRoute),
+      )
+      setRoute(nextRoute)
+    },
+    [runtime],
+  )
   const selectionStartedAt = beginFirstSliceSnapshotSelection()
   const snapshot = useBrowserRuntimeSnapshot(runtime)
   const dispatchPlayer = useCallback(
@@ -320,7 +345,7 @@ export function ProbedReadyDysonRuntimeHost({
       dispatchPlayer={dispatchPlayer}
       presetActions={presetActions}
       route={route}
-      onRouteChange={setRoute}
+      onRouteChange={changeRoute}
       resetSave={resetSave}
       previewImportSaveFile={previewImportSaveFile}
       previewImportSaveText={previewImportSaveText}
@@ -387,6 +412,30 @@ export type ReadyGameRoute =
   | 'store'
   | 'debug'
   | 'settings'
+
+function gameplayPreviewDemandForRoute(
+  route: ReadyGameRoute,
+): FrontendGameplayPreviewDemand {
+  switch (route) {
+    case 'bots':
+    case 'research':
+    case 'skills':
+    case 'infinity':
+    case 'reality':
+    case 'simulations':
+    case 'quantum':
+    case 'avocato':
+    case 'offline-time':
+      return route
+    case 'story':
+    case 'wiki':
+    case 'statistics':
+    case 'store':
+    case 'debug':
+    case 'settings':
+      return 'none'
+  }
+}
 
 const AVOCATO_MEDITATION_ROUTE_PLACEMENT: Partial<
   Record<ReadyGameRoute, AvocatoMeditationPlacement>
