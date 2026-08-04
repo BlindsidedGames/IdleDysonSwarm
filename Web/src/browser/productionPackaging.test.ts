@@ -11,12 +11,13 @@ import { JSDOM } from 'jsdom'
 import { build } from 'vite'
 import { describe, expect, test } from 'vitest'
 import {
+  CONTENT_SECURITY_POLICY,
   HTML_CONTENT_SECURITY_POLICY,
   renderStaticSecurityHeaders,
 } from '../../securityHeaders'
 
 describe('production browser package', () => {
-  test('excludes developer fixtures and source maps while retaining the exact CSP', async () => {
+  test('excludes developer artifacts and emits CSP-compatible production assets', async () => {
     const outputDirectory = mkdtempSync(
       join(tmpdir(), 'idle-dyson-swarm-package-'),
     )
@@ -91,7 +92,9 @@ describe('production browser package', () => {
         resolve(outputDirectory, 'index.html'),
         'utf8',
       )
-      const document = new JSDOM(html).window.document
+      const document = new JSDOM(html, {
+        url: 'http://localhost/',
+      }).window.document
       expect(
         document
           .querySelector(
@@ -107,6 +110,68 @@ describe('production browser package', () => {
         document.querySelector('script[type="module"]')
           ?.getAttribute('src'),
       ).toMatch(/^\/play\/assets\/.+\.js$/)
+
+      const executableResource = html.indexOf('<script')
+      const policyPosition = html.indexOf(
+        'http-equiv="Content-Security-Policy"',
+      )
+      expect(policyPosition).toBeGreaterThanOrEqual(0)
+      expect(policyPosition).toBeLessThan(executableResource)
+      expect(document.querySelector('script:not([src])')).toBeNull()
+      expect(document.querySelector('style')).toBeNull()
+
+      const assetReferences = [
+        ...Array.from(
+          document.querySelectorAll<HTMLScriptElement>('script[src]'),
+          (element) => element.src,
+        ),
+        ...Array.from(
+          document.querySelectorAll<HTMLLinkElement>(
+            'link[rel="stylesheet"][href]',
+          ),
+          (element) => element.href,
+        ),
+      ]
+      expect(assetReferences.length).toBeGreaterThan(0)
+      for (const reference of assetReferences) {
+        expect(new URL(reference).origin).toBe('http://localhost')
+      }
+
+      const cssFiles = readdirSync(
+        resolve(outputDirectory, 'assets'),
+      ).filter((file) => file.endsWith('.css'))
+      expect(cssFiles.length).toBeGreaterThan(0)
+      for (const file of cssFiles) {
+        const styles = readFileSync(
+          resolve(outputDirectory, 'assets', file),
+          'utf8',
+        )
+        const resourceUrls = Array.from(
+          styles.matchAll(/url\(([^)]+)\)/g),
+          (match) => match[1]?.replaceAll(/["']/g, '').trim() ?? '',
+        )
+        for (const resourceUrl of resourceUrls) {
+          expect(
+            resourceUrl.startsWith('data:') ||
+              new URL(
+                resourceUrl,
+                'https://idle-dyson-swarm.invalid',
+              ).origin === 'https://idle-dyson-swarm.invalid',
+          ).toBe(true)
+        }
+      }
+
+      const directives = parsePolicy(CONTENT_SECURITY_POLICY)
+      expect(directives.get('script-src')).toEqual(["'self'"])
+      expect(directives.get('style-src')).toEqual(["'self'"])
+      expect(directives.get('font-src')).toEqual(["'self'"])
+      expect(directives.get('connect-src')).toEqual(["'self'"])
+      expect(directives.get('worker-src')).toEqual(["'self'"])
+      expect(directives.get('manifest-src')).toEqual(["'self'"])
+      expect(directives.get('img-src')).toEqual([
+        "'self'",
+        'data:',
+      ])
 
       const pwaManifest = JSON.parse(readFileSync(
         resolve(outputDirectory, 'manifest.webmanifest'),
@@ -158,4 +223,15 @@ function listFiles(directory: string): string[] {
     const path = join(directory, entry)
     return statSync(path).isDirectory() ? listFiles(path) : [path]
   })
+}
+
+function parsePolicy(
+  policy: string,
+): ReadonlyMap<string, readonly string[]> {
+  return new Map(
+    policy.split(';').map((directive) => {
+      const [name = '', ...values] = directive.trim().split(/\s+/)
+      return [name, values] as const
+    }),
+  )
 }
