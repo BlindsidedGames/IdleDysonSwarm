@@ -41,10 +41,12 @@ const facilitySource = readFileSync(
   ),
   'utf8',
 )
+const originalElementAnimate = HTMLElement.prototype.animate
 
 afterEach(() => {
   cleanup()
   vi.unstubAllGlobals()
+  restoreElementAnimate()
 })
 
 const outputByFacility = {
@@ -360,6 +362,47 @@ describe('BasicFacilityRegion', () => {
     expect(screen.getByRole('progressbar', {
       name: 'Assembly Lines production',
     })).toHaveAttribute('value', '0.2')
+  })
+
+  it('predicts the next production interval without changing canonical semantics or scheduling frames', () => {
+    const requestFrame = vi.fn()
+    vi.stubGlobal('requestAnimationFrame', requestFrame)
+    const { animate } = installElementAnimationStub()
+    renderRegion({
+      visibleBasicFacilityIds: ['assembly_lines'],
+      facilityFacts: {
+        ...facilityFacts,
+        assembly_lines: facilityFact(
+          'assembly_lines',
+          1,
+          0,
+          1,
+          0.2,
+        ),
+      },
+    })
+    const progress = screen.getByRole('progressbar', {
+      name: 'Assembly Lines production',
+    })
+    const fill = document.querySelector<HTMLElement>(
+      '.basic-facility-card__progress-fill',
+    )
+
+    expect(progress).toHaveAttribute('value', '0.2')
+    expect(fill).toHaveStyle({ transform: 'scaleX(0.2)' })
+    expect(animate).toHaveBeenCalledWith(
+      [
+        { offset: 0, transform: 'scaleX(0.2)' },
+        { offset: 1, transform: 'scaleX(0.30000000000000004)' },
+      ],
+      {
+        duration: 100,
+        easing: 'linear',
+        fill: 'forwards',
+      },
+    )
+    expect(requestFrame).not.toHaveBeenCalled()
+    expect(facilitiesCss).not.toMatch(/transition:\s*transform/)
   })
 
   it('traps modal focus, isolates background, and restores focus on every close path', async () => {
@@ -1034,4 +1077,27 @@ function deferred<T>() {
     resolve = fulfill
   })
   return { promise, resolve }
+}
+
+function installElementAnimationStub() {
+  const cancel = vi.fn()
+  const animate = vi.fn(() => ({ cancel }) as unknown as Animation)
+  Object.defineProperty(HTMLElement.prototype, 'animate', {
+    configurable: true,
+    writable: true,
+    value: animate,
+  })
+  return { animate, cancel }
+}
+
+function restoreElementAnimate(): void {
+  if (originalElementAnimate === undefined) {
+    Reflect.deleteProperty(HTMLElement.prototype, 'animate')
+    return
+  }
+  Object.defineProperty(HTMLElement.prototype, 'animate', {
+    configurable: true,
+    writable: true,
+    value: originalElementAnimate,
+  })
 }

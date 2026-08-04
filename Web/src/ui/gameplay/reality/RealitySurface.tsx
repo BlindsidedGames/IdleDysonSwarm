@@ -713,6 +713,15 @@ function RealityProgress({
   value,
   valueText,
 }: RealityProgressProps) {
+  const normalized = Math.min(1, Math.max(0, value))
+  const previousProgress = useRef<number | null>(null)
+  const smoothForwardStep =
+    previousProgress.current !== null &&
+    normalized > previousProgress.current
+  useEffect(() => {
+    previousProgress.current = normalized
+  }, [normalized])
+
   return (
     <div
       className="reality-progress"
@@ -720,10 +729,14 @@ function RealityProgress({
       aria-label={label}
       aria-valuemin={0}
       aria-valuemax={100}
-      aria-valuenow={Math.round(value * 100)}
+      aria-valuenow={Math.round(normalized * 100)}
       aria-valuetext={valueText}
     >
-      <span style={{ inlineSize: `${value * 100}%` }} />
+      <span
+        aria-hidden="true"
+        data-smooth={smoothForwardStep ? 'true' : 'false'}
+        style={{ transform: `scaleX(${normalized})` }}
+      />
     </div>
   )
 }

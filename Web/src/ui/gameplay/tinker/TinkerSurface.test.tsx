@@ -32,6 +32,7 @@ const tinkerCss = readFileSync(
   ),
   'utf8',
 )
+const originalElementAnimate = HTMLElement.prototype.animate
 
 beforeEach(() => {
   vi.useFakeTimers()
@@ -40,6 +41,7 @@ beforeEach(() => {
 afterEach(() => {
   cleanup()
   vi.unstubAllGlobals()
+  restoreElementAnimate()
   vi.useRealTimers()
 })
 
@@ -626,7 +628,8 @@ describe('TinkerSurface presentation and accessibility', () => {
     expect(requestFrame).not.toHaveBeenCalled()
   })
 
-  test('renders each canonical progress publication without display-rate interpolation', () => {
+  test('predicts the next interval while keeping the progress element canonical', () => {
+    const { animate } = installElementAnimationStub()
     const dispatch = createDispatch()
     const view = renderTinker(
       dispatch,
@@ -635,8 +638,24 @@ describe('TinkerSurface presentation and accessibility', () => {
     const progress = screen.getByRole('progressbar', {
       name: 'Tinker progress',
     }) as HTMLProgressElement
+    const fill = document.querySelector<HTMLElement>(
+      '.tinker-surface__progress-fill',
+    )
 
     expect(progress.value).toBeCloseTo(0.1)
+    expect(fill).toHaveStyle({ transform: 'scaleX(0.2)' })
+    expect(animate).toHaveBeenNthCalledWith(
+      1,
+      [
+        { offset: 0, transform: 'scaleX(0.2)' },
+        { offset: 1, transform: 'scaleX(0.4)' },
+      ],
+      {
+        duration: 100,
+        easing: 'linear',
+        fill: 'forwards',
+      },
+    )
 
     view.rerender(
       tinkerElement(
@@ -645,6 +664,19 @@ describe('TinkerSurface presentation and accessibility', () => {
       ),
     )
     expect(progress.value).toBeCloseTo(0.2)
+    expect(fill).toHaveStyle({ transform: 'scaleX(0.4)' })
+    expect(animate).toHaveBeenNthCalledWith(
+      2,
+      [
+        { offset: 0, transform: 'scaleX(0.4)' },
+        { offset: 1, transform: 'scaleX(0.6000000000000001)' },
+      ],
+      {
+        duration: 100,
+        easing: 'linear',
+        fill: 'forwards',
+      },
+    )
 
     view.rerender(
       tinkerElement(
@@ -653,6 +685,9 @@ describe('TinkerSurface presentation and accessibility', () => {
       ),
     )
     expect(progress.value).toBeCloseTo(0.05)
+    expect(fill).toHaveStyle({ transform: 'scaleX(0.1)' })
+    expect(animate).toHaveBeenCalledTimes(3)
+    expect(tinkerCss).not.toMatch(/transition:\s*transform/)
   })
 
   test('does not synthesize progress between zero-valued repeat publications', () => {
@@ -743,7 +778,7 @@ describe('TinkerSurface presentation and accessibility', () => {
       /@media \(max-width: 720px\)[\s\S]*\.tinker-surface__output\s*\{[\s\S]*grid-column:\s*1 \/ -1;/,
     )
     expect(tinkerCss).toMatch(
-      /@media \(max-width: 720px\)[\s\S]*\.tinker-surface__progress\s*\{[\s\S]*block-size:\s*1rem;/,
+      /@media \(max-width: 720px\)[\s\S]*\.tinker-surface__progress-track\s*\{[\s\S]*block-size:\s*1rem;/,
     )
   })
 
@@ -1009,4 +1044,27 @@ function installPointerCapture(button: HTMLButtonElement) {
     (pointerId: number) => captured === pointerId,
   )
   return { set, release }
+}
+
+function installElementAnimationStub() {
+  const cancel = vi.fn()
+  const animate = vi.fn(() => ({ cancel }) as unknown as Animation)
+  Object.defineProperty(HTMLElement.prototype, 'animate', {
+    configurable: true,
+    writable: true,
+    value: animate,
+  })
+  return { animate, cancel }
+}
+
+function restoreElementAnimate(): void {
+  if (originalElementAnimate === undefined) {
+    Reflect.deleteProperty(HTMLElement.prototype, 'animate')
+    return
+  }
+  Object.defineProperty(HTMLElement.prototype, 'animate', {
+    configurable: true,
+    writable: true,
+    value: originalElementAnimate,
+  })
 }

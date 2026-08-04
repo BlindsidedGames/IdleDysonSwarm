@@ -26,6 +26,8 @@ import {
 } from '../../i18n/formatters'
 import type { EnabledLocale } from '../../i18n/localeRegistry'
 import type { UiRuntimePlayerCommandResult } from '../../runtime'
+import { usePrefersReducedMotion } from '../../accessibility/useMediaQuery'
+import { useForwardProgressAnimation } from '../progress/useForwardProgressAnimation'
 import { basicFacilityMessages as messages } from './messages'
 import { FacilityDetailsDialog } from './FacilityDetailsDialog'
 import { clampProgress } from './progressInterpolation'
@@ -157,6 +159,7 @@ export function BasicFacilityRegion({
   dispatchPlayer,
   headingLevel = 'h2',
 }: BasicFacilityRegionProps) {
+  const reducedMotion = usePrefersReducedMotion()
   const intl = useIntl()
   const headingId = useId()
   const previewById = new Map(
@@ -275,6 +278,7 @@ export function BasicFacilityRegion({
                 pending={pendingIds.has(facilityId)}
                 feedback={feedbackById[facilityId]}
                 revision={revision}
+                reducedMotion={reducedMotion}
                 onPurchase={() => purchase(facilityId)}
                 onOpenDetails={() =>
                   setDetailsFacilityId(facilityId)
@@ -325,6 +329,7 @@ interface BasicFacilityPresentationCardProps {
   readonly pending: boolean
   readonly feedback?: PurchaseFeedback
   readonly revision: BasicFacilityPresentationRevision
+  readonly reducedMotion: boolean
   readonly onPurchase: () => void
   readonly onOpenDetails: () => void
 }
@@ -338,6 +343,7 @@ function BasicFacilityPresentationCard({
   pending,
   feedback,
   revision,
+  reducedMotion,
   onPurchase,
   onOpenDetails,
 }: BasicFacilityPresentationCardProps) {
@@ -406,6 +412,8 @@ function BasicFacilityPresentationCard({
             },
           )}
           progress={fact.productionProgress}
+          productionRatePerSecond={fact.production.perSecond}
+          reducedMotion={reducedMotion}
         />
       }
       feedback={
@@ -510,13 +518,26 @@ const upstreamFacilityNameMessages: Readonly<
 function FacilityProductionProgress({
   accessibleName,
   progress,
+  productionRatePerSecond,
+  reducedMotion,
 }: {
   readonly accessibleName: string
   readonly progress?: BasicFacilityCanonicalFact['productionProgress']
+  readonly productionRatePerSecond: number
+  readonly reducedMotion: boolean
 }) {
   const canonicalNormalized = clampProgress(
     progress?.normalized ?? 0,
   )
+  const fillRef = useRef<HTMLSpanElement>(null)
+  useForwardProgressAnimation(fillRef, {
+    canonicalProgress: canonicalNormalized,
+    normalizedRatePerSecond: productionRatePerSecond,
+    active:
+      progress?.visible === true && canonicalNormalized < 1,
+    wraps: true,
+    reducedMotion,
+  })
 
   return (
     <div
@@ -524,12 +545,20 @@ function FacilityProductionProgress({
       data-visible={progress?.visible === true ? 'true' : 'false'}
     >
       {progress?.visible === true && (
-        <progress
-          className="basic-facility-card__progress"
-          aria-label={accessibleName}
-          max={1}
-          value={canonicalNormalized}
-        />
+        <>
+          <progress
+            className="basic-facility-card__progress"
+            aria-label={accessibleName}
+            max={1}
+            value={canonicalNormalized}
+          />
+          <span
+            ref={fillRef}
+            aria-hidden="true"
+            className="basic-facility-card__progress-fill"
+            style={{ transform: `scaleX(${canonicalNormalized})` }}
+          />
+        </>
       )}
     </div>
   )
