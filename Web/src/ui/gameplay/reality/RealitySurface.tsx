@@ -33,11 +33,13 @@ import {
 } from '../../i18n/formatters'
 import type { EnabledLocale } from '../../i18n/localeRegistry'
 import type { UiRuntimePlayerCommandResult } from '../../runtime'
+import { usePrefersReducedMotion } from '../../accessibility/useMediaQuery'
 import {
   realityMessages as messages,
   realityUpgradeMessages as upgradeMessages,
 } from './messages'
 import { SimulationUpgradeRegion } from '../simulations/SimulationUpgradeRegion'
+import { useForwardProgressAnimation } from '../progress/useForwardProgressAnimation'
 import './reality.css'
 
 type RealityCommand = Extract<
@@ -96,6 +98,7 @@ export function RealitySurface({
   dispatchPlayer,
 }: RealitySurfaceProps) {
   const intl = useIntl()
+  const reducedMotion = usePrefersReducedMotion()
   const pendingRef = useRef(false)
   const [pending, setPending] = useState(false)
   const [failed, setFailed] = useState(false)
@@ -125,6 +128,15 @@ export function RealitySurface({
   }
 
   const batchProgress = derived.workerBatchFillFraction
+  const visualBatchProgress = Math.min(
+    1,
+    Math.max(
+      0,
+      batchProgress +
+        Math.max(0, resources.workerGenerationProgress) /
+          Math.max(1, Number(derived.workerBatchSize)),
+    ),
+  )
   const waitingForGather =
     derived.consumptionStatus === 'halted'
   const gatherDisabled =
@@ -242,6 +254,14 @@ export function RealitySurface({
               <RealityProgress
                 label={intl.formatMessage(messages.workersReady)}
                 value={batchProgress}
+                visualValue={visualBatchProgress}
+                normalizedRatePerSecond={
+                  derived.generationPerSecond /
+                  Math.max(1, Number(derived.workerBatchSize))
+                }
+                active={!waitingForGather && batchProgress < 1}
+                wraps={derived.autoGatherEnabled}
+                reducedMotion={reducedMotion}
                 valueText={intl.formatMessage(
                   messages.workersReadyValue,
                   {
@@ -705,22 +725,34 @@ function RealityUpgradeCard({
 interface RealityProgressProps {
   readonly label: string
   readonly value: number
+  readonly visualValue?: number
   readonly valueText?: string
+  readonly normalizedRatePerSecond: number
+  readonly active: boolean
+  readonly wraps: boolean
+  readonly reducedMotion: boolean
 }
 
 function RealityProgress({
   label,
   value,
+  visualValue = value,
   valueText,
+  normalizedRatePerSecond,
+  active,
+  wraps,
+  reducedMotion,
 }: RealityProgressProps) {
   const normalized = Math.min(1, Math.max(0, value))
-  const previousProgress = useRef<number | null>(null)
-  const smoothForwardStep =
-    previousProgress.current !== null &&
-    normalized > previousProgress.current
-  useEffect(() => {
-    previousProgress.current = normalized
-  }, [normalized])
+  const visualNormalized = Math.min(1, Math.max(0, visualValue))
+  const fillRef = useRef<HTMLSpanElement>(null)
+  useForwardProgressAnimation(fillRef, {
+    canonicalProgress: visualNormalized,
+    normalizedRatePerSecond,
+    active,
+    wraps,
+    reducedMotion,
+  })
 
   return (
     <div
@@ -733,9 +765,9 @@ function RealityProgress({
       aria-valuetext={valueText}
     >
       <span
+        ref={fillRef}
         aria-hidden="true"
-        data-smooth={smoothForwardStep ? 'true' : 'false'}
-        style={{ transform: `scaleX(${normalized})` }}
+        style={{ transform: `scaleX(${visualNormalized})` }}
       />
     </div>
   )

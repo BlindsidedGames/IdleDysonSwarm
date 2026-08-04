@@ -93,11 +93,12 @@
 
 .infinity-surface__progress-track > span {
   display: block;
+  inline-size: 100%;
   block-size: 100%;
   min-inline-size: 0;
   border-inline-end: 0.16rem solid var(--infinity-accent-lead);
   background: var(--infinity-accent);
-  transition: inline-size 160ms linear;
+  transform-origin: left center;
 }
 
 .infinity-surface__warning {

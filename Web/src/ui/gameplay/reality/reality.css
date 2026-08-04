@@ -184,10 +184,6 @@
   transform-origin: left center;
 }
 
-.reality-progress > span[data-smooth="true"] {
-  transition: transform 33ms linear;
-}
-
 .reality-worker-panel__batch {
   display: grid;
   grid-template-columns: minmax(0, 1fr) auto;
@@ -485,12 +481,6 @@
 
   .reality-worker-panel {
     inline-size: 100%;
-  }
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .reality-progress > span {
-    transition: none;
   }
 }
 

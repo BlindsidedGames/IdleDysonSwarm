@@ -14,7 +14,8 @@ const RESET_OFFSET_EPSILON = 0.000_001
 
 export interface ForwardProgressAnimationOptions {
   readonly canonicalProgress: number
-  readonly normalizedRatePerSecond: number
+  readonly normalizedRatePerSecond?: number
+  readonly inferRate?: 'increasing' | 'decreasing' | 'either'
   readonly active: boolean
   readonly wraps: boolean
   readonly reducedMotion: boolean
@@ -30,9 +31,19 @@ export function useForwardProgressAnimation(
   options: Readonly<ForwardProgressAnimationOptions>,
 ): void {
   const animationRef = useRef<Animation | null>(null)
+  const previousSampleRef = useRef<{
+    readonly progress: number
+    readonly sampledAt: number
+  } | null>(null)
   const canonicalProgress = clampUnit(options.canonicalProgress)
 
   useLayoutEffect(() => {
+    const sampledAt = performance.now()
+    const previousSample = previousSampleRef.current
+    previousSampleRef.current = {
+      progress: canonicalProgress,
+      sampledAt,
+    }
     const element = elementRef.current
     animationRef.current?.cancel()
     animationRef.current = null
@@ -47,9 +58,16 @@ export function useForwardProgressAnimation(
       return undefined
     }
 
+    const inferredRate = inferProgressRate(
+      previousSample,
+      canonicalProgress,
+      sampledAt,
+      options.inferRate,
+      options.wraps,
+    )
     const keyframes = buildForwardProgressKeyframes(
       canonicalProgress,
-      options.normalizedRatePerSecond,
+      options.normalizedRatePerSecond ?? inferredRate,
       options.wraps,
     )
     if (keyframes.length < 2) return undefined
@@ -71,6 +89,7 @@ export function useForwardProgressAnimation(
     canonicalProgress,
     elementRef,
     options.active,
+    options.inferRate,
     options.normalizedRatePerSecond,
     options.reducedMotion,
     options.wraps,
@@ -84,11 +103,16 @@ export function buildForwardProgressKeyframes(
 ): Keyframe[] {
   const start = clampUnit(canonicalProgress)
   const rate = Number.isFinite(normalizedRatePerSecond)
-    ? Math.max(0, normalizedRatePerSecond)
+    ? normalizedRatePerSecond
     : 0
   const advance =
     rate * (FORWARD_PROGRESS_INTERVAL_MILLISECONDS / 1_000)
-  if (advance <= 0 || start >= 1) return []
+  if (advance === 0) return []
+
+  if (advance < 0) {
+    return buildReverseProgressKeyframes(start, advance, wraps)
+  }
+  if (start >= 1) return []
 
   const rawEnd = start + advance
   if (rawEnd <= 1) {
@@ -135,6 +159,79 @@ export function buildForwardProgressKeyframes(
     ),
   })
   return keyframes
+}
+
+function buildReverseProgressKeyframes(
+  start: number,
+  advance: number,
+  wraps: boolean,
+): Keyframe[] {
+  if (start <= 0) return []
+  const rawEnd = start + advance
+  if (rawEnd >= 0) {
+    return [
+      { offset: 0, transform: progressTransform(start) },
+      { offset: 1, transform: progressTransform(rawEnd) },
+    ]
+  }
+  if (!wraps) {
+    const completionOffset = start / -advance
+    return [
+      { offset: 0, transform: progressTransform(start) },
+      { offset: completionOffset, transform: progressTransform(0) },
+      { offset: 1, transform: progressTransform(0) },
+    ]
+  }
+
+  const boundaryOffset = start / -advance
+  const endFraction = rawEnd - Math.floor(rawEnd)
+  return [
+    { offset: 0, transform: progressTransform(start) },
+    { offset: boundaryOffset, transform: progressTransform(0) },
+    {
+      offset: Math.min(1, boundaryOffset + RESET_OFFSET_EPSILON),
+      transform: progressTransform(1),
+    },
+    { offset: 1, transform: progressTransform(endFraction) },
+  ]
+}
+
+function inferProgressRate(
+  previous: {
+    readonly progress: number
+    readonly sampledAt: number
+  } | null,
+  current: number,
+  sampledAt: number,
+  direction: ForwardProgressAnimationOptions['inferRate'],
+  wraps: boolean,
+): number {
+  if (previous === null || direction === undefined) return 0
+  const elapsedSeconds = (sampledAt - previous.sampledAt) / 1_000
+  if (!Number.isFinite(elapsedSeconds) || elapsedSeconds <= 0) return 0
+
+  let delta = current - previous.progress
+  if (
+    wraps &&
+    direction === 'increasing' &&
+    delta < 0 &&
+    previous.progress > 0.5 &&
+    current < 0.5
+  ) {
+    delta = 1 - previous.progress + current
+  } else if (
+    wraps &&
+    direction === 'decreasing' &&
+    delta > 0 &&
+    previous.progress < 0.5 &&
+    current > 0.5
+  ) {
+    delta = -(previous.progress + 1 - current)
+  }
+
+  if (direction === 'increasing' && delta <= 0) return 0
+  if (direction === 'decreasing' && delta >= 0) return 0
+  return delta / elapsedSeconds
 }
 
 function progressTransform(progress: number): string {

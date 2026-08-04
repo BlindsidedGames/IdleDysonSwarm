@@ -122,11 +122,12 @@
 
 .offline-time-storage-progress > span {
   display: block;
+  inline-size: 100%;
   block-size: 100%;
   min-inline-size: 0;
   border-inline-end: 0.15rem solid var(--offline-accent-bright);
   background: var(--offline-accent);
-  transition: inline-size 160ms linear;
+  transform-origin: left center;
 }
 
 .offline-time-card .offline-time-card__capacity {
@@ -321,11 +322,5 @@
 
   .offline-time-capacity-upgrade {
     grid-template-columns: minmax(0, 1fr);
-  }
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .offline-time-storage-progress > span {
-    transition: none;
   }
 }

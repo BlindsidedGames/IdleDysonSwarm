@@ -30,6 +30,21 @@ describe('forward progress animation', () => {
     ])
   })
 
+  it('projects a decreasing timer toward the next canonical value', () => {
+    expect(buildForwardProgressKeyframes(0.8, -1, false)).toEqual([
+      { offset: 0, transform: 'scaleX(0.8)' },
+      { offset: 1, transform: 'scaleX(0.7000000000000001)' },
+    ])
+  })
+
+  it('holds a decreasing timer at zero when it completes mid-tick', () => {
+    expect(buildForwardProgressKeyframes(0.05, -1, false)).toEqual([
+      { offset: 0, transform: 'scaleX(0.05)' },
+      { offset: 0.5, transform: 'scaleX(0)' },
+      { offset: 1, transform: 'scaleX(0)' },
+    ])
+  })
+
   it('does not animate invalid, stationary or complete progress', () => {
     expect(buildForwardProgressKeyframes(0.2, 0, true)).toEqual([])
     expect(buildForwardProgressKeyframes(0.2, Number.NaN, true)).toEqual([])

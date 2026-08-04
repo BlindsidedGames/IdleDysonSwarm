@@ -10,6 +10,8 @@ import { Button } from '../../components'
 import { formatGameDuration } from '../../i18n/formatters'
 import type { EnabledLocale } from '../../i18n/localeRegistry'
 import type { UiRuntimePlayerCommandResult } from '../../runtime'
+import { usePrefersReducedMotion } from '../../accessibility/useMediaQuery'
+import { useForwardProgressAnimation } from '../progress/useForwardProgressAnimation'
 import { offlineTimeMessages as messages } from './messages'
 import './offlineTime.css'
 
@@ -64,6 +66,8 @@ export function OfflineTimeSurface({
   dispatchPlayer,
 }: OfflineTimeSurfaceProps) {
   const intl = useIntl()
+  const reducedMotion = usePrefersReducedMotion()
+  const progressFillRef = useRef<HTMLSpanElement>(null)
   const bankSeconds = Math.max(
     0,
     Math.min(
@@ -78,6 +82,13 @@ export function OfflineTimeSurface({
   const fill = capacitySeconds > 0
     ? Math.max(0, Math.min(1, bankSeconds / capacitySeconds))
     : 0
+  useForwardProgressAnimation(progressFillRef, {
+    canonicalProgress: fill,
+    inferRate: 'increasing',
+    active: fill < 1,
+    wraps: false,
+    reducedMotion,
+  })
   const [selectedSeconds, setSelectedSeconds] = useState(() =>
     defaultSelection(bankSeconds),
   )
@@ -222,7 +233,11 @@ export function OfflineTimeSurface({
             aria-valuemax={100}
             aria-valuenow={Math.round(fill * 100)}
           >
-            <span style={{ inlineSize: `${fill * 100}%` }} />
+            <span
+              ref={progressFillRef}
+              aria-hidden="true"
+              style={{ transform: `scaleX(${fill})` }}
+            />
           </div>
           <p className="offline-time-card__capacity">
             {intl.formatMessage(messages.capacity, {

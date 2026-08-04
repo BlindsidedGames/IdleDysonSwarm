@@ -379,13 +379,12 @@ describe('RealitySurface', () => {
     const fill = screen.getByRole('progressbar', {
       name: 'Workers ready',
     }).querySelector<HTMLElement>('span')
-    expect(fill).toHaveStyle({ transform: 'scaleX(0.5)' })
-    expect(fill).toHaveAttribute('data-smooth', 'false')
+    expect(fill).toHaveStyle({ transform: 'scaleX(0.501953125)' })
     expect(realityStyles).toMatch(
-      /\.reality-progress > span\[data-smooth="true"\]\s*\{[^}]*transition:\s*transform 33ms linear;/,
+      /\.reality-progress > span\s*\{[^}]*transform-origin:\s*left center;/,
     )
     expect(realityStyles).not.toMatch(
-      /\.reality-progress > span\s*\{[^}]*transition:\s*inline-size/,
+      /\.reality-progress > span\s*\{[^}]*transition:/,
     )
   })
 
