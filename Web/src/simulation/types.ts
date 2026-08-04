@@ -73,6 +73,11 @@ export function createSimulationSummary(): SimulationPresentationSummary {
 export interface EventTimeSimulationModel<TModel> {
   clone(): TModel
   validate(): string | undefined
+  /**
+   * Bounded validation for scheduler-owned, already-hydrated state.
+   * Models without an incremental validator retain the fail-closed full check.
+   */
+  validateIncremental?(): string | undefined
   timeToNextMaterialEvent(
     maximumSeconds: number,
     infinityMinimumCycleSeconds: number,
@@ -99,10 +104,23 @@ export interface EventTimeSimulationModel<TModel> {
   ): void
 }
 
-export interface SimulationAdvanceRequest<
-  TModel extends EventTimeSimulationModel<TModel>,
-> {
-  readonly startingState: TModel
+declare const ownedEventTimeModel: unique symbol
+
+/**
+ * A scheduler model whose caller transfers exclusive mutation ownership to
+ * `advanceEventTime`. Borrowed models remain the default and are cloned.
+ */
+export type OwnedEventTimeSimulationModel<TModel> = TModel & {
+  readonly [ownedEventTimeModel]: true
+}
+
+export function transferEventTimeModelOwnership<TModel>(
+  model: TModel,
+): OwnedEventTimeSimulationModel<TModel> {
+  return model as OwnedEventTimeSimulationModel<TModel>
+}
+
+interface SimulationAdvanceOptions {
   readonly durationSeconds: number
   readonly mode?: SimulationAdvanceMode
   readonly automationPolicy?: SimulationAutomationPolicy
@@ -110,11 +128,25 @@ export interface SimulationAdvanceRequest<
   readonly automationTimeUntilNextEvent?: number
   readonly infinityMinimumCycleSeconds?: number
   readonly processingBudgetMilliseconds?: number
-  readonly cloneStartingState?: boolean
   readonly processPartialEndpoint?: boolean
   readonly cancelRequested?: () => boolean
   readonly queuedInputs?: readonly SimulationQueuedInput[]
 }
+
+export type SimulationAdvanceRequest<
+  TModel extends EventTimeSimulationModel<TModel>,
+> = SimulationAdvanceOptions &
+  (
+    | {
+        readonly startingState: TModel
+        readonly cloneStartingState?: true
+      }
+    | {
+        readonly startingState:
+          OwnedEventTimeSimulationModel<TModel>
+        readonly cloneStartingState: false
+      }
+  )
 
 export interface SimulationWorkMetrics {
   schedulerPasses: bigint

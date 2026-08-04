@@ -1,7 +1,5 @@
 import {
-  useEffect,
   useId,
-  useRef,
   useState,
   type ReactNode,
 } from 'react'
@@ -10,7 +8,6 @@ import type {
   FrontendApplicationSnapshot,
   UiRuntimePlayerCommandResult,
 } from '../../runtime'
-import { usePrefersReducedMotion } from '../../accessibility/useMediaQuery'
 import { formatGameNumber } from '../../i18n/formatters'
 import type { EnabledLocale } from '../../i18n/localeRegistry'
 import { tinkerMessages } from './messages'
@@ -37,7 +34,6 @@ export interface TinkerSurfaceProps {
   readonly dispatch: TinkerCommandDispatch
   readonly className?: string
 }
-
 type TinkerFailureCategory = 'rejected' | 'runtime'
 
 export function TinkerSurface({
@@ -71,7 +67,7 @@ export function TinkerSurface({
     onResult: handleResult,
     onDispatchFailure: () => setFailure('runtime'),
   })
-  const visualElapsedSeconds = useVisualTinkerElapsed(facts)
+  const visualElapsedSeconds = facts.runtime.elapsedSeconds
   const seconds = facts.runtime.running
     ? Math.max(
         0,
@@ -201,75 +197,4 @@ export function TinkerSurface({
       )}
     </section>
   )
-}
-
-/**
- * Interpolates only the displayed fill between canonical runtime snapshots.
- * Completion and rewards remain entirely owned by the lifecycle coordinator.
- */
-function useVisualTinkerElapsed(facts: TinkerFacts): number {
-  const prefersReducedMotion = usePrefersReducedMotion()
-  const [elapsed, setElapsed] = useState(facts.runtime.elapsedSeconds)
-  const visualElapsedRef = useRef(facts.runtime.elapsedSeconds)
-  const previousCanonicalElapsedRef = useRef(
-    facts.runtime.elapsedSeconds,
-  )
-  const previousCooldownRef = useRef(
-    facts.runtime.cooldownSeconds,
-  )
-  const previousCycleIdRef = useRef(facts.runtime.cycleId)
-
-  useEffect(() => {
-    const authoritativeElapsed = facts.runtime.elapsedSeconds
-    const cycleRestarted =
-      authoritativeElapsed <
-      previousCanonicalElapsedRef.current
-    const cooldownChanged =
-      facts.runtime.cooldownSeconds !== previousCooldownRef.current
-    const cycleChanged =
-      facts.runtime.cycleId !== previousCycleIdRef.current
-    previousCanonicalElapsedRef.current = authoritativeElapsed
-    previousCooldownRef.current = facts.runtime.cooldownSeconds
-    previousCycleIdRef.current = facts.runtime.cycleId
-
-    if (!facts.runtime.running || prefersReducedMotion) {
-      visualElapsedRef.current = authoritativeElapsed
-      setElapsed(authoritativeElapsed)
-      return undefined
-    }
-
-    const animationStartElapsed =
-      cycleRestarted || cooldownChanged || cycleChanged
-        ? authoritativeElapsed
-        : Math.max(
-            visualElapsedRef.current,
-            authoritativeElapsed,
-          )
-    visualElapsedRef.current = animationStartElapsed
-    setElapsed(animationStartElapsed)
-
-    const startedAt = performance.now()
-    let frame = 0
-    const update = (now: number) => {
-      const nextElapsed = Math.min(
-        facts.runtime.cooldownSeconds,
-        animationStartElapsed + (now - startedAt) / 1000,
-      )
-      visualElapsedRef.current = nextElapsed
-      setElapsed(nextElapsed)
-      if (nextElapsed < facts.runtime.cooldownSeconds) {
-        frame = requestAnimationFrame(update)
-      }
-    }
-    frame = requestAnimationFrame(update)
-    return () => cancelAnimationFrame(frame)
-  }, [
-    facts.runtime.cycleId,
-    facts.runtime.cooldownSeconds,
-    facts.runtime.elapsedSeconds,
-    facts.runtime.running,
-    prefersReducedMotion,
-  ])
-
-  return elapsed
 }

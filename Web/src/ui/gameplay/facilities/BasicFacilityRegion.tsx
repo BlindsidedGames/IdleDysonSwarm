@@ -19,7 +19,6 @@ import {
   Button,
   FacilityCard,
 } from '../../components'
-import { usePrefersReducedMotion } from '../../accessibility/useMediaQuery'
 import {
   formatGameNumber,
   formatNumber,
@@ -29,10 +28,7 @@ import type { EnabledLocale } from '../../i18n/localeRegistry'
 import type { UiRuntimePlayerCommandResult } from '../../runtime'
 import { basicFacilityMessages as messages } from './messages'
 import { FacilityDetailsDialog } from './FacilityDetailsDialog'
-import {
-  clampProgress,
-  interpolatePublishedFacilityProgress,
-} from './progressInterpolation'
+import { clampProgress } from './progressInterpolation'
 import './facilities.css'
 
 export type EarlyBasicFacilityId =
@@ -410,9 +406,6 @@ function BasicFacilityPresentationCard({
             },
           )}
           progress={fact.productionProgress}
-          productionPerSecond={fact.production.perSecond}
-          revisionSession={revision.session}
-          revisionState={revision.state}
         />
       }
       feedback={
@@ -517,60 +510,13 @@ const upstreamFacilityNameMessages: Readonly<
 function FacilityProductionProgress({
   accessibleName,
   progress,
-  productionPerSecond,
-  revisionSession,
-  revisionState,
 }: {
   readonly accessibleName: string
   readonly progress?: BasicFacilityCanonicalFact['productionProgress']
-  readonly productionPerSecond: number
-  readonly revisionSession: number
-  readonly revisionState: number
 }) {
-  const prefersReducedMotion = usePrefersReducedMotion()
   const canonicalNormalized = clampProgress(
     progress?.normalized ?? 0,
   )
-  const solid =
-    progress?.visible === true && canonicalNormalized === 1
-  const [visualNormalized, setVisualNormalized] = useState(
-    canonicalNormalized,
-  )
-
-  useEffect(() => {
-    setVisualNormalized(canonicalNormalized)
-    if (
-      progress?.visible !== true ||
-      solid ||
-      prefersReducedMotion ||
-      productionPerSecond <= 0
-    ) {
-      return
-    }
-    const startedAt = performance.now()
-    let frame = 0
-    const paint = (now: number) => {
-      const elapsedMs = Math.max(0, now - startedAt)
-      setVisualNormalized(
-        interpolatePublishedFacilityProgress(
-          canonicalNormalized,
-          productionPerSecond,
-          elapsedMs,
-        ),
-      )
-      frame = requestAnimationFrame(paint)
-    }
-    frame = requestAnimationFrame(paint)
-    return () => cancelAnimationFrame(frame)
-  }, [
-    canonicalNormalized,
-    prefersReducedMotion,
-    productionPerSecond,
-    progress?.visible,
-    revisionSession,
-    revisionState,
-    solid,
-  ])
 
   return (
     <div
@@ -582,7 +528,7 @@ function FacilityProductionProgress({
           className="basic-facility-card__progress"
           aria-label={accessibleName}
           max={1}
-          value={visualNormalized}
+          value={canonicalNormalized}
         />
       )}
     </div>

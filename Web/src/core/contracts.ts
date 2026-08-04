@@ -55,7 +55,9 @@ export type SimulationTransitionResult =
 
 export interface StagedSimulationTransition<TState> {
   readonly baseRevision: number
-  copyCandidate(): TState
+  readCandidate<TResult>(
+    read: (candidate: DeepReadonly<TState>) => TResult,
+  ): TResult
 }
 
 export type SimulationStageResult<TState> =
@@ -78,7 +80,18 @@ export type DomainTransition =
 export interface SimulationEngineDefinition<TState, TCommand> {
   readonly schema: number
   cloneState(state: TState): TState
+  forkState?(state: TState): TState
+  /**
+   * Opts structurally shared state into incremental publication freezing.
+   * Snapshots can then reuse the authoritative graph as a read-only value.
+   */
+  readonly publishImmutableState?: boolean
   validateState(state: TState): string | undefined
+  /**
+   * Optional bounded validator for already-hydrated transition candidates.
+   * When omitted, the engine uses the full state validator.
+   */
+  validateTransitionState?(state: TState): string | undefined
   applyCommand(candidate: TState, command: TCommand): DomainTransition
   advance(candidate: TState, milliseconds: number): DomainTransition
   onListenerError?(error: unknown): void

@@ -113,4 +113,17 @@ describe('CanonicalRuntimeSession', () => {
     expect(second.initialState.compatibilityTuning.panelsPerSecMulti)
       .toBe(31)
   })
+
+  test('refuses to prepare an invalid numeric graph for durable storage', () => {
+    const prepared = prepareIdb1Save(fixture).prepared
+    const session = new CanonicalRuntimeSession(prepared, {
+      entitlements,
+    })
+    const state = structuredClone(session.initialState)
+    state.gameState.dyson.money = Number.NaN
+
+    expect(() => session.prepare(state)).toThrow(
+      /Canonical game state is invalid/,
+    )
+  })
 })

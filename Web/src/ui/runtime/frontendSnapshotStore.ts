@@ -19,7 +19,7 @@ export type FrontendSnapshotListener = (
  * rejected or no-op command cannot masquerade as a canonical update.
  */
 export class FrontendSnapshotStore {
-  private current = freezeDetached<FrontendApplicationSnapshot>({
+  private current = freezeOwned<FrontendApplicationSnapshot>({
     version: FRONTEND_GAMEPLAY_SNAPSHOT_VERSION,
     phase: 'idle',
   })
@@ -44,7 +44,7 @@ export class FrontendSnapshotStore {
     if (this.disposed || sameEnvelope(this.current, snapshot)) {
       return this.current
     }
-    this.current = freezeDetached(snapshot)
+    this.current = freezeOwned(snapshot)
     for (const listener of [...this.listeners]) {
       try {
         listener(this.current)
@@ -151,8 +151,8 @@ function sameCheckpoint(
   )
 }
 
-function freezeDetached<T>(value: Readonly<T>): DeepReadonly<T> {
-  return deepFreeze(structuredClone(value) as T)
+function freezeOwned<T>(value: Readonly<T>): DeepReadonly<T> {
+  return deepFreeze(value as T)
 }
 
 function deepFreeze<T>(value: T): DeepReadonly<T> {

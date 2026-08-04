@@ -174,7 +174,15 @@ function recordWindow(
   segmentEndSeconds: number,
   summary: Readonly<SimulationPresentationSummary>,
 ): readonly StatisticsWindowState[] {
-  const windows = source.map((bucket) => ({ ...bucket }))
+  const changed = new Map<number, StatisticsWindowState>()
+  const readWindow = (index: number): StatisticsWindowState =>
+    changed.get(index) ?? source[index]!
+  const writeWindow = (
+    index: number,
+    bucket: StatisticsWindowState,
+  ): void => {
+    changed.set(index, bucket)
+  }
   const start = clampContinuous(segmentStartSeconds)
   const end = Math.max(
     start,
@@ -190,7 +198,7 @@ function recordWindow(
     const lastSequence = windowSequence(lastPoint, widthSeconds)
     const retainedFirst = maximumBigInt(
       firstSequence,
-      lastSequence - BigInt(windows.length) + 1n,
+      lastSequence - BigInt(source.length) + 1n,
     )
 
     for (
@@ -198,8 +206,8 @@ function recordWindow(
       sequence <= lastSequence;
       sequence += 1n
     ) {
-      const index = Number(sequence % BigInt(windows.length))
-      const bucket = prepareWindow(windows[index], sequence)
+      const index = Number(sequence % BigInt(source.length))
+      const bucket = prepareWindow(readWindow(index), sequence)
       const windowStart = Number(sequence) * widthSeconds
       const windowEnd = addContinuous(windowStart, widthSeconds)
       const overlap = Math.max(
@@ -207,25 +215,25 @@ function recordWindow(
         Math.min(end, windowEnd) -
           Math.max(start, windowStart),
       )
-      windows[index] = {
+      writeWindow(index, {
         ...bucket,
         simulatedSeconds: addContinuous(
           bucket.simulatedSeconds,
           overlap,
         ),
-      }
+      })
     }
   }
 
   const eventSequence = windowSequence(end, widthSeconds)
   const eventIndex = Number(
-    eventSequence % BigInt(windows.length),
+    eventSequence % BigInt(source.length),
   )
   const eventBucket = prepareWindow(
-    windows[eventIndex],
+    readWindow(eventIndex),
     eventSequence,
   )
-  windows[eventIndex] = {
+  writeWindow(eventIndex, {
     ...eventBucket,
     infinityCount: addDiscrete(
       eventBucket.infinityCount,
@@ -247,7 +255,10 @@ function recordWindow(
       eventBucket.realityWorkers,
       summary.realityWorkers,
     ),
-  }
+  })
+  if (changed.size === 0) return source
+  const windows = source.slice()
+  for (const [index, bucket] of changed) windows[index] = bucket
   return windows
 }
 
@@ -297,10 +308,13 @@ function ensureWindows(
       () => emptyWindow(0n),
     )
   }
-  return Array.from(
-    { length: expectedLength },
-    (_, index) => source[index] ?? emptyWindow(0n),
-  )
+  let repaired: StatisticsWindowState[] | undefined
+  for (let index = 0; index < expectedLength; index += 1) {
+    if (source[index] !== null && source[index] !== undefined) continue
+    repaired ??= source.slice()
+    repaired[index] = emptyWindow(0n)
+  }
+  return repaired ?? source
 }
 
 function windowSequence(

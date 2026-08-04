@@ -103,7 +103,7 @@ export function advanceEventTime<
     finiteNonNegative(processingBudget)
 
   if (validRequest) {
-    diagnosticCode = candidateState.validate()
+    diagnosticCode = validateSchedulerState(candidateState)
     validationStatus = diagnosticCode === undefined ? 'valid' : 'invalid-state'
   }
 
@@ -236,7 +236,7 @@ export function advanceEventTime<
       candidateState.applyInfinityReset(infinityMinimumCycle, summary)
     }
 
-    diagnosticCode = candidateState.validate()
+    diagnosticCode = validateSchedulerState(candidateState)
     if (diagnosticCode !== undefined) validationStatus = 'invalid-state'
   }
 
@@ -256,4 +256,12 @@ export function advanceEventTime<
     diagnosticCode,
     completed: validationStatus === 'valid' && remainingSeconds <= 0,
   }
+}
+
+function validateSchedulerState<TModel extends EventTimeSimulationModel<TModel>>(
+  candidateState: TModel,
+): string | undefined {
+  return candidateState.validateIncremental === undefined
+    ? candidateState.validate()
+    : candidateState.validateIncremental()
 }

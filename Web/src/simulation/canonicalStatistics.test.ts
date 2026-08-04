@@ -204,6 +204,37 @@ describe('canonical combined statistics segment', () => {
     expect(source.trackedSimulatedSeconds).toBe(59)
     expect(source.minuteWindows[0]).toEqual(window())
     expect(result.minuteWindows).not.toBe(source.minuteWindows)
+    expect(result.minuteWindows[2]).toBe(source.minuteWindows[2])
+    expect(result.halfHourWindows[2]).toBe(
+      source.halfHourWindows[2],
+    )
+    expect(result.dailyWindows[2]).toBe(source.dailyWindows[2])
+  })
+
+  test('reuses every historical bucket on an ordinary same-window segment', () => {
+    const source = statistics({ trackedSimulatedSeconds: 10 })
+    const result = recordCanonicalStatisticsSegment(
+      source,
+      0.1,
+      summary(),
+    )
+
+    expect(result.minuteWindows[0]).not.toBe(source.minuteWindows[0])
+    expect(result.halfHourWindows[0]).not.toBe(
+      source.halfHourWindows[0],
+    )
+    expect(result.dailyWindows[0]).not.toBe(source.dailyWindows[0])
+    for (let index = 1; index < source.minuteWindows.length; index += 1) {
+      expect(result.minuteWindows[index]).toBe(source.minuteWindows[index])
+    }
+    for (let index = 1; index < source.halfHourWindows.length; index += 1) {
+      expect(result.halfHourWindows[index]).toBe(
+        source.halfHourWindows[index],
+      )
+    }
+    for (let index = 1; index < source.dailyWindows.length; index += 1) {
+      expect(result.dailyWindows[index]).toBe(source.dailyWindows[index])
+    }
   })
 
   test('preserves boundary events until a completed recent segment is replaced', () => {

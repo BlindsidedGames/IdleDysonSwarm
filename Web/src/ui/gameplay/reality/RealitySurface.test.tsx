@@ -405,7 +405,7 @@ describe('RealitySurface', () => {
     }
   })
 
-  test('reveals slower artifact progress in Unity-style discrete steps', () => {
+  test('caps artifact presentation updates at the canonical 10 Hz cadence', () => {
     vi.useFakeTimers()
     try {
       const { container } = renderSurface({
@@ -424,13 +424,13 @@ describe('RealitySurface', () => {
         '--reality-artifact-progress',
       )
 
-      expect(progress()).toBe('0.5')
-
-      act(() => vi.advanceTimersByTime(17))
       expect(progress()).toBe('1')
 
-      act(() => vi.advanceTimersByTime(17))
-      expect(progress()).toBe('0.5')
+      act(() => vi.advanceTimersByTime(50))
+      expect(progress()).toBe('1')
+
+      act(() => vi.advanceTimersByTime(50))
+      expect(progress()).toBe('1')
     } finally {
       vi.useRealTimers()
     }

@@ -3,7 +3,7 @@ import type { FrontendApplicationSnapshot } from '../../application/frontendSnap
 import { FrontendSnapshotStore } from './frontendSnapshotStore'
 
 describe('frontend snapshot external store', () => {
-  test('publishes detached recursively frozen snapshots with stable identity', () => {
+  test('takes ownership of recursively frozen snapshots with stable identity', () => {
     const store = new FrontendSnapshotStore()
     const publications: FrontendApplicationSnapshot[] = []
     store.subscribe((snapshot) => publications.push(snapshot))
@@ -16,7 +16,9 @@ describe('frontend snapshot external store', () => {
     if (first.phase !== 'ready') return
     expect(Object.isFrozen(first.revision)).toBe(true)
     expect(Object.isFrozen(first.gameplay)).toBe(true)
-    source.gameplay.marker = 'mutated-source'
+    expect(() => {
+      source.gameplay.marker = 'mutated-source'
+    }).toThrow()
     expect((first.gameplay as unknown as { marker: string }).marker)
       .toBe('first')
 

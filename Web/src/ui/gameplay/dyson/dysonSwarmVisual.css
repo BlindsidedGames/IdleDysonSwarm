@@ -26,6 +26,11 @@
   overflow: visible;
 }
 
+.dyson-swarm-visual__collector-field {
+  animation: dyson-orbit-track 79s linear infinite;
+  transform-origin: center;
+}
+
 .dyson-swarm-visual__orbit-guide {
   fill: none;
   stroke: rgb(238 218 242 / 12%);
@@ -36,27 +41,8 @@
   pointer-events: none;
 }
 
-.dyson-swarm-visual__collector-track {
-  animation: dyson-orbit-track 34s linear infinite;
-}
-
-.dyson-swarm-visual__collector-track--1 {
-  animation-duration: 47s;
-  animation-direction: reverse;
-}
-
-.dyson-swarm-visual__collector-track--2 {
-  animation-duration: 63s;
-}
-
-.dyson-swarm-visual__collector-track--3 {
-  animation-duration: 79s;
-  animation-direction: reverse;
-}
-
 .dyson-swarm-visual__collector-plane {
   fill: #c89ad4;
-  filter: drop-shadow(0 0 1.2px rgb(210 108 233 / 70%));
   opacity: 0;
   transition: opacity 650ms ease-out;
 }
@@ -124,10 +110,8 @@
   box-shadow:
     0 0 1.2rem rgb(255 204 66 / 92%),
     0 0 2.8rem rgb(255 145 20 / 36%);
-  filter:
-    brightness(calc(1 - var(--swarm-completion) * 0.56))
-    saturate(calc(1 - var(--swarm-completion) * 0.28));
-  transition: filter 900ms ease, box-shadow 900ms ease;
+  opacity: calc(1 - var(--swarm-completion) * 0.38);
+  transition: opacity 900ms ease, box-shadow 900ms ease;
 }
 
 .dyson-swarm-visual__scene--galaxy {
@@ -142,10 +126,6 @@
 .dyson-swarm-visual__galaxy-plane {
   transform-box: view-box;
   transform-origin: center;
-}
-
-.dyson-swarm-visual__galaxy-plane {
-  filter: drop-shadow(0 0 1.15px rgb(219 155 237 / 74%));
 }
 
 .dyson-swarm-visual__galaxy-light {
@@ -172,9 +152,6 @@
 }
 
 .dyson-swarm-visual__galaxy-bulge {
-  filter:
-    drop-shadow(0 0 1.8px rgb(255 220 155 / 74%))
-    drop-shadow(0 0 5px rgb(194 102 184 / 35%));
   transition: opacity 1100ms ease;
 }
 
@@ -215,7 +192,6 @@
 
 .dyson-swarm-visual__field-dust {
   fill: #d9b8e2;
-  filter: drop-shadow(0 0 0.34px rgb(216 161 230 / 48%));
   transition: opacity 1200ms ease;
 }
 
@@ -232,11 +208,14 @@
   --galaxy-harvest: 0;
   --galaxy-depth-opacity: 1;
   --galaxy-entry-delay: 0ms;
-  --galaxy-spin-duration: 240s;
   opacity: var(--galaxy-depth-opacity);
-  transition:
-    filter 1200ms ease,
-    opacity 1200ms ease;
+  transition: opacity 1200ms ease;
+}
+
+.dyson-swarm-visual__field-members {
+  animation: dyson-field-galaxy-spin 240s linear infinite;
+  transform-box: view-box;
+  transform-origin: center;
 }
 
 .dyson-swarm-visual__field-member-entry {
@@ -258,29 +237,10 @@
 }
 
 .dyson-swarm-visual__field-member-spin {
-  animation:
-    dyson-field-galaxy-spin
-    var(--galaxy-spin-duration)
-    linear
-    infinite;
-  filter:
-    brightness(calc(1 - var(--galaxy-harvest) * 0.64))
-    saturate(calc(1 - var(--galaxy-harvest) * 0.72))
-    drop-shadow(
-      0 0
-      calc(1.4px - var(--galaxy-harvest) * 0.8px)
-      rgb(204 143 219 / 58%)
-    );
   opacity: calc(0.95 - var(--galaxy-harvest) * 0.7);
-  transition:
-    filter 1200ms ease,
-    opacity 1200ms ease;
+  transition: opacity 1200ms ease;
   transform-box: fill-box;
   transform-origin: center;
-}
-
-.dyson-swarm-visual__field-member-spin[data-spin="reverse"] {
-  animation-direction: reverse;
 }
 
 .dyson-swarm-visual__field-galaxy-image {
@@ -295,14 +255,12 @@
 
 @keyframes dyson-origin-star-zoom-out {
   from {
-    filter:
-      drop-shadow(0 0 2px rgb(255 242 174 / 100%))
-      drop-shadow(0 0 8px rgb(255 173 48 / 86%));
+    opacity: 1;
     transform: scaleY(2.6316) scale(28);
   }
 
   to {
-    filter: drop-shadow(0 0 1.2px rgb(255 218 139 / 72%));
+    opacity: 1;
     transform: scaleY(2.6316) scale(1);
   }
 }
@@ -366,12 +324,31 @@
   .dyson-swarm-visual__sun {
     inline-size: clamp(3.6rem, 17vw, 4.65rem);
   }
+
+  .dyson-swarm-visual__scene,
+  .dyson-swarm-visual__collector-field,
+  .dyson-swarm-visual__galaxy-light--origin,
+  .dyson-swarm-visual__field-members,
+  .dyson-swarm-visual__field-member-entry {
+    animation: none;
+  }
+}
+
+@media (pointer: coarse) {
+  .dyson-swarm-visual__scene,
+  .dyson-swarm-visual__collector-field,
+  .dyson-swarm-visual__galaxy-light--origin,
+  .dyson-swarm-visual__field-members,
+  .dyson-swarm-visual__field-member-entry {
+    animation: none;
+  }
 }
 
 @media (prefers-reduced-motion: reduce) {
   .dyson-swarm-visual__scene,
-  .dyson-swarm-visual__collector-track,
+  .dyson-swarm-visual__collector-field,
   .dyson-swarm-visual__galaxy-light--origin,
+  .dyson-swarm-visual__field-members,
   .dyson-swarm-visual__field-member-entry,
   .dyson-swarm-visual__field-member-spin {
     animation: none;

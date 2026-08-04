@@ -196,8 +196,8 @@ export class TransactionalGameApplication<TState, TCommand>
         return { committed: false, transition: staged }
       }
 
-      const prepared = this.requireSession().prepare(
-        staged.staged.copyCandidate(),
+      const prepared = staged.staged.readCandidate((candidate) =>
+        this.requireSession().prepare(candidate),
       )
       let committed: PreparedSave
       try {

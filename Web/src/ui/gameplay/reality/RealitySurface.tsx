@@ -366,7 +366,7 @@ export function RealitySurface({
   )
 }
 
-const ARTIFACT_UPDATES_PER_SECOND = 60
+const ARTIFACT_UPDATES_PER_SECOND = 10
 const ARTIFACT_UPDATE_INTERVAL_MS =
   1_000 / ARTIFACT_UPDATES_PER_SECOND
 
@@ -389,26 +389,25 @@ function useArtifactAnimation(
       return
     }
 
-    const ticksPerUpdate = Math.round(1 / intervalSeconds)
-    let cycleTicks = Math.min(
-      ticksPerUpdate,
-      ARTIFACT_UPDATES_PER_SECOND,
+    const effectiveIntervalSeconds = Math.max(
+      intervalSeconds,
+      1 / ARTIFACT_UPDATES_PER_SECOND,
     )
+    const stepSeconds = 1 / ARTIFACT_UPDATES_PER_SECOND
+    let cycleSeconds = Math.min(stepSeconds, effectiveIntervalSeconds)
     setFrame({
       display: scrambleText(source),
-      progress: cycleTicks / ARTIFACT_UPDATES_PER_SECOND,
+      progress: cycleSeconds / effectiveIntervalSeconds,
     })
-    if (cycleTicks >= ARTIFACT_UPDATES_PER_SECOND) {
-      cycleTicks = 0
+    if (cycleSeconds >= effectiveIntervalSeconds) {
+      cycleSeconds = 0
     }
 
-    const interval = window.setInterval(
-      () => {
-        cycleTicks += ticksPerUpdate
-        const completed =
-          cycleTicks >= ARTIFACT_UPDATES_PER_SECOND
+    const update = () => {
+        cycleSeconds += stepSeconds
+        const completed = cycleSeconds >= effectiveIntervalSeconds
         const progress = Math.min(
-          cycleTicks / ARTIFACT_UPDATES_PER_SECOND,
+          cycleSeconds / effectiveIntervalSeconds,
           1,
         )
 
@@ -419,11 +418,37 @@ function useArtifactAnimation(
           progress,
         }))
 
-        if (completed) cycleTicks = 0
-      },
-      ARTIFACT_UPDATE_INTERVAL_MS,
-    )
-    return () => window.clearInterval(interval)
+        if (completed) cycleSeconds = 0
+    }
+    let interval: number | undefined
+    const stop = () => {
+      if (interval === undefined) return
+      window.clearInterval(interval)
+      interval = undefined
+    }
+    const start = () => {
+      if (
+        interval !== undefined ||
+        (typeof document !== 'undefined' &&
+          document.visibilityState === 'hidden')
+      ) {
+        return
+      }
+      interval = window.setInterval(
+        update,
+        ARTIFACT_UPDATE_INTERVAL_MS,
+      )
+    }
+    const handleVisibility = () => {
+      stop()
+      start()
+    }
+    start()
+    document.addEventListener('visibilitychange', handleVisibility)
+    return () => {
+      stop()
+      document.removeEventListener('visibilitychange', handleVisibility)
+    }
   }, [intervalSeconds, source])
 
   return frame
@@ -437,11 +462,15 @@ function createInitialArtifactFrame(
     return { display: source, progress: 0 }
   }
 
-  const ticksPerUpdate = Math.round(1 / intervalSeconds)
+  const effectiveIntervalSeconds = Math.max(
+    intervalSeconds,
+    1 / ARTIFACT_UPDATES_PER_SECOND,
+  )
   return {
     display: scrambleText(source),
     progress: Math.min(
-      ticksPerUpdate / ARTIFACT_UPDATES_PER_SECOND,
+      (1 / ARTIFACT_UPDATES_PER_SECOND) /
+        effectiveIntervalSeconds,
       1,
     ),
   }

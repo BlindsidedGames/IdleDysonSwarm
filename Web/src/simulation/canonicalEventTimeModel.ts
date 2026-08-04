@@ -88,6 +88,7 @@ export const CANONICAL_QUANTUM_LEAP_INPUT = 'quantum-leap'
 export const UNITY_QUANTUM_ACTION_INPUT = 'quantum_action'
 const QUANTUM_LEAP_INFINITY_GATE = 42n
 const TIME_EPSILON = 1e-12
+const OWNED_EVENT_TIME_STATE = Symbol('owned-event-time-state')
 
 /**
  * Transactional runtime carrier. Compatibility tuning and the evaluation
@@ -179,28 +180,69 @@ const preparedContexts = new WeakSet<object>()
 export class CanonicalEventTimeModel
   implements EventTimeSimulationModel<CanonicalEventTimeModel>
 {
-  private carrier: CanonicalEventTimeState
+  private ownedCarrier: CanonicalEventTimeState
   private readonly context: CapturedContext
   private pendingInterval: PendingInterval | null = null
   private currentIssue: CanonicalEventTimeIssue | undefined
   private queuedInputOutcome: CanonicalQueuedInputOutcome | undefined
+  private ownershipTransferred = false
+
+  static fromOwnedState(
+    state: CanonicalEventTimeState,
+    context: Readonly<CanonicalEventTimeContext>,
+  ): CanonicalEventTimeModel {
+    return new CanonicalEventTimeModel(
+      state,
+      context,
+      OWNED_EVENT_TIME_STATE,
+    )
+  }
 
   constructor(
     state: Readonly<CanonicalEventTimeState>,
     context: Readonly<CanonicalEventTimeContext>,
+    ownership?: typeof OWNED_EVENT_TIME_STATE,
   ) {
     this.context = prepareCanonicalEventTimeContext(context)
-    this.carrier = normalizeAutomationPhase(
-      cloneCarrier(state),
+    this.ownedCarrier = normalizeAutomationPhase(
+      ownership === OWNED_EVENT_TIME_STATE
+        ? state as CanonicalEventTimeState
+        : cloneCarrier(state),
       this.context.automationIntervalSeconds,
     )
+  }
+
+  private get carrier(): CanonicalEventTimeState {
+    this.assertOwned()
+    return this.ownedCarrier
+  }
+
+  private set carrier(value: CanonicalEventTimeState) {
+    this.assertOwned()
+    this.ownedCarrier = value
   }
 
   get state(): CanonicalEventTimeState {
     return cloneCarrier(this.carrier)
   }
 
+  /**
+   * Transfers the completed carrier without cloning it. A transferred model
+   * is permanently consumed so no second owner can observe or mutate it.
+   */
+  takeState(): CanonicalEventTimeState {
+    const carrier = this.carrier
+    if (this.pendingInterval !== null) {
+      throw new Error(
+        'Cannot transfer canonical event state while an interval is pending.',
+      )
+    }
+    this.ownershipTransferred = true
+    return carrier
+  }
+
   get issue(): CanonicalEventTimeIssue | undefined {
+    this.assertOwned()
     return this.currentIssue === undefined
       ? undefined
       : Object.freeze({ ...this.currentIssue })
@@ -209,6 +251,7 @@ export class CanonicalEventTimeModel
   get lastQueuedInputOutcome():
     | CanonicalQueuedInputOutcome
     | undefined {
+    this.assertOwned()
     return this.queuedInputOutcome === undefined
       ? undefined
       : Object.freeze({ ...this.queuedInputOutcome })
@@ -241,6 +284,7 @@ export class CanonicalEventTimeModel
   }
 
   validate(): string | undefined {
+    this.assertOwned()
     if (this.currentIssue !== undefined) {
       return this.currentIssue.code
     }
@@ -254,6 +298,19 @@ export class CanonicalEventTimeModel
         canonical.errors[0] ?? 'Canonical state validation failed.',
       )
       return 'CANONICAL_EVENT_STATE_INVALID'
+    }
+    const carrierIssue = validateCarrier(this.carrier, this.context)
+    if (carrierIssue !== undefined) {
+      this.currentIssue = carrierIssue
+      return carrierIssue.code
+    }
+    return undefined
+  }
+
+  validateIncremental(): string | undefined {
+    this.assertOwned()
+    if (this.currentIssue !== undefined) {
+      return this.currentIssue.code
     }
     const carrierIssue = validateCarrier(this.carrier, this.context)
     if (carrierIssue !== undefined) {
@@ -1032,8 +1089,16 @@ export class CanonicalEventTimeModel
   }
 
   private fail(code: string, path: string, detail: string): void {
+    this.assertOwned()
     if (this.currentIssue !== undefined) return
     this.currentIssue = Object.freeze({ code, path, detail })
+  }
+
+  private assertOwned(): void {
+    if (!this.ownershipTransferred) return
+    throw new Error(
+      'Canonical event model state ownership has already been transferred.',
+    )
   }
 }
 

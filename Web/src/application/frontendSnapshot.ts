@@ -1000,33 +1000,32 @@ export type FrontendApplicationSnapshot =
 export function selectFrontendApplicationSnapshot(
   application: ApplicationSnapshot<CanonicalRuntimeState>,
   context: Readonly<FrontendApplicationSnapshotContext>,
+  sourceOwnership: 'borrowed' | 'detached-frozen' = 'borrowed',
 ): DeepReadonly<FrontendApplicationSnapshot> {
   switch (application.phase) {
     case 'idle':
     case 'starting':
-      return deepFreeze({
+      return freezeFrontendProjection({
         version: FRONTEND_GAMEPLAY_SNAPSHOT_VERSION,
         phase: application.phase,
-      })
+      }, sourceOwnership)
     case 'blocked':
-      return deepFreeze({
+      return freezeFrontendProjection({
         version: FRONTEND_GAMEPLAY_SNAPSHOT_VERSION,
         phase: application.phase,
         outcome: application.outcome,
         error: application.error,
-      })
+      }, sourceOwnership)
     case 'ready':
-      return deepFreeze({
+      return freezeFrontendProjection({
         version: FRONTEND_GAMEPLAY_SNAPSHOT_VERSION,
         phase: 'ready',
         source: application.source,
-        revision: structuredClone(application.revision),
-        checkpoint: structuredClone(application.checkpoint),
+        revision: Object.freeze({ ...application.revision }),
+        checkpoint: Object.freeze({ ...application.checkpoint }),
         operation: application.operation,
         gameplay: selectFrontendGameplaySnapshot(
-          structuredClone(
-            application.state.gameState,
-          ) as CanonicalGameStateV1,
+          application.state.gameState as unknown as Readonly<CanonicalGameStateV1>,
           {
             runtimeRequirements: context.runtimeRequirements,
             compatibilityTuning:
@@ -1044,8 +1043,9 @@ export function selectFrontendApplicationSnapshot(
             selectedSkillPresetSlot:
               application.state.selectedSkillPresetSlot,
           },
+          sourceOwnership,
         ),
-      })
+      }, sourceOwnership)
   }
 }
 
@@ -1057,8 +1057,12 @@ export function selectFrontendApplicationSnapshot(
 export function selectFrontendGameplaySnapshot(
   source: Readonly<CanonicalGameStateV1>,
   context: Readonly<FrontendSnapshotContext>,
+  sourceOwnership: 'borrowed' | 'detached-frozen' = 'borrowed',
 ): DeepReadonly<FrontendGameplaySnapshot> {
-  const state = structuredClone(source)
+  const state =
+    sourceOwnership === 'detached-frozen'
+      ? source as CanonicalGameStateV1
+      : structuredClone(source)
   const definitionCoverage = inspectFrontendDefinitionCoverage()
   const derived = selectDerivedFacts(state, context)
   const resources = selectResources(state, derived)
@@ -1077,7 +1081,7 @@ export function selectFrontendGameplaySnapshot(
   )
   const previews = selectGameplayPreviews(state, context)
 
-  return deepFreeze({
+  return freezeFrontendProjection({
     version: FRONTEND_GAMEPLAY_SNAPSHOT_VERSION,
     modelVersion: state.modelVersion,
     resources,
@@ -1096,7 +1100,7 @@ export function selectFrontendGameplaySnapshot(
       unmatchedWritePolicy:
         mappingCoverageManifest.unmatchedWritePolicy,
     },
-  })
+  }, sourceOwnership)
 }
 
 function selectGameplayVisibility(
@@ -1217,6 +1221,16 @@ export function createFrontendCommandEnvelope(
  * optimistic frontend availability.
  */
 export function inspectFrontendDefinitionCoverage():
+  DeepReadonly<FrontendDefinitionCoverage> {
+  cachedDefinitionCoverage ??= inspectFrontendDefinitionCoverageOnce()
+  return cachedDefinitionCoverage
+}
+
+let cachedDefinitionCoverage:
+  | DeepReadonly<FrontendDefinitionCoverage>
+  | undefined
+
+function inspectFrontendDefinitionCoverageOnce():
   DeepReadonly<FrontendDefinitionCoverage> {
   const domains = {
     'dream-upgrades': inspectDefinitionDomain(
@@ -2509,4 +2523,13 @@ function deepFreeze<T>(value: T): DeepReadonly<T> {
     deepFreeze(child)
   }
   return Object.freeze(value) as DeepReadonly<T>
+}
+
+function freezeFrontendProjection<T>(
+  value: T,
+  sourceOwnership: 'borrowed' | 'detached-frozen',
+): DeepReadonly<T> {
+  return sourceOwnership === 'detached-frozen' && import.meta.env.PROD
+    ? Object.freeze(value) as DeepReadonly<T>
+    : deepFreeze(value)
 }

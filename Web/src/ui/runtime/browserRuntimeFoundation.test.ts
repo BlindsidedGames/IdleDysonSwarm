@@ -2553,13 +2553,13 @@ describe('browser runtime foundation composition', () => {
     )
 
     const first = runtime.dispatchPlayer({
-      kind: 'tinker.start',
-      repeat: false,
+      kind: 'dyson.purchase-basic-facility',
+      facilityId: 'assembly_lines',
     })
     await waitUntil(() => application?.playerEnvelopes.length === 1)
     const second = runtime.dispatchPlayer({
-      kind: 'tinker.start',
-      repeat: false,
+      kind: 'dyson.purchase-basic-facility',
+      facilityId: 'assembly_lines',
     })
     await flushMicrotasks()
     expect(application?.playerEnvelopes).toHaveLength(1)
@@ -2573,7 +2573,7 @@ describe('browser runtime foundation composition', () => {
     await expect(second).resolves.toMatchObject({
       status: 'accepted',
       stateRevision: 2,
-      activationRevision: { session: 1, state: 1 },
+      activationRevision: { session: 1, state: 0 },
     })
     expect(application?.playerEnvelopes).toHaveLength(2)
     expect(publications).toHaveLength(2)
@@ -2585,6 +2585,52 @@ describe('browser runtime foundation composition', () => {
     if (publications[1]?.phase === 'ready') {
       expect(publications[1].revision.state).toBe(2)
     }
+    await runtime.shutdown()
+  })
+
+  test('admits an ordinary purchase after already queued active time', async () => {
+    const database = new MemoryBrowserSaveDatabase()
+    const activeClock = new ManualActiveTimeClock()
+    const frames = new ManualAnimationFrameScheduler()
+    let application: FakeRuntimeApplication | undefined
+    const runtime = createRuntime({
+      database,
+      activeTimeClock: activeClock,
+      activeTimeScheduler: frames,
+      createApplication: (repository) => {
+        application = new FakeRuntimeApplication(
+          repository,
+          database.events,
+        )
+        return application
+      },
+    })
+    await runtime.start()
+
+    activeClock.set(10)
+    frames.fire()
+    const purchase = runtime.dispatchPlayer({
+      kind: 'dyson.purchase-basic-facility',
+      facilityId: 'assembly_lines',
+    })
+
+    await expect(purchase).resolves.toMatchObject({
+      status: 'accepted',
+      activationRevision: { session: 1, state: 0 },
+      stateRevision: 2,
+    })
+    expect(application?.activeRequests).toEqual([
+      { milliseconds: 10, sessionRevision: 1 },
+    ])
+    expect(application?.playerEnvelopes).toHaveLength(1)
+    expect(application?.playerEnvelopes[0]).toMatchObject({
+      sessionRevision: 1,
+      expectedStateRevision: 1,
+      command: {
+        kind: 'dyson.purchase-basic-facility',
+        facilityId: 'assembly_lines',
+      },
+    })
     await runtime.shutdown()
   })
 

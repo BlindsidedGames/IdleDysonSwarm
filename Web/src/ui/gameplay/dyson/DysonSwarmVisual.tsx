@@ -13,13 +13,13 @@ import galaxyShallowInclined from '../../assets/galaxy-field/galaxy-shallow-incl
 import './dysonSwarmVisual.css'
 
 const EXACT_COLLECTOR_LIMIT = 64
-const DENSE_COLLECTOR_LAYER_COUNT = 11
-const COLLECTORS_PER_DENSE_LAYER = 32
-const GALAXY_LIGHT_COUNT = 420
-const GALAXY_CORE_LIGHT_COUNT = 36
-const ORIGIN_STAR_INDEX = 173
-const GALAXY_FIELD_MEMBER_COUNT = 84
-const GALAXY_FIELD_DUST_COUNT = 144
+const DENSE_COLLECTOR_LAYER_COUNT = 8
+const COLLECTORS_PER_DENSE_LAYER = 24
+const GALAXY_LIGHT_COUNT = 144
+const GALAXY_CORE_LIGHT_COUNT = 16
+const ORIGIN_STAR_INDEX = 57
+const GALAXY_FIELD_MEMBER_COUNT = 32
+const GALAXY_FIELD_DUST_COUNT = 48
 const GALAXY_FIELD_ANCHOR_X = -8
 const GALAXY_FIELD_ANCHOR_Y = -44
 const ORBIT_COUNT = 4
@@ -54,7 +54,6 @@ type GalaxyFieldStyle = CSSProperties & {
   readonly '--galaxy-harvest': number
   readonly '--galaxy-depth-opacity': number
   readonly '--galaxy-entry-delay': string
-  readonly '--galaxy-spin-duration': string
 }
 
 interface GalaxyLight {
@@ -82,8 +81,6 @@ interface GalaxyFieldMember {
   readonly scale: number
   readonly depth: number
   readonly variant: GalaxyFieldVariant
-  readonly spinDirection: 'normal' | 'reverse'
-  readonly spinDurationSeconds: number
   readonly dimOrder: number
 }
 
@@ -243,23 +240,22 @@ const StarCollectorField = memo(function StarCollectorField({
               className={`dyson-swarm-visual__collector-track dyson-swarm-visual__collector-track--${orbitIndex}`}
             >
               <g className="dyson-swarm-visual__collector-plane dyson-swarm-visual__collector-plane--exact">
-                {EXACT_COLLECTORS_BY_ORBIT[orbitIndex].map(
-                  ({ collector, index }) =>
+                {EXACT_COLLECTORS_BY_ORBIT[orbitIndex]
+                  .filter(({ index }) => index < exactCollectorCount)
+                  .map(({ collector, index }) =>
                     renderCollector(
                       collector,
-                      index < exactCollectorCount,
+                      true,
                       `exact-${index}`,
                     ),
-                )}
+                  )}
               </g>
               {DENSE_COLLECTOR_LAYERS_BY_ORBIT[
                 orbitIndex
-              ].map((collectors, layer) => (
+              ].slice(0, denseCollectorLayers).map((collectors, layer) => (
                 <g
                   className="dyson-swarm-visual__collector-plane"
-                  data-visible={
-                    layer < denseCollectorLayers || undefined
-                  }
+                  data-visible="true"
                   key={`dense-${orbitIndex}-${layer}`}
                 >
                   {collectors}
@@ -487,8 +483,6 @@ function GalaxyGroupScene({
                 0.58 + member.depth * 0.42,
               '--galaxy-entry-delay':
                 `${Math.round(member.depth * 220)}ms`,
-              '--galaxy-spin-duration':
-                `${member.spinDurationSeconds}s`,
             }
             return (
               <g
@@ -517,7 +511,6 @@ function GalaxyGroupScene({
                 <g className="dyson-swarm-visual__field-member-entry">
                   <g
                     className="dyson-swarm-visual__field-member-spin"
-                    data-spin={member.spinDirection}
                   >
                     <use href={GALAXY_FIELD_VARIANT_IDS[member.variant]} />
                   </g>
@@ -639,8 +632,6 @@ function createGalaxyFieldMember(
       scale,
       depth: 1,
       variant: 0,
-      spinDirection: 'normal',
-      spinDurationSeconds: 214,
       dimOrder,
     }
   }
@@ -692,9 +683,6 @@ function createGalaxyFieldMember(
     scale,
     depth,
     variant: (index % GALAXY_FIELD_VARIANT_IDS.length) as GalaxyFieldVariant,
-    spinDirection: index % 2 === 0 ? 'normal' : 'reverse',
-    spinDurationSeconds:
-      170 + Math.round(deterministicUnit(index + 8501) * 170),
     dimOrder,
   }
 }

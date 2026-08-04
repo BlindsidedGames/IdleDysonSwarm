@@ -1,4 +1,4 @@
-import { describe, expect, test } from 'vitest'
+import { describe, expect, test, vi } from 'vitest'
 import { advanceEventTime } from './eventTime'
 import type {
   EventTimeSimulationModel,
@@ -6,6 +6,7 @@ import type {
   SimulationPresentationSummary,
   SimulationQueuedInput,
 } from './types'
+import { transferEventTimeModelOwnership } from './types'
 
 class CharacterizationModel
   implements EventTimeSimulationModel<CharacterizationModel>
@@ -157,7 +158,7 @@ describe('event-time scheduler characterization', () => {
     let phase = 0.1
     for (const durationSeconds of [0.07, 0.11, 0.17]) {
       const part = advanceEventTime({
-        startingState: splitModel,
+        startingState: transferEventTimeModelOwnership(splitModel),
         durationSeconds,
         automationIntervalSeconds: 0.1,
         automationTimeUntilNextEvent: phase,
@@ -175,6 +176,46 @@ describe('event-time scheduler characterization', () => {
     expect(splitModel.calls.filter((call) => call === 'automation')).toHaveLength(
       whole.candidateState.calls.filter((call) => call === 'automation').length,
     )
+  })
+
+  test('uses bounded model validation when the model provides it', () => {
+    const model = new CharacterizationModel()
+    const fullValidation = vi.spyOn(model, 'validate')
+    const incrementalValidation = vi.fn(() => undefined)
+    model.validateIncremental = incrementalValidation
+
+    const result = advanceEventTime({
+      startingState: transferEventTimeModelOwnership(model),
+      cloneStartingState: false,
+      durationSeconds: 0.1,
+      automationIntervalSeconds: 1,
+      automationTimeUntilNextEvent: 1,
+      processingBudgetMilliseconds: 0,
+    })
+
+    expect(result.completed).toBe(true)
+    expect(incrementalValidation).toHaveBeenCalled()
+    expect(fullValidation).not.toHaveBeenCalled()
+  })
+
+  test('mutates an explicitly transferred model without cloning it', () => {
+    const model = new CharacterizationModel()
+    let cloneCalls = 0
+    model.clone = () => {
+      cloneCalls += 1
+      return new CharacterizationModel()
+    }
+
+    const result = advanceEventTime({
+      startingState: transferEventTimeModelOwnership(model),
+      cloneStartingState: false,
+      durationSeconds: 0.1,
+      processingBudgetMilliseconds: 0,
+    })
+
+    expect(cloneCalls).toBe(0)
+    expect(result.candidateState).toBe(model)
+    expect(model.advancedSeconds).toBeCloseTo(0.1, 12)
   })
 
   test('rejects non-finite state after a boundary', () => {
