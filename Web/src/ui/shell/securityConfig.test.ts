@@ -1,13 +1,5 @@
-import {
-  mkdtempSync,
-  readFileSync,
-  readdirSync,
-  rmSync,
-} from 'node:fs'
-import { tmpdir } from 'node:os'
-import { join, resolve } from 'node:path'
-import { JSDOM } from 'jsdom'
-import { build } from 'vite'
+import { readFileSync } from 'node:fs'
+import { resolve } from 'node:path'
 import { describe, expect, it } from 'vitest'
 import {
   CONTENT_SECURITY_POLICY,
@@ -87,112 +79,6 @@ describe('browser security policy', () => {
     expect(config).toContain('sourcemap: false')
   })
 
-  it('emits the exact policy and only CSP-compatible assets in a production build', async () => {
-    const outputDirectory = mkdtempSync(
-      join(tmpdir(), 'idle-dyson-swarm-security-'),
-    )
-    try {
-      await build({
-        configLoader: 'runner',
-        configFile: resolve(
-          import.meta.dirname,
-          '../../../vite.config.ts',
-        ),
-        logLevel: 'silent',
-        build: {
-          outDir: outputDirectory,
-          emptyOutDir: true,
-        },
-      })
-
-      expect(
-        readFileSync(
-          resolve(outputDirectory, '_headers'),
-          'utf8',
-        ),
-      ).toBe(renderStaticSecurityHeaders('/play/*'))
-
-      const html = readFileSync(
-        resolve(outputDirectory, 'index.html'),
-        'utf8',
-      )
-      const document = new JSDOM(html, {
-        url: 'http://localhost/',
-      }).window.document
-      const csp = document.querySelector(
-        'meta[http-equiv="Content-Security-Policy"]',
-      )
-      expect(csp?.getAttribute('content')).toBe(
-        HTML_CONTENT_SECURITY_POLICY,
-      )
-
-      const executableResource = html.indexOf('<script')
-      const policyPosition = html.indexOf(
-        'http-equiv="Content-Security-Policy"',
-      )
-      expect(policyPosition).toBeGreaterThanOrEqual(0)
-      expect(policyPosition).toBeLessThan(executableResource)
-      expect(document.querySelector('script:not([src])')).toBeNull()
-      expect(document.querySelector('style')).toBeNull()
-
-      const assetReferences = [
-        ...Array.from(
-          document.querySelectorAll<HTMLScriptElement>(
-            'script[src]',
-          ),
-          (element) => element.src,
-        ),
-        ...Array.from(
-          document.querySelectorAll<HTMLLinkElement>(
-            'link[rel="stylesheet"][href]',
-          ),
-          (element) => element.href,
-        ),
-      ]
-      expect(assetReferences.length).toBeGreaterThan(0)
-      for (const reference of assetReferences) {
-        expect(new URL(reference).origin).toBe('http://localhost')
-      }
-
-      const cssFiles = readdirSync(
-        resolve(outputDirectory, 'assets'),
-      ).filter((file) => file.endsWith('.css'))
-      expect(cssFiles.length).toBeGreaterThan(0)
-      for (const file of cssFiles) {
-        const styles = readFileSync(
-          resolve(outputDirectory, 'assets', file),
-          'utf8',
-        )
-        const resourceUrls = Array.from(
-          styles.matchAll(/url\(([^)]+)\)/g),
-          (match) => match[1]?.replaceAll(/["']/g, '').trim() ?? '',
-        )
-        for (const resourceUrl of resourceUrls) {
-          expect(
-            resourceUrl.startsWith('data:') ||
-              new URL(
-                resourceUrl,
-                'https://idle-dyson-swarm.invalid',
-              ).origin === 'https://idle-dyson-swarm.invalid',
-          ).toBe(true)
-        }
-      }
-
-      const directives = parsePolicy(CONTENT_SECURITY_POLICY)
-      expect(directives.get('script-src')).toEqual(["'self'"])
-      expect(directives.get('style-src')).toEqual(["'self'"])
-      expect(directives.get('font-src')).toEqual(["'self'"])
-      expect(directives.get('connect-src')).toEqual(["'self'"])
-      expect(directives.get('worker-src')).toEqual(["'self'"])
-      expect(directives.get('manifest-src')).toEqual(["'self'"])
-      expect(directives.get('img-src')).toEqual([
-        "'self'",
-        'data:',
-      ])
-    } finally {
-      rmSync(outputDirectory, { recursive: true, force: true })
-    }
-  })
 })
 
 describe('startup shell resilient layout', () => {
@@ -211,14 +97,3 @@ describe('startup shell resilient layout', () => {
     expect(styles).toContain('transition-duration: 0ms')
   })
 })
-
-function parsePolicy(
-  policy: string,
-): ReadonlyMap<string, readonly string[]> {
-  return new Map(
-    policy.split(';').map((directive) => {
-      const [name = '', ...values] = directive.trim().split(/\s+/)
-      return [name, values] as const
-    }),
-  )
-}

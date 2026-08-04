@@ -17,6 +17,7 @@ import {
   CanonicalEventTimeModel,
   deriveCanonicalArtifactSkillPoints,
   prepareCanonicalEventTimeContext,
+  prepareCanonicalEventTimeContextVariants,
   type CanonicalEventTimeContext,
   type CanonicalEventTimeState,
 } from '../simulation/canonicalEventTimeModel'
@@ -603,9 +604,10 @@ export function createCanonicalGameEngineDefinition(
 > {
   const minimumCycleSeconds =
     options.infinityMinimumCycleSeconds ?? 1 / 60
-  const eventContext = prepareCanonicalEventTimeContext(
+  const eventContexts = prepareCanonicalEventTimeContextVariants(
     options.eventContext,
   )
+  const eventContext = eventContexts.active
   return {
     schema: CANONICAL_GAME_APPLICATION_SCHEMA,
     cloneState: cloneCanonicalRuntimeState,
@@ -675,7 +677,7 @@ export function createCanonicalGameEngineDefinition(
         return advanceStoredTime(
           candidate,
           command.seconds,
-          eventContext,
+          eventContexts.storedTime,
           minimumCycleSeconds,
           command.cancelRequested,
         )
@@ -686,7 +688,7 @@ export function createCanonicalGameEngineDefinition(
       advanceActive(
         candidate,
         milliseconds,
-        eventContext,
+        eventContexts.active,
         minimumCycleSeconds,
       ),
   }
@@ -1215,7 +1217,6 @@ function advanceStoredTime(
     context,
     minimumCycleSeconds,
     cancelRequested,
-    false,
     'force-buy-max',
   )
   const botCapRequired =
@@ -1332,7 +1333,6 @@ function runEventAdvance(
   context: Readonly<CanonicalEventTimeContext>,
   minimumCycleSeconds: number,
   cancelRequested?: () => boolean,
-  advanceTinker = true,
   automationPolicy: SimulationAutomationPolicy =
     'preserve-configured-mode',
 ) {
@@ -1340,7 +1340,7 @@ function runEventAdvance(
     startingState: transferEventTimeModelOwnership(
       CanonicalEventTimeModel.fromOwnedState(
         eventCarrier(candidate),
-        { ...context, advanceTinker },
+        context,
       ),
     ),
     cloneStartingState: false,

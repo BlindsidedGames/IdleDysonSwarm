@@ -14,6 +14,7 @@ import {
   deriveCanonicalArtifactSkillPoints,
   evaluateCanonicalInfinityBoundary,
   prepareCanonicalEventTimeContext,
+  prepareCanonicalEventTimeContextVariants,
   type CanonicalEventTimeContext,
   type CanonicalEventTimeState,
 } from './canonicalEventTimeModel'
@@ -355,6 +356,31 @@ const artifactDefinitions = new Map<
 ])
 
 describe('canonical whole-game event-time model', () => {
+  test('shares prepared definitions between active and stored-time contexts', () => {
+    const variants = prepareCanonicalEventTimeContextVariants(context())
+
+    expect(variants.active.advanceTinker).toBe(true)
+    expect(variants.storedTime.advanceTinker).toBe(false)
+    expect(variants.active.dreamResetDefinitions).toBe(
+      variants.storedTime.dreamResetDefinitions,
+    )
+    expect(variants.active.realityUpgradeDefinitions).toBe(
+      variants.storedTime.realityUpgradeDefinitions,
+    )
+    expect(variants.active.dysonPresentationTuning).toBe(
+      variants.storedTime.dysonPresentationTuning,
+    )
+    expect(variants.active.realityWorkerTuning).toBe(
+      variants.storedTime.realityWorkerTuning,
+    )
+    expect(prepareCanonicalEventTimeContext(variants.active)).toBe(
+      variants.active,
+    )
+    expect(prepareCanonicalEventTimeContext(variants.storedTime)).toBe(
+      variants.storedTime,
+    )
+  })
+
   test('prepares detached immutable definitions once for every model clone', () => {
     const dreamDefinitions = new Map(
       [...SIMULATION_UPGRADE_DEFINITIONS].map(([key, definition]) => [

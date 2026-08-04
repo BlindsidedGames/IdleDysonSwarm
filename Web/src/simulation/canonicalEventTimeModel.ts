@@ -171,6 +171,11 @@ interface CapturedContext {
 
 const preparedContexts = new WeakSet<object>()
 
+export interface CanonicalEventTimeContextVariants {
+  readonly active: Readonly<CanonicalEventTimeContext>
+  readonly storedTime: Readonly<CanonicalEventTimeContext>
+}
+
 /**
  * Canonical whole-game composition for the shared event-time scheduler.
  *
@@ -1190,6 +1195,26 @@ export function prepareCanonicalEventTimeContext(
   )
   preparedContexts.add(prepared)
   return prepared
+}
+
+/**
+ * Prepares the two application-lifetime Tinker modes without revalidating or
+ * copying their shared immutable definition catalogs.
+ */
+export function prepareCanonicalEventTimeContextVariants(
+  context: Readonly<CanonicalEventTimeContext>,
+): Readonly<CanonicalEventTimeContextVariants> {
+  const prepared = prepareCanonicalEventTimeContext(context)
+  const alternate = Object.freeze({
+    ...prepared,
+    advanceTinker: !prepared.advanceTinker,
+  })
+  preparedContexts.add(alternate)
+  return Object.freeze(
+    prepared.advanceTinker
+      ? { active: prepared, storedTime: alternate }
+      : { active: alternate, storedTime: prepared },
+  )
 }
 
 function createImmutableDefinitionMap<K, V>(
