@@ -457,7 +457,9 @@ function recordRealityWindows(
   workersGenerated: bigint,
 ): readonly StatisticsWindowState[] {
   if (source.length === 0) return source
-  const windows = source.map((window) => ({ ...window }))
+  const changed = new Map<number, StatisticsWindowState>()
+  const readWindow = (index: number): StatisticsWindowState =>
+    changed.get(index) ?? source[index]!
   if (end > start) {
     const lastPoint = Math.max(
       start,
@@ -466,16 +468,16 @@ function recordRealityWindows(
     const firstSequence = windowSequence(start, widthSeconds)
     const lastSequence = windowSequence(lastPoint, widthSeconds)
     const retainedFirst =
-      firstSequence > lastSequence - BigInt(windows.length) + 1n
+      firstSequence > lastSequence - BigInt(source.length) + 1n
         ? firstSequence
-        : lastSequence - BigInt(windows.length) + 1n
+        : lastSequence - BigInt(source.length) + 1n
     for (
       let sequence = retainedFirst;
       sequence <= lastSequence;
       sequence += 1n
     ) {
-      const index = Number(sequence % BigInt(windows.length))
-      let window = prepareWindow(windows[index], sequence)
+      const index = Number(sequence % BigInt(source.length))
+      let window = prepareWindow(readWindow(index), sequence)
       const windowStart = Number(sequence) * widthSeconds
       const overlap = Math.max(
         0,
@@ -489,25 +491,27 @@ function recordRealityWindows(
           overlap,
         ),
       }
-      windows[index] = window
+      changed.set(index, window)
     }
   }
 
   const eventSequence = windowSequence(end, widthSeconds)
   const eventIndex = Number(
-    eventSequence % BigInt(windows.length),
+    eventSequence % BigInt(source.length),
   )
   const eventWindow = prepareWindow(
-    windows[eventIndex],
+    readWindow(eventIndex),
     eventSequence,
   )
-  windows[eventIndex] = {
+  changed.set(eventIndex, {
     ...eventWindow,
     realityWorkers: addDiscrete(
       eventWindow.realityWorkers,
       workersGenerated,
     ),
-  }
+  })
+  const windows = source.slice()
+  for (const [index, window] of changed) windows[index] = window
   return windows
 }
 

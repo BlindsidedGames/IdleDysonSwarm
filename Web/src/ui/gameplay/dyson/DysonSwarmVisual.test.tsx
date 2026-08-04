@@ -9,7 +9,7 @@ import { DysonSwarmVisual } from './DysonSwarmVisual'
 afterEach(cleanup)
 
 describe('DysonSwarmVisual', () => {
-  test('keeps galaxy phases free of whole-scene and clock-face orbit animation', () => {
+  test('uses one bounded group transform and disables continuous motion on mobile', () => {
     const stylesheet = readFileSync(
       'src/ui/gameplay/dyson/dysonSwarmVisual.css',
       'utf8',
@@ -32,6 +32,13 @@ describe('DysonSwarmVisual', () => {
       'dyson-galaxy-member-counter-orbit',
     )
     expect(stylesheet).toContain('dyson-field-galaxy-spin')
+    expect(stylesheet).not.toContain('--galaxy-spin-duration')
+    expect(stylesheet).toMatch(
+      /\.dyson-swarm-visual__field-members\s*\{[^}]*animation:/,
+    )
+    expect(stylesheet).toMatch(
+      /@media \(pointer: coarse\)[\s\S]*\.dyson-swarm-visual__field-members[\s\S]*animation:\s*none/,
+    )
     expect(stylesheet).toContain(
       'dyson-origin-galaxy-zoom-out',
     )
@@ -63,6 +70,11 @@ describe('DysonSwarmVisual', () => {
     expect(
       view.container.querySelectorAll(
         '.dyson-swarm-visual__collector[data-visible="true"]',
+      ),
+    ).toHaveLength(0)
+    expect(
+      view.container.querySelectorAll(
+        '.dyson-swarm-visual__collector',
       ),
     ).toHaveLength(0)
 
@@ -98,12 +110,12 @@ describe('DysonSwarmVisual', () => {
       container.querySelectorAll(
         '.dyson-swarm-visual__collector',
       ),
-    ).toHaveLength(416)
+    ).toHaveLength(256)
     expect(
       container.querySelectorAll(
         '.dyson-swarm-visual__collector-plane[data-visible="true"]',
       ),
-    ).toHaveLength(44)
+    ).toHaveLength(32)
     expect(
       container.querySelectorAll(
         '.dyson-swarm-visual__orbit-plane',
@@ -146,7 +158,7 @@ describe('DysonSwarmVisual', () => {
       view.container.querySelectorAll(
         '.dyson-swarm-visual__galaxy-light',
       ),
-    ).toHaveLength(420)
+    ).toHaveLength(144)
     expect(
       view.container.querySelectorAll(
         '.dyson-swarm-visual__galaxy-orbit-cluster',
@@ -179,7 +191,7 @@ describe('DysonSwarmVisual', () => {
       bulge?.querySelectorAll(
         '.dyson-swarm-visual__galaxy-core-light',
       ),
-    ).toHaveLength(36)
+    ).toHaveLength(16)
     expect(
       bulge?.parentElement,
     ).toBe(composition)
@@ -195,7 +207,7 @@ describe('DysonSwarmVisual', () => {
         '.dyson-swarm-visual__galaxy-light',
       ),
     ).filter((light) => light.style.opacity === '1')
-    expect(initiallyLit).toHaveLength(420)
+    expect(initiallyLit).toHaveLength(144)
 
     view.rerender(
       <DysonSwarmVisual
@@ -211,8 +223,8 @@ describe('DysonSwarmVisual', () => {
         '.dyson-swarm-visual__galaxy-light',
       ),
     ).filter((light) => Number(light.style.opacity) < 1)
-    expect(partlyExtinguished.length).toBeGreaterThan(150)
-    expect(partlyExtinguished.length).toBeLessThan(300)
+    expect(partlyExtinguished.length).toBeGreaterThan(50)
+    expect(partlyExtinguished.length).toBeLessThan(100)
 
     view.rerender(
       <DysonSwarmVisual
@@ -228,8 +240,8 @@ describe('DysonSwarmVisual', () => {
         '.dyson-swarm-visual__galaxy-light',
       ),
     ).filter((light) => Number(light.style.opacity) === 0.08)
-    expect(mostlyExtinguished.length).toBeGreaterThan(350)
-    expect(mostlyExtinguished.length).toBeLessThan(420)
+    expect(mostlyExtinguished.length).toBeGreaterThan(120)
+    expect(mostlyExtinguished.length).toBeLessThan(144)
   })
 
   test('fills the post-galaxy field and dims members across compressed progression', () => {
@@ -247,12 +259,12 @@ describe('DysonSwarmVisual', () => {
       view.container.querySelectorAll(
         '.dyson-swarm-visual__field-member',
       ),
-    ).toHaveLength(84)
+    ).toHaveLength(32)
     expect(
       view.container.querySelectorAll(
         '.dyson-swarm-visual__field-dust',
       ),
-    ).toHaveLength(144)
+    ).toHaveLength(48)
 
     const variantIds = [
       'dyson-field-galaxy-face-on',
@@ -287,7 +299,7 @@ describe('DysonSwarmVisual', () => {
         view.container.querySelectorAll<SVGGElement>(
           `.dyson-swarm-visual__field-member[data-variant="${variant}"]`,
         )
-      expect(membersForVariant).toHaveLength(21)
+      expect(membersForVariant).toHaveLength(8)
       expect(
         membersForVariant[0]?.querySelector('use'),
       ).toHaveAttribute('href', `#${variantId}`)
@@ -307,7 +319,7 @@ describe('DysonSwarmVisual', () => {
       view.container.querySelectorAll(
         '.dyson-swarm-visual__field-member[data-edge="true"]',
       ).length,
-    ).toBeGreaterThan(10)
+    ).toBeGreaterThan(4)
 
     const resourceClearanceZones = [
       { minX: -120, maxX: -42, minY: -90, maxY: -38 },
@@ -362,7 +374,7 @@ describe('DysonSwarmVisual', () => {
         facts={{
           phase: 'galaxy-group',
           galaxiesEngulfed: 2,
-          completion: 0.5 / 83,
+          completion: 0.5 / 31,
         }}
       />,
     )
@@ -390,6 +402,6 @@ describe('DysonSwarmVisual', () => {
       view.container.querySelectorAll(
         '.dyson-swarm-visual__field-member[data-engulfed="true"]',
       ),
-    ).toHaveLength(84)
+    ).toHaveLength(32)
   })
 })

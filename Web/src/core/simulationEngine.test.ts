@@ -197,7 +197,9 @@ describe('transactional simulation engine', () => {
     if (!(result.accepted && result.changed && 'staged' in result)) {
       throw new Error('Expected a staged transition.')
     }
-    expect(result.staged.copyCandidate().value).toBe(5)
+    expect(
+      result.staged.readCandidate((candidate) => candidate.value),
+    ).toBe(5)
     expect(engine.publish(result.staged)).toEqual({
       accepted: true,
       changed: true,
@@ -243,7 +245,7 @@ describe('transactional simulation engine', () => {
     expect(first.snapshot().state.value).toBe(5)
   })
 
-  test('keeps staged candidates isolated from caller-owned copies', () => {
+  test('exposes a read-only staged candidate only until publication', () => {
     const engine = new TransactionalSimulationEngine(
       { value: 1, nested: { values: [] } },
       definition(),
@@ -256,14 +258,9 @@ describe('transactional simulation engine', () => {
       throw new Error('Expected a staged transition.')
     }
 
-    const callerCopy = staged.staged.copyCandidate()
-    callerCopy.value = 999
-    callerCopy.nested.values.push(999)
-
-    expect(staged.staged.copyCandidate()).toEqual({
-      value: 5,
-      nested: { values: [5] },
-    })
+    expect(
+      staged.staged.readCandidate((candidate) => candidate),
+    ).toEqual({ value: 5, nested: { values: [5] } })
     expect(engine.publish(staged.staged)).toMatchObject({
       accepted: true,
       changed: true,
@@ -273,6 +270,70 @@ describe('transactional simulation engine', () => {
       value: 5,
       nested: { values: [5] },
     })
+    expect(() =>
+      staged.staged.readCandidate((candidate) => candidate),
+    ).toThrow(/no longer available/)
+  })
+
+  test('publishes the staged candidate without another state clone', () => {
+    const cloneState = vi.fn((state: ProbeState): ProbeState =>
+      structuredClone(state),
+    )
+    const engine = new TransactionalSimulationEngine(
+      { value: 1, nested: { values: [] } },
+      { ...definition(), cloneState },
+    )
+    expect(cloneState).toHaveBeenCalledTimes(1)
+
+    const result = engine.stageDispatch({
+      expectedRevision: 0,
+      command: { kind: 'add', amount: 4 },
+    })
+    if (!(result.accepted && result.changed && 'staged' in result)) {
+      throw new Error('Expected a staged transition.')
+    }
+    expect(cloneState).toHaveBeenCalledTimes(2)
+    result.staged.readCandidate((candidate) => {
+      expect(candidate.value).toBe(5)
+    })
+    expect(cloneState).toHaveBeenCalledTimes(2)
+
+    expect(engine.publish(result.staged)).toMatchObject({
+      accepted: true,
+      changed: true,
+      revision: 1,
+    })
+    expect(cloneState).toHaveBeenCalledTimes(2)
+  })
+
+  test('uses bounded transition validation once and does not revalidate on publication', () => {
+    const validateState = vi.fn((state: ProbeState) =>
+      Number.isFinite(state.value) ? undefined : 'PROBE-NON-FINITE')
+    const validateTransitionState = vi.fn((state: ProbeState) =>
+      Number.isFinite(state.value) ? undefined : 'PROBE-NON-FINITE')
+    const engine = new TransactionalSimulationEngine(
+      { value: 1, nested: { values: [] } },
+      { ...definition(), validateState, validateTransitionState },
+    )
+    expect(validateState).toHaveBeenCalledTimes(1)
+
+    const result = engine.stageDispatch({
+      expectedRevision: 0,
+      command: { kind: 'add', amount: 4 },
+    })
+    if (!(result.accepted && result.changed && 'staged' in result)) {
+      throw new Error('Expected a staged transition.')
+    }
+    expect(validateTransitionState).toHaveBeenCalledTimes(1)
+    expect(validateState).toHaveBeenCalledTimes(1)
+
+    expect(engine.publish(result.staged)).toMatchObject({
+      accepted: true,
+      changed: true,
+      revision: 1,
+    })
+    expect(validateTransitionState).toHaveBeenCalledTimes(1)
+    expect(validateState).toHaveBeenCalledTimes(1)
   })
 
   test('rejects a staged transition made stale by another publication', () => {

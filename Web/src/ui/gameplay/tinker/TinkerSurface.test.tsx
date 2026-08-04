@@ -626,19 +626,7 @@ describe('TinkerSurface presentation and accessibility', () => {
     expect(requestFrame).not.toHaveBeenCalled()
   })
 
-  test('keeps visual progress monotonic within a cycle and resets only when canonical progress wraps', () => {
-    let now = 0
-    let nextFrame: FrameRequestCallback | undefined
-    vi.spyOn(performance, 'now').mockImplementation(() => now)
-    vi.stubGlobal(
-      'requestAnimationFrame',
-      vi.fn((callback: FrameRequestCallback) => {
-        nextFrame = callback
-        return 1
-      }),
-    )
-    vi.stubGlobal('cancelAnimationFrame', vi.fn())
-
+  test('renders each canonical progress publication without display-rate interpolation', () => {
     const dispatch = createDispatch()
     const view = renderTinker(
       dispatch,
@@ -648,11 +636,7 @@ describe('TinkerSurface presentation and accessibility', () => {
       name: 'Tinker progress',
     }) as HTMLProgressElement
 
-    act(() => {
-      now = 200
-      nextFrame?.(now)
-    })
-    expect(progress.value).toBeCloseTo(0.3)
+    expect(progress.value).toBeCloseTo(0.1)
 
     view.rerender(
       tinkerElement(
@@ -660,7 +644,7 @@ describe('TinkerSurface presentation and accessibility', () => {
         dispatch,
       ),
     )
-    expect(progress.value).toBeCloseTo(0.3)
+    expect(progress.value).toBeCloseTo(0.2)
 
     view.rerender(
       tinkerElement(
@@ -671,19 +655,9 @@ describe('TinkerSurface presentation and accessibility', () => {
     expect(progress.value).toBeCloseTo(0.05)
   })
 
-  test('restarts visual progress when a new authoritative repeat wraps from zero to zero', () => {
-    let now = 0
-    let nextFrame: FrameRequestCallback | undefined
-    vi.spyOn(performance, 'now').mockImplementation(() => now)
-    vi.stubGlobal(
-      'requestAnimationFrame',
-      vi.fn((callback: FrameRequestCallback) => {
-        nextFrame = callback
-        return 1
-      }),
-    )
-    vi.stubGlobal('cancelAnimationFrame', vi.fn())
-
+  test('does not synthesize progress between zero-valued repeat publications', () => {
+    const requestFrame = vi.fn()
+    vi.stubGlobal('requestAnimationFrame', requestFrame)
     const dispatch = createDispatch()
     const facts = runningFacts({ elapsedSeconds: 0 })
     const view = render(tinkerElement(facts, dispatch))
@@ -691,12 +665,8 @@ describe('TinkerSurface presentation and accessibility', () => {
       name: 'Tinker progress',
     }) as HTMLProgressElement
 
-    act(() => {
-      now = 500
-      nextFrame?.(now)
-    })
-    expect(progress.value).toBeCloseTo(0.5)
-    expect(screen.getByText('0.00s')).toBeInTheDocument()
+    expect(progress.value).toBe(0)
+    expect(screen.getByText('0.50s')).toBeInTheDocument()
 
     view.rerender(
       tinkerElement(
@@ -707,7 +677,7 @@ describe('TinkerSurface presentation and accessibility', () => {
 
     expect(progress.value).toBe(0)
     expect(screen.getByText('0.50s')).toBeInTheDocument()
-    expect(requestAnimationFrame).toHaveBeenCalledTimes(2)
+    expect(requestFrame).not.toHaveBeenCalled()
   })
 
   test('renders Unity copy, hold hint, time and progress with no Repeat control', () => {

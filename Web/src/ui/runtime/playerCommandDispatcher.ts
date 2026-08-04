@@ -52,10 +52,21 @@ export interface RevisionedPlayerCommandDispatcherOptions {
   readonly cancelRequested: () => boolean
 }
 
+interface PreparedPlayerCommand {
+  readonly envelope: ReturnType<
+    typeof createFrontendCommandEnvelope
+  >
+  readonly activationRevision:
+    UiRuntimeCommandActivationRevision
+}
+
 /**
- * Captures the latest published ready revision at player activation time for
- * ordinary intents. Idempotent safety reconciliation can instead capture its
- * revision inside the authority lane through `dispatchLatest`.
+ * Detaches ordinary player intent and its session at activation time, then
+ * captures the latest state revision inside the authority lane. This lets
+ * local commands follow admitted ticks and earlier commands without retrying
+ * them, while a session replacement still invalidates intent from the old
+ * save. Idempotent safety reconciliation captures both revisions inside the
+ * lane through `dispatchLatest`.
  */
 export class RevisionedPlayerCommandDispatcher {
   private readonly options:
@@ -70,16 +81,25 @@ export class RevisionedPlayerCommandDispatcher {
   async dispatch(
     command: Readonly<CanonicalPlayerCommand>,
   ): Promise<UiRuntimePlayerCommandResult> {
-    const prepared = this.prepare(command)
-    if ('status' in prepared) return prepared
+    const captured = this.prepare(command)
+    if ('status' in captured) return captured
     try {
-      const result = await this.options.serialize(() =>
-        this.options.dispatch(
+      const outcome = await this.options.serialize(async () => {
+        const prepared = this.prepareForExecution(captured)
+        if ('status' in prepared) {
+          return { kind: 'failure', failure: prepared } as const
+        }
+        const result = await this.options.dispatch(
           prepared.envelope,
           this.options.cancelRequested,
-        ),
+        )
+        return { kind: 'result', result } as const
+      })
+      if (outcome.kind === 'failure') return outcome.failure
+      return this.finish(
+        outcome.result,
+        captured.activationRevision,
       )
-      return this.finish(result, prepared.activationRevision)
     } catch (error) {
       return this.mapFailure(error)
     }
@@ -122,15 +142,7 @@ export class RevisionedPlayerCommandDispatcher {
 
   private prepare(
     command: Readonly<CanonicalPlayerCommand>,
-  ):
-    | {
-        readonly envelope: ReturnType<
-          typeof createFrontendCommandEnvelope
-        >
-        readonly activationRevision:
-          UiRuntimeCommandActivationRevision
-      }
-    | UiRuntimePlayerCommandResult {
+  ): PreparedPlayerCommand | UiRuntimePlayerCommandResult {
     const snapshot = this.options.latestSnapshot()
     if (snapshot.phase !== 'ready') {
       return failed(
@@ -149,6 +161,41 @@ export class RevisionedPlayerCommandDispatcher {
           command,
         ),
         activationRevision,
+      }
+    } catch (error) {
+      return failed(
+        'RUNTIME-PLAYER-COMMAND-INVALID',
+        errorMessage(error),
+      )
+    }
+  }
+
+  private prepareForExecution(
+    captured: Readonly<PreparedPlayerCommand>,
+  ): PreparedPlayerCommand | UiRuntimePlayerCommandResult {
+    const snapshot = this.options.latestSnapshot()
+    if (snapshot.phase !== 'ready') {
+      return failed(
+        'RUNTIME-PLAYER-NOT-READY',
+        'Player commands require a ready frontend snapshot.',
+      )
+    }
+    if (
+      snapshot.revision.session !==
+      captured.activationRevision.session
+    ) {
+      return staleSession(
+        captured.activationRevision,
+        snapshot.revision.state,
+      )
+    }
+    try {
+      return {
+        envelope: createFrontendCommandEnvelope(
+          snapshot.revision,
+          captured.envelope.command,
+        ),
+        activationRevision: captured.activationRevision,
       }
     } catch (error) {
       return failed(
@@ -260,6 +307,21 @@ function failed(
     code,
     reason,
     retryable: false,
+  })
+}
+
+function staleSession(
+  activationRevision: UiRuntimeCommandActivationRevision,
+  stateRevision: number,
+): UiRuntimePlayerCommandResult {
+  return Object.freeze({
+    status: 'rejected',
+    kind: 'transition',
+    code: 'APP-STALE-SESSION',
+    reason: `Session ${activationRevision.session} is not current.`,
+    stale: true,
+    stateRevision,
+    activationRevision,
   })
 }
 

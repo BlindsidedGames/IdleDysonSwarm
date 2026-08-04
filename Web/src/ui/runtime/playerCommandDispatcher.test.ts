@@ -7,25 +7,25 @@ import type { DeepReadonly } from '../../core/contracts'
 import { RevisionedPlayerCommandDispatcher } from './playerCommandDispatcher'
 
 describe('revisioned player command dispatcher', () => {
-  test('captures activation revisions once and never retries an overlapping stale command', async () => {
+  test('admits overlapping ordinary commands once each against execution-time state', async () => {
     const envelopes: Array<{
       readonly sessionRevision: number
       readonly expectedStateRevision: number
       readonly command: { readonly kind: string }
     }> = []
-    const gates = [
-      deferred<CanonicalCoordinatedPlayerResult>(),
-      deferred<CanonicalCoordinatedPlayerResult>(),
-    ]
+    const firstGate = deferred<void>()
+    let stateRevision = 9
+    const serialize = createSerializer()
     let publications = 0
     const dispatcher = new RevisionedPlayerCommandDispatcher({
-      latestSnapshot: () => readySnapshot(4, 9),
-      dispatch: (envelope) => {
-        const index = envelopes.length
+      latestSnapshot: () => readySnapshot(4, stateRevision),
+      dispatch: async (envelope) => {
         envelopes.push(envelope)
-        return gates[index]!.promise
+        if (envelopes.length === 1) await firstGate.promise
+        stateRevision += 1
+        return acceptedTransition(stateRevision)
       },
-      serialize: (operation) => operation(),
+      serialize,
       publishSnapshot: () => {
         publications += 1
       },
@@ -34,30 +34,16 @@ describe('revisioned player command dispatcher', () => {
     })
 
     const first = dispatcher.dispatch({
-      kind: 'tinker.start',
-      repeat: false,
+      kind: 'dyson.purchase-basic-facility',
+      facilityId: 'assembly_lines',
     })
     const second = dispatcher.dispatch({
-      kind: 'tinker.start',
-      repeat: false,
+      kind: 'dyson.purchase-basic-facility',
+      facilityId: 'assembly_lines',
     })
-    expect(envelopes).toHaveLength(2)
-    expect(envelopes.map((envelope) => ({
-      session: envelope.sessionRevision,
-      state: envelope.expectedStateRevision,
-    }))).toEqual([
-      { session: 4, state: 9 },
-      { session: 4, state: 9 },
-    ])
-    expect(Object.isFrozen(envelopes[0])).toBe(true)
-    expect(Object.isFrozen(envelopes[0]?.command)).toBe(true)
-
-    gates[0]?.resolve(acceptedTransition(10))
-    gates[1]?.resolve(rejectedTransition(
-      'SIM-STALE-REVISION',
-      'Expected revision 9 but current revision is 10.',
-      10,
-    ))
+    await Promise.resolve()
+    expect(envelopes).toHaveLength(1)
+    firstGate.resolve()
 
     await expect(first).resolves.toMatchObject({
       status: 'accepted',
@@ -66,31 +52,111 @@ describe('revisioned player command dispatcher', () => {
       activationRevision: { session: 4, state: 9 },
     })
     await expect(second).resolves.toMatchObject({
-      status: 'rejected',
-      code: 'SIM-STALE-REVISION',
-      stale: true,
-      stateRevision: 10,
+      status: 'accepted',
+      changed: true,
+      stateRevision: 11,
+      activationRevision: { session: 4, state: 9 },
     })
-    expect(publications).toBe(1)
+    expect(envelopes.map((envelope) => ({
+      session: envelope.sessionRevision,
+      state: envelope.expectedStateRevision,
+    }))).toEqual([
+      { session: 4, state: 9 },
+      { session: 4, state: 10 },
+    ])
+    expect(Object.isFrozen(envelopes[0])).toBe(true)
+    expect(Object.isFrozen(envelopes[0]?.command)).toBe(true)
+    expect(publications).toBe(2)
   })
 
-  test('captures safety reconciliation after previously admitted lifecycle work', async () => {
+  test('captures ordinary command state after previously admitted lifecycle work', async () => {
     let stateRevision = 9
-    let lane = Promise.resolve()
     const blocker = deferred<void>()
     const envelopes: Array<{
       readonly expectedStateRevision: number
     }> = []
-    const serialize = <T>(
-      operation: () => Promise<T>,
-    ): Promise<T> => {
-      const result = lane.then(operation)
-      lane = result.then(
-        () => undefined,
-        () => undefined,
-      )
-      return result
-    }
+    const serialize = createSerializer()
+    const admitted = serialize(async () => {
+      await blocker.promise
+      stateRevision = 10
+    })
+    const dispatcher = new RevisionedPlayerCommandDispatcher({
+      latestSnapshot: () => readySnapshot(4, stateRevision),
+      dispatch: async (envelope) => {
+        envelopes.push(envelope)
+        stateRevision = 11
+        return acceptedTransition(11)
+      },
+      serialize,
+      publishSnapshot: () => undefined,
+      isCurrent: () => true,
+      cancelRequested: () => false,
+    })
+
+    const command = dispatcher.dispatch({
+      kind: 'research.purchase',
+      researchId: 'startHereTree',
+    })
+    expect(envelopes).toHaveLength(0)
+
+    blocker.resolve()
+    await admitted
+    await expect(command).resolves.toMatchObject({
+      status: 'accepted',
+      activationRevision: { session: 4, state: 9 },
+      stateRevision: 11,
+    })
+    expect(envelopes[0]?.expectedStateRevision).toBe(10)
+  })
+
+  test('rejects old-session intent locally when a queued replacement wins first', async () => {
+    let sessionRevision = 4
+    let stateRevision = 9
+    const blocker = deferred<void>()
+    let dispatches = 0
+    const serialize = createSerializer()
+    const replacement = serialize(async () => {
+      await blocker.promise
+      sessionRevision = 5
+      stateRevision = 0
+    })
+    const dispatcher = new RevisionedPlayerCommandDispatcher({
+      latestSnapshot: () =>
+        readySnapshot(sessionRevision, stateRevision),
+      dispatch: async () => {
+        dispatches += 1
+        return acceptedTransition(1)
+      },
+      serialize,
+      publishSnapshot: () => undefined,
+      isCurrent: () => true,
+      cancelRequested: () => false,
+    })
+
+    const command = dispatcher.dispatch({
+      kind: 'dyson.purchase-basic-facility',
+      facilityId: 'assembly_lines',
+    })
+    blocker.resolve()
+    await replacement
+
+    await expect(command).resolves.toMatchObject({
+      status: 'rejected',
+      code: 'APP-STALE-SESSION',
+      stale: true,
+      stateRevision: 0,
+      activationRevision: { session: 4, state: 9 },
+    })
+    expect(dispatches).toBe(0)
+  })
+
+  test('captures safety reconciliation after previously admitted lifecycle work', async () => {
+    let stateRevision = 9
+    const blocker = deferred<void>()
+    const envelopes: Array<{
+      readonly expectedStateRevision: number
+    }> = []
+    const serialize = createSerializer()
     const admitted = serialize(async () => {
       await blocker.promise
       stateRevision = 10
@@ -233,19 +299,17 @@ function acceptedTransition(
   }
 }
 
-function rejectedTransition(
-  code: string,
-  reason: string,
-  revision: number,
-): CanonicalCoordinatedPlayerResult {
-  return {
-    kind: 'transition',
-    transition: {
-      accepted: false,
-      code,
-      reason,
-      revision,
-    },
+function createSerializer(): <T>(
+  operation: () => Promise<T>,
+) => Promise<T> {
+  let lane = Promise.resolve()
+  return <T>(operation: () => Promise<T>): Promise<T> => {
+    const result = lane.then(operation)
+    lane = result.then(
+      () => undefined,
+      () => undefined,
+    )
+    return result
   }
 }
 

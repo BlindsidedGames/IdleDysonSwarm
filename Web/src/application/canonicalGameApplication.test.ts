@@ -1,5 +1,6 @@
 import { readFileSync } from 'node:fs'
-import { describe, expect, test } from 'vitest'
+import { describe, expect, test, vi } from 'vitest'
+import { TransactionalSimulationEngine } from '../core/simulationEngine'
 import { prepareIdb1Save } from '../save/prepare'
 import {
   createCapturedInfinityAssetLookup,
@@ -49,6 +50,55 @@ function runtime() {
 }
 
 describe('canonical game application engine', () => {
+  test('advances an ordinary tick without cloning complete runtime state', () => {
+    const base = createCanonicalGameEngineDefinition({
+      eventContext: context(),
+    })
+    const cloneState = vi.fn(base.cloneState)
+    const engine = new TransactionalSimulationEngine(
+      runtime(),
+      { ...base, cloneState },
+    )
+    expect(cloneState).toHaveBeenCalledTimes(1)
+    const initialSnapshot = engine.snapshot()
+    expect(cloneState).toHaveBeenCalledTimes(1)
+    expect(Object.isFrozen(initialSnapshot.state)).toBe(true)
+    expect(Object.isFrozen(initialSnapshot.state.gameState.dyson)).toBe(true)
+
+    expect(engine.advanceBy(100)).toMatchObject({
+      accepted: true,
+      changed: true,
+      revision: 1,
+    })
+    expect(cloneState).toHaveBeenCalledTimes(1)
+    expect(engine.snapshot().state).not.toBe(initialSnapshot.state)
+    expect(cloneState).toHaveBeenCalledTimes(1)
+  })
+
+  test('replaces changed branches without mutating a shallow-fork source', () => {
+    const definition = createCanonicalGameEngineDefinition({
+      eventContext: context(),
+    })
+    const source = runtime()
+    const before = structuredClone(source)
+    const activeCandidate = definition.forkState!(source)
+
+    expect(definition.advance(activeCandidate, 100)).toEqual({
+      accepted: true,
+      changed: true,
+    })
+    expect(source).toEqual(before)
+    expect(activeCandidate.gameState).not.toBe(source.gameState)
+
+    const commandCandidate = definition.forkState!(source)
+    expect(definition.applyCommand(commandCandidate, {
+      kind: 'internal.development-set-dyson-bots',
+      bots: 1_000,
+    })).toEqual({ accepted: true, changed: true })
+    expect(source).toEqual(before)
+    expect(commandCandidate.gameState).not.toBe(source.gameState)
+  })
+
   test('sets the development bot count through the current canonical allocation', () => {
     const state = runtime()
     Object.assign(state, {

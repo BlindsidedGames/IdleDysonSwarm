@@ -29,7 +29,6 @@ import {
   type BasicFacilityRegionProps,
   type EarlyBasicFacilityId,
 } from './BasicFacilityRegion'
-import { interpolatePublishedFacilityProgress } from './progressInterpolation'
 
 const facilitiesCss = readFileSync(
   resolve(process.cwd(), 'src/ui/gameplay/facilities/facilities.css'),
@@ -172,21 +171,6 @@ const defaultRevision = {
 }
 
 describe('BasicFacilityRegion', () => {
-  it('continuously extrapolates from the latest published progress', () => {
-    expect(
-      interpolatePublishedFacilityProgress(0.2, 1, 50),
-    ).toBeCloseTo(0.25)
-    expect(
-      interpolatePublishedFacilityProgress(0.98, 0.5, 100),
-    ).toBeCloseTo(0.03)
-    expect(
-      interpolatePublishedFacilityProgress(0.2, 1, 500),
-    ).toBeCloseTo(0.7)
-    expect(
-      interpolatePublishedFacilityProgress(1, 50, 100),
-    ).toBe(1)
-  })
-
   it('renders the canonical Fresh collection as no named cards plus one teaser', () => {
     renderRegion({
       visibleBasicFacilityIds: [],

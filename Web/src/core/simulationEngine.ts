@@ -26,6 +26,7 @@ export class TransactionalSimulationEngine<TState, TCommand>
   private readonly definition: SimulationEngineDefinition<TState, TCommand>
   private readonly listeners = new Set<SimulationListener<TState>>()
   private readonly validStages = new WeakSet<object>()
+  private readonly stagedCandidates = new WeakMap<object, TState>()
   private state: TState
   private revision = 0
 
@@ -39,10 +40,19 @@ export class TransactionalSimulationEngine<TState, TCommand>
       throw new Error(`Initial simulation state is invalid: ${invalidCode}`)
     }
     this.definition = definition
-    this.state = initialCandidate
+    this.state = definition.publishImmutableState
+      ? freezeGraph(initialCandidate) as TState
+      : initialCandidate
   }
 
   snapshot(): SimulationSnapshot<TState> {
+    if (this.definition.publishImmutableState) {
+      return Object.freeze({
+        schema: this.definition.schema,
+        revision: this.revision,
+        state: this.state as DeepReadonly<TState>,
+      })
+    }
     const detached = this.definition.cloneState(this.state)
     return Object.freeze({
       schema: this.definition.schema,
@@ -113,21 +123,24 @@ export class TransactionalSimulationEngine<TState, TCommand>
       )
     }
     this.validStages.delete(staged)
+    const ownsCandidate = this.stagedCandidates.has(staged)
+    const candidate = this.stagedCandidates.get(staged) as TState
+    this.stagedCandidates.delete(staged)
+    if (!ownsCandidate) {
+      return this.rejected(
+        'SIM-INVALID-STAGE',
+        'Staged transition no longer owns a candidate.',
+      )
+    }
     if (staged.baseRevision !== this.revision) {
       return this.rejected(
         'SIM-STALE-REVISION',
         `Staged revision ${staged.baseRevision} does not match current revision ${this.revision}.`,
       )
     }
-    const candidate = staged.copyCandidate()
-    const invalidCode = this.definition.validateState(candidate)
-    if (invalidCode) {
-      return this.rejected(
-        'SIM-INVALID-CANDIDATE',
-        `Staged transition produced invalid state: ${invalidCode}`,
-      )
-    }
-    this.state = this.definition.cloneState(candidate)
+    this.state = this.definition.publishImmutableState
+      ? freezeGraph(candidate) as TState
+      : candidate
     this.revision += 1
     this.notifyListeners()
     return { accepted: true, changed: true, revision: this.revision }
@@ -143,7 +156,8 @@ export class TransactionalSimulationEngine<TState, TCommand>
   private transition(
     apply: (candidate: TState) => DomainTransition,
   ): SimulationStageResult<TState> {
-    const candidate = this.definition.cloneState(this.state)
+    const candidate = this.definition.forkState?.(this.state) ??
+      this.definition.cloneState(this.state)
     let decision: DomainTransition
     try {
       decision = apply(candidate)
@@ -159,7 +173,10 @@ export class TransactionalSimulationEngine<TState, TCommand>
     if (!decision.changed) {
       return { accepted: true, changed: false, revision: this.revision }
     }
-    const invalidCode = this.definition.validateState(candidate)
+    const invalidCode = (
+      this.definition.validateTransitionState ??
+      this.definition.validateState
+    )(candidate)
     if (invalidCode) {
       return this.rejected(
         'SIM-INVALID-CANDIDATE',
@@ -167,11 +184,28 @@ export class TransactionalSimulationEngine<TState, TCommand>
       )
     }
 
-    const staged = Object.freeze({
+    let staged!: StagedSimulationTransition<TState>
+    staged = Object.freeze({
       baseRevision: this.revision,
-      copyCandidate: () => this.definition.cloneState(candidate),
+      readCandidate: <TResult>(
+        read: (candidate: DeepReadonly<TState>) => TResult,
+      ): TResult => {
+        if (!this.validStages.has(staged)) {
+          throw new Error(
+            'Staged transition candidate is no longer available.',
+          )
+        }
+        if (!this.stagedCandidates.has(staged)) {
+          throw new Error(
+            'Staged transition no longer owns a candidate.',
+          )
+        }
+        const owned = this.stagedCandidates.get(staged) as TState
+        return read(owned as DeepReadonly<TState>)
+      },
     })
     this.validStages.add(staged)
+    this.stagedCandidates.set(staged, candidate)
     return {
       accepted: true,
       changed: true,

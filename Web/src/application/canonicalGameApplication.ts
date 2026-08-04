@@ -35,6 +35,7 @@ import {
 import { runCanonicalSkillAutoAssignment } from '../simulation/canonicalSkillTransactions'
 import {
   createSimulationSummary,
+  transferEventTimeModelOwnership,
   type SimulationAutomationPolicy,
 } from '../simulation/types'
 import {
@@ -202,6 +203,9 @@ export class CanonicalGameApplicationFacade {
     CanonicalApplicationCommand
   >
   private readonly eventContext: Readonly<CanonicalEventTimeContext>
+  private cachedFrontendSnapshot:
+    | DeepReadonly<FrontendApplicationSnapshot>
+    | undefined
 
   constructor(options: Readonly<CanonicalGameApplicationOptions>) {
     this.eventContext = prepareCanonicalEventTimeContext(
@@ -233,30 +237,55 @@ export class CanonicalGameApplicationFacade {
         definitionGap: null,
       }
     }
-    const state = cloneCanonicalRuntimeState(
-      snapshot.state as CanonicalRuntimeState,
-    )
     return previewCanonicalQuantumLeap(
-      state,
+      snapshot.state as CanonicalRuntimeState,
       this.eventContext,
     )
   }
 
   frontendSnapshot(): DeepReadonly<FrontendApplicationSnapshot> {
-    return selectFrontendApplicationSnapshot(this.snapshot(), {
-      runtimeRequirements: {
-        'compatibility-tuning': true,
-        'quantum-leap-port': true,
-        'runtime-evaluation-port': true,
-        'selected-skill-preset-carrier': true,
-        'stored-time-commit-first-runner': true,
-        'stored-time-cheater-carrier': true,
+    const application = this.snapshot()
+    if (
+      this.cachedFrontendSnapshot !== undefined &&
+      sameFrontendApplicationEnvelope(
+        this.cachedFrontendSnapshot,
+        application,
+      )
+    ) {
+      return this.cachedFrontendSnapshot
+    }
+    const quantumLeap =
+      application.phase === 'ready'
+        ? previewCanonicalQuantumLeap(
+            application.state as CanonicalRuntimeState,
+            this.eventContext,
+          )
+        : {
+            eligible: false,
+            code: 'APP-NOT-READY',
+            branch: null,
+            artifactSkillPoints: null,
+            definitionGap: null,
+          } satisfies FrontendQuantumLeapPreview
+    this.cachedFrontendSnapshot = selectFrontendApplicationSnapshot(
+      application,
+      {
+        runtimeRequirements: {
+          'compatibility-tuning': true,
+          'quantum-leap-port': true,
+          'runtime-evaluation-port': true,
+          'selected-skill-preset-carrier': true,
+          'stored-time-commit-first-runner': true,
+          'stored-time-cheater-carrier': true,
+        },
+        quantumLeap,
+        realityWorkerTuning: this.eventContext.realityWorkerTuning,
+        dysonPresentationTuning:
+          this.eventContext.dysonPresentationTuning,
       },
-      quantumLeap: this.previewQuantumLeap(),
-      realityWorkerTuning: this.eventContext.realityWorkerTuning,
-      dysonPresentationTuning:
-        this.eventContext.dysonPresentationTuning,
-    })
+      'detached-frozen',
+    )
+    return this.cachedFrontendSnapshot
   }
 
   start(): Promise<ApplicationSnapshot<CanonicalRuntimeState>> {
@@ -562,8 +591,12 @@ export function createCanonicalGameEngineDefinition(
   return {
     schema: CANONICAL_GAME_APPLICATION_SCHEMA,
     cloneState: cloneCanonicalRuntimeState,
+    forkState: (state) => ({ ...state }),
+    publishImmutableState: true,
     validateState: (state) =>
       validateRuntimeState(state, eventContext),
+    validateTransitionState: (state) =>
+      validateRuntimeTransitionState(state, eventContext),
     applyCommand: (candidate, command) => {
       if (command.kind === 'tinker.start') {
         return applyTinker(candidate, eventContext, (model) =>
@@ -1010,7 +1043,7 @@ function applyPlayerCommand(
       ...commandOptions(candidate, context),
       quantumLeap: {
         requestLeap: (state) => {
-          const model = new CanonicalEventTimeModel(
+          const model = CanonicalEventTimeModel.fromOwnedState(
             { ...eventCarrier(candidate), gameState: state },
             context,
           )
@@ -1022,17 +1055,21 @@ function applyPlayerCommand(
             createSimulationSummary(),
           )
           const outcome = model.lastQueuedInputOutcome
-          return outcome?.accepted
-            ? {
-                accepted: true,
-                changed: outcome.changed,
-                code: outcome.code,
-                state: model.state.gameState,
-              }
-            : {
-                accepted: false,
-                code: outcome?.code ?? model.validate() ?? 'quantum-rejected',
-              }
+          if (outcome?.accepted) {
+            return {
+              accepted: true,
+              changed: outcome.changed,
+              code: outcome.code,
+              state: model.takeState().gameState,
+            }
+          }
+          return {
+            accepted: false,
+            code:
+              outcome?.code ??
+              model.validateIncremental() ??
+              'quantum-rejected',
+          }
         },
       },
     },
@@ -1127,7 +1164,7 @@ function advanceActive(
       `Active advance ended as ${result.validationStatus}.`,
     )
   }
-  replaceEventCarrier(candidate, result.candidateState.state)
+  replaceEventCarrier(candidate, result.candidateState.takeState())
   return { accepted: true, changed: true }
 }
 
@@ -1186,7 +1223,7 @@ function advanceStoredTime(
   }
 
   replaceEventCarrier(candidate, {
-    ...result.candidateState.state,
+    ...result.candidateState.takeState(),
     // Unity's Tinker coroutine advances on wall Time.deltaTime only.
     tinker: preservedTinker,
   })
@@ -1260,11 +1297,14 @@ function applyTinker(
   context: Readonly<CanonicalEventTimeContext>,
   apply: (model: CanonicalEventTimeModel) => boolean,
 ): DomainTransition {
-  const model = new CanonicalEventTimeModel(eventCarrier(candidate), context)
+  const model = CanonicalEventTimeModel.fromOwnedState(
+    eventCarrier(candidate),
+    context,
+  )
   const changed = apply(model)
-  const issue = model.validate()
+  const issue = model.validateIncremental()
   if (issue) return reject(issue, model.issue?.detail ?? issue)
-  if (changed) replaceEventCarrier(candidate, model.state)
+  if (changed) replaceEventCarrier(candidate, model.takeState())
   return { accepted: true, changed }
 }
 
@@ -1279,10 +1319,13 @@ function runEventAdvance(
     'preserve-configured-mode',
 ) {
   return advanceEventTime({
-    startingState: new CanonicalEventTimeModel(
-      eventCarrier(candidate),
-      { ...context, advanceTinker },
+    startingState: transferEventTimeModelOwnership(
+      CanonicalEventTimeModel.fromOwnedState(
+        eventCarrier(candidate),
+        { ...context, advanceTinker },
+      ),
     ),
+    cloneStartingState: false,
     durationSeconds: seconds,
     automationIntervalSeconds: context.automationIntervalSeconds,
     automationTimeUntilNextEvent:
@@ -1338,7 +1381,99 @@ function validateRuntimeState(
   ) {
     return 'CANONICAL-SKILL-PRESET-SLOT-INVALID'
   }
-  return new CanonicalEventTimeModel(eventCarrier(state), context).validate()
+  return CanonicalEventTimeModel.fromOwnedState(
+    eventCarrier(state),
+    context,
+  ).validate()
+}
+
+function sameFrontendApplicationEnvelope(
+  frontend: DeepReadonly<FrontendApplicationSnapshot>,
+  application: ApplicationSnapshot<CanonicalRuntimeState>,
+): boolean {
+  if (frontend.phase !== application.phase) return false
+  if (frontend.phase === 'idle' || frontend.phase === 'starting') {
+    return true
+  }
+  if (frontend.phase === 'blocked') {
+    return (
+      application.phase === 'blocked' &&
+      frontend.outcome === application.outcome &&
+      frontend.error === application.error
+    )
+  }
+  if (frontend.phase !== 'ready' || application.phase !== 'ready') {
+    return false
+  }
+  return (
+    frontend.source === application.source &&
+    frontend.revision.session === application.revision.session &&
+    frontend.revision.state === application.revision.state &&
+    frontend.revision.durable === application.revision.durable &&
+    sameApplicationCheckpoint(
+      frontend.checkpoint,
+      application.checkpoint,
+    ) &&
+    frontend.operation === application.operation
+  )
+}
+
+function sameApplicationCheckpoint(
+  left: Readonly<
+    Extract<FrontendApplicationSnapshot, { phase: 'ready' }>['checkpoint']
+  >,
+  right: Readonly<
+    Extract<
+      ApplicationSnapshot<CanonicalRuntimeState>,
+      { phase: 'ready' }
+    >['checkpoint']
+  >,
+): boolean {
+  if (
+    left.kind !== right.kind ||
+    left.durableRevision !== right.durableRevision
+  ) {
+    return false
+  }
+  if (left.kind === 'clean' || right.kind === 'clean') {
+    return left.kind === 'clean' && right.kind === 'clean'
+  }
+  if (left.kind === 'checkpointing' || right.kind === 'checkpointing') {
+    return (
+      left.kind === 'checkpointing' &&
+      right.kind === 'checkpointing' &&
+      left.targetStateRevision === right.targetStateRevision
+    )
+  }
+  return (
+    left.kind === 'dirty' &&
+    right.kind === 'dirty' &&
+    left.reason === right.reason &&
+    left.error === right.error
+  )
+}
+
+function validateRuntimeTransitionState(
+  state: CanonicalRuntimeState,
+  context: Readonly<CanonicalEventTimeContext>,
+): string | undefined {
+  if (typeof state.storedTimeCheater !== 'boolean') {
+    return 'CANONICAL-STORED-TIME-CHEATER-INVALID'
+  }
+  if (
+    !Number.isInteger(state.selectedSkillPresetSlot) ||
+    state.selectedSkillPresetSlot < 1 ||
+    state.selectedSkillPresetSlot > 5
+  ) {
+    return 'CANONICAL-SKILL-PRESET-SLOT-INVALID'
+  }
+  const model = CanonicalEventTimeModel.fromOwnedState(
+    eventCarrier(state),
+    context,
+  )
+  const incrementalIssue = model.validateIncremental()
+  if (incrementalIssue !== undefined) return incrementalIssue
+  return import.meta.env.DEV ? model.validate() : undefined
 }
 
 function requiredBotCapCheckpoint(
@@ -1389,7 +1524,7 @@ export function previewCanonicalQuantumLeap(
     artifactSkillPoints = artifact.value
   }
 
-  const model = new CanonicalEventTimeModel(
+  const model = CanonicalEventTimeModel.fromOwnedState(
     eventCarrier(runtime),
     context,
   )

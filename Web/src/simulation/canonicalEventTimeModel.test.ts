@@ -452,6 +452,31 @@ describe('canonical whole-game event-time model', () => {
     expect(clone.state.gameState.skills.points).toBe(10n)
   })
 
+  test('transfers its owned carrier once and rejects every later use', () => {
+    const source = carrier(baseState())
+    const model = new CanonicalEventTimeModel(source, context())
+
+    const taken = model.takeState()
+
+    expect(taken).not.toBe(source)
+    expect(taken.gameState).toEqual(source.gameState)
+    expect(() => model.takeState()).toThrow(/already been transferred/)
+    expect(() => model.state).toThrow(/already been transferred/)
+    expect(() => model.validate()).toThrow(/already been transferred/)
+    expect(() => model.clone()).toThrow(/already been transferred/)
+    expect(() => model.issue).toThrow(/already been transferred/)
+  })
+
+  test('adopts an application-owned carrier without cloning it', () => {
+    const source = carrier(baseState())
+    const model = CanonicalEventTimeModel.fromOwnedState(
+      source,
+      context(),
+    )
+
+    expect(model.takeState()).toBe(source)
+  })
+
   test('synchronizes bot allocation and advances the complete early Dyson production chain', () => {
     const source = baseState()
     const gameState: CanonicalGameStateV1 = {

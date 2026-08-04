@@ -173,6 +173,7 @@ describe('frontend-ready canonical backend integration', () => {
     const checkpoint = await firstApplication.checkpoint()
     expect(checkpoint.committed).toBe(true)
     const firstFrontend = firstApplication.frontendSnapshot()
+    expect(firstApplication.frontendSnapshot()).toBe(firstFrontend)
     expect(firstFrontend.phase).toBe('ready')
     if (firstFrontend.phase !== 'ready') return
     expect(firstFrontend.gameplay.commands.byKind['tinker.start'])
@@ -219,6 +220,17 @@ describe('frontend-ready canonical backend integration', () => {
     expect(
       reconstructedApplication.frontendSnapshot().gameplay,
     ).toEqual(firstApplication.frontendSnapshot().gameplay)
+    expect(
+      reconstructedApplication.frontendSnapshot().phase === 'ready' &&
+        firstApplication.frontendSnapshot().phase === 'ready'
+        ? reconstructedApplication.frontendSnapshot().gameplay
+            .definitionCoverage
+        : undefined,
+    ).toBe(
+      firstApplication.frontendSnapshot().phase === 'ready'
+        ? firstApplication.frontendSnapshot().gameplay.definitionCoverage
+        : undefined,
+    )
     expect(repository.commits.length).toBeGreaterThanOrEqual(6)
   })
 })

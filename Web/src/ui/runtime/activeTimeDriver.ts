@@ -24,8 +24,8 @@ export interface ActiveTimeDriverOptions<TResult> {
 
 /**
  * Coalesces exact monotonic foreground elapsed time behind one asynchronous
- * delivery at a time. Animation frames schedule sampling only; they never
- * define or approximate gameplay duration.
+ * delivery at a time. A deliberately capped timer schedules sampling only;
+ * the monotonic clock remains the sole authority for gameplay duration.
  */
 export class CoordinatorActiveTimeDriver<TResult> {
   private readonly clock: ActiveTimeMonotonicClock
@@ -34,7 +34,7 @@ export class CoordinatorActiveTimeDriver<TResult> {
   private readonly minimumDeliveryMilliseconds: number
   private readonly onDelivered: (result: TResult) => void
   private readonly onFailure: (error: unknown) => void
-  private frameHandle: unknown
+  private sampleHandle: unknown
   private lastSampleMilliseconds: number | undefined
   private pendingMilliseconds = 0
   private deliveryPending = false
@@ -44,8 +44,6 @@ export class CoordinatorActiveTimeDriver<TResult> {
 
   constructor(options: Readonly<ActiveTimeDriverOptions<TResult>>) {
     this.clock = options.clock ?? new BrowserMonotonicClock()
-    this.scheduler =
-      options.scheduler ?? new BrowserActiveTimeFrameScheduler()
     this.minimumDeliveryMilliseconds =
       options.minimumDeliveryMilliseconds ??
       DEFAULT_ACTIVE_TIME_DELIVERY_INTERVAL_MILLISECONDS
@@ -57,6 +55,10 @@ export class CoordinatorActiveTimeDriver<TResult> {
         'The active-time delivery interval must be finite and positive.',
       )
     }
+    this.scheduler =
+      options.scheduler ?? new BrowserActiveTimeFrameScheduler(
+        this.minimumDeliveryMilliseconds,
+      )
     this.deliver = options.deliver
     this.onDelivered = options.onDelivered
     this.onFailure = options.onFailure ?? (() => undefined)
@@ -68,7 +70,7 @@ export class CoordinatorActiveTimeDriver<TResult> {
     this.publicationEpoch += 1
     try {
       this.lastSampleMilliseconds = this.readClock()
-      this.scheduleFrame()
+      this.scheduleSample()
     } catch (error) {
       this.foreground = false
       this.lastSampleMilliseconds = undefined
@@ -91,7 +93,7 @@ export class CoordinatorActiveTimeDriver<TResult> {
       this.publicationEpoch += 1
       this.lastSampleMilliseconds = undefined
       this.pendingMilliseconds = 0
-      this.cancelFrame()
+      this.cancelSample()
     }
   }
 
@@ -102,16 +104,16 @@ export class CoordinatorActiveTimeDriver<TResult> {
     this.publicationEpoch += 1
     this.pendingMilliseconds = 0
     this.lastSampleMilliseconds = undefined
-    this.cancelFrame()
+    this.cancelSample()
   }
 
-  private readonly handleFrame = (): void => {
-    this.frameHandle = undefined
+  private readonly handleSample = (): void => {
+    this.sampleHandle = undefined
     if (!this.foreground || this.disposed) return
     try {
       this.captureElapsed()
       this.pump()
-      this.scheduleFrame()
+      this.scheduleSample()
     } catch (error) {
       this.foreground = false
       this.publicationEpoch += 1
@@ -176,43 +178,49 @@ export class CoordinatorActiveTimeDriver<TResult> {
     return value
   }
 
-  private scheduleFrame(): void {
+  private scheduleSample(): void {
     if (
       !this.foreground ||
       this.disposed ||
-      this.frameHandle !== undefined
+      this.sampleHandle !== undefined
     ) {
       return
     }
-    this.frameHandle = this.scheduler.requestFrame(this.handleFrame)
+    this.sampleHandle = this.scheduler.requestFrame(this.handleSample)
   }
 
-  private cancelFrame(): void {
-    if (this.frameHandle === undefined) return
-    this.scheduler.cancelFrame(this.frameHandle)
-    this.frameHandle = undefined
+  private cancelSample(): void {
+    if (this.sampleHandle === undefined) return
+    this.scheduler.cancelFrame(this.sampleHandle)
+    this.sampleHandle = undefined
   }
 }
 
 class BrowserActiveTimeFrameScheduler
   implements ActiveTimeFrameScheduler
 {
+  private readonly delayMilliseconds: number
+
+  constructor(delayMilliseconds: number) {
+    this.delayMilliseconds = delayMilliseconds
+  }
+
   requestFrame(callback: () => void): unknown {
-    if (typeof globalThis.requestAnimationFrame !== 'function') {
+    if (typeof globalThis.setTimeout !== 'function') {
       throw new Error(
-        'requestAnimationFrame is unavailable for active-time scheduling.',
+        'setTimeout is unavailable for active-time scheduling.',
       )
     }
-    return globalThis.requestAnimationFrame(callback)
+    return globalThis.setTimeout(callback, this.delayMilliseconds)
   }
 
   cancelFrame(handle: unknown): void {
     if (
-      typeof globalThis.cancelAnimationFrame !== 'function' ||
-      typeof handle !== 'number'
+      typeof globalThis.clearTimeout !== 'function' ||
+      handle === undefined
     ) {
       return
     }
-    globalThis.cancelAnimationFrame(handle)
+    globalThis.clearTimeout(handle as ReturnType<typeof setTimeout>)
   }
 }
