@@ -26,6 +26,7 @@ export {
   createBrowserRuntimeFoundation,
   DEVELOPMENT_ONLY_BROWSER_DATABASE_NAME,
   DEVELOPMENT_ONLY_BROWSER_PROFILE_ID,
+  DEVELOPMENT_ONLY_BROWSER_SAVE_PATHS,
   type BrowserRuntimeApplicationFactory,
   type BrowserRuntimeFoundationOptions,
   type BrowserRuntimeLifecyclePolicy,

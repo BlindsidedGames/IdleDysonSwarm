@@ -178,6 +178,7 @@ export class CdpSession {
 export async function startProductionPreview(
   webRoot: string,
   port: number,
+  outDir?: string,
 ): Promise<ProductionPreview> {
   const url = `http://127.0.0.1:${port}/`
   if (await isReachable(url)) {
@@ -202,6 +203,7 @@ export async function startProductionPreview(
       '--port',
       String(port),
       '--strictPort',
+      ...(outDir === undefined ? [] : ['--outDir', outDir]),
     ],
     {
       cwd: webRoot,
@@ -237,6 +239,7 @@ export async function startProductionPreview(
 export async function openChromiumPage(
   profile: ViewportProfile,
   productionUrl: string,
+  options: Readonly<{ readonly disableGpu?: boolean }> = {},
 ): Promise<ChromiumPage> {
   const executable = chromiumExecutable()
   const profileRoot = mkdtempSync(
@@ -246,6 +249,7 @@ export async function openChromiumPage(
     executable,
     [
       '--headless=new',
+      ...(options.disableGpu === true ? ['--disable-gpu'] : []),
       '--remote-debugging-port=0',
       `--user-data-dir=${profileRoot}`,
       '--no-first-run',
@@ -259,10 +263,14 @@ export async function openChromiumPage(
       'about:blank',
     ],
     {
-      stdio: 'ignore',
+      stdio: ['ignore', 'ignore', 'pipe'],
       windowsHide: true,
     },
   )
+  let startupDiagnostic = ''
+  child.stderr?.on('data', (chunk: Buffer | string) => {
+    startupDiagnostic = `${startupDiagnostic}${String(chunk)}`.slice(-4_096)
+  })
   try {
     const portFile = join(profileRoot, 'DevToolsActivePort')
     await waitUntil(() => {
@@ -327,8 +335,15 @@ export async function openChromiumPage(
     })
   } catch (error) {
     stopChild(child)
-    removeTemporaryProfile(profileRoot)
-    throw error
+    await waitForExit(child)
+    try {
+      removeTemporaryProfile(profileRoot)
+    } catch {
+      // Preserve the launch diagnostic when Windows still holds profile files.
+    }
+    const detail = startupDiagnostic.trim()
+    if (detail.length === 0) throw error
+    throw new Error(`${error instanceof Error ? error.message : String(error)}\n${detail}`)
   }
 }
 

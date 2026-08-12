@@ -1,4 +1,5 @@
 import { readFileSync } from 'node:fs'
+import { gzipSync, strToU8 } from 'fflate'
 import { describe, expect, test } from 'vitest'
 import { serializeWebSave } from './serialization'
 import { PreparedSave } from './prepare'
@@ -7,6 +8,19 @@ import { RECEIVING_DEVICE_PREFERENCE_FIELDS } from './importContext'
 import { mappingCoverageManifest } from '../game-state/mappingCoverage'
 
 const fixtureDirectory = new URL('../../test/fixtures/', import.meta.url)
+
+function syntheticWebNativeV13(): string {
+  const json = JSON.stringify({
+    schemaVersion: 13,
+    modelVersion: 2,
+    savedAtUtc: '2026-08-08T00:00:00.000Z',
+    state: {},
+  })
+  const compressed = gzipSync(strToU8(json), { level: 9, mtime: 0 })
+  let binary = ''
+  for (const byte of compressed) binary += String.fromCharCode(byte)
+  return `IDSWEB1:${btoa(binary)}`
+}
 
 describe('save import text preparation', () => {
   test('retains every top-level field classified as a presentation preference', () => {
@@ -52,6 +66,8 @@ describe('save import text preparation', () => {
         doubleIp: true,
         debugOptions: true,
         debugEverEnabled: true,
+        cheater: true,
+        unlockAllTabs: true,
       }).copyValidatedState(),
     )
 
@@ -63,7 +79,13 @@ describe('save import text preparation', () => {
     expect(imported.doubleIp).toBe(false)
     expect(imported.debugOptions).toBe(false)
     expect(imported.debugEverEnabled).toBe(false)
-    expect((imported.packedSettingsFlags as bigint) & 0b1100n).toBe(0n)
+    expect(imported.cheater).toBe(false)
+    expect(imported.unlockAllTabs).toBe(false)
+    const nonportablePackedMask =
+      (1n << 2n) | (1n << 3n) | (1n << 4n) | (1n << 9n)
+    expect(
+      (imported.packedSettingsFlags as bigint) & nonportablePackedMask,
+    ).toBe(0n)
   })
 
   test('retains receiving-device presentation preferences on manual imports', () => {
@@ -118,13 +140,15 @@ describe('save import text preparation', () => {
     })
   })
 
-  test('manual shared import keeps only the receiving local Developer Options unlock', () => {
+  test('manual shared import keeps only the receiving local platform state', () => {
     const sender = serializeWebSave(
       PreparedSave.fromDecoded({
         saveVersion: 12,
         doubleIp: true,
         debugOptions: true,
         debugEverEnabled: true,
+        cheater: false,
+        unlockAllTabs: false,
       }).copyValidatedState(),
     )
     const receiver = PreparedSave.fromDecoded({
@@ -132,6 +156,8 @@ describe('save import text preparation', () => {
       doubleIp: false,
       debugOptions: true,
       debugEverEnabled: true,
+      cheater: true,
+      unlockAllTabs: true,
     }).copyValidatedState()
 
     const imported = prepareImportedSaveText(
@@ -148,14 +174,24 @@ describe('save import text preparation', () => {
     expect(imported.doubleIp).toBe(false)
     expect(imported.debugEverEnabled).toBe(true)
     expect(imported.debugOptions).toBe(true)
+    expect(imported.cheater).toBe(true)
+    expect(imported.unlockAllTabs).toBe(true)
+    const receivingPackedMask =
+      (1n << 2n) | (1n << 4n) | (1n << 9n)
+    expect(
+      (imported.packedSettingsFlags as bigint) & receivingPackedMask,
+    ).toBe(receivingPackedMask)
+    expect((imported.packedSettingsFlags as bigint) & (1n << 3n)).toBe(0n)
   })
 
-  test('manual shared import cannot introduce a sender Developer Options claim', () => {
+  test('manual shared import cannot introduce sender platform state', () => {
     const sender = serializeWebSave(
       PreparedSave.fromDecoded({
         saveVersion: 12,
         debugOptions: true,
         debugEverEnabled: true,
+        cheater: true,
+        unlockAllTabs: true,
       }).copyValidatedState(),
     )
 
@@ -171,11 +207,20 @@ describe('save import text preparation', () => {
         saveVersion: 12,
         debugOptions: false,
         debugEverEnabled: false,
+        cheater: false,
+        unlockAllTabs: false,
       }).copyValidatedState(),
     ).copyValidatedState()
 
     expect(imported.debugEverEnabled).toBe(false)
     expect(imported.debugOptions).toBe(false)
+    expect(imported.cheater).toBe(false)
+    expect(imported.unlockAllTabs).toBe(false)
+    const platformPackedMask =
+      (1n << 2n) | (1n << 4n) | (1n << 9n)
+    expect(
+      (imported.packedSettingsFlags as bigint) & platformPackedMask,
+    ).toBe(0n)
   })
 
   test('automatic same-device migration preserves Unity evidence and quit time for one startup grant', () => {
@@ -187,6 +232,8 @@ describe('save import text preparation', () => {
         doubleIp: true,
         debugOptions: true,
         debugEverEnabled: true,
+        cheater: true,
+        unlockAllTabs: true,
       }).copyValidatedState(),
     )
 
@@ -206,6 +253,8 @@ describe('save import text preparation', () => {
       doubleIp: true,
       debugOptions: true,
       debugEverEnabled: true,
+      cheater: true,
+      unlockAllTabs: true,
     })
   })
 
@@ -237,6 +286,8 @@ describe('save import text preparation', () => {
         dateQuitString: '2026-07-29T04:00:00Z',
         debugOptions: true,
         debugEverEnabled: true,
+        cheater: true,
+        unlockAllTabs: true,
       },
     })
 
@@ -254,6 +305,8 @@ describe('save import text preparation', () => {
       dateQuitString: '2026-07-29T04:00:00Z',
       debugOptions: true,
       debugEverEnabled: true,
+      cheater: true,
+      unlockAllTabs: true,
     })
   })
 
@@ -292,6 +345,15 @@ describe('save import text preparation', () => {
       lastSuccessfulLoadUtc: '2026-07-29T05:00:00Z',
       futureValue: { retained: true },
     })
+  })
+
+  test('rejects a synthetic Web-native V13 import as unsupported future', () => {
+    expect(() =>
+      prepareImportedSaveText(
+        syntheticWebNativeV13(),
+        '2026-07-29T05:00:00Z',
+      ),
+    ).toThrow('Save schema 13 is newer than supported schema 12.')
   })
 
   test('rejects text outside both supported save envelopes', () => {

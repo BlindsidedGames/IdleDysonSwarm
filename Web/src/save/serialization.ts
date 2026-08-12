@@ -7,9 +7,10 @@ import {
   type SaveImportLimits,
 } from './decodeIdb1'
 import { packSettingsFlags } from './settingsFlags'
+import { assertGzipTrailerIntegrity } from './gzipIntegrity'
 
 const WEB_SAVE_FORMAT = 'IDSWEB1'
-const WEB_SAVE_PREFIX = `${WEB_SAVE_FORMAT}:`
+export const WEB_SAVE_PREFIX = `${WEB_SAVE_FORMAT}:`
 const GZIP_INPUT_CHUNK_BYTES = 64
 const MAXIMUM_GZIP_CALLBACK_BYTES = 128 * 1024
 const MAXIMUM_DECODE_DEPTH = 128
@@ -55,6 +56,8 @@ export function stripNonShareableEntitlementClaims(
   shareable.doubleIp = false
   shareable.debugOptions = false
   shareable.debugEverEnabled = false
+  shareable.cheater = false
+  shareable.unlockAllTabs = false
   packSettingsFlags(shareable)
   return shareable
 }
@@ -73,11 +76,48 @@ export function deserializeWebSaveBounded(
   assertSuppliedSaveTextLimit(text, limits)
   const trimmed = text.trim()
   const json = trimmed.toUpperCase().startsWith(WEB_SAVE_PREFIX)
-    ? decodeCompressedEnvelope(
+    ? decodeCompressedWebSaveEnvelope(
         trimmed.slice(WEB_SAVE_PREFIX.length),
         limits,
       )
     : trimmed
+  return deserializeWebSaveJsonBounded(json, limits)
+}
+
+/**
+ * Decodes only the bounded IDSWEB1 transport layer. The returned JSON remains
+ * untrusted and must pass a schema-specific parser before use.
+ */
+export function decodeCompressedWebSaveEnvelope(
+  payload: string,
+  limits: Readonly<SaveImportLimits>,
+): string {
+  if (payload.length === 0) {
+    throw new Error('Canonical web save payload is empty.')
+  }
+  const compressed = decodeBase64Payload(
+    payload,
+    limits.decodedPayloadBytes,
+  )
+  const inflated = gunzipBounded(
+    compressed,
+    limits.inflatedBinaryBytes,
+  )
+  try {
+    return new TextDecoder('utf-8', { fatal: true }).decode(inflated)
+  } catch {
+    throw new Error('Canonical web save contains invalid UTF-8 JSON.')
+  }
+}
+
+/**
+ * Applies the existing schema-0-through-12 JSON graph decoder to JSON whose
+ * transport has already been bounded and inflated.
+ */
+export function deserializeWebSaveJsonBounded(
+  json: string,
+  limits: Readonly<SaveImportLimits>,
+): SaveRecord {
   const parsed = JSON.parse(json) as unknown
   const envelope = requireRecord(parsed, 'web save envelope')
   if (envelope.format !== WEB_SAVE_FORMAT) {
@@ -109,28 +149,6 @@ export function deserializeWebSaveBounded(
     )
   }
   return state
-}
-
-function decodeCompressedEnvelope(
-  payload: string,
-  limits: Readonly<SaveImportLimits>,
-): string {
-  if (payload.length === 0) {
-    throw new Error('Canonical web save payload is empty.')
-  }
-  const compressed = decodeBase64Payload(
-    payload,
-    limits.decodedPayloadBytes,
-  )
-  const inflated = gunzipBounded(
-    compressed,
-    limits.inflatedBinaryBytes,
-  )
-  try {
-    return new TextDecoder('utf-8', { fatal: true }).decode(inflated)
-  } catch {
-    throw new Error('Canonical web save contains invalid UTF-8 JSON.')
-  }
 }
 
 function decodeBase64Payload(value: string, limitBytes: number): Uint8Array {
@@ -201,6 +219,11 @@ function gunzipBounded(compressed: Uint8Array, limitBytes: number): Uint8Array {
       'Canonical web save gzip output does not match its advertised size.',
     )
   }
+  assertGzipTrailerIntegrity(
+    compressed,
+    output,
+    'Canonical web save',
+  )
   return output
 }
 

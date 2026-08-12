@@ -203,6 +203,7 @@ export type UiRuntimeDevelopmentAction =
   | { readonly kind: 'set-tinker-interval'; readonly seconds: 0 | 1 }
   | { readonly kind: 'recalculate-skill-points' }
   | { readonly kind: 'reset-secret-progress' }
+  | { readonly kind: 'unlock-debug-options' }
   | { readonly kind: 'purchase-debug-options' }
   | { readonly kind: 'disable-debug-options' }
 

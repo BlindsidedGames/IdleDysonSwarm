@@ -9,12 +9,14 @@ public final class IdleDysonNativePlugin: CAPPlugin, CAPBridgedPlugin {
     public let jsName = "IdleDysonNative"
     public let pluginMethods: [CAPPluginMethod] = [
         CAPPluginMethod(name: "metadata", returnType: CAPPluginReturnPromise),
+        CAPPluginMethod(name: "certificationDeviceContext", returnType: CAPPluginReturnPromise),
         CAPPluginMethod(name: "currentLifecycle", returnType: CAPPluginReturnPromise),
         CAPPluginMethod(name: "fileExists", returnType: CAPPluginReturnPromise),
         CAPPluginMethod(name: "readText", returnType: CAPPluginReturnPromise),
         CAPPluginMethod(name: "writeText", returnType: CAPPluginReturnPromise),
         CAPPluginMethod(name: "replaceAtomically", returnType: CAPPluginReturnPromise),
         CAPPluginMethod(name: "copy", returnType: CAPPluginReturnPromise),
+        CAPPluginMethod(name: "removeCertificationFiles", returnType: CAPPluginReturnPromise),
         CAPPluginMethod(name: "discoverUnitySaveCandidates", returnType: CAPPluginReturnPromise),
         CAPPluginMethod(name: "exportDiagnostics", returnType: CAPPluginReturnPromise),
         CAPPluginMethod(name: "getStoreProducts", returnType: CAPPluginReturnPromise),
@@ -185,6 +187,45 @@ public final class IdleDysonNativePlugin: CAPPlugin, CAPBridgedPlugin {
             defer { try? FileManager.default.removeItem(at: staged) }
             try data.write(to: staged, options: [.atomic])
             try self.replace(source: staged, destination: destination)
+            call.resolve()
+        }
+    }
+
+    @objc public func certificationDeviceContext(_ call: CAPPluginCall) {
+        let bundle = Bundle.main
+        guard bundle.bundleIdentifier?.hasSuffix(".stage7certification") == true else {
+            call.reject("Certification context is unavailable.", "certification-unavailable")
+            return
+        }
+        #if !targetEnvironment(simulator)
+        call.reject("This build certifies only the unsigned iOS simulator.", "certification-target-unsupported")
+        return
+        #endif
+        call.resolve([
+            "matrixId": "ios-current-simulator",
+            "physicalDevice": false,
+            "osApiLevel": NSNull(),
+            "deviceModel": UIDevice.current.model,
+            "osVersion": UIDevice.current.systemVersion,
+            "applicationVersion": bundle.object(forInfoDictionaryKey: "CFBundleShortVersionString") as? String ?? "0.0.0",
+            "buildNumber": bundle.object(forInfoDictionaryKey: "CFBundleVersion") as? String ?? "0",
+        ])
+    }
+
+    @objc public func removeCertificationFiles(_ call: CAPPluginCall) {
+        perform(call) {
+            guard let paths = call.getArray("relativePaths", String.self) else {
+                throw NativeBridgeError.invalidPath
+            }
+            let admitted = try paths.map { relativePath -> URL in
+                try self.requireCertificationCleanupPath(relativePath)
+                return try self.rootedURL(relativePath: relativePath)
+            }
+            for target in admitted where FileManager.default.fileExists(atPath: target.path) {
+                let values = try target.resourceValues(forKeys: [.isRegularFileKey])
+                guard values.isRegularFile == true else { throw NativeBridgeError.invalidPath }
+                try FileManager.default.removeItem(at: target)
+            }
             call.resolve()
         }
     }
@@ -451,6 +492,18 @@ public final class IdleDysonNativePlugin: CAPPlugin, CAPBridgedPlugin {
         return data
     }
 
+    private func requireCertificationCleanupPath(_ relativePath: String) throws {
+        let segments = relativePath.split(separator: "/", omittingEmptySubsequences: false)
+        guard segments.count >= 3,
+              segments[0] == Substring(Self.certificationNamespace),
+              Self.certificationBuildScope.wholeMatch(in: String(segments[1])) != nil,
+              Self.certificationCleanupSuffixes.contains(
+                segments.dropFirst(2).map(String.init).joined(separator: "/")
+              ) else {
+            throw NativeBridgeError.invalidPath
+        }
+    }
+
     private func readBoundedData(from url: URL) throws -> Data {
         let values = try url.resourceValues(forKeys: [.fileSizeKey, .isRegularFileKey])
         guard values.isRegularFile == true else {
@@ -504,6 +557,22 @@ public final class IdleDysonNativePlugin: CAPPlugin, CAPBridgedPlugin {
     private static let unitySaveFileName = "idle_dyson_swarm_save.txt"
     private static let maxFileBytes = 32 * 1024 * 1024
     private static let maxDiagnosticBytes = 64 * 1024
+    private static let certificationNamespace = "stage7-v2-certification"
+    private static let certificationBuildScope = try! NSRegularExpression(
+        pattern: "^[a-zA-Z0-9][a-zA-Z0-9._-]{0,127}$"
+    )
+    private static let certificationCleanupSuffixes: Set<String> = [
+        "checkpoint/current.json",
+        "checkpoint/current.json.tmp",
+        "checkpoint/backups/current.1.json",
+        "checkpoint/backups/current.2.json",
+        "checkpoint/backups/current.3.json",
+        "recovery/import-original.idsw",
+        "recovery/import-original.idsw.tmp",
+        "local/stored-time-policy.json",
+        "evidence/draft.json",
+        "evidence/draft.json.tmp",
+    ]
     private static let diagnosticFileName = try! NSRegularExpression(
         pattern: "^[a-zA-Z0-9][a-zA-Z0-9._-]{0,90}\\.json$"
     )
@@ -517,6 +586,22 @@ public final class IdleDysonNativePlugin: CAPPlugin, CAPBridgedPlugin {
         "frontendRevision",
         "canonicalRevision",
         "errorKind",
+        "matrixId", "performedAtUtc", "tester", "deviceModel", "physicalDevice", "osApiLevel",
+        "osVersion", "webViewVersion", "appVersion", "workerBuildId",
+        "workerCatalogHash", "workerTuningHash", "policy", "schemaBefore",
+        "schemaAfter", "initialRevision", "finalRevision", "saveReadback",
+        "reloadReadback", "corruptionRecovery", "lifecyclePauseReturn",
+        "forcedReloadRecovery", "longOfflineSeconds", "extremeDecimalCanonical",
+        "updateIdentityRecovery", "platformStateIsLocal", "portableSaveExcludesPlatform",
+        "maximumChunkMilliseconds", "maximumAtomicEventMilliseconds", "result", "notes",
+        "fastRawTicks", "balancedRawTicks", "exactRawTicks",
+        "fastCompleted", "balancedCompleted", "exactCompleted",
+        "developerPurchaseVerified", "developerFreeEnableVerified",
+        "developerShardDebit", "developerStrangeMatterDebit", "developerLifetimeShardDelta",
+        "preAckRecovery", "postCheckpointRecovery", "forwardSchemaRecovery",
+        "extremeAdvanceVerified",
+        "updateBuildAId", "updateBuildBId", "updateBaselineRevision",
+        "updateBaselineStoredTimeSeconds", "updatePortableHash",
     ]
     private static let productIds: [String] = [
         "ids.tiptier1",

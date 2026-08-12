@@ -7,12 +7,14 @@ function read(relativePath: string): string {
 
 const bridgeMethods = [
   'metadata',
+  'certificationDeviceContext',
   'currentLifecycle',
   'fileExists',
   'readText',
   'writeText',
   'replaceAtomically',
   'copy',
+  'removeCertificationFiles',
   'discoverUnitySaveCandidates',
   'exportDiagnostics',
   'getStoreProducts',
@@ -67,6 +69,27 @@ describe('Capacitor first-party native bridge', () => {
     )
     for (const discovery of discoverySlices) {
       expect(discovery).not.toMatch(/removeItem|delete\(|writeText|write\(to:/)
+    }
+  })
+
+  it('limits certification cleanup to its enumerated build-scoped files', () => {
+    for (const source of [android, ios]) {
+      const cleanupStart = Math.max(
+        source.indexOf('fun removeCertificationFiles'),
+        source.indexOf('func removeCertificationFiles'),
+      )
+      const cleanup = source.slice(
+        cleanupStart,
+        source.indexOf('discoverUnitySaveCandidates', cleanupStart),
+      )
+      expect(cleanup).toContain('requireCertificationCleanupPath')
+      expect(source).toContain('stage7-v2-certification')
+      expect(source).toContain('checkpoint/current.json')
+      expect(source).toContain('recovery/import-original.idsw')
+      expect(source).toContain('local/stored-time-policy.json')
+      expect(source).toContain('evidence/draft.json')
+      expect(cleanup).not.toContain('save/idle_dyson_swarm_web_save.idsw')
+      expect(cleanup).not.toContain('NATIVE_WEB_SAVE_PATHS')
     }
   })
 
@@ -179,5 +202,44 @@ describe('Capacitor first-party native bridge', () => {
       expect(source).not.toContain('receiptData')
       expect(source).not.toContain('purchaseToken')
     }
+  })
+
+  it('packages the dormant device harness only in explicitly flagged debug builds', () => {
+    const androidBuild = read('hosts/capacitor/android/app/build.gradle')
+    const productionVite = read('vite.config.ts')
+    const certificationVite = read('vite.stage7-native-certification.config.ts')
+    const instrumented = read(
+      'hosts/capacitor/android/app/src/androidTest/java/com/blindsidedgames/idledysonswarm/Stage7CertificationInstrumentedTest.kt',
+    )
+    const iosProject = read('hosts/capacitor/ios/App/App.xcodeproj/project.pbxproj')
+    const iosInstaller = read('scripts/install-stage7-ios-certification.ts')
+
+    expect(androidBuild).toContain("gradleProperty('IDS_STAGE7_CERTIFICATION')")
+    expect(androidBuild).toContain("assets.srcDir '../../../../dist-stage7-native-certification'")
+    expect(androidBuild).toContain('buildConfigField "boolean", "STAGE7_V2_CERTIFICATION"')
+    expect(androidBuild).toContain('applicationIdSuffix ".stage7certification"')
+    expect(android).toContain('if (!BuildConfig.STAGE7_V2_CERTIFICATION)')
+    expect(android).toContain('"certification-unavailable"')
+    expect(ios).toContain('hasSuffix(".stage7certification")')
+    expect(ios).toContain('"certification-unavailable"')
+    expect(androidBuild.indexOf('assets.srcDir')).toBeGreaterThan(androidBuild.indexOf('debug {'))
+    expect(certificationVite).toContain("outDir: 'dist-stage7-native-certification/public'")
+    expect(certificationVite).toContain('__STAGE7_NATIVE_CERTIFICATION__')
+    expect(certificationVite).toContain("'import.meta.env.VITE_BUILD_ID'")
+    expect(certificationVite).toContain('createStoredTimeWorkerReleaseBuildIdV2()')
+    expect(productionVite).not.toContain('stage7-native-certification')
+    expect(instrumented).toContain('BuildConfig.STAGE7_V2_CERTIFICATION')
+    expect(instrumented).toContain('ActivityScenario.launch(MainActivity::class.java)')
+    expect(instrumented).toContain('selected policy')
+    expect(instrumented).toContain('pause and return')
+    expect(instrumented).toContain('1e1000')
+    expect(instrumented).toContain('public/index.html')
+    expect(instrumented).not.toContain('ExampleInstrumentedTest')
+    expect(iosProject).toContain('Guard Stage 7 Certification Resources')
+    expect(iosProject).toContain('stage7-certification.marker')
+    expect(iosProject).toContain('IDS_STAGE7_CERTIFICATION')
+    expect(iosProject).toContain('*.stage7certification')
+    expect(iosInstaller).toContain("process.env.IDS_STAGE7_CERTIFICATION !== 'true'")
+    expect(iosInstaller).toContain("resolve('dist-stage7-native-certification/public')")
   })
 })

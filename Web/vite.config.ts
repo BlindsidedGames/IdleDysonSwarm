@@ -1,4 +1,5 @@
 import { defineConfig, type Plugin } from 'vite'
+import { resolve } from 'node:path'
 import react from '@vitejs/plugin-react'
 import {
   HTML_CONTENT_SECURITY_POLICY,
@@ -12,6 +13,7 @@ import {
   PWA_BASE_PATH,
   pwaPackagePlugin,
 } from './scripts/pwaPackage.js'
+import { createStoredTimeWorkerReleaseBuildIdV2 } from './vite.stored-time-worker.config.js'
 
 function nativeRelativeHtmlPlugin(): Plugin {
   return {
@@ -63,6 +65,7 @@ function developmentTelemetryPlugin(): Plugin {
 // https://vite.dev/config/
 export default defineConfig(({ mode }) => {
   const nativeBuild = mode === 'native'
+  const stage8InspectionBuild = mode === 'stage8-v2-game'
   return {
     base: nativeBuild ? './' : PWA_BASE_PATH,
     plugins: [
@@ -97,13 +100,39 @@ export default defineConfig(({ mode }) => {
         },
       },
     ],
+    define: {
+      'import.meta.env.VITE_BUILD_ID': JSON.stringify(
+        createStoredTimeWorkerReleaseBuildIdV2(),
+      ),
+    },
     build: {
       // Native schemes and Electron's file loader require relative asset URLs.
-      outDir: nativeBuild ? 'dist-native' : 'dist',
+      outDir: nativeBuild
+        ? 'dist-native'
+        : stage8InspectionBuild
+          ? 'dist-stage8-v2-game'
+          : 'dist',
       // The repeatable initial-request budget report consumes this graph instead
       // of assuming Vite's hashed filenames or manual chunk layout.
       manifest: true,
       sourcemap: false,
+      rollupOptions: {
+        preserveEntrySignatures: 'exports-only',
+        input: {
+          app: resolve(import.meta.dirname, 'index.html'),
+          ...(stage8InspectionBuild
+            ? { v2Game: resolve(import.meta.dirname, 'v2-game.html') }
+            : {}),
+          'stage7-v2-certification-launcher': resolve(
+            import.meta.dirname,
+            'src/certification/stage7V2Harness.ts',
+          ),
+          'stage7-v2-certification-access': resolve(
+            import.meta.dirname,
+            'src/certification/stage7V2/access.ts',
+          ),
+        },
+      },
     },
     preview: {
       headers: SECURITY_HEADERS,

@@ -1,0 +1,98 @@
+@import "../../ui/tokens/tokens.css";
+
+.stage7-certification {
+  display: grid;
+  gap: var(--space-4);
+  inline-size: min(100%, 52rem);
+  margin-inline: auto;
+  padding: var(--space-5);
+  color: var(--color-text-primary);
+  background: var(--color-app-background);
+  font-family: var(--font-family-body);
+}
+
+.stage7-certification header,
+.stage7-certification section {
+  display: grid;
+  gap: var(--space-3);
+}
+
+.stage7-certification section {
+  padding: var(--space-4);
+  border: var(--border-width) solid var(--color-border);
+  border-radius: var(--radius-md);
+  background: var(--color-surface);
+}
+
+.stage7-certification h1,
+.stage7-certification h2,
+.stage7-certification p,
+.stage7-certification fieldset,
+.stage7-certification dl {
+  margin: 0;
+}
+
+.stage7-certification h1 { font-size: var(--font-size-xl); }
+.stage7-certification h2 { font-size: var(--font-size-lg); }
+.stage7-certification p,
+.stage7-certification small { color: var(--color-text-secondary); line-height: var(--line-height-body); }
+
+.stage7-certification fieldset {
+  min-inline-size: 0;
+  padding: var(--space-3);
+  border: var(--border-width) solid var(--color-border);
+}
+
+.stage7-certification legend { padding-inline: var(--space-2); font-weight: var(--font-weight-semibold); }
+.stage7-certification__policies { display: grid; gap: var(--space-2); }
+.stage7-certification__policies label { display: grid; gap: var(--space-1); padding: var(--space-2); cursor: pointer; }
+.stage7-certification__policies label:has(input:checked) { background: var(--color-surface-raised); }
+.stage7-certification__policies span { display: flex; align-items: center; gap: var(--space-2); }
+.stage7-certification input { inline-size: 1.25rem; block-size: 1.25rem; accent-color: var(--color-highlight); }
+.stage7-certification .stage7-certification__fast-disclosure {
+  padding: var(--space-3);
+  border-inline-start: 0.25rem solid var(--color-warning);
+  color: var(--color-text-primary);
+  background: var(--color-surface-raised);
+}
+
+.stage7-certification__section-heading { display: flex; align-items: baseline; justify-content: space-between; gap: var(--space-3); }
+.stage7-certification output { color: var(--color-highlight); font-weight: var(--font-weight-semibold); }
+.stage7-certification progress { inline-size: 100%; block-size: 1rem; accent-color: var(--color-highlight); }
+.stage7-certification__metrics { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: var(--space-2); }
+.stage7-certification__metrics div { min-inline-size: 0; padding: var(--space-2); background: var(--color-surface-raised); }
+.stage7-certification__metrics dt { color: var(--color-text-secondary); font-size: var(--font-size-sm); }
+.stage7-certification__metrics dd { margin: var(--space-1) 0 0; overflow-wrap: anywhere; font-variant-numeric: tabular-nums; }
+
+.stage7-certification__controls { display: flex; flex-wrap: wrap; gap: var(--space-2); }
+.stage7-certification button {
+  min-block-size: var(--target-minimum);
+  padding: var(--space-2) var(--space-4);
+  border: var(--border-width) solid var(--color-border);
+  border-radius: var(--radius-sm);
+  color: #170f1a;
+  background: var(--color-control);
+  font: inherit;
+  font-weight: var(--font-weight-semibold);
+  cursor: pointer;
+  transition: background-color var(--motion-duration-fast) var(--motion-easing-standard);
+}
+.stage7-certification button:hover:not(:disabled) { background: var(--color-control-hover); }
+.stage7-certification button:focus-visible,
+.stage7-certification input:focus-visible { outline: 0.2rem solid var(--color-focus); outline-offset: 0.15rem; }
+.stage7-certification button:disabled { cursor: not-allowed; opacity: 0.55; }
+.stage7-certification .stage7-certification__cancel { color: var(--color-text-primary); background: #71333b; }
+.stage7-certification__refund-note { color: var(--color-warning) !important; }
+.stage7-certification__announcement { min-block-size: 1.5em; }
+
+@media (max-width: 599px) {
+  .stage7-certification { padding: var(--space-3); }
+  .stage7-certification section { padding: var(--space-3); }
+  .stage7-certification__metrics { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .stage7-certification__controls { display: grid; }
+  .stage7-certification button { inline-size: 100%; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .stage7-certification button { transition: none; }
+}

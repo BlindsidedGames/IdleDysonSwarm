@@ -57,6 +57,9 @@ export interface NativeHostBridgeApi {
     sourceRelativePath: string,
     destinationRelativePath: string,
   ): Promise<void>
+  readonly removeCertificationFiles?: (
+    relativePaths: readonly string[],
+  ) => Promise<void>
   discoverUnitySaves(): Promise<readonly NativeUnitySaveCandidate[]>
   currentLifecyclePhase(): LifecyclePhase
   subscribeLifecycle(
@@ -66,6 +69,7 @@ export interface NativeHostBridgeApi {
     handler: () => Promise<boolean>,
   ) => () => void
   metadata(): Promise<Readonly<NativeApplicationMetadata>>
+  readonly certificationDeviceContext?: () => Promise<Readonly<NativeCertificationDeviceContext>>
   exportDiagnostics(
     request: Readonly<NativeDiagnosticsFileRequest>,
   ): Promise<DiagnosticsExportResult>
@@ -78,6 +82,16 @@ export interface NativeHostBridgeApi {
   readonly promoteAutomaticUnityPurchaseEvidence?: (
     evidence: Readonly<AutomaticUnityPurchaseEvidence>,
   ) => Promise<void>
+}
+
+export interface NativeCertificationDeviceContext {
+  readonly matrixId: 'android-api26-emulator' | 'android-api36-emulator' | 'ios-current-simulator'
+  readonly physicalDevice: boolean
+  readonly osApiLevel: number | null
+  readonly deviceModel: string
+  readonly osVersion: string
+  readonly applicationVersion: string
+  readonly buildNumber: string
 }
 
 declare global {
@@ -101,11 +115,15 @@ interface CapacitorNativeHostPlugin {
     sourceRelativePath: string
     destinationRelativePath: string
   }): Promise<void>
+  removeCertificationFiles(request: {
+    relativePaths: readonly string[]
+  }): Promise<void>
   discoverUnitySaveCandidates(): Promise<{
     candidates: readonly NativeUnitySaveCandidate[]
   }>
   currentLifecycle(): Promise<{ phase: LifecyclePhase }>
   metadata(): Promise<NativeApplicationMetadata>
+  certificationDeviceContext(): Promise<NativeCertificationDeviceContext>
   exportDiagnostics(
     request: NativeDiagnosticsFileRequest,
   ): Promise<DiagnosticsExportResult>
@@ -319,6 +337,10 @@ class CapacitorNativeHostBridge implements NativeHostBridgeApi {
     })
   }
 
+  removeCertificationFiles(relativePaths: readonly string[]): Promise<void> {
+    return this.plugin.removeCertificationFiles({ relativePaths })
+  }
+
   async discoverUnitySaves(): Promise<readonly NativeUnitySaveCandidate[]> {
     return (await this.plugin.discoverUnitySaveCandidates()).candidates
   }
@@ -351,6 +373,10 @@ class CapacitorNativeHostBridge implements NativeHostBridgeApi {
 
   metadata(): Promise<Readonly<NativeApplicationMetadata>> {
     return this.plugin.metadata()
+  }
+
+  certificationDeviceContext(): Promise<Readonly<NativeCertificationDeviceContext>> {
+    return this.plugin.certificationDeviceContext()
   }
 
   exportDiagnostics(

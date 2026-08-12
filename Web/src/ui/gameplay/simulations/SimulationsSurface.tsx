@@ -45,9 +45,16 @@ import {
   formatGameNumber,
   formatGameNumberParts,
   formatNumber,
+  type NumericValue,
 } from '../../i18n/formatters'
 import type { EnabledLocale } from '../../i18n/localeRegistry'
 import type { UiRuntimePlayerCommandResult } from '../../runtime'
+import {
+  boundedPresentationWholeQuotient,
+  comparePresentationNumeric,
+  presentationDecimal,
+} from '../../presentationNumeric'
+import { multiplyGameDecimals } from '../../../math/gameDecimal'
 import { usePrefersReducedMotion } from '../../accessibility/useMediaQuery'
 import { useForwardProgressAnimation } from '../progress/useForwardProgressAnimation'
 import { simulationsMessages as messages } from './messages'
@@ -103,7 +110,7 @@ export interface SimulationsSurfaceProps {
   readonly facts: FrontendSimulationsDerivedFacts
   readonly progression: FrontendCanonicalProgression['dream']
   readonly previews: FrontendGameplayPreviews['dream']
-  readonly influence: bigint
+  readonly influence: NumericValue
   readonly activeDoubleTimeRate: number
   readonly spaceAgePurchaseQuantity: SpaceAgePurchaseQuantity
   readonly commandAvailability: SimulationsCommandAvailability
@@ -323,7 +330,7 @@ function simulationTextToString(value: SimulationText): string {
 
 function highlightedNumber(
   locale: EnabledLocale,
-  value: number | bigint,
+  value: NumericValue,
 ): SimulationTextModel {
   const parts = formatGameNumberParts(locale, value)
   return {
@@ -984,7 +991,7 @@ function createPanelModels(input: {
   readonly progression: FrontendCanonicalProgression['dream']
   readonly previews: FrontendGameplayPreviews['dream']
   readonly commandAvailability: SimulationsCommandAvailability
-  readonly influence: bigint
+  readonly influence: NumericValue
   readonly cyclePresentation: CyclePresentationMode
   readonly spaceAgePurchaseQuantity: SpaceAgePurchaseQuantity
 }): ReadonlyMap<PanelId, SimulationPanelModel> {
@@ -994,8 +1001,8 @@ function createPanelModels(input: {
   const production = facts.live.production.ok
     ? facts.live.production.value
     : null
-  const display = (value: number | bigint) => formatGameNumber(locale, value)
-  const displayRich = (value: number | bigint) => highlightedNumber(locale, value)
+  const display = (value: NumericValue) => formatGameNumber(locale, value)
+  const displayRich = (value: NumericValue) => highlightedNumber(locale, value)
   const displayEnergyRich = (
     value: number,
     unit: 'joules' | 'watts',
@@ -1358,7 +1365,7 @@ function productionProgress(
   >>,
   presentation: CyclePresentationMode,
   intl: IntlShape,
-  display: (value: number | bigint) => SimulationText,
+  display: (value: NumericValue) => SimulationText,
   percent: (fraction: number) => SimulationText,
 ): SimulationProgressModel {
   const fraction = timer.durationSeconds > 0
@@ -1388,7 +1395,7 @@ function productionProgress(
 function timerDetailRows(
   timer: DreamTimerProductionFact,
   intl: IntlShape,
-  display: (value: number | bigint) => string,
+  display: (value: NumericValue) => string,
 ): readonly SimulationDetailRowModel[] {
   const outputs = Object.entries(timer.outputPerCycle)
     .filter(([, amount]) => amount > 0)
@@ -1442,7 +1449,7 @@ function timerDetailRows(
 function rocketConversionDetailRows(
   conversion: CanonicalDreamDerivedFacts['foundationalInformation']['conversions']['rocketsToSpaceFactories'],
   intl: IntlShape,
-  display: (value: number | bigint) => string,
+  display: (value: NumericValue) => string,
 ): readonly SimulationDetailRowModel[] {
   return [
     {
@@ -1483,7 +1490,7 @@ function spaceAgeDetailRows(
 function foundationalAction(
   id: PanelId,
   input: Parameters<typeof createPanelModels>[0],
-  display: (value: number | bigint) => string,
+  display: (value: NumericValue) => string,
 ): SimulationPanelModel['action'] {
   const purchase: DreamPurchaseCommand | null =
     id === 'hunters' || id === 'gatherers'
@@ -1502,7 +1509,8 @@ function foundationalAction(
       ? input.progression.gatherersPerPurchase
       : 1
   const isBoost = purchase.endsWith('-boost')
-  const free = purchase === 'community-boost' && preview.cost === 0n
+  const free = purchase === 'community-boost' &&
+    comparePresentationNumeric(preview.cost, 0) === 0
   const label = input.intl.formatMessage(
     free ? messages.freeBoost : isBoost ? messages.boost : messages.purchase,
     {
@@ -1528,7 +1536,7 @@ function foundationalAction(
 function educationAction(
   educationId: DreamEducationId,
   input: Parameters<typeof createPanelModels>[0],
-  display: (value: number | bigint) => string,
+  display: (value: NumericValue) => string,
 ): SimulationPanelModel['action'] {
   const preview = input.previews.education.find((item) => item.educationId === educationId)
   if (!preview) return undefined
@@ -1545,7 +1553,7 @@ function educationAction(
 function spaceAgeAction(
   id: PanelId,
   input: Parameters<typeof createPanelModels>[0],
-  display: (value: number | bigint) => string,
+  display: (value: NumericValue) => string,
 ): SimulationPanelModel['action'] {
   if (id === 'swarm-stats') {
     const label = input.intl.formatMessage(messages.blackHole, {
@@ -1577,7 +1585,10 @@ function spaceAgeAction(
     input.influence,
     preview.cost,
   )
-  const totalCost = preview.cost * BigInt(quantity)
+  const totalCost = multiplyGameDecimals(
+    presentationDecimal(preview.cost),
+    presentationDecimal(quantity),
+  )
   const label = input.intl.formatMessage(messages.purchase, {
     quantity: formatWholeQuantity(input.locale, quantity),
     cost: display(totalCost),
@@ -1598,14 +1609,19 @@ function spaceAgeAction(
 
 function resolveSpaceAgePurchaseQuantity(
   selected: SpaceAgePurchaseQuantity,
-  influence: bigint,
-  unitCost: bigint,
+  influence: NumericValue,
+  unitCost: NumericValue,
 ): number {
   if (selected !== 'max') return selected
-  if (unitCost <= 0n || influence < unitCost) return 0
-  const affordable = influence / unitCost
-  const maximum = BigInt(Number.MAX_SAFE_INTEGER)
-  return Number(affordable > maximum ? maximum : affordable)
+  if (
+    comparePresentationNumeric(unitCost, 0) <= 0 ||
+    comparePresentationNumeric(influence, unitCost) < 0
+  ) return 0
+  return Number(boundedPresentationWholeQuotient(
+    influence,
+    unitCost,
+    BigInt(Number.MAX_SAFE_INTEGER),
+  ))
 }
 
 function formatWholeQuantity(
@@ -1690,7 +1706,7 @@ function combinePanelStatus(
 function timerProductionStatus(
   timer: DreamTimerProductionFact,
   intl: IntlShape,
-  display: (value: number | bigint) => string,
+  display: (value: NumericValue) => string,
 ): string {
   const outputs = Object.entries(timer.outputPerSecond)
     .filter(([, amount]) => amount > 0)

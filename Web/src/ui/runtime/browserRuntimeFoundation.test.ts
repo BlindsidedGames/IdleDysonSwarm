@@ -1,5 +1,6 @@
 import { readFileSync } from 'node:fs'
 import { describe, expect, test } from 'vitest'
+import { gameDecimalFromBigInt, gameDecimalFromNumber } from '../../math/gameDecimal'
 import type {
   ApplicationCommandEnvelope,
   ApplicationSnapshot,
@@ -176,13 +177,13 @@ describe('browser runtime foundation composition', () => {
       gameplay: {
         resources: {
           dyson: {
-            bots: 195_000,
-            workers: 97_500,
-            researchers: 97_500,
+            bots: gameDecimalFromNumber(195_000),
+            workers: gameDecimalFromNumber(97_500),
+            researchers: gameDecimalFromNumber(97_500),
           },
           infinity: {
-            points: 27n,
-            spentPoints: 27n,
+            points: gameDecimalFromBigInt(27n),
+            spentPoints: gameDecimalFromBigInt(27n),
             secretsOfTheUniverse: 27n,
           },
         },

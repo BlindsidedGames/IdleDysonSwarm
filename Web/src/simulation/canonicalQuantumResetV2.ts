@@ -1,0 +1,74 @@
+import { cloneCanonicalGameStateV2 } from '../game-state/cloneV2'
+import { cloneCanonicalRuntimeSidecarV2, type CanonicalRuntimeSidecarV2 } from '../game-state/runtimeV2'
+import type { CanonicalGameStateV2, SimulationTotalsStateV2 } from '../game-state/typesV2'
+import { validateCanonicalGameStateV2 } from '../game-state/validateV2'
+import {
+  GAME_DECIMAL_ONE, GAME_DECIMAL_ZERO, addGameDecimals, cloneGameDecimal,
+  compareGameDecimals, divideGameDecimals, equalGameDecimals, floorGameDecimal,
+  gameDecimalFromBigInt, gameDecimalToSchedulerSeconds, isIntegerGameDecimal,
+  multiplyGameDecimals, subtractGameDecimals, type GameDecimal,
+} from '../math/gameDecimal'
+import { deriveDysonV2FromCauses } from './dysonV2Derivation'
+import { infinityProductionHorizonV2, INFINITY_TUNING_V2, ordinaryInfinityBotThresholdV2 } from './infinityEconomyV2'
+import { DISCRETE_MAXIMUM } from './numeric'
+import { realityArtifactSkillPointsV2 } from './realityV2'
+import { resetV2ResearchForInfinity } from './researchV2'
+import { canonicalSkillCatalogV2 } from './skillCatalogV2'
+import { clearedCanonicalSkillRuntimeV2, runCanonicalSkillAutoAssignmentV2 } from './skillTransactionsV2'
+
+export interface CanonicalQuantumPublicationV2 { readonly revision:number;readonly state:CanonicalGameStateV2;readonly runtime:CanonicalRuntimeSidecarV2 }
+export type CanonicalQuantumResetRequestV2=Readonly<{kind:'quantum-action'}>
+export interface CanonicalQuantumResetQuoteV2 {readonly kind:'canonical-quantum-reset-quote-v2';readonly accepted:boolean;readonly code:'ready'|'invalid-request'|'not-ready'|'output-unrepresented'|'revision-exhausted';readonly sourceRevision:number;readonly operation:'ordinary-leap'|'entanglement'|null;readonly requestedShards:GameDecimal;readonly effectiveAvailableShards:GameDecimal;readonly effectiveLifetimeShards:GameDecimal;readonly infinityPointsConsumed:GameDecimal;readonly resetSkillPoints:bigint;readonly autoAssignedSkillIds:readonly string[];readonly expectedPublication:Readonly<CanonicalQuantumPublicationV2>|null}
+export interface CanonicalQuantumResetCommitV2 {readonly accepted:boolean;readonly changed:boolean;readonly code:'committed'|'quote-rejected'|'stale-publication';readonly publication:Readonly<CanonicalQuantumPublicationV2>|null}
+interface Issued {readonly source:Readonly<CanonicalQuantumPublicationV2>;readonly candidate:Readonly<CanonicalQuantumPublicationV2>}
+const issued=new WeakMap<object,Issued>(),consumed=new WeakSet<object>()
+const FORTY_TWO=gameDecimalFromBigInt(42n)
+
+export function quoteCanonicalQuantumResetV2(publication:Readonly<CanonicalQuantumPublicationV2>,request:CanonicalQuantumResetRequestV2):Readonly<CanonicalQuantumResetQuoteV2>{try{return quoteInternal(publication,request)}catch{return failureQuote('invalid-request')}}
+export function commitCanonicalQuantumResetV2(quote:Readonly<CanonicalQuantumResetQuoteV2>,publication:Readonly<CanonicalQuantumPublicationV2>):Readonly<CanonicalQuantumResetCommitV2>{try{if(quote===null||typeof quote!=='object'||consumed.has(quote as object))return commitFailure('quote-rejected');const descriptor=issued.get(quote as object);if(descriptor===undefined)return commitFailure('quote-rejected');consumed.add(quote as object);const current=admitPublication(publication);if(current===null||!equalTree(current,descriptor.source))return commitFailure('stale-publication');return Object.freeze({accepted:true,changed:true,code:'committed' as const,publication:descriptor.candidate})}catch{return commitFailure('quote-rejected')}}
+
+function quoteInternal(publication:Readonly<CanonicalQuantumPublicationV2>,request:CanonicalQuantumResetRequestV2):Readonly<CanonicalQuantumResetQuoteV2>{
+  const source=admitPublication(publication),captured=captureRequest(request);if(source===null||captured===null)return failureQuote('invalid-request')
+  const operation=source.state.quantum.unlocks.quantumEntanglement?'entanglement' as const:'ordinary-leap' as const
+  if(source.revision===Number.MAX_SAFE_INTEGER)return failureQuote('revision-exhausted',source.revision,operation)
+  const outcome=operation==='entanglement'?entangle(source):ordinaryLeap(source)
+  if(outcome.code!=='ready')return failureQuote(outcome.code,source.revision,operation)
+  const expected=Object.freeze({revision:source.revision+1,state:outcome.state,runtime:outcome.runtime}),quote=Object.freeze({kind:'canonical-quantum-reset-quote-v2' as const,accepted:true,code:'ready' as const,sourceRevision:source.revision,operation,requestedShards:outcome.requested,effectiveAvailableShards:outcome.available,effectiveLifetimeShards:outcome.lifetime,infinityPointsConsumed:outcome.consumed,resetSkillPoints:outcome.resetSkillPoints,autoAssignedSkillIds:outcome.assigned,expectedPublication:expected})
+  issued.set(quote,Object.freeze({source,candidate:expected}));return quote
+}
+
+type Outcome=Readonly<{code:'ready';state:CanonicalGameStateV2;runtime:Readonly<CanonicalRuntimeSidecarV2>;requested:GameDecimal;available:GameDecimal;lifetime:GameDecimal;consumed:GameDecimal;resetSkillPoints:bigint;assigned:readonly string[]}>|Readonly<{code:'not-ready'|'output-unrepresented'}>
+function entangle(source:Readonly<CanonicalQuantumPublicationV2>):Outcome{
+  if(!source.state.quantum.unlocks.quantumEntanglement)return Object.freeze({code:'not-ready'})
+  const availableIp=source.state.infinity.availablePoints;if(!isIntegerGameDecimal(availableIp))return Object.freeze({code:'not-ready'})
+  let requested=floorGameDecimal(divideGameDecimals(availableIp,FORTY_TWO)),represented=multiplyGameDecimals(requested,FORTY_TWO)
+  if(compareGameDecimals(represented,availableIp)>0&&compareGameDecimals(requested,GAME_DECIMAL_ZERO)>0){requested=subtractGameDecimals(requested,GAME_DECIMAL_ONE);represented=multiplyGameDecimals(requested,FORTY_TWO)}
+  if(compareGameDecimals(requested,GAME_DECIMAL_ZERO)<=0)return Object.freeze({code:'not-ready'})
+  const remainder=subtractGameDecimals(availableIp,represented);if(compareGameDecimals(remainder,FORTY_TWO)>=0)return Object.freeze({code:'not-ready'})
+  const nextAvailable=addGameDecimals(source.state.quantum.availableShards,requested),nextLifetime=addGameDecimals(source.state.quantum.lifetimeEarnedShards,requested),effectiveAvailable=subtractGameDecimals(nextAvailable,source.state.quantum.availableShards),effectiveLifetime=subtractGameDecimals(nextLifetime,source.state.quantum.lifetimeEarnedShards)
+  if(equalGameDecimals(nextAvailable,source.state.quantum.availableShards)||equalGameDecimals(nextLifetime,source.state.quantum.lifetimeEarnedShards)||equalGameDecimals(remainder,availableIp))return Object.freeze({code:'output-unrepresented'})
+  const state=cloneCanonicalGameStateV2({...source.state,meta:{...source.state.meta,firstInfinityComplete:true},infinity:{...source.state.infinity,availablePoints:remainder},quantum:{...source.state.quantum,availableShards:nextAvailable,lifetimeEarnedShards:nextLifetime}})
+  return Object.freeze({code:'ready',state,runtime:cloneCanonicalRuntimeSidecarV2(source.runtime),requested,available:effectiveAvailable,lifetime:effectiveLifetime,consumed:represented,resetSkillPoints:0n,assigned:Object.freeze([])})
+}
+
+function ordinaryLeap(source:Readonly<CanonicalQuantumPublicationV2>):Outcome{
+  const totalInfinityPoints=addGameDecimals(source.state.infinity.availablePoints,source.state.infinity.allocatedPoints)
+  if(compareGameDecimals(totalInfinityPoints,FORTY_TWO)<0)return Object.freeze({code:'not-ready'})
+  const nextAvailable=addGameDecimals(source.state.quantum.availableShards,GAME_DECIMAL_ONE),nextLifetime=addGameDecimals(source.state.quantum.lifetimeEarnedShards,GAME_DECIMAL_ONE),effectiveAvailable=subtractGameDecimals(nextAvailable,source.state.quantum.availableShards),effectiveLifetime=subtractGameDecimals(nextLifetime,source.state.quantum.lifetimeEarnedShards),resetSkillPoints=quantumResetSkillPoints(source.state)
+  const clearedSkills=Object.freeze(Object.fromEntries(canonicalSkillCatalogV2.skillIds.map(id=>[id,clearedCanonicalSkillRuntimeV2()])))
+  const resetFacilities=Object.freeze(Object.fromEntries(Object.keys(source.state.dyson.facilities).map(id=>[id,Object.freeze([cloneGameDecimal(GAME_DECIMAL_ZERO),cloneGameDecimal(GAME_DECIMAL_ZERO)])]))) as CanonicalGameStateV2['dyson']['facilities']
+  let candidate=cloneCanonicalGameStateV2({...source.state,meta:{...source.state.meta,firstInfinityComplete:true},dyson:{...source.state.dyson,money:GAME_DECIMAL_ZERO,science:GAME_DECIMAL_ZERO,bots:GAME_DECIMAL_ZERO,workers:GAME_DECIMAL_ZERO,researchers:GAME_DECIMAL_ZERO,facilities:resetFacilities,totalPanelsDecayed:GAME_DECIMAL_ZERO,goalStage:0n,botDistribution:.5},infinity:{...source.state.infinity,availablePoints:GAME_DECIMAL_ZERO,allocatedPoints:GAME_DECIMAL_ZERO,inProgress:false,botCapTransitionPending:false,botCapRewardsGranted:false,lastCycleDurationSeconds:0,lastPointsGained:GAME_DECIMAL_ZERO,storedTimeUsedThisCycleSeconds:0,storedTimeUsedPreviousCycleSeconds:0,secretsOfTheUniverse:source.state.quantum.permanentSecrets>1n?source.state.quantum.permanentSecrets:0n,permanentSkillPoints:0n,retainedFacilities:{assembly_lines:false,ai_managers:false,servers:false,data_centers:false,planets:false},automationUnlocked:{research:source.state.quantum.unlocks.automation,bots:source.state.quantum.unlocks.automation}},skills:{...source.state.skills,points:resetSkillPoints,fragments:0n,byId:clearedSkills},quantum:{...source.state.quantum,availableShards:nextAvailable,lifetimeEarnedShards:nextLifetime},statistics:{...source.state.statistics,trackedSinceUpdate:true,trackingStartedMarker:source.state.statistics.trackedSinceUpdate?source.state.statistics.trackingStartedMarker:'tracked-since-update',currentQuantumRun:zeroTotals(),recentProcessedSegment:zeroTotals()},timeline:{...source.state.timeline,eventClockInitialized:false,automationTimeUntilNextEvent:0,dysonAutomationTargetIndex:0,researchAutomationTargetIndex:0,infinityBoundaryRemaining:Number.MAX_VALUE,infinityCycleSeconds:0,infinityCycleStartingPoints:GAME_DECIMAL_ZERO,infinityHasPostResetStart:true}})
+  candidate=resetV2ResearchForInfinity(candidate);const assignment=runCanonicalSkillAutoAssignmentV2(candidate);if(!assignment.accepted)throw new TypeError(`Quantum reset Skill assignment failed: ${assignment.reason}`);candidate=cloneCanonicalGameStateV2(assignment.state)
+  const derived=deriveDysonV2FromCauses(candidate,source.runtime),runtime=cloneCanonicalRuntimeSidecarV2(Object.freeze({dysonEvaluationSnapshot:derived.nextEvaluationSnapshot,dysonTuningProfile:source.runtime.dysonTuningProfile})),horizon=infinityProductionHorizonV2(candidate.dyson.bots,derived.production.rates.bots,ordinaryInfinityBotThresholdV2(candidate.quantum.divisionsPurchased)),remaining=horizon===null?Number.MAX_VALUE:Math.max(INFINITY_TUNING_V2.minimumCycleSeconds,gameDecimalToSchedulerSeconds(horizon,Number.MAX_VALUE).seconds)
+  candidate=cloneCanonicalGameStateV2({...candidate,timeline:{...candidate.timeline,infinityBoundaryRemaining:remaining}})
+  return Object.freeze({code:'ready',state:candidate,runtime,requested:GAME_DECIMAL_ONE,available:effectiveAvailable,lifetime:effectiveLifetime,consumed:cloneGameDecimal(totalInfinityPoints),resetSkillPoints,assigned:Object.freeze([...assignment.affectedSkillIds])})
+}
+
+function quantumResetSkillPoints(state:Readonly<CanonicalGameStateV2>):bigint{const points=realityArtifactSkillPointsV2(state)+(state.secretProgress.completed?4n:0n);if(points<0n||points>DISCRETE_MAXIMUM)throw new RangeError('Quantum reset Skill pool exceeds exact headroom.');return points}
+function zeroTotals():Readonly<SimulationTotalsStateV2>{return Object.freeze({ordinaryInfinityCount:0n,breakInfinityCount:0n,ordinaryInfinityPoints:GAME_DECIMAL_ZERO,breakInfinityPoints:GAME_DECIMAL_ZERO,botCapInfinityPoints:GAME_DECIMAL_ZERO,botCapOverflowRewards:GAME_DECIMAL_ZERO,meteorDreamResets:0n,aiDreamResets:0n,globalWarmingDreamResets:0n,blackHoleDreamResets:0n,strangeMatter:GAME_DECIMAL_ZERO,realityWorkers:GAME_DECIMAL_ZERO,automaticInfluence:GAME_DECIMAL_ZERO,manualInfluence:GAME_DECIMAL_ZERO,realityCapacityStallSeconds:0,simulatedSeconds:0})}
+function admitPublication(value:unknown):Readonly<CanonicalQuantumPublicationV2>|null{const record=closed(value,['revision','state','runtime']);if(record===null||typeof record.revision!=='number'||!Number.isSafeInteger(record.revision)||record.revision<0||Object.is(record.revision,-0)||!validateCanonicalGameStateV2(record.state).valid)return null;try{return Object.freeze({revision:record.revision,state:cloneCanonicalGameStateV2(record.state as CanonicalGameStateV2),runtime:cloneCanonicalRuntimeSidecarV2(record.runtime as CanonicalRuntimeSidecarV2)})}catch{return null}}
+function captureRequest(value:unknown):CanonicalQuantumResetRequestV2|null{const record=closed(value,['kind']);return record!==null&&record.kind==='quantum-action'?Object.freeze({kind:'quantum-action'}):null}
+function closed(value:unknown,keys:readonly string[]):Readonly<Record<string,unknown>>|null{if(value===null||typeof value!=='object'||Array.isArray(value)||Object.getPrototypeOf(value)!==Object.prototype)return null;const descriptors=Object.getOwnPropertyDescriptors(value),actual=Reflect.ownKeys(descriptors);if(actual.length!==keys.length||actual.some(key=>typeof key!=='string'||!keys.includes(key))||keys.some(key=>descriptors[key]===undefined||!descriptors[key]!.enumerable||!('value'in descriptors[key]!)))return null;return Object.freeze(Object.fromEntries(keys.map(key=>[key,descriptors[key]!.value])))}
+function equalTree(a:unknown,b:unknown):boolean{if(Object.is(a,b))return true;if(a===null||b===null||typeof a!=='object'||typeof b!=='object'||Object.getPrototypeOf(a)!==Object.getPrototypeOf(b))return false;const ak=Reflect.ownKeys(a),bk=Reflect.ownKeys(b);return ak.length===bk.length&&ak.every(key=>bk.includes(key)&&equalTree(Object.getOwnPropertyDescriptor(a,key)?.value,Object.getOwnPropertyDescriptor(b,key)?.value))}
+function failureQuote(code:CanonicalQuantumResetQuoteV2['code'],sourceRevision=-1,operation:CanonicalQuantumResetQuoteV2['operation']=null):Readonly<CanonicalQuantumResetQuoteV2>{return Object.freeze({kind:'canonical-quantum-reset-quote-v2',accepted:false,code,sourceRevision,operation,requestedShards:GAME_DECIMAL_ZERO,effectiveAvailableShards:GAME_DECIMAL_ZERO,effectiveLifetimeShards:GAME_DECIMAL_ZERO,infinityPointsConsumed:GAME_DECIMAL_ZERO,resetSkillPoints:0n,autoAssignedSkillIds:Object.freeze([]),expectedPublication:null})}
+function commitFailure(code:CanonicalQuantumResetCommitV2['code']):Readonly<CanonicalQuantumResetCommitV2>{return Object.freeze({accepted:false,changed:false,code,publication:null})}

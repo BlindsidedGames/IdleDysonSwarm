@@ -1,3 +1,4 @@
+import { gzipSync, strToU8 } from 'fflate'
 import { describe, expect, test, vi } from 'vitest'
 import { PreparedSave } from './prepare'
 import { PortableSaveRepository, type LegacySaveCandidate, type SaveStorageAdapter } from './repository'
@@ -46,6 +47,19 @@ class MemoryStorage implements SaveStorageAdapter {
   async discoverLegacyCandidates(): Promise<readonly LegacySaveCandidate[]> {
     return this.candidates
   }
+}
+
+function syntheticWebNativeV13(): string {
+  const json = JSON.stringify({
+    schemaVersion: 13,
+    modelVersion: 2,
+    savedAtUtc: '2026-08-08T00:00:00.000Z',
+    state: {},
+  })
+  const compressed = gzipSync(strToU8(json), { level: 9, mtime: 0 })
+  let binary = ''
+  for (const byte of compressed) binary += String.fromCharCode(byte)
+  return `IDSWEB1:${btoa(binary)}`
 }
 
 describe('portable transactional save repository', () => {
@@ -148,6 +162,41 @@ describe('portable transactional save repository', () => {
     await expect(repository.loadCurrent()).rejects.toThrow(
       'newer than supported schema',
     )
+  })
+
+  test('preserves a Web-native V13 current and recovery data without downgrade fallback', async () => {
+    const storage = new MemoryStorage()
+    const current = syntheticWebNativeV13()
+    const recovery = 'existing immutable recovery'
+    storage.files.set('/current', current)
+    storage.files.set('/recovery/original-idb1.txt', recovery)
+    storage.files.set(
+      '/backup.1',
+      serializeWebSave({ saveVersion: 12, slot: 'older' }),
+    )
+    const repository = new PortableSaveRepository(
+      storage,
+      {
+        current: '/current',
+        temporary: '/current.tmp',
+        legacyRecovery: '/recovery/original-idb1.txt',
+        backups: ['/backup.1', '/backup.2', '/backup.3'],
+      },
+      () => ({ saveVersion: 12 }),
+    )
+
+    await expect(repository.loadCurrent()).rejects.toMatchObject({
+      sourceSchema: 13,
+      supportedSchema: 12,
+    })
+    await expect(repository.migrateLegacyOnFirstLaunch()).resolves.toMatchObject({
+      status: 'unsupported-future-version',
+      source: 'current',
+    })
+    expect(storage.files.get('/current')).toBe(current)
+    expect(storage.files.get('/recovery/original-idb1.txt')).toBe(recovery)
+    expect(storage.copies).toEqual([])
+    expect(storage.replacements).toEqual([])
   })
 
   test.each(['write', 'read-temporary', 'replace'] as const)(

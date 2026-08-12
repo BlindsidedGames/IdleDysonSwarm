@@ -62,6 +62,15 @@ describe('canonical web save serialization', () => {
     )
   })
 
+  test('rejects a compressed payload with a corrupt gzip checksum', () => {
+    const encoded = serializeWebSave({ saveVersion: 12, cash: 42 })
+    const compressed = Buffer.from(encoded.slice('IDSWEB1:'.length), 'base64')
+    compressed[compressed.length - 8] ^= 0xff
+    const corrupted = `IDSWEB1:${compressed.toString('base64')}`
+
+    expect(() => deserializeWebSave(corrupted)).toThrow(/checksum/i)
+  })
+
   test('continues to read transitional uncompressed web envelopes', () => {
     const transitional = JSON.stringify({
       format: 'IDSWEB1',
@@ -91,13 +100,15 @@ describe('canonical web save serialization', () => {
     expect(encoded.length).toBeLessThan(1_000)
   })
 
-  test('shared exports exclude device-owned Double IP and Developer Options', () => {
+  test('shared exports exclude device-owned and platform-authority fields', () => {
     const decoded = deserializeWebSave(
       serializeSharedWebSave({
         saveVersion: 12,
         doubleIp: true,
         debugOptions: true,
         debugEverEnabled: true,
+        cheater: true,
+        unlockAllTabs: true,
         dysonVerseSaveData: {
           dysonVersePrestigeData: { doubleIP: true },
         },
@@ -108,12 +119,18 @@ describe('canonical web save serialization', () => {
       doubleIp: false,
       debugOptions: false,
       debugEverEnabled: false,
+      cheater: false,
+      unlockAllTabs: false,
       hasPackedSettingsFlags: true,
       dysonVerseSaveData: {
         dysonVersePrestigeData: { doubleIP: true },
       },
     })
-    expect((decoded.packedSettingsFlags as bigint) & 0b1100n).toBe(0n)
+    const nonportablePackedMask =
+      (1n << 2n) | (1n << 3n) | (1n << 4n) | (1n << 9n)
+    expect(
+      (decoded.packedSettingsFlags as bigint) & nonportablePackedMask,
+    ).toBe(0n)
   })
 
   test('rejects a 1.1 MiB byte field before base64 byte allocation', () => {

@@ -131,6 +131,52 @@ class IdleDysonNativePlugin : Plugin() {
     }
 
     @PluginMethod
+    fun certificationDeviceContext(call: PluginCall) {
+        if (!BuildConfig.STAGE7_V2_CERTIFICATION) {
+            call.reject("Certification context is unavailable.", "certification-unavailable")
+            return
+        }
+        val packageInfo = context.packageManager.getPackageInfo(context.packageName, 0)
+        val emulator = android.os.Build.FINGERPRINT.startsWith("generic") ||
+            android.os.Build.MODEL.contains("Emulator") || android.os.Build.MODEL.contains("sdk_gphone")
+        val matrixId = when (android.os.Build.VERSION.SDK_INT) {
+            26 -> "android-api26-emulator"
+            36 -> "android-api36-emulator"
+            else -> null
+        }
+        if (!emulator || matrixId == null) {
+            call.reject("This build certifies only Android API 26/36 emulators.", "certification-target-unsupported")
+            return
+        }
+        call.resolve(JSObject().apply {
+            put("matrixId", matrixId)
+            put("physicalDevice", false)
+            put("osApiLevel", android.os.Build.VERSION.SDK_INT)
+            put("deviceModel", android.os.Build.MODEL)
+            put("osVersion", android.os.Build.VERSION.RELEASE)
+            put("applicationVersion", packageInfo.versionName ?: "0.0.0")
+            put("buildNumber", packageInfo.longVersionCode.toString())
+        })
+    }
+
+    @PluginMethod
+    fun removeCertificationFiles(call: PluginCall) = withNativeFailure(call) {
+        val paths = call.getArray("relativePaths")
+            ?: throw IllegalArgumentException("Certification cleanup requires paths.")
+        val admitted = (0 until paths.length()).map { index ->
+            val relativePath = paths.getString(index)
+            requireCertificationCleanupPath(relativePath)
+            rootedFile(relativePath)
+        }
+        admitted.forEach { target ->
+            if (target.exists() && (!target.isFile || !target.delete())) {
+                throw IllegalStateException("Certification cleanup could not remove an owned file.")
+            }
+        }
+        call.resolve()
+    }
+
+    @PluginMethod
     fun discoverUnitySaveCandidates(call: PluginCall) = withNativeFailure(call) {
         val candidates = JSArray()
         val unitySave = context.getExternalFilesDir(null)?.resolve(UNITY_SAVE_FILE_NAME)
@@ -360,6 +406,16 @@ class IdleDysonNativePlugin : Plugin() {
         return contents
     }
 
+    private fun requireCertificationCleanupPath(relativePath: String) {
+        val normalized = relativePath.replace('\\', '/')
+        val segments = normalized.split('/')
+        if (segments.size < 3 || segments[0] != CERTIFICATION_NAMESPACE ||
+            !CERTIFICATION_BUILD_SCOPE.matches(segments[1]) ||
+            !CERTIFICATION_CLEANUP_SUFFIXES.contains(segments.drop(2).joinToString("/"))) {
+            throw IllegalArgumentException("Certification cleanup accepts only enumerated owned files.")
+        }
+    }
+
     private fun requireReadableSize(file: File) {
         if (file.length() < 0 || file.length() > MAX_FILE_BYTES) {
             throw IllegalArgumentException("Native save exceeds the supported size limit.")
@@ -405,6 +461,20 @@ class IdleDysonNativePlugin : Plugin() {
         private const val UNITY_SAVE_FILE_NAME = "idle_dyson_swarm_save.txt"
         private const val MAX_FILE_BYTES = 32 * 1024 * 1024
         private const val MAX_DIAGNOSTIC_BYTES = 64 * 1024
+        private const val CERTIFICATION_NAMESPACE = "stage7-v2-certification"
+        private val CERTIFICATION_BUILD_SCOPE = Regex("^[a-zA-Z0-9][a-zA-Z0-9._-]{0,127}$")
+        private val CERTIFICATION_CLEANUP_SUFFIXES = setOf(
+            "checkpoint/current.json",
+            "checkpoint/current.json.tmp",
+            "checkpoint/backups/current.1.json",
+            "checkpoint/backups/current.2.json",
+            "checkpoint/backups/current.3.json",
+            "recovery/import-original.idsw",
+            "recovery/import-original.idsw.tmp",
+            "local/stored-time-policy.json",
+            "evidence/draft.json",
+            "evidence/draft.json.tmp",
+        )
         private val DRIVE_PREFIX = Regex("^[a-zA-Z]:")
         private val DIAGNOSTIC_FILE_NAME = Regex("^[a-zA-Z0-9][a-zA-Z0-9._-]{0,90}\\.json$")
         private val DIAGNOSTIC_KEYS = setOf(
@@ -417,6 +487,22 @@ class IdleDysonNativePlugin : Plugin() {
             "frontendRevision",
             "canonicalRevision",
             "errorKind",
+            "matrixId", "performedAtUtc", "tester", "deviceModel", "physicalDevice", "osApiLevel",
+            "osVersion", "webViewVersion", "appVersion", "workerBuildId",
+            "workerCatalogHash", "workerTuningHash", "policy", "schemaBefore",
+            "schemaAfter", "initialRevision", "finalRevision", "saveReadback",
+            "reloadReadback", "corruptionRecovery", "lifecyclePauseReturn",
+            "forcedReloadRecovery", "longOfflineSeconds", "extremeDecimalCanonical",
+            "updateIdentityRecovery", "platformStateIsLocal", "portableSaveExcludesPlatform",
+            "maximumChunkMilliseconds", "maximumAtomicEventMilliseconds", "result", "notes",
+            "fastRawTicks", "balancedRawTicks", "exactRawTicks",
+            "fastCompleted", "balancedCompleted", "exactCompleted",
+            "developerPurchaseVerified", "developerFreeEnableVerified",
+            "developerShardDebit", "developerStrangeMatterDebit", "developerLifetimeShardDelta",
+            "preAckRecovery", "postCheckpointRecovery", "forwardSchemaRecovery",
+            "extremeAdvanceVerified",
+            "updateBuildAId", "updateBuildBId", "updateBaselineRevision",
+            "updateBaselineStoredTimeSeconds", "updatePortableHash",
         )
         private val PRODUCT_IDS = setOf(
             "ids.tiptier1",

@@ -3,6 +3,11 @@ import { describe, expect, test } from 'vitest'
 import type { DysonCompatibilityTuning } from '../game-state/compatibilityTuning'
 import { hydrateGameState } from '../game-state/mapping'
 import type { CanonicalGameStateV1 } from '../game-state/types'
+import {
+  gameDecimalToCanonicalString,
+  isGameDecimal,
+  type GameDecimal,
+} from '../math/gameDecimal'
 import { prepareIdb1Save } from '../save/prepare'
 import { deriveAvocadoMultiplier } from '../simulation/avocadoDomain'
 import { deriveCanonicalDreamDerivedFacts } from '../simulation/canonicalDreamDerivedFacts'
@@ -34,6 +39,12 @@ const fixtureUrl = new URL(
   '../../test/fixtures/schema-08-canonical-idb1-main-save.txt',
   import.meta.url,
 )
+
+function canonicalResource(value: number | bigint | GameDecimal): string {
+  expect(isGameDecimal(value)).toBe(true)
+  if (!isGameDecimal(value)) throw new TypeError('Expected a GameDecimal resource.')
+  return gameDecimalToCanonicalString(value)
+}
 const firstRunFixtureUrl = new URL(
   './firstRun/generated/first-run-schema-12.idb1.txt',
   import.meta.url,
@@ -192,9 +203,9 @@ describe('frontend gameplay snapshot', () => {
       operation: 'none',
     })
     if (projected.phase !== 'ready') return
-    expect(projected.gameplay.resources.dyson.money).toBeTypeOf(
-      'number',
-    )
+    expect(canonicalResource(
+      projected.gameplay.resources.dyson.money,
+    )).toBe('1.4618850564454222e12')
     expect(projected.gameplay.runtime.selectedSkillPresetSlot).toBe(1)
     expect(Object.isFrozen(projected.revision)).toBe(true)
     expect(Object.isFrozen(projected.gameplay)).toBe(true)
@@ -230,17 +241,15 @@ describe('frontend gameplay snapshot', () => {
       frontendContext(),
     )
 
-    expect(snapshot.resources.dyson.money).toBe(state.dyson.money)
-    expect(snapshot.resources.infinity).toMatchObject({
-      points: 100n,
-      spentPoints: 7n,
-      availablePoints: 93n,
-    })
-    expect(snapshot.resources.quantum).toMatchObject({
-      pointsEarned: 55n,
-      pointsSpent: 13n,
-      availablePoints: 42n,
-    })
+    expect(canonicalResource(snapshot.resources.dyson.money)).toBe(
+      '1.4618850564454222e12',
+    )
+    expect(canonicalResource(snapshot.resources.infinity.points)).toBe('1e2')
+    expect(canonicalResource(snapshot.resources.infinity.spentPoints)).toBe('7e0')
+    expect(canonicalResource(snapshot.resources.infinity.availablePoints)).toBe('9.3e1')
+    expect(canonicalResource(snapshot.resources.quantum.pointsEarned)).toBe('5.5e1')
+    expect(canonicalResource(snapshot.resources.quantum.pointsSpent)).toBe('1.3e1')
+    expect(canonicalResource(snapshot.resources.quantum.availablePoints)).toBe('4.2e1')
     expect(snapshot.resources.time).toEqual({
       storedTimeAvailableSeconds: 91.25,
       storedTimeCapacitySeconds: 120,

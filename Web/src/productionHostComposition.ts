@@ -1,11 +1,17 @@
-import {
-  createProductionBrowserComposition,
-  type ProductionBrowserComposition,
+import type {
+  ProductionBrowserComposition,
 } from './browser/productionBrowserComposition'
 import {
-  createProductionNativeComposition,
-  type ProductionNativeComposition,
+  createProductionBrowserCompositionV2,
+  type ProductionBrowserCompositionV2,
+} from './browser/productionBrowserCompositionV2'
+import type {
+  ProductionNativeComposition,
 } from './native/productionNativeComposition'
+import {
+  createProductionNativeCompositionV2,
+  type ProductionNativeCompositionV2,
+} from './native/productionNativeCompositionV2'
 import {
   createNativeHostEnvironment,
   detectNativeHostBridge,
@@ -17,6 +23,10 @@ import type {
   BrowserUiRuntimeFoundation,
   UiRuntimeImportResult,
 } from './ui/runtime'
+import type {
+  Stage7V2WorkerLauncherAccessResult,
+} from './certification/stage7V2/access'
+import { createStage7V2WorkerLauncherOnDemand } from './certification/stage7V2/access'
 
 export interface ProductionHostComposition {
   readonly hostKind: HostKind
@@ -29,14 +39,17 @@ export interface ProductionHostComposition {
   prepareForUpdateActivation(): Promise<void>
   prepareForSafeReload(): Promise<void>
   reloadSafely(): Promise<void>
+  createStage7V2WorkerLauncher(): Promise<Stage7V2WorkerLauncherAccessResult>
 }
 
 export interface ProductionHostCompositionOptions {
   readonly detectNativeBridge?: () => NativeHostBridgeApi | null
-  readonly createBrowserComposition?: () => ProductionBrowserComposition
+  readonly createBrowserComposition?: () =>
+    | ProductionBrowserComposition
+    | ProductionBrowserCompositionV2
   readonly createNativeComposition?: (
     bridge: NativeHostBridgeApi,
-  ) => ProductionNativeComposition
+  ) => ProductionNativeComposition | ProductionNativeCompositionV2
 }
 
 /** Selects exactly one host graph before any persistence is opened. */
@@ -49,7 +62,7 @@ export function createProductionHostComposition(
     const composition = options.createBrowserComposition === undefined
       ? (() => {
           const services = createBrowserStripeReleasePlatformServices()
-          return createProductionBrowserComposition({
+          return createProductionBrowserCompositionV2({
             releasePlatformServices: services,
           })
         })()
@@ -66,10 +79,11 @@ export function createProductionHostComposition(
         composition.prepareForUpdateActivation,
       prepareForSafeReload: composition.prepareForSafeReload,
       reloadSafely: composition.reloadSafely,
+      createStage7V2WorkerLauncher: createStage7V2WorkerLauncherOnDemand,
     })
   }
   const composition = options.createNativeComposition === undefined
-    ? createProductionNativeComposition(
+    ? createProductionNativeCompositionV2(
         createNativeHostEnvironment(bridge),
       )
     : options.createNativeComposition(bridge)
@@ -86,5 +100,6 @@ export function createProductionHostComposition(
       composition.prepareForSafeReload,
     prepareForSafeReload: composition.prepareForSafeReload,
     reloadSafely: composition.reloadSafely,
+    createStage7V2WorkerLauncher: createStage7V2WorkerLauncherOnDemand,
   })
 }

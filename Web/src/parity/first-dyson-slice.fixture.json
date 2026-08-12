@@ -19,11 +19,26 @@
       "durableRevision": 0
     },
     "resources": {
-      "money": 1000000,
-      "science": 0,
-      "bots": 0,
-      "workers": 0,
-      "researchers": 0
+      "money": {
+        "mantissa": 1,
+        "exponent": 6
+      },
+      "science": {
+        "mantissa": 0,
+        "exponent": 0
+      },
+      "bots": {
+        "mantissa": 0,
+        "exponent": 0
+      },
+      "workers": {
+        "mantissa": 0,
+        "exponent": 0
+      },
+      "researchers": {
+        "mantissa": 0,
+        "exponent": 0
+      }
     },
     "facilities": {
       "assembly_lines": [
@@ -235,7 +250,10 @@
   },
   "tinker": {
     "inProgress": {
-      "bots": 0,
+      "bots": {
+        "mantissa": 0,
+        "exponent": 0
+      },
       "tinker": {
         "status": "ready",
         "value": {
@@ -260,7 +278,10 @@
       }
     },
     "completed": {
-      "bots": 1,
+      "bots": {
+        "mantissa": 1,
+        "exponent": 0
+      },
       "tinker": {
         "status": "ready",
         "value": {
@@ -298,11 +319,26 @@
       "durableRevision": 0
     },
     "resources": {
-      "money": 131056.66691933374,
-      "science": 0,
-      "bots": 1,
-      "workers": 1,
-      "researchers": 0
+      "money": {
+        "mantissa": 1.3105666691933375,
+        "exponent": 5
+      },
+      "science": {
+        "mantissa": 0,
+        "exponent": 0
+      },
+      "bots": {
+        "mantissa": 1,
+        "exponent": 0
+      },
+      "workers": {
+        "mantissa": 1,
+        "exponent": 0
+      },
+      "researchers": {
+        "mantissa": 0,
+        "exponent": 0
+      }
     },
     "facilities": {
       "assembly_lines": [

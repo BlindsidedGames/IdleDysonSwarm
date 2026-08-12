@@ -16,10 +16,15 @@ def unsignedReleaseExplicitlyAllowed =
 def releaseBuildRequested = gradle.startParameter.taskNames.any {
     it.toLowerCase(java.util.Locale.ROOT).contains('release')
 }
+def stage7CertificationEnabled =
+    providers.gradleProperty('IDS_STAGE7_CERTIFICATION').orNull == 'true'
 
 android {
     namespace = "com.blindsidedgames.idledysonswarm"
     compileSdk = rootProject.ext.compileSdkVersion
+    buildFeatures {
+        buildConfig = true
+    }
     defaultConfig {
         applicationId "com.blindsidedgames.idledysonswarm"
         minSdkVersion rootProject.ext.minSdkVersion
@@ -27,10 +32,18 @@ android {
         versionCode idsReleaseCandidateId
         versionName idsMarketingVersion
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+        buildConfigField "boolean", "STAGE7_V2_CERTIFICATION", stage7CertificationEnabled.toString()
         aaptOptions {
              // Files and dirs to omit from the packaged assets dir, modified to accommodate modern web apps.
              // Default: https://android.googlesource.com/platform/frameworks/base/+/282e181b58cf72b6ca770dc7ca5f91f135444502/tools/aapt/AaptAssets.cpp#61
             ignoreAssetsPattern = '!.svn:!.git:!.ds_store:!*.scc:.*:!CVS:!thumbs.db:!picasa.ini:!*~'
+        }
+    }
+    sourceSets {
+        debug {
+            if (stage7CertificationEnabled) {
+                assets.srcDir '../../../../dist-stage7-native-certification'
+            }
         }
     }
     signingConfigs {
@@ -44,6 +57,11 @@ android {
         }
     }
     buildTypes {
+        debug {
+            if (stage7CertificationEnabled) {
+                applicationIdSuffix ".stage7certification"
+            }
+        }
         release {
             if (releaseSigningConfigured) {
                 signingConfig signingConfigs.release

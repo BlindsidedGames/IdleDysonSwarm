@@ -181,6 +181,7 @@ function App({
           downloadSave={() => runtime.exportCurrentSave()}
           copySaveText={(text: string) =>
             runtime.writeClipboardText(text)}
+          readClipboardText={() => runtime.readClipboardText()}
           releasePlatformServices={releasePlatformServices}
           localDeveloperOptionsPurchased={localDeveloperOptionsPurchased}
         />

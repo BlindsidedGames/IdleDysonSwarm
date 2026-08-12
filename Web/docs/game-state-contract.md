@@ -1,5 +1,9 @@
 # Canonical game-state contract
 
+Unity schemas in this document describe historical import and characterization
+surfaces. The Web application is the supported runtime and may evolve its
+canonical model and `IDSWEB1` saves without preserving Unity write compatibility.
+
 This decision record freezes the boundary used by parallel gameplay domain
 ports. The first typed mapper now covers the durable gameplay roots. Its
 executable coverage manifest is pinned to the public Unity 3.0.328/schema-11

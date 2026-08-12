@@ -134,6 +134,8 @@ export const DEVELOPMENT_ONLY_BROWSER_DATABASE_NAME =
   'idle-dyson-swarm-web-development-v1'
 export const DEVELOPMENT_ONLY_BROWSER_PROFILE_ID =
   'development-only-default-profile'
+export const DEVELOPMENT_ONLY_BROWSER_SAVE_PATHS =
+  developmentOnlyRepositoryPaths(DEVELOPMENT_ONLY_BROWSER_PROFILE_ID)
 
 interface BrowserRuntimeApplicationPort
   extends CanonicalLifecycleApplicationPort {
@@ -401,10 +403,9 @@ class BrowserRuntimeFoundation implements BrowserUiRuntimeFoundation {
     this.saveStorage = options.saveStorage
     this.saveRepositoryPaths =
       options.saveRepositoryPaths ??
-      developmentOnlyRepositoryPaths(
-        options.profileId ??
-          DEVELOPMENT_ONLY_BROWSER_PROFILE_ID,
-      )
+      (options.profileId === undefined
+        ? DEVELOPMENT_ONLY_BROWSER_SAVE_PATHS
+        : developmentOnlyRepositoryPaths(options.profileId))
     this.lease = new BrowserWriterLease({
       database: this.database,
       nowUtcMilliseconds: options.nowUtcMilliseconds,

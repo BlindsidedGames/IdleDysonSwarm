@@ -1,4 +1,9 @@
 import type { DeepReadonly } from '../core/contracts'
+import {
+  gameDecimalFromBigInt,
+  gameDecimalFromNumber,
+  type GameDecimal,
+} from '../math/gameDecimal'
 import type { DysonCompatibilityTuning } from '../game-state/compatibilityTuning'
 import { mappingCoverageManifest } from '../game-state/mappingCoverage'
 import type { DysonSkillEffectEvaluationSnapshot } from '../game-state/skillEffectEvaluationSnapshot'
@@ -376,16 +381,16 @@ export interface FrontendCommandAvailabilityIndex {
 
 export interface FrontendCanonicalResources {
   readonly dyson: {
-    readonly money: number
-    readonly science: number
-    readonly bots: number
-    readonly workers: number
-    readonly researchers: number
+    readonly money: number | GameDecimal
+    readonly science: number | GameDecimal
+    readonly bots: number | GameDecimal
+    readonly workers: number | GameDecimal
+    readonly researchers: number | GameDecimal
   }
   readonly infinity: {
-    readonly points: bigint
-    readonly spentPoints: bigint
-    readonly availablePoints: bigint
+    readonly points: bigint | GameDecimal
+    readonly spentPoints: bigint | GameDecimal
+    readonly availablePoints: bigint | GameDecimal
     readonly secretsOfTheUniverse: bigint
     readonly permanentSkillPoints: bigint
   }
@@ -394,29 +399,28 @@ export interface FrontendCanonicalResources {
     readonly fragments: bigint
   }
   readonly reality: {
-    readonly universeDesignationCount: bigint
+    readonly universeDesignationCount: bigint | GameDecimal
     readonly workersReady: bigint
     readonly workerGenerationProgress: number
-    readonly influence: bigint
+    readonly influence: bigint | GameDecimal
   }
   readonly quantum: {
-    readonly pointsEarned: bigint
-    readonly pointsSpent: bigint
-    readonly availablePoints: bigint
+    readonly pointsEarned: bigint | GameDecimal
+    readonly pointsSpent: bigint | GameDecimal
+    readonly availablePoints: bigint | GameDecimal
     readonly permanentSecrets: bigint
-    readonly influenceSpeedBonus: bigint
-    readonly cashBonusLevels: bigint
-    readonly scienceBonusLevels: bigint
+    readonly influenceSpeedBonus: bigint | GameDecimal
+    readonly cashBonusLevels: bigint | GameDecimal
+    readonly scienceBonusLevels: bigint | GameDecimal
   }
   readonly avocado: {
-    readonly infinityPoints: number
-    readonly influence: number
-    readonly strangeMatter: number
-    readonly overflowMultiplier: number
+    readonly infinityPoints: number | GameDecimal
+    readonly influence: number | GameDecimal
+    readonly strangeMatter: number | GameDecimal
+    readonly overflowMultiplier: number | GameDecimal
   }
-  readonly dream: DeepReadonly<DreamState['resources']> & {
-    readonly strangeMatter: bigint
-  }
+  readonly dream: Readonly<Record<keyof DreamState['resources'], number | bigint | GameDecimal>> &
+    { readonly strangeMatter: bigint | GameDecimal }
   readonly time: {
     readonly storedTimeAvailableSeconds: number
     readonly storedTimeCapacitySeconds: number
@@ -528,8 +532,8 @@ export interface FrontendQuantumLeapPreview {
 export interface FrontendMegaStructurePurchasePreview {
   readonly facilityId: MegaStructureId
   readonly eligible: boolean
-  readonly selectedQuantity: bigint
-  readonly cost: number
+  readonly selectedQuantity: bigint | GameDecimal
+  readonly cost: number | GameDecimal
   readonly code: string
   readonly definitionGap: string | null
 }
@@ -542,7 +546,15 @@ export interface FrontendResearchCatalogPreview {
 }
 
 export interface FrontendResearchCardPreview
-  extends CanonicalResearchPurchasePreview {
+  extends Omit<
+    CanonicalResearchPurchasePreview,
+    'code' | 'currentLevel' | 'selectedQuantity' | 'affordableQuantity' | 'cost'
+  > {
+  readonly code: string
+  readonly currentLevel: number | GameDecimal
+  readonly selectedQuantity: bigint | GameDecimal
+  readonly affordableQuantity: bigint | GameDecimal
+  readonly cost: number | GameDecimal
   readonly prerequisitesMet: boolean
   readonly visible: boolean
   readonly maxed: boolean
@@ -557,7 +569,7 @@ export interface FrontendResearchCardPreview
 export interface FrontendInfinityShopPreview {
   readonly itemId: CanonicalInfinityShopItemId
   readonly eligible: boolean
-  readonly cost: bigint
+  readonly cost: bigint | GameDecimal
   readonly code: string
   readonly definitionGap: string | null
 }
@@ -567,14 +579,14 @@ export interface FrontendDreamPurchasePreview<
 > {
   readonly purchase: TPurchase
   readonly eligible: boolean
-  readonly cost: bigint
+  readonly cost: bigint | GameDecimal
   readonly code: string
 }
 
 export interface FrontendDreamUpgradePreview {
   readonly upgradeId: DreamUpgradeFlag
   readonly eligible: boolean
-  readonly cost: bigint
+  readonly cost: bigint | GameDecimal
   readonly code: string
   readonly definitionGap: string | null
 }
@@ -582,7 +594,7 @@ export interface FrontendDreamUpgradePreview {
 export interface FrontendDreamEducationPreview {
   readonly educationId: DreamEducationId
   readonly eligible: boolean
-  readonly cost: number
+  readonly cost: number | GameDecimal
   readonly code: string
 }
 
@@ -590,14 +602,14 @@ export interface FrontendDreamResetPreview {
   readonly eligible: boolean
   readonly code: string
   readonly cause: string | null
-  readonly requestedReward: bigint
+  readonly requestedReward: bigint | GameDecimal
   readonly definitionGaps: readonly string[]
 }
 
 export interface FrontendRealityUpgradePreview {
   readonly upgradeId: RealityUpgradeId
   readonly eligible: boolean
-  readonly cost: bigint
+  readonly cost: bigint | GameDecimal
   readonly code: string
   readonly definitionGap: string | null
 }
@@ -605,7 +617,7 @@ export interface FrontendRealityUpgradePreview {
 export interface FrontendQuantumUpgradePreview {
   readonly upgradeId: QuantumUpgradeId
   readonly eligible: boolean
-  readonly cost: bigint
+  readonly cost: bigint | GameDecimal
   readonly code: string
   readonly definitionGap: string | null
 }
@@ -613,7 +625,7 @@ export interface FrontendQuantumUpgradePreview {
 export interface FrontendAvocadoFeedPreview {
   readonly source: AvocadoFeedSource
   readonly eligible: boolean
-  readonly amount: bigint
+  readonly amount: bigint | GameDecimal
   readonly code: string
 }
 
@@ -904,8 +916,16 @@ export interface FrontendRuntimeFacts {
 
 export interface FrontendGameplayPreviews {
   readonly dyson: {
-    readonly basicFacilities:
-      readonly CanonicalBasicFacilityPurchasePreview[]
+    readonly basicFacilities: readonly (
+      Omit<
+        CanonicalBasicFacilityPurchasePreview,
+        'selectedQuantity' | 'affordableQuantity' | 'cost'
+      > & {
+        readonly selectedQuantity: bigint | GameDecimal
+        readonly affordableQuantity: bigint | GameDecimal
+        readonly cost: number | GameDecimal
+      }
+    )[]
     readonly megaStructures:
       readonly FrontendMegaStructurePurchasePreview[]
   }
@@ -1290,16 +1310,16 @@ function selectResources(
       : state.dyson
   return {
     dyson: {
-      money: state.dyson.money,
-      science: state.dyson.science,
-      bots: state.dyson.bots,
-      workers: allocation.workers,
-      researchers: allocation.researchers,
+      money: gameDecimalFromNumber(state.dyson.money),
+      science: gameDecimalFromNumber(state.dyson.science),
+      bots: gameDecimalFromNumber(state.dyson.bots),
+      workers: gameDecimalFromNumber(allocation.workers),
+      researchers: gameDecimalFromNumber(allocation.researchers),
     },
     infinity: {
-      points: state.infinity.points,
-      spentPoints: state.infinity.spentPoints,
-      availablePoints: availableCanonicalInfinityShopPoints(state),
+      points: gameDecimalFromBigInt(state.infinity.points),
+      spentPoints: gameDecimalFromBigInt(state.infinity.spentPoints),
+      availablePoints: gameDecimalFromBigInt(availableCanonicalInfinityShopPoints(state)),
       secretsOfTheUniverse: state.infinity.secretsOfTheUniverse,
       permanentSkillPoints: state.infinity.permanentSkillPoints,
     },
@@ -1309,30 +1329,34 @@ function selectResources(
     },
     reality: {
       universeDesignationCount:
-        state.reality.universeDesignationCount,
+        gameDecimalFromBigInt(state.reality.universeDesignationCount),
       workersReady: state.reality.workersReady,
       workerGenerationProgress:
         state.reality.workerGenerationProgress,
-      influence: state.reality.influence,
+      influence: gameDecimalFromBigInt(state.reality.influence),
     },
     quantum: {
-      pointsEarned: state.quantum.pointsEarned,
-      pointsSpent: state.quantum.pointsSpent,
-      availablePoints: availableQuantumPoints(state),
+      pointsEarned: gameDecimalFromBigInt(state.quantum.pointsEarned),
+      pointsSpent: gameDecimalFromBigInt(state.quantum.pointsSpent),
+      availablePoints: gameDecimalFromBigInt(availableQuantumPoints(state)),
       permanentSecrets: state.quantum.permanentSecrets,
-      influenceSpeedBonus: state.quantum.influenceSpeedBonus,
-      cashBonusLevels: state.quantum.cashBonusLevels,
-      scienceBonusLevels: state.quantum.scienceBonusLevels,
+      influenceSpeedBonus: gameDecimalFromBigInt(state.quantum.influenceSpeedBonus),
+      cashBonusLevels: gameDecimalFromBigInt(state.quantum.cashBonusLevels),
+      scienceBonusLevels: gameDecimalFromBigInt(state.quantum.scienceBonusLevels),
     },
     avocado: {
-      infinityPoints: state.avocado.infinityPoints,
-      influence: state.avocado.influence,
-      strangeMatter: state.avocado.strangeMatter,
-      overflowMultiplier: state.avocado.overflowMultiplier,
+      infinityPoints: gameDecimalFromNumber(state.avocado.infinityPoints),
+      influence: gameDecimalFromNumber(state.avocado.influence),
+      strangeMatter: gameDecimalFromNumber(state.avocado.strangeMatter),
+      overflowMultiplier: gameDecimalFromNumber(state.avocado.overflowMultiplier),
     },
     dream: {
-      ...state.dream.resources,
-      strangeMatter: state.dream.strangeMatter,
+      ...Object.fromEntries(Object.entries(state.dream.resources).map(
+        ([key, value]) => [key, typeof value === 'bigint'
+          ? gameDecimalFromBigInt(value)
+          : gameDecimalFromNumber(value)],
+      )) as Record<keyof DreamState['resources'], GameDecimal>,
+      strangeMatter: gameDecimalFromBigInt(state.dream.strangeMatter),
     },
     time: {
       storedTimeAvailableSeconds:
@@ -2621,7 +2645,7 @@ function freezeFrontendProjection<T>(
   value: T,
   sourceOwnership: 'borrowed' | 'detached-frozen',
 ): DeepReadonly<T> {
-  return sourceOwnership === 'detached-frozen' && import.meta.env.PROD
+  return sourceOwnership === 'detached-frozen' && import.meta.env?.PROD === true
     ? Object.freeze(value) as DeepReadonly<T>
     : deepFreeze(value)
 }

@@ -9702,7 +9702,35 @@
     },
     {
       "type": 0,
-      "value": "ᗡǝʌǝʅodɯǝuʇ Wǝun"
+      "value": "ᗡǝqnƃ Wǝun"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "settings.development.unlock": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "∩uʅoɔʞ ᗡǝʌǝʅodǝɹ Odʇıous"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "settings.development.unlocked": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "ᗡǝʌǝʅodǝɹ Odʇıous ɐɹǝ nuʅoɔʞǝp."
     },
     {
       "type": 0,
@@ -10235,6 +10263,34 @@
     {
       "type": 0,
       "value": "Sɐʌǝ ıɯdoɹʇǝp snɔɔǝssɟnʅʅʎ."
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "settings.save-data.paste-failed": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "⊥ɥıs qɹoʍsǝɹ qʅoɔʞǝp ɔʅıdqoɐɹp ɐɔɔǝss. Ↄɥoosǝ ɐ sɐʌǝ ɟıʅǝ, oɹ odǝu ʇɥǝ ƃɐɯǝ ıu ɐ qɹoʍsǝɹ ʇɥɐʇ dǝɹɯıʇs ɔʅıdqoɐɹp ɐɔɔǝss."
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "settings.save-data.paste-string": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "Ԁɐsʇǝ"
     },
     {
       "type": 0,

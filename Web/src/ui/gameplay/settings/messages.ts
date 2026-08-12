@@ -101,6 +101,16 @@ export const settingsSurfaceMessages = defineMessages({
     defaultMessage: 'Choose File',
     description: 'Selects a save file as an alternative import source.',
   },
+  pasteString: {
+    id: 'settings.save-data.paste-string',
+    defaultMessage: 'Paste',
+    description: 'Reads a save string from the clipboard.',
+  },
+  pasteFailed: {
+    id: 'settings.save-data.paste-failed',
+    defaultMessage: 'This browser blocked clipboard access. Choose a save file, or open the game in a browser that permits clipboard access.',
+    description: 'Failure shown when clipboard access is unavailable or denied.',
+  },
   importReview: {
     id: 'settings.save-data.import-review',
     defaultMessage: 'Review Save',
@@ -261,8 +271,18 @@ export const settingsSurfaceMessages = defineMessages({
   },
   developmentTitle: {
     id: 'settings.development.title',
-    defaultMessage: 'Development Menu',
+    defaultMessage: 'Debug Menu',
     description: 'Heading for development-only gameplay controls.',
+  },
+  developmentUnlock: {
+    id: 'settings.development.unlock',
+    defaultMessage: 'Unlock Developer Options',
+    description: 'Development-only action that unlocks the in-game Developer Options surface.',
+  },
+  developmentUnlocked: {
+    id: 'settings.development.unlocked',
+    defaultMessage: 'Developer Options are unlocked.',
+    description: 'Development-only confirmation that Developer Options are available.',
   },
   developmentDescription: {
     id: 'settings.development.description',

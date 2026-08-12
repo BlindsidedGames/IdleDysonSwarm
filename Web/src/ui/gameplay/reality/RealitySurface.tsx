@@ -30,6 +30,7 @@ import {
 import {
   formatGameNumber,
   formatNumber,
+  type NumericValue,
 } from '../../i18n/formatters'
 import type { EnabledLocale } from '../../i18n/localeRegistry'
 import type { UiRuntimePlayerCommandResult } from '../../runtime'
@@ -64,7 +65,7 @@ export interface RealitySurfaceProps {
   readonly simulationUpgrades: FrontendGameplayPreviews['dream']['upgrades']
   readonly simulationUpgradeSections:
     FrontendSimulationsDerivedFacts['permanentUpgrades']['simulation']
-  readonly strangeMatter: bigint
+  readonly strangeMatter: NumericValue
   readonly gatherRouteAvailable: boolean
   readonly purchaseRouteAvailable: boolean
   readonly simulationPurchaseRouteAvailable: boolean

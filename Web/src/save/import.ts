@@ -1,8 +1,8 @@
 import { prepareIdb1Save, prepareImportedSave, PreparedSave } from './prepare'
 import {
-  deserializeWebSaveBounded,
   stripNonShareableEntitlementClaims,
 } from './serialization'
+import { deserializeCurrentWebSaveBounded } from './webSaveSchemaProbe'
 import {
   assertSuppliedSaveTextLimit,
   DEFAULT_SAVE_IMPORT_LIMITS,
@@ -11,7 +11,7 @@ import {
 import type { SaveRecord } from './graph'
 import {
   retainReceivingDevicePreferences,
-  retainReceivingLocalDeveloperOptions,
+  retainReceivingLocalPlatformState,
   type ImportContext,
 } from './importContext'
 import { packSettingsFlags } from './settingsFlags'
@@ -40,7 +40,7 @@ export function prepareImportedSaveText(
   const decoded = trimmed.toUpperCase().startsWith('IDB1:')
     ? prepareIdb1Save(trimmed, limits).prepared
     : PreparedSave.fromDecoded(
-        deserializeWebSaveBounded(trimmed, limits),
+        deserializeCurrentWebSaveBounded(trimmed, limits),
       )
   assertContextTimestamp(context)
   switch (context.kind) {
@@ -60,7 +60,7 @@ export function prepareImportedSaveText(
         portableState,
         receivingState,
       )
-      const transferred = retainReceivingLocalDeveloperOptions(
+      const transferred = retainReceivingLocalPlatformState(
         withPreferences,
         receivingState,
       )

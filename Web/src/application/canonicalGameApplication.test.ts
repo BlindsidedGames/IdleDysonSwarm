@@ -323,6 +323,28 @@ describe('canonical game application engine', () => {
     expect(state.debugOptionsEnabled).toBe(true)
   })
 
+  test('unlocks Developer Options for development without changing currencies', () => {
+    const state = runtime()
+    const beforeQuantum = state.gameState.quantum
+    const beforeMatter = state.gameState.dream.strangeMatter
+    const definition = createCanonicalGameEngineDefinition({
+      eventContext: context(),
+    })
+
+    expect(
+      definition.applyCommand(state, {
+        kind: 'internal.development-apply-action',
+        action: { kind: 'unlock-debug-options' },
+      }),
+    ).toEqual({ accepted: true, changed: true })
+    expect(state).toMatchObject({
+      debugOptionsEnabled: true,
+      debugEntitlementPurchased: true,
+    })
+    expect(state.gameState.quantum).toEqual(beforeQuantum)
+    expect(state.gameState.dream.strangeMatter).toBe(beforeMatter)
+  })
+
   test('applies trusted host entitlements without persisting a paid save claim', () => {
     const state = runtime()
     Object.assign(state, {

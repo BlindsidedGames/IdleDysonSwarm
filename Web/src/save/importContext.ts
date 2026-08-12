@@ -60,11 +60,11 @@ export function retainReceivingDevicePreferences(
 }
 
 /**
- * A shared save cannot carry Developer Options ownership. The receiving save's
- * in-game unlock is local progression, however, and must survive replacement.
+ * A shared save cannot carry platform or Developer Options state. The
+ * receiving installation's local state must survive replacement instead.
  * Store ownership remains outside the save graph and is reapplied by the host.
  */
-export function retainReceivingLocalDeveloperOptions(
+export function retainReceivingLocalPlatformState(
   imported: SaveRecord,
   receiving: SaveRecord | undefined,
 ): SaveRecord {
@@ -73,5 +73,7 @@ export function retainReceivingLocalDeveloperOptions(
   result.debugEverEnabled = locallyUnlocked
   result.debugOptions =
     locallyUnlocked && receiving?.debugOptions === true
+  result.cheater = receiving?.cheater === true
+  result.unlockAllTabs = receiving?.unlockAllTabs === true
   return result
 }

@@ -1,6 +1,7 @@
 import type { EnabledLocale } from './localeRegistry'
+import { isGameDecimal, type GameDecimal } from '../../math/gameDecimal'
 
-export type NumericValue = number | bigint
+export type NumericValue = number | bigint | GameDecimal
 export const NON_FINITE_NUMBER_FALLBACK = '—'
 
 const GAME_NUMBER_PREFIXES = Object.freeze([
@@ -64,6 +65,7 @@ export function formatNumber(
   value: NumericValue,
   options: Intl.NumberFormatOptions = {},
 ): string {
+  if (isGameDecimal(value)) return formatGameNumber(locale, value)
   if (typeof value === 'number' && !Number.isFinite(value)) {
     return NON_FINITE_NUMBER_FALLBACK
   }
@@ -87,6 +89,7 @@ export function formatGameNumberParts(
   locale: EnabledLocale,
   value: NumericValue,
 ): GameNumberParts {
+  if (isGameDecimal(value)) return formatGameDecimalParts(locale, value)
   if (typeof value === 'bigint') {
     if (
       value > BigInt(Number.MAX_SAFE_INTEGER) ||
@@ -137,6 +140,45 @@ export function formatGameNumberParts(
     value: formatted,
     suffix: GAME_NUMBER_PREFIXES[exponentGroup],
   }
+}
+
+function formatGameDecimalParts(
+  locale: EnabledLocale,
+  value: GameDecimal,
+): GameNumberParts {
+  if (value.mantissa === 0) {
+    return {
+      value: formatNumber(locale, 0, {
+        minimumFractionDigits: 2,
+        maximumFractionDigits: 2,
+        useGrouping: false,
+      }),
+      suffix: '',
+    }
+  }
+  if (value.exponent < 0) {
+    if (value.exponent < -307) {
+      return { value: `${truncateMantissa(locale, value.mantissa)}e${value.exponent}`, suffix: '' }
+    }
+    return formatGameNumberParts(locale, value.mantissa * 10 ** value.exponent)
+  }
+  const exponentGroup = Math.floor(value.exponent / 3)
+  const displayMantissa = value.mantissa * 10 ** (value.exponent - exponentGroup * 3)
+  const formatted = truncateMantissa(locale, displayMantissa)
+  return exponentGroup < GAME_NUMBER_PREFIXES.length
+    ? { value: formatted, suffix: GAME_NUMBER_PREFIXES[exponentGroup] }
+    : { value: `${formatted}e${exponentGroup * 3}`, suffix: '' }
+}
+
+function truncateMantissa(locale: EnabledLocale, value: number): string {
+  const integerDigits = Math.max(1, Math.floor(Math.log10(value)) + 1)
+  const fractionDigits = Math.max(0, 3 - integerDigits)
+  const factor = 10 ** fractionDigits
+  return formatNumber(locale, Math.trunc(value * factor) / factor, {
+    minimumFractionDigits: fractionDigits,
+    maximumFractionDigits: fractionDigits,
+    useGrouping: false,
+  })
 }
 
 function formatLargeGameBigIntParts(

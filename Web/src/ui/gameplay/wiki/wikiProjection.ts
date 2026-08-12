@@ -1,4 +1,8 @@
 import type { FrontendCanonicalResources } from '../../../application/frontendSnapshot'
+import {
+  comparePresentationNumeric,
+  type PresentationNumeric,
+} from '../../presentationNumeric'
 
 export type WikiCategoryId =
   | 'bots'
@@ -13,8 +17,8 @@ export type WikiCategoryId =
   | 'secrets'
 
 export interface WikiProgression {
-  readonly infinityPoints: bigint
-  readonly quantumPoints: bigint
+  readonly infinityPoints: PresentationNumeric
+  readonly quantumPoints: PresentationNumeric
   readonly secretsOfTheUniverse: bigint
 }
 
@@ -31,12 +35,12 @@ export function visibleWikiCategoryIds(
     'lore',
   ]
   if (
-    progression.infinityPoints >= 42n ||
-    progression.quantumPoints >= 1n
+    comparePresentationNumeric(progression.infinityPoints, 42n) >= 0 ||
+    comparePresentationNumeric(progression.quantumPoints, 1n) >= 0
   ) {
     ids.push('reality')
   }
-  if (progression.quantumPoints >= 1n) ids.push('quantum')
+  if (comparePresentationNumeric(progression.quantumPoints, 1n) >= 0) ids.push('quantum')
   if (progression.secretsOfTheUniverse > 0n) ids.push('secrets')
   return ids
 }

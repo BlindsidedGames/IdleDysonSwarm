@@ -34,6 +34,7 @@ export interface SettingsSurfaceProps {
   readonly readSaveText: () => Promise<string | null>
   readonly downloadSave: () => Promise<boolean>
   readonly copySaveText: (text: string) => Promise<void>
+  readonly readClipboardText: () => Promise<string>
   readonly development?: UiRuntimeDevelopmentControls
   readonly developmentOnly?: boolean
   readonly visualizationVisible?: boolean
@@ -90,6 +91,7 @@ export function SettingsSurface({
   readSaveText,
   downloadSave,
   copySaveText,
+  readClipboardText,
   development,
   developmentOnly = false,
   visualizationVisible = true,
@@ -114,6 +116,7 @@ export function SettingsSurface({
     useState<UiRuntimeImportPreview | null>(null)
   const [importPreviewStatus, setImportPreviewStatus] =
     useState<ImportPreviewStatus>('idle')
+  const [pasteFailed, setPasteFailed] = useState(false)
   const [exportText, setExportText] = useState('')
   const [selectedImport, setSelectedImport] =
     useState<UiRuntimeSuppliedFile | null>(null)
@@ -122,6 +125,8 @@ export function SettingsSurface({
     setSelectedDevelopmentPreset,
   ] = useState<DevelopmentPresetId>('early-swarm')
   const [developmentStatus, setDevelopmentStatus] =
+    useState<DevelopmentStatus>('idle')
+  const [developmentUnlockStatus, setDevelopmentUnlockStatus] =
     useState<DevelopmentStatus>('idle')
   const [appliedDevelopmentPreset, setAppliedDevelopmentPreset] =
     useState<DevelopmentPresetId | null>(null)
@@ -229,6 +234,22 @@ export function SettingsSurface({
     }
   }
 
+  const requestClipboardPaste = async (): Promise<void> => {
+    if (operationPending) return
+    setPasteFailed(false)
+    try {
+      const text = await readClipboardText()
+      setImportText(text)
+      setSelectedImport(null)
+      setImportStatus('idle')
+      setImportPreviewStatus('idle')
+      transferTextRef.current?.focus()
+    } catch {
+      setPasteFailed(true)
+      transferTextRef.current?.focus()
+    }
+  }
+
   const requestImportPreview = async (): Promise<void> => {
     const suppliedText = importText.trim()
     if (
@@ -331,6 +352,24 @@ export function SettingsSurface({
     }
   }
 
+  const unlockDeveloperOptions = async (): Promise<void> => {
+    if (
+      development === undefined ||
+      developmentUnlockStatus === 'pending'
+    ) return
+    setDevelopmentUnlockStatus('pending')
+    try {
+      const result = await development.apply({
+        kind: 'unlock-debug-options',
+      })
+      setDevelopmentUnlockStatus(
+        result.applied ? 'succeeded' : 'failed',
+      )
+    } catch {
+      setDevelopmentUnlockStatus('failed')
+    }
+  }
+
   return (
     <div className="settings-surface">
       <div
@@ -415,6 +454,7 @@ export function SettingsSurface({
                 setImportText('')
                 setImportPreview(null)
                 setImportPreviewStatus('idle')
+                setPasteFailed(false)
                 setDialog('import')
               }}
             >
@@ -480,6 +520,23 @@ export function SettingsSurface({
                     )}
                   </p>
                 </div>
+                {import.meta.env.DEV ? (
+                  <div className="settings-surface__development-controls">
+                    {development.status().enabled ? (
+                      <p>
+                        {intl.formatMessage(messages.developmentUnlocked)}
+                      </p>
+                    ) : (
+                      <button
+                        type="button"
+                        disabled={developmentUnlockStatus === 'pending'}
+                        onClick={() => void unlockDeveloperOptions()}
+                      >
+                        {intl.formatMessage(messages.developmentUnlock)}
+                      </button>
+                    )}
+                  </div>
+                ) : null}
                 <div className="settings-surface__development-controls">
                   <label htmlFor={developmentPresetId}>
                     {intl.formatMessage(
@@ -550,6 +607,11 @@ export function SettingsSurface({
                     )}
                   </p>
                 ) : null}
+                {developmentUnlockStatus === 'failed' ? (
+                  <p className="settings-surface__development-status" role="alert">
+                    {intl.formatMessage(messages.developmentFailed)}
+                  </p>
+                ) : null}
               </section>
             ) : null}
           </>
@@ -617,11 +679,22 @@ export function SettingsSurface({
                   )}
                   wrap="off"
                   spellCheck={false}
+                  onPaste={(event) => {
+                    const text = event.clipboardData.getData('text/plain')
+                    if (text.length === 0) return
+                    event.preventDefault()
+                    setImportText(text)
+                    setSelectedImport(null)
+                    setImportStatus('idle')
+                    setImportPreviewStatus('idle')
+                    setPasteFailed(false)
+                  }}
                   onChange={(event) => {
                     setImportText(event.currentTarget.value)
                     setSelectedImport(null)
                     setImportStatus('idle')
                     setImportPreviewStatus('idle')
+                    setPasteFailed(false)
                   }}
                 />
                 <div className="settings-surface__file-option">
@@ -639,8 +712,16 @@ export function SettingsSurface({
                       setImportText('')
                       setImportStatus('idle')
                       setImportPreviewStatus('idle')
+                      setPasteFailed(false)
                     }}
                   />
+                  <button
+                    type="button"
+                    disabled={operationPending}
+                    onClick={() => void requestClipboardPaste()}
+                  >
+                    {intl.formatMessage(messages.pasteString)}
+                  </button>
                   <button
                     type="button"
                     disabled={importStatus === 'pending'}
@@ -715,11 +796,14 @@ export function SettingsSurface({
             (dialog === 'import' &&
               (importStatus === 'failed' ||
                 importStatus === 'committed-recovery' ||
-                importPreviewStatus === 'failed')) ? (
+                importPreviewStatus === 'failed' ||
+                pasteFailed)) ? (
               <p className="settings-surface__dialog-error" role="alert">
                 {intl.formatMessage(
                   dialog === 'reset'
                     ? resetStatusMessage(status)
+                    : pasteFailed
+                      ? messages.pasteFailed
                     : importPreviewStatus === 'failed'
                       ? messages.importPreviewFailed
                     : importStatusMessage(importStatus),

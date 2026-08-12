@@ -2,8 +2,9 @@ import {
   UnsupportedFutureSaveSchemaError,
   type SaveMigrationResult,
 } from './migrate'
-import { deserializeWebSave, serializeWebSave } from './serialization'
+import { serializeWebSave } from './serialization'
 import { PreparedSave } from './prepare'
+import { deserializeCurrentWebSaveBounded } from './webSaveSchemaProbe'
 import type {
   AutomaticUnityPurchaseEvidencePromoter,
   LegacyCandidateProvenance,
@@ -125,7 +126,7 @@ export class PortableSaveRepository implements SaveRepository {
 
   async loadCurrent(): Promise<PreparedSave | null> {
     if (!(await this.hasCurrent())) return null
-    const decoded = deserializeWebSave(
+    const decoded = deserializeCurrentWebSaveBounded(
       await this.storage.readText(this.paths.current),
     )
     return PreparedSave.fromDecoded(decoded)
@@ -304,7 +305,7 @@ export class PortableSaveRepository implements SaveRepository {
     )
     const encoded = serializeWebSave(normalized.copyValidatedState())
     await this.storage.writeText(this.paths.temporary, encoded)
-    const verified = deserializeWebSave(
+    const verified = deserializeCurrentWebSaveBounded(
       await this.storage.readText(this.paths.temporary),
     )
     if (serializeWebSave(verified) !== encoded) {
@@ -330,7 +331,9 @@ export class PortableSaveRepository implements SaveRepository {
       let prepared: PreparedSave
       try {
         prepared = PreparedSave.fromDecoded(
-          deserializeWebSave(await this.storage.readText(sourcePath)),
+          deserializeCurrentWebSaveBounded(
+            await this.storage.readText(sourcePath),
+          ),
         )
       } catch (error) {
         if (error instanceof UnsupportedFutureSaveSchemaError) {

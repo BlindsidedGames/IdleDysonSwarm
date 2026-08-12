@@ -4930,7 +4930,19 @@
   "settings.development.title": [
     {
       "type": 0,
-      "value": "Development Menu"
+      "value": "Debug Menu"
+    }
+  ],
+  "settings.development.unlock": [
+    {
+      "type": 0,
+      "value": "Unlock Developer Options"
+    }
+  ],
+  "settings.development.unlocked": [
+    {
+      "type": 0,
+      "value": "Developer Options are unlocked."
     }
   ],
   "settings.more-by.description": [
@@ -5159,6 +5171,18 @@
     {
       "type": 0,
       "value": "Save imported successfully."
+    }
+  ],
+  "settings.save-data.paste-failed": [
+    {
+      "type": 0,
+      "value": "This browser blocked clipboard access. Choose a save file, or open the game in a browser that permits clipboard access."
+    }
+  ],
+  "settings.save-data.paste-string": [
+    {
+      "type": 0,
+      "value": "Paste"
     }
   ],
   "settings.save-data.reset": [

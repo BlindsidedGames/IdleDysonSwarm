@@ -64,9 +64,14 @@ crashlytics-build.properties
 # Node / web
 node_modules/
 dist/
+Web/dist-*/
+Web/output/
 coverage/
 .turbo/
 .vite/
+
+# Local migration recovery snapshots
+.migration-snapshots/
 
 # Tauri
 apps/**/src-tauri/target/

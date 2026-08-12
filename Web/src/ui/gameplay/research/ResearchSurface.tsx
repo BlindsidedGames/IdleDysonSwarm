@@ -20,6 +20,7 @@ import type {
   CanonicalSkillPresetAutomationSlot,
   SkillPresetState,
 } from '../../../game-state/types'
+import { isGameDecimal, isZeroGameDecimal } from '../../../math/gameDecimal'
 import researchCostSymbolSrc from '../../assets/symbol-research-cost.png'
 import scienceSymbolSrc from '../../assets/symbol-science.png'
 import {
@@ -32,6 +33,7 @@ import {
 import {
   formatGameNumber,
   formatNumber,
+  type NumericValue,
 } from '../../i18n/formatters'
 import type {
   EnabledLocale,
@@ -81,7 +83,7 @@ const BUY_MODE_OPTIONS = Object.freeze([
 export interface ResearchSurfaceProps {
   readonly locale: EnabledLocale
   readonly cards: readonly FrontendResearchCardPreview[]
-  readonly researchers: number
+  readonly researchers: NumericValue
   readonly sciencePerSecond: number
   readonly buyMode: ResearchBuyMode
   readonly roundedBulkBuy: boolean
@@ -568,7 +570,10 @@ function effectText(
       />
     )
   }
-  if (card.currentLevel === 0) {
+  if (
+    card.currentLevel === 0 ||
+    (isGameDecimal(card.currentLevel) && isZeroGameDecimal(card.currentLevel))
+  ) {
     return (
       <FormattedMessage
         {...messages.purchaseBoost}

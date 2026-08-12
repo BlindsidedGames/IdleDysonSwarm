@@ -16,6 +16,7 @@ import {
   NON_FINITE_NUMBER_FALLBACK,
   selectPlural,
 } from './formatters'
+import { gameDecimalFromCanonicalString } from '../../math/gameDecimal'
 
 describe('cached locale formatters', () => {
   beforeEach(() => clearFormatterCachesForTests())
@@ -63,6 +64,10 @@ describe('cached locale formatters', () => {
     expect(formatGameNumber('en', -12.39)).toBe('-12.3')
     expect(formatGameNumber('en', 12_039_871_001_422_293n)).toBe('12.0Qa')
     expect(formatGameNumber('en', -12_102_296_928_535_773n)).toBe('-12.1Qa')
+    expect(formatGameNumber('en', gameDecimalFromCanonicalString('1.2345e308')))
+      .toBe('123UCe')
+    expect(formatGameNumber('en', gameDecimalFromCanonicalString('9.8765e1000')))
+      .toBe('98.7e999')
   })
 
   it('matches the Unity watt and joule energy format', () => {

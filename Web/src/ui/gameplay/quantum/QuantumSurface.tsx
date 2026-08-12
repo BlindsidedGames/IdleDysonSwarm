@@ -23,6 +23,14 @@ import {
 import { Button, SettingsIcon } from '../../components'
 import quantumShardsIcon from '../../assets/quantum-shards.png'
 import { formatGameNumber, formatNumber } from '../../i18n/formatters'
+import {
+  boundedPresentationFraction,
+  boundedPresentationWholeQuotient,
+  comparePresentationNumeric,
+  presentationDecimal,
+  type PresentationNumeric,
+} from '../../presentationNumeric'
+import { multiplyGameDecimals } from '../../../math/gameDecimal'
 import type { EnabledLocale } from '../../i18n/localeRegistry'
 import type { UiRuntimePlayerCommandResult } from '../../runtime'
 import { AvotationProgress } from './AvotationProgress'
@@ -50,7 +58,7 @@ export interface QuantumSurfaceProps {
   /** Retained for compatibility; leap progress is rendered by QuantumControlPanel. */
   readonly infinityPoints?: bigint
   /** Quantum Entanglement converts only unspent IP. */
-  readonly availableInfinityPoints: bigint
+  readonly availableInfinityPoints: PresentationNumeric
   readonly progression: Pick<FrontendCanonicalProgression, 'quantum' | 'avocado' | 'secretProgress'>
   readonly previews: FrontendGameplayPreviews['quantum']
   readonly meditationPreview: FrontendGameplayPreviews['avocado']['meditation']
@@ -245,16 +253,21 @@ function QuantumUpgradeCard({ locale, preview, resources, progression, routeAvai
   const name = intl.formatMessage(upgradeMessage(preview.upgradeId, 'Title'))
   const completed = preview.code === 'already-maxed'
   const isAvocato = preview.upgradeId === 'Avocado'
-  const isFreeClaim = preview.upgradeId === 'DoubleIP' && preview.cost === 0n
+  const isFreeClaim = preview.upgradeId === 'DoubleIP' && comparePresentationNumeric(preview.cost, 0) === 0
   const repeatable = HOLD_TO_PURCHASE_IDS.has(preview.upgradeId)
   const resolvedQuantity = repeatable
     ? purchaseQuantity === 'max'
-      ? preview.cost > 0n ? resources.availablePoints / preview.cost : 0n
+      ? comparePresentationNumeric(preview.cost, 0) > 0
+        ? boundedPresentationWholeQuotient(resources.availablePoints, preview.cost, 1_000n)
+        : 0n
       : BigInt(purchaseQuantity)
     : 1n
-  const totalCost = preview.cost * resolvedQuantity
+  const totalCost = multiplyGameDecimals(
+    presentationDecimal(preview.cost),
+    presentationDecimal(resolvedQuantity),
+  )
   const bulkAffordable = !repeatable || (
-    resolvedQuantity > 0n && totalCost <= resources.availablePoints
+    resolvedQuantity > 0n && comparePresentationNumeric(totalCost, resources.availablePoints) <= 0
   )
   const unavailable = completed || !preview.eligible || !routeAvailable || !bulkAffordable
   const disabled = pending || unavailable
@@ -348,7 +361,7 @@ function QuantumUpgradeCard({ locale, preview, resources, progression, routeAvai
 
 export interface QuantumControlPanelProps {
   readonly locale: EnabledLocale
-  readonly infinityPoints: bigint
+  readonly infinityPoints: PresentationNumeric
   readonly purchaseSettingsOpen: boolean
   readonly purchaseQuantity: QuantumPurchaseQuantity
   readonly onPurchaseSettingsOpenChange: (open: boolean) => void
@@ -365,9 +378,8 @@ export function QuantumControlPanel({
 }: QuantumControlPanelProps) {
   const intl = useIntl()
   const required = QUANTUM_CONSTANTS.infinityPointsPerQuantumPoint
-  const current = infinityPoints < required ? infinityPoints : required
-  const progress = Number(current) / Number(required)
-  const available = infinityPoints >= required
+  const progress = boundedPresentationFraction(infinityPoints, required)
+  const available = comparePresentationNumeric(infinityPoints, required) >= 0
 
   return (
     <section className="quantum-control-panel" aria-label={intl.formatMessage(messages.progress)}>
@@ -387,7 +399,7 @@ export function QuantumControlPanel({
           onClick={() => onPurchaseSettingsOpenChange(!purchaseSettingsOpen)}
         ><SettingsIcon /></button>
       </div>
-      <span className="quantum-surface__track" role="progressbar" aria-label={intl.formatMessage(messages.progress)} aria-valuemin={0} aria-valuemax={42} aria-valuenow={Number(current)}>
+      <span className="quantum-surface__track" role="progressbar" aria-label={intl.formatMessage(messages.progress)} aria-valuemin={0} aria-valuemax={42} aria-valuenow={Math.round(progress * 42)}>
         <span style={{ inlineSize: `${Math.max(0, Math.min(1, progress)) * 100}%` }} />
       </span>
       {purchaseSettingsOpen && (
@@ -507,7 +519,7 @@ function usePressAndHoldRepeat(
 
 interface QuantumLeapCardProps {
   readonly locale: EnabledLocale
-  readonly availableInfinityPoints: bigint
+  readonly availableInfinityPoints: PresentationNumeric
   readonly preview: FrontendGameplayPreviews['quantum']['leap']
   readonly entangled: boolean
   readonly routeAvailable: boolean
@@ -520,7 +532,11 @@ function QuantumLeapCard({ locale, availableInfinityPoints, preview, entangled, 
   const [confirming, setConfirming] = useState(false)
   const [pending, setPending] = useState(false)
   const [failed, setFailed] = useState(false)
-  const reward = availableInfinityPoints / QUANTUM_CONSTANTS.infinityPointsPerQuantumPoint
+  const reward = boundedPresentationWholeQuotient(
+    availableInfinityPoints,
+    QUANTUM_CONSTANTS.infinityPointsPerQuantumPoint,
+    9_007_199_254_740_991n,
+  )
   const disabled = pending || !preview.eligible || !routeAvailable
 
   const leap = async () => {
@@ -574,7 +590,7 @@ function QuantumLeapCard({ locale, availableInfinityPoints, preview, entangled, 
   )
 }
 
-function QuantumShardAmount({ locale, value }: { readonly locale: EnabledLocale; readonly value: bigint }) {
+function QuantumShardAmount({ locale, value }: { readonly locale: EnabledLocale; readonly value: PresentationNumeric }) {
   return (
     <span className="quantum-shard-amount">
       <span
@@ -650,10 +666,10 @@ function upgradeMessage(id: QuantumUpgradeId, suffix: 'Title' | 'Description'): 
 }
 
 function upgradeLevel(locale: EnabledLocale, id: QuantumUpgradeId, resources: FrontendCanonicalResources['quantum'], progression: Pick<FrontendCanonicalProgression, 'quantum' | 'avocado'>): string | null {
-  let value: bigint | null = null
+  let value: PresentationNumeric | null = null
   if (id === 'Secrets') value = resources.permanentSecrets / QUANTUM_CONSTANTS.secretsPerPurchase
   else if (id === 'Division') value = progression.quantum.divisionsPurchased
-  else if (id === 'InfluenceSpeed') value = resources.influenceSpeedBonus / QUANTUM_CONSTANTS.influenceSpeedPerPurchase
+  else if (id === 'InfluenceSpeed') value = boundedPresentationWholeQuotient(resources.influenceSpeedBonus, QUANTUM_CONSTANTS.influenceSpeedPerPurchase, 9_007_199_254_740_991n)
   else if (id === 'CashBonus') value = resources.cashBonusLevels
   else if (id === 'ScienceBonus') value = resources.scienceBonusLevels
   return value === null ? null : formatNumber(locale, value, { maximumFractionDigits: 0 })

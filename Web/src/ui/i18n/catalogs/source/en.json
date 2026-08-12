@@ -2384,8 +2384,16 @@
     "description": "Successful development progression feedback."
   },
   "settings.development.title": {
-    "defaultMessage": "Development Menu",
+    "defaultMessage": "Debug Menu",
     "description": "Heading for development-only gameplay controls."
+  },
+  "settings.development.unlock": {
+    "defaultMessage": "Unlock Developer Options",
+    "description": "Development-only action that unlocks the in-game Developer Options surface."
+  },
+  "settings.development.unlocked": {
+    "defaultMessage": "Developer Options are unlocked.",
+    "description": "Development-only confirmation that Developer Options are available."
   },
   "settings.more-by.description": {
     "defaultMessage": "Discover more games from the developer of Idle Dyson Swarm.",
@@ -2538,6 +2546,14 @@
   "settings.save-data.import-succeeded": {
     "defaultMessage": "Save imported successfully.",
     "description": "Successful save-import feedback."
+  },
+  "settings.save-data.paste-failed": {
+    "defaultMessage": "This browser blocked clipboard access. Choose a save file, or open the game in a browser that permits clipboard access.",
+    "description": "Failure shown when clipboard access is unavailable or denied."
+  },
+  "settings.save-data.paste-string": {
+    "defaultMessage": "Paste",
+    "description": "Reads a save string from the clipboard."
   },
   "settings.save-data.reset": {
     "defaultMessage": "Reset Save",

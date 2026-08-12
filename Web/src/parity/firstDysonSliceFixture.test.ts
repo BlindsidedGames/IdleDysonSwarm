@@ -33,7 +33,7 @@ describe('frozen first-Dyson canonical fixture', () => {
       checkpoints: [],
     })
     expect(fixture.tinker.inProgress.tinker.value.runtime.running).toBe(true)
-    expect(fixture.tinker.completed.bots).toBe(1)
+    expect(fixture.tinker.completed.bots).toEqual({ mantissa: 1, exponent: 0 })
     expect(fixture.initial.visibility).toEqual({
       showTinker: true,
       visibleBasicFacilityIds: [],

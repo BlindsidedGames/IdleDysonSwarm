@@ -1,14 +1,21 @@
 # Idle Dyson Swarm Web
 
-Headless TypeScript port foundation for Idle Dyson Swarm, with a small
-developer-only browser harness for save compatibility diagnostics.
+The actively supported TypeScript/Web implementation of Idle Dyson Swarm,
+with a small developer-only browser harness for save compatibility
+diagnostics.
+
+The retained Unity project is deprecated historical reference material. Unity
+behaviour, exported content and saves remain useful inputs for characterization
+and one-way legacy import, but Unity is not an active runtime, release target or
+forward-compatibility target. New Web saves and gameplay systems do not need to
+load in Unity.
 
 There is intentionally no playable product frontend at this checkpoint. The
 earlier Bot-tab slice was removed because the project does not yet have an
 approved product, design, interaction, accessibility or performance baseline.
 The diagnostic harness must not be treated as a product UI reference.
 
-## Compatibility foundation
+## Legacy compatibility foundation
 
 The port can decode and prepare existing Unity/Odin `IDB1:` saves without
 starting Unity. It performs base64 and gzip envelope decoding, reconstructs the
@@ -43,8 +50,8 @@ not copied into this repository.
 - Deterministic exporter for 559 Unity data assets, including stable IDs,
   resolved GUID references and source hashes.
 - Compact legacy skill/research ID and dependency catalogs.
-- Unity-compatible save normalization, migration, numeric repair and
-  validation.
+- Legacy Unity-save normalization, migration, numeric repair and validation for
+  one-way import into the supported Web runtime.
 - Typed version-1 game-state hydration/dehydration across the major durable
   domains, with source preservation and an executable partial-coverage gate.
 - Precision-preserving `IDSWEB1` serialization for 64-bit integers and bytes.
@@ -102,6 +109,10 @@ Before creating another product frontend, satisfy
 [simulation-contract.md](docs/simulation-contract.md),
 [parity-fixtures.md](docs/parity-fixtures.md), and
 [platform-port-inventory.md](docs/platform-port-inventory.md).
+
+The planned replacement of the finite `number` economy with Break Infinity is
+specified in
+[break-infinity-migration-plan.md](docs/break-infinity-migration-plan.md).
 
 See [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md) for the Odin binary
 protocol source attribution.

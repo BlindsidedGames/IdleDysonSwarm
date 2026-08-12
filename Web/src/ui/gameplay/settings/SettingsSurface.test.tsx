@@ -153,7 +153,12 @@ describe('SettingsSurface', () => {
       name: 'Save string',
     })
     expect(saveString).toHaveFocus()
-    await user.type(saveString, 'IDSWEB1:test')
+    await user.click(saveString)
+    expect(saveString).toHaveFocus()
+    await user.paste('IDSWEB1:test')
+    expect(saveString).toHaveFocus()
+    await user.tab()
+    expect(screen.getByRole('button', { name: 'Paste' })).toHaveFocus()
     expect(importSaveText).not.toHaveBeenCalled()
     await user.click(
       within(dialog).getByRole('button', { name: 'Review Save' }),
@@ -174,6 +179,36 @@ describe('SettingsSurface', () => {
       expect(importSaveText).toHaveBeenCalledWith('IDSWEB1:test'),
     )
     expect(screen.queryByRole('alertdialog')).not.toBeInTheDocument()
+  })
+
+  test('pastes a save string from the clipboard button and retains focus', async () => {
+    const user = userEvent.setup()
+    const readClipboardText = vi.fn().mockResolvedValue('IDSWEB1:clipboard')
+    renderSettings(vi.fn(), undefined, { readClipboardText })
+
+    await user.click(screen.getByRole('button', { name: 'Import' }))
+    await user.click(screen.getByRole('button', { name: 'Paste' }))
+
+    const saveString = screen.getByRole('textbox', { name: 'Save string' })
+    expect(readClipboardText).toHaveBeenCalledOnce()
+    expect(saveString).toHaveValue('IDSWEB1:clipboard')
+    expect(saveString).toHaveFocus()
+  })
+
+  test('reports when the browser blocks clipboard access', async () => {
+    const user = userEvent.setup()
+    const readClipboardText = vi.fn().mockRejectedValue(
+      new DOMException('Clipboard read permission denied.', 'NotAllowedError'),
+    )
+    renderSettings(vi.fn(), undefined, { readClipboardText })
+
+    await user.click(screen.getByRole('button', { name: 'Import' }))
+    await user.click(screen.getByRole('button', { name: 'Paste' }))
+
+    expect(screen.getByRole('alert')).toHaveTextContent(
+      'This browser blocked clipboard access. Choose a save file, or open the game in a browser that permits clipboard access.',
+    )
+    expect(screen.getByRole('textbox', { name: 'Save string' })).toHaveFocus()
   })
 
   test('also accepts a save file from the import dialog', async () => {
@@ -367,8 +402,36 @@ describe('SettingsSurface', () => {
     renderSettings(vi.fn())
 
     expect(
-      screen.queryByRole('button', { name: 'Development Menu' }),
+      screen.queryByRole('button', { name: 'Debug Menu' }),
     ).not.toBeInTheDocument()
+  })
+
+  test('unlocks the in-game Developer Options from the development-only debug menu', async () => {
+    const user = userEvent.setup()
+    let enabled = false
+    const apply = vi.fn().mockImplementation(async () => {
+      enabled = true
+      return { applied: true, stateRevision: 2, durableRevision: 2 }
+    })
+    renderSettings(vi.fn(), {
+      status: () => ({ enabled, entitled: enabled, quantumShards: 0n, strangeMatter: 0n }),
+      setDysonBots: vi.fn(),
+      unlockReality: vi.fn(),
+      apply,
+      simulateOfflineTime: vi.fn(),
+    })
+
+    await user.click(screen.getByRole('button', { name: 'Debug Menu' }))
+    await user.click(
+      screen.getByRole('button', { name: 'Unlock Developer Options' }),
+    )
+
+    await waitFor(() =>
+      expect(apply).toHaveBeenCalledWith({ kind: 'unlock-debug-options' }),
+    )
+    expect(
+      screen.getByText('Developer Options are unlocked.'),
+    ).toBeInTheDocument()
   })
 
   test('applies the selected real bot-count preset through the development runtime', async () => {
@@ -391,7 +454,7 @@ describe('SettingsSurface', () => {
       screen.queryByRole('combobox', { name: 'Progression state' }),
     ).not.toBeInTheDocument()
     await user.click(
-      screen.getByRole('button', { name: 'Development Menu' }),
+      screen.getByRole('button', { name: 'Debug Menu' }),
     )
     await user.selectOptions(
       screen.getByRole('combobox', { name: 'Progression state' }),
@@ -426,7 +489,7 @@ describe('SettingsSurface', () => {
     })
 
     await user.click(
-      screen.getByRole('button', { name: 'Development Menu' }),
+      screen.getByRole('button', { name: 'Debug Menu' }),
     )
     await user.selectOptions(
       screen.getByRole('combobox', { name: 'Progression state' }),
@@ -460,7 +523,7 @@ describe('SettingsSurface', () => {
     })
 
     await user.click(
-      screen.getByRole('button', { name: 'Development Menu' }),
+      screen.getByRole('button', { name: 'Debug Menu' }),
     )
     await user.selectOptions(
       screen.getByRole('combobox', { name: 'Progression state' }),
@@ -497,6 +560,7 @@ function renderSettings(
         readSaveText={vi.fn().mockResolvedValue(null)}
         downloadSave={vi.fn()}
         copySaveText={vi.fn()}
+        readClipboardText={vi.fn().mockResolvedValue('')}
         development={development}
         {...overrides}
       />

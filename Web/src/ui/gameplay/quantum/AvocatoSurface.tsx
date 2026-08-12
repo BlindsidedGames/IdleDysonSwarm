@@ -9,7 +9,7 @@ import type { CanonicalPlayerCommand } from '../../../application/canonicalPlaye
 import type { AvocadoFeedSource } from '../../../simulation/avocadoDomain'
 import avocatoIcon from '../../assets/skill-icons/avocados.png'
 import { Button } from '../../components'
-import { formatGameNumber, formatNumber } from '../../i18n/formatters'
+import { formatGameNumber, formatNumber, type NumericValue } from '../../i18n/formatters'
 import type { EnabledLocale } from '../../i18n/localeRegistry'
 import type { UiRuntimePlayerCommandResult } from '../../runtime'
 import { avocatoMessages as messages } from './messages'
@@ -27,9 +27,9 @@ export interface AvocatoSurfaceProps {
   readonly unlocked: boolean
   readonly resources: FrontendCanonicalResources['avocado']
   readonly spendable: {
-    readonly infinityPoints: bigint
-    readonly influence: bigint
-    readonly strangeMatter: bigint
+    readonly infinityPoints: NumericValue
+    readonly influence: NumericValue
+    readonly strangeMatter: NumericValue
   }
   readonly derived: FrontendGameplayDerivedFacts['avocado']
   readonly previews: FrontendGameplayPreviews['avocado']
@@ -101,9 +101,9 @@ export function AvocatoSurface({ locale, unlocked, resources, spendable, derived
 interface FeedCardProps {
   readonly locale: EnabledLocale
   readonly preview: FrontendGameplayPreviews['avocado']['feeds'][number]
-  readonly invested: number
+  readonly invested: NumericValue
   readonly multiplier: number
-  readonly resourceAvailable: bigint
+  readonly resourceAvailable: NumericValue
   readonly routeAvailable: boolean
   readonly dispatchPlayer: AvocatoSurfaceProps['dispatchPlayer']
 }
@@ -154,13 +154,13 @@ function AvocatoFeedCard({ locale, preview, invested, multiplier, resourceAvaila
   )
 }
 
-function spendableValue(spendable: AvocatoSurfaceProps['spendable'], source: AvocadoFeedSource): bigint {
+function spendableValue(spendable: AvocatoSurfaceProps['spendable'], source: AvocadoFeedSource): NumericValue {
   if (source === 'infinity-points') return spendable.infinityPoints
   if (source === 'influence') return spendable.influence
   return spendable.strangeMatter
 }
 
-function investedValue(resources: FrontendCanonicalResources['avocado'], source: AvocadoFeedSource): number {
+function investedValue(resources: FrontendCanonicalResources['avocado'], source: AvocadoFeedSource): NumericValue {
   if (source === 'infinity-points') return resources.infinityPoints
   if (source === 'influence') return resources.influence
   return resources.strangeMatter

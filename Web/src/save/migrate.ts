@@ -20,7 +20,8 @@ import { repairNumericSave, type NumericRepairResult } from './numericRepair'
 import { applyPackedSettingsFlags, packSettingsFlags } from './settingsFlags'
 import { validatePreparedSave, type SaveValidationResult } from './validate'
 
-export const CURRENT_SAVE_SCHEMA = 12
+export const CURRENT_SAVE_SCHEMA = 13
+export const LEGACY_V1_SAVE_SCHEMA = 12
 
 export class UnsupportedFutureSaveSchemaError extends Error {
   readonly sourceSchema: number
@@ -52,10 +53,10 @@ export function migrateDecodedSave(candidate: unknown): SaveMigrationResult {
     typeof save.saveVersion === 'number' && Number.isInteger(save.saveVersion)
       ? save.saveVersion
       : 0
-  if (sourceSchema > CURRENT_SAVE_SCHEMA) {
+  if (sourceSchema > LEGACY_V1_SAVE_SCHEMA) {
     throw new UnsupportedFutureSaveSchemaError(
       sourceSchema,
-      CURRENT_SAVE_SCHEMA,
+      LEGACY_V1_SAVE_SCHEMA,
     )
   }
 
@@ -64,7 +65,7 @@ export function migrateDecodedSave(candidate: unknown): SaveMigrationResult {
   applyPackedSettingsFlags(save)
   appliedSteps.push('ensure-root-and-dyson-shape')
   migrateAvotation(save)
-  migrateSkills(save, sourceSchema < CURRENT_SAVE_SCHEMA)
+  migrateSkills(save, sourceSchema < LEGACY_V1_SAVE_SCHEMA)
   appliedSteps.push('stable-skill-ids-and-bitsets')
   migrateResearch(save)
   appliedSteps.push('stable-research-ids')
@@ -80,13 +81,13 @@ export function migrateDecodedSave(candidate: unknown): SaveMigrationResult {
   packSettingsFlags(save)
   appliedSteps.push('packed-settings-flags')
   save.lastMigratedFromVersion = sourceSchema
-  save.saveVersion = CURRENT_SAVE_SCHEMA
-  const validation = validatePreparedSave(save, CURRENT_SAVE_SCHEMA)
+  save.saveVersion = LEGACY_V1_SAVE_SCHEMA
+  const validation = validatePreparedSave(save, LEGACY_V1_SAVE_SCHEMA)
 
   return {
     save,
     sourceSchema,
-    targetSchema: CURRENT_SAVE_SCHEMA,
+    targetSchema: LEGACY_V1_SAVE_SCHEMA,
     appliedSteps,
     numericRepair,
     validation,

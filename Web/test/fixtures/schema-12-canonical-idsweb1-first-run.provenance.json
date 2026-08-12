@@ -1,0 +1,31 @@
+{
+  "formatVersion": 1,
+  "classification": "development-only-non-private",
+  "artifactPath": "Web/test/fixtures/schema-12-canonical-idsweb1-first-run.txt",
+  "artifactSha256": "671DB2BAC4B4FDD23ACE6E988AD3C71BB9DA7C689C17FA46DB1CDB8F506DF489",
+  "artifactBytes": 6872,
+  "saveSchema": 12,
+  "source": {
+    "kind": "checked-in-unity-first-run-development-artifact",
+    "artifactPath": "Web/src/application/firstRun/generated/first-run-schema-12.idb1.txt",
+    "artifactSha256": "259EF04EFC4946C51A6FEA96064A2D2F05A8DB5778A1ECF4B3943A42A317D4FF",
+    "provenancePath": "Web/src/application/firstRun/generated/first-run-schema-12.provenance.json",
+    "provenanceSha256": "194BFE52C0884DD2A0E1DFD74B617933A4938B96D1CEA7EC1AB95281E004F4A4"
+  },
+  "generator": {
+    "path": "Web/scripts/generate-schema12-web-fixture.ts",
+    "command": "npm run fixture:schema12-web:generate",
+    "checkCommand": "npm run fixture:schema12-web:check",
+    "contract": "createDeterministicUnityFirstRunPreparedSave -> copyValidatedState -> serializeWebSave"
+  },
+  "serializer": {
+    "path": "Web/src/save/serialization.ts",
+    "contract": "IDSWEB1 sorted-key JSON, gzip level 9 with mtime 0, and path-independent bigint/byte encoding"
+  },
+  "privacy": {
+    "localProductionSaveUsed": false,
+    "browserProfileUsed": false,
+    "indexedDbExportUsed": false,
+    "playerOrSupportSaveUsed": false
+  }
+}

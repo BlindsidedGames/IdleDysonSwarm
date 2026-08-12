@@ -4,7 +4,7 @@ import {
 } from './decodeIdb1'
 import { deepCloneSave, type SaveRecord } from './graph'
 import {
-  CURRENT_SAVE_SCHEMA,
+  LEGACY_V1_SAVE_SCHEMA,
   migrateDecodedSave,
   type SaveMigrationResult,
 } from './migrate'
@@ -64,7 +64,7 @@ export class PreparedSave {
 
   withValidatedState(candidate: unknown): PreparedSave {
     const state = deepCloneSave(candidate) as SaveRecord
-    const validation = validatePreparedSave(state, CURRENT_SAVE_SCHEMA)
+    const validation = validatePreparedSave(state, LEGACY_V1_SAVE_SCHEMA)
     if (!validation.valid) {
       throw new Error(
         validation.error ?? 'Replacement save failed validation.',
@@ -72,8 +72,8 @@ export class PreparedSave {
     }
     return new PreparedSave({
       save: state,
-      sourceSchema: CURRENT_SAVE_SCHEMA,
-      targetSchema: CURRENT_SAVE_SCHEMA,
+      sourceSchema: LEGACY_V1_SAVE_SCHEMA,
+      targetSchema: LEGACY_V1_SAVE_SCHEMA,
       appliedSteps: [],
       numericRepair: { entries: [], repairCount: 0 },
       validation,

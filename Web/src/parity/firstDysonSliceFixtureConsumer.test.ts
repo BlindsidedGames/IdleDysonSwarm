@@ -6,7 +6,7 @@ describe('first-slice fixture consumer boundary', () => {
   test('consumes detached facts without gameplay-domain imports', () => {
     const fixture = loadFrozenFirstDysonSliceFixture()
 
-    expect(fixture.initial.resources.money).toBe(1_000_000)
+    expect(fixture.initial.resources.money).toEqual({ mantissa: 1, exponent: 6 })
     expect(fixture.initial.tinker.value.canStart).toBe(true)
     expect(fixture.initial.visibility.visibleBasicFacilityIds).toEqual([])
     expect(fixture.initial.basicFacilityPreviews[0]?.facilityId)

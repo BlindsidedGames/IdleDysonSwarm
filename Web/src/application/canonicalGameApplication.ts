@@ -124,6 +124,7 @@ export type CanonicalDevelopmentAction =
   | { readonly kind: 'set-tinker-interval'; readonly seconds: 0 | 1 }
   | { readonly kind: 'recalculate-skill-points' }
   | { readonly kind: 'reset-secret-progress' }
+  | { readonly kind: 'unlock-debug-options' }
   | { readonly kind: 'purchase-debug-options' }
   | { readonly kind: 'enable-host-debug-options' }
   | { readonly kind: 'disable-debug-options' }
@@ -957,6 +958,12 @@ function applyDevelopmentAction(
           step: 0,
         },
       })
+    case 'unlock-debug-options':
+      Object.assign(candidate, {
+        debugOptionsEnabled: true,
+        debugEntitlementPurchased: true,
+      })
+      return { accepted: true, changed: true }
     case 'purchase-debug-options': {
       if (candidate.debugEntitlementPurchased) {
         return replaceDevelopmentRuntime(candidate, {
@@ -1491,7 +1498,7 @@ function validateRuntimeTransitionState(
   )
   const incrementalIssue = model.validateIncremental()
   if (incrementalIssue !== undefined) return incrementalIssue
-  return import.meta.env.DEV ? model.validate() : undefined
+  return (import.meta.env?.DEV ?? true) ? model.validate() : undefined
 }
 
 function requiredBotCapCheckpoint(

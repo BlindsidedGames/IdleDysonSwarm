@@ -72,6 +72,7 @@ import {
   type SpaceAgePurchaseQuantity,
 } from '../simulations/SimulationsSurface'
 import { wikiProgressionFromResources } from '../wiki/wikiProjection'
+import { comparePresentationNumeric } from '../../presentationNumeric'
 import { AvocatoMeditationSecretTrigger } from '../quantum/AvocatoMeditationSecretTrigger'
 import { AvotationCompletionOverlay } from '../quantum/AvotationProgress'
 import type { AvocatoMeditationPlacement } from '../quantum/meditationTargets'
@@ -172,6 +173,7 @@ export interface ReadyDysonRuntimeHostProps {
   readonly readSaveText?: () => Promise<string | null>
   readonly downloadSave?: () => Promise<boolean>
   readonly copySaveText?: (text: string) => Promise<void>
+  readonly readClipboardText?: () => Promise<string>
   readonly releasePlatformServices?: Readonly<ReleasePlatformServices>
   readonly localDeveloperOptionsPurchased?: boolean
 }
@@ -191,6 +193,7 @@ function UnprobedReadyDysonRuntimeHost({
   readSaveText = unavailableReadSave,
   downloadSave = unavailableExport,
   copySaveText = unavailableCopy,
+  readClipboardText = unavailableClipboardRead,
   releasePlatformServices,
   localDeveloperOptionsPurchased,
 }: ReadyDysonRuntimeHostProps) {
@@ -263,6 +266,7 @@ function UnprobedReadyDysonRuntimeHost({
       readSaveText={readSaveText}
       downloadSave={downloadSave}
       copySaveText={copySaveText}
+      readClipboardText={readClipboardText}
       development={runtime.development}
       synchronizeHostEntitlements={runtime.synchronizeHostEntitlements}
       releasePlatformServices={releasePlatformServices}
@@ -282,6 +286,7 @@ export function ProbedReadyDysonRuntimeHost({
   readSaveText = unavailableReadSave,
   downloadSave = unavailableExport,
   copySaveText = unavailableCopy,
+  readClipboardText = unavailableClipboardRead,
   releasePlatformServices,
   localDeveloperOptionsPurchased,
 }: ReadyDysonRuntimeHostProps) {
@@ -354,6 +359,7 @@ export function ProbedReadyDysonRuntimeHost({
       readSaveText={readSaveText}
       downloadSave={downloadSave}
       copySaveText={copySaveText}
+      readClipboardText={readClipboardText}
       development={runtime.development}
       synchronizeHostEntitlements={runtime.synchronizeHostEntitlements}
       releasePlatformServices={releasePlatformServices}
@@ -390,6 +396,7 @@ export interface ReadyDysonSliceProps {
   readonly readSaveText?: () => Promise<string | null>
   readonly downloadSave?: () => Promise<boolean>
   readonly copySaveText?: (text: string) => Promise<void>
+  readonly readClipboardText?: () => Promise<string>
   readonly development?: UiRuntimeDevelopmentControls
   readonly synchronizeHostEntitlements?: () => Promise<boolean>
   readonly releasePlatformServices?: Readonly<ReleasePlatformServices>
@@ -467,6 +474,7 @@ export function ReadyDysonSlice({
   readSaveText = unavailableReadSave,
   downloadSave = unavailableExport,
   copySaveText = unavailableCopy,
+  readClipboardText = unavailableClipboardRead,
   development,
   synchronizeHostEntitlements,
   releasePlatformServices,
@@ -505,11 +513,11 @@ export function ReadyDysonSlice({
   )
   const gameplay = snapshot.gameplay
   const quantumVisible =
-    gameplay.resources.infinity.points >= 1n ||
-    gameplay.resources.quantum.pointsEarned >= 1n
+    comparePresentationNumeric(gameplay.resources.infinity.points, 1n) >= 0 ||
+    comparePresentationNumeric(gameplay.resources.quantum.pointsEarned, 1n) >= 0
   const quantumUnlocked =
-    gameplay.resources.infinity.points >= 42n ||
-    gameplay.resources.quantum.pointsEarned >= 1n
+    comparePresentationNumeric(gameplay.resources.infinity.points, 42n) >= 0 ||
+    comparePresentationNumeric(gameplay.resources.quantum.pointsEarned, 1n) >= 0
   const requestedRouteUnavailable =
     ((requestedRoute === 'reality' ||
       requestedRoute === 'simulations') &&
@@ -928,6 +936,8 @@ export function ReadyDysonSlice({
                   readSaveText={readSaveText}
                   downloadSave={downloadSave}
                   copySaveText={copySaveText}
+                  readClipboardText={readClipboardText}
+                  development={development}
                   visualizationVisible={visualizationVisible}
                   onVisualizationVisibleChange={(visible) => {
                     setVisualizationVisible(visible)
@@ -1817,6 +1827,10 @@ function unavailableReadSave(): Promise<null> {
 
 function unavailableCopy(): Promise<void> {
   return Promise.resolve()
+}
+
+function unavailableClipboardRead(): Promise<string> {
+  return Promise.reject(new Error('Clipboard reading is unavailable.'))
 }
 
 function createSkillPresetActions(

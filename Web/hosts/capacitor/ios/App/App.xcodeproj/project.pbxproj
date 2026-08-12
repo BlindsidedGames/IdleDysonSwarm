@@ -94,6 +94,7 @@
 			buildPhases = (
 				504EC3001FED79650016851F /* Sources */,
 				504EC3011FED79650016851F /* Frameworks */,
+				A1D5A0052FF0000000000001 /* Guard Stage 7 Certification Resources */,
 				504EC3021FED79650016851F /* Resources */,
 			);
 			buildRules = (
@@ -160,6 +161,23 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXResourcesBuildPhase section */
+
+/* Begin PBXShellScriptBuildPhase section */
+		A1D5A0052FF0000000000001 /* Guard Stage 7 Certification Resources */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "Guard Stage 7 Certification Resources";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "set -eu\nMARKER=\"${SRCROOT}/App/public/stage7-certification.marker\"\nif [ -f \"$MARKER\" ]; then\n  if [ \"${IDS_STAGE7_CERTIFICATION:-NO}\" != \"YES\" ]; then echo \"Certification resources require IDS_STAGE7_CERTIFICATION=YES\" >&2; exit 1; fi\n  case \"${PRODUCT_BUNDLE_IDENTIFIER}\" in *.stage7certification) ;; *) echo \"Certification resources require the separate certification bundle ID\" >&2; exit 1;; esac\nelif [ \"${IDS_STAGE7_CERTIFICATION:-NO}\" = \"YES\" ]; then\n  echo \"Certification flag requires a verified certification marker\" >&2; exit 1\nfi\n";
+		};
+/* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
 		504EC3001FED79650016851F /* Sources */ = {

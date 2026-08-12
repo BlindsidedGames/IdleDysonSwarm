@@ -3,9 +3,7 @@ import type {
   FrontendGameplaySnapshot,
 } from '../../../application/frontendSnapshot'
 import type { DeepReadonly } from '../../../core/contracts'
-import {
-  formatGameNumber,
-} from '../../i18n/formatters'
+import { formatGameNumber, type NumericValue } from '../../i18n/formatters'
 import type {
   EnabledLocale,
 } from '../../i18n/localeRegistry'
@@ -47,7 +45,7 @@ export function DysonProductionSummary({
 
 function formatFact(
   locale: EnabledLocale,
-  value: number,
+  value: NumericValue,
 ): string {
   return formatGameNumber(locale, value)
 }

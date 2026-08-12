@@ -1,5 +1,10 @@
 # Port architecture
 
+The Web application is the only supported runtime. The retained Unity project
+is deprecated historical reference material used for legacy import, exported
+content and behavioural characterization; it is not a release or
+forward-compatibility target.
+
 The rebuild keeps gameplay, persistence and platform work independent from any
 future product frontend. The React/Vite entrypoint is a developer-only save
 diagnostic and is not part of the product architecture.
