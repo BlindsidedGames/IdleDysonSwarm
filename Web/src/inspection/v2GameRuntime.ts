@@ -270,6 +270,9 @@ class V2GameRuntime {
       subscribeStatus: (listener) => this.#subscribeStatus(listener),
       snapshot: () => this.#snapshot,
       subscribeSnapshot: (listener) => this.#subscribeSnapshot(listener),
+      receiverLocalEntitlements: () => Object.freeze({
+        developerOptionsPurchased: this.#platform.debugEverEnabled,
+      }),
       start: () => this.start(false),
       takeOverWriterOwnership: () => this.start(true),
       dispatchPlayer: (command) => this.dispatchPlayer(command),
@@ -659,7 +662,11 @@ class V2GameRuntime {
         this.#publishSnapshot()
       }
       return true
-    }).catch(() => false)
+    }).catch((error) => {
+      document.documentElement.dataset.v2LastCheckpointError =
+        error instanceof Error ? error.message : String(error)
+      return false
+    })
     return this.#checkpointTail
   }
 
@@ -1550,11 +1557,18 @@ class V2GameRuntime {
     seconds: number,
   ): void {
     if (!this.#tinker.running) return
+    const advanceStarted = performance.now()
     const result = advanceCanonicalTinkerV2(
       source.state,
       this.#tinker,
       this.#tinkerStatsV2(source),
       seconds,
+    )
+    document.documentElement.dataset.v2LastTinkerAdvanceMs =
+      (performance.now() - advanceStarted).toFixed(3)
+    recordMaximumTiming(
+      'v2MaxTinkerAdvanceMs',
+      performance.now() - advanceStarted,
     )
     this.#tinker = result.runtime
     if (result.completions === 0) {
@@ -1562,7 +1576,18 @@ class V2GameRuntime {
       return
     }
     const commitStarted = performance.now()
-    this.#adopt(this.#publicationWithState(source, result.state, source.revision + 1))
+    const publicationStarted = performance.now()
+    const publication = this.#publicationWithState(
+      source,
+      result.state,
+      source.revision + 1,
+    )
+    document.documentElement.dataset.v2LastTinkerPublicationMs =
+      (performance.now() - publicationStarted).toFixed(3)
+    const adoptionStarted = performance.now()
+    this.#adopt(publication)
+    document.documentElement.dataset.v2LastTinkerAdoptionMs =
+      (performance.now() - adoptionStarted).toFixed(3)
     document.documentElement.dataset.v2LastTinkerCommitMs =
       (performance.now() - commitStarted).toFixed(3)
   }
@@ -1576,6 +1601,11 @@ class V2GameRuntime {
 
 function normalizeBotDistribution(value: number): number {
   return Math.round(Math.max(0, Math.min(1, value)) * 100) / 100
+}
+
+function recordMaximumTiming(key: string, elapsed: number): void {
+  const current = Number(document.documentElement.dataset[key] ?? 0)
+  document.documentElement.dataset[key] = Math.max(current, elapsed).toFixed(3)
 }
 
 function allocateV2Bots(

@@ -541,6 +541,7 @@ class TestRuntime {
       return () => undefined
     },
     setGameplayPreviewDemand: () => undefined,
+    receiverLocalEntitlements: () => ({ developerOptionsPurchased: false }),
     dispatchPlayer: async () => ({
       status: 'failed',
       code: 'test-not-configured',

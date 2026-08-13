@@ -254,12 +254,23 @@ export interface BrowserFrontendDemandPort {
   ): void
 }
 
+export interface BrowserReceiverLocalEntitlementPort {
+  /**
+   * Read-only receiver state. This must never be sourced from, or copied into,
+   * a portable save.
+   */
+  receiverLocalEntitlements(): Readonly<{
+    readonly developerOptionsPurchased: boolean
+  }>
+}
+
 export type BrowserUiRuntimeFoundation = UiRuntimeFoundation<
   DeepReadonly<FrontendApplicationSnapshot>,
   CanonicalPlayerCommand
 > &
   BrowserSkillPresetQueryPort &
-  BrowserFrontendDemandPort
+  BrowserFrontendDemandPort &
+  BrowserReceiverLocalEntitlementPort
 
 /**
  * Browser Wave 1 composition root.
@@ -287,6 +298,8 @@ export function createBrowserRuntimeFoundation(
     ) => implementation.subscribeSnapshot(listener),
     setGameplayPreviewDemand: (demand) =>
       implementation.setGameplayPreviewDemand(demand),
+    receiverLocalEntitlements: () =>
+      implementation.receiverLocalEntitlements(),
     start: () => implementation.start(),
     takeOverWriterOwnership: () =>
       implementation.takeOverWriterOwnership(),
@@ -453,6 +466,17 @@ class BrowserRuntimeFoundation implements BrowserUiRuntimeFoundation {
 
   snapshot(): DeepReadonly<FrontendApplicationSnapshot> {
     return this.frontendSnapshots.snapshot()
+  }
+
+  receiverLocalEntitlements(): Readonly<{
+    readonly developerOptionsPurchased: boolean
+  }> {
+    const snapshot = this.graph?.application.snapshot()
+    return Object.freeze({
+      developerOptionsPurchased:
+        snapshot?.phase === 'ready' &&
+        snapshot.state.debugEntitlementPurchased === true,
+    })
   }
 
   subscribeStatus(listener: UiRuntimeStatusListener): () => void {

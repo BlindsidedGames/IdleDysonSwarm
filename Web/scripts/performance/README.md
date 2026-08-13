@@ -44,10 +44,11 @@ which starts immediately before the external-store snapshot selection and ends
 in the layout effect for that exact committed snapshot revision. Initial mount,
 same-revision rerenders, StrictMode effect replay and aborted renders do not
 produce samples. Normal production builds statically select the unprobed host.
-Each trial performs excluded warm-up Tinker activations only until its first
-measured revision, then clears instrumentation and starts the timed trace. This
-handles startup timing without accepting a missing sample, and the warm-up is
-outside the timed trace.
+Each trial starts one excluded warm-up Tinker operation, waits for its first
+canonical Tinker commit, then lets that revision's worker-backed dirty checkpoint
+settle before clearing instrumentation and starting the timed trace. This
+handles startup timing without overlapping gestures, accepting a missing
+sample, or leaking warm-up persistence into the measured trace.
 
 The acceptance command runs five 30-second trials at desktop 1440x900 and
 mobile 390x844 with 4x CPU throttling. It records presentation long tasks,

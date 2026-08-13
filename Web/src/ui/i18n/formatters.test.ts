@@ -67,7 +67,15 @@ describe('cached locale formatters', () => {
     expect(formatGameNumber('en', gameDecimalFromCanonicalString('1.2345e308')))
       .toBe('123UCe')
     expect(formatGameNumber('en', gameDecimalFromCanonicalString('9.8765e1000')))
-      .toBe('98.7e999')
+      .toBe('9.87e1.00K')
+    expect(formatGameNumber('en', gameDecimalFromCanonicalString('1.2345e10000')))
+      .toBe('1.23e10.0K')
+    expect(formatGameNumber('en', gameDecimalFromCanonicalString('1e1000000')))
+      .toBe('1.00e1.00M')
+    expect(formatGameNumber(
+      'en',
+      gameDecimalFromCanonicalString('9.8765e8999999999999999'),
+    )).toBe('9.87e8.99Qa')
   })
 
   it('matches the Unity watt and joule energy format', () => {

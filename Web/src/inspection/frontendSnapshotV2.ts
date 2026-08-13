@@ -3,6 +3,7 @@ import {
   FRONTEND_GAMEPLAY_SNAPSHOT_VERSION,
   selectFrontendApplicationSnapshot,
   type FrontendApplicationSnapshot,
+  type FrontendGameplayVisibility,
   type FrontendGameplayPreviews,
   type FrontendGameplayPreviewDemand,
 } from '../application/frontendSnapshot'
@@ -206,7 +207,9 @@ export function selectFrontendApplicationSnapshotV2(
     version: FRONTEND_GAMEPLAY_SNAPSHOT_VERSION,
     gameplay: Object.freeze({
       ...selected.gameplay,
+      modelVersion: state.modelVersion,
       resources,
+      visibility: selectV2GameplayVisibility(state),
       previews: selectV2Previews(
         publication,
         selected.gameplay.previews,
@@ -226,6 +229,91 @@ export function selectFrontendApplicationSnapshotV2(
   }
   byTinker.set(tinker as object, snapshot)
   return snapshot
+}
+
+function selectV2GameplayVisibility(
+  state: Readonly<CanonicalGameStateV2>,
+): Readonly<FrontendGameplayVisibility> {
+  const zero = gameDecimalFromNumber(0)
+  const total = (facilityId: keyof CanonicalGameStateV2['dyson']['facilities']) => {
+    const owned = state.dyson.facilities[facilityId]
+    return addGameDecimals(owned[0], owned[1])
+  }
+  const owns = (
+    facilityId: keyof CanonicalGameStateV2['dyson']['facilities'],
+    amount = 1,
+  ) => compareGameDecimals(total(facilityId), gameDecimalFromNumber(amount)) >= 0
+  const automaticOwns = (
+    facilityId: keyof CanonicalGameStateV2['dyson']['facilities'],
+    amount: number,
+  ) => compareGameDecimals(
+    state.dyson.facilities[facilityId][1],
+    gameDecimalFromNumber(amount),
+  ) >= 0
+  const positive = (value: GameDecimal) => compareGameDecimals(value, zero) > 0
+  const basicVisible = Object.freeze({
+    assembly_lines: compareGameDecimals(
+      state.dyson.bots,
+      gameDecimalFromNumber(10),
+    ) >= 0 || owns('assembly_lines'),
+    ai_managers: automaticOwns('assembly_lines', 5) || owns('ai_managers'),
+    servers: automaticOwns('ai_managers', 1) || owns('servers'),
+    data_centers: owns('servers') || owns('data_centers'),
+    planets: owns('data_centers') || owns('planets'),
+  })
+  const infinityPoints = addGameDecimals(
+    state.infinity.availablePoints,
+    state.infinity.allocatedPoints,
+  )
+  const quantumEarned = state.quantum.lifetimeEarnedShards
+  const realityUnlocked = positive(quantumEarned) ||
+    state.infinity.secretsOfTheUniverse >= 42n
+  const galacticBrainsVisible = owns('galactic_brains') ||
+    (state.quantum.unlocks.galacticBrains && owns('birch_planets'))
+  const currentSecrets = state.infinity.secretsOfTheUniverse
+  const requiredSecrets = 42n
+
+  return Object.freeze({
+    dyson: Object.freeze({
+      showTinker: ((!owns('assembly_lines', 10) ||
+        !automaticOwns('ai_managers', 1)) && !owns('data_centers')) ||
+        state.skills.byId.manualLabour?.owned === true,
+      visibleBasicFacilityIds: Object.freeze(
+        BASIC_DYSON_FACILITY_IDS.filter((facilityId) => basicVisible[facilityId]),
+      ),
+      showNextTierTeaser: positive(quantumEarned)
+        ? !galacticBrainsVisible
+        : !basicVisible.planets,
+    }),
+    skills: Object.freeze({
+      routeUnlocked: compareGameDecimals(
+        state.dyson.bots,
+        gameDecimalFromNumber(10),
+      ) >= 0 ||
+        state.dyson.goalStage > 0n ||
+        state.meta.firstInfinityComplete ||
+        state.skills.points > 0n ||
+        state.infinity.permanentSkillPoints > 0n ||
+        positive(infinityPoints) ||
+        Object.values(state.skills.byId).some((skill) => skill.owned),
+    }),
+    infinity: Object.freeze({
+      routeUnlocked: state.meta.firstInfinityComplete ||
+        positive(infinityPoints) || positive(quantumEarned),
+    }),
+    reality: Object.freeze({
+      routeVisible: positive(infinityPoints) || positive(quantumEarned),
+      routeUnlocked: realityUnlocked,
+      unlockProgress: Object.freeze({
+        currentSecrets,
+        requiredSecrets,
+        fraction: currentSecrets >= requiredSecrets
+          ? 1
+          : Number(currentSecrets) / Number(requiredSecrets),
+      }),
+    }),
+    simulations: Object.freeze({ routeUnlocked: realityUnlocked }),
+  })
 }
 
 export function projectLegacyPresentationState(

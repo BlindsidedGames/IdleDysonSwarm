@@ -1,4 +1,9 @@
-import { cloneCanonicalGameStateV2 } from '../game-state/cloneV2'
+import {
+  admitValidatedCanonicalGameStateV2,
+  cloneCanonicalGameStateV2,
+  isIssuedCanonicalGameStateV2,
+  registerCanonicalGameStateValidationAuthorityV2,
+} from '../game-state/cloneV2'
 import {
   cloneCanonicalRuntimeSidecarV2,
   type CanonicalRuntimeSidecarV2,
@@ -19,6 +24,8 @@ const MAXIMUM_RETAINED_CHUNK_DIAGNOSTICS = 4
 const COOPERATIVE_MATERIAL_EVENT_BUDGET = 8
 const issuedPublications = new WeakSet<object>()
 const issuedApplicationAuthorities = new WeakSet<object>()
+const STATE_VALIDATION_AUTHORITY =
+  registerCanonicalGameStateValidationAuthorityV2()
 
 export interface CanonicalRuntimeApplicationAuthorityV2 {
   readonly policy: 'canonical-runtime-application-publication-v1'
@@ -151,9 +158,12 @@ export function adoptPreparedCanonicalRuntimePublicationV2(
     'state',
     'Prepared canonical V2 runtime publication',
   ) as Readonly<CanonicalGameStateV2>
-  const validation = validateCanonicalGameStateV2(state)
-  if (!validation.valid || !isDeepFrozenDataTree(state, new Set())) {
-    throw new TypeError('Prepared canonical V2 state must be valid and deeply frozen.')
+  if (!isIssuedCanonicalGameStateV2(state)) {
+    const validation = validateCanonicalGameStateV2(state)
+    if (!validation.valid || !isDeepFrozenDataTree(state, new Set())) {
+      throw new TypeError('Prepared canonical V2 state must be valid and deeply frozen.')
+    }
+    admitValidatedCanonicalGameStateV2(STATE_VALIDATION_AUTHORITY, state)
   }
   const runtime = cloneCanonicalRuntimeSidecarV2(
     dataValue(
@@ -361,6 +371,13 @@ function issuePublication(
   carrier: Readonly<CanonicalEventTimeCarrierV2>,
 ): Readonly<CanonicalRuntimePublicationV2> {
   const publication = prepareCanonicalEventTimeCarrierV2(carrier)
+  // The event-time engine returns its internally validated immutable carrier.
+  // Preserve that ownership fact so a following small player transaction can
+  // structurally share unchanged canonical sections.
+  admitValidatedCanonicalGameStateV2(
+    STATE_VALIDATION_AUTHORITY,
+    publication.state,
+  )
   issuedPublications.add(publication)
   return publication
 }

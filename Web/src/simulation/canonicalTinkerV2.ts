@@ -1,4 +1,4 @@
-import { cloneCanonicalGameStateV2 } from '../game-state/cloneV2'
+import { cloneCanonicalGameStateV2WithDyson } from '../game-state/cloneV2'
 import type { CanonicalGameStateV2 } from '../game-state/typesV2'
 import {
   addGameDecimals,
@@ -92,9 +92,9 @@ export function advanceCanonicalTinkerV2(
     }
     remaining = Math.max(0, remaining - untilCompletion)
     const manual = isManualLabourEffective(candidate)
-    candidate = cloneCanonicalGameStateV2({
-      ...candidate,
-      dyson: manual
+    candidate = cloneCanonicalGameStateV2WithDyson(
+      candidate,
+      manual
         ? {
             ...candidate.dyson,
             facilities: {
@@ -113,7 +113,7 @@ export function advanceCanonicalTinkerV2(
               ? Math.max(0, candidate.dyson.manualCreationIntervalSeconds - 1)
               : BOT_MINIMUM_COOLDOWN_SECONDS,
           },
-    })
+    )
     completions += 1
     if (!active.repeat) {
       active = Object.freeze({ ...active, running: false, cycleId: 0, elapsedSeconds: 0 })
@@ -147,7 +147,10 @@ function synchronize(
     : state.dyson.manualCreationIntervalSeconds
   const candidate = creationTime === state.dyson.manualCreationIntervalSeconds
     ? state
-    : cloneCanonicalGameStateV2({ ...state, dyson: { ...state.dyson, manualCreationIntervalSeconds: creationTime } })
+    : cloneCanonicalGameStateV2WithDyson(
+        state,
+        { ...state.dyson, manualCreationIntervalSeconds: creationTime },
+      )
   const changed = modeChanged || runtime.cooldownSeconds !== stats.cooldownSeconds
   return Object.freeze({
     state: candidate,

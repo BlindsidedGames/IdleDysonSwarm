@@ -9,6 +9,7 @@ import {
 } from './productionV2Repository'
 import type { V2GameRuntimeRepository } from '../inspection/v2GameRuntime'
 import type { StoredTimePolicyIdV2 } from '../simulation/storedTimePolicyV2'
+import { encodeSchema13WebSave } from './schema13'
 
 export interface ProductionV2RuntimeRepositoryOptions {
   readonly repository: Readonly<ProductionV2SaveRepository>
@@ -23,6 +24,7 @@ implements V2GameRuntimeRepository {
   readonly #nowUtc: () => string
   readonly #createFirstRunSave: () => PreparedSave
   #current: Readonly<ProductionV2Checkpoint> | null = null
+  #encoder: Schema13WorkerEncoder | null = null
 
   constructor(options: Readonly<ProductionV2RuntimeRepositoryOptions>) {
     this.#repository = options.repository
@@ -49,8 +51,10 @@ implements V2GameRuntimeRepository {
     revision: number,
   ): Promise<void> {
     const current = this.#requireCurrent()
-    this.#current = await this.#repository.checkpoint(
-      source,
+    this.#encoder ??= new Schema13WorkerEncoder()
+    const portableSave = await this.#encoder.encode(source)
+    this.#current = await this.#repository.checkpointPreparedPortable(
+      portableSave,
       current.preferences,
       platform,
       revision,
@@ -128,5 +132,62 @@ implements V2GameRuntimeRepository {
       throw new Error('The production V2 repository has not been opened.')
     }
     return this.#current
+  }
+}
+
+interface WorkerEncodeResponse {
+  readonly id: number
+  readonly portableSaveBlob?: Blob
+  readonly error?: string
+}
+
+class Schema13WorkerEncoder {
+  readonly #worker: Worker | null
+  readonly #pending = new Map<number, Readonly<{
+    resolve(value: string): void
+    reject(reason: Error): void
+  }>>()
+  #nextId = 1
+
+  constructor() {
+    this.#worker = typeof Worker === 'function'
+      ? new Worker(new URL('./schema13EncodeWorker.ts', import.meta.url), {
+          type: 'module',
+          name: 'schema-13-checkpoint-encoder',
+        })
+      : null
+    if (this.#worker !== null) {
+      this.#worker.onmessage = (event: MessageEvent<WorkerEncodeResponse>) => {
+        const response = event.data
+        const pending = this.#pending.get(response.id)
+        if (pending === undefined) return
+        this.#pending.delete(response.id)
+        if (response.portableSaveBlob instanceof Blob) {
+          void response.portableSaveBlob.text().then(
+            pending.resolve,
+            (error) => pending.reject(
+              error instanceof Error ? error : new Error(String(error)),
+            ),
+          )
+        } else {
+          pending.reject(new Error(response.error ?? 'Schema-13 encode worker failed.'))
+        }
+      }
+      this.#worker.onerror = () => {
+        const error = new Error('Schema-13 encode worker failed.')
+        for (const pending of this.#pending.values()) pending.reject(error)
+        this.#pending.clear()
+      }
+    }
+  }
+
+  encode(source: Readonly<Schema13WebSaveSource>): Promise<string> {
+    if (this.#worker === null) return Promise.resolve(encodeSchema13WebSave(source))
+    const id = this.#nextId
+    this.#nextId += 1
+    return new Promise((resolve, reject) => {
+      this.#pending.set(id, { resolve, reject })
+      this.#worker?.postMessage({ id, source })
+    })
   }
 }

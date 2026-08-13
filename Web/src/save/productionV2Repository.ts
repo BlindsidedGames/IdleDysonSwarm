@@ -313,6 +313,39 @@ export class ProductionV2SaveRepository {
     return this.#mutate(() => this.#checkpoint(source, preferences, platform, revision))
   }
 
+  /**
+   * Trusted runtime checkpoint path. The portable save was produced by this
+   * build's schema-13 encoder, so persistence verifies the exact staged and
+   * committed bytes without performing two redundant full decodes. Startup
+   * and import paths continue to decode and validate the complete payload.
+   */
+  checkpointPreparedPortable(
+    portableSave: string,
+    preferences: Readonly<Schema13PresentationPreferences>,
+    platform: Readonly<Schema13PlatformState>,
+    revision: number,
+  ): Promise<Readonly<ProductionV2Checkpoint>> {
+    return this.#mutate(async () => {
+      const checkpoint = Object.freeze({
+        revision: requireRevision(revision),
+        portableSave: requirePreparedPortableSave(portableSave),
+        preferences: validateSchema13PresentationPreferences(preferences),
+        platform: validateSchema13PlatformState(platform),
+      })
+      const encoded = encodeCheckpoint(checkpoint)
+      await this.#write(this.#paths.temporary, encoded)
+      if (await this.#read(this.#paths.temporary) !== encoded) {
+        throw new Error('V2 prepared temporary save readback did not match.')
+      }
+      await this.#rotateBackups()
+      await this.#storage.replaceAtomically(this.#paths.temporary, this.#paths.current)
+      if (await this.#read(this.#paths.current) !== encoded) {
+        throw new Error('V2 prepared committed save readback did not match.')
+      }
+      return checkpoint
+    })
+  }
+
   async importPortable(
     text: string,
     importedAtUtc: string,
@@ -797,6 +830,14 @@ function requireRevision(value: unknown): number {
     throw new TypeError('The production V2 revision is invalid.')
   }
   return value as number
+}
+
+function requirePreparedPortableSave(value: unknown): string {
+  if (typeof value !== 'string') {
+    throw new TypeError('The prepared portable save must be text.')
+  }
+  assertBoundedText(value)
+  return value
 }
 
 function requireTimestamp(value: unknown): string {

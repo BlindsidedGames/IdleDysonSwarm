@@ -23,6 +23,33 @@ const PLATFORM = Object.freeze({
 })
 
 describe('V2 game runtime production seams', () => {
+  test('projects receiver-local Developer Options ownership without using portable state', async () => {
+    const migrated = migratePreparedSaveToV2(
+      createDeterministicUnityFirstRunPreparedSave(),
+      { kind: 'trusted-same-device' },
+    )
+    const repository = new FakeRuntimeRepository(
+      createCanonicalRuntimePublicationV2({
+        revision: 1,
+        state: migrated.state,
+        runtime: migrated.runtime,
+      }),
+    )
+    repository.latestPlatform = Object.freeze({
+      ...PLATFORM,
+      debugEverEnabled: true,
+    })
+    const controller = createV2GameRuntimeController({ repository })
+
+    await controller.runtime.start()
+
+    expect(controller.runtime.receiverLocalEntitlements()).toEqual({
+      developerOptionsPurchased: true,
+    })
+    expect('debugEverEnabled' in repository.latestState).toBe(false)
+    await controller.runtime.shutdown()
+  })
+
   test('uses unit bot fractions, synchronizes the selected preset, and enforces the Multitasking lock', async () => {
     const migrated = migratePreparedSaveToV2(createDeterministicUnityFirstRunPreparedSave(), { kind: 'trusted-same-device' })
     const unlocked = cloneCanonicalGameStateV2({

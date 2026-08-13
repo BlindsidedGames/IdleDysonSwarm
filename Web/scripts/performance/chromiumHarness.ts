@@ -39,6 +39,10 @@ export interface BrowserPerformanceEntries {
   readonly snapshotSelectionThroughReactCommit:
     readonly FirstSliceCommitProbeSample[]
   readonly events: readonly {
+    readonly name: string
+    readonly startTime: number
+    readonly processingStart: number
+    readonly processingEnd: number
     readonly interactionId: number
     readonly duration: number
   }[]
@@ -463,22 +467,45 @@ function createPage(options: {
       return true
     },
     async warmFirstSliceCommitProbe(
-      timeoutMilliseconds = 10_000,
+      timeoutMilliseconds = 20_000,
     ) {
       const startedAt = Date.now()
-      let activations = 0
+      let activations = await this.clickTinker() ? 1 : 0
+      if (activations === 0) {
+        throw new Error('Could not start the first-slice Tinker warm-up.')
+      }
+      let running = false
       while (Date.now() - startedAt < timeoutMilliseconds) {
-        if (await this.clickTinker()) activations += 1
-        await delay(550)
-        const entries = await this.readPerformanceEntries()
-        if (
-          entries.snapshotSelectionThroughReactCommit.length > 0
-        ) {
+        await delay(250)
+        const committed = await evaluate<boolean>(
+          `document.documentElement.dataset.v2LastTinkerCommitMs !== undefined`,
+        )
+        if (committed) {
+          // The first meaningful revision is the completed Tinker operation.
+          // Its dirty checkpoint is scheduled five seconds later; let that
+          // worker-backed save and its exact readbacks finish before clearing
+          // instrumentation for the measured steady-state trace.
+          await delay(6_000)
           return activations
         }
+        running ||= await evaluate<boolean>(`(() => {
+          const surface = document.querySelector('.tinker-surface')
+          return surface instanceof HTMLElement && surface.dataset.running === 'true'
+        })()`)
+        if (!running && await this.clickTinker()) activations += 1
       }
+      const state = await evaluate<unknown>(`(() => {
+        const surface = document.querySelector('.tinker-surface')
+        return {
+          running: surface instanceof HTMLElement ? surface.dataset.running : null,
+          runtime: Object.fromEntries(
+            Object.entries(document.documentElement.dataset)
+              .filter(([key]) => key.startsWith('v2')),
+          ),
+        }
+      })()`)
       throw new Error(
-        `Timed out after ${timeoutMilliseconds} ms warming the first-slice commit probe.`,
+        `Timed out after ${timeoutMilliseconds} ms warming the first-slice commit probe: ${JSON.stringify(state)}.`,
       )
     },
     async resetInteractionMeasurements() {
@@ -788,6 +815,10 @@ const PERFORMANCE_INSTRUMENTATION = String.raw`
     (entries) => {
       for (const entry of entries) {
         events.push({
+          name: entry.name,
+          startTime: entry.startTime,
+          processingStart: entry.processingStart,
+          processingEnd: entry.processingEnd,
           interactionId: entry.interactionId || 0,
           duration: entry.duration,
         })

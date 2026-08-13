@@ -1,6 +1,11 @@
 import { describe, expect, test } from 'vitest'
 import schema12Web from '../../test/fixtures/schema-12-canonical-idsweb1-first-run.txt?raw'
 import { migratePreparedSaveToV2 } from '../game-state/mappingV2'
+import {
+  admitValidatedCanonicalGameStateV2,
+  cloneCanonicalGameStateV2WithDyson,
+  isIssuedCanonicalGameStateV2,
+} from '../game-state/cloneV2'
 import { gameDecimalFromCanonicalString } from '../math/gameDecimal'
 import { PreparedSave } from '../save/prepare'
 import { deserializeWebSave } from '../save/serialization'
@@ -16,6 +21,30 @@ const migrated = migratePreparedSaveToV2(
 )
 
 describe('prepared canonical runtime application publication', () => {
+  test('structurally shares issued unchanged sections and rejects forged validation authority', () => {
+    const source = createCanonicalRuntimePublicationV2(Object.freeze({
+      revision: 0,
+      state: migrated.state,
+      runtime: migrated.runtime,
+    }))
+    const state = cloneCanonicalGameStateV2WithDyson(
+      source.state,
+      Object.freeze({
+        ...source.state.dyson,
+        money: gameDecimalFromCanonicalString('1.2345e4'),
+      }),
+    )
+
+    expect(state).not.toBe(source.state)
+    expect(state.dyson).not.toBe(source.state.dyson)
+    expect(state.research).toBe(source.state.research)
+    expect(isIssuedCanonicalGameStateV2(state)).toBe(true)
+    expect(() => admitValidatedCanonicalGameStateV2(
+      Object.freeze({ policy: 'canonical-game-state-validation-authority-v1' }),
+      state,
+    )).toThrow('not authentic')
+  })
+
   test('adopts one deeply frozen revision without cloning the canonical state again', () => {
     const source = createCanonicalRuntimePublicationV2(Object.freeze({
       revision: 4,

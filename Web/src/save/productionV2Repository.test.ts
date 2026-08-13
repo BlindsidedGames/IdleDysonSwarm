@@ -84,6 +84,31 @@ describe('ProductionV2SaveRepository', () => {
     expect(await repository.exportPreMigrationRecovery()).toBe(original)
   })
 
+  test('persists a trusted prepared portable save with exact staged and committed readbacks', async () => {
+    const storage = new MemoryStorage([[PATHS.current, schema12Text()]])
+    const repository = new ProductionV2SaveRepository(storage, PATHS)
+    const opened = await repository.openOrMigrate({
+      observedAtUtc: NOW,
+      createFirstRunSave: createDeterministicUnityFirstRunPreparedSave,
+    })
+    const portableSave = encodeSchema13WebSave(Object.freeze({
+      savedAtUtc: '2026-08-12T00:00:05.000Z',
+      state: opened.save.state,
+      runtime: opened.save.runtime,
+    }))
+
+    const checkpoint = await repository.checkpointPreparedPortable(
+      portableSave,
+      opened.checkpoint.preferences,
+      opened.checkpoint.platform,
+      5,
+    )
+
+    expect(checkpoint.portableSave).toBe(portableSave)
+    expect((await repository.loadCurrent())?.checkpoint).toEqual(checkpoint)
+    expect(storage.events).toContain(`replace:${PATHS.current}`)
+  })
+
   test('recovers a valid schema-12 backup without replacing the retained source bytes', async () => {
     const backup = schema12Text()
     const storage = new MemoryStorage([

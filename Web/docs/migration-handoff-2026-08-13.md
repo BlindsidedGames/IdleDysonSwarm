@@ -11,6 +11,11 @@
   native signing, store upload, TestFlight upload, release, or merge was
   performed as part of this handoff.
 
+The remote branch was refreshed on 2026-08-13 and still resolves to checkpoint
+`74e05605`. Live GitHub Actions run status was unavailable because the stored
+`gh` credential for `BlindsidedGames` is invalid; do not infer remote CI status
+from the green local gates below.
+
 ## Current state
 
 The production Web composition now uses the V2 canonical game state and
@@ -31,6 +36,12 @@ The latest adversarial audit fixes include:
   Dream, Reality, Quantum, and Avocato, with immutable projection memoization;
 - a mature synthetic schema-12 migration/import/recovery corpus; and
 - V1/V2 command, codec, activated-command, checkpoint, and reload benchmarks.
+
+Large-number presentation retains Unity's truncated three-significant-digit
+suffix format through `DCe`. Above that range, both the scientific mantissa and
+the exponent use the same compact formatter: for example, `9.8765e1000` is
+shown as `9.87e1.00K`, and a near-ceiling value is shown as `9.87e8.99Qa`.
+Canonical values and calculations remain unchanged.
 
 ## Validation at handoff
 
@@ -65,6 +76,48 @@ Activated V2 facade medians were 7.528 ms for assembly purchase plus projection,
 report script is `scripts/performance/runMigrationCommandReport.ts`; generated
 output remains intentionally untracked.
 
+## macOS continuation evidence
+
+The receiver-local Developer Options presentation gap was closed on the same
+branch after the original checkpoint. `BrowserUiRuntimeFoundation` now exposes
+a read-only receiver-local entitlement projection. The V2 runtime sources it
+from schema-13 platform sidecar state, and the Store receives it in production
+builds without putting `debugEverEnabled` into portable save state.
+
+Focused TypeScript, lint, runtime, storefront, browser-composition and
+repository checks pass. A real dev-server run opened the production IndexedDB
+database, verified an `ids-web-production-v2-checkpoint-v1` record containing
+an `IDSWEB1:` portable save, persisted a navigation preference, and restored it
+after reload. Developer Options then displayed as `Unlocked in game` both
+before and after a second reload. Observed ready times were approximately
+1.18 seconds and 1.12 seconds on this machine.
+
+The interaction failures were subsequently resolved. Profiling showed that
+each dirty autosave synchronously encoded schema 13 and then performed two
+redundant full schema-13 decodes for staged/committed comparison. Trusted
+runtime autosaves now encode in a dedicated module worker, transfer the result
+as a Blob, and preserve exact staged/committed byte verification; startup and
+import paths still perform strict full decoding. Tinker completion also now
+uses an authenticated Dyson-only structural-share clone for event-time-issued
+immutable states instead of cloning every unrelated system.
+
+The acceptance harness now starts one accepted warm-up Tinker operation, waits
+for its canonical commit, and lets its worker-backed autosave settle before
+clearing measurements. The final five-trial, 30-second report is acceptance
+eligible and passes every budget. Desktop and 4x-throttled mobile both recorded
+zero presentation long tasks. Mobile synthetic INP P75 was 120 ms,
+snapshot-selection-through-React-commit P95 was 2.7 ms, and LCP P75 was 404 ms.
+Generated report files remain ignored under `output/performance/`.
+
+The full automated suite is green: the serialized run passed 2,226 ordinary
+tests and failed only the three real-browser certification cases because the
+sandbox forbids their fixed localhost ports. Those three then passed with
+loopback permission, giving a combined 2,229/2,229 result. Two Stored Time
+Fast-plan completion/restart tests had previously exceeded a fixed 10-second
+drain deadline after preceding CPU-heavy cases despite passing individually in
+under four seconds. Their heavy-path drains now use the existing 60-second
+checkpoint-driver bound and pass in the original full-file order (25/25).
+
 ## Save and recovery material
 
 The repository includes the immutable canonical schema-12 fixture at
@@ -84,22 +137,30 @@ source checkpoint and all generated artifacts are reproducible.
 
 ## Known follow-up concerns
 
-1. Production Developer Options presentation does not yet receive the
-   receiver-local `debugEverEnabled` entitlement. The entitlement itself is
-   preserved, but the storefront can visually show it as unowned. Fix this by
-   projecting a read-only receiver-local entitlement; never put the entitlement
-   into portable save state.
-2. Schema-13 encode/decode and fresh-controller reload are materially slower
-   than schema 12. Profile actual IndexedDB, writer-lease, React, and browser
-   reload behavior before further optimization. Normal arithmetic and purchase
-   commands are fast in absolute terms.
-3. The synthetic non-UI `previewDemand='all'` projection is intentionally
+The original receiver-local Developer Options presentation concern is resolved
+by the macOS continuation described above.
+
+1. Schema-13 startup decode and fresh-controller reload remain materially
+   slower than schema 12, but steady-state autosave encoding is now off the
+   presentation thread and exact readbacks no longer repeat full decoding.
+   Continue to measure startup/reload separately from interaction budgets.
+2. The synthetic non-UI `previewDemand='all'` projection is intentionally
    expensive because it constructs every strict quote family. Activated play
    defaults to the Bots route, requests only the visible family, and memoizes
    identical immutable projections.
-4. Physical-device certification and store distribution remain outside this
+3. Physical-device certification and store distribution remain outside this
    checkpoint. GitHub build tests may continue, but do not deploy, sign, merge,
    or upload without explicit user authorization.
+4. Stage 9 is not complete. `inspection/frontendSnapshotV2.ts` still projects
+   the complete `CanonicalGameStateV2` back into `CanonicalGameStateV1`, invokes
+   `application/frontendSnapshot.ts`, and then replaces the authoritative V2
+   resources, visibility, and previews. V2 snapshots now report model version 2,
+   and visibility is derived directly from `GameDecimal` state so extreme values
+   cannot collapse to the bridge's zero sentinel. The bridge remains reachable
+   from `inspection/v2GameRuntime.ts`. Retire it incrementally by moving the
+   remaining progression, visibility, derived-fact, runtime, and command
+   projection families onto V2 inputs while preserving legacy decode/import,
+   fixtures, and recovery.
 
 ## Resume on macOS
 
@@ -122,6 +183,9 @@ If the repository already exists, run `git fetch origin`, switch to
 Read this file and `docs/break-infinity-migration-plan.md` before editing.
 Preserve the existing architecture and exact numeric boundaries. Verify the
 working tree before changes and use focused tests first. Do not deploy, merge,
-publish, sign, or upload. The next sensible work is the Developer Options
-receiver-local presentation fix followed by real dev-server IndexedDB/save and
-interaction benchmarking.
+publish, sign, or upload. The throttled-mobile backlog and long-task concern is
+resolved and the automated suite is green. The next work is to complete the
+Stage 9 frontend projection migration and remove production-only V1
+compatibility that is no longer required.
+Physical-device checks remain useful residual-risk evidence, but are not
+migration completion gates and must not be treated as release readiness.

@@ -15,6 +15,31 @@ const intendedEntries = [
   ...canonicalNumericFieldClassifications,
   ...plannedV2OnlyNumericClassifications,
 ].filter((entry) => entry.intendedV2Path !== null)
+const issuedCanonicalGameStates = new WeakSet<object>()
+const issuedValidationAuthorities = new WeakSet<object>()
+
+export interface CanonicalGameStateValidationAuthorityV2 {
+  readonly policy: 'canonical-game-state-validation-authority-v1'
+}
+
+export function registerCanonicalGameStateValidationAuthorityV2():
+Readonly<CanonicalGameStateValidationAuthorityV2> {
+  const authority = Object.freeze({
+    policy: 'canonical-game-state-validation-authority-v1' as const,
+  })
+  issuedValidationAuthorities.add(authority)
+  return authority
+}
+
+export function admitValidatedCanonicalGameStateV2(
+  authority: Readonly<CanonicalGameStateValidationAuthorityV2>,
+  value: Readonly<CanonicalGameStateV2>,
+): void {
+  if (!issuedValidationAuthorities.has(authority as object)) {
+    throw new TypeError('Canonical game-state validation authority is not authentic.')
+  }
+  issuedCanonicalGameStates.add(value)
+}
 
 function pathMatches(pattern: string, path: string): boolean {
   const expression = pattern
@@ -125,5 +150,41 @@ export function cloneCanonicalGameStateV2(
       `Cannot publish an invalid CanonicalGameStateV2: ${validation.errors.join(' ')}`,
     )
   }
+  issuedCanonicalGameStates.add(clone)
   return clone
+}
+
+/**
+ * Reissues an already-owned canonical state after a Dyson-only transaction.
+ * Unchanged sections are authenticated immutable nodes from the issued source;
+ * the replacement Dyson tree is cloned, frozen and path-checked before the
+ * assembled state is validated and issued.
+ */
+export function cloneCanonicalGameStateV2WithDyson(
+  source: Readonly<CanonicalGameStateV2>,
+  dyson: Readonly<CanonicalGameStateV2['dyson']>,
+): CanonicalGameStateV2 {
+  if (!isIssuedCanonicalGameStateV2(source)) {
+    return cloneCanonicalGameStateV2({ ...source, dyson })
+  }
+  const candidate = Object.freeze({
+    ...source,
+    dyson: cloneAndFreeze(dyson, new Map(), '$.dyson'),
+  }) as CanonicalGameStateV2
+  const validation = validateCanonicalGameStateV2(candidate)
+  if (!validation.valid) {
+    throw new TypeError(
+      `Cannot publish an invalid CanonicalGameStateV2: ${validation.errors.join(' ')}`,
+    )
+  }
+  issuedCanonicalGameStates.add(candidate)
+  return candidate
+}
+
+/** Identifies states already cloned, validated and deeply frozen here. */
+export function isIssuedCanonicalGameStateV2(
+  value: unknown,
+): boolean {
+  return typeof value === 'object' && value !== null &&
+    issuedCanonicalGameStates.has(value)
 }

@@ -74,8 +74,10 @@ export function formatNumber(
 
 /**
  * Matches the Unity game's three-digit, truncated mantissa presentation while
- * retaining locale-appropriate decimal digits. This is display formatting
- * only; canonical values and gameplay calculations remain untouched.
+ * retaining locale-appropriate decimal digits. Above the named-suffix range,
+ * both the scientific mantissa and exponent use the same compact three-digit
+ * presentation. This is display formatting only; canonical values and
+ * gameplay calculations remain untouched.
  */
 export function formatGameNumber(
   locale: EnabledLocale,
@@ -117,7 +119,12 @@ export function formatGameNumberParts(
     0,
   )
   if (exponentGroup >= GAME_NUMBER_PREFIXES.length) {
-    return { value: value.toExponential(2), suffix: '' }
+    const exponent = Math.floor(Math.log10(absolute))
+    const mantissa = value / 10 ** exponent
+    return {
+      value: `${truncateScientificMantissa(locale, mantissa)}e${formatCompactExponent(locale, exponent)}`,
+      suffix: '',
+    }
   }
 
   const scale = 10 ** (exponentGroup * 3)
@@ -167,7 +174,10 @@ function formatGameDecimalParts(
   const formatted = truncateMantissa(locale, displayMantissa)
   return exponentGroup < GAME_NUMBER_PREFIXES.length
     ? { value: formatted, suffix: GAME_NUMBER_PREFIXES[exponentGroup] }
-    : { value: `${formatted}e${exponentGroup * 3}`, suffix: '' }
+    : {
+        value: `${truncateScientificMantissa(locale, value.mantissa)}e${formatCompactExponent(locale, value.exponent)}`,
+        suffix: '',
+      }
 }
 
 function truncateMantissa(locale: EnabledLocale, value: number): string {
@@ -179,6 +189,26 @@ function truncateMantissa(locale: EnabledLocale, value: number): string {
     maximumFractionDigits: fractionDigits,
     useGrouping: false,
   })
+}
+
+function truncateScientificMantissa(
+  locale: EnabledLocale,
+  value: number,
+): string {
+  const factor = 100
+  return formatNumber(locale, Math.trunc(value * factor) / factor, {
+    minimumFractionDigits: 2,
+    maximumFractionDigits: 2,
+    useGrouping: false,
+  })
+}
+
+function formatCompactExponent(
+  locale: EnabledLocale,
+  exponent: number,
+): string {
+  const parts = formatGameNumberParts(locale, exponent)
+  return `${parts.value}${parts.suffix}`
 }
 
 function formatLargeGameBigIntParts(
@@ -197,10 +227,20 @@ function formatLargeGameBigIntParts(
     maximumFractionDigits: fractionDigits,
     useGrouping: false,
   })
+  const scientificMantissa = Number(digits.slice(0, 3)) / 100
 
   return exponentGroup < GAME_NUMBER_PREFIXES.length
     ? { value: formatted, suffix: GAME_NUMBER_PREFIXES[exponentGroup] }
-    : { value: `${formatted}e${exponentGroup * 3}`, suffix: '' }
+    : {
+        value: `${formatNumber(locale, negative
+          ? -scientificMantissa
+          : scientificMantissa, {
+          minimumFractionDigits: 2,
+          maximumFractionDigits: 2,
+          useGrouping: false,
+        })}e${formatCompactExponent(locale, digits.length - 1)}`,
+        suffix: '',
+      }
 }
 
 /**

@@ -1045,6 +1045,9 @@ describe('ReadyDysonSlice', () => {
         listeners.add(listener)
         return () => listeners.delete(listener)
       },
+      receiverLocalEntitlements: () => ({
+        developerOptionsPurchased: false,
+      }),
       setGameplayPreviewDemand: vi.fn(),
       dispatchPlayer: vi.fn(acceptedDispatch),
     } as unknown as BrowserUiRuntimeFoundation

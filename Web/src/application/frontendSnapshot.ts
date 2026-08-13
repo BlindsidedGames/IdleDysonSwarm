@@ -15,6 +15,7 @@ import type {
   DreamState,
   TimelineState,
 } from '../game-state/types'
+import type { CanonicalGameStateV2 } from '../game-state/typesV2'
 import {
   deriveAvocadoMultiplier,
   feedAllToAvocado,
@@ -1001,7 +1002,9 @@ export type FrontendGameplayPreviewDemand =
 
 export interface FrontendGameplaySnapshot {
   readonly version: typeof FRONTEND_GAMEPLAY_SNAPSHOT_VERSION
-  readonly modelVersion: CanonicalGameStateV1['modelVersion']
+  readonly modelVersion:
+    | CanonicalGameStateV1['modelVersion']
+    | CanonicalGameStateV2['modelVersion']
   readonly resources: DeepReadonly<FrontendCanonicalResources>
   readonly progression: DeepReadonly<FrontendCanonicalProgression>
   readonly derived: DeepReadonly<FrontendGameplayDerivedFacts>

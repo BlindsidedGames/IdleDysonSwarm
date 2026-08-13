@@ -250,6 +250,9 @@ function UnprobedReadyDysonRuntimeHost({
     [runtime],
   )
   if (snapshot.phase !== 'ready') return null
+  const receiverLocalDeveloperOptionsPurchased =
+    localDeveloperOptionsPurchased ??
+    runtime.receiverLocalEntitlements().developerOptionsPurchased
   return (
     <ReadyDysonSlice
       snapshot={snapshot}
@@ -270,7 +273,9 @@ function UnprobedReadyDysonRuntimeHost({
       development={runtime.development}
       synchronizeHostEntitlements={runtime.synchronizeHostEntitlements}
       releasePlatformServices={releasePlatformServices}
-      localDeveloperOptionsPurchased={localDeveloperOptionsPurchased}
+      localDeveloperOptionsPurchased={
+        receiverLocalDeveloperOptionsPurchased
+      }
     />
   )
 }
@@ -343,6 +348,9 @@ export function ProbedReadyDysonRuntimeHost({
     }
   }, [selectionStartedAt, sessionRevision, stateRevision])
   if (snapshot.phase !== 'ready') return null
+  const receiverLocalDeveloperOptionsPurchased =
+    localDeveloperOptionsPurchased ??
+    runtime.receiverLocalEntitlements().developerOptionsPurchased
   return (
     <ReadyDysonSlice
       snapshot={snapshot}
@@ -363,7 +371,9 @@ export function ProbedReadyDysonRuntimeHost({
       development={runtime.development}
       synchronizeHostEntitlements={runtime.synchronizeHostEntitlements}
       releasePlatformServices={releasePlatformServices}
-      localDeveloperOptionsPurchased={localDeveloperOptionsPurchased}
+      localDeveloperOptionsPurchased={
+        receiverLocalDeveloperOptionsPurchased
+      }
     />
   )
 }

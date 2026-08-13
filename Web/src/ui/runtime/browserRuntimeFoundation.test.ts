@@ -3475,6 +3475,7 @@ describe('browser runtime foundation composition', () => {
       'previewSkillPresetQueueChange',
       'readClipboardText',
       'readCurrentSaveText',
+      'receiverLocalEntitlements',
       'recoveryExportAvailable',
       'requestCheckpoint',
       'setGameplayPreviewDemand',

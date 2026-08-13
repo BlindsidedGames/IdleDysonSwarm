@@ -37,6 +37,8 @@ describe('V2 full-game frontend projection', () => {
     )
     const elapsed = performance.now() - started
     expect(snapshot.phase).toBe('ready')
+    if (snapshot.phase !== 'ready') return
+    expect(snapshot.gameplay.modelVersion).toBe(2)
     expect(elapsed).toBeLessThan(250)
     const cachedStarted = performance.now()
     expect(selectFrontendApplicationSnapshotV2(
@@ -85,6 +87,12 @@ describe('V2 full-game frontend projection', () => {
     expect(Object.isFrozen(snapshot.gameplay.resources)).toBe(true)
     expect(snapshot.gameplay.runtime.selectedSkillPresetSlot).toBe(4)
     expect(projectLegacyPresentationState(state).dyson.money).toBe(0)
+    expect(snapshot.gameplay.visibility.skills.routeUnlocked).toBe(true)
+    expect(snapshot.gameplay.visibility.infinity.routeUnlocked).toBe(true)
+    expect(snapshot.gameplay.visibility.reality).toMatchObject({
+      routeVisible: true,
+      routeUnlocked: true,
+    })
 
     const assemblyLine = snapshot.gameplay.previews.dyson.basicFacilities.find(
       ({ facilityId }) => facilityId === 'assembly_lines',
