@@ -1,8 +1,6 @@
 import type { DeepReadonly } from '../../core/contracts'
-import {
-  FRONTEND_GAMEPLAY_SNAPSHOT_VERSION,
-  type FrontendApplicationSnapshot,
-} from '../../application/frontendSnapshot'
+import { FRONTEND_GAMEPLAY_SNAPSHOT_VERSION } from '../../application/frontendPresentationMetadata'
+import type { FrontendApplicationSnapshot } from '../../application/frontendSnapshot'
 
 export type FrozenFrontendApplicationSnapshot =
   DeepReadonly<FrontendApplicationSnapshot>

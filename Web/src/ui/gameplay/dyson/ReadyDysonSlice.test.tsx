@@ -265,7 +265,7 @@ describe('ReadyDysonSlice', () => {
     expect(onRouteChange).toHaveBeenCalledWith('bots')
   })
 
-  test('enables the dedicated Debug Options page for development runtimes', () => {
+  test('enables the dedicated Debug Options page for development runtimes', async () => {
     render(
       provider(
         <ReadyDysonSlice
@@ -288,7 +288,7 @@ describe('ReadyDysonSlice', () => {
       screen.getByRole('heading', { level: 1, name: 'Debug Options' }),
     ).toBeInTheDocument()
     expect(
-      screen.getByRole('combobox', { name: 'Bot count' }),
+      await screen.findByRole('combobox', { name: 'Bot count' }),
     ).toBeInTheDocument()
     expect(
       screen.queryByText('Save data'),

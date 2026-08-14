@@ -1,15 +1,12 @@
 import { describe, expect, test } from 'vitest'
 import { createDeterministicUnityFirstRunPreparedSave } from '../application/firstRun/unityFirstRunSave'
 import { gameDecimalToCanonicalString } from '../math/gameDecimal'
-import { deriveExpectedLegacyDysonTuningV2 } from '../game-state/dysonTuningV2'
-import type { SaveRecord } from './graph'
 import type { LegacySaveCandidate, SaveStorageAdapter } from './repository'
 import {
   ProductionV2SaveRepository,
   type ProductionV2RepositoryPaths,
 } from './productionV2Repository'
-import { deserializeWebSave, serializeWebSave } from './serialization'
-import { packSettingsFlags } from './settingsFlags'
+import { createMatureSchema12WebFixtureFromSource } from './matureSchema12Fixture'
 
 const NOW = '2026-08-12T02:00:00.000Z'
 const PATHS = Object.freeze({
@@ -112,7 +109,8 @@ describe('mature schema-12 Web migration corpus', () => {
       debugEverEnabled: false,
       cheater: false,
       unlockAllTabs: false,
-    }, 2)
+      selectedPreset: 2,
+    })
     const storage = new MemoryStorage([[PATHS.current, receiver]])
     const repository = new ProductionV2SaveRepository(storage, PATHS)
     const opened = await repository.openOrMigrate({
@@ -135,7 +133,7 @@ describe('mature schema-12 Web migration corpus', () => {
     )).toBe('1e300')
     expect((await repository.loadCurrent())!.save.state.skills.selectedPreset).toBe(2)
 
-    const second = matureSchema12({}, 4)
+    const second = matureSchema12({ selectedPreset: 4 })
     await repository.importPortable(
       second,
       '2026-08-12T02:03:00.000Z',
@@ -146,63 +144,12 @@ describe('mature schema-12 Web migration corpus', () => {
 })
 
 function matureSchema12(
-  platform: Partial<Readonly<{
-    debugOptions: boolean
-    debugEverEnabled: boolean
-    cheater: boolean
-    unlockAllTabs: boolean
-  }>> = {},
-  selectedPreset = 3,
+  options: Parameters<typeof createMatureSchema12WebFixtureFromSource>[1] = {},
 ): string {
-  const source = createDeterministicUnityFirstRunPreparedSave().copyValidatedState()
-  const dyson = record(source.dysonVerseSaveData)
-  const infinity = record(dyson.dysonVerseInfinityData)
-  const prestige = record(dyson.dysonVersePrestigeData)
-  const skillTree = record(dyson.dysonVerseSkillTreeData)
-  const tuning = deriveExpectedLegacyDysonTuningV2(27n)
-
-  infinity.money = 1e300
-  infinity.science = 9.5e299
-  infinity.bots = 1e250
-  infinity.workers = 2.7e249
-  infinity.researchers = 7.3e249
-  infinity.assemblyLines = [1e120, 1e110]
-  infinity.aiManagers = [1e90, 1e80]
-  infinity.researchLevelsById = {
-    ...record(infinity.researchLevelsById),
-    'research.science_boost': 1e150,
-  }
-  // Schema 12's discrete prestige currencies are bounded exact integers;
-  // extreme magnitudes belong only to the continuous economy leaves above.
-  prestige.infinityPoints = Number.MAX_SAFE_INTEGER
-  prestige.spentInfinityPoints = 1_000_000_000
-  prestige.secretsOfTheUniverse = 27
-  Object.assign(infinity, tuning)
-  prestige.botDistribution = 0.73
-  skillTree.skillPointsTree = Number.MAX_SAFE_INTEGER
-  skillTree.fragments = 123_456_789
-  dyson.selectedPreset = selectedPreset
-  dyson.preset3Name = 'Late Game'
-  dyson.preset3ColorId = 'gold'
-  dyson.botDistPreset3 = 0.73
-  dyson.skillAutoAssignmentIds3 = ['startHereTree']
-
-  source.debugOptions = platform.debugOptions ?? false
-  source.debugEverEnabled = platform.debugEverEnabled ?? false
-  source.cheater = platform.cheater ?? false
-  source.unlockAllTabs = platform.unlockAllTabs ?? false
-  packSettingsFlags(source)
-  source.saveVersion = 12
-  const encoded = serializeWebSave(source)
-  expect(deserializeWebSave(encoded).saveVersion).toBe(12)
-  return encoded
-}
-
-function record(value: unknown): SaveRecord {
-  if (typeof value !== 'object' || value === null || Array.isArray(value)) {
-    throw new TypeError('Mature fixture source shape changed.')
-  }
-  return value as SaveRecord
+  return createMatureSchema12WebFixtureFromSource(
+    createDeterministicUnityFirstRunPreparedSave().copyValidatedState(),
+    options,
+  )
 }
 
 class MemoryStorage implements SaveStorageAdapter {

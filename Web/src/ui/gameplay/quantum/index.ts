@@ -1,4 +1,5 @@
 export * from './QuantumSurface'
+export * from './QuantumControlPanel'
 export * from './quantumPurchaseQuantities'
 export * from './AvocatoSurface'
 export * from './AvocatoMeditationSecretTrigger'

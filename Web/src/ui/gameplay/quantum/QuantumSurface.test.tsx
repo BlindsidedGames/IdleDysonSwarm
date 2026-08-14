@@ -18,10 +18,10 @@ import {
 } from '../../../simulation/quantumUpgrades'
 import type { UiRuntimePlayerCommandResult } from '../../runtime'
 import {
-  QuantumControlPanel,
   QuantumSurface,
   type QuantumSurfaceProps,
 } from './QuantumSurface'
+import { QuantumControlPanel } from './QuantumControlPanel'
 
 const quantumStyles = readFileSync(
   join(process.cwd(), 'src', 'ui', 'gameplay', 'quantum', 'quantum.css'),

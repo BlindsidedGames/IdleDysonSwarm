@@ -72,6 +72,21 @@ An acceptance-mode command exits nonzero if CLI overrides make it ineligible,
 even when every observed metric is within budget. Only explicit `--smoke`
 permits a successful diagnostic report which is not acceptance evidence.
 
+## Mature-save startup and lazy routes
+
+Profile a synthetic, non-private mature schema-12 save through the real
+production browser migration path:
+
+```powershell
+npm run report:performance:mature-browser
+```
+
+The run seeds an isolated Chromium profile with `1e300` cash, `1e250` bots and
+27 secrets, measures navigation through the ready shell, then times first-open
+loading of the Simulations and Quantum route chunks. It writes evidence to
+`output/performance/mature-browser-profile.json` and never reads a player's
+browser profile or private save.
+
 ## Explicit-GC retained-heap soak
 
 Run the shortened smoke soak:

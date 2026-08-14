@@ -17,7 +17,7 @@ import {
   QUANTUM_V2_DEFINITIONS, QUANTUM_V2_GENERATED_KIND, QUANTUM_V2_UPGRADE_IDS,
   compileQuantumV2Catalog, validateQuantumV2CatalogIngress,
 } from './quantumCatalogV2'
-import { commitQuantumUpgradeV2, previewQuantumSectionsV2, quoteQuantumUpgradeV2 } from './quantumV2'
+import { commitQuantumUpgradeV2, previewQuantumSectionsV2, previewQuantumUpgradeCatalogV2, quoteQuantumUpgradeV2 } from './quantumV2'
 
 const baseState = migratePreparedSaveToV2(
   PreparedSave.fromDecoded(deserializeWebSave(schema12Web)),
@@ -103,6 +103,23 @@ describe('Quantum V2 generated catalog', () => {
 })
 
 describe('Quantum V2 quotes and commits', () => {
+  test('read-only catalog previews match commit-capable buy-one quotes without issuing candidates', () => {
+    const state = stateWith({ available: '1e1000', lifetime: '1e1000' })
+    const previews = previewQuantumUpgradeCatalogV2(state, 12)
+    expect(previews).toHaveLength(QUANTUM_V2_UPGRADE_IDS.length)
+    for (const preview of previews) {
+      const quote = quoteQuantumUpgradeV2(state, 12, preview.upgradeId)
+      expect(preview).toMatchObject({
+        upgradeId: quote.upgradeId,
+        requestedMode: quote.requestedMode,
+        status: quote.status,
+        eligible: quote.eligible,
+      })
+      expect(gameDecimalToCanonicalString(preview.quotedCost)).toBe(
+        gameDecimalToCanonicalString(quote.quotedCost),
+      )
+    }
+  })
   test('debits one shard for DoubleIP and changes only its gameplay unlock', () => {
     const source = stateWith({ available: '1', lifetime: '9' })
     const quote = quoteQuantumUpgradeV2(source, 7, 'DoubleIP')

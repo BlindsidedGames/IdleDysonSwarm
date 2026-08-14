@@ -6,19 +6,20 @@ import {
   FRONTEND_SIMULATION_SPACE_AGE_PANEL_IDS,
   SIMULATION_UPGRADE_SECTIONS,
   REALITY_UPGRADE_SECTIONS,
-  selectFrontendReadinessConstants,
-  type FrontendApplicationSnapshot,
-  type FrontendCanonicalProgression,
-  type FrontendGameplayVisibility,
-  type FrontendGameplayPreviews,
-  type FrontendGameplayPreviewDemand,
-  type FrontendRealityDerivedFacts,
-  type FrontendDysonDerivedFactsV2,
-  type FrontendStoryDerivedFacts,
-  type FrontendSimulationsDerivedFacts,
-  type FrontendDreamDerivedFacts,
+} from '../application/frontendPresentationMetadata'
+import type {
+  FrontendApplicationSnapshot,
+  FrontendCanonicalProgression,
+  FrontendGameplayVisibility,
+  FrontendGameplayPreviews,
+  FrontendGameplayPreviewDemand,
+  FrontendRealityDerivedFacts,
+  FrontendDysonDerivedFactsV2,
+  FrontendStoryDerivedFacts,
+  FrontendSimulationsDerivedFacts,
+  FrontendDreamDerivedFacts,
 } from '../application/frontendSnapshot'
-import type { CanonicalGameStateV1 } from '../game-state/types'
+import { selectV2FrontendReadinessConstants } from '../application/frontendCommandReadiness'
 import type { RealityUpgradeId } from '../simulation/realityUpgrades'
 import {
   REALITY_WORKERS_READY_MAXIMUM_V2,
@@ -31,13 +32,11 @@ import {
 import type { CanonicalTinkerRuntimeState } from '../simulation/canonicalTinker'
 import { selectCanonicalTinkerUiFactsV2 } from '../simulation/canonicalTinkerV2'
 import {
-  DISCRETE_MAXIMUM,
-} from '../simulation/numeric'
-import {
   addGameDecimals,
   compareGameDecimals,
   divideGameDecimals,
   floorGameDecimal,
+  gameDecimalFromBigInt,
   gameDecimalFromNumber,
   gameDecimalToBigIntChecked,
   gameDecimalToNumberChecked,
@@ -62,11 +61,10 @@ import {
 } from '../simulation/researchV2'
 import { INFINITY_SHOP_ITEM_IDS_V2, quoteInfinityShopPurchaseV2 } from '../simulation/infinityShopV2'
 import { projectInfinityProgressV2, type InfinityRewardAuthorityV2 } from '../simulation/infinityEconomyV2'
-import { QUANTUM_V2_UPGRADE_IDS } from '../simulation/quantumCatalogV2'
 import { QUANTUM_CONSTANTS } from '../simulation/quantumUpgrades'
-import { previewQuantumSectionsV2, quoteQuantumUpgradeV2 } from '../simulation/quantumV2'
-import { quoteDreamCommandV2, type DreamCommandV2 } from '../application/dreamStrangeMatterAuthorityV2'
-import { DREAM_V2_CATALOG, DREAM_V2_UPGRADE_IDS } from '../simulation/dreamCatalogV2'
+import { previewQuantumSectionsV2, previewQuantumUpgradeCatalogV2 } from '../simulation/quantumV2'
+import { canonicalRealityCatalogV2, type RealityUpgradeIdV2 } from '../simulation/realityCatalogV2'
+import { DREAM_V2_CATALOG, DREAM_V2_UPGRADE_IDS, type DreamUpgradeIdV2 } from '../simulation/dreamCatalogV2'
 import {
   DREAM_V2_EDUCATION_IDS,
   deriveDreamV2PresentationFacts,
@@ -74,24 +72,19 @@ import {
   type DreamInfluencePurchaseIdV2,
 } from '../simulation/dreamV2'
 import { prepareDreamDoubleTimeTick } from '../simulation/timeResources'
+import { DISCRETE_MAXIMUM } from '../simulation/numeric'
 import { projectBreakInfinityPresentationControl, BREAK_INFINITY_PRESENTATION_TARGET_MAXIMUM } from '../simulation/infinityCycle'
 import { upgradeStoredTimeCapacity } from '../simulation/timeResources'
 import { REALITY_UPGRADE_IDS_V2 } from '../simulation/realityCatalogV2'
 import { gatherRealityInfluenceV2, realityWorkerGenerationRateV2 } from '../simulation/realityV2'
-import { previewCanonicalDreamResetV2, quoteCanonicalDreamResetV2 } from '../simulation/canonicalDreamResetV2'
-import { quoteCanonicalQuantumResetV2 } from '../simulation/canonicalQuantumResetV2'
+import { previewCanonicalDreamResetV2 } from '../simulation/canonicalDreamResetV2'
+import { previewCanonicalQuantumResetV2 } from '../simulation/canonicalQuantumResetV2'
 import {
   quoteAvocadoCommandV2,
   derivePreparedAvocadoMultiplierV2,
   registerAvocadoStrangeMatterAccountV2ForOwner,
 } from '../simulation/avocadoV2'
 
-import { createDeterministicUnityFirstRunPreparedSave } from '../application/firstRun/unityFirstRunSave'
-import { hydrateGameState } from '../game-state/mapping'
-
-const legacyHydration = hydrateGameState(
-  createDeterministicUnityFirstRunPreparedSave(),
-)
 const DREAM_FOUNDATIONAL_PURCHASE_IDS = Object.freeze([
   'hunters',
   'gatherers',
@@ -214,7 +207,7 @@ export function selectFrontendApplicationSnapshotV2(
   const publicationCache = projectionCache.get(publication as object)
   const cached = publicationCache?.get(cacheKey)?.get(infinityRewardAuthority as object)?.get(tinker as object)
   if (cached !== undefined) return cached
-  const readiness = selectFrontendReadinessConstants({
+  const readiness = selectV2FrontendReadinessConstants({
       'compatibility-tuning': true,
       'quantum-leap-port': true,
       'runtime-evaluation-port': true,
@@ -815,218 +808,6 @@ function selectV2GameplayVisibility(
   })
 }
 
-export function projectLegacyPresentationState(
-  state: Readonly<CanonicalGameStateV2>,
-): CanonicalGameStateV1 {
-  return projectLegacyPresentationStateWithSafety(state).state
-}
-
-function projectLegacyPresentationStateWithSafety(
-  state: Readonly<CanonicalGameStateV2>,
-  options: Readonly<{ includeStatistics: boolean }> = Object.freeze({
-    includeStatistics: true,
-  }),
-): Readonly<{ state: CanonicalGameStateV1; unsafe: boolean }> {
-  let unsafe = false
-  const number = (value: GameDecimal): number => {
-    const projected = tryDecimalToPresentationNumber(value)
-    if (projected === null) unsafe = true
-    return projected ?? 0
-  }
-  const discrete = (value: GameDecimal): bigint => {
-    const projected = tryDecimalToPresentationBigInt(value)
-    if (projected === null) unsafe = true
-    return projected ?? 0n
-  }
-  const count = (value: bigint): number => {
-    const projected = Number(value)
-    if (!Number.isSafeInteger(projected)) {
-      unsafe = true
-      return 0
-    }
-    return projected
-  }
-  const infinityTotal = addGameDecimals(
-    state.infinity.availablePoints,
-    state.infinity.allocatedPoints,
-  )
-  const spentQuantum = compareGameDecimals(
-    state.quantum.lifetimeEarnedShards,
-    state.quantum.availableShards,
-  ) >= 0
-    ? subtractGameDecimals(
-        state.quantum.lifetimeEarnedShards,
-        state.quantum.availableShards,
-      )
-    : gameDecimalFromNumber(0)
-  const totals = (source: CanonicalGameStateV2['statistics']['lifetime']) => ({
-    ...source,
-    ordinaryInfinityPoints: discrete(source.ordinaryInfinityPoints),
-    breakInfinityPoints: discrete(source.breakInfinityPoints),
-    botCapInfinityPoints: discrete(source.botCapInfinityPoints),
-    botCapOverflowRewards: discrete(source.botCapOverflowRewards),
-    strangeMatter: discrete(source.strangeMatter),
-    realityWorkers: discrete(source.realityWorkers),
-    automaticInfluence: discrete(source.automaticInfluence),
-    manualInfluence: discrete(source.manualInfluence),
-  })
-  const window = (source: CanonicalGameStateV2['statistics']['minuteWindows'][number]) => ({
-    ...source,
-    infinityPoints: discrete(source.infinityPoints),
-    strangeMatter: discrete(source.strangeMatter),
-    realityWorkers: discrete(source.realityWorkers),
-  })
-  const projected: CanonicalGameStateV1 = {
-    modelVersion: 1,
-    meta: state.meta,
-    dyson: {
-      ...state.dyson,
-      money: number(state.dyson.money),
-      science: number(state.dyson.science),
-      bots: number(state.dyson.bots),
-      workers: number(state.dyson.workers),
-      researchers: number(state.dyson.researchers),
-      facilities: Object.fromEntries(Object.entries(state.dyson.facilities).map(
-        ([id, owned]) => [id, [number(owned[0]), number(owned[1])]],
-      )) as unknown as CanonicalGameStateV1['dyson']['facilities'],
-      totalPanelsDecayed: number(state.dyson.totalPanelsDecayed),
-    },
-    infinity: {
-      ...state.infinity,
-      points: discrete(infinityTotal),
-      spentPoints: discrete(state.infinity.allocatedPoints),
-      breakTarget: discrete(state.infinity.breakTarget),
-      lastPointsGained: number(state.infinity.lastPointsGained),
-    },
-    skills: {
-      ...state.skills,
-      byId: Object.fromEntries(Object.entries(state.skills.byId).map(
-        ([id, skill]) => [id, { ...skill, level: count(skill.level) }],
-      )),
-    },
-    research: {
-      ...state.research,
-      levelsById: Object.fromEntries(Object.entries(state.research.levelsById).map(
-        ([id, level]) => [id, typeof level === 'bigint' ? count(level) : number(level)],
-      )),
-      progressById: Object.fromEntries(Object.entries(state.research.progressById).map(
-        ([id, progress]) => [id, number(progress)],
-      )),
-    },
-    reality: {
-      ...state.reality,
-      universeDesignationCount: discrete(state.reality.universeDesignationCount),
-      influence: discrete(state.reality.influence),
-    },
-    quantum: {
-      ...state.quantum,
-      pointsEarned: discrete(state.quantum.lifetimeEarnedShards),
-      pointsSpent: discrete(spentQuantum),
-      influenceSpeedBonus: discrete(state.quantum.influenceSpeedBonus),
-      cashBonusLevels: discrete(state.quantum.cashBonusLevels),
-      scienceBonusLevels: discrete(state.quantum.scienceBonusLevels),
-    },
-    avocado: {
-      ...state.avocado,
-      infinityPoints: number(state.avocado.infinityPoints),
-      influence: number(state.avocado.influence),
-      strangeMatter: number(state.avocado.strangeMatter),
-      overflowMultiplier: number(state.avocado.overflowMultiplier),
-    },
-    timeline: {
-      ...state.timeline,
-      infinityCycleStartingPoints: discrete(state.timeline.infinityCycleStartingPoints),
-    },
-    secretProgress: state.secretProgress,
-    dream: {
-      ...state.dream,
-      resources: {
-        hunters: discrete(state.dream.resources.hunters),
-        gatherers: discrete(state.dream.resources.gatherers),
-        community: number(state.dream.resources.community),
-        housing: number(state.dream.resources.housing),
-        villages: number(state.dream.resources.villages),
-        workers: number(state.dream.resources.workers),
-        cities: number(state.dream.resources.cities),
-        factories: number(state.dream.resources.factories),
-        bots: number(state.dream.resources.bots),
-        rockets: number(state.dream.resources.rockets),
-        energy: number(state.dream.resources.energy),
-        spaceFactories: number(state.dream.resources.spaceFactories),
-        dysonPanels: discrete(state.dream.resources.dysonPanels),
-        railgunCharge: number(state.dream.resources.railgunCharge),
-        solarPanels: number(state.dream.resources.solarPanels),
-        fusion: number(state.dream.resources.fusion),
-        swarmPanels: discrete(state.dream.resources.swarmPanels),
-      },
-      parameters: {
-        ...state.dream.parameters,
-        hunterCost: discrete(state.dream.parameters.hunterCost),
-        gathererCost: discrete(state.dream.parameters.gathererCost),
-        communityBoostCost: number(state.dream.parameters.communityBoostCost),
-        factoriesBoostCost: number(state.dream.parameters.factoriesBoostCost),
-        rocketsPerSpaceFactory: discrete(state.dream.parameters.rocketsPerSpaceFactory),
-        railgunMaxCharge: number(state.dream.parameters.railgunMaxCharge),
-        solarCost: discrete(state.dream.parameters.solarCost),
-        solarPanelGeneration: discrete(state.dream.parameters.solarPanelGeneration),
-        fusionCost: discrete(state.dream.parameters.fusionCost),
-        fusionGeneration: discrete(state.dream.parameters.fusionGeneration),
-        swarmPanelGeneration: discrete(state.dream.parameters.swarmPanelGeneration),
-      },
-      education: Object.fromEntries(Object.entries(state.dream.education).map(
-        ([id, education]) => [id, {
-          ...education,
-          progress: number(education.progress),
-          cost: number(education.cost),
-        }],
-      )) as CanonicalGameStateV1['dream']['education'],
-      railgun: {
-        firing: state.dream.railgun.firing,
-        fireProgress: state.dream.railgun.fireProgress,
-        shotsRemaining: state.dream.railgun.shotsRemaining,
-        activeRailguns: state.dream.railgun.activeRailguns,
-        reservedPanels: discrete(state.dream.railgun.reservedPanels),
-        highestStoredPanels: discrete(state.dream.railgun.highestStoredPanels),
-        lastRoundsFired: state.dream.railgun.lastRoundsFired,
-        lastPanelsLaunched: discrete(state.dream.railgun.lastPanelsLaunched),
-      },
-      strangeMatter: discrete(state.dream.strangeMatter),
-      huntersPerPurchase: discrete(state.dream.huntersPerPurchase),
-      gatherersPerPurchase: discrete(state.dream.gatherersPerPurchase),
-    },
-    statistics: options.includeStatistics ? {
-      ...state.statistics,
-      lifetime: totals(state.statistics.lifetime),
-      currentQuantumRun: totals(state.statistics.currentQuantumRun),
-      recentProcessedSegment: totals(state.statistics.recentProcessedSegment),
-      lastCompletedCycle: {
-        ...state.statistics.lastCompletedCycle,
-        reward: discrete(state.statistics.lastCompletedCycle.reward),
-      },
-      minuteWindows: state.statistics.minuteWindows.map(window),
-      halfHourWindows: state.statistics.halfHourWindows.map(window),
-      dailyWindows: state.statistics.dailyWindows.map(window),
-    } : legacyHydration.state.statistics,
-  }
-  return Object.freeze({ state: projected, unsafe })
-}
-
-function tryDecimalToPresentationNumber(value: GameDecimal): number | null {
-  try {
-    return gameDecimalToNumberChecked(value)
-  } catch {
-    return null
-  }
-}
-
-function tryDecimalToPresentationBigInt(value: GameDecimal): bigint | null {
-  try {
-    return gameDecimalToBigIntChecked(value, { maximum: DISCRETE_MAXIMUM })
-  } catch {
-    return null
-  }
-}
-
 function selectV2Previews(
   publication: Readonly<CanonicalRuntimePublicationV2>,
   legacy: Readonly<FrontendGameplayPreviews>,
@@ -1117,12 +898,11 @@ function selectV2Previews(
       ? BREAK_INFINITY_PRESENTATION_TARGET_MAXIMUM
       : gameDecimalToBigIntChecked(state.infinity.breakTarget, { maximum: BREAK_INFINITY_PRESENTATION_TARGET_MAXIMUM }),
   ) : fallback.infinity.breakTarget
-  const quantumUpgrades = !wants('quantum') ? fallback.quantum.upgrades : QUANTUM_V2_UPGRADE_IDS.map((upgradeId) => {
-    const preview = quoteQuantumUpgradeV2(
-      state as CanonicalGameStateV2,
-      revision,
-      upgradeId,
-    )
+  const quantumUpgrades = !wants('quantum') ? fallback.quantum.upgrades : previewQuantumUpgradeCatalogV2(
+    state as CanonicalGameStateV2,
+    revision,
+  ).map((preview) => {
+    const upgradeId = preview.upgradeId
     return Object.freeze({
       upgradeId,
       eligible: preview.eligible,
@@ -1157,8 +937,6 @@ function selectV2Previews(
     state: state as CanonicalGameStateV2,
     runtime: publication.runtime,
   })
-  const dreamQuote = (request: DreamCommandV2) =>
-    quoteDreamCommandV2(dreamPublication, request)
   const influenceQuotes = (purchaseId: DreamInfluencePurchaseIdV2) =>
     Object.freeze(previewDreamInfluencePurchaseModesV2(state, purchaseId).map((quote) =>
       Object.freeze({
@@ -1186,11 +964,8 @@ function selectV2Previews(
         selectedInfluenceQuote: selected,
       })
     }
-    const quote = dreamQuote(Object.freeze({
-      kind: 'boost',
-      boostId: preview.purchase === 'community-boost' ? 'community' : 'factories',
-    }))
-    return Object.freeze({ ...preview, eligible: quote.accepted, cost: quote.quotedCost, code: quote.code })
+    const quote = previewDreamBoost(state, preview.purchase === 'community-boost' ? 'community' : 'factories')
+    return Object.freeze({ ...preview, eligible: quote.accepted, cost: quote.cost, code: quote.code })
   })
   const spaceAge = !wants('simulations') ? fallback.dream.spaceAge : DREAM_SPACE_AGE_PURCHASE_IDS.map((purchase) => {
     const preview = Object.freeze({ purchase, eligible: false, cost: gameDecimalFromNumber(0), code: 'not-quoted' })
@@ -1205,25 +980,25 @@ function selectV2Previews(
     })
   })
   const dreamUpgrades = !wants('simulations') ? fallback.dream.upgrades : DREAM_V2_UPGRADE_IDS.map((upgradeId) => {
-    const quote = dreamQuote(Object.freeze({ kind: 'dream-upgrade', upgradeId }))
-    return Object.freeze({ upgradeId, eligible: quote.accepted, cost: quote.quotedCost, code: quote.code, definitionGap: null })
+    const quote = previewDreamUpgrade(state, upgradeId)
+    return Object.freeze({ upgradeId, eligible: quote.accepted, cost: quote.cost, code: quote.code, definitionGap: null })
   })
   const education = !wants('simulations') ? fallback.dream.education : DREAM_V2_EDUCATION_IDS.map((educationId) => {
-    const quote = dreamQuote(Object.freeze({ kind: 'education-start', educationId }))
-    return Object.freeze({ educationId, eligible: quote.accepted, cost: quote.quotedCost, code: quote.code })
+    const quote = previewDreamEducation(state, educationId)
+    return Object.freeze({ educationId, eligible: quote.accepted, cost: quote.cost, code: quote.code })
   })
-  const automaticResetQuote = wants('simulations') ? quoteCanonicalDreamResetV2(dreamPublication, Object.freeze({ kind: 'automatic' })) : null
-  const blackHoleResetQuote = wants('simulations') ? quoteCanonicalDreamResetV2(dreamPublication, Object.freeze({ kind: 'black-hole' })) : null
+  const automaticResetQuote = wants('simulations') ? previewCanonicalDreamResetV2(state, Object.freeze({ kind: 'automatic' })) : null
+  const blackHoleResetQuote = wants('simulations') ? previewCanonicalDreamResetV2(state, Object.freeze({ kind: 'black-hole' })) : null
   const reset = (quote: NonNullable<typeof automaticResetQuote>) => Object.freeze({
-    eligible: quote.accepted,
+    eligible: quote.eligible,
     code: quote.code,
     cause: quote.cause,
     requestedReward: quote.requestedReward,
     definitionGaps: Object.freeze([]),
   })
   const realityUpgrades = !wants('reality') ? fallback.reality.upgrades : REALITY_UPGRADE_IDS_V2.map((upgradeId) => {
-    const quote = dreamQuote(Object.freeze({ kind: 'reality-upgrade', upgradeId }))
-    return Object.freeze({ upgradeId, eligible: quote.accepted, cost: quote.quotedCost, code: quote.code, definitionGap: null })
+    const quote = previewRealityUpgrade(state, upgradeId)
+    return Object.freeze({ upgradeId, eligible: quote.accepted, cost: quote.cost, code: quote.code, definitionGap: null })
   })
   const realityGather = !wants('reality')
     ? fallback.reality.gatherInfluence
@@ -1244,7 +1019,7 @@ function selectV2Previews(
     return Object.freeze({ source, eligible: quote.accepted, amount: quote.transferred, code: quote.code })
   })
   const meditationQuote = wants('avocato') ? quoteAvocadoCommandV2(avocadoPublication, Object.freeze({ kind: 'meditation-step', stepIndex: state.secretProgress.step })) : null
-  const leap = wants('quantum') ? quoteCanonicalQuantumResetV2(dreamPublication, Object.freeze({ kind: 'quantum-action' })) : null
+  const leap = wants('quantum') ? previewCanonicalQuantumResetV2(state) : null
   const storedCapacity = upgradeStoredTimeCapacity({ bankSeconds: state.timeline.storedTimeAvailableSeconds, capacitySeconds: state.timeline.storedTimeCapacitySeconds, cheater: storedTimeCheater })
   const storedCapacityEligible = !storedTimeCheater && storedCapacity.upgraded
   const time = wants('offline-time') ? Object.freeze({
@@ -1308,5 +1083,98 @@ function selectV2Previews(
           }),
     }),
     time,
+  })
+}
+
+interface ReadOnlyPurchasePreview {
+  readonly accepted: boolean
+  readonly cost: GameDecimal
+  readonly code: 'ready' | 'rejected'
+}
+
+function previewDreamUpgrade(
+  state: CanonicalGameStateV2,
+  upgradeId: DreamUpgradeIdV2,
+): ReadOnlyPurchasePreview {
+  const definition = DREAM_V2_CATALOG[upgradeId]
+  const accepted = !state.dream.upgrades[upgradeId] &&
+    definition.prerequisites.every(
+      (requirement) =>
+        state.dream.upgrades[requirement.key] === requirement.mustBeOwned,
+    ) && compareGameDecimals(state.dream.strangeMatter, definition.cost) >= 0
+  return Object.freeze({
+    accepted,
+    cost: definition.cost,
+    code: accepted ? 'ready' : 'rejected',
+  })
+}
+
+function previewDreamEducation(
+  state: CanonicalGameStateV2,
+  educationId: keyof CanonicalGameStateV2['dream']['education'],
+): ReadOnlyPurchasePreview {
+  const education = state.dream.education[educationId]
+  const accepted = !education.active &&
+    compareGameDecimals(state.reality.influence, education.cost) >= 0
+  return Object.freeze({
+    accepted,
+    cost: education.cost,
+    code: accepted ? 'ready' : 'rejected',
+  })
+}
+
+function previewDreamBoost(
+  state: CanonicalGameStateV2,
+  boostId: 'community' | 'factories',
+): ReadOnlyPurchasePreview {
+  const parameters = state.dream.parameters
+  const community = boostId === 'community'
+  const cost = community && parameters.communityBoostIsFree
+    ? gameDecimalFromNumber(0)
+    : community
+      ? parameters.communityBoostCost
+      : parameters.factoriesBoostCost
+  const clock = community
+    ? parameters.communityBoostClock
+    : parameters.factoriesBoostClock
+  const unlocked = community
+    ? compareGameDecimals(state.dream.resources.hunters, gameDecimalFromNumber(1)) >= 0 ||
+      compareGameDecimals(state.dream.resources.gatherers, gameDecimalFromNumber(1)) >= 0
+    : compareGameDecimals(state.dream.resources.cities, gameDecimalFromNumber(1)) >= 0 &&
+      state.dream.education.engineering.complete
+  const accepted = clock < 10 && unlocked &&
+    compareGameDecimals(state.reality.influence, cost) >= 0
+  return Object.freeze({
+    accepted,
+    cost,
+    code: accepted ? 'ready' : 'rejected',
+  })
+}
+
+function previewRealityUpgrade(
+  state: CanonicalGameStateV2,
+  upgradeId: RealityUpgradeIdV2,
+): ReadOnlyPurchasePreview {
+  const definition = canonicalRealityCatalogV2.upgrades[upgradeId]
+  const cost = gameDecimalFromBigInt(definition.cost)
+  const grantedSkillPoints = definition.effects.reduce(
+    (total, effect) => total + (effect.kind === 'grant-skill-points' ? effect.amount : 0n),
+    0n,
+  )
+  const owned = (id: RealityUpgradeIdV2) => id === 'doubleTimeOwned'
+    ? state.timeline.doubleTime.unlocked
+    : id === 'workerAutoConvert'
+      ? state.reality.autoGather
+      : state.dream.upgrades[id]
+  const accepted = !owned(upgradeId) &&
+    definition.prerequisites.every(
+      (requirement) =>
+        owned(requirement.key) === requirement.mustBeOwned,
+    ) && compareGameDecimals(state.dream.strangeMatter, cost) >= 0 &&
+    state.skills.points <= DISCRETE_MAXIMUM - grantedSkillPoints
+  return Object.freeze({
+    accepted,
+    cost,
+    code: accepted ? 'ready' : 'rejected',
   })
 }

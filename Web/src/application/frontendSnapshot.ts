@@ -136,15 +136,12 @@ import {
   prepareDreamDoubleTimeTick,
   upgradeStoredTimeCapacity,
 } from '../simulation/timeResources'
-import {
-  CANONICAL_PLAYER_COMMAND_KINDS,
+import type {
   CANONICAL_PLAYER_COMMAND_SUPPORT,
-  type CanonicalPlayerCommand,
-  type CanonicalPlayerCommandKind,
+  CanonicalPlayerCommandKind,
 } from './canonicalPlayerCommands'
 import type { CanonicalRuntimeState } from './canonicalRuntimeSession'
 import type {
-  ApplicationCommandEnvelope,
   ApplicationRevision,
   ApplicationSnapshot,
   BlockingStartupOutcome,
@@ -152,22 +149,38 @@ import type {
   ExclusiveOperation,
   ReadySource,
 } from './contracts'
+import {
+  FRONTEND_COMMAND_FAMILIES,
+  selectFrontendCommandAvailability,
+} from './frontendCommandReadiness'
+import {
+  FRONTEND_GAMEPLAY_SNAPSHOT_VERSION,
+  FRONTEND_SIMULATION_FOUNDATIONAL_PANEL_IDS,
+  FRONTEND_SIMULATION_INFORMATION_PANEL_IDS,
+  FRONTEND_SIMULATION_SPACE_AGE_PANEL_IDS,
+  REALITY_UPGRADE_SECTIONS,
+  SIMULATION_UPGRADE_SECTIONS,
+  type FrontendSimulationFoundationalPanelId,
+  type FrontendSimulationInformationPanelId,
+  type FrontendSimulationSpaceAgePanelId,
+} from './frontendPresentationMetadata'
 
-export const FRONTEND_GAMEPLAY_SNAPSHOT_VERSION = 1 as const
-
-export const FRONTEND_COMMAND_FAMILIES = Object.freeze([
-  'dyson',
-  'research',
-  'skill',
-  'dream',
-  'reality',
-  'quantum',
-  'infinity',
-  'avocado',
-  'time',
-  'settings',
-  'tinker',
-] as const)
+export {
+  FRONTEND_GAMEPLAY_SNAPSHOT_VERSION,
+  FRONTEND_SIMULATION_FOUNDATIONAL_PANEL_IDS,
+  FRONTEND_SIMULATION_INFORMATION_PANEL_IDS,
+  FRONTEND_SIMULATION_SPACE_AGE_PANEL_IDS,
+  REALITY_UPGRADE_SECTIONS,
+  SIMULATION_UPGRADE_SECTIONS,
+  type FrontendSimulationFoundationalPanelId,
+  type FrontendSimulationInformationPanelId,
+  type FrontendSimulationSpaceAgePanelId,
+} from './frontendPresentationMetadata'
+export {
+  FRONTEND_COMMAND_FAMILIES,
+  selectFrontendCommandAvailability,
+} from './frontendCommandReadiness'
+export { createFrontendCommandEnvelope } from './frontendCommandEnvelope'
 
 export type FrontendCommandFamily =
   (typeof FRONTEND_COMMAND_FAMILIES)[number]
@@ -192,117 +205,6 @@ const DREAM_EDUCATION_IDS = Object.freeze([
   'mathematics',
   'advancedPhysics',
 ] as const satisfies readonly DreamEducationId[])
-
-export const FRONTEND_SIMULATION_FOUNDATIONAL_PANEL_IDS =
-  Object.freeze([
-    'hunters',
-    'gatherers',
-    'community',
-    'housing',
-    'villages',
-    'workers',
-    'cities',
-  ] as const)
-
-export type FrontendSimulationFoundationalPanelId =
-  (typeof FRONTEND_SIMULATION_FOUNDATIONAL_PANEL_IDS)[number]
-
-export const FRONTEND_SIMULATION_INFORMATION_PANEL_IDS =
-  Object.freeze([
-    'engineering',
-    'shipping',
-    'world-trade',
-    'world-peace',
-    'mathematics',
-    'advanced-physics',
-    'factories',
-    'bots',
-    'rockets',
-  ] as const)
-
-export type FrontendSimulationInformationPanelId =
-  (typeof FRONTEND_SIMULATION_INFORMATION_PANEL_IDS)[number]
-
-export const FRONTEND_SIMULATION_SPACE_AGE_PANEL_IDS =
-  Object.freeze([
-    'solar',
-    'fusion',
-    'space-factories',
-    'railguns',
-    'swarm-stats',
-  ] as const)
-
-export type FrontendSimulationSpaceAgePanelId =
-  (typeof FRONTEND_SIMULATION_SPACE_AGE_PANEL_IDS)[number]
-
-export const SIMULATION_UPGRADE_SECTIONS = Object.freeze({
-  countermeasures: Object.freeze([
-    'counterMeteor',
-    'counterAi',
-    'counterGw',
-  ] as const satisfies readonly DreamUpgradeFlag[]),
-  education: Object.freeze([
-    'engineering1',
-    'engineering2',
-    'engineering3',
-    'shipping1',
-    'shipping2',
-    'worldTrade1',
-    'worldTrade2',
-    'worldTrade3',
-    'worldPeace1',
-    'worldPeace2',
-    'worldPeace3',
-    'worldPeace4',
-    'mathematics1',
-    'mathematics2',
-    'mathematics3',
-    'advancedPhysics1',
-    'advancedPhysics2',
-    'advancedPhysics3',
-    'advancedPhysics4',
-  ] as const satisfies readonly DreamUpgradeFlag[]),
-  foundational: Object.freeze([
-    'hunter1',
-    'hunter2',
-    'hunter3',
-    'hunter4',
-    'gatherer1',
-    'gatherer2',
-    'gatherer3',
-    'gatherer4',
-    'workerBoost',
-    'citiesBoost',
-  ] as const satisfies readonly DreamUpgradeFlag[]),
-  information: Object.freeze([
-    'factoriesBoost',
-    'bots1',
-    'bots2',
-    'rockets1',
-    'rockets2',
-    'rockets3',
-  ] as const satisfies readonly DreamUpgradeFlag[]),
-  spaceAge: Object.freeze([
-    'sfacs1',
-    'sfacs2',
-    'sfacs3',
-    'railguns1',
-    'railguns2',
-  ] as const satisfies readonly DreamUpgradeFlag[]),
-})
-
-export const REALITY_UPGRADE_SECTIONS = Object.freeze({
-  translation: Object.freeze(
-    REALITY_UPGRADE_IDS.filter((id) => id.startsWith('translation')),
-  ),
-  speed: Object.freeze(
-    REALITY_UPGRADE_IDS.filter((id) => id.startsWith('speed')),
-  ),
-  qualityOfLife: Object.freeze([
-    'doubleTimeOwned',
-    'workerAutoConvert',
-  ] as const satisfies readonly RealityUpgradeId[]),
-})
 
 const AVOCADO_FEED_SOURCES = Object.freeze([
   'infinity-points',
@@ -1437,27 +1339,6 @@ function selectGameplayVisibility(
       routeUnlocked: realityUnlocked,
     },
   }
-}
-
-/**
- * Captures revisions and a detached command in the application envelope used
- * for optimistic concurrency. Durable revision is intentionally not part of a
- * dispatch request.
- */
-export function createFrontendCommandEnvelope(
-  revision: Readonly<ApplicationRevision>,
-  command: Readonly<CanonicalPlayerCommand>,
-): DeepReadonly<ApplicationCommandEnvelope<CanonicalPlayerCommand>> {
-  assertRevision('session', revision.session)
-  assertRevision('state', revision.state)
-  if (!hasCommandKind(command.kind)) {
-    throw new Error(`Unknown canonical command kind '${command.kind}'.`)
-  }
-  return deepFreeze({
-    sessionRevision: revision.session,
-    expectedStateRevision: revision.state,
-    command: structuredClone(command),
-  })
 }
 
 /**
@@ -2687,107 +2568,6 @@ function previewDreamReset(
   }
 }
 
-/**
- * Builds exhaustive route-readiness facts from authoritative command support,
- * runtime composition readiness, and a previously inspected definition set.
- */
-export function selectFrontendCommandAvailability(
-  requirements: FrontendCommandRequirementReadiness,
-  definitionCoverage: Readonly<FrontendDefinitionCoverage>,
-): FrontendCommandAvailabilityIndex {
-  const byKindEntries = CANONICAL_PLAYER_COMMAND_KINDS.map((kind) => {
-    const support = CANONICAL_PLAYER_COMMAND_SUPPORT[kind]
-    const required =
-      'requires' in support
-        ? [...support.requires] as FrontendCommandRequirement[]
-        : []
-    const missingRequirements = required.filter(
-      (requirement) => requirements[requirement] !== true,
-    )
-    const definitionGaps = definitionGapsForCommand(
-      kind,
-      definitionCoverage,
-    )
-    const routeAvailable =
-      support.supported &&
-      missingRequirements.length === 0 &&
-      definitionGaps.length === 0
-    const status: FrontendCommandRouteStatus = !support.supported
-      ? 'unsupported'
-      : definitionGaps.length > 0
-        ? 'definition-gap'
-        : missingRequirements.length > 0
-          ? 'missing-runtime-requirement'
-          : 'available'
-
-    const availability: FrontendCommandAvailability = {
-      kind,
-      family: commandFamily(kind),
-      supported: support.supported,
-      routeAvailable,
-      status,
-      authority: support.authority,
-      blocker:
-        'blocker' in support &&
-        typeof support.blocker === 'string'
-          ? support.blocker
-          : null,
-      requirements: required,
-      missingRequirements,
-      definitionGaps,
-    }
-    return [kind, availability] as const
-  })
-  const byKind = Object.fromEntries(byKindEntries) as Record<
-    CanonicalPlayerCommandKind,
-    FrontendCommandAvailability
-  >
-
-  const byFamily = Object.fromEntries(
-    FRONTEND_COMMAND_FAMILIES.map((family) => {
-      const commands = CANONICAL_PLAYER_COMMAND_KINDS.filter(
-        (kind) => commandFamily(kind) === family,
-      )
-      return [
-        family,
-        {
-          family,
-          commandKinds: commands,
-          supportedCount: commands.filter(
-            (kind) => byKind[kind].supported,
-          ).length,
-          routeAvailableCount: commands.filter(
-            (kind) => byKind[kind].routeAvailable,
-          ).length,
-        },
-      ] as const
-    }),
-  ) as unknown as Record<
-    FrontendCommandFamily,
-    FrontendCommandFamilyAvailability
-  >
-
-  return { byKind, byFamily }
-}
-
-function definitionGapsForCommand(
-  kind: CanonicalPlayerCommandKind,
-  coverage: Readonly<FrontendDefinitionCoverage>,
-): readonly string[] {
-  switch (kind) {
-    case 'dream.purchase-upgrade':
-    case 'dream.request-reset':
-    case 'dream.request-black-hole-reset':
-      return coverage.domains['dream-upgrades'].gaps
-    case 'reality.purchase-upgrade':
-      return coverage.domains['reality-upgrades'].gaps
-    case 'quantum.purchase-upgrade':
-      return coverage.domains['quantum-upgrades'].gaps
-    default:
-      return []
-  }
-}
-
 function inspectDefinitionDomain(
   inspect: () => readonly (string | number | bigint)[],
 ): FrontendDefinitionDomainCoverage {
@@ -2803,35 +2583,6 @@ function inspectDefinitionDomain(
         }`,
       ],
     }
-  }
-}
-
-function commandFamily(
-  kind: CanonicalPlayerCommandKind,
-): FrontendCommandFamily {
-  const family = kind.slice(0, kind.indexOf('.'))
-  if (
-    FRONTEND_COMMAND_FAMILIES.some(
-      (candidate) => candidate === family,
-    )
-  ) {
-    return family as FrontendCommandFamily
-  }
-  throw new Error(`Unknown canonical command family '${family}'.`)
-}
-
-function hasCommandKind(kind: string): kind is CanonicalPlayerCommandKind {
-  return Object.prototype.hasOwnProperty.call(
-    CANONICAL_PLAYER_COMMAND_SUPPORT,
-    kind,
-  )
-}
-
-function assertRevision(name: string, value: number): void {
-  if (!Number.isSafeInteger(value) || value < 0) {
-    throw new Error(
-      `${name} revision must be a non-negative safe integer.`,
-    )
   }
 }
 

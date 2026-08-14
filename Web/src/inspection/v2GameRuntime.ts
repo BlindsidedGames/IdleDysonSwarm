@@ -41,9 +41,8 @@ import type {
 import type { Stage7V2CertificationHostResult } from '../certification/stage7V2/certificationHost'
 import type { LifecycleAdapter, LifecyclePhase } from '../platform/contracts'
 import {
-  previewAddSkillToPreset,
-  previewRemoveSkillFromPreset,
   parseCanonicalSkillPreset,
+  serializeCanonicalSkillPreset,
 } from '../simulation/canonicalSkillPresetTransactions'
 import { CANONICAL_V2_NO_DORMANT_DUE_EVENTS } from '../simulation/canonicalEventTimeModelV2'
 import {
@@ -117,7 +116,7 @@ import type {
   UiRuntimeStorageStatus,
 } from '../ui/runtime'
 import type { UiRuntimeDevelopmentRealityResult } from '../ui/runtime/contracts'
-import { selectFrontendApplicationSnapshotV2, projectLegacyPresentationState } from './frontendSnapshotV2'
+import { selectFrontendApplicationSnapshotV2 } from './frontendSnapshotV2'
 
 const BUILD_SCOPE = 'stage8-v2-full-game-v1'
 const DEFAULT_PLATFORM = Object.freeze({
@@ -287,14 +286,23 @@ class V2GameRuntime {
       },
       previewSkillPresetQueueChange: (request) => {
         const state = this.#requirePublication().state
-        const legacy = projectLegacyPresentationState(state)
-        return request.included
-          ? previewAddSkillToPreset(legacy, request.slot, request.skillId)
-          : previewRemoveSkillFromPreset(legacy, request.slot, request.skillId)
+        const preview = request.included
+          ? previewAddCanonicalSkillToPresetV2(state, request.slot, request.skillId)
+          : previewRemoveCanonicalSkillFromPresetV2(state, request.slot, request.skillId)
+        return preview.accepted
+          ? Object.freeze({
+              ...preview,
+              code: preview.changed
+                ? request.included ? 'added' as const : 'removed' as const
+                : 'unchanged' as const,
+            })
+          : Object.freeze({
+              ...preview,
+              code: 'definition-gap' as const,
+            })
       },
-      exportSkillPreset: (slot) => JSON.stringify(
-        projectLegacyPresentationState(this.#requirePublication().state)
-          .skills.presets[slot - 1],
+      exportSkillPreset: (slot) => serializeCanonicalSkillPreset(
+        this.#requirePublication().state.skills.presets[slot - 1],
       ),
       previewSkillPresetImport: (serialized) => parseCanonicalSkillPreset(serialized),
       previewImport: (request) => this.previewImport(request),

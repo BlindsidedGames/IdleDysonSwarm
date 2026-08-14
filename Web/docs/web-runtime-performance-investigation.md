@@ -1,11 +1,40 @@
 # Web runtime performance investigation
 
-Status: confirmed investigation findings; remediation not started
+Status: historical V1 investigation; V2 remediation in progress
 Investigation date: 2026-08-03 to 2026-08-04
 Primary symptom: sustained web play makes a mobile device hot
 Source inspected: local `main` at `82cd16a`, with the relevant runtime,
 snapshot, visualization and facility code compared against `origin/main`
 through `bba288d`
+
+## V2 remediation checkpoint: 2026-08-14
+
+The findings below describe the former V1 production path and remain useful as
+historical attribution. The activated V2 runtime no longer performs a live
+V2-to-V1 frontend projection. Preview selection is demand-driven and uses
+read-only Dream, Reality and Quantum authorities rather than commit-capable
+quotes that clone and validate candidate states for every catalog card.
+
+A synthetic mature schema-12 production-browser profile now covers a `1e300`
+cash / `1e250` bots save. After replacing commit-capable presentation quotes,
+the Simulations route changed from approximately 12.59 seconds to 0.38 seconds
+and Quantum from approximately 7.95 seconds to 0.96 seconds on the profiling
+machine. Ready-shell startup is approximately 0.40 seconds.
+
+The V2 boot path also imports lightweight presentation metadata, command
+support, command-envelope and readiness modules instead of evaluating the V1
+frontend selector, V1 command router and detailed schema-11 mapping catalog.
+The complete boot JavaScript graph is 360.67 KiB gzip, down from 381.49 KiB at
+the start of this performance pass. It remains above the provisional 200 KiB
+target. The next measured bundle candidates are the stored-time authority and
+event-time model, which remain required during startup; they must not be split
+without preserving durable-job recovery and old-save compatibility.
+
+Reproduce the current browser measurements with:
+
+- `npm run report:performance:mature-browser`
+- `npm run report:performance:interaction:smoke`
+- `npm run report:initial-request-bundle`
 
 ## Purpose
 

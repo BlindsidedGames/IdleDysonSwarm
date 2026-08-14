@@ -14,10 +14,7 @@ import { PreparedSave } from '../save/prepare'
 import { deriveDysonV2FromCauses } from '../simulation/dysonV2Derivation'
 import { createCanonicalTinkerRuntimeState } from '../simulation/canonicalTinker'
 import { deserializeWebSave } from '../save/serialization'
-import {
-  projectLegacyPresentationState,
-  selectFrontendApplicationSnapshotV2,
-} from './frontendSnapshotV2'
+import { selectFrontendApplicationSnapshotV2 } from './frontendSnapshotV2'
 
 const migrated = migratePreparedSaveToV2(
   PreparedSave.fromDecoded(deserializeWebSave(schema12Web)),
@@ -266,7 +263,6 @@ describe('V2 full-game frontend projection', () => {
         snapshot.gameplay.derived.dyson.value.presentation.facilities.assembly_lines.ownership.total,
       )).toBe(true)
     }
-    expect(projectLegacyPresentationState(state).dyson.money).toBe(0)
     expect(snapshot.gameplay.visibility.skills.routeUnlocked).toBe(true)
     expect(snapshot.gameplay.visibility.infinity.routeUnlocked).toBe(true)
     expect(snapshot.gameplay.visibility.reality).toMatchObject({
@@ -350,6 +346,21 @@ describe('V2 full-game frontend projection', () => {
     expect(source).not.toContain('as unknown as DeepReadonly<FrontendGameplayPreviews>')
     expect(source).toContain('production.facilityProducerRates.matrioshka_brains')
     expect(source).not.toContain('selectFrontendApplicationSnapshot({')
+    expect(source).toContain(
+      "from '../application/frontendPresentationMetadata'",
+    )
+    expect(source).toContain(
+      "from '../application/frontendCommandReadiness'",
+    )
+    expect(source).not.toContain('selectFrontendReadinessConstants')
+    for (const commitCapablePreview of [
+      'quoteDreamCommandV2',
+      'quoteCanonicalDreamResetV2',
+      'quoteCanonicalQuantumResetV2',
+      'quoteQuantumUpgradeV2',
+    ]) {
+      expect(source).not.toContain(commitCapablePreview)
+    }
 
     const progression = source.slice(
       source.indexOf('function selectV2Progression('),

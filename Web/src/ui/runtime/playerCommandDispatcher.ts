@@ -3,10 +3,8 @@ import type {
   CanonicalCoordinatedPlayerResult,
 } from '../../application/canonicalLifecycleCoordinator'
 import type { CanonicalPlayerCommand } from '../../application/canonicalPlayerCommands'
-import {
-  createFrontendCommandEnvelope,
-  type FrontendApplicationSnapshot,
-} from '../../application/frontendSnapshot'
+import { createFrontendCommandEnvelope } from '../../application/frontendCommandEnvelope'
+import type { FrontendApplicationSnapshot } from '../../application/frontendSnapshot'
 import type {
   UiRuntimeCommandActivationRevision,
   UiRuntimePlayerCommandResult,

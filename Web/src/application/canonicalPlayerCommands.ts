@@ -1,8 +1,8 @@
 import {
   CANONICAL_GAME_COMMAND_KINDS,
   CANONICAL_GAME_COMMAND_SUPPORT,
-  type CanonicalGameCommand,
-} from './canonicalGameCommands'
+} from './canonicalGameCommandSupport'
+import type { CanonicalGameCommand } from './canonicalGameCommands'
 
 /**
  * Complete frontend-dispatchable intent union. Internal away-time, bot-cap,

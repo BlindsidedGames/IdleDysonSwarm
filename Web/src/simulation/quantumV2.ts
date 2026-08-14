@@ -107,6 +107,19 @@ export function quoteQuantumUpgradeV2(
   return quote
 }
 
+/** Read-only catalog projection. It validates once and does not mint commit authorities. */
+export function previewQuantumUpgradeCatalogV2(
+  state: CanonicalGameStateV2,
+  sourceRevision: number,
+): readonly QuantumPurchaseQuoteV2[] {
+  if (!admitState(state) || !validRevision(sourceRevision)) {
+    return Object.freeze([])
+  }
+  return Object.freeze(QUANTUM_V2_UPGRADE_IDS.map((upgradeId) =>
+    buildQuote(state, sourceRevision, upgradeId, 'buy-1', true),
+  ))
+}
+
 export function commitQuantumUpgradeV2(
   quote: QuantumPurchaseQuoteV2,
   state: CanonicalGameStateV2,
@@ -153,11 +166,11 @@ export function commitQuantumUpgradeV2(
   })
 }
 
-function buildQuote(state: CanonicalGameStateV2, revision: number, id: QuantumUpgradeIdV2, mode: V2PurchaseMode): QuantumPurchaseQuoteV2 {
+function buildQuote(state: CanonicalGameStateV2, revision: number, id: QuantumUpgradeIdV2, mode: V2PurchaseMode, stateAlreadyAdmitted = false): QuantumPurchaseQuoteV2 {
   const safeId = isId(id) ? id : QUANTUM_V2_UPGRADE_IDS[0]
   const safeMode = isMode(mode) ? mode : 'buy-1'
   if (!isId(id) || !isMode(mode) || !validRevision(revision)) return empty(safeId, revision, safeMode, 'invalid-request')
-  if (!admitState(state)) return empty(id, revision, mode, 'invalid-state')
+  if (!stateAlreadyAdmitted && !admitState(state)) return empty(id, revision, mode, 'invalid-state')
   const definition = QUANTUM_V2_DEFINITIONS[id]
   if (definition === undefined) return empty(id, revision, mode, 'catalog-gap')
   const current = purchaseOutput(state, id)

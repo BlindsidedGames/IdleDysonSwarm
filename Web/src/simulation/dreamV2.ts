@@ -226,7 +226,58 @@ export function purchaseDreamInfluenceV2(state:CanonicalGameStateV2,id:DreamInfl
 }
 
 export const DREAM_INFLUENCE_PURCHASE_MODES_V2=Object.freeze(['buy-1','buy-10','buy-50','buy-100','buy-max'] as const satisfies readonly V2PurchaseMode[])
-export function previewDreamInfluencePurchaseModesV2(state:CanonicalGameStateV2,id:DreamInfluencePurchaseIdV2):readonly DreamInfluencePurchaseResultV2[]{return Object.freeze(DREAM_INFLUENCE_PURCHASE_MODES_V2.map(mode=>purchaseDreamInfluenceV2(state,id,mode)))}
+export type DreamInfluencePurchasePreviewV2 = Readonly<Pick<
+  DreamInfluencePurchaseResultV2,
+  | 'accepted'
+  | 'purchaseId'
+  | 'requestedMode'
+  | 'batches'
+  | 'unitsGranted'
+  | 'quotedCost'
+  | 'buyMaxBatchCap'
+  | 'reachedBuyMaxBatchCap'
+>>
+
+export function previewDreamInfluencePurchaseModesV2(
+  state: CanonicalGameStateV2,
+  id: DreamInfluencePurchaseIdV2,
+): readonly DreamInfluencePurchasePreviewV2[] {
+  if (!admit(state) || !['hunters','gatherers','solar','fusion'].includes(id)) {
+    return Object.freeze([])
+  }
+  return Object.freeze(DREAM_INFLUENCE_PURCHASE_MODES_V2.map((mode) =>
+    previewDreamInfluencePurchaseModeAdmitted(state, id, mode),
+  ))
+}
+
+function previewDreamInfluencePurchaseModeAdmitted(
+  state: CanonicalGameStateV2,
+  id: DreamInfluencePurchaseIdV2,
+  mode: V2PurchaseMode,
+): DreamInfluencePurchasePreviewV2 {
+  const resource=id==='hunters'?'hunters':id==='gatherers'?'gatherers':id==='solar'?'solarPanels':'fusion'
+  const price=id==='hunters'?state.dream.parameters.hunterCost:id==='gatherers'?state.dream.parameters.gathererCost:id==='solar'?state.dream.parameters.solarCost:state.dream.parameters.fusionCost
+  const units=id==='hunters'?state.dream.huntersPerPurchase:id==='gatherers'?state.dream.gatherersPerPurchase:GAME_DECIMAL_ONE
+  const failed = (): DreamInfluencePurchasePreviewV2 => Object.freeze({
+    accepted:false,purchaseId:id,requestedMode:mode,batches:GAME_DECIMAL_ZERO,
+    unitsGranted:GAME_DECIMAL_ZERO,quotedCost:GAME_DECIMAL_ZERO,
+    buyMaxBatchCap:mode==='buy-max'?V2_FIXED_PRICE_BUY_MAX_BATCH_CAP:null,
+    reachedBuyMaxBatchCap:false,
+  })
+  if(isZeroGameDecimal(price)||isZeroGameDecimal(units))return failed()
+  const common={currencyPath:'$.reality.influence',sourceRevision:0,balance:state.reality.influence,balanceSemantic:'integer' as const,output:state.dream.resources[resource],outputSemantic:'integer' as const,unitsPerPurchase:units,integerCost:true,negligibleDebitPolicy:'allow-for-purchase' as const}
+  const affordable=floorGameDecimal(divideGameDecimals(common.balance,price))
+  const currentOwned=floorGameDecimal(divideGameDecimals(common.output,units))
+  const batches=selectV2PurchaseBatches({mode,rounded:false,currentOwned,affordable})
+  const quote=mode==='buy-max'?quoteV2FixedPriceBuyMax({...common,pricePerBatch:price}):quoteV2Purchase({...common,requestedMode:mode,batches,quotedCost:multiplyGameDecimals(price,batches)})
+  if(!quote.accepted)return failed()
+  return Object.freeze({
+    accepted:true,purchaseId:id,requestedMode:mode,batches:quote.batches,
+    unitsGranted:quote.unitsGranted,quotedCost:quote.quotedCost,
+    buyMaxBatchCap:mode==='buy-max'?V2_FIXED_PRICE_BUY_MAX_BATCH_CAP:null,
+    reachedBuyMaxBatchCap:mode==='buy-max'&&equalGameDecimals(quote.batches,V2_FIXED_PRICE_BUY_MAX_BATCH_CAP),
+  })
+}
 
 export function startDreamEducationV2(state:CanonicalGameStateV2,id:keyof DreamStateV2['education']):CanonicalGameStateV2|null{
   if(!admit(state)||!DREAM_V2_EDUCATION_IDS.includes(id as never))return null;const subject=state.dream.education[id];if(subject.active||compareGameDecimals(state.reality.influence,subject.cost)<0)return null;const influence=subtractGameDecimals(state.reality.influence,subject.cost);if(!purchaseDebitAllowed(state.reality.influence,influence,subject.cost))return null;return publish({...state,reality:{...state.reality,influence},dream:{...state.dream,education:{...state.dream.education,[id]:{...subject,active:true}}}},state)

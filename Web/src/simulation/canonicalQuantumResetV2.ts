@@ -20,11 +20,36 @@ export interface CanonicalQuantumPublicationV2 { readonly revision:number;readon
 export type CanonicalQuantumResetRequestV2=Readonly<{kind:'quantum-action'}>
 export interface CanonicalQuantumResetQuoteV2 {readonly kind:'canonical-quantum-reset-quote-v2';readonly accepted:boolean;readonly code:'ready'|'invalid-request'|'not-ready'|'output-unrepresented'|'revision-exhausted';readonly sourceRevision:number;readonly operation:'ordinary-leap'|'entanglement'|null;readonly requestedShards:GameDecimal;readonly effectiveAvailableShards:GameDecimal;readonly effectiveLifetimeShards:GameDecimal;readonly infinityPointsConsumed:GameDecimal;readonly infinityPointsRemainder:GameDecimal;readonly resetSkillPoints:bigint;readonly autoAssignedSkillIds:readonly string[];readonly expectedPublication:Readonly<CanonicalQuantumPublicationV2>|null}
 export interface CanonicalQuantumResetCommitV2 {readonly accepted:boolean;readonly changed:boolean;readonly code:'committed'|'quote-rejected'|'stale-publication';readonly publication:Readonly<CanonicalQuantumPublicationV2>|null}
+export type CanonicalQuantumResetPreviewV2 = Readonly<Pick<CanonicalQuantumResetQuoteV2,
+  'accepted'|'code'|'operation'|'requestedShards'|'infinityPointsConsumed'|'infinityPointsRemainder'|'resetSkillPoints'
+>>
 interface Issued {readonly source:Readonly<CanonicalQuantumPublicationV2>;readonly candidate:Readonly<CanonicalQuantumPublicationV2>}
 const issued=new WeakMap<object,Issued>(),consumed=new WeakSet<object>()
 const FORTY_TWO=gameDecimalFromBigInt(42n)
 
 export function quoteCanonicalQuantumResetV2(publication:Readonly<CanonicalQuantumPublicationV2>,request:CanonicalQuantumResetRequestV2):Readonly<CanonicalQuantumResetQuoteV2>{try{return quoteInternal(publication,request)}catch{return failureQuote('invalid-request')}}
+export function previewCanonicalQuantumResetV2(state:Readonly<CanonicalGameStateV2>):CanonicalQuantumResetPreviewV2{
+  try{
+    if(!validateCanonicalGameStateV2(state).valid)return previewFailure('invalid-request',null)
+    const operation=state.quantum.unlocks.quantumEntanglement?'entanglement' as const:'ordinary-leap' as const
+    if(operation==='entanglement'){
+      const available=state.infinity.availablePoints
+      if(!isIntegerGameDecimal(available))return previewFailure('not-ready',operation)
+      let requested=floorGameDecimal(divideGameDecimals(available,FORTY_TWO)),consumed=multiplyGameDecimals(requested,FORTY_TWO)
+      if(compareGameDecimals(consumed,available)>0&&compareGameDecimals(requested,GAME_DECIMAL_ZERO)>0){requested=subtractGameDecimals(requested,GAME_DECIMAL_ONE);consumed=multiplyGameDecimals(requested,FORTY_TWO)}
+      if(compareGameDecimals(requested,GAME_DECIMAL_ZERO)<=0)return previewFailure('not-ready',operation)
+      const remainder=subtractGameDecimals(available,consumed)
+      if(compareGameDecimals(remainder,FORTY_TWO)>=0)return previewFailure('not-ready',operation)
+      const nextAvailable=addGameDecimals(state.quantum.availableShards,requested)
+      const nextLifetime=addGameDecimals(state.quantum.lifetimeEarnedShards,requested)
+      if(equalGameDecimals(nextAvailable,state.quantum.availableShards)||equalGameDecimals(nextLifetime,state.quantum.lifetimeEarnedShards)||equalGameDecimals(remainder,available))return previewFailure('output-unrepresented',operation)
+      return Object.freeze({accepted:true,code:'ready',operation,requestedShards:requested,infinityPointsConsumed:consumed,infinityPointsRemainder:remainder,resetSkillPoints:0n})
+    }
+    const total=addGameDecimals(state.infinity.availablePoints,state.infinity.allocatedPoints)
+    if(compareGameDecimals(total,FORTY_TWO)<0)return previewFailure('not-ready',operation)
+    return Object.freeze({accepted:true,code:'ready',operation,requestedShards:GAME_DECIMAL_ONE,infinityPointsConsumed:total,infinityPointsRemainder:GAME_DECIMAL_ZERO,resetSkillPoints:quantumResetSkillPoints(state)})
+  }catch{return previewFailure('invalid-request',null)}
+}
 export function commitCanonicalQuantumResetV2(quote:Readonly<CanonicalQuantumResetQuoteV2>,publication:Readonly<CanonicalQuantumPublicationV2>):Readonly<CanonicalQuantumResetCommitV2>{try{if(quote===null||typeof quote!=='object'||consumed.has(quote as object))return commitFailure('quote-rejected');const descriptor=issued.get(quote as object);if(descriptor===undefined)return commitFailure('quote-rejected');consumed.add(quote as object);const current=admitPublication(publication);if(current===null||!equalTree(current,descriptor.source))return commitFailure('stale-publication');return Object.freeze({accepted:true,changed:true,code:'committed' as const,publication:descriptor.candidate})}catch{return commitFailure('quote-rejected')}}
 
 function quoteInternal(publication:Readonly<CanonicalQuantumPublicationV2>,request:CanonicalQuantumResetRequestV2):Readonly<CanonicalQuantumResetQuoteV2>{
@@ -71,4 +96,5 @@ function captureRequest(value:unknown):CanonicalQuantumResetRequestV2|null{const
 function closed(value:unknown,keys:readonly string[]):Readonly<Record<string,unknown>>|null{if(value===null||typeof value!=='object'||Array.isArray(value)||Object.getPrototypeOf(value)!==Object.prototype)return null;const descriptors=Object.getOwnPropertyDescriptors(value),actual=Reflect.ownKeys(descriptors);if(actual.length!==keys.length||actual.some(key=>typeof key!=='string'||!keys.includes(key))||keys.some(key=>descriptors[key]===undefined||!descriptors[key]!.enumerable||!('value'in descriptors[key]!)))return null;return Object.freeze(Object.fromEntries(keys.map(key=>[key,descriptors[key]!.value])))}
 function equalTree(a:unknown,b:unknown):boolean{if(Object.is(a,b))return true;if(a===null||b===null||typeof a!=='object'||typeof b!=='object'||Object.getPrototypeOf(a)!==Object.getPrototypeOf(b))return false;const ak=Reflect.ownKeys(a),bk=Reflect.ownKeys(b);return ak.length===bk.length&&ak.every(key=>bk.includes(key)&&equalTree(Object.getOwnPropertyDescriptor(a,key)?.value,Object.getOwnPropertyDescriptor(b,key)?.value))}
 function failureQuote(code:CanonicalQuantumResetQuoteV2['code'],sourceRevision=-1,operation:CanonicalQuantumResetQuoteV2['operation']=null):Readonly<CanonicalQuantumResetQuoteV2>{return Object.freeze({kind:'canonical-quantum-reset-quote-v2',accepted:false,code,sourceRevision,operation,requestedShards:GAME_DECIMAL_ZERO,effectiveAvailableShards:GAME_DECIMAL_ZERO,effectiveLifetimeShards:GAME_DECIMAL_ZERO,infinityPointsConsumed:GAME_DECIMAL_ZERO,infinityPointsRemainder:GAME_DECIMAL_ZERO,resetSkillPoints:0n,autoAssignedSkillIds:Object.freeze([]),expectedPublication:null})}
+function previewFailure(code:CanonicalQuantumResetPreviewV2['code'],operation:CanonicalQuantumResetPreviewV2['operation']):CanonicalQuantumResetPreviewV2{return Object.freeze({accepted:false,code,operation,requestedShards:GAME_DECIMAL_ZERO,infinityPointsConsumed:GAME_DECIMAL_ZERO,infinityPointsRemainder:GAME_DECIMAL_ZERO,resetSkillPoints:0n})}
 function commitFailure(code:CanonicalQuantumResetCommitV2['code']):Readonly<CanonicalQuantumResetCommitV2>{return Object.freeze({accepted:false,changed:false,code,publication:null})}

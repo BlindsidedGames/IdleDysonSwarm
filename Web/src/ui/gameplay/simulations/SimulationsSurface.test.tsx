@@ -17,10 +17,10 @@ import { PresentationIntlProvider } from '../../i18n/PresentationIntlProvider'
 import type { SharedMessageCatalog } from '../../i18n/catalogs/types'
 import type { UiRuntimePlayerCommandResult } from '../../runtime'
 import {
-  SimulationTimeControl,
   SimulationsSurface,
   type SimulationsSurfaceProps,
 } from './SimulationsSurface'
+import { SimulationTimeControl } from './SimulationTimeControl'
 
 const simulationStyles = readFileSync(
   join(process.cwd(), 'src', 'ui', 'gameplay', 'simulations', 'simulations.css'),

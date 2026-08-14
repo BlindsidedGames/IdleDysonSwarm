@@ -47,11 +47,7 @@ import {
   reportDevelopmentTelemetry,
   startDevelopmentTelemetry,
 } from '../../runtime/developmentTelemetry'
-import {
-  SettingsSurface,
-  type SettingsSurfaceProps,
-} from '../settings'
-import { DebugSurface } from '../debug'
+import type { SettingsSurfaceProps } from '../settings'
 import type { SkillPresetActions } from '../skills'
 import {
   beginFirstSliceSnapshotSelection,
@@ -71,7 +67,7 @@ import { DysonSwarmVisual } from './DysonSwarmVisual'
 import {
   SimulationTimeControl,
   type SpaceAgePurchaseQuantity,
-} from '../simulations/SimulationsSurface'
+} from '../simulations/SimulationTimeControl'
 import { wikiProgressionFromResources } from '../wiki/wikiProjection'
 import { comparePresentationNumeric } from '../../presentationNumeric'
 import { AvocatoMeditationSecretTrigger } from '../quantum/AvocatoMeditationSecretTrigger'
@@ -79,7 +75,7 @@ import { AvotationCompletionOverlay } from '../quantum/AvotationProgress'
 import type { AvocatoMeditationPlacement } from '../quantum/meditationTargets'
 import {
   QuantumControlPanel,
-} from '../quantum/QuantumSurface'
+} from '../quantum/QuantumControlPanel'
 import type { QuantumPurchaseQuantity } from '../quantum/quantumPurchaseQuantities'
 import type { ReleasePlatformServices } from '../../../platform/releaseFoundation'
 import { StorefrontController } from '../../../store/storefront'
@@ -87,6 +83,16 @@ import { StorefrontController } from '../../../store/storefront'
 const BasicFacilityRegion = lazy(async () => {
   const module = await import('../facilities')
   return { default: module.BasicFacilityRegion }
+})
+
+const SettingsSurface = lazy(async () => {
+  const module = await import('../settings')
+  return { default: module.SettingsSurface }
+})
+
+const DebugSurface = lazy(async () => {
+  const module = await import('../debug')
+  return { default: module.DebugSurface }
 })
 
 const ResearchSurface = lazy(async () => {
@@ -927,18 +933,21 @@ export function ReadyDysonSlice({
           ? {
               ariaLabel: intl.formatMessage(messages.debugRoute),
               content: (
-                <DebugSurface
-                  development={development}
-                  locale={locale}
-                />
+                <Suspense fallback={<div aria-label={intl.formatMessage(messages.debugRoute)} aria-busy="true" />}>
+                  <DebugSurface
+                    development={development}
+                    locale={locale}
+                  />
+                </Suspense>
               ),
             }
           : settingsActive
           ? {
               ariaLabel: intl.formatMessage(messages.settingsRoute),
               content: (
-                <SettingsSurface
-                  resetSave={resetSave}
+                <Suspense fallback={<div aria-label={intl.formatMessage(messages.settingsRoute)} aria-busy="true" />}>
+                  <SettingsSurface
+                    resetSave={resetSave}
                   previewImportSaveFile={previewImportSaveFile}
                   previewImportSaveText={previewImportSaveText}
                   importSaveFile={importSaveFile}
@@ -960,8 +969,9 @@ export function ReadyDysonSlice({
                       item,
                       visible,
                     })
-                  }}
-                />
+                    }}
+                  />
+                </Suspense>
               ),
             }
           : researchActive
