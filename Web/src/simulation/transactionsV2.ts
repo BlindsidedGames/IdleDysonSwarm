@@ -1,5 +1,6 @@
 import {
   GAME_DECIMAL_ONE,
+  GAME_DECIMAL_MAXIMUM,
   GAME_DECIMAL_ZERO,
   addGameDecimals,
   ceilGameDecimal,
@@ -12,6 +13,7 @@ import {
   gameDecimalToBigIntChecked,
   isGameDecimal,
   isIntegerGameDecimal,
+  isMaximumGameDecimal,
   isZeroGameDecimal,
   logGameDecimal,
   minGameDecimal,
@@ -35,6 +37,7 @@ export type V2PurchaseRejection =
   | 'none'
   | 'invalid-request'
   | 'invalid-cost'
+  | 'maximum-reached'
   | 'insufficient-funds'
   | 'negligible-debit-forbidden'
   | 'correction-limit'
@@ -135,6 +138,9 @@ export interface V2AtomicExchangeCommitResult {
 }
 
 export const V2_BULK_MAXIMUM_DOWNWARD_CORRECTIONS = 16
+const V2_BULK_REPRESENTABLE_STEP_FACTOR = gameDecimalFromNumber(
+  1 - Number.EPSILON,
+)
 export const V2_FIXED_PRICE_BUY_MAX_BATCH_CAP =
   gameDecimalFromNumber(1_000)
 
@@ -274,6 +280,9 @@ function buildV2PurchaseQuote(
   const quotedCost = normalizeCost(request.quotedCost, request.integerCost)
   if (quotedCost === null) {
     return rejectedPurchase(request, 'invalid-cost')
+  }
+  if (isMaximumGameDecimal(quotedCost)) {
+    return rejectedPurchase(request, 'maximum-reached', GAME_DECIMAL_MAXIMUM)
   }
   if (compareGameDecimals(quotedCost, request.balance) > 0) {
     return rejectedPurchase(request, 'insufficient-funds', quotedCost)
@@ -579,7 +588,13 @@ export function correctV2BulkEstimate(
     corrections < V2_BULK_MAXIMUM_DOWNWARD_CORRECTIONS &&
     compareGameDecimals(batches, GAME_DECIMAL_ONE) > 0
   ) {
-    batches = subtractGameDecimals(batches, GAME_DECIMAL_ONE)
+    const unitStep = subtractGameDecimals(batches, GAME_DECIMAL_ONE)
+    batches = equalGameDecimals(unitStep, batches)
+      ? floorGameDecimal(multiplyGameDecimals(
+          batches,
+          V2_BULK_REPRESENTABLE_STEP_FACTOR,
+        ))
+      : unitStep
     corrections += 1
     try {
       cost = authoritativeCost(batches)

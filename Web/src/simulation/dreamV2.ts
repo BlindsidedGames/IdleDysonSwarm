@@ -5,11 +5,11 @@ import {
   GAME_DECIMAL_ONE, GAME_DECIMAL_ZERO, addGameDecimals, ceilGameDecimal, cloneGameDecimal,
   compareGameDecimals, divideGameDecimals, equalGameDecimals, floorGameDecimal,
   gameDecimalFromNumber, gameDecimalToNumberChecked,
-  isZeroGameDecimal, logGameDecimal, maxGameDecimal, minGameDecimal,
+  isMaximumGameDecimal, isZeroGameDecimal, logGameDecimal, maxGameDecimal, minGameDecimal,
   multiplyGameDecimals, powGameDecimal, subtractGameDecimals, type GameDecimal,
 } from '../math/gameDecimal'
 import { DREAM_V2_CATALOG, type DreamUpgradeEffectV2, type DreamUpgradeIdV2 } from './dreamCatalogV2'
-import { V2_FIXED_PRICE_BUY_MAX_BATCH_CAP, commitV2Purchase, quoteV2FixedPriceBuyMax, quoteV2Purchase, selectV2PurchaseBatches, type V2PurchaseMode } from './transactionsV2'
+import { V2_FIXED_PRICE_BUY_MAX_BATCH_CAP, commitV2Purchase, quoteV2FixedPriceBuyMax, quoteV2Purchase, selectV2PurchaseBatches, type V2PurchaseMode, type V2PurchaseRejection } from './transactionsV2'
 
 export const DREAM_V2_TIMER_DURATIONS = Object.freeze({
   hunterTimerProgress:3,gathererTimerProgress:3,communityTimerProgress:3,
@@ -206,23 +206,23 @@ export function advanceDreamRailgunV2(state:CanonicalGameStateV2,seconds:number,
 }
 
 export function applyDreamUpgradeEffectsV2(state:CanonicalGameStateV2,id:DreamUpgradeIdV2):CanonicalGameStateV2|null{
-  if(!admit(state)||typeof id!=='string'||!Object.hasOwn(DREAM_V2_CATALOG,id))return null;const definition=DREAM_V2_CATALOG[id];if(state.dream.upgrades[id]||definition.prerequisites.some(p=>state.dream.upgrades[p.key]!==p.mustBeOwned)||compareGameDecimals(state.dream.strangeMatter,definition.cost)<0)return null
+  if(!admit(state)||typeof id!=='string'||!Object.hasOwn(DREAM_V2_CATALOG,id))return null;const definition=DREAM_V2_CATALOG[id];if(state.dream.upgrades[id]||definition.prerequisites.some(p=>state.dream.upgrades[p.key]!==p.mustBeOwned)||isMaximumGameDecimal(definition.cost)||compareGameDecimals(state.dream.strangeMatter,definition.cost)<0)return null
   let candidate:CanonicalGameStateV2=state;for(const effect of definition.effects)candidate=applyEffect(candidate,effect)
   const strangeMatter=subtractGameDecimals(candidate.dream.strangeMatter,definition.cost);if(!purchaseDebitAllowed(candidate.dream.strangeMatter,strangeMatter,definition.cost))return null;candidate={...candidate,dream:{...candidate.dream,strangeMatter}};return publish(candidate,state)
 }
 
 export type DreamInfluencePurchaseIdV2='hunters'|'gatherers'|'solar'|'fusion'
-export interface DreamInfluencePurchaseResultV2{readonly accepted:boolean;readonly changed:boolean;readonly state:CanonicalGameStateV2;readonly purchaseId:DreamInfluencePurchaseIdV2;readonly requestedMode:V2PurchaseMode;readonly batches:GameDecimal;readonly unitsGranted:GameDecimal;readonly quotedCost:GameDecimal;readonly debited:GameDecimal;readonly buyMaxBatchCap:GameDecimal|null;readonly reachedBuyMaxBatchCap:boolean}
+export interface DreamInfluencePurchaseResultV2{readonly accepted:boolean;readonly changed:boolean;readonly state:CanonicalGameStateV2;readonly purchaseId:DreamInfluencePurchaseIdV2;readonly requestedMode:V2PurchaseMode;readonly rejection:V2PurchaseRejection;readonly batches:GameDecimal;readonly unitsGranted:GameDecimal;readonly quotedCost:GameDecimal;readonly debited:GameDecimal;readonly buyMaxBatchCap:GameDecimal|null;readonly reachedBuyMaxBatchCap:boolean}
 export function purchaseDreamInfluenceV2(state:CanonicalGameStateV2,id:DreamInfluencePurchaseIdV2,mode:V2PurchaseMode):DreamInfluencePurchaseResultV2{
   if(!admit(state)||!['hunters','gatherers','solar','fusion'].includes(id)||!['buy-1','buy-10','buy-50','buy-100','buy-max'].includes(mode))return influenceFailure(state,id,mode)
   const resource=id==='hunters'?'hunters':id==='gatherers'?'gatherers':id==='solar'?'solarPanels':'fusion';const price=id==='hunters'?state.dream.parameters.hunterCost:id==='gatherers'?state.dream.parameters.gathererCost:id==='solar'?state.dream.parameters.solarCost:state.dream.parameters.fusionCost;const units=id==='hunters'?state.dream.huntersPerPurchase:id==='gatherers'?state.dream.gatherersPerPurchase:GAME_DECIMAL_ONE
   if(isZeroGameDecimal(price)||isZeroGameDecimal(units))return influenceFailure(state,id,mode)
   const common={currencyPath:'$.reality.influence',sourceRevision:0,balance:state.reality.influence,balanceSemantic:'integer' as const,output:state.dream.resources[resource],outputSemantic:'integer' as const,unitsPerPurchase:units,integerCost:true,negligibleDebitPolicy:'allow-for-purchase' as const}
   const quote=mode==='buy-max'?quoteV2FixedPriceBuyMax({...common,pricePerBatch:price}):quoteV2Purchase({...common,requestedMode:mode,batches:selectV2PurchaseBatches({mode,rounded:false,currentOwned:floorGameDecimal(divideGameDecimals(common.output,units)),affordable:floorGameDecimal(divideGameDecimals(common.balance,price))}),quotedCost:multiplyGameDecimals(price,selectV2PurchaseBatches({mode,rounded:false,currentOwned:floorGameDecimal(divideGameDecimals(common.output,units)),affordable:floorGameDecimal(divideGameDecimals(common.balance,price))}))})
-  if(!quote.accepted)return influenceFailure(state,id,mode)
-  const committed=commitV2Purchase(quote,{revision:0,balance:state.reality.influence,output:state.dream.resources[resource]});if(!committed.accepted)return influenceFailure(state,id,mode)
+  if(!quote.accepted)return influenceFailure(state,id,mode,quote.rejection,quote.quotedCost)
+  const committed=commitV2Purchase(quote,{revision:0,balance:state.reality.influence,output:state.dream.resources[resource]});if(!committed.accepted)return influenceFailure(state,id,mode,committed.rejection,committed.quotedCost)
   const candidate=committed.changed?publish({...state,reality:{...state.reality,influence:committed.balance},dream:{...state.dream,resources:{...state.dream.resources,[resource]:committed.output}}},state):state
-  return Object.freeze({accepted:true,changed:committed.changed,state:candidate,purchaseId:id,requestedMode:mode,batches:quote.batches,unitsGranted:quote.unitsGranted,quotedCost:quote.quotedCost,debited:committed.debitedAmount,buyMaxBatchCap:mode==='buy-max'?V2_FIXED_PRICE_BUY_MAX_BATCH_CAP:null,reachedBuyMaxBatchCap:mode==='buy-max'&&equalGameDecimals(quote.batches,V2_FIXED_PRICE_BUY_MAX_BATCH_CAP)})
+  return Object.freeze({accepted:true,changed:committed.changed,state:candidate,purchaseId:id,requestedMode:mode,rejection:'none' as const,batches:quote.batches,unitsGranted:quote.unitsGranted,quotedCost:quote.quotedCost,debited:committed.debitedAmount,buyMaxBatchCap:mode==='buy-max'?V2_FIXED_PRICE_BUY_MAX_BATCH_CAP:null,reachedBuyMaxBatchCap:mode==='buy-max'&&equalGameDecimals(quote.batches,V2_FIXED_PRICE_BUY_MAX_BATCH_CAP)})
 }
 
 export const DREAM_INFLUENCE_PURCHASE_MODES_V2=Object.freeze(['buy-1','buy-10','buy-50','buy-100','buy-max'] as const satisfies readonly V2PurchaseMode[])
@@ -231,6 +231,7 @@ export type DreamInfluencePurchasePreviewV2 = Readonly<Pick<
   | 'accepted'
   | 'purchaseId'
   | 'requestedMode'
+  | 'rejection'
   | 'batches'
   | 'unitsGranted'
   | 'quotedCost'
@@ -259,7 +260,7 @@ function previewDreamInfluencePurchaseModeAdmitted(
   const price=id==='hunters'?state.dream.parameters.hunterCost:id==='gatherers'?state.dream.parameters.gathererCost:id==='solar'?state.dream.parameters.solarCost:state.dream.parameters.fusionCost
   const units=id==='hunters'?state.dream.huntersPerPurchase:id==='gatherers'?state.dream.gatherersPerPurchase:GAME_DECIMAL_ONE
   const failed = (): DreamInfluencePurchasePreviewV2 => Object.freeze({
-    accepted:false,purchaseId:id,requestedMode:mode,batches:GAME_DECIMAL_ZERO,
+    accepted:false,purchaseId:id,requestedMode:mode,rejection:'invalid-request',batches:GAME_DECIMAL_ZERO,
     unitsGranted:GAME_DECIMAL_ZERO,quotedCost:GAME_DECIMAL_ZERO,
     buyMaxBatchCap:mode==='buy-max'?V2_FIXED_PRICE_BUY_MAX_BATCH_CAP:null,
     reachedBuyMaxBatchCap:false,
@@ -270,9 +271,11 @@ function previewDreamInfluencePurchaseModeAdmitted(
   const currentOwned=floorGameDecimal(divideGameDecimals(common.output,units))
   const batches=selectV2PurchaseBatches({mode,rounded:false,currentOwned,affordable})
   const quote=mode==='buy-max'?quoteV2FixedPriceBuyMax({...common,pricePerBatch:price}):quoteV2Purchase({...common,requestedMode:mode,batches,quotedCost:multiplyGameDecimals(price,batches)})
-  if(!quote.accepted)return failed()
+  if(!quote.accepted)return Object.freeze({
+    ...failed(),rejection:quote.rejection,quotedCost:quote.quotedCost,
+  })
   return Object.freeze({
-    accepted:true,purchaseId:id,requestedMode:mode,batches:quote.batches,
+    accepted:true,purchaseId:id,requestedMode:mode,rejection:'none' as const,batches:quote.batches,
     unitsGranted:quote.unitsGranted,quotedCost:quote.quotedCost,
     buyMaxBatchCap:mode==='buy-max'?V2_FIXED_PRICE_BUY_MAX_BATCH_CAP:null,
     reachedBuyMaxBatchCap:mode==='buy-max'&&equalGameDecimals(quote.batches,V2_FIXED_PRICE_BUY_MAX_BATCH_CAP),
@@ -280,11 +283,11 @@ function previewDreamInfluencePurchaseModeAdmitted(
 }
 
 export function startDreamEducationV2(state:CanonicalGameStateV2,id:keyof DreamStateV2['education']):CanonicalGameStateV2|null{
-  if(!admit(state)||!DREAM_V2_EDUCATION_IDS.includes(id as never))return null;const subject=state.dream.education[id];if(subject.active||compareGameDecimals(state.reality.influence,subject.cost)<0)return null;const influence=subtractGameDecimals(state.reality.influence,subject.cost);if(!purchaseDebitAllowed(state.reality.influence,influence,subject.cost))return null;return publish({...state,reality:{...state.reality,influence},dream:{...state.dream,education:{...state.dream.education,[id]:{...subject,active:true}}}},state)
+  if(!admit(state)||!DREAM_V2_EDUCATION_IDS.includes(id as never))return null;const subject=state.dream.education[id];if(subject.active||isMaximumGameDecimal(subject.cost)||compareGameDecimals(state.reality.influence,subject.cost)<0)return null;const influence=subtractGameDecimals(state.reality.influence,subject.cost);if(!purchaseDebitAllowed(state.reality.influence,influence,subject.cost))return null;return publish({...state,reality:{...state.reality,influence},dream:{...state.dream,education:{...state.dream.education,[id]:{...subject,active:true}}}},state)
 }
 
 export function activateDreamBoostV2(state:CanonicalGameStateV2,id:'community'|'factories'):CanonicalGameStateV2|null{
-  if(!admit(state)||(id!=='community'&&id!=='factories'))return null;const p=state.dream.parameters;const community=id==='community';const clock=community?p.communityBoostClock:p.factoriesBoostClock;if(clock>=10)return null;const unlocked=community?compareGameDecimals(state.dream.resources.hunters,GAME_DECIMAL_ONE)>=0||compareGameDecimals(state.dream.resources.gatherers,GAME_DECIMAL_ONE)>=0:compareGameDecimals(state.dream.resources.cities,GAME_DECIMAL_ONE)>=0&&state.dream.education.engineering.complete;if(!unlocked)return null;const free=community&&p.communityBoostIsFree;const cost=community?p.communityBoostCost:p.factoriesBoostCost;if(!free&&compareGameDecimals(state.reality.influence,cost)<0)return null;const influence=free?state.reality.influence:subtractGameDecimals(state.reality.influence,cost);if(!free&&!purchaseDebitAllowed(state.reality.influence,influence,cost))return null;const parameters=community?{...p,communityBoostClock:p.communityBoostDuration}:{...p,factoriesBoostClock:p.factoriesBoostDuration};return publish({...state,reality:{...state.reality,influence},dream:{...state.dream,parameters}},state)
+  if(!admit(state)||(id!=='community'&&id!=='factories'))return null;const p=state.dream.parameters;const community=id==='community';const clock=community?p.communityBoostClock:p.factoriesBoostClock;if(clock>=10)return null;const unlocked=community?compareGameDecimals(state.dream.resources.hunters,GAME_DECIMAL_ONE)>=0||compareGameDecimals(state.dream.resources.gatherers,GAME_DECIMAL_ONE)>=0:compareGameDecimals(state.dream.resources.cities,GAME_DECIMAL_ONE)>=0&&state.dream.education.engineering.complete;if(!unlocked)return null;const free=community&&p.communityBoostIsFree;const cost=community?p.communityBoostCost:p.factoriesBoostCost;if(!free&&(isMaximumGameDecimal(cost)||compareGameDecimals(state.reality.influence,cost)<0))return null;const influence=free?state.reality.influence:subtractGameDecimals(state.reality.influence,cost);if(!free&&!purchaseDebitAllowed(state.reality.influence,influence,cost))return null;const parameters=community?{...p,communityBoostClock:p.communityBoostDuration}:{...p,factoriesBoostClock:p.factoriesBoostDuration};return publish({...state,reality:{...state.reality,influence},dream:{...state.dream,parameters}},state)
 }
 
 function applyEffect(state:CanonicalGameStateV2,e:DreamUpgradeEffectV2):CanonicalGameStateV2{
@@ -304,7 +307,7 @@ function summary(values:Partial<DreamV2AmountSummary>):DreamV2AmountSummary{retu
 function advanceFailure(state:CanonicalGameStateV2):DreamV2AdvanceResult{return Object.freeze({accepted:false,changed:false,state,requested:ZERO_SUMMARY,produced:ZERO_SUMMARY})}
 function spaceFailure(state:CanonicalGameStateV2):DreamV2SpaceAgeResult{return Object.freeze({accepted:false,changed:false,state,requestedEnergyGenerated:GAME_DECIMAL_ZERO,energyGenerated:GAME_DECIMAL_ZERO,overdriveEnergyConsumed:GAME_DECIMAL_ZERO,factoryCycles:GAME_DECIMAL_ZERO,panelsProduced:GAME_DECIMAL_ZERO})}
 function railgunFailure(state:CanonicalGameStateV2):DreamV2RailgunResult{return Object.freeze({accepted:false,changed:false,state,chargeTransferred:GAME_DECIMAL_ZERO,roundsFired:0,panelsLaunched:GAME_DECIMAL_ZERO})}
-function influenceFailure(state:CanonicalGameStateV2,id:DreamInfluencePurchaseIdV2,mode:V2PurchaseMode):DreamInfluencePurchaseResultV2{return Object.freeze({accepted:false,changed:false,state,purchaseId:id,requestedMode:mode,batches:GAME_DECIMAL_ZERO,unitsGranted:GAME_DECIMAL_ZERO,quotedCost:GAME_DECIMAL_ZERO,debited:GAME_DECIMAL_ZERO,buyMaxBatchCap:mode==='buy-max'?V2_FIXED_PRICE_BUY_MAX_BATCH_CAP:null,reachedBuyMaxBatchCap:false})}
+function influenceFailure(state:CanonicalGameStateV2,id:DreamInfluencePurchaseIdV2,mode:V2PurchaseMode,rejection:V2PurchaseRejection='invalid-request',quotedCost:GameDecimal=GAME_DECIMAL_ZERO):DreamInfluencePurchaseResultV2{return Object.freeze({accepted:false,changed:false,state,purchaseId:id,requestedMode:mode,rejection,batches:GAME_DECIMAL_ZERO,unitsGranted:GAME_DECIMAL_ZERO,quotedCost,debited:GAME_DECIMAL_ZERO,buyMaxBatchCap:mode==='buy-max'?V2_FIXED_PRICE_BUY_MAX_BATCH_CAP:null,reachedBuyMaxBatchCap:false})}
 function publish(state:CanonicalGameStateV2,preparedSource?:CanonicalGameStateV2):CanonicalGameStateV2{const published=preparedSource!==undefined&&issuedPreparedDreamStates.has(preparedSource)?freezePreparedState(state):cloneCanonicalGameStateV2(state);issuedPreparedDreamStates.add(published);return published}
 function freezePreparedState(state:CanonicalGameStateV2):CanonicalGameStateV2{for(const branch of [state.dream,state.reality] as const)freezePreparedTree(branch);return Object.freeze(state)}
 function freezePreparedTree<T>(value:T):T{if(value===null||typeof value!=='object'||Object.isFrozen(value))return value;for(const descriptor of Object.values(Object.getOwnPropertyDescriptors(value)))if('value'in descriptor)freezePreparedTree(descriptor.value);return Object.freeze(value)}

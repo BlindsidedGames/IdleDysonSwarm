@@ -146,6 +146,16 @@ export const realityMessages = defineMessages({
     defaultMessage: 'Purchase',
     description: 'Button label for purchasing a Reality upgrade.',
   },
+  maximumReached: {
+    id: 'reality.upgrades.maximum-reached',
+    defaultMessage: 'Max',
+    description: 'Purchase state shown when a permanent upgrade cost reaches the numeric ceiling.',
+  },
+  maximumReachedAccessible: {
+    id: 'reality.upgrades.maximum-reached-accessible',
+    defaultMessage: '{name} has reached the maximum supported cost',
+    description: 'Accessible explanation for a permanent upgrade disabled at the numeric ceiling.',
+  },
   cost: {
     id: 'reality.upgrades.cost',
     defaultMessage: '{value} SM',

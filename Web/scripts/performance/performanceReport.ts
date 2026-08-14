@@ -85,6 +85,7 @@ export interface InteractionPerformanceReport {
 export interface ResourceCounts {
   readonly documents: number
   readonly nodes: number
+  readonly liveDomNodes: number
   readonly jsEventListeners: number
   readonly activeTimeouts: number
   readonly activeIntervals: number
@@ -113,6 +114,7 @@ export interface SoakPerformanceReport {
   }
   readonly baseline: SoakSnapshot
   readonly final: SoakSnapshot
+  readonly samples: readonly SoakSnapshot[]
   readonly retainedHeapGrowthBytes: number
   readonly retainedHeapAllowanceBytes: number
   readonly budgets: readonly PerformanceBudgetResult[]
@@ -385,6 +387,7 @@ export function createSoakReport(input: {
   readonly explicitGarbageCollections: number
   readonly baseline: SoakSnapshot
   readonly final: SoakSnapshot
+  readonly samples?: readonly SoakSnapshot[]
 }): SoakPerformanceReport {
   const retainedHeapGrowthBytes = Math.max(
     0,
@@ -401,8 +404,6 @@ export function createSoakReport(input: {
   )
   const countKeys = [
     'documents',
-    'nodes',
-    'jsEventListeners',
     'activeTimeouts',
     'activeIntervals',
     'activeAnimationFrames',
@@ -410,12 +411,41 @@ export function createSoakReport(input: {
     'callbackSubscriptionSets',
     'callbackSubscriptionMembers',
   ] as const
+  const baselineRetainedNodes = Math.max(
+    0,
+    input.baseline.resources.nodes - input.baseline.resources.liveDomNodes,
+  )
+  const settlingResources = input.samples?.[0]?.resources ?? input.baseline.resources
+  const settlingRetainedNodes = Math.max(
+    baselineRetainedNodes,
+    settlingResources.nodes - settlingResources.liveDomNodes,
+  )
+  const finalRetainedNodes = Math.max(
+    0,
+    input.final.resources.nodes - input.final.resources.liveDomNodes,
+  )
+  const settlingEventListeners = Math.max(
+    input.baseline.resources.jsEventListeners,
+    settlingResources.jsEventListeners,
+  )
   const budgets = [
     budget(
       'Retained JavaScript heap growth',
       'bytes',
       retainedHeapGrowthBytes,
       retainedHeapAllowanceBytes,
+    ),
+    budget(
+      'Post-soak retained DOM nodes outside the live document',
+      'count',
+      finalRetainedNodes,
+      settlingRetainedNodes,
+    ),
+    budget(
+      'Post-soak JS event listeners after initial settling sample',
+      'count',
+      input.final.resources.jsEventListeners,
+      settlingEventListeners,
     ),
     ...countKeys.map((key) =>
       budget(
@@ -442,6 +472,7 @@ export function createSoakReport(input: {
     },
     baseline: input.baseline,
     final: input.final,
+    samples: Object.freeze([...(input.samples ?? [])]),
     retainedHeapGrowthBytes,
     retainedHeapAllowanceBytes,
     budgets,

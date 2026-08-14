@@ -2336,21 +2336,25 @@ class AuthorityIntegrationHostV2 implements StoredTimeWorkerEngineHostV2 {
     count: number,
     firstAdvanceMilliseconds = 1,
   ): Promise<void> {
-    let idlePasses = 0
+    // A scheduled engine step can remain in flight while it hashes a proposal.
+    // An empty host task queue therefore does not prove that no message can be
+    // produced. In particular, slower CI crypto workers can legitimately take
+    // more than an arbitrary number of setImmediate turns to finish. Bound the
+    // integration wait by elapsed time instead, just like the complete-driver
+    // helper below, while continuing to drain every deterministic host task.
+    const deadline = performance.now() + 10_000
     for (let pass = 0; pass < 20_000; pass += 1) {
       if (this.messages.filter((message) => message.type === type).length >= count) return
       const task = this.tasks.shift()
       if (task === undefined) {
-        idlePasses += 1
-        if (idlePasses > 100) {
+        if (performance.now() >= deadline) {
           throw new Error(
-            `No worker task can produce ${type}: ${JSON.stringify(this.messages)}`,
+            `Worker did not produce ${type} before the asynchronous deadline: ${JSON.stringify(this.messages)}`,
           )
         }
         await waitImmediate()
         continue
       }
-      idlePasses = 0
       this.now += pass === 0 ? firstAdvanceMilliseconds : 1
       task()
       await waitImmediate()

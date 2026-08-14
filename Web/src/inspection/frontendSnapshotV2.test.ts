@@ -332,7 +332,8 @@ describe('V2 full-game frontend projection', () => {
     expect(reality.gameplay.previews.dream.foundational).not.toHaveLength(0)
     expect(reality.gameplay.previews.reality.upgrades).not.toHaveLength(0)
     expect(quantum.gameplay.previews.quantum.sections).not.toHaveLength(0)
-    expect(quantum.gameplay.previews.avocado.feeds).toHaveLength(3)
+    expect(quantum.gameplay.previews.avocado.feeds).toHaveLength(0)
+    expect(quantum.gameplay.previews.avocado.meditation.code).not.toBe('not-requested')
   }, 30_000)
 
   test('guards native V2 families from regressing into the legacy selector', () => {
@@ -390,7 +391,9 @@ describe('V2 full-game frontend projection', () => {
     expect(source).toContain('story: selectV2StoryDerivedFacts(state, dyson)')
 
     expect(source).toContain("previewDemand === 'reality' && family === 'simulations'")
-    expect(source).toContain("previewDemand === 'quantum' && family === 'avocato'")
+    expect(source).not.toContain("previewDemand === 'quantum' && family === 'avocato'")
+    expect(source).toContain('previewPreparedAvocadoMeditationV2')
+    expect(source).not.toContain('quoteAvocadoCommandV2')
   })
 })
 

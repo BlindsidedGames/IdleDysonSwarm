@@ -1,6 +1,9 @@
 import { describe, expect, test } from 'vitest'
 
 import {
+  GAME_DECIMAL_MAXIMUM,
+  GAME_DECIMAL_EXPONENT_LIMIT,
+  compareGameDecimals,
   gameDecimalFromCanonicalString,
   gameDecimalFromNumber,
   gameDecimalToCanonicalString,
@@ -15,6 +18,7 @@ import {
   correctV2BulkEstimate,
   exponentialCostV2,
   geometricSeriesCostV2,
+  maximumAffordableGeometricBatchesV2,
   quoteV2AtomicExchange,
   quoteV2FixedPriceBuyMax,
   quoteV2GeometricBuyMax,
@@ -96,6 +100,23 @@ describe('dormant V2 Decimal transaction primitives', () => {
     expect(quote.accepted).toBe(false)
     expect(quote.rejection).toBe('insufficient-funds')
     expect(encoded(quote.expectedBalance)).toBe(encoded(balance))
+  })
+
+  test('treats the playable maximum cost as an unaffordable sentinel', () => {
+    const quote = quoteV2Purchase(purchaseRequest({
+      balance: GAME_DECIMAL_MAXIMUM,
+      balanceSemantic: 'ordinary',
+      output: decimal(0),
+      outputSemantic: 'ordinary',
+      batches: integer(1),
+      unitsPerPurchase: integer(1),
+      quotedCost: GAME_DECIMAL_MAXIMUM,
+      integerCost: false,
+    }))
+
+    expect(quote.accepted).toBe(false)
+    expect(quote.rejection).toBe('maximum-reached')
+    expect(encoded(quote.quotedCost)).toBe(encoded(GAME_DECIMAL_MAXIMUM))
   })
 
   test('allows a represented-free purchase debit only under explicit policy', () => {
@@ -506,6 +527,22 @@ describe('dormant V2 Decimal transaction primitives', () => {
     expect(corrected.accepted).toBe(true)
     expect(corrected.corrections).toBe(2)
     expect(encoded(corrected.batches)).toBe('3e0')
+  })
+
+  test('corrects an affordability estimate when subtracting one is below Decimal precision', () => {
+    const available = gameDecimalFromCanonicalString(
+      `1e${GAME_DECIMAL_EXPONENT_LIMIT - 1}`,
+    )
+    const result = maximumAffordableGeometricBatchesV2({
+      available,
+      firstBatchCost: gameDecimalFromCanonicalString('4.2e19'),
+      ratio: 3.9,
+      integerCost: false,
+    })
+
+    expect(result.accepted).toBe(true)
+    expect(result.corrections).toBeGreaterThan(0)
+    expect(compareGameDecimals(result.cost, available)).toBeLessThanOrEqual(0)
   })
 
   test('fails fast for a quantity beyond the practical bigint budget', () => {

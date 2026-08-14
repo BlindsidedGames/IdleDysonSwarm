@@ -255,6 +255,16 @@ export const researchMessages = defineMessages({
     defaultMessage: 'Max',
     description: 'Purchase the maximum canonically affordable Research levels.',
   },
+  maximumReached: {
+    id: 'research.card.maximum-reached',
+    defaultMessage: 'Max',
+    description: 'Purchase state shown when a Research cost reaches the numeric ceiling.',
+  },
+  maximumReachedAccessible: {
+    id: 'research.card.maximum-reached-accessible',
+    defaultMessage: '{title} has reached the maximum supported cost',
+    description: 'Accessible explanation for Research disabled at the numeric ceiling.',
+  },
   roundedBulkBuy: {
     id: 'research.settings.rounded-bulk-buy',
     defaultMessage: 'Round bulk purchases to the next milestone',

@@ -14,6 +14,7 @@ export type MappingClassification =
   | 'legacy-duplicate-omitted'
   | 'presentation-preference'
   | 'platform-entitlement'
+  | 'compatibility-metadata'
   | 'still-unowned'
 
 export interface MappingCoverageEntry {
@@ -78,6 +79,29 @@ const dysonRoot = '$.dysonVerseSaveData'
 const dysonInfinity = `${dysonRoot}.dysonVerseInfinityData`
 const dysonPrestige = `${dysonRoot}.dysonVersePrestigeData`
 const skillTree = `${dysonRoot}.dysonVerseSkillTreeData`
+const dysonDerivedInfinityFields = Object.freeze([
+  'moneyMulti', 'scienceMulti', 'panelsPerSec', 'panelsPerSecMulti',
+  'panelLifetime', 'assemblyLineModifier', 'botProduction',
+  'assemblyLineBotProduction', 'managerModifier', 'assemblyLineProduction',
+  'managerAssemblyLineProduction', 'serverModifier', 'managerProduction',
+  'serverManagerProduction', 'dataCenterModifier', 'serverProduction',
+  'dataCenterServerProduction', 'planetModifier', 'dataCenterProduction',
+  'planetsDataCenterProduction', 'matrioshkaBrainModifier',
+  'matrioshkaBrainPlanetProduction', 'birchPlanetModifier',
+  'birchPlanetMatrioshkaProduction', 'galacticBrainModifier',
+  'galacticBrainBirchProduction', 'pocketDimensionsProduction',
+  'quantumComputingProduction',
+  'pocketDimensionsWithoutAnythingElseProduction',
+  'pocketProtectorsProduction', 'pocketMultiverseProduction',
+  'totalPlanetProduction', 'scientificPlanetsProduction',
+  'stellarSacrificesProduction', 'rudimentrySingularityProduction',
+  'planetAssemblyProduction', 'shellWorldsProduction',
+  'scienceBoostPercent', 'moneyMultiUpgradePercent',
+  'assemblyLineUpgradePercent', 'aiManagerUpgradePercent',
+  'serverUpgradePercent', 'dataCenterUpgradePercent',
+  'planetUpgradePercent', 'matrioshkaUpgradePercent',
+  'birchUpgradePercent', 'galacticUpgradePercent',
+] as const)
 
 const explicitEntries: MappingCoverageEntry[] = [
   owned('$.dateStarted', 'meta', '$.meta.createdAtLegacyText'),
@@ -133,6 +157,7 @@ const explicitEntries: MappingCoverageEntry[] = [
     'dyson',
     '$.dyson.botDistribution',
   ),
+  owned(`${dysonRoot}.selectedPreset`, 'skills', '$.skills.selectedPreset'),
   owned('$.buyMode', 'dyson', '$.dyson.automation.buyMode'),
   owned('$.roundedBulkBuy', 'dyson', '$.dyson.automation.roundedBulkBuy'),
   ...[
@@ -317,6 +342,45 @@ const explicitEntries: MappingCoverageEntry[] = [
   ),
   owned('$.avotation', 'secret-progress', '$.secretProgress.completed'),
   owned('$.avotationProgressStep', 'secret-progress', '$.secretProgress.step'),
+  classified(
+    '$.lastSuccessfulLoadUtc',
+    'derived-recomputed',
+    'recompute',
+    'Compatibility load metadata is stamped by the save preparation pipeline and is not gameplay state.',
+    'compatibility',
+  ),
+  classified(
+    '$.timeThisInfinity',
+    'legacy-duplicate-omitted',
+    'omit',
+    'Unused legacy text carrier superseded by canonical Infinity cycle clocks.',
+    'timeline',
+  ),
+  classified(
+    `${dysonRoot}.lastCollapseDate`,
+    'compatibility-metadata',
+    'preserve-source',
+    'Unity wall-clock run anchor is preserved for Unity compatibility; deterministic Web simulation uses canonical Infinity cycle seconds.',
+    'timeline',
+  ),
+  ...['androidsSkillTimer', 'pocketAndroidsTimer'].map((field) =>
+    classified(
+      `${dysonPrestige}.${field}`,
+      'legacy-duplicate-omitted',
+      'omit',
+      'Legacy timer is migrated into the stable skillStateById timerSeconds carrier and then cleared.',
+      'skills',
+    ),
+  ),
+  ...dysonDerivedInfinityFields.map((field) =>
+    classified(
+      `${dysonInfinity}.${field}`,
+      'derived-recomputed',
+      'recompute',
+      'Cached Unity production or modifier output is recomputed from canonical causes by the V2 Dyson derivation.',
+      'dyson',
+    ),
+  ),
   ...ownedFields(
     '$.sdSimulation',
     'dream',

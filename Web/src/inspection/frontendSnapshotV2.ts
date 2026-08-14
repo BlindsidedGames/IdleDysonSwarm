@@ -40,6 +40,7 @@ import {
   gameDecimalFromNumber,
   gameDecimalToBigIntChecked,
   gameDecimalToNumberChecked,
+  isMaximumGameDecimal,
   logGameDecimal,
   multiplyGameDecimals,
   subtractGameDecimals,
@@ -80,9 +81,9 @@ import { gatherRealityInfluenceV2, realityWorkerGenerationRateV2 } from '../simu
 import { previewCanonicalDreamResetV2 } from '../simulation/canonicalDreamResetV2'
 import { previewCanonicalQuantumResetV2 } from '../simulation/canonicalQuantumResetV2'
 import {
-  quoteAvocadoCommandV2,
   derivePreparedAvocadoMultiplierV2,
-  registerAvocadoStrangeMatterAccountV2ForOwner,
+  previewPreparedAvocadoFeedV2,
+  previewPreparedAvocadoMeditationV2,
 } from '../simulation/avocadoV2'
 
 const DREAM_FOUNDATIONAL_PURCHASE_IDS = Object.freeze([
@@ -819,8 +820,7 @@ function selectV2Previews(
   const wants = (family: FrontendGameplayPreviewDemand) =>
     previewDemand === 'all' ||
     previewDemand === family ||
-    (previewDemand === 'reality' && family === 'simulations') ||
-    (previewDemand === 'quantum' && family === 'avocato')
+    (previewDemand === 'reality' && family === 'simulations')
   const quote = (facilityId: (typeof BASIC_DYSON_FACILITY_IDS)[number] | (typeof MEGA_STRUCTURE_IDS)[number]) =>
     quoteV2DysonFacilityPurchase(
       state as CanonicalGameStateV2,
@@ -932,11 +932,6 @@ function selectV2Previews(
               : null,
     })),
   )
-  const dreamPublication = Object.freeze({
-    revision,
-    state: state as CanonicalGameStateV2,
-    runtime: publication.runtime,
-  })
   const influenceQuotes = (purchaseId: DreamInfluencePurchaseIdV2) =>
     Object.freeze(previewDreamInfluencePurchaseModesV2(state, purchaseId).map((quote) =>
       Object.freeze({
@@ -947,7 +942,7 @@ function selectV2Previews(
         totalCost: quote.quotedCost,
         buyMaxBatchCap: quote.buyMaxBatchCap,
         reachedBuyMaxBatchCap: quote.reachedBuyMaxBatchCap,
-        code: quote.accepted ? 'ready' : 'rejected',
+        code: quote.accepted ? 'ready' : quote.rejection,
       }),
     ))
   const foundational = !wants('simulations') ? fallback.dream.foundational : DREAM_FOUNDATIONAL_PURCHASE_IDS.map((purchase) => {
@@ -1010,15 +1005,13 @@ function selectV2Previews(
           code: result.code,
         })
       })()
-  const avocadoPublication = dreamPublication
   const avocadoFeeds = !wants('avocato') ? fallback.avocado.feeds : (['infinity-points', 'influence', 'strange-matter'] as const).map((source) => {
-    const account = source === 'strange-matter'
-      ? registerAvocadoStrangeMatterAccountV2ForOwner(revision, state.dream.strangeMatter)
-      : null
-    const quote = quoteAvocadoCommandV2(avocadoPublication, Object.freeze({ kind: 'feed-all', source }), account)
+    const quote = previewPreparedAvocadoFeedV2(state, source, source === 'strange-matter')
     return Object.freeze({ source, eligible: quote.accepted, amount: quote.transferred, code: quote.code })
   })
-  const meditationQuote = wants('avocato') ? quoteAvocadoCommandV2(avocadoPublication, Object.freeze({ kind: 'meditation-step', stepIndex: state.secretProgress.step })) : null
+  const meditationQuote = wants('avocato') || wants('quantum')
+    ? previewPreparedAvocadoMeditationV2(state, state.secretProgress.step)
+    : null
   const leap = wants('quantum') ? previewCanonicalQuantumResetV2(state) : null
   const storedCapacity = upgradeStoredTimeCapacity({ bankSeconds: state.timeline.storedTimeAvailableSeconds, capacitySeconds: state.timeline.storedTimeCapacitySeconds, cheater: storedTimeCheater })
   const storedCapacityEligible = !storedTimeCheater && storedCapacity.upgraded
@@ -1089,7 +1082,7 @@ function selectV2Previews(
 interface ReadOnlyPurchasePreview {
   readonly accepted: boolean
   readonly cost: GameDecimal
-  readonly code: 'ready' | 'rejected'
+  readonly code: 'ready' | 'rejected' | 'maximum-reached'
 }
 
 function previewDreamUpgrade(
@@ -1097,7 +1090,8 @@ function previewDreamUpgrade(
   upgradeId: DreamUpgradeIdV2,
 ): ReadOnlyPurchasePreview {
   const definition = DREAM_V2_CATALOG[upgradeId]
-  const accepted = !state.dream.upgrades[upgradeId] &&
+  const maximumReached = isMaximumGameDecimal(definition.cost)
+  const accepted = !maximumReached && !state.dream.upgrades[upgradeId] &&
     definition.prerequisites.every(
       (requirement) =>
         state.dream.upgrades[requirement.key] === requirement.mustBeOwned,
@@ -1105,7 +1099,7 @@ function previewDreamUpgrade(
   return Object.freeze({
     accepted,
     cost: definition.cost,
-    code: accepted ? 'ready' : 'rejected',
+    code: accepted ? 'ready' : maximumReached ? 'maximum-reached' : 'rejected',
   })
 }
 
@@ -1114,12 +1108,13 @@ function previewDreamEducation(
   educationId: keyof CanonicalGameStateV2['dream']['education'],
 ): ReadOnlyPurchasePreview {
   const education = state.dream.education[educationId]
-  const accepted = !education.active &&
+  const maximumReached = isMaximumGameDecimal(education.cost)
+  const accepted = !maximumReached && !education.active &&
     compareGameDecimals(state.reality.influence, education.cost) >= 0
   return Object.freeze({
     accepted,
     cost: education.cost,
-    code: accepted ? 'ready' : 'rejected',
+    code: accepted ? 'ready' : maximumReached ? 'maximum-reached' : 'rejected',
   })
 }
 
@@ -1142,12 +1137,15 @@ function previewDreamBoost(
       compareGameDecimals(state.dream.resources.gatherers, gameDecimalFromNumber(1)) >= 0
     : compareGameDecimals(state.dream.resources.cities, gameDecimalFromNumber(1)) >= 0 &&
       state.dream.education.engineering.complete
-  const accepted = clock < 10 && unlocked &&
+  const maximumReached = !community || !parameters.communityBoostIsFree
+    ? isMaximumGameDecimal(cost)
+    : false
+  const accepted = !maximumReached && clock < 10 && unlocked &&
     compareGameDecimals(state.reality.influence, cost) >= 0
   return Object.freeze({
     accepted,
     cost,
-    code: accepted ? 'ready' : 'rejected',
+    code: accepted ? 'ready' : maximumReached ? 'maximum-reached' : 'rejected',
   })
 }
 

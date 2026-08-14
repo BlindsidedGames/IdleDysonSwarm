@@ -252,6 +252,70 @@ describe('performance report schema and gates', () => {
     expect(performanceReportExitCode(report)).toBe(0)
   })
 
+  test('permits bounded live UI growth but still rejects detached DOM retention', () => {
+    const input = {
+      mode: 'acceptance' as const,
+      createdAtUtc: '2026-01-01T00:00:00.000Z',
+      environment,
+      durationMilliseconds: 30 * 60 * 1_000,
+      warmupMilliseconds: 10_000,
+      explicitGarbageCollections: 4,
+      baseline: {
+        heapUsedBytes: 1,
+        resources: { ...counts(10), nodes: 100, liveDomNodes: 90, jsEventListeners: 50 },
+      },
+    }
+    const liveGrowth = createSoakReport({
+      ...input,
+      final: {
+        heapUsedBytes: 1,
+        resources: { ...counts(10), nodes: 130, liveDomNodes: 120, jsEventListeners: 50 },
+      },
+    })
+    expect(liveGrowth.passed).toBe(true)
+
+    const detachedGrowth = createSoakReport({
+      ...input,
+      final: {
+        heapUsedBytes: 1,
+        resources: { ...counts(10), nodes: 131, liveDomNodes: 120, jsEventListeners: 50 },
+      },
+    })
+    expect(detachedGrowth.budgets.find((entry) => entry.name.includes('retained DOM')))
+      .toMatchObject({ actual: 11, limit: 10, passed: false })
+  })
+
+  test('permits one settling sample but rejects later detached-node accumulation', () => {
+    const baseline = {
+      heapUsedBytes: 1,
+      resources: { ...counts(10), nodes: 100, liveDomNodes: 90 },
+    }
+    const settling = {
+      heapUsedBytes: 1,
+      resources: { ...counts(10), nodes: 101, liveDomNodes: 90 },
+    }
+    const input = {
+      mode: 'acceptance' as const,
+      createdAtUtc: '2026-01-01T00:00:00.000Z',
+      environment,
+      durationMilliseconds: 30 * 60 * 1_000,
+      warmupMilliseconds: 10_000,
+      explicitGarbageCollections: 4,
+      baseline,
+      samples: [settling],
+    }
+    expect(createSoakReport({ ...input, final: settling }).passed).toBe(true)
+    const accumulated = createSoakReport({
+      ...input,
+      final: {
+        heapUsedBytes: 1,
+        resources: { ...counts(10), nodes: 102, liveDomNodes: 90 },
+      },
+    })
+    expect(accumulated.budgets.find((entry) => entry.name.includes('retained DOM')))
+      .toMatchObject({ actual: 12, limit: 11, passed: false })
+  })
+
   test('fails ineligible acceptance commands but permits explicit smoke diagnostics', () => {
     const acceptance = createSoakReport({
       mode: 'acceptance',
@@ -291,6 +355,7 @@ function counts(value: number) {
   return {
     documents: value,
     nodes: value,
+    liveDomNodes: value,
     jsEventListeners: value,
     activeTimeouts: value,
     activeIntervals: value,

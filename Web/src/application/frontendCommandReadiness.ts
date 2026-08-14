@@ -51,7 +51,7 @@ export const V2_FRONTEND_DEFINITION_COVERAGE: DeepReadonly<FrontendDefinitionCov
  * detailed schema-11 coverage catalog remains in the migration tooling path.
  */
 export const V2_FRONTEND_PERSISTENCE_READINESS = Object.freeze({
-  mappingCoverageComplete: false,
+  mappingCoverageComplete: true,
   canonicalWriteAllowed: false,
   unmatchedWritePolicy: 'preserve-source' as const,
 })

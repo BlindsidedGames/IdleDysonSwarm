@@ -1165,7 +1165,7 @@ describe('frontend gameplay snapshot', () => {
       'selectorGaps' in snapshot,
     ).toBe(false)
     expect(snapshot.persistence).toEqual({
-      mappingCoverageComplete: false,
+      mappingCoverageComplete: true,
       canonicalWriteAllowed: false,
       unmatchedWritePolicy: 'preserve-source',
     })

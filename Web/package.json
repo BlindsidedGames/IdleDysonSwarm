@@ -33,6 +33,7 @@
     "report:performance:interaction": "npm run build:performance && tsx scripts/performance/runInteractionReport.ts",
     "report:performance:interaction:smoke": "npm run build:performance && tsx scripts/performance/runInteractionReport.ts --smoke",
     "report:performance:mature-browser": "npm run build:performance && tsx scripts/performance/runMatureBrowserProfile.ts",
+    "report:performance:large-numbers": "npm run build:performance && tsx scripts/performance/runLargeNumberRangeReport.ts",
     "report:performance:soak": "npm run build && tsx scripts/performance/runSoakReport.ts",
     "report:performance:soak:smoke": "npm run build && tsx scripts/performance/runSoakReport.ts --smoke",
     "report:performance:migration": "tsx scripts/performance/runMigrationCommandReport.ts",

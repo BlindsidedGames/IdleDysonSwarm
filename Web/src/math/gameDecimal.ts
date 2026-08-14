@@ -35,6 +35,7 @@ export const GAME_DECIMAL_ENCODED_MAX_LENGTH = 64
 export const GAME_DECIMAL_BIGINT_MAX_DIGITS = 4_096
 export const GAME_DECIMAL_EXPONENT_LIMIT = 9_000_000_000_000_000
 export const GAME_DECIMAL_MINIMUM_SCHEDULER_SECONDS = 1e-12
+const GAME_DECIMAL_MAXIMUM_MANTISSA = 9.999999999999998
 
 const canonicalDecimalPattern =
   /^([1-9](?:\.[0-9]+)?)e(0|-[1-9][0-9]*|[1-9][0-9]*)$/
@@ -104,7 +105,7 @@ function freezeGameDecimal(
   return frozen
 }
 
-function fromUpstream(value: Decimal): GameDecimal {
+function fromUpstream(value: Decimal, saturateRange = false): GameDecimal {
   let mantissa = value.mantissa
   let exponent = Object.is(value.exponent, -0) ? 0 : value.exponent
   if (!Number.isFinite(mantissa) || mantissa < 0) {
@@ -126,6 +127,15 @@ function fromUpstream(value: Decimal): GameDecimal {
       mantissa *= 10
       exponent -= 1
     }
+  }
+  if (saturateRange && exponent >= GAME_DECIMAL_EXPONENT_LIMIT) {
+    return freezeGameDecimal(
+      GAME_DECIMAL_MAXIMUM_MANTISSA,
+      GAME_DECIMAL_EXPONENT_LIMIT - 1,
+    )
+  }
+  if (saturateRange && exponent <= -GAME_DECIMAL_EXPONENT_LIMIT) {
+    return freezeGameDecimal(0, 0)
   }
   return freezeGameDecimal(mantissa, exponent)
 }
@@ -198,6 +208,15 @@ function nextUp(value: number): number {
 export const GAME_DECIMAL_ZERO = freezeGameDecimal(0, 0)
 export const GAME_DECIMAL_ONE = freezeGameDecimal(1, 0)
 export const GAME_DECIMAL_TEN = freezeGameDecimal(1, 1)
+/**
+ * Playable numeric ceiling. Gameplay arithmetic saturates here so a valid
+ * state can never become unrenderable; direct parsing remains strict and still
+ * rejects values outside the transport format.
+ */
+export const GAME_DECIMAL_MAXIMUM = freezeGameDecimal(
+  GAME_DECIMAL_MAXIMUM_MANTISSA,
+  GAME_DECIMAL_EXPONENT_LIMIT - 1,
+)
 
 export function gameDecimalFromNumber(value: number): GameDecimal {
   validateFiniteNonNegativeNumber(value, 'GameDecimal number')
@@ -419,6 +438,11 @@ export function isZeroGameDecimal(value: GameDecimal): boolean {
   return value.mantissa === 0
 }
 
+export function isMaximumGameDecimal(value: GameDecimal): boolean {
+  assertGameDecimal(value)
+  return equalGameDecimals(value, GAME_DECIMAL_MAXIMUM)
+}
+
 export function isIntegerGameDecimal(value: GameDecimal): boolean {
   return integerDigitInfo(value).integer
 }
@@ -461,7 +485,7 @@ export function addGameDecimals(
   left: GameDecimal,
   right: GameDecimal,
 ): GameDecimal {
-  return fromUpstream(toUpstream(left).add(toUpstream(right)))
+  return fromUpstream(toUpstream(left).add(toUpstream(right)), true)
 }
 
 export function subtractGameDecimals(
@@ -475,7 +499,15 @@ export function multiplyGameDecimals(
   left: GameDecimal,
   right: GameDecimal,
 ): GameDecimal {
-  return fromUpstream(toUpstream(left).mul(toUpstream(right)))
+  assertGameDecimal(left)
+  assertGameDecimal(right)
+  if (isZeroGameDecimal(left) || isZeroGameDecimal(right)) {
+    return cloneGameDecimal(GAME_DECIMAL_ZERO)
+  }
+  if (decimalLog10(left) + decimalLog10(right) >= GAME_DECIMAL_EXPONENT_LIMIT) {
+    return cloneGameDecimal(GAME_DECIMAL_MAXIMUM)
+  }
+  return fromUpstream(toUpstream(left).mul(toUpstream(right)), true)
 }
 
 export function divideGameDecimals(
@@ -485,7 +517,13 @@ export function divideGameDecimals(
   if (isZeroGameDecimal(divisor)) {
     failRange('GameDecimal divisor must be positive.')
   }
-  return fromUpstream(toUpstream(dividend).div(toUpstream(divisor)))
+  if (
+    !isZeroGameDecimal(dividend) &&
+    decimalLog10(dividend) - decimalLog10(divisor) >= GAME_DECIMAL_EXPONENT_LIMIT
+  ) {
+    return cloneGameDecimal(GAME_DECIMAL_MAXIMUM)
+  }
+  return fromUpstream(toUpstream(dividend).div(toUpstream(divisor)), true)
 }
 
 export function powGameDecimal(
@@ -499,7 +537,19 @@ export function powGameDecimal(
   if (isZeroGameDecimal(base) && exponent <= 0) {
     failRange('Zero GameDecimal base requires a positive exponent.')
   }
-  return fromUpstream(toUpstream(base).pow(exponent))
+  if (
+    !isZeroGameDecimal(base) &&
+    decimalLog10(base) * exponent >= GAME_DECIMAL_EXPONENT_LIMIT
+  ) {
+    return cloneGameDecimal(GAME_DECIMAL_MAXIMUM)
+  }
+  return fromUpstream(toUpstream(base).pow(exponent), true)
+}
+
+function decimalLog10(value: GameDecimal): number {
+  assertGameDecimal(value)
+  if (isZeroGameDecimal(value)) return Number.NEGATIVE_INFINITY
+  return value.exponent + Math.log10(value.mantissa)
 }
 
 export function logGameDecimal(

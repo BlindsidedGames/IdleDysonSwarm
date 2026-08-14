@@ -4,6 +4,7 @@ import { describe, expect, test } from 'vitest'
 import {
   gameDecimalFromCanonicalString,
   gameDecimalFromNumber,
+  gameDecimalToCanonicalString,
   isGameDecimal,
   type GameDecimal,
 } from '../math/gameDecimal'
@@ -532,6 +533,24 @@ describe('schema 13 dormant Web-native codec', () => {
     expect(isIssuedCanonicalGameStateV2(decoded.state)).toBe(true)
     expect(Object.isFrozen(decoded.runtime)).toBe(true)
     expect(Object.isFrozen(decoded.runtime.dysonEvaluationSnapshot)).toBe(true)
+    expect(encodeSchema13WebSave(decoded)).toBe(encoded)
+  })
+
+  test('round-trips a resource at the maximum supported GameDecimal exponent', () => {
+    const input = source()
+    const maximum = gameDecimalFromCanonicalString('1e8999999999999999')
+    const encoded = encodeSchema13WebSave({
+      ...input,
+      state: {
+        ...input.state,
+        dyson: { ...input.state.dyson, money: maximum },
+      },
+    })
+    const decoded = decodeSchema13WebSave(encoded)
+
+    expect(gameDecimalToCanonicalString(decoded.state.dyson.money)).toBe(
+      '1e8999999999999999',
+    )
     expect(encodeSchema13WebSave(decoded)).toBe(encoded)
   })
 

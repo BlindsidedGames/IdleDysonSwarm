@@ -60,7 +60,7 @@ describe('public Unity mapping coverage certification', () => {
         'legacy-duplicate-omitted',
         'presentation-preference',
         'platform-entitlement',
-        'still-unowned',
+        'compatibility-metadata',
       ]),
     )
 
@@ -152,9 +152,9 @@ describe('public Unity mapping coverage certification', () => {
     ).not.toBeNull()
   })
 
-  test('keeps release writes blocked while explicit leaves remain unowned', () => {
-    expect(mappingCoverageManifest.unresolvedLeafCount).toBeGreaterThan(0)
-    expect(mappingCoverageManifest.coverageComplete).toBe(false)
+  test('classifies every public leaf while keeping reverse Unity writes separately gated', () => {
+    expect(mappingCoverageManifest.unresolvedLeafCount).toBe(0)
+    expect(mappingCoverageManifest.coverageComplete).toBe(true)
     expect(mappingCoverageManifest.releaseCanonicalWriteAllowed).toBe(false)
     expect(mappingCoverageManifest.unmatchedWritePolicy).toBe('preserve-source')
     expect(mappingCoverageManifest.unclassifiedLeafPolicy).toBe(

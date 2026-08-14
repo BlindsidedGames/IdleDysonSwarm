@@ -248,6 +248,7 @@ function QuantumUpgradeCard({ locale, preview, resources, progression, routeAvai
   const [failed, setFailed] = useState(false)
   const name = intl.formatMessage(upgradeMessage(preview.upgradeId, 'Title'))
   const completed = preview.code === 'already-maxed'
+  const maximumReached = preview.code === 'maximum-reached'
   const isAvocato = preview.upgradeId === 'Avocado'
   const isFreeClaim = preview.upgradeId === 'DoubleIP' && comparePresentationNumeric(preview.cost, 0) === 0
   const repeatable = HOLD_TO_PURCHASE_IDS.has(preview.upgradeId)
@@ -314,7 +315,9 @@ function QuantumUpgradeCard({ locale, preview, resources, progression, routeAvai
           variant="primary"
           state={pending ? 'pending' : failed ? 'failure' : 'idle'}
           disabled={disabled}
-          aria-label={isFreeClaim
+          aria-label={maximumReached
+            ? intl.formatMessage(messages.maximumReachedAccessible, { name })
+            : isFreeClaim
             ? intl.formatMessage(messages.claimUpgrade, { name })
             : intl.formatMessage(
                 repeatable && resolvedQuantity !== 1n
@@ -336,6 +339,8 @@ function QuantumUpgradeCard({ locale, preview, resources, progression, routeAvai
         >
           <span>{completed
             ? intl.formatMessage(messages.purchased)
+            : maximumReached
+              ? intl.formatMessage(messages.maximumReached)
             : isFreeClaim
               ? intl.formatMessage(messages.claim)
             : repeatable
@@ -343,7 +348,7 @@ function QuantumUpgradeCard({ locale, preview, resources, progression, routeAvai
               : preview.eligible || preview.code === 'insufficient-points'
                 ? intl.formatMessage(messages.purchaseShort)
                 : intl.formatMessage(messages.unavailable)}</span>
-          {!completed && !isFreeClaim && (
+          {!completed && !maximumReached && !isFreeClaim && (
             <small>
               <QuantumShardAmount locale={locale} value={totalCost} />
             </small>

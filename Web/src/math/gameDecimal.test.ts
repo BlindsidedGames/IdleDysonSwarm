@@ -9,6 +9,7 @@ import {
   GAME_DECIMAL_BIGINT_MAX_DIGITS,
   GAME_DECIMAL_ENCODED_MAX_LENGTH,
   GAME_DECIMAL_EXPONENT_LIMIT,
+  GAME_DECIMAL_MAXIMUM,
   GAME_DECIMAL_MINIMUM_SCHEDULER_SECONDS,
   GAME_DECIMAL_ONE,
   GAME_DECIMAL_TEN,
@@ -753,6 +754,20 @@ describe('GameDecimal canonical parser and encoding', () => {
     expect(gameDecimalToCanonicalString(beyondNative)).toBe('1e309')
     expect(isFiniteGameDecimal(beyondNative)).toBe(true)
     expect(isNonNegativeGameDecimal(beyondNative)).toBe(true)
+  })
+
+  it('saturates playable arithmetic at the upper boundary and zeros lower underflow', () => {
+    const maximum = gameDecimalFromCanonicalString(
+      `9e${GAME_DECIMAL_EXPONENT_LIMIT - 1}`,
+    )
+    const minimum = gameDecimalFromCanonicalString(
+      `1e${1 - GAME_DECIMAL_EXPONENT_LIMIT}`,
+    )
+
+    expect(equalGameDecimals(addGameDecimals(maximum, maximum), GAME_DECIMAL_MAXIMUM)).toBe(true)
+    expect(equalGameDecimals(multiplyGameDecimals(maximum, GAME_DECIMAL_TEN), GAME_DECIMAL_MAXIMUM)).toBe(true)
+    expect(equalGameDecimals(powGameDecimal(maximum, 2), GAME_DECIMAL_MAXIMUM)).toBe(true)
+    expect(equalGameDecimals(divideGameDecimals(minimum, GAME_DECIMAL_TEN), GAME_DECIMAL_ZERO)).toBe(true)
   })
 
   it.each([

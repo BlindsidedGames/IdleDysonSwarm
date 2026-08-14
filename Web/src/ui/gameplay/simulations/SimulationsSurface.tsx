@@ -1490,24 +1490,29 @@ function foundationalAction(
   if (!isBoost && influenceQuote === undefined) return undefined
   const quantity = influenceQuote?.unitsGranted ?? 1
   const cost = influenceQuote?.totalCost ?? preview.cost
+  const maximumReached = (influenceQuote?.code ?? preview.code) === 'maximum-reached'
   const free = purchase === 'community-boost' &&
     comparePresentationNumeric(cost, 0) === 0
-  const label = input.intl.formatMessage(
+  const label = maximumReached
+    ? input.intl.formatMessage(messages.maximumReachedAccessible)
+    : input.intl.formatMessage(
     free ? messages.freeBoost : isBoost ? messages.boost : messages.purchase,
     {
       quantity: formatWholeQuantity(input.locale, quantity),
       cost: display(cost),
     },
-  )
+    )
   return {
-    primaryLabel: input.intl.formatMessage(
+    primaryLabel: maximumReached
+      ? input.intl.formatMessage(messages.maximumReached)
+      : input.intl.formatMessage(
       isBoost ? messages.boostLabel : messages.purchaseQuantity,
       { quantity: formatWholeQuantity(input.locale, quantity) },
-    ),
+      ),
     secondaryLabel: free
       ? input.intl.formatMessage(messages.freeLabel)
       : undefined,
-    influenceCost: free ? undefined : display(cost),
+    influenceCost: free || maximumReached ? undefined : display(cost),
     accessibleLabel: label.replace('\n', ', '),
     command: { kind: 'dream.purchase-foundational', purchase },
     disabled: !(influenceQuote?.eligible ?? preview.eligible) || !input.commandAvailability.purchaseFoundational,
@@ -1521,10 +1526,13 @@ function educationAction(
 ): SimulationPanelModel['action'] {
   const preview = input.previews.education.find((item) => item.educationId === educationId)
   if (!preview) return undefined
-  const label = input.intl.formatMessage(messages.start, { cost: display(preview.cost) })
+  const maximumReached = preview.code === 'maximum-reached'
+  const label = maximumReached
+    ? input.intl.formatMessage(messages.maximumReachedAccessible)
+    : input.intl.formatMessage(messages.start, { cost: display(preview.cost) })
   return {
-    primaryLabel: input.intl.formatMessage(messages.startLabel),
-    influenceCost: display(preview.cost),
+    primaryLabel: input.intl.formatMessage(maximumReached ? messages.maximumReached : messages.startLabel),
+    influenceCost: maximumReached ? undefined : display(preview.cost),
     accessibleLabel: label.replace('\n', ', '),
     command: { kind: 'dream.start-education', educationId },
     disabled: !preview.eligible || !input.commandAvailability.startEducation,
@@ -1574,15 +1582,20 @@ function spaceAgeAction(
     (candidate) => candidate.requestedMode === selectedMode,
   )
   if (quote === undefined) return undefined
-  const label = input.intl.formatMessage(messages.purchase, {
+  const maximumReached = quote.code === 'maximum-reached'
+  const label = maximumReached
+    ? input.intl.formatMessage(messages.maximumReachedAccessible)
+    : input.intl.formatMessage(messages.purchase, {
     quantity: formatWholeQuantity(input.locale, quote.unitsGranted),
     cost: display(quote.totalCost),
-  })
+      })
   return {
-    primaryLabel: input.intl.formatMessage(messages.purchaseQuantity, {
+    primaryLabel: maximumReached
+      ? input.intl.formatMessage(messages.maximumReached)
+      : input.intl.formatMessage(messages.purchaseQuantity, {
       quantity: formatWholeQuantity(input.locale, quote.unitsGranted),
-    }),
-    influenceCost: display(quote.totalCost),
+        }),
+    influenceCost: maximumReached ? undefined : display(quote.totalCost),
     accessibleLabel: label.replace('\n', ', '),
     command: {
       kind: 'dream.purchase-space-age',

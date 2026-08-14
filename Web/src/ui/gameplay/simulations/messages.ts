@@ -59,6 +59,8 @@ export const simulationsMessages = defineMessages({
   boostLabel: { id: 'simulations.action.boost-label', defaultMessage: 'Boost', description: 'Visible label on a Simulation boost button.' },
   freeBoost: { id: 'simulations.action.free-boost', defaultMessage: 'Boost\nFree', description: 'Free timed production boost action.' },
   freeLabel: { id: 'simulations.action.free-label', defaultMessage: 'Free', description: 'Visible cost label for a free Simulation action.' },
+  maximumReached: { id: 'simulations.action.maximum-reached', defaultMessage: 'Max', description: 'Purchase state shown when a Simulation action cost reaches the numeric ceiling.' },
+  maximumReachedAccessible: { id: 'simulations.action.maximum-reached-accessible', defaultMessage: 'This purchase has reached the maximum supported cost', description: 'Accessible explanation for a Simulation action disabled at the numeric ceiling.' },
   start: { id: 'simulations.action.start', defaultMessage: 'Start\n{cost} Influence', description: 'Start Education action and cost.' },
   startLabel: { id: 'simulations.action.start-label', defaultMessage: 'Start', description: 'Visible label on a Simulation research start button.' },
   blackHole: { id: 'simulations.action.black-hole', defaultMessage: 'Black Hole\n+{reward} Strange Matter', description: 'Black Hole reset action and canonical reward.' },

@@ -991,6 +991,7 @@ function disabledReason(
       return { message: messages.locked }
     case 'output-maxed':
     case 'maxed':
+    case 'maximum-reached':
       return { message: messages.maximumReached }
     default:
       return { message: messages.unavailable }

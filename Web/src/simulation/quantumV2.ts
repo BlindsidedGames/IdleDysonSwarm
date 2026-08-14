@@ -32,7 +32,7 @@ const consumed = new WeakSet<QuantumPurchaseQuoteV2>()
 
 export type QuantumPurchaseStatusV2 = 'ready' | 'invalid-request' | 'invalid-state' |
   'catalog-gap' | 'already-maxed' | 'prerequisites-not-met' | 'bulk-mode-forbidden' |
-  'insufficient-funds' | 'invalid-cost'
+  'insufficient-funds' | 'maximum-reached' | 'invalid-cost'
 
 export interface QuantumPurchaseQuoteV2 {
   readonly kind: 'quantum-v2-purchase-quote'
@@ -203,7 +203,19 @@ function buildQuote(state: CanonicalGameStateV2, revision: number, id: QuantumUp
       })
       transaction = quoteV2Purchase({ ...common, requestedMode: mode, batches, quotedCost: multiplyGameDecimals(price, batches) })
     }
-    if (!transaction.accepted) return empty(id, revision, mode, transaction.rejection === 'insufficient-funds' ? 'insufficient-funds' : 'invalid-cost', currentPurchases, definition.maximumPurchases)
+    if (!transaction.accepted) return empty(
+      id,
+      revision,
+      mode,
+      transaction.rejection === 'insufficient-funds'
+        ? 'insufficient-funds'
+        : transaction.rejection === 'maximum-reached'
+          ? 'maximum-reached'
+          : 'invalid-cost',
+      currentPurchases,
+      definition.maximumPurchases,
+      transaction,
+    )
     return Object.freeze({
       kind: 'quantum-v2-purchase-quote', upgradeId: id, sourceRevision: revision,
       requestedMode: mode, status: 'ready', eligible: true,
@@ -296,9 +308,9 @@ function unlockKey(id: QuantumUpgradeIdV2): keyof QuantumStateV2['unlocks'] | nu
   return keys[id] ?? null
 }
 
-function empty(id: QuantumUpgradeIdV2, revision: number, mode: V2PurchaseMode, status: QuantumPurchaseStatusV2, current = GAME_DECIMAL_ZERO, maximum: bigint | null = null): QuantumPurchaseQuoteV2 {
+function empty(id: QuantumUpgradeIdV2, revision: number, mode: V2PurchaseMode, status: QuantumPurchaseStatusV2, current = GAME_DECIMAL_ZERO, maximum: bigint | null = null, transactionQuote: V2PurchaseQuote | null = null): QuantumPurchaseQuoteV2 {
   return Object.freeze({ kind:'quantum-v2-purchase-quote', upgradeId:id, sourceRevision:revision, requestedMode:mode, status, eligible:false,
-    currentPurchases:cloneGameDecimal(current), maximumPurchases:maximum, batches:cloneGameDecimal(GAME_DECIMAL_ZERO), quotedCost:cloneGameDecimal(GAME_DECIMAL_ZERO), transactionQuote:null })
+    currentPurchases:cloneGameDecimal(current), maximumPurchases:maximum, batches:cloneGameDecimal(GAME_DECIMAL_ZERO), quotedCost:cloneGameDecimal(transactionQuote?.quotedCost ?? GAME_DECIMAL_ZERO), transactionQuote })
 }
 
 function rejected(state: CanonicalGameStateV2, revision: number, status: QuantumPurchaseResultV2['status'], quote?: QuantumPurchaseQuoteV2, transaction?: V2PurchaseCommitResult): QuantumPurchaseResultV2 {

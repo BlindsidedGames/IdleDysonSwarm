@@ -12,6 +12,7 @@ import type {
 } from '../game-state/typesV2'
 import {
   GAME_DECIMAL_ZERO,
+  GAME_DECIMAL_EXPONENT_LIMIT,
   addGameDecimals,
   compareGameDecimals,
   gameDecimalFromCanonicalString,
@@ -278,6 +279,23 @@ function queuedInput(
 }
 
 describe('dormant CanonicalEventTimeModelV2', () => {
+  test('advances a combined state at the representational ceiling without overflow', () => {
+    const exponent = GAME_DECIMAL_EXPONENT_LIMIT - 1
+    const high = gameDecimalFromCanonicalString(`1e${exponent}`)
+    const lower = gameDecimalFromCanonicalString(`5e${exponent - 1}`)
+    const source = stateWith()
+    const state = cloneCanonicalGameStateV2({
+      ...source,
+      dyson: { ...source.dyson, money: high, science: lower, bots: high, workers: lower, researchers: lower, totalPanelsDecayed: lower },
+      infinity: { ...source.infinity, availablePoints: high, allocatedPoints: lower, breakTarget: high, lastPointsGained: lower },
+      reality: { ...source.reality, universeDesignationCount: high, influence: high },
+      quantum: { ...source.quantum, availableShards: high, lifetimeEarnedShards: high, influenceSpeedBonus: high, cashBonusLevels: high, scienceBonusLevels: high },
+    })
+
+    const result = advanceCanonicalEventTimeV2(request(carrier(state), 0.1))
+    expect(result.status).toBe('completed')
+  })
+
   test('initializes the first Infinity horizon instead of treating an uninitialized zero clock as due', () => {
     const baseline = stateWith({
       automationHorizon: 0,

@@ -87,6 +87,20 @@ loading of the Simulations and Quantum route chunks. It writes evidence to
 `output/performance/mature-browser-profile.json` and never reads a player's
 browser profile or private save.
 
+Run the schema-13 range profile from the last native-number-comparable value
+through the canonical GameDecimal ceiling:
+
+```powershell
+npm run report:performance:large-numbers
+```
+
+This synthetic report covers exponents 300, 1,000, 5,000, 10,000, 20,000,
+1,000,000, and the maximum supported exponent. At the ceiling it separates a
+single maximum Cash value from simultaneous saturation of every scalable
+domain. It measures schema-13 codec, production startup, every gameplay route,
+displayed Cash, per-domain projection safety, and rejection at the exclusive
+exponent boundary.
+
 ## Explicit-GC retained-heap soak
 
 Run the shortened smoke soak:
@@ -101,15 +115,23 @@ Run the required 30-minute acceptance soak:
 npm run report:performance:soak
 ```
 
-The harness warms the playable slice before its baseline, forces two DevTools
+The harness seeds a mature all-routes-unlocked schema-13 save, visits every
+route before taking its baseline, warms the playable slice, forces two DevTools
 heap collections at both baseline and completion, and records
 `JSHeapUsedSize`, documents, DOM nodes, JavaScript event listeners, active
 timeouts, intervals, animation frames and pointers. It also uses
 `Runtime.queryObjects` to count live `Set` instances whose members are all
 callbacks, recording both callback-subscription sets and members without
 requiring a production debug hook. Retained heap may grow by the larger of
-10 MiB or 20 percent of the post-warm-up baseline. Resource counts must return
-to or below baseline.
+10 MiB or 20 percent of the post-warm-up baseline. Live document nodes are
+counted separately from Chromium's total DOM nodes so ordinary progression UI
+growth is not mistaken for detached-node retention. The first five-minute
+sample is the settling ceiling for nodes outside the live document and for
+JavaScript event listeners; later samples and the final sample must not exceed
+it. Timers, animation frames, pointers, and callback registries must return to
+or below baseline.
+The explicit-GC plateau samples run every five minutes (every 2.5 seconds in
+smoke mode), so a passing endpoint cannot conceal steady retained growth.
 
 For debugging, duration and warm-up are configurable:
 

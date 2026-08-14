@@ -10,7 +10,7 @@ import { afterEach, describe, expect, test, vi } from 'vitest'
 import type {
   FrontendQuantumUpgradePreview,
 } from '../../../application/frontendSnapshot'
-import { gameDecimalFromCanonicalString } from '../../../math/gameDecimal'
+import { GAME_DECIMAL_MAXIMUM, gameDecimalFromCanonicalString } from '../../../math/gameDecimal'
 import {
   QUANTUM_UPGRADE_IDS,
   type QuantumUpgradeId,
@@ -142,6 +142,25 @@ describe('QuantumSurface', () => {
       name: 'Purchase Division for 2.00 Quantum Shards',
     })).toHaveTextContent('2.00')
     expect(screen.queryByText('Unavailable')).not.toBeInTheDocument()
+  })
+
+  test('shows Max without exposing an unaffordable ceiling price', () => {
+    renderSurface({
+      upgradeOverrides: {
+        Secrets: {
+          cost: GAME_DECIMAL_MAXIMUM,
+          code: 'maximum-reached',
+          eligible: false,
+        },
+      },
+    })
+
+    const maximum = screen.getByRole('button', {
+      name: 'Secrets of the Universe has reached the maximum supported cost',
+    })
+    expect(maximum).toBeDisabled()
+    expect(maximum).toHaveTextContent('Max')
+    expect(maximum).not.toHaveTextContent('e1.00M')
   })
 
   test('dispatches one canonical purchase while the action is pending', async () => {

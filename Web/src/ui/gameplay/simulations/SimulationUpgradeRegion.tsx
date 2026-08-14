@@ -134,6 +134,7 @@ function SimulationUpgradeCard({
   const [failed, setFailed] = useState(false)
   const copy = simulationUpgradeCopy(preview.upgradeId)
   const name = intl.formatMessage(copy.title)
+  const maximumReached = preview.code === 'maximum-reached'
   const disabled = pending || !preview.eligible || !routeAvailable
 
   const purchase = async (): Promise<void> => {
@@ -165,21 +166,25 @@ function SimulationUpgradeCard({
         variant="primary"
         state={pending ? 'pending' : failed ? 'failure' : 'idle'}
         disabled={disabled}
-        aria-label={intl.formatMessage(realityMessages.purchaseAccessible, {
+        aria-label={intl.formatMessage(maximumReached
+          ? realityMessages.maximumReachedAccessible
+          : realityMessages.purchaseAccessible, {
           name,
           value: formatGameNumber(locale, preview.cost),
         })}
         onClick={() => void purchase()}
       >
-        <span>{intl.formatMessage(realityMessages.purchase)}</span>
-        <strong className="simulation-permanent-upgrade-card__cost">
+        <span>{intl.formatMessage(maximumReached
+          ? realityMessages.maximumReached
+          : realityMessages.purchase)}</span>
+        {!maximumReached ? <strong className="simulation-permanent-upgrade-card__cost">
           <InlineImageSymbol
             src={strangeMatterSymbol}
             symbol="strange-matter"
             tint
           />
           <span>{formatGameNumber(locale, preview.cost)}</span>
-        </strong>
+        </strong> : null}
       </Button>
       {pending || failed ? (
         <span

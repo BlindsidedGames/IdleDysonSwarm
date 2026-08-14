@@ -5399,6 +5399,38 @@
       "value": "‬"
     }
   ],
+  "quantum.maximum-reached": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "Wɐx"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "quantum.maximum-reached-accessible": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 1,
+      "value": "name"
+    },
+    {
+      "type": 0,
+      "value": " ɥɐs ɹǝɐɔɥǝp ʇɥǝ ɯɐxıɯnɯ snddoɹʇǝp ɔosʇ"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
   "quantum.mega.all": [
     {
       "type": 0,
@@ -7831,6 +7863,38 @@
       "value": "‬"
     }
   ],
+  "reality.upgrades.maximum-reached": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "Wɐx"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "reality.upgrades.maximum-reached-accessible": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 1,
+      "value": "name"
+    },
+    {
+      "type": 0,
+      "value": " ɥɐs ɹǝɐɔɥǝp ʇɥǝ ɯɐxıɯnɯ snddoɹʇǝp ɔosʇ"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
   "reality.upgrades.purchase": [
     {
       "type": 0,
@@ -8671,6 +8735,38 @@
           "value": "s"
         }
       ]
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "research.card.maximum-reached": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "Wɐx"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "research.card.maximum-reached-accessible": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 1,
+      "value": "title"
+    },
+    {
+      "type": 0,
+      "value": " ɥɐs ɹǝɐɔɥǝp ʇɥǝ ɯɐxıɯnɯ snddoɹʇǝp ɔosʇ"
     },
     {
       "type": 0,
@@ -10779,6 +10875,34 @@
     {
       "type": 0,
       "value": "Ⅎɹǝǝ"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "simulations.action.maximum-reached": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "Wɐx"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "simulations.action.maximum-reached-accessible": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "⊥ɥıs dnɹɔɥɐsǝ ɥɐs ɹǝɐɔɥǝp ʇɥǝ ɯɐxıɯnɯ snddoɹʇǝp ɔosʇ"
     },
     {
       "type": 0,

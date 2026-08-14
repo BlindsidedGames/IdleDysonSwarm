@@ -1275,6 +1275,14 @@
     "defaultMessage": "Level {value}",
     "description": "Repeatable Quantum upgrade level."
   },
+  "quantum.maximum-reached": {
+    "defaultMessage": "Max",
+    "description": "Purchase state shown when a Quantum upgrade cost reaches the numeric ceiling."
+  },
+  "quantum.maximum-reached-accessible": {
+    "defaultMessage": "{name} has reached the maximum supported cost",
+    "description": "Accessible explanation for a Quantum upgrade disabled at the numeric ceiling."
+  },
   "quantum.mega.all": {
     "defaultMessage": "Mega-Structures",
     "description": "Completed sequential mega-structure Quantum card title."
@@ -1939,6 +1947,14 @@
     "defaultMessage": "Enable Time Multiplier",
     "description": "Unity Reality upgrade title."
   },
+  "reality.upgrades.maximum-reached": {
+    "defaultMessage": "Max",
+    "description": "Purchase state shown when a permanent upgrade cost reaches the numeric ceiling."
+  },
+  "reality.upgrades.maximum-reached-accessible": {
+    "defaultMessage": "{name} has reached the maximum supported cost",
+    "description": "Accessible explanation for a permanent upgrade disabled at the numeric ceiling."
+  },
   "reality.upgrades.purchase": {
     "defaultMessage": "Purchase",
     "description": "Button label for purchasing a Reality upgrade."
@@ -2134,6 +2150,14 @@
   "research.card.lifetime-effect": {
     "defaultMessage": "Increases Panel Lifetime by <value>{seconds}s</value>",
     "description": "Effect line for a Unity Panel Lifetime upgrade."
+  },
+  "research.card.maximum-reached": {
+    "defaultMessage": "Max",
+    "description": "Purchase state shown when a Research cost reaches the numeric ceiling."
+  },
+  "research.card.maximum-reached-accessible": {
+    "defaultMessage": "{title} has reached the maximum supported cost",
+    "description": "Accessible explanation for Research disabled at the numeric ceiling."
   },
   "research.card.purchase-boost": {
     "defaultMessage": "Purchase for a boost! (<value>{perLevel}%</value> per level)",
@@ -2674,6 +2698,14 @@
   "simulations.action.free-label": {
     "defaultMessage": "Free",
     "description": "Visible cost label for a free Simulation action."
+  },
+  "simulations.action.maximum-reached": {
+    "defaultMessage": "Max",
+    "description": "Purchase state shown when a Simulation action cost reaches the numeric ceiling."
+  },
+  "simulations.action.maximum-reached-accessible": {
+    "defaultMessage": "This purchase has reached the maximum supported cost",
+    "description": "Accessible explanation for a Simulation action disabled at the numeric ceiling."
   },
   "simulations.action.purchase": {
     "defaultMessage": "+{quantity} {cost} Influence",

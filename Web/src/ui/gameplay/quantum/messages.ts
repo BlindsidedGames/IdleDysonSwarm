@@ -27,6 +27,8 @@ export const quantumMessages = defineMessages({
   buyQuantity: { id: 'quantum.purchase.buy-quantity', defaultMessage: 'Buy {quantity}', description: 'Selects a fixed repeatable Quantum purchase quantity.' },
   buyMax: { id: 'quantum.purchase.buy-max', defaultMessage: 'Buy Max', description: 'Selects the maximum affordable repeatable Quantum purchase quantity.' },
   purchased: { id: 'quantum.purchased', defaultMessage: 'Purchased', description: 'Completed Quantum upgrade state.' },
+  maximumReached: { id: 'quantum.maximum-reached', defaultMessage: 'Max', description: 'Purchase state shown when a Quantum upgrade cost reaches the numeric ceiling.' },
+  maximumReachedAccessible: { id: 'quantum.maximum-reached-accessible', defaultMessage: '{name} has reached the maximum supported cost', description: 'Accessible explanation for a Quantum upgrade disabled at the numeric ceiling.' },
   level: { id: 'quantum.level', defaultMessage: 'Level {value}', description: 'Repeatable Quantum upgrade level.' },
   cost: { id: 'quantum.cost', defaultMessage: '{value} QS', description: 'Quantum Shard price.' },
   unavailable: { id: 'quantum.unavailable', defaultMessage: 'Unavailable', description: 'Quantum upgrade unavailable action.' },

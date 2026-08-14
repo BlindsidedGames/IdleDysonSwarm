@@ -2847,6 +2847,22 @@
       "value": "value"
     }
   ],
+  "quantum.maximum-reached": [
+    {
+      "type": 0,
+      "value": "Max"
+    }
+  ],
+  "quantum.maximum-reached-accessible": [
+    {
+      "type": 1,
+      "value": "name"
+    },
+    {
+      "type": 0,
+      "value": " has reached the maximum supported cost"
+    }
+  ],
   "quantum.mega.all": [
     {
       "type": 0,
@@ -3951,6 +3967,22 @@
       "value": "Enable Time Multiplier"
     }
   ],
+  "reality.upgrades.maximum-reached": [
+    {
+      "type": 0,
+      "value": "Max"
+    }
+  ],
+  "reality.upgrades.maximum-reached-accessible": [
+    {
+      "type": 1,
+      "value": "name"
+    },
+    {
+      "type": 0,
+      "value": " has reached the maximum supported cost"
+    }
+  ],
   "reality.upgrades.purchase": [
     {
       "type": 0,
@@ -4403,6 +4435,22 @@
           "value": "s"
         }
       ]
+    }
+  ],
+  "research.card.maximum-reached": [
+    {
+      "type": 0,
+      "value": "Max"
+    }
+  ],
+  "research.card.maximum-reached-accessible": [
+    {
+      "type": 1,
+      "value": "title"
+    },
+    {
+      "type": 0,
+      "value": " has reached the maximum supported cost"
     }
   ],
   "research.card.purchase-boost": [
@@ -5431,6 +5479,18 @@
     {
       "type": 0,
       "value": "Free"
+    }
+  ],
+  "simulations.action.maximum-reached": [
+    {
+      "type": 0,
+      "value": "Max"
+    }
+  ],
+  "simulations.action.maximum-reached-accessible": [
+    {
+      "type": 0,
+      "value": "This purchase has reached the maximum supported cost"
     }
   ],
   "simulations.action.purchase": [

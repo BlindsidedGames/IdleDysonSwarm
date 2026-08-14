@@ -466,6 +466,7 @@ function ResearchCard({
   )
   const quantity = formatGameNumber(locale, card.selectedQuantity)
   const cost = formatGameNumber(locale, card.cost)
+  const maximumReached = card.code === 'maximum-reached'
   const disabled =
     pending ||
     card.maxed ||
@@ -514,6 +515,8 @@ function ResearchCard({
           aria-label={intl.formatMessage(
             card.maxed
               ? messages.purchasedAccessible
+              : maximumReached
+                ? messages.maximumReachedAccessible
               : card.automationActive
                 ? messages.automaticAccessible
                 : messages.purchaseAccessible,
@@ -528,13 +531,15 @@ function ResearchCard({
           <span className="research-card__purchase-quantity">
             {card.maxed
               ? intl.formatMessage(messages.purchased)
+              : maximumReached
+                ? intl.formatMessage(messages.maximumReached)
               : card.automationActive
               ? intl.formatMessage(messages.automatic)
               : intl.formatMessage(messages.purchaseQuantity, {
                   quantity,
                 })}
           </span>
-          {card.maxed ? null : (
+          {card.maxed || maximumReached ? null : (
             <span className="research-card__purchase-cost">
               <ResearchCostSymbol />
               <bdi>{cost}</bdi>
