@@ -17,6 +17,7 @@ import {
 } from '../../components'
 import {
   formatGameNumber,
+  type NumericValue,
 } from '../../i18n/formatters'
 import type {
   EnabledLocale,
@@ -34,8 +35,8 @@ export interface DysonInfoProps {
     FrontendDysonPresentationFacts['activePanelMetric']
   readonly currentGoal:
     FrontendDysonPresentationFacts['currentGoal']
-  readonly panelLifetimeSeconds: number
-  readonly totalPanelsDecayed: number
+  readonly panelLifetimeSeconds: NumericValue
+  readonly totalPanelsDecayed: NumericValue
   readonly buyMode: DysonBuyMode
   readonly roundedBulkBuy: boolean
   readonly presets: readonly SkillPresetState[]
@@ -554,7 +555,7 @@ export function BotDistribution({
   )
 }
 
-function formatFact(locale: EnabledLocale, value: number): string {
+function formatFact(locale: EnabledLocale, value: NumericValue): string {
   return formatGameNumber(locale, value)
 }
 

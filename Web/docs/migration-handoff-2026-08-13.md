@@ -140,10 +140,13 @@ source checkpoint and all generated artifacts are reproducible.
 The original receiver-local Developer Options presentation concern is resolved
 by the macOS continuation described above.
 
-1. Schema-13 startup decode and fresh-controller reload remain materially
-   slower than schema 12, but steady-state autosave encoding is now off the
-   presentation thread and exact readbacks no longer repeat full decoding.
-   Continue to measure startup/reload separately from interaction budgets.
+1. The schema-13 codec was optimized after this handoff checkpoint. The final
+   macOS migration benchmark measured schema-13 encode at 2.877 ms, decode at
+   4.329 ms, checkpoint at 3.129 ms, and fresh-controller reload at 65.066 ms.
+   The original baseline was approximately 55.9 ms encode, 58.6 ms decode,
+   55.3 ms checkpoint, and 171.3 ms reload. Persistence encoding still performs
+   full semantic validation, deterministic save bytes are unchanged, and the
+   bounded hostile-import parser remains in place.
 2. The synthetic non-UI `previewDemand='all'` projection is intentionally
    expensive because it constructs every strict quote family. Activated play
    defaults to the Bots route, requests only the visible family, and memoizes
@@ -151,16 +154,18 @@ by the macOS continuation described above.
 3. Physical-device certification and store distribution remain outside this
    checkpoint. GitHub build tests may continue, but do not deploy, sign, merge,
    or upload without explicit user authorization.
-4. Stage 9 is not complete. `inspection/frontendSnapshotV2.ts` still projects
-   the complete `CanonicalGameStateV2` back into `CanonicalGameStateV1`, invokes
-   `application/frontendSnapshot.ts`, and then replaces the authoritative V2
-   resources, visibility, and previews. V2 snapshots now report model version 2,
-   and visibility is derived directly from `GameDecimal` state so extreme values
-   cannot collapse to the bridge's zero sentinel. The bridge remains reachable
-   from `inspection/v2GameRuntime.ts`. Retire it incrementally by moving the
-   remaining progression, visibility, derived-fact, runtime, and command
-   projection families onto V2 inputs while preserving legacy decode/import,
-   fixtures, and recovery.
+4. The live Stage-9 frontend bridge is retired. Production snapshots no longer
+   convert current `CanonicalGameStateV2` into `CanonicalGameStateV1`.
+   Progression, Dyson, Dream/Simulations, Infinity, Reality, Avocato,
+   statistics, Tinker, Story, visibility, and previews are selected directly
+   from V2 state and preserve `GameDecimal` values beyond `1e1000`. Static
+   preview ordering and shapes are now native constants as well; the previous
+   deterministic V1 metadata bootstrap has been removed. Legacy
+   decode/import/recovery and the explicit developer projection remain
+   intentionally available. Command plus projection
+   measured 6.172 ms median versus the 7.352 ms pre-pass baseline. Boot
+   JavaScript measured 337.31 KiB gzip versus 409.58 KiB before the pass, so
+   further initial-load splitting remains useful but is separate work.
 
 ## Resume on macOS
 
@@ -184,8 +189,10 @@ Read this file and `docs/break-infinity-migration-plan.md` before editing.
 Preserve the existing architecture and exact numeric boundaries. Verify the
 working tree before changes and use focused tests first. Do not deploy, merge,
 publish, sign, or upload. The throttled-mobile backlog and long-task concern is
-resolved and the automated suite is green. The next work is to complete the
-Stage 9 frontend projection migration and remove production-only V1
-compatibility that is no longer required.
+resolved and the automated suite is green. Stage 9 production frontend
+projection is complete: no live-state or static-metadata V1 bridge remains in
+the V2 snapshot path. Retain V1 only for legacy save decode/import/recovery and
+the explicit developer/test projection until those diagnostic consumers are
+retired.
 Physical-device checks remain useful residual-risk evidence, but are not
 migration completion gates and must not be treated as release readiness.

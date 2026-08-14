@@ -1,3 +1,5 @@
+import type { GameDecimal } from '../../math/gameDecimal'
+
 export type UiRuntimeWarningCode =
   | 'backup-recovered'
   | 'persistent-storage-denied'
@@ -193,14 +195,14 @@ export type UiRuntimeDevelopmentRealityResult =
     }
 
 export type UiRuntimeDevelopmentAction =
-  | { readonly kind: 'add-cash'; readonly amount: number }
-  | { readonly kind: 'add-bots'; readonly amount: number }
+  | { readonly kind: 'add-cash'; readonly amount: GameDecimal }
+  | { readonly kind: 'add-bots'; readonly amount: GameDecimal }
   | { readonly kind: 'add-skill-points'; readonly amount: bigint }
-  | { readonly kind: 'add-infinity-points'; readonly amount: bigint }
-  | { readonly kind: 'add-quantum-shards'; readonly amount: bigint }
-  | { readonly kind: 'add-influence'; readonly amount: bigint }
-  | { readonly kind: 'add-strange-matter'; readonly amount: bigint }
-  | { readonly kind: 'set-tinker-interval'; readonly seconds: 0 | 1 }
+  | { readonly kind: 'add-infinity-points'; readonly amount: GameDecimal }
+  | { readonly kind: 'add-quantum-shards'; readonly amount: GameDecimal }
+  | { readonly kind: 'add-influence'; readonly amount: GameDecimal }
+  | { readonly kind: 'add-strange-matter'; readonly amount: GameDecimal }
+  | { readonly kind: 'set-tinker-interval'; readonly seconds: 0.01 | 1 }
   | { readonly kind: 'recalculate-skill-points' }
   | { readonly kind: 'reset-secret-progress' }
   | { readonly kind: 'unlock-debug-options' }

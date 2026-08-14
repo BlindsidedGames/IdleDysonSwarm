@@ -29,6 +29,7 @@ import {
   applyCapturedDysonV2ProductionKernel,
   createNeutralDysonV2DerivationParameters,
   deriveDysonV2BotAllocation,
+  deriveDysonV2FacilityContributionRows,
   deriveDysonV2Production,
   DYSON_V2_FACILITY_IDS,
   type DysonV2DerivationParameters,
@@ -295,6 +296,22 @@ function v1Authority(): Readonly<{
 }
 
 describe('dormant Dyson V2 production', () => {
+  test('preserves an exact negative presentation delta beyond Number range', () => {
+    const source = stateWith()
+    const parameters = parametersWith()
+    const withEffects = Object.freeze({ ...parameters, effects: Object.freeze({
+      assembly_lines: Object.freeze([
+        Object.freeze({ id: 'huge', operation: 'override' as const, value: decimal('1e1000'), order: 1 }),
+        Object.freeze({ id: 'zero', operation: 'override' as const, value: decimal(0), order: 2 }),
+      ]),
+    }) })
+    const production = deriveDysonV2Production(source, withEffects)
+    const rows = deriveDysonV2FacilityContributionRows(source, withEffects, production).assembly_lines
+    const negative = rows.find(({ sourceId }) => sourceId === 'zero')!.delta
+    expect(negative).toMatchObject({ sign: -1 })
+    if (!('magnitude' in negative)) throw new Error('Expected signed magnitude.')
+    expect(gameDecimalToCanonicalString(negative.magnitude)).toBe('1e1000')
+  })
   test('matches representable V1 rates within test-only approximate parity', () => {
     const source = stateWith()
     const v1 = v1Authority()
@@ -625,6 +642,7 @@ describe('dormant Dyson V2 production', () => {
     ).toEqual(Object.keys(sourceRecord).filter((key) => key !== 'dyson'))
     expect(Object.isFrozen(source)).toBe(true)
     expect(Object.isFrozen(derived)).toBe(true)
+    expect(derived).not.toHaveProperty('facilityContributionRows')
     expect(Object.isFrozen(derived.rates)).toBe(true)
     expect(Object.isFrozen(result.state)).toBe(true)
     expect(Object.isFrozen(result.state.dyson.facilities.assembly_lines)).toBe(true)

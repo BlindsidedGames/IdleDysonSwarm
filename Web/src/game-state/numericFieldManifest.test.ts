@@ -1,7 +1,52 @@
 import { describe, expect, test } from 'vitest'
 import runtimeCatalog from '../game-data/generated/runtime-catalog.json'
 import skillTreePresentation from '../game-data/generated/skill-tree-presentation.json'
-import type { FrontendCanonicalResources } from '../application/frontendSnapshot'
+import type {
+  FrontendCanonicalResources,
+  FrontendRealityDerivedFacts,
+} from '../application/frontendSnapshot'
+import type { GameDecimal } from '../math/gameDecimal'
+import type {
+  V2AtomicAccount,
+  V2AtomicExchangeCommitResult,
+  V2AtomicExchangeQuote,
+  V2AtomicLeg,
+  V2BulkCorrectionResult,
+  V2GeometricAffordabilityResult,
+  V2PurchaseCommitResult,
+  V2PurchaseQuote,
+} from '../simulation/transactionsV2'
+import type {
+  DysonV2FacilityPurchaseQuote,
+  DysonV2FacilityPurchaseResult,
+} from '../simulation/dysonV2Commands'
+import type {
+  ResearchV2PhaseAccounting,
+  ResearchV2PurchaseQuote,
+  ResearchV2PurchaseResult,
+} from '../simulation/researchV2'
+import type {
+  InfinityShopCommitResultV2,
+  InfinityShopQuoteV2,
+} from '../simulation/infinityShopV2'
+import type {
+  RealityGatherResultV2,
+  RealityStrangeMatterAccountV2,
+  RealityUpgradeCommitResultV2,
+  RealityUpgradeQuoteV2,
+  RealityWorkerAdvanceResultV2,
+} from '../simulation/realityV2'
+import type {
+  QuantumPurchaseQuoteV2,
+  QuantumPurchaseResultV2,
+} from '../simulation/quantumV2'
+import type { DreamCommandQuoteV2 } from '../application/dreamStrangeMatterAuthorityV2'
+import type {
+  AvocadoCommandQuoteV2,
+  AvocadoStrangeMatterAccountV2,
+} from '../simulation/avocadoV2'
+import type { DeveloperOptionsQuoteV2 } from '../application/developerOptionsTransactionV2'
+import type { CanonicalDreamResetQuoteV2 } from '../simulation/canonicalDreamResetV2'
 import {
   canonicalNumericFieldClassifications,
   canonicalFragmentSkillKeySet,
@@ -23,11 +68,14 @@ import {
   skillTreePresentationNumericPathInventory,
   currentUnboundedRuntimeNumericCarrierClassifications,
   validateNumericFieldClassifications,
+  v2TransactionDtoNumericClassifications,
   type NumericFieldClassification,
 } from './numericFieldManifest'
 
-type NumericLeafPaths<T, TPrefix extends string> =
-  NonNullable<T> extends number | bigint
+type NumericLeafPaths<T, TPrefix extends string> = T extends unknown
+  ? NonNullable<T> extends GameDecimal
+    ? TPrefix
+    : NonNullable<T> extends number | bigint
     ? TPrefix
     : NonNullable<T> extends readonly (infer TValue)[]
       ? NumericLeafPaths<TValue, `${TPrefix}.*`>
@@ -43,6 +91,179 @@ type NumericLeafPaths<T, TPrefix extends string> =
               >
             }[keyof NonNullable<T> & string]
         : never
+  : never
+
+type NumericCarrierPaths<
+  T,
+  TCarrier extends 'decimal' | 'bigint' | 'number',
+  TPrefix extends string,
+> = T extends unknown
+  ? NonNullable<T> extends GameDecimal
+    ? TCarrier extends 'decimal' ? TPrefix : never
+    : NonNullable<T> extends bigint
+      ? TCarrier extends 'bigint' ? TPrefix : never
+      : NonNullable<T> extends number
+        ? TCarrier extends 'number' ? TPrefix : never
+        : NonNullable<T> extends readonly (infer TValue)[]
+          ? NumericCarrierPaths<TValue, TCarrier, `${TPrefix}.*`>
+          : NonNullable<T> extends object
+            ? string extends keyof NonNullable<T>
+              ? NonNullable<T> extends Readonly<Record<string, infer TValue>>
+                ? NumericCarrierPaths<TValue, TCarrier, `${TPrefix}.*`>
+                : never
+              : {
+                  [TKey in keyof NonNullable<T> & string]: NumericCarrierPaths<
+                    NonNullable<T>[TKey],
+                    TCarrier,
+                    `${TPrefix}.${TKey}`
+                  >
+                }[keyof NonNullable<T> & string]
+            : never
+  : never
+
+type V2TransactionDtoSurface = {
+  readonly V2PurchaseQuote: V2PurchaseQuote
+  readonly V2PurchaseCommitResult: V2PurchaseCommitResult
+  readonly V2BulkCorrectionResult: V2BulkCorrectionResult
+  readonly V2GeometricAffordabilityResult: V2GeometricAffordabilityResult
+  readonly V2AtomicAccount: V2AtomicAccount
+  readonly V2AtomicLeg: V2AtomicLeg
+  readonly V2AtomicExchangeQuote: V2AtomicExchangeQuote
+  readonly V2AtomicExchangeCommitResult: V2AtomicExchangeCommitResult
+  readonly DysonV2FacilityPurchaseQuote: Omit<
+    DysonV2FacilityPurchaseQuote,
+    'transactionQuote'
+  >
+  readonly DysonV2FacilityPurchaseResult: Omit<
+    DysonV2FacilityPurchaseResult,
+    'state'
+  >
+  readonly ResearchV2PurchaseQuote: Omit<
+    ResearchV2PurchaseQuote,
+    'transactionQuote'
+  >
+  readonly ResearchV2PurchaseResult: Omit<ResearchV2PurchaseResult, 'state'>
+  readonly ResearchV2PhaseAccounting: ResearchV2PhaseAccounting
+  readonly InfinityShopQuoteV2: InfinityShopQuoteV2
+  readonly InfinityShopCommitResultV2: Omit<InfinityShopCommitResultV2, 'state'>
+  readonly RealityWorkerAdvanceResultV2: Omit<RealityWorkerAdvanceResultV2, 'state'>
+  readonly RealityGatherResultV2: Omit<RealityGatherResultV2, 'state'>
+  readonly RealityStrangeMatterAccountV2: RealityStrangeMatterAccountV2
+  readonly RealityUpgradeQuoteV2: RealityUpgradeQuoteV2
+  readonly RealityUpgradeCommitResultV2: Omit<
+    RealityUpgradeCommitResultV2,
+    'state' | 'account'
+  >
+  readonly QuantumPurchaseQuoteV2: Omit<QuantumPurchaseQuoteV2, 'transactionQuote'>
+  readonly QuantumPurchaseResultV2: Omit<QuantumPurchaseResultV2, 'state'>
+  readonly DreamCommandQuoteV2: Omit<DreamCommandQuoteV2, 'expectedPublication'>
+  readonly AvocadoCommandQuoteV2: Omit<AvocadoCommandQuoteV2, 'expectedPublication'>
+  readonly AvocadoStrangeMatterAccountV2: AvocadoStrangeMatterAccountV2
+  readonly DeveloperOptionsQuoteV2: Omit<DeveloperOptionsQuoteV2, 'expectedCandidate'>
+  readonly CanonicalDreamResetQuoteV2: Omit<CanonicalDreamResetQuoteV2, 'expectedPublication'>
+}
+
+type V2TransactionDtoPath = NumericLeafPaths<V2TransactionDtoSurface, ''>
+type ClassifiedV2TransactionDtoPath =
+  (typeof v2TransactionDtoNumericClassifications)[number]['path']
+type MissingV2TransactionDtoPath = Exclude<
+  V2TransactionDtoPath extends `.${infer TPath}` ? TPath : never,
+  ClassifiedV2TransactionDtoPath
+>
+type UnexpectedV2TransactionDtoPath = Exclude<
+  ClassifiedV2TransactionDtoPath,
+  V2TransactionDtoPath extends `.${infer TPath}` ? TPath : never
+>
+const V2_TRANSACTION_DTO_PATHS_ARE_EXHAUSTIVE: [
+  MissingV2TransactionDtoPath,
+  UnexpectedV2TransactionDtoPath,
+] extends [never, never]
+  ? true
+  : never = true
+void V2_TRANSACTION_DTO_PATHS_ARE_EXHAUSTIVE
+
+type StripLeadingDot<TPath> = TPath extends `.${infer TStripped}`
+  ? TStripped
+  : never
+type V2TransactionDecimalPath = StripLeadingDot<
+  NumericCarrierPaths<V2TransactionDtoSurface, 'decimal', ''>
+>
+type V2TransactionBigIntPath = StripLeadingDot<
+  NumericCarrierPaths<V2TransactionDtoSurface, 'bigint', ''>
+>
+type V2TransactionNumberPath = StripLeadingDot<
+  NumericCarrierPaths<V2TransactionDtoSurface, 'number', ''>
+>
+type ClassifiedV2TransactionDecimalPath = Extract<
+  (typeof v2TransactionDtoNumericClassifications)[number],
+  { readonly semanticClass: 'ordinary-decimal' | 'integer-decimal' }
+>['path']
+type ClassifiedV2TransactionBigIntPath = Extract<
+  (typeof v2TransactionDtoNumericClassifications)[number],
+  { readonly semanticClass: 'exact-bigint' }
+>['path']
+type ClassifiedV2TransactionNumberPath = Extract<
+  (typeof v2TransactionDtoNumericClassifications)[number],
+  { readonly semanticClass: 'bounded-number' }
+>['path']
+type SamePaths<TLeft, TRight> = [
+  Exclude<TLeft, TRight>,
+  Exclude<TRight, TLeft>,
+] extends [never, never] ? true : never
+const V2_TRANSACTION_DECIMAL_CARRIERS_ARE_EXACT:
+  SamePaths<V2TransactionDecimalPath, ClassifiedV2TransactionDecimalPath> = true
+const V2_TRANSACTION_BIGINT_CARRIERS_ARE_EXACT:
+  SamePaths<V2TransactionBigIntPath, ClassifiedV2TransactionBigIntPath> = true
+const V2_TRANSACTION_NUMBER_CARRIERS_ARE_BOUNDED:
+  SamePaths<V2TransactionNumberPath, ClassifiedV2TransactionNumberPath> = true
+void V2_TRANSACTION_DECIMAL_CARRIERS_ARE_EXACT
+void V2_TRANSACTION_BIGINT_CARRIERS_ARE_EXACT
+void V2_TRANSACTION_NUMBER_CARRIERS_ARE_BOUNDED
+
+type FrontendRealityDerivedFactsV2 = Omit<
+  FrontendRealityDerivedFacts,
+  'generationPerSecond' | 'nextUniverseDesignation'
+> & {
+  readonly generationPerSecond: GameDecimal
+  readonly nextUniverseDesignation: GameDecimal
+}
+type RealityCarrierPath<TCarrier extends 'decimal' | 'bigint' | 'number'> =
+  StripLeadingDot<NumericCarrierPaths<
+    { readonly FrontendRealityDerivedFacts: FrontendRealityDerivedFactsV2 },
+    TCarrier,
+    ''
+  >>
+type ClassifiedRealityEntry = Extract<
+  (typeof currentUnboundedRuntimeNumericCarrierClassifications)[number],
+  { readonly path: `FrontendRealityDerivedFacts.${string}` }
+>
+type ClassifiedRealityDecimalPath = Extract<
+  ClassifiedRealityEntry,
+  { readonly semanticClass: 'ordinary-decimal' | 'integer-decimal' }
+>['path']
+type ClassifiedRealityBigIntPath = Extract<
+  ClassifiedRealityEntry,
+  { readonly semanticClass: 'exact-bigint' }
+>['path']
+type ClassifiedRealityNumberPath = Extract<
+  ClassifiedRealityEntry,
+  { readonly semanticClass: 'bounded-number' }
+>['path']
+const V2_REALITY_DECIMAL_CARRIERS_ARE_EXACT: SamePaths<
+  RealityCarrierPath<'decimal'>,
+  ClassifiedRealityDecimalPath
+> = true
+const V2_REALITY_BIGINT_CARRIERS_ARE_EXACT: SamePaths<
+  RealityCarrierPath<'bigint'>,
+  ClassifiedRealityBigIntPath
+> = true
+const V2_REALITY_NUMBER_CARRIERS_ARE_BOUNDED: SamePaths<
+  RealityCarrierPath<'number'>,
+  ClassifiedRealityNumberPath
+> = true
+void V2_REALITY_DECIMAL_CARRIERS_ARE_EXACT
+void V2_REALITY_BIGINT_CARRIERS_ARE_EXACT
+void V2_REALITY_NUMBER_CARRIERS_ARE_BOUNDED
 
 type FrontendInventoryPath =
   (typeof frontendResourceNumericPathInventory)[number]
@@ -390,11 +611,12 @@ describe('numeric field manifest', () => {
     ])
   })
 
-  test('keeps later migration boundaries explicitly deferred', () => {
-    expect(deferredNumericCoverage.map((entry) => entry.boundary)).toEqual([
-      'V2 transaction quote and commit DTOs',
-      'V2 frontend resource projections',
-    ])
+  test('closes the former V2 DTO and frontend projection deferrals', () => {
+    expect(deferredNumericCoverage).toEqual([])
+    expect(v2TransactionDtoNumericClassifications.length).toBeGreaterThan(100)
+    expect(v2TransactionDtoNumericClassifications.every(
+      (entry) => entry.stage0Coverage === 'mechanical',
+    )).toBe(true)
     expect(numericFieldManifest.validationErrors).toEqual([])
   })
 })

@@ -29,6 +29,7 @@ import type {
   DreamTimerProductionFact,
 } from '../../../simulation/dreamFoundationalInformation'
 import type { CanonicalDreamDerivedFacts } from '../../../simulation/canonicalDreamDerivedFacts'
+import type { DreamV2TimerPresentationFact } from '../../../simulation/dreamV2'
 import type { DreamSpaceAgePurchase } from '../../../simulation/dreamSpaceAge'
 import {
   Button,
@@ -50,11 +51,10 @@ import {
 import type { EnabledLocale } from '../../i18n/localeRegistry'
 import type { UiRuntimePlayerCommandResult } from '../../runtime'
 import {
-  boundedPresentationWholeQuotient,
   comparePresentationNumeric,
   presentationDecimal,
 } from '../../presentationNumeric'
-import { multiplyGameDecimals } from '../../../math/gameDecimal'
+import { divideGameDecimals, floorGameDecimal, gameDecimalToNumberChecked, multiplyGameDecimals, subtractGameDecimals } from '../../../math/gameDecimal'
 import { usePrefersReducedMotion } from '../../accessibility/useMediaQuery'
 import { useForwardProgressAnimation } from '../progress/useForwardProgressAnimation'
 import { simulationsMessages as messages } from './messages'
@@ -341,12 +341,35 @@ function highlightedNumber(
   }
 }
 
+function numericPositive(value: NumericValue): boolean {
+  return comparePresentationNumeric(value, 0) > 0
+}
+
+function boundedRatio(numerator: NumericValue, denominator: NumericValue): number {
+  if (!numericPositive(denominator)) return 0
+  const ratio = divideGameDecimals(
+    presentationDecimal(numerator),
+    presentationDecimal(denominator),
+  )
+  if (comparePresentationNumeric(ratio, 1) >= 0) return 1
+  return gameDecimalToNumberChecked(ratio, { minimum: 0, maximum: 1 })
+}
+
+function boundedPresentationNumber(value: NumericValue, maximum = Number.MAX_VALUE): number {
+  if (typeof value === 'number') return Math.min(maximum, Math.max(0, value))
+  const decimal = presentationDecimal(value)
+  if (comparePresentationNumeric(decimal, maximum) >= 0) return maximum
+  return gameDecimalToNumberChecked(decimal, { minimum: 0, maximum })
+}
+
 function highlightedEnergy(
   locale: EnabledLocale,
-  value: number,
+  value: NumericValue,
   unit: 'joules' | 'watts',
 ): SimulationTextModel {
-  const parts = formatGameEnergyParts(locale, value, unit)
+  const parts = typeof value === 'number'
+    ? formatGameEnergyParts(locale, value, unit)
+    : { ...formatGameNumberParts(locale, value), unit }
   return {
     parts: [
       { text: parts.value, highlight: true },
@@ -1004,7 +1027,7 @@ function createPanelModels(input: {
   const display = (value: NumericValue) => formatGameNumber(locale, value)
   const displayRich = (value: NumericValue) => highlightedNumber(locale, value)
   const displayEnergyRich = (
-    value: number,
+    value: NumericValue,
     unit: 'joules' | 'watts',
   ) => highlightedEnergy(locale, value, unit)
   const percentRich = (fraction: number) => highlightedFormattedNumber(
@@ -1044,7 +1067,7 @@ function createPanelModels(input: {
         intl,
         locale,
         resources.housing,
-        conversion.housingToVillages.inputCostPerConversion,
+        'inputCostPerConversion' in conversion.housingToVillages ? conversion.housingToVillages.inputCostPerConversion : 10,
       ))
     }
     if (id === 'villages' && conversion) {
@@ -1052,7 +1075,7 @@ function createPanelModels(input: {
         intl,
         locale,
         resources.villages,
-        conversion.villagesToCities.inputCostPerConversion,
+        'inputCostPerConversion' in conversion.villagesToCities ? conversion.villagesToCities.inputCostPerConversion : 25,
       ))
     }
     output.set(id, {
@@ -1084,7 +1107,7 @@ function createPanelModels(input: {
       const educationId = toEducationId(id)
       const education = facts.live.education[educationId]
       const fraction = education.researchTime > 0
-        ? education.progress / education.researchTime
+        ? boundedRatio(education.progress, education.researchTime)
         : education.complete ? 1 : 0
       output.set(id, {
         id,
@@ -1105,10 +1128,7 @@ function createPanelModels(input: {
                     label: intl.formatMessage(messages.timeRemaining),
                     valueText: formatGameDuration(
                       locale,
-                      Math.max(
-                        0,
-                        education.researchTime - education.progress,
-                      ),
+                      Math.max(0, education.researchTime - boundedPresentationNumber(education.progress, education.researchTime)),
                     ),
                     fraction,
                     showBar: false,
@@ -1130,7 +1150,7 @@ function createPanelModels(input: {
             label: intl.formatMessage(messages.detailRemainingDuration),
             value: formatGameDuration(
               locale,
-              Math.max(0, education.researchTime - education.progress),
+              Math.max(0, education.researchTime - boundedPresentationNumber(education.progress, education.researchTime)),
             ),
           },
           {
@@ -1184,6 +1204,7 @@ function createPanelModels(input: {
                 .rocketsToSpaceFactories,
               intl,
               display,
+              progression.parameters.rocketsPerSpaceFactory,
             )
           : [],
       action: foundationalAction(id, input, display),
@@ -1202,7 +1223,7 @@ function createPanelModels(input: {
             : 'fusion'
     const count = countKey ? resources[countKey] : undefined
     const progress: SimulationProgressModel[] = []
-    let recordStoredPanels: bigint | undefined
+    let recordStoredPanels: NumericValue | undefined
     let status: SimulationText = count !== undefined
       ? intl.formatMessage(messages.owned, { value: display(count) })
       : ''
@@ -1226,13 +1247,13 @@ function createPanelModels(input: {
       const activeThroughput = production.spaceAge.railgun
       const nextVolleyTarget =
         activeThroughput.panelsPerVolley !== undefined &&
-        activeThroughput.panelsPerVolley > 0n
+        numericPositive(activeThroughput.panelsPerVolley)
           ? activeThroughput.panelsPerVolley
           : BigInt(activeThroughput.shotsPerVolley ?? 10)
       const storedRecord = facts.live.railgun.highestStoredPanels ??
         resources.dysonPanels
-      const factoryCycleSeconds = factory.progressPerSecond > 0
-        ? factory.durationSeconds / factory.progressPerSecond
+      const factoryCycleSeconds = numericPositive(factory.progressPerSecond)
+        ? factory.durationSeconds / boundedPresentationNumber(factory.progressPerSecond)
         : 0
       recordStoredPanels = storedRecord
       progress.push(productionProgress(
@@ -1248,10 +1269,9 @@ function createPanelModels(input: {
           target: displayRich(nextVolleyTarget),
         }),
         fraction:
-          Number(resources.dysonPanels) /
-          Math.max(1, Number(nextVolleyTarget)),
+          boundedRatio(resources.dysonPanels, nextVolleyTarget),
         reservoir: {
-          sample: Number(resources.dysonPanels),
+          sample: boundedPresentationNumber(resources.dysonPanels),
           idleTimeoutMs: Math.max(
             RESERVOIR_IDLE_TIMEOUT_MS,
             Math.ceil(factoryCycleSeconds * 1_250),
@@ -1280,8 +1300,7 @@ function createPanelModels(input: {
             )
           : intl.formatMessage(messages.factoryOverdriveIdle),
         fraction:
-          activeThroughput.factoryOverdriveMultiplier /
-          Math.max(1, activeThroughput.factoryOverdriveMultiplier),
+          numericPositive(activeThroughput.factoryOverdriveMultiplier) ? 1 : 0,
         showBar: false,
       })
     } else if (id === 'railguns' && production) {
@@ -1292,9 +1311,9 @@ function createPanelModels(input: {
           current: displayEnergyRich(resources.railgunCharge, 'joules'),
           total: displayEnergyRich(railgun.maximumCharge, 'joules'),
         }),
-        fraction: resources.railgunCharge / railgun.maximumCharge,
+        fraction: boundedRatio(resources.railgunCharge, railgun.maximumCharge),
         reservoir: {
-          sample: resources.railgunCharge,
+          sample: boundedPresentationNumber(resources.railgunCharge),
           formatRate: (ratePerSecond) => formatSimulationMessage(
             intl,
             messages.energyOutput,
@@ -1310,8 +1329,7 @@ function createPanelModels(input: {
           rounds: displayRich(railgun.shotsPerVolley),
         }),
         fraction:
-          railgun.mechanicalPayload /
-          Math.max(1, railgun.payloadCapacity),
+          boundedRatio(railgun.mechanicalPayload, railgun.payloadCapacity),
         showBar: false,
       })
       progress.push({
@@ -1356,13 +1374,7 @@ function createPanelModels(input: {
 }
 
 function productionProgress(
-  timer: Readonly<Pick<
-    DreamTimerProductionFact,
-    | 'currentProgress'
-    | 'durationSeconds'
-    | 'progressPerSecond'
-    | 'cyclesPerSecond'
-  >>,
+  timer: Readonly<{currentProgress:number;durationSeconds:number;progressPerSecond:NumericValue;cyclesPerSecond:NumericValue}>,
   presentation: CyclePresentationMode,
   intl: IntlShape,
   display: (value: NumericValue) => SimulationText,
@@ -1378,9 +1390,9 @@ function productionProgress(
     animation: {
       normalizedRatePerSecond:
         timer.durationSeconds > 0
-          ? timer.progressPerSecond / timer.durationSeconds
+          ? boundedRatio(timer.progressPerSecond, timer.durationSeconds)
           : 0,
-      active: presentation === 'slow' && timer.progressPerSecond > 0,
+      active: presentation === 'slow' && numericPositive(timer.progressPerSecond),
       wraps: true,
     },
     cycle: {
@@ -1393,12 +1405,12 @@ function productionProgress(
 }
 
 function timerDetailRows(
-  timer: DreamTimerProductionFact,
+  timer: DreamTimerProductionFact | DreamV2TimerPresentationFact,
   intl: IntlShape,
   display: (value: NumericValue) => string,
 ): readonly SimulationDetailRowModel[] {
   const outputs = Object.entries(timer.outputPerCycle)
-    .filter(([, amount]) => amount > 0)
+    .filter(([, amount]) => numericPositive(amount))
   const output = outputs.map(([resource, amount]) =>
     intl.formatMessage(messages.detailOutputPerCycle, {
       value: display(amount),
@@ -1406,26 +1418,28 @@ function timerDetailRows(
     }),
   ).join(' + ')
   const currentRate = Object.entries(timer.outputPerSecond)
-    .filter(([, amount]) => amount > 0)
+    .filter(([, amount]) => numericPositive(amount))
     .map(([resource, amount]) =>
     intl.formatMessage(messages.detailRatePerSecond, {
       value: display(amount),
       resource: intl.formatMessage(panelTitleMessage(resource as PanelId)),
     }),
   ).join(' + ')
-  const speedMultiplier = timer.advanceEnabled
-    ? intl.formatMessage(
-        timer.multiplierFormula === 'logarithmic-source'
-          ? messages.detailLogarithmicMultiplier
-          : messages.detailPreparedMultiplier,
-        {
-          count: display(timer.sourceCount),
-          base: display(timer.baseMultiplier),
-          global: display(timer.globalMultiplier),
-          effective: display(timer.progressPerSecond),
-        },
-      )
-    : intl.formatMessage(messages.detailInactiveMultiplier)
+  const speedMultiplier = 'sourceCount' in timer
+    ? timer.advanceEnabled
+      ? intl.formatMessage(
+          timer.multiplierFormula === 'logarithmic-source'
+            ? messages.detailLogarithmicMultiplier
+            : messages.detailPreparedMultiplier,
+          {
+            count: display(timer.sourceCount),
+            base: display(timer.baseMultiplier),
+            global: display(timer.globalMultiplier),
+            effective: display(timer.progressPerSecond),
+          },
+        )
+      : intl.formatMessage(messages.detailInactiveMultiplier)
+    : null
 
   return [
     { label: intl.formatMessage(messages.detailOutput), value: output },
@@ -1435,10 +1449,10 @@ function timerDetailRows(
         value: display(timer.durationSeconds),
       }),
     },
-    {
+    ...(speedMultiplier === null ? [] : [{
       label: intl.formatMessage(messages.detailSpeedMultiplier),
       value: speedMultiplier,
-    },
+    }]),
     {
       label: intl.formatMessage(messages.detailCurrentRate),
       value: currentRate,
@@ -1447,20 +1461,27 @@ function timerDetailRows(
 }
 
 function rocketConversionDetailRows(
-  conversion: CanonicalDreamDerivedFacts['foundationalInformation']['conversions']['rocketsToSpaceFactories'],
+  conversion: CanonicalDreamDerivedFacts['foundationalInformation']['conversions']['rocketsToSpaceFactories'] | NumericValue,
   intl: IntlShape,
   display: (value: NumericValue) => string,
+  v2RocketsPerFactory: NumericValue,
 ): readonly SimulationDetailRowModel[] {
+  const rocketsPerSpaceFactory = typeof conversion === 'object' && 'rocketsPerSpaceFactory' in conversion
+    ? conversion.rocketsPerSpaceFactory
+    : v2RocketsPerFactory
+  const conversions = typeof conversion === 'object' && 'conversions' in conversion
+    ? conversion.conversions
+    : conversion
   return [
     {
       label: intl.formatMessage(messages.detailConversionRequirement),
       value: intl.formatMessage(messages.detailRocketConversionRequirement, {
-        rockets: display(conversion.rocketsPerSpaceFactory),
+        rockets: display(rocketsPerSpaceFactory),
       }),
     },
     {
       label: intl.formatMessage(messages.detailAvailableConversions),
-      value: display(conversion.conversions),
+      value: display(conversions),
     },
   ]
 }
@@ -1503,19 +1524,18 @@ function foundationalAction(
   if (!purchase) return undefined
   const preview = input.previews.foundational.find((item) => item.purchase === purchase)
   if (!preview) return undefined
-  const quantity = purchase === 'hunters'
-    ? input.progression.huntersPerPurchase
-    : purchase === 'gatherers'
-      ? input.progression.gatherersPerPurchase
-      : 1
   const isBoost = purchase.endsWith('-boost')
+  const influenceQuote = !isBoost ? preview.selectedInfluenceQuote : undefined
+  if (!isBoost && influenceQuote === undefined) return undefined
+  const quantity = influenceQuote?.unitsGranted ?? 1
+  const cost = influenceQuote?.totalCost ?? preview.cost
   const free = purchase === 'community-boost' &&
-    comparePresentationNumeric(preview.cost, 0) === 0
+    comparePresentationNumeric(cost, 0) === 0
   const label = input.intl.formatMessage(
     free ? messages.freeBoost : isBoost ? messages.boost : messages.purchase,
     {
       quantity: formatWholeQuantity(input.locale, quantity),
-      cost: display(preview.cost),
+      cost: display(cost),
     },
   )
   return {
@@ -1526,10 +1546,10 @@ function foundationalAction(
     secondaryLabel: free
       ? input.intl.formatMessage(messages.freeLabel)
       : undefined,
-    influenceCost: free ? undefined : display(preview.cost),
+    influenceCost: free ? undefined : display(cost),
     accessibleLabel: label.replace('\n', ', '),
     command: { kind: 'dream.purchase-foundational', purchase },
-    disabled: !preview.eligible || !input.commandAvailability.purchaseFoundational,
+    disabled: !(influenceQuote?.eligible ?? preview.eligible) || !input.commandAvailability.purchaseFoundational,
   }
 }
 
@@ -1580,71 +1600,73 @@ function spaceAgeAction(
   if (!purchase) return undefined
   const preview = input.previews.spaceAge.find((item) => item.purchase === purchase)
   if (!preview) return undefined
-  const quantity = resolveSpaceAgePurchaseQuantity(
-    input.spaceAgePurchaseQuantity,
-    input.influence,
-    preview.cost,
+  const selectedMode = input.spaceAgePurchaseQuantity === 'max'
+    ? 'buy-max'
+    : input.spaceAgePurchaseQuantity === 1
+      ? 'buy-1'
+      : input.spaceAgePurchaseQuantity === 10
+        ? 'buy-10'
+        : input.spaceAgePurchaseQuantity === 50
+          ? 'buy-50'
+          : 'buy-100'
+  const quote = preview.influenceQuotes?.find(
+    (candidate) => candidate.requestedMode === selectedMode,
   )
-  const totalCost = multiplyGameDecimals(
-    presentationDecimal(preview.cost),
-    presentationDecimal(quantity),
-  )
+  if (quote === undefined) return undefined
   const label = input.intl.formatMessage(messages.purchase, {
-    quantity: formatWholeQuantity(input.locale, quantity),
-    cost: display(totalCost),
+    quantity: formatWholeQuantity(input.locale, quote.unitsGranted),
+    cost: display(quote.totalCost),
   })
   return {
     primaryLabel: input.intl.formatMessage(messages.purchaseQuantity, {
-      quantity: formatWholeQuantity(input.locale, quantity),
+      quantity: formatWholeQuantity(input.locale, quote.unitsGranted),
     }),
-    influenceCost: display(totalCost),
+    influenceCost: display(quote.totalCost),
     accessibleLabel: label.replace('\n', ', '),
-    command: { kind: 'dream.purchase-space-age', purchase, quantity },
+    command: {
+      kind: 'dream.purchase-space-age',
+      purchase,
+      quantity: input.spaceAgePurchaseQuantity === 'max'
+        ? Number.MAX_SAFE_INTEGER
+        : input.spaceAgePurchaseQuantity,
+    },
     disabled:
-      quantity < 1 ||
-      !preview.eligible ||
+      !quote.eligible ||
       !input.commandAvailability.purchaseSpaceAge,
   }
 }
 
-function resolveSpaceAgePurchaseQuantity(
-  selected: SpaceAgePurchaseQuantity,
-  influence: NumericValue,
-  unitCost: NumericValue,
-): number {
-  if (selected !== 'max') return selected
-  if (
-    comparePresentationNumeric(unitCost, 0) <= 0 ||
-    comparePresentationNumeric(influence, unitCost) < 0
-  ) return 0
-  return Number(boundedPresentationWholeQuotient(
-    influence,
-    unitCost,
-    BigInt(Number.MAX_SAFE_INTEGER),
-  ))
-}
-
 function formatWholeQuantity(
   locale: EnabledLocale,
-  value: number | bigint,
+  value: NumericValue,
 ): string {
-  return formatNumber(locale, Number(value), { maximumFractionDigits: 0 })
+  return typeof value === 'number' || typeof value === 'bigint'
+    ? formatNumber(locale, Number(value), { maximumFractionDigits: 0 })
+    : formatGameNumber(locale, value)
 }
 
 function conversionProgress(
   intl: IntlShape,
   locale: EnabledLocale,
-  current: number,
-  required: number,
+  current: NumericValue,
+  required: NumericValue,
 ): SimulationProgressModel {
-  const remainder = current % required
+  const currentDecimal = presentationDecimal(current)
+  const requiredDecimal = presentationDecimal(required)
+  const quotient = numericPositive(required)
+    ? floorGameDecimal(divideGameDecimals(currentDecimal, requiredDecimal))
+    : presentationDecimal(0)
+  const remainder = numericPositive(required)
+    ? subtractGameDecimals(currentDecimal, multiplyGameDecimals(quotient, requiredDecimal))
+    : currentDecimal
+  const ratio = boundedRatio(remainder, required)
   return {
     label: intl.formatMessage(messages.conversionProgress),
     valueText: intl.formatMessage(messages.countOfTotal, {
       current: formatGameNumber(locale, remainder),
       total: formatGameNumber(locale, required),
     }),
-    fraction: remainder / required,
+    fraction: ratio,
     animation: {
       inferRate: 'increasing',
       active: true,
@@ -1704,12 +1726,12 @@ function combinePanelStatus(
 }
 
 function timerProductionStatus(
-  timer: DreamTimerProductionFact,
+  timer: DreamTimerProductionFact | DreamV2TimerPresentationFact,
   intl: IntlShape,
   display: (value: NumericValue) => string,
 ): string {
   const outputs = Object.entries(timer.outputPerSecond)
-    .filter(([, amount]) => amount > 0)
+    .filter(([, amount]) => numericPositive(amount))
     .map(([resource, amount]) => {
       return `${display(amount)} ${intl.formatMessage(
         panelTitleMessage(resource as PanelId),

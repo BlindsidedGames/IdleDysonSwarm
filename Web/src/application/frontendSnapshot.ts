@@ -15,7 +15,9 @@ import type {
   DreamState,
   TimelineState,
 } from '../game-state/types'
-import type { CanonicalGameStateV2 } from '../game-state/typesV2'
+import type { CanonicalGameStateV2, DreamStateV2 } from '../game-state/typesV2'
+import type { DreamV2PresentationFacts } from '../simulation/dreamV2'
+import type { V2PurchaseMode } from '../simulation/transactionsV2'
 import {
   deriveAvocadoMultiplier,
   feedAllToAvocado,
@@ -91,6 +93,7 @@ import {
   type BreakInfinityPresentationControl,
   type InfinityProgressFacts,
 } from '../simulation/infinityCycle'
+import type { InfinityProgressFactsV2 } from '../simulation/infinityEconomyV2'
 import {
   availableQuantumPoints,
   findQuantumUpgradeCanonicalGaps,
@@ -121,6 +124,7 @@ import {
   type CanonicalTinkerUiFacts,
   type CanonicalTinkerRuntimeState,
 } from '../simulation/canonicalTinker'
+import type { CanonicalTinkerUiFactsV2 } from '../simulation/canonicalTinkerV2'
 import { withCanonicalBotAllocation } from '../simulation/canonicalBotAllocation'
 import {
   previewCanonicalResearchPurchase,
@@ -231,7 +235,7 @@ export const FRONTEND_SIMULATION_SPACE_AGE_PANEL_IDS =
 export type FrontendSimulationSpaceAgePanelId =
   (typeof FRONTEND_SIMULATION_SPACE_AGE_PANEL_IDS)[number]
 
-const SIMULATION_UPGRADE_SECTIONS = Object.freeze({
+export const SIMULATION_UPGRADE_SECTIONS = Object.freeze({
   countermeasures: Object.freeze([
     'counterMeteor',
     'counterAi',
@@ -287,7 +291,7 @@ const SIMULATION_UPGRADE_SECTIONS = Object.freeze({
   ] as const satisfies readonly DreamUpgradeFlag[]),
 })
 
-const REALITY_UPGRADE_SECTIONS = Object.freeze({
+export const REALITY_UPGRADE_SECTIONS = Object.freeze({
   translation: Object.freeze(
     REALITY_UPGRADE_IDS.filter((id) => id.startsWith('translation')),
   ),
@@ -441,11 +445,67 @@ type TimelineProgression = Omit<
   >
 }
 
+type FrontendStatisticsTotals = Omit<
+  CanonicalGameStateV1['statistics']['lifetime'],
+  | 'ordinaryInfinityPoints'
+  | 'breakInfinityPoints'
+  | 'botCapInfinityPoints'
+  | 'botCapOverflowRewards'
+  | 'strangeMatter'
+  | 'realityWorkers'
+  | 'automaticInfluence'
+  | 'manualInfluence'
+> & {
+  readonly ordinaryInfinityPoints: bigint | GameDecimal
+  readonly breakInfinityPoints: bigint | GameDecimal
+  readonly botCapInfinityPoints: bigint | GameDecimal
+  readonly botCapOverflowRewards: bigint | GameDecimal
+  readonly strangeMatter: bigint | GameDecimal
+  readonly realityWorkers: bigint | GameDecimal
+  readonly automaticInfluence: bigint | GameDecimal
+  readonly manualInfluence: bigint | GameDecimal
+}
+
+type FrontendStatisticsWindow = Omit<
+  CanonicalGameStateV1['statistics']['minuteWindows'][number],
+  'infinityPoints' | 'strangeMatter' | 'realityWorkers'
+> & {
+  readonly infinityPoints: bigint | GameDecimal
+  readonly strangeMatter: bigint | GameDecimal
+  readonly realityWorkers: bigint | GameDecimal
+}
+
+export type FrontendStatisticsProgression = Omit<
+  CanonicalGameStateV1['statistics'],
+  | 'lifetime'
+  | 'currentQuantumRun'
+  | 'recentProcessedSegment'
+  | 'lastCompletedCycle'
+  | 'minuteWindows'
+  | 'halfHourWindows'
+  | 'dailyWindows'
+> & {
+  readonly lifetime: FrontendStatisticsTotals
+  readonly currentQuantumRun: FrontendStatisticsTotals
+  readonly recentProcessedSegment: FrontendStatisticsTotals
+  readonly lastCompletedCycle: Omit<
+    CanonicalGameStateV1['statistics']['lastCompletedCycle'],
+    'reward'
+  > & { readonly reward: bigint | GameDecimal }
+  readonly minuteWindows: readonly FrontendStatisticsWindow[]
+  readonly halfHourWindows: readonly FrontendStatisticsWindow[]
+  readonly dailyWindows: readonly FrontendStatisticsWindow[]
+}
+
 export interface FrontendCanonicalProgression {
-  readonly meta: DeepReadonly<CanonicalGameStateV1['meta']>
+  readonly meta: DeepReadonly<CanonicalGameStateV1['meta'] | CanonicalGameStateV2['meta']>
   readonly dyson: DeepReadonly<
     Omit<
       CanonicalGameStateV1['dyson'],
+      'money' | 'science' | 'bots' | 'workers' | 'researchers'
+    >
+    | Omit<
+      CanonicalGameStateV2['dyson'],
       'money' | 'science' | 'bots' | 'workers' | 'researchers'
     >
   >
@@ -457,32 +517,51 @@ export interface FrontendCanonicalProgression {
       | 'secretsOfTheUniverse'
       | 'permanentSkillPoints'
     >
+    | Omit<
+      CanonicalGameStateV2['infinity'],
+      | 'availablePoints'
+      | 'allocatedPoints'
+      | 'secretsOfTheUniverse'
+      | 'permanentSkillPoints'
+    >
   >
   readonly skills: DeepReadonly<
     Omit<CanonicalGameStateV1['skills'], 'points' | 'fragments'>
+    | Omit<CanonicalGameStateV2['skills'], 'points' | 'fragments' | 'selectedPreset'>
   >
-  readonly research: DeepReadonly<CanonicalGameStateV1['research']>
+  readonly research: DeepReadonly<CanonicalGameStateV1['research'] | CanonicalGameStateV2['research']>
   readonly reality: DeepReadonly<
     Pick<CanonicalGameStateV1['reality'], 'autoGather'>
+    | Pick<CanonicalGameStateV2['reality'], 'autoGather'>
   >
   readonly quantum: DeepReadonly<
     Pick<
       CanonicalGameStateV1['quantum'],
       'divisionsPurchased' | 'unlocks'
     >
+    | Pick<
+      CanonicalGameStateV2['quantum'],
+      'divisionsPurchased' | 'unlocks'
+    >
   >
   readonly avocado: DeepReadonly<
     Pick<CanonicalGameStateV1['avocado'], 'unlocked'>
+    | Pick<CanonicalGameStateV2['avocado'], 'unlocked'>
   >
-  readonly timeline: DeepReadonly<TimelineProgression>
+  readonly timeline: DeepReadonly<
+    TimelineProgression |
+    Omit<CanonicalGameStateV2['timeline'], 'storedTimeAvailableSeconds' | 'storedTimeCapacitySeconds' | 'doubleTime'> & {
+      readonly doubleTime: Omit<CanonicalGameStateV2['timeline']['doubleTime'], 'bankSeconds'>
+    }
+  >
   readonly secretProgress: DeepReadonly<
-    CanonicalGameStateV1['secretProgress']
+    CanonicalGameStateV1['secretProgress'] | CanonicalGameStateV2['secretProgress']
   >
   readonly dream: DeepReadonly<
-    Omit<DreamState, 'resources' | 'strangeMatter'>
+    Omit<DreamState, 'resources' | 'strangeMatter'> | Omit<DreamStateV2, 'resources' | 'strangeMatter'>
   >
   readonly statistics: DeepReadonly<
-    CanonicalGameStateV1['statistics']
+    FrontendStatisticsProgression
   >
 }
 
@@ -528,6 +607,10 @@ export interface FrontendQuantumLeapPreview {
   readonly branch: 'reset' | 'entanglement' | null
   readonly artifactSkillPoints: bigint | null
   readonly definitionGap: string | null
+  /** Exact backend quote values. Present on the native V2 read model. */
+  readonly requestedShards?: bigint | GameDecimal
+  readonly infinityPointsConsumed?: bigint | GameDecimal
+  readonly infinityPointsRemainder?: bigint | GameDecimal
 }
 
 export interface FrontendMegaStructurePurchasePreview {
@@ -542,7 +625,10 @@ export interface FrontendMegaStructurePurchasePreview {
 export interface FrontendResearchCatalogPreview {
   readonly complete: boolean
   readonly issue: string | null
-  readonly purchases: readonly CanonicalResearchPurchasePreview[]
+  readonly purchases: readonly (
+    | CanonicalResearchPurchasePreview
+    | FrontendResearchCardPreview
+  )[]
   readonly cards: readonly FrontendResearchCardPreview[]
 }
 
@@ -561,10 +647,10 @@ export interface FrontendResearchCardPreview
   readonly maxed: boolean
   readonly automationActive: boolean
   readonly effectKind: 'percentage' | 'panel-lifetime-seconds'
-  readonly perLevelEffect: number
-  readonly currentEffect: number
-  readonly projectedEffect: number
-  readonly passiveProgress: number
+  readonly perLevelEffect: number | GameDecimal
+  readonly currentEffect: number | GameDecimal
+  readonly projectedEffect: number | GameDecimal
+  readonly passiveProgress: number | GameDecimal
 }
 
 export interface FrontendInfinityShopPreview {
@@ -581,6 +667,21 @@ export interface FrontendDreamPurchasePreview<
   readonly purchase: TPurchase
   readonly eligible: boolean
   readonly cost: bigint | GameDecimal
+  readonly code: string
+  /** Exact V2 purchase-mode quotes; absent only on the legacy V1 read model. */
+  readonly influenceQuotes?: readonly FrontendDreamInfluencePurchaseModePreview[]
+  /** Quote matching the mode the command will dispatch with. */
+  readonly selectedInfluenceQuote?: FrontendDreamInfluencePurchaseModePreview
+}
+
+export interface FrontendDreamInfluencePurchaseModePreview {
+  readonly requestedMode: V2PurchaseMode
+  readonly eligible: boolean
+  readonly batches: GameDecimal
+  readonly unitsGranted: GameDecimal
+  readonly totalCost: GameDecimal
+  readonly buyMaxBatchCap: GameDecimal | null
+  readonly reachedBuyMaxBatchCap: boolean
   readonly code: string
 }
 
@@ -651,7 +752,7 @@ export type FrontendDysonSwarmVisualizationFacts =
     }
   | {
       readonly phase: 'galaxy-group'
-      readonly galaxiesEngulfed: number
+      readonly galaxiesEngulfed: number | GameDecimal
       readonly completion: number
     }
 
@@ -661,7 +762,7 @@ export interface FrontendDysonPresentationFacts {
       | 'active-panels'
       | 'stars-surrounded'
       | 'galaxies-engulfed'
-    readonly value: number
+    readonly value: number | GameDecimal
   }
   readonly currentGoal:
     | {
@@ -698,14 +799,77 @@ export type FrontendDysonDerivedFacts =
       readonly issues: readonly DysonDerivationIssue[]
     }
 
+export interface FrontendBasicFacilityFactsV2 {
+  readonly facilityId: BasicDysonFacilityId
+  readonly ownership: {
+    readonly automatic: GameDecimal
+    readonly manual: GameDecimal
+    readonly total: GameDecimal
+  }
+  readonly production: {
+    readonly outputFacilityId: BasicDysonFacilityId | 'bots'
+    readonly perSecond: GameDecimal
+    readonly secondsPerUnit: number | null
+  }
+  readonly productionProgress: {
+    readonly visible: boolean
+    readonly normalized: number
+  }
+  readonly details: {
+    readonly baseProductionPerSecond: GameDecimal
+    readonly effectiveProducerCount: GameDecimal
+    readonly modifier: GameDecimal
+    readonly contributions?: readonly {
+      readonly sourceId: string
+      readonly displayRole: 'base' | 'producer-count' | 'modifier' | 'output-adjustments'
+      readonly operation: 'add' | 'subtract' | 'multiply' | 'power' | 'override' | 'clamp-min' | 'clamp-max'
+      readonly value: GameDecimal | number
+      readonly delta: GameDecimal | Readonly<{ readonly sign: -1; readonly magnitude: GameDecimal }>
+      readonly runningTotal: GameDecimal
+      readonly automaticManualTuple?: readonly [GameDecimal, GameDecimal]
+    }[]
+    readonly upstreamSources?: readonly {
+      readonly sourceFacilityId: CanonicalFacilityId
+      readonly contributionPerSecond: GameDecimal
+    }[]
+  }
+}
+
+export interface FrontendDysonDerivedFactsV2 {
+  readonly status: 'ready'
+  readonly value: {
+    readonly globals: {
+      readonly moneyMultiplier: GameDecimal
+      readonly scienceMultiplier: GameDecimal
+      readonly panelsPerSecond: GameDecimal
+      readonly panelLifetimeSeconds: GameDecimal
+    }
+    readonly rates: Readonly<Record<
+      'money' | 'science' | 'panels' | 'bots' | 'assembly_lines' |
+      'ai_managers' | 'servers' | 'data_centers' | 'planets' |
+      'matrioshka_brains' | 'birch_planets',
+      GameDecimal
+    >>
+    readonly presentation: Omit<FrontendDysonPresentationFacts, 'facilities'> & {
+      readonly facilities: Readonly<Record<BasicDysonFacilityId, FrontendBasicFacilityFactsV2>>
+    }
+  }
+}
+
 export interface FrontendRealityDerivedFacts {
   readonly status: RealityWorkerAdvanceStatus
-  readonly generationPerSecond: number
+  /** Exact canonical generation rate; presentation must not narrow this leaf. */
+  readonly generationPerSecond: number | GameDecimal
+  /**
+   * Bounded normalized rate used only to animate the current worker batch.
+   * This is the sole permitted narrowing of generationPerSecond.
+   */
+  readonly workerGenerationAnimationRatePerSecond: number
   /** Unity's full-bar fast-generation presentation is projected canonically. */
   readonly workerGenerationFillFraction: number
   readonly workerBatchSize: bigint
   /** Unity labels the active batch with the next consumed universe number. */
-  readonly nextUniverseDesignation: bigint
+  readonly nextUniverseDesignation: bigint | GameDecimal
   /** Bounded Unity WorkerFillPercent equivalent for presentation controls. */
   readonly workerBatchFillFraction: number
   /**
@@ -734,7 +898,7 @@ export interface FrontendDreamDerivedFacts {
    */
   readonly productionBasis: 'current-rate'
   readonly effectiveDoubleTimeMultiplier: number
-  readonly result: CanonicalDreamDerivedFactsResult
+  readonly result: CanonicalDreamDerivedFactsResult | Readonly<{ readonly ok: true; readonly value: DreamV2PresentationFacts }>
 }
 
 export type FrontendSimulationEra =
@@ -768,11 +932,11 @@ export interface FrontendSimulationsDerivedFacts {
   }
   /** Canonical live values needed by the era panels. */
   readonly live: {
-    readonly resources: DeepReadonly<DreamState['resources']>
-    readonly education: DeepReadonly<DreamState['education']>
+    readonly resources: DeepReadonly<DreamState['resources'] | DreamStateV2['resources']>
+    readonly education: DeepReadonly<DreamState['education'] | DreamStateV2['education']>
     readonly timers: DeepReadonly<DreamState['timers']>
-    readonly railgun: DeepReadonly<DreamState['railgun']>
-    readonly production: CanonicalDreamDerivedFactsResult
+    readonly railgun: DeepReadonly<DreamState['railgun'] | DreamStateV2['railgun']>
+    readonly production: CanonicalDreamDerivedFactsResult | Readonly<{ readonly ok: true; readonly value: DreamV2PresentationFacts }>
   }
   readonly resets: {
     readonly count: bigint
@@ -848,17 +1012,23 @@ export interface FrontendStoryDerivedFacts {
 }
 
 export interface FrontendGameplayDerivedFacts {
-  readonly dyson: FrontendDysonDerivedFacts
+  readonly dyson: FrontendDysonDerivedFacts | FrontendDysonDerivedFactsV2
   readonly dysonBotDistribution: {
     readonly workersFraction: number
     readonly scientistsFraction: number
   }
-  readonly infinity: InfinityProgressFacts
+  readonly infinity: InfinityProgressFacts | InfinityProgressFactsV2
   readonly dream: FrontendDreamDerivedFacts
   readonly simulations: FrontendSimulationsDerivedFacts
   readonly reality: FrontendRealityDerivedFacts
   readonly story: FrontendStoryDerivedFacts
-  readonly avocado: AvocadoMultiplierBreakdown
+  readonly avocado: AvocadoMultiplierBreakdown | Readonly<{
+    readonly infinityPoints: GameDecimal
+    readonly influence: GameDecimal
+    readonly strangeMatter: GameDecimal
+    readonly overflow: GameDecimal
+    readonly total: GameDecimal
+  }>
 }
 
 export interface FrontendDysonVisibility {
@@ -901,7 +1071,7 @@ export interface FrontendGameplayVisibility {
 export type FrontendTinkerRuntimeFacts =
   | {
       readonly status: 'ready'
-      readonly value: CanonicalTinkerUiFacts
+      readonly value: CanonicalTinkerUiFacts | CanonicalTinkerUiFactsV2
     }
   | {
       readonly status: 'unavailable'
@@ -920,8 +1090,9 @@ export interface FrontendGameplayPreviews {
     readonly basicFacilities: readonly (
       Omit<
         CanonicalBasicFacilityPurchasePreview,
-        'selectedQuantity' | 'affordableQuantity' | 'cost'
+        'selectedQuantity' | 'affordableQuantity' | 'cost' | 'status'
       > & {
+        readonly status: string
         readonly selectedQuantity: bigint | GameDecimal
         readonly affordableQuantity: bigint | GameDecimal
         readonly cost: number | GameDecimal
@@ -946,7 +1117,7 @@ export interface FrontendGameplayPreviews {
     readonly upgrades: readonly FrontendRealityUpgradePreview[]
     readonly gatherInfluence: {
       readonly eligible: boolean
-      readonly amount: bigint
+      readonly amount: bigint | GameDecimal
       readonly code: string
     }
   }
@@ -1155,6 +1326,27 @@ export function selectFrontendGameplaySnapshot(
   }, sourceOwnership)
 }
 
+/** State-independent readiness used by the native V2 frontend selector. */
+export function selectFrontendReadinessConstants(
+  runtimeRequirements: FrontendCommandRequirementReadiness = {},
+): DeepReadonly<Pick<FrontendGameplaySnapshot, 'commands' | 'definitionCoverage' | 'persistence'>> {
+  const definitionCoverage = inspectFrontendDefinitionCoverage()
+  return deepFreeze({
+    commands: selectFrontendCommandAvailability({
+      ...runtimeRequirements,
+      'compatibility-tuning': true,
+      'quantum-leap-port': true,
+      'stored-time-cheater-carrier': true,
+    }, definitionCoverage),
+    definitionCoverage,
+    persistence: {
+      mappingCoverageComplete: mappingCoverageManifest.coverageComplete,
+      canonicalWriteAllowed: mappingCoverageManifest.releaseCanonicalWriteAllowed,
+      unmatchedWritePolicy: mappingCoverageManifest.unmatchedWritePolicy,
+    },
+  })
+}
+
 function selectGameplayVisibility(
   state: CanonicalGameStateV1,
 ): FrontendGameplayVisibility {
@@ -1308,7 +1500,7 @@ function selectResources(
   derived: Readonly<FrontendGameplayDerivedFacts>,
 ): FrontendCanonicalResources {
   const allocation =
-    derived.dyson.status === 'ready'
+    derived.dyson.status === 'ready' && 'allocation' in derived.dyson.value
       ? derived.dyson.value.allocation
       : state.dyson
   return {
@@ -1535,6 +1727,17 @@ function selectDerivedFacts(
     reality: {
       status: reality.status,
       generationPerSecond: reality.generationPerSecond,
+      workerGenerationAnimationRatePerSecond:
+        reality.status === 'success'
+          ? Math.min(
+              Number.MAX_VALUE,
+              Math.max(
+                0,
+                reality.generationPerSecond /
+                  Math.max(1, Number(context.realityWorkerTuning.workerBatchSize)),
+              ),
+            )
+          : 0,
       workerGenerationFillFraction:
         reality.status === 'success'
           ? reality.generationPerSecond >= 10
@@ -2112,7 +2315,7 @@ function selectRuntimeFacts(
     storedTimeCheater: context.storedTimeCheater,
     selectedSkillPresetSlot: context.selectedSkillPresetSlot,
     tinker:
-      derived.dyson.status === 'ready'
+      derived.dyson.status === 'ready' && 'auxiliary' in derived.dyson.value
         ? {
             status: 'ready',
             value: selectCanonicalTinkerUiFacts(
@@ -2123,7 +2326,9 @@ function selectRuntimeFacts(
           }
         : {
             status: 'unavailable',
-            issues: derived.dyson.issues,
+            issues: derived.dyson.status === 'unavailable'
+              ? derived.dyson.issues
+              : [],
           },
   }
 }

@@ -7,15 +7,18 @@ import type {
   CanonicalGameStateV2,
   SkillRuntimeStateV2,
 } from '../game-state/typesV2'
+import { gameDecimalFromNumber } from '../math/gameDecimal'
 import { prepareIdb1Save } from '../save/prepare'
 import {
   advanceCanonicalSkillTimersV2,
   clearedCanonicalSkillRuntimeV2,
   panelWarrantyLifetimeAdditionV2,
   previewAddCanonicalSkillToPresetV2,
+  previewCanonicalSkillCatalogV2,
   previewRemoveCanonicalSkillFromPresetV2,
   productionScalingThresholdV2,
   purchaseCanonicalSkillV2,
+  recalculateCanonicalSkillPointsV2,
   refundCanonicalSkillV2,
   resetCanonicalSkillsV2,
   runCanonicalSkillAutoAssignmentV2,
@@ -68,6 +71,10 @@ function stateWithSkills(
   )
   return cloneCanonicalGameStateV2({
     ...baseState,
+    infinity: {
+      ...baseState.infinity,
+      breakTarget: gameDecimalFromNumber(1),
+    },
     meta: { ...baseState.meta, firstInfinityComplete: true },
     quantum: {
       ...baseState.quantum,
@@ -91,6 +98,18 @@ function stateWithSkills(
 }
 
 describe('exact Canonical Skill V2 transactions', () => {
+  test('projects the complete catalog through the same V2 planners', () => {
+    const preview = previewCanonicalSkillCatalogV2(stateWithSkills([], 10n))
+    expect(preview).toMatchObject({ complete: true, definitionGap: null })
+    expect(preview.skills).toHaveLength(104)
+    expect(preview.skills.find(({ visualState }) => visualState === 'root')).toMatchObject({
+      visible: true,
+      unlocked: true,
+      visualState: 'root',
+      purchase: { eligible: true },
+    })
+    expect(Object.isFrozen(preview.skills)).toBe(true)
+  })
   test('atomically purchases a dependency closure using exact bigint points', () => {
     const state = stateWithSkills([], 2n)
     const purchased = purchaseCanonicalSkillV2(state, 'assemblyLineTree')
@@ -126,6 +145,22 @@ describe('exact Canonical Skill V2 transactions', () => {
     expect(refunded.accepted).toBe(true)
     if (!refunded.accepted) return
     expect(refunded.state.skills.points).toBe(hugePoints)
+  })
+
+  test('recalculates the Unity repair balance from canonical V2 sources and owned costs', () => {
+    const source = stateWithSkills(['startHereTree'], 99n)
+    const prepared = cloneCanonicalGameStateV2({
+      ...source,
+      dyson: { ...source.dyson, goalStage: 3n },
+      infinity: { ...source.infinity, permanentSkillPoints: 4n },
+    })
+
+    const result = recalculateCanonicalSkillPointsV2(prepared)
+
+    expect(result).toMatchObject({ accepted: true, changed: true, code: 'recalculated' })
+    if (!result.accepted) return
+    expect(result.state.skills.points).toBe(6n)
+    expect(result.state.skills.byId.startHereTree!.owned).toBe(true)
   })
 
   test('hardens first-Infinity and Quantum fragment unlocks', () => {

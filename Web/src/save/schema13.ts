@@ -9,7 +9,10 @@ import {
   isIntegerGameDecimal,
   type GameDecimal,
 } from '../math/gameDecimal'
-import { cloneCanonicalGameStateV2 } from '../game-state/cloneV2'
+import {
+  admitValidatedCanonicalGameStateV2,
+  registerCanonicalGameStateValidationAuthorityV2,
+} from '../game-state/cloneV2'
 import {
   canonicalDreamTimerKeySet,
   canonicalResearchKeySet,
@@ -23,6 +26,7 @@ import type { CanonicalGameStateV2 } from '../game-state/typesV2'
 import { validateCanonicalGameStateV2 } from '../game-state/validateV2'
 import {
   cloneCanonicalRuntimeSidecarV2,
+  isValidatedCanonicalRuntimeSidecarV2,
   type CanonicalRuntimeSidecarV2,
 } from '../game-state/runtimeV2'
 import { DYSON_TUNING_PROFILE_IDS } from '../game-state/dysonTuningV2'
@@ -40,6 +44,8 @@ export const SCHEMA13_WEB_SAVE_PREFIX = 'IDSWEB1:' as const
 
 const GZIP_INPUT_CHUNK_BYTES = 64
 const MAXIMUM_GZIP_CALLBACK_BYTES = 128 * 1024
+const STATE_VALIDATION_AUTHORITY =
+  registerCanonicalGameStateValidationAuthorityV2()
 
 export const SCHEMA13_CODEC_LIMITS = Object.freeze({
   suppliedTextBytes: DEFAULT_SAVE_IMPORT_LIMITS.suppliedTextBytes,
@@ -164,6 +170,7 @@ type SchemaNode =
   | Readonly<{
       kind: 'object'
       fields: readonly SchemaField[]
+      allowedNames: ReadonlySet<string>
       inventoryWildcard?: boolean
     }>
 
@@ -175,6 +182,7 @@ interface SchemaField {
 interface CodecBudget {
   containers: number
   entries: number
+  seen?: Set<object>
 }
 
 type CodecDirection = 'encode' | 'decode'
@@ -198,9 +206,11 @@ function objectNode(
   fields: readonly SchemaField[],
   inventoryWildcard = false,
 ): SchemaNode {
+  const frozenFields = Object.freeze([...fields])
   return Object.freeze({
     kind: 'object',
-    fields: Object.freeze([...fields]),
+    fields: frozenFields,
+    allowedNames: new Set(frozenFields.map((entry) => entry.name)),
     inventoryWildcard,
   })
 }
@@ -739,43 +749,60 @@ export function encodeSchema13WebSave(
     'savedAtUtc',
     '$.source',
   )
-  const state = cloneCanonicalGameStateV2(
-    requireDataProperty(sourceProperties, 'state', '$.source') as
-      Readonly<CanonicalGameStateV2>,
-  )
-  const runtime = cloneCanonicalRuntimeSidecarV2(
-    requireDataProperty(sourceProperties, 'runtime', '$.source') as
-      Readonly<CanonicalRuntimeSidecarV2>,
-  )
+  const suppliedState = requireDataProperty(
+    sourceProperties,
+    'state',
+    '$.source',
+  ) as Readonly<CanonicalGameStateV2>
+  const suppliedRuntime = requireDataProperty(
+    sourceProperties,
+    'runtime',
+    '$.source',
+  ) as Readonly<CanonicalRuntimeSidecarV2>
+  const runtime = isValidatedCanonicalRuntimeSidecarV2(suppliedRuntime)
+    ? suppliedRuntime
+    : cloneCanonicalRuntimeSidecarV2(suppliedRuntime)
   assertCanonicalUtcTimestamp(savedAtUtc as string)
-  const stateSource = {
-    meta: state.meta,
-    dyson: state.dyson,
-    infinity: state.infinity,
-    skills: state.skills,
-    research: state.research,
-    reality: state.reality,
-    quantum: state.quantum,
-    avocado: state.avocado,
-    timeline: state.timeline,
-    secretProgress: state.secretProgress,
-    dream: state.dream,
-    statistics: state.statistics,
+  const budget: CodecBudget = {
+    containers: 0,
+    entries: 0,
+    seen: new Set<object>(),
   }
-  const dto = transformBySchema(
-    {
-      schemaVersion: SCHEMA13_WEB_SAVE_SCHEMA,
-      modelVersion: SCHEMA13_GAME_MODEL_VERSION,
-      savedAtUtc,
-      state: stateSource,
-      runtime,
-    },
-    envelopeNode,
-    '$',
+  const stateProperties = requireDataProperties(suppliedState, '$.source.state')
+  const stateFields = (stateNode as Extract<SchemaNode, { kind: 'object' }>).fields
+  const stateSource = Object.fromEntries(stateFields.map((entry) => [
+    entry.name,
+    requireDataProperty(stateProperties, entry.name, '$.source.state'),
+  ]))
+  const encodedState = transformBySchema(
+    stateSource,
+    stateNode,
+    '$.state',
     'encode',
-    { containers: 0, entries: 0 },
+    budget,
     0,
-  ) as WebSaveDtoV13
+  ) as WebSaveStateDtoV13
+  // Persistence is a stricter trust boundary than the runtime's structural-
+  // sharing marker. Runtime validation authorities are intentionally usable by
+  // hot-path owners and therefore must never authorize a durable write by
+  // identity alone. Validate the exact supplied graph on every encode; the
+  // production checkpoint path already performs this work in its worker.
+  assertValidCanonicalState(suppliedState)
+  const encodedRuntime = transformBySchema(
+    runtime,
+    runtimeNode,
+    '$.runtime',
+    'encode',
+    budget,
+    0,
+  ) as WebSaveRuntimeDtoV13
+  const dto: WebSaveDtoV13 = {
+    schemaVersion: SCHEMA13_WEB_SAVE_SCHEMA,
+    modelVersion: SCHEMA13_GAME_MODEL_VERSION,
+    savedAtUtc: savedAtUtc as string,
+    state: encodedState,
+    runtime: encodedRuntime,
+  }
   const json = JSON.stringify(dto)
   const jsonBytes = strToU8(json)
   if (jsonBytes.byteLength > SCHEMA13_CODEC_LIMITS.inflatedJsonBytes) {
@@ -837,16 +864,20 @@ export function decodeSchema13WebSave(
     runtime: CanonicalRuntimeSidecarV2
   }>
   assertCanonicalUtcTimestamp(decoded.savedAtUtc)
-  const decodedState = {
+  const decodedState = Object.freeze({
     modelVersion: SCHEMA13_GAME_MODEL_VERSION,
     ...decoded.state,
-  } satisfies CanonicalGameStateV2
+  } satisfies CanonicalGameStateV2)
   assertValidCanonicalState(decodedState)
+  admitValidatedCanonicalGameStateV2(
+    STATE_VALIDATION_AUTHORITY,
+    decodedState,
+  )
   return Object.freeze({
     schemaVersion: SCHEMA13_WEB_SAVE_SCHEMA,
     modelVersion: SCHEMA13_GAME_MODEL_VERSION,
     savedAtUtc: decoded.savedAtUtc,
-    state: cloneCanonicalGameStateV2(decodedState),
+    state: decodedState,
     runtime: cloneCanonicalRuntimeSidecarV2(decoded.runtime),
   })
 }
@@ -1026,11 +1057,12 @@ function transformBySchema(
       return value
     case 'array': {
       const entries = requireDataArray(value, path)
+      registerContainerValue(entries, budget, path, direction)
       if (node.length !== undefined && entries.length !== node.length) {
         throw new TypeError(`${path} has an invalid array length.`)
       }
       consumeContainerBudget(entries.length, budget)
-      return entries.map((entry, index) =>
+      const output = entries.map((entry, index) =>
         transformBySchema(
           entry,
           node.entry,
@@ -1040,14 +1072,16 @@ function transformBySchema(
           depth + 1,
         ),
       )
+      return direction === 'decode' ? Object.freeze(output) : output
     }
     case 'tuple': {
       const values = requireDataArray(value, path)
+      registerContainerValue(values, budget, path, direction)
       if (values.length !== node.entries.length) {
         throw new TypeError(`${path} must be a declared tuple.`)
       }
       consumeContainerBudget(values.length, budget)
-      return node.entries.map((entry, index) =>
+      const output = node.entries.map((entry, index) =>
         transformBySchema(
           values[index],
           entry,
@@ -1057,15 +1091,16 @@ function transformBySchema(
           depth + 1,
         ),
       )
+      return direction === 'decode' ? Object.freeze(output) : output
     }
     case 'object': {
       const properties = requireDataProperties(value, path)
+      registerContainerValue(value as object, budget, path, direction)
       const actualKeys = Object.keys(properties)
       if (actualKeys.some(isPrototypePollutingKey)) {
         throw new TypeError(`${path} contains a forbidden object key.`)
       }
-      const allowed = new Set(node.fields.map((entry) => entry.name))
-      if (actualKeys.some((key) => !allowed.has(key))) {
+      if (actualKeys.some((key) => !node.allowedNames.has(key))) {
         throw new TypeError(`${path} contains undeclared fields.`)
       }
       const output: Record<string, unknown> = {}
@@ -1080,7 +1115,7 @@ function transformBySchema(
           depth + 1,
         )
       }
-      return output
+      return direction === 'decode' ? Object.freeze(output) : output
     }
   }
 }
@@ -1243,6 +1278,19 @@ function consumeContainerBudget(
   }
 }
 
+function registerContainerValue(
+  value: object,
+  budget: CodecBudget,
+  path: string,
+  direction: CodecDirection,
+): void {
+  if (direction !== 'encode' || budget.seen === undefined) return
+  if (budget.seen.has(value)) {
+    throw new TypeError(`${path} must be an unaliased acyclic tree.`)
+  }
+  budget.seen.add(value)
+}
+
 function assertCanonicalUtcTimestamp(value: string): void {
   assertBoundedString(value, '$.savedAtUtc')
   const milliseconds = Date.parse(value)
@@ -1359,11 +1407,17 @@ function parseBoundedJson(text: string): unknown {
 
   function parseString(): string {
     const start = index
+    let containsEscape = false
     index += 1
     while (index < text.length) {
       const code = text.charCodeAt(index)
       if (text[index] === '"') {
         index += 1
+        if (!containsEscape) {
+          const value = text.slice(start + 1, index - 1)
+          assertBoundedString(value, 'Schema 13 JSON string')
+          return value
+        }
         let value: unknown
         try {
           value = JSON.parse(text.slice(start, index))
@@ -1374,6 +1428,7 @@ function parseBoundedJson(text: string): unknown {
         return value
       }
       if (text[index] === '\\') {
+        containsEscape = true
         index += 2
         continue
       }

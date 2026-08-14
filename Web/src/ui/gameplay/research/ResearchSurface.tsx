@@ -20,7 +20,12 @@ import type {
   CanonicalSkillPresetAutomationSlot,
   SkillPresetState,
 } from '../../../game-state/types'
-import { isGameDecimal, isZeroGameDecimal } from '../../../math/gameDecimal'
+import {
+  gameDecimalToNumberChecked,
+  isGameDecimal,
+  isZeroGameDecimal,
+} from '../../../math/gameDecimal'
+import { comparePresentationNumeric } from '../../presentationNumeric'
 import researchCostSymbolSrc from '../../assets/symbol-research-cost.png'
 import scienceSymbolSrc from '../../assets/symbol-science.png'
 import {
@@ -84,7 +89,7 @@ export interface ResearchSurfaceProps {
   readonly locale: EnabledLocale
   readonly cards: readonly FrontendResearchCardPreview[]
   readonly researchers: NumericValue
-  readonly sciencePerSecond: number
+  readonly sciencePerSecond: NumericValue
   readonly buyMode: ResearchBuyMode
   readonly roundedBulkBuy: boolean
   readonly presets: readonly SkillPresetState[]
@@ -558,11 +563,17 @@ function effectText(
   intl: IntlShape,
 ): ReactNode {
   if (card.effectKind === 'panel-lifetime-seconds') {
+    const seconds = isGameDecimal(card.perLevelEffect)
+      ? gameDecimalToNumberChecked(card.perLevelEffect, {
+          minimum: 0,
+          maximum: 4,
+        })
+      : card.perLevelEffect
     return (
       <FormattedMessage
         {...messages.lifetimeEffect}
         values={{
-          seconds: formatNumber(locale, card.perLevelEffect, {
+          seconds: formatNumber(locale, seconds, {
             maximumFractionDigits: 2,
           }),
           value: researchValue,
@@ -588,7 +599,7 @@ function effectText(
     )
   }
   const current = formatPercentPoints(locale, card.currentEffect)
-  if (card.projectedEffect !== card.currentEffect) {
+  if (comparePresentationNumeric(card.projectedEffect, card.currentEffect) !== 0) {
     const projected = formatPercentPoints(
       locale,
       card.projectedEffect,
@@ -634,11 +645,11 @@ function researchValue(chunks: ReactNode): ReactNode {
 
 function formatPercentPoints(
   locale: EnabledLocale,
-  value: number,
+  value: NumericValue,
 ): string {
-  return formatNumber(locale, value, {
-    maximumFractionDigits: 2,
-  })
+  return isGameDecimal(value)
+    ? formatGameNumber(locale, value)
+    : formatNumber(locale, value, { maximumFractionDigits: 2 })
 }
 
 function nameMessage(researchId: string): MessageDescriptor {

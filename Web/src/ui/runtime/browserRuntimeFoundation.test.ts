@@ -134,19 +134,19 @@ describe('browser runtime foundation composition', () => {
     await expect(
       development?.apply({
         kind: 'add-quantum-shards',
-        amount: 100_000n,
+        amount: gameDecimalFromNumber(100_000),
       }),
     ).resolves.toMatchObject({ applied: true })
     await expect(
       development?.apply({
         kind: 'add-strange-matter',
-        amount: 500_000n,
+        amount: gameDecimalFromNumber(500_000),
       }),
     ).resolves.toMatchObject({ applied: true })
     await expect(
       development?.apply({
         kind: 'add-influence',
-        amount: 1_000n,
+        amount: gameDecimalFromNumber(1_000),
       }),
     ).resolves.toMatchObject({ applied: true })
     await expect(

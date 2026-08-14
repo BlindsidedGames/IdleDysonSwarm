@@ -8,7 +8,7 @@ import {
 } from '../math/gameDecimal'
 import type { CanonicalTinkerRuntimeState } from './canonicalTinker'
 
-const MINIMUM_TINKER_COOLDOWN_SECONDS = 0.01
+export const MINIMUM_TINKER_COOLDOWN_SECONDS = 0.01
 const STARTING_PROGRESS_SECONDS = 0.1
 const MANUAL_LABOUR_COOLDOWN_SECONDS = 0.2
 const BOT_MINIMUM_COOLDOWN_SECONDS = 0.5
@@ -17,6 +17,22 @@ const TINKER_TIME_EPSILON_SECONDS = 1e-12
 export interface CanonicalTinkerStatsV2 {
   readonly assemblyYield: GameDecimal
   readonly cooldownSeconds: number
+}
+
+export interface CanonicalTinkerUiFactsV2 {
+  readonly runtime: Readonly<CanonicalTinkerRuntimeState>
+  readonly stats: Readonly<{
+    readonly botYield: GameDecimal
+    readonly assemblyYield: GameDecimal
+    readonly cooldownSeconds: number
+  }>
+  readonly presentationMode:
+    | 'default'
+    | 'manual-labour-blocked'
+    | 'manual-labour'
+  readonly canStart: boolean
+  readonly eligibility: 'available' | 'already-running'
+  readonly timeToCompletionSeconds: number | null
 }
 
 export interface CanonicalTinkerAdvanceResultV2 {
@@ -35,6 +51,41 @@ export function deriveCanonicalTinkerStatsV2(
       MINIMUM_TINKER_COOLDOWN_SECONDS,
       state.dyson.manualCreationIntervalSeconds,
     ),
+  })
+}
+
+/** Selects production V2 Tinker facts without projecting durable state to V1. */
+export function selectCanonicalTinkerUiFactsV2(
+  state: Readonly<CanonicalGameStateV2>,
+  runtime: Readonly<CanonicalTinkerRuntimeState>,
+  assemblyYield: GameDecimal,
+): Readonly<CanonicalTinkerUiFactsV2> {
+  const initialStats = deriveCanonicalTinkerStatsV2(state, assemblyYield)
+  const initial = synchronize(state, runtime, initialStats)
+  const stats = deriveCanonicalTinkerStatsV2(initial.state, assemblyYield)
+  const synchronized = synchronize(initial.state, initial.runtime, stats)
+  const canStart = !synchronized.runtime.running
+  return Object.freeze({
+    runtime: synchronized.runtime,
+    stats: Object.freeze({
+      botYield: gameDecimalFromNumber(1),
+      assemblyYield,
+      cooldownSeconds: stats.cooldownSeconds,
+    }),
+    presentationMode: synchronized.runtime.effectiveManualLabour
+      ? 'manual-labour'
+      : state.skills.byId.manualLabour?.owned === true
+        ? 'manual-labour-blocked'
+        : 'default',
+    canStart,
+    eligibility: canStart ? 'available' : 'already-running',
+    timeToCompletionSeconds: synchronized.runtime.running
+      ? Math.max(
+          0,
+          synchronized.runtime.cooldownSeconds -
+            synchronized.runtime.elapsedSeconds,
+        )
+      : null,
   })
 }
 
@@ -110,7 +161,10 @@ export function advanceCanonicalTinkerV2(
             ...candidate.dyson,
             bots: addGameDecimals(candidate.dyson.bots, gameDecimalFromNumber(1)),
             manualCreationIntervalSeconds: candidate.dyson.manualCreationIntervalSeconds >= 1
-              ? Math.max(0, candidate.dyson.manualCreationIntervalSeconds - 1)
+              ? Math.max(
+                  MINIMUM_TINKER_COOLDOWN_SECONDS,
+                  candidate.dyson.manualCreationIntervalSeconds - 1,
+                )
               : BOT_MINIMUM_COOLDOWN_SECONDS,
           },
     )

@@ -1420,6 +1420,9 @@ describe('frontend gameplay snapshot', () => {
     expect(snapshot.derived.reality).toEqual({
       status: expectedReality.status,
       generationPerSecond: expectedReality.generationPerSecond,
+      workerGenerationAnimationRatePerSecond:
+        expectedReality.generationPerSecond /
+        Number(context.realityWorkerTuning.workerBatchSize),
       workerGenerationFillFraction:
         expectedReality.generationPerSecond >= 10
           ? 1

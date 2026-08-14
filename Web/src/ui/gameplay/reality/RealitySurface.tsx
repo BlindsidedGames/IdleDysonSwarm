@@ -17,6 +17,10 @@ import type {
 import type {
   CanonicalPlayerCommand,
 } from '../../../application/canonicalPlayerCommands'
+import {
+  gameDecimalToBigIntChecked,
+  isGameDecimal,
+} from '../../../math/gameDecimal'
 import type {
   RealityUpgradeId,
 } from '../../../simulation/realityUpgrades'
@@ -174,9 +178,7 @@ export function RealitySurface({
       <header className="reality-surface__summary">
         <strong>
           {intl.formatMessage(messages.universeDesignation, {
-            value: formatNumber(locale, designation, {
-              maximumFractionDigits: 0,
-            }),
+            value: formatUniverseDesignation(locale, designation),
           })}
         </strong>
         <div className="reality-surface__balances">
@@ -257,8 +259,7 @@ export function RealitySurface({
                 value={batchProgress}
                 visualValue={visualBatchProgress}
                 normalizedRatePerSecond={
-                  derived.generationPerSecond /
-                  Math.max(1, Number(derived.workerBatchSize))
+                  derived.workerGenerationAnimationRatePerSecond
                 }
                 active={!waitingForGather && batchProgress < 1}
                 wraps={derived.autoGatherEnabled}
@@ -394,6 +395,22 @@ const ARTIFACT_UPDATE_INTERVAL_MS =
 interface ArtifactAnimationFrame {
   readonly display: string
   readonly progress: number
+}
+
+function formatUniverseDesignation(
+  locale: EnabledLocale,
+  value: FrontendGameplayDerivedFacts['reality']['nextUniverseDesignation'],
+): string {
+  if (!isGameDecimal(value)) {
+    return formatNumber(locale, value, { maximumFractionDigits: 0 })
+  }
+  try {
+    return formatNumber(locale, gameDecimalToBigIntChecked(value), {
+      maximumFractionDigits: 0,
+    })
+  } catch {
+    return formatGameNumber(locale, value)
+  }
 }
 
 function useArtifactAnimation(

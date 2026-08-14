@@ -51,6 +51,9 @@ function stateWith(options: Readonly<{
     infinity: {
       ...baseState.infinity,
       secretsOfTheUniverse: options.sessionSecrets ?? options.secrets ?? 0n,
+      breakTarget: options.unlocks?.breakTheLoop === true
+        ? gameDecimalFromNumber(1)
+        : baseState.infinity.breakTarget,
     },
   })
 }
@@ -110,6 +113,16 @@ describe('Quantum V2 quotes and commits', () => {
     expect(gameDecimalToCanonicalString(result.state.quantum.lifetimeEarnedShards)).toBe('9e0')
     expect(result.state.quantum.unlocks.doubleInfinityPoints).toBe(true)
     expect(source.quantum.unlocks.doubleInfinityPoints).toBe(false)
+  })
+
+  test('initializes a positive reward target when Break The Loop is purchased', () => {
+    const source = stateWith({ available: '6', lifetime: '6' })
+    const quote = quoteQuantumUpgradeV2(source, 2, 'BreakTheLoop')
+    const result = commitQuantumUpgradeV2(quote, source, 2)
+
+    expect(result).toMatchObject({ accepted: true, purchased: true, changed: true })
+    expect(result.state.quantum.unlocks.breakTheLoop).toBe(true)
+    expect(gameDecimalToCanonicalString(result.state.infinity.breakTarget)).toBe('1e0')
   })
 
   test('applies exact caps and Division exponential costs', () => {

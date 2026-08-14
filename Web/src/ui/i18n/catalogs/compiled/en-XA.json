@@ -5305,6 +5305,32 @@
       "value": "]"
     }
   ],
+  "quantum.leap.entanglement-amounts": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 1,
+      "value": "consumed"
+    },
+    {
+      "type": 0,
+      "value": " ĪƤ ƈǿǿƞşŭŭḿḗḗḓ · "
+    },
+    {
+      "type": 1,
+      "value": "remainder"
+    },
+    {
+      "type": 0,
+      "value": " ĪƤ řḗḗḿȧȧīƞş"
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
   "quantum.leap.entanglement-description": [
     {
       "type": 0,

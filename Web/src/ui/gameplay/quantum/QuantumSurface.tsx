@@ -526,17 +526,15 @@ interface QuantumLeapCardProps {
   readonly dispatchPlayer: QuantumSurfaceProps['dispatchPlayer']
 }
 
-function QuantumLeapCard({ locale, availableInfinityPoints, preview, entangled, routeAvailable, dispatchPlayer }: QuantumLeapCardProps) {
+function QuantumLeapCard({ locale, preview, entangled, routeAvailable, dispatchPlayer }: QuantumLeapCardProps) {
   const intl = useIntl()
   const pendingRef = useRef(false)
   const [confirming, setConfirming] = useState(false)
   const [pending, setPending] = useState(false)
   const [failed, setFailed] = useState(false)
-  const reward = boundedPresentationWholeQuotient(
-    availableInfinityPoints,
-    QUANTUM_CONSTANTS.infinityPointsPerQuantumPoint,
-    9_007_199_254_740_991n,
-  )
+  const reward = preview.requestedShards ?? 0n
+  const consumed = preview.infinityPointsConsumed ?? 0n
+  const remainder = preview.infinityPointsRemainder ?? 0n
   const disabled = pending || !preview.eligible || !routeAvailable
 
   const leap = async () => {
@@ -561,6 +559,10 @@ function QuantumLeapCard({ locale, availableInfinityPoints, preview, entangled, 
       <div>
         <h2>{intl.formatMessage(messages.leap)}</h2>
         <p>{intl.formatMessage(entangled ? messages.leapEntanglementDescription : messages.leapResetDescription)}</p>
+        {entangled && <small>{intl.formatMessage(messages.leapEntanglementAmounts, {
+          consumed: formatGameNumber(locale, consumed),
+          remainder: formatGameNumber(locale, remainder),
+        })}</small>}
       </div>
       {confirming && !entangled ? (
         <div className="quantum-leap-card__confirm">
@@ -605,7 +607,7 @@ function QuantumShardAmount({ locale, value }: { readonly locale: EnabledLocale;
 
 function QuantumShardSentence({ locale, value, template }: {
   readonly locale: EnabledLocale
-  readonly value: bigint
+  readonly value: PresentationNumeric
   readonly template: string
 }) {
   const [before = '', rawAfter = ''] = template.split(QUANTUM_AMOUNT_MARKER)

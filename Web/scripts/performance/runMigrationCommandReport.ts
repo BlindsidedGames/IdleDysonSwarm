@@ -13,6 +13,7 @@ import type { V2GameRuntimeRepository } from '../../src/inspection/v2GameRuntime
 import {
   gameDecimalFromCanonicalString,
   gameDecimalFromNumber,
+  restoreGameDecimal,
 } from '../../src/math/gameDecimal'
 import { prepareIdb1Save } from '../../src/save/prepare'
 import { decodeSchema13WebSave, encodeSchema13WebSave } from '../../src/save/schema13'
@@ -48,6 +49,14 @@ const decimal = gameDecimalFromCanonicalString
 const v1 = fundedV1(hydrated.state)
 const v2 = fundedV2(migrated.state)
 const runtimeV2 = migrated.runtime
+const workerShapedSchema13Source = restoreTransferredGameDecimals(
+  structuredClone({
+    savedAtUtc: '2026-08-12T00:00:00.000Z',
+    state: v2,
+    runtime: runtimeV2,
+  }),
+)
+deepFreeze(workerShapedSchema13Source)
 const v1Options = Object.freeze({
   runtimeCarriers: Object.freeze({
     compatibilityTuning: hydrated.compatibilityTuning,
@@ -119,6 +128,11 @@ const codecScenarios = [
       state: v2,
       runtime: runtimeV2,
     })),
+    (encoded) => decodeSchema13WebSave(encoded),
+  ),
+  codecScenario(
+    'schema13-save-codec-worker-shaped',
+    () => encodeSchema13WebSave(workerShapedSchema13Source),
     (encoded) => decodeSchema13WebSave(encoded),
   ),
 ]
@@ -400,6 +414,30 @@ function assertAccepted(label: string, result: unknown): void {
       throw new Error(`${label} transition was rejected: ${String(transition.code)}`)
     }
   }
+}
+
+function deepFreeze<T>(value: T, seen = new WeakSet<object>()): T {
+  if (value === null || typeof value !== 'object' || seen.has(value)) return value
+  seen.add(value)
+  for (const child of Object.values(value)) deepFreeze(child, seen)
+  return Object.freeze(value)
+}
+
+function restoreTransferredGameDecimals<T>(value: T): T {
+  if (value === null || typeof value !== 'object') return value
+  const names = Object.getOwnPropertyNames(value).sort()
+  if (
+    names.length === 2 && names[0] === 'exponent' && names[1] === 'mantissa' &&
+    typeof (value as { mantissa?: unknown }).mantissa === 'number' &&
+    typeof (value as { exponent?: unknown }).exponent === 'number'
+  ) {
+    return restoreGameDecimal(value) as T
+  }
+  for (const key of Object.keys(value)) {
+    const record = value as Record<string, unknown>
+    record[key] = restoreTransferredGameDecimals(record[key])
+  }
+  return value
 }
 
 function fundedV1(source: CanonicalGameStateV1): CanonicalGameStateV1 {

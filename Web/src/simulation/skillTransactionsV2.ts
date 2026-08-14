@@ -3,6 +3,10 @@ import type {
   SkillRuntimeStateV2,
 } from '../game-state/typesV2'
 import type { CanonicalSkillPresetSlot } from '../game-state/types'
+import type {
+  CanonicalSkillCatalogPreview,
+  CanonicalSkillVisualState,
+} from './canonicalSkillTransactions'
 import { validateCanonicalGameStateV2 } from '../game-state/validateV2'
 import {
   CANONICAL_ACTIVE_SKILL_TIMER_IDS_V2,
@@ -10,12 +14,15 @@ import {
   type CanonicalSkillCatalogV2,
   type CanonicalSkillDefinitionV2,
 } from './skillCatalogV2'
+import { addDiscrete } from './numeric'
+import { realityArtifactSkillPointsV2 } from './realityV2'
 
 export type CanonicalSkillTransactionCodeV2 =
   | 'purchased'
   | 'refunded'
   | 'reset'
   | 'auto-assigned'
+  | 'recalculated'
   | 'timers-advanced'
   | 'unchanged'
   | 'invalid-state'
@@ -65,6 +72,94 @@ interface PurchasePlanV2 {
   readonly reason: string
   readonly affectedSkillIds: readonly string[]
   readonly pointsRequired: bigint
+}
+
+/** Exact read-only Skill catalog projection backed by the same V2 planning
+ * helpers used by purchase/refund commands. */
+export function previewCanonicalSkillCatalogV2(
+  state: Readonly<CanonicalGameStateV2>,
+): Readonly<CanonicalSkillCatalogPreview> {
+  const catalog = canonicalSkillCatalogV2
+  const effectivelyNotRefundable = effectivelyNotRefundableSkillIdsV2(state, catalog)
+  const skills = catalog.skillIds.map((skillId) => {
+    const definition = catalog.byId[skillId]!
+    const runtime = state.skills.byId[skillId]!
+    const purchase = planPurchase(state, skillId, catalog)
+    const refund = previewRefundV2(state, definition, catalog)
+    const refundChanged = refund.eligible
+    return Object.freeze({
+      skillId,
+      cost: definition.cost,
+      owned: runtime.owned,
+      visible: isUnlocked(definition, state),
+      unlocked: isUnlocked(definition, state),
+      queued: state.skills.activeAutoAssignment.includes(skillId),
+      visualState: visualStateV2(definition, state, effectivelyNotRefundable),
+      fragment: definition.fragment,
+      intrinsicallyRefundable: definition.refundable,
+      requiredSkillIds: definition.required,
+      shadowRequiredSkillIds: definition.shadowRequired,
+      exclusiveWithSkillIds: definition.exclusiveWith,
+      purchase: Object.freeze({
+        eligible: purchase.accepted && purchase.affectedSkillIds.length > 0,
+        code: purchase.code,
+        affectedSkillIds: purchase.affectedSkillIds,
+        pointsRequired: purchase.pointsRequired,
+      }),
+      refund: Object.freeze({
+        eligible: refundChanged,
+        code: refund.code,
+        affectedSkillIds: refund.affectedSkillIds,
+        pointsReturned: refund.pointsReturned,
+        fragmentsRemoved: refund.fragmentsRemoved,
+      }),
+    })
+  })
+  return Object.freeze({ complete: true, definitionGap: null, skills: Object.freeze(skills) })
+}
+
+/**
+ * Reconciles the spendable Skill balance from the same authored sources as
+ * Unity's developer repair: permanent points, Reality artifacts, and completed
+ * Dyson goals, less the catalog cost of every currently owned Skill. Debug,
+ * manual, and historical research grants are intentionally not inferred.
+ */
+export function recalculateCanonicalSkillPointsV2(
+  state: Readonly<CanonicalGameStateV2>,
+): CanonicalSkillTransactionResultV2 {
+  const invalid = invalidState(state)
+  if (invalid !== null) return invalid
+  const earned = addDiscrete(
+    addDiscrete(
+      state.infinity.permanentSkillPoints,
+      realityArtifactSkillPointsV2(state),
+    ),
+    state.dyson.goalStage,
+  )
+  let spent = 0n
+  for (const id of canonicalSkillCatalogV2.skillIds) {
+    if (!state.skills.byId[id]!.owned) continue
+    spent = addDiscrete(spent, canonicalSkillCatalogV2.byId[id]!.cost)
+  }
+  const points = earned > spent ? earned - spent : 0n
+  if (points === state.skills.points) {
+    return accepted(state, false, 'unchanged', [])
+  }
+  return accepted(
+    skillCandidate(state, { points }, canonicalSkillCatalogV2),
+    true,
+    'recalculated',
+    [],
+  )
+}
+
+function previewRefundV2(state:Readonly<CanonicalGameStateV2>,definition:Readonly<CanonicalSkillDefinitionV2>,catalog:Readonly<CanonicalSkillCatalogV2>){
+  if(!state.skills.byId[definition.id]!.owned)return Object.freeze({eligible:false,code:'not-owned',affectedSkillIds:Object.freeze([]),pointsReturned:0n,fragmentsRemoved:0n})
+  const affected=[...dependentIds(definition.id,catalog,state.skills.byId,true),definition.id]
+  if(affected.some(id=>!isRefundable(catalog.byId[id]!,state.skills.byId)))return Object.freeze({eligible:false,code:'not-refundable',affectedSkillIds:Object.freeze([]),pointsReturned:0n,fragmentsRemoved:0n})
+  const pointsReturned=affected.reduce((sum,id)=>sum+catalog.byId[id]!.cost,0n)
+  const fragmentsRemoved=affected.reduce((sum,id)=>sum+(catalog.byId[id]!.fragment?1n:0n),0n)
+  return Object.freeze({eligible:true,code:'refundable',affectedSkillIds:Object.freeze(affected),pointsReturned,fragmentsRemoved})
 }
 
 /**
@@ -455,6 +550,50 @@ function isRefundable(
   byId: CanonicalGameStateV2['skills']['byId'],
 ): boolean {
   return definition.refundable && !definition.unrefundableWith.some((id) => byId[id]!.owned)
+}
+
+function effectivelyNotRefundableSkillIdsV2(
+  state: Readonly<CanonicalGameStateV2>,
+  catalog: Readonly<CanonicalSkillCatalogV2>,
+): ReadonlySet<string> {
+  const result = new Set<string>()
+  for (const id of catalog.skillIds) {
+    const definition = catalog.byId[id]!
+    if (!definition.refundable || (state.skills.byId[id]!.owned &&
+      definition.unrefundableWith.some((other) => state.skills.byId[other]!.owned))) {
+      result.add(id)
+    }
+  }
+  for (const candidateId of catalog.skillIds) {
+    const candidate = catalog.byId[candidateId]!
+    if (candidate.refundable || !state.skills.byId[candidateId]!.owned) continue
+    const visited = new Set([candidateId])
+    const queue = [candidateId]
+    while (queue.length > 0) {
+      const current = queue.shift()!
+      for (const requiredId of catalog.byId[current]!.required) {
+        if (!visited.add(requiredId)) continue
+        if (state.skills.byId[requiredId]!.owned) result.add(requiredId)
+        queue.push(requiredId)
+      }
+    }
+  }
+  return result
+}
+
+function visualStateV2(
+  definition: Readonly<CanonicalSkillDefinitionV2>,
+  state: Readonly<CanonicalGameStateV2>,
+  effectivelyNotRefundable: ReadonlySet<string>,
+): CanonicalSkillVisualState {
+  if (definition.exclusiveWith.some((id) => state.skills.byId[id]!.owned)) return 'exclusive'
+  if (effectivelyNotRefundable.has(definition.id)) {
+    return state.skills.byId[definition.id]!.owned ? 'non-refundable-owned' : 'non-refundable'
+  }
+  if (state.skills.byId[definition.id]!.owned) return 'owned'
+  if (definition.fragment) return 'fragment'
+  if (definition.required.length === 0) return 'root'
+  return 'normal'
 }
 
 function dependentIds(

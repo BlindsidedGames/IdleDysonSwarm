@@ -219,6 +219,17 @@ function applyEffect(state: CanonicalGameStateV2, id: QuantumUpgradeIdV2, transa
   else if (id === 'Automation') {
     q.unlocks = { ...q.unlocks, automation: true }
     candidate = { ...candidate, infinity: { ...state.infinity, automationUnlocked: { research: true, bots: true } } }
+  } else if (id === 'BreakTheLoop') {
+    q.unlocks = { ...q.unlocks, breakTheLoop: true }
+    candidate = {
+      ...candidate,
+      infinity: {
+        ...state.infinity,
+        breakTarget: compareGameDecimals(state.infinity.breakTarget, GAME_DECIMAL_ONE) < 0
+          ? GAME_DECIMAL_ONE
+          : state.infinity.breakTarget,
+      },
+    }
   } else {
     const key = unlockKey(id)
     if (key !== null) q.unlocks = { ...q.unlocks, [key]: true }

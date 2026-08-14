@@ -9,6 +9,50 @@ Original prompt: Create a separate `Idle Dyson Swarm Web` project beside the Uni
 - Treat the existing simulation and performance work as complete for the
   current stage. Revisit discretionary tuning after the full port is complete.
 
+## 2026-08-13 Break Infinity performance pass
+
+- Optimized schema-13 persistence without changing deterministic bytes or
+  weakening bounded hostile-import validation. Final medians: encode 2.877 ms,
+  decode 4.329 ms, checkpoint 3.129 ms, fresh controller reload 65.066 ms.
+- Removed the production live-state V2-to-V1 frontend projection. Native V2
+  selectors now own progression, Dyson, Dream/Simulations, Infinity, Reality,
+  Avocato, statistics, Tinker, Story, visibility, and dynamic previews.
+- Added exact no-time Dream presentation facts, native 104-node Skill catalog
+  previews, exact signed large-number facility contribution rows, and live
+  permanent Double-IP authority threading.
+- Command plus projection now measures 6.172 ms median versus 7.352 ms before
+  the pass. Boot JavaScript is 337.31 KiB gzip versus 409.58 KiB before it.
+- Validation: TypeScript, lint, production and performance builds, 2,270 tests
+  (2,267 sandbox-safe plus three loopback browser certifications), interaction
+  smoke budgets, and final 1280x720 production screenshot all pass.
+- Remaining performance follow-up: split dormant boot code and continue
+  measuring with mature saves. The deterministic V1 metadata bootstrap has now
+  been removed; production V2 snapshots use native static metadata and native
+  route-demanded previews. V1 remains only for old-save compatibility and the
+  explicit developer/test projection.
+
+## 2026-08-14 V2 numeric parity completion pass
+
+- Replaced the accidental 42-secret Reality, Simulations, Story and debug gates
+  with the shared canonical maximum of 27 while leaving the intentional
+  42-Infinity-Point Quantum prerequisite unchanged.
+- Propagated persisted Stored Time integrity state into V2 warnings, previews,
+  cache identity and command enforcement; compromised saves cannot spend or
+  expand Stored Time before the worker starts.
+- Made Dream influence purchases authoritative for buy 1/10/50/100/max,
+  including exact units, total cost and the authored 1,000-batch Buy Max cap.
+- Made Quantum Entanglement previews carry exact requested shards, consumed
+  Infinity Points and remainder, including multi-shard Break Reality outcomes
+  beyond `1e1000`.
+- Kept Reality generation and Research effect presentation in `GameDecimal`,
+  with separate explicitly bounded animation values, and expanded exhaustive
+  numeric DTO/field-manifest coverage.
+- Removed fabricated Dream timer multiplier detail when native V2 facts do not
+  expose its components, and replaced the remaining Quantum navigation
+  `Number(...)` ratio with an exact bounded decimal fraction.
+- Removed the obsolete production V1 preview bridge and its selector; native V2
+  route demand now composes Reality with Simulations and Quantum with Avocato.
+
 ## Progress
 
 - Created the React + TypeScript + Vite scaffold.

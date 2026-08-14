@@ -1255,6 +1255,10 @@
     "defaultMessage": "Engage Quantum Leap",
     "description": "Ordinary Quantum Leap button."
   },
+  "quantum.leap.entanglement-amounts": {
+    "defaultMessage": "{consumed} IP consumed · {remainder} IP remains",
+    "description": "Exact Infinity Point consumption and remainder for Quantum Entanglement."
+  },
   "quantum.leap.entanglement-description": {
     "defaultMessage": "Convert every complete group of 42 unspent Infinity Points without resetting Infinity.",
     "description": "Unity Quantum Entanglement consequence."

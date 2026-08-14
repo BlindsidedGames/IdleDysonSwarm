@@ -34,6 +34,7 @@ import {
   LOCALE_REGISTRY,
   type EnabledLocale,
 } from '../../i18n/localeRegistry'
+import { boundedPresentationFraction } from '../../presentationNumeric'
 import {
   useBrowserRuntimeSnapshot,
   type BrowserUiRuntimeFoundation,
@@ -801,10 +802,9 @@ export function ReadyDysonSlice({
                     : {
                         disabled: true,
                         progress: {
-                          fraction: Math.min(
-                            1,
-                            Number(gameplay.resources.infinity.points) /
-                              42,
+                          fraction: boundedPresentationFraction(
+                            gameplay.resources.infinity.points,
+                            42,
                           ),
                           label: intl.formatMessage(
                             messages.quantumProgress,

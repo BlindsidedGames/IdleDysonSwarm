@@ -2,15 +2,18 @@ import {
   GAME_DECIMAL_ONE,
   GAME_DECIMAL_TEN,
   GAME_DECIMAL_ZERO,
+  addGameDecimals,
   ceilGameDecimal,
   cloneGameDecimal,
   compareGameDecimals,
   divideGameDecimals,
   gameDecimalFromBigInt,
   gameDecimalFromCanonicalString,
+  gameDecimalToNumberChecked,
   isGameDecimal,
   isIntegerGameDecimal,
   isZeroGameDecimal,
+  logGameDecimal,
   multiplyGameDecimals,
   powGameDecimal,
   subtractGameDecimals,
@@ -46,6 +49,37 @@ export interface InfinityBoundaryEvaluationV2 {
   readonly requiredBots: GameDecimal
   readonly sourceRevision: number
 }
+
+interface InfinityProgressFactsV2Base {
+  currentReward: GameDecimal
+  progressFraction: number
+  resetThresholdBots: GameDecimal
+  botsRemainingToReset: GameDecimal
+  showRealityWarning: boolean
+}
+export type InfinityProgressFactsV2 = Readonly<
+  | InfinityProgressFactsV2Base & {
+    mode: 'ordinary'
+    navigationReward: null
+    currentRewardThresholdBots: null
+    nextRewardThresholdBots: null
+    botsRemainingToNextReward: null
+    breakTargetProgress: null
+  }
+  | InfinityProgressFactsV2Base & {
+    mode: 'break'
+    navigationReward: GameDecimal
+    currentRewardThresholdBots: GameDecimal
+    nextRewardThresholdBots: GameDecimal
+    botsRemainingToNextReward: GameDecimal
+    breakTargetProgress: Readonly<{
+    targetReward: GameDecimal
+    currentReward: GameDecimal
+    fraction: number
+    }>
+    showRealityWarning: false
+  }
+>
 
 const issuedRewardAuthorities = new WeakSet<object>()
 const boundaryDescriptors = new WeakMap<InfinityBoundaryEvaluationV2, Readonly<{
@@ -167,6 +201,108 @@ function botsRequiredForInfinityRewardV2(
     INFINITY_TUNING_V2.rewardCostRatio,
     baseReward,
   )
+}
+
+/** Decimal-native presentation facts for the production V2 frontend. */
+export function projectInfinityProgressV2(
+  state: Readonly<CanonicalGameStateV2>,
+  authority: Readonly<InfinityRewardAuthorityV2>,
+): InfinityProgressFactsV2 {
+  requireIssuedRewardAuthority(authority)
+  const currentReward = infinityRewardForBotsV2(
+    state.dyson.bots,
+    state.quantum.divisionsPurchased,
+    authority,
+    state.quantum.unlocks.doubleInfinityPoints,
+  )
+  const target = state.quantum.unlocks.breakTheLoop
+    ? state.infinity.breakTarget
+    : GAME_DECIMAL_ONE
+  const resetThreshold = botsRequiredForInfinityRewardV2(
+    target,
+    state.quantum.divisionsPurchased,
+    authority,
+    state.quantum.unlocks.doubleInfinityPoints,
+  )
+  const remaining = (required: GameDecimal) =>
+    compareGameDecimals(required, state.dyson.bots) > 0
+      ? subtractGameDecimals(required, state.dyson.bots)
+      : cloneGameDecimal(GAME_DECIMAL_ZERO)
+  if (!state.quantum.unlocks.breakTheLoop) {
+    const progress = compareGameDecimals(state.dyson.bots, resetThreshold) >= 0
+      ? 1
+      : compareGameDecimals(state.dyson.bots, GAME_DECIMAL_ONE) < 0
+        ? 0
+        : unitRatio(
+            logGameDecimal(state.dyson.bots, 10),
+            logGameDecimal(resetThreshold, 10),
+          )
+    return Object.freeze({
+      mode: 'ordinary',
+      currentReward,
+      navigationReward: null,
+      progressFraction: progress,
+      resetThresholdBots: resetThreshold,
+      botsRemainingToReset: remaining(resetThreshold),
+      currentRewardThresholdBots: null,
+      nextRewardThresholdBots: null,
+      botsRemainingToNextReward: null,
+      breakTargetProgress: null,
+      showRealityWarning: progress > 0.95 && compareGameDecimals(
+        addGameDecimals(state.infinity.availablePoints, state.infinity.allocatedPoints),
+        gameDecimalFromBigInt(42n),
+      ) < 0,
+    })
+  }
+  const rewardStep = infinityRewardMultiplierV2(
+    authority,
+    state.quantum.unlocks.doubleInfinityPoints,
+  )
+  const currentThreshold = isZeroGameDecimal(currentReward)
+    ? cloneGameDecimal(GAME_DECIMAL_ZERO)
+    : botsRequiredForInfinityRewardV2(
+        currentReward,
+        state.quantum.divisionsPurchased,
+        authority,
+        state.quantum.unlocks.doubleInfinityPoints,
+      )
+  const nextReward = addGameDecimals(currentReward, rewardStep)
+  const nextThreshold = botsRequiredForInfinityRewardV2(
+    nextReward,
+    state.quantum.divisionsPurchased,
+    authority,
+    state.quantum.unlocks.doubleInfinityPoints,
+  )
+  const span = subtractGameDecimals(nextThreshold, currentThreshold)
+  const pointProgress = compareGameDecimals(span, GAME_DECIMAL_ZERO) > 0
+    ? unitRatio(subtractGameDecimals(state.dyson.bots, currentThreshold), span)
+    : compareGameDecimals(state.dyson.bots, nextThreshold) >= 0 ? 1 : 0
+  return Object.freeze({
+    mode: 'break',
+    currentReward,
+    navigationReward: currentReward,
+    progressFraction: pointProgress,
+    resetThresholdBots: resetThreshold,
+    botsRemainingToReset: remaining(resetThreshold),
+    currentRewardThresholdBots: currentThreshold,
+    nextRewardThresholdBots: nextThreshold,
+    botsRemainingToNextReward: remaining(nextThreshold),
+    breakTargetProgress: Object.freeze({
+      targetReward: state.infinity.breakTarget,
+      currentReward,
+      fraction: unitRatio(currentReward, state.infinity.breakTarget),
+    }),
+    showRealityWarning: false,
+  })
+}
+
+function unitRatio(numerator: GameDecimal, denominator: GameDecimal): number {
+  if (compareGameDecimals(numerator, GAME_DECIMAL_ZERO) <= 0) return 0
+  if (compareGameDecimals(numerator, denominator) >= 0) return 1
+  return gameDecimalToNumberChecked(divideGameDecimals(numerator, denominator), {
+    minimum: 0,
+    maximum: 1,
+  })
 }
 
 export function quoteInfinityBoundaryV2(

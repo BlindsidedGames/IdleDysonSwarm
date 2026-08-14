@@ -6,6 +6,14 @@ import type {
 } from '../../runtime'
 import { formatGameNumber } from '../../i18n/formatters'
 import type { EnabledLocale } from '../../i18n/localeRegistry'
+import {
+  floorGameDecimal,
+  gameDecimalFromInputString,
+  gameDecimalToBigIntChecked,
+  gameDecimalToNumberChecked,
+  type GameDecimal,
+} from '../../../math/gameDecimal'
+import { MINIMUM_TINKER_COOLDOWN_SECONDS } from '../../../simulation/canonicalTinkerV2'
 import { debugSurfaceMessages as messages } from './messages'
 import './debugSurface.css'
 
@@ -39,7 +47,7 @@ export function DebugSurface({
   const intl = useIntl()
   const amountId = useId()
   const presetId = useId()
-  const [amount, setAmount] = useState('1')
+  const [amountDraft, setAmountDraft] = useState('1')
   const [preset, setPreset] = useState('early')
   const [operation, setOperation] = useState<OperationStatus>({
     kind: 'idle',
@@ -68,11 +76,13 @@ export function DebugSurface({
     }
   }
 
-  const parsedAmount = Number(amount)
-  const validAmount = Number.isFinite(parsedAmount) && parsedAmount >= 0
-  const discreteAmount = validAmount
-    ? BigInt(Math.trunc(parsedAmount))
-    : 0n
+  const decimalAmount = parseDecimalAmount(amountDraft)
+  const validDecimalAmount = decimalAmount !== null
+  const wholeDecimalAmount = decimalAmount === null
+    ? null
+    : floorGameDecimal(decimalAmount)
+  const discreteAmount = parseDiscreteAmount(decimalAmount)
+  const secondsAmount = parseSecondsAmount(decimalAmount)
   const canPurchase =
     status.entitled ||
     (status.quantumShards >= 100_000n &&
@@ -141,20 +151,20 @@ export function DebugSurface({
                 <input
                   id={amountId}
                   inputMode="decimal"
-                  value={amount}
-                  aria-invalid={!validAmount}
-                  onChange={(event) => setAmount(event.currentTarget.value)}
+                  defaultValue="1"
+                  aria-invalid={!validDecimalAmount}
+                  onChange={(event) => setAmountDraft(event.currentTarget.value)}
                 />
               </div>
               <div className="debug-surface__button-grid">
-                <ActionButton label={intl.formatMessage(messages.addCash)} disabled={pending || !validAmount} onClick={() => apply({ kind: 'add-cash', amount: parsedAmount }, intl.formatMessage(messages.actionSuccess))} />
-                <ActionButton label={intl.formatMessage(messages.addBots)} disabled={pending || !validAmount} onClick={() => apply({ kind: 'add-bots', amount: parsedAmount }, intl.formatMessage(messages.actionSuccess))} />
-                <ActionButton label={intl.formatMessage(messages.addSkillPoints)} disabled={pending || !validAmount} onClick={() => apply({ kind: 'add-skill-points', amount: discreteAmount }, intl.formatMessage(messages.actionSuccess))} />
-                <ActionButton label={intl.formatMessage(messages.addInfinityPoints)} disabled={pending || !validAmount} onClick={() => apply({ kind: 'add-infinity-points', amount: discreteAmount }, intl.formatMessage(messages.actionSuccess))} />
-                <ActionButton label={intl.formatMessage(messages.addQuantumShards)} disabled={pending || !validAmount} onClick={() => apply({ kind: 'add-quantum-shards', amount: discreteAmount }, intl.formatMessage(messages.actionSuccess))} />
-                <ActionButton label={intl.formatMessage(messages.addInfluence)} disabled={pending || !validAmount} onClick={() => apply({ kind: 'add-influence', amount: discreteAmount }, intl.formatMessage(messages.actionSuccess))} />
-                <ActionButton label={intl.formatMessage(messages.addStrangeMatter)} disabled={pending || !validAmount} onClick={() => apply({ kind: 'add-strange-matter', amount: discreteAmount }, intl.formatMessage(messages.actionSuccess))} />
-                <ActionButton label={intl.formatMessage(messages.addOfflineTime)} disabled={pending || !validAmount} onClick={() => void run(intl.formatMessage(messages.actionSuccess), () => development.simulateOfflineTime(parsedAmount))} />
+                <ActionButton label={intl.formatMessage(messages.addCash)} disabled={pending || decimalAmount === null} onClick={() => decimalAmount !== null && apply({ kind: 'add-cash', amount: decimalAmount }, intl.formatMessage(messages.actionSuccess))} />
+                <ActionButton label={intl.formatMessage(messages.addBots)} disabled={pending || decimalAmount === null} onClick={() => decimalAmount !== null && apply({ kind: 'add-bots', amount: decimalAmount }, intl.formatMessage(messages.actionSuccess))} />
+                <ActionButton label={intl.formatMessage(messages.addSkillPoints)} disabled={pending || discreteAmount === null} onClick={() => discreteAmount !== null && apply({ kind: 'add-skill-points', amount: discreteAmount }, intl.formatMessage(messages.actionSuccess))} />
+                <ActionButton label={intl.formatMessage(messages.addInfinityPoints)} disabled={pending || wholeDecimalAmount === null} onClick={() => wholeDecimalAmount !== null && apply({ kind: 'add-infinity-points', amount: wholeDecimalAmount }, intl.formatMessage(messages.actionSuccess))} />
+                <ActionButton label={intl.formatMessage(messages.addQuantumShards)} disabled={pending || wholeDecimalAmount === null} onClick={() => wholeDecimalAmount !== null && apply({ kind: 'add-quantum-shards', amount: wholeDecimalAmount }, intl.formatMessage(messages.actionSuccess))} />
+                <ActionButton label={intl.formatMessage(messages.addInfluence)} disabled={pending || wholeDecimalAmount === null} onClick={() => wholeDecimalAmount !== null && apply({ kind: 'add-influence', amount: wholeDecimalAmount }, intl.formatMessage(messages.actionSuccess))} />
+                <ActionButton label={intl.formatMessage(messages.addStrangeMatter)} disabled={pending || wholeDecimalAmount === null} onClick={() => wholeDecimalAmount !== null && apply({ kind: 'add-strange-matter', amount: wholeDecimalAmount }, intl.formatMessage(messages.actionSuccess))} />
+                <ActionButton label={intl.formatMessage(messages.addOfflineTime)} disabled={pending || secondsAmount === null} onClick={() => secondsAmount !== null && void run(intl.formatMessage(messages.actionSuccess), () => development.simulateOfflineTime(secondsAmount))} />
               </div>
             </section>
 
@@ -191,7 +201,7 @@ export function DebugSurface({
               <h2>{intl.formatMessage(messages.timing)}</h2>
               <div className="debug-surface__button-grid">
                 <ActionButton label={intl.formatMessage(messages.tinkerOneSecond)} disabled={pending} onClick={() => apply({ kind: 'set-tinker-interval', seconds: 1 }, intl.formatMessage(messages.actionSuccess))} />
-                <ActionButton label={intl.formatMessage(messages.tinkerInstant)} disabled={pending} onClick={() => apply({ kind: 'set-tinker-interval', seconds: 0 }, intl.formatMessage(messages.actionSuccess))} />
+                <ActionButton label={intl.formatMessage(messages.tinkerInstant)} disabled={pending} onClick={() => apply({ kind: 'set-tinker-interval', seconds: MINIMUM_TINKER_COOLDOWN_SECONDS }, intl.formatMessage(messages.actionSuccess))} />
               </div>
             </section>
 
@@ -217,6 +227,32 @@ export function DebugSurface({
       </div>
     </section>
   )
+}
+
+function parseDecimalAmount(value: string): GameDecimal | null {
+  try {
+    return gameDecimalFromInputString(value)
+  } catch {
+    return null
+  }
+}
+
+function parseDiscreteAmount(value: GameDecimal | null): bigint | null {
+  if (value === null) return null
+  try {
+    return gameDecimalToBigIntChecked(floorGameDecimal(value))
+  } catch {
+    return null
+  }
+}
+
+function parseSecondsAmount(value: GameDecimal | null): number | null {
+  if (value === null) return null
+  try {
+    return gameDecimalToNumberChecked(value)
+  } catch {
+    return null
+  }
 }
 
 function ActionButton({

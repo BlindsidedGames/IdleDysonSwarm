@@ -2793,6 +2793,24 @@
       "value": "Engage Quantum Leap"
     }
   ],
+  "quantum.leap.entanglement-amounts": [
+    {
+      "type": 1,
+      "value": "consumed"
+    },
+    {
+      "type": 0,
+      "value": " IP consumed · "
+    },
+    {
+      "type": 1,
+      "value": "remainder"
+    },
+    {
+      "type": 0,
+      "value": " IP remains"
+    }
+  ],
   "quantum.leap.entanglement-description": [
     {
       "type": 0,

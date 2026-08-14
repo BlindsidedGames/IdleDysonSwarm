@@ -96,6 +96,12 @@ import {
   type CanonicalSkillPresetQueuePreview,
 } from '../../simulation/canonicalSkillPresetTransactions'
 import { QUANTUM_CONSTANTS } from '../../simulation/quantumUpgrades'
+import { DISCRETE_MAXIMUM } from '../../simulation/numeric'
+import {
+  floorGameDecimal,
+  gameDecimalToBigIntChecked,
+  gameDecimalToNumberChecked,
+} from '../../math/gameDecimal'
 import type { RuntimeEntitlementBridge } from '../../store/runtimeEntitlements'
 import {
   AuthoritativeLifecycleRouter,
@@ -680,12 +686,19 @@ class BrowserRuntimeFoundation implements BrowserUiRuntimeFoundation {
     ) {
       return developmentNotEnabled()
     }
-    const canonicalAction: CanonicalDevelopmentAction =
+    const canonicalAction: CanonicalDevelopmentAction | null =
       action.kind === 'purchase-debug-options' &&
       this.options.hostEntitlements?.currentOwnership().developerOptions ===
         true
-        ? { kind: 'enable-host-debug-options' }
-        : action as CanonicalDevelopmentAction
+        ? { kind: 'enable-host-debug-options' as const }
+        : toLegacyDevelopmentAction(action)
+    if (canonicalAction === null) {
+      return {
+        applied: false,
+        code: 'RUNTIME-DEVELOPMENT-AMOUNT-INVALID',
+        reason: 'This amount is outside the legacy development runtime range.',
+      }
+    }
     try {
       const result = await graph.router.run(() =>
         graph.coordinator.applyDevelopmentAction(
@@ -1821,6 +1834,36 @@ class BrowserRuntimeFoundation implements BrowserUiRuntimeFoundation {
           this.importReader.readPaste(request.text),
         )
     }
+  }
+}
+
+function toLegacyDevelopmentAction(
+  action: UiRuntimeDevelopmentAction,
+): CanonicalDevelopmentAction | null {
+  try {
+    switch (action.kind) {
+      case 'add-cash':
+      case 'add-bots':
+        return {
+          kind: action.kind,
+          amount: gameDecimalToNumberChecked(action.amount),
+        }
+      case 'add-infinity-points':
+      case 'add-quantum-shards':
+      case 'add-influence':
+      case 'add-strange-matter':
+        return {
+          kind: action.kind,
+          amount: gameDecimalToBigIntChecked(
+            floorGameDecimal(action.amount),
+            { maximum: DISCRETE_MAXIMUM },
+          ),
+        }
+      default:
+        return action
+    }
+  } catch {
+    return null
   }
 }
 

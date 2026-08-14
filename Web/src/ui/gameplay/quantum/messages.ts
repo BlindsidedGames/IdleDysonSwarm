@@ -34,6 +34,7 @@ export const quantumMessages = defineMessages({
   leap: { id: 'quantum.leap', defaultMessage: 'Quantum Leap', description: 'Quantum Leap card title.' },
   leapResetDescription: { id: 'quantum.leap.reset-description', defaultMessage: 'Reset this reality to earn 1 Quantum Shard. Your Quantum upgrades persist.', description: 'Ordinary Unity Quantum Leap consequence.' },
   leapEntanglementDescription: { id: 'quantum.leap.entanglement-description', defaultMessage: 'Convert every complete group of 42 unspent Infinity Points without resetting Infinity.', description: 'Unity Quantum Entanglement consequence.' },
+  leapEntanglementAmounts: { id: 'quantum.leap.entanglement-amounts', defaultMessage: '{consumed} IP consumed · {remainder} IP remains', description: 'Exact Infinity Point consumption and remainder for Quantum Entanglement.' },
   engageLeap: { id: 'quantum.leap.engage', defaultMessage: 'Engage Quantum Leap', description: 'Ordinary Quantum Leap button.' },
   leapFor: { id: 'quantum.leap.for', defaultMessage: 'Leap for {value} QS', description: 'Quantum Entanglement conversion button.' },
   confirmLeap: { id: 'quantum.leap.confirm', defaultMessage: 'Confirm Quantum Leap', description: 'Quantum Leap confirmation action.' },

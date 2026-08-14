@@ -21,15 +21,18 @@ import {
   floorGameDecimal,
   ceilGameDecimal,
   addGameDecimals,
+  gameDecimalFromBigInt,
   gameDecimalFromCanonicalString,
   gameDecimalFromNumber,
   gameDecimalToBigIntChecked,
+  isGameDecimal,
   multiplyGameDecimals,
   subtractGameDecimals,
 } from '../math/gameDecimal'
 import { decodeSchema13WebSave, encodeSchema13WebSave } from '../save/schema13'
 import { prepareImportedSaveText } from '../save/import'
 import { DISCRETE_MAXIMUM } from '../simulation/numeric'
+import { QUANTUM_CONSTANTS } from '../simulation/quantumUpgrades'
 import type {
   DecodedSchema13WebSave,
   Schema13PlatformState,
@@ -91,6 +94,7 @@ import {
   previewAddCanonicalSkillToPresetV2,
   previewRemoveCanonicalSkillFromPresetV2,
   refundCanonicalSkillV2,
+  recalculateCanonicalSkillPointsV2,
   resetCanonicalSkillsV2,
   runCanonicalSkillAutoAssignmentV2,
 } from '../simulation/skillTransactionsV2'
@@ -502,7 +506,7 @@ class V2GameRuntime {
   async #unlockDevelopmentReality(): Promise<UiRuntimeDevelopmentRealityResult> {
     const source = this.#requireDevelopmentPublication()
     if ('applied' in source) return source
-    const secrets = 27n
+    const secrets = QUANTUM_CONSTANTS.maximumSecrets
     const publication = this.#replaceState(source, {
       ...source.state,
       meta: {
@@ -562,45 +566,53 @@ class V2GameRuntime {
     }
     if (!this.#platform.debugOptions) return developmentRejected('V2-DEVELOPMENT-NOT-ENABLED', 'Developer Options are not enabled.')
 
-    if (action.kind === 'recalculate-skill-points') {
-      return developmentRejected('V2-DEVELOPMENT-NOT-PORTED', 'Skill-point recalculation is not available in the V2 development runtime yet.')
-    }
     const state = source.state
     let candidate: Parameters<typeof cloneCanonicalGameStateV2>[0]
     switch (action.kind) {
       case 'add-cash':
-        if (!Number.isFinite(action.amount) || action.amount < 0) return invalidDevelopmentAmount('Cash')
-        candidate = { ...state, dyson: { ...state.dyson, money: addGameDecimals(state.dyson.money, gameDecimalFromNumber(action.amount)) } }
+        if (!isGameDecimal(action.amount)) return invalidDevelopmentAmount('Cash')
+        candidate = { ...state, dyson: { ...state.dyson, money: addGameDecimals(state.dyson.money, action.amount) } }
         break
       case 'add-bots':
-        if (!Number.isFinite(action.amount) || action.amount < 0) return invalidDevelopmentAmount('Bot')
-        candidate = { ...state, dyson: { ...state.dyson, bots: addGameDecimals(state.dyson.bots, floorGameDecimal(gameDecimalFromNumber(action.amount))) } }
+        if (!isGameDecimal(action.amount)) return invalidDevelopmentAmount('Bot')
+        candidate = { ...state, dyson: { ...state.dyson, bots: addGameDecimals(state.dyson.bots, floorGameDecimal(action.amount)) } }
         break
       case 'add-skill-points':
         if (action.amount < 0n) return invalidDevelopmentAmount('Skill point')
         candidate = { ...state, skills: { ...state.skills, points: clampDevelopmentBigInt(state.skills.points + action.amount) } }
         break
       case 'add-infinity-points':
-        if (action.amount < 0n) return invalidDevelopmentAmount('Infinity point')
-        candidate = { ...state, infinity: { ...state.infinity, availablePoints: addGameDecimals(state.infinity.availablePoints, gameDecimalFromCanonicalString(action.amount.toString())) } }
+        if (!isGameDecimal(action.amount)) return invalidDevelopmentAmount('Infinity point')
+        candidate = { ...state, infinity: { ...state.infinity, availablePoints: addGameDecimals(state.infinity.availablePoints, floorGameDecimal(action.amount)) } }
         break
       case 'add-quantum-shards': {
-        if (action.amount < 0n) return invalidDevelopmentAmount('Quantum shard')
-        const amount = gameDecimalFromCanonicalString(action.amount.toString())
+        if (!isGameDecimal(action.amount)) return invalidDevelopmentAmount('Quantum shard')
+        const amount = floorGameDecimal(action.amount)
         candidate = { ...state, quantum: { ...state.quantum, availableShards: addGameDecimals(state.quantum.availableShards, amount), lifetimeEarnedShards: addGameDecimals(state.quantum.lifetimeEarnedShards, amount) } }
         break
       }
       case 'add-influence':
-        if (action.amount < 0n) return invalidDevelopmentAmount('Influence')
-        candidate = { ...state, reality: { ...state.reality, influence: addGameDecimals(state.reality.influence, gameDecimalFromCanonicalString(action.amount.toString())) } }
+        if (!isGameDecimal(action.amount)) return invalidDevelopmentAmount('Influence')
+        candidate = { ...state, reality: { ...state.reality, influence: addGameDecimals(state.reality.influence, floorGameDecimal(action.amount)) } }
         break
       case 'add-strange-matter':
-        if (action.amount < 0n) return invalidDevelopmentAmount('Strange Matter')
-        candidate = { ...state, dream: { ...state.dream, strangeMatter: addGameDecimals(state.dream.strangeMatter, gameDecimalFromCanonicalString(action.amount.toString())) } }
+        if (!isGameDecimal(action.amount)) return invalidDevelopmentAmount('Strange Matter')
+        candidate = { ...state, dream: { ...state.dream, strangeMatter: addGameDecimals(state.dream.strangeMatter, floorGameDecimal(action.amount)) } }
         break
       case 'set-tinker-interval':
         candidate = { ...state, dyson: { ...state.dyson, manualCreationIntervalSeconds: action.seconds } }
         break
+      case 'recalculate-skill-points': {
+        const result = recalculateCanonicalSkillPointsV2(state)
+        if (!result.accepted) {
+          return developmentRejected(
+            'V2-DEVELOPMENT-SKILL-RECALCULATION-REJECTED',
+            result.reason,
+          )
+        }
+        candidate = result.state
+        break
+      }
       case 'reset-secret-progress':
         candidate = { ...state, secretProgress: { completed: false, step: 0 } }
         break
@@ -831,11 +843,16 @@ class V2GameRuntime {
           : null
       }
       case 'infinity.set-break-target':
+        if (
+          !source.state.quantum.unlocks.breakTheLoop ||
+          command.target < 1n ||
+          command.target > 2_147_483_647n
+        ) return null
         return this.#replaceState(source, {
           ...source.state,
           infinity: {
             ...source.state.infinity,
-            breakTarget: gameDecimalFromCanonicalString(command.target.toString()),
+            breakTarget: gameDecimalFromBigInt(command.target),
           },
         })
       case 'dream.purchase-foundational': {
@@ -986,6 +1003,7 @@ class V2GameRuntime {
           timeline: setV2DoubleTimeRate(source.state.timeline, command.rate),
         })
       case 'time.upgrade-stored-capacity': {
+        if (this.#platform.cheater) return null
         const result = upgradeV2StoredTimeCapacity(source.state.timeline)
         return result.upgraded
           ? this.#replaceState(source, { ...source.state, timeline: result.timeline })
@@ -1211,6 +1229,13 @@ class V2GameRuntime {
     requestedSeconds: number,
     activationRevision: Readonly<{ session: number; state: number }>,
   ): Promise<UiRuntimePlayerCommandResult> {
+    if (this.#platform.cheater) {
+      return Object.freeze({
+        status: 'rejected', kind: 'stored-time', code: 'V2-STORED-TIME-INTEGRITY-COMPROMISED',
+        reason: 'Stored Time is disabled because this save is marked as integrity-compromised.',
+        stale: false, stateRevision: source.revision, activationRevision,
+      })
+    }
     const host = this.#storedTimeHost
     if (host === null) {
       return Object.freeze({
@@ -1380,6 +1405,8 @@ class V2GameRuntime {
       this.#publication.revision === this.#durableRevision ? 'clean' : 'dirty',
       this.#previewDemand,
       this.#tinker,
+      this.#infinityRewardAuthority(),
+      this.#platform.cheater,
     )
     document.documentElement.dataset.v2LastProjectionMs =
       (performance.now() - started).toFixed(3)

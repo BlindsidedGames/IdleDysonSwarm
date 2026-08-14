@@ -51,6 +51,25 @@ describe('text selection policy', () => {
     }
   })
 
+  test('does not clear Safari-style document selection while a text editor is active', () => {
+    uninstall = installTextSelectionPolicy()
+    document.body.innerHTML = '<input type="text"><p>Page selection</p>'
+    const editor = document.querySelector('input')
+    const pageText = document.querySelector('p')
+    const selection = document.getSelection()
+    if (editor === null || pageText === null || selection === null) {
+      throw new Error('Expected text selection test fixtures.')
+    }
+    editor.focus()
+    selection.selectAllChildren(pageText)
+    const removeAllRanges = vi.spyOn(selection, 'removeAllRanges')
+
+    document.dispatchEvent(new Event('selectionchange'))
+
+    expect(document.activeElement).toBe(editor)
+    expect(removeAllRanges).not.toHaveBeenCalled()
+  })
+
   test('cancels a nearby second touch before iOS can begin native selection', () => {
     uninstall = installTextSelectionPolicy()
     const surface = document.createElement('div')

@@ -24,6 +24,7 @@ import {
   floorGameDecimal,
   gameDecimalFromBigInt,
   gameDecimalFromCanonicalString,
+  gameDecimalFromInputString,
   gameDecimalFromNumber,
   gameDecimalToBigIntChecked,
   gameDecimalToCanonicalString,
@@ -834,6 +835,27 @@ describe('GameDecimal canonical parser and encoding', () => {
     ).toThrow(RangeError)
     expect(GAME_DECIMAL_BIGINT_MAX_DIGITS).toBe(4_096)
   })
+})
+
+describe('GameDecimal player input parser', () => {
+  it.each([
+    ['0', '0'],
+    ['12', '1.2e1'],
+    ['0.125', '1.25e-1'],
+    ['.5', '5e-1'],
+    ['1e999', '1e999'],
+    ['2.5E+1000', '2.5e1000'],
+  ])('parses %s without native-number narrowing', (input, expected) => {
+    expect(gameDecimalToCanonicalString(gameDecimalFromInputString(input)))
+      .toBe(expected)
+  })
+
+  it.each(['', '-1', '1e', '1e999junk', 'Infinity', 'NaN']) (
+    'rejects invalid input %j',
+    (input) => {
+      expect(() => gameDecimalFromInputString(input)).toThrow()
+    },
+  )
 })
 
 describe('GameDecimal arithmetic and exact comparisons', () => {

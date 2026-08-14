@@ -16,6 +16,7 @@ import {
   infinityProductionHorizonV2,
   prepareInfinityBoundaryEvaluationV2ForReset,
   ordinaryInfinityBotThresholdV2,
+  projectInfinityProgressV2,
   quoteInfinityBoundaryV2,
   quoteInfinityResetBoundaryV2,
   rederiveInfinityBoundaryV2,
@@ -123,6 +124,33 @@ describe('Infinity economy V2', () => {
     expect(quote.ready).toBe(true)
     expect(quote.requiredBots.exponent).toBeGreaterThan(308)
     expect(quote.reward.exponent).toBeGreaterThan(2)
+  })
+
+  test('projects ordinary and break progress without narrowing huge values', () => {
+    const authority = issueInfinityRewardAuthorityV2ForApplication(
+      Object.freeze({ doubleInfinityPoints: false }),
+    )
+    const ordinary = projectInfinityProgressV2(
+      stateWith({ bots: '4.2e18' }),
+      authority,
+    )
+    expect(ordinary.mode).toBe('ordinary')
+    expect(ordinary.progressFraction).toBeGreaterThan(0.9)
+    expect(ordinary.progressFraction).toBeLessThan(1)
+    expect(gameDecimalToCanonicalString(ordinary.resetThresholdBots)).toBe('4.2e19')
+
+    const broken = projectInfinityProgressV2(
+      stateWith({
+        bots: '1e1000',
+        divisions: 19n,
+        breakTarget: '1e3',
+        breakTheLoop: true,
+      }),
+      authority,
+    )
+    expect(broken.mode).toBe('break')
+    expect(broken.breakTargetProgress?.fraction).toBe(1)
+    expect(broken.resetThresholdBots.exponent).toBeGreaterThan(308)
   })
 
   test('returns Decimal horizons without requiring integer bots', () => {

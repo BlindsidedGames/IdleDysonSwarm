@@ -105,13 +105,16 @@ describe('SimulationsSurface', () => {
     expect(screen.getAllByRole('progressbar')).toHaveLength(2)
 
     const purchaseButton = screen.getByRole('button', {
-      name: '+1 4.00 Influence',
+      name: '+1,000 4.00 Influence',
     })
-    expect(purchaseButton).toHaveTextContent('+14.00')
+    expect(purchaseButton).toHaveTextContent('+1,0004.00')
     expect(purchaseButton).not.toHaveTextContent('Influence')
     expect(
       purchaseButton.querySelector('[data-symbol="influence"]'),
     ).toHaveClass('ui-inline-image-symbol--tinted')
+    expect(screen.getByRole('button', {
+      name: '+50 5.00 Influence',
+    })).toHaveTextContent('+505.00')
 
     await userEvent.setup().click(purchaseButton)
 
@@ -145,6 +148,49 @@ describe('SimulationsSurface', () => {
       'Influence heroic hunters to gather meat for your communities.',
     )
     expect(dispatchPlayer).not.toHaveBeenCalled()
+  })
+
+  test('does not invent multiplier components when native V2 facts do not expose them', async () => {
+    const nativeTimer = {
+      ...foundationalProduction.foundationalInformation.production.timers.hunterTimerProgress,
+    } as Record<string, unknown>
+    delete nativeTimer.sourceCount
+    delete nativeTimer.baseMultiplier
+    delete nativeTimer.globalMultiplier
+    delete nativeTimer.multiplierFormula
+    delete nativeTimer.advanceEnabled
+    const nativeFacts = {
+      ...facts,
+      live: {
+        ...facts.live,
+        production: {
+          ok: true,
+          value: {
+            ...foundationalProduction,
+            foundationalInformation: {
+              ...foundationalProduction.foundationalInformation,
+              production: {
+                ...foundationalProduction.foundationalInformation.production,
+                timers: {
+                  ...foundationalProduction.foundationalInformation.production.timers,
+                  hunterTimerProgress: nativeTimer,
+                },
+              },
+            },
+          },
+        },
+      },
+    } as unknown as FrontendSimulationsDerivedFacts
+
+    renderSurface(accepted, nativeFacts)
+    await userEvent.setup().click(
+      screen.getByRole('button', { name: 'Foundational Era' }),
+    )
+    await userEvent.setup().click(screen.getAllByRole('button', { name: 'Details' })[0]!)
+
+    const dialog = screen.getByRole('dialog', { name: 'Hunters' })
+    expect(within(dialog).queryByText('Speed multiplier')).not.toBeInTheDocument()
+    expect(within(dialog).getByText('Current rate')).toBeInTheDocument()
   })
 
   test('shows a completion pulse and cycles per second for medium-speed production', async () => {
@@ -475,6 +521,37 @@ describe('SimulationsSurface', () => {
       .toHaveTextContent('Record stored')
   })
 
+  test('shows only the unconverted remainder in conversion progress', async () => {
+    renderSurface(accepted, conversionRemainderFacts)
+
+    await userEvent.setup().click(
+      screen.getByRole('button', { name: 'Foundational Era' }),
+    )
+    const housingCard = screen.getByText('Housing').closest('article')
+    expect(housingCard).not.toBeNull()
+    const progress = within(housingCard!).getByRole('progressbar', {
+      name: 'Conversion progress',
+    })
+    expect(Number(progress.getAttribute('value'))).toBeCloseTo(0.7)
+    expect(progress).toHaveAttribute('aria-valuetext', '7.00 / 10.0')
+  })
+
+  test('keeps Space Age labels on authoritative quote totals', () => {
+    const source = readFileSync(
+      join(process.cwd(), 'src', 'ui', 'gameplay', 'simulations', 'SimulationsSurface.tsx'),
+      'utf8',
+    )
+    const action = source.slice(
+      source.indexOf('function spaceAgeAction('),
+      source.indexOf('function formatWholeQuantity('),
+    )
+    expect(action).toContain('quote.unitsGranted')
+    expect(action).toContain('quote.totalCost')
+    expect(action).not.toContain('multiplyGameDecimals')
+    expect(action).not.toContain('boundedPresentationWholeQuotient')
+    expect(action).not.toContain('input.influence')
+  })
+
   test('shows a solid bar and cycles per second for fast Space Factories', async () => {
     renderSurface(accepted, fastSpaceFactoryFacts, progression, 8)
 
@@ -740,6 +817,34 @@ const facts = {
   },
 } as unknown as FrontendSimulationsDerivedFacts
 
+const factsProduction = facts.live.production
+if (!factsProduction.ok) throw new Error('Expected fixture production facts.')
+const conversionRemainderFacts = {
+  ...facts,
+  eras: {
+    ...facts.eras,
+    foundational: { visible: true, visiblePanelIds: ['housing'] },
+  },
+  live: {
+    ...facts.live,
+    resources: { ...facts.live.resources, housing: 27 },
+    production: {
+      ok: true,
+      value: {
+        ...factsProduction.value,
+        foundationalInformation: {
+          ...factsProduction.value.foundationalInformation,
+          conversions: {
+            housingToVillages: { mantissa: 0, exponent: 0 },
+            villagesToCities: { mantissa: 0, exponent: 0 },
+            rocketsToSpaceFactories: { mantissa: 0, exponent: 0 },
+          },
+        },
+      },
+    },
+  },
+} as unknown as FrontendSimulationsDerivedFacts
+
 const informationFacts = {
   ...facts,
   currentEra: 'information',
@@ -797,8 +902,22 @@ const boostedProgression = {
 
 const previews = {
   foundational: [
-    { purchase: 'hunters', eligible: true, cost: 4n },
-    { purchase: 'gatherers', eligible: true, cost: 5n },
+    {
+      purchase: 'hunters', eligible: true, cost: 4n,
+      selectedInfluenceQuote: {
+        requestedMode: 'buy-1', eligible: true, batches: 1n,
+        unitsGranted: 1_000n, totalCost: 4n, buyMaxBatchCap: null,
+        reachedBuyMaxBatchCap: false, code: 'ready',
+      },
+    },
+    {
+      purchase: 'gatherers', eligible: true, cost: 5n,
+      selectedInfluenceQuote: {
+        requestedMode: 'buy-1', eligible: true, batches: 1n,
+        unitsGranted: 50n, totalCost: 5n, buyMaxBatchCap: null,
+        reachedBuyMaxBatchCap: false, code: 'ready',
+      },
+    },
   ],
   education: [],
   spaceAge: [],

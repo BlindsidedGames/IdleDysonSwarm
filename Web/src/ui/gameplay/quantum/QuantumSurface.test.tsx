@@ -10,6 +10,7 @@ import { afterEach, describe, expect, test, vi } from 'vitest'
 import type {
   FrontendQuantumUpgradePreview,
 } from '../../../application/frontendSnapshot'
+import { gameDecimalFromCanonicalString } from '../../../math/gameDecimal'
 import {
   QUANTUM_UPGRADE_IDS,
   type QuantumUpgradeId,
@@ -301,13 +302,31 @@ describe('QuantumSurface', () => {
       availableInfinityPoints: 100n,
       entangled: true,
       leapEligible: true,
+      requestedShards: 2n,
+      infinityPointsConsumed: 84n,
+      infinityPointsRemainder: 16n,
       dispatchPlayer,
     })
 
     const leap = screen.getByRole('button', { name: 'Leap for 2.00 QS' })
     fireEvent.click(leap)
     expect(dispatchPlayer).toHaveBeenCalledWith({ kind: 'quantum.request-leap' })
+    expect(screen.getByText('84.0 IP consumed · 16.0 IP remains')).toBeInTheDocument()
     expect(screen.queryByRole('button', { name: 'Confirm Quantum Leap' })).not.toBeInTheDocument()
+  })
+
+  test('renders an exact Entanglement shard quote beyond bigint-safe UI bounds', () => {
+    renderSurface({
+      availableInfinityPoints: gameDecimalFromCanonicalString('4.2e1002'),
+      entangled: true,
+      leapEligible: true,
+      requestedShards: gameDecimalFromCanonicalString('1e1001'),
+      infinityPointsConsumed: gameDecimalFromCanonicalString('4.2e1002'),
+      infinityPointsRemainder: 0n,
+    })
+    expect(screen.getByRole('button', { name: 'Leap for 1.00e1.00K QS' }))
+      .toBeInTheDocument()
+    expect(screen.queryByText(/9\.01e15/u)).not.toBeInTheDocument()
   })
 
   test('offers the Avocato destination after the one-time unlock', () => {
@@ -328,9 +347,12 @@ describe('QuantumSurface', () => {
 })
 
 interface RenderOptions {
-  readonly availableInfinityPoints?: bigint
+  readonly availableInfinityPoints?: QuantumSurfaceProps['availableInfinityPoints']
   readonly entangled?: boolean
   readonly leapEligible?: boolean
+  readonly requestedShards?: QuantumSurfaceProps['previews']['leap']['requestedShards']
+  readonly infinityPointsConsumed?: QuantumSurfaceProps['previews']['leap']['infinityPointsConsumed']
+  readonly infinityPointsRemainder?: QuantumSurfaceProps['previews']['leap']['infinityPointsRemainder']
   readonly dispatchPlayer?: QuantumSurfaceProps['dispatchPlayer']
   readonly onOpenAvocato?: () => void
   readonly upgradeOverrides?: Partial<Record<QuantumUpgradeId, Partial<FrontendQuantumUpgradePreview>>>
@@ -351,7 +373,7 @@ function renderSurface(options: RenderOptions = {}) {
       cashBonusLevels: 3n,
       scienceBonusLevels: 4n,
     },
-    infinityPoints: options.availableInfinityPoints ?? 41n,
+    infinityPoints: 41n,
     availableInfinityPoints: options.availableInfinityPoints ?? 41n,
     progression: {
       quantum: {
@@ -385,6 +407,9 @@ function renderSurface(options: RenderOptions = {}) {
         branch: entangled ? 'entanglement' : 'reset',
         artifactSkillPoints: entangled ? null : 3n,
         definitionGap: null,
+        requestedShards: options.requestedShards ?? 0n,
+        infinityPointsConsumed: options.infinityPointsConsumed ?? 0n,
+        infinityPointsRemainder: options.infinityPointsRemainder ?? 0n,
       },
     },
     meditationPreview: {

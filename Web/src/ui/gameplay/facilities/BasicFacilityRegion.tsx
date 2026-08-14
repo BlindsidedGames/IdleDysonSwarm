@@ -12,7 +12,6 @@ import {
 import type {
   FrontendDysonVisibility,
   FrontendGameplayPreviews,
-  FrontendGameplaySnapshot,
 } from '../../../application/frontendSnapshot'
 import type { CanonicalPlayerCommand } from '../../../application/canonicalPlayerCommands'
 import {
@@ -31,6 +30,15 @@ import { useForwardProgressAnimation } from '../progress/useForwardProgressAnima
 import { basicFacilityMessages as messages } from './messages'
 import { FacilityDetailsDialog } from './FacilityDetailsDialog'
 import { clampProgress } from './progressInterpolation'
+import {
+  comparePresentationNumeric,
+  presentationDecimal,
+} from '../../presentationNumeric'
+import {
+  divideGameDecimals,
+  gameDecimalFromNumber,
+  gameDecimalToSchedulerSeconds,
+} from '../../../math/gameDecimal'
 import './facilities.css'
 
 export type EarlyBasicFacilityId =
@@ -44,11 +52,40 @@ export type BasicFacilityPurchaseCommand = Extract<
   { readonly kind: 'dyson.purchase-basic-facility' }
 >
 
-export type BasicFacilityCanonicalFact =
-  Extract<
-    FrontendGameplaySnapshot['derived']['dyson'],
-    { readonly status: 'ready' }
-  >['value']['presentation']['facilities'][EarlyBasicFacilityId]
+export interface BasicFacilityCanonicalFact {
+  readonly facilityId: EarlyBasicFacilityId
+  readonly ownership: {
+    readonly automatic: NumericValue
+    readonly manual: NumericValue
+    readonly total: NumericValue
+  }
+  readonly production: {
+    readonly outputFacilityId: EarlyBasicFacilityId | 'bots'
+    readonly perSecond: NumericValue
+    readonly secondsPerUnit: number | null
+  }
+  readonly productionProgress: { readonly visible: boolean; readonly normalized: number }
+  readonly details: {
+    readonly baseProductionPerSecond: NumericValue
+    readonly effectiveProducerCount: NumericValue
+    readonly modifier: NumericValue
+    readonly contributions?: readonly {
+      readonly sourceId: string
+      readonly displayRole: 'base' | 'producer-count' | 'modifier' | 'output-adjustments'
+      readonly operation: 'add' | 'subtract' | 'multiply' | 'power' | 'override' | 'clamp-min' | 'clamp-max'
+      readonly value: NumericValue
+      readonly delta: NumericValue | Readonly<{ readonly sign: -1; readonly magnitude: NumericValue }>
+      readonly runningTotal: NumericValue
+      readonly conditionIdentifier?: string
+      readonly condition?: string
+      readonly automaticManualTuple?: readonly NumericValue[]
+    }[]
+    readonly upstreamSources?: readonly {
+      readonly sourceFacilityId: string
+      readonly contributionPerSecond: NumericValue
+    }[]
+  }
+}
 
 export interface BasicFacilityPresentationRevision {
   readonly session: number
@@ -523,7 +560,7 @@ function FacilityProductionProgress({
 }: {
   readonly accessibleName: string
   readonly progress?: BasicFacilityCanonicalFact['productionProgress']
-  readonly productionRatePerSecond: number
+  readonly productionRatePerSecond: NumericValue
   readonly reducedMotion: boolean
 }) {
   const canonicalNormalized = clampProgress(
@@ -532,7 +569,10 @@ function FacilityProductionProgress({
   const fillRef = useRef<HTMLSpanElement>(null)
   useForwardProgressAnimation(fillRef, {
     canonicalProgress: canonicalNormalized,
-    normalizedRatePerSecond: productionRatePerSecond,
+    normalizedRatePerSecond: gameDecimalToSchedulerSeconds(
+      presentationDecimal(productionRatePerSecond),
+      Number.MAX_VALUE,
+    ).seconds,
     active:
       progress?.visible === true && canonicalNormalized < 1,
     wraps: true,
@@ -653,15 +693,15 @@ function FacilityDetailsContent({
                     <span
                       className="facility-details-dialog__delta"
                       data-sign={
-                        contribution.delta > 0
+                        contributionSign(contribution.delta) > 0
                           ? 'positive'
-                          : contribution.delta < 0
+                          : contributionSign(contribution.delta) < 0
                             ? 'negative'
                             : 'neutral'
                       }
                     >
-                      {contribution.delta > 0 ? '+' : ''}
-                      {formatGameNumber(locale, contribution.delta)}
+                      {contributionSign(contribution.delta) > 0 ? '+' : ''}
+                      {formatContributionDelta(locale, contribution.delta)}
                     </span>
                     <span className="facility-details-dialog__total">
                       {formatGameNumber(
@@ -763,6 +803,8 @@ function operationSymbol(
   switch (operation) {
     case 'add':
       return '+'
+    case 'subtract':
+      return '−'
     case 'multiply':
       return '×'
     case 'power':
@@ -834,20 +876,23 @@ function FacilityIdentity({
 
 function productionText(
   locale: EnabledLocale,
-  productionPerSecond: number,
+  productionPerSecond: NumericValue,
   presentation: FacilityPresentationMessages,
   intl: IntlShape,
 ): string {
-  if (productionPerSecond === 0) {
+  if (comparePresentationNumeric(productionPerSecond, 0) === 0) {
     return intl.formatMessage(presentation.purchasePrompt)
   }
-  if (productionPerSecond >= 1) {
+  if (comparePresentationNumeric(productionPerSecond, 1) >= 0) {
     return intl.formatMessage(presentation.productionPerSecond, {
       rate: formatGameNumber(locale, productionPerSecond),
     })
   }
-  const seconds = 1 / productionPerSecond
-  const inMinutes = seconds >= 60
+  const seconds = divideGameDecimals(
+    gameDecimalFromNumber(1),
+    presentationDecimal(productionPerSecond),
+  )
+  const inMinutes = comparePresentationNumeric(seconds, 60) >= 0
   return intl.formatMessage(
     inMinutes
       ? presentation.productionMinutes
@@ -855,10 +900,35 @@ function productionText(
     {
       interval: formatGameNumber(
         locale,
-        inMinutes ? seconds / 60 : seconds,
+        inMinutes
+          ? divideGameDecimals(seconds, gameDecimalFromNumber(60))
+          : seconds,
       ),
     },
   )
+}
+
+function presentationSign(value: NumericValue): -1 | 0 | 1 {
+  if (typeof value === 'number') return value < 0 ? -1 : value > 0 ? 1 : 0
+  if (typeof value === 'bigint') return value < 0n ? -1 : value > 0n ? 1 : 0
+  return comparePresentationNumeric(value, 0)
+}
+
+function contributionSign(
+  value: NumericValue | Readonly<{ readonly sign: -1; readonly magnitude: NumericValue }>,
+): -1 | 0 | 1 {
+  return typeof value === 'object' && value !== null && 'sign' in value
+    ? value.sign
+    : presentationSign(value)
+}
+
+function formatContributionDelta(
+  locale: EnabledLocale,
+  value: NumericValue | Readonly<{ readonly sign: -1; readonly magnitude: NumericValue }>,
+): string {
+  return typeof value === 'object' && value !== null && 'sign' in value
+    ? `−${formatGameNumber(locale, value.magnitude)}`
+    : formatGameNumber(locale, value)
 }
 
 function preciseNumber(

@@ -474,6 +474,49 @@ describe('one-way CanonicalGameStateV2 migration', () => {
     )
   })
 
+  test('repairs every stricter V2 bound that a valid legacy state can exceed', () => {
+    const prepared = prepareIdb1Save(firstRunIdb1).prepared
+    const candidate = prepared.copyValidatedState()
+    const dyson = requireRecord(candidate.dysonVerseSaveData)
+    const infinity = requireRecord(dyson.dysonVerseInfinityData)
+    const quantum = requireRecord(candidate.prestigePlus)
+    const levels = requireRecord(infinity.researchLevelsById)
+    const cappedResearch = canonicalResearchLevelPolicies.find(
+      (policy) => policy.semanticClass === 'exact-bigint',
+    )!
+    dyson.manualCreationTime = 0
+    candidate.researchAutomationTargetIndex = 999
+    quantum.divisionsPurchased = 20n
+    quantum.secrets = 28n
+    quantum.breakTheLoop = true
+    candidate.infinityPointsToBreakFor = 0n
+    levels[cappedResearch.key] = 2
+    const before = structuredClone(candidate)
+
+    const result = migratePreparedSaveToV2(
+      prepared.withValidatedState(candidate),
+      TRUSTED_AUTHORITY,
+    )
+
+    expect(result.state.dyson.manualCreationIntervalSeconds).toBe(0.01)
+    expect(result.state.timeline.researchAutomationTargetIndex)
+      .toBe(canonicalResearchLevelPolicies.length - 1)
+    expect(result.state.quantum.divisionsPurchased).toBe(19n)
+    expect(result.state.quantum.permanentSecrets).toBe(27n)
+    expect(result.state.infinity.breakTarget).toEqual(gameDecimalFromBigInt(1n))
+    expect(result.state.research.levelsById[cappedResearch.key]).toBe(1n)
+    expect(validateCanonicalGameStateV2(result.state)).toEqual({ valid: true, errors: [] })
+    expect(candidate).toEqual(before)
+    expect(result.repairs.map((entry) => entry.path)).toEqual(expect.arrayContaining([
+      '$.dyson.manualCreationIntervalSeconds',
+      '$.timeline.researchAutomationTargetIndex',
+      '$.quantum.divisionsPurchased',
+      '$.quantum.permanentSecrets',
+      '$.infinity.breakTarget',
+      `$.research.levelsById.${cappedResearch.key}`,
+    ]))
+  })
+
   test('repairs stored-time capacity, available time, and the independent Double Time cap', () => {
     const prepared = prepareIdb1Save(firstRunIdb1).prepared
     const candidate = prepared.copyValidatedState()

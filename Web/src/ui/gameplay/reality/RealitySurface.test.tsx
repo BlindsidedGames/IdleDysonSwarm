@@ -20,6 +20,7 @@ import type {
   FrontendSimulationsDerivedFacts,
 } from '../../../application/frontendSnapshot'
 import type { UiRuntimePlayerCommandResult } from '../../runtime'
+import { gameDecimalFromCanonicalString } from '../../../math/gameDecimal'
 import enCatalog from '../../i18n/catalogs/compiled/en.json'
 import type {
   SharedMessageCatalog,
@@ -44,6 +45,7 @@ afterEach(() => {
 const derived = {
   status: 'success',
   generationPerSecond: 1,
+  workerGenerationAnimationRatePerSecond: 1 / 128,
   workerGenerationFillFraction: 0.25,
   workerBatchSize: 128n,
   nextUniverseDesignation: 4n,
@@ -147,6 +149,25 @@ const simulationUpgradeSections = {
 ]['simulation']
 
 describe('RealitySurface', () => {
+  test.each(['1e308', '1e1000'])(
+    'keeps exact %s generation out of the bounded animation boundary',
+    (generation) => {
+      renderSurface({
+        derived: {
+          ...derived,
+          generationPerSecond: gameDecimalFromCanonicalString(generation),
+          workerGenerationAnimationRatePerSecond: 10,
+          workerBatchFillFraction: 0.5,
+          consumptionStatus: 'running',
+        },
+      })
+
+      expect(
+        screen.getByRole('progressbar', { name: 'Workers ready' }),
+      ).toHaveAttribute('aria-valuenow', '50')
+    },
+  )
+
   test('presents Unity worker facts and collapsed Reality_Content upgrade groups', async () => {
     const { container } = renderSurface()
 

@@ -4,7 +4,11 @@ import { createDeterministicUnityFirstRunPreparedSave } from '../application/fir
 import { createCanonicalRuntimePublicationV2, type CanonicalRuntimePublicationV2 } from '../application/canonicalRuntimeSessionV2'
 import { migratePreparedSaveToV2 } from '../game-state/mappingV2'
 import { cloneCanonicalGameStateV2 } from '../game-state/cloneV2'
-import { gameDecimalFromNumber } from '../math/gameDecimal'
+import {
+  gameDecimalFromCanonicalString,
+  gameDecimalFromNumber,
+  gameDecimalToCanonicalString,
+} from '../math/gameDecimal'
 import type { LifecycleAdapter, LifecyclePhase } from '../platform/contracts'
 import { decodeSchema13WebSave, encodeSchema13WebSave } from '../save/schema13'
 import type { Schema13PlatformState } from '../save/schema13'
@@ -23,6 +27,91 @@ const PLATFORM = Object.freeze({
 })
 
 describe('V2 game runtime production seams', () => {
+  test('uses the canonical 27-secret debug unlock for V2 Reality, Simulations, and Story', async () => {
+    const migrated = migratePreparedSaveToV2(
+      createDeterministicUnityFirstRunPreparedSave(),
+      { kind: 'trusted-same-device' },
+    )
+    const repository = new FakeRuntimeRepository(
+      createCanonicalRuntimePublicationV2({
+        revision: 1,
+        state: migrated.state,
+        runtime: migrated.runtime,
+      }),
+    )
+    const controller = createV2GameRuntimeController({ repository })
+    await controller.runtime.start()
+
+    await expect(controller.runtime.development!.apply({
+      kind: 'unlock-debug-options',
+    })).resolves.toMatchObject({ applied: true })
+    await expect(controller.runtime.development!.unlockReality()).resolves.toMatchObject({
+      applied: true,
+      secretsOfTheUniverse: 27n,
+    })
+    const snapshot = controller.runtime.snapshot()
+    if (snapshot.phase !== 'ready') throw new Error('Expected a ready snapshot.')
+    expect(snapshot.gameplay.visibility.reality.routeUnlocked).toBe(true)
+    expect(snapshot.gameplay.visibility.reality.unlockProgress.requiredSecrets).toBe(27n)
+    expect(snapshot.gameplay.visibility.simulations.routeUnlocked).toBe(true)
+    expect(snapshot.gameplay.derived.story.visibleChapterIds).toContain('chapter-5')
+    await controller.runtime.shutdown()
+  })
+
+  test('propagates persisted cheater state and rejects Stored Time spend and upgrade commands', async () => {
+    const migrated = migratePreparedSaveToV2(
+      createDeterministicUnityFirstRunPreparedSave(),
+      { kind: 'trusted-same-device' },
+    )
+    const state = cloneCanonicalGameStateV2({
+      ...migrated.state,
+      timeline: {
+        ...migrated.state.timeline,
+        storedTimeAvailableSeconds:
+          migrated.state.timeline.storedTimeCapacitySeconds,
+      },
+    })
+    const initial = createCanonicalRuntimePublicationV2({
+      revision: 4,
+      state,
+      runtime: migrated.runtime,
+    })
+    const host = new FakeStoredTimeHost(initial)
+    const repository = new FakeRuntimeRepository(initial)
+    repository.latestPlatform = Object.freeze({ ...PLATFORM, cheater: true })
+    const controller = createV2GameRuntimeController({
+      repository,
+      createStoredTimeHost: () => host,
+    })
+    await controller.runtime.start()
+    controller.runtime.setGameplayPreviewDemand('offline-time')
+
+    const snapshot = controller.runtime.snapshot()
+    if (snapshot.phase !== 'ready') throw new Error('Expected a ready snapshot.')
+    expect(snapshot.gameplay.runtime.storedTimeCheater).toBe(true)
+    expect(snapshot.gameplay.previews.time.storedCapacity).toMatchObject({
+      eligible: false,
+      code: 'integrity-compromised',
+    })
+    await expect(controller.runtime.dispatchPlayer({
+      kind: 'time.request-stored-time-spend',
+      requestedSeconds: 5,
+    })).resolves.toMatchObject({
+      status: 'rejected',
+      code: 'V2-STORED-TIME-INTEGRITY-COMPROMISED',
+    })
+    await expect(controller.runtime.dispatchPlayer({
+      kind: 'time.upgrade-stored-capacity',
+    })).resolves.toMatchObject({
+      status: 'rejected',
+      code: 'V2-COMMAND-REJECTED',
+    })
+    expect(host.startRequests).toEqual([])
+    expect(repository.latestState.timeline).toEqual(state.timeline)
+    await controller.runtime.shutdown()
+    expect(repository.latestPlatform.cheater).toBe(true)
+  })
+
   test('projects receiver-local Developer Options ownership without using portable state', async () => {
     const migrated = migratePreparedSaveToV2(
       createDeterministicUnityFirstRunPreparedSave(),
@@ -80,6 +169,60 @@ describe('V2 game runtime production seams', () => {
     await expect(locked.runtime.dispatchPlayer({ kind: 'dyson.set-bot-distribution', distribution: 0.2 }))
       .resolves.toMatchObject({ status: 'rejected', code: 'V2-COMMAND-REJECTED' })
     await controller.runtime.shutdown()
+    await locked.runtime.shutdown()
+  })
+
+  test('stores the bigint Break target without routing it through save-text parsing', async () => {
+    const migrated = migratePreparedSaveToV2(createDeterministicUnityFirstRunPreparedSave(), { kind: 'trusted-same-device' })
+    const state = cloneCanonicalGameStateV2({
+      ...migrated.state,
+      quantum: {
+        ...migrated.state.quantum,
+        unlocks: { ...migrated.state.quantum.unlocks, breakTheLoop: true },
+      },
+      infinity: {
+        ...migrated.state.infinity,
+        breakTarget: gameDecimalFromNumber(1),
+      },
+    })
+    const repository = new FakeRuntimeRepository(createCanonicalRuntimePublicationV2({
+      revision: 1,
+      state,
+      runtime: migrated.runtime,
+    }))
+    const controller = createV2GameRuntimeController({ repository })
+    const started = await controller.runtime.start()
+    expect(started, JSON.stringify(started)).toMatchObject({ phase: 'ready' })
+
+    const result = await controller.runtime.dispatchPlayer({
+      kind: 'infinity.set-break-target',
+      target: 42n,
+    })
+    expect(result, JSON.stringify(result)).toMatchObject({ status: 'accepted', changed: true })
+    await controller.runtime.requestCheckpoint()
+    expect(gameDecimalToCanonicalString(repository.latestState.infinity.breakTarget))
+      .toBe('4.2e1')
+    await expect(controller.runtime.dispatchPlayer({
+      kind: 'infinity.set-break-target',
+      target: 0n,
+    })).resolves.toMatchObject({ status: 'rejected', code: 'V2-COMMAND-REJECTED' })
+    await expect(controller.runtime.dispatchPlayer({
+      kind: 'infinity.set-break-target',
+      target: 2_147_483_648n,
+    })).resolves.toMatchObject({ status: 'rejected', code: 'V2-COMMAND-REJECTED' })
+    await controller.runtime.shutdown()
+
+    const lockedRepository = new FakeRuntimeRepository(createCanonicalRuntimePublicationV2({
+      revision: 9,
+      state: migrated.state,
+      runtime: migrated.runtime,
+    }))
+    const locked = createV2GameRuntimeController({ repository: lockedRepository })
+    await locked.runtime.start()
+    await expect(locked.runtime.dispatchPlayer({
+      kind: 'infinity.set-break-target',
+      target: 42n,
+    })).resolves.toMatchObject({ status: 'rejected', code: 'V2-COMMAND-REJECTED' })
     await locked.runtime.shutdown()
   })
 
@@ -195,12 +338,51 @@ describe('V2 game runtime production seams', () => {
     expect(repository.latestState.quantum.availableShards).toEqual(before.quantum.availableShards)
     expect(repository.latestState.dream.strangeMatter).toEqual(before.dream.strangeMatter)
     expect(repository.latestPlatform).toMatchObject({ debugOptions: true, debugEverEnabled: true })
+    await expect(development!.apply({
+      kind: 'add-cash',
+      amount: gameDecimalFromCanonicalString('1e999'),
+    })).resolves.toMatchObject({ applied: true, stateRevision: 8 })
+    expect(gameDecimalToCanonicalString(repository.latestState.dyson.money))
+      .toBe('1e999')
 
     await controller.runtime.shutdown()
     const reloaded = createV2GameRuntimeController({ repository })
     await reloaded.runtime.start()
     expect(reloaded.runtime.development?.status()).toMatchObject({ enabled: true, entitled: true })
+    expect(gameDecimalToCanonicalString(repository.latestState.dyson.money))
+      .toBe('1e999')
     await reloaded.runtime.shutdown()
+  })
+
+  test('routes Skill-point recalculation through the canonical V2 repair authority', async () => {
+    const migrated = migratePreparedSaveToV2(
+      createDeterministicUnityFirstRunPreparedSave(),
+      { kind: 'trusted-same-device' },
+    )
+    const state = cloneCanonicalGameStateV2({
+      ...migrated.state,
+      dyson: { ...migrated.state.dyson, goalStage: 3n },
+      infinity: { ...migrated.state.infinity, permanentSkillPoints: 4n },
+      skills: { ...migrated.state.skills, points: 99n },
+    })
+    const repository = new FakeRuntimeRepository(createCanonicalRuntimePublicationV2({
+      revision: 5,
+      state,
+      runtime: migrated.runtime,
+    }))
+    repository.latestPlatform = Object.freeze({
+      ...PLATFORM,
+      debugOptions: true,
+      debugEverEnabled: true,
+    })
+    const controller = createV2GameRuntimeController({ repository })
+    await controller.runtime.start()
+
+    await expect(controller.runtime.development!.apply({
+      kind: 'recalculate-skill-points',
+    })).resolves.toMatchObject({ applied: true, stateRevision: 6 })
+    expect(repository.latestState.skills.points).toBe(7n)
+    await controller.runtime.shutdown()
   })
 
   test('checkpoints a dirty live revision before importing a replacement save', async () => {

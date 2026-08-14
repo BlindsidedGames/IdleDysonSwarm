@@ -108,6 +108,16 @@ export interface DerivedDysonV2Production {
   }>
 }
 
+export interface DysonV2FacilityContributionRow {
+  readonly sourceId: string
+  readonly displayRole: 'base' | 'producer-count' | 'modifier' | 'output-adjustments'
+  readonly operation: DysonV2StatEffect['operation']
+  readonly value: GameDecimal | number
+  readonly delta: GameDecimal | Readonly<{ readonly sign: -1; readonly magnitude: GameDecimal }>
+  readonly runningTotal: GameDecimal
+  readonly automaticManualTuple?: readonly [GameDecimal, GameDecimal]
+}
+
 export interface DysonV2ProductionSummary {
   readonly generated: Readonly<DysonV2ProductionRates>
   readonly effective: Readonly<DysonV2ProductionRates>
@@ -200,7 +210,6 @@ function deriveDysonV2ProductionFromValidatedState(
       parameters.effects?.[id] ?? [],
     )
   })
-
   const panelLifetimeSeconds = applyEffects(
     parameters.panelLifetimeSeconds,
     parameters.effects?.panelLifetimeSeconds ?? [],
@@ -258,6 +267,73 @@ function deriveDysonV2ProductionFromValidatedState(
     panelLifetimeSeconds,
     intermediates,
   })
+}
+
+export function deriveDysonV2FacilityContributionRows(
+  state: Readonly<CanonicalGameStateV2>,
+  parameters: Readonly<DysonV2DerivationParameters>,
+  production: Readonly<DerivedDysonV2Production>,
+): Readonly<Record<CanonicalFacilityId, readonly DysonV2FacilityContributionRow[]>> {
+  return mapFacilities((id) => deriveFacilityContributionRowsV2(
+    id,
+    production.facilityBaseProduction[id],
+    production.effectiveFacilityCounts[id],
+    parameters.facilityModifiers[id],
+    parameters.effects?.[id] ?? [],
+    state.dyson.facilities[id],
+  ))
+}
+
+function deriveFacilityContributionRowsV2(
+  id: CanonicalFacilityId,
+  base: GameDecimal,
+  count: GameDecimal,
+  modifier: GameDecimal,
+  effects: readonly DysonV2StatEffect[],
+  pair: readonly [GameDecimal, GameDecimal],
+): readonly DysonV2FacilityContributionRow[] {
+  const ordered: DysonV2StatEffect[] = [
+    { id: `${id}.count`, operation: 'multiply', value: count, order: 0 },
+    ...(modifierDiffersFromOne(modifier)
+      ? [{ id: `${id}.modifier`, operation: 'multiply' as const, value: modifier, order: 10 }]
+      : []),
+    ...effects,
+  ]
+  const rows: DysonV2FacilityContributionRow[] = [Object.freeze({
+    sourceId: 'base',
+    displayRole: 'base' as const,
+    operation: 'override' as const,
+    value: base,
+    delta: base,
+    runningTotal: base,
+  })]
+  let running = base
+  for (const effect of ordered.map((effect, index) => ({ effect, index })).sort(
+    (left, right) => left.effect.order - right.effect.order || left.index - right.index,
+  ).map(({ effect }) => effect)) {
+    const next = applyEffects(running, [effect])
+    const isCount = effect.id.endsWith('.count')
+    rows.push(Object.freeze({
+      sourceId: effect.id,
+      displayRole: isCount ? 'producer-count' as const
+        : effect.id.endsWith('.modifier') ? 'modifier' as const
+          : 'output-adjustments' as const,
+      operation: effect.operation,
+      value: effect.operation === 'power' ? effect.exponent : effect.value,
+      delta: signedFacilityDelta(next, running),
+      runningTotal: next,
+      ...(isCount ? { automaticManualTuple: pair } : {}),
+    }))
+    running = next
+  }
+  return Object.freeze(rows)
+}
+
+function signedFacilityDelta(next: GameDecimal, previous: GameDecimal): DysonV2FacilityContributionRow['delta'] {
+  if (compareGameDecimals(next, previous) >= 0) {
+    return subtractGameDecimals(next, previous)
+  }
+  return Object.freeze({ sign: -1 as const, magnitude: subtractGameDecimals(previous, next) })
 }
 
 export function deriveDysonV2BotAllocation(

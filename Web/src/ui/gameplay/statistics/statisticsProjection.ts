@@ -1,14 +1,13 @@
-import type {
-  StatisticsWindowState,
-} from '../../../game-state/types'
+import { addGameDecimals } from '../../../math/gameDecimal'
+import { presentationDecimal, type PresentationNumeric } from '../../presentationNumeric'
 
 export interface StatisticsWindowAggregate {
   readonly simulatedSeconds: number
   readonly infinityCount: bigint
-  readonly infinityPoints: bigint
+  readonly infinityPoints: PresentationNumeric
   readonly dreamResetCount: bigint
-  readonly strangeMatter: bigint
-  readonly realityWorkers: bigint
+  readonly strangeMatter: PresentationNumeric
+  readonly realityWorkers: PresentationNumeric
 }
 
 /**
@@ -17,7 +16,14 @@ export interface StatisticsWindowAggregate {
  * the canonical recorder before reuse, so every retained bucket contributes.
  */
 export function aggregateStatisticsWindows(
-  windows: readonly Readonly<StatisticsWindowState>[],
+  windows: readonly Readonly<{
+    readonly simulatedSeconds: number
+    readonly infinityCount: bigint
+    readonly infinityPoints: PresentationNumeric
+    readonly dreamResetCount: bigint
+    readonly strangeMatter: PresentationNumeric
+    readonly realityWorkers: PresentationNumeric
+  }>[],
 ): StatisticsWindowAggregate {
   return windows.reduce<StatisticsWindowAggregate>(
     (total, window) => ({
@@ -25,12 +31,12 @@ export function aggregateStatisticsWindows(
         total.simulatedSeconds + window.simulatedSeconds,
       infinityCount: total.infinityCount + window.infinityCount,
       infinityPoints:
-        total.infinityPoints + window.infinityPoints,
+        addPresentation(total.infinityPoints, window.infinityPoints),
       dreamResetCount:
         total.dreamResetCount + window.dreamResetCount,
-      strangeMatter: total.strangeMatter + window.strangeMatter,
+      strangeMatter: addPresentation(total.strangeMatter, window.strangeMatter),
       realityWorkers:
-        total.realityWorkers + window.realityWorkers,
+        addPresentation(total.realityWorkers, window.realityWorkers),
     }),
     {
       simulatedSeconds: 0,
@@ -41,4 +47,12 @@ export function aggregateStatisticsWindows(
       realityWorkers: 0n,
     },
   )
+}
+
+function addPresentation(
+  left: PresentationNumeric,
+  right: PresentationNumeric,
+): PresentationNumeric {
+  if (typeof left === 'bigint' && typeof right === 'bigint') return left + right
+  return addGameDecimals(presentationDecimal(left), presentationDecimal(right))
 }

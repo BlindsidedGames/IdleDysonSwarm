@@ -20,6 +20,11 @@ import {
 import { mappingCoverageManifest } from '../game-state/mappingCoverage'
 import { DREAM_UPGRADE_FLAGS } from '../game-state/types'
 import {
+  admitValidatedCanonicalGameStateV2,
+  isIssuedCanonicalGameStateV2,
+  registerCanonicalGameStateValidationAuthorityV2,
+} from '../game-state/cloneV2'
+import {
   REALITY_WORKERS_READY_MAXIMUM_V2,
   type CanonicalGameStateV2,
 } from '../game-state/typesV2'
@@ -522,6 +527,9 @@ describe('schema 13 dormant Web-native codec', () => {
     expect(isGameDecimal(decoded.state.dyson.money)).toBe(true)
     expect(Object.isFrozen(decoded.state)).toBe(true)
     expect(Object.isFrozen(decoded.state.dyson)).toBe(true)
+    expect(Object.isFrozen(decoded.state.statistics.minuteWindows)).toBe(true)
+    expect(Object.isFrozen(decoded.state.statistics.minuteWindows[0])).toBe(true)
+    expect(isIssuedCanonicalGameStateV2(decoded.state)).toBe(true)
     expect(Object.isFrozen(decoded.runtime)).toBe(true)
     expect(Object.isFrozen(decoded.runtime.dysonEvaluationSnapshot)).toBe(true)
     expect(encodeSchema13WebSave(decoded)).toBe(encoded)
@@ -579,6 +587,37 @@ describe('schema 13 dormant Web-native codec', () => {
     expect(encodeSchema13WebSave(reordered)).toBe(
       encodeSchema13WebSave(input),
     )
+  })
+
+  test('rejects aliased encode graphs while retaining the worker-shaped fast path', () => {
+    const input = source()
+    const mutableStatistics = input.state.statistics as unknown as Record<
+      string,
+      unknown
+    >
+    mutableStatistics.currentQuantumRun = mutableStatistics.lifetime
+
+    expect(() => encodeSchema13WebSave(input)).toThrow(/unaliased acyclic/i)
+  })
+
+  test('does not let a forged issued-state marker bypass persistence validation', () => {
+    const input = source()
+    const invalidState = Object.freeze({
+      ...input.state,
+      timeline: Object.freeze({
+        ...input.state.timeline,
+        storedTimeAvailableSeconds:
+          input.state.timeline.storedTimeCapacitySeconds + 1,
+      }),
+    })
+    const authority = registerCanonicalGameStateValidationAuthorityV2()
+    admitValidatedCanonicalGameStateV2(authority, invalidState)
+
+    expect(isIssuedCanonicalGameStateV2(invalidState)).toBe(true)
+    expect(() => encodeSchema13WebSave(Object.freeze({
+      ...input,
+      state: invalidState,
+    }))).toThrow(/Stored time available must not exceed stored-time capacity/i)
   })
 
   test('keeps automatic facility and accumulated panel fractions but rejects integer-path fractions', () => {

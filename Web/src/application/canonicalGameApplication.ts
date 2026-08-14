@@ -121,7 +121,7 @@ export type CanonicalDevelopmentAction =
   | { readonly kind: 'add-influence'; readonly amount: bigint }
   | { readonly kind: 'add-strange-matter'; readonly amount: bigint }
   | { readonly kind: 'add-double-time'; readonly seconds: number }
-  | { readonly kind: 'set-tinker-interval'; readonly seconds: 0 | 1 }
+  | { readonly kind: 'set-tinker-interval'; readonly seconds: 0.01 | 1 }
   | { readonly kind: 'recalculate-skill-points' }
   | { readonly kind: 'reset-secret-progress' }
   | { readonly kind: 'unlock-debug-options' }

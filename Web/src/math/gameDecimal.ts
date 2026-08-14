@@ -38,6 +38,8 @@ export const GAME_DECIMAL_MINIMUM_SCHEDULER_SECONDS = 1e-12
 
 const canonicalDecimalPattern =
   /^([1-9](?:\.[0-9]+)?)e(0|-[1-9][0-9]*|[1-9][0-9]*)$/
+const inputDecimalPattern =
+  /^(?:[0-9]+(?:\.[0-9]*)?|\.[0-9]+)(?:e[+-]?[0-9]+)?$/i
 
 type MutableGameDecimal = {
   mantissa: number
@@ -228,6 +230,26 @@ export function gameDecimalFromCanonicalString(value: string): GameDecimal {
   }
   validateNormalizedParts(mantissa, exponent)
   return makeFromValidatedParts(mantissa, exponent)
+}
+
+/**
+ * Parses a non-negative player-entered decimal without narrowing it through a
+ * JavaScript number. Unlike the persistence parser above, this accepts normal
+ * decimal notation and conventional scientific notation such as `1e1000`.
+ */
+export function gameDecimalFromInputString(value: string): GameDecimal {
+  if (typeof value !== 'string') {
+    failType('GameDecimal input must be a string.')
+  }
+  const trimmed = value.trim()
+  if (
+    trimmed.length === 0 ||
+    trimmed.length > GAME_DECIMAL_ENCODED_MAX_LENGTH ||
+    !inputDecimalPattern.test(trimmed)
+  ) {
+    failRange('GameDecimal input has invalid syntax or length.')
+  }
+  return fromUpstream(Decimal.fromString(trimmed.toLowerCase()))
 }
 
 export function gameDecimalFromBigInt(value: bigint): GameDecimal {

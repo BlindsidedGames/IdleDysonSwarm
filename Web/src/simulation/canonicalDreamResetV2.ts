@@ -65,6 +65,7 @@ export function normalizePreparedCanonicalFastDreamResetsV2(
 }
 
 export function isCanonicalAutomaticDreamResetReadyV2(state:Readonly<CanonicalGameStateV2>):boolean{try{return validateCanonicalGameStateV2(state).valid&&state.dream.resetCount<DISCRETE_MAXIMUM&&deriveOutcome(state as CanonicalGameStateV2,Object.freeze({kind:'automatic'}))!==null}catch{return false}}
+export function previewCanonicalDreamResetV2(state:Readonly<CanonicalGameStateV2>,request:CanonicalDreamResetRequestV2):Readonly<{eligible:boolean;code:'ready'|'not-ready'|'reset-count-saturated';cause:CanonicalDreamResetCauseV2|null;requestedReward:GameDecimal}>{const outcome=deriveOutcome(state as CanonicalGameStateV2,request);if(outcome===null)return Object.freeze({eligible:false,code:'not-ready',cause:null,requestedReward:cloneGameDecimal(GAME_DECIMAL_ZERO)});if(state.dream.resetCount===DISCRETE_MAXIMUM)return Object.freeze({eligible:false,code:'reset-count-saturated',cause:outcome.cause,requestedReward:cloneGameDecimal(outcome.reward)});return Object.freeze({eligible:true,code:'ready',cause:outcome.cause,requestedReward:cloneGameDecimal(outcome.reward)})}
 
 export function quoteCanonicalDreamResetV2(publication:Readonly<CanonicalDreamResetPublicationV2>,request:CanonicalDreamResetRequestV2):Readonly<CanonicalDreamResetQuoteV2>{try{return quoteInternal(publication,request)}catch{return failureQuote('invalid-request')}}
 function quoteInternal(publication:Readonly<CanonicalDreamResetPublicationV2>,request:CanonicalDreamResetRequestV2):Readonly<CanonicalDreamResetQuoteV2>{

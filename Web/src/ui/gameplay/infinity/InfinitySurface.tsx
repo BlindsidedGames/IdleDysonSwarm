@@ -11,6 +11,7 @@ import {
 import type {
   FrontendCanonicalProgression,
   FrontendCanonicalResources,
+  FrontendGameplayDerivedFacts,
   FrontendGameplayPreviews,
 } from '../../../application/frontendSnapshot'
 import type {
@@ -19,9 +20,9 @@ import type {
 import type {
   CanonicalInfinityShopItemId,
 } from '../../../simulation/canonicalInfinityShop'
+import type { GameDecimal } from '../../../math/gameDecimal'
 import {
   breakInfinityTargetFromPresentationPosition,
-  type InfinityProgressFacts,
 } from '../../../simulation/infinityCycle'
 import infinitySymbol from '../../assets/nav-infinity.png'
 import { Button, InlineImageSymbol } from '../../components'
@@ -36,6 +37,7 @@ import type {
   UiRuntimePlayerCommandResult,
 } from '../../runtime'
 import { usePrefersReducedMotion } from '../../accessibility/useMediaQuery'
+import { comparePresentationNumeric } from '../../presentationNumeric'
 import { useForwardProgressAnimation } from '../progress/useForwardProgressAnimation'
 import { infinityMessages as messages } from './messages'
 import './infinity.css'
@@ -58,7 +60,7 @@ export interface InfinitySurfaceProps {
   readonly locale: EnabledLocale
   readonly resources: FrontendCanonicalResources['infinity']
   readonly progression: Pick<FrontendCanonicalProgression, 'infinity'>
-  readonly derived: InfinityProgressFacts
+  readonly derived: FrontendGameplayDerivedFacts['infinity']
   readonly previews: FrontendGameplayPreviews['infinity']
   readonly commandAvailability: InfinityCommandAvailability
   readonly dispatchPlayer: (
@@ -364,7 +366,7 @@ function InfinityShopCard({
 
 interface BreakTargetControlProps {
   readonly locale: EnabledLocale
-  readonly target: bigint
+  readonly target: bigint | GameDecimal
   readonly control: FrontendGameplayPreviews['infinity']['breakTarget']
   readonly routeAvailable: boolean
   readonly dispatchPlayer: InfinitySurfaceProps['dispatchPlayer']
@@ -389,7 +391,7 @@ function BreakTargetControl({
   }, [control.currentPosition])
 
   const parsed = breakInfinityTargetFromPresentationPosition(draft)
-  const changed = parsed !== target
+  const changed = comparePresentationNumeric(target, parsed) !== 0
 
   const submit = async (): Promise<void> => {
     if (

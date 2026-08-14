@@ -8,6 +8,7 @@ import type { SaveRecord } from '../save/graph'
 import { requireRecord } from '../save/graph'
 import type { NumericRepairEntry } from '../save/numericRepair'
 import type { PreparedSave } from '../save/prepare'
+import { MINIMUM_TINKER_COOLDOWN_SECONDS } from '../simulation/canonicalTinkerV2'
 import {
   DEFAULT_STORED_TIME_CAPACITY_SECONDS,
   STORED_TIME_MAXIMUM_SECONDS,
@@ -254,6 +255,13 @@ function migrateHydratedState(
     repairs,
     'Dyson goal stage is limited to the ten authored progression rewards',
   )
+  const manualCreationIntervalSeconds = migratePositiveSeconds(
+    source.dyson.manualCreationIntervalSeconds,
+    '$.dyson.manualCreationIntervalSeconds',
+    MINIMUM_TINKER_COOLDOWN_SECONDS,
+    repairs,
+    'Tinker interval must remain strictly positive in the V2 scheduler',
+  )
   const fragments = BigInt(
     canonicalFragmentSkillKeySet.filter(
       (id) => source.skills.byId[id]?.owned === true,
@@ -276,6 +284,31 @@ function migrateHydratedState(
     repairs,
     'ready workers are capped by the authored Reality worker batch size',
   )
+  const divisionsPurchased = migrateBoundedExactBigInt(
+    source.quantum.divisionsPurchased,
+    '$.quantum.divisionsPurchased',
+    0n,
+    19n,
+    repairs,
+    'Quantum Divisions are capped at the nineteen authored purchases',
+  )
+  const permanentSecrets = migrateBoundedExactBigInt(
+    source.quantum.permanentSecrets,
+    '$.quantum.permanentSecrets',
+    0n,
+    27n,
+    repairs,
+    'Permanent Quantum Secrets are capped at the authored rank 27',
+  )
+  const breakTarget = source.quantum.unlocks.breakTheLoop && source.infinity.breakTarget < 1n
+    ? repairExactBigInt(
+        source.infinity.breakTarget,
+        '$.infinity.breakTarget',
+        1n,
+        repairs,
+        'Break The Loop requires a positive Infinity reward target',
+      )
+    : source.infinity.breakTarget
   const disasterStage = migrateDisasterStage(
     source.dream.disasterStage,
     repairs,
@@ -297,6 +330,33 @@ function migrateHydratedState(
     STORED_TIME_MAXIMUM_SECONDS,
     repairs,
     'Dream Double Time uses its independent authoritative 42000000-second maximum',
+  )
+  const researchAutomationTargetIndex = migrateBoundedExactNumber(
+    source.timeline.researchAutomationTargetIndex,
+    '$.timeline.researchAutomationTargetIndex',
+    0,
+    canonicalResearchKeySet.length - 1,
+    0,
+    repairs,
+    'Research automation must select an entry in the closed V2 catalog',
+  )
+  const researchLevelsById = Object.fromEntries(
+    canonicalResearchLevelPolicies.map((policy) => {
+      const level = source.research.levelsById[policy.key] ?? 0
+      return [
+        policy.key,
+        policy.semanticClass === 'exact-bigint'
+          ? migrateBoundedExactBigInt(
+              typeof level === 'bigint' ? level : BigInt(level),
+              `$.research.levelsById.${policy.key}`,
+              0n,
+              1n,
+              repairs,
+              `Research '${policy.key}' has one authored level`,
+            )
+          : level,
+      ]
+    }),
   )
   const navigationVisibility = source.meta.navigationVisibility ??
     recordDefault(
@@ -345,21 +405,17 @@ function migrateHydratedState(
     ...source,
     modelVersion: 2,
     meta: { ...source.meta, navigationVisibility },
-    dyson: { ...source.dyson, goalStage },
+    dyson: { ...source.dyson, goalStage, manualCreationIntervalSeconds },
     infinity: {
       ...infinity,
       availablePoints: infinityAvailable,
       allocatedPoints: source.infinity.spentPoints,
+      breakTarget,
     },
     skills: { ...source.skills, fragments, selectedPreset },
     research: {
       ...source.research,
-      levelsById: Object.fromEntries(
-        canonicalResearchKeySet.map((id) => [
-          id,
-          source.research.levelsById[id] ?? 0,
-        ]),
-      ),
+      levelsById: researchLevelsById,
       progressById: Object.fromEntries(
         canonicalResearchKeySet.map((id) => [
           id,
@@ -381,9 +437,12 @@ function migrateHydratedState(
       ...quantum,
       availableShards: quantumAvailable,
       lifetimeEarnedShards: source.quantum.pointsEarned,
+      divisionsPurchased,
+      permanentSecrets,
     },
     timeline: {
       ...source.timeline,
+      researchAutomationTargetIndex,
       storedTimeAvailableSeconds,
       storedTimeCapacitySeconds,
       doubleTime: {
@@ -443,6 +502,23 @@ function migrateBoundedExactBigInt(
   return replacement
 }
 
+function repairExactBigInt(
+  original: bigint,
+  path: string,
+  replacement: bigint,
+  repairs: V2MigrationRepair[],
+  rule: string,
+): bigint {
+  repairs.push(Object.freeze({
+    phase: 'v1-to-v2',
+    path,
+    original: original.toString(),
+    replacement: replacement.toString(),
+    rule,
+  }))
+  return replacement
+}
+
 function migrateBoundedExactNumber(
   value: unknown,
   path: string,
@@ -499,6 +575,26 @@ function migrateStoredTimeCapacity(
       original: value.toString(),
       replacement: replacement.toString(),
       rule: 'stored-time capacity uses its positive default and authoritative maximum',
+    }))
+  }
+  return replacement
+}
+
+function migratePositiveSeconds(
+  value: number,
+  path: string,
+  minimum: number,
+  repairs: V2MigrationRepair[],
+  rule: string,
+): number {
+  const replacement = value > 0 ? value : minimum
+  if (!Object.is(replacement, value)) {
+    repairs.push(Object.freeze({
+      phase: 'v1-to-v2',
+      path,
+      original: value.toString(),
+      replacement: replacement.toString(),
+      rule,
     }))
   }
   return replacement

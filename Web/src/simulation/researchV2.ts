@@ -137,6 +137,18 @@ export interface ResearchV2PurchaseResult {
   readonly debitedAmount: GameDecimal
 }
 
+export interface ResearchV2PresentationFacts {
+  readonly prerequisitesMet: boolean
+  readonly visible: boolean
+  readonly maxed: boolean
+  readonly automationActive: boolean
+  readonly effectKind: 'percentage' | 'panel-lifetime-seconds'
+  readonly perLevelEffect: GameDecimal
+  readonly currentEffect: GameDecimal
+  readonly projectedEffect: GameDecimal
+  readonly passiveProgress: GameDecimal
+}
+
 export interface ResearchV2AutomationAttempt {
   readonly researchId: CanonicalResearchId
   readonly quote: ResearchV2PurchaseQuote
@@ -275,6 +287,55 @@ export function quoteV2ResearchPurchase(
     roundedBulkBuy,
     false,
   ))
+}
+
+/**
+ * Projects the current V2 Research card without consulting the legacy V1
+ * selector. Unbounded levels and their displayed effects remain GameDecimal;
+ * only authored coefficients are lifted from bounded catalog/tuning numbers.
+ */
+export function selectResearchV2PresentationFacts(
+  state: CanonicalGameStateV2,
+  runtime: Readonly<CanonicalRuntimeSidecarV2>,
+  researchId: CanonicalResearchId,
+  projectedBatches: GameDecimal,
+): ResearchV2PresentationFacts | null {
+  if (!admitResearchState(state) || admitResearchRuntime(runtime) === null) return null
+  const definition = catalogContract.byId.get(researchId)
+  const expectedDefinition = EXPECTED_DEFINITIONS.find(({ id }) => id === researchId)
+  if (definition === undefined || expectedDefinition === undefined) return null
+  let tuning: Readonly<DysonCompatibilityTuning>
+  try {
+    tuning = effectiveTuning(state, runtime)
+  } catch {
+    return null
+  }
+  const currentLevel = currentLevelDecimal(state, researchId)
+  const maxed = definition.maximumLevel !== null &&
+    compareGameDecimals(currentLevel, gameDecimalFromBigInt(definition.maximumLevel)) >= 0
+  const coefficientField = definition.coefficientField
+  const effectKind = coefficientField === null
+    ? 'panel-lifetime-seconds' as const
+    : 'percentage' as const
+  const authoredEffect = coefficientField === null
+    ? expectedDefinition.perLevel
+    : tuning[coefficientField] * 100
+  if (!Number.isFinite(authoredEffect) || authoredEffect < 0) return null
+  const perLevelEffect = gameDecimalFromNumber(authoredEffect)
+  const projectedLevel = addGameDecimals(currentLevel, projectedBatches)
+  const meetsPrerequisites = prerequisitesMet(state, definition)
+  return Object.freeze({
+    prerequisitesMet: meetsPrerequisites,
+    visible: (meetsPrerequisites || !isZeroGameDecimal(currentLevel)) && !maxed,
+    maxed,
+    automationActive: state.infinity.automationUnlocked.research &&
+      automationEnabled(state, definition),
+    effectKind,
+    perLevelEffect,
+    currentEffect: multiplyGameDecimals(currentLevel, perLevelEffect),
+    projectedEffect: multiplyGameDecimals(projectedLevel, perLevelEffect),
+    passiveProgress: cloneGameDecimal(state.research.progressById[researchId]),
+  })
 }
 
 export function commitV2ResearchPurchase(

@@ -1,6 +1,7 @@
 import {
   isGameDecimal,
   isIntegerGameDecimal,
+  isZeroGameDecimal,
 } from '../math/gameDecimal'
 import { STORED_TIME_MAXIMUM_SECONDS } from '../simulation/timeResources'
 import {
@@ -455,6 +456,13 @@ function validateCanonicalGameStateV2Unsafe(
   }
   if (typeof state.dyson?.goalStage === 'bigint' && state.dyson.goalStage > 10n) {
     errors.push('Dyson goal stage must be from 0 through 10.')
+  }
+  if (
+    state.quantum?.unlocks?.breakTheLoop === true &&
+    isGameDecimal(state.infinity?.breakTarget) &&
+    isZeroGameDecimal(state.infinity.breakTarget)
+  ) {
+    errors.push('Infinity Break target must be positive while Break The Loop is owned.')
   }
   if (
     typeof state.reality?.workersReady === 'bigint' &&

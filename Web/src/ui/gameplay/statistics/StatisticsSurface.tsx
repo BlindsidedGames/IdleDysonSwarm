@@ -4,10 +4,12 @@ import {
 } from 'react-intl'
 import type {
   FrontendCanonicalProgression,
+  FrontendStatisticsProgression,
 } from '../../../application/frontendSnapshot'
 import type {
   SimulationTotalsState,
 } from '../../../game-state/types'
+import type { NumericValue } from '../../i18n/formatters'
 import {
   formatGameDuration,
   formatGameNumber,
@@ -259,7 +261,7 @@ function ScopeCard({
 }: {
   readonly locale: EnabledLocale
   readonly title: MessageDescriptor
-  readonly totals: Readonly<SimulationTotalsState>
+  readonly totals: Readonly<FrontendStatisticsProgression['lifetime']>
 }) {
   const intl = useIntl()
   return (
@@ -384,7 +386,7 @@ function StatisticFact({
 
 function formatMetricValue(
   locale: EnabledLocale,
-  value: number | bigint,
+  value: NumericValue,
   format: 'number' | 'duration',
 ): string {
   return format === 'duration'
