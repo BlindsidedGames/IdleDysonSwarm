@@ -120,13 +120,25 @@ const SimulationsSurface = lazy(async () => {
   return { default: module.SimulationsSurface }
 })
 
+type QuantumRouteModule = typeof import('../quantum')
+let quantumRouteModulePromise: Promise<QuantumRouteModule> | null = null
+
+function loadQuantumRouteModule(): Promise<QuantumRouteModule> {
+  if (quantumRouteModulePromise !== null) return quantumRouteModulePromise
+  quantumRouteModulePromise = import('../quantum').catch((error: unknown) => {
+    quantumRouteModulePromise = null
+    throw error
+  })
+  return quantumRouteModulePromise
+}
+
 const QuantumSurface = lazy(async () => {
-  const module = await import('../quantum')
+  const module = await loadQuantumRouteModule()
   return { default: module.QuantumSurface }
 })
 
 const AvocatoSurface = lazy(async () => {
-  const module = await import('../quantum')
+  const module = await loadQuantumRouteModule()
   return { default: module.AvocatoSurface }
 })
 
@@ -503,6 +515,8 @@ export function ReadyDysonSlice({
   const [purchaseSettingsOpen, setPurchaseSettingsOpen] = useState(false)
   const [quantumPurchaseSettingsOpen, setQuantumPurchaseSettingsOpen] =
     useState(false)
+  const [preloadedQuantumRouteModule, setPreloadedQuantumRouteModule] =
+    useState<QuantumRouteModule | null>(null)
   const [avotationCompletionVisible, setAvotationCompletionVisible] =
     useState(false)
   const [spaceAgePurchaseQuantity, setSpaceAgePurchaseQuantity] =
@@ -535,6 +549,34 @@ export function ReadyDysonSlice({
   const quantumUnlocked =
     comparePresentationNumeric(gameplay.resources.infinity.points, 42n) >= 0 ||
     comparePresentationNumeric(gameplay.resources.quantum.pointsEarned, 1n) >= 0
+  useEffect(() => {
+    if (!quantumUnlocked) return undefined
+    let active = true
+    const preload = () => {
+      void loadQuantumRouteModule().then(
+        (module) => {
+          if (active) setPreloadedQuantumRouteModule(module)
+        },
+        () => undefined,
+      )
+    }
+    if (typeof window.requestIdleCallback === 'function') {
+      const request = window.requestIdleCallback(preload, { timeout: 2_000 })
+      return () => {
+        active = false
+        window.cancelIdleCallback(request)
+      }
+    }
+    const timeout = window.setTimeout(preload, 1_000)
+    return () => {
+      active = false
+      window.clearTimeout(timeout)
+    }
+  }, [quantumUnlocked])
+  const ReadyQuantumSurface =
+    preloadedQuantumRouteModule?.QuantumSurface ?? QuantumSurface
+  const ReadyAvocatoSurface =
+    preloadedQuantumRouteModule?.AvocatoSurface ?? AvocatoSurface
   const requestedRouteUnavailable =
     ((requestedRoute === 'reality' ||
       requestedRoute === 'simulations') &&
@@ -1286,7 +1328,7 @@ export function ReadyDysonSlice({
                                 />
                               }
                             >
-                              <QuantumSurface
+                              <ReadyQuantumSurface
                                 locale={locale}
                                 resources={gameplay.resources.quantum}
                                 availableInfinityPoints={
@@ -1343,7 +1385,7 @@ export function ReadyDysonSlice({
                                   />
                                 }
                               >
-                                <AvocatoSurface
+                                <ReadyAvocatoSurface
                                   locale={locale}
                                   unlocked={
                                     gameplay.progression.avocado.unlocked

@@ -78,15 +78,17 @@ try {
         displayedCash: document.querySelector('.dyson-resource-header__item--cash .ui-resource-value__value bdi')?.textContent ?? null,
       }
     })()`)
-    const simulationsMilliseconds = await activateRoute(page, 'simulations', '.simulations-surface')
-    const quantumMilliseconds = await activateRoute(page, 'quantum', '.quantum-surface')
+    const simulations = await activateRoute(page, 'simulations', '.simulations-surface')
+    const quantum = await activateRoute(page, 'quantum', '.quantum-surface')
+    const botsReturn = await activateRoute(page, 'bots', '.basic-facility-region')
+    const quantumWarm = await activateRoute(page, 'quantum', '.quantum-surface')
     const report = Object.freeze({
       kind: 'mature-schema12-production-browser-profile',
       createdAtUtc: new Date().toISOString(),
       environment: page.environment,
       fixture: { schema: 12, cash: '1e300', bots: '1e250', secrets: 27, unlockAllTabs: true },
       startup: { readyWallMilliseconds, ...startup },
-      lazyRoutes: { simulationsMilliseconds, quantumMilliseconds },
+      lazyRoutes: { simulations, quantum, botsReturn, quantumWarm },
     })
     const outputRoot = resolve(webRoot, 'output', 'performance')
     mkdirSync(outputRoot, { recursive: true })
@@ -106,15 +108,56 @@ async function activateRoute(
   page: Awaited<ReturnType<typeof openChromiumPage>>,
   route: string,
   readySelector: string,
-): Promise<number> {
-  const started = performance.now()
-  const activated = await page.evaluate<boolean>(`(() => {
+): Promise<Readonly<{
+  readonly browserReadyMilliseconds: number
+  readonly projectionMilliseconds: number | null
+  readonly resources: readonly Readonly<{
+    readonly name: string
+    readonly initiatorType: string
+    readonly startMilliseconds: number
+    readonly durationMilliseconds: number
+    readonly transferBytes: number
+    readonly decodedBodyBytes: number
+  }>[]
+}>> {
+  return page.evaluate(`new Promise((resolvePromise, rejectPromise) => {
     const button = document.querySelector('.dyson-navigation__item[data-navigation-id=${JSON.stringify(route)}] button')
-    if (!(button instanceof HTMLButtonElement) || button.disabled) return false
+    if (!(button instanceof HTMLButtonElement) || button.disabled) {
+      rejectPromise(new Error(${JSON.stringify(`Mature profile could not activate ${route}.`)}))
+      return
+    }
+    const started = performance.now()
+    let timeout = 0
+    const finish = () => {
+      if (document.querySelector(${JSON.stringify(readySelector)}) === null) return false
+      observer.disconnect()
+      window.clearTimeout(timeout)
+      const completed = performance.now()
+      resolvePromise({
+        browserReadyMilliseconds: completed - started,
+        projectionMilliseconds: Number.isFinite(Number(document.documentElement.dataset.v2LastProjectionMs))
+          ? Number(document.documentElement.dataset.v2LastProjectionMs)
+          : null,
+        resources: performance.getEntriesByType('resource')
+          .filter((entry) => entry.startTime >= started && entry.startTime <= completed)
+          .map((entry) => ({
+            name: entry.name,
+            initiatorType: entry.initiatorType,
+            startMilliseconds: entry.startTime - started,
+            durationMilliseconds: entry.duration,
+            transferBytes: entry.transferSize,
+            decodedBodyBytes: entry.decodedBodySize,
+          })),
+      })
+      return true
+    }
+    const observer = new MutationObserver(() => { finish() })
+    observer.observe(document.documentElement, { childList: true, subtree: true })
+    timeout = window.setTimeout(() => {
+      observer.disconnect()
+      rejectPromise(new Error(${JSON.stringify(`Timed out waiting for the ${route} route.`)}))
+    }, 30_000)
     button.click()
-    return true
-  })()`)
-  if (!activated) throw new Error(`Mature profile could not activate ${route}.`)
-  await page.waitForSelector(readySelector, 30_000)
-  return performance.now() - started
+    finish()
+  })`)
 }

@@ -83,9 +83,14 @@ npm run report:performance:mature-browser
 
 The run seeds an isolated Chromium profile with `1e300` cash, `1e250` bots and
 27 secrets, measures navigation through the ready shell, then times first-open
-loading of the Simulations and Quantum route chunks. It writes evidence to
-`output/performance/mature-browser-profile.json` and never reads a player's
-browser profile or private save.
+Simulations and Quantum rendering inside the browser with a `MutationObserver`.
+This avoids the 50 ms DevTools polling floor. Each route result separates the
+last native snapshot-projection time from lazy resource timing; Quantum is
+also reopened after returning to Bots to expose its already-loaded cost. The
+production UI idly evaluates the small Quantum module only after that route is
+unlocked, so early-game startup does not pay for inaccessible content. The
+report is written to `output/performance/mature-browser-profile.json` and never
+reads a player's browser profile or private save.
 
 Run the schema-13 range profile from the last native-number-comparable value
 through the canonical GameDecimal ceiling:

@@ -395,6 +395,9 @@ function createPage(options: {
       }
       readonly exceptionDetails?: {
         readonly text?: string
+        readonly exception?: {
+          readonly description?: string
+        }
       }
     }>('Runtime.evaluate', {
       expression,
@@ -403,7 +406,8 @@ function createPage(options: {
     })
     if (response.exceptionDetails !== undefined) {
       throw new Error(
-        response.exceptionDetails.text ??
+        response.exceptionDetails.exception?.description ??
+          response.exceptionDetails.text ??
           response.result.description ??
           'Browser evaluation failed.',
       )

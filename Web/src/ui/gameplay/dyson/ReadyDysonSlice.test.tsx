@@ -581,6 +581,41 @@ describe('ReadyDysonSlice', () => {
     )
   })
 
+  test('preloads the Quantum route only after it is unlocked and cancels idle work on unmount', () => {
+    const requestIdleCallback = vi.fn(() => 17)
+    const cancelIdleCallback = vi.fn()
+    vi.stubGlobal('requestIdleCallback', requestIdleCallback)
+    vi.stubGlobal('cancelIdleCallback', cancelIdleCallback)
+    const rendered = render(
+      provider(
+        <ReadyDysonSlice
+          snapshot={snapshot({ infinityPoints: 1n })}
+          locale="en"
+          dispatchPlayer={acceptedDispatch}
+        />,
+      ),
+    )
+
+    expect(requestIdleCallback).not.toHaveBeenCalled()
+    rendered.rerender(
+      provider(
+        <ReadyDysonSlice
+          snapshot={snapshot({ infinityPoints: 42n })}
+          locale="en"
+          dispatchPlayer={acceptedDispatch}
+        />,
+      ),
+    )
+    expect(requestIdleCallback).toHaveBeenCalledOnce()
+    expect(requestIdleCallback).toHaveBeenCalledWith(
+      expect.any(Function),
+      { timeout: 2_000 },
+    )
+
+    rendered.unmount()
+    expect(cancelIdleCallback).toHaveBeenCalledWith(17)
+  })
+
   test('keeps Avocato subordinate to Quantum and exposes it through Reality', async () => {
     const user = userEvent.setup()
     const onRouteChange = vi.fn()
