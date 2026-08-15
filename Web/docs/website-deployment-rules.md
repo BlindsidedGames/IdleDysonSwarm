@@ -55,7 +55,12 @@ and Web entitlements are origin-scoped and device-bound.
 
 Start from a fresh worktree based on current `main`. From `Web`:
 
+Use the exact Node release in `Web/.nvmrc` before installing. The migration
+checkpoint requires Node 24.11.1 with npm 11.6.2; npm 10 rejects the locked
+optional dependency graph.
+
 ```powershell
+nvm use 24.11.1
 npm ci
 npm run pwa:icons
 npm test
@@ -161,4 +166,3 @@ Roll back the website deployment to the last verified website commit or Pages
 deployment. Do not roll back Stripe secrets, prices, DNS, or the custom-domain
 attachment unless those resources caused the incident. After rollback, repeat
 the canonical-route, save-loading, catalog, and unpaid Checkout-session checks.
-

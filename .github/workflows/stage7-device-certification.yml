@@ -18,9 +18,9 @@ jobs:
         working-directory: Web
     steps:
       - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4.4.0
         with:
-          node-version: 22
+          node-version-file: Web/.nvmrc
           cache: npm
           cache-dependency-path: Web/package-lock.json
       - run: npm ci
@@ -36,9 +36,9 @@ jobs:
         api-level: [26, 36]
     steps:
       - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4.4.0
         with:
-          node-version: 22
+          node-version-file: Web/.nvmrc
           cache: npm
           cache-dependency-path: Web/package-lock.json
       - uses: actions/setup-java@v4
@@ -64,9 +64,9 @@ jobs:
     runs-on: macos-latest
     steps:
       - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4.4.0
         with:
-          node-version: 22
+          node-version-file: Web/.nvmrc
           cache: npm
           cache-dependency-path: Web/package-lock.json
       - run: npm ci

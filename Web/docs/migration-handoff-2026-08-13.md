@@ -5,16 +5,15 @@
 - Repository: `BlindsidedGames/IdleDysonSwarm`
 - Branch: `break-infinity-migration`
 - Base before this migration checkpoint: `1aaae34`
-- Prepared on: 2026-08-13 (Australia/Sydney)
+- Prepared on: 2026-08-15 (Australia/Sydney)
 - Product target: the TypeScript/Web application under `Web/`
 - Deployment status: local source checkpoint only. No website deployment,
   native signing, store upload, TestFlight upload, release, or merge was
   performed as part of this handoff.
 
-The remote branch was refreshed on 2026-08-13 and still resolves to checkpoint
-`74e05605`. Live GitHub Actions run status was unavailable because the stored
-`gh` credential for `BlindsidedGames` is invalid; do not infer remote CI status
-from the green local gates below.
+The gameplay checkpoint `69854cf9` was pushed on 2026-08-15. GitHub Actions run
+`31866684411` completed successfully for the shared Web runtime, unsigned
+Android debug assembly, and unsigned iOS simulator compilation.
 
 ## Current state
 
@@ -36,6 +35,69 @@ The latest adversarial audit fixes include:
   Dream, Reality, Quantum, and Avocato, with immutable projection memoization;
 - a mature synthetic schema-12 migration/import/recovery corpus; and
 - V1/V2 command, codec, activated-command, checkpoint, and reload benchmarks.
+
+## 2026-08-15 final-tree certification
+
+The following evidence was collected against gameplay checkpoint `69854cf9`.
+The only later source change in this handoff is the Stage 7 workflow toolchain
+correction and this documentation; no gameplay code changed after these runs.
+
+- Production build: PASS, 459 modules transformed. The initial application
+  module is 1,004.81 KiB decoded and 274.92 KiB gzip.
+- Full serialized suite: PASS, 228 files and 2,326 tests. The ordinary sandbox
+  run passed 2,323 tests and the three loopback browser cases then passed with
+  localhost permission.
+- Lint: PASS with the two existing Fast Refresh warnings in
+  `v2GameMain.tsx` and `v2InspectionMain.tsx`.
+- Unity data projection: PASS, 559 assets across 34 types, 371 runtime assets,
+  and 104 skill-tree presentation nodes.
+- Schema-12 Web fixture, first-Dyson parity, and i18n extract/compile: PASS.
+- Real Chrome/PWA local gates: PASS for installed A-to-B update activation,
+  certification UI, and native certification entry.
+- GitHub `Verify Web and native foundations`: PASS for exact source SHA
+  `69854cf9ff01de5a0b7e1d884317c3d731215b63`.
+
+The migration corpus contains 15 valid saves spanning schemas 0, 8, 10, 11,
+and 12, plus two intentionally corrupt ES3 artifacts. Every valid save
+validated after V2 migration, retained exact recovery bytes, encoded
+deterministically as schema 13, reopened through the production repository,
+and reproduced the same canonical state. The installed Unity save and eight
+local backups required zero numeric repairs. The installed source file remains
+unchanged at SHA-256
+`98f86ee2d836836386350fd0f935e5b8484bd029ff42d189501b4f0112291517`.
+
+Measured final performance:
+
+| Gate | Result |
+| --- | --- |
+| Desktop interaction | 0.7 ms feedback P95, 1.3 ms React commit P95, 40 ms INP P75 |
+| 4x-throttled mobile | 1.4 ms feedback P95, 2.7 ms React commit P95, 120 ms INP P75 |
+| Mature schema-12 startup | 237.7 ms ready wall time, zero long tasks |
+| Schema-13 codec | 2.80 ms encode median, 4.50 ms decode median |
+| Activated V2 | 6.10 ms command plus projection, 3.26 ms checkpoint, 14.45 ms reload |
+| Large-number range | PASS from `1e300` through `1e20000`, `1e1000000`, and exponent `8999999999999999` |
+| Overflow boundary | Maximum exponent accepted; either exclusive limit throws `RangeError` |
+| 30-minute retained-heap soak | PASS; 3.86 MiB growth against 10 MiB allowance, no settled resource-count growth |
+
+Compared with the original migration handoff measurements, schema-13 encode is
+about 96% faster, decode 94% faster, checkpoint 96% faster, and fresh controller
+reload 94% faster. Command plus projection improved by about 19%. These are
+same-harness comparisons; the production-browser results above remain the
+authority for user-visible latency.
+
+Two non-correctness performance opportunities remain visible: the initial
+application module is about 275 KiB gzip, and Quantum preview projection is
+about 36-39 ms because the current catalog projection repeats full-state
+admission for each upgrade. Cold Simulations measured about 115 ms. These are
+useful follow-up optimizations, not failed interaction budgets.
+
+The Stage 7 device workflow exists on this branch and covers Web/PWA, Android
+API 26 and 36 emulators, and unsigned iOS simulator compilation. GitHub cannot
+dispatch a branch-only `workflow_dispatch` file until it exists on the default
+branch; its `pull_request` trigger is therefore the remaining path to execute
+the two Android emulator jobs. The workflow previously hardcoded Node 22,
+which cannot clean-install this lockfile with its bundled npm 10. It now reads
+`Web/.nvmrc`, matching the active verify and release workflows.
 
 Large-number presentation retains Unity's truncated three-significant-digit
 suffix format through `DCe`. Above that range, both the scientific mantissa and
@@ -174,6 +236,7 @@ git clone https://github.com/BlindsidedGames/IdleDysonSwarm.git
 cd IdleDysonSwarm
 git switch break-infinity-migration
 cd Web
+nvm use
 npm ci
 npx tsc -b --pretty false
 npm test -- --maxWorkers=1
@@ -182,6 +245,10 @@ npm run dev -- --host 127.0.0.1 --port 5173 --strictPort
 
 If the repository already exists, run `git fetch origin`, switch to
 `break-infinity-migration`, and use `git pull --ff-only`.
+
+Use the exact Node version in `Web/.nvmrc` before `npm ci`. At this checkpoint
+that is Node 24.11.1 with npm 11.6.2. Node 22/npm 10 rejects the current lockfile;
+do not regenerate the lockfile under that older toolchain.
 
 ## Instructions for the receiving Codex agent
 
