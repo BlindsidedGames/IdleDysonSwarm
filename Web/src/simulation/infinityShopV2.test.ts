@@ -16,6 +16,7 @@ import { PreparedSave } from '../save/prepare'
 import { deserializeWebSave } from '../save/serialization'
 import {
   commitInfinityShopPurchaseV2,
+  INFINITY_SHOP_ITEM_IDS_V2,
   INFINITY_SHOP_TUNING_V2,
   quoteInfinityShopPurchaseV2,
 } from './infinityShopV2'
@@ -53,6 +54,33 @@ function stateWith(
 }
 
 describe('Infinity shop V2', () => {
+  test('independently quotes and commits every Infinity shop item', () => {
+    const retainedOrder = [
+      'assembly_lines', 'ai_managers', 'servers', 'data_centers', 'planets',
+    ] as const
+    for (const itemId of INFINITY_SHOP_ITEM_IDS_V2) {
+      let source = stateWith({ available: '1e2' })
+      if (itemId.startsWith('retain-')) {
+        const key = itemId.slice('retain-'.length).replaceAll('-', '_') as typeof retainedOrder[number]
+        const index = retainedOrder.indexOf(key)
+        source = cloneCanonicalGameStateV2({
+          ...source,
+          infinity: {
+            ...source.infinity,
+            retainedFacilities: Object.fromEntries(retainedOrder.map((entry, entryIndex) => [
+              entry,
+              entryIndex < index,
+            ])) as unknown as CanonicalGameStateV2['infinity']['retainedFacilities'],
+          },
+        })
+      }
+      const quote = quoteInfinityShopPurchaseV2(source, 4, itemId)
+      expect(quote.eligible, `${itemId}: ${quote.status}`).toBe(true)
+      const result = commitInfinityShopPurchaseV2(quote, source, 4)
+      expect(result.accepted, `${itemId}: ${result.status}`).toBe(true)
+      expect(result.changed, itemId).toBe(true)
+    }
+  })
   test('does not trust an authority-forged issued state for validation elision', () => {
     const source = stateWith()
     const forged = Object.freeze({

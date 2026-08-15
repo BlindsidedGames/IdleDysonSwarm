@@ -134,6 +134,18 @@ describe('exact Canonical Skill V2 transactions', () => {
     })
     expect(Object.isFrozen(preview.skills)).toBe(true)
   })
+  test('independently purchases every authored skill through its canonical planner', () => {
+    const source = stateWithSkills([], 1_000_000n)
+    const catalog = previewCanonicalSkillCatalogV2(source)
+    expect(catalog.skills).toHaveLength(104)
+    for (const skill of catalog.skills) {
+      const result = purchaseCanonicalSkillV2(source, skill.skillId)
+      expect(result.accepted, `${skill.skillId}: ${result.code}`).toBe(true)
+      expect(result.changed, skill.skillId).toBe(true)
+      if (!result.accepted) continue
+      expect(result.state.skills.byId[skill.skillId]?.owned, skill.skillId).toBe(true)
+    }
+  })
   test('atomically purchases a dependency closure using exact bigint points', () => {
     const state = stateWithSkills([], 2n)
     const purchased = purchaseCanonicalSkillV2(state, 'assemblyLineTree')

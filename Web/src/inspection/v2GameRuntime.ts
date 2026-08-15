@@ -428,6 +428,10 @@ class V2GameRuntime {
       const next = this.#routeCommand(source, command)
       const authorityCompleted = performance.now()
       if (next === null) {
+        document.documentElement.dataset.v2LastCommandCode =
+          'V2-COMMAND-REJECTED'
+        document.documentElement.dataset.v2LastCommandReason =
+          `The V2 authority rejected '${command.kind}'.`
         return Object.freeze({
           status: 'rejected', kind: 'transition', code: 'V2-COMMAND-REJECTED',
           reason: `The V2 authority rejected '${command.kind}'.`, stale: false,
@@ -438,6 +442,8 @@ class V2GameRuntime {
       if (changed) this.#adopt(next)
       const completed = performance.now()
       document.documentElement.dataset.v2LastCommandKind = command.kind
+      document.documentElement.dataset.v2LastCommandCode = 'accepted'
+      delete document.documentElement.dataset.v2LastCommandReason
       document.documentElement.dataset.v2LastCommandAuthorityMs =
         (authorityCompleted - commandStarted).toFixed(3)
       document.documentElement.dataset.v2LastCommandTotalMs =
@@ -447,6 +453,10 @@ class V2GameRuntime {
         stateRevision: next.revision, activationRevision,
       })
     } catch (error) {
+      document.documentElement.dataset.v2LastCommandCode =
+        'V2-COMMAND-FAILED'
+      document.documentElement.dataset.v2LastCommandReason =
+        error instanceof Error ? error.message : String(error)
       return Object.freeze({
         status: 'rejected', kind: 'transition', code: 'V2-COMMAND-FAILED',
         reason: error instanceof Error ? error.message : String(error), stale: false,
@@ -954,7 +964,9 @@ class V2GameRuntime {
       case 'quantum.request-leap': {
         const quote = quoteCanonicalQuantumResetV2(source, Object.freeze({ kind: 'quantum-action' }))
         const result = commitCanonicalQuantumResetV2(quote, source)
-        return result.accepted && result.publication !== null ? result.publication : null
+        return result.accepted && result.publication !== null
+          ? this.#admitOwnedPublication(source, result.publication, result.changed)
+          : null
       }
       case 'avocado.feed': {
         const account = command.source === 'strange-matter'
@@ -968,7 +980,9 @@ class V2GameRuntime {
           source: command.source,
         }), account)
         const result = commitAvocadoCommandV2(quote, source)
-        return result.accepted && result.publication !== null ? result.publication : null
+        return result.accepted && result.publication !== null
+          ? this.#admitOwnedPublication(source, result.publication, result.changed)
+          : null
       }
       case 'avocado.complete-meditation-step': {
         const quote = quoteAvocadoCommandV2(source, Object.freeze({
@@ -976,7 +990,9 @@ class V2GameRuntime {
           stepIndex: command.requiredStepIndex,
         }))
         const result = commitAvocadoCommandV2(quote, source)
-        return result.accepted && result.publication !== null ? result.publication : null
+        return result.accepted && result.publication !== null
+          ? this.#admitOwnedPublication(source, result.publication, result.changed)
+          : null
       }
       case 'dyson.set-buy-mode':
         return this.#replaceState(source, {
@@ -1202,7 +1218,7 @@ class V2GameRuntime {
     const quote = quoteDreamCommandV2(source, request)
     const result = commitDreamCommandV2(quote, source)
     return result.accepted && result.publication !== null
-      ? result.publication
+      ? this.#admitOwnedPublication(source, result.publication, result.changed)
       : null
   }
 
@@ -1213,8 +1229,21 @@ class V2GameRuntime {
     const quote = quoteCanonicalDreamResetV2(source, Object.freeze({ kind }))
     const result = commitCanonicalDreamResetV2(quote, source)
     return result.accepted && result.publication !== null
-      ? result.publication
+      ? this.#admitOwnedPublication(source, result.publication, result.changed)
       : null
+  }
+
+  #admitOwnedPublication(
+    source: Readonly<CanonicalRuntimePublicationV2>,
+    candidate: Readonly<CanonicalRuntimePublicationV2>,
+    changed: boolean,
+  ): Readonly<CanonicalRuntimePublicationV2> {
+    if (!changed) return source
+    return adoptPreparedCanonicalRuntimePublicationV2(
+      APPLICATION_AUTHORITY,
+      source,
+      candidate,
+    )
   }
 
   #replaceState(
@@ -1249,9 +1278,14 @@ class V2GameRuntime {
   }
 
   #adopt(publication: Readonly<CanonicalRuntimePublicationV2>): void {
-    this.#publication = publication
+    // Projection and host admission can reject a candidate. Complete both
+    // before changing the foreground publication so a failed command cannot
+    // leave gameplay and the Reality/Stored Time host on different revisions.
+    const snapshot = this.#selectSnapshot(publication)
     this.#storedTimeHost?.adoptExternalPublication(publication, this.#platform)
-    this.#publishSnapshot()
+    this.#publication = publication
+    this.#snapshot = snapshot
+    this.#notifySnapshot()
     this.#scheduleCheckpoint()
   }
 
@@ -1425,15 +1459,22 @@ class V2GameRuntime {
 
   #publishSnapshot(): void {
     if (this.#publication === null) return
+    this.#snapshot = this.#selectSnapshot(this.#publication)
+    this.#notifySnapshot()
+  }
+
+  #selectSnapshot(
+    publication: Readonly<CanonicalRuntimePublicationV2>,
+  ): DeepReadonly<FrontendApplicationSnapshot> {
     const started = performance.now()
-    this.#snapshot = selectFrontendApplicationSnapshotV2(
-      this.#publication,
+    const snapshot = selectFrontendApplicationSnapshotV2(
+      publication,
       Object.freeze({
         session: this.#sessionRevision,
-        state: this.#publication.revision,
+        state: publication.revision,
         durable: this.#durableRevision,
       }),
-      this.#publication.revision === this.#durableRevision ? 'clean' : 'dirty',
+      publication.revision === this.#durableRevision ? 'clean' : 'dirty',
       this.#previewDemand,
       this.#tinker,
       this.#infinityRewardAuthority(),
@@ -1442,7 +1483,7 @@ class V2GameRuntime {
     )
     document.documentElement.dataset.v2LastProjectionMs =
       (performance.now() - started).toFixed(3)
-    this.#notifySnapshot()
+    return snapshot
   }
 
   async #checkpointPublication(publication: Readonly<CanonicalRuntimePublicationV2>): Promise<void> {

@@ -120,6 +120,23 @@ export function previewQuantumUpgradeCatalogV2(
   ))
 }
 
+/** Read-only mode projection for one upgrade. No commit authority is minted. */
+export function previewQuantumUpgradeModesV2(
+  state: CanonicalGameStateV2,
+  sourceRevision: number,
+  upgradeId: QuantumUpgradeIdV2,
+): readonly QuantumPurchaseQuoteV2[] {
+  if (!admitState(state) || !validRevision(sourceRevision) || !isId(upgradeId)) {
+    return Object.freeze([])
+  }
+  const modes: readonly V2PurchaseMode[] = BULK_SET.has(upgradeId)
+    ? Object.freeze(['buy-1', 'buy-10', 'buy-50', 'buy-100', 'buy-max'])
+    : Object.freeze(['buy-1'])
+  return Object.freeze(modes.map((mode) =>
+    buildQuote(state, sourceRevision, upgradeId, mode, true),
+  ))
+}
+
 export function commitQuantumUpgradeV2(
   quote: QuantumPurchaseQuoteV2,
   state: CanonicalGameStateV2,

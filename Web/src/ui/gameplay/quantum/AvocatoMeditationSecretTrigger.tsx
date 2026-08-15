@@ -92,9 +92,14 @@ export function AvocatoMeditationSecretTrigger({
         foundMarker.alt = ''
         foundMarker.setAttribute('aria-hidden', 'true')
         foundMarker.setAttribute('data-avotation-found-marker', placement)
-        foundMarker.className = 'avotation-found-marker'
+        foundMarker.className = placement === 'quantum'
+          ? 'avotation-found-marker avotation-found-marker--inline'
+          : 'avotation-found-marker'
         markedTarget.setAttribute('data-avotation-marker-host', placement)
-        markedTarget.append(foundMarker)
+        const markerHost = placement === 'quantum'
+          ? markedTarget.querySelector('h4') ?? markedTarget
+          : markedTarget
+        markerHost.append(foundMarker)
       }
     }
 

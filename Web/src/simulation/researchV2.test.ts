@@ -125,6 +125,39 @@ function decimal(value: string) {
 }
 
 describe('dormant V2 Research commands', () => {
+  test('independently quotes and commits every Research catalog entry', () => {
+    for (const definition of RESEARCH_V2_DEFINITIONS) {
+      const levelsById = Object.fromEntries(RESEARCH_V2_IDS.map((id) => {
+        const current = baseState.research.levelsById[id]
+        const owned = id === definition.id ? false : true
+        return [id, typeof current === 'bigint'
+          ? (owned ? 1n : 0n)
+          : (owned ? GAME_DECIMAL_ONE : GAME_DECIMAL_ZERO)]
+      })) as unknown as CanonicalGameStateV2['research']['levelsById']
+      const facilities = Object.fromEntries(Object.keys(baseState.dyson.facilities).map((id) => [
+        id,
+        Object.freeze([GAME_DECIMAL_ONE, GAME_DECIMAL_ONE]),
+      ])) as unknown as CanonicalGameStateV2['dyson']['facilities']
+      const source = cloneCanonicalGameStateV2({
+        ...baseState,
+        dyson: { ...baseState.dyson, science: decimal('1e1000'), facilities },
+        research: { ...baseState.research, levelsById },
+      })
+      const quote = quoteV2ResearchPurchase(
+        source,
+        runtime,
+        5,
+        definition.id,
+        'buy-1',
+        false,
+        false,
+      )
+      expect(quote.eligible, `${definition.id}: ${quote.status}`).toBe(true)
+      const result = commitV2ResearchPurchase(quote, source, runtime, 5)
+      expect(result.accepted, `${definition.id}: ${result.status}`).toBe(true)
+      expect(result.changed, definition.id).toBe(true)
+    }
+  })
   test('closes the generated catalog to 14 exact definitions and numeric policies', () => {
     expect(RESEARCH_V2_CATALOG_CONTRACT_VALID).toBe(true)
     expect(RESEARCH_V2_IDS).toHaveLength(14)

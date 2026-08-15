@@ -237,7 +237,7 @@ export type DreamInfluencePurchasePreviewV2 = Readonly<Pick<
   | 'quotedCost'
   | 'buyMaxBatchCap'
   | 'reachedBuyMaxBatchCap'
->>
+> & { readonly unitsRequested: GameDecimal }>
 
 export function previewDreamInfluencePurchaseModesV2(
   state: CanonicalGameStateV2,
@@ -261,7 +261,7 @@ function previewDreamInfluencePurchaseModeAdmitted(
   const units=id==='hunters'?state.dream.huntersPerPurchase:id==='gatherers'?state.dream.gatherersPerPurchase:GAME_DECIMAL_ONE
   const failed = (): DreamInfluencePurchasePreviewV2 => Object.freeze({
     accepted:false,purchaseId:id,requestedMode:mode,rejection:'invalid-request',batches:GAME_DECIMAL_ZERO,
-    unitsGranted:GAME_DECIMAL_ZERO,quotedCost:GAME_DECIMAL_ZERO,
+    unitsRequested:GAME_DECIMAL_ZERO,unitsGranted:GAME_DECIMAL_ZERO,quotedCost:GAME_DECIMAL_ZERO,
     buyMaxBatchCap:mode==='buy-max'?V2_FIXED_PRICE_BUY_MAX_BATCH_CAP:null,
     reachedBuyMaxBatchCap:false,
   })
@@ -270,13 +270,14 @@ function previewDreamInfluencePurchaseModeAdmitted(
   const affordable=floorGameDecimal(divideGameDecimals(common.balance,price))
   const currentOwned=floorGameDecimal(divideGameDecimals(common.output,units))
   const batches=selectV2PurchaseBatches({mode,rounded:false,currentOwned,affordable})
+  const unitsRequested=multiplyGameDecimals(batches,units)
   const quote=mode==='buy-max'?quoteV2FixedPriceBuyMax({...common,pricePerBatch:price}):quoteV2Purchase({...common,requestedMode:mode,batches,quotedCost:multiplyGameDecimals(price,batches)})
   if(!quote.accepted)return Object.freeze({
-    ...failed(),rejection:quote.rejection,quotedCost:quote.quotedCost,
+    ...failed(),rejection:quote.rejection,unitsRequested,quotedCost:quote.quotedCost,
   })
   return Object.freeze({
     accepted:true,purchaseId:id,requestedMode:mode,rejection:'none' as const,batches:quote.batches,
-    unitsGranted:quote.unitsGranted,quotedCost:quote.quotedCost,
+    unitsRequested,unitsGranted:quote.unitsGranted,quotedCost:quote.quotedCost,
     buyMaxBatchCap:mode==='buy-max'?V2_FIXED_PRICE_BUY_MAX_BATCH_CAP:null,
     reachedBuyMaxBatchCap:mode==='buy-max'&&equalGameDecimals(quote.batches,V2_FIXED_PRICE_BUY_MAX_BATCH_CAP),
   })

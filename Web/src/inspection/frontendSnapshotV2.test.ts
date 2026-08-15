@@ -350,6 +350,15 @@ describe('V2 full-game frontend projection', () => {
     expect(hunter?.selectedInfluenceQuote?.requestedMode).toBe(
       state.dyson.automation.buyMode,
     )
+    expect(snapshot.gameplay.previews.quantum.upgrades.find(
+      ({ upgradeId }) => upgradeId === 'CashBonus',
+    )?.purchaseModes.map(({ requestedMode }) => requestedMode)).toEqual([
+      'buy-1',
+      'buy-10',
+      'buy-50',
+      'buy-100',
+      'buy-max',
+    ])
     expect(isGameDecimal(snapshot.gameplay.previews.quantum.leap.requestedShards)).toBe(true)
     expect(isGameDecimal(snapshot.gameplay.previews.quantum.leap.infinityPointsConsumed)).toBe(true)
     expect(isGameDecimal(snapshot.gameplay.previews.quantum.leap.infinityPointsRemainder)).toBe(true)

@@ -583,6 +583,9 @@ export interface FrontendDreamInfluencePurchaseModePreview {
   readonly requestedMode: V2PurchaseMode
   readonly eligible: boolean
   readonly batches: GameDecimal
+  /** Quantity requested by the selected mode, even when unaffordable. */
+  readonly unitsRequested: GameDecimal
+  /** Quantity the accepted transaction would actually grant. */
   readonly unitsGranted: GameDecimal
   readonly totalCost: GameDecimal
   readonly buyMaxBatchCap: GameDecimal | null
@@ -627,6 +630,13 @@ export interface FrontendQuantumUpgradePreview {
   readonly cost: bigint | GameDecimal
   readonly code: string
   readonly definitionGap: string | null
+  readonly purchaseModes: readonly Readonly<{
+    readonly requestedMode: V2PurchaseMode
+    readonly eligible: boolean
+    readonly batches: GameDecimal
+    readonly totalCost: GameDecimal
+    readonly code: string
+  }>[]
 }
 
 export interface FrontendAvocadoFeedPreview {
@@ -2410,6 +2420,13 @@ function selectQuantumPreviews(
         definitionGap: QUANTUM_UPGRADE_DEFINITIONS.has(upgradeId)
           ? null
           : `missing_definition:${upgradeId}`,
+        purchaseModes: [{
+          requestedMode: 'buy-1',
+          eligible: result.accepted && result.changed,
+          batches: gameDecimalFromNumber(1),
+          totalCost: gameDecimalFromBigInt(quantumUpgradeCost(state, upgradeId)),
+          code: result.code,
+        }],
       }
     }),
     sections: previewQuantumUpgradeSections(state),

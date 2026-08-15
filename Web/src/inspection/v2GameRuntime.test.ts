@@ -1,7 +1,12 @@
 // @vitest-environment jsdom
 import { describe, expect, test, vi } from 'vitest'
 import { createDeterministicUnityFirstRunPreparedSave } from '../application/firstRun/unityFirstRunSave'
-import { createCanonicalRuntimePublicationV2, type CanonicalRuntimePublicationV2 } from '../application/canonicalRuntimeSessionV2'
+import {
+  admitIssuedCanonicalRuntimePublicationV2,
+  createCanonicalRuntimePublicationV2,
+  registerCanonicalRuntimeApplicationAuthorityV2,
+  type CanonicalRuntimePublicationV2,
+} from '../application/canonicalRuntimeSessionV2'
 import { migratePreparedSaveToV2 } from '../game-state/mappingV2'
 import { cloneCanonicalGameStateV2 } from '../game-state/cloneV2'
 import {
@@ -27,6 +32,182 @@ const PLATFORM = Object.freeze({
 })
 
 describe('V2 game runtime production seams', () => {
+  test('admits every purchase family through the production host boundary', async () => {
+    const migrated = migratePreparedSaveToV2(
+      createDeterministicUnityFirstRunPreparedSave(),
+      { kind: 'trusted-same-device' },
+    )
+    const hundred = gameDecimalFromNumber(100)
+    const facilities = Object.fromEntries(Object.keys(migrated.state.dyson.facilities).map((id) => [
+      id,
+      Object.freeze([hundred, gameDecimalFromNumber(0)]),
+    ])) as unknown as typeof migrated.state.dyson.facilities
+    const state = cloneCanonicalGameStateV2({
+      ...migrated.state,
+      meta: { ...migrated.state.meta, firstInfinityComplete: true },
+      dyson: {
+        ...migrated.state.dyson,
+        money: gameDecimalFromCanonicalString('1e1000'),
+        science: gameDecimalFromCanonicalString('1e1000'),
+        facilities,
+      },
+      infinity: {
+        ...migrated.state.infinity,
+        availablePoints: hundred,
+      },
+      skills: { ...migrated.state.skills, points: 1_000_000n },
+      dream: {
+        ...migrated.state.dream,
+        strangeMatter: gameDecimalFromCanonicalString('1e1000'),
+      },
+      reality: { ...migrated.state.reality, influence: gameDecimalFromCanonicalString('1e1000') },
+      quantum: {
+        ...migrated.state.quantum,
+        availableShards: hundred,
+        lifetimeEarnedShards: hundred,
+      },
+      avocado: { ...migrated.state.avocado, unlocked: true },
+      timeline: {
+        ...migrated.state.timeline,
+        storedTimeAvailableSeconds: migrated.state.timeline.storedTimeCapacitySeconds,
+      },
+    })
+    const initial = createCanonicalRuntimePublicationV2({
+      revision: 1,
+      state,
+      runtime: migrated.runtime,
+    })
+    const repository = new FakeRuntimeRepository(initial)
+    const controller = createV2GameRuntimeController({
+      repository,
+      createStoredTimeHost: () => new BoundaryCheckingStoredTimeHost(initial),
+    })
+    await controller.runtime.start()
+
+    const commands = [
+      { kind: 'dyson.purchase-basic-facility', facilityId: 'assembly_lines' },
+      { kind: 'research.purchase', researchId: 'research.science_boost' },
+      { kind: 'skill.purchase', skillId: 'startHereTree' },
+      { kind: 'infinity.purchase-shop-item', itemId: 'secret' },
+      { kind: 'dream.purchase-foundational', purchase: 'hunters' },
+      { kind: 'dream.purchase-upgrade', upgradeId: 'counterMeteor' },
+      { kind: 'dream.start-education', educationId: 'engineering' },
+      { kind: 'reality.purchase-upgrade', upgradeId: 'translation1' },
+      { kind: 'quantum.purchase-upgrade', upgradeId: 'CashBonus' },
+      { kind: 'avocado.feed', source: 'influence' },
+      { kind: 'time.upgrade-stored-capacity' },
+    ] as const
+    for (const command of commands) {
+      const result = await controller.runtime.dispatchPlayer(command)
+      expect(result, `${command.kind}: ${'reason' in result ? result.reason : ''}`).toMatchObject({
+        status: 'accepted',
+        changed: true,
+      })
+    }
+
+    const snapshot = controller.runtime.snapshot()
+    if (snapshot.phase !== 'ready') throw new Error('Expected a ready snapshot.')
+    expect(snapshot.gameplay.progression.skills.byId.startHereTree?.owned).toBe(true)
+    expect(snapshot.gameplay.progression.dream.upgrades.counterMeteor).toBe(true)
+    expect(snapshot.gameplay.progression.dream.education.engineering.active).toBe(true)
+    expect(snapshot.gameplay.progression.dream.upgrades.translation1).toBe(true)
+    expect(gameDecimalToCanonicalString(snapshot.gameplay.resources.reality.influence)).toBe('0')
+    await new Promise((resolve) => setTimeout(resolve, 350))
+    expect(controller.runtime.snapshot()).toMatchObject({ phase: 'ready' })
+    await controller.runtime.shutdown()
+
+    const reloaded = createV2GameRuntimeController({ repository })
+    await expect(reloaded.runtime.start()).resolves.toMatchObject({ phase: 'ready' })
+    const restored = reloaded.runtime.snapshot()
+    if (restored.phase !== 'ready') throw new Error('Expected a restored ready snapshot.')
+    expect(restored.gameplay.progression.skills.byId.startHereTree?.owned).toBe(true)
+    expect(restored.gameplay.progression.dream.upgrades.counterMeteor).toBe(true)
+    expect(restored.gameplay.progression.dream.upgrades.translation1).toBe(true)
+    expect(gameDecimalToCanonicalString(restored.gameplay.resources.reality.influence)).toBe('0')
+    await reloaded.runtime.shutdown()
+  })
+  test('reports an Influence purchase as accepted when it debits Influence and grants a Hunter', async () => {
+    const migrated = migratePreparedSaveToV2(
+      createDeterministicUnityFirstRunPreparedSave(),
+      { kind: 'trusted-same-device' },
+    )
+    const initial = createCanonicalRuntimePublicationV2({
+      revision: 1,
+      state: migrated.state,
+      runtime: migrated.runtime,
+    })
+    const repository = new FakeRuntimeRepository(initial)
+    repository.latestPlatform = Object.freeze({
+      ...PLATFORM,
+      debugOptions: true,
+      debugEverEnabled: true,
+      unlockAllTabs: true,
+    })
+    const host = new BoundaryCheckingStoredTimeHost(initial)
+    const controller = createV2GameRuntimeController({
+      repository,
+      createStoredTimeHost: () => host,
+    })
+    await controller.runtime.start()
+    await expect(controller.runtime.development!.apply({
+      kind: 'add-influence',
+      amount: gameDecimalFromNumber(128),
+    })).resolves.toMatchObject({ applied: true })
+    controller.runtime.setGameplayPreviewDemand('simulations')
+    await new Promise((resolve) => setTimeout(resolve, 350))
+
+    const result = await controller.runtime.dispatchPlayer({
+      kind: 'dream.purchase-foundational',
+      purchase: 'hunters',
+    })
+
+    expect(result).toMatchObject({ status: 'accepted', changed: true })
+    const snapshot = controller.runtime.snapshot()
+    expect(snapshot).toMatchObject({ phase: 'ready' })
+    if (snapshot.phase !== 'ready') throw new Error('Expected a ready snapshot.')
+    expect(gameDecimalToCanonicalString(snapshot.gameplay.resources.reality.influence)).toBe('2.8e1')
+    expect(gameDecimalToCanonicalString(snapshot.gameplay.resources.dream.hunters)).toBe('1e0')
+    await controller.runtime.shutdown()
+  })
+
+  test('does not partially adopt a purchase when the external host rejects it', async () => {
+    const migrated = migratePreparedSaveToV2(
+      createDeterministicUnityFirstRunPreparedSave(),
+      { kind: 'trusted-same-device' },
+    )
+    const initial = createCanonicalRuntimePublicationV2({
+      revision: 1,
+      state: cloneCanonicalGameStateV2({
+        ...migrated.state,
+        reality: {
+          ...migrated.state.reality,
+          influence: gameDecimalFromNumber(128),
+        },
+      }),
+      runtime: migrated.runtime,
+    })
+    const repository = new FakeRuntimeRepository(initial)
+    const controller = createV2GameRuntimeController({
+      repository,
+      createStoredTimeHost: () => new RejectingStoredTimeHost(initial),
+    })
+    await controller.runtime.start()
+    controller.runtime.setGameplayPreviewDemand('simulations')
+
+    await expect(controller.runtime.dispatchPlayer({
+      kind: 'dream.purchase-foundational',
+      purchase: 'hunters',
+    })).resolves.toMatchObject({
+      status: 'rejected',
+      code: 'V2-COMMAND-FAILED',
+      reason: 'host-rejected-for-test',
+    })
+
+    await controller.runtime.shutdown()
+    expect(gameDecimalToCanonicalString(repository.latestState.reality.influence)).toBe('1.28e2')
+    expect(gameDecimalToCanonicalString(repository.latestState.dream.resources.hunters)).toBe('0')
+  })
+
   test('persists all-tab visibility without granting Infinity or Quantum currency', async () => {
     const migrated = migratePreparedSaveToV2(
       createDeterministicUnityFirstRunPreparedSave(),
@@ -689,6 +870,36 @@ class FakeStoredTimeHost implements V2StoredTimeHostPort {
   }
   #result(status: 'ready' | 'started' | 'completed' | 'paused') {
     return Object.freeze({ status, publication: this.#publication, storedTimeUntouched: false })
+  }
+}
+
+class BoundaryCheckingStoredTimeHost extends FakeStoredTimeHost {
+  readonly #authority = registerCanonicalRuntimeApplicationAuthorityV2()
+
+  override adoptExternalPublication(
+    publication: Readonly<CanonicalRuntimePublicationV2>,
+  ) {
+    super.adoptExternalPublication(
+      admitIssuedCanonicalRuntimePublicationV2(this.#authority, publication),
+    )
+  }
+}
+
+class RejectingStoredTimeHost extends FakeStoredTimeHost {
+  readonly #initialRevision: number
+
+  constructor(publication: Readonly<CanonicalRuntimePublicationV2>) {
+    super(publication)
+    this.#initialRevision = publication.revision
+  }
+
+  override adoptExternalPublication(
+    publication: Readonly<CanonicalRuntimePublicationV2>,
+  ): void {
+    if (publication.revision > this.#initialRevision) {
+      throw new Error('host-rejected-for-test')
+    }
+    super.adoptExternalPublication(publication)
   }
 }
 

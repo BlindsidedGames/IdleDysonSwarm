@@ -475,7 +475,6 @@ function gameplayPreviewDemandForRoute(
 const AVOCATO_MEDITATION_ROUTE_PLACEMENT: Partial<
   Record<ReadyGameRoute, AvocatoMeditationPlacement>
 > = Object.freeze({
-  quantum: 'quantum',
   infinity: 'infinity',
   bots: 'bots',
   skills: 'skills',

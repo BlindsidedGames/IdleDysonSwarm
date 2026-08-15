@@ -10,8 +10,14 @@ import { afterEach, describe, expect, test, vi } from 'vitest'
 import type {
   FrontendQuantumUpgradePreview,
 } from '../../../application/frontendSnapshot'
-import { GAME_DECIMAL_MAXIMUM, gameDecimalFromCanonicalString } from '../../../math/gameDecimal'
 import {
+  GAME_DECIMAL_MAXIMUM,
+  gameDecimalFromBigInt,
+  gameDecimalFromCanonicalString,
+  multiplyGameDecimals,
+} from '../../../math/gameDecimal'
+import {
+  QUANTUM_BULK_UPGRADE_IDS,
   QUANTUM_UPGRADE_IDS,
   type QuantumUpgradeId,
   type QuantumUpgradeSectionPreview,
@@ -142,6 +148,41 @@ describe('QuantumSurface', () => {
       name: 'Purchase Division for 2.00 Quantum Shards',
     })).toHaveTextContent('2.00')
     expect(screen.queryByText('Unavailable')).not.toBeInTheDocument()
+  })
+
+  test('owns the first meditation target on the complete Secrets purchase card', async () => {
+    const dispatchPlayer = vi.fn(async () => accepted())
+    renderSurface({
+      dispatchPlayer,
+      secretStep: 0,
+      upgradeOverrides: {
+        Secrets: { code: 'already-maxed', eligible: false },
+      },
+    })
+
+    const card = screen.getByRole('heading', {
+      name: 'Secrets of the Universe',
+    }).closest('article')
+    expect(card).toHaveAttribute('data-avocato-secret-step', '0')
+    fireEvent.click(card!)
+
+    expect(dispatchPlayer).toHaveBeenCalledWith({
+      kind: 'avocado.complete-meditation-step',
+      requiredStepIndex: 0,
+    })
+  })
+
+  test('renders the first discovered Dabocado directly after the Secrets heading', () => {
+    const { container } = renderSurface({ secretStep: 1 })
+    const heading = screen.getByRole('heading', {
+      name: 'Secrets of the Universe',
+    })
+    const marker = container.querySelector(
+      '[data-avotation-found-marker="quantum"]',
+    )
+
+    expect(marker?.parentElement).toBe(heading)
+    expect(marker).toHaveClass('avotation-found-marker--inline')
   })
 
   test('shows Max without exposing an unaffordable ceiling price', () => {
@@ -315,6 +356,35 @@ describe('QuantumSurface', () => {
     })
   })
 
+  test('renders bulk quantity and cost from the authoritative mode quote', async () => {
+    const dispatchPlayer = vi.fn(async () => accepted())
+    const authoritativeModes = preview('CashBonus').purchaseModes.map((mode) =>
+      mode.requestedMode === 'buy-10'
+        ? {
+            ...mode,
+            eligible: true,
+            batches: gameDecimalFromBigInt(7n),
+            totalCost: gameDecimalFromBigInt(17n),
+          }
+        : mode,
+    )
+    renderSurface({
+      dispatchPlayer,
+      purchaseQuantity: 10,
+      upgradeOverrides: { CashBonus: { purchaseModes: authoritativeModes } },
+    })
+
+    const bulk = screen.getByRole('button', {
+      name: 'Purchase 7.00 Cash Booster upgrades for 17.0 Quantum Shards',
+    })
+    fireEvent.click(bulk)
+    expect(dispatchPlayer).toHaveBeenCalledWith({
+      kind: 'quantum.purchase-upgrade',
+      upgradeId: 'CashBonus',
+      quantity: 10n,
+    })
+  })
+
   test('converts complete 42-point groups directly after Quantum Entanglement', async () => {
     const dispatchPlayer = vi.fn(async () => accepted())
     renderSurface({
@@ -377,6 +447,8 @@ interface RenderOptions {
   readonly upgradeOverrides?: Partial<Record<QuantumUpgradeId, Partial<FrontendQuantumUpgradePreview>>>
   readonly purchaseQuantity?: QuantumSurfaceProps['purchaseQuantity']
   readonly sections?: readonly QuantumUpgradeSectionPreview[]
+  readonly secretStep?: number
+  readonly secretCompleted?: boolean
 }
 
 function renderSurface(options: RenderOptions = {}) {
@@ -415,7 +487,10 @@ function renderSurface(options: RenderOptions = {}) {
         },
       },
       avocado: { unlocked: false },
-      secretProgress: { step: 2, completed: false },
+      secretProgress: {
+        step: options.secretStep ?? 2,
+        completed: options.secretCompleted ?? false,
+      },
     },
     previews: {
       upgrades: QUANTUM_UPGRADE_IDS.map((id) => preview(id, options.upgradeOverrides?.[id])),
@@ -433,7 +508,9 @@ function renderSurface(options: RenderOptions = {}) {
     },
     meditationPreview: {
       eligible: true,
-      requiredStepIndex: 2,
+      requiredStepIndex: options.secretCompleted
+        ? null
+        : options.secretStep ?? 2,
       code: 'step-completed',
       skillPointReward: 4n,
     },
@@ -497,19 +574,46 @@ describe('QuantumControlPanel', () => {
 })
 
 function preview(upgradeId: QuantumUpgradeId, overrides: Partial<FrontendQuantumUpgradePreview> = {}): FrontendQuantumUpgradePreview {
+  const cost = overrides.cost ?? (upgradeId === 'DoubleIP'
+    ? 0n
+    : upgradeId === 'Division'
+      ? 2n
+      : upgradeId === 'Avocado'
+        ? 42n
+        : 1n)
+  const eligible = overrides.eligible ?? true
+  const code = overrides.code ?? 'purchased'
+  const costDecimal = typeof cost === 'bigint' ? gameDecimalFromBigInt(cost) : cost
+  const quantities = QUANTUM_BULK_UPGRADE_IDS.includes(upgradeId as never)
+    ? [1n, 10n, 50n, 100n]
+    : [1n]
+  const purchaseModes: FrontendQuantumUpgradePreview['purchaseModes'][number][] = quantities.map((quantity) => ({
+    requestedMode: `buy-${quantity}` as FrontendQuantumUpgradePreview['purchaseModes'][number]['requestedMode'],
+    eligible: eligible && cost !== GAME_DECIMAL_MAXIMUM && cost !== 0n && cost !== undefined &&
+      (typeof cost !== 'bigint' || cost * quantity <= 48n),
+    batches: gameDecimalFromBigInt(quantity),
+    totalCost: multiplyGameDecimals(costDecimal, gameDecimalFromBigInt(quantity)),
+    code,
+  }))
+  if (QUANTUM_BULK_UPGRADE_IDS.includes(upgradeId as never)) {
+    const unitCost = typeof cost === 'bigint' && cost > 0n ? cost : 1n
+    const quantity = typeof cost === 'bigint' ? 48n / unitCost : 0n
+    purchaseModes.push({
+      requestedMode: 'buy-max',
+      eligible: eligible && quantity > 0n,
+      batches: gameDecimalFromBigInt(quantity),
+      totalCost: multiplyGameDecimals(costDecimal, gameDecimalFromBigInt(quantity)),
+      code,
+    })
+  }
   return {
     upgradeId,
-    eligible: true,
-    cost: upgradeId === 'DoubleIP'
-      ? 0n
-      : upgradeId === 'Division'
-        ? 2n
-        : upgradeId === 'Avocado'
-          ? 42n
-          : 1n,
-    code: 'purchased',
+    eligible,
+    cost,
+    code,
     definitionGap: null,
     ...overrides,
+    purchaseModes: overrides.purchaseModes ?? purchaseModes,
   }
 }
 

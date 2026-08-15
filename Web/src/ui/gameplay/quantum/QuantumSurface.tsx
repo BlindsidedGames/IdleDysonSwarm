@@ -22,14 +22,13 @@ import {
 } from '../../../simulation/quantumUpgrades'
 import { Button } from '../../components'
 import quantumShardsIcon from '../../assets/quantum-shards.png'
+import dabbingAvocadoUrl from '../../assets/avotation-dabbing-avocado.png'
 import { formatGameNumber, formatNumber } from '../../i18n/formatters'
 import {
   boundedPresentationWholeQuotient,
   comparePresentationNumeric,
-  presentationDecimal,
   type PresentationNumeric,
 } from '../../presentationNumeric'
-import { multiplyGameDecimals } from '../../../math/gameDecimal'
 import type { EnabledLocale } from '../../i18n/localeRegistry'
 import type { UiRuntimePlayerCommandResult } from '../../runtime'
 import { AvotationProgress } from './AvotationProgress'
@@ -124,6 +123,7 @@ export function QuantumSurface({
                 resources={resources}
                 progression={progression}
                 routeAvailable={commandAvailability.purchaseUpgrade}
+                meditationRouteAvailable={commandAvailability.completeMeditationStep}
                 dispatchPlayer={dispatchPlayer}
                 onOpenAvocato={onOpenAvocato}
                 purchaseQuantity={purchaseQuantity}
@@ -141,8 +141,9 @@ interface QuantumUpgradeSectionProps {
   readonly section: FrontendGameplayPreviews['quantum']['sections'][number]
   readonly previews: FrontendGameplayPreviews['quantum']['upgrades']
   readonly resources: FrontendCanonicalResources['quantum']
-  readonly progression: Pick<FrontendCanonicalProgression, 'quantum' | 'avocado'>
+  readonly progression: Pick<FrontendCanonicalProgression, 'quantum' | 'avocado' | 'secretProgress'>
   readonly routeAvailable: boolean
+  readonly meditationRouteAvailable: boolean
   readonly dispatchPlayer: QuantumSurfaceProps['dispatchPlayer']
   readonly onOpenAvocato?: () => void
   readonly purchaseQuantity: QuantumPurchaseQuantity
@@ -155,6 +156,7 @@ function QuantumUpgradeSection({
   resources,
   progression,
   routeAvailable,
+  meditationRouteAvailable,
   dispatchPlayer,
   onOpenAvocato,
   purchaseQuantity,
@@ -218,6 +220,7 @@ function QuantumUpgradeSection({
                 resources={resources}
                 progression={progression}
                 routeAvailable={routeAvailable}
+                meditationRouteAvailable={meditationRouteAvailable}
                 dispatchPlayer={dispatchPlayer}
                 onOpenAvocato={onOpenAvocato}
                 purchaseQuantity={purchaseQuantity}
@@ -234,39 +237,43 @@ interface QuantumUpgradeCardProps {
   readonly locale: EnabledLocale
   readonly preview: FrontendGameplayPreviews['quantum']['upgrades'][number]
   readonly resources: FrontendCanonicalResources['quantum']
-  readonly progression: Pick<FrontendCanonicalProgression, 'quantum' | 'avocado'>
+  readonly progression: Pick<FrontendCanonicalProgression, 'quantum' | 'avocado' | 'secretProgress'>
   readonly routeAvailable: boolean
+  readonly meditationRouteAvailable: boolean
   readonly dispatchPlayer: QuantumSurfaceProps['dispatchPlayer']
   readonly onOpenAvocato?: () => void
   readonly purchaseQuantity: QuantumPurchaseQuantity
 }
 
-function QuantumUpgradeCard({ locale, preview, resources, progression, routeAvailable, dispatchPlayer, onOpenAvocato, purchaseQuantity }: QuantumUpgradeCardProps) {
+function QuantumUpgradeCard({ locale, preview, resources, progression, routeAvailable, meditationRouteAvailable, dispatchPlayer, onOpenAvocato, purchaseQuantity }: QuantumUpgradeCardProps) {
   const intl = useIntl()
   const pendingRef = useRef(false)
   const [pending, setPending] = useState(false)
   const [failed, setFailed] = useState(false)
+  const meditationPendingRef = useRef(false)
   const name = intl.formatMessage(upgradeMessage(preview.upgradeId, 'Title'))
   const completed = preview.code === 'already-maxed'
   const maximumReached = preview.code === 'maximum-reached'
   const isAvocato = preview.upgradeId === 'Avocado'
+  const isFirstMeditationTarget = preview.upgradeId === 'Secrets'
+  const firstMeditationActive = isFirstMeditationTarget &&
+    !progression.secretProgress.completed &&
+    progression.secretProgress.step === 0 &&
+    meditationRouteAvailable
+  const firstMeditationDiscovered = isFirstMeditationTarget && (
+    progression.secretProgress.completed || progression.secretProgress.step > 0
+  )
   const isFreeClaim = preview.upgradeId === 'DoubleIP' && comparePresentationNumeric(preview.cost, 0) === 0
   const repeatable = HOLD_TO_PURCHASE_IDS.has(preview.upgradeId)
-  const resolvedQuantity = repeatable
-    ? purchaseQuantity === 'max'
-      ? comparePresentationNumeric(preview.cost, 0) > 0
-        ? boundedPresentationWholeQuotient(resources.availablePoints, preview.cost, 1_000n)
-        : 0n
-      : BigInt(purchaseQuantity)
-    : 1n
-  const totalCost = multiplyGameDecimals(
-    presentationDecimal(preview.cost),
-    presentationDecimal(resolvedQuantity),
+  const requestedMode = repeatable
+    ? purchaseQuantity === 'max' ? 'buy-max' : `buy-${purchaseQuantity}`
+    : 'buy-1'
+  const selectedQuote = preview.purchaseModes.find(
+    (quote) => quote.requestedMode === requestedMode,
   )
-  const bulkAffordable = !repeatable || (
-    resolvedQuantity > 0n && comparePresentationNumeric(totalCost, resources.availablePoints) <= 0
-  )
-  const unavailable = completed || !preview.eligible || !routeAvailable || !bulkAffordable
+  const resolvedQuantity = selectedQuote?.batches ?? 0
+  const totalCost = selectedQuote?.totalCost ?? preview.cost
+  const unavailable = completed || !selectedQuote?.eligible || !routeAvailable
   const disabled = pending || unavailable
   const level = upgradeLevel(locale, preview.upgradeId, resources, progression)
 
@@ -298,13 +305,55 @@ function QuantumUpgradeCard({ locale, preview, resources, progression, routeAvai
     purchase,
   )
 
+  const discoverFirstMeditationSecret = async () => {
+    if (!firstMeditationActive || meditationPendingRef.current) return
+    meditationPendingRef.current = true
+    try {
+      const result = await dispatchPlayer({
+        kind: 'avocado.complete-meditation-step',
+        requiredStepIndex: 0,
+      })
+      if (result.status !== 'accepted') setFailed(true)
+    } catch {
+      setFailed(true)
+    } finally {
+      meditationPendingRef.current = false
+    }
+  }
+
+  const activateCardSecret = (target: EventTarget | null) => {
+    if (!firstMeditationActive) return
+    if (target instanceof Element && target.closest('button:not(:disabled)') !== null) return
+    void discoverFirstMeditationSecret()
+  }
+
   return (
     <article
       className={`quantum-upgrade-card${completed ? ' quantum-upgrade-card--complete' : ''}`}
       data-quantum-upgrade-id={preview.upgradeId}
+      data-avocato-secret-step={firstMeditationActive ? '0' : undefined}
+      data-avotation-target={firstMeditationActive ? 'quantum' : undefined}
+      onClick={(event) => activateCardSecret(event.target)}
+      onKeyDown={(event) => {
+        if (event.target !== event.currentTarget || (event.key !== 'Enter' && event.key !== ' ')) return
+        event.preventDefault()
+        activateCardSecret(event.target)
+      }}
+      tabIndex={firstMeditationActive ? 0 : undefined}
     >
       <div>
-        <h4>{name}</h4>
+        <h4>
+          {name}
+          {firstMeditationDiscovered ? (
+            <img
+              className="avotation-found-marker avotation-found-marker--inline"
+              src={dabbingAvocadoUrl}
+              alt=""
+              aria-hidden="true"
+              data-avotation-found-marker="quantum"
+            />
+          ) : null}
+        </h4>
         {level !== null && <p className="quantum-upgrade-card__level">{intl.formatMessage(messages.level, { value: level })}</p>}
         <p>{intl.formatMessage(upgradeMessage(preview.upgradeId, 'Description'))}</p>
       </div>
@@ -320,7 +369,7 @@ function QuantumUpgradeCard({ locale, preview, resources, progression, routeAvai
             : isFreeClaim
             ? intl.formatMessage(messages.claimUpgrade, { name })
             : intl.formatMessage(
-                repeatable && resolvedQuantity !== 1n
+                repeatable && comparePresentationNumeric(resolvedQuantity, 1) !== 0
                   ? messages.purchaseBulk
                   : messages.purchase,
                 {

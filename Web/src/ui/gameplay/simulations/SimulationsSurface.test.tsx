@@ -124,6 +124,38 @@ describe('SimulationsSurface', () => {
     })
   })
 
+  test('shows the requested quantity when a Foundational purchase is unaffordable', async () => {
+    const unaffordablePreviews = {
+      ...previews,
+      foundational: previews.foundational.map((preview) =>
+        preview.purchase === 'hunters'
+          ? {
+              ...preview,
+              eligible: false,
+              selectedInfluenceQuote: {
+                ...preview.selectedInfluenceQuote,
+                eligible: false,
+                unitsRequested: 1_000n,
+                unitsGranted: 0n,
+                code: 'rejected',
+              },
+            }
+          : preview,
+      ),
+    } as FrontendGameplayPreviews['dream']
+
+    renderSurface(accepted, facts, progression, 0, unaffordablePreviews)
+    await userEvent.setup().click(
+      screen.getByRole('button', { name: 'Foundational Era' }),
+    )
+
+    const purchaseButton = screen.getByRole('button', {
+      name: '+1,000 4.00 Influence',
+    })
+    expect(purchaseButton).toBeDisabled()
+    expect(purchaseButton).not.toHaveAccessibleName('+0.00 4.00 Influence')
+  })
+
   test('opens compact panel details without creating a player command', async () => {
     const dispatchPlayer = vi.fn(accepted)
     renderSurface(dispatchPlayer)
@@ -545,7 +577,7 @@ describe('SimulationsSurface', () => {
       source.indexOf('function spaceAgeAction('),
       source.indexOf('function formatWholeQuantity('),
     )
-    expect(action).toContain('quote.unitsGranted')
+    expect(action).toContain('quote.unitsRequested')
     expect(action).toContain('quote.totalCost')
     expect(action).not.toContain('multiplyGameDecimals')
     expect(action).not.toContain('boundedPresentationWholeQuotient')
@@ -669,12 +701,14 @@ function renderSurface(
   renderedFacts: FrontendSimulationsDerivedFacts = facts,
   renderedProgression: FrontendCanonicalProgression['dream'] = progression,
   activeDoubleTimeRate = 0,
+  renderedPreviews: FrontendGameplayPreviews['dream'] = previews,
 ) {
   return render(surfaceElement(
     dispatchPlayer,
     renderedFacts,
     renderedProgression,
     activeDoubleTimeRate,
+    renderedPreviews,
   ))
 }
 
@@ -683,6 +717,7 @@ function surfaceElement(
   renderedFacts: FrontendSimulationsDerivedFacts = facts,
   renderedProgression: FrontendCanonicalProgression['dream'] = progression,
   activeDoubleTimeRate = 0,
+  renderedPreviews: FrontendGameplayPreviews['dream'] = previews,
 ) {
   return (
     <PresentationIntlProvider
@@ -693,7 +728,7 @@ function surfaceElement(
         locale="en"
         facts={renderedFacts}
         progression={renderedProgression}
-        previews={previews}
+        previews={renderedPreviews}
         influence={20n}
         activeDoubleTimeRate={activeDoubleTimeRate}
         spaceAgePurchaseQuantity={1}
@@ -906,7 +941,7 @@ const previews = {
       purchase: 'hunters', eligible: true, cost: 4n,
       selectedInfluenceQuote: {
         requestedMode: 'buy-1', eligible: true, batches: 1n,
-        unitsGranted: 1_000n, totalCost: 4n, buyMaxBatchCap: null,
+        unitsRequested: 1_000n, unitsGranted: 1_000n, totalCost: 4n, buyMaxBatchCap: null,
         reachedBuyMaxBatchCap: false, code: 'ready',
       },
     },
@@ -914,7 +949,7 @@ const previews = {
       purchase: 'gatherers', eligible: true, cost: 5n,
       selectedInfluenceQuote: {
         requestedMode: 'buy-1', eligible: true, batches: 1n,
-        unitsGranted: 50n, totalCost: 5n, buyMaxBatchCap: null,
+        unitsRequested: 50n, unitsGranted: 50n, totalCost: 5n, buyMaxBatchCap: null,
         reachedBuyMaxBatchCap: false, code: 'ready',
       },
     },

@@ -63,7 +63,7 @@ import {
 import { INFINITY_SHOP_ITEM_IDS_V2, quoteInfinityShopPurchaseV2 } from '../simulation/infinityShopV2'
 import { projectInfinityProgressV2, type InfinityRewardAuthorityV2 } from '../simulation/infinityEconomyV2'
 import { QUANTUM_CONSTANTS } from '../simulation/quantumUpgrades'
-import { previewQuantumSectionsV2, previewQuantumUpgradeCatalogV2 } from '../simulation/quantumV2'
+import { previewQuantumSectionsV2, previewQuantumUpgradeCatalogV2, previewQuantumUpgradeModesV2 } from '../simulation/quantumV2'
 import { canonicalRealityCatalogV2, type RealityUpgradeIdV2 } from '../simulation/realityCatalogV2'
 import { DREAM_V2_CATALOG, DREAM_V2_UPGRADE_IDS, type DreamUpgradeIdV2 } from '../simulation/dreamCatalogV2'
 import {
@@ -918,6 +918,17 @@ function selectV2Previews(
       cost: preview.quotedCost,
       code: preview.status,
       definitionGap: preview.status === 'catalog-gap' ? upgradeId : null,
+      purchaseModes: Object.freeze(previewQuantumUpgradeModesV2(
+        state as CanonicalGameStateV2,
+        revision,
+        upgradeId,
+      ).map((quote) => Object.freeze({
+        requestedMode: quote.requestedMode,
+        eligible: quote.eligible,
+        batches: quote.batches,
+        totalCost: quote.quotedCost,
+        code: quote.status,
+      }))),
     })
   })
   const quantumSectionById = !wants('quantum') ? new Map() : new Map(
@@ -947,6 +958,7 @@ function selectV2Previews(
         requestedMode: quote.requestedMode,
         eligible: quote.accepted,
         batches: quote.batches,
+        unitsRequested: quote.unitsRequested,
         unitsGranted: quote.unitsGranted,
         totalCost: quote.quotedCost,
         buyMaxBatchCap: quote.buyMaxBatchCap,

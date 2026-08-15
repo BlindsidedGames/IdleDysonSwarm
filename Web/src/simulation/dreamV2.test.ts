@@ -13,7 +13,8 @@ import { deserializeWebSave } from '../save/serialization'
 import schema12Web from '../../test/fixtures/schema-12-canonical-idsweb1-first-run.txt?raw'
 import { commitDreamCommandV2,quoteDreamCommandV2 } from '../application/dreamStrangeMatterAuthorityV2'
 import { DREAM_V2_CATALOG,DREAM_V2_UPGRADE_IDS,DREAM_V2_UPGRADE_KIND,validateDreamCatalogV2 } from './dreamCatalogV2'
-import { advanceDreamEducationV2,advanceDreamFoundationalV2,advanceDreamRailgunV2,advanceDreamSpaceAgeV2,deriveDreamV2PresentationFacts,prepareCanonicalDreamKernelStateV2,previewDreamInfluencePurchaseModesV2,purchaseDreamInfluenceV2,registerCanonicalDreamKernelAuthorityV2ForEventModel,runDreamConversionsV2 } from './dreamV2'
+import { canonicalRealityCatalogV2 } from './realityCatalogV2'
+import { advanceDreamEducationV2,advanceDreamFoundationalV2,advanceDreamRailgunV2,advanceDreamSpaceAgeV2,deriveDreamV2PresentationFacts,DREAM_INFLUENCE_PURCHASE_MODES_V2,DREAM_V2_EDUCATION_IDS,prepareCanonicalDreamKernelStateV2,previewDreamInfluencePurchaseModesV2,purchaseDreamInfluenceV2,registerCanonicalDreamKernelAuthorityV2ForEventModel,runDreamConversionsV2 } from './dreamV2'
 import { advanceV2TimeResourceSlice } from './timeResourcesV2'
 
 const migrated=migratePreparedSaveToV2(PreparedSave.fromDecoded(deserializeWebSave(schema12Web)),Object.freeze({kind:'trusted-same-device' as const}))
@@ -40,6 +41,47 @@ describe('Dream V2 catalog and kernels',()=>{
     const assets=getGameAssetsByKind(DREAM_V2_UPGRADE_KIND);expect(validateDreamCatalogV2(assets)).toBe(true)
     expect(validateDreamCatalogV2(assets.map((asset,index)=>index===0?{...asset,data:{...asset.data,cost:999}}:asset))).toBe(false)
     let getters=0;const hostile=Object.defineProperty({},'id',{enumerable:true,get(){getters+=1;return 'x'}});expect(validateDreamCatalogV2([hostile,...assets.slice(1)])).toBe(false);expect(getters).toBe(0)
+  })
+  test('quotes and commits every authored Dream and Reality upgrade independently',()=>{
+    for(const upgradeId of DREAM_V2_UPGRADE_IDS){
+      const definition=DREAM_V2_CATALOG[upgradeId]
+      const upgrades=Object.fromEntries(definition.prerequisites.map((entry)=>[entry.key,entry.mustBeOwned]))
+      const state=stateWith({strangeMatter:'1e1000',upgrades}),publication=Object.freeze({revision:1,state,runtime})
+      const quote=quoteDreamCommandV2(publication,Object.freeze({kind:'dream-upgrade' as const,upgradeId}))
+      expect(quote.accepted,`Dream upgrade ${upgradeId}: ${quote.code}`).toBe(true)
+      const committed=commitDreamCommandV2(quote,publication)
+      expect(committed.accepted,`Dream upgrade ${upgradeId}: ${committed.code}`).toBe(true)
+      expect(committed.publication!.state.dream.upgrades[upgradeId]).toBe(true)
+    }
+    for(const upgradeId of canonicalRealityCatalogV2.upgradeIds){
+      const definition=canonicalRealityCatalogV2.upgrades[upgradeId]
+      const upgrades=Object.fromEntries(definition.prerequisites.map((entry)=>[entry.key,entry.mustBeOwned]))
+      const state=stateWith({strangeMatter:'1e1000',upgrades}),publication=Object.freeze({revision:1,state,runtime})
+      const quote=quoteDreamCommandV2(publication,Object.freeze({kind:'reality-upgrade' as const,upgradeId}))
+      expect(quote.accepted,`Reality upgrade ${upgradeId}: ${quote.code}`).toBe(true)
+      const committed=commitDreamCommandV2(quote,publication)
+      expect(committed.accepted,`Reality upgrade ${upgradeId}: ${committed.code}`).toBe(true)
+      const next=committed.publication!.state
+      const owned=upgradeId==='doubleTimeOwned'?next.timeline.doubleTime.unlocked:upgradeId==='workerAutoConvert'?next.reality.autoGather:next.dream.upgrades[upgradeId]
+      expect(owned).toBe(true)
+    }
+  })
+  test('commits every Influence purchase mode and every education subject from its quote',()=>{
+    for(const purchaseId of ['hunters','gatherers','solar','fusion'] as const){
+      for(const mode of DREAM_INFLUENCE_PURCHASE_MODES_V2){
+        const state=stateWith({influence:'1e1000',resources:{hunters:d('0'),gatherers:d('0'),solarPanels:d('0'),fusion:d('0')},parameters:{hunterCost:d('1'),gathererCost:d('1'),solarCost:d('1'),fusionCost:d('1')}})
+        const result=purchaseDreamInfluenceV2(state,purchaseId,mode)
+        expect(result.accepted,`${purchaseId} ${mode}: ${result.rejection}`).toBe(true)
+        expect(result.changed).toBe(true)
+      }
+    }
+    for(const educationId of DREAM_V2_EDUCATION_IDS){
+      const subject={...base.dream.education[educationId],active:false,complete:false,cost:d('1')}
+      const state=stateWith({influence:'1e1000',education:{[educationId]:subject}}),publication=Object.freeze({revision:1,state,runtime})
+      const quote=quoteDreamCommandV2(publication,Object.freeze({kind:'education-start' as const,educationId}))
+      expect(quote.accepted,`Education ${educationId}: ${quote.code}`).toBe(true)
+      expect(commitDreamCommandV2(quote,publication).publication!.state.dream.education[educationId].active).toBe(true)
+    }
   })
   test('captures every foundational producer at tick start',()=>{
     const source=stateWith({resources:{hunters:d('1'),community:d('0'),housing:d('0')},timers:{hunterTimerProgress:0,communityTimerProgress:0}})
@@ -73,6 +115,7 @@ describe('Dream V2 catalog and kernels',()=>{
   test('caps every fixed-price Dream Buy Max at 1000 batches above 1e308',()=>{
     const source=stateWith({influence:'1e1000',resources:{hunters:d('0')},parameters:{hunterCost:d('1')},});const result=purchaseDreamInfluenceV2(source,'hunters','buy-max');expect(result.accepted).toBe(true);expect(result.requestedMode).toBe('buy-max');expect(gameDecimalToCanonicalString(result.batches)).toBe('1e3');expect(gameDecimalToCanonicalString(result.buyMaxBatchCap!)).toBe('1e3');expect(result.reachedBuyMaxBatchCap).toBe(true);expect(gameDecimalToCanonicalString(result.unitsGranted)).toBe('1e3');expect(gameDecimalToCanonicalString(result.quotedCost)).toBe('1e3');expect(gameDecimalToCanonicalString(result.state.dream.resources.hunters)).toBe('1e3');expect(gameDecimalToCanonicalString(result.debited)).toBe('0');const solar=previewDreamInfluencePurchaseModesV2(source,'solar');expect(solar.map(quote=>quote.requestedMode)).toEqual(['buy-1','buy-10','buy-50','buy-100','buy-max']);expect(gameDecimalToCanonicalString(solar.at(-1)!.batches)).toBe('1e3')
   })
+  test('keeps the requested Hunter quantity visible when Influence is insufficient',()=>{const source=stateWith({influence:'28',resources:{hunters:d('0')},parameters:{hunterCost:d('100')}}),preview=previewDreamInfluencePurchaseModesV2(source,'hunters').find(entry=>entry.requestedMode==='buy-1');expect(preview).toMatchObject({accepted:false,rejection:'insufficient-funds'});expect(gameDecimalToCanonicalString(preview!.unitsRequested)).toBe('1e0');expect(gameDecimalToCanonicalString(preview!.unitsGranted)).toBe('0');expect(gameDecimalToCanonicalString(preview!.quotedCost)).toBe('1e2')})
   test('rejects a Dream influence purchase whose authored cost has reached the numeric ceiling',()=>{const maximum=gameDecimalToCanonicalString(GAME_DECIMAL_MAXIMUM),source=stateWith({influence:maximum,resources:{hunters:d('0')},parameters:{hunterCost:GAME_DECIMAL_MAXIMUM}}),preview=previewDreamInfluencePurchaseModesV2(source,'hunters').find((entry)=>entry.requestedMode==='buy-1');expect(preview).toMatchObject({accepted:false,rejection:'maximum-reached'});expect(gameDecimalToCanonicalString(preview!.quotedCost)).toBe(maximum);expect(purchaseDreamInfluenceV2(source,'hunters','buy-1')).toMatchObject({accepted:false,rejection:'maximum-reached'})})
   test('keeps dormant Dream authority outside every production root and closes import bypasses',()=>{
     const root=join(dirname(fileURLToPath(import.meta.url)),'..');const violations:string[]=[],authorityViolations:string[]=[]

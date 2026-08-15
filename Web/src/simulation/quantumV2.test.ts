@@ -17,7 +17,7 @@ import {
   QUANTUM_V2_DEFINITIONS, QUANTUM_V2_GENERATED_KIND, QUANTUM_V2_UPGRADE_IDS,
   compileQuantumV2Catalog, validateQuantumV2CatalogIngress,
 } from './quantumCatalogV2'
-import { commitQuantumUpgradeV2, previewQuantumSectionsV2, previewQuantumUpgradeCatalogV2, quoteQuantumUpgradeV2 } from './quantumV2'
+import { commitQuantumUpgradeV2, previewQuantumSectionsV2, previewQuantumUpgradeCatalogV2, previewQuantumUpgradeModesV2, quoteQuantumUpgradeV2 } from './quantumV2'
 
 const baseState = migratePreparedSaveToV2(
   PreparedSave.fromDecoded(deserializeWebSave(schema12Web)),
@@ -115,6 +115,50 @@ describe('Quantum V2 quotes and commits', () => {
         status: quote.status,
         eligible: quote.eligible,
       })
+      expect(gameDecimalToCanonicalString(preview.quotedCost)).toBe(
+        gameDecimalToCanonicalString(quote.quotedCost),
+      )
+    }
+  })
+  test('independently quotes and commits every Quantum catalog entry', () => {
+    const covered: string[] = []
+    for (const upgradeId of QUANTUM_V2_UPGRADE_IDS) {
+      const unlocks = upgradeId === 'BirchPlanets'
+        ? { breakTheLoop: true, matrioshkaBrains: true }
+        : upgradeId === 'GalacticBrains'
+          ? { breakTheLoop: true, matrioshkaBrains: true, birchPlanets: true }
+          : upgradeId === 'MatrioshkaBrains' ? { breakTheLoop: true } : {}
+      const source = stateWith({ available: '1000', lifetime: '1000', unlocks })
+      const quote = quoteQuantumUpgradeV2(source, 7, upgradeId)
+      expect(quote.eligible, `${upgradeId}: ${quote.status}`).toBe(true)
+      const result = commitQuantumUpgradeV2(quote, source, 7)
+      expect(result.accepted, `${upgradeId}: ${result.status}`).toBe(true)
+      expect(result.changed, upgradeId).toBe(true)
+      covered.push(upgradeId)
+    }
+    expect(covered).toEqual([...QUANTUM_V2_UPGRADE_IDS])
+  })
+  test('projects every supported purchase mode from the authoritative quote path', () => {
+    const state = stateWith({ available: '17', lifetime: '20' })
+    const previews = previewQuantumUpgradeModesV2(state, 12, 'CashBonus')
+    expect(previews.map((preview) => preview.requestedMode)).toEqual([
+      'buy-1', 'buy-10', 'buy-50', 'buy-100', 'buy-max',
+    ])
+    for (const preview of previews) {
+      const quote = quoteQuantumUpgradeV2(
+        state,
+        12,
+        'CashBonus',
+        preview.requestedMode,
+      )
+      expect(preview).toMatchObject({
+        requestedMode: quote.requestedMode,
+        status: quote.status,
+        eligible: quote.eligible,
+      })
+      expect(gameDecimalToCanonicalString(preview.batches)).toBe(
+        gameDecimalToCanonicalString(quote.batches),
+      )
       expect(gameDecimalToCanonicalString(preview.quotedCost)).toBe(
         gameDecimalToCanonicalString(quote.quotedCost),
       )

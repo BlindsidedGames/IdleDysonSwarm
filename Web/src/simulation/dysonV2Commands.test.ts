@@ -169,6 +169,25 @@ function allEnabled(value: boolean): Record<CanonicalFacilityId, boolean> {
 }
 
 describe('dormant Dyson V2 commands', () => {
+  test('independently quotes and commits every Dyson facility target', () => {
+    const state = stateWith({
+      money: '1e1000',
+      facilities: allFacilities('0', '100'),
+      assemblyMegaLines: true,
+      megaUnlocks: {
+        matrioshkaBrains: true,
+        birchPlanets: true,
+        galacticBrains: true,
+      },
+    })
+    for (const facilityId of DYSON_V2_COMMAND_TARGETS) {
+      const quote = quoteV2DysonFacilityPurchase(state, 6, facilityId, 'buy-1', false)
+      expect(quote.eligible, `${facilityId}: ${quote.status}`).toBe(true)
+      const result = commitV2DysonFacilityPurchase(quote, state, 6)
+      expect(result.accepted, `${facilityId}: ${result.status}`).toBe(true)
+      expect(result.changed, facilityId).toBe(true)
+    }
+  })
   test('uses the schema-12 to V2 fixture and the closed generated catalog', () => {
     const state = fixtureState()
 

@@ -1488,7 +1488,7 @@ function foundationalAction(
   const isBoost = purchase.endsWith('-boost')
   const influenceQuote = !isBoost ? preview.selectedInfluenceQuote : undefined
   if (!isBoost && influenceQuote === undefined) return undefined
-  const quantity = influenceQuote?.unitsGranted ?? 1
+  const quantity = influenceQuote?.unitsRequested ?? 1
   const cost = influenceQuote?.totalCost ?? preview.cost
   const maximumReached = (influenceQuote?.code ?? preview.code) === 'maximum-reached'
   const free = purchase === 'community-boost' &&
@@ -1586,14 +1586,14 @@ function spaceAgeAction(
   const label = maximumReached
     ? input.intl.formatMessage(messages.maximumReachedAccessible)
     : input.intl.formatMessage(messages.purchase, {
-    quantity: formatWholeQuantity(input.locale, quote.unitsGranted),
+    quantity: formatWholeQuantity(input.locale, quote.unitsRequested),
     cost: display(quote.totalCost),
       })
   return {
     primaryLabel: maximumReached
       ? input.intl.formatMessage(messages.maximumReached)
       : input.intl.formatMessage(messages.purchaseQuantity, {
-      quantity: formatWholeQuantity(input.locale, quote.unitsGranted),
+      quantity: formatWholeQuantity(input.locale, quote.unitsRequested),
         }),
     influenceCost: maximumReached ? undefined : display(quote.totalCost),
     accessibleLabel: label.replace('\n', ', '),

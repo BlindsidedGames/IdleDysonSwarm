@@ -50,6 +50,12 @@ describe('AvocatoMeditationSecretTrigger', () => {
     )
   })
 
+  test('makes a disabled Secrets purchase control click through to the complete card target', () => {
+    expect(meditationSecretsCss).toMatch(
+      /\[data-avotation-target="quantum"\]\s+button:disabled\s*\{[^}]*pointer-events:\s*none;/,
+    )
+  })
+
   test.each(
     Object.entries(AVOCATO_MEDITATION_ROUTE_STEPS) as [
       AvocatoMeditationPlacement,
@@ -141,6 +147,21 @@ describe('AvocatoMeditationSecretTrigger', () => {
     )
     expect(marker).toHaveAttribute('aria-hidden', 'true')
     expect(container.querySelector('[data-test-panel]')).not.toHaveAttribute('data-avotation-target')
+  })
+
+  test('places the discovered Quantum marker directly after the Secrets heading', async () => {
+    const { container } = renderTrigger({
+      placement: 'quantum',
+      requiredStepIndex: 1,
+    })
+
+    const marker = await waitFor(() =>
+      container.querySelector('[data-avotation-found-marker="quantum"]'),
+    )
+    const heading = container.querySelector('[data-test-panel] h4')
+    expect(heading).toHaveTextContent('Secrets of the Universe')
+    expect(marker?.parentElement).toBe(heading)
+    expect(marker).toHaveClass('avotation-found-marker--inline')
   })
 
   test('keeps accepted feedback visible through the step transition, then removes it', async () => {
@@ -245,7 +266,7 @@ function renderTrigger(
 }
 
 function TestPanel({ placement }: { readonly placement: AvocatoMeditationPlacement }) {
-  if (placement === 'quantum') return <article data-test-panel data-quantum-upgrade-id="Secrets" />
+  if (placement === 'quantum') return <article data-test-panel data-quantum-upgrade-id="Secrets"><h4>Secrets of the Universe</h4></article>
   if (placement === 'infinity') return <header data-test-panel className="infinity-surface__summary" />
   if (placement === 'bots') return <div data-test-panel className="dyson-shell__production-summary" />
   if (placement === 'skills') return <div data-test-panel className="skill-settings__preset-row" />

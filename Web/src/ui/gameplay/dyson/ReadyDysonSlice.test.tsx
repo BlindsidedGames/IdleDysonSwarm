@@ -23,6 +23,7 @@ import type {
 import type {
   CanonicalPlayerCommand,
 } from '../../../application/canonicalPlayerCommands'
+import { gameDecimalFromNumber } from '../../../math/gameDecimal'
 import arXbCatalog from '../../i18n/catalogs/compiled/ar-XB.json'
 import enCatalog from '../../i18n/catalogs/compiled/en.json'
 import enXaCatalog from '../../i18n/catalogs/compiled/en-XA.json'
@@ -2040,6 +2041,13 @@ function snapshot(options: SnapshotOptions = {}): ReadySnapshot {
               cost: 1n,
               code: 'purchased',
               definitionGap: null,
+              purchaseModes: [{
+                requestedMode: 'buy-1',
+                eligible: true,
+                batches: gameDecimalFromNumber(1),
+                totalCost: gameDecimalFromNumber(1),
+                code: 'purchased',
+              }],
             },
           ],
           sections: [
