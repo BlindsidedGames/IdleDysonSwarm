@@ -121,9 +121,10 @@ Wildcards may represent collection elements or dictionary keys, but never an
 unknown field name. A leaf absent from the pinned catalog fails certification;
 it is not silently assigned to the nearest object or domain.
 
-Partial-port builds must use a separate development save and must not overwrite
-the player's canonical Unity save. Enabling canonical writes is a later release
-decision gated on complete mapping coverage and round-trip parity.
+The Web runtime writes its own schema-13 `IDSWEB1` player save. It never
+overwrites a discovered Unity `IDB1` source and does not provide a Unity-readable
+exporter. Public Unity mapping coverage certifies one-way import, not reverse
+serialization or two-way synchronization.
 
 ## Implemented mapper checkpoint
 
@@ -138,8 +139,8 @@ decision gated on complete mapping coverage and round-trip parity.
   schema-11 support save and the schema-11 source-field catalog. A generated
   schema-12 entry verifies development-schema idempotence only; it is not the
   public release target.
-- The executable coverage manifest keeps release canonical writes disabled
-  while unmatched paths remain source-preserved.
+- The executable coverage manifest separates supported Web schema-13 writes
+  from the intentionally unsupported reverse Unity export path.
 
 ## Implemented application checkpoint
 

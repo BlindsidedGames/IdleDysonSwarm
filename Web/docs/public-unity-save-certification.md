@@ -56,8 +56,10 @@ entry, including dictionary keys that contain dots. The fixture cannot prove
 fields whose collections are empty or whose values were omitted by its
 serializer; the pinned source catalog and hash cover that structural gap.
 
-Canonical Unity-save writes remain disabled while any entry is `still-unowned`
-or any incoming leaf is absent from the certification catalog.
+This catalog certifies one-way import coverage only. Complete classification
+does not enable a Unity-readable exporter. The supported Web runtime writes
+schema-13 `IDSWEB1`; exporting a Unity `IDB1` graph and two-way Unity
+synchronization are intentionally unsupported.
 
 ## Recertifying a later public release
 

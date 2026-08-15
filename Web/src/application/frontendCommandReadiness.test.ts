@@ -31,6 +31,10 @@ describe('lightweight V2 frontend readiness', () => {
     expect(v2.commands).toEqual(v1.commands)
     expect(V2_FRONTEND_PERSISTENCE_READINESS).toEqual({
       mappingCoverageComplete: mappingCoverageManifest.coverageComplete,
+      webSchema13PlayerWritesSupported:
+        mappingCoverageManifest.compatibilityPolicy.webSchema13PlayerWritesSupported,
+      unityReadableExportSupported:
+        mappingCoverageManifest.compatibilityPolicy.unityReadableExportSupported,
       canonicalWriteAllowed: mappingCoverageManifest.releaseCanonicalWriteAllowed,
       unmatchedWritePolicy: mappingCoverageManifest.unmatchedWritePolicy,
     })

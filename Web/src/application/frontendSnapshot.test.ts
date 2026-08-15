@@ -1166,6 +1166,8 @@ describe('frontend gameplay snapshot', () => {
     ).toBe(false)
     expect(snapshot.persistence).toEqual({
       mappingCoverageComplete: true,
+      webSchema13PlayerWritesSupported: true,
+      unityReadableExportSupported: false,
       canonicalWriteAllowed: false,
       unmatchedWritePolicy: 'preserve-source',
     })

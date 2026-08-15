@@ -8,6 +8,7 @@ import type {
   CanonicalSkillVisualState,
 } from './canonicalSkillTransactions'
 import { validateCanonicalGameStateV2 } from '../game-state/validateV2'
+import { isStructurallyValidatedCanonicalGameStateV2 } from '../game-state/cloneV2'
 import {
   CANONICAL_ACTIVE_SKILL_TIMER_IDS_V2,
   canonicalSkillCatalogV2,
@@ -702,6 +703,10 @@ function normalizePresetIds(
 function invalidState(
   state: Readonly<CanonicalGameStateV2>,
 ): Extract<CanonicalSkillTransactionResultV2, { accepted: false }> | null {
+  // States admitted by the canonical clone boundary have already passed the
+  // full structural validator and are immutable. Revalidating that entire
+  // graph on every Skill quote/command was the dominant command cost.
+  if (isStructurallyValidatedCanonicalGameStateV2(state)) return null
   const validation = validateCanonicalGameStateV2(state)
   return validation.valid
     ? null

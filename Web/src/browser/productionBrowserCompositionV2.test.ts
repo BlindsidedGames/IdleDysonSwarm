@@ -11,7 +11,11 @@ import type {
 import { createProductionV2RepositoryPaths } from '../save/productionV2Repository'
 import { serializeWebSave } from '../save/serialization'
 import { DEVELOPMENT_ONLY_BROWSER_SAVE_PATHS } from '../ui/runtime'
-import { createProductionBrowserCompositionV2 } from './productionBrowserCompositionV2'
+import type { BrowserUiRuntimeFoundation } from '../ui/runtime'
+import {
+  createBrowserReloadActionsV2,
+  createProductionBrowserCompositionV2,
+} from './productionBrowserCompositionV2'
 
 const NOW_MS = Date.parse('2026-08-12T02:00:00.000Z')
 
@@ -36,11 +40,11 @@ describe('production browser V2 composition', () => {
 
     expect(first.saveSchemaVersion).toBe(13)
     await expect(first.runtime.start()).resolves.toMatchObject({ phase: 'ready' })
-    expect(await first.runtime.requestCheckpoint()).toBe(true)
+    await expect(first.prepareForUpdateActivation()).resolves.toBeUndefined()
+    expect(first.runtime.status()).toEqual({ phase: 'stopped' })
     const paths = createProductionV2RepositoryPaths(DEVELOPMENT_ONLY_BROWSER_SAVE_PATHS)
     expect(database.files.get(paths.preMigrationRecovery)).toBe(original)
     expect(database.files.get(paths.current)).toContain('ids-web-production-v2-checkpoint-v1')
-    await first.runtime.shutdown()
 
     const second = createProductionBrowserCompositionV2({
       ...options,
@@ -54,7 +58,167 @@ describe('production browser V2 composition', () => {
     expect(database.files.get(paths.preMigrationRecovery)).toBe(original)
     await second.runtime.shutdown()
   }, 30_000)
+
+  test('prepares a package update only after a verified schema-13 checkpoint and shutdown', async () => {
+    const events: string[] = []
+    const actions = createBrowserReloadActionsV2(reloadRuntimeV2({
+      status: readyStatus(),
+      checkpoint: async () => {
+        events.push('checkpoint')
+        return true
+      },
+      shutdown: async () => { events.push('shutdown') },
+    }), () => events.push('reload'))
+
+    await expect(actions.prepareForUpdateActivation()).resolves.toBeUndefined()
+    expect(events).toEqual(['checkpoint', 'shutdown'])
+  })
+
+  test.each([
+    { phase: 'idle' },
+    { phase: 'starting' },
+    {
+      phase: 'blocked',
+      code: 'application-blocked',
+      reason: 'startup unavailable',
+    },
+    { phase: 'ownership-lost', reason: 'lease replaced' },
+    { phase: 'stopping' },
+    { phase: 'stopped' },
+  ] as const)(
+    'refuses package activation while the V2 runtime is $phase',
+    async (status) => {
+      const events: string[] = []
+      const actions = createBrowserReloadActionsV2(reloadRuntimeV2({
+        status,
+        checkpoint: async () => {
+          events.push('checkpoint')
+          return true
+        },
+        shutdown: async () => { events.push('shutdown') },
+      }), () => events.push('reload'))
+
+      await expect(actions.prepareForUpdateActivation()).rejects.toThrow(
+        'ready V2 runtime and verified schema-13 checkpoint',
+      )
+      expect(events).toEqual([])
+    },
+  )
+
+  test('keeps the ready session alive when package checkpoint verification fails', async () => {
+    const events: string[] = []
+    const actions = createBrowserReloadActionsV2(reloadRuntimeV2({
+      status: readyStatus(),
+      checkpoint: async () => {
+        events.push('checkpoint')
+        return false
+      },
+      shutdown: async () => { events.push('shutdown') },
+    }), () => events.push('reload'))
+
+    await expect(actions.prepareForUpdateActivation()).rejects.toThrow(
+      'verified schema-13 checkpoint',
+    )
+    expect(events).toEqual(['checkpoint'])
+  })
+
+  test('propagates a package checkpoint failure without shutdown or activation', async () => {
+    const events: string[] = []
+    const actions = createBrowserReloadActionsV2(reloadRuntimeV2({
+      status: readyStatus(),
+      checkpoint: async () => {
+        events.push('checkpoint')
+        throw new Error('schema-13 checkpoint failed')
+      },
+      shutdown: async () => { events.push('shutdown') },
+    }), () => events.push('reload'))
+
+    await expect(actions.prepareForUpdateActivation()).rejects.toThrow(
+      'schema-13 checkpoint failed',
+    )
+    expect(events).toEqual(['checkpoint'])
+  })
+
+  test('keeps verified safe reload ordering separate from update activation', async () => {
+    const events: string[] = []
+    const actions = createBrowserReloadActionsV2(reloadRuntimeV2({
+      status: readyStatus(),
+      checkpoint: async () => {
+        events.push('checkpoint')
+        return true
+      },
+      shutdown: async () => { events.push('shutdown') },
+    }), () => events.push('reload'))
+
+    await expect(actions.reloadSafely()).resolves.toBeUndefined()
+    expect(events).toEqual(['checkpoint', 'shutdown', 'reload'])
+  })
+
+  test.each([
+    {
+      name: 'writer-blocked',
+      status: { phase: 'blocked', code: 'writer-owned', reason: 'another owner' },
+    },
+    {
+      name: 'application-blocked',
+      status: { phase: 'blocked', code: 'application-blocked', reason: 'startup unavailable' },
+    },
+    {
+      name: 'ownership-lost',
+      status: { phase: 'ownership-lost', reason: 'lease replaced' },
+    },
+    { name: 'stopped', status: { phase: 'stopped' } },
+  ] as const)(
+    'allows $name recovery reload without inventing a schema-13 checkpoint',
+    async ({ status }) => {
+      const events: string[] = []
+      const actions = createBrowserReloadActionsV2(reloadRuntimeV2({
+        status,
+        checkpoint: async () => {
+          events.push('checkpoint')
+          return false
+        },
+        shutdown: async () => { events.push('shutdown') },
+      }), () => events.push('reload'))
+
+      await expect(actions.reloadSafely()).resolves.toBeUndefined()
+      expect(events).toEqual(['shutdown', 'reload'])
+    },
+  )
+
+  test.each(['idle', 'starting', 'stopping'] as const)(
+    'rejects ordinary safe reload while the V2 runtime is %s',
+    async (phase) => {
+      const events: string[] = []
+      const actions = createBrowserReloadActionsV2(reloadRuntimeV2({
+        status: { phase },
+        checkpoint: async () => true,
+        shutdown: async () => { events.push('shutdown') },
+      }), () => events.push('reload'))
+
+      await expect(actions.reloadSafely()).rejects.toThrow(
+        `Safe reload is unavailable while the V2 runtime is ${phase}.`,
+      )
+      expect(events).toEqual([])
+    },
+  )
 })
+
+function readyStatus() {
+  return Object.freeze({ phase: 'ready' as const, warnings: Object.freeze([]) })
+}
+
+function reloadRuntimeV2(operations: Readonly<{
+  status: ReturnType<BrowserUiRuntimeFoundation['status']>
+  checkpoint: () => Promise<boolean>
+  shutdown: () => Promise<void>
+}>): BrowserUiRuntimeFoundation {
+  return Object.freeze({
+    status: () => operations.status,
+    checkpointBeforeSafeReload: operations.checkpoint,
+    shutdown: operations.shutdown,
+  }) as unknown as BrowserUiRuntimeFoundation
+}
 
 function fixedClock() {
   return Object.freeze({

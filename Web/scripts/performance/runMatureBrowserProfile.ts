@@ -7,6 +7,7 @@ import { integerArgument } from './reportArtifacts'
 
 const webRoot = resolve(import.meta.dirname, '..', '..')
 const port = integerArgument(process.argv.slice(2), 'port', 4_174)
+const captureCpuProfile = process.argv.includes('--cpu-profile')
 const seedPath = resolve(webRoot, 'dist', 'performance-seed.html')
 const databaseName = 'idle-dyson-swarm-web-development-v1'
 const currentPath = '/development-only/development-only-default-profile/current.idsw'
@@ -52,10 +53,18 @@ try {
       return true
     })()`)
 
+    if (captureCpuProfile) {
+      await page.cdp.send('Profiler.enable')
+      await page.cdp.send('Profiler.setSamplingInterval', { interval: 100 })
+      await page.cdp.send('Profiler.start')
+    }
     const navigationStarted = performance.now()
     await page.cdp.send('Page.navigate', { url: preview.url })
     await page.waitForSelector('.dyson-shell', 30_000)
     const readyWallMilliseconds = performance.now() - navigationStarted
+    const startupCpuProfile = captureCpuProfile
+      ? summarizeCpuProfile(await page.cdp.send<CpuProfileResult>('Profiler.stop'))
+      : null
     const startup = await page.evaluate<{
       readonly domContentLoadedMilliseconds: number
       readonly loadEventMilliseconds: number
@@ -87,7 +96,11 @@ try {
       createdAtUtc: new Date().toISOString(),
       environment: page.environment,
       fixture: { schema: 12, cash: '1e300', bots: '1e250', secrets: 27, unlockAllTabs: true },
-      startup: { readyWallMilliseconds, ...startup },
+      startup: {
+        readyWallMilliseconds,
+        ...startup,
+        ...(startupCpuProfile === null ? {} : { cpuProfile: startupCpuProfile }),
+      },
       lazyRoutes: { simulations, quantum, botsReturn, quantumWarm },
     })
     const outputRoot = resolve(webRoot, 'output', 'performance')
@@ -102,6 +115,47 @@ try {
 } finally {
   await preview.stop()
   unlinkSync(seedPath)
+}
+
+interface CpuProfileResult {
+  readonly profile: Readonly<{
+    readonly nodes: readonly Readonly<{
+      readonly id: number
+      readonly callFrame: Readonly<{
+        readonly functionName: string
+        readonly url: string
+        readonly lineNumber: number
+      }>
+    }>[]
+    readonly samples?: readonly number[]
+    readonly timeDeltas?: readonly number[]
+  }>
+}
+
+function summarizeCpuProfile(result: Readonly<CpuProfileResult>) {
+  const byId = new Map(result.profile.nodes.map((node) => [node.id, node]))
+  const selfMicroseconds = new Map<number, number>()
+  const samples = result.profile.samples ?? []
+  const deltas = result.profile.timeDeltas ?? []
+  for (let index = 0; index < samples.length; index += 1) {
+    const id = samples[index]!
+    selfMicroseconds.set(id, (selfMicroseconds.get(id) ?? 0) + (deltas[index] ?? 0))
+  }
+  const frames = [...selfMicroseconds.entries()]
+    .map(([id, microseconds]) => {
+      const frame = byId.get(id)?.callFrame
+      return {
+        functionName: frame?.functionName || '(anonymous)',
+        url: frame?.url ?? '',
+        lineNumber: (frame?.lineNumber ?? -1) + 1,
+        selfMilliseconds: microseconds / 1_000,
+      }
+    })
+    .sort((left, right) => right.selfMilliseconds - left.selfMilliseconds)
+  return Object.freeze({
+    sampledMilliseconds: deltas.reduce((total, value) => total + value, 0) / 1_000,
+    topSelfTimeFrames: Object.freeze(frames.slice(0, 20)),
+  })
 }
 
 async function activateRoute(

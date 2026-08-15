@@ -26,6 +26,59 @@ const STANDARD_INFINITY_AUTHORITY = issueInfinityRewardAuthorityV2ForApplication
 )
 
 describe('V2 full-game frontend projection', () => {
+  test('keys the persisted all-tabs override into projection visibility', () => {
+    const zero = gameDecimalFromCanonicalString('0')
+    const state = cloneCanonicalGameStateV2({
+      ...migrated.state,
+      meta: { ...migrated.state.meta, firstInfinityComplete: false },
+      infinity: {
+        ...migrated.state.infinity,
+        availablePoints: zero,
+        allocatedPoints: zero,
+        secretsOfTheUniverse: 0n,
+      },
+      quantum: {
+        ...migrated.state.quantum,
+        availableShards: zero,
+        lifetimeEarnedShards: zero,
+      },
+    })
+    const publication = createCanonicalRuntimePublicationV2({
+      revision: 1,
+      state,
+      runtime: migrated.runtime,
+    })
+    const revision = Object.freeze({ session: 1, state: 1, durable: 1 })
+    const hidden = selectFrontendApplicationSnapshotV2(
+      publication, revision, 'clean', 'bots', TEST_TINKER,
+      STANDARD_INFINITY_AUTHORITY, false, false,
+    )
+    const unlocked = selectFrontendApplicationSnapshotV2(
+      publication, revision, 'clean', 'bots', TEST_TINKER,
+      STANDARD_INFINITY_AUTHORITY, false, true,
+    )
+    if (hidden.phase !== 'ready' || unlocked.phase !== 'ready') {
+      throw new Error('Expected ready V2 snapshots.')
+    }
+    expect(unlocked).not.toBe(hidden)
+    expect(hidden.gameplay.visibility).toMatchObject({
+      infinity: { routeUnlocked: false },
+      reality: { routeVisible: false, routeUnlocked: false },
+      simulations: { routeUnlocked: false },
+      quantum: { routeVisible: false, routeUnlocked: false },
+    })
+    expect(unlocked.gameplay.visibility).toMatchObject({
+      infinity: { routeUnlocked: true },
+      reality: { routeVisible: true, routeUnlocked: true },
+      simulations: { routeUnlocked: true },
+      quantum: { routeVisible: true, routeUnlocked: true },
+    })
+    expect(selectFrontendApplicationSnapshotV2(
+      publication, revision, 'clean', 'bots', TEST_TINKER,
+      STANDARD_INFINITY_AUTHORITY, false, true,
+    )).toBe(unlocked)
+  })
+
   test('unlocks Reality, Simulations, and Story at the canonical 27-secret boundary', () => {
     const snapshotAt = (secretsOfTheUniverse: bigint) => {
       const zero = gameDecimalFromCanonicalString('0')

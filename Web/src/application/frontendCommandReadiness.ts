@@ -46,12 +46,14 @@ export const V2_FRONTEND_DEFINITION_COVERAGE: DeepReadonly<FrontendDefinitionCov
 })
 
 /**
- * Canonical writes remain blocked until the preserved Unity schema surface is
- * fully owned. V2 startup only needs this conservative release policy; the
- * detailed schema-11 coverage catalog remains in the migration tooling path.
+ * Web schema-13 player writes and reverse Unity export are separate policies.
+ * V2 startup only needs these frozen facts; the detailed schema-11 import
+ * coverage catalog remains in the migration tooling path.
  */
 export const V2_FRONTEND_PERSISTENCE_READINESS = Object.freeze({
   mappingCoverageComplete: true,
+  webSchema13PlayerWritesSupported: true,
+  unityReadableExportSupported: false,
   canonicalWriteAllowed: false,
   unmatchedWritePolicy: 'preserve-source' as const,
 })

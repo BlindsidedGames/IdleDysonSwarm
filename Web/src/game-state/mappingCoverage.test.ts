@@ -11,6 +11,7 @@ import {
   publicUnitySaveCertification,
   publicUnitySchema11LeafPatterns,
 } from './mappingCoverageSchema11'
+import { SAVE_COMPATIBILITY_POLICY } from '../save/compatibilityPolicy'
 
 const schema11Fixture = new URL(
   '../../test/fixtures/support-case-01-attached-idb1.txt',
@@ -152,9 +153,18 @@ describe('public Unity mapping coverage certification', () => {
     ).not.toBeNull()
   })
 
-  test('classifies every public leaf while keeping reverse Unity writes separately gated', () => {
+  test('classifies every public leaf without claiming reverse Unity export support', () => {
     expect(mappingCoverageManifest.unresolvedLeafCount).toBe(0)
     expect(mappingCoverageManifest.coverageComplete).toBe(true)
+    expect(mappingCoverageManifest.compatibilityPolicy).toBe(
+      SAVE_COMPATIBILITY_POLICY,
+    )
+    expect(mappingCoverageManifest.compatibilityPolicy).toEqual({
+      legacyUnityImportSupported: true,
+      webSchema13PlayerWritesSupported: true,
+      unityReadableExportSupported: false,
+      twoWayUnitySynchronizationSupported: false,
+    })
     expect(mappingCoverageManifest.releaseCanonicalWriteAllowed).toBe(false)
     expect(mappingCoverageManifest.unmatchedWritePolicy).toBe('preserve-source')
     expect(mappingCoverageManifest.unclassifiedLeafPolicy).toBe(

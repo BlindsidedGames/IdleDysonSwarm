@@ -7,6 +7,7 @@ import {
   schema11DreamTimerFields,
   schema11DreamUpgradeFields,
 } from './mappingCoverageSchema11'
+import { SAVE_COMPATIBILITY_POLICY } from '../save/compatibilityPolicy'
 
 export type MappingClassification =
   | 'canonically-owned'
@@ -623,6 +624,8 @@ export const mappingCoverageManifest = {
   unityImportSchema: publicUnitySaveCertification.saveSchema,
   canonicalGameModelVersion: 1,
   coverageComplete: unresolvedLeafCount === 0,
+  compatibilityPolicy: SAVE_COMPATIBILITY_POLICY,
+  /** @deprecated This is the reverse Unity-write gate, not the Web save gate. */
   releaseCanonicalWriteAllowed: false,
   unmatchedWritePolicy: 'preserve-source' as const,
   unclassifiedLeafPolicy: 'fail-certification' as const,

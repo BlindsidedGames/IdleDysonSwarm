@@ -103,6 +103,21 @@ const intendedEntries = [
   ...canonicalNumericFieldClassifications,
   ...plannedV2OnlyNumericClassifications,
 ].filter((entry) => entry.intendedV2Path !== null)
+const researchSemanticClasses = new Map(
+  canonicalResearchLevelPolicies.map((entry) => [entry.key, entry.semanticClass]),
+)
+const exactSemanticClasses = new Map<string, NumericSemanticClass>()
+const wildcardSemanticClasses: readonly Readonly<{
+  readonly pattern: RegExp
+  readonly semanticClass: NumericSemanticClass
+}>[] = intendedEntries.flatMap((entry) => {
+  const path = entry.intendedV2Path!
+  if (!path.includes('*')) {
+    exactSemanticClasses.set(path, entry.semanticClass)
+    return []
+  }
+  return [{ pattern: compilePathPattern(path), semanticClass: entry.semanticClass }]
+})
 
 const DREAM_RESET_CAUSES = new Set<CanonicalDreamResetCauseV2>([
   'Meteor',
@@ -722,25 +737,22 @@ function convertNumericGraph(value: unknown, path: string): unknown {
 function semanticClassForPath(path: string): NumericSemanticClass {
   if (path.startsWith('$.research.levelsById.')) {
     const id = path.slice('$.research.levelsById.'.length)
-    const policy = canonicalResearchLevelPolicies.find(
-      (entry) => entry.key === id,
-    )
-    if (policy !== undefined) return policy.semanticClass
+    const semanticClass = researchSemanticClasses.get(id)
+    if (semanticClass !== undefined) return semanticClass
   }
-  const entry = intendedEntries.find((candidate) =>
-    pathMatches(candidate.intendedV2Path!, path),
-  )
-  if (entry === undefined) {
+  const semanticClass = exactSemanticClasses.get(path) ??
+    wildcardSemanticClasses.find((entry) => entry.pattern.test(path))?.semanticClass
+  if (semanticClass === undefined) {
     throw new Error(`V2 migration encountered unclassified numeric path ${path}.`)
   }
-  return entry.semanticClass
+  return semanticClass
 }
 
-function pathMatches(pattern: string, path: string): boolean {
+function compilePathPattern(pattern: string): RegExp {
   const expression = pattern
     .replace(/[.*+?^${}()|[\]\\]/gu, '\\$&')
     .replaceAll('\\*', '.+')
-  return new RegExp(`^${expression}$`, 'u').test(path)
+  return new RegExp(`^${expression}$`, 'u')
 }
 
 function exactBigIntFromNumber(value: number, path: string): bigint {

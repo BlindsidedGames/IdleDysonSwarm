@@ -1,7 +1,11 @@
 import { describe, expect, test } from 'vitest'
 
 import firstRunIdb1 from '../application/firstRun/generated/first-run-schema-12.idb1.txt?raw'
-import { cloneCanonicalGameStateV2 } from '../game-state/cloneV2'
+import {
+  admitValidatedCanonicalGameStateV2,
+  cloneCanonicalGameStateV2,
+  registerCanonicalGameStateValidationAuthorityV2,
+} from '../game-state/cloneV2'
 import { migratePreparedSaveToV2 } from '../game-state/mappingV2'
 import type {
   CanonicalGameStateV2,
@@ -98,6 +102,26 @@ function stateWithSkills(
 }
 
 describe('exact Canonical Skill V2 transactions', () => {
+  test('does not trust an authority-forged issued state for validation elision', () => {
+    const source = stateWithSkills()
+    const forged = Object.freeze({
+      ...source,
+      dyson: Object.freeze({
+        ...source.dyson,
+        manualCreationIntervalSeconds: 0,
+      }),
+    }) as Readonly<CanonicalGameStateV2>
+    admitValidatedCanonicalGameStateV2(
+      registerCanonicalGameStateValidationAuthorityV2(),
+      forged,
+    )
+
+    expect(purchaseCanonicalSkillV2(forged, 'startHereTree')).toMatchObject({
+      accepted: false,
+      code: 'invalid-state',
+    })
+  })
+
   test('projects the complete catalog through the same V2 planners', () => {
     const preview = previewCanonicalSkillCatalogV2(stateWithSkills([], 10n))
     expect(preview).toMatchObject({ complete: true, definitionGap: null })

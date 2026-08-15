@@ -1,4 +1,7 @@
-import { cloneCanonicalGameStateV2 } from '../game-state/cloneV2'
+import {
+  cloneCanonicalGameStateV2,
+  isStructurallyValidatedCanonicalGameStateV2,
+} from '../game-state/cloneV2'
 import type { CanonicalFacilityId } from '../game-state/types'
 import type { CanonicalGameStateV2 } from '../game-state/typesV2'
 import { validateCanonicalGameStateV2 } from '../game-state/validateV2'
@@ -258,6 +261,12 @@ function admitSource(source: Readonly<CanonicalGameStateV2>): Readonly<{
   state: Readonly<CanonicalGameStateV2>
   identityFastPath: boolean
 }> {
+  // Canonical clone admission is stronger than repeating a deep-freeze walk
+  // and whole-state validation for each shop quote. Keep the defensive path
+  // for external/unissued callers.
+  if (isStructurallyValidatedCanonicalGameStateV2(source)) {
+    return Object.freeze({ state: source, identityFastPath: true })
+  }
   if (
     validateCanonicalGameStateV2(source).valid &&
     isDeepFrozenDataTree(source, new Set())

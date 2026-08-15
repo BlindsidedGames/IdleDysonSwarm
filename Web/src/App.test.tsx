@@ -748,6 +748,10 @@ function readySnapshot(): FrontendApplicationSnapshot {
         simulations: {
           routeUnlocked: false,
         },
+        quantum: {
+          routeVisible: false,
+          routeUnlocked: false,
+        },
       },
       runtime: {
         tinker: {

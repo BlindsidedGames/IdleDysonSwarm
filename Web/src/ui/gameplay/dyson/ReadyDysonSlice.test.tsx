@@ -65,6 +65,22 @@ const compiledCatalogs = {
 } as const
 
 describe('ReadyDysonSlice', () => {
+  test('keeps route gating on published visibility instead of React resource derivation', () => {
+    const source = readFileSync(
+      resolve('src/ui/gameplay/dyson/ReadyDysonSlice.tsx'),
+      'utf8',
+    )
+    expect(source).toContain(
+      'const quantumVisible = gameplay.visibility.quantum.routeVisible',
+    )
+    expect(source).toContain(
+      'const quantumUnlocked = gameplay.visibility.quantum.routeUnlocked',
+    )
+    expect(source).not.toContain(
+      'comparePresentationNumeric(gameplay.resources.infinity.points',
+    )
+  })
+
   test('renders fresh authoritative visibility without named hidden cards', async () => {
     renderSlice(snapshot())
 
@@ -528,6 +544,39 @@ describe('ReadyDysonSlice', () => {
     expect(
       rendered.container.querySelector('.dyson-resource-header'),
     ).not.toBeInTheDocument()
+  })
+
+  test('uses published all-tab visibility for the four Unity-overridden routes', async () => {
+    const onRouteChange = vi.fn()
+    const user = userEvent.setup()
+    render(
+      provider(
+        <ReadyDysonSlice
+          snapshot={snapshot({
+            infinityPoints: 0n,
+            infinityRouteUnlocked: true,
+            realityRouteVisible: true,
+            realityRouteUnlocked: true,
+            quantumRouteVisible: true,
+            quantumRouteUnlocked: true,
+          })}
+          locale="en"
+          dispatchPlayer={acceptedDispatch}
+          onRouteChange={onRouteChange}
+        />,
+      ),
+    )
+
+    for (const [label, route] of [
+      ['Infinity', 'infinity'],
+      ['Reality', 'reality'],
+      ['Simulations', 'simulations'],
+      ['Quantum', 'quantum'],
+    ] as const) {
+      await user.click(screen.getAllByRole('button', { name: label })[0])
+      expect(onRouteChange).toHaveBeenLastCalledWith(route)
+    }
+    expect(onRouteChange).not.toHaveBeenCalledWith('bots')
   })
 
   test('reveals locked Quantum progress at one IP and opens the route at 42 IP', async () => {
@@ -1326,6 +1375,8 @@ interface SnapshotOptions {
   readonly realitySecrets?: bigint
   readonly infinityPoints?: bigint
   readonly quantumPoints?: bigint
+  readonly quantumRouteVisible?: boolean
+  readonly quantumRouteUnlocked?: boolean
   readonly avocatoUnlocked?: boolean
   readonly avocatoEntryVisible?: boolean
   readonly navigationVisibility?: {
@@ -1753,6 +1804,14 @@ function snapshot(options: SnapshotOptions = {}): ReadySnapshot {
         },
         simulations: {
           routeUnlocked: options.realityRouteUnlocked ?? false,
+        },
+        quantum: {
+          routeVisible: options.quantumRouteVisible ??
+            ((options.infinityPoints ?? 0n) >= 1n ||
+              (options.quantumPoints ?? 0n) >= 1n),
+          routeUnlocked: options.quantumRouteUnlocked ??
+            ((options.infinityPoints ?? 0n) >= 42n ||
+              (options.quantumPoints ?? 0n) >= 1n),
         },
       },
       runtime: {

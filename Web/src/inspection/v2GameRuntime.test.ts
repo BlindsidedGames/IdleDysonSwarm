@@ -27,7 +27,7 @@ const PLATFORM = Object.freeze({
 })
 
 describe('V2 game runtime production seams', () => {
-  test('uses the canonical 27-secret debug unlock for V2 Reality, Simulations, and Story', async () => {
+  test('persists all-tab visibility without granting Infinity or Quantum currency', async () => {
     const migrated = migratePreparedSaveToV2(
       createDeterministicUnityFirstRunPreparedSave(),
       { kind: 'trusted-same-device' },
@@ -54,8 +54,26 @@ describe('V2 game runtime production seams', () => {
     expect(snapshot.gameplay.visibility.reality.routeUnlocked).toBe(true)
     expect(snapshot.gameplay.visibility.reality.unlockProgress.requiredSecrets).toBe(27n)
     expect(snapshot.gameplay.visibility.simulations.routeUnlocked).toBe(true)
+    expect(snapshot.gameplay.visibility.infinity.routeUnlocked).toBe(true)
+    expect(snapshot.gameplay.visibility.quantum).toEqual({
+      routeVisible: true,
+      routeUnlocked: true,
+    })
+    expect(snapshot.gameplay.resources.infinity.points).toEqual(gameDecimalFromNumber(0))
+    expect(snapshot.gameplay.resources.quantum.pointsEarned).toEqual(gameDecimalFromNumber(0))
     expect(snapshot.gameplay.derived.story.visibleChapterIds).toContain('chapter-5')
+    expect(repository.latestPlatform.unlockAllTabs).toBe(true)
+
     await controller.runtime.shutdown()
+    const reloaded = createV2GameRuntimeController({ repository })
+    await reloaded.runtime.start()
+    const reloadedSnapshot = reloaded.runtime.snapshot()
+    if (reloadedSnapshot.phase !== 'ready') throw new Error('Expected a ready snapshot.')
+    expect(reloadedSnapshot.gameplay.visibility.infinity.routeUnlocked).toBe(true)
+    expect(reloadedSnapshot.gameplay.visibility.reality.routeUnlocked).toBe(true)
+    expect(reloadedSnapshot.gameplay.visibility.simulations.routeUnlocked).toBe(true)
+    expect(reloadedSnapshot.gameplay.visibility.quantum.routeUnlocked).toBe(true)
+    await reloaded.runtime.shutdown()
   })
 
   test('propagates persisted cheater state and rejects Stored Time spend and upgrade commands', async () => {
@@ -311,6 +329,72 @@ describe('V2 game runtime production seams', () => {
     expect(repository.latestState.meta.navigationVisibility.story).toBe(true)
     await controller.runtime.shutdown()
   })
+
+  test('closes command admission synchronously, drains admitted work, and shares concurrent shutdown', async () => {
+    const migrated = migratePreparedSaveToV2(
+      createDeterministicUnityFirstRunPreparedSave(),
+      { kind: 'trusted-same-device' },
+    )
+    const initial = createCanonicalRuntimePublicationV2({
+      revision: 4,
+      state: cloneCanonicalGameStateV2({
+        ...migrated.state,
+        timeline: {
+          ...migrated.state.timeline,
+          storedTimeAvailableSeconds: 10,
+        },
+      }),
+      runtime: migrated.runtime,
+    })
+    const terminal = deferred<void>()
+    const host = new FakeStoredTimeHost(initial, terminal.promise)
+    const repository = new FakeRuntimeRepository(initial)
+    const releasedStates: number[] = []
+    const controller = createV2GameRuntimeController({
+      repository,
+      createStoredTimeHost: () => host,
+      afterShutdown: async () => {
+        releasedStates.push(repository.latestState.timeline.storedTimeAvailableSeconds)
+      },
+    })
+    await controller.runtime.start()
+
+    const admitted = controller.runtime.dispatchPlayer({
+      kind: 'time.request-stored-time-spend',
+      requestedSeconds: 5,
+    })
+    await host.terminalStarted.promise
+
+    const firstShutdown = controller.runtime.shutdown()
+    expect(controller.runtime.status()).toEqual({ phase: 'stopping' })
+    const concurrentShutdown = controller.runtime.shutdown()
+    expect(concurrentShutdown).toBe(firstShutdown)
+
+    const racingCommand = controller.runtime.dispatchPlayer({
+      kind: 'settings.set-navigation-item-visible',
+      item: 'story',
+      visible: true,
+    })
+    terminal.resolve()
+
+    await expect(admitted).resolves.toMatchObject({
+      status: 'accepted',
+      kind: 'stored-time',
+      consumedSeconds: 5,
+    })
+    await expect(racingCommand).resolves.toMatchObject({
+      status: 'rejected',
+      code: 'V2-NOT-READY',
+    })
+    await expect(firstShutdown).resolves.toBeUndefined()
+    await expect(concurrentShutdown).resolves.toBeUndefined()
+
+    expect(controller.runtime.status()).toEqual({ phase: 'stopped' })
+    expect(repository.latestState.timeline.storedTimeAvailableSeconds).toBe(5)
+    expect(releasedStates).toEqual([5])
+    expect(repository.checkpoints.at(-1)).toBe(5)
+  })
+
   test('exposes a development-only unlock that persists platform ownership without changing gameplay currency', async () => {
     const migrated = migratePreparedSaveToV2(
       createDeterministicUnityFirstRunPreparedSave(),

@@ -196,6 +196,7 @@ export function selectFrontendApplicationSnapshotV2(
   tinker: Readonly<CanonicalTinkerRuntimeState>,
   infinityRewardAuthority: Readonly<InfinityRewardAuthorityV2>,
   storedTimeCheater = false,
+  unlockAllTabs = false,
 ): DeepReadonly<FrontendApplicationSnapshot> {
   const cacheKey = [
     revision.session,
@@ -204,6 +205,7 @@ export function selectFrontendApplicationSnapshotV2(
     checkpoint,
     previewDemand,
     storedTimeCheater ? 'cheater' : 'clean-time',
+    unlockAllTabs ? 'all-tabs' : 'progression-tabs',
   ].join(':')
   const publicationCache = projectionCache.get(publication as object)
   const cached = publicationCache?.get(cacheKey)?.get(infinityRewardAuthority as object)?.get(tinker as object)
@@ -329,7 +331,7 @@ export function selectFrontendApplicationSnapshotV2(
           ),
         }),
       }),
-      visibility: selectV2GameplayVisibility(state),
+      visibility: selectV2GameplayVisibility(state, unlockAllTabs),
       commands: readiness.commands,
       previews: selectV2Previews(
         publication,
@@ -726,6 +728,7 @@ function selectV2Progression(
 
 function selectV2GameplayVisibility(
   state: Readonly<CanonicalGameStateV2>,
+  unlockAllTabs: boolean,
 ): Readonly<FrontendGameplayVisibility> {
   const zero = gameDecimalFromNumber(0)
   const total = (facilityId: keyof CanonicalGameStateV2['dyson']['facilities']) => {
@@ -791,12 +794,12 @@ function selectV2GameplayVisibility(
         Object.values(state.skills.byId).some((skill) => skill.owned),
     }),
     infinity: Object.freeze({
-      routeUnlocked: state.meta.firstInfinityComplete ||
+      routeUnlocked: unlockAllTabs || state.meta.firstInfinityComplete ||
         positive(infinityPoints) || positive(quantumEarned),
     }),
     reality: Object.freeze({
-      routeVisible: positive(infinityPoints) || positive(quantumEarned),
-      routeUnlocked: realityUnlocked,
+      routeVisible: unlockAllTabs || positive(infinityPoints) || positive(quantumEarned),
+      routeUnlocked: unlockAllTabs || realityUnlocked,
       unlockProgress: Object.freeze({
         currentSecrets,
         requiredSecrets,
@@ -805,7 +808,13 @@ function selectV2GameplayVisibility(
           : Number(currentSecrets) / Number(requiredSecrets),
       }),
     }),
-    simulations: Object.freeze({ routeUnlocked: realityUnlocked }),
+    simulations: Object.freeze({ routeUnlocked: unlockAllTabs || realityUnlocked }),
+    quantum: Object.freeze({
+      routeVisible: unlockAllTabs || positive(infinityPoints) || positive(quantumEarned),
+      routeUnlocked: unlockAllTabs ||
+        compareGameDecimals(infinityPoints, gameDecimalFromNumber(42)) >= 0 ||
+        positive(quantumEarned),
+    }),
   })
 }
 

@@ -246,7 +246,7 @@ describe('portable transactional save repository', () => {
         PreparedSave.fromDecoded({ saveVersion: 12 }),
         'canonical-player',
       ),
-    ).rejects.toThrow('disabled until mapping coverage is complete')
+    ).rejects.toThrow('disabled by repository policy')
     expect(storage.files.size).toBe(0)
   })
 

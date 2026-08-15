@@ -69,7 +69,6 @@ import {
   type SpaceAgePurchaseQuantity,
 } from '../simulations/SimulationTimeControl'
 import { wikiProgressionFromResources } from '../wiki/wikiProjection'
-import { comparePresentationNumeric } from '../../presentationNumeric'
 import { AvocatoMeditationSecretTrigger } from '../quantum/AvocatoMeditationSecretTrigger'
 import { AvotationCompletionOverlay } from '../quantum/AvotationProgress'
 import type { AvocatoMeditationPlacement } from '../quantum/meditationTargets'
@@ -543,12 +542,8 @@ export function ReadyDysonSlice({
     [releasePlatformServices, storeVisible, synchronizeHostEntitlements],
   )
   const gameplay = snapshot.gameplay
-  const quantumVisible =
-    comparePresentationNumeric(gameplay.resources.infinity.points, 1n) >= 0 ||
-    comparePresentationNumeric(gameplay.resources.quantum.pointsEarned, 1n) >= 0
-  const quantumUnlocked =
-    comparePresentationNumeric(gameplay.resources.infinity.points, 42n) >= 0 ||
-    comparePresentationNumeric(gameplay.resources.quantum.pointsEarned, 1n) >= 0
+  const quantumVisible = gameplay.visibility.quantum.routeVisible
+  const quantumUnlocked = gameplay.visibility.quantum.routeUnlocked
   useEffect(() => {
     if (!quantumUnlocked) return undefined
     let active = true

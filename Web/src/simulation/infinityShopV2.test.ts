@@ -1,7 +1,11 @@
 import { describe, expect, test } from 'vitest'
 
 import schema12Web from '../../test/fixtures/schema-12-canonical-idsweb1-first-run.txt?raw'
-import { cloneCanonicalGameStateV2 } from '../game-state/cloneV2'
+import {
+  admitValidatedCanonicalGameStateV2,
+  cloneCanonicalGameStateV2,
+  registerCanonicalGameStateValidationAuthorityV2,
+} from '../game-state/cloneV2'
 import { migratePreparedSaveToV2 } from '../game-state/mappingV2'
 import type { CanonicalGameStateV2 } from '../game-state/typesV2'
 import {
@@ -49,6 +53,25 @@ function stateWith(
 }
 
 describe('Infinity shop V2', () => {
+  test('does not trust an authority-forged issued state for validation elision', () => {
+    const source = stateWith()
+    const forged = Object.freeze({
+      ...source,
+      dyson: Object.freeze({
+        ...source.dyson,
+        manualCreationIntervalSeconds: 0,
+      }),
+    }) as Readonly<CanonicalGameStateV2>
+    admitValidatedCanonicalGameStateV2(
+      registerCanonicalGameStateValidationAuthorityV2(),
+      forged,
+    )
+
+    expect(() => quoteInfinityShopPurchaseV2(forged, 1, 'secret')).toThrow(
+      'Cannot publish an invalid CanonicalGameStateV2',
+    )
+  })
+
   test('atomically debits available, credits lifetime allocation, and grants output', () => {
     const source = stateWith({ available: '5e0', allocated: '7e0' })
     const quote = quoteInfinityShopPurchaseV2(source, 11, 'secret')

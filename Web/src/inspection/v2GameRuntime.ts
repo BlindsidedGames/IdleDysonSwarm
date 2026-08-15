@@ -245,6 +245,7 @@ class V2GameRuntime {
   #unsubscribeLifecycle: (() => void) | null = null
   #lifecycleTail: Promise<void> = Promise.resolve()
   #mutationTail: Promise<void> = Promise.resolve()
+  #shutdownPromise: Promise<void> | null = null
 
   constructor(options: Readonly<V2GameRuntimeOptions>) {
     this.#repository = options.repository ?? new Stage7V2CertificationRepository({
@@ -528,7 +529,12 @@ class V2GameRuntime {
     this.#platform = Object.freeze({ ...this.#platform, unlockAllTabs: true })
     this.#adopt(publication)
     await this.requestCheckpoint()
-    return Object.freeze({ applied: true, secretsOfTheUniverse: secrets, stateRevision: publication.revision, durableRevision: this.#durableRevision })
+    return Object.freeze({
+      applied: true,
+      secretsOfTheUniverse: secrets,
+      stateRevision: publication.revision,
+      durableRevision: this.#durableRevision,
+    })
   }
 
   async #applyDevelopmentAction(action: UiRuntimeDevelopmentAction): Promise<UiRuntimeDevelopmentActionResult> {
@@ -690,8 +696,25 @@ class V2GameRuntime {
     return this.#checkpointTail
   }
 
-  async shutdown(): Promise<void> {
+  shutdown(): Promise<void> {
+    if (this.#shutdownPromise !== null) return this.#shutdownPromise
+    let resolveShutdown!: () => void
+    let rejectShutdown!: (reason?: unknown) => void
+    this.#shutdownPromise = new Promise<void>((resolve, reject) => {
+      resolveShutdown = resolve
+      rejectShutdown = reject
+    })
+    // Close command, import, lifecycle-resume, and timer admission before the
+    // first suspension. Work already admitted through #mutationTail is still
+    // drained and included in the final checkpoint below.
+    this.#setStatus(Object.freeze({ phase: 'stopping' }))
     this.#stopActiveTimer()
+    void this.#completeShutdown().then(resolveShutdown, rejectShutdown)
+    return this.#shutdownPromise
+  }
+
+  async #completeShutdown(): Promise<void> {
+    await this.#mutationTail
     await this.#awaitActiveAdvance()
     this.#unsubscribeLifecycle?.()
     this.#unsubscribeLifecycle = null
@@ -1415,6 +1438,7 @@ class V2GameRuntime {
       this.#tinker,
       this.#infinityRewardAuthority(),
       this.#platform.cheater,
+      this.#platform.unlockAllTabs,
     )
     document.documentElement.dataset.v2LastProjectionMs =
       (performance.now() - started).toFixed(3)

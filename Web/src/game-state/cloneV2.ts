@@ -15,7 +15,24 @@ const intendedEntries = [
   ...canonicalNumericFieldClassifications,
   ...plannedV2OnlyNumericClassifications,
 ].filter((entry) => entry.intendedV2Path !== null)
+const researchGameDecimalClasses = new Map(
+  canonicalResearchLevelPolicies.map((policy) => [policy.key, policy.semanticClass]),
+)
+const exactGameDecimalPaths = new Set<string>()
+const wildcardGameDecimalPaths: RegExp[] = []
+for (const entry of intendedEntries) {
+  if (
+    entry.semanticClass !== 'ordinary-decimal' &&
+    entry.semanticClass !== 'integer-decimal'
+  ) continue
+  const path = entry.intendedV2Path!
+  if (path.includes('*')) wildcardGameDecimalPaths.push(compilePathPattern(path))
+  else exactGameDecimalPaths.add(path)
+}
 const issuedCanonicalGameStates = new WeakSet<object>()
+// Authority-based admission is an ownership assertion, not proof of validity.
+// Only checks performed inside this module may add to this second cache.
+const structurallyValidatedCanonicalGameStates = new WeakSet<object>()
 const issuedValidationAuthorities = new WeakSet<object>()
 
 export interface CanonicalGameStateValidationAuthorityV2 {
@@ -41,27 +58,35 @@ export function admitValidatedCanonicalGameStateV2(
   issuedCanonicalGameStates.add(value)
 }
 
-function pathMatches(pattern: string, path: string): boolean {
+/** Performs full structural and immutability checks before enabling fast reuse. */
+export function validateCanonicalGameStateV2ForTrustedReuse(
+  value: Readonly<CanonicalGameStateV2>,
+): void {
+  const validation = validateCanonicalGameStateV2(value)
+  if (!validation.valid || !isDeepFrozenDataTree(value, new Set())) {
+    throw new TypeError(
+      `CanonicalGameStateV2 must be valid and deeply frozen: ${validation.errors.join(' ')}`,
+    )
+  }
+  issuedCanonicalGameStates.add(value)
+  structurallyValidatedCanonicalGameStates.add(value)
+}
+
+function compilePathPattern(pattern: string): RegExp {
   const expression = pattern
     .replace(/[.*+?^${}()|[\]\\]/gu, '\\$&')
     .replaceAll('\\*', '.+')
-  return new RegExp(`^${expression}$`, 'u').test(path)
+  return new RegExp(`^${expression}$`, 'u')
 }
 
 function isGameDecimalPath(path: string): boolean {
   if (path.startsWith('$.research.levelsById.')) {
     const id = path.slice('$.research.levelsById.'.length)
-    const semanticClass = canonicalResearchLevelPolicies.find(
-      (policy) => policy.key === id,
-    )?.semanticClass
+    const semanticClass = researchGameDecimalClasses.get(id)
     return semanticClass === 'integer-decimal'
   }
-  const semanticClass = intendedEntries.find((entry) =>
-    pathMatches(entry.intendedV2Path!, path),
-  )?.semanticClass
-  return (
-    semanticClass === 'ordinary-decimal' || semanticClass === 'integer-decimal'
-  )
+  return exactGameDecimalPaths.has(path) ||
+    wildcardGameDecimalPaths.some((pattern) => pattern.test(path))
 }
 
 function isDecimalParts(value: object): boolean {
@@ -151,6 +176,7 @@ export function cloneCanonicalGameStateV2(
     )
   }
   issuedCanonicalGameStates.add(clone)
+  structurallyValidatedCanonicalGameStates.add(clone)
   return clone
 }
 
@@ -178,6 +204,7 @@ export function cloneCanonicalGameStateV2WithDyson(
     )
   }
   issuedCanonicalGameStates.add(candidate)
+  structurallyValidatedCanonicalGameStates.add(candidate)
   return candidate
 }
 
@@ -187,4 +214,28 @@ export function isIssuedCanonicalGameStateV2(
 ): boolean {
   return typeof value === 'object' && value !== null &&
     issuedCanonicalGameStates.has(value)
+}
+
+/** True only after validation performed inside this module. */
+export function isStructurallyValidatedCanonicalGameStateV2(
+  value: unknown,
+): boolean {
+  return typeof value === 'object' && value !== null &&
+    structurallyValidatedCanonicalGameStates.has(value)
+}
+
+function isDeepFrozenDataTree(value: unknown, seen: Set<object>): boolean {
+  if (typeof value !== 'object' || value === null) return true
+  if (seen.has(value) || !Object.isFrozen(value)) return false
+  seen.add(value)
+  const descriptors = Object.getOwnPropertyDescriptors(value)
+  for (const key of Reflect.ownKeys(descriptors)) {
+    const descriptor = descriptors[key as keyof typeof descriptors]
+    if (
+      descriptor === undefined ||
+      !('value' in descriptor) ||
+      !isDeepFrozenDataTree(descriptor.value, seen)
+    ) return false
+  }
+  return true
 }

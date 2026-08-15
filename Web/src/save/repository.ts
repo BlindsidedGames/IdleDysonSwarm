@@ -297,7 +297,7 @@ export class PortableSaveRepository implements SaveRepository {
       !this.policy.allowCanonicalPlayerWrites
     ) {
       throw new Error(
-        'Canonical player-save writes are disabled until mapping coverage is complete.',
+        'Legacy V1 player-save writes are disabled by repository policy. This repository is not a Unity-readable export path.',
       )
     }
     const normalized = PreparedSave.fromDecoded(

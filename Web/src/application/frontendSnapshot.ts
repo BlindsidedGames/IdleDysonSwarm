@@ -469,6 +469,9 @@ export interface FrontendCanonicalProgression {
 
 export interface FrontendPersistenceReadiness {
   readonly mappingCoverageComplete: boolean
+  readonly webSchema13PlayerWritesSupported: boolean
+  readonly unityReadableExportSupported: boolean
+  /** @deprecated This means reverse Unity-graph writes, not Web player saves. */
   readonly canonicalWriteAllowed: boolean
   readonly unmatchedWritePolicy: 'preserve-source'
 }
@@ -968,6 +971,12 @@ export interface FrontendGameplayVisibility {
     /** Simulations appears with Reality and uses the same Unity unlock. */
     readonly routeUnlocked: boolean
   }
+  readonly quantum: {
+    /** Quantum appears after the first Infinity Point. */
+    readonly routeVisible: boolean
+    /** Quantum opens at 42 Infinity Points or after the first Quantum Leap. */
+    readonly routeUnlocked: boolean
+  }
 }
 
 export type FrontendTinkerRuntimeFacts =
@@ -1220,6 +1229,10 @@ export function selectFrontendGameplaySnapshot(
     persistence: {
       mappingCoverageComplete:
         mappingCoverageManifest.coverageComplete,
+      webSchema13PlayerWritesSupported:
+        mappingCoverageManifest.compatibilityPolicy.webSchema13PlayerWritesSupported,
+      unityReadableExportSupported:
+        mappingCoverageManifest.compatibilityPolicy.unityReadableExportSupported,
       canonicalWriteAllowed:
         mappingCoverageManifest.releaseCanonicalWriteAllowed,
       unmatchedWritePolicy:
@@ -1243,6 +1256,10 @@ export function selectFrontendReadinessConstants(
     definitionCoverage,
     persistence: {
       mappingCoverageComplete: mappingCoverageManifest.coverageComplete,
+      webSchema13PlayerWritesSupported:
+        mappingCoverageManifest.compatibilityPolicy.webSchema13PlayerWritesSupported,
+      unityReadableExportSupported:
+        mappingCoverageManifest.compatibilityPolicy.unityReadableExportSupported,
       canonicalWriteAllowed: mappingCoverageManifest.releaseCanonicalWriteAllowed,
       unmatchedWritePolicy: mappingCoverageManifest.unmatchedWritePolicy,
     },
@@ -1337,6 +1354,14 @@ function selectGameplayVisibility(
     },
     simulations: {
       routeUnlocked: realityUnlocked,
+    },
+    quantum: {
+      routeVisible:
+        state.infinity.points > 0n ||
+        state.quantum.pointsEarned > 0n,
+      routeUnlocked:
+        state.infinity.points >= 42n ||
+        state.quantum.pointsEarned > 0n,
     },
   }
 }

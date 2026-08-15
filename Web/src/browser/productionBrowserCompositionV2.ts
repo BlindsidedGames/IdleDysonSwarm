@@ -49,6 +49,67 @@ export interface ProductionBrowserCompositionV2Options {
   readonly writerIdentity?: Readonly<BrowserReloadWriterIdentity>
 }
 
+type BrowserReloadRuntimeV2 = Pick<
+  BrowserUiRuntimeFoundation,
+  'status' | 'checkpointBeforeSafeReload' | 'shutdown'
+>
+
+interface BrowserReloadActionsV2 {
+  prepareForUpdateActivation(): Promise<void>
+  prepareForSafeReload(): Promise<void>
+  reloadSafely(): Promise<void>
+}
+
+/**
+ * Coordinates reloads for the schema-13 browser runtime.
+ *
+ * Recovery reloads may shut down a runtime that cannot publish a new
+ * checkpoint. Package activation is deliberately stricter: it can replace
+ * the running code only after a ready runtime has published and verified a
+ * fresh checkpoint, then completed orderly shutdown.
+ *
+ * @internal Exported so the production status matrix can be tested without
+ * replacing the persistence graph with a test-only composition seam.
+ */
+export function createBrowserReloadActionsV2(
+  runtime: Readonly<BrowserReloadRuntimeV2>,
+  reloadPage: () => void,
+): Readonly<BrowserReloadActionsV2> {
+  const prepareForSafeReload = async (): Promise<void> => {
+    const status = runtime.status()
+    if (status.phase === 'ready' && !(await runtime.checkpointBeforeSafeReload())) {
+      throw new Error('Safe reload requires a verified schema-13 checkpoint.')
+    }
+    if (status.phase !== 'ready' && status.phase !== 'blocked' &&
+      status.phase !== 'ownership-lost' && status.phase !== 'stopped') {
+      throw new Error(`Safe reload is unavailable while the V2 runtime is ${status.phase}.`)
+    }
+    await runtime.shutdown()
+  }
+  const prepareForUpdateActivation = async (): Promise<void> => {
+    const status = runtime.status()
+    if (status.phase !== 'ready') {
+      throw new Error(
+        'Package updates require a ready V2 runtime and verified schema-13 checkpoint.',
+      )
+    }
+    if (!(await runtime.checkpointBeforeSafeReload())) {
+      throw new Error(
+        'Package updates require a verified schema-13 checkpoint.',
+      )
+    }
+    await runtime.shutdown()
+  }
+  return Object.freeze({
+    prepareForUpdateActivation,
+    prepareForSafeReload,
+    reloadSafely: async () => {
+      await prepareForSafeReload()
+      reloadPage()
+    },
+  })
+}
+
 /**
  * Coordinated browser V2 composition. It deliberately reuses the existing
  * IndexedDB database/profile paths so the repository can perform the one-way
@@ -123,17 +184,7 @@ export function createProductionBrowserCompositionV2(
   })
   const runtime = controller.runtime
   const reloadPage = options.reloadPage ?? (() => window.location.reload())
-  const prepareForSafeReload = async (): Promise<void> => {
-    const status = runtime.status()
-    if (status.phase === 'ready' && !(await runtime.checkpointBeforeSafeReload())) {
-      throw new Error('Safe reload requires a verified schema-13 checkpoint.')
-    }
-    if (status.phase !== 'ready' && status.phase !== 'blocked' &&
-      status.phase !== 'ownership-lost' && status.phase !== 'stopped') {
-      throw new Error(`Safe reload is unavailable while the V2 runtime is ${status.phase}.`)
-    }
-    await runtime.shutdown()
-  }
+  const reloadActions = createBrowserReloadActionsV2(runtime, reloadPage)
   return Object.freeze({
     runtime,
     releasePlatformServices: options.releasePlatformServices,
@@ -145,12 +196,9 @@ export function createProductionBrowserCompositionV2(
       importedAtUtc: clock.sample().serializedUtcText,
       overwriteApproved: true,
     })),
-    prepareForUpdateActivation: prepareForSafeReload,
-    prepareForSafeReload,
-    reloadSafely: async () => {
-      await prepareForSafeReload()
-      reloadPage()
-    },
+    prepareForUpdateActivation: reloadActions.prepareForUpdateActivation,
+    prepareForSafeReload: reloadActions.prepareForSafeReload,
+    reloadSafely: reloadActions.reloadSafely,
   })
 }
 
