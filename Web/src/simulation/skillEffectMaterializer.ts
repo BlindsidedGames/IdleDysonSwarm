@@ -1,9 +1,9 @@
-import { getGameAsset } from '../game-data/catalog'
-import type {
-  RuntimeAssetReference,
-  RuntimeAssetValue,
-} from '../game-data/types'
-import { operationFromUnity, type StatEffect } from './stat'
+import {
+  getCompiledSkillEffectCatalog,
+  type CompiledSkillEffectCatalog,
+  type CompiledSkillEffectDefinition,
+} from './compiledSkillEffectCatalog'
+import type { StatEffect } from './stat'
 
 export interface SkillEffectFacilityContext {
   readonly id: string
@@ -34,18 +34,9 @@ export interface SkillEffectConditionReference {
   readonly legacyId: string | null
 }
 
-interface EffectData {
-  readonly id: string
-  readonly targetStatId: string
-  readonly operation: number
-  readonly value: number
-  readonly perLevel: number
-  readonly order: number
-  readonly conditionId: string | null
-  readonly conditionAssetId: string | null
-  readonly targetFacilityIds: readonly string[]
-  readonly targetFacilityTags: readonly string[]
-}
+const EMPTY_EFFECTS: readonly StatEffect[] = Object.freeze([])
+const EMPTY_EFFECT_GROUPS: readonly (readonly StatEffect[])[] =
+  Object.freeze([])
 
 /**
  * Mirrors SkillEffectProvider.BuildEffects over the exported Unity catalog.
@@ -55,93 +46,88 @@ interface EffectData {
 export function materializeSkillEffects(
   context: Readonly<SkillEffectMaterializationContext>,
 ): readonly StatEffect[] {
-  if (context.targetStatId.length === 0) return Object.freeze([])
-
-  const database = getGameAsset('GameData.SkillDatabase', 'SkillDatabase')
-  if (database === undefined) {
-    throw new Error("Exported game data is missing SkillDatabase.")
-  }
-  const skillReferences = requireReferences(
-    database.data.skills,
-    'SkillDatabase.skills',
+  if (context.targetStatId.length === 0) return EMPTY_EFFECTS
+  return materializeFromCompiledCatalog(
+    context,
+    getCompiledSkillEffectCatalog(),
   )
-  const effects: StatEffect[] = []
+}
 
-  for (const skillReference of skillReferences) {
+/**
+ * Batch companion for callers that materialize several statistic contexts at
+ * once. Results retain input order and each group retains SkillDatabase source
+ * ordering. The generated catalog is compiled at most once for the batch.
+ */
+export function materializeSkillEffectsForContexts(
+  contexts: readonly Readonly<SkillEffectMaterializationContext>[],
+): readonly (readonly StatEffect[])[] {
+  if (contexts.length === 0) return EMPTY_EFFECT_GROUPS
+  const needsCatalog = contexts.some(
+    (context) => context.targetStatId.length > 0,
+  )
+  if (!needsCatalog) {
+    return Object.freeze(contexts.map(() => EMPTY_EFFECTS))
+  }
+  const catalog = getCompiledSkillEffectCatalog()
+  return Object.freeze(
+    contexts.map((context) =>
+      context.targetStatId.length === 0
+        ? EMPTY_EFFECTS
+        : materializeFromCompiledCatalog(context, catalog),
+    ),
+  )
+}
+
+function materializeFromCompiledCatalog(
+  context: Readonly<SkillEffectMaterializationContext>,
+  catalog: Readonly<CompiledSkillEffectCatalog>,
+): readonly StatEffect[] {
+  const effects: StatEffect[] = []
+  for (const candidate of catalog.candidatesForStat(
+    context.targetStatId,
+  )) {
+    if (!context.ownedSkillIds.has(candidate.skillId)) continue
+    const effect = candidate.effect
+    if (!matchesFacility(effect, context.facility)) continue
     if (
-      skillReference.id === null ||
-      !context.ownedSkillIds.has(skillReference.id)
+      (effect.conditionAssetId !== null ||
+        effect.conditionId !== null) &&
+      !conditionMet(effect, context)
     ) {
       continue
     }
-    const skill = getGameAsset(
-      'GameData.SkillDefinition',
-      skillReference.id,
-    )
-    if (skill === undefined) {
-      throw new Error(
-        `Exported SkillDatabase references missing skill '${skillReference.id}'.`,
-      )
-    }
-    const effectReferences = requireReferences(
-      skill.data.effects,
-      `skills.${skillReference.id}.effects`,
-    )
-    for (const effectReference of effectReferences) {
-      if (effectReference.id === null) continue
-      const asset = getGameAsset(
-        'GameData.EffectDefinition',
-        effectReference.id,
-      )
-      if (asset === undefined) {
-        throw new Error(
-          `Skill '${skillReference.id}' references missing effect '${effectReference.id}'.`,
-        )
-      }
-      const effect = requireEffectData(asset.data, effectReference.id)
-      if (effect.targetStatId !== context.targetStatId) continue
-      if (!matchesFacility(effect, context.facility)) continue
-      if (
-        (effect.conditionAssetId !== null ||
-          effect.conditionId !== null) &&
-        !conditionMet(effect, context)
-      ) {
-        continue
-      }
 
-      const dynamicValue = context.resolveDynamicValue?.(effect.id)
-      const resolvedValue =
-        dynamicValue === undefined
-          ? effect.value + effect.perLevel
-          : dynamicValue
-      if (!Number.isFinite(resolvedValue)) {
-        throw new Error(
-          `Effect '${effect.id}' resolved to a non-finite value.`,
-        )
-      }
-      const operation = operationFromUnity(effect.operation)
-      if (shouldSkipEffect(operation, resolvedValue)) continue
-      effects.push(
-        Object.freeze({
-          id: effect.id,
-          operation,
-          value: resolvedValue,
-          order: effect.order,
-          ...((effect.conditionAssetId ?? effect.conditionId) === null
-            ? {}
-            : {
-                conditionIdentifier:
-                  effect.conditionAssetId ?? effect.conditionId!,
-              }),
-        }),
+    const dynamicValue = context.resolveDynamicValue?.(effect.id)
+    const resolvedValue =
+      dynamicValue === undefined
+        ? effect.authoredValue + effect.perLevel
+        : dynamicValue
+    if (!Number.isFinite(resolvedValue)) {
+      throw new Error(
+        `Effect '${effect.id}' resolved to a non-finite value.`,
       )
     }
+    if (shouldSkipEffect(effect.operation, resolvedValue)) continue
+    effects.push(
+      Object.freeze({
+        id: effect.id,
+        operation: effect.operation,
+        value: resolvedValue,
+        order: effect.order,
+        ...((effect.conditionAssetId ?? effect.conditionId) === null
+          ? {}
+          : {
+              conditionIdentifier:
+                effect.conditionAssetId ?? effect.conditionId!,
+            }),
+      }),
+    )
   }
-  return Object.freeze(effects)
+  return effects.length === 0 ? EMPTY_EFFECTS : Object.freeze(effects)
 }
 
 function conditionMet(
-  effect: EffectData,
+  effect: Readonly<CompiledSkillEffectDefinition>,
   context: Readonly<SkillEffectMaterializationContext>,
 ): boolean {
   if (context.isConditionMet === undefined) {
@@ -156,7 +142,7 @@ function conditionMet(
 }
 
 function matchesFacility(
-  effect: EffectData,
+  effect: Readonly<CompiledSkillEffectDefinition>,
   facility: Readonly<SkillEffectFacilityContext> | undefined,
 ): boolean {
   const hasFilter =
@@ -165,150 +151,19 @@ function matchesFacility(
   if (facility === undefined) return !hasFilter
   if (
     effect.targetFacilityIds.length > 0 &&
-    !effect.targetFacilityIds.some(
-      (id) => id.toLowerCase() === facility.id.toLowerCase(),
-    )
+    !effect.targetFacilityIds.includes(facility.id.toLowerCase())
   ) {
     return false
   }
   if (
     effect.targetFacilityTags.length > 0 &&
     !effect.targetFacilityTags.some((target) =>
-      facility.tags.some(
-        (tag) => tag.toLowerCase() === target.toLowerCase(),
-      ),
+      facility.tags.some((tag) => tag.toLowerCase() === target),
     )
   ) {
     return false
   }
   return true
-}
-
-function requireEffectData(
-  data: Readonly<Record<string, RuntimeAssetValue>>,
-  expectedId: string,
-): EffectData {
-  const id = requireString(data.id, `${expectedId}.id`)
-  if (id !== expectedId) {
-    throw new Error(
-      `Effect asset '${expectedId}' declares mismatched id '${id}'.`,
-    )
-  }
-  return {
-    id,
-    targetStatId: requireString(
-      data.targetStatId,
-      `${expectedId}.targetStatId`,
-    ),
-    operation: requireNumber(data.operation, `${expectedId}.operation`),
-    value: requireNumber(data.value, `${expectedId}.value`),
-    perLevel: requireNumber(data.perLevel, `${expectedId}.perLevel`),
-    order: requireNumber(data.order, `${expectedId}.order`),
-    conditionId: requireNullableString(
-      data.conditionId,
-      `${expectedId}.conditionId`,
-    ),
-    conditionAssetId: optionalReferenceId(
-      data._condition,
-      `${expectedId}._condition`,
-    ),
-    targetFacilityIds: requireStrings(
-      data.targetFacilityIds,
-      `${expectedId}.targetFacilityIds`,
-    ),
-    targetFacilityTags: requireStrings(
-      data.targetFacilityTags,
-      `${expectedId}.targetFacilityTags`,
-    ),
-  }
-}
-
-function optionalReferenceId(
-  value: RuntimeAssetValue | undefined,
-  path: string,
-): string | null {
-  if (value === null || value === undefined) return null
-  if (
-    typeof value !== 'object' ||
-    Array.isArray(value) ||
-    !('id' in value)
-  ) {
-    throw new Error(`Exported game data '${path}' must be a reference.`)
-  }
-  const id = value.id
-  if (id !== null && typeof id !== 'string') {
-    throw new Error(
-      `Exported game data '${path}.id' must be a string or null.`,
-    )
-  }
-  return id
-}
-
-function requireReferences(
-  value: RuntimeAssetValue | undefined,
-  path: string,
-): readonly RuntimeAssetReference[] {
-  // Runtime transport deliberately retains only the stable ID. Provenance
-  // metadata remains in the complete generated catalog and is not gameplay.
-  if (
-    !Array.isArray(value) ||
-    !value.every(
-      (entry) =>
-        typeof entry === 'object' &&
-        entry !== null &&
-        'id' in entry,
-    )
-  ) {
-    throw new Error(`Exported game data '${path}' is not a reference list.`)
-  }
-  return value as unknown as readonly RuntimeAssetReference[]
-}
-
-function requireString(
-  value: RuntimeAssetValue | undefined,
-  path: string,
-): string {
-  if (typeof value !== 'string') {
-    throw new Error(`Exported game data '${path}' must be a string.`)
-  }
-  return value
-}
-
-function requireNullableString(
-  value: RuntimeAssetValue | undefined,
-  path: string,
-): string | null {
-  if (value !== null && typeof value !== 'string') {
-    throw new Error(
-      `Exported game data '${path}' must be a string or null.`,
-    )
-  }
-  return value
-}
-
-function requireNumber(
-  value: RuntimeAssetValue | undefined,
-  path: string,
-): number {
-  if (typeof value !== 'number' || !Number.isFinite(value)) {
-    throw new Error(
-      `Exported game data '${path}' must be a finite number.`,
-    )
-  }
-  return value
-}
-
-function requireStrings(
-  value: RuntimeAssetValue | undefined,
-  path: string,
-): readonly string[] {
-  if (
-    !Array.isArray(value) ||
-    !value.every((entry) => typeof entry === 'string')
-  ) {
-    throw new Error(`Exported game data '${path}' must be a string list.`)
-  }
-  return value
 }
 
 function shouldSkipEffect(

@@ -8,7 +8,10 @@ import type {
   SkillRuntimeState,
 } from '../game-state/types'
 import { prepareIdb1Save } from '../save/prepare'
-import { resolveDynamicSkillEffect } from './dynamicSkillEffectResolver'
+import {
+  prepareDynamicSkillEffectResolver,
+  resolveDynamicSkillEffect,
+} from './dynamicSkillEffectResolver'
 
 const fixture = readFileSync(
   new URL(
@@ -96,6 +99,99 @@ function value(effectId: string, ownedIds: readonly string[]): number {
 }
 
 describe('dynamic skill effect resolver', () => {
+  test('prepared authority resolves multiple effect families with wrapper parity', () => {
+    const source = state([
+      'shouldersOfPrecursors',
+      'stayingPower',
+      'androids',
+      'planetAssembly',
+      'shouldersOfGiants',
+      'scientificPlanets',
+      'manualLabour',
+    ])
+    const prepared = prepareDynamicSkillEffectResolver(
+      source,
+      tuning,
+      snapshot,
+    )
+    const effectIds = [
+      'effect.shouldersOfPrecursors.money_multiplier',
+      'effect.staying_power.assembly_lines',
+      'effect.androids.panel_lifetime',
+      'effect.planetAssembly.planets_per_second',
+      'effect.shouldersOfGiants.science_boost_per_second',
+      'effect.manualLabour.tinker_assembly_yield',
+      'effect.startHereTree.money_multiplier',
+    ]
+
+    for (const effectId of effectIds) {
+      expect(prepared.resolve(effectId)).toEqual(
+        resolveDynamicSkillEffect(effectId, source, tuning, snapshot),
+      )
+    }
+  })
+
+  test('prepared authority captures ownership once for the derivation', () => {
+    const source = state(['panelMaintenance'])
+    const prepared = prepareDynamicSkillEffectResolver(
+      source,
+      tuning,
+      snapshot,
+    )
+
+    ;(
+      source.skills.byId.panelMaintenance as { owned: boolean }
+    ).owned = false
+
+    expect(
+      prepared.resolve('effect.panelMaintenance.panel_lifetime'),
+    ).toEqual({
+      handled: true,
+      ok: true,
+      value: 75,
+    })
+    expect(
+      resolveDynamicSkillEffect(
+        'effect.panelMaintenance.panel_lifetime',
+        source,
+        tuning,
+        snapshot,
+      ),
+    ).toEqual({ handled: true, ok: true, value: 0 })
+  })
+
+  test('prepared authority preserves typed dynamic failures', () => {
+    const source = state(['higgsBoson'])
+    const invalid = {
+      ...snapshot,
+      panelsPerSecond: Number.NaN,
+    }
+    const prepared = prepareDynamicSkillEffectResolver(
+      source,
+      tuning,
+      invalid,
+    )
+
+    expect(
+      prepared.resolve('effect.higgsBoson.money_multiplier'),
+    ).toMatchObject({
+      handled: true,
+      ok: false,
+      issue: {
+        code: 'DYSON_MONEY_SCIENCE_DERIVED_INPUT_INVALID',
+      },
+    })
+    expect(
+      prepared.resolve('effect.rocketMania.panels_per_second'),
+    ).toMatchObject({
+      handled: true,
+      ok: false,
+      issue: {
+        code: 'DYSON_DYNAMIC_SKILL_EFFECT_INVALID',
+      },
+    })
+  })
+
   test('composes money/science and facility branches', () => {
     expect(
       value('effect.shouldersOfPrecursors.money_multiplier', [

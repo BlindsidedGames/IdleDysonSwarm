@@ -1,5 +1,8 @@
 import { describe, expect, test, vi } from 'vitest'
-import { materializeSkillEffects } from './skillEffectMaterializer'
+import {
+  materializeSkillEffects,
+  materializeSkillEffectsForContexts,
+} from './skillEffectMaterializer'
 
 describe('skill effect materializer', () => {
   test('uses SkillDatabase order and authored values for global effects', () => {
@@ -33,6 +36,18 @@ describe('skill effect materializer', () => {
     expect(resolveDynamicValue).not.toHaveBeenCalled()
   })
 
+  test('retains case-insensitive facility matching', () => {
+    const effects = materializeSkillEffects({
+      ownedSkillIds: new Set(['superchargedPower']),
+      targetStatId: 'Facility.AssemblyLine.Production',
+      facility: { id: 'ASSEMBLY_LINES', tags: [] },
+    })
+
+    expect(effects.map(({ id }) => id)).toEqual([
+      'effect.supercharged_power.assembly_lines',
+    ])
+  })
+
   test('dynamic values replace authored values and neutral values skip', () => {
     const effects = materializeSkillEffects({
       ownedSkillIds: new Set([
@@ -53,6 +68,19 @@ describe('skill effect materializer', () => {
         order: 30,
       },
     ])
+  })
+
+  test('retains non-finite dynamic-value validation', () => {
+    expect(() =>
+      materializeSkillEffects({
+        ownedSkillIds: new Set(['parallelComputation']),
+        targetStatId: 'Facility.DataCenter.Production',
+        facility: { id: 'data_centers', tags: [] },
+        resolveDynamicValue: () => Number.NaN,
+      }),
+    ).toThrow(
+      "Effect 'effect.parallel_computation.data_centers' resolved to a non-finite value.",
+    )
   })
 
   test('evaluates conditions after ownership and facility filters', () => {
@@ -92,5 +120,41 @@ describe('skill effect materializer', () => {
     ).toThrow(
       "Conditional effect 'effect.avocados.servers' requires a condition evaluator.",
     )
+  })
+
+  test('batch materialization retains context order and wrapper parity', () => {
+    const contexts = [
+      {
+        ownedSkillIds: new Set([
+          'startHereTree',
+          'superchargedPower',
+        ]),
+        targetStatId: 'Global.MoneyMultiplier',
+      },
+      {
+        ownedSkillIds: new Set(['superchargedPower']),
+        targetStatId: 'Facility.AssemblyLine.Production',
+        facility: { id: 'assembly_lines', tags: [] },
+      },
+      {
+        ownedSkillIds: new Set<string>(),
+        targetStatId: '',
+      },
+    ] as const
+
+    const groups = materializeSkillEffectsForContexts(contexts)
+
+    expect(groups).toEqual(
+      contexts.map((context) => materializeSkillEffects(context)),
+    )
+    expect(groups.map((effects) => effects.map(({ id }) => id))).toEqual([
+      [
+        'effect.superchargedPower.money_multiplier',
+        'effect.startHereTree.money_multiplier',
+      ],
+      ['effect.supercharged_power.assembly_lines'],
+      [],
+    ])
+    expect(Object.isFrozen(groups)).toBe(true)
   })
 })

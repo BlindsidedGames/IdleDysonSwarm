@@ -43,11 +43,14 @@ import {
   type StatOperation,
 } from './stat'
 import {
-  resolveDynamicSkillEffect,
+  prepareDynamicSkillEffectResolver,
   type DynamicSkillEffectIssue,
 } from './dynamicSkillEffectResolver'
 import { evaluateSkillEffectCondition } from './skillEffectConditions'
-import { materializeSkillEffects } from './skillEffectMaterializer'
+import {
+  materializeSkillEffectsForContexts,
+  type SkillEffectMaterializationContext,
+} from './skillEffectMaterializer'
 import { publishDysonSkillEffectEvaluationSnapshot } from './dysonSnapshotPublication'
 
 export interface DysonEntitlements {
@@ -762,40 +765,45 @@ function materializeCanonicalSkillEffects(
   const owned = new Set(ownedSkillIds)
   let dynamicIssue: DynamicSkillEffectIssue | undefined
   try {
-    const entries = MATERIALIZED_SKILL_STATS.map((statId) => {
-      const facilityId = facilityForStat(statId)
-      const effects = materializeSkillEffects({
-        ownedSkillIds: owned,
-        targetStatId: statId,
-        facility:
-          facilityId === undefined
-            ? undefined
-            : { id: facilityId, tags: [] },
-        isConditionMet: (_effectId, condition) =>
-          evaluateSkillEffectCondition(condition, {
-            facilities: state.dyson.facilities,
-            currentFacility:
-              facilityId === undefined
-                ? undefined
-                : { owned: state.dyson.facilities[facilityId] },
-          }),
-        resolveDynamicValue: (effectId) => {
-          const result = resolveDynamicSkillEffect(
-            effectId,
-            state,
-            tuning,
-            snapshot,
-          )
-          if (!result.handled) return undefined
-          if (!result.ok) {
-            dynamicIssue = result.issue
-            throw new Error(result.issue.detail)
-          }
-          return result.value
-        },
-      })
-      return [statId, effects] as const
-    })
+    const dynamicEffects = prepareDynamicSkillEffectResolver(
+      state,
+      tuning,
+      snapshot,
+    )
+    const contexts = MATERIALIZED_SKILL_STATS.map(
+      (statId): SkillEffectMaterializationContext => {
+        const facilityId = facilityForStat(statId)
+        return {
+          ownedSkillIds: owned,
+          targetStatId: statId,
+          facility:
+            facilityId === undefined
+              ? undefined
+              : { id: facilityId, tags: [] },
+          isConditionMet: (_effectId, condition) =>
+            evaluateSkillEffectCondition(condition, {
+              facilities: state.dyson.facilities,
+              currentFacility:
+                facilityId === undefined
+                  ? undefined
+                  : { owned: state.dyson.facilities[facilityId] },
+            }),
+          resolveDynamicValue: (effectId) => {
+            const result = dynamicEffects.resolve(effectId)
+            if (!result.handled) return undefined
+            if (!result.ok) {
+              dynamicIssue = result.issue
+              throw new Error(result.issue.detail)
+            }
+            return result.value
+          },
+        }
+      },
+    )
+    const effectGroups = materializeSkillEffectsForContexts(contexts)
+    const entries = MATERIALIZED_SKILL_STATS.map(
+      (statId, index) => [statId, effectGroups[index] ?? []] as const,
+    )
     return {
       ok: true,
       byStat: Object.freeze(Object.fromEntries(entries)),

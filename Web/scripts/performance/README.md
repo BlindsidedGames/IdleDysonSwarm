@@ -104,3 +104,32 @@ npx tsx scripts/performance/runSoakReport.ts --smoke --duration-ms=15000 --warmu
 Do not cite a shortened report as acceptance evidence. Preserve the production
 build output, JSON report, text report, browser version and command invocation
 as CI artifacts for an acceptance run.
+
+## Skill-effect evaluation differential and benchmark
+
+Run the deterministic report while developing the compiled skill/effect path:
+
+```powershell
+npm run report:performance:skill-effects
+```
+
+The report uses the committed schema-08 compatibility fixture to construct a
+bounded mature state; it never reads a developer's live save. It compares the
+candidate materializer and dynamic resolver against frozen test-only copies of
+the pre-optimization traversal and orchestration, then reports steady-state
+materialization, alternating-ownership invalidation, dynamic-resolver sweeps,
+and complete Dyson derivation timing. Semantic mismatch always fails.
+
+After implementation, run the acceptance gate:
+
+```powershell
+npm run verify:performance:skill-effects
+```
+
+Acceptance requires 300 samples after warm-up, exact differential parity, at
+least 35 percent lower median materialization time and at least 25 percent lower
+P95. Use `--samples=<count>` only for local investigation; a reduced sample
+count is not acceptance evidence. Keep the focused differential Vitest suite
+alongside the timing report because timing alone cannot certify ordering,
+condition, dynamic dependency, ownership-change, Infinity-reset, or
+Quantum-reset semantics.

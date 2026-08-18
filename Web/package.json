@@ -25,6 +25,8 @@
     "verify:normal-performance-build": "npm run report:initial-request-bundle && tsx scripts/performance/assertNormalBuildExcludesCommitProbe.ts",
     "report:performance:interaction": "npm run build:performance && tsx scripts/performance/runInteractionReport.ts",
     "report:performance:interaction:smoke": "npm run build:performance && tsx scripts/performance/runInteractionReport.ts --smoke",
+    "report:performance:skill-effects": "tsx scripts/performance/runSkillEffectEvaluationReport.ts",
+    "verify:performance:skill-effects": "vitest run src/simulation/skillEffectOptimizationCertification.test.ts && tsx scripts/performance/runSkillEffectEvaluationReport.ts --assert",
     "report:performance:soak": "npm run build && tsx scripts/performance/runSoakReport.ts",
     "report:performance:soak:smoke": "npm run build && tsx scripts/performance/runSoakReport.ts --smoke",
     "pwa:icons": "powershell -NoProfile -ExecutionPolicy Bypass -File scripts/generate-pwa-icons.ps1",
