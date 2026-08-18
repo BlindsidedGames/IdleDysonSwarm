@@ -1,0 +1,23 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="img" aria-label="Idle Dyson Swarm">
+  <defs>
+    <linearGradient id="background" x1="0" y1="0" x2="1" y2="1">
+      <stop stop-color="#4b3850"/>
+      <stop offset="1" stop-color="#130f22"/>
+    </linearGradient>
+    <linearGradient id="orbit" x1="0" y1="0" x2="1" y2="1">
+      <stop stop-color="#00e1ff"/>
+      <stop offset="1" stop-color="#c9a1d8"/>
+    </linearGradient>
+  </defs>
+  <rect width="512" height="512" rx="96" fill="url(#background)"/>
+  <circle cx="256" cy="256" r="67" fill="#ffa45e"/>
+  <g fill="none" stroke="url(#orbit)" stroke-width="22">
+    <ellipse cx="256" cy="256" rx="174" ry="84" transform="rotate(28 256 256)"/>
+    <ellipse cx="256" cy="256" rx="174" ry="84" transform="rotate(-28 256 256)"/>
+  </g>
+  <g fill="#f7f4f8">
+    <circle cx="116" cy="177" r="25"/>
+    <circle cx="396" cy="335" r="25"/>
+    <circle cx="354" cy="132" r="17"/>
+  </g>
+</svg>
