@@ -27,7 +27,12 @@ The post-icon-conversion performance baseline is recorded in
   320/390 px reflow and touch checks remain deliberately unpassed and are
   retained as Phase 9 acceptance work. No Android or iOS testing has been
   added to scope.
-- Phase 7 is next.
+- Phase 7 is complete and independently reviewed. Ordinary development uses a
+  provider-free deterministic five-product Store; `dev:stripe` retains the
+  explicit real-endpoint integration path; production output is checked for
+  Stripe presence and development-adapter absence. Native adapters were not
+  changed.
+- Phase 8 is next.
 
 ## Preparation already completed
 

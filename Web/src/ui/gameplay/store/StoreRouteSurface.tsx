@@ -7,6 +7,7 @@ export interface StoreRouteSurfaceProps {
   readonly synchronizeHostEntitlements?: () => Promise<boolean>
   readonly localDeveloperOptionsPurchased: boolean
   readonly deviceOnlyPurchases?: boolean
+  readonly restoreAvailable?: boolean
 }
 
 interface CachedStorefront {
@@ -47,6 +48,7 @@ export function StoreRouteSurface({
   synchronizeHostEntitlements,
   localDeveloperOptionsPurchased,
   deviceOnlyPurchases = false,
+  restoreAvailable,
 }: StoreRouteSurfaceProps) {
   const controller = controllerFor(
     releasePlatformServices,
@@ -58,6 +60,7 @@ export function StoreRouteSurface({
       controller={controller}
       localDeveloperOptionsPurchased={localDeveloperOptionsPurchased}
       deviceOnlyPurchases={deviceOnlyPurchases}
+      restoreAvailable={restoreAvailable}
     />
   )
 }

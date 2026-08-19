@@ -134,6 +134,7 @@ describe('browser runtime foundation composition', () => {
     expect(development?.status()).toMatchObject({
       enabled: false,
       entitled: true,
+      purchasedInGame: false,
     })
     await expect(
       development?.apply({ kind: 'purchase-debug-options' }),
@@ -141,6 +142,7 @@ describe('browser runtime foundation composition', () => {
     expect(development?.status()).toMatchObject({
       enabled: true,
       entitled: true,
+      purchasedInGame: false,
     })
     await expect(
       development?.apply({

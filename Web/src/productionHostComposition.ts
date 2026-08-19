@@ -12,11 +12,15 @@ import {
   type NativeHostBridgeApi,
 } from './platform/nativeHostBridge'
 import type { HostKind, ReleasePlatformServices } from './platform/releaseFoundation'
-import { createBrowserStripeReleasePlatformServices } from './platform/releaseFoundation'
+import {
+  createBrowserDevelopmentReleasePlatformServices,
+  createBrowserStripeReleasePlatformServices,
+} from './platform/releaseFoundation'
 import type {
   BrowserUiRuntimeFoundation,
   UiRuntimeImportResult,
 } from './ui/runtime'
+import { selectBrowserStoreAdapterKind } from './store/developmentStoreSelection'
 
 export interface ProductionHostComposition {
   readonly hostKind: HostKind
@@ -39,6 +43,18 @@ export interface ProductionHostCompositionOptions {
   ) => ProductionNativeComposition
 }
 
+function createConfiguredBrowserStoreServices(): Readonly<ReleasePlatformServices> {
+  const storeKind = import.meta.env.DEV
+    ? selectBrowserStoreAdapterKind({
+        developmentBuild: true,
+        mode: import.meta.env.MODE,
+      })
+    : 'stripe'
+  return storeKind === 'development'
+    ? createBrowserDevelopmentReleasePlatformServices()
+    : createBrowserStripeReleasePlatformServices()
+}
+
 /** Selects exactly one host graph before any persistence is opened. */
 export function createProductionHostComposition(
   options: Readonly<ProductionHostCompositionOptions> = {},
@@ -48,7 +64,7 @@ export function createProductionHostComposition(
   if (bridge === null) {
     const composition = options.createBrowserComposition === undefined
       ? (() => {
-          const services = createBrowserStripeReleasePlatformServices()
+          const services = createConfiguredBrowserStoreServices()
           return createProductionBrowserComposition({
             releasePlatformServices: services,
           })

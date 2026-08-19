@@ -18,6 +18,7 @@ export interface StoreSurfaceProps {
   readonly controller: StorefrontController
   readonly localDeveloperOptionsPurchased: boolean
   readonly deviceOnlyPurchases?: boolean
+  readonly restoreAvailable?: boolean
 }
 
 const TIP_IDS = new Set<StoreProductId>([
@@ -30,6 +31,7 @@ export function StoreSurface({
   controller,
   localDeveloperOptionsPurchased,
   deviceOnlyPurchases = false,
+  restoreAvailable = !deviceOnlyPurchases,
 }: StoreSurfaceProps) {
   const intl = useIntl()
   const snapshot = useSyncExternalStore(
@@ -100,7 +102,8 @@ export function StoreSurface({
                   <p>{intl.formatMessage(messages.deviceOnlyDescription)}</p>
                 </div>
               </section>
-            ) : (
+            ) : null}
+            {restoreAvailable ? (
               <section className="store-restore" aria-labelledby="store-restore-heading">
               <div>
                 <h2 id="store-restore-heading">
@@ -121,7 +124,7 @@ export function StoreSurface({
                 )}
               </button>
               </section>
-            )}
+            ) : null}
           </>
         )}
 

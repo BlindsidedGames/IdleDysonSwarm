@@ -644,6 +644,7 @@ class BrowserRuntimeFoundation implements BrowserUiRuntimeFoundation {
       return {
         enabled: false,
         entitled: false,
+        purchasedInGame: false,
         quantumShards: 0n,
         strangeMatter: 0n,
       }
@@ -657,6 +658,8 @@ class BrowserRuntimeFoundation implements BrowserUiRuntimeFoundation {
       enabled:
         snapshot.state.debugOptionsEnabled === true && entitled,
       entitled,
+      purchasedInGame:
+        snapshot.state.debugEntitlementPurchased === true,
       quantumShards:
         snapshot.state.gameState.quantum.pointsEarned >
         snapshot.state.gameState.quantum.pointsSpent

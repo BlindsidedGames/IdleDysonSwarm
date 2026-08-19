@@ -7,6 +7,7 @@ import {
   resolveEffectiveEntitlementAccess,
 } from '../store/contracts'
 import {
+  createBrowserDevelopmentReleasePlatformServices,
   createBrowserReleasePlatformServices,
   NoopDiagnosticsExporter,
   NoopNativeFilesystemMigrationSource,
@@ -70,6 +71,15 @@ describe('release platform/store foundation', () => {
         payload: { phase: 'idle', code: 'none' },
       }),
     ).resolves.toEqual({ exported: false, code: 'export-unavailable' })
+  })
+
+  test('pairs the development Store adapter with its in-memory entitlement authority', async () => {
+    const services = createBrowserDevelopmentReleasePlatformServices()
+
+    expect(services.storeAvailable).toBe(true)
+    expect(services.storeRestoreAvailable).toBe(true)
+    expect(services.entitlements).toBe(services.store)
+    await expect(services.store.products()).resolves.toHaveLength(5)
   })
 
   test('does not let shared-save claims grant Double IP or Developer Options', () => {

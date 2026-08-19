@@ -35,7 +35,10 @@ import type {
   BrowserUiRuntimeFoundation,
   UiRuntimePlayerCommandResult,
 } from '../../runtime'
-import type { ReleasePlatformServices } from '../../../platform/releaseFoundation'
+import {
+  createBrowserDevelopmentReleasePlatformServices,
+  type ReleasePlatformServices,
+} from '../../../platform/releaseFoundation'
 import {
   CANONICAL_STORE_PRODUCTS,
   type HostEntitlementOwnership,
@@ -937,6 +940,69 @@ describe('ReadyDysonSlice', () => {
         .toBeInTheDocument()
     })
     expect(products).toHaveBeenCalledTimes(1)
+  })
+
+  test('keeps free development controls separate from Developer Options Store ownership', async () => {
+    const user = userEvent.setup()
+    const services = createBrowserDevelopmentReleasePlatformServices()
+    const synchronizeHostEntitlements = vi.fn(async () => true)
+
+    render(
+      provider(
+        <ReadyDysonSlice
+          snapshot={snapshot()}
+          locale="en"
+          dispatchPlayer={acceptedDispatch}
+          route="store"
+          development={{
+            status: () => ({
+              enabled: true,
+              entitled: true,
+              purchasedInGame: false,
+              quantumShards: 0n,
+              strangeMatter: 0n,
+            }),
+            setDysonBots: vi.fn(),
+            unlockReality: vi.fn(),
+            apply: vi.fn(),
+            simulateOfflineTime: vi.fn(),
+          }}
+          releasePlatformServices={services}
+          synchronizeHostEntitlements={synchronizeHostEntitlements}
+        />,
+      ),
+    )
+
+    const heading = await screen.findByRole('heading', {
+      level: 3,
+      name: 'Developer Options',
+    })
+    const product = heading.closest('article')
+    expect(product).not.toBeNull()
+    const purchase = within(product as HTMLElement).getByRole('button', {
+      name: 'Purchase Test: succeeds',
+    })
+    expect(purchase).toBeEnabled()
+    expect(
+      within(product as HTMLElement).queryByRole('button', {
+        name: 'Unlocked in game',
+      }),
+    ).not.toBeInTheDocument()
+
+    await user.click(purchase)
+
+    await waitFor(() => {
+      expect(
+        within(product as HTMLElement).getByRole('button', { name: 'Owned' }),
+      ).toBeDisabled()
+    })
+    expect(screen.getByRole('status')).toHaveTextContent(
+      'Purchase verified on this device.',
+    )
+    expect(synchronizeHostEntitlements).toHaveBeenCalledTimes(1)
+    await expect(services.entitlements.readOwnership()).resolves.toMatchObject({
+      developerOptions: true,
+    })
   })
 
   test('keeps optional pages in the menu while respecting shortcut preferences', () => {

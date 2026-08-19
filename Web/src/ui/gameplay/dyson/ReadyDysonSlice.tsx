@@ -1556,9 +1556,12 @@ export function ReadyDysonSlice({
                                               releasePlatformServices?.hostKind ===
                                               'browser'
                                             }
+                                            restoreAvailable={
+                                              releasePlatformServices?.storeRestoreAvailable
+                                            }
                                             localDeveloperOptionsPurchased={
                                               localDeveloperOptionsPurchased ??
-                                              development?.status().entitled ??
+                                              development?.status().purchasedInGame ??
                                               false
                                             }
                                           />

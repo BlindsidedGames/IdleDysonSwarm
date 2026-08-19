@@ -6,7 +6,8 @@
   "main": "hosts/electron/main.mjs",
   "scripts": {
     "dev": "vite",
-    "build": "tsc -b && vite build",
+    "dev:stripe": "vite --mode development-stripe",
+    "build": "tsc -b && vite build && tsx scripts/check-production-store-boundary.ts",
     "native:release:sync": "tsx scripts/sync-native-release.ts",
     "native:branding:sync": "powershell -NoProfile -ExecutionPolicy Bypass -File scripts/generate-native-branding.ps1",
     "build:native": "npm run native:release:sync && tsc -b && vite build --mode native",

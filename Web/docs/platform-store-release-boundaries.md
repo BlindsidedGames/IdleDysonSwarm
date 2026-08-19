@@ -17,9 +17,16 @@ surface.
   copied exactly from Unity's `Assets/Resources/IAPProductCatalog.json`:
   `ids.tiptier1`, `ids.tiptier2`, `ids.tiptier3`, `ids.devoptions`, and
   `ids.doubleip`.
-- Browser/local adapters intentionally return metadata and catalog data only.
-  Their migration source finds no files, purchase is unavailable, restore is
-  empty, ownership is false, and diagnostics export is unavailable.
+- Hosted Web production selects Stripe checkout and its device-bound
+  entitlement authority. `npm run dev` instead selects an in-memory Store that
+  labels deterministic success, cancellation and failure outcomes and never
+  owns a network, receipt or storage port. `npm run dev:stripe` is the explicit
+  local integration path for the real Stripe endpoint. The production build
+  runs a bundle-boundary check that requires Stripe and rejects development
+  Store markers.
+- The provider-free browser foundation remains available for unsupported test
+  hosts. Its migration source finds no files, purchase is unavailable, restore
+  is empty, ownership is false, and diagnostics export is unavailable.
 
 ## Trust rule
 

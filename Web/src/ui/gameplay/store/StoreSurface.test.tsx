@@ -86,6 +86,18 @@ describe('StoreSurface', () => {
       .toBeInTheDocument()
   })
 
+  test('keeps browser ownership warnings while exposing development restore simulation', async () => {
+    renderStore(storeAdapter(), undefined, false, {
+      deviceOnlyPurchases: true,
+      restoreAvailable: true,
+    })
+
+    expect(await screen.findByText(/web version has no player account/))
+      .toBeInTheDocument()
+    expect(screen.getByRole('button', { name: 'Restore Purchases' }))
+      .toBeInTheDocument()
+  })
+
   test('announces a failed or cancelled purchase assertively', async () => {
     const user = userEvent.setup()
     const store = storeAdapter()
@@ -136,6 +148,10 @@ function renderStore(
     }),
   },
   localDeveloperOptionsPurchased = false,
+  presentation: Readonly<{
+    deviceOnlyPurchases?: boolean
+    restoreAvailable?: boolean
+  }> = {},
 ) {
   const controller = new StorefrontController({ store, entitlements })
   return render(
@@ -146,6 +162,7 @@ function renderStore(
       <StoreSurface
         controller={controller}
         localDeveloperOptionsPurchased={localDeveloperOptionsPurchased}
+        {...presentation}
       />
     </PresentationIntlProvider>,
   )
