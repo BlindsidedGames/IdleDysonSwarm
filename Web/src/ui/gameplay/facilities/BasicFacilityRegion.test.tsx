@@ -894,7 +894,19 @@ describe('BasicFacilityRegion', () => {
       /\.basic-facility-region\s*\{[^}]*container-type:\s*inline-size;/,
     )
     expect(facilitiesCss).toMatch(
-      /@container \(min-width: 50rem\)[\s\S]*grid-template-columns:\s*repeat\(2,\s*minmax\(0,\s*1fr\)\);[^}]*grid-auto-rows:\s*1fr;/,
+      /@container \(min-width: 50rem\)[\s\S]*grid-template-columns:\s*repeat\(2,\s*minmax\(0,\s*1fr\)\);[^}]*grid-auto-rows:\s*auto;/,
+    )
+    expect(facilitiesCss).toMatch(
+      /\.ui-facility-card\.basic-facility-card\s*\{[^}]*grid-template-rows:\s*auto auto minmax\(min-content, 1fr\) auto;[^}]*gap:\s*var\(--basic-facility-section-gap\) 0\.38rem;[^}]*padding:\s*0\.38rem;/,
+    )
+    expect(facilitiesCss).toMatch(
+      /\.basic-facility-card__actions\s*\{[^}]*grid-template-rows:\s*minmax\(var\(--target-minimum\), 1fr\)\s*var\(--basic-facility-section-gap\)\s*var\(--target-minimum\);/,
+    )
+    expect(facilitiesCss).toMatch(
+      /\.basic-facility-card__details-button\s*\{[^}]*grid-row:\s*3;/,
+    )
+    expect(facilitiesCss).toMatch(
+      /@media \(hover: hover\) and \(pointer: fine\)[\s\S]*\.basic-facility-card__actions\s*\{[^}]*grid-template-rows:\s*minmax\(var\(--target-minimum\), 1fr\)\s*var\(--basic-facility-section-gap\)\s*2\.25rem;[\s\S]*\.basic-facility-card__details-button\s*\{[^}]*min-block-size:\s*2\.25rem;/,
     )
     expect(facilitiesCss).toMatch(
       /@container \(min-width: 80rem\)[\s\S]*grid-template-columns:\s*repeat\(3,\s*minmax\(0,\s*1fr\)\);/,
@@ -907,6 +919,9 @@ describe('BasicFacilityRegion', () => {
     )
     expect(facilitiesCss).toMatch(
       /@media \(max-width: 359px\)[\s\S]*\.basic-facility-card\s*\{[\s\S]*grid-template-columns:\s*minmax\(0,\s*1fr\)\s*6\.25rem;/,
+    )
+    expect(facilitiesCss).not.toMatch(
+      /@media \(max-width: 359px\)[\s\S]*\.ui-facility-card\.basic-facility-card\s*\{[^}]*padding-(?:inline|block):/,
     )
     expect(facilitiesCss).not.toMatch(
       /@media \(max-width: 359px\)[\s\S]*\.ui-facility-card__action\s*\{[\s\S]*grid-row:\s*5;/,

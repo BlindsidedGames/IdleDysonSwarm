@@ -321,8 +321,18 @@ describe('Dyson gameplay responsive CSS contract', () => {
     expect(shellCss).toMatch(
       /\.dyson-shell__playfield\[data-has-swarm="true"\][\s\S]*\.dyson-shell__stage::after\s*\{[^}]*position:\s*absolute;[^}]*inset-block-start:\s*calc\(100% \+ var\(--dyson-swarm-space\)\);[^}]*content:\s*"";[^}]*pointer-events:\s*none;/,
     )
-    expect(shellCss).not.toContain('scrollbar-width: thin')
-    expect(shellCss).not.toContain('scrollbar-color:')
+    expect(shellCss).toMatch(
+      /\.dyson-shell__side-panel\s*\{[^}]*scrollbar-color:\s*var\(--menu-scrollbar-thumb\)\s*var\(--menu-scrollbar-track\);[^}]*scrollbar-gutter:\s*stable;[^}]*scrollbar-width:\s*thin;/,
+    )
+    expect(shellCss).toMatch(
+      /\.dyson-shell__side-panel::\s*-webkit-scrollbar-thumb\s*\{[^}]*background:\s*var\(--menu-scrollbar-thumb\);/,
+    )
+    expect(shellCss).toMatch(
+      /\.dyson-shell\[data-route-theme="settings"\]\s*\{[^}]*--menu-scrollbar-track:\s*#121a12;[^}]*--menu-scrollbar-thumb:\s*#364d36;/,
+    )
+    expect(shellCss).toMatch(
+      /\.dyson-shell\[data-route-theme="simulations"\]\s*\{[^}]*--menu-scrollbar-track:\s*var\(--simulations-menu-background\);[^}]*--menu-scrollbar-thumb:\s*var\(--simulations-navigation-border\);/,
+    )
     expect(shellCss).toMatch(
       /\.dyson-shell__tinker\s*\{[\s\S]*margin-block-start:\s*auto;/,
     )

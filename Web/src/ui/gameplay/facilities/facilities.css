@@ -48,15 +48,16 @@
 }
 
 .ui-facility-card.basic-facility-card {
+  --basic-facility-section-gap: 0.2rem;
   position: relative;
   block-size: 100%;
   grid-template-columns:
     minmax(0, 1fr)
     clamp(6.25rem, 27%, 6.75rem);
-  grid-template-rows: auto auto auto minmax(0.3rem, auto);
-  gap: 0.05rem 0.32rem;
+  grid-template-rows: auto auto minmax(min-content, 1fr) auto;
+  gap: var(--basic-facility-section-gap) 0.38rem;
   align-items: start;
-  padding: 0.34rem 0.38rem;
+  padding: 0.38rem;
   border: 2px solid #694b70;
   border-radius: 0.25rem;
   background:
@@ -82,6 +83,7 @@
 .basic-facility-card .ui-facility-card__progress {
   grid-column: 1;
   grid-row: 4;
+  inline-size: 100%;
   align-self: end;
 }
 
@@ -188,9 +190,15 @@
 .basic-facility-card__actions {
   display: grid;
   block-size: 100%;
-  grid-template-rows: var(--target-minimum) var(--target-minimum);
-  align-content: start;
-  gap: 0.28rem;
+  grid-template-rows:
+    minmax(var(--target-minimum), 1fr)
+    var(--basic-facility-section-gap)
+    var(--target-minimum);
+  align-content: stretch;
+}
+
+.basic-facility-card__actions > .ui-button {
+  grid-row: 1;
 }
 
 .basic-facility-card .ui-button {
@@ -224,6 +232,7 @@
 }
 
 .basic-facility-card__details-button {
+  grid-row: 3;
   min-block-size: var(--target-minimum);
   border: 1px solid #0b080c;
   border-radius: 0.2rem;
@@ -481,7 +490,6 @@
   .ui-facility-card.basic-facility-card {
     grid-template-columns: minmax(0, 1fr) 6.25rem;
     gap-inline: 0.35rem;
-    padding-inline: 0.4rem;
   }
 
   .basic-facility-card .ui-facility-card__title {
@@ -500,8 +508,21 @@
 @container (min-width: 50rem) {
   .basic-facility-region__grid {
     grid-template-columns: repeat(2, minmax(0, 1fr));
-    grid-auto-rows: 1fr;
+    grid-auto-rows: auto;
     align-items: stretch;
+  }
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .basic-facility-card__actions {
+    grid-template-rows:
+      minmax(var(--target-minimum), 1fr)
+      var(--basic-facility-section-gap)
+      2.25rem;
+  }
+
+  .basic-facility-card__details-button {
+    min-block-size: 2.25rem;
   }
 }
 

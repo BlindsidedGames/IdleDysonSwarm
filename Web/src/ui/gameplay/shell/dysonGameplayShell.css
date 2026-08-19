@@ -11,6 +11,9 @@
   --resource-clearance-color: var(--color-app-background);
   --bot-distribution-track-color: #120d14;
   --bot-distribution-handle-color: #c45cda;
+  --menu-scrollbar-track: #1c1420;
+  --menu-scrollbar-thumb: #694b70;
+  --menu-scrollbar-thumb-hover: #8a6593;
   display: grid;
   grid-template-rows: minmax(0, 1fr) 4.9rem;
   inline-size: 100%;
@@ -41,6 +44,9 @@
 
 .dyson-shell[data-route-theme="settings"] {
   --resource-clearance-color: #121a12;
+  --menu-scrollbar-track: #121a12;
+  --menu-scrollbar-thumb: #364d36;
+  --menu-scrollbar-thumb-hover: #4f704f;
   background: #121a12;
 }
 
@@ -82,6 +88,9 @@
   --resource-clearance-color: #181f1e;
   --bot-distribution-track-color: #263a38;
   --bot-distribution-handle-color: #8bc7c4;
+  --menu-scrollbar-track: #181f1e;
+  --menu-scrollbar-thumb: #41615e;
+  --menu-scrollbar-thumb-hover: #5a7e7a;
   background: #181f1e;
 }
 
@@ -136,6 +145,9 @@
 
 .dyson-shell[data-route-theme="skills"] {
   --resource-clearance-color: #151225;
+  --menu-scrollbar-track: #151225;
+  --menu-scrollbar-thumb: #4b3f70;
+  --menu-scrollbar-thumb-hover: #685895;
   background: #151225;
 }
 
@@ -185,6 +197,9 @@
 .dyson-shell[data-route-theme="infinity"] {
   --infinity-panel-color: #30244f;
   --resource-clearance-color: var(--infinity-panel-color);
+  --menu-scrollbar-track: #1c1427;
+  --menu-scrollbar-thumb: #5b4674;
+  --menu-scrollbar-thumb-hover: #795d99;
   background: #1c1427;
 }
 
@@ -238,6 +253,9 @@
 
 .dyson-shell[data-route-theme="reality"] {
   --resource-clearance-color: #302744;
+  --menu-scrollbar-track: #151020;
+  --menu-scrollbar-thumb: #675282;
+  --menu-scrollbar-thumb-hover: #856aa6;
   background: #151020;
 }
 
@@ -247,6 +265,9 @@
 .dyson-shell[data-route-theme="story"],
 .dyson-shell[data-route-theme="wiki"] {
   --resource-clearance-color: #352a52;
+  --menu-scrollbar-track: #130f22;
+  --menu-scrollbar-thumb: #69558a;
+  --menu-scrollbar-thumb-hover: #886daf;
   background: #130f22;
 }
 
@@ -318,6 +339,9 @@
 
 .dyson-shell[data-route-theme="statistics"] {
   --resource-clearance-color: #354d38;
+  --menu-scrollbar-track: #102317;
+  --menu-scrollbar-thumb: #628568;
+  --menu-scrollbar-thumb-hover: #7ba783;
   background: #102317;
 }
 
@@ -418,6 +442,9 @@
   --simulations-time-background: #29435f;
   --simulations-slider-accent: #91b7d6;
   --simulations-slider-track: #152337;
+  --menu-scrollbar-track: var(--simulations-menu-background);
+  --menu-scrollbar-thumb: var(--simulations-navigation-border);
+  --menu-scrollbar-thumb-hover: var(--simulations-menu-accent);
   --resource-clearance-color: var(--simulations-panel-color);
   background: #152337;
 }
@@ -1019,6 +1046,11 @@
   inline-size: min(82vw, 25rem);
   grid-template-rows: auto auto minmax(0, 1fr);
   overflow-y: auto;
+  scrollbar-color:
+    var(--menu-scrollbar-thumb)
+    var(--menu-scrollbar-track);
+  scrollbar-gutter: stable;
+  scrollbar-width: thin;
   padding: max(0.65rem, env(safe-area-inset-top)) 0.65rem
     max(0.9rem, env(safe-area-inset-bottom));
   border-inline-end: 4px solid #49384f;
@@ -1026,6 +1058,24 @@
   box-shadow: 8px 0 20px rgb(0 0 0 / 45%);
   transform: translateX(-105%);
   transition: transform 160ms ease-out;
+}
+
+.dyson-shell__side-panel::-webkit-scrollbar {
+  inline-size: 0.65rem;
+}
+
+.dyson-shell__side-panel::-webkit-scrollbar-track {
+  background: var(--menu-scrollbar-track);
+}
+
+.dyson-shell__side-panel::-webkit-scrollbar-thumb {
+  border: 2px solid var(--menu-scrollbar-track);
+  border-radius: 999px;
+  background: var(--menu-scrollbar-thumb);
+}
+
+.dyson-shell__side-panel::-webkit-scrollbar-thumb:hover {
+  background: var(--menu-scrollbar-thumb-hover);
 }
 
 [dir="rtl"] .dyson-shell__side-panel {
