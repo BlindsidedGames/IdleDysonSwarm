@@ -4501,6 +4501,36 @@
       "value": "‬"
     }
   ],
+  "navigation.offline-time-progress": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "Oɟɟʅıuǝ ⊥ıɯǝ, "
+    },
+    {
+      "type": 1,
+      "value": "stored"
+    },
+    {
+      "type": 0,
+      "value": " oɟ "
+    },
+    {
+      "type": 1,
+      "value": "capacity"
+    },
+    {
+      "type": 0,
+      "value": " sʇoɹǝp"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
   "navigation.quantum": [
     {
       "type": 0,

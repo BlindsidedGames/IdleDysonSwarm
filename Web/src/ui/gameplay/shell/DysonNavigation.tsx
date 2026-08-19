@@ -54,6 +54,7 @@ export function DysonNavigation({
               <button
                 type="button"
                 className="dyson-navigation__link"
+                aria-label={item.progress?.label}
                 tabIndex={interactive ? undefined : -1}
                 onClick={() => {
                   item.onActivate?.()
@@ -66,6 +67,7 @@ export function DysonNavigation({
               <a
                 className="dyson-navigation__link"
                 href={item.href}
+                aria-label={item.progress?.label}
                 tabIndex={interactive ? undefined : -1}
                 onClick={onNavigate}
               >

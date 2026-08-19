@@ -1047,6 +1047,10 @@
     "defaultMessage": "Offline Time",
     "description": "Unity Offline Time destination."
   },
+  "navigation.offline-time-progress": {
+    "defaultMessage": "Offline Time, {stored} of {capacity} stored",
+    "description": "Accessible storage progress for the Offline Time destination."
+  },
   "navigation.quantum": {
     "defaultMessage": "Quantum",
     "description": "Unity Quantum destination."

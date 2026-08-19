@@ -120,6 +120,12 @@ export const readyDysonMessages = defineMessages({
     defaultMessage: 'Offline Time',
     description: 'Unity Offline Time destination.',
   },
+  offlineTimeProgress: {
+    id: 'navigation.offline-time-progress',
+    defaultMessage: 'Offline Time, {stored} of {capacity} stored',
+    description:
+      'Accessible storage progress for the Offline Time destination.',
+  },
   settingsRoute: {
     id: 'navigation.settings',
     defaultMessage: 'Settings',

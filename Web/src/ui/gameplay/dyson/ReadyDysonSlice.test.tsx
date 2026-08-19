@@ -809,6 +809,47 @@ describe('ReadyDysonSlice', () => {
       .toHaveAttribute('aria-pressed', 'true')
   })
 
+  test.each([
+    [0, 0],
+    [1_800, 50],
+    [3_600, 100],
+  ] as const)(
+    'shows Offline Time navigation storage at %s seconds',
+    (storedTimeAvailableSeconds, expectedPercent) => {
+      const rendered = render(
+        provider(
+          <ReadyDysonSlice
+            snapshot={snapshot({
+              storedTimeAvailableSeconds,
+              storedTimeCapacitySeconds: 3_600,
+            })}
+            locale="en"
+            dispatchPlayer={acceptedDispatch}
+            route="bots"
+          />,
+        ),
+      )
+
+      const drawerItem = rendered.container.querySelector(
+        '.dyson-navigation--drawer [data-navigation-id="offline-time"]',
+      )
+      expect(drawerItem).not.toBeNull()
+      expect(within(drawerItem as HTMLElement).getByRole('button', {
+        name: `Offline Time, ${
+          storedTimeAvailableSeconds === 0
+            ? '0s'
+            : storedTimeAvailableSeconds === 1_800
+              ? '30m 0s'
+              : '1h 0s'
+        } of 1h 0s stored`,
+        hidden: true,
+      })).toBeEnabled()
+      expect(
+        drawerItem?.querySelector('.dyson-navigation__progress i'),
+      ).toHaveStyle({ inlineSize: `${expectedPercent}%` })
+    },
+  )
+
   test('shows the Store route only when native host services are injected', async () => {
     const browserRouteChange = vi.fn()
     const browser = render(
@@ -1393,6 +1434,8 @@ interface SnapshotOptions {
   readonly realitySecrets?: bigint
   readonly infinityPoints?: bigint
   readonly quantumPoints?: bigint
+  readonly storedTimeAvailableSeconds?: number
+  readonly storedTimeCapacitySeconds?: number
   readonly avocatoUnlocked?: boolean
   readonly avocatoEntryVisible?: boolean
   readonly navigationVisibility?: {
@@ -1533,8 +1576,10 @@ function snapshot(options: SnapshotOptions = {}): ReadySnapshot {
           strangeMatter: 4096n,
         },
         time: {
-          storedTimeAvailableSeconds: 600,
-          storedTimeCapacitySeconds: 3600,
+          storedTimeAvailableSeconds:
+            options.storedTimeAvailableSeconds ?? 600,
+          storedTimeCapacitySeconds:
+            options.storedTimeCapacitySeconds ?? 3600,
           doubleTimeBankSeconds: 0,
         },
       },

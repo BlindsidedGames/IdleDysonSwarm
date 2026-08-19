@@ -2405,6 +2405,28 @@
       "value": "Offline Time"
     }
   ],
+  "navigation.offline-time-progress": [
+    {
+      "type": 0,
+      "value": "Offline Time, "
+    },
+    {
+      "type": 1,
+      "value": "stored"
+    },
+    {
+      "type": 0,
+      "value": " of "
+    },
+    {
+      "type": 1,
+      "value": "capacity"
+    },
+    {
+      "type": 0,
+      "value": " stored"
+    }
+  ],
   "navigation.quantum": [
     {
       "type": 0,

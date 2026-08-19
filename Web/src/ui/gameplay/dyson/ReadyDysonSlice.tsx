@@ -26,6 +26,7 @@ import {
 } from '../shell'
 import { TinkerSurface } from '../tinker'
 import {
+  formatGameDuration,
   formatGameNumber,
   formatNumber,
   type NumericValue,
@@ -656,6 +657,20 @@ export function ReadyDysonSlice({
       wiki: false,
       statistics: true,
     }
+  const storedTimeCapacitySeconds = Math.max(
+    0,
+    gameplay.resources.time.storedTimeCapacitySeconds,
+  )
+  const storedTimeAvailableSeconds = Math.max(
+    0,
+    Math.min(
+      gameplay.resources.time.storedTimeAvailableSeconds,
+      storedTimeCapacitySeconds,
+    ),
+  )
+  const storedTimeStorageFraction = storedTimeCapacitySeconds > 0
+    ? storedTimeAvailableSeconds / storedTimeCapacitySeconds
+    : 0
   const routeHeading = debugActive
     ? messages.debugRoute
     : avocatoActive
@@ -875,6 +890,19 @@ export function ReadyDysonSlice({
             label: intl.formatMessage(messages.offlineTimeRoute),
             iconSrc: navigationAssets.offlineTime,
             bottom: false,
+            progress: {
+              fraction: storedTimeStorageFraction,
+              label: intl.formatMessage(messages.offlineTimeProgress, {
+                stored: formatGameDuration(
+                  locale,
+                  storedTimeAvailableSeconds,
+                ),
+                capacity: formatGameDuration(
+                  locale,
+                  storedTimeCapacitySeconds,
+                ),
+              }),
+            },
             ...(offlineTimeActive
               ? { current: true as const }
               : {
