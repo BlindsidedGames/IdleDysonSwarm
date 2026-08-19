@@ -332,6 +332,7 @@ export async function openChromiumPage(
     })
   } catch (error) {
     stopChild(child)
+    await waitForExit(child)
     removeTemporaryProfile(profileRoot)
     throw error
   }
@@ -631,7 +632,22 @@ function removeTemporaryProfile(path: string): void {
   if (!resolve(path).startsWith(resolve(expectedPrefix))) {
     throw new Error('Refusing to remove an unexpected browser profile.')
   }
-  rmSync(path, { recursive: true, force: true, maxRetries: 3 })
+  try {
+    rmSync(path, {
+      recursive: true,
+      force: true,
+      maxRetries: 20,
+      retryDelay: 100,
+    })
+  } catch (error) {
+    const code = (error as NodeJS.ErrnoException).code
+    if (code !== 'EPERM' && code !== 'EBUSY' && code !== 'ENOTEMPTY') {
+      throw error
+    }
+    console.warn(
+      `Chromium released late; temporary profile remains for later cleanup: ${path}`,
+    )
+  }
 }
 
 function stopChild(child: ChildProcess): void {

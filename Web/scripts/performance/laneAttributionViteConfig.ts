@@ -24,8 +24,8 @@ function laneProbePlugin(): Plugin {
         return code.replace(pattern, replacement)
       }
       if (id.endsWith('/src/application/frontendSnapshot.ts')) {
-        const derivedPattern = /const\s+derived\s*=\s*selectDerivedFacts\(state,\s*context\)/
-        const derivedReplacement = `const derivedStartedAt = performance.now()\n  const derived = selectDerivedFacts(state, context)\n  globalThis.__idleDysonLaneProbeV1?.record('projection-derived', performance.now() - derivedStartedAt)`
+        const derivedPattern = /const\s+derived\s*=\s*selectDerivedFacts\(\s*state,\s*context,\s*previous\?\.derived,\s*context\.previewDemand\s*\?\?\s*'all',?\s*\)/
+        const derivedReplacement = `const derivedStartedAt = performance.now()\n  const derived = selectDerivedFacts(\n    state,\n    context,\n    previous?.derived,\n    context.previewDemand ?? 'all',\n  )\n  globalThis.__idleDysonLaneProbeV1?.record('projection-derived', performance.now() - derivedStartedAt)`
         const previewsPattern = /const\s+previews\s*=\s*selectGameplayPreviews\(\s*state,\s*context,\s*context\.previousPreviews,\s*context\.previewDemand\s*\?\?\s*'all',?\s*\)/
         const previewsReplacement = `const previewsStartedAt = performance.now()\n  const previews = selectGameplayPreviews(\n    state,\n    context,\n    context.previousPreviews,\n    context.previewDemand ?? 'all',\n  )\n  globalThis.__idleDysonLaneProbeV1?.record('projection-preview', performance.now() - previewsStartedAt)`
         if (!derivedPattern.test(code) || !previewsPattern.test(code)) {
@@ -37,9 +37,9 @@ function laneProbePlugin(): Plugin {
       }
       if (!id.endsWith('/src/ui/runtime/browserRuntimeFoundation.ts')) return null
       const activeReplacement = `deliver: async (milliseconds) => {\n        const startedAt = performance.now()\n        try {\n          return await router.run(() => coordinator.advanceActive(milliseconds))\n        } finally {\n          globalThis.__idleDysonLaneProbeV1?.record('canonical-active', performance.now() - startedAt)\n        }\n      },`
-      const publishReplacement = `const projectionStartedAt = performance.now()\n    const projected = graph.application.frontendSnapshot(this.gameplayPreviewDemand)\n    globalThis.__idleDysonLaneProbeV1?.record('frontend-projection', performance.now() - projectionStartedAt)\n    const publicationStartedAt = performance.now()\n    this.frontendSnapshots.publish(projected, force)\n    globalThis.__idleDysonLaneProbeV1?.record('snapshot-publication', performance.now() - publicationStartedAt)`
+      const publishReplacement = `const projectionStartedAt = performance.now()\n    const projected = graph.application.frontendSnapshot(this.gameplayPreviewDemand)\n    globalThis.__idleDysonLaneProbeV1?.record('frontend-projection', performance.now() - projectionStartedAt)\n    const publicationStartedAt = performance.now()\n    this.frontendSnapshots.publish(projected, force, delivery)\n    globalThis.__idleDysonLaneProbeV1?.record('snapshot-publication', performance.now() - publicationStartedAt)`
       const activePattern = /deliver:\s*\(milliseconds\)\s*=>\s*router\.run\(\(\)\s*=>\s*coordinator\.advanceActive\(milliseconds\)\),/
-      const publishPattern = /this\.frontendSnapshots\.publish\(\s*graph\.application\.frontendSnapshot\(this\.gameplayPreviewDemand\),\s*force,?\s*\)/
+      const publishPattern = /this\.frontendSnapshots\.publish\(\s*graph\.application\.frontendSnapshot\(this\.gameplayPreviewDemand\),\s*force,\s*delivery,?\s*\)/
       if (!activePattern.test(code) || !publishPattern.test(code)) {
         throw new Error('Temporary lane probe could not find its instrumentation anchors.')
       }

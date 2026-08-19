@@ -452,7 +452,7 @@ function gameplayPreviewDemandForRoute(
     case 'store':
     case 'debug':
     case 'settings':
-      return 'none'
+      return route
   }
 }
 

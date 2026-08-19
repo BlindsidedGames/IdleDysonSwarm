@@ -289,9 +289,20 @@ export class CanonicalGameApplicationFacade {
     ) {
       return this.cachedFrontendSnapshot
     }
+    const mayReusePreviousGameplay =
+      application.phase === 'ready' &&
+      this.cachedFrontendSnapshot?.phase === 'ready' &&
+      this.cachedFrontendSnapshot.revision.session ===
+        application.revision.session
     const previousPreviews =
+      mayReusePreviousGameplay &&
       this.cachedFrontendSnapshot?.phase === 'ready'
         ? this.cachedFrontendSnapshot.gameplay.previews
+        : undefined
+    const previousGameplay =
+      mayReusePreviousGameplay &&
+      this.cachedFrontendSnapshot?.phase === 'ready'
+        ? this.cachedFrontendSnapshot.gameplay
         : undefined
     const quantumLeap =
       application.phase === 'ready'
@@ -327,6 +338,7 @@ export class CanonicalGameApplicationFacade {
           this.eventContext.dysonPresentationTuning,
         previewDemand,
         previousPreviews,
+        previousGameplay,
       },
       'detached-frozen',
     )

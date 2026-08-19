@@ -1248,6 +1248,87 @@ describe('browser runtime foundation composition', () => {
     await runtime.shutdown()
   })
 
+  test('coalesces only complete active results and publishes rejected or partial results immediately', async () => {
+    const database = new MemoryBrowserSaveDatabase()
+    const activeClock = new ManualActiveTimeClock()
+    const activeFrames = new ManualAnimationFrameScheduler()
+    const presentationFrames = new ManualAnimationFrameScheduler()
+    let application: FakeRuntimeApplication | undefined
+    const runtime = createRuntime({
+      database,
+      activeTimeClock: activeClock,
+      activeTimeScheduler: activeFrames,
+      frontendSnapshotScheduler: presentationFrames,
+      createApplication: (repository) => {
+        application = new FakeRuntimeApplication(
+          repository,
+          database.events,
+        )
+        application.activeOutcomes.push(
+          'success',
+          'rejected',
+          'partial',
+          'success',
+        )
+        return application
+      },
+    })
+    await runtime.start()
+    const revisions: number[] = []
+    runtime.subscribeSnapshot((snapshot) => {
+      if (snapshot.phase === 'ready') {
+        revisions.push(snapshot.revision.state)
+      }
+    })
+
+    activeClock.set(1)
+    activeFrames.fire()
+    await waitUntil(() => application?.activeRequests.length === 1)
+    await flushMicrotasks()
+    expect(presentationFrames.pending).toBe(1)
+    expect(revisions).toEqual([])
+    expect(runtime.snapshot()).toMatchObject({
+      phase: 'ready',
+      revision: { state: 1 },
+    })
+
+    activeClock.set(2)
+    activeFrames.fire()
+    await waitUntil(() => application?.activeRequests.length === 2)
+    await flushMicrotasks()
+    expect(presentationFrames.pending).toBe(0)
+    expect(revisions).toEqual([1])
+
+    activeClock.set(3)
+    activeFrames.fire()
+    await waitUntil(() => application?.activeRequests.length === 3)
+    await flushMicrotasks()
+    expect(presentationFrames.pending).toBe(0)
+    expect(revisions).toEqual([1, 2])
+
+    activeClock.set(4)
+    activeFrames.fire()
+    await waitUntil(() => application?.activeRequests.length === 4)
+    await flushMicrotasks()
+    expect(presentationFrames.pending).toBe(1)
+    expect(revisions).toEqual([1, 2])
+    expect(runtime.snapshot()).toMatchObject({
+      phase: 'ready',
+      revision: { state: 3 },
+    })
+
+    presentationFrames.fire()
+    expect(revisions).toEqual([1, 2, 3])
+    expect(runtime.status()).toMatchObject({
+      phase: 'ready',
+      warnings: [
+        { code: 'active-time-failed' },
+        { code: 'active-time-failed' },
+      ],
+    })
+    await runtime.shutdown()
+  })
+
   test.each(['background', 'focus-lost'] as const)(
     'does not let overlapping import completion override a newer %s intent',
     async (nonActivePhase) => {
@@ -3726,6 +3807,7 @@ class FakeRuntimeApplication
     readonly milliseconds: number
     readonly sessionRevision: number
   }> = []
+  readonly activeOutcomes: Array<'success' | 'rejected' | 'partial'> = []
   readonly playerEnvelopes:
     ApplicationCommandEnvelope<CanonicalPlayerCommand>[] = []
 
@@ -3815,18 +3897,33 @@ class FakeRuntimeApplication
       this.throwActive = false
       throw new Error('Scripted active-time failure.')
     }
+    const outcome = this.activeOutcomes.shift() ?? 'success'
+    if (outcome === 'rejected') {
+      return {
+        transition: {
+          accepted: false,
+          code: 'TEST-ACTIVE-REJECTED',
+          reason: 'Scripted active-time rejection.',
+          revision: this.stateRevision,
+        },
+        consumedMilliseconds: 0,
+        remainingMilliseconds: milliseconds,
+        continuation: { kind: 'complete' },
+      }
+    }
     if (milliseconds > 0) {
       this.stateRevision += 1
       this.dirty = true
     }
+    const partial = outcome === 'partial'
     return {
       transition: {
         accepted: true,
         changed: milliseconds > 0,
         revision: this.stateRevision,
       },
-      consumedMilliseconds: milliseconds,
-      remainingMilliseconds: 0,
+      consumedMilliseconds: partial ? milliseconds / 2 : milliseconds,
+      remainingMilliseconds: partial ? milliseconds / 2 : 0,
       continuation: { kind: 'complete' },
     }
   }

@@ -1,6 +1,7 @@
 import { describe, expect, test } from 'vitest'
 import type { FrontendApplicationSnapshot } from '../../application/frontendSnapshot'
 import { FrontendSnapshotStore } from './frontendSnapshotStore'
+import type { FrontendSnapshotFrameScheduler } from './frontendSnapshotStore'
 
 describe('frontend snapshot external store', () => {
   test('takes ownership of recursively frozen snapshots with stable identity', () => {
@@ -63,7 +64,81 @@ describe('frontend snapshot external store', () => {
     expect(cleared).toEqual({ version: 1, phase: 'idle' })
     expect(Object.isFrozen(cleared)).toBe(true)
   })
+
+  test('coalesces ready publications to one frame and delivers the latest revision', () => {
+    const scheduler = new ManualFrameScheduler()
+    const store = new FrontendSnapshotStore(scheduler)
+    const publications: number[] = []
+    store.subscribe((snapshot) => {
+      if (snapshot.phase === 'ready') publications.push(snapshot.revision.state)
+    })
+
+    store.publish(readySnapshot(1, 1, 0, 'one'), false, 'animation-frame')
+    store.publish(readySnapshot(1, 2, 0, 'two'), false, 'animation-frame')
+    store.publish(readySnapshot(1, 3, 0, 'three'), false, 'animation-frame')
+
+    expect(store.snapshot()).toMatchObject({ revision: { state: 3 } })
+    expect(publications).toEqual([])
+    expect(scheduler.pending).toBe(1)
+
+    scheduler.flush()
+
+    expect(publications).toEqual([3])
+    expect(scheduler.pending).toBe(0)
+  })
+
+  test('publishes lifecycle and commit state immediately over a queued frame', () => {
+    const scheduler = new ManualFrameScheduler()
+    const store = new FrontendSnapshotStore(scheduler)
+    const phases: string[] = []
+    store.subscribe((snapshot) => phases.push(snapshot.phase))
+
+    store.publish(readySnapshot(1, 1, 0, 'tick'), false, 'animation-frame')
+    store.publish({ version: 1, phase: 'starting' })
+
+    expect(phases).toEqual(['starting'])
+    expect(scheduler.pending).toBe(0)
+  })
+
+  test('flushes a queued authoritative snapshot when an immediate duplicate reports failure', () => {
+    const scheduler = new ManualFrameScheduler()
+    const store = new FrontendSnapshotStore(scheduler)
+    const publications: number[] = []
+    store.subscribe((snapshot) => {
+      if (snapshot.phase === 'ready') publications.push(snapshot.revision.state)
+    })
+    const snapshot = readySnapshot(1, 1, 0, 'tick')
+
+    store.publish(snapshot, false, 'animation-frame')
+    store.publish(snapshot, false, 'immediate')
+
+    expect(publications).toEqual([1])
+    expect(scheduler.pending).toBe(0)
+  })
 })
+
+class ManualFrameScheduler implements FrontendSnapshotFrameScheduler {
+  private callback: (() => void) | undefined
+
+  get pending(): number {
+    return this.callback === undefined ? 0 : 1
+  }
+
+  requestFrame(callback: () => void): unknown {
+    this.callback = callback
+    return callback
+  }
+
+  cancelFrame(): void {
+    this.callback = undefined
+  }
+
+  flush(): void {
+    const callback = this.callback
+    this.callback = undefined
+    callback?.()
+  }
+}
 
 function readySnapshot(
   session: number,

@@ -130,7 +130,9 @@ import type {
   UiRuntimeWarning,
 } from './contracts'
 import {
+  BrowserFrontendSnapshotFrameScheduler,
   FrontendSnapshotStore,
+  type FrontendSnapshotFrameScheduler,
 } from './frontendSnapshotStore'
 import {
   RevisionedPlayerCommandDispatcher,
@@ -205,6 +207,8 @@ export interface BrowserRuntimeFoundationOptions {
   readonly activeTimeClock?: ActiveTimeMonotonicClock
   readonly activeTimeScheduler?: ActiveTimeFrameScheduler
   readonly activeTimeDeliveryIntervalMilliseconds?: number
+  /** Deterministic presentation-publication test seam. */
+  readonly frontendSnapshotScheduler?: FrontendSnapshotFrameScheduler
   readonly storageManager?: BrowserStorageManagerPort
   readonly clipboard?: ClipboardPort
   readonly navigationOpener?: ExternalWindowOpener
@@ -383,7 +387,7 @@ class BrowserRuntimeFoundation implements BrowserUiRuntimeFoundation {
   private readonly importReader: BrowserSaveImportReader
   private readonly exporter: BrowserRecoveryBlobExporter
   private readonly downloads: TextDownloadPort
-  private readonly frontendSnapshots = new FrontendSnapshotStore()
+  private readonly frontendSnapshots: FrontendSnapshotStore
   private readonly listeners = new Set<UiRuntimeStatusListener>()
   private currentStatus: UiRuntimeFoundationStatus = Object.freeze({
     phase: 'idle',
@@ -408,6 +412,10 @@ class BrowserRuntimeFoundation implements BrowserUiRuntimeFoundation {
 
   constructor(options: Readonly<BrowserRuntimeFoundationOptions>) {
     this.options = options
+    this.frontendSnapshots = new FrontendSnapshotStore(
+      options.frontendSnapshotScheduler ??
+        new BrowserFrontendSnapshotFrameScheduler(),
+    )
     this.developmentControlsAvailable =
       options.developmentControlsAvailable ?? import.meta.env.DEV
     this.developmentControlsRequireEntitlement =
@@ -1420,7 +1428,14 @@ class BrowserRuntimeFoundation implements BrowserUiRuntimeFoundation {
       onDelivered: (result) => {
         if (!this.isCurrentGraph(graph)) return
         this.recordActiveResult(result)
-        this.publishFrontendSnapshot(graph)
+        this.publishFrontendSnapshot(
+          graph,
+          false,
+          result.transition.accepted &&
+            result.remainingMilliseconds <= 0
+            ? 'animation-frame'
+            : 'immediate',
+        )
       },
       onFailure: (error) => {
         if (
@@ -1586,6 +1601,7 @@ class BrowserRuntimeFoundation implements BrowserUiRuntimeFoundation {
   private publishFrontendSnapshot(
     graph: BrowserRuntimeGraph,
     force = false,
+    delivery: 'immediate' | 'animation-frame' = 'immediate',
   ): void {
     this.assertCurrentGraph(graph)
     if (!this.lease.isAuthoritative()) {
@@ -1594,6 +1610,7 @@ class BrowserRuntimeFoundation implements BrowserUiRuntimeFoundation {
     this.frontendSnapshots.publish(
       graph.application.frontendSnapshot(this.gameplayPreviewDemand),
       force,
+      delivery,
     )
   }
 

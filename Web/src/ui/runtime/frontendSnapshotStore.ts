@@ -11,6 +11,13 @@ export type FrontendSnapshotListener = (
   snapshot: FrozenFrontendApplicationSnapshot,
 ) => void
 
+export interface FrontendSnapshotFrameScheduler {
+  requestFrame(callback: () => void): unknown
+  cancelFrame(handle: unknown): void
+}
+
+export type FrontendSnapshotDelivery = 'immediate' | 'animation-frame'
+
 /**
  * Owns the sole UI-visible snapshot identity.
  *
@@ -24,7 +31,14 @@ export class FrontendSnapshotStore {
     phase: 'idle',
   })
   private readonly listeners = new Set<FrontendSnapshotListener>()
+  private readonly scheduler: FrontendSnapshotFrameScheduler | undefined
+  private scheduledHandle: unknown
+  private notificationScheduled = false
   private disposed = false
+
+  constructor(scheduler?: FrontendSnapshotFrameScheduler) {
+    this.scheduler = scheduler
+  }
 
   snapshot(): FrozenFrontendApplicationSnapshot {
     return this.current
@@ -41,20 +55,24 @@ export class FrontendSnapshotStore {
   publish(
     snapshot: Readonly<FrontendApplicationSnapshot>,
     force = false,
+    delivery: FrontendSnapshotDelivery = 'immediate',
   ): FrozenFrontendApplicationSnapshot {
-    if (
-      this.disposed ||
-      (!force && sameEnvelope(this.current, snapshot))
-    ) {
+    if (this.disposed) {
+      return this.current
+    }
+    if (!force && sameEnvelope(this.current, snapshot)) {
+      if (delivery === 'immediate' && this.notificationScheduled) {
+        this.cancelScheduledNotification()
+        this.notifyListeners()
+      }
       return this.current
     }
     this.current = freezeOwned(snapshot)
-    for (const listener of [...this.listeners]) {
-      try {
-        listener(this.current)
-      } catch {
-        // Presentation observers cannot interrupt canonical publication.
-      }
+    if (delivery === 'animation-frame' && this.scheduler !== undefined) {
+      this.scheduleNotification()
+    } else {
+      this.cancelScheduledNotification()
+      this.notifyListeners()
     }
     return this.current
   }
@@ -75,7 +93,65 @@ export class FrontendSnapshotStore {
 
   dispose(): void {
     this.disposed = true
+    this.cancelScheduledNotification()
     this.listeners.clear()
+  }
+
+  private scheduleNotification(): void {
+    if (this.notificationScheduled) return
+    this.notificationScheduled = true
+    this.scheduledHandle = this.scheduler!.requestFrame(() => {
+      this.notificationScheduled = false
+      this.scheduledHandle = undefined
+      if (!this.disposed) this.notifyListeners()
+    })
+  }
+
+  private cancelScheduledNotification(): void {
+    if (!this.notificationScheduled || this.scheduler === undefined) {
+      return
+    }
+    this.scheduler.cancelFrame(this.scheduledHandle)
+    this.notificationScheduled = false
+    this.scheduledHandle = undefined
+  }
+
+  private notifyListeners(): void {
+    for (const listener of [...this.listeners]) {
+      try {
+        listener(this.current)
+      } catch {
+        // Presentation observers cannot interrupt canonical publication.
+      }
+    }
+  }
+}
+
+export class BrowserFrontendSnapshotFrameScheduler
+  implements FrontendSnapshotFrameScheduler
+{
+  requestFrame(callback: () => void): unknown {
+    if (typeof globalThis.requestAnimationFrame === 'function') {
+      return {
+        kind: 'animation-frame',
+        handle: globalThis.requestAnimationFrame(callback),
+      }
+    }
+    return { kind: 'timeout', handle: globalThis.setTimeout(callback, 0) }
+  }
+
+  cancelFrame(handle: unknown): void {
+    const scheduled = handle as
+      | { readonly kind: 'animation-frame'; readonly handle: number }
+      | {
+          readonly kind: 'timeout'
+          readonly handle: ReturnType<typeof setTimeout>
+        }
+    if (scheduled.kind === 'animation-frame') {
+      globalThis.cancelAnimationFrame?.(scheduled.handle)
+    } else {
+      globalThis.clearTimeout(scheduled.handle)
+    }
   }
 }
 

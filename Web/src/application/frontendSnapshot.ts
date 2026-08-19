@@ -505,6 +505,12 @@ export interface FrontendSnapshotContext {
     CanonicalRuntimeState['selectedSkillPresetSlot']
   readonly previewDemand?: FrontendGameplayPreviewDemand
   readonly previousPreviews?: DeepReadonly<FrontendGameplayPreviews>
+  /**
+   * Previous detached projection owned by the application. Expensive
+   * destination-only facts and unchanged domain slices may retain their
+   * identity while a different destination is active.
+   */
+  readonly previousGameplay?: DeepReadonly<FrontendGameplaySnapshot>
 }
 
 export type FrontendApplicationSnapshotContext = Pick<
@@ -515,6 +521,7 @@ export type FrontendApplicationSnapshotContext = Pick<
   | 'realityWorkerTuning'
   | 'previewDemand'
   | 'previousPreviews'
+  | 'previousGameplay'
 >
 
 export interface FrontendQuantumLeapPreview {
@@ -962,9 +969,10 @@ export interface FrontendGameplayPreviews {
 }
 
 /**
- * Identifies the preview family visible on the current gameplay route.
- * `all` preserves the complete stateless selector contract for non-UI callers,
- * while `none` lets routes without purchase controls reuse the last projection.
+ * Identifies the active gameplay destination. Preview and derived selectors
+ * use it to rebuild only facts the visible route can consume. `all` preserves
+ * the complete stateless selector contract for non-UI callers, while `none`
+ * lets callers intentionally reuse all destination-only projections.
  */
 export type FrontendGameplayPreviewDemand =
   | 'all'
@@ -978,6 +986,12 @@ export type FrontendGameplayPreviewDemand =
   | 'quantum'
   | 'avocato'
   | 'offline-time'
+  | 'story'
+  | 'wiki'
+  | 'statistics'
+  | 'store'
+  | 'debug'
+  | 'settings'
 
 export interface FrontendGameplaySnapshot {
   readonly version: typeof FRONTEND_GAMEPLAY_SNAPSHOT_VERSION
@@ -1066,6 +1080,7 @@ export function selectFrontendApplicationSnapshot(
               application.state.selectedSkillPresetSlot,
             previewDemand: context.previewDemand,
             previousPreviews: context.previousPreviews,
+            previousGameplay: context.previousGameplay,
           },
           sourceOwnership,
         ),
@@ -1087,10 +1102,16 @@ export function selectFrontendGameplaySnapshot(
     sourceOwnership === 'detached-frozen'
       ? source as CanonicalGameStateV1
       : structuredClone(source)
+  const previous = context.previousGameplay
   const definitionCoverage = inspectFrontendDefinitionCoverage()
-  const derived = selectDerivedFacts(state, context)
-  const resources = selectResources(state, derived)
-  const progression = selectProgression(state)
+  const derived = selectDerivedFacts(
+    state,
+    context,
+    previous?.derived,
+    context.previewDemand ?? 'all',
+  )
+  const resources = selectResources(state, derived, previous?.resources)
+  const progression = selectProgression(state, previous?.progression)
   const visibility = selectGameplayVisibility(state)
   const runtime = selectRuntimeFacts(state, context, derived)
   const requirements = {
@@ -1099,10 +1120,9 @@ export function selectFrontendGameplaySnapshot(
     'quantum-leap-port': true,
     'stored-time-cheater-carrier': true,
   }
-  const commands = selectFrontendCommandAvailability(
-    requirements,
-    definitionCoverage,
-  )
+  const commands =
+    previous?.commands ??
+    selectFrontendCommandAvailability(requirements, definitionCoverage)
   const previews = selectGameplayPreviews(
     state,
     context,
@@ -1121,16 +1141,18 @@ export function selectFrontendGameplaySnapshot(
     commands,
     previews,
     definitionCoverage,
-    persistence: {
-      mappingCoverageComplete:
-        mappingCoverageManifest.coverageComplete,
-      canonicalWriteAllowed:
-        mappingCoverageManifest.releaseCanonicalWriteAllowed,
-      unmatchedWritePolicy:
-        mappingCoverageManifest.unmatchedWritePolicy,
-    },
+    persistence: previous?.persistence ?? FRONTEND_PERSISTENCE_READINESS,
   }, sourceOwnership)
 }
+
+const FRONTEND_PERSISTENCE_READINESS: FrontendPersistenceReadiness =
+  Object.freeze({
+    mappingCoverageComplete:
+      mappingCoverageManifest.coverageComplete,
+    canonicalWriteAllowed:
+      mappingCoverageManifest.releaseCanonicalWriteAllowed,
+    unmatchedWritePolicy: mappingCoverageManifest.unmatchedWritePolicy,
+  })
 
 function selectGameplayVisibility(
   state: CanonicalGameStateV1,
@@ -1283,39 +1305,40 @@ function inspectFrontendDefinitionCoverageOnce():
 function selectResources(
   state: CanonicalGameStateV1,
   derived: Readonly<FrontendGameplayDerivedFacts>,
+  previous?: DeepReadonly<FrontendCanonicalResources>,
 ): FrontendCanonicalResources {
   const allocation =
     derived.dyson.status === 'ready'
       ? derived.dyson.value.allocation
       : state.dyson
   return {
-    dyson: {
+    dyson: reuseShallowDomain(previous?.dyson, {
       money: state.dyson.money,
       science: state.dyson.science,
       bots: state.dyson.bots,
       workers: allocation.workers,
       researchers: allocation.researchers,
-    },
-    infinity: {
+    }),
+    infinity: reuseShallowDomain(previous?.infinity, {
       points: state.infinity.points,
       spentPoints: state.infinity.spentPoints,
       availablePoints: availableCanonicalInfinityShopPoints(state),
       secretsOfTheUniverse: state.infinity.secretsOfTheUniverse,
       permanentSkillPoints: state.infinity.permanentSkillPoints,
-    },
-    skills: {
+    }),
+    skills: reuseShallowDomain(previous?.skills, {
       points: state.skills.points,
       fragments: state.skills.fragments,
-    },
-    reality: {
+    }),
+    reality: reuseShallowDomain(previous?.reality, {
       universeDesignationCount:
         state.reality.universeDesignationCount,
       workersReady: state.reality.workersReady,
       workerGenerationProgress:
         state.reality.workerGenerationProgress,
       influence: state.reality.influence,
-    },
-    quantum: {
+    }),
+    quantum: reuseShallowDomain(previous?.quantum, {
       pointsEarned: state.quantum.pointsEarned,
       pointsSpent: state.quantum.pointsSpent,
       availablePoints: availableQuantumPoints(state),
@@ -1323,33 +1346,34 @@ function selectResources(
       influenceSpeedBonus: state.quantum.influenceSpeedBonus,
       cashBonusLevels: state.quantum.cashBonusLevels,
       scienceBonusLevels: state.quantum.scienceBonusLevels,
-    },
-    avocado: {
+    }),
+    avocado: reuseShallowDomain(previous?.avocado, {
       infinityPoints: state.avocado.infinityPoints,
       influence: state.avocado.influence,
       strangeMatter: state.avocado.strangeMatter,
       overflowMultiplier: state.avocado.overflowMultiplier,
-    },
-    dream: {
+    }),
+    dream: reuseShallowDomain(previous?.dream, {
       ...state.dream.resources,
       strangeMatter: state.dream.strangeMatter,
-    },
-    time: {
+    }),
+    time: reuseShallowDomain(previous?.time, {
       storedTimeAvailableSeconds:
         state.timeline.storedTimeAvailableSeconds,
       storedTimeCapacitySeconds:
         state.timeline.storedTimeCapacitySeconds,
       doubleTimeBankSeconds: state.timeline.doubleTime.bankSeconds,
-    },
+    }),
   }
 }
 
 function selectProgression(
   state: CanonicalGameStateV1,
+  previous?: DeepReadonly<FrontendCanonicalProgression>,
 ): FrontendCanonicalProgression {
   return {
-    meta: state.meta,
-    dyson: {
+    meta: reuseShallowDomain(previous?.meta, state.meta),
+    dyson: reuseShallowDomain(previous?.dyson, {
       facilities: state.dyson.facilities,
       manualCreationIntervalSeconds:
         state.dyson.manualCreationIntervalSeconds,
@@ -1357,8 +1381,8 @@ function selectProgression(
       goalStage: state.dyson.goalStage,
       botDistribution: state.dyson.botDistribution,
       automation: state.dyson.automation,
-    },
-    infinity: {
+    }),
+    infinity: reuseShallowDomain(previous?.infinity, {
       breakTarget: state.infinity.breakTarget,
       inProgress: state.infinity.inProgress,
       botCapTransitionPending:
@@ -1373,8 +1397,8 @@ function selectProgression(
         state.infinity.storedTimeUsedPreviousCycleSeconds,
       retainedFacilities: state.infinity.retainedFacilities,
       automationUnlocked: state.infinity.automationUnlocked,
-    },
-    skills: {
+    }),
+    skills: reuseShallowDomain(previous?.skills, {
       byId: state.skills.byId,
       activeAutoAssignment: state.skills.activeAutoAssignment,
       presets: state.skills.presets,
@@ -1382,19 +1406,19 @@ function selectProgression(
         state.skills.autoAssignNonRefundable,
       tabPresetAutomation:
         state.skills.tabPresetAutomation,
-    },
-    research: state.research,
-    reality: {
+    }),
+    research: reuseShallowDomain(previous?.research, state.research),
+    reality: reuseShallowDomain(previous?.reality, {
       autoGather: state.reality.autoGather,
-    },
-    quantum: {
+    }),
+    quantum: reuseShallowDomain(previous?.quantum, {
       divisionsPurchased: state.quantum.divisionsPurchased,
       unlocks: state.quantum.unlocks,
-    },
-    avocado: {
+    }),
+    avocado: reuseShallowDomain(previous?.avocado, {
       unlocked: state.avocado.unlocked,
-    },
-    timeline: {
+    }),
+    timeline: reuseShallowDomain(previous?.timeline, {
       eventClockInitialized: state.timeline.eventClockInitialized,
       automationTimeUntilNextEvent:
         state.timeline.automationTimeUntilNextEvent,
@@ -1416,9 +1440,12 @@ function selectProgression(
         enabled: state.timeline.doubleTime.enabled,
         rate: state.timeline.doubleTime.rate,
       },
-    },
-    secretProgress: state.secretProgress,
-    dream: {
+    }),
+    secretProgress: reuseShallowDomain(
+      previous?.secretProgress,
+      state.secretProgress,
+    ),
+    dream: reuseShallowDomain(previous?.dream, {
       parameters: state.dream.parameters,
       education: state.dream.education,
       timers: state.dream.timers,
@@ -1428,14 +1455,19 @@ function selectProgression(
       upgrades: state.dream.upgrades,
       huntersPerPurchase: state.dream.huntersPerPurchase,
       gatherersPerPurchase: state.dream.gatherersPerPurchase,
-    },
-    statistics: state.statistics,
+    }),
+    statistics: reuseShallowDomain(
+      previous?.statistics,
+      state.statistics,
+    ),
   }
 }
 
 function selectDerivedFacts(
   state: CanonicalGameStateV1,
   context: Readonly<FrontendSnapshotContext>,
+  previous: DeepReadonly<FrontendGameplayDerivedFacts> | undefined,
+  demand: FrontendGameplayPreviewDemand,
 ): FrontendGameplayDerivedFacts {
   const synchronizedState = withCanonicalBotAllocation(state)
   const dyson = deriveBasicDysonState(
@@ -1445,26 +1477,34 @@ function selectDerivedFacts(
     context.evaluationSnapshot,
     context.dysonPresentationTuning,
   )
-  const reality = advanceRealityWorkers(
-    state,
-    0,
-    context.realityWorkerTuning,
-  )
-  const doubleTimeTick = prepareDreamDoubleTimeTick(
-    state.timeline.doubleTime.unlocked,
-    state.timeline.doubleTime.bankSeconds,
-    state.timeline.doubleTime.rate,
-    DREAM_SPACE_AGE_CONSTANTS.tickSeconds,
-  )
-  const dream = deriveCanonicalDreamDerivedFacts(state, {
-    effectiveDoubleTimeMultiplier: doubleTimeTick.effectiveMultiplier,
-    doubleTimeActive: doubleTimeTick.active,
-    doubleTimeRate: doubleTimeTick.rate,
-  })
-  const simulations = selectFrontendSimulationsDerivedFacts(
-    state,
-    dream,
-  )
+  const deriveReality =
+    previous === undefined || demand === 'all' || demand === 'reality'
+  const deriveSimulations =
+    previous === undefined ||
+    demand === 'all' ||
+    demand === 'simulations' ||
+    demand === 'reality'
+  const reality = deriveReality
+    ? advanceRealityWorkers(state, 0, context.realityWorkerTuning)
+    : null
+  const doubleTimeTick = deriveSimulations
+    ? prepareDreamDoubleTimeTick(
+        state.timeline.doubleTime.unlocked,
+        state.timeline.doubleTime.bankSeconds,
+        state.timeline.doubleTime.rate,
+        DREAM_SPACE_AGE_CONSTANTS.tickSeconds,
+      )
+    : null
+  const dream = doubleTimeTick === null
+    ? null
+    : deriveCanonicalDreamDerivedFacts(state, {
+        effectiveDoubleTimeMultiplier: doubleTimeTick.effectiveMultiplier,
+        doubleTimeActive: doubleTimeTick.active,
+        doubleTimeRate: doubleTimeTick.rate,
+      })
+  const simulations = dream === null
+    ? previous!.simulations
+    : selectFrontendSimulationsDerivedFacts(state, dream)
 
   return {
     dyson: dyson.ok
@@ -1499,63 +1539,93 @@ function selectDerivedFacts(
       quantumDoubleIp:
         state.quantum.unlocks.doubleInfinityPoints,
     }),
-    dream: {
-      productionBasis: 'current-rate',
-      effectiveDoubleTimeMultiplier: doubleTimeTick.effectiveMultiplier,
-      result: dream,
-    },
+    dream:
+      dream === null || doubleTimeTick === null
+        ? previous!.dream
+        : {
+            productionBasis: 'current-rate',
+            effectiveDoubleTimeMultiplier:
+              doubleTimeTick.effectiveMultiplier,
+            result: dream,
+          },
     simulations,
-    reality: {
-      status: reality.status,
-      generationPerSecond: reality.generationPerSecond,
-      workerGenerationFillFraction:
-        reality.status === 'success'
-          ? reality.generationPerSecond >= 10
-            ? 1
-            : Math.min(
-                1,
-                Math.max(
-                  0,
-                  reality.state.reality.workerGenerationProgress,
-                ),
-              )
-          : 0,
-      workerBatchSize: context.realityWorkerTuning.workerBatchSize,
-      nextUniverseDesignation: addDiscrete(
-        state.reality.universeDesignationCount,
-        1n,
-      ),
-      workerBatchFillFraction:
-        reality.status === 'success'
-          ? Math.min(
-              1,
-              divideContinuous(
-                Number(reality.state.reality.workersReady),
-                Number(context.realityWorkerTuning.workerBatchSize),
-              ),
-            )
-          : 0,
-      consumptionStatus:
-        reality.status === 'success' &&
-        !state.reality.autoGather &&
-        reality.state.reality.workersReady >=
-          context.realityWorkerTuning.workerBatchSize
-          ? 'halted'
-          : 'running',
-      autoGatherEnabled: state.reality.autoGather,
-      artifact: projectRealityArtifact(state.dream.upgrades),
-    },
-    story: projectFrontendStoryDerivedFacts(
-      state,
-      dyson.ok
-        ? multiplyContinuous(
-            dyson.value.globals.panelsPerSecond,
-            dyson.value.globals.panelLifetimeSeconds,
-          )
-        : 0,
-    ),
-    avocado: deriveAvocadoMultiplier(state),
+    reality:
+      reality === null
+        ? previous!.reality
+        : {
+            status: reality.status,
+            generationPerSecond: reality.generationPerSecond,
+            workerGenerationFillFraction:
+              reality.status === 'success'
+                ? reality.generationPerSecond >= 10
+                  ? 1
+                  : Math.min(
+                      1,
+                      Math.max(
+                        0,
+                        reality.state.reality.workerGenerationProgress,
+                      ),
+                    )
+                : 0,
+            workerBatchSize: context.realityWorkerTuning.workerBatchSize,
+            nextUniverseDesignation: addDiscrete(
+              state.reality.universeDesignationCount,
+              1n,
+            ),
+            workerBatchFillFraction:
+              reality.status === 'success'
+                ? Math.min(
+                    1,
+                    divideContinuous(
+                      Number(reality.state.reality.workersReady),
+                      Number(context.realityWorkerTuning.workerBatchSize),
+                    ),
+                  )
+                : 0,
+            consumptionStatus:
+              reality.status === 'success' &&
+              !state.reality.autoGather &&
+              reality.state.reality.workersReady >=
+                context.realityWorkerTuning.workerBatchSize
+                ? 'halted'
+                : 'running',
+            autoGatherEnabled: state.reality.autoGather,
+            artifact: projectRealityArtifact(state.dream.upgrades),
+          },
+    story:
+      previous !== undefined && demand !== 'all' && demand !== 'story'
+        ? previous.story
+        : projectFrontendStoryDerivedFacts(
+            state,
+            dyson.ok
+              ? multiplyContinuous(
+                  dyson.value.globals.panelsPerSecond,
+                  dyson.value.globals.panelLifetimeSeconds,
+                )
+              : 0,
+          ),
+    avocado:
+      previous !== undefined && demand !== 'all' && demand !== 'avocato'
+        ? previous.avocado
+        : deriveAvocadoMultiplier(state),
   }
+}
+
+function reuseShallowDomain<T extends object>(
+  previous: DeepReadonly<T> | undefined,
+  next: T,
+): T {
+  if (previous === undefined) return next
+  const previousRecord = previous as Readonly<Record<string, unknown>>
+  const nextRecord = next as Readonly<Record<string, unknown>>
+  const keys = Object.keys(next)
+  if (
+    keys.length === Object.keys(previous).length &&
+    keys.every((key) => Object.is(previousRecord[key], nextRecord[key]))
+  ) {
+    return previous as T
+  }
+  return next
 }
 
 /**

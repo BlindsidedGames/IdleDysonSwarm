@@ -86,6 +86,55 @@ describe('frontend gameplay snapshot', () => {
     expect(reality.previews.dream).not.toBe(bots.previews.dream)
   })
 
+  test('retains inactive derived slices while the active destination receives latest canonical facts', () => {
+    const runtime = fixtureRuntimeState()
+    const context = frontendContext()
+    const initial = selectFrontendGameplaySnapshot(
+      runtime.gameState,
+      context,
+      'detached-frozen',
+    )
+    const advanced = structuredClone(runtime.gameState)
+    advanced.dyson.money += 123
+    advanced.dream.resources.hunters += 1n
+
+    const bots = selectFrontendGameplaySnapshot(
+      advanced,
+      {
+        ...context,
+        previewDemand: 'bots',
+        previousPreviews: initial.previews,
+        previousGameplay: initial,
+      },
+      'detached-frozen',
+    )
+
+    expect(bots.resources.dyson.money).toBe(initial.resources.dyson.money + 123)
+    expect(bots.derived.dream).toBe(initial.derived.dream)
+    expect(bots.derived.simulations).toBe(initial.derived.simulations)
+    expect(bots.derived.reality).toBe(initial.derived.reality)
+    expect(bots.previews.skills).toBe(initial.previews.skills)
+    expect(bots.commands).toBe(initial.commands)
+    expect(bots.persistence).toBe(initial.persistence)
+
+    const simulations = selectFrontendGameplaySnapshot(
+      advanced,
+      {
+        ...context,
+        previewDemand: 'simulations',
+        previousPreviews: bots.previews,
+        previousGameplay: bots,
+      },
+      'detached-frozen',
+    )
+
+    expect(simulations.derived.dream).not.toBe(bots.derived.dream)
+    expect(simulations.derived.simulations).not.toBe(
+      bots.derived.simulations,
+    )
+    expect(simulations.derived.reality).toBe(bots.derived.reality)
+  })
+
   test.each([
     [
       0,
