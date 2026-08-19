@@ -42,6 +42,7 @@ import {
 import {
   normalizeCanonicalTinkerRuntimeState,
 } from '../simulation/canonicalTinker'
+import { applyAwayTimeGrant } from '../simulation/timeResources'
 import type { SaveRepository } from '../save/repository'
 import type { StartupSaveResolver } from '../save/startupResolver'
 import {
@@ -72,6 +73,13 @@ import {
   cloneCanonicalRuntimeState,
   type CanonicalRuntimeState,
 } from './canonicalRuntimeSession'
+import {
+  type StoredTimeJobProgress,
+  type StoredTimeJobStatus,
+} from '../workers/storedTime/storedTimeProtocol'
+import type {
+  StoredTimeJobRunner,
+} from '../workers/storedTime/storedTimeJobRunner'
 
 export const CANONICAL_GAME_APPLICATION_SCHEMA = 1 as const
 
@@ -90,6 +98,10 @@ type CanonicalInternalCommand =
     }
   | {
       readonly kind: 'internal.replace-away-state'
+      readonly state: CanonicalRuntimeState
+    }
+  | {
+      readonly kind: 'internal.replace-stored-time-state'
       readonly state: CanonicalRuntimeState
     }
   | {
@@ -120,7 +132,7 @@ export type CanonicalDevelopmentAction =
   | { readonly kind: 'add-quantum-shards'; readonly amount: bigint }
   | { readonly kind: 'add-influence'; readonly amount: bigint }
   | { readonly kind: 'add-strange-matter'; readonly amount: bigint }
-  | { readonly kind: 'add-double-time'; readonly seconds: number }
+  | { readonly kind: 'add-offline-time'; readonly seconds: number }
   | { readonly kind: 'set-tinker-interval'; readonly seconds: 0 | 1 }
   | { readonly kind: 'recalculate-skill-points' }
   | { readonly kind: 'reset-secret-progress' }
@@ -142,7 +154,12 @@ export interface CanonicalGameApplicationOptions {
   readonly repository: SaveRepository
   readonly sessionFactory: GameStateSessionFactory<CanonicalRuntimeState>
   readonly engine: Readonly<CanonicalGameEngineOptions>
+  readonly storedTimeJobRunner?: StoredTimeJobRunner
 }
+
+export type StoredTimeJobListener = (
+  status: Readonly<StoredTimeJobStatus>,
+) => void
 
 export type CanonicalPlayerDispatchResult =
   | {
@@ -205,6 +222,13 @@ export class CanonicalGameApplicationFacade {
     CanonicalApplicationCommand
   >
   private readonly eventContext: Readonly<CanonicalEventTimeContext>
+  private readonly infinityMinimumCycleSeconds: number
+  private readonly storedTimeJobRunner: StoredTimeJobRunner | undefined
+  private readonly storedTimeJobListeners = new Set<StoredTimeJobListener>()
+  private storedTimeJobStatusValue: StoredTimeJobStatus = Object.freeze({
+    kind: 'idle',
+  })
+  private storedTimeCancellationRequested = false
   private cachedFrontendSnapshot:
     | DeepReadonly<FrontendApplicationSnapshot>
     | undefined
@@ -216,6 +240,9 @@ export class CanonicalGameApplicationFacade {
     this.eventContext = prepareCanonicalEventTimeContext(
       options.engine.eventContext,
     )
+    this.infinityMinimumCycleSeconds =
+      options.engine.infinityMinimumCycleSeconds ?? 1 / 60
+    this.storedTimeJobRunner = options.storedTimeJobRunner
     this.application = new TransactionalGameApplication({
       startupResolver: options.startupResolver,
       repository: options.repository,
@@ -375,6 +402,30 @@ export class CanonicalGameApplicationFacade {
     return this.application.subscribe(listener)
   }
 
+  storedTimeJobStatus(): Readonly<StoredTimeJobStatus> {
+    return this.storedTimeJobStatusValue
+  }
+
+  subscribeStoredTimeJob(listener: StoredTimeJobListener): () => void {
+    this.storedTimeJobListeners.add(listener)
+    return () => this.storedTimeJobListeners.delete(listener)
+  }
+
+  cancelStoredTimeJob(): void {
+    if (this.storedTimeJobStatusValue.kind === 'idle') return
+    this.storedTimeCancellationRequested = true
+    this.publishStoredTimeJobStatus({
+      ...this.storedTimeJobStatusValue,
+      kind: 'cancelling',
+    })
+  }
+
+  disposeStoredTimeJobRunner(): void {
+    this.storedTimeCancellationRequested = true
+    this.storedTimeJobRunner?.dispose()
+    this.publishStoredTimeJobStatus({ kind: 'idle' })
+  }
+
   async dispatchPlayer(
     envelope: ApplicationCommandEnvelope<CanonicalPlayerCommand>,
     cancelRequested?: () => boolean,
@@ -419,6 +470,171 @@ export class CanonicalGameApplicationFacade {
   }
 
   async commitStoredTime(
+    envelope: Pick<
+      ApplicationCommandEnvelope<unknown>,
+      'sessionRevision' | 'expectedStateRevision'
+    >,
+    seconds: number,
+    cancelRequested?: () => boolean,
+  ): Promise<CanonicalStoredTimeCommitResult> {
+    if (this.storedTimeJobRunner !== undefined) {
+      return this.commitStoredTimeInJob(
+        envelope,
+        seconds,
+        cancelRequested,
+      )
+    }
+    return this.commitStoredTimeSynchronously(
+      envelope,
+      seconds,
+      cancelRequested,
+    )
+  }
+
+  private async commitStoredTimeInJob(
+    envelope: Pick<
+      ApplicationCommandEnvelope<unknown>,
+      'sessionRevision' | 'expectedStateRevision'
+    >,
+    seconds: number,
+    cancelRequested?: () => boolean,
+  ): Promise<CanonicalStoredTimeCommitResult> {
+    const before = this.snapshot()
+    if (before.phase !== 'ready') {
+      return rejectedStoredTimeCommit(
+        before,
+        seconds,
+        'APP-NOT-READY',
+        'Stored Time requires a ready application.',
+      )
+    }
+    const bank = before.state.gameState.timeline.storedTimeAvailableSeconds
+    if (!Number.isFinite(seconds) || seconds <= 0 || seconds > bank) {
+      return rejectedStoredTimeCommit(
+        before,
+        seconds,
+        'CANONICAL-STORED-TIME-INVALID',
+        'Stored-time spend must be positive, finite, and no greater than the bank.',
+      )
+    }
+
+    const jobId = createStoredTimeJobId()
+    this.storedTimeCancellationRequested = false
+    this.publishStoredTimeProgress({
+      jobId,
+      requestedSeconds: seconds,
+      computedSeconds: 0,
+      fraction: 0,
+      elapsedMilliseconds: 0,
+      estimatedRemainingMilliseconds: null,
+      maximumChunkMilliseconds: 0,
+    })
+    try {
+      const terminal = await this.storedTimeJobRunner!.run({
+        jobId,
+        state: cloneCanonicalRuntimeState(
+          before.state as CanonicalRuntimeState,
+        ),
+        requestedSeconds: seconds,
+        infinityMinimumCycleSeconds: this.infinityMinimumCycleSeconds,
+        dysonPresentationTuning:
+          this.eventContext.dysonPresentationTuning!,
+      }, {
+        cancelRequested: () =>
+          this.storedTimeCancellationRequested ||
+          cancelRequested?.() === true,
+        onProgress: (progress) => this.publishStoredTimeProgress(progress),
+      })
+      if (terminal.type === 'cancelled') {
+        return rejectedStoredTimeCommit(
+          this.snapshot(),
+          seconds,
+          'CANONICAL-STORED-TIME-CANCELLED',
+          'Cancelled Stored Time work was discarded without charging the bank.',
+        )
+      }
+      if (terminal.type === 'failed') {
+        return rejectedStoredTimeCommit(
+          this.snapshot(),
+          seconds,
+          terminal.code,
+          terminal.reason,
+        )
+      }
+      const candidateIssue = validateStoredTimeJobCandidate(
+        before.state as CanonicalRuntimeState,
+        terminal.candidate,
+        seconds,
+        terminal.consumedSeconds,
+        terminal.remainingSeconds,
+      )
+      if (candidateIssue !== undefined) {
+        return rejectedStoredTimeCommit(
+          this.snapshot(),
+          seconds,
+          'STORED-TIME-WORKER-CANDIDATE-INVALID',
+          candidateIssue,
+        )
+      }
+      const checkpoint = requiredBotCapCheckpoint(
+        structuredClone(terminal.candidate.gameState),
+      )
+      if (
+        terminal.continuation.kind ===
+          'bot-cap-persistence-required' &&
+        checkpoint === undefined
+      ) {
+        return rejectedStoredTimeCommit(
+          this.snapshot(),
+          seconds,
+          'STORED-TIME-WORKER-CONTINUATION-INVALID',
+          'The worker requested a bot-cap checkpoint that the candidate does not require.',
+        )
+      }
+      const result = await this.application.dispatchCommitFirst(
+        {
+          ...envelope,
+          command: {
+            kind: 'internal.replace-stored-time-state',
+            state: terminal.candidate,
+          },
+        },
+        'stored-time',
+      )
+      if (!result.committed) {
+        return {
+          ...result,
+          consumedSeconds: 0,
+          remainingSeconds: seconds,
+        }
+      }
+      return {
+        ...result,
+        consumedSeconds: terminal.consumedSeconds,
+        remainingSeconds: terminal.remainingSeconds,
+        continuation:
+          terminal.continuation.kind ===
+            'bot-cap-persistence-required' || checkpoint !== undefined
+            ? {
+                kind: 'bot-cap-persistence-required',
+                checkpoint: checkpoint as BotCapCheckpointName,
+              }
+            : { kind: 'complete' },
+      }
+    } catch (error) {
+      return rejectedStoredTimeCommit(
+        this.snapshot(),
+        seconds,
+        'STORED-TIME-WORKER-UNAVAILABLE',
+        error instanceof Error ? error.message : String(error),
+      )
+    } finally {
+      this.storedTimeCancellationRequested = false
+      this.publishStoredTimeJobStatus({ kind: 'idle' })
+    }
+  }
+
+  private async commitStoredTimeSynchronously(
     envelope: Pick<
       ApplicationCommandEnvelope<unknown>,
       'sessionRevision' | 'expectedStateRevision'
@@ -474,6 +690,37 @@ export class CanonicalGameApplicationFacade {
               kind: 'bot-cap-persistence-required',
               checkpoint,
             },
+    }
+  }
+
+  private publishStoredTimeProgress(progress: StoredTimeJobProgress): void {
+    const current = this.storedTimeJobStatusValue
+    const monotonicProgress =
+      current.kind !== 'idle' &&
+      current.jobId === progress.jobId &&
+      current.computedSeconds > progress.computedSeconds
+        ? {
+            ...progress,
+            computedSeconds: current.computedSeconds,
+            fraction: current.fraction,
+          }
+        : progress
+    this.publishStoredTimeJobStatus({
+      ...monotonicProgress,
+      kind: this.storedTimeCancellationRequested
+        ? 'cancelling'
+        : 'running',
+    })
+  }
+
+  private publishStoredTimeJobStatus(status: StoredTimeJobStatus): void {
+    this.storedTimeJobStatusValue = Object.freeze(status)
+    for (const listener of this.storedTimeJobListeners) {
+      try {
+        listener(status)
+      } catch {
+        // A presentation observer cannot alter persistence or bank accounting.
+      }
     }
   }
 
@@ -627,6 +874,10 @@ export function createCanonicalGameEngineDefinition(
           model.setTinkerRepeat(command.enabled))
       }
       if (command.kind === 'internal.replace-away-state') {
+        replaceRuntimeState(candidate, command.state)
+        return { accepted: true, changed: true }
+      }
+      if (command.kind === 'internal.replace-stored-time-state') {
         replaceRuntimeState(candidate, command.state)
         return { accepted: true, changed: true }
       }
@@ -872,24 +1123,44 @@ function applyDevelopmentAction(
           ),
         },
       })
-    case 'add-double-time': {
+    case 'add-offline-time': {
       if (!Number.isFinite(action.seconds) || action.seconds < 0) {
-        return invalidDevelopmentAction('Double-time amount')
+        return invalidDevelopmentAction('Offline-time amount')
       }
-      const bankSeconds = Math.min(
-        Number.MAX_VALUE,
-        state.timeline.doubleTime.bankSeconds + action.seconds,
-      )
-      return replaceDevelopmentState(candidate, {
+      const grant = applyAwayTimeGrant({
+        awaySeconds: action.seconds,
+        bankSeconds: state.timeline.storedTimeAvailableSeconds,
+        capacitySeconds: state.timeline.storedTimeCapacitySeconds,
+        cheater: candidate.storedTimeCheater,
+        dreamDoubleTimeBankSeconds:
+          state.timeline.doubleTime.bankSeconds,
+      })
+      const next = {
         ...state,
         timeline: {
           ...state.timeline,
+          storedTimeAvailableSeconds: grant.bankSeconds,
+          storedTimeCapacitySeconds: grant.capacitySeconds,
           doubleTime: {
             ...state.timeline.doubleTime,
-            bankSeconds,
+            bankSeconds: grant.dreamDoubleTimeBankSeconds,
           },
         },
-      })
+      }
+      const changed =
+        grant.cheater !== candidate.storedTimeCheater ||
+        grant.bankRepaired ||
+        grant.capacityRepaired ||
+        grant.storedTimeCreditedSeconds > 0 ||
+        grant.dreamDoubleTimeBankSeconds !==
+          state.timeline.doubleTime.bankSeconds
+      if (changed) {
+        Object.assign(candidate, {
+          gameState: next,
+          storedTimeCheater: grant.cheater,
+        })
+      }
+      return { accepted: true, changed }
     }
     case 'set-tinker-interval':
       return replaceDevelopmentState(candidate, {
@@ -1383,6 +1654,131 @@ function replaceRuntimeState(
   source: Readonly<CanonicalRuntimeState>,
 ): void {
   Object.assign(target, cloneCanonicalRuntimeState(source))
+}
+
+function createStoredTimeJobId(): string {
+  const randomUuid = globalThis.crypto?.randomUUID
+  return randomUuid === undefined
+    ? `stored-time-${Date.now()}-${Math.random().toString(36).slice(2)}`
+    : randomUuid.call(globalThis.crypto)
+}
+
+function rejectedStoredTimeCommit(
+  snapshot: ApplicationSnapshot<CanonicalRuntimeState>,
+  requestedSeconds: number,
+  code: string,
+  reason: string,
+): CanonicalStoredTimeCommitResult {
+  return {
+    committed: false,
+    transition: {
+      accepted: false,
+      code,
+      reason,
+      revision:
+        snapshot.phase === 'ready' ? snapshot.revision.state : 0,
+    },
+    consumedSeconds: 0,
+    remainingSeconds: Number.isFinite(requestedSeconds)
+      ? Math.max(0, requestedSeconds)
+      : 0,
+    code,
+    reason,
+  }
+}
+
+function validateStoredTimeJobCandidate(
+  before: Readonly<CanonicalRuntimeState>,
+  candidate: Readonly<CanonicalRuntimeState>,
+  requestedSeconds: number,
+  consumedSeconds: number,
+  remainingSeconds: number,
+): string | undefined {
+  if (
+    !Number.isFinite(consumedSeconds) ||
+    consumedSeconds <= 0 ||
+    consumedSeconds > requestedSeconds
+  ) {
+    return 'The worker reported an invalid consumed duration.'
+  }
+  if (
+    !Number.isFinite(remainingSeconds) ||
+    Math.abs(requestedSeconds - consumedSeconds - remainingSeconds) > 1e-8
+  ) {
+    return 'The worker reported inconsistent remaining duration.'
+  }
+  const expectedBank = Math.max(
+    0,
+    before.gameState.timeline.storedTimeAvailableSeconds - consumedSeconds,
+  )
+  if (
+    Math.abs(
+      candidate.gameState.timeline.storedTimeAvailableSeconds - expectedBank,
+    ) > 1e-8
+  ) {
+    return 'The worker candidate does not charge exactly its consumed duration.'
+  }
+  if (
+    candidate.storedTimeCheater !== before.storedTimeCheater ||
+    candidate.selectedSkillPresetSlot !== before.selectedSkillPresetSlot ||
+    candidate.debugOptionsEnabled !== before.debugOptionsEnabled ||
+    candidate.debugEntitlementPurchased !== before.debugEntitlementPurchased
+  ) {
+    return 'The worker candidate changed a host-owned runtime carrier.'
+  }
+  if (
+    !sameCapturedValue(candidate.tinker, before.tinker) ||
+    !sameCapturedValue(candidate.entitlements, before.entitlements) ||
+    !sameCapturedValue(
+      candidate.compatibilityTuning,
+      before.compatibilityTuning,
+    )
+  ) {
+    return 'The worker candidate changed a session-owned simulation carrier.'
+  }
+  if (
+    candidate.gameState.modelVersion !== before.gameState.modelVersion ||
+    candidate.gameState.meta.createdAtLegacyText !==
+      before.gameState.meta.createdAtLegacyText ||
+    !sameCapturedValue(
+      candidate.gameState.meta.navigationVisibility,
+      before.gameState.meta.navigationVisibility,
+    ) ||
+    candidate.gameState.timeline.storedTimeCapacitySeconds !==
+      before.gameState.timeline.storedTimeCapacitySeconds ||
+    candidate.gameState.timeline.lastSuspendedAtLegacyText !==
+      before.gameState.timeline.lastSuspendedAtLegacyText
+  ) {
+    return 'The worker candidate changed persistent identity or Stored Time capacity.'
+  }
+  return undefined
+}
+
+function sameCapturedValue(left: unknown, right: unknown): boolean {
+  if (Object.is(left, right)) return true
+  if (
+    left === null ||
+    right === null ||
+    typeof left !== 'object' ||
+    typeof right !== 'object'
+  ) {
+    return false
+  }
+  if (Array.isArray(left) || Array.isArray(right)) {
+    return Array.isArray(left) &&
+      Array.isArray(right) &&
+      left.length === right.length &&
+      left.every((value, index) =>
+        sameCapturedValue(value, right[index]))
+  }
+  const leftRecord = left as Record<string, unknown>
+  const rightRecord = right as Record<string, unknown>
+  const leftKeys = Object.keys(leftRecord).sort()
+  const rightKeys = Object.keys(rightRecord).sort()
+  return leftKeys.length === rightKeys.length &&
+    leftKeys.every((key, index) =>
+      key === rightKeys[index] &&
+      sameCapturedValue(leftRecord[key], rightRecord[key]))
 }
 
 function validateRuntimeState(

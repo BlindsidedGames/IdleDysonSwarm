@@ -1103,6 +1103,18 @@
     "defaultMessage": "All",
     "description": "Quick selection for all stored time."
   },
+  "offline-time.calculating": {
+    "defaultMessage": "calculating",
+    "description": "Shown while a Stored Time job has insufficient data for an ETA."
+  },
+  "offline-time.cancel": {
+    "defaultMessage": "Cancel simulation",
+    "description": "Cancels the active Stored Time simulation without charging its bank."
+  },
+  "offline-time.cancelling": {
+    "defaultMessage": "Cancelling safely…",
+    "description": "Status while a Stored Time worker is discarding its candidate."
+  },
   "offline-time.capacity": {
     "defaultMessage": "{stored} of {capacity}",
     "description": "Stored Offline Time compared with its storage capacity."
@@ -1131,6 +1143,10 @@
     "defaultMessage": "Offline Time is stored while you are away. Spend it to advance the whole game immediately. This storage is separate from Simulation Double Time.",
     "description": "Explains what stored Offline Time does and distinguishes it from Simulation Double Time."
   },
+  "offline-time.large-spend-disclosure": {
+    "defaultMessage": "Small spends replay every automation tick. Large spends execute up to 4,096 representative purchase decisions while continuous production still advances; omitted ticks make no purchases. Results may differ from exact replay, and splitting the same time into multiple spends may change results.",
+    "description": "Discloses the automatic exact versus bounded Stored Time policy."
+  },
   "offline-time.maximum-storage": {
     "defaultMessage": "Maximum storage reached",
     "description": "Status shown after the permanent Offline Time capacity ceiling is reached."
@@ -1155,6 +1171,10 @@
     "defaultMessage": "Simulating…",
     "description": "Status while stored Offline Time is being processed."
   },
+  "offline-time.progress": {
+    "defaultMessage": "{percent}% complete · about {eta} remaining",
+    "description": "Progress and estimated remaining time for a Stored Time job."
+  },
   "offline-time.region": {
     "defaultMessage": "Offline Time",
     "description": "Accessible name and heading for the stored Offline Time page."
@@ -1162,6 +1182,10 @@
   "offline-time.selected-amount": {
     "defaultMessage": "Selected: {duration}",
     "description": "The selected stored-time spend duration."
+  },
+  "offline-time.simulation-progress": {
+    "defaultMessage": "Offline Time simulation progress",
+    "description": "Accessible label for Stored Time job progress."
   },
   "offline-time.spend": {
     "defaultMessage": "Spend {duration}",
@@ -2318,6 +2342,22 @@
   "settings.development.applying": {
     "defaultMessage": "Applying…",
     "description": "Pending development progression button text."
+  },
+  "settings.development.debug.description": {
+    "defaultMessage": "Shows the Debug Options page without requiring the in-game purchase. Development builds only.",
+    "description": "Explains the development-only debug access toggle."
+  },
+  "settings.development.debug.failed": {
+    "defaultMessage": "Developer Options could not be changed.",
+    "description": "Failure feedback for the development-only debug toggle."
+  },
+  "settings.development.debug.title": {
+    "defaultMessage": "Developer Options",
+    "description": "Heading for the development-only debug access toggle."
+  },
+  "settings.development.debug.toggle": {
+    "defaultMessage": "Enable Developer Options",
+    "description": "Toggles Developer Options in a development build."
   },
   "settings.development.description": {
     "defaultMessage": "Sets the real saved bot count. Visual stages assume Bot Distribution is set to 100% Workers.",

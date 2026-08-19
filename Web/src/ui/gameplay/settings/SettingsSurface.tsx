@@ -123,6 +123,8 @@ export function SettingsSurface({
   ] = useState<DevelopmentPresetId>('early-swarm')
   const [developmentStatus, setDevelopmentStatus] =
     useState<DevelopmentStatus>('idle')
+  const [developmentOptionsStatus, setDevelopmentOptionsStatus] =
+    useState<'idle' | 'pending' | 'failed'>('idle')
   const [appliedDevelopmentPreset, setAppliedDevelopmentPreset] =
     useState<DevelopmentPresetId | null>(null)
   const [developmentPanelOpen, setDevelopmentPanelOpen] =
@@ -331,6 +333,30 @@ export function SettingsSurface({
     }
   }
 
+  const setDevelopmentOptionsEnabled = async (
+    enabled: boolean,
+  ): Promise<void> => {
+    if (
+      development === undefined ||
+      developmentOptionsStatus === 'pending'
+    ) {
+      return
+    }
+    setDevelopmentOptionsStatus('pending')
+    try {
+      const result = await development.apply({
+        kind: enabled
+          ? 'purchase-debug-options'
+          : 'disable-debug-options',
+      })
+      setDevelopmentOptionsStatus(
+        result.applied ? 'idle' : 'failed',
+      )
+    } catch {
+      setDevelopmentOptionsStatus('failed')
+    }
+  }
+
   return (
     <div className="settings-surface">
       <div
@@ -473,6 +499,40 @@ export function SettingsSurface({
                   messages.developmentTitle,
                 )}
               >
+                {import.meta.env.DEV ? (
+                  <div className="settings-surface__development-debug">
+                    <div className="settings-surface__copy">
+                      <h3>
+                        {intl.formatMessage(
+                          messages.developmentDebugTitle,
+                        )}
+                      </h3>
+                      <p>
+                        {intl.formatMessage(
+                          messages.developmentDebugDescription,
+                        )}
+                      </p>
+                    </div>
+                    <label className="settings-surface__toggle">
+                      <input
+                        type="checkbox"
+                        checked={development.status().enabled}
+                        disabled={
+                          developmentOptionsStatus === 'pending'
+                        }
+                        onChange={(event) =>
+                          void setDevelopmentOptionsEnabled(
+                            event.currentTarget.checked,
+                          )}
+                      />
+                      <span>
+                        {intl.formatMessage(
+                          messages.developmentDebugToggle,
+                        )}
+                      </span>
+                    </label>
+                  </div>
+                ) : null}
                 <div className="settings-surface__copy">
                   <p>
                     {intl.formatMessage(
@@ -547,6 +607,16 @@ export function SettingsSurface({
                           ? messages.developmentRealitySucceeded
                           : messages.developmentSucceeded
                         : messages.developmentFailed,
+                    )}
+                  </p>
+                ) : null}
+                {developmentOptionsStatus === 'failed' ? (
+                  <p
+                    className="settings-surface__development-status"
+                    role="alert"
+                  >
+                    {intl.formatMessage(
+                      messages.developmentDebugFailed,
                     )}
                   </p>
                 ) : null}

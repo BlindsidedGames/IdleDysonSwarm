@@ -151,6 +151,11 @@ export function installTextSelectionPolicy(
     suppressedTouch = null
   }
   const clearOutsideEditorSelection = (): void => {
+    // Safari keeps input and textarea caret state outside the document
+    // Selection API. Its anchor can therefore point at the page even while a
+    // text editor is actively receiving keyboard input. Clearing that
+    // document selection terminates Safari's editing session after one key.
+    if (isEditableText(documentPort.activeElement)) return
     const selection = documentPort.getSelection()
     const anchor = selection?.anchorNode
     if (

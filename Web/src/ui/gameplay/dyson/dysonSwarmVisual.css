@@ -26,9 +26,22 @@
   overflow: visible;
 }
 
-.dyson-swarm-visual__collector-field {
-  animation: dyson-orbit-track 79s linear infinite;
-  transform-origin: center;
+.dyson-swarm-visual__collector-track {
+  animation: dyson-orbit-track 34s linear infinite;
+}
+
+.dyson-swarm-visual__collector-track--1 {
+  animation-direction: reverse;
+  animation-duration: 47s;
+}
+
+.dyson-swarm-visual__collector-track--2 {
+  animation-duration: 63s;
+}
+
+.dyson-swarm-visual__collector-track--3 {
+  animation-direction: reverse;
+  animation-duration: 79s;
 }
 
 .dyson-swarm-visual__orbit-guide {
@@ -212,12 +225,6 @@
   transition: opacity 1200ms ease;
 }
 
-.dyson-swarm-visual__field-members {
-  animation: dyson-field-galaxy-spin 240s linear infinite;
-  transform-box: view-box;
-  transform-origin: center;
-}
-
 .dyson-swarm-visual__field-member-entry {
   animation:
     dyson-field-galaxy-enter
@@ -262,12 +269,6 @@
   to {
     opacity: 1;
     transform: scaleY(2.6316) scale(1);
-  }
-}
-
-@keyframes dyson-field-galaxy-spin {
-  to {
-    transform: rotate(1turn);
   }
 }
 
@@ -326,9 +327,8 @@
   }
 
   .dyson-swarm-visual__scene,
-  .dyson-swarm-visual__collector-field,
+  .dyson-swarm-visual__collector-track,
   .dyson-swarm-visual__galaxy-light--origin,
-  .dyson-swarm-visual__field-members,
   .dyson-swarm-visual__field-member-entry {
     animation: none;
   }
@@ -336,9 +336,8 @@
 
 @media (pointer: coarse) {
   .dyson-swarm-visual__scene,
-  .dyson-swarm-visual__collector-field,
+  .dyson-swarm-visual__collector-track,
   .dyson-swarm-visual__galaxy-light--origin,
-  .dyson-swarm-visual__field-members,
   .dyson-swarm-visual__field-member-entry {
     animation: none;
   }
@@ -346,9 +345,8 @@
 
 @media (prefers-reduced-motion: reduce) {
   .dyson-swarm-visual__scene,
-  .dyson-swarm-visual__collector-field,
+  .dyson-swarm-visual__collector-track,
   .dyson-swarm-visual__galaxy-light--origin,
-  .dyson-swarm-visual__field-members,
   .dyson-swarm-visual__field-member-entry,
   .dyson-swarm-visual__field-member-spin {
     animation: none;

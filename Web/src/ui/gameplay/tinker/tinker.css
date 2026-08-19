@@ -159,6 +159,7 @@
 .tinker-surface__hold-label {
   position: absolute;
   z-index: 1;
+  inset-block-start: 50%;
   inset-inline: 0.35rem;
   color: white;
   font-size: 0.72rem;
@@ -168,6 +169,7 @@
   pointer-events: none;
   text-overflow: ellipsis;
   text-shadow: 0 1px 1px black;
+  transform: translateY(-50%);
   white-space: nowrap;
 }
 

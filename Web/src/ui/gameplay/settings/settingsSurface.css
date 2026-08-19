@@ -284,6 +284,19 @@
   grid-template-columns: 1fr;
 }
 
+.settings-surface__development-debug {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 1rem;
+}
+
+.settings-surface__development-debug h3 {
+  margin: 0;
+  color: white;
+  font-size: calc(1rem * var(--game-text-scale));
+}
+
 .settings-surface__development-controls {
   display: grid;
   grid-template-columns: minmax(0, 1fr) auto;

@@ -22,6 +22,7 @@ describe('production browser composition', () => {
     let captured: Readonly<BrowserRuntimeFoundationOptions> | undefined
     const runtime = Object.freeze({}) as BrowserUiRuntimeFoundation
     createProductionBrowserComposition({
+      developmentBuild: false,
       entitlementDocument: entitlementDocument('false'),
       releasePlatformServices: {
         hostKind: 'mobile-native',
@@ -53,6 +54,36 @@ describe('production browser composition', () => {
         entitlements: { permanentDoubleIp: true },
       },
     })
+  })
+
+  test('keeps developer controls free in a development build with browser platform services', () => {
+    let captured: Readonly<BrowserRuntimeFoundationOptions> | undefined
+    const runtime = Object.freeze({}) as BrowserUiRuntimeFoundation
+
+    createProductionBrowserComposition({
+      developmentBuild: true,
+      entitlementDocument: entitlementDocument('false'),
+      releasePlatformServices: {
+        hostKind: 'web',
+        entitlements: {
+          readOwnership: async () => ({
+            doubleInfinityPoints: false,
+            developerOptions: false,
+          }),
+          refreshOwnership: async () => ({
+            doubleInfinityPoints: false,
+            developerOptions: false,
+          }),
+        },
+      } as unknown as ReleasePlatformServices,
+      createRuntime: (options) => {
+        captured = options
+        return runtime
+      },
+    })
+
+    expect(captured?.developmentControlsAvailable).toBe(true)
+    expect(captured?.developmentControlsRequireEntitlement).toBe(false)
   })
 
   test('binds authentic first-run data, explicit host authority, and shared browser clocks outside React', async () => {

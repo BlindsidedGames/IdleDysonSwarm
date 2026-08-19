@@ -4729,6 +4729,48 @@
       "value": "]"
     }
   ],
+  "offline-time.calculating": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "ƈȧȧŀƈŭŭŀȧȧŧīƞɠ"
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "offline-time.cancel": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Ƈȧȧƞƈḗḗŀ şīḿŭŭŀȧȧŧīǿǿƞ"
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "offline-time.cancelling": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Ƈȧȧƞƈḗḗŀŀīƞɠ şȧȧƒḗḗŀẏ…"
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
   "offline-time.capacity": [
     {
       "type": 0,
@@ -4843,6 +4885,20 @@
       "value": "]"
     }
   ],
+  "offline-time.large-spend-disclosure": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Şḿȧȧŀŀ şƥḗḗƞḓş řḗḗƥŀȧȧẏ ḗḗṽḗḗřẏ ȧȧŭŭŧǿǿḿȧȧŧīǿǿƞ ŧīƈķ. Ŀȧȧřɠḗḗ şƥḗḗƞḓş ḗḗẋḗḗƈŭŭŧḗḗ ŭŭƥ ŧǿǿ 4,096 řḗḗƥřḗḗşḗḗƞŧȧȧŧīṽḗḗ ƥŭŭřƈħȧȧşḗḗ ḓḗḗƈīşīǿǿƞş ẇħīŀḗḗ ƈǿǿƞŧīƞŭŭǿǿŭŭş ƥřǿǿḓŭŭƈŧīǿǿƞ şŧīŀŀ ȧȧḓṽȧȧƞƈḗḗş; ǿǿḿīŧŧḗḗḓ ŧīƈķş ḿȧȧķḗḗ ƞǿǿ ƥŭŭřƈħȧȧşḗḗş. Řḗḗşŭŭŀŧş ḿȧȧẏ ḓīƒƒḗḗř ƒřǿǿḿ ḗḗẋȧȧƈŧ řḗḗƥŀȧȧẏ, ȧȧƞḓ şƥŀīŧŧīƞɠ ŧħḗḗ şȧȧḿḗḗ ŧīḿḗḗ īƞŧǿǿ ḿŭŭŀŧīƥŀḗḗ şƥḗḗƞḓş ḿȧȧẏ ƈħȧȧƞɠḗḗ řḗḗşŭŭŀŧş."
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
   "offline-time.maximum-storage": [
     {
       "type": 0,
@@ -4927,6 +4983,32 @@
       "value": "]"
     }
   ],
+  "offline-time.progress": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 1,
+      "value": "percent"
+    },
+    {
+      "type": 0,
+      "value": "% ƈǿǿḿƥŀḗḗŧḗḗ · ȧȧƀǿǿŭŭŧ "
+    },
+    {
+      "type": 1,
+      "value": "eta"
+    },
+    {
+      "type": 0,
+      "value": " řḗḗḿȧȧīƞīƞɠ"
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
   "offline-time.region": [
     {
       "type": 0,
@@ -4953,6 +5035,20 @@
     {
       "type": 1,
       "value": "duration"
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "offline-time.simulation-progress": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Ǿƒƒŀīƞḗḗ Ŧīḿḗḗ şīḿŭŭŀȧȧŧīǿǿƞ ƥřǿǿɠřḗḗşş"
     },
     {
       "type": 0,
@@ -9385,6 +9481,62 @@
     {
       "type": 0,
       "value": "Ȧƥƥŀẏīƞɠ…"
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "settings.development.debug.description": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Şħǿǿẇş ŧħḗḗ Ḓḗḗƀŭŭɠ Ǿƥŧīǿǿƞş ƥȧȧɠḗḗ ẇīŧħǿǿŭŭŧ řḗḗɋŭŭīřīƞɠ ŧħḗḗ īƞ-ɠȧȧḿḗḗ ƥŭŭřƈħȧȧşḗḗ. Ḓḗḗṽḗḗŀǿǿƥḿḗḗƞŧ ƀŭŭīŀḓş ǿǿƞŀẏ."
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "settings.development.debug.failed": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Ḓḗḗṽḗḗŀǿǿƥḗḗř Ǿƥŧīǿǿƞş ƈǿǿŭŭŀḓ ƞǿǿŧ ƀḗḗ ƈħȧȧƞɠḗḗḓ."
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "settings.development.debug.title": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Ḓḗḗṽḗḗŀǿǿƥḗḗř Ǿƥŧīǿǿƞş"
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "settings.development.debug.toggle": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Ḗƞȧȧƀŀḗḗ Ḓḗḗṽḗḗŀǿǿƥḗḗř Ǿƥŧīǿǿƞş"
     },
     {
       "type": 0,

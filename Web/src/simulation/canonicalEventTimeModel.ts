@@ -112,6 +112,12 @@ export type CanonicalInfinityBoundaryEvaluation =
 
 export interface CanonicalEventTimeContext {
   readonly automationIntervalSeconds: number
+  /**
+   * Duration represented by one automation action. Stored Time may schedule
+   * a representative action after a longer continuous group while preserving
+   * the canonical 100 ms action semantics.
+   */
+  readonly automationActionIntervalSeconds?: number
   readonly dysonPresentationTuning?: Readonly<DysonPresentationTuning>
   /**
    * Tinker uses Unity wall Time.deltaTime. Stored/away simulations set this
@@ -158,6 +164,7 @@ interface ArtifactSkillPointResult {
 
 interface CapturedContext {
   readonly automationIntervalSeconds: number
+  readonly automationActionIntervalSeconds: number
   readonly dysonPresentationTuning: Readonly<DysonPresentationTuning>
   readonly advanceTinker: boolean
   readonly realityWorkerTuning: Readonly<RealityWorkerTuning>
@@ -573,7 +580,7 @@ export class CanonicalEventTimeModel
       candidate =
         runDreamFoundationalInformationConversions(candidate).state
       const railgun = runDreamRailgunAutomation(candidate, {
-        tickSeconds: this.context.automationIntervalSeconds,
+        tickSeconds: this.context.automationActionIntervalSeconds,
         effectiveDoubleTimeMultiplier:
           this.pendingInterval?.doubleTimeTick.effectiveMultiplier ?? 1,
         doubleTimeActive:
@@ -1169,6 +1176,9 @@ export function prepareCanonicalEventTimeContext(
   }
   const prepared = Object.freeze({
     automationIntervalSeconds: context.automationIntervalSeconds,
+    automationActionIntervalSeconds:
+      context.automationActionIntervalSeconds ??
+      context.automationIntervalSeconds,
     dysonPresentationTuning: Object.freeze({
       ...(context.dysonPresentationTuning ??
         CANONICAL_DYSON_PRESENTATION_TUNING),
@@ -1215,6 +1225,34 @@ export function prepareCanonicalEventTimeContextVariants(
       ? { active: prepared, storedTime: alternate }
       : { active: alternate, storedTime: prepared },
   )
+}
+
+/**
+ * Reuses prepared immutable catalogs while changing only the scheduler's
+ * automation cadence. Stored Time's bounded representative groups use this
+ * to collapse many raw automation ticks into one disclosed decision without
+ * cloning the generated definition maps for every group.
+ */
+export function withCanonicalEventTimeAutomationInterval(
+  context: Readonly<CanonicalEventTimeContext>,
+  automationIntervalSeconds: number,
+): Readonly<CanonicalEventTimeContext> {
+  if (
+    !Number.isFinite(automationIntervalSeconds) ||
+    automationIntervalSeconds <= 0
+  ) {
+    throw new RangeError('Automation interval must be finite and positive.')
+  }
+  const prepared = prepareCanonicalEventTimeContext(context)
+  if (prepared.automationIntervalSeconds === automationIntervalSeconds) {
+    return prepared
+  }
+  const adjusted = Object.freeze({
+    ...prepared,
+    automationIntervalSeconds,
+  })
+  preparedContexts.add(adjusted)
+  return adjusted
 }
 
 function createImmutableDefinitionMap<K, V>(

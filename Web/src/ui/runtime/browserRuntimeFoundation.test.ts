@@ -37,6 +37,7 @@ import type {
   WriterLeaseFence,
 } from '../../platform/browserSaveDatabase'
 import { WriterLeaseLostError } from '../../platform/browserSaveDatabase'
+import type { DepartureMarker } from '../../platform/browserDepartureMarker'
 import type {
   ClipboardPort,
 } from '../../platform/browserSystemPorts'
@@ -130,6 +131,17 @@ describe('browser runtime foundation composition', () => {
     if (firstSnapshot.phase !== 'ready') return
     const development = firstRuntime.development
     expect(development).toBeDefined()
+    expect(development?.status()).toMatchObject({
+      enabled: false,
+      entitled: true,
+    })
+    await expect(
+      development?.apply({ kind: 'purchase-debug-options' }),
+    ).resolves.toMatchObject({ applied: true })
+    expect(development?.status()).toMatchObject({
+      enabled: true,
+      entitled: true,
+    })
     await expect(
       development?.apply({
         kind: 'add-quantum-shards',
@@ -149,15 +161,22 @@ describe('browser runtime foundation composition', () => {
       }),
     ).resolves.toMatchObject({ applied: true })
     await expect(
-      development?.apply({ kind: 'purchase-debug-options' }),
+      development?.simulateOfflineTime(42_000_000),
     ).resolves.toMatchObject({ applied: true })
-    expect(development?.status()).toMatchObject({
-      enabled: true,
-      entitled: true,
-    })
-    await expect(
-      development?.simulateOfflineTime(1),
-    ).resolves.toMatchObject({ applied: true })
+    const offlineSnapshot = firstRuntime.snapshot()
+    expect(offlineSnapshot.phase).toBe('ready')
+    if (offlineSnapshot.phase === 'ready') {
+      expect(
+        offlineSnapshot.gameplay.resources.time
+          .storedTimeAvailableSeconds,
+      ).toBe(
+        offlineSnapshot.gameplay.resources.time
+          .storedTimeCapacitySeconds,
+      )
+      expect(
+        offlineSnapshot.gameplay.resources.time.doubleTimeBankSeconds,
+      ).toBe(42_000_000)
+    }
     await expect(
       development?.setDysonBots(195_000),
     ).resolves.toMatchObject({
@@ -2237,6 +2256,67 @@ describe('browser runtime foundation composition', () => {
     await runtime.shutdown()
   })
 
+  test('does not clear a newer departure received while the previous replay is committing', async () => {
+    const database = new MemoryBrowserSaveDatabase()
+    const lifecycle = new TestLifecycleAdapter()
+    const lifecycleClock = new ManualLifecycleClock(
+      '2026-07-29T00:00:00Z',
+    )
+    const marker = new MemoryDepartureMarker()
+    const replayGate = deferred<void>()
+    const secondDepartureGate = deferred<void>()
+    let application: FakeRuntimeApplication | undefined
+    const runtime = createRuntime({
+      database,
+      lifecycle,
+      lifecycleClock,
+      departureMarker: marker,
+      createApplication: (repository) => {
+        application = new FakeRuntimeApplication(
+          repository,
+          database.events,
+        )
+        application.setTimeResources(0, 100, 0)
+        return application
+      },
+    })
+    await runtime.start()
+
+    lifecycle.emit('background')
+    await waitUntil(() => application?.awayCommits === 1)
+    expect(marker.read()).toBe('2026-07-29T00:00:00Z')
+
+    application!.awayGate = replayGate.promise
+    lifecycleClock.set('2026-07-29T00:00:01Z')
+    lifecycle.emit('active')
+    await waitUntil(() => application?.awayCommitsStarted === 2)
+
+    application!.awayCommitGates.set(3, secondDepartureGate.promise)
+    lifecycleClock.set('2026-07-29T00:00:02Z')
+    lifecycle.emit('background')
+    expect(marker.read()).toBe('2026-07-29T00:00:02Z')
+
+    replayGate.resolve()
+    await waitUntil(() => application?.awayCommitsStarted === 3)
+    expect(marker.read()).toBe('2026-07-29T00:00:02Z')
+
+    secondDepartureGate.resolve()
+    await waitUntil(() => application?.awayCommits === 3)
+    application!.awayGate = undefined
+    lifecycleClock.set('2026-07-29T00:00:05Z')
+    lifecycle.emit('active')
+    await waitUntil(() => application?.awayCommits === 4)
+    expect(marker.read()).toBeNull()
+    const snapshot = application?.snapshot()
+    expect(snapshot?.phase).toBe('ready')
+    if (snapshot?.phase === 'ready') {
+      expect(
+        snapshot.state.gameState.timeline.storedTimeAvailableSeconds,
+      ).toBe(4)
+    }
+    await runtime.shutdown()
+  })
+
   test('keeps startup foreground stopped when cold replay commit fails and resumes only after a safe retry', async () => {
     const database = new MemoryBrowserSaveDatabase()
     const lifecycle = new TestLifecycleAdapter()
@@ -3481,13 +3561,14 @@ describe('browser runtime foundation composition', () => {
       'snapshot',
       'start',
       'status',
+      'storedTime',
       'subscribeSnapshot',
       'subscribeStatus',
       'synchronizeHostEntitlements',
       'takeOverWriterOwnership',
       'writeClipboardText',
     ])
-    const { development, ...hostMethods } = runtime
+    const { development, storedTime, ...hostMethods } = runtime
     expect(
       Object.values(hostMethods).every(
         (value) => typeof value === 'function',
@@ -3498,6 +3579,9 @@ describe('browser runtime foundation composition', () => {
     expect(typeof development?.status).toBe('function')
     expect(typeof development?.apply).toBe('function')
     expect(typeof development?.simulateOfflineTime).toBe('function')
+    expect(typeof storedTime?.status).toBe('function')
+    expect(typeof storedTime?.subscribe).toBe('function')
+    expect(typeof storedTime?.cancel).toBe('function')
     await runtime.shutdown()
   })
 
@@ -4267,6 +4351,31 @@ class ManualLifecycleClock implements CanonicalLifecycleClock {
 
   set(value: string): void {
     this.currentIso = value
+  }
+}
+
+class MemoryDepartureMarker implements DepartureMarker {
+  private value: string | null = null
+
+  read(): string | null {
+    return this.value
+  }
+
+  record(serializedUtcText: string): void {
+    this.value = serializedUtcText
+  }
+
+  clearIfMatches(utcMilliseconds: number): void {
+    if (
+      this.value !== null &&
+      Date.parse(this.value) === utcMilliseconds
+    ) {
+      this.value = null
+    }
+  }
+
+  clear(): void {
+    this.value = null
   }
 }
 

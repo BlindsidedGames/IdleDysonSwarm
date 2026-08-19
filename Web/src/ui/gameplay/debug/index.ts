@@ -1,1 +1,5 @@
-export { DebugSurface, type DebugSurfaceProps } from './DebugSurface'
+export {
+  DebugSurface,
+  type DebugSurfaceDraft,
+  type DebugSurfaceProps,
+} from './DebugSurface'

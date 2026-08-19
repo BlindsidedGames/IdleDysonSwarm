@@ -79,6 +79,8 @@ export function advanceEventTime<
   const summary = createSimulationSummary()
   const events: SimulationAdvanceResult<TModel>['events'] = []
   const work = createWorkMetrics()
+  const collectEvents = request.collectEvents !== false
+  const collectWorkMetrics = request.collectWorkMetrics !== false
   const inputs = request.queuedInputs ?? []
   let consumedSeconds = 0
   let remainingSeconds = request.durationSeconds
@@ -111,7 +113,7 @@ export function advanceEventTime<
     validationStatus === 'valid' &&
     remainingSeconds > TIME_EPSILON
   ) {
-    work.schedulerPasses += 1n
+    if (collectWorkMetrics) work.schedulerPasses += 1n
 
     if (request.cancelRequested?.() === true) {
       validationStatus = 'cancelled'
@@ -170,8 +172,10 @@ export function advanceEventTime<
       consumedSeconds += horizon
       remainingSeconds = Math.max(0, remainingSeconds - horizon)
       automationRemaining = Math.max(0, automationRemaining - horizon)
-      work.continuousSegments += 1n
-      work.exactSeconds += horizon
+      if (collectWorkMetrics) {
+        work.continuousSegments += 1n
+        work.exactSeconds += horizon
+      }
       zeroTimePasses = 0
     } else {
       zeroTimePasses += 1
@@ -193,39 +197,45 @@ export function advanceEventTime<
     const atBoundary = atModelEvent || atAutomation || atInput || atEndpoint
 
     if (atBoundary) {
-      work.materialEvents += 1n
+      if (collectWorkMetrics) work.materialEvents += 1n
       candidateState.applyProductionArrivals(summary)
-      events.push({
-        timeSeconds: consumedSeconds,
-        kind: 'production-arrival',
-      })
+      if (collectEvents) {
+        events.push({
+          timeSeconds: consumedSeconds,
+          kind: 'production-arrival',
+        })
+      }
     }
 
     while (atInput) {
       const input = inputs[queuedIndex]!
       queuedIndex += 1
       candidateState.applyQueuedInput(input, summary)
-      events.push({
-        timeSeconds: consumedSeconds,
-        kind: 'queued-input',
-        stableOrder: queuedIndex,
-        id: input.id,
-      })
+      if (collectEvents) {
+        events.push({
+          timeSeconds: consumedSeconds,
+          kind: 'queued-input',
+          stableOrder: queuedIndex,
+          id: input.id,
+        })
+      }
       atInput =
         queuedIndex < inputs.length &&
         inputs[queuedIndex]!.timeSeconds <= consumedSeconds + TIME_EPSILON
     }
 
     if (atAutomation) {
-      work.automationEvents += 1n
+      if (collectWorkMetrics) work.automationEvents += 1n
       candidateState.applyAutomation(
         request.automationPolicy ?? 'preserve-configured-mode',
         summary,
       )
-      events.push({
-        timeSeconds: consumedSeconds,
-        kind: 'automation',
-      })
+      if (collectEvents) {
+        events.push({
+          timeSeconds: consumedSeconds,
+          kind: 'automation',
+        })
+      }
       automationRemaining = automationInterval
     }
 
@@ -242,7 +252,9 @@ export function advanceEventTime<
 
   remainingSeconds =
     remainingSeconds <= TIME_EPSILON ? 0 : Math.max(0, remainingSeconds)
-  work.processingMilliseconds = performance.now() - startedAt
+  if (collectWorkMetrics) {
+    work.processingMilliseconds = performance.now() - startedAt
+  }
 
   return {
     candidateState,

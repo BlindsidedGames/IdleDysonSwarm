@@ -12,6 +12,13 @@ import './debugSurface.css'
 export interface DebugSurfaceProps {
   readonly development: UiRuntimeDevelopmentControls
   readonly locale: EnabledLocale
+  readonly initialDraft?: Readonly<DebugSurfaceDraft>
+  readonly onDraftChange?: (draft: Readonly<DebugSurfaceDraft>) => void
+}
+
+export interface DebugSurfaceDraft {
+  readonly amount: string
+  readonly preset: string
 }
 
 type OperationStatus =
@@ -35,12 +42,14 @@ const BOT_PRESETS = [
 export function DebugSurface({
   development,
   locale,
+  initialDraft,
+  onDraftChange,
 }: DebugSurfaceProps) {
   const intl = useIntl()
   const amountId = useId()
   const presetId = useId()
-  const [amount, setAmount] = useState('1')
-  const [preset, setPreset] = useState('early')
+  const [amount, setAmount] = useState(() => initialDraft?.amount ?? '1')
+  const [preset, setPreset] = useState(() => initialDraft?.preset ?? 'early')
   const [operation, setOperation] = useState<OperationStatus>({
     kind: 'idle',
   })
@@ -143,7 +152,11 @@ export function DebugSurface({
                   inputMode="decimal"
                   value={amount}
                   aria-invalid={!validAmount}
-                  onChange={(event) => setAmount(event.currentTarget.value)}
+                  onChange={(event) => {
+                    const nextAmount = event.currentTarget.value
+                    setAmount(nextAmount)
+                    onDraftChange?.({ amount: nextAmount, preset })
+                  }}
                 />
               </div>
               <div className="debug-surface__button-grid">
@@ -162,7 +175,11 @@ export function DebugSurface({
               <h2>{intl.formatMessage(messages.progressionPresets)}</h2>
               <div className="debug-surface__preset-row">
                 <label htmlFor={presetId}>{intl.formatMessage(messages.botState)}</label>
-                <select id={presetId} value={preset} onChange={(event) => setPreset(event.currentTarget.value)}>
+                <select id={presetId} value={preset} onChange={(event) => {
+                  const nextPreset = event.currentTarget.value
+                  setPreset(nextPreset)
+                  onDraftChange?.({ amount, preset: nextPreset })
+                }}>
                   {BOT_PRESETS.map((item) => (
                     <option key={item.id} value={item.id}>
                       {formatGameNumber(locale, item.bots)} {intl.formatMessage(messages.bots)}

@@ -237,6 +237,12 @@ export interface UiRuntimeDevelopmentControls {
   ): Promise<UiRuntimeDevelopmentActionResult>
 }
 
+export interface UiRuntimeStoredTimeControls {
+  status(): import('../../workers/storedTime/storedTimeProtocol').StoredTimeJobStatus
+  subscribe(listener: () => void): () => void
+  cancel(): void
+}
+
 /**
  * Host-neutral browser product boundary.
  *
@@ -260,6 +266,7 @@ export interface UiRuntimeFoundation<
   dispatchPlayer(
     command: TPlayerCommand,
   ): Promise<UiRuntimePlayerCommandResult>
+  readonly storedTime?: UiRuntimeStoredTimeControls
   readonly development?: UiRuntimeDevelopmentControls
   previewImport(
     request: UiRuntimeImportRequest,

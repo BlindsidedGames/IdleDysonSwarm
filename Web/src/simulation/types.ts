@@ -130,6 +130,17 @@ interface SimulationAdvanceOptions {
   readonly processingBudgetMilliseconds?: number
   readonly processPartialEndpoint?: boolean
   readonly cancelRequested?: () => boolean
+  /**
+   * Diagnostic event traces are useful in tests and inspection tools, but
+   * retaining one object per offline boundary makes large Stored Time jobs
+   * consume memory in proportion to their raw tick count.
+   */
+  readonly collectEvents?: boolean
+  /**
+   * BigInt work counters are optional for production replay. Presentation
+   * summaries remain authoritative regardless of this diagnostic setting.
+   */
+  readonly collectWorkMetrics?: boolean
   readonly queuedInputs?: readonly SimulationQueuedInput[]
 }
 

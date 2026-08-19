@@ -97,6 +97,37 @@ export const offlineTimeMessages = defineMessages({
     defaultMessage: 'Simulating…',
     description: 'Status while stored Offline Time is being processed.',
   },
+  largeSpendDisclosure: {
+    id: 'offline-time.large-spend-disclosure',
+    defaultMessage:
+      'Small spends replay every automation tick. Large spends execute up to 4,096 representative purchase decisions while continuous production still advances; omitted ticks make no purchases. Results may differ from exact replay, and splitting the same time into multiple spends may change results.',
+    description: 'Discloses the automatic exact versus bounded Stored Time policy.',
+  },
+  simulationProgress: {
+    id: 'offline-time.simulation-progress',
+    defaultMessage: 'Offline Time simulation progress',
+    description: 'Accessible label for Stored Time job progress.',
+  },
+  progress: {
+    id: 'offline-time.progress',
+    defaultMessage: '{percent}% complete · about {eta} remaining',
+    description: 'Progress and estimated remaining time for a Stored Time job.',
+  },
+  calculating: {
+    id: 'offline-time.calculating',
+    defaultMessage: 'calculating',
+    description: 'Shown while a Stored Time job has insufficient data for an ETA.',
+  },
+  cancel: {
+    id: 'offline-time.cancel',
+    defaultMessage: 'Cancel simulation',
+    description: 'Cancels the active Stored Time simulation without charging its bank.',
+  },
+  cancelling: {
+    id: 'offline-time.cancelling',
+    defaultMessage: 'Cancelling safely…',
+    description: 'Status while a Stored Time worker is discarding its candidate.',
+  },
   spendSuccess: {
     id: 'offline-time.spend-success',
     defaultMessage: 'Advanced the game by {duration}.',

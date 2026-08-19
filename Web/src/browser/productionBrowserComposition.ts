@@ -61,6 +61,8 @@ export interface ProductionBrowserCompositionOptions {
   readonly ownershipNoticeChannel?: OwnershipNoticeChannel
   /** Native hosts inject their real Store authority through this composition seam. */
   readonly releasePlatformServices?: Readonly<ReleasePlatformServices>
+  /** Test seam for preserving release entitlement behavior outside Vite builds. */
+  readonly developmentBuild?: boolean
 }
 
 export interface ProductionBrowserComposition {
@@ -121,6 +123,8 @@ export function createProductionBrowserComposition(
     (options.createRuntime === undefined
       ? createOwnershipNoticeChannel()
       : undefined)
+  const developmentBuild =
+    options.developmentBuild ?? import.meta.env.DEV
   const runtime = runtimeFactory({
     createApplication,
     lifecyclePolicy: WEB_LIFECYCLE_POLICY,
@@ -139,9 +143,11 @@ export function createProductionBrowserComposition(
         options.releasePlatformServices?.entitlements,
       ),
     developmentControlsAvailable:
-      options.releasePlatformServices === undefined ? undefined : true,
+      developmentBuild || options.releasePlatformServices !== undefined
+        ? true
+        : undefined,
     developmentControlsRequireEntitlement:
-      options.releasePlatformServices !== undefined,
+      !developmentBuild && options.releasePlatformServices !== undefined,
   })
   const reloadPage =
     options.reloadPage ?? (() => window.location.reload())

@@ -1,29 +1,14 @@
-import { gameDataCatalog } from '../game-data/catalog'
 import type { SaveRepository } from '../save/repository'
 import {
   RepositoryStartupSaveResolver,
   type FirstRunSaveFactory,
 } from '../save/startupResolver'
 import {
-  createCapturedInfinityAssetLookup,
-  prepareCanonicalEventTimeContext,
-  type CanonicalEventTimeContext,
-} from '../simulation/canonicalEventTimeModel'
-import {
   CANONICAL_DYSON_PRESENTATION_TUNING,
   type DysonEntitlements,
   type DysonPresentationTuning,
 } from '../simulation/canonicalDysonDerivation'
-import {
-  SIMULATION_UPGRADE_DEFINITIONS,
-} from '../simulation/dreamEducationUpgrades'
-import { DEFAULT_AUTOMATION_INTERVAL_SECONDS } from '../simulation/eventTime'
-import {
-  REALITY_UPGRADE_DEFINITIONS,
-} from '../simulation/realityUpgrades'
-import {
-  readRealityWorkerTuning,
-} from '../simulation/realityWorkers'
+import { createProductionEventContext } from '../simulation/productionEventContext'
 import {
   createCanonicalGameApplication,
   type CanonicalGameApplicationFacade,
@@ -31,6 +16,9 @@ import {
 import {
   createCanonicalRuntimeSessionFactory,
 } from './canonicalRuntimeSession'
+import {
+  BrowserStoredTimeJobRunner,
+} from '../workers/storedTime/storedTimeJobRunner'
 
 export interface ProductionCanonicalApplicationFactoryOptions {
   /**
@@ -82,37 +70,12 @@ export function createProductionCanonicalApplicationFactory(
         entitlements,
       }),
       engine: { eventContext },
+      storedTimeJobRunner: new BrowserStoredTimeJobRunner(),
     })
   }
 }
 
-export function createProductionEventContext(
-  dysonPresentationTuning: Readonly<DysonPresentationTuning> =
-    CANONICAL_DYSON_PRESENTATION_TUNING,
-):
-  Readonly<CanonicalEventTimeContext> {
-  const realityWorkerTuning = readRealityWorkerTuning()
-  if (realityWorkerTuning === undefined) {
-    throw new Error(
-      'Generated RealitySystemTuning is unavailable or invalid.',
-    )
-  }
-  return prepareCanonicalEventTimeContext({
-    automationIntervalSeconds:
-      DEFAULT_AUTOMATION_INTERVAL_SECONDS,
-    dysonPresentationTuning: Object.freeze({
-      ...dysonPresentationTuning,
-    }),
-    realityWorkerTuning: Object.freeze({
-      ...realityWorkerTuning,
-    }),
-    dreamResetDefinitions: SIMULATION_UPGRADE_DEFINITIONS,
-    realityUpgradeDefinitions: REALITY_UPGRADE_DEFINITIONS,
-    infinityResetAssetLookup: createCapturedInfinityAssetLookup(
-      gameDataCatalog.assets,
-    ),
-  })
-}
+export { createProductionEventContext } from '../simulation/productionEventContext'
 
 function readEntitlements(
   readHostEntitlements: () => Readonly<DysonEntitlements>,

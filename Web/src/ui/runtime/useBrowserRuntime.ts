@@ -12,6 +12,7 @@ import type {
 import type {
   UiRuntimeFoundationStatus,
 } from './contracts'
+import type { StoredTimeJobStatus } from '../../workers/storedTime/storedTimeProtocol'
 
 export function useBrowserRuntimeStatus(
   runtime: BrowserUiRuntimeFoundation,
@@ -55,4 +56,23 @@ export function useBrowserRuntimeSnapshot(
     getSnapshot,
     getSnapshot,
   )
+}
+
+const IDLE_STORED_TIME_JOB = Object.freeze({
+  kind: 'idle' as const,
+})
+
+export function useBrowserStoredTimeJob(
+  runtime: BrowserUiRuntimeFoundation,
+): StoredTimeJobStatus {
+  const subscribe = useCallback(
+    (listener: () => void) =>
+      runtime.storedTime?.subscribe(listener) ?? (() => undefined),
+    [runtime],
+  )
+  const getSnapshot = useCallback(
+    () => runtime.storedTime?.status() ?? IDLE_STORED_TIME_JOB,
+    [runtime],
+  )
+  return useSyncExternalStore(subscribe, getSnapshot, getSnapshot)
 }

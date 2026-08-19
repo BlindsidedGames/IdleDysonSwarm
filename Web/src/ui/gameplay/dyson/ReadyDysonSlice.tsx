@@ -36,6 +36,7 @@ import {
 } from '../../i18n/localeRegistry'
 import {
   useBrowserRuntimeSnapshot,
+  useBrowserStoredTimeJob,
   type BrowserUiRuntimeFoundation,
   type UiRuntimeDevelopmentControls,
   type UiRuntimeImportPreviewResult,
@@ -50,7 +51,8 @@ import {
   SettingsSurface,
   type SettingsSurfaceProps,
 } from '../settings'
-import { DebugSurface } from '../debug'
+import { DebugSurface, type DebugSurfaceDraft } from '../debug'
+import type { OfflineTimeSurfaceDraft } from '../offline-time'
 import type { SkillPresetActions } from '../skills'
 import {
   beginFirstSliceSnapshotSelection,
@@ -81,6 +83,7 @@ import {
 import type { QuantumPurchaseQuantity } from '../quantum/quantumPurchaseQuantities'
 import type { ReleasePlatformServices } from '../../../platform/releaseFoundation'
 import { StorefrontController } from '../../../store/storefront'
+import type { StoredTimeJobStatus } from '../../../workers/storedTime/storedTimeProtocol'
 
 const BasicFacilityRegion = lazy(async () => {
   const module = await import('../facilities')
@@ -150,6 +153,10 @@ const WikiSurface = lazy(async () => {
 export const SWARM_VISUALIZATION_STORAGE_KEY =
   'idle-dyson-swarm.show-visualization'
 
+const IDLE_STORED_TIME_JOB: StoredTimeJobStatus = Object.freeze({
+  kind: 'idle',
+})
+
 type ReadySnapshot = DeepReadonly<
   Extract<
     FrontendApplicationSnapshot,
@@ -208,6 +215,7 @@ function UnprobedReadyDysonRuntimeHost({
     [runtime],
   )
   const snapshot = useBrowserRuntimeSnapshot(runtime)
+  const storedTimeJob = useBrowserStoredTimeJob(runtime)
   const telemetrySnapshotRef = useRef(snapshot)
   telemetrySnapshotRef.current = snapshot
   useEffect(
@@ -267,6 +275,8 @@ function UnprobedReadyDysonRuntimeHost({
       synchronizeHostEntitlements={runtime.synchronizeHostEntitlements}
       releasePlatformServices={releasePlatformServices}
       localDeveloperOptionsPurchased={localDeveloperOptionsPurchased}
+      storedTimeJob={storedTimeJob}
+      cancelStoredTimeJob={() => runtime.storedTime?.cancel()}
     />
   )
 }
@@ -300,6 +310,7 @@ export function ProbedReadyDysonRuntimeHost({
   )
   const selectionStartedAt = beginFirstSliceSnapshotSelection()
   const snapshot = useBrowserRuntimeSnapshot(runtime)
+  const storedTimeJob = useBrowserStoredTimeJob(runtime)
   const dispatchPlayer = useCallback(
     (command: CanonicalPlayerCommand) =>
       runtime.dispatchPlayer(command),
@@ -358,6 +369,8 @@ export function ProbedReadyDysonRuntimeHost({
       synchronizeHostEntitlements={runtime.synchronizeHostEntitlements}
       releasePlatformServices={releasePlatformServices}
       localDeveloperOptionsPurchased={localDeveloperOptionsPurchased}
+      storedTimeJob={storedTimeJob}
+      cancelStoredTimeJob={() => runtime.storedTime?.cancel()}
     />
   )
 }
@@ -394,6 +407,8 @@ export interface ReadyDysonSliceProps {
   readonly synchronizeHostEntitlements?: () => Promise<boolean>
   readonly releasePlatformServices?: Readonly<ReleasePlatformServices>
   readonly localDeveloperOptionsPurchased?: boolean
+  readonly storedTimeJob?: StoredTimeJobStatus
+  readonly cancelStoredTimeJob?: () => void
 }
 
 export type ReadyGameRoute =
@@ -471,6 +486,8 @@ export function ReadyDysonSlice({
   synchronizeHostEntitlements,
   releasePlatformServices,
   localDeveloperOptionsPurchased,
+  storedTimeJob = IDLE_STORED_TIME_JOB,
+  cancelStoredTimeJob = () => undefined,
 }: ReadyDysonSliceProps) {
   const intl = useIntl()
   const [visualizationVisible, setVisualizationVisible] =
@@ -484,6 +501,26 @@ export function ReadyDysonSlice({
     useState<SpaceAgePurchaseQuantity>(1)
   const [quantumPurchaseQuantity, setQuantumPurchaseQuantity] =
     useState<QuantumPurchaseQuantity>(1)
+  const debugDraftRef = useRef<DebugSurfaceDraft>({
+    amount: '1',
+    preset: 'early',
+  })
+  const offlineTimeDraftRef = useRef<OfflineTimeSurfaceDraft>({
+    selectedSeconds: null,
+    repeatSeconds: null,
+  })
+  const rememberDebugDraft = useCallback(
+    (draft: Readonly<DebugSurfaceDraft>) => {
+      debugDraftRef.current = { ...draft }
+    },
+    [],
+  )
+  const rememberOfflineTimeDraft = useCallback(
+    (draft: Readonly<OfflineTimeSurfaceDraft>) => {
+      offlineTimeDraftRef.current = { ...draft }
+    },
+    [],
+  )
   const storeVisible =
     releasePlatformServices !== undefined &&
     (releasePlatformServices.hostKind !== 'browser' ||
@@ -912,6 +949,8 @@ export function ReadyDysonSlice({
                 <DebugSurface
                   development={development}
                   locale={locale}
+                  initialDraft={debugDraftRef.current}
+                  onDraftChange={rememberDebugDraft}
                 />
               ),
             }
@@ -928,6 +967,9 @@ export function ReadyDysonSlice({
                   readSaveText={readSaveText}
                   downloadSave={downloadSave}
                   copySaveText={copySaveText}
+                  development={
+                    import.meta.env.DEV ? development : undefined
+                  }
                   visualizationVisible={visualizationVisible}
                   onVisualizationVisibleChange={(visible) => {
                     setVisualizationVisible(visible)
@@ -1427,6 +1469,14 @@ export function ReadyDysonSlice({
                                             ].routeAvailable,
                                         }}
                                         dispatchPlayer={dispatchPlayer}
+                                        jobStatus={storedTimeJob}
+                                        cancelJob={cancelStoredTimeJob}
+                                        initialDraft={
+                                          offlineTimeDraftRef.current
+                                        }
+                                        onDraftChange={
+                                          rememberOfflineTimeDraft
+                                        }
                                       />
                                     </Suspense>
                                   ),

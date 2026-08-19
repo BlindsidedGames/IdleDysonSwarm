@@ -13,6 +13,7 @@ import type { UiRuntimePlayerCommandResult } from '../../runtime'
 import { usePrefersReducedMotion } from '../../accessibility/useMediaQuery'
 import { useForwardProgressAnimation } from '../progress/useForwardProgressAnimation'
 import { offlineTimeMessages as messages } from './messages'
+import type { StoredTimeJobStatus } from '../../../workers/storedTime/storedTimeProtocol'
 import './offlineTime.css'
 
 type OfflineTimeCommand = Extract<
@@ -29,6 +30,11 @@ export interface OfflineTimeCommandAvailability {
   readonly requestStoredTimeSpend: boolean
 }
 
+export interface OfflineTimeSurfaceDraft {
+  readonly selectedSeconds: number | null
+  readonly repeatSeconds: number | null
+}
+
 export interface OfflineTimeSurfaceProps {
   readonly locale: EnabledLocale
   readonly resources: FrontendCanonicalResources['time']
@@ -43,6 +49,12 @@ export interface OfflineTimeSurfaceProps {
   readonly dispatchPlayer: (
     command: OfflineTimeCommand,
   ) => Promise<UiRuntimePlayerCommandResult>
+  readonly jobStatus?: StoredTimeJobStatus
+  readonly cancelJob?: () => void
+  readonly initialDraft?: Readonly<OfflineTimeSurfaceDraft>
+  readonly onDraftChange?: (
+    draft: Readonly<OfflineTimeSurfaceDraft>,
+  ) => void
 }
 
 const QUICK_AMOUNTS = Object.freeze([
@@ -64,6 +76,10 @@ export function OfflineTimeSurface({
   storedTimeCheater,
   commandAvailability,
   dispatchPlayer,
+  jobStatus = { kind: 'idle' },
+  cancelJob = () => undefined,
+  initialDraft,
+  onDraftChange,
 }: OfflineTimeSurfaceProps) {
   const intl = useIntl()
   const reducedMotion = usePrefersReducedMotion()
@@ -90,10 +106,15 @@ export function OfflineTimeSurface({
     reducedMotion,
   })
   const [selectedSeconds, setSelectedSeconds] = useState(() =>
-    defaultSelection(bankSeconds),
+    clampSelection(
+      initialDraft?.selectedSeconds ?? defaultSelection(bankSeconds),
+      bankSeconds,
+    ),
   )
   const [armed, setArmed] = useState(false)
-  const [repeatSeconds, setRepeatSeconds] = useState<number | null>(null)
+  const [repeatSeconds, setRepeatSeconds] = useState<number | null>(() =>
+    validRepeatSelection(initialDraft?.repeatSeconds, bankSeconds),
+  )
   const [pendingAction, setPendingAction] = useState<
     'spend' | 'upgrade' | null
   >(null)
@@ -115,9 +136,14 @@ export function OfflineTimeSurface({
   }, [bankSeconds])
 
   const select = (seconds: number): void => {
-    setSelectedSeconds(Math.max(0, Math.min(seconds, bankSeconds)))
+    const nextSelectedSeconds = clampSelection(seconds, bankSeconds)
+    setSelectedSeconds(nextSelectedSeconds)
     setArmed(false)
     setRepeatSeconds(null)
+    onDraftChange?.({
+      selectedSeconds: nextSelectedSeconds,
+      repeatSeconds: null,
+    })
     setFeedback(null)
   }
 
@@ -160,6 +186,10 @@ export function OfflineTimeSurface({
       ) {
         setFeedback({ kind: 'success', seconds: result.consumedSeconds })
         setRepeatSeconds(requestedSeconds)
+        onDraftChange?.({
+          selectedSeconds,
+          repeatSeconds: requestedSeconds,
+        })
       } else {
         setFeedback({ kind: 'failure' })
       }
@@ -284,6 +314,9 @@ export function OfflineTimeSurface({
         <article className="offline-time-card offline-time-card--spend">
           <h2>{intl.formatMessage(messages.spendHeading)}</h2>
           <p>{intl.formatMessage(messages.spendDescription)}</p>
+          <p className="offline-time-card__note">
+            {intl.formatMessage(messages.largeSpendDisclosure)}
+          </p>
           <output htmlFor="offline-time-amount">
             {intl.formatMessage(messages.selectedAmount, {
               duration: formatGameDuration(locale, selectedSeconds),
@@ -346,6 +379,44 @@ export function OfflineTimeSurface({
                   })}
           </Button>
 
+          {jobStatus.kind !== 'idle' ? (
+            <div className="offline-time-job" aria-live="polite">
+              <div
+                className="offline-time-job__progress"
+                role="progressbar"
+                aria-label={intl.formatMessage(messages.simulationProgress)}
+                aria-valuemin={0}
+                aria-valuemax={100}
+                aria-valuenow={Math.round(jobStatus.fraction * 100)}
+              >
+                <span
+                  aria-hidden="true"
+                  style={{ transform: `scaleX(${jobStatus.fraction})` }}
+                />
+              </div>
+              <p className="offline-time-job__status">
+                {jobStatus.kind === 'cancelling'
+                  ? intl.formatMessage(messages.cancelling)
+                  : intl.formatMessage(messages.progress, {
+                      percent: Math.round(jobStatus.fraction * 100),
+                      eta: jobStatus.estimatedRemainingMilliseconds === null
+                        ? intl.formatMessage(messages.calculating)
+                        : formatGameDuration(
+                            locale,
+                            jobStatus.estimatedRemainingMilliseconds / 1000,
+                          ),
+                    })}
+              </p>
+              <Button
+                variant="secondary"
+                disabled={jobStatus.kind === 'cancelling'}
+                onClick={cancelJob}
+              >
+                {intl.formatMessage(messages.cancel)}
+              </Button>
+            </div>
+          ) : null}
+
           {feedback ? (
             <p
               className={`offline-time-feedback offline-time-feedback--${feedback.kind}`}
@@ -390,4 +461,22 @@ export function OfflineTimeSurface({
 
 function defaultSelection(bankSeconds: number): number {
   return Math.max(0, Math.min(60, bankSeconds))
+}
+
+function clampSelection(seconds: number, bankSeconds: number): number {
+  if (!Number.isFinite(seconds)) return defaultSelection(bankSeconds)
+  return Math.max(0, Math.min(seconds, bankSeconds))
+}
+
+function validRepeatSelection(
+  seconds: number | null | undefined,
+  bankSeconds: number,
+): number | null {
+  return seconds !== undefined &&
+    seconds !== null &&
+    Number.isFinite(seconds) &&
+    seconds > 0 &&
+    seconds <= bankSeconds
+    ? seconds
+    : null
 }

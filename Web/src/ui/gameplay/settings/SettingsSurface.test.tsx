@@ -409,6 +409,51 @@ describe('SettingsSurface', () => {
     )
   })
 
+  test('toggles Developer Options for a development runtime', async () => {
+    const user = userEvent.setup()
+    let enabled = false
+    const apply = vi.fn().mockImplementation(async (action) => {
+      enabled = action.kind === 'purchase-debug-options'
+      return {
+        applied: true,
+        stateRevision: 2,
+        durableRevision: 2,
+      }
+    })
+    renderSettings(vi.fn(), {
+      status: () => ({
+        enabled,
+        entitled: true,
+        quantumShards: 0n,
+        strangeMatter: 0n,
+      }),
+      setDysonBots: vi.fn(),
+      unlockReality: vi.fn(),
+      apply,
+      simulateOfflineTime: vi.fn(),
+    })
+
+    await user.click(
+      screen.getByRole('button', { name: 'Development Menu' }),
+    )
+    const toggle = screen.getByRole('checkbox', {
+      name: 'Enable Developer Options',
+    })
+    expect(toggle).not.toBeChecked()
+
+    await user.click(toggle)
+    await waitFor(() => expect(toggle).toBeChecked())
+    expect(apply).toHaveBeenLastCalledWith({
+      kind: 'purchase-debug-options',
+    })
+
+    await user.click(toggle)
+    await waitFor(() => expect(toggle).not.toBeChecked())
+    expect(apply).toHaveBeenLastCalledWith({
+      kind: 'disable-debug-options',
+    })
+  })
+
   test('offers the canonical first-Infinity threshold as a real-state preset', async () => {
     const user = userEvent.setup()
     const setDysonBots = vi.fn().mockResolvedValue({

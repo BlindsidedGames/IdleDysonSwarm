@@ -2521,6 +2521,24 @@
       "value": "All"
     }
   ],
+  "offline-time.calculating": [
+    {
+      "type": 0,
+      "value": "calculating"
+    }
+  ],
+  "offline-time.cancel": [
+    {
+      "type": 0,
+      "value": "Cancel simulation"
+    }
+  ],
+  "offline-time.cancelling": [
+    {
+      "type": 0,
+      "value": "Cancelling safely…"
+    }
+  ],
   "offline-time.capacity": [
     {
       "type": 1,
@@ -2579,6 +2597,12 @@
       "value": "Offline Time is stored while you are away. Spend it to advance the whole game immediately. This storage is separate from Simulation Double Time."
     }
   ],
+  "offline-time.large-spend-disclosure": [
+    {
+      "type": 0,
+      "value": "Small spends replay every automation tick. Large spends execute up to 4,096 representative purchase decisions while continuous production still advances; omitted ticks make no purchases. Results may differ from exact replay, and splitting the same time into multiple spends may change results."
+    }
+  ],
   "offline-time.maximum-storage": [
     {
       "type": 0,
@@ -2615,6 +2639,24 @@
       "value": "Simulating…"
     }
   ],
+  "offline-time.progress": [
+    {
+      "type": 1,
+      "value": "percent"
+    },
+    {
+      "type": 0,
+      "value": "% complete · about "
+    },
+    {
+      "type": 1,
+      "value": "eta"
+    },
+    {
+      "type": 0,
+      "value": " remaining"
+    }
+  ],
   "offline-time.region": [
     {
       "type": 0,
@@ -2629,6 +2671,12 @@
     {
       "type": 1,
       "value": "duration"
+    }
+  ],
+  "offline-time.simulation-progress": [
+    {
+      "type": 0,
+      "value": "Offline Time simulation progress"
     }
   ],
   "offline-time.spend": [
@@ -4749,6 +4797,30 @@
     {
       "type": 0,
       "value": "Applying…"
+    }
+  ],
+  "settings.development.debug.description": [
+    {
+      "type": 0,
+      "value": "Shows the Debug Options page without requiring the in-game purchase. Development builds only."
+    }
+  ],
+  "settings.development.debug.failed": [
+    {
+      "type": 0,
+      "value": "Developer Options could not be changed."
+    }
+  ],
+  "settings.development.debug.title": [
+    {
+      "type": 0,
+      "value": "Developer Options"
+    }
+  ],
+  "settings.development.debug.toggle": [
+    {
+      "type": 0,
+      "value": "Enable Developer Options"
     }
   ],
   "settings.development.description": [

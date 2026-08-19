@@ -15,6 +15,7 @@ import {
   type BotCapCheckpointName,
 } from '../simulation/canonicalBotCapCheckpoint'
 import { parseUnityInvariantUtcTimestamp } from '../simulation/unityUtcTimestamp'
+import type { ParsedUtcTimestamp } from '../simulation/timeResources'
 import type {
   ApplicationCommandEnvelope,
   ApplicationSnapshot,
@@ -115,6 +116,14 @@ export interface CanonicalLifecycleCoordinatorOptions {
    * phase before it enters the coordinator.
    */
   readonly subscribeToLifecycle?: boolean
+  /**
+   * Optional synchronous departure receipt used when a host can be torn down
+   * before its normal asynchronous lifecycle save reaches durable storage.
+   */
+  readonly readPendingDepartureTimestamp?: () => ParsedUtcTimestamp
+  readonly clearPendingDepartureTimestamp?: (
+    expectedUtcMilliseconds?: number,
+  ) => void
 }
 
 export interface CanonicalLifecycleFailure {
@@ -247,6 +256,12 @@ export class CanonicalLifecycleCoordinator {
     | CanonicalLifecycleFailureSink
     | undefined
   private readonly subscribeToRawLifecycle: boolean
+  private readonly readPendingDepartureTimestamp:
+    | (() => ParsedUtcTimestamp)
+    | undefined
+  private readonly clearPendingDepartureTimestamp:
+    | ((expectedUtcMilliseconds?: number) => void)
+    | undefined
   private lifecycleState: LifecycleCoordinatorState | undefined
   private unsubscribe: (() => void) | undefined
   private operationTail: Promise<void> = Promise.resolve()
@@ -262,10 +277,15 @@ export class CanonicalLifecycleCoordinator {
     this.onLifecycleFailure = options.onLifecycleFailure
     this.subscribeToRawLifecycle =
       options.subscribeToLifecycle ?? true
+    this.readPendingDepartureTimestamp =
+      options.readPendingDepartureTimestamp
+    this.clearPendingDepartureTimestamp =
+      options.clearPendingDepartureTimestamp
   }
 
   async start(
     clockSample?: LifecycleClockSample,
+    pendingDepartureTimestamp?: ParsedUtcTimestamp,
   ): Promise<CanonicalAwayReplayResult> {
     if (this.disposed) {
       return {
@@ -295,7 +315,11 @@ export class CanonicalLifecycleCoordinator {
         createLifecycleState(snapshot, false),
         true,
       )
-      return this.replayAwayTime(admittedClockSample)
+      return this.replayAwayTime(
+        admittedClockSample,
+        pendingDepartureTimestamp ??
+          this.readPendingDepartureTimestamp?.(),
+      )
     })
   }
 
@@ -329,6 +353,7 @@ export class CanonicalLifecycleCoordinator {
   handlePlatformPhase(
     phase: LifecyclePhase,
     clockSample?: LifecycleClockSample,
+    pendingDepartureTimestamp?: ParsedUtcTimestamp,
   ): Promise<CanonicalLifecycleSaveResult | CanonicalAwayReplayResult> {
     let admittedClockSample: LifecycleClockSample
     try {
@@ -341,7 +366,11 @@ export class CanonicalLifecycleCoordinator {
     }
     return this.enqueue(async () => {
       if (phase === 'active') {
-        return this.replayAwayTime(admittedClockSample)
+        return this.replayAwayTime(
+          admittedClockSample,
+          pendingDepartureTimestamp ??
+            this.readPendingDepartureTimestamp?.(),
+        )
       }
       return this.handleLifecycleEvent(
         lifecycleEventForPhase(phase),
@@ -604,9 +633,17 @@ export class CanonicalLifecycleCoordinator {
   importSave(
     request: ImportSaveRequest,
   ): Promise<CanonicalCoordinatedImportResult> {
+    const pendingDepartureAtAdmission =
+      this.readPendingDepartureTimestamp?.()
     return this.enqueue(async () => {
       const imported = await this.application.importSave(request)
       if (!imported.imported) return imported
+
+      if (pendingDepartureAtAdmission?.status === 'valid') {
+        this.clearPendingDepartureTimestamp?.(
+          pendingDepartureAtAdmission.utcMilliseconds,
+        )
+      }
 
       const suppressAwayReplay =
         request.context?.kind === undefined ||
@@ -733,6 +770,7 @@ export class CanonicalLifecycleCoordinator {
 
   private async replayAwayTime(
     clockSample: LifecycleClockSample,
+    pendingQuitTimestamp?: ParsedUtcTimestamp,
   ): Promise<CanonicalAwayReplayResult> {
     const snapshot = this.application.snapshot()
     if (snapshot.phase !== 'ready') {
@@ -772,11 +810,15 @@ export class CanonicalLifecycleCoordinator {
             canonical: runtime.gameState,
             loaded: true,
           }
+    const persistedQuitTimestamp = parseUnityInvariantUtcTimestamp(
+      runtime.gameState.timeline.lastSuspendedAtLegacyText,
+    )
     const replay = applyAwayTimeReplay({
       state: current,
       clock: clockSample,
-      parsedQuitTimestamp: parseUnityInvariantUtcTimestamp(
-        runtime.gameState.timeline.lastSuspendedAtLegacyText,
+      parsedQuitTimestamp: earliestValidDepartureTimestamp(
+        persistedQuitTimestamp,
+        pendingQuitTimestamp,
       ),
       parsedStartedTimestamp: parseUnityInvariantUtcTimestamp(
         runtime.gameState.meta.createdAtLegacyText,
@@ -821,6 +863,11 @@ export class CanonicalLifecycleCoordinator {
       }
     }
     this.lifecycleState = replay.state
+    if (pendingQuitTimestamp?.status === 'valid') {
+      this.clearPendingDepartureTimestamp?.(
+        pendingQuitTimestamp.utcMilliseconds,
+      )
+    }
     return {
       replayed: true,
       committed: true,
@@ -1012,6 +1059,17 @@ function snapshotLifecycleClockSample(
     utcMilliseconds: sample.utcMilliseconds,
     serializedUtcText: sample.serializedUtcText,
   })
+}
+
+function earliestValidDepartureTimestamp(
+  persisted: ParsedUtcTimestamp,
+  pending: ParsedUtcTimestamp | undefined,
+): ParsedUtcTimestamp {
+  if (pending?.status !== 'valid') return persisted
+  if (persisted.status !== 'valid') return pending
+  return pending.utcMilliseconds < persisted.utcMilliseconds
+    ? pending
+    : persisted
 }
 
 function lifecycleEventForPhase(

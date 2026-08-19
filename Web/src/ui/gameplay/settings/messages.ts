@@ -271,6 +271,27 @@ export const settingsSurfaceMessages = defineMessages({
     description:
       'Explains the real-state development progression presets.',
   },
+  developmentDebugTitle: {
+    id: 'settings.development.debug.title',
+    defaultMessage: 'Developer Options',
+    description: 'Heading for the development-only debug access toggle.',
+  },
+  developmentDebugDescription: {
+    id: 'settings.development.debug.description',
+    defaultMessage:
+      'Shows the Debug Options page without requiring the in-game purchase. Development builds only.',
+    description: 'Explains the development-only debug access toggle.',
+  },
+  developmentDebugToggle: {
+    id: 'settings.development.debug.toggle',
+    defaultMessage: 'Enable Developer Options',
+    description: 'Toggles Developer Options in a development build.',
+  },
+  developmentDebugFailed: {
+    id: 'settings.development.debug.failed',
+    defaultMessage: 'Developer Options could not be changed.',
+    description: 'Failure feedback for the development-only debug toggle.',
+  },
   developmentPreset: {
     id: 'settings.development.preset',
     defaultMessage: 'Progression state',

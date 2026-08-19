@@ -15,6 +15,7 @@ export type {
   UiRuntimeDevelopmentAction,
   UiRuntimeDevelopmentActionResult,
   UiRuntimeDevelopmentStatus,
+  UiRuntimeStoredTimeControls,
   UiRuntimeCommandActivationRevision,
   UiRuntimeSuppliedFile,
   UiRuntimeDropData,
@@ -43,4 +44,5 @@ export type {
 export {
   useBrowserRuntimeSnapshot,
   useBrowserRuntimeStatus,
+  useBrowserStoredTimeJob,
 } from './useBrowserRuntime'

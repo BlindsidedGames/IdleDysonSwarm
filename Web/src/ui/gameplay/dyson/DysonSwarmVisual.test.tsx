@@ -31,13 +31,10 @@ describe('DysonSwarmVisual', () => {
     expect(stylesheet).not.toContain(
       'dyson-galaxy-member-counter-orbit',
     )
-    expect(stylesheet).toContain('dyson-field-galaxy-spin')
+    expect(stylesheet).not.toContain('dyson-field-galaxy-spin')
     expect(stylesheet).not.toContain('--galaxy-spin-duration')
-    expect(stylesheet).toMatch(
+    expect(stylesheet).not.toMatch(
       /\.dyson-swarm-visual__field-members\s*\{[^}]*animation:/,
-    )
-    expect(stylesheet).toMatch(
-      /@media \(pointer: coarse\)[\s\S]*\.dyson-swarm-visual__field-members[\s\S]*animation:\s*none/,
     )
     expect(stylesheet).toContain(
       'dyson-origin-galaxy-zoom-out',
@@ -50,6 +47,18 @@ describe('DysonSwarmVisual', () => {
     )
     expect(stylesheet).not.toMatch(
       /\.dyson-swarm-visual__galaxy-field\s*\{[^}]*animation:/,
+    )
+    expect(stylesheet).not.toMatch(
+      /\.dyson-swarm-visual__collector-field\s*\{[^}]*animation:/,
+    )
+    expect(stylesheet).toMatch(
+      /\.dyson-swarm-visual__collector-track\s*\{[^}]*animation:/,
+    )
+    expect(stylesheet).toMatch(
+      /@media \(pointer: coarse\)[\s\S]*\.dyson-swarm-visual__collector-track[\s\S]*animation:\s*none/,
+    )
+    expect(stylesheet).not.toContain(
+      'dyson-swarm-visual__orbit-plane-motion',
     )
   })
 
@@ -116,11 +125,22 @@ describe('DysonSwarmVisual', () => {
         '.dyson-swarm-visual__collector-plane[data-visible="true"]',
       ),
     ).toHaveLength(32)
-    expect(
-      container.querySelectorAll(
-        '.dyson-swarm-visual__orbit-plane',
-      ),
-    ).toHaveLength(4)
+    const orbitPlanes = container.querySelectorAll(
+      '.dyson-swarm-visual__orbit-plane',
+    )
+    expect(orbitPlanes).toHaveLength(4)
+    orbitPlanes.forEach((orbitPlane) => {
+      expect(
+        orbitPlane.querySelector(
+          ':scope > g > .dyson-swarm-visual__collector-track',
+        ),
+      ).not.toBeNull()
+      expect(
+        orbitPlane.querySelector(
+          ':scope > .dyson-swarm-visual__orbit-guide',
+        ),
+      ).not.toBeNull()
+    })
     expect(
       container.querySelectorAll(
         '.dyson-swarm-visual__collector-track',

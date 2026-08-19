@@ -127,6 +127,29 @@ describe('OfflineTimeSurface', () => {
     })
   })
 
+  test('restores and reports the spend-selection draft', async () => {
+    const user = userEvent.setup()
+    const onDraftChange = vi.fn()
+    renderSurface({
+      initialDraft: {
+        selectedSeconds: 600,
+        repeatSeconds: null,
+      },
+      onDraftChange,
+    })
+
+    expect(screen.getByRole('slider', { name: 'Spend Offline Time' }))
+      .toHaveValue('600')
+    expect(screen.getByRole('button', { name: '10 minutes' }))
+      .toHaveAttribute('aria-pressed', 'true')
+
+    await user.click(screen.getByRole('button', { name: '1 hour' }))
+    expect(onDraftChange).toHaveBeenLastCalledWith({
+      selectedSeconds: 3_600,
+      repeatSeconds: null,
+    })
+  })
+
   test('dispatches the canonical full-bank storage upgrade', async () => {
     const user = userEvent.setup()
     const dispatchPlayer = vi.fn().mockResolvedValue(acceptedTransition)
@@ -153,6 +176,31 @@ describe('OfflineTimeSurface', () => {
     expect(spend).toBeDisabled()
     await user.click(spend)
     expect(dispatchPlayer).not.toHaveBeenCalled()
+  })
+
+  test('shows worker progress and cancels without issuing another command', async () => {
+    const user = userEvent.setup()
+    const cancelJob = vi.fn()
+    renderSurface({
+      jobStatus: {
+        kind: 'running',
+        jobId: 'job-1',
+        requestedSeconds: 600,
+        computedSeconds: 150,
+        fraction: 0.25,
+        elapsedMilliseconds: 1_000,
+        estimatedRemainingMilliseconds: 3_000,
+        maximumChunkMilliseconds: 12,
+      },
+      cancelJob,
+    })
+
+    expect(screen.getByRole('progressbar', {
+      name: 'Offline Time simulation progress',
+    })).toHaveAttribute('aria-valuenow', '25')
+    expect(screen.getByText('25% complete · about 3s remaining')).toBeVisible()
+    await user.click(screen.getByRole('button', { name: 'Cancel simulation' }))
+    expect(cancelJob).toHaveBeenCalledOnce()
   })
 
   test('has no serious or critical accessibility violations', async () => {

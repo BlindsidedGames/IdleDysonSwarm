@@ -703,6 +703,117 @@ describe('canonical lifecycle coordinator', () => {
     ).resolves.toEqual(application.importResult)
     expect(application.awayCommits).toBe(0)
   })
+
+  test('recovers a receipt-time departure when page teardown lost the asynchronous lifecycle save', async () => {
+    const runtime = fixtureRuntimeWithoutQuitTimestamp()
+    runtime.gameState.timeline = {
+      ...runtime.gameState.timeline,
+      storedTimeAvailableSeconds: 0,
+      storedTimeCapacitySeconds: 100,
+      doubleTime: {
+        ...runtime.gameState.timeline.doubleTime,
+        bankSeconds: 0,
+      },
+    }
+    const application = new FakeCanonicalApplication(runtime)
+    let pendingDeparture = '2026-07-29T00:00:00Z'
+    const coordinator = new CanonicalLifecycleCoordinator({
+      application,
+      lifecycle: new FakeLifecycleAdapter(),
+      clock: fixedClock('2026-07-29T00:00:10Z'),
+      policy: MOBILE_LIFECYCLE_POLICY,
+      readPendingDepartureTimestamp: () => ({
+        status: 'valid',
+        utcMilliseconds: Date.parse(pendingDeparture),
+      }),
+      clearPendingDepartureTimestamp: () => {
+        pendingDeparture = ''
+      },
+    })
+
+    await expect(coordinator.start()).resolves.toMatchObject({
+      replayed: true,
+      committed: true,
+      grantedSeconds: 10,
+      storedTimeCreditedSeconds: 10,
+    })
+    expect(pendingDeparture).toBe('')
+    expect(
+      readyState(application.snapshot()).gameState.timeline
+        .storedTimeAvailableSeconds,
+    ).toBe(10)
+  })
+
+  test('preserves the earlier durable departure when a hidden startup also has a newer marker', async () => {
+    const runtime = fixtureRuntimeWithoutQuitTimestamp()
+    runtime.gameState.timeline = {
+      ...runtime.gameState.timeline,
+      lastSuspendedAtLegacyText: '2026-07-29T00:00:00Z',
+      storedTimeAvailableSeconds: 0,
+      storedTimeCapacitySeconds: 100,
+    }
+    const application = new FakeCanonicalApplication(runtime)
+    const coordinator = new CanonicalLifecycleCoordinator({
+      application,
+      lifecycle: new FakeLifecycleAdapter(),
+      clock: fixedClock('2026-07-29T00:00:10Z'),
+      policy: MOBILE_LIFECYCLE_POLICY,
+    })
+
+    await expect(
+      coordinator.start(
+        undefined,
+        {
+          status: 'valid',
+          utcMilliseconds: Date.parse('2026-07-29T00:00:05Z'),
+        },
+      ),
+    ).resolves.toMatchObject({
+      replayed: true,
+      grantedSeconds: 10,
+    })
+  })
+
+  test('retains a receipt-time departure until replay commits and clears it after a successful import', async () => {
+    const application = new FakeCanonicalApplication(
+      fixtureRuntimeWithoutQuitTimestamp(),
+    )
+    let pendingDeparture = true
+    const coordinator = new CanonicalLifecycleCoordinator({
+      application,
+      lifecycle: new FakeLifecycleAdapter(),
+      clock: fixedClock('2026-07-29T00:00:10Z'),
+      policy: MOBILE_LIFECYCLE_POLICY,
+      readPendingDepartureTimestamp: () =>
+        pendingDeparture
+          ? {
+              status: 'valid',
+              utcMilliseconds: Date.parse('2026-07-29T00:00:00Z'),
+            }
+          : { status: 'missing' },
+      clearPendingDepartureTimestamp: () => {
+        pendingDeparture = false
+      },
+    })
+    application.failAwayCommit = true
+
+    await expect(coordinator.start()).resolves.toMatchObject({
+      replayed: false,
+      committed: false,
+      code: 'commit-failed',
+    })
+    expect(pendingDeparture).toBe(true)
+
+    application.importedState = fixtureRuntimeWithoutQuitTimestamp()
+    await expect(
+      coordinator.importSave({
+        text: 'scripted import',
+        importedAtUtc: '2026-07-29T00:00:10Z',
+        overwriteApproved: true,
+      }),
+    ).resolves.toMatchObject({ imported: true })
+    expect(pendingDeparture).toBe(false)
+  })
 })
 
 class FakeCanonicalApplication

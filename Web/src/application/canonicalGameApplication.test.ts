@@ -249,6 +249,38 @@ describe('canonical game application engine', () => {
     expect(state.gameState.dyson.money).toBe(before + 125)
   })
 
+  test('credits debug offline time without advancing active gameplay', () => {
+    const state = runtime()
+    state.gameState.timeline = {
+      ...state.gameState.timeline,
+      storedTimeAvailableSeconds: 10,
+      storedTimeCapacitySeconds: 100,
+      doubleTime: {
+        ...state.gameState.timeline.doubleTime,
+        bankSeconds: 5,
+      },
+    }
+    const dysonBefore = structuredClone(state.gameState.dyson)
+    const statisticsBefore = structuredClone(state.gameState.statistics)
+    const definition = createCanonicalGameEngineDefinition({
+      eventContext: context(),
+    })
+
+    expect(
+      definition.applyCommand(state, {
+        kind: 'internal.development-apply-action',
+        action: { kind: 'add-offline-time', seconds: 1_000 },
+      }),
+    ).toEqual({ accepted: true, changed: true })
+    expect(state.gameState.timeline).toMatchObject({
+      storedTimeAvailableSeconds: 100,
+      storedTimeCapacitySeconds: 100,
+      doubleTime: { bankSeconds: 1_095 },
+    })
+    expect(state.gameState.dyson).toEqual(dysonBefore)
+    expect(state.gameState.statistics).toEqual(statisticsBefore)
+  })
+
   test('resets Avotation secret progress through Developer Options', () => {
     const state = runtime()
     Object.assign(state, {

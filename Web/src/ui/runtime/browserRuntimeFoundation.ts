@@ -21,6 +21,7 @@ import {
 } from '../../application/canonicalLifecycleCoordinator'
 import type { CanonicalPlayerCommand } from '../../application/canonicalPlayerCommands'
 import type { CanonicalDevelopmentAction } from '../../application/canonicalGameApplication'
+import type { StoredTimeJobListener } from '../../application/canonicalGameApplication'
 import type { CanonicalRuntimeState } from '../../application/canonicalRuntimeSession'
 import type {
   CanonicalSkillPresetSlot,
@@ -37,6 +38,10 @@ import {
   BrowserLifecycleAdapter,
   BrowserLifecycleUtcClock,
 } from '../../platform/browserLifecycle'
+import {
+  BrowserDepartureMarker,
+  type DepartureMarker,
+} from '../../platform/browserDepartureMarker'
 import {
   BrowserRecoveryBlobExporter,
   BrowserRecoveryBlobRetainer,
@@ -87,6 +92,7 @@ import {
 import type {
   LifecycleClockSample,
 } from '../../simulation/lifecycleAwayTime'
+import { parseUnityInvariantUtcTimestamp } from '../../simulation/unityUtcTimestamp'
 import {
   parseCanonicalSkillPreset,
   previewAddSkillToPreset,
@@ -141,11 +147,16 @@ interface BrowserRuntimeApplicationPort
   frontendSnapshot(
     previewDemand?: FrontendGameplayPreviewDemand,
   ): DeepReadonly<FrontendApplicationSnapshot>
+  storedTimeJobStatus?(): import('../../workers/storedTime/storedTimeProtocol').StoredTimeJobStatus
+  subscribeStoredTimeJob?(listener: StoredTimeJobListener): () => void
+  cancelStoredTimeJob?(): void
+  disposeStoredTimeJobRunner?(): void
 }
 
 interface BrowserLifecycleReceipt {
   readonly intentEpoch: number
   readonly clockSample: LifecycleClockSample
+  readonly pendingDepartureTimestamp: import('../../simulation/timeResources').ParsedUtcTimestamp
 }
 
 class LifecycleReceiptClockError extends Error {
@@ -189,6 +200,8 @@ export interface BrowserRuntimeFoundationOptions {
   /** Deterministic lifecycle orchestration test seam. */
   readonly lifecycle?: LifecycleAdapter
   readonly lifecycleClock?: CanonicalLifecycleClock
+  /** Deterministic synchronous page-teardown recovery seam. */
+  readonly departureMarker?: DepartureMarker
   readonly activeTimeClock?: ActiveTimeMonotonicClock
   readonly activeTimeScheduler?: ActiveTimeFrameScheduler
   readonly activeTimeDeliveryIntervalMilliseconds?: number
@@ -226,6 +239,7 @@ interface BrowserRuntimeGraph {
     readonly phase: LifecyclePhase
     readonly intentEpoch: number
     readonly clockSample: LifecycleClockSample
+    readonly pendingDepartureTimestamp: import('../../simulation/timeResources').ParsedUtcTimestamp
   }
   readonly router: AuthoritativeLifecycleRouter
   readonly activeTime: CoordinatorActiveTimeDriver<CanonicalCoordinatedActiveResult>
@@ -290,6 +304,12 @@ export function createBrowserRuntimeFoundation(
       implementation.takeOverWriterOwnership(),
     dispatchPlayer: (command: CanonicalPlayerCommand) =>
       implementation.dispatchPlayer(command),
+    storedTime: Object.freeze({
+      status: () => implementation.storedTimeJobStatus(),
+      subscribe: (listener: () => void) =>
+        implementation.subscribeStoredTimeJob(listener),
+      cancel: () => implementation.cancelStoredTimeJob(),
+    }),
     previewSkillPresetQueueChange: (request) =>
       implementation.previewSkillPresetQueueChange(request),
     exportSkillPreset: (slot) =>
@@ -356,6 +376,7 @@ class BrowserRuntimeFoundation implements BrowserUiRuntimeFoundation {
   private readonly lease: BrowserWriterLease
   private readonly lifecycle: LifecycleAdapter
   private readonly clock: CanonicalLifecycleClock
+  private readonly departureMarker: DepartureMarker
   private clipboard: ClipboardAdapter | undefined
   private readonly navigation: ExternalNavigationAdapter
   private readonly storageStatus: BrowserStorageStatusAdapter
@@ -378,6 +399,7 @@ class BrowserRuntimeFoundation implements BrowserUiRuntimeFoundation {
   // Foreground sampling may resume only when the latest visible intent has
   // completed any required canonical replay inside the authority fence.
   private lifecycleReconciledIntentEpoch = 0
+  private departureRecordedForCurrentEpisode = false
   // Every admitted import participates, including queued calls and failures.
   // Only the final completion may reopen foreground sampling.
   private pendingImportCount = 0
@@ -404,6 +426,11 @@ class BrowserRuntimeFoundation implements BrowserUiRuntimeFoundation {
       developmentOnlyRepositoryPaths(
         options.profileId ??
           DEVELOPMENT_ONLY_BROWSER_PROFILE_ID,
+      )
+    this.departureMarker =
+      options.departureMarker ??
+      new BrowserDepartureMarker(
+        `${databaseName}/${this.saveRepositoryPaths.current}`,
       )
     this.lease = new BrowserWriterLease({
       database: this.database,
@@ -553,6 +580,23 @@ class BrowserRuntimeFoundation implements BrowserUiRuntimeFoundation {
     return graph.playerCommands.dispatch(command)
   }
 
+  storedTimeJobStatus() {
+    return this.graph?.application.storedTimeJobStatus?.() ??
+      Object.freeze({ kind: 'idle' as const })
+  }
+
+  subscribeStoredTimeJob(listener: () => void): () => void {
+    const application = this.graph?.application
+    return application === undefined
+      ? () => undefined
+      : application.subscribeStoredTimeJob?.(() => listener()) ??
+        (() => undefined)
+  }
+
+  cancelStoredTimeJob(): void {
+    this.graph?.application.cancelStoredTimeJob?.()
+  }
+
   previewSkillPresetQueueChange(request: {
     readonly slot: CanonicalSkillPresetSlot
     readonly skillId: string
@@ -597,6 +641,7 @@ class BrowserRuntimeFoundation implements BrowserUiRuntimeFoundation {
       }
     }
     const entitled =
+      !this.developmentControlsRequireEntitlement ||
       snapshot.state.debugEntitlementPurchased === true ||
       this.options.hostEntitlements?.currentOwnership().developerOptions ===
         true
@@ -657,8 +702,9 @@ class BrowserRuntimeFoundation implements BrowserUiRuntimeFoundation {
     }
     const canonicalAction: CanonicalDevelopmentAction =
       action.kind === 'purchase-debug-options' &&
-      this.options.hostEntitlements?.currentOwnership().developerOptions ===
-        true
+      (!this.developmentControlsRequireEntitlement ||
+        this.options.hostEntitlements?.currentOwnership().developerOptions ===
+          true)
         ? { kind: 'enable-host-debug-options' }
         : action as CanonicalDevelopmentAction
     try {
@@ -699,13 +745,12 @@ class BrowserRuntimeFoundation implements BrowserUiRuntimeFoundation {
       return developmentNotReady()
     }
     try {
-      const result = await graph.router.run(async () => {
-        await graph.coordinator.advanceActive(seconds * 1_000)
-        return graph.coordinator.applyDevelopmentAction({
-          kind: 'add-double-time',
+      const result = await graph.router.run(() =>
+        graph.coordinator.applyDevelopmentAction({
+          kind: 'add-offline-time',
           seconds,
-        })
-      })
+        }),
+      )
       this.assertCurrentGraph(graph)
       this.publishFrontendSnapshot(graph)
       return developmentCommitResult(result)
@@ -1131,6 +1176,7 @@ class BrowserRuntimeFoundation implements BrowserUiRuntimeFoundation {
       const startupReplay = await graph.router.start(async () => {
         const replay = await graph.coordinator.start(
           graph.initialLifecycle.clockSample,
+          graph.initialLifecycle.pendingDepartureTimestamp,
         )
         if (
           graph.initialLifecycle.phase !== 'active' &&
@@ -1254,6 +1300,17 @@ class BrowserRuntimeFoundation implements BrowserUiRuntimeFoundation {
       clock: this.clock,
       policy: this.options.lifecyclePolicy,
       subscribeToLifecycle: false,
+      readPendingDepartureTimestamp: () =>
+        parseUnityInvariantUtcTimestamp(
+          this.departureMarker.read(),
+        ),
+      clearPendingDepartureTimestamp: (expectedUtcMilliseconds) => {
+        if (expectedUtcMilliseconds === undefined) {
+          this.departureMarker.clear()
+        } else {
+          this.departureMarker.clearIfMatches(expectedUtcMilliseconds)
+        }
+      },
     })
     let graph!: BrowserRuntimeGraph
     let activeTime!: CoordinatorActiveTimeDriver<CanonicalCoordinatedActiveResult>
@@ -1268,6 +1325,7 @@ class BrowserRuntimeFoundation implements BrowserUiRuntimeFoundation {
         return coordinator.handlePlatformPhase(
           phase,
           receipt.clockSample,
+          receipt.pendingDepartureTimestamp,
         )
       },
       beforePhase: (phase, observationError) => {
@@ -1468,6 +1526,7 @@ class BrowserRuntimeFoundation implements BrowserUiRuntimeFoundation {
       await graph.checkpoint.shutdown()
       if (orderly) await this.checkpointOrderlyShutdown(graph)
       await graph.coordinator.shutdown()
+      graph.application.disposeStoredTimeJobRunner?.()
     }
     if (orderly) await this.lease.release()
     await this.lease.shutdown()
@@ -1628,9 +1687,20 @@ class BrowserRuntimeFoundation implements BrowserUiRuntimeFoundation {
 
   private observeLifecyclePhase(
     phase: LifecyclePhase,
+    recordDeparture = true,
   ): BrowserLifecycleReceipt {
+    if (!this.phaseRunsActiveTime(phase)) {
+      // Lifecycle work is queued behind the active authority operation. Send
+      // cancellation out-of-band so a detached Stored Time candidate reaches
+      // a safe terminal state before the platform suspends this page.
+      this.graph?.application.cancelStoredTimeJob?.()
+    }
     const intentEpoch = this.captureLifecycleIntent(phase)
     try {
+      const pendingDepartureTimestamp =
+        parseUnityInvariantUtcTimestamp(
+          this.departureMarker.read(),
+        )
       const sampled = this.clock.sample()
       const serializedUtcText = sampled.serializedUtcText
       const parsedUtcMilliseconds =
@@ -1643,8 +1713,20 @@ class BrowserRuntimeFoundation implements BrowserUiRuntimeFoundation {
       ) {
         throw new LifecycleReceiptClockError()
       }
+      if (this.phaseRunsActiveTime(phase)) {
+        this.departureRecordedForCurrentEpisode = false
+      } else if (
+        recordDeparture &&
+        !this.departureRecordedForCurrentEpisode
+      ) {
+        this.departureMarker.record(serializedUtcText)
+        this.departureRecordedForCurrentEpisode = true
+      } else if (!recordDeparture) {
+        this.departureRecordedForCurrentEpisode = true
+      }
       return Object.freeze({
         intentEpoch,
+        pendingDepartureTimestamp,
         clockSample: Object.freeze({
           utcMilliseconds: sampled.utcMilliseconds,
           serializedUtcText,

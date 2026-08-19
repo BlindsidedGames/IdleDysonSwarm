@@ -145,6 +145,38 @@ describe('DebugSurface', () => {
     await waitFor(() => expect(simulateOfflineTime).toHaveBeenCalledWith(12))
   })
 
+  test('restores a supplied draft and reports field changes', async () => {
+    const user = userEvent.setup()
+    const onDraftChange = vi.fn()
+    render(
+      <IntlProvider locale="en">
+        <DebugSurface
+          development={controls()}
+          locale="en"
+          initialDraft={{ amount: '42', preset: 'star' }}
+          onDraftChange={onDraftChange}
+        />
+      </IntlProvider>,
+    )
+
+    const amount = screen.getByRole('textbox', { name: 'Amount' })
+    const preset = screen.getByRole('combobox', { name: 'Bot count' })
+    expect(amount).toHaveValue('42')
+    expect(preset).toHaveValue('star')
+
+    await user.clear(amount)
+    await user.type(amount, '7')
+    expect(onDraftChange).toHaveBeenLastCalledWith({
+      amount: '7',
+      preset: 'star',
+    })
+    await user.selectOptions(preset, 'deep-field')
+    expect(onDraftChange).toHaveBeenLastCalledWith({
+      amount: '7',
+      preset: 'deep-field',
+    })
+  })
+
   test('routes secret progress reset through the development boundary', async () => {
     const user = userEvent.setup()
     const apply = vi.fn().mockResolvedValue({

@@ -265,6 +265,35 @@ describe('ReadyDysonSlice', () => {
     expect(onRouteChange).toHaveBeenCalledWith('bots')
   })
 
+  test('exposes the development menu from Settings in development runtimes', () => {
+    render(
+      provider(
+        <ReadyDysonSlice
+          snapshot={snapshot()}
+          locale="en"
+          dispatchPlayer={acceptedDispatch}
+          route="settings"
+          development={{
+            status: () => ({
+              enabled: false,
+              entitled: true,
+              quantumShards: 0n,
+              strangeMatter: 0n,
+            }),
+            setDysonBots: vi.fn(),
+            unlockReality: vi.fn(),
+            apply: vi.fn(),
+            simulateOfflineTime: vi.fn(),
+          }}
+        />,
+      ),
+    )
+
+    expect(
+      screen.getByRole('button', { name: 'Development Menu' }),
+    ).toBeInTheDocument()
+  })
+
   test('enables the dedicated Debug Options page for development runtimes', () => {
     render(
       provider(
@@ -293,6 +322,50 @@ describe('ReadyDysonSlice', () => {
     expect(
       screen.queryByText('Save data'),
     ).not.toBeInTheDocument()
+  })
+
+  test('preserves Debug Options drafts across route switches', async () => {
+    const user = userEvent.setup()
+    const development = {
+      status: () => ({
+        enabled: true,
+        entitled: true,
+        quantumShards: 0n,
+        strangeMatter: 0n,
+      }),
+      setDysonBots: vi.fn(),
+      unlockReality: vi.fn(),
+      apply: vi.fn(),
+      simulateOfflineTime: vi.fn(),
+    }
+    const renderAtRoute = (route: 'bots' | 'debug') => provider(
+      <ReadyDysonSlice
+        snapshot={snapshot()}
+        locale="en"
+        dispatchPlayer={acceptedDispatch}
+        route={route}
+        development={development}
+      />,
+    )
+    const view = render(renderAtRoute('debug'))
+
+    const amount = screen.getByRole('textbox', { name: 'Amount' })
+    await user.clear(amount)
+    await user.type(amount, '42')
+    await user.selectOptions(
+      screen.getByRole('combobox', { name: 'Bot count' }),
+      'star',
+    )
+
+    view.rerender(renderAtRoute('bots'))
+    expect(screen.queryByRole('textbox', { name: 'Amount' }))
+      .not.toBeInTheDocument()
+    view.rerender(renderAtRoute('debug'))
+
+    expect(screen.getByRole('textbox', { name: 'Amount' }))
+      .toHaveValue('42')
+    expect(screen.getByRole('combobox', { name: 'Bot count' }))
+      .toHaveValue('star')
   })
 
   test('switches to the teal Research route and renders canonical cards', async () => {
@@ -703,6 +776,38 @@ describe('ReadyDysonSlice', () => {
       })
     },
   )
+
+  test('preserves the Offline Time selection across route switches', async () => {
+    const renderAtRoute = (route: 'bots' | 'offline-time') => provider(
+      <ReadyDysonSlice
+        snapshot={snapshot()}
+        locale="en"
+        dispatchPlayer={acceptedDispatch}
+        route={route}
+      />,
+    )
+    const view = render(renderAtRoute('offline-time'))
+
+    await waitFor(() => {
+      expect(screen.getByRole('slider', { name: 'Spend Offline Time' }))
+        .toBeInTheDocument()
+    })
+    await userEvent.setup().click(
+      screen.getByRole('button', { name: '10 minutes' }),
+    )
+
+    view.rerender(renderAtRoute('bots'))
+    expect(screen.queryByRole('slider', { name: 'Spend Offline Time' }))
+      .not.toBeInTheDocument()
+    view.rerender(renderAtRoute('offline-time'))
+
+    await waitFor(() => {
+      expect(screen.getByRole('slider', { name: 'Spend Offline Time' }))
+        .toHaveValue('600')
+    })
+    expect(screen.getByRole('button', { name: '10 minutes' }))
+      .toHaveAttribute('aria-pressed', 'true')
+  })
 
   test('shows the Store route only when native host services are injected', async () => {
     const browserRouteChange = vi.fn()

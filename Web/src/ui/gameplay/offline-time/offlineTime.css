@@ -257,6 +257,35 @@
   min-block-size: 1.2em;
 }
 
+.offline-time-job {
+  display: grid;
+  gap: 0.65rem;
+  margin-block-start: 0.8rem;
+}
+
+.offline-time-job__progress {
+  height: 0.55rem;
+  overflow: hidden;
+  border-radius: 0.2rem;
+  background: color-mix(in srgb, var(--offline-panel-raised) 75%, black);
+}
+
+.offline-time-job__progress > span {
+  display: block;
+  width: 100%;
+  height: 100%;
+  transform-origin: left center;
+  background: var(--offline-accent-bright);
+}
+
+.offline-time-card .offline-time-job__status {
+  color: var(--ids-text-secondary);
+}
+
+.offline-time-job .ui-button {
+  justify-self: start;
+}
+
 .offline-time-card .offline-time-feedback--success {
   color: #91dd8f;
 }

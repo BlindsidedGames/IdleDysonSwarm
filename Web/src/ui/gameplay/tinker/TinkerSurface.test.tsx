@@ -755,6 +755,9 @@ describe('TinkerSurface presentation and accessibility', () => {
     expect(
       screen.getByText('Hold anywhere to repeat...'),
     ).toBeInTheDocument()
+    expect(tinkerCss).toMatch(
+      /\.tinker-surface__hold-label\s*\{[\s\S]*inset-block-start:\s*50%;[\s\S]*transform:\s*translateY\(-50%\);/,
+    )
     expect(
       screen.queryByRole('button', { name: /repeat/i }),
     ).not.toBeInTheDocument()
