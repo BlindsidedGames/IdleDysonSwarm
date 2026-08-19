@@ -688,12 +688,11 @@ release.
 ### Budgets
 
 - Initial first-slice JavaScript is measured and reported on every production
-  checkpoint. The earlier 200 KiB gzip cap is a provisional optimization target,
-  not a blocker for the Bots visual/parity checkpoint. The current reviewed
-  build is approximately 208.8 KiB gzip before any later-destination code.
-  Freeze a realistic warning and hard ceiling only after profiling startup,
-  interaction and representative-device behavior; do not trade familiar UI or
-  canonical architecture for an arbitrary one-number reduction.
+  checkpoint. The temporary no-regression ceiling is 301 KiB gzip and is
+  enforced. The first reduction milestone is 250 KiB gzip and currently warns;
+  200 KiB remains the eventual architectural target. Do not trade familiar UI,
+  canonical correctness, or honest transfer accounting for an arbitrary
+  one-number reduction.
 - Initial first-slice CSS: at most 40 KiB gzip.
 - Initial source-locale fonts: at most 250 KiB transferred. Additional
   script-specific fonts and locale catalogs are lazy and separately budgeted.
@@ -746,9 +745,10 @@ transfer size of the source-locale fonts and writes deterministic text and JSON
 under `reports/initial-request-bundle/`.
 
 JavaScript and CSS assets are measured with gzip rather than guessed or manually
-named chunks. The provisional 200 KiB boot-JavaScript target produces a warning
-without failing the command during the Bots design-baseline checkpoint. Enforced
-CSS, shared-locale, or source-font overages exit nonzero.
+named chunks. The 301 KiB boot-JavaScript no-regression ceiling is enforced;
+the 250 KiB first milestone produces a warning, and 200 KiB remains the eventual
+target. Enforced JavaScript, CSS, shared-locale, or source-font overages exit
+nonzero.
 
 ## Testing standard
 
@@ -912,9 +912,10 @@ Approval should explicitly confirm or amend:
   locales, with the Unity-derived dark-plum visual direction and reference
   tokens above. Approved 2026-07-29.
 - [x] WCAG 2.2 AA, responsive and proportionate testing standards above.
-- [ ] Freeze the final initial-JavaScript warning and hard ceiling after the
-  Bots baseline is profiled on representative devices; the provisional 200 KiB
-  target is reported but does not block this visual/parity checkpoint.
+- [x] Enforce the temporary 301 KiB initial-JavaScript no-regression ceiling,
+  warn at the 250 KiB first milestone, and retain 200 KiB as the eventual target.
+  Representative-device evidence can tighten the ceiling after Web release
+  profiling.
 - [x] Error containment, the measured 2 MiB/1 MiB/8 MiB import ceilings,
   CSP/native-shell isolation, diagnostic redaction and no production analytics,
   remote crash reporting or real-user monitoring in this foundation.

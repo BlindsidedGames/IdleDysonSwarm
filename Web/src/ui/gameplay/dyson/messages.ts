@@ -120,6 +120,11 @@ export const readyDysonMessages = defineMessages({
     defaultMessage: 'Offline Time',
     description: 'Unity Offline Time destination.',
   },
+  simulationTimeMultiplier: {
+    id: 'dyson.simulations.time-multiplier',
+    defaultMessage: 'Time multiplier',
+    description: 'Accessible name for the Simulation time multiplier controls.',
+  },
   offlineTimeProgress: {
     id: 'navigation.offline-time-progress',
     defaultMessage: 'Offline Time, {stored} of {capacity} stored',

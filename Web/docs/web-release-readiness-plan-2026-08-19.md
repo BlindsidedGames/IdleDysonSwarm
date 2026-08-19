@@ -1,6 +1,6 @@
 # Web release readiness plan
 
-Status: approved plan, implementation not started
+Status: implementation in progress; Phases 0 through 5 complete
 
 Recorded: 2026-08-19 AEST
 
@@ -11,6 +11,18 @@ scope. They will be planned later, after the Web build is accepted.
 
 The post-icon-conversion performance baseline is recorded in
 `docs/web-performance-baseline-2026-08-19.md`.
+
+## Implementation progress
+
+- Phases 0 and 1: checkpoint and test foundation completed in `87363528`.
+- Phase 2: Stored Time domain ownership completed in `a4e5b6c7`.
+- Phase 3: frontend presentation isolation completed in `a2eca0e8`.
+- Phase 4: Skills presentation stabilization completed in `09d5fc98`.
+- Phase 5: bundle separation completed and independently reviewed. Boot
+  JavaScript fell from 300.03 KiB to 282.61 KiB gzip and boot CSS fell from
+  19.16 KiB to 12.46 KiB gzip. The 250 KiB milestone remains future work; the
+  report now distinguishes initial page loading from the PWA precache package.
+- Phase 6 is next. No Android or iOS testing has been added to scope.
 
 ## Preparation already completed
 

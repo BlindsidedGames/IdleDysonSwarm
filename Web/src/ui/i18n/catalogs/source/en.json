@@ -799,6 +799,10 @@
     "defaultMessage": "Toggle All",
     "description": "Sets every visible Bots auto-purchase option together."
   },
+  "dyson.simulations.time-multiplier": {
+    "defaultMessage": "Time multiplier",
+    "description": "Accessible name for the Simulation time multiplier controls."
+  },
   "dyson.swarm.region": {
     "defaultMessage": "Dyson swarm",
     "description": "Accessible region name for the decorative Unity-style swarm visual."

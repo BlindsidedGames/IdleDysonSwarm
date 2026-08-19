@@ -84,7 +84,7 @@ const report = Object.freeze({
 })
 const lines = [
   'Idle Dyson Swarm boot and fresh-Bots bundle report',
-  'Policy: 200 KiB boot JavaScript is provisional; CSS, locale, and source-font limits are enforced.',
+  'Policy: 301 KiB is the temporary enforced no-regression ceiling, 250 KiB is the first provisional milestone, and 200 KiB remains the eventual target.',
   `Manifest: ${report.manifest}`,
   '',
   'Boot graph (entry plus awaited English catalog):',

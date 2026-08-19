@@ -22,6 +22,7 @@
     "native:electron:package:linux": "npm run build:native && electron-builder --config hosts/electron/electron-builder.yml --linux",
     "build:performance": "tsc -b && vite build --mode performance",
     "report:initial-request-bundle": "npm run build && tsx scripts/report-initial-request-bundle.ts",
+    "report:bundle-composition": "tsx scripts/report-bundle-composition.ts",
     "verify:normal-performance-build": "npm run report:initial-request-bundle && tsx scripts/performance/assertNormalBuildExcludesCommitProbe.ts",
     "report:performance:interaction": "npm run build:performance && tsx scripts/performance/runInteractionReport.ts",
     "report:performance:interaction:smoke": "npm run build:performance && tsx scripts/performance/runInteractionReport.ts --smoke",

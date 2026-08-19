@@ -268,7 +268,7 @@ describe('ReadyDysonSlice', () => {
     expect(onRouteChange).toHaveBeenCalledWith('bots')
   })
 
-  test('exposes the development menu from Settings in development runtimes', () => {
+  test('exposes the development menu from Settings in development runtimes', async () => {
     render(
       provider(
         <ReadyDysonSlice
@@ -293,11 +293,11 @@ describe('ReadyDysonSlice', () => {
     )
 
     expect(
-      screen.getByRole('button', { name: 'Development Menu' }),
+      await screen.findByRole('button', { name: 'Development Menu' }),
     ).toBeInTheDocument()
   })
 
-  test('enables the dedicated Debug Options page for development runtimes', () => {
+  test('enables the dedicated Debug Options page for development runtimes', async () => {
     render(
       provider(
         <ReadyDysonSlice
@@ -320,7 +320,7 @@ describe('ReadyDysonSlice', () => {
       screen.getByRole('heading', { level: 1, name: 'Debug Options' }),
     ).toBeInTheDocument()
     expect(
-      screen.getByRole('combobox', { name: 'Bot count' }),
+      await screen.findByRole('combobox', { name: 'Bot count' }),
     ).toBeInTheDocument()
     expect(
       screen.queryByText('Save data'),
@@ -352,11 +352,11 @@ describe('ReadyDysonSlice', () => {
     )
     const view = render(renderAtRoute('debug'))
 
-    const amount = screen.getByRole('textbox', { name: 'Amount' })
+    const amount = await screen.findByRole('textbox', { name: 'Amount' })
     await user.clear(amount)
     await user.type(amount, '42')
     await user.selectOptions(
-      screen.getByRole('combobox', { name: 'Bot count' }),
+      await screen.findByRole('combobox', { name: 'Bot count' }),
       'star',
     )
 
@@ -365,7 +365,7 @@ describe('ReadyDysonSlice', () => {
       .not.toBeInTheDocument()
     view.rerender(renderAtRoute('debug'))
 
-    expect(screen.getByRole('textbox', { name: 'Amount' }))
+    expect(await screen.findByRole('textbox', { name: 'Amount' }))
       .toHaveValue('42')
     expect(screen.getByRole('combobox', { name: 'Bot count' }))
       .toHaveValue('star')
@@ -904,16 +904,19 @@ describe('ReadyDysonSlice', () => {
     expect(browserRouteChange).toHaveBeenCalledWith('bots')
     cleanup()
 
+    const nativeServices = platformServices('desktop-native')
+    const products = vi.spyOn(nativeServices.store, 'products')
+    const renderNativeRoute = (route: 'bots' | 'store') => provider(
+      <ReadyDysonSlice
+        snapshot={snapshot()}
+        locale="en"
+        dispatchPlayer={acceptedDispatch}
+        route={route}
+        releasePlatformServices={nativeServices}
+      />,
+    )
     const native = render(
-      provider(
-        <ReadyDysonSlice
-          snapshot={snapshot()}
-          locale="en"
-          dispatchPlayer={acceptedDispatch}
-          route="store"
-          releasePlatformServices={platformServices('desktop-native')}
-        />,
-      ),
+      renderNativeRoute('store'),
     )
     await waitFor(() => {
       expect(native.container.querySelector('.store-surface'))
@@ -925,6 +928,15 @@ describe('ReadyDysonSlice', () => {
     expect(
       screen.getByRole('heading', { level: 1, name: 'Store' }),
     ).toBeInTheDocument()
+    expect(products).toHaveBeenCalledTimes(1)
+
+    native.rerender(renderNativeRoute('bots'))
+    native.rerender(renderNativeRoute('store'))
+    await waitFor(() => {
+      expect(native.container.querySelector('.store-surface'))
+        .toBeInTheDocument()
+    })
+    expect(products).toHaveBeenCalledTimes(1)
   })
 
   test('keeps optional pages in the menu while respecting shortcut preferences', () => {

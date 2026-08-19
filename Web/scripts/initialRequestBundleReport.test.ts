@@ -68,21 +68,22 @@ describe('initial request bundle report', () => {
     ])
   })
 
-  test('warns for provisional JavaScript while enforcing the other resource limits', () => {
+  test('enforces the JavaScript ceiling while warning on the first milestone', () => {
     const budgets = createInitialRequestBudgets(
-      [{ file: 'assets/main.js', bytes: 201 * 1024, gzipBytes: 200 * 1024 }],
+      [{ file: 'assets/main.js', bytes: 252 * 1024, gzipBytes: 251 * 1024 }],
       [{ file: 'assets/en.js', bytes: 1024, gzipBytes: 1024 }],
       [{ file: 'assets/source.ttf', bytes: 250 * 1024, gzipBytes: 1 }],
     )
     expect(budgets.map(({ actualBytes }) => actualBytes)).toEqual([
-      201 * 1024,
+      252 * 1024,
+      252 * 1024,
       0,
       1024,
       250 * 1024,
     ])
     expect(budgetFailures(budgets)).toEqual([])
     expect(budgetWarnings(budgets).map(({ name }) => name)).toEqual([
-      'Boot-graph JavaScript',
+      'Boot-graph JavaScript first milestone',
     ])
   })
 

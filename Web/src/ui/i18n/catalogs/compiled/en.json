@@ -1913,6 +1913,12 @@
       "value": "Toggle All"
     }
   ],
+  "dyson.simulations.time-multiplier": [
+    {
+      "type": 0,
+      "value": "Time multiplier"
+    }
+  ],
   "dyson.swarm.region": [
     {
       "type": 0,

@@ -10,9 +10,10 @@ Set `IDS_CHROMIUM_PATH` when Chrome or Edge is not installed in a standard
 location.
 
 Build the normal minified production application, record its boot graph and
-completed fresh-Bots transfer, enforce the CSS, English-catalog and aggregate
-source-font ceilings, report the provisional 200 KiB JavaScript target as a
-warning, and verify that no performance-probe marker or recorder remains:
+completed fresh-Bots transfer, enforce the temporary 301 KiB gzip JavaScript
+no-regression ceiling plus the CSS, English-catalog and aggregate source-font
+ceilings, report the 250 KiB JavaScript milestone as a warning, and verify that
+no performance-probe marker or recorder remains:
 
 ```powershell
 npm run verify:normal-performance-build
@@ -21,8 +22,10 @@ npm run verify:normal-performance-build
 The boot graph is the application entry plus the English catalog awaited before
 React first renders. The report lists the lazy facility chunk separately because
 the fresh-save `????` teaser requests it to complete the approved Bots surface.
-The JavaScript target does not make this command fail during the current design
-baseline. An enforced CSS, catalog, or source-font overage does.
+The 250 KiB milestone does not make this command fail. Exceeding the 301 KiB
+no-regression ceiling or an enforced CSS, catalog, or source-font limit does.
+The 200 KiB figure remains an eventual architectural target, not a current
+release gate.
 
 ## Interaction trace and synthetic Web Vitals
 

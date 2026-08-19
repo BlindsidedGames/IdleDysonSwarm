@@ -37,7 +37,10 @@ export interface BundleBudget {
 }
 
 export const INITIAL_REQUEST_BUDGETS = Object.freeze({
-  initialJavaScript: 200 * 1024,
+  // The measured pre-separation baseline was 300.03 KiB gzip. Keep a small
+  // deterministic-build allowance while preventing a return to that size.
+  initialJavaScriptCeiling: 301 * 1024,
+  initialJavaScriptMilestone: 250 * 1024,
   initialCss: 40 * 1024,
   sharedLocale: 30 * 1024,
   sourceLocaleFonts: 250 * 1024,
@@ -164,10 +167,17 @@ export function createInitialRequestBudgets(
   const localeTypes = classifyGzipAssets(localeAssets)
   return Object.freeze([
     {
-      name: 'Boot-graph JavaScript',
-      limitBytes: INITIAL_REQUEST_BUDGETS.initialJavaScript,
+      name: 'Boot-graph JavaScript no-regression ceiling',
+      limitBytes: INITIAL_REQUEST_BUDGETS.initialJavaScriptCeiling,
       // Startup awaits the selected catalog before React's first render, so it
       // is part of the boot graph as well as its own sub-budget.
+      actualBytes: sumGzipBytes([...bootTypes.js, ...localeTypes.js]),
+      transfer: 'gzip',
+      enforcement: 'enforced',
+    },
+    {
+      name: 'Boot-graph JavaScript first milestone',
+      limitBytes: INITIAL_REQUEST_BUDGETS.initialJavaScriptMilestone,
       actualBytes: sumGzipBytes([...bootTypes.js, ...localeTypes.js]),
       transfer: 'gzip',
       enforcement: 'provisional-warning',

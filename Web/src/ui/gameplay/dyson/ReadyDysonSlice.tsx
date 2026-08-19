@@ -48,11 +48,8 @@ import {
   reportDevelopmentTelemetry,
   startDevelopmentTelemetry,
 } from '../../runtime/developmentTelemetry'
-import {
-  SettingsSurface,
-  type SettingsSurfaceProps,
-} from '../settings'
-import { DebugSurface, type DebugSurfaceDraft } from '../debug'
+import type { SettingsSurfaceProps } from '../settings'
+import type { DebugSurfaceDraft } from '../debug'
 import type { OfflineTimeSurfaceDraft } from '../offline-time'
 import type { SkillPresetActions } from '../skills'
 import {
@@ -66,27 +63,20 @@ import {
   BotDistribution,
   DysonInfo,
 } from './DysonControls'
+import { LazySurfacePending } from './LazySurfacePending'
 import {
   DysonProductionSummary,
 } from './DysonLowerFacts'
 import { DysonSwarmVisual } from './DysonSwarmVisual'
-import {
-  SimulationTimeControl,
-  type SpaceAgePurchaseQuantity,
-} from '../simulations/SimulationsSurface'
+import type { SpaceAgePurchaseQuantity } from '../simulations/SimulationsSurface'
 import {
   wikiProgressionFromResources,
   type WikiCategoryId,
 } from '../wiki/wikiProjection'
 import { AvocatoMeditationSecretTrigger } from '../quantum/AvocatoMeditationSecretTrigger'
-import { AvotationCompletionOverlay } from '../quantum/AvotationProgress'
 import type { AvocatoMeditationPlacement } from '../quantum/meditationTargets'
-import {
-  QuantumControlPanel,
-} from '../quantum/QuantumSurface'
 import type { QuantumPurchaseQuantity } from '../quantum/quantumPurchaseQuantities'
 import type { ReleasePlatformServices } from '../../../platform/releaseFoundation'
-import { StorefrontController } from '../../../store/storefront'
 import type { StoredTimeJobStatus } from '../../../workers/storedTime/storedTimeProtocol'
 
 const BasicFacilityRegion = lazy(async () => {
@@ -139,11 +129,6 @@ const StatisticsSurface = lazy(async () => {
   return { default: module.StatisticsSurface }
 })
 
-const StoreSurface = lazy(async () => {
-  const module = await import('../store')
-  return { default: module.StoreSurface }
-})
-
 const StorySurface = lazy(async () => {
   const module = await import('../story')
   return { default: module.StorySurface }
@@ -159,6 +144,36 @@ export const SWARM_VISUALIZATION_STORAGE_KEY =
 
 const IDLE_STORED_TIME_JOB: StoredTimeJobStatus = Object.freeze({
   kind: 'idle',
+})
+
+const SettingsSurface = lazy(async () => {
+  const module = await import('../settings')
+  return { default: module.SettingsSurface }
+})
+
+const DebugSurface = lazy(async () => {
+  const module = await import('../debug')
+  return { default: module.DebugSurface }
+})
+
+const SimulationTimeControl = lazy(async () => {
+  const module = await import('../simulations/SimulationsSurface')
+  return { default: module.SimulationTimeControl }
+})
+
+const QuantumControlPanel = lazy(async () => {
+  const module = await import('../quantum/QuantumSurface')
+  return { default: module.QuantumControlPanel }
+})
+
+const AvotationCompletionOverlay = lazy(async () => {
+  const module = await import('../quantum/AvotationProgress')
+  return { default: module.AvotationCompletionOverlay }
+})
+
+const StoreRouteSurface = lazy(async () => {
+  const module = await import('../store')
+  return { default: module.StoreRouteSurface }
 })
 
 type ReadySnapshot = DeepReadonly<
@@ -533,21 +548,6 @@ export function ReadyDysonSlice({
     releasePlatformServices !== undefined &&
     (releasePlatformServices.hostKind !== 'browser' ||
       releasePlatformServices.storeAvailable === true)
-  const storeController = useMemo(
-    () => storeVisible
-      ? new StorefrontController({
-          store: releasePlatformServices.store,
-          entitlements: releasePlatformServices.entitlements,
-          ...(synchronizeHostEntitlements === undefined
-            ? {}
-            : {
-                onVerifiedOwnershipChanged:
-                  synchronizeHostEntitlements,
-              }),
-        })
-      : null,
-    [releasePlatformServices, storeVisible, synchronizeHostEntitlements],
-  )
   const gameplay = snapshot.gameplay
   const quantumVisible =
     gameplay.resources.infinity.points >= 1n ||
@@ -958,19 +958,26 @@ export function ReadyDysonSlice({
           ? {
               ariaLabel: intl.formatMessage(messages.debugRoute),
               content: (
-                <DebugSurface
-                  development={development}
-                  locale={locale}
-                  initialDraft={debugDraftRef.current}
-                  onDraftChange={rememberDebugDraft}
-                />
+                <Suspense
+                  fallback={<LazySurfacePending />}
+                >
+                  <DebugSurface
+                    development={development}
+                    locale={locale}
+                    initialDraft={debugDraftRef.current}
+                    onDraftChange={rememberDebugDraft}
+                  />
+                </Suspense>
               ),
             }
           : settingsActive
           ? {
               ariaLabel: intl.formatMessage(messages.settingsRoute),
               content: (
-                <SettingsSurface
+                <Suspense
+                  fallback={<LazySurfacePending />}
+                >
+                  <SettingsSurface
                   resetSave={resetSave}
                   previewImportSaveFile={previewImportSaveFile}
                   previewImportSaveText={previewImportSaveText}
@@ -995,7 +1002,8 @@ export function ReadyDysonSlice({
                       visible,
                     })
                   }}
-                />
+                  />
+                </Suspense>
               ),
             }
           : researchActive
@@ -1532,24 +1540,18 @@ export function ReadyDysonSlice({
                                       </Suspense>
                                     ),
                                   }
-                                : storeActive && storeController !== null
+                                : storeActive && releasePlatformServices !== undefined
                                   ? {
                                       ariaLabel: intl.formatMessage(
                                         messages.storeRoute,
                                       ),
                                       content: (
                                         <Suspense
-                                          fallback={
-                                            <div
-                                              aria-label={intl.formatMessage(
-                                                messages.storeRoute,
-                                              )}
-                                              aria-busy="true"
-                                            />
-                                          }
+                                          fallback={<LazySurfacePending />}
                                         >
-                                          <StoreSurface
-                                            controller={storeController}
+                                          <StoreRouteSurface
+                                            releasePlatformServices={releasePlatformServices}
+                                            synchronizeHostEntitlements={synchronizeHostEntitlements}
                                             deviceOnlyPurchases={
                                               releasePlatformServices?.hostKind ===
                                               'browser'
@@ -1568,9 +1570,10 @@ export function ReadyDysonSlice({
       routeSupplement={
         simulationsActive && gameplay.progression.timeline.doubleTime.unlocked
           ? {
-              ariaLabel: 'Time multiplier',
+              ariaLabel: intl.formatMessage(messages.simulationTimeMultiplier),
               content: (
-                <SimulationTimeControl
+                <Suspense fallback={<LazySurfacePending />}>
+                  <SimulationTimeControl
                   locale={locale}
                   bankSeconds={gameplay.resources.time.doubleTimeBankSeconds}
                   rate={gameplay.progression.timeline.doubleTime.rate}
@@ -1582,21 +1585,24 @@ export function ReadyDysonSlice({
                   onPurchaseSettingsOpenChange={setPurchaseSettingsOpen}
                   onSpaceAgePurchaseQuantityChange={setSpaceAgePurchaseQuantity}
                   dispatchPlayer={dispatchPlayer}
-                />
+                  />
+                </Suspense>
               ),
             }
           : quantumRouteActive
             ? {
                 ariaLabel: intl.formatMessage(messages.quantumControls),
                 content: (
-                  <QuantumControlPanel
+                  <Suspense fallback={<LazySurfacePending />}>
+                    <QuantumControlPanel
                     locale={locale}
                     infinityPoints={gameplay.resources.infinity.points}
                     purchaseSettingsOpen={quantumPurchaseSettingsOpen}
                     purchaseQuantity={quantumPurchaseQuantity}
                     onPurchaseSettingsOpenChange={setQuantumPurchaseSettingsOpen}
                     onPurchaseQuantityChange={setQuantumPurchaseQuantity}
-                  />
+                    />
+                  </Suspense>
                 ),
               }
             : undefined
@@ -1822,10 +1828,14 @@ export function ReadyDysonSlice({
           setAvotationCompletionVisible(true)
         }
       />
-      <AvotationCompletionOverlay
-        open={avotationCompletionVisible}
-        onDismiss={() => setAvotationCompletionVisible(false)}
-      />
+      {avotationCompletionVisible ? (
+        <Suspense fallback={<LazySurfacePending overlay />}>
+          <AvotationCompletionOverlay
+            open
+            onDismiss={() => setAvotationCompletionVisible(false)}
+          />
+        </Suspense>
+      ) : null}
     </>
   )
 }
