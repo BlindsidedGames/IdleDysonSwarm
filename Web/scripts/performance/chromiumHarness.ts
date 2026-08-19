@@ -109,12 +109,23 @@ export class CdpSession {
     }
   >()
   private nextId = 1
+  private readonly eventListeners = new Map<
+    string,
+    Set<(params: unknown) => void>
+  >()
 
   private constructor(socket: WebSocket) {
     this.socket = socket
     this.socket.addEventListener('message', (event) => {
       const message = JSON.parse(String(event.data)) as CdpMessage
-      if (message.id === undefined) return
+      if (message.id === undefined) {
+        if (message.method !== undefined) {
+          for (const listener of this.eventListeners.get(message.method) ?? []) {
+            listener(message.params)
+          }
+        }
+        return
+      }
       const pending = this.pending.get(message.id)
       if (pending === undefined) return
       this.pending.delete(message.id)
@@ -172,6 +183,16 @@ export class CdpSession {
 
   close(): void {
     this.socket.close()
+  }
+
+  on<T>(method: string, listener: (params: T) => void): () => void {
+    const listeners = this.eventListeners.get(method) ?? new Set()
+    listeners.add(listener as (params: unknown) => void)
+    this.eventListeners.set(method, listeners)
+    return () => {
+      listeners.delete(listener as (params: unknown) => void)
+      if (listeners.size === 0) this.eventListeners.delete(method)
+    }
   }
 }
 

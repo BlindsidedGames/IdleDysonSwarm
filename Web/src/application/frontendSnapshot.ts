@@ -1154,7 +1154,7 @@ const FRONTEND_PERSISTENCE_READINESS: FrontendPersistenceReadiness =
     unmatchedWritePolicy: mappingCoverageManifest.unmatchedWritePolicy,
   })
 
-function selectGameplayVisibility(
+export function selectGameplayVisibility(
   state: CanonicalGameStateV1,
 ): FrontendGameplayVisibility {
   const total = (facilityId: CanonicalFacilityId) => {

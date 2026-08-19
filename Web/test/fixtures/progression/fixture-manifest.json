@@ -1,0 +1,220 @@
+{
+  "schemaVersion": 1,
+  "generatedFrom": "canonical progression builders",
+  "fixtures": [
+    {
+      "id": "fresh",
+      "description": "Unmodified production first-run artifact.",
+      "fingerprint": "9b36818e06ce93092ca22380d62f8023f8dbc88aa8e1606aac523cc88f208a44",
+      "saveSha256": "848ea29c6038bcb741ddf818690adf51ee929ecad68d95cbc7d76cf75cf7277b",
+      "reachableRoutes": [
+        "bots",
+        "research",
+        "story",
+        "wiki",
+        "offline-time",
+        "statistics",
+        "settings"
+      ],
+      "certification": [
+        "production first-run artifact"
+      ],
+      "file": "fresh.idsweb1.txt"
+    },
+    {
+      "id": "mid-swarm",
+      "description": "Deterministic pre-Infinity run with every basic Dyson facility visible.",
+      "fingerprint": "6f1deef08364b408ff2f5773316e429d8484519045a491c810c18a154ae03f2d",
+      "saveSha256": "efa03600884355e8a006325a959c0a43fbfe0ce6fd84f5f9c617b785302f3132",
+      "reachableRoutes": [
+        "bots",
+        "research",
+        "skills",
+        "story",
+        "wiki",
+        "offline-time",
+        "statistics",
+        "settings"
+      ],
+      "certification": [
+        "pre-Infinity invariants"
+      ],
+      "file": "mid-swarm.idsweb1.txt"
+    },
+    {
+      "id": "first-infinity",
+      "description": "The result of one canonical Infinity reset awarding one point.",
+      "fingerprint": "56f2e07f8e9ddca3ccb405c26001fdf3e91608795a7d9d12434dc0ea13cd4bf9",
+      "saveSha256": "a80c6064e55b5e5484e92e7eff7e92ee6cac209bca417b049611d21d36e1f0a9",
+      "reachableRoutes": [
+        "bots",
+        "research",
+        "skills",
+        "infinity",
+        "story",
+        "wiki",
+        "offline-time",
+        "statistics",
+        "settings"
+      ],
+      "certification": [
+        "applyCanonicalInfinityReset"
+      ],
+      "file": "first-infinity.idsweb1.txt"
+    },
+    {
+      "id": "mature-infinity",
+      "description": "Active mature Infinity economy with twenty Secrets and both automation unlocks purchased canonically.",
+      "fingerprint": "8735d28de54ea397a84ad1e0c142a35d7993463b6bec34d2c7452741fafa14a4",
+      "saveSha256": "6fb28824e53f9962b4572de81afdc4592170e4fc0ca58ed2c01ce5c5fa8b0f40",
+      "reachableRoutes": [
+        "bots",
+        "research",
+        "skills",
+        "infinity",
+        "story",
+        "wiki",
+        "offline-time",
+        "statistics",
+        "settings"
+      ],
+      "certification": [
+        "canonical reset",
+        "20 canonical Secret purchases",
+        "canonical automation purchases",
+        "characterized active-economy seed",
+        "goal progression fixed point"
+      ],
+      "file": "mature-infinity.idsweb1.txt"
+    },
+    {
+      "id": "reality-unlock",
+      "description": "The authored 27 Secrets and ten permanent Skill purchases paid from 41 Infinity Points.",
+      "fingerprint": "72e3ad4d490cbeab01a25aac291a01b99838ce01cfdda039fac55bd9d9ebba08",
+      "saveSha256": "b122cbc0a4cd283fb96967570b7cb41fb3c793777162af7ed2b162a691e4e0cb",
+      "reachableRoutes": [
+        "bots",
+        "research",
+        "skills",
+        "infinity",
+        "reality",
+        "simulations",
+        "story",
+        "wiki",
+        "offline-time",
+        "statistics",
+        "settings"
+      ],
+      "certification": [
+        "canonical reset",
+        "37 canonical Infinity shop purchases"
+      ],
+      "file": "reality-unlock.idsweb1.txt"
+    },
+    {
+      "id": "mature-simulations",
+      "description": "Reality unlocked with a reset, populated Dream run, and Simulation upgrade produced through canonical transactions.",
+      "fingerprint": "adab9c3eea0cc44cd183d60e6371afd114c2ff7cf8d060b8a7c61812f3b5b5df",
+      "saveSha256": "673416bcc5afb021ae9eccabe9b5794f5ced7da06cbb2fbd31c08f16adf3bb5d",
+      "reachableRoutes": [
+        "bots",
+        "research",
+        "skills",
+        "infinity",
+        "reality",
+        "simulations",
+        "story",
+        "wiki",
+        "offline-time",
+        "statistics",
+        "settings"
+      ],
+      "certification": [
+        "canonical Dream reset",
+        "canonical Reality generation/gather",
+        "canonical Dream purchases/production",
+        "canonical Simulation upgrade purchase"
+      ],
+      "file": "mature-simulations.idsweb1.txt"
+    },
+    {
+      "id": "quantum-unlock",
+      "description": "The 42 Infinity Point Quantum threshold with valid Reality-unlock spending.",
+      "fingerprint": "99f5c7072307148855747852ce8f6b046be8a360eb3228d363ccf5dc7647c430",
+      "saveSha256": "3e456c4dd615f65f5d15047aecd7f8d57a617611365e5f9b2723e7ffd7a170fa",
+      "reachableRoutes": [
+        "bots",
+        "research",
+        "skills",
+        "infinity",
+        "reality",
+        "simulations",
+        "quantum",
+        "story",
+        "wiki",
+        "offline-time",
+        "statistics",
+        "settings"
+      ],
+      "certification": [
+        "canonical reset",
+        "37 canonical Infinity shop purchases"
+      ],
+      "file": "quantum-unlock.idsweb1.txt"
+    },
+    {
+      "id": "late-quantum",
+      "description": "Late Quantum built by 420 canonical leap cycles followed by canonical upgrade transactions.",
+      "fingerprint": "58e1a9709d8808b44894d44f635267e9ad5714e071fbdcc757a0f15ffe1f1453",
+      "saveSha256": "72bd436baafc59eec4127f9b494d606ec0b3864ea1f9dbd2cd3024de709b647d",
+      "reachableRoutes": [
+        "bots",
+        "research",
+        "skills",
+        "infinity",
+        "reality",
+        "simulations",
+        "quantum",
+        "avocato",
+        "story",
+        "wiki",
+        "offline-time",
+        "statistics",
+        "settings"
+      ],
+      "certification": [
+        "canonical Infinity resets",
+        "canonical Quantum resets",
+        "canonical Quantum upgrade purchases"
+      ],
+      "file": "late-quantum.idsweb1.txt"
+    },
+    {
+      "id": "maximum-skills",
+      "description": "Maximum deterministic non-conflicting Skill ownership from an explicit stress-funding seed and canonical purchases.",
+      "fingerprint": "7760c3e4a5244426af4ee48a25a3a1317aaf28e950b22166a80dc6c5df3d9c8c",
+      "saveSha256": "192b49d8d97f87dde0bf17c715500a2f037ce94e01e92a32e43ae888b71a70e6",
+      "reachableRoutes": [
+        "bots",
+        "research",
+        "skills",
+        "infinity",
+        "reality",
+        "simulations",
+        "quantum",
+        "avocato",
+        "story",
+        "wiki",
+        "offline-time",
+        "statistics",
+        "settings"
+      ],
+      "certification": [
+        "explicit 200-point/42-fragment stress seed",
+        "canonical Skill purchase fixed point",
+        "exclusive choices respected"
+      ],
+      "file": "maximum-skills.idsweb1.txt"
+    }
+  ]
+}

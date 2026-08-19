@@ -220,6 +220,24 @@ export class StoredTimeSimulation {
     })
   }
 
+  /** Read-only instrumentation for deterministic worker-core profiling. */
+  diagnostics() {
+    return Object.freeze({
+      executionKind: this.plan.executionKind,
+      representativeGroupsPlanned:
+        this.plan.executionKind === 'representative-groups'
+          ? this.plan.groups.length
+          : 0,
+      finalRemainderPlannedSeconds:
+        this.plan.executionKind === 'representative-groups'
+          ? this.plan.finalRemainderSeconds
+          : 0,
+      representativeGroupsCompleted: this.representativeGroupIndex,
+      finalRemainderConsumedSeconds: this.finalRemainderConsumedSeconds,
+      summary: Object.freeze(structuredClone(this.summary)),
+    })
+  }
+
   private currentPhase():
     | {
         readonly kind: 'exact'

@@ -987,6 +987,10 @@ class BrowserRuntimeFoundation implements BrowserUiRuntimeFoundation {
         return {
           imported,
           recoveryPath: recovery.sourcePath,
+          importedSaveSha256:
+            import.meta.env.MODE === 'performance'
+              ? await sha256Hex(supplied.text)
+              : undefined,
         }
       })
       this.assertCurrentGraph(graph)
@@ -996,6 +1000,12 @@ class BrowserRuntimeFoundation implements BrowserUiRuntimeFoundation {
       }
       this.lastRecoveryPath = routed.recoveryPath
       if (routed.imported.imported) {
+        if (routed.importedSaveSha256 !== undefined) {
+          ;(globalThis as typeof globalThis & {
+            __idleDysonLastImportedSaveSha256?: string
+          }).__idleDysonLastImportedSaveSha256 =
+            routed.importedSaveSha256
+        }
         if (routed.imported.lifecycleReset) {
           this.reconcileActiveLifecycleIntent(
             admittedLifecycleIntentEpoch,
@@ -1899,6 +1909,16 @@ class BrowserRuntimeFoundation implements BrowserUiRuntimeFoundation {
         )
     }
   }
+}
+
+async function sha256Hex(text: string): Promise<string> {
+  const digest = await crypto.subtle.digest(
+    'SHA-256',
+    new TextEncoder().encode(text),
+  )
+  return [...new Uint8Array(digest)]
+    .map((byte) => byte.toString(16).padStart(2, '0'))
+    .join('')
 }
 
 function developmentOnlyRepositoryPaths(profileId: string) {

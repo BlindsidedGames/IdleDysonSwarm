@@ -235,6 +235,16 @@ describe('StoredTimeSimulation', () => {
       createCanonicalGameEngineDefinition({ eventContext })
         .validateState(terminal.candidate),
     ).toBeUndefined()
+    expect(simulation.diagnostics()).toMatchObject({
+      executionKind: 'representative-groups',
+      representativeGroupsPlanned: 4_096,
+      representativeGroupsCompleted: 4_096,
+      finalRemainderConsumedSeconds: 0,
+      summary: {
+        meteorDreamResets: 0n,
+        realityWorkers: 0n,
+      },
+    })
   }, 30_000)
 })
 

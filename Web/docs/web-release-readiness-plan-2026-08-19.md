@@ -32,7 +32,14 @@ The post-icon-conversion performance baseline is recorded in
   explicit real-endpoint integration path; production output is checked for
   Stripe presence and development-adapter absence. Native adapters were not
   changed.
-- Phase 8 is next.
+- Phase 8 fixture, harness and Stored Time work is complete and independently
+  reviewed. Nine immutable, production-valid progression saves and their
+  hashes are checked in. The same mature save certifies 1-hour, 24-hour,
+  1-week and maximum persisted-valid 64-day Stored Time spends. The browser
+  route matrix is reproducible and records an explicit blocked result because
+  local Chromium still closes its DevTools connection; route timing figures
+  remain unclaimed and must be collected when that environment issue clears.
+- Phase 9 is next.
 
 ## Preparation already completed
 
