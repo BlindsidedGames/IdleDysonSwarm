@@ -40,6 +40,7 @@
     "verify:web-accessibility:browser": "npm run build:performance && tsx scripts/performance/runWebAccessibilityAcceptance.ts",
     "pwa:icons": "powershell -NoProfile -ExecutionPolicy Bypass -File scripts/generate-pwa-icons.ps1",
     "verify:pwa:production": "tsx scripts/verify-pwa-production.ts",
+    "verify:pwa:candidate": "tsx scripts/verify-pwa-production.ts --output=output/performance/pwa-production-candidate.json",
     "website:promotion:prepare": "tsx scripts/prepare-website-promotion.ts",
     "website:promotion:apply": "tsx scripts/apply-website-promotion.ts",
     "data:export": "tsx scripts/export-unity-data.ts",

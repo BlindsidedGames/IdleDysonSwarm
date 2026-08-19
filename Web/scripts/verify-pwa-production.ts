@@ -1,5 +1,6 @@
 import { createHash } from 'node:crypto'
 import {
+  mkdirSync,
   mkdtempSync,
   readFileSync,
   readdirSync,
@@ -8,7 +9,7 @@ import {
   writeFileSync,
 } from 'node:fs'
 import { tmpdir } from 'node:os'
-import { join, relative, resolve } from 'node:path'
+import { dirname, join, relative, resolve } from 'node:path'
 import { spawnSync } from 'node:child_process'
 import {
   delay,
@@ -26,12 +27,16 @@ import {
   assertCleanPwaVerificationCandidate,
   assertPwaVerificationCandidateUnchanged,
   PWA_PRODUCTION_VERIFICATION_SCHEMA_VERSION,
+  resolvePwaVerificationEvidencePath,
 } from './pwaProductionVerification'
 
 const webRoot = resolve(import.meta.dirname, '..')
-const evidencePath = resolve(
+const outputArgument = process.argv
+  .slice(2)
+  .find((argument) => argument.startsWith('--output='))
+const evidencePath = resolvePwaVerificationEvidencePath(
   webRoot,
-  'docs/pwa-production-verification-2026-08-19.json',
+  outputArgument?.slice('--output='.length),
 )
 const runIdentity = repositoryRunIdentity(webRoot)
 assertCleanPwaVerificationCandidate(runIdentity)
@@ -165,6 +170,7 @@ try {
       stableProductionStorageRetained: true,
     },
   }
+  mkdirSync(dirname(evidencePath), { recursive: true })
   writeFileSync(evidencePath, `${JSON.stringify(result, null, 2)}\n`)
   console.log(JSON.stringify(result, null, 2))
 } finally {

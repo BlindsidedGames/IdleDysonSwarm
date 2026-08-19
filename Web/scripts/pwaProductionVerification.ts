@@ -1,8 +1,42 @@
+import { extname, isAbsolute, relative, resolve } from 'node:path'
+
 export const PWA_PRODUCTION_VERIFICATION_SCHEMA_VERSION = 2
 
 export interface PwaProductionVerificationRunIdentity {
   readonly revision: string
   readonly workingTreeDirty: boolean
+}
+
+export function resolvePwaVerificationEvidencePath(
+  webRoot: string,
+  customOutput: string | undefined,
+): string {
+  if (customOutput === undefined) {
+    return resolve(
+      webRoot,
+      'docs/pwa-production-verification-2026-08-19.json',
+    )
+  }
+  const requested = customOutput.trim()
+  if (requested.length === 0 || isAbsolute(requested)) {
+    throw new Error(
+      'Custom PWA verification output must be a non-empty relative JSON path under Web/output/.',
+    )
+  }
+  const outputRoot = resolve(webRoot, 'output')
+  const candidate = resolve(webRoot, requested)
+  const withinOutput = relative(outputRoot, candidate)
+  if (
+    withinOutput.length === 0 ||
+    withinOutput.startsWith('..') ||
+    isAbsolute(withinOutput) ||
+    extname(candidate).toLowerCase() !== '.json'
+  ) {
+    throw new Error(
+      'Custom PWA verification output must be a JSON file under Web/output/.',
+    )
+  }
+  return candidate
 }
 
 export function assertCleanPwaVerificationCandidate(
