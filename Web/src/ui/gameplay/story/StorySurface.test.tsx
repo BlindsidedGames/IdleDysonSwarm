@@ -39,6 +39,27 @@ describe('StorySurface', () => {
     )
   })
 
+  test('keeps chapter grouping transparent around standalone passage panels', () => {
+    const { container } = renderSurface()
+    const chapter = container.querySelector('.story-chapter')
+
+    expect(chapter).not.toBeNull()
+    expect(
+      chapter?.querySelector(':scope > .ui-collapsible-section__heading'),
+    ).not.toBeNull()
+    expect(
+      chapter?.querySelector(
+        ':scope > .ui-collapsible-section__content > .story-chapter__passages > li',
+      ),
+    ).not.toBeNull()
+    expect(storyStyles).toMatch(
+      /\.story-chapter\s*\{[^}]*border:\s*0;[^}]*background:\s*transparent;[^}]*box-shadow:\s*none;/,
+    )
+    expect(storyStyles).toMatch(
+      /\.story-chapter > \.ui-collapsible-section__content\s*\{[^}]*background:\s*transparent;/,
+    )
+  })
+
   test('renders only canonically revealed passages', () => {
     renderSurface()
 

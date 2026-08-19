@@ -81,14 +81,15 @@
 }
 
 .story-chapter {
-  overflow: hidden;
-  border: 1px solid var(--story-border);
-  border-radius: 0.35rem;
-  background: var(--story-panel);
-  box-shadow: 0 0.16rem 0.35rem rgb(0 0 0 / 28%);
+  overflow: visible;
+  border: 0;
+  background: transparent;
+  box-shadow: none;
 }
 
 .story-chapter > .ui-collapsible-section__heading {
+  border: 1px solid var(--story-border);
+  border-radius: 0.35rem;
   background: var(--story-panel-heading);
 }
 
@@ -98,13 +99,14 @@
 }
 
 .story-chapter > .ui-collapsible-section__content {
-  background: var(--story-panel);
+  padding-block-start: 0.5rem;
+  background: transparent;
 }
 
 .story-chapter__passages {
   display: grid;
   gap: 0.5rem;
-  padding: 0.6rem;
+  padding: 0;
   list-style: none;
 }
 
