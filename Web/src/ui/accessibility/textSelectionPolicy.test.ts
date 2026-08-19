@@ -113,6 +113,26 @@ describe('text selection policy', () => {
     expect(button.dispatchEvent(touchEvent('touchstart', 100, 20, 30))).toBe(true)
     expect(button.dispatchEvent(touchEvent('touchstart', 250, 20, 30))).toBe(true)
   })
+
+  test('never suppresses a rapid second native range drag', () => {
+    uninstall = installTextSelectionPolicy()
+    const slider = document.createElement('input')
+    slider.type = 'range'
+    document.body.append(slider)
+
+    const events = [
+      touchEvent('touchstart', 100, 20, 30, 7),
+      touchEvent('touchend', 150, 20, 30, 7),
+      touchEvent('touchstart', 300, 21, 30, 8),
+      touchEvent('touchmove', 340, 80, 30, 8),
+      touchEvent('touchend', 380, 80, 30, 8),
+    ]
+
+    for (const event of events) {
+      expect(slider.dispatchEvent(event)).toBe(true)
+      expect(event.defaultPrevented).toBe(false)
+    }
+  })
 })
 
 function cancelable(type: string): Event {

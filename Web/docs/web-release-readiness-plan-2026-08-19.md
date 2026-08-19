@@ -1,8 +1,8 @@
 # Web release readiness plan
 
-Status: implementation in progress; Phases 0 through 5 complete
+Status: implementation and provisional automated verification complete; clean-candidate rerun and manual Web acceptance gates remain
 
-Recorded: 2026-08-19 AEST
+Recorded: 2026-08-19 AEST; status updated 2026-08-20 AEST
 
 Scope: restore and prepare the Web build for deployment. Android and iOS
 testing, native accessibility certification, native lifecycle testing, native
@@ -18,14 +18,16 @@ The post-icon-conversion performance baseline is recorded in
 - Phase 2: Stored Time domain ownership completed in `a4e5b6c7`.
 - Phase 3: frontend presentation isolation completed in `a2eca0e8`.
 - Phase 4: Skills presentation stabilization completed in `09d5fc98`.
-- Phase 5: bundle separation completed and independently reviewed. Boot
-  JavaScript fell from 300.03 KiB to 282.61 KiB gzip and boot CSS fell from
-  19.16 KiB to 12.46 KiB gzip. The 250 KiB milestone remains future work; the
-  report now distinguishes initial page loading from the PWA precache package.
+- Phase 5: bundle separation completed and independently reviewed. Entry
+  JavaScript is 260.28 KiB gzip, total boot JavaScript is 283.11 KiB gzip and
+  boot CSS fell from 19.16 KiB to 12.46 KiB gzip. The 250 KiB boot milestone
+  remains future work; the report now distinguishes initial page loading from
+  the PWA precache package.
 - Phase 6 code and automated coverage are complete and independently reviewed.
-  Its real-browser contrast, focus-paint, text scaling, 400 percent zoom,
-  320/390 px reflow and touch checks remain deliberately unpassed and are
-  retained as Phase 9 acceptance work. No Android or iOS testing has been
+  Automated 320/390 px reflow, 200 percent text scaling and scripted touch
+  proxies pass. Manual visual contrast, focus paint, 200 percent appearance,
+  browser-native 400 percent zoom, 320/390 px visual reflow and real-touch Web
+  checks remain Phase 9 acceptance work. No Android or iOS testing has been
   added to scope.
 - Phase 7 is complete and independently reviewed. Ordinary development uses a
   provider-free deterministic five-product Store; `dev:stripe` retains the
@@ -36,16 +38,25 @@ The post-icon-conversion performance baseline is recorded in
   reviewed. Nine immutable, production-valid progression saves and their
   hashes are checked in. The same mature save certifies 1-hour, 24-hour,
   1-week and maximum persisted-valid 64-day Stored Time spends. The browser
-  route matrix is reproducible and records an explicit blocked result because
-  local Chromium still closes its DevTools connection; route timing figures
-  remain unclaimed and must be collected when that environment issue clears.
-- Phase 9 automated Web verification is complete and independently reviewed.
+  route matrix now passes all 18 fixture/profile combinations and all 186
+  reachable-route measurements; the earlier blocked local-CDP run remains only
+  as historical evidence and is not the current result.
+- Phase 9 provisional automated Web verification is complete and independently
+  reviewed.
   Production save/backup recovery, PWA install/offline/update survival, Store
-  boundaries, dependency audits, the 18-profile/186-route matrix, interaction
+  boundaries, dependency audits, the 18-fixture/profile-combination and
+  186-route matrix, interaction
   budgets, automated accessibility/reflow gates and the 30-minute explicit-GC
-  soak all pass. Manual visible-focus paint, complete visual contrast, 200%
-  visual appearance, browser-native 400% zoom and screen-reader behavior remain
-  required before deployment. No deployment or push has been performed.
+  soak all pass. The same automated gates must be rerun from the clean release
+  candidate. Manual visible-focus paint, complete visual contrast, 200%
+  visual appearance, browser-native 400% zoom, 320/390 px visual reflow,
+  real-touch Web behavior and screen-reader behavior remain required before
+  deployment. No deployment or push has been performed.
+  The final PWA evidence must be rerun from the clean checkpoint candidate:
+  the verifier now fails closed on a dirty working tree and records the exact
+  Git revision and clean/dirty state in its versioned JSON evidence. The
+  existing 2026-08-19 JSON remains historical evidence and has deliberately
+  not been rewritten from this dirty implementation tree.
 
 ## Preparation already completed
 

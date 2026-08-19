@@ -12,7 +12,10 @@ const EDITABLE_TEXT_SELECTOR = [
   'input[type="tel"]',
 ].join(',')
 
-const NATIVE_TOUCH_MANAGED_SELECTOR = '[data-manages-native-touch="true"]'
+const NATIVE_TOUCH_MANAGED_SELECTOR = [
+  '[data-manages-native-touch="true"]',
+  'input[type="range"]',
+].join(',')
 const REPLAYABLE_CONTROL_SELECTOR = [
   'button',
   'a[href]',

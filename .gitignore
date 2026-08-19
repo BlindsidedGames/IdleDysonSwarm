@@ -99,3 +99,10 @@ Documentation/Idle_Dyson_Swarm_Keys/
 
 # Editor console snapshot (agent helper)
 Documentation/Console/editor-console.json
+
+# Local migration, browser, and generated verification artifacts
+/.local-pull-backups/
+/.migration-snapshots/
+/.playwright-cli/
+/Web/.playwright-cli/
+/Web/dist-stage8-v2-game/

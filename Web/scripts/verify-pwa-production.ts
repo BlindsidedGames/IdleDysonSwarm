@@ -21,12 +21,20 @@ import {
   PRODUCTION_BROWSER_DATABASE_NAME,
   PRODUCTION_BROWSER_SAVE_PATHS,
 } from '../src/browser/productionBrowserStorage'
+import { repositoryRunIdentity } from './performance/reportArtifacts'
+import {
+  assertCleanPwaVerificationCandidate,
+  assertPwaVerificationCandidateUnchanged,
+  PWA_PRODUCTION_VERIFICATION_SCHEMA_VERSION,
+} from './pwaProductionVerification'
 
 const webRoot = resolve(import.meta.dirname, '..')
 const evidencePath = resolve(
   webRoot,
   'docs/pwa-production-verification-2026-08-19.json',
 )
+const runIdentity = repositoryRunIdentity(webRoot)
+assertCleanPwaVerificationCandidate(runIdentity)
 const temporaryRoot = mkdtempSync(
   join(tmpdir(), 'idle-dyson-pwa-verification-'),
 )
@@ -119,8 +127,14 @@ try {
   if (!databaseNames.includes(PRODUCTION_BROWSER_DATABASE_NAME)) {
     throw new Error('The stable production save database was not retained.')
   }
+  assertPwaVerificationCandidateUnchanged(
+    runIdentity,
+    repositoryRunIdentity(webRoot),
+  )
 
   const result = {
+    schemaVersion: PWA_PRODUCTION_VERIFICATION_SCHEMA_VERSION,
+    runIdentity,
     verifiedAtUtc: new Date().toISOString(),
     browser: page.environment.browser,
     browserVersion: page.environment.browserVersion,
