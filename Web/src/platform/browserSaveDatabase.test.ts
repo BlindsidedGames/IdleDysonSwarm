@@ -1,6 +1,8 @@
 import { describe, expect, test } from 'vitest'
 import {
   createProductionBrowserComposition,
+  PRODUCTION_BROWSER_DATABASE_NAME,
+  PRODUCTION_BROWSER_SAVE_PATHS,
 } from '../browser/productionBrowserComposition'
 import { PreparedSave } from '../save/prepare'
 import { PortableSaveRepository } from '../save/repository'
@@ -435,9 +437,8 @@ describe('IndexedDbBrowserSaveDatabase', () => {
     ).rejects.toBeInstanceOf(WriterLeaseLostError)
   })
 
-  test('production composition checkpoints through a fired interval, blocks a second writer, and reconstructs through fresh IndexedDB wrappers', async () => {
+  test('production composition preserves the deployed storage identity, rotates three backups, reconstructs, and recovers', async () => {
     const harness = new HarnessIndexedDbFactory()
-    const databaseName = 'production-composition-reconstruction'
     const checkpointGate = deferred<void>()
     const firstCheckpointScheduler = new ManualIntervalScheduler()
     let checkpointCalls = 0
@@ -477,9 +478,7 @@ describe('IndexedDbBrowserSaveDatabase', () => {
                 },
               })
             },
-            databaseName,
             indexedDbFactory: harness.asFactory(),
-            profileId: 'production-like-profile',
             ownerToken,
             autoHeartbeat: false,
             nowUtcMilliseconds: () => 1_000,
@@ -506,6 +505,28 @@ describe('IndexedDbBrowserSaveDatabase', () => {
     ).resolves.toMatchObject({
       status: 'accepted',
     })
+    firstCheckpointScheduler.fire()
+    firstCheckpointScheduler.fire()
+    await waitUntil(() => checkpointCalls === 1)
+
+    const blocked = createComposition('blocked-production-owner')
+    await expect(blocked.runtime.start()).resolves.toMatchObject({
+      phase: 'blocked',
+      code: 'writer-owned',
+    })
+
+    checkpointGate.resolve()
+    await expect(first.runtime.requestCheckpoint()).resolves.toBe(true)
+    expect(checkpointCalls).toBe(1)
+    for (const distribution of [0.7, 0.65, 0.6]) {
+      await expect(
+        first.runtime.dispatchPlayer({
+          kind: 'dyson.set-bot-distribution',
+          distribution,
+        }),
+      ).resolves.toMatchObject({ status: 'accepted' })
+      await expect(first.runtime.requestCheckpoint()).resolves.toBe(true)
+    }
     const expected = structuredClone(first.runtime.snapshot())
     const expectedGameplay = (() => {
       if (expected.phase !== 'ready') return undefined
@@ -524,22 +545,23 @@ describe('IndexedDbBrowserSaveDatabase', () => {
         },
       }
     })()
-
-    firstCheckpointScheduler.fire()
-    firstCheckpointScheduler.fire()
-    await waitUntil(() => checkpointCalls === 1)
-
-    const blocked = createComposition('blocked-production-owner')
-    await expect(blocked.runtime.start()).resolves.toMatchObject({
-      phase: 'blocked',
-      code: 'writer-owned',
-    })
-
-    checkpointGate.resolve()
-    await expect(first.runtime.requestCheckpoint()).resolves.toBe(true)
-    expect(checkpointCalls).toBe(1)
     await first.runtime.shutdown()
     await blocked.runtime.shutdown()
+
+    const productionDatabase = new IndexedDbBrowserSaveDatabase(
+      PRODUCTION_BROWSER_DATABASE_NAME,
+      harness.asFactory(),
+    )
+    await expect(
+      productionDatabase.fileExists(
+        PRODUCTION_BROWSER_SAVE_PATHS.current,
+      ),
+    ).resolves.toBe(true)
+    for (const backup of PRODUCTION_BROWSER_SAVE_PATHS.backups) {
+      await expect(
+        productionDatabase.fileExists(backup),
+      ).resolves.toBe(true)
+    }
 
     const reconstructed = createComposition(
       'reconstructed-production-owner',
@@ -553,6 +575,42 @@ describe('IndexedDbBrowserSaveDatabase', () => {
       gameplay: expectedGameplay,
     })
     await reconstructed.runtime.shutdown()
+
+    const maintenanceLease = await productionDatabase.acquireWriterLease(
+      'recovery-test-maintenance',
+      2_000,
+      15_000,
+    )
+    expect(maintenanceLease.acquired).toBe(true)
+    if (!maintenanceLease.acquired) {
+      throw new Error('Expected recovery-test writer ownership.')
+    }
+    await productionDatabase.mutateFiles(
+      {
+        kind: 'write',
+        path: PRODUCTION_BROWSER_SAVE_PATHS.current,
+        contents: 'corrupted-current-save',
+      },
+      maintenanceLease.fence,
+      2_000,
+    )
+    await productionDatabase.releaseWriterLease(
+      maintenanceLease.fence,
+    )
+
+    const recovered = createComposition('recovered-production-owner')
+    await expect(recovered.runtime.start()).resolves.toMatchObject({
+      phase: 'ready',
+      warnings: [
+        expect.objectContaining({ code: 'backup-recovered' }),
+      ],
+    })
+    await expect(
+      productionDatabase.readFile(
+        PRODUCTION_BROWSER_SAVE_PATHS.legacyRecovery,
+      ),
+    ).resolves.toBe('corrupted-current-save')
+    await recovered.runtime.shutdown()
   })
 })
 

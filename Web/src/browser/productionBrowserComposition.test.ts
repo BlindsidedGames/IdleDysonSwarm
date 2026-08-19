@@ -14,6 +14,9 @@ import type {
 } from '../ui/runtime'
 import {
   createProductionBrowserComposition,
+  PRODUCTION_BROWSER_DATABASE_NAME,
+  PRODUCTION_BROWSER_PROFILE_ID,
+  PRODUCTION_BROWSER_SAVE_PATHS,
 } from './productionBrowserComposition'
 import type { ReleasePlatformServices } from '../platform/releaseFoundation'
 
@@ -124,8 +127,16 @@ describe('production browser composition', () => {
     expect(captured.activeTimeClock).toBe(monotonicClock)
     expect(captured.ownerToken).toBe('reload-tab')
     expect(captured.allowUnexpiredSameOwnerTakeover).toBe(true)
-    expect(captured.databaseName).toBeUndefined()
-    expect(captured.profileId).toBeUndefined()
+    expect(captured.databaseName).toBe(
+      PRODUCTION_BROWSER_DATABASE_NAME,
+    )
+    expect(captured.profileId).toBe(
+      PRODUCTION_BROWSER_PROFILE_ID,
+    )
+    expect(captured.saveRepositoryPaths).toBe(
+      PRODUCTION_BROWSER_SAVE_PATHS,
+    )
+    expect(captured.allowCanonicalPlayerWrites).toBe(true)
     expect(lifecycleClock.samples).toBe(0)
 
     const repository = new FirstRunRepository()

@@ -45,6 +45,11 @@ describe('PWA build package', () => {
     expect(source).toContain('caches.match(APP_SHELL_URL)')
     expect(source).toContain("event.data?.type === 'ACTIVATE_UPDATE'")
     expect(source).toContain('self.skipWaiting()')
+    expect(source).toContain(
+      "key.startsWith(CACHE_PREFIX) && key !== CACHE_NAME",
+    )
+    expect(source).toContain('caches.delete(key)')
+    expect(source).toContain('self.clients.claim()')
     expect(source).not.toContain('caches.put')
     expect(source).not.toMatch(/indexedDB|IDSWEB1|localStorage/)
   })

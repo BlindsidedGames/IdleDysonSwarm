@@ -1,0 +1,74 @@
+{
+  "verifiedAtUtc": "2026-08-19T09:41:51.778Z",
+  "browser": "Chrome",
+  "browserVersion": "151.0.7922.138",
+  "platform": "win32-x64",
+  "url": "http://127.0.0.1:4187/play/",
+  "storageCompatibility": {
+    "databaseName": "idle-dyson-swarm-web-development-v1",
+    "currentPath": "/development-only/development-only-default-profile/current.idsw",
+    "databaseNames": [
+      "idle-dyson-swarm-web-development-v1"
+    ]
+  },
+  "packages": {
+    "old": {
+      "buildId": "pwa-verification-old",
+      "sha256": "a53ab7db8818311a40f06ee9638c98702bfe6d8fc4a1db4a9d9c8e7bc8f27800"
+    },
+    "new": {
+      "buildId": "pwa-verification-new",
+      "sha256": "cea322284e8b9f11df9982bc69a48ce8317c99dbb5d2568cce49aadf098b5640"
+    }
+  },
+  "saves": {
+    "initial": {
+      "sha256": "480c0969203a650af3b814c83c3679ac6872a621c0524ea02eb0108f2b317cad",
+      "bots": 0,
+      "botDistribution": 0.5,
+      "schema": 12
+    },
+    "seeded": {
+      "sha256": "dc371a1c1d9474748d6ce73d33e9dc2d06ac03743648067d4c60b57a58487149",
+      "bots": 1,
+      "botDistribution": 0.73,
+      "schema": 12
+    },
+    "repeated": {
+      "sha256": "bfa01def695becbdb31efde9d8a1b95c5874e0f5b6f4fc5f5bc4f2e2441a124a",
+      "bots": 1,
+      "botDistribution": 0.73,
+      "schema": 12
+    },
+    "offline": {
+      "sha256": "9d2fe767dc4050725f5b00e5804cd017d8d45a62184b7925c6266a60fd00104d",
+      "bots": 1,
+      "botDistribution": 0.73,
+      "schema": 12
+    },
+    "updated": {
+      "sha256": "4275d56089da5d3dcb00a8be68122dd8aac5cd5366a8c60b87d19e7cb337ebfe",
+      "bots": 1,
+      "botDistribution": 0.73,
+      "schema": 12
+    }
+  },
+  "caches": {
+    "old": [
+      "idle-dyson-swarm-app-3cca0ce387774a39"
+    ],
+    "injectedObsolete": "idle-dyson-swarm-app-obsolete-verification",
+    "new": [
+      "idle-dyson-swarm-app-87e0106f719d9963"
+    ]
+  },
+  "assertions": {
+    "firstInstallControlled": true,
+    "repeatLoadPreservedCanonicalFingerprint": true,
+    "offlineReloadPreservedCanonicalFingerprint": true,
+    "updateRequiredExplicitAcceptance": true,
+    "updatePreservedCanonicalFingerprint": true,
+    "obsoleteCachesRemoved": true,
+    "stableProductionStorageRetained": true
+  }
+}

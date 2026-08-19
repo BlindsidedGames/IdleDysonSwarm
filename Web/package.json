@@ -37,6 +37,7 @@
     "report:performance:soak": "npm run build && tsx scripts/performance/runSoakReport.ts",
     "report:performance:soak:smoke": "npm run build && tsx scripts/performance/runSoakReport.ts --smoke",
     "pwa:icons": "powershell -NoProfile -ExecutionPolicy Bypass -File scripts/generate-pwa-icons.ps1",
+    "verify:pwa:production": "tsx scripts/verify-pwa-production.ts",
     "website:promotion:prepare": "tsx scripts/prepare-website-promotion.ts",
     "website:promotion:apply": "tsx scripts/apply-website-promotion.ts",
     "data:export": "tsx scripts/export-unity-data.ts",

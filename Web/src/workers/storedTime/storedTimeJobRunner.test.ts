@@ -53,6 +53,23 @@ describe('BrowserStoredTimeJobRunner', () => {
     expect(worker.terminated).toBe(true)
     runner.dispose()
   })
+
+  test('rejects a stale worker build and completes through the same bounded fallback', async () => {
+    const state = runtimeWithStoredTime(1)
+    const worker = new FakeWorker('silent', 'stale-package')
+    const runner = new BrowserStoredTimeJobRunner({
+      createWorker: () => worker as unknown as Worker,
+      workerSupported: () => true,
+    })
+
+    await expect(runner.run(request(state))).resolves.toMatchObject({
+      type: 'completed',
+      consumedSeconds: 0.1,
+      remainingSeconds: 0,
+    })
+    expect(worker.terminated).toBe(true)
+    runner.dispose()
+  })
 })
 
 function request(state: CanonicalRuntimeState) {
@@ -86,14 +103,16 @@ class FakeWorker {
   private readonly messageListeners = new Set<(event: MessageEvent) => void>()
   private readonly errorListeners = new Set<(event: ErrorEvent) => void>()
   readonly mode: 'complete' | 'silent'
+  readonly buildId: string | null
   terminated = false
 
-  constructor(mode: 'complete' | 'silent') {
+  constructor(mode: 'complete' | 'silent', buildId: string | null = null) {
     this.mode = mode
+    this.buildId = buildId
     queueMicrotask(() => this.emit({
       type: 'ready',
       protocolVersion: 1,
-      buildId: null,
+      buildId: this.buildId,
     }))
   }
 

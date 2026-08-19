@@ -31,6 +31,17 @@ import type { ReleasePlatformServices } from '../platform/releaseFoundation'
 import type {
   AutomaticUnityPurchaseEvidencePromoter,
 } from '../save/automaticPurchaseEvidence'
+import {
+  PRODUCTION_BROWSER_DATABASE_NAME,
+  PRODUCTION_BROWSER_PROFILE_ID,
+  PRODUCTION_BROWSER_SAVE_PATHS,
+} from './productionBrowserStorage'
+
+export {
+  PRODUCTION_BROWSER_DATABASE_NAME,
+  PRODUCTION_BROWSER_PROFILE_ID,
+  PRODUCTION_BROWSER_SAVE_PATHS,
+} from './productionBrowserStorage'
 import { RuntimeEntitlementBridge } from '../store/runtimeEntitlements'
 import { serializeWebSave } from '../save/serialization'
 import type {
@@ -129,6 +140,10 @@ export function createProductionBrowserComposition(
     createApplication,
     lifecyclePolicy: WEB_LIFECYCLE_POLICY,
     allowedExternalOrigins: [],
+    databaseName: PRODUCTION_BROWSER_DATABASE_NAME,
+    profileId: PRODUCTION_BROWSER_PROFILE_ID,
+    saveRepositoryPaths: PRODUCTION_BROWSER_SAVE_PATHS,
+    allowCanonicalPlayerWrites: true,
     lifecycleClock,
     activeTimeClock: monotonicClock,
     nowUtcMilliseconds: () =>
