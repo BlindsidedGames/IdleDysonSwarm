@@ -405,7 +405,7 @@ describe('SettingsSurface', () => {
       durableRevision: 2,
     })
     renderSettings(vi.fn(), {
-      status: () => ({ enabled: true, entitled: true, quantumShards: 0n, strangeMatter: 0n }),
+      status: () => ({ enabled: true, entitled: true, purchasedInGame: true, quantumShards: 0n, strangeMatter: 0n }),
       setDysonBots,
       unlockReality: vi.fn(),
       apply: vi.fn(),
@@ -449,6 +449,7 @@ describe('SettingsSurface', () => {
       status: () => ({
         enabled,
         entitled: true,
+        purchasedInGame: true,
         quantumShards: 0n,
         strangeMatter: 0n,
       }),
@@ -488,7 +489,7 @@ describe('SettingsSurface', () => {
       durableRevision: 2,
     })
     renderSettings(vi.fn(), {
-      status: () => ({ enabled: true, entitled: true, quantumShards: 0n, strangeMatter: 0n }),
+      status: () => ({ enabled: true, entitled: true, purchasedInGame: true, quantumShards: 0n, strangeMatter: 0n }),
       setDysonBots,
       unlockReality: vi.fn(),
       apply: vi.fn(),
@@ -522,7 +523,7 @@ describe('SettingsSurface', () => {
       durableRevision: 3,
     })
     renderSettings(vi.fn(), {
-      status: () => ({ enabled: true, entitled: true, quantumShards: 0n, strangeMatter: 0n }),
+      status: () => ({ enabled: true, entitled: true, purchasedInGame: true, quantumShards: 0n, strangeMatter: 0n }),
       setDysonBots: vi.fn(),
       unlockReality,
       apply: vi.fn(),

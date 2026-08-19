@@ -210,7 +210,7 @@ export interface UiRuntimeDevelopmentStatus {
   readonly enabled: boolean
   readonly entitled: boolean
   /** Canonical save ownership, independent of free development-build access. */
-  readonly purchasedInGame?: boolean
+  readonly purchasedInGame: boolean
   readonly quantumShards: bigint
   readonly strangeMatter: bigint
 }

@@ -18,6 +18,7 @@ function controls(
     status: () => ({
       enabled: true,
       entitled: true,
+      purchasedInGame: true,
       quantumShards: 100_000n,
       strangeMatter: 500_000n,
     }),
@@ -99,6 +100,7 @@ describe('DebugSurface', () => {
         status: () => ({
           enabled: false,
           entitled: false,
+          purchasedInGame: false,
           quantumShards: 100_000n,
           strangeMatter: 500_000n,
         }),

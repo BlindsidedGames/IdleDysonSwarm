@@ -541,6 +541,7 @@ class TestRuntime {
       status: () => ({
         enabled: true,
         entitled: true,
+        purchasedInGame: true,
         quantumShards: 0n,
         strangeMatter: 0n,
       }),

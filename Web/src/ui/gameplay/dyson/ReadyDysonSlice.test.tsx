@@ -283,6 +283,7 @@ describe('ReadyDysonSlice', () => {
             status: () => ({
               enabled: false,
               entitled: true,
+              purchasedInGame: true,
               quantumShards: 0n,
               strangeMatter: 0n,
             }),
@@ -309,7 +310,7 @@ describe('ReadyDysonSlice', () => {
           dispatchPlayer={acceptedDispatch}
           route="debug"
           development={{
-            status: () => ({ enabled: true, entitled: true, quantumShards: 0n, strangeMatter: 0n }),
+            status: () => ({ enabled: true, entitled: true, purchasedInGame: true, quantumShards: 0n, strangeMatter: 0n }),
             setDysonBots: vi.fn(),
             unlockReality: vi.fn(),
             apply: vi.fn(),
@@ -336,6 +337,7 @@ describe('ReadyDysonSlice', () => {
       status: () => ({
         enabled: true,
         entitled: true,
+        purchasedInGame: true,
         quantumShards: 0n,
         strangeMatter: 0n,
       }),
@@ -1136,7 +1138,7 @@ describe('ReadyDysonSlice', () => {
           locale="en"
           dispatchPlayer={acceptedDispatch}
           development={{
-            status: () => ({ enabled: true, entitled: true, quantumShards: 0n, strangeMatter: 0n }),
+            status: () => ({ enabled: true, entitled: true, purchasedInGame: true, quantumShards: 0n, strangeMatter: 0n }),
             setDysonBots: vi.fn(),
             unlockReality: vi.fn(),
             apply: vi.fn(),
