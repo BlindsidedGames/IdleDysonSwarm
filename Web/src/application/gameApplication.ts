@@ -313,6 +313,28 @@ export class TransactionalGameApplication<TState, TCommand>
         }
       }
 
+      // Decode/schema validation is not sufficient for a canonical import:
+      // production engine invariants can be stricter than the persisted graph
+      // (for example, an automation phase must fit the production interval).
+      // Prove the complete application session and engine before the first
+      // displacement or replacement write so an invalid import can never
+      // overwrite the current durable save.
+      try {
+        const candidateSession = this.options.sessionFactory.open(prepared)
+        new TransactionalSimulationEngine(
+          candidateSession.initialState,
+          this.options.engineDefinition,
+        )
+      } catch (error) {
+        this.setSnapshot(previous)
+        return {
+          imported: false,
+          committed: false,
+          code: 'APP-IMPORT-INVALID',
+          reason: errorMessage(error),
+        }
+      }
+
       if (
         previous.phase === 'ready' &&
         previous.checkpoint.kind !== 'clean'

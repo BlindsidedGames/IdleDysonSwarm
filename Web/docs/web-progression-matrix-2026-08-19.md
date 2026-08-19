@@ -2,7 +2,7 @@
 
 ## Reproducible fixtures
 
-`test/support/progressionMatrixFixtures.ts` builds nine deterministic fixtures. `test/fixtures/progression/fixture-manifest.json` and its referenced `*.idsweb1.txt` files are the immutable profiling inputs. The first fixture is the exact production first-run artifact. Later fixtures use canonical Infinity resets, Infinity shop transactions, Reality/Dream operations, Simulation upgrades, Quantum upgrade transactions, and Skill purchases. The focused certification test freezes the serialized-save SHA-256 values, validates every state, imports every save through the production importer, reconstructs every production runtime session, and requires the builders to reproduce the checked-in artifacts exactly.
+`test/support/progressionMatrixFixtures.ts` builds nine deterministic fixtures. `test/fixtures/progression/fixture-manifest.json` and its referenced `*.idsweb1.txt` files are the immutable profiling inputs. The first fixture is the exact production first-run artifact. Later fixtures use canonical Infinity resets, Infinity shop transactions, Reality/Dream operations, Simulation upgrades, Quantum upgrade transactions, and Skill purchases. The focused certification test freezes the serialized-save SHA-256 values, validates every state, imports every save through the production importer, opens it through the complete production application and simulation engine, advances it successfully, and requires the builders to reproduce the checked-in artifacts exactly.
 
 The certification compares the complete reconstructed runtime carrier, not only `gameState`. Non-Dyson-stress fixtures intentionally inherit the production first-run evaluation snapshot as the valid prior-recalculation compatibility input. The mature active-economy fixture repeatedly performs canonical goal catch-up and Dyson recalculation until a second goal pass awards nothing, then persists that settled evaluation snapshot so its first measured simulation step does not include deferred progression cleanup.
 
@@ -15,6 +15,8 @@ npm test -- --run test/support/progressionMatrixFixtures.test.ts
 ```
 
 The fixture report records both a canonical-state fingerprint and serialized-save SHA. A catalog, transaction, mapping, or serializer change that alters a fixture fails the checked-in SHA expectations, forcing an intentional baseline review rather than silently changing the benchmark save.
+
+The mature-Infinity fixture uses the production 0.1-second automation interval. Imports are preflighted through the production engine before the current save is displaced or replaced. The regression suite proves that the former out-of-range phase is rejected with `CANONICAL_EVENT_AUTOMATION_PHASE_INVALID`, leaves the current save untouched, and performs no commit.
 
 ## Browser route matrix
 
@@ -34,7 +36,34 @@ The full matrix uses desktop 1440x900 and mobile Web 390x844 viewports at four-t
 
 Bots is explicitly labelled warm because it is the startup route. Settings is explicitly labelled warm because production import uses Settings. Other entries are independent first activations after fixture import; they are not misrepresented as independent cold-browser startup measurements.
 
-On 2026-08-19 the smoke build completed, but local Chromium closed its DevTools connection before measurement. `output/performance/progression-matrix-smoke.json` therefore records the browser evidence as `blocked`; no route figures were fabricated. The harness and fixture catalog are ready to rerun after the local CDP problem is resolved.
+The final 2026-08-20 run measured all 18 profile/fixture combinations and all
+186 reachable routes with zero blocked fixtures, console errors, page errors,
+or document-level horizontal overflow. Its report is
+`output/performance/progression-matrix.json`. The Avocato check follows the
+production design: Avocato has no side-navigation entry and is opened through
+the enabled Avocado upgrade on Quantum. The earlier generic check that expected
+a side-navigation button was a harness error and its blocked output is not used
+as acceptance evidence.
+
+This matrix certifies performance and successful activation for routes that
+the shared production visibility selector declares reachable. It deliberately
+does not open Quantum during unrelated-route preflight, because doing so would
+warm route chunks and invalidate independent first-activation measurements.
+Locked/unlocked Avocato boundary correctness is supplied by the focused fixture,
+Quantum-surface, and shell-routing tests; the measured Avocato rows verify the
+enabled subordinate entry end to end.
+
+At four-times CPU throttling, Skills was the dominant first-activation cost.
+The maximum-Skills fixture took 608.2 ms on desktop and 569.9 ms on mobile to
+reach the route-ready marker; late Quantum took 397.4 ms and 374.1 ms. Skills
+also produced the largest first-activation long tasks, up to 203 ms. This is a
+route-entry/loading cost rather than ongoing graph churn. In steady state, the
+maximum-Skills stress fixture produced four isolated long-task observations
+across Research, Settings, and Offline Time, with a maximum browser long task
+of 52 ms and a maximum throttled canonical-active sample of 56.4 ms. All other
+steady route trials recorded no long task. The separately budgeted normal interaction trace remains the Web
+release responsiveness acceptance gate; the matrix retains these stress
+outliers as the next optimization baseline rather than hiding them.
 
 ## Stored Time matrix
 

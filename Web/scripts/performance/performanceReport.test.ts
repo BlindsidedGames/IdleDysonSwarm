@@ -65,6 +65,8 @@ describe('performance report schema and gates', () => {
           trials: [
             {
               trial: 1,
+              consoleErrors: [],
+              pageErrors: [],
               longTaskDurationsMilliseconds: [20, 49],
               commandFeedbackLatenciesMilliseconds: [10, 20],
               snapshotSelectionThroughReactCommit: [
@@ -93,6 +95,8 @@ describe('performance report schema and gates', () => {
   test('requires commit samples and applies distinct desktop and mobile limits', () => {
     const trial = {
       trial: 1,
+      consoleErrors: [] as readonly string[],
+      pageErrors: [] as readonly string[],
       longTaskDurationsMilliseconds: [],
       commandFeedbackLatenciesMilliseconds: [1],
       interactionToNextPaintMilliseconds: 16,
@@ -242,6 +246,8 @@ describe('performance report schema and gates', () => {
         heapUsedBytes: 119 * 1024 * 1024,
         resources: counts(10),
       },
+      consoleErrors: [],
+      pageErrors: [],
     })
     expect(report.retainedHeapAllowanceBytes).toBe(
       20 * 1024 * 1024,
@@ -250,6 +256,49 @@ describe('performance report schema and gates', () => {
     expect(report.passed).toBe(true)
     expect(() => assertPerformanceReport(report)).not.toThrow()
     expect(performanceReportExitCode(report)).toBe(0)
+  })
+
+  test('fails interaction and soak reports when the browser emits errors', () => {
+    const interaction = createInteractionReport({
+      mode: 'smoke',
+      createdAtUtc: '2026-01-01T00:00:00.000Z',
+      environment,
+      traceDurationMilliseconds: 3_000,
+      profiles: [{
+        id: 'desktop',
+        viewport: { width: 1_440, height: 900, deviceScaleFactor: 1 },
+        cpuThrottleRate: 1,
+        trials: [{
+          trial: 1,
+          consoleErrors: ['console failure'],
+          pageErrors: [],
+          longTaskDurationsMilliseconds: [],
+          commandFeedbackLatenciesMilliseconds: [1],
+          snapshotSelectionThroughReactCommit: [{
+            revision: { session: 1, state: 1 },
+            durationMilliseconds: 1,
+          }],
+          interactionToNextPaintMilliseconds: 16,
+          cumulativeLayoutShift: 0,
+          largestContentfulPaintMilliseconds: 100,
+        }],
+      }],
+    })
+    const soak = createSoakReport({
+      mode: 'smoke',
+      createdAtUtc: '2026-01-01T00:00:00.000Z',
+      environment,
+      durationMilliseconds: 10_000,
+      warmupMilliseconds: 1_000,
+      explicitGarbageCollections: 4,
+      baseline: { heapUsedBytes: 1, resources: counts(1) },
+      final: { heapUsedBytes: 1, resources: counts(1) },
+      consoleErrors: [],
+      pageErrors: ['page failure'],
+    })
+
+    expect(interaction.passed).toBe(false)
+    expect(soak.passed).toBe(false)
   })
 
   test('fails ineligible acceptance commands but permits explicit smoke diagnostics', () => {
@@ -268,6 +317,8 @@ describe('performance report schema and gates', () => {
         heapUsedBytes: 1,
         resources: counts(1),
       },
+      consoleErrors: [],
+      pageErrors: [],
     })
     const smoke = { ...acceptance, mode: 'smoke' as const }
     expect(acceptance.passed).toBe(true)

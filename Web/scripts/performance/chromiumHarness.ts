@@ -37,8 +37,15 @@ export interface BrowserPerformanceEntries {
   }[]
   readonly commandFeedbackLatenciesMilliseconds: readonly number[]
   readonly snapshotSelectionThroughReactCommit:
-    readonly FirstSliceCommitProbeSample[]
+    readonly (FirstSliceCommitProbeSample & {
+      readonly startTime: number
+      readonly endTime: number
+    })[]
   readonly events: readonly {
+    readonly name: string
+    readonly startTime: number
+    readonly processingStart: number
+    readonly processingEnd: number
     readonly interactionId: number
     readonly duration: number
   }[]
@@ -201,7 +208,7 @@ export async function startProductionPreview(
   port: number,
   outDir?: string,
 ): Promise<ProductionPreview> {
-  const url = `http://127.0.0.1:${port}/`
+  const url = `http://127.0.0.1:${port}/play/`
   if (await isReachable(url)) {
     throw new Error(
       `Production preview port ${port} is already serving another process.`,
@@ -249,7 +256,8 @@ export async function startProductionPreview(
     }, 15_000)
   } catch (error) {
     stopChild(child)
-    throw error
+    const message = error instanceof Error ? error.message : String(error)
+    throw new Error(`${message}\n${output.join('')}`)
   }
   return {
     url,
@@ -277,18 +285,27 @@ export async function openChromiumPage(
       '--no-first-run',
       '--no-default-browser-check',
       '--disable-background-networking',
+      '--disable-background-timer-throttling',
+      '--disable-backgrounding-occluded-windows',
       '--disable-component-update',
       '--disable-default-apps',
       '--disable-extensions',
       '--disable-sync',
+      '--disable-renderer-backgrounding',
+      // This isolated local runner cannot start Chrome's subprocess sandbox.
+      // It loads only the loopback production preview.
+      '--no-sandbox',
       '--metrics-recording-only',
       'about:blank',
     ],
     {
-      stdio: 'ignore',
+      stdio: ['ignore', 'pipe', 'pipe'],
       windowsHide: true,
     },
   )
+  const chromiumOutput: string[] = []
+  child.stdout?.on('data', (chunk) => chromiumOutput.push(String(chunk)))
+  child.stderr?.on('data', (chunk) => chromiumOutput.push(String(chunk)))
   try {
     const portFile = join(profileRoot, 'DevToolsActivePort')
     await waitUntil(() => {
@@ -296,7 +313,9 @@ export async function openChromiumPage(
         return readFileSync(portFile, 'utf8').trim().length > 0
       } catch {
         if (child.exitCode !== null) {
-          throw new Error('Chromium exited before DevTools was ready.')
+          throw new Error(
+            `Chromium exited before DevTools was ready.${formatChromiumOutput(chromiumOutput)}`,
+          )
         }
         return false
       }
@@ -331,6 +350,10 @@ export async function openChromiumPage(
       cdp.send('Performance.enable'),
       cdp.send('Network.enable'),
     ])
+    await cdp.send('Page.bringToFront')
+    await cdp.send('Emulation.setFocusEmulationEnabled', {
+      enabled: true,
+    })
     await cdp.send('Network.setCacheDisabled', { cacheDisabled: true })
     await cdp.send('Emulation.setDeviceMetricsOverride', {
       width: profile.width,
@@ -355,8 +378,24 @@ export async function openChromiumPage(
     stopChild(child)
     await waitForExit(child)
     removeTemporaryProfile(profileRoot)
+    if (
+      error instanceof Error &&
+      chromiumOutput.length > 0 &&
+      !error.message.includes('Chromium output:')
+    ) {
+      throw new Error(
+        `${error.message}${formatChromiumOutput(chromiumOutput)}`,
+        { cause: error },
+      )
+    }
     throw error
   }
+}
+
+function formatChromiumOutput(chunks: readonly string[]): string {
+  const output = chunks.join('').trim()
+  if (output.length === 0) return ''
+  return `\nChromium output:\n${output.slice(-8_000)}`
 }
 
 export async function interactFor(
@@ -463,6 +502,7 @@ function createPage(options: {
         button: 'left',
         buttons: 1,
         clickCount: 1,
+        pointerType: 'mouse',
       })
       await options.cdp.send('Input.dispatchMouseEvent', {
         type: 'mouseReleased',
@@ -471,26 +511,56 @@ function createPage(options: {
         button: 'left',
         buttons: 0,
         clickCount: 1,
+        pointerType: 'mouse',
       })
+      await delay(10)
+      const stillActive = await evaluate<boolean>(
+        `document.querySelector('.tinker-surface__control')?.getAttribute('data-gesture-active') === 'true'`,
+      )
+      if (stillActive) {
+        throw new Error('Synthetic Tinker pointer remained active after release.')
+      }
       return true
     },
     async warmFirstSliceCommitProbe(
-      timeoutMilliseconds = 10_000,
+      timeoutMilliseconds = 30_000,
     ) {
       const startedAt = Date.now()
-      let activations = 0
+      let observedRunning = false
+      const activations = await evaluate<boolean>(`(() => {
+        const button = document.querySelector('.tinker-surface__control')
+        if (!(button instanceof HTMLButtonElement) || button.disabled) {
+          return false
+        }
+        button.click()
+        return true
+      })()`) ? 1 : 0
       while (Date.now() - startedAt < timeoutMilliseconds) {
-        if (await this.clickTinker()) activations += 1
         await delay(550)
         const entries = await this.readPerformanceEntries()
+        const running = await evaluate<boolean>(
+          `document.querySelector('.tinker-surface')?.getAttribute('data-running') === 'true'`,
+        )
+        observedRunning ||= running
         if (
-          entries.snapshotSelectionThroughReactCommit.length > 0
+          entries.snapshotSelectionThroughReactCommit.length > 0 &&
+          observedRunning &&
+          !running
         ) {
           return activations
         }
       }
+      const diagnostic = await evaluate<unknown>(`({
+        probeInstalled: Boolean(window[${JSON.stringify(FIRST_SLICE_COMMIT_PROBE_MARKER)}]),
+        performanceInstalled: Boolean(window.__idleDysonPerformance),
+        visibilityState: document.visibilityState,
+        hasFocus: document.hasFocus(),
+        resources: window.__idleDysonPerformance?.readResources?.() ?? null,
+        statusText: document.querySelector('[role="alert"]')?.textContent ?? null,
+        tinkerText: document.querySelector('.tinker-surface__control')?.textContent ?? null,
+      })`)
       throw new Error(
-        `Timed out after ${timeoutMilliseconds} ms warming the first-slice commit probe.`,
+        `Timed out after ${timeoutMilliseconds} ms warming the first-slice commit probe. Diagnostic: ${JSON.stringify(diagnostic)}`,
       )
     },
     async resetInteractionMeasurements() {
@@ -735,6 +805,7 @@ const PERFORMANCE_INSTRUMENTATION = String.raw`
   const events = []
   const layoutShifts = []
   let largestContentfulPaint = 0
+  let measurementStartedAt = 0
   let activeTinkerStart = null
   const timeouts = new Set()
   const intervals = new Set()
@@ -804,6 +875,7 @@ const PERFORMANCE_INSTRUMENTATION = String.raw`
   }
   observe('longtask', (entries) => {
     for (const entry of entries) {
+      if (entry.startTime < measurementStartedAt) continue
       longTasks.push({
         startTime: entry.startTime,
         duration: entry.duration,
@@ -814,7 +886,12 @@ const PERFORMANCE_INSTRUMENTATION = String.raw`
     'event',
     (entries) => {
       for (const entry of entries) {
+        if (entry.startTime < measurementStartedAt) continue
         events.push({
+          name: entry.name,
+          startTime: entry.startTime,
+          processingStart: entry.processingStart,
+          processingEnd: entry.processingEnd,
           interactionId: entry.interactionId || 0,
           duration: entry.duration,
         })
@@ -824,6 +901,7 @@ const PERFORMANCE_INSTRUMENTATION = String.raw`
   )
   observe('layout-shift', (entries) => {
     for (const entry of entries) {
+      if (entry.startTime < measurementStartedAt) continue
       layoutShifts.push({
         startTime: entry.startTime,
         value: entry.value,
@@ -833,6 +911,7 @@ const PERFORMANCE_INSTRUMENTATION = String.raw`
   })
   observe('largest-contentful-paint', (entries) => {
     for (const entry of entries) {
+      if (entry.startTime < measurementStartedAt) continue
       largestContentfulPaint = Math.max(
         largestContentfulPaint,
         entry.renderTime || entry.loadTime || entry.startTime,
@@ -891,18 +970,22 @@ const PERFORMANCE_INSTRUMENTATION = String.raw`
         ) {
           return
         }
+        const endTime = performance.now()
         snapshotSelectionThroughReactCommit.push({
           revision: {
             session: sample.revision.session,
             state: sample.revision.state,
           },
           durationMilliseconds: sample.durationMilliseconds,
+          startTime: endTime - sample.durationMilliseconds,
+          endTime,
         })
       },
     })
 
   window.__idleDysonPerformance = Object.freeze({
     resetInteraction() {
+      measurementStartedAt = performance.now()
       longTasks.length = 0
       commandFeedback.length = 0
       snapshotSelectionThroughReactCommit.length = 0
@@ -917,6 +1000,8 @@ const PERFORMANCE_INSTRUMENTATION = String.raw`
           snapshotSelectionThroughReactCommit.map((sample) => ({
             revision: { ...sample.revision },
             durationMilliseconds: sample.durationMilliseconds,
+            startTime: sample.startTime,
+            endTime: sample.endTime,
           })),
         events: [...events],
         layoutShifts: [...layoutShifts],

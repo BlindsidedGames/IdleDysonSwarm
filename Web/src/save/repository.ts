@@ -304,13 +304,14 @@ export class PortableSaveRepository implements SaveRepository {
     )
     const encoded = serializeWebSave(normalized.copyValidatedState())
     await this.storage.writeText(this.paths.temporary, encoded)
-    const verified = deserializeWebSave(
-      await this.storage.readText(this.paths.temporary),
-    )
-    if (serializeWebSave(verified) !== encoded) {
+    const temporaryText = await this.storage.readText(this.paths.temporary)
+    // Exact read-back verifies the durable adapter preserved the already
+    // validated, locally encoded payload. Decoding and recompressing the same
+    // bytes here duplicated the codec's work on every periodic checkpoint.
+    if (temporaryText !== encoded) {
       throw new Error('Temporary save verification failed before atomic replace.')
     }
-    const committed = PreparedSave.fromDecoded(verified)
+    const committed = normalized
     if (rotateBackups) await this.rotateBackups()
     await this.storage.replaceAtomically(
       this.paths.temporary,

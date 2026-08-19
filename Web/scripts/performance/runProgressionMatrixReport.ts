@@ -15,6 +15,12 @@ import {
 const webRoot = resolve(import.meta.dirname, '..', '..')
 const outputDirectory = resolve(webRoot, 'output', 'performance')
 const smoke = process.argv.includes('--smoke')
+const fixtureFilter = argumentValue('--fixture=')
+const profileFilter = argumentValue('--profile=')
+const importTimeoutMilliseconds = Number(argumentValue('--import-timeout-ms=') ?? 30_000)
+const profileImport = process.argv.includes('--profile-import')
+const cpuThrottleOverride = argumentValue('--cpu-throttle=')
+const selectedCpuThrottle = cpuThrottleOverride === undefined ? undefined : Number(cpuThrottleOverride)
 const durationMilliseconds = smoke ? 500 : 2_000
 const steadyTrials = smoke ? 1 : 3
 const fixtures = loadCheckedInProgressionMatrixFixtures()
@@ -26,7 +32,7 @@ const profiles: readonly ViewportProfile[] = [
   { id: 'mobile-390x844', width: 390, height: 844, deviceScaleFactor: 2, cpuThrottleRate: 4 },
 ]
 const routeReadySelectors: Readonly<Record<string, string>> = {
-  bots: '.tinker-surface', research: '.research-surface', skills: '.skills-surface',
+  bots: '.dyson-shell__stage', research: '.research-surface', skills: '.skills-surface',
   infinity: '.infinity-surface', reality: '.reality-surface', simulations: '.simulations-surface',
   quantum: '.quantum-surface', avocato: '.avocato-surface', story: '.story-surface',
   wiki: '.wiki-surface', 'offline-time': '.offline-time-surface', statistics: '.statistics-surface',
@@ -39,8 +45,16 @@ const fixtureCatalog = fixtures.map(({ id, description, fingerprint, saveSha256,
 const measurements: unknown[] = []
 const preview = await startProductionPreview(webRoot, 4_188, 'output/performance/lane-dist')
 try {
-  for (const profile of smoke ? profiles.slice(0, 1) : profiles) {
-    for (const fixture of smoke ? fixtures.slice(0, 1) : fixtures) {
+  const selectedProfiles = (smoke ? profiles.slice(0, 1) : profiles)
+    .filter((profile) => profileFilter === undefined || profile.id === profileFilter)
+    .map((profile) => selectedCpuThrottle === undefined ? profile : { ...profile, cpuThrottleRate: selectedCpuThrottle })
+  const selectedFixtures = (smoke ? fixtures.slice(0, 1) : fixtures)
+    .filter((fixture) => fixtureFilter === undefined || fixture.id === fixtureFilter)
+  if (selectedProfiles.length === 0) throw new Error(`No profile matched ${profileFilter}.`)
+  if (selectedFixtures.length === 0) throw new Error(`No fixture matched ${fixtureFilter}.`)
+  for (const profile of selectedProfiles) {
+    for (const fixture of selectedFixtures) {
+      console.error(`[matrix] ${profile.id} / ${fixture.id}`)
       try {
         measurements.push(await measureFixture(profile, fixture, preview.url))
       } catch (error) {
@@ -83,7 +97,13 @@ function repositoryRunIdentity() {
   }
 }
 mkdirSync(outputDirectory, { recursive: true })
-const output = resolve(outputDirectory, smoke ? 'progression-matrix-smoke.json' : 'progression-matrix.json')
+const focusedSuffix = [profileFilter, fixtureFilter].filter(Boolean).join('-').replaceAll(/[^a-z0-9-]/gi, '_')
+const outputName = smoke
+  ? 'progression-matrix-smoke.json'
+  : focusedSuffix.length > 0
+    ? `progression-matrix-focused-${focusedSuffix}.json`
+    : 'progression-matrix.json'
+const output = resolve(outputDirectory, outputName)
 writeFileSync(output, `${JSON.stringify(report, null, 2)}\n`)
 console.log(JSON.stringify(report, null, 2))
 console.log(`Report: ${output}`)
@@ -97,12 +117,16 @@ async function measureFixture(
   const pageErrors: string[] = []
   const routes = []
   for (const route of fixture.reachableRoutes) {
-    const page = await openProbedPage(profile, productionUrl, consoleErrors, pageErrors)
+    console.error(`[matrix] ${profile.id} / ${fixture.id} / ${route}`)
+    let page: ChromiumPage | undefined
     try {
+      page = await openProbedPage(profile, productionUrl, consoleErrors, pageErrors)
       await importSave(page, fixture)
       routes.push(await measureRoute(page, route))
+    } catch (error) {
+      throw new Error(`${profile.id} / ${fixture.id} / ${route}: ${error instanceof Error ? error.message : String(error)}`)
     } finally {
-      await page.close()
+      await page?.close()
     }
   }
   return {
@@ -198,7 +222,7 @@ async function openProbedPage(
   consoleErrors: string[],
   pageErrors: string[],
 ): Promise<ChromiumPage> {
-  const url = new URL('play/', productionUrl).href
+  const url = productionUrl
   const page = await openChromiumPage(profile, url)
   await page.cdp.send('Runtime.enable')
   page.cdp.on<{ type?: string; args?: readonly { value?: unknown; description?: string }[] }>(
@@ -227,7 +251,11 @@ async function openProbedPage(
 }
 
 async function importSave(page: ChromiumPage, fixture: ProgressionMatrixFixture): Promise<void> {
-  await page.evaluate(`globalThis.__idleDysonLastImportedSaveSha256 = undefined`)
+  await page.evaluate(`(() => {
+    globalThis.__idleDysonLastImportedSaveSha256 = undefined
+    globalThis.__idleDysonLastImportResult = undefined
+  })()`)
+  console.error(`[matrix] import ${fixture.id}: open settings`)
   await activateRoute(page, 'settings')
   await page.evaluate(`(() => {
     const button = [...document.querySelectorAll('button')].find((candidate) => candidate.textContent?.trim() === 'Import')
@@ -235,6 +263,7 @@ async function importSave(page: ChromiumPage, fixture: ProgressionMatrixFixture)
     button.click()
   })()`)
   await page.waitForSelector('#settings-import-save-text')
+  console.error(`[matrix] import ${fixture.id}: fill save`)
   await page.evaluate(`(() => {
     const textarea = document.querySelector('#settings-import-save-text')
     if (!(textarea instanceof HTMLTextAreaElement)) throw new Error('Import textarea missing')
@@ -245,23 +274,81 @@ async function importSave(page: ChromiumPage, fixture: ProgressionMatrixFixture)
   await delay(100)
   await clickDialogButton(page, 'Review Save')
   await page.waitForSelector('.settings-surface__import-preview', 30_000)
-  await clickDialogButton(page, 'Import')
-  await waitForCondition(page, `document.querySelector('.settings-surface__dialog') === null`, 30_000)
-  await waitForCondition(
-    page,
-    `globalThis.__idleDysonLastImportedSaveSha256 === ${JSON.stringify(fixture.saveSha256)}`,
-    30_000,
-  )
+  console.error(`[matrix] import ${fixture.id}: confirm preview`)
+  if (profileImport) {
+    await page.cdp.send('Profiler.enable')
+    await page.cdp.send('Profiler.start')
+  }
+  try {
+    await clickDialogButton(page, 'Import')
+    await waitForCondition(
+      page,
+      `(() => {
+        const result = globalThis.__idleDysonLastImportResult
+        if (result?.imported === false) {
+          throw new Error('Import failed: ' + result.code + ': ' + result.reason)
+        }
+        const blocked = document.querySelector('.startup-shell')
+        if (blocked !== null) {
+          throw new Error('Import left the application blocked: ' + blocked.textContent?.trim())
+        }
+        return document.querySelector('.settings-surface__dialog') === null
+      })()`,
+      importTimeoutMilliseconds,
+    )
+    console.error(`[matrix] import ${fixture.id}: verify sha`)
+    await waitForCondition(
+      page,
+      `(() => {
+        const result = globalThis.__idleDysonLastImportResult
+        if (result?.imported === false) {
+          throw new Error('Import failed: ' + result.code + ': ' + result.reason)
+        }
+        const blocked = document.querySelector('.startup-shell')
+        if (blocked !== null) {
+          throw new Error('Import left the application blocked: ' + blocked.textContent?.trim())
+        }
+        return globalThis.__idleDysonLastImportedSaveSha256 === ${JSON.stringify(fixture.saveSha256)}
+      })()`,
+      importTimeoutMilliseconds,
+    )
+    if (profileImport) await page.cdp.send('Profiler.stop')
+  } catch (error) {
+    const profile = profileImport
+      ? await page.cdp.send<{ profile: { nodes: readonly { hitCount?: number; callFrame: { functionName: string; url: string; lineNumber: number } }[] } }>('Profiler.stop')
+      : undefined
+    const diagnostics = await page.evaluate(`({
+      actualSha256: globalThis.__idleDysonLastImportedSaveSha256,
+      status: [...document.querySelectorAll('[role="status"], [role="alert"]')].map((element) => element.textContent?.trim()),
+      routeTheme: document.querySelector('.dyson-shell')?.getAttribute('data-route-theme'),
+      bodyText: document.body.innerText.slice(0, 1000),
+      performanceGlobals: Object.keys(globalThis).filter((key) => key.startsWith('__idleDyson')),
+    })`)
+    const hotFunctions = profile?.profile.nodes
+      .filter((node) => (node.hitCount ?? 0) > 0)
+      .sort((left, right) => (right.hitCount ?? 0) - (left.hitCount ?? 0))
+      .slice(0, 20)
+      .map((node) => ({ hits: node.hitCount, ...node.callFrame }))
+    throw new Error(`${error instanceof Error ? error.message : String(error)}; diagnostics=${JSON.stringify({ ...diagnostics, hotFunctions })}`)
+  }
   for (const route of fixture.reachableRoutes) {
-    await waitForCondition(page, `document.querySelector('[data-navigation-id=${JSON.stringify(route)}] .dyson-navigation__link') !== null`, 30_000)
+    if (route !== 'avocato') {
+      await waitForCondition(page, `document.querySelector('[data-navigation-id=${JSON.stringify(route)}] .dyson-navigation__link') !== null`, 30_000)
+    }
   }
   for (const route of progressionRoutes) {
     const expected = fixture.reachableRoutes.includes(route)
+    if (route === 'avocato') {
+      // Avocato is subordinate to Quantum and deliberately has no navigation
+      // entry of its own. Its measured route activation verifies the enabled
+      // Quantum entry without warming Quantum during import preflight.
+      continue
+    }
     await waitForCondition(
       page,
       expected
-        ? `document.querySelector('[data-navigation-id=${JSON.stringify(route)}] .dyson-navigation__link')?.getAttribute('aria-disabled') !== 'true'`
-        : `(() => { const link = document.querySelector('[data-navigation-id=${JSON.stringify(route)}] .dyson-navigation__link'); return link === null || link.getAttribute('aria-disabled') === 'true' })()`,
+        ? `(() => { const link = document.querySelector('[data-navigation-id=${JSON.stringify(route)}] .dyson-navigation__link'); return link instanceof HTMLElement && !link.matches(':disabled') && link.getAttribute('aria-disabled') !== 'true' })()`
+        : `(() => { const link = document.querySelector('[data-navigation-id=${JSON.stringify(route)}] .dyson-navigation__link'); return link === null || link.matches(':disabled') || link.getAttribute('aria-disabled') === 'true' })()`,
       30_000,
     )
   }
@@ -278,9 +365,21 @@ async function clickDialogButton(page: ChromiumPage, label: string): Promise<voi
 }
 
 async function activateRoute(page: ChromiumPage, route: string): Promise<void> {
+  if (route === 'avocato') {
+    await activateRoute(page, 'quantum')
+    await page.evaluate(`(() => {
+      const target = document.querySelector('[data-quantum-upgrade-id="Avocado"] button')
+      if (!(target instanceof HTMLButtonElement) || target.disabled) throw new Error('Avocato route entry unavailable')
+      target.click()
+    })()`)
+    await waitForCondition(page, `document.querySelector('.dyson-shell')?.getAttribute('data-route-theme') === 'avocato'`, 30_000)
+    await page.waitForSelector('.avocato-surface', 30_000)
+    await waitForCondition(page, `document.querySelector('.lazy-surface-pending') === null`, 30_000)
+    return
+  }
   await page.evaluate(`(() => {
     const target = document.querySelector('[data-navigation-id=${JSON.stringify(route)}] .dyson-navigation__link')
-    if (!(target instanceof HTMLElement) || target.getAttribute('aria-disabled') === 'true') throw new Error(${JSON.stringify(`Route ${route} unavailable`)})
+    if (!(target instanceof HTMLElement) || target.matches(':disabled') || target.getAttribute('aria-disabled') === 'true') throw new Error(${JSON.stringify(`Route ${route} unavailable`)})
     target.click()
   })()`)
   await waitForCondition(
@@ -290,7 +389,7 @@ async function activateRoute(page: ChromiumPage, route: string): Promise<void> {
   )
   await waitForCondition(
     page,
-    `document.querySelector('.dyson-shell')?.getAttribute('data-route-theme') === ${JSON.stringify(route === 'avocato' ? 'quantum' : route)}`,
+    `document.querySelector('.dyson-shell')?.getAttribute('data-route-theme') === ${JSON.stringify(route)}`,
     30_000,
   )
   const selector = routeReadySelectors[route]
@@ -340,6 +439,10 @@ function summarize(values: readonly number[]) {
 function percentile(sorted: readonly number[], quantile: number): number {
   if (sorted.length === 0) return 0
   return sorted[Math.min(sorted.length - 1, Math.ceil(sorted.length * quantile) - 1)] ?? 0
+}
+
+function argumentValue(prefix: string): string | undefined {
+  return process.argv.find((argument) => argument.startsWith(prefix))?.slice(prefix.length)
 }
 
 function delay(milliseconds: number): Promise<void> {

@@ -10,6 +10,7 @@ class MemoryStorage implements SaveStorageAdapter {
   copies: Array<[string, string]> = []
   failAt: 'write' | 'read-temporary' | 'copy' | 'replace' | null = null
   corruptTemporaryRead = false
+  substituteTemporaryRead: string | null = null
 
   async exists(path: string): Promise<boolean> {
     return this.files.has(path)
@@ -22,6 +23,9 @@ class MemoryStorage implements SaveStorageAdapter {
     const value = this.files.get(path)
     if (value === undefined) throw new Error(`Missing ${path}`)
     if (path === '/current.tmp' && this.corruptTemporaryRead) return '{'
+    if (path === '/current.tmp' && this.substituteTemporaryRead !== null) {
+      return this.substituteTemporaryRead
+    }
     return value
   }
 
@@ -228,6 +232,97 @@ describe('portable transactional save repository', () => {
         }),
       ),
     ).rejects.toThrow()
+    expect(storage.replacements).toEqual([])
+    expect(storage.files.get('/current')).toBe(currentBytes)
+  })
+
+  test('rejects a different valid payload returned by temporary read-back', async () => {
+    const storage = new MemoryStorage()
+    const currentBytes = serializeWebSave({
+      saveVersion: 12,
+      checkpointMarker: 'current',
+    })
+    storage.files.set('/current', currentBytes)
+    storage.substituteTemporaryRead = serializeWebSave({
+      saveVersion: 12,
+      checkpointMarker: 'different-valid-save',
+    })
+    const repository = new PortableSaveRepository(
+      storage,
+      {
+        current: '/current',
+        temporary: '/current.tmp',
+        legacyRecovery: '/recovery/original-idb1.txt',
+      },
+      () => ({ saveVersion: 12 }),
+    )
+
+    await expect(
+      repository.commit(
+        PreparedSave.fromDecoded({
+          saveVersion: 12,
+          checkpointMarker: 'candidate',
+        }),
+      ),
+    ).rejects.toThrow('Temporary save verification failed')
+    expect(storage.replacements).toEqual([])
+    expect(storage.files.get('/current')).toBe(currentBytes)
+  })
+
+  test('does not replace current when the candidate contains a lossy graph value', async () => {
+    const storage = new MemoryStorage()
+    const currentBytes = serializeWebSave({
+      saveVersion: 12,
+      checkpointMarker: 'current',
+    })
+    storage.files.set('/current', currentBytes)
+    const repository = new PortableSaveRepository(
+      storage,
+      {
+        current: '/current',
+        temporary: '/current.tmp',
+        legacyRecovery: '/recovery/original-idb1.txt',
+      },
+      () => ({ saveVersion: 12 }),
+    )
+
+    await expect(
+      repository.commit(
+        PreparedSave.fromDecoded({
+          saveVersion: 12,
+          unknownForwardField: undefined,
+        }),
+      ),
+    ).rejects.toThrow('undefined')
+    expect(storage.replacements).toEqual([])
+    expect(storage.files.get('/current')).toBe(currentBytes)
+  })
+
+  test('does not replace current when a source object collides with a codec tag', async () => {
+    const storage = new MemoryStorage()
+    const currentBytes = serializeWebSave({
+      saveVersion: 12,
+      checkpointMarker: 'current',
+    })
+    storage.files.set('/current', currentBytes)
+    const repository = new PortableSaveRepository(
+      storage,
+      {
+        current: '/current',
+        temporary: '/current.tmp',
+        legacyRecovery: '/recovery/original-idb1.txt',
+      },
+      () => ({ saveVersion: 12 }),
+    )
+
+    await expect(
+      repository.commit(
+        PreparedSave.fromDecoded({
+          saveVersion: 12,
+          unknownForwardField: { $bigint: '123' },
+        }),
+      ),
+    ).rejects.toThrow('reserved codec tags')
     expect(storage.replacements).toEqual([])
     expect(storage.files.get('/current')).toBe(currentBytes)
   })

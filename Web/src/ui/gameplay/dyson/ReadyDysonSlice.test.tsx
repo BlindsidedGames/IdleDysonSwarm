@@ -1369,6 +1369,19 @@ describe('ReadyDysonSlice', () => {
     }
   })
 
+  test('keeps the bot-distribution slider touch target at least 44 CSS pixels', () => {
+    const stylesheet = readFileSync(
+      resolve(process.cwd(), 'src/ui/gameplay/dyson/dysonControls.css'),
+      'utf8',
+    )
+    expect(stylesheet).toMatch(
+      /\.bot-distribution__slider\s*\{[^}]*block-size:\s*2\.75rem;[^}]*margin:\s*-0\.675rem 0;/,
+    )
+    expect(stylesheet).toMatch(
+      /\.bot-distribution\s*\{[^}]*grid-template-columns:\s*minmax\(0, 0\.7fr\)\s*minmax\(0, 1\.45fr\)\s*minmax\(0, 0\.7fr\);[^}]*min-inline-size:\s*0;/,
+    )
+  })
+
   test('renders the expanded LTR pseudo-locale across the full playable slice', async () => {
     const { container, intlErrors } = renderSlice(
       snapshot({

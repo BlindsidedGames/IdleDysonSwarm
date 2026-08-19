@@ -2,8 +2,15 @@ import { describe, expect, test } from 'vitest'
 import { hydrateGameState } from '../../src/game-state/mapping'
 import { validateCanonicalGameState } from '../../src/game-state/validate'
 import { prepareImportedSaveText } from '../../src/save/import'
+import { serializeWebSave } from '../../src/save/serialization'
 import { previewCanonicalSkillCatalog } from '../../src/simulation/canonicalSkillTransactions'
 import { CanonicalRuntimeSession } from '../../src/application/canonicalRuntimeSession'
+import { createProductionCanonicalApplicationFactory } from '../../src/application/productionApplicationFactory'
+import type {
+  FirstLaunchMigrationResult,
+  SaveRepository,
+} from '../../src/save/repository'
+import type { PreparedSave } from '../../src/save/prepare'
 import {
   createProgressionMatrixFixtures,
   loadCheckedInProgressionMatrixFixtures,
@@ -16,7 +23,7 @@ describe('production-valid progression matrix fixtures', () => {
     fresh: '848ea29c6038bcb741ddf818690adf51ee929ecad68d95cbc7d76cf75cf7277b',
     'mid-swarm': 'efa03600884355e8a006325a959c0a43fbfe0ce6fd84f5f9c617b785302f3132',
     'first-infinity': 'a80c6064e55b5e5484e92e7eff7e92ee6cac209bca417b049611d21d36e1f0a9',
-    'mature-infinity': '6fb28824e53f9962b4572de81afdc4592170e4fc0ca58ed2c01ce5c5fa8b0f40',
+    'mature-infinity': '12c4114ef8452800229bbf700a3848aff4d0d30b40502379556a2c17b570f358',
     'reality-unlock': 'b122cbc0a4cd283fb96967570b7cb41fb3c793777162af7ed2b162a691e4e0cb',
     'mature-simulations': '673416bcc5afb021ae9eccabe9b5794f5ced7da06cbb2fbd31c08f16adf3bb5d',
     'quantum-unlock': '3e456c4dd615f65f5d15047aecd7f8d57a617611365e5f9b2723e7ffd7a170fa',
@@ -57,6 +64,71 @@ describe('production-valid progression matrix fixtures', () => {
     expect(checkedIn.map((fixture) => fixture.saveSha256)).toEqual(built.map((fixture) => fixture.saveSha256))
     expect(checkedIn.map((fixture) => fixture.fingerprint)).toEqual(built.map((fixture) => fixture.fingerprint))
     expect(checkedIn.map((fixture) => fixture.saveText)).toEqual(built.map((fixture) => fixture.saveText))
+  })
+
+  test('opens and advances every checked-in fixture through the full production application engine', async () => {
+    for (const fixture of loadCheckedInProgressionMatrixFixtures()) {
+      const prepared = prepareImportedSaveText(
+        fixture.saveText,
+        '2026-08-19T00:00:00.000Z',
+      )
+      const application = createProductionCanonicalApplicationFactory({
+        createFirstRunSave: () => {
+          throw new Error('Fixture certification must not use first-run fallback.')
+        },
+        readHostEntitlements: () => ({ permanentDoubleIp: false }),
+      })(new FixtureRepository(prepared))
+
+      await expect(application.start(), fixture.id).resolves.toMatchObject({
+        phase: 'ready',
+        source: 'primary',
+      })
+      expect(application.advanceActive(1), fixture.id).toMatchObject({
+        accepted: true,
+      })
+    }
+  })
+
+  test('rejects an invalid automation phase before commit and preserves the current fixture', async () => {
+    const fixtures = loadCheckedInProgressionMatrixFixtures()
+    const current = prepareImportedSaveText(
+      fixtures[0].saveText,
+      '2026-08-19T00:00:00.000Z',
+    )
+    const mature = prepareImportedSaveText(
+      fixtures.find((fixture) => fixture.id === 'mature-infinity')!.saveText,
+      '2026-08-19T00:00:00.000Z',
+    )
+    const hydrated = hydrateGameState(mature)
+    const invalid = hydrated.prepare({
+      ...hydrated.state,
+      timeline: {
+        ...hydrated.state.timeline,
+        automationTimeUntilNextEvent: 1,
+      },
+    })
+    const repository = new FixtureRepository(current)
+    const application = createProductionCanonicalApplicationFactory({
+      createFirstRunSave: () => {
+        throw new Error('Invalid-phase import test must not use first-run fallback.')
+      },
+      readHostEntitlements: () => ({ permanentDoubleIp: false }),
+    })(repository)
+    await expect(application.start()).resolves.toMatchObject({ phase: 'ready' })
+    const before = repository.current
+
+    await expect(application.importSave({
+      text: serializeWebSave(invalid.copyValidatedState()),
+      importedAtUtc: '2026-08-19T00:00:01.000Z',
+      overwriteApproved: true,
+    })).resolves.toMatchObject({
+      imported: false,
+      committed: false,
+      code: 'APP-IMPORT-INVALID',
+      reason: expect.stringContaining('CANONICAL_EVENT_AUTOMATION_PHASE_INVALID'),
+    })
+    expect(repository.current).toBe(before)
+    expect(repository.commits).toEqual([])
   })
 
   test('certifies exact Infinity accounting and populated Simulation progression', () => {
@@ -116,3 +188,27 @@ describe('production-valid progression matrix fixtures', () => {
     expect(deriveProgressionRoutes({ ...fresh, avocado: { ...fresh.avocado, unlocked: true } })).toContain('avocato')
   })
 })
+
+class FixtureRepository implements SaveRepository {
+  readonly commits: PreparedSave[] = []
+
+  constructor(public current: PreparedSave) {}
+
+  async hasCurrent(): Promise<boolean> {
+    return true
+  }
+
+  async loadCurrent(): Promise<PreparedSave> {
+    return this.current
+  }
+
+  async migrateLegacyOnFirstLaunch(): Promise<FirstLaunchMigrationResult> {
+    return { status: 'already-migrated', save: this.current }
+  }
+
+  async commit(save: PreparedSave): Promise<PreparedSave> {
+    this.commits.push(save)
+    this.current = save
+    return save
+  }
+}

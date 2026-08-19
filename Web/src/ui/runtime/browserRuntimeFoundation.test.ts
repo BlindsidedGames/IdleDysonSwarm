@@ -911,7 +911,9 @@ describe('browser runtime foundation composition', () => {
       phase: 'ready',
       revision: { state: 1 },
     })
-    expect(snapshotPublications).toEqual([1])
+    // Active-time settlement publishes once; the terminal failed-import
+    // outcome then republishes the authoritative final snapshot explicitly.
+    expect(snapshotPublications).toEqual([1, 1])
     expect(runtime.recoveryExportAvailable()).toBe(true)
 
     await expect(runtime.exportLastRecovery()).resolves.toBe(true)
@@ -1328,6 +1330,52 @@ describe('browser runtime foundation composition', () => {
         { code: 'active-time-failed' },
       ],
     })
+    await runtime.shutdown()
+  })
+
+  test('publishes a committed import failure as blocked with recovery available', async () => {
+    const database = new MemoryBrowserSaveDatabase()
+    let application: FakeRuntimeApplication | undefined
+    const phases: string[] = []
+    const snapshots: string[] = []
+    const runtime = createRuntime({
+      database,
+      createApplication: (repository) => {
+        application = new FakeRuntimeApplication(
+          repository,
+          database.events,
+        )
+        application.committedImportFailure = true
+        return application
+      },
+    })
+    runtime.subscribeStatus((status) => phases.push(status.phase))
+    runtime.subscribeSnapshot((snapshot) => snapshots.push(snapshot.phase))
+    await runtime.start()
+
+    await expect(runtime.importSave({
+      text: serializeWebSave({
+        saveVersion: 12,
+        marker: 'committed-but-invalid',
+      }),
+      importedAtUtc: '2026-07-29T00:00:00Z',
+      overwriteApproved: true,
+    })).resolves.toMatchObject({
+      imported: false,
+      committed: true,
+      code: 'APP-POST-COMMIT-RELOAD',
+      recoveryAvailable: true,
+    })
+
+    expect(runtime.status()).toMatchObject({
+      phase: 'blocked',
+      code: 'application-blocked',
+    })
+    expect(runtime.snapshot()).toMatchObject({
+      phase: 'blocked',
+    })
+    expect(phases.at(-1)).toBe('blocked')
+    expect(snapshots.at(-1)).toBe('blocked')
     await runtime.shutdown()
   })
 
@@ -3795,6 +3843,7 @@ class FakeRuntimeApplication
   importedState: CanonicalRuntimeState | undefined
   rejectImports = false
   readonly rejectImportAttempts = new Set<number>()
+  committedImportFailure = false
   checkpointSkipsPersistence = false
   blocked = false
   throwActive = false
@@ -4063,6 +4112,15 @@ class FakeRuntimeApplication
       }),
       request.target,
     )
+    if (this.committedImportFailure) {
+      this.blocked = true
+      return {
+        imported: false,
+        committed: true,
+        code: 'APP-POST-COMMIT-RELOAD',
+        reason: 'Scripted post-commit reload failure.',
+      }
+    }
     if (this.importedState !== undefined) {
       this.state = cloneCanonicalRuntimeState(this.importedState)
     }

@@ -21,7 +21,7 @@ payment, or an automatic dependency upgrade.
 
 ## Save and recovery evidence
 
-The focused release command ran 25 test files and 302 tests:
+The focused release command ran 25 test files and 305 tests:
 
 ```powershell
 npm test -- --run src/save/decodeIdb1.test.ts src/save/migrate.test.ts `
@@ -43,7 +43,7 @@ npm test -- --run src/save/decodeIdb1.test.ts src/save/migrate.test.ts `
   src/ui/gameplay/dyson/ReadyDysonSlice.test.tsx
 ```
 
-Result: **302 passed, 0 failed**.
+Result: **305 passed, 0 failed**.
 
 This covers:
 
@@ -53,7 +53,11 @@ This covers:
 - supported Unity schemas 0, 8, 10 and 11 migrating to schema 12;
 - the authentic public Unity 3.0.328 support save and current production save;
 - all nine immutable progression saves, their pinned hashes, production
-  validation, import and runtime reconstruction;
+  validation, import, full production application/engine startup and a
+  successful engine advance;
+- pre-commit production-engine import preflight, including rejection of the
+  former mature-fixture automation phase with the current save unchanged and
+  no replacement commit;
 - canonical Web export/deserialize round trips, BigInt precision, compressed
   saves and portable-entitlement stripping;
 - malformed base64, malformed envelopes, invalid UTF-8, oversized payloads,
@@ -165,3 +169,144 @@ changed automatically during verification.
 - Android and iOS verification are explicitly outside this Web plan.
 - Production interaction and soak evidence are tracked separately in the final
   performance phase.
+
+## Track B: Web browser, accessibility and performance evidence
+
+Track B was completed on 2026-08-20. It is Web-only and does not claim Android,
+iOS, TalkBack, VoiceOver, heat, battery, or native lifecycle coverage. No
+deployment, commit, push, or paid Store action was performed.
+
+### Browser harness boundary
+
+Chrome and Edge initially exited before opening their DevTools port with a GPU
+process `0xC0000022` failure on this Windows host. The isolated verification
+harness succeeded with `--no-sandbox`; the harness did not disable GPU
+rendering, but it did not independently certify hardware acceleration.
+That flag is confined to local test-process launch and is not shipped in the
+application or recommended as a user browser setting. The production package
+was served on isolated loopback ports so an unrelated existing preview process
+was not interrupted.
+
+### Progression route matrix
+
+`npm run report:performance:matrix` rebuilt the performance package and ran the
+complete matrix at desktop 1440x900 and mobile Web 390x844, with four-times CPU
+throttling, three steady trials, fresh pages per route, and exact checked-in
+save SHA verification. The current artifact is
+`output/performance/progression-matrix.json`.
+
+- 18 profile/fixture combinations and 186 reachable routes were measured.
+- 0 fixtures were blocked; 0 console errors and 0 page errors were recorded.
+- 0 routes had document-level horizontal overflow.
+- The matrix measures reachable activation/performance only. Focused fixture
+  and UI tests certify locked Avocato boundaries without warming Quantum on
+  unrelated route pages; measured Avocato rows exercise the enabled entry.
+- Skills was the largest first activation: maximum Skills reached ready in
+  608.2 ms desktop and 569.9 ms mobile, with first-activation long tasks up to
+  203 ms under throttling.
+- The largest steady canonical-active sample was 56.4 ms in maximum-Skills
+  Settings. Four isolated throttled steady long-task observations occurred in
+  the maximum-Skills stress fixture across Research, Settings, and Offline
+  Time; all other steady route trials had none.
+- Frontend projection remained at or below 3.0 ms p95; canonical
+  gameplay work was the dominant lane.
+
+These stress observations are retained as follow-up optimization evidence.
+They do not contradict the normal interaction acceptance trace below: the
+matrix deliberately uses four-times CPU throttling and a maximum-Skills fixture
+funded explicitly for catalog stress.
+
+### Production interaction acceptance
+
+`npm run report:performance:interaction` ran five 30-second trials per profile.
+`output/performance/first-slice-interaction.json` passed every configured
+budget after the checkpoint correction described below.
+The gate now records the exact fresh fixture fingerprint/save SHA and candidate
+run identity, captures console and page errors before navigation, and assigns
+both a zero-error budget.
+
+| Profile | Max long task | Feedback p95 | React selection-to-commit p95 | INP p75 | CLS p75 | LCP p75 |
+| --- | ---: | ---: | ---: | ---: | ---: | ---: |
+| Desktop 1440x900 | 0 ms | 0.4 ms | 0.8 ms | 32 ms | 0.012028 | 564 ms |
+| Mobile 390x844 at 4x CPU | 0 ms | 1.8 ms | 4.6 ms | 128 ms | 0.070243 | 1,324 ms |
+
+Temporary lane attribution identified the prior periodic mobile spike as the
+30-second save checkpoint, specifically redundant deserialize, revalidation,
+and deterministic recompression after an exact temporary read-back. The
+repository now prepares and encodes once, verifies exact stored text, then
+promotes the same owned, validated `PreparedSave`. Serializer trust boundaries
+were tightened to reject lossy JavaScript graph values and reserved codec-tag
+collisions before any write. An independent review exercised corruption,
+different-valid-payload, lossy-value, codec-collision, write/read/replace/copy,
+backup, and recovery cases and passed. Three subsequent 35-second mobile 4x
+attribution trials recorded zero long tasks; the evidence is
+`output/performance/mobile-long-task-attribution.json`.
+
+### Thirty-minute retained-resource soak
+
+`npm run report:performance:soak` imported the certified mid-swarm fixture,
+cycled stable routes, returned to Settings for like-for-like snapshots, forced
+four garbage collections, and ran for 1,800,000 ms. The final
+`output/performance/first-slice-retained-heap.json` passed every budget:
+
+- retained heap grew 3,669,176 bytes against a 10,485,760-byte allowance;
+- document count remained 1, nodes 274, listeners 405;
+- timeout/interval/animation-frame/pointer counts remained 1/3/0/0;
+- subscription sets and members remained 7/7;
+- route visibility boundaries were identical at start and finish.
+
+The soak artifact records the exact mid-swarm fixture fingerprint/save SHA and
+candidate run identity and fails its report if any console or page error occurs.
+
+Earlier short diagnostics that compared a changing Bots surface or crossed an
+unlock boundary were rejected as invalid baselines rather than reported as
+leaks.
+
+### Browser accessibility acceptance
+
+`npm run verify:web-accessibility:browser` produced
+`output/performance/web-accessibility-acceptance.json` for 320x800 and 390x844
+Web viewports. This browser script is fail-closed and the current artifact has
+`passed: true` with no acceptance issues. It recorded zero document overflow at
+normal and 200 percent text sizing, a minimum 44 CSS-pixel interactive target,
+zero running animations with reduced motion, representative
+computed contrast ratios from 11.85:1 to 17.81:1, keyboard opening of Import,
+real textarea editing, dialog focus containment, Escape close/focus restore,
+and clean state after rapid trusted CDP touch activation. Console and page
+errors are captured and must both remain empty.
+
+This automation does not prove every painted contrast combination, visible
+focus paint, browser-chrome 400 percent zoom, or actual screen-reader
+announcements. A 320 CSS-pixel reflow proxy passed, but manual browser 400
+percent zoom, screen-reader, visible-focus and full contrast checks remain
+acceptance items before public deployment. The 200 percent text geometry is
+now free of clipped interactive controls, but it and the remaining
+element-edge diagnostics also require a manual visual review. Physical/native
+accessibility checks remain explicitly outside this Web phase.
+
+### Current bundle gate
+
+The final production bundle report records a 260.28 KiB-gzip JavaScript entry
+and a 283.11 KiB-gzip initial boot graph including the English catalog. The
+boot graph passes the enforced 301 KiB no-regression ceiling and remains above
+the provisional 250 KiB milestone. Boot CSS is 12.46 KiB gzip. The complete
+PWA precache is 2,431,809 bytes gzip across 153 assets; destination separation
+reduces initial request/evaluation work but does not claim to reduce eventual
+background PWA installation transfer.
+
+### Reproduction commands and remaining boundary
+
+```powershell
+npm run report:performance:matrix
+npm run report:performance:interaction
+npm run report:performance:soak
+npm run verify:web-accessibility:browser
+```
+
+The evidence was generated from commit
+`909782a03acdbd1f5b7d764e698bcc8e0ebc70c1` plus the dirty reviewed candidate.
+It is not yet evidence for a deployable SHA. The work must be intentionally
+checkpointed, then all release gates and the clean-repository audit rerun for
+the exact committed candidate. Manual browser 400 percent zoom, 200 percent
+text appearance, visible focus, full contrast, and screen-reader checks also
+remain open; Android and iOS remain deferred by scope.

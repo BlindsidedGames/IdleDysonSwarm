@@ -463,6 +463,47 @@ describe('transactional game application', () => {
     expect(repository.commits).toEqual([])
   })
 
+  test('rejects an engine-invalid import before commit and preserves the current save', async () => {
+    const repository = new RecordingRepository()
+    repository.current = prepared(2)
+    const definition = engineDefinition()
+    const application = new TransactionalGameApplication({
+      startupResolver: {
+        resolve: async () => ({
+          kind: 'ready' as const,
+          source: 'primary' as const,
+          save: repository.current!,
+        }),
+      },
+      sessionFactory: { open: sessionFactory },
+      engineDefinition: {
+        ...definition,
+        validateState: (state) =>
+          state.value === 99
+            ? 'PROBE-IMPORT-PHASE-INVALID'
+            : definition.validateState(state),
+      },
+      repository,
+    })
+    await application.start()
+    const beforeSnapshot = application.snapshot()
+    const beforeCurrent = repository.current
+
+    await expect(application.importSave({
+      text: importedText(99),
+      importedAtUtc: '2026-07-29T03:00:00.000Z',
+      overwriteApproved: true,
+    })).resolves.toMatchObject({
+      imported: false,
+      committed: false,
+      code: 'APP-IMPORT-INVALID',
+      reason: expect.stringContaining('PROBE-IMPORT-PHASE-INVALID'),
+    })
+    expect(application.snapshot()).toBe(beforeSnapshot)
+    expect(repository.current).toBe(beforeCurrent)
+    expect(repository.commits).toEqual([])
+  })
+
   test('preserves the exact current state when import commit fails', async () => {
     const repository = new RecordingRepository()
     repository.current = prepared(2)

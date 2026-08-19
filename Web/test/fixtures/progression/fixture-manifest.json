@@ -17,7 +17,8 @@
         "settings"
       ],
       "certification": [
-        "production first-run artifact"
+        "production first-run artifact",
+        "full production application/engine startup and advance"
       ],
       "file": "fresh.idsweb1.txt"
     },
@@ -37,7 +38,8 @@
         "settings"
       ],
       "certification": [
-        "pre-Infinity invariants"
+        "pre-Infinity invariants",
+        "full production application/engine startup and advance"
       ],
       "file": "mid-swarm.idsweb1.txt"
     },
@@ -58,15 +60,16 @@
         "settings"
       ],
       "certification": [
-        "applyCanonicalInfinityReset"
+        "applyCanonicalInfinityReset",
+        "full production application/engine startup and advance"
       ],
       "file": "first-infinity.idsweb1.txt"
     },
     {
       "id": "mature-infinity",
       "description": "Active mature Infinity economy with twenty Secrets and both automation unlocks purchased canonically.",
-      "fingerprint": "8735d28de54ea397a84ad1e0c142a35d7993463b6bec34d2c7452741fafa14a4",
-      "saveSha256": "6fb28824e53f9962b4572de81afdc4592170e4fc0ca58ed2c01ce5c5fa8b0f40",
+      "fingerprint": "def49e091e41805a52ac2acd2ecf45d4b933ca478d5b431c80706ebce6ba0f68",
+      "saveSha256": "12c4114ef8452800229bbf700a3848aff4d0d30b40502379556a2c17b570f358",
       "reachableRoutes": [
         "bots",
         "research",
@@ -83,7 +86,8 @@
         "20 canonical Secret purchases",
         "canonical automation purchases",
         "characterized active-economy seed",
-        "goal progression fixed point"
+        "goal progression fixed point",
+        "full production application/engine startup and advance"
       ],
       "file": "mature-infinity.idsweb1.txt"
     },
@@ -107,7 +111,8 @@
       ],
       "certification": [
         "canonical reset",
-        "37 canonical Infinity shop purchases"
+        "37 canonical Infinity shop purchases",
+        "full production application/engine startup and advance"
       ],
       "file": "reality-unlock.idsweb1.txt"
     },
@@ -133,7 +138,8 @@
         "canonical Dream reset",
         "canonical Reality generation/gather",
         "canonical Dream purchases/production",
-        "canonical Simulation upgrade purchase"
+        "canonical Simulation upgrade purchase",
+        "full production application/engine startup and advance"
       ],
       "file": "mature-simulations.idsweb1.txt"
     },
@@ -158,7 +164,8 @@
       ],
       "certification": [
         "canonical reset",
-        "37 canonical Infinity shop purchases"
+        "37 canonical Infinity shop purchases",
+        "full production application/engine startup and advance"
       ],
       "file": "quantum-unlock.idsweb1.txt"
     },
@@ -185,7 +192,8 @@
       "certification": [
         "canonical Infinity resets",
         "canonical Quantum resets",
-        "canonical Quantum upgrade purchases"
+        "canonical Quantum upgrade purchases",
+        "full production application/engine startup and advance"
       ],
       "file": "late-quantum.idsweb1.txt"
     },
@@ -212,7 +220,8 @@
       "certification": [
         "explicit 200-point/42-fragment stress seed",
         "canonical Skill purchase fixed point",
-        "exclusive choices respected"
+        "exclusive choices respected",
+        "full production application/engine startup and advance"
       ],
       "file": "maximum-skills.idsweb1.txt"
     }

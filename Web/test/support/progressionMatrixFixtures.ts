@@ -24,6 +24,7 @@ import { deriveBasicDysonState } from '../../src/simulation/canonicalDysonDeriva
 import { createDeterministicMatureDysonFixture } from './deterministicMatureDysonFixture'
 import { selectGameplayVisibility } from '../../src/application/frontendSnapshot'
 import { advanceRealityWorkers, gatherRealityInfluence } from '../../src/simulation/realityWorkers'
+import { DEFAULT_AUTOMATION_INTERVAL_SECONDS } from '../../src/simulation/eventTime'
 
 export const PROGRESSION_FIXTURE_IDS = [
   'fresh', 'mid-swarm', 'first-infinity', 'mature-infinity',
@@ -236,7 +237,8 @@ function withMatureActiveEconomy(source: CanonicalGameStateV1): {
     timeline: {
       ...state.timeline,
       eventClockInitialized: true,
-      automationTimeUntilNextEvent: 1,
+      automationTimeUntilNextEvent:
+        DEFAULT_AUTOMATION_INTERVAL_SECONDS,
       storedTimeAvailableSeconds: MAXIMUM_PERSISTED_STORED_TIME_SECONDS,
       storedTimeCapacitySeconds: MAXIMUM_PERSISTED_STORED_TIME_SECONDS,
     },
@@ -386,7 +388,10 @@ function materialize(
     fingerprint: createHash('sha256').update(stableStringify(serializedState)).digest('hex'),
     saveSha256: createHash('sha256').update(saveText).digest('hex'),
     reachableRoutes: deriveProgressionRoutes(serializedState), saveText,
-    certification: Object.freeze([...certification]),
+    certification: Object.freeze([
+      ...certification,
+      'full production application/engine startup and advance',
+    ]),
   })
 }
 

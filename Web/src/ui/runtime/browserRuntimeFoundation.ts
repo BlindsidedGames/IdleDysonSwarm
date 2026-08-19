@@ -1012,13 +1012,11 @@ class BrowserRuntimeFoundation implements BrowserUiRuntimeFoundation {
           )
         }
         graph.checkpoint.start()
-        const snapshot = graph.application.snapshot()
-        if (snapshot.phase === 'ready') {
-          this.publishFrontendSnapshot(graph)
-          this.publish(this.readyStatus())
-        }
       }
-      return mapImportResult(routed.imported, true)
+      this.publishApplicationOutcomeAfterImport(graph)
+      const result = mapImportResult(routed.imported, true)
+      recordPerformanceImportResult(result)
+      return result
     } catch (error) {
       await this.lease.assertWritable()
       this.assertCurrentGraph(graph)
@@ -1029,13 +1027,16 @@ class BrowserRuntimeFoundation implements BrowserUiRuntimeFoundation {
       if (retainedPath !== undefined) {
         this.lastRecoveryPath = retainedPath
       }
-      return {
+      this.publishApplicationOutcomeAfterImport(graph)
+      const result = {
         imported: false,
         committed: false,
         code: importFailureCode(error),
         reason: errorMessage(error),
         recoveryAvailable: retainedPath !== undefined,
-      }
+      } as const
+      recordPerformanceImportResult(result)
+      return result
     } finally {
       this.pendingImportCount -= 1
       if (this.pendingImportCount === 0) {
@@ -1627,6 +1628,25 @@ class BrowserRuntimeFoundation implements BrowserUiRuntimeFoundation {
     )
   }
 
+  /** Every terminal import outcome must replace any transient import UI. */
+  private publishApplicationOutcomeAfterImport(
+    graph: BrowserRuntimeGraph,
+  ): void {
+    const snapshot = graph.application.snapshot()
+    this.publishFrontendSnapshot(graph, true)
+    if (snapshot.phase === 'ready') {
+      this.publish(this.readyStatus())
+      return
+    }
+    if (snapshot.phase === 'blocked') {
+      this.publish(applicationBlockedStatus(snapshot))
+      return
+    }
+    throw new Error(
+      `Import ended with the application in ${snapshot.phase}.`,
+    )
+  }
+
   private recordActiveResult(
     result: Readonly<CanonicalCoordinatedActiveResult>,
   ): void {
@@ -2106,6 +2126,15 @@ function importFailureCode(error: unknown): string {
     return 'RUNTIME-IMPORT-LIMIT'
   }
   return 'RUNTIME-IMPORT-INVALID'
+}
+
+function recordPerformanceImportResult(
+  result: UiRuntimeImportResult,
+): void {
+  if (import.meta.env.MODE !== 'performance') return
+  ;(globalThis as typeof globalThis & {
+    __idleDysonLastImportResult?: UiRuntimeImportResult
+  }).__idleDysonLastImportResult = structuredClone(result)
 }
 
 function errorMessage(error: unknown): string {

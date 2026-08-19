@@ -5,6 +5,7 @@ import {
   serializeSharedWebSave,
   serializeWebSave,
 } from './serialization'
+import type { SaveRecord } from './graph'
 
 describe('canonical web save serialization', () => {
   afterEach(() => {
@@ -30,6 +31,41 @@ describe('canonical web save serialization', () => {
     const save: Record<string, unknown> = { saveVersion: 12 }
     save.self = save
     expect(() => serializeWebSave(save)).toThrow('reference cycles')
+  })
+
+  test.each([
+    ['undefined', undefined],
+    ['function', () => undefined],
+    ['symbol', Symbol('unsupported')],
+    ['date', new Date('2026-08-19T00:00:00Z')],
+    ['non-finite number', Number.POSITIVE_INFINITY],
+    ['negative zero', -0],
+  ])('rejects lossy %s values instead of changing durable state', (_label, value) => {
+    expect(() => serializeWebSave({ saveVersion: 12, value })).toThrow(
+      'Canonical web saves',
+    )
+  })
+
+  test('rejects sparse arrays and symbol-keyed properties', () => {
+    const sparse = Array(1)
+    expect(() => serializeWebSave({ saveVersion: 12, sparse })).toThrow(
+      'undefined',
+    )
+
+    const symbolKeyed = { saveVersion: 12 } as Record<PropertyKey, unknown>
+    symbolKeyed[Symbol('hidden')] = 'not serialized by JSON'
+    expect(() => serializeWebSave(symbolKeyed as SaveRecord)).toThrow(
+      'symbol-keyed',
+    )
+  })
+
+  test.each([
+    ['$bigint', { $bigint: '123' }],
+    ['$bytes', { $bytes: 'AA==' }],
+  ])('rejects source objects that collide with the reserved %s codec tag', (_tag, value) => {
+    expect(() => serializeWebSave({ saveVersion: 12, value })).toThrow(
+      'reserved codec tags',
+    )
   })
 
   test('rejects mismatched envelope and state schemas', () => {

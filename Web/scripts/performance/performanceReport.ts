@@ -32,6 +32,8 @@ export interface PerformanceBudgetResult {
 
 export interface InteractionTrialMeasurement {
   readonly trial: number
+  readonly consoleErrors: readonly string[]
+  readonly pageErrors: readonly string[]
   readonly longTaskDurationsMilliseconds: readonly number[]
   readonly commandFeedbackLatenciesMilliseconds: readonly number[]
   readonly snapshotSelectionThroughReactCommit: readonly {
@@ -113,6 +115,8 @@ export interface SoakPerformanceReport {
   }
   readonly baseline: SoakSnapshot
   readonly final: SoakSnapshot
+  readonly consoleErrors: readonly string[]
+  readonly pageErrors: readonly string[]
   readonly retainedHeapGrowthBytes: number
   readonly retainedHeapAllowanceBytes: number
   readonly budgets: readonly PerformanceBudgetResult[]
@@ -270,6 +274,18 @@ export function createInteractionReport(input: {
     )
     const budgets = [
       budget(
+        'Console errors',
+        'count',
+        profile.trials.reduce((total, trial) => total + trial.consoleErrors.length, 0),
+        0,
+      ),
+      budget(
+        'Page errors',
+        'count',
+        profile.trials.reduce((total, trial) => total + trial.pageErrors.length, 0),
+        0,
+      ),
+      budget(
         'Visible command feedback samples',
         'count',
         profile.trials.reduce(
@@ -385,6 +401,8 @@ export function createSoakReport(input: {
   readonly explicitGarbageCollections: number
   readonly baseline: SoakSnapshot
   readonly final: SoakSnapshot
+  readonly consoleErrors: readonly string[]
+  readonly pageErrors: readonly string[]
 }): SoakPerformanceReport {
   const retainedHeapGrowthBytes = Math.max(
     0,
@@ -411,6 +429,8 @@ export function createSoakReport(input: {
     'callbackSubscriptionMembers',
   ] as const
   const budgets = [
+    budget('Console errors', 'count', input.consoleErrors.length, 0),
+    budget('Page errors', 'count', input.pageErrors.length, 0),
     budget(
       'Retained JavaScript heap growth',
       'bytes',
@@ -442,6 +462,8 @@ export function createSoakReport(input: {
     },
     baseline: input.baseline,
     final: input.final,
+    consoleErrors: input.consoleErrors ?? [],
+    pageErrors: input.pageErrors ?? [],
     retainedHeapGrowthBytes,
     retainedHeapAllowanceBytes,
     budgets,

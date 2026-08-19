@@ -2,6 +2,7 @@ import {
   mkdirSync,
   writeFileSync,
 } from 'node:fs'
+import { execFileSync } from 'node:child_process'
 import { resolve } from 'node:path'
 import {
   assertPerformanceReport,
@@ -49,4 +50,20 @@ export function hasFlag(
   name: string,
 ): boolean {
   return argumentsList.includes(`--${name}`)
+}
+
+export function repositoryRunIdentity(webRoot: string): {
+  readonly revision: string
+  readonly workingTreeDirty: boolean
+} {
+  return {
+    revision: execFileSync('git', ['rev-parse', 'HEAD'], {
+      cwd: webRoot,
+      encoding: 'utf8',
+    }).trim(),
+    workingTreeDirty: execFileSync('git', ['status', '--porcelain'], {
+      cwd: webRoot,
+      encoding: 'utf8',
+    }).trim().length > 0,
+  }
 }

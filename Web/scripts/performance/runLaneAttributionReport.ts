@@ -96,7 +96,7 @@ async function openProbedPage(
   profile: ViewportProfile,
   productionUrl: string,
 ): Promise<ChromiumPage> {
-  const url = new URL('play/', productionUrl).href
+  const url = productionUrl
   const page = await openChromiumPage(profile, url)
   await page.cdp.send('Page.addScriptToEvaluateOnNewDocument', {
     source: `(() => {

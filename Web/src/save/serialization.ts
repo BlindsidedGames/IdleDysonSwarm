@@ -206,12 +206,41 @@ function gunzipBounded(compressed: Uint8Array, limitBytes: number): Uint8Array {
 
 function encodeValue(value: unknown, seen: Set<object>): unknown {
   if (typeof value === 'bigint') return { $bigint: value.toString() }
+  if (typeof value === 'number') {
+    if (!Number.isFinite(value) || Object.is(value, -0)) {
+      throw new Error('Canonical web saves cannot contain non-finite or negative-zero numbers.')
+    }
+    return value
+  }
+  if (
+    value === undefined ||
+    typeof value === 'function' ||
+    typeof value === 'symbol'
+  ) {
+    throw new Error(`Canonical web saves cannot contain ${typeof value} values.`)
+  }
   if (value instanceof Uint8Array) return { $bytes: encodeBase64(value) }
   if (value === null || typeof value !== 'object') return value
+  if (!Array.isArray(value)) {
+    const prototype = Object.getPrototypeOf(value)
+    if (prototype !== Object.prototype && prototype !== null) {
+      throw new Error('Canonical web saves can contain only plain objects, arrays, and byte arrays.')
+    }
+    if (Object.getOwnPropertySymbols(value).length > 0) {
+      throw new Error('Canonical web saves cannot contain symbol-keyed properties.')
+    }
+    const sourceKeys = Object.keys(value)
+    if (
+      sourceKeys.length === 1 &&
+      (sourceKeys[0] === '$bigint' || sourceKeys[0] === '$bytes')
+    ) {
+      throw new Error('Canonical web saves cannot contain objects that collide with reserved codec tags.')
+    }
+  }
   if (seen.has(value)) throw new Error('Canonical web saves cannot contain reference cycles.')
   seen.add(value)
   const encoded = Array.isArray(value)
-    ? value.map((entry) => encodeValue(entry, seen))
+    ? Array.from(value, (entry) => encodeValue(entry, seen))
     : sortObject(
         Object.fromEntries(
           Object.entries(value).map(([key, entry]) => [

@@ -39,7 +39,13 @@ The post-icon-conversion performance baseline is recorded in
   route matrix is reproducible and records an explicit blocked result because
   local Chromium still closes its DevTools connection; route timing figures
   remain unclaimed and must be collected when that environment issue clears.
-- Phase 9 is next.
+- Phase 9 automated Web verification is complete and independently reviewed.
+  Production save/backup recovery, PWA install/offline/update survival, Store
+  boundaries, dependency audits, the 18-profile/186-route matrix, interaction
+  budgets, automated accessibility/reflow gates and the 30-minute explicit-GC
+  soak all pass. Manual visible-focus paint, complete visual contrast, 200%
+  visual appearance, browser-native 400% zoom and screen-reader behavior remain
+  required before deployment. No deployment or push has been performed.
 
 ## Preparation already completed
 

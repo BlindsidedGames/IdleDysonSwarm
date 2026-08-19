@@ -18,8 +18,13 @@ import {
 import {
   hasFlag,
   integerArgument,
+  repositoryRunIdentity,
   writePerformanceReport,
 } from './reportArtifacts'
+import {
+  loadCheckedInProgressionMatrixFixtures,
+} from '../../test/support/progressionMatrixFixtures'
+import { importSaveThroughSettings } from './browserFixtureImport'
 
 const webRoot = resolve(import.meta.dirname, '..', '..')
 const smoke = hasFlag(process.argv.slice(2), 'smoke')
@@ -56,6 +61,12 @@ const allProfiles: readonly ViewportProfile[] = [
   },
 ]
 const profiles = smoke ? allProfiles.slice(0, 1) : allProfiles
+const freshFixture = loadCheckedInProgressionMatrixFixtures().find(
+  (fixture) => fixture.id === 'fresh',
+)
+if (freshFixture === undefined) {
+  throw new Error('The checked-in fresh performance fixture is missing.')
+}
 
 const preview = await startProductionPreview(webRoot, port)
 let environment: PerformanceEnvironment | undefined
@@ -65,9 +76,14 @@ try {
     const trials: InteractionTrialMeasurement[] = []
     for (let trial = 1; trial <= trialCount; trial += 1) {
       const page = await openChromiumPage(profile, preview.url)
+      const consoleErrors: string[] = []
+      const pageErrors: string[] = []
       try {
+        await captureBrowserErrors(page, consoleErrors, pageErrors)
         environment ??= page.environment
         await page.navigate(preview.url)
+        await importSaveThroughSettings(page, freshFixture)
+        await page.resetInteractionMeasurements()
         const warmupActivations =
           await page.warmFirstSliceCommitProbe()
         if (warmupActivations === 0) {
@@ -88,6 +104,8 @@ try {
         const entries = await page.readPerformanceEntries()
         trials.push({
           trial,
+          consoleErrors,
+          pageErrors,
           longTaskDurationsMilliseconds: entries.longTasks.map(
             (entry) => entry.duration,
           ),
@@ -121,13 +139,21 @@ try {
   if (environment === undefined) {
     throw new Error('No browser environment was measured.')
   }
-  const report = createInteractionReport({
+  const report = {
+    ...createInteractionReport({
     mode,
     createdAtUtc: new Date().toISOString(),
     environment,
     traceDurationMilliseconds: durationMilliseconds,
     profiles: measurements,
-  })
+    }),
+    fixture: {
+      id: freshFixture.id,
+      fingerprint: freshFixture.fingerprint,
+      saveSha256: freshFixture.saveSha256,
+    },
+    runIdentity: repositoryRunIdentity(webRoot),
+  }
   const paths = writePerformanceReport(
     webRoot,
     'first-slice-interaction',
@@ -139,4 +165,24 @@ try {
   process.exitCode = performanceReportExitCode(report)
 } finally {
   await preview.stop()
+}
+
+async function captureBrowserErrors(
+  page: Awaited<ReturnType<typeof openChromiumPage>>,
+  consoleErrors: string[],
+  pageErrors: string[],
+): Promise<void> {
+  await page.cdp.send('Runtime.enable')
+  page.cdp.on<{ type?: string; args?: readonly { value?: unknown; description?: string }[] }>(
+    'Runtime.consoleAPICalled',
+    (event) => {
+      if (event.type === 'error') {
+        consoleErrors.push(event.args?.map((entry) => String(entry.value ?? entry.description ?? '')).join(' ') ?? '')
+      }
+    },
+  )
+  page.cdp.on<{ exceptionDetails?: { text?: string; exception?: { description?: string } } }>(
+    'Runtime.exceptionThrown',
+    (event) => pageErrors.push(event.exceptionDetails?.exception?.description ?? event.exceptionDetails?.text ?? 'Unknown page exception'),
+  )
 }

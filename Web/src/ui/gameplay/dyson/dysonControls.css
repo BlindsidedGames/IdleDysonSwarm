@@ -166,12 +166,13 @@
 .bot-distribution {
   display: grid;
   grid-template-columns:
-    minmax(4.6rem, 0.7fr)
-    minmax(7rem, 1.45fr)
-    minmax(4.6rem, 0.7fr);
+    minmax(0, 0.7fr)
+    minmax(0, 1.45fr)
+    minmax(0, 0.7fr);
   grid-template-rows: auto auto;
   gap: 0.15rem 0.45rem;
   align-items: end;
+  min-inline-size: 0;
   color: white;
 }
 
@@ -219,8 +220,8 @@
   grid-column: 2;
   grid-row: 2;
   inline-size: 100%;
-  block-size: 1.4rem;
-  margin: 0;
+  block-size: 2.75rem;
+  margin: -0.675rem 0;
   background: transparent;
   touch-action: pan-y;
 }
