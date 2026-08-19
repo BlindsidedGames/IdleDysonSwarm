@@ -24,76 +24,55 @@ import './statistics.css'
 
 type StatisticsState = FrontendCanonicalProgression['statistics']
 type TotalsMetricKey = keyof SimulationTotalsState
+type DisplayMetricKey =
+  | TotalsMetricKey
+  | 'combinedInfinityCount'
+  | 'combinedInfinityPoints'
 
 export interface StatisticsSurfaceProps {
   readonly locale: EnabledLocale
   readonly statistics: StatisticsState
+  readonly visibility: StatisticsVisibility
+}
+
+export interface StatisticsVisibility {
+  readonly infinity: boolean
+  readonly simulations: boolean
+  readonly reality: boolean
 }
 
 interface MetricDefinition {
   readonly label: MessageDescriptor
-  readonly key: TotalsMetricKey
+  readonly key: DisplayMetricKey
   readonly format: 'number' | 'duration'
 }
 
 interface MetricGroupDefinition {
   readonly title: MessageDescriptor
   readonly metrics: readonly MetricDefinition[]
+  readonly visibility?: keyof StatisticsVisibility
 }
 
 const metricGroups: readonly MetricGroupDefinition[] = [
   {
-    title: messages.activity,
-    metrics: [
-      {
-        label: messages.simulatedTime,
-        key: 'simulatedSeconds',
-        format: 'duration',
-      },
-      {
-        label: messages.capacityStallTime,
-        key: 'realityCapacityStallSeconds',
-        format: 'duration',
-      },
-    ],
-  },
-  {
     title: messages.infinity,
+    visibility: 'infinity',
     metrics: [
       {
-        label: messages.ordinaryInfinityCount,
-        key: 'ordinaryInfinityCount',
+        label: messages.totalInfinities,
+        key: 'combinedInfinityCount',
         format: 'number',
       },
       {
-        label: messages.breakInfinityCount,
-        key: 'breakInfinityCount',
-        format: 'number',
-      },
-      {
-        label: messages.ordinaryInfinityPoints,
-        key: 'ordinaryInfinityPoints',
-        format: 'number',
-      },
-      {
-        label: messages.breakInfinityPoints,
-        key: 'breakInfinityPoints',
-        format: 'number',
-      },
-      {
-        label: messages.botCapInfinityPoints,
-        key: 'botCapInfinityPoints',
-        format: 'number',
-      },
-      {
-        label: messages.botCapOverflowRewards,
-        key: 'botCapOverflowRewards',
+        label: messages.infinityPoints,
+        key: 'combinedInfinityPoints',
         format: 'number',
       },
     ],
   },
   {
     title: messages.simulations,
+    visibility: 'simulations',
     metrics: [
       {
         label: messages.meteorResets,
@@ -124,7 +103,13 @@ const metricGroups: readonly MetricGroupDefinition[] = [
   },
   {
     title: messages.reality,
+    visibility: 'reality',
     metrics: [
+      {
+        label: messages.capacityStallTime,
+        key: 'realityCapacityStallSeconds',
+        format: 'duration',
+      },
       {
         label: messages.realityWorkers,
         key: 'realityWorkers',
@@ -145,17 +130,20 @@ const metricGroups: readonly MetricGroupDefinition[] = [
 ]
 
 const windowMetrics = [
-  ['simulatedSeconds', messages.simulatedTime, 'duration'],
-  ['infinityCount', messages.infinityResets, 'number'],
-  ['infinityPoints', messages.infinityPoints, 'number'],
-  ['dreamResetCount', messages.dreamResets, 'number'],
-  ['strangeMatter', messages.strangeMatter, 'number'],
-  ['realityWorkers', messages.realityWorkers, 'number'],
+  ['simulatedSeconds', messages.simulatedTime, 'duration', undefined],
+  ['infinityCount', messages.infinityResets, 'number', 'infinity'],
+  ['infinityPoints', messages.infinityPoints, 'number', 'infinity'],
+  ['dreamResetCount', messages.dreamResets, 'number', 'simulations'],
+  ['strangeMatter', messages.strangeMatter, 'number', 'simulations'],
+  ['realityWorkers', messages.realityWorkers, 'number', 'reality'],
 ] as const
+
+type WindowMetricDefinition = (typeof windowMetrics)[number]
 
 export function StatisticsSurface({
   locale,
   statistics,
+  visibility,
 }: StatisticsSurfaceProps) {
   const intl = useIntl()
   const scopes = [
@@ -167,11 +155,15 @@ export function StatisticsSurface({
       title: messages.currentQuantumRun,
       totals: statistics.currentQuantumRun,
     },
-    {
-      title: messages.latestInterval,
-      totals: statistics.recentProcessedSegment,
-    },
   ] as const
+  const visibleMetricGroups = metricGroups.filter(
+    (group) =>
+      group.visibility === undefined || visibility[group.visibility],
+  )
+  const visibleWindowMetrics = windowMetrics.filter(
+    ([, , , requiredVisibility]) =>
+      requiredVisibility === undefined || visibility[requiredVisibility],
+  )
   const windows = [
     {
       title: messages.lastHour,
@@ -225,6 +217,7 @@ export function StatisticsSurface({
               locale={locale}
               title={scope.title}
               totals={scope.totals}
+              groups={visibleMetricGroups}
             />
           ))}
         </div>
@@ -238,6 +231,7 @@ export function StatisticsSurface({
                 locale={locale}
                 title={window.title}
                 totals={window.totals}
+                metrics={visibleWindowMetrics}
               />
             ))}
           </div>
@@ -256,31 +250,50 @@ function ScopeCard({
   locale,
   title,
   totals,
+  groups,
 }: {
   readonly locale: EnabledLocale
   readonly title: MessageDescriptor
   readonly totals: Readonly<SimulationTotalsState>
+  readonly groups: readonly MetricGroupDefinition[]
 }) {
   const intl = useIntl()
   return (
     <article className="statistics-card statistics-scope-card">
-      <h2>{intl.formatMessage(title)}</h2>
-      {metricGroups.map((group) => (
-        <section key={group.title.id}>
+      <header className="statistics-scope-card__heading">
+        <h2>{intl.formatMessage(title)}</h2>
+        <dl>
+          <div>
+            <dt>{intl.formatMessage(messages.simulatedTime)}</dt>
+            <dd>{formatGameDuration(locale, totals.simulatedSeconds)}</dd>
+          </div>
+        </dl>
+      </header>
+      {groups.map((group) => (
+        <section
+          key={group.title.id}
+          data-statistics-group={group.visibility}
+        >
           <h3>{intl.formatMessage(group.title)}</h3>
-          <dl>
-            {group.metrics.map((metric) => (
-              <StatisticFact
-                key={metric.key}
-                label={intl.formatMessage(metric.label)}
-                value={formatMetricValue(
-                  locale,
-                  totals[metric.key],
-                  metric.format,
-                )}
-              />
-            ))}
-          </dl>
+          {hasRecordedGroupActivity(totals, group.metrics) ? (
+            <dl>
+              {group.metrics.map((metric) => (
+                <StatisticFact
+                  key={metric.key}
+                  label={intl.formatMessage(metric.label)}
+                  value={formatMetricValue(
+                    locale,
+                    readDisplayMetric(totals, metric.key),
+                    metric.format,
+                  )}
+                />
+              ))}
+            </dl>
+          ) : (
+            <p className="statistics-card__empty">
+              {intl.formatMessage(messages.none)}
+            </p>
+          )}
         </section>
       ))}
     </article>
@@ -291,17 +304,19 @@ function WindowCard({
   locale,
   title,
   totals,
+  metrics,
 }: {
   readonly locale: EnabledLocale
   readonly title: MessageDescriptor
   readonly totals: StatisticsWindowAggregate
+  readonly metrics: readonly WindowMetricDefinition[]
 }) {
   const intl = useIntl()
   return (
     <article className="statistics-card statistics-window-card">
       <h3>{intl.formatMessage(title)}</h3>
       <dl>
-        {windowMetrics.map(([key, label, format]) => (
+        {metrics.map(([key, label, format]) => (
           <StatisticFact
             key={key}
             label={intl.formatMessage(label)}
@@ -315,6 +330,31 @@ function WindowCard({
       </dl>
     </article>
   )
+}
+
+function hasRecordedGroupActivity(
+  totals: Readonly<SimulationTotalsState>,
+  metrics: readonly MetricDefinition[],
+): boolean {
+  return metrics.some((metric) => {
+    const value = readDisplayMetric(totals, metric.key)
+    return value !== 0 && value !== 0n
+  })
+}
+
+function readDisplayMetric(
+  totals: Readonly<SimulationTotalsState>,
+  key: DisplayMetricKey,
+): number | bigint {
+  if (key === 'combinedInfinityCount') {
+    return totals.ordinaryInfinityCount + totals.breakInfinityCount
+  }
+  if (key === 'combinedInfinityPoints') {
+    return totals.ordinaryInfinityPoints +
+      totals.breakInfinityPoints +
+      totals.botCapInfinityPoints
+  }
+  return totals[key]
 }
 
 function LastCycleCard({

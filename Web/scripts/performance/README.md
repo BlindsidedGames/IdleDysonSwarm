@@ -58,6 +58,30 @@ The report applies the fixed P75 trial aggregation and P95 budgets from
 `product-ui-foundation.md`. The commit interval excludes browser paint,
 command/coordinator time and input scheduling.
 
+## Runtime lane attribution
+
+Run the focused comparison used while optimizing canonical processing,
+frontend projection, snapshot publication and React commits:
+
+```powershell
+npm run report:performance:lanes:focused
+```
+
+Run the wider diagnostic route set:
+
+```powershell
+npm run report:performance:lanes
+```
+
+Both commands build an instrumented production variant, start an isolated
+Vite Preview server, and use `Documentation/SaveBackups/MainSave.txt` for the
+advanced-Dyson measurements. They write machine-readable results under the
+ignored `output/performance/` directory. The focused report covers fresh Bots
+plus advanced Bots, Skills and Settings at desktop and mobile viewports with
+4x CPU throttling. These are diagnostic lane measurements, not acceptance
+evidence. Keep the save path and SHA-256 recorded with a baseline unchanged
+when making before-and-after comparisons.
+
 For harness debugging only, smoke duration and trial count are configurable:
 
 ```powershell

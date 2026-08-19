@@ -1887,7 +1887,7 @@ function validateRuntimeTransitionState(
   )
   const incrementalIssue = model.validateIncremental()
   if (incrementalIssue !== undefined) return incrementalIssue
-  return import.meta.env.DEV ? model.validate() : undefined
+  return import.meta.env?.DEV === false ? undefined : model.validate()
 }
 
 function requiredBotCapCheckpoint(

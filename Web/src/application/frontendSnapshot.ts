@@ -2621,7 +2621,7 @@ function freezeFrontendProjection<T>(
   value: T,
   sourceOwnership: 'borrowed' | 'detached-frozen',
 ): DeepReadonly<T> {
-  return sourceOwnership === 'detached-frozen' && import.meta.env.PROD
+  return sourceOwnership === 'detached-frozen' && import.meta.env?.PROD === true
     ? Object.freeze(value) as DeepReadonly<T>
     : deepFreeze(value)
 }

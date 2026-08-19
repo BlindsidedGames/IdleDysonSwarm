@@ -5,6 +5,7 @@ import {
 } from 'node:fs'
 import { resolve } from 'node:path'
 import { fileURLToPath } from 'node:url'
+import sharp from 'sharp'
 import { describe, expect, test } from 'vitest'
 import legacyIdMapsJson from './generated/legacy-id-maps.json'
 import runtimeCatalogJson from './generated/runtime-catalog.json'
@@ -119,7 +120,7 @@ describe('Unity skill-tree presentation export', () => {
     }
   })
 
-  test('tracks the exact graph sources and copied Unity icon bytes', () => {
+  test('tracks graph sources and deterministic Web-optimized Unity icons', async () => {
     expect(presentation.sources.graphPrefab.path).toBe(
       'Assets/Prefabs/Panel.prefab',
     )
@@ -148,12 +149,17 @@ describe('Unity skill-tree presentation export', () => {
       .map((node) => node.icon.fileName)
       .sort(compareText)
     const actualFileNames = readdirSync(generatedIconDirectory)
-      .filter((name) => name.toLowerCase().endsWith('.png'))
+      .filter((name) => /\.(?:png|webp)$/i.test(name))
       .sort(compareText)
     expect(actualFileNames).toEqual(expectedFileNames)
 
+    const deterministicSamples = new Set([
+      presentation.nodes.at(0)?.skillId,
+      presentation.nodes.at(Math.floor(presentation.nodes.length / 2))?.skillId,
+      presentation.nodes.at(-1)?.skillId,
+    ])
     for (const node of presentation.nodes) {
-      expect(node.icon.fileName).toBe(`${node.skillId}.png`)
+      expect(node.icon.fileName).toBe(`${node.skillId}.webp`)
       expect(node.icon.sourcePath).toMatch(
         /^Assets\/Sprites\/SkillIcons\/.+\.png$/,
       )
@@ -169,10 +175,32 @@ describe('Unity skill-tree presentation export', () => {
       const generatedBytes = readFileSync(
         resolve(generatedIconDirectory, node.icon.fileName),
       )
-      expect(generatedBytes.equals(sourceBytes)).toBe(true)
+      const metadata = await sharp(generatedBytes).metadata()
+      expect(metadata).toMatchObject({
+        format: 'webp',
+        width: 256,
+        height: 256,
+        hasAlpha: true,
+      })
+      if (deterministicSamples.has(node.skillId)) {
+        const expectedBytes = await sharp(sourceBytes)
+          .resize(256, 256, {
+            fit: 'inside',
+            kernel: 'lanczos3',
+            withoutEnlargement: true,
+          })
+          .webp({
+            alphaQuality: 100,
+            effort: 6,
+            quality: 90,
+            smartSubsample: true,
+          })
+          .toBuffer()
+        expect(generatedBytes.equals(expectedBytes)).toBe(true)
+      }
       expect(hashBytes(sourceBytes)).toBe(node.icon.sourceHash)
     }
-  })
+  }, 30_000)
 })
 
 function readUnitySource(path: string): string {

@@ -28,15 +28,10 @@ export const statisticsMessages = defineMessages({
     defaultMessage: 'Current Quantum run',
     description: 'Statistics accumulated since the latest Quantum Leap.',
   },
-  latestInterval: {
-    id: 'statistics.scope.latest-interval',
-    defaultMessage: 'Latest interval',
-    description: 'Statistics from the latest processed simulation interval.',
-  },
-  activity: {
-    id: 'statistics.group.activity',
-    defaultMessage: 'Activity',
-    description: 'Heading for time-based statistics.',
+  none: {
+    id: 'statistics.none',
+    defaultMessage: 'None',
+    description: 'Empty state for a reached statistics group with no recorded activity.',
   },
   infinity: {
     id: 'statistics.group.infinity',
@@ -63,35 +58,10 @@ export const statisticsMessages = defineMessages({
     defaultMessage: 'Reality capacity stalled',
     description: 'Time Reality workers spent blocked at capacity.',
   },
-  ordinaryInfinityCount: {
-    id: 'statistics.metric.ordinary-infinities',
-    defaultMessage: 'Ordinary Infinities',
-    description: 'Count of ordinary Infinity resets.',
-  },
-  breakInfinityCount: {
-    id: 'statistics.metric.break-infinities',
-    defaultMessage: 'Break Infinities',
-    description: 'Count of Break Infinity resets.',
-  },
-  ordinaryInfinityPoints: {
-    id: 'statistics.metric.ordinary-infinity-points',
-    defaultMessage: 'Ordinary Infinity Points',
-    description: 'Infinity Points earned from ordinary resets.',
-  },
-  breakInfinityPoints: {
-    id: 'statistics.metric.break-infinity-points',
-    defaultMessage: 'Break Infinity Points',
-    description: 'Infinity Points earned from Break Infinity.',
-  },
-  botCapInfinityPoints: {
-    id: 'statistics.metric.bot-cap-infinity-points',
-    defaultMessage: 'Bot-cap Infinity Points',
-    description: 'Infinity Points earned at the canonical bot cap.',
-  },
-  botCapOverflowRewards: {
-    id: 'statistics.metric.bot-cap-overflow-rewards',
-    defaultMessage: 'Bot-cap overflow rewards',
-    description: 'Overflow rewards earned at the canonical bot cap.',
+  totalInfinities: {
+    id: 'statistics.metric.total-infinities',
+    defaultMessage: 'Infinities',
+    description: 'Combined count of ordinary and Break Infinity resets.',
   },
   meteorResets: {
     id: 'statistics.metric.meteor-resets',

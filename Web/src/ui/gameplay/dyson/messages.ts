@@ -136,21 +136,6 @@ export const readyDysonMessages = defineMessages({
     defaultMessage: 'Debug Options',
     description: 'Development-only Unity Debug Options destination.',
   },
-  cashMultiplier: {
-    id: 'dyson.menu.cash-multiplier',
-    defaultMessage: 'Cash Multiplier: {value}',
-    description: 'Current canonical Cash multiplier in the Unity menu.',
-  },
-  researchMultiplier: {
-    id: 'dyson.menu.research-multiplier',
-    defaultMessage: 'Research Multiplier: {value}',
-    description: 'Current canonical research multiplier in the Unity menu.',
-  },
-  panelLifetime: {
-    id: 'dyson.menu.panel-lifetime',
-    defaultMessage: 'Panel Lifetime: {value} s',
-    description: 'Current canonical panel lifetime in the Unity menu.',
-  },
   resources: {
     id: 'dyson.resources.summary',
     defaultMessage: 'Resources',

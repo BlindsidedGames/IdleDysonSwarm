@@ -178,6 +178,7 @@ export class CdpSession {
 export async function startProductionPreview(
   webRoot: string,
   port: number,
+  outDir?: string,
 ): Promise<ProductionPreview> {
   const url = `http://127.0.0.1:${port}/`
   if (await isReachable(url)) {
@@ -192,17 +193,21 @@ export async function startProductionPreview(
     'bin',
     'vite.js',
   )
+  const previewArguments = [
+    viteBin,
+    'preview',
+    '--host',
+    '127.0.0.1',
+    '--port',
+    String(port),
+    '--strictPort',
+  ]
+  if (outDir) {
+    previewArguments.push('--outDir', outDir)
+  }
   const child = spawn(
     process.execPath,
-    [
-      viteBin,
-      'preview',
-      '--host',
-      '127.0.0.1',
-      '--port',
-      String(port),
-      '--strictPort',
-    ],
+    previewArguments,
     {
       cwd: webRoot,
       stdio: ['ignore', 'pipe', 'pipe'],

@@ -45,7 +45,7 @@ describe('application startup host', () => {
       warnings: [],
     })
     ready.snapshotValue = readySnapshot()
-    renderApp(ready.runtime, {
+    const readyRender = renderApp(ready.runtime, {
       confirmOverwrite: () => true,
       sampleUtc: () => '2026-07-29T00:00:00.000Z',
     })
@@ -58,6 +58,17 @@ describe('application startup host', () => {
     ).not.toBeInTheDocument()
     expect(ready.snapshotReads).toBeGreaterThan(0)
     expect(ready.snapshotSubscriptions).toBe(1)
+
+    const offlineTimeItem = readyRender.container.querySelector(
+      '.dyson-navigation--drawer [data-navigation-id="offline-time"]',
+    )
+    expect(offlineTimeItem).not.toBeNull()
+    expect(
+      offlineTimeItem?.querySelector('.dyson-navigation__progress i'),
+    ).toHaveStyle({ inlineSize: '50%' })
+    expect(
+      offlineTimeItem?.querySelector('button'),
+    ).toHaveAccessibleName('Offline Time, 30m 0s of 1h 0s stored')
   })
 
   test('maps recovery safely and requires explicit overwrite approval before import', async () => {
@@ -622,6 +633,11 @@ function readySnapshot(): FrontendApplicationSnapshot {
         skills: {
           points: 0n,
           fragments: 0n,
+        },
+        time: {
+          storedTimeAvailableSeconds: 1_800,
+          storedTimeCapacitySeconds: 3_600,
+          doubleTimeBankSeconds: 0,
         },
       },
       progression: {

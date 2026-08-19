@@ -98,11 +98,18 @@
 .statistics-surface__history-grid {
   display: grid;
   inline-size: min(100%, 82rem);
-  grid-template-columns: repeat(3, minmax(0, 1fr));
   align-items: start;
   gap: 0.7rem;
   margin-block-start: 0.7rem;
   margin-inline: auto;
+}
+
+.statistics-surface__scope-grid {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.statistics-surface__history-grid {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
 }
 
 .statistics-card {
@@ -122,6 +129,42 @@
   line-height: 1.2;
 }
 
+.statistics-scope-card__heading {
+  display: flex;
+  grid-column: 1 / -1;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  padding: 0.55rem 0.65rem;
+  background: var(--statistics-panel-heading);
+}
+
+.statistics-scope-card__heading h2 {
+  color: var(--statistics-accent);
+  font-size: calc(1rem * var(--game-text-scale));
+  line-height: 1.2;
+}
+
+.statistics-scope-card__heading dl {
+  display: block;
+  padding: 0;
+  text-align: end;
+}
+
+.statistics-scope-card__heading dt {
+  color: #e2eee3;
+  font-size: calc(0.68rem * var(--game-text-scale));
+}
+
+.statistics-scope-card__heading dd {
+  margin-block-start: 0.05rem;
+  color: var(--statistics-value);
+  font-family: var(--font-family-numeric);
+  font-size: calc(0.8rem * var(--game-text-scale));
+  font-variant-numeric: tabular-nums;
+  font-weight: var(--font-weight-semibold);
+}
+
 .statistics-scope-card > section h3 {
   padding: 0.45rem 0.65rem 0.3rem;
   border-block-start: 1px solid rgb(145 221 143 / 18%);
@@ -134,10 +177,27 @@
   border-block-start: 0;
 }
 
+.statistics-scope-card {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.statistics-scope-card > section:only-of-type,
+.statistics-scope-card > [data-statistics-group="infinity"] {
+  grid-column: 1 / -1;
+}
+
 .statistics-card dl {
   display: grid;
   gap: 0.1rem;
   padding: 0.3rem 0.65rem 0.5rem;
+}
+
+.statistics-card__empty {
+  padding: 0.45rem 0.65rem 0.55rem;
+  color: #e2eee3;
+  font-size: calc(0.75rem * var(--game-text-scale));
+  line-height: 1.22;
 }
 
 .statistics-fact {
@@ -211,15 +271,6 @@
   .statistics-surface__scope-grid {
     grid-template-columns: minmax(0, 1fr);
   }
-
-  .statistics-scope-card {
-    display: grid;
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-  }
-
-  .statistics-scope-card > h2 {
-    grid-column: 1 / -1;
-  }
 }
 
 @media (max-width: 44rem) {
@@ -247,6 +298,10 @@
 
   .statistics-scope-card {
     grid-template-columns: minmax(0, 1fr);
+  }
+
+  .statistics-scope-card__heading {
+    align-items: flex-start;
   }
 
   .statistics-last-cycle dl {

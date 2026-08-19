@@ -87,6 +87,9 @@ describe('ReadyDysonSlice', () => {
     expect(screen.getByText(/^Tip: The tinker panel/)).toBeInTheDocument()
     expect(screen.queryByText(/auto tinker/i)).not.toBeInTheDocument()
     expect(screen.queryByText(/owned/i)).not.toBeInTheDocument()
+    expect(screen.queryByText(/^Cash Multiplier:/)).not.toBeInTheDocument()
+    expect(screen.queryByText(/^Research Multiplier:/)).not.toBeInTheDocument()
+    expect(screen.queryByText(/^Panel Lifetime:/)).not.toBeInTheDocument()
     expect(screen.getAllByRole('navigation')).toHaveLength(1)
     expect(
       screen.getByRole('slider', { name: 'Bot Distribution' }),
@@ -849,6 +852,34 @@ describe('ReadyDysonSlice', () => {
       ).toHaveStyle({ inlineSize: `${expectedPercent}%` })
     },
   )
+
+  test('preserves the selected Wiki topic across route switches', async () => {
+    const user = userEvent.setup()
+    const renderAtRoute = (route: 'bots' | 'wiki') => provider(
+      <ReadyDysonSlice
+        snapshot={snapshot()}
+        locale="en"
+        dispatchPlayer={acceptedDispatch}
+        route={route}
+      />,
+    )
+    const view = render(renderAtRoute('wiki'))
+
+    await user.selectOptions(
+      await screen.findByRole('combobox', { name: 'Topics' }),
+      'lore',
+    )
+    expect(screen.getByRole('heading', { name: 'Existence' })).toBeVisible()
+
+    view.rerender(renderAtRoute('bots'))
+    expect(screen.queryByRole('combobox', { name: 'Topics' }))
+      .not.toBeInTheDocument()
+    view.rerender(renderAtRoute('wiki'))
+
+    expect(await screen.findByRole('combobox', { name: 'Topics' }))
+      .toHaveValue('lore')
+    expect(screen.getByRole('heading', { name: 'Existence' })).toBeVisible()
+  })
 
   test('shows the Store route only when native host services are injected', async () => {
     const browserRouteChange = vi.fn()

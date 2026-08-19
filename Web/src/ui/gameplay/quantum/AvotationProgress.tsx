@@ -4,7 +4,7 @@ import type { CanonicalPlayerCommand } from '../../../application/canonicalPlaye
 import type { FrontendGameplayPreviews } from '../../../application/frontendSnapshot'
 import { AVOCADO_MEDITATION_TOTAL_STEPS } from '../../../simulation/avocadoMeditation'
 import dabbingAvocadoUrl from '../../assets/avotation-dabbing-avocado.png'
-import meditationAvocadoUrl from '../../assets/avotation-meditation.png'
+import meditationAvocadoUrl from '../../assets/avotation-meditation.webp'
 import { Button } from '../../components'
 import type { UiRuntimePlayerCommandResult } from '../../runtime'
 import { avocatoMessages as messages } from './messages'

@@ -23,7 +23,7 @@ import { aggregateStatisticsWindows } from './statisticsProjection'
 afterEach(cleanup)
 
 describe('StatisticsSurface', () => {
-  test('presents every canonical lifetime, run and latest-interval total', () => {
+  test('presents reached-system lifetime and current-run totals without the diagnostic interval', () => {
     renderStatistics(statistics())
 
     expect(screen.getByText('Statistics')).toBeVisible()
@@ -45,17 +45,62 @@ describe('StatisticsSurface', () => {
       .closest('article')
     expect(lifetime).not.toBeNull()
     const lifetimeQueries = within(lifetime as HTMLElement)
-    expect(lifetimeQueries.getByText('Ordinary Infinities')).toBeVisible()
+    expect(lifetimeQueries.getByText('Infinities')).toBeVisible()
     expect(lifetimeQueries.getByText('1.23M')).toBeVisible()
+    expect(lifetimeQueries.getByText('Infinity Points earned')).toBeVisible()
+    expect(lifetimeQueries.getByText('1.80K')).toBeVisible()
+    expect(lifetimeQueries.queryByText('Break Infinities')).not.toBeInTheDocument()
+    expect(lifetimeQueries.queryByText('Bot-cap Infinity Points')).not.toBeInTheDocument()
     expect(lifetimeQueries.getByText('Artificial Intelligence resets')).toBeVisible()
     expect(lifetimeQueries.getByText('Influence gathered automatically')).toBeVisible()
 
     expect(
       screen.getByRole('heading', { name: 'Current Quantum run' }),
     ).toBeVisible()
+    const currentRun = screen
+      .getByRole('heading', { name: 'Current Quantum run' })
+      .closest('article')
+    expect(currentRun).not.toBeNull()
+    expect(within(currentRun as HTMLElement).getByText('0s')).toBeVisible()
     expect(
-      screen.getByRole('heading', { name: 'Latest interval' }),
-    ).toBeVisible()
+      screen.queryByRole('heading', { name: 'Latest interval' }),
+    ).not.toBeInTheDocument()
+  })
+
+  test('hides statistics for systems that have not been reached', () => {
+    renderStatistics(statistics(), {
+      infinity: false,
+      simulations: false,
+      reality: false,
+    })
+
+    expect(screen.queryByRole('heading', { name: 'Infinity' })).not.toBeInTheDocument()
+    expect(screen.queryByRole('heading', { name: 'Simulations' })).not.toBeInTheDocument()
+    expect(screen.queryByRole('heading', { name: 'Reality' })).not.toBeInTheDocument()
+    expect(screen.queryByText('Infinity resets')).not.toBeInTheDocument()
+    expect(screen.queryByText('Simulation resets')).not.toBeInTheDocument()
+    expect(screen.queryByText('Reality workers created')).not.toBeInTheDocument()
+  })
+
+  test('shows None for a reached group with no recorded activity', () => {
+    renderStatistics(statistics({
+      lifetime: totals({ simulatedSeconds: 10 }),
+      currentQuantumRun: totals(),
+    }))
+
+    const currentRun = screen
+      .getByRole('heading', { name: 'Current Quantum run' })
+      .closest('article')
+    expect(currentRun).not.toBeNull()
+    expect(within(currentRun as HTMLElement).getAllByText('None')).toHaveLength(3)
+  })
+
+  test('keeps exactly two player-facing scope cards', () => {
+    const { container } = renderStatistics(statistics())
+
+    expect(
+      container.querySelectorAll('.statistics-surface__scope-grid > article'),
+    ).toHaveLength(2)
   })
 
   test('summarizes all three rolling horizons and the last completed cycle', () => {
@@ -134,6 +179,11 @@ describe('aggregateStatisticsWindows', () => {
 
 function renderStatistics(
   state: FrontendCanonicalProgression['statistics'],
+  visibility = {
+    infinity: true,
+    simulations: true,
+    reality: true,
+  },
 ) {
   return render(
     <IntlProvider
@@ -141,7 +191,11 @@ function renderStatistics(
       messages={{}}
       onError={() => undefined}
     >
-      <StatisticsSurface locale="en" statistics={state} />
+      <StatisticsSurface
+        locale="en"
+        statistics={state}
+        visibility={visibility}
+      />
     </IntlProvider>,
   )
 }

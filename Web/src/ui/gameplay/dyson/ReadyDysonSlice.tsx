@@ -74,7 +74,10 @@ import {
   SimulationTimeControl,
   type SpaceAgePurchaseQuantity,
 } from '../simulations/SimulationsSurface'
-import { wikiProgressionFromResources } from '../wiki/wikiProjection'
+import {
+  wikiProgressionFromResources,
+  type WikiCategoryId,
+} from '../wiki/wikiProjection'
 import { AvocatoMeditationSecretTrigger } from '../quantum/AvocatoMeditationSecretTrigger'
 import { AvotationCompletionOverlay } from '../quantum/AvotationProgress'
 import type { AvocatoMeditationPlacement } from '../quantum/meditationTargets'
@@ -510,6 +513,7 @@ export function ReadyDysonSlice({
     selectedSeconds: null,
     repeatSeconds: null,
   })
+  const wikiTopicRef = useRef<WikiCategoryId>('bots')
   const rememberDebugDraft = useCallback(
     (draft: Readonly<DebugSurfaceDraft>) => {
       debugDraftRef.current = { ...draft }
@@ -522,6 +526,9 @@ export function ReadyDysonSlice({
     },
     [],
   )
+  const rememberWikiTopic = useCallback((topic: WikiCategoryId) => {
+    wikiTopicRef.current = topic
+  }, [])
   const storeVisible =
     releasePlatformServices !== undefined &&
     (releasePlatformServices.hostKind !== 'browser' ||
@@ -943,29 +950,6 @@ export function ReadyDysonSlice({
           },
         ],
       }}
-      sidePanelSupplement={
-        dyson.status === 'ready' ? (
-          <>
-            <div>
-              {intl.formatMessage(messages.cashMultiplier, {
-                value: display(dyson.value.globals.moneyMultiplier),
-              })}
-            </div>
-            <div>
-              {intl.formatMessage(messages.researchMultiplier, {
-                value: display(dyson.value.globals.scienceMultiplier),
-              })}
-            </div>
-            <div>
-              {intl.formatMessage(messages.panelLifetime, {
-                value: display(
-                  dyson.value.globals.panelLifetimeSeconds,
-                ),
-              })}
-            </div>
-          </>
-        ) : undefined
-      }
       hasVisibleFacilities={
         hasFacilityContent
       }
@@ -1450,10 +1434,13 @@ export function ReadyDysonSlice({
                                     }
                                   >
                                     <WikiSurface
+                                      initialCategory={wikiTopicRef.current}
                                       locale={locale}
+                                      onCategoryChange={rememberWikiTopic}
                                       progression={
                                         wikiProgressionFromResources(
                                           gameplay.resources,
+                                          gameplay.visibility,
                                         )
                                       }
                                     />
@@ -1530,6 +1517,17 @@ export function ReadyDysonSlice({
                                           statistics={
                                             gameplay.progression.statistics
                                           }
+                                          visibility={{
+                                            infinity:
+                                              gameplay.visibility.infinity
+                                                .routeUnlocked,
+                                            simulations:
+                                              gameplay.visibility.simulations
+                                                .routeUnlocked,
+                                            reality:
+                                              gameplay.visibility.reality
+                                                .routeUnlocked,
+                                          }}
                                         />
                                       </Suspense>
                                     ),

@@ -7,7 +7,7 @@ import type {
 } from '../../../application/frontendSnapshot'
 import type { CanonicalPlayerCommand } from '../../../application/canonicalPlayerCommands'
 import type { AvocadoFeedSource } from '../../../simulation/avocadoDomain'
-import avocatoIcon from '../../assets/skill-icons/avocados.png'
+import avocatoIcon from '../../assets/skill-icons/avocados.webp'
 import { Button } from '../../components'
 import { formatGameNumber, formatNumber } from '../../i18n/formatters'
 import type { EnabledLocale } from '../../i18n/localeRegistry'

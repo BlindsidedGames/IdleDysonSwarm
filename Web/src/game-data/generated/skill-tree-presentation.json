@@ -30,7 +30,7 @@
         "technicalDescription": "skills.node.addictionToPower.technical"
       },
       "icon": {
-        "fileName": "addictionToPower.png",
+        "fileName": "addictionToPower.webp",
         "sourcePath": "Assets/Sprites/SkillIcons/icons_Addiction to Power.png",
         "sourceGuid": "c9de6009384494dedb26357e71bfc3c5",
         "sourceHash": "f33b65988ebdae43d109e9399226127b46c87e8b645b73b9973d51801b19c5d5"
@@ -51,7 +51,7 @@
         "technicalDescription": "skills.node.agressiveAlgorithms.technical"
       },
       "icon": {
-        "fileName": "agressiveAlgorithms.png",
+        "fileName": "agressiveAlgorithms.webp",
         "sourcePath": "Assets/Sprites/SkillIcons/icons_Aggressive Algorithms.png",
         "sourceGuid": "19259291a4f574f21be5eb2ba9ff9720",
         "sourceHash": "be0ec03a1d07169df71484b4d280c348a795a7e0bb0065124b0ce3bc91c7e9f0"
@@ -72,7 +72,7 @@
         "technicalDescription": "skills.node.aiManagerTree.technical"
       },
       "icon": {
-        "fileName": "aiManagerTree.png",
+        "fileName": "aiManagerTree.webp",
         "sourcePath": "Assets/Sprites/SkillIcons/icons_AI Managers.png",
         "sourceGuid": "4fcc50f98fd7744aba30e5233bb52654",
         "sourceHash": "3f0382b4469bc4dd0b2e4d7e7a9d03e0abcfb22082d2027d6b3caf0494612e25"
@@ -93,7 +93,7 @@
         "technicalDescription": "skills.node.androids.technical"
       },
       "icon": {
-        "fileName": "androids.png",
+        "fileName": "androids.webp",
         "sourcePath": "Assets/Sprites/SkillIcons/icons_Androids.png",
         "sourceGuid": "d15d5366436154a33a0f8b5c28981749",
         "sourceHash": "da2b826348c184c3d58696640106c05c2ce6bb394768443ed90c60350324fd0e"
@@ -114,7 +114,7 @@
         "technicalDescription": "skills.node.artificiallyEnhancedPanels.technical"
       },
       "icon": {
-        "fileName": "artificiallyEnhancedPanels.png",
+        "fileName": "artificiallyEnhancedPanels.webp",
         "sourcePath": "Assets/Sprites/SkillIcons/icons_Artificially Enhanced Panels.png",
         "sourceGuid": "6ce5f1220ae0a437d841b5a48db39175",
         "sourceHash": "9f76c5e92466879a57c2394c44d1dd208e3db6f51efc1d47b3e670569dd70cd5"
@@ -135,7 +135,7 @@
         "technicalDescription": "skills.node.assemblyLineTree.technical"
       },
       "icon": {
-        "fileName": "assemblyLineTree.png",
+        "fileName": "assemblyLineTree.webp",
         "sourcePath": "Assets/Sprites/SkillIcons/icons_Assembly Lines.png",
         "sourceGuid": "25060be4c29124769af2dc04de31bcdb",
         "sourceHash": "9ed53737c989572972a9a4b6050c011324cdcd54130683ffb9464a4e2ab605ca"
@@ -156,7 +156,7 @@
         "technicalDescription": "skills.node.assemblyMegaLines.technical"
       },
       "icon": {
-        "fileName": "assemblyMegaLines.png",
+        "fileName": "assemblyMegaLines.webp",
         "sourcePath": "Assets/Sprites/SkillIcons/icons_Assembly Megalines.png",
         "sourceGuid": "0b43db52c6c2648ce80a76656ee27ddd",
         "sourceHash": "6333f7e35df2144e581c60277e0536c9f667fd88e557f39aad4a0efc4364870b"
@@ -177,7 +177,7 @@
         "technicalDescription": "skills.node.avocados.technical"
       },
       "icon": {
-        "fileName": "avocados.png",
+        "fileName": "avocados.webp",
         "sourcePath": "Assets/Sprites/SkillIcons/icons_Avocados.png",
         "sourceGuid": "d0ad3bcf08bf448a59c4b317918d27b1",
         "sourceHash": "68794bb04fb7d96a64632ee92d06738b3fa5e7c03734399a18467100e457da16"
@@ -198,7 +198,7 @@
         "technicalDescription": "skills.node.banking.technical"
       },
       "icon": {
-        "fileName": "banking.png",
+        "fileName": "banking.webp",
         "sourcePath": "Assets/Sprites/SkillIcons/icons_Banking.png",
         "sourceGuid": "bfe64bca14fc14670b143050ba35f1f0",
         "sourceHash": "dfa8b35664ca19ece1554c4e6650c62586e914cb3e6f44a77ff73369dcaf47d0"
@@ -219,7 +219,7 @@
         "technicalDescription": "skills.node.burnOut.technical"
       },
       "icon": {
-        "fileName": "burnOut.png",
+        "fileName": "burnOut.webp",
         "sourcePath": "Assets/Sprites/SkillIcons/icons_Burnout.png",
         "sourceGuid": "bc6241dbdf29b45bb886dae4fd7c3d90",
         "sourceHash": "154356b1c8e64ac2c4fa0591872f356e364ad6210ea6e49d9c133da639dcd719"
@@ -240,7 +240,7 @@
         "technicalDescription": "skills.node.citadelCouncil.technical"
       },
       "icon": {
-        "fileName": "citadelCouncil.png",
+        "fileName": "citadelCouncil.webp",
         "sourcePath": "Assets/Sprites/SkillIcons/icons_Citadel Council.png",
         "sourceGuid": "adbdbe983a3d349b68b04c433edacd0b",
         "sourceHash": "0c092acb751e05b33187a8e66d0fa53c410292ae3bf03cfb8c38f4ffde4ab731"
@@ -261,7 +261,7 @@
         "technicalDescription": "skills.node.clusterNetworking.technical"
       },
       "icon": {
-        "fileName": "clusterNetworking.png",
+        "fileName": "clusterNetworking.webp",
         "sourcePath": "Assets/Sprites/SkillIcons/icons_Cluster Networking.png",
         "sourceGuid": "c555bf87f9ff746799f04b111dac60dd",
         "sourceHash": "755125465e2637e2af5235b29d3719320f8d864d02c8ee9c7fbb7835fd8b41d9"
@@ -282,7 +282,7 @@
         "technicalDescription": "skills.node.coldFusion.technical"
       },
       "icon": {
-        "fileName": "coldFusion.png",
+        "fileName": "coldFusion.webp",
         "sourcePath": "Assets/Sprites/SkillIcons/icons_Cold Fusion.png",
         "sourceGuid": "e5014995c9e514a538ceec1b3a6a7bb7",
         "sourceHash": "f3a931d688bfeb59e2897d300f81553092d5d6b9964d1772f55a46e92b007fed"
@@ -303,7 +303,7 @@
         "technicalDescription": "skills.node.dataCenterTree.technical"
       },
       "icon": {
-        "fileName": "dataCenterTree.png",
+        "fileName": "dataCenterTree.webp",
         "sourcePath": "Assets/Sprites/SkillIcons/icons_Data Centers.png",
         "sourceGuid": "56781f60867bb4a7f8135c0eb38d1885",
         "sourceHash": "df0ad995b546a39d231ad58fe4cfebc79d06e62dc8f22bdaf03d7edb1699953d"
@@ -324,7 +324,7 @@
         "technicalDescription": "skills.node.dimensionalCatCables.technical"
       },
       "icon": {
-        "fileName": "dimensionalCatCables.png",
+        "fileName": "dimensionalCatCables.webp",
         "sourcePath": "Assets/Sprites/SkillIcons/icons_Dimensional CAT Cables.png",
         "sourceGuid": "32102846e7fcd410da9d5389e45f1ac7",
         "sourceHash": "1f90aaf291489bb2ff1061bbb26f6466c883027db8e7394fb5098dbcff65a027"
@@ -345,7 +345,7 @@
         "technicalDescription": "skills.node.doubleScienceTree.technical"
       },
       "icon": {
-        "fileName": "doubleScienceTree.png",
+        "fileName": "doubleScienceTree.webp",
         "sourcePath": "Assets/Sprites/SkillIcons/icons_Double Science.png",
         "sourceGuid": "a3e3b741e70344ddf924eece3adc2b27",
         "sourceHash": "00e1bd1086521ec58db513663c6f161389a37952628f91655930c58536c8a80e"
@@ -366,7 +366,7 @@
         "technicalDescription": "skills.node.dysonSubsidies.technical"
       },
       "icon": {
-        "fileName": "dysonSubsidies.png",
+        "fileName": "dysonSubsidies.webp",
         "sourcePath": "Assets/Sprites/SkillIcons/icons_Dyson Subsidies.png",
         "sourceGuid": "bcb05961f99624077b0b85d0c09cc374",
         "sourceHash": "d6f85585ee48e48ebf137b31e6ce92d0e7a785f3b2bffee011f61d78ab8da4dd"
@@ -387,7 +387,7 @@
         "technicalDescription": "skills.node.economicDominance.technical"
       },
       "icon": {
-        "fileName": "economicDominance.png",
+        "fileName": "economicDominance.webp",
         "sourcePath": "Assets/Sprites/SkillIcons/icons_Economic Dominance.png",
         "sourceGuid": "2053f0f995547406085a7fdbabd08e3b",
         "sourceHash": "8b19abcdbe6c3e4d3797794b22b546a807cbef9c55734f6f7d82d63100be1f79"
@@ -408,7 +408,7 @@
         "technicalDescription": "skills.node.economicRevolution.technical"
       },
       "icon": {
-        "fileName": "economicRevolution.png",
+        "fileName": "economicRevolution.webp",
         "sourcePath": "Assets/Sprites/SkillIcons/icons_Economic Revolution.png",
         "sourceGuid": "d9bd3fdec8a5141d0b441827f98fc61e",
         "sourceHash": "4613a83e98f298012684dae0bb936197cde4d1fe6e68624d4dacb2c99a3a12c1"
@@ -429,7 +429,7 @@
         "technicalDescription": "skills.node.endOfTheLine.technical"
       },
       "icon": {
-        "fileName": "endOfTheLine.png",
+        "fileName": "endOfTheLine.webp",
         "sourcePath": "Assets/Sprites/SkillIcons/icons_End of the Line.png",
         "sourceGuid": "68448cf0cafad48ccae1f0832579ae5f",
         "sourceHash": "b1a0a2a30191f0f1e2f891183370437562cf6e33ac0767c61551d2e9519b2113"
@@ -450,7 +450,7 @@
         "technicalDescription": "skills.node.fragmentAssembly.technical"
       },
       "icon": {
-        "fileName": "fragmentAssembly.png",
+        "fileName": "fragmentAssembly.webp",
         "sourcePath": "Assets/Sprites/SkillIcons/icons_Fragment Assembly.png",
         "sourceGuid": "3ee197daaac214261897bae3fe9dc2c8",
         "sourceHash": "70966825b91c3cd35c3976c864d5ef4b1000586e9aa54e9ef27854818bb01602"
@@ -471,7 +471,7 @@
         "technicalDescription": "skills.node.fusionReactors.technical"
       },
       "icon": {
-        "fileName": "fusionReactors.png",
+        "fileName": "fusionReactors.webp",
         "sourcePath": "Assets/Sprites/SkillIcons/icons_Fusion Reactors.png",
         "sourceGuid": "54e0263c17b14402db61fa7c3901b46a",
         "sourceHash": "1009d5362ee732002fd46d86c802f50a4f9739ce04365d53524e6ad0afa6e512"
@@ -492,7 +492,7 @@
         "technicalDescription": "skills.node.galacticPradigmShift.technical"
       },
       "icon": {
-        "fileName": "galacticPradigmShift.png",
+        "fileName": "galacticPradigmShift.webp",
         "sourcePath": "Assets/Sprites/SkillIcons/icons_Galactic Paradigm Shift.png",
         "sourceGuid": "1dc5e6729f5bc4cee840f27cf20fcd3d",
         "sourceHash": "b1cc5ffc63e2f32095d04840e7bbb564dc16a2cc46d9e1a1b759b7cc3dc375c6"
@@ -513,7 +513,7 @@
         "technicalDescription": "skills.node.higgsBoson.technical"
       },
       "icon": {
-        "fileName": "higgsBoson.png",
+        "fileName": "higgsBoson.webp",
         "sourcePath": "Assets/Sprites/SkillIcons/icons_Higgs Boson.png",
         "sourceGuid": "246dae6d038cc48aa847dcfdcb03f3da",
         "sourceHash": "4b6a299f9916c498cdec283c8bbe1fd3ae0f7ab15d1dbc1e919e7581f0c40210"
@@ -534,7 +534,7 @@
         "technicalDescription": "skills.node.hubbleTelescope.technical"
       },
       "icon": {
-        "fileName": "hubbleTelescope.png",
+        "fileName": "hubbleTelescope.webp",
         "sourcePath": "Assets/Sprites/SkillIcons/icons_Hubble Telescope.png",
         "sourceGuid": "aecc890a486a64c93b23acc49f2b12fb",
         "sourceHash": "16e8c1a673f6f45abdf8ba964ea138f5d6b266294f9fba27dec15c46688ee980"
@@ -555,7 +555,7 @@
         "technicalDescription": "skills.node.hypercubeNetworks.technical"
       },
       "icon": {
-        "fileName": "hypercubeNetworks.png",
+        "fileName": "hypercubeNetworks.webp",
         "sourcePath": "Assets/Sprites/SkillIcons/icons_Hypercube Networks.png",
         "sourceGuid": "66549a18149194521901c6b49ccba0bb",
         "sourceHash": "d8c5e4ce24117e500a5b262b0b59279a074b37443c48b951d133cd0b19732a1b"
@@ -576,7 +576,7 @@
         "technicalDescription": "skills.node.idleElectricSheep.technical"
       },
       "icon": {
-        "fileName": "idleElectricSheep.png",
+        "fileName": "idleElectricSheep.webp",
         "sourcePath": "Assets/Sprites/SkillIcons/icons_Idle Electric Sheep.png",
         "sourceGuid": "0a8c597c496874c63ac8764246addabd",
         "sourceHash": "62c9eb630527a639b6bd058fbb402f25e5a9ee35ec248248a4a98e82d8dc879e"
@@ -597,7 +597,7 @@
         "technicalDescription": "skills.node.idleSpaceFlight.technical"
       },
       "icon": {
-        "fileName": "idleSpaceFlight.png",
+        "fileName": "idleSpaceFlight.webp",
         "sourcePath": "Assets/Sprites/SkillIcons/icons_Idle Spaceflight.png",
         "sourceGuid": "abc74073233654be5961e40136e7035a",
         "sourceHash": "84ebc490c9f8d56144e5d42c413a141c97f4815de823475dbb66d4397607dd56"
@@ -618,7 +618,7 @@
         "technicalDescription": "skills.node.indulgingInPower.technical"
       },
       "icon": {
-        "fileName": "indulgingInPower.png",
+        "fileName": "indulgingInPower.webp",
         "sourcePath": "Assets/Sprites/SkillIcons/icons_Indulging in Power.png",
         "sourceGuid": "90c48bdd712a043498daf517d03123a7",
         "sourceHash": "3d9766700828b926db0fdf9de92f884db6380fa521ef95c75737f4562c12b035"
@@ -639,7 +639,7 @@
         "technicalDescription": "skills.node.investmentPortfolio.technical"
       },
       "icon": {
-        "fileName": "investmentPortfolio.png",
+        "fileName": "investmentPortfolio.webp",
         "sourcePath": "Assets/Sprites/SkillIcons/icons_Investment.png",
         "sourceGuid": "fad12964a0d1e4d35b81a9b429032409",
         "sourceHash": "d10750fc1ecc151ddec78e0f8a56bbfda0a1bd37a304d6e156cfbed93dc7a838"
@@ -660,7 +660,7 @@
         "technicalDescription": "skills.node.jamesWebbTelescope.technical"
       },
       "icon": {
-        "fileName": "jamesWebbTelescope.png",
+        "fileName": "jamesWebbTelescope.webp",
         "sourcePath": "Assets/Sprites/SkillIcons/icons_James Webb Telescope.png",
         "sourceGuid": "af19b8413c11149698a69c2f8659d4db",
         "sourceHash": "787e820db1a3c945e2f3da188e94f693e32cdbf80960b9bb17553c88b63635e1"
@@ -681,7 +681,7 @@
         "technicalDescription": "skills.node.manualLabour.technical"
       },
       "icon": {
-        "fileName": "manualLabour.png",
+        "fileName": "manualLabour.webp",
         "sourcePath": "Assets/Sprites/SkillIcons/icons_Manual Labour.png",
         "sourceGuid": "d8af9dd3762814ccebba8a2c7dfe219a",
         "sourceHash": "5c44941546c2cc016684543478e17b59ed3ed8c16c79da40d8843a8d6219b532"
@@ -702,7 +702,7 @@
         "technicalDescription": "skills.node.megaSwarm.technical"
       },
       "icon": {
-        "fileName": "megaSwarm.png",
+        "fileName": "megaSwarm.webp",
         "sourcePath": "Assets/Sprites/SkillIcons/icons_Mega Swarm.png",
         "sourceGuid": "7f584815c121d4a55a9cc9576d041dfd",
         "sourceHash": "d78cf85c68cc1918436b99e949fa9c05ba7e2e3e3ae1acc1af215fa46412ab4e"
@@ -723,7 +723,7 @@
         "technicalDescription": "skills.node.monetaryPolicy.technical"
       },
       "icon": {
-        "fileName": "monetaryPolicy.png",
+        "fileName": "monetaryPolicy.webp",
         "sourcePath": "Assets/Sprites/SkillIcons/icons_Monetary Policy.png",
         "sourceGuid": "182f1f59f8c234020aeb1a1485a70d57",
         "sourceHash": "b3001135f52b0b1b8afc26e9970ab79c21d812befd797535fc972586fc17e141"
@@ -744,7 +744,7 @@
         "technicalDescription": "skills.node.oneMinutePlan.technical"
       },
       "icon": {
-        "fileName": "oneMinutePlan.png",
+        "fileName": "oneMinutePlan.webp",
         "sourcePath": "Assets/Sprites/SkillIcons/icons_One Minute Plan.png",
         "sourceGuid": "4fe1eb720f46542639ecbc6067c021e8",
         "sourceHash": "402b0a17f720f88fe1d93df1d5c226f224792532a54f4c6fc0dc81949cde86da"
@@ -765,7 +765,7 @@
         "technicalDescription": "skills.node.panelLifetime20Tree.technical"
       },
       "icon": {
-        "fileName": "panelLifetime20Tree.png",
+        "fileName": "panelLifetime20Tree.webp",
         "sourcePath": "Assets/Sprites/SkillIcons/icons_20s Panel Lifetime.png",
         "sourceGuid": "c16bff96990ad45f0af61abcc540720e",
         "sourceHash": "0908886a49eeb20b238ca8227c767bc67d40c9776d76a1240fb92882c2b41451"
@@ -786,7 +786,7 @@
         "technicalDescription": "skills.node.panelMaintenance.technical"
       },
       "icon": {
-        "fileName": "panelMaintenance.png",
+        "fileName": "panelMaintenance.webp",
         "sourcePath": "Assets/Sprites/SkillIcons/icons_Panel Maintenance.png",
         "sourceGuid": "0880d97929a8140f181b72e1eae48a87",
         "sourceHash": "6400f93a4c5d5a87b24183d48de12970d2826d7263175139646bafc67695217a"
@@ -807,7 +807,7 @@
         "technicalDescription": "skills.node.panelWarranty.technical"
       },
       "icon": {
-        "fileName": "panelWarranty.png",
+        "fileName": "panelWarranty.webp",
         "sourcePath": "Assets/Sprites/SkillIcons/icons_Panel Warranty.png",
         "sourceGuid": "e1a1ce3a717f54496b8144deb8a7410c",
         "sourceHash": "0cdbec1996a95aa67b4ce62aa4ef85161641504bd5cdd3a31c582db4dc9f2c7a"
@@ -828,7 +828,7 @@
         "technicalDescription": "skills.node.paragon.technical"
       },
       "icon": {
-        "fileName": "paragon.png",
+        "fileName": "paragon.webp",
         "sourcePath": "Assets/Sprites/SkillIcons/icons_Paragon.png",
         "sourceGuid": "2f8d8d473699e40c49c750942753d908",
         "sourceHash": "1a5f6379e84ad8c114f2f7e154f4955ed3cd9d1eab4b19b5cf16ce6ba8b843a5"
@@ -849,7 +849,7 @@
         "technicalDescription": "skills.node.parallelComputation.technical"
       },
       "icon": {
-        "fileName": "parallelComputation.png",
+        "fileName": "parallelComputation.webp",
         "sourcePath": "Assets/Sprites/SkillIcons/icons_Parallel Computation.png",
         "sourceGuid": "defdae9113f4e4384ba31227363c153c",
         "sourceHash": "bdfadc0fc79a6207d0edc04723d2c77afb594f694b1cc4e2dd167b51618a7882"
@@ -870,7 +870,7 @@
         "technicalDescription": "skills.node.parallelProcessing.technical"
       },
       "icon": {
-        "fileName": "parallelProcessing.png",
+        "fileName": "parallelProcessing.webp",
         "sourcePath": "Assets/Sprites/SkillIcons/icons_Parallel Processing.png",
         "sourceGuid": "839faecd936874f0ca3e7cbcf62686a6",
         "sourceHash": "6b2802286989d8bf52cdb17d60f55afd54a7f0f3112c055854e909cddb633bf9"
@@ -891,7 +891,7 @@
         "technicalDescription": "skills.node.planetAssembly.technical"
       },
       "icon": {
-        "fileName": "planetAssembly.png",
+        "fileName": "planetAssembly.webp",
         "sourcePath": "Assets/Sprites/SkillIcons/icons_Planet Assembly.png",
         "sourceGuid": "cf81ec9aa8ce645bba4e307362b9b52c",
         "sourceHash": "3bb74dd0469dd88d6868c0827470228e60d47623502acabdc47b7e969bed905a"
@@ -912,7 +912,7 @@
         "technicalDescription": "skills.node.planetsTree.technical"
       },
       "icon": {
-        "fileName": "planetsTree.png",
+        "fileName": "planetsTree.webp",
         "sourcePath": "Assets/Sprites/SkillIcons/icons_Planets.png",
         "sourceGuid": "06830f15e73d34846bb0b4f10351b433",
         "sourceHash": "d8836ac1e8c30affe80e54d38b87fa93db11fa1d84949dbe42cdc3d92b7aa7e6"
@@ -933,7 +933,7 @@
         "technicalDescription": "skills.node.pocketAndroids.technical"
       },
       "icon": {
-        "fileName": "pocketAndroids.png",
+        "fileName": "pocketAndroids.webp",
         "sourcePath": "Assets/Sprites/SkillIcons/icons_Pocket Androids.png",
         "sourceGuid": "7e722c1e4245948be84a2ffbf6552114",
         "sourceHash": "aed3d28e65d8f17b9a16d493e75e69d3a19d6d604f8e61d0675b652b940686b6"
@@ -954,7 +954,7 @@
         "technicalDescription": "skills.node.pocketDimensions.technical"
       },
       "icon": {
-        "fileName": "pocketDimensions.png",
+        "fileName": "pocketDimensions.webp",
         "sourcePath": "Assets/Sprites/SkillIcons/icons_Pocket Dimensions.png",
         "sourceGuid": "1f4a955b79a754e469371a32ad973cc1",
         "sourceHash": "2263fef1ca57de0ced1bb92a8165978317443cc3c680d5dc50e05b62450adb6b"
@@ -975,7 +975,7 @@
         "technicalDescription": "skills.node.pocketMultiverse.technical"
       },
       "icon": {
-        "fileName": "pocketMultiverse.png",
+        "fileName": "pocketMultiverse.webp",
         "sourcePath": "Assets/Sprites/SkillIcons/icons_Pocket Multiverse.png",
         "sourceGuid": "75da9643b88ed4c50ba78d3464f71789",
         "sourceHash": "ec23b398ab43ecff83592a4e6393a50f4452cffe16213e7036562ff8d6711d0f"
@@ -996,7 +996,7 @@
         "technicalDescription": "skills.node.pocketProtectors.technical"
       },
       "icon": {
-        "fileName": "pocketProtectors.png",
+        "fileName": "pocketProtectors.webp",
         "sourcePath": "Assets/Sprites/SkillIcons/icons_Pocket Protectors.png",
         "sourceGuid": "836c55cabb6f040b9954ff66fb15748d",
         "sourceHash": "920e8d7ceab760df542fd1481425d04a5c016807cb815dd9755e2908347a164f"
@@ -1017,7 +1017,7 @@
         "technicalDescription": "skills.node.powerOverwhelming.technical"
       },
       "icon": {
-        "fileName": "powerOverwhelming.png",
+        "fileName": "powerOverwhelming.webp",
         "sourcePath": "Assets/Sprites/SkillIcons/icons_Power Overwhelming.png",
         "sourceGuid": "ff715c3f618ba4329af25b6022531d00",
         "sourceHash": "29735cc77db72d72673ac865142b3bf1c30e73934e3370e5c4a214c43bbdcdaf"
@@ -1038,7 +1038,7 @@
         "technicalDescription": "skills.node.powerUnderwhelming.technical"
       },
       "icon": {
-        "fileName": "powerUnderwhelming.png",
+        "fileName": "powerUnderwhelming.webp",
         "sourcePath": "Assets/Sprites/SkillIcons/icons_Power Underwhelming.png",
         "sourceGuid": "b3006fc6789d546f0a1f7ecd4cabee63",
         "sourceHash": "736a10695328c2082f74e6749794452de7bd16c32e4d9f59d4154677cc623a9d"
@@ -1059,7 +1059,7 @@
         "technicalDescription": "skills.node.producedAsScienceTree.technical"
       },
       "icon": {
-        "fileName": "producedAsScienceTree.png",
+        "fileName": "producedAsScienceTree.webp",
         "sourcePath": "Assets/Sprites/SkillIcons/icons_Science Boost.png",
         "sourceGuid": "031165676b81d4c54a4cc1e1538fabe5",
         "sourceHash": "5f956a85cb6e3372629dca0b1780ae0bcd6c682910c0567a72041fb31d8fae2f"
@@ -1080,7 +1080,7 @@
         "technicalDescription": "skills.node.productionScaling.technical"
       },
       "icon": {
-        "fileName": "productionScaling.png",
+        "fileName": "productionScaling.webp",
         "sourcePath": "Assets/Sprites/SkillIcons/icons_Production Scaling.png",
         "sourceGuid": "667e287419510429995bfc63dca9730b",
         "sourceHash": "53cafcdc5f207243d1af5672dd0784263a40d504adf328573bb183cd89f4a70d"
@@ -1101,7 +1101,7 @@
         "technicalDescription": "skills.node.progressiveAssembly.technical"
       },
       "icon": {
-        "fileName": "progressiveAssembly.png",
+        "fileName": "progressiveAssembly.webp",
         "sourcePath": "Assets/Sprites/SkillIcons/icons_Progressive Assembly.png",
         "sourceGuid": "40a7919e963a742d5b4d4ed09ef30708",
         "sourceHash": "f1b315c2de928e8816fd25b50f4d329b9ef1dc9625729c7d44c71ef87e49e105"
@@ -1122,7 +1122,7 @@
         "technicalDescription": "skills.node.purityOfBody.technical"
       },
       "icon": {
-        "fileName": "purityOfBody.png",
+        "fileName": "purityOfBody.webp",
         "sourcePath": "Assets/Sprites/SkillIcons/icons_Purity of Body.png",
         "sourceGuid": "3c5fa78210fee4b9badd1d591661dbf8",
         "sourceHash": "5900731a5aa54eba852affd4bd7f59d72bafc4d9c65cd65afef2c87b9d379e71"
@@ -1143,7 +1143,7 @@
         "technicalDescription": "skills.node.purityOfMind.technical"
       },
       "icon": {
-        "fileName": "purityOfMind.png",
+        "fileName": "purityOfMind.webp",
         "sourcePath": "Assets/Sprites/SkillIcons/icons_Purity of Mind.png",
         "sourceGuid": "9923c2eb456a34592b3f38245cabab7e",
         "sourceHash": "15ffe552e9d758db7895a7a8d89938932f1219c13b23ae5cb412094414e6c143"
@@ -1164,7 +1164,7 @@
         "technicalDescription": "skills.node.purityOfSEssence.technical"
       },
       "icon": {
-        "fileName": "purityOfSEssence.png",
+        "fileName": "purityOfSEssence.webp",
         "sourcePath": "Assets/Sprites/SkillIcons/icons_Purity of Essence.png",
         "sourceGuid": "f0ab110b5e93c40b1af2d61a3a026b0c",
         "sourceHash": "90b39ad66658a18f5d39b6cf06bc2cbc8aeaac84c5069325c07d5826a632772d"
@@ -1185,7 +1185,7 @@
         "technicalDescription": "skills.node.quantumComputing.technical"
       },
       "icon": {
-        "fileName": "quantumComputing.png",
+        "fileName": "quantumComputing.webp",
         "sourcePath": "Assets/Sprites/SkillIcons/icons_Quantum Computing.png",
         "sourceGuid": "c442d2c607cde442fbe8ada8251fb834",
         "sourceHash": "a564120b1b34cba9b610521320c7414156ed5c1e8f5aa25474ca94d2230f28c2"
@@ -1206,7 +1206,7 @@
         "technicalDescription": "skills.node.reapers.technical"
       },
       "icon": {
-        "fileName": "reapers.png",
+        "fileName": "reapers.webp",
         "sourcePath": "Assets/Sprites/SkillIcons/icons_Reapers.png",
         "sourceGuid": "16c9b039f7f4c438189f9bb18cbf4de5",
         "sourceHash": "4006fa166855a0da96d8d4667896b165d68e9954ea24185135c5f18381aaf107"
@@ -1227,7 +1227,7 @@
         "technicalDescription": "skills.node.regulatedAcademia.technical"
       },
       "icon": {
-        "fileName": "regulatedAcademia.png",
+        "fileName": "regulatedAcademia.webp",
         "sourcePath": "Assets/Sprites/SkillIcons/icons_Regulated Academia.png",
         "sourceGuid": "785b8b23a6dd646a7a04be802d6c5cdc",
         "sourceHash": "11324306461c979714d3275218f4d7ca104c66ed7a9ea46632fad2c90d59d026"
@@ -1248,7 +1248,7 @@
         "technicalDescription": "skills.node.renegade.technical"
       },
       "icon": {
-        "fileName": "renegade.png",
+        "fileName": "renegade.webp",
         "sourcePath": "Assets/Sprites/SkillIcons/icons_Renegade.png",
         "sourceGuid": "36fd82f9265ac408c81724a15f7e1d66",
         "sourceHash": "78f670006572221ca137849ae33904d50a56c787a8a13709c47be1f59a629e2e"
@@ -1269,7 +1269,7 @@
         "technicalDescription": "skills.node.renewableEnergy.technical"
       },
       "icon": {
-        "fileName": "renewableEnergy.png",
+        "fileName": "renewableEnergy.webp",
         "sourcePath": "Assets/Sprites/SkillIcons/icons_Renewable Energy.png",
         "sourceGuid": "08905642f712c4d508962e805550181b",
         "sourceHash": "79f216d88c2609b81442b4b05258580b490d7a20ba58e2a48be676f1e1a3d4db"
@@ -1290,7 +1290,7 @@
         "technicalDescription": "skills.node.repeatableResearch.technical"
       },
       "icon": {
-        "fileName": "repeatableResearch.png",
+        "fileName": "repeatableResearch.webp",
         "sourcePath": "Assets/Sprites/SkillIcons/icons_Repeatable Research.png",
         "sourceGuid": "9cd74c0bdcbf04cad987acb3887aa398",
         "sourceHash": "95ffe95e76a0dcedf29e05e7525b72e4e0bdd8f9d83eb168e4fe90b49171fa7f"
@@ -1311,7 +1311,7 @@
         "technicalDescription": "skills.node.rocketMania.technical"
       },
       "icon": {
-        "fileName": "rocketMania.png",
+        "fileName": "rocketMania.webp",
         "sourcePath": "Assets/Sprites/SkillIcons/icons_Rocket Mania.png",
         "sourceGuid": "2f4672738207942638384fba8da6715b",
         "sourceHash": "d41d4d3bb2a821b14f4bf0e82833a4939ec0c6ae973d91f98b6c1de185e99233"
@@ -1332,7 +1332,7 @@
         "technicalDescription": "skills.node.rudimentarySingularity.technical"
       },
       "icon": {
-        "fileName": "rudimentarySingularity.png",
+        "fileName": "rudimentarySingularity.webp",
         "sourcePath": "Assets/Sprites/SkillIcons/icons_Rudimentary Singularity.png",
         "sourceGuid": "63211096da11a40f5876ad03f8a46068",
         "sourceHash": "1afd8d10793c322ee3591b000d82a44c5d450febf5b6cb57cc83ad933cd10062"
@@ -1353,7 +1353,7 @@
         "technicalDescription": "skills.node.saren.technical"
       },
       "icon": {
-        "fileName": "saren.png",
+        "fileName": "saren.webp",
         "sourcePath": "Assets/Sprites/SkillIcons/icons_Saren.png",
         "sourceGuid": "92d1e726a2d0d4de9bf652f1eca06637",
         "sourceHash": "90b7c028d225c838b2f2a6474e9d9e0a62e36fd286486efe6831f45e712e7e47"
@@ -1374,7 +1374,7 @@
         "technicalDescription": "skills.node.scientificDominance.technical"
       },
       "icon": {
-        "fileName": "scientificDominance.png",
+        "fileName": "scientificDominance.webp",
         "sourcePath": "Assets/Sprites/SkillIcons/icons_Scientific Dominance.png",
         "sourceGuid": "720d16a7006254a3791ec7e6220bce3a",
         "sourceHash": "863c136dabccea6fc6292000b4bf26fc77c351832ddf34ad364d54bb27ee57eb"
@@ -1395,7 +1395,7 @@
         "technicalDescription": "skills.node.scientificPlanets.technical"
       },
       "icon": {
-        "fileName": "scientificPlanets.png",
+        "fileName": "scientificPlanets.webp",
         "sourcePath": "Assets/Sprites/SkillIcons/icons_Automatic Planet Discovery.png",
         "sourceGuid": "55e9c989dadf74414a7fbc3f667c9ae0",
         "sourceHash": "7848908e714a94aac8e4c98b766ceb96f3c74e64f76b5058dd515506710a49b6"
@@ -1416,7 +1416,7 @@
         "technicalDescription": "skills.node.scientificRevolution.technical"
       },
       "icon": {
-        "fileName": "scientificRevolution.png",
+        "fileName": "scientificRevolution.webp",
         "sourcePath": "Assets/Sprites/SkillIcons/icons_Scientific Revolution.png",
         "sourceGuid": "8d22ceaadbf38490aacbb1b6bf7a009a",
         "sourceHash": "464c42464f86020094c0ec4fd0f7ae259af71ee4ae6a202780ee1d03a0d71f03"
@@ -1437,7 +1437,7 @@
         "technicalDescription": "skills.node.serverTree.technical"
       },
       "icon": {
-        "fileName": "serverTree.png",
+        "fileName": "serverTree.webp",
         "sourcePath": "Assets/Sprites/SkillIcons/icons_Servers.png",
         "sourceGuid": "367555f1bb82e49ae80d450e5a153510",
         "sourceHash": "73ad295e52f2f3c36ae5f31e25e1434983377fc4cc3198fe2a333b6cf40016be"
@@ -1458,7 +1458,7 @@
         "technicalDescription": "skills.node.shellWorlds.technical"
       },
       "icon": {
-        "fileName": "shellWorlds.png",
+        "fileName": "shellWorlds.webp",
         "sourcePath": "Assets/Sprites/SkillIcons/icons_Shell Worlds.png",
         "sourceGuid": "613762fd31c3f48618da662aca200d4f",
         "sourceHash": "a93ccd2f5a65f8724661ec9e93d4328ffd975716c51ae68d03ef1f3298340c28"
@@ -1479,7 +1479,7 @@
         "technicalDescription": "skills.node.shepherd.technical"
       },
       "icon": {
-        "fileName": "shepherd.png",
+        "fileName": "shepherd.webp",
         "sourcePath": "Assets/Sprites/SkillIcons/icons_Sheperds.png",
         "sourceGuid": "ce2600f00bc2b43e789546b6b4e72a50",
         "sourceHash": "18d4b22634c955e5c79f68b253b6cdcf2d138cba2af7ac75fa30dcf562053f5e"
@@ -1500,7 +1500,7 @@
         "technicalDescription": "skills.node.shoulderSurgery.technical"
       },
       "icon": {
-        "fileName": "shoulderSurgery.png",
+        "fileName": "shoulderSurgery.webp",
         "sourcePath": "Assets/Sprites/SkillIcons/icons_Shoulder Surgery.png",
         "sourceGuid": "92b3c086fc2534f288f961df1c747aba",
         "sourceHash": "212a8477a406949c5e1868f49257d9f80ee4867f28a05f0d41a5684bce09650a"
@@ -1521,7 +1521,7 @@
         "technicalDescription": "skills.node.shouldersOfGiants.technical"
       },
       "icon": {
-        "fileName": "shouldersOfGiants.png",
+        "fileName": "shouldersOfGiants.webp",
         "sourcePath": "Assets/Sprites/SkillIcons/icons_Shoulders of Giants.png",
         "sourceGuid": "eb87d6cfc072b42ff9b8afd44cc0e616",
         "sourceHash": "d5d01cdeb537c5603b98d2414173a33cdddd200525cfb62e5f5f0d9c269c3e32"
@@ -1542,7 +1542,7 @@
         "technicalDescription": "skills.node.shouldersOfPrecursors.technical"
       },
       "icon": {
-        "fileName": "shouldersOfPrecursors.png",
+        "fileName": "shouldersOfPrecursors.webp",
         "sourcePath": "Assets/Sprites/SkillIcons/icons_Shoulders of Precursors.png",
         "sourceGuid": "9fdbbfe1e633e4cf3b5805e5783be760",
         "sourceHash": "d9e33188cbadb451e0b1fbc8e47b3d57203aa52f84d7ef0561304e5dc808c129"
@@ -1563,7 +1563,7 @@
         "technicalDescription": "skills.node.shouldersOfTheEnlightened.technical"
       },
       "icon": {
-        "fileName": "shouldersOfTheEnlightened.png",
+        "fileName": "shouldersOfTheEnlightened.webp",
         "sourcePath": "Assets/Sprites/SkillIcons/icons_Shoulders of the Enlightened.png",
         "sourceGuid": "aa3ee1d06f1e141a893e3edad59b3ee9",
         "sourceHash": "49bd00f016a96ae049f3e42a0eda4d928f10fe20790c60dc005305d442e1e085"
@@ -1584,7 +1584,7 @@
         "technicalDescription": "skills.node.shouldersOfTheFallen.technical"
       },
       "icon": {
-        "fileName": "shouldersOfTheFallen.png",
+        "fileName": "shouldersOfTheFallen.webp",
         "sourcePath": "Assets/Sprites/SkillIcons/icons_Shoulders of the Fallen.png",
         "sourceGuid": "4ec044480052840da9e522bb26beafca",
         "sourceHash": "26c969100c84a79095f866f369f71ea10abb783a441a76f1bb2d2cf017a23303"
@@ -1605,7 +1605,7 @@
         "technicalDescription": "skills.node.shouldersOfTheRevolution.technical"
       },
       "icon": {
-        "fileName": "shouldersOfTheRevolution.png",
+        "fileName": "shouldersOfTheRevolution.webp",
         "sourcePath": "Assets/Sprites/SkillIcons/icons_Shoulders of the Revolution.png",
         "sourceGuid": "42cefde34c2a44f3fa9e0f26f857672b",
         "sourceHash": "f94d33569e0c7466c056f96816ddfa88a6cc28a87294310ff8bfc1156ff20857"
@@ -1626,7 +1626,7 @@
         "technicalDescription": "skills.node.solarBubbles.technical"
       },
       "icon": {
-        "fileName": "solarBubbles.png",
+        "fileName": "solarBubbles.webp",
         "sourcePath": "Assets/Sprites/SkillIcons/icons_Solar Bubbles.png",
         "sourceGuid": "6eed61837b9f542cc91df844bf867698",
         "sourceHash": "c9413858ed7d9da2834ce0ed516ef4ab56d2c63be1341340eddd9d2513162f8a"
@@ -1647,7 +1647,7 @@
         "technicalDescription": "skills.node.startHereTree.technical"
       },
       "icon": {
-        "fileName": "startHereTree.png",
+        "fileName": "startHereTree.webp",
         "sourcePath": "Assets/Sprites/SkillIcons/icons_Cash & Science.png",
         "sourceGuid": "2b8866f94d73e440ba801a334858e1a2",
         "sourceHash": "17a6a1328b20f028b9ae3ba6113ac40d13b7e6a87db09d0f67165ca9a08746b9"
@@ -1668,7 +1668,7 @@
         "technicalDescription": "skills.node.stayingPower.technical"
       },
       "icon": {
-        "fileName": "stayingPower.png",
+        "fileName": "stayingPower.webp",
         "sourcePath": "Assets/Sprites/SkillIcons/icons_Staying Power.png",
         "sourceGuid": "f3182bcef7ac441e28f79625b1dca3b3",
         "sourceHash": "49cd595f5cc36a454dd09f8b3bcd22d9b827ec01063ab20915ba63c190d7cf69"
@@ -1689,7 +1689,7 @@
         "technicalDescription": "skills.node.stellarDominance.technical"
       },
       "icon": {
-        "fileName": "stellarDominance.png",
+        "fileName": "stellarDominance.webp",
         "sourcePath": "Assets/Sprites/SkillIcons/icons_Scientific Dominance.png",
         "sourceGuid": "720d16a7006254a3791ec7e6220bce3a",
         "sourceHash": "863c136dabccea6fc6292000b4bf26fc77c351832ddf34ad364d54bb27ee57eb"
@@ -1710,7 +1710,7 @@
         "technicalDescription": "skills.node.stellarImprovements.technical"
       },
       "icon": {
-        "fileName": "stellarImprovements.png",
+        "fileName": "stellarImprovements.webp",
         "sourcePath": "Assets/Sprites/SkillIcons/icons_Stellar Improvements.png",
         "sourceGuid": "585236a24a902407481ca7ada6abd72f",
         "sourceHash": "1f484c2ab0604587531a6f7ae252fc05ecefb2bde5044321bb0ff625f75bde32"
@@ -1731,7 +1731,7 @@
         "technicalDescription": "skills.node.stellarObliteration.technical"
       },
       "icon": {
-        "fileName": "stellarObliteration.png",
+        "fileName": "stellarObliteration.webp",
         "sourcePath": "Assets/Sprites/SkillIcons/icons_Stellar Obliteration.png",
         "sourceGuid": "64842518360054d11a9fbca1255ac463",
         "sourceHash": "c745a91cae59b946595d4314df96224ccf47f3693388bd2cbc8a74e6b48bcb01"
@@ -1752,7 +1752,7 @@
         "technicalDescription": "skills.node.stellarSacrifices.technical"
       },
       "icon": {
-        "fileName": "stellarSacrifices.png",
+        "fileName": "stellarSacrifices.webp",
         "sourcePath": "Assets/Sprites/SkillIcons/icons_Stellar Sacrifices.png",
         "sourceGuid": "b131aa2a7cf154582a3402ae05189458",
         "sourceHash": "f5818368abc347409bdf6b8c88b9c5ca6c0b7900dcf0bfb33076e0b8237306a9"
@@ -1773,7 +1773,7 @@
         "technicalDescription": "skills.node.superRadiantScattering.technical"
       },
       "icon": {
-        "fileName": "superRadiantScattering.png",
+        "fileName": "superRadiantScattering.webp",
         "sourcePath": "Assets/Sprites/SkillIcons/icons_Super Radiant Scattering.png",
         "sourceGuid": "2ba931f8de5d244e6af33cb38923ff36",
         "sourceHash": "a30efe1ae467d75aa61899154d7cd4b20ab7bce96f35b1ad18b88ec9d175822b"
@@ -1794,7 +1794,7 @@
         "technicalDescription": "skills.node.superSwarm.technical"
       },
       "icon": {
-        "fileName": "superSwarm.png",
+        "fileName": "superSwarm.webp",
         "sourcePath": "Assets/Sprites/SkillIcons/icons_Super Swarm.png",
         "sourceGuid": "ad65bf2ef7e65443bbfb210de61e0eec",
         "sourceHash": "8d7b76af9f51fc282a862b9582c06260c4cfbc3254a462a9012d28d1c25551af"
@@ -1815,7 +1815,7 @@
         "technicalDescription": "skills.node.superchargedPower.technical"
       },
       "icon": {
-        "fileName": "superchargedPower.png",
+        "fileName": "superchargedPower.webp",
         "sourcePath": "Assets/Sprites/SkillIcons/icons_Supercharged Power.png",
         "sourceGuid": "c81fcdf3adcb54cb5ad0478bb703b91b",
         "sourceHash": "669065d033a3df956a07cedd22b06bf077b3f1b2cc915be258279aa1a1186b72"
@@ -1836,7 +1836,7 @@
         "technicalDescription": "skills.node.supernova.technical"
       },
       "icon": {
-        "fileName": "supernova.png",
+        "fileName": "supernova.webp",
         "sourcePath": "Assets/Sprites/SkillIcons/icons_Supernova.png",
         "sourceGuid": "bb1de96fafb2849519230ef499dd4d01",
         "sourceHash": "fa9162ff863c387314689e89c9f405791bdba418b139f7b5221ce8b859301eaa"
@@ -1857,7 +1857,7 @@
         "technicalDescription": "skills.node.tasteOfPower.technical"
       },
       "icon": {
-        "fileName": "tasteOfPower.png",
+        "fileName": "tasteOfPower.webp",
         "sourcePath": "Assets/Sprites/SkillIcons/icons_Taste of Power.png",
         "sourceGuid": "7f8a75691ba214fa5a01739b3dfa3927",
         "sourceHash": "297c2e460c2b441c7d670ef63d5fe8c1fa6c639d1bc717a920fb7f8c0ac4b620"
@@ -1878,7 +1878,7 @@
         "technicalDescription": "skills.node.terraEculeo.technical"
       },
       "icon": {
-        "fileName": "terraEculeo.png",
+        "fileName": "terraEculeo.webp",
         "sourcePath": "Assets/Sprites/SkillIcons/icons_Terra Eculeo.png",
         "sourceGuid": "5fdd3d88928854a4aa8b1318bff7179f",
         "sourceHash": "1c2c6d2d2b2ab8cdb5b97d918c6b4c4b02894986c6252da99f6172f6ec46ca30"
@@ -1899,7 +1899,7 @@
         "technicalDescription": "skills.node.terraFirma.technical"
       },
       "icon": {
-        "fileName": "terraFirma.png",
+        "fileName": "terraFirma.webp",
         "sourcePath": "Assets/Sprites/SkillIcons/icons_Terra Firma.png",
         "sourceGuid": "389d45a2270684f0a9370b30821ed403",
         "sourceHash": "6be6d1909b05d463db78cb89d1cf609b72c6533a6ba3890ad749002412a14059"
@@ -1920,7 +1920,7 @@
         "technicalDescription": "skills.node.terraGloriae.technical"
       },
       "icon": {
-        "fileName": "terraGloriae.png",
+        "fileName": "terraGloriae.webp",
         "sourcePath": "Assets/Sprites/SkillIcons/icons_Terra Gloriae.png",
         "sourceGuid": "0226a6ae849da4c10bba0ac81d648178",
         "sourceHash": "159585115a4fba2a5202b6d6b09a9bb04febf476e32ebda42f6f71c961834fdf"
@@ -1941,7 +1941,7 @@
         "technicalDescription": "skills.node.terraInfirma.technical"
       },
       "icon": {
-        "fileName": "terraInfirma.png",
+        "fileName": "terraInfirma.webp",
         "sourcePath": "Assets/Sprites/SkillIcons/icons_Terra Infirma.png",
         "sourceGuid": "b12323c35e92e4ee78ac80f1e7dc0379",
         "sourceHash": "6ee4086c318c643e556a656b20121eec7a36c92fa2f0a858d2b8079fadf2b91f"
@@ -1962,7 +1962,7 @@
         "technicalDescription": "skills.node.terraIrradiant.technical"
       },
       "icon": {
-        "fileName": "terraIrradiant.png",
+        "fileName": "terraIrradiant.webp",
         "sourcePath": "Assets/Sprites/SkillIcons/icons_Terra Irradiant.png",
         "sourceGuid": "4c5c0fda0f7294b218c5a9f7391d2690",
         "sourceHash": "0695fb0d3d3102d2afe19419ac9e5d081810d20b01a7e58f205e9f172dc3b0d1"
@@ -1983,7 +1983,7 @@
         "technicalDescription": "skills.node.terraNova.technical"
       },
       "icon": {
-        "fileName": "terraNova.png",
+        "fileName": "terraNova.webp",
         "sourcePath": "Assets/Sprites/SkillIcons/icons_Terra Nove.png",
         "sourceGuid": "0dd8d936ee468444689923a5a6e3beff",
         "sourceHash": "369aec225506da2f4f48b1b4909ab1b0e0b209263e765dbc29ee12dd37a3369c"
@@ -2004,7 +2004,7 @@
         "technicalDescription": "skills.node.terraNullius.technical"
       },
       "icon": {
-        "fileName": "terraNullius.png",
+        "fileName": "terraNullius.webp",
         "sourcePath": "Assets/Sprites/SkillIcons/icons_Terra Nullius.png",
         "sourceGuid": "73c42c066f24343ff8a47e97284f8877",
         "sourceHash": "b9b8fb345fd705890b6b00039baf745c1455ff1f6e2436efa86c378ac8142e06"
@@ -2025,7 +2025,7 @@
         "technicalDescription": "skills.node.terraformingProtocols.technical"
       },
       "icon": {
-        "fileName": "terraformingProtocols.png",
+        "fileName": "terraformingProtocols.webp",
         "sourcePath": "Assets/Sprites/SkillIcons/icons_Terraforming Protocols.png",
         "sourceGuid": "7f11383cc79d249548544209c46f0a40",
         "sourceHash": "75d4dfbe4acc5306e155e947fd7e3df2f90b1ea1f0e3a985b3bc7fad72607307"
@@ -2046,7 +2046,7 @@
         "technicalDescription": "skills.node.ultimateSwarm.technical"
       },
       "icon": {
-        "fileName": "ultimateSwarm.png",
+        "fileName": "ultimateSwarm.webp",
         "sourcePath": "Assets/Sprites/SkillIcons/icons_Ultimate Swarm.png",
         "sourceGuid": "08f6c050081764cceb1f2c440649e579",
         "sourceHash": "d158cf2fba58fc1f97c29f5d9a2c6b24c781a30e339548184bcb46030626ad55"
@@ -2067,7 +2067,7 @@
         "technicalDescription": "skills.node.unsuspiciousAlgorithms.technical"
       },
       "icon": {
-        "fileName": "unsuspiciousAlgorithms.png",
+        "fileName": "unsuspiciousAlgorithms.webp",
         "sourcePath": "Assets/Sprites/SkillIcons/icons_Unsuspicious Algorithms.png",
         "sourceGuid": "7cd922a601f8d423f938c029b1aba6b9",
         "sourceHash": "883df308bdcaee1288485e1e4dda87523083db74bb519ecbf9d5642ea9462eb2"
@@ -2088,7 +2088,7 @@
         "technicalDescription": "skills.node.versatileProductionTactics.technical"
       },
       "icon": {
-        "fileName": "versatileProductionTactics.png",
+        "fileName": "versatileProductionTactics.webp",
         "sourcePath": "Assets/Sprites/SkillIcons/icons_Versatile Production Tactics.png",
         "sourceGuid": "660c79124ddc2454e981a288e37e7b05",
         "sourceHash": "33c0f233291653318d248da69b0bd48c181f17f5e881546c443485b973f529e2"
@@ -2109,7 +2109,7 @@
         "technicalDescription": "skills.node.whatCouldHaveBeen.technical"
       },
       "icon": {
-        "fileName": "whatCouldHaveBeen.png",
+        "fileName": "whatCouldHaveBeen.webp",
         "sourcePath": "Assets/Sprites/SkillIcons/icons_What Could've Been.png",
         "sourceGuid": "450187a73b62544da98bee2dd7c4a9a7",
         "sourceHash": "2f228f83959378ac924f82208518f6f413bb8f0320dee4ffc748c0807c8786a4"
@@ -2130,7 +2130,7 @@
         "technicalDescription": "skills.node.whatWillComeToPass.technical"
       },
       "icon": {
-        "fileName": "whatWillComeToPass.png",
+        "fileName": "whatWillComeToPass.webp",
         "sourcePath": "Assets/Sprites/SkillIcons/icons_What Will Come to Pass.png",
         "sourceGuid": "92c94e82f4dca465c9bf6ff9d11872c6",
         "sourceHash": "6365306a11164e20857a2f4b0fbe2f8382a9c765a93b4b88fe0712b9336e01be"
@@ -2151,7 +2151,7 @@
         "technicalDescription": "skills.node.workerBoost.technical"
       },
       "icon": {
-        "fileName": "workerBoost.png",
+        "fileName": "workerBoost.webp",
         "sourcePath": "Assets/Sprites/SkillIcons/icons_Workers Boost.png",
         "sourceGuid": "9444f197e1dc74ff8b1e564914ca3c4c",
         "sourceHash": "f6ad732f44d6360c37724746b2650e55a445e688900e74f552f273c1e38be488"
@@ -2172,7 +2172,7 @@
         "technicalDescription": "skills.node.workerEfficiencyTree.technical"
       },
       "icon": {
-        "fileName": "workerEfficiencyTree.png",
+        "fileName": "workerEfficiencyTree.webp",
         "sourcePath": "Assets/Sprites/SkillIcons/icons_Worker Efficiency.png",
         "sourceGuid": "a0c6bf1c6b4064cee9c7a7d47d40a909",
         "sourceHash": "bf07ee06290f73a970fc842063d2f114cdc7b0e6ab487c28a27134bd714ec004"
@@ -2193,7 +2193,7 @@
         "technicalDescription": "skills.node.worthySacrifice.technical"
       },
       "icon": {
-        "fileName": "worthySacrifice.png",
+        "fileName": "worthySacrifice.webp",
         "sourcePath": "Assets/Sprites/SkillIcons/icons_Worthy Sacrifice.png",
         "sourceGuid": "da584849591df4c8194eab3ea09bcae4",
         "sourceHash": "338c7dddb2bb3b4bc3d5af10e0439b33551443873c48c60dd51d75c1da8c222a"

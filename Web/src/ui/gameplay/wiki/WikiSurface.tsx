@@ -1,10 +1,11 @@
-import { useState } from 'react'
-import { useIntl, type MessageDescriptor } from 'react-intl'
+import { useId, useLayoutEffect, useRef, useState, type ReactNode } from 'react'
+import { useIntl, type IntlShape, type MessageDescriptor } from 'react-intl'
 import { formatNumber } from '../../i18n/formatters'
 import type { EnabledLocale } from '../../i18n/localeRegistry'
 import { wikiMessages as messages } from './messages'
 import { WIKI_LORE_SECTIONS, WIKI_PATCH_NOTES } from './content'
 import {
+  visibleWikiLoreSectionIds,
   visibleWikiCategoryIds,
   type WikiCategoryId,
   type WikiProgression,
@@ -14,6 +15,8 @@ import './wiki.css'
 export interface WikiSurfaceProps {
   readonly locale: EnabledLocale
   readonly progression: WikiProgression
+  readonly initialCategory?: WikiCategoryId
+  readonly onCategoryChange?: (category: WikiCategoryId) => void
 }
 
 interface WikiSection {
@@ -66,11 +69,10 @@ const baseCategories: readonly WikiCategory[] = [
     id: 'other',
     title: messages.other,
     sections: [
-      { title: messages.offlineTitle, body: messages.offline },
       { title: messages.easterEggTitle, body: messages.easterEgg },
+      { title: messages.offlineTitle, body: messages.offline },
     ],
   },
-  { id: 'patch-notes', title: messages.patchNotes, sections: [] },
   { id: 'lore', title: messages.lore, sections: [] },
   {
     id: 'reality',
@@ -92,7 +94,16 @@ const baseCategories: readonly WikiCategory[] = [
     ],
   },
   { id: 'secrets', title: messages.secrets, sections: [] },
+  { id: 'patch-notes', title: messages.patchNotes, sections: [] },
 ]
+
+const FLAT_CATEGORY_IDS = new Set<WikiCategoryId>([
+  'bots',
+  'research',
+  'skills',
+  'infinity',
+  'other',
+])
 
 const goalMessages = [
   messages.goal1,
@@ -105,6 +116,22 @@ const goalMessages = [
   messages.goal8,
   messages.goal9,
   messages.goal10,
+] as const
+
+const version3PatchNoteMessages = [
+  messages.patchNotesVersion3WebRelease,
+  messages.patchNotesVersion3OfflineTime,
+  messages.patchNotesVersion3Saves,
+  messages.patchNotesVersion3Transfers,
+  messages.patchNotesVersion3Pwa,
+  messages.patchNotesVersion3Store,
+  messages.patchNotesVersion3ResponsiveUi,
+  messages.patchNotesVersion3Accessibility,
+  messages.patchNotesVersion3Wiki,
+  messages.patchNotesVersion3StoryAndStore,
+  messages.patchNotesVersion3Statistics,
+  messages.patchNotesVersion3SettingsAndDebug,
+  messages.patchNotesVersion3InteractionFixes,
 ] as const
 
 type SecretEffectMessage =
@@ -155,13 +182,28 @@ const secretEntries: readonly SecretEntry[] = [
   { letter: 'I', effect: 'aiManagerMultiplier', change: '×3 → ×42' },
 ]
 
-export function WikiSurface({ locale, progression }: WikiSurfaceProps) {
+export function WikiSurface({
+  locale,
+  progression,
+  initialCategory = 'bots',
+  onCategoryChange,
+}: WikiSurfaceProps) {
   const intl = useIntl()
+  const topicSelectId = useId()
+  const articleRef = useRef<HTMLElement>(null)
   const visibleIds = visibleWikiCategoryIds(progression)
   const visibleCategories = baseCategories.filter((category) => visibleIds.includes(category.id))
-  const [requestedCategory, setRequestedCategory] = useState<WikiCategoryId>('bots')
+  const [requestedCategory, setRequestedCategory] = useState<WikiCategoryId>(initialCategory)
   const category = visibleCategories.find(({ id }) => id === requestedCategory) ?? visibleCategories[0]
   const panelId = `wiki-panel-${category.id}`
+  const selectCategory = (nextCategory: WikiCategoryId) => {
+    setRequestedCategory(nextCategory)
+    onCategoryChange?.(nextCategory)
+  }
+
+  useLayoutEffect(() => {
+    if (articleRef.current !== null) articleRef.current.scrollTop = 0
+  }, [category.id])
 
   return (
     <div className="wiki-surface">
@@ -170,13 +212,31 @@ export function WikiSurface({ locale, progression }: WikiSurfaceProps) {
           <div className="wiki-surface__title" aria-hidden="true">
             {intl.formatMessage(messages.title)}
           </div>
-          <p>{intl.formatMessage(messages.introduction)}</p>
         </div>
       </header>
 
       <div className="wiki-surface__layout">
         <nav className="wiki-surface__navigation" aria-label={intl.formatMessage(messages.topicNavigation)}>
           <h2>{intl.formatMessage(messages.topics)}</h2>
+          <label
+            className="wiki-surface__mobile-topic-control"
+            htmlFor={topicSelectId}
+          >
+            <span>{intl.formatMessage(messages.topics)}</span>
+            <select
+              id={topicSelectId}
+              value={category.id}
+              onChange={(event) => {
+                selectCategory(event.currentTarget.value as WikiCategoryId)
+              }}
+            >
+              {visibleCategories.map((item) => (
+                <option key={item.id} value={item.id}>
+                  {intl.formatMessage(item.title)}
+                </option>
+              ))}
+            </select>
+          </label>
           <div className="wiki-surface__topic-list">
             {visibleCategories.map((item) => (
               <button
@@ -184,7 +244,7 @@ export function WikiSurface({ locale, progression }: WikiSurfaceProps) {
                 type="button"
                 aria-controls={item.id === category.id ? panelId : undefined}
                 aria-current={item.id === category.id ? 'page' : undefined}
-                onClick={() => setRequestedCategory(item.id)}
+                onClick={() => selectCategory(item.id)}
               >
                 <span>{intl.formatMessage(item.title)}</span>
                 <span
@@ -196,15 +256,35 @@ export function WikiSurface({ locale, progression }: WikiSurfaceProps) {
           </div>
         </nav>
 
-        <article id={panelId} className={`wiki-surface__article wiki-surface__article--${category.id}`} aria-labelledby={`${panelId}-title`}>
-          <h2 id={`${panelId}-title`}>{intl.formatMessage(category.title)}</h2>
+        <article ref={articleRef} id={panelId} className={`wiki-surface__article wiki-surface__article--${category.id}`} aria-labelledby={`${panelId}-title`}>
+          {category.id === 'lore' ? (
+            <header className="wiki-surface__article-heading">
+              <h2 id={`${panelId}-title`}>
+                {intl.formatMessage(messages.loreArticleTitle)}
+              </h2>
+              <p>{intl.formatMessage(messages.loreIntroduction)}</p>
+            </header>
+          ) : (
+            <h2 id={`${panelId}-title`}>
+              {intl.formatMessage(category.title)}
+            </h2>
+          )}
           {category.id === 'skills' ? (
             <>
-              <WikiSections sections={category.sections} />
+              <WikiSections
+                flat
+                onSelectCategory={selectCategory}
+                sections={category.sections}
+                visibleCategoryIds={visibleIds}
+              />
               <section className="wiki-surface__section">
                 <h3>{intl.formatMessage(messages.goalsTitle)}</h3>
                 <ol className="wiki-surface__goals">
-                  {goalMessages.map((goal) => <li key={goal.id}>{intl.formatMessage(goal)}</li>)}
+                  {goalMessages.map((goal) => (
+                    <li key={goal.id}>
+                      {formatWikiMessage(intl, goal, selectCategory, visibleIds)}
+                    </li>
+                  ))}
                 </ol>
               </section>
             </>
@@ -213,9 +293,14 @@ export function WikiSurface({ locale, progression }: WikiSurfaceProps) {
           ) : category.id === 'patch-notes' ? (
             <PatchNotesArticle />
           ) : category.id === 'lore' ? (
-            <LoreArticle />
+            <LoreArticle progression={progression} />
           ) : (
-            <WikiSections sections={category.sections} />
+            <WikiSections
+              flat={FLAT_CATEGORY_IDS.has(category.id)}
+              onSelectCategory={selectCategory}
+              sections={category.sections}
+              visibleCategoryIds={visibleIds}
+            />
           )}
         </article>
       </div>
@@ -225,34 +310,39 @@ export function WikiSurface({ locale, progression }: WikiSurfaceProps) {
 
 function PatchNotesArticle() {
   const intl = useIntl()
+  const previousNotes = [...WIKI_PATCH_NOTES]
+    .reverse()
+    .map((entry) => entry.notes)
+    .join('\n\n')
 
   return (
     <>
-      <p className="wiki-surface__article-introduction">
-        {intl.formatMessage(messages.patchNotesIntroduction)}
-      </p>
       <div className="wiki-surface__long-form-list">
-        {[...WIKI_PATCH_NOTES].reverse().map((entry) => (
-          <section key={entry.version} className="wiki-surface__section">
-            <h3>{entry.version}</h3>
-            <p className="wiki-surface__authored-copy">{entry.notes}</p>
-          </section>
-        ))}
+        <section className="wiki-surface__section">
+          <h3>{intl.formatMessage(messages.patchNotesMostRecent)}</h3>
+          <h4>{intl.formatMessage(messages.patchNotesVersion3)}</h4>
+          <ul className="wiki-surface__patch-note-list">
+            {version3PatchNoteMessages.map((message) => (
+              <li key={message.id}>{intl.formatMessage(message)}</li>
+            ))}
+          </ul>
+        </section>
+        <section className="wiki-surface__section">
+          <h3>{intl.formatMessage(messages.patchNotesPrevious)}</h3>
+          <p className="wiki-surface__authored-copy">{previousNotes}</p>
+        </section>
       </div>
     </>
   )
 }
 
-function LoreArticle() {
-  const intl = useIntl()
-
+function LoreArticle({ progression }: { readonly progression: WikiProgression }) {
+  const visibleSectionIds = visibleWikiLoreSectionIds(progression)
   return (
-    <>
-      <p className="wiki-surface__article-introduction">
-        {intl.formatMessage(messages.loreIntroduction)}
-      </p>
-      <div className="wiki-surface__lore">
-        {WIKI_LORE_SECTIONS.map((section) => (
+    <div className="wiki-surface__lore">
+      {WIKI_LORE_SECTIONS
+        .filter((section) => visibleSectionIds.includes(section.id))
+        .map((section) => (
           <section key={section.title} className="wiki-surface__lore-section">
             <h3>{section.title}</h3>
             <div className="wiki-surface__lore-chapters">
@@ -265,19 +355,87 @@ function LoreArticle() {
             </div>
           </section>
         ))}
-      </div>
-    </>
+    </div>
   )
 }
 
-function WikiSections({ sections }: { readonly sections: readonly WikiSection[] }) {
+function WikiSections({
+  flat = false,
+  onSelectCategory,
+  sections,
+  visibleCategoryIds,
+}: {
+  readonly flat?: boolean
+  readonly onSelectCategory: (category: WikiCategoryId) => void
+  readonly sections: readonly WikiSection[]
+  readonly visibleCategoryIds: readonly WikiCategoryId[]
+}) {
   const intl = useIntl()
+  if (flat) {
+    return (
+      <div className="wiki-surface__section wiki-surface__copy">
+        {sections.map((section) => (
+          <p key={section.body.id}>
+            {formatWikiMessage(
+              intl,
+              section.body,
+              onSelectCategory,
+              visibleCategoryIds,
+            )}
+          </p>
+        ))}
+      </div>
+    )
+  }
   return sections.map((section) => (
     <section key={section.title.id} className="wiki-surface__section">
       <h3>{intl.formatMessage(section.title)}</h3>
-      <p>{intl.formatMessage(section.body)}</p>
+      <p>
+        {formatWikiMessage(
+          intl,
+          section.body,
+          onSelectCategory,
+          visibleCategoryIds,
+        )}
+      </p>
     </section>
   ))
+}
+
+function formatWikiMessage(
+  intl: IntlShape,
+  message: MessageDescriptor,
+  onSelectCategory: (category: WikiCategoryId) => void,
+  visibleCategoryIds: readonly WikiCategoryId[],
+): ReactNode {
+  return intl.formatMessage(message, {
+    bots: (chunks) => wikiTopicLink(chunks, 'bots', onSelectCategory, visibleCategoryIds),
+    infinity: (chunks) => wikiTopicLink(chunks, 'infinity', onSelectCategory, visibleCategoryIds),
+    quantum: (chunks) => wikiTopicLink(chunks, 'quantum', onSelectCategory, visibleCategoryIds),
+    reality: (chunks) => wikiTopicLink(chunks, 'reality', onSelectCategory, visibleCategoryIds),
+    skills: (chunks) => wikiTopicLink(chunks, 'skills', onSelectCategory, visibleCategoryIds),
+    value: (chunks) => <span className="wiki-surface__value">{chunks}</span>,
+  })
+}
+
+function wikiTopicLink(
+  chunks: ReactNode,
+  category: WikiCategoryId,
+  onSelectCategory: (category: WikiCategoryId) => void,
+  visibleCategoryIds: readonly WikiCategoryId[],
+): ReactNode {
+  if (!visibleCategoryIds.includes(category)) {
+    return <span className="wiki-surface__value">{chunks}</span>
+  }
+  return (
+    <button
+      type="button"
+      className="wiki-surface__topic-link"
+      onClick={() => onSelectCategory(category)}
+    >
+      {chunks}
+    </button>
+  )
 }
 
 function SecretsArticle({ locale, revealed }: { readonly locale: EnabledLocale; readonly revealed: bigint }) {

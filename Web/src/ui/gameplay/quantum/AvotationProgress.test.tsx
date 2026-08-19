@@ -84,7 +84,7 @@ describe('AvotationProgress', () => {
     expect(screen.getByRole('dialog')).toBeVisible()
     expect(screen.getByRole('img', { name: 'Avocato meditating' })).toHaveAttribute(
       'src',
-      expect.stringContaining('avotation-meditation.png'),
+      expect.stringContaining('avotation-meditation.webp'),
     )
     expect(screen.getByRole('list', { name: 'Avotation names' })).toBeVisible()
     for (const name of [

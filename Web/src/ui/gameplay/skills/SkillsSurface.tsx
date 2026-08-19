@@ -157,7 +157,7 @@ export interface SkillsSurfaceProps {
 
 const presentation =
   skillTreePresentationJson as SkillTreePresentation
-const iconModules = import.meta.glob('../../assets/skill-icons/*.png', {
+const iconModules = import.meta.glob('../../assets/skill-icons/*.webp', {
   eager: true,
   query: '?url',
   import: 'default',

@@ -124,7 +124,7 @@ export function createDeterministicMatureDysonFixture(
       ...characterizedState.infinity,
       points: 4_200n,
       spentPoints: 420n,
-      permanentSkillPoints: 200n,
+      permanentSkillPoints: 10n,
       secretsOfTheUniverse: 27n,
     },
     skills: {

@@ -11,7 +11,8 @@
  *   or `IDLE_DYSON_UNITY_ROOT`, parses selected assets, and owns stable output
  *   ordering plus source hashes.
  * - Projects the authored Unity skill-tree node positions and presentation
- *   copy, and copies exact per-node icon bytes under stable skill-ID names.
+ *   copy, and creates deterministic Web-optimized icons under stable skill-ID
+ *   names while retaining hashes of the authoritative Unity PNG sources.
  * - Delegates YAML parsing to `yaml` and file/cryptographic primitives to Node.
  *
  * Interacts with:
@@ -49,6 +50,7 @@ import {
 } from 'node:fs'
 import { dirname, relative, resolve, sep } from 'node:path'
 import { fileURLToPath } from 'node:url'
+import sharp from 'sharp'
 import { parse } from 'yaml'
 import {
   RUNTIME_CATALOG_FIELDS_BY_KIND,
@@ -88,6 +90,7 @@ interface SkillTreeNodePresentation {
 }
 
 const expectedSkillNodeCount = 104
+const skillIconSizePixels = 256
 const skillNodeRootTransformFileId = '8686025716392041846'
 const skillNodeManagerFileId = '8686025716392041845'
 const skillNodeIconFileId = '5184747946528573067'
@@ -309,7 +312,7 @@ emit(
   ),
 )
 emit('skill-tree-presentation.json', skillTreePresentation)
-emitSkillIcons(skillTreePresentation.nodes)
+await emitSkillIcons(skillTreePresentation.nodes)
 
 console.log(
   `${checkOnly ? 'Verified' : 'Exported'} ${assets.length} Unity data assets across ${Object.keys(countsByKind).length} types, ${runtimeAssets.length} projected runtime assets and ${skillTreePresentation.nodeCount} skill-tree presentation nodes.`,
@@ -449,7 +452,7 @@ function exportSkillTreePresentation(
           technicalDescription: `skills.node.${skillId}.technical`,
         },
         icon: {
-          fileName: `${skillId}.png`,
+          fileName: `${skillId}.webp`,
           sourcePath: unityRelative(iconSourcePath),
           sourceGuid: iconGuid,
           sourceHash: hashBytes(readFileSync(iconSourcePath)),
@@ -593,7 +596,9 @@ function requiredPrefabModification(
   }
 }
 
-function emitSkillIcons(nodes: readonly SkillTreeNodePresentation[]): void {
+async function emitSkillIcons(
+  nodes: readonly SkillTreeNodePresentation[],
+): Promise<void> {
   if (!existsSync(skillIconOutputDirectory)) {
     if (checkOnly) {
       throw new Error(
@@ -604,7 +609,7 @@ function emitSkillIcons(nodes: readonly SkillTreeNodePresentation[]): void {
   }
   const expectedFileNames = new Set(nodes.map((node) => node.icon.fileName))
   const existingFileNames = readdirSync(skillIconOutputDirectory)
-    .filter((name) => name.toLowerCase().endsWith('.png'))
+    .filter((name) => /\.(?:png|webp)$/i.test(name))
     .sort(compareText)
   const unexpectedFileNames = existingFileNames.filter(
     (name) => !expectedFileNames.has(name),
@@ -633,20 +638,33 @@ function emitSkillIcons(nodes: readonly SkillTreeNodePresentation[]): void {
         `Unity skill icon changed during export: ${node.icon.sourcePath}`,
       )
     }
+    const optimizedBytes = await sharp(sourceBytes)
+      .resize(skillIconSizePixels, skillIconSizePixels, {
+        fit: 'inside',
+        kernel: 'lanczos3',
+        withoutEnlargement: true,
+      })
+      .webp({
+        alphaQuality: 100,
+        effort: 6,
+        quality: 90,
+        smartSubsample: true,
+      })
+      .toBuffer()
     if (checkOnly) {
       const destinationBytes = existsSync(destination)
         ? readFileSync(destination)
         : null
       if (
         destinationBytes === null ||
-        !sourceBytes.equals(destinationBytes)
+        !optimizedBytes.equals(destinationBytes)
       ) {
         throw new Error(
           `${node.icon.fileName} is stale. Run npm run data:export after Unity icon changes.`,
         )
       }
     } else {
-      writeFileSync(destination, sourceBytes)
+      writeFileSync(destination, optimizedBytes)
     }
   }
 }

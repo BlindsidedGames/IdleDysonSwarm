@@ -715,10 +715,6 @@
     "defaultMessage": "Total panels decayed: <emphasis>{value}</emphasis>",
     "description": "Canonical lifetime panel total shown in expanded Info."
   },
-  "dyson.menu.cash-multiplier": {
-    "defaultMessage": "Cash Multiplier: {value}",
-    "description": "Current canonical Cash multiplier in the Unity menu."
-  },
   "dyson.menu.close": {
     "defaultMessage": "Close menu",
     "description": "Closes the compact game menu."
@@ -730,14 +726,6 @@
   "dyson.menu.open": {
     "defaultMessage": "Open menu",
     "description": "Opens the compact game menu."
-  },
-  "dyson.menu.panel-lifetime": {
-    "defaultMessage": "Panel Lifetime: {value} s",
-    "description": "Current canonical panel lifetime in the Unity menu."
-  },
-  "dyson.menu.research-multiplier": {
-    "defaultMessage": "Research Multiplier: {value}",
-    "description": "Current canonical research multiplier in the Unity menu."
   },
   "dyson.navigation.bottom": {
     "defaultMessage": "Game tabs",
@@ -3607,10 +3595,6 @@
     "defaultMessage": "Meteor",
     "description": "Meteor Simulation reset cause."
   },
-  "statistics.group.activity": {
-    "defaultMessage": "Activity",
-    "description": "Heading for time-based statistics."
-  },
   "statistics.group.infinity": {
     "defaultMessage": "Infinity",
     "description": "Heading for Infinity statistics."
@@ -3671,22 +3655,6 @@
     "defaultMessage": "Black Hole resets",
     "description": "Dream resets caused by the Black Hole simulation."
   },
-  "statistics.metric.bot-cap-infinity-points": {
-    "defaultMessage": "Bot-cap Infinity Points",
-    "description": "Infinity Points earned at the canonical bot cap."
-  },
-  "statistics.metric.bot-cap-overflow-rewards": {
-    "defaultMessage": "Bot-cap overflow rewards",
-    "description": "Overflow rewards earned at the canonical bot cap."
-  },
-  "statistics.metric.break-infinities": {
-    "defaultMessage": "Break Infinities",
-    "description": "Count of Break Infinity resets."
-  },
-  "statistics.metric.break-infinity-points": {
-    "defaultMessage": "Break Infinity Points",
-    "description": "Infinity Points earned from Break Infinity."
-  },
   "statistics.metric.capacity-stall-time": {
     "defaultMessage": "Reality capacity stalled",
     "description": "Time Reality workers spent blocked at capacity."
@@ -3715,14 +3683,6 @@
     "defaultMessage": "Meteor resets",
     "description": "Dream resets caused by the Meteor simulation."
   },
-  "statistics.metric.ordinary-infinities": {
-    "defaultMessage": "Ordinary Infinities",
-    "description": "Count of ordinary Infinity resets."
-  },
-  "statistics.metric.ordinary-infinity-points": {
-    "defaultMessage": "Ordinary Infinity Points",
-    "description": "Infinity Points earned from ordinary resets."
-  },
   "statistics.metric.reality-workers": {
     "defaultMessage": "Reality workers created",
     "description": "Total Reality workers created."
@@ -3735,6 +3695,14 @@
     "defaultMessage": "Strange Matter earned",
     "description": "Total Strange Matter earned from Simulation resets."
   },
+  "statistics.metric.total-infinities": {
+    "defaultMessage": "Infinities",
+    "description": "Combined count of ordinary and Break Infinity resets."
+  },
+  "statistics.none": {
+    "defaultMessage": "None",
+    "description": "Empty state for a reached statistics group with no recorded activity."
+  },
   "statistics.recent-activity": {
     "defaultMessage": "Recent activity",
     "description": "Heading for rolling canonical statistics windows."
@@ -3742,10 +3710,6 @@
   "statistics.region": {
     "defaultMessage": "Statistics",
     "description": "Accessible name for the Statistics route."
-  },
-  "statistics.scope.latest-interval": {
-    "defaultMessage": "Latest interval",
-    "description": "Statistics from the latest processed simulation interval."
   },
   "statistics.scope.lifetime": {
     "defaultMessage": "Lifetime",
@@ -4072,7 +4036,7 @@
     "description": "Accessible name and heading for the Story route."
   },
   "wiki.bots.milestones": {
-    "defaultMessage": "Assembly Lines, AI Managers, Servers, Data Centers and Planets double their yield at 50 manually purchased and double again at 100. Each manual purchase beyond 100 adds another 1% boost.",
+    "defaultMessage": "<value>Assembly Lines</value>, <value>AI Managers</value>, <value>Servers</value>, <value>Data Centers</value> and <value>Planets</value> double their yield at <value>50</value> manually purchased and double again at <value>100</value>. Each manual purchase beyond <value>100</value> adds another <value>1%</value> boost.",
     "description": "Facility milestone explanation from the Unity WikiContent prefab."
   },
   "wiki.bots.milestones-title": {
@@ -4080,7 +4044,7 @@
     "description": "Heading for facility purchase milestone notes."
   },
   "wiki.bots.overview": {
-    "defaultMessage": "Build bots, then distribute them between panel production and research with the allocation control. Production bots create Solar Panels which are launched into orbit automatically.",
+    "defaultMessage": "Build <bots>bots</bots>, then distribute them between panel production and research with the allocation control. Production bots create <value>Solar Panels</value> which are launched into orbit automatically. Completing the goals listed in <skills>Skill Tree</skills> awards <value>Skill Points</value>.",
     "description": "Bots Wiki overview adapted from the Unity WikiContent prefab."
   },
   "wiki.bots.overview-title": {
@@ -4088,7 +4052,7 @@
     "description": "Heading for the Bots Wiki overview."
   },
   "wiki.bots.panels": {
-    "defaultMessage": "Each panel produces energy for its Panel Lifetime before its orbit decays into the star. That energy is sold automatically for cash, which funds stronger bot production.",
+    "defaultMessage": "Each panel produces energy for its <value>Panel Lifetime</value> before its orbit decays into the star. That energy is sold automatically for cash, which funds stronger bot production.",
     "description": "Panel lifetime explanation adapted from the Unity WikiContent prefab."
   },
   "wiki.bots.panels-title": {
@@ -4096,7 +4060,7 @@
     "description": "Heading for the panel lifetime Wiki section."
   },
   "wiki.bots.scale": {
-    "defaultMessage": "20,000 active panels surround one star. 100 billion surrounded stars engulf one galaxy. The interface changes from panels, to stars, to galaxies as your swarm grows.",
+    "defaultMessage": "<value>20,000</value> active panels surround <value>one star</value>. <value>100 billion</value> surrounded stars engulf <value>one galaxy</value>. The interface changes from <value>panels</value>, to <value>stars</value>, to <value>galaxies</value> as your swarm grows.",
     "description": "Dyson scale conversions from the Unity WikiContent prefab."
   },
   "wiki.bots.scale-title": {
@@ -4144,7 +4108,7 @@
     "description": "Wiki category about skills and goals."
   },
   "wiki.infinity.overview": {
-    "defaultMessage": "Reaching 42 quintillion bots lets you break reality and earn an Infinity Point. The first five breaks extend the Infinity Point production bonus across Assembly Lines, AI Managers, Servers, Data Centers and Planets.",
+    "defaultMessage": "Reaching the current <infinity>Infinity</infinity> threshold—initially <value>42 quintillion bots</value>—lets you break reality and earn an <value>Infinity Point</value>. The first <value>five</value> breaks extend the Infinity Point production bonus across <value>Assembly Lines</value>, <value>AI Managers</value>, <value>Servers</value>, <value>Data Centers</value> and <value>Planets</value>.",
     "description": "Infinity explanation adapted from the Unity WikiContent prefab."
   },
   "wiki.infinity.overview-title": {
@@ -4152,7 +4116,7 @@
     "description": "Heading for the Infinity Wiki overview."
   },
   "wiki.infinity.scaling": {
-    "defaultMessage": "Every spent or unspent Infinity Point increases the production of the facilities affected by your completed breaks. Shop upgrades spend points without removing their contribution to that total.",
+    "defaultMessage": "Every earned <value>Infinity Point</value> adds <value>100% of base production</value> to the facilities affected by your completed breaks. <value>Five total points</value> add <value>500%</value>, producing <value>six times the base output</value>. Shop upgrades spend points without removing their contribution to that total.",
     "description": "Infinity point effect explanation adapted to the canonical Web model."
   },
   "wiki.infinity.scaling-title": {
@@ -4160,23 +4124,23 @@
     "description": "Heading for Infinity Point production scaling."
   },
   "wiki.infinity.secrets": {
-    "defaultMessage": "After a Quantum Leap, Secret upgrades reveal the meaning of life one letter at a time and apply a permanent hidden production benefit.",
+    "defaultMessage": "After a <quantum>Quantum Leap</quantum>, <value>Secret</value> upgrades reveal the meaning of life one letter at a time and apply a permanent hidden production benefit.",
     "description": "Secret unlock explanation adapted from the Unity WikiContent prefab."
   },
   "wiki.infinity.secrets-title": {
     "defaultMessage": "Secrets",
     "description": "Heading for the Infinity Secrets note."
   },
-  "wiki.introduction": {
-    "defaultMessage": "Reference notes revealed as your run reaches each layer.",
-    "description": "Introductory copy for the in-game reference surface."
-  },
   "wiki.lore.introduction": {
     "defaultMessage": "The original Wiki chronicle. These chapters are separate from the interactive Story destination.",
     "description": "Introduction to the ported Wiki lore."
   },
+  "wiki.lore.title": {
+    "defaultMessage": "Lore - Nuclearion Edition",
+    "description": "Unity-authored heading for the Nuclearion Wiki lore chronicle."
+  },
   "wiki.other.easter-egg": {
-    "defaultMessage": "A seven-step discovery begins in Quantum Management. Completing every step awards four Skill Points.",
+    "defaultMessage": "A <value>seven-step</value> discovery begins in <value>Quantum Management</value>. Completing every step awards <value>four Skill Points</value>.",
     "description": "Easter egg explanation adapted from the Unity WikiContent prefab."
   },
   "wiki.other.easter-egg-title": {
@@ -4184,19 +4148,79 @@
     "description": "Heading for the hidden discovery Wiki note."
   },
   "wiki.other.offline": {
-    "defaultMessage": "Time away from the game becomes Offline Time currency. Spend it from the Offline Time screen. A return summary appears after you have been away for at least 60 seconds.",
+    "defaultMessage": "Time away from the game becomes <value>Offline Time</value> currency. Spend it from the Offline Time screen. A return summary appears after you have been away for at least <value>60 seconds</value>.",
     "description": "Offline Time explanation adapted from the Unity WikiContent prefab."
   },
   "wiki.other.offline-title": {
     "defaultMessage": "Offline Time",
     "description": "Heading for Offline Time reference notes."
   },
-  "wiki.patch-notes.introduction": {
-    "defaultMessage": "The complete release history authored for the Unity Wiki.",
-    "description": "Introduction to the ported patch-note history."
+  "wiki.patch-notes.most-recent": {
+    "defaultMessage": "Most Recent",
+    "description": "Heading for the latest Wiki patch notes."
+  },
+  "wiki.patch-notes.previous": {
+    "defaultMessage": "Previous",
+    "description": "Heading for archived Wiki patch notes."
+  },
+  "wiki.patch-notes.version-3": {
+    "defaultMessage": "Version 3",
+    "description": "Version label for the latest Wiki patch notes."
+  },
+  "wiki.patch-notes.version-3.accessibility": {
+    "defaultMessage": "Improved keyboard and screen-reader support, reduced-motion behavior, mobile text selection, text-field editing, focus handling, and rapid-touch protection.",
+    "description": "Version 3 release note for accessibility and input support."
+  },
+  "wiki.patch-notes.version-3.interaction-fixes": {
+    "defaultMessage": "Improved Tinker hold-to-repeat feedback, corrected Dyson and late-game animations, and fixed several stalled or unsafe automation edge cases.",
+    "description": "Version 3 release note for interaction and animation fixes."
+  },
+  "wiki.patch-notes.version-3.offline-time": {
+    "defaultMessage": "Improved Offline Time with Stored Time and Double Time support, visible processing progress, cancellation, safer recovery, remembered controls, and a storage meter in navigation.",
+    "description": "Version 3 release note for offline and stored time improvements."
+  },
+  "wiki.patch-notes.version-3.pwa": {
+    "defaultMessage": "The Web game can be installed as an app, reopened without a network connection, and updated through a prompt that protects progress before applying the new version.",
+    "description": "Version 3 release note for installing and safely updating the Web game."
+  },
+  "wiki.patch-notes.version-3.responsive-ui": {
+    "defaultMessage": "Redesigned the interface for desktop, portrait mobile, and compact landscape with touch-friendly controls, safe-area support, themed navigation, and evolving star and galaxy visuals.",
+    "description": "Version 3 release note for responsive presentation."
+  },
+  "wiki.patch-notes.version-3.saves": {
+    "defaultMessage": "Added durable browser saves with three rotating backups, automatic recovery from the newest valid backup, regular safety checkpoints, and save protection before reloading.",
+    "description": "Version 3 release note for browser save durability and recovery."
+  },
+  "wiki.patch-notes.version-3.settings-and-debug": {
+    "defaultMessage": "Expanded Settings save controls and improved development options with a working unlock toggle and remembered Debug and Offline Time values between tab switches.",
+    "description": "Version 3 release note for Settings and development controls."
+  },
+  "wiki.patch-notes.version-3.statistics": {
+    "defaultMessage": "Refined Statistics with reached-system disclosure, combined Infinity totals, simulated time in each history heading, and a dedicated presentation instead of desktop-menu diagnostics.",
+    "description": "Version 3 release note for Statistics."
+  },
+  "wiki.patch-notes.version-3.store": {
+    "defaultMessage": "Added a Web Store with five support and permanent-upgrade products, Stripe checkout, and clear warnings that Web purchases belong to this browser and device rather than an account.",
+    "description": "Version 3 release note for the Web Store."
+  },
+  "wiki.patch-notes.version-3.story-and-store": {
+    "defaultMessage": "Refined Story and Store presentation with clearer sections and fewer redundant layered panels.",
+    "description": "Version 3 release note for Story and Store presentation."
+  },
+  "wiki.patch-notes.version-3.transfers": {
+    "defaultMessage": "Added preview-first save import and export, including supported Unity saves, while keeping purchases and device-specific preferences on their original device.",
+    "description": "Version 3 release note for save import and export."
+  },
+  "wiki.patch-notes.version-3.web-release": {
+    "defaultMessage": "Idle Dyson Swarm is now available to play on the Web.",
+    "description": "Version 3 release note announcing the Web release."
+  },
+  "wiki.patch-notes.version-3.wiki": {
+    "defaultMessage": "Expanded the Wiki with original lore, gameplay reference material, value highlighting, topic links, remembered navigation, mobile topic selection, and unlock-aware lore sections.",
+    "description": "Version 3 release note for the Wiki."
   },
   "wiki.quantum.advice": {
-    "defaultMessage": "Quantum upgrades open new systems and permanent efficiencies. Review each prerequisite and preview before committing to a reset.",
+    "defaultMessage": "<value>Quantum</value> upgrades open new systems and permanent efficiencies. Review each prerequisite and preview before committing to a reset.",
     "description": "Web-appropriate Quantum Leap planning guidance based on Unity Wiki intent."
   },
   "wiki.quantum.advice-title": {
@@ -4204,7 +4228,7 @@
     "description": "Heading for Quantum Leap planning guidance."
   },
   "wiki.quantum.overview": {
-    "defaultMessage": "A Quantum Leap fully resets the current Reality at 42 Infinity Points and awards Quantum Shards. Spend them on permanent upgrades in Quantum Management.",
+    "defaultMessage": "A <quantum>Quantum Leap</quantum> fully resets the current Reality at <value>42 Infinity Points</value> and awards <value>Quantum Shards</value>. Spend them on permanent upgrades in <value>Quantum Management</value>.",
     "description": "Quantum Leap explanation adapted from the Unity WikiContent prefab."
   },
   "wiki.quantum.overview-title": {
@@ -4212,7 +4236,7 @@
     "description": "Heading for Quantum Shard reference notes."
   },
   "wiki.reality.anomaly": {
-    "defaultMessage": "Speed Reduction and Translation upgrades advance the story and each award one Skill Point.",
+    "defaultMessage": "<value>Speed Reduction</value> and <value>Translation</value> upgrades advance the story and each award <value>one Skill Point</value>.",
     "description": "Anomaly explanation adapted from the Unity WikiContent prefab."
   },
   "wiki.reality.anomaly-title": {
@@ -4220,7 +4244,7 @@
     "description": "Heading for Anomaly notes."
   },
   "wiki.reality.countermeasures": {
-    "defaultMessage": "Countermeasures in Research let simulations survive later disasters and increase the Strange Matter earned from a reset.",
+    "defaultMessage": "<value>Countermeasures</value> in Research let simulations survive later disasters and increase the <value>Strange Matter</value> earned from a reset.",
     "description": "Countermeasure explanation adapted from the Unity WikiContent prefab."
   },
   "wiki.reality.countermeasures-title": {
@@ -4228,7 +4252,7 @@
     "description": "Heading for Countermeasure notes."
   },
   "wiki.reality.disasters": {
-    "defaultMessage": "Disasters reset a simulated world and award Strange Matter. Spend Strange Matter on Reality research and Countermeasures.",
+    "defaultMessage": "<value>Disasters</value> reset a simulated world and award <value>Strange Matter</value>. Spend Strange Matter on Reality research and <value>Countermeasures</value>.",
     "description": "Disaster explanation adapted from the Unity WikiContent prefab."
   },
   "wiki.reality.disasters-title": {
@@ -4236,7 +4260,7 @@
     "description": "Heading for Disaster reset notes."
   },
   "wiki.reality.offline": {
-    "defaultMessage": "Simulation offline progress is stored as time rather than immediately awarded resources. The Time Multiplier upgrade lets you spend that reserve to accelerate Simulations.",
+    "defaultMessage": "Simulation offline progress is stored as time rather than immediately awarded resources. The <value>Time Multiplier</value> upgrade lets you spend that reserve to accelerate <value>Simulations</value>.",
     "description": "Simulation offline progress explanation adapted from the Unity WikiContent prefab."
   },
   "wiki.reality.offline-title": {
@@ -4244,7 +4268,7 @@
     "description": "Heading for simulation offline progress notes."
   },
   "wiki.reality.overview": {
-    "defaultMessage": "Reality is the second major layer. Its upgrades change how you break reality and how later prestige systems work.",
+    "defaultMessage": "<reality>Reality</reality> is the <value>second major layer</value>. Its upgrades change how you break reality and how later prestige systems work.",
     "description": "Reality overview adapted from the Unity WikiContent prefab."
   },
   "wiki.reality.overview-title": {
@@ -4256,7 +4280,7 @@
     "description": "Accessible name for the in-game reference surface."
   },
   "wiki.research.overview": {
-    "defaultMessage": "Assigning workers as scientists produces research points. Spend them on upgrades; some research only appears after you reach its required amount or progression era.",
+    "defaultMessage": "Assigning workers as <value>scientists</value> produces <value>research points</value>. Spend them on upgrades; some research only appears after you reach its required amount or progression era.",
     "description": "Research explanation adapted from the Unity WikiContent prefab."
   },
   "wiki.research.overview-title": {
@@ -4320,7 +4344,7 @@
     "description": "Heading for revealed Secrets of the Universe."
   },
   "wiki.skills.auto-assign": {
-    "defaultMessage": "The tree remembers assignment order so it can rebuild your layout after Infinity or a Quantum reset. Presets save complete layouts. Skills such as Banking may be excluded from automatic assignment.",
+    "defaultMessage": "You can manually include or exclude individual skills from automatic assignment. The tree remembers assignment order so it can rebuild your layout after <infinity>Infinity</infinity> or a <value>Quantum</value> reset. Resetting the tree clears the live auto-assignment queue. Presets save complete layouts.",
     "description": "Skill assignment explanation adapted from the Unity WikiContent prefab."
   },
   "wiki.skills.auto-assign-title": {
@@ -4328,43 +4352,43 @@
     "description": "Heading for skill auto-assignment notes."
   },
   "wiki.skills.goal-1": {
-    "defaultMessage": "Create 10 Bots.",
+    "defaultMessage": "Create <value>10 Bots</value>.",
     "description": "First canonical Dyson goal."
   },
   "wiki.skills.goal-10": {
-    "defaultMessage": "Engulf 100 Galaxies.",
+    "defaultMessage": "Engulf <value>100 Galaxies</value>.",
     "description": "Tenth canonical Dyson goal."
   },
   "wiki.skills.goal-2": {
-    "defaultMessage": "Build 5 manually purchased Assembly Lines.",
+    "defaultMessage": "Build <value>5</value> manually purchased <value>Assembly Lines</value>.",
     "description": "Second canonical Dyson goal."
   },
   "wiki.skills.goal-3": {
-    "defaultMessage": "Maintain 20,000 active Panels.",
+    "defaultMessage": "Maintain <value>20,000 active Panels</value>.",
     "description": "Third canonical Dyson goal."
   },
   "wiki.skills.goal-4": {
-    "defaultMessage": "Own 20 Planets.",
+    "defaultMessage": "Own <value>20 Planets</value>.",
     "description": "Fourth canonical Dyson goal."
   },
   "wiki.skills.goal-5": {
-    "defaultMessage": "Decay 1 trillion Panels in total.",
+    "defaultMessage": "Decay <value>1 trillion Panels</value> in total.",
     "description": "Fifth canonical Dyson goal, based on the lifetime panel-decay counter."
   },
   "wiki.skills.goal-6": {
-    "defaultMessage": "Surround 1 billion Stars.",
+    "defaultMessage": "Surround <value>1 billion Stars</value>.",
     "description": "Sixth canonical Dyson goal."
   },
   "wiki.skills.goal-7": {
-    "defaultMessage": "Surround 10 billion Stars.",
+    "defaultMessage": "Surround <value>10 billion Stars</value>.",
     "description": "Seventh canonical Dyson goal."
   },
   "wiki.skills.goal-8": {
-    "defaultMessage": "Engulf 1 Galaxy.",
+    "defaultMessage": "Engulf <value>1 Galaxy</value>.",
     "description": "Eighth canonical Dyson goal."
   },
   "wiki.skills.goal-9": {
-    "defaultMessage": "Engulf 10 Galaxies.",
+    "defaultMessage": "Engulf <value>10 Galaxies</value>.",
     "description": "Ninth canonical Dyson goal."
   },
   "wiki.skills.goals-title": {
@@ -4372,7 +4396,7 @@
     "description": "Heading for the canonical goal list."
   },
   "wiki.skills.overview": {
-    "defaultMessage": "Skill Points are awarded by completing goals, with further sources unlocked later. Exclusive skills disable their alternatives, Fragment skills grow with assigned Fragments, and some mechanically dependent skills cannot be refunded.",
+    "defaultMessage": "<value>Skill Points</value> are awarded by completing goals, with further sources unlocked later. The tree contains <value>104 skills</value> and <value>three exclusivity areas</value>, where choosing one skill disables its alternatives. <value>Fragment skills</value> grow with assigned <value>Fragments</value>, and some mechanically dependent skills cannot be refunded.",
     "description": "Skill types explanation adapted from the Unity WikiContent prefab."
   },
   "wiki.skills.overview-title": {

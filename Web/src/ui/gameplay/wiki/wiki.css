@@ -43,13 +43,6 @@
   font-weight: var(--font-weight-bold);
 }
 
-.wiki-surface__summary p {
-  margin-block-start: 0.25rem;
-  color: #e4dcef;
-  font-size: calc(0.8rem * var(--game-text-scale));
-  line-height: 1.35;
-}
-
 .wiki-surface__layout {
   display: grid;
   inline-size: min(100%, 82rem);
@@ -62,6 +55,7 @@
 
 .wiki-surface__navigation,
 .wiki-surface__article {
+  min-inline-size: 0;
   min-block-size: 0;
   border: 1px solid #20182a;
   border-radius: 0.35rem;
@@ -74,8 +68,13 @@
   overflow: hidden;
 }
 
+.wiki-surface__mobile-topic-control {
+  display: none;
+}
+
 .wiki-surface__navigation > h2,
-.wiki-surface__article > h2 {
+.wiki-surface__article > h2,
+.wiki-surface__article-heading {
   padding: 0.72rem 0.8rem;
   background: var(--wiki-heading);
   font-size: calc(1rem * var(--game-text-scale));
@@ -132,22 +131,50 @@
   scrollbar-color: #765d92 #251d31;
 }
 
-.wiki-surface__article > h2 {
+.wiki-surface__article--lore {
+  border: 0;
+  background: transparent;
+  box-shadow: none;
+}
+
+.wiki-surface__article--lore > .wiki-surface__article-heading {
+  border: 1px solid #20182a;
+  border-radius: 0.35rem;
+}
+
+.wiki-surface__article > h2,
+.wiki-surface__article-heading {
   position: sticky;
   z-index: 1;
   inset-block-start: 0;
+}
+
+.wiki-surface__article > h2,
+.wiki-surface__article-heading h2 {
   color: var(--wiki-accent);
   font-size: calc(1.12rem * var(--game-text-scale));
 }
 
+.wiki-surface__article-heading p {
+  margin-block-start: 0.18rem;
+  color: #e4dcef;
+  font-size: calc(0.76rem * var(--game-text-scale));
+  line-height: 1.35;
+}
+
 .wiki-surface__section {
   padding: 0.8rem;
-  border-block-end: 1px solid rgb(18 13 25 / 55%);
 }
 
 .wiki-surface__section h3 {
   color: #fff;
   font-size: calc(0.94rem * var(--game-text-scale));
+}
+
+.wiki-surface__section h4 {
+  margin-block-start: 0.45rem;
+  color: var(--wiki-accent);
+  font-size: calc(0.86rem * var(--game-text-scale));
 }
 
 .wiki-surface__section p,
@@ -156,6 +183,45 @@
   color: #eee8f4;
   font-size: calc(0.82rem * var(--game-text-scale));
   line-height: 1.45;
+}
+
+.wiki-surface__copy p {
+  margin: 0;
+}
+
+.wiki-surface__copy p + p {
+  margin-block-start: 0.75rem;
+}
+
+.wiki-surface__topic-link {
+  display: inline;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: var(--color-positive);
+  cursor: pointer;
+  font: inherit;
+  font-weight: var(--font-weight-semibold);
+  text-decoration: underline;
+  text-decoration-thickness: 0.08em;
+  text-underline-offset: 0.12em;
+}
+
+.wiki-surface__topic-link:hover {
+  color: #b7f2b5;
+}
+
+.wiki-surface__topic-link:focus-visible {
+  border-radius: 0.1rem;
+  outline: 0.12rem solid #fff;
+  outline-offset: 0.08rem;
+}
+
+.wiki-surface__value {
+  color: var(--wiki-value);
+  font-family: var(--font-family-numeric);
+  font-variant-numeric: tabular-nums;
+  font-weight: var(--font-weight-bold);
 }
 
 .wiki-surface__article-introduction {
@@ -170,33 +236,49 @@
   white-space: pre-line;
 }
 
+.wiki-surface__patch-note-list {
+  display: grid;
+  gap: 0.35rem;
+  margin-block-start: 0.35rem;
+  padding-inline-start: 1.25rem;
+  color: #eee8f4;
+  font-size: calc(0.82rem * var(--game-text-scale));
+  line-height: 1.45;
+}
+
+.wiki-surface__patch-note-list li::marker {
+  color: var(--wiki-accent);
+}
+
 .wiki-surface__lore {
   display: grid;
   gap: 0.7rem;
-  padding: 0.7rem;
+  padding-block-start: 0.7rem;
 }
 
 .wiki-surface__lore-section {
-  overflow: hidden;
-  border: 1px solid #251d31;
-  border-radius: 0.3rem;
-  background: var(--wiki-panel-raised);
+  overflow: visible;
+  border: 0;
+  background: transparent;
 }
 
 .wiki-surface__lore-section > h3 {
-  padding: 0.7rem 0.8rem;
-  background: #352943;
+  padding: 0.2rem 0.1rem 0.45rem;
+  background: transparent;
   color: var(--wiki-accent);
   font-size: calc(0.94rem * var(--game-text-scale));
 }
 
 .wiki-surface__lore-chapters {
   display: grid;
-  gap: 1px;
-  background: #251d31;
+  gap: 0.4rem;
+  background: transparent;
 }
 
 .wiki-surface__lore-chapters details {
+  overflow: hidden;
+  border: 1px solid #251d31;
+  border-radius: 0.3rem;
   background: #40334f;
 }
 
@@ -296,34 +378,74 @@
   }
 
   .wiki-surface__navigation > h2 {
-    position: absolute;
-    inline-size: 1px;
-    block-size: 1px;
-    overflow: hidden;
-    clip: rect(0 0 0 0);
-    clip-path: inset(50%);
-    white-space: nowrap;
-  }
-
-  .wiki-surface__topic-list {
-    display: flex;
-    overflow-x: auto;
-    scrollbar-width: none;
-  }
-
-  .wiki-surface__topic-list::-webkit-scrollbar {
     display: none;
   }
 
-  .wiki-surface__topic-list button {
-    flex: 0 0 auto;
-    border-inline-start: 0;
-    border-block-end: 0.2rem solid transparent;
+  .wiki-surface__navigation {
+    overflow: visible;
+    border: 0;
+    background: transparent;
+    box-shadow: none;
   }
 
-  .wiki-surface__topic-list button[aria-current="page"] {
-    border-inline-start-color: transparent;
-    border-block-end-color: var(--wiki-accent);
+  .wiki-surface__mobile-topic-control {
+    display: grid;
+    grid-template-columns: auto minmax(0, 1fr);
+    align-items: center;
+    gap: 0.65rem;
+    color: var(--wiki-accent);
+    font-size: calc(0.86rem * var(--game-text-scale));
+    font-weight: var(--font-weight-bold);
+  }
+
+  .wiki-surface__mobile-topic-control select {
+    inline-size: 100%;
+    min-inline-size: 0;
+    min-block-size: 2.75rem;
+    padding: 0.55rem 2.2rem 0.55rem 0.7rem;
+    border: 1px solid #20182a;
+    border-radius: 0.35rem;
+    background: var(--wiki-panel-raised);
+    color: white;
+    font: inherit;
+  }
+
+  .wiki-surface__mobile-topic-control select:focus-visible {
+    outline: 0.15rem solid #fff;
+    outline-offset: 0.1rem;
+  }
+
+  .wiki-surface__topic-list {
+    display: none;
+  }
+
+  .wiki-surface__article {
+    border: 0;
+    border-radius: 0;
+    background: transparent;
+    box-shadow: none;
+  }
+
+  .wiki-surface__article > h2 {
+    display: none;
+  }
+
+  .wiki-surface__article-heading {
+    position: static;
+    padding: 0;
+    background: transparent;
+  }
+
+  .wiki-surface__article--lore > .wiki-surface__article-heading {
+    border: 0;
+  }
+
+  .wiki-surface__article-heading h2 {
+    display: none;
+  }
+
+  .wiki-surface__article-heading p {
+    margin: 0;
   }
 }
 
