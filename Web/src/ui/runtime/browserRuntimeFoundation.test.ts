@@ -233,6 +233,10 @@ describe('browser runtime foundation composition', () => {
     })
     if (secondSnapshot.phase !== 'ready') return
     expect(secondSnapshot.gameplay).toEqual(firstGameplay)
+    expect(secondRuntime.development?.status()).toMatchObject({
+      enabled: true,
+      entitled: true,
+    })
     expect(await database.readFile(currentPath)).toBe(
       firstStoredSave,
     )

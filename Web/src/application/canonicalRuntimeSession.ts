@@ -1,6 +1,7 @@
 import type { DeepReadonly } from '../core/contracts'
 import { requireRecord } from '../save/graph'
 import type { PreparedSave } from '../save/prepare'
+import { packSettingsFlags } from '../save/settingsFlags'
 import type { DysonEntitlements } from '../simulation/canonicalDysonDerivation'
 import {
   createCanonicalTinkerRuntimeState,
@@ -86,6 +87,7 @@ export class CanonicalRuntimeSession
     source.cheater = candidate.storedTimeCheater
     source.debugOptions = candidate.debugOptionsEnabled
     source.debugEverEnabled = candidate.debugEntitlementPurchased
+    packSettingsFlags(source)
     const dyson = requireRecord(
       source.dysonVerseSaveData,
       'Dyson save',

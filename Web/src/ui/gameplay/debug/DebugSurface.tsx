@@ -95,18 +95,13 @@ export function DebugSurface({
   return (
     <section className="debug-surface" aria-label={intl.formatMessage(messages.title)}>
       <div className="debug-surface__scroll-region">
-        <section className="debug-surface__panel debug-surface__access">
-          <div>
-            <h2>{intl.formatMessage(messages.title)}</h2>
-            <p>{intl.formatMessage(messages.accessDescription)}</p>
-          </div>
-          {status.enabled ? (
-            <strong className="debug-surface__enabled">
-              {intl.formatMessage(messages.enabled)}
-            </strong>
-          ) : (
-            <>
-              <dl className="debug-surface__costs">
+        {!status.enabled ? (
+          <section className="debug-surface__panel debug-surface__access">
+            <div>
+              <h2>{intl.formatMessage(messages.title)}</h2>
+              <p>{intl.formatMessage(messages.accessDescription)}</p>
+            </div>
+            <dl className="debug-surface__costs">
                 <div>
                   <dt>{intl.formatMessage(messages.quantumShards)}</dt>
                   <dd>
@@ -121,25 +116,24 @@ export function DebugSurface({
                     {formatGameNumber(locale, 500_000)}
                   </dd>
                 </div>
-              </dl>
-              <button
-                type="button"
-                className="debug-surface__purchase"
-                disabled={pending || !canPurchase}
-                onClick={() =>
-                  apply(
-                    { kind: 'purchase-debug-options' },
-                    intl.formatMessage(messages.purchaseSuccess),
-                  )
-                }
-              >
-                {intl.formatMessage(
-                  status.entitled ? messages.enableFree : messages.purchase,
-                )}
-              </button>
-            </>
-          )}
-        </section>
+            </dl>
+            <button
+              type="button"
+              className="debug-surface__purchase"
+              disabled={pending || !canPurchase}
+              onClick={() =>
+                apply(
+                  { kind: 'purchase-debug-options' },
+                  intl.formatMessage(messages.purchaseSuccess),
+                )
+              }
+            >
+              {intl.formatMessage(
+                status.entitled ? messages.enableFree : messages.purchase,
+              )}
+            </button>
+          </section>
+        ) : null}
 
         {status.enabled ? (
           <>

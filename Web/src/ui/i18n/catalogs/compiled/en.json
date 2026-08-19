@@ -303,12 +303,6 @@
       "value": "Enable for free"
     }
   ],
-  "debug.enabled": [
-    {
-      "type": 0,
-      "value": "Developer tools enabled"
-    }
-  ],
   "debug.maintenance": [
     {
       "type": 0,

@@ -182,6 +182,7 @@ const GRAPH_PADDING = 180
 const MIN_SCALE = 0.4
 const MAX_SCALE = 1.5
 const DEFAULT_SCALE = 0.8
+const SKILL_DRAG_THRESHOLD_PX = 6
 
 const minX =
   Math.min(...presentation.nodes.map((node) => node.x)) -
@@ -553,9 +554,17 @@ const SkillTreeViewport = memo(function SkillTreeViewport({
   const pointers = useRef(
     new Map<
       number,
-      { x: number; y: number; startX: number; startY: number }
+      {
+        x: number
+        y: number
+        startX: number
+        startY: number
+        skillId: string | null
+        dragged: boolean
+      }
     >(),
   )
+  const suppressedSkillClick = useRef<string | null>(null)
   const gesture = useRef({
     startDistance: 0,
     startScale: DEFAULT_SCALE,
@@ -710,22 +719,33 @@ const SkillTreeViewport = memo(function SkillTreeViewport({
   )
 
   const onPointerDown = (event: ReactPointerEvent<HTMLDivElement>) => {
+    const target = event.target instanceof Element ? event.target : null
+    const skillNode = target?.closest<HTMLButtonElement>(
+      '.skill-tree-node',
+    )
     if (
-      event.target instanceof Element &&
-      event.target.closest(
+      target?.closest(
         'button, input, select, textarea, a, [role="button"]',
-      )
+      ) && !skillNode
     ) {
       return
     }
-    event.currentTarget.setPointerCapture?.(event.pointerId)
+    if (skillNode) suppressedSkillClick.current = null
+    if (!skillNode) {
+      event.currentTarget.setPointerCapture?.(event.pointerId)
+    }
     pointers.current.set(event.pointerId, {
       x: event.clientX,
       y: event.clientY,
       startX: event.clientX,
       startY: event.clientY,
+      skillId: skillNode?.dataset.skillId ?? null,
+      dragged: false,
     })
     if (pointers.current.size === 2) {
+      for (const pointerId of pointers.current.keys()) {
+        event.currentTarget.setPointerCapture?.(pointerId)
+      }
       const [first, second] = [...pointers.current.values()]
       gesture.current.startDistance = Math.hypot(
         second.x - first.x,
@@ -738,19 +758,52 @@ const SkillTreeViewport = memo(function SkillTreeViewport({
   const onPointerMove = (event: ReactPointerEvent<HTMLDivElement>) => {
     const previous = pointers.current.get(event.pointerId)
     if (!previous) return
-    pointers.current.set(event.pointerId, {
+    const next = {
       x: event.clientX,
       y: event.clientY,
       startX: previous.startX,
       startY: previous.startY,
-    })
+      skillId: previous.skillId,
+      dragged: previous.dragged,
+    }
     if (pointers.current.size === 1) {
+      const crossedThreshold =
+        previous.skillId !== null &&
+        !previous.dragged &&
+        Math.hypot(
+          event.clientX - previous.startX,
+          event.clientY - previous.startY,
+        ) >= SKILL_DRAG_THRESHOLD_PX
+      if (
+        previous.skillId !== null &&
+        !previous.dragged &&
+        !crossedThreshold
+      ) {
+        pointers.current.set(event.pointerId, next)
+        return
+      }
+      next.dragged = true
+      pointers.current.set(event.pointerId, next)
+      if (crossedThreshold) {
+        event.currentTarget.setPointerCapture?.(event.pointerId)
+      }
       scheduleTransformUpdate((current) => ({
         ...current,
-        x: current.x + event.clientX - previous.x,
-        y: current.y + event.clientY - previous.y,
+        x:
+          current.x + event.clientX -
+          (crossedThreshold ? previous.startX : previous.x),
+        y:
+          current.y + event.clientY -
+          (crossedThreshold ? previous.startY : previous.y),
       }))
       return
+    }
+    next.dragged = true
+    pointers.current.set(event.pointerId, next)
+    for (const [pointerId, pointer] of pointers.current) {
+      if (!pointer.dragged) {
+        pointers.current.set(pointerId, { ...pointer, dragged: true })
+      }
     }
     const [first, second] = [...pointers.current.values()]
     const distance = Math.hypot(
@@ -768,8 +821,19 @@ const SkillTreeViewport = memo(function SkillTreeViewport({
   }
 
   const releasePointer = (event: ReactPointerEvent<HTMLDivElement>) => {
+    const pointer = pointers.current.get(event.pointerId)
+    if (pointer?.skillId && pointer.dragged) {
+      suppressedSkillClick.current = pointer.skillId
+    }
     pointers.current.delete(event.pointerId)
     if (pointers.current.size < 2) gesture.current.startDistance = 0
+  }
+
+  const losePointerCapture = (
+    event: ReactPointerEvent<HTMLDivElement>,
+  ) => {
+    if (event.target !== event.currentTarget) return
+    releasePointer(event)
   }
 
   const connectors = useMemo(
@@ -794,7 +858,7 @@ const SkillTreeViewport = memo(function SkillTreeViewport({
       onPointerMove={onPointerMove}
       onPointerUp={releasePointer}
       onPointerCancel={releasePointer}
-      onLostPointerCapture={releasePointer}
+      onLostPointerCapture={losePointerCapture}
       onWheel={(event: ReactWheelEvent<HTMLDivElement>) => {
         event.preventDefault()
         zoomAt(
@@ -902,6 +966,7 @@ const SkillTreeViewport = memo(function SkillTreeViewport({
               data-match={matched || undefined}
               data-dimmed={searchActive && !matched ? true : undefined}
               data-selected={selected || undefined}
+              data-skill-id={node.skillId}
               data-selection-related={selectionRelated || undefined}
               data-selection-dimmed={
                 hasSelection && !selectionRelated ? true : undefined
@@ -926,7 +991,17 @@ const SkillTreeViewport = memo(function SkillTreeViewport({
                 left: position.x,
                 top: position.y,
               }}
-              onClick={() => onSelect(node.skillId)}
+              onClick={(event) => {
+                if (
+                  event.detail > 0 &&
+                  suppressedSkillClick.current === node.skillId
+                ) {
+                  suppressedSkillClick.current = null
+                  return
+                }
+                suppressedSkillClick.current = null
+                onSelect(node.skillId)
+              }}
             >
               <img
                 src={iconByFileName.get(node.icon.fileName)}

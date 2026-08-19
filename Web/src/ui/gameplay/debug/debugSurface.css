@@ -41,14 +41,6 @@
   align-items: center;
 }
 
-.debug-surface__enabled {
-  padding: 0.65rem 0.8rem;
-  border: 1px solid #77ab79;
-  border-radius: 0.35rem;
-  background: #213e23;
-  color: #a8dda9;
-}
-
 .debug-surface__costs {
   display: grid;
   gap: 0.35rem;

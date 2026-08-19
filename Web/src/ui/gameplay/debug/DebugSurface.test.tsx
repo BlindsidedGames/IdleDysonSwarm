@@ -65,6 +65,15 @@ describe('DebugSurface', () => {
   test('exposes every live Unity developer option after purchase', () => {
     renderDebug(controls())
 
+    expect(
+      screen.queryByText(
+        'Unlock the developer tools with late-game currencies. Once purchased, they can be re-enabled for free.',
+      ),
+    ).not.toBeInTheDocument()
+    expect(
+      screen.queryByText('Developer tools enabled'),
+    ).not.toBeInTheDocument()
+
     for (const name of [
       'Add Cash',
       'Add Bots',
@@ -108,6 +117,11 @@ describe('DebugSurface', () => {
       }),
     )
 
+    expect(
+      screen.getByText(
+        'Unlock the developer tools with late-game currencies. Once purchased, they can be re-enabled for free.',
+      ),
+    ).toBeInTheDocument()
     expect(screen.queryByText('Progression tools')).not.toBeInTheDocument()
     await user.click(
       screen.getByRole('button', {

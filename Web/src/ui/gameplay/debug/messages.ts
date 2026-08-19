@@ -3,7 +3,6 @@ import { defineMessages } from 'react-intl'
 export const debugSurfaceMessages = defineMessages({
   title: { id: 'debug.title', defaultMessage: 'Developer Options', description: 'Heading for the developer tools screen.' },
   accessDescription: { id: 'debug.access-description', defaultMessage: 'Unlock the developer tools with late-game currencies. Once purchased, they can be re-enabled for free.', description: 'Explains how developer tools are unlocked and retained.' },
-  enabled: { id: 'debug.enabled', defaultMessage: 'Developer tools enabled', description: 'Status shown when developer tools are active.' },
   quantumShards: { id: 'debug.quantum-shards', defaultMessage: 'Quantum Shards', description: 'Quantum Shards resource label in developer tools.' },
   strangeMatter: { id: 'debug.strange-matter', defaultMessage: 'Strange Matter', description: 'Strange Matter resource label in developer tools.' },
   purchase: { id: 'debug.purchase', defaultMessage: 'Purchase Developer Options', description: 'Action that purchases access to developer tools.' },

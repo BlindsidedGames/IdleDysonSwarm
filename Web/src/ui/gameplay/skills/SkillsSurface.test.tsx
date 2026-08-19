@@ -410,11 +410,21 @@ describe('SkillsSurface', () => {
     )
   })
 
-  test('opens skill details without turning a skill tap into a pan', () => {
+  test('opens skill details when movement stays below the drag threshold', () => {
     renderSkills()
     const skill = screen.getByRole('button', {
       name: 'Cash & Science. Cost: 1 Skill Points',
     })
+    const tree = screen.getByRole('region', { name: 'Skill tree' })
+    const capturePointer = vi.fn()
+    Object.defineProperty(tree, 'setPointerCapture', {
+      configurable: true,
+      value: capturePointer,
+    })
+    const canvas = document.querySelector(
+      '.skill-tree-viewport__canvas',
+    )
+    const before = canvas?.getAttribute('style')
 
     fireEvent.pointerDown(skill, {
       pointerId: 1,
@@ -423,16 +433,18 @@ describe('SkillsSurface', () => {
     })
     fireEvent.pointerMove(skill, {
       pointerId: 1,
-      clientX: 125,
-      clientY: 125,
+      clientX: 103,
+      clientY: 104,
     })
     fireEvent.pointerUp(skill, {
       pointerId: 1,
-      clientX: 125,
-      clientY: 125,
+      clientX: 103,
+      clientY: 104,
     })
     fireEvent.click(skill)
 
+    expect(canvas?.getAttribute('style')).toBe(before)
+    expect(capturePointer).not.toHaveBeenCalled()
     expect(
       screen.getByRole('dialog', { name: 'Cash & Science' }),
     ).toBeInTheDocument()
@@ -440,6 +452,98 @@ describe('SkillsSurface', () => {
       document.querySelector(
         '.skill-details-dialog[data-palette="normal"]',
       ),
+    ).toBeInTheDocument()
+  })
+
+  test('pans from a skill icon after the drag threshold and suppresses its click', () => {
+    const frames: FrameRequestCallback[] = []
+    vi.stubGlobal(
+      'requestAnimationFrame',
+      vi.fn((callback: FrameRequestCallback) => {
+        frames.push(callback)
+        return frames.length
+      }),
+    )
+    vi.stubGlobal('cancelAnimationFrame', vi.fn())
+    const { container } = render(
+      createSkillElement(createDispatchPlayer()),
+    )
+    const skill = screen.getByRole('button', {
+      name: 'Cash & Science. Cost: 1 Skill Points',
+    })
+    const tree = screen.getByRole('region', { name: 'Skill tree' })
+    const capturePointer = vi.fn()
+    Object.defineProperty(tree, 'setPointerCapture', {
+      configurable: true,
+      value: capturePointer,
+    })
+    const canvas = container.querySelector(
+      '.skill-tree-viewport__canvas',
+    )
+    const before = readCanvasTransform(canvas)
+
+    fireEvent.pointerDown(skill, {
+      pointerId: 2,
+      pointerType: 'touch',
+      clientX: 100,
+      clientY: 100,
+    })
+    fireEvent.pointerMove(skill, {
+      pointerId: 2,
+      pointerType: 'touch',
+      clientX: 125,
+      clientY: 130,
+    })
+    fireEvent.lostPointerCapture(skill, { pointerId: 2 })
+    fireEvent.pointerMove(tree, {
+      pointerId: 2,
+      pointerType: 'touch',
+      clientX: 140,
+      clientY: 150,
+    })
+    fireEvent.pointerUp(tree, {
+      pointerId: 2,
+      pointerType: 'touch',
+      clientX: 140,
+      clientY: 150,
+    })
+    fireEvent.click(skill, { detail: 1 })
+
+    act(() => frames[0]?.(0))
+    const after = readCanvasTransform(canvas)
+    expect(capturePointer).toHaveBeenCalledWith(2)
+    expect(after.x).toBe(before.x + 40)
+    expect(after.y).toBe(before.y + 50)
+    expect(
+      screen.queryByRole('dialog', { name: 'Cash & Science' }),
+    ).not.toBeInTheDocument()
+  })
+
+  test('keeps keyboard skill activation available after a drag', () => {
+    renderSkills()
+    const skill = screen.getByRole('button', {
+      name: 'Cash & Science. Cost: 1 Skill Points',
+    })
+
+    fireEvent.pointerDown(skill, {
+      pointerId: 3,
+      clientX: 100,
+      clientY: 100,
+    })
+    fireEvent.pointerMove(skill, {
+      pointerId: 3,
+      clientX: 125,
+      clientY: 125,
+    })
+    fireEvent.pointerUp(skill, {
+      pointerId: 3,
+      clientX: 125,
+      clientY: 125,
+    })
+    fireEvent.click(skill, { detail: 0 })
+
+    expect(
+      screen.getByRole('dialog', { name: 'Cash & Science' }),
     ).toBeInTheDocument()
   })
 
@@ -879,6 +983,52 @@ describe('SkillsSurface', () => {
     expect(zoomed.scale).toBeCloseTo(1.3)
     act(() => frames[0]?.(0))
     expect(readCanvasTransform(canvas)).toEqual(zoomed)
+  })
+
+  test('continues a pinch when skill touch capture transfers to the viewport', () => {
+    const frames: FrameRequestCallback[] = []
+    vi.stubGlobal(
+      'requestAnimationFrame',
+      vi.fn((callback: FrameRequestCallback) => {
+        frames.push(callback)
+        return frames.length
+      }),
+    )
+    vi.stubGlobal('cancelAnimationFrame', vi.fn())
+    const { container } = render(
+      createSkillElement(createDispatchPlayer()),
+    )
+    const tree = screen.getByRole('region', { name: 'Skill tree' })
+    const skill = screen.getByRole('button', {
+      name: 'Cash & Science. Cost: 1 Skill Points',
+    })
+    const canvas = container.querySelector(
+      '.skill-tree-viewport__canvas',
+    )
+
+    fireEvent.pointerDown(skill, {
+      pointerId: 14,
+      pointerType: 'touch',
+      clientX: 0,
+      clientY: 0,
+    })
+    fireEvent.pointerDown(skill, {
+      pointerId: 15,
+      pointerType: 'touch',
+      clientX: 100,
+      clientY: 0,
+    })
+    fireEvent.lostPointerCapture(skill, { pointerId: 14 })
+    fireEvent.lostPointerCapture(skill, { pointerId: 15 })
+    fireEvent.pointerMove(tree, {
+      pointerId: 15,
+      pointerType: 'touch',
+      clientX: 150,
+      clientY: 0,
+    })
+
+    act(() => frames[0]?.(0))
+    expect(readCanvasTransform(canvas).scale).toBeCloseTo(1.2)
   })
 
   test('restarts a pinch from its queued effective scale before the frame commits', () => {

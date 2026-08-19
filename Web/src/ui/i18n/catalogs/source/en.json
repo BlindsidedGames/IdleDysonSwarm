@@ -175,10 +175,6 @@
     "defaultMessage": "Enable for free",
     "description": "Action that re-enables previously purchased developer tools."
   },
-  "debug.enabled": {
-    "defaultMessage": "Developer tools enabled",
-    "description": "Status shown when developer tools are active."
-  },
   "debug.maintenance": {
     "defaultMessage": "Maintenance",
     "description": "Heading for developer maintenance controls."
