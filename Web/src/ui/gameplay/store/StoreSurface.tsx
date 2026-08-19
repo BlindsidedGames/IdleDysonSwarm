@@ -148,7 +148,7 @@ function StoreSection({
 }) {
   return (
     <section className="store-product-section">
-      <header>
+      <header className="store-product-section__header">
         <h2>{heading}</h2>
         <p>{description}</p>
       </header>

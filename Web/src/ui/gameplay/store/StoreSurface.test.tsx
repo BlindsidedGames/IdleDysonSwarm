@@ -68,6 +68,25 @@ describe('StoreSurface', () => {
     expect(screen.getByText(/existing in-game unlock remains available/))
       .toBeInTheDocument()
   })
+
+  test('keeps product cards as the only visual panel layer in each section', async () => {
+    const { container } = renderStore(storeAdapter())
+
+    await screen.findByRole('heading', { name: 'Support the developer' })
+    const sections = container.querySelectorAll('.store-product-section')
+    expect(sections).toHaveLength(2)
+    for (const section of sections) {
+      expect(
+        section.querySelector(':scope > .store-product-section__header'),
+      ).not.toBeNull()
+      expect(
+        section.querySelectorAll(':scope > ul > li > .store-product-card'),
+      ).not.toHaveLength(0)
+      expect(
+        section.querySelector(':scope > ul > li > .store-product-section'),
+      ).toBeNull()
+    }
+  })
 })
 
 function renderStore(
