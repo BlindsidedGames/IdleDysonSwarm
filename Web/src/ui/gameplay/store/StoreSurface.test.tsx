@@ -1,6 +1,7 @@
 // @vitest-environment jsdom
 
 import '@testing-library/jest-dom/vitest'
+import axe from 'axe-core'
 import { cleanup, render, screen, waitFor } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { afterEach, describe, expect, test, vi } from 'vitest'
@@ -19,6 +20,22 @@ import { StoreSurface } from './StoreSurface'
 afterEach(cleanup)
 
 describe('StoreSurface', () => {
+  test('has no serious or critical automated accessibility violations', async () => {
+    const { container } = renderStore(storeAdapter())
+    await screen.findByRole('button', { name: 'Tip A$1.49' })
+    const results = await axe.run(container, {
+      rules: {
+        'color-contrast': { enabled: false },
+      },
+    })
+
+    expect(
+      results.violations.filter((violation) =>
+        violation.impact === 'serious' || violation.impact === 'critical',
+      ),
+    ).toEqual([])
+  })
+
   test('renders only adapter-supplied localized prices and repeatable tip actions', async () => {
     const user = userEvent.setup()
     const store = storeAdapter()
@@ -67,6 +84,23 @@ describe('StoreSurface', () => {
       .toBeDisabled()
     expect(screen.getByText(/existing in-game unlock remains available/))
       .toBeInTheDocument()
+  })
+
+  test('announces a failed or cancelled purchase assertively', async () => {
+    const user = userEvent.setup()
+    const store = storeAdapter()
+    store.purchase.mockResolvedValue({
+      accepted: false,
+      productId: STORE_PRODUCT_IDS.tipTier1,
+      code: 'purchase-cancelled',
+    })
+    renderStore(store)
+
+    await user.click(await screen.findByRole('button', { name: 'Tip A$1.49' }))
+
+    expect(await screen.findByRole('alert')).toHaveTextContent(
+      'Purchase cancelled.',
+    )
   })
 
   test('keeps product cards as the only visual panel layer in each section', async () => {

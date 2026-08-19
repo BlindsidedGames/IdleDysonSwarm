@@ -1,6 +1,7 @@
 // @vitest-environment jsdom
 
 import '@testing-library/jest-dom/vitest'
+import axe from 'axe-core'
 import {
   act,
   cleanup,
@@ -200,6 +201,21 @@ function readCanvasTransform(element: Element | null) {
 }
 
 describe('SkillsSurface', () => {
+  test('has no serious or critical automated accessibility violations', async () => {
+    const { container } = render(createSkillElement(createDispatchPlayer()))
+    const results = await axe.run(container, {
+      rules: {
+        'color-contrast': { enabled: false },
+      },
+    })
+
+    expect(
+      results.violations.filter((violation) =>
+        violation.impact === 'serious' || violation.impact === 'critical',
+      ),
+    ).toEqual([])
+  })
+
   test('renders the canonical resource strip and authored starting node', () => {
     renderSkills()
 
@@ -437,6 +453,14 @@ describe('SkillsSurface', () => {
 
     await user.click(skill)
     expect(screen.getByRole('button', { name: 'Close' })).toHaveFocus()
+    const results = await axe.run(document.body, {
+      rules: { 'color-contrast': { enabled: false } },
+    })
+    expect(
+      results.violations.filter((violation) =>
+        violation.impact === 'serious' || violation.impact === 'critical',
+      ),
+    ).toEqual([])
     focus.mockClear()
 
     await user.keyboard('{Escape}')

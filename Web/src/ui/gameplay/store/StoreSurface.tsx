@@ -254,7 +254,10 @@ function StoreFeedback({
     message = intl.formatMessage(messages.operationFailed)
   }
   return (
-    <p className="store-surface__feedback" role="status">
+    <p
+      className="store-surface__feedback"
+      role={feedback.kind === 'operation-failed' ? 'alert' : 'status'}
+    >
       {message}
     </p>
   )

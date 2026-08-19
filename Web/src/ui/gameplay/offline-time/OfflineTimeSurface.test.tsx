@@ -2,7 +2,7 @@
 
 import '@testing-library/jest-dom/vitest'
 import axe from 'axe-core'
-import { cleanup, render, screen, within } from '@testing-library/react'
+import { cleanup, fireEvent, render, screen, within } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { afterEach, describe, expect, test, vi } from 'vitest'
 import type {
@@ -148,6 +148,22 @@ describe('OfflineTimeSurface', () => {
       selectedSeconds: 3_600,
       repeatSeconds: null,
     })
+  })
+
+  test('admits only one spend when confirmation is tapped rapidly', async () => {
+    const user = userEvent.setup()
+    const dispatchPlayer = vi.fn(
+      async () => await new Promise<UiRuntimePlayerCommandResult>(() => undefined),
+    )
+    renderSurface({ dispatchPlayer })
+
+    await user.click(screen.getByRole('button', { name: '10 minutes' }))
+    await user.click(screen.getByRole('button', { name: 'Spend 10m 0s' }))
+    const confirm = screen.getByRole('button', { name: 'Tap again to confirm' })
+    fireEvent.click(confirm)
+    fireEvent.click(confirm)
+
+    expect(dispatchPlayer).toHaveBeenCalledOnce()
   })
 
   test('dispatches the canonical full-bank storage upgrade', async () => {

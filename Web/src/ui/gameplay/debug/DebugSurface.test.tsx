@@ -1,6 +1,7 @@
 // @vitest-environment jsdom
 
 import '@testing-library/jest-dom/vitest'
+import axe from 'axe-core'
 import { cleanup, render, screen, waitFor } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { IntlProvider } from 'react-intl'
@@ -45,6 +46,21 @@ function renderDebug(development: UiRuntimeDevelopmentControls) {
 }
 
 describe('DebugSurface', () => {
+  test('has no serious or critical automated accessibility violations', async () => {
+    const { container } = renderDebug(controls())
+    const results = await axe.run(container, {
+      rules: {
+        'color-contrast': { enabled: false },
+      },
+    })
+
+    expect(
+      results.violations.filter((violation) =>
+        violation.impact === 'serious' || violation.impact === 'critical',
+      ),
+    ).toEqual([])
+  })
+
   test('exposes every live Unity developer option after purchase', () => {
     renderDebug(controls())
 

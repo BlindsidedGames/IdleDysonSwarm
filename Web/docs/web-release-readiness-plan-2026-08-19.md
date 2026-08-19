@@ -22,7 +22,12 @@ The post-icon-conversion performance baseline is recorded in
   JavaScript fell from 300.03 KiB to 282.61 KiB gzip and boot CSS fell from
   19.16 KiB to 12.46 KiB gzip. The 250 KiB milestone remains future work; the
   report now distinguishes initial page loading from the PWA precache package.
-- Phase 6 is next. No Android or iOS testing has been added to scope.
+- Phase 6 code and automated coverage are complete and independently reviewed.
+  Its real-browser contrast, focus-paint, text scaling, 400 percent zoom,
+  320/390 px reflow and touch checks remain deliberately unpassed and are
+  retained as Phase 9 acceptance work. No Android or iOS testing has been
+  added to scope.
+- Phase 7 is next.
 
 ## Preparation already completed
 

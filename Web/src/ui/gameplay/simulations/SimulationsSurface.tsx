@@ -8,6 +8,7 @@ import {
   type CSSProperties,
   type ReactNode,
 } from 'react'
+import { createPortal } from 'react-dom'
 import {
   useIntl,
   type IntlShape,
@@ -507,6 +508,7 @@ function SimulationPanelCard({
   const dialogTitleId = useId()
   const pendingRef = useRef(false)
   const detailsButtonRef = useRef<HTMLButtonElement>(null)
+  const detailsBackdropRef = useRef<HTMLDivElement>(null)
   const detailsDialogRef = useRef<HTMLElement>(null)
   const closeButtonRef = useRef<HTMLButtonElement>(null)
   const [detailsOpen, setDetailsOpen] = useState(false)
@@ -515,11 +517,24 @@ function SimulationPanelCard({
 
   const closeDetails = useCallback((): void => {
     setDetailsOpen(false)
-    detailsButtonRef.current?.focus()
   }, [])
 
   useEffect(() => {
     if (!detailsOpen) return
+    const returnFocus = detailsButtonRef.current
+    const backgroundSiblings = Array.from(document.body.children)
+      .filter(
+        (element): element is HTMLElement =>
+          element instanceof HTMLElement &&
+          element !== detailsBackdropRef.current,
+      )
+      .map((element) => ({
+        element,
+        hadInertAttribute: element.hasAttribute('inert'),
+      }))
+    for (const { element } of backgroundSiblings) {
+      element.setAttribute('inert', '')
+    }
     closeButtonRef.current?.focus()
 
     const handleKeyDown = (event: KeyboardEvent): void => {
@@ -546,7 +561,13 @@ function SimulationPanelCard({
     }
 
     document.addEventListener('keydown', handleKeyDown)
-    return () => document.removeEventListener('keydown', handleKeyDown)
+    return () => {
+      document.removeEventListener('keydown', handleKeyDown)
+      for (const { element, hadInertAttribute } of backgroundSiblings) {
+        if (!hadInertAttribute) element.removeAttribute('inert')
+      }
+      returnFocus?.focus({ preventScroll: true })
+    }
   }, [closeDetails, detailsOpen])
 
   const runAction = async (): Promise<void> => {
@@ -668,7 +689,8 @@ function SimulationPanelCard({
       />
 
       {detailsOpen ? (
-        <div
+        createPortal(<div
+          ref={detailsBackdropRef}
           className="simulation-details__backdrop"
           role="presentation"
           onMouseDown={(event) => {
@@ -705,7 +727,7 @@ function SimulationPanelCard({
               ))}
             </dl>
           </section>
-        </div>
+        </div>, document.body)
       ) : null}
     </>
   )

@@ -119,6 +119,12 @@
   cursor: default;
 }
 
+.store-surface__purchase-action:focus-visible,
+.store-surface__secondary-action:focus-visible {
+  outline: 3px solid var(--color-focus);
+  outline-offset: 2px;
+}
+
 .store-restore {
   display: grid;
   grid-template-columns: minmax(0, 1fr) minmax(10rem, auto);

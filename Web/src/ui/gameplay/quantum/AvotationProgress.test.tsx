@@ -1,7 +1,12 @@
 // @vitest-environment jsdom
 
 import '@testing-library/jest-dom/vitest'
+import axe from 'axe-core'
+import { readFileSync } from 'node:fs'
+import { join } from 'node:path'
 import { act, cleanup, fireEvent, render, screen } from '@testing-library/react'
+import userEvent from '@testing-library/user-event'
+import { useState } from 'react'
 import { IntlProvider } from 'react-intl'
 import { afterEach, describe, expect, test, vi } from 'vitest'
 import type { UiRuntimePlayerCommandResult } from '../../runtime'
@@ -15,6 +20,11 @@ afterEach(() => {
   cleanup()
   vi.useRealTimers()
 })
+
+const quantumStyles = readFileSync(
+  join(process.cwd(), 'src', 'ui', 'gameplay', 'quantum', 'quantum.css'),
+  'utf8',
+)
 
 describe('AvotationProgress', () => {
   test('keeps progress, the current canonical hint and skip controls in Quantum', () => {
@@ -98,6 +108,54 @@ describe('AvotationProgress', () => {
     ]) {
       expect(screen.getByText(name)).toBeVisible()
     }
+  })
+
+  test('contains modal focus, closes with Escape and restores the trigger', async () => {
+    const user = userEvent.setup()
+    const onDismiss = vi.fn()
+    function OverlayHarness() {
+      const [open, setOpen] = useState(false)
+      return (
+        <IntlProvider locale="en">
+          <button type="button" onClick={() => setOpen(true)}>Open completion</button>
+          <AvotationCompletionOverlay
+            open={open}
+            onDismiss={() => {
+              onDismiss()
+              setOpen(false)
+            }}
+          />
+        </IntlProvider>
+      )
+    }
+    render(<OverlayHarness />)
+    const trigger = screen.getByRole('button', { name: 'Open completion' })
+    await user.click(trigger)
+
+    const dismiss = screen.getByRole('button', { name: 'Continue' })
+    expect(dismiss).toHaveFocus()
+    expect(trigger.closest('div')).toHaveAttribute('inert')
+    const results = await axe.run(document.body, {
+      rules: { 'color-contrast': { enabled: false } },
+    })
+    expect(
+      results.violations.filter((violation) =>
+        violation.impact === 'serious' || violation.impact === 'critical',
+      ),
+    ).toEqual([])
+    await user.tab()
+    expect(dismiss).toHaveFocus()
+    await user.keyboard('{Escape}')
+
+    expect(onDismiss).toHaveBeenCalledOnce()
+    expect(screen.queryByRole('dialog')).not.toBeInTheDocument()
+    expect(trigger).toHaveFocus()
+  })
+
+  test('defines its portaled accent without relying on a Quantum ancestor', () => {
+    expect(quantumStyles).toMatch(
+      /\.avotation-completion\s*\{[^}]*--avotation-accent:\s*#c8b3ff;[^}]*border:\s*2px solid var\(--avotation-accent\);/,
+    )
   })
 })
 

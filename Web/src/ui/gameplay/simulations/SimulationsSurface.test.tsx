@@ -475,6 +475,34 @@ describe('SimulationsSurface', () => {
       .toHaveTextContent('Record stored')
   })
 
+  test('contains details focus and restores its trigger after Escape', async () => {
+    const user = userEvent.setup()
+    const { container } = renderSurface(accepted, spaceAgeFacts)
+    await user.click(screen.getByRole('button', { name: 'Space Age' }))
+    const card = screen.getByText('Swarm Stats').closest('article')
+    const trigger = within(card!).getByRole('button', { name: 'Details' })
+    await user.click(trigger)
+
+    const dialog = screen.getByRole('dialog', { name: 'Swarm Stats' })
+    const close = within(dialog).getByRole('button', { name: 'Close' })
+    expect(close).toHaveFocus()
+    expect(container).toHaveAttribute('inert')
+    const results = await axe.run(document.body, {
+      rules: { 'color-contrast': { enabled: false } },
+    })
+    expect(
+      results.violations.filter((violation) =>
+        violation.impact === 'serious' || violation.impact === 'critical',
+      ),
+    ).toEqual([])
+    await user.tab()
+    expect(close).toHaveFocus()
+    await user.keyboard('{Escape}')
+
+    expect(screen.queryByRole('dialog')).not.toBeInTheDocument()
+    expect(trigger).toHaveFocus()
+  })
+
   test('shows a solid bar and cycles per second for fast Space Factories', async () => {
     renderSurface(accepted, fastSpaceFactoryFacts, progression, 8)
 

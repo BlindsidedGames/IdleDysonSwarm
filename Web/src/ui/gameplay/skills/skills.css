@@ -58,7 +58,7 @@
 
 .skills-surface__search input {
   min-inline-size: 0;
-  min-block-size: 2.35rem;
+  min-block-size: var(--target-minimum);
   padding-inline: 0.7rem;
   border: 1px solid #6a5a8d;
   border-radius: 0.25rem;
@@ -83,8 +83,8 @@
 .skill-tree-viewport__controls button {
   display: grid;
   place-items: center;
-  min-inline-size: 2.5rem;
-  min-block-size: 2.5rem;
+  min-inline-size: var(--target-minimum);
+  min-block-size: var(--target-minimum);
   border: 1px solid #77689d;
   border-radius: 0.28rem;
   background: #3b3155;
@@ -156,6 +156,12 @@
 
 .skill-tree-connection-arrow {
   fill: currentcolor;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .skill-tree-connection {
+    transition: none;
+  }
 }
 
 .skill-tree-connection[data-source-owned="true"] {
@@ -753,7 +759,7 @@
 }
 
 .skill-confirmation .ui-button {
-  min-block-size: 2.5rem;
+  min-block-size: var(--target-minimum);
   border-color: #8e73b3;
   background: #49365f;
   color: white;
@@ -826,6 +832,7 @@
 .skill-preset-management input,
 .skill-preset-management textarea {
   inline-size: 100%;
+  min-block-size: var(--target-minimum);
   box-sizing: border-box;
   padding: 0.5rem 0.6rem;
   border: 1px solid #816aa7;
@@ -865,7 +872,7 @@
   display: flex;
   gap: 0.5rem;
   align-items: center;
-  min-block-size: 2.5rem;
+  min-block-size: var(--target-minimum);
   box-sizing: border-box;
   padding: 0.45rem 0.65rem;
   border: 1px solid #816aa7;
@@ -890,6 +897,11 @@
   outline-offset: 2px;
 }
 
+.skill-preset-color-picker summary:focus-visible {
+  outline: 3px solid #f7e766;
+  outline-offset: 2px;
+}
+
 .skill-preset-color-picker__options {
   position: absolute;
   z-index: 3;
@@ -908,7 +920,7 @@
   display: flex;
   gap: 0.55rem;
   align-items: center;
-  min-block-size: 2.5rem;
+  min-block-size: var(--target-minimum);
   padding: 0.45rem 0.6rem;
   border: 1px solid transparent;
   border-radius: 0.24rem;
@@ -943,7 +955,7 @@
 }
 
 .skill-preset-management-dialog .ui-button {
-  min-block-size: 2.5rem;
+  min-block-size: var(--target-minimum);
   padding: 0.45rem 0.7rem;
   border-color: #8e73b3;
   background: #49365f;

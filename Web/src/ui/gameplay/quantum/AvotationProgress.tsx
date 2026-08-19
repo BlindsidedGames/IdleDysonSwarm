@@ -1,4 +1,5 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
+import { createPortal } from 'react-dom'
 import { useIntl } from 'react-intl'
 import type { CanonicalPlayerCommand } from '../../../application/canonicalPlayerCommands'
 import type { FrontendGameplayPreviews } from '../../../application/frontendSnapshot'
@@ -192,10 +193,62 @@ export function AvotationCompletionOverlay({
   onDismiss,
 }: AvotationCompletionOverlayProps) {
   const intl = useIntl()
+  const backdropRef = useRef<HTMLDivElement>(null)
+  const dialogRef = useRef<HTMLElement>(null)
+  const returnFocusRef = useRef<HTMLElement | null>(null)
+  const onDismissRef = useRef(onDismiss)
+  onDismissRef.current = onDismiss
+
+  useEffect(() => {
+    if (!open) return undefined
+    returnFocusRef.current =
+      document.activeElement instanceof HTMLElement
+        ? document.activeElement
+        : null
+    const backgroundSiblings = Array.from(document.body.children)
+      .filter(
+        (element): element is HTMLElement =>
+          element instanceof HTMLElement &&
+          element !== backdropRef.current,
+      )
+      .map((element) => ({
+        element,
+        hadInertAttribute: element.hasAttribute('inert'),
+      }))
+    for (const { element } of backgroundSiblings) {
+      element.setAttribute('inert', '')
+    }
+
+    const dismissButton = dialogRef.current?.querySelector('button')
+    dismissButton?.focus({ preventScroll: true })
+    const handleKeyDown = (event: KeyboardEvent): void => {
+      if (event.key === 'Escape') {
+        event.preventDefault()
+        onDismissRef.current()
+        return
+      }
+      if (event.key === 'Tab') {
+        event.preventDefault()
+        dismissButton?.focus({ preventScroll: true })
+      }
+    }
+    document.addEventListener('keydown', handleKeyDown)
+    return () => {
+      document.removeEventListener('keydown', handleKeyDown)
+      for (const { element, hadInertAttribute } of backgroundSiblings) {
+        if (!hadInertAttribute) element.removeAttribute('inert')
+      }
+      if (returnFocusRef.current?.isConnected) {
+        returnFocusRef.current.focus({ preventScroll: true })
+      }
+    }
+  }, [open])
+
   if (!open) return null
-  return (
-    <div className="avotation-completion__backdrop">
+  return createPortal(
+    <div ref={backdropRef} className="avotation-completion__backdrop">
       <section
+        ref={dialogRef}
         className="avotation-completion"
         role="dialog"
         aria-modal="true"
@@ -216,10 +269,11 @@ export function AvotationCompletionOverlay({
           </ul>
         </figure>
         <p>{intl.formatMessage(messages.meditationComplete)}</p>
-        <Button autoFocus onClick={onDismiss}>
+        <Button onClick={onDismiss}>
           {intl.formatMessage(messages.meditationDismiss)}
         </Button>
       </section>
-    </div>
+    </div>,
+    document.body,
   )
 }

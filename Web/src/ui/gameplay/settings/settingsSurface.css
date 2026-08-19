@@ -280,6 +280,12 @@
   transform: rotate(90deg);
 }
 
+@media (prefers-reduced-motion: reduce) {
+  .settings-surface__development-chevron {
+    transition: none;
+  }
+}
+
 .settings-surface__panel--development {
   grid-template-columns: 1fr;
 }

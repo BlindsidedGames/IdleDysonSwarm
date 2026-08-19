@@ -257,6 +257,12 @@
   min-block-size: 1.2em;
 }
 
+.offline-time-card--spend input[type="range"]:focus-visible,
+.offline-time-quick-select button:focus-visible {
+  outline: 3px solid var(--color-focus);
+  outline-offset: 2px;
+}
+
 .offline-time-job {
   display: grid;
   gap: 0.65rem;

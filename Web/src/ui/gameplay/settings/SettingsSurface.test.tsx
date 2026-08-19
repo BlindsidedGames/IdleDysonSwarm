@@ -1,6 +1,7 @@
 // @vitest-environment jsdom
 
 import '@testing-library/jest-dom/vitest'
+import axe from 'axe-core'
 import { readFileSync } from 'node:fs'
 import { join } from 'node:path'
 import {
@@ -33,6 +34,21 @@ const settingsStyles = readFileSync(
 afterEach(cleanup)
 
 describe('SettingsSurface', () => {
+  test('has no serious or critical automated accessibility violations', async () => {
+    const { container } = renderSettings(vi.fn())
+    const results = await axe.run(container, {
+      rules: {
+        'color-contrast': { enabled: false },
+      },
+    })
+
+    expect(
+      results.violations.filter((violation) =>
+        violation.impact === 'serious' || violation.impact === 'critical',
+      ),
+    ).toEqual([])
+  })
+
   test('owns vertical scrolling and keeps the default mobile layout compact', () => {
     expect(settingsStyles).toMatch(
       /\.settings-surface\s*\{[^}]*block-size:\s*100%;[^}]*min-block-size:\s*0;[^}]*overflow-y:\s*auto;[^}]*overscroll-behavior:\s*contain;/,
@@ -192,7 +208,7 @@ describe('SettingsSurface', () => {
       recoveryAvailable: true,
       lifecycleReset: true,
     })
-    const { container } = renderSettings(vi.fn(), undefined, {
+    renderSettings(vi.fn(), undefined, {
       previewImportSaveFile,
       importSaveFile,
     })
@@ -205,7 +221,7 @@ describe('SettingsSurface', () => {
       name: 'Import Save?',
     })
     await user.upload(
-      container.querySelector('input[type="file"]') as HTMLInputElement,
+      document.querySelector('input[type="file"]') as HTMLInputElement,
       file,
     )
     expect(dialog).toHaveTextContent('backup.idsw')
@@ -257,7 +273,7 @@ describe('SettingsSurface', () => {
   test('requires an accessible confirmation and cancels without resetting', async () => {
     const user = userEvent.setup()
     const resetSave = vi.fn()
-    renderSettings(resetSave)
+    const { container } = renderSettings(resetSave)
 
     const trigger = screen.getByRole('button', {
       name: 'Reset Save',
@@ -272,7 +288,16 @@ describe('SettingsSurface', () => {
     expect(
       document.querySelector('.settings-surface__content'),
     ).toHaveAttribute('inert')
+    expect(container).toHaveAttribute('inert')
     expect(cancel).toHaveFocus()
+    const results = await axe.run(document.body, {
+      rules: { 'color-contrast': { enabled: false } },
+    })
+    expect(
+      results.violations.filter((violation) =>
+        violation.impact === 'serious' || violation.impact === 'critical',
+      ),
+    ).toEqual([])
 
     await user.keyboard('{Escape}')
     expect(screen.queryByRole('alertdialog')).not.toBeInTheDocument()

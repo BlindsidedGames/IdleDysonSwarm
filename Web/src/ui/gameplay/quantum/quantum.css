@@ -214,7 +214,7 @@
 }
 .avocato-meditation > .ui-button { min-block-size: var(--target-minimum); padding: 0.28rem; font-size: calc(0.72rem * var(--game-text-scale)); }
 .avotation-completion__backdrop { position: fixed; z-index: 30; inset: 0; display: grid; place-items: center; padding: 1rem; background: rgb(7 4 13 / 84%); }
-.avotation-completion { display: grid; inline-size: min(100%, 36rem); max-block-size: calc(100dvh - 2rem); gap: 0.8rem; padding: 1rem; overflow-y: auto; border: 2px solid var(--quantum-accent); border-radius: 0.35rem; background: #2f2546; box-shadow: 0 1rem 2.5rem rgb(0 0 0 / 45%); text-align: center; }
+.avotation-completion { --avotation-accent: #c8b3ff; display: grid; inline-size: min(100%, 36rem); max-block-size: calc(100dvh - 2rem); gap: 0.8rem; padding: 1rem; overflow-y: auto; border: 2px solid var(--avotation-accent); border-radius: 0.35rem; background: #2f2546; box-shadow: 0 1rem 2.5rem rgb(0 0 0 / 45%); text-align: center; }
 .avotation-completion h2,
 .avotation-completion p { margin: 0; }
 .avotation-completion p { color: #91dd8f; font-weight: var(--font-weight-bold); }

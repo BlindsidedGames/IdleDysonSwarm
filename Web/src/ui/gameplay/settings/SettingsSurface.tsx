@@ -4,6 +4,7 @@ import {
   useRef,
   useState,
 } from 'react'
+import { createPortal } from 'react-dom'
 import { useIntl } from 'react-intl'
 import type {
   UiRuntimeDevelopmentControls,
@@ -132,6 +133,7 @@ export function SettingsSurface({
   const [dialog, setDialog] = useState<SaveDialog | null>(null)
   const importInputRef = useRef<HTMLInputElement>(null)
   const returnFocusRef = useRef<HTMLButtonElement | null>(null)
+  const backdropRef = useRef<HTMLDivElement>(null)
   const dialogRef = useRef<HTMLElement>(null)
   const transferTextRef = useRef<HTMLTextAreaElement>(null)
   const cancelRef = useRef<HTMLButtonElement>(null)
@@ -148,6 +150,19 @@ export function SettingsSurface({
   useEffect(() => {
     if (dialog === null) return undefined
     const returnFocus = returnFocusRef.current
+    const backgroundSiblings = Array.from(document.body.children)
+      .filter(
+        (element): element is HTMLElement =>
+          element instanceof HTMLElement &&
+          element !== backdropRef.current,
+      )
+      .map((element) => ({
+        element,
+        hadInertAttribute: element.hasAttribute('inert'),
+      }))
+    for (const { element } of backgroundSiblings) {
+      element.setAttribute('inert', '')
+    }
     const initialFocus = dialog === 'reset'
       ? cancelRef.current
       : transferTextRef.current
@@ -176,6 +191,9 @@ export function SettingsSurface({
     document.addEventListener('keydown', handleKeyDown)
     return () => {
       document.removeEventListener('keydown', handleKeyDown)
+      for (const { element, hadInertAttribute } of backgroundSiblings) {
+        if (!hadInertAttribute) element.removeAttribute('inert')
+      }
       returnFocus?.focus()
     }
   }, [dialog])
@@ -644,7 +662,10 @@ export function SettingsSurface({
         ) : null)}
       </div>
       {!developmentOnly && dialog !== null ? (
-        <div className="settings-surface__dialog-backdrop">
+        createPortal(<div
+          ref={backdropRef}
+          className="settings-surface__dialog-backdrop"
+        >
           <section
             ref={dialogRef}
             className="settings-surface__dialog"
@@ -883,7 +904,7 @@ export function SettingsSurface({
               )}
             </div>
           </section>
-        </div>
+        </div>, document.body)
       ) : null}
     </div>
   )

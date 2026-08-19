@@ -1,6 +1,7 @@
 // @vitest-environment jsdom
 
 import '@testing-library/jest-dom/vitest'
+import axe from 'axe-core'
 import {
   cleanup,
   fireEvent,
@@ -112,6 +113,31 @@ describe('application startup host', () => {
     expect(confirmOverwrite).toHaveBeenCalledTimes(1)
     expect(runtime.imports).toHaveLength(0)
     expect(sampleUtc).not.toHaveBeenCalled()
+  })
+
+  test('has no serious or critical automated violations in blocked save recovery', async () => {
+    const runtime = new TestRuntime({
+      phase: 'blocked',
+      code: 'application-blocked',
+      applicationOutcome: 'all-candidates-invalid',
+      reason: 'private',
+    })
+    const { container } = renderApp(runtime.runtime, {
+      confirmOverwrite: () => false,
+      sampleUtc: () => '2026-08-19T00:00:00.000Z',
+    })
+    await screen.findByRole('heading', {
+      name: 'Saved progress needs attention',
+    })
+    const results = await axe.run(container, {
+      rules: { 'color-contrast': { enabled: false } },
+    })
+
+    expect(
+      results.violations.filter((violation) =>
+        violation.impact === 'serious' || violation.impact === 'critical',
+      ),
+    ).toEqual([])
   })
 
   test('routes approved import through the runtime and exposes recovery export only after retention', async () => {
