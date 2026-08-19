@@ -31,6 +31,7 @@ export function createProductionEventContext(
     )
   }
   return prepareCanonicalEventTimeContext({
+    mode: 'active',
     automationIntervalSeconds:
       DEFAULT_AUTOMATION_INTERVAL_SECONDS,
     dysonPresentationTuning: Object.freeze({

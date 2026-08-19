@@ -293,6 +293,7 @@ function context(
   automationIntervalSeconds = 1,
 ): CanonicalEventTimeContext {
   return {
+    mode: 'active',
     automationIntervalSeconds,
     realityWorkerTuning: {
       workerBatchSize: 128n,
@@ -359,8 +360,8 @@ describe('canonical whole-game event-time model', () => {
   test('shares prepared definitions between active and stored-time contexts', () => {
     const variants = prepareCanonicalEventTimeContextVariants(context())
 
-    expect(variants.active.advanceTinker).toBe(true)
-    expect(variants.storedTime.advanceTinker).toBe(false)
+    expect(variants.active.mode).toBe('active')
+    expect(variants.storedTime.mode).toBe('stored-time')
     expect(variants.active.dreamResetDefinitions).toBe(
       variants.storedTime.dreamResetDefinitions,
     )
@@ -380,6 +381,23 @@ describe('canonical whole-game event-time model', () => {
       variants.storedTime,
     )
   })
+
+  test.each([undefined, 'background'])(
+    'rejects invalid runtime mode %s before direct or variant preparation',
+    (mode) => {
+      const invalid = {
+        ...context(),
+        mode,
+      } as unknown as CanonicalEventTimeContext
+
+      expect(() => prepareCanonicalEventTimeContext(invalid)).toThrow(
+        /mode must be 'active' or 'stored-time'/,
+      )
+      expect(() => prepareCanonicalEventTimeContextVariants(invalid)).toThrow(
+        /mode must be 'active' or 'stored-time'/,
+      )
+    },
+  )
 
   test('prepares detached immutable definitions once for every model clone', () => {
     const dreamDefinitions = new Map(
@@ -550,7 +568,7 @@ describe('canonical whole-game event-time model', () => {
     expect(next.facilities.data_centers[0]).toBeGreaterThan(0)
   })
 
-  test('advances every active Education subject through active and stored event time', () => {
+  test('advances every active Education subject during active time', () => {
     const educationIds = [
       'engineering',
       'shipping',
@@ -589,28 +607,164 @@ describe('canonical whole-game event-time model', () => {
       },
     }
 
-    for (const advanceTinker of [true, false]) {
-      const result = advanceEventTime({
-        startingState: new CanonicalEventTimeModel(
-          carrier(gameState),
-          { ...context(), advanceTinker },
-        ),
-        durationSeconds: 1,
-        automationIntervalSeconds: 1,
-        automationTimeUntilNextEvent: 1,
-        infinityMinimumCycleSeconds: 10,
-        processingBudgetMilliseconds: 0,
-      })
+    const result = advanceEventTime({
+      startingState: new CanonicalEventTimeModel(
+        carrier(gameState),
+        context(),
+      ),
+      durationSeconds: 1,
+      automationIntervalSeconds: 1,
+      automationTimeUntilNextEvent: 1,
+      infinityMinimumCycleSeconds: 10,
+      processingBudgetMilliseconds: 0,
+    })
 
-      expect(result.completed).toBe(true)
-      expect(result.diagnosticCode).toBeUndefined()
-      for (const id of educationIds) {
-        expect(
-          result.candidateState.state.gameState.dream.education[id]
-            .progress,
-        ).toBe(3)
-      }
+    expect(result.completed).toBe(true)
+    expect(result.diagnosticCode).toBeUndefined()
+    for (const id of educationIds) {
+      expect(
+        result.candidateState.state.gameState.dream.education[id]
+          .progress,
+      ).toBe(3)
     }
+  })
+
+  test('freezes Dream, Reality, and Dream Double Time under Stored Time while Dyson production advances', () => {
+    const source = baseState()
+    const gameState: CanonicalGameStateV1 = {
+      ...source,
+      dyson: {
+        ...source.dyson,
+        bots: 10,
+        science: 1_000_000_000,
+        botDistribution: 0.5,
+        facilities: {
+          ...source.dyson.facilities,
+          assembly_lines: [0, 1],
+          ai_managers: [0, 1],
+          servers: [0, 1],
+          data_centers: [0, 1],
+          planets: [0, 1],
+        },
+      },
+      infinity: {
+        ...source.infinity,
+        automationUnlocked: {
+          ...source.infinity.automationUnlocked,
+          research: true,
+        },
+      },
+      dream: {
+        ...source.dream,
+        disasterStage: 0n,
+        resources: {
+          ...source.dream.resources,
+          cities: 1,
+          energy: 1_000_000_000,
+          railgunCharge: 175_000_000,
+          spaceFactories: 10,
+          dysonPanels: 14n,
+        },
+        upgrades: {
+          ...source.dream.upgrades,
+          sfActivator1: true,
+          sfActivator2: true,
+          sfActivator3: true,
+          railgunActivator1: true,
+          railgunActivator2: true,
+        },
+        education: {
+          ...source.dream.education,
+          engineering: {
+            ...source.dream.education.engineering,
+            active: true,
+            complete: false,
+            progress: 0,
+            researchTime: 100,
+          },
+        },
+      },
+      reality: {
+        ...source.reality,
+        workerGenerationProgress: 0.25,
+      },
+      timeline: {
+        ...source.timeline,
+        doubleTime: {
+          unlocked: true,
+          enabled: true,
+          bankSeconds: 10,
+          rate: 2,
+        },
+      },
+    }
+    const beforeExcluded = {
+      dream: structuredClone(gameState.dream),
+      reality: structuredClone(gameState.reality),
+      doubleTime: structuredClone(gameState.timeline.doubleTime),
+    }
+    const storedContext = prepareCanonicalEventTimeContextVariants(
+      context(),
+    ).storedTime
+    const result = advanceEventTime({
+      startingState: new CanonicalEventTimeModel(
+        carrier(gameState),
+        storedContext,
+      ),
+      durationSeconds: 1,
+      automationIntervalSeconds: 1,
+      automationTimeUntilNextEvent: 1,
+      infinityMinimumCycleSeconds: 10,
+      processingBudgetMilliseconds: 0,
+    })
+
+    expect(result.completed).toBe(true)
+    expect(result.diagnosticCode).toBeUndefined()
+    const next = result.candidateState.state.gameState
+    expect({
+      dream: next.dream,
+      reality: next.reality,
+      doubleTime: next.timeline.doubleTime,
+    }).toEqual(beforeExcluded)
+    expect(next.dyson.money).toBeGreaterThan(gameState.dyson.money)
+    expect(next.dyson.bots).toBeGreaterThan(gameState.dyson.bots)
+    expect(next.research.levelsById).not.toEqual(
+      gameState.research.levelsById,
+    )
+    const activeResult = advanceEventTime({
+      startingState: new CanonicalEventTimeModel(
+        carrier(gameState),
+        prepareCanonicalEventTimeContextVariants(context()).active,
+      ),
+      durationSeconds: 1,
+      automationIntervalSeconds: 1,
+      automationTimeUntilNextEvent: 1,
+      infinityMinimumCycleSeconds: 10,
+      processingBudgetMilliseconds: 0,
+    })
+
+    expect(activeResult.completed).toBe(true)
+    expect(activeResult.diagnosticCode).toBeUndefined()
+    const activeNext = activeResult.candidateState.state.gameState
+    expect(activeNext.dream).not.toEqual(gameState.dream)
+    expect(activeNext.dream.resetCount).toBe(
+      gameState.dream.resetCount + 1n,
+    )
+    expect(activeNext.reality.universeDesignationCount).toBeGreaterThan(
+      gameState.reality.universeDesignationCount,
+    )
+    expect(activeNext.timeline.doubleTime).not.toEqual(
+      gameState.timeline.doubleTime,
+    )
+    expect(activeResult.summary).toMatchObject({
+      meteorDreamResets: 1n,
+      strangeMatter: 1n,
+      realityWorkers: 4n,
+    })
+    expect(
+      activeNext.statistics.lifetime.meteorDreamResets,
+    ).toBe(1n)
+    expect(activeNext.statistics.lifetime.realityWorkers).toBe(4n)
   })
 
   test('batches adaptive railgun rounds across Double Time event boundaries', () => {
@@ -926,6 +1080,35 @@ describe('canonical whole-game event-time model', () => {
     expect(statistics.lifetime.realityWorkers).toBe(4n)
   })
 
+  test('continues Infinity progression under the Stored Time domain policy', () => {
+    const source = baseState()
+    const result = advanceEventTime({
+      startingState: new CanonicalEventTimeModel(
+        carrier({
+          ...source,
+          dyson: {
+            ...source.dyson,
+            bots: 4.2e19,
+          },
+        }),
+        prepareCanonicalEventTimeContextVariants(context()).storedTime,
+      ),
+      durationSeconds: 1,
+      automationIntervalSeconds: 1,
+      automationTimeUntilNextEvent: 1,
+      infinityMinimumCycleSeconds: 1,
+      processingBudgetMilliseconds: 0,
+    })
+
+    expect(result.completed).toBe(true)
+    expect(result.diagnosticCode).toBeUndefined()
+    expect(result.summary.ordinaryInfinityCount).toBe(1n)
+    expect(result.summary.ordinaryInfinityPoints).toBe(1n)
+    expect(
+      result.candidateState.state.gameState.infinity.points,
+    ).toBe(1n)
+  })
+
   test('publishes one dynamic recalculation per material interval and survives split reconstruction', () => {
     const source = baseState()
     const dynamicSource: CanonicalGameStateV1 = {
@@ -1156,7 +1339,7 @@ describe('canonical whole-game event-time model', () => {
             },
           },
         }),
-        { ...context(), advanceTinker: false },
+        prepareCanonicalEventTimeContextVariants(context()).storedTime,
       ),
       durationSeconds: 0.1,
       automationIntervalSeconds: 1,

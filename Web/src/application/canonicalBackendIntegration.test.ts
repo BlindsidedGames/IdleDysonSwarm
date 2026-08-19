@@ -398,6 +398,7 @@ function createSeededPreparedSave(): PreparedSave {
 
 function eventContext(): CanonicalEventTimeContext {
   return {
+    mode: 'active',
     automationIntervalSeconds: 0.1,
     realityWorkerTuning: {
       workerBatchSize: 128n,

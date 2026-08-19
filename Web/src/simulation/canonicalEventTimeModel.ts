@@ -111,6 +111,7 @@ export type CanonicalInfinityBoundaryEvaluation =
     }
 
 export interface CanonicalEventTimeContext {
+  readonly mode: 'active' | 'stored-time'
   readonly automationIntervalSeconds: number
   /**
    * Duration represented by one automation action. Stored Time may schedule
@@ -119,11 +120,6 @@ export interface CanonicalEventTimeContext {
    */
   readonly automationActionIntervalSeconds?: number
   readonly dysonPresentationTuning?: Readonly<DysonPresentationTuning>
-  /**
-   * Tinker uses Unity wall Time.deltaTime. Stored/away simulations set this
-   * false so their simulated seconds cannot complete the transient action.
-   */
-  readonly advanceTinker?: boolean
   readonly realityWorkerTuning: Readonly<RealityWorkerTuning>
   readonly dreamResetDefinitions: CanonicalDreamResetDefinitions
   readonly realityUpgradeDefinitions: ReadonlyMap<
@@ -152,7 +148,7 @@ export interface CanonicalQueuedInputOutcome {
 
 interface PendingInterval {
   readonly seconds: number
-  readonly doubleTimeTick: DreamDoubleTimeTick
+  readonly doubleTimeTick: DreamDoubleTimeTick | null
   readonly summary: SimulationPresentationSummary
 }
 
@@ -163,10 +159,10 @@ interface ArtifactSkillPointResult {
 }
 
 interface CapturedContext {
+  readonly mode: 'active' | 'stored-time'
   readonly automationIntervalSeconds: number
   readonly automationActionIntervalSeconds: number
   readonly dysonPresentationTuning: Readonly<DysonPresentationTuning>
-  readonly advanceTinker: boolean
   readonly realityWorkerTuning: Readonly<RealityWorkerTuning>
   readonly dreamResetDefinitions: CanonicalDreamResetDefinitions
   readonly realityUpgradeDefinitions: ReadonlyMap<
@@ -279,9 +275,10 @@ export class CanonicalEventTimeModel
         ? null
         : {
             seconds: this.pendingInterval.seconds,
-            doubleTimeTick: {
-              ...this.pendingInterval.doubleTimeTick,
-            },
+            doubleTimeTick:
+              this.pendingInterval.doubleTimeTick === null
+                ? null
+                : { ...this.pendingInterval.doubleTimeTick },
             summary: { ...this.pendingInterval.summary },
           }
     clone.currentIssue =
@@ -354,7 +351,10 @@ export class CanonicalEventTimeModel
     }
     if (
       this.carrier.gameState.dyson.bots === Number.MAX_VALUE ||
-      canApplyCanonicalAutomaticDreamReset(this.carrier.gameState)
+      (
+        this.context.mode === 'active' &&
+        canApplyCanonicalAutomaticDreamReset(this.carrier.gameState)
+      )
     ) {
       this.replaceGameState(
         withNextInfinityBoundary(
@@ -369,7 +369,7 @@ export class CanonicalEventTimeModel
       'eventTime.infinityHorizon',
     )
     if (derived === undefined) return 0
-    if (this.context.advanceTinker) {
+    if (this.context.mode === 'active') {
       const tinkerStats = deriveCanonicalTinkerStats(
         this.carrier.gameState,
         derived.auxiliary.tinkerAssemblyYield,
@@ -399,7 +399,7 @@ export class CanonicalEventTimeModel
         infinityHorizon,
       ),
     )
-    const tinkerHorizon = this.context.advanceTinker
+    const tinkerHorizon = this.context.mode === 'active'
       ? timeToCanonicalTinkerCompletion(
           this.carrier.tinker,
           maximumSeconds,
@@ -449,18 +449,20 @@ export class CanonicalEventTimeModel
         return
       }
 
-      const doubleTimeTick = prepareDreamDoubleTimeTick(
-        startingState.timeline.doubleTime.unlocked,
-        startingState.timeline.doubleTime.bankSeconds,
-        startingState.timeline.doubleTime.rate,
-        seconds,
-      )
+      const doubleTimeTick = this.context.mode === 'active'
+        ? prepareDreamDoubleTimeTick(
+            startingState.timeline.doubleTime.unlocked,
+            startingState.timeline.doubleTime.bankSeconds,
+            startingState.timeline.doubleTime.rate,
+            seconds,
+          )
+        : null
       let candidate = applyDysonProductionArrivals(
         startingState,
         derived.value.productionArrivalRates,
         seconds,
       )
-      const tinker = this.context.advanceTinker
+      const tinker = this.context.mode === 'active'
         ? advanceCanonicalTinker(
             candidate,
             this.carrier.tinker,
@@ -475,63 +477,74 @@ export class CanonicalEventTimeModel
             runtime: this.carrier.tinker,
           }
       candidate = withCanonicalBotAllocation(tinker.state)
-      const space = runDreamSpaceAgeProduction(candidate, {
-        tickSeconds: seconds,
-        doubleTimeMultiplier:
-          doubleTimeTick.effectiveMultiplier,
-      })
-      if (space.status !== 'success') {
-        this.fail(
-          'CANONICAL_EVENT_DREAM_SPACE_REJECTED',
-          'dream.spaceAge',
-          'Dream Space Age production rejected the interval.',
-        )
-        return
-      }
-      candidate = space.state
-      const earlyDream =
-        runDreamFoundationalInformationProduction(candidate, {
+      if (doubleTimeTick !== null) {
+        const space = runDreamSpaceAgeProduction(candidate, {
           tickSeconds: seconds,
           doubleTimeMultiplier:
             doubleTimeTick.effectiveMultiplier,
         })
-      if (earlyDream.status !== 'success') {
-        this.fail(
-          'CANONICAL_EVENT_DREAM_PRODUCTION_REJECTED',
-          'dream',
-          'Dream Foundational/Information production rejected the interval.',
+        if (space.status !== 'success') {
+          this.fail(
+            'CANONICAL_EVENT_DREAM_SPACE_REJECTED',
+            'dream.spaceAge',
+            'Dream Space Age production rejected the interval.',
+          )
+          return
+        }
+        candidate = space.state
+        const earlyDream =
+          runDreamFoundationalInformationProduction(candidate, {
+            tickSeconds: seconds,
+            doubleTimeMultiplier:
+              doubleTimeTick.effectiveMultiplier,
+          })
+        if (earlyDream.status !== 'success') {
+          this.fail(
+            'CANONICAL_EVENT_DREAM_PRODUCTION_REJECTED',
+            'dream',
+            'Dream Foundational/Information production rejected the interval.',
+          )
+          return
+        }
+        candidate = earlyDream.state
+        const education = advanceDreamEducation(
+          candidate,
+          seconds,
+          doubleTimeTick.effectiveMultiplier,
         )
-        return
+        if (!education.accepted) {
+          this.fail(
+            'CANONICAL_EVENT_DREAM_EDUCATION_REJECTED',
+            'dream.education',
+            'Dream Education research rejected the interval.',
+          )
+          return
+        }
+        candidate = education.candidate
       }
-      candidate = earlyDream.state
-      const education = advanceDreamEducation(
-        candidate,
-        seconds,
-        doubleTimeTick.effectiveMultiplier,
-      )
-      if (!education.accepted) {
-        this.fail(
-          'CANONICAL_EVENT_DREAM_EDUCATION_REJECTED',
-          'dream.education',
-          'Dream Education research rejected the interval.',
+      let intervalSummary = emptySummary()
+      if (this.context.mode === 'active') {
+        const reality = advanceRealityWorkers(
+          candidate,
+          seconds,
+          this.context.realityWorkerTuning,
         )
-        return
-      }
-      candidate = education.candidate
-      const reality = advanceRealityWorkers(
-        candidate,
-        seconds,
-        this.context.realityWorkerTuning,
-      )
-      if (reality.status !== 'success') {
-        this.fail(
-          `CANONICAL_EVENT_REALITY_${reality.status.toUpperCase().replace('-', '_')}`,
-          'reality',
-          `Reality worker production rejected as ${reality.status}.`,
+        if (reality.status !== 'success') {
+          this.fail(
+            `CANONICAL_EVENT_REALITY_${reality.status.toUpperCase().replace('-', '_')}`,
+            'reality',
+            `Reality worker production rejected as ${reality.status}.`,
+          )
+          return
+        }
+        candidate = reality.state
+        intervalSummary = createIntervalSummary(
+          reality.workersGenerated,
+          reality.automaticInfluence,
+          reality.stalledSeconds,
         )
-        return
       }
-      candidate = withAdvancedClock(reality.state, seconds)
+      candidate = withAdvancedClock(candidate, seconds)
 
       this.carrier = {
         ...this.carrier,
@@ -541,11 +554,7 @@ export class CanonicalEventTimeModel
       this.pendingInterval = {
         seconds,
         doubleTimeTick,
-        summary: createIntervalSummary(
-          reality.workersGenerated,
-          reality.automaticInfluence,
-          reality.stalledSeconds,
-        ),
+        summary: intervalSummary,
       }
     } catch (error) {
       this.fail(
@@ -577,29 +586,32 @@ export class CanonicalEventTimeModel
         this.carrier.compatibilityTuning,
         policy,
       ).state
-      candidate =
-        runDreamFoundationalInformationConversions(candidate).state
-      const railgun = runDreamRailgunAutomation(candidate, {
-        tickSeconds: this.context.automationActionIntervalSeconds,
-        effectiveDoubleTimeMultiplier:
-          this.pendingInterval?.doubleTimeTick.effectiveMultiplier ?? 1,
-        doubleTimeActive:
-          this.pendingInterval?.doubleTimeTick.active ??
-          candidate.timeline.doubleTime.enabled,
-        doubleTimeRate: candidate.timeline.doubleTime.rate,
-      })
-      if (railgun.status !== 'success') {
-        this.fail(
-          'CANONICAL_EVENT_RAILGUN_AUTOMATION_REJECTED',
-          'dream.railgun',
-          'Dream railgun automation rejected its explicit interval.',
-        )
-        return
+      if (this.context.mode === 'active') {
+        candidate =
+          runDreamFoundationalInformationConversions(candidate).state
+        const railgun = runDreamRailgunAutomation(candidate, {
+          tickSeconds: this.context.automationActionIntervalSeconds,
+          effectiveDoubleTimeMultiplier:
+            this.pendingInterval?.doubleTimeTick?.effectiveMultiplier ?? 1,
+          doubleTimeActive:
+            this.pendingInterval?.doubleTimeTick?.active ??
+            candidate.timeline.doubleTime.enabled,
+          doubleTimeRate: candidate.timeline.doubleTime.rate,
+        })
+        if (railgun.status !== 'success') {
+          this.fail(
+            'CANONICAL_EVENT_RAILGUN_AUTOMATION_REJECTED',
+            'dream.railgun',
+            'Dream railgun automation rejected its explicit interval.',
+          )
+          return
+        }
+        candidate = railgun.state
       }
       this.replaceGameState({
-        ...railgun.state,
+        ...candidate,
         timeline: {
-          ...railgun.state.timeline,
+          ...candidate.timeline,
           automationTimeUntilNextEvent:
             this.context.automationIntervalSeconds,
         },
@@ -630,12 +642,14 @@ export class CanonicalEventTimeModel
       }
       pending = {
         seconds: 0,
-        doubleTimeTick: prepareDreamDoubleTimeTick(
-          this.carrier.gameState.timeline.doubleTime.unlocked,
-          this.carrier.gameState.timeline.doubleTime.bankSeconds,
-          this.carrier.gameState.timeline.doubleTime.rate,
-          0,
-        ),
+        doubleTimeTick: this.context.mode === 'active'
+          ? prepareDreamDoubleTimeTick(
+              this.carrier.gameState.timeline.doubleTime.unlocked,
+              this.carrier.gameState.timeline.doubleTime.bankSeconds,
+              this.carrier.gameState.timeline.doubleTime.rate,
+              0,
+            )
+          : null,
         summary: emptySummary(),
       }
       this.pendingInterval = pending
@@ -651,22 +665,24 @@ export class CanonicalEventTimeModel
     }
 
     const state = this.carrier.gameState
-    const completed = completeDreamDoubleTimeTick(
-      state.timeline.doubleTime.unlocked,
-      state.timeline.doubleTime.bankSeconds,
-      pending.doubleTimeTick,
-    )
-    this.replaceGameState({
-      ...state,
-      timeline: {
-        ...state.timeline,
-        doubleTime: {
-          ...state.timeline.doubleTime,
-          bankSeconds: completed.bankSeconds,
-          enabled: completed.enabled,
+    if (pending.doubleTimeTick !== null) {
+      const completed = completeDreamDoubleTimeTick(
+        state.timeline.doubleTime.unlocked,
+        state.timeline.doubleTime.bankSeconds,
+        pending.doubleTimeTick,
+      )
+      this.replaceGameState({
+        ...state,
+        timeline: {
+          ...state.timeline,
+          doubleTime: {
+            ...state.timeline.doubleTime,
+            bankSeconds: completed.bankSeconds,
+            enabled: completed.enabled,
+          },
         },
-      },
-    })
+      })
+    }
     if (!this.applyGoalProgression()) return
     if (!this.publishEvaluationSnapshot('evaluationSnapshot')) return
     mergeSummary(summary, pending.summary)
@@ -674,6 +690,7 @@ export class CanonicalEventTimeModel
 
   applyDreamReset(summary: SimulationPresentationSummary): void {
     if (this.currentIssue !== undefined) return
+    if (this.context.mode === 'stored-time') return
     const result = applyCanonicalDreamReset(
       this.carrier.gameState,
       { kind: 'automatic' },
@@ -1171,10 +1188,16 @@ export function deriveCanonicalArtifactSkillPoints(
 export function prepareCanonicalEventTimeContext(
   context: Readonly<CanonicalEventTimeContext>,
 ): CapturedContext {
+  if (context.mode !== 'active' && context.mode !== 'stored-time') {
+    throw new TypeError(
+      "Canonical event-time context mode must be 'active' or 'stored-time'.",
+    )
+  }
   if (preparedContexts.has(context)) {
     return context as CapturedContext
   }
   const prepared = Object.freeze({
+    mode: context.mode,
     automationIntervalSeconds: context.automationIntervalSeconds,
     automationActionIntervalSeconds:
       context.automationActionIntervalSeconds ??
@@ -1183,7 +1206,6 @@ export function prepareCanonicalEventTimeContext(
       ...(context.dysonPresentationTuning ??
         CANONICAL_DYSON_PRESENTATION_TUNING),
     }),
-    advanceTinker: context.advanceTinker ?? true,
     realityWorkerTuning: Object.freeze({
       ...context.realityWorkerTuning,
     }),
@@ -1208,23 +1230,28 @@ export function prepareCanonicalEventTimeContext(
 }
 
 /**
- * Prepares the two application-lifetime Tinker modes without revalidating or
+ * Prepares active and Stored Time progression modes without revalidating or
  * copying their shared immutable definition catalogs.
  */
 export function prepareCanonicalEventTimeContextVariants(
   context: Readonly<CanonicalEventTimeContext>,
 ): Readonly<CanonicalEventTimeContextVariants> {
   const prepared = prepareCanonicalEventTimeContext(context)
-  const alternate = Object.freeze({
-    ...prepared,
-    advanceTinker: !prepared.advanceTinker,
-  })
-  preparedContexts.add(alternate)
-  return Object.freeze(
-    prepared.advanceTinker
-      ? { active: prepared, storedTime: alternate }
-      : { active: alternate, storedTime: prepared },
-  )
+  const active = prepared.mode === 'active'
+    ? prepared
+    : Object.freeze({
+        ...prepared,
+        mode: 'active' as const,
+      })
+  const storedTime = prepared.mode === 'stored-time'
+    ? prepared
+    : Object.freeze({
+        ...prepared,
+        mode: 'stored-time' as const,
+      })
+  if (active !== prepared) preparedContexts.add(active)
+  if (storedTime !== prepared) preparedContexts.add(storedTime)
+  return Object.freeze({ active, storedTime })
 }
 
 /**
@@ -1427,6 +1454,7 @@ function validateCarrier(
     })
   }
   if (
+    (context.mode !== 'active' && context.mode !== 'stored-time') ||
     !Number.isFinite(context.automationIntervalSeconds) ||
     context.automationIntervalSeconds <= 0 ||
     context.realityWorkerTuning.workerBatchSize <= 0n ||

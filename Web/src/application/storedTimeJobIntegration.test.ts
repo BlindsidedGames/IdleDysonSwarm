@@ -320,6 +320,7 @@ function transformingSimulationRunner(
 
 function context(): CanonicalEventTimeContext {
   return {
+    mode: 'active',
     automationIntervalSeconds: 1,
     realityWorkerTuning: {
       workerBatchSize: 128n,

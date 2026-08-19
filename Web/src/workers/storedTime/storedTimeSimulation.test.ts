@@ -8,6 +8,11 @@ import {
 } from '../../simulation/canonicalEventTimeModel'
 import { SIMULATION_UPGRADE_DEFINITIONS } from '../../simulation/dreamEducationUpgrades'
 import { REALITY_UPGRADE_DEFINITIONS } from '../../simulation/realityUpgrades'
+import type {
+  SimulationStatisticsState,
+  SimulationTotalsState,
+  StatisticsWindowState,
+} from '../../game-state/types'
 import { createCanonicalGameEngineDefinition } from '../../application/canonicalGameApplication'
 import {
   CanonicalRuntimeSession,
@@ -59,6 +64,117 @@ describe('StoredTimeSimulation', () => {
     expect(terminal.consumedSeconds).toBe(2)
     expect(terminal.remainingSeconds).toBe(0)
     expect(terminal.progress.fraction).toBe(1)
+  })
+
+  test('commits its own bank while preserving Dream, Reality, and Dream Double Time state', () => {
+    const source = runtimeWithStoredTime(10)
+    source.gameState = {
+      ...source.gameState,
+      dream: {
+        ...source.gameState.dream,
+        education: {
+          ...source.gameState.dream.education,
+          engineering: {
+            ...source.gameState.dream.education.engineering,
+            active: true,
+            complete: false,
+            progress: 0,
+            researchTime: 100,
+          },
+        },
+      },
+      reality: {
+        ...source.gameState.reality,
+        workerGenerationProgress: 0.25,
+      },
+      timeline: {
+        ...source.gameState.timeline,
+        doubleTime: {
+          unlocked: true,
+          enabled: true,
+          bankSeconds: 10,
+          rate: 2,
+        },
+      },
+    }
+    const before = {
+      dream: structuredClone(source.gameState.dream),
+      reality: structuredClone(source.gameState.reality),
+      doubleTime: structuredClone(source.gameState.timeline.doubleTime),
+      dyson: structuredClone(source.gameState.dyson),
+    }
+    const simulation = new StoredTimeSimulation({
+      jobId: 'domain-policy',
+      state: source,
+      requestedSeconds: 2,
+      infinityMinimumCycleSeconds: 1 / 60,
+      eventContext: context(),
+    })
+    let terminal = simulation.step(0.01, false)
+    while (terminal === null) terminal = simulation.step(0.01, false)
+
+    expect(terminal.type).toBe('completed')
+    if (terminal.type !== 'completed') return
+    expect({
+      dream: terminal.candidate.gameState.dream,
+      reality: terminal.candidate.gameState.reality,
+      doubleTime: terminal.candidate.gameState.timeline.doubleTime,
+    }).toEqual({
+      dream: before.dream,
+      reality: before.reality,
+      doubleTime: before.doubleTime,
+    })
+    expect(
+      terminal.candidate.gameState.timeline.storedTimeAvailableSeconds,
+    ).toBe(8)
+    expect(terminal.candidate.gameState.dyson).not.toEqual(before.dyson)
+  })
+
+  test('preserves cumulative Dream and Reality statistics while recording a zero-event Stored Time segment', () => {
+    const source = runtimeWithStoredTime(10)
+    const seeded = seedExcludedDomainStatistics(
+      source.gameState.statistics,
+    )
+    source.gameState = {
+      ...source.gameState,
+      statistics: seeded,
+    }
+    const simulation = new StoredTimeSimulation({
+      jobId: 'statistics-policy',
+      state: source,
+      requestedSeconds: 2,
+      infinityMinimumCycleSeconds: 1 / 60,
+      eventContext: context(),
+    })
+    let terminal = simulation.step(0.01, false)
+    while (terminal === null) terminal = simulation.step(0.01, false)
+
+    expect(terminal.type).toBe('completed')
+    if (terminal.type !== 'completed') return
+    const statistics = terminal.candidate.gameState.statistics
+    expect(excludedDomainTotals(statistics.lifetime)).toEqual(
+      excludedDomainTotals(seeded.lifetime),
+    )
+    expect(excludedDomainTotals(statistics.currentQuantumRun)).toEqual(
+      excludedDomainTotals(seeded.currentQuantumRun),
+    )
+    expect(excludedDomainTotals(statistics.recentProcessedSegment)).toEqual(
+      excludedDomainTotals(emptyDomainTotals()),
+    )
+    expect(statistics.recentProcessedSegment.simulatedSeconds).toBeGreaterThan(
+      0,
+    )
+    expect(statistics.trackedSimulatedSeconds).toBe(61)
+    expect(excludedWindowTotals(statistics.minuteWindows[0]!)).toEqual({
+      dreamResetCount: 5n,
+      strangeMatter: 6n,
+      realityWorkers: 7n,
+    })
+    expect(excludedWindowTotals(statistics.minuteWindows[1]!)).toEqual({
+      dreamResetCount: 0n,
+      strangeMatter: 0n,
+      realityWorkers: 0n,
+    })
   })
 
   test('discards a progressed candidate when cancellation is requested', () => {
@@ -126,6 +242,7 @@ function context(
   automationIntervalSeconds = 1,
 ): CanonicalEventTimeContext {
   return {
+    mode: 'active',
     automationIntervalSeconds,
     realityWorkerTuning: {
       workerBatchSize: 128n,
@@ -155,5 +272,95 @@ function runtimeWithStoredTime(seconds: number): CanonicalRuntimeState {
         storedTimeAvailableSeconds: seconds,
       },
     },
+  }
+}
+
+function seedExcludedDomainStatistics(
+  source: Readonly<SimulationStatisticsState>,
+): SimulationStatisticsState {
+  const seedTotals = (
+    totals: Readonly<SimulationTotalsState>,
+    offset: bigint,
+  ): SimulationTotalsState => ({
+    ...totals,
+    meteorDreamResets: offset + 1n,
+    aiDreamResets: offset + 2n,
+    globalWarmingDreamResets: offset + 3n,
+    blackHoleDreamResets: offset + 4n,
+    strangeMatter: offset + 5n,
+    realityWorkers: offset + 6n,
+    automaticInfluence: offset + 7n,
+    manualInfluence: offset + 8n,
+    realityCapacityStallSeconds: Number(offset) + 9,
+  })
+  const windows = source.minuteWindows.map((window, index) => ({
+    ...window,
+    sequence: BigInt(index),
+    simulatedSeconds: 0,
+    infinityCount: 0n,
+    infinityPoints: 0n,
+    dreamResetCount: index === 0 ? 5n : 0n,
+    strangeMatter: index === 0 ? 6n : 0n,
+    realityWorkers: index === 0 ? 7n : 0n,
+  }))
+  return {
+    ...source,
+    trackedSinceUpdate: true,
+    trackingStartedMarker: 'tracked-since-update',
+    trackedSimulatedSeconds: 59,
+    lifetime: seedTotals(source.lifetime, 10n),
+    currentQuantumRun: seedTotals(source.currentQuantumRun, 20n),
+    recentProcessedSegment: {
+      ...seedTotals(source.recentProcessedSegment, 30n),
+      simulatedSeconds: 1,
+    },
+    minuteWindows: windows,
+  }
+}
+
+function excludedDomainTotals(
+  totals: Readonly<SimulationTotalsState>,
+) {
+  return {
+    meteorDreamResets: totals.meteorDreamResets,
+    aiDreamResets: totals.aiDreamResets,
+    globalWarmingDreamResets: totals.globalWarmingDreamResets,
+    blackHoleDreamResets: totals.blackHoleDreamResets,
+    strangeMatter: totals.strangeMatter,
+    realityWorkers: totals.realityWorkers,
+    automaticInfluence: totals.automaticInfluence,
+    manualInfluence: totals.manualInfluence,
+    realityCapacityStallSeconds: totals.realityCapacityStallSeconds,
+  }
+}
+
+function excludedWindowTotals(
+  window: Readonly<StatisticsWindowState>,
+) {
+  return {
+    dreamResetCount: window.dreamResetCount,
+    strangeMatter: window.strangeMatter,
+    realityWorkers: window.realityWorkers,
+  }
+}
+
+function emptyDomainTotals(): SimulationTotalsState {
+  return {
+    ordinaryInfinityCount: 0n,
+    breakInfinityCount: 0n,
+    ordinaryInfinityPoints: 0n,
+    breakInfinityPoints: 0n,
+    botCapInfinityPoints: 0n,
+    botCapOverflowRewards: 0n,
+    meteorDreamResets: 0n,
+    aiDreamResets: 0n,
+    globalWarmingDreamResets: 0n,
+    blackHoleDreamResets: 0n,
+    strangeMatter: 0n,
+    realityWorkers: 0n,
+    automaticInfluence: 0n,
+    manualInfluence: 0n,
+    realityCapacityStallSeconds: 0,
+    simulatedSeconds: 0,
   }
 }
