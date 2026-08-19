@@ -2,6 +2,7 @@
 
 import '@testing-library/jest-dom/vitest'
 import {
+  act,
   cleanup,
   fireEvent,
   render,
@@ -19,7 +20,10 @@ import type {
 import { SkillsSurface, type SkillsSurfaceProps } from './SkillsSurface'
 import type { SkillPresetActions } from './SkillsSurface'
 
-afterEach(cleanup)
+afterEach(() => {
+  cleanup()
+  vi.unstubAllGlobals()
+})
 
 const startSkill = {
   skillId: 'startHereTree',
@@ -180,6 +184,19 @@ function renderSkills(
 ) {
   render(createSkillElement(dispatchPlayer))
   return dispatchPlayer
+}
+
+function readCanvasTransform(element: Element | null) {
+  const style = element?.getAttribute('style') ?? ''
+  const match = style.match(
+    /translate3d\((-?[\d.]+)px, (-?[\d.]+)px, 0\) scale\((-?[\d.]+)\)/,
+  )
+  if (match === null) throw new Error(`Missing canvas transform: ${style}`)
+  return {
+    x: Number(match[1]),
+    y: Number(match[2]),
+    scale: Number(match[3]),
+  }
 }
 
 describe('SkillsSurface', () => {
@@ -631,6 +648,263 @@ describe('SkillsSurface', () => {
     fireEvent.click(zoomIn)
 
     expect(canvas?.getAttribute('style')).toContain('scale(0.9)')
+  })
+
+  test('coalesces rapid pan updates into one animation-frame transform', () => {
+    const frames: FrameRequestCallback[] = []
+    vi.stubGlobal(
+      'requestAnimationFrame',
+      vi.fn((callback: FrameRequestCallback) => {
+        frames.push(callback)
+        return frames.length
+      }),
+    )
+    vi.stubGlobal('cancelAnimationFrame', vi.fn())
+    const { container } = render(
+      createSkillElement(createDispatchPlayer()),
+    )
+    const tree = screen.getByRole('region', { name: 'Skill tree' })
+    const canvas = container.querySelector(
+      '.skill-tree-viewport__canvas',
+    )
+    const before = canvas?.getAttribute('style') ?? ''
+    const beforeMatch = before.match(
+      /translate3d\((-?[\d.]+)px, (-?[\d.]+)px, 0\)/,
+    )
+    expect(beforeMatch).not.toBeNull()
+
+    fireEvent.pointerDown(tree, {
+      pointerId: 7,
+      clientX: 10,
+      clientY: 15,
+    })
+    fireEvent.pointerMove(tree, {
+      pointerId: 7,
+      clientX: 20,
+      clientY: 25,
+    })
+    fireEvent.pointerMove(tree, {
+      pointerId: 7,
+      clientX: 40,
+      clientY: 55,
+    })
+
+    expect(requestAnimationFrame).toHaveBeenCalledTimes(1)
+    act(() => frames[0]?.(0))
+    const after = canvas?.getAttribute('style') ?? ''
+    const expectedX = Number(beforeMatch?.[1]) + 30
+    const expectedY = Number(beforeMatch?.[2]) + 40
+    expect(after).toContain(
+      `translate3d(${expectedX}px, ${expectedY}px, 0)`,
+    )
+  })
+
+  test('applies pending pan before immediate centre and zoom controls', () => {
+    const frames: FrameRequestCallback[] = []
+    const cancelFrame = vi.fn()
+    vi.stubGlobal(
+      'requestAnimationFrame',
+      vi.fn((callback: FrameRequestCallback) => {
+        frames.push(callback)
+        return frames.length
+      }),
+    )
+    vi.stubGlobal('cancelAnimationFrame', cancelFrame)
+    const { container } = render(
+      createSkillElement(createDispatchPlayer()),
+    )
+    const tree = screen.getByRole('region', { name: 'Skill tree' })
+    const canvas = container.querySelector(
+      '.skill-tree-viewport__canvas',
+    )
+    const initial = readCanvasTransform(canvas)
+
+    fireEvent.pointerDown(tree, {
+      pointerId: 8,
+      clientX: 10,
+      clientY: 10,
+    })
+    fireEvent.pointerMove(tree, {
+      pointerId: 8,
+      clientX: 30,
+      clientY: 40,
+    })
+    fireEvent.click(
+      screen.getByRole('button', { name: 'Centre on starting skill' }),
+    )
+
+    expect(readCanvasTransform(canvas)).toEqual(initial)
+    expect(cancelFrame).toHaveBeenCalledTimes(1)
+    act(() => frames[0]?.(0))
+    expect(readCanvasTransform(canvas)).toEqual(initial)
+
+    fireEvent.pointerMove(tree, {
+      pointerId: 8,
+      clientX: 40,
+      clientY: 50,
+    })
+    fireEvent.click(screen.getByRole('button', { name: 'Zoom in' }))
+
+    const zoomed = readCanvasTransform(canvas)
+    expect(zoomed.scale).toBeCloseTo(0.9)
+    expect(zoomed.x).toBeCloseTo((initial.x + 10) * (0.9 / 0.8))
+    expect(zoomed.y).toBeCloseTo((initial.y + 10) * (0.9 / 0.8))
+    act(() => frames[1]?.(0))
+    expect(readCanvasTransform(canvas)).toEqual(zoomed)
+  })
+
+  test('orders pending pan before resize and cancels queued work on unmount', () => {
+    const frames: FrameRequestCallback[] = []
+    const cancelFrame = vi.fn()
+    let resize: ResizeObserverCallback | undefined
+    vi.stubGlobal(
+      'requestAnimationFrame',
+      vi.fn((callback: FrameRequestCallback) => {
+        frames.push(callback)
+        return frames.length
+      }),
+    )
+    vi.stubGlobal('cancelAnimationFrame', cancelFrame)
+    vi.stubGlobal(
+      'ResizeObserver',
+      class {
+        constructor(callback: ResizeObserverCallback) {
+          resize = callback
+        }
+        observe() {}
+        disconnect() {}
+      },
+    )
+    const rendered = render(createSkillElement(createDispatchPlayer()))
+    const tree = screen.getByRole('region', { name: 'Skill tree' })
+    const canvas = rendered.container.querySelector(
+      '.skill-tree-viewport__canvas',
+    )
+    const initial = readCanvasTransform(canvas)
+    const resizeEntry = (width: number, height: number) => ({
+      contentRect: { width, height },
+    }) as ResizeObserverEntry
+    act(() => resize?.([resizeEntry(100, 100)], {} as ResizeObserver))
+
+    fireEvent.pointerDown(tree, {
+      pointerId: 9,
+      clientX: 10,
+      clientY: 10,
+    })
+    fireEvent.pointerMove(tree, {
+      pointerId: 9,
+      clientX: 30,
+      clientY: 40,
+    })
+    act(() => resize?.([resizeEntry(120, 140)], {} as ResizeObserver))
+
+    const resized = readCanvasTransform(canvas)
+    expect(resized.x).toBeCloseTo(initial.x + 30)
+    expect(resized.y).toBeCloseTo(initial.y + 50)
+    act(() => frames[0]?.(0))
+    expect(readCanvasTransform(canvas)).toEqual(resized)
+
+    fireEvent.pointerMove(tree, {
+      pointerId: 9,
+      clientX: 35,
+      clientY: 45,
+    })
+    const beforeUnmount = readCanvasTransform(canvas)
+    rendered.unmount()
+    expect(cancelFrame).toHaveBeenCalledTimes(2)
+    act(() => frames[1]?.(0))
+    expect(readCanvasTransform(canvas)).toEqual(beforeUnmount)
+  })
+
+  test('applies relative zoom controls after a queued pinch scale', () => {
+    const frames: FrameRequestCallback[] = []
+    vi.stubGlobal(
+      'requestAnimationFrame',
+      vi.fn((callback: FrameRequestCallback) => {
+        frames.push(callback)
+        return frames.length
+      }),
+    )
+    vi.stubGlobal('cancelAnimationFrame', vi.fn())
+    const { container } = render(
+      createSkillElement(createDispatchPlayer()),
+    )
+    const tree = screen.getByRole('region', { name: 'Skill tree' })
+    const canvas = container.querySelector(
+      '.skill-tree-viewport__canvas',
+    )
+
+    fireEvent.pointerDown(tree, {
+      pointerId: 10,
+      clientX: 0,
+      clientY: 0,
+    })
+    fireEvent.pointerDown(tree, {
+      pointerId: 11,
+      clientX: 100,
+      clientY: 0,
+    })
+    fireEvent.pointerMove(tree, {
+      pointerId: 11,
+      clientX: 150,
+      clientY: 0,
+    })
+    fireEvent.click(screen.getByRole('button', { name: 'Zoom in' }))
+
+    const zoomed = readCanvasTransform(canvas)
+    expect(zoomed.scale).toBeCloseTo(1.3)
+    act(() => frames[0]?.(0))
+    expect(readCanvasTransform(canvas)).toEqual(zoomed)
+  })
+
+  test('restarts a pinch from its queued effective scale before the frame commits', () => {
+    const frames: FrameRequestCallback[] = []
+    vi.stubGlobal(
+      'requestAnimationFrame',
+      vi.fn((callback: FrameRequestCallback) => {
+        frames.push(callback)
+        return frames.length
+      }),
+    )
+    vi.stubGlobal('cancelAnimationFrame', vi.fn())
+    const { container } = render(
+      createSkillElement(createDispatchPlayer()),
+    )
+    const tree = screen.getByRole('region', { name: 'Skill tree' })
+    const canvas = container.querySelector(
+      '.skill-tree-viewport__canvas',
+    )
+
+    fireEvent.pointerDown(tree, {
+      pointerId: 12,
+      clientX: 0,
+      clientY: 0,
+    })
+    fireEvent.pointerDown(tree, {
+      pointerId: 13,
+      clientX: 100,
+      clientY: 0,
+    })
+    fireEvent.pointerMove(tree, {
+      pointerId: 13,
+      clientX: 150,
+      clientY: 0,
+    })
+    fireEvent.pointerUp(tree, { pointerId: 13 })
+    fireEvent.pointerDown(tree, {
+      pointerId: 13,
+      clientX: 150,
+      clientY: 0,
+    })
+    fireEvent.pointerMove(tree, {
+      pointerId: 13,
+      clientX: 125,
+      clientY: 0,
+    })
+
+    expect(requestAnimationFrame).toHaveBeenCalledTimes(1)
+    act(() => frames[0]?.(0))
+    expect(readCanvasTransform(canvas).scale).toBeCloseTo(1)
   })
 
   test('dispatches purchase intent without changing gameplay locally', async () => {

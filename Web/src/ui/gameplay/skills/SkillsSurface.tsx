@@ -1,4 +1,5 @@
 import {
+  memo,
   useCallback,
   useEffect,
   useId,
@@ -197,8 +198,18 @@ const maxY =
 const graphWidth = maxX - minX
 const graphHeight = maxY - minY
 
+const graphPositionBySkillId = new Map(
+  presentation.nodes.map((node) => [
+    node.skillId,
+    Object.freeze({
+      x: node.x - minX,
+      y: maxY - node.y,
+    }),
+  ]),
+)
+
 function graphPosition(node: SkillPresentationNode) {
-  return {
+  return graphPositionBySkillId.get(node.skillId) ?? {
     x: node.x - minX,
     y: maxY - node.y,
   }
@@ -237,6 +248,12 @@ export function SkillsSurface({
   const [failed, setFailed] = useState(false)
   const pendingRef = useRef(false)
   const focusNodeRef = useRef<(skillId: string) => void>(() => undefined)
+  const registerTreeFocus = useCallback(
+    (focus: (skillId: string) => void) => {
+      focusNodeRef.current = focus
+    },
+    [],
+  )
   const previewById = useMemo(
     () => new Map(catalog.skills.map((skill) => [skill.skillId, skill])),
     [catalog.skills],
@@ -478,9 +495,7 @@ export function SkillsSurface({
             defaultSkillPresetColorId(selectedPresetSlot)
           }
           onSelect={setSelectedSkillId}
-          registerFocus={(focus) => {
-            focusNodeRef.current = focus
-          }}
+          registerFocus={registerTreeFocus}
         />
       )}
 
@@ -520,7 +535,7 @@ interface SkillTreeViewportProps {
   readonly registerFocus: (focus: (skillId: string) => void) => void
 }
 
-function SkillTreeViewport({
+const SkillTreeViewport = memo(function SkillTreeViewport({
   nodes,
   previews,
   nodeById,
@@ -550,10 +565,52 @@ function SkillTreeViewport({
     y: 0,
     scale: DEFAULT_SCALE,
   })
+  const effectiveTransform = useRef<SkillTreeTransform>({
+    x: 0,
+    y: 0,
+    scale: DEFAULT_SCALE,
+  })
+  const transformFrame = useRef<number | null>(null)
   const initialized = useRef(false)
   const viewportSize = useRef({ width: 0, height: 0 })
   const startNode =
     nodeById.get('startHereTree') ?? presentation.nodes[0]
+
+  const scheduleTransformUpdate = useCallback(
+    (update: (current: SkillTreeTransform) => SkillTreeTransform) => {
+      effectiveTransform.current = update(effectiveTransform.current)
+      if (transformFrame.current !== null) return
+      const scheduledFrame = requestAnimationFrame(() => {
+        if (transformFrame.current !== scheduledFrame) return
+        transformFrame.current = null
+        setTransform(effectiveTransform.current)
+      })
+      transformFrame.current = scheduledFrame
+    },
+    [],
+  )
+
+  const applyTransformUpdateImmediately = useCallback(
+    (update: (current: SkillTreeTransform) => SkillTreeTransform) => {
+      if (transformFrame.current !== null) {
+        cancelAnimationFrame(transformFrame.current)
+        transformFrame.current = null
+      }
+      effectiveTransform.current = update(effectiveTransform.current)
+      setTransform(effectiveTransform.current)
+    },
+    [],
+  )
+
+  useEffect(
+    () => () => {
+      if (transformFrame.current !== null) {
+        cancelAnimationFrame(transformFrame.current)
+        transformFrame.current = null
+      }
+    },
+    [],
+  )
 
   const centreOn = useCallback(
     (skillId: string, focus = true) => {
@@ -562,7 +619,7 @@ function SkillTreeViewport({
       if (!viewport || !node) return
       const position = graphPosition(node)
       const bounds = viewport.getBoundingClientRect()
-      setTransform((current) => ({
+      applyTransformUpdateImmediately((current) => ({
         ...current,
         x: bounds.width / 2 - position.x * current.scale,
         y: bounds.height / 2 - position.y * current.scale,
@@ -573,7 +630,7 @@ function SkillTreeViewport({
         )
       }
     },
-    [nodeById],
+    [applyTransformUpdateImmediately, nodeById],
   )
 
   useLayoutEffect(() => {
@@ -599,7 +656,7 @@ function SkillTreeViewport({
       }
       viewportSize.current = next
       if (previous.width === 0 || previous.height === 0) return
-      setTransform((current) => ({
+      applyTransformUpdateImmediately((current) => ({
         ...current,
         x: current.x + (next.width - previous.width) / 2,
         y: current.y + (next.height - previous.height) / 2,
@@ -607,14 +664,18 @@ function SkillTreeViewport({
     })
     observer.observe(viewport)
     return () => observer.disconnect()
-  }, [])
+  }, [applyTransformUpdateImmediately])
 
   useEffect(() => {
     registerFocus((skillId) => centreOn(skillId))
   }, [centreOn, registerFocus])
 
   const zoomAt = useCallback(
-    (nextScale: number, clientX?: number, clientY?: number) => {
+    (
+      selectScale: (currentScale: number) => number,
+      clientX?: number,
+      clientY?: number,
+    ) => {
       const viewport = viewportRef.current
       if (!viewport) return
       const bounds = viewport.getBoundingClientRect()
@@ -622,18 +683,30 @@ function SkillTreeViewport({
         clientX === undefined ? bounds.width / 2 : clientX - bounds.left
       const anchorY =
         clientY === undefined ? bounds.height / 2 : clientY - bounds.top
-      setTransform((current) => {
-        const scale = Math.min(MAX_SCALE, Math.max(MIN_SCALE, nextScale))
-        const graphX = (anchorX - current.x) / current.scale
-        const graphY = (anchorY - current.y) / current.scale
-        return {
-          scale,
-          x: anchorX - graphX * scale,
-          y: anchorY - graphY * scale,
-        }
-      })
+      applyTransformUpdateImmediately((current) =>
+        transformAtScale(
+          current,
+          selectScale(current.scale),
+          anchorX,
+          anchorY,
+        ),
+      )
     },
-    [],
+    [applyTransformUpdateImmediately],
+  )
+
+  const scheduleZoomAt = useCallback(
+    (nextScale: number, clientX: number, clientY: number) => {
+      const viewport = viewportRef.current
+      if (!viewport) return
+      const bounds = viewport.getBoundingClientRect()
+      const anchorX = clientX - bounds.left
+      const anchorY = clientY - bounds.top
+      scheduleTransformUpdate((current) =>
+        transformAtScale(current, nextScale, anchorX, anchorY),
+      )
+    },
+    [scheduleTransformUpdate],
   )
 
   const onPointerDown = (event: ReactPointerEvent<HTMLDivElement>) => {
@@ -658,7 +731,7 @@ function SkillTreeViewport({
         second.x - first.x,
         second.y - first.y,
       )
-      gesture.current.startScale = transform.scale
+      gesture.current.startScale = effectiveTransform.current.scale
     }
   }
 
@@ -672,7 +745,7 @@ function SkillTreeViewport({
       startY: previous.startY,
     })
     if (pointers.current.size === 1) {
-      setTransform((current) => ({
+      scheduleTransformUpdate((current) => ({
         ...current,
         x: current.x + event.clientX - previous.x,
         y: current.y + event.clientY - previous.y,
@@ -685,7 +758,7 @@ function SkillTreeViewport({
       second.y - first.y,
     )
     if (gesture.current.startDistance > 0) {
-      zoomAt(
+      scheduleZoomAt(
         gesture.current.startScale *
           (distance / gesture.current.startDistance),
         (first.x + second.x) / 2,
@@ -699,16 +772,10 @@ function SkillTreeViewport({
     if (pointers.current.size < 2) gesture.current.startDistance = 0
   }
 
-  const connectors = nodes.flatMap((node) => {
-    const preview = previews.get(node.skillId)
-    if (!preview) return []
-    return preview.requiredSkillIds.flatMap((requiredId) => {
-      const required = nodeById.get(requiredId)
-      const requiredPreview = previews.get(requiredId)
-      if (!required || requiredPreview?.visible !== true) return []
-      return [{ from: required, to: node }]
-    })
-  })
+  const connectors = useMemo(
+    () => prepareSkillConnectors(nodes, previews, nodeById),
+    [nodeById, nodes, previews],
+  )
   const selectedPreview =
     selectedSkillId === null ? undefined : previews.get(selectedSkillId)
   const selectedRequiredIds = new Set(
@@ -731,7 +798,7 @@ function SkillTreeViewport({
       onWheel={(event: ReactWheelEvent<HTMLDivElement>) => {
         event.preventDefault()
         zoomAt(
-          transform.scale * (event.deltaY < 0 ? 1.1 : 0.9),
+          (scale) => scale * (event.deltaY < 0 ? 1.1 : 0.9),
           event.clientX,
           event.clientY,
         )
@@ -758,18 +825,15 @@ function SkillTreeViewport({
           height={graphHeight}
           aria-hidden="true"
         >
-          {connectors.map(({ from, to }) => {
-            const start = graphPosition(from)
-            const end = graphPosition(to)
+          {connectors.map((connector) => {
+            const { from, to } = connector
             const sourcePreview = previews.get(from.skillId)
             const targetPreview = previews.get(to.skillId)
             const sourceOwned = sourcePreview?.owned === true
             const targetOwned = targetPreview?.owned === true
-            const layout = layoutSkillConnector(start, end, {
-              nodeSize: NODE_SIZE,
-              startClearance: sourceOwned ? 10 : 7,
-            })
-            if (layout === null) return null
+            const paths = sourceOwned
+              ? connector.ownedSourcePaths
+              : connector.unownedSourcePaths
             const selectedPath = to.skillId === selectedSkillId
             const sharedAttributes = {
               'data-owned': sourceOwned && targetOwned,
@@ -788,11 +852,7 @@ function SkillTreeViewport({
                 <path
                   key={`${from.skillId}-${to.skillId}`}
                   className="skill-tree-connection skill-tree-connection--met"
-                  d={buildSolidSkillConnectorPath(
-                    layout.start,
-                    layout.arrowTip,
-                    { width: selectedPath ? 7 : 6 },
-                  )}
+                  d={selectedPath ? paths.selectedBody : paths.body}
                   {...sharedAttributes}
                 />
               )
@@ -801,16 +861,12 @@ function SkillTreeViewport({
               <g key={`${from.skillId}-${to.skillId}`}>
                 <path
                   className="skill-tree-connection skill-tree-connection--unmet"
-                  d={buildTaperedSkillConnectorPath(
-                    layout.start,
-                    layout.bodyEnd,
-                    { width: selectedPath ? 7 : 6 },
-                  )}
+                  d={selectedPath ? paths.selectedBody : paths.body}
                   {...sharedAttributes}
                 />
                 <path
                   className="skill-tree-connection skill-tree-connection-arrow"
-                  d={layout.arrowPath}
+                  d={paths.arrow}
                   {...sharedAttributes}
                 />
               </g>
@@ -916,7 +972,7 @@ function SkillTreeViewport({
         <button
           type="button"
           aria-label={intl.formatMessage(messages.zoomOut)}
-          onClick={() => zoomAt(transform.scale - 0.1)}
+          onClick={() => zoomAt((scale) => scale - 0.1)}
         >
           −
         </button>
@@ -930,13 +986,105 @@ function SkillTreeViewport({
         <button
           type="button"
           aria-label={intl.formatMessage(messages.zoomIn)}
-          onClick={() => zoomAt(transform.scale + 0.1)}
+          onClick={() => zoomAt((scale) => scale + 0.1)}
         >
           +
         </button>
       </div>
     </div>
   )
+})
+
+interface SkillTreeTransform {
+  readonly x: number
+  readonly y: number
+  readonly scale: number
+}
+
+function transformAtScale(
+  current: SkillTreeTransform,
+  nextScale: number,
+  anchorX: number,
+  anchorY: number,
+): SkillTreeTransform {
+  const scale = Math.min(MAX_SCALE, Math.max(MIN_SCALE, nextScale))
+  const graphX = (anchorX - current.x) / current.scale
+  const graphY = (anchorY - current.y) / current.scale
+  return {
+    scale,
+    x: anchorX - graphX * scale,
+    y: anchorY - graphY * scale,
+  }
+}
+
+interface PreparedSkillConnectorPaths {
+  readonly body: string
+  readonly selectedBody: string
+  readonly arrow: string
+}
+
+interface PreparedSkillConnector {
+  readonly from: SkillPresentationNode
+  readonly to: SkillPresentationNode
+  readonly ownedSourcePaths: PreparedSkillConnectorPaths
+  readonly unownedSourcePaths: PreparedSkillConnectorPaths
+}
+
+function prepareSkillConnectors(
+  nodes: readonly SkillPresentationNode[],
+  previews: ReadonlyMap<string, CanonicalSkillAvailabilityPreview>,
+  nodeById: ReadonlyMap<string, SkillPresentationNode>,
+): readonly PreparedSkillConnector[] {
+  return nodes.flatMap((node) => {
+    const preview = previews.get(node.skillId)
+    if (!preview) return []
+    return preview.requiredSkillIds.flatMap((requiredId) => {
+      const required = nodeById.get(requiredId)
+      const requiredPreview = previews.get(requiredId)
+      if (!required || requiredPreview?.visible !== true) return []
+      const start = graphPosition(required)
+      const end = graphPosition(node)
+      const ownedLayout = layoutSkillConnector(start, end, {
+        nodeSize: NODE_SIZE,
+        startClearance: 10,
+      })
+      const unownedLayout = layoutSkillConnector(start, end, {
+        nodeSize: NODE_SIZE,
+        startClearance: 7,
+      })
+      if (ownedLayout === null || unownedLayout === null) return []
+      return [{
+        from: required,
+        to: node,
+        ownedSourcePaths: {
+          body: buildSolidSkillConnectorPath(
+            ownedLayout.start,
+            ownedLayout.arrowTip,
+            { width: 6 },
+          ),
+          selectedBody: buildSolidSkillConnectorPath(
+            ownedLayout.start,
+            ownedLayout.arrowTip,
+            { width: 7 },
+          ),
+          arrow: ownedLayout.arrowPath,
+        },
+        unownedSourcePaths: {
+          body: buildTaperedSkillConnectorPath(
+            unownedLayout.start,
+            unownedLayout.bodyEnd,
+            { width: 6 },
+          ),
+          selectedBody: buildTaperedSkillConnectorPath(
+            unownedLayout.start,
+            unownedLayout.bodyEnd,
+            { width: 7 },
+          ),
+          arrow: unownedLayout.arrowPath,
+        },
+      }]
+    })
+  })
 }
 
 interface SkillDetailsProps {

@@ -2190,7 +2190,7 @@ function selectGameplayPreviews(
         : previous.research,
     skills:
       previous === undefined || demand === 'all' || demand === 'skills'
-        ? previewCanonicalSkillCatalog(state)
+        ? selectStableFrontendSkillPreview(state, previous?.skills)
         : previous.skills,
     dream:
       previous === undefined ||
@@ -2694,4 +2694,165 @@ function freezeFrontendProjection<T>(
   return sourceOwnership === 'detached-frozen' && import.meta.env?.PROD === true
     ? Object.freeze(value) as DeepReadonly<T>
     : deepFreeze(value)
+}
+
+interface SkillPreviewDependencies {
+  readonly points: bigint
+  readonly fragments: bigint
+  readonly ownedSkillIds: string
+  readonly queuedSkillIds: string
+  readonly firstInfinityComplete: boolean
+  readonly quantumUnlockMask: number
+}
+
+const skillPreviewDependenciesByCatalog = new WeakMap<
+  object,
+  SkillPreviewDependencies
+>()
+
+/**
+ * Avoids rebuilding the authored 104-skill transaction preview when none of
+ * the canonical inputs read by that projector changed. The optional projector
+ * keeps the dependency boundary directly testable without runtime probes.
+ */
+export function selectStableFrontendSkillPreview(
+  state: Readonly<CanonicalGameStateV1>,
+  previous: DeepReadonly<CanonicalSkillCatalogPreview> | undefined,
+  project: (
+    source: CanonicalGameStateV1,
+  ) => CanonicalSkillCatalogPreview = previewCanonicalSkillCatalog,
+): CanonicalSkillCatalogPreview {
+  const dependencies = selectSkillPreviewDependencies(state)
+  if (
+    previous !== undefined &&
+    sameSkillPreviewDependencies(
+      skillPreviewDependenciesByCatalog.get(previous),
+      dependencies,
+    )
+  ) {
+    return previous as CanonicalSkillCatalogPreview
+  }
+  const next = reuseSkillCatalogPreview(
+    previous,
+    project(state as CanonicalGameStateV1),
+  )
+  skillPreviewDependenciesByCatalog.set(next, dependencies)
+  return next
+}
+
+function selectSkillPreviewDependencies(
+  state: Readonly<CanonicalGameStateV1>,
+): SkillPreviewDependencies {
+  const unlocks = state.quantum.unlocks
+  return {
+    points: state.skills.points,
+    fragments: state.skills.fragments,
+    ownedSkillIds: Object.entries(state.skills.byId)
+      .filter(([, runtime]) => runtime.owned)
+      .map(([skillId]) => skillId)
+      .sort()
+      .join('\u0000'),
+    queuedSkillIds: [...state.skills.activeAutoAssignment]
+      .sort()
+      .join('\u0000'),
+    firstInfinityComplete: state.meta.firstInfinityComplete,
+    quantumUnlockMask:
+      Number(unlocks.fragments) |
+      (Number(unlocks.purity) << 1) |
+      (Number(unlocks.terra) << 2) |
+      (Number(unlocks.power) << 3) |
+      (Number(unlocks.paragade) << 4) |
+      (Number(unlocks.stellar) << 5),
+  }
+}
+
+function sameSkillPreviewDependencies(
+  before: SkillPreviewDependencies | undefined,
+  after: SkillPreviewDependencies,
+): boolean {
+  return (
+    before !== undefined &&
+    before.points === after.points &&
+    before.fragments === after.fragments &&
+    before.ownedSkillIds === after.ownedSkillIds &&
+    before.queuedSkillIds === after.queuedSkillIds &&
+    before.firstInfinityComplete === after.firstInfinityComplete &&
+    before.quantumUnlockMask === after.quantumUnlockMask
+  )
+}
+
+function reuseSkillCatalogPreview(
+  previous: DeepReadonly<CanonicalSkillCatalogPreview> | undefined,
+  next: CanonicalSkillCatalogPreview,
+): CanonicalSkillCatalogPreview {
+  if (previous === undefined) return next
+  if (
+    previous.complete !== next.complete ||
+    previous.definitionGap !== next.definitionGap ||
+    previous.skills.length !== next.skills.length
+  ) {
+    return next
+  }
+  for (let index = 0; index < next.skills.length; index += 1) {
+    const before = previous.skills[index]
+    const after = next.skills[index]
+    if (before === undefined || after === undefined) return next
+    if (
+      before.skillId !== after.skillId ||
+      before.cost !== after.cost ||
+      before.owned !== after.owned ||
+      before.visible !== after.visible ||
+      before.unlocked !== after.unlocked ||
+      before.queued !== after.queued ||
+      before.visualState !== after.visualState ||
+      before.fragment !== after.fragment ||
+      before.intrinsicallyRefundable !== after.intrinsicallyRefundable ||
+      !sameStringArray(before.requiredSkillIds, after.requiredSkillIds) ||
+      !sameStringArray(
+        before.shadowRequiredSkillIds,
+        after.shadowRequiredSkillIds,
+      ) ||
+      !sameStringArray(
+        before.exclusiveWithSkillIds,
+        after.exclusiveWithSkillIds,
+      ) ||
+      !sameSkillActionPreview(before.purchase, after.purchase) ||
+      before.purchase.pointsRequired !== after.purchase.pointsRequired ||
+      !sameSkillActionPreview(before.refund, after.refund) ||
+      before.refund.pointsReturned !== after.refund.pointsReturned ||
+      before.refund.fragmentsRemoved !== after.refund.fragmentsRemoved
+    ) {
+      return next
+    }
+  }
+  return previous as CanonicalSkillCatalogPreview
+}
+
+function sameSkillActionPreview(
+  before: Readonly<{
+    readonly eligible: boolean
+    readonly code: string
+    readonly affectedSkillIds: readonly string[]
+  }>,
+  after: Readonly<{
+    readonly eligible: boolean
+    readonly code: string
+    readonly affectedSkillIds: readonly string[]
+  }>,
+): boolean {
+  return (
+    before.eligible === after.eligible &&
+    before.code === after.code &&
+    sameStringArray(before.affectedSkillIds, after.affectedSkillIds)
+  )
+}
+
+function sameStringArray(
+  before: readonly string[],
+  after: readonly string[],
+): boolean {
+  return (
+    before.length === after.length &&
+    before.every((value, index) => value === after[index])
+  )
 }

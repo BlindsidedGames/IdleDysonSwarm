@@ -1,5 +1,5 @@
 import { readFileSync } from 'node:fs'
-import { describe, expect, test } from 'vitest'
+import { describe, expect, test, vi } from 'vitest'
 import type { DysonCompatibilityTuning } from '../game-state/compatibilityTuning'
 import { hydrateGameState } from '../game-state/mapping'
 import type { CanonicalGameStateV1 } from '../game-state/types'
@@ -25,6 +25,7 @@ import {
   selectFrontendApplicationSnapshot,
   selectFrontendCommandAvailability,
   selectFrontendGameplaySnapshot,
+  selectStableFrontendSkillPreview,
   type FrontendCommandRequirementReadiness,
   type FrontendDefinitionCoverage,
   type FrontendSnapshotContext,
@@ -133,6 +134,114 @@ describe('frontend gameplay snapshot', () => {
       bots.derived.simulations,
     )
     expect(simulations.derived.reality).toBe(bots.derived.reality)
+  })
+
+  test('retains the active Skills catalog when an ordinary production tick does not change graph facts', () => {
+    const runtime = fixtureRuntimeState()
+    const context = frontendContext()
+    const initial = selectFrontendGameplaySnapshot(
+      runtime.gameState,
+      { ...context, previewDemand: 'skills' },
+      'detached-frozen',
+    )
+    const advanced = structuredClone(runtime.gameState)
+    advanced.dyson.money += 123
+    advanced.dyson.science += 456
+
+    const next = selectFrontendGameplaySnapshot(
+      advanced,
+      {
+        ...context,
+        previewDemand: 'skills',
+        previousPreviews: initial.previews,
+        previousGameplay: initial,
+      },
+      'detached-frozen',
+    )
+
+    expect(next.resources.dyson.money).toBe(initial.resources.dyson.money + 123)
+    expect(next.resources.dyson.science).toBe(
+      initial.resources.dyson.science + 456,
+    )
+    expect(next.previews.skills).toBe(initial.previews.skills)
+    expect(next.previews.skills.skills).toBe(
+      initial.previews.skills.skills,
+    )
+  })
+
+  test('does not invoke the Skills preview projector for money and science-only ticks', () => {
+    const state = fixtureRuntimeState().gameState
+    const project = vi.fn(() => ({
+      complete: true,
+      definitionGap: null,
+      skills: [],
+    }))
+    const initial = selectStableFrontendSkillPreview(
+      state,
+      undefined,
+      project,
+    )
+    const advanced = structuredClone(state)
+    advanced.dyson.money += 123
+    advanced.dyson.science += 456
+
+    expect(
+      selectStableFrontendSkillPreview(advanced, initial, project),
+    ).toBe(initial)
+    expect(project).toHaveBeenCalledTimes(1)
+  })
+
+  test.each([
+    ['skill points', (state: CanonicalGameStateV1) => { state.skills.points += 1n }],
+    ['skill fragments', (state: CanonicalGameStateV1) => { state.skills.fragments += 1n }],
+    ['skill ownership', (state: CanonicalGameStateV1) => {
+      const skillId = Object.keys(state.skills.byId)[0]
+      if (skillId === undefined) throw new Error('Expected a skill fixture.')
+      state.skills.byId = {
+        ...state.skills.byId,
+        [skillId]: {
+          ...state.skills.byId[skillId],
+          owned: !state.skills.byId[skillId]?.owned,
+        },
+      }
+    }],
+    ['assignment queue', (state: CanonicalGameStateV1) => {
+      state.skills.activeAutoAssignment = [
+        ...state.skills.activeAutoAssignment,
+        'stage-four-queue-probe',
+      ]
+    }],
+    ['first Infinity', (state: CanonicalGameStateV1) => {
+      state.meta.firstInfinityComplete = !state.meta.firstInfinityComplete
+    }],
+    ...(['fragments', 'purity', 'terra', 'power', 'paragade', 'stellar'] as const)
+      .map((unlock) => [
+        `Quantum ${unlock}`,
+        (state: CanonicalGameStateV1) => {
+          state.quantum.unlocks = {
+            ...state.quantum.unlocks,
+            [unlock]: !state.quantum.unlocks[unlock],
+          }
+        },
+      ] as const),
+  ])('invalidates the Skills preview for %s changes', (_name, mutate) => {
+    const state = fixtureRuntimeState().gameState
+    const project = vi.fn(() => ({
+      complete: true,
+      definitionGap: null,
+      skills: [],
+    }))
+    const initial = selectStableFrontendSkillPreview(
+      state,
+      undefined,
+      project,
+    )
+    const changed = structuredClone(state)
+    mutate(changed)
+
+    selectStableFrontendSkillPreview(changed, initial, project)
+
+    expect(project).toHaveBeenCalledTimes(2)
   })
 
   test.each([
