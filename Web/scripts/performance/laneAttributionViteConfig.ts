@@ -26,8 +26,8 @@ function laneProbePlugin(): Plugin {
       if (id.endsWith('/src/application/frontendSnapshot.ts')) {
         const derivedPattern = /const\s+derived\s*=\s*selectDerivedFacts\(\s*state,\s*context,\s*previous\?\.derived,\s*context\.previewDemand\s*\?\?\s*'all',?\s*\)/
         const derivedReplacement = `const derivedStartedAt = performance.now()\n  const derived = selectDerivedFacts(\n    state,\n    context,\n    previous?.derived,\n    context.previewDemand ?? 'all',\n  )\n  globalThis.__idleDysonLaneProbeV1?.record('projection-derived', performance.now() - derivedStartedAt)`
-        const previewsPattern = /const\s+previews\s*=\s*selectGameplayPreviews\(\s*state,\s*context,\s*context\.previousPreviews,\s*context\.previewDemand\s*\?\?\s*'all',?\s*\)/
-        const previewsReplacement = `const previewsStartedAt = performance.now()\n  const previews = selectGameplayPreviews(\n    state,\n    context,\n    context.previousPreviews,\n    context.previewDemand ?? 'all',\n  )\n  globalThis.__idleDysonLaneProbeV1?.record('projection-preview', performance.now() - previewsStartedAt)`
+        const previewsPattern = /const\s+previews\s*=\s*selectGameplayPreviews\(\s*state,\s*context,\s*context\.previousPreviews,\s*context\.previewDemand\s*\?\?\s*'all',?\s*derived,?\s*\)/
+        const previewsReplacement = `const previewsStartedAt = performance.now()\n  const previews = selectGameplayPreviews(\n    state,\n    context,\n    context.previousPreviews,\n    context.previewDemand ?? 'all',\n    derived,\n  )\n  globalThis.__idleDysonLaneProbeV1?.record('projection-preview', performance.now() - previewsStartedAt)`
         if (!derivedPattern.test(code) || !previewsPattern.test(code)) {
           throw new Error('Projection sublane probe anchor missing.')
         }
