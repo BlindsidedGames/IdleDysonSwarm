@@ -152,7 +152,7 @@ const moneyCases: readonly ParityCase[] = [
   {
     effectId: 'effect.regulatedAcademia.money_multiplier',
     owned: ['regulatedAcademia'],
-    expected: 0.2448,
+    expected: 0.048,
   },
   {
     effectId: 'effect.economicRevolution.money_multiplier',
@@ -167,7 +167,7 @@ const moneyCases: readonly ParityCase[] = [
   {
     effectId: 'effect.workerBoost.money_multiplier',
     owned: ['workerBoost'],
-    expected: 60,
+    expected: 61,
   },
   {
     effectId: 'effect.shouldersOfTheRevolution.money_multiplier',
@@ -188,7 +188,7 @@ const moneyCases: readonly ParityCase[] = [
   {
     effectId: 'effect.purityOfMind.money_multiplier',
     owned: ['purityOfMind'],
-    expected: 6,
+    expected: 5.0625,
   },
   {
     effectId: 'effect.monetaryPolicy.money_multiplier',
@@ -203,7 +203,7 @@ const moneyCases: readonly ParityCase[] = [
   {
     effectId: 'effect.stellarObliteration.money_multiplier',
     owned: ['stellarObliteration'],
-    expected: 0.5,
+    expected: 0.0005,
   },
   {
     effectId: 'effect.stellarDominance.money_multiplier',
@@ -214,7 +214,7 @@ const moneyCases: readonly ParityCase[] = [
   {
     effectId: 'effect.purityOfSEssence.money_multiplier',
     owned: ['purityOfSEssence'],
-    expected: 5.68,
+    expected: 4.06586896,
   },
   {
     effectId: 'effect.superRadiantScattering.money_multiplier',
@@ -227,12 +227,12 @@ const scienceCases: readonly ParityCase[] = [
   {
     effectId: 'effect.regulatedAcademia.science_multiplier',
     owned: ['regulatedAcademia'],
-    expected: 0.5712,
+    expected: 0.112,
   },
   {
     effectId: 'effect.producedAsScienceTree.science_multiplier',
     owned: ['producedAsScienceTree'],
-    expected: 40,
+    expected: 41,
   },
   {
     effectId: 'effect.idleSpaceFlight.science_multiplier',
@@ -247,7 +247,7 @@ const scienceCases: readonly ParityCase[] = [
   {
     effectId: 'effect.purityOfMind.science_multiplier',
     owned: ['purityOfMind'],
-    expected: 6,
+    expected: 5.0625,
   },
   {
     effectId: 'effect.tasteOfPower.science_multiplier',
@@ -257,12 +257,12 @@ const scienceCases: readonly ParityCase[] = [
   {
     effectId: 'effect.stellarObliteration.science_multiplier',
     owned: ['stellarObliteration'],
-    expected: 0.5,
+    expected: 0.0005,
   },
   {
     effectId: 'effect.purityOfSEssence.science_multiplier',
     owned: ['purityOfSEssence'],
-    expected: 5.68,
+    expected: 4.06586896,
   },
   {
     effectId: 'effect.superRadiantScattering.science_multiplier',
@@ -283,6 +283,89 @@ describe('Unity money/science dynamic skill parity', () => {
       expectValue(resolveCase(testCase), testCase.expected)
     })
   }
+
+  test('uses the shared Regulated Academia 20 plus 10-point progression', () => {
+    for (const [fragments, percentage] of [[1, 20], [2, 30], [3, 40], [7, 80]] as const) {
+      const moneyBoost = 2 * tuning.moneyMultiUpgradePercent
+      const scienceBoost = 4 * tuning.scienceBoostPercent
+      expectValue(
+        resolveCase({
+          effectId: 'effect.regulatedAcademia.money_multiplier',
+          owned: ['regulatedAcademia'],
+          expected: moneyBoost * percentage / 100,
+          state: { fragments: BigInt(fragments) },
+        }),
+        moneyBoost * percentage / 100,
+      )
+      expectValue(
+        resolveCase({
+          effectId: 'effect.regulatedAcademia.science_multiplier',
+          owned: ['regulatedAcademia'],
+          expected: scienceBoost * percentage / 100,
+          state: { fragments: BigInt(fragments) },
+        }),
+        scienceBoost * percentage / 100,
+      )
+    }
+  })
+
+  test('compounds Purity at zero, one, two and 34 unspent points', () => {
+    for (const points of [0, 1, 2, 34] as const) {
+      for (const [effectId, coefficient] of [
+        ['effect.purityOfMind.money_multiplier', 1.5],
+        ['effect.purityOfSEssence.money_multiplier', 1.42],
+      ] as const) {
+        expectValue(
+          resolveCase({
+            effectId,
+            owned: [effectId.includes('Mind') ? 'purityOfMind' : 'purityOfSEssence'],
+            expected: Math.pow(coefficient, points),
+            state: { points: BigInt(points) },
+          }),
+          Math.pow(coefficient, points),
+        )
+      }
+    }
+  })
+
+  test('adds the neutral one to allocation percentage-point multipliers', () => {
+    for (const [distribution, money, science] of [
+      [1, 1, 101],
+      [0.99, 2, 100],
+      [0, 101, 1],
+    ] as const) {
+      expectValue(
+        resolveCase({
+          effectId: 'effect.workerBoost.money_multiplier',
+          owned: ['workerBoost'],
+          expected: money,
+          state: { botDistribution: distribution },
+        }),
+        money,
+      )
+      expectValue(
+        resolveCase({
+          effectId: 'effect.producedAsScienceTree.science_multiplier',
+          owned: ['producedAsScienceTree'],
+          expected: science,
+          state: { botDistribution: distribution },
+        }),
+        science,
+      )
+    }
+  })
+
+  test('hands Dyson Subsidies from Cash to Bots at exactly one star', () => {
+    expectValue(
+      resolveCase({
+        effectId: 'effect.dysonSubsidies.money_multiplier',
+        owned: ['dysonSubsidies'],
+        expected: 1,
+        derived: { panelsPerSecond: 2_000, panelLifetimeSeconds: 10 },
+      }),
+      1,
+    )
+  })
 
   test('preserves the exact half-allocation comparisons and multitasking branches', () => {
     expectValue(
@@ -325,19 +408,19 @@ describe('Unity money/science dynamic skill parity', () => {
       resolveCase({
         effectId: 'effect.workerBoost.money_multiplier',
         owned: ['workerBoost'],
-        expected: 100,
+        expected: 101,
         state: { botDistribution: 0.9, botMultitasking: true },
       }),
-      100,
+      101,
     )
     expectValue(
       resolveCase({
         effectId: 'effect.producedAsScienceTree.science_multiplier',
         owned: ['producedAsScienceTree'],
-        expected: 100,
+        expected: 101,
         state: { botDistribution: 0.1, botMultitasking: true },
       }),
-      100,
+      101,
     )
   })
 
@@ -360,7 +443,7 @@ describe('Unity money/science dynamic skill parity', () => {
     )
   })
 
-  test('uses the floored-galaxy gate before raw Stellar Obliteration division', () => {
+  test('uses adjusted Stellar Galaxies for the Obliteration division', () => {
     const halfGalaxy = {
       panelsPerSecond: 100_000_000_000_000,
       panelLifetimeSeconds: 10,
@@ -369,14 +452,14 @@ describe('Unity money/science dynamic skill parity', () => {
       resolveCase({
         effectId: 'effect.stellarObliteration.money_multiplier',
         owned: ['stellarObliteration'],
-        expected: 1,
+        expected: 0.002,
         derived: halfGalaxy,
       }),
-      1,
+      0.002,
     )
   })
 
-  test('preserves stellar-sacrifice precedence, modifiers, and strict bot comparison', () => {
+  test('preserves stellar-sacrifice precedence, modifiers, and inclusive bot comparison', () => {
     const twoStars = {
       panelsPerSecond: 4_000,
       panelLifetimeSeconds: 10,
@@ -396,11 +479,11 @@ describe('Unity money/science dynamic skill parity', () => {
         resolveCase({
           effectId: 'effect.stellarDominance.money_multiplier',
           owned: ['stellarDominance', ...nested],
-          expected: 1,
+          expected: 0.01,
           state: { bots: required },
           derived: twoStars,
         }),
-        1,
+        0.01,
       )
       expectValue(
         resolveCase({

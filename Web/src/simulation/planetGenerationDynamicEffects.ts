@@ -105,22 +105,13 @@ function stellarSacrificesProduction(
 ): number {
   const panelArea =
     inputs.panelsPerSecond * inputs.panelLifetimeSeconds
-  const starsSurrounded = panelArea / 20_000
   const galaxiesEngulfed =
     panelArea / 20_000 / 100_000_000_000
   const stellarGalaxies = resolveStellarGalaxies(
     inputs,
     galaxiesEngulfed,
   )
-  const botsRequired = stellarSacrificesRequiredBots(
-    inputs,
-    starsSurrounded,
-  )
-  return (
-    inputs.ownedSkills.has('stellarSacrifices') &&
-    inputs.bots >= botsRequired &&
-    stellarGalaxies > 0
-  )
+  return inputs.ownedSkills.has('stellarSacrifices')
     ? stellarGalaxies
     : 0
 }
@@ -132,23 +123,24 @@ function resolveStellarGalaxies(
   let galaxies = galaxiesEngulfed
   if (inputs.ownedSkills.has('stellarObliteration')) galaxies *= 1_000
   if (inputs.ownedSkills.has('supernova')) galaxies *= 1_000
-  if (galaxies > 10) return Math.pow(Math.log10(galaxies), 2)
-  if (galaxies > 1) return Math.log10(galaxies)
-  return 0
+  return Math.pow(Math.max(0, Math.log10(galaxies)), 2)
 }
 
-function stellarSacrificesRequiredBots(
-  inputs: PlanetGenerationDynamicInputs,
-  starsSurrounded: number,
+export function resolveStellarSacrificesRequiredBots(
+  ownedSkills: ReadonlySet<string>,
+  panelsPerSecond: number,
+  panelLifetimeSeconds: number,
 ): number {
-  let botsNeeded = inputs.ownedSkills.has('supernova')
+  const starsSurrounded =
+    panelsPerSecond * panelLifetimeSeconds / 20_000
+  let botsNeeded = ownedSkills.has('supernova')
     ? starsSurrounded * 1_000_000
-    : inputs.ownedSkills.has('stellarObliteration')
+    : ownedSkills.has('stellarObliteration')
       ? starsSurrounded * 1_000
       : starsSurrounded
   if (botsNeeded < 1) botsNeeded = 1
-  if (inputs.ownedSkills.has('stellarDominance')) botsNeeded *= 100
-  if (inputs.ownedSkills.has('stellarImprovements')) botsNeeded /= 1_000
+  if (ownedSkills.has('stellarDominance')) botsNeeded *= 100
+  if (ownedSkills.has('stellarImprovements')) botsNeeded /= 1_000
   return botsNeeded
 }
 

@@ -1331,12 +1331,12 @@
       "kind": "GameData.EffectDefinition",
       "path": "Assets/Data/Effects/effect.citadelCouncil.panel_lifetime.asset",
       "guid": "efc704c1491065a4a96c771d1ffea873",
-      "sourceHash": "eab2166ba44010478137ec545578c067c31d0e8fac47407a222cfdb9659b4c6b",
+      "sourceHash": "cbf78eb4dbfe3642fa43f17cba734d2c6f87f9cb2828bb4e174dd1eb74f90d43",
       "data": {
         "conditionId": null,
         "displayName": "Citadel Council",
         "id": "effect.citadelCouncil.panel_lifetime",
-        "operation": 0,
+        "operation": 1,
         "order": 17,
         "perLevel": 0,
         "targetFacilityIds": [],
@@ -3610,7 +3610,7 @@
       "kind": "GameData.EffectDefinition",
       "path": "Assets/Data/Effects/effect.versatileProductionTactics.assembly_lines_modifier.asset",
       "guid": "a6b82eec160715a4fb1611bd18289bfc",
-      "sourceHash": "f6f790e93d01d6f7cc32fc98bfd59e6ee5bd7778a0bbc2c4533833befc47c869",
+      "sourceHash": "26c0d0b01825e20499d6c6900a89feed1392446113e8f14ea3a61972f7b1c5a3",
       "data": {
         "conditionId": null,
         "displayName": "Versatile Production Tactics",
@@ -3619,10 +3619,10 @@
         "order": 62,
         "perLevel": 0,
         "targetFacilityIds": [
-          "ai_managers"
+          "servers"
         ],
         "targetFacilityTags": [],
-        "targetStatId": "Facility.Manager.Production",
+        "targetStatId": "Facility.Server.Production",
         "value": 1
       }
     },
@@ -3745,7 +3745,7 @@
       "kind": "GameData.EffectDefinition",
       "path": "Assets/Data/Effects/effect.worthySacrifice.assembly_lines_modifier.asset",
       "guid": "76def48ab5b8dcc46921b9a49a3c2f34",
-      "sourceHash": "18e2bf8aa1196e2f17272a51ba9119d8e2d626ea86b8bc458cf8e3824cb22237",
+      "sourceHash": "cc3b01f2dab8af65069e7df3a94503a4ba9eb9383ec1b653c0e81257c31198c4",
       "data": {
         "conditionId": null,
         "displayName": "Worthy Sacrifice",
@@ -3756,7 +3756,7 @@
         "targetFacilityIds": [],
         "targetFacilityTags": [],
         "targetStatId": "Facility.AssemblyLine.Modifier",
-        "value": 2.5
+        "value": 5
       }
     },
     {
@@ -6931,7 +6931,7 @@
       "kind": "GameData.SkillDefinition",
       "path": "Assets/Data/Skills/panelWarranty.asset",
       "guid": "e5e7f489a86483c44b1fca3afc80aa57",
-      "sourceHash": "60d0a80e32c20feee79ecd9dd53e8f35c0c266b70fdf94a11dec244987ef38dc",
+      "sourceHash": "5b8aad7fc9178bb7a2d7e787e5aec08fda56057e5b6e9ae7ec908220158ec270",
       "data": {
         "_id": {
           "fileId": 11400000,
@@ -6962,7 +6962,7 @@
         ],
         "shadowRequirementIds": [],
         "stellarLine": 0,
-        "technicalDescription": "<color=#A3FFFE>+5s</color> of Panel Lifetime. Double this bonus for every other purchased <color=#A3FFFE>Fragment Skill</color>. (<color=#A3FFFE>10s</color> for <color=#A3FFFE>1</color>, <color=#91DD8F>40s</color> for <color=#91DD8F>3</color>)",
+        "technicalDescription": "<color=#A3FFFE>+5s</color> of Panel Lifetime. Double this bonus for every other purchased <color=#A3FFFE>Fragment Skill</color>. (<color=#A3FFFE>5s</color> for <color=#A3FFFE>1</color>, <color=#91DD8F>20s</color> for <color=#91DD8F>3</color>)",
         "terraLine": 0,
         "unrefundableWithIds": []
       }
@@ -7460,7 +7460,7 @@
       "kind": "GameData.SkillDefinition",
       "path": "Assets/Data/Skills/productionScaling.asset",
       "guid": "bd7abec346429904eaa61471b8445a55",
-      "sourceHash": "061b62c25dfa1209d81f9a16bcfb0c74d2887546fa87445a55c11de28e04c35a",
+      "sourceHash": "ed22dc5fea870a744394462558b239c663f5371921b2d53dc1a063b86983fb7d",
       "data": {
         "_id": {
           "fileId": 11400000,
@@ -7484,7 +7484,7 @@
         ],
         "shadowRequirementIds": [],
         "stellarLine": 0,
-        "technicalDescription": "Reduce the starting point of the <color=#A3FFFE>1%</color> bonus per bought building to <color=#A3FFFE>90</color>. Reduce it by another <color=#A3FFFE>5</color> for every other purchased <color=#A3FFFE>Fragment Skill</color>.",
+        "technicalDescription": "Start the <color=#A3FFFE>1%</color> bonus with the first bought building after <color=#A3FFFE>90</color>. Reduce that threshold by another <color=#A3FFFE>5</color> for every other purchased <color=#A3FFFE>Fragment Skill</color>.",
         "terraLine": 0,
         "unrefundableWithIds": []
       }
@@ -7535,7 +7535,7 @@
       "kind": "GameData.SkillDefinition",
       "path": "Assets/Data/Skills/purityOfBody.asset",
       "guid": "26e5678153471f9499b4a383924302a2",
-      "sourceHash": "8b8f8d1c1ae22c7dd2d111147832cadf454fa16ed50975d16c48a27d864b0dba",
+      "sourceHash": "c718434710b6cb30f36c683e636e4627b2d1d3ce1c331f40b923526401c192c9",
       "data": {
         "_id": {
           "fileId": 11400000,
@@ -7566,7 +7566,7 @@
         ],
         "shadowRequirementIds": [],
         "stellarLine": 0,
-        "technicalDescription": "Gain <color=#A3FFFE>25%</color> more <color=#A3FFFE>Bots</color> for each unspent <color=#A3FFFE>Skill Point</color>.",
+        "technicalDescription": "Multiply <color=#A3FFFE>Bots</color> by <color=#A3FFFE>1.25x</color> for each unspent <color=#A3FFFE>Skill Point</color>, compounding exponentially.",
         "terraLine": 0,
         "unrefundableWithIds": []
       }
@@ -7576,7 +7576,7 @@
       "kind": "GameData.SkillDefinition",
       "path": "Assets/Data/Skills/purityOfMind.asset",
       "guid": "3841dd96022f9a14fa511199554a49cc",
-      "sourceHash": "180839c0b10cb6df94792dff46fa4b9e0ab61bf8bf0136291a8e686c5d4b1632",
+      "sourceHash": "b6c11e23a71f54c8a545836a1ed4b773c4608fad74c5dc44aaedee1cf52d0fcf",
       "data": {
         "_id": {
           "fileId": 11400000,
@@ -7613,7 +7613,7 @@
         ],
         "shadowRequirementIds": [],
         "stellarLine": 0,
-        "technicalDescription": "Gain <color=#A3FFFE>50%</color> more <color=#A3FFFE>Cash</color>/<color=#A3FFFE>Science</color> for each unspent <color=#A3FFFE>Skill Point</color>.",
+        "technicalDescription": "Multiply <color=#A3FFFE>Cash</color>/<color=#A3FFFE>Science</color> by <color=#A3FFFE>1.5x</color> for each unspent <color=#A3FFFE>Skill Point</color>, compounding exponentially.",
         "terraLine": 0,
         "unrefundableWithIds": []
       }
@@ -7623,7 +7623,7 @@
       "kind": "GameData.SkillDefinition",
       "path": "Assets/Data/Skills/purityOfSEssence.asset",
       "guid": "77b3b9d21a9cf5b499fbd33f598ed0ac",
-      "sourceHash": "0cf9feeabb4432a209576d5c5171b1796dc4b2dccacea6d4ff78f15cf66b59af",
+      "sourceHash": "b7a2ea654adee3607ddd69d0f27cc36a8e93efbd41d9dac812891bf2490ab3ea",
       "data": {
         "_id": {
           "fileId": 11400000,
@@ -7690,7 +7690,7 @@
         ],
         "shadowRequirementIds": [],
         "stellarLine": 0,
-        "technicalDescription": "Gain a <color=#A3FFFE>42%</color> bonus to <color=#A3FFFE>Everything</color> for each unspent <color=#A3FFFE>Skill Point</color>.",
+        "technicalDescription": "Multiply <color=#A3FFFE>Everything</color> by <color=#A3FFFE>1.42x</color> for each unspent <color=#A3FFFE>Skill Point</color>, compounding exponentially.",
         "terraLine": 0,
         "unrefundableWithIds": []
       }
@@ -9058,7 +9058,7 @@
       "kind": "GameData.SkillDefinition",
       "path": "Assets/Data/Skills/supernova.asset",
       "guid": "4aa8860018df3e74a860e0cf756c76d9",
-      "sourceHash": "170c8bfc5d5412ec6392a755695470d88f083cea58eed5945e93cbc51ef1009e",
+      "sourceHash": "ea486d36cc548534d94ca3ead0ed6239dd8b8ffb4700ab3d81701032375a7188",
       "data": {
         "_id": {
           "fileId": 11400000,
@@ -9082,7 +9082,7 @@
         ],
         "shadowRequirementIds": [],
         "stellarLine": 1,
-        "technicalDescription": "<color=#A3FFFE>Stellar Sacrifices Galaxies</color> are <color=#A3FFFE>1000x</color> better, however manually purchased buildings no longer boost production.",
+        "technicalDescription": "<color=#A3FFFE>Stellar Sacrifices Galaxies</color> are <color=#A3FFFE>1000x</color> better. While owned, manually purchased buildings lose every production bonus including Avocados, the 50/100 milestones, Production Scaling, and all Swarm rates. Refunding Supernova restores the complete manual-purchase layer.",
         "terraLine": 0,
         "unrefundableWithIds": []
       }

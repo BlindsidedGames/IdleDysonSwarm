@@ -248,4 +248,87 @@ describe('canonical Dyson commands', () => {
     ).toBe(true)
     expect(result.state.timeline.dysonAutomationTargetIndex).toBe(0)
   })
+
+  test('guards the first Planet and shares stacked Terra pricing across every purchase path', () => {
+    const before = state()
+    const enabled = {
+      ...before.dyson.automation.enabledFacilities,
+      planets: true,
+    }
+    const base: CanonicalGameStateV1 = {
+      ...before,
+      dyson: {
+        ...before.dyson,
+        money: 1e15,
+        facilities: {
+          ...before.dyson.facilities,
+          data_centers: [1, 0],
+          planets: [0, 0],
+        },
+        automation: {
+          ...before.dyson.automation,
+          buyMode: 'buy-1',
+          enabledFacilities: enabled,
+        },
+      },
+      infinity: {
+        ...before.infinity,
+        automationUnlocked: {
+          ...before.infinity.automationUnlocked,
+          bots: true,
+        },
+      },
+    }
+    const terra = {
+      ...base,
+      skills: {
+        ...base.skills,
+        byId: {
+          ...base.skills.byId,
+          terraNova: { ...base.skills.byId.terraNova!, owned: true },
+          terraGloriae: {
+            ...base.skills.byId.terraGloriae!,
+            owned: true,
+          },
+        },
+      },
+    }
+    const quote = (
+      source: CanonicalGameStateV1,
+      planets: readonly [number, number],
+    ) => previewCanonicalBasicFacilityPurchase(
+      {
+        ...source,
+        dyson: {
+          ...source.dyson,
+          facilities: { ...source.dyson.facilities, planets },
+        },
+      },
+      'planets',
+      5,
+    )
+    const ordinaryZero = quote(base, [0, 0])
+    const terraZero = quote(terra, [0, 0])
+    expect(terraZero.cost).toBe(ordinaryZero.cost)
+    expect(quote(base, [1, 0]).cost / quote(terra, [1, 0]).cost)
+      .toBeCloseTo(5, 12)
+    expect(quote(base, [1, 1]).cost / quote(terra, [1, 1]).cost)
+      .toBeCloseTo(10, 12)
+
+    const manual = tryPurchaseCanonicalBasicFacility(
+      terra,
+      'planets',
+      5,
+    )
+    expect(manual.attempt.cost).toBe(terraZero.cost)
+    const automated = runCanonicalDysonAutomation(
+      terra,
+      'preserve-configured-mode',
+      5,
+    )
+    expect(
+      automated.attempts.find(({ facilityId }) => facilityId === 'planets')
+        ?.cost,
+    ).toBe(terraZero.cost)
+  })
 })

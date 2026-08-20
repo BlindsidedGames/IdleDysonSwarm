@@ -31,7 +31,11 @@ import {
   SettingsIcon,
   StatusFeedback,
 } from '../../components'
-import { formatGameNumber } from '../../i18n/formatters'
+import {
+  formatGameNumber,
+  formatNumber,
+  type NumericValue,
+} from '../../i18n/formatters'
 import type { EnabledLocale } from '../../i18n/localeRegistry'
 import type { UiRuntimePlayerCommandResult } from '../../runtime'
 import {
@@ -54,6 +58,16 @@ type SkillCommand = Extract<
   CanonicalPlayerCommand,
   { readonly kind: `skill.${string}` }
 >
+
+function formatPreciseNumber(
+  locale: EnabledLocale,
+  value: NumericValue,
+): string {
+  return formatNumber(locale, value, {
+    maximumFractionDigits: 20,
+    useGrouping: true,
+  })
+}
 
 interface PendingExpectation {
   readonly beforeSignature: string
@@ -113,6 +127,7 @@ export interface SkillPresetImportPreview {
   readonly queuedSkillCount: number
   readonly workerPercent: number
   readonly colorId: SkillPresetColorId
+  readonly lockedQueuedSkillCount?: number
 }
 
 /**
@@ -1324,8 +1339,11 @@ function SkillDetails({
     const additionalSkillIds = affectedSkillIds.filter(
       (skillId) => skillId !== node.skillId,
     )
+    const productionImpact = kind === 'purchase'
+      ? preview.purchase.productionImpact
+      : preview.refund.productionImpact
     setQueuePreview(null)
-    if (additionalSkillIds.length > 0) {
+    if (additionalSkillIds.length > 0 || productionImpact !== undefined) {
       setActionPreview({ kind, affectedSkillIds })
       return
     }
@@ -1537,6 +1555,48 @@ function SkillDetails({
                 nodeById={nodeById}
                 label={intl.formatMessage(messages.affectedSkills)}
               />
+              {(() => {
+                const impact = actionPreview.kind === 'purchase'
+                  ? preview.purchase.productionImpact
+                  : preview.refund.productionImpact
+                if (impact === undefined) return null
+                return (
+                  <div className="skill-details__production-impact">
+                    {impact.purity && (
+                      <p>
+                        {intl.formatMessage(messages.purityProductionQuote, {
+                          pointsBefore: String(impact.pointsBefore),
+                          pointsAfter: String(impact.pointsAfter),
+                          cashBefore: formatPreciseNumber(locale, impact.purity.cashScienceBefore),
+                          cashAfter: formatPreciseNumber(locale, impact.purity.cashScienceAfter),
+                          botsBefore: formatPreciseNumber(locale, impact.purity.botsBefore),
+                          botsAfter: formatPreciseNumber(locale, impact.purity.botsAfter),
+                          everythingBefore: formatPreciseNumber(locale, impact.purity.everythingBefore),
+                          everythingAfter: formatPreciseNumber(locale, impact.purity.everythingAfter),
+                        })}
+                      </p>
+                    )}
+                    {impact.manualPurchase && (
+                      <>
+                        <p>
+                          {intl.formatMessage(
+                            actionPreview.kind === 'purchase'
+                              ? messages.supernovaSuppressionQuote
+                              : messages.supernovaRestorationQuote,
+                          )}
+                        </p>
+                        <ul>
+                          {impact.manualPurchase.map((entry) => (
+                            <li key={entry.facilityId}>
+                              {entry.facilityId}: ×{formatPreciseNumber(locale, entry.beforeMultiplier)} → ×{formatPreciseNumber(locale, entry.afterMultiplier)}
+                            </li>
+                          ))}
+                        </ul>
+                      </>
+                    )}
+                  </div>
+                )
+              })()}
               <Button
                 variant={
                   actionPreview.kind === 'purchase'
@@ -2062,6 +2122,13 @@ function PresetManagementDialog({
                   name: preset.name,
                 })}
               </p>
+              {(importPreview.lockedQueuedSkillCount ?? 0) > 0 && (
+                <p>
+                  {intl.formatMessage(messages.importLockedQueued, {
+                    count: importPreview.lockedQueuedSkillCount,
+                  })}
+                </p>
+              )}
               <Button
                 variant="primary"
                 state={

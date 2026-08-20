@@ -59,13 +59,11 @@ export function resolveDynamicFacilitySkillEffect(
       }
       return 1
     case 'oneMinutePlan':
-      return context.panelLifetimeSeconds > 60 ? 5 : 1.5
+      return context.panelLifetimeSeconds >= 60 ? 5 : 1.5
     case 'dysonSubsidies':
-      return context.starsSurrounded > 1 ? 2 : 1
+      return context.starsSurrounded >= 1 ? 2 : 1
     case 'purityOfBody':
-      return context.assignedSkillPoints > 0
-        ? 1.25 * context.assignedSkillPoints
-        : 1
+      return Math.pow(1.25, context.assignedSkillPoints)
     case 'clusterNetworking':
       return context.serversTotal > 1
         ? 1 + UNITY_FLOAT_005 * Math.log10(context.serversTotal)
@@ -81,11 +79,9 @@ export function resolveDynamicFacilitySkillEffect(
         ? 1 + 0.1 * Math.log10(context.serversTotal)
         : 1
     case 'galacticPradigmShift':
-      return context.galaxiesEngulfed > 1 ? 3 : 1.5
+      return context.galaxiesEngulfed >= 1 ? 3 : 1.5
     case 'purityOfSEssence':
-      return context.assignedSkillPoints > 0
-        ? 1.42 * context.assignedSkillPoints
-        : 1
+      return Math.pow(1.42, context.assignedSkillPoints)
     case 'superRadiantScattering':
       return (
         1 + 0.01 * context.superRadiantScatteringTimerSeconds

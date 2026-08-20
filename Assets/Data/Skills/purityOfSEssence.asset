@@ -16,8 +16,8 @@ MonoBehaviour:
   displayName: Purity of Essence
   description: You transcend beyond reality, consuming everything in your path you
     become one with the Universe.
-  technicalDescription: Gain a <color=#A3FFFE>42%</color> bonus to <color=#A3FFFE>Everything</color>
-    for each unspent <color=#A3FFFE>Skill Point</color>.
+  technicalDescription: Multiply <color=#A3FFFE>Everything</color> by <color=#A3FFFE>1.42x</color>
+    for each unspent <color=#A3FFFE>Skill Point</color>, compounding exponentially.
   cost: 3
   refundable: 1
   isFragment: 0

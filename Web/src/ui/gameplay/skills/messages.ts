@@ -346,6 +346,34 @@ export const skillMessages = defineMessages({
     defaultMessage: 'Replace {name}?',
     description: 'Confirmation heading before replacing a named skill preset.',
   },
+  purityProductionQuote: {
+    id: 'skills.purity-production-quote',
+    defaultMessage:
+      'Unspent points {pointsBefore} → {pointsAfter}. Combined Purity multipliers: Cash/Science ×{cashBefore} → ×{cashAfter}; Bots ×{botsBefore} → ×{botsAfter}; Everything ×{everythingBefore} → ×{everythingAfter}.',
+    description:
+      'Exact pre-confirmation quote for the compounding Purity skill point cliff.',
+  },
+  supernovaSuppressionQuote: {
+    id: 'skills.supernova-suppression-quote',
+    defaultMessage:
+      'Supernova suppresses the complete manual-purchase layer: Avocados, both 50/100 milestones, Production Scaling, and every Swarm rate.',
+    description:
+      'Exact warning before purchasing Supernova.',
+  },
+  supernovaRestorationQuote: {
+    id: 'skills.supernova-restoration-quote',
+    defaultMessage:
+      'Refunding Supernova restores the complete manual-purchase layer: Avocados, both 50/100 milestones, Production Scaling, and every Swarm rate.',
+    description:
+      'Exact warning before refunding Supernova.',
+  },
+  importLockedQueued: {
+    id: 'skills.import-locked-queued',
+    defaultMessage:
+      '{count, plural, one {# locked skill will remain queued until its line unlocks.} other {# locked skills will remain queued until their lines unlock.}}',
+    description:
+      'Preset import warning explaining that gated skills stay queued without spending points.',
+  },
   confirmImport: {
     id: 'skills.confirm-import',
     defaultMessage: 'Replace preset',

@@ -18,8 +18,8 @@ MonoBehaviour:
     improve your Solar Panels, I wonder what other parts of this universe you can
     find?
   technicalDescription: <color=#A3FFFE>+5s</color> of Panel Lifetime. Double this
-    bonus for every other purchased <color=#A3FFFE>Fragment Skill</color>. (<color=#A3FFFE>10s</color>
-    for <color=#A3FFFE>1</color>, <color=#91DD8F>40s</color> for <color=#91DD8F>3</color>)
+    bonus for every other purchased <color=#A3FFFE>Fragment Skill</color>. (<color=#A3FFFE>5s</color>
+    for <color=#A3FFFE>1</color>, <color=#91DD8F>20s</color> for <color=#91DD8F>3</color>)
   cost: 1
   refundable: 1
   isFragment: 1

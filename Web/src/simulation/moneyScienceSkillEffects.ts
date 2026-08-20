@@ -123,8 +123,13 @@ function resolveMoneyEffect(
       )
       if (!fragments.ok) return blocked(fragments.issue)
       const moneyBoost = research.value * coefficient.value
-      const factor = 1.02 + 1.01 * (fragments.value - 1)
-      return resolvedFinite(moneyBoost * (factor - 1), effectId)
+      const percentagePoints = regulatedAcademiaPercentagePoints(
+        fragments.value,
+      )
+      return resolvedFinite(
+        moneyBoost * percentagePoints / 100,
+        effectId,
+      )
     }
     case 'economicRevolution': {
       const allocation = readAllocationInputs(state, effectId)
@@ -150,8 +155,8 @@ function resolveMoneyEffect(
       if (!allocation.ok) return blocked(allocation.issue)
       return resolvedFinite(
         allocation.value.botMultitasking
-          ? 100
-          : (1 - allocation.value.botDistribution) * 100,
+          ? 101
+          : 1 + (1 - allocation.value.botDistribution) * 100,
         effectId,
       )
     }
@@ -194,7 +199,7 @@ function resolveMoneyEffect(
     case 'tasteOfPower':
       return resolveTasteOfPower(state, effectId)
     case 'stellarObliteration':
-      return resolveStellarObliteration(derived, effectId)
+      return resolveStellarObliteration(state, derived, effectId)
     case 'stellarDominance':
       return resolveStellarDominance(state, derived, effectId)
     case 'purityOfSEssence':
@@ -246,16 +251,21 @@ function resolveScienceEffect(
       )
       if (!fragments.ok) return blocked(fragments.issue)
       const scienceBoost = research.value * coefficient.value
-      const factor = 1.02 + 1.01 * (fragments.value - 1)
-      return resolvedFinite(scienceBoost * (factor - 1), effectId)
+      const percentagePoints = regulatedAcademiaPercentagePoints(
+        fragments.value,
+      )
+      return resolvedFinite(
+        scienceBoost * percentagePoints / 100,
+        effectId,
+      )
     }
     case 'producedAsScienceTree': {
       const allocation = readAllocationInputs(state, effectId)
       if (!allocation.ok) return blocked(allocation.issue)
       return resolvedFinite(
         allocation.value.botMultitasking
-          ? 100
-          : allocation.value.botDistribution * 100,
+          ? 101
+          : 1 + allocation.value.botDistribution * 100,
         effectId,
       )
     }
@@ -284,7 +294,7 @@ function resolveScienceEffect(
     case 'tasteOfPower':
       return resolveTasteOfPower(state, effectId)
     case 'stellarObliteration':
-      return resolveStellarObliteration(derived, effectId)
+      return resolveStellarObliteration(state, derived, effectId)
     case 'purityOfSEssence':
       return resolveSkillPointMultiplier(state, effectId, 1.42)
     case 'superRadiantScattering':
@@ -323,6 +333,10 @@ const SCIENCE_SKILL_IDS: ReadonlySet<string> = new Set([
   'superRadiantScattering',
 ])
 
+function regulatedAcademiaPercentagePoints(fragments: number): number {
+  return 20 + 10 * Math.max(0, fragments - 1)
+}
+
 function resolveSkillPointMultiplier(
   state: MoneyScienceCanonicalInputs,
   effectId: string,
@@ -334,10 +348,7 @@ function resolveSkillPointMultiplier(
     effectId,
   )
   if (!points.ok) return blocked(points.issue)
-  return resolvedFinite(
-    points.value > 0 ? coefficient * points.value : 1,
-    effectId,
-  )
+  return resolvedFinite(Math.pow(coefficient, points.value), effectId)
 }
 
 function resolveTasteOfPower(
@@ -353,14 +364,20 @@ function resolveTasteOfPower(
 }
 
 function resolveStellarObliteration(
+  state: MoneyScienceCanonicalInputs,
   derived: MoneyScienceDerivedInputs,
   effectId: string,
 ): MoneyScienceSkillEffectResolution {
   const production = readPanelDerivedInputs(derived, effectId)
   if (!production.ok) return blocked(production.issue)
-  if (galaxiesEngulfed(production.value, true) < 1) return resolved(1)
-  const raw = galaxiesEngulfed(production.value, false)
-  return resolvedFinite(raw > 0 ? 1 / raw : 1, effectId)
+  const supernova = readSkillOwned(state, 'supernova', effectId)
+  if (!supernova.ok) return blocked(supernova.issue)
+  const stellarGalaxies = galaxiesEngulfed(production.value, false) *
+    1_000 * (supernova.value ? 1_000 : 1)
+  return resolvedFinite(
+    stellarGalaxies >= 1 ? 1 / stellarGalaxies : 1,
+    effectId,
+  )
 }
 
 function resolveStellarDominance(
@@ -403,7 +420,7 @@ function resolveStellarDominance(
       detail: `Effect '${effectId}' produced a non-finite stellar requirement.`,
     })
   }
-  return resolved(bots.value > required ? 0.01 : 1)
+  return resolved(bots.value >= required ? 0.01 : 1)
 }
 
 function resolveScattering(

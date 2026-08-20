@@ -44,6 +44,9 @@ export interface DysonAutomationState {
   roundedBulkBuy: boolean
   retainedFacilities: Record<BasicDysonFacilityId, boolean>
   assemblyMegaLinesOwned: boolean
+  planetModifier?: number
+  terraNovaOwned?: boolean
+  terraGloriaeOwned?: boolean
 }
 
 export type DysonAutomationSkipStatus =
@@ -188,6 +191,13 @@ export function previewDysonFacilityPurchase<
     typeof state.roundedBulkBuy !== 'boolean' ||
     !isBuyMode(state.buyMode) ||
     typeof state.assemblyMegaLinesOwned !== 'boolean' ||
+    (state.terraNovaOwned !== undefined &&
+      typeof state.terraNovaOwned !== 'boolean') ||
+    (state.terraGloriaeOwned !== undefined &&
+      typeof state.terraGloriaeOwned !== 'boolean') ||
+    (state.planetModifier !== undefined &&
+      (!Number.isFinite(state.planetModifier) ||
+        state.planetModifier <= 0)) ||
     !hasValidFacilityPairs(state.facilities) ||
     !hasValidRetainedFacilityFlags(state.retainedFacilities)
   ) {
@@ -406,18 +416,34 @@ function effectiveFacilityBaseCost(
   facilityId: CanonicalFacilityId,
   authoredBaseCost: number,
 ): number | null {
+  let effective = authoredBaseCost
   if (
-    facilityId !== 'assembly_lines' ||
-    !state.assemblyMegaLinesOwned
+    facilityId === 'planets' &&
+    (state.terraNovaOwned || state.terraGloriaeOwned)
   ) {
-    return authoredBaseCost
+    const planets = state.facilities.planets
+    if (!isValidOwnedPair(planets)) return null
+    const totalPlanets = addContinuous(planets[0], planets[1])
+    if (totalPlanets <= 0) return effective
+    if (state.terraNovaOwned) {
+      effective = divideContinuous(effective, state.planetModifier ?? 1)
+      if (effective <= 0) return null
+    }
+    if (state.terraGloriaeOwned) {
+      effective = divideContinuous(effective, totalPlanets)
+      if (effective <= 0) return null
+    }
+    return effective
+  }
+  if (facilityId !== 'assembly_lines' || !state.assemblyMegaLinesOwned) {
+    return effective
   }
 
   const planets = state.facilities.planets
   if (!isValidOwnedPair(planets)) return null
   const totalPlanets = addContinuous(planets[0], planets[1])
-  if (totalPlanets <= 0) return authoredBaseCost
-  const discounted = divideContinuous(authoredBaseCost, totalPlanets)
+  if (totalPlanets <= 0) return effective
+  const discounted = divideContinuous(effective, totalPlanets)
   return discounted > 0 ? discounted : null
 }
 
@@ -558,5 +584,8 @@ function cloneState(
     roundedBulkBuy: state.roundedBulkBuy,
     retainedFacilities: { ...state.retainedFacilities },
     assemblyMegaLinesOwned: state.assemblyMegaLinesOwned,
+    planetModifier: state.planetModifier,
+    terraNovaOwned: state.terraNovaOwned,
+    terraGloriaeOwned: state.terraGloriaeOwned,
   }
 }

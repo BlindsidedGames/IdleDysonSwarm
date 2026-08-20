@@ -17,8 +17,8 @@ MonoBehaviour:
   description: You find a fragment of another universe. You use this knowledge to
     improve your entire production line, I wonder what other parts of this universe
     you can find?
-  technicalDescription: Reduce the starting point of the <color=#A3FFFE>1%</color>
-    bonus per bought building to <color=#A3FFFE>90</color>. Reduce it by another
+  technicalDescription: Start the <color=#A3FFFE>1%</color> bonus with the first
+    bought building after <color=#A3FFFE>90</color>. Reduce that threshold by another
     <color=#A3FFFE>5</color> for every other purchased <color=#A3FFFE>Fragment Skill</color>.
   cost: 1
   refundable: 1

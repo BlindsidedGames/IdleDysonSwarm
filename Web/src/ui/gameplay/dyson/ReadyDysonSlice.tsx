@@ -1961,6 +1961,7 @@ function createSkillPresetActions(
         colorId:
           preview.payload.colorId ??
           defaultSkillPresetColorId(slot),
+        lockedQueuedSkillCount: preview.blockedSkillIds?.length ?? 0,
       }
     },
     importPreset: async (slot, serialized) => {

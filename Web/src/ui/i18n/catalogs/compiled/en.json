@@ -6509,6 +6509,38 @@
       "value": ")"
     }
   ],
+  "skills.import-locked-queued": [
+    {
+      "type": 6,
+      "value": "count",
+      "options": {
+        "one": {
+          "value": [
+            {
+              "type": 7
+            },
+            {
+              "type": 0,
+              "value": " locked skill will remain queued until its line unlocks."
+            }
+          ]
+        },
+        "other": {
+          "value": [
+            {
+              "type": 7
+            },
+            {
+              "type": 0,
+              "value": " locked skills will remain queued until their lines unlock."
+            }
+          ]
+        }
+      },
+      "offset": 0,
+      "pluralType": "cardinal"
+    }
+  ],
   "skills.import-placeholder": [
     {
       "type": 0,
@@ -6817,6 +6849,76 @@
       "value": " Skill Points"
     }
   ],
+  "skills.purity-production-quote": [
+    {
+      "type": 0,
+      "value": "Unspent points "
+    },
+    {
+      "type": 1,
+      "value": "pointsBefore"
+    },
+    {
+      "type": 0,
+      "value": " → "
+    },
+    {
+      "type": 1,
+      "value": "pointsAfter"
+    },
+    {
+      "type": 0,
+      "value": ". Combined Purity multipliers: Cash/Science ×"
+    },
+    {
+      "type": 1,
+      "value": "cashBefore"
+    },
+    {
+      "type": 0,
+      "value": " → ×"
+    },
+    {
+      "type": 1,
+      "value": "cashAfter"
+    },
+    {
+      "type": 0,
+      "value": "; Bots ×"
+    },
+    {
+      "type": 1,
+      "value": "botsBefore"
+    },
+    {
+      "type": 0,
+      "value": " → ×"
+    },
+    {
+      "type": 1,
+      "value": "botsAfter"
+    },
+    {
+      "type": 0,
+      "value": "; Everything ×"
+    },
+    {
+      "type": 1,
+      "value": "everythingBefore"
+    },
+    {
+      "type": 0,
+      "value": " → ×"
+    },
+    {
+      "type": 1,
+      "value": "everythingAfter"
+    },
+    {
+      "type": 0,
+      "value": "."
+    }
+  ],
   "skills.queued": [
     {
       "type": 0,
@@ -6939,6 +7041,18 @@
     {
       "type": 0,
       "value": "Skill presets and reset"
+    }
+  ],
+  "skills.supernova-restoration-quote": [
+    {
+      "type": 0,
+      "value": "Refunding Supernova restores the complete manual-purchase layer: Avocados, both 50/100 milestones, Production Scaling, and every Swarm rate."
+    }
+  ],
+  "skills.supernova-suppression-quote": [
+    {
+      "type": 0,
+      "value": "Supernova suppresses the complete manual-purchase layer: Avocados, both 50/100 milestones, Production Scaling, and every Swarm rate."
     }
   ],
   "skills.tree": [

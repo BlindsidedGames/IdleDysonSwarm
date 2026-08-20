@@ -246,6 +246,100 @@ describe('StoredTimeSimulation', () => {
       },
     })
   }, 30_000)
+
+  test('keeps changed interval handling deterministic and bounded for one representative day', () => {
+    const createSource = () => {
+      const source = runtimeWithStoredTime(86_400)
+      const owned = new Set([
+        'androids',
+        'pocketAndroids',
+        'superRadiantScattering',
+        'stellarSacrifices',
+      ])
+      return {
+        ...source,
+        gameState: {
+          ...source.gameState,
+          dyson: {
+            ...source.gameState.dyson,
+            money: 0,
+            science: 0,
+            bots: 0,
+            workers: 0,
+            researchers: 0,
+            totalPanelsDecayed: 0,
+            facilities: Object.fromEntries(
+              Object.keys(source.gameState.dyson.facilities).map((id) => [
+                id,
+                [0, 0],
+              ]),
+            ) as CanonicalRuntimeState['gameState']['dyson']['facilities'],
+            automation: {
+              ...source.gameState.dyson.automation,
+              enabledFacilities: Object.fromEntries(
+                Object.keys(
+                  source.gameState.dyson.automation.enabledFacilities,
+                ).map((id) => [id, false]),
+              ) as CanonicalRuntimeState['gameState']['dyson']['automation']['enabledFacilities'],
+            },
+          },
+          skills: {
+            ...source.gameState.skills,
+            byId: Object.fromEntries(
+              Object.entries(source.gameState.skills.byId).map(
+                ([id, skill]) => [
+                  id,
+                  {
+                    ...skill,
+                    owned: owned.has(id),
+                    timerSeconds: 0,
+                  },
+                ],
+              ),
+            ),
+          },
+        },
+      } satisfies CanonicalRuntimeState
+    }
+    const run = () => {
+      const simulation = new StoredTimeSimulation({
+        jobId: 'representative-skills',
+        state: createSource(),
+        requestedSeconds: 86_400,
+        infinityMinimumCycleSeconds: 1 / 60,
+        eventContext: context(0.1),
+      })
+      let terminal = simulation.step(5, false)
+      let turns = 1
+      while (terminal === null && turns < 10_000) {
+        terminal = simulation.step(5, false)
+        turns += 1
+      }
+      if (terminal?.type !== 'completed') {
+        throw new Error(
+          `Stored Time ended after ${turns} turns: ${JSON.stringify(terminal)}`,
+        )
+      }
+      expect(terminal.type).toBe('completed')
+      expect(turns).toBeLessThanOrEqual(4_097)
+      expect(simulation.diagnostics()).toMatchObject({
+        executionKind: 'representative-groups',
+        representativeGroupsPlanned: 4_096,
+        representativeGroupsCompleted: 4_096,
+      })
+      return terminal.candidate
+    }
+
+    const first = run()
+    const second = run()
+    expect(first).toEqual(second)
+    expect(first.gameState.skills.byId.androids?.timerSeconds).toBe(600)
+    expect(first.gameState.skills.byId.pocketAndroids?.timerSeconds)
+      .toBe(3_600)
+    expect(
+      first.gameState.skills.byId.superRadiantScattering?.timerSeconds,
+    ).toBe(86_400)
+  }, 30_000)
 })
 
 function context(

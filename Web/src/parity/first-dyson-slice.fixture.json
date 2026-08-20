@@ -4,7 +4,7 @@
     "sourcePath": "test/fixtures/schema-08-canonical-idb1-main-save.txt",
     "sourceSha256": "10e2e48cd989618918118e16d0900af7d80f0f5dfb1aad475423ac165ab00c78",
     "preparedStateSha256": "795f33b2b95132b69c18b6eeec061ad06f19ccba9729df71a9e35dfc82cdb02d",
-    "catalogSha256": "a7cd177e845f8af443535e29bf3f0e61f67dcd0ec01068604422ddc31fb8e0a1"
+    "catalogSha256": "0f7e96636565c8d2d268eaa417335b9eb049939ddd2463408540b0af64ecf665"
   },
   "initial": {
     "phase": "ready",
@@ -298,7 +298,7 @@
       "durableRevision": 0
     },
     "resources": {
-      "money": 131056.66691933374,
+      "money": 131057.31371932407,
       "science": 0,
       "bots": 1,
       "workers": 1,

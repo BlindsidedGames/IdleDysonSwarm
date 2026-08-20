@@ -358,6 +358,10 @@ export type CanonicalRuntimeEvaluationPortResult =
   | {
       readonly accepted: true
       readonly snapshot: Readonly<DysonSkillEffectEvaluationSnapshot>
+      readonly facilityModifiers?: Readonly<
+        Record<CanonicalFacilityId, number>
+      >
+      readonly planetPricingModifier?: number
     }
   | {
       readonly accepted: false
@@ -759,9 +763,18 @@ export function routeCanonicalGameCommand(
     }
 
     case 'dyson.purchase-basic-facility': {
+      const pricing = options.runtimeEvaluation?.evaluate(
+        state,
+        carriers.skillEffectEvaluationSnapshot,
+      )
       const result = tryPurchaseCanonicalBasicFacility(
         state,
         command.facilityId,
+        pricing?.accepted === true
+          ? pricing.planetPricingModifier ??
+            pricing.facilityModifiers?.planets ??
+            1
+          : 1,
       )
       if (!result.attempt.purchased) {
         return rejectDomain(
@@ -807,9 +820,18 @@ export function routeCanonicalGameCommand(
     }
 
     case 'dyson.run-automation': {
+      const pricing = options.runtimeEvaluation?.evaluate(
+        state,
+        carriers.skillEffectEvaluationSnapshot,
+      )
       const result = runCanonicalDysonAutomation(
         state,
         command.policy,
+        pricing?.accepted === true
+          ? pricing.planetPricingModifier ??
+            pricing.facilityModifiers?.planets ??
+            1
+          : 1,
       )
       return finalizeAccepted(
         state,
@@ -1416,7 +1438,7 @@ export function routeCanonicalGameCommand(
     }
 
     case 'skill.import-preset': {
-      const parsed = parseCanonicalSkillPreset(command.serialized)
+      const parsed = parseCanonicalSkillPreset(command.serialized, state)
       if (!parsed.accepted) {
         return rejectDomain(
           state,

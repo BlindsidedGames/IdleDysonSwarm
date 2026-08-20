@@ -7,7 +7,11 @@ import type {
   SkillRuntimeState,
 } from '../game-state/types'
 import { prepareIdb1Save } from '../save/prepare'
-import { deriveBasicDysonState } from './canonicalDysonDerivation'
+import {
+  deriveBasicDysonState,
+  deriveManualPurchaseProductionLayer,
+} from './canonicalDysonDerivation'
+import { previewCanonicalBasicFacilityPurchase } from './canonicalDysonCommands'
 
 const fixtureText = readFileSync(
   new URL(
@@ -730,7 +734,231 @@ describe('canonical Basic Dyson derivation', () => {
     const belowResult = requireDerived(below)
     const thresholdResult = requireDerived(atThreshold)
     expect(thresholdResult.rates.bots).toBe(
-      belowResult.rates.bots * (69 / 5) * 2,
+      belowResult.rates.bots * (69 / 5) * 4,
     )
+  })
+
+  test('restores exact manual-purchase milestones and scaling boundaries', () => {
+    const normalized = (
+      manual: number,
+      skills: readonly string[] = [],
+      fragments = 0n,
+    ) => {
+      const source = characterizedState(skills)
+      const result = requireDerived({
+        ...source,
+        dyson: {
+          ...source.dyson,
+          facilities: {
+            ...source.dyson.facilities,
+            assembly_lines: [0, manual],
+          },
+        },
+        skills: { ...source.skills, fragments },
+      })
+      return result.rates.bots / manual
+    }
+
+    expect(normalized(50) / normalized(49)).toBeCloseTo(2, 12)
+    expect(normalized(51) / normalized(49)).toBeCloseTo(2, 12)
+    expect(normalized(100) / normalized(99)).toBeCloseTo(2, 12)
+    expect(normalized(101) / normalized(100)).toBeCloseTo(1.01, 12)
+
+    const threshold90 = normalized(90, ['productionScaling'], 1n)
+    expect(normalized(91, ['productionScaling'], 1n) / threshold90)
+      .toBeCloseTo(1.01, 12)
+    const threshold85 = normalized(85, ['productionScaling'], 2n)
+    expect(normalized(86, ['productionScaling'], 2n) / threshold85)
+      .toBeCloseTo(1.01, 12)
+  })
+
+  test('uses exact Swarm rates and lets Supernova suppress the whole layer', () => {
+    const normalized = (skills: readonly string[]) => {
+      const source = characterizedState(skills)
+      const result = requireDerived({
+        ...source,
+        dyson: {
+          ...source.dyson,
+          facilities: {
+            ...source.dyson.facilities,
+            assembly_lines: [0, 101],
+          },
+        },
+        skills: { ...source.skills, fragments: 1n },
+      })
+      return result.rates.bots / 101
+    }
+    const baseBeforeScaling = normalized([]) / 1.01
+    expect(normalized(['superSwarm']) / baseBeforeScaling)
+      .toBeCloseTo(1.02, 12)
+    expect(normalized(['megaSwarm']) / baseBeforeScaling)
+      .toBeCloseTo(1.03, 12)
+    expect(normalized(['ultimateSwarm']) / baseBeforeScaling)
+      .toBeCloseTo(1.05, 12)
+
+    const full = normalized([
+      'avocados',
+      'productionScaling',
+      'ultimateSwarm',
+    ])
+    const suppressed = normalized([
+      'avocados',
+      'productionScaling',
+      'ultimateSwarm',
+      'supernova',
+    ])
+    expect(full / suppressed).toBeCloseTo(2 * 2 * 2 * 1.55, 12)
+  })
+
+  test('applies Terra substitutions and twelve-times bought-Planet counts', () => {
+    const normalizedDataCenterRate = (
+      skills: readonly string[],
+      manualPlanets: number,
+    ) => {
+      const source = characterizedState(skills)
+      const result = requireDerived({
+        ...source,
+        dyson: {
+          ...source.dyson,
+          facilities: {
+            ...source.dyson.facilities,
+            data_centers: [1, 0],
+            planets: [0, manualPlanets],
+          },
+        },
+      })
+      return result.rates.servers
+    }
+    const neutral = normalizedDataCenterRate([], 50)
+    expect(normalizedDataCenterRate(['terraFirma'], 50) / neutral)
+      .toBeCloseTo(2, 12)
+    expect(
+      normalizedDataCenterRate(['terraFirma', 'terraIrradiant'], 5) /
+        normalizedDataCenterRate([], 5),
+    ).toBeCloseTo(2, 12)
+  })
+
+  test('keeps Avocados eligibility on each facility raw manual count', () => {
+    const layer = (
+      facilityId: 'assembly_lines' | 'data_centers' | 'planets',
+      skills: readonly string[],
+      manual: Partial<Record<
+        'assembly_lines' | 'data_centers' | 'planets',
+        number
+      >>,
+    ) => {
+      const source = characterizedState(skills)
+      return deriveManualPurchaseProductionLayer({
+        ...source,
+        dyson: {
+          ...source.dyson,
+          facilities: {
+            ...source.dyson.facilities,
+            assembly_lines: [0, manual.assembly_lines ?? 0],
+            data_centers: [0, manual.data_centers ?? 0],
+            planets: [0, manual.planets ?? 0],
+          },
+        },
+      }, facilityId)
+    }
+
+    const crossFacility = layer(
+      'assembly_lines',
+      ['avocados', 'terraNullius'],
+      { assembly_lines: 0, planets: 69 },
+    )
+    expect(crossFacility.effectiveManualCount).toBe(69)
+    expect(crossFacility.avocadosMultiplier).toBe(1)
+    expect(crossFacility.milestone50Multiplier).toBe(2)
+
+    const substitutedSameFacility = layer(
+      'data_centers',
+      ['avocados', 'terraFirma'],
+      { data_centers: 68, planets: 1 },
+    )
+    expect(substitutedSameFacility.effectiveManualCount).toBe(69)
+    expect(substitutedSameFacility.avocadosMultiplier).toBe(1)
+
+    const irradiantPlanets = layer(
+      'planets',
+      ['avocados', 'terraIrradiant'],
+      { planets: 6 },
+    )
+    expect(irradiantPlanets.effectiveManualCount).toBe(72)
+    expect(irradiantPlanets.avocadosMultiplier).toBe(1)
+
+    const legitimate = layer(
+      'data_centers',
+      ['avocados', 'terraFirma'],
+      { data_centers: 69, planets: 1 },
+    )
+    expect(legitimate.rawManualCount).toBe(69)
+    expect(legitimate.avocadosMultiplier).toBe(2)
+    expect(
+      layer(
+        'data_centers',
+        ['avocados', 'terraFirma', 'supernova'],
+        { data_centers: 69, planets: 1 },
+      ).avocadosMultiplier,
+    ).toBe(1)
+  })
+
+  test('publishes the historical Terra Nova Planet Boost without Avocados', () => {
+    const derive = (manualPlanets: number, skills: readonly string[]) => {
+      const source = characterizedState(skills)
+      const state: CanonicalGameStateV1 = {
+        ...source,
+        dyson: {
+          ...source.dyson,
+          facilities: {
+            ...source.dyson.facilities,
+            planets: [1, manualPlanets],
+          },
+        },
+      }
+      return {
+        state,
+        derived: requireDerived(state),
+        manual: deriveManualPurchaseProductionLayer(state, 'planets'),
+      }
+    }
+
+    expect(derive(49, ['terraNova']).derived.planetPricingModifier)
+      .toBe(1)
+    expect(derive(50, ['terraNova']).derived.planetPricingModifier)
+      .toBe(2)
+    expect(derive(100, ['terraNova']).derived.planetPricingModifier)
+      .toBe(4)
+    expect(derive(101, ['terraNova']).derived.planetPricingModifier)
+      .toBeCloseTo(4.04, 12)
+
+    const avocado = derive(69, ['terraNova', 'avocados'])
+    expect(avocado.manual.totalMultiplier).toBe(4)
+    expect(avocado.derived.planetPricingModifier).toBe(2)
+    expect(
+      derive(101, ['terraNova', 'supernova']).derived
+        .planetPricingModifier,
+    ).toBe(1)
+
+    for (const [manualPlanets, expectedRatio] of [
+      [50, 2],
+      [100, 4],
+      [101, 4.04],
+    ] as const) {
+      const ordinary = derive(manualPlanets, [])
+      const terra = derive(manualPlanets, ['terraNova'])
+      const ordinaryQuote = previewCanonicalBasicFacilityPurchase(
+        ordinary.state,
+        'planets',
+        ordinary.derived.planetPricingModifier,
+      )
+      const terraQuote = previewCanonicalBasicFacilityPurchase(
+        terra.state,
+        'planets',
+        terra.derived.planetPricingModifier,
+      )
+      expect(ordinaryQuote.cost / terraQuote.cost)
+        .toBeCloseTo(expectedRatio, 12)
+    }
   })
 })

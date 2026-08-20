@@ -420,4 +420,102 @@ describe('canonical skill transactions', () => {
     expect(reset.state.skills.points).toBe(1n)
     expect(reset.state.skills.activeAutoAssignment).toEqual([])
   })
+
+  test('quotes the accepted 34 to 33 Purity cliff before spending a point', () => {
+    const state = stateWithSkills(
+      ['purityOfMind', 'purityOfBody', 'purityOfSEssence'],
+      34n,
+    )
+    const preview = previewCanonicalSkillCatalog(state).skills.find(
+      ({ skillId }) => skillId === 'fragmentAssembly',
+    )
+    const impact = preview?.purchase.productionImpact
+    expect(impact).toMatchObject({ pointsBefore: 34n, pointsAfter: 33n })
+    expect(impact?.purity?.cashScienceBefore).toBeCloseTo(
+      Math.pow(1.5, 34) * Math.pow(1.42, 34),
+      10,
+    )
+    expect(impact?.purity?.cashScienceAfter).toBeCloseTo(
+      Math.pow(1.5, 33) * Math.pow(1.42, 33),
+      10,
+    )
+    expect(impact?.purity?.botsBefore).toBeCloseTo(
+      Math.pow(1.25, 34) * Math.pow(1.42, 34),
+      10,
+    )
+  })
+
+  test('quotes exact Supernova suppression by facility', () => {
+    const source = stateWithSkills(
+      ['stellarSacrifices', 'stellarObliteration', 'avocados', 'ultimateSwarm'],
+      10n,
+    )
+    const state = {
+      ...source,
+      dyson: {
+        ...source.dyson,
+        facilities: Object.fromEntries(
+          Object.entries(source.dyson.facilities).map(([id, pair]) => [
+            id,
+            id === 'assembly_lines' ||
+            id === 'ai_managers' ||
+            id === 'servers' ||
+            id === 'data_centers' ||
+            id === 'planets'
+              ? [pair[0], 101]
+              : pair,
+          ]),
+        ),
+      },
+    } as CanonicalGameStateV1
+    const preview = previewCanonicalSkillCatalog(state).skills.find(
+      ({ skillId }) => skillId === 'supernova',
+    )
+    expect(preview?.purchase.productionImpact?.manualPurchase)
+      .toHaveLength(5)
+    expect(
+      preview?.purchase.productionImpact?.manualPurchase?.every(
+        ({ beforeMultiplier, afterMultiplier }) =>
+          beforeMultiplier > 1 && afterMultiplier === 1,
+      ),
+    ).toBe(true)
+
+    const ownedSource = stateWithSkills(
+      [
+        'stellarSacrifices',
+        'stellarObliteration',
+        'supernova',
+        'avocados',
+        'ultimateSwarm',
+      ],
+      6n,
+    )
+    const owned = {
+      ...ownedSource,
+      dyson: state.dyson,
+    } as CanonicalGameStateV1
+    const direct = previewCanonicalSkillCatalog(owned).skills.find(
+      ({ skillId }) => skillId === 'supernova',
+    )
+    expect(
+      direct?.refund.productionImpact?.manualPurchase?.every(
+        ({ beforeMultiplier, afterMultiplier }) =>
+          beforeMultiplier === 1 && afterMultiplier > 1,
+      ),
+    ).toBe(true)
+
+    const cascade = previewCanonicalSkillCatalog(owned).skills.find(
+      ({ skillId }) => skillId === 'stellarObliteration',
+    )
+    expect(cascade?.refund.affectedSkillIds).toEqual([
+      'supernova',
+      'stellarObliteration',
+    ])
+    expect(
+      cascade?.refund.productionImpact?.manualPurchase?.every(
+        ({ beforeMultiplier, afterMultiplier }) =>
+          beforeMultiplier === 1 && afterMultiplier > 1,
+      ),
+    ).toBe(true)
+  })
 })

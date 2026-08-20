@@ -15,7 +15,7 @@ MonoBehaviour:
   id: effect.citadelCouncil.panel_lifetime
   displayName: Citadel Council
   targetStatId: Global.PanelLifetime
-  operation: 0
+  operation: 1
   value: 0
   perLevel: 0
   order: 17

@@ -25,11 +25,14 @@ import {
   createBasicDysonInfinityState,
   infinityPointsForBots,
   ordinaryInfinityBotThreshold,
-  timeToNextInfinityEvent,
 } from './infinityCycle'
 import {
   applyDysonProductionArrivals,
 } from './dysonProductionArrivals'
+import {
+  applyCanonicalSkillIntervalEffects,
+  timeToNextInfinityEventAfterStellarSettlement,
+} from './canonicalSkillIntervalEffects'
 import {
   applyCanonicalDreamReset,
   canApplyCanonicalAutomaticDreamReset,
@@ -386,9 +389,11 @@ export class CanonicalEventTimeModel
         tinker: synchronizedTinker.runtime,
       }
     }
-    const infinityHorizon = timeToNextInfinityEvent(
+    const infinityHorizon = timeToNextInfinityEventAfterStellarSettlement(
       this.carrier.gameState.dyson.bots,
       derived.productionArrivalRates.bots,
+      derived.auxiliary.stellarSacrifice.botsPerSecond,
+      derived.auxiliary.stellarSacrifice.planetsPerSecond,
       createInfinityCycleState(this.carrier),
       Number.MAX_VALUE,
       infinityMinimumCycleSeconds,
@@ -461,6 +466,23 @@ export class CanonicalEventTimeModel
         startingState,
         derived.value.productionArrivalRates,
         seconds,
+      )
+      candidate = applyCanonicalSkillIntervalEffects(
+        startingState,
+        candidate,
+        {
+          seconds,
+          botProductionPerSecond:
+            derived.value.productionArrivalRates.bots,
+          stellarPlanetsPerSecond:
+            derived.value.auxiliary.stellarSacrifice.planetsPerSecond,
+          stellarBotsPerSecond:
+            derived.value.auxiliary.stellarSacrifice.botsPerSecond,
+          scienceBoostPerSecond:
+            derived.value.auxiliary.scienceBoostPerSecond,
+          moneyUpgradePerSecond:
+            derived.value.auxiliary.moneyUpgradePerSecond,
+        },
       )
       const tinker = this.context.mode === 'active'
         ? advanceCanonicalTinker(
@@ -577,9 +599,15 @@ export class CanonicalEventTimeModel
   ): void {
     if (this.currentIssue !== undefined) return
     try {
+      const pricing = this.deriveForNextState(
+        this.carrier.gameState,
+        'automation.dysonPricing',
+      )
+      if (pricing === undefined) return
       let candidate = runCanonicalDysonAutomation(
         this.carrier.gameState,
         policy,
+        pricing.planetPricingModifier,
       ).state
       candidate = runResearchAutomationTick(
         candidate,
@@ -1074,9 +1102,11 @@ export class CanonicalEventTimeModel
       'eventTime.infinityBoundary',
     )
     if (derived === undefined) return false
-    const horizon = timeToNextInfinityEvent(
+    const horizon = timeToNextInfinityEventAfterStellarSettlement(
       this.carrier.gameState.dyson.bots,
       derived.productionArrivalRates.bots,
+      derived.auxiliary.stellarSacrifice.botsPerSecond,
+      derived.auxiliary.stellarSacrifice.planetsPerSecond,
       createInfinityCycleState(this.carrier),
       Number.MAX_VALUE,
       minimumCycleSeconds,

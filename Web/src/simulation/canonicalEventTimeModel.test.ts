@@ -568,6 +568,261 @@ describe('canonical whole-game event-time model', () => {
     expect(next.facilities.data_centers[0]).toBeGreaterThan(0)
   })
 
+  test('recalculates timer production and Shoulders rates at representative boundaries', () => {
+    const source = baseState()
+    const gameState: CanonicalGameStateV1 = {
+      ...source,
+      dyson: {
+        ...source.dyson,
+        workers: 100,
+        researchers: 100,
+        facilities: {
+          ...source.dyson.facilities,
+          servers: [0, 1],
+        },
+      },
+      research: {
+        ...source.research,
+        levelsById: {
+          ...source.research.levelsById,
+          'research.science_boost': 2,
+        },
+      },
+      skills: {
+        ...source.skills,
+        byId: {
+          ...source.skills.byId,
+          androids: { ...source.skills.byId.androids!, owned: true },
+          pocketAndroids: {
+            ...source.skills.byId.pocketAndroids!,
+            owned: true,
+          },
+          superRadiantScattering: {
+            ...source.skills.byId.superRadiantScattering!,
+            owned: true,
+          },
+          scientificPlanets: {
+            ...source.skills.byId.scientificPlanets!,
+            owned: true,
+          },
+          shouldersOfGiants: {
+            ...source.skills.byId.shouldersOfGiants!,
+            owned: true,
+          },
+          shouldersOfTheFallen: {
+            ...source.skills.byId.shouldersOfTheFallen!,
+            owned: true,
+          },
+        },
+      },
+      timeline: {
+        ...source.timeline,
+        automationTimeUntilNextEvent: 10,
+      },
+    }
+    const representativeContext: CanonicalEventTimeContext = {
+      ...context(REALITY_UPGRADE_DEFINITIONS, 10),
+      mode: 'stored-time',
+      automationActionIntervalSeconds: 0.1,
+    }
+    const advanceGroup = (state: CanonicalEventTimeState) =>
+      advanceEventTime({
+        startingState: new CanonicalEventTimeModel(
+          state,
+          representativeContext,
+        ),
+        durationSeconds: 10,
+        automationIntervalSeconds: 10,
+        automationTimeUntilNextEvent: 10,
+        infinityMinimumCycleSeconds: 100,
+        processingBudgetMilliseconds: 0,
+      })
+    const run = () => {
+      const first = advanceGroup(carrier(gameState))
+      const firstState = first.candidateState.state
+      const second = advanceGroup(firstState)
+      return { firstState, secondState: second.candidateState.state }
+    }
+
+    const firstRun = run()
+    const repeat = run()
+    const firstGame = firstRun.firstState.gameState
+    const secondGame = firstRun.secondState.gameState
+    const firstManagers = firstGame.dyson.facilities.ai_managers[0]
+    const secondManagers = secondGame.dyson.facilities.ai_managers[0]
+    const firstScienceLevel =
+      firstGame.research.levelsById['research.science_boost'] ?? 0
+    const secondScienceLevel =
+      secondGame.research.levelsById['research.science_boost'] ?? 0
+
+    expect(firstGame.skills.byId.androids?.timerSeconds).toBe(10)
+    expect(firstGame.skills.byId.pocketAndroids?.timerSeconds).toBe(10)
+    expect(firstGame.skills.byId.superRadiantScattering?.timerSeconds)
+      .toBe(10)
+    expect(secondGame.skills.byId.superRadiantScattering?.timerSeconds)
+      .toBe(20)
+    expect(secondManagers - firstManagers).toBeGreaterThan(firstManagers)
+    expect(secondScienceLevel - firstScienceLevel)
+      .toBeGreaterThan(firstScienceLevel - 2)
+    expect(firstRun.secondState).toEqual(repeat.secondState)
+  })
+
+  test('does not refresh Stellar funding at a prevented Infinity horizon inside a representative interval', () => {
+    const source = baseState()
+    const gameState: CanonicalGameStateV1 = {
+      ...source,
+      dyson: {
+        ...source.dyson,
+        bots: 1,
+        botDistribution: 0,
+        facilities: {
+          ...source.dyson.facilities,
+          assembly_lines: [7, 0],
+        },
+      },
+      quantum: {
+        ...source.quantum,
+        divisionsPurchased: 19n,
+      },
+      skills: {
+        ...source.skills,
+        byId: {
+          ...source.skills.byId,
+          stellarSacrifices: {
+            ...source.skills.byId.stellarSacrifices!,
+            owned: true,
+          },
+        },
+      },
+      timeline: {
+        ...source.timeline,
+        automationTimeUntilNextEvent: 5,
+      },
+    }
+    const modelState: CanonicalEventTimeState = {
+      ...carrier(gameState, {
+        ...hydrated.skillEffectEvaluationSnapshot,
+        panelsPerSecond: 1e16,
+        panelLifetimeSeconds: 10,
+      }),
+      compatibilityTuning: {
+        ...hydrated.compatibilityTuning,
+        panelsPerSecMulti: 1e18,
+      },
+    }
+    const representativeContext: CanonicalEventTimeContext = {
+      ...context(REALITY_UPGRADE_DEFINITIONS, 5),
+      mode: 'stored-time',
+      automationActionIntervalSeconds: 0.1,
+    }
+    const result = advanceEventTime({
+      startingState: new CanonicalEventTimeModel(
+        modelState,
+        representativeContext,
+      ),
+      durationSeconds: 5,
+      automationIntervalSeconds: 5,
+      automationTimeUntilNextEvent: 5,
+      infinityMinimumCycleSeconds: 1 / 60,
+      processingBudgetMilliseconds: 0,
+    })
+
+    expect(result.completed).toBe(true)
+    expect(result.summary.ordinaryInfinityCount).toBe(0n)
+    expect(
+      result.events.filter(({ kind }) => kind === 'production-arrival'),
+    ).toHaveLength(1)
+    expect(result.candidateState.state.gameState.dyson.bots)
+      .toBeCloseTo(3.500000052154064, 10)
+    expect(
+      result.candidateState.state.gameState.dyson.facilities.planets[0],
+    ).toBeCloseTo(Math.pow(Math.log10(50), 2) / 5e12, 20)
+  })
+
+  test('orders ready and minimum-cycle Infinity boundaries around Stellar settlement', () => {
+    const createState = (
+      bots: number,
+      infinityCycleSeconds: number,
+    ): CanonicalEventTimeState => {
+      const source = baseState()
+      const gameState: CanonicalGameStateV1 = {
+        ...source,
+        dyson: {
+          ...source.dyson,
+          bots,
+          botDistribution: 0,
+          facilities: {
+            ...source.dyson.facilities,
+            assembly_lines: [7, 0],
+          },
+        },
+        quantum: {
+          ...source.quantum,
+          divisionsPurchased: 19n,
+        },
+        skills: {
+          ...source.skills,
+          byId: {
+            ...source.skills.byId,
+            stellarSacrifices: {
+              ...source.skills.byId.stellarSacrifices!,
+              owned: true,
+            },
+          },
+        },
+        timeline: {
+          ...source.timeline,
+          automationTimeUntilNextEvent: 1,
+          infinityCycleSeconds,
+        },
+      }
+      return {
+        ...carrier(gameState, {
+          ...hydrated.skillEffectEvaluationSnapshot,
+          panelsPerSecond: 1e16,
+          panelLifetimeSeconds: 10,
+        }),
+        compatibilityTuning: {
+          ...hydrated.compatibilityTuning,
+          panelsPerSecMulti: 1e18,
+        },
+      }
+    }
+    const representativeContext: CanonicalEventTimeContext = {
+      ...context(REALITY_UPGRADE_DEFINITIONS, 1),
+      mode: 'stored-time',
+      automationActionIntervalSeconds: 0.1,
+    }
+    const advance = (
+      state: CanonicalEventTimeState,
+      durationSeconds: number,
+      minimumCycleSeconds: number,
+    ) => advanceEventTime({
+      startingState: new CanonicalEventTimeModel(
+        state,
+        representativeContext,
+      ),
+      durationSeconds,
+      automationIntervalSeconds: 1,
+      automationTimeUntilNextEvent: 1,
+      infinityMinimumCycleSeconds: minimumCycleSeconds,
+      processingBudgetMilliseconds: 0,
+    })
+
+    const ready = advance(createState(4.2, 1), 0.1, 1 / 60)
+    expect(ready.completed).toBe(true)
+    expect(ready.summary.ordinaryInfinityCount).toBe(1n)
+
+    const waiting = advance(createState(100, 0), 1, 0.5)
+    expect(waiting.completed).toBe(true)
+    expect(waiting.summary.ordinaryInfinityCount).toBe(0n)
+    expect(
+      waiting.events.filter(({ kind }) => kind === 'production-arrival'),
+    ).toHaveLength(1)
+    expect(waiting.candidateState.state.gameState.dyson.bots)
+      .toBeCloseTo(0.7000000104308128, 10)
+  })
+
   test('advances every active Education subject during active time', () => {
     const educationIds = [
       'engineering',

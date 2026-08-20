@@ -1128,6 +1128,7 @@ export function selectFrontendGameplaySnapshot(
     context,
     context.previousPreviews,
     context.previewDemand ?? 'all',
+    derived,
   )
 
   return freezeFrontendProjection({
@@ -1778,6 +1779,7 @@ function projectDysonDerivedFacts(
     globals: source.globals,
     auxiliary: source.auxiliary,
     facilityModifiers: source.facilityModifiers,
+    planetPricingModifier: source.planetPricingModifier,
     facilityFacts: source.facilityFacts,
     rates: source.rates,
     megaRates: source.megaRates,
@@ -2176,11 +2178,12 @@ function selectGameplayPreviews(
   context: Readonly<FrontendSnapshotContext>,
   previous: DeepReadonly<FrontendGameplayPreviews> | undefined,
   demand: FrontendGameplayPreviewDemand,
+  derived: Readonly<FrontendGameplayDerivedFacts>,
 ): FrontendGameplayPreviews {
   return {
     dyson:
       previous === undefined || demand === 'all' || demand === 'bots'
-        ? selectDysonPreviews(state)
+        ? selectDysonPreviews(state, derived)
         : previous.dyson,
     research:
       previous === undefined ||
@@ -2235,10 +2238,18 @@ function selectGameplayPreviews(
 
 function selectDysonPreviews(
   state: CanonicalGameStateV1,
+  derived: Readonly<FrontendGameplayDerivedFacts>,
 ): FrontendGameplayPreviews['dyson'] {
+  const planetModifier = derived.dyson.status === 'ready'
+    ? derived.dyson.value.planetPricingModifier
+    : 1
   return {
     basicFacilities: BASIC_DYSON_FACILITY_IDS.map((facilityId) =>
-      previewCanonicalBasicFacilityPurchase(state, facilityId),
+      previewCanonicalBasicFacilityPurchase(
+        state,
+        facilityId,
+        planetModifier,
+      ),
     ),
     megaStructures: MEGA_STRUCTURE_IDS.map((facilityId) =>
       previewMegaStructure(state, facilityId),
@@ -2703,6 +2714,7 @@ interface SkillPreviewDependencies {
   readonly queuedSkillIds: string
   readonly firstInfinityComplete: boolean
   readonly quantumUnlockMask: number
+  readonly manualFacilityCounts: string
 }
 
 const skillPreviewDependenciesByCatalog = new WeakMap<
@@ -2755,6 +2767,9 @@ function selectSkillPreviewDependencies(
     queuedSkillIds: [...state.skills.activeAutoAssignment]
       .sort()
       .join('\u0000'),
+    manualFacilityCounts: BASIC_DYSON_FACILITY_IDS.map(
+      (facilityId) => state.dyson.facilities[facilityId][1],
+    ).join('\u0000'),
     firstInfinityComplete: state.meta.firstInfinityComplete,
     quantumUnlockMask:
       Number(unlocks.fragments) |
@@ -2776,6 +2791,7 @@ function sameSkillPreviewDependencies(
     before.fragments === after.fragments &&
     before.ownedSkillIds === after.ownedSkillIds &&
     before.queuedSkillIds === after.queuedSkillIds &&
+    before.manualFacilityCounts === after.manualFacilityCounts &&
     before.firstInfinityComplete === after.firstInfinityComplete &&
     before.quantumUnlockMask === after.quantumUnlockMask
   )

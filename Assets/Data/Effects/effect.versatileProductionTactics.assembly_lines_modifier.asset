@@ -14,12 +14,12 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::GameData.EffectDefinition
   id: effect.versatileProductionTactics.assembly_lines_modifier
   displayName: Versatile Production Tactics
-  targetStatId: Facility.Manager.Production
+  targetStatId: Facility.Server.Production
   operation: 1
   value: 1
   perLevel: 0
   order: 62
   conditionId: 
   targetFacilityIds:
-  - ai_managers
+  - servers
   targetFacilityTags: []

@@ -56,10 +56,19 @@ describe('Unity panel lifetime dynamic effects', () => {
   })
 
   test('matches warranty exponential behavior', () => {
-    expect(lifetime('panelWarranty', inputs(['panelWarranty']))).toBe(1)
+    expect(lifetime('panelWarranty', inputs(['panelWarranty']))).toBe(0)
+    expect(
+      lifetime('panelWarranty', inputs(['panelWarranty'], { fragments: 1n })),
+    ).toBe(5)
     expect(
       lifetime('panelWarranty', inputs(['panelWarranty'], { fragments: 2n })),
-    ).toBe(2)
+    ).toBe(10)
+    expect(
+      lifetime('panelWarranty', inputs(['panelWarranty'], { fragments: 3n })),
+    ).toBe(20)
+    expect(
+      lifetime('panelWarranty', inputs(['panelWarranty'], { fragments: 4n })),
+    ).toBe(40)
     expect(
       lifetime(
         'panelWarranty',
@@ -122,7 +131,7 @@ describe('Unity panel lifetime dynamic effects', () => {
         'citadelCouncil',
         inputs(['citadelCouncil'], { totalPanelsDecayed: 1 }),
       ),
-    ).toBe(0)
+    ).toBe(1)
     expect(
       lifetime(
         'citadelCouncil',
@@ -131,13 +140,13 @@ describe('Unity panel lifetime dynamic effects', () => {
     ).toBe(1)
   })
 
-  test('matches stellar-dominance requirements and strict bot comparison', () => {
+  test('matches stellar-dominance requirements and inclusive bot comparison', () => {
     const state = inputs(['stellarDominance'], {
       panelsPerSecond: 2_000,
       panelLifetimeSeconds: 10,
       bots: 100,
     })
-    expect(lifetime('stellarDominance', state)).toBe(1)
+    expect(lifetime('stellarDominance', state)).toBe(10)
     expect(lifetime('stellarDominance', { ...state, bots: 101 })).toBe(10)
     expect(
       lifetime(
@@ -146,7 +155,7 @@ describe('Unity panel lifetime dynamic effects', () => {
           bots: 0.1,
         }),
       ),
-    ).toBe(1)
+    ).toBe(10)
     expect(
       lifetime(
         'stellarDominance',
@@ -159,7 +168,7 @@ describe('Unity panel lifetime dynamic effects', () => {
 })
 
 describe('Unity panels-per-second dynamic effects', () => {
-  test('matches Reapers base-two logarithm and strict threshold', () => {
+  test('uses the complete documented Reapers logarithmic multiplier', () => {
     expect(
       panelRate(
         'reapers',
@@ -171,7 +180,19 @@ describe('Unity panels-per-second dynamic effects', () => {
         'reapers',
         inputs(['reapers'], { totalPanelsDecayed: 4 }),
       ),
-    ).toBe(1.2)
+    ).toBe(1)
+    expect(
+      panelRate(
+        'reapers',
+        inputs(['reapers'], { totalPanelsDecayed: 1_024 }),
+      ),
+    ).toBe(1)
+    expect(
+      panelRate(
+        'reapers',
+        inputs(['reapers'], { totalPanelsDecayed: 2_048 }),
+      ),
+    ).toBe(1.1)
     expect(panelRate('reapers', inputs())).toBe(1)
   })
 

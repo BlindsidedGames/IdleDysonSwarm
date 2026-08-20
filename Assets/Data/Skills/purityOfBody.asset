@@ -16,8 +16,8 @@ MonoBehaviour:
   displayName: Purity of Body
   description: You become one with your Bots, perfection on this scale never before
     seen.
-  technicalDescription: Gain <color=#A3FFFE>25%</color> more <color=#A3FFFE>Bots</color>
-    for each unspent <color=#A3FFFE>Skill Point</color>.
+  technicalDescription: Multiply <color=#A3FFFE>Bots</color> by <color=#A3FFFE>1.25x</color>
+    for each unspent <color=#A3FFFE>Skill Point</color>, compounding exponentially.
   cost: 2
   refundable: 1
   isFragment: 0

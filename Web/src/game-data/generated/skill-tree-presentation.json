@@ -799,7 +799,7 @@
       "y": 450,
       "displayName": "Panel Warranty",
       "description": "You find a fragment of another universe. You use this knowledge to improve your Solar Panels, I wonder what other parts of this universe you can find?",
-      "technicalDescription": "+5s of Panel Lifetime. Double this bonus for every other purchased Fragment Skill. (10s for 1, 40s for 3)",
+      "technicalDescription": "+5s of Panel Lifetime. Double this bonus for every other purchased Fragment Skill. (5s for 1, 20s for 3)",
       "cost": 1,
       "messageIds": {
         "displayName": "skills.node.panelWarranty.name",
@@ -1072,7 +1072,7 @@
       "y": -569.1997,
       "displayName": "Production Scaling",
       "description": "You find a fragment of another universe. You use this knowledge to improve your entire production line, I wonder what other parts of this universe you can find?",
-      "technicalDescription": "Reduce the starting point of the 1% bonus per bought building to 90. Reduce it by another 5 for every other purchased Fragment Skill.",
+      "technicalDescription": "Start the 1% bonus with the first bought building after 90. Reduce that threshold by another 5 for every other purchased Fragment Skill.",
       "cost": 1,
       "messageIds": {
         "displayName": "skills.node.productionScaling.name",
@@ -1114,7 +1114,7 @@
       "y": -518.9995,
       "displayName": "Purity of Body",
       "description": "You become one with your Bots, perfection on this scale never before seen.",
-      "technicalDescription": "Gain 25% more Bots for each unspent Skill Point.",
+      "technicalDescription": "Multiply Bots by 1.25x for each unspent Skill Point, compounding exponentially.",
       "cost": 2,
       "messageIds": {
         "displayName": "skills.node.purityOfBody.name",
@@ -1135,7 +1135,7 @@
       "y": -696.999,
       "displayName": "Purity of Mind",
       "description": "WIth singular focus you clear your mind of all thoughts that don't include Cash or Science.",
-      "technicalDescription": "Gain 50% more Cash/Science for each unspent Skill Point.",
+      "technicalDescription": "Multiply Cash/Science by 1.5x for each unspent Skill Point, compounding exponentially.",
       "cost": 2,
       "messageIds": {
         "displayName": "skills.node.purityOfMind.name",
@@ -1156,7 +1156,7 @@
       "y": -341.99902,
       "displayName": "Purity of Essence",
       "description": "You transcend beyond reality, consuming everything in your path you become one with the Universe.",
-      "technicalDescription": "Gain a 42% bonus to Everything for each unspent Skill Point.",
+      "technicalDescription": "Multiply Everything by 1.42x for each unspent Skill Point, compounding exponentially.",
       "cost": 3,
       "messageIds": {
         "displayName": "skills.node.purityOfSEssence.name",
@@ -1828,7 +1828,7 @@
       "y": 1404,
       "displayName": "Supernova",
       "description": "You discover a way to utilize supernovas to melt bots faster.",
-      "technicalDescription": "Stellar Sacrifices Galaxies are 1000x better, however manually purchased buildings no longer boost production.",
+      "technicalDescription": "Stellar Sacrifices Galaxies are 1000x better. While owned, manually purchased buildings lose every production bonus including Avocados, the 50/100 milestones, Production Scaling, and all Swarm rates. Refunding Supernova restores the complete manual-purchase layer.",
       "cost": 4,
       "messageIds": {
         "displayName": "skills.node.supernova.name",

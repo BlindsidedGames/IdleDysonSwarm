@@ -108,7 +108,7 @@ function derivePocketDimensions(
       timer,
       'skills.byId.pocketAndroids.timerSeconds',
     )
-    production *= timer > 3564 ? 100 : 1 + timer / 36
+    production *= 1 + 99 * Math.min(timer, 3_600) / 3_600
   }
   if (owned('quantumComputing')) {
     production *=

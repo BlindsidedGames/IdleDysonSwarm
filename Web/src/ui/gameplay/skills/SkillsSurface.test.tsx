@@ -1234,6 +1234,85 @@ describe('SkillsSurface', () => {
     })
   })
 
+  test('warns that cascading Stellar Obliteration refund restores Supernova production', async () => {
+    const user = userEvent.setup()
+    const dispatchPlayer = createDispatchPlayer()
+    const manualPurchase = ([
+      'assembly_lines',
+      'ai_managers',
+      'servers',
+      'data_centers',
+      'planets',
+    ] as const).map((facilityId) => ({
+      facilityId,
+      effectiveManualCount: 101,
+      beforeMultiplier: 1,
+      afterMultiplier: 8.4,
+    }))
+    const restorationCatalog: CanonicalSkillCatalogPreview = {
+      ...catalog,
+      skills: [
+        createSkillPreview('stellarObliteration', {
+          owned: true,
+          visualState: 'owned',
+          purchase: {
+            eligible: false,
+            code: 'already-owned',
+            affectedSkillIds: [],
+            pointsRequired: 0n,
+          },
+          refund: {
+            eligible: true,
+            code: 'refundable',
+            affectedSkillIds: ['supernova', 'stellarObliteration'],
+            pointsReturned: 6n,
+            fragmentsRemoved: 0n,
+            productionImpact: {
+              pointsBefore: 6n,
+              pointsAfter: 12n,
+              manualPurchase,
+            },
+          },
+        }),
+        createSkillPreview('supernova', {
+          owned: true,
+          visualState: 'owned',
+        }),
+      ],
+    }
+    render(
+      createSkillElement(
+        dispatchPlayer,
+        0.5,
+        1,
+        restorationCatalog,
+      ),
+    )
+
+    await user.click(
+      screen.getByRole('button', { name: 'Stellar Obliteration. Owned' }),
+    )
+    await user.click(
+      screen.getByRole('button', {
+        name: 'Unassign Skill. Will refund 6.00 Skill Points',
+      }),
+    )
+
+    expect(dispatchPlayer).not.toHaveBeenCalled()
+    expect(
+      screen.getByText(
+        'Refunding Supernova restores the complete manual-purchase layer: Avocados, both 50/100 milestones, Production Scaling, and every Swarm rate.',
+      ),
+    ).toBeInTheDocument()
+    expect(screen.getByText('assembly_lines: ×1 → ×8.4')).toBeInTheDocument()
+
+    await user.click(screen.getByRole('button', { name: 'Confirm' }))
+    expect(dispatchPlayer).toHaveBeenCalledWith({
+      kind: 'skill.refund',
+      skillId: 'stellarObliteration',
+    })
+  })
+
   test('unassigns immediately when no dependent skill is affected', async () => {
     const user = userEvent.setup()
     const dispatchPlayer = createDispatchPlayer()

@@ -4,6 +4,10 @@ import type {
   CanonicalGameStateV1,
   SkillRuntimeState,
 } from '../game-state/types'
+import {
+  deriveManualPurchaseProductionLayer,
+} from './canonicalDysonDerivation'
+import { BASIC_DYSON_FACILITY_IDS } from './dysonFacilities'
 
 const SKILL_KIND = 'GameData.SkillDefinition'
 
@@ -47,6 +51,25 @@ export interface CanonicalSkillActionPreview {
   readonly affectedSkillIds: readonly string[]
 }
 
+export interface CanonicalSkillProductionImpact {
+  readonly pointsBefore: bigint
+  readonly pointsAfter: bigint
+  readonly purity?: {
+    readonly cashScienceBefore: number
+    readonly cashScienceAfter: number
+    readonly botsBefore: number
+    readonly botsAfter: number
+    readonly everythingBefore: number
+    readonly everythingAfter: number
+  }
+  readonly manualPurchase?: readonly {
+    readonly facilityId: (typeof BASIC_DYSON_FACILITY_IDS)[number]
+    readonly effectiveManualCount: number
+    readonly beforeMultiplier: number
+    readonly afterMultiplier: number
+  }[]
+}
+
 interface CanonicalSkillPurchasePlan
   extends CanonicalSkillActionPreview {
   readonly pointsRequired: bigint
@@ -77,10 +100,12 @@ export interface CanonicalSkillAvailabilityPreview {
   readonly exclusiveWithSkillIds: readonly string[]
   readonly purchase: CanonicalSkillActionPreview & {
     readonly pointsRequired: bigint
+    readonly productionImpact?: CanonicalSkillProductionImpact
   }
   readonly refund: CanonicalSkillActionPreview & {
     readonly pointsReturned: bigint
     readonly fragmentsRemoved: bigint
+    readonly productionImpact?: CanonicalSkillProductionImpact
   }
 }
 
@@ -125,6 +150,21 @@ export function previewCanonicalSkillCatalog(
       definition.id,
       definitions,
     )
+    const purchaseTransaction =
+      purchase.eligible && purchase.affectedSkillIds.length > 0
+        ? purchaseWithDefinitions(state, definition.id, definitions)
+        : null
+    const purchaseImpact =
+      purchaseTransaction?.accepted === true &&
+      purchaseTransaction.changed
+        ? previewProductionImpact(
+            state,
+            purchaseTransaction.state,
+          )
+        : undefined
+    const refundImpact = refund.accepted && refund.changed
+      ? previewProductionImpact(state, refund.state)
+      : undefined
     const refundAffected =
       refund.accepted && refund.changed
         ? refund.affectedSkillIds
@@ -176,6 +216,9 @@ export function previewCanonicalSkillCatalog(
           ...purchase.affectedSkillIds,
         ]),
         pointsRequired: purchase.pointsRequired,
+        ...(purchaseImpact === undefined
+          ? {}
+          : { productionImpact: purchaseImpact }),
       }),
       refund: Object.freeze({
         eligible: refund.accepted && refund.changed,
@@ -183,6 +226,9 @@ export function previewCanonicalSkillCatalog(
         affectedSkillIds: Object.freeze([...refundAffected]),
         pointsReturned,
         fragmentsRemoved,
+        ...(refundImpact === undefined
+          ? {}
+          : { productionImpact: refundImpact }),
       }),
     })
   })
@@ -191,6 +237,74 @@ export function previewCanonicalSkillCatalog(
     definitionGap: null,
     skills: Object.freeze(skills),
   })
+}
+
+function previewProductionImpact(
+  before: CanonicalGameStateV1,
+  after: CanonicalGameStateV1,
+): CanonicalSkillProductionImpact | undefined {
+  const purity =
+    [before, after].some((state) =>
+      state.skills.byId.purityOfMind?.owned === true ||
+      state.skills.byId.purityOfBody?.owned === true ||
+      state.skills.byId.purityOfSEssence?.owned === true,
+    )
+      ? {
+          cashScienceBefore: purityCashScienceMultiplier(before),
+          cashScienceAfter: purityCashScienceMultiplier(after),
+          botsBefore: purityBotsMultiplier(before),
+          botsAfter: purityBotsMultiplier(after),
+          everythingBefore: purityEssenceMultiplier(before),
+          everythingAfter: purityEssenceMultiplier(after),
+        }
+      : undefined
+  const supernovaOwnershipChanged =
+    before.skills.byId.supernova?.owned !==
+    after.skills.byId.supernova?.owned
+  const manualPurchase = supernovaOwnershipChanged
+    ? BASIC_DYSON_FACILITY_IDS.map((facilityId) => {
+        const previous = deriveManualPurchaseProductionLayer(
+          before,
+          facilityId,
+        )
+        const next = deriveManualPurchaseProductionLayer(after, facilityId)
+        return Object.freeze({
+          facilityId,
+          effectiveManualCount: previous.effectiveManualCount,
+          beforeMultiplier: previous.totalMultiplier,
+          afterMultiplier: next.totalMultiplier,
+        })
+      })
+    : undefined
+  if (purity === undefined && manualPurchase === undefined) return undefined
+  return Object.freeze({
+    pointsBefore: before.skills.points,
+    pointsAfter: after.skills.points,
+    ...(purity === undefined ? {} : { purity: Object.freeze(purity) }),
+    ...(manualPurchase === undefined
+      ? {}
+      : { manualPurchase: Object.freeze(manualPurchase) }),
+  })
+}
+
+function purityEssenceMultiplier(state: CanonicalGameStateV1): number {
+  return state.skills.byId.purityOfSEssence?.owned === true
+    ? Math.pow(1.42, Number(state.skills.points))
+    : 1
+}
+
+function purityCashScienceMultiplier(state: CanonicalGameStateV1): number {
+  const mind = state.skills.byId.purityOfMind?.owned === true
+    ? Math.pow(1.5, Number(state.skills.points))
+    : 1
+  return mind * purityEssenceMultiplier(state)
+}
+
+function purityBotsMultiplier(state: CanonicalGameStateV1): number {
+  const body = state.skills.byId.purityOfBody?.owned === true
+    ? Math.pow(1.25, Number(state.skills.points))
+    : 1
+  return body * purityEssenceMultiplier(state)
 }
 
 /**

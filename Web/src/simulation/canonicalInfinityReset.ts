@@ -69,6 +69,15 @@ interface SkillAutoAssignmentRule {
   readonly requiredSkillIds: readonly string[]
   readonly shadowRequirementIds: readonly string[]
   readonly exclusiveWithIds: readonly string[]
+  readonly unlock:
+    | 'always'
+    | 'first-infinity'
+    | 'fragments'
+    | 'purity'
+    | 'terra'
+    | 'power'
+    | 'paragade'
+    | 'stellar'
   readonly valid: boolean
 }
 
@@ -141,6 +150,7 @@ export function applyCanonicalInfinityReset(
     initialSkillPoints,
     state.skills.autoAssignNonRefundable,
     rulesResult.rules,
+    state,
   )
   const resetSkillStates = materializeResetSkillStates(
     state.skills.byId,
@@ -450,6 +460,7 @@ function readSkillRule(
     data.shadowRequirementIds,
   )
   const exclusiveWithIds = readStringArray(data.exclusiveWithIds)
+  const unlock = readSkillUnlock(data)
   if (
     asset.kind !== SKILL_DEFINITION_KIND ||
     asset.id !== id ||
@@ -461,7 +472,8 @@ function readSkillRule(
     isFragment === undefined ||
     requiredSkillIds === undefined ||
     shadowRequirementIds === undefined ||
-    exclusiveWithIds === undefined
+    exclusiveWithIds === undefined ||
+    unlock === undefined
   ) {
     return {
       ok: false,
@@ -482,6 +494,7 @@ function readSkillRule(
       requiredSkillIds,
       shadowRequirementIds,
       exclusiveWithIds,
+      unlock,
       valid: true,
     },
   }
@@ -496,6 +509,7 @@ function invalidRule(id: string): SkillAutoAssignmentRule {
     requiredSkillIds: Object.freeze([]),
     shadowRequirementIds: Object.freeze([]),
     exclusiveWithIds: Object.freeze([]),
+    unlock: 'always',
     valid: false,
   }
 }
@@ -504,6 +518,7 @@ function applyAutoAssignment(
   initialPoints: bigint,
   assignNonRefundable: boolean,
   rules: readonly SkillAutoAssignmentRule[],
+  state: Readonly<CanonicalGameStateV1>,
 ): AutoAssignmentOutcome {
   let points = initialPoints
   let fragments = 0n
@@ -516,6 +531,7 @@ function applyAutoAssignment(
     for (const rule of rules) {
       if (
         !rule.valid ||
+        !isRuleUnlocked(rule, state) ||
         rule.id.length === 0 ||
         isOwned(byId, rule.id) ||
         points < rule.cost ||
@@ -549,6 +565,49 @@ function applyAutoAssignment(
     fragments,
     byId,
     assignedIds: Object.freeze(assignedIds),
+  }
+}
+
+function readSkillUnlock(
+  data: Readonly<Record<string, unknown>>,
+): SkillAutoAssignmentRule['unlock'] | undefined {
+  const candidates = [
+    ['firstRunBlocked', 'first-infinity'],
+    ['isFragment', 'fragments'],
+    ['purityLine', 'purity'],
+    ['terraLine', 'terra'],
+    ['powerLine', 'power'],
+    ['paragadeLine', 'paragade'],
+    ['stellarLine', 'stellar'],
+  ] as const
+  for (const [field, unlock] of candidates) {
+    const value = readBooleanFlag(data[field])
+    if (value === undefined) return undefined
+    if (value) return unlock
+  }
+  return 'always'
+}
+
+function isRuleUnlocked(
+  rule: Readonly<SkillAutoAssignmentRule>,
+  state: Readonly<CanonicalGameStateV1>,
+): boolean {
+  switch (rule.unlock) {
+    case 'always':
+    case 'first-infinity':
+      return true
+    case 'fragments':
+      return state.quantum.unlocks.fragments
+    case 'purity':
+      return state.quantum.unlocks.purity
+    case 'terra':
+      return state.quantum.unlocks.terra
+    case 'power':
+      return state.quantum.unlocks.power
+    case 'paragade':
+      return state.quantum.unlocks.paragade
+    case 'stellar':
+      return state.quantum.unlocks.stellar
   }
 }
 

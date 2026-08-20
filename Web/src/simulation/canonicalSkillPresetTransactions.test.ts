@@ -194,4 +194,32 @@ describe('canonical skill preset transactions', () => {
       code: 'unknown-skill',
     })
   })
+
+  test('previews locked imported skills without dropping them from the queue', () => {
+    const state = stateWithQueue([])
+    const serialized = JSON.stringify({
+      version: 1,
+      presetName: 'Future fragments',
+      botDistribution: 0.5,
+      skillIds: ['fragmentAssembly'],
+    })
+    const locked = parseCanonicalSkillPreset(serialized, state)
+    expect(locked).toMatchObject({
+      accepted: true,
+      blockedSkillIds: ['fragmentAssembly'],
+      payload: { skillIds: ['fragmentAssembly'] },
+    })
+    const unlocked = parseCanonicalSkillPreset(serialized, {
+      ...state,
+      quantum: {
+        ...state.quantum,
+        unlocks: { ...state.quantum.unlocks, fragments: true },
+      },
+    })
+    expect(unlocked).toMatchObject({
+      accepted: true,
+      blockedSkillIds: [],
+      payload: { skillIds: ['fragmentAssembly'] },
+    })
+  })
 })

@@ -625,7 +625,7 @@ class BrowserRuntimeFoundation implements BrowserUiRuntimeFoundation {
   previewSkillPresetImport(
     serialized: string,
   ): CanonicalSkillPresetImportResult {
-    return parseCanonicalSkillPreset(serialized)
+    return parseCanonicalSkillPreset(serialized, this.readyCanonicalState())
   }
 
   private readyCanonicalState(): DeepReadonly<CanonicalGameStateV1> {

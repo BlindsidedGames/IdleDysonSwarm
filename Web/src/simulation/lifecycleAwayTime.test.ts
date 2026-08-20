@@ -284,6 +284,41 @@ describe('pure lifecycle policy and cold-start gate', () => {
 })
 
 describe('pure canonical away-time replay', () => {
+  test('Idle Electric Sheep doubles admitted away time only once', () => {
+    const source = canonical()
+    const sheep = {
+      ...source,
+      skills: {
+        ...source.skills,
+        byId: {
+          ...source.skills.byId,
+          idleElectricSheep: {
+            ...source.skills.byId.idleElectricSheep!,
+            owned: true,
+          },
+        },
+      },
+    }
+    const first = applyAwayTimeReplay({
+      state: coordinator({ canonical: sheep }),
+      clock,
+      parsedQuitTimestamp: { status: 'valid', utcMilliseconds: 70_000 },
+      parsedStartedTimestamp: { status: 'missing' },
+    })
+    expect(first.resolution.grantedSeconds).toBe(30)
+    expect(first.storedTimeCreditedSeconds).toBe(60)
+    expect(first.state.canonical.timeline.storedTimeAvailableSeconds).toBe(70)
+
+    const replay = applyAwayTimeReplay({
+      state: first.state,
+      clock,
+      parsedQuitTimestamp: { status: 'missing' },
+      parsedStartedTimestamp: { status: 'missing' },
+    })
+    expect(replay.storedTimeCreditedSeconds).toBe(0)
+    expect(replay.state.canonical.timeline.storedTimeAvailableSeconds).toBe(70)
+  })
+
   test('valid timestamps consume quit state and grant stored and Dream time', () => {
     const result = applyAwayTimeReplay({
       state: coordinator({

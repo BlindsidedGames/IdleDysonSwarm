@@ -56,23 +56,29 @@ Status conventions:
 
 ## Skill-tree correctness
 
-- [ ] Recheck current line unlocks during imported-preset Infinity-reset
+- [x] Recheck current line unlocks during imported-preset Infinity-reset
   assignment and define how blocked queued skills remain queued. Source:
   [skill F-01](audits/skill-tree-audit-2026-08-20.md#cross-cutting-and-high-priority-findings).
-- [ ] Advance Androids, Pocket Androids, and Super-Radiant timers in canonical
+- [x] Advance Androids, Pocket Androids, and Super-Radiant timers in canonical
   active time with their intended caps and reset behavior. Source: skill F-03.
-- [ ] Implement Idle Electric Sheep in admitted offline-time ordering. Source:
+- [x] Implement Idle Electric Sheep in admitted offline-time ordering. Source:
   skill F-04.
-- [ ] Port the shared manual-building modifier layer covering Swarm scaling,
+- [x] Port the shared manual-building modifier layer covering Swarm scaling,
   Terra count substitution, and the Supernova downside. Sources: skill F-05,
   F-06, and F-09.
-- [ ] Commit Shoulders science/cash auxiliary accrual into canonical events,
+- [x] Commit Shoulders science/cash auxiliary accrual into canonical events,
   including fractional research progress and offline behavior. Source: skill
   F-07.
-- [ ] Debit Stellar Sacrifices bots atomically with planet credit and resolve
-  its exact-threshold behavior. Source: skill F-08.
-- [ ] Resolve and test the formula/copy discrepancies tracked as skill F-10
+- [x] Debit Stellar Sacrifices bots atomically with planet credit and resolve
+  its exact-threshold behavior. Active ticks and adaptive Stored Time groups
+  each use interval-start Bot funding; long grouped spends are deterministic
+  for the same grouping and intentionally approximate rather than raw-100-ms
+  equivalent. Source: skill F-08.
+- [x] Resolve and test the formula/copy discrepancies tracked as skill F-10
   through F-20, starting with Panel Warranty and Regulated Academia.
+
+Completion evidence and the requirement-by-requirement reconciliation are in
+the [skill-tree audit implementation verification](audits/skill-tree-audit-2026-08-20.md#implementation-verification-2026-08-20).
 
 ## Current Web release acceptance
 

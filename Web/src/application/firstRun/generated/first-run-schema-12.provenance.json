@@ -13,7 +13,7 @@
     "catalogHashes": [
         {
             "path": "Web/src/game-data/generated/catalog.json",
-            "sha256": "A7CD177E845F8AF443535E29BF3F0E61F67DCD0EC01068604422DDC31FB8E0A1"
+            "sha256": "0F7E96636565C8D2D268EAA417335B9EB049939DDD2463408540B0AF64ECF665"
         },
         {
             "path": "Web/src/game-data/generated/legacy-id-maps.json",

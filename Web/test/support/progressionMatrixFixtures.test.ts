@@ -23,7 +23,7 @@ describe('production-valid progression matrix fixtures', () => {
     fresh: '848ea29c6038bcb741ddf818690adf51ee929ecad68d95cbc7d76cf75cf7277b',
     'mid-swarm': 'efa03600884355e8a006325a959c0a43fbfe0ce6fd84f5f9c617b785302f3132',
     'first-infinity': 'a80c6064e55b5e5484e92e7eff7e92ee6cac209bca417b049611d21d36e1f0a9',
-    'mature-infinity': '12c4114ef8452800229bbf700a3848aff4d0d30b40502379556a2c17b570f358',
+    'mature-infinity': 'a5a09f64dd778fcfcc6902c02d08d493e473e793821e902d10c77be5e800a8a1',
     'reality-unlock': 'b122cbc0a4cd283fb96967570b7cb41fb3c793777162af7ed2b162a691e4e0cb',
     'mature-simulations': '673416bcc5afb021ae9eccabe9b5794f5ced7da06cbb2fbd31c08f16adf3bb5d',
     'quantum-unlock': '3e456c4dd615f65f5d15047aecd7f8d57a617611365e5f9b2723e7ffd7a170fa',

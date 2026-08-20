@@ -3219,6 +3219,10 @@
     "defaultMessage": "Fragments owned: {value} ({delta})",
     "description": "Skill fragment total and its recent change shown in skill details."
   },
+  "skills.import-locked-queued": {
+    "defaultMessage": "{count, plural, one {# locked skill will remain queued until its line unlocks.} other {# locked skills will remain queued until their lines unlock.}}",
+    "description": "Preset import warning explaining that gated skills stay queued without spending points."
+  },
   "skills.import-placeholder": {
     "defaultMessage": "Paste preset string",
     "description": "Placeholder inviting the player to paste a skill preset string."
@@ -3339,6 +3343,10 @@
     "defaultMessage": "Will cost {value} Skill Points",
     "description": "Exact skill-point total that assigning the selected skill will spend."
   },
+  "skills.purity-production-quote": {
+    "defaultMessage": "Unspent points {pointsBefore} → {pointsAfter}. Combined Purity multipliers: Cash/Science ×{cashBefore} → ×{cashAfter}; Bots ×{botsBefore} → ×{botsAfter}; Everything ×{everythingBefore} → ×{everythingAfter}.",
+    "description": "Exact pre-confirmation quote for the compounding Purity skill point cliff."
+  },
   "skills.queued": {
     "defaultMessage": "Queued for automatic assignment",
     "description": "Status indicating that a skill is in the active automatic-assignment queue."
@@ -3394,6 +3402,14 @@
   "skills.settings": {
     "defaultMessage": "Skill presets and reset",
     "description": "Accessible label for opening skill preset and reset settings."
+  },
+  "skills.supernova-restoration-quote": {
+    "defaultMessage": "Refunding Supernova restores the complete manual-purchase layer: Avocados, both 50/100 milestones, Production Scaling, and every Swarm rate.",
+    "description": "Exact warning before refunding Supernova."
+  },
+  "skills.supernova-suppression-quote": {
+    "defaultMessage": "Supernova suppresses the complete manual-purchase layer: Avocados, both 50/100 milestones, Production Scaling, and every Swarm rate.",
+    "description": "Exact warning before purchasing Supernova."
   },
   "skills.tree": {
     "defaultMessage": "Skill tree",

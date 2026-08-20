@@ -16,11 +16,34 @@ interface SkillQueueDefinition {
   readonly required: readonly string[]
   readonly shadowRequired: readonly string[]
   readonly exclusiveWith: readonly string[]
+  readonly unlock:
+    | 'always'
+    | 'first-infinity'
+    | 'fragments'
+    | 'purity'
+    | 'terra'
+    | 'power'
+    | 'paragade'
+    | 'stellar'
 }
 
 export interface CanonicalSkillPresetQueueSource {
   readonly skills: {
     readonly presets: readonly Readonly<SkillPresetState>[]
+  }
+}
+
+interface SkillUnlockState {
+  readonly meta: { readonly firstInfinityComplete: boolean }
+  readonly quantum: {
+    readonly unlocks: {
+      readonly fragments: boolean
+      readonly purity: boolean
+      readonly terra: boolean
+      readonly power: boolean
+      readonly paragade: boolean
+      readonly stellar: boolean
+    }
   }
 }
 
@@ -56,6 +79,7 @@ export type CanonicalSkillPresetImportResult =
   | {
       readonly accepted: true
       readonly payload: CanonicalSkillPresetPayloadV1
+      readonly blockedSkillIds?: readonly string[]
     }
   | {
       readonly accepted: false
@@ -216,6 +240,7 @@ export function serializeCanonicalSkillPreset(
  */
 export function parseCanonicalSkillPreset(
   serialized: string,
+  state?: Readonly<SkillUnlockState>,
 ): CanonicalSkillPresetImportResult {
   let value: unknown
   try {
@@ -269,6 +294,13 @@ export function parseCanonicalSkillPreset(
   }
   return Object.freeze({
     accepted: true,
+    ...(state === undefined
+      ? {}
+      : { blockedSkillIds: Object.freeze(
+          skillIds.filter(
+            (id) => !isQueueSkillUnlocked(definitions.get(id)!, state),
+          ),
+        ) }),
     payload: Object.freeze({
       version: PRESET_FORMAT_VERSION,
       presetName: source.presetName,
@@ -399,9 +431,51 @@ function loadQueueDefinitions(): ReadonlyMap<string, SkillQueueDefinition> {
           asset.data.shadowRequirementIds,
         ),
         exclusiveWith: stringArray(asset.data.exclusiveWithIds),
+        unlock: queueSkillUnlock(asset.data),
       }),
     ]),
   )
+}
+
+function queueSkillUnlock(
+  data: Readonly<Record<string, unknown>>,
+): SkillQueueDefinition['unlock'] {
+  for (const [field, unlock] of [
+    ['firstRunBlocked', 'first-infinity'],
+    ['isFragment', 'fragments'],
+    ['purityLine', 'purity'],
+    ['terraLine', 'terra'],
+    ['powerLine', 'power'],
+    ['paragadeLine', 'paragade'],
+    ['stellarLine', 'stellar'],
+  ] as const) {
+    if (data[field] === true || data[field] === 1) return unlock
+  }
+  return 'always'
+}
+
+function isQueueSkillUnlocked(
+  definition: Readonly<SkillQueueDefinition>,
+  state: Readonly<SkillUnlockState>,
+): boolean {
+  switch (definition.unlock) {
+    case 'always':
+      return true
+    case 'first-infinity':
+      return state.meta.firstInfinityComplete
+    case 'fragments':
+      return state.quantum.unlocks.fragments
+    case 'purity':
+      return state.quantum.unlocks.purity
+    case 'terra':
+      return state.quantum.unlocks.terra
+    case 'power':
+      return state.quantum.unlocks.power
+    case 'paragade':
+      return state.quantum.unlocks.paragade
+    case 'stellar':
+      return state.quantum.unlocks.stellar
+  }
 }
 
 function rejectedPreview(

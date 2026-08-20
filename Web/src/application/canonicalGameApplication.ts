@@ -1431,6 +1431,8 @@ function commandOptions(
           ? {
               accepted: true,
               snapshot: derived.value.nextEvaluationSnapshot,
+              facilityModifiers: derived.value.facilityModifiers,
+              planetPricingModifier: derived.value.planetPricingModifier,
             }
           : {
               accepted: false,

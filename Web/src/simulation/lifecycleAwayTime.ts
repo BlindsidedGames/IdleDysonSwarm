@@ -196,8 +196,11 @@ export function applyAwayTimeReplay(
   let markComparisonIntegrityCompromised = resolution.cheater
 
   if (resolution.hasQuitTimestampInput) {
+    const idleElectricSheepMultiplier =
+      canonical.skills.byId.idleElectricSheep?.owned === true ? 2 : 1
     const grant = applyAwayTimeGrant({
-      awaySeconds: resolution.grantedSeconds,
+      awaySeconds:
+        resolution.grantedSeconds * idleElectricSheepMultiplier,
       bankSeconds: canonical.timeline.storedTimeAvailableSeconds,
       capacitySeconds: canonical.timeline.storedTimeCapacitySeconds,
       dreamDoubleTimeBankSeconds: canonical.timeline.doubleTime.bankSeconds,

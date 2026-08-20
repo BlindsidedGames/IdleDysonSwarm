@@ -69,6 +69,40 @@ describe('compiled skill effect catalog', () => {
     ).toBe(true)
   })
 
+  test('preserves legacy IDs while retargeting VPT and the approved authored values', () => {
+    const catalog = compileSkillEffectCatalog(getGameAsset)
+    const vpt = catalog
+      .candidatesForStat('Facility.Server.Production')
+      .find(({ effect }) =>
+        effect.id ===
+        'effect.versatileProductionTactics.assembly_lines_modifier')
+    expect(vpt).toMatchObject({
+      skillId: 'versatileProductionTactics',
+      effect: {
+        id: 'effect.versatileProductionTactics.assembly_lines_modifier',
+        targetFacilityIds: ['servers'],
+      },
+    })
+    expect(
+      catalog.candidatesForStat('Facility.Manager.Production')
+        .some(({ effect }) =>
+          effect.id ===
+          'effect.versatileProductionTactics.assembly_lines_modifier'),
+    ).toBe(false)
+    expect(
+      getGameAsset(
+        'GameData.EffectDefinition',
+        'effect.worthySacrifice.assembly_lines_modifier',
+      )?.data.value,
+    ).toBe(5)
+    expect(
+      getGameAsset('GameData.SkillDefinition', 'purityOfSEssence'),
+    ).toBeDefined()
+    expect(
+      getGameAsset('GameData.SkillDefinition', 'galacticPradigmShift'),
+    ).toBeDefined()
+  })
+
   test('retains the existing missing-reference and effect-validation errors', () => {
     expect(() => compileSkillEffectCatalog(() => undefined)).toThrow(
       'Exported game data is missing SkillDatabase.',

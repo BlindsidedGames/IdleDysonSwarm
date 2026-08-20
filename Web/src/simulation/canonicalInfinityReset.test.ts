@@ -349,16 +349,17 @@ describe('canonical Infinity reset', () => {
     expect(result.autoAssignedSkillIds).toEqual([
       'startHereTree',
       'workerEfficiencyTree',
-      'monetaryPolicy',
     ])
-    expect(result.state.skills.points).toBe(0n)
-    expect(result.state.skills.fragments).toBe(1n)
+    expect(result.state.skills.points).toBe(1n)
+    expect(result.state.skills.fragments).toBe(0n)
     expect(Object.keys(result.state.skills.byId)).toEqual([
       'discardedOldSkill',
       'startHereTree',
       'workerEfficiencyTree',
-      'monetaryPolicy',
     ])
+    expect(result.state.skills.activeAutoAssignment).toContain(
+      'monetaryPolicy',
+    )
     expect(result.state.skills.byId.discardedOldSkill)
       .toEqual(clearedSkillState())
     for (const skillId of result.autoAssignedSkillIds) {

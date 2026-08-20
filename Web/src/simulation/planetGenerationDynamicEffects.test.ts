@@ -107,19 +107,21 @@ describe('Unity planet-generation dynamic effects', () => {
     ).toBe(1)
   })
 
-  test('matches stellar galaxy transforms and inclusive bot threshold', () => {
+  test('uses the squared-log stellar galaxy transform across the full range', () => {
     const state = inputs(['stellarSacrifices'], {
       panelsPerSecond: 400_000_000_000_000,
       panelLifetimeSeconds: 10,
       bots: 200_000_000_000,
     })
-    expect(resolve('stellarSacrifices', state)).toBe(Math.log10(2))
+    expect(resolve('stellarSacrifices', state)).toBe(
+      Math.pow(Math.log10(2), 2),
+    )
     expect(
       resolve('stellarSacrifices', {
         ...state,
         bots: 199_999_999_999,
       }),
-    ).toBe(0)
+    ).toBe(Math.pow(Math.log10(2), 2))
 
     const transformed = inputs(
       ['stellarSacrifices', 'stellarObliteration', 'supernova'],
@@ -134,7 +136,7 @@ describe('Unity planet-generation dynamic effects', () => {
     )
   })
 
-  test('matches stellar bot scaling and improvements divisor', () => {
+  test('leaves bot affordability to the atomic interval transaction', () => {
     const state = inputs(
       [
         'stellarSacrifices',
@@ -149,7 +151,7 @@ describe('Unity planet-generation dynamic effects', () => {
         bots: 199_999_999_999,
       },
     )
-    expect(resolve('stellarSacrifices', state)).toBe(0)
+    expect(resolve('stellarSacrifices', state)).toBeGreaterThan(0)
     expect(
       resolve('stellarSacrifices', {
         ...state,

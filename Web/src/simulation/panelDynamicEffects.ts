@@ -33,9 +33,9 @@ export function tryResolvePanelLifetimeDynamicEffect(
         : (1 - inputs.botDistribution) * 100
     case 'panelWarranty':
       if (!inputs.ownedSkills.has(skillId)) return 0
-      return 5n * inputs.fragments > 1n
-        ? Math.pow(2, Number(inputs.fragments - 1n))
-        : 1
+      return inputs.fragments > 0n
+        ? 5 * Math.pow(2, Number(inputs.fragments - 1n))
+        : 0
     case 'artificiallyEnhancedPanels': {
       if (!inputs.ownedSkills.has(skillId)) return 0
       const managersTotal = inputs.managers[0] + inputs.managers[1]
@@ -54,13 +54,14 @@ export function tryResolvePanelLifetimeDynamicEffect(
         ? 1 + 0.1 * Math.log10(inputs.workers / 1e6)
         : 1
     case 'citadelCouncil':
-      if (!inputs.ownedSkills.has(skillId)) return 0
-      return inputs.totalPanelsDecayed > 1
-        ? logarithm(inputs.totalPanelsDecayed, 1.2)
-        : 0
+      if (!inputs.ownedSkills.has(skillId)) return 1
+      return Math.max(
+        1,
+        logarithm(inputs.totalPanelsDecayed, 1.2),
+      )
     case 'stellarDominance':
       if (!inputs.ownedSkills.has(skillId)) return 1
-      return inputs.bots > stellarSacrificesRequiredBots(inputs) ? 10 : 1
+      return inputs.bots >= stellarSacrificesRequiredBots(inputs) ? 10 : 1
   }
 }
 
@@ -76,9 +77,10 @@ export function tryResolvePanelsPerSecondDynamicEffect(
   switch (skillId) {
     case 'reapers':
       if (!inputs.ownedSkills.has(skillId)) return 1
-      return inputs.totalPanelsDecayed > 2
-        ? 1 + logarithm(inputs.totalPanelsDecayed, 2) / 10
-        : 1
+      return Math.max(
+        1,
+        logarithm(inputs.totalPanelsDecayed, 2) / 10,
+      )
     case 'rocketMania':
       if (!inputs.ownedSkills.has(skillId)) return 1
       return inputs.panelsPerSecond > 20

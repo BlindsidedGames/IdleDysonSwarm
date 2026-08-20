@@ -44,7 +44,7 @@ describe('dynamic facility skill effects', () => {
     expect(resolve('effect.pocket_dimensions.planets')).toBe(69)
   })
 
-  test('preserves strict production thresholds', () => {
+  test('uses the approved inclusive production thresholds', () => {
     expect(
       resolve('effect.parallel_computation.data_centers', {
         serversTotal: 1,
@@ -62,22 +62,22 @@ describe('dynamic facility skill effects', () => {
     ).toBe(1.5)
     expect(
       resolve('effect.oneMinutePlan.assembly_lines_modifier', {
-        panelLifetimeSeconds: 60,
+        panelLifetimeSeconds: 59.99,
       }),
     ).toBe(1.5)
     expect(
       resolve('effect.oneMinutePlan.assembly_lines_modifier', {
-        panelLifetimeSeconds: 60.01,
+        panelLifetimeSeconds: 60,
       }),
     ).toBe(5)
     expect(
       resolve('effect.dysonSubsidies.assembly_lines_modifier', {
-        starsSurrounded: 1,
+        starsSurrounded: 0.99,
       }),
     ).toBe(1)
     expect(
       resolve('effect.dysonSubsidies.assembly_lines_modifier', {
-        starsSurrounded: 1.01,
+        starsSurrounded: 1,
       }),
     ).toBe(2)
   })
@@ -102,12 +102,12 @@ describe('dynamic facility skill effects', () => {
       resolve('effect.purityOfBody.assembly_lines_modifier', {
         assignedSkillPoints: 8,
       }),
-    ).toBe(10)
+    ).toBe(Math.pow(1.25, 8))
     expect(
       resolve('effect.purityOfSEssence.planets_modifier', {
         assignedSkillPoints: 50,
       }),
-    ).toBe(71)
+    ).toBe(Math.pow(1.42, 50))
   })
 
   test('matches server and retained-facility formulas', () => {
@@ -141,12 +141,12 @@ describe('dynamic facility skill effects', () => {
     ).toBe(1.5)
     expect(
       resolve('effect.galacticPradigmShift.planets_modifier', {
-        galaxiesEngulfed: 1,
+        galaxiesEngulfed: 0.999,
       }),
     ).toBe(1.5)
     expect(
       resolve('effect.galacticPradigmShift.planets_modifier', {
-        galaxiesEngulfed: 2,
+        galaxiesEngulfed: 1,
       }),
     ).toBe(3)
     expect(

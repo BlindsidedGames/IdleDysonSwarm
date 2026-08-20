@@ -16,7 +16,7 @@ MonoBehaviour:
   displayName: Worthy Sacrifice
   targetStatId: Facility.AssemblyLine.Modifier
   operation: 1
-  value: 2.5
+  value: 5
   perLevel: 0
   order: 70
   conditionId: 

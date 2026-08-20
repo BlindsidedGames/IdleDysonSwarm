@@ -16,7 +16,9 @@ MonoBehaviour:
   displayName: Supernova
   description: You discover a way to utilize supernovas to melt bots faster.
   technicalDescription: <color=#A3FFFE>Stellar Sacrifices Galaxies</color> are <color=#A3FFFE>1000x</color>
-    better, however manually purchased buildings no longer boost production.
+    better. While owned, manually purchased buildings lose every production bonus including
+    Avocados, the 50/100 milestones, Production Scaling, and all Swarm rates. Refunding
+    Supernova restores the complete manual-purchase layer.
   cost: 4
   refundable: 1
   isFragment: 0

@@ -45,8 +45,9 @@ export type CanonicalBasicFacilityPurchasePreview =
 export function previewCanonicalBasicFacilityPurchase(
   state: CanonicalGameStateV1,
   facilityId: BasicDysonFacilityId,
+  planetModifier = 1,
 ): CanonicalBasicFacilityPurchasePreview {
-  const automationState = toDysonAutomationState(state)
+  const automationState = toDysonAutomationState(state, planetModifier)
   automationState.globalEnabled = true
   automationState.enabledFacilities[facilityId] = true
   return previewDysonFacilityPurchase(
@@ -63,8 +64,9 @@ export function previewCanonicalBasicFacilityPurchase(
 export function tryPurchaseCanonicalBasicFacility(
   state: CanonicalGameStateV1,
   facilityId: BasicDysonFacilityId,
+  planetModifier = 1,
 ): CanonicalBasicFacilityPurchaseResult {
-  const automationState = toDysonAutomationState(state)
+  const automationState = toDysonAutomationState(state, planetModifier)
   automationState.globalEnabled = true
   automationState.enabledFacilities[facilityId] = true
   const result = tryPurchaseDysonFacility(
@@ -139,8 +141,9 @@ export function isCanonicalMegaStructureVisible(
 export function runCanonicalDysonAutomation(
   state: CanonicalGameStateV1,
   policy: SimulationAutomationPolicy = 'preserve-configured-mode',
+  planetModifier = 1,
 ): CanonicalDysonAutomationResult {
-  const automationState = toDysonAutomationState(state)
+  const automationState = toDysonAutomationState(state, planetModifier)
   const result = runDysonAutomationTick(
     automationState,
     policy,
@@ -160,6 +163,7 @@ export function runCanonicalDysonAutomation(
 
 function toDysonAutomationState(
   state: CanonicalGameStateV1,
+  planetModifier: number,
 ): DysonAutomationState {
   return {
     money: state.dyson.money,
@@ -187,6 +191,9 @@ function toDysonAutomationState(
     },
     assemblyMegaLinesOwned:
       state.skills.byId.assemblyMegaLines?.owned === true,
+    planetModifier,
+    terraNovaOwned: state.skills.byId.terraNova?.owned === true,
+    terraGloriaeOwned: state.skills.byId.terraGloriae?.owned === true,
   }
 }
 

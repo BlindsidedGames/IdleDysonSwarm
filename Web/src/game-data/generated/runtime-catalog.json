@@ -346,7 +346,7 @@
       "data": {
         "conditionId": null,
         "id": "effect.citadelCouncil.panel_lifetime",
-        "operation": 0,
+        "operation": 1,
         "order": 17,
         "perLevel": 0,
         "targetFacilityIds": [],
@@ -2153,10 +2153,10 @@
         "order": 62,
         "perLevel": 0,
         "targetFacilityIds": [
-          "ai_managers"
+          "servers"
         ],
         "targetFacilityTags": [],
-        "targetStatId": "Facility.Manager.Production",
+        "targetStatId": "Facility.Server.Production",
         "value": 1
       }
     },
@@ -2262,7 +2262,7 @@
         "targetFacilityIds": [],
         "targetFacilityTags": [],
         "targetStatId": "Facility.AssemblyLine.Modifier",
-        "value": 2.5
+        "value": 5
       }
     },
     {

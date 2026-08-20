@@ -115,10 +115,27 @@ describe('Dyson derived intermediates', () => {
     expect(result.pocketDimensionsProduction).toBeCloseTo(
       Math.log10(100) *
         Math.log10(1_000) *
-        100 *
+        (1 + 99 * 3_565 / 3_600) *
         (1 + Math.log2(rudimentary)),
       14,
     )
+  })
+
+  test('ramps Pocket Androids from 1x to 100x over exactly one hour', () => {
+    const value = (timer: number) =>
+      deriveDysonIntermediates(
+        state(['pocketDimensions', 'pocketAndroids'], {
+          pocketAndroids: timer,
+        }),
+        {
+          managerAssemblyLineProduction: 0,
+          panelLifetimeSeconds: 10,
+        },
+      ).pocketDimensionsProduction / Math.log10(100)
+    expect(value(0)).toBe(1)
+    expect(value(1_800)).toBe(50.5)
+    expect(value(3_600)).toBe(100)
+    expect(value(7_200)).toBe(100)
   })
 
   test('returns neutral values without enabling skills', () => {

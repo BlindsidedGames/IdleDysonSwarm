@@ -12949,6 +12949,46 @@
       "value": "‬"
     }
   ],
+  "skills.import-locked-queued": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 6,
+      "value": "count",
+      "options": {
+        "one": {
+          "value": [
+            {
+              "type": 7
+            },
+            {
+              "type": 0,
+              "value": " ʅoɔʞǝp sʞıʅʅ ʍıʅʅ ɹǝɯɐıu bnǝnǝp nuʇıʅ ıʇs ʅıuǝ nuʅoɔʞs."
+            }
+          ]
+        },
+        "other": {
+          "value": [
+            {
+              "type": 7
+            },
+            {
+              "type": 0,
+              "value": " ʅoɔʞǝp sʞıʅʅs ʍıʅʅ ɹǝɯɐıu bnǝnǝp nuʇıʅ ʇɥǝıɹ ʅıuǝs nuʅoɔʞ."
+            }
+          ]
+        }
+      },
+      "offset": 0,
+      "pluralType": "cardinal"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
   "skills.import-placeholder": [
     {
       "type": 0,
@@ -13497,6 +13537,84 @@
       "value": "‬"
     }
   ],
+  "skills.purity-production-quote": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "∩usdǝuʇ doıuʇs "
+    },
+    {
+      "type": 1,
+      "value": "pointsBefore"
+    },
+    {
+      "type": 0,
+      "value": " → "
+    },
+    {
+      "type": 1,
+      "value": "pointsAfter"
+    },
+    {
+      "type": 0,
+      "value": ". Ↄoɯqıuǝp Ԁnɹıʇʎ ɯnʅʇıdʅıǝɹs: Ↄɐsɥ/Sɔıǝuɔǝ ×"
+    },
+    {
+      "type": 1,
+      "value": "cashBefore"
+    },
+    {
+      "type": 0,
+      "value": " → ×"
+    },
+    {
+      "type": 1,
+      "value": "cashAfter"
+    },
+    {
+      "type": 0,
+      "value": "; Ԑoʇs ×"
+    },
+    {
+      "type": 1,
+      "value": "botsBefore"
+    },
+    {
+      "type": 0,
+      "value": " → ×"
+    },
+    {
+      "type": 1,
+      "value": "botsAfter"
+    },
+    {
+      "type": 0,
+      "value": "; Ǝʌǝɹʎʇɥıuƃ ×"
+    },
+    {
+      "type": 1,
+      "value": "everythingBefore"
+    },
+    {
+      "type": 0,
+      "value": " → ×"
+    },
+    {
+      "type": 1,
+      "value": "everythingAfter"
+    },
+    {
+      "type": 0,
+      "value": "."
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
   "skills.queued": [
     {
       "type": 0,
@@ -13727,6 +13845,34 @@
     {
       "type": 0,
       "value": "Sʞıʅʅ dɹǝsǝʇs ɐup ɹǝsǝʇ"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "skills.supernova-restoration-quote": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "ᴚǝɟnupıuƃ Sndǝɹuoʌɐ ɹǝsʇoɹǝs ʇɥǝ ɔoɯdʅǝʇǝ ɯɐunɐʅ-dnɹɔɥɐsǝ ʅɐʎǝɹ: ∀ʌoɔɐpos, qoʇɥ 50/100 ɯıʅǝsʇouǝs, Ԁɹopnɔʇıou Sɔɐʅıuƃ, ɐup ǝʌǝɹʎ Sʍɐɹɯ ɹɐʇǝ."
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "skills.supernova-suppression-quote": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "Sndǝɹuoʌɐ snddɹǝssǝs ʇɥǝ ɔoɯdʅǝʇǝ ɯɐunɐʅ-dnɹɔɥɐsǝ ʅɐʎǝɹ: ∀ʌoɔɐpos, qoʇɥ 50/100 ɯıʅǝsʇouǝs, Ԁɹopnɔʇıou Sɔɐʅıuƃ, ɐup ǝʌǝɹʎ Sʍɐɹɯ ɹɐʇǝ."
     },
     {
       "type": 0,
