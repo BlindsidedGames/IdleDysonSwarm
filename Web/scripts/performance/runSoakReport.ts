@@ -35,7 +35,10 @@ const durationMilliseconds = integerArgument(
 const warmupMilliseconds = integerArgument(
   argumentsList,
   'warmup-ms',
-  smoke ? 7_000 : 15_000,
+  // Chrome materializes the production HTMLAudioElement's internal DOM and
+  // listener bookkeeping asynchronously. Include that one-time browser-media
+  // initialization in the baseline before measuring route retention.
+  smoke ? 30_000 : 2 * 60 * 1_000,
 )
 const port = integerArgument(argumentsList, 'port', 4_174)
 const profile: ViewportProfile = {
@@ -71,6 +74,7 @@ try {
   }
   await activateRoute(page, 'settings')
   const baselineRouteBoundary = await readRouteBoundary(page)
+  await delay(1_000)
   const baseline = await collectSnapshot(page)
   const activations = await exerciseStableRoutesFor(page, durationMilliseconds)
   if (activations === 0) {
