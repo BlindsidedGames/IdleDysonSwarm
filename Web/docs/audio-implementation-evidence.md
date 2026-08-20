@@ -44,7 +44,7 @@ Loop behavior is whole-track repeat. It preserves the master's intentional rough
 - TypeScript production project: passed.
 - Full Vitest suite: passed (178 files / 1,674 tests). Focused audio/settings/native/PWA tests also passed after the independent review fixes.
 - Production Web build: passed; audio files present in output and the generated service worker precache.
-- Browser button-cue buffer sources and gain nodes disconnect after playback (and after start failure), covered by focused lifecycle tests. The retained-heap soak now takes its baseline only after Chromium's delayed media bookkeeping settles and applies the same render-settle delay to its baseline and final snapshots.
+- Browser button-cue buffer sources and gain nodes disconnect after playback (and after start failure), covered by focused lifecycle tests. The retained-heap soak now takes its baseline after the 328.13-second soundtrack crosses its first native loop, when Chromium materializes the media element's one-time internal nodes and listeners, and applies the same render-settle delay to its baseline and final snapshots.
 - Android Capacitor sync: passed.
 - Android `:app:compileDebugKotlin`: passed on Windows with Media3 resolved.
 - iOS Capacitor sync: passed. Xcode/Swift compilation is unavailable on Windows and remains pending on macOS CI/device validation.
