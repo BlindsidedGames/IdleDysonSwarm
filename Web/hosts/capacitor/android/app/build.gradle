@@ -44,6 +44,13 @@ android {
         }
     }
     buildTypes {
+        debug {
+            // Keep local device testing isolated from the signed production app
+            // and its private save data.
+            applicationIdSuffix ".debug"
+            versionNameSuffix "-debug"
+            resValue "string", "app_name", "Idle Dyson Swarm (Debug)"
+        }
         release {
             if (releaseSigningConfigured) {
                 signingConfig signingConfigs.release
