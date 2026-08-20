@@ -45,6 +45,9 @@ describe('native host scaffold', () => {
     const variables = read('hosts/capacitor/android/variables.gradle')
     const gradle = read('hosts/capacitor/android/app/build.gradle')
     expect(variables).toContain('minSdkVersion = 26')
+    expect(gradle).toContain('applicationIdSuffix ".debug"')
+    expect(gradle).toContain('versionNameSuffix "-debug"')
+    expect(gradle).toContain('Idle Dyson Swarm (Debug)')
     expect(gradle).toContain("contains('release')")
     expect(gradle).toContain('IDS_ANDROID_KEYSTORE_PASSWORD')
     expect(gradle).toMatch(
