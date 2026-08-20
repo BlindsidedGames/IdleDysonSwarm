@@ -59,7 +59,18 @@ export class WebAudioBackend implements AudioBackend {
     source.buffer = this.buttonBuffer
     gain.gain.value = this.settings.effectsVolume
     source.connect(gain).connect(this.context.destination)
-    source.start()
+    const disconnect = () => {
+      source.disconnect()
+      gain.disconnect()
+    }
+    source.addEventListener('ended', disconnect, { once: true })
+    try {
+      source.start()
+    } catch (error) {
+      source.removeEventListener('ended', disconnect)
+      disconnect()
+      throw error
+    }
   }
 
   async destroy(): Promise<void> {
