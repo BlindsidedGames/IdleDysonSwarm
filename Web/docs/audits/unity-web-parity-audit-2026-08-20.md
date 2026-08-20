@@ -122,9 +122,9 @@ Unity uses Odin-serialized `IDB1` in an atomic file store (`Assets/Scripts/Syste
 
 Unity historically carries `doubleIp`/debug claims in save and PlayerPrefs (`Assets/Scripts/Expansion/Oracle.Clipboard.cs:90-123`). Web deliberately removes `doubleIp`, `debugOptions`, and `debugEverEnabled` from shared exports (`Web/src/save/serialization.ts:42-59`) and reapplies verified host ownership through the Store authority. This is a security improvement and should remain unless a signed portable entitlement format is introduced.
 
-### A-03 — Browser Store absence is intentional; native Store is host-specific
+### A-03 — Store authority is host-specific
 
-The browser/PWA does not expose a production Store because a browser profile is not a purchase authority. Capacitor Android uses Google Play Billing and iOS uses StoreKit (`Web/hosts/capacitor/android/.../GooglePlayStore.kt`; `Web/hosts/capacitor/ios/App/App/IdleDysonStoreKit.swift`). This host distinction is sound. P-02 applies only because Electron currently exposes a planned Steam authority that is explicitly disabled.
+The shared Store UI and product contract deliberately delegate commerce and entitlement verification to the active host. The production browser/PWA uses Stripe Checkout through `Web/src/store/browserStripe.ts`; its durable receipts are bound to one browser device key and cannot be restored on another device or after site storage is cleared. Capacitor Android uses Google Play Billing and iOS uses StoreKit (`Web/hosts/capacitor/android/.../GooglePlayStore.kt`; `Web/hosts/capacitor/ios/App/App/IdleDysonStoreKit.swift`). Development uses a deterministic fake adapter unless its explicit Stripe mode is selected. This host distinction is sound. P-02 applies only because Electron currently exposes a planned Steam Inventory authority that is explicitly disabled.
 
 ### A-04 — Unity scene/prefab layout is re-expressed as responsive semantic UI
 
@@ -185,7 +185,7 @@ Validate narrow portrait, wide landscape, safe-area devices, zoomed text, reduce
 | Offline, stored time, Double Time | persistence, away calculator, offline progress, Double Time | lifecycle away time, time resources, stored-time worker | Verified parity in non-skill scope | Host sequencing is R-02; skill modifiers are covered separately |
 | Save schema/import/startup/recovery | schema 12, `SaveCodec`, atomic storage/recovery | schema 12, IDB1 decoder, repository/startup resolver | Intentional adaptation | Web storage is A-01; one-way migration is A-06; mobile upgrade is R-01 |
 | Entitlements | Unity save + PlayerPrefs outcomes | native host authority/cache, stripped shared exports | Intentional adaptation | R-01 |
-| Store products | Unity IAP catalog/handlers | Web Store contracts, Google Play, StoreKit, Steam inventory | Host-dependent | Android/iOS source aligned; Electron gap is P-02; browser omission intentional |
+| Store products | Unity IAP catalog/handlers | shared Store UI/contracts, browser Stripe, Google Play, StoreKit, Steam Inventory | Host-dependent | Browser Stripe and Android/iOS source are present; Electron gap is P-02; host-specific authority is A-03 |
 | Steam achievements/stats/presence | service, monitor, 27 definitions, scene object | interfaces/inventory only | Confirmed mismatch | P-01 |
 | Story | StoryManager and serialized content | canonical projection and Story UI | Verified parity | Text/layout runtime QA under R-03 |
 | Wiki/patch notes/secrets | Wiki prefab/category gates and source content | Wiki content/projection/UI | Partial parity | Unlock gates align; live/supporter/community content is P-06 |

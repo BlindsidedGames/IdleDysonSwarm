@@ -17,14 +17,38 @@ Status conventions:
   button effects with native iOS/Android playback, Web/Electron fallbacks,
   device-local volume controls, lifecycle handling, and compressed assets.
   Source: [parity P-03](audits/unity-web-parity-audit-2026-08-20.md#p-03--unity-audiomusic-behavior-and-volume-controls-are-absent-on-web).
-- [ ] Decide and implement the supported Unity presentation preferences:
-  notation, hide-purchased research, screensaver behavior, and whether frame
-  rate remains host-owned. Source: [parity P-04](audits/unity-web-parity-audit-2026-08-20.md#p-04--several-unity-presentation-preferences-are-preserved-as-data-but-have-no-web-behavior).
-- [ ] Restore the last valid unlocked top-level route after reload, falling back
-  safely to Bots. Source: [parity P-05](audits/unity-web-parity-audit-2026-08-20.md#p-05--web-always-starts-on-bots-instead-of-restoring-the-last-top-level-screen).
-- [ ] **Decision required — community and live content.** Decide whether to
-  restore MOTD, official links, Patreon/supporter credits, or replace them with
-  a smaller maintained surface. Source: [parity P-06](audits/unity-web-parity-audit-2026-08-20.md#p-06--live-motd-community-links-and-supporter-credits-are-missing-from-web).
+- [ ] Implement device-local number notation with functional Standard,
+  Scientific, and Engineering modes, and apply the selected formatter
+  consistently across every player-facing resource, rate, cost, statistic,
+  tooltip, and accessible value. Source: [parity P-04](audits/unity-web-parity-audit-2026-08-20.md#p-04--several-unity-presentation-preferences-are-preserved-as-data-but-have-no-web-behavior).
+- [ ] Implement the hide-purchased-research preference, including consistent
+  filtering, empty-state behavior, keyboard/focus safety, and persistence
+  across reloads. Source: parity P-04.
+- [ ] Implement a device-local inactivity-screensaver toggle and define its
+  idle threshold, lifecycle behavior, reduced-motion behavior, dismissal, and
+  interaction with background/offline processing. Source: parity P-04.
+- [ ] Implement device-local presentation frame-rate choices matching Unity's
+  10, 30, 60, and Maximum options. Limit only rendering/animation delivery;
+  canonical 10 Hz simulation, commands, saves, imports, lifecycle events, and
+  offline accounting must remain unchanged. Source: parity P-04.
+- [ ] Implement a device-local Skill interaction preference for direct
+  purchase on click/tap versus opening Skill details first. Preserve drag/pan,
+  pinch, keyboard activation, purchase eligibility, confirmation, and
+  accessibility behavior in both modes. Source: parity P-04 and the Unity
+  `skillsBuyOnTap` behavior.
+- [ ] Persist the last selected top-level game destination as a device-local
+  preference and restore it after reload, PWA restart, Electron restart, or
+  native host recreation. Restore only a currently unlocked and reachable
+  destination; fall back safely to Bots if the saved route is unknown, locked,
+  or no longer available. Keep dialogs, drafts, and nested/transient panels
+  out of the persisted route. Source: [parity P-05](audits/unity-web-parity-audit-2026-08-20.md#p-05--web-always-starts-on-bots-instead-of-restoring-the-last-top-level-screen).
+- [ ] Restore the maintained live message-of-the-day, allowlisted official
+  website and community links, Patreon entry, and supporter credits. Keep
+  external navigation behind the host boundary; render fetched content as
+  text only with bounded timeout, validation, and a non-blocking fallback;
+  preserve supporter attribution when offline; and test Web, Electron, and
+  native-host behavior without allowing remote content to affect gameplay or
+  startup. Source: [parity P-06](audits/unity-web-parity-audit-2026-08-20.md#p-06--live-motd-community-links-and-supporter-credits-are-missing-from-web).
 
 ## Skill-tree correctness
 
@@ -64,8 +88,20 @@ Status conventions:
   presence.** Implement and certify publication through the Electron/Steam
   host. Source: [parity P-01](audits/unity-web-parity-audit-2026-08-20.md#p-01--steam-achievements-stats-and-rich-presence-have-no-web-implementation).
 - [ ] **Deferred until Steam commerce work — Steam Store authority.** Replace
-  the explicitly disabled Electron Store binding and certify purchases,
-  cancellation, restore, and ownership. Source: [parity P-02](audits/unity-web-parity-audit-2026-08-20.md#p-02--the-electron-steam-store-is-explicitly-disabled).
-- [ ] Before Android/iOS rollout, certify in-place Unity-save migration, paid
-  ownership, lifecycle/offline replay, native purchases/restores, and physical
-  device accessibility. Sources: parity runtime gates R-01 through R-03.
+  the explicitly disabled Electron main-process Inventory binding, configure
+  authoritative Steam ItemDef IDs for all five products, and keep renderer
+  access behind the shared Store contract. Certify localized listings;
+  durable Developer Options and Double Infinity Points ownership; consumable
+  tip delivery and consumption; purchase success, cancellation, pending, and
+  failure outcomes; restore; offline verified-cache behavior; Steam-account
+  switching; renderer restart; and interrupted-consumption recovery. Treat
+  this as a blocker for a monetized Steam release unless the Steam SKU
+  intentionally excludes the Store. Source: [parity P-02](audits/unity-web-parity-audit-2026-08-20.md#p-02--the-electron-steam-store-is-explicitly-disabled).
+- [ ] **Deferred until Android/iOS release work — native Store and device
+  certification.** On physical devices and platform sandboxes, certify
+  purchase success, cancellation, pending/interrupted transactions, durable
+  ownership restore, account switching, reinstall, offline verified-cache
+  behavior, and entitlement reapplication after import. Also certify in-place
+  Unity-save migration, lifecycle/offline replay, update survival, and native
+  accessibility before either Store submission. Sources: parity runtime gates
+  R-01 through R-03.
