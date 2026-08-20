@@ -11,7 +11,7 @@ surface.
 - `src/platform/platformSaveStorage.ts`, `nativeMigration.ts`, and
   `nativeSystemPorts.ts` define the dependency-free native host foundation.
   The concrete path and bridge rules are recorded in
-  `docs/native-host-foundation.md`.
+  `native-host-foundation.md`.
 - `src/store/contracts.ts` owns the canonical IAP product catalog, store
   purchase/restore port and entitlement authority. The five identifiers are
   copied exactly from Unity's `Assets/Resources/IAPProductCatalog.json`:

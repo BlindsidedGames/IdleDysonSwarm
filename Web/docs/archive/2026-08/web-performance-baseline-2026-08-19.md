@@ -6,7 +6,7 @@ Captured: 2026-08-19 15:59 AEST
 
 Purpose: preserve the exact save, environment and runtime-lane measurements to
 compare against the frontend projection and Skills work in
-`docs/web-release-readiness-plan-2026-08-19.md`.
+`docs/release/web-release-readiness-plan-2026-08-19.md`.
 
 ## Source identity
 

@@ -14,7 +14,7 @@ export function resolvePwaVerificationEvidencePath(
   if (customOutput === undefined) {
     return resolve(
       webRoot,
-      'docs/pwa-production-verification-2026-08-19.json',
+      'docs/archive/2026-08/pwa-production-verification-2026-08-19.json',
     )
   }
   const requested = customOutput.trim()

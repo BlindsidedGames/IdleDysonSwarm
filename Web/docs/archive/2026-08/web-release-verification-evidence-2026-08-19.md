@@ -80,7 +80,7 @@ production-boundary check. `npm run verify:pwa:production` is a checked-in,
 repeatable Chrome DevTools Protocol harness. It builds two different production
 packages, runs them successively at the same origin, and writes the complete
 machine-readable result to
-`docs/pwa-production-verification-2026-08-19.json`.
+`docs/archive/2026-08/pwa-production-verification-2026-08-19.json`.
 
 The recorded run used Chrome `151.0.7922.138` on `win32-x64`. Package SHA-256
 values were `a53ab7db8818311a40f06ee9638c98702bfe6d8fc4a1db4a9d9c8e7bc8f27800`

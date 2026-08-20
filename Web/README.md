@@ -95,13 +95,15 @@ test/parity/           Executable save and simulation parity cases
 ```
 
 Before creating another product frontend, satisfy
-[frontend-readiness-gate.md](docs/frontend-readiness-gate.md). See also
-[product-ui-foundation.md](docs/product-ui-foundation.md),
-[architecture.md](docs/architecture.md),
-[game-state-contract.md](docs/game-state-contract.md),
-[simulation-contract.md](docs/simulation-contract.md),
-[parity-fixtures.md](docs/parity-fixtures.md), and
-[platform-port-inventory.md](docs/platform-port-inventory.md).
+[frontend-readiness-gate.md](docs/contracts/frontend-readiness-gate.md). See
+also the [documentation index](docs/README.md), the active
+[product backlog](docs/BACKLOG.md),
+[product-ui-foundation.md](docs/contracts/product-ui-foundation.md),
+[architecture.md](docs/contracts/architecture.md),
+[game-state-contract.md](docs/contracts/game-state-contract.md),
+[simulation-contract.md](docs/contracts/simulation-contract.md), and
+[parity-fixtures.md](docs/contracts/parity-fixtures.md). The superseded platform
+inventory is retained under `docs/archive/`.
 
 See [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md) for the Odin binary
 protocol source attribution.

@@ -175,7 +175,7 @@ Original prompt: Create a separate `Idle Dyson Swarm Web` project beside the Uni
   accessibility and performance contracts had not been established.
 - Restored the browser entrypoint to a developer-only save compatibility
   diagnostic. It is not a product frontend.
-- Added `docs/frontend-readiness-gate.md` to prevent another prototype from
+- Added `docs/contracts/frontend-readiness-gate.md` to prevent another prototype from
   silently defining the product architecture or visual standard.
 - Accepted the existing event-time simulation and performance work as complete
   for the current port stage. Further discretionary tuning is deferred until
@@ -201,7 +201,7 @@ Original prompt: Create a separate `Idle Dyson Swarm Web` project beside the Uni
 - Current headless validation: 127 tests, TypeScript checks, lint, production
   build and deterministic verification of 559 Unity assets across 34 types.
 - Classified the remaining canonical Dyson integration inputs in
-  `docs/canonical-dyson-parity-plan.md`: durable causes remain canonical,
+  `docs/archive/2026-08/canonical-dyson-parity-plan.md`: durable causes remain canonical,
   production/stat caches are reconstructed, legacy mirrors remain
   compatibility-only and platform entitlements stay outside player state.
 - Added executable ownership coverage and round-trip proof for all ten durable
@@ -296,6 +296,6 @@ Original prompt: Create a separate `Idle Dyson Swarm Web` project beside the Uni
   including automatic legacy file discovery under the retained app identity.
 - Implement Steam main-process adapters and physical iOS/Android migration
   certification.
-- Satisfy `docs/frontend-readiness-gate.md` before implementing a replacement
+- Satisfy `docs/contracts/frontend-readiness-gate.md` before implementing a replacement
   product frontend.
 - Remove bundled support fixtures from production packaging after diagnostics.

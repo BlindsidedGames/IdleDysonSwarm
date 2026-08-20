@@ -11,7 +11,7 @@ native/browser host gate or later gameplay destinations. The explicit
 deferrals below are sequencing decisions, not waivers or certification claims.
 
 This plan controls how the product foundation in
-[`product-ui-foundation.md`](product-ui-foundation.md) is delivered. The product
+[`product-ui-foundation.md`](../../contracts/product-ui-foundation.md) is delivered. The product
 foundation remains authoritative for behavior, interaction, visual,
 responsive, accessibility, performance and testing standards. This file adds
 work ownership, review order and recovery checkpoints; it does not relax any

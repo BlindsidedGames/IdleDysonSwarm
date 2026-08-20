@@ -46,7 +46,7 @@ describe('PWA production verification candidate', () => {
       'output/performance/pwa-candidate.json',
     )).toMatch(/[\\/]output[\\/]performance[\\/]pwa-candidate\.json$/)
     expect(resolvePwaVerificationEvidencePath(webRoot, undefined)).toMatch(
-      /[\\/]docs[\\/]pwa-production-verification-2026-08-19\.json$/,
+      /[\\/]docs[\\/]archive[\\/]2026-08[\\/]pwa-production-verification-2026-08-19\.json$/,
     )
     for (const invalid of [
       '',

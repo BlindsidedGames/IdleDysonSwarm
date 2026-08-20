@@ -160,7 +160,7 @@ as pending, reward and Prestige phases so a crash cannot lose or duplicate its
 special reward.
 
 The detailed contract and reset ownership boundary are recorded in
-`docs/lifecycle-infinity-contract.md`. Application command routing and
+`docs/contracts/lifecycle-infinity-contract.md`. Application command routing and
 save/reload acceptance remain required before this becomes a whole-game
 runtime claim.
 

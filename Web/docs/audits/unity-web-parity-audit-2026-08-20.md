@@ -42,7 +42,7 @@ This was an investigation-only source audit. The only file created or edited by 
 5. Inspected platform distinctions separately: browser/PWA, Capacitor Android/iOS, and Electron/Steam.
 6. Ran `npm.cmd run data:check` from `Web`. It completed successfully and byte-verified the current generated data against Unity. This is supporting evidence for authored-data parity, not evidence for runtime behavior.
 7. Used repository-wide negative searches for concrete adapters and UI surfaces when documenting an absence, then checked the composition roots to avoid mistaking an unused contract for an implementation.
-8. Excluded the complete skill-tree domain after reconciling it into `Web/docs/skill-tree-audit-2026-08-20.md`, so the two reports have no duplicated findings.
+8. Excluded the complete skill-tree domain after reconciling it into `Web/docs/audits/skill-tree-audit-2026-08-20.md`, so the two reports have no duplicated findings.
 
 ### Evidence labels
 

@@ -10,7 +10,7 @@ store certification, thermal testing and battery testing are explicitly out of
 scope. They will be planned later, after the Web build is accepted.
 
 The post-icon-conversion performance baseline is recorded in
-`docs/web-performance-baseline-2026-08-19.md`.
+`docs/archive/2026-08/web-performance-baseline-2026-08-19.md`.
 
 ## Implementation progress
 

@@ -3,12 +3,12 @@
 Status: approved on 2026-07-29 for dependency-first implementation through the
 earliest playable Tinker/basic-facility slice. The frontend readiness gate is
 open only for the scope and delivery waves defined by this document and
-[`web-ui-delivery-waves.md`](web-ui-delivery-waves.md). The Tinker, facility
+[`web-ui-delivery-waves.md`](../archive/2026-08/web-ui-delivery-waves.md). The Tinker, facility
 visibility and first-slice layout corrections below were approved by the user
 on 2026-07-29.
 
 Implementation coordination, review gates and recoverable checkpoints are
-defined separately in [`web-ui-delivery-waves.md`](web-ui-delivery-waves.md).
+defined separately in [`web-ui-delivery-waves.md`](../archive/2026-08/web-ui-delivery-waves.md).
 
 Scope decision (2026-07-30): the current checkpoint target is a high-quality
 Bots/Dyson product-design baseline, not a Unity-migration UI or complete
@@ -80,7 +80,7 @@ upgrades have their own identity, signing and container requirements. Complete
 migration promises still require canonical mapping, the pinned public Unity
 3.0.328/schema-11 leaf certification, development-schema idempotence,
 release-write and applicable host gates in
-`platform-port-inventory.md`.
+`../archive/2026-08/platform-port-inventory.md`.
 
 Every product path supports pointer, touch and keyboard. Controller navigation
 is a later release gate unless controller support is explicitly promoted into
@@ -606,7 +606,7 @@ not behind dense text without an opaque contrast surface.
 
 ### Approved layout reference
 
-[`wave-3-parity-layout-reference.md`](wave-3-parity-layout-reference.md) is the
+[`wave-3-parity-layout-reference.md`](../archive/2026-08/wave-3-parity-layout-reference.md) is the
 approved 2026-07-29 composition reference for the first slice. It covers fresh
 and Assembly-revealed state at compact portrait, medium/tablet, wide desktop
 and compact landscape. It settles hierarchy, navigation placement, resource

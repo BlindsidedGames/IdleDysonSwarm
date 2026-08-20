@@ -12,7 +12,7 @@ performance and testing contract is recorded in
 [`product-ui-foundation.md`](product-ui-foundation.md). The user opened this
 gate on 2026-07-29 for dependency-first implementation through the earliest
 playable Tinker/basic-facility slice under
-[`web-ui-delivery-waves.md`](web-ui-delivery-waves.md). Later gameplay
+[`web-ui-delivery-waves.md`](../archive/2026-08/web-ui-delivery-waves.md). Later gameplay
 destinations and native-host certification remain closed.
 
 The backend dependency is complete: UI code may consume

@@ -33,7 +33,7 @@
  * - The runtime projection must select authored values only. It must never
  *   derive costs, unlocks, effects, rates, previews or other gameplay rules.
  * - Coordinate those changes with generated outputs, catalog tests, migration
- *   data, and `docs/parity-fixtures.md`.
+ *   data, and `docs/contracts/parity-fixtures.md`.
  * - The skill-tree graph parser intentionally targets the serialized component
  *   IDs in `SkillButtonPrefab.prefab`; changing that prefab hierarchy requires
  *   updating the constants and parity checks together.
