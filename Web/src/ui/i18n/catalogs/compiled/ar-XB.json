@@ -9431,6 +9431,76 @@
       "value": "‬"
     }
   ],
+  "settings.audio.description": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "Ↄouʇɹoʅ ʇɥǝ sonupʇɹɐɔʞ ɐup ıuʇǝɹɟɐɔǝ sonups ou ʇɥıs pǝʌıɔǝ."
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "settings.audio.effects-volume": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "Ǝɟɟǝɔʇs ʌoʅnɯǝ"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "settings.audio.music-volume": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "Wnsıɔ ʌoʅnɯǝ"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "settings.audio.mute": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "Wnʇǝ ɐʅʅ ɐnpıo"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "settings.audio.title": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "∀npıo"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
   "settings.development.apply": [
     {
       "type": 0,

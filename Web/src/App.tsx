@@ -25,6 +25,7 @@ import {
   type StartupShellOperationStatus,
 } from './ui/shell'
 import { StatusFeedback } from './ui/components'
+import type { GameAudioService } from './audio'
 
 export interface AppProps {
   readonly runtime: BrowserUiRuntimeFoundation
@@ -37,6 +38,7 @@ export interface AppProps {
   readonly buildId?: string
   readonly releasePlatformServices?: Readonly<ReleasePlatformServices>
   readonly localDeveloperOptionsPurchased?: boolean
+  readonly audio?: GameAudioService
 }
 
 function App({
@@ -50,6 +52,7 @@ function App({
   buildId,
   releasePlatformServices,
   localDeveloperOptionsPurchased,
+  audio,
 }: AppProps) {
   const intl = useIntl()
   const status = useBrowserRuntimeStatus(runtime)
@@ -183,6 +186,7 @@ function App({
             runtime.writeClipboardText(text)}
           releasePlatformServices={releasePlatformServices}
           localDeveloperOptionsPurchased={localDeveloperOptionsPurchased}
+          audio={audio}
         />
       </>
     )

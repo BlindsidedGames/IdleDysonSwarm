@@ -21,6 +21,11 @@ import type {
   UiRuntimeImportResult,
 } from './ui/runtime'
 import { selectBrowserStoreAdapterKind } from './store/developmentStoreSelection'
+import { BrowserLifecycleAdapter } from './platform/browserLifecycle'
+import {
+  createProductionAudioService,
+  type GameAudioService,
+} from './audio'
 
 export interface ProductionHostComposition {
   readonly hostKind: HostKind
@@ -28,6 +33,7 @@ export interface ProductionHostComposition {
   readonly releasePlatformServices?: Readonly<ReleasePlatformServices>
   readonly saveSchemaVersion: number
   readonly pwaUpdatesAvailable: boolean
+  readonly audio: GameAudioService
   sampleUtc(): string
   resetSave(): Promise<UiRuntimeImportResult>
   prepareForUpdateActivation(): Promise<void>
@@ -62,6 +68,10 @@ export function createProductionHostComposition(
   const bridge =
     (options.detectNativeBridge ?? detectNativeHostBridge)()
   if (bridge === null) {
+    const audio = createProductionAudioService(
+      'browser',
+      new BrowserLifecycleAdapter(),
+    )
     const composition = options.createBrowserComposition === undefined
       ? (() => {
           const services = createConfiguredBrowserStoreServices()
@@ -76,6 +86,7 @@ export function createProductionHostComposition(
       releasePlatformServices: composition.releasePlatformServices,
       saveSchemaVersion: composition.saveSchemaVersion,
       pwaUpdatesAvailable: true,
+      audio,
       sampleUtc: composition.sampleUtc,
       resetSave: composition.resetSave,
       prepareForUpdateActivation:
@@ -84,10 +95,9 @@ export function createProductionHostComposition(
       reloadSafely: composition.reloadSafely,
     })
   }
+  const environment = createNativeHostEnvironment(bridge)
   const composition = options.createNativeComposition === undefined
-    ? createProductionNativeComposition(
-        createNativeHostEnvironment(bridge),
-      )
+    ? createProductionNativeComposition(environment)
     : options.createNativeComposition(bridge)
   return Object.freeze({
     hostKind: composition.hostKind,
@@ -96,6 +106,7 @@ export function createProductionHostComposition(
       composition.releasePlatformServices,
     saveSchemaVersion: composition.saveSchemaVersion,
     pwaUpdatesAvailable: false,
+    audio: createProductionAudioService(bridge.target, environment.lifecycle),
     sampleUtc: composition.sampleUtc,
     resetSave: composition.resetSave,
     prepareForUpdateActivation:

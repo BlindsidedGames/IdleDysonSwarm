@@ -1,5 +1,5 @@
 import { createHash } from 'node:crypto'
-import { readFileSync } from 'node:fs'
+import { readFileSync, statSync } from 'node:fs'
 import { resolve } from 'node:path'
 import type { Plugin, ResolvedConfig, Rollup } from 'vite'
 
@@ -9,6 +9,7 @@ type OutputChunk = Rollup.OutputChunk
 
 export const PWA_BASE_PATH = '/play/'
 const PWA_GENERATOR_VERSION = '2'
+export const PWA_AUDIO_PACKAGE_BUDGET_BYTES = 7_000_000
 
 const PUBLIC_PRECACHE_FILES = Object.freeze([
   'manifest.webmanifest',
@@ -16,6 +17,9 @@ const PUBLIC_PRECACHE_FILES = Object.freeze([
   'icons/pwa-icon-192.png',
   'icons/pwa-icon-512.png',
   'icons/pwa-maskable-512.png',
+  'audio/ids-soundtrack.m4a',
+  'audio/button.ogg',
+  'audio/button.wav',
 ])
 
 export function pwaPackagePlugin(): Plugin {
@@ -31,6 +35,7 @@ export function pwaPackagePlugin(): Plugin {
       if (config === undefined) {
         throw new Error('PWA packaging requires resolved Vite configuration.')
       }
+      assertPwaAudioPackageBudget(config.publicDir)
       const precacheUrls = collectPwaPrecacheUrls(bundle, config.base)
       const cacheVersion = hashPwaPackage(
         bundle,
@@ -47,6 +52,21 @@ export function pwaPackagePlugin(): Plugin {
       })
     },
   }
+}
+
+export function assertPwaAudioPackageBudget(publicDirectory: string): number {
+  const bytes = PUBLIC_PRECACHE_FILES
+    .filter((fileName) => fileName.startsWith('audio/'))
+    .reduce(
+      (total, fileName) => total + statSync(resolve(publicDirectory, fileName)).size,
+      0,
+    )
+  if (bytes > PWA_AUDIO_PACKAGE_BUDGET_BYTES) {
+    throw new Error(
+      `PWA audio package is ${bytes} bytes; budget is ${PWA_AUDIO_PACKAGE_BUDGET_BYTES} bytes.`,
+    )
+  }
+  return bytes
 }
 
 export function assertPwaBasePath(basePath: string): void {

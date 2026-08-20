@@ -25,6 +25,7 @@ import './index.css'
 import {
   installTextSelectionPolicy,
 } from './ui/accessibility/textSelectionPolicy'
+import { installSemanticAudioCues } from './audio'
 
 installTextSelectionPolicy()
 void bootstrap()
@@ -38,6 +39,8 @@ async function bootstrap(): Promise<void> {
     const messages =
       await LOCALE_REGISTRY[locale].loadSharedCatalog()
     const composition = createProductionHostComposition()
+    void composition.audio.initialize().catch(() => undefined)
+    installSemanticAudioCues(document, composition.audio)
     const pwaUpdateController =
       composition.pwaUpdatesAvailable
         ? createProductionPwaUpdateController()
@@ -135,6 +138,7 @@ async function bootstrap(): Promise<void> {
               releasePlatformServices={
                 composition.releasePlatformServices
               }
+              audio={composition.audio}
             />
             {pwaUpdateController === undefined ? null : (
               <PwaUpdatePrompt

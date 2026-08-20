@@ -1,6 +1,31 @@
 import { defineMessages } from 'react-intl'
 
 export const settingsSurfaceMessages = defineMessages({
+  audioTitle: {
+    id: 'settings.audio.title',
+    defaultMessage: 'Audio',
+    description: 'Heading for game audio preferences.',
+  },
+  audioDescription: {
+    id: 'settings.audio.description',
+    defaultMessage: 'Control the soundtrack and interface sounds on this device.',
+    description: 'Explains that audio preferences are device-local.',
+  },
+  musicVolume: {
+    id: 'settings.audio.music-volume',
+    defaultMessage: 'Music volume',
+    description: 'Label for the soundtrack volume control.',
+  },
+  effectsVolume: {
+    id: 'settings.audio.effects-volume',
+    defaultMessage: 'Effects volume',
+    description: 'Label for the interface sound volume control.',
+  },
+  muteAudio: {
+    id: 'settings.audio.mute',
+    defaultMessage: 'Mute all audio',
+    description: 'Label for the game audio mute control.',
+  },
   moreByTitle: {
     id: 'settings.more-by.title',
     defaultMessage: 'More by Blindsided Games',

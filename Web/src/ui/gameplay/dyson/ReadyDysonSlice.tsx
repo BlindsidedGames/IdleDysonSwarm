@@ -77,6 +77,7 @@ import { AvocatoMeditationSecretTrigger } from '../quantum/AvocatoMeditationSecr
 import type { AvocatoMeditationPlacement } from '../quantum/meditationTargets'
 import type { QuantumPurchaseQuantity } from '../quantum/quantumPurchaseQuantities'
 import type { ReleasePlatformServices } from '../../../platform/releaseFoundation'
+import type { GameAudioService } from '../../../audio'
 import type { StoredTimeJobStatus } from '../../../workers/storedTime/storedTimeProtocol'
 
 const BasicFacilityRegion = lazy(async () => {
@@ -200,6 +201,7 @@ export interface ReadyDysonRuntimeHostProps {
   readonly copySaveText?: (text: string) => Promise<void>
   readonly releasePlatformServices?: Readonly<ReleasePlatformServices>
   readonly localDeveloperOptionsPurchased?: boolean
+  readonly audio?: GameAudioService
 }
 
 /**
@@ -219,6 +221,7 @@ function UnprobedReadyDysonRuntimeHost({
   copySaveText = unavailableCopy,
   releasePlatformServices,
   localDeveloperOptionsPurchased,
+  audio,
 }: ReadyDysonRuntimeHostProps) {
   const [route, setRoute] = useState<ReadyGameRoute>('bots')
   useLayoutEffect(() => {
@@ -294,6 +297,7 @@ function UnprobedReadyDysonRuntimeHost({
       synchronizeHostEntitlements={runtime.synchronizeHostEntitlements}
       releasePlatformServices={releasePlatformServices}
       localDeveloperOptionsPurchased={localDeveloperOptionsPurchased}
+      audio={audio}
       storedTimeJob={storedTimeJob}
       cancelStoredTimeJob={() => runtime.storedTime?.cancel()}
     />
@@ -313,6 +317,7 @@ export function ProbedReadyDysonRuntimeHost({
   copySaveText = unavailableCopy,
   releasePlatformServices,
   localDeveloperOptionsPurchased,
+  audio,
 }: ReadyDysonRuntimeHostProps) {
   const [route, setRoute] = useState<ReadyGameRoute>('bots')
   useLayoutEffect(() => {
@@ -388,6 +393,7 @@ export function ProbedReadyDysonRuntimeHost({
       synchronizeHostEntitlements={runtime.synchronizeHostEntitlements}
       releasePlatformServices={releasePlatformServices}
       localDeveloperOptionsPurchased={localDeveloperOptionsPurchased}
+      audio={audio}
       storedTimeJob={storedTimeJob}
       cancelStoredTimeJob={() => runtime.storedTime?.cancel()}
     />
@@ -428,6 +434,7 @@ export interface ReadyDysonSliceProps {
   readonly localDeveloperOptionsPurchased?: boolean
   readonly storedTimeJob?: StoredTimeJobStatus
   readonly cancelStoredTimeJob?: () => void
+  readonly audio?: GameAudioService
 }
 
 export type ReadyGameRoute =
@@ -507,6 +514,7 @@ export function ReadyDysonSlice({
   localDeveloperOptionsPurchased,
   storedTimeJob = IDLE_STORED_TIME_JOB,
   cancelStoredTimeJob = () => undefined,
+  audio,
 }: ReadyDysonSliceProps) {
   const intl = useIntl()
   const [visualizationVisible, setVisualizationVisible] =
@@ -986,6 +994,7 @@ export function ReadyDysonSlice({
                   readSaveText={readSaveText}
                   downloadSave={downloadSave}
                   copySaveText={copySaveText}
+                  audio={audio}
                   development={
                     import.meta.env.DEV ? development : undefined
                   }

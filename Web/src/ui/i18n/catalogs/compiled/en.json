@@ -4775,6 +4775,36 @@
       "value": "Round bulk purchases to the next milestone"
     }
   ],
+  "settings.audio.description": [
+    {
+      "type": 0,
+      "value": "Control the soundtrack and interface sounds on this device."
+    }
+  ],
+  "settings.audio.effects-volume": [
+    {
+      "type": 0,
+      "value": "Effects volume"
+    }
+  ],
+  "settings.audio.music-volume": [
+    {
+      "type": 0,
+      "value": "Music volume"
+    }
+  ],
+  "settings.audio.mute": [
+    {
+      "type": 0,
+      "value": "Mute all audio"
+    }
+  ],
+  "settings.audio.title": [
+    {
+      "type": 0,
+      "value": "Audio"
+    }
+  ],
   "settings.development.apply": [
     {
       "type": 0,

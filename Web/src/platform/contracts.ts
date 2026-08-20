@@ -38,11 +38,6 @@ export interface PresenceAdapter {
   clear(): Promise<void>
 }
 
-export interface AudioSettingsAdapter {
-  load(): Promise<{ musicVolume: number; buttonVolume: number }>
-  save(settings: { musicVolume: number; buttonVolume: number }): Promise<void>
-}
-
 export interface ClipboardAdapter {
   readText(): Promise<string>
   writeText(value: string): Promise<void>
@@ -68,7 +63,6 @@ export interface PlatformServices {
   readonly lifecycle: LifecycleAdapter
   readonly achievements: AchievementAdapter
   readonly presence: PresenceAdapter
-  readonly audio: AudioSettingsAdapter
   readonly clipboard: ClipboardAdapter
   readonly navigation: ExternalNavigationAdapter
   readonly display: DisplayAdapter

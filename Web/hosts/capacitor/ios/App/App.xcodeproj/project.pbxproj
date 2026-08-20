@@ -18,6 +18,7 @@
 		9582B6832FE993A70072D4E8 /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9582B6822FE993A50072D4E8 /* SceneDelegate.swift */; };
 		A1D5A0012FF0000000000001 /* IdleDysonNativePlugin.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1D5A0022FF0000000000001 /* IdleDysonNativePlugin.swift */; };
 		A1D5A0032FF0000000000001 /* IdleDysonStoreKit.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1D5A0042FF0000000000001 /* IdleDysonStoreKit.swift */; };
+		A1D5A0052FF0000000000001 /* IdleDysonAudioPlugin.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1D5A0062FF0000000000001 /* IdleDysonAudioPlugin.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -33,6 +34,7 @@
 		9582B6822FE993A50072D4E8 /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
 		A1D5A0022FF0000000000001 /* IdleDysonNativePlugin.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IdleDysonNativePlugin.swift; sourceTree = "<group>"; };
 		A1D5A0042FF0000000000001 /* IdleDysonStoreKit.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IdleDysonStoreKit.swift; sourceTree = "<group>"; };
+		A1D5A0062FF0000000000001 /* IdleDysonAudioPlugin.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IdleDysonAudioPlugin.swift; sourceTree = "<group>"; };
 		958DCC722DB07C7200EA8C5F /* debug.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; name = debug.xcconfig; path = ../debug.xcconfig; sourceTree = SOURCE_ROOT; };
 		958DCC732DB07C7200EA8C5F /* release-version.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; name = release-version.xcconfig; path = ../release-version.xcconfig; sourceTree = SOURCE_ROOT; };
 /* End PBXFileReference section */
@@ -73,6 +75,7 @@
 				9582B6822FE993A50072D4E8 /* SceneDelegate.swift */,
 				A1D5A0022FF0000000000001 /* IdleDysonNativePlugin.swift */,
 				A1D5A0042FF0000000000001 /* IdleDysonStoreKit.swift */,
+				A1D5A0062FF0000000000001 /* IdleDysonAudioPlugin.swift */,
 				50379B222058CBB4000EE86E /* capacitor.config.json */,
 				504EC3071FED79650016851F /* AppDelegate.swift */,
 				504EC30B1FED79650016851F /* Main.storyboard */,
@@ -170,6 +173,7 @@
 				9582B6832FE993A70072D4E8 /* SceneDelegate.swift in Sources */,
 				A1D5A0012FF0000000000001 /* IdleDysonNativePlugin.swift in Sources */,
 				A1D5A0032FF0000000000001 /* IdleDysonStoreKit.swift in Sources */,
+				A1D5A0052FF0000000000001 /* IdleDysonAudioPlugin.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

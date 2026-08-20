@@ -9431,6 +9431,76 @@
       "value": "]"
     }
   ],
+  "settings.audio.description": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Ƈǿǿƞŧřǿǿŀ ŧħḗḗ şǿǿŭŭƞḓŧřȧȧƈķ ȧȧƞḓ īƞŧḗḗřƒȧȧƈḗḗ şǿǿŭŭƞḓş ǿǿƞ ŧħīş ḓḗḗṽīƈḗḗ."
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "settings.audio.effects-volume": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Ḗƒƒḗḗƈŧş ṽǿǿŀŭŭḿḗḗ"
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "settings.audio.music-volume": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Ḿŭŭşīƈ ṽǿǿŀŭŭḿḗḗ"
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "settings.audio.mute": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Ḿŭŭŧḗḗ ȧȧŀŀ ȧȧŭŭḓīǿǿ"
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "settings.audio.title": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Ȧŭŭḓīǿǿ"
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
   "settings.development.apply": [
     {
       "type": 0,

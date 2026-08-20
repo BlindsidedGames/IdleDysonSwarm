@@ -4,6 +4,7 @@ import Capacitor
 final class IdleDysonBridgeViewController: CAPBridgeViewController {
     override func capacitorDidLoad() {
         bridge?.registerPluginInstance(IdleDysonNativePlugin())
+        bridge?.registerPluginInstance(IdleDysonAudioPlugin())
     }
 }
 

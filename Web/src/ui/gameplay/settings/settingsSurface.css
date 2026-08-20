@@ -20,6 +20,26 @@
   gap: 0.8rem;
 }
 
+.settings-surface__panel--audio {
+  align-items: start;
+}
+
+.settings-surface__audio-controls {
+  display: grid;
+  gap: 0.65rem;
+}
+
+.settings-surface__audio-controls > label:not(.settings-surface__toggle) {
+  display: grid;
+  grid-template-columns: minmax(8rem, auto) minmax(8rem, 15rem);
+  align-items: center;
+  gap: 0.65rem;
+}
+
+.settings-surface__audio-controls input[type="range"] {
+  inline-size: 100%;
+}
+
 .settings-surface__dialog-backdrop {
   position: fixed;
   z-index: 100;

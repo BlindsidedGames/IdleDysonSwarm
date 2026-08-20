@@ -18,6 +18,7 @@ import {
   SettingsSurface,
   type SettingsSurfaceProps,
 } from './SettingsSurface'
+import type { GameAudioService } from '../../../audio'
 
 const settingsStyles = readFileSync(
   join(
@@ -34,6 +35,28 @@ const settingsStyles = readFileSync(
 afterEach(cleanup)
 
 describe('SettingsSurface', () => {
+  test('exposes localized device audio volumes and mute controls', async () => {
+    const update = vi.fn(() => Promise.resolve())
+    const audioSettings = { musicVolume: 0.7, effectsVolume: 0.5, muted: false } as const
+    const audio: GameAudioService = {
+      target: 'browser',
+      initialize: vi.fn(() => Promise.resolve()),
+      settings: () => audioSettings,
+      subscribe: () => () => undefined,
+      update,
+      semanticAction: vi.fn(() => Promise.resolve()),
+      setMusicIntended: vi.fn(() => Promise.resolve()),
+      destroy: vi.fn(() => Promise.resolve()),
+    }
+    const user = userEvent.setup()
+    renderSettings(vi.fn(), undefined, { audio })
+    expect(screen.getByRole('heading', { name: 'Audio' })).toBeInTheDocument()
+    expect(screen.getByRole('slider', { name: 'Music volume' })).toHaveValue('70')
+    expect(screen.getByRole('slider', { name: 'Effects volume' })).toHaveValue('50')
+    await user.click(screen.getByRole('checkbox', { name: 'Mute all audio' }))
+    expect(update).toHaveBeenCalledWith({ muted: true })
+  })
+
   test('has no serious or critical automated accessibility violations', async () => {
     const { container } = renderSettings(vi.fn())
     const results = await axe.run(container, {

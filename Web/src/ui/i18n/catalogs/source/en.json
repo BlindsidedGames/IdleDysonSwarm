@@ -2327,6 +2327,26 @@
     "defaultMessage": "Round bulk purchases to the next milestone",
     "description": "Unity Research rounded-bulk setting."
   },
+  "settings.audio.description": {
+    "defaultMessage": "Control the soundtrack and interface sounds on this device.",
+    "description": "Explains that audio preferences are device-local."
+  },
+  "settings.audio.effects-volume": {
+    "defaultMessage": "Effects volume",
+    "description": "Label for the interface sound volume control."
+  },
+  "settings.audio.music-volume": {
+    "defaultMessage": "Music volume",
+    "description": "Label for the soundtrack volume control."
+  },
+  "settings.audio.mute": {
+    "defaultMessage": "Mute all audio",
+    "description": "Label for the game audio mute control."
+  },
+  "settings.audio.title": {
+    "defaultMessage": "Audio",
+    "description": "Heading for game audio preferences."
+  },
   "settings.development.apply": {
     "defaultMessage": "Apply Progression",
     "description": "Applies a development progression preset."

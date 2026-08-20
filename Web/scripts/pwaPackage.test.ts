@@ -3,12 +3,19 @@ import { resolve } from 'node:path'
 import type { Rollup } from 'vite'
 import {
   assertPwaBasePath,
+  assertPwaAudioPackageBudget,
   collectPwaPrecacheUrls,
   hashPwaPackage,
   renderPwaServiceWorker,
+  PWA_AUDIO_PACKAGE_BUDGET_BYTES,
 } from './pwaPackage'
 
 describe('PWA build package', () => {
+  test('keeps the explicit offline audio payload within its package budget', () => {
+    const bytes = assertPwaAudioPackageBudget(resolve(import.meta.dirname, '../public'))
+    expect(bytes).toBe(6_775_358)
+    expect(bytes).toBeLessThanOrEqual(PWA_AUDIO_PACKAGE_BUDGET_BYTES)
+  })
   test('pins the player package to the canonical /play/ base path', () => {
     expect(() => assertPwaBasePath('/play/')).not.toThrow()
     expect(() => assertPwaBasePath('/')).toThrow(
@@ -28,6 +35,9 @@ describe('PWA build package', () => {
     expect(urls).toContain('/play/')
     expect(urls).toContain('/play/assets/app-123.js')
     expect(urls).toContain('/play/icons/pwa-icon-512.png')
+    expect(urls).toContain('/play/audio/ids-soundtrack.m4a')
+    expect(urls).toContain('/play/audio/button.ogg')
+    expect(urls).toContain('/play/audio/button.wav')
     expect(urls).not.toContain('/play/index.html')
     expect(urls).not.toContain('/play/_headers')
     expect(urls).not.toContain('/play/.vite/manifest.json')

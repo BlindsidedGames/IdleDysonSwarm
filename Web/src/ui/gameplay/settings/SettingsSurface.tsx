@@ -17,6 +17,8 @@ import { formatGameNumber } from '../../i18n/formatters'
 import type { EnabledLocale } from '../../i18n/localeRegistry'
 import { settingsSurfaceMessages as messages } from './messages'
 import './settingsSurface.css'
+import type { GameAudioService } from '../../../audio'
+import { useAudioSettings } from '../../../audio'
 
 export interface SettingsSurfaceProps {
   readonly resetSave: () => Promise<UiRuntimeImportResult>
@@ -46,6 +48,7 @@ export interface SettingsSurfaceProps {
     item: NavigationShortcutId,
     visible: boolean,
   ) => void
+  readonly audio?: GameAudioService
 }
 
 export type NavigationShortcutId = 'story' | 'wiki' | 'statistics'
@@ -101,6 +104,7 @@ export function SettingsSurface({
     statistics: true,
   },
   onNavigationVisibilityChange = () => undefined,
+  audio,
 }: SettingsSurfaceProps) {
   const intl = useIntl()
   const developmentPresetId = useId()
@@ -382,6 +386,9 @@ export function SettingsSurface({
         aria-hidden={dialog !== null || undefined}
         inert={dialog !== null || undefined}
       >
+        {!developmentOnly && audio !== undefined ? (
+          <AudioSettingsPanel audio={audio} />
+        ) : null}
         {!developmentOnly ? <section className="settings-surface__panel settings-surface__panel--visualization">
           <div className="settings-surface__copy">
             <h2>
@@ -907,6 +914,55 @@ export function SettingsSurface({
         </div>, document.body)
       ) : null}
     </div>
+  )
+}
+
+function AudioSettingsPanel({ audio }: { readonly audio: GameAudioService }) {
+  const intl = useIntl()
+  const settings = useAudioSettings(audio)
+  return (
+    <section className="settings-surface__panel settings-surface__panel--audio">
+      <div className="settings-surface__copy">
+        <h2>{intl.formatMessage(messages.audioTitle)}</h2>
+        <p>{intl.formatMessage(messages.audioDescription)}</p>
+      </div>
+      <div className="settings-surface__audio-controls">
+        <label>
+          <span>{intl.formatMessage(messages.musicVolume)}</span>
+          <input
+            type="range"
+            min="0"
+            max="100"
+            value={Math.round(settings.musicVolume * 100)}
+            aria-valuetext={`${Math.round(settings.musicVolume * 100)}%`}
+            onChange={(event) => void audio.update({
+              musicVolume: Number(event.currentTarget.value) / 100,
+            })}
+          />
+        </label>
+        <label>
+          <span>{intl.formatMessage(messages.effectsVolume)}</span>
+          <input
+            type="range"
+            min="0"
+            max="100"
+            value={Math.round(settings.effectsVolume * 100)}
+            aria-valuetext={`${Math.round(settings.effectsVolume * 100)}%`}
+            onChange={(event) => void audio.update({
+              effectsVolume: Number(event.currentTarget.value) / 100,
+            })}
+          />
+        </label>
+        <label className="settings-surface__toggle">
+          <input
+            type="checkbox"
+            checked={settings.muted}
+            onChange={(event) => void audio.update({ muted: event.currentTarget.checked })}
+          />
+          <span>{intl.formatMessage(messages.muteAudio)}</span>
+        </label>
+      </div>
+    </section>
   )
 }
 
