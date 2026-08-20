@@ -35,11 +35,10 @@ const durationMilliseconds = integerArgument(
 const warmupMilliseconds = integerArgument(
   argumentsList,
   'warmup-ms',
-  // Chrome materializes the production HTMLAudioElement's internal DOM and
-  // listener bookkeeping when the 328.13-second soundtrack crosses its first
-  // native loop. Include that one-time browser-media initialization in the
-  // baseline before measuring route retention; later loops do not add more.
-  smoke ? 30_000 : 6 * 60 * 1_000,
+  // Warm every stable route before measuring application-owned resources.
+  // Chromium's global media bookkeeping remains diagnostic-only because its
+  // internal HTMLAudio nodes and listeners are not application registrations.
+  30_000,
 )
 const port = integerArgument(argumentsList, 'port', 4_174)
 const profile: ViewportProfile = {

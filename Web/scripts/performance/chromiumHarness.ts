@@ -58,6 +58,8 @@ export interface BrowserPerformanceEntries {
 }
 
 export interface InstrumentedResourceCounts {
+  readonly documentNodes: number
+  readonly activeEventListeners: number
   readonly activeTimeouts: number
   readonly activeIntervals: number
   readonly activeAnimationFrames: number
@@ -811,6 +813,121 @@ const PERFORMANCE_INSTRUMENTATION = String.raw`
   const intervals = new Set()
   const animationFrames = new Set()
   const pointers = new Set()
+  const listenerRegistrations = new WeakMap()
+  let activeEventListeners = 0
+  const listenerTargetFinalizer = new FinalizationRegistry((record) => {
+    activeEventListeners -= record.count
+  })
+
+  const nativeAddEventListener = EventTarget.prototype.addEventListener
+  const nativeRemoveEventListener = EventTarget.prototype.removeEventListener
+
+  const captureFrom = (options) =>
+    typeof options === 'boolean' ? options : Boolean(options?.capture)
+  const removeTrackedListener = (target, entry, removeNative) => {
+    const registrations = listenerRegistrations.get(target)?.registrations
+    const index = registrations?.indexOf(entry) ?? -1
+    if (index < 0) return
+    registrations.splice(index, 1)
+    activeEventListeners -= 1
+    entry.targetRecord.count -= 1
+    if (entry.abortHandler && entry.signal) {
+      nativeRemoveEventListener.call(
+        entry.signal,
+        'abort',
+        entry.abortHandler,
+      )
+    }
+    if (removeNative) {
+      nativeRemoveEventListener.call(
+        target,
+        entry.type,
+        entry.wrapped,
+        entry.capture,
+      )
+    }
+  }
+
+  EventTarget.prototype.addEventListener = function (
+    type,
+    listener,
+    options,
+  ) {
+    if (listener === null || listener === undefined) {
+      return nativeAddEventListener.call(this, type, listener, options)
+    }
+    const capture = captureFrom(options)
+    const signal = typeof options === 'object' ? options?.signal : undefined
+    if (signal?.aborted) {
+      return nativeAddEventListener.call(this, type, listener, options)
+    }
+    const existing = listenerRegistrations.get(this)
+    const registrations = existing?.registrations ?? []
+    const targetRecord = existing?.targetRecord ?? { count: 0 }
+    if (!listenerRegistrations.has(this)) {
+      listenerRegistrations.set(this, { registrations, targetRecord })
+      listenerTargetFinalizer.register(this, targetRecord, targetRecord)
+    }
+    const duplicate = registrations.find(
+      (entry) =>
+        entry.type === type &&
+        entry.listener === listener &&
+        entry.capture === capture,
+    )
+    if (duplicate) {
+      return nativeAddEventListener.call(this, type, duplicate.wrapped, options)
+    }
+    const entry = {
+      type,
+      listener,
+      capture,
+      signal,
+      targetRecord,
+      abortHandler: undefined,
+      wrapped: listener,
+    }
+    if (typeof options === 'object' && options?.once) {
+      entry.wrapped = function (event) {
+        removeTrackedListener(this, entry, false)
+        if (typeof listener === 'function') {
+          return listener.call(this, event)
+        }
+        return listener.handleEvent(event)
+      }
+    }
+    if (signal) {
+      entry.abortHandler = () => removeTrackedListener(this, entry, true)
+      nativeAddEventListener.call(
+        signal,
+        'abort',
+        entry.abortHandler,
+        { once: true },
+      )
+    }
+    registrations.push(entry)
+    activeEventListeners += 1
+    targetRecord.count += 1
+    return nativeAddEventListener.call(this, type, entry.wrapped, options)
+  }
+
+  EventTarget.prototype.removeEventListener = function (
+    type,
+    listener,
+    options,
+  ) {
+    const capture = captureFrom(options)
+    const entry = listenerRegistrations.get(this)?.registrations.find(
+      (candidate) =>
+        candidate.type === type &&
+        candidate.listener === listener &&
+        candidate.capture === capture,
+    )
+    if (entry) {
+      removeTrackedListener(this, entry, true)
+      return
+    }
+    return nativeRemoveEventListener.call(this, type, listener, options)
+  }
 
   const nativeSetTimeout = window.setTimeout.bind(window)
   const nativeClearTimeout = window.clearTimeout.bind(window)
@@ -1010,6 +1127,8 @@ const PERFORMANCE_INSTRUMENTATION = String.raw`
     },
     readResources() {
       return {
+        documentNodes: document.querySelectorAll('*').length,
+        activeEventListeners,
         activeTimeouts: timeouts.size,
         activeIntervals: intervals.size,
         activeAnimationFrames: animationFrames.size,
