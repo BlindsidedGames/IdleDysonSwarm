@@ -13,9 +13,13 @@ Status conventions:
 
 ## Current cross-platform work
 
-- [ ] **In progress — native cross-platform audio.** Restore bundled music and
-  button effects with native iOS/Android playback, Web/Electron fallbacks,
-  device-local volume controls, lifecycle handling, and compressed assets.
+- [ ] **Review and certify native cross-platform audio.** The shared audio
+  implementation is integrated on `main`; before release, complete macOS/iOS
+  compilation, the physical Android/iOS acceptance matrix, and a subjective
+  headphone/speaker A/B and whole-track loop-transition check. Confirm volume
+  and mute persistence, lifecycle/focus recovery, output-route changes, long
+  playback, and the absence of duplicate music or excessive cue overlap.
+  Record results in [audio implementation evidence](audio-implementation-evidence.md).
   Source: [parity P-03](audits/unity-web-parity-audit-2026-08-20.md#p-03--unity-audiomusic-behavior-and-volume-controls-are-absent-on-web).
 - [ ] Implement device-local number notation with functional Standard,
   Scientific, and Engineering modes, and apply the selected formatter
@@ -84,6 +88,13 @@ Status conventions:
 
 ## Deferred platform release work
 
+- [ ] **Deferred to a future release — full-game localization.** Keep the game
+  intentionally English-only for the current release, consistent with its
+  historical releases; this does not block current skill-tree fixes. A future
+  localization release must cover all player-facing copy, including every
+  generated skill-tree message and the authored locale catalogs, plus
+  locale-aware formatting, layout expansion, fallback behavior, and
+  per-locale rendering and interaction testing.
 - [ ] **Deferred until Steam release — achievements, statistics, and rich
   presence.** Implement and certify publication through the Electron/Steam
   host. Source: [parity P-01](audits/unity-web-parity-audit-2026-08-20.md#p-01--steam-achievements-stats-and-rich-presence-have-no-web-implementation).
