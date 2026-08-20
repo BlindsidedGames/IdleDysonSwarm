@@ -88,6 +88,8 @@ export interface ResourceCounts {
   readonly documents: number
   readonly nodes: number
   readonly jsEventListeners: number
+  readonly documentNodes: number
+  readonly activeEventListeners: number
   readonly activeTimeouts: number
   readonly activeIntervals: number
   readonly activeAnimationFrames: number
@@ -419,8 +421,8 @@ export function createSoakReport(input: {
   )
   const countKeys = [
     'documents',
-    'nodes',
-    'jsEventListeners',
+    'documentNodes',
+    'activeEventListeners',
     'activeTimeouts',
     'activeIntervals',
     'activeAnimationFrames',

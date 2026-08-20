@@ -343,6 +343,8 @@ function counts(value: number) {
     documents: value,
     nodes: value,
     jsEventListeners: value,
+    documentNodes: value,
+    activeEventListeners: value,
     activeTimeouts: value,
     activeIntervals: value,
     activeAnimationFrames: value,
