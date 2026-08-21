@@ -51,6 +51,6 @@ describe('native audio integration', () => {
     expect(statSync(resolve(process.cwd(), 'public/audio/ids-soundtrack.m4a')).size).toBeLessThan(8_000_000)
     expect(statSync(resolve(process.cwd(), 'public/audio/button.ogg')).size).toBe(6_021)
     expect(statSync(resolve(process.cwd(), 'public/audio/button.wav')).size).toBeLessThan(20_000)
-    expect(statSync(resolve(process.cwd(), '../Assets/Sounds/IDS.wav')).size).toBe(57_882_296)
+    expect(statSync(resolve(process.cwd(), 'source-assets/audio/IDS-master.wav')).size).toBe(57_882_296)
   })
 })

@@ -10,10 +10,9 @@ Playback does not start at application construction. The first enabled semantic 
 
 | Asset | Purpose | Codec | Channels / rate | Duration | Bytes | SHA-256 |
 | --- | --- | --- | --- | ---: | ---: | --- |
-| `../Assets/Sounds/IDS.wav` | preserved soundtrack master | PCM S16LE, 1,411 kb/s | stereo / 44.1 kHz | 328.13 s | 57,882,296 | `2ab4636ee5970a729ece6106dfbb8b8252ae44a8b1fa89a780f224b4e4296602` |
+| `source-assets/audio/IDS-master.wav` | preserved soundtrack master | PCM S16LE, 1,411 kb/s | stereo / 44.1 kHz | 328.13 s | 57,882,296 | `2ab4636ee5970a729ece6106dfbb8b8252ae44a8b1fa89a780f224b4e4296602` |
 | `public/audio/ids-soundtrack.m4a` | all delivery targets | AAC-LC, requested 160 kb/s (163 kb/s stream, 164 kb/s container) | stereo / 44.1 kHz | 328.13 s | 6,752,895 | `e80073021656835372c5d5880081f503bc654c674ec86c8d46bd0d8a0e40aeee` |
-| `../Assets/Resources/button.ogg` | preserved cue master and Browser/Android delivery source | Vorbis, nominal 160 kb/s | stereo / 48 kHz | about 0.09 s | 6,021 | `25860126b6ad2ef525907ed58fee58f9149a681160a3c90ce2e95d32530a6108` |
-| `public/audio/button.ogg` | Browser/Android cue | byte-identical Vorbis copy | stereo / 48 kHz | about 0.09 s | 6,021 | `25860126b6ad2ef525907ed58fee58f9149a681160a3c90ce2e95d32530a6108` |
+| `public/audio/button.ogg` | preserved master and Browser/Android cue | Vorbis, nominal 160 kb/s | stereo / 48 kHz | about 0.09 s | 6,021 | `25860126b6ad2ef525907ed58fee58f9149a681160a3c90ce2e95d32530a6108` |
 | `public/audio/button.wav` | iOS cue | PCM S16LE | stereo / 48 kHz | about 0.09 s | 16,442 | `6a2441dcfdfcefe7a01cac2dfbaaff1605764b209fd6f0f93f8882d79aa37d0f` |
 
 The soundtrack is encoded from the supplied game-specific master with FFmpeg 6.0 static (`aac`, `-b:a 160k`, `-ar 44100`, stereo, fast-start M4A, source metadata removed). The iOS cue is decoded from the preserved Ogg master without resampling.

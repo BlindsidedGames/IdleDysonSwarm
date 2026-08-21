@@ -13,11 +13,11 @@ Upload Idle Dyson Swarm builds to Steam via SteamCMD.
   - Linux: `4348572`
   - macOS: `4348573`
 
-## Paths
-- SteamCMD scripts root: `/Users/matthewrushworth/Builds/steamcmd/Scripts/idle-dyson-swarm`
-- Windows build output: `/Users/matthewrushworth/Builds/Idle Dyson Swarm/Windows`
-- Linux build output: `/Users/matthewrushworth/Builds/Idle Dyson Swarm/Linux`
-- macOS build output: `/Users/matthewrushworth/Builds/Idle Dyson Swarm/MacOS`
+## Build source
+Build the Electron packages from `Web/` with the matching
+`native:electron:package:*` npm script, then copy the reviewed package into the
+SteamCMD content root configured by the upload script. Never source a depot
+from the archived Unity branch.
 
 ## Upload Scripts
 - Windows only:
@@ -49,7 +49,7 @@ Upload Idle Dyson Swarm builds to Steam via SteamCMD.
    - First actionable error if failed.
 
 ## Troubleshooting
-- Missing build folder/output: run Unity build first.
+- Missing build folder/output: build and review the matching Electron package.
 - Missing SteamCMD script or VDF: restore script set before upload.
 - Auth failures: re-auth in SteamCMD environment and retry.
 - Partial depot upload failure: rerun after fixing the failed platform payload.

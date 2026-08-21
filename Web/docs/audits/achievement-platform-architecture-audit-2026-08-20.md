@@ -4,7 +4,7 @@ Scope: investigation and design only from current Unity and Web source, 2026-08-
 
 ## Confirmed findings
 
-- The serialized Unity registry has 27 references (Assets/Data/Steam/AchievementRegistry.asset:15-42). The active folder has 27 achievement assets, the source catalog has 27 steamAchievementId values, and Documentation/Archive/AchievementPackageForEve has 27 PNGs.
+- The archived Unity registry has 27 references. The Web handoff catalog preserves 27 achievement assets and `steamAchievementId` values, while `Web/source-assets/achievements/legacy-unity/` preserves 27 hash-verified PNG masters. Historical `Assets/` paths in this audit resolve against `archive/unity-development-handoff-2026-08-21`.
 - The runtime catalog intentionally has no achievement definition: Web/src/game-data/runtimeCatalogContract.ts:21-100 contains no achievement kinds, and generated/runtime-catalog.json contains none of FIRST_BOT, BOTS_42QI, or AchievementRegistry.
 - Unity evaluates gameplay and publishes Steam in one service. It starts with presence/check, then uses 5 s presence, 10 s achievement, and 30 s stat/flush cadence (Assets/Scripts/Services/Steam/SteamIntegrationMonitor.cs:51-115; serialized values Assets/Scenes/Game.unity:154719-154723).
 - Web provides only AchievementAdapter and PresenceAdapter contracts (Web/src/platform/contracts.ts:25-39). There is no Web evaluator or publisher. Electron has Steam Inventory/entitlement support, not achievements; Capacitor bridge has save/lifecycle/store calls only (Web/src/platform/nativeHostBridge.ts:47-81).
@@ -57,7 +57,7 @@ Canonical fact is the recommended platform-neutral semantic ID. Current platform
 | presence.template / ephemeral | steam_display = #Status_InGame. | Set active/clear on exit. Host-only localisation token. SteamIntegrationService.cs:132-138,253-260. |
 | presence.status / ephemeral | status is Early bots; Infinity IP + bots; Quantum QP + IP; Reality + QP; Avocado multiplier + QP. Tier priority Avocado, reality (QP or 27 secrets), quantum, infinity, early. | Separate PresenceSnapshot, preserving current MAX/ERR formatting. SteamIntegrationService.cs:59-77,141-250,575-580; ProgressionTier.cs:10-26. |
 
-Documentation/Archive/AchievementPackageForEve/ALLACHIEVEMENTS.md:116-165 documents five apparent stats and three progress calls. It is not evidence of live dashboard configuration. API names/types/defaults/increment policy, visibility, localisation, tokens, icons and uploads are dashboard unknown.
+`Web/source-assets/achievements/legacy-unity/ALLACHIEVEMENTS.md` documents five apparent stats and three progress calls. It is not evidence of live dashboard configuration. API names/types/defaults/increment policy, visibility, localisation, tokens, icons and uploads are dashboard unknown.
 
 ## Recommended design
 
@@ -103,7 +103,7 @@ Required build/package tests:
 | presence snapshot and diagnostic vocabulary | Google Play Games project/OAuth/test-track/Android mapping |
 | validation saves and bundle exclusions | Game Center IDs/capability, sandbox account, completion policy, App Store Connect setup |
 
-No source proves Google Play Games or Game Center achievement configuration. GAME_KIT_API_ENABLED at ProjectSettings/ProjectSettings.asset:864-869 is not dashboard evidence. The 27 PNGs prove prepared images, not achieved/locked variants or upload.
+No source proves Google Play Games or Game Center achievement configuration. The archived `GAME_KIT_API_ENABLED` project setting is not dashboard evidence. The 27 PNGs prove prepared images, not achieved/locked variants or upload.
 
 ## Staged implementation plan and gates
 
@@ -114,13 +114,12 @@ No source proves Google Play Games or Game Center achievement configuration. GAM
 5. iOS later: Game Center host after App Store Connect setup. Gate: sandbox device authentication, retroactive reporting, percentage/background behaviour.
 6. Per-release: compare map with provider export, inspect package, test clean/old/imported saves and offline/reconnect. Browser remains no-op unless explicitly authorised otherwise.
 
-## Unity-removal preservation checklist
+## Unity-removal preservation record
 
-- [ ] Assets/Data/Steam/AchievementRegistry.asset and meta; every Assets/Data/Steam/Achievements asset/meta pair; both condition folders/metas; referenced IDs including Assets/Data/IDs/Skills/avocados.asset. Preserve GUID meta files.
-- [ ] AchievementDefinition.cs, AchievementRegistry.cs, EffectCondition.cs, ResourceThresholdCondition.cs, PrestigeThresholdCondition.cs, FacilityCountCondition.cs, FacilityCountType.cs, QuantumUpgradeCondition.cs, SimulationFlagCondition.cs, AndCondition.cs, AllSimulationUpgradesCondition.cs, SecretsFoundCondition.cs, SkillPointsAssignedCondition.cs, SkillOwnedCondition.cs, DevOptionsCondition.cs and ComparisonOperator.cs.
-- [ ] SteamIntegrationMonitor.cs, SteamIntegrationService.cs, ISteamIntegrationService.cs, ProgressionTier.cs, SteamManager.cs, ServiceProvider.cs and Assets/Scenes/Game.unity:154675-154723.
-- [ ] steam_appid.txt, relevant scripting symbols in ProjectSettings/ProjectSettings.asset, Assets/Editor/AndroidSteamPluginExcluder.cs and Assets/Editor/AndroidSteamGradleStripper.cs. Steamworks package/binary provenance was not established.
-- [ ] All 27 archive PNGs, ALLACHIEVEMENTS.md, message.txt and Assets/Sprites/SteamIcon.png. When access is authorised, capture dimensions, masters, achieved/locked variants, visibility, localisation and upload receipt.
+- [x] The exact source tree, GUID metadata, service code, scene serialization, project settings, and plugins are retained on the public archive branch/tag.
+- [x] The Web-authored handoff capsule preserves all 27 definition records and their referenced condition data with historical path, GUID, and source-hash provenance.
+- [x] `Web/hosts/electron/steam_appid.txt` preserves the development app ID.
+- [x] All 27 PNG masters, one ALLACHIEVEMENTS copy, message, soundtrack master, and Steam icon are retained under `Web/source-assets/` with automated hash checks.
 - [ ] Read-only dashboard exports: Steam APIs/types/defaults/increment rules, hidden/progress/localisation/#Status_InGame/art; equivalent Google/App Store evidence only for planned releases.
 
 ## Verification performed

@@ -1,12 +1,7 @@
 # Idle Dyson Swarm Web
 
-Headless TypeScript port foundation for Idle Dyson Swarm, with a small
-developer-only browser harness for save compatibility diagnostics.
-
-There is intentionally no playable product frontend at this checkpoint. The
-earlier Bot-tab slice was removed because the project does not yet have an
-approved product, design, interaction, accessibility or performance baseline.
-The diagnostic harness must not be treated as a product UI reference.
+Canonical TypeScript/React edition of Idle Dyson Swarm, including the browser
+game, installable PWA, Capacitor Android/iOS hosts, and Electron desktop host.
 
 ## Compatibility foundation
 
@@ -40,8 +35,8 @@ not copied into this repository.
   gameplay facts and transient Tinker progress.
 - Exact event-time simulation across Dyson, Infinity, Dream, Reality, Quantum,
   Avocado and time-resource systems.
-- Deterministic exporter for 559 Unity data assets, including stable IDs,
-  resolved GUID references and source hashes.
+- Versioned Web-owned gameplay-data capsule covering 559 historical assets,
+  with deterministic byte and structure validation.
 - Compact legacy skill/research ID and dependency catalogs.
 - Unity-compatible save normalization, migration, numeric repair and
   validation.
@@ -53,10 +48,9 @@ not copied into this repository.
 - Golden-master fixture and comparison tooling.
 - Platform capability contracts for future Electron and Capacitor adapters.
 
-The existing simulation and performance work is accepted as complete for the
-current port stage. Further discretionary performance tuning is deferred until
-the full gameplay port is complete. Correctness defects and measured
-regressions remain valid reasons to revisit it earlier.
+The existing simulation and performance baseline is accepted for the current
+product. Further tuning should be driven by measured regressions or correctness
+defects and must preserve deterministic gameplay behavior.
 
 ## Commands
 
@@ -71,8 +65,7 @@ npm run decode-save -- /path/to/idle_dyson_swarm_save.txt
 npm run prepare-save -- /path/to/idle_dyson_swarm_save.txt
 ```
 
-`npm run dev` opens the developer save-compatibility harness. It is not the
-game frontend.
+`npm run dev` starts the playable game for local development.
 
 ## Project layout
 
@@ -80,23 +73,23 @@ game frontend.
 scripts/
   decode-save.ts       Standalone read-only decoder command
   prepare-save.ts      Decode + migrate + repair + validate command
-  export-unity-data.ts Deterministic ScriptableObject exporter
+  build-web-data.ts    Deterministic Web-authored data materializer
 src/
   application/         Runtime session, commands, lifecycle and UI read boundary
   core/                Framework-independent simulation contracts
-  game-data/           Runtime types and generated Unity catalogs
+  game-data/           Web-owned authored inputs and generated runtime catalogs
   parity/              Golden-master fixture and graph comparison tools
   platform/            Replaceable platform capability contracts
   save/                Decode, migration, repair, validation and repository
   simulation/          Whole-game event-time domains and parity authorities
-public/fixtures/       Browser diagnostic fixtures
+public/                Shipped browser assets
+source-assets/         Non-shipped masters and platform reference assets
+hosts/                 Capacitor mobile and Electron desktop hosts
 test/fixtures/         Immutable save fixtures
 test/parity/           Executable save and simulation parity cases
 ```
 
-Before creating another product frontend, satisfy
-[frontend-readiness-gate.md](docs/contracts/frontend-readiness-gate.md). See
-also the [documentation index](docs/README.md), the active
+See the [documentation index](docs/README.md), the active
 [product backlog](docs/BACKLOG.md),
 [product-ui-foundation.md](docs/contracts/product-ui-foundation.md),
 [architecture.md](docs/contracts/architecture.md),

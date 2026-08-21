@@ -1,11 +1,12 @@
-# Port architecture
+# Canonical product architecture
 
-The rebuild keeps gameplay, persistence and platform work independent from any
-future product frontend. The React/Vite entrypoint is a developer-only save
-diagnostic and is not part of the product architecture.
+The React/Vite application is the canonical product frontend shared by the Web,
+Capacitor mobile, and Electron desktop builds. Gameplay, persistence,
+presentation, and host integrations remain separated by typed boundaries so no
+frontend or platform SDK owns canonical state transitions.
 
 ```text
-future product frontend (not selected)
+React product frontend
   |
   v
 CanonicalLifecycleCoordinator
@@ -35,8 +36,10 @@ platform contracts              SaveRepository
 ## Rules
 
 - `src/core` contains game-facing ports and may not import React or a platform SDK.
-- `src/game-data` is generated deterministically from Unity assets and contains no
-  gameplay code.
+- `src/game-data/authored` owns versioned Web gameplay-data inputs. The initial
+  V1 capsule is a hash-verified handoff from the archived Unity development
+  snapshot; `scripts/build-web-data.ts` deterministically materializes the
+  stable files in `src/game-data/generated`.
 - `src/save` owns compatibility, migration, validation and persistence envelopes.
 - `src/application` owns the concrete runtime session, exhaustive player
   command boundary, whole-game facade, lifecycle serialization and immutable
@@ -47,16 +50,16 @@ platform contracts              SaveRepository
 - `src/parity` owns engine-independent golden-master fixture and comparison tools.
 - `src/platform` defines capabilities; Electron and Capacitor implementations
   remain replaceable.
-- `src/App.tsx` is a developer save diagnostic only. It must not acquire product
-  gameplay or become a visual baseline.
+- `src/App.tsx` composes the product UI and must communicate with gameplay only
+  through application commands and immutable frontend snapshots.
 - The exact event-time scheduler follows `simulation-contract.md`. Gameplay
   models and projection remain behind the same pure boundary.
-- No product frontend implementation begins until
-  `frontend-readiness-gate.md` is satisfied.
+- Product UI changes must preserve the accessibility, responsive-layout,
+  performance, and interaction contracts recorded alongside this document.
 
 ## Runtime ownership
 
-The simulation runs outside the presentation layer. A selected frontend sends
+The simulation runs outside the presentation layer. The product frontend sends
 typed, revision-checked command envelopes and receives detached,
 read-only snapshots. Ordinary object and array graphs are recursively frozen;
 byte views are detached and expose a non-mutating type. Accepted state changes
@@ -87,7 +90,6 @@ revisions, raw canonical resources and progression, exact transaction
 previews, derived gameplay facts and transient Tinker progress. It contains no
 formatting, layout or visual-design rules.
 
-The existing simulation performance work is accepted for the current stage.
-Further discretionary tuning is deferred until the full gameplay port is
-complete unless a correctness defect or measured regression requires earlier
-work.
+Performance work remains evidence-led: measured regressions and correctness
+defects are valid reasons to change the simulation or projection lanes, while
+discretionary tuning must preserve deterministic gameplay behavior.

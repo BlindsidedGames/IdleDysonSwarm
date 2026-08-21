@@ -9,7 +9,12 @@ import {
 
 const webRoot = resolve(import.meta.dirname, '..', '..')
 const save = readFileSync(
-  resolve(webRoot, '..', 'Documentation', 'SaveBackups', 'MainSave.txt'),
+  resolve(
+    webRoot,
+    'test',
+    'fixtures',
+    'schema-08-canonical-idb1-main-save.txt',
+  ),
   'utf8',
 ).trim()
 const durationMilliseconds = 5_000
@@ -79,7 +84,7 @@ const report = {
   createdAt: new Date().toISOString(),
   durationMilliseconds,
   cpuThrottleRate: 4,
-  saveSource: 'Documentation/SaveBackups/MainSave.txt',
+  saveSource: 'Web/test/fixtures/schema-08-canonical-idb1-main-save.txt',
   measurements,
 }
 const output = resolve(
