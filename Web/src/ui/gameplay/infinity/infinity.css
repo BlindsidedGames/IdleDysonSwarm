@@ -1,19 +1,19 @@
 @import "../../tokens/tokens.css";
 
 .infinity-surface {
-  --infinity-panel: var(--infinity-panel-color, #30244f);
-  --infinity-panel-raised: #3a2b5b;
-  --infinity-accent: #9b74ff;
-  --infinity-accent-lead: #d3c2ff;
-  --infinity-control-pressed: #674ea9;
-  --infinity-control-disabled: #3e2f66;
+  --infinity-panel: var(--theme-panel);
+  --infinity-panel-raised: var(--theme-selected);
+  --infinity-accent: var(--theme-accent);
+  --infinity-accent-lead: var(--theme-accent);
+  --infinity-control-pressed: var(--theme-selected);
+  --infinity-control-disabled: color-mix(in srgb, var(--theme-panel) 72%, var(--theme-page));
   --infinity-available: #ffa45e;
   --infinity-spent: #91dd8f;
   display: grid;
   block-size: 100%;
   min-block-size: 0;
   grid-template-rows: auto minmax(0, 1fr);
-  background: #130f22;
+  background: var(--theme-page);
   color: white;
   user-select: none;
 }
@@ -22,11 +22,13 @@
   z-index: 2;
   display: grid;
   gap: 0.45rem;
-  padding-block: 0.625rem;
+  padding-block:
+    calc(0.625rem + env(safe-area-inset-top))
+    0.625rem;
   padding-inline:
     max(0.75rem, env(safe-area-inset-left))
     max(0.75rem, env(safe-area-inset-right));
-  border-block-end: 2px solid #5a477e;
+  border-block-end: 2px solid var(--theme-divider);
   background: var(--infinity-panel);
 }
 
@@ -61,10 +63,13 @@
 
 .infinity-surface__secret {
   color: #e8dffa;
-  font-size: calc(0.92rem * var(--game-text-scale));
+  font-size: clamp(
+    0.7rem,
+    3.1vw,
+    calc(0.92rem * var(--game-text-scale))
+  );
   line-height: 1.25;
-  overflow-wrap: anywhere;
-  white-space: pre-wrap;
+  white-space: nowrap;
 }
 
 .infinity-surface__progress {
@@ -86,9 +91,9 @@
   position: relative;
   block-size: 0.7rem;
   overflow: hidden;
-  border: 1px solid #0b0810;
+  border: 1px solid var(--theme-divider);
   border-radius: 0.2rem;
-  background: #15111e;
+  background: var(--theme-page);
 }
 
 .infinity-surface__progress-track > span {
@@ -150,7 +155,7 @@
   grid-template-rows: minmax(0, 1fr) auto;
   gap: 0.22rem 0.38rem;
   padding: 0.38rem;
-  border: 1px solid #08060d;
+  border: 1px solid var(--theme-divider);
   border-radius: 0.3rem;
   background: var(--infinity-panel);
 }
@@ -199,7 +204,7 @@
   gap: 0.05rem;
   align-self: stretch;
   padding: 0.28rem;
-  border-color: #08060d;
+  border-color: var(--theme-divider);
   border-radius: 0.25rem;
   background: var(--infinity-accent);
   color: #100a18;
@@ -210,7 +215,7 @@
 }
 
 .infinity-shop-card .ui-button:not(:disabled):hover {
-  background: #ad8cff;
+  background: color-mix(in srgb, var(--theme-accent) 82%, white);
 }
 
 .infinity-shop-card .ui-button:not(:disabled):active {
@@ -248,10 +253,12 @@
   align-items: center;
   gap: 0.4rem;
   padding-block-start: 0.2rem;
-  border-block-start: 1px solid #5a477e;
+  border-block-start: 1px solid var(--theme-divider);
 }
 
 .infinity-break-target label {
+  grid-column: 1;
+  grid-row: 1;
   font-size: calc(0.84rem * var(--game-text-scale));
   font-weight: var(--font-weight-semibold);
 }
@@ -259,6 +266,7 @@
 .infinity-break-target input {
   appearance: none;
   grid-column: 1 / -1;
+  grid-row: 2;
   inline-size: 100%;
   min-inline-size: 0;
   min-block-size: var(--target-minimum);
@@ -322,6 +330,8 @@
 }
 
 .infinity-break-target__range {
+  grid-column: 2;
+  grid-row: 1;
   text-align: end;
 }
 
@@ -355,7 +365,9 @@
 @media (max-width: 30rem) {
   .infinity-surface__summary {
     gap: 0.35rem;
-    padding-block: 0.45rem;
+    padding-block:
+      calc(0.45rem + env(safe-area-inset-top))
+      0.45rem;
   }
 
 }

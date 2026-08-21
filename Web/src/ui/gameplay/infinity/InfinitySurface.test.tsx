@@ -82,6 +82,9 @@ describe('InfinitySurface', () => {
         'The meaning of life is: Love, ------- --- ------------',
       ),
     ).toBeInTheDocument()
+    expect(infinityStyles).toMatch(
+      /\.infinity-surface__secret\s*\{[^}]*font-size:\s*clamp\(\s*0\.7rem,\s*3\.1vw,\s*calc\(0\.92rem \* var\(--game-text-scale\)\)[\s\S]*white-space:\s*nowrap;/,
+    )
     expect(
       screen.getAllByRole('article').map((card) =>
         card.querySelector('h2')?.textContent,
@@ -191,6 +194,12 @@ describe('InfinitySurface', () => {
     expect(
       screen.queryByRole('button', { name: 'Set target' }),
     ).not.toBeInTheDocument()
+    expect(infinityStyles).toMatch(
+      /\.infinity-break-target__range\s*\{[^}]*grid-row:\s*1;[^}]*text-align:\s*end;/s,
+    )
+    expect(infinityStyles).toMatch(
+      /\.infinity-break-target input\s*\{[^}]*grid-row:\s*2;/s,
+    )
   })
 
   test('keeps the Break target absent during ordinary Infinity', () => {

@@ -171,7 +171,7 @@ export function RealitySurface({
       data-auto-gather={derived.autoGatherEnabled}
     >
       <header className="reality-surface__summary">
-        <strong>
+        <strong className="reality-surface__designation">
           {intl.formatMessage(messages.universeDesignation, {
             value: formatNumber(locale, designation, {
               maximumFractionDigits: 0,

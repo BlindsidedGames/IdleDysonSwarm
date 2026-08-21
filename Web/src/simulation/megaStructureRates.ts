@@ -18,6 +18,22 @@ export interface MegaStructureRates {
   readonly galactic_brains: number
 }
 
+export interface MegaStructureProductionFact {
+  readonly facilityId: MegaStructureFacilityId
+  readonly outputFacilityId:
+    | 'planets'
+    | 'matrioshka_brains'
+    | 'birch_planets'
+  readonly ownership: {
+    readonly automatic: number
+    readonly manual: number
+    readonly total: number
+  }
+  readonly baseProductionPerSecond: number
+  readonly modifier: number
+  readonly perSecond: number
+}
+
 export interface MegaStructureModifiers {
   readonly matrioshka_brains: number | undefined
   readonly birch_planets: number | undefined
@@ -59,6 +75,9 @@ export type MegaStructureRateResult =
   | {
       readonly ok: true
       readonly rates: Readonly<MegaStructureRates>
+      readonly facts: Readonly<
+        Record<MegaStructureFacilityId, MegaStructureProductionFact>
+      >
     }
   | {
       readonly ok: false
@@ -78,6 +97,10 @@ interface MegaStructureSpec {
   readonly unlockId: MegaStructureUnlockId
   readonly baseProduction: number
   readonly productionStatId: string
+  readonly outputFacilityId:
+    | 'planets'
+    | 'matrioshka_brains'
+    | 'birch_planets'
 }
 
 const FACILITY_KIND = 'GameData.FacilityDefinition'
@@ -89,18 +112,21 @@ const MEGA_STRUCTURE_SPECS: readonly MegaStructureSpec[] = [
     unlockId: 'matrioshkaBrains',
     baseProduction: 1,
     productionStatId: 'Facility.MatrioshkaBrain.Production',
+    outputFacilityId: 'planets',
   },
   {
     id: 'birch_planets',
     unlockId: 'birchPlanets',
     baseProduction: 0.01,
     productionStatId: 'Facility.BirchPlanet.Production',
+    outputFacilityId: 'matrioshka_brains',
   },
   {
     id: 'galactic_brains',
     unlockId: 'galacticBrains',
     baseProduction: 0.1,
     productionStatId: 'Facility.GalacticBrain.Production',
+    outputFacilityId: 'birch_planets',
   },
 ]
 
@@ -168,9 +194,11 @@ export function deriveMegaStructureRates(
     birch_planets: 0,
     galactic_brains: 0,
   }
+  const mutableFacts = {} as Record<
+    MegaStructureFacilityId,
+    MegaStructureProductionFact
+  >
   for (const spec of MEGA_STRUCTURE_SPECS) {
-    if (!unlocks.get(spec.id)) continue
-
     const base = bases.get(spec.id)
     const count = counts.get(spec.id)
     const modifier = validatedModifiers.get(spec.id)
@@ -184,9 +212,12 @@ export function deriveMegaStructureRates(
       ])
     }
 
-    let rate = multiplyContinuous(base, count)
-    if (Math.abs(modifier - 1) > UNITY_MULTIPLIER_EPSILON) {
-      rate = multiplyContinuous(rate, modifier)
+    let rate = 0
+    if (unlocks.get(spec.id)) {
+      rate = multiplyContinuous(base, count)
+      if (Math.abs(modifier - 1) > UNITY_MULTIPLIER_EPSILON) {
+        rate = multiplyContinuous(rate, modifier)
+      }
     }
     if (!Number.isFinite(rate) || rate < 0) {
       issues.push({
@@ -197,12 +228,26 @@ export function deriveMegaStructureRates(
       continue
     }
     mutableRates[spec.id] = rate
+    const owned = state.dyson.facilities[spec.id]
+    mutableFacts[spec.id] = Object.freeze({
+      facilityId: spec.id,
+      outputFacilityId: spec.outputFacilityId,
+      ownership: Object.freeze({
+        automatic: owned[0],
+        manual: owned[1],
+        total: count,
+      }),
+      baseProductionPerSecond: base,
+      modifier,
+      perSecond: rate,
+    })
   }
 
   if (issues.length > 0) return failed(issues)
   return {
     ok: true,
     rates: Object.freeze({ ...mutableRates }),
+    facts: Object.freeze({ ...mutableFacts }),
   }
 }
 

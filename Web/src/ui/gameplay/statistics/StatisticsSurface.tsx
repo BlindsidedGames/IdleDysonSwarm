@@ -187,29 +187,12 @@ export function StatisticsSurface({
 
   return (
     <div className="statistics-surface">
+      <header className="statistics-surface__summary">
+        <div className="statistics-surface__title" aria-hidden="true">
+          {intl.formatMessage(messages.region)}
+        </div>
+      </header>
       <div className="statistics-surface__content">
-        <header className="statistics-surface__summary">
-          <div>
-            <div className="statistics-surface__title" aria-hidden="true">
-              {intl.formatMessage(messages.region)}
-            </div>
-            {statistics.trackedSinceUpdate ? (
-              <p>{intl.formatMessage(messages.trackingNotice)}</p>
-            ) : null}
-          </div>
-          <dl>
-            <div>
-              <dt>{intl.formatMessage(messages.trackedTime)}</dt>
-              <dd>
-                {formatGameDuration(
-                  locale,
-                  statistics.trackedSimulatedSeconds,
-                )}
-              </dd>
-            </div>
-          </dl>
-        </header>
-
         <div className="statistics-surface__scope-grid">
           {scopes.map((scope) => (
             <ScopeCard

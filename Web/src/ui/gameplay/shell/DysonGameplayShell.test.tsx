@@ -21,6 +21,30 @@ const shellCss = readFileSync(
   resolve(process.cwd(), 'src/ui/gameplay/shell/dysonGameplayShell.css'),
   'utf8',
 )
+const infinityCss = readFileSync(
+  resolve(process.cwd(), 'src/ui/gameplay/infinity/infinity.css'),
+  'utf8',
+)
+const realityCss = readFileSync(
+  resolve(process.cwd(), 'src/ui/gameplay/reality/reality.css'),
+  'utf8',
+)
+const simulationsCss = readFileSync(
+  resolve(process.cwd(), 'src/ui/gameplay/simulations/simulations.css'),
+  'utf8',
+)
+const quantumCss = readFileSync(
+  resolve(process.cwd(), 'src/ui/gameplay/quantum/quantum.css'),
+  'utf8',
+)
+const statisticsCss = readFileSync(
+  resolve(process.cwd(), 'src/ui/gameplay/statistics/statistics.css'),
+  'utf8',
+)
+const storeCss = readFileSync(
+  resolve(process.cwd(), 'src/ui/gameplay/store/store.css'),
+  'utf8',
+)
 const controlsCss = readFileSync(
   resolve(process.cwd(), 'src/ui/gameplay/dyson/dysonControls.css'),
   'utf8',
@@ -47,6 +71,9 @@ describe('DysonGameplayShell', () => {
   it('compacts the mobile drawer and Bots lower regions without shrinking touch targets', () => {
     expect(shellCss).toMatch(
       /@media \(max-width: 720px\)[\s\S]*\.dyson-navigation--drawer \.dyson-navigation__link\s*\{[^}]*min-block-size:\s*var\(--target-minimum\);[^}]*font-size:\s*calc\(0\.9rem \* var\(--game-text-scale\)\);/,
+    )
+    expect(shellCss).toMatch(
+      /@media \(max-width: 720px\)[\s\S]*\.dyson-navigation--drawer \.dyson-navigation__progress\s*\{[^}]*inset-inline-start:\s*2\.85rem;[^}]*inset-inline-end:\s*0\.45rem;/,
     )
     expect(controlsCss).toMatch(
       /@media \(max-width: 720px\)[\s\S]*\.dyson-info__facts\s*\{[^}]*font-size:\s*calc\(0\.66rem \* var\(--game-text-scale\)\);/,
@@ -149,6 +176,12 @@ describe('DysonGameplayShell', () => {
     expect(resources[1]).toHaveTextContent('Total Bots0')
     expect(resources[2]).toHaveTextContent('Science0 science0.00 /s')
 
+    const botsSymbol = resources[1].querySelector(
+      'img[data-symbol="bots"]',
+    )
+    expect(botsSymbol).toHaveAttribute('alt', '')
+    expect(botsSymbol).toHaveClass('ui-inline-image-symbol')
+
     const scienceSymbols = resources[2].querySelectorAll(
       'img[data-symbol="science"]',
     )
@@ -239,6 +272,10 @@ describe('DysonGameplayShell', () => {
     expect(
       container.querySelector('.dyson-resource-header'),
     ).not.toBeInTheDocument()
+    expect(container.firstElementChild).toHaveAttribute(
+      'data-resource-header',
+      'false',
+    )
   })
 
   it('pins route content and supplements to their shell rows when the header is omitted', () => {
@@ -289,6 +326,76 @@ describe('DysonGameplayShell', () => {
 })
 
 describe('Dyson gameplay responsive CSS contract', () => {
+  it('keeps the skip link fully above an inset viewport until focused', () => {
+    expect(shellCss).toMatch(
+      /\.dyson-shell__skip-link\s*\{[^}]*inset-block-start:\s*max\(0\.5rem, env\(safe-area-inset-top\)\);[^}]*transform:\s*translateY\(\s*calc\(-100% - max\(0\.5rem, env\(safe-area-inset-top\)\)\)\s*\);/s,
+    )
+    expect(shellCss).toMatch(
+      /\.dyson-shell__skip-link:focus\s*\{[^}]*transform:\s*translateY\(0\);/s,
+    )
+  })
+
+  it('owns top safe-area clearance when a route omits the resource header', () => {
+    expect(shellCss).toMatch(
+      /\.dyson-shell\[data-resource-header="false"\]\s+\.dyson-shell__content\s*\{[^}]*padding-block-start:\s*env\(safe-area-inset-top\);/s,
+    )
+    expect(shellCss).toMatch(
+      /\[data-route-theme="skills"\][\s\S]*\[data-route-theme="infinity"\][\s\S]*\[data-route-theme="reality"\][\s\S]*\[data-route-theme="simulations"\][\s\S]*\[data-route-theme="quantum"\][\s\S]*\[data-route-theme="statistics"\][\s\S]*padding-block-start:\s*0;/,
+    )
+  })
+
+  it('extends owned route panels through the top safe area', () => {
+    expect(infinityCss).toMatch(
+      /\.infinity-surface__summary\s*\{[^}]*calc\(0\.625rem \+ env\(safe-area-inset-top\)\)/s,
+    )
+    expect(realityCss).toMatch(
+      /\.reality-surface__summary\s*\{[^}]*calc\(0\.72rem \+ env\(safe-area-inset-top\)\)/s,
+    )
+    expect(simulationsCss).toMatch(
+      /\.simulations-surface__summary\s*\{[^}]*calc\(0\.6rem \+ env\(safe-area-inset-top\)\)/s,
+    )
+    expect(quantumCss).toMatch(
+      /\.quantum-surface__summary\s*\{[^}]*calc\(0\.75rem \+ env\(safe-area-inset-top\)\)/s,
+    )
+    expect(statisticsCss).toMatch(
+      /\.statistics-surface__summary\s*\{[^}]*calc\(0\.75rem \+ env\(safe-area-inset-top\)\)/s,
+    )
+    expect(storeCss).toMatch(
+      /\.store-surface__content\s*\{[^}]*calc\(0\.75rem \+ env\(safe-area-inset-top\)\)/s,
+    )
+  })
+
+  it('colors Offline Time progress from the active route theme', () => {
+    expect(shellCss).toMatch(
+      /\.dyson-navigation__progress i\s*\{[^}]*background:\s*var\(--navigation-progress-fill\);/s,
+    )
+    expect(shellCss).toMatch(
+      /\[data-route-theme="research"\]\s*\{[^}]*--navigation-progress-fill:\s*#8bc7c4;/s,
+    )
+    expect(shellCss).toMatch(
+      /\[data-route-theme="statistics"\]\s*\{[^}]*--navigation-progress-fill:\s*#91dd8f;/s,
+    )
+    expect(shellCss).toMatch(
+      /\[data-route-theme="simulations"\]\s*\{[^}]*--navigation-progress-fill:\s*var\(--simulations-slider-accent\);/s,
+    )
+  })
+
+  it('keeps late-game resource values inside three compact mobile columns', () => {
+    expect(shellCss).toMatch(
+      /@media \(max-width:\s*720px\)[\s\S]*\.dyson-resource-header\s*\{[^}]*grid-template-columns:\s*repeat\(3, minmax\(0, 1fr\)\);[^}]*calc\(0\.42rem \+ env\(safe-area-inset-top\)\)/,
+    )
+    expect(shellCss).toMatch(
+      /\.dyson-resource-header__item\s*\{[^}]*overflow:\s*hidden;/s,
+    )
+    expect(shellCss).not.toContain('content: "Total Bots: "')
+    expect(shellCss).toMatch(
+      /\.dyson-resource-header__item--total-bots \.ui-inline-image-symbol,[\s\S]*block-size:\s*0\.95em;/,
+    )
+    expect(shellCss).toContain(
+      'font-size: clamp(0.68rem, 3.6vw, 1.22rem)',
+    )
+  })
+
   it('keeps compact bottom navigation and switches to the permanent side menu', () => {
     expect(shellCss).toContain('@media (min-width: 1024px)')
     expect(shellCss).not.toContain('@media (min-width: 900px)')
@@ -343,47 +450,75 @@ describe('Dyson gameplay responsive CSS contract', () => {
       /\.dyson-resource-header\s*\{[^}]*min-block-size:\s*4\.7rem;[^}]*padding-block:\s*max\(0\.55rem,\s*env\(safe-area-inset-top\)\)\s*0\.18rem;/,
     )
     expect(shellCss).toMatch(
-      /@media \(max-width:\s*720px\)[\s\S]*\.dyson-resource-header\s*\{[^}]*min-block-size:\s*3\.2rem;[^}]*padding-block:\s*max\(0\.42rem,\s*env\(safe-area-inset-top\)\)\s*0\.12rem;/,
+      /@media \(max-width:\s*720px\)[\s\S]*\.dyson-resource-header\s*\{[^}]*min-block-size:\s*3\.2rem;[^}]*padding-block:\s*calc\(0\.42rem \+ env\(safe-area-inset-top\)\)\s*0\.12rem;/,
     )
     expect(shellCss).not.toContain(
       'linear-gradient(180deg, #1c1420 70%',
     )
     expect(shellCss).toMatch(
-      /\.dyson-shell\s*\{[^}]*--resource-clearance-color:\s*var\(--color-app-background\);/,
+      /\.dyson-shell\s*\{[^}]*--theme-page:\s*#1d151f;[^}]*--theme-panel:\s*#443148;[^}]*--theme-selected:\s*#513b56;[^}]*--theme-divider:\s*#694b70;[^}]*--theme-accent:\s*#e59aeb;/,
     )
     expect(shellCss).toMatch(
-      /\.dyson-shell\[data-route-theme="settings"\]\s*\{[^}]*--resource-clearance-color:\s*#121a12;/,
+      /data-route-theme="research"[^}]*--theme-page:\s*#181f1e;[^}]*--theme-panel:\s*#334c4a;[^}]*--theme-selected:\s*#41615e;[^}]*--theme-divider:\s*#5f8a87;[^}]*--theme-accent:\s*#8bc7c4;/,
     )
     expect(shellCss).toMatch(
-      /\.dyson-shell\[data-route-theme="research"\]\s*\{[^}]*--resource-clearance-color:\s*#181f1e;[^}]*background:\s*#181f1e;/,
+      /data-route-theme="simulations"[^}]*--theme-page:\s*#152337;[^}]*--theme-panel:\s*#29435f;[^}]*--theme-selected:\s*#3a6384;[^}]*--theme-divider:\s*#7b9fbe;[^}]*--theme-accent:\s*#b9ddf7;/,
     )
     expect(shellCss).toMatch(
-      /\.dyson-shell\[data-route-theme="settings"\][\s\S]*\.dyson-shell__side-panel\s*\{[^}]*border-color:\s*#364d36;[^}]*background:\s*#121a12;/,
+      /data-route-theme="skills"[\s\S]*data-route-theme="offline-time"[^}]*--theme-page:\s*#1c1427;[^}]*--theme-panel:\s*#30244f;[^}]*--theme-selected:\s*#483563;[^}]*--theme-divider:\s*#5b4674;[^}]*--theme-accent:\s*#d3c2ff;/,
     )
     expect(shellCss).toMatch(
-      /\.dyson-shell\[data-route-theme="settings"\][\s\S]*\.dyson-navigation--drawer[\s\S]*\.dyson-navigation__link\s*\{[^}]*border-color:\s*#101710;[^}]*background:\s*#243324;[^}]*color:\s*#c9dec9;/,
+      /data-route-theme="settings"[\s\S]*data-route-theme="statistics"[^}]*--theme-page:\s*#121a12;[^}]*--theme-panel:\s*#243324;[^}]*--theme-selected:\s*#3f7042;[^}]*--theme-divider:\s*#364d36;[^}]*--theme-accent:\s*#b9dfb7;/,
+    )
+    const routeAccents = {
+      bots: '#e59aeb',
+      research: '#8bc7c4',
+      skills: '#d3c2ff',
+      infinity: '#d3c2ff',
+      reality: '#d3c2ff',
+      simulations: '#b9ddf7',
+      quantum: '#d3c2ff',
+      store: '#e59aeb',
+      story: '#e59aeb',
+      wiki: '#e59aeb',
+      'offline-time': '#d3c2ff',
+      statistics: '#b9dfb7',
+      debug: '#b9dfb7',
+      settings: '#b9dfb7',
+    } as const
+    for (const [route, accent] of Object.entries(routeAccents)) {
+      expect(shellCss).toContain(
+        `.dyson-navigation__item[data-navigation-id="${route}"] {\n  --navigation-item-accent: ${accent};`,
+      )
+    }
+    expect(shellCss).toMatch(
+      /\.dyson-navigation__icon-mask\s*\{[^}]*background:\s*currentColor;[^}]*mask-position:\s*center;[^}]*mask-size:\s*contain;/,
     )
     expect(shellCss).toMatch(
-      /\.dyson-shell\[data-route-theme="settings"\][\s\S]*\.dyson-navigation--drawer[\s\S]*\.dyson-navigation__link\[aria-current="page"\]\s*\{[^}]*background:\s*#3f7042;[^}]*color:\s*white;/,
+      /\.dyson-navigation__icon\s*\{[^}]*color:\s*#f4eff5;/,
     )
     expect(shellCss).toMatch(
-      /\.dyson-shell\[data-route-theme="settings"\][\s\S]*\.dyson-navigation__link\[aria-current="page"\][\s\S]*\.dyson-navigation__icon[\s\S]*img\s*\{[^}]*hue-rotate\(65deg\)/,
-    )
-    expect(shellCss).not.toContain('[data-navigation-id="settings"]')
-    expect(shellCss).toMatch(
-      /\.dyson-shell\[data-route-theme="infinity"\]\s*\{[^}]*--infinity-panel-color:\s*#30244f;[^}]*--resource-clearance-color:\s*var\(--infinity-panel-color\);[^}]*background:\s*#1c1427;/,
+      /\.dyson-navigation__link\[aria-current="page"\]\s*\.dyson-navigation__icon\s*\{[^}]*color:\s*var\(--navigation-item-accent, currentColor\);/,
     )
     expect(shellCss).toMatch(
-      /\.dyson-shell\[data-route-theme="infinity"\][\s\S]*\.dyson-resource-header\s*\{[^}]*background:\s*var\(--infinity-panel-color\);/,
+      /data-route-theme-variant="information"[\s\S]*data-navigation-id="simulations"[^}]*--navigation-item-accent:\s*#d3c2ff;/,
     )
     expect(shellCss).toMatch(
-      /\.dyson-shell\[data-route-theme="simulations"\]\s*\{[^}]*--simulations-panel-color:\s*#29435f;[^}]*--simulations-menu-background:\s*#101b29;[^}]*--resource-clearance-color:\s*var\(--simulations-panel-color\);[^}]*background:\s*#152337;/,
+      /data-route-theme-variant="space-age"[\s\S]*data-navigation-id="simulations"[^}]*--navigation-item-accent:\s*#b9dfb7;/,
+    )
+    const defaultIconMaskRule = shellCss.match(
+      /\.dyson-navigation__icon-mask\s*\{([^}]*)\}/,
+    )?.[1]
+    expect(defaultIconMaskRule).toBeDefined()
+    expect(defaultIconMaskRule).not.toContain('opacity:')
+    expect(shellCss).toMatch(
+      /data-route-theme="simulations"\]\s*\{[^}]*--simulations-panel-color:\s*var\(--theme-panel\);[^}]*--simulations-navigation-border:\s*var\(--theme-divider\);[^}]*--simulations-menu-active-background:\s*var\(--theme-selected\);[^}]*--simulations-menu-accent:\s*var\(--theme-accent\);/,
     )
     expect(shellCss).toMatch(
-      /data-route-theme-variant="information"[^}]*--simulations-panel-color:\s*#3a2947;[^}]*--simulations-menu-background:\s*#17101d;/,
+      /\.dyson-shell\[data-route-theme\]\s*\.dyson-resource-header,[\s\S]*\.dyson-shell\[data-route-theme\]\s*\.dyson-shell__bottom-navigation,[\s\S]*\.dyson-shell\[data-route-theme\]\s*\.dyson-shell__lower-regions\s*\{[^}]*border-color:\s*var\(--theme-divider\);[^}]*background:\s*var\(--theme-panel\);/,
     )
     expect(shellCss).toMatch(
-      /data-route-theme-variant="space-age"[^}]*--simulations-panel-color:\s*#254233;[^}]*--simulations-menu-background:\s*#0f1d16;/,
+      /\.dyson-shell\[data-route-theme="bots"\]\s+\.dyson-resource-header,\s*\.dyson-shell\[data-route-theme="research"\]\s+\.dyson-resource-header\s*\{[^}]*border-block-end:\s*2px solid var\(--theme-divider\);/,
     )
     expect(shellCss).toMatch(
       /\.dyson-shell\[data-route-theme="simulations"\][\s\S]*\.dyson-resource-header\s*\{[^}]*background:\s*var\(--simulations-panel-color\);/,
@@ -424,7 +559,7 @@ describe('Dyson gameplay responsive CSS contract', () => {
       /\.dyson-shell\[data-route-theme="research"\][\s\S]*\.dyson-shell__lower-regions\s*\{[^}]*border-color:\s*#41615e;[^}]*background:\s*#334c4a;/,
     )
     expect(shellCss).toMatch(
-      /\.dyson-resource-header__item::before\s*\{[^}]*z-index:\s*-1;[^}]*radial-gradient\([^}]*var\(--resource-clearance-color\)[^}]*transparent 86%[^}]*pointer-events:\s*none;/,
+      /\.dyson-resource-header__item::before\s*\{[^}]*content:\s*none;[^}]*pointer-events:\s*none;/,
     )
     expect(shellCss).toMatch(
       /\.dyson-resource-header__item--cash::before,\s*\.dyson-resource-header__item--science::before\s*\{[^}]*content:\s*none;/,
@@ -455,7 +590,7 @@ describe('Dyson gameplay responsive CSS contract', () => {
     expect(rootCss).not.toMatch(/\bmin-width:\s*320px/)
     expect(tokensCss).toContain('--game-text-scale: 1')
     expect(shellCss).toMatch(
-      /@media \(max-width: 720px\)[\s\S]*grid-template-columns:\s*minmax\(0,\s*1fr\)\s*auto\s*minmax\(0,\s*1fr\);/,
+      /@media \(max-width: 720px\)[\s\S]*grid-template-columns:\s*repeat\(3,\s*minmax\(0,\s*1fr\)\);/,
     )
     expect(shellCss).toMatch(
       /@media \(max-width: 720px\)[\s\S]*\.ui-resource-value__value,[\s\S]*white-space:\s*nowrap;/,

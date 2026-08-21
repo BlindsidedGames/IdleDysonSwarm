@@ -85,6 +85,11 @@ const BasicFacilityRegion = lazy(async () => {
   return { default: module.BasicFacilityRegion }
 })
 
+const MegaStructureRegion = lazy(async () => {
+  const module = await import('../facilities')
+  return { default: module.MegaStructureRegion }
+})
+
 const ResearchSurface = lazy(async () => {
   const module = await import('../research')
   return { default: module.ResearchSurface }
@@ -648,7 +653,8 @@ export function ReadyDysonSlice({
   const scienceRate = (value: string) =>
     intl.formatMessage(messages.scienceRate, { value })
   const hasVisibleFacilities =
-    visibility.visibleBasicFacilityIds.length > 0
+    visibility.visibleBasicFacilityIds.length > 0 ||
+    visibility.visibleMegaStructureIds.length > 0
   const hasFacilityContent =
     hasVisibleFacilities || visibility.showNextTierTeaser
   const settingsActive = route === 'settings'
@@ -666,6 +672,16 @@ export function ReadyDysonSlice({
   const statisticsActive = route === 'statistics'
   const storeActive = route === 'store'
   const debugActive = route === 'debug'
+  const showSharedResourceHeader = !(
+    skillsActive ||
+    infinityActive ||
+    realityActive ||
+    simulationsActive ||
+    quantumNavigationActive ||
+    statisticsActive ||
+    storeActive ||
+    settingsActive
+  )
   const navigationVisibility =
     gameplay.progression.meta?.navigationVisibility ?? {
       story: false,
@@ -733,11 +749,9 @@ export function ReadyDysonSlice({
       closeMenuLabel={intl.formatMessage(messages.closeMenu)}
       openMenuLabel={intl.formatMessage(messages.openMenu)}
       heading={intl.formatMessage(routeHeading)}
-      routeTheme={debugActive ? 'settings' : storeActive ? 'quantum' : route}
+      routeTheme={debugActive ? 'statistics' : storeActive ? 'bots' : route}
       routeThemeVariant={
-        simulationsActive
-          ? gameplay.derived.simulations.currentEra
-          : undefined
+        gameplay.derived.simulations?.currentEra ?? 'foundational'
       }
       navigation={{
         ariaLabel: intl.formatMessage(messages.primaryNavigation),
@@ -1644,9 +1658,7 @@ export function ReadyDysonSlice({
           fullPrecisionRate: scienceRate(precise(rates.science)),
         },
       }}
-      showResourceHeader={
-        !realityActive && !simulationsActive && !storeActive
-      }
+      showResourceHeader={showSharedResourceHeader}
       swarmVisual={
         visualizationVisible
           ? {
@@ -1684,24 +1696,51 @@ export function ReadyDysonSlice({
               />
             }
           >
-            <BasicFacilityRegion
-              locale={locale}
-              visibleBasicFacilityIds={
-                visibility.visibleBasicFacilityIds
-              }
-              showNextTierTeaser={visibility.showNextTierTeaser}
-              facilityFacts={dyson.value.presentation.facilities}
-              purchasePreviews={
-                gameplay.previews.dyson.basicFacilities
-              }
-              purchaseRouteAvailable={
-                gameplay.commands.byKind[
-                  'dyson.purchase-basic-facility'
-                ].routeAvailable
-              }
-              revision={snapshot.revision}
-              dispatchPlayer={dispatchPlayer}
-            />
+            <>
+              <BasicFacilityRegion
+                locale={locale}
+                visibleBasicFacilityIds={
+                  visibility.visibleBasicFacilityIds
+                }
+                showNextTierTeaser={
+                  visibility.visibleMegaStructureIds.length === 0 &&
+                  visibility.showNextTierTeaser
+                }
+                facilityFacts={dyson.value.presentation.facilities}
+                purchasePreviews={
+                  gameplay.previews.dyson.basicFacilities
+                }
+                purchaseRouteAvailable={
+                  gameplay.commands.byKind[
+                    'dyson.purchase-basic-facility'
+                  ].routeAvailable
+                }
+                revision={snapshot.revision}
+                dispatchPlayer={dispatchPlayer}
+              />
+              {visibility.visibleMegaStructureIds.length > 0 && (
+                <MegaStructureRegion
+                  locale={locale}
+                  visibleMegaStructureIds={
+                    visibility.visibleMegaStructureIds
+                  }
+                  showNextTierTeaser={
+                    visibility.showNextTierTeaser
+                  }
+                  facts={dyson.value.megaStructureFacts}
+                  purchasePreviews={
+                    gameplay.previews.dyson.megaStructures
+                  }
+                  purchaseRouteAvailable={
+                    gameplay.commands.byKind[
+                      'dyson.purchase-mega-structure'
+                    ].routeAvailable
+                  }
+                  revision={snapshot.revision}
+                  dispatchPlayer={dispatchPlayer}
+                />
+              )}
+            </>
           </Suspense>
         ) : (
           <section

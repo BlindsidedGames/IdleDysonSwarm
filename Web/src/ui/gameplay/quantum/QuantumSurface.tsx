@@ -372,13 +372,17 @@ export function QuantumControlPanel({
   return (
     <section className="quantum-control-panel" aria-label={intl.formatMessage(messages.progress)}>
       <div className="quantum-control-panel__header">
-        <strong>{intl.formatMessage(messages.progress)}</strong>
-        <span>{available
-          ? intl.formatMessage(messages.progressAvailable)
-          : intl.formatMessage(messages.progressValue, {
-              current: formatGameNumber(locale, infinityPoints),
-              required: formatGameNumber(locale, required),
-            })}</span>
+        <div className="quantum-control-panel__progress-copy">
+          <strong>{intl.formatMessage(messages.progress)}</strong>
+          {!available ? (
+            <span>
+              {intl.formatMessage(messages.progressValue, {
+                current: formatGameNumber(locale, infinityPoints),
+                required: formatGameNumber(locale, required),
+              })}
+            </span>
+          ) : null}
+        </div>
         <button
           type="button"
           className="quantum-control-panel__settings-toggle"

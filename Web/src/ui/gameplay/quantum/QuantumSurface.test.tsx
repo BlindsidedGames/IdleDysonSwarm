@@ -445,7 +445,13 @@ describe('QuantumControlPanel', () => {
         />
       </IntlProvider>,
     )
-    expect(screen.getByText('Quantum Leap Available')).toBeInTheDocument()
+    expect(screen.queryByText('Quantum Leap Available')).not.toBeInTheDocument()
+    expect(
+      screen.getByText('Progress to Quantum Leap')
+        .closest('.quantum-control-panel__header'),
+    ).toContainElement(
+      screen.getByRole('button', { name: 'Purchase settings' }),
+    )
     expect(screen.getByRole('progressbar')).toHaveAttribute('aria-valuenow', '42')
     fireEvent.click(screen.getByRole('button', { name: 'Buy 10' }))
     expect(onQuantityChange).toHaveBeenCalledWith(10)

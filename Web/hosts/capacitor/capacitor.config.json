@@ -2,6 +2,7 @@
   "appId": "com.blindsidedgames.idledysonswarm",
   "appName": "Idle Dyson Swarm",
   "webDir": "../../dist-native",
+  "zoomEnabled": false,
   "server": {
     "androidScheme": "https",
     "iosScheme": "capacitor",

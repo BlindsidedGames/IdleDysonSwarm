@@ -16,7 +16,7 @@ describe('Electron native host hardening', () => {
 
     expect(runtimeMetadata('4.0.0', release)).toEqual({
       applicationVersion: '4.0.0',
-      buildNumber: '2026080200',
+      buildNumber: '2026082104',
     })
     expect(() => runtimeMetadata('4.0.1', release)).toThrow(
       'does not match',

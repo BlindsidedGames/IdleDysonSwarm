@@ -62,6 +62,9 @@ describe('browser security policy', () => {
     expect(html).toContain(
       '<meta name="referrer" content="no-referrer" />',
     )
+    expect(html).toContain(
+      'content="width=device-width, initial-scale=1.0, viewport-fit=cover"',
+    )
   })
 
   it('emits headers during builds and applies them to local preview', () => {

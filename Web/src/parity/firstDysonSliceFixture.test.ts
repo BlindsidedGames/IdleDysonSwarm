@@ -37,6 +37,7 @@ describe('frozen first-Dyson canonical fixture', () => {
     expect(fixture.initial.visibility).toEqual({
       showTinker: true,
       visibleBasicFacilityIds: [],
+      visibleMegaStructureIds: [],
       showNextTierTeaser: true,
     })
     expect(fixture.initial.basicFacilityPreviews[0]).toMatchObject({
@@ -73,6 +74,7 @@ describe('frozen first-Dyson canonical fixture', () => {
         'assembly_lines',
         'ai_managers',
       ],
+      visibleMegaStructureIds: [],
       showNextTierTeaser: true,
     })
     expect(fixture.checkpointedReconstruction.tinker.value.runtime.running)

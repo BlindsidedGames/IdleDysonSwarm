@@ -278,6 +278,7 @@ describe('native host system-port boundaries', () => {
     expect(capacitor).toMatchObject({
       appId: UNITY_APPLICATION_ID,
       webDir: '../../dist-native',
+      zoomEnabled: false,
       server: { cleartext: false },
       android: { allowMixedContent: false },
     })

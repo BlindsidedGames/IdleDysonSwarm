@@ -108,7 +108,18 @@ function NavigationItemContent({
           aria-hidden="true"
         >
           {item.iconSrc !== undefined
-            ? <img src={item.iconSrc} alt="" />
+            ? (
+                <>
+                  <img src={item.iconSrc} alt="" />
+                  <span
+                    className="dyson-navigation__icon-mask"
+                    style={{
+                      WebkitMaskImage: `url("${item.iconSrc}")`,
+                      maskImage: `url("${item.iconSrc}")`,
+                    }}
+                  />
+                </>
+              )
             : item.icon}
         </span>
       )}

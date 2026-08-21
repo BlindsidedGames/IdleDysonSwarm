@@ -1,15 +1,15 @@
 @import "../../tokens/tokens.css";
 
 .offline-time-surface {
-  --offline-panel: #30244f;
-  --offline-panel-raised: #3a2b5b;
-  --offline-accent: #9b74ff;
-  --offline-accent-bright: #d3c2ff;
+  --offline-panel: var(--theme-panel);
+  --offline-panel-raised: var(--theme-selected);
+  --offline-accent: var(--theme-accent);
+  --offline-accent-bright: var(--theme-accent);
   display: grid;
   block-size: 100%;
   min-block-size: 0;
   grid-template-rows: auto minmax(0, 1fr);
-  background: #130f22;
+  background: var(--theme-page);
   color: #fff;
   user-select: none;
 }
@@ -21,7 +21,7 @@
   padding-inline:
     max(0.75rem, env(safe-area-inset-left))
     max(0.75rem, env(safe-area-inset-right));
-  border-block-end: 2px solid #5a477e;
+  border-block-end: 2px solid var(--theme-divider);
   background: var(--offline-panel);
 }
 
@@ -76,7 +76,7 @@
   display: grid;
   gap: 0.55rem;
   padding: 0.75rem;
-  border: 1px solid #08060d;
+  border: 1px solid var(--theme-divider);
   border-radius: 0.3rem;
   background: var(--offline-panel);
   box-shadow: 0 0.18rem 0.3rem rgb(0 0 0 / 28%);
@@ -115,9 +115,9 @@
   position: relative;
   block-size: 0.8rem;
   overflow: hidden;
-  border: 1px solid #0b0810;
+  border: 1px solid var(--theme-divider);
   border-radius: 0.25rem;
-  background: #15111e;
+  background: var(--theme-page);
 }
 
 .offline-time-storage-progress > span {
@@ -148,13 +148,13 @@
   align-items: center;
   gap: 0.625rem;
   padding-block-start: 0.55rem;
-  border-block-start: 1px solid #5a477e;
+  border-block-start: 1px solid var(--theme-divider);
 }
 
 .offline-time-capacity-upgrade .ui-button,
 .offline-time-spend-button.ui-button {
   min-block-size: var(--target-minimum);
-  border-color: #08060d;
+  border-color: var(--theme-divider);
   background: var(--offline-accent);
   color: #100a18;
   font-weight: var(--font-weight-bold);
@@ -186,9 +186,9 @@
 
 .offline-time-card--spend input[type="range"]::-webkit-slider-runnable-track {
   block-size: 0.7rem;
-  border: 1px solid #08060d;
+  border: 1px solid var(--theme-divider);
   border-radius: 999px;
-  background: #15111e;
+  background: var(--theme-page);
 }
 
 .offline-time-card--spend input[type="range"]::-webkit-slider-thumb {
@@ -204,9 +204,9 @@
 
 .offline-time-card--spend input[type="range"]::-moz-range-track {
   block-size: 0.7rem;
-  border: 1px solid #08060d;
+  border: 1px solid var(--theme-divider);
   border-radius: 999px;
-  background: #15111e;
+  background: var(--theme-page);
 }
 
 .offline-time-card--spend input[type="range"]::-moz-range-thumb {
@@ -232,7 +232,7 @@
 .offline-time-quick-select button {
   min-block-size: var(--target-minimum);
   padding: 0.35rem;
-  border: 1px solid #08060d;
+  border: 1px solid var(--theme-divider);
   border-radius: 0.22rem;
   background: var(--offline-panel-raised);
   color: #fff;
@@ -312,7 +312,7 @@
   justify-content: space-between;
   gap: 0.75rem;
   padding: 0.45rem 0.55rem;
-  border: 1px solid #5a477e;
+  border: 1px solid var(--theme-divider);
   border-radius: 0.25rem;
   background: var(--offline-panel-raised);
 }

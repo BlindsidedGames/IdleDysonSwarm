@@ -24,7 +24,7 @@ afterEach(cleanup)
 
 describe('StatisticsSurface', () => {
   test('presents reached-system lifetime and current-run totals without the diagnostic interval', () => {
-    renderStatistics(statistics())
+    const { container } = renderStatistics(statistics())
 
     expect(screen.getByText('Statistics')).toBeVisible()
     expect(
@@ -34,11 +34,15 @@ describe('StatisticsSurface', () => {
       screen.queryByRole('region', { name: 'Statistics' }),
     ).not.toBeInTheDocument()
     expect(
-      screen.getByText(
+      screen.queryByText(
         'Statistics have been tracked since this feature was added.',
       ),
-    ).toBeInTheDocument()
-    expect(screen.getAllByText('2h 5s')).toHaveLength(2)
+    ).not.toBeInTheDocument()
+    expect(screen.queryByText('Tracked simulation time')).not.toBeInTheDocument()
+    expect(screen.getAllByText('2h 5s')).toHaveLength(1)
+    expect(
+      container.querySelector('.statistics-surface')?.firstElementChild,
+    ).toHaveClass('statistics-surface__summary')
 
     const lifetime = screen
       .getByRole('heading', { name: 'Lifetime' })

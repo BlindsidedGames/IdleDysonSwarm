@@ -439,6 +439,7 @@ describe('frontend gameplay snapshot', () => {
     expect(snapshot.visibility.dyson).toEqual({
       showTinker: true,
       visibleBasicFacilityIds: [],
+      visibleMegaStructureIds: [],
       showNextTierTeaser: true,
     })
     expect(snapshot.visibility.skills.routeUnlocked).toBe(false)
@@ -976,6 +977,7 @@ describe('frontend gameplay snapshot', () => {
         'assembly_lines',
         'ai_managers',
       ],
+      visibleMegaStructureIds: [],
       showNextTierTeaser: true,
     })
   })
@@ -1086,6 +1088,7 @@ describe('frontend gameplay snapshot', () => {
         'data_centers',
         'planets',
       ],
+      visibleMegaStructureIds: [],
       showNextTierTeaser: false,
     })
 
@@ -1124,8 +1127,14 @@ describe('frontend gameplay snapshot', () => {
       selectFrontendGameplaySnapshot(
         galacticEligible,
         frontendContext(),
-      ).visibility.dyson.showNextTierTeaser,
-    ).toBe(false)
+      ).visibility.dyson,
+    ).toMatchObject({
+      visibleMegaStructureIds: [
+        'birch_planets',
+        'galactic_brains',
+      ],
+      showNextTierTeaser: false,
+    })
 
     const galacticOwned: CanonicalGameStateV1 = {
       ...postQuantum,
@@ -1141,8 +1150,11 @@ describe('frontend gameplay snapshot', () => {
       selectFrontendGameplaySnapshot(
         galacticOwned,
         frontendContext(),
-      ).visibility.dyson.showNextTierTeaser,
-    ).toBe(false)
+      ).visibility.dyson,
+    ).toMatchObject({
+      visibleMegaStructureIds: ['galactic_brains'],
+      showNextTierTeaser: false,
+    })
 
     const manualLabour: CanonicalGameStateV1 = {
       ...progressed,

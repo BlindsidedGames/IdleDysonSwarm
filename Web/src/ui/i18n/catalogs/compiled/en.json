@@ -635,10 +635,68 @@
       "value": "cost"
     }
   ],
+  "dyson.facilities.birch-planets.description": [
+    {
+      "type": 0,
+      "value": "Supermassive planetary shells that consume Matrioshka Brains to produce more Matrioshka Brains."
+    }
+  ],
+  "dyson.facilities.birch-planets.identity": [
+    {
+      "type": 0,
+      "value": "Birch Planets "
+    },
+    {
+      "type": 1,
+      "value": "total"
+    },
+    {
+      "type": 0,
+      "value": "("
+    },
+    {
+      "type": 1,
+      "value": "manual"
+    },
+    {
+      "type": 0,
+      "value": ")"
+    }
+  ],
   "dyson.facilities.birch-planets.name": [
     {
       "type": 0,
       "value": "Birch Planets"
+    }
+  ],
+  "dyson.facilities.birch-planets.production-interval": [
+    {
+      "type": 0,
+      "value": "Assembling 1 Matrioshka Brain /"
+    },
+    {
+      "type": 1,
+      "value": "interval"
+    }
+  ],
+  "dyson.facilities.birch-planets.production-per-second": [
+    {
+      "type": 0,
+      "value": "Assembling "
+    },
+    {
+      "type": 1,
+      "value": "rate"
+    },
+    {
+      "type": 0,
+      "value": " Matrioshka Brains /s"
+    }
+  ],
+  "dyson.facilities.birch-planets.purchase": [
+    {
+      "type": 0,
+      "value": "Construct a Birch Planet"
     }
   ],
   "dyson.facilities.close-details": [
@@ -877,10 +935,68 @@
       "value": "Upstream Sources"
     }
   ],
+  "dyson.facilities.galactic-brains.description": [
+    {
+      "type": 0,
+      "value": "The ultimate mega-structure requiring both Matrioshka Brains and Birch Planets. Produces Birch Planets."
+    }
+  ],
+  "dyson.facilities.galactic-brains.identity": [
+    {
+      "type": 0,
+      "value": "Galactic Brains "
+    },
+    {
+      "type": 1,
+      "value": "total"
+    },
+    {
+      "type": 0,
+      "value": "("
+    },
+    {
+      "type": 1,
+      "value": "manual"
+    },
+    {
+      "type": 0,
+      "value": ")"
+    }
+  ],
   "dyson.facilities.galactic-brains.name": [
     {
       "type": 0,
       "value": "Galactic Brains"
+    }
+  ],
+  "dyson.facilities.galactic-brains.production-interval": [
+    {
+      "type": 0,
+      "value": "Manifesting 1 Birch Planet /"
+    },
+    {
+      "type": 1,
+      "value": "interval"
+    }
+  ],
+  "dyson.facilities.galactic-brains.production-per-second": [
+    {
+      "type": 0,
+      "value": "Manifesting "
+    },
+    {
+      "type": 1,
+      "value": "rate"
+    },
+    {
+      "type": 0,
+      "value": " Birch Planets /s"
+    }
+  ],
+  "dyson.facilities.galactic-brains.purchase": [
+    {
+      "type": 0,
+      "value": "Construct a Galactic Brain"
     }
   ],
   "dyson.facilities.heading": [
@@ -903,10 +1019,146 @@
       "value": ")"
     }
   ],
+  "dyson.facilities.matrioshka-brains.description": [
+    {
+      "type": 0,
+      "value": "Massive stellar computing structures that consume planets to produce more planets."
+    }
+  ],
+  "dyson.facilities.matrioshka-brains.identity": [
+    {
+      "type": 0,
+      "value": "Matrioshka Brains "
+    },
+    {
+      "type": 1,
+      "value": "total"
+    },
+    {
+      "type": 0,
+      "value": "("
+    },
+    {
+      "type": 1,
+      "value": "manual"
+    },
+    {
+      "type": 0,
+      "value": ")"
+    }
+  ],
   "dyson.facilities.matrioshka-brains.name": [
     {
       "type": 0,
       "value": "Matrioshka Brains"
+    }
+  ],
+  "dyson.facilities.matrioshka-brains.production-interval": [
+    {
+      "type": 0,
+      "value": "Synthesizing 1 Planet /"
+    },
+    {
+      "type": 1,
+      "value": "interval"
+    }
+  ],
+  "dyson.facilities.matrioshka-brains.production-per-second": [
+    {
+      "type": 0,
+      "value": "Synthesizing "
+    },
+    {
+      "type": 1,
+      "value": "rate"
+    },
+    {
+      "type": 0,
+      "value": " Planets /s"
+    }
+  ],
+  "dyson.facilities.matrioshka-brains.purchase": [
+    {
+      "type": 0,
+      "value": "Construct a Matrioshka Brain"
+    }
+  ],
+  "dyson.facilities.mega-structure.details.final-production": [
+    {
+      "type": 0,
+      "value": "Final production"
+    }
+  ],
+  "dyson.facilities.mega-structure.details.output": [
+    {
+      "type": 0,
+      "value": "Produces"
+    }
+  ],
+  "dyson.facilities.mega-structure.details.production-rate-value": [
+    {
+      "type": 1,
+      "value": "value"
+    },
+    {
+      "type": 0,
+      "value": " /s"
+    }
+  ],
+  "dyson.facilities.mega-structure.details.unlock-condition": [
+    {
+      "type": 0,
+      "value": "Unlock condition"
+    }
+  ],
+  "dyson.facilities.mega-structure.details.unlock-requirement": [
+    {
+      "type": 0,
+      "value": "Requires the "
+    },
+    {
+      "type": 1,
+      "value": "structure"
+    },
+    {
+      "type": 0,
+      "value": " Quantum unlock and ownership of "
+    },
+    {
+      "type": 1,
+      "value": "prerequisite"
+    },
+    {
+      "type": 0,
+      "value": "."
+    }
+  ],
+  "dyson.facilities.mega-structure.purchase-accessible": [
+    {
+      "type": 1,
+      "value": "prompt"
+    },
+    {
+      "type": 0,
+      "value": ": +"
+    },
+    {
+      "type": 1,
+      "value": "quantity"
+    },
+    {
+      "type": 0,
+      "value": ", $"
+    },
+    {
+      "type": 1,
+      "value": "cost"
+    }
+  ],
+  "dyson.facilities.mega-structures.heading": [
+    {
+      "type": 0,
+      "value": "Mega-Structures"
     }
   ],
   "dyson.facilities.next-tier-teaser": [
@@ -1041,6 +1293,12 @@
       "value": "Purchase unavailable."
     }
   ],
+  "dyson.facilities.purchase.insufficient-cash": [
+    {
+      "type": 0,
+      "value": "Not enough Cash for this purchase."
+    }
+  ],
   "dyson.facilities.purchase.insufficient-funds": [
     {
       "type": 0,
@@ -1071,6 +1329,12 @@
     {
       "type": 0,
       "value": "Purchase pending…"
+    }
+  ],
+  "dyson.facilities.purchase.prerequisite-not-met": [
+    {
+      "type": 0,
+      "value": "Construct the preceding mega-structure before purchasing this one."
     }
   ],
   "dyson.facilities.purchase.quantity": [
@@ -3916,7 +4180,7 @@
   "reality.universe-designation": [
     {
       "type": 0,
-      "value": "Universe Designation: "
+      "value": "Designation: "
     },
     {
       "type": 1,

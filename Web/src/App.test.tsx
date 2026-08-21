@@ -770,6 +770,7 @@ function readySnapshot(): FrontendApplicationSnapshot {
         dyson: {
           showTinker: true,
           visibleBasicFacilityIds: [],
+          visibleMegaStructureIds: [],
           showNextTierTeaser: true,
         },
         skills: {

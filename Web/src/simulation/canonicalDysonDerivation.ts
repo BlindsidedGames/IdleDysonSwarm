@@ -23,6 +23,7 @@ import {
   deriveMegaStructureRates,
   type MegaStructureRateIssueCode,
   type MegaStructureRates,
+  type MegaStructureProductionFact,
 } from './megaStructureRates'
 import {
   avocadoDysonMultiplier,
@@ -115,6 +116,9 @@ export interface DerivedBasicDysonState {
   readonly planetPricingModifier: number
   readonly rates: Readonly<BasicDysonRates>
   readonly megaRates: Readonly<MegaStructureRates>
+  readonly megaStructureFacts: Readonly<
+    Record<keyof MegaStructureRates, MegaStructureProductionFact>
+  >
   readonly productionArrivalRates: Readonly<DysonProductionArrivalRates>
   readonly facilityFacts: Readonly<
     Record<BasicDysonFacilityId, CanonicalBasicFacilityFacts>
@@ -610,6 +614,7 @@ export function deriveBasicDysonState(
       planetPricingModifier,
       rates: Object.freeze({ ...model.rates }),
       megaRates: mega.rates,
+      megaStructureFacts: mega.facts,
       productionArrivalRates: combineDysonProductionArrivalRates(
         model.rates,
         mega.rates,

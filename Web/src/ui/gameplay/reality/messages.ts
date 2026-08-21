@@ -23,7 +23,7 @@ export const realityMessages = defineMessages({
   },
   universeDesignation: {
     id: 'reality.universe-designation',
-    defaultMessage: 'Universe Designation: {value}',
+    defaultMessage: 'Designation: {value}',
     description:
       'Number of the universe currently being consumed by Reality workers.',
   },

@@ -1,6 +1,6 @@
 .skills-surface {
-  --skills-panel: #29223f;
-  --skills-panel-light: #3a3056;
+  --skills-panel: var(--theme-panel);
+  --skills-panel-light: var(--theme-selected);
   position: relative;
   display: grid;
   grid-template-rows: minmax(0, 1fr) auto;
@@ -9,7 +9,7 @@
   overflow: hidden;
   background:
     radial-gradient(circle at 50% 45%, rgb(84 63 119 / 16%), transparent 42%),
-    #151225;
+    var(--theme-page);
 }
 
 .skills-surface::before {
@@ -19,8 +19,8 @@
   block-size: 1.65rem;
   background: linear-gradient(
     to bottom,
-    #151225 0%,
-    rgb(21 18 37 / 82%) 35%,
+    var(--theme-page) 0%,
+    color-mix(in srgb, var(--theme-page) 82%, transparent) 35%,
     transparent 100%
   );
   content: "";
@@ -36,8 +36,8 @@
   align-items: center;
   padding: 0.5rem max(0.7rem, env(safe-area-inset-right)) 0.55rem
     max(0.7rem, env(safe-area-inset-left));
-  border-block: 1px solid #50436f;
-  background: rgb(39 31 57 / 94%);
+  border-block: 1px solid var(--theme-divider);
+  background: color-mix(in srgb, var(--theme-panel) 94%, transparent);
   box-shadow: 0 0.2rem 0.8rem rgb(0 0 0 / 30%);
 }
 
@@ -60,17 +60,17 @@
   min-inline-size: 0;
   min-block-size: var(--target-minimum);
   padding-inline: 0.7rem;
-  border: 1px solid #6a5a8d;
+  border: 1px solid var(--theme-divider);
   border-radius: 0.25rem;
   outline: none;
-  background: #17131f;
+  background: var(--theme-page);
   color: white;
   font: inherit;
 }
 
 .skills-surface__search input:focus-visible {
-  border-color: #b994ea;
-  box-shadow: 0 0 0 2px rgb(185 148 234 / 35%);
+  border-color: var(--theme-accent);
+  box-shadow: 0 0 0 2px color-mix(in srgb, var(--theme-accent) 35%, transparent);
 }
 
 .skills-surface__search span {
@@ -85,9 +85,9 @@
   place-items: center;
   min-inline-size: var(--target-minimum);
   min-block-size: var(--target-minimum);
-  border: 1px solid #77689d;
+  border: 1px solid var(--theme-divider);
   border-radius: 0.28rem;
-  background: #3b3155;
+  background: var(--theme-selected);
   color: white;
   font: 700 1.3rem/1 var(--font-family-body);
 }
@@ -396,10 +396,10 @@
 .skill-settings__preset-row {
   display: grid;
   grid-template-columns: minmax(0, 1fr) 2.85rem;
-  border: 1px solid #6c5b94;
+  border: 1px solid var(--theme-divider);
   border-radius: 0.35rem;
   overflow: hidden;
-  background: #392e52;
+  background: var(--theme-panel);
 }
 
 .skill-settings__preset-load {
@@ -435,8 +435,8 @@
 }
 
 .skill-settings__preset-row[data-current="true"] {
-  border-color: #c59be2;
-  background: #4c3867;
+  border-color: var(--theme-accent);
+  background: var(--theme-selected);
   box-shadow:
     inset 0 0 0 1px rgb(218 182 241 / 36%),
     0 0 0.75rem rgb(161 112 195 / 18%);
@@ -445,9 +445,9 @@
 .skill-settings__current {
   align-self: start;
   padding: 0.15rem 0.4rem;
-  border: 1px solid #b996d3;
+  border: 1px solid var(--theme-divider);
   border-radius: 0.25rem;
-  background: #775494;
+  background: var(--theme-selected);
   color: #fbf6ff;
   font-size: 0.72rem;
   font-style: normal;
@@ -456,8 +456,8 @@
 }
 
 .skill-settings__preset-row:has(button:not(:disabled):hover) {
-  border-color: #a783d1;
-  background: #4a3b6a;
+  border-color: var(--theme-accent);
+  background: color-mix(in srgb, var(--theme-selected) 82%, var(--theme-accent));
 }
 
 .skill-settings__preset-row:has(button:focus-visible),
@@ -512,9 +512,9 @@
   align-items: center;
   margin-block: 1.25rem;
   padding: 0.8rem;
-  border: 1px solid #6c5b94;
+  border: 1px solid var(--theme-divider);
   border-radius: 0.35rem;
-  background: #302746;
+  background: var(--theme-panel);
 }
 
 .skill-settings__toggle input {
@@ -525,9 +525,9 @@
 
 .skill-settings__reset {
   padding: 0.8rem;
-  border: 1px solid #6c5b94;
+  border: 1px solid var(--theme-divider);
   border-radius: 0.35rem;
-  background: #29223f;
+  background: var(--theme-panel);
 }
 
 .skill-settings__reset [role="group"] {
@@ -543,13 +543,13 @@
 }
 
 .skill-settings__reset .ui-button {
-  border-color: #8e73b3;
-  background: #49365f;
+  border-color: var(--theme-divider);
+  background: var(--theme-selected);
   color: white;
 }
 
 .skill-settings__reset .ui-button:not(:disabled):hover {
-  background: #5c4477;
+  background: color-mix(in srgb, var(--theme-selected) 82%, var(--theme-accent));
 }
 
 .skill-settings__reset .ui-button--danger {
@@ -760,8 +760,8 @@
 
 .skill-confirmation .ui-button {
   min-block-size: var(--target-minimum);
-  border-color: #8e73b3;
-  background: #49365f;
+  border-color: var(--theme-divider);
+  background: var(--theme-selected);
   color: white;
 }
 
@@ -777,7 +777,7 @@
   inline-size: min(31rem, 100%);
   max-block-size: min(42rem, calc(100dvh - 1rem));
   padding: 0.75rem;
-  background: #2d203d;
+  background: var(--theme-panel);
 }
 
 .skill-preset-management-dialog .skill-details-dialog__content {
@@ -835,11 +835,15 @@
   min-block-size: var(--target-minimum);
   box-sizing: border-box;
   padding: 0.5rem 0.6rem;
-  border: 1px solid #816aa7;
+  border: 1px solid var(--theme-divider);
   border-radius: 0.3rem;
-  background: #171021;
+  background: var(--theme-page);
   color: white;
   font: inherit;
+  font-size: 1rem;
+  -webkit-touch-callout: default;
+  -webkit-user-select: text;
+  user-select: text;
 }
 
 .skill-preset-management textarea {
@@ -875,9 +879,9 @@
   min-block-size: var(--target-minimum);
   box-sizing: border-box;
   padding: 0.45rem 0.65rem;
-  border: 1px solid #816aa7;
+  border: 1px solid var(--theme-divider);
   border-radius: 0.3rem;
-  background: #171021;
+  background: var(--theme-page);
   color: white;
   cursor: pointer;
   list-style: none;
@@ -910,9 +914,9 @@
   display: grid;
   gap: 0.2rem;
   padding: 0.3rem;
-  border: 1px solid #816aa7;
+  border: 1px solid var(--theme-divider);
   border-radius: 0.3rem;
-  background: #21172e;
+  background: var(--theme-panel);
   box-shadow: 0 0.75rem 1.5rem rgb(7 4 12 / 52%);
 }
 
@@ -957,13 +961,13 @@
 .skill-preset-management-dialog .ui-button {
   min-block-size: var(--target-minimum);
   padding: 0.45rem 0.7rem;
-  border-color: #8e73b3;
-  background: #49365f;
+  border-color: var(--theme-divider);
+  background: var(--theme-selected);
   color: white;
 }
 
 .skill-preset-management-dialog .ui-button:not(:disabled):hover {
-  background: #5c4477;
+  background: color-mix(in srgb, var(--theme-selected) 82%, var(--theme-accent));
 }
 
 .skill-preset-management-dialog .ui-button--primary {
@@ -978,6 +982,11 @@
 }
 
 .skill-details-dialog__backdrop {
+  --theme-page: #1c1427;
+  --theme-panel: #30244f;
+  --theme-selected: #483563;
+  --theme-divider: #5b4674;
+  --theme-accent: #d3c2ff;
   position: fixed;
   z-index: 100;
   display: grid;
@@ -985,6 +994,7 @@
   background: rgb(8 6 13 / 78%);
   inset: 0;
   place-items: center;
+  touch-action: manipulation;
 }
 
 .skill-details-dialog {

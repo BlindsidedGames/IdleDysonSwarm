@@ -89,13 +89,13 @@ describe('SettingsSurface', () => {
 
   test('styles enabled dialog and file actions as interactive controls', () => {
     expect(settingsStyles).toMatch(
-      /\.settings-surface__dialog-actions > button\s*\{[^}]*background:\s*#56815a;[^}]*cursor:\s*pointer;/,
+      /\.settings-surface__dialog-actions > button\s*\{[^}]*background:\s*var\(--theme-selected\);[^}]*cursor:\s*pointer;/,
     )
     expect(settingsStyles).toMatch(
-      /\.settings-surface__file-option > button:hover:not\(:disabled\),\s*\.settings-surface__dialog-actions > button:hover:not\(:disabled\)\s*\{[^}]*background:\s*#67976b;/,
+      /\.settings-surface__file-option > button:hover:not\(:disabled\),\s*\.settings-surface__dialog-actions > button:hover:not\(:disabled\)\s*\{[^}]*background:\s*color-mix\(in srgb, var\(--theme-selected\) 78%, var\(--theme-accent\)\);/,
     )
     expect(settingsStyles).toMatch(
-      /\.settings-surface__file-option > button:active:not\(:disabled\),\s*\.settings-surface__dialog-actions > button:active:not\(:disabled\)\s*\{[^}]*background:\s*#47704b;/,
+      /\.settings-surface__file-option > button:active:not\(:disabled\),\s*\.settings-surface__dialog-actions > button:active:not\(:disabled\)\s*\{[^}]*background:\s*var\(--theme-panel\);/,
     )
     expect(settingsStyles).toMatch(
       /\.settings-surface__dialog-actions > button:disabled\s*\{[^}]*cursor:\s*wait;[^}]*opacity:\s*0\.7;/,

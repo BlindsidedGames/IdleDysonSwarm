@@ -4,7 +4,7 @@
   block-size: 100%;
   min-block-size: 0;
   overflow: hidden;
-  background: #130f22;
+  background: var(--theme-page);
   color: white;
 }
 
@@ -16,7 +16,12 @@
   min-block-size: 0;
   box-sizing: border-box;
   gap: 0.7rem;
-  padding: 0.75rem;
+  padding-block:
+    calc(0.75rem + env(safe-area-inset-top))
+    0.75rem;
+  padding-inline:
+    max(0.75rem, env(safe-area-inset-left))
+    max(0.75rem, env(safe-area-inset-right));
   margin-inline: auto;
   overflow-y: auto;
   overscroll-behavior: contain;
@@ -38,9 +43,9 @@
 .store-restore,
 .store-surface__feedback,
 .store-surface__loading {
-  border: 1px solid #20172f;
+  border: 1px solid var(--theme-divider);
   border-radius: 0.35rem;
-  background: #352a52;
+  background: var(--theme-panel);
   box-shadow: 0 0.16rem 0.35rem rgb(0 0 0 / 25%);
 }
 
@@ -89,13 +94,13 @@
   align-items: stretch;
   gap: 0.6rem;
   padding: 0.6rem;
-  border: 1px solid #261b38;
+  border: 1px solid var(--theme-divider);
   border-radius: 0.3rem;
-  background: #3b2f5b;
+  background: var(--theme-panel);
 }
 
 .store-product-card h3 {
-  color: #d2c0ff;
+  color: var(--theme-accent);
   font-size: calc(0.98rem * var(--game-text-scale));
 }
 
@@ -103,10 +108,10 @@
 .store-surface__secondary-action {
   min-block-size: 3.4rem;
   padding: 0.65rem 0.85rem;
-  border: 1px solid #4d3b69;
+  border: 1px solid var(--theme-divider);
   border-radius: 0.25rem;
-  background: #b7a0f0;
-  color: #171021;
+  background: var(--theme-accent);
+  color: var(--theme-page);
   font: inherit;
   font-weight: var(--font-weight-bold);
   cursor: pointer;
@@ -114,7 +119,7 @@
 
 .store-surface__purchase-action:disabled,
 .store-surface__secondary-action:disabled {
-  background: #4a3c61;
+  background: var(--theme-selected);
   color: #c7bbd7;
   cursor: default;
 }

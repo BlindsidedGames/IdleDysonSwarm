@@ -106,6 +106,7 @@ export function DysonGameplayShell({
       className="dyson-shell"
       dir={direction}
       data-menu-open={menuOpen}
+      data-resource-header={showResourceHeader}
       data-route-content={routeContent !== undefined}
       data-route-theme={routeTheme}
       data-route-theme-variant={routeThemeVariant}

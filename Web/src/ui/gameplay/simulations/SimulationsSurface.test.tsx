@@ -96,6 +96,12 @@ describe('SimulationsSurface', () => {
     expect(
       influenceBalance.querySelector('[data-symbol="influence"]'),
     ).toHaveClass('ui-inline-image-symbol--tinted')
+    expect(simulationStyles).toMatch(
+      /\.simulations-surface__influence[\s\S]*> \.ui-inline-image-symbol\[data-symbol="influence"\]\s*\{[^}]*color:\s*var\(--simulation-value\);/,
+    )
+    expect(simulationStyles).toMatch(
+      /\.simulations-surface__influence > span\s*\{[^}]*color:\s*var\(--simulation-value\);/,
+    )
 
     await userEvent.setup().click(
       screen.getByRole('button', { name: 'Foundational Era' }),

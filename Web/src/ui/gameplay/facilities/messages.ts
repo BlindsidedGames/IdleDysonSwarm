@@ -7,6 +7,12 @@ export const basicFacilityMessages = defineMessages({
     description:
       'Screen-reader heading for the early Dyson basic-facility region.',
   },
+  megaStructuresHeading: {
+    id: 'dyson.facilities.mega-structures.heading',
+    defaultMessage: 'Mega-Structures',
+    description:
+      'Screen-reader heading for the Dyson mega-structure region.',
+  },
   assemblyLinesName: {
     id: 'dyson.facilities.assembly-lines.name',
     defaultMessage: 'Assembly Lines',
@@ -54,6 +60,124 @@ export const basicFacilityMessages = defineMessages({
     defaultMessage: 'Galactic Brains',
     description:
       'Localized upstream-source name for Galactic Brains.',
+  },
+  matrioshkaBrainsIdentity: {
+    id: 'dyson.facilities.matrioshka-brains.identity',
+    defaultMessage: 'Matrioshka Brains {total}({manual})',
+    description:
+      'Compact identity with canonical total and manual Matrioshka Brain counts.',
+  },
+  birchPlanetsIdentity: {
+    id: 'dyson.facilities.birch-planets.identity',
+    defaultMessage: 'Birch Planets {total}({manual})',
+    description:
+      'Compact identity with canonical total and manual Birch Planet counts.',
+  },
+  galacticBrainsIdentity: {
+    id: 'dyson.facilities.galactic-brains.identity',
+    defaultMessage: 'Galactic Brains {total}({manual})',
+    description:
+      'Compact identity with canonical total and manual Galactic Brain counts.',
+  },
+  matrioshkaBrainsDescription: {
+    id: 'dyson.facilities.matrioshka-brains.description',
+    defaultMessage:
+      'Massive stellar computing structures that consume planets to produce more planets.',
+    description: 'Exact authored Matrioshka Brains description.',
+  },
+  birchPlanetsDescription: {
+    id: 'dyson.facilities.birch-planets.description',
+    defaultMessage:
+      'Supermassive planetary shells that consume Matrioshka Brains to produce more Matrioshka Brains.',
+    description: 'Exact authored Birch Planets description.',
+  },
+  galacticBrainsDescription: {
+    id: 'dyson.facilities.galactic-brains.description',
+    defaultMessage:
+      'The ultimate mega-structure requiring both Matrioshka Brains and Birch Planets. Produces Birch Planets.',
+    description: 'Exact authored Galactic Brains description.',
+  },
+  constructMatrioshkaBrain: {
+    id: 'dyson.facilities.matrioshka-brains.purchase',
+    defaultMessage: 'Construct a Matrioshka Brain',
+    description: 'Exact authored Matrioshka Brain purchase prompt.',
+  },
+  constructBirchPlanet: {
+    id: 'dyson.facilities.birch-planets.purchase',
+    defaultMessage: 'Construct a Birch Planet',
+    description: 'Exact authored Birch Planet purchase prompt.',
+  },
+  constructGalacticBrain: {
+    id: 'dyson.facilities.galactic-brains.purchase',
+    defaultMessage: 'Construct a Galactic Brain',
+    description: 'Exact authored Galactic Brain purchase prompt.',
+  },
+  constructMegaStructureAccessible: {
+    id: 'dyson.facilities.mega-structure.purchase-accessible',
+    defaultMessage: '{prompt}: +{quantity}, ${cost}',
+    description:
+      'Accessible name for a compact mega-structure purchase control.',
+  },
+  megaOutput: {
+    id: 'dyson.facilities.mega-structure.details.output',
+    defaultMessage: 'Produces',
+    description: 'Label for the facility produced by a mega-structure.',
+  },
+  finalProduction: {
+    id: 'dyson.facilities.mega-structure.details.final-production',
+    defaultMessage: 'Final production',
+    description: 'Label for the final mega-structure production rate.',
+  },
+  productionRateValue: {
+    id: 'dyson.facilities.mega-structure.details.production-rate-value',
+    defaultMessage: '{value} /s',
+    description:
+      'Formatted per-second production value in mega-structure details.',
+  },
+  unlockCondition: {
+    id: 'dyson.facilities.mega-structure.details.unlock-condition',
+    defaultMessage: 'Unlock condition',
+    description: 'Label for a mega-structure unlock condition.',
+  },
+  megaUnlockRequirement: {
+    id: 'dyson.facilities.mega-structure.details.unlock-requirement',
+    defaultMessage:
+      'Requires the {structure} Quantum unlock and ownership of {prerequisite}.',
+    description:
+      'Canonical sequential visibility condition for a mega-structure.',
+  },
+  matrioshkaBrainsProductionPerSecond: {
+    id: 'dyson.facilities.matrioshka-brains.production-per-second',
+    defaultMessage: 'Synthesizing {rate} Planets /s',
+    description: 'Authored Matrioshka Brain production phrase.',
+  },
+  matrioshkaBrainsProductionInterval: {
+    id: 'dyson.facilities.matrioshka-brains.production-interval',
+    defaultMessage: 'Synthesizing 1 Planet /{interval}',
+    description:
+      'Authored Matrioshka Brain production phrase below one unit per second.',
+  },
+  birchPlanetsProductionPerSecond: {
+    id: 'dyson.facilities.birch-planets.production-per-second',
+    defaultMessage: 'Assembling {rate} Matrioshka Brains /s',
+    description: 'Authored Birch Planet production phrase.',
+  },
+  birchPlanetsProductionInterval: {
+    id: 'dyson.facilities.birch-planets.production-interval',
+    defaultMessage: 'Assembling 1 Matrioshka Brain /{interval}',
+    description:
+      'Authored Birch Planet production phrase below one unit per second.',
+  },
+  galacticBrainsProductionPerSecond: {
+    id: 'dyson.facilities.galactic-brains.production-per-second',
+    defaultMessage: 'Manifesting {rate} Birch Planets /s',
+    description: 'Authored Galactic Brain production phrase.',
+  },
+  galacticBrainsProductionInterval: {
+    id: 'dyson.facilities.galactic-brains.production-interval',
+    defaultMessage: 'Manifesting 1 Birch Planet /{interval}',
+    description:
+      'Authored Galactic Brain production phrase below one unit per second.',
   },
   unknownFacility: {
     id: 'dyson.facilities.unknown.name',
@@ -417,6 +541,19 @@ export const basicFacilityMessages = defineMessages({
       'Not enough Cash for this purchase. Affordable quantity: {quantity}.',
     description:
       'Screen-reader-only explanation selected from the canonical insufficient-funds preview.',
+  },
+  insufficientCash: {
+    id: 'dyson.facilities.purchase.insufficient-cash',
+    defaultMessage: 'Not enough Cash for this purchase.',
+    description:
+      'Screen-reader explanation for a mega-structure purchase that is too expensive.',
+  },
+  prerequisiteNotMet: {
+    id: 'dyson.facilities.purchase.prerequisite-not-met',
+    defaultMessage:
+      'Construct the preceding mega-structure before purchasing this one.',
+    description:
+      'Screen-reader explanation for a sequential mega-structure prerequisite.',
   },
   locked: {
     id: 'dyson.facilities.purchase.locked',

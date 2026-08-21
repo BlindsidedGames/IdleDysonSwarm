@@ -21,9 +21,9 @@
 
 .dyson-lower-facts p {
   padding: 0.42rem 0.65rem;
-  border: 1px solid #5a405f;
+  border: 1px solid var(--theme-divider);
   border-radius: 0.2rem;
-  background: #3f3044;
+  background: var(--theme-panel);
   color: #f4edf5;
   line-height: var(--line-height-body);
   text-align: center;

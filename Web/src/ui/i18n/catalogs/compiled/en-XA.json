@@ -1275,6 +1275,50 @@
       "value": "]"
     }
   ],
+  "dyson.facilities.birch-planets.description": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Şŭŭƥḗḗřḿȧȧşşīṽḗḗ ƥŀȧȧƞḗḗŧȧȧřẏ şħḗḗŀŀş ŧħȧȧŧ ƈǿǿƞşŭŭḿḗḗ Ḿȧȧŧřīǿǿşħķȧȧ Ɓřȧȧīƞş ŧǿǿ ƥřǿǿḓŭŭƈḗḗ ḿǿǿřḗḗ Ḿȧȧŧřīǿǿşħķȧȧ Ɓřȧȧīƞş."
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "dyson.facilities.birch-planets.identity": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Ɓīřƈħ Ƥŀȧȧƞḗḗŧş "
+    },
+    {
+      "type": 1,
+      "value": "total"
+    },
+    {
+      "type": 0,
+      "value": "("
+    },
+    {
+      "type": 1,
+      "value": "manual"
+    },
+    {
+      "type": 0,
+      "value": ")"
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
   "dyson.facilities.birch-planets.name": [
     {
       "type": 0,
@@ -1283,6 +1327,60 @@
     {
       "type": 0,
       "value": "Ɓīřƈħ Ƥŀȧȧƞḗḗŧş"
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "dyson.facilities.birch-planets.production-interval": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Ȧşşḗḗḿƀŀīƞɠ 1 Ḿȧȧŧřīǿǿşħķȧȧ Ɓřȧȧīƞ /"
+    },
+    {
+      "type": 1,
+      "value": "interval"
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "dyson.facilities.birch-planets.production-per-second": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Ȧşşḗḗḿƀŀīƞɠ "
+    },
+    {
+      "type": 1,
+      "value": "rate"
+    },
+    {
+      "type": 0,
+      "value": " Ḿȧȧŧřīǿǿşħķȧȧ Ɓřȧȧīƞş /ş"
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "dyson.facilities.birch-planets.purchase": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Ƈǿǿƞşŧřŭŭƈŧ ȧȧ Ɓīřƈħ Ƥŀȧȧƞḗḗŧ"
     },
     {
       "type": 0,
@@ -1717,6 +1815,50 @@
       "value": "]"
     }
   ],
+  "dyson.facilities.galactic-brains.description": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Ŧħḗḗ ŭŭŀŧīḿȧȧŧḗḗ ḿḗḗɠȧȧ-şŧřŭŭƈŧŭŭřḗḗ řḗḗɋŭŭīřīƞɠ ƀǿǿŧħ Ḿȧȧŧřīǿǿşħķȧȧ Ɓřȧȧīƞş ȧȧƞḓ Ɓīřƈħ Ƥŀȧȧƞḗḗŧş. Ƥřǿǿḓŭŭƈḗḗş Ɓīřƈħ Ƥŀȧȧƞḗḗŧş."
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "dyson.facilities.galactic-brains.identity": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Ɠȧȧŀȧȧƈŧīƈ Ɓřȧȧīƞş "
+    },
+    {
+      "type": 1,
+      "value": "total"
+    },
+    {
+      "type": 0,
+      "value": "("
+    },
+    {
+      "type": 1,
+      "value": "manual"
+    },
+    {
+      "type": 0,
+      "value": ")"
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
   "dyson.facilities.galactic-brains.name": [
     {
       "type": 0,
@@ -1725,6 +1867,60 @@
     {
       "type": 0,
       "value": "Ɠȧȧŀȧȧƈŧīƈ Ɓřȧȧīƞş"
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "dyson.facilities.galactic-brains.production-interval": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Ḿȧȧƞīƒḗḗşŧīƞɠ 1 Ɓīřƈħ Ƥŀȧȧƞḗḗŧ /"
+    },
+    {
+      "type": 1,
+      "value": "interval"
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "dyson.facilities.galactic-brains.production-per-second": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Ḿȧȧƞīƒḗḗşŧīƞɠ "
+    },
+    {
+      "type": 1,
+      "value": "rate"
+    },
+    {
+      "type": 0,
+      "value": " Ɓīřƈħ Ƥŀȧȧƞḗḗŧş /ş"
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "dyson.facilities.galactic-brains.purchase": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Ƈǿǿƞşŧřŭŭƈŧ ȧȧ Ɠȧȧŀȧȧƈŧīƈ Ɓřȧȧīƞ"
     },
     {
       "type": 0,
@@ -1767,6 +1963,50 @@
       "value": "]"
     }
   ],
+  "dyson.facilities.matrioshka-brains.description": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Ḿȧȧşşīṽḗḗ şŧḗḗŀŀȧȧř ƈǿǿḿƥŭŭŧīƞɠ şŧřŭŭƈŧŭŭřḗḗş ŧħȧȧŧ ƈǿǿƞşŭŭḿḗḗ ƥŀȧȧƞḗḗŧş ŧǿǿ ƥřǿǿḓŭŭƈḗḗ ḿǿǿřḗḗ ƥŀȧȧƞḗḗŧş."
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "dyson.facilities.matrioshka-brains.identity": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Ḿȧȧŧřīǿǿşħķȧȧ Ɓřȧȧīƞş "
+    },
+    {
+      "type": 1,
+      "value": "total"
+    },
+    {
+      "type": 0,
+      "value": "("
+    },
+    {
+      "type": 1,
+      "value": "manual"
+    },
+    {
+      "type": 0,
+      "value": ")"
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
   "dyson.facilities.matrioshka-brains.name": [
     {
       "type": 0,
@@ -1775,6 +2015,194 @@
     {
       "type": 0,
       "value": "Ḿȧȧŧřīǿǿşħķȧȧ Ɓřȧȧīƞş"
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "dyson.facilities.matrioshka-brains.production-interval": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Şẏƞŧħḗḗşīẑīƞɠ 1 Ƥŀȧȧƞḗḗŧ /"
+    },
+    {
+      "type": 1,
+      "value": "interval"
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "dyson.facilities.matrioshka-brains.production-per-second": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Şẏƞŧħḗḗşīẑīƞɠ "
+    },
+    {
+      "type": 1,
+      "value": "rate"
+    },
+    {
+      "type": 0,
+      "value": " Ƥŀȧȧƞḗḗŧş /ş"
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "dyson.facilities.matrioshka-brains.purchase": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Ƈǿǿƞşŧřŭŭƈŧ ȧȧ Ḿȧȧŧřīǿǿşħķȧȧ Ɓřȧȧīƞ"
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "dyson.facilities.mega-structure.details.final-production": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Ƒīƞȧȧŀ ƥřǿǿḓŭŭƈŧīǿǿƞ"
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "dyson.facilities.mega-structure.details.output": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Ƥřǿǿḓŭŭƈḗḗş"
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "dyson.facilities.mega-structure.details.production-rate-value": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 1,
+      "value": "value"
+    },
+    {
+      "type": 0,
+      "value": " /ş"
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "dyson.facilities.mega-structure.details.unlock-condition": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Ŭƞŀǿǿƈķ ƈǿǿƞḓīŧīǿǿƞ"
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "dyson.facilities.mega-structure.details.unlock-requirement": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Řḗḗɋŭŭīřḗḗş ŧħḗḗ "
+    },
+    {
+      "type": 1,
+      "value": "structure"
+    },
+    {
+      "type": 0,
+      "value": " Ɋŭŭȧȧƞŧŭŭḿ ŭŭƞŀǿǿƈķ ȧȧƞḓ ǿǿẇƞḗḗřşħīƥ ǿǿƒ "
+    },
+    {
+      "type": 1,
+      "value": "prerequisite"
+    },
+    {
+      "type": 0,
+      "value": "."
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "dyson.facilities.mega-structure.purchase-accessible": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 1,
+      "value": "prompt"
+    },
+    {
+      "type": 0,
+      "value": ": +"
+    },
+    {
+      "type": 1,
+      "value": "quantity"
+    },
+    {
+      "type": 0,
+      "value": ", $"
+    },
+    {
+      "type": 1,
+      "value": "cost"
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "dyson.facilities.mega-structures.heading": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Ḿḗḗɠȧȧ-Şŧřŭŭƈŧŭŭřḗḗş"
     },
     {
       "type": 0,
@@ -2009,6 +2437,20 @@
       "value": "]"
     }
   ],
+  "dyson.facilities.purchase.insufficient-cash": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Ƞǿǿŧ ḗḗƞǿǿŭŭɠħ Ƈȧȧşħ ƒǿǿř ŧħīş ƥŭŭřƈħȧȧşḗḗ."
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
   "dyson.facilities.purchase.insufficient-funds": [
     {
       "type": 0,
@@ -2067,6 +2509,20 @@
     {
       "type": 0,
       "value": "Ƥŭŭřƈħȧȧşḗḗ ƥḗḗƞḓīƞɠ…"
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "dyson.facilities.purchase.prerequisite-not-met": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Ƈǿǿƞşŧřŭŭƈŧ ŧħḗḗ ƥřḗḗƈḗḗḓīƞɠ ḿḗḗɠȧȧ-şŧřŭŭƈŧŭŭřḗḗ ƀḗḗƒǿǿřḗḗ ƥŭŭřƈħȧȧşīƞɠ ŧħīş ǿǿƞḗḗ."
     },
     {
       "type": 0,
@@ -7760,7 +8216,7 @@
     },
     {
       "type": 0,
-      "value": "Ŭƞīṽḗḗřşḗḗ Ḓḗḗşīɠƞȧȧŧīǿǿƞ: "
+      "value": "Ḓḗḗşīɠƞȧȧŧīǿǿƞ: "
     },
     {
       "type": 1,

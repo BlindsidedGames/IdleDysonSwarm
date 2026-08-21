@@ -8,6 +8,7 @@ import type {
   DysonResourcePresentation,
   DysonShellDirection,
 } from './contracts'
+import { navigationAssets } from './navigationAssets'
 
 export interface DysonResourceHeaderProps
   extends DysonResourceHeaderPresentation {
@@ -39,6 +40,7 @@ export function DysonResourceHeader({
         placement="total-bots"
         direction={direction}
         presentation={totalBots}
+        showBotsIcon
       />
       <Resource
         placement="science"
@@ -54,6 +56,7 @@ interface ResourceProps {
   readonly placement: 'cash' | 'total-bots' | 'science'
   readonly direction: DysonShellDirection
   readonly presentation: DysonResourcePresentation
+  readonly showBotsIcon?: boolean
   readonly showScienceIcon?: boolean
 }
 
@@ -61,6 +64,7 @@ function Resource({
   placement,
   direction,
   presentation,
+  showBotsIcon = false,
   showScienceIcon = false,
 }: ResourceProps) {
   return (
@@ -73,7 +77,11 @@ function Resource({
         label={presentation.label}
         value={presentation.value}
         leadingSymbol={
-          showScienceIcon ? <ScienceSymbol /> : undefined
+          showBotsIcon
+            ? <BotsSymbol />
+            : showScienceIcon
+              ? <ScienceSymbol />
+              : undefined
         }
         fullPrecisionValue={presentation.fullPrecisionValue}
         machineValue={presentation.machineValue}
@@ -89,6 +97,15 @@ function Resource({
         </span>
       )}
     </div>
+  )
+}
+
+function BotsSymbol() {
+  return (
+    <InlineImageSymbol
+      src={navigationAssets.bots}
+      symbol="bots"
+    />
   )
 }
 

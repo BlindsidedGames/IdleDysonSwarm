@@ -6,6 +6,10 @@
   container-type: inline-size;
 }
 
+.mega-structure-region {
+  margin-block-start: var(--game-card-grid-gap);
+}
+
 .basic-facility-region__heading {
   position: absolute;
   inline-size: 1px;
@@ -58,10 +62,9 @@
   gap: var(--basic-facility-section-gap) 0.38rem;
   align-items: start;
   padding: 0.38rem;
-  border: 2px solid #694b70;
+  border: 2px solid var(--theme-divider);
   border-radius: 0.25rem;
-  background:
-    linear-gradient(100deg, #443148, #342638);
+  background: var(--theme-panel);
   box-shadow: 0 2px 0 #171018;
 }
 
@@ -170,7 +173,7 @@
   display: block;
   inline-size: 100%;
   block-size: 100%;
-  background: #d68ee8;
+  background: var(--theme-accent);
   transform-origin: left center;
 }
 
@@ -199,6 +202,34 @@
 
 .basic-facility-card__actions > .ui-button {
   grid-row: 1;
+}
+
+.ui-facility-card.mega-structure-card {
+  border-color: var(--theme-divider);
+  background: var(--theme-panel);
+}
+
+.mega-structure-details__list {
+  display: grid;
+  gap: 0.45rem;
+  margin: 0;
+}
+
+.mega-structure-details__list > div {
+  display: grid;
+  grid-template-columns: minmax(8rem, 0.8fr) minmax(0, 1.2fr);
+  gap: 0.75rem;
+}
+
+.mega-structure-details__list dt {
+  font-weight: var(--font-weight-semibold);
+}
+
+.mega-structure-details__list dd {
+  margin: 0;
+  color: var(--color-positive);
+  font-family: var(--font-family-numeric);
+  overflow-wrap: anywhere;
 }
 
 .basic-facility-card .ui-button {

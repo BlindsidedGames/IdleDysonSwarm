@@ -149,6 +149,76 @@ describe('ReadyDysonSlice', () => {
     })).toBeEmptyDOMElement()
   })
 
+  test('renders canonical mega-structure cards in order and dispatches their purchase route', async () => {
+    const dispatch = vi.fn().mockResolvedValue({
+      status: 'accepted',
+      kind: 'transition',
+      changed: true,
+      stateRevision: 2,
+      activationRevision: { session: 1, state: 1 },
+    })
+    renderSlice(
+      snapshot({
+        visibleBasicFacilityIds: [
+          'assembly_lines',
+          'ai_managers',
+          'servers',
+          'data_centers',
+          'planets',
+        ],
+        visibleMegaStructureIds: [
+          'matrioshka_brains',
+          'birch_planets',
+          'galactic_brains',
+        ],
+        facilities: {
+          matrioshka_brains: [2, 3],
+          birch_planets: [4, 5],
+          galactic_brains: [6, 7],
+        },
+        showNextTierTeaser: false,
+      }),
+      dispatch,
+    )
+
+    const megaHeading = await screen.findByRole('heading', {
+      name: 'Mega-Structures',
+      level: 2,
+    })
+    const megaRegion = megaHeading.closest('section')
+    expect(megaRegion).not.toBeNull()
+    const cards = within(megaRegion as HTMLElement).getAllByRole('article')
+    expect(cards[0]).toHaveAccessibleName('Matrioshka Brains 5.00(3.00)')
+    expect(cards[1]).toHaveAccessibleName('Birch Planets 9.00(5.00)')
+    expect(cards[2]).toHaveAccessibleName('Galactic Brains 13.0(7.00)')
+    expect(within(cards[0]).getByText('Synthesizing 1.00 Planets /s'))
+      .toBeInTheDocument()
+
+    await userEvent.click(within(cards[0]).getByRole('button', {
+      name: 'Details',
+    }))
+    const details = screen.getByRole('dialog', {
+      name: 'Matrioshka Brains',
+    })
+    expect(within(details).getByText('Base')).toBeInTheDocument()
+    expect(within(details).getByText('Final production'))
+      .toBeInTheDocument()
+    expect(within(details).getByText(
+      'Requires the Matrioshka Brains Quantum unlock and ownership of Planets.',
+    )).toBeInTheDocument()
+    await userEvent.click(within(details).getByRole('button', {
+      name: 'Close',
+    }))
+
+    await userEvent.click(within(cards[2]).getByRole('button', {
+      name: /^Construct a Galactic Brain:/,
+    }))
+    expect(dispatch).toHaveBeenCalledWith({
+      kind: 'dyson.purchase-mega-structure',
+      facilityId: 'galactic_brains',
+    })
+  })
+
   test('maps current resources and producer output rates exactly', async () => {
     renderSlice(
       snapshot({
@@ -242,7 +312,7 @@ describe('ReadyDysonSlice', () => {
   test('switches to the green Settings route without unmounting the ready game host', async () => {
     const user = userEvent.setup()
     const onRouteChange = vi.fn()
-    render(
+    const rendered = render(
       provider(
         <ReadyDysonSlice
           snapshot={snapshot()}
@@ -265,6 +335,9 @@ describe('ReadyDysonSlice', () => {
     ).not.toBeInTheDocument()
     expect(
       screen.queryByRole('slider', { name: 'Bot Distribution' }),
+    ).not.toBeInTheDocument()
+    expect(
+      rendered.container.querySelector('.dyson-resource-header'),
     ).not.toBeInTheDocument()
 
     await user.click(screen.getByRole('button', { name: 'Bots' }))
@@ -457,7 +530,7 @@ describe('ReadyDysonSlice', () => {
   })
 
   test('switches to the authored Skills tree only when canonical visibility unlocks it', async () => {
-    render(
+    const rendered = render(
       provider(
         <ReadyDysonSlice
           snapshot={snapshot({ skillsRouteUnlocked: true })}
@@ -478,6 +551,9 @@ describe('ReadyDysonSlice', () => {
     ).toBeInTheDocument()
     expect(
       screen.queryByRole('slider', { name: 'Bot Distribution' }),
+    ).not.toBeInTheDocument()
+    expect(
+      rendered.container.querySelector('.dyson-resource-header'),
     ).not.toBeInTheDocument()
   })
 
@@ -519,6 +595,9 @@ describe('ReadyDysonSlice', () => {
     ).toBeInTheDocument()
     expect(
       screen.queryByRole('slider', { name: 'Bot Distribution' }),
+    ).not.toBeInTheDocument()
+    expect(
+      rendered.container.querySelector('.dyson-resource-header'),
     ).not.toBeInTheDocument()
 
     await user.click(screen.getByRole('button', { name: 'Bots' }))
@@ -568,7 +647,7 @@ describe('ReadyDysonSlice', () => {
     )
 
     expect(
-      await screen.findByText('Universe Designation: 4'),
+      await screen.findByText('Designation: 4'),
     ).toBeInTheDocument()
     expect(
       rendered.container.querySelector('.dyson-resource-header'),
@@ -660,6 +739,9 @@ describe('ReadyDysonSlice', () => {
       'data-route-theme',
       'quantum',
     )
+    expect(
+      rendered.container.querySelector('.dyson-resource-header'),
+    ).not.toBeInTheDocument()
   })
 
   test('keeps Avocato subordinate to Quantum and exposes it through Reality', async () => {
@@ -933,6 +1015,9 @@ describe('ReadyDysonSlice', () => {
     expect(
       screen.getByRole('heading', { level: 1, name: 'Store' }),
     ).toBeInTheDocument()
+    expect(
+      native.container.querySelector('.dyson-resource-header'),
+    ).not.toBeInTheDocument()
     expect(products).toHaveBeenCalledTimes(1)
 
     native.rerender(renderNativeRoute('bots'))
@@ -1127,6 +1212,15 @@ describe('ReadyDysonSlice', () => {
         'data-route-theme',
         route,
       )
+      if (route === 'statistics') {
+        expect(
+          rendered.container.querySelector('.dyson-resource-header'),
+        ).not.toBeInTheDocument()
+      } else {
+        expect(
+          rendered.container.querySelector('.dyson-resource-header'),
+        ).toBeInTheDocument()
+      }
     },
   )
 
@@ -1547,9 +1641,12 @@ type ReadySnapshot = Extract<
 
 type FacilityId =
   ReadySnapshot['gameplay']['visibility']['dyson']['visibleBasicFacilityIds'][number]
+type MegaStructureId =
+  ReadySnapshot['gameplay']['visibility']['dyson']['visibleMegaStructureIds'][number]
 
 interface SnapshotOptions {
   readonly visibleBasicFacilityIds?: readonly FacilityId[]
+  readonly visibleMegaStructureIds?: readonly MegaStructureId[]
   readonly showNextTierTeaser?: boolean
   readonly skillsRouteUnlocked?: boolean
   readonly infinityRouteUnlocked?: boolean
@@ -1575,7 +1672,7 @@ interface SnapshotOptions {
   readonly researchAutomationUnlocked?: boolean
   readonly enabledFacilities?: Partial<Record<FacilityId, boolean>>
   readonly facilities?: Partial<
-    Record<FacilityId, readonly [number, number]>
+    Record<FacilityId | MegaStructureId, readonly [number, number]>
   >
 }
 
@@ -1868,6 +1965,55 @@ function snapshot(options: SnapshotOptions = {}): ReadySnapshot {
               data_centers: 77,
               planets: 88,
             },
+            megaRates: {
+              matrioshka_brains: 1,
+              birch_planets: 0.01,
+              galactic_brains: 0.1,
+            },
+            megaStructureFacts: {
+              matrioshka_brains: {
+                facilityId: 'matrioshka_brains',
+                outputFacilityId: 'planets',
+                ownership: {
+                  automatic: facilities.matrioshka_brains[0],
+                  manual: facilities.matrioshka_brains[1],
+                  total:
+                    facilities.matrioshka_brains[0] +
+                    facilities.matrioshka_brains[1],
+                },
+                baseProductionPerSecond: 1,
+                modifier: 1,
+                perSecond: 1,
+              },
+              birch_planets: {
+                facilityId: 'birch_planets',
+                outputFacilityId: 'matrioshka_brains',
+                ownership: {
+                  automatic: facilities.birch_planets[0],
+                  manual: facilities.birch_planets[1],
+                  total:
+                    facilities.birch_planets[0] +
+                    facilities.birch_planets[1],
+                },
+                baseProductionPerSecond: 0.01,
+                modifier: 1,
+                perSecond: 0.01,
+              },
+              galactic_brains: {
+                facilityId: 'galactic_brains',
+                outputFacilityId: 'birch_planets',
+                ownership: {
+                  automatic: facilities.galactic_brains[0],
+                  manual: facilities.galactic_brains[1],
+                  total:
+                    facilities.galactic_brains[0] +
+                    facilities.galactic_brains[1],
+                },
+                baseProductionPerSecond: 0.1,
+                modifier: 1,
+                perSecond: 0.1,
+              },
+            },
           },
         },
         dysonBotDistribution: {
@@ -1968,6 +2114,8 @@ function snapshot(options: SnapshotOptions = {}): ReadySnapshot {
           showTinker: true,
           visibleBasicFacilityIds:
             options.visibleBasicFacilityIds ?? [],
+          visibleMegaStructureIds:
+            options.visibleMegaStructureIds ?? [],
           showNextTierTeaser:
             options.showNextTierTeaser ?? true,
         },
@@ -2018,6 +2166,9 @@ function snapshot(options: SnapshotOptions = {}): ReadySnapshot {
       commands: {
         byKind: {
           'dyson.purchase-basic-facility': {
+            routeAvailable: true,
+          },
+          'dyson.purchase-mega-structure': {
             routeAvailable: true,
           },
           'dyson.set-bot-distribution': {
@@ -2116,7 +2267,21 @@ function snapshot(options: SnapshotOptions = {}): ReadySnapshot {
         },
       },
       previews: {
-        dyson: { basicFacilities },
+        dyson: {
+          basicFacilities,
+          megaStructures: [
+            'matrioshka_brains',
+            'birch_planets',
+            'galactic_brains',
+          ].map((facilityId) => ({
+            facilityId,
+            eligible: true,
+            selectedQuantity: 1n,
+            cost: 1_000_000_000,
+            code: 'success',
+            definitionGap: null,
+          })),
+        },
         research: {
           complete: true,
           issue: null,

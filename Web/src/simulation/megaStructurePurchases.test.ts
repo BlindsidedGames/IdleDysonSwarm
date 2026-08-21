@@ -4,6 +4,7 @@ import type {
   CanonicalOwnedPair,
 } from '../game-state/types'
 import {
+  isMegaStructureVisible,
   megaStructureCashCost,
   tryPurchaseMegaStructure,
   type MegaStructurePurchaseState,
@@ -63,6 +64,55 @@ describe('mega-structure authored cash costs', () => {
 })
 
 describe('mega-structure purchase command', () => {
+  test.each([
+    ['matrioshka_brains', 'matrioshkaBrains', 'planets'],
+    ['birch_planets', 'birchPlanets', 'matrioshka_brains'],
+    ['galactic_brains', 'galacticBrains', 'birch_planets'],
+  ] as const)(
+    'reveals %s only after its unlock and preceding-tier ownership, while retaining owned imports',
+    (facilityId, unlockKey, prerequisiteId) => {
+      const locked = purchaseState({
+        facilities: facilities({
+          [facilityId]: [0, 0],
+        }),
+        quantumUnlocks: {
+          ...purchaseState().quantumUnlocks,
+          [unlockKey]: false,
+        },
+      })
+      expect(isMegaStructureVisible(locked, facilityId)).toBe(false)
+
+      const missingPrerequisite = purchaseState({
+        facilities: facilities({
+          [facilityId]: [0, 0],
+          [prerequisiteId]: [0, 0],
+        }),
+      })
+      expect(isMegaStructureVisible(missingPrerequisite, facilityId))
+        .toBe(false)
+
+      const unlocked = purchaseState({
+        facilities: facilities({
+          [facilityId]: [0, 0],
+          [prerequisiteId]: [1, 0],
+        }),
+      })
+      expect(isMegaStructureVisible(unlocked, facilityId)).toBe(true)
+
+      const importedOwned = purchaseState({
+        facilities: facilities({
+          [facilityId]: [0, 1],
+          [prerequisiteId]: [0, 0],
+        }),
+        quantumUnlocks: {
+          ...purchaseState().quantumUnlocks,
+          [unlockKey]: false,
+        },
+      })
+      expect(isMegaStructureVisible(importedOwned, facilityId)).toBe(true)
+    },
+  )
+
   test.each([
     ['buy-1', false, 8, 1n],
     ['buy-10', false, 8, 10n],

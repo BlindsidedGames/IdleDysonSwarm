@@ -73,6 +73,36 @@ function lookupWithDataPatch(
 }
 
 describe('mega-structure production rates', () => {
+  test('publishes the canonical details breakdown beside each final rate', () => {
+    const result = deriveMegaStructureRates(
+      makeState({
+        facilities: {
+          matrioshka_brains: [2, 3],
+        },
+      }),
+      {
+        matrioshka_brains: 2,
+        birch_planets: 1,
+        galactic_brains: 1,
+      },
+    )
+
+    expect(result.ok).toBe(true)
+    if (!result.ok) return
+    expect(result.facts.matrioshka_brains).toEqual({
+      facilityId: 'matrioshka_brains',
+      outputFacilityId: 'planets',
+      ownership: {
+        automatic: 2,
+        manual: 3,
+        total: 5,
+      },
+      baseProductionPerSecond: Math.fround(1),
+      modifier: 2,
+      perSecond: Math.fround(1) * 5 * 2,
+    })
+  })
+
   test('returns all three producer rates using effective automatic plus manual counts', () => {
     const rates = requireRates(
       deriveMegaStructureRates(

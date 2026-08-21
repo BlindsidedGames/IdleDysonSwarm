@@ -2,9 +2,9 @@
   display: grid;
   grid-template-columns: minmax(0, 1fr);
   overflow: hidden;
-  border: 1px solid #0d0a0e;
+  border: 1px solid var(--theme-divider);
   border-radius: 0.35rem;
-  background: #3f3044;
+  background: var(--theme-panel);
   color: white;
 }
 
@@ -12,7 +12,7 @@
   display: grid;
   grid-template-columns: minmax(0, 1fr) 2.8rem;
   min-inline-size: 0;
-  background: #49364e;
+  background: var(--theme-selected);
 }
 
 .dyson-info__settings-toggle {
@@ -28,7 +28,7 @@
 .dyson-info__settings-toggle {
   display: grid;
   place-items: center;
-  border-inline-start: 1px solid #62466a;
+  border-inline-start: 1px solid var(--theme-divider);
   font-size: 1.25rem;
 }
 
@@ -70,13 +70,13 @@
   display: grid;
   gap: 0.4rem;
   padding: 0.5rem 0.65rem 0.6rem;
-  border-block-start: 1px solid #62466a;
-  background: #342839;
+  border-block-start: 1px solid var(--theme-divider);
+  background: var(--theme-panel);
 }
 
 .dyson-info__settings .ui-preset-automation select {
-  border-color: #78617e;
-  background: #271e2b;
+  border-color: var(--theme-divider);
+  background: var(--theme-page);
 }
 
 .dyson-info__settings-title {
@@ -94,9 +94,9 @@
   min-block-size: var(--target-minimum);
   min-inline-size: 0;
   padding: 0.25rem;
-  border: 1px solid #78617e;
+  border: 1px solid var(--theme-divider);
   border-radius: 0.22rem;
-  background: #4a3a4f;
+  background: var(--theme-panel);
   color: white;
   font: inherit;
   font-size: 0.82rem;
@@ -105,8 +105,8 @@
 }
 
 .dyson-info__buy-modes button[aria-pressed="true"] {
-  border-color: #d777e8;
-  background: #724879;
+  border-color: var(--theme-accent);
+  background: var(--theme-selected);
 }
 
 .dyson-info__buy-modes button:disabled {
@@ -132,9 +132,9 @@
   flex: 0 0 auto;
   place-content: center;
   margin: 0;
-  border: 1px solid #b790bf;
+  border: 1px solid var(--theme-divider);
   border-radius: 0.18rem;
-  background: #241c27;
+  background: var(--theme-page);
   color: white;
   cursor: pointer;
 }
@@ -150,8 +150,8 @@
 }
 
 .dyson-info__rounded-bulk input:checked {
-  border-color: #dc8bea;
-  background: #b84ccc;
+  border-color: var(--theme-accent);
+  background: var(--theme-accent);
 }
 
 .dyson-info__rounded-bulk input:checked::after {
@@ -304,9 +304,9 @@
   padding: 0.25rem 0.7rem;
   margin-block-start: -1.55rem;
   margin-block-end: 0.3rem;
-  border: 1px solid #a779b0;
+  border: 1px solid var(--theme-divider);
   border-radius: 0.22rem;
-  background: #724879;
+  background: var(--theme-selected);
   color: white;
   cursor: pointer;
   font: inherit;
@@ -315,11 +315,11 @@
 }
 
 .dyson-info__automation-toggle-all:not(:disabled):hover {
-  background: #87558f;
+  background: color-mix(in srgb, var(--theme-selected) 80%, var(--theme-accent));
 }
 
 .dyson-info__automation-toggle-all:not(:disabled):active {
-  background: #633e69;
+  background: var(--theme-panel);
 }
 
 .dyson-info__automation-toggle-all:disabled {
@@ -347,9 +347,9 @@
   align-items: center;
   gap: 0.4rem;
   padding: 0.25rem 0.4rem;
-  border: 1px solid #78617e;
+  border: 1px solid var(--theme-divider);
   border-radius: 0.22rem;
-  background: #382c3c;
+  background: var(--theme-panel);
   cursor: pointer;
   font-size: 0.82rem;
   touch-action: manipulation;
@@ -357,16 +357,16 @@
 }
 
 .dyson-info__automation-grid label:has(input:checked) {
-  border-color: #ce77df;
-  background: #624267;
+  border-color: var(--theme-accent);
+  background: var(--theme-selected);
 }
 
 .dyson-info__automation-grid label:hover {
-  background: #4d3852;
+  background: color-mix(in srgb, var(--theme-panel) 78%, var(--theme-selected));
 }
 
 .dyson-info__automation-grid label:has(input:checked):hover {
-  background: #704b76;
+  background: color-mix(in srgb, var(--theme-selected) 80%, var(--theme-accent));
 }
 
 .dyson-info__automation-grid label[data-save-error="true"] {
@@ -381,9 +381,9 @@
   flex: 0 0 auto;
   place-content: center;
   margin: 0;
-  border: 1px solid #b790bf;
+  border: 1px solid var(--theme-divider);
   border-radius: 0.18rem;
-  background: #241c27;
+  background: var(--theme-page);
   color: white;
   cursor: pointer;
 }
@@ -399,8 +399,8 @@
 }
 
 .dyson-info__automation-grid input:checked {
-  border-color: #dc8bea;
-  background: #b84ccc;
+  border-color: var(--theme-accent);
+  background: var(--theme-accent);
 }
 
 .dyson-info__automation-grid input:checked::after {

@@ -1,11 +1,11 @@
 @import "../../tokens/tokens.css";
 
 .reality-surface {
-  --reality-panel: #302744;
-  --reality-panel-raised: #46365e;
-  --reality-accent: #c8b3ff;
+  --reality-panel: var(--theme-panel);
+  --reality-panel-raised: var(--theme-selected);
+  --reality-accent: var(--theme-accent);
   --reality-anomaly: #9966cc;
-  --reality-track: #171221;
+  --reality-track: var(--theme-page);
   display: grid;
   block-size: 100%;
   min-block-size: 0;
@@ -17,7 +17,7 @@
       rgb(153 102 204 / 14%),
       transparent 34%
     ),
-    #151020;
+    var(--theme-page);
   color: white;
   user-select: none;
 }
@@ -34,11 +34,13 @@
   align-items: baseline;
   justify-content: space-between;
   gap: 0.75rem;
-  padding-block: 0.72rem;
+  padding-block:
+    calc(0.72rem + env(safe-area-inset-top))
+    0.72rem;
   padding-inline:
     max(0.8rem, env(safe-area-inset-left))
     max(0.8rem, env(safe-area-inset-right));
-  border-block-end: 2px solid #675282;
+  border-block-end: 2px solid var(--theme-divider);
   background: var(--reality-panel);
   font-family: var(--font-family-numeric);
   font-size: calc(0.96rem * var(--game-text-scale));
@@ -50,6 +52,16 @@
   align-items: baseline;
   justify-content: flex-end;
   gap: 0.58rem;
+}
+
+.reality-surface__designation {
+  min-inline-size: 0;
+  font-size: clamp(
+    0.7rem,
+    4vw,
+    calc(0.96rem * var(--game-text-scale))
+  );
+  white-space: nowrap;
 }
 
 .reality-surface__balance {
@@ -97,7 +109,7 @@
   align-content: center;
   gap: 0.55rem;
   padding: 0.8rem;
-  border: 1px solid #0a0710;
+  border: 1px solid var(--theme-divider);
   border-radius: 0.35rem;
   background: #050609;
   isolation: isolate;
@@ -145,7 +157,7 @@
   padding: 0.75rem;
   border: 1px solid #0a0710;
   border-radius: 0.35rem;
-  background: var(--reality-panel);
+  background: var(--theme-panel);
   box-shadow: 0 0.18rem 0.35rem rgb(0 0 0 / 28%);
 }
 
@@ -211,7 +223,7 @@
 
 .reality-worker-panel .ui-button {
   min-block-size: var(--target-minimum);
-  border-color: #0a0710;
+  border-color: var(--theme-divider);
   border-radius: 0.28rem;
   background: var(--reality-accent);
   color: #171020;
@@ -220,16 +232,16 @@
 }
 
 .reality-worker-panel .ui-button:not(:disabled):hover {
-  background: #d7c7ff;
+  background: color-mix(in srgb, var(--theme-accent) 82%, white);
 }
 
 .reality-worker-panel .ui-button:not(:disabled):active {
-  background: #9d7bd3;
+  background: var(--theme-selected);
 }
 
 .reality-worker-panel .ui-button:disabled {
-  border-color: #191222;
-  background: #4c3a64;
+  border-color: var(--theme-divider);
+  background: var(--theme-selected);
   color: #b7a8c8;
   opacity: 1;
 }
@@ -256,9 +268,9 @@
   gap: 0.65rem;
   align-items: stretch;
   padding: 0.7rem;
-  border: 1px solid #171021;
+  border: 1px solid var(--theme-divider);
   border-radius: 0.3rem;
-  background: #3d3158;
+  background: var(--theme-panel);
 }
 
 .reality-avocato-entry h2,
@@ -273,13 +285,26 @@
 
 .reality-avocato-entry .ui-button {
   min-block-size: 100%;
+  border-color: var(--theme-divider);
+  background: var(--theme-accent);
+  color: var(--theme-page);
+  font-weight: var(--font-weight-bold);
+}
+
+.reality-avocato-entry .ui-button:not(:disabled):hover {
+  background: color-mix(in srgb, var(--theme-accent) 82%, white);
+}
+
+.reality-avocato-entry .ui-button:not(:disabled):active {
+  background: var(--theme-selected);
+  color: white;
 }
 
 .reality-upgrades > .ui-collapsible-section__heading {
   overflow: hidden;
-  border: 1px solid #0a0710;
+  border: 1px solid var(--theme-divider);
   border-radius: 0.3rem;
-  background: #744b4d;
+  background: var(--theme-selected);
 }
 
 .reality-upgrades > .ui-collapsible-section__heading

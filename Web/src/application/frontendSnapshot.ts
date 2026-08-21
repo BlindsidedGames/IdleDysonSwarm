@@ -858,6 +858,7 @@ export interface FrontendGameplayDerivedFacts {
 export interface FrontendDysonVisibility {
   readonly showTinker: boolean
   readonly visibleBasicFacilityIds: readonly BasicDysonFacilityId[]
+  readonly visibleMegaStructureIds: readonly MegaStructureId[]
   readonly showNextTierTeaser: boolean
 }
 
@@ -1199,6 +1200,10 @@ export function selectGameplayVisibility(
         manualLabourOwned,
       visibleBasicFacilityIds: BASIC_DYSON_FACILITY_IDS.filter(
         (facilityId) => basicVisible[facilityId],
+      ),
+      visibleMegaStructureIds: MEGA_STRUCTURE_IDS.filter(
+        (facilityId) =>
+          isCanonicalMegaStructureVisible(state, facilityId),
       ),
       showNextTierTeaser:
         state.quantum.pointsEarned >= 1n
@@ -1783,6 +1788,7 @@ function projectDysonDerivedFacts(
     facilityFacts: source.facilityFacts,
     rates: source.rates,
     megaRates: source.megaRates,
+    megaStructureFacts: source.megaStructureFacts,
     productionArrivalRates: source.productionArrivalRates,
     presentation: {
       activePanelMetric,

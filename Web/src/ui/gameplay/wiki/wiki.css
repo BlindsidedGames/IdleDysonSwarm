@@ -1,11 +1,11 @@
 @import "../../tokens/tokens.css";
 
 .wiki-surface {
-  --wiki-background: #140f20;
-  --wiki-panel: #3a3048;
-  --wiki-panel-raised: #493a5b;
-  --wiki-heading: #2d243a;
-  --wiki-accent: #c9a5ee;
+  --wiki-background: var(--theme-page);
+  --wiki-panel: var(--theme-panel);
+  --wiki-panel-raised: var(--theme-selected);
+  --wiki-heading: var(--theme-selected);
+  --wiki-accent: var(--theme-accent);
   --wiki-value: #8fd4dd;
   display: grid;
   block-size: 100%;
@@ -28,8 +28,8 @@
 
 .wiki-surface__summary {
   padding: 0.8rem max(0.75rem, env(safe-area-inset-left));
-  border-block-end: 1px solid #70578c;
-  background: #2a2137;
+  border-block-end: 1px solid var(--theme-divider);
+  background: var(--theme-panel);
   box-shadow: 0 0.15rem 0.4rem rgb(0 0 0 / 26%);
 }
 
@@ -57,7 +57,7 @@
 .wiki-surface__article {
   min-inline-size: 0;
   min-block-size: 0;
-  border: 1px solid #20182a;
+  border: 1px solid var(--theme-divider);
   border-radius: 0.35rem;
   background: var(--wiki-panel);
   box-shadow: 0 0.15rem 0.35rem rgb(0 0 0 / 25%);
@@ -83,7 +83,7 @@
 .wiki-surface__topic-list {
   display: grid;
   gap: 1px;
-  background: #251d31;
+  background: var(--theme-divider);
 }
 
 .wiki-surface__topic-list button {
@@ -96,7 +96,7 @@
   border: 0;
   border-inline-start: 0.22rem solid transparent;
   border-radius: 0;
-  background: #40334f;
+  background: var(--theme-panel);
   color: #f4eefb;
   cursor: pointer;
   font: inherit;
@@ -110,12 +110,12 @@
 }
 
 .wiki-surface__topic-list button:hover {
-  background: #4b3b5e;
+  background: color-mix(in srgb, var(--theme-panel) 78%, var(--theme-selected));
 }
 
 .wiki-surface__topic-list button[aria-current="page"] {
   border-inline-start-color: var(--wiki-accent);
-  background: #57426d;
+  background: var(--theme-selected);
   color: white;
 }
 
@@ -138,7 +138,7 @@
 }
 
 .wiki-surface__article--lore > .wiki-surface__article-heading {
-  border: 1px solid #20182a;
+  border: 1px solid var(--theme-divider);
   border-radius: 0.35rem;
 }
 
@@ -277,9 +277,9 @@
 
 .wiki-surface__lore-chapters details {
   overflow: hidden;
-  border: 1px solid #251d31;
+  border: 1px solid var(--theme-divider);
   border-radius: 0.3rem;
-  background: #40334f;
+  background: var(--theme-panel);
 }
 
 .wiki-surface__lore-chapters summary {
@@ -335,7 +335,7 @@
   align-items: center;
   gap: 0.55rem;
   padding: 0.6rem;
-  border: 1px solid #251d31;
+  border: 1px solid var(--theme-divider);
   border-radius: 0.3rem;
   background: var(--wiki-panel-raised);
 }
@@ -403,7 +403,7 @@
     min-inline-size: 0;
     min-block-size: 2.75rem;
     padding: 0.55rem 2.2rem 0.55rem 0.7rem;
-    border: 1px solid #20182a;
+    border: 1px solid var(--theme-divider);
     border-radius: 0.35rem;
     background: var(--wiki-panel-raised);
     color: white;

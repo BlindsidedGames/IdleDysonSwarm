@@ -8,9 +8,15 @@
 }
 
 .dyson-shell {
+  --theme-page: #1d151f;
+  --theme-panel: #443148;
+  --theme-selected: #513b56;
+  --theme-divider: #694b70;
+  --theme-accent: #e59aeb;
   --resource-clearance-color: var(--color-app-background);
   --bot-distribution-track-color: #120d14;
   --bot-distribution-handle-color: #c45cda;
+  --navigation-progress-fill: #c45cda;
   --menu-scrollbar-track: #1c1420;
   --menu-scrollbar-thumb: #694b70;
   --menu-scrollbar-thumb-hover: #8a6593;
@@ -21,12 +27,66 @@
   block-size: 100dvb;
   min-block-size: 0;
   overflow: hidden;
-  background: var(--color-app-background);
+  background: var(--theme-page);
   color: var(--color-text-primary);
   font-family: var(--font-family-body);
   -webkit-touch-callout: none;
   -webkit-user-select: none;
   user-select: none;
+}
+
+.dyson-shell[data-route-theme="research"] {
+  --theme-page: #181f1e;
+  --theme-panel: #334c4a;
+  --theme-selected: #41615e;
+  --theme-divider: #5f8a87;
+  --theme-accent: #8bc7c4;
+}
+
+.dyson-shell[data-route-theme="simulations"] {
+  --theme-page: #152337;
+  --theme-panel: #29435f;
+  --theme-selected: #3a6384;
+  --theme-divider: #7b9fbe;
+  --theme-accent: #b9ddf7;
+}
+
+.dyson-shell[data-route-theme="skills"],
+.dyson-shell[data-route-theme="infinity"],
+.dyson-shell[data-route-theme="reality"],
+.dyson-shell[data-route-theme="quantum"],
+.dyson-shell[data-route-theme="avocato"],
+.dyson-shell[data-route-theme="offline-time"] {
+  --theme-page: #1c1427;
+  --theme-panel: #30244f;
+  --theme-selected: #483563;
+  --theme-divider: #5b4674;
+  --theme-accent: #d3c2ff;
+}
+
+.dyson-shell[data-route-theme="settings"],
+.dyson-shell[data-route-theme="statistics"] {
+  --theme-page: #121a12;
+  --theme-panel: #243324;
+  --theme-selected: #3f7042;
+  --theme-divider: #364d36;
+  --theme-accent: #b9dfb7;
+}
+
+.dyson-shell[data-route-theme="simulations"][data-route-theme-variant="information"] {
+  --theme-page: #1c1427;
+  --theme-panel: #30244f;
+  --theme-selected: #483563;
+  --theme-divider: #5b4674;
+  --theme-accent: #d3c2ff;
+}
+
+.dyson-shell[data-route-theme="simulations"][data-route-theme-variant="space-age"] {
+  --theme-page: #121a12;
+  --theme-panel: #243324;
+  --theme-selected: #3f7042;
+  --theme-divider: #364d36;
+  --theme-accent: #b9dfb7;
 }
 
 .dyson-shell input[type="text"],
@@ -43,6 +103,7 @@
 }
 
 .dyson-shell[data-route-theme="settings"] {
+  --navigation-progress-fill: #83df63;
   --resource-clearance-color: #121a12;
   --menu-scrollbar-track: #121a12;
   --menu-scrollbar-thumb: #364d36;
@@ -77,14 +138,8 @@
   color: white;
 }
 
-.dyson-shell[data-route-theme="settings"]
-  .dyson-navigation__link[aria-current="page"]
-  .dyson-navigation__icon
-  img {
-  filter: sepia(1) saturate(4) hue-rotate(65deg) brightness(1.25);
-}
-
 .dyson-shell[data-route-theme="research"] {
+  --navigation-progress-fill: #8bc7c4;
   --resource-clearance-color: #181f1e;
   --bot-distribution-track-color: #263a38;
   --bot-distribution-handle-color: #8bc7c4;
@@ -132,18 +187,8 @@
   color: #8bc7c4;
 }
 
-.dyson-shell[data-route-theme="research"]
-  .dyson-navigation__link[aria-current="page"]
-  .dyson-navigation__icon
-  img {
-  filter:
-    sepia(0.45)
-    saturate(2.2)
-    hue-rotate(125deg)
-    brightness(1.25);
-}
-
 .dyson-shell[data-route-theme="skills"] {
+  --navigation-progress-fill: #83df63;
   --resource-clearance-color: #151225;
   --menu-scrollbar-track: #151225;
   --menu-scrollbar-thumb: #4b3f70;
@@ -183,18 +228,8 @@
   color: #83df63;
 }
 
-.dyson-shell[data-route-theme="skills"]
-  .dyson-navigation__link[aria-current="page"]
-  .dyson-navigation__icon
-  img {
-  filter:
-    sepia(0.55)
-    saturate(4)
-    hue-rotate(55deg)
-    brightness(1.35);
-}
-
 .dyson-shell[data-route-theme="infinity"] {
+  --navigation-progress-fill: #c8b3ff;
   --infinity-panel-color: #30244f;
   --resource-clearance-color: var(--infinity-panel-color);
   --menu-scrollbar-track: #1c1427;
@@ -240,18 +275,8 @@
   color: #c8b3ff;
 }
 
-.dyson-shell[data-route-theme="infinity"]
-  .dyson-navigation__link[aria-current="page"]
-  .dyson-navigation__icon
-  img {
-  filter:
-    sepia(0.45)
-    saturate(2.8)
-    hue-rotate(215deg)
-    brightness(1.25);
-}
-
 .dyson-shell[data-route-theme="reality"] {
+  --navigation-progress-fill: #c8b3ff;
   --resource-clearance-color: #302744;
   --menu-scrollbar-track: #151020;
   --menu-scrollbar-thumb: #675282;
@@ -264,6 +289,7 @@
 .dyson-shell[data-route-theme="offline-time"],
 .dyson-shell[data-route-theme="story"],
 .dyson-shell[data-route-theme="wiki"] {
+  --navigation-progress-fill: #c8b3ff;
   --resource-clearance-color: #352a52;
   --menu-scrollbar-track: #130f22;
   --menu-scrollbar-thumb: #69558a;
@@ -338,6 +364,7 @@
 }
 
 .dyson-shell[data-route-theme="statistics"] {
+  --navigation-progress-fill: #91dd8f;
   --resource-clearance-color: #354d38;
   --menu-scrollbar-track: #102317;
   --menu-scrollbar-thumb: #628568;
@@ -418,18 +445,8 @@
   color: #c8b3ff;
 }
 
-.dyson-shell[data-route-theme="reality"]
-  .dyson-navigation__link[aria-current="page"]
-  .dyson-navigation__icon
-  img {
-  filter:
-    sepia(0.35)
-    saturate(2.3)
-    hue-rotate(205deg)
-    brightness(1.25);
-}
-
 .dyson-shell[data-route-theme="simulations"] {
+  --navigation-progress-fill: var(--simulations-slider-accent);
   --simulations-panel-color: #29435f;
   --simulations-navigation-border: #7b9fbe;
   --simulations-navigation-background: #29435f;
@@ -518,17 +535,6 @@
   color: var(--simulations-menu-accent);
 }
 
-.dyson-shell[data-route-theme="simulations"]
-  .dyson-navigation__link[aria-current="page"]
-  .dyson-navigation__icon
-  img {
-  filter:
-    sepia(0.45)
-    saturate(2.4)
-    hue-rotate(65deg)
-    brightness(1.25);
-}
-
 .dyson-shell__skip-link {
   position: fixed;
   z-index: 100;
@@ -539,7 +545,9 @@
   border-radius: 0.4rem;
   background: #201722;
   color: white;
-  transform: translateY(-180%);
+  transform: translateY(
+    calc(-100% - max(0.5rem, env(safe-area-inset-top)))
+  );
 }
 
 .dyson-shell__skip-link:focus {
@@ -559,6 +567,25 @@
   block-size: 100%;
   min-block-size: 0;
   overflow: hidden;
+}
+
+.dyson-shell[data-resource-header="false"] .dyson-shell__content {
+  padding-block-start: env(safe-area-inset-top);
+}
+
+.dyson-shell[data-resource-header="false"][data-route-theme="skills"]
+  .dyson-shell__content,
+.dyson-shell[data-resource-header="false"][data-route-theme="infinity"]
+  .dyson-shell__content,
+.dyson-shell[data-resource-header="false"][data-route-theme="reality"]
+  .dyson-shell__content,
+.dyson-shell[data-resource-header="false"][data-route-theme="simulations"]
+  .dyson-shell__content,
+.dyson-shell[data-resource-header="false"][data-route-theme="quantum"]
+  .dyson-shell__content,
+.dyson-shell[data-resource-header="false"][data-route-theme="statistics"]
+  .dyson-shell__content {
+  padding-block-start: 0;
 }
 
 .dyson-shell__route-heading {
@@ -607,7 +634,7 @@
       var(--resource-clearance-color) 0 48%,
       transparent 86%
     );
-  content: "";
+  content: none;
   pointer-events: none;
 }
 
@@ -659,10 +686,6 @@
   text-shadow: 0 2px 2px rgb(0 0 0 / 70%);
 }
 
-.dyson-resource-header__item--total-bots .ui-resource-value__value::before {
-  content: "Total Bots: ";
-}
-
 .dyson-resource-header__item--total-bots .ui-resource-value__value {
   font-size: clamp(1.45rem, 4.6vw, 2.15rem);
 }
@@ -676,18 +699,25 @@
   line-height: 1.1;
 }
 
+.dyson-resource-header__item--total-bots .ui-inline-image-symbol,
 .dyson-resource-header__item--science .ui-inline-image-symbol {
   block-size: 0.95em;
 }
 
 @media (max-width: 720px) {
   .dyson-resource-header {
-    grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
+    grid-template-columns: repeat(3, minmax(0, 1fr));
     column-gap: 0.3rem;
     min-block-size: 3.2rem;
-    padding-block: max(0.42rem, env(safe-area-inset-top)) 0.12rem;
+    padding-block:
+      calc(0.42rem + env(safe-area-inset-top))
+      0.12rem;
     padding-inline: max(0.58rem, env(safe-area-inset-left))
       max(0.58rem, env(safe-area-inset-right));
+  }
+
+  .dyson-resource-header__item {
+    overflow: hidden;
   }
 
   .dyson-resource-header__item--science {
@@ -702,15 +732,18 @@
 
   .dyson-resource-header .ui-resource-value__value {
     overflow-wrap: normal;
-    font-size: calc(1.22rem * var(--game-text-scale));
+    max-inline-size: 100%;
+    font-size: clamp(0.68rem, 3.6vw, 1.22rem);
   }
 
   .dyson-resource-header__item--total-bots .ui-resource-value__value {
-    font-size: calc(1.15rem * var(--game-text-scale));
+    font-size: clamp(0.68rem, 3.6vw, 1.15rem);
   }
 
   .dyson-resource-header__rate {
-    font-size: calc(0.72rem * var(--game-text-scale));
+    max-inline-size: 100%;
+    overflow: hidden;
+    font-size: clamp(0.58rem, 2.8vw, 0.72rem);
   }
 
   .dyson-shell__stage {
@@ -928,6 +961,72 @@
   min-inline-size: 0;
 }
 
+.dyson-navigation__item[data-navigation-id="bots"] {
+  --navigation-item-accent: #e59aeb;
+}
+
+.dyson-navigation__item[data-navigation-id="research"] {
+  --navigation-item-accent: #8bc7c4;
+}
+
+.dyson-navigation__item[data-navigation-id="skills"] {
+  --navigation-item-accent: #d3c2ff;
+}
+
+.dyson-navigation__item[data-navigation-id="infinity"] {
+  --navigation-item-accent: #d3c2ff;
+}
+
+.dyson-navigation__item[data-navigation-id="reality"] {
+  --navigation-item-accent: #d3c2ff;
+}
+
+.dyson-navigation__item[data-navigation-id="simulations"] {
+  --navigation-item-accent: #b9ddf7;
+}
+
+.dyson-shell[data-route-theme-variant="information"]
+  .dyson-navigation__item[data-navigation-id="simulations"] {
+  --navigation-item-accent: #d3c2ff;
+}
+
+.dyson-shell[data-route-theme-variant="space-age"]
+  .dyson-navigation__item[data-navigation-id="simulations"] {
+  --navigation-item-accent: #b9dfb7;
+}
+
+.dyson-navigation__item[data-navigation-id="quantum"] {
+  --navigation-item-accent: #d3c2ff;
+}
+
+.dyson-navigation__item[data-navigation-id="store"] {
+  --navigation-item-accent: #e59aeb;
+}
+
+.dyson-navigation__item[data-navigation-id="story"] {
+  --navigation-item-accent: #e59aeb;
+}
+
+.dyson-navigation__item[data-navigation-id="wiki"] {
+  --navigation-item-accent: #e59aeb;
+}
+
+.dyson-navigation__item[data-navigation-id="offline-time"] {
+  --navigation-item-accent: #d3c2ff;
+}
+
+.dyson-navigation__item[data-navigation-id="statistics"] {
+  --navigation-item-accent: #b9dfb7;
+}
+
+.dyson-navigation__item[data-navigation-id="debug"] {
+  --navigation-item-accent: #b9dfb7;
+}
+
+.dyson-navigation__item[data-navigation-id="settings"] {
+  --navigation-item-accent: #b9dfb7;
+}
+
 .dyson-navigation__link {
   position: relative;
   inline-size: 100%;
@@ -957,7 +1056,7 @@
 .dyson-navigation__progress i {
   display: block;
   block-size: 100%;
-  background: #c8b3ff;
+  background: var(--navigation-progress-fill);
 }
 
 .dyson-navigation--drawer .dyson-navigation__progress {
@@ -990,10 +1089,17 @@
 }
 
 .dyson-navigation__icon {
+  position: relative;
   display: grid;
   inline-size: clamp(2.25rem, 7vw, 3rem);
   block-size: clamp(2.25rem, 7vw, 3rem);
   place-items: center;
+  color: #f4eff5;
+}
+
+.dyson-navigation__link[aria-current="page"]
+  .dyson-navigation__icon {
+  color: var(--navigation-item-accent, currentColor);
 }
 
 .dyson-navigation__icon img {
@@ -1001,7 +1107,26 @@
   inline-size: 100%;
   block-size: 100%;
   object-fit: contain;
-  filter: grayscale(1) brightness(2.15);
+  opacity: 0;
+}
+
+.dyson-navigation__icon-mask {
+  position: absolute;
+  background: currentColor;
+  inset: 0;
+  -webkit-mask-position: center;
+  mask-position: center;
+  -webkit-mask-repeat: no-repeat;
+  mask-repeat: no-repeat;
+  -webkit-mask-size: contain;
+  mask-size: contain;
+}
+
+.dyson-navigation__link[aria-current="page"]
+  .dyson-navigation__icon-mask {
+  filter: brightness(1.08)
+    drop-shadow(0 0 0.18rem color-mix(in srgb, currentColor 55%, transparent));
+  opacity: 1;
 }
 
 .dyson-navigation__debug-icon {
@@ -1010,10 +1135,6 @@
   font-size: 1.45rem;
   font-weight: var(--font-weight-bold);
   line-height: 1;
-}
-
-.dyson-navigation__link[aria-current="page"] .dyson-navigation__icon img {
-  filter: sepia(1) saturate(7) hue-rotate(244deg) brightness(1.05);
 }
 
 .dyson-navigation--bottom .dyson-navigation__label {
@@ -1181,6 +1302,11 @@
     block-size: 2rem;
   }
 
+  .dyson-navigation--drawer .dyson-navigation__progress {
+    inset-inline-start: 2.85rem;
+    inset-inline-end: 0.45rem;
+  }
+
   .dyson-shell__side-supplement {
     padding: 0.55rem 0.2rem 0;
     font-size: calc(0.72rem * var(--game-text-scale));
@@ -1236,6 +1362,70 @@
 .dyson-shell[data-route-theme="wiki"]
   .dyson-shell__route-content {
   padding: 0;
+}
+
+/* Unified structural palette contract. Route content may retain semantic
+   status and currency colors, but shared chrome always uses these five roles. */
+.dyson-shell {
+  --resource-clearance-color: var(--theme-panel);
+  --bot-distribution-track-color: var(--theme-page);
+  --bot-distribution-handle-color: var(--theme-accent);
+  --navigation-progress-fill: var(--theme-accent);
+  --menu-scrollbar-track: var(--theme-page);
+  --menu-scrollbar-thumb: var(--theme-divider);
+  --menu-scrollbar-thumb-hover: var(--theme-selected);
+  background: var(--theme-page);
+}
+
+.dyson-shell[data-route-theme="simulations"] {
+  --simulations-panel-color: var(--theme-panel);
+  --simulations-navigation-border: var(--theme-divider);
+  --simulations-navigation-background: var(--theme-panel);
+  --simulations-menu-background: var(--theme-page);
+  --simulations-menu-card-background: var(--theme-panel);
+  --simulations-menu-active-background: var(--theme-selected);
+  --simulations-menu-accent: var(--theme-accent);
+  --simulations-time-border: var(--theme-divider);
+  --simulations-time-background: var(--theme-panel);
+  --simulations-slider-accent: var(--theme-accent);
+  --simulations-slider-track: var(--theme-page);
+}
+
+.dyson-shell[data-route-theme] .dyson-resource-header,
+.dyson-shell[data-route-theme] .dyson-shell__bottom-navigation,
+.dyson-shell[data-route-theme] .dyson-shell__lower-regions {
+  border-color: var(--theme-divider);
+  background: var(--theme-panel);
+}
+
+.dyson-shell[data-route-theme="bots"] .dyson-resource-header,
+.dyson-shell[data-route-theme="research"] .dyson-resource-header {
+  border-block-end: 2px solid var(--theme-divider);
+}
+
+.dyson-shell[data-route-theme] .dyson-shell__side-panel {
+  border-color: var(--theme-divider);
+  background: var(--theme-page);
+}
+
+.dyson-shell[data-route-theme]
+  .dyson-navigation--drawer
+  .dyson-navigation__link {
+  border-color: color-mix(in srgb, var(--theme-page) 72%, black);
+  background: var(--theme-panel);
+  color: #f4eff5;
+}
+
+.dyson-shell[data-route-theme]
+  .dyson-navigation--drawer
+  .dyson-navigation__link[aria-current="page"] {
+  background: var(--theme-selected);
+  color: white;
+}
+
+.dyson-shell[data-route-theme]
+  .dyson-navigation__link[aria-current="page"] {
+  color: var(--theme-accent);
 }
 
 @media (min-width: 1024px) {

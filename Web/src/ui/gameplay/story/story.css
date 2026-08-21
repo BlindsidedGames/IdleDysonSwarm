@@ -1,12 +1,12 @@
 @import "../../tokens/tokens.css";
 
 .story-surface {
-  --story-background: #130f1d;
-  --story-panel: #3f3152;
-  --story-panel-raised: #4a3a5d;
-  --story-panel-heading: #513b62;
-  --story-accent: #d08de1;
-  --story-border: #1c1525;
+  --story-background: var(--theme-page);
+  --story-panel: var(--theme-panel);
+  --story-panel-raised: var(--theme-selected);
+  --story-panel-heading: var(--theme-selected);
+  --story-accent: var(--theme-accent);
+  --story-border: var(--theme-divider);
   display: grid;
   block-size: 100%;
   min-block-size: 0;
@@ -131,8 +131,8 @@
   align-items: center;
   gap: 0.75rem;
   padding: 0.65rem;
-  border-block-start: 1px solid rgb(208 141 225 / 24%);
-  background: #493451;
+  border-block-start: 1px solid var(--theme-divider);
+  background: var(--theme-selected);
 }
 
 .story-avocato-entry h3 {
@@ -146,14 +146,14 @@
 
 .story-avocato-entry .ui-button {
   min-block-size: var(--target-minimum);
-  border-color: #211027;
+  border-color: var(--theme-divider);
   background: var(--story-accent);
   color: #1b0e1e;
   font-weight: var(--font-weight-bold);
 }
 
 .story-avocato-entry .ui-button:not(:disabled):hover {
-  background: #dfa5eb;
+  background: var(--theme-accent);
 }
 
 @media (max-width: 32rem) {

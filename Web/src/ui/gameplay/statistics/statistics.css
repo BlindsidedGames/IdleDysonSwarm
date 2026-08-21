@@ -1,12 +1,13 @@
 @import "../../tokens/tokens.css";
 
 .statistics-surface {
-  --statistics-panel: #354d38;
-  --statistics-panel-raised: #3d5941;
-  --statistics-panel-heading: #29402d;
-  --statistics-accent: #91dd8f;
+  --statistics-panel: var(--theme-panel);
+  --statistics-panel-raised: var(--theme-selected);
+  --statistics-panel-heading: var(--theme-selected);
+  --statistics-accent: var(--theme-accent);
   --statistics-value: #00e1ff;
   display: grid;
+  grid-template-rows: auto minmax(0, 1fr);
   block-size: 100%;
   min-block-size: 0;
   overflow: hidden;
@@ -16,7 +17,7 @@
       rgb(145 221 143 / 8%),
       transparent 32rem
     ),
-    #102317;
+    var(--theme-page);
   color: white;
   user-select: none;
 }
@@ -40,14 +41,17 @@
 
 .statistics-surface__summary {
   display: flex;
-  inline-size: min(100%, 82rem);
+  inline-size: 100%;
   align-items: center;
   justify-content: space-between;
   gap: 1rem;
-  padding: 0.75rem;
-  border: 1px solid #18281b;
-  border-radius: 0.35rem;
-  margin-inline: auto;
+  padding-block:
+    calc(0.75rem + env(safe-area-inset-top))
+    0.75rem;
+  padding-inline:
+    max(0.75rem, env(safe-area-inset-left))
+    max(0.75rem, env(safe-area-inset-right));
+  border-block-end: 2px solid var(--theme-divider);
   background: var(--statistics-panel);
   box-shadow: 0 0.16rem 0.35rem rgb(0 0 0 / 25%);
 }
@@ -114,7 +118,7 @@
 
 .statistics-card {
   overflow: hidden;
-  border: 1px solid #18281b;
+  border: 1px solid var(--theme-divider);
   border-radius: 0.35rem;
   background: var(--statistics-panel);
   box-shadow: 0 0.16rem 0.35rem rgb(0 0 0 / 25%);
@@ -167,7 +171,7 @@
 
 .statistics-scope-card > section h3 {
   padding: 0.45rem 0.65rem 0.3rem;
-  border-block-start: 1px solid rgb(145 221 143 / 18%);
+  border-block-start: 1px solid color-mix(in srgb, var(--theme-accent) 18%, transparent);
   color: white;
   font-size: calc(0.78rem * var(--game-text-scale));
   line-height: 1.2;

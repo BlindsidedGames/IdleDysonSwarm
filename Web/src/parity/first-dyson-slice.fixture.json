@@ -62,6 +62,7 @@
     "visibility": {
       "showTinker": true,
       "visibleBasicFacilityIds": [],
+      "visibleMegaStructureIds": [],
       "showNextTierTeaser": true
     },
     "tinker": {
@@ -344,6 +345,7 @@
         "assembly_lines",
         "ai_managers"
       ],
+      "visibleMegaStructureIds": [],
       "showNextTierTeaser": true
     },
     "tinker": {

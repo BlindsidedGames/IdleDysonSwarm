@@ -56,9 +56,9 @@
   inline-size: min(100%, 34rem);
   gap: 0.8rem;
   padding: 1.25rem;
-  border: 2px solid #364d36;
+  border: 2px solid var(--theme-divider);
   border-radius: 0.45rem;
-  background: #243324;
+  background: var(--theme-panel);
   box-shadow: 0 1rem 3rem rgb(0 0 0 / 55%);
 }
 
@@ -95,9 +95,9 @@
   min-block-size: 10rem;
   resize: vertical;
   padding: 0.65rem;
-  border: 2px solid #172918;
+  border: 2px solid var(--theme-divider);
   border-radius: 0.35rem;
-  background: #142516;
+  background: var(--theme-page);
   color: white;
   font: 0.78rem/1.35 ui-monospace, SFMono-Regular, Consolas, monospace;
 }
@@ -111,9 +111,9 @@
   display: grid;
   gap: 0.65rem;
   padding: 0.8rem;
-  border: 2px solid #47794a;
+  border: 2px solid var(--theme-divider);
   border-radius: 0.4rem;
-  background: #1d351f;
+  background: var(--theme-selected);
 }
 
 .settings-surface__import-preview h4,
@@ -158,9 +158,9 @@
   flex: none;
   min-block-size: var(--target-minimum);
   padding: 0.45rem 0.75rem;
-  border: 2px solid #172918;
+  border: 2px solid var(--theme-divider);
   border-radius: 0.4rem;
-  background: #56815a;
+  background: var(--theme-selected);
   color: white;
   cursor: pointer;
   font: inherit;
@@ -169,12 +169,12 @@
 
 .settings-surface__file-option > button:hover:not(:disabled),
 .settings-surface__dialog-actions > button:hover:not(:disabled) {
-  background: #67976b;
+  background: color-mix(in srgb, var(--theme-selected) 78%, var(--theme-accent));
 }
 
 .settings-surface__file-option > button:active:not(:disabled),
 .settings-surface__dialog-actions > button:active:not(:disabled) {
-  background: #47704b;
+  background: var(--theme-panel);
 }
 
 .settings-surface__file-option > button:disabled,
@@ -198,9 +198,9 @@
 .settings-surface__dialog-actions > button {
   min-block-size: 3rem;
   padding: 0.55rem 1rem;
-  border: 2px solid #172918;
+  border: 2px solid var(--theme-divider);
   border-radius: 0.4rem;
-  background: #56815a;
+  background: var(--theme-selected);
   color: white;
   cursor: pointer;
   font: inherit;
@@ -218,9 +218,9 @@
   align-items: center;
   gap: 1rem;
   padding: clamp(1rem, 3vw, 1.5rem);
-  border: 2px solid #172918;
+  border: 2px solid var(--theme-divider);
   border-radius: 0.45rem;
-  background: #2e4c2e;
+  background: var(--theme-panel);
   box-shadow: inset 0 1px rgb(255 255 255 / 8%);
 }
 
@@ -243,9 +243,9 @@
   min-block-size: 3rem;
   gap: 0.65rem;
   padding: 0.55rem 0.8rem;
-  border: 2px solid #172918;
+  border: 2px solid var(--theme-divider);
   border-radius: 0.4rem;
-  background: #1d351f;
+  background: var(--theme-selected);
   cursor: pointer;
   font-weight: var(--font-weight-semibold);
 }
@@ -269,9 +269,9 @@
   min-block-size: 3.5rem;
   inline-size: 100%;
   padding: 0.75rem 1rem;
-  border: 2px solid #172918;
+  border: 2px solid var(--theme-divider);
   border-radius: 0.45rem;
-  background: #2e4c2e;
+  background: var(--theme-panel);
   color: white;
   cursor: pointer;
   font: inherit;
@@ -281,7 +281,7 @@
 }
 
 .settings-surface__development-trigger:hover {
-  background: #385a38;
+  background: var(--theme-selected);
 }
 
 .settings-surface__development-trigger:focus-visible {
@@ -338,7 +338,7 @@
 .settings-surface__development-controls select,
 .settings-surface__development-controls button {
   min-block-size: 3rem;
-  border: 2px solid #172918;
+  border: 2px solid var(--theme-divider);
   border-radius: 0.4rem;
   font: inherit;
 }
@@ -346,13 +346,13 @@
 .settings-surface__development-controls select {
   min-inline-size: 0;
   padding: 0.5rem 2.2rem 0.5rem 0.7rem;
-  background: #1d351f;
+  background: var(--theme-selected);
   color: white;
 }
 
 .settings-surface__development-controls button {
   padding: 0.55rem 1rem;
-  background: #56815a;
+  background: var(--theme-selected);
   color: white;
   cursor: pointer;
   font-weight: var(--font-weight-semibold);
@@ -373,9 +373,9 @@
 .settings-surface__development-status {
   margin: 0;
   padding: 0.7rem 0.8rem;
-  border: 1px solid #47794a;
+  border: 1px solid var(--theme-divider);
   border-radius: 0.35rem;
-  background: #223f24;
+  background: var(--theme-panel);
 }
 
 .settings-surface__development-status[role="alert"] {
@@ -411,9 +411,9 @@
 .settings-surface__save-actions > button {
   min-block-size: 3.25rem;
   padding: 0.65rem 1rem;
-  border: 2px solid #172918;
+  border: 2px solid var(--theme-divider);
   border-radius: 0.4rem;
-  background: #56815a;
+  background: var(--theme-selected);
   color: white;
   cursor: pointer;
   font: inherit;
@@ -421,7 +421,7 @@
 }
 
 .settings-surface__save-actions > button:hover:not(:disabled) {
-  background: #67976b;
+  background: color-mix(in srgb, var(--theme-selected) 78%, var(--theme-accent));
 }
 
 .settings-surface__save-actions > button:focus-visible {
@@ -473,9 +473,9 @@
 .settings-surface__status {
   margin: 0;
   padding: 0.8rem 1rem;
-  border: 1px solid #47794a;
+  border: 1px solid var(--theme-divider);
   border-radius: 0.35rem;
-  background: #223f24;
+  background: var(--theme-panel);
 }
 
 .settings-surface__status[role="alert"] {
