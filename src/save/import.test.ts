@@ -9,6 +9,28 @@ import { mappingCoverageManifest } from '../game-state/mappingCoverage'
 const fixtureDirectory = new URL('../../test/fixtures/', import.meta.url)
 
 describe('save import text preparation', () => {
+  test('accepts a historical lowercase IDB1 envelope through the shared import pipeline', () => {
+    const uppercase = readFileSync(
+      new URL(
+        'schema-08-canonical-idb1-main-save.txt',
+        fixtureDirectory,
+      ),
+      'utf8',
+    )
+    const lowercase = `idb1:${uppercase.slice('IDB1:'.length)}`
+
+    const imported = prepareImportedSaveText(
+      lowercase,
+      '2026-07-29T05:00:00Z',
+    )
+
+    expect(imported.targetSchema).toBe(12)
+    expect(imported.copyValidatedState()).toMatchObject({
+      dateQuitString: '',
+      lastSuccessfulLoadUtc: '2026-07-29T05:00:00Z',
+    })
+  })
+
   test('retains every top-level field classified as a presentation preference', () => {
     const classified = mappingCoverageManifest.entries
       .filter(

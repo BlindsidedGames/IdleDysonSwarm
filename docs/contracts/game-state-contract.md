@@ -147,7 +147,8 @@ decision gated on complete mapping coverage and round-trip parity.
   winning last.
 - Stored-time candidates use a private commit-first stage and remain invisible
   until the repository verifies their write.
-- Imports accept Unity `IDB1` and canonical `IDSWEB1`, require explicit
+- Imports accept Unity `IDB1` case-insensitively, including historical
+  lowercase `idb1`, and canonical `IDSWEB1`; they require explicit
   overwrite approval, consume the remote quit timestamp, commit before
   publication and install a new clean application session.
 - If a durable commit succeeds but the committed save cannot be reopened, the

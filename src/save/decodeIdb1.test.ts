@@ -13,6 +13,17 @@ function loadFixture(name: string): string {
 }
 
 describe('IDB1 Odin compatibility decoder', () => {
+  test('accepts a historical lowercase envelope without changing its payload semantics', () => {
+    const uppercase = loadFixture(
+      'schema-08-canonical-idb1-main-save.txt',
+    )
+    const lowercase = `idb1:${uppercase.slice('IDB1:'.length)}`
+
+    expect(decodeIdb1Save(lowercase)).toEqual(
+      decodeIdb1Save(uppercase),
+    )
+  })
+
   test('decodes the canonical schema 8 fixture and preserves its sentinels', () => {
     const decoded = decodeIdb1Save(
       loadFixture('schema-08-canonical-idb1-main-save.txt'),
