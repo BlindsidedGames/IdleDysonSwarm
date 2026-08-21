@@ -75,7 +75,7 @@ describe('native host save foundation', () => {
       discoverCandidates: async () => Object.freeze([Object.freeze({
         id: 'retained-unity',
         sourcePath: 'unity-readonly:retained-unity',
-        text: 'IDB1:original',
+        text: 'idb1:original',
         provenance: {
           kind: 'automatic-same-device-unity',
           platform: 'windows',
@@ -102,7 +102,7 @@ describe('native host save foundation', () => {
     )
 
     expect(files.files.get(NATIVE_WEB_SAVE_PATHS.legacyRecovery)).toBe(
-      'IDB1:original',
+      'idb1:original',
     )
     expect(files.files.get(NATIVE_WEB_SAVE_PATHS.current)).toBe(
       'IDSWEB1:verified',

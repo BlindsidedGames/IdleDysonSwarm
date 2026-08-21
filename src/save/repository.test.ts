@@ -1,7 +1,14 @@
+import { readFileSync } from 'node:fs'
 import { describe, expect, test, vi } from 'vitest'
+import { decodeIdb1SaveRoot } from './decodeIdb1'
 import { PreparedSave } from './prepare'
 import { PortableSaveRepository, type LegacySaveCandidate, type SaveStorageAdapter } from './repository'
 import { serializeWebSave } from './serialization'
+
+const fixtureUrl = new URL(
+  '../../test/fixtures/schema-08-canonical-idb1-main-save.txt',
+  import.meta.url,
+)
 
 class MemoryStorage implements SaveStorageAdapter {
   readonly files = new Map<string, string>()
@@ -53,6 +60,38 @@ class MemoryStorage implements SaveStorageAdapter {
 }
 
 describe('portable transactional save repository', () => {
+  test('automatically migrates lowercase IDB1 while retaining the exact recovery source', async () => {
+    const storage = new MemoryStorage()
+    const uppercase = readFileSync(fixtureUrl, 'utf8')
+    const lowercase = `idb1:${uppercase.slice('IDB1:'.length)}`
+    storage.files.set('/legacy', lowercase)
+    storage.candidates = [{
+      id: 'historical-lowercase-unity',
+      sourcePath: '/legacy',
+      text: lowercase,
+    }]
+    const repository = new PortableSaveRepository(
+      storage,
+      {
+        current: '/current',
+        temporary: '/current.tmp',
+        legacyRecovery: '/recovery/original-idb1.txt',
+      },
+      decodeIdb1SaveRoot,
+    )
+
+    await expect(repository.migrateLegacyOnFirstLaunch()).resolves
+      .toMatchObject({
+        status: 'migrated',
+        source: { id: 'historical-lowercase-unity', text: lowercase },
+      })
+    expect(storage.files.get('/recovery/original-idb1.txt')).toBe(
+      lowercase,
+    )
+    expect(storage.files.get('/current')).toMatch(/^IDSWEB1:/)
+    expect((await repository.loadCurrent())?.targetSchema).toBe(12)
+  })
+
   test('migrates once, atomically promotes, and preserves the Odin source', async () => {
     const storage = new MemoryStorage()
     storage.files.set('/legacy', 'IDB1:test')

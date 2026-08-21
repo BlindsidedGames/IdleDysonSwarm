@@ -15,8 +15,6 @@ Status conventions:
 
 - [x] Keep the Stored/Offline Time progress indicator visible and preserve the
   original job when an additional spend is requested while a run is active.
-- [ ] Make save envelope detection case-insensitive across native and desktop
-  hosts, preserving compatibility with historical lowercase `idb1` exports.
 - [ ] Reproduce and prevent repeated offline-time credit from an immediate
   desktop export/import cycle.
 - [ ] Investigate the historical report that active Stored Time incorrectly
