@@ -5,9 +5,11 @@ import {
   planDysonAutomationTargets,
   previewDysonFacilityPurchase,
   runDysonAutomationTick,
+  tryPurchaseDysonFacility,
   type DysonAutomationState,
   type MutableOwnedPair,
 } from './dysonAutomation'
+import { buyXCost, maxAffordable, tryDebitContinuous } from './transactions'
 
 function booleanRecord(
   value: boolean,
@@ -283,5 +285,130 @@ describe('eight-slot Dyson automation', () => {
       cost: 0,
       status: 'definition-gap',
     })
+  })
+
+  test('keeps finite buy-1 quotes purchasable at MAX for manual and automation paths', () => {
+    const enabled = booleanRecord(false)
+    enabled.assembly_lines = true
+    const input = createState({
+      money: Number.MAX_VALUE,
+      enabledFacilities: enabled,
+    })
+    const expectedDebit = tryDebitContinuous(Number.MAX_VALUE, 100)
+
+    const preview = previewDysonFacilityPurchase(
+      input,
+      'assembly_lines',
+    )
+    const manual = tryPurchaseDysonFacility(input, 'assembly_lines')
+    const automatic = runDysonAutomationTick(input)
+
+    expect(preview).toMatchObject({
+      eligible: true,
+      selectedQuantity: 1n,
+      affordableQuantity: maxAffordable(
+        Number.MAX_VALUE,
+        100,
+        1.22,
+        0,
+      ),
+      cost: 100,
+      status: 'success',
+    })
+    expect(manual.attempt).toMatchObject({
+      purchased: true,
+      quantity: preview.selectedQuantity,
+      cost: preview.cost,
+      status: 'success',
+    })
+    expect(automatic.attempts[0]).toEqual(manual.attempt)
+    expect(manual.state.money).toBe(expectedDebit.balance)
+    expect(automatic.state.money).toBe(expectedDebit.balance)
+    expect(manual.state.money).toBeLessThan(Number.MAX_VALUE)
+    expect(expectedDebit.charged).toBeGreaterThan(preview.cost)
+    expect(input.money).toBe(Number.MAX_VALUE)
+  })
+
+  test('buy-max selects the greatest finite facility quote at MAX across preview and execution', () => {
+    const enabled = booleanRecord(false)
+    enabled.assembly_lines = true
+    const input = createState({
+      money: Number.MAX_VALUE,
+      enabledFacilities: enabled,
+      buyMode: 'buy-max',
+    })
+    const quantity = maxAffordable(Number.MAX_VALUE, 100, 1.22, 0)
+    const cost = buyXCost(quantity, 100, 1.22, 0)
+    const expectedDebit = tryDebitContinuous(
+      Number.MAX_VALUE,
+      cost,
+      quantity,
+    )
+
+    expect(quantity).toBe(3_538n)
+    expect(cost).toBe(1.5800042183011432e308)
+    expect(buyXCost(quantity + 1n, 100, 1.22, 0))
+      .toBe(Number.MAX_VALUE)
+
+    const preview = previewDysonFacilityPurchase(
+      input,
+      'assembly_lines',
+    )
+    const manual = tryPurchaseDysonFacility(input, 'assembly_lines')
+    const automatic = runDysonAutomationTick(input)
+
+    expect(preview).toMatchObject({
+      eligible: true,
+      selectedQuantity: quantity,
+      affordableQuantity: quantity,
+      cost,
+      status: 'success',
+    })
+    expect(manual.attempt).toMatchObject({
+      purchased: true,
+      quantity: preview.selectedQuantity,
+      cost: preview.cost,
+      status: preview.status,
+    })
+    expect(automatic.attempts[0]).toEqual(manual.attempt)
+    expect(manual.state.money).toBe(expectedDebit.balance)
+    expect(automatic.state.money).toBe(expectedDebit.balance)
+  })
+
+  test('treats a saturated facility price as terminal without mutation', () => {
+    const enabled = booleanRecord(false)
+    enabled.assembly_lines = true
+    const facilities = facilityRecord()
+    facilities.assembly_lines[1] = 3_547
+    const input = createState({
+      money: Number.MAX_VALUE,
+      facilities,
+      enabledFacilities: enabled,
+    })
+
+    const preview = previewDysonFacilityPurchase(
+      input,
+      'assembly_lines',
+    )
+    const manual = tryPurchaseDysonFacility(input, 'assembly_lines')
+    const automatic = runDysonAutomationTick(input)
+
+    expect(preview).toMatchObject({
+      eligible: false,
+      selectedQuantity: 1n,
+      affordableQuantity: 0n,
+      cost: Number.MAX_VALUE,
+      status: 'maxed',
+    })
+    expect(manual.attempt).toMatchObject({
+      purchased: false,
+      quantity: 0n,
+      cost: Number.MAX_VALUE,
+      status: 'maxed',
+    })
+    expect(manual.state).toEqual(input)
+    expect(automatic.attempts[0]).toEqual(manual.attempt)
+    expect(automatic.state.money).toBe(Number.MAX_VALUE)
+    expect(automatic.state.facilities.assembly_lines[1]).toBe(3_547)
   })
 })

@@ -272,6 +272,25 @@ describe('mega-structure purchase command', () => {
     expect(result.quantity).toBe(0n)
   })
 
+  test('purchases a finite mega-structure price at MAX with the quoted cost', () => {
+    const state = purchaseState({ money: Number.MAX_VALUE })
+
+    const result = tryPurchaseMegaStructure(
+      state,
+      'matrioshka_brains',
+    )
+
+    expect(result).toMatchObject({
+      purchased: true,
+      quantity: 1n,
+      cost: 1_100_000_000,
+      status: 'success',
+    })
+    expect(result.state.money).toBe(1.7976931348623155e308)
+    expect(result.state.facilities.matrioshka_brains[1]).toBe(2)
+    expect(state.money).toBe(Number.MAX_VALUE)
+  })
+
   test('fails closed when geometric cost saturates', () => {
     const state = purchaseState({
       money: Number.MAX_VALUE,

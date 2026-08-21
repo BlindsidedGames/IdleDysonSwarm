@@ -4929,6 +4929,12 @@
       "value": "Research was not purchased."
     }
   ],
+  "research.purchase.maximum-reached": [
+    {
+      "type": 0,
+      "value": "Maximum reached."
+    }
+  ],
   "research.purchase.pending": [
     {
       "type": 0,

@@ -5,7 +5,7 @@ import type {
   CanonicalFacilityId,
   CanonicalGameStateV1,
 } from '../game-state/types'
-import { floorToDiscrete } from './numeric'
+import { CONTINUOUS_MAXIMUM, floorToDiscrete } from './numeric'
 import type { SimulationAutomationPolicy } from './types'
 import {
   buyModeAmount,
@@ -593,6 +593,14 @@ function previewPurchase(
     return ineligiblePreview(
       facts,
       'prerequisites-not-met',
+      science,
+      currentLevel,
+    )
+  }
+  if (cost === CONTINUOUS_MAXIMUM) {
+    return ineligiblePreview(
+      facts,
+      'output-maxed',
       science,
       currentLevel,
     )

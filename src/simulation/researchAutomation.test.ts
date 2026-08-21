@@ -10,7 +10,11 @@ import {
   purchaseCanonicalResearch,
   runResearchAutomationTick,
 } from './researchAutomation'
-import { buyXCost, maxAffordable } from './transactions'
+import {
+  buyXCost,
+  maxAffordable,
+  tryDebitContinuous,
+} from './transactions'
 
 const fixtureText = readFileSync(
   new URL(
@@ -559,5 +563,182 @@ describe('research automation', () => {
     expect(
       runResearchAutomationTick(withoutSkill, tuning).purchases,
     ).toEqual([])
+  })
+
+  test('keeps a finite buy-1 research quote purchasable at MAX for manual and automation paths', () => {
+    const input = withLevels(
+      enable(
+        stateWith(
+          Number.MAX_VALUE,
+          indexOf('research.money_multiplier'),
+        ),
+        'research.money_multiplier',
+      ),
+      {
+        'research.panel_lifetime_1': 1,
+        'research.panel_lifetime_2': 1,
+        'research.panel_lifetime_3': 1,
+        'research.panel_lifetime_4': 1,
+      },
+    )
+    const expectedDebit = tryDebitContinuous(Number.MAX_VALUE, 5_000)
+
+    const preview = previewCanonicalResearchPurchase(
+      input,
+      neutralTuning,
+      'research.money_multiplier',
+    )
+    const manual = purchaseCanonicalResearch(
+      input,
+      neutralTuning,
+      'research.money_multiplier',
+    )
+    const automatic = runResearchAutomationTick(input, neutralTuning)
+
+    expect(preview).toMatchObject({
+      eligible: true,
+      code: 'purchasable',
+      selectedQuantity: 1n,
+      cost: 5_000,
+    })
+    expect(manual).toMatchObject({
+      accepted: true,
+      changed: true,
+      purchase: {
+        researchId: preview.researchId,
+        quantity: preview.selectedQuantity,
+        cost: preview.cost,
+      },
+    })
+    expect(automatic.purchases).toEqual([manual.purchase])
+    expect(manual.state.dyson.science).toBe(expectedDebit.balance)
+    expect(automatic.state.dyson.science).toBe(expectedDebit.balance)
+    expect(expectedDebit.charged).toBeGreaterThan(preview.cost)
+    expect(input.dyson.science).toBe(Number.MAX_VALUE)
+  })
+
+  test('buy-max selects the greatest finite research quote at MAX across preview and execution', () => {
+    const base = withLevels(
+      enable(
+        stateWith(
+          Number.MAX_VALUE,
+          indexOf('research.money_multiplier'),
+        ),
+        'research.money_multiplier',
+      ),
+      {
+        'research.panel_lifetime_1': 1,
+        'research.panel_lifetime_2': 1,
+        'research.panel_lifetime_3': 1,
+        'research.panel_lifetime_4': 1,
+      },
+    )
+    const input = {
+      ...base,
+      research: {
+        ...base.research,
+        automation: {
+          ...base.research.automation,
+          buyMode: 'buy-max' as const,
+        },
+      },
+    }
+    const quantity = maxAffordable(
+      Number.MAX_VALUE,
+      5_000,
+      1.77,
+      0,
+    )
+    const cost = buyXCost(quantity, 5_000, 1.77, 0)
+    const expectedDebit = tryDebitContinuous(
+      Number.MAX_VALUE,
+      cost,
+      quantity,
+    )
+
+    expect(quantity).toBe(1_227n)
+    expect(cost).toBe(1.1903566571205716e308)
+    expect(buyXCost(quantity + 1n, 5_000, 1.77, 0))
+      .toBe(Number.MAX_VALUE)
+
+    const preview = previewCanonicalResearchPurchase(
+      input,
+      neutralTuning,
+      'research.money_multiplier',
+    )
+    const manual = purchaseCanonicalResearch(
+      input,
+      neutralTuning,
+      'research.money_multiplier',
+    )
+    const automatic = runResearchAutomationTick(input, neutralTuning)
+
+    expect(preview).toMatchObject({
+      eligible: true,
+      code: 'purchasable',
+      selectedQuantity: quantity,
+      affordableQuantity: quantity,
+      cost,
+    })
+    expect(manual).toMatchObject({
+      accepted: true,
+      changed: true,
+      purchase: {
+        quantity: preview.selectedQuantity,
+        cost: preview.cost,
+      },
+    })
+    expect(automatic.purchases).toEqual([manual.purchase])
+    expect(manual.state.dyson.science).toBe(expectedDebit.balance)
+    expect(automatic.state.dyson.science).toBe(expectedDebit.balance)
+  })
+
+  test('treats a saturated research price as terminal without mutating balances or levels', () => {
+    const input = withLevels(
+      enable(
+        stateWith(
+          Number.MAX_VALUE,
+          indexOf('research.money_multiplier'),
+        ),
+        'research.money_multiplier',
+      ),
+      {
+        'research.money_multiplier': 1_229,
+        'research.panel_lifetime_1': 1,
+        'research.panel_lifetime_2': 1,
+        'research.panel_lifetime_3': 1,
+        'research.panel_lifetime_4': 1,
+      },
+    )
+
+    const preview = previewCanonicalResearchPurchase(
+      input,
+      neutralTuning,
+      'research.money_multiplier',
+    )
+    const manual = purchaseCanonicalResearch(
+      input,
+      neutralTuning,
+      'research.money_multiplier',
+    )
+    const automatic = runResearchAutomationTick(input, neutralTuning)
+
+    expect(preview).toMatchObject({
+      eligible: false,
+      code: 'output-maxed',
+      selectedQuantity: 1n,
+      affordableQuantity: 0n,
+      cost: Number.MAX_VALUE,
+    })
+    expect(manual).toMatchObject({
+      accepted: false,
+      code: 'RESEARCH-UNAFFORDABLE',
+      state: input,
+    })
+    expect(automatic.purchases).toEqual([])
+    expect(automatic.state.dyson.science).toBe(Number.MAX_VALUE)
+    expect(
+      automatic.state.research.levelsById['research.money_multiplier'],
+    ).toBe(1_229)
   })
 })
