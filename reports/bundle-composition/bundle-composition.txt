@@ -1,0 +1,63 @@
+Idle Dyson Swarm production bundle composition
+Entry: assets/index-B-Xgd1j_.js (867126 B raw, 244536 B gzip)
+PWA precache: 159 assets (11491383 B raw, 9136589 B gzip)
+
+JavaScript chunks:
+  assets/index-B-Xgd1j_.js  867126 B raw  244536 B gzip  213 modules
+  assets/skills-BpDib1pt.js  212712 B raw  100961 B gzip  112 modules
+  assets/wiki-DJOsxXo7.js  87867 B raw  31787 B gzip  3 modules
+  assets/en-XA-B2qU_RAg.js  223391 B raw  31419 B gzip  1 modules
+  assets/ar-XB-D1dD_s5w.js  187350 B raw  29177 B gzip  1 modules
+  assets/en-DHLyGErO.js  116879 B raw  23689 B gzip  1 modules
+  assets/react-intl-CZiZAdoX.js  57563 B raw  17203 B gzip  11 modules
+  assets/catalog-q-OmVghR.js  114103 B raw  9231 B gzip  2 modules
+  assets/SimulationsSurface-BUMvqTQm.js  30769 B raw  8464 B gzip  2 modules
+  assets/facilities-IV_jNquV.js  23101 B raw  5482 B gzip  4 modules
+  assets/reality-DwtA0yza.js  24945 B raw  5040 B gzip  3 modules
+  assets/research-CYqCeCxY.js  13395 B raw  4859 B gzip  3 modules
+  assets/settings-Cb7PQOM1.js  19455 B raw  4457 B gzip  2 modules
+  assets/QuantumSurface-DoU0brwo.js  11060 B raw  3404 B gzip  3 modules
+  assets/store-CdkergJH.js  11453 B raw  2893 B gzip  4 modules
+  assets/AvotationProgress-6_1-nyNh.js  9584 B raw  2880 B gzip  3 modules
+  assets/infinity-r9kOYcKd.js  9937 B raw  2873 B gzip  2 modules
+  assets/offline-time-DHWVi9OL.js  8510 B raw  2485 B gzip  2 modules
+  assets/debug-PdHqgNRy.js  7771 B raw  2039 B gzip  2 modules
+  assets/statistics-yiWQ98aS.js  7711 B raw  2017 B gzip  3 modules
+  assets/quantum-DaI_BTJh.js  3917 B raw  1343 B gzip  2 modules
+  assets/story-SAzAFo2q.js  4770 B raw  1265 B gzip  2 modules
+  assets/avotation-dabbing-avocado-BtjSNMIF.js  1166 B raw  514 B gzip  2 modules
+  assets/numeric-D9fd4tZy.js  1296 B raw  457 B gzip  1 modules
+  assets/symbol-strange-matter-7b143Bgp.js  120 B raw  117 B gzip  2 modules
+  assets/simulations-hhAzMzKE.js  156 B raw  107 B gzip  0 modules
+
+Largest entry modules by rendered size:
+  453153 B  node_modules/react-dom/cjs/react-dom-client.production.js
+  45564 B  src/ui/gameplay/dyson/ReadyDysonSlice.tsx
+  45228 B  src/application/frontendSnapshot.ts
+  42531 B  src/ui/runtime/browserRuntimeFoundation.ts
+  39761 B  src/application/canonicalGameCommands.ts
+  39216 B  src/application/canonicalGameApplication.ts
+  36862 B  src/simulation/canonicalEventTimeModel.ts
+  35624 B  src/game-state/mapping.ts
+  25934 B  src/simulation/dreamSpaceAge.ts
+  19820 B  src/simulation/dreamFoundationalInformation.ts
+  19671 B  src/simulation/canonicalDysonDerivation.ts
+  19547 B  src/application/canonicalLifecycleCoordinator.ts
+  19142 B  node_modules/fflate/esm/browser.js
+  18609 B  src/ui/gameplay/dyson/DysonSwarmVisual.tsx
+  17865 B  src/simulation/canonicalSkillTransactions.ts
+  15816 B  src/save/odinBinary.ts
+  15600 B  src/ui/gameplay/dyson/DysonControls.tsx
+  15456 B  node_modules/@capacitor/core/dist/index.js
+  15332 B  src/platform/browserWriterLease.ts
+  15164 B  src/game-data/generated/skill-migration-data.json
+  14946 B  src/simulation/canonicalDreamReset.ts
+  14768 B  src/simulation/moneyScienceSkillEffects.ts
+  14761 B  src/game-state/mappingCoverage.ts
+  14581 B  src/simulation/researchAutomation.ts
+  14020 B  src/simulation/canonicalInfinityReset.ts
+  13976 B  src/save/migrate.ts
+  13520 B  src/application/gameApplication.ts
+  13479 B  src/simulation/quantumUpgrades.ts
+  11255 B  src/game-state/mappingCoverageSchema11.ts
+  11201 B  src/simulation/dreamEducationUpgrades.ts

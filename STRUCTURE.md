@@ -7,11 +7,17 @@ development tree is preserved publicly on
 
 ## Root
 
-- `Web/` — canonical game, tests, documentation, build tooling, and hosts.
+- `src/`, `public/`, and `index.html` — canonical TypeScript/React game and
+  shipped browser assets.
+- `package.json`, `vite.config.ts`, and `scripts/` — build, validation, data,
+  release, and performance tooling.
+- `hosts/` — Capacitor Android/iOS and Electron desktop hosts.
+- `docs/`, `test/`, and `source-assets/` — current documentation,
+  compatibility fixtures, and non-shipped masters.
 - `.github/workflows/` — Web, website-promotion, and native release automation.
 - `.agents/workflows/` — repository-specific assistant workflows.
 
-## Web
+## Canonical product
 
 - `src/` — TypeScript/React application, gameplay simulation, save migration,
   Store contracts, UI, workers, and platform boundaries.

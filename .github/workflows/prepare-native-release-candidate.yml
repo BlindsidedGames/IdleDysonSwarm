@@ -56,9 +56,9 @@ jobs:
       - name: Use the repository Node version
         uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
         with:
-          node-version-file: Web/.nvmrc
+          node-version-file: .nvmrc
           cache: npm
-          cache-dependency-path: Web/package-lock.json
+          cache-dependency-path: package-lock.json
 
       - name: Validate immutable inputs
         shell: bash
@@ -75,7 +75,6 @@ jobs:
           fi
 
       - name: Install, test, lint, and build
-        working-directory: Web
         shell: bash
         run: |
           npm ci
@@ -99,18 +98,17 @@ jobs:
       - name: Use the repository Node version
         uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
         with:
-          node-version-file: Web/.nvmrc
+          node-version-file: .nvmrc
           cache: npm
-          cache-dependency-path: Web/package-lock.json
+          cache-dependency-path: package-lock.json
 
       - name: Build pinned Web output
-        working-directory: Web
         shell: bash
         run: |
           npm ci
           IDS_RELEASE_CANDIDATE_ID="$RELEASE_ID" npm run native:release:sync
           npm run build
-          source_date_epoch="$(git -C .. show -s --format=%ct "$SOURCE_SHA")"
+          source_date_epoch="$(git show -s --format=%ct "$SOURCE_SHA")"
           output="output/release-candidate/web"
           mkdir -p "$output"
           tar --sort=name --mtime="@$source_date_epoch" --owner=0 --group=0 --numeric-owner \
@@ -128,7 +126,7 @@ jobs:
         uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
         with:
           name: ids-${{ env.RELEASE_ID }}-web
-          path: Web/output/release-candidate/web
+          path: output/release-candidate/web
           if-no-files-found: error
           retention-days: 1
 
@@ -162,18 +160,17 @@ jobs:
       - name: Use the repository Node version
         uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
         with:
-          node-version-file: Web/.nvmrc
+          node-version-file: .nvmrc
           cache: npm
-          cache-dependency-path: Web/package-lock.json
+          cache-dependency-path: package-lock.json
 
       - name: Build without release signing identities
-        working-directory: Web
         shell: bash
         env:
           CSC_IDENTITY_AUTO_DISCOVERY: 'false'
         run: |
           npm ci
-          source_date_epoch="$(git -C .. show -s --format=%ct "$SOURCE_SHA")"
+          source_date_epoch="$(git show -s --format=%ct "$SOURCE_SHA")"
           export SOURCE_DATE_EPOCH="$source_date_epoch"
           IDS_RELEASE_CANDIDATE_ID="$RELEASE_ID" npm run "${{ matrix.script }}"
           output="output/release-candidate/electron-${{ matrix.platform }}"
@@ -202,7 +199,7 @@ jobs:
         uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
         with:
           name: ids-${{ env.RELEASE_ID }}-electron-${{ matrix.platform }}-unsigned
-          path: Web/output/release-candidate/electron-${{ matrix.platform }}
+          path: output/release-candidate/electron-${{ matrix.platform }}
           if-no-files-found: error
           retention-days: 1
 
@@ -220,9 +217,9 @@ jobs:
       - name: Use the repository Node version
         uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
         with:
-          node-version-file: Web/.nvmrc
+          node-version-file: .nvmrc
           cache: npm
-          cache-dependency-path: Web/package-lock.json
+          cache-dependency-path: package-lock.json
 
       - name: Use the Android build JDK
         uses: actions/setup-java@b6effb05e454b25005698d916606bdc6ffcbf961 # v5.7.0
@@ -231,13 +228,12 @@ jobs:
           java-version: '21'
 
       - name: Build explicitly unsigned release outputs
-        working-directory: Web
         shell: bash
         run: |
           npm ci
           IDS_RELEASE_CANDIDATE_ID="$RELEASE_ID" npm run native:capacitor:sync:android
           chmod +x hosts/capacitor/android/gradlew
-          source_date_epoch="$(git -C .. show -s --format=%ct "$SOURCE_SHA")"
+          source_date_epoch="$(git show -s --format=%ct "$SOURCE_SHA")"
           ./hosts/capacitor/android/gradlew \
             -p hosts/capacitor/android \
             assembleRelease bundleRelease --no-daemon \
@@ -269,7 +265,7 @@ jobs:
         uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
         with:
           name: ids-${{ env.RELEASE_ID }}-android-unsigned
-          path: Web/output/release-candidate/android
+          path: output/release-candidate/android
           if-no-files-found: error
           retention-days: 1
 
@@ -287,19 +283,18 @@ jobs:
       - name: Use the repository Node version
         uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
         with:
-          node-version-file: Web/.nvmrc
+          node-version-file: .nvmrc
           cache: npm
-          cache-dependency-path: Web/package-lock.json
+          cache-dependency-path: package-lock.json
 
       - name: Build and normalize unsigned simulator archive
-        working-directory: Web
         shell: bash
         env:
           COPYFILE_DISABLE: '1'
         run: |
           npm ci
           IDS_RELEASE_CANDIDATE_ID="$RELEASE_ID" npm run native:capacitor:sync:ios
-          source_date_epoch="$(git -C .. show -s --format=%ct "$SOURCE_SHA")"
+          source_date_epoch="$(git show -s --format=%ct "$SOURCE_SHA")"
           xcodebuild \
             -project hosts/capacitor/ios/App/App.xcodeproj \
             -scheme App \
@@ -330,7 +325,7 @@ jobs:
         uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
         with:
           name: ids-${{ env.RELEASE_ID }}-ios-simulator-unsigned
-          path: Web/output/release-candidate/ios-simulator
+          path: output/release-candidate/ios-simulator
           if-no-files-found: error
           retention-days: 1
 
@@ -350,9 +345,9 @@ jobs:
       - name: Use the repository Node version
         uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
         with:
-          node-version-file: Web/.nvmrc
+          node-version-file: .nvmrc
           cache: npm
-          cache-dependency-path: Web/package-lock.json
+          cache-dependency-path: package-lock.json
 
       - name: Use the Android build JDK
         uses: actions/setup-java@b6effb05e454b25005698d916606bdc6ffcbf961 # v5.7.0
@@ -361,7 +356,6 @@ jobs:
           java-version: '21'
 
       - name: Prepare Android dependencies and native source without credentials
-        working-directory: Web
         shell: bash
         run: |
           npm ci
@@ -394,7 +388,6 @@ jobs:
           fi
 
       - name: Build signed Android App Bundle
-        working-directory: Web
         shell: bash
         env:
           ORG_GRADLE_PROJECT_IDS_ANDROID_KEYSTORE_PATH: ${{ runner.temp }}/ids-upload.keystore
@@ -402,7 +395,7 @@ jobs:
           ORG_GRADLE_PROJECT_IDS_ANDROID_KEY_ALIAS: ${{ secrets.IDS_ANDROID_KEY_ALIAS }}
           ORG_GRADLE_PROJECT_IDS_ANDROID_KEY_PASSWORD: ${{ secrets.IDS_ANDROID_KEY_PASSWORD }}
         run: |
-          source_date_epoch="$(git -C .. show -s --format=%ct "$SOURCE_SHA")"
+          source_date_epoch="$(git show -s --format=%ct "$SOURCE_SHA")"
           ./hosts/capacitor/android/gradlew -p hosts/capacitor/android bundleRelease --no-daemon
           bundle="$(find hosts/capacitor/android/app/build/outputs/bundle/release -type f -name '*.aab' -print -quit)"
           [[ -n "$bundle" ]]
@@ -423,7 +416,7 @@ jobs:
         uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
         with:
           name: ids-${{ env.RELEASE_ID }}-android-signed
-          path: Web/output/release-candidate/android-signed
+          path: output/release-candidate/android-signed
           if-no-files-found: error
           retention-days: 1
 
@@ -448,12 +441,11 @@ jobs:
       - name: Use the repository Node version
         uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
         with:
-          node-version-file: Web/.nvmrc
+          node-version-file: .nvmrc
           cache: npm
-          cache-dependency-path: Web/package-lock.json
+          cache-dependency-path: package-lock.json
 
       - name: Prepare iOS dependencies and native source without credentials
-        working-directory: Web
         shell: bash
         run: |
           npm ci
@@ -497,13 +489,12 @@ jobs:
           cp "$RUNNER_TEMP/ids.mobileprovision" "$HOME/Library/MobileDevice/Provisioning Profiles/ids.mobileprovision"
 
       - name: Archive and export signed iOS application
-        working-directory: Web
         shell: bash
         env:
           DEVELOPMENT_TEAM: ${{ secrets.IDS_APPLE_DEVELOPMENT_TEAM }}
           PROFILE_SPECIFIER: ${{ secrets.IDS_APPLE_PROVISIONING_PROFILE_SPECIFIER }}
         run: |
-          source_date_epoch="$(git -C .. show -s --format=%ct "$SOURCE_SHA")"
+          source_date_epoch="$(git show -s --format=%ct "$SOURCE_SHA")"
           archive="$RUNNER_TEMP/IdleDysonSwarm.xcarchive"
           export_path="$RUNNER_TEMP/ids-export"
           xcodebuild \
@@ -539,7 +530,7 @@ jobs:
         uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
         with:
           name: ids-${{ env.RELEASE_ID }}-ios-signed
-          path: Web/output/release-candidate/ios-signed
+          path: output/release-candidate/ios-signed
           if-no-files-found: error
           retention-days: 1
 
@@ -567,12 +558,11 @@ jobs:
       - name: Use the repository Node version
         uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
         with:
-          node-version-file: Web/.nvmrc
+          node-version-file: .nvmrc
           cache: npm
-          cache-dependency-path: Web/package-lock.json
+          cache-dependency-path: package-lock.json
 
       - name: Prepare macOS dependencies and Web runtime without credentials
-        working-directory: Web
         shell: bash
         env:
           CSC_IDENTITY_AUTO_DISCOVERY: 'false'
@@ -597,7 +587,6 @@ jobs:
           done
 
       - name: Build signed and notarized macOS package
-        working-directory: Web
         shell: bash
         env:
           CSC_LINK: ${{ secrets.IDS_MAC_CERTIFICATE_P12_BASE64 }}
@@ -608,7 +597,7 @@ jobs:
         run: |
           python3 -c 'import base64,os; open(os.environ["RUNNER_TEMP"]+"/AuthKey.p8","wb").write(base64.b64decode(os.environ["API_KEY"]))'
           export APPLE_API_KEY="$RUNNER_TEMP/AuthKey.p8"
-          source_date_epoch="$(git -C .. show -s --format=%ct "$SOURCE_SHA")"
+          source_date_epoch="$(git show -s --format=%ct "$SOURCE_SHA")"
           export SOURCE_DATE_EPOCH="$source_date_epoch"
           npx electron-builder --config hosts/electron/electron-builder.yml --mac \
             -c.mac.hardenedRuntime=true \
@@ -636,7 +625,7 @@ jobs:
         uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
         with:
           name: ids-${{ env.RELEASE_ID }}-electron-macos-signed
-          path: Web/output/release-candidate/electron-macos-signed
+          path: output/release-candidate/electron-macos-signed
           if-no-files-found: error
           retention-days: 1
 
@@ -676,9 +665,9 @@ jobs:
       - name: Use the repository Node version
         uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
         with:
-          node-version-file: Web/.nvmrc
+          node-version-file: .nvmrc
           cache: npm
-          cache-dependency-path: Web/package-lock.json
+          cache-dependency-path: package-lock.json
 
       - name: Download exact signed iOS artifact
         uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8.0.1
@@ -687,7 +676,6 @@ jobs:
           path: signed-ios
 
       - name: Verify exact signed iOS artifact provenance
-        working-directory: Web
         shell: bash
         run: |
           npm ci --ignore-scripts
