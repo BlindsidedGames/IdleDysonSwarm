@@ -83,8 +83,10 @@ export const platformCapabilityInventory: readonly PlatformCapability[] = [
       'Assets/Scripts/User Interface/ScreenSafeArea.cs',
       'Assets/Scripts/Systems/Platform/DeviceRotationManager.cs',
     ],
-    targetBoundary: 'DisplayAdapter plus CSS env(safe-area-inset-*)',
-    notes: 'Retain responsive portrait and landscape behavior.',
+    targetBoundary:
+      'Android WindowInsetsCompat plus shared CSS safe-area variables',
+    notes:
+      'Combine native system-bar and display-cutout insets with CSS env() values so responsive portrait and landscape layouts work across navigation modes and device shapes.',
   },
   {
     id: 'touch-pan-zoom-and-hold',

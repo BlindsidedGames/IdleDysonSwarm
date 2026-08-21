@@ -19,8 +19,8 @@
   gap: 0.35rem;
   padding-block: 0.75rem;
   padding-inline:
-    max(0.75rem, env(safe-area-inset-left))
-    max(0.75rem, env(safe-area-inset-right));
+    max(0.75rem, var(--safe-area-left))
+    max(0.75rem, var(--safe-area-right));
   border-block-end: 2px solid var(--theme-divider);
   background: var(--offline-panel);
 }
@@ -53,8 +53,8 @@
   overscroll-behavior: contain;
   padding-block: 0.625rem;
   padding-inline:
-    max(0.625rem, env(safe-area-inset-left))
-    max(0.625rem, env(safe-area-inset-right));
+    max(0.625rem, var(--safe-area-left))
+    max(0.625rem, var(--safe-area-right));
   scrollbar-width: none;
 }
 

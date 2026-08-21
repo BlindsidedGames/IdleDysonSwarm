@@ -17,11 +17,11 @@
   box-sizing: border-box;
   gap: 0.7rem;
   padding-block:
-    calc(0.75rem + env(safe-area-inset-top))
+    calc(0.75rem + var(--safe-area-top))
     0.75rem;
   padding-inline:
-    max(0.75rem, env(safe-area-inset-left))
-    max(0.75rem, env(safe-area-inset-right));
+    max(0.75rem, var(--safe-area-left))
+    max(0.75rem, var(--safe-area-right));
   margin-inline: auto;
   overflow-y: auto;
   overscroll-behavior: contain;

@@ -34,8 +34,8 @@
   grid-template-columns: minmax(9rem, auto) minmax(8rem, 28rem) 2.7rem;
   gap: 0.65rem;
   align-items: center;
-  padding: 0.5rem max(0.7rem, env(safe-area-inset-right)) 0.55rem
-    max(0.7rem, env(safe-area-inset-left));
+  padding: 0.5rem max(0.7rem, var(--safe-area-right)) 0.55rem
+    max(0.7rem, var(--safe-area-left));
   border-block: 1px solid var(--theme-divider);
   background: color-mix(in srgb, var(--theme-panel) 94%, transparent);
   box-shadow: 0 0.2rem 0.8rem rgb(0 0 0 / 30%);
@@ -365,7 +365,7 @@
   position: absolute;
   z-index: 2;
   inset-block-end: 0.75rem;
-  inset-inline-end: max(0.75rem, env(safe-area-inset-right));
+  inset-inline-end: max(0.75rem, var(--safe-area-right));
   display: flex;
   gap: 0.35rem;
 }

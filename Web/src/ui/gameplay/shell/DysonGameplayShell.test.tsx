@@ -289,10 +289,10 @@ describe('DysonGameplayShell', () => {
 
   it('uses the card gutter for both facilities and lower panels', () => {
     expect(shellCss).toMatch(
-      /\.dyson-shell__stage\s*\{[^}]*max\(var\(--game-card-content-inset\), env\(safe-area-inset-right\)\)[^}]*max\(var\(--game-card-content-inset\), env\(safe-area-inset-left\)\);/s,
+      /\.dyson-shell__stage\s*\{[^}]*max\(var\(--game-card-content-inset\), var\(--safe-area-right\)\)[^}]*max\(var\(--game-card-content-inset\), var\(--safe-area-left\)\);/s,
     )
     expect(shellCss).toMatch(
-      /\.dyson-shell__lower-regions\s*\{[^}]*max\(var\(--game-card-content-inset\), env\(safe-area-inset-right\)\)[^}]*max\(var\(--game-card-content-inset\), env\(safe-area-inset-left\)\);/s,
+      /\.dyson-shell__lower-regions\s*\{[^}]*max\(var\(--game-card-content-inset\), var\(--safe-area-right\)\)[^}]*max\(var\(--game-card-content-inset\), var\(--safe-area-left\)\);/s,
     )
     expect(shellCss).not.toMatch(
       /@media \(min-width: 1024px\)[\s\S]*\.dyson-shell__lower-regions\s*\{[^}]*padding-inline:/,
@@ -328,7 +328,7 @@ describe('DysonGameplayShell', () => {
 describe('Dyson gameplay responsive CSS contract', () => {
   it('keeps the skip link fully above an inset viewport until focused', () => {
     expect(shellCss).toMatch(
-      /\.dyson-shell__skip-link\s*\{[^}]*inset-block-start:\s*max\(0\.5rem, env\(safe-area-inset-top\)\);[^}]*transform:\s*translateY\(\s*calc\(-100% - max\(0\.5rem, env\(safe-area-inset-top\)\)\)\s*\);/s,
+      /\.dyson-shell__skip-link\s*\{[^}]*inset-block-start:\s*max\(0\.5rem, var\(--safe-area-top\)\);[^}]*transform:\s*translateY\(\s*calc\(-100% - max\(0\.5rem, var\(--safe-area-top\)\)\)\s*\);/s,
     )
     expect(shellCss).toMatch(
       /\.dyson-shell__skip-link:focus\s*\{[^}]*transform:\s*translateY\(0\);/s,
@@ -337,7 +337,7 @@ describe('Dyson gameplay responsive CSS contract', () => {
 
   it('owns top safe-area clearance when a route omits the resource header', () => {
     expect(shellCss).toMatch(
-      /\.dyson-shell\[data-resource-header="false"\]\s+\.dyson-shell__content\s*\{[^}]*padding-block-start:\s*env\(safe-area-inset-top\);/s,
+      /\.dyson-shell\[data-resource-header="false"\]\s+\.dyson-shell__content\s*\{[^}]*padding-block-start:\s*var\(--safe-area-top\);/s,
     )
     expect(shellCss).toMatch(
       /\[data-route-theme="skills"\][\s\S]*\[data-route-theme="infinity"\][\s\S]*\[data-route-theme="reality"\][\s\S]*\[data-route-theme="simulations"\][\s\S]*\[data-route-theme="quantum"\][\s\S]*\[data-route-theme="statistics"\][\s\S]*padding-block-start:\s*0;/,
@@ -346,22 +346,22 @@ describe('Dyson gameplay responsive CSS contract', () => {
 
   it('extends owned route panels through the top safe area', () => {
     expect(infinityCss).toMatch(
-      /\.infinity-surface__summary\s*\{[^}]*calc\(0\.625rem \+ env\(safe-area-inset-top\)\)/s,
+      /\.infinity-surface__summary\s*\{[^}]*calc\(0\.625rem \+ var\(--safe-area-top\)\)/s,
     )
     expect(realityCss).toMatch(
-      /\.reality-surface__summary\s*\{[^}]*calc\(0\.72rem \+ env\(safe-area-inset-top\)\)/s,
+      /\.reality-surface__summary\s*\{[^}]*calc\(0\.72rem \+ var\(--safe-area-top\)\)/s,
     )
     expect(simulationsCss).toMatch(
-      /\.simulations-surface__summary\s*\{[^}]*calc\(0\.6rem \+ env\(safe-area-inset-top\)\)/s,
+      /\.simulations-surface__summary\s*\{[^}]*calc\(0\.6rem \+ var\(--safe-area-top\)\)/s,
     )
     expect(quantumCss).toMatch(
-      /\.quantum-surface__summary\s*\{[^}]*calc\(0\.75rem \+ env\(safe-area-inset-top\)\)/s,
+      /\.quantum-surface__summary\s*\{[^}]*calc\(0\.75rem \+ var\(--safe-area-top\)\)/s,
     )
     expect(statisticsCss).toMatch(
-      /\.statistics-surface__summary\s*\{[^}]*calc\(0\.75rem \+ env\(safe-area-inset-top\)\)/s,
+      /\.statistics-surface__summary\s*\{[^}]*calc\(0\.75rem \+ var\(--safe-area-top\)\)/s,
     )
     expect(storeCss).toMatch(
-      /\.store-surface__content\s*\{[^}]*calc\(0\.75rem \+ env\(safe-area-inset-top\)\)/s,
+      /\.store-surface__content\s*\{[^}]*calc\(0\.75rem \+ var\(--safe-area-top\)\)/s,
     )
   })
 
@@ -382,7 +382,7 @@ describe('Dyson gameplay responsive CSS contract', () => {
 
   it('keeps late-game resource values inside three compact mobile columns', () => {
     expect(shellCss).toMatch(
-      /@media \(max-width:\s*720px\)[\s\S]*\.dyson-resource-header\s*\{[^}]*grid-template-columns:\s*repeat\(3, minmax\(0, 1fr\)\);[^}]*calc\(0\.42rem \+ env\(safe-area-inset-top\)\)/,
+      /@media \(max-width:\s*720px\)[\s\S]*\.dyson-resource-header\s*\{[^}]*grid-template-columns:\s*repeat\(3, minmax\(0, 1fr\)\);[^}]*calc\(0\.42rem \+ var\(--safe-area-top\)\)/,
     )
     expect(shellCss).toMatch(
       /\.dyson-resource-header__item\s*\{[^}]*overflow:\s*hidden;/s,
@@ -405,7 +405,15 @@ describe('Dyson gameplay responsive CSS contract', () => {
     expect(shellCss).toMatch(
       /@media \(min-width: 1024px\)[\s\S]*\.dyson-shell__bottom-navigation\s*\{\s*display:\s*none !important;/,
     )
-    expect(shellCss).toContain('env(safe-area-inset-bottom)')
+    expect(rootCss).toMatch(
+      /--safe-area-bottom:\s*max\([\s\S]*env\(safe-area-inset-bottom, 0px\),[\s\S]*var\(--android-safe-area-bottom\)[\s\S]*\);/,
+    )
+    expect(shellCss).toMatch(
+      /\.dyson-shell\s*\{[^}]*grid-template-rows:\s*minmax\(0, 1fr\)\s*calc\(4rem \+ var\(--safe-area-bottom\)\);/s,
+    )
+    expect(shellCss).toMatch(
+      /\.dyson-shell__bottom-navigation\s*\{[^}]*padding-block:\s*0\.32rem max\(0\.32rem, var\(--safe-area-bottom\)\);/s,
+    )
     expect(shellCss).toContain('overflow: hidden')
     expect(shellCss).toMatch(
       /\.dyson-shell__stage\s*\{[\s\S]*display:\s*flex;[\s\S]*flex-direction:\s*column;/,
@@ -447,10 +455,10 @@ describe('Dyson gameplay responsive CSS contract', () => {
       /\.dyson-resource-header\s*\{[^}]*background:\s*transparent;/,
     )
     expect(shellCss).toMatch(
-      /\.dyson-resource-header\s*\{[^}]*min-block-size:\s*4\.7rem;[^}]*padding-block:\s*max\(0\.55rem,\s*env\(safe-area-inset-top\)\)\s*0\.18rem;/,
+      /\.dyson-resource-header\s*\{[^}]*min-block-size:\s*4\.7rem;[^}]*padding-block:\s*max\(0\.55rem,\s*var\(--safe-area-top\)\)\s*0\.18rem;/,
     )
     expect(shellCss).toMatch(
-      /@media \(max-width:\s*720px\)[\s\S]*\.dyson-resource-header\s*\{[^}]*min-block-size:\s*3\.2rem;[^}]*padding-block:\s*calc\(0\.42rem \+ env\(safe-area-inset-top\)\)\s*0\.12rem;/,
+      /@media \(max-width:\s*720px\)[\s\S]*\.dyson-resource-header\s*\{[^}]*min-block-size:\s*3\.2rem;[^}]*padding-block:\s*calc\(0\.42rem \+ var\(--safe-area-top\)\)\s*0\.12rem;/,
     )
     expect(shellCss).not.toContain(
       'linear-gradient(180deg, #1c1420 70%',

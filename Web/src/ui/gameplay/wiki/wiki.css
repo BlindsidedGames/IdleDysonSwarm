@@ -27,7 +27,7 @@
 }
 
 .wiki-surface__summary {
-  padding: 0.8rem max(0.75rem, env(safe-area-inset-left));
+  padding: 0.8rem max(0.75rem, var(--safe-area-left));
   border-block-end: 1px solid var(--theme-divider);
   background: var(--theme-panel);
   box-shadow: 0 0.15rem 0.4rem rgb(0 0 0 / 26%);

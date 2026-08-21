@@ -23,11 +23,11 @@
   display: grid;
   gap: 0.45rem;
   padding-block:
-    calc(0.625rem + env(safe-area-inset-top))
+    calc(0.625rem + var(--safe-area-top))
     0.625rem;
   padding-inline:
-    max(0.75rem, env(safe-area-inset-left))
-    max(0.75rem, env(safe-area-inset-right));
+    max(0.75rem, var(--safe-area-left))
+    max(0.75rem, var(--safe-area-right));
   border-block-end: 2px solid var(--theme-divider);
   background: var(--infinity-panel);
 }
@@ -122,8 +122,8 @@
   overscroll-behavior: contain;
   padding-block: var(--game-card-content-inset);
   padding-inline:
-    max(var(--game-card-content-inset), env(safe-area-inset-left))
-    max(var(--game-card-content-inset), env(safe-area-inset-right));
+    max(var(--game-card-content-inset), var(--safe-area-left))
+    max(var(--game-card-content-inset), var(--safe-area-right));
   scrollbar-width: none;
 }
 
@@ -366,7 +366,7 @@
   .infinity-surface__summary {
     gap: 0.35rem;
     padding-block:
-      calc(0.45rem + env(safe-area-inset-top))
+      calc(0.45rem + var(--safe-area-top))
       0.45rem;
   }
 

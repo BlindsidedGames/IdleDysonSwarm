@@ -16,8 +16,8 @@
   overscroll-behavior: contain;
   padding-block: var(--game-card-content-inset);
   padding-inline:
-    max(var(--game-card-content-inset), env(safe-area-inset-left))
-    max(var(--game-card-content-inset), env(safe-area-inset-right));
+    max(var(--game-card-content-inset), var(--safe-area-left))
+    max(var(--game-card-content-inset), var(--safe-area-right));
   scrollbar-width: none;
 }
 
@@ -335,8 +335,8 @@
   .research-surface__scroll-region {
     padding-block: var(--game-card-content-inset);
     padding-inline:
-      max(var(--game-card-content-inset), env(safe-area-inset-left))
-      max(var(--game-card-content-inset), env(safe-area-inset-right));
+      max(var(--game-card-content-inset), var(--safe-area-left))
+      max(var(--game-card-content-inset), var(--safe-area-right));
   }
 
   .research-surface__summary {

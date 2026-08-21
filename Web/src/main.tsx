@@ -26,6 +26,7 @@ import {
   installTextSelectionPolicy,
 } from './ui/accessibility/textSelectionPolicy'
 import { installSemanticAudioCues } from './audio'
+import { installNativeSafeAreaInsets } from './platform/nativeHostBridge'
 
 installTextSelectionPolicy()
 void bootstrap()
@@ -34,6 +35,7 @@ async function bootstrap(): Promise<void> {
   const rootElement = document.getElementById('root')
   if (rootElement === null) return
   try {
+    await installNativeSafeAreaInsets()
     const localePreference = new LocalePreferenceService()
     const locale = localePreference.getSnapshot()
     const messages =

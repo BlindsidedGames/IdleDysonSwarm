@@ -28,8 +28,8 @@
   overscroll-behavior: contain;
   padding-block: 0.7rem 1rem;
   padding-inline:
-    max(0.7rem, env(safe-area-inset-left))
-    max(0.7rem, env(safe-area-inset-right));
+    max(0.7rem, var(--safe-area-left))
+    max(0.7rem, var(--safe-area-right));
   scrollbar-width: none;
   touch-action: pan-y;
   -webkit-overflow-scrolling: touch;

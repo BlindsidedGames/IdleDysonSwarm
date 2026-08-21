@@ -86,6 +86,13 @@ declare global {
   }
 }
 
+export interface NativeSystemInsets {
+  readonly top: number
+  readonly right: number
+  readonly bottom: number
+  readonly left: number
+}
+
 interface CapacitorNativeHostPlugin {
   fileExists(request: { relativePath: string }): Promise<{ exists: boolean }>
   readText(request: { relativePath: string }): Promise<{ text: string }>
@@ -121,15 +128,81 @@ interface CapacitorNativeHostPlugin {
   promoteAutomaticUnityPurchaseEvidence(
     evidence: Readonly<AutomaticUnityPurchaseEvidence>,
   ): Promise<{ promoted: boolean }>
+  systemInsets(): Promise<NativeSystemInsets>
   addListener(
     eventName: 'lifecycleChanged',
     listener: (event: { phase: LifecyclePhase }) => void,
+  ): Promise<PluginListenerHandle>
+  addListener(
+    eventName: 'systemInsetsChanged',
+    listener: (event: NativeSystemInsets) => void,
   ): Promise<PluginListenerHandle>
 }
 
 const capacitorPlugin = registerPlugin<CapacitorNativeHostPlugin>(
   'IdleDysonNative',
 )
+
+export interface NativeSafeAreaPlugin {
+  systemInsets(): Promise<NativeSystemInsets>
+  addListener(
+    eventName: 'systemInsetsChanged',
+    listener: (event: NativeSystemInsets) => void,
+  ): Promise<PluginListenerHandle>
+}
+
+export interface NativeSafeAreaInstallerOptions {
+  readonly root?: HTMLElement
+  readonly isNativePlatform?: boolean
+  readonly platform?: string
+  readonly plugin?: NativeSafeAreaPlugin
+}
+
+export async function installNativeSafeAreaInsets(
+  options: Readonly<NativeSafeAreaInstallerOptions> = {},
+): Promise<() => void> {
+  const isNativePlatform = options.isNativePlatform ??
+    Capacitor.isNativePlatform()
+  const platform = options.platform ?? Capacitor.getPlatform()
+  if (!isNativePlatform || platform !== 'android') return () => undefined
+
+  const root = options.root ?? document.documentElement
+  const plugin = options.plugin ?? capacitorPlugin
+  let active = true
+  let handle: PluginListenerHandle | undefined
+  const apply = (insets: NativeSystemInsets): void => {
+    if (!active) return
+    setNativeSafeAreaProperty(root, 'top', insets.top)
+    setNativeSafeAreaProperty(root, 'right', insets.right)
+    setNativeSafeAreaProperty(root, 'bottom', insets.bottom)
+    setNativeSafeAreaProperty(root, 'left', insets.left)
+  }
+
+  try {
+    handle = await plugin.addListener('systemInsetsChanged', apply)
+    apply(await plugin.systemInsets())
+  } catch {
+    active = false
+    await handle?.remove().catch(() => undefined)
+    return () => undefined
+  }
+
+  return () => {
+    active = false
+    void handle?.remove()
+  }
+}
+
+function setNativeSafeAreaProperty(
+  root: HTMLElement,
+  side: 'top' | 'right' | 'bottom' | 'left',
+  value: number,
+): void {
+  const safeValue = Number.isFinite(value)
+    ? Math.min(Math.max(value, 0), 2048)
+    : 0
+  root.style.setProperty(`--android-safe-area-${side}`, `${safeValue}px`)
+}
 
 export function detectNativeHostBridge(): NativeHostBridgeApi | null {
   if (window.idleDysonSwarmNativeHost !== undefined) {

@@ -2,7 +2,10 @@ package com.blindsidedgames.idledysonswarm
 
 import android.content.Intent
 import android.content.pm.PackageManager
+import android.view.View
 import androidx.core.content.FileProvider
+import androidx.core.view.ViewCompat
+import androidx.core.view.WindowInsetsCompat
 import com.getcapacitor.JSArray
 import com.getcapacitor.JSObject
 import com.getcapacitor.Plugin
@@ -31,6 +34,18 @@ class IdleDysonNativePlugin : Plugin() {
         entitlementCache = NativeEntitlementCache(context)
         googlePlayStore = GooglePlayStore(context, entitlementCache)
         googlePlayStore.warmUp()
+        val hostActivity = activity ?: return
+        hostActivity.runOnUiThread {
+            val decorView = hostActivity.window.decorView
+            ViewCompat.setOnApplyWindowInsetsListener(decorView) { view, insets ->
+                notifyListeners(
+                    "systemInsetsChanged",
+                    systemInsetsPayload(view, insets),
+                )
+                insets
+            }
+            ViewCompat.requestApplyInsets(decorView)
+        }
     }
 
     @PluginMethod
@@ -57,8 +72,39 @@ class IdleDysonNativePlugin : Plugin() {
     }
 
     @PluginMethod
+    fun systemInsets(call: PluginCall) {
+        val hostActivity = activity
+        if (hostActivity == null) {
+            call.reject("Unable to read Android system insets.", "insets-unavailable")
+            return
+        }
+        hostActivity.runOnUiThread {
+            val decorView = hostActivity.window.decorView
+            call.resolve(systemInsetsPayload(decorView))
+        }
+    }
+
+    @PluginMethod
     fun currentLifecycle(call: PluginCall) {
         call.resolve(JSObject().apply { put("phase", lifecyclePhase) })
+    }
+
+    private fun systemInsetsPayload(
+        view: View,
+        windowInsets: WindowInsetsCompat? = ViewCompat.getRootWindowInsets(view),
+    ): JSObject {
+        val insets = windowInsets?.getInsets(
+            WindowInsetsCompat.Type.systemBars() or
+                WindowInsetsCompat.Type.displayCutout(),
+        )
+        val density = view.resources.displayMetrics.density
+            .takeIf { it > 0f } ?: 1f
+        return JSObject().apply {
+            put("top", (insets?.top ?: 0) / density)
+            put("right", (insets?.right ?: 0) / density)
+            put("bottom", (insets?.bottom ?: 0) / density)
+            put("left", (insets?.left ?: 0) / density)
+        }
     }
 
     @PluginMethod

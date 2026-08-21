@@ -55,11 +55,11 @@
   gap: 0.75rem;
   min-block-size: 2.85rem;
   padding-block:
-    calc(0.6rem + env(safe-area-inset-top))
+    calc(0.6rem + var(--safe-area-top))
     0.6rem;
   padding-inline:
-    max(0.75rem, env(safe-area-inset-left))
-    max(0.75rem, env(safe-area-inset-right));
+    max(0.75rem, var(--safe-area-left))
+    max(0.75rem, var(--safe-area-right));
   border-block-end: 2px solid var(--simulation-era-divider);
   background: var(--simulation-era-summary);
   font-family: var(--font-family-numeric);
@@ -90,10 +90,10 @@
   overscroll-behavior: contain;
   padding-block:
     var(--game-card-content-inset)
-    max(var(--game-card-content-inset), env(safe-area-inset-bottom));
+    max(var(--game-card-content-inset), var(--safe-area-bottom));
   padding-inline:
-    max(var(--game-card-content-inset), env(safe-area-inset-left))
-    max(var(--game-card-content-inset), env(safe-area-inset-right));
+    max(var(--game-card-content-inset), var(--safe-area-left))
+    max(var(--game-card-content-inset), var(--safe-area-right));
   scrollbar-width: none;
   touch-action: pan-y;
   -webkit-overflow-scrolling: touch;

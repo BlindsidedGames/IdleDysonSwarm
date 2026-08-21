@@ -28,8 +28,8 @@
   overscroll-behavior: contain;
   padding-block: 0.75rem;
   padding-inline:
-    max(0.7rem, env(safe-area-inset-left))
-    max(0.7rem, env(safe-area-inset-right));
+    max(0.7rem, var(--safe-area-left))
+    max(0.7rem, var(--safe-area-right));
   scrollbar-width: none;
   touch-action: pan-y;
   -webkit-overflow-scrolling: touch;
@@ -46,11 +46,11 @@
   justify-content: space-between;
   gap: 1rem;
   padding-block:
-    calc(0.75rem + env(safe-area-inset-top))
+    calc(0.75rem + var(--safe-area-top))
     0.75rem;
   padding-inline:
-    max(0.75rem, env(safe-area-inset-left))
-    max(0.75rem, env(safe-area-inset-right));
+    max(0.75rem, var(--safe-area-left))
+    max(0.75rem, var(--safe-area-right));
   border-block-end: 2px solid var(--theme-divider);
   background: var(--statistics-panel);
   box-shadow: 0 0.16rem 0.35rem rgb(0 0 0 / 25%);

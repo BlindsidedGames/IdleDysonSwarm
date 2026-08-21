@@ -88,6 +88,13 @@ describe('Capacitor first-party native bridge', () => {
     }
   })
 
+  it('publishes Android system-bar and cutout insets in CSS pixels', () => {
+    expect(android).toContain('WindowInsetsCompat.Type.systemBars()')
+    expect(android).toContain('WindowInsetsCompat.Type.displayCutout()')
+    expect(android).toContain('systemInsetsChanged')
+    expect(android).toContain('/ density')
+  })
+
   it('binds first-party mobile Stores without exposing receipts or purchase tokens', () => {
     const androidStore = read(
       'hosts/capacitor/android/app/src/main/java/com/blindsidedgames/idledysonswarm/GooglePlayStore.kt',

@@ -3,8 +3,8 @@
 .pwa-update-prompt {
   position: fixed;
   z-index: 100;
-  inset-inline: max(0.75rem, env(safe-area-inset-left)) max(0.75rem, env(safe-area-inset-right));
-  inset-block-end: max(0.75rem, env(safe-area-inset-bottom));
+  inset-inline: max(0.75rem, var(--safe-area-left)) max(0.75rem, var(--safe-area-right));
+  inset-block-end: max(0.75rem, var(--safe-area-bottom));
   display: grid;
   grid-template-columns: minmax(0, 1fr) auto;
   align-items: center;

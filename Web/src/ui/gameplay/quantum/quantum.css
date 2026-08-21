@@ -29,13 +29,13 @@
   z-index: 1;
   display: grid;
   gap: 0.65rem;
-  padding: 0.75rem max(0.8rem, env(safe-area-inset-right)) 0.75rem max(0.8rem, env(safe-area-inset-left));
+  padding: 0.75rem max(0.8rem, var(--safe-area-right)) 0.75rem max(0.8rem, var(--safe-area-left));
   border-block-end: 2px solid var(--theme-divider);
   background: var(--quantum-panel);
 }
 
 .quantum-surface__summary {
-  padding-block-start: calc(0.75rem + env(safe-area-inset-top));
+  padding-block-start: calc(0.75rem + var(--safe-area-top));
 }
 
 .quantum-surface__balance {
@@ -80,7 +80,7 @@
   min-block-size: 0;
   overflow-y: auto;
   overscroll-behavior: contain;
-  padding: var(--game-card-content-inset) max(var(--game-card-content-inset), env(safe-area-inset-right)) var(--game-card-content-inset) max(var(--game-card-content-inset), env(safe-area-inset-left));
+  padding: var(--game-card-content-inset) max(var(--game-card-content-inset), var(--safe-area-right)) var(--game-card-content-inset) max(var(--game-card-content-inset), var(--safe-area-left));
   scrollbar-width: none;
 }
 .quantum-surface__content::-webkit-scrollbar,

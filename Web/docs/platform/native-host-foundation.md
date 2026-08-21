@@ -114,6 +114,12 @@ lifecycle events, bounded platform metadata, a closed-vocabulary diagnostic
 share and real mobile Store provider adapters. Detailed method, entitlement,
 test-account and safety rules are recorded in `hosts/capacitor/README.md`.
 
+On Android, the plugin also publishes `WindowInsetsCompat` system-bar and
+display-cutout insets in density-independent CSS pixels. The Web shell combines
+those values with `env(safe-area-inset-*)`; bottom navigation therefore grows
+above gesture or button navigation without device-specific offsets, while its
+background can continue through the edge-to-edge system area.
+
 ## Local verification
 
 From `Web`:
