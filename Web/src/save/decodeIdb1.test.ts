@@ -1,6 +1,10 @@
 import { readFileSync } from 'node:fs'
 import { describe, expect, test } from 'vitest'
-import { decodeIdb1Save, getSavePath } from './decodeIdb1'
+import {
+  decodeIdb1Save,
+  decodeIdb1SaveRoot,
+  getSavePath,
+} from './decodeIdb1'
 
 const fixtureDirectory = new URL('../../test/fixtures/', import.meta.url)
 
@@ -39,6 +43,17 @@ describe('IDB1 Odin compatibility decoder', () => {
       'dysonVerseSaveData.dysonVerseInfinityData.researchLevelsById',
     ) as Record<string, unknown>
     expect(researchLevels['research.money_multiplier']).toBe(29)
+  })
+
+  test('unwraps the Odin document before repository migration', () => {
+    const root = decodeIdb1SaveRoot(
+      loadFixture('schema-08-canonical-idb1-main-save.txt'),
+    )
+
+    expect(getSavePath(root, 'saveVersion')).toBe(8)
+    expect(getSavePath(root, 'dateStarted')).toBe('02/01/2026 01:56:16')
+    expect(getSavePath(root, 'root')).toBeUndefined()
+    expect(getSavePath(root, 'binaryBytes')).toBeUndefined()
   })
 
   test('allocates only the advertised output for a normal compressed save', () => {

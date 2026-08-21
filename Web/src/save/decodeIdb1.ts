@@ -104,6 +104,18 @@ export function decodeIdb1Save(
   }
 }
 
+/**
+ * Decodes the canonical Unity payload to the player save graph consumed by
+ * migration. The surrounding Odin document contains decoder diagnostics and
+ * type metadata; it is not itself game state.
+ */
+export function decodeIdb1SaveRoot(
+  text: string,
+  limits: Readonly<SaveImportLimits> = DEFAULT_SAVE_IMPORT_LIMITS,
+): unknown {
+  return decodeIdb1Save(text, limits).root
+}
+
 export function assertSuppliedSaveTextLimit(
   text: string,
   limits: Readonly<SaveImportLimits> = DEFAULT_SAVE_IMPORT_LIMITS,

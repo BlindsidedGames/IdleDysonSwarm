@@ -77,7 +77,7 @@ import { IndexedDbSaveStorageAdapter } from '../../platform/indexedDbSaveStorage
 import {
   PeriodicCheckpointScheduler,
 } from '../../platform/periodicCheckpoint'
-import { decodeIdb1Save } from '../../save/decodeIdb1'
+import { decodeIdb1SaveRoot } from '../../save/decodeIdb1'
 import { prepareImportedSaveText } from '../../save/import'
 import { serializeWebSave } from '../../save/serialization'
 import type {
@@ -1305,7 +1305,7 @@ class BrowserRuntimeFoundation implements BrowserUiRuntimeFoundation {
     const repository = new PortableSaveRepository(
       storage,
       this.saveRepositoryPaths,
-      decodeIdb1Save,
+      decodeIdb1SaveRoot,
       {
         allowCanonicalPlayerWrites:
           this.options.allowCanonicalPlayerWrites === true,
