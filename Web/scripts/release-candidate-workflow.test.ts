@@ -27,6 +27,10 @@ const verificationWorkflowPath = resolve(
   repositoryRoot,
   '.github/workflows/verify-web-native.yml',
 )
+const promotionWorkflowPath = resolve(
+  repositoryRoot,
+  '.github/workflows/promote-web-pwa.yml',
+)
 
 describe('protected native release-candidate workflow', () => {
   it('is manual-only and defaults to package-only behavior', async () => {
@@ -83,6 +87,25 @@ describe('protected native release-candidate workflow', () => {
     expect(verificationSource).toContain('chmod +x gradlew')
     expect(releaseSource).not.toContain('mapfile')
     expect(releaseSource).toContain('while IFS= read -r artifact; do')
+  })
+
+  it('hydrates Git LFS source masters before running integrity tests', async () => {
+    const [release, verification, promotion] = await Promise.all([
+      loadWorkflow(),
+      loadWorkflowFrom(verificationWorkflowPath),
+      loadWorkflowFrom(promotionWorkflowPath),
+    ])
+
+    for (const job of [
+      release.jobs.validate,
+      verification.jobs.verify,
+      promotion.jobs['website-pull-request'],
+    ]) {
+      const checkout = job?.steps.find((step) =>
+        String(step.uses).startsWith('actions/checkout@'),
+      )
+      expect(checkout?.with).toMatchObject({ lfs: true })
+    }
   })
 
   it('keeps package jobs credential-free and protects every authority job', async () => {
@@ -199,5 +222,9 @@ describe('protected native release-candidate workflow', () => {
 })
 
 async function loadWorkflow(): Promise<ReleaseWorkflow> {
-  return parse(await readFile(workflowPath, 'utf8')) as ReleaseWorkflow
+  return loadWorkflowFrom(workflowPath)
+}
+
+async function loadWorkflowFrom(path: string): Promise<ReleaseWorkflow> {
+  return parse(await readFile(path, 'utf8')) as ReleaseWorkflow
 }

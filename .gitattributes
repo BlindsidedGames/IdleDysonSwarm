@@ -1,2 +1,5 @@
 # Auto detect text files and perform LF normalization
 * text=auto
+
+# Preserve the archival soundtrack master without bloating future Git objects.
+Web/source-assets/audio/IDS-master.wav filter=lfs diff=lfs merge=lfs -text
