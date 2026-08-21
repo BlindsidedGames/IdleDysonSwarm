@@ -2785,6 +2785,12 @@
       "value": "Cancel simulation"
     }
   ],
+  "offline-time.cancel-confirmation": [
+    {
+      "type": 0,
+      "value": "Cancel"
+    }
+  ],
   "offline-time.cancelling": [
     {
       "type": 0,

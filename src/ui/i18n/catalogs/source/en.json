@@ -1199,6 +1199,10 @@
     "defaultMessage": "Cancel simulation",
     "description": "Cancels the active Stored Time simulation without charging its bank."
   },
+  "offline-time.cancel-confirmation": {
+    "defaultMessage": "Cancel",
+    "description": "Disarms a pending Stored Time spend confirmation."
+  },
   "offline-time.cancelling": {
     "defaultMessage": "Cancelling safely…",
     "description": "Status while a Stored Time worker is discarding its candidate."

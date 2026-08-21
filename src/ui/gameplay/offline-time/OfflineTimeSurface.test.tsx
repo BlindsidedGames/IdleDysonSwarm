@@ -14,6 +14,7 @@ import enCatalog from '../../i18n/catalogs/compiled/en.json'
 import type { SharedMessageCatalog } from '../../i18n/catalogs/types'
 import { PresentationIntlProvider } from '../../i18n/PresentationIntlProvider'
 import type { UiRuntimePlayerCommandResult } from '../../runtime'
+import type { StoredTimeJobStatus } from '../../../workers/storedTime/storedTimeProtocol'
 import {
   OfflineTimeSurface,
   type OfflineTimeSurfaceProps,
@@ -134,6 +135,7 @@ describe('OfflineTimeSurface', () => {
       initialDraft: {
         selectedSeconds: 600,
         repeatSeconds: null,
+        armed: false,
       },
       onDraftChange,
     })
@@ -147,7 +149,26 @@ describe('OfflineTimeSurface', () => {
     expect(onDraftChange).toHaveBeenLastCalledWith({
       selectedSeconds: 3_600,
       repeatSeconds: null,
+      armed: false,
     })
+  })
+
+  test('shows an adjacent Cancel action that only disarms confirmation', async () => {
+    const user = userEvent.setup()
+    const dispatchPlayer = vi.fn()
+    renderSurface({ dispatchPlayer })
+
+    await user.click(screen.getByRole('button', { name: 'Spend 1m 0s' }))
+    const confirm = screen.getByRole('button', { name: 'Tap again to confirm' })
+    const cancel = screen.getByRole('button', { name: 'Cancel' })
+    expect(confirm.parentElement).toBe(cancel.parentElement)
+    expect(Array.from(confirm.parentElement!.children)).toEqual([confirm, cancel])
+
+    await user.click(cancel)
+    expect(screen.queryByRole('button', { name: 'Tap again to confirm' }))
+      .not.toBeInTheDocument()
+    expect(screen.getByRole('button', { name: 'Spend 1m 0s' })).toBeVisible()
+    expect(dispatchPlayer).not.toHaveBeenCalled()
   })
 
   test('admits only one spend when confirmation is tapped rapidly', async () => {
@@ -197,8 +218,7 @@ describe('OfflineTimeSurface', () => {
   test('shows worker progress and cancels without issuing another command', async () => {
     const user = userEvent.setup()
     const cancelJob = vi.fn()
-    renderSurface({
-      jobStatus: {
+    const job = createStoredTimeControls({
         kind: 'running',
         jobId: 'job-1',
         requestedSeconds: 600,
@@ -207,8 +227,12 @@ describe('OfflineTimeSurface', () => {
         elapsedMilliseconds: 1_000,
         estimatedRemainingMilliseconds: 3_000,
         maximumChunkMilliseconds: 12,
+    })
+    renderSurface({
+      storedTime: {
+        ...job.controls,
+        cancel: cancelJob,
       },
-      cancelJob,
     })
 
     expect(screen.getByRole('progressbar', {
@@ -217,6 +241,71 @@ describe('OfflineTimeSurface', () => {
     expect(screen.getByText('25% complete · about 3s remaining')).toBeVisible()
     await user.click(screen.getByRole('button', { name: 'Cancel simulation' }))
     expect(cancelJob).toHaveBeenCalledOnce()
+  })
+
+  test.each(['running', 'cancelling'] as const)(
+    'disables every conflicting control while a job is %s',
+    (kind) => {
+      const job = createStoredTimeControls({
+        kind,
+        jobId: 'original-job',
+        requestedSeconds: 600,
+        computedSeconds: 150,
+        fraction: 0.25,
+        elapsedMilliseconds: 1_000,
+        estimatedRemainingMilliseconds: 3_000,
+        maximumChunkMilliseconds: 12,
+      })
+      renderSurface({
+        storedTime: job.controls,
+        initialDraft: kind === 'cancelling'
+          ? { selectedSeconds: 600, repeatSeconds: 600, armed: false }
+          : undefined,
+      })
+
+      expect(screen.getByRole('slider', { name: 'Spend Offline Time' }))
+        .toBeDisabled()
+      for (const name of ['1 minute', '10 minutes', '1 hour', 'All']) {
+        expect(screen.getByRole('button', { name })).toBeDisabled()
+      }
+      expect(screen.getByRole('button', {
+        name: kind === 'cancelling'
+          ? 'Spend Again: 10m 0s'
+          : 'Spend 1m 0s',
+      }))
+        .toBeDisabled()
+      expect(screen.getByRole('button', { name: 'Double Storage' }))
+        .toBeDisabled()
+    },
+  )
+
+  test('confirmation Cancel disarms without cancelling a programmatic active job', async () => {
+    const user = userEvent.setup()
+    const job = createStoredTimeControls({
+      kind: 'running',
+      jobId: 'programmatic-job',
+      requestedSeconds: 600,
+      computedSeconds: 150,
+      fraction: 0.25,
+      elapsedMilliseconds: 1_000,
+      estimatedRemainingMilliseconds: 3_000,
+      maximumChunkMilliseconds: 12,
+    })
+    renderSurface({
+      storedTime: job.controls,
+      initialDraft: {
+        selectedSeconds: 600,
+        repeatSeconds: null,
+        armed: true,
+      },
+    })
+
+    await user.click(screen.getByRole('button', { name: 'Cancel' }))
+    expect(job.controls.cancel).not.toHaveBeenCalled()
+    expect(screen.getByRole('button', { name: 'Cancel simulation' }))
+      .toBeVisible()
+    expect(screen.queryByRole('button', { name: 'Cancel' }))
+      .not.toBeInTheDocument()
   })
 
   test('has no serious or critical accessibility violations', async () => {
@@ -259,4 +348,18 @@ function renderSurface(
       <OfflineTimeSurface {...props} />
     </PresentationIntlProvider>,
   )
+}
+
+function createStoredTimeControls(initial: StoredTimeJobStatus) {
+  const listeners = new Set<() => void>()
+  return {
+    controls: {
+      status: () => initial,
+      subscribe(listener: () => void) {
+        listeners.add(listener)
+        return () => listeners.delete(listener)
+      },
+      cancel: vi.fn(),
+    },
+  }
 }
