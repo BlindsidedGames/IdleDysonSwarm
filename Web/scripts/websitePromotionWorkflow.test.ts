@@ -41,7 +41,7 @@ describe('website promotion workflow', () => {
       (step) => step.name === 'Retain the pinned promotion package',
     )
     expect(upload).toMatchObject({
-      uses: 'actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02',
+      uses: 'actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a',
       with: {
         path: '${{ steps.package.outputs.path }}',
         'if-no-files-found': 'error',
