@@ -37,12 +37,12 @@ import {
 } from '../../i18n/localeRegistry'
 import {
   useBrowserRuntimeSnapshot,
-  useBrowserStoredTimeJob,
   type BrowserUiRuntimeFoundation,
   type UiRuntimeDevelopmentControls,
   type UiRuntimeImportPreviewResult,
   type UiRuntimeImportResult,
   type UiRuntimeSuppliedFile,
+  type UiRuntimeStoredTimeControls,
 } from '../../runtime'
 import {
   reportDevelopmentTelemetry,
@@ -78,7 +78,6 @@ import type { AvocatoMeditationPlacement } from '../quantum/meditationTargets'
 import type { QuantumPurchaseQuantity } from '../quantum/quantumPurchaseQuantities'
 import type { ReleasePlatformServices } from '../../../platform/releaseFoundation'
 import type { GameAudioService } from '../../../audio'
-import type { StoredTimeJobStatus } from '../../../workers/storedTime/storedTimeProtocol'
 
 const BasicFacilityRegion = lazy(async () => {
   const module = await import('../facilities')
@@ -147,10 +146,6 @@ const WikiSurface = lazy(async () => {
 
 export const SWARM_VISUALIZATION_STORAGE_KEY =
   'idle-dyson-swarm.show-visualization'
-
-const IDLE_STORED_TIME_JOB: StoredTimeJobStatus = Object.freeze({
-  kind: 'idle',
-})
 
 const SettingsSurface = lazy(async () => {
   const module = await import('../settings')
@@ -242,7 +237,6 @@ function UnprobedReadyDysonRuntimeHost({
     [runtime],
   )
   const snapshot = useBrowserRuntimeSnapshot(runtime)
-  const storedTimeJob = useBrowserStoredTimeJob(runtime)
   const telemetrySnapshotRef = useRef(snapshot)
   telemetrySnapshotRef.current = snapshot
   useEffect(
@@ -303,8 +297,7 @@ function UnprobedReadyDysonRuntimeHost({
       releasePlatformServices={releasePlatformServices}
       localDeveloperOptionsPurchased={localDeveloperOptionsPurchased}
       audio={audio}
-      storedTimeJob={storedTimeJob}
-      cancelStoredTimeJob={() => runtime.storedTime?.cancel()}
+      storedTime={runtime.storedTime}
     />
   )
 }
@@ -339,7 +332,6 @@ export function ProbedReadyDysonRuntimeHost({
   )
   const selectionStartedAt = beginFirstSliceSnapshotSelection()
   const snapshot = useBrowserRuntimeSnapshot(runtime)
-  const storedTimeJob = useBrowserStoredTimeJob(runtime)
   const dispatchPlayer = useCallback(
     (command: CanonicalPlayerCommand) =>
       runtime.dispatchPlayer(command),
@@ -399,8 +391,7 @@ export function ProbedReadyDysonRuntimeHost({
       releasePlatformServices={releasePlatformServices}
       localDeveloperOptionsPurchased={localDeveloperOptionsPurchased}
       audio={audio}
-      storedTimeJob={storedTimeJob}
-      cancelStoredTimeJob={() => runtime.storedTime?.cancel()}
+      storedTime={runtime.storedTime}
     />
   )
 }
@@ -437,8 +428,7 @@ export interface ReadyDysonSliceProps {
   readonly synchronizeHostEntitlements?: () => Promise<boolean>
   readonly releasePlatformServices?: Readonly<ReleasePlatformServices>
   readonly localDeveloperOptionsPurchased?: boolean
-  readonly storedTimeJob?: StoredTimeJobStatus
-  readonly cancelStoredTimeJob?: () => void
+  readonly storedTime?: UiRuntimeStoredTimeControls
   readonly audio?: GameAudioService
 }
 
@@ -517,8 +507,7 @@ export function ReadyDysonSlice({
   synchronizeHostEntitlements,
   releasePlatformServices,
   localDeveloperOptionsPurchased,
-  storedTimeJob = IDLE_STORED_TIME_JOB,
-  cancelStoredTimeJob = () => undefined,
+  storedTime,
   audio,
 }: ReadyDysonSliceProps) {
   const intl = useIntl()
@@ -540,6 +529,7 @@ export function ReadyDysonSlice({
   const offlineTimeDraftRef = useRef<OfflineTimeSurfaceDraft>({
     selectedSeconds: null,
     repeatSeconds: null,
+    armed: false,
   })
   const wikiTopicRef = useRef<WikiCategoryId>('bots')
   const rememberDebugDraft = useCallback(
@@ -1515,8 +1505,7 @@ export function ReadyDysonSlice({
                                             ].routeAvailable,
                                         }}
                                         dispatchPlayer={dispatchPlayer}
-                                        jobStatus={storedTimeJob}
-                                        cancelJob={cancelStoredTimeJob}
+                                        storedTime={storedTime}
                                         initialDraft={
                                           offlineTimeDraftRef.current
                                         }

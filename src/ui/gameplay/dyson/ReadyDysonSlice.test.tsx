@@ -34,6 +34,7 @@ import { PresentationIntlProvider } from '../../i18n/PresentationIntlProvider'
 import type {
   BrowserUiRuntimeFoundation,
   UiRuntimePlayerCommandResult,
+  UiRuntimeStoredTimeControls,
 } from '../../runtime'
 import {
   createBrowserDevelopmentReleasePlatformServices,
@@ -867,12 +868,26 @@ describe('ReadyDysonSlice', () => {
     },
   )
 
-  test('preserves the Offline Time selection across route switches', async () => {
+  test('preserves the Offline Time selected, repeat, and armed draft across route switches', async () => {
+    const dispatchPlayer = vi.fn(async (command: CanonicalPlayerCommand) =>
+      command.kind === 'time.request-stored-time-spend'
+        ? {
+            status: 'accepted' as const,
+            kind: 'stored-time' as const,
+            admittedSeconds: command.requestedSeconds,
+            consumedSeconds: command.requestedSeconds,
+            remainingSeconds: 0,
+            durableRevision: 2,
+            stateRevision: 2,
+            activationRevision: { session: 1, state: 2 },
+          }
+        : acceptedDispatch(command),
+    )
     const renderAtRoute = (route: 'bots' | 'offline-time') => provider(
       <ReadyDysonSlice
         snapshot={snapshot()}
         locale="en"
-        dispatchPlayer={acceptedDispatch}
+        dispatchPlayer={dispatchPlayer}
         route={route}
       />,
     )
@@ -884,6 +899,9 @@ describe('ReadyDysonSlice', () => {
     })
     await userEvent.setup().click(
       screen.getByRole('button', { name: '10 minutes' }),
+    )
+    await userEvent.setup().click(
+      screen.getByRole('button', { name: 'Spend 10m 0s' }),
     )
 
     view.rerender(renderAtRoute('bots'))
@@ -897,6 +915,72 @@ describe('ReadyDysonSlice', () => {
     })
     expect(screen.getByRole('button', { name: '10 minutes' }))
       .toHaveAttribute('aria-pressed', 'true')
+    expect(screen.getByRole('button', { name: 'Tap again to confirm' }))
+      .toBeVisible()
+
+    await userEvent.setup().click(
+      screen.getByRole('button', { name: 'Tap again to confirm' }),
+    )
+    await screen.findByRole('button', { name: 'Spend Again: 10m 0s' })
+
+    view.rerender(renderAtRoute('bots'))
+    view.rerender(renderAtRoute('offline-time'))
+    expect(await screen.findByRole('button', { name: 'Spend Again: 10m 0s' }))
+      .toBeVisible()
+  })
+
+  test('subscribes to Stored Time progress only on its route and restores the active job on remount', async () => {
+    let status = {
+      kind: 'running' as const,
+      jobId: 'original-job',
+      requestedSeconds: 600,
+      computedSeconds: 150,
+      fraction: 0.25,
+      elapsedMilliseconds: 1_000,
+      estimatedRemainingMilliseconds: 3_000,
+      maximumChunkMilliseconds: 12,
+    }
+    const listeners = new Set<() => void>()
+    const storedTime: UiRuntimeStoredTimeControls = {
+      status: () => status,
+      subscribe(listener) {
+        listeners.add(listener)
+        return () => listeners.delete(listener)
+      },
+      cancel: vi.fn(),
+    }
+    const renderAtRoute = (route: 'bots' | 'offline-time') => provider(
+      <ReadyDysonSlice
+        snapshot={snapshot()}
+        locale="en"
+        dispatchPlayer={acceptedDispatch}
+        route={route}
+        storedTime={storedTime}
+      />,
+    )
+    const view = render(renderAtRoute('offline-time'))
+
+    const progress = await screen.findByRole('progressbar', {
+      name: 'Offline Time simulation progress',
+    })
+    expect(progress).toHaveAttribute('aria-valuenow', '25')
+    expect(progress.closest('.offline-time-job'))
+      .toHaveAttribute('data-job-id', 'original-job')
+    expect(listeners.size).toBe(1)
+
+    view.rerender(renderAtRoute('bots'))
+    await waitFor(() => expect(listeners.size).toBe(0))
+    status = { ...status, computedSeconds: 300, fraction: 0.5 }
+    for (const listener of listeners) listener()
+
+    view.rerender(renderAtRoute('offline-time'))
+    const restored = await screen.findByRole('progressbar', {
+      name: 'Offline Time simulation progress',
+    })
+    expect(restored).toHaveAttribute('aria-valuenow', '50')
+    expect(restored.closest('.offline-time-job'))
+      .toHaveAttribute('data-job-id', 'original-job')
+    expect(listeners.size).toBe(1)
   })
 
   test.each([

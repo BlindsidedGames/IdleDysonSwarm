@@ -13,8 +13,8 @@ Status conventions:
 
 ## Current cross-platform work
 
-- [ ] Keep the Stored/Offline Time progress indicator visible when additional
-  stored time is applied while a run is already active.
+- [x] Keep the Stored/Offline Time progress indicator visible and preserve the
+  original job when an additional spend is requested while a run is active.
 - [ ] Define and implement purchase behavior when cash or science reaches the
   numeric ceiling (historically reported around `1e308`) so valid purchases do
   not become permanently unavailable.

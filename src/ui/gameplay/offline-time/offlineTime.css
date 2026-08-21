@@ -160,6 +160,16 @@
   font-weight: var(--font-weight-bold);
 }
 
+.offline-time-spend-actions {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 0.45rem;
+}
+
+.offline-time-spend-actions > .ui-button {
+  min-block-size: var(--target-minimum);
+}
+
 .offline-time-capacity-upgrade .ui-button:disabled,
 .offline-time-spend-button.ui-button:disabled {
   background: #3e2f66;

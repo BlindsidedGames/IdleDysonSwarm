@@ -139,6 +139,76 @@ describe('Stored Time job application integration', () => {
     expect(after.state.gameState.timeline.storedTimeAvailableSeconds).toBe(10)
   })
 
+  test('rejects a concurrent request before replacing or cancelling the active job', async () => {
+    const repository = new MemoryRepository()
+    let finish: (() => void) | undefined
+    const runner: StoredTimeJobRunner = {
+      run: vi.fn((request, options) => {
+        const progress = {
+          jobId: request.jobId,
+          requestedSeconds: request.requestedSeconds,
+          computedSeconds: 1,
+          fraction: 0.5,
+          elapsedMilliseconds: 10,
+          estimatedRemainingMilliseconds: 10,
+          maximumChunkMilliseconds: 5,
+        }
+        options?.onProgress?.(progress)
+        return new Promise((resolve) => {
+          finish = () => resolve({
+            type: 'cancelled',
+            protocolVersion: 1,
+            jobId: request.jobId,
+            progress,
+          })
+        })
+      }),
+      dispose: vi.fn(),
+    }
+    const application = createApplication(repository, runner)
+    await application.start()
+    await installStoredBank(application, 10)
+    const snapshot = application.snapshot()
+    expect(snapshot.phase).toBe('ready')
+    if (snapshot.phase !== 'ready') return
+    const envelope = {
+      sessionRevision: snapshot.revision.session,
+      expectedStateRevision: snapshot.revision.state,
+    }
+
+    const originalPromise = application.commitStoredTime(envelope, 2)
+    const originalStatus = application.storedTimeJobStatus()
+    expect(originalStatus).toMatchObject({
+      kind: 'running',
+      computedSeconds: 1,
+      fraction: 0.5,
+    })
+
+    await expect(application.commitStoredTime(envelope, 3)).resolves
+      .toMatchObject({
+        committed: false,
+        code: 'CANONICAL-STORED-TIME-JOB-ACTIVE',
+        consumedSeconds: 0,
+        remainingSeconds: 3,
+      })
+    expect(runner.run).toHaveBeenCalledOnce()
+    expect(application.storedTimeJobStatus()).toBe(originalStatus)
+
+    application.cancelStoredTimeJob()
+    expect(application.storedTimeJobStatus()).toMatchObject({
+      kind: 'cancelling',
+      jobId: originalStatus.kind === 'idle' ? undefined : originalStatus.jobId,
+      computedSeconds: 1,
+      fraction: 0.5,
+    })
+    finish?.()
+    await expect(originalPromise).resolves.toMatchObject({
+      committed: false,
+      code: 'CANONICAL-STORED-TIME-CANCELLED',
+    })
+    expect(application.storedTimeJobStatus()).toEqual({ kind: 'idle' })
+  })
+
   test('keeps the pre-job state when persistence rejects the candidate', async () => {
     const repository = new MemoryRepository()
     const application = createApplication(repository, simulationRunner())

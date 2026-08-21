@@ -92,6 +92,11 @@ export const offlineTimeMessages = defineMessages({
     defaultMessage: 'Tap again to confirm',
     description: 'Unity-style confirmation text before spending stored Offline Time.',
   },
+  cancelConfirmation: {
+    id: 'offline-time.cancel-confirmation',
+    defaultMessage: 'Cancel',
+    description: 'Disarms a pending Stored Time spend confirmation.',
+  },
   processing: {
     id: 'offline-time.processing',
     defaultMessage: 'Simulating…',

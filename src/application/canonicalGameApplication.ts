@@ -228,6 +228,7 @@ export class CanonicalGameApplicationFacade {
   private storedTimeJobStatusValue: StoredTimeJobStatus = Object.freeze({
     kind: 'idle',
   })
+  private activeStoredTimeJobId: string | null = null
   private storedTimeCancellationRequested = false
   private cachedFrontendSnapshot:
     | DeepReadonly<FrontendApplicationSnapshot>
@@ -512,6 +513,14 @@ export class CanonicalGameApplicationFacade {
     cancelRequested?: () => boolean,
   ): Promise<CanonicalStoredTimeCommitResult> {
     const before = this.snapshot()
+    if (this.activeStoredTimeJobId !== null) {
+      return rejectedStoredTimeCommit(
+        before,
+        seconds,
+        'CANONICAL-STORED-TIME-JOB-ACTIVE',
+        'A Stored Time job is already active.',
+      )
+    }
     if (before.phase !== 'ready') {
       return rejectedStoredTimeCommit(
         before,
@@ -531,6 +540,7 @@ export class CanonicalGameApplicationFacade {
     }
 
     const jobId = createStoredTimeJobId()
+    this.activeStoredTimeJobId = jobId
     this.storedTimeCancellationRequested = false
     this.publishStoredTimeProgress({
       jobId,
@@ -641,8 +651,11 @@ export class CanonicalGameApplicationFacade {
         error instanceof Error ? error.message : String(error),
       )
     } finally {
-      this.storedTimeCancellationRequested = false
-      this.publishStoredTimeJobStatus({ kind: 'idle' })
+      if (this.activeStoredTimeJobId === jobId) {
+        this.activeStoredTimeJobId = null
+        this.storedTimeCancellationRequested = false
+        this.publishStoredTimeJobStatus({ kind: 'idle' })
+      }
     }
   }
 
@@ -706,6 +719,7 @@ export class CanonicalGameApplicationFacade {
   }
 
   private publishStoredTimeProgress(progress: StoredTimeJobProgress): void {
+    if (progress.jobId !== this.activeStoredTimeJobId) return
     const current = this.storedTimeJobStatusValue
     const monotonicProgress =
       current.kind !== 'idle' &&

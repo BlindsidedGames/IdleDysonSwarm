@@ -5185,6 +5185,20 @@
       "value": "]"
     }
   ],
+  "offline-time.cancel-confirmation": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Ƈȧȧƞƈḗḗŀ"
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
   "offline-time.cancelling": [
     {
       "type": 0,

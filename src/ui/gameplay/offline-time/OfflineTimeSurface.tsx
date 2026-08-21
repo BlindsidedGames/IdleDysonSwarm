@@ -1,4 +1,10 @@
-import { useEffect, useRef, useState } from 'react'
+import {
+  useCallback,
+  useEffect,
+  useRef,
+  useState,
+  useSyncExternalStore,
+} from 'react'
 import { useIntl } from 'react-intl'
 import type {
   FrontendCanonicalProgression,
@@ -9,7 +15,10 @@ import type { CanonicalPlayerCommand } from '../../../application/canonicalPlaye
 import { Button } from '../../components'
 import { formatGameDuration } from '../../i18n/formatters'
 import type { EnabledLocale } from '../../i18n/localeRegistry'
-import type { UiRuntimePlayerCommandResult } from '../../runtime'
+import type {
+  UiRuntimePlayerCommandResult,
+  UiRuntimeStoredTimeControls,
+} from '../../runtime'
 import { usePrefersReducedMotion } from '../../accessibility/useMediaQuery'
 import { useForwardProgressAnimation } from '../progress/useForwardProgressAnimation'
 import { offlineTimeMessages as messages } from './messages'
@@ -33,6 +42,7 @@ export interface OfflineTimeCommandAvailability {
 export interface OfflineTimeSurfaceDraft {
   readonly selectedSeconds: number | null
   readonly repeatSeconds: number | null
+  readonly armed: boolean
 }
 
 export interface OfflineTimeSurfaceProps {
@@ -49,8 +59,7 @@ export interface OfflineTimeSurfaceProps {
   readonly dispatchPlayer: (
     command: OfflineTimeCommand,
   ) => Promise<UiRuntimePlayerCommandResult>
-  readonly jobStatus?: StoredTimeJobStatus
-  readonly cancelJob?: () => void
+  readonly storedTime?: UiRuntimeStoredTimeControls
   readonly initialDraft?: Readonly<OfflineTimeSurfaceDraft>
   readonly onDraftChange?: (
     draft: Readonly<OfflineTimeSurfaceDraft>,
@@ -62,6 +71,17 @@ const QUICK_AMOUNTS = Object.freeze([
   { seconds: 600, message: messages.tenMinutes },
   { seconds: 3_600, message: messages.oneHour },
 ] as const)
+
+const IDLE_STORED_TIME_JOB: StoredTimeJobStatus = Object.freeze({
+  kind: 'idle',
+})
+
+const INACTIVE_STORED_TIME_CONTROLS: UiRuntimeStoredTimeControls =
+  Object.freeze({
+    status: () => IDLE_STORED_TIME_JOB,
+    subscribe: () => () => undefined,
+    cancel: () => undefined,
+  })
 
 /**
  * Presents Unity's consumable Offline Time bank. The canonical runtime owns
@@ -76,12 +96,21 @@ export function OfflineTimeSurface({
   storedTimeCheater,
   commandAvailability,
   dispatchPlayer,
-  jobStatus = { kind: 'idle' },
-  cancelJob = () => undefined,
+  storedTime = INACTIVE_STORED_TIME_CONTROLS,
   initialDraft,
   onDraftChange,
 }: OfflineTimeSurfaceProps) {
   const intl = useIntl()
+  const subscribeToJob = useCallback(
+    (listener: () => void) => storedTime.subscribe(listener),
+    [storedTime],
+  )
+  const readJobStatus = useCallback(() => storedTime.status(), [storedTime])
+  const jobStatus = useSyncExternalStore(
+    subscribeToJob,
+    readJobStatus,
+    readJobStatus,
+  )
   const reducedMotion = usePrefersReducedMotion()
   const progressFillRef = useRef<HTMLSpanElement>(null)
   const bankSeconds = Math.max(
@@ -111,7 +140,7 @@ export function OfflineTimeSurface({
       bankSeconds,
     ),
   )
-  const [armed, setArmed] = useState(false)
+  const [armed, setArmed] = useState(initialDraft?.armed ?? false)
   const [repeatSeconds, setRepeatSeconds] = useState<number | null>(() =>
     validRepeatSelection(initialDraft?.repeatSeconds, bankSeconds),
   )
@@ -132,18 +161,26 @@ export function OfflineTimeSurface({
             Math.min(current || defaultSelection(bankSeconds), bankSeconds),
           ),
     )
-    setArmed(false)
   }, [bankSeconds])
+
+  const publishDraft = (
+    nextSelectedSeconds: number,
+    nextRepeatSeconds: number | null,
+    nextArmed: boolean,
+  ): void => {
+    onDraftChange?.({
+      selectedSeconds: nextSelectedSeconds,
+      repeatSeconds: nextRepeatSeconds,
+      armed: nextArmed,
+    })
+  }
 
   const select = (seconds: number): void => {
     const nextSelectedSeconds = clampSelection(seconds, bankSeconds)
     setSelectedSeconds(nextSelectedSeconds)
     setArmed(false)
     setRepeatSeconds(null)
-    onDraftChange?.({
-      selectedSeconds: nextSelectedSeconds,
-      repeatSeconds: null,
-    })
+    publishDraft(nextSelectedSeconds, null, false)
     setFeedback(null)
   }
 
@@ -151,6 +188,7 @@ export function OfflineTimeSurface({
     repeatSeconds !== null &&
     repeatSeconds > 0 &&
     repeatSeconds <= bankSeconds
+  const jobActive = jobStatus.kind !== 'idle'
 
   const spend = async (): Promise<void> => {
     const requestedSeconds =
@@ -159,6 +197,7 @@ export function OfflineTimeSurface({
         : selectedSeconds
     if (
       pendingRef.current ||
+      jobActive ||
       storedTimeCheater ||
       !commandAvailability.requestStoredTimeSpend ||
       requestedSeconds <= 0
@@ -167,6 +206,7 @@ export function OfflineTimeSurface({
     }
     if (!armed && !repeatAvailable) {
       setArmed(true)
+      publishDraft(selectedSeconds, repeatSeconds, true)
       setFeedback(null)
       return
     }
@@ -174,6 +214,7 @@ export function OfflineTimeSurface({
     pendingRef.current = true
     setPendingAction('spend')
     setArmed(false)
+    publishDraft(selectedSeconds, repeatSeconds, false)
     setFeedback(null)
     try {
       const result = await dispatchPlayer({
@@ -186,10 +227,7 @@ export function OfflineTimeSurface({
       ) {
         setFeedback({ kind: 'success', seconds: result.consumedSeconds })
         setRepeatSeconds(requestedSeconds)
-        onDraftChange?.({
-          selectedSeconds,
-          repeatSeconds: requestedSeconds,
-        })
+        publishDraft(selectedSeconds, requestedSeconds, false)
       } else {
         setFeedback({ kind: 'failure' })
       }
@@ -204,6 +242,7 @@ export function OfflineTimeSurface({
   const upgradeCapacity = async (): Promise<void> => {
     if (
       pendingRef.current ||
+      jobActive ||
       storedTimeCheater ||
       !commandAvailability.upgradeStoredCapacity ||
       !previews.storedCapacity.eligible
@@ -230,6 +269,7 @@ export function OfflineTimeSurface({
 
   const spendDisabled =
     pendingAction !== null ||
+    jobActive ||
     storedTimeCheater ||
     !commandAvailability.requestStoredTimeSpend ||
     selectedSeconds <= 0
@@ -296,6 +336,7 @@ export function OfflineTimeSurface({
                 state={pendingAction === 'upgrade' ? 'pending' : 'idle'}
                 disabled={
                   pendingAction !== null ||
+                  jobActive ||
                   storedTimeCheater ||
                   !commandAvailability.upgradeStoredCapacity
                 }
@@ -329,7 +370,7 @@ export function OfflineTimeSurface({
             max={bankSeconds}
             step={bankSeconds < 1 ? 'any' : 1}
             value={Math.min(selectedSeconds, bankSeconds)}
-            disabled={bankSeconds <= 0 || pendingAction !== null || storedTimeCheater}
+            disabled={bankSeconds <= 0 || pendingAction !== null || jobActive || storedTimeCheater}
             aria-label={intl.formatMessage(messages.spendHeading)}
             aria-valuetext={formatGameDuration(locale, selectedSeconds)}
             onChange={(event) => select(event.currentTarget.valueAsNumber)}
@@ -343,7 +384,7 @@ export function OfflineTimeSurface({
               <button
                 key={seconds}
                 type="button"
-                disabled={bankSeconds < seconds || pendingAction !== null || storedTimeCheater}
+                disabled={bankSeconds < seconds || pendingAction !== null || jobActive || storedTimeCheater}
                 aria-pressed={selectedSeconds === seconds}
                 onClick={() => select(seconds)}
               >
@@ -352,35 +393,52 @@ export function OfflineTimeSurface({
             ))}
             <button
               type="button"
-              disabled={bankSeconds <= 0 || pendingAction !== null || storedTimeCheater}
+              disabled={bankSeconds <= 0 || pendingAction !== null || jobActive || storedTimeCheater}
               aria-pressed={bankSeconds > 0 && selectedSeconds === bankSeconds}
               onClick={() => select(bankSeconds)}
             >
               {intl.formatMessage(messages.all)}
             </button>
           </div>
-          <Button
-            className="offline-time-spend-button"
-            variant="primary"
-            state={pendingAction === 'spend' ? 'pending' : 'idle'}
-            disabled={spendDisabled}
-            onClick={() => void spend()}
-          >
-            {pendingAction === 'spend'
-              ? intl.formatMessage(messages.processing)
-              : repeatAvailable
-                ? intl.formatMessage(messages.spendAgain, {
-                    duration: formatGameDuration(locale, repeatSeconds),
-                  })
-                : armed
-                ? intl.formatMessage(messages.confirmSpend)
-                : intl.formatMessage(messages.spend, {
-                    duration: formatGameDuration(locale, selectedSeconds),
-                  })}
-          </Button>
+          <div className="offline-time-spend-actions">
+            <Button
+              className="offline-time-spend-button"
+              variant="primary"
+              state={pendingAction === 'spend' ? 'pending' : 'idle'}
+              disabled={spendDisabled}
+              onClick={() => void spend()}
+            >
+              {pendingAction === 'spend'
+                ? intl.formatMessage(messages.processing)
+                : repeatAvailable
+                  ? intl.formatMessage(messages.spendAgain, {
+                      duration: formatGameDuration(locale, repeatSeconds),
+                    })
+                  : armed
+                  ? intl.formatMessage(messages.confirmSpend)
+                  : intl.formatMessage(messages.spend, {
+                      duration: formatGameDuration(locale, selectedSeconds),
+                    })}
+            </Button>
+            {armed ? (
+              <Button
+                variant="secondary"
+                onClick={() => {
+                  setArmed(false)
+                  publishDraft(selectedSeconds, repeatSeconds, false)
+                }}
+              >
+                {intl.formatMessage(messages.cancelConfirmation)}
+              </Button>
+            ) : null}
+          </div>
 
           {jobStatus.kind !== 'idle' ? (
-            <div className="offline-time-job" aria-live="polite">
+            <div
+              className="offline-time-job"
+              aria-live="polite"
+              data-job-id={jobStatus.jobId}
+            >
               <div
                 className="offline-time-job__progress"
                 role="progressbar"
@@ -410,7 +468,7 @@ export function OfflineTimeSurface({
               <Button
                 variant="secondary"
                 disabled={jobStatus.kind === 'cancelling'}
-                onClick={cancelJob}
+                onClick={storedTime.cancel}
               >
                 {intl.formatMessage(messages.cancel)}
               </Button>
