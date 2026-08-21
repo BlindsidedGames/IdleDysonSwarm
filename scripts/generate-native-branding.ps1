@@ -4,8 +4,8 @@ $ErrorActionPreference = 'Stop'
 Add-Type -AssemblyName System.Drawing
 
 $webRoot = Split-Path -Parent $PSScriptRoot
-$gameIconPath = Resolve-Path (Join-Path $webRoot '..\Assets\Sprites\MenuIcons\icons-menu-12_Bots.png')
-$pwaIconPath = Resolve-Path (Join-Path $webRoot 'public\icons\pwa-icon-512.png')
+$appIconPath = Resolve-Path (Join-Path $webRoot 'source-assets\branding\unity-app-icon.png')
+$splashLogoPath = Resolve-Path (Join-Path $webRoot 'src\ui\assets\nav-bots.png')
 $androidResourceRoot = Join-Path $webRoot 'hosts\capacitor\android\app\src\main\res'
 $iosAssetRoot = Join-Path $webRoot 'hosts\capacitor\ios\App\App\Assets.xcassets'
 $themeColor = [System.Drawing.Color]::FromArgb(255, 47, 23, 56)
@@ -64,9 +64,9 @@ foreach ($density in $androidDensities.GetEnumerator()) {
   $directory = Join-Path $androidResourceRoot "mipmap-$($density.Key)"
   $legacySize = $density.Value.Legacy
   $foregroundSize = $density.Value.Foreground
-  Write-ScaledImage $pwaIconPath (Join-Path $directory 'ic_launcher.png') $legacySize $legacySize 1 $false
-  Write-ScaledImage $pwaIconPath (Join-Path $directory 'ic_launcher_round.png') $legacySize $legacySize 1 $false
-  Write-ScaledImage $gameIconPath (Join-Path $directory 'ic_launcher_foreground.png') $foregroundSize $foregroundSize 0.64 $false
+  Write-ScaledImage $appIconPath (Join-Path $directory 'ic_launcher.png') $legacySize $legacySize 1 $false
+  Write-ScaledImage $appIconPath (Join-Path $directory 'ic_launcher_round.png') $legacySize $legacySize 1 $false
+  Write-ScaledImage $appIconPath (Join-Path $directory 'ic_launcher_foreground.png') $foregroundSize $foregroundSize 1 $false
 }
 
 $androidSplashes = @{
@@ -85,10 +85,10 @@ $androidSplashes = @{
 
 foreach ($splash in $androidSplashes.GetEnumerator()) {
   $destination = Join-Path (Join-Path $androidResourceRoot $splash.Key) 'splash.png'
-  Write-ScaledImage $gameIconPath $destination $splash.Value[0] $splash.Value[1] 0.28 $true
+  Write-ScaledImage $splashLogoPath $destination $splash.Value[0] $splash.Value[1] 0.28 $true
 }
 
-Write-ScaledImage $pwaIconPath `
+Write-ScaledImage $appIconPath `
   (Join-Path $iosAssetRoot 'AppIcon.appiconset\AppIcon-512@2x.png') `
   1024 1024 1 $true
 
@@ -97,7 +97,7 @@ foreach ($splashName in @(
   'splash-2732x2732-1.png',
   'splash-2732x2732-2.png'
 )) {
-  Write-ScaledImage $gameIconPath `
+  Write-ScaledImage $splashLogoPath `
     (Join-Path $iosAssetRoot "Splash.imageset\$splashName") `
     2732 2732 0.28 $true
 }

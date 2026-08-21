@@ -3,7 +3,7 @@ param()
 $ErrorActionPreference = 'Stop'
 
 $webRoot = Split-Path -Parent $PSScriptRoot
-$sourcePath = Join-Path $webRoot 'public\icons\pwa-icon.svg'
+$sourcePath = Join-Path $webRoot 'source-assets\branding\unity-app-icon.png'
 $outputDirectory = Join-Path $webRoot 'public\icons'
 $magick = Get-Command magick -ErrorAction Stop
 

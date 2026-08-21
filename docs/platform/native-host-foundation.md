@@ -72,8 +72,10 @@ whenever possible.
 ## Branding
 
 `npm run native:branding:sync` regenerates Capacitor launcher and splash images
-from the approved Idle Dyson Swarm bot/PWA artwork. Electron Builder uses the
-same PWA icon. Re-run the command after intentionally changing the PWA brand.
+from approved Idle Dyson Swarm artwork. Launcher icons for Web, Android, iOS,
+and Electron derive from `source-assets/branding/unity-app-icon.png`, the icon
+used by the archived Unity mobile builds. Re-run the command after intentionally
+changing the application brand.
 
 ## Storage and migration
 

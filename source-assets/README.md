@@ -5,6 +5,10 @@ into the shipped browser bundle unless a build step explicitly consumes them.
 
 - `audio/IDS-master.wav` is the lossless soundtrack master, SHA-256
   `2ab4636ee5970a729ece6106dfbb8b8252ae44a8b1fa89a780f224b4e4296602`.
+- `branding/unity-app-icon.png` is the 1024x1024 application icon assigned to
+  the archived Unity iOS and Android builds. It is the canonical source for
+  current Web, mobile, and desktop launcher icons, SHA-256
+  `47064cffd68541f3e75560352ba6333d7cf849279e7213fb8806a155d3eccfcd`.
 - `achievements/legacy-unity/` preserves 27 unique achievement PNG masters and
   one copy of the historical achievement notes. The SHA-256 of its sorted
   `shasum`-style PNG manifest is
