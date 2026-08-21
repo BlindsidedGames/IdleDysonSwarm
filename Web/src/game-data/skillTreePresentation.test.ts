@@ -1,15 +1,12 @@
 import { createHash } from 'node:crypto'
-import {
-  readFileSync,
-  readdirSync,
-} from 'node:fs'
-import { resolve } from 'node:path'
+import { readFileSync, readdirSync } from 'node:fs'
 import { fileURLToPath } from 'node:url'
 import sharp from 'sharp'
 import { describe, expect, test } from 'vitest'
 import legacyIdMapsJson from './generated/legacy-id-maps.json'
 import runtimeCatalogJson from './generated/runtime-catalog.json'
 import skillTreePresentationJson from './generated/skill-tree-presentation.json'
+import handoffProvenance from './authored/unity-handoff/provenance.json'
 
 interface SkillTreePresentationNode {
   readonly skillId: string
@@ -54,14 +51,11 @@ interface SkillTreePresentationCatalog {
 
 const presentation =
   skillTreePresentationJson as SkillTreePresentationCatalog
-const repositoryRoot = resolve(
-  fileURLToPath(new URL('../../../', import.meta.url)),
-)
 const generatedIconDirectory = fileURLToPath(
   new URL('../ui/assets/skill-icons/', import.meta.url),
 )
 
-describe('Unity skill-tree presentation export', () => {
+describe('Web-owned skill-tree presentation handoff', () => {
   test('covers every canonical skill exactly once', () => {
     expect(presentation.formatVersion).toBe(1)
     expect(presentation.nodeCount).toBe(104)
@@ -120,7 +114,7 @@ describe('Unity skill-tree presentation export', () => {
     }
   })
 
-  test('tracks graph sources and deterministic Web-optimized Unity icons', async () => {
+  test('retains frozen source provenance and complete Web-optimized icons', async () => {
     expect(presentation.sources.graphPrefab.path).toBe(
       'Assets/Prefabs/Panel.prefab',
     )
@@ -134,16 +128,13 @@ describe('Unity skill-tree presentation export', () => {
       'Assets/Data/Skills/*.asset',
     )
 
-    expect(
-      hashNormalizedText(
-        readUnitySource(presentation.sources.graphPrefab.path),
-      ),
-    ).toBe(presentation.sources.graphPrefab.sourceHash)
-    expect(
-      hashNormalizedText(
-        readUnitySource(presentation.sources.nodePrefab.path),
-      ),
-    ).toBe(presentation.sources.nodePrefab.sourceHash)
+    expect(presentation.sources.graphPrefab.sourceHash).toBe(
+      handoffProvenance.historicalSkillSources.graphPrefabSha256,
+    )
+    expect(presentation.sources.nodePrefab).toMatchObject({
+      guid: handoffProvenance.historicalSkillSources.nodePrefabGuid,
+      sourceHash: handoffProvenance.historicalSkillSources.nodePrefabSha256,
+    })
 
     const expectedFileNames = presentation.nodes
       .map((node) => node.icon.fileName)
@@ -152,12 +143,18 @@ describe('Unity skill-tree presentation export', () => {
       .filter((name) => /\.(?:png|webp)$/i.test(name))
       .sort(compareText)
     expect(actualFileNames).toEqual(expectedFileNames)
+    const iconManifest = actualFileNames
+      .map((fileName) => {
+        const hash = createHash('sha256')
+          .update(readFileSync(new URL(`../ui/assets/skill-icons/${fileName}`, import.meta.url)))
+          .digest('hex')
+        return `${hash}  Web/src/ui/assets/skill-icons/${fileName}\n`
+      })
+      .join('')
+    expect(createHash('sha256').update(iconManifest).digest('hex')).toBe(
+      handoffProvenance.skillIcons.sortedSha256ManifestHash,
+    )
 
-    const deterministicSamples = new Set([
-      presentation.nodes.at(0)?.skillId,
-      presentation.nodes.at(Math.floor(presentation.nodes.length / 2))?.skillId,
-      presentation.nodes.at(-1)?.skillId,
-    ])
     for (const node of presentation.nodes) {
       expect(node.icon.fileName).toBe(`${node.skillId}.webp`)
       expect(node.icon.sourcePath).toMatch(
@@ -166,59 +163,20 @@ describe('Unity skill-tree presentation export', () => {
       expect(node.icon.sourceGuid).toMatch(/^[a-f0-9]+$/)
       expect(node.icon.sourceHash).toMatch(/^[a-f0-9]{64}$/)
 
-      const sourceBytes = readFileSync(
-        resolve(
-          repositoryRoot,
-          ...node.icon.sourcePath.split('/'),
+      const metadata = await sharp(
+        fileURLToPath(
+          new URL(`../ui/assets/skill-icons/${node.icon.fileName}`, import.meta.url),
         ),
-      )
-      const generatedBytes = readFileSync(
-        resolve(generatedIconDirectory, node.icon.fileName),
-      )
-      const metadata = await sharp(generatedBytes).metadata()
+      ).metadata()
       expect(metadata).toMatchObject({
         format: 'webp',
         width: 256,
         height: 256,
         hasAlpha: true,
       })
-      if (deterministicSamples.has(node.skillId)) {
-        const expectedBytes = await sharp(sourceBytes)
-          .resize(256, 256, {
-            fit: 'inside',
-            kernel: 'lanczos3',
-            withoutEnlargement: true,
-          })
-          .webp({
-            alphaQuality: 100,
-            effort: 6,
-            quality: 90,
-            smartSubsample: true,
-          })
-          .toBuffer()
-        expect(generatedBytes.equals(expectedBytes)).toBe(true)
-      }
-      expect(hashBytes(sourceBytes)).toBe(node.icon.sourceHash)
     }
   }, 30_000)
 })
-
-function readUnitySource(path: string): string {
-  return readFileSync(
-    resolve(repositoryRoot, ...path.split('/')),
-    'utf8',
-  )
-}
-
-function hashNormalizedText(value: string): string {
-  return createHash('sha256')
-    .update(value.replace(/\r\n?/g, '\n'))
-    .digest('hex')
-}
-
-function hashBytes(value: NodeJS.ArrayBufferView): string {
-  return createHash('sha256').update(value).digest('hex')
-}
 
 function compareText(left: string, right: string): number {
   return left < right ? -1 : left > right ? 1 : 0

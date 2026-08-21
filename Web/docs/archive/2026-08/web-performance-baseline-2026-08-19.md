@@ -27,7 +27,7 @@ phase must create the immutable checkpoint used for later release evidence.
 
 | Property | Value |
 | --- | --- |
-| Repository path | `Documentation/SaveBackups/MainSave.txt` |
+| Repository path | `Web/test/fixtures/schema-08-canonical-idb1-main-save.txt` |
 | SHA-256 | `10e2e48cd989618918118e16d0900af7d80f0f5dfb1aad475423ac165ab00c78` |
 | Source schema | 8 |
 | Prepared target schema | 12 |

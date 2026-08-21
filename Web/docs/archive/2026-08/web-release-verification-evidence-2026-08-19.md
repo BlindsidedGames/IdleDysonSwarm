@@ -47,7 +47,7 @@ Result: **305 passed, 0 failed**.
 
 This covers:
 
-- the repository's production `Documentation/SaveBackups/MainSave.txt` via
+- the repository's preserved `Web/test/fixtures/schema-08-canonical-idb1-main-save.txt` via
   its byte-identical checked-in Web and Unity fixture copies (SHA-256
   `10e2e48cd989618918118e16d0900af7d80f0f5dfb1aad475423ac165ab00c78`);
 - supported Unity schemas 0, 8, 10 and 11 migrating to schema 12;

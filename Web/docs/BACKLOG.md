@@ -13,6 +13,28 @@ Status conventions:
 
 ## Current cross-platform work
 
+- [ ] Prevent unwanted automatic Skill allocation when unspent points are
+  available, and verify that the Fix Skill Points recovery action never removes
+  legitimately banked points.
+- [ ] Keep the Stored/Offline Time progress indicator visible when additional
+  stored time is applied while a run is already active.
+- [ ] Define and implement purchase behavior when cash or science reaches the
+  numeric ceiling (historically reported around `1e308`) so valid purchases do
+  not become permanently unavailable.
+- [ ] Make save envelope detection case-insensitive across native and desktop
+  hosts, preserving compatibility with historical lowercase `idb1` exports.
+- [ ] Reproduce and prevent repeated offline-time credit from an immediate
+  desktop export/import cycle.
+- [ ] Investigate the historical report that active Stored Time incorrectly
+  behaved as though Break the Loop and Quantum Entanglement were owned. Treat
+  it as progression integrity work; the original reporter save remains only in
+  the archived development context unless a sanitized fixture is supplied.
+- [ ] Improve Reality onboarding so Gather Influence is obvious at unlock and
+  the initial Wiki presentation supports rather than obscures that action.
+- [ ] Verify first-completion achievement timing, the reported false Division
+  Master unlock, and Point Blank progress-notification cadence before Steam
+  achievements are enabled.
+
 - [ ] **Review and certify native cross-platform audio.** The shared audio
   implementation is integrated on `main`; before release, complete macOS/iOS
   compilation, the physical Android/iOS acceptance matrix, and a subjective

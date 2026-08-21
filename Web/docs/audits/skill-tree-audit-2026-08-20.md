@@ -22,7 +22,7 @@ This is not a claim that 67 nodes are globally issue-free. In particular, **give
 
 A node was not marked working merely because its generated skill references an effect. For each node the audit required:
 
-1. Presentation identity, cost and text in `src/game-data/generated/skill-tree-presentation.json`.
+1. Presentation identity, cost and text in `src/game-data/generated/skill-tree-presentation.json`, byte-materialized from the versioned Web handoff capsule.
 2. Canonical skill flags, requirements, exclusivities, refundability and effect references in `runtime-catalog.json`.
 3. Ownership and unlock behavior in canonical purchase/refund/preset/Infinity-reset transactions.
 4. A materialized or bespoke effect calculation with an owned-skill check.

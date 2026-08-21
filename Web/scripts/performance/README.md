@@ -77,7 +77,7 @@ npm run report:performance:lanes
 ```
 
 Both commands build an instrumented production variant, start an isolated
-Vite Preview server, and use `Documentation/SaveBackups/MainSave.txt` for the
+Vite Preview server, and use `Web/test/fixtures/schema-08-canonical-idb1-main-save.txt` for the
 advanced-Dyson measurements. They write machine-readable results under the
 ignored `output/performance/` directory. The focused report covers fresh Bots
 plus advanced Bots, Skills and Settings at desktop and mobile viewports with

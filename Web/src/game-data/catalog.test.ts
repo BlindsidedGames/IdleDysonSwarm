@@ -2,7 +2,7 @@ import { describe, expect, test } from 'vitest'
 import catalog from './generated/catalog.json'
 import skillMigrationData from './generated/skill-migration-data.json'
 
-describe('deterministic Unity game-data catalog', () => {
+describe('deterministic Web-owned game-data catalog', () => {
   test('contains the complete stable-ID gameplay catalogs', () => {
     expect(catalog.formatVersion).toBe(1)
     expect(catalog.countsByKind['GameData.SkillDefinition']).toBe(104)

@@ -19,12 +19,17 @@ an audit finding, release gate, or platform contract.
   persistence, presentation, and parity contracts.
 - [`platform/`](platform/) contains host, Store, PWA, migration, deployment, and
   release-operation guidance.
+- [`product/`](product/) contains current product direction that is not an
+  implementation contract.
 
 ## Historical material
 
 - [`archive/`](archive/) preserves completed plans, superseded inventories,
   diagnostic baselines, and dated evidence. Archived material is evidence of a
   past state, not the current implementation contract.
+- [`archive/unity-development-snapshot/`](archive/unity-development-snapshot/)
+  is frozen reference material for the unreleased Unity handoff; its old paths
+  resolve against the public archive branch/tag, not `main`.
 
 ## Maintenance rules
 

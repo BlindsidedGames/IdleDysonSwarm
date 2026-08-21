@@ -19,11 +19,11 @@ Goal: turn local working-tree changes into a clean record on the default branch.
    - PR body / commit body with what changed, why, test notes, and risks.
 
 ## Test Context
-7. For Unity repos, automated tests may be skipped if no safe quick command is available. If targeted tests are available, run them.
+7. From `Web/`, run the proportionate automated gates, including `npm run data:check`, focused tests, lint, and the production/native build where relevant.
 
 ## Execute
 8. Create and checkout branch `codex/<slug>` derived from PR title.
-9. Stage all changes: `git add -A`.
+9. Stage only the reviewed paths in scope; inspect the staged diff before committing.
 10. Commit with drafted message.
 11. Push branch.
 12. Create PR to default branch via `gh pr create --title "..." --body "..."`.
