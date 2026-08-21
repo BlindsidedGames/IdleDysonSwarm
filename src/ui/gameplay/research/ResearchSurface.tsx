@@ -544,6 +544,10 @@ function ResearchCard({
                 : messages.purchasePending,
             )}
           </span>
+        ) : card.code === 'output-maxed' ? (
+          <span role="status">
+            {intl.formatMessage(messages.maximumReached)}
+          </span>
         ) : undefined
       }
     />

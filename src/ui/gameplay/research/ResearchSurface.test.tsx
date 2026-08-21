@@ -244,6 +244,24 @@ describe('ResearchSurface', () => {
     expect(results.violations).toEqual([])
   })
 
+  test('communicates a saturated terminal price as maximum reached', () => {
+    renderSurface([
+      card({
+        eligible: false,
+        code: 'output-maxed',
+        selectedQuantity: 1n,
+        affordableQuantity: 0n,
+        cost: Number.MAX_VALUE,
+      }),
+    ])
+
+    expect(screen.getByRole('button', { name: /^Purchase / }))
+      .toBeDisabled()
+    expect(screen.getByRole('status')).toHaveTextContent('Maximum reached.')
+    expect(screen.queryByText('Research was not purchased.'))
+      .not.toBeInTheDocument()
+  })
+
   test('toggles every visible automation setting toward one intended state', async () => {
     const user = userEvent.setup()
     const dispatchPlayer = vi.fn(async () => accepted())

@@ -269,7 +269,7 @@ export function tryPurchaseBasicFacility(
   return {
     purchased: true,
     quantity: selected,
-    cost: debit.charged,
+    cost,
     status: 'success',
   }
 }

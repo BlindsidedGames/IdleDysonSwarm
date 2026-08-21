@@ -15,9 +15,6 @@ Status conventions:
 
 - [x] Keep the Stored/Offline Time progress indicator visible and preserve the
   original job when an additional spend is requested while a run is active.
-- [ ] Define and implement purchase behavior when cash or science reaches the
-  numeric ceiling (historically reported around `1e308`) so valid purchases do
-  not become permanently unavailable.
 - [ ] Make save envelope detection case-insensitive across native and desktop
   hosts, preserving compatibility with historical lowercase `idb1` exports.
 - [ ] Reproduce and prevent repeated offline-time credit from an immediate

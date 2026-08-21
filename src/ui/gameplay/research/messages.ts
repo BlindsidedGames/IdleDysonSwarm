@@ -210,6 +210,12 @@ export const researchMessages = defineMessages({
     defaultMessage: 'Purchasing research.',
     description: 'Status feedback while a Research purchase is pending.',
   },
+  maximumReached: {
+    id: 'research.purchase.maximum-reached',
+    defaultMessage: 'Maximum reached.',
+    description:
+      'Status shown when the next calculated Research price reaches the numeric ceiling.',
+  },
   purchaseSettings: {
     id: 'research.settings.open',
     defaultMessage: 'Research purchase settings',

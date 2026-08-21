@@ -5,7 +5,18 @@ import { compareGraphs } from '../parity/compare'
 import { getSavePath } from '../save/decodeIdb1'
 import { deepCloneSave } from '../save/graph'
 import { prepareIdb1Save, PreparedSave } from '../save/prepare'
-import { serializeWebSave } from '../save/serialization'
+import {
+  deserializeWebSave,
+  serializeWebSave,
+} from '../save/serialization'
+import {
+  previewCanonicalBasicFacilityPurchase,
+  tryPurchaseCanonicalBasicFacility,
+} from '../simulation/canonicalDysonCommands'
+import {
+  previewCanonicalResearchPurchase,
+  purchaseCanonicalResearch,
+} from '../simulation/researchAutomation'
 import {
   dehydrateGameState,
   GameStateSessionV1,
@@ -67,6 +78,97 @@ describe('canonical game-state mapping', () => {
     expect(hydrated.state.reality.workersReady).toBeTypeOf('bigint')
     expect(hydrated.state.quantum.pointsEarned).toBeTypeOf('bigint')
     expect(hydrated.state.statistics.minuteWindows).toHaveLength(60)
+  })
+
+  test('round-trips MAX cash and science as finite purchase-capable balances', () => {
+    const prepared = prepareIdb1Save(
+      loadFixture('schema-08-canonical-idb1-main-save.txt'),
+    ).prepared
+    const session = hydrateGameState(prepared)
+    const candidate = {
+      ...session.state,
+      dyson: {
+        ...session.state.dyson,
+        money: Number.MAX_VALUE,
+        science: Number.MAX_VALUE,
+        facilities: {
+          ...session.state.dyson.facilities,
+          assembly_lines: [0, 0] as const,
+        },
+        automation: {
+          ...session.state.dyson.automation,
+          buyMode: 'buy-1' as const,
+          roundedBulkBuy: false,
+        },
+      },
+      research: {
+        ...session.state.research,
+        levelsById: {
+          ...session.state.research.levelsById,
+          'research.money_multiplier': 0,
+        },
+        automation: {
+          ...session.state.research.automation,
+          buyMode: 'buy-1' as const,
+          roundedBulkBuy: false,
+        },
+      },
+    }
+    const serialized = serializeWebSave(
+      session.prepare(candidate).copyValidatedState(),
+    )
+    const reloaded = hydrateGameState(
+      PreparedSave.fromDecoded(deserializeWebSave(serialized)),
+    )
+
+    expect(Number.isFinite(reloaded.state.dyson.money)).toBe(true)
+    expect(Number.isFinite(reloaded.state.dyson.science)).toBe(true)
+    expect(reloaded.state.dyson.money).toBe(Number.MAX_VALUE)
+    expect(reloaded.state.dyson.science).toBe(Number.MAX_VALUE)
+
+    const facilityPreview = previewCanonicalBasicFacilityPurchase(
+      reloaded.state,
+      'assembly_lines',
+    )
+    const facilityPurchase = tryPurchaseCanonicalBasicFacility(
+      reloaded.state,
+      'assembly_lines',
+    )
+    const researchPreview = previewCanonicalResearchPurchase(
+      reloaded.state,
+      reloaded.compatibilityTuning,
+      'research.money_multiplier',
+    )
+    const researchPurchase = purchaseCanonicalResearch(
+      reloaded.state,
+      reloaded.compatibilityTuning,
+      'research.money_multiplier',
+    )
+
+    expect(facilityPreview).toMatchObject({
+      eligible: true,
+      cost: 100,
+      status: 'success',
+    })
+    expect(facilityPurchase.attempt).toMatchObject({
+      purchased: true,
+      cost: facilityPreview.cost,
+      status: 'success',
+    })
+    expect(facilityPurchase.state.dyson.money)
+      .toBeLessThan(Number.MAX_VALUE)
+    expect(researchPreview).toMatchObject({
+      eligible: true,
+      cost: 5_000,
+      code: 'purchasable',
+    })
+    expect(researchPurchase).toMatchObject({
+      accepted: true,
+      changed: true,
+      purchase: { cost: researchPreview.cost },
+    })
+    expect(researchPurchase.state.dyson.science)
+      .toBeLessThan(Number.MAX_VALUE)
   })
 
   test('round-trips reserved Railgun volleys and the panel high-water mark', () => {

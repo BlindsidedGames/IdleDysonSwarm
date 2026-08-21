@@ -363,7 +363,7 @@ function attemptFacilityPurchase(
     facilityId,
     purchased: true,
     quantity: preview.selectedQuantity,
-    cost: debit.charged,
+    cost: preview.cost,
     status: 'success',
   }
 }

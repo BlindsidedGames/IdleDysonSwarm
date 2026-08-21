@@ -213,7 +213,7 @@ export function tryPurchaseMegaStructure(
   return {
     purchased: true,
     quantity,
-    cost: debit.charged,
+    cost,
     status: 'success',
     state: {
       ...state,

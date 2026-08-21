@@ -93,6 +93,16 @@ describe('facility transaction Unity parity', () => {
     expect(result.charged).toBeGreaterThan(0)
   })
 
+  test('charges exactly one representable step for a finite cost at MAX', () => {
+    const result = tryDebitContinuous(Number.MAX_VALUE, 1)
+
+    expect(result).toEqual({
+      balance: 1.7976931348623155e308,
+      charged: 1.99584030953472e292,
+      status: 'success',
+    })
+  })
+
   test('runs automation after production at the scheduler boundary', () => {
     const entry = fixture.cases[0]!
     const state = stateFor(entry)
