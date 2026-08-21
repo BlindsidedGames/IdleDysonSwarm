@@ -14,7 +14,7 @@ Upload Idle Dyson Swarm builds to Steam via SteamCMD.
   - macOS: `4348573`
 
 ## Build source
-Build the Electron packages from `Web/` with the matching
+Build the Electron packages from the repository root with the matching
 `native:electron:package:*` npm script, then copy the reviewed package into the
 SteamCMD content root configured by the upload script. Never source a depot
 from the archived Unity branch.

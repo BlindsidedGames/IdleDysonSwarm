@@ -1,0 +1,29 @@
+{
+  "formatVersion": 1,
+  "description": "Unreleased post-3.0.328 Unity development snapshot retained as the initial Web-authored gameplay-data capsule; this is not a shipped binary.",
+  "archive": {
+    "branch": "archive/unity-development-handoff-2026-08-21",
+    "tag": "unity-dev-handoff-2026-08-21",
+    "commit": "cc21ca0ee632ac950a69ba14842b3fd7b5f7976c"
+  },
+  "publicUnityBaseline": {
+    "version": "3.0.328",
+    "schema": 11,
+    "commit": "9b840fb2"
+  },
+  "catalog": {
+    "assetCount": 559,
+    "kindCount": 34
+  },
+  "historicalSkillSources": {
+    "graphPrefabSha256": "a9ba135c9bad1b1a18185a37844d39971c8a412ee1c7dbb0fd8179d007f18290",
+    "nodePrefabSha256": "07ef6b88ddd317c2f52612c02ee14174bf8df97f9e0b000e073002c4ac0ccebf",
+    "nodePrefabGuid": "63def614896650346ad3eab31ba9e48b"
+  },
+  "skillIcons": {
+    "count": 104,
+    "totalBytes": 665170,
+    "manifestAlgorithm": "UTF-16 filename order; sha256, two spaces, repository-relative path, LF",
+    "sortedSha256ManifestHash": "41c86132f6151f8fd4cd5326a72eaa43c233b17e18aa92af4e611c5701145d29"
+  }
+}

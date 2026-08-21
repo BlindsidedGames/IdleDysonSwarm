@@ -19,7 +19,7 @@ Goal: turn local working-tree changes into a clean record on the default branch.
    - PR body / commit body with what changed, why, test notes, and risks.
 
 ## Test Context
-7. From `Web/`, run the proportionate automated gates, including `npm run data:check`, focused tests, lint, and the production/native build where relevant.
+7. From the repository root, run the proportionate automated gates, including `npm run data:check`, focused tests, lint, and the production/native build where relevant.
 
 ## Execute
 8. Create and checkout branch `codex/<slug>` derived from PR title.

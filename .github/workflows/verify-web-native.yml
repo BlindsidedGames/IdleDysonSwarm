@@ -26,32 +26,26 @@ jobs:
       - name: Use the repository Node version
         uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
         with:
-          node-version-file: Web/.nvmrc
+          node-version-file: .nvmrc
           cache: npm
-          cache-dependency-path: Web/package-lock.json
+          cache-dependency-path: package-lock.json
 
       - name: Install locked dependencies
-        working-directory: Web
         run: npm ci
 
       - name: Run deterministic tests
-        working-directory: Web
         run: npm test -- --maxWorkers=1
 
       - name: Lint sources
-        working-directory: Web
         run: npm run lint
 
       - name: Build the /play/ PWA
-        working-directory: Web
         run: npm run build
 
       - name: Build native-relative assets
-        working-directory: Web
         run: npm run build:native
 
       - name: Validate the Electron process boundary
-        working-directory: Web
         run: npm run native:electron:check
 
   android:
@@ -67,9 +61,9 @@ jobs:
       - name: Use the repository Node version
         uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
         with:
-          node-version-file: Web/.nvmrc
+          node-version-file: .nvmrc
           cache: npm
-          cache-dependency-path: Web/package-lock.json
+          cache-dependency-path: package-lock.json
 
       - name: Use the Android build JDK
         uses: actions/setup-java@b6effb05e454b25005698d916606bdc6ffcbf961 # v5.7.0
@@ -78,13 +72,12 @@ jobs:
           java-version: '21'
 
       - name: Install and synchronize Android
-        working-directory: Web
         run: |
           npm ci
           npm run native:capacitor:sync:android
 
       - name: Assemble the unsigned debug application
-        working-directory: Web/hosts/capacitor/android
+        working-directory: hosts/capacitor/android
         run: |
           chmod +x gradlew
           ./gradlew assembleDebug --no-daemon
@@ -102,18 +95,16 @@ jobs:
       - name: Use the repository Node version
         uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
         with:
-          node-version-file: Web/.nvmrc
+          node-version-file: .nvmrc
           cache: npm
-          cache-dependency-path: Web/package-lock.json
+          cache-dependency-path: package-lock.json
 
       - name: Install and synchronize iOS
-        working-directory: Web
         run: |
           npm ci
           npm run native:capacitor:sync:ios
 
       - name: Compile without distribution credentials
-        working-directory: Web
         run: >-
           xcodebuild
           -project hosts/capacitor/ios/App/App.xcodeproj

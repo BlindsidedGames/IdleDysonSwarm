@@ -1,19 +1,35 @@
-# Node / Web
+# Logs and package-manager output
+logs/
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+lerna-debug.log*
+
+# Node / Web build output
 node_modules/
 dist/
+dist-native/
+dist-ssr/
+dist-stage8-v2-game/
+dist-stored-time-worker-harness/
 coverage/
 .turbo/
 .vite/
-*.log
+*.local
+output/
+release/
+reports/initial-request-bundle/
+reports/bundle-composition/*.html
+test/private-fixtures/
 
 # Native and desktop build output
-Web/hosts/capacitor/android/.gradle/
-Web/hosts/capacitor/android/**/build/
-Web/hosts/capacitor/ios/DerivedData/
-Web/hosts/capacitor/ios/**/*.xcarchive
-Web/hosts/capacitor/ios/**/*.ipa
-Web/release/
-Web/output/
+hosts/capacitor/android/.gradle/
+hosts/capacitor/android/**/build/
+hosts/capacitor/ios/DerivedData/
+hosts/capacitor/ios/**/*.xcarchive
+hosts/capacitor/ios/**/*.ipa
 *.apk
 *.aab
 *.app
@@ -30,18 +46,20 @@ Web/output/
 
 # Local tools and generated diagnostics
 .playwright-cli/
-Web/.playwright-cli/
-Web/dist-stage8-v2-game/
-Web/dist-stored-time-worker-harness/
-Web/reports/bundle-composition/*.html
 .local-pull-backups/
 .migration-snapshots/
 
 # IDE / OS
 .DS_Store
 Thumbs.db
+.vscode/*
+!.vscode/extensions.json
 .vs/
 .idea/
 *.suo
 *.user
 *.tmp
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?

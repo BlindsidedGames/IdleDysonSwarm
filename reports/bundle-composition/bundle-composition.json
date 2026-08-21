@@ -1,0 +1,1929 @@
+{
+  "version": 1,
+  "command": "npm run report:bundle-composition",
+  "entry": {
+    "file": "assets/index-B-Xgd1j_.js",
+    "rawBytes": 867126,
+    "gzipBytes": 244536
+  },
+  "precacheTransfer": {
+    "assetCount": 159,
+    "rawBytes": 11491383,
+    "gzipBytes": 9136589
+  },
+  "chunks": [
+    {
+      "file": "assets/index-B-Xgd1j_.js",
+      "entry": true,
+      "dynamicEntry": false,
+      "imports": [
+        "assets/avotation-dabbing-avocado-BtjSNMIF.js",
+        "assets/catalog-q-OmVghR.js",
+        "assets/numeric-D9fd4tZy.js",
+        "assets/react-intl-CZiZAdoX.js"
+      ],
+      "dynamicImports": [
+        "assets/AvotationProgress-6_1-nyNh.js",
+        "assets/QuantumSurface-DoU0brwo.js",
+        "assets/SimulationsSurface-BUMvqTQm.js",
+        "assets/ar-XB-D1dD_s5w.js",
+        "assets/debug-PdHqgNRy.js",
+        "assets/en-DHLyGErO.js",
+        "assets/en-XA-B2qU_RAg.js",
+        "assets/facilities-IV_jNquV.js",
+        "assets/infinity-r9kOYcKd.js",
+        "assets/offline-time-DHWVi9OL.js",
+        "assets/quantum-DaI_BTJh.js",
+        "assets/reality-DwtA0yza.js",
+        "assets/research-CYqCeCxY.js",
+        "assets/settings-Cb7PQOM1.js",
+        "assets/simulations-hhAzMzKE.js",
+        "assets/skills-BpDib1pt.js",
+        "assets/statistics-yiWQ98aS.js",
+        "assets/store-CdkergJH.js",
+        "assets/story-SAzAFo2q.js",
+        "assets/wiki-DJOsxXo7.js"
+      ],
+      "modules": [
+        {
+          "id": "node_modules/react-dom/cjs/react-dom-client.production.js",
+          "renderedBytes": 453153
+        },
+        {
+          "id": "src/ui/gameplay/dyson/ReadyDysonSlice.tsx",
+          "renderedBytes": 45564
+        },
+        {
+          "id": "src/application/frontendSnapshot.ts",
+          "renderedBytes": 45228
+        },
+        {
+          "id": "src/ui/runtime/browserRuntimeFoundation.ts",
+          "renderedBytes": 42531
+        },
+        {
+          "id": "src/application/canonicalGameCommands.ts",
+          "renderedBytes": 39761
+        },
+        {
+          "id": "src/application/canonicalGameApplication.ts",
+          "renderedBytes": 39216
+        },
+        {
+          "id": "src/simulation/canonicalEventTimeModel.ts",
+          "renderedBytes": 36862
+        },
+        {
+          "id": "src/game-state/mapping.ts",
+          "renderedBytes": 35624
+        },
+        {
+          "id": "src/simulation/dreamSpaceAge.ts",
+          "renderedBytes": 25934
+        },
+        {
+          "id": "src/simulation/dreamFoundationalInformation.ts",
+          "renderedBytes": 19820
+        },
+        {
+          "id": "src/simulation/canonicalDysonDerivation.ts",
+          "renderedBytes": 19671
+        },
+        {
+          "id": "src/application/canonicalLifecycleCoordinator.ts",
+          "renderedBytes": 19547
+        },
+        {
+          "id": "node_modules/fflate/esm/browser.js",
+          "renderedBytes": 19142
+        },
+        {
+          "id": "src/ui/gameplay/dyson/DysonSwarmVisual.tsx",
+          "renderedBytes": 18609
+        },
+        {
+          "id": "src/simulation/canonicalSkillTransactions.ts",
+          "renderedBytes": 17865
+        },
+        {
+          "id": "src/save/odinBinary.ts",
+          "renderedBytes": 15816
+        },
+        {
+          "id": "src/ui/gameplay/dyson/DysonControls.tsx",
+          "renderedBytes": 15600
+        },
+        {
+          "id": "node_modules/@capacitor/core/dist/index.js",
+          "renderedBytes": 15456
+        },
+        {
+          "id": "src/platform/browserWriterLease.ts",
+          "renderedBytes": 15332
+        },
+        {
+          "id": "src/game-data/generated/skill-migration-data.json",
+          "renderedBytes": 15164
+        },
+        {
+          "id": "src/simulation/canonicalDreamReset.ts",
+          "renderedBytes": 14946
+        },
+        {
+          "id": "src/simulation/moneyScienceSkillEffects.ts",
+          "renderedBytes": 14768
+        },
+        {
+          "id": "src/game-state/mappingCoverage.ts",
+          "renderedBytes": 14761
+        },
+        {
+          "id": "src/simulation/researchAutomation.ts",
+          "renderedBytes": 14581
+        },
+        {
+          "id": "src/simulation/canonicalInfinityReset.ts",
+          "renderedBytes": 14020
+        },
+        {
+          "id": "src/save/migrate.ts",
+          "renderedBytes": 13976
+        },
+        {
+          "id": "src/application/gameApplication.ts",
+          "renderedBytes": 13520
+        },
+        {
+          "id": "src/simulation/quantumUpgrades.ts",
+          "renderedBytes": 13479
+        },
+        {
+          "id": "src/game-state/mappingCoverageSchema11.ts",
+          "renderedBytes": 11255
+        },
+        {
+          "id": "src/simulation/dreamEducationUpgrades.ts",
+          "renderedBytes": 11201
+        },
+        {
+          "id": "src/platform/browserSaveDatabase.ts",
+          "renderedBytes": 10600
+        },
+        {
+          "id": "src/simulation/dysonResearchEffects.ts",
+          "renderedBytes": 10237
+        },
+        {
+          "id": "src/simulation/realityUpgrades.ts",
+          "renderedBytes": 10073
+        },
+        {
+          "id": "src/workers/storedTime/storedTimeSimulation.ts",
+          "renderedBytes": 9993
+        },
+        {
+          "id": "src/simulation/realityWorkers.ts",
+          "renderedBytes": 9983
+        },
+        {
+          "id": "src/ui/shell/StartupShell.tsx",
+          "renderedBytes": 9824
+        },
+        {
+          "id": "src/application/firstRun/generated/first-run-schema-12.idb1.txt?raw",
+          "renderedBytes": 9791
+        },
+        {
+          "id": "src/save/numericRepair.ts",
+          "renderedBytes": 9609
+        },
+        {
+          "id": "src/simulation/dysonAutomation.ts",
+          "renderedBytes": 9392
+        },
+        {
+          "id": "src/simulation/canonicalSkillPresetTransactions.ts",
+          "renderedBytes": 9263
+        },
+        {
+          "id": "node_modules/scheduler/cjs/scheduler.production.js",
+          "renderedBytes": 9064
+        },
+        {
+          "id": "src/ui/gameplay/shell/DysonGameplayShell.tsx",
+          "renderedBytes": 8615
+        },
+        {
+          "id": "src/simulation/infinityCycle.ts",
+          "renderedBytes": 8394
+        },
+        {
+          "id": "src/save/serialization.ts",
+          "renderedBytes": 8239
+        },
+        {
+          "id": "src/ui/gameplay/tinker/useTinkerPressController.ts",
+          "renderedBytes": 7725
+        },
+        {
+          "id": "src/simulation/canonicalInfinityShop.ts",
+          "renderedBytes": 7682
+        },
+        {
+          "id": "src/simulation/canonicalTinker.ts",
+          "renderedBytes": 7569
+        },
+        {
+          "id": "src/ui/gameplay/facilities/messages.ts",
+          "renderedBytes": 7569
+        },
+        {
+          "id": "src/simulation/canonicalStatistics.ts",
+          "renderedBytes": 7409
+        },
+        {
+          "id": "src/save/repository.ts",
+          "renderedBytes": 7035
+        },
+        {
+          "id": "src/platform/nativeHostBridge.ts",
+          "renderedBytes": 6681
+        },
+        {
+          "id": "src/simulation/eventTime.ts",
+          "renderedBytes": 6645
+        },
+        {
+          "id": "src/App.tsx",
+          "renderedBytes": 6631
+        },
+        {
+          "id": "src/workers/storedTime/storedTimeJobRunner.ts",
+          "renderedBytes": 6389
+        },
+        {
+          "id": "src/ui/shell/StartupErrorBoundary.tsx",
+          "renderedBytes": 6261
+        },
+        {
+          "id": "src/ui/i18n/formatters.ts",
+          "renderedBytes": 6240
+        },
+        {
+          "id": "src/ui/gameplay/tinker/TinkerSurface.tsx",
+          "renderedBytes": 6186
+        },
+        {
+          "id": "src/simulation/megaStructureRates.ts",
+          "renderedBytes": 6125
+        },
+        {
+          "id": "src/simulation/timeResources.ts",
+          "renderedBytes": 5886
+        },
+        {
+          "id": "node_modules/react-dom/cjs/react-dom.production.js",
+          "renderedBytes": 5713
+        },
+        {
+          "id": "src/simulation/dynamicSkillEffectResolver.ts",
+          "renderedBytes": 5281
+        },
+        {
+          "id": "src/ui/runtime/playerCommandDispatcher.ts",
+          "renderedBytes": 5247
+        },
+        {
+          "id": "src/core/simulationEngine.ts",
+          "renderedBytes": 5178
+        },
+        {
+          "id": "src/save/decodeIdb1.ts",
+          "renderedBytes": 5076
+        },
+        {
+          "id": "src/ui/accessibility/textSelectionPolicy.ts",
+          "renderedBytes": 5062
+        },
+        {
+          "id": "src/ui/gameplay/progress/useForwardProgressAnimation.ts",
+          "renderedBytes": 5040
+        },
+        {
+          "id": "src/simulation/canonicalSkillIntervalEffects.ts",
+          "renderedBytes": 5019
+        },
+        {
+          "id": "src/simulation/canonicalBotCapCheckpoint.ts",
+          "renderedBytes": 4936
+        },
+        {
+          "id": "src/ui/gameplay/quantum/AvocatoMeditationSecretTrigger.tsx",
+          "renderedBytes": 4916
+        },
+        {
+          "id": "src/ui/gameplay/dyson/messages.ts",
+          "renderedBytes": 4859
+        },
+        {
+          "id": "src/simulation/megaStructurePurchases.ts",
+          "renderedBytes": 4775
+        },
+        {
+          "id": "src/simulation/panelDynamicEffects.ts",
+          "renderedBytes": 4701
+        },
+        {
+          "id": "src/simulation/lifecycleAwayTime.ts",
+          "renderedBytes": 4671
+        },
+        {
+          "id": "src/simulation/compiledSkillEffectCatalog.ts",
+          "renderedBytes": 4671
+        },
+        {
+          "id": "src/simulation/quantumTransitions.ts",
+          "renderedBytes": 4627
+        },
+        {
+          "id": "src/store/browserStripe.ts",
+          "renderedBytes": 4577
+        },
+        {
+          "id": "src/simulation/planetGenerationDynamicEffects.ts",
+          "renderedBytes": 4567
+        },
+        {
+          "id": "src/simulation/shouldersTinkerDynamicEffects.ts",
+          "renderedBytes": 4520
+        },
+        {
+          "id": "src/simulation/dysonModel.ts",
+          "renderedBytes": 4474
+        },
+        {
+          "id": "src/simulation/canonicalDysonCommands.ts",
+          "renderedBytes": 4292
+        },
+        {
+          "id": "src/ui/runtime/activeTimeDriver.ts",
+          "renderedBytes": 4230
+        },
+        {
+          "id": "src/browser/productionBrowserComposition.ts",
+          "renderedBytes": 4222
+        },
+        {
+          "id": "src/ui/runtime/frontendSnapshotStore.ts",
+          "renderedBytes": 4168
+        },
+        {
+          "id": "src/pwa/serviceWorkerUpdate.ts",
+          "renderedBytes": 4160
+        },
+        {
+          "id": "src/simulation/skillEffectConditions.ts",
+          "renderedBytes": 4137
+        },
+        {
+          "id": "src/save/legacyIds.ts",
+          "renderedBytes": 3856
+        },
+        {
+          "id": "src/platform/platformSaveStorage.ts",
+          "renderedBytes": 3732
+        },
+        {
+          "id": "src/game-state/validate.ts",
+          "renderedBytes": 3716
+        },
+        {
+          "id": "src/native/productionNativeComposition.ts",
+          "renderedBytes": 3629
+        },
+        {
+          "id": "src/main.tsx",
+          "renderedBytes": 3542
+        },
+        {
+          "id": "src/simulation/canonicalDreamDerivedFacts.ts",
+          "renderedBytes": 3529
+        },
+        {
+          "id": "src/platform/nativeSystemPorts.ts",
+          "renderedBytes": 3516
+        },
+        {
+          "id": "src/ui/gameplay/shell/DysonNavigation.tsx",
+          "renderedBytes": 3499
+        },
+        {
+          "id": "src/simulation/storedTimePolicy.ts",
+          "renderedBytes": 3493
+        },
+        {
+          "id": "src/simulation/transactions.ts",
+          "renderedBytes": 3419
+        },
+        {
+          "id": "src/ui/runtime/authoritativeLifecycleRouter.ts",
+          "renderedBytes": 3397
+        },
+        {
+          "id": "src/game-data/generated/legacy-id-maps.json",
+          "renderedBytes": 3384
+        },
+        {
+          "id": "src/audio/gameAudioService.ts",
+          "renderedBytes": 3311
+        },
+        {
+          "id": "src/platform/indexedDbSaveStorage.ts",
+          "renderedBytes": 3077
+        },
+        {
+          "id": "src/platform/browserLifecycle.ts",
+          "renderedBytes": 3039
+        },
+        {
+          "id": "src/save/validate.ts",
+          "renderedBytes": 3024
+        },
+        {
+          "id": "src/ui/shell/messages.ts",
+          "renderedBytes": 2985
+        },
+        {
+          "id": "src/simulation/canonicalGoalProgression.ts",
+          "renderedBytes": 2869
+        },
+        {
+          "id": "src/simulation/skillEffectMaterializer.ts",
+          "renderedBytes": 2741
+        },
+        {
+          "id": "src/platform/periodicCheckpoint.ts",
+          "renderedBytes": 2737
+        },
+        {
+          "id": "src/platform/browserSaveTransfer.ts",
+          "renderedBytes": 2684
+        },
+        {
+          "id": "src/simulation/avocadoDomain.ts",
+          "renderedBytes": 2646
+        },
+        {
+          "id": "src/ui/shell/diagnostics.ts",
+          "renderedBytes": 2538
+        },
+        {
+          "id": "src/simulation/unityUtcTimestamp.ts",
+          "renderedBytes": 2494
+        },
+        {
+          "id": "src/simulation/dysonDerivedIntermediates.ts",
+          "renderedBytes": 2486
+        },
+        {
+          "id": "src/application/canonicalRuntimeSession.ts",
+          "renderedBytes": 2447
+        },
+        {
+          "id": "src/audio/webAudioBackend.ts",
+          "renderedBytes": 2433
+        },
+        {
+          "id": "src/platform/nativeWriterLeaseDatabase.ts",
+          "renderedBytes": 2356
+        },
+        {
+          "id": "src/ui/assets/symbol-science.png",
+          "renderedBytes": 2343
+        },
+        {
+          "id": "src/simulation/secretBuffs.ts",
+          "renderedBytes": 2318
+        },
+        {
+          "id": "src/save/graph.ts",
+          "renderedBytes": 2293
+        },
+        {
+          "id": "src/ui/gameplay/shell/DysonResourceHeader.tsx",
+          "renderedBytes": 2248
+        },
+        {
+          "id": "src/simulation/dynamicFacilitySkillEffects.ts",
+          "renderedBytes": 2187
+        },
+        {
+          "id": "src/save/startupResolver.ts",
+          "renderedBytes": 2152
+        },
+        {
+          "id": "src/save/prepare.ts",
+          "renderedBytes": 2148
+        },
+        {
+          "id": "\u0000vite/preload-helper.js",
+          "renderedBytes": 2147
+        },
+        {
+          "id": "src/ui/i18n/localeRegistry.ts",
+          "renderedBytes": 2146
+        },
+        {
+          "id": "src/save/settingsFlags.ts",
+          "renderedBytes": 2023
+        },
+        {
+          "id": "src/application/firstRun/generated/first-run-schema-12.provenance.json",
+          "renderedBytes": 1993
+        },
+        {
+          "id": "src/productionHostComposition.ts",
+          "renderedBytes": 1906
+        },
+        {
+          "id": "src/simulation/dysonProductionArrivals.ts",
+          "renderedBytes": 1894
+        },
+        {
+          "id": "src/workers/storedTime/storedTimeProtocol.ts",
+          "renderedBytes": 1864
+        },
+        {
+          "id": "src/store/contracts.ts",
+          "renderedBytes": 1817
+        },
+        {
+          "id": "src/ui/components/CollapsibleSection.tsx",
+          "renderedBytes": 1804
+        },
+        {
+          "id": "src/simulation/dysonPrestigeEffects.ts",
+          "renderedBytes": 1758
+        },
+        {
+          "id": "src/ui/i18n/localePreference.ts",
+          "renderedBytes": 1718
+        },
+        {
+          "id": "src/platform/browserStorageStatus.ts",
+          "renderedBytes": 1712
+        },
+        {
+          "id": "src/platform/browserReloadWriterIdentity.ts",
+          "renderedBytes": 1666
+        },
+        {
+          "id": "src/game-state/skillEffectEvaluationSnapshot.ts",
+          "renderedBytes": 1656
+        },
+        {
+          "id": "src/ui/shell/runtimeStartupAdapter.ts",
+          "renderedBytes": 1604
+        },
+        {
+          "id": "src/simulation/skillEffects.ts",
+          "renderedBytes": 1595
+        },
+        {
+          "id": "src/platform/browserSystemPorts.ts",
+          "renderedBytes": 1436
+        },
+        {
+          "id": "src/application/firstRun/unityFirstRunSave.ts",
+          "renderedBytes": 1410
+        },
+        {
+          "id": "src/ui/components/FacilityCard.tsx",
+          "renderedBytes": 1391
+        },
+        {
+          "id": "src/platform/browserDepartureMarker.ts",
+          "renderedBytes": 1385
+        },
+        {
+          "id": "src/save/import.ts",
+          "renderedBytes": 1371
+        },
+        {
+          "id": "src/pwa/PwaUpdatePrompt.tsx",
+          "renderedBytes": 1363
+        },
+        {
+          "id": "src/save/importContext.ts",
+          "renderedBytes": 1230
+        },
+        {
+          "id": "\u0000vite/modulepreload-polyfill.js",
+          "renderedBytes": 1205
+        },
+        {
+          "id": "src/ui/runtime/useBrowserRuntime.ts",
+          "renderedBytes": 1173
+        },
+        {
+          "id": "src/game-state/types.ts",
+          "renderedBytes": 1168
+        },
+        {
+          "id": "src/pwa/messages.ts",
+          "renderedBytes": 1165
+        },
+        {
+          "id": "src/simulation/stat.ts",
+          "renderedBytes": 1139
+        },
+        {
+          "id": "src/ui/gameplay/wiki/wikiProjection.ts",
+          "renderedBytes": 1134
+        },
+        {
+          "id": "src/save/facilityArrays.ts",
+          "renderedBytes": 1121
+        },
+        {
+          "id": "src/application/productionApplicationFactory.ts",
+          "renderedBytes": 1093
+        },
+        {
+          "id": "src/ui/components/disclosurePreference.ts",
+          "renderedBytes": 1001
+        },
+        {
+          "id": "src/game-state/compatibilityTuning.ts",
+          "renderedBytes": 992
+        },
+        {
+          "id": "src/platform/releaseFoundation.ts",
+          "renderedBytes": 977
+        },
+        {
+          "id": "src/simulation/dysonSnapshotPublication.ts",
+          "renderedBytes": 971
+        },
+        {
+          "id": "src/audio/settings.ts",
+          "renderedBytes": 961
+        },
+        {
+          "id": "src/simulation/canonicalBotAllocation.ts",
+          "renderedBytes": 938
+        },
+        {
+          "id": "src/ui/gameplay/dyson/DysonLowerFacts.tsx",
+          "renderedBytes": 930
+        },
+        {
+          "id": "src/simulation/storedTimeAccounting.ts",
+          "renderedBytes": 892
+        },
+        {
+          "id": "src/ui/components/ResourceValue.tsx",
+          "renderedBytes": 885
+        },
+        {
+          "id": "src/store/runtimeEntitlements.ts",
+          "renderedBytes": 857
+        },
+        {
+          "id": "src/ui/components/InlineImageSymbol.tsx",
+          "renderedBytes": 825
+        },
+        {
+          "id": "src/ui/components/PresetAutomationSelect.tsx",
+          "renderedBytes": 825
+        },
+        {
+          "id": "src/simulation/productionEventContext.ts",
+          "renderedBytes": 812
+        },
+        {
+          "id": "src/ui/accessibility/useMediaQuery.ts",
+          "renderedBytes": 805
+        },
+        {
+          "id": "src/ui/gameplay/tinker/messages.ts",
+          "renderedBytes": 787
+        },
+        {
+          "id": "src/browser/productionBrowserStorage.ts",
+          "renderedBytes": 779
+        },
+        {
+          "id": "src/platform/browserEntitlementAuthority.ts",
+          "renderedBytes": 748
+        },
+        {
+          "id": "src/audio/capacitorAudioBackend.ts",
+          "renderedBytes": 710
+        },
+        {
+          "id": "src/bootstrapFailure.ts",
+          "renderedBytes": 691
+        },
+        {
+          "id": "src/audio/semanticCues.ts",
+          "renderedBytes": 679
+        },
+        {
+          "id": "src/ui/components/StatusFeedback.tsx",
+          "renderedBytes": 659
+        },
+        {
+          "id": "src/ui/shell/LocalDiagnostics.tsx",
+          "renderedBytes": 648
+        },
+        {
+          "id": "src/ui/components/Button.tsx",
+          "renderedBytes": 607
+        },
+        {
+          "id": "src/simulation/types.ts",
+          "renderedBytes": 567
+        },
+        {
+          "id": "src/ui/gameplay/shell/navigationAssets.ts",
+          "renderedBytes": 554
+        },
+        {
+          "id": "src/application/canonicalPlayerCommands.ts",
+          "renderedBytes": 514
+        },
+        {
+          "id": "src/platform/browserEnvironment.ts",
+          "renderedBytes": 500
+        },
+        {
+          "id": "src/ui/i18n/messages.ts",
+          "renderedBytes": 491
+        },
+        {
+          "id": "node_modules/react-dom/client.js",
+          "renderedBytes": 473
+        },
+        {
+          "id": "node_modules/react-dom/index.js",
+          "renderedBytes": 468
+        },
+        {
+          "id": "src/audio/composition.ts",
+          "renderedBytes": 445
+        },
+        {
+          "id": "src/ui/gameplay/dyson/LazySurfacePending.tsx",
+          "renderedBytes": 430
+        },
+        {
+          "id": "src/save/automaticPurchaseEvidence.ts",
+          "renderedBytes": 423
+        },
+        {
+          "id": "src/game-state/skillPresetColors.ts",
+          "renderedBytes": 354
+        },
+        {
+          "id": "src/ui/i18n/PresentationIntlProvider.tsx",
+          "renderedBytes": 352
+        },
+        {
+          "id": "src/simulation/dysonFacilities.ts",
+          "renderedBytes": 332
+        },
+        {
+          "id": "src/store/developmentStore.ts",
+          "renderedBytes": 311
+        },
+        {
+          "id": "src/ui/components/SettingsIcon.tsx",
+          "renderedBytes": 261
+        },
+        {
+          "id": "src/audio/useAudioSettings.ts",
+          "renderedBytes": 227
+        },
+        {
+          "id": "src/ui/gameplay/quantum/meditationTargets.ts",
+          "renderedBytes": 211
+        },
+        {
+          "id": "node_modules/scheduler/index.js",
+          "renderedBytes": 188
+        },
+        {
+          "id": "src/ui/runtime/developmentTelemetry.ts",
+          "renderedBytes": 184
+        },
+        {
+          "id": "src/ui/assets/galaxy-field/galaxy-shallow-inclined.png",
+          "renderedBytes": 158
+        },
+        {
+          "id": "src/audio/contracts.ts",
+          "renderedBytes": 147
+        },
+        {
+          "id": "src/ui/assets/nav-statistics-growth.png",
+          "renderedBytes": 141
+        },
+        {
+          "id": "src/ui/assets/galaxy-field/galaxy-edge-on.png",
+          "renderedBytes": 140
+        },
+        {
+          "id": "src/ui/assets/galaxy-field/galaxy-face-on.png",
+          "renderedBytes": 140
+        },
+        {
+          "id": "src/ui/assets/galaxy-field/galaxy-oblique.png",
+          "renderedBytes": 140
+        },
+        {
+          "id": "src/ui/assets/nav-simulations-vr.png",
+          "renderedBytes": 135
+        },
+        {
+          "id": "src/ui/assets/nav-offline-time.png",
+          "renderedBytes": 131
+        },
+        {
+          "id": "src/ui/assets/nav-settings.png",
+          "renderedBytes": 123
+        },
+        {
+          "id": "src/ui/assets/nav-infinity.png",
+          "renderedBytes": 123
+        },
+        {
+          "id": "src/ui/assets/nav-research.png",
+          "renderedBytes": 123
+        },
+        {
+          "id": "src/ui/assets/nav-quantum.png",
+          "renderedBytes": 121
+        },
+        {
+          "id": "src/ui/assets/nav-reality.png",
+          "renderedBytes": 121
+        },
+        {
+          "id": "src/platform/nativeMigration.ts",
+          "renderedBytes": 120
+        },
+        {
+          "id": "src/ui/assets/nav-skills.png",
+          "renderedBytes": 119
+        },
+        {
+          "id": "src/ui/assets/nav-debug.png",
+          "renderedBytes": 117
+        },
+        {
+          "id": "src/ui/assets/nav-store.png",
+          "renderedBytes": 117
+        },
+        {
+          "id": "src/ui/assets/nav-story.png",
+          "renderedBytes": 117
+        },
+        {
+          "id": "src/ui/assets/nav-bots.png",
+          "renderedBytes": 115
+        },
+        {
+          "id": "src/ui/assets/nav-wiki.png",
+          "renderedBytes": 115
+        }
+      ],
+      "rawBytes": 867126,
+      "gzipBytes": 244536
+    },
+    {
+      "file": "assets/skills-BpDib1pt.js",
+      "entry": false,
+      "dynamicEntry": true,
+      "imports": [
+        "assets/index-B-Xgd1j_.js",
+        "assets/react-intl-CZiZAdoX.js"
+      ],
+      "dynamicImports": [],
+      "modules": [
+        {
+          "id": "src/game-data/generated/skill-tree-presentation.json",
+          "renderedBytes": 92074
+        },
+        {
+          "id": "src/ui/gameplay/skills/SkillsSurface.tsx",
+          "renderedBytes": 64191
+        },
+        {
+          "id": "src/ui/gameplay/skills/skillConnectorGeometry.ts",
+          "renderedBytes": 6105
+        },
+        {
+          "id": "src/ui/assets/skill-icons/stellarObliteration.webp?url",
+          "renderedBytes": 5563
+        },
+        {
+          "id": "src/ui/assets/skill-icons/banking.webp?url",
+          "renderedBytes": 5475
+        },
+        {
+          "id": "src/ui/assets/skill-icons/stayingPower.webp?url",
+          "renderedBytes": 5461
+        },
+        {
+          "id": "src/ui/assets/skill-icons/megaSwarm.webp?url",
+          "renderedBytes": 5447
+        },
+        {
+          "id": "src/ui/assets/skill-icons/parallelProcessing.webp?url",
+          "renderedBytes": 5313
+        },
+        {
+          "id": "src/ui/assets/skill-icons/stellarSacrifices.webp?url",
+          "renderedBytes": 5295
+        },
+        {
+          "id": "src/ui/assets/skill-icons/reapers.webp?url",
+          "renderedBytes": 5199
+        },
+        {
+          "id": "src/ui/assets/skill-icons/superSwarm.webp?url",
+          "renderedBytes": 4977
+        },
+        {
+          "id": "src/ui/assets/skill-icons/terraformingProtocols.webp?url",
+          "renderedBytes": 4879
+        },
+        {
+          "id": "src/ui/assets/skill-icons/addictionToPower.webp?url",
+          "renderedBytes": 4853
+        },
+        {
+          "id": "src/ui/assets/skill-icons/indulgingInPower.webp?url",
+          "renderedBytes": 4645
+        },
+        {
+          "id": "src/ui/assets/skill-icons/serverTree.webp?url",
+          "renderedBytes": 4429
+        },
+        {
+          "id": "src/ui/assets/skill-icons/progressiveAssembly.webp?url",
+          "renderedBytes": 4259
+        },
+        {
+          "id": "src/ui/assets/skill-icons/regulatedAcademia.webp?url",
+          "renderedBytes": 4207
+        },
+        {
+          "id": "src/ui/assets/skill-icons/parallelComputation.webp?url",
+          "renderedBytes": 4191
+        },
+        {
+          "id": "src/ui/assets/skill-icons/rocketMania.webp?url",
+          "renderedBytes": 3839
+        },
+        {
+          "id": "src/ui/gameplay/skills/messages.ts",
+          "renderedBytes": 3731
+        },
+        {
+          "id": "src/ui/gameplay/skills/SkillDetailsDialog.tsx",
+          "renderedBytes": 3570
+        },
+        {
+          "id": "src/ui/assets/skill-icons/tasteOfPower.webp?url",
+          "renderedBytes": 3393
+        },
+        {
+          "id": "src/ui/assets/skill-icons/agressiveAlgorithms.webp?url",
+          "renderedBytes": 3295
+        },
+        {
+          "id": "src/ui/gameplay/skills/skillSearch.ts",
+          "renderedBytes": 3194
+        },
+        {
+          "id": "src/ui/assets/skill-icons/investmentPortfolio.webp?url",
+          "renderedBytes": 2731
+        },
+        {
+          "id": "src/ui/assets/skill-icons/fragmentAssembly.webp?url",
+          "renderedBytes": 2485
+        },
+        {
+          "id": "src/game-data/skillPresentationLocalization.ts",
+          "renderedBytes": 514
+        },
+        {
+          "id": "src/ui/gameplay/skills/presetColors.ts",
+          "renderedBytes": 321
+        },
+        {
+          "id": "src/ui/assets/skill-icons/artificiallyEnhancedPanels.webp?url",
+          "renderedBytes": 168
+        },
+        {
+          "id": "src/ui/assets/skill-icons/versatileProductionTactics.webp?url",
+          "renderedBytes": 168
+        },
+        {
+          "id": "src/ui/assets/skill-icons/shouldersOfTheEnlightened.webp?url",
+          "renderedBytes": 166
+        },
+        {
+          "id": "src/ui/assets/skill-icons/shouldersOfTheRevolution.webp?url",
+          "renderedBytes": 164
+        },
+        {
+          "id": "src/ui/assets/skill-icons/rudimentarySingularity.webp?url",
+          "renderedBytes": 160
+        },
+        {
+          "id": "src/ui/assets/skill-icons/superRadiantScattering.webp?url",
+          "renderedBytes": 160
+        },
+        {
+          "id": "src/ui/assets/skill-icons/unsuspiciousAlgorithms.webp?url",
+          "renderedBytes": 160
+        },
+        {
+          "id": "src/ui/assets/skill-icons/producedAsScienceTree.webp?url",
+          "renderedBytes": 158
+        },
+        {
+          "id": "src/ui/assets/skill-icons/shouldersOfPrecursors.webp?url",
+          "renderedBytes": 158
+        },
+        {
+          "id": "src/ui/assets/skill-icons/dimensionalCatCables.webp?url",
+          "renderedBytes": 156
+        },
+        {
+          "id": "src/ui/assets/skill-icons/galacticPradigmShift.webp?url",
+          "renderedBytes": 156
+        },
+        {
+          "id": "src/ui/assets/skill-icons/scientificRevolution.webp?url",
+          "renderedBytes": 156
+        },
+        {
+          "id": "src/ui/assets/skill-icons/shouldersOfTheFallen.webp?url",
+          "renderedBytes": 156
+        },
+        {
+          "id": "src/ui/assets/skill-icons/workerEfficiencyTree.webp?url",
+          "renderedBytes": 156
+        },
+        {
+          "id": "src/ui/assets/skill-icons/panelLifetime20Tree.webp?url",
+          "renderedBytes": 154
+        },
+        {
+          "id": "src/ui/assets/skill-icons/scientificDominance.webp?url",
+          "renderedBytes": 154
+        },
+        {
+          "id": "src/ui/assets/skill-icons/stellarImprovements.webp?url",
+          "renderedBytes": 154
+        },
+        {
+          "id": "src/ui/assets/skill-icons/economicRevolution.webp?url",
+          "renderedBytes": 152
+        },
+        {
+          "id": "src/ui/assets/skill-icons/jamesWebbTelescope.webp?url",
+          "renderedBytes": 152
+        },
+        {
+          "id": "src/ui/assets/skill-icons/powerUnderwhelming.webp?url",
+          "renderedBytes": 152
+        },
+        {
+          "id": "src/ui/assets/skill-icons/repeatableResearch.webp?url",
+          "renderedBytes": 152
+        },
+        {
+          "id": "src/ui/assets/skill-icons/whatWillComeToPass.webp?url",
+          "renderedBytes": 152
+        },
+        {
+          "id": "src/ui/assets/skill-icons/assemblyMegaLines.webp?url",
+          "renderedBytes": 150
+        },
+        {
+          "id": "src/ui/assets/skill-icons/clusterNetworking.webp?url",
+          "renderedBytes": 150
+        },
+        {
+          "id": "src/ui/assets/skill-icons/doubleScienceTree.webp?url",
+          "renderedBytes": 150
+        },
+        {
+          "id": "src/ui/assets/skill-icons/economicDominance.webp?url",
+          "renderedBytes": 150
+        },
+        {
+          "id": "src/ui/assets/skill-icons/hypercubeNetworks.webp?url",
+          "renderedBytes": 150
+        },
+        {
+          "id": "src/ui/assets/skill-icons/idleElectricSheep.webp?url",
+          "renderedBytes": 150
+        },
+        {
+          "id": "src/ui/assets/skill-icons/powerOverwhelming.webp?url",
+          "renderedBytes": 150
+        },
+        {
+          "id": "src/ui/assets/skill-icons/productionScaling.webp?url",
+          "renderedBytes": 150
+        },
+        {
+          "id": "src/ui/assets/skill-icons/scientificPlanets.webp?url",
+          "renderedBytes": 150
+        },
+        {
+          "id": "src/ui/assets/skill-icons/shouldersOfGiants.webp?url",
+          "renderedBytes": 150
+        },
+        {
+          "id": "src/ui/assets/skill-icons/superchargedPower.webp?url",
+          "renderedBytes": 150
+        },
+        {
+          "id": "src/ui/assets/skill-icons/whatCouldHaveBeen.webp?url",
+          "renderedBytes": 150
+        },
+        {
+          "id": "src/ui/assets/skill-icons/assemblyLineTree.webp?url",
+          "renderedBytes": 148
+        },
+        {
+          "id": "src/ui/assets/skill-icons/panelMaintenance.webp?url",
+          "renderedBytes": 148
+        },
+        {
+          "id": "src/ui/assets/skill-icons/pocketDimensions.webp?url",
+          "renderedBytes": 148
+        },
+        {
+          "id": "src/ui/assets/skill-icons/pocketMultiverse.webp?url",
+          "renderedBytes": 148
+        },
+        {
+          "id": "src/ui/assets/skill-icons/pocketProtectors.webp?url",
+          "renderedBytes": 148
+        },
+        {
+          "id": "src/ui/assets/skill-icons/purityOfSEssence.webp?url",
+          "renderedBytes": 148
+        },
+        {
+          "id": "src/ui/assets/skill-icons/quantumComputing.webp?url",
+          "renderedBytes": 148
+        },
+        {
+          "id": "src/ui/assets/skill-icons/stellarDominance.webp?url",
+          "renderedBytes": 148
+        },
+        {
+          "id": "src/ui/assets/skill-icons/hubbleTelescope.webp?url",
+          "renderedBytes": 146
+        },
+        {
+          "id": "src/ui/assets/skill-icons/idleSpaceFlight.webp?url",
+          "renderedBytes": 146
+        },
+        {
+          "id": "src/ui/assets/skill-icons/renewableEnergy.webp?url",
+          "renderedBytes": 146
+        },
+        {
+          "id": "src/ui/assets/skill-icons/shoulderSurgery.webp?url",
+          "renderedBytes": 146
+        },
+        {
+          "id": "src/ui/assets/skill-icons/worthySacrifice.webp?url",
+          "renderedBytes": 146
+        },
+        {
+          "id": "src/ui/assets/skill-icons/citadelCouncil.webp?url",
+          "renderedBytes": 144
+        },
+        {
+          "id": "src/ui/assets/skill-icons/dataCenterTree.webp?url",
+          "renderedBytes": 144
+        },
+        {
+          "id": "src/ui/assets/skill-icons/dysonSubsidies.webp?url",
+          "renderedBytes": 144
+        },
+        {
+          "id": "src/ui/assets/skill-icons/fusionReactors.webp?url",
+          "renderedBytes": 144
+        },
+        {
+          "id": "src/ui/assets/skill-icons/monetaryPolicy.webp?url",
+          "renderedBytes": 144
+        },
+        {
+          "id": "src/ui/assets/skill-icons/planetAssembly.webp?url",
+          "renderedBytes": 144
+        },
+        {
+          "id": "src/ui/assets/skill-icons/pocketAndroids.webp?url",
+          "renderedBytes": 144
+        },
+        {
+          "id": "src/ui/assets/skill-icons/terraIrradiant.webp?url",
+          "renderedBytes": 144
+        },
+        {
+          "id": "src/ui/assets/skill-icons/aiManagerTree.webp?url",
+          "renderedBytes": 142
+        },
+        {
+          "id": "src/ui/assets/skill-icons/oneMinutePlan.webp?url",
+          "renderedBytes": 142
+        },
+        {
+          "id": "src/ui/assets/skill-icons/panelWarranty.webp?url",
+          "renderedBytes": 142
+        },
+        {
+          "id": "src/ui/assets/skill-icons/startHereTree.webp?url",
+          "renderedBytes": 142
+        },
+        {
+          "id": "src/ui/assets/skill-icons/ultimateSwarm.webp?url",
+          "renderedBytes": 142
+        },
+        {
+          "id": "src/ui/assets/skill-icons/endOfTheLine.webp?url",
+          "renderedBytes": 140
+        },
+        {
+          "id": "src/ui/assets/skill-icons/manualLabour.webp?url",
+          "renderedBytes": 140
+        },
+        {
+          "id": "src/ui/assets/skill-icons/purityOfBody.webp?url",
+          "renderedBytes": 140
+        },
+        {
+          "id": "src/ui/assets/skill-icons/purityOfMind.webp?url",
+          "renderedBytes": 140
+        },
+        {
+          "id": "src/ui/assets/skill-icons/solarBubbles.webp?url",
+          "renderedBytes": 140
+        },
+        {
+          "id": "src/ui/assets/skill-icons/terraGloriae.webp?url",
+          "renderedBytes": 140
+        },
+        {
+          "id": "src/ui/assets/skill-icons/terraInfirma.webp?url",
+          "renderedBytes": 140
+        },
+        {
+          "id": "src/ui/assets/skill-icons/terraNullius.webp?url",
+          "renderedBytes": 140
+        },
+        {
+          "id": "src/ui/assets/skill-icons/planetsTree.webp?url",
+          "renderedBytes": 138
+        },
+        {
+          "id": "src/ui/assets/skill-icons/shellWorlds.webp?url",
+          "renderedBytes": 138
+        },
+        {
+          "id": "src/ui/assets/skill-icons/terraEculeo.webp?url",
+          "renderedBytes": 138
+        },
+        {
+          "id": "src/ui/assets/skill-icons/workerBoost.webp?url",
+          "renderedBytes": 138
+        },
+        {
+          "id": "src/ui/assets/skill-icons/coldFusion.webp?url",
+          "renderedBytes": 136
+        },
+        {
+          "id": "src/ui/assets/skill-icons/higgsBoson.webp?url",
+          "renderedBytes": 136
+        },
+        {
+          "id": "src/ui/assets/skill-icons/terraFirma.webp?url",
+          "renderedBytes": 136
+        },
+        {
+          "id": "src/ui/assets/skill-icons/supernova.webp?url",
+          "renderedBytes": 134
+        },
+        {
+          "id": "src/ui/assets/skill-icons/terraNova.webp?url",
+          "renderedBytes": 134
+        },
+        {
+          "id": "src/ui/assets/skill-icons/androids.webp?url",
+          "renderedBytes": 132
+        },
+        {
+          "id": "src/ui/assets/skill-icons/avocados.webp?url",
+          "renderedBytes": 132
+        },
+        {
+          "id": "src/ui/assets/skill-icons/renegade.webp?url",
+          "renderedBytes": 132
+        },
+        {
+          "id": "src/ui/assets/skill-icons/shepherd.webp?url",
+          "renderedBytes": 132
+        },
+        {
+          "id": "src/ui/assets/skill-icons/burnOut.webp?url",
+          "renderedBytes": 130
+        },
+        {
+          "id": "src/ui/assets/skill-icons/paragon.webp?url",
+          "renderedBytes": 130
+        },
+        {
+          "id": "src/ui/assets/skill-icons/saren.webp?url",
+          "renderedBytes": 126
+        }
+      ],
+      "rawBytes": 212712,
+      "gzipBytes": 100961
+    },
+    {
+      "file": "assets/wiki-DJOsxXo7.js",
+      "entry": false,
+      "dynamicEntry": true,
+      "imports": [
+        "assets/index-B-Xgd1j_.js",
+        "assets/react-intl-CZiZAdoX.js"
+      ],
+      "dynamicImports": [],
+      "modules": [
+        {
+          "id": "src/ui/gameplay/wiki/content.ts",
+          "renderedBytes": 74745
+        },
+        {
+          "id": "src/ui/gameplay/wiki/WikiSurface.tsx",
+          "renderedBytes": 17391
+        },
+        {
+          "id": "src/ui/gameplay/wiki/messages.ts",
+          "renderedBytes": 5368
+        }
+      ],
+      "rawBytes": 87867,
+      "gzipBytes": 31787
+    },
+    {
+      "file": "assets/en-XA-B2qU_RAg.js",
+      "entry": false,
+      "dynamicEntry": true,
+      "imports": [],
+      "dynamicImports": [],
+      "modules": [
+        {
+          "id": "src/ui/i18n/catalogs/compiled/en-XA.json",
+          "renderedBytes": 259222
+        }
+      ],
+      "rawBytes": 223391,
+      "gzipBytes": 31419
+    },
+    {
+      "file": "assets/ar-XB-D1dD_s5w.js",
+      "entry": false,
+      "dynamicEntry": true,
+      "imports": [],
+      "dynamicImports": [],
+      "modules": [
+        {
+          "id": "src/ui/i18n/catalogs/compiled/ar-XB.json",
+          "renderedBytes": 249453
+        }
+      ],
+      "rawBytes": 187350,
+      "gzipBytes": 29177
+    },
+    {
+      "file": "assets/en-DHLyGErO.js",
+      "entry": false,
+      "dynamicEntry": true,
+      "imports": [],
+      "dynamicImports": [],
+      "modules": [
+        {
+          "id": "src/ui/i18n/catalogs/compiled/en.json",
+          "renderedBytes": 152234
+        }
+      ],
+      "rawBytes": 116879,
+      "gzipBytes": 23689
+    },
+    {
+      "file": "assets/react-intl-CZiZAdoX.js",
+      "entry": false,
+      "dynamicEntry": false,
+      "imports": [],
+      "dynamicImports": [],
+      "modules": [
+        {
+          "id": "node_modules/@formatjs/icu-messageformat-parser/index.js",
+          "renderedBytes": 35506
+        },
+        {
+          "id": "node_modules/@formatjs/intl/index.js",
+          "renderedBytes": 18625
+        },
+        {
+          "id": "node_modules/react/cjs/react.production.js",
+          "renderedBytes": 15178
+        },
+        {
+          "id": "node_modules/react-intl/index.js",
+          "renderedBytes": 12477
+        },
+        {
+          "id": "node_modules/@formatjs/icu-skeleton-parser/index.js",
+          "renderedBytes": 10755
+        },
+        {
+          "id": "node_modules/intl-messageformat/index.js",
+          "renderedBytes": 10303
+        },
+        {
+          "id": "node_modules/@formatjs/fast-memoize/index.js",
+          "renderedBytes": 2163
+        },
+        {
+          "id": "\u0000rolldown/runtime.js",
+          "renderedBytes": 1388
+        },
+        {
+          "id": "node_modules/react/cjs/react-jsx-runtime.production.js",
+          "renderedBytes": 871
+        },
+        {
+          "id": "node_modules/react/jsx-runtime.js",
+          "renderedBytes": 200
+        },
+        {
+          "id": "node_modules/react/index.js",
+          "renderedBytes": 176
+        }
+      ],
+      "rawBytes": 57563,
+      "gzipBytes": 17203
+    },
+    {
+      "file": "assets/catalog-q-OmVghR.js",
+      "entry": false,
+      "dynamicEntry": false,
+      "imports": [],
+      "dynamicImports": [],
+      "modules": [
+        {
+          "id": "src/game-data/generated/runtime-catalog.json",
+          "renderedBytes": 155579
+        },
+        {
+          "id": "src/game-data/catalog.ts",
+          "renderedBytes": 389
+        }
+      ],
+      "rawBytes": 114103,
+      "gzipBytes": 9231
+    },
+    {
+      "file": "assets/SimulationsSurface-BUMvqTQm.js",
+      "entry": false,
+      "dynamicEntry": true,
+      "imports": [
+        "assets/index-B-Xgd1j_.js",
+        "assets/react-intl-CZiZAdoX.js",
+        "assets/symbol-strange-matter-7b143Bgp.js"
+      ],
+      "dynamicImports": [],
+      "modules": [
+        {
+          "id": "src/ui/gameplay/simulations/SimulationsSurface.tsx",
+          "renderedBytes": 45882
+        },
+        {
+          "id": "src/ui/gameplay/simulations/messages.ts",
+          "renderedBytes": 7185
+        }
+      ],
+      "rawBytes": 30769,
+      "gzipBytes": 8464
+    },
+    {
+      "file": "assets/facilities-IV_jNquV.js",
+      "entry": false,
+      "dynamicEntry": true,
+      "imports": [
+        "assets/index-B-Xgd1j_.js",
+        "assets/react-intl-CZiZAdoX.js"
+      ],
+      "dynamicImports": [],
+      "modules": [
+        {
+          "id": "src/ui/gameplay/facilities/BasicFacilityRegion.tsx",
+          "renderedBytes": 24011
+        },
+        {
+          "id": "src/ui/gameplay/facilities/MegaStructureRegion.tsx",
+          "renderedBytes": 17032
+        },
+        {
+          "id": "src/ui/gameplay/facilities/FacilityDetailsDialog.tsx",
+          "renderedBytes": 3380
+        },
+        {
+          "id": "src/ui/gameplay/facilities/progressInterpolation.ts",
+          "renderedBytes": 190
+        }
+      ],
+      "rawBytes": 23101,
+      "gzipBytes": 5482
+    },
+    {
+      "file": "assets/reality-DwtA0yza.js",
+      "entry": false,
+      "dynamicEntry": true,
+      "imports": [
+        "assets/index-B-Xgd1j_.js",
+        "assets/react-intl-CZiZAdoX.js",
+        "assets/symbol-strange-matter-7b143Bgp.js"
+      ],
+      "dynamicImports": [],
+      "modules": [
+        {
+          "id": "src/ui/gameplay/reality/RealitySurface.tsx",
+          "renderedBytes": 20834
+        },
+        {
+          "id": "src/ui/gameplay/reality/messages.ts",
+          "renderedBytes": 10193
+        },
+        {
+          "id": "src/ui/gameplay/simulations/SimulationUpgradeRegion.tsx",
+          "renderedBytes": 9194
+        }
+      ],
+      "rawBytes": 24945,
+      "gzipBytes": 5040
+    },
+    {
+      "file": "assets/research-CYqCeCxY.js",
+      "entry": false,
+      "dynamicEntry": true,
+      "imports": [
+        "assets/index-B-Xgd1j_.js",
+        "assets/react-intl-CZiZAdoX.js"
+      ],
+      "dynamicImports": [],
+      "modules": [
+        {
+          "id": "src/ui/gameplay/research/ResearchSurface.tsx",
+          "renderedBytes": 17008
+        },
+        {
+          "id": "src/ui/gameplay/research/messages.ts",
+          "renderedBytes": 3039
+        },
+        {
+          "id": "src/ui/assets/symbol-research-cost.png",
+          "renderedBytes": 2067
+        }
+      ],
+      "rawBytes": 13395,
+      "gzipBytes": 4859
+    },
+    {
+      "file": "assets/settings-Cb7PQOM1.js",
+      "entry": false,
+      "dynamicEntry": true,
+      "imports": [
+        "assets/index-B-Xgd1j_.js",
+        "assets/react-intl-CZiZAdoX.js"
+      ],
+      "dynamicImports": [],
+      "modules": [
+        {
+          "id": "src/ui/gameplay/settings/SettingsSurface.tsx",
+          "renderedBytes": 30050
+        },
+        {
+          "id": "src/ui/gameplay/settings/messages.ts",
+          "renderedBytes": 5195
+        }
+      ],
+      "rawBytes": 19455,
+      "gzipBytes": 4457
+    },
+    {
+      "file": "assets/QuantumSurface-DoU0brwo.js",
+      "entry": false,
+      "dynamicEntry": true,
+      "imports": [
+        "assets/AvotationProgress-6_1-nyNh.js",
+        "assets/index-B-Xgd1j_.js",
+        "assets/react-intl-CZiZAdoX.js"
+      ],
+      "dynamicImports": [],
+      "modules": [
+        {
+          "id": "src/ui/gameplay/quantum/QuantumSurface.tsx",
+          "renderedBytes": 21170
+        },
+        {
+          "id": "src/ui/assets/quantum-shards.png",
+          "renderedBytes": 191
+        },
+        {
+          "id": "src/ui/gameplay/quantum/quantumPurchaseQuantities.ts",
+          "renderedBytes": 142
+        }
+      ],
+      "rawBytes": 11060,
+      "gzipBytes": 3404
+    },
+    {
+      "file": "assets/store-CdkergJH.js",
+      "entry": false,
+      "dynamicEntry": true,
+      "imports": [
+        "assets/index-B-Xgd1j_.js",
+        "assets/react-intl-CZiZAdoX.js"
+      ],
+      "dynamicImports": [],
+      "modules": [
+        {
+          "id": "src/ui/gameplay/store/StoreSurface.tsx",
+          "renderedBytes": 8526
+        },
+        {
+          "id": "src/store/storefront.ts",
+          "renderedBytes": 6762
+        },
+        {
+          "id": "src/ui/gameplay/store/messages.ts",
+          "renderedBytes": 2166
+        },
+        {
+          "id": "src/ui/gameplay/store/StoreRouteSurface.tsx",
+          "renderedBytes": 1153
+        }
+      ],
+      "rawBytes": 11453,
+      "gzipBytes": 2893
+    },
+    {
+      "file": "assets/AvotationProgress-6_1-nyNh.js",
+      "entry": false,
+      "dynamicEntry": false,
+      "imports": [
+        "assets/avotation-dabbing-avocado-BtjSNMIF.js",
+        "assets/index-B-Xgd1j_.js",
+        "assets/react-intl-CZiZAdoX.js"
+      ],
+      "dynamicImports": [],
+      "modules": [
+        {
+          "id": "src/ui/gameplay/quantum/AvotationProgress.tsx",
+          "renderedBytes": 7677
+        },
+        {
+          "id": "src/ui/gameplay/quantum/messages.ts",
+          "renderedBytes": 6052
+        },
+        {
+          "id": "src/ui/assets/avotation-meditation.webp",
+          "renderedBytes": 248
+        }
+      ],
+      "rawBytes": 9584,
+      "gzipBytes": 2880
+    },
+    {
+      "file": "assets/infinity-r9kOYcKd.js",
+      "entry": false,
+      "dynamicEntry": true,
+      "imports": [
+        "assets/index-B-Xgd1j_.js",
+        "assets/react-intl-CZiZAdoX.js"
+      ],
+      "dynamicImports": [],
+      "modules": [
+        {
+          "id": "src/ui/gameplay/infinity/InfinitySurface.tsx",
+          "renderedBytes": 13887
+        },
+        {
+          "id": "src/ui/gameplay/infinity/messages.ts",
+          "renderedBytes": 2636
+        }
+      ],
+      "rawBytes": 9937,
+      "gzipBytes": 2873
+    },
+    {
+      "file": "assets/offline-time-DHWVi9OL.js",
+      "entry": false,
+      "dynamicEntry": true,
+      "imports": [
+        "assets/index-B-Xgd1j_.js",
+        "assets/react-intl-CZiZAdoX.js"
+      ],
+      "dynamicImports": [],
+      "modules": [
+        {
+          "id": "src/ui/gameplay/offline-time/OfflineTimeSurface.tsx",
+          "renderedBytes": 14090
+        },
+        {
+          "id": "src/ui/gameplay/offline-time/messages.ts",
+          "renderedBytes": 1823
+        }
+      ],
+      "rawBytes": 8510,
+      "gzipBytes": 2485
+    },
+    {
+      "file": "assets/debug-PdHqgNRy.js",
+      "entry": false,
+      "dynamicEntry": true,
+      "imports": [
+        "assets/index-B-Xgd1j_.js",
+        "assets/react-intl-CZiZAdoX.js"
+      ],
+      "dynamicImports": [],
+      "modules": [
+        {
+          "id": "src/ui/gameplay/debug/DebugSurface.tsx",
+          "renderedBytes": 13685
+        },
+        {
+          "id": "src/ui/gameplay/debug/messages.ts",
+          "renderedBytes": 1706
+        }
+      ],
+      "rawBytes": 7771,
+      "gzipBytes": 2039
+    },
+    {
+      "file": "assets/statistics-yiWQ98aS.js",
+      "entry": false,
+      "dynamicEntry": true,
+      "imports": [
+        "assets/index-B-Xgd1j_.js",
+        "assets/react-intl-CZiZAdoX.js"
+      ],
+      "dynamicImports": [],
+      "modules": [
+        {
+          "id": "src/ui/gameplay/statistics/StatisticsSurface.tsx",
+          "renderedBytes": 9662
+        },
+        {
+          "id": "src/ui/gameplay/statistics/messages.ts",
+          "renderedBytes": 2430
+        },
+        {
+          "id": "src/ui/gameplay/statistics/statisticsProjection.ts",
+          "renderedBytes": 697
+        }
+      ],
+      "rawBytes": 7711,
+      "gzipBytes": 2017
+    },
+    {
+      "file": "assets/quantum-DaI_BTJh.js",
+      "entry": false,
+      "dynamicEntry": true,
+      "imports": [
+        "assets/AvotationProgress-6_1-nyNh.js",
+        "assets/QuantumSurface-DoU0brwo.js",
+        "assets/index-B-Xgd1j_.js",
+        "assets/react-intl-CZiZAdoX.js"
+      ],
+      "dynamicImports": [],
+      "modules": [
+        {
+          "id": "src/ui/gameplay/quantum/AvocatoSurface.tsx",
+          "renderedBytes": 6490
+        },
+        {
+          "id": "src/ui/assets/skill-icons/avocados.webp",
+          "renderedBytes": 192
+        }
+      ],
+      "rawBytes": 3917,
+      "gzipBytes": 1343
+    },
+    {
+      "file": "assets/story-SAzAFo2q.js",
+      "entry": false,
+      "dynamicEntry": true,
+      "imports": [
+        "assets/index-B-Xgd1j_.js",
+        "assets/react-intl-CZiZAdoX.js"
+      ],
+      "dynamicImports": [],
+      "modules": [
+        {
+          "id": "src/ui/gameplay/story/StorySurface.tsx",
+          "renderedBytes": 5007
+        },
+        {
+          "id": "src/ui/gameplay/story/messages.ts",
+          "renderedBytes": 1989
+        }
+      ],
+      "rawBytes": 4770,
+      "gzipBytes": 1265
+    },
+    {
+      "file": "assets/avotation-dabbing-avocado-BtjSNMIF.js",
+      "entry": false,
+      "dynamicEntry": false,
+      "imports": [
+        "assets/numeric-D9fd4tZy.js"
+      ],
+      "dynamicImports": [],
+      "modules": [
+        {
+          "id": "src/simulation/avocadoMeditation.ts",
+          "renderedBytes": 1884
+        },
+        {
+          "id": "src/ui/assets/avotation-dabbing-avocado.png",
+          "renderedBytes": 149
+        }
+      ],
+      "rawBytes": 1166,
+      "gzipBytes": 514
+    },
+    {
+      "file": "assets/numeric-D9fd4tZy.js",
+      "entry": false,
+      "dynamicEntry": false,
+      "imports": [],
+      "dynamicImports": [],
+      "modules": [
+        {
+          "id": "src/simulation/numeric.ts",
+          "renderedBytes": 2636
+        }
+      ],
+      "rawBytes": 1296,
+      "gzipBytes": 457
+    },
+    {
+      "file": "assets/symbol-strange-matter-7b143Bgp.js",
+      "entry": false,
+      "dynamicEntry": false,
+      "imports": [],
+      "dynamicImports": [],
+      "modules": [
+        {
+          "id": "src/ui/assets/symbol-strange-matter.png",
+          "renderedBytes": 141
+        },
+        {
+          "id": "src/ui/assets/symbol-influence.png",
+          "renderedBytes": 131
+        }
+      ],
+      "rawBytes": 120,
+      "gzipBytes": 117
+    },
+    {
+      "file": "assets/simulations-hhAzMzKE.js",
+      "entry": false,
+      "dynamicEntry": true,
+      "imports": [
+        "assets/SimulationsSurface-BUMvqTQm.js"
+      ],
+      "dynamicImports": [],
+      "modules": [],
+      "rawBytes": 156,
+      "gzipBytes": 107
+    }
+  ]
+}
