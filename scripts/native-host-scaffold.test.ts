@@ -79,8 +79,10 @@ describe('native host scaffold', () => {
   it('uses approved application artwork instead of template branding', () => {
     const brandingScript = read('scripts/generate-native-branding.ps1')
     const builder = read('hosts/electron/electron-builder.yml')
-    expect(brandingScript).toContain('icons-menu-12_Bots.png')
-    expect(brandingScript).toContain('public\\icons\\pwa-icon-512.png')
+    expect(brandingScript).toContain(
+      'source-assets\\branding\\unity-app-icon.png',
+    )
+    expect(brandingScript).not.toContain('..\\Assets')
     expect(builder).toContain('icon: public/icons/pwa-icon-512.png')
     expect(read(
       'hosts/capacitor/android/app/src/main/res/values/ic_launcher_background.xml',

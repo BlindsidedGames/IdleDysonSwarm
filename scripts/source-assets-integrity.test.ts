@@ -11,7 +11,10 @@ function sha256(path: string): string {
 }
 
 describe('preserved source assets', () => {
-  test('retains the soundtrack and Steam icon masters byte-for-byte', () => {
+  test('retains the application, soundtrack, and Steam icon masters byte-for-byte', () => {
+    expect(sha256('source-assets/branding/unity-app-icon.png')).toBe(
+      '47064cffd68541f3e75560352ba6333d7cf849279e7213fb8806a155d3eccfcd',
+    )
     expect(sha256('source-assets/audio/IDS-master.wav')).toBe(
       '2ab4636ee5970a729ece6106dfbb8b8252ae44a8b1fa89a780f224b4e4296602',
     )

@@ -8,12 +8,11 @@ type OutputBundle = Rollup.OutputBundle
 type OutputChunk = Rollup.OutputChunk
 
 export const PWA_BASE_PATH = '/play/'
-const PWA_GENERATOR_VERSION = '2'
+const PWA_GENERATOR_VERSION = '3'
 export const PWA_AUDIO_PACKAGE_BUDGET_BYTES = 7_000_000
 
 const PUBLIC_PRECACHE_FILES = Object.freeze([
   'manifest.webmanifest',
-  'icons/pwa-icon.svg',
   'icons/pwa-icon-192.png',
   'icons/pwa-icon-512.png',
   'icons/pwa-maskable-512.png',

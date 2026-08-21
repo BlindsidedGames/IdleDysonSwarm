@@ -13,9 +13,6 @@ Status conventions:
 
 ## Current cross-platform work
 
-- [ ] Prevent unwanted automatic Skill allocation when unspent points are
-  available, and verify that the Fix Skill Points recovery action never removes
-  legitimately banked points.
 - [ ] Keep the Stored/Offline Time progress indicator visible when additional
   stored time is applied while a run is already active.
 - [ ] Define and implement purchase behavior when cash or science reaches the
