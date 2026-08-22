@@ -171,6 +171,76 @@ describe('portable transactional save repository', () => {
 
   test.each([
     {
+      label: 'absent',
+      decoded: { saveVersion: 12 },
+    },
+    {
+      label: 'malformed',
+      decoded: {
+        saveVersion: 12,
+        numberFormatting: '2',
+        hidePurchased: 'true',
+      },
+    },
+  ])('does not adopt migration-generated defaults when raw Unity preferences are $label', async ({ decoded }) => {
+    const storage = new MemoryStorage()
+    storage.files.set('unity-readonly:canonical-unity', 'IDB1:test')
+    storage.candidates = [verifiedUnityCandidate()]
+    const notationAdopter = {
+      adoptLegacyUnityNumberFormatting: vi.fn(() => true),
+    }
+    const visibilityAdopter = {
+      adoptLegacyUnityHidePurchased: vi.fn(() => true),
+    }
+    const repository = new PortableSaveRepository(
+      storage,
+      {
+        current: '/current',
+        temporary: '/current.tmp',
+        legacyRecovery: '/recovery/original-idb1.txt',
+      },
+      () => decoded,
+      { allowCanonicalPlayerWrites: false },
+      undefined,
+      notationAdopter,
+      visibilityAdopter,
+    )
+
+    await expect(repository.migrateLegacyOnFirstLaunch()).resolves
+      .toMatchObject({ status: 'migrated' })
+    expect(notationAdopter.adoptLegacyUnityNumberFormatting).not.toHaveBeenCalled()
+    expect(visibilityAdopter.adoptLegacyUnityHidePurchased).not.toHaveBeenCalled()
+  })
+
+  test('preserves an explicit false Unity Research visibility preference', async () => {
+    const storage = new MemoryStorage()
+    storage.files.set('unity-readonly:canonical-unity', 'IDB1:test')
+    storage.candidates = [verifiedUnityCandidate()]
+    const visibilityAdopter = {
+      adoptLegacyUnityHidePurchased: vi.fn(() => true),
+    }
+    const repository = new PortableSaveRepository(
+      storage,
+      {
+        current: '/current',
+        temporary: '/current.tmp',
+        legacyRecovery: '/recovery/original-idb1.txt',
+      },
+      () => ({ saveVersion: 12, hidePurchased: false }),
+      { allowCanonicalPlayerWrites: false },
+      undefined,
+      undefined,
+      visibilityAdopter,
+    )
+
+    await expect(repository.migrateLegacyOnFirstLaunch()).resolves
+      .toMatchObject({ status: 'migrated' })
+    expect(visibilityAdopter.adoptLegacyUnityHidePurchased)
+      .toHaveBeenCalledExactlyOnceWith(false)
+  })
+
+  test.each([
+    {
       label: 'unprovenanced recovery candidate',
       id: 'legacy',
       sourcePath: '/legacy',
@@ -262,6 +332,9 @@ describe('portable transactional save repository', () => {
     const adopter = {
       adoptLegacyUnityNumberFormatting: vi.fn(() => true),
     }
+    const visibilityAdopter = {
+      adoptLegacyUnityHidePurchased: vi.fn(() => true),
+    }
     const repository = new PortableSaveRepository(
       storage,
       {
@@ -269,15 +342,17 @@ describe('portable transactional save repository', () => {
         temporary: '/current.tmp',
         legacyRecovery: '/recovery/original-idb1.txt',
       },
-      () => ({ saveVersion: 12, numberFormatting: 1 }),
+      () => ({ saveVersion: 12, numberFormatting: 1, hidePurchased: false }),
       { allowCanonicalPlayerWrites: false },
       undefined,
       adopter,
+      visibilityAdopter,
     )
 
     await expect(repository.migrateLegacyOnFirstLaunch()).resolves
       .toMatchObject({ status: 'recovery-write-failed' })
     expect(adopter.adoptLegacyUnityNumberFormatting).not.toHaveBeenCalled()
+    expect(visibilityAdopter.adoptLegacyUnityHidePurchased).not.toHaveBeenCalled()
   })
 
   test('keeps a committed migration when optional notation adoption throws', async () => {
@@ -297,6 +372,9 @@ describe('portable transactional save repository', () => {
         },
       },
     ]
+    const visibilityAdopter = {
+      adoptLegacyUnityHidePurchased: vi.fn(() => true),
+    }
     const repository = new PortableSaveRepository(
       storage,
       {
@@ -304,7 +382,7 @@ describe('portable transactional save repository', () => {
         temporary: '/current.tmp',
         legacyRecovery: '/recovery/original-idb1.txt',
       },
-      () => ({ saveVersion: 12, numberFormatting: 1 }),
+      () => ({ saveVersion: 12, numberFormatting: 1, hidePurchased: false }),
       { allowCanonicalPlayerWrites: false },
       undefined,
       {
@@ -312,11 +390,14 @@ describe('portable transactional save repository', () => {
           throw new Error('optional storage unavailable')
         },
       },
+      visibilityAdopter,
     )
 
     await expect(repository.migrateLegacyOnFirstLaunch()).resolves
       .toMatchObject({ status: 'migrated' })
     expect(storage.files.get('/current')).toMatch(/^IDSWEB1:/)
+    expect(visibilityAdopter.adoptLegacyUnityHidePurchased)
+      .toHaveBeenCalledExactlyOnceWith(false)
   })
 
   test('falls back to a valid recovery candidate when the first legacy file is corrupt', async () => {
@@ -959,3 +1040,18 @@ describe('portable transactional save repository', () => {
     expect(storage.replacements).toEqual([])
   })
 })
+
+function verifiedUnityCandidate(): LegacySaveCandidate {
+  return {
+    id: 'canonical-unity',
+    sourcePath: 'unity-readonly:canonical-unity',
+    text: 'IDB1:test',
+    provenance: {
+      kind: 'automatic-same-device-unity',
+      platform: 'android',
+      sourceClass: 'unity-persistent-data-save',
+      opaqueSourceIdentifier: 'canonical-unity',
+      pathClass: 'capacitor-external-files',
+    },
+  }
+}
