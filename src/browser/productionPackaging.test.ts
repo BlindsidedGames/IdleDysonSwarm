@@ -55,6 +55,11 @@ describe('production browser package', () => {
 
       expect(outputRelativePaths).not.toEqual([])
       expect(
+        outputRelativePaths.filter((file) =>
+          /^assets\/IDS-LexendTabularDigits-.+\.ttf$/.test(file),
+        ),
+      ).toHaveLength(3)
+      expect(
         outputRelativePaths.some((file) =>
           /(?:^|\/)(?:fixtures?|parity)(?:\/|$)/i.test(file),
         ),

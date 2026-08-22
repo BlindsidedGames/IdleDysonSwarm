@@ -1,4 +1,8 @@
 import type { EnabledLocale } from './localeRegistry'
+import {
+  getActiveNumberNotation,
+  type NumberNotationMode,
+} from '../number-notation'
 
 export type NumericValue = number | bigint
 export const NON_FINITE_NUMBER_FALLBACK = '—'
@@ -78,21 +82,22 @@ export function formatNumber(
 export function formatGameNumber(
   locale: EnabledLocale,
   value: NumericValue,
+  notation: NumberNotationMode = getActiveNumberNotation(),
 ): string {
-  const parts = formatGameNumberParts(locale, value)
+  const parts = formatGameNumberParts(locale, value, notation)
   return `${parts.value}${parts.suffix}`
 }
 
 export function formatGameNumberParts(
   locale: EnabledLocale,
   value: NumericValue,
+  notation: NumberNotationMode = getActiveNumberNotation(),
 ): GameNumberParts {
   if (typeof value === 'bigint') {
-    if (
-      value > BigInt(Number.MAX_SAFE_INTEGER) ||
-      value < BigInt(Number.MIN_SAFE_INTEGER)
-    ) return formatLargeGameBigIntParts(locale, value)
-    return formatGameNumberParts(locale, Number(value))
+    if (value > 1000n || value < -1000n) {
+      return formatLargeGameBigIntParts(locale, value, notation)
+    }
+    return formatGameNumberParts(locale, Number(value), notation)
   }
   if (!Number.isFinite(value)) {
     return { value: NON_FINITE_NUMBER_FALLBACK, suffix: '' }
@@ -106,6 +111,10 @@ export function formatGameNumberParts(
       }),
       suffix: '',
     }
+  }
+
+  if (Math.abs(value) > 1000 && notation !== 'standard') {
+    return formatExponentNumberParts(locale, value, notation)
   }
 
   const absolute = Math.abs(value)
@@ -142,11 +151,15 @@ export function formatGameNumberParts(
 function formatLargeGameBigIntParts(
   locale: EnabledLocale,
   value: bigint,
+  notation: NumberNotationMode,
 ): GameNumberParts {
   const negative = value < 0n
   const digits = (negative ? -value : value).toString()
   const exponentGroup = Math.floor((digits.length - 1) / 3)
-  const integerDigits = digits.length - exponentGroup * 3
+  const exponent = notation === 'scientific'
+    ? digits.length - 1
+    : exponentGroup * 3
+  const integerDigits = digits.length - exponent
   const fractionDigits = Math.max(0, 3 - integerDigits)
   const significantDigits = Number(digits.slice(0, 3))
   const mantissa = significantDigits / 10 ** fractionDigits
@@ -156,9 +169,37 @@ function formatLargeGameBigIntParts(
     useGrouping: false,
   })
 
+  if (notation !== 'standard') {
+    return { value: formatted, suffix: `e${exponent}` }
+  }
   return exponentGroup < GAME_NUMBER_PREFIXES.length
     ? { value: formatted, suffix: GAME_NUMBER_PREFIXES[exponentGroup] }
     : { value: `${formatted}e${exponentGroup * 3}`, suffix: '' }
+}
+
+function formatExponentNumberParts(
+  locale: EnabledLocale,
+  value: number,
+  notation: Exclude<NumberNotationMode, 'standard'>,
+): GameNumberParts {
+  const absolute = Math.abs(value)
+  const scientificExponent = Math.floor(Math.log10(absolute))
+  const exponent = notation === 'scientific'
+    ? scientificExponent
+    : Math.floor(scientificExponent / 3) * 3
+  const mantissa = value / 10 ** exponent
+  const integerDigits = Math.floor(Math.log10(Math.abs(mantissa))) + 1
+  const fractionDigits = Math.max(0, 3 - integerDigits)
+  const factor = 10 ** fractionDigits
+  const truncated = Math.trunc(mantissa * factor) / factor
+  return {
+    value: formatNumber(locale, truncated, {
+      minimumFractionDigits: fractionDigits,
+      maximumFractionDigits: fractionDigits,
+      useGrouping: false,
+    }),
+    suffix: `e${exponent}`,
+  }
 }
 
 /**
@@ -169,8 +210,9 @@ export function formatGameEnergy(
   locale: EnabledLocale,
   value: number,
   unit: GameEnergyUnit,
+  notation: NumberNotationMode = getActiveNumberNotation(),
 ): string {
-  const parts = formatGameEnergyParts(locale, value, unit)
+  const parts = formatGameEnergyParts(locale, value, unit, notation)
   return parts.unit ? `${parts.value} ${parts.unit}` : parts.value
 }
 
@@ -178,6 +220,7 @@ export function formatGameEnergyParts(
   locale: EnabledLocale,
   value: number,
   unit: GameEnergyUnit,
+  notation: NumberNotationMode = getActiveNumberNotation(),
 ): GameEnergyParts {
   const prefixes = GAME_ENERGY_PREFIXES[unit]
   if (value === Number.MAX_VALUE) return { value: 'MAX', unit: '' }
@@ -185,6 +228,11 @@ export function formatGameEnergyParts(
     return { value: 'ERR', unit: '' }
   }
   if (value === 0) return { value: '0.00', unit: prefixes[0] }
+
+  if (value > 1000 && notation !== 'standard') {
+    const parts = formatExponentNumberParts(locale, value, notation)
+    return { value: `${parts.value}${parts.suffix}`, unit: prefixes[0] }
+  }
 
   const exponentGroup = Math.max(
     Math.floor(Math.log10(Math.abs(value)) / 3),

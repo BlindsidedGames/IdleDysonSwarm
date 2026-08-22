@@ -8,7 +8,10 @@ import type {
   AutomaticUnityPurchaseEvidencePromoter,
   LegacyCandidateProvenance,
 } from './automaticPurchaseEvidence'
-import { sha256Utf8 } from './automaticPurchaseEvidence'
+import {
+  isVerifiedAutomaticSameDeviceUnityCandidate,
+  sha256Utf8,
+} from './automaticPurchaseEvidence'
 
 export interface LegacySaveCandidate {
   readonly id: string
@@ -89,6 +92,10 @@ export type FirstLaunchMigrationResult =
 
 export type LegacySaveDecoder = (text: string) => unknown
 
+export interface AutomaticUnityNumberFormattingAdopter {
+  adoptLegacyUnityNumberFormatting(value: unknown): boolean
+}
+
 /**
  * Platform shells supply only filesystem discovery and atomic primitives.
  * Decode, migration and validation remain shared TypeScript behavior.
@@ -100,6 +107,8 @@ export class PortableSaveRepository implements SaveRepository {
   private readonly policy: SaveRepositoryPolicy
   private readonly automaticPurchaseEvidencePromoter?:
     AutomaticUnityPurchaseEvidencePromoter
+  private readonly automaticNumberFormattingAdopter?:
+    AutomaticUnityNumberFormattingAdopter
 
   constructor(
     storage: SaveStorageAdapter,
@@ -110,6 +119,8 @@ export class PortableSaveRepository implements SaveRepository {
     },
     automaticPurchaseEvidencePromoter?:
       AutomaticUnityPurchaseEvidencePromoter,
+    automaticNumberFormattingAdopter?:
+      AutomaticUnityNumberFormattingAdopter,
   ) {
     this.storage = storage
     this.paths = paths
@@ -117,6 +128,8 @@ export class PortableSaveRepository implements SaveRepository {
     this.policy = policy
     this.automaticPurchaseEvidencePromoter =
       automaticPurchaseEvidencePromoter
+    this.automaticNumberFormattingAdopter =
+      automaticNumberFormattingAdopter
   }
 
   async hasCurrent(): Promise<boolean> {
@@ -223,6 +236,7 @@ export class PortableSaveRepository implements SaveRepository {
         await this.storage.copy(source.sourcePath, this.paths.legacyRecovery)
         await this.promoteAutomaticPurchaseEvidence(source, prepared)
         const committed = await this.commit(prepared)
+        this.adoptAutomaticNumberFormatting(source, prepared)
         return { status: 'migrated', source, migration, save: committed }
       } catch (error) {
         return {
@@ -252,19 +266,30 @@ export class PortableSaveRepository implements SaveRepository {
       : { status: 'no-legacy-save' }
   }
 
+  private adoptAutomaticNumberFormatting(
+    candidate: Readonly<LegacySaveCandidate>,
+    save: PreparedSave,
+  ): void {
+    if (!isVerifiedAutomaticSameDeviceUnityCandidate(candidate)) return
+    try {
+      this.automaticNumberFormattingAdopter
+        ?.adoptLegacyUnityNumberFormatting(
+          save.copyValidatedState().numberFormatting,
+        )
+    } catch {
+      // An optional device-local presentation preference can never invalidate
+      // a successfully committed canonical migration.
+    }
+  }
+
   private async promoteAutomaticPurchaseEvidence(
     candidate: Readonly<LegacySaveCandidate>,
     prepared: PreparedSave,
   ): Promise<void> {
     const promoter = this.automaticPurchaseEvidencePromoter
     if (promoter === undefined) return
+    if (!isVerifiedAutomaticSameDeviceUnityCandidate(candidate)) return
     const provenance = candidate.provenance
-    if (
-      provenance?.kind !== 'automatic-same-device-unity' ||
-      candidate.sourcePath !==
-        `unity-readonly:${provenance.opaqueSourceIdentifier}` ||
-      candidate.id !== provenance.opaqueSourceIdentifier
-    ) return
     const source = prepared.copyValidatedState()
     if (source.doubleIp !== true) return
     if (

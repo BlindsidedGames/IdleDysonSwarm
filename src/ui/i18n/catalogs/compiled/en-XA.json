@@ -10485,6 +10485,90 @@
       "value": "]"
     }
   ],
+  "settings.number-notation.description": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Ƈħǿǿǿǿşḗḗ ħǿǿẇ ŀȧȧřɠḗḗ ɠȧȧḿḗḗ ṽȧȧŀŭŭḗḗş ȧȧřḗḗ ḓīşƥŀȧȧẏḗḗḓ ǿǿƞ ŧħīş ḓḗḗṽīƈḗḗ."
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "settings.number-notation.engineering": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Ḗƞɠīƞḗḗḗḗřīƞɠ"
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "settings.number-notation.label": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Ŀȧȧřɠḗḗ ƞŭŭḿƀḗḗř ƞǿǿŧȧȧŧīǿǿƞ"
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "settings.number-notation.scientific": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Şƈīḗḗƞŧīƒīƈ"
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "settings.number-notation.standard": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Şŧȧȧƞḓȧȧřḓ"
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "settings.number-notation.title": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Ƞŭŭḿƀḗḗř ƞǿǿŧȧȧŧīǿǿƞ"
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
   "settings.save-data.cancel": [
     {
       "type": 0,

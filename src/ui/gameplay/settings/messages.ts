@@ -1,6 +1,36 @@
 import { defineMessages } from 'react-intl'
 
 export const settingsSurfaceMessages = defineMessages({
+  numberNotationTitle: {
+    id: 'settings.number-notation.title',
+    defaultMessage: 'Number notation',
+    description: 'Heading for the device-local number notation preference.',
+  },
+  numberNotationDescription: {
+    id: 'settings.number-notation.description',
+    defaultMessage: 'Choose how large game values are displayed on this device.',
+    description: 'Explains the scope of the number notation preference.',
+  },
+  numberNotationLabel: {
+    id: 'settings.number-notation.label',
+    defaultMessage: 'Large number notation',
+    description: 'Accessible label for the number notation select.',
+  },
+  numberNotationStandard: {
+    id: 'settings.number-notation.standard',
+    defaultMessage: 'Standard',
+    description: 'Standard suffix number notation option.',
+  },
+  numberNotationScientific: {
+    id: 'settings.number-notation.scientific',
+    defaultMessage: 'Scientific',
+    description: 'Scientific number notation option.',
+  },
+  numberNotationEngineering: {
+    id: 'settings.number-notation.engineering',
+    defaultMessage: 'Engineering',
+    description: 'Engineering number notation option.',
+  },
   audioTitle: {
     id: 'settings.audio.title',
     defaultMessage: 'Audio',

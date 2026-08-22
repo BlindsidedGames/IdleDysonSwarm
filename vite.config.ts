@@ -104,6 +104,12 @@ export default defineConfig(({ mode }) => {
       // of assuming Vite's hashed filenames or manual chunk layout.
       manifest: true,
       sourcemap: false,
+      // Keep the tiny tabular faces as real assets. A CSS query suffix avoids
+      // build inlining but breaks Vite development URL rewriting under /play/.
+      assetsInlineLimit: (filePath) =>
+        filePath.includes('IDS-LexendTabularDigits-')
+          ? false
+          : undefined,
     },
     preview: {
       headers: SECURITY_HEADERS,

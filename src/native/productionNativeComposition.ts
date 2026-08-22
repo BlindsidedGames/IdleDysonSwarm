@@ -47,6 +47,8 @@ export interface ProductionNativeCompositionOptions {
   readonly monotonicClock?: ActiveTimeMonotonicClock
   readonly createRuntime?: NativeRuntimeFactory
   readonly reloadPage?: () => void
+  readonly automaticNumberFormattingAdopter?:
+    import('../save/repository').AutomaticUnityNumberFormattingAdopter
 }
 
 export interface ProductionNativeComposition {
@@ -124,6 +126,8 @@ export function createProductionNativeComposition(
       automaticPurchaseEvidencePromoter(
         services.entitlements,
       ),
+    automaticNumberFormattingAdopter:
+      options.automaticNumberFormattingAdopter,
     developmentControlsAvailable: true,
     developmentControlsRequireEntitlement: true,
   })

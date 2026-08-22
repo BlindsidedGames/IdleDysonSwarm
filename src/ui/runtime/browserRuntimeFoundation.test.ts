@@ -3738,6 +3738,9 @@ describe('browser runtime foundation composition', () => {
     expect(
       deserializeWebSave(exportedText ?? ''),
     ).toMatchObject({ marker: 'exported-checkpoint' })
+    expect(deserializeWebSave(exportedText ?? '')).not.toHaveProperty(
+      'numberFormatting',
+    )
 
     await expect(runtime.exportCurrentSave()).resolves.toBe(true)
     expect(downloads.last).toMatchObject({

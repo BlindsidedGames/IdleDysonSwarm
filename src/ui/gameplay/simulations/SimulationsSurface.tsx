@@ -1634,7 +1634,7 @@ function formatWholeQuantity(
   locale: EnabledLocale,
   value: number | bigint,
 ): string {
-  return formatNumber(locale, Number(value), { maximumFractionDigits: 0 })
+  return formatNumber(locale, value, { maximumFractionDigits: 0 })
 }
 
 function conversionProgress(

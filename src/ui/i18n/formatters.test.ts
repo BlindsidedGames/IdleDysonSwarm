@@ -65,6 +65,46 @@ describe('cached locale formatters', () => {
     expect(formatGameNumber('en', -12_102_296_928_535_773n)).toBe('-12.1Qa')
   })
 
+  it.each([
+    ['standard', 999, '999'],
+    ['standard', 1000, '1.00K'],
+    ['standard', 999_999, '999K'],
+    ['standard', 1_000_000, '1.00M'],
+    ['scientific', 999, '999'],
+    ['scientific', 1000, '1.00K'],
+    ['scientific', 1001, '1.00e3'],
+    ['scientific', -12_345, '-1.23e4'],
+    ['engineering', 999, '999'],
+    ['engineering', 1000, '1.00K'],
+    ['engineering', 12_345, '12.3e3'],
+    ['engineering', -1_234_567, '-1.23e6'],
+  ] as const)('formats %s threshold value %s as %s', (mode, value, expected) => {
+    expect(formatGameNumber('en', value, mode)).toBe(expected)
+  })
+
+  it('formats arbitrarily large bigint values without Number coercion', () => {
+    const huge = BigInt(`123${'0'.repeat(399)}`)
+    expect(formatGameNumber('en', huge, 'scientific')).toBe('1.23e401')
+    expect(formatGameNumber('en', huge, 'engineering')).toBe('123e399')
+    expect(formatGameNumber('en', -huge, 'scientific')).toBe('-1.23e401')
+    expect(formatGameNumber('en', huge, 'standard')).toBe('123e399')
+  })
+
+  it.each(['standard', 'scientific', 'engineering'] as const)(
+    'uses stable zero and non-finite fallbacks in %s mode',
+    (mode) => {
+      expect(formatGameNumber('en', 0, mode)).toBe('0.00')
+      expect(formatGameNumber('en', Number.NaN, mode)).toBe('—')
+      expect(formatGameNumber('en', Number.POSITIVE_INFINITY, mode)).toBe('—')
+    },
+  )
+
+  it('applies notation to energy magnitude while preserving W and J units', () => {
+    expect(formatGameEnergy('en', 1000, 'watts', 'scientific')).toBe('1.00 KW')
+    expect(formatGameEnergy('en', 1001, 'watts', 'scientific')).toBe('1.00e3 W')
+    expect(formatGameEnergy('en', 12_345, 'joules', 'engineering')).toBe('12.3e3 J')
+  })
+
   it('matches the Unity watt and joule energy format', () => {
     expect(formatGameEnergy('en', 0, 'watts')).toBe('0.00 W')
     expect(formatGameEnergy('en', 0.8, 'watts')).toBe('0.80 W')

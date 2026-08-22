@@ -26,6 +26,7 @@ import {
   createProductionAudioService,
   type GameAudioService,
 } from './audio'
+import type { AutomaticUnityNumberFormattingAdopter } from './save/repository'
 
 export interface ProductionHostComposition {
   readonly hostKind: HostKind
@@ -47,6 +48,8 @@ export interface ProductionHostCompositionOptions {
   readonly createNativeComposition?: (
     bridge: NativeHostBridgeApi,
   ) => ProductionNativeComposition
+  readonly automaticNumberFormattingAdopter?:
+    AutomaticUnityNumberFormattingAdopter
 }
 
 function createConfiguredBrowserStoreServices(): Readonly<ReleasePlatformServices> {
@@ -77,6 +80,8 @@ export function createProductionHostComposition(
           const services = createConfiguredBrowserStoreServices()
           return createProductionBrowserComposition({
             releasePlatformServices: services,
+            automaticNumberFormattingAdopter:
+              options.automaticNumberFormattingAdopter,
           })
         })()
       : options.createBrowserComposition()
@@ -97,7 +102,10 @@ export function createProductionHostComposition(
   }
   const environment = createNativeHostEnvironment(bridge)
   const composition = options.createNativeComposition === undefined
-    ? createProductionNativeComposition(environment)
+    ? createProductionNativeComposition(environment, {
+        automaticNumberFormattingAdopter:
+          options.automaticNumberFormattingAdopter,
+      })
     : options.createNativeComposition(bridge)
   return Object.freeze({
     hostKind: composition.hostKind,

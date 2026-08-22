@@ -265,16 +265,8 @@ export function RealitySurface({
                 valueText={intl.formatMessage(
                   messages.workersReadyValue,
                   {
-                    current: formatNumber(
-                      locale,
-                      resources.workersReady,
-                      { maximumFractionDigits: 0 },
-                    ),
-                    total: formatNumber(
-                      locale,
-                      derived.workerBatchSize,
-                      { maximumFractionDigits: 0 },
-                    ),
+                    current: formatGameNumber(locale, resources.workersReady),
+                    total: formatGameNumber(locale, derived.workerBatchSize),
                   },
                 )}
               />
@@ -282,16 +274,8 @@ export function RealitySurface({
                 aria-label={intl.formatMessage(
                   messages.workersReadyValue,
                   {
-                    current: formatNumber(
-                      locale,
-                      resources.workersReady,
-                      { maximumFractionDigits: 0 },
-                    ),
-                    total: formatNumber(
-                      locale,
-                      derived.workerBatchSize,
-                      { maximumFractionDigits: 0 },
-                    ),
+                    current: formatGameNumber(locale, resources.workersReady),
+                    total: formatGameNumber(locale, derived.workerBatchSize),
                   },
                 )}
               >
@@ -303,16 +287,8 @@ export function RealitySurface({
                 {intl.formatMessage(
                   messages.workersReadyCompact,
                   {
-                    current: formatNumber(
-                      locale,
-                      resources.workersReady,
-                      { maximumFractionDigits: 0 },
-                    ),
-                    total: formatNumber(
-                      locale,
-                      derived.workerBatchSize,
-                      { maximumFractionDigits: 0 },
-                    ),
+                    current: formatGameNumber(locale, resources.workersReady),
+                    total: formatGameNumber(locale, derived.workerBatchSize),
                   },
                 )}
               </strong>

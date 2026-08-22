@@ -35,10 +35,12 @@ Status conventions:
   playback, and the absence of duplicate music or excessive cue overlap.
   Record results in [audio implementation evidence](audio-implementation-evidence.md).
   Source: [parity P-03](audits/unity-web-parity-audit-2026-08-20.md#p-03--unity-audiomusic-behavior-and-volume-controls-are-absent-on-web).
-- [ ] Implement device-local number notation with functional Standard,
+- [x] Implement device-local number notation with functional Standard,
   Scientific, and Engineering modes, and apply the selected formatter
   consistently across every player-facing resource, rate, cost, statistic,
-  tooltip, and accessible value. Source: [parity P-04](audits/unity-web-parity-audit-2026-08-20.md#p-04--several-unity-presentation-preferences-are-preserved-as-data-but-have-no-web-behavior).
+  tooltip, and accessible value. Implementation and exception inventory:
+  [number notation evidence](number-notation-implementation-evidence.md).
+  Source: [parity P-04](audits/unity-web-parity-audit-2026-08-20.md#p-04--several-unity-presentation-preferences-are-preserved-as-data-but-have-no-web-behavior).
 - [ ] Implement the hide-purchased-research preference, including consistent
   filtering, empty-state behavior, keyboard/focus safety, and persistence
   across reloads. Source: parity P-04.

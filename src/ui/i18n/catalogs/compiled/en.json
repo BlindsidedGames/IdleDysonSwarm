@@ -5341,6 +5341,42 @@
       "value": "Show Wiki shortcut"
     }
   ],
+  "settings.number-notation.description": [
+    {
+      "type": 0,
+      "value": "Choose how large game values are displayed on this device."
+    }
+  ],
+  "settings.number-notation.engineering": [
+    {
+      "type": 0,
+      "value": "Engineering"
+    }
+  ],
+  "settings.number-notation.label": [
+    {
+      "type": 0,
+      "value": "Large number notation"
+    }
+  ],
+  "settings.number-notation.scientific": [
+    {
+      "type": 0,
+      "value": "Scientific"
+    }
+  ],
+  "settings.number-notation.standard": [
+    {
+      "type": 0,
+      "value": "Standard"
+    }
+  ],
+  "settings.number-notation.title": [
+    {
+      "type": 0,
+      "value": "Number notation"
+    }
+  ],
   "settings.save-data.cancel": [
     {
       "type": 0,

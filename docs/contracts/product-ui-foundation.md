@@ -542,6 +542,16 @@ The application shell owns one active-time driver:
   minute may use decimals only when the distinction affects interaction.
 - `bigint` values remain `bigint` until string formatting. Never coerce them to
   `number`.
+- Number notation is a versioned device-local preference with Standard,
+  Scientific, and Engineering choices. Portable saves exclude it; manual
+  imports retain the receiving device's choice. Automatic same-device Unity
+  migration may adopt a valid legacy choice once when no device preference is
+  established, but only when the native provenance identity matches both the
+  repository candidate identity and its read-only Unity bridge path. See
+  [implementation evidence](../number-notation-implementation-evidence.md).
+- Routine digit changes use the shared tabular-digit presentation without
+  fixed-width containers. Decimal separators, signs, units, and suffixes keep
+  natural spacing, and genuine magnitude/suffix transitions may change width.
 - Progress bars expose a text equivalent and canonical minimum/maximum/current
   values. Indeterminate operations use an indeterminate treatment rather than
   invented percentages.
