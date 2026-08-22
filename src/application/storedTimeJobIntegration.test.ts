@@ -1,5 +1,6 @@
 import { readFileSync } from 'node:fs'
 import { describe, expect, test, vi } from 'vitest'
+import { gameDataCatalog } from '../game-data/catalog'
 import { prepareIdb1Save } from '../save/prepare'
 import type {
   FirstLaunchMigrationResult,
@@ -63,6 +64,89 @@ describe('Stored Time job application integration', () => {
     expect(after.state.gameState.timeline.storedTimeAvailableSeconds).toBe(8)
     expect(statuses).toContain('running')
     expect(statuses.at(-1)).toBe('idle')
+  })
+
+  test('persists unowned Quantum behavior through Stored Time and reload', async () => {
+    const repository = new MemoryRepository()
+    const application = createApplication(repository, simulationRunner())
+    await application.start()
+    const initial = application.snapshot()
+    expect(initial.phase).toBe('ready')
+    if (initial.phase !== 'ready') return
+    const candidate = structuredClone(initial.state)
+    candidate.gameState = {
+      ...candidate.gameState,
+      dyson: {
+        ...candidate.gameState.dyson,
+        bots: 4.2e20,
+      },
+      infinity: {
+        ...candidate.gameState.infinity,
+        points: 0n,
+        spentPoints: 0n,
+        breakTarget: 2n,
+      },
+      quantum: {
+        ...candidate.gameState.quantum,
+        divisionsPurchased: 0n,
+        unlocks: {
+          ...candidate.gameState.quantum.unlocks,
+          breakTheLoop: false,
+          quantumEntanglement: false,
+        },
+      },
+      timeline: {
+        ...candidate.gameState.timeline,
+        eventClockInitialized: true,
+        automationTimeUntilNextEvent: 1,
+        infinityCycleSeconds: 1,
+        storedTimeAvailableSeconds: 1,
+      },
+    }
+    const quantumPointsBefore = candidate.gameState.quantum.pointsEarned
+    await expect(application.commitAwayReplacement(
+      {
+        sessionRevision: initial.revision.session,
+        expectedStateRevision: initial.revision.state,
+      },
+      candidate,
+    )).resolves.toMatchObject({ committed: true })
+
+    const ready = application.snapshot()
+    expect(ready.phase).toBe('ready')
+    if (ready.phase !== 'ready') return
+    await expect(application.commitStoredTime(
+      {
+        sessionRevision: ready.revision.session,
+        expectedStateRevision: ready.revision.state,
+      },
+      1,
+    )).resolves.toMatchObject({
+      committed: true,
+      consumedSeconds: 1,
+      remainingSeconds: 0,
+    })
+
+    const assertOrdinaryResult = (
+      snapshot: ReturnType<typeof application.snapshot>,
+    ) => {
+      expect(snapshot.phase).toBe('ready')
+      if (snapshot.phase !== 'ready') return
+      expect(snapshot.state.gameState.infinity.points).toBe(1n)
+      expect(snapshot.state.gameState.quantum.pointsEarned)
+        .toBe(quantumPointsBefore)
+      expect(snapshot.state.gameState.quantum.unlocks).toMatchObject({
+        breakTheLoop: false,
+        quantumEntanglement: false,
+      })
+    }
+    assertOrdinaryResult(application.snapshot())
+    application.disposeStoredTimeJobRunner()
+
+    const reopened = createApplication(repository, simulationRunner())
+    await reopened.start()
+    assertOrdinaryResult(reopened.snapshot())
+    reopened.disposeStoredTimeJobRunner()
   })
 
   test('contains a throwing status subscriber without changing the committed result', async () => {
@@ -309,7 +393,11 @@ function createApplication(
   return createCanonicalGameApplication({
     repository,
     startupResolver: {
-      resolve: async () => ({ kind: 'ready', source: 'primary', save: prepared }),
+      resolve: async () => ({
+        kind: 'ready',
+        source: 'primary',
+        save: (await repository.loadCurrent()) ?? prepared,
+      }),
     },
     sessionFactory: createCanonicalRuntimeSessionFactory({
       entitlements: { permanentDoubleIp: false },
@@ -398,20 +486,23 @@ function context(): CanonicalEventTimeContext {
     },
     dreamResetDefinitions: SIMULATION_UPGRADE_DEFINITIONS,
     realityUpgradeDefinitions: REALITY_UPGRADE_DEFINITIONS,
-    infinityResetAssetLookup: createCapturedInfinityAssetLookup([]),
+    infinityResetAssetLookup: createCapturedInfinityAssetLookup(
+      gameDataCatalog.assets,
+    ),
   }
 }
 
 class MemoryRepository implements SaveRepository {
   commits = 0
   failNextCommit = false
+  private current = prepared
 
   async hasCurrent(): Promise<boolean> {
     return true
   }
 
   async loadCurrent() {
-    return prepared
+    return this.current
   }
 
   async migrateLegacyOnFirstLaunch(): Promise<FirstLaunchMigrationResult> {
@@ -424,6 +515,7 @@ class MemoryRepository implements SaveRepository {
       throw new Error('simulated storage failure')
     }
     this.commits += 1
-    return save
+    this.current = save
+    return this.current
   }
 }

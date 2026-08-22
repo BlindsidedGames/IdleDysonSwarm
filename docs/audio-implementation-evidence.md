@@ -50,7 +50,15 @@ Loop behavior is whole-track repeat. It preserves the master's intentional rough
 
 Independent review found and fixed iOS plugin registration, an in-flight background/resume race, Android duck-volume restoration, and output-removal re-arming. Re-review found no remaining actionable source issue.
 
-## Physical-device acceptance matrix (pending)
+## Physical-device acceptance
+
+On 2026-08-22, the project owner confirmed that the cross-platform audio was
+working correctly in current native builds on both a physical iPhone and a
+physical Android phone. This completed the current native audio acceptance
+gate. The extended scenario matrix below remains a future regression checklist;
+individual rows were not separately recorded during that acceptance pass.
+
+### Extended regression matrix
 
 Run each row with music at 70%, effects at 50%, then repeat with custom volumes and mute. Confirm there is only one soundtrack instance and no stuck/duplicated cue.
 

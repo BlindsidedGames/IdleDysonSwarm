@@ -59,6 +59,7 @@ import {
   serializeWebSave,
 } from '../../save/serialization'
 import {
+  DESKTOP_LIFECYCLE_POLICY,
   MOBILE_LIFECYCLE_POLICY,
   WEB_LIFECYCLE_POLICY,
 } from '../../simulation/lifecycleAwayTime'
@@ -3750,6 +3751,114 @@ describe('browser runtime foundation composition', () => {
     ).toMatchObject({ marker: 'exported-checkpoint' })
 
     await runtime.shutdown()
+  })
+
+  test('does not duplicate offline credit across repeated desktop export and immediate import cycles', async () => {
+    const database = new MemoryBrowserSaveDatabase()
+    const lifecycleClock = new ManualLifecycleClock(
+      '2026-07-29T00:00:00.000Z',
+    )
+    const createApplication =
+      createProductionCanonicalApplicationFactory({
+        createFirstRunSave: () =>
+          createUnityFirstRunPreparedSave({
+            startedAtUtc:
+              lifecycleClock.sample().serializedUtcText,
+          }),
+        readHostEntitlements: () =>
+          Object.freeze({ permanentDoubleIp: false }),
+      })
+    const createDesktopRuntime = (
+      ownerToken: string,
+      lifecycle: TestLifecycleAdapter,
+    ) => createBrowserRuntimeFoundation({
+      createApplication,
+      lifecyclePolicy: DESKTOP_LIFECYCLE_POLICY,
+      allowedExternalOrigins: [],
+      database,
+      lifecycle,
+      lifecycleClock,
+      activeTimeClock: new ManualActiveTimeClock(),
+      activeTimeScheduler: new ManualAnimationFrameScheduler(),
+      storageManager: {
+        persisted: async () => true,
+        persist: async () => true,
+        estimate: async () => ({ usage: 1, quota: 1_000 }),
+      },
+      nowUtcMilliseconds: () => 1_000,
+      ownerToken,
+      autoHeartbeat: false,
+    })
+    const progress = (
+      runtime: ReturnType<typeof createBrowserRuntimeFoundation>,
+    ) => {
+      const snapshot = runtime.snapshot()
+      expect(snapshot.phase).toBe('ready')
+      if (snapshot.phase !== 'ready') {
+        throw new Error('Desktop runtime did not remain ready.')
+      }
+      return {
+        storedTimeAvailableSeconds:
+          snapshot.gameplay.resources.time.storedTimeAvailableSeconds,
+        doubleTimeBankSeconds:
+          snapshot.gameplay.resources.time.doubleTimeBankSeconds,
+        bots: snapshot.gameplay.resources.dyson.bots,
+        infinityPoints:
+          snapshot.gameplay.resources.infinity.points,
+      }
+    }
+
+    const firstLifecycle = new TestLifecycleAdapter('active')
+    const firstRuntime = createDesktopRuntime(
+      'desktop-export-import-first',
+      firstLifecycle,
+    )
+    await expect(firstRuntime.start()).resolves.toMatchObject({
+      phase: 'ready',
+    })
+    await expect(
+      firstRuntime.development?.apply({
+        kind: 'purchase-debug-options',
+      }),
+    ).resolves.toMatchObject({ applied: true })
+    await expect(
+      firstRuntime.development?.simulateOfflineTime(120_000),
+    ).resolves.toMatchObject({ applied: true })
+    const expected = progress(firstRuntime)
+    expect(expected.storedTimeAvailableSeconds).toBeGreaterThan(0)
+    expect(expected.doubleTimeBankSeconds).toBeGreaterThan(0)
+
+    for (let cycle = 0; cycle < 3; cycle += 1) {
+      const exported = await firstRuntime.readCurrentSaveText()
+      expect(exported).toMatch(/^IDSWEB1:/)
+      await expect(firstRuntime.importSave({
+        text: exported ?? '',
+        importedAtUtc: lifecycleClock.sample().serializedUtcText,
+        overwriteApproved: true,
+        context: {
+          kind: 'manual-shared-import',
+          importedAtUtc: lifecycleClock.sample().serializedUtcText,
+        },
+      })).resolves.toMatchObject({
+        imported: true,
+        lifecycleReset: true,
+      })
+      firstLifecycle.emit('active')
+      await expect(firstRuntime.requestCheckpoint()).resolves.toBe(true)
+      expect(progress(firstRuntime)).toEqual(expected)
+    }
+
+    await firstRuntime.shutdown()
+
+    const reopenedRuntime = createDesktopRuntime(
+      'desktop-export-import-reopened',
+      new TestLifecycleAdapter('active'),
+    )
+    await expect(reopenedRuntime.start()).resolves.toMatchObject({
+      phase: 'ready',
+    })
+    expect(progress(reopenedRuntime)).toEqual(expected)
+    await reopenedRuntime.shutdown()
   })
 
   test('keeps the host-neutral contract free of application, repository, save, and platform imports', () => {
