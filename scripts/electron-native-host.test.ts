@@ -4,6 +4,7 @@ import {
   runtimeMetadata,
   validateReleaseMetadata,
 } from '../hosts/electron/releaseMetadata.mjs'
+import { selectElectronSmokeMode } from '../hosts/electron/smokeMode.mjs'
 
 function read(relativePath: string): string {
   return readFileSync(new URL(`../${relativePath}`, import.meta.url), 'utf8')
@@ -24,9 +25,46 @@ describe('Electron native host hardening', () => {
     const builder = read('hosts/electron/electron-builder.yml')
     expect(builder).toContain('hosts/native-release.json')
     expect(builder).toContain('hosts/electron/releaseMetadata.mjs')
+    expect(builder).toContain('hosts/electron/smokeMode.mjs')
     expect(builder).toContain('hosts/electron/steamInventoryBinding.mjs')
     expect(builder).toContain('hosts/electron/steamInventoryStore.mjs')
     expect(builder).toContain('hosts/electron/steam-inventory.json')
+  })
+
+  it('selects ordinary and suspend/resume smoke modes from explicit arguments', () => {
+    expect(selectElectronSmokeMode([])).toEqual({
+      smokeTest: false,
+      suspendResumeSmoke: false,
+    })
+    expect(selectElectronSmokeMode(['--smoke-test'])).toEqual({
+      smokeTest: true,
+      suspendResumeSmoke: false,
+    })
+    expect(selectElectronSmokeMode(['--suspend-resume-smoke'])).toEqual({
+      smokeTest: true,
+      suspendResumeSmoke: true,
+    })
+    expect(selectElectronSmokeMode([
+      '--smoke-test',
+      '--suspend-resume-smoke',
+    ])).toEqual({
+      smokeTest: true,
+      suspendResumeSmoke: true,
+    })
+    expect(selectElectronSmokeMode(['--smoke-test-disabled'])).toEqual({
+      smokeTest: false,
+      suspendResumeSmoke: false,
+    })
+  })
+
+  it('keeps ordinary smoke stable and exposes suspend/resume smoke directly', () => {
+    const packageJson = JSON.parse(read('package.json'))
+    expect(packageJson.scripts['native:electron:smoke']).toBe(
+      'npm run build:native && electron hosts/electron/main.mjs --smoke-test',
+    )
+    expect(packageJson.scripts['native:electron:smoke:suspend-resume']).toBe(
+      'npm run build:native && electron hosts/electron/main.mjs --suspend-resume-smoke',
+    )
   })
 
   it('enforces one writer process and refocuses the owned window', () => {

@@ -32,6 +32,7 @@ import {
   readPackagedReleaseMetadata,
   runtimeMetadata,
 } from './releaseMetadata.mjs'
+import { selectElectronSmokeMode } from './smokeMode.mjs'
 import { loadSteamInventoryBinding } from './steamInventoryBinding.mjs'
 import {
   AtomicSteamEntitlementCache,
@@ -48,8 +49,10 @@ const steamInventoryConfigPath = join(
   hostDirectory,
   'steam-inventory.json',
 )
-const smokeTest = process.argv.includes('--smoke-test')
-const suspendResumeSmoke = process.argv.includes('--suspend-resume-smoke')
+const {
+  smokeTest,
+  suspendResumeSmoke,
+} = selectElectronSmokeMode(process.argv)
 const smokeUserData = smokeTest
   ? await mkdtemp(join(tmpdir(), 'idle-dyson-swarm-smoke-'))
   : null
