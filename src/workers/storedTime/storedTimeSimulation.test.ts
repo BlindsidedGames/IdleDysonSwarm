@@ -1,6 +1,7 @@
 import { readFileSync } from 'node:fs'
 import { describe, expect, test } from 'vitest'
 import { TransactionalSimulationEngine } from '../../core/simulationEngine'
+import { gameDataCatalog } from '../../game-data/catalog'
 import { prepareIdb1Save } from '../../save/prepare'
 import {
   createCapturedInfinityAssetLookup,
@@ -247,6 +248,107 @@ describe('StoredTimeSimulation', () => {
     })
   }, 30_000)
 
+  test.each([
+    {
+      label: 'neither upgrade owned',
+      breakTheLoop: false,
+      quantumEntanglement: false,
+      expectedOrdinaryCount: 1n,
+      expectedBreakCount: 0n,
+      expectedInfinityPoints: 1n,
+    },
+    {
+      label: 'Quantum Entanglement owned only',
+      breakTheLoop: false,
+      quantumEntanglement: true,
+      expectedOrdinaryCount: 1n,
+      expectedBreakCount: 0n,
+      expectedInfinityPoints: 1n,
+    },
+    {
+      label: 'Break The Loop owned only',
+      breakTheLoop: true,
+      quantumEntanglement: false,
+      expectedOrdinaryCount: 0n,
+      expectedBreakCount: 1n,
+      expectedInfinityPoints: 2n,
+    },
+    {
+      label: 'both upgrades owned',
+      breakTheLoop: true,
+      quantumEntanglement: true,
+      expectedOrdinaryCount: 0n,
+      expectedBreakCount: 1n,
+      expectedInfinityPoints: 2n,
+    },
+  ])(
+    'honours exact Quantum ownership during Stored Time: $label',
+    ({
+      breakTheLoop,
+      quantumEntanglement,
+      expectedOrdinaryCount,
+      expectedBreakCount,
+      expectedInfinityPoints,
+    }) => {
+      const source = runtimeWithStoredTime(1)
+      const quantumPointsBefore = source.gameState.quantum.pointsEarned
+      source.gameState = {
+        ...source.gameState,
+        dyson: {
+          ...source.gameState.dyson,
+          bots: 4.2e20,
+        },
+        infinity: {
+          ...source.gameState.infinity,
+          points: 0n,
+          spentPoints: 0n,
+          breakTarget: 2n,
+        },
+        quantum: {
+          ...source.gameState.quantum,
+          divisionsPurchased: 0n,
+          unlocks: {
+            ...source.gameState.quantum.unlocks,
+            breakTheLoop,
+            quantumEntanglement,
+          },
+        },
+        timeline: {
+          ...source.gameState.timeline,
+          infinityCycleSeconds: 1,
+        },
+      }
+      const simulation = new StoredTimeSimulation({
+        jobId: `quantum-ownership-${String(breakTheLoop)}-${String(quantumEntanglement)}`,
+        state: source,
+        requestedSeconds: 1,
+        infinityMinimumCycleSeconds: 1 / 60,
+        eventContext: context(),
+      })
+
+      let terminal = simulation.step(5, false)
+      while (terminal === null) terminal = simulation.step(5, false)
+
+      if (terminal.type === 'failed') {
+        throw new Error(`${terminal.code}: ${terminal.reason}`)
+      }
+      expect(terminal).toMatchObject({ type: 'completed' })
+      if (terminal.type !== 'completed') return
+      expect(simulation.diagnostics().summary).toMatchObject({
+        ordinaryInfinityCount: expectedOrdinaryCount,
+        breakInfinityCount: expectedBreakCount,
+      })
+      expect(terminal.candidate.gameState.infinity.points)
+        .toBe(expectedInfinityPoints)
+      expect(terminal.candidate.gameState.quantum.pointsEarned)
+        .toBe(quantumPointsBefore)
+      expect(terminal.candidate.gameState.quantum.unlocks).toMatchObject({
+        breakTheLoop,
+        quantumEntanglement,
+      })
+    },
+  )
+
   test('keeps changed interval handling deterministic and bounded for one representative day', () => {
     const createSource = () => {
       const source = runtimeWithStoredTime(86_400)
@@ -354,7 +456,9 @@ function context(
     },
     dreamResetDefinitions: SIMULATION_UPGRADE_DEFINITIONS,
     realityUpgradeDefinitions: REALITY_UPGRADE_DEFINITIONS,
-    infinityResetAssetLookup: createCapturedInfinityAssetLookup([]),
+    infinityResetAssetLookup: createCapturedInfinityAssetLookup(
+      gameDataCatalog.assets,
+    ),
   }
 }
 

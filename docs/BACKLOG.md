@@ -13,34 +13,6 @@ Status conventions:
 
 ## Current cross-platform work
 
-- [x] Keep the Stored/Offline Time progress indicator visible and preserve the
-  original job when an additional spend is requested while a run is active.
-- [ ] Reproduce and prevent repeated offline-time credit from an immediate
-  desktop export/import cycle.
-- [ ] Investigate the historical report that active Stored Time incorrectly
-  behaved as though Break the Loop and Quantum Entanglement were owned. Treat
-  it as progression integrity work; the original reporter save remains only in
-  the archived development context unless a sanitized fixture is supplied.
-- [ ] Improve Reality onboarding so Gather Influence is obvious at unlock and
-  the initial Wiki presentation supports rather than obscures that action.
-- [ ] Verify first-completion achievement timing, the reported false Division
-  Master unlock, and Point Blank progress-notification cadence before Steam
-  achievements are enabled.
-
-- [ ] **Review and certify native cross-platform audio.** The shared audio
-  implementation is integrated on `main`; before release, complete macOS/iOS
-  compilation, the physical Android/iOS acceptance matrix, and a subjective
-  headphone/speaker A/B and whole-track loop-transition check. Confirm volume
-  and mute persistence, lifecycle/focus recovery, output-route changes, long
-  playback, and the absence of duplicate music or excessive cue overlap.
-  Record results in [audio implementation evidence](audio-implementation-evidence.md).
-  Source: [parity P-03](audits/unity-web-parity-audit-2026-08-20.md#p-03--unity-audiomusic-behavior-and-volume-controls-are-absent-on-web).
-- [x] Implement device-local number notation with functional Standard,
-  Scientific, and Engineering modes, and apply the selected formatter
-  consistently across every player-facing resource, rate, cost, statistic,
-  tooltip, and accessible value. Implementation and exception inventory:
-  [number notation evidence](number-notation-implementation-evidence.md).
-  Source: [parity P-04](audits/unity-web-parity-audit-2026-08-20.md#p-04--several-unity-presentation-preferences-are-preserved-as-data-but-have-no-web-behavior).
 - [ ] Implement the hide-purchased-research preference, including consistent
   filtering, empty-state behavior, keyboard/focus safety, and persistence
   across reloads. Source: parity P-04.
@@ -70,47 +42,8 @@ Status conventions:
   native-host behavior without allowing remote content to affect gameplay or
   startup. Source: [parity P-06](audits/unity-web-parity-audit-2026-08-20.md#p-06--live-motd-community-links-and-supporter-credits-are-missing-from-web).
 
-## Skill-tree correctness
-
-- [x] Recheck current line unlocks during imported-preset Infinity-reset
-  assignment and define how blocked queued skills remain queued. Source:
-  [skill F-01](audits/skill-tree-audit-2026-08-20.md#cross-cutting-and-high-priority-findings).
-- [x] Advance Androids, Pocket Androids, and Super-Radiant timers in canonical
-  active time with their intended caps and reset behavior. Source: skill F-03.
-- [x] Implement Idle Electric Sheep in admitted offline-time ordering. Source:
-  skill F-04.
-- [x] Port the shared manual-building modifier layer covering Swarm scaling,
-  Terra count substitution, and the Supernova downside. Sources: skill F-05,
-  F-06, and F-09.
-- [x] Commit Shoulders science/cash auxiliary accrual into canonical events,
-  including fractional research progress and offline behavior. Source: skill
-  F-07.
-- [x] Debit Stellar Sacrifices bots atomically with planet credit and resolve
-  its exact-threshold behavior. Active ticks and adaptive Stored Time groups
-  each use interval-start Bot funding; long grouped spends are deterministic
-  for the same grouping and intentionally approximate rather than raw-100-ms
-  equivalent. Source: skill F-08.
-- [x] Resolve and test the formula/copy discrepancies tracked as skill F-10
-  through F-20, starting with Panel Warranty and Regulated Academia.
-
-Completion evidence and the requirement-by-requirement reconciliation are in
-the [skill-tree audit implementation verification](audits/skill-tree-audit-2026-08-20.md#implementation-verification-2026-08-20).
-
 ## Current Web release acceptance
 
-- [ ] **Complete Supporter Cat Gallery browser fulfillment in the website
-  repository.** The game repository now defines the fail-closed
-  `supporterCatGallery` contract, Store-only UI, native persistence ordering,
-  and browser response normalization. Extend the HMAC-signed device receipt in
-  `BlindsidedGames/BlindsidedGames/functions/_utils/ids-stripe.ts` and
-  `functions/api/ids/stripe/verify.ts`, return the entitlement from
-  `/api/ids/stripe/verify`, and validate all three
-  SKUs plus unpaid/mismatch/tamper/replay cases in Stripe test mode. Decide on
-  a server-signed receipt format before promising secure offline access after
-  a cold browser reload. This remains a browser release blocker; client source
-  publication alone is not fulfillment. Sources:
-  [platform Store boundaries](platform/platform-store-release-boundaries.md#browser-backend-ownership-and-open-gate)
-  and [website deployment rules](platform/website-deployment-rules.md).
 - [ ] Complete the remaining manual Web checks: visible focus paint, complete
   contrast review, 200 percent visual appearance, browser-native 400 percent
   zoom, 320/390-pixel visual reflow, real-touch slider behavior, and screen
@@ -123,6 +56,15 @@ the [skill-tree audit implementation verification](audits/skill-tree-audit-2026-
 
 ## Deferred platform release work
 
+- [ ] **Before enabling Steam commerce, coalesce stacked repeat supporter
+  deliveries by inventory instance.** If cleanup of a supporter item is still
+  pending and Steam adds the next purchase quantity to the same instance,
+  merge that quantity into the existing pending-consumption record instead of
+  creating a duplicate instance ID. Prove that the charged repeat purchase is
+  accepted once, the complete quantity remains durably queued before cleanup,
+  retries consume it exactly once, and cache-write failure cannot encourage a
+  second charge.
+
 - [ ] **Deferred to a future release — full-game localization.** Keep the game
   intentionally English-only for the current release, consistent with its
   historical releases; this does not block current skill-tree fixes. A future
@@ -130,9 +72,6 @@ the [skill-tree audit implementation verification](audits/skill-tree-audit-2026-
   generated skill-tree message and the authored locale catalogs, plus
   locale-aware formatting, layout expansion, fallback behavior, and
   per-locale rendering and interaction testing.
-- [ ] **Deferred until Steam release — achievements, statistics, and rich
-  presence.** Implement and certify publication through the Electron/Steam
-  host. Source: [parity P-01](audits/unity-web-parity-audit-2026-08-20.md#p-01--steam-achievements-stats-and-rich-presence-have-no-web-implementation).
 - [ ] **Deferred until Steam commerce work — Steam Store authority.** Replace
   the explicitly disabled Electron main-process Inventory binding, configure
   authoritative Steam ItemDef IDs for all five products, and keep renderer
@@ -151,3 +90,11 @@ the [skill-tree audit implementation verification](audits/skill-tree-audit-2026-
   Unity-save migration, lifecycle/offline replay, update survival, and native
   accessibility before either Store submission. Sources: parity runtime gates
   R-01 through R-03.
+
+### Deferred achievements
+
+- [ ] Implement and certify achievements, statistics, and rich presence through
+  the Electron/Steam host. Source: [parity P-01](audits/unity-web-parity-audit-2026-08-20.md#p-01--steam-achievements-stats-and-rich-presence-have-no-web-implementation).
+- [ ] Before enabling Steam achievements, verify first-completion achievement
+  timing, the reported false Division Master unlock, and Point Blank
+  progress-notification cadence.
