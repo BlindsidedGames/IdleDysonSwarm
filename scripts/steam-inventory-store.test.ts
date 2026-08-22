@@ -188,24 +188,42 @@ describe('Electron Steam Inventory foundation', () => {
     })
   })
 
-  it('does not consume or report supporter success when persistence fails', async () => {
+  it('accepts verified tip delivery but does not consume before persistence', async () => {
+    const retryCallbacks: Array<() => void> = []
     const cache = memoryCache()
-    cache.write.mockRejectedValue(new Error('disk unavailable'))
+    cache.write.mockRejectedValueOnce(new Error('disk unavailable'))
+    const delivered = { itemDefId: 101, instanceId: '7001', quantity: 1 }
     const binding = bindingStub({
       getAllItems: vi.fn()
         .mockResolvedValueOnce([])
-        .mockResolvedValueOnce([
-          { itemDefId: 101, instanceId: '7001', quantity: 1 },
-        ]),
+        .mockResolvedValue([delivered]),
     })
-    const store = enabledStore({ binding, cache })
+    const store = enabledStore({
+      binding,
+      cache,
+      scheduleRetry: (callback) => retryCallbacks.push(callback),
+    })
 
     await expect(store.purchase('ids.tiptier1')).resolves.toEqual({
-      accepted: false,
+      accepted: true,
       productId: 'ids.tiptier1',
-      code: 'purchase-failed',
     })
     expect(binding.consumeItem).not.toHaveBeenCalled()
+    expect(store.maintenanceState()).toEqual({
+      persistence: 'retry-pending',
+      pendingTipConsumptions: 1,
+    })
+
+    retryCallbacks.shift()?.()
+    await vi.waitFor(() => expect(binding.consumeItem).toHaveBeenCalledWith(
+      '7001',
+      1,
+    ))
+    expect(binding.consumeItem).toHaveBeenCalledTimes(1)
+    expect(store.maintenanceState()).toEqual({
+      persistence: 'ready',
+      pendingTipConsumptions: 0,
+    })
   })
 
   it('does not accept completed checkout without verified delivery', async () => {
@@ -335,6 +353,17 @@ describe('Electron Steam Inventory foundation', () => {
     await writeFile(path, protector.protect(JSON.stringify(legacy)))
     await expect(cache.read(steamId)).resolves.toBeNull()
 
+    const duplicatePending = structuredClone(persisted)
+    duplicatePending.pendingConsumptions = [
+      { itemDefId: 101, instanceId: '9300', quantity: 1 },
+      { itemDefId: 101, instanceId: '9300', quantity: 2 },
+    ]
+    await writeFile(
+      path,
+      protector.protect(JSON.stringify(duplicatePending)),
+    )
+    await expect(cache.read(steamId)).resolves.toBeNull()
+
     const tampered = Buffer.from(protectedValue)
     tampered[tampered.length - 1] ^= 1
     await writeFile(path, tampered)
@@ -423,6 +452,51 @@ describe('Electron Steam Inventory foundation', () => {
     })
   })
 
+  it('drops pending state when the authenticated Steam account changes', async () => {
+    const nextSteamId = '76561198000000002'
+    const oldTip = { itemDefId: 101, instanceId: '9400', quantity: 1 }
+    const cache = memoryCache({
+      ownership: {
+        doubleInfinityPoints: false,
+        developerOptions: false,
+        supporterCatGallery: true,
+      },
+      pendingConsumptions: [oldTip],
+    })
+    const binding = bindingStub({
+      getAuthenticatedSteamId: vi.fn()
+        .mockResolvedValueOnce(steamId)
+        .mockResolvedValueOnce(nextSteamId),
+      getAllItems: vi.fn()
+        .mockResolvedValueOnce([oldTip])
+        .mockResolvedValueOnce([]),
+      consumeItem: vi.fn(async () => false),
+    })
+    const store = enabledStore({ binding, cache })
+
+    await expect(store.readEntitlements(true)).resolves.toMatchObject({
+      supporterCatGallery: true,
+    })
+    await expect(store.readEntitlements(true)).resolves.toEqual({
+      doubleInfinityPoints: false,
+      developerOptions: false,
+      supporterCatGallery: false,
+    })
+
+    expect(cache.read).toHaveBeenNthCalledWith(1, steamId)
+    expect(cache.read).toHaveBeenNthCalledWith(2, nextSteamId)
+    expect(cache.write).toHaveBeenLastCalledWith(
+      nextSteamId,
+      verifiedState({
+        doubleInfinityPoints: false,
+        developerOptions: false,
+      }),
+      '2026-08-03T00:00:00.000Z',
+    )
+    expect(binding.consumeItem).toHaveBeenCalledOnce()
+    expect(binding.consumeItem).toHaveBeenCalledWith('9400', 1)
+  })
+
   it('returns matching cache immediately and refreshes revocation in background', async () => {
     const cache = memoryCache(verifiedState({
       doubleInfinityPoints: true,
@@ -509,6 +583,236 @@ describe('Electron Steam Inventory foundation', () => {
     await store.readEntitlements(true)
     expect(binding.consumeItem).toHaveBeenCalledTimes(2)
     expect(store.maintenanceState().pendingTipConsumptions).toBe(0)
+  })
+
+  it('coalesces a stacked repeat purchase into one durable cleanup', async () => {
+    const firstDelivery = { itemDefId: 101, instanceId: '9003', quantity: 1 }
+    const stackedDelivery = { ...firstDelivery, quantity: 2 }
+    const binding = bindingStub({
+      getAllItems: vi.fn()
+        .mockResolvedValueOnce([])
+        .mockResolvedValueOnce([firstDelivery])
+        .mockResolvedValueOnce([firstDelivery])
+        .mockResolvedValueOnce([stackedDelivery]),
+      consumeItem: vi.fn()
+        .mockResolvedValueOnce(false)
+        .mockResolvedValueOnce(true),
+    })
+    const cache = memoryCache()
+    const store = enabledStore({ binding, cache })
+
+    await expect(store.purchase('ids.tiptier1')).resolves.toMatchObject({
+      accepted: true,
+    })
+    await expect(store.purchase('ids.tiptier1')).resolves.toMatchObject({
+      accepted: true,
+    })
+
+    expect(cache.write).toHaveBeenNthCalledWith(2, steamId, {
+      ownership: {
+        doubleInfinityPoints: false,
+        developerOptions: false,
+        supporterCatGallery: true,
+      },
+      pendingConsumptions: [{
+        itemDefId: 101,
+        instanceId: '9003',
+        quantity: 2,
+      }],
+    }, '2026-08-03T00:00:00.000Z')
+    expect(binding.consumeItem).toHaveBeenNthCalledWith(1, '9003', 1)
+    expect(binding.consumeItem).toHaveBeenNthCalledWith(2, '9003', 2)
+    expect(cache.write.mock.invocationCallOrder[1])
+      .toBeLessThan(binding.consumeItem.mock.invocationCallOrder[1])
+    expect(store.maintenanceState().pendingTipConsumptions).toBe(0)
+  })
+
+  it('adds verified delivery to a higher durable quantity than a stale snapshot', async () => {
+    const cached = {
+      ownership: {
+        doubleInfinityPoints: false,
+        developerOptions: false,
+        supporterCatGallery: true,
+      },
+      pendingConsumptions: [{
+        itemDefId: 101,
+        instanceId: '9007',
+        quantity: 2,
+      }],
+    }
+    const staleBefore = { itemDefId: 101, instanceId: '9007', quantity: 1 }
+    const staleAfter = { ...staleBefore, quantity: 2 }
+    const current = { ...staleBefore, quantity: 3 }
+    const binding = bindingStub({
+      getAllItems: vi.fn()
+        .mockResolvedValueOnce([staleBefore])
+        .mockResolvedValueOnce([staleAfter])
+        .mockResolvedValueOnce([current]),
+    })
+    const cache = memoryCache(cached)
+    const store = enabledStore({ binding, cache })
+
+    await expect(store.purchase('ids.tiptier1')).resolves.toMatchObject({
+      accepted: true,
+    })
+    expect(cache.write).toHaveBeenNthCalledWith(1, steamId, {
+      ownership: cached.ownership,
+      pendingConsumptions: [{
+        itemDefId: 101,
+        instanceId: '9007',
+        quantity: 3,
+      }],
+    }, '2026-08-03T00:00:00.000Z')
+    expect(binding.consumeItem).not.toHaveBeenCalled()
+    expect(store.maintenanceState().pendingTipConsumptions).toBe(1)
+
+    await store.readEntitlements(true)
+    expect(binding.consumeItem).toHaveBeenCalledOnce()
+    expect(binding.consumeItem).toHaveBeenCalledWith('9007', 3)
+    expect(store.maintenanceState().pendingTipConsumptions).toBe(0)
+  })
+
+  it('recovers an unpersisted delivered tip after restart', async () => {
+    const delivered = { itemDefId: 102, instanceId: '9004', quantity: 1 }
+    const failingCache = memoryCache()
+    failingCache.write.mockRejectedValue(new Error('disk unavailable'))
+    const firstBinding = bindingStub({
+      getAllItems: vi.fn()
+        .mockResolvedValueOnce([])
+        .mockResolvedValueOnce([delivered]),
+    })
+    const firstStore = enabledStore({
+      binding: firstBinding,
+      cache: failingCache,
+      scheduleRetry: vi.fn(),
+    })
+
+    await expect(firstStore.purchase('ids.tiptier2')).resolves.toMatchObject({
+      accepted: true,
+    })
+    expect(firstBinding.consumeItem).not.toHaveBeenCalled()
+
+    const restartedCache = memoryCache()
+    const restartedBinding = bindingStub({
+      getAllItems: vi.fn(async () => [delivered]),
+    })
+    const restartedStore = enabledStore({
+      binding: restartedBinding,
+      cache: restartedCache,
+    })
+    await restartedStore.readEntitlements(true)
+
+    expect(restartedCache.write.mock.invocationCallOrder[0])
+      .toBeLessThan(restartedBinding.consumeItem.mock.invocationCallOrder[0])
+    expect(restartedBinding.consumeItem).toHaveBeenCalledOnce()
+    expect(restartedBinding.consumeItem).toHaveBeenCalledWith('9004', 1)
+    expect(restartedStore.maintenanceState().pendingTipConsumptions).toBe(0)
+  })
+
+  it('does not consume twice when clearing the durable queue must retry', async () => {
+    const retryCallbacks: Array<() => void> = []
+    const delivered = { itemDefId: 102, instanceId: '9006', quantity: 1 }
+    const cache = memoryCache()
+    cache.write
+      .mockImplementationOnce(async () => undefined)
+      .mockRejectedValueOnce(new Error('disk unavailable'))
+    const binding = bindingStub({
+      getAllItems: vi.fn()
+        .mockResolvedValueOnce([])
+        .mockResolvedValueOnce([delivered]),
+    })
+    const store = enabledStore({
+      binding,
+      cache,
+      scheduleRetry: (callback) => retryCallbacks.push(callback),
+    })
+
+    await expect(store.purchase('ids.tiptier2')).resolves.toMatchObject({
+      accepted: true,
+    })
+    expect(binding.consumeItem).toHaveBeenCalledOnce()
+    expect(store.maintenanceState()).toEqual({
+      persistence: 'retry-pending',
+      pendingTipConsumptions: 0,
+    })
+
+    retryCallbacks.shift()?.()
+    await vi.waitFor(() => expect(cache.write).toHaveBeenCalledTimes(3))
+    expect(binding.consumeItem).toHaveBeenCalledOnce()
+    expect(store.maintenanceState()).toEqual({
+      persistence: 'ready',
+      pendingTipConsumptions: 0,
+    })
+  })
+
+  it('refreshes an existing pending instance to its stacked quantity', async () => {
+    const cache = memoryCache({
+      ownership: {
+        doubleInfinityPoints: false,
+        developerOptions: false,
+        supporterCatGallery: true,
+      },
+      pendingConsumptions: [{
+        itemDefId: 103,
+        instanceId: '9005',
+        quantity: 1,
+      }],
+    })
+    const binding = bindingStub({
+      getAllItems: vi.fn(async () => [
+        { itemDefId: 103, instanceId: '9005', quantity: 2 },
+      ]),
+    })
+    const store = enabledStore({ binding, cache })
+
+    await store.readEntitlements(true)
+
+    expect(cache.write).toHaveBeenNthCalledWith(1, steamId, {
+      ownership: {
+        doubleInfinityPoints: false,
+        developerOptions: false,
+        supporterCatGallery: true,
+      },
+      pendingConsumptions: [{
+        itemDefId: 103,
+        instanceId: '9005',
+        quantity: 2,
+      }],
+    }, '2026-08-03T00:00:00.000Z')
+    expect(binding.consumeItem).toHaveBeenCalledOnce()
+    expect(binding.consumeItem).toHaveBeenCalledWith('9005', 2)
+  })
+
+  it('does not downgrade or partially consume a stale lower inventory quantity', async () => {
+    const cached = {
+      ownership: {
+        doubleInfinityPoints: false,
+        developerOptions: false,
+        supporterCatGallery: true,
+      },
+      pendingConsumptions: [{
+        itemDefId: 103,
+        instanceId: '9008',
+        quantity: 2,
+      }],
+    }
+    const binding = bindingStub({
+      getAllItems: vi.fn(async () => [
+        { itemDefId: 103, instanceId: '9008', quantity: 1 },
+      ]),
+    })
+    const cache = memoryCache(cached)
+    const store = enabledStore({ binding, cache })
+
+    await store.readEntitlements(true)
+
+    expect(cache.write).toHaveBeenCalledWith(
+      steamId,
+      cached,
+      '2026-08-03T00:00:00.000Z',
+    )
+    expect(binding.consumeItem).not.toHaveBeenCalled()
+    expect(store.maintenanceState().pendingTipConsumptions).toBe(1)
   })
 
   it('adopts and consumes an orphaned delivered tip during refresh', async () => {

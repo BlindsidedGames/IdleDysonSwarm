@@ -56,14 +56,16 @@ Status conventions:
 
 ## Deferred platform release work
 
-- [ ] **Before enabling Steam commerce, coalesce stacked repeat supporter
+- [x] **Before enabling Steam commerce, coalesce stacked repeat supporter
   deliveries by inventory instance.** If cleanup of a supporter item is still
   pending and Steam adds the next purchase quantity to the same instance,
   merge that quantity into the existing pending-consumption record instead of
   creating a duplicate instance ID. Prove that the charged repeat purchase is
   accepted once, the complete quantity remains durably queued before cleanup,
   retries consume it exactly once, and cache-write failure cannot encourage a
-  second charge.
+  second charge. Completed in the Electron Steam Inventory adapter and focused
+  host tests; live Steam commerce remains disabled pending the separate Store
+  authority and sandbox-certification work below.
 
 - [ ] **Deferred to a future release — full-game localization.** Keep the game
   intentionally English-only for the current release, consistent with its
