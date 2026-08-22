@@ -27,6 +27,23 @@ describe('canonical web save serialization', () => {
     expect(serializeWebSave(decoded)).toBe(encoded)
   })
 
+  test('excludes device-local number notation from portable saves', () => {
+    const exported = serializeSharedWebSave({
+      saveVersion: 12,
+      numberFormatting: 2,
+      bots: 42,
+    })
+    const decoded = deserializeWebSave(exported)
+    expect(decoded).not.toHaveProperty('numberFormatting')
+    expect(decoded).toMatchObject({
+      saveVersion: 12,
+      bots: 42,
+      doubleIp: false,
+      debugOptions: false,
+      debugEverEnabled: false,
+    })
+  })
+
   test('rejects cyclic graphs instead of producing ambiguous persistence', () => {
     const save: Record<string, unknown> = { saveVersion: 12 }
     save.self = save

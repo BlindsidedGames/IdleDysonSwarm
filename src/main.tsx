@@ -27,6 +27,10 @@ import {
 } from './ui/accessibility/textSelectionPolicy'
 import { installSemanticAudioCues } from './audio'
 import { installNativeSafeAreaInsets } from './platform/nativeHostBridge'
+import {
+  NumberNotationPreferenceService,
+  NumberNotationProvider,
+} from './ui/number-notation'
 
 installTextSelectionPolicy()
 void bootstrap()
@@ -40,7 +44,11 @@ async function bootstrap(): Promise<void> {
     const locale = localePreference.getSnapshot()
     const messages =
       await LOCALE_REGISTRY[locale].loadSharedCatalog()
-    const composition = createProductionHostComposition()
+    const numberNotationPreference =
+      new NumberNotationPreferenceService()
+    const composition = createProductionHostComposition({
+      automaticNumberFormattingAdopter: numberNotationPreference,
+    })
     void composition.audio.initialize().catch(() => undefined)
     installSemanticAudioCues(document, composition.audio)
     const pwaUpdateController =
@@ -127,29 +135,31 @@ async function bootstrap(): Promise<void> {
             locale={locale}
             messages={messages}
           >
-            <App
-              runtime={composition.runtime}
-              locale={locale}
-              saveSchemaVersion={
-                composition.saveSchemaVersion
-              }
-              sampleUtc={composition.sampleUtc}
-              reloadSafely={composition.reloadSafely}
-              resetSave={composition.resetSave}
-              buildId={import.meta.env.VITE_BUILD_ID}
-              releasePlatformServices={
-                composition.releasePlatformServices
-              }
-              audio={composition.audio}
-            />
-            {pwaUpdateController === undefined ? null : (
-              <PwaUpdatePrompt
-                controller={pwaUpdateController}
-                prepareForActivation={
-                  composition.prepareForUpdateActivation
+            <NumberNotationProvider preference={numberNotationPreference}>
+              <App
+                runtime={composition.runtime}
+                locale={locale}
+                saveSchemaVersion={
+                  composition.saveSchemaVersion
                 }
+                sampleUtc={composition.sampleUtc}
+                reloadSafely={composition.reloadSafely}
+                resetSave={composition.resetSave}
+                buildId={import.meta.env.VITE_BUILD_ID}
+                releasePlatformServices={
+                  composition.releasePlatformServices
+                }
+                audio={composition.audio}
               />
-            )}
+              {pwaUpdateController === undefined ? null : (
+                <PwaUpdatePrompt
+                  controller={pwaUpdateController}
+                  prepareForActivation={
+                    composition.prepareForUpdateActivation
+                  }
+                />
+              )}
+            </NumberNotationProvider>
           </PresentationIntlProvider>
         </StartupErrorBoundary>
       </StrictMode>,

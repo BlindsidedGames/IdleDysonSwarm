@@ -89,6 +89,10 @@ export type FirstLaunchMigrationResult =
 
 export type LegacySaveDecoder = (text: string) => unknown
 
+export interface AutomaticUnityNumberFormattingAdopter {
+  adoptLegacyUnityNumberFormatting(value: unknown): boolean
+}
+
 /**
  * Platform shells supply only filesystem discovery and atomic primitives.
  * Decode, migration and validation remain shared TypeScript behavior.
@@ -100,6 +104,8 @@ export class PortableSaveRepository implements SaveRepository {
   private readonly policy: SaveRepositoryPolicy
   private readonly automaticPurchaseEvidencePromoter?:
     AutomaticUnityPurchaseEvidencePromoter
+  private readonly automaticNumberFormattingAdopter?:
+    AutomaticUnityNumberFormattingAdopter
 
   constructor(
     storage: SaveStorageAdapter,
@@ -110,6 +116,8 @@ export class PortableSaveRepository implements SaveRepository {
     },
     automaticPurchaseEvidencePromoter?:
       AutomaticUnityPurchaseEvidencePromoter,
+    automaticNumberFormattingAdopter?:
+      AutomaticUnityNumberFormattingAdopter,
   ) {
     this.storage = storage
     this.paths = paths
@@ -117,6 +125,8 @@ export class PortableSaveRepository implements SaveRepository {
     this.policy = policy
     this.automaticPurchaseEvidencePromoter =
       automaticPurchaseEvidencePromoter
+    this.automaticNumberFormattingAdopter =
+      automaticNumberFormattingAdopter
   }
 
   async hasCurrent(): Promise<boolean> {
@@ -223,6 +233,7 @@ export class PortableSaveRepository implements SaveRepository {
         await this.storage.copy(source.sourcePath, this.paths.legacyRecovery)
         await this.promoteAutomaticPurchaseEvidence(source, prepared)
         const committed = await this.commit(prepared)
+        this.adoptAutomaticNumberFormatting(prepared)
         return { status: 'migrated', source, migration, save: committed }
       } catch (error) {
         return {
@@ -250,6 +261,18 @@ export class PortableSaveRepository implements SaveRepository {
     return currentError
       ? { status: 'current-invalid', error: currentError }
       : { status: 'no-legacy-save' }
+  }
+
+  private adoptAutomaticNumberFormatting(save: PreparedSave): void {
+    try {
+      this.automaticNumberFormattingAdopter
+        ?.adoptLegacyUnityNumberFormatting(
+          save.copyValidatedState().numberFormatting,
+        )
+    } catch {
+      // An optional device-local presentation preference can never invalidate
+      // a successfully committed canonical migration.
+    }
   }
 
   private async promoteAutomaticPurchaseEvidence(

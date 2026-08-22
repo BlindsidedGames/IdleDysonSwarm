@@ -19,6 +19,10 @@ import {
   type SettingsSurfaceProps,
 } from './SettingsSurface'
 import type { GameAudioService } from '../../../audio'
+import {
+  NumberNotationPreferenceService,
+  NumberNotationProvider,
+} from '../../number-notation'
 
 const settingsStyles = readFileSync(
   join(
@@ -35,6 +39,29 @@ const settingsStyles = readFileSync(
 afterEach(cleanup)
 
 describe('SettingsSurface', () => {
+  test('changes the accessible device-local notation select by mouse and keyboard', async () => {
+    const user = userEvent.setup()
+    const local = {
+      getItem: vi.fn(() => null),
+      setItem: vi.fn(),
+    }
+    const preference = new NumberNotationPreferenceService({ storage: local })
+    renderSettings(vi.fn(), undefined, {}, preference)
+    const select = screen.getByRole('combobox', {
+      name: 'Large number notation',
+    })
+    expect(select).toHaveValue('standard')
+    await user.selectOptions(select, 'scientific')
+    expect(select).toHaveValue('scientific')
+    expect(preference.getSnapshot()).toBe('scientific')
+    expect(local.setItem).toHaveBeenCalledOnce()
+    await user.selectOptions(select, 'engineering')
+    expect(select).toHaveValue('engineering')
+    select.blur()
+    await user.tab()
+    expect(select).toHaveFocus()
+  })
+
   test('exposes localized device audio volumes and mute controls', async () => {
     const update = vi.fn(() => Promise.resolve())
     const audioSettings = { musicVolume: 0.7, effectsVolume: 0.5, muted: false } as const
@@ -575,6 +602,7 @@ function renderSettings(
   resetSave: SettingsSurfaceProps['resetSave'],
   development?: SettingsSurfaceProps['development'],
   overrides: Partial<SettingsSurfaceProps> = {},
+  preference = new NumberNotationPreferenceService({ storage: null }),
 ) {
   return render(
     <IntlProvider
@@ -582,18 +610,20 @@ function renderSettings(
       messages={{}}
       onError={() => undefined}
     >
-      <SettingsSurface
-        resetSave={resetSave}
-        previewImportSaveFile={vi.fn()}
-        previewImportSaveText={vi.fn()}
-        importSaveFile={vi.fn()}
-        importSaveText={vi.fn()}
-        readSaveText={vi.fn().mockResolvedValue(null)}
-        downloadSave={vi.fn()}
-        copySaveText={vi.fn()}
-        development={development}
-        {...overrides}
-      />
+      <NumberNotationProvider preference={preference}>
+        <SettingsSurface
+          resetSave={resetSave}
+          previewImportSaveFile={vi.fn()}
+          previewImportSaveText={vi.fn()}
+          importSaveFile={vi.fn()}
+          importSaveText={vi.fn()}
+          readSaveText={vi.fn().mockResolvedValue(null)}
+          downloadSave={vi.fn()}
+          copySaveText={vi.fn()}
+          development={development}
+          {...overrides}
+        />
+      </NumberNotationProvider>
     </IntlProvider>,
   )
 }

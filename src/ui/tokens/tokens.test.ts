@@ -15,6 +15,10 @@ const componentsCss = readFileSync(
   new URL('../components/components.css', import.meta.url),
   'utf8',
 )
+const indexCss = readFileSync(
+  new URL('../../index.css', import.meta.url),
+  'utf8',
+)
 
 describe('presentation tokens', () => {
   it('keeps required normal-text pairs above WCAG AA contrast', () => {
@@ -59,11 +63,24 @@ describe('presentation tokens', () => {
     expect(tokensCss).toContain(':root:lang(zh-Hans)')
     expect(tokensCss).toContain('@media (prefers-reduced-motion: reduce)')
     expect(tokensCss).toContain('@media (forced-colors: active)')
-    expect(tokensCss.match(/@font-face/g)).toHaveLength(3)
+    expect(tokensCss.match(/@font-face/g)).toHaveLength(4)
     expect(tokensCss).toContain('url("../assets/Lexend-Regular.ttf")')
     expect(tokensCss).toContain('url("../assets/Lexend-SemiBold.ttf")')
     expect(tokensCss).toContain('url("../assets/Lexend-Bold.ttf")')
     expect(tokensCss).not.toMatch(/url\([^)]*Noto[^)]*\)/i)
+  })
+
+  it('uses one digit-only tabular presentation without fixed widths', () => {
+    expect(tokensCss).toContain('font-family: "IDS Tabular Digits"')
+    expect(tokensCss).toContain('unicode-range: U+0030-0039')
+    expect(tokensCss).toContain('local("Helvetica Neue")')
+    expect(tokensCss).toContain('local("Roboto")')
+    expect(indexCss).toMatch(
+      /\.game-number-presentation\s*\{[^}]*font-family:\s*var\(--font-family-numeric\);[^}]*font-variant-numeric:\s*tabular-nums;[^}]*font-feature-settings:\s*"tnum" 1;/,
+    )
+    expect(indexCss).not.toMatch(
+      /\.game-number-presentation\s*\{[^}]*(?:inline-size|width|min-inline-size):/,
+    )
   })
 
   it('uses logical component layout properties', () => {

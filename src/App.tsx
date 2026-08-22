@@ -26,6 +26,7 @@ import {
 } from './ui/shell'
 import { StatusFeedback } from './ui/components'
 import type { GameAudioService } from './audio'
+import { useNumberNotation } from './ui/number-notation'
 
 export interface AppProps {
   readonly runtime: BrowserUiRuntimeFoundation
@@ -54,6 +55,9 @@ function App({
   localDeveloperOptionsPurchased,
   audio,
 }: AppProps) {
+  // One stable device-preference context update redraws presentation strings;
+  // it never enters the canonical snapshot store or 10 Hz scheduler.
+  useNumberNotation()
   const intl = useIntl()
   const status = useBrowserRuntimeStatus(runtime)
   const operationPendingRef = useRef(false)

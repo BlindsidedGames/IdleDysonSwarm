@@ -2571,6 +2571,30 @@
     "defaultMessage": "Show Wiki shortcut",
     "description": "Controls the Wiki bottom navigation shortcut."
   },
+  "settings.number-notation.description": {
+    "defaultMessage": "Choose how large game values are displayed on this device.",
+    "description": "Explains the scope of the number notation preference."
+  },
+  "settings.number-notation.engineering": {
+    "defaultMessage": "Engineering",
+    "description": "Engineering number notation option."
+  },
+  "settings.number-notation.label": {
+    "defaultMessage": "Large number notation",
+    "description": "Accessible label for the number notation select."
+  },
+  "settings.number-notation.scientific": {
+    "defaultMessage": "Scientific",
+    "description": "Scientific number notation option."
+  },
+  "settings.number-notation.standard": {
+    "defaultMessage": "Standard",
+    "description": "Standard suffix number notation option."
+  },
+  "settings.number-notation.title": {
+    "defaultMessage": "Number notation",
+    "description": "Heading for the device-local number notation preference."
+  },
   "settings.save-data.cancel": {
     "defaultMessage": "Cancel",
     "description": "Cancels a save reset."

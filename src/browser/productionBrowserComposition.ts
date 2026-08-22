@@ -74,6 +74,8 @@ export interface ProductionBrowserCompositionOptions {
   readonly releasePlatformServices?: Readonly<ReleasePlatformServices>
   /** Test seam for preserving release entitlement behavior outside Vite builds. */
   readonly developmentBuild?: boolean
+  readonly automaticNumberFormattingAdopter?:
+    import('../save/repository').AutomaticUnityNumberFormattingAdopter
 }
 
 export interface ProductionBrowserComposition {
@@ -157,6 +159,8 @@ export function createProductionBrowserComposition(
       automaticPurchaseEvidencePromoter(
         options.releasePlatformServices?.entitlements,
       ),
+    automaticNumberFormattingAdopter:
+      options.automaticNumberFormattingAdopter,
     developmentControlsAvailable:
       developmentBuild || options.releasePlatformServices !== undefined
         ? true

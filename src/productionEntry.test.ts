@@ -10,7 +10,7 @@ describe('production host entry', () => {
   test('constructs and starts one runtime outside React lifecycle effects', () => {
     expect(
       mainSource.match(
-        /createProductionHostComposition\(\)/g,
+        /createProductionHostComposition\(\{/g,
       ),
     ).toHaveLength(1)
     expect(

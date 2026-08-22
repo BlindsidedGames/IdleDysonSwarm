@@ -121,6 +121,93 @@ describe('portable transactional save repository', () => {
     expect(storage.replacements).toHaveLength(1)
   })
 
+  test('adopts legacy notation only after a successful automatic migration commit', async () => {
+    const storage = new MemoryStorage()
+    storage.files.set('/legacy', 'IDB1:test')
+    storage.candidates = [
+      { id: 'canonical-unity', sourcePath: '/legacy', text: 'IDB1:test' },
+    ]
+    const adopter = {
+      adoptLegacyUnityNumberFormatting: vi.fn(() => true),
+    }
+    const repository = new PortableSaveRepository(
+      storage,
+      {
+        current: '/current',
+        temporary: '/current.tmp',
+        legacyRecovery: '/recovery/original-idb1.txt',
+      },
+      () => ({ saveVersion: 12, numberFormatting: 2 }),
+      { allowCanonicalPlayerWrites: false },
+      undefined,
+      adopter,
+    )
+
+    await expect(repository.migrateLegacyOnFirstLaunch()).resolves
+      .toMatchObject({ status: 'migrated' })
+    expect(adopter.adoptLegacyUnityNumberFormatting).toHaveBeenCalledOnce()
+    expect(adopter.adoptLegacyUnityNumberFormatting).toHaveBeenCalledWith(2)
+
+    await repository.migrateLegacyOnFirstLaunch()
+    expect(adopter.adoptLegacyUnityNumberFormatting).toHaveBeenCalledOnce()
+  })
+
+  test('does not adopt legacy notation when automatic migration fails to commit', async () => {
+    const storage = new MemoryStorage()
+    storage.files.set('/legacy', 'IDB1:test')
+    storage.candidates = [
+      { id: 'canonical-unity', sourcePath: '/legacy', text: 'IDB1:test' },
+    ]
+    storage.failAt = 'replace'
+    const adopter = {
+      adoptLegacyUnityNumberFormatting: vi.fn(() => true),
+    }
+    const repository = new PortableSaveRepository(
+      storage,
+      {
+        current: '/current',
+        temporary: '/current.tmp',
+        legacyRecovery: '/recovery/original-idb1.txt',
+      },
+      () => ({ saveVersion: 12, numberFormatting: 1 }),
+      { allowCanonicalPlayerWrites: false },
+      undefined,
+      adopter,
+    )
+
+    await expect(repository.migrateLegacyOnFirstLaunch()).resolves
+      .toMatchObject({ status: 'recovery-write-failed' })
+    expect(adopter.adoptLegacyUnityNumberFormatting).not.toHaveBeenCalled()
+  })
+
+  test('keeps a committed migration when optional notation adoption throws', async () => {
+    const storage = new MemoryStorage()
+    storage.files.set('/legacy', 'IDB1:test')
+    storage.candidates = [
+      { id: 'canonical-unity', sourcePath: '/legacy', text: 'IDB1:test' },
+    ]
+    const repository = new PortableSaveRepository(
+      storage,
+      {
+        current: '/current',
+        temporary: '/current.tmp',
+        legacyRecovery: '/recovery/original-idb1.txt',
+      },
+      () => ({ saveVersion: 12, numberFormatting: 1 }),
+      { allowCanonicalPlayerWrites: false },
+      undefined,
+      {
+        adoptLegacyUnityNumberFormatting: () => {
+          throw new Error('optional storage unavailable')
+        },
+      },
+    )
+
+    await expect(repository.migrateLegacyOnFirstLaunch()).resolves
+      .toMatchObject({ status: 'migrated' })
+    expect(storage.files.get('/current')).toMatch(/^IDSWEB1:/)
+  })
+
   test('falls back to a valid recovery candidate when the first legacy file is corrupt', async () => {
     const storage = new MemoryStorage()
     storage.files.set('/corrupt', 'bad')

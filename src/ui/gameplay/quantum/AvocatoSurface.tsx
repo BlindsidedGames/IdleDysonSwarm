@@ -9,7 +9,7 @@ import type { CanonicalPlayerCommand } from '../../../application/canonicalPlaye
 import type { AvocadoFeedSource } from '../../../simulation/avocadoDomain'
 import avocatoIcon from '../../assets/skill-icons/avocados.webp'
 import { Button } from '../../components'
-import { formatGameNumber, formatNumber } from '../../i18n/formatters'
+import { formatGameNumber } from '../../i18n/formatters'
 import type { EnabledLocale } from '../../i18n/localeRegistry'
 import type { UiRuntimePlayerCommandResult } from '../../runtime'
 import { avocatoMessages as messages } from './messages'
@@ -65,7 +65,7 @@ export function AvocatoSurface({ locale, unlocked, resources, spendable, derived
           <>
         <section className="avocato-total" aria-label={intl.formatMessage(messages.totalBoost)}>
           <strong>{intl.formatMessage(messages.totalBoost)}</strong>
-          <span>{intl.formatMessage(messages.multiplier, { value: formatNumber(locale, derived.total, { maximumSignificantDigits: 3 }) })}</span>
+          <span>{intl.formatMessage(messages.multiplier, { value: formatGameNumber(locale, derived.total) })}</span>
         </section>
 
         <div className="avocato-feed-grid">
@@ -83,7 +83,7 @@ export function AvocatoSurface({ locale, unlocked, resources, spendable, derived
           ))}
           <article className="avocato-feed-card avocato-feed-card--overflow">
             <div><h2>{intl.formatMessage(messages.overflowMultiplier)}</h2><p>{intl.formatMessage(messages.invested, { value: formatGameNumber(locale, resources.overflowMultiplier) })}</p></div>
-            <strong>{intl.formatMessage(messages.multiplier, { value: formatNumber(locale, derived.overflow, { maximumSignificantDigits: 3 }) })}</strong>
+            <strong>{intl.formatMessage(messages.multiplier, { value: formatGameNumber(locale, derived.overflow) })}</strong>
           </article>
         </div>
           </>
@@ -136,7 +136,7 @@ function AvocatoFeedCard({ locale, preview, invested, multiplier, resourceAvaila
     <article className="avocato-feed-card">
       <div>
         <h2>{intl.formatMessage(meta.title)}</h2>
-        <strong>{intl.formatMessage(messages.multiplier, { value: formatNumber(locale, multiplier, { maximumSignificantDigits: 3 }) })}</strong>
+        <strong>{intl.formatMessage(messages.multiplier, { value: formatGameNumber(locale, multiplier) })}</strong>
         <p>{intl.formatMessage(messages.invested, { value: formatGameNumber(locale, invested) })}</p>
         <p>{intl.formatMessage(messages.available, { value: formatGameNumber(locale, resourceAvailable) })}</p>
       </div>

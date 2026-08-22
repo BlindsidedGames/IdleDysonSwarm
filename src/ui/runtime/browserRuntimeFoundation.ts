@@ -79,7 +79,9 @@ import {
 } from '../../platform/periodicCheckpoint'
 import { decodeIdb1SaveRoot } from '../../save/decodeIdb1'
 import { prepareImportedSaveText } from '../../save/import'
-import { serializeWebSave } from '../../save/serialization'
+import {
+  serializeSharedWebSave,
+} from '../../save/serialization'
 import type {
   AutomaticUnityPurchaseEvidencePromoter,
 } from '../../save/automaticPurchaseEvidence'
@@ -229,6 +231,9 @@ export interface BrowserRuntimeFoundationOptions {
   /** Same-device automatic migration capability; never used by manual import. */
   readonly automaticPurchaseEvidencePromoter?:
     AutomaticUnityPurchaseEvidencePromoter
+  /** One-time receiving-device adoption during successful automatic Unity migration. */
+  readonly automaticNumberFormattingAdopter?:
+    import('../../save/repository').AutomaticUnityNumberFormattingAdopter
   /** Native release hosts expose the locally unlockable debug surface in production. */
   readonly developmentControlsAvailable?: boolean
   /** Native release controls remain gated until Store or gameplay unlock succeeds. */
@@ -1071,7 +1076,7 @@ class BrowserRuntimeFoundation implements BrowserUiRuntimeFoundation {
     const save = await graph.repository.loadCurrent()
     return save === null
       ? null
-      : serializeWebSave(save.copyValidatedState())
+      : serializeSharedWebSave(save.copyValidatedState())
   }
 
   recoveryExportAvailable(): boolean {
@@ -1311,6 +1316,7 @@ class BrowserRuntimeFoundation implements BrowserUiRuntimeFoundation {
           this.options.allowCanonicalPlayerWrites === true,
       },
       this.options.automaticPurchaseEvidencePromoter,
+      this.options.automaticNumberFormattingAdopter,
     )
     const initialLifecyclePhase = this.lifecycle.currentPhase()
     const initialLifecycleReceipt =
