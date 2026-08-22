@@ -13,10 +13,6 @@ Status conventions:
 
 ## Current cross-platform work
 
-- [x] Implement the hide-purchased-research preference, including consistent
-  filtering, empty-state behavior, keyboard/focus safety, and persistence
-  across reloads. Source: parity P-04. Evidence:
-  [Research visibility implementation](research-visibility-implementation-evidence.md).
 - [ ] Implement a device-local inactivity-screensaver toggle and define its
   idle threshold, lifecycle behavior, reduced-motion behavior, dismissal, and
   interaction with background/offline processing. Source: parity P-04.
@@ -56,17 +52,6 @@ Status conventions:
   [release readiness plan](release/web-release-readiness-plan-2026-08-19.md).
 
 ## Deferred platform release work
-
-- [x] **Before enabling Steam commerce, coalesce stacked repeat supporter
-  deliveries by inventory instance.** If cleanup of a supporter item is still
-  pending and Steam adds the next purchase quantity to the same instance,
-  merge that quantity into the existing pending-consumption record instead of
-  creating a duplicate instance ID. Prove that the charged repeat purchase is
-  accepted once, the complete quantity remains durably queued before cleanup,
-  retries consume it exactly once, and cache-write failure cannot encourage a
-  second charge. Completed in the Electron Steam Inventory adapter and focused
-  host tests; live Steam commerce remains disabled pending the separate Store
-  authority and sandbox-certification work below.
 
 - [ ] **Deferred to a future release — full-game localization.** Keep the game
   intentionally English-only for the current release, consistent with its
