@@ -1,0 +1,65 @@
+:root {
+  color-scheme: dark;
+  background: #2f1738;
+}
+
+html,
+body,
+#root {
+  inline-size: 100%;
+  min-block-size: 100%;
+  margin: 0;
+  background: #2f1738;
+}
+
+.native-launch-loader {
+  min-block-size: 100vh;
+  display: grid;
+  place-content: center;
+  justify-items: center;
+  gap: 1rem;
+  padding: 2rem;
+  box-sizing: border-box;
+  background: #2f1738;
+  color: #fff;
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  text-align: center;
+}
+
+.native-launch-loader__mark {
+  inline-size: clamp(7rem, 24vw, 10rem);
+  block-size: auto;
+}
+
+.native-launch-loader__title {
+  margin: 0;
+  font-size: clamp(1.45rem, 5vw, 2rem);
+  line-height: 1.15;
+}
+
+.native-launch-loader__activity {
+  inline-size: 2rem;
+  block-size: 2rem;
+  border: 3px solid rgb(255 255 255 / 35%);
+  border-block-start-color: #fff;
+  border-radius: 50%;
+  animation: native-launch-spin 800ms linear infinite;
+}
+
+.native-launch-loader__status {
+  min-block-size: 1.5em;
+  margin: 0;
+  color: rgb(255 255 255 / 82%);
+  line-height: 1.5;
+}
+
+@keyframes native-launch-spin {
+  to { transform: rotate(1turn); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .native-launch-loader__activity {
+    animation: none;
+    border-color: #fff;
+  }
+}

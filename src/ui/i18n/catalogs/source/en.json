@@ -3635,6 +3635,18 @@
     "defaultMessage": "Save text",
     "description": "Visible label for the optional manual save-text recovery field."
   },
+  "startup-shell.native.saving": {
+    "defaultMessage": "Saving your progress…",
+    "description": "Status shown while a native host is shutting down safely."
+  },
+  "startup-shell.native.starting": {
+    "defaultMessage": "Starting your swarm…",
+    "description": "Short status shown in the branded native startup loader."
+  },
+  "startup-shell.native.starting-slow": {
+    "defaultMessage": "Still loading your progress…",
+    "description": "Friendly delayed status shown when native startup is slow."
+  },
   "startup-shell.notice.backup-recovered": {
     "defaultMessage": "Your current save could not be opened. The newest verified backup was restored.",
     "description": "Player-facing notice shown after startup restores a verified Web backup."

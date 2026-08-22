@@ -50,10 +50,18 @@ import type {
   LifecycleAdapter,
   LifecyclePhase,
 } from '../../platform/contracts'
+import {
+  SingleHostSessionWriterAuthority,
+} from '../../platform/singleHostSessionWriterAuthority'
+import { NATIVE_WEB_SAVE_PATHS } from '../../platform/platformSaveStorage'
 import type { DeepReadonly } from '../../core/contracts'
 import type { TextDownloadPort } from '../../platform/browserSaveTransfer'
 import { prepareIdb1Save, PreparedSave } from '../../save/prepare'
-import type { SaveRepository } from '../../save/repository'
+import type {
+  LegacySaveCandidate,
+  SaveRepository,
+  SaveStorageAdapter,
+} from '../../save/repository'
 import {
   deserializeWebSave,
   serializeWebSave,
@@ -860,6 +868,149 @@ describe('browser runtime foundation composition', () => {
       }),
     ).rejects.toThrow('does not own an active application graph')
     expect(database.mutations).toHaveLength(mutationsAfterDrain)
+  })
+
+  test('serializes native background behind a delayed checkpoint without lease expiry or duplicate lifecycle credit', async () => {
+    const database = new MemoryBrowserSaveDatabase()
+    const lifecycle = new TestLifecycleAdapter()
+    const storage = new MemoryNativeSaveStorage()
+    const checkpointGate = deferred<void>()
+    let application: FakeRuntimeApplication | undefined
+    const runtime = createRuntime({
+      database,
+      lifecycle,
+      saveStorage: storage,
+      writerAuthority: new SingleHostSessionWriterAuthority({
+        sessionId: 'native-delayed-checkpoint',
+      }),
+      createApplication: (repository) => {
+        application = new FakeRuntimeApplication(
+          repository,
+          database.events,
+        )
+        return application
+      },
+    })
+    await runtime.start()
+    application?.setDirty('native-background')
+    if (application !== undefined) {
+      application.checkpointGate = checkpointGate.promise
+    }
+
+    const checkpoint = runtime.requestCheckpoint()
+    await waitUntil(() => application?.checkpointCalls === 1)
+    lifecycle.emit('background')
+    await flushMicrotasks()
+    expect(application?.awayCommits).toBe(0)
+
+    checkpointGate.resolve()
+    await expect(checkpoint).resolves.toBe(true)
+    await waitUntil(() => application?.awayCommits === 1)
+    await flushMicrotasks()
+    expect(application?.awayCommits).toBe(1)
+    expect(runtime.status().phase).toBe('ready')
+    await runtime.shutdown()
+  })
+
+  test('awards native resume credit exactly once and reconstructs it after process restart', async () => {
+    const storage = new MemoryNativeSaveStorage()
+    const lifecycleClock = new ManualLifecycleClock(
+      '2026-07-29T00:00:00.000Z',
+    )
+    const createApplication =
+      createProductionCanonicalApplicationFactory({
+        createFirstRunSave: () =>
+          createUnityFirstRunPreparedSave({
+            startedAtUtc:
+              lifecycleClock.sample().serializedUtcText,
+          }),
+        readHostEntitlements: () =>
+          Object.freeze({ permanentDoubleIp: false }),
+      })
+    const createNativeRuntime = (
+      sessionId: string,
+      lifecycle: TestLifecycleAdapter,
+    ) => createBrowserRuntimeFoundation({
+      createApplication,
+      lifecyclePolicy: MOBILE_LIFECYCLE_POLICY,
+      allowedExternalOrigins: [],
+      writerAuthority: new SingleHostSessionWriterAuthority({ sessionId }),
+      saveStorage: storage,
+      saveRepositoryPaths: NATIVE_WEB_SAVE_PATHS,
+      allowCanonicalPlayerWrites: true,
+      lifecycle,
+      lifecycleClock,
+      activeTimeClock: new ManualActiveTimeClock(),
+      activeTimeScheduler: new ManualAnimationFrameScheduler(),
+      storageManager: {
+        persisted: async () => true,
+        persist: async () => true,
+        estimate: async () => ({ usage: 1, quota: 1_000 }),
+      },
+    })
+    const imported = prepareIdb1Save(
+      readFileSync(fixtureUrl, 'utf8'),
+    ).prepared.copyValidatedState()
+    imported.dateQuitString = ''
+    imported.lastSuccessfulLoadUtc = '2026-07-29T00:00:00.000Z'
+    imported.offlineTime = 0
+    imported.maxOfflineTime = 100
+    if (
+      imported.sdPrestige !== null &&
+      typeof imported.sdPrestige === 'object'
+    ) {
+      imported.sdPrestige.doubleTime = 0
+    }
+
+    const firstLifecycle = new TestLifecycleAdapter('active')
+    const firstRuntime = createNativeRuntime(
+      'native-process-one',
+      firstLifecycle,
+    )
+    await expect(firstRuntime.start()).resolves.toMatchObject({
+      phase: 'ready',
+    })
+    await expect(firstRuntime.importSave({
+      text: serializeWebSave(imported),
+      importedAtUtc: '2026-07-29T00:00:00.000Z',
+      overwriteApproved: true,
+    })).resolves.toMatchObject({ imported: true })
+
+    lifecycleClock.set('2026-07-29T00:00:10.000Z')
+    const replacementsBeforeBackground = storage.replaceCalls
+    firstLifecycle.emit('background')
+    await waitUntil(
+      () => storage.replaceCalls > replacementsBeforeBackground,
+    )
+    expect(nativeStoredTimeSeconds(firstRuntime)).toBe(0)
+    lifecycleClock.set('2026-07-29T00:00:20.000Z')
+    firstLifecycle.emit('active')
+    await waitUntil(() => nativeStoredTimeSeconds(firstRuntime) === 10)
+
+    firstLifecycle.emit('active')
+    await flushMicrotasks()
+    expect(nativeStoredTimeSeconds(firstRuntime)).toBe(10)
+    await expect(firstRuntime.requestCheckpoint()).resolves.toBe(true)
+    await firstRuntime.shutdown()
+
+    const secondLifecycle = new TestLifecycleAdapter('background')
+    const secondRuntime = createNativeRuntime(
+      'native-process-two',
+      secondLifecycle,
+    )
+    await expect(secondRuntime.start()).resolves.toMatchObject({
+      phase: 'ready',
+    })
+    expect(secondRuntime.snapshot()).toMatchObject({
+      phase: 'ready',
+      source: 'primary',
+    })
+    expect(nativeStoredTimeSeconds(secondRuntime)).toBe(10)
+
+    secondLifecycle.emit('active')
+    await flushMicrotasks()
+    expect(nativeStoredTimeSeconds(secondRuntime)).toBe(10)
+    await secondRuntime.shutdown()
   })
 
   test('retains an exact bounded invalid import before canonical validation and never replaces the current save', async () => {
@@ -3934,6 +4085,70 @@ function createRuntime(
       overrides.legacyIdFactory ?? (() => 'retained-original'),
     ...overrides,
   })
+}
+
+function nativeStoredTimeSeconds(
+  runtime: ReturnType<typeof createBrowserRuntimeFoundation>,
+): number {
+  const snapshot = runtime.snapshot()
+  if (snapshot.phase !== 'ready') {
+    throw new Error(`Native runtime is ${snapshot.phase}.`)
+  }
+  return snapshot.gameplay.resources.time
+    .storedTimeAvailableSeconds
+}
+
+class MemoryNativeSaveStorage implements SaveStorageAdapter {
+  private readonly files = new Map<string, string>()
+  replaceCalls = 0
+
+  async exists(path: string): Promise<boolean> {
+    return this.files.has(path)
+  }
+
+  async readText(path: string): Promise<string> {
+    const value = this.files.get(path)
+    if (value === undefined) throw new Error(`Missing ${path}`)
+    return value
+  }
+
+  async writeText(path: string, contents: string): Promise<void> {
+    this.files.set(path, contents)
+  }
+
+  async replaceAtomically(
+    temporaryPath: string,
+    destinationPath: string,
+  ): Promise<void> {
+    const contents = await this.readText(temporaryPath)
+    this.files.set(destinationPath, contents)
+    this.files.delete(temporaryPath)
+    this.replaceCalls += 1
+  }
+
+  async copy(sourcePath: string, destinationPath: string): Promise<void> {
+    this.files.set(destinationPath, await this.readText(sourcePath))
+  }
+
+  async discoverLegacyCandidates(): Promise<readonly LegacySaveCandidate[]> {
+    return []
+  }
+
+  async retainLegacyCandidate(
+    text: string,
+    id = 'native-test-import',
+  ): Promise<LegacySaveCandidate> {
+    const sourcePath = `recovery/${id}.txt`
+    this.files.set(sourcePath, text)
+    return Object.freeze({
+      id,
+      sourcePath,
+      text,
+      provenance: Object.freeze({
+        kind: 'browser-retained-import' as const,
+      }),
+    })
+  }
 }
 
 class FakeRuntimeApplication

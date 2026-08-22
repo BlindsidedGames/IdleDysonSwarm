@@ -1,5 +1,6 @@
 import type { LegacySaveCandidate } from '../save/repository'
 import { requireBrowserCapability } from './browserEnvironment'
+import { WriterAuthorityLostError } from './writerAuthority'
 
 const FILES_STORE = 'files'
 const LEGACY_CANDIDATES_STORE = 'legacy-candidates'
@@ -89,7 +90,7 @@ export interface BrowserSaveDatabase {
   ): Promise<void>
 }
 
-export class WriterLeaseLostError extends Error {
+export class WriterLeaseLostError extends WriterAuthorityLostError {
   constructor(message = 'The writable browser session no longer owns its lease.') {
     super(message)
     this.name = 'WriterLeaseLostError'

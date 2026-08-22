@@ -14783,6 +14783,48 @@
       "value": "]"
     }
   ],
+  "startup-shell.native.saving": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Şȧȧṽīƞɠ ẏǿǿŭŭř ƥřǿǿɠřḗḗşş…"
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "startup-shell.native.starting": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Şŧȧȧřŧīƞɠ ẏǿǿŭŭř şẇȧȧřḿ…"
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
+  "startup-shell.native.starting-slow": [
+    {
+      "type": 0,
+      "value": "["
+    },
+    {
+      "type": 0,
+      "value": "Şŧīŀŀ ŀǿǿȧȧḓīƞɠ ẏǿǿŭŭř ƥřǿǿɠřḗḗşş…"
+    },
+    {
+      "type": 0,
+      "value": "]"
+    }
+  ],
   "startup-shell.notice.backup-recovered": [
     {
       "type": 0,

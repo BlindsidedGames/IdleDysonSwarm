@@ -5,6 +5,11 @@ import {
   WriterLeaseLostError,
 } from './browserSaveDatabase'
 import { requireBrowserCapability } from './browserEnvironment'
+import type {
+  WriterAuthorityPort,
+  WriterAuthorityTakeoverPort,
+  WriterOperationAuthority,
+} from './writerAuthority'
 
 const DEFAULT_LEASE_DURATION_MILLISECONDS = 15_000
 const DEFAULT_HEARTBEAT_MILLISECONDS = 5_000
@@ -19,10 +24,14 @@ export type BrowserWriterOwnershipState =
     }
   | {
       readonly kind: 'writable'
+      readonly sessionId: string
+      readonly generation: number
       readonly fence: WriterLeaseFence
     }
   | {
       readonly kind: 'lost'
+      readonly sessionId: string
+      readonly generation: number
       readonly previousFence: WriterLeaseFence
       readonly reason: string
     }
@@ -33,11 +42,10 @@ export type BrowserWriterOwnershipListener = (
   state: BrowserWriterOwnershipState,
 ) => void
 
-export interface BrowserWriterAuthority {
+export interface BrowserWriterAuthority
+extends WriterOperationAuthority {
   readonly fence: WriterLeaseFence
   readonly deadlineUtcMilliseconds: number
-  isAuthoritative(): boolean
-  cancellationRequested(): boolean
 }
 
 export interface OwnershipNotice {
@@ -83,7 +91,8 @@ export interface BrowserWriterLeaseOptions {
  * after any in-flight publication that settles concurrently with ownership
  * loss; this platform gate cannot roll back application memory by itself.
  */
-export class BrowserWriterLease {
+export class BrowserExpiringWriterAuthority
+implements WriterAuthorityPort, WriterAuthorityTakeoverPort {
   private readonly database: BrowserSaveDatabase
   private readonly nowUtcMilliseconds: () => number
   private readonly ownerToken: string
@@ -211,7 +220,12 @@ export class BrowserWriterLease {
           )
         }
         this.acquiredFence = renewed
-        this.publish({ kind: 'writable', fence: renewed })
+        this.publish({
+          kind: 'writable',
+          sessionId: renewed.ownerToken,
+          generation: renewed.generation,
+          fence: renewed,
+        })
         this.postNotice({
           kind: 'renewed',
           generation: renewed.generation,
@@ -255,7 +269,12 @@ export class BrowserWriterLease {
           current.expiresAtUtcMilliseconds !==
           fence.expiresAtUtcMilliseconds
         ) {
-          this.publish({ kind: 'writable', fence: current })
+          this.publish({
+            kind: 'writable',
+            sessionId: current.ownerToken,
+            generation: current.generation,
+            fence: current,
+          })
         }
         return current
       })
@@ -378,6 +397,8 @@ export class BrowserWriterLease {
       }
       this.publish({
         kind: 'writable',
+        sessionId: acquisition.fence.ownerToken,
+        generation: acquisition.fence.generation,
         fence: acquisition.fence,
       })
       this.postNotice({
@@ -429,6 +450,8 @@ export class BrowserWriterLease {
       this.authorityDeadlineFor(fence, operationEpoch)
     return Object.freeze({
       fence,
+      sessionId: fence.ownerToken,
+      generation: fence.generation,
       get deadlineUtcMilliseconds() {
         return deadline()
       },
@@ -617,6 +640,8 @@ export class BrowserWriterLease {
       error instanceof Error ? error.message : String(error)
     this.publish({
       kind: 'lost',
+      sessionId: fence.ownerToken,
+      generation: fence.generation,
       previousFence: fence,
       reason,
     })
@@ -693,6 +718,11 @@ export class BrowserWriterLease {
     }).catch(() => undefined)
     return promise
   }
+}
+
+/** @deprecated Use BrowserExpiringWriterAuthority for new composition code. */
+export {
+  BrowserExpiringWriterAuthority as BrowserWriterLease,
 }
 
 export class BrowserBroadcastOwnershipChannel

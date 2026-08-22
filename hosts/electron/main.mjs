@@ -49,6 +49,7 @@ const steamInventoryConfigPath = join(
   'steam-inventory.json',
 )
 const smokeTest = process.argv.includes('--smoke-test')
+const suspendResumeSmoke = process.argv.includes('--suspend-resume-smoke')
 const smokeUserData = smokeTest
   ? await mkdtemp(join(tmpdir(), 'idle-dyson-swarm-smoke-'))
   : null
@@ -460,7 +461,25 @@ async function waitForRendererReady(window) {
         }, { once: true })
       })
     `)
-    await exitHost(ready ? 0 : 1)
+    if (!ready) {
+      await exitHost(1)
+      return
+    }
+    if (suspendResumeSmoke) {
+      window.minimize()
+      await new Promise((resolve) => setTimeout(resolve, 20_000))
+      window.restore()
+      window.show()
+      window.focus()
+      await new Promise((resolve) => setTimeout(resolve, 1_000))
+      const resumedSafely = await window.webContents.executeJavaScript(`
+        document.documentElement.dataset.idleDysonSwarmRuntime === 'ready' &&
+          !document.body.textContent.includes('This tab stopped writing progress')
+      `)
+      await exitHost(resumedSafely ? 0 : 1)
+      return
+    }
+    await exitHost(0)
   } catch (error) {
     console.error('Packaged renderer readiness check failed.', error)
     await exitHost(1)
@@ -563,7 +582,7 @@ function createMainWindow() {
     height: 800,
     minWidth: 360,
     minHeight: 640,
-    backgroundColor: '#130c1d',
+    backgroundColor: '#2f1738',
     show: false,
     webPreferences: {
       contextIsolation: true,

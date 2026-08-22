@@ -7,8 +7,8 @@ import type {
   LifecyclePhase,
 } from '../../platform/contracts'
 import type {
-  BrowserWriterAuthority,
-} from '../../platform/browserWriterLease'
+  WriterOperationAuthority,
+} from '../../platform/writerAuthority'
 
 export interface AuthoritativeLifecycleCoordinatorPort {
   handlePlatformPhase(
@@ -19,7 +19,7 @@ export interface AuthoritativeLifecycleCoordinatorPort {
 export interface AuthoritativeWriterLeasePort {
   runAuthoritativeOperation<T>(
     operation: (
-      authority: BrowserWriterAuthority,
+      authority: WriterOperationAuthority,
     ) => T | Promise<T>,
   ): Promise<T>
   assertWritable(): Promise<unknown>
@@ -80,9 +80,9 @@ export class AuthoritativeLifecycleRouterClosedError extends Error {
 }
 
 /**
- * Serializes startup, browser phases, checkpoints, and import operations behind
- * the same IndexedDB authority fence. Results leave this router only after a
- * final database-backed authority check.
+ * Serializes startup, lifecycle phases, checkpoints, and import operations
+ * behind the selected host authority. Results leave this router only after a
+ * final host-specific authority check.
  */
 export class AuthoritativeLifecycleRouter {
   private readonly lifecycle: LifecycleAdapter
@@ -122,7 +122,7 @@ export class AuthoritativeLifecycleRouter {
 
   start<T>(
     startApplication: (
-      authority: BrowserWriterAuthority,
+      authority: WriterOperationAuthority,
     ) => T | Promise<T>,
   ): Promise<T> {
     const starting = this.run(startApplication)
@@ -211,7 +211,7 @@ export class AuthoritativeLifecycleRouter {
 
   run<T>(
     operation: (
-      authority: BrowserWriterAuthority,
+      authority: WriterOperationAuthority,
     ) => T | Promise<T>,
   ): Promise<T> {
     if (!this.accepting) {
@@ -252,12 +252,12 @@ export class AuthoritativeLifecycleRouter {
 
   private async runFenced<T>(
     operation: (
-      authority: BrowserWriterAuthority,
+      authority: WriterOperationAuthority,
     ) => T | Promise<T>,
   ): Promise<T> {
-    // BrowserWriterLease owns both entry validation and the synchronous
-    // post-operation cancellation check. Let it classify and publish a lost
-    // fence instead of replacing that signal with a generic router error.
+    // The selected authority owns entry validation and the synchronous
+    // post-operation cancellation check. Let it classify terminal fencing
+    // instead of replacing that signal with a generic router error.
     const result =
       await this.lease.runAuthoritativeOperation(operation)
     await this.lease.assertWritable()

@@ -32,7 +32,7 @@ import { hydrateGameState } from '../../game-state/mapping'
 import {
   type BrowserSaveDatabase,
   IndexedDbBrowserSaveDatabase,
-  WriterLeaseLostError,
+  type WriterLeaseFence,
 } from '../../platform/browserSaveDatabase'
 import {
   BrowserLifecycleAdapter,
@@ -62,11 +62,18 @@ import {
   type ExternalWindowOpener,
 } from '../../platform/browserSystemPorts'
 import {
-  BrowserWriterLease,
-  type BrowserWriterOwnershipState,
+  BrowserExpiringWriterAuthority,
   type IntervalScheduler,
   type OwnershipNoticeChannel,
 } from '../../platform/browserWriterLease'
+import type {
+  WriterAuthorityPort,
+  WriterAuthorityState,
+  WriterAuthorityTakeoverPort,
+} from '../../platform/writerAuthority'
+import {
+  WriterAuthorityLostError,
+} from '../../platform/writerAuthority'
 import type {
   ClipboardAdapter,
   ExternalNavigationAdapter,
@@ -225,6 +232,8 @@ export interface BrowserRuntimeFoundationOptions {
   readonly checkpointScheduler?: IntervalScheduler
   readonly noticeChannel?: OwnershipNoticeChannel
   readonly autoHeartbeat?: boolean
+  /** Native hosts inject a non-expiring single-renderer authority here. */
+  readonly writerAuthority?: WriterAuthorityPort
   readonly legacyIdFactory?: () => string
   /** Native Store authority projected before the canonical graph is opened. */
   readonly hostEntitlements?: RuntimeEntitlementBridge
@@ -380,12 +389,12 @@ class BrowserRuntimeFoundation implements BrowserUiRuntimeFoundation {
   private readonly options: Readonly<BrowserRuntimeFoundationOptions>
   private readonly developmentControlsAvailable: boolean
   private readonly developmentControlsRequireEntitlement: boolean
-  private readonly database: BrowserSaveDatabase
+  private readonly database: BrowserSaveDatabase | undefined
   private readonly saveStorage:
     | (SaveStorageAdapter & BrowserLegacyRecoveryStore)
     | undefined
   private readonly saveRepositoryPaths: SaveRepositoryPaths
-  private readonly lease: BrowserWriterLease
+  private readonly lease: WriterAuthorityPort
   private readonly lifecycle: LifecycleAdapter
   private readonly clock: CanonicalLifecycleClock
   private readonly departureMarker: DepartureMarker
@@ -430,12 +439,13 @@ class BrowserRuntimeFoundation implements BrowserUiRuntimeFoundation {
       options.developmentControlsRequireEntitlement === true
     const databaseName =
       options.databaseName ?? DEVELOPMENT_ONLY_BROWSER_DATABASE_NAME
-    this.database =
-      options.database ??
-      new IndexedDbBrowserSaveDatabase(
-        databaseName,
-        options.indexedDbFactory,
-      )
+    this.database = options.database ??
+      (options.saveStorage === undefined
+        ? new IndexedDbBrowserSaveDatabase(
+            databaseName,
+            options.indexedDbFactory,
+          )
+        : undefined)
     this.saveStorage = options.saveStorage
     this.saveRepositoryPaths =
       options.saveRepositoryPaths ??
@@ -448,20 +458,21 @@ class BrowserRuntimeFoundation implements BrowserUiRuntimeFoundation {
       new BrowserDepartureMarker(
         `${databaseName}/${this.saveRepositoryPaths.current}`,
       )
-    this.lease = new BrowserWriterLease({
-      database: this.database,
-      nowUtcMilliseconds: options.nowUtcMilliseconds,
-      ownerToken: options.ownerToken,
-      ownerTokenFactory: options.ownerTokenFactory,
-      allowUnexpiredSameOwnerTakeover:
-        options.allowUnexpiredSameOwnerTakeover,
-      leaseDurationMilliseconds:
-        options.leaseDurationMilliseconds,
-      heartbeatMilliseconds: options.heartbeatMilliseconds,
-      scheduler: options.leaseScheduler,
-      noticeChannel: options.noticeChannel,
-      autoHeartbeat: options.autoHeartbeat,
-    })
+    this.lease = options.writerAuthority ??
+      new BrowserExpiringWriterAuthority({
+        database: requireBrowserDatabase(this.database),
+        nowUtcMilliseconds: options.nowUtcMilliseconds,
+        ownerToken: options.ownerToken,
+        ownerTokenFactory: options.ownerTokenFactory,
+        allowUnexpiredSameOwnerTakeover:
+          options.allowUnexpiredSameOwnerTakeover,
+        leaseDurationMilliseconds:
+          options.leaseDurationMilliseconds,
+        heartbeatMilliseconds: options.heartbeatMilliseconds,
+        scheduler: options.leaseScheduler,
+        noticeChannel: options.noticeChannel,
+        autoHeartbeat: options.autoHeartbeat,
+      })
     this.lifecycle =
       options.lifecycle ?? new BrowserLifecycleAdapter()
     this.clock =
@@ -480,7 +491,7 @@ class BrowserRuntimeFoundation implements BrowserUiRuntimeFoundation {
       {
         readText: (path) =>
           this.saveStorage?.readText(path) ??
-          this.database.readFile(path),
+          requireBrowserDatabase(this.database).readFile(path),
       },
       this.downloads,
     )
@@ -554,7 +565,7 @@ class BrowserRuntimeFoundation implements BrowserUiRuntimeFoundation {
     ) {
       return this.currentStatus
     }
-    const acquisition = await this.lease.takeOver()
+    const acquisition = await requireBrowserTakeover(this.lease).takeOver()
     if (!acquisition.acquired) return this.currentStatus
     this.startPromise = undefined
     return this.start()
@@ -1167,14 +1178,15 @@ class BrowserRuntimeFoundation implements BrowserUiRuntimeFoundation {
         return this.currentStatus
       }
       if (!acquisition.acquired) {
+        const browserBlocked = requireBrowserBlockedAcquisition(acquisition)
         const blocked = Object.freeze({
           phase: 'blocked',
           code: 'writer-owned',
           reason:
             'Another browser context owns the writable game session.',
-          generation: acquisition.generation,
+          generation: browserBlocked.generation,
           expiresAtUtcMilliseconds:
-            acquisition.expiresAtUtcMilliseconds,
+            browserBlocked.expiresAtUtcMilliseconds,
         } satisfies UiRuntimeFoundationStatus)
         this.frontendSnapshots.clear()
         this.publish(blocked)
@@ -1233,7 +1245,7 @@ class BrowserRuntimeFoundation implements BrowserUiRuntimeFoundation {
       if (applicationSnapshot.phase === 'blocked') {
         const recoveryPath = this.saveRepositoryPaths.legacyRecovery
         const recoveryExists = this.saveStorage === undefined
-          ? await this.database.fileExists(recoveryPath)
+          ? await requireBrowserDatabase(this.database).fileExists(recoveryPath)
           : await this.saveStorage.exists(recoveryPath)
         if (recoveryExists) {
           this.lastRecoveryPath = recoveryPath
@@ -1285,7 +1297,7 @@ class BrowserRuntimeFoundation implements BrowserUiRuntimeFoundation {
         await this.teardownPromise
         return this.currentStatus
       }
-      if (error instanceof WriterLeaseLostError) {
+      if (error instanceof WriterAuthorityLostError) {
         return this.currentStatus
       }
       const blocked = Object.freeze({
@@ -1305,8 +1317,8 @@ class BrowserRuntimeFoundation implements BrowserUiRuntimeFoundation {
     const storage =
       this.saveStorage ??
       new IndexedDbSaveStorageAdapter({
-        database: this.database,
-        lease: this.lease,
+        database: requireBrowserDatabase(this.database),
+        lease: requireBrowserPersistenceFence(this.lease),
         nowUtcMilliseconds: this.options.nowUtcMilliseconds,
         legacyIdFactory: this.options.legacyIdFactory,
       })
@@ -1429,7 +1441,7 @@ class BrowserRuntimeFoundation implements BrowserUiRuntimeFoundation {
       },
       onFailure: (_phase, error) => {
         if (
-          !(error instanceof WriterLeaseLostError) &&
+          !(error instanceof WriterAuthorityLostError) &&
           this.graph?.router === router
         ) {
           this.addWarning({
@@ -1463,7 +1475,7 @@ class BrowserRuntimeFoundation implements BrowserUiRuntimeFoundation {
       },
       onFailure: (error) => {
         if (
-          !(error instanceof WriterLeaseLostError) &&
+          !(error instanceof WriterAuthorityLostError) &&
           this.isCurrentGraph(graph)
         ) {
           this.addWarning({
@@ -1518,19 +1530,20 @@ class BrowserRuntimeFoundation implements BrowserUiRuntimeFoundation {
   }
 
   private handleOwnershipState(
-    state: BrowserWriterOwnershipState,
+    state: WriterAuthorityState,
   ): void {
     if (this.shutdownRequested) return
     if (state.kind === 'blocked') {
+      const browserBlocked = requireBrowserBlockedState(state)
       if (
         this.currentStatus.phase === 'blocked' &&
         this.currentStatus.code === 'writer-owned'
       ) {
         this.publish({
           ...this.currentStatus,
-          generation: state.generation,
+          generation: browserBlocked.generation,
           expiresAtUtcMilliseconds:
-            state.expiresAtUtcMilliseconds,
+            browserBlocked.expiresAtUtcMilliseconds,
         })
       }
       return
@@ -1587,7 +1600,7 @@ class BrowserRuntimeFoundation implements BrowserUiRuntimeFoundation {
         }, false)
       }
     } catch (error) {
-      if (!(error instanceof WriterLeaseLostError)) {
+      if (!(error instanceof WriterAuthorityLostError)) {
         this.addWarning({
           code: 'checkpoint-failed',
           reason: errorMessage(error),
@@ -1608,7 +1621,7 @@ class BrowserRuntimeFoundation implements BrowserUiRuntimeFoundation {
 
   private assertCurrentGraph(graph: BrowserRuntimeGraph): void {
     if (this.graph !== graph || this.shutdownRequested) {
-      throw new WriterLeaseLostError(
+      throw new WriterAuthorityLostError(
         'The browser runtime discarded the application graph.',
       )
     }
@@ -1629,7 +1642,7 @@ class BrowserRuntimeFoundation implements BrowserUiRuntimeFoundation {
   ): void {
     this.assertCurrentGraph(graph)
     if (!this.lease.isAuthoritative()) {
-      throw new WriterLeaseLostError()
+      throw new WriterAuthorityLostError()
     }
     this.frontendSnapshots.publish(
       graph.application.frontendSnapshot(this.gameplayPreviewDemand),
@@ -1733,7 +1746,10 @@ class BrowserRuntimeFoundation implements BrowserUiRuntimeFoundation {
   async copyLastRecovery(): Promise<boolean> {
     const recoveryPath = this.lastRecoveryPath
     if (recoveryPath === undefined) return false
-    const text = await this.database.readFile(recoveryPath)
+    const text = await (
+      this.saveStorage?.readText(recoveryPath) ??
+      requireBrowserDatabase(this.database).readFile(recoveryPath)
+    )
     await this.writeClipboardText(text)
     return true
   }
@@ -2145,6 +2161,95 @@ function recordPerformanceImportResult(
   ;(globalThis as typeof globalThis & {
     __idleDysonLastImportResult?: UiRuntimeImportResult
   }).__idleDysonLastImportResult = structuredClone(result)
+}
+
+function requireBrowserDatabase(
+  database: BrowserSaveDatabase | undefined,
+): BrowserSaveDatabase {
+  if (database === undefined) {
+    throw new Error(
+      'Browser persistence requires an IndexedDB writer-fence database.',
+    )
+  }
+  return database
+}
+
+function requireBrowserPersistenceFence(
+  authority: WriterAuthorityPort,
+): { currentFence(): WriterLeaseFence } {
+  if (
+    !('currentFence' in authority) ||
+    typeof authority.currentFence !== 'function'
+  ) {
+    throw new Error(
+      'IndexedDB persistence requires browser expiring writer authority.',
+    )
+  }
+  return authority as WriterAuthorityPort & {
+    currentFence(): WriterLeaseFence
+  }
+}
+
+function requireBrowserTakeover(
+  authority: WriterAuthorityPort,
+): WriterAuthorityTakeoverPort {
+  if (
+    !('takeOver' in authority) ||
+    typeof authority.takeOver !== 'function'
+  ) {
+    throw new Error(
+      'Writer takeover is available only to browser expiring authority.',
+    )
+  }
+  return authority as WriterAuthorityPort & WriterAuthorityTakeoverPort
+}
+
+function requireBrowserBlockedAcquisition(
+  acquisition: { readonly acquired: false },
+): Readonly<{
+  acquired: false
+  generation: number
+  expiresAtUtcMilliseconds: number
+}> {
+  if (
+    !('generation' in acquisition) ||
+    typeof acquisition.generation !== 'number' ||
+    !('expiresAtUtcMilliseconds' in acquisition) ||
+    typeof acquisition.expiresAtUtcMilliseconds !== 'number'
+  ) {
+    throw new Error(
+      'Only browser expiring authority may block writer acquisition.',
+    )
+  }
+  return acquisition as Readonly<{
+    acquired: false
+    generation: number
+    expiresAtUtcMilliseconds: number
+  }>
+}
+
+function requireBrowserBlockedState(
+  state: Extract<WriterAuthorityState, { kind: 'blocked' }>,
+): Readonly<{
+  kind: 'blocked'
+  generation: number
+  expiresAtUtcMilliseconds: number
+}> {
+  if (
+    !('generation' in state) ||
+    typeof state.generation !== 'number' ||
+    !('expiresAtUtcMilliseconds' in state) ||
+    typeof state.expiresAtUtcMilliseconds !== 'number'
+  ) {
+    throw new Error(
+      'Only browser expiring authority may publish blocked ownership.',
+    )
+  }
+  return state as Readonly<{
+    kind: 'blocked'
+    generation: number
+    expiresAtUtcMilliseconds: number
+  }>
 }
 
 function errorMessage(error: unknown): string {

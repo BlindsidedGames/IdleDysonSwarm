@@ -1,6 +1,7 @@
 import type {
   UiRuntimeFoundationStatus,
 } from '../runtime'
+import type { HostKind } from '../../platform/releaseFoundation'
 import type {
   StartupShellPhase,
   StartupShellViewModel,
@@ -19,6 +20,7 @@ export interface RuntimeStartupAdapterContext {
   readonly locale: string
   readonly saveSchemaVersion: number
   readonly buildId?: string
+  readonly hostKind: HostKind
 }
 
 /**
@@ -42,12 +44,16 @@ export function selectStartupShellViewModel(
             phase,
             code,
             buildId: context.buildId,
-            hostKind: 'browser-pwa',
+            hostKind: diagnosticHostKind(context.hostKind),
             locale: context.locale,
             saveSchemaVersion: context.saveSchemaVersion,
           }),
         }),
   })
+}
+
+function diagnosticHostKind(hostKind: HostKind): string {
+  return hostKind === 'browser' ? 'browser-pwa' : hostKind
 }
 
 function shellPhase(

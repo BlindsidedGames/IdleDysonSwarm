@@ -11,6 +11,21 @@ export const startupShellMessages = defineMessages({
     description:
       'Game name shown as the top-level heading in the browser startup shell.',
   },
+  nativeStarting: {
+    id: 'startup-shell.native.starting',
+    defaultMessage: 'Starting your swarm…',
+    description: 'Short status shown in the branded native startup loader.',
+  },
+  nativeStartingSlow: {
+    id: 'startup-shell.native.starting-slow',
+    defaultMessage: 'Still loading your progress…',
+    description: 'Friendly delayed status shown when native startup is slow.',
+  },
+  nativeSaving: {
+    id: 'startup-shell.native.saving',
+    defaultMessage: 'Saving your progress…',
+    description: 'Status shown while a native host is shutting down safely.',
+  },
   idleTitle: {
     id: 'startup-shell.state.idle.title',
     defaultMessage: 'Ready to start',

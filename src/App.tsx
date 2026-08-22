@@ -18,6 +18,7 @@ import {
 import { ReadyDysonRuntimeHost } from './ui/gameplay/dyson'
 import type { EnabledLocale } from './ui/i18n'
 import {
+  NativeStartupLoader,
   selectStartupShellViewModel,
   StartupShell,
   startupShellMessages,
@@ -27,9 +28,11 @@ import {
 import { StatusFeedback } from './ui/components'
 import type { GameAudioService } from './audio'
 import { useNumberNotation } from './ui/number-notation'
+import type { HostKind } from './platform/releaseFoundation'
 
 export interface AppProps {
   readonly runtime: BrowserUiRuntimeFoundation
+  readonly hostKind?: HostKind
   readonly locale: EnabledLocale
   readonly saveSchemaVersion: number
   readonly sampleUtc: () => string
@@ -44,6 +47,7 @@ export interface AppProps {
 
 function App({
   runtime,
+  hostKind = 'browser',
   locale,
   saveSchemaVersion,
   sampleUtc,
@@ -71,8 +75,9 @@ function App({
         locale,
         saveSchemaVersion,
         buildId,
+        hostKind,
       }),
-    [buildId, locale, saveSchemaVersion, status],
+    [buildId, hostKind, locale, saveSchemaVersion, status],
   )
   const shellViewModel = useMemo(
     () =>
@@ -193,6 +198,22 @@ function App({
           audio={audio}
         />
       </>
+    )
+  }
+
+  if (
+    hostKind !== 'browser' &&
+    (
+      viewModel.phase === 'idle' ||
+      viewModel.phase === 'starting' ||
+      viewModel.phase === 'ready-placeholder' ||
+      viewModel.phase === 'stopping'
+    )
+  ) {
+    return (
+      <NativeStartupLoader
+        phase={viewModel.phase}
+      />
     )
   }
 

@@ -17,6 +17,7 @@ import {
   createProductionBrowserComposition,
 } from './browser/productionBrowserComposition'
 import enCatalog from './ui/i18n/catalogs/compiled/en.json'
+import { NativeLaunchPresentationGate } from './ui/shell'
 import type {
   BrowserUiRuntimeFoundation,
   FrontendApplicationSnapshot,
@@ -27,6 +28,69 @@ import type {
 afterEach(cleanup)
 
 describe('application startup host', () => {
+  test('uses one branded native cold-start loader and mounts it before splash dismissal', () => {
+    const runtime = new TestRuntime({ phase: 'starting' })
+    const presented = vi.fn()
+    renderApp(runtime.runtime, {
+      confirmOverwrite: () => true,
+      sampleUtc: () => '2026-08-22T00:00:00.000Z',
+      hostKind: 'mobile-native',
+      onNativePresentationMounted: presented,
+    })
+
+    expect(presented).toHaveBeenCalledOnce()
+    expect(screen.getByRole('status')).toHaveTextContent(
+      'Starting your swarm…',
+    )
+    expect(screen.queryByRole('heading', {
+      name: 'Starting the game',
+    })).not.toBeInTheDocument()
+  })
+
+  test('moves a warm native start directly to gameplay without a loader', () => {
+    const ready = new TestRuntime({ phase: 'ready', warnings: [] })
+    ready.snapshotValue = readySnapshot()
+    const presented = vi.fn()
+    renderApp(ready.runtime, {
+      confirmOverwrite: () => true,
+      sampleUtc: () => '2026-08-22T00:00:00.000Z',
+      hostKind: 'desktop-native',
+      onNativePresentationMounted: presented,
+    })
+
+    expect(presented).toHaveBeenCalledOnce()
+    expect(screen.getByRole('heading', {
+      level: 1,
+      name: 'Bots',
+    })).toBeInTheDocument()
+    expect(
+      document.querySelector('.native-launch-loader'),
+    ).toBeNull()
+  })
+
+  test('shows the recovery shell only when native startup genuinely fails', () => {
+    const failed = new TestRuntime({
+      phase: 'blocked',
+      code: 'startup-failed',
+      reason: 'fixture startup failure',
+    })
+    renderApp(failed.runtime, {
+      confirmOverwrite: () => true,
+      sampleUtc: () => '2026-08-22T00:00:00.000Z',
+      hostKind: 'mobile-native',
+    })
+
+    expect(screen.getByRole('heading', {
+      name: 'The game could not start',
+    })).toBeInTheDocument()
+    expect(screen.getByLabelText(
+      'Redacted local diagnostic report',
+    )).toHaveTextContent('"hostKind": "mobile-native"')
+    expect(
+      document.querySelector('.native-launch-loader'),
+    ).toBeNull()
+  })
+
   test('mounts the snapshot-driven Dyson slice only after runtime readiness', () => {
     const blocked = new TestRuntime({
       phase: 'blocked',
@@ -480,12 +544,21 @@ function renderApp(
     readonly sampleUtc: () => string
     readonly reloadSafely?: () => Promise<void>
     readonly resetSave?: () => Promise<UiRuntimeImportResult>
+    readonly hostKind?: 'browser' | 'desktop-native' | 'mobile-native'
+    readonly onNativePresentationMounted?: () => void
   },
 ) {
   return render(
     <IntlProvider locale="en" messages={enCatalog}>
+      <NativeLaunchPresentationGate
+        enabled={options.hostKind !== undefined && options.hostKind !== 'browser'}
+        onPresented={
+          options.onNativePresentationMounted ?? (() => undefined)
+        }
+      />
       <App
         runtime={runtime}
+        hostKind={options.hostKind}
         locale="en"
         saveSchemaVersion={12}
         sampleUtc={options.sampleUtc}

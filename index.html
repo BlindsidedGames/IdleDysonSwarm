@@ -14,6 +14,7 @@
     <link rel="manifest" href="/play/manifest.webmanifest" />
     <link rel="icon" href="/play/icons/pwa-icon-192.png" type="image/png" />
     <link rel="apple-touch-icon" href="/play/icons/pwa-icon-192.png" />
+    <link rel="stylesheet" href="/bootstrap.css" />
     <meta
       name="idle-dyson-swarm-permanent-double-ip"
       content="false"
@@ -21,7 +22,23 @@
     <title>Idle Dyson Swarm</title>
   </head>
   <body>
-    <div id="root"></div>
+    <div id="root">
+      <main
+        class="native-launch-loader"
+        role="status"
+        aria-live="polite"
+        aria-label="Idle Dyson Swarm is starting"
+      >
+        <img
+          class="native-launch-loader__mark"
+          src="/play/native-launch-mark.svg"
+          alt=""
+        />
+        <h1 class="native-launch-loader__title">Idle Dyson Swarm</h1>
+        <span class="native-launch-loader__activity" aria-hidden="true"></span>
+        <p class="native-launch-loader__status">Starting your swarm…</p>
+      </main>
+    </div>
     <script type="module" src="/src/main.tsx"></script>
   </body>
 </html>
