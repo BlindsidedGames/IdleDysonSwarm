@@ -5,7 +5,10 @@ import {
 import {
   createProductionHostComposition,
 } from '../productionHostComposition'
-import type { StoreProductId } from '../store/contracts'
+import type {
+  HostEntitlementOwnership,
+  StoreProductId,
+} from '../store/contracts'
 import { PortableSaveRepository } from '../save/repository'
 import type {
   BrowserRuntimeFoundationOptions,
@@ -93,6 +96,7 @@ describe('native host bootstrap boundary', () => {
     ).resolves.toEqual({
       doubleInfinityPoints: false,
       developerOptions: false,
+      supporterCatGallery: false,
     })
   })
 
@@ -133,6 +137,22 @@ describe('native host bootstrap boundary', () => {
       { productId: 'ids.devoptions', localizedPrice: null, available: false },
       { productId: 'ids.doubleip', localizedPrice: '$1.99', available: true },
     ])
+  })
+
+  test('normalizes missing native entitlement fields fail closed', async () => {
+    const bridge = fakeBridge()
+    bridge.readEntitlements.mockResolvedValue({
+      developerOptions: true,
+    } as HostEntitlementOwnership)
+    const services = createNativeHostEnvironment(
+      bridge,
+    ).releasePlatformServices
+
+    await expect(services.entitlements.readOwnership()).resolves.toEqual({
+      doubleInfinityPoints: false,
+      developerOptions: true,
+      supporterCatGallery: false,
+    })
   })
 
   test('installs a native termination handshake that checkpoints and shuts down', async () => {

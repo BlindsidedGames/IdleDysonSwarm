@@ -83,6 +83,12 @@ This was an investigation-only source audit. The only file created or edited by 
 
 ### P-04 — Several Unity presentation preferences are preserved as data but have no Web behavior
 
+**2026-08-22 update:** Number notation is resolved with a device-local
+Standard/Scientific/Engineering control, shared formatter behavior, portable
+save isolation, one-time automatic Unity adoption, and tabular digit styling.
+See [number notation implementation evidence](../number-notation-implementation-evidence.md).
+P-04 remains open for the other preferences listed below.
+
 - **Classification:** Confirmed mismatch
 - **Severity:** S2
 - **Unity evidence:** `Assets/Scripts/User Interface/NotationToggler.cs:12-43` supports Standard, Scientific, and Engineering notation. `Assets/Scripts/User Interface/HidePurchasedToggle.cs:9-17` controls purchased-research visibility, consumed by `Assets/Scripts/Research/ResearchPresenter.cs:434-449`. `Assets/Scripts/User Interface/ScreensaverToggle.cs:13-27` controls the idle display, consumed by `Assets/Scripts/Expansion/LoadScreenMethods.cs:70-85`. `Assets/Scripts/User Interface/ButtonThings.cs:32-47` persists frame-rate choices.

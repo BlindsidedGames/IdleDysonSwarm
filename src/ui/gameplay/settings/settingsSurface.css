@@ -232,6 +232,29 @@
   grid-template-columns: minmax(0, 1fr) minmax(13rem, auto);
 }
 
+.settings-surface__select-label {
+  display: grid;
+  min-inline-size: min(15rem, 100%);
+  gap: 0.35rem;
+  font-weight: var(--font-weight-semibold);
+}
+
+.settings-surface__select-label select {
+  min-block-size: var(--target-minimum);
+  inline-size: 100%;
+  padding: 0.55rem 2.25rem 0.55rem 0.7rem;
+  border: 2px solid var(--theme-divider);
+  border-radius: 0.4rem;
+  background: var(--theme-selected);
+  color: white;
+  font: inherit;
+}
+
+.settings-surface__select-label select:focus-visible {
+  outline: 3px solid var(--color-focus);
+  outline-offset: 2px;
+}
+
 .settings-surface__navigation-toggles {
   display: grid;
   gap: 0.5rem;
@@ -500,6 +523,11 @@
 
   .settings-surface__panel--navigation {
     grid-template-columns: 1fr;
+  }
+
+  .settings-surface__select-label {
+    inline-size: 100%;
+    font-size: calc(0.8rem * var(--game-text-scale));
   }
 
   .settings-surface__toggle {

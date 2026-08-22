@@ -47,6 +47,7 @@ describe('release platform/store foundation', () => {
     await expect(services.entitlements.readOwnership()).resolves.toEqual({
       doubleInfinityPoints: false,
       developerOptions: false,
+      supporterCatGallery: false,
     })
     await expect(services.store.products()).resolves.toEqual(
       CANONICAL_STORE_PRODUCTS.map((product) => ({
@@ -98,6 +99,8 @@ describe('release platform/store foundation', () => {
     expect(access).toEqual({
       doubleInfinityPoints: false,
       developerOptions: false,
+      supporterCatGallery: false,
+      supporterCatGalleryAccess: false,
       developerOptionsSource: 'none',
       ignoredSharedSaveClaims: {
         doubleInfinityPoints: true,
@@ -146,6 +149,7 @@ describe('release platform/store foundation', () => {
     await expect(new NoopEntitlementAuthority().readOwnership()).resolves.toEqual({
       doubleInfinityPoints: false,
       developerOptions: false,
+      supporterCatGallery: false,
     })
     await expect(new NoopStoreAdapter().restorePurchases()).resolves.toEqual({
       restoredProductIds: [],

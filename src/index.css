@@ -52,6 +52,18 @@ body {
   touch-action: manipulation;
 }
 
+/*
+ * Shared game-number presentation. OpenType tabular figures affect numeric
+ * glyphs only: punctuation, signs, units, suffixes and surrounding prose keep
+ * the active UI font's natural spacing. No fixed width is imposed, so genuine
+ * magnitude and suffix transitions may still change label width.
+ */
+.game-number-presentation {
+  font-family: var(--font-family-numeric);
+  font-variant-numeric: tabular-nums;
+  font-feature-settings: "tnum" 1;
+}
+
 #root,
 #root * {
   -webkit-touch-callout: none !important;

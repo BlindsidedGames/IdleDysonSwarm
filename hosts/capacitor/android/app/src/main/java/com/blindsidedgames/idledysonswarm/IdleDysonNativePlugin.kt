@@ -344,6 +344,7 @@ class IdleDysonNativePlugin : Plugin() {
         call.resolve(JSObject().apply {
             put("doubleInfinityPoints", ownership.doubleInfinityPoints)
             put("developerOptions", ownership.developerOptions)
+            put("supporterCatGallery", ownership.supporterCatGallery)
             put("providerAvailable", providerAvailable)
         })
     }

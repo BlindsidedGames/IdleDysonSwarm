@@ -19,7 +19,7 @@ export type StoreProductId =
   (typeof STORE_PRODUCT_IDS)[keyof typeof STORE_PRODUCT_IDS]
 
 export type StoreProductKind =
-  | 'support-tip'
+  | 'supporter-tier'
   | 'developer-options'
   | 'double-infinity-points'
 
@@ -47,24 +47,24 @@ export interface StoreProductListing {
 export const CANONICAL_STORE_PRODUCTS: readonly StoreProduct[] = Object.freeze([
   Object.freeze({
     id: STORE_PRODUCT_IDS.tipTier1,
-    kind: 'support-tip',
+    kind: 'supporter-tier',
     durability: 'consumable',
-    title: 'Tip Tier 1',
-    description: 'Treat the Cats!',
+    title: 'Cat Treat Supporter Tier',
+    description: 'Unlocks the Supporter Cat Gallery on this installation.',
   }),
   Object.freeze({
     id: STORE_PRODUCT_IDS.tipTier2,
-    kind: 'support-tip',
+    kind: 'supporter-tier',
     durability: 'consumable',
-    title: 'Tip Tier 2',
-    description: 'Buy us a coffee',
+    title: 'Coffee Supporter Tier',
+    description: 'Unlocks the Supporter Cat Gallery on this installation.',
   }),
   Object.freeze({
     id: STORE_PRODUCT_IDS.tipTier3,
-    kind: 'support-tip',
+    kind: 'supporter-tier',
     durability: 'consumable',
-    title: 'Tip Tier 3',
-    description: 'Support my kids',
+    title: 'Family Supporter Tier',
+    description: 'Unlocks the Supporter Cat Gallery on this installation.',
   }),
   Object.freeze({
     id: STORE_PRODUCT_IDS.developerOptions,
@@ -146,6 +146,7 @@ export class NoopStoreAdapter implements StoreAdapter {
 export interface HostEntitlementOwnership {
   readonly doubleInfinityPoints: boolean
   readonly developerOptions: boolean
+  readonly supporterCatGallery: boolean
 }
 
 /**
@@ -162,6 +163,7 @@ export class NoopEntitlementAuthority implements EntitlementAuthority {
     return Object.freeze({
       doubleInfinityPoints: false,
       developerOptions: false,
+      supporterCatGallery: false,
     })
   }
 
@@ -231,6 +233,9 @@ implements EntitlementAuthority, AutomaticUnityPurchaseEvidencePromoter {
           verified.doubleInfinityPoints === true ||
           cached?.automaticUnityDoubleIpEvidence !== undefined,
         developerOptions: verified.developerOptions,
+        supporterCatGallery:
+          verified.supporterCatGallery === true ||
+          cached?.ownership.supporterCatGallery === true,
       })
     } catch (error: unknown) {
       if (cached === null) throw error
@@ -270,6 +275,10 @@ implements EntitlementAuthority, AutomaticUnityPurchaseEvidencePromoter {
         this.current?.developerOptions ??
         cached?.ownership.developerOptions ??
         false,
+      supporterCatGallery:
+        this.current?.supporterCatGallery ??
+        cached?.ownership.supporterCatGallery ??
+        false,
     })
     await this.cache.write(Object.freeze({
       ownership,
@@ -308,6 +317,8 @@ export interface LocalDeveloperOptionsPath {
 export interface EffectiveEntitlementAccess {
   readonly doubleInfinityPoints: boolean
   readonly developerOptions: boolean
+  readonly supporterCatGallery: boolean
+  readonly supporterCatGalleryAccess: boolean
   readonly developerOptionsSource:
     | 'none'
     | 'host-store'
@@ -334,6 +345,10 @@ export function resolveEffectiveEntitlementAccess(input: {
   return Object.freeze({
     doubleInfinityPoints: input.hostOwnership.doubleInfinityPoints,
     developerOptions: developerOptionsSource !== 'none',
+    supporterCatGallery: input.hostOwnership.supporterCatGallery === true,
+    supporterCatGalleryAccess:
+      input.hostOwnership.supporterCatGallery === true ||
+      developerOptionsSource !== 'none',
     developerOptionsSource,
     ignoredSharedSaveClaims: Object.freeze({
       doubleInfinityPoints: input.sharedSaveClaims?.doubleInfinityPoints,
@@ -348,5 +363,14 @@ function freezeOwnership(
   return Object.freeze({
     doubleInfinityPoints: ownership.doubleInfinityPoints === true,
     developerOptions: ownership.developerOptions === true,
+    supporterCatGallery: ownership.supporterCatGallery === true,
   })
+}
+
+export function isSupporterProductId(
+  productId: StoreProductId,
+): boolean {
+  return productId === STORE_PRODUCT_IDS.tipTier1 ||
+    productId === STORE_PRODUCT_IDS.tipTier2 ||
+    productId === STORE_PRODUCT_IDS.tipTier3
 }

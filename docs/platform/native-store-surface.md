@@ -10,8 +10,9 @@ or unlock.
 
 The catalog uses the five existing Unity product IDs:
 
-- `ids.tiptier1`, `ids.tiptier2`, and `ids.tiptier3` are repeatable consumable
-  tips with no gameplay effect.
+- `ids.tiptier1`, `ids.tiptier2`, and `ids.tiptier3` are repeatable supporter
+  consumables. Each verified delivery grants the same device-local
+  `supporterCatGallery` entitlement and no gameplay effect.
 - `ids.doubleip` and `ids.devoptions` are permanent entitlements.
 
 The UI owns localized product names and explanations. It does not format,
@@ -33,6 +34,14 @@ verified purchase or restore. Store UI never supplies an entitlement value to
 gameplay. Developer Options additionally accepts the existing local in-game
 unlock supplied by gameplay; native release builds expose that path without
 depending on Vite's development-build flag.
+
+`supporterCatGallery` is a third, distinct host-owned boolean. It is never
+serialized into `IDSWEB1`, inferred from checkout navigation, or coupled to
+Developer Options. Effective gallery access is
+`supporterCatGallery || developerOptions`, preserving Cat Gallery access for
+existing Developer Options owners without converting them into supporter
+purchasers. The Store is the only gallery entry point and all UI uses the one
+URL exported by `src/store/supporterCatGallery.ts`.
 
 Shared-save claims are not inputs to the controller. `resolveEffectiveEntitlementAccess`
 continues to ignore them, so imports cannot grant either permanent product.
@@ -59,10 +68,20 @@ belongs to the native host, outside the shared save, so game resets do not erase
 store ownership. Existing gameplay reset semantics continue to control the
 local in-game Developer Options path.
 
+Consumable-derived supporter ownership is affirmative and sticky: a later
+provider refresh that omits consumed transaction history must not erase it.
+Android commits the supporter flag before calling Play consumption, including
+detached and startup-drained purchases. iOS commits it to the non-synchronizing
+Keychain record before `Transaction.finish()`, including transaction updates.
+A persistence failure leaves the provider transaction unfinished and reports
+no success. The development adapter models the same verify-before-UI sequence
+without a provider or charge.
+
 ## Restore behavior
 
-Restore Purchases is presented only alongside permanent upgrades. Returned tip
-IDs are ignored. A restored product is counted and exposed only when the host
+Restore Purchases is presented only alongside permanent upgrades. Returned
+supporter IDs are ignored because repeatable consumables are not generally
+restorable without an account-backed ledger. A restored product is counted and exposed only when the host
 authority independently verifies the matching durable entitlement.
 
 Mobile release certification must exercise purchases, cancellation, pending

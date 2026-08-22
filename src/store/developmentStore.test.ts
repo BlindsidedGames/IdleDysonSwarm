@@ -9,25 +9,19 @@ import { StorefrontController } from './storefront'
 afterEach(() => vi.unstubAllGlobals())
 
 describe('development Store commerce', () => {
-  test('exposes all five real products with understandable deterministic outcomes', async () => {
+  test('exposes all five real products with a compact zero-cost test label', async () => {
     const commerce = new DevelopmentStoreCommerce()
 
     await expect(commerce.products()).resolves.toEqual(
       CANONICAL_STORE_PRODUCTS.map((product) => ({
         productId: product.id,
-        localizedPrice: {
-          [STORE_PRODUCT_IDS.tipTier1]: 'Test: succeeds',
-          [STORE_PRODUCT_IDS.tipTier2]: 'Test: cancels',
-          [STORE_PRODUCT_IDS.tipTier3]: 'Test: fails',
-          [STORE_PRODUCT_IDS.developerOptions]: 'Test: succeeds',
-          [STORE_PRODUCT_IDS.doubleInfinityPoints]: 'Test: succeeds',
-        }[product.id],
+        localizedPrice: 'Test $0',
         available: true,
       })),
     )
   })
 
-  test('simulates success, cancellation and failure without granting tip ownership', async () => {
+  test('simulates verified supporter success, cancellation and failure', async () => {
     const commerce = new DevelopmentStoreCommerce()
 
     await expect(
@@ -53,6 +47,7 @@ describe('development Store commerce', () => {
     await expect(commerce.readOwnership()).resolves.toEqual({
       doubleInfinityPoints: false,
       developerOptions: false,
+      supporterCatGallery: true,
     })
     await expect(commerce.restorePurchases()).resolves.toEqual({
       restoredProductIds: [],
@@ -68,6 +63,7 @@ describe('development Store commerce', () => {
     await expect(commerce.refreshOwnership()).resolves.toEqual({
       developerOptions: true,
       doubleInfinityPoints: true,
+      supporterCatGallery: false,
     })
     await expect(commerce.restorePurchases()).resolves.toEqual({
       restoredProductIds: [
@@ -88,7 +84,28 @@ describe('development Store commerce', () => {
     await expect(commerce.readOwnership()).resolves.toEqual({
       developerOptions: false,
       doubleInfinityPoints: true,
+      supporterCatGallery: false,
     })
+  })
+
+  test('lets every supporter SKU independently grant gallery access only', async () => {
+    for (const productId of [
+      STORE_PRODUCT_IDS.tipTier1,
+      STORE_PRODUCT_IDS.tipTier2,
+      STORE_PRODUCT_IDS.tipTier3,
+    ]) {
+      const commerce = new DevelopmentStoreCommerce({
+        outcomes: { [productId]: 'success' },
+      })
+
+      await commerce.purchase(productId)
+
+      await expect(commerce.readOwnership()).resolves.toEqual({
+        doubleInfinityPoints: false,
+        developerOptions: false,
+        supporterCatGallery: true,
+      })
+    }
   })
 
   test('drives verified storefront entitlements without any network request', async () => {
@@ -109,6 +126,7 @@ describe('development Store commerce', () => {
       hostOwnership: {
         developerOptions: true,
         doubleInfinityPoints: false,
+        supporterCatGallery: false,
       },
       feedback: {
         kind: 'entitlement-verified',

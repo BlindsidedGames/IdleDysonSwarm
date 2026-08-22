@@ -113,6 +113,7 @@ describe('Electron Steam Inventory foundation', () => {
     await expect(store.readEntitlements(true)).resolves.toEqual({
       doubleInfinityPoints: false,
       developerOptions: false,
+      supporterCatGallery: false,
     })
   })
 
@@ -151,6 +152,7 @@ describe('Electron Steam Inventory foundation', () => {
         ownership: {
           doubleInfinityPoints: true,
           developerOptions: true,
+          supporterCatGallery: false,
         },
         pendingConsumptions: [],
       },
@@ -162,6 +164,7 @@ describe('Electron Steam Inventory foundation', () => {
   })
 
   it('accepts a tip only after observing delivery and consumes that instance', async () => {
+    const cache = memoryCache()
     const binding = bindingStub({
       getAllItems: vi.fn()
         .mockResolvedValueOnce([])
@@ -169,13 +172,40 @@ describe('Electron Steam Inventory foundation', () => {
           { itemDefId: 101, instanceId: '7001', quantity: 1 },
         ]),
     })
-    const store = enabledStore({ binding, cache: memoryCache() })
+    const store = enabledStore({ binding, cache })
 
     await expect(store.purchase('ids.tiptier1')).resolves.toEqual({
       accepted: true,
       productId: 'ids.tiptier1',
     })
     expect(binding.consumeItem).toHaveBeenCalledWith('7001', 1)
+    expect(cache.write.mock.invocationCallOrder[0])
+      .toBeLessThan(binding.consumeItem.mock.invocationCallOrder[0])
+    await expect(store.readEntitlements()).resolves.toEqual({
+      doubleInfinityPoints: false,
+      developerOptions: false,
+      supporterCatGallery: true,
+    })
+  })
+
+  it('does not consume or report supporter success when persistence fails', async () => {
+    const cache = memoryCache()
+    cache.write.mockRejectedValue(new Error('disk unavailable'))
+    const binding = bindingStub({
+      getAllItems: vi.fn()
+        .mockResolvedValueOnce([])
+        .mockResolvedValueOnce([
+          { itemDefId: 101, instanceId: '7001', quantity: 1 },
+        ]),
+    })
+    const store = enabledStore({ binding, cache })
+
+    await expect(store.purchase('ids.tiptier1')).resolves.toEqual({
+      accepted: false,
+      productId: 'ids.tiptier1',
+      code: 'purchase-failed',
+    })
+    expect(binding.consumeItem).not.toHaveBeenCalled()
   })
 
   it('does not accept completed checkout without verified delivery', async () => {
@@ -226,6 +256,7 @@ describe('Electron Steam Inventory foundation', () => {
     await expect(store.readEntitlements(true)).resolves.toEqual({
       doubleInfinityPoints: true,
       developerOptions: false,
+      supporterCatGallery: false,
     })
     expect(cache.write).not.toHaveBeenCalled()
   })
@@ -242,6 +273,7 @@ describe('Electron Steam Inventory foundation', () => {
     await expect(store.readEntitlements(false)).resolves.toEqual({
       doubleInfinityPoints: false,
       developerOptions: false,
+      supporterCatGallery: false,
     })
   })
 
@@ -265,6 +297,7 @@ describe('Electron Steam Inventory foundation', () => {
       ownership: {
         doubleInfinityPoints: true,
         developerOptions: false,
+        supporterCatGallery: false,
       },
       pendingConsumptions: [],
     })
@@ -281,9 +314,26 @@ describe('Electron Steam Inventory foundation', () => {
       ownership: {
         doubleInfinityPoints: true,
         developerOptions: false,
+        supporterCatGallery: false,
       },
       pendingConsumptions: [],
     })
+
+    const legacy = structuredClone(persisted)
+    delete legacy.ownership.supporterCatGallery
+    await writeFile(path, protector.protect(JSON.stringify(legacy)))
+    await expect(cache.read(steamId)).resolves.toEqual({
+      ownership: {
+        doubleInfinityPoints: true,
+        developerOptions: false,
+        supporterCatGallery: false,
+      },
+      pendingConsumptions: [],
+    })
+
+    legacy.ownership.supporterCatGallery = 'tampered'
+    await writeFile(path, protector.protect(JSON.stringify(legacy)))
+    await expect(cache.read(steamId)).resolves.toBeNull()
 
     const tampered = Buffer.from(protectedValue)
     tampered[tampered.length - 1] ^= 1
@@ -358,6 +408,7 @@ describe('Electron Steam Inventory foundation', () => {
     await expect(store.readEntitlements()).resolves.toEqual({
       doubleInfinityPoints: false,
       developerOptions: false,
+      supporterCatGallery: false,
     })
     const unavailableIdentity = enabledStore({
       binding: bindingStub({
@@ -368,6 +419,7 @@ describe('Electron Steam Inventory foundation', () => {
     await expect(unavailableIdentity.readEntitlements()).resolves.toEqual({
       doubleInfinityPoints: false,
       developerOptions: false,
+      supporterCatGallery: false,
     })
   })
 
@@ -394,6 +446,7 @@ describe('Electron Steam Inventory foundation', () => {
     await expect(store.readEntitlements()).resolves.toEqual({
       doubleInfinityPoints: true,
       developerOptions: false,
+      supporterCatGallery: false,
     })
     releaseInventory()
     await vi.waitFor(() => expect(cache.write).toHaveBeenCalledWith(
@@ -407,6 +460,7 @@ describe('Electron Steam Inventory foundation', () => {
     await expect(store.readEntitlements()).resolves.toEqual({
       doubleInfinityPoints: false,
       developerOptions: false,
+      supporterCatGallery: false,
     })
   })
 
@@ -471,6 +525,26 @@ describe('Electron Steam Inventory foundation', () => {
       persistence: 'ready',
       pendingTipConsumptions: 0,
     })
+    await expect(store.readEntitlements()).resolves.toEqual({
+      doubleInfinityPoints: false,
+      developerOptions: false,
+      supporterCatGallery: true,
+    })
+  })
+
+  it('does not erase consumed supporter ownership on provider refresh', async () => {
+    const cache = memoryCache(verifiedState({
+      doubleInfinityPoints: false,
+      developerOptions: false,
+      supporterCatGallery: true,
+    }))
+    const store = enabledStore({ binding: bindingStub(), cache })
+
+    await expect(store.readEntitlements(true)).resolves.toEqual({
+      doubleInfinityPoints: false,
+      developerOptions: false,
+      supporterCatGallery: true,
+    })
   })
 
   it('never consumes a durable ItemDef from a forged pending cleanup record', async () => {
@@ -479,6 +553,7 @@ describe('Electron Steam Inventory foundation', () => {
       ownership: {
         doubleInfinityPoints: true,
         developerOptions: false,
+        supporterCatGallery: false,
       },
       pendingConsumptions: [{
         itemDefId: 105,
@@ -602,9 +677,13 @@ function memoryCache(
 function verifiedState(ownership: {
   doubleInfinityPoints: boolean
   developerOptions: boolean
+  supporterCatGallery?: boolean
 }) {
   return {
-    ownership,
+    ownership: {
+      ...ownership,
+      supporterCatGallery: ownership.supporterCatGallery === true,
+    },
     pendingConsumptions: [],
   }
 }

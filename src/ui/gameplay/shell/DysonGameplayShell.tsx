@@ -103,7 +103,7 @@ export function DysonGameplayShell({
 
   return (
     <div
-      className="dyson-shell"
+      className="dyson-shell game-number-presentation"
       dir={direction}
       data-menu-open={menuOpen}
       data-resource-header={showResourceHeader}

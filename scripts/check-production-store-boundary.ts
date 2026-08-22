@@ -11,6 +11,7 @@ const forbiddenDevelopmentMarkers = [
   'Test: succeeds',
   'Test: cancels',
   'Test: fails',
+  'Test $0',
   'development-stripe',
 ]
 const leakedMarker = forbiddenDevelopmentMarkers.find(

@@ -19,6 +19,10 @@ import { settingsSurfaceMessages as messages } from './messages'
 import './settingsSurface.css'
 import type { GameAudioService } from '../../../audio'
 import { useAudioSettings } from '../../../audio'
+import {
+  isNumberNotationMode,
+  useNumberNotation,
+} from '../../number-notation'
 
 export interface SettingsSurfaceProps {
   readonly resetSave: () => Promise<UiRuntimeImportResult>
@@ -107,6 +111,7 @@ export function SettingsSurface({
   audio,
 }: SettingsSurfaceProps) {
   const intl = useIntl()
+  const numberNotation = useNumberNotation()
   const developmentPresetId = useId()
   const developmentPanelId = useId()
   const [status, setStatus] = useState<ResetStatus>('idle')
@@ -388,6 +393,34 @@ export function SettingsSurface({
       >
         {!developmentOnly && audio !== undefined ? (
           <AudioSettingsPanel audio={audio} />
+        ) : null}
+        {!developmentOnly ? (
+          <section className="settings-surface__panel settings-surface__panel--number-notation">
+            <div className="settings-surface__copy">
+              <h2>{intl.formatMessage(messages.numberNotationTitle)}</h2>
+              <p>{intl.formatMessage(messages.numberNotationDescription)}</p>
+            </div>
+            <label className="settings-surface__select-label">
+              <span>{intl.formatMessage(messages.numberNotationLabel)}</span>
+              <select
+                value={numberNotation.mode}
+                onChange={(event) => {
+                  const mode = event.currentTarget.value
+                  if (isNumberNotationMode(mode)) numberNotation.setMode(mode)
+                }}
+              >
+                <option value="standard">
+                  {intl.formatMessage(messages.numberNotationStandard)}
+                </option>
+                <option value="scientific">
+                  {intl.formatMessage(messages.numberNotationScientific)}
+                </option>
+                <option value="engineering">
+                  {intl.formatMessage(messages.numberNotationEngineering)}
+                </option>
+              </select>
+            </label>
+          </section>
         ) : null}
         {!developmentOnly ? <section className="settings-surface__panel settings-surface__panel--visualization">
           <div className="settings-surface__copy">

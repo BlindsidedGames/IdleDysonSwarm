@@ -55,6 +55,10 @@ export function stripNonShareableEntitlementClaims(
   shareable.doubleIp = false
   shareable.debugOptions = false
   shareable.debugEverEnabled = false
+  // Number notation is versioned device-local presentation state. Legacy
+  // Unity/Web graph data may still contain this field for migration input,
+  // but a portable share must never carry the sender's selection.
+  delete shareable.numberFormatting
   packSettingsFlags(shareable)
   return shareable
 }

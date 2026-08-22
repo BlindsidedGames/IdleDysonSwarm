@@ -15,6 +15,10 @@ const componentsCss = readFileSync(
   new URL('../components/components.css', import.meta.url),
   'utf8',
 )
+const indexCss = readFileSync(
+  new URL('../../index.css', import.meta.url),
+  'utf8',
+)
 
 describe('presentation tokens', () => {
   it('keeps required normal-text pairs above WCAG AA contrast', () => {
@@ -59,11 +63,53 @@ describe('presentation tokens', () => {
     expect(tokensCss).toContain(':root:lang(zh-Hans)')
     expect(tokensCss).toContain('@media (prefers-reduced-motion: reduce)')
     expect(tokensCss).toContain('@media (forced-colors: active)')
-    expect(tokensCss.match(/@font-face/g)).toHaveLength(3)
+    expect(tokensCss.match(/@font-face/g)).toHaveLength(6)
     expect(tokensCss).toContain('url("../assets/Lexend-Regular.ttf")')
     expect(tokensCss).toContain('url("../assets/Lexend-SemiBold.ttf")')
     expect(tokensCss).toContain('url("../assets/Lexend-Bold.ttf")')
     expect(tokensCss).not.toMatch(/url\([^)]*Noto[^)]*\)/i)
+  })
+
+  it('uses one digit-only tabular presentation without fixed widths', () => {
+    expect(tokensCss).toContain('font-family: "IDS Lexend Tabular Digits"')
+    expect(tokensCss.match(/unicode-range: U\+0030-0039/g)).toHaveLength(3)
+    expect(tokensCss).toContain(
+      'url("../assets/IDS-LexendTabularDigits-Regular.ttf")',
+    )
+    expect(tokensCss).toContain(
+      'url("../assets/IDS-LexendTabularDigits-SemiBold.ttf")',
+    )
+    expect(tokensCss).toContain(
+      'url("../assets/IDS-LexendTabularDigits-Bold.ttf")',
+    )
+    expect(tokensCss).not.toMatch(/local\("(?:Helvetica Neue|Roboto|Noto Sans)"\)/)
+    expect(indexCss).toMatch(
+      /\.game-number-presentation\s*\{[^}]*font-family:\s*var\(--font-family-numeric\);[^}]*font-variant-numeric:\s*tabular-nums;[^}]*font-feature-settings:\s*"tnum" 1;/,
+    )
+    expect(indexCss).not.toMatch(
+      /\.game-number-presentation\s*\{[^}]*(?:inline-size|width|min-inline-size):/,
+    )
+  })
+
+  it.each([
+    ['Regular', 568],
+    ['SemiBold', 606],
+    ['Bold', 626],
+  ])('bundles a digit-only %s face with equal advances', (style, advance) => {
+    const font = readFileSync(
+      new URL(`../assets/IDS-LexendTabularDigits-${style}.ttf`, import.meta.url),
+    )
+    const maxp = sfntTable(font, 'maxp')
+    const hhea = sfntTable(font, 'hhea')
+    const hmtx = sfntTable(font, 'hmtx')
+    expect(font.readUInt16BE(maxp + 4)).toBe(11)
+    const horizontalMetricCount = font.readUInt16BE(hhea + 34)
+    const digitAdvances = Array.from({ length: 10 }, (_, index) =>
+      font.readUInt16BE(
+        hmtx + Math.min(index + 1, horizontalMetricCount - 1) * 4,
+      ),
+    )
+    expect(new Set(digitAdvances)).toEqual(new Set([advance]))
   })
 
   it('uses logical component layout properties', () => {
@@ -75,6 +121,17 @@ describe('presentation tokens', () => {
     expect(componentsCss).toContain('min-inline-size')
   })
 })
+
+function sfntTable(font: Buffer, expectedTag: string): number {
+  const tableCount = font.readUInt16BE(4)
+  for (let index = 0; index < tableCount; index += 1) {
+    const record = 12 + index * 16
+    if (font.toString('ascii', record, record + 4) === expectedTag) {
+      return font.readUInt32BE(record + 8)
+    }
+  }
+  throw new Error(`Missing ${expectedTag} font table.`)
+}
 
 function contrast(left: string, right: string): number {
   const first = luminance(left)

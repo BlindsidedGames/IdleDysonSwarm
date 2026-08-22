@@ -14,6 +14,7 @@ const API_ROOT = '/api/ids/stripe'
 const EMPTY_OWNERSHIP: Readonly<HostEntitlementOwnership> = Object.freeze({
   doubleInfinityPoints: false,
   developerOptions: false,
+  supporterCatGallery: false,
 })
 
 interface BrowserStripeRecord {
@@ -49,6 +50,7 @@ export class BrowserStripeCommerce
 implements StoreAdapter, EntitlementAuthority {
   private readonly ports: BrowserStripePorts
   private readonly apiRoot: string
+  private verifiedSupporterCatGallery = false
 
   constructor(
     ports: BrowserStripePorts = browserStripePorts(),
@@ -140,17 +142,29 @@ implements StoreAdapter, EntitlementAuthority {
           ...(sessionId === null ? {} : { sessionId }),
         }),
       })
-      if (!response.ok) return EMPTY_OWNERSHIP
+      if (!response.ok) return this.currentFallbackOwnership()
       const body = await response.json() as BrowserStripeVerifyResponse
-      this.writeRecord({ deviceKey: record.deviceKey, tokens: body.tokens })
+      const tokens = normalizeTokens(body.tokens)
       if (sessionId !== null || cancelled) this.clearCheckoutQuery(currentUrl)
+      if (tokens === null || !isOwnershipObject(body.ownership)) {
+        return this.currentFallbackOwnership()
+      }
+      const supporterCatGallery =
+        this.verifiedSupporterCatGallery ||
+        body.ownership.supporterCatGallery === true
+      this.verifiedSupporterCatGallery = supporterCatGallery
+      this.writeRecord({
+        deviceKey: record.deviceKey,
+        tokens,
+      })
       return Object.freeze({
         doubleInfinityPoints: body.ownership.doubleInfinityPoints === true,
         developerOptions: body.ownership.developerOptions === true,
+        supporterCatGallery,
       })
     } catch {
       if (cancelled) this.clearCheckoutQuery(currentUrl)
-      return EMPTY_OWNERSHIP
+      return this.currentFallbackOwnership()
     }
   }
 
@@ -186,11 +200,33 @@ implements StoreAdapter, EntitlementAuthority {
     this.ports.storage.setItem(STORAGE_KEY, JSON.stringify(record))
   }
 
+  private currentFallbackOwnership(): Readonly<HostEntitlementOwnership> {
+    if (!this.verifiedSupporterCatGallery) return EMPTY_OWNERSHIP
+    return Object.freeze({
+      ...EMPTY_OWNERSHIP,
+      supporterCatGallery: true,
+    })
+  }
+
   private clearCheckoutQuery(url: URL): void {
     url.searchParams.delete('stripe_session_id')
     url.searchParams.delete('stripe_checkout')
     this.ports.replaceUrl(url.toString())
   }
+}
+
+function normalizeTokens(value: unknown): readonly string[] | null {
+  if (
+    !Array.isArray(value) ||
+    !value.every((token) => typeof token === 'string')
+  ) return null
+  return Object.freeze(value.slice(0, 4))
+}
+
+function isOwnershipObject(
+  value: unknown,
+): value is Partial<HostEntitlementOwnership> {
+  return value !== null && typeof value === 'object'
 }
 
 function browserStripePorts(): BrowserStripePorts {
@@ -215,4 +251,3 @@ function randomDeviceKey(
     .replaceAll('/', '_')
     .replace(/=+$/u, '')
 }
-

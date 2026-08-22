@@ -599,20 +599,6 @@
       "value": "‬"
     }
   ],
-  "debug.cats": [
-    {
-      "type": 0,
-      "value": "‮"
-    },
-    {
-      "type": 0,
-      "value": "ᗡǝqnƃ Ↄɐʇs"
-    },
-    {
-      "type": 0,
-      "value": "‬"
-    }
-  ],
   "debug.disable": [
     {
       "type": 0,
@@ -10485,6 +10471,90 @@
       "value": "‬"
     }
   ],
+  "settings.number-notation.description": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "Ↄɥoosǝ ɥoʍ ʅɐɹƃǝ ƃɐɯǝ ʌɐʅnǝs ɐɹǝ pısdʅɐʎǝp ou ʇɥıs pǝʌıɔǝ."
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "settings.number-notation.engineering": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "Ǝuƃıuǝǝɹıuƃ"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "settings.number-notation.label": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "⅂ɐɹƃǝ unɯqǝɹ uoʇɐʇıou"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "settings.number-notation.scientific": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "Sɔıǝuʇıɟıɔ"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "settings.number-notation.standard": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "Sʇɐupɐɹp"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "settings.number-notation.title": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "Nnɯqǝɹ uoʇɐʇıou"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
   "settings.save-data.cancel": [
     {
       "type": 0,
@@ -15643,10 +15713,6 @@
       "value": "‮"
     },
     {
-      "type": 0,
-      "value": "Ԁnɹɔɥɐsǝ "
-    },
-    {
       "type": 1,
       "value": "price"
     },
@@ -15697,14 +15763,10 @@
       "value": "‬"
     }
   ],
-  "store.action.tip": [
+  "store.action.support": [
     {
       "type": 0,
       "value": "‮"
-    },
-    {
-      "type": 0,
-      "value": "⊥ıd "
     },
     {
       "type": 1,
@@ -15750,7 +15812,7 @@
     },
     {
       "type": 0,
-      "value": "⊥ɥǝ ʍǝq ʌǝɹsıou ɥɐs uo dʅɐʎǝɹ ɐɔɔonuʇ oɹ ɔɹoss-pǝʌıɔǝ ɹǝsʇoɹǝ. ᗡonqʅǝ Iuɟıuıʇʎ Ԁoıuʇs ɐup ᗡǝʌǝʅodǝɹ Odʇıous sʇɐʎ ouʅʎ ıu ʇɥıs qɹoʍsǝɹ ou ʇɥıs pǝʌıɔǝ. ⊥ɥǝʎ ɔɐuuoʇ qǝ ɹǝsʇoɹǝp ou ɐuoʇɥǝɹ pǝʌıɔǝ, ıu ɐuoʇɥǝɹ qɹoʍsǝɹ, oɹ ɐɟʇǝɹ ʇɥıs sıʇǝ's pɐʇɐ ıs ɔʅǝɐɹǝp. ∀u ǝɯɐıʅ ǝuʇǝɹǝp ıu Sʇɹıdǝ Ↄɥǝɔʞonʇ ıs dɐʎɯǝuʇ ɔouʇɐɔʇ ıuɟoɹɯɐʇıou ouʅʎ; ıʇ poǝs uoʇ ɔɹǝɐʇǝ ɐ ƃɐɯǝ ɐɔɔonuʇ oɹ ǝuɐqʅǝ ɹǝsʇoɹɐʇıou. ⊥ıds uǝʌǝɹ nuʅoɔʞ ƃɐɯǝdʅɐʎ."
+      "value": "⊥ɥǝ ʍǝq ʌǝɹsıou ɥɐs uo dʅɐʎǝɹ ɐɔɔonuʇ oɹ ɔɹoss-pǝʌıɔǝ ɹǝsʇoɹǝ. Ʌǝɹıɟıǝp dnɹɔɥɐsǝs sʇɐʎ ouʅʎ ıu ʇɥıs qɹoʍsǝɹ ou ʇɥıs pǝʌıɔǝ ɐup ɯɐʎ qǝ ʅosʇ ıɟ ʇɥıs sıʇǝ's pɐʇɐ ıs ɔʅǝɐɹǝp. ∀u ǝɯɐıʅ ǝuʇǝɹǝp ıu Sʇɹıdǝ Ↄɥǝɔʞonʇ ıs dɐʎɯǝuʇ ɔouʇɐɔʇ ıuɟoɹɯɐʇıou ouʅʎ; ıʇ poǝs uoʇ ɔɹǝɐʇǝ ɐ ƃɐɯǝ ɐɔɔonuʇ oɹ ǝuɐqʅǝ ɹǝsʇoɹɐʇıou. ⊥ɥǝ ƃɐʅʅǝɹʎ uǝʌǝɹ nuʅoɔʞs ƃɐɯǝdʅɐʎ."
     },
     {
       "type": 0,
@@ -15872,14 +15934,56 @@
       "value": "‬"
     }
   ],
-  "store.feedback.tip-completed": [
+  "store.gallery.action": [
     {
       "type": 0,
       "value": "‮"
     },
     {
       "type": 0,
-      "value": "⊥ɥɐuʞ ʎon ɟoɹ ʎonɹ snddoɹʇ!"
+      "value": "Odǝu Snddoɹʇǝɹ Ↄɐʇ ⅁ɐʅʅǝɹʎ"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "store.gallery.developer-access-description": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "⅄onɹ ǝxısʇıuƃ ᗡǝʌǝʅodǝɹ Odʇıous ɐɔɔǝss ıuɔʅnpǝs ʇɥǝ Ↄɐʇ ⅁ɐʅʅǝɹʎ. ⊥ɥıs poǝs uoʇ ɯɐɹʞ ʎon ɐs ɐ snddoɹʇǝɹ dnɹɔɥɐsǝɹ."
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "store.gallery.heading": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "Snddoɹʇǝɹ Ↄɐʇ ⅁ɐʅʅǝɹʎ"
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "store.gallery.unlocked-description": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "∩uʅoɔʞǝp ou ʇɥıs ıusʇɐʅʅɐʇıou ʇɥɹonƃɥ ɐ ʌǝɹıɟıǝp snddoɹʇǝɹ dnɹɔɥɐsǝ. ⊥ɥɐuʞ ʎon ɟoɹ snddoɹʇıuƃ Ipʅǝ ᗡʎsou Sʍɐɹɯ."
     },
     {
       "type": 0,
@@ -15991,7 +16095,7 @@
     },
     {
       "type": 0,
-      "value": "∀ sɯɐʅʅ ʇɥɐuʞ-ʎon ʍıʇɥ uo ƃɐɯǝdʅɐʎ qǝuǝɟıʇ."
+      "value": "∩uʅoɔʞs ʇɥǝ sɐɯǝ Ↄɐʇ ⅁ɐʅʅǝɹʎ ɐs ǝʌǝɹʎ snddoɹʇǝɹ ʇıǝɹ, ʍıʇɥ uo ƃɐɯǝdʅɐʎ ɐpʌɐuʇɐƃǝ."
     },
     {
       "type": 0,
@@ -16005,7 +16109,7 @@
     },
     {
       "type": 0,
-      "value": "⊥ɹǝɐʇ ʇɥǝ Ↄɐʇs!"
+      "value": "Ↄɐʇ ⊥ɹǝɐʇ Snddoɹʇǝɹ ⊥ıǝɹ"
     },
     {
       "type": 0,
@@ -16019,7 +16123,7 @@
     },
     {
       "type": 0,
-      "value": "∀ ɯǝpınɯ ʇɥɐuʞ-ʎon ʍıʇɥ uo ƃɐɯǝdʅɐʎ qǝuǝɟıʇ."
+      "value": "∩uʅoɔʞs ʇɥǝ sɐɯǝ Ↄɐʇ ⅁ɐʅʅǝɹʎ ɐs ǝʌǝɹʎ snddoɹʇǝɹ ʇıǝɹ, ʍıʇɥ uo ƃɐɯǝdʅɐʎ ɐpʌɐuʇɐƃǝ."
     },
     {
       "type": 0,
@@ -16033,7 +16137,7 @@
     },
     {
       "type": 0,
-      "value": "Ԑnʎ ns ɐ ɔoɟɟǝǝ"
+      "value": "Ↄoɟɟǝǝ Snddoɹʇǝɹ ⊥ıǝɹ"
     },
     {
       "type": 0,
@@ -16047,7 +16151,7 @@
     },
     {
       "type": 0,
-      "value": "∀ ƃǝuǝɹons ʇɥɐuʞ-ʎon ʍıʇɥ uo ƃɐɯǝdʅɐʎ qǝuǝɟıʇ."
+      "value": "∩uʅoɔʞs ʇɥǝ sɐɯǝ Ↄɐʇ ⅁ɐʅʅǝɹʎ ɐs ǝʌǝɹʎ snddoɹʇǝɹ ʇıǝɹ, ʍıʇɥ uo ƃɐɯǝdʅɐʎ ɐpʌɐuʇɐƃǝ."
     },
     {
       "type": 0,
@@ -16061,7 +16165,7 @@
     },
     {
       "type": 0,
-      "value": "Snddoɹʇ ɯʎ ʞıps"
+      "value": "Ⅎɐɯıʅʎ Snddoɹʇǝɹ ⊥ıǝɹ"
     },
     {
       "type": 0,
@@ -16089,7 +16193,7 @@
     },
     {
       "type": 0,
-      "value": "ᴚǝsʇoɹǝ ɔɥǝɔʞs ouʅʎ ᗡonqʅǝ Iuɟıuıʇʎ Ԁoıuʇs ɐup ᗡǝʌǝʅodǝɹ Odʇıous. ⊥ıds ɐɹǝ ɔousnɯɐqʅǝ ɐup ɐɹǝ uoʇ ɹǝsʇoɹǝp."
+      "value": "ᴚǝsʇoɹǝ ɔɥǝɔʞs ouʅʎ ᗡonqʅǝ Iuɟıuıʇʎ Ԁoıuʇs ɐup ᗡǝʌǝʅodǝɹ Odʇıous. Snddoɹʇǝɹ ʇıǝɹs ɐɹǝ ɔousnɯɐqʅǝ ɐup ɐɹǝ uoʇ ƃǝuǝɹɐʅʅʎ ɹǝsʇoɹɐqʅǝ ʍıʇɥonʇ ɐu ɐɔɔonuʇ-qɐɔʞǝp ʅǝpƃǝɹ."
     },
     {
       "type": 0,
@@ -16159,7 +16263,7 @@
     },
     {
       "type": 0,
-      "value": "⊥ıds ɐɹǝ odʇıouɐʅ, ɹǝdǝɐʇɐqʅǝ, ɐup dɹoʌıpǝ uo ƃɐɯǝdʅɐʎ qǝuǝɟıʇ."
+      "value": "Ǝɐɔɥ snddoɹʇǝɹ ʇıǝɹ dǝɹɯɐuǝuʇʅʎ nuʅoɔʞs ʇɥǝ sɐɯǝ Ↄɐʇ ⅁ɐʅʅǝɹʎ ou ʇɥıs ıusʇɐʅʅɐʇıou. Ↄɥoosǝ ʍɥıɔɥǝʌǝɹ ʅǝʌǝʅ oɟ snddoɹʇ ɟǝǝʅs ɔoɯɟoɹʇɐqʅǝ. ⊥ɥǝ ƃɐʅʅǝɹʎ dɹoʌıpǝs uo ƃɐɯǝdʅɐʎ ɐpʌɐuʇɐƃǝ. ⊥ıǝɹs ɹǝɯɐıu ɹǝdǝɐʇɐqʅǝ ɐɟʇǝɹ nuʅoɔʞıuƃ."
     },
     {
       "type": 0,
@@ -16173,7 +16277,7 @@
     },
     {
       "type": 0,
-      "value": "Snddoɹʇ ʇɥǝ pǝʌǝʅodǝɹ"
+      "value": "Snddoɹʇǝɹ Ↄɐʇ ⅁ɐʅʅǝɹʎ"
     },
     {
       "type": 0,

@@ -13,10 +13,12 @@ Status conventions:
 
 ## Current cross-platform work
 
-- [ ] Implement device-local number notation with functional Standard,
+- [x] Implement device-local number notation with functional Standard,
   Scientific, and Engineering modes, and apply the selected formatter
   consistently across every player-facing resource, rate, cost, statistic,
-  tooltip, and accessible value. Source: [parity P-04](audits/unity-web-parity-audit-2026-08-20.md#p-04--several-unity-presentation-preferences-are-preserved-as-data-but-have-no-web-behavior).
+  tooltip, and accessible value. Implementation and exception inventory:
+  [number notation evidence](number-notation-implementation-evidence.md).
+  Source: [parity P-04](audits/unity-web-parity-audit-2026-08-20.md#p-04--several-unity-presentation-preferences-are-preserved-as-data-but-have-no-web-behavior).
 - [ ] Implement the hide-purchased-research preference, including consistent
   filtering, empty-state behavior, keyboard/focus safety, and persistence
   across reloads. Source: parity P-04.
@@ -59,6 +61,15 @@ Status conventions:
   [release readiness plan](release/web-release-readiness-plan-2026-08-19.md).
 
 ## Deferred platform release work
+
+- [ ] **Before enabling Steam commerce, coalesce stacked repeat supporter
+  deliveries by inventory instance.** If cleanup of a supporter item is still
+  pending and Steam adds the next purchase quantity to the same instance,
+  merge that quantity into the existing pending-consumption record instead of
+  creating a duplicate instance ID. Prove that the charged repeat purchase is
+  accepted once, the complete quantity remains durably queued before cleanup,
+  retries consume it exactly once, and cache-write failure cannot encourage a
+  second charge.
 
 - [ ] **Deferred to a future release — full-game localization.** Keep the game
   intentionally English-only for the current release, consistent with its

@@ -12,6 +12,7 @@ import {
   type StorefrontSnapshot,
 } from '../../../store/storefront'
 import { storeMessages as messages } from './messages'
+import { SUPPORTER_CAT_GALLERY_URL } from '../../../store/supporterCatGallery'
 import './store.css'
 
 export interface StoreSurfaceProps {
@@ -73,6 +74,31 @@ export function StoreSurface({
           </p>
         ) : (
           <>
+            {access.supporterCatGalleryAccess ? (
+              <section
+                className="store-gallery-panel"
+                aria-labelledby="store-gallery-heading"
+              >
+                <div>
+                  <h2 id="store-gallery-heading">
+                    {intl.formatMessage(messages.galleryHeading)}
+                  </h2>
+                  <p>{intl.formatMessage(
+                    access.supporterCatGallery
+                      ? messages.galleryUnlockedDescription
+                      : messages.galleryDeveloperAccessDescription,
+                  )}</p>
+                </div>
+                <a
+                  className="store-surface__secondary-action"
+                  href={SUPPORTER_CAT_GALLERY_URL}
+                  target="_blank"
+                  rel="noreferrer"
+                >
+                  {intl.formatMessage(messages.galleryAction)}
+                </a>
+              </section>
+            ) : null}
             <StoreSection
               heading={intl.formatMessage(messages.tipsHeading)}
               description={intl.formatMessage(messages.tipsDescription)}
@@ -199,7 +225,7 @@ function StoreProductCard({
     snapshot.operation.kind === 'purchasing' &&
     snapshot.operation.productId === product.id
   const canPurchase =
-    !owned &&
+    (isTip || !owned) &&
     listing?.available === true &&
     listing.localizedPrice !== null &&
     snapshot.operation.kind === 'idle'
@@ -216,7 +242,7 @@ function StoreProductCard({
         disabled={!canPurchase}
         onClick={() => void controller.purchase(product.id)}
       >
-        {owned
+        {!isTip && owned
           ? intl.formatMessage(
               unlockedInGame ? messages.unlockedInGame : messages.owned,
             )
@@ -225,7 +251,7 @@ function StoreProductCard({
             : listing?.localizedPrice === null || !listing?.available
               ? intl.formatMessage(messages.unavailable)
               : intl.formatMessage(
-                  isTip ? messages.tipAction : messages.purchaseAction,
+                  isTip ? messages.supportAction : messages.purchaseAction,
                   { price: listing.localizedPrice },
                 )}
       </button>
@@ -241,9 +267,7 @@ function StoreFeedback({
   const intl = useIntl()
   if (feedback === null) return null
   let message: string
-  if (feedback.kind === 'tip-completed') {
-    message = intl.formatMessage(messages.tipCompleted)
-  } else if (feedback.kind === 'entitlement-verified') {
+  if (feedback.kind === 'entitlement-verified') {
     message = intl.formatMessage(messages.entitlementVerified)
   } else if (feedback.kind === 'restore-completed') {
     message = intl.formatMessage(messages.restoreCompleted, {
