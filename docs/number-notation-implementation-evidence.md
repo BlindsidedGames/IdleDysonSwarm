@@ -56,8 +56,11 @@ Local HarfBuzz shaping showed the bundled Lexend Regular, SemiBold, and Bold
 files do not substitute tabular figures: Regular digit advances ranged from
 500 to 620 font units even with `tnum`. Three deterministic digit-only derived
 faces now retain the corresponding Lexend outlines and weights while centring
-each outline within the widest original digit advance for that weight. Their
-Regular/SemiBold/Bold digit advances are 620/653/675 units respectively.
+each outline within a compact reviewed digit cell for that weight. Their
+Regular/SemiBold/Bold digit advances are 568/606/626 units respectively. Each
+cell remains wider than the face's widest digit outline, preserving visible
+side-bearing clearance without the excessive gaps produced by using the widest
+original proportional advance.
 
 `unicode-range: U+0030-0039` limits those faces to digits. Decimal separators,
 signs, suffixes, units, and all prose therefore continue through the original
@@ -83,9 +86,9 @@ PYTHONPATH=/tmp/ids-font-tools python3 scripts/generate_lexend_tabular_digits.py
 
 The derived SHA-256 values are:
 
-- Regular: `8a8d67e100c54bc1f338b589823e1b1b07056c75eb7eb05748d09aa2d47192ce`
-- SemiBold: `64fcc9c560dc84b4e5e5d41a374ebe32ca77cb08985fb5d61cc3acb29f053ee8`
-- Bold: `11df5a2d0782b60cded1970319729874fc04e5f6152482f38900796590f6ea29`
+- Regular: `191779a2b443a63036bd9a3115726392a4ab34ca879373f98bda5d6df6d581ba`
+- SemiBold: `10f268a658bcf9d2853e7a11bf5f29f54bdb0e5f934966bce5f89f7d0421ac3f`
+- Bold: `b3a5c58deae99cfddb48bf526f269a9a69c5540329cdb237bc5874587821cc85`
 
 The source and derivatives remain under the included Lexend SIL Open Font
 License 1.1 (`src/ui/assets/OFL-Lexend.txt`).

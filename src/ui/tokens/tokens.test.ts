@@ -92,9 +92,9 @@ describe('presentation tokens', () => {
   })
 
   it.each([
-    ['Regular', 620],
-    ['SemiBold', 653],
-    ['Bold', 675],
+    ['Regular', 568],
+    ['SemiBold', 606],
+    ['Bold', 626],
   ])('bundles a digit-only %s face with equal advances', (style, advance) => {
     const font = readFileSync(
       new URL(`../assets/IDS-LexendTabularDigits-${style}.ttf`, import.meta.url),

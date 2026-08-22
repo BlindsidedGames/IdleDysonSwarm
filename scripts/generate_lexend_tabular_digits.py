@@ -26,18 +26,21 @@ FACES = (
         ASSET_ROOT / "Lexend-Regular.ttf",
         ASSET_ROOT / "IDS-LexendTabularDigits-Regular.ttf",
         "542046d84e641bfdcda744bd435010cb3ff9aa8c5428068ce64666de41fe6bf0",
+        568,
     ),
     (
         "SemiBold",
         ASSET_ROOT / "Lexend-SemiBold.ttf",
         ASSET_ROOT / "IDS-LexendTabularDigits-SemiBold.ttf",
         "b7bbc0e77d85d03aea413a1b8ea571f9d82ca49994d9c62ba53e64fe7a755e05",
+        606,
     ),
     (
         "Bold",
         ASSET_ROOT / "Lexend-Bold.ttf",
         ASSET_ROOT / "IDS-LexendTabularDigits-Bold.ttf",
         "1a688b4e45c9e941be394c9c7e5d2a6cc38b6704eb7cd571b83eaa302616833f",
+        626,
     ),
 )
 
@@ -52,7 +55,12 @@ def set_name(font: TTFont, name_id: int, value: str) -> None:
             record.string = value.encode(record.getEncoding())
 
 
-def derive(source: Path, destination: Path, style: str) -> None:
+def derive(
+    source: Path,
+    destination: Path,
+    style: str,
+    tabular_advance: int,
+) -> None:
     font = TTFont(source, recalcTimestamp=False)
     cmap = font.getBestCmap()
     glyphs = tuple(cmap[codepoint] for codepoint in DIGIT_CODEPOINTS)
@@ -61,12 +69,20 @@ def derive(source: Path, destination: Path, style: str) -> None:
         for glyph in glyphs
     }
     metrics = font["hmtx"].metrics
-    tabular_advance = max(metrics[glyph][0] for glyph in glyphs)
+    widest_outline = max(
+        font["glyf"][glyph].xMax - font["glyf"][glyph].xMin
+        for glyph in glyphs
+    )
+    if tabular_advance < widest_outline:
+        raise SystemExit(
+            f"Tabular advance clips a digit outline: {style} "
+            f"{tabular_advance} < {widest_outline}",
+        )
 
     for glyph in glyphs:
         advance, left_side_bearing = metrics[glyph]
-        # Keep the original outline untouched. Split the additional side
-        # bearing around it so narrower Lexend digits remain optically centred.
+        # Keep the original outline untouched. Re-centre it in the approved
+        # tabular cell so every digit has equal, deliberately compact spacing.
         metrics[glyph] = (
             tabular_advance,
             left_side_bearing + (tabular_advance - advance) // 2,
@@ -112,7 +128,7 @@ def main() -> int:
             f"FontTools {FONTTOOLS_VERSION} is required; found {fontTools.__version__}",
         )
 
-    for style, source, destination, expected_source_hash in FACES:
+    for style, source, destination, expected_source_hash, tabular_advance in FACES:
         actual_source_hash = sha256(source)
         if actual_source_hash != expected_source_hash:
             raise SystemExit(
@@ -121,11 +137,11 @@ def main() -> int:
         if args.check:
             with tempfile.TemporaryDirectory() as directory:
                 generated = Path(directory) / destination.name
-                derive(source, generated, style)
+                derive(source, generated, style, tabular_advance)
                 if not destination.exists() or generated.read_bytes() != destination.read_bytes():
                     raise SystemExit(f"Regenerate {destination.relative_to(ROOT)}")
         else:
-            derive(source, destination, style)
+            derive(source, destination, style, tabular_advance)
             print(
                 destination.relative_to(ROOT),
                 sha256(destination),
