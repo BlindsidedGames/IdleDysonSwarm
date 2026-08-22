@@ -84,10 +84,10 @@ describe('native host bootstrap boundary', () => {
     await bridge.ready()
 
     expect(bridge.currentLifecyclePhase()).toBe('background')
-    expect(observed).toEqual(['background'])
+    expect(observed).toEqual([])
   })
 
-  test('publishes a delayed current-state reconciliation to an already attached runtime', async () => {
+  test('does not duplicate a delayed current-state reconciliation that matches the conservative phase', async () => {
     const currentLifecycle = deferred<{ phase: 'background' }>()
     const plugin = {
       addListener: vi.fn(async () => ({
@@ -103,7 +103,7 @@ describe('native host bootstrap boundary', () => {
     await bridge.ready()
 
     expect(bridge.currentLifecyclePhase()).toBe('background')
-    expect(observed).toEqual(['background'])
+    expect(observed).toEqual([])
   })
 
   test('keeps the subscribed lifecycle stream when the current-state query fails', async () => {

@@ -39,6 +39,14 @@ the bridge remains conservatively backgrounded rather than beginning
 optimistically active. Lifecycle reconciliation is adjacent hardening; it is
 not the cause of the former 15-second ownership loss.
 
+Runtime admission separately passes its already sampled startup phase into the
+authority router. The router subscribes first, buffers receipt-time lifecycle
+observations, and then reconciles `currentPhase`. A callback epoch prevents a
+stale query result from overwriting an event received during reconciliation.
+The seeded startup replay remains first in the serialized authority lane,
+followed by any buffered phases in receipt order; an unchanged current phase is
+not replayed as a duplicate canonical transition.
+
 Capacitor holds the native splash until the first branded React presentation
 is committed: normally the in-app loader, or gameplay itself on an already
 ready warm start. The earliest HTML, Android/iOS splash assets and Electron

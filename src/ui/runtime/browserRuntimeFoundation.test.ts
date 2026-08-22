@@ -1980,6 +1980,120 @@ describe('browser runtime foundation composition', () => {
     await runtime.shutdown()
   })
 
+  test.each([
+    {
+      admissionRace: 'background immediately before subscription',
+      departedPhase: 'background' as const,
+      arrange: (lifecycle: TestLifecycleAdapter) => {
+        lifecycle.beforeSubscribe = () => {
+          lifecycle.emit('background')
+        }
+      },
+    },
+    {
+      admissionRace: 'focus loss during current-phase reconciliation',
+      departedPhase: 'focus-lost' as const,
+      arrange: (lifecycle: TestLifecycleAdapter) => {
+        lifecycle.afterCurrentPhaseSnapshot = (readCount) => {
+          if (readCount === 2) lifecycle.emit('focus-lost')
+        }
+      },
+    },
+  ])(
+    'reconciles $admissionRace before native startup can deliver foreground time',
+    async ({ departedPhase, arrange }) => {
+      const database = new MemoryBrowserSaveDatabase()
+      const storage = new MemoryNativeSaveStorage()
+      const lifecycle = new TestLifecycleAdapter('active')
+      const lifecycleClock = new ManualLifecycleClock(
+        '2026-07-29T00:00:00Z',
+      )
+      const activeClock = new ManualActiveTimeClock()
+      const frames = new ManualAnimationFrameScheduler()
+      const marker = new MemoryDepartureMarker()
+      const startGate = deferred<void>()
+      let application: FakeRuntimeApplication | undefined
+      arrange(lifecycle)
+      const runtime = createRuntime({
+        database,
+        saveStorage: storage,
+        writerAuthority: new SingleHostSessionWriterAuthority({
+          sessionId: `native-admission-${departedPhase}`,
+        }),
+        lifecycle,
+        lifecycleClock,
+        departureMarker: marker,
+        activeTimeClock: activeClock,
+        activeTimeScheduler: frames,
+        createApplication: (repository) => {
+          application = new FakeRuntimeApplication(
+            repository,
+            database.events,
+          )
+          application.startGate = startGate.promise
+          application.setTimeResources(0, 100, 0)
+          return application
+        },
+      })
+
+      const starting = runtime.start()
+      await waitUntil(() =>
+        database.events.includes('application.start'),
+      )
+      expect(lifecycle.currentPhase()).toBe(departedPhase)
+      expect(marker.read()).toBe('2026-07-29T00:00:00Z')
+      activeClock.set(4_000)
+      await flushMicrotasks()
+      expect(frames.pending).toBe(0)
+      expect(application?.activeRequests).toEqual([])
+
+      startGate.resolve()
+      await expect(starting).resolves.toMatchObject({
+        phase: 'ready',
+      })
+      await waitUntil(() => application?.awayCommits === 1)
+      expect(frames.pending).toBe(0)
+      expect(application?.activeRequests).toEqual([])
+      const departed = application?.snapshot()
+      expect(departed?.phase).toBe('ready')
+      if (departed?.phase === 'ready') {
+        expect(
+          departed.state.gameState.timeline.lastSuspendedAtLegacyText,
+        ).toBe('2026-07-29T00:00:00Z')
+      }
+
+      lifecycleClock.set('2026-07-29T00:00:10Z')
+      activeClock.set(5_000)
+      lifecycle.emit('active')
+      await waitUntil(() => application?.awayCommits === 2)
+      await waitUntil(() => frames.pending === 1)
+      const resumed = application?.snapshot()
+      expect(resumed?.phase).toBe('ready')
+      if (resumed?.phase === 'ready') {
+        expect(resumed.state.gameState.timeline).toMatchObject({
+          storedTimeAvailableSeconds: 10,
+          storedTimeCapacitySeconds: 100,
+          lastSuspendedAtLegacyText: null,
+          doubleTime: { bankSeconds: 20 },
+        })
+      }
+      expect(marker.read()).toBeNull()
+
+      lifecycle.emit('active')
+      await runtime.requestCheckpoint()
+      expect(application?.awayCommits).toBe(2)
+      expect(frames.pending).toBe(1)
+
+      activeClock.set(5_017)
+      frames.fire()
+      await waitUntil(() => application?.activeRequests.length === 1)
+      expect(application?.activeRequests).toEqual([
+        { milliseconds: 17, sessionRevision: 1 },
+      ])
+      await runtime.shutdown()
+    },
+  )
+
   test.each(['background', 'focus-lost'] as const)(
     'seeds initial %s through the startup fence and replays exact away credit before foreground time',
     async (initialPhase) => {
@@ -4524,6 +4638,11 @@ class TestLifecycleAdapter implements LifecycleAdapter {
   private readonly listeners =
     new Set<(phase: LifecyclePhase) => void>()
   private phase: LifecyclePhase
+  private currentPhaseReads = 0
+  beforeSubscribe: (() => void) | undefined
+  afterCurrentPhaseSnapshot:
+    | ((readCount: number) => void)
+    | undefined
 
   constructor(initialPhase: LifecyclePhase = 'active') {
     this.phase = initialPhase
@@ -4534,6 +4653,9 @@ class TestLifecycleAdapter implements LifecycleAdapter {
   }
 
   subscribe(listener: (phase: LifecyclePhase) => void): () => void {
+    const beforeSubscribe = this.beforeSubscribe
+    this.beforeSubscribe = undefined
+    beforeSubscribe?.()
     this.listeners.add(listener)
     return () => {
       this.listeners.delete(listener)
@@ -4541,7 +4663,10 @@ class TestLifecycleAdapter implements LifecycleAdapter {
   }
 
   currentPhase(): LifecyclePhase {
-    return this.phase
+    const snapshot = this.phase
+    this.currentPhaseReads += 1
+    this.afterCurrentPhaseSnapshot?.(this.currentPhaseReads)
+    return snapshot
   }
 
   emit(phase: LifecyclePhase): void {

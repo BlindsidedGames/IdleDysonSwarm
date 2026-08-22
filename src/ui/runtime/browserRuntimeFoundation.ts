@@ -1215,29 +1215,32 @@ class BrowserRuntimeFoundation implements BrowserUiRuntimeFoundation {
       }
       const graph = this.createGraph()
       this.graph = graph
-      const startupReplay = await graph.router.start(async () => {
-        const replay = await graph.coordinator.start(
-          graph.initialLifecycle.clockSample,
-          graph.initialLifecycle.pendingDepartureTimestamp,
-        )
-        if (
-          graph.initialLifecycle.phase !== 'active' &&
-          graph.application.snapshot().phase === 'ready'
-        ) {
-          await graph.coordinator.handlePlatformPhase(
-            graph.initialLifecycle.phase,
+      const startupReplay = await graph.router.start({
+        initialPhase: graph.initialLifecycle.phase,
+        startApplication: async () => {
+          const replay = await graph.coordinator.start(
             graph.initialLifecycle.clockSample,
+            graph.initialLifecycle.pendingDepartureTimestamp,
           )
           if (
-            this.isLatestLifecycleIntent(
-              graph.initialLifecycle.intentEpoch,
-              false,
-            )
+            graph.initialLifecycle.phase !== 'active' &&
+            graph.application.snapshot().phase === 'ready'
           ) {
-            this.suspendActiveTime(graph)
+            await graph.coordinator.handlePlatformPhase(
+              graph.initialLifecycle.phase,
+              graph.initialLifecycle.clockSample,
+            )
+            if (
+              this.isLatestLifecycleIntent(
+                graph.initialLifecycle.intentEpoch,
+                false,
+              )
+            ) {
+              this.suspendActiveTime(graph)
+            }
           }
-        }
-        return replay
+          return replay
+        },
       })
       this.assertCurrentGraph(graph)
 

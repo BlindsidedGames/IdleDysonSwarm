@@ -461,6 +461,7 @@ export class CapacitorNativeHostBridge implements NativeHostBridgeApi {
   }
 
   private publishReconciledLifecycle(phase: LifecyclePhase): void {
+    if (phase === this.phase) return
     this.phase = phase
     for (const listener of [...this.lifecycleListeners]) {
       try {
