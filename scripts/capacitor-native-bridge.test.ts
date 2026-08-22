@@ -159,6 +159,32 @@ describe('Capacitor first-party native bridge', () => {
     expect(ios).toContain('"opaqueSourceIdentifier": candidateId')
     expect(ios).not.toContain('call.jsObjectRepresentation')
 
+    const androidTipPurchase = androidStore.slice(
+      androidStore.indexOf('private fun deliverPurchase'),
+      androidStore.indexOf('private fun queryProductDetails'),
+    )
+    expect(androidTipPurchase.indexOf('grantSupporterCatGallery()'))
+      .toBeLessThan(androidTipPurchase.indexOf('consumeAsync'))
+    const androidDetachedTip = androidStore.slice(
+      androidStore.indexOf('private fun deliverDetachedPurchase'),
+      androidStore.indexOf('private fun deliverPurchase'),
+    )
+    expect(androidDetachedTip.indexOf('grantSupporterCatGallery()'))
+      .toBeLessThan(androidDetachedTip.indexOf('consumeAsync'))
+
+    const iosPurchase = iosStore.slice(
+      iosStore.indexOf('func purchase(productId:'),
+      iosStore.indexOf('func restore()'),
+    )
+    expect(iosPurchase.indexOf('grantSupporterCatGallery()'))
+      .toBeLessThan(iosPurchase.indexOf('transaction.finish()'))
+    const iosUpdate = iosStore.slice(
+      iosStore.indexOf('private func processStoreUpdate'),
+      iosStore.indexOf('private static let doubleIp'),
+    )
+    expect(iosUpdate.indexOf('grantSupporterCatGallery()'))
+      .toBeLessThan(iosUpdate.indexOf('transaction.finish()'))
+
     const promotionSlices = [
       android.slice(
         android.indexOf('fun promoteAutomaticUnityPurchaseEvidence'),

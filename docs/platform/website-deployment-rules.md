@@ -13,6 +13,11 @@ Website releases always cross two repositories:
 2. `BlindsidedGames/BlindsidedGames` owns the deployed `public/play` package,
    Cloudflare Pages Functions, Stripe price bindings, and Pages deployment.
 
+That website repository is also the sole production owner of
+`/api/ids/stripe`. Game-client changes that extend its response contract do not
+complete browser fulfillment until the matching Pages Function and deployment
+are reviewed, tested, and released there.
+
 Pushing the game repository does not publish the website. Pushing a generated
 Web build without a matching website commit also does not complete a release.
 Keep source publication, website promotion, merge, production deployment, and
@@ -115,6 +120,9 @@ Verify on preview:
 - the update prompt creates a verified checkpoint before reload; and
 - Store messaging still states that Web entitlements are device/browser-bound
   and are not restored on another device.
+- in Stripe test mode, every supporter SKU is accepted only after a paid
+  server-verified session, repeated verification is idempotent, and unpaid,
+  mismatched, tampered, or replayed session claims fail closed;
 
 ## Production deployment
 

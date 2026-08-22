@@ -7,6 +7,7 @@ import type {
 const EMPTY_OWNERSHIP: Readonly<HostEntitlementOwnership> = Object.freeze({
   doubleInfinityPoints: false,
   developerOptions: false,
+  supporterCatGallery: false,
 })
 
 /**
@@ -47,6 +48,7 @@ export class RuntimeEntitlementBridge {
       doubleInfinityPoints:
         ownership.doubleInfinityPoints === true,
       developerOptions: ownership.developerOptions === true,
+      supporterCatGallery: ownership.supporterCatGallery === true,
     })
     return this.ownership
   }

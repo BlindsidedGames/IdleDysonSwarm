@@ -367,6 +367,7 @@ public final class IdleDysonNativePlugin: CAPPlugin, CAPBridgedPlugin {
         call.resolve([
             "doubleInfinityPoints": ownership.doubleInfinityPoints,
             "developerOptions": ownership.developerOptions,
+            "supporterCatGallery": ownership.supporterCatGallery,
             "providerAvailable": providerAvailable,
         ])
     }

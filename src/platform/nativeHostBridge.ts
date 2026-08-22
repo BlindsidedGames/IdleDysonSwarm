@@ -335,13 +335,23 @@ class NativeBridgeEntitlementAuthority implements EntitlementAuthority {
     }
   }
 
-  readOwnership(): Promise<Readonly<HostEntitlementOwnership>> {
-    return this.bridge.readEntitlements(false)
+  async readOwnership(): Promise<Readonly<HostEntitlementOwnership>> {
+    return normalizeHostOwnership(await this.bridge.readEntitlements(false))
   }
 
-  refreshOwnership(): Promise<Readonly<HostEntitlementOwnership>> {
-    return this.bridge.readEntitlements(true)
+  async refreshOwnership(): Promise<Readonly<HostEntitlementOwnership>> {
+    return normalizeHostOwnership(await this.bridge.readEntitlements(true))
   }
+}
+
+function normalizeHostOwnership(
+  ownership: Partial<HostEntitlementOwnership> | null | undefined,
+): Readonly<HostEntitlementOwnership> {
+  return Object.freeze({
+    doubleInfinityPoints: ownership?.doubleInfinityPoints === true,
+    developerOptions: ownership?.developerOptions === true,
+    supporterCatGallery: ownership?.supporterCatGallery === true,
+  })
 }
 
 class CapacitorNativeHostBridge implements NativeHostBridgeApi {

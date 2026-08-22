@@ -2613,6 +2613,7 @@ function platformServices(
   const emptyOwnership: HostEntitlementOwnership = {
     doubleInfinityPoints: false,
     developerOptions: false,
+    supporterCatGallery: false,
   }
   return {
     hostKind,

@@ -140,9 +140,10 @@ internal class GooglePlayStore(
             val ownership = DurableOwnership(
                 doubleInfinityPoints = durableIds.contains(DOUBLE_IP),
                 developerOptions = durableIds.contains(DEV_OPTIONS),
+                supporterCatGallery = entitlementCache.read().supporterCatGallery,
             )
             val persisted = entitlementCache.writeProviderOwnership(ownership)
-            callback(if (persisted) ownership else null, persisted)
+            callback(if (persisted) entitlementCache.read() else null, persisted)
         }
     }
 
@@ -191,6 +192,7 @@ internal class GooglePlayStore(
      */
     private fun deliverDetachedPurchase(purchase: Purchase) {
         if (purchase.products.any(TIP_IDS::contains)) {
+            if (!entitlementCache.grantSupporterCatGallery()) return
             billingClient.consumeAsync(
                 ConsumeParams.newBuilder().setPurchaseToken(purchase.purchaseToken).build(),
             ) { _, _ -> }
@@ -213,6 +215,10 @@ internal class GooglePlayStore(
 
     private fun deliverPurchase(purchase: Purchase, productId: String) {
         if (TIP_IDS.contains(productId)) {
+            if (!entitlementCache.grantSupporterCatGallery()) {
+                resolvePending(false, "purchase-failed")
+                return
+            }
             billingClient.consumeAsync(
                 ConsumeParams.newBuilder().setPurchaseToken(purchase.purchaseToken).build(),
             ) { result, _ ->
@@ -344,6 +350,9 @@ internal class GooglePlayStore(
                 it.purchaseState == Purchase.PurchaseState.PURCHASED &&
                     it.products.any(TIP_IDS::contains)
             }.forEach { purchase ->
+                if (!entitlementCache.grantSupporterCatGallery()) {
+                    return@forEach
+                }
                 billingClient.consumeAsync(
                     ConsumeParams.newBuilder()
                         .setPurchaseToken(purchase.purchaseToken)
@@ -357,6 +366,7 @@ internal class GooglePlayStore(
         entitlementCache.writeProviderOwnership(DurableOwnership(
             doubleInfinityPoints = productIds.contains(DOUBLE_IP),
             developerOptions = productIds.contains(DEV_OPTIONS),
+            supporterCatGallery = entitlementCache.read().supporterCatGallery,
         ))
 
     private fun resolvePending(accepted: Boolean, code: String?) {

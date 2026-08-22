@@ -89,12 +89,12 @@ describe('DebugSurface', () => {
       'Set Tinker to instant',
       'Recalculate Skill Points',
       'Reset Secret Progress',
-      'Debug Cats',
       'Disable Developer Options',
     ]) {
-      expect(screen.getByRole(name === 'Debug Cats' ? 'link' : 'button', { name }))
+      expect(screen.getByRole('button', { name }))
         .toBeInTheDocument()
     }
+    expect(screen.queryByRole('link', { name: /Cats/u })).not.toBeInTheDocument()
   })
 
   test('shows the Unity purchase gate before exposing developer tools', async () => {

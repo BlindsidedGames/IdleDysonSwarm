@@ -1,6 +1,7 @@
 import {
   CANONICAL_STORE_PRODUCTS,
   STORE_PRODUCT_IDS,
+  isSupporterProductId,
   resolveEffectiveEntitlementAccess,
   type EffectiveEntitlementAccess,
   type EntitlementAuthority,
@@ -18,7 +19,6 @@ export type StorefrontOperation =
   | { readonly kind: 'restoring' }
 
 export type StorefrontFeedback =
-  | { readonly kind: 'tip-completed'; readonly productId: StoreProductId }
   | { readonly kind: 'entitlement-verified'; readonly productId: StoreProductId }
   | { readonly kind: 'restore-completed'; readonly restoredCount: number }
   | {
@@ -51,6 +51,7 @@ export interface StorefrontControllerOptions {
 const EMPTY_OWNERSHIP = Object.freeze({
   doubleInfinityPoints: false,
   developerOptions: false,
+  supporterCatGallery: false,
 })
 
 const INITIAL_SNAPSHOT: StorefrontSnapshot = Object.freeze({
@@ -64,7 +65,7 @@ const INITIAL_SNAPSHOT: StorefrontSnapshot = Object.freeze({
 /**
  * Serial platform-neutral Store orchestration. Purchase success is not enough
  * to grant a durable benefit: ownership must also be verified by the host
- * authority. Consumable tips remain repeatable and grant no gameplay state.
+ * authority. Supporter tiers remain repeatable and grant no gameplay state.
  */
 export class StorefrontController {
   private snapshotValue: StorefrontSnapshot = INITIAL_SNAPSHOT
@@ -122,12 +123,10 @@ export class StorefrontController {
         })
         return
       }
-
-      const product = productById(productId)
-      if (product.durability === 'consumable') {
+      if (result.productId !== productId) {
         this.publish({
           operation: { kind: 'idle' },
-          feedback: { kind: 'tip-completed', productId },
+          feedback: { kind: 'operation-failed', code: 'verification-failed' },
         })
         return
       }
@@ -145,6 +144,7 @@ export class StorefrontController {
         return
       }
       if (
+        !isSupporterProductId(productId) &&
         this.options.onVerifiedOwnershipChanged !== undefined &&
         !(await this.options.onVerifiedOwnershipChanged())
       ) {
@@ -264,6 +264,8 @@ export class StorefrontController {
               update.hostOwnership.doubleInfinityPoints === true,
             developerOptions:
               update.hostOwnership.developerOptions === true,
+            supporterCatGallery:
+              update.hostOwnership.supporterCatGallery === true,
           }),
     })
     for (const listener of this.listeners) listener()
@@ -315,6 +317,9 @@ function ownsProduct(
   }
   if (productId === STORE_PRODUCT_IDS.doubleInfinityPoints) {
     return ownership.doubleInfinityPoints
+  }
+  if (isSupporterProductId(productId)) {
+    return ownership.supporterCatGallery
   }
   return false
 }

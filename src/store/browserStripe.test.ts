@@ -75,7 +75,11 @@ describe('BrowserStripeCommerce', () => {
       expect(body.sessionId).toBe('cs_test_verified')
       expect(body.tokens).toEqual([])
       return new Response(JSON.stringify({
-        ownership: { doubleInfinityPoints: true, developerOptions: false },
+        ownership: {
+          doubleInfinityPoints: true,
+          developerOptions: false,
+          supporterCatGallery: false,
+        },
         tokens: ['signed-device-receipt'],
         completedProductId: STORE_PRODUCT_IDS.doubleInfinityPoints,
       }))
@@ -90,6 +94,7 @@ describe('BrowserStripeCommerce', () => {
     ).resolves.toEqual({
       doubleInfinityPoints: true,
       developerOptions: false,
+      supporterCatGallery: false,
     })
     expect(environment.replaceUrl).toHaveBeenCalledWith(
       'https://ids.blindsidedgames.com/play/',
@@ -109,7 +114,72 @@ describe('BrowserStripeCommerce', () => {
     ).resolves.toEqual({
       doubleInfinityPoints: false,
       developerOptions: false,
+      supporterCatGallery: false,
+    })
+  })
+
+  test('grants and retains supporter access only from verified server ownership', async () => {
+    let offline = false
+    const fetchMock = vi.fn(async () => {
+      if (offline) throw new Error('offline')
+      return new Response(JSON.stringify({
+        ownership: {
+          doubleInfinityPoints: false,
+          developerOptions: false,
+          supporterCatGallery: true,
+        },
+        tokens: ['signed-supporter-receipt'],
+        completedProductId: STORE_PRODUCT_IDS.tipTier2,
+      }))
+    }) as typeof fetch
+    const environment = ports(fetchMock)
+    const commerce = new BrowserStripeCommerce(environment.ports)
+
+    await expect(commerce.refreshOwnership()).resolves.toEqual({
+      doubleInfinityPoints: false,
+      developerOptions: false,
+      supporterCatGallery: true,
+    })
+    offline = true
+    await expect(commerce.refreshOwnership()).resolves.toEqual({
+      doubleInfinityPoints: false,
+      developerOptions: false,
+      supporterCatGallery: true,
+    })
+  })
+
+  test('normalizes missing and malformed supporter ownership fail closed', async () => {
+    const environment = ports(vi.fn(async () => new Response(JSON.stringify({
+      ownership: { doubleInfinityPoints: false, developerOptions: false },
+      tokens: ['legacy-token'],
+      completedProductId: null,
+    }))) as typeof fetch)
+
+    await expect(
+      new BrowserStripeCommerce(environment.ports).refreshOwnership(),
+    ).resolves.toEqual({
+      doubleInfinityPoints: false,
+      developerOptions: false,
+      supporterCatGallery: false,
+    })
+  })
+
+  test('does not trust a browser-authored supporter flag', async () => {
+    const environment = ports(vi.fn(async () => {
+      throw new Error('offline')
+    }) as typeof fetch)
+    environment.values.set('idle-dyson-swarm:stripe-device:v1', JSON.stringify({
+      deviceKey: 'x'.repeat(43),
+      tokens: [],
+      supporterCatGallery: true,
+    }))
+
+    await expect(
+      new BrowserStripeCommerce(environment.ports).readOwnership(),
+    ).resolves.toEqual({
+      doubleInfinityPoints: false,
+      developerOptions: false,
+      supporterCatGallery: false,
     })
   })
 })
-

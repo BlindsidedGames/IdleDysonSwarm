@@ -1,6 +1,7 @@
 import {
   CANONICAL_STORE_PRODUCTS,
   STORE_PRODUCT_IDS,
+  isSupporterProductId,
   type EntitlementAuthority,
   type HostEntitlementOwnership,
   type StoreAdapter,
@@ -62,6 +63,8 @@ implements StoreAdapter, EntitlementAuthority {
         options.initialOwnership?.doubleInfinityPoints === true,
       developerOptions:
         options.initialOwnership?.developerOptions === true,
+      supporterCatGallery:
+        options.initialOwnership?.supporterCatGallery === true,
     })
   }
 
@@ -86,7 +89,12 @@ implements StoreAdapter, EntitlementAuthority {
           : 'purchase-failed' as const,
       })
     }
-    if (productId === STORE_PRODUCT_IDS.developerOptions) {
+    if (isSupporterProductId(productId)) {
+      this.ownership = freezeOwnership({
+        ...this.ownership,
+        supporterCatGallery: true,
+      })
+    } else if (productId === STORE_PRODUCT_IDS.developerOptions) {
       this.ownership = freezeOwnership({
         ...this.ownership,
         developerOptions: true,
@@ -131,5 +139,6 @@ function freezeOwnership(
   return Object.freeze({
     doubleInfinityPoints: ownership.doubleInfinityPoints === true,
     developerOptions: ownership.developerOptions === true,
+    supporterCatGallery: ownership.supporterCatGallery === true,
   })
 }

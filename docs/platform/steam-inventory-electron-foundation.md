@@ -9,12 +9,14 @@ fail-closed integration seam, not a live Steam commerce implementation.
 
 - Steam Inventory access belongs only in the Electron main process. The
   sandboxed renderer receives product listings, purchase outcomes and two
-  durable ownership booleans through the existing preload contract.
+  three ownership booleans through the existing preload contract.
 - A successful purchase result is not entitlement authority. Double Infinity
   Points and Developer Options become owned only after a fresh Steam inventory
   result contains their configured ItemDef IDs.
-- Tips are accepted only after inventory delivery is observed. The delivered
-  instance is then consumed as cleanup; no tip item grants gameplay state.
+- Supporter tiers are accepted only after inventory delivery is observed. The
+  Cat Gallery entitlement and pending cleanup record are atomically persisted
+  before the delivered instance is consumed. Persistence failure does not
+  consume or report success. The entitlement grants no gameplay state.
 - Only provider-verified durable ownership is written to the atomic offline
   cache. The complete cache record is encrypted/authenticated through
   Electron `safeStorage`, remains opaque on disk, and contains the currently
@@ -35,7 +37,8 @@ fail-closed integration seam, not a live Steam commerce implementation.
   snapshots without turning a charged purchase into a reported failure. Any
   orphaned configured tip instance found by a later authoritative snapshot is
   also adopted into the cleanup queue, covering interruption before the first
-  pending record could be published.
+  pending record could be published. A later inventory refresh preserves the
+  cached supporter entitlement after the consumable instance disappears.
 - Every pending cleanup includes the exact configured tip ItemDef ID. Before
   consumption, a fresh validated inventory snapshot must contain that same
   instance, ItemDef and sufficient quantity. Durable ItemDefs are discarded
@@ -74,7 +77,8 @@ supported native binding implements these main-process operations:
    `itemDefId`, opaque `instanceId`, and integer `quantity`.
 4. `startPurchase(itemDefId, quantity)` completes with one of `completed`,
    `cancelled`, `pending`, or `failed` after the Steam purchase flow.
-5. `consumeItem(instanceId, quantity)` consumes a verified delivered tip item.
+5. `consumeItem(instanceId, quantity)` consumes a verified delivered supporter
+   item only after entitlement persistence.
 
 Every binding payload is structurally checked before use. Invalid SteamIDs,
 duplicate or malformed inventory instances, invalid quantities, unexpected or

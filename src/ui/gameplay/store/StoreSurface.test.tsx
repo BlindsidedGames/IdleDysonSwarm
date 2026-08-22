@@ -22,7 +22,7 @@ afterEach(cleanup)
 describe('StoreSurface', () => {
   test('has no serious or critical automated accessibility violations', async () => {
     const { container } = renderStore(storeAdapter())
-    await screen.findByRole('button', { name: 'Tip A$1.49' })
+    await screen.findByRole('button', { name: 'Support A$1.49' })
     const results = await axe.run(container, {
       rules: {
         'color-contrast': { enabled: false },
@@ -41,13 +41,13 @@ describe('StoreSurface', () => {
     const store = storeAdapter()
     renderStore(store)
 
-    expect(await screen.findByRole('button', { name: 'Tip A$1.49' }))
+    expect(await screen.findByRole('button', { name: 'Support A$1.49' }))
       .toBeInTheDocument()
     expect(screen.getByRole('button', { name: 'Purchase A$8.99' }))
       .toBeInTheDocument()
     expect(screen.queryByText(/USD|\$9\.99/)).not.toBeInTheDocument()
 
-    const tip = screen.getByRole('button', { name: 'Tip A$1.49' })
+    const tip = screen.getByRole('button', { name: 'Support A$1.49' })
     await user.click(tip)
     await waitFor(() => expect(store.purchase).toHaveBeenCalledTimes(1))
     await user.click(tip)
@@ -61,14 +61,16 @@ describe('StoreSurface', () => {
       readOwnership: async () => ({
         doubleInfinityPoints: false,
         developerOptions: false,
+        supporterCatGallery: false,
       }),
       refreshOwnership: async () => ({
         doubleInfinityPoints: true,
         developerOptions: false,
+        supporterCatGallery: false,
       }),
     })
 
-    expect(await screen.findByText(/Tips are consumable and are not restored/))
+    expect(await screen.findByText(/Supporter tiers are consumable/u))
       .toBeInTheDocument()
     await user.click(screen.getByRole('button', { name: 'Restore Purchases' }))
     await waitFor(() => expect(store.restorePurchases).toHaveBeenCalledOnce())
@@ -84,6 +86,44 @@ describe('StoreSurface', () => {
       .toBeDisabled()
     expect(screen.getByText(/existing in-game unlock remains available/))
       .toBeInTheDocument()
+    expect(screen.getByRole('link', { name: 'Open Supporter Cat Gallery' }))
+      .toHaveAttribute(
+        'href',
+        'https://www.icloud.com/sharedalbum/#B0vG6XBub6hSR6',
+      )
+    expect(screen.getByText(/does not mark you as a supporter purchaser/u))
+      .toBeInTheDocument()
+  })
+
+  test('keeps the gallery locked until supporter ownership is verified', async () => {
+    renderStore(storeAdapter())
+
+    await screen.findByRole('button', { name: 'Support A$1.49' })
+    expect(screen.queryByRole('link', { name: /Supporter Cat Gallery/u }))
+      .not.toBeInTheDocument()
+  })
+
+  test('shows verified supporter access without granting Developer Options', async () => {
+    renderStore(storeAdapter(), {
+      readOwnership: async () => ({
+        doubleInfinityPoints: false,
+        developerOptions: false,
+        supporterCatGallery: true,
+      }),
+      refreshOwnership: async () => ({
+        doubleInfinityPoints: false,
+        developerOptions: false,
+        supporterCatGallery: true,
+      }),
+    })
+
+    expect(await screen.findByRole('link', {
+      name: 'Open Supporter Cat Gallery',
+    })).toHaveAttribute('target', '_blank')
+    expect(screen.getAllByRole('button', { name: /^Support /u }))
+      .toHaveLength(3)
+    expect(screen.getByRole('button', { name: 'Purchase A$8.99' }))
+      .toBeEnabled()
   })
 
   test('keeps browser ownership warnings while exposing development restore simulation', async () => {
@@ -108,7 +148,7 @@ describe('StoreSurface', () => {
     })
     renderStore(store)
 
-    await user.click(await screen.findByRole('button', { name: 'Tip A$1.49' }))
+    await user.click(await screen.findByRole('button', { name: 'Support A$1.49' }))
 
     expect(await screen.findByRole('alert')).toHaveTextContent(
       'Purchase cancelled.',
@@ -118,7 +158,7 @@ describe('StoreSurface', () => {
   test('keeps product cards as the only visual panel layer in each section', async () => {
     const { container } = renderStore(storeAdapter())
 
-    await screen.findByRole('heading', { name: 'Support the developer' })
+    await screen.findByRole('heading', { name: 'Supporter Cat Gallery' })
     const sections = container.querySelectorAll('.store-product-section')
     expect(sections).toHaveLength(2)
     for (const section of sections) {
@@ -141,10 +181,12 @@ function renderStore(
     readOwnership: async () => ({
       doubleInfinityPoints: false,
       developerOptions: false,
+      supporterCatGallery: false,
     }),
     refreshOwnership: async () => ({
       doubleInfinityPoints: false,
       developerOptions: false,
+      supporterCatGallery: false,
     }),
   },
   localDeveloperOptionsPurchased = false,

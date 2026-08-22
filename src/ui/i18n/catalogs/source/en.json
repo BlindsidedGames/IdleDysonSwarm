@@ -159,10 +159,6 @@
     "defaultMessage": "Bots",
     "description": "Bots resource label in developer tools."
   },
-  "debug.cats": {
-    "defaultMessage": "Debug Cats",
-    "description": "Developer action that logs diagnostic cat data."
-  },
   "debug.disable": {
     "defaultMessage": "Disable Developer Options",
     "description": "Action that disables developer tools."
@@ -3919,9 +3915,9 @@
     "defaultMessage": "Restoring…",
     "description": "Restore operation pending."
   },
-  "store.action.tip": {
-    "defaultMessage": "Tip {price}",
-    "description": "Purchases one repeatable support tip using a store-localized price."
+  "store.action.support": {
+    "defaultMessage": "Support {price}",
+    "description": "Purchases one repeatable supporter tier using a store-localized price."
   },
   "store.browser-introduction": {
     "defaultMessage": "Optional ways to support Idle Dyson Swarm and permanent upgrades for this browser on this device.",
@@ -3932,7 +3928,7 @@
     "description": "Explains Web durable purchase ownership."
   },
   "store.device-only.description": {
-    "defaultMessage": "The web version has no player account or cross-device restore. Double Infinity Points and Developer Options stay only in this browser on this device. They cannot be restored on another device, in another browser, or after this site's data is cleared. An email entered in Stripe Checkout is payment contact information only; it does not create a game account or enable restoration. Tips never unlock gameplay.",
+    "defaultMessage": "The web version has no player account or cross-device restore. Verified purchases stay only in this browser on this device and may be lost if this site's data is cleared. An email entered in Stripe Checkout is payment contact information only; it does not create a game account or enable restoration. The gallery never unlocks gameplay.",
     "description": "Explains that Web purchases cannot be restored elsewhere."
   },
   "store.device-only.heading": {
@@ -3959,9 +3955,21 @@
     "defaultMessage": "{count, plural, =0 {No permanent purchases were restored.} one {One permanent purchase was restored.} other {# permanent purchases were restored.}}",
     "description": "Restore result summary."
   },
-  "store.feedback.tip-completed": {
-    "defaultMessage": "Thank you for your support!",
-    "description": "Successful consumable tip feedback."
+  "store.gallery.action": {
+    "defaultMessage": "Open Supporter Cat Gallery",
+    "description": "External link accessible name for the supporter gallery."
+  },
+  "store.gallery.developer-access-description": {
+    "defaultMessage": "Your existing Developer Options access includes the Cat Gallery. This does not mark you as a supporter purchaser.",
+    "description": "Legacy Developer Options gallery access explanation."
+  },
+  "store.gallery.heading": {
+    "defaultMessage": "Supporter Cat Gallery",
+    "description": "Heading for the unlocked gallery panel."
+  },
+  "store.gallery.unlocked-description": {
+    "defaultMessage": "Unlocked on this installation through a verified supporter purchase. Thank you for supporting Idle Dyson Swarm.",
+    "description": "Verified supporter access explanation."
   },
   "store.introduction": {
     "defaultMessage": "Optional ways to support Idle Dyson Swarm and permanent upgrades for this device account.",
@@ -3992,35 +4000,35 @@
     "description": "Double Infinity Points product title."
   },
   "store.product.tip-tier-1.description": {
-    "defaultMessage": "A small thank-you with no gameplay benefit.",
-    "description": "First support tip description."
+    "defaultMessage": "Unlocks the same Cat Gallery as every supporter tier, with no gameplay advantage.",
+    "description": "First supporter tier description."
   },
   "store.product.tip-tier-1.title": {
-    "defaultMessage": "Treat the Cats!",
-    "description": "First support tip title."
+    "defaultMessage": "Cat Treat Supporter Tier",
+    "description": "First supporter tier title."
   },
   "store.product.tip-tier-2.description": {
-    "defaultMessage": "A medium thank-you with no gameplay benefit.",
-    "description": "Second support tip description."
+    "defaultMessage": "Unlocks the same Cat Gallery as every supporter tier, with no gameplay advantage.",
+    "description": "Second supporter tier description."
   },
   "store.product.tip-tier-2.title": {
-    "defaultMessage": "Buy us a coffee",
-    "description": "Second support tip title."
+    "defaultMessage": "Coffee Supporter Tier",
+    "description": "Second supporter tier title."
   },
   "store.product.tip-tier-3.description": {
-    "defaultMessage": "A generous thank-you with no gameplay benefit.",
-    "description": "Third support tip description."
+    "defaultMessage": "Unlocks the same Cat Gallery as every supporter tier, with no gameplay advantage.",
+    "description": "Third supporter tier description."
   },
   "store.product.tip-tier-3.title": {
-    "defaultMessage": "Support my kids",
-    "description": "Third support tip title."
+    "defaultMessage": "Family Supporter Tier",
+    "description": "Third supporter tier title."
   },
   "store.region": {
     "defaultMessage": "Store",
     "description": "Accessible name for the native Store route."
   },
   "store.restore.description": {
-    "defaultMessage": "Restore checks only Double Infinity Points and Developer Options. Tips are consumable and are not restored.",
+    "defaultMessage": "Restore checks only Double Infinity Points and Developer Options. Supporter tiers are consumable and are not generally restorable without an account-backed ledger.",
     "description": "Explains restore scope."
   },
   "store.status.loading": {
@@ -4040,12 +4048,12 @@
     "description": "Developer Options was unlocked through gameplay."
   },
   "store.tips.description": {
-    "defaultMessage": "Tips are optional, repeatable, and provide no gameplay benefit.",
-    "description": "Explains support-tip behavior."
+    "defaultMessage": "Each supporter tier permanently unlocks the same Cat Gallery on this installation. Choose whichever level of support feels comfortable. The gallery provides no gameplay advantage. Tiers remain repeatable after unlocking.",
+    "description": "Explains supporter-tier behavior."
   },
   "store.tips.heading": {
-    "defaultMessage": "Support the developer",
-    "description": "Heading for repeatable support tips."
+    "defaultMessage": "Supporter Cat Gallery",
+    "description": "Heading for repeatable supporter tiers."
   },
   "story.avocato.description": {
     "defaultMessage": "Visit your friendly interdimensional reset assistant.",
