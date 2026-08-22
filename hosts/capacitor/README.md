@@ -34,6 +34,9 @@ requires the production application ID/bundle ID and signing identity.
 
 ## Lifecycle, metadata and diagnostics
 
+The native single-renderer authority and its Android/iOS/Electron invariants are
+documented in [the platform architecture note](../../docs/platform/native-writer-authority.md).
+
 `currentLifecycle` plus `lifecycleChanged` normalize host state to `active`,
 `focus-lost`, `background` and `terminating`. The durable checkpoint boundary
 is `focus-lost`/`background`: mobile operating systems do not guarantee a final

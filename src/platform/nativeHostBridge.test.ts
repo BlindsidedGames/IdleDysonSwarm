@@ -15,10 +15,14 @@ import type {
   BrowserUiRuntimeFoundation,
 } from '../ui/runtime'
 import {
+  CapacitorNativeHostBridge,
   createNativeHostEnvironment,
+  type CapacitorNativeHostPlugin,
   type NativeHostBridgeApi,
 } from './nativeHostBridge'
-import { NativeSingleHostWriterDatabase } from './nativeWriterLeaseDatabase'
+import {
+  SingleHostSessionWriterAuthority,
+} from './singleHostSessionWriterAuthority'
 import { NATIVE_WEB_SAVE_PATHS } from './platformSaveStorage'
 import {
   MOBILE_LIFECYCLE_POLICY,
@@ -26,6 +30,105 @@ import {
 } from '../simulation/lifecycleAwayTime'
 
 describe('native host bootstrap boundary', () => {
+  test('remains conservatively backgrounded past the bootstrap timeout until reconciliation proves active', async () => {
+    vi.useFakeTimers()
+    const currentLifecycle = deferred<{ phase: 'active' }>()
+    const plugin = {
+      addListener: vi.fn(async () => ({
+        remove: async () => undefined,
+      })),
+      currentLifecycle: vi.fn(() => currentLifecycle.promise),
+    } as unknown as CapacitorNativeHostPlugin
+    const bridge = new CapacitorNativeHostBridge('android', plugin)
+    const observed: string[] = []
+    bridge.subscribeLifecycle((phase) => observed.push(phase))
+
+    await vi.advanceTimersByTimeAsync(2_000)
+    expect(bridge.currentLifecyclePhase()).toBe('background')
+    expect(observed).toEqual([])
+
+    currentLifecycle.resolve({ phase: 'active' })
+    await bridge.ready()
+    expect(bridge.currentLifecyclePhase()).toBe('active')
+    expect(observed).toEqual(['active'])
+    vi.useRealTimers()
+  })
+
+  test('subscribes before querying and prevents a stale lifecycle query from overwriting a newer event', async () => {
+    const listenerRegistered = deferred<{
+      remove(): Promise<void>
+    }>()
+    const currentLifecycle = deferred<{ phase: 'active' }>()
+    let publishNativePhase:
+      | ((event: { phase: 'background' }) => void)
+      | undefined
+    const plugin = {
+      addListener: vi.fn((eventName, listener) => {
+        expect(eventName).toBe('lifecycleChanged')
+        publishNativePhase = listener as typeof publishNativePhase
+        return listenerRegistered.promise
+      }),
+      currentLifecycle: vi.fn(() => currentLifecycle.promise),
+    } as unknown as CapacitorNativeHostPlugin
+    const bridge = new CapacitorNativeHostBridge('android', plugin)
+    const observed: string[] = []
+    bridge.subscribeLifecycle((phase) => observed.push(phase))
+
+    expect(plugin.currentLifecycle).not.toHaveBeenCalled()
+    listenerRegistered.resolve({ remove: async () => undefined })
+    await Promise.resolve()
+    expect(plugin.currentLifecycle).toHaveBeenCalledOnce()
+
+    publishNativePhase?.({ phase: 'background' })
+    currentLifecycle.resolve({ phase: 'active' })
+    await bridge.ready()
+
+    expect(bridge.currentLifecyclePhase()).toBe('background')
+    expect(observed).toEqual([])
+  })
+
+  test('does not duplicate a delayed current-state reconciliation that matches the conservative phase', async () => {
+    const currentLifecycle = deferred<{ phase: 'background' }>()
+    const plugin = {
+      addListener: vi.fn(async () => ({
+        remove: async () => undefined,
+      })),
+      currentLifecycle: vi.fn(() => currentLifecycle.promise),
+    } as unknown as CapacitorNativeHostPlugin
+    const bridge = new CapacitorNativeHostBridge('ios', plugin)
+    const observed: string[] = []
+    bridge.subscribeLifecycle((phase) => observed.push(phase))
+    await Promise.resolve()
+    currentLifecycle.resolve({ phase: 'background' })
+    await bridge.ready()
+
+    expect(bridge.currentLifecyclePhase()).toBe('background')
+    expect(observed).toEqual([])
+  })
+
+  test('keeps the subscribed lifecycle stream when the current-state query fails', async () => {
+    let publishNativePhase:
+      | ((event: { phase: 'focus-lost' }) => void)
+      | undefined
+    const plugin = {
+      addListener: vi.fn(async (_eventName, listener) => {
+        publishNativePhase = listener as typeof publishNativePhase
+        return { remove: async () => undefined }
+      }),
+      currentLifecycle: vi.fn(async () => {
+        throw new Error('query unavailable')
+      }),
+    } as unknown as CapacitorNativeHostPlugin
+    const bridge = new CapacitorNativeHostBridge('ios', plugin)
+    const observed: string[] = []
+    bridge.subscribeLifecycle((phase) => observed.push(phase))
+    await bridge.ready()
+
+    publishNativePhase?.({ phase: 'focus-lost' })
+    expect(bridge.currentLifecyclePhase()).toBe('focus-lost')
+    expect(observed).toEqual(['focus-lost'])
+  })
+
   test('selects native before constructing browser persistence', () => {
     const browser = vi.fn(() => {
       throw new Error('browser composition must remain unopened')
@@ -71,8 +174,9 @@ describe('native host bootstrap boundary', () => {
     )
 
     expect(composition.runtime).toBe(runtime)
-    expect(captured?.database).toBeInstanceOf(
-      NativeSingleHostWriterDatabase,
+    expect(captured?.database).toBeUndefined()
+    expect(captured?.writerAuthority).toBeInstanceOf(
+      SingleHostSessionWriterAuthority,
     )
     expect(captured?.saveRepositoryPaths).toBe(
       NATIVE_WEB_SAVE_PATHS,
@@ -322,4 +426,12 @@ function fakeBridge() {
     readonly storeProducts: ReturnType<typeof vi.fn>
     readonly writeText: ReturnType<typeof vi.fn>
   }
+}
+
+function deferred<T>() {
+  let resolve!: (value: T | PromiseLike<T>) => void
+  const promise = new Promise<T>((resolvePromise) => {
+    resolve = resolvePromise
+  })
+  return { promise, resolve }
 }

@@ -18,6 +18,7 @@ import {
   PwaUpdatePrompt,
 } from './pwa'
 import {
+  NativeLaunchPresentationGate,
   StartupErrorBoundary,
   startupShellMessages,
 } from './ui/shell'
@@ -26,7 +27,13 @@ import {
   installTextSelectionPolicy,
 } from './ui/accessibility/textSelectionPolicy'
 import { installSemanticAudioCues } from './audio'
-import { installNativeSafeAreaInsets } from './platform/nativeHostBridge'
+import {
+  detectNativeHostBridge,
+  installNativeSafeAreaInsets,
+} from './platform/nativeHostBridge'
+import {
+  createNativeLaunchDismissalController,
+} from './platform/nativeLaunchScreen'
 import {
   NumberNotationPreferenceService,
   NumberNotationProvider,
@@ -42,8 +49,18 @@ void bootstrap()
 async function bootstrap(): Promise<void> {
   const rootElement = document.getElementById('root')
   if (rootElement === null) return
+  const nativeLaunch = createNativeLaunchDismissalController()
   try {
-    await installNativeSafeAreaInsets()
+    const nativeBridge = detectNativeHostBridge()
+    if (nativeBridge !== null) {
+      nativeLaunch.armFailsafe()
+    }
+    await Promise.all([
+      boundedBootstrapPrerequisite(installNativeSafeAreaInsets()),
+      boundedBootstrapPrerequisite(
+        nativeBridge?.ready?.() ?? Promise.resolve(),
+      ),
+    ])
     const localePreference = new LocalePreferenceService()
     const locale = localePreference.getSnapshot()
     const messages =
@@ -53,6 +70,7 @@ async function bootstrap(): Promise<void> {
     const researchVisibilityPreference =
       new ResearchVisibilityPreferenceService()
     const composition = createProductionHostComposition({
+      detectNativeBridge: () => nativeBridge,
       automaticNumberFormattingAdopter: numberNotationPreference,
       automaticResearchVisibilityAdopter: researchVisibilityPreference,
     })
@@ -128,6 +146,12 @@ async function bootstrap(): Promise<void> {
     })
     createRoot(rootElement).render(
       <StrictMode>
+        <NativeLaunchPresentationGate
+          enabled={composition.hostKind !== 'browser'}
+          onPresented={() => {
+            void nativeLaunch.dismissNow()
+          }}
+        />
         <StartupErrorBoundary
           copy={boundaryCopy}
           actions={boundaryActions}
@@ -148,6 +172,7 @@ async function bootstrap(): Promise<void> {
               >
                 <App
                   runtime={composition.runtime}
+                  hostKind={composition.hostKind}
                   locale={locale}
                   saveSchemaVersion={
                     composition.saveSchemaVersion
@@ -177,5 +202,28 @@ async function bootstrap(): Promise<void> {
     )
   } catch {
     renderStaticBootstrapFailure(rootElement)
+    await nativeLaunch.dismissNow()
   }
+}
+
+function boundedBootstrapPrerequisite<T>(
+  prerequisite: Promise<T>,
+  timeoutMilliseconds = 1_500,
+): Promise<T | undefined> {
+  return new Promise((resolve) => {
+    const timeout = globalThis.setTimeout(
+      () => resolve(undefined),
+      timeoutMilliseconds,
+    )
+    void prerequisite.then(
+      (value) => {
+        globalThis.clearTimeout(timeout)
+        resolve(value)
+      },
+      () => {
+        globalThis.clearTimeout(timeout)
+        resolve(undefined)
+      },
+    )
+  })
 }

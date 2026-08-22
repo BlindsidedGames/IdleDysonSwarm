@@ -72,6 +72,7 @@ describe('runtime startup shell adapter', () => {
           locale: 'en',
           saveSchemaVersion: 12,
           buildId: 'web-wave-2',
+          hostKind: 'browser',
         },
       )
       expect(viewModel.phase).toBe(expectedPhase)
@@ -81,4 +82,24 @@ describe('runtime startup shell adapter', () => {
       )
     },
   )
+
+  test('labels native startup error diagnostics with the actual host', () => {
+    const viewModel = selectStartupShellViewModel(
+      {
+        phase: 'blocked',
+        code: 'startup-failed',
+        reason: 'private native failure',
+      },
+      {
+        locale: 'en',
+        saveSchemaVersion: 12,
+        hostKind: 'mobile-native',
+      },
+    )
+
+    expect(viewModel.diagnostics).toMatchObject({
+      hostKind: 'mobile-native',
+      code: 'startup-failed',
+    })
+  })
 })

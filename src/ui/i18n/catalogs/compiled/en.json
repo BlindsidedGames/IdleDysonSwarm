@@ -7511,6 +7511,24 @@
       "value": "Save text"
     }
   ],
+  "startup-shell.native.saving": [
+    {
+      "type": 0,
+      "value": "Saving your progress…"
+    }
+  ],
+  "startup-shell.native.starting": [
+    {
+      "type": 0,
+      "value": "Starting your swarm…"
+    }
+  ],
+  "startup-shell.native.starting-slow": [
+    {
+      "type": 0,
+      "value": "Still loading your progress…"
+    }
+  ],
   "startup-shell.notice.backup-recovered": [
     {
       "type": 0,

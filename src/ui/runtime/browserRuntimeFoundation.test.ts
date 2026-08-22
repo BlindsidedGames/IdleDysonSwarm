@@ -50,10 +50,18 @@ import type {
   LifecycleAdapter,
   LifecyclePhase,
 } from '../../platform/contracts'
+import {
+  SingleHostSessionWriterAuthority,
+} from '../../platform/singleHostSessionWriterAuthority'
+import { NATIVE_WEB_SAVE_PATHS } from '../../platform/platformSaveStorage'
 import type { DeepReadonly } from '../../core/contracts'
 import type { TextDownloadPort } from '../../platform/browserSaveTransfer'
 import { prepareIdb1Save, PreparedSave } from '../../save/prepare'
-import type { SaveRepository } from '../../save/repository'
+import type {
+  LegacySaveCandidate,
+  SaveRepository,
+  SaveStorageAdapter,
+} from '../../save/repository'
 import {
   deserializeWebSave,
   serializeWebSave,
@@ -860,6 +868,149 @@ describe('browser runtime foundation composition', () => {
       }),
     ).rejects.toThrow('does not own an active application graph')
     expect(database.mutations).toHaveLength(mutationsAfterDrain)
+  })
+
+  test('serializes native background behind a delayed checkpoint without lease expiry or duplicate lifecycle credit', async () => {
+    const database = new MemoryBrowserSaveDatabase()
+    const lifecycle = new TestLifecycleAdapter()
+    const storage = new MemoryNativeSaveStorage()
+    const checkpointGate = deferred<void>()
+    let application: FakeRuntimeApplication | undefined
+    const runtime = createRuntime({
+      database,
+      lifecycle,
+      saveStorage: storage,
+      writerAuthority: new SingleHostSessionWriterAuthority({
+        sessionId: 'native-delayed-checkpoint',
+      }),
+      createApplication: (repository) => {
+        application = new FakeRuntimeApplication(
+          repository,
+          database.events,
+        )
+        return application
+      },
+    })
+    await runtime.start()
+    application?.setDirty('native-background')
+    if (application !== undefined) {
+      application.checkpointGate = checkpointGate.promise
+    }
+
+    const checkpoint = runtime.requestCheckpoint()
+    await waitUntil(() => application?.checkpointCalls === 1)
+    lifecycle.emit('background')
+    await flushMicrotasks()
+    expect(application?.awayCommits).toBe(0)
+
+    checkpointGate.resolve()
+    await expect(checkpoint).resolves.toBe(true)
+    await waitUntil(() => application?.awayCommits === 1)
+    await flushMicrotasks()
+    expect(application?.awayCommits).toBe(1)
+    expect(runtime.status().phase).toBe('ready')
+    await runtime.shutdown()
+  })
+
+  test('awards native resume credit exactly once and reconstructs it after process restart', async () => {
+    const storage = new MemoryNativeSaveStorage()
+    const lifecycleClock = new ManualLifecycleClock(
+      '2026-07-29T00:00:00.000Z',
+    )
+    const createApplication =
+      createProductionCanonicalApplicationFactory({
+        createFirstRunSave: () =>
+          createUnityFirstRunPreparedSave({
+            startedAtUtc:
+              lifecycleClock.sample().serializedUtcText,
+          }),
+        readHostEntitlements: () =>
+          Object.freeze({ permanentDoubleIp: false }),
+      })
+    const createNativeRuntime = (
+      sessionId: string,
+      lifecycle: TestLifecycleAdapter,
+    ) => createBrowserRuntimeFoundation({
+      createApplication,
+      lifecyclePolicy: MOBILE_LIFECYCLE_POLICY,
+      allowedExternalOrigins: [],
+      writerAuthority: new SingleHostSessionWriterAuthority({ sessionId }),
+      saveStorage: storage,
+      saveRepositoryPaths: NATIVE_WEB_SAVE_PATHS,
+      allowCanonicalPlayerWrites: true,
+      lifecycle,
+      lifecycleClock,
+      activeTimeClock: new ManualActiveTimeClock(),
+      activeTimeScheduler: new ManualAnimationFrameScheduler(),
+      storageManager: {
+        persisted: async () => true,
+        persist: async () => true,
+        estimate: async () => ({ usage: 1, quota: 1_000 }),
+      },
+    })
+    const imported = prepareIdb1Save(
+      readFileSync(fixtureUrl, 'utf8'),
+    ).prepared.copyValidatedState()
+    imported.dateQuitString = ''
+    imported.lastSuccessfulLoadUtc = '2026-07-29T00:00:00.000Z'
+    imported.offlineTime = 0
+    imported.maxOfflineTime = 100
+    if (
+      imported.sdPrestige !== null &&
+      typeof imported.sdPrestige === 'object'
+    ) {
+      imported.sdPrestige.doubleTime = 0
+    }
+
+    const firstLifecycle = new TestLifecycleAdapter('active')
+    const firstRuntime = createNativeRuntime(
+      'native-process-one',
+      firstLifecycle,
+    )
+    await expect(firstRuntime.start()).resolves.toMatchObject({
+      phase: 'ready',
+    })
+    await expect(firstRuntime.importSave({
+      text: serializeWebSave(imported),
+      importedAtUtc: '2026-07-29T00:00:00.000Z',
+      overwriteApproved: true,
+    })).resolves.toMatchObject({ imported: true })
+
+    lifecycleClock.set('2026-07-29T00:00:10.000Z')
+    const replacementsBeforeBackground = storage.replaceCalls
+    firstLifecycle.emit('background')
+    await waitUntil(
+      () => storage.replaceCalls > replacementsBeforeBackground,
+    )
+    expect(nativeStoredTimeSeconds(firstRuntime)).toBe(0)
+    lifecycleClock.set('2026-07-29T00:00:20.000Z')
+    firstLifecycle.emit('active')
+    await waitUntil(() => nativeStoredTimeSeconds(firstRuntime) === 10)
+
+    firstLifecycle.emit('active')
+    await flushMicrotasks()
+    expect(nativeStoredTimeSeconds(firstRuntime)).toBe(10)
+    await expect(firstRuntime.requestCheckpoint()).resolves.toBe(true)
+    await firstRuntime.shutdown()
+
+    const secondLifecycle = new TestLifecycleAdapter('background')
+    const secondRuntime = createNativeRuntime(
+      'native-process-two',
+      secondLifecycle,
+    )
+    await expect(secondRuntime.start()).resolves.toMatchObject({
+      phase: 'ready',
+    })
+    expect(secondRuntime.snapshot()).toMatchObject({
+      phase: 'ready',
+      source: 'primary',
+    })
+    expect(nativeStoredTimeSeconds(secondRuntime)).toBe(10)
+
+    secondLifecycle.emit('active')
+    await flushMicrotasks()
+    expect(nativeStoredTimeSeconds(secondRuntime)).toBe(10)
+    await secondRuntime.shutdown()
   })
 
   test('retains an exact bounded invalid import before canonical validation and never replaces the current save', async () => {
@@ -1828,6 +1979,120 @@ describe('browser runtime foundation composition', () => {
     ])
     await runtime.shutdown()
   })
+
+  test.each([
+    {
+      admissionRace: 'background immediately before subscription',
+      departedPhase: 'background' as const,
+      arrange: (lifecycle: TestLifecycleAdapter) => {
+        lifecycle.beforeSubscribe = () => {
+          lifecycle.emit('background')
+        }
+      },
+    },
+    {
+      admissionRace: 'focus loss during current-phase reconciliation',
+      departedPhase: 'focus-lost' as const,
+      arrange: (lifecycle: TestLifecycleAdapter) => {
+        lifecycle.afterCurrentPhaseSnapshot = (readCount) => {
+          if (readCount === 2) lifecycle.emit('focus-lost')
+        }
+      },
+    },
+  ])(
+    'reconciles $admissionRace before native startup can deliver foreground time',
+    async ({ departedPhase, arrange }) => {
+      const database = new MemoryBrowserSaveDatabase()
+      const storage = new MemoryNativeSaveStorage()
+      const lifecycle = new TestLifecycleAdapter('active')
+      const lifecycleClock = new ManualLifecycleClock(
+        '2026-07-29T00:00:00Z',
+      )
+      const activeClock = new ManualActiveTimeClock()
+      const frames = new ManualAnimationFrameScheduler()
+      const marker = new MemoryDepartureMarker()
+      const startGate = deferred<void>()
+      let application: FakeRuntimeApplication | undefined
+      arrange(lifecycle)
+      const runtime = createRuntime({
+        database,
+        saveStorage: storage,
+        writerAuthority: new SingleHostSessionWriterAuthority({
+          sessionId: `native-admission-${departedPhase}`,
+        }),
+        lifecycle,
+        lifecycleClock,
+        departureMarker: marker,
+        activeTimeClock: activeClock,
+        activeTimeScheduler: frames,
+        createApplication: (repository) => {
+          application = new FakeRuntimeApplication(
+            repository,
+            database.events,
+          )
+          application.startGate = startGate.promise
+          application.setTimeResources(0, 100, 0)
+          return application
+        },
+      })
+
+      const starting = runtime.start()
+      await waitUntil(() =>
+        database.events.includes('application.start'),
+      )
+      expect(lifecycle.currentPhase()).toBe(departedPhase)
+      expect(marker.read()).toBe('2026-07-29T00:00:00Z')
+      activeClock.set(4_000)
+      await flushMicrotasks()
+      expect(frames.pending).toBe(0)
+      expect(application?.activeRequests).toEqual([])
+
+      startGate.resolve()
+      await expect(starting).resolves.toMatchObject({
+        phase: 'ready',
+      })
+      await waitUntil(() => application?.awayCommits === 1)
+      expect(frames.pending).toBe(0)
+      expect(application?.activeRequests).toEqual([])
+      const departed = application?.snapshot()
+      expect(departed?.phase).toBe('ready')
+      if (departed?.phase === 'ready') {
+        expect(
+          departed.state.gameState.timeline.lastSuspendedAtLegacyText,
+        ).toBe('2026-07-29T00:00:00Z')
+      }
+
+      lifecycleClock.set('2026-07-29T00:00:10Z')
+      activeClock.set(5_000)
+      lifecycle.emit('active')
+      await waitUntil(() => application?.awayCommits === 2)
+      await waitUntil(() => frames.pending === 1)
+      const resumed = application?.snapshot()
+      expect(resumed?.phase).toBe('ready')
+      if (resumed?.phase === 'ready') {
+        expect(resumed.state.gameState.timeline).toMatchObject({
+          storedTimeAvailableSeconds: 10,
+          storedTimeCapacitySeconds: 100,
+          lastSuspendedAtLegacyText: null,
+          doubleTime: { bankSeconds: 20 },
+        })
+      }
+      expect(marker.read()).toBeNull()
+
+      lifecycle.emit('active')
+      await runtime.requestCheckpoint()
+      expect(application?.awayCommits).toBe(2)
+      expect(frames.pending).toBe(1)
+
+      activeClock.set(5_017)
+      frames.fire()
+      await waitUntil(() => application?.activeRequests.length === 1)
+      expect(application?.activeRequests).toEqual([
+        { milliseconds: 17, sessionRevision: 1 },
+      ])
+      await runtime.shutdown()
+    },
+  )
 
   test.each(['background', 'focus-lost'] as const)(
     'seeds initial %s through the startup fence and replays exact away credit before foreground time',
@@ -3936,6 +4201,70 @@ function createRuntime(
   })
 }
 
+function nativeStoredTimeSeconds(
+  runtime: ReturnType<typeof createBrowserRuntimeFoundation>,
+): number {
+  const snapshot = runtime.snapshot()
+  if (snapshot.phase !== 'ready') {
+    throw new Error(`Native runtime is ${snapshot.phase}.`)
+  }
+  return snapshot.gameplay.resources.time
+    .storedTimeAvailableSeconds
+}
+
+class MemoryNativeSaveStorage implements SaveStorageAdapter {
+  private readonly files = new Map<string, string>()
+  replaceCalls = 0
+
+  async exists(path: string): Promise<boolean> {
+    return this.files.has(path)
+  }
+
+  async readText(path: string): Promise<string> {
+    const value = this.files.get(path)
+    if (value === undefined) throw new Error(`Missing ${path}`)
+    return value
+  }
+
+  async writeText(path: string, contents: string): Promise<void> {
+    this.files.set(path, contents)
+  }
+
+  async replaceAtomically(
+    temporaryPath: string,
+    destinationPath: string,
+  ): Promise<void> {
+    const contents = await this.readText(temporaryPath)
+    this.files.set(destinationPath, contents)
+    this.files.delete(temporaryPath)
+    this.replaceCalls += 1
+  }
+
+  async copy(sourcePath: string, destinationPath: string): Promise<void> {
+    this.files.set(destinationPath, await this.readText(sourcePath))
+  }
+
+  async discoverLegacyCandidates(): Promise<readonly LegacySaveCandidate[]> {
+    return []
+  }
+
+  async retainLegacyCandidate(
+    text: string,
+    id = 'native-test-import',
+  ): Promise<LegacySaveCandidate> {
+    const sourcePath = `recovery/${id}.txt`
+    this.files.set(sourcePath, text)
+    return Object.freeze({
+      id,
+      sourcePath,
+      text,
+      provenance: Object.freeze({
+        kind: 'browser-retained-import' as const,
+      }),
+    })
+  }
+}
+
 class FakeRuntimeApplication
   implements CanonicalLifecycleApplicationPort
 {
@@ -4309,6 +4638,11 @@ class TestLifecycleAdapter implements LifecycleAdapter {
   private readonly listeners =
     new Set<(phase: LifecyclePhase) => void>()
   private phase: LifecyclePhase
+  private currentPhaseReads = 0
+  beforeSubscribe: (() => void) | undefined
+  afterCurrentPhaseSnapshot:
+    | ((readCount: number) => void)
+    | undefined
 
   constructor(initialPhase: LifecyclePhase = 'active') {
     this.phase = initialPhase
@@ -4319,6 +4653,9 @@ class TestLifecycleAdapter implements LifecycleAdapter {
   }
 
   subscribe(listener: (phase: LifecyclePhase) => void): () => void {
+    const beforeSubscribe = this.beforeSubscribe
+    this.beforeSubscribe = undefined
+    beforeSubscribe?.()
     this.listeners.add(listener)
     return () => {
       this.listeners.delete(listener)
@@ -4326,7 +4663,10 @@ class TestLifecycleAdapter implements LifecycleAdapter {
   }
 
   currentPhase(): LifecyclePhase {
-    return this.phase
+    const snapshot = this.phase
+    this.currentPhaseReads += 1
+    this.afterCurrentPhaseSnapshot?.(this.currentPhaseReads)
+    return snapshot
   }
 
   emit(phase: LifecyclePhase): void {

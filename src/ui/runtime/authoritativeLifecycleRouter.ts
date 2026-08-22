@@ -7,8 +7,8 @@ import type {
   LifecyclePhase,
 } from '../../platform/contracts'
 import type {
-  BrowserWriterAuthority,
-} from '../../platform/browserWriterLease'
+  WriterOperationAuthority,
+} from '../../platform/writerAuthority'
 
 export interface AuthoritativeLifecycleCoordinatorPort {
   handlePlatformPhase(
@@ -19,7 +19,7 @@ export interface AuthoritativeLifecycleCoordinatorPort {
 export interface AuthoritativeWriterLeasePort {
   runAuthoritativeOperation<T>(
     operation: (
-      authority: BrowserWriterAuthority,
+      authority: WriterOperationAuthority,
     ) => T | Promise<T>,
   ): Promise<T>
   assertWritable(): Promise<unknown>
@@ -72,6 +72,24 @@ export interface AuthoritativeLifecycleRouterOptions {
   readonly onFailure?: (phase: LifecyclePhase, error: unknown) => void
 }
 
+export interface AuthoritativeLifecycleStartOptions<T> {
+  /** Phase already sampled and paired with the seeded startup replay. */
+  readonly initialPhase: LifecyclePhase
+  readonly startApplication: (
+    authority: WriterOperationAuthority,
+  ) => T | Promise<T>
+}
+
+interface AdmittedLifecyclePhase {
+  readonly phase: LifecyclePhase
+  readonly phaseObservation: unknown
+  readonly observationError: unknown
+  readonly observationFailed: boolean
+  readonly before: AuthoritativeLifecyclePreOperation | undefined
+  readonly setupError: unknown
+  readonly setupFailed: boolean
+}
+
 export class AuthoritativeLifecycleRouterClosedError extends Error {
   constructor() {
     super('The authoritative lifecycle router no longer accepts operations.')
@@ -80,9 +98,9 @@ export class AuthoritativeLifecycleRouterClosedError extends Error {
 }
 
 /**
- * Serializes startup, browser phases, checkpoints, and import operations behind
- * the same IndexedDB authority fence. Results leave this router only after a
- * final database-backed authority check.
+ * Serializes startup, lifecycle phases, checkpoints, and import operations
+ * behind the selected host authority. Results leave this router only after a
+ * final host-specific authority check.
  */
 export class AuthoritativeLifecycleRouter {
   private readonly lifecycle: LifecycleAdapter
@@ -121,81 +139,139 @@ export class AuthoritativeLifecycleRouter {
   }
 
   start<T>(
-    startApplication: (
-      authority: BrowserWriterAuthority,
-    ) => T | Promise<T>,
+    options: Readonly<AuthoritativeLifecycleStartOptions<T>>,
   ): Promise<T> {
-    const starting = this.run(startApplication)
-    this.unsubscribe ??= this.lifecycle.subscribe((phase) => {
-      let phaseObservation: unknown
-      let observationError: unknown
-      let observationFailed = false
-      let before: AuthoritativeLifecyclePreOperation | undefined
-      let setupError: unknown
-      let setupFailed = false
-      try {
-        phaseObservation = this.observePhase?.(phase)
-      } catch (error) {
-        observationFailed = true
-        observationError = error
+    if (!this.accepting) {
+      return Promise.reject(
+        new AuthoritativeLifecycleRouterClosedError(),
+      )
+    }
+    const admissionBuffer: AdmittedLifecyclePhase[] = []
+    let reconcilingAdmission = true
+    let lifecycleEventEpoch = 0
+    const receivePhase = (phase: LifecyclePhase): void => {
+      const admitted = this.admitPhase(phase)
+      lifecycleEventEpoch += 1
+      if (reconcilingAdmission) {
+        admissionBuffer.push(admitted)
+      } else {
+        this.routePhase(admitted)
       }
-      try {
-        before = this.beforePhase?.(
-          phase,
-          observationFailed ? observationError : undefined,
-        )
-      } catch (error) {
-        setupFailed = true
-        setupError = error
+    }
+    try {
+      this.unsubscribe ??= this.lifecycle.subscribe(receivePhase)
+      const queryEpoch = lifecycleEventEpoch
+      const reconciledPhase = this.lifecycle.currentPhase()
+      if (
+        queryEpoch === lifecycleEventEpoch &&
+        reconciledPhase !== options.initialPhase
+      ) {
+        admissionBuffer.push(this.admitPhase(reconciledPhase))
       }
-      void this.run(async () => {
-        let beforeResult: unknown
-        let beforeError: unknown
-        let beforeFailed = false
-        try {
-          beforeResult = await before?.()
-        } catch (error) {
-          beforeFailed = true
-          beforeError = error
-        }
-        if (observationFailed) {
-          return {
-            kind: 'observation-failed' as const,
-            beforeError,
-            beforeFailed,
-          }
-        }
-        const result =
-          await this.handlePhase(phase, phaseObservation)
+    } catch (error) {
+      this.unsubscribe?.()
+      this.unsubscribe = undefined
+      return Promise.reject(error)
+    }
+    const starting = this.run(options.startApplication)
+    reconcilingAdmission = false
+    for (const admitted of admissionBuffer) {
+      this.routePhase(admitted)
+    }
+    return starting
+  }
+
+  private admitPhase(
+    phase: LifecyclePhase,
+  ): AdmittedLifecyclePhase {
+    let phaseObservation: unknown
+    let observationError: unknown
+    let observationFailed = false
+    let before: AuthoritativeLifecyclePreOperation | undefined
+    let setupError: unknown
+    let setupFailed = false
+    try {
+      phaseObservation = this.observePhase?.(phase)
+    } catch (error) {
+      observationFailed = true
+      observationError = error
+    }
+    try {
+      before = this.beforePhase?.(
+        phase,
+        observationFailed ? observationError : undefined,
+      )
+    } catch (error) {
+      setupFailed = true
+      setupError = error
+    }
+    return {
+      phase,
+      phaseObservation,
+      observationError,
+      observationFailed,
+      before,
+      setupError,
+      setupFailed,
+    }
+  }
+
+  private routePhase(admitted: AdmittedLifecyclePhase): void {
+    const {
+      phase,
+      phaseObservation,
+      observationError,
+      observationFailed,
+      before,
+      setupError,
+      setupFailed,
+    } = admitted
+    void this.run(async () => {
+      let beforeResult: unknown
+      let beforeError: unknown
+      let beforeFailed = false
+      try {
+        beforeResult = await before?.()
+      } catch (error) {
+        beforeFailed = true
+        beforeError = error
+      }
+      if (observationFailed) {
         return {
-          kind: 'handled' as const,
+          kind: 'observation-failed' as const,
           beforeError,
           beforeFailed,
-          beforeResult,
-          result,
         }
-      }).then((outcome) => {
-        if (setupFailed) {
-          this.reportFailure(phase, setupError)
-        }
-        if (outcome.beforeFailed) {
-          this.reportFailure(phase, outcome.beforeError)
-        }
-        if (outcome.kind === 'observation-failed') {
-          this.reportFailure(phase, observationError)
-          return
-        }
-        this.afterPhase?.(
-          phase,
-          outcome.result,
-          outcome.beforeResult,
-          phaseObservation,
-        )
-      }).catch((error: unknown) => {
-        this.reportFailure(phase, error)
-      })
+      }
+      const result =
+        await this.handlePhase(phase, phaseObservation)
+      return {
+        kind: 'handled' as const,
+        beforeError,
+        beforeFailed,
+        beforeResult,
+        result,
+      }
+    }).then((outcome) => {
+      if (setupFailed) {
+        this.reportFailure(phase, setupError)
+      }
+      if (outcome.beforeFailed) {
+        this.reportFailure(phase, outcome.beforeError)
+      }
+      if (outcome.kind === 'observation-failed') {
+        this.reportFailure(phase, observationError)
+        return
+      }
+      this.afterPhase?.(
+        phase,
+        outcome.result,
+        outcome.beforeResult,
+        phaseObservation,
+      )
+    }).catch((error: unknown) => {
+      this.reportFailure(phase, error)
     })
-    return starting
   }
 
   private reportFailure(
@@ -211,7 +287,7 @@ export class AuthoritativeLifecycleRouter {
 
   run<T>(
     operation: (
-      authority: BrowserWriterAuthority,
+      authority: WriterOperationAuthority,
     ) => T | Promise<T>,
   ): Promise<T> {
     if (!this.accepting) {
@@ -252,12 +328,12 @@ export class AuthoritativeLifecycleRouter {
 
   private async runFenced<T>(
     operation: (
-      authority: BrowserWriterAuthority,
+      authority: WriterOperationAuthority,
     ) => T | Promise<T>,
   ): Promise<T> {
-    // BrowserWriterLease owns both entry validation and the synchronous
-    // post-operation cancellation check. Let it classify and publish a lost
-    // fence instead of replacing that signal with a generic router error.
+    // The selected authority owns entry validation and the synchronous
+    // post-operation cancellation check. Let it classify terminal fencing
+    // instead of replacing that signal with a generic router error.
     const result =
       await this.lease.runAuthoritativeOperation(operation)
     await this.lease.assertWritable()

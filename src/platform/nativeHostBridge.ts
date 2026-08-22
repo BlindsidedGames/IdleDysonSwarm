@@ -46,6 +46,8 @@ export interface NativeUnitySaveCandidate {
 
 export interface NativeHostBridgeApi {
   readonly target: Exclude<RuntimeTarget, 'browser'>
+  /** Resolves after native lifecycle events are subscribed and reconciled. */
+  readonly ready?: () => Promise<void>
   exists(relativePath: string): Promise<boolean>
   readText(relativePath: string): Promise<string>
   writeText(relativePath: string, contents: string): Promise<void>
@@ -93,7 +95,7 @@ export interface NativeSystemInsets {
   readonly left: number
 }
 
-interface CapacitorNativeHostPlugin {
+export interface CapacitorNativeHostPlugin {
   fileExists(request: { relativePath: string }): Promise<{ exists: boolean }>
   readText(request: { relativePath: string }): Promise<{ text: string }>
   writeText(request: {
@@ -354,10 +356,16 @@ function normalizeHostOwnership(
   })
 }
 
-class CapacitorNativeHostBridge implements NativeHostBridgeApi {
+export class CapacitorNativeHostBridge implements NativeHostBridgeApi {
   readonly target: 'android' | 'ios'
   private readonly plugin: CapacitorNativeHostPlugin
-  private phase: LifecyclePhase = 'active'
+  // Stay conservatively suspended until a subscribed event or the reconciled
+  // current-state query proves the WebView is active.
+  private phase: LifecyclePhase = 'background'
+  private phaseEpoch = 0
+  private readonly lifecycleListeners =
+    new Set<(phase: LifecyclePhase) => void>()
+  private readonly lifecycleReady: Promise<void>
 
   constructor(
     target: 'android' | 'ios',
@@ -365,9 +373,11 @@ class CapacitorNativeHostBridge implements NativeHostBridgeApi {
   ) {
     this.target = target
     this.plugin = plugin
-    void plugin.currentLifecycle().then(({ phase }) => {
-      if (isLifecyclePhase(phase)) this.phase = phase
-    }).catch(() => undefined)
+    this.lifecycleReady = this.initializeLifecycle()
+  }
+
+  ready(): Promise<void> {
+    return this.lifecycleReady
   }
 
   async exists(relativePath: string): Promise<boolean> {
@@ -413,22 +423,52 @@ class CapacitorNativeHostBridge implements NativeHostBridgeApi {
   subscribeLifecycle(
     listener: (phase: LifecyclePhase) => void,
   ): () => void {
-    let active = true
-    let handle: PluginListenerHandle | undefined
-    void this.plugin.addListener(
-      'lifecycleChanged',
-      ({ phase }) => {
-        if (!active || !isLifecyclePhase(phase)) return
-        this.phase = phase
-        listener(phase)
-      },
-    ).then((registered) => {
-      if (active) handle = registered
-      else void registered.remove()
-    })
+    this.lifecycleListeners.add(listener)
     return () => {
-      active = false
-      void handle?.remove()
+      this.lifecycleListeners.delete(listener)
+    }
+  }
+
+  private async initializeLifecycle(): Promise<void> {
+    try {
+      await this.plugin.addListener(
+        'lifecycleChanged',
+        ({ phase }) => this.applyLifecycleEvent(phase),
+      )
+    } catch {
+      // Still query the current state. Without an event stream, the bridge
+      // remains conservatively backgrounded if reconciliation also fails.
+    }
+    const queryEpoch = this.phaseEpoch
+    try {
+      const { phase } = await this.plugin.currentLifecycle()
+      if (
+        queryEpoch === this.phaseEpoch &&
+        isLifecyclePhase(phase)
+      ) {
+        this.publishReconciledLifecycle(phase)
+      }
+    } catch {
+      // The subscribed event stream remains authoritative if the one-time
+      // current-state query is unavailable.
+    }
+  }
+
+  private applyLifecycleEvent(phase: LifecyclePhase): void {
+    if (!isLifecyclePhase(phase)) return
+    this.phaseEpoch += 1
+    this.publishReconciledLifecycle(phase)
+  }
+
+  private publishReconciledLifecycle(phase: LifecyclePhase): void {
+    if (phase === this.phase) return
+    this.phase = phase
+    for (const listener of [...this.lifecycleListeners]) {
+      try {
+        listener(phase)
+      } catch {
+        // A renderer listener cannot suppress native lifecycle delivery.
+      }
     }
   }
 

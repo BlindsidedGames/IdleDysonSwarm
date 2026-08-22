@@ -10,5 +10,13 @@
   },
   "android": {
     "allowMixedContent": false
+  },
+  "plugins": {
+    "SplashScreen": {
+      "launchAutoHide": false,
+      "backgroundColor": "#2f1738",
+      "androidSplashResourceName": "splash",
+      "showSpinner": false
+    }
   }
 }

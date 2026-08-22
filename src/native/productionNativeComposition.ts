@@ -13,7 +13,9 @@ import {
   BrowserMonotonicClock,
 } from '../platform/browserLifecycle'
 import type { NativeHostEnvironment } from '../platform/nativeHostBridge'
-import { NativeSingleHostWriterDatabase } from '../platform/nativeWriterLeaseDatabase'
+import {
+  SingleHostSessionWriterAuthority,
+} from '../platform/singleHostSessionWriterAuthority'
 import {
   CapacitorPlatformSaveStorageAdapter,
   ElectronPlatformSaveStorageAdapter,
@@ -111,7 +113,7 @@ export function createProductionNativeComposition(
         ? WEB_LIFECYCLE_POLICY
         : MOBILE_LIFECYCLE_POLICY,
     allowedExternalOrigins: [],
-    database: new NativeSingleHostWriterDatabase(),
+    writerAuthority: new SingleHostSessionWriterAuthority(),
     saveStorage: storage,
     saveRepositoryPaths: NATIVE_WEB_SAVE_PATHS,
     allowCanonicalPlayerWrites: true,
@@ -120,8 +122,6 @@ export function createProductionNativeComposition(
     activeTimeClock: monotonicClock,
     nowUtcMilliseconds: () =>
       lifecycleClock.sample().utcMilliseconds,
-    ownerToken: `native-${environment.target}`,
-    autoHeartbeat: true,
     storageManager: {},
     hostEntitlements: entitlementBridge,
     automaticPurchaseEvidencePromoter:

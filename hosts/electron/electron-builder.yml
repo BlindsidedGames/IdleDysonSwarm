@@ -12,6 +12,7 @@ files:
   - hosts/electron/main.mjs
   - hosts/electron/preload.cjs
   - hosts/electron/releaseMetadata.mjs
+  - hosts/electron/smokeMode.mjs
   - hosts/electron/steamInventoryBinding.mjs
   - hosts/electron/steamInventoryStore.mjs
   - hosts/electron/steam-inventory.json
