@@ -31,6 +31,10 @@ import {
   NumberNotationPreferenceService,
   NumberNotationProvider,
 } from './ui/number-notation'
+import {
+  ResearchVisibilityPreferenceService,
+  ResearchVisibilityProvider,
+} from './ui/research-visibility'
 
 installTextSelectionPolicy()
 void bootstrap()
@@ -46,8 +50,11 @@ async function bootstrap(): Promise<void> {
       await LOCALE_REGISTRY[locale].loadSharedCatalog()
     const numberNotationPreference =
       new NumberNotationPreferenceService()
+    const researchVisibilityPreference =
+      new ResearchVisibilityPreferenceService()
     const composition = createProductionHostComposition({
       automaticNumberFormattingAdopter: numberNotationPreference,
+      automaticResearchVisibilityAdopter: researchVisibilityPreference,
     })
     void composition.audio.initialize().catch(() => undefined)
     installSemanticAudioCues(document, composition.audio)
@@ -136,29 +143,33 @@ async function bootstrap(): Promise<void> {
             messages={messages}
           >
             <NumberNotationProvider preference={numberNotationPreference}>
-              <App
-                runtime={composition.runtime}
-                locale={locale}
-                saveSchemaVersion={
-                  composition.saveSchemaVersion
-                }
-                sampleUtc={composition.sampleUtc}
-                reloadSafely={composition.reloadSafely}
-                resetSave={composition.resetSave}
-                buildId={import.meta.env.VITE_BUILD_ID}
-                releasePlatformServices={
-                  composition.releasePlatformServices
-                }
-                audio={composition.audio}
-              />
-              {pwaUpdateController === undefined ? null : (
-                <PwaUpdatePrompt
-                  controller={pwaUpdateController}
-                  prepareForActivation={
-                    composition.prepareForUpdateActivation
+              <ResearchVisibilityProvider
+                preference={researchVisibilityPreference}
+              >
+                <App
+                  runtime={composition.runtime}
+                  locale={locale}
+                  saveSchemaVersion={
+                    composition.saveSchemaVersion
                   }
+                  sampleUtc={composition.sampleUtc}
+                  reloadSafely={composition.reloadSafely}
+                  resetSave={composition.resetSave}
+                  buildId={import.meta.env.VITE_BUILD_ID}
+                  releasePlatformServices={
+                    composition.releasePlatformServices
+                  }
+                  audio={composition.audio}
                 />
-              )}
+                {pwaUpdateController === undefined ? null : (
+                  <PwaUpdatePrompt
+                    controller={pwaUpdateController}
+                    prepareForActivation={
+                      composition.prepareForUpdateActivation
+                    }
+                  />
+                )}
+              </ResearchVisibilityProvider>
             </NumberNotationProvider>
           </PresentationIntlProvider>
         </StartupErrorBoundary>

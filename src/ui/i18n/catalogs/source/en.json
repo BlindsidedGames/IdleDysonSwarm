@@ -2247,6 +2247,10 @@
     "defaultMessage": "Purchase for a boost! (<value>{perLevel}%</value> per level)",
     "description": "Research effect line before its first purchase."
   },
+  "research.completed-hidden": {
+    "defaultMessage": "All currently available Research is completed and hidden.",
+    "description": "Empty state shown when the device preference hides every available Research card."
+  },
   "research.description.ai-manager": {
     "defaultMessage": "Refactoring code makes your AI Managers more efficient, thus producing more Assembly Lines!",
     "description": "Unity AI Manager research description."
@@ -2406,6 +2410,10 @@
   "research.settings.failed": {
     "defaultMessage": "Research purchase settings were not changed.",
     "description": "Failure feedback after a rejected Research setting command."
+  },
+  "research.settings.hide-completed": {
+    "defaultMessage": "Hide completed Research",
+    "description": "Device-local presentation preference for maxed Research cards."
   },
   "research.settings.open": {
     "defaultMessage": "Research purchase settings",

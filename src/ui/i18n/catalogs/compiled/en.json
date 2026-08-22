@@ -4711,6 +4711,12 @@
       "value": " per level)"
     }
   ],
+  "research.completed-hidden": [
+    {
+      "type": 0,
+      "value": "All currently available Research is completed and hidden."
+    }
+  ],
   "research.description.ai-manager": [
     {
       "type": 0,
@@ -5013,6 +5019,12 @@
     {
       "type": 0,
       "value": "Research purchase settings were not changed."
+    }
+  ],
+  "research.settings.hide-completed": [
+    {
+      "type": 0,
+      "value": "Hide completed Research"
     }
   ],
   "research.settings.open": [

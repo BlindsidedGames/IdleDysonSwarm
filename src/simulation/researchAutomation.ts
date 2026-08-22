@@ -238,9 +238,7 @@ export function selectCanonicalResearchPresentationFacts(
 
   return Object.freeze({
     prerequisitesMet: meetsPrerequisites,
-    visible:
-      (meetsPrerequisites || currentLevel > 0) &&
-      !maxed,
+    visible: meetsPrerequisites || currentLevel > 0,
     maxed,
     automationActive:
       state.infinity.automationUnlocked.research &&

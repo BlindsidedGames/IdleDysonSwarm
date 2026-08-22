@@ -549,6 +549,15 @@ The application shell owns one active-time driver:
   established, but only when the native provenance identity matches both the
   repository candidate identity and its read-only Unity bridge path. See
   [implementation evidence](../number-notation-implementation-evidence.md).
+- Completed Research visibility is a versioned device-local preference,
+  defaulting to showing completed cards for existing Web installations.
+  Canonical Research visibility means unlocked/available and is independent
+  of completion. The Research UI may hide only cards whose canonical `maxed`
+  fact is true. Portable saves exclude the legacy `hidePurchased` field and
+  manual imports never alter the receiving device selection. Only a verified
+  automatic same-device Unity migration may adopt a valid legacy boolean once
+  when the device has no established preference. See
+  [implementation evidence](../research-visibility-implementation-evidence.md).
 - Routine digit changes use the shared tabular-digit presentation without
   fixed-width containers. Decimal separators, signs, units, and suffixes keep
   natural spacing, and genuine magnitude/suffix transitions may change width.

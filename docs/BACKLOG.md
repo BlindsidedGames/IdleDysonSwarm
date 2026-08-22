@@ -13,9 +13,10 @@ Status conventions:
 
 ## Current cross-platform work
 
-- [ ] Implement the hide-purchased-research preference, including consistent
+- [x] Implement the hide-purchased-research preference, including consistent
   filtering, empty-state behavior, keyboard/focus safety, and persistence
-  across reloads. Source: parity P-04.
+  across reloads. Source: parity P-04. Evidence:
+  [Research visibility implementation](research-visibility-implementation-evidence.md).
 - [ ] Implement a device-local inactivity-screensaver toggle and define its
   idle threshold, lifecycle behavior, reduced-motion behavior, dismissal, and
   interaction with background/offline processing. Source: parity P-04.

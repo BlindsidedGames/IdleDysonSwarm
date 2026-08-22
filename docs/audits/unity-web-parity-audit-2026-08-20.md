@@ -87,13 +87,18 @@ This was an investigation-only source audit. The only file created or edited by 
 Standard/Scientific/Engineering control, shared formatter behavior, portable
 save isolation, one-time automatic Unity adoption, and tabular digit styling.
 See [number notation implementation evidence](../number-notation-implementation-evidence.md).
+Completed Research visibility is also resolved with a device-local Research
+panel control, portable-save isolation, trusted one-time Unity adoption,
+canonical unlock/completion separation, focus-safe filtering, and verified
+Infinity reset/reload behavior. See
+[Research visibility implementation evidence](../research-visibility-implementation-evidence.md).
 P-04 remains open for the other preferences listed below.
 
 - **Classification:** Confirmed mismatch
 - **Severity:** S2
 - **Unity evidence:** `Assets/Scripts/User Interface/NotationToggler.cs:12-43` supports Standard, Scientific, and Engineering notation. `Assets/Scripts/User Interface/HidePurchasedToggle.cs:9-17` controls purchased-research visibility, consumed by `Assets/Scripts/Research/ResearchPresenter.cs:434-449`. `Assets/Scripts/User Interface/ScreensaverToggle.cs:13-27` controls the idle display, consumed by `Assets/Scripts/Expansion/LoadScreenMethods.cs:70-85`. `Assets/Scripts/User Interface/ButtonThings.cs:32-47` persists frame-rate choices.
-- **Web evidence:** `src/save/importContext.ts:17-46` and `src/game-state/mappingCoverage.ts:470-498` classify these as receiving-device presentation preferences, but the runtime does not consume them. `src/ui/i18n/formatters.ts:73-139` always uses one suffix/exponential formatting strategy. `src/ui/gameplay/research/ResearchSurface.tsx:125-138,500-529` continues to render maxed cards as “Purchased.” `src/ui/gameplay/settings/SettingsSurface.tsx:385-490` exposes none of notation, hide-purchased, screensaver, or frame-rate controls.
-- **Player impact:** A migrated player can carry apparently preserved values that do nothing. Scientific/Engineering users see a different number presentation; purchased research cannot be hidden; the Unity idle screensaver disappears.
+- **Web evidence:** Number notation and completed Research visibility now use explicit versioned device-local services and controls. `src/save/importContext.ts` continues to classify the remaining legacy values as receiving-device preferences; screensaver and frame-rate controls remain unimplemented.
+- **Player impact:** The resolved preferences now behave explicitly without entering transferable saves. The Unity idle screensaver and frame-rate choices remain absent.
 - **Validation/fix direction:** Make an explicit per-preference product decision. Re-express relevant preferences as device-local Web settings and bind them to formatting/UI behavior, or remove them from the “preserved” promise and document the Web interaction model. Frame rate may be intentionally browser-owned, but that should be recorded as an adaptation rather than silently retained.
 
 ### P-05 — Web always starts on Bots instead of restoring the last top-level screen
@@ -181,7 +186,7 @@ Validate narrow portrait, wide landscape, safe-area devices, zoomed text, reduce
 | --- | --- | --- | --- | --- |
 | Authored balance/content data | `Assets/Data`, definition/condition scripts | exporter, generated catalogs, runtime contract | Verified parity | Current byte check passed; behavior still audited separately |
 | Bots, Tinker, facilities, production, decay, money/science | building scripts, `ProductionMath`, `ProductionSystem`, assets/prefabs | Dyson derivation/commands/event model, Tinker, automation, facility UI | Verified parity in non-skill scope | Skill-driven modifiers are covered only by the skill-tree audit; audio is P-03 |
-| Research | presenter, auto-buy, definitions/effects | research automation/effects/commands/UI | Verified parity | Hide-purchased preference is P-04 |
+| Research | presenter, auto-buy, definitions/effects | research automation/effects/commands/UI | Verified parity | Completed-card preference resolved; see P-04 update |
 | Infinity and Infinity Shop | reset model/transitions, GameManager, shop data | Infinity cycle/reset/shop/automation/UI | Verified parity | Steam publication is P-01 |
 | Dream and disasters | Dream managers, reset transitions, upgrade assets | foundational/Space Age/Education/reset/UI | Verified parity | Device lifecycle is R-02 |
 | Reality and simulations | Worker/Simulation managers, tuning/upgrades, prefabs | workers/upgrades/effects/reset/UI | Verified parity | Device lifecycle is R-02 |

@@ -50,6 +50,8 @@ export interface ProductionHostCompositionOptions {
   ) => ProductionNativeComposition
   readonly automaticNumberFormattingAdopter?:
     AutomaticUnityNumberFormattingAdopter
+  readonly automaticResearchVisibilityAdopter?:
+    import('./save/repository').AutomaticUnityResearchVisibilityAdopter
 }
 
 function createConfiguredBrowserStoreServices(): Readonly<ReleasePlatformServices> {
@@ -82,6 +84,8 @@ export function createProductionHostComposition(
             releasePlatformServices: services,
             automaticNumberFormattingAdopter:
               options.automaticNumberFormattingAdopter,
+            automaticResearchVisibilityAdopter:
+              options.automaticResearchVisibilityAdopter,
           })
         })()
       : options.createBrowserComposition()
@@ -105,6 +109,8 @@ export function createProductionHostComposition(
     ? createProductionNativeComposition(environment, {
         automaticNumberFormattingAdopter:
           options.automaticNumberFormattingAdopter,
+        automaticResearchVisibilityAdopter:
+          options.automaticResearchVisibilityAdopter,
       })
     : options.createNativeComposition(bridge)
   return Object.freeze({

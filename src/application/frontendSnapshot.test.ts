@@ -1427,7 +1427,7 @@ describe('frontend gameplay snapshot', () => {
           card.researchId === 'research.panel_lifetime_1',
       ),
     ).toMatchObject({
-      visible: false,
+      visible: true,
       maxed: true,
       effectKind: 'panel-lifetime-seconds',
       perLevelEffect: 1,

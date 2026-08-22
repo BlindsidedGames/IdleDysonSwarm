@@ -770,6 +770,15 @@ describe('canonical whole-game event-time model', () => {
             },
           },
         },
+        research: {
+          ...source.research,
+          levelsById: { 'research.money_multiplier': 4 },
+          progressById: { 'research.money_multiplier': 0.75 },
+          automation: {
+            ...source.research.automation,
+            enabledById: {},
+          },
+        },
         timeline: {
           ...source.timeline,
           automationTimeUntilNextEvent: 1,
@@ -816,6 +825,10 @@ describe('canonical whole-game event-time model', () => {
     const waiting = advance(createState(100, 0), 1, 0.5)
     expect(waiting.completed).toBe(true)
     expect(waiting.summary.ordinaryInfinityCount).toBe(0n)
+    expect(waiting.candidateState.state.gameState.research.levelsById)
+      .toEqual({ 'research.money_multiplier': 4 })
+    expect(waiting.candidateState.state.gameState.research.progressById)
+      .toEqual({ 'research.money_multiplier': 0.75 })
     expect(
       waiting.events.filter(({ kind }) => kind === 'production-arrival'),
     ).toHaveLength(1)

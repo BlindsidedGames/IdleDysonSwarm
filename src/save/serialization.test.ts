@@ -27,14 +27,16 @@ describe('canonical web save serialization', () => {
     expect(serializeWebSave(decoded)).toBe(encoded)
   })
 
-  test('excludes device-local number notation from portable saves', () => {
+  test('excludes device-local presentation preferences from portable saves', () => {
     const exported = serializeSharedWebSave({
       saveVersion: 12,
       numberFormatting: 2,
+      hidePurchased: true,
       bots: 42,
     })
     const decoded = deserializeWebSave(exported)
     expect(decoded).not.toHaveProperty('numberFormatting')
+    expect(decoded).not.toHaveProperty('hidePurchased')
     expect(decoded).toMatchObject({
       saveVersion: 12,
       bots: 42,

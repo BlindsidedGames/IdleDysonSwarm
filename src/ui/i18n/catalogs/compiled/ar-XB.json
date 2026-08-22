@@ -9207,6 +9207,20 @@
       "value": "‬"
     }
   ],
+  "research.completed-hidden": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "∀ʅʅ ɔnɹɹǝuʇʅʎ ɐʌɐıʅɐqʅǝ ᴚǝsǝɐɹɔɥ ıs ɔoɯdʅǝʇǝp ɐup ɥıppǝu."
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
   "research.description.ai-manager": [
     {
       "type": 0,
@@ -9825,6 +9839,20 @@
     {
       "type": 0,
       "value": "ᴚǝsǝɐɹɔɥ dnɹɔɥɐsǝ sǝʇʇıuƃs ʍǝɹǝ uoʇ ɔɥɐuƃǝp."
+    },
+    {
+      "type": 0,
+      "value": "‬"
+    }
+  ],
+  "research.settings.hide-completed": [
+    {
+      "type": 0,
+      "value": "‮"
+    },
+    {
+      "type": 0,
+      "value": "Hıpǝ ɔoɯdʅǝʇǝp ᴚǝsǝɐɹɔɥ"
     },
     {
       "type": 0,
