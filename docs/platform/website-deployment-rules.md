@@ -18,6 +18,15 @@ That website repository is also the sole production owner of
 complete browser fulfillment until the matching Pages Function and deployment
 are reviewed, tested, and released there.
 
+The Supporter Cat Gallery receipt contract was completed in website PR
+`BlindsidedGames/BlindsidedGames#5` (merge
+`26e8a169f75ea1938e08c912e9d1524666ec6dc5`). Its three supporter SKUs grant one
+device-bound `supporterCatGallery` entitlement without merging the independent
+Developer Options or Double Infinity Points grants. The implementation and
+focused receipt-contract fixtures were validated without performing a checkout
+or purchase; each later website promotion must still verify the deployed
+endpoint and its environment bindings.
+
 Pushing the game repository does not publish the website. Pushing a generated
 Web build without a matching website commit also does not complete a release.
 Keep source publication, website promotion, merge, production deployment, and

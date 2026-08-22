@@ -18,6 +18,9 @@ Portable `IDSWEB1` exports remove the legacy `numberFormatting` graph field.
 Manual/shared imports cannot write the device preference. After—and only
 after—a successful verified automatic same-device Unity migration commit, a
 device with no established preference may adopt Unity values 0, 1, or 2 once.
+Adoption reads only an explicitly present numeric field from the raw decoded
+Unity graph before schema normalization; migration-generated defaults cannot
+establish device intent.
 The candidate must carry `automatic-same-device-unity` provenance and its
 opaque native identity must match both the repository candidate ID and the
 `unity-readonly:<identity>` bridge path. Browser-retained, manual/recovery,

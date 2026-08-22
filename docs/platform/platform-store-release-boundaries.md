@@ -60,7 +60,7 @@ locally, but it must not map an imported/shared save claim into it.
    completed purchase or restore. UI must not grant features from its own
    result or from a save claim.
 
-## Browser backend ownership and open gate
+## Browser backend ownership and Supporter Gallery handoff
 
 The game repository does not own the `/api/ids/stripe` implementation.
 `docs/platform/website-deployment-rules.md` identifies
@@ -68,19 +68,21 @@ The game repository does not own the `/api/ids/stripe` implementation.
 Functions, Stripe bindings, token secret, and Pages deployment. No checkout or
 verification handler from that repository is present in this worktree.
 
-Read-only inspection of its current `main` located the implementation in
-`functions/_utils/ids-stripe.ts` and
-`functions/api/ids/stripe/{catalog,checkout,verify}.ts`. It already checks paid
-and complete Stripe sessions, expected price and device hash, then verifies
-device-bound HMAC tokens. Its token payload currently permits only
-`ids.devoptions` and `ids.doubleip`, and its ownership response omits the
-supporter field.
+Website PR `BlindsidedGames/BlindsidedGames#5`, merged as
+`26e8a169f75ea1938e08c912e9d1524666ec6dc5`, completed the shared receipt
+contract. Any of `ids.tiptier1` through `ids.tiptier3` now idempotently grants
+one signed, device-bound `supporterCatGallery` entitlement while Developer
+Options and Double Infinity Points remain independent grants. Verification
+canonicalizes one token per entitlement and returns the supporter field from a
+valid token without weakening the existing paid-session, price, device-hash,
+tamper, or mismatch checks. Repeating verification for the same paid completed
+session is intentionally idempotent: it may reissue a token, which is then
+canonicalized to one entitlement grant rather than duplicated.
 
-Browser fulfillment is therefore not end-to-end complete here. That existing
-website implementation must extend its signed receipt contract so any of
-`ids.tiptier1` through `ids.tiptier3` idempotently yields the same affirmative
-supporter ownership, while preserving its paid/session/price/device checks and
-rejecting unpaid, mismatched, tampered, and replayed session claims. Every later
-verify call must return `supporterCatGallery` from valid device-bound tokens.
-The change needs Cloudflare preview deployment with Stripe test keys/prices,
-provider fixtures for each SKU, replay/mismatch tests, and no real charge.
+The website change passed its focused Stripe fixtures, strict TypeScript check,
+and production build. All five catalog price mappings and receipt verification
+configuration were inspected. No checkout or purchase was performed, so this
+evidence must not be represented as a charged end-to-end transaction. Website
+deployment and live endpoint state remain governed by
+`website-deployment-rules.md` and must be reverified for each promoted website
+revision.

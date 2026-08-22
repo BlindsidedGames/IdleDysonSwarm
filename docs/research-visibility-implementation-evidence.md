@@ -31,7 +31,9 @@ commit, and only when native provenance identity matches the repository
 candidate and read-only Unity bridge path, a device with no established value
 may adopt a legacy boolean once. Invalid values, failed commits, browser
 retained imports, unprovenanced candidates, and identity/path mismatches do not
-write the preference.
+write the preference. Adoption captures only an explicitly present boolean
+from the raw decoded Unity graph before schema normalization, so the historical
+`hidePurchased: true` migration default can never masquerade as player intent.
 
 ## Infinity validation
 

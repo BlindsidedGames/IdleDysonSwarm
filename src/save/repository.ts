@@ -100,6 +100,11 @@ export interface AutomaticUnityResearchVisibilityAdopter {
   adoptLegacyUnityHidePurchased(value: unknown): boolean
 }
 
+interface ExplicitLegacyDevicePreferences {
+  readonly numberFormatting?: number
+  readonly hidePurchased?: boolean
+}
+
 /**
  * Platform shells supply only filesystem discovery and atomic primitives.
  * Decode, migration and validation remain shared TypeScript behavior.
@@ -211,10 +216,11 @@ export class PortableSaveRepository implements SaveRepository {
     for (const source of candidates) {
       let migration: SaveMigrationResult
       let prepared: PreparedSave
+      let devicePreferences: Readonly<ExplicitLegacyDevicePreferences>
       try {
-        const preparation = PreparedSave.prepareDecoded(
-          this.decodeLegacy(source.text),
-        )
+        const decoded = this.decodeLegacy(source.text)
+        devicePreferences = extractExplicitLegacyDevicePreferences(decoded)
+        const preparation = PreparedSave.prepareDecoded(decoded)
         migration = preparation.migration
         prepared = preparation.prepared
         if (!migration.validation.valid) {
@@ -246,7 +252,7 @@ export class PortableSaveRepository implements SaveRepository {
         await this.storage.copy(source.sourcePath, this.paths.legacyRecovery)
         await this.promoteAutomaticPurchaseEvidence(source, prepared)
         const committed = await this.commit(prepared)
-        this.adoptAutomaticDevicePreferences(source, prepared)
+        this.adoptAutomaticDevicePreferences(source, devicePreferences)
         return { status: 'migrated', source, migration, save: committed }
       } catch (error) {
         return {
@@ -278,18 +284,26 @@ export class PortableSaveRepository implements SaveRepository {
 
   private adoptAutomaticDevicePreferences(
     candidate: Readonly<LegacySaveCandidate>,
-    save: PreparedSave,
+    preferences: Readonly<ExplicitLegacyDevicePreferences>,
   ): void {
     if (!isVerifiedAutomaticSameDeviceUnityCandidate(candidate)) return
-    try {
-      const source = save.copyValidatedState()
-      this.automaticNumberFormattingAdopter
-        ?.adoptLegacyUnityNumberFormatting(source.numberFormatting)
-      this.automaticResearchVisibilityAdopter
-        ?.adoptLegacyUnityHidePurchased(source.hidePurchased)
-    } catch {
-      // An optional device-local presentation preference can never invalidate
-      // a successfully committed canonical migration.
+    if (preferences.numberFormatting !== undefined) {
+      try {
+        this.automaticNumberFormattingAdopter
+          ?.adoptLegacyUnityNumberFormatting(preferences.numberFormatting)
+      } catch {
+        // Optional presentation storage cannot invalidate save migration or
+        // prevent an independent device preference from being considered.
+      }
+    }
+    if (preferences.hidePurchased !== undefined) {
+      try {
+        this.automaticResearchVisibilityAdopter
+          ?.adoptLegacyUnityHidePurchased(preferences.hidePurchased)
+      } catch {
+        // Optional presentation storage cannot invalidate save migration or
+        // prevent an independent device preference from being considered.
+      }
     }
   }
 
@@ -427,4 +441,30 @@ export class PortableSaveRepository implements SaveRepository {
       ]
     )
   }
+}
+
+function extractExplicitLegacyDevicePreferences(
+  decoded: unknown,
+): Readonly<ExplicitLegacyDevicePreferences> {
+  if (decoded === null || typeof decoded !== 'object' || Array.isArray(decoded)) {
+    return Object.freeze({})
+  }
+  const source = decoded as Record<string, unknown>
+  const preferences: {
+    numberFormatting?: number
+    hidePurchased?: boolean
+  } = {}
+  if (
+    Object.prototype.hasOwnProperty.call(source, 'numberFormatting') &&
+    typeof source.numberFormatting === 'number'
+  ) {
+    preferences.numberFormatting = source.numberFormatting
+  }
+  if (
+    Object.prototype.hasOwnProperty.call(source, 'hidePurchased') &&
+    typeof source.hidePurchased === 'boolean'
+  ) {
+    preferences.hidePurchased = source.hidePurchased
+  }
+  return Object.freeze(preferences)
 }
