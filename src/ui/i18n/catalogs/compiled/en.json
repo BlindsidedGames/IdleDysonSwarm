@@ -7909,10 +7909,6 @@
   ],
   "store.action.purchase": [
     {
-      "type": 0,
-      "value": "Purchase "
-    },
-    {
       "type": 1,
       "value": "price"
     }
@@ -7936,10 +7932,6 @@
     }
   ],
   "store.action.support": [
-    {
-      "type": 0,
-      "value": "Support "
-    },
     {
       "type": 1,
       "value": "price"

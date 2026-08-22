@@ -3900,7 +3900,7 @@
     "description": "Title for the daily-bucket statistics horizon."
   },
   "store.action.purchase": {
-    "defaultMessage": "Purchase {price}",
+    "defaultMessage": "{price}",
     "description": "Purchases one permanent product using a store-localized price."
   },
   "store.action.purchasing": {
@@ -3916,7 +3916,7 @@
     "description": "Restore operation pending."
   },
   "store.action.support": {
-    "defaultMessage": "Support {price}",
+    "defaultMessage": "{price}",
     "description": "Purchases one repeatable supporter tier using a store-localized price."
   },
   "store.browser-introduction": {

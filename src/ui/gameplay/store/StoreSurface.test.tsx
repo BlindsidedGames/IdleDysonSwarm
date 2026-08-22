@@ -22,7 +22,7 @@ afterEach(cleanup)
 describe('StoreSurface', () => {
   test('has no serious or critical automated accessibility violations', async () => {
     const { container } = renderStore(storeAdapter())
-    await screen.findByRole('button', { name: 'Support A$1.49' })
+    await screen.findByRole('button', { name: 'A$1.49' })
     const results = await axe.run(container, {
       rules: {
         'color-contrast': { enabled: false },
@@ -41,13 +41,13 @@ describe('StoreSurface', () => {
     const store = storeAdapter()
     renderStore(store)
 
-    expect(await screen.findByRole('button', { name: 'Support A$1.49' }))
+    expect(await screen.findByRole('button', { name: 'A$1.49' }))
       .toBeInTheDocument()
-    expect(screen.getByRole('button', { name: 'Purchase A$8.99' }))
+    expect(screen.getByRole('button', { name: 'A$8.99' }))
       .toBeInTheDocument()
     expect(screen.queryByText(/USD|\$9\.99/)).not.toBeInTheDocument()
 
-    const tip = screen.getByRole('button', { name: 'Support A$1.49' })
+    const tip = screen.getByRole('button', { name: 'A$1.49' })
     await user.click(tip)
     await waitFor(() => expect(store.purchase).toHaveBeenCalledTimes(1))
     await user.click(tip)
@@ -98,7 +98,7 @@ describe('StoreSurface', () => {
   test('keeps the gallery locked until supporter ownership is verified', async () => {
     renderStore(storeAdapter())
 
-    await screen.findByRole('button', { name: 'Support A$1.49' })
+    await screen.findByRole('button', { name: 'A$1.49' })
     expect(screen.queryByRole('link', { name: /Supporter Cat Gallery/u }))
       .not.toBeInTheDocument()
   })
@@ -120,9 +120,10 @@ describe('StoreSurface', () => {
     expect(await screen.findByRole('link', {
       name: 'Open Supporter Cat Gallery',
     })).toHaveAttribute('target', '_blank')
-    expect(screen.getAllByRole('button', { name: /^Support /u }))
-      .toHaveLength(3)
-    expect(screen.getByRole('button', { name: 'Purchase A$8.99' }))
+    expect(screen.getByRole('button', { name: 'A$1.49' })).toBeEnabled()
+    expect(screen.getByRole('button', { name: 'A$3.99' })).toBeEnabled()
+    expect(screen.getByRole('button', { name: 'A$7.99' })).toBeEnabled()
+    expect(screen.getByRole('button', { name: 'A$8.99' }))
       .toBeEnabled()
   })
 
@@ -148,7 +149,7 @@ describe('StoreSurface', () => {
     })
     renderStore(store)
 
-    await user.click(await screen.findByRole('button', { name: 'Support A$1.49' }))
+    await user.click(await screen.findByRole('button', { name: 'A$1.49' }))
 
     expect(await screen.findByRole('alert')).toHaveTextContent(
       'Purchase cancelled.',

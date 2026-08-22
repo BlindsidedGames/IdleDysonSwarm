@@ -9,19 +9,13 @@ import { StorefrontController } from './storefront'
 afterEach(() => vi.unstubAllGlobals())
 
 describe('development Store commerce', () => {
-  test('exposes all five real products with understandable deterministic outcomes', async () => {
+  test('exposes all five real products with a compact zero-cost test label', async () => {
     const commerce = new DevelopmentStoreCommerce()
 
     await expect(commerce.products()).resolves.toEqual(
       CANONICAL_STORE_PRODUCTS.map((product) => ({
         productId: product.id,
-        localizedPrice: {
-          [STORE_PRODUCT_IDS.tipTier1]: 'Test: succeeds',
-          [STORE_PRODUCT_IDS.tipTier2]: 'Test: cancels',
-          [STORE_PRODUCT_IDS.tipTier3]: 'Test: fails',
-          [STORE_PRODUCT_IDS.developerOptions]: 'Test: succeeds',
-          [STORE_PRODUCT_IDS.doubleInfinityPoints]: 'Test: succeeds',
-        }[product.id],
+        localizedPrice: 'Test $0',
         available: true,
       })),
     )

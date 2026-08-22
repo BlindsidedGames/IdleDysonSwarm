@@ -33,13 +33,7 @@ const DEFAULT_OUTCOMES: Readonly<
   [STORE_PRODUCT_IDS.doubleInfinityPoints]: 'success',
 }
 
-const OUTCOME_LABELS: Readonly<
-  Record<DevelopmentPurchaseOutcome, string>
-> = {
-  success: 'Test: succeeds',
-  cancelled: 'Test: cancels',
-  failed: 'Test: fails',
-}
+const DEVELOPMENT_PRICE_LABEL = 'Test $0'
 
 /**
  * In-memory commerce used only by the Vite development composition. It owns no
@@ -72,7 +66,7 @@ implements StoreAdapter, EntitlementAuthority {
     return Object.freeze(
       CANONICAL_STORE_PRODUCTS.map((product) => Object.freeze({
         productId: product.id,
-        localizedPrice: OUTCOME_LABELS[this.outcomes[product.id]],
+        localizedPrice: DEVELOPMENT_PRICE_LABEL,
         available: true,
       })),
     )

@@ -107,11 +107,10 @@
 
 .store-product-card {
   display: grid;
-  min-block-size: 7rem;
-  grid-template-columns: minmax(0, 1fr) minmax(8.5rem, auto);
-  align-items: stretch;
-  gap: 0.6rem;
-  padding: 0.6rem;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.45rem;
   border: 1px solid var(--theme-divider);
   border-radius: 0.3rem;
   background: var(--theme-panel);
@@ -148,6 +147,14 @@
   outline-offset: 2px;
 }
 
+.store-surface__purchase-action {
+  inline-size: 6.5rem;
+  min-block-size: 2.75rem;
+  justify-self: end;
+  padding: 0.45rem 0.65rem;
+  white-space: nowrap;
+}
+
 .store-restore {
   display: grid;
   grid-template-columns: minmax(0, 1fr) minmax(10rem, auto);
@@ -162,7 +169,6 @@
 }
 
 @media (max-width: 560px) {
-  .store-product-card,
   .store-gallery-panel,
   .store-restore {
     grid-template-columns: 1fr;
