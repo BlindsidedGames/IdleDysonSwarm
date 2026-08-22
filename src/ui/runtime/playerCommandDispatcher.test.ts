@@ -109,6 +109,83 @@ describe('revisioned player command dispatcher', () => {
     expect(envelopes[0]?.expectedStateRevision).toBe(10)
   })
 
+  test('rejects a second stored-time request before the authority queue and releases admission after settlement', async () => {
+    const firstGate = deferred<void>()
+    let dispatches = 0
+    const dispatcher = new RevisionedPlayerCommandDispatcher({
+      latestSnapshot: () => readySnapshot(4, 9),
+      dispatch: async () => {
+        dispatches += 1
+        if (dispatches === 1) await firstGate.promise
+        return acceptedStoredTime(9)
+      },
+      serialize: createSerializer(),
+      publishSnapshot: () => undefined,
+      isCurrent: () => true,
+      cancelRequested: () => false,
+    })
+    const request = {
+      kind: 'time.request-stored-time-spend',
+      requestedSeconds: 2,
+    } as const
+
+    const first = dispatcher.dispatch(request)
+    await Promise.resolve()
+    expect(dispatches).toBe(1)
+
+    // A remounted surface reaches this same runtime admission boundary. Its
+    // fresh component state must not allow it to queue another spend.
+    await expect(dispatcher.dispatch(request)).resolves.toMatchObject({
+      status: 'rejected',
+      kind: 'stored-time',
+      code: 'CANONICAL-STORED-TIME-JOB-ACTIVE',
+      stateRevision: 9,
+      activationRevision: { session: 4, state: 9 },
+    })
+    expect(dispatches).toBe(1)
+
+    firstGate.resolve()
+    await expect(first).resolves.toMatchObject({
+      status: 'accepted',
+      kind: 'stored-time',
+    })
+    await expect(dispatcher.dispatch(request)).resolves.toMatchObject({
+      status: 'accepted',
+      kind: 'stored-time',
+    })
+    expect(dispatches).toBe(2)
+  })
+
+  test('releases stored-time admission when authority dispatch throws', async () => {
+    let dispatches = 0
+    const dispatcher = new RevisionedPlayerCommandDispatcher({
+      latestSnapshot: () => readySnapshot(4, 9),
+      dispatch: async () => {
+        dispatches += 1
+        if (dispatches === 1) throw new Error('scripted stored-time failure')
+        return acceptedStoredTime(9)
+      },
+      serialize: createSerializer(),
+      publishSnapshot: () => undefined,
+      isCurrent: () => true,
+      cancelRequested: () => false,
+    })
+    const request = {
+      kind: 'time.request-stored-time-spend',
+      requestedSeconds: 2,
+    } as const
+
+    await expect(dispatcher.dispatch(request)).resolves.toMatchObject({
+      status: 'failed',
+      code: 'RUNTIME-PLAYER-DISPATCH-FAILED',
+    })
+    await expect(dispatcher.dispatch(request)).resolves.toMatchObject({
+      status: 'accepted',
+      kind: 'stored-time',
+    })
+    expect(dispatches).toBe(2)
+  })
+
   test('rejects old-session intent locally when a queued replacement wins first', async () => {
     let sessionRevision = 4
     let stateRevision = 9
@@ -295,6 +372,26 @@ function acceptedTransition(
       accepted: true,
       changed: true,
       revision,
+    },
+  }
+}
+
+function acceptedStoredTime(
+  revision: number,
+): CanonicalCoordinatedPlayerResult {
+  return {
+    kind: 'stored-time',
+    result: {
+      status: 'completed',
+      admittedSeconds: 2,
+      consumedSeconds: 2,
+      remainingSeconds: 0,
+      durableRevision: revision,
+      transition: {
+        accepted: true,
+        changed: true,
+        revision,
+      },
     },
   }
 }
