@@ -546,7 +546,9 @@ The application shell owns one active-time driver:
   Scientific, and Engineering choices. Portable saves exclude it; manual
   imports retain the receiving device's choice. Automatic same-device Unity
   migration may adopt a valid legacy choice once when no device preference is
-  established. See [implementation evidence](../number-notation-implementation-evidence.md).
+  established, but only when the native provenance identity matches both the
+  repository candidate identity and its read-only Unity bridge path. See
+  [implementation evidence](../number-notation-implementation-evidence.md).
 - Routine digit changes use the shared tabular-digit presentation without
   fixed-width containers. Decimal separators, signs, units, and suffixes keep
   natural spacing, and genuine magnitude/suffix transitions may change width.

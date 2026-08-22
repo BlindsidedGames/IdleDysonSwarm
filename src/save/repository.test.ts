@@ -123,9 +123,20 @@ describe('portable transactional save repository', () => {
 
   test('adopts legacy notation only after a successful automatic migration commit', async () => {
     const storage = new MemoryStorage()
-    storage.files.set('/legacy', 'IDB1:test')
+    storage.files.set('unity-readonly:canonical-unity', 'IDB1:test')
     storage.candidates = [
-      { id: 'canonical-unity', sourcePath: '/legacy', text: 'IDB1:test' },
+      {
+        id: 'canonical-unity',
+        sourcePath: 'unity-readonly:canonical-unity',
+        text: 'IDB1:test',
+        provenance: {
+          kind: 'automatic-same-device-unity',
+          platform: 'android',
+          sourceClass: 'unity-persistent-data-save',
+          opaqueSourceIdentifier: 'canonical-unity',
+          pathClass: 'capacitor-external-files',
+        },
+      },
     ]
     const adopter = {
       adoptLegacyUnityNumberFormatting: vi.fn(() => true),
@@ -152,11 +163,89 @@ describe('portable transactional save repository', () => {
     expect(adopter.adoptLegacyUnityNumberFormatting).toHaveBeenCalledOnce()
   })
 
+  test.each([
+    {
+      label: 'unprovenanced recovery candidate',
+      id: 'legacy',
+      sourcePath: '/legacy',
+      provenance: undefined,
+    },
+    {
+      label: 'browser-retained import',
+      id: 'legacy',
+      sourcePath: '/legacy',
+      provenance: { kind: 'browser-retained-import' as const },
+    },
+    {
+      label: 'mismatched native bridge path',
+      id: 'canonical-unity',
+      sourcePath: 'unity-readonly:different-source',
+      provenance: {
+        kind: 'automatic-same-device-unity' as const,
+        platform: 'android' as const,
+        sourceClass: 'unity-persistent-data-save' as const,
+        opaqueSourceIdentifier: 'canonical-unity',
+        pathClass: 'capacitor-external-files' as const,
+      },
+    },
+    {
+      label: 'mismatched candidate identity',
+      id: 'different-source',
+      sourcePath: 'unity-readonly:canonical-unity',
+      provenance: {
+        kind: 'automatic-same-device-unity' as const,
+        platform: 'android' as const,
+        sourceClass: 'unity-persistent-data-save' as const,
+        opaqueSourceIdentifier: 'canonical-unity',
+        pathClass: 'capacitor-external-files' as const,
+      },
+    },
+  ])('does not adopt notation from $label', async (candidate) => {
+    const storage = new MemoryStorage()
+    storage.files.set(candidate.sourcePath, 'IDB1:test')
+    storage.candidates = [{
+      id: candidate.id,
+      sourcePath: candidate.sourcePath,
+      text: 'IDB1:test',
+      provenance: candidate.provenance,
+    }]
+    const adopter = {
+      adoptLegacyUnityNumberFormatting: vi.fn(() => true),
+    }
+    const repository = new PortableSaveRepository(
+      storage,
+      {
+        current: '/current',
+        temporary: '/current.tmp',
+        legacyRecovery: '/recovery/original-idb1.txt',
+      },
+      () => ({ saveVersion: 12, numberFormatting: 2 }),
+      { allowCanonicalPlayerWrites: false },
+      undefined,
+      adopter,
+    )
+
+    await expect(repository.migrateLegacyOnFirstLaunch()).resolves
+      .toMatchObject({ status: 'migrated' })
+    expect(adopter.adoptLegacyUnityNumberFormatting).not.toHaveBeenCalled()
+  })
+
   test('does not adopt legacy notation when automatic migration fails to commit', async () => {
     const storage = new MemoryStorage()
-    storage.files.set('/legacy', 'IDB1:test')
+    storage.files.set('unity-readonly:canonical-unity', 'IDB1:test')
     storage.candidates = [
-      { id: 'canonical-unity', sourcePath: '/legacy', text: 'IDB1:test' },
+      {
+        id: 'canonical-unity',
+        sourcePath: 'unity-readonly:canonical-unity',
+        text: 'IDB1:test',
+        provenance: {
+          kind: 'automatic-same-device-unity',
+          platform: 'android',
+          sourceClass: 'unity-persistent-data-save',
+          opaqueSourceIdentifier: 'canonical-unity',
+          pathClass: 'capacitor-external-files',
+        },
+      },
     ]
     storage.failAt = 'replace'
     const adopter = {
@@ -182,9 +271,20 @@ describe('portable transactional save repository', () => {
 
   test('keeps a committed migration when optional notation adoption throws', async () => {
     const storage = new MemoryStorage()
-    storage.files.set('/legacy', 'IDB1:test')
+    storage.files.set('unity-readonly:canonical-unity', 'IDB1:test')
     storage.candidates = [
-      { id: 'canonical-unity', sourcePath: '/legacy', text: 'IDB1:test' },
+      {
+        id: 'canonical-unity',
+        sourcePath: 'unity-readonly:canonical-unity',
+        text: 'IDB1:test',
+        provenance: {
+          kind: 'automatic-same-device-unity',
+          platform: 'android',
+          sourceClass: 'unity-persistent-data-save',
+          opaqueSourceIdentifier: 'canonical-unity',
+          pathClass: 'capacitor-external-files',
+        },
+      },
     ]
     const repository = new PortableSaveRepository(
       storage,

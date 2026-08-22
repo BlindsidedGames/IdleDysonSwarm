@@ -8,7 +8,10 @@ import type {
   AutomaticUnityPurchaseEvidencePromoter,
   LegacyCandidateProvenance,
 } from './automaticPurchaseEvidence'
-import { sha256Utf8 } from './automaticPurchaseEvidence'
+import {
+  isVerifiedAutomaticSameDeviceUnityCandidate,
+  sha256Utf8,
+} from './automaticPurchaseEvidence'
 
 export interface LegacySaveCandidate {
   readonly id: string
@@ -233,7 +236,7 @@ export class PortableSaveRepository implements SaveRepository {
         await this.storage.copy(source.sourcePath, this.paths.legacyRecovery)
         await this.promoteAutomaticPurchaseEvidence(source, prepared)
         const committed = await this.commit(prepared)
-        this.adoptAutomaticNumberFormatting(prepared)
+        this.adoptAutomaticNumberFormatting(source, prepared)
         return { status: 'migrated', source, migration, save: committed }
       } catch (error) {
         return {
@@ -263,7 +266,11 @@ export class PortableSaveRepository implements SaveRepository {
       : { status: 'no-legacy-save' }
   }
 
-  private adoptAutomaticNumberFormatting(save: PreparedSave): void {
+  private adoptAutomaticNumberFormatting(
+    candidate: Readonly<LegacySaveCandidate>,
+    save: PreparedSave,
+  ): void {
+    if (!isVerifiedAutomaticSameDeviceUnityCandidate(candidate)) return
     try {
       this.automaticNumberFormattingAdopter
         ?.adoptLegacyUnityNumberFormatting(
@@ -281,13 +288,8 @@ export class PortableSaveRepository implements SaveRepository {
   ): Promise<void> {
     const promoter = this.automaticPurchaseEvidencePromoter
     if (promoter === undefined) return
+    if (!isVerifiedAutomaticSameDeviceUnityCandidate(candidate)) return
     const provenance = candidate.provenance
-    if (
-      provenance?.kind !== 'automatic-same-device-unity' ||
-      candidate.sourcePath !==
-        `unity-readonly:${provenance.opaqueSourceIdentifier}` ||
-      candidate.id !== provenance.opaqueSourceIdentifier
-    ) return
     const source = prepared.copyValidatedState()
     if (source.doubleIp !== true) return
     if (

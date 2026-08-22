@@ -16,10 +16,15 @@ does not churn it.
 
 Portable `IDSWEB1` exports remove the legacy `numberFormatting` graph field.
 Manual/shared imports cannot write the device preference. After—and only
-after—a successful automatic same-device Unity migration commit, a device with
-no established preference may adopt Unity values 0, 1, or 2 once. Existing
-device state wins, invalid legacy values are ignored, and failed migrations do
-not write presentation state.
+after—a successful verified automatic same-device Unity migration commit, a
+device with no established preference may adopt Unity values 0, 1, or 2 once.
+The candidate must carry `automatic-same-device-unity` provenance and its
+opaque native identity must match both the repository candidate ID and the
+`unity-readonly:<identity>` bridge path. Browser-retained, manual/recovery,
+unprovenanced, or identity/path-mismatched candidates cannot adopt notation.
+Existing device state wins, invalid legacy values are ignored, and failed
+migrations do not write presentation state. Notation adoption and purchase
+evidence promotion share the same trust predicate.
 
 ## Formatting contract
 
@@ -48,14 +53,42 @@ does not set a width or minimum width. Suffix transitions such as `999` to
 `1.00K` therefore remain free to change width.
 
 Local HarfBuzz shaping showed the bundled Lexend Regular, SemiBold, and Bold
-files do not substitute tabular figures: for example Regular shaped `1` at 500
-font units and `8` at 579 even with `tnum`. The narrowly scoped
-`IDS Tabular Digits` face therefore selects Helvetica Neue on Apple/Chromium
-and Roboto on Android WebView through `unicode-range: U+0030-0039`. Only digits
-use that face. Decimal separators, signs, suffixes, units, and all prose fall
-through to Lexend. Local Helvetica Neue shaped every digit at 556 units while
-the decimal remained 278 units, so `111.11` and `888.88` have equal width
-without making punctuation monospaced.
+files do not substitute tabular figures: Regular digit advances ranged from
+500 to 620 font units even with `tnum`. Three deterministic digit-only derived
+faces now retain the corresponding Lexend outlines and weights while centring
+each outline within the widest original digit advance for that weight. Their
+Regular/SemiBold/Bold digit advances are 620/653/675 units respectively.
+
+`unicode-range: U+0030-0039` limits those faces to digits. Decimal separators,
+signs, suffixes, units, and all prose therefore continue through the original
+proportional Lexend faces. HarfBuzz shapes `111.11` and `888.88` with identical
+digit advances while the decimal point remains a separate proportional Lexend
+glyph in the browser. The derived files bundle the same result on Web,
+Android WebView, iOS WebKit, Electron, and Windows rather than depending on
+platform-installed Helvetica Neue, Roboto, or Noto Sans.
+
+### Deterministic font reproduction
+
+The generator is `scripts/generate_lexend_tabular_digits.py`. It requires
+FontTools 4.59.1, verifies SHA-256 hashes for all three source faces, preserves
+hinting and exact glyph-outline bytes, removes every non-digit codepoint, and
+fails if an outline changes. It uses the source font timestamp and deterministic
+table serialization. Reproduce and byte-check the committed assets with:
+
+```sh
+python3 -m pip install --target /tmp/ids-font-tools fonttools==4.59.1
+PYTHONPATH=/tmp/ids-font-tools python3 scripts/generate_lexend_tabular_digits.py
+PYTHONPATH=/tmp/ids-font-tools python3 scripts/generate_lexend_tabular_digits.py --check
+```
+
+The derived SHA-256 values are:
+
+- Regular: `8a8d67e100c54bc1f338b589823e1b1b07056c75eb7eb05748d09aa2d47192ce`
+- SemiBold: `64fcc9c560dc84b4e5e5d41a374ebe32ca77cb08985fb5d61cc3acb29f053ee8`
+- Bold: `11df5a2d0782b60cded1970319729874fc04e5f6152482f38900796590f6ea29`
+
+The source and derivatives remain under the included Lexend SIL Open Font
+License 1.1 (`src/ui/assets/OFL-Lexend.txt`).
 
 ## Player-facing surface audit
 
@@ -93,7 +126,8 @@ inside the shared formatter.
 Automated coverage includes all three notation modes, zero, negatives, exact
 1000 and suffix boundaries, values beyond the suffix table, huge positive and
 negative `bigint`, non-finite fallbacks, W/J semantics, storage corruption and
-version fallback, reload, automatic migration success/failure, portable-export
+version fallback, reload, trusted automatic migration success/failure,
+browser-retained and identity/path mismatch rejection, portable-export
 isolation, Settings accessible naming and keyboard selection, full-precision
 resource text, shared style/no-fixed-width assertions, and the existing test
 coverage for every top-level route and shared numeric component.
@@ -105,12 +139,16 @@ syncs, and `git diff --check`. A Chromium mobile-width pass at 390 by 844 CSS
 pixels found no horizontal overflow in the resource header, facility cards, or
 the eight visible research cards. The Settings select changed existing labels
 immediately and retained its selection after reload at the isolated test
-origin.
+origin. A follow-up pass against the running game at 390 by 844 compared the
+bundled derived faces in Standard, Scientific, and Engineering: the three-item
+resource header, five dense facility cards, action columns, footer facts, and
+bottom navigation remained within the viewport in every mode. The original
+Standard selection was restored after the comparison.
 
 Manual release review still required on physical iOS and Android devices:
 
-- confirm the installed native WebViews resolve the expected digit-only local
-  fallback and preserve equal-width digits at every shipped font weight;
+- confirm the installed native WebViews load the bundled derived faces and
+  preserve equal-width digits at every shipped font weight;
 - inspect mobile resource headers and dense facility/research rows in all three
   modes, including legitimate suffix transitions and large exponents;
 - exercise the native select with touch and external/switch keyboard input.

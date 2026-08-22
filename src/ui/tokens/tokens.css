@@ -7,19 +7,34 @@
 }
 
 /*
- * Lexend's bundled static faces have proportional figures and no effective
- * OpenType tnum substitution. This local, digit-only face uses the native
- * platform UI font's tabular figures while every non-digit falls through to
- * Lexend. Helvetica Neue covers Apple/Chromium; Roboto covers Android WebView.
+ * Deterministic digit-only derivatives of the bundled OFL Lexend faces. Their
+ * 0-9 outlines and weights are unchanged; only horizontal metrics are made
+ * tabular. Every non-digit falls through to the proportional Lexend UI face.
  */
 @font-face {
-  font-family: "IDS Tabular Digits";
-  src:
-    local("Helvetica Neue"),
-    local("Roboto"),
-    local("Noto Sans");
+  font-family: "IDS Lexend Tabular Digits";
+  src: url("../assets/IDS-LexendTabularDigits-Regular.ttf?no-inline") format("truetype");
   font-style: normal;
-  font-weight: 100 900;
+  font-weight: 400;
+  font-display: swap;
+  unicode-range: U+0030-0039;
+}
+
+@font-face {
+  font-family: "IDS Lexend Tabular Digits";
+  src: url("../assets/IDS-LexendTabularDigits-SemiBold.ttf?no-inline") format("truetype");
+  font-style: normal;
+  font-weight: 600;
+  font-display: swap;
+  unicode-range: U+0030-0039;
+}
+
+@font-face {
+  font-family: "IDS Lexend Tabular Digits";
+  src: url("../assets/IDS-LexendTabularDigits-Bold.ttf?no-inline") format("truetype");
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
   unicode-range: U+0030-0039;
 }
 
@@ -74,7 +89,7 @@
     "Noto Sans Devanagari", "Nirmala UI", sans-serif;
   --font-family-body: var(--font-family-latin);
   --font-family-numeric:
-    "IDS Tabular Digits", var(--font-family-body);
+    "IDS Lexend Tabular Digits", var(--font-family-body);
   --game-text-scale: 1;
   --font-size-xs: 0.75rem;
   --font-size-sm: 0.875rem;

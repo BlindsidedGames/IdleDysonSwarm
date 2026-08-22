@@ -36,6 +36,28 @@ export type LegacyCandidateProvenance =
   | AutomaticSameDeviceUnityCandidateProvenance
   | BrowserRetainedImportCandidateProvenance
 
+export interface LegacyCandidateTrustInput {
+  readonly id: string
+  readonly sourcePath: string
+  readonly provenance?: Readonly<LegacyCandidateProvenance>
+}
+
+/**
+ * A provenance label is not sufficient by itself. The opaque native identity,
+ * repository candidate identity, and read-only bridge path must all agree.
+ */
+export function isVerifiedAutomaticSameDeviceUnityCandidate(
+  candidate: Readonly<LegacyCandidateTrustInput>,
+): candidate is Readonly<LegacyCandidateTrustInput> & {
+  readonly provenance: Readonly<AutomaticSameDeviceUnityCandidateProvenance>
+} {
+  const provenance = candidate.provenance
+  return provenance?.kind === 'automatic-same-device-unity' &&
+    candidate.id === provenance.opaqueSourceIdentifier &&
+    candidate.sourcePath ===
+      `unity-readonly:${provenance.opaqueSourceIdentifier}`
+}
+
 export interface AutomaticUnityPurchaseEvidence
   extends AutomaticSameDeviceUnityCandidateProvenance {
   readonly permanentDoubleInfinityPoints: boolean
