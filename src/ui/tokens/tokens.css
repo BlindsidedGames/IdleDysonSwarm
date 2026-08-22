@@ -13,7 +13,7 @@
  */
 @font-face {
   font-family: "IDS Lexend Tabular Digits";
-  src: url("../assets/IDS-LexendTabularDigits-Regular.ttf?no-inline") format("truetype");
+  src: url("../assets/IDS-LexendTabularDigits-Regular.ttf") format("truetype");
   font-style: normal;
   font-weight: 400;
   font-display: swap;
@@ -22,7 +22,7 @@
 
 @font-face {
   font-family: "IDS Lexend Tabular Digits";
-  src: url("../assets/IDS-LexendTabularDigits-SemiBold.ttf?no-inline") format("truetype");
+  src: url("../assets/IDS-LexendTabularDigits-SemiBold.ttf") format("truetype");
   font-style: normal;
   font-weight: 600;
   font-display: swap;
@@ -31,7 +31,7 @@
 
 @font-face {
   font-family: "IDS Lexend Tabular Digits";
-  src: url("../assets/IDS-LexendTabularDigits-Bold.ttf?no-inline") format("truetype");
+  src: url("../assets/IDS-LexendTabularDigits-Bold.ttf") format("truetype");
   font-style: normal;
   font-weight: 700;
   font-display: swap;

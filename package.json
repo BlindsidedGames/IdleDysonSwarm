@@ -38,6 +38,7 @@
     "report:performance:soak": "npm run build && tsx scripts/performance/runSoakReport.ts",
     "report:performance:soak:smoke": "npm run build && tsx scripts/performance/runSoakReport.ts --smoke",
     "verify:web-accessibility:browser": "npm run build:performance && tsx scripts/performance/runWebAccessibilityAcceptance.ts",
+    "verify:number-typography:browser": "tsx scripts/verify-tabular-number-rendering.ts",
     "pwa:icons": "powershell -NoProfile -ExecutionPolicy Bypass -File scripts/generate-pwa-icons.ps1",
     "verify:pwa:production": "tsx scripts/verify-pwa-production.ts",
     "verify:pwa:candidate": "tsx scripts/verify-pwa-production.ts --output=output/performance/pwa-production-candidate.json",

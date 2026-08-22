@@ -90,6 +90,25 @@ The derived SHA-256 values are:
 The source and derivatives remain under the included Lexend SIL Open Font
 License 1.1 (`src/ui/assets/OFL-Lexend.txt`).
 
+### Live browser loading correction
+
+The first derived-face integration used a `?no-inline` CSS URL suffix. Although
+that emitted font files in the production build, Vite did not rewrite those
+URLs while serving the game at the development `/play/` base path. Chromium
+requested `/assets/IDS-LexendTabularDigits-*.ttf`, received 404 responses, and
+silently painted every glyph with proportional Lexend. A computed family stack
+and `document.fonts.check()` alone did not expose that fallback.
+
+The CSS now uses ordinary relative asset URLs so Vite rewrites development
+requests beneath `/play/src/ui/assets/`. The production `assetsInlineLimit`
+callback independently keeps all three tiny derived faces as emitted files.
+`npm run verify:number-typography:browser` starts an isolated development
+server and Chromium at 390 by 844 CSS pixels, inherits the actual resource
+header font stack, and compares real DOM bounding boxes for different
+equal-length digit strings at weights 400, 600, and 700. It also rejects font
+face load errors. Production packaging coverage asserts that exactly three
+derived TTF assets are emitted.
+
 ## Player-facing surface audit
 
 The selected shared formatter is used by the reusable resource header and
@@ -130,9 +149,22 @@ version fallback, reload, trusted automatic migration success/failure,
 browser-retained and identity/path mismatch rejection, portable-export
 isolation, Settings accessible naming and keyboard selection, full-precision
 resource text, shared style/no-fixed-width assertions, and the existing test
-coverage for every top-level route and shared numeric component.
+coverage for every top-level route and shared numeric component. The
+browser-level typography regression additionally covers `111.11` versus
+`888.88`, `853T` versus `854T`, and `$90.0T` versus `$90.1T` at every bundled
+weight; it intentionally does not compare suffix transitions.
 
-The implementation checkpoint passed 188 Vitest files / 1,798 tests, ESLint,
+Before the live loading correction, the 5199 development build measured
+`111`/`888` at 65.046875/71.046875 px, `853T`/`854T` at
+95.203125/98.28125 px, and `$90.0T`/`$90.1T` at
+135.328125/130.890625 px. After the correction, controlled DOM spans
+inheriting the actual live resource-header style measure `111` and `888` at
+78.375 px, `853T` and `854T` at 103.5625 px, and `$90.0T` and `$90.1T` at
+138.6875 px. Chromium painted-font inspection attributes digit glyphs to
+`IDSLexendTabularDigits-SemiBold` while suffixes and punctuation remain on
+proportional Lexend, with no font-request 404s.
+
+The implementation checkpoint now passes 188 Vitest files / 1,805 tests, ESLint,
 the TypeScript project build, localization catalog verification, production
 Web and native Vite builds, Electron syntax checks, Android and iOS Capacitor
 syncs, and `git diff --check`. A Chromium mobile-width pass at 390 by 844 CSS

@@ -71,6 +71,58 @@ export interface ProductionPreview {
   stop(): Promise<void>
 }
 
+export async function startDevelopmentServer(
+  webRoot: string,
+  port: number,
+): Promise<ProductionPreview> {
+  const url = `http://127.0.0.1:${port}/play/`
+  if (await isReachable(url)) {
+    throw new Error(
+      `Development server port ${port} is already serving another process.`,
+    )
+  }
+  const viteBin = resolve(
+    webRoot,
+    'node_modules',
+    'vite',
+    'bin',
+    'vite.js',
+  )
+  const child = spawn(
+    process.execPath,
+    [viteBin, '--host', '127.0.0.1', '--port', String(port), '--strictPort'],
+    {
+      cwd: webRoot,
+      stdio: ['ignore', 'pipe', 'pipe'],
+      windowsHide: true,
+    },
+  )
+  const output: string[] = []
+  child.stdout?.on('data', (chunk) => output.push(String(chunk)))
+  child.stderr?.on('data', (chunk) => output.push(String(chunk)))
+  try {
+    await waitUntil(async () => {
+      if (child.exitCode !== null) {
+        throw new Error(
+          `Development server exited early.\n${output.join('')}`,
+        )
+      }
+      return isReachable(url)
+    }, 15_000)
+  } catch (error) {
+    stopChild(child)
+    const message = error instanceof Error ? error.message : String(error)
+    throw new Error(`${message}\n${output.join('')}`)
+  }
+  return {
+    url,
+    async stop() {
+      stopChild(child)
+      await waitForExit(child)
+    },
+  }
+}
+
 export interface ChromiumPage {
   readonly cdp: CdpSession
   readonly environment: BrowserMeasurementEnvironment

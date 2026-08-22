@@ -74,13 +74,13 @@ describe('presentation tokens', () => {
     expect(tokensCss).toContain('font-family: "IDS Lexend Tabular Digits"')
     expect(tokensCss.match(/unicode-range: U\+0030-0039/g)).toHaveLength(3)
     expect(tokensCss).toContain(
-      'url("../assets/IDS-LexendTabularDigits-Regular.ttf?no-inline")',
+      'url("../assets/IDS-LexendTabularDigits-Regular.ttf")',
     )
     expect(tokensCss).toContain(
-      'url("../assets/IDS-LexendTabularDigits-SemiBold.ttf?no-inline")',
+      'url("../assets/IDS-LexendTabularDigits-SemiBold.ttf")',
     )
     expect(tokensCss).toContain(
-      'url("../assets/IDS-LexendTabularDigits-Bold.ttf?no-inline")',
+      'url("../assets/IDS-LexendTabularDigits-Bold.ttf")',
     )
     expect(tokensCss).not.toMatch(/local\("(?:Helvetica Neue|Roboto|Noto Sans)"\)/)
     expect(indexCss).toMatch(
