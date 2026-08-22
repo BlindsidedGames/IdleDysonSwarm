@@ -1151,7 +1151,7 @@ describe('ReadyDysonSlice', () => {
     const product = heading.closest('article')
     expect(product).not.toBeNull()
     const purchase = within(product as HTMLElement).getByRole('button', {
-      name: 'Purchase Test: succeeds',
+      name: 'Test $0',
     })
     expect(purchase).toBeEnabled()
     expect(
@@ -2613,6 +2613,7 @@ function platformServices(
   const emptyOwnership: HostEntitlementOwnership = {
     doubleInfinityPoints: false,
     developerOptions: false,
+    supporterCatGallery: false,
   }
   return {
     hostKind,

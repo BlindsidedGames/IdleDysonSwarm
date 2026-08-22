@@ -30,7 +30,6 @@ export const debugSurfaceMessages = defineMessages({
   recalculateSkillPoints: { id: 'debug.recalculate-skill-points', defaultMessage: 'Recalculate Skill Points', description: 'Developer action that recalculates earned Skill Points.' },
   resetSecretProgress: { id: 'debug.reset-secret-progress', defaultMessage: 'Reset Secret Progress', description: 'Developer action that resets Avotation secret progress.' },
   resetSecretProgressSuccess: { id: 'debug.reset-secret-progress-success', defaultMessage: 'Secret progress reset.', description: 'Confirmation after resetting Avotation secret progress.' },
-  debugCats: { id: 'debug.cats', defaultMessage: 'Debug Cats', description: 'Developer action that logs diagnostic cat data.' },
   disable: { id: 'debug.disable', defaultMessage: 'Disable Developer Options', description: 'Action that disables developer tools.' },
   disabledSuccess: { id: 'debug.disabled-success', defaultMessage: 'Developer Options disabled. Your entitlement was retained.', description: 'Confirmation after disabling developer tools.' },
   actionSuccess: { id: 'debug.action-success', defaultMessage: 'Development change saved.', description: 'Generic confirmation after a developer action succeeds.' },

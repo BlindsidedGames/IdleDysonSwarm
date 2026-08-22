@@ -333,6 +333,10 @@ export class SteamInventoryStore {
             return failedPurchase(productId, 'purchase-failed')
           }
           const state = await this.currentCacheState(ownership)
+          const supporterOwnership = freezeOwnership({
+            ...ownership,
+            supporterCatGallery: true,
+          })
           const pending = freezePendingConsumptions([
             ...state.pendingConsumptions,
             {
@@ -341,14 +345,17 @@ export class SteamInventoryStore {
               quantity: 1,
             },
           ])
-          await this.publishVerifiedState({ ownership, pendingConsumptions: pending })
+          await this.publishVerifiedState({
+            ownership: supporterOwnership,
+            pendingConsumptions: pending,
+          }, true)
           const consumed = await this.consumePendingItem(
             pending.find((item) => item.instanceId === delivered.instanceId),
             after,
           )
           if (consumed) {
             await this.publishVerifiedState({
-              ownership,
+              ownership: supporterOwnership,
               pendingConsumptions: pending.filter(
                 (item) => item.instanceId !== delivered.instanceId,
               ),
@@ -426,8 +433,8 @@ export class SteamInventoryStore {
   async refreshAuthoritativeState() {
     await this.ensureIdentity()
     const items = validateInventoryItems(await this.binding.getAllItems())
-    const ownership = ownershipFromItems(items, this.config.products)
-    const cached = await this.currentCacheState(ownership)
+    const providerOwnership = ownershipFromItems(items, this.config.products)
+    const cached = await this.currentCacheState(providerOwnership)
     const knownPendingIds = new Set(
       cached.pendingConsumptions.map((item) => item.instanceId),
     )
@@ -442,12 +449,24 @@ export class SteamInventoryStore {
         instanceId: item.instanceId,
         quantity: item.quantity,
       }))
-    const remaining = []
-    for (const pending of [
+    const pendingConsumptions = [
       ...cached.pendingConsumptions,
       ...discoveredTips,
-    ]) {
-      if (!this.isConfiguredTipItemDef(pending.itemDefId)) continue
+    ].filter((pending) => this.isConfiguredTipItemDef(pending.itemDefId))
+    const ownership = freezeOwnership({
+      ...providerOwnership,
+      supporterCatGallery:
+        cached.ownership.supporterCatGallery ||
+        pendingConsumptions.length > 0,
+    })
+    if (pendingConsumptions.length === 0) {
+      const state = freezeCacheState({ ownership, pendingConsumptions })
+      await this.publishVerifiedState(state)
+      return state
+    }
+    await this.publishVerifiedState({ ownership, pendingConsumptions }, true)
+    const remaining = []
+    for (const pending of pendingConsumptions) {
       const instance = items.find((item) =>
         item.instanceId === pending.instanceId &&
         item.itemDefId === pending.itemDefId &&
@@ -482,8 +501,16 @@ export class SteamInventoryStore {
     }
   }
 
-  async publishVerifiedState(state) {
+  async publishVerifiedState(state, persistenceRequired = false) {
     const frozen = freezeCacheState(state)
+    if (persistenceRequired) {
+      await this.cache.write(this.steamId, frozen, this.sampleUtc())
+      this.liveState = frozen
+      this.pendingPersistence = null
+      this.persistenceError = null
+      this.cacheDisabled = false
+      return frozen
+    }
     this.liveState = frozen
     try {
       await this.cache.write(this.steamId, frozen, this.sampleUtc())
@@ -621,6 +648,7 @@ function ownershipFromItems(items, products) {
   return freezeOwnership({
     developerOptions: ownedItemDefs.has(products['ids.devoptions']),
     doubleInfinityPoints: ownedItemDefs.has(products['ids.doubleip']),
+    supporterCatGallery: false,
   })
 }
 
@@ -679,6 +707,7 @@ function validatePurchaseResult(result) {
 function ownershipForProduct(ownership, productId) {
   if (productId === 'ids.devoptions') return ownership.developerOptions
   if (productId === 'ids.doubleip') return ownership.doubleInfinityPoints
+  if (tipProductIds.has(productId)) return ownership.supporterCatGallery
   return false
 }
 
@@ -702,6 +731,7 @@ function emptyOwnership() {
   return freezeOwnership({
     doubleInfinityPoints: false,
     developerOptions: false,
+    supporterCatGallery: false,
   })
 }
 
@@ -709,6 +739,7 @@ function freezeOwnership(ownership) {
   return Object.freeze({
     doubleInfinityPoints: ownership.doubleInfinityPoints === true,
     developerOptions: ownership.developerOptions === true,
+    supporterCatGallery: ownership.supporterCatGallery === true,
   })
 }
 
@@ -716,7 +747,11 @@ function isValidOwnership(ownership) {
   return ownership !== null &&
     typeof ownership === 'object' &&
     typeof ownership.doubleInfinityPoints === 'boolean' &&
-    typeof ownership.developerOptions === 'boolean'
+    typeof ownership.developerOptions === 'boolean' &&
+    (
+      ownership.supporterCatGallery === undefined ||
+      typeof ownership.supporterCatGallery === 'boolean'
+    )
 }
 
 function isValidSteamId(value) {

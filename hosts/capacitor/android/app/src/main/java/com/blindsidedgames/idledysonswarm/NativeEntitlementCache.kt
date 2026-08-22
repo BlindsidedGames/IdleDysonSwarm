@@ -4,6 +4,7 @@ import android.content.Context
 internal data class DurableOwnership(
     val doubleInfinityPoints: Boolean,
     val developerOptions: Boolean,
+    val supporterCatGallery: Boolean,
 )
 
 internal data class NativeBoundUnityEvidence(
@@ -29,12 +30,24 @@ internal class NativeEntitlementCache(context: Context) {
             preferences.getBoolean(KEY_PROVIDER_DOUBLE_IP, false) ||
                 preferences.getBoolean(KEY_LEGACY_DOUBLE_IP, false),
         developerOptions = preferences.getBoolean(KEY_PROVIDER_DEV_OPTIONS, false),
+        supporterCatGallery = preferences.getBoolean(KEY_SUPPORTER_CAT_GALLERY, false),
     )
 
     fun writeProviderOwnership(ownership: DurableOwnership): Boolean =
         preferences.edit()
             .putBoolean(KEY_PROVIDER_DOUBLE_IP, ownership.doubleInfinityPoints)
             .putBoolean(KEY_PROVIDER_DEV_OPTIONS, ownership.developerOptions)
+            .putBoolean(
+                KEY_SUPPORTER_CAT_GALLERY,
+                ownership.supporterCatGallery ||
+                    preferences.getBoolean(KEY_SUPPORTER_CAT_GALLERY, false),
+            )
+            .putLong(KEY_VERIFIED_AT_UTC_MS, System.currentTimeMillis())
+            .commit()
+
+    fun grantSupporterCatGallery(): Boolean =
+        preferences.edit()
+            .putBoolean(KEY_SUPPORTER_CAT_GALLERY, true)
             .putLong(KEY_VERIFIED_AT_UTC_MS, System.currentTimeMillis())
             .commit()
 
@@ -58,6 +71,7 @@ internal class NativeEntitlementCache(context: Context) {
     private companion object {
         private const val KEY_PROVIDER_DOUBLE_IP = "provider.double-ip"
         private const val KEY_PROVIDER_DEV_OPTIONS = "provider.developer-options"
+        private const val KEY_SUPPORTER_CAT_GALLERY = "provider.supporter-cat-gallery"
         private const val KEY_VERIFIED_AT_UTC_MS = "provider.verified-at-utc-ms"
          private const val KEY_LEGACY_DOUBLE_IP = "legacy.double-ip"
          private const val KEY_LEGACY_KIND = "legacy.kind"

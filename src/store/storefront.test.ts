@@ -14,9 +14,15 @@ import { StorefrontController } from './storefront'
 import { RuntimeEntitlementBridge } from './runtimeEntitlements'
 
 describe('StorefrontController', () => {
-  test('keeps repeatable tips gameplay-neutral and uses adapter listings', async () => {
+  test('verifies repeatable supporter tiers without granting gameplay access', async () => {
     const store = fakeStore()
-    const entitlements = fakeAuthority()
+    const entitlements = fakeAuthority({
+      refresh: {
+        doubleInfinityPoints: false,
+        developerOptions: false,
+        supporterCatGallery: true,
+      },
+    })
     const controller = new StorefrontController({ store, entitlements })
 
     await controller.initialize()
@@ -24,14 +30,15 @@ describe('StorefrontController', () => {
     await controller.purchase(STORE_PRODUCT_IDS.tipTier1)
 
     expect(store.purchase).toHaveBeenCalledTimes(2)
-    expect(entitlements.refreshOwnership).not.toHaveBeenCalled()
+    expect(entitlements.refreshOwnership).toHaveBeenCalledTimes(2)
     expect(controller.getSnapshot().feedback).toEqual({
-      kind: 'tip-completed',
+      kind: 'entitlement-verified',
       productId: STORE_PRODUCT_IDS.tipTier1,
     })
     expect(controller.getSnapshot().hostOwnership).toEqual({
       doubleInfinityPoints: false,
       developerOptions: false,
+      supporterCatGallery: true,
     })
   })
 
@@ -51,6 +58,7 @@ describe('StorefrontController', () => {
     expect(controller.effectiveAccess(false)).toMatchObject({
       doubleInfinityPoints: true,
       developerOptions: false,
+      supporterCatGalleryAccess: false,
     })
     expect(controller.getSnapshot().feedback).toEqual({
       kind: 'entitlement-verified',
@@ -93,6 +101,47 @@ describe('StorefrontController', () => {
     expect(controller.getSnapshot().feedback).toEqual({
       kind: 'operation-failed',
       code: 'verification-failed',
+    })
+  })
+
+  test('does not unlock a supporter tier from accepted checkout alone', async () => {
+    const controller = new StorefrontController({
+      store: fakeStore(),
+      entitlements: fakeAuthority(),
+    })
+    await controller.initialize()
+
+    await controller.purchase(STORE_PRODUCT_IDS.tipTier2)
+
+    expect(controller.effectiveAccess(false).supporterCatGalleryAccess)
+      .toBe(false)
+    expect(controller.getSnapshot().feedback).toEqual({
+      kind: 'operation-failed',
+      code: 'verification-failed',
+    })
+  })
+
+  test('does not require a gameplay reprojection for verified supporter access', async () => {
+    const synchronized = vi.fn(async () => false)
+    const controller = new StorefrontController({
+      store: fakeStore(),
+      entitlements: fakeAuthority({
+        refresh: {
+          doubleInfinityPoints: false,
+          developerOptions: false,
+          supporterCatGallery: true,
+        },
+      }),
+      onVerifiedOwnershipChanged: synchronized,
+    })
+    await controller.initialize()
+
+    await controller.purchase(STORE_PRODUCT_IDS.tipTier1)
+
+    expect(synchronized).not.toHaveBeenCalled()
+    expect(controller.getSnapshot().feedback).toEqual({
+      kind: 'entitlement-verified',
+      productId: STORE_PRODUCT_IDS.tipTier1,
     })
   })
 
@@ -142,6 +191,39 @@ describe('StorefrontController', () => {
 })
 
 describe('CachedVerifiedEntitlementAuthority', () => {
+  test('does not erase cached consumable-derived supporter ownership', async () => {
+    const records: VerifiedEntitlementRecord[] = [{
+      ownership: {
+        doubleInfinityPoints: false,
+        developerOptions: false,
+        supporterCatGallery: true,
+      },
+      verifiedAtUtc: '2026-08-01T00:00:00.000Z',
+    }]
+    const authority = new CachedVerifiedEntitlementAuthority(
+      {
+        readVerifiedOwnership: async () => ({
+          doubleInfinityPoints: false,
+          developerOptions: false,
+          supporterCatGallery: false,
+        }),
+      },
+      {
+        read: async () => records.at(-1) ?? null,
+        write: async (record) => {
+          records.push(record as VerifiedEntitlementRecord)
+        },
+      },
+      () => '2026-08-02T00:00:00.000Z',
+    )
+
+    await expect(authority.refreshOwnership()).resolves.toEqual({
+      doubleInfinityPoints: false,
+      developerOptions: false,
+      supporterCatGallery: true,
+    })
+  })
+
   test('retains the last verified ownership while the provider is offline', async () => {
     let providerOffline = false
     const source: VerifiedEntitlementSource = {
@@ -169,11 +251,13 @@ describe('CachedVerifiedEntitlementAuthority', () => {
     await expect(authority.refreshOwnership()).resolves.toEqual({
       doubleInfinityPoints: true,
       developerOptions: false,
+      supporterCatGallery: false,
     })
     providerOffline = true
     await expect(authority.refreshOwnership()).resolves.toEqual({
       doubleInfinityPoints: true,
       developerOptions: false,
+      supporterCatGallery: false,
     })
     expect(records[0]?.verifiedAtUtc).toBe('2026-08-02T00:00:00.000Z')
   })
@@ -213,6 +297,7 @@ describe('CachedVerifiedEntitlementAuthority', () => {
     await expect(authority.refreshOwnership()).resolves.toEqual({
       doubleInfinityPoints: false,
       developerOptions: true,
+      supporterCatGallery: false,
     })
   })
 
@@ -247,6 +332,7 @@ describe('CachedVerifiedEntitlementAuthority', () => {
     await expect(authority.refreshOwnership()).resolves.toEqual({
       doubleInfinityPoints: true,
       developerOptions: true,
+      supporterCatGallery: false,
     })
     expect(records.at(-1)?.automaticUnityDoubleIpEvidence).toEqual({
       platform: 'macos',
@@ -345,6 +431,7 @@ describe('RuntimeEntitlementBridge', () => {
     expect(bridge.currentOwnership()).toEqual({
       doubleInfinityPoints: false,
       developerOptions: true,
+      supporterCatGallery: false,
     })
   })
 })

@@ -211,9 +211,6 @@ export function DebugSurface({
               <div className="debug-surface__button-grid">
                 <ActionButton label={intl.formatMessage(messages.recalculateSkillPoints)} disabled={pending} onClick={() => apply({ kind: 'recalculate-skill-points' }, intl.formatMessage(messages.actionSuccess))} />
                 <ActionButton label={intl.formatMessage(messages.resetSecretProgress)} disabled={pending} onClick={() => apply({ kind: 'reset-secret-progress' }, intl.formatMessage(messages.resetSecretProgressSuccess))} />
-                <a className="debug-surface__button" href="https://www.icloud.com/sharedalbum/#B0vG6XBub6hSR6" target="_blank" rel="noreferrer">
-                  {intl.formatMessage(messages.debugCats)}
-                </a>
                 <ActionButton danger label={intl.formatMessage(messages.disable)} disabled={pending} onClick={() => apply({ kind: 'disable-debug-options' }, intl.formatMessage(messages.disabledSuccess))} />
               </div>
             </section>

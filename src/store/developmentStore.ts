@@ -1,6 +1,7 @@
 import {
   CANONICAL_STORE_PRODUCTS,
   STORE_PRODUCT_IDS,
+  isSupporterProductId,
   type EntitlementAuthority,
   type HostEntitlementOwnership,
   type StoreAdapter,
@@ -32,13 +33,7 @@ const DEFAULT_OUTCOMES: Readonly<
   [STORE_PRODUCT_IDS.doubleInfinityPoints]: 'success',
 }
 
-const OUTCOME_LABELS: Readonly<
-  Record<DevelopmentPurchaseOutcome, string>
-> = {
-  success: 'Test: succeeds',
-  cancelled: 'Test: cancels',
-  failed: 'Test: fails',
-}
+const DEVELOPMENT_PRICE_LABEL = 'Test $0'
 
 /**
  * In-memory commerce used only by the Vite development composition. It owns no
@@ -62,6 +57,8 @@ implements StoreAdapter, EntitlementAuthority {
         options.initialOwnership?.doubleInfinityPoints === true,
       developerOptions:
         options.initialOwnership?.developerOptions === true,
+      supporterCatGallery:
+        options.initialOwnership?.supporterCatGallery === true,
     })
   }
 
@@ -69,7 +66,7 @@ implements StoreAdapter, EntitlementAuthority {
     return Object.freeze(
       CANONICAL_STORE_PRODUCTS.map((product) => Object.freeze({
         productId: product.id,
-        localizedPrice: OUTCOME_LABELS[this.outcomes[product.id]],
+        localizedPrice: DEVELOPMENT_PRICE_LABEL,
         available: true,
       })),
     )
@@ -86,7 +83,12 @@ implements StoreAdapter, EntitlementAuthority {
           : 'purchase-failed' as const,
       })
     }
-    if (productId === STORE_PRODUCT_IDS.developerOptions) {
+    if (isSupporterProductId(productId)) {
+      this.ownership = freezeOwnership({
+        ...this.ownership,
+        supporterCatGallery: true,
+      })
+    } else if (productId === STORE_PRODUCT_IDS.developerOptions) {
       this.ownership = freezeOwnership({
         ...this.ownership,
         developerOptions: true,
@@ -131,5 +133,6 @@ function freezeOwnership(
   return Object.freeze({
     doubleInfinityPoints: ownership.doubleInfinityPoints === true,
     developerOptions: ownership.developerOptions === true,
+    supporterCatGallery: ownership.supporterCatGallery === true,
   })
 }

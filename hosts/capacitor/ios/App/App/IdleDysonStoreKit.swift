@@ -5,6 +5,7 @@ import StoreKit
 struct DurableOwnership {
     let doubleInfinityPoints: Bool
     let developerOptions: Bool
+    let supporterCatGallery: Bool
 }
 
 struct NativeProductListing {
@@ -29,6 +30,7 @@ final class NativeEntitlementCache {
     private struct Record: Codable {
         var providerDoubleIp = false
         var providerDeveloperOptions = false
+        var supporterCatGallery: Bool?
         var providerVerifiedAtUtc: TimeInterval?
         var legacyDoubleIp = false
         var legacyPlatform: String?
@@ -44,16 +46,26 @@ final class NativeEntitlementCache {
         return DurableOwnership(
             doubleInfinityPoints:
                 record.providerDoubleIp || record.legacyDoubleIp,
-            developerOptions: record.providerDeveloperOptions
+            developerOptions: record.providerDeveloperOptions,
+            supporterCatGallery: record.supporterCatGallery == true
         )
     }
 
-    func writeProviderOwnership(_ ownership: DurableOwnership) {
+    func writeProviderOwnership(_ ownership: DurableOwnership) -> Bool {
         var record = readRecord()
         record.providerDoubleIp = ownership.doubleInfinityPoints
         record.providerDeveloperOptions = ownership.developerOptions
+        record.supporterCatGallery =
+            record.supporterCatGallery == true || ownership.supporterCatGallery
         record.providerVerifiedAtUtc = Date().timeIntervalSince1970
-        _ = writeRecord(record)
+        return writeRecord(record)
+    }
+
+    func grantSupporterCatGallery() -> Bool {
+        var record = readRecord()
+        record.supporterCatGallery = true
+        record.providerVerifiedAtUtc = Date().timeIntervalSince1970
+        return writeRecord(record)
     }
 
     func promoteAutomaticUnityDoubleIpEvidence(
@@ -180,7 +192,22 @@ final class IdleDysonStoreKit {
                         code: "purchase-failed"
                     )
                 }
-                if Self.durableIds.contains(productId) {
+                guard transaction.productID == productId else {
+                    return NativePurchaseResult(
+                        accepted: false,
+                        productId: productId,
+                        code: "purchase-failed"
+                    )
+                }
+                if Self.supporterIds.contains(productId) {
+                    guard entitlementCache.grantSupporterCatGallery() else {
+                        return NativePurchaseResult(
+                            accepted: false,
+                            productId: productId,
+                            code: "purchase-failed"
+                        )
+                    }
+                } else if Self.durableIds.contains(productId) {
                     _ = try await refreshDurableOwnership()
                 }
                 await transaction.finish()
@@ -221,7 +248,7 @@ final class IdleDysonStoreKit {
         do {
             try await AppStore.sync()
             let ownership = try await verifiedDurableProductIds()
-            writeProviderOwnership(ownership)
+            _ = try writeProviderOwnership(ownership)
             return (ownership.sorted(), true)
         } catch {
             return ([], false)
@@ -230,7 +257,7 @@ final class IdleDysonStoreKit {
 
     func refreshDurableOwnership() async throws -> DurableOwnership {
         let productIds = try await verifiedDurableProductIds()
-        let ownership = writeProviderOwnership(productIds)
+        let ownership = try writeProviderOwnership(productIds)
         return ownership
     }
 
@@ -252,12 +279,16 @@ final class IdleDysonStoreKit {
         return productIds
     }
 
-    private func writeProviderOwnership(_ productIds: Set<String>) -> DurableOwnership {
+    private func writeProviderOwnership(_ productIds: Set<String>) throws -> DurableOwnership {
+        let cached = entitlementCache.read()
         let ownership = DurableOwnership(
             doubleInfinityPoints: productIds.contains(Self.doubleIp),
-            developerOptions: productIds.contains(Self.developerOptions)
+            developerOptions: productIds.contains(Self.developerOptions),
+            supporterCatGallery: cached.supporterCatGallery
         )
-        entitlementCache.writeProviderOwnership(ownership)
+        guard entitlementCache.writeProviderOwnership(ownership) else {
+            throw StorePersistenceError.unavailable
+        }
         return ownership
     }
 
@@ -265,18 +296,22 @@ final class IdleDysonStoreKit {
         _ verification: VerificationResult<Transaction>
     ) async {
         guard case let .verified(transaction) = verification else { return }
-        if Self.durableIds.contains(transaction.productID) {
-            _ = try? await refreshDurableOwnership()
+        if Self.supporterIds.contains(transaction.productID) {
+            guard entitlementCache.grantSupporterCatGallery() else { return }
+        } else if Self.durableIds.contains(transaction.productID) {
+            guard (try? await refreshDurableOwnership()) != nil else { return }
+        } else {
+            return
         }
-        // Tips are repeatable consumables with no gameplay delivery. Finishing
-        // them (and durable transactions after caching ownership) is the only
-        // native delivery acknowledgement required by this client-only design.
         await transaction.finish()
     }
 
     private static let doubleIp = "ids.doubleip"
     private static let developerOptions = "ids.devoptions"
     private static let durableIds: Set<String> = [doubleIp, developerOptions]
+    private static let supporterIds: Set<String> = [
+        "ids.tiptier1", "ids.tiptier2", "ids.tiptier3",
+    ]
     private static let productIds: [String] = [
         "ids.tiptier1",
         "ids.tiptier2",
@@ -284,4 +319,8 @@ final class IdleDysonStoreKit {
         developerOptions,
         doubleIp,
     ]
+}
+
+private enum StorePersistenceError: Error {
+    case unavailable
 }

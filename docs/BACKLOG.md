@@ -98,6 +98,19 @@ the [skill-tree audit implementation verification](audits/skill-tree-audit-2026-
 
 ## Current Web release acceptance
 
+- [ ] **Complete Supporter Cat Gallery browser fulfillment in the website
+  repository.** The game repository now defines the fail-closed
+  `supporterCatGallery` contract, Store-only UI, native persistence ordering,
+  and browser response normalization. Extend the HMAC-signed device receipt in
+  `BlindsidedGames/BlindsidedGames/functions/_utils/ids-stripe.ts` and
+  `functions/api/ids/stripe/verify.ts`, return the entitlement from
+  `/api/ids/stripe/verify`, and validate all three
+  SKUs plus unpaid/mismatch/tamper/replay cases in Stripe test mode. Decide on
+  a server-signed receipt format before promising secure offline access after
+  a cold browser reload. This remains a browser release blocker; client source
+  publication alone is not fulfillment. Sources:
+  [platform Store boundaries](platform/platform-store-release-boundaries.md#browser-backend-ownership-and-open-gate)
+  and [website deployment rules](platform/website-deployment-rules.md).
 - [ ] Complete the remaining manual Web checks: visible focus paint, complete
   contrast review, 200 percent visual appearance, browser-native 400 percent
   zoom, 320/390-pixel visual reflow, real-touch slider behavior, and screen
