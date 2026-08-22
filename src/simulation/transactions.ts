@@ -97,18 +97,60 @@ export function buyXCost(
       : 0
   }
   const count = Number(quantity)
-  const firstCost = multiplyContinuous(
-    baseCost,
-    powerContinuous(exponent, currentLevel),
-  )
-  if (firstCost === CONTINUOUS_MAXIMUM) return CONTINUOUS_MAXIMUM
   if (Math.abs(exponent - 1) <= 1e-12) {
+    const firstCost = multiplyContinuous(
+      baseCost,
+      powerContinuous(exponent, currentLevel),
+    )
+    if (firstCost === CONTINUOUS_MAXIMUM) return CONTINUOUS_MAXIMUM
     return multiplyContinuous(firstCost, count)
   }
+
+  const levelPower = powerContinuous(exponent, currentLevel)
   const powered = powerContinuous(exponent, count)
-  if (powered === CONTINUOUS_MAXIMUM) return CONTINUOUS_MAXIMUM
+  if (
+    levelPower === CONTINUOUS_MAXIMUM ||
+    powered === CONTINUOUS_MAXIMUM
+  ) {
+    return geometricCostFromLogs(
+      count,
+      baseCost,
+      exponent,
+      currentLevel,
+    )
+  }
+
+  const firstCost = multiplyContinuous(baseCost, levelPower)
+  if (firstCost === CONTINUOUS_MAXIMUM) return CONTINUOUS_MAXIMUM
   const series = divideContinuous(powered - 1, exponent - 1)
   return multiplyContinuous(firstCost, series)
+}
+
+function geometricCostFromLogs(
+  count: number,
+  baseCost: number,
+  exponent: number,
+  currentLevel: number,
+): number {
+  const logExponent = Math.log(exponent)
+  const logCost =
+    Math.log(baseCost) +
+    currentLevel * logExponent +
+    logExpm1(count * logExponent) -
+    Math.log(exponent - 1)
+  if (!Number.isFinite(logCost)) return CONTINUOUS_MAXIMUM
+  if (logCost >= Math.log(CONTINUOUS_MAXIMUM)) {
+    return CONTINUOUS_MAXIMUM
+  }
+  return clampGeometricCost(Math.exp(logCost))
+}
+
+function logExpm1(value: number): number {
+  return value > 700 ? value : Math.log(Math.expm1(value))
+}
+
+function clampGeometricCost(value: number): number {
+  return Number.isFinite(value) && value > 0 ? value : 0
 }
 
 export function maxAffordable(
