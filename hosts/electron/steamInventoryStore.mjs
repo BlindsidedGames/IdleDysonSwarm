@@ -332,11 +332,16 @@ export class SteamInventoryStore {
           if (delivered === null) {
             return failedPurchase(productId, 'purchase-failed')
           }
+          const state = await this.currentCacheState(ownership)
           const supporterOwnership = freezeOwnership({
             ...ownership,
             supporterCatGallery: true,
           })
-          const pending = this.pendingTipConsumptionsFromInventory(after)
+          const pending = this.reconcilePendingTipConsumptions(
+            state.pendingConsumptions,
+            after,
+            delivered,
+          )
           const persisted = await this.publishVerifiedState({
             ownership: supporterOwnership,
             pendingConsumptions: pending,
@@ -429,7 +434,10 @@ export class SteamInventoryStore {
     const items = validateInventoryItems(await this.binding.getAllItems())
     const providerOwnership = ownershipFromItems(items, this.config.products)
     const cached = await this.currentCacheState(providerOwnership)
-    const pendingConsumptions = this.pendingTipConsumptionsFromInventory(items)
+    const pendingConsumptions = this.reconcilePendingTipConsumptions(
+      cached.pendingConsumptions,
+      items,
+    )
     const ownership = freezeOwnership({
       ...providerOwnership,
       supporterCatGallery:
@@ -453,10 +461,9 @@ export class SteamInventoryStore {
         item.instanceId === pending.instanceId &&
         item.itemDefId === pending.itemDefId &&
         item.quantity >= pending.quantity)
-      if (
-        instance !== undefined &&
-        !(await this.consumePendingItem(pending, items))
-      ) {
+      if (instance === undefined) {
+        remaining.push(pending)
+      } else if (!(await this.consumePendingItem(pending, items))) {
         remaining.push(pending)
       }
     }
@@ -559,14 +566,37 @@ export class SteamInventoryStore {
     ))
   }
 
-  pendingTipConsumptionsFromInventory(inventoryItems) {
-    return freezePendingConsumptions(inventoryItems
+  reconcilePendingTipConsumptions(
+    cachedConsumptions,
+    inventoryItems,
+    deliveredIncrease = null,
+  ) {
+    const cachedByInstance = new Map(cachedConsumptions
       .filter((item) => this.isConfiguredTipItemDef(item.itemDefId))
-      .map((item) => ({
-        itemDefId: item.itemDefId,
-        instanceId: item.instanceId,
-        quantity: item.quantity,
-      })))
+      .map((item) => [item.instanceId, item]))
+    const reconciled = inventoryItems
+      .filter((item) => this.isConfiguredTipItemDef(item.itemDefId))
+      .map((item) => {
+        const cached = cachedByInstance.get(item.instanceId)
+        const cachedQuantity = cached?.itemDefId === item.itemDefId
+          ? cached.quantity
+          : 0
+        const deliveredQuantity =
+          deliveredIncrease?.instanceId === item.instanceId &&
+          deliveredIncrease.itemDefId === item.itemDefId
+            ? deliveredIncrease.quantity
+            : 0
+        const knownQuantity = checkedSteamQuantitySum(
+          cachedQuantity,
+          deliveredQuantity,
+        )
+        return {
+          itemDefId: item.itemDefId,
+          instanceId: item.instanceId,
+          quantity: Math.max(item.quantity, knownQuantity),
+        }
+      })
+    return freezePendingConsumptions(reconciled)
   }
 
   async ensureIdentity() {
@@ -713,13 +743,29 @@ function productIdForItemDef(itemDefId, products) {
 
 function findDeliveredItem(before, after, itemDefId) {
   const beforeItems = new Map(before.map((item) => [item.instanceId, item]))
-  return after.find((item) => {
+  const delivered = after.find((item) => {
     if (item.itemDefId !== itemDefId) return false
     const prior = beforeItems.get(item.instanceId)
     return prior === undefined || (
       prior.itemDefId === itemDefId && item.quantity > prior.quantity
     )
   }) ?? null
+  if (delivered === null) return null
+  const prior = beforeItems.get(delivered.instanceId)
+  return Object.freeze({
+    itemDefId: delivered.itemDefId,
+    instanceId: delivered.instanceId,
+    quantity: delivered.quantity - (prior?.quantity ?? 0),
+  })
+}
+
+function checkedSteamQuantitySum(left, right) {
+  const sum = left + right
+  if (!Number.isSafeInteger(sum) || sum <= 0) {
+    if (left === 0 && right === 0) return 0
+    throw new Error('Steam pending consumption quantity is invalid.')
+  }
+  return sum
 }
 
 function emptyOwnership() {

@@ -44,8 +44,11 @@ fail-closed integration seam, not a live Steam commerce implementation.
   pending record could be published. A later inventory refresh preserves the
   cached supporter entitlement after the consumable instance disappears.
 - Steam may stack a repeat supporter delivery onto the same inventory instance.
-  Purchase and refresh paths therefore derive one pending record per validated
-  provider instance at its complete current quantity. A transient cache-write
+  Purchase and refresh paths therefore coalesce one pending record per
+  validated provider instance. A verified purchase adds its delivered quantity
+  to any durable pending quantity, while refresh never downgrades a matching
+  pending record if Steam returns a cached lower quantity. Cleanup waits until
+  a snapshot contains the complete queued quantity. A transient cache-write
   failure retries persistence before cleanup; restart and later authoritative
   refresh recover from the still-delivered item. Successful cleanup consumes
   the complete queued quantity once and only then removes the durable pending

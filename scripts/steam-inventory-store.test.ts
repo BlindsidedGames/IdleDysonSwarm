@@ -353,6 +353,17 @@ describe('Electron Steam Inventory foundation', () => {
     await writeFile(path, protector.protect(JSON.stringify(legacy)))
     await expect(cache.read(steamId)).resolves.toBeNull()
 
+    const duplicatePending = structuredClone(persisted)
+    duplicatePending.pendingConsumptions = [
+      { itemDefId: 101, instanceId: '9300', quantity: 1 },
+      { itemDefId: 101, instanceId: '9300', quantity: 2 },
+    ]
+    await writeFile(
+      path,
+      protector.protect(JSON.stringify(duplicatePending)),
+    )
+    await expect(cache.read(steamId)).resolves.toBeNull()
+
     const tampered = Buffer.from(protectedValue)
     tampered[tampered.length - 1] ^= 1
     await writeFile(path, tampered)
@@ -439,6 +450,51 @@ describe('Electron Steam Inventory foundation', () => {
       developerOptions: false,
       supporterCatGallery: false,
     })
+  })
+
+  it('drops pending state when the authenticated Steam account changes', async () => {
+    const nextSteamId = '76561198000000002'
+    const oldTip = { itemDefId: 101, instanceId: '9400', quantity: 1 }
+    const cache = memoryCache({
+      ownership: {
+        doubleInfinityPoints: false,
+        developerOptions: false,
+        supporterCatGallery: true,
+      },
+      pendingConsumptions: [oldTip],
+    })
+    const binding = bindingStub({
+      getAuthenticatedSteamId: vi.fn()
+        .mockResolvedValueOnce(steamId)
+        .mockResolvedValueOnce(nextSteamId),
+      getAllItems: vi.fn()
+        .mockResolvedValueOnce([oldTip])
+        .mockResolvedValueOnce([]),
+      consumeItem: vi.fn(async () => false),
+    })
+    const store = enabledStore({ binding, cache })
+
+    await expect(store.readEntitlements(true)).resolves.toMatchObject({
+      supporterCatGallery: true,
+    })
+    await expect(store.readEntitlements(true)).resolves.toEqual({
+      doubleInfinityPoints: false,
+      developerOptions: false,
+      supporterCatGallery: false,
+    })
+
+    expect(cache.read).toHaveBeenNthCalledWith(1, steamId)
+    expect(cache.read).toHaveBeenNthCalledWith(2, nextSteamId)
+    expect(cache.write).toHaveBeenLastCalledWith(
+      nextSteamId,
+      verifiedState({
+        doubleInfinityPoints: false,
+        developerOptions: false,
+      }),
+      '2026-08-03T00:00:00.000Z',
+    )
+    expect(binding.consumeItem).toHaveBeenCalledOnce()
+    expect(binding.consumeItem).toHaveBeenCalledWith('9400', 1)
   })
 
   it('returns matching cache immediately and refreshes revocation in background', async () => {
@@ -571,6 +627,51 @@ describe('Electron Steam Inventory foundation', () => {
     expect(store.maintenanceState().pendingTipConsumptions).toBe(0)
   })
 
+  it('adds verified delivery to a higher durable quantity than a stale snapshot', async () => {
+    const cached = {
+      ownership: {
+        doubleInfinityPoints: false,
+        developerOptions: false,
+        supporterCatGallery: true,
+      },
+      pendingConsumptions: [{
+        itemDefId: 101,
+        instanceId: '9007',
+        quantity: 2,
+      }],
+    }
+    const staleBefore = { itemDefId: 101, instanceId: '9007', quantity: 1 }
+    const staleAfter = { ...staleBefore, quantity: 2 }
+    const current = { ...staleBefore, quantity: 3 }
+    const binding = bindingStub({
+      getAllItems: vi.fn()
+        .mockResolvedValueOnce([staleBefore])
+        .mockResolvedValueOnce([staleAfter])
+        .mockResolvedValueOnce([current]),
+    })
+    const cache = memoryCache(cached)
+    const store = enabledStore({ binding, cache })
+
+    await expect(store.purchase('ids.tiptier1')).resolves.toMatchObject({
+      accepted: true,
+    })
+    expect(cache.write).toHaveBeenNthCalledWith(1, steamId, {
+      ownership: cached.ownership,
+      pendingConsumptions: [{
+        itemDefId: 101,
+        instanceId: '9007',
+        quantity: 3,
+      }],
+    }, '2026-08-03T00:00:00.000Z')
+    expect(binding.consumeItem).not.toHaveBeenCalled()
+    expect(store.maintenanceState().pendingTipConsumptions).toBe(1)
+
+    await store.readEntitlements(true)
+    expect(binding.consumeItem).toHaveBeenCalledOnce()
+    expect(binding.consumeItem).toHaveBeenCalledWith('9007', 3)
+    expect(store.maintenanceState().pendingTipConsumptions).toBe(0)
+  })
+
   it('recovers an unpersisted delivered tip after restart', async () => {
     const delivered = { itemDefId: 102, instanceId: '9004', quantity: 1 }
     const failingCache = memoryCache()
@@ -680,6 +781,38 @@ describe('Electron Steam Inventory foundation', () => {
     }, '2026-08-03T00:00:00.000Z')
     expect(binding.consumeItem).toHaveBeenCalledOnce()
     expect(binding.consumeItem).toHaveBeenCalledWith('9005', 2)
+  })
+
+  it('does not downgrade or partially consume a stale lower inventory quantity', async () => {
+    const cached = {
+      ownership: {
+        doubleInfinityPoints: false,
+        developerOptions: false,
+        supporterCatGallery: true,
+      },
+      pendingConsumptions: [{
+        itemDefId: 103,
+        instanceId: '9008',
+        quantity: 2,
+      }],
+    }
+    const binding = bindingStub({
+      getAllItems: vi.fn(async () => [
+        { itemDefId: 103, instanceId: '9008', quantity: 1 },
+      ]),
+    })
+    const cache = memoryCache(cached)
+    const store = enabledStore({ binding, cache })
+
+    await store.readEntitlements(true)
+
+    expect(cache.write).toHaveBeenCalledWith(
+      steamId,
+      cached,
+      '2026-08-03T00:00:00.000Z',
+    )
+    expect(binding.consumeItem).not.toHaveBeenCalled()
+    expect(store.maintenanceState().pendingTipConsumptions).toBe(1)
   })
 
   it('adopts and consumes an orphaned delivered tip during refresh', async () => {
