@@ -13,6 +13,11 @@ Status conventions:
 
 ## Current cross-platform work
 
+- [ ] Add clear player-facing enable/disable toggles for the Double Infinity
+  Points and Developer Options purchases. Toggling either effect must preserve
+  its durable ownership and restore eligibility, apply consistently across Web
+  and native hosts, and keep the existing in-game Developer Options unlock
+  compatible with the purchased entitlement.
 - [ ] Implement device-local presentation frame-rate choices matching Unity's
   10, 30, 60, and Maximum options. Limit only rendering/animation delivery;
   canonical 10 Hz simulation, commands, saves, imports, lifecycle events, and
