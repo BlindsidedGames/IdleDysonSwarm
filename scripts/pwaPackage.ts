@@ -12,6 +12,7 @@ const PWA_GENERATOR_VERSION = '3'
 export const PWA_AUDIO_PACKAGE_BUDGET_BYTES = 7_000_000
 
 const PUBLIC_PRECACHE_FILES = Object.freeze([
+  'bootstrap.css',
   'manifest.webmanifest',
   'icons/pwa-icon-192.png',
   'icons/pwa-icon-512.png',
@@ -168,6 +169,8 @@ function isPlayerFacingBuildAsset(fileName: string): boolean {
 export function hashPwaPackage(
   bundle: OutputBundle,
   publicDirectory: string,
+  readPublicAsset: (absolutePath: string) => Uint8Array =
+    (absolutePath) => readFileSync(absolutePath),
 ): string {
   const hash = createHash('sha256')
   hash.update(PWA_GENERATOR_VERSION)
@@ -178,7 +181,7 @@ export function hashPwaPackage(
   }
   for (const fileName of PUBLIC_PRECACHE_FILES) {
     hash.update(fileName)
-    hash.update(readFileSync(resolve(publicDirectory, fileName)))
+    hash.update(readPublicAsset(resolve(publicDirectory, fileName)))
   }
   return hash.digest('hex').slice(0, 16)
 }

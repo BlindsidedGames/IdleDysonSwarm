@@ -14,8 +14,11 @@ afterEach(() => {
 
 describe('native startup loader', () => {
   test('mounts a branded accessible cold-start status immediately', () => {
-    renderLoader('starting')
+    const { container } = renderLoader('starting')
     expect(screen.getByRole('status')).toHaveAttribute('aria-busy', 'true')
+    expect(
+      container.querySelector('.native-launch-loader__mark'),
+    ).toHaveAttribute('src', './icons/pwa-icon-512.png')
     expect(screen.getByRole('heading', {
       level: 1,
       name: 'Idle Dyson Swarm',

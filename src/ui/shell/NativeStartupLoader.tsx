@@ -47,7 +47,7 @@ export function NativeStartupLoader({
     >
       <img
         className="native-launch-loader__mark"
-        src="./native-launch-mark.svg"
+        src="./icons/pwa-icon-512.png"
         alt=""
       />
       <h1 className="native-launch-loader__title">
