@@ -332,25 +332,19 @@ export class SteamInventoryStore {
           if (delivered === null) {
             return failedPurchase(productId, 'purchase-failed')
           }
-          const state = await this.currentCacheState(ownership)
           const supporterOwnership = freezeOwnership({
             ...ownership,
             supporterCatGallery: true,
           })
-          const pending = freezePendingConsumptions([
-            ...state.pendingConsumptions,
-            {
-              itemDefId,
-              instanceId: delivered.instanceId,
-              quantity: 1,
-            },
-          ])
-          await this.publishVerifiedState({
+          const pending = this.pendingTipConsumptionsFromInventory(after)
+          const persisted = await this.publishVerifiedState({
             ownership: supporterOwnership,
             pendingConsumptions: pending,
-          }, true)
-          const consumed = await this.consumePendingItem(
-            pending.find((item) => item.instanceId === delivered.instanceId),
+          })
+          const consumed = persisted && await this.consumePendingItem(
+            pending.find((item) =>
+              item.instanceId === delivered.instanceId &&
+              item.itemDefId === delivered.itemDefId),
             after,
           )
           if (consumed) {
@@ -435,24 +429,7 @@ export class SteamInventoryStore {
     const items = validateInventoryItems(await this.binding.getAllItems())
     const providerOwnership = ownershipFromItems(items, this.config.products)
     const cached = await this.currentCacheState(providerOwnership)
-    const knownPendingIds = new Set(
-      cached.pendingConsumptions.map((item) => item.instanceId),
-    )
-    const discoveredTips = items
-      .filter((item) =>
-        tipProductIds.has(productIdForItemDef(
-          item.itemDefId,
-          this.config.products,
-        )) && !knownPendingIds.has(item.instanceId))
-      .map((item) => ({
-        itemDefId: item.itemDefId,
-        instanceId: item.instanceId,
-        quantity: item.quantity,
-      }))
-    const pendingConsumptions = [
-      ...cached.pendingConsumptions,
-      ...discoveredTips,
-    ].filter((pending) => this.isConfiguredTipItemDef(pending.itemDefId))
+    const pendingConsumptions = this.pendingTipConsumptionsFromInventory(items)
     const ownership = freezeOwnership({
       ...providerOwnership,
       supporterCatGallery:
@@ -464,7 +441,12 @@ export class SteamInventoryStore {
       await this.publishVerifiedState(state)
       return state
     }
-    await this.publishVerifiedState({ ownership, pendingConsumptions }, true)
+    const persisted = await this.publishVerifiedState(
+      { ownership, pendingConsumptions },
+    )
+    if (!persisted) {
+      return freezeCacheState({ ownership, pendingConsumptions })
+    }
     const remaining = []
     for (const pending of pendingConsumptions) {
       const instance = items.find((item) =>
@@ -501,22 +483,15 @@ export class SteamInventoryStore {
     }
   }
 
-  async publishVerifiedState(state, persistenceRequired = false) {
+  async publishVerifiedState(state) {
     const frozen = freezeCacheState(state)
-    if (persistenceRequired) {
-      await this.cache.write(this.steamId, frozen, this.sampleUtc())
-      this.liveState = frozen
-      this.pendingPersistence = null
-      this.persistenceError = null
-      this.cacheDisabled = false
-      return frozen
-    }
     this.liveState = frozen
     try {
       await this.cache.write(this.steamId, frozen, this.sampleUtc())
       this.pendingPersistence = null
       this.persistenceError = null
       this.cacheDisabled = false
+      return true
     } catch (error) {
       this.persistenceError = error
       if (isProtectionUnavailableError(error)) {
@@ -526,8 +501,8 @@ export class SteamInventoryStore {
         this.pendingPersistence = frozen
         this.schedulePersistenceRetry()
       }
+      return false
     }
-    return frozen
   }
 
   schedulePersistenceRetry() {
@@ -546,6 +521,15 @@ export class SteamInventoryStore {
       await this.cache.write(this.steamId, pending, this.sampleUtc())
       if (this.pendingPersistence === pending) this.pendingPersistence = null
       this.persistenceError = null
+      this.cacheDisabled = false
+      if (pending.pendingConsumptions.length > 0) {
+        try {
+          await this.refreshAuthoritativeState()
+        } catch {
+          // The durable pending record remains recovery authority until the
+          // next provider refresh or process restart can finish cleanup.
+        }
+      }
     } catch (error) {
       this.persistenceError = error
       this.schedulePersistenceRetry()
@@ -573,6 +557,16 @@ export class SteamInventoryStore {
       itemDefId,
       this.config.products,
     ))
+  }
+
+  pendingTipConsumptionsFromInventory(inventoryItems) {
+    return freezePendingConsumptions(inventoryItems
+      .filter((item) => this.isConfiguredTipItemDef(item.itemDefId))
+      .map((item) => ({
+        itemDefId: item.itemDefId,
+        instanceId: item.instanceId,
+        quantity: item.quantity,
+      })))
   }
 
   async ensureIdentity() {
@@ -718,13 +712,14 @@ function productIdForItemDef(itemDefId, products) {
 }
 
 function findDeliveredItem(before, after, itemDefId) {
-  const beforeQuantities = new Map(before.map((item) => [
-    item.instanceId,
-    item.itemDefId === itemDefId ? item.quantity : 0,
-  ]))
-  return after.find((item) =>
-    item.itemDefId === itemDefId &&
-    item.quantity > (beforeQuantities.get(item.instanceId) ?? 0)) ?? null
+  const beforeItems = new Map(before.map((item) => [item.instanceId, item]))
+  return after.find((item) => {
+    if (item.itemDefId !== itemDefId) return false
+    const prior = beforeItems.get(item.instanceId)
+    return prior === undefined || (
+      prior.itemDefId === itemDefId && item.quantity > prior.quantity
+    )
+  }) ?? null
 }
 
 function emptyOwnership() {

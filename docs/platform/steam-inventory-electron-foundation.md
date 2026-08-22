@@ -8,15 +8,19 @@ fail-closed integration seam, not a live Steam commerce implementation.
 ## Trust and process boundary
 
 - Steam Inventory access belongs only in the Electron main process. The
-  sandboxed renderer receives product listings, purchase outcomes and two
-  three ownership booleans through the existing preload contract.
+  sandboxed renderer receives product listings, purchase outcomes and three
+  ownership booleans through the existing preload contract.
 - A successful purchase result is not entitlement authority. Double Infinity
   Points and Developer Options become owned only after a fresh Steam inventory
   result contains their configured ItemDef IDs.
 - Supporter tiers are accepted only after inventory delivery is observed. The
   Cat Gallery entitlement and pending cleanup record are atomically persisted
-  before the delivered instance is consumed. Persistence failure does not
-  consume or report success. The entitlement grants no gameplay state.
+  before the delivered instance is consumed. Once Steam reports completed and
+  the delivered inventory increase is verified, a cache-write failure retains
+  the item as provider recovery authority and reports the purchase as accepted
+  instead of encouraging a second charge. The item is not consumed until the
+  complete outstanding quantity is durable. The entitlement grants no gameplay
+  state.
 - Only provider-verified durable ownership is written to the atomic offline
   cache. The complete cache record is encrypted/authenticated through
   Electron `safeStorage`, remains opaque on disk, and contains the currently
@@ -39,6 +43,13 @@ fail-closed integration seam, not a live Steam commerce implementation.
   also adopted into the cleanup queue, covering interruption before the first
   pending record could be published. A later inventory refresh preserves the
   cached supporter entitlement after the consumable instance disappears.
+- Steam may stack a repeat supporter delivery onto the same inventory instance.
+  Purchase and refresh paths therefore derive one pending record per validated
+  provider instance at its complete current quantity. A transient cache-write
+  failure retries persistence before cleanup; restart and later authoritative
+  refresh recover from the still-delivered item. Successful cleanup consumes
+  the complete queued quantity once and only then removes the durable pending
+  record.
 - Every pending cleanup includes the exact configured tip ItemDef ID. Before
   consumption, a fresh validated inventory snapshot must contain that same
   instance, ItemDef and sufficient quantity. Durable ItemDefs are discarded
